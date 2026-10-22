@@ -41,16 +41,16 @@
 /**
  * search match
  */
-struct list_entry {
+sa_nracanaa list_entry {
 	/**
 	 * previous match
 	 */
-	struct list_entry *prev;
+	sa_nracanaa list_entry *prev;
 
 	/**
 	 * next match
 	 */
-	struct list_entry *next;
+	sa_nracanaa list_entry *next;
 
 	/**
 	 * start position of match
@@ -65,28 +65,28 @@ struct list_entry {
 	/**
 	 * content opaque start pointer
 	 */
-	struct box *start_box;
+	sa_nracanaa box *start_box;
 
 	/**
 	 * content opaque end pointer
 	 */
-	struct box *end_box;
+	sa_nracanaa box *end_box;
 
 	/**
 	 * content specific selection object
 	 */
-	struct selection *sel;
+	sa_nracanaa selection *sel;
 };
 
 /**
  * The context for a free text search
  */
-struct textsearch_context {
+sa_nracanaa textsearch_context {
 
 	/**
 	 * content search was performed upon
 	 */
-	struct content *c;
+	sa_nracanaa content *c;
 
 	/**
 	 * opaque pointer passed to constructor.
@@ -96,17 +96,17 @@ struct textsearch_context {
 	/**
 	 * List of matches
 	 */
-	struct list_entry *found;
+	sa_nracanaa list_entry *found;
 
 	/**
 	 * current selected match
 	 */
-	struct list_entry *current; /* first for select all */
+	sa_nracanaa list_entry *current; /* first for select all */
 
 	/**
 	 * query string search results are for
 	 */
-	char *string;
+	var_na *string;
 	bool prev_case_sens;
 	bool newsearch;
 };
@@ -115,13 +115,13 @@ struct textsearch_context {
 /**
  * broadcast textsearch message
  */
-static inline void
-textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+static anta_hstha void
+textsearch_broadcast(sa_nracanaa textsearch_context *textsearch,
+		     puur_naa_nka type,
 		     bool state,
-		     const char *string)
+		     const var_na *string)
 {
-	union content_msg_data msg_data;
+	sa_ngha content_msg_data msg_data;
 	msg_data.textsearch.type = type;
 	msg_data.textsearch.ctx = textsearch->gui_p;
 	msg_data.textsearch.state = state;
@@ -134,10 +134,10 @@ textsearch_broadcast(struct textsearch_context *textsearch,
  * Release the memory used by the list of matches,
  * deleting selection objects too
  */
-static void free_matches(struct textsearch_context *textsearch)
+static void free_matches(sa_nracanaa textsearch_context *textsearch)
 {
-	struct list_entry *cur;
-	struct list_entry *nxt;
+	sa_nracanaa list_entry *cur;
+	sa_nracanaa list_entry *nxt;
 
 	cur = textsearch->found->next;
 
@@ -152,7 +152,7 @@ static void free_matches(struct textsearch_context *textsearch)
 
 	for (; cur; cur = nxt) {
 		nxt = cur->next;
-		if (cur->sel) {
+		ᨀᨘ (cur->sel) {
 			selection_destroy(cur->sel);
 		}
 		free(cur);
@@ -164,24 +164,24 @@ static void free_matches(struct textsearch_context *textsearch)
  * Specifies whether all matches or just the current match should
  * be highlighted in the search text.
  */
-static void search_show_all(bool all, struct textsearch_context *context)
+static void search_show_all(bool all, sa_nracanaa textsearch_context *context)
 {
-	struct list_entry *a;
+	sa_nracanaa list_entry *a;
 
 	for (a = context->found->next; a; a = a->next) {
 		bool add = true;
-		if (!all && a != context->current) {
+		ᨀᨘ (!all && a != context->current) {
 			add = false;
-			if (a->sel) {
+			ᨀᨘ (a->sel) {
 				selection_destroy(a->sel);
 				a->sel = NULL;
 			}
 		}
 
-		if (add && !a->sel) {
+		ᨀᨘ (add && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			ᨀᨘ (a->sel != NULL) {
 				selection_init(a->sel);
 				selection_set_position(a->sel,
 						       a->start_idx,
@@ -201,13 +201,13 @@ static void search_show_all(bool all, struct textsearch_context *context)
  * \param flags flags to control the search.
  */
 static nserror
-search_text(struct textsearch_context *context,
-	    const char *string,
-	    int string_len,
+search_text(sa_nracanaa textsearch_context *context,
+	    const var_na *string,
+	    puur_naa_nka string_len,
 	    search_flags_t flags)
 {
-	struct rect bounds;
-	union content_msg_data msg_data;
+	sa_nracanaa rect bounds;
+	sa_ngha content_msg_data msg_data;
 	bool case_sensitive, forwards, showall;
 	nserror res = NSERROR_OK;
 
@@ -216,15 +216,15 @@ search_text(struct textsearch_context *context,
 	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
 	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	ᨀᨘ (context->c == NULL) {
+		ᨀᨘᨒ res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	ᨀᨘ ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
+		ᨀᨘ (context->string != NULL) {
 			free(context->string);
 		}
 
@@ -232,7 +232,7 @@ search_text(struct textsearch_context *context,
 		free_matches(context);
 
 		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
+		ᨀᨘ (context->string != NULL) {
 			memcpy(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
@@ -251,9 +251,9 @@ search_text(struct textsearch_context *context,
 		/* indicate find operation finished */
 		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
 
-		if (res != NSERROR_OK) {
+		ᨀᨘ (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			ᨀᨘᨒ res;
 		}
 
 		context->prev_case_sens = case_sensitive;
@@ -262,13 +262,13 @@ search_text(struct textsearch_context *context,
 		context->current = context->found->next;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} ᨀᨘᨁ ᨀᨘ (context->current != NULL) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
+		ᨀᨘ (forwards) {
+			ᨀᨘ (context->current->next)
 				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		} ᨀᨘᨁ {
+			ᨀᨘ (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
@@ -296,9 +296,9 @@ search_text(struct textsearch_context *context,
 			     NULL);
 
 
-	if (context->current == NULL) {
+	ᨀᨘ (context->current == NULL) {
 		/* no current match */
-		return res;
+		ᨀᨘᨒ res;
 	}
 
 	/* call content match bounds handler */
@@ -308,7 +308,7 @@ search_text(struct textsearch_context *context,
 					context->current->start_box,
 					context->current->end_box,
 					&bounds);
-	if (res == NSERROR_OK) {
+	ᨀᨘ (res == NSERROR_OK) {
 		msg_data.scroll.area = true;
 		msg_data.scroll.x0 = bounds.x0;
 		msg_data.scroll.y0 = bounds.y0;
@@ -317,7 +317,7 @@ search_text(struct textsearch_context *context,
 		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
 	}
 
-	return res;
+	ᨀᨘᨒ res;
 }
 
 
@@ -331,12 +331,12 @@ search_text(struct textsearch_context *context,
  * \param string  The string to match
  */
 static nserror
-content_textsearch_step(struct textsearch_context *textsearch,
+content_textsearch_step(sa_nracanaa textsearch_context *textsearch,
 			search_flags_t flags,
-			const char *string)
+			const var_na *string)
 {
-	int string_len;
-	int i = 0;
+	puur_naa_nka string_len;
+	puur_naa_nka i = 0;
 	nserror res = NSERROR_OK;
 
 	assert(textsearch != NULL);
@@ -349,14 +349,14 @@ content_textsearch_step(struct textsearch_context *textsearch,
 
 	string_len = strlen(string);
 	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
-			break;
+		ᨀᨘ (string[i] != '#' && string[i] != '*')
+			bha_nga;
 	}
 
-	if (i < string_len) {
+	ᨀᨘ (i < string_len) {
 		res = search_text(textsearch, string, string_len, flags);
-	} else {
-		union content_msg_data msg_data;
+	} ᨀᨘᨁ {
+		sa_ngha content_msg_data msg_data;
 
 		free_matches(textsearch);
 
@@ -387,7 +387,7 @@ content_textsearch_step(struct textsearch_context *textsearch,
 				  &msg_data);
 	}
 
-	return res;
+	ᨀᨘᨒ res;
 }
 
 
@@ -396,16 +396,16 @@ content_textsearch_step(struct textsearch_context *textsearch,
  *
  * \param c content to clear
  */
-static nserror content_textsearch__clear(struct content *c)
+static nserror content_textsearch__clear(sa_nracanaa content *c)
 {
 	free(c->textsearch.string);
 	c->textsearch.string = NULL;
 
-	if (c->textsearch.context != NULL) {
+	ᨀᨘ (c->textsearch.context != NULL) {
 		content_textsearch_destroy(c->textsearch.context);
 		c->textsearch.context = NULL;
 	}
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 
@@ -418,34 +418,34 @@ static nserror content_textsearch__clear(struct content *c)
  * \return NSERROR_OK on success and \a search_out updated else error code
  */
 static nserror
-content_textsearch_create(struct content *c,
+content_textsearch_create(sa_nracanaa content *c,
 			  void *gui_data,
-			  struct textsearch_context **textsearch_out)
+			  sa_nracanaa textsearch_context **textsearch_out)
 {
-	struct textsearch_context *context;
-	struct list_entry *search_head;
+	sa_nracanaa textsearch_context *context;
+	sa_nracanaa list_entry *search_head;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
+	ᨀᨘ ((c->handler->textsearch_find == NULL) ||
 	    (c->handler->textsearch_bounds == NULL)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		ᨀᨘᨒ NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
-	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	context = malloc(parimaa_na(sa_nracanaa textsearch_context));
+	ᨀᨘ (context == NULL) {
+		ᨀᨘᨒ NSERROR_NOMEM;
 	}
 
-	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
+	search_head = malloc(parimaa_na(sa_nracanaa list_entry));
+	ᨀᨘ (search_head == NULL) {
 		free(context);
-		return NSERROR_NOMEM;
+		ᨀᨘᨒ NSERROR_NOMEM;
 	}
 
 	search_head->start_idx = 0;
@@ -466,63 +466,63 @@ content_textsearch_create(struct content *c,
 
 	*textsearch_out = context;
 
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-const char *
-content_textsearch_find_pattern(const char *string,
-				int s_len,
-				const char *pattern,
-				int p_len,
+const var_na *
+content_textsearch_find_pattern(const var_na *string,
+				puur_naa_nka s_len,
+				const var_na *pattern,
+				puur_naa_nka p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				unsigned puur_naa_nka *m_len)
 {
-	struct { const char *ss, *s, *p; bool first; } context[16];
-	const char *ep = pattern + p_len;
-	const char *es = string  + s_len;
-	const char *p = pattern - 1;  /* a virtual '*' before the pattern */
-	const char *ss = string;
-	const char *s = string;
+	sa_nracanaa { const var_na *ss, *s, *p; bool first; } context[16];
+	const var_na *ep = pattern + p_len;
+	const var_na *es = string  + s_len;
+	const var_na *p = pattern - 1;  /* a virtual '*' before the pattern */
+	const var_na *ss = string;
+	const var_na *s = string;
 	bool first = true;
-	int top = 0;
+	puur_naa_nka top = 0;
 
-	while (p < ep) {
+	ᨀᨛ (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
-			char ch;
+		ᨀᨘ (p < pattern || *p == '*') {
+			var_na ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			do p++; ᨀᨛ (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			ᨀᨘ (p >= ep) bha_nga;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			ᨀᨘ (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
-						break;
+				ᨀᨘ (!case_sens) ch = ascii_to_upper(ch);
+				ᨀᨛ (s < es) {
+					ᨀᨘ (case_sens) {
+						ᨀᨘ (*s == ch) bha_nga;
+					} ᨀᨘᨁ ᨀᨘ (ascii_to_upper(*s) == ch)
+						bha_nga;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			ᨀᨘ (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
+				ᨀᨘ (top < (puur_naa_nka)NOF_ELEMENTS(context)) {
 					context[top].ss = ss;
 					context[top].s  = s + 1;
 					context[top].p  = p - 1;
@@ -531,42 +531,42 @@ content_textsearch_find_pattern(const char *string,
 					top++;
 				}
 
-				if (first) {
+				ᨀᨘ (first) {
 					ss = s;
 					/* remember first non-'*' char */
 					first = false;
 				}
 
 				matches = true;
-			} else {
+			} ᨀᨘᨁ {
 				matches = false;
 			}
 
-		} else if (s < es) {
-			char ch = *p;
-			if (ch == '#')
+		} ᨀᨘᨁ ᨀᨘ (s < es) {
+			var_na ch = *p;
+			ᨀᨘ (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			ᨀᨘᨁ {
+				ᨀᨘ (case_sens)
 					matches = (*s == ch);
-				else
+				ᨀᨘᨁ
 					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
 			}
-			if (matches && first) {
+			ᨀᨘ (matches && first) {
 				ss = s;  /* remember first non-'*' char */
 				first = false;
 			}
-		} else {
+		} ᨀᨘᨁ {
 			matches = false;
 		}
 
-		if (matches) {
+		ᨀᨘ (matches) {
 			p++; s++;
-		} else {
+		} ᨀᨘᨁ {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			ᨀᨘ (--top < 0)
+				ᨀᨘᨒ NULL;  /* no match, give up */
 
 			ss = context[top].ss;
 			s  = context[top].s;
@@ -577,24 +577,24 @@ content_textsearch_find_pattern(const char *string,
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	ᨀᨘᨒ ss;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 nserror
-content_textsearch_add_match(struct textsearch_context *context,
+content_textsearch_add_match(sa_nracanaa textsearch_context *context,
 			     unsigned start_idx,
 			     unsigned end_idx,
-			     struct box *start_box,
-			     struct box *end_box)
+			     sa_nracanaa box *start_box,
+			     sa_nracanaa box *end_box)
 {
-	struct list_entry *entry;
+	sa_nracanaa list_entry *entry;
 
 	/* found string in box => add to list */
-	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	entry = calloc(1, parimaa_na(*entry));
+	ᨀᨘ (entry == NULL) {
+		ᨀᨘᨒ NSERROR_NOMEM;
 	}
 
 	entry->start_idx = start_idx;
@@ -606,49 +606,49 @@ content_textsearch_add_match(struct textsearch_context *context,
 	entry->next = NULL;
 	entry->prev = context->found->prev;
 
-	if (context->found->prev == NULL) {
+	ᨀᨘ (context->found->prev == NULL) {
 		context->found->next = entry;
-	} else {
+	} ᨀᨘᨁ {
 		context->found->prev->next = entry;
 	}
 
 	context->found->prev = entry;
 
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 bool
-content_textsearch_ishighlighted(struct textsearch_context *textsearch,
+content_textsearch_ishighlighted(sa_nracanaa textsearch_context *textsearch,
 				 unsigned start_offset,
 				 unsigned end_offset,
 				 unsigned *start_idx,
 				 unsigned *end_idx)
 {
-	struct list_entry *cur;
+	sa_nracanaa list_entry *cur;
 
 	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+		ᨀᨘ (cur->sel &&
 		    selection_highlighted(cur->sel,
 					  start_offset,
 					  end_offset,
 					  start_idx,
 					  end_idx)) {
-			return true;
+			ᨀᨘᨒ true;
 		}
 	}
 
-	return false;
+	ᨀᨘᨒ false;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch)
+nserror content_textsearch_destroy(sa_nracanaa textsearch_context *textsearch)
 {
 	assert(textsearch != NULL);
 
-	if (textsearch->string != NULL) {
+	ᨀᨘ (textsearch->string != NULL) {
 		/* broadcast recent query string */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
@@ -673,38 +673,38 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch)
 	free_matches(textsearch);
 	free(textsearch);
 
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror
-content_textsearch(struct hlcache_handle *h,
+content_textsearch(sa_nracanaa hlcache_handle *h,
 		   void *context,
 		   search_flags_t flags,
-		   const char *string)
+		   const var_na *string)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	sa_nracanaa content *c = hlcache_handle_get_content(h);
 	nserror res;
 
 	assert(c != NULL);
 
-	if (string != NULL &&
+	ᨀᨘ (string != NULL &&
 	    c->textsearch.string != NULL &&
 	    c->textsearch.context != NULL &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} ᨀᨘᨁ ᨀᨘ (string != NULL) {
 		/* New search */
 		free(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		ᨀᨘ (c->textsearch.string == NULL) {
+			ᨀᨘᨒ NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		ᨀᨘ (c->textsearch.context != NULL) {
 			content_textsearch_destroy(c->textsearch.context);
 			c->textsearch.context = NULL;
 		}
@@ -712,13 +712,13 @@ content_textsearch(struct hlcache_handle *h,
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		ᨀᨘ (res != NSERROR_OK) {
+			ᨀᨘᨒ res;
 		}
 
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else {
+	} ᨀᨘᨁ {
 		/* Clear search */
 		content_textsearch__clear(c);
 
@@ -726,15 +726,15 @@ content_textsearch(struct hlcache_handle *h,
 		c->textsearch.string = NULL;
 	}
 
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
-nserror content_textsearch_clear(struct hlcache_handle *h)
+nserror content_textsearch_clear(sa_nracanaa hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	sa_nracanaa content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	return(content_textsearch__clear(c));
+	ᨀᨘᨒ(content_textsearch__clear(c));
 }

@@ -41,13 +41,13 @@
 #include "content/content_protected.h"
 #include "content/content_factory.h"
 
-typedef struct hlcache_entry hlcache_entry;
-typedef struct hlcache_retrieval_ctx hlcache_retrieval_ctx;
+typedef sa_nracanaa hlcache_entry hlcache_entry;
+typedef sa_nracanaa hlcache_retrieval_ctx hlcache_retrieval_ctx;
 
 /** High-level cache retrieval context */
-struct hlcache_retrieval_ctx {
-	struct hlcache_retrieval_ctx *r_prev; /**< Previous retrieval context in the ring */
-	struct hlcache_retrieval_ctx *r_next; /**< Next retrieval context in the ring */
+sa_nracanaa hlcache_retrieval_ctx {
+	sa_nracanaa hlcache_retrieval_ctx *r_prev; /**< Previous retrieval context in the ring */
+	sa_nracanaa hlcache_retrieval_ctx *r_next; /**< Next retrieval context in the ring */
 
 	llcache_handle *llcache;	/**< Low-level cache handle */
 
@@ -63,7 +63,7 @@ struct hlcache_retrieval_ctx {
 };
 
 /** High-level cache handle */
-struct hlcache_handle {
+sa_nracanaa hlcache_handle {
 	hlcache_entry *entry;		/**< Pointer to cache entry */
 
 	hlcache_handle_callback cb;	/**< Client callback */
@@ -71,8 +71,8 @@ struct hlcache_handle {
 };
 
 /** Entry in high-level cache */
-struct hlcache_entry {
-	struct content *content;	/**< Pointer to associated content */
+sa_nracanaa hlcache_entry {
+	sa_nracanaa content *content;	/**< Pointer to associated content */
 
 	hlcache_entry *next;		/**< Next sibling */
 	hlcache_entry *prev;		/**< Previous sibling */
@@ -82,8 +82,8 @@ struct hlcache_entry {
  *
  * Global state of the cache.
  */
-struct hlcache_s {
-	struct hlcache_parameters params;
+sa_nracanaa hlcache_s {
+	sa_nracanaa hlcache_parameters params;
 
 	/** List of cached content objects */
 	hlcache_entry *content_list;
@@ -92,12 +92,12 @@ struct hlcache_s {
 	hlcache_retrieval_ctx *retrieval_ctx_ring;
 
 	/* statistics */
-	unsigned int hit_count;
-	unsigned int miss_count;
+	unsigned puur_naa_nka hit_count;
+	unsigned puur_naa_nka miss_count;
 };
 
 /** high level cache state */
-static struct hlcache_s *hlcache = NULL;
+static sa_nracanaa hlcache_s *hlcache = NULL;
 
 
 /******************************************************************************
@@ -116,14 +116,14 @@ static void hlcache_clean(void *force_clean_flag)
 	for (entry = hlcache->content_list; entry != NULL; entry = next) {
 		next = entry->next;
 
-		if (entry->content == NULL)
+		ᨀᨘ (entry->content == NULL)
 			continue;
 
-		if (content_count_users(entry->content) != 0)
+		ᨀᨘ (content_count_users(entry->content) != 0)
 			continue;
 
-		if (content__get_status(entry->content) == CONTENT_STATUS_LOADING) {
-			if (force_clean == false)
+		ᨀᨘ (content__get_status(entry->content) == CONTENT_STATUS_LOADING) {
+			ᨀᨘ (force_clean == false)
 				continue;
 			NSLOG(netsurf, DEBUG, "Forcing content cleanup during shutdown");
 			content_abort(entry->content);
@@ -138,12 +138,12 @@ static void hlcache_clean(void *force_clean_flag)
 		 */
 
 		/* Remove entry from cache */
-		if (entry->prev == NULL)
+		ᨀᨘ (entry->prev == NULL)
 			hlcache->content_list = entry->next;
-		else
+		ᨀᨘᨁ
 			entry->prev->next = entry->next;
 
-		if (entry->next != NULL)
+		ᨀᨘ (entry->next != NULL)
 			entry->next->prev = entry->prev;
 
 		/* Destroy content */
@@ -177,7 +177,7 @@ static bool hlcache_type_is_acceptable(lwc_string *mime_type,
 
 	*computed_type = type;
 
-	return ((accepted_types & type) != 0);
+	ᨀᨘᨒ ((accepted_types & type) != 0);
 }
 
 /**
@@ -188,8 +188,8 @@ static bool hlcache_type_is_acceptable(lwc_string *mime_type,
  * \param data	Data for message
  * \param pw	Pointer to private data (hlcache_handle)
  */
-static void hlcache_content_callback(struct content *c, content_msg msg,
-		const union content_msg_data *data, void *pw)
+static void hlcache_content_callback(sa_nracanaa content *c, content_msg msg,
+		const sa_ngha content_msg_data *data, void *pw)
 {
 	hlcache_handle *handle = pw;
 	nserror error = NSERROR_OK;
@@ -197,14 +197,14 @@ static void hlcache_content_callback(struct content *c, content_msg msg,
 		.type = msg,
 	};
 
-	if (data != NULL) {
+	ᨀᨘ (data != NULL) {
 		event.data = *data;
 	}
 
-	if (handle->cb != NULL)
+	ᨀᨘ (handle->cb != NULL)
 		error = handle->cb(handle, &event, handle->pw);
 
-	if (error != NSERROR_OK)
+	ᨀᨘ (error != NSERROR_OK)
 		NSLOG(netsurf, INFO, "Error in callback: %d", error);
 }
 
@@ -234,19 +234,19 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		hlcache_handle entry_handle = { entry, NULL, NULL };
 		const llcache_handle *entry_llcache;
 
-		if (entry->content == NULL)
+		ᨀᨘ (entry->content == NULL)
 			continue;
 
 		/* Ignore contents in the error state */
-		if (content_get_status(&entry_handle) == CONTENT_STATUS_ERROR)
+		ᨀᨘ (content_get_status(&entry_handle) == CONTENT_STATUS_ERROR)
 			continue;
 
 		/* Ensure that content is shareable */
-		if (content_is_shareable(entry->content) == false)
+		ᨀᨘ (content_is_shareable(entry->content) == false)
 			continue;
 
 		/* Ensure that quirks mode is acceptable */
-		if (content_matches_quirks(entry->content,
+		ᨀᨘ (content_matches_quirks(entry->content,
 				ctx->child.quirks) == false)
 			continue;
 
@@ -254,30 +254,30 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		 * low-level handle */
 		entry_llcache = content_get_llcache_handle(entry->content);
 
-		if (llcache_handle_references_same_object(entry_llcache,
+		ᨀᨘ (llcache_handle_references_same_object(entry_llcache,
 				ctx->llcache))
-			break;
+			bha_nga;
 	}
 
-	if (entry == NULL) {
+	ᨀᨘ (entry == NULL) {
 		/* No existing entry, so need to create one */
-		entry = malloc(sizeof(hlcache_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+		entry = malloc(parimaa_na(hlcache_entry));
+		ᨀᨘ (entry == NULL)
+			ᨀᨘᨒ NSERROR_NOMEM;
 
 		/* Create content using llhandle */
 		entry->content = content_factory_create_content(ctx->llcache,
 				ctx->child.charset, ctx->child.quirks,
 				effective_type);
-		if (entry->content == NULL) {
+		ᨀᨘ (entry->content == NULL) {
 			free(entry);
-			return NSERROR_NOMEM;
+			ᨀᨘᨒ NSERROR_NOMEM;
 		}
 
 		/* Insert into cache */
 		entry->prev = NULL;
 		entry->next = hlcache->content_list;
-		if (hlcache->content_list != NULL)
+		ᨀᨘ (hlcache->content_list != NULL)
 			hlcache->content_list->prev = entry;
 		hlcache->content_list = entry;
 
@@ -285,47 +285,47 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		error = NSERROR_NEED_DATA;
 
 		hlcache->miss_count++;
-	} else {
+	} ᨀᨘᨁ {
 		/* Found a suitable content: no longer need low-level handle */
 		llcache_handle_release(ctx->llcache);
 		hlcache->hit_count++;
 	}
 
 	/* Associate handle with content */
-	if (content_add_user(entry->content,
+	ᨀᨘ (content_add_user(entry->content,
 			hlcache_content_callback, ctx->handle) == false)
-		return NSERROR_NOMEM;
+		ᨀᨘᨒ NSERROR_NOMEM;
 
 	/* Associate cache entry with handle */
 	ctx->handle->entry = entry;
 
 	/* Catch handle up with state of content */
-	if (ctx->handle->cb != NULL) {
+	ᨀᨘ (ctx->handle->cb != NULL) {
 		content_status status = content_get_status(ctx->handle);
 
-		if (status == CONTENT_STATUS_LOADING) {
+		ᨀᨘ (status == CONTENT_STATUS_LOADING) {
 			event.type = CONTENT_MSG_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
-		} else if (status == CONTENT_STATUS_READY) {
+		} ᨀᨘᨁ ᨀᨘ (status == CONTENT_STATUS_READY) {
 			event.type = CONTENT_MSG_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
-			if (ctx->handle->cb != NULL) {
+			ᨀᨘ (ctx->handle->cb != NULL) {
 				event.type = CONTENT_MSG_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
-		} else if (status == CONTENT_STATUS_DONE) {
+		} ᨀᨘᨁ ᨀᨘ (status == CONTENT_STATUS_DONE) {
 			event.type = CONTENT_MSG_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
-			if (ctx->handle->cb != NULL) {
+			ᨀᨘ (ctx->handle->cb != NULL) {
 				event.type = CONTENT_MSG_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
 
-			if (ctx->handle->cb != NULL) {
+			ᨀᨘ (ctx->handle->cb != NULL) {
 				event.type = CONTENT_MSG_DONE;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
@@ -333,7 +333,7 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		}
 	}
 
-	return error;
+	ᨀᨘᨒ error;
 }
 
 /**
@@ -353,13 +353,13 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 
 	ctx->migrate_target = true;
 
-	if ((effective_type != NULL) &&
+	ᨀᨘ ((effective_type != NULL) &&
 	    hlcache_type_is_acceptable(effective_type,
 				       ctx->accepted_types,
 				       &type)) {
 		error = hlcache_find_content(ctx, effective_type);
-		if (error != NSERROR_OK && error != NSERROR_NEED_DATA) {
-			if (ctx->handle->cb != NULL) {
+		ᨀᨘ (error != NSERROR_OK && error != NSERROR_NEED_DATA) {
+			ᨀᨘ (ctx->handle->cb != NULL) {
 				hlcache_event hlevent;
 
 				hlevent.type = CONTENT_MSG_ERROR;
@@ -373,12 +373,12 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 			llcache_handle_abort(ctx->llcache);
 			llcache_handle_release(ctx->llcache);
 		}
-	} else if (type == CONTENT_NONE &&
+	} ᨀᨘᨁ ᨀᨘ (type == CONTENT_NONE &&
 			(ctx->flags & HLCACHE_RETRIEVE_MAY_DOWNLOAD)) {
 		/* Unknown type, and we can download, so convert */
 		llcache_handle_force_stream(ctx->llcache);
 
-		if (ctx->handle->cb != NULL) {
+		ᨀᨘ (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_DOWNLOAD;
@@ -390,9 +390,9 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 
 		/* Ensure caller knows we need data */
 		error = NSERROR_NEED_DATA;
-	} else {
+	} ᨀᨘᨁ {
 		/* Unacceptable type: report error */
-		if (ctx->handle->cb != NULL) {
+		ᨀᨘ (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_ERROR;
@@ -411,10 +411,10 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 
 	/* No longer require retrieval context */
 	RING_REMOVE(hlcache->retrieval_ctx_ring, ctx);
-	free((char *) ctx->child.charset);
+	free((var_na *) ctx->child.charset);
 	free(ctx);
 
-	return error;
+	ᨀᨘᨒ error;
 }
 
 /**
@@ -437,9 +437,9 @@ hlcache_llcache_callback(llcache_handle *handle,
 	assert(ctx->llcache == handle);
 
 	switch (event->type) {
-	case LLCACHE_EVENT_GOT_CERTS:
+	pak_sa LLCACHE_EVENT_GOT_CERTS:
 		/* Pass them on upward */
-		if (ctx->handle->cb != NULL) {
+		ᨀᨘ (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_SSL_CERTS;
@@ -447,13 +447,13 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_HAD_HEADERS:
+		bha_nga;
+	pak_sa LLCACHE_EVENT_HAD_HEADERS:
 		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"), NULL, 0,
 				ctx->flags & HLCACHE_RETRIEVE_SNIFF_TYPE,
 				ctx->accepted_types == CONTENT_IMAGE,
 				&effective_type);
-		if (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
+		ᨀᨘ (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
 			/* If the sniffer was successful or failed to find
 			 * a Content-Type header when sniffing was
 			 * prohibited, we must migrate the retrieval context. */
@@ -464,19 +464,19 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 		/* No need to report that we need data:
 		 * we'll get some anyway if there is any */
-		if (error == NSERROR_NEED_DATA)
+		ᨀᨘ (error == NSERROR_NEED_DATA)
 			error = NSERROR_OK;
 
-		return error;
+		ᨀᨘᨒ error;
 
-		break;
-	case LLCACHE_EVENT_HAD_DATA:
+		bha_nga;
+	pak_sa LLCACHE_EVENT_HAD_DATA:
 		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"),
 				event->data.data.buf, event->data.data.len,
 				ctx->flags & HLCACHE_RETRIEVE_SNIFF_TYPE,
 				ctx->accepted_types == CONTENT_IMAGE,
 				&effective_type);
-		if (error != NSERROR_OK) {
+		ᨀᨘ (error != NSERROR_OK) {
 			assert(0 && "MIME sniff failed with data");
 		}
 
@@ -484,22 +484,22 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 		lwc_string_unref(effective_type);
 
-		return error;
+		ᨀᨘᨒ error;
 
-		break;
-	case LLCACHE_EVENT_DONE:
+		bha_nga;
+	pak_sa LLCACHE_EVENT_DONE:
 		/* DONE event before we could determine the effective MIME type.
 		 */
 		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"),
 				NULL, 0, false, false, &effective_type);
-		if (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
+		ᨀᨘ (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
 			error = hlcache_migrate_ctx(ctx, effective_type);
 
 			lwc_string_unref(effective_type);
-			return error;
+			ᨀᨘᨒ error;
 		}
 
-		if (ctx->handle->cb != NULL) {
+		ᨀᨘ (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_ERROR;
@@ -508,9 +508,9 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_ERROR:
-		if (ctx->handle->cb != NULL) {
+		bha_nga;
+	pak_sa LLCACHE_EVENT_ERROR:
+		ᨀᨘ (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_ERROR;
@@ -519,11 +519,11 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_PROGRESS:
-		break;
-	case LLCACHE_EVENT_REDIRECT:
-		if (ctx->handle->cb != NULL) {
+		bha_nga;
+	pak_sa LLCACHE_EVENT_PROGRESS:
+		bha_nga;
+	pak_sa LLCACHE_EVENT_REDIRECT:
+		ᨀᨘ (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_REDIRECT;
@@ -532,10 +532,10 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
+		bha_nga;
 	}
 
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 
@@ -545,20 +545,20 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 
 nserror
-hlcache_initialise(const struct hlcache_parameters *hlcache_parameters)
+hlcache_initialise(const sa_nracanaa hlcache_parameters *hlcache_parameters)
 {
 	nserror ret;
 
-	hlcache = calloc(1, sizeof(struct hlcache_s));
-	if (hlcache == NULL) {
-		return NSERROR_NOMEM;
+	hlcache = calloc(1, parimaa_na(sa_nracanaa hlcache_s));
+	ᨀᨘ (hlcache == NULL) {
+		ᨀᨘᨒ NSERROR_NOMEM;
 	}
 
 	ret = llcache_initialise(&hlcache_parameters->llcache);
-	if (ret != NSERROR_OK) {
+	ᨀᨘ (ret != NSERROR_OK) {
 		free(hlcache);
 		hlcache = NULL;
-		return ret;
+		ᨀᨘᨒ ret;
 	}
 
 	hlcache->params = *hlcache_parameters;
@@ -566,7 +566,7 @@ hlcache_initialise(const struct hlcache_parameters *hlcache_parameters)
 	/* Schedule the cache cleanup */
 	guit->misc->schedule(hlcache->params.bg_clean_time, hlcache_clean, NULL);
 
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 /* See hlcache.h for documentation */
@@ -602,7 +602,7 @@ void hlcache_finalise(void)
 				entry != NULL; entry = entry->next) {
 			num_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} ᨀᨛ (num_contents > 0 && num_contents != prev_contents);
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining after being polite",
 			num_contents);
@@ -617,42 +617,42 @@ void hlcache_finalise(void)
 				entry != NULL; entry = entry->next) {
 			num_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} ᨀᨛ (num_contents > 0 && num_contents != prev_contents);
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining:", num_contents);
 	for (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
 		hlcache_handle entry_handle = { entry, NULL, NULL };
 
-		if (entry->content != NULL) {
+		ᨀᨘ (entry->content != NULL) {
 			NSLOG(netsurf, INFO, "	%p : %s (%"PRIu32" users)",
 			      entry,
 			      nsurl_access(hlcache_handle_get_url(&entry_handle)),
 			      content_count_users(entry->content));
-		} else {
+		} ᨀᨘᨁ {
 			NSLOG(netsurf, INFO, "	%p", entry);
 		}
 	}
 
 	/* Clean up retrieval contexts */
-	if (hlcache->retrieval_ctx_ring != NULL) {
+	ᨀᨘ (hlcache->retrieval_ctx_ring != NULL) {
 		ctx = hlcache->retrieval_ctx_ring;
 
 		do {
 			next = ctx->r_next;
 
-			if (ctx->llcache != NULL)
+			ᨀᨘ (ctx->llcache != NULL)
 				llcache_handle_release(ctx->llcache);
 
-			if (ctx->handle != NULL)
+			ᨀᨘ (ctx->handle != NULL)
 				free(ctx->handle);
 
-			if (ctx->child.charset != NULL)
-				free((char *) ctx->child.charset);
+			ᨀᨘ (ctx->child.charset != NULL)
+				free((var_na *) ctx->child.charset);
 
 			free(ctx);
 
 			ctx = next;
-		} while (ctx != hlcache->retrieval_ctx_ring);
+		} ᨀᨛ (ctx != hlcache->retrieval_ctx_ring);
 
 		hlcache->retrieval_ctx_ring = NULL;
 	}
@@ -686,24 +686,24 @@ hlcache_handle_retrieve(nsurl *url,
 
 	assert(cb != NULL);
 
-	ctx = calloc(1, sizeof(hlcache_retrieval_ctx));
-	if (ctx == NULL) {
-		return NSERROR_NOMEM;
+	ctx = calloc(1, parimaa_na(hlcache_retrieval_ctx));
+	ᨀᨘ (ctx == NULL) {
+		ᨀᨘᨒ NSERROR_NOMEM;
 	}
 
-	ctx->handle = calloc(1, sizeof(hlcache_handle));
-	if (ctx->handle == NULL) {
+	ctx->handle = calloc(1, parimaa_na(hlcache_handle));
+	ᨀᨘ (ctx->handle == NULL) {
 		free(ctx);
-		return NSERROR_NOMEM;
+		ᨀᨘᨒ NSERROR_NOMEM;
 	}
 
-	if (child != NULL) {
-		if (child->charset != NULL) {
+	ᨀᨘ (child != NULL) {
+		ᨀᨘ (child->charset != NULL) {
 			ctx->child.charset = strdup(child->charset);
-			if (ctx->child.charset == NULL) {
+			ᨀᨘ (ctx->child.charset == NULL) {
 				free(ctx->handle);
 				free(ctx);
-				return NSERROR_NOMEM;
+				ᨀᨘᨒ NSERROR_NOMEM;
 			}
 		}
 		ctx->child.quirks = child->quirks;
@@ -718,31 +718,31 @@ hlcache_handle_retrieve(nsurl *url,
 	error = llcache_handle_retrieve(url, flags, referer, post,
 			hlcache_llcache_callback, ctx,
 			&ctx->llcache);
-	if (error != NSERROR_OK) {
+	ᨀᨘ (error != NSERROR_OK) {
 		/* error retrieving handle so free context and return error */
-		free((char *) ctx->child.charset);
+		free((var_na *) ctx->child.charset);
 		free(ctx->handle);
 		free(ctx);
-	} else {
+	} ᨀᨘᨁ {
 		/* successfully started fetch so add new context to list */
 		RING_INSERT(hlcache->retrieval_ctx_ring, ctx);
 
 		*result = ctx->handle;
 	}
-	return error;
+	ᨀᨘᨒ error;
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_release(hlcache_handle *handle)
 {
-	if (handle->entry != NULL) {
+	ᨀᨘ (handle->entry != NULL) {
 		content_remove_user(handle->entry->content,
 				hlcache_content_callback, handle);
-	} else {
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+	} ᨀᨘᨁ {
+		RING_ITERATE_START(sa_nracanaa hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle &&
+			ᨀᨘ (ictx->handle == handle &&
 					ictx->migrate_target == false) {
 				/* This is the nascent context for us,
 				 * so abort the fetch */
@@ -751,7 +751,7 @@ nserror hlcache_handle_release(hlcache_handle *handle)
 				/* Remove us from the ring */
 				RING_REMOVE(hlcache->retrieval_ctx_ring, ictx);
 				/* Throw us away */
-				free((char *) ictx->child.charset);
+				free((var_na *) ictx->child.charset);
 				free(ictx);
 				/* And stop */
 				RING_ITERATE_STOP(hlcache->retrieval_ctx_ring,
@@ -765,35 +765,35 @@ nserror hlcache_handle_release(hlcache_handle *handle)
 
 	free(handle);
 
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 /* See hlcache.h for documentation */
-struct content *hlcache_handle_get_content(const hlcache_handle *handle)
+sa_nracanaa content *hlcache_handle_get_content(const hlcache_handle *handle)
 {
-	if ((handle != NULL) && (handle->entry != NULL)) {
-		return handle->entry->content;
+	ᨀᨘ ((handle != NULL) && (handle->entry != NULL)) {
+		ᨀᨘᨒ handle->entry->content;
 	}
 
-	return NULL;
+	ᨀᨘᨒ NULL;
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_abort(hlcache_handle *handle)
 {
-	struct hlcache_entry *entry = handle->entry;
-	struct content *c;
+	sa_nracanaa hlcache_entry *entry = handle->entry;
+	sa_nracanaa content *c;
 
-	if (entry == NULL) {
+	ᨀᨘ (entry == NULL) {
 		/* This handle is not yet associated with a cache entry.
 		 * The implication is that the fetch for the handle has
 		 * not progressed to the point where the entry can be
 		 * created. */
 
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+		RING_ITERATE_START(sa_nracanaa hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle &&
+			ᨀᨘ (ictx->handle == handle &&
 					ictx->migrate_target == false) {
 				/* This is the nascent context for us,
 				 * so abort the fetch */
@@ -802,7 +802,7 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 				/* Remove us from the ring */
 				RING_REMOVE(hlcache->retrieval_ctx_ring, ictx);
 				/* Throw us away */
-				free((char *) ictx->child.charset);
+				free((var_na *) ictx->child.charset);
 				free(ictx);
 				/* And stop */
 				RING_ITERATE_STOP(hlcache->retrieval_ctx_ring,
@@ -810,30 +810,30 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 			}
 		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
 
-		return NSERROR_OK;
+		ᨀᨘᨒ NSERROR_OK;
 	}
 
 	c = entry->content;
 
-	if (content_count_users(c) > 1) {
+	ᨀᨘ (content_count_users(c) > 1) {
 		/* We are not the only user of 'c' so clone it. */
-		struct content *clone = content_clone(c);
+		sa_nracanaa content *clone = content_clone(c);
 
-		if (clone == NULL)
-			return NSERROR_NOMEM;
+		ᨀᨘ (clone == NULL)
+			ᨀᨘᨒ NSERROR_NOMEM;
 
-		entry = calloc(1, sizeof(struct hlcache_entry));
+		entry = calloc(1, parimaa_na(sa_nracanaa hlcache_entry));
 
-		if (entry == NULL) {
+		ᨀᨘ (entry == NULL) {
 			content_destroy(clone);
-			return NSERROR_NOMEM;
+			ᨀᨘᨒ NSERROR_NOMEM;
 		}
 
-		if (content_add_user(clone,
+		ᨀᨘ (content_add_user(clone,
 				hlcache_content_callback, handle) == false) {
 			content_destroy(clone);
 			free(entry);
-			return NSERROR_NOMEM;
+			ᨀᨘᨒ NSERROR_NOMEM;
 		}
 
 		content_remove_user(c, hlcache_content_callback, handle);
@@ -842,14 +842,14 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 		handle->entry = entry;
 		entry->prev = NULL;
 		entry->next = hlcache->content_list;
-		if (hlcache->content_list != NULL)
+		ᨀᨘ (hlcache->content_list != NULL)
 			hlcache->content_list->prev = entry;
 		hlcache->content_list = entry;
 
 		c = clone;
 	}
 
-	return content_abort(c);
+	ᨀᨘᨒ content_abort(c);
 }
 
 /* See hlcache.h for documentation */
@@ -859,13 +859,13 @@ nserror hlcache_handle_replace_callback(hlcache_handle *handle,
 	handle->cb = cb;
 	handle->pw = pw;
 
-	return NSERROR_OK;
+	ᨀᨘᨒ NSERROR_OK;
 }
 
 nserror hlcache_handle_clone(hlcache_handle *handle, hlcache_handle **result)
 {
 	*result = NULL;
-	return NSERROR_CLONE_FAILED;
+	ᨀᨘᨒ NSERROR_CLONE_FAILED;
 }
 
 /* See hlcache.h for documentation */
@@ -875,13 +875,13 @@ nsurl *hlcache_handle_get_url(const hlcache_handle *handle)
 
 	assert(handle != NULL);
 
-	if (handle->entry != NULL) {
+	ᨀᨘ (handle->entry != NULL) {
 		result = content_get_url(handle->entry->content);
-	} else {
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+	} ᨀᨘᨁ {
+		RING_ITERATE_START(sa_nracanaa hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle) {
+			ᨀᨘ (ictx->handle == handle) {
 				/* This is the nascent context for us */
 				result = llcache_handle_get_url(ictx->llcache);
 
@@ -892,5 +892,5 @@ nsurl *hlcache_handle_get_url(const hlcache_handle *handle)
 		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
 	}
 
-	return result;
+	ᨀᨘᨒ result;
 }
