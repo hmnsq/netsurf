@@ -23,23 +23,23 @@
 #ifndef _NETSURF_DESKTOP_FETCH_H_
 #define _NETSURF_DESKTOP_FETCH_H_
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
-#include "utils/config.h"
-#include "utils/nsurl.h"
-#include "utils/inet.h"
-#include "utils/http/response-codes.h"
+#अन्तर्भाव "utils/config.h"
+#अन्तर्भाव "utils/nsurl.h"
+#अन्तर्भाव "utils/inet.h"
+#अन्तर्भाव "utils/http/response-codes.h"
 
-#include "netsurf/ssl_certs.h"
+#अन्तर्भाव "netsurf/ssl_certs.h"
 
-struct content;
-struct fetch;
-struct ssl_cert_info;
+संरचना content;
+संरचना fetch;
+संरचना ssl_cert_info;
 
 /**
  * Fetcher message types
  */
-typedef enum {
+प्रकारनिर्देश गणना {
 	FETCH_PROGRESS,
 	FETCH_CERTS,
 	FETCH_HEADER,
@@ -53,14 +53,14 @@ typedef enum {
 	FETCH_AUTH,
 	FETCH_CERT_ERR,
 	FETCH_SSL_ERR
-} fetch_msg_type;
+} fetch_संदेश_type;
 
 /** Minimum finished message type.
  *
  * If a fetch does not progress this far, it's an error and the fetch machinery
  * will send FETCH_ERROR to the llcache on fetch_free()
  */
-#define FETCH_MIN_FINISHED_MSG FETCH_FINISHED
+#define FETCH_MIN_FINISHED_संदेश FETCH_FINISHED
 
 /**
  * This message is actually an internal message used to indicate
@@ -71,34 +71,34 @@ typedef enum {
 /**
  * Fetcher message data
  */
-typedef struct fetch_msg {
-	fetch_msg_type type;
+प्रकारनिर्देश संरचना fetch_संदेश {
+	fetch_संदेश_type type;
 
-	union {
-		const char *progress;
+	सङ्घ {
+		ध्रुव वर्ण *progress;
 
-		struct {
-			const uint8_t *buf;
+		संरचना {
+			ध्रुव uint8_t *buf;
 			size_t len;
 		} header_or_data;
 
-		const char *error;
+		ध्रुव वर्ण *error;
 
 		/** \todo Use nsurl */
-		const char *redirect;
+		ध्रुव वर्ण *redirect;
 
-		struct {
-			const char *realm;
+		संरचना {
+			ध्रुव वर्ण *realm;
 		} auth;
 
-		const struct cert_chain *chain;
+		ध्रुव संरचना cert_chain *chain;
 	} data;
-} fetch_msg;
+} fetch_संदेश;
 
 /**
  * Fetcher post data types
  */
-typedef enum {
+प्रकारनिर्देश गणना {
 	FETCH_POSTDATA_NONE,
 	FETCH_POSTDATA_URLENC,
 	FETCH_POSTDATA_MULTIPART,
@@ -108,31 +108,31 @@ typedef enum {
 /**
  * Fetch POST multipart data
  */
-struct fetch_multipart_data {
-	struct fetch_multipart_data *next; /**< Next in linked list */
+संरचना fetch_multipart_data {
+	संरचना fetch_multipart_data *next; /**< Next in linked list */
 
-	char *name; /**< Name of item */
-	char *value; /**< Item value */
+	वर्ण *name; /**< Name of item */
+	वर्ण *मूल्य; /**< Item value */
 
-	char *rawfile; /**< Raw filename if file is true */
+	वर्ण *rawfile; /**< Raw filename if file is true */
 	bool file; /**< Item is a file */
 };
 
 /**
  * fetch POST data
  */
-struct fetch_postdata {
+संरचना fetch_postdata {
 	fetch_postdata_type type;
-	union {
+	सङ्घ {
 		/** Url encoded POST string if type is FETCH_POSTDATA_URLENC */
-		char *urlenc;
+		वर्ण *urlenc;
 		/** Multipart post data if type is FETCH_POSTDATA_MULTIPART */
-		struct fetch_multipart_data *multipart;
+		संरचना fetch_multipart_data *multipart;
 	} data;
 };
 
 
-typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
+प्रकारनिर्देश शून्य (*fetch_callback)(ध्रुव fetch_संदेश *संदेश, शून्य *p);
 
 /**
  * Start fetching data for the given URL.
@@ -166,15 +166,15 @@ typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
  * \return NSERROR_OK and fetch_out updated else appropriate error code
  */
 nserror fetch_start(nsurl *url, nsurl *referer, fetch_callback callback,
-		    void *p, bool only_2xx, const char *post_urlenc,
-		    const struct fetch_multipart_data *post_multipart,
+		    शून्य *p, bool only_2xx, ध्रुव वर्ण *post_urlenc,
+		    ध्रुव संरचना fetch_multipart_data *post_multipart,
 		    bool verifiable, bool downgrade_tls,
-		    const char *headers[], struct fetch **fetch_out);
+		    ध्रुव वर्ण *headers[], संरचना fetch **fetch_out);
 
 /**
  * Abort a fetch.
  */
-void fetch_abort(struct fetch *f);
+शून्य fetch_abort(संरचना fetch *f);
 
 
 /**
@@ -183,17 +183,17 @@ void fetch_abort(struct fetch *f);
  * \param  url  URL to check
  * \return  true if the scheme is supported
  */
-bool fetch_can_fetch(const nsurl *url);
+bool fetch_can_fetch(ध्रुव nsurl *url);
 
 /**
  * Change the callback function for a fetch.
  */
-void fetch_change_callback(struct fetch *fetch, fetch_callback callback, void *p);
+शून्य fetch_change_callback(संरचना fetch *fetch, fetch_callback callback, शून्य *p);
 
 /**
  * Get the HTTP response code.
  */
-http_response_code fetch_http_code(struct fetch *fetch);
+http_response_code fetch_http_code(संरचना fetch *fetch);
 
 
 /**
@@ -201,7 +201,7 @@ http_response_code fetch_http_code(struct fetch *fetch);
  *
  * \param list Pointer to head of list to free
  */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
+शून्य fetch_multipart_data_destroy(संरचना fetch_multipart_data *list);
 
 /**
  * Clone a linked list of fetch_multipart_data.
@@ -209,7 +209,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
  * \param list  List to clone
  * \return Pointer to head of cloned list, or NULL on failure
  */
-struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multipart_data *list);
+संरचना fetch_multipart_data *fetch_multipart_data_clone(ध्रुव संरचना fetch_multipart_data *list);
 
 /**
  * Find an entry in a fetch_multipart_data
@@ -218,8 +218,8 @@ struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multi
  * \param name The name to look for in the list
  * \return The value found, or NULL if not present
  */
-const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
-				      const char *name);
+ध्रुव वर्ण *fetch_multipart_data_find(ध्रुव संरचना fetch_multipart_data *list,
+				      ध्रुव वर्ण *name);
 
 /**
  * Create an entry for a fetch_multipart_data
@@ -231,34 +231,34 @@ const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
  * \param value The value of the entry to create
  * \return The result of the attempt
  */
-nserror fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-				    const char *name,
-				    const char *value);
+nserror fetch_multipart_data_new_kv(संरचना fetch_multipart_data **list,
+				    ध्रुव वर्ण *name,
+				    ध्रुव वर्ण *मूल्य);
 
 /**
  * send message to fetch
  */
-void fetch_send_callback(const fetch_msg *msg, struct fetch *fetch);
+शून्य fetch_send_callback(ध्रुव fetch_संदेश *संदेश, संरचना fetch *fetch);
 
 /**
  * remove a queued fetch
  */
-void fetch_remove_from_queues(struct fetch *fetch);
+शून्य fetch_remove_from_queues(संरचना fetch *fetch);
 
 /**
  * Free a fetch structure and associated resources.
  */
-void fetch_free(struct fetch *f);
+शून्य fetch_free(संरचना fetch *f);
 
 /**
  * set the http code of a fetch
  */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code);
+nserror fetch_set_http_code(संरचना fetch *fetch, http_response_code http_code);
 
 /**
  * set cookie data on a fetch
  */
-void fetch_set_cookie(struct fetch *fetch, const char *data);
+शून्य fetch_set_cookie(संरचना fetch *fetch, ध्रुव वर्ण *data);
 
 /**
  * Get the set of file descriptors the fetchers are currently using.
@@ -284,6 +284,6 @@ void fetch_set_cookie(struct fetch *fetch, const char *data);
  * \param[out] maxfd The highest fd number in the set or -1 if no fd available.
  * \return NSERROR_OK on success or appropriate error code.
  */
-nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, int *maxfd);
+nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, पूर्णाङ्क *maxfd);
 
 #endif
