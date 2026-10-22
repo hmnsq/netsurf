@@ -29,6 +29,6 @@
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_file_register(void);
+nserror fetch_file_register(शून्य);
 
 #endif

@@ -30,53 +30,53 @@
  * [rjw] - Sun 4th April 2004
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdlib.h>
 
-#include <nsutils/assert.h>
+#अन्तर्भाव <nsutils/assert.h>
 
-#include <nsgif.h>
+#अन्तर्भाव <nsgif.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "utils/nsoption.h"
-#include "netsurf/misc.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/messages.h"
+#अन्तर्भाव "utils/nsoption.h"
+#अन्तर्भाव "netsurf/misc.h"
+#अन्तर्भाव "netsurf/bitmap.h"
+#अन्तर्भाव "netsurf/content.h"
+#अन्तर्भाव "content/llcache.h"
+#अन्तर्भाव "content/content.h"
+#अन्तर्भाव "content/content_protected.h"
+#अन्तर्भाव "content/content_factory.h"
+#अन्तर्भाव "desktop/gui_internal.h"
+#अन्तर्भाव "desktop/bitmap.h"
 
-#include "image/image.h"
-#include "image/gif.h"
+#अन्तर्भाव "image/image.h"
+#अन्तर्भाव "image/gif.h"
 
-typedef struct gif_content {
-	struct content base;
+प्रकारनिर्देश संरचना gif_content {
+	संरचना content base;
 
 	nsgif_t *gif; /**< GIF animation data */
 	uint32_t current_frame;   /**< current frame to display [0...(max-1)] */
 } gif_content;
 
-static inline nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
+स्थिर अन्तःस्थ nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
 {
 	nserror err;
 
-	switch (gif_res) {
-	case NSGIF_ERR_OOM:
+	विकल्प (gif_res) {
+	पक्ष NSGIF_ERR_OOM:
 		err = NSERROR_NOMEM;
-		break;
-	default:
+		भङ्ग;
+	स्वभाव:
 		err = NSERROR_GIF_ERROR;
-		break;
+		भङ्ग;
 	}
 
-	return err;
+	प्रत्यागम err;
 }
 
 /**
@@ -86,32 +86,32 @@ static inline nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
  * \param  height  width of image in pixels
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *gif_bitmap_create(int width, int height)
+स्थिर शून्य *gif_bitmap_create(पूर्णाङ्क width, पूर्णाङ्क height)
 {
-	return guit->bitmap->create(width, height, BITMAP_NONE);
+	प्रत्यागम guit->bitmap->create(width, height, BITMAP_NONE);
 }
 
 /**
  * Convert client bitmap format to a LibNSGIF format specifier.
  */
-static nsgif_bitmap_fmt_t nsgif__get_bitmap_format(void)
+स्थिर nsgif_bitmap_fmt_t nsgif__get_bitmap_format(शून्य)
 {
-	ns_static_assert((int)BITMAP_LAYOUT_R8G8B8A8 == (int)NSGIF_BITMAP_FMT_R8G8B8A8);
-	ns_static_assert((int)BITMAP_LAYOUT_B8G8R8A8 == (int)NSGIF_BITMAP_FMT_B8G8R8A8);
-	ns_static_assert((int)BITMAP_LAYOUT_A8R8G8B8 == (int)NSGIF_BITMAP_FMT_A8R8G8B8);
-	ns_static_assert((int)BITMAP_LAYOUT_A8B8G8R8 == (int)NSGIF_BITMAP_FMT_A8B8G8R8);
-	ns_static_assert((int)BITMAP_LAYOUT_RGBA8888 == (int)NSGIF_BITMAP_FMT_RGBA8888);
-	ns_static_assert((int)BITMAP_LAYOUT_BGRA8888 == (int)NSGIF_BITMAP_FMT_BGRA8888);
-	ns_static_assert((int)BITMAP_LAYOUT_ARGB8888 == (int)NSGIF_BITMAP_FMT_ARGB8888);
-	ns_static_assert((int)BITMAP_LAYOUT_ABGR8888 == (int)NSGIF_BITMAP_FMT_ABGR8888);
+	ns_static_assert((पूर्णाङ्क)BITMAP_LAYOUT_R8G8B8A8 == (पूर्णाङ्क)NSGIF_BITMAP_FMT_R8G8B8A8);
+	ns_static_assert((पूर्णाङ्क)BITMAP_LAYOUT_B8G8R8A8 == (पूर्णाङ्क)NSGIF_BITMAP_FMT_B8G8R8A8);
+	ns_static_assert((पूर्णाङ्क)BITMAP_LAYOUT_A8R8G8B8 == (पूर्णाङ्क)NSGIF_BITMAP_FMT_A8R8G8B8);
+	ns_static_assert((पूर्णाङ्क)BITMAP_LAYOUT_A8B8G8R8 == (पूर्णाङ्क)NSGIF_BITMAP_FMT_A8B8G8R8);
+	ns_static_assert((पूर्णाङ्क)BITMAP_LAYOUT_RGBA8888 == (पूर्णाङ्क)NSGIF_BITMAP_FMT_RGBA8888);
+	ns_static_assert((पूर्णाङ्क)BITMAP_LAYOUT_BGRA8888 == (पूर्णाङ्क)NSGIF_BITMAP_FMT_BGRA8888);
+	ns_static_assert((पूर्णाङ्क)BITMAP_LAYOUT_ARGB8888 == (पूर्णाङ्क)NSGIF_BITMAP_FMT_ARGB8888);
+	ns_static_assert((पूर्णाङ्क)BITMAP_LAYOUT_ABGR8888 == (पूर्णाङ्क)NSGIF_BITMAP_FMT_ABGR8888);
 
-	return (nsgif_bitmap_fmt_t)bitmap_fmt.layout;
+	प्रत्यागम (nsgif_bitmap_fmt_t)bitmap_fmt.layout;
 }
 
-static nserror gif_create_gif_data(gif_content *c)
+स्थिर nserror gif_create_gif_data(gif_content *c)
 {
 	nsgif_error gif_res;
-	const nsgif_bitmap_cb_vt gif_bitmap_callbacks = {
+	ध्रुव nsgif_bitmap_cb_vt gif_bitmap_callbacks = {
 		.create = gif_bitmap_create,
 		.destroy = guit->bitmap->destroy,
 		.get_buffer = guit->bitmap->get_buffer,
@@ -122,43 +122,43 @@ static nserror gif_create_gif_data(gif_content *c)
 
 	gif_res = nsgif_create(&gif_bitmap_callbacks,
 			nsgif__get_bitmap_format(), &c->gif);
-	if (gif_res != NSGIF_OK) {
+	यदि (gif_res != NSGIF_OK) {
 		nserror err = gif__nsgif_error_to_ns(gif_res);
-		content_broadcast_error(&c->base, err, NULL);
-		return err;
+		content_broadcast_error(&c->base, err, रिक्त);
+		प्रत्यागम err;
 	}
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-static nserror gif_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+स्थिर nserror gif_create(ध्रुव content_handler *handler,
+		lwc_string *imime_type, ध्रुव संरचना http_parameter *params,
+		llcache_handle *llcache, ध्रुव वर्ण *fallback_charset,
+		bool quirks, संरचना content **c)
 {
 	gif_content *result;
 	nserror error;
 
-	result = calloc(1, sizeof(gif_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	result = calloc(1, परिमाण(gif_content));
+	यदि (result == रिक्त)
+		प्रत्यागम NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	यदि (error != NSERROR_OK) {
+		मुक्त(result);
+		प्रत्यागम error;
 	}
 
 	error = gif_create_gif_data(result);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	यदि (error != NSERROR_OK) {
+		मुक्त(result);
+		प्रत्यागम error;
 	}
 
-	*c = (struct content *) result;
+	*c = (संरचना content *) result;
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 /**
@@ -166,14 +166,14 @@ static nserror gif_create(const content_handler *handler,
  *
  * \param p  The content to animate
 */
-static void gif_animate_cb(void *p);
+स्थिर शून्य gif_animate_cb(शून्य *p);
 
 /**
  * Performs any necessary animation.
  *
  * \param p  The content to animate
 */
-static nserror gif__animate(gif_content *gif, bool redraw)
+स्थिर nserror gif__animate(gif_content *gif, bool redraw)
 {
 	nsgif_error gif_res;
 	nsgif_rect_t rect;
@@ -181,19 +181,19 @@ static nserror gif__animate(gif_content *gif, bool redraw)
 	uint32_t f;
 
 	gif_res = nsgif_frame_prepare(gif->gif, &rect, &delay, &f);
-	if (gif_res != NSGIF_OK) {
-		return gif__nsgif_error_to_ns(gif_res);
+	यदि (gif_res != NSGIF_OK) {
+		प्रत्यागम gif__nsgif_error_to_ns(gif_res);
 	}
 
 	gif->current_frame = f;
 
 	/* Continue animating if we should */
-	if (nsoption_bool(animate_images) && delay != NSGIF_INFINITE) {
+	यदि (nsoption_bool(animate_images) && delay != NSGIF_INFINITE) {
 		guit->misc->schedule(delay * 10, gif_animate_cb, gif);
 	}
 
-	if (redraw) {
-		union content_msg_data data;
+	यदि (redraw) {
+		सङ्घ content_संदेश_data data;
 
 		/* area within gif to redraw */
 		data.redraw.x = rect.x0;
@@ -201,35 +201,35 @@ static nserror gif__animate(gif_content *gif, bool redraw)
 		data.redraw.width  = rect.x1 - rect.x0;
 		data.redraw.height = rect.y1 - rect.y0;
 
-		content_broadcast(&gif->base, CONTENT_MSG_REDRAW, &data);
+		content_broadcast(&gif->base, CONTENT_संदेश_REDRAW, &data);
 	}
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-static void gif_animate_cb(void *p)
+स्थिर शून्य gif_animate_cb(शून्य *p)
 {
 	gif_content *gif = p;
 
 	gif__animate(gif, true);
 }
 
-static bool gif_convert(struct content *c)
+स्थिर bool gif_convert(संरचना content *c)
 {
 	gif_content *gif = (gif_content *) c;
-	const nsgif_info_t *gif_info;
-	const uint8_t *data;
+	ध्रुव nsgif_info_t *gif_info;
+	ध्रुव uint8_t *data;
 	nsgif_error gif_err;
 	nserror err;
 	size_t size;
-	char *title;
+	वर्ण *title;
 
 	/* Get the animation */
 	data = content__get_source_data(c, &size);
 
 	/* Initialise the GIF */
 	gif_err = nsgif_data_scan(gif->gif, size, data);
-	if (gif_err != NSGIF_OK) {
+	यदि (gif_err != NSGIF_OK) {
 		NSLOG(netsurf, INFO, "nsgif scan: %s", nsgif_strerror(gif_err));
 		/* Not fatal unless we have no frames. */
 	}
@@ -237,17 +237,17 @@ static bool gif_convert(struct content *c)
 	nsgif_data_complete(gif->gif);
 
 	gif_info = nsgif_get_info(gif->gif);
-	assert(gif_info != NULL);
+	प्रतिज्ञा(gif_info != रिक्त);
 
 	/* Abort on bad GIFs */
-	if (gif_info->frame_count == 0) {
+	यदि (gif_info->frame_गिनती == 0) {
 		err = gif__nsgif_error_to_ns(gif_err);
 		content_broadcast_error(c, err, "GIF with no frames.");
-		return false;
-	} else if (gif_info->width == 0 || gif_info->height == 0) {
+		प्रत्यागम false;
+	} अन्यथा यदि (gif_info->width == 0 || gif_info->height == 0) {
 		err = gif__nsgif_error_to_ns(gif_err);
 		content_broadcast_error(c, err, "Zero size image.");
-		return false;
+		प्रत्यागम false;
 	}
 
 	/* Store our content width, height and calculate size */
@@ -259,15 +259,15 @@ static bool gif_convert(struct content *c)
 	title = messages_get_buff("GIFTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	यदि (title != रिक्त) {
 		content__set_title(c, title);
-		free(title);
+		मुक्त(title);
 	}
 
 	err = gif__animate(gif, false);
-	if (err != NSERROR_OK) {
-		content_broadcast_error(c, NSERROR_GIF_ERROR, NULL);
-		return false;
+	यदि (err != NSERROR_OK) {
+		content_broadcast_error(c, NSERROR_GIF_ERROR, रिक्त);
+		प्रत्यागम false;
 	}
 
 	/* Exit as a success */
@@ -276,7 +276,7 @@ static bool gif_convert(struct content *c)
 
 	/* Done: update status bar */
 	content_set_status(c, "");
-	return true;
+	प्रत्यागम true;
 }
 
 /**
@@ -285,31 +285,31 @@ static bool gif_convert(struct content *c)
  * \param gif The gif context to update.
  * \return NSGIF_OK on success else apropriate error code.
  */
-static nsgif_error gif_get_frame(gif_content *gif,
+स्थिर nsgif_error gif_get_frame(gif_content *gif,
 		nsgif_bitmap_t **bitmap)
 {
 	uint32_t current_frame = gif->current_frame;
-	if (!nsoption_bool(animate_images)) {
+	यदि (!nsoption_bool(animate_images)) {
 		current_frame = 0;
 	}
 
-	return nsgif_frame_decode(gif->gif, current_frame, bitmap);
+	प्रत्यागम nsgif_frame_decode(gif->gif, current_frame, bitmap);
 }
 
-static bool gif_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+स्थिर bool gif_redraw(संरचना content *c, संरचना content_redraw_data *data,
+		ध्रुव संरचना rect *clip, ध्रुव संरचना redraw_context *ctx)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return false;
+	यदि (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
+		प्रत्यागम false;
 	}
 
-	return image_bitmap_plot(bitmap, data, clip, ctx);
+	प्रत्यागम image_bitmap_plot(bitmap, data, clip, ctx);
 }
 
-static void gif_destroy(struct content *c)
+स्थिर शून्य gif_destroy(संरचना content *c)
 {
 	gif_content *gif = (gif_content *) c;
 
@@ -318,96 +318,96 @@ static void gif_destroy(struct content *c)
 	nsgif_destroy(gif->gif);
 }
 
-static nserror gif_clone(const struct content *old, struct content **newc)
+स्थिर nserror gif_clone(ध्रुव संरचना content *old, संरचना content **newc)
 {
 	gif_content *gif;
 	nserror error;
 
-	gif = calloc(1, sizeof(gif_content));
-	if (gif == NULL)
-		return NSERROR_NOMEM;
+	gif = calloc(1, परिमाण(gif_content));
+	यदि (gif == रिक्त)
+		प्रत्यागम NSERROR_NOMEM;
 
 	error = content__clone(old, &gif->base);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		content_destroy(&gif->base);
-		return error;
+		प्रत्यागम error;
 	}
 
 	/* Simply replay creation and conversion of content */
 	error = gif_create_gif_data(gif);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		content_destroy(&gif->base);
-		return error;
+		प्रत्यागम error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	यदि (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (gif_convert(&gif->base) == false) {
+		यदि (gif_convert(&gif->base) == false) {
 			content_destroy(&gif->base);
-			return NSERROR_CLONE_FAILED;
+			प्रत्यागम NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) gif;
+	*newc = (संरचना content *) gif;
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-static void gif_add_user(struct content *c)
+स्थिर शून्य gif_add_user(संरचना content *c)
 {
 	gif_content *gif = (gif_content *) c;
 
 	/* Ensure this content has already been converted.
 	 * If it hasn't, the animation will start at the conversion phase instead. */
-	if (gif->gif == NULL) return;
+	यदि (gif->gif == रिक्त) प्रत्यागम;
 
-	if (content_count_users(c) == 1) {
+	यदि (content_गिनती_users(c) == 1) {
 		/* First user, and content already converted, so start the animation. */
-		if (nsgif_reset(gif->gif) == NSGIF_OK) {
+		यदि (nsgif_reset(gif->gif) == NSGIF_OK) {
 			gif__animate(gif, true);
 		}
 	}
 }
 
-static void gif_remove_user(struct content *c)
+स्थिर शून्य gif_remove_user(संरचना content *c)
 {
-	if (content_count_users(c) == 1) {
+	यदि (content_गिनती_users(c) == 1) {
 		/* Last user is about to be removed from this content, so stop the animation. */
 		guit->misc->schedule(-1, gif_animate_cb, c);
 	}
 }
 
-static nsgif_bitmap_t *gif_get_bitmap(
-		const struct content *c, void *context)
+स्थिर nsgif_bitmap_t *gif_get_bitmap(
+		ध्रुव संरचना content *c, शून्य *context)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return NULL;
+	यदि (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
+		प्रत्यागम रिक्त;
 	}
 
-	return bitmap;
+	प्रत्यागम bitmap;
 }
 
-static content_type gif_content_type(void)
+स्थिर content_type gif_content_type(शून्य)
 {
-	return CONTENT_IMAGE;
+	प्रत्यागम CONTENT_IMAGE;
 }
 
-static bool gif_content_is_opaque(struct content *c)
+स्थिर bool gif_content_is_opaque(संरचना content *c)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return false;
+	यदि (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
+		प्रत्यागम false;
 	}
 
-	return guit->bitmap->get_opaque(bitmap);
+	प्रत्यागम guit->bitmap->get_opaque(bitmap);
 }
 
-static const content_handler gif_content_handler = {
+स्थिर ध्रुव content_handler gif_content_handler = {
 	.create = gif_create,
 	.data_complete = gif_convert,
 	.destroy = gif_destroy,
@@ -421,7 +421,7 @@ static const content_handler gif_content_handler = {
 	.no_share = false,
 };
 
-static const char *gif_types[] = {
+स्थिर ध्रुव वर्ण *gif_types[] = {
 	"image/gif"
 };
 
