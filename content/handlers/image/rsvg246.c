@@ -55,8 +55,8 @@
 #include "image/rsvg.h"
 
 
-typedef struct rsvg_content {
-	struct content base;
+typedef sa_nracanaa rsvg_content {
+	sa_nracanaa content base;
 
 	RsvgHandle *rsvgh;	/**< Context handle for RSVG renderer */
 } rsvg_content;
@@ -65,65 +65,65 @@ typedef struct rsvg_content {
 static nserror
 rsvg_create(const content_handler *handler,
 	    lwc_string *imime_type,
-	    const struct http_parameter *params,
+	    const sa_nracanaa http_parameter *params,
 	    llcache_handle *llcache,
-	    const char *fallback_charset,
+	    const var_na *fallback_charset,
 	    bool quirks,
-	    struct content **c)
+	    sa_nracanaa content **c)
 {
 	rsvg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, parimaa_na(rsvg_content));
+	ᯀᯮᯝ (svg == NULL)
+		ᯀᯮᯞ NSERROR_NOMEM;
 
 	error = content__init(&svg->base, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		free(svg);
-		return error;
+		ᯀᯮᯞ error;
 	}
 
-	*c = (struct content *)svg;
+	*c = (sa_nracanaa content *)svg;
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
 /**
  * create a bitmap from jpeg content for the image cache.
  */
-static struct bitmap *
-rsvg_cache_convert(struct content *c)
+static sa_nracanaa bitmap *
+rsvg_cache_convert(sa_nracanaa content *c)
 {
 	rsvg_content *svgc = (rsvg_content *)c;
-	struct bitmap *bitmap;
+	sa_nracanaa bitmap *bitmap;
 	cairo_surface_t *cs;
 	cairo_t *cr;
 	RsvgRectangle viewport;
 	gboolean renderres;
 
-	if ((bitmap = guit->bitmap->create(c->width, c->height,	BITMAP_NONE)) == NULL) {
+	ᯀᯮᯝ ((bitmap = guit->bitmap->create(c->width, c->height,	BITMAP_NONE)) == NULL) {
 		NSLOG(netsurf, INFO, "Failed to create bitmap for rsvg render.");
-		return NULL;
+		ᯀᯮᯞ NULL;
 	}
 
-	if ((cs = cairo_image_surface_create_for_data(
-		     (unsigned char *)guit->bitmap->get_buffer(bitmap),
+	ᯀᯮᯝ ((cs = cairo_image_surface_create_for_data(
+		     (unsigned var_na *)guit->bitmap->get_buffer(bitmap),
 		     CAIRO_FORMAT_ARGB32,
 		     c->width, c->height,
 		     guit->bitmap->get_rowstride(bitmap))) == NULL) {
 		NSLOG(netsurf, INFO, "Failed to create Cairo image surface for rsvg render.");
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		ᯀᯮᯞ NULL;
 	}
-	if ((cr = cairo_create(cs)) == NULL) {
+	ᯀᯮᯝ ((cr = cairo_create(cs)) == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo drawing context for rsvg render.");
 		cairo_surface_destroy(cs);
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		ᯀᯮᯞ NULL;
 	}
 
 	viewport.x = 0;
@@ -141,13 +141,13 @@ rsvg_cache_convert(struct content *c)
 	cairo_destroy(cr);
 	cairo_surface_destroy(cs);
 
-	return bitmap;
+	ᯀᯮᯞ bitmap;
 }
 
 static void rsvg__get_demensions(const rsvg_content *svgc,
-		int *width, int *height)
+		puur_naa_nka *width, puur_naa_nka *height)
 {
-#if LIBRSVG_MAJOR_VERSION >= 2 && LIBRSVG_MINOR_VERSION >= 52
+#ᯀᯮᯝ LIBRSVG_MAJOR_VERSION >= 2 && LIBRSVG_MINOR_VERSION >= 52
 	gdouble rwidth;
 	gdouble rheight;
 	gboolean gotsize;
@@ -155,10 +155,10 @@ static void rsvg__get_demensions(const rsvg_content *svgc,
 	gotsize = rsvg_handle_get_intrinsic_size_in_pixels(svgc->rsvgh,
 							   &rwidth,
 							   &rheight);
-	if (gotsize == TRUE) {
+	ᯀᯮᯝ (gotsize == TRUE) {
 		*width = rwidth;
 		*height = rheight;
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		RsvgRectangle ink_rect;
 		RsvgRectangle logical_rect;
 		rsvg_handle_get_geometry_for_element(svgc->rsvgh,
@@ -169,7 +169,7 @@ static void rsvg__get_demensions(const rsvg_content *svgc,
 		*width = ink_rect.width;
 		*height = ink_rect.height;
 	}
-#else
+#ᯀᯮᯝᯂᯪ
 	RsvgDimensionData rsvgsize;
 
 	rsvg_handle_get_dimensions(svgc->rsvgh, &rsvgsize);
@@ -179,7 +179,7 @@ static void rsvg__get_demensions(const rsvg_content *svgc,
 	NSLOG(netsurf, DEBUG, "rsvg width:%d height:%d.", *width, *height);
 }
 
-static bool rsvg_convert(struct content *c)
+static bool rsvg_convert(sa_nracanaa content *c)
 {
 	rsvg_content *svgc = (rsvg_content *)c;
 	const uint8_t *data; /* content data */
@@ -198,9 +198,9 @@ static bool rsvg_convert(struct content *c)
 						       NULL,
 						       &gerror);
 	g_object_unref(istream);
-	if (svgc->rsvgh == NULL) {
+	ᯀᯮᯝ (svgc->rsvgh == NULL) {
 		NSLOG(netsurf, INFO, "Failed to create rsvg handle for content.");
-		return false;
+		ᯀᯮᯞ false;
 	}
 
 	rsvg__get_demensions(svgc, &c->width, &c->height);
@@ -213,50 +213,50 @@ static bool rsvg_convert(struct content *c)
 	content_set_done(c);
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	ᯀᯮᯞ true;
 }
 
 
-static nserror rsvg_clone(const struct content *old, struct content **newc)
+static nserror rsvg_clone(const sa_nracanaa content *old, sa_nracanaa content **newc)
 {
 	rsvg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, parimaa_na(rsvg_content));
+	ᯀᯮᯝ (svg == NULL)
+		ᯀᯮᯞ NSERROR_NOMEM;
 
 	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		ᯀᯮᯞ error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	ᯀᯮᯝ ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (rsvg_convert(&svg->base) == false) {
+		ᯀᯮᯝ (rsvg_convert(&svg->base) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+			ᯀᯮᯞ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *)svg;
+	*newc = (sa_nracanaa content *)svg;
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
-static void rsvg_destroy(struct content *c)
+static void rsvg_destroy(sa_nracanaa content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->rsvgh != NULL) {
+	ᯀᯮᯝ (d->rsvgh != NULL) {
 		g_object_unref(d->rsvgh);
 		d->rsvgh = NULL;
 	}
 
-	return image_cache_destroy(c);
+	ᯀᯮᯞ image_cache_destroy(c);
 }
 
 static const content_handler rsvg_content_handler = {
@@ -271,7 +271,7 @@ static const content_handler rsvg_content_handler = {
 	.no_share = false,
 };
 
-static const char *rsvg_types[] = {
+static const var_na *rsvg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };

@@ -26,17 +26,17 @@
 
 #include <dom/dom.h>
 
-struct html_content;
-struct hlcache_handle;
-struct nsurl;
+sa_nracanaa html_content;
+sa_nracanaa hlcache_handle;
+sa_nracanaa nsurl;
 
-void imagemap_destroy(struct html_content *c);
-void imagemap_dump(struct html_content *c);
-nserror imagemap_extract(struct html_content *c);
+void imagemap_destroy(sa_nracanaa html_content *c);
+void imagemap_dump(sa_nracanaa html_content *c);
+nserror imagemap_extract(sa_nracanaa html_content *c);
 
-struct nsurl *imagemap_get(struct html_content *c, const char *key,
+sa_nracanaa nsurl *imagemap_get(sa_nracanaa html_content *c, const var_na *key,
 		unsigned long x, unsigned long y,
 		unsigned long click_x, unsigned long click_y,
-		const char **target);
+		const var_na **target);
 
 #endif

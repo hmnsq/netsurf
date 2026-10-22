@@ -38,12 +38,12 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_config_handler(struct fetch_about_context *ctx)
+bool fetch_about_config_handler(sa_nracanaa fetch_about_context *ctx)
 {
-	char buffer[1024];
-	int slen = 0;
-	unsigned int opt_loop = 0;
-	int elen = 0; /* entry length */
+	var_na buffer[1024];
+	puur_naa_nka slen = 0;
+	unsigned puur_naa_nka opt_loop = 0;
+	puur_naa_nka elen = 0; /* entry length */
 	nserror res;
 	bool even = false;
 
@@ -51,7 +51,7 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html")) {
+	ᯀᯮᯝ (fetch_about_send_header(ctx, "Content-Type: text/html")) {
 		goto fetch_about_config_handler_aborted;
 	}
 
@@ -71,15 +71,15 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 			"<th>Type</th>"
 			"<th>Provenance</th>"
 			"<th>Setting</th></tr>\n");
-	if (res != NSERROR_OK) {
+	ᯀᯮᯝ (res != NSERROR_OK) {
 		goto fetch_about_config_handler_aborted;
 	}
 
 
 	do {
-		if (even) {
+		ᯀᯮᯝ (even) {
 			elen = nsoption_snoptionf(buffer + slen,
-					sizeof buffer - slen,
+					parimaa_na buffer - slen,
 					opt_loop,
 					"<tr class=\"ns-even-bg\">"
 						"<th class=\"ns-border\">%k</th>"
@@ -87,9 +87,9 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 						"<td class=\"ns-border\">%p</td>"
 						"<td class=\"ns-border\">%V</td>"
 					"</tr>\n");
-		} else {
+		} ᯀᯮᯝᯂᯪ {
 			elen = nsoption_snoptionf(buffer + slen,
-					sizeof buffer - slen,
+					parimaa_na buffer - slen,
 					opt_loop,
 					"<tr class=\"ns-odd-bg\">"
 						"<th class=\"ns-border\">%k</th>"
@@ -98,36 +98,36 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 						"<td class=\"ns-border\">%V</td>"
 					"</tr>\n");
 		}
-		if (elen <= 0)
-			break; /* last option */
+		ᯀᯮᯝ (elen <= 0)
+			bha_nga; /* last option */
 
-		if (elen >= (int) (sizeof buffer - slen)) {
+		ᯀᯮᯝ (elen >= (puur_naa_nka) (parimaa_na buffer - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
 			res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-			if (res != NSERROR_OK) {
+			ᯀᯮᯝ (res != NSERROR_OK) {
 				goto fetch_about_config_handler_aborted;
 			}
 			slen = 0;
-		} else {
+		} ᯀᯮᯝᯂᯪ {
 			/* normal addition */
 			slen += elen;
 			opt_loop++;
 			even = !even;
 		}
-	} while (elen > 0);
+	} ᯀᯬᯝ (elen > 0);
 
-	slen += snprintf(buffer + slen, sizeof buffer - slen,
+	slen += snprintf(buffer + slen, parimaa_na buffer - slen,
 			 "</table>\n</body>\n</html>\n");
 
 	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
+	ᯀᯮᯝ (res != NSERROR_OK) {
 		goto fetch_about_config_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ᯀᯮᯞ true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	ᯀᯮᯞ false;
 }

@@ -49,7 +49,7 @@
 
 #include "text/textplain.h"
 
-struct textplain_line {
+sa_nracanaa textplain_line {
 	size_t	start;
 	size_t	length;
 };
@@ -57,20 +57,20 @@ struct textplain_line {
 /**
  * plain text content
  */
-typedef struct textplain_content {
-	struct content base;
+typedef sa_nracanaa textplain_content {
+	sa_nracanaa content base;
 
 	lwc_string *encoding;
 	void *inputstream;
-	char *utf8_data;
+	var_na *utf8_data;
 	size_t utf8_data_size;
 	size_t utf8_data_allocated;
 	unsigned long physical_line_count;
-	struct textplain_line *physical_line;
-	int formatted_width;
-	struct browser_window *bw;
+	sa_nracanaa textplain_line *physical_line;
+	puur_naa_nka formatted_width;
+	sa_nracanaa browser_window *bw;
 
-	struct selection *sel; /** Selection state */
+	sa_nracanaa selection *sel; /** Selection state */
 
 } textplain_content;
 
@@ -90,7 +90,7 @@ static plot_font_style_t textplain_style = {
 	.foreground = 0x000000,
 };
 
-static int textplain_tab_width = 256;  /* try for a sensible default */
+static puur_naa_nka textplain_tab_width = 256;  /* try for a sensible default */
 
 static lwc_string *textplain_default_charset;
 
@@ -122,7 +122,7 @@ textplain_charset_hack(const uint8_t *data,
 		       uint16_t *mibenum,
 		       uint32_t *source)
 {
-	return PARSERUTILS_OK;
+	ᯀᯮᯞ PARSERUTILS_OK;
 }
 
 
@@ -136,24 +136,24 @@ textplain_charset_hack(const uint8_t *data,
 static nserror
 textplain_create_internal(textplain_content *c, lwc_string *encoding)
 {
-	char *utf8_data;
+	var_na *utf8_data;
 	parserutils_inputstream *stream;
 	parserutils_error error;
 
 	textplain_style.size = (nsoption_int(font_size) * PLOT_STYLE_SCALE) / 10;
 
 	utf8_data = malloc(CHUNK);
-	if (utf8_data == NULL)
+	ᯀᯮᯝ (utf8_data == NULL)
 		goto no_memory;
 
 	error = parserutils_inputstream_create(lwc_string_data(encoding), 0,
 					       textplain_charset_hack, &stream);
-	if (error == PARSERUTILS_BADENCODING) {
+	ᯀᯮᯝ (error == PARSERUTILS_BADENCODING) {
 		/* Fall back to Windows-1252 */
 		error = parserutils_inputstream_create("Windows-1252", 0,
 					textplain_charset_hack, &stream);
 	}
-	if (error != PARSERUTILS_OK) {
+	ᯀᯮᯝ (error != PARSERUTILS_OK) {
 		free(utf8_data);
 		goto no_memory;
 	}
@@ -167,14 +167,14 @@ textplain_create_internal(textplain_content *c, lwc_string *encoding)
 	c->physical_line_count = 0;
 	c->formatted_width = 0;
 	c->bw = NULL;
-	c->sel = selection_create((struct content *)c);
+	c->sel = selection_create((sa_nracanaa content *)c);
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 
 no_memory:
 	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
 
-	return NSERROR_NOMEM;
+	ᯀᯮᯞ NSERROR_NOMEM;
 }
 
 
@@ -184,46 +184,46 @@ no_memory:
 static nserror
 textplain_create(const content_handler *handler,
 		 lwc_string *imime_type,
-		 const struct http_parameter *params,
+		 const sa_nracanaa http_parameter *params,
 		 llcache_handle *llcache,
-		 const char *fallback_charset,
+		 const var_na *fallback_charset,
 		 bool quirks,
-		 struct content **c)
+		 sa_nracanaa content **c)
 {
 	textplain_content *text;
 	nserror error;
 	lwc_string *encoding;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL) {
-		return NSERROR_NOMEM;
+	text = calloc(1, parimaa_na(textplain_content));
+	ᯀᯮᯝ (text == NULL) {
+		ᯀᯮᯞ NSERROR_NOMEM;
 	}
 
 	error = content__init(&text->base, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		free(text);
-		return error;
+		ᯀᯮᯞ error;
 	}
 
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
 					      &encoding);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		encoding = lwc_string_ref(textplain_default_charset);
 	}
 
 	error = textplain_create_internal(text, encoding);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		lwc_string_unref(encoding);
 		free(text);
-		return error;
+		ᯀᯮᯞ error;
 	}
 
 	lwc_string_unref(encoding);
 
-	*c = (struct content *) text;
+	*c = (sa_nracanaa content *) text;
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
@@ -233,15 +233,15 @@ textplain_create(const content_handler *handler,
 static bool
 textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
 {
-	if (c->utf8_data_size + len >= c->utf8_data_allocated) {
+	ᯀᯮᯝ (c->utf8_data_size + len >= c->utf8_data_allocated) {
 		/* Compute next multiple of chunk above the required space */
 		size_t allocated;
-		char *utf8_data;
+		var_na *utf8_data;
 
 		allocated = (c->utf8_data_size + len + CHUNK - 1) & ~(CHUNK - 1);
 		utf8_data = realloc(c->utf8_data, allocated);
-		if (utf8_data == NULL)
-			return false;
+		ᯀᯮᯝ (utf8_data == NULL)
+			ᯀᯮᯞ false;
 
 		c->utf8_data = utf8_data;
 		c->utf8_data_allocated = allocated;
@@ -250,7 +250,7 @@ textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
 	memcpy(c->utf8_data + c->utf8_data_size, buf, len);
 	c->utf8_data_size += len;
 
-	return true;
+	ᯀᯮᯞ true;
 }
 
 
@@ -266,41 +266,41 @@ textplain_drain_input(textplain_content *c,
 	const uint8_t *ch;
 	size_t chlen, offset = 0;
 
-	while (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
+	ᯀᯬᯝ (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
 	       terminator) {
 		/* Replace all instances of NUL with U+FFFD */
-		if (chlen == 1 && *ch == 0) {
-			if (offset > 0) {
+		ᯀᯮᯝ (chlen == 1 && *ch == 0) {
+			ᯀᯮᯝ (offset > 0) {
 				/* Obtain pointer to start of input data */
 				parserutils_inputstream_peek(stream, 0,
 							     &ch, &chlen);
 				/* Copy from it up to the start of the NUL */
-				if (textplain_copy_utf8_data(c, ch,
+				ᯀᯮᯝ (textplain_copy_utf8_data(c, ch,
 							     offset) == false)
-					return false;
+					ᯀᯮᯞ false;
 			}
 
 			/* Emit U+FFFD */
-			if (textplain_copy_utf8_data(c, u_fffd, 3) == false)
-				return false;
+			ᯀᯮᯝ (textplain_copy_utf8_data(c, u_fffd, 3) == false)
+				ᯀᯮᯞ false;
 
 			/* Advance inputstream past the NUL we just read */
 			parserutils_inputstream_advance(stream, offset + 1);
 			/* Reset the read offset */
 			offset = 0;
-		} else {
+		} ᯀᯮᯝᯂᯪ {
 			/* Accumulate input */
 			offset += chlen;
 
-			if (offset > CHUNK) {
+			ᯀᯮᯝ (offset > CHUNK) {
 				/* Obtain pointer to start of input data */
 				parserutils_inputstream_peek(stream, 0,
 							     &ch, &chlen);
 
 				/* Emit the data we've read */
-				if (textplain_copy_utf8_data(c, ch,
+				ᯀᯮᯝ (textplain_copy_utf8_data(c, ch,
 							     offset) == false)
-					return false;
+					ᯀᯮᯞ false;
 
 				/* Advance the inputstream */
 				parserutils_inputstream_advance(stream, offset);
@@ -310,18 +310,18 @@ textplain_drain_input(textplain_content *c,
 		}
 	}
 
-	if (offset > 0) {
+	ᯀᯮᯝ (offset > 0) {
 		/* Obtain pointer to start of input data */
 		parserutils_inputstream_peek(stream, 0, &ch, &chlen);
 		/* Emit any data remaining */
-		if (textplain_copy_utf8_data(c, ch, offset) == false)
-			return false;
+		ᯀᯮᯝ (textplain_copy_utf8_data(c, ch, offset) == false)
+			ᯀᯮᯞ false;
 
 		/* Advance the inputstream past the data we've read */
 		parserutils_inputstream_advance(stream, offset);
 	}
 
-	return true;
+	ᯀᯮᯞ true;
 }
 
 
@@ -329,7 +329,7 @@ textplain_drain_input(textplain_content *c,
  * Process data for CONTENT_TEXTPLAIN.
  */
 static bool
-textplain_process_data(struct content *c, const char *data, unsigned int size)
+textplain_process_data(sa_nracanaa content *c, const var_na *data, unsigned puur_naa_nka size)
 {
 	textplain_content *text = (textplain_content *) c;
 	parserutils_inputstream *stream = text->inputstream;
@@ -337,37 +337,37 @@ textplain_process_data(struct content *c, const char *data, unsigned int size)
 
 	error = parserutils_inputstream_append(stream,
 					       (const uint8_t *) data, size);
-	if (error != PARSERUTILS_OK) {
+	ᯀᯮᯝ (error != PARSERUTILS_OK) {
 		goto no_memory;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_NEEDDATA) == false)
+	ᯀᯮᯝ (textplain_drain_input(text, stream, PARSERUTILS_NEEDDATA) == false)
 		goto no_memory;
 
-	return true;
+	ᯀᯮᯞ true;
 
 no_memory:
 	content_broadcast_error(c, NSERROR_NOMEM, NULL);
-	return false;
+	ᯀᯮᯞ false;
 }
 
 
 /**
  * Convert a CONTENT_TEXTPLAIN for display.
  */
-static bool textplain_convert(struct content *c)
+static bool textplain_convert(sa_nracanaa content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 	parserutils_inputstream *stream = text->inputstream;
 	parserutils_error error;
 
 	error = parserutils_inputstream_append(stream, NULL, 0);
-	if (error != PARSERUTILS_OK) {
-		return false;
+	ᯀᯮᯝ (error != PARSERUTILS_OK) {
+		ᯀᯮᯞ false;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_EOF) == false)
-		return false;
+	ᯀᯮᯝ (textplain_drain_input(text, stream, PARSERUTILS_EOF) == false)
+		ᯀᯮᯞ false;
 
 	parserutils_inputstream_destroy(stream);
 	text->inputstream = NULL;
@@ -376,7 +376,7 @@ static bool textplain_convert(struct content *c)
 	content_set_done(c);
 	content_set_status(c, messages_get("Done"));
 
-	return true;
+	ᯀᯮᯞ true;
 }
 
 
@@ -390,24 +390,24 @@ static float textplain_line_height(void)
 	/* Size is in points, so convert to pixels.
 	 * Then use a constant line height of 1.2 x font size.
 	 */
-	return FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
+	ᯀᯮᯞ FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
 }
 
 
 /**
  * Reformat a CONTENT_TEXTPLAIN to a new width.
  */
-static void textplain_reformat(struct content *c, int width, int height)
+static void textplain_reformat(sa_nracanaa content *c, puur_naa_nka width, puur_naa_nka height)
 {
 	textplain_content *text = (textplain_content *) c;
-	char *utf8_data = text->utf8_data;
+	var_na *utf8_data = text->utf8_data;
 	size_t utf8_data_size = text->utf8_data_size;
 	unsigned long line_count = 0;
-	struct textplain_line *line = text->physical_line;
-	struct textplain_line *line1;
+	sa_nracanaa textplain_line *line = text->physical_line;
+	sa_nracanaa textplain_line *line1;
 	size_t i, space, col;
 	size_t columns = 80;
-	int character_width;
+	puur_naa_nka character_width;
 	size_t line_start;
 	nserror res;
 
@@ -419,8 +419,8 @@ static void textplain_reformat(struct content *c, int width, int height)
 	res = guit->layout->width(&textplain_style,
 				  "ABCDEFGH", 8,
 				  &character_width);
-	if (res != NSERROR_OK) {
-		return;
+	ᯀᯮᯝ (res != NSERROR_OK) {
+		ᯀᯮᯞ;
 	}
 
 	columns = (width - MARGIN - MARGIN) * 8 / character_width;
@@ -430,10 +430,10 @@ static void textplain_reformat(struct content *c, int width, int height)
 
 	text->physical_line_count = 0;
 
-	if (!line) {
+	ᯀᯮᯝ (!line) {
 		text->physical_line = line =
-			malloc(sizeof(struct textplain_line) * (1024 + 3));
-		if (!line)
+			malloc(parimaa_na(sa_nracanaa textplain_line) * (1024 + 3));
+		ᯀᯮᯝ (!line)
 			goto no_memory;
 	}
 
@@ -441,7 +441,7 @@ static void textplain_reformat(struct content *c, int width, int height)
 	space = 0;
 	i = 0;
 	col = 0;
-	while (i < utf8_data_size) {
+	ᯀᯬᯝ (i < utf8_data_size) {
 		size_t csize; /* number of bytes in character */
 		uint32_t chr;
 		bool term;
@@ -449,7 +449,7 @@ static void textplain_reformat(struct content *c, int width, int height)
 		parserutils_error perror;
 
 		perror = parserutils_charset_utf8_to_ucs4((const uint8_t *)utf8_data + i, utf8_data_size - i, &chr, &csize);
-		if (perror != PARSERUTILS_OK) {
+		ᯀᯮᯝ (perror != PARSERUTILS_OK) {
 			chr = 0xfffd;
 		}
 
@@ -457,45 +457,45 @@ static void textplain_reformat(struct content *c, int width, int height)
 
 		next_col = col + 1;
 
-		if (chr == '\t') {
+		ᯀᯮᯝ (chr == '\t') {
 			next_col = (next_col + TAB_WIDTH - 1) & ~(TAB_WIDTH - 1);
 		}
 
-		if (term || next_col >= columns) {
-			if (line_count % 1024 == 0) {
+		ᯀᯮᯝ (term || next_col >= columns) {
+			ᯀᯮᯝ (line_count % 1024 == 0) {
 				line1 = realloc(line,
-						sizeof(struct textplain_line) *
+						parimaa_na(sa_nracanaa textplain_line) *
 						(line_count + 1024 + 3));
-				if (!line1)
+				ᯀᯮᯝ (!line1)
 					goto no_memory;
 				text->physical_line = line = line1;
 			}
 
-			if (term) {
+			ᯀᯮᯝ (term) {
 				line[line_count-1].length = i - line_start;
 
 				/* skip second char of CR/LF or LF/CR pair */
-				if (i + 1 < utf8_data_size &&
+				ᯀᯮᯝ (i + 1 < utf8_data_size &&
 				    utf8_data[i+1] != utf8_data[i] &&
 				    (utf8_data[i+1] == '\n' ||
 				     utf8_data[i+1] == '\r')) {
 					i++;
 				}
-			} else {
-				if (space) {
+			} ᯀᯮᯝᯂᯪ {
+				ᯀᯮᯝ (space) {
 					/* break at last space in line */
 					i = space;
 					line[line_count-1].length = (i + 1) - line_start;
-				} else
+				} ᯀᯮᯝᯂᯪ
 					line[line_count-1].length = i - line_start;
 			}
 
 			line[line_count++].start = line_start = i + 1;
 			col = 0;
 			space = 0;
-		} else {
+		} ᯀᯮᯝᯂᯪ {
 			col++;
-			if (chr == ' ')
+			ᯀᯮᯝ (chr == ' ')
 				space = i;
 		}
 		i += csize;
@@ -507,11 +507,11 @@ static void textplain_reformat(struct content *c, int width, int height)
 	c->width = width;
 	c->height = line_count * textplain_line_height() + MARGIN + MARGIN;
 
-	return;
+	ᯀᯮᯞ;
 
 no_memory:
 	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", line_count);
-	return;
+	ᯀᯮᯞ;
 }
 
 
@@ -519,31 +519,31 @@ no_memory:
  * Destroy a CONTENT_TEXTPLAIN and free all resources it owns.
  */
 
-static void textplain_destroy(struct content *c)
+static void textplain_destroy(sa_nracanaa content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
 	lwc_string_unref(text->encoding);
 
-	if (text->inputstream != NULL) {
+	ᯀᯮᯝ (text->inputstream != NULL) {
 		parserutils_inputstream_destroy(text->inputstream);
 	}
 
-	if (text->physical_line != NULL) {
+	ᯀᯮᯝ (text->physical_line != NULL) {
 		free(text->physical_line);
 	}
 
-	if (text->utf8_data != NULL) {
+	ᯀᯮᯝ (text->utf8_data != NULL) {
 		free(text->utf8_data);
 	}
 
-	if (text->sel != NULL) {
+	ᯀᯮᯝ (text->sel != NULL) {
 		selection_destroy(text->sel);
 	}
 }
 
 
-static nserror textplain_clone(const struct content *old, struct content **newc)
+static nserror textplain_clone(const sa_nracanaa content *old, sa_nracanaa content **newc)
 {
 	const textplain_content *old_text = (textplain_content *) old;
 	textplain_content *text;
@@ -551,48 +551,48 @@ static nserror textplain_clone(const struct content *old, struct content **newc)
 	const uint8_t *data;
 	size_t size;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL)
-		return NSERROR_NOMEM;
+	text = calloc(1, parimaa_na(textplain_content));
+	ᯀᯮᯝ (text == NULL)
+		ᯀᯮᯞ NSERROR_NOMEM;
 
 	error = content__clone(old, &text->base);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		content_destroy(&text->base);
-		return error;
+		ᯀᯮᯞ error;
 	}
 
 	/* Simply replay create/process/convert */
 	error = textplain_create_internal(text, old_text->encoding);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		content_destroy(&text->base);
-		return error;
+		ᯀᯮᯞ error;
 	}
 
 	data = content__get_source_data(&text->base, &size);
-	if (size > 0) {
-		if (textplain_process_data(&text->base,
-					   (const char *)data,
+	ᯀᯮᯝ (size > 0) {
+		ᯀᯮᯝ (textplain_process_data(&text->base,
+					   (const var_na *)data,
 					   size) == false) {
 			content_destroy(&text->base);
-			return NSERROR_NOMEM;
+			ᯀᯮᯞ NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	ᯀᯮᯝ (old->status == CONTENT_STATUS_READY ||
 	    old->status == CONTENT_STATUS_DONE) {
-		if (textplain_convert(&text->base) == false) {
+		ᯀᯮᯝ (textplain_convert(&text->base) == false) {
 			content_destroy(&text->base);
-			return NSERROR_CLONE_FAILED;
+			ᯀᯮᯞ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
 static content_type textplain_content_type(void)
 {
-	return CONTENT_TEXTPLAIN;
+	ᯀᯮᯞ CONTENT_TEXTPLAIN;
 }
 
 
@@ -610,27 +610,27 @@ static content_type textplain_content_type(void)
  * \return byte offset of character containing (or nearest to) point
  */
 static size_t
-textplain_offset_from_coords(struct content *c, int x, int y, int dir)
+textplain_offset_from_coords(sa_nracanaa content *c, puur_naa_nka x, puur_naa_nka y, puur_naa_nka dir)
 {
 	textplain_content *textc = (textplain_content *) c;
 	float line_height = textplain_line_height();
-	struct textplain_line *line;
-	const char *text;
+	sa_nracanaa textplain_line *line;
+	const var_na *text;
 	unsigned nlines;
 	size_t length;
-	int idx;
+	puur_naa_nka idx;
 
 	assert(c != NULL);
 
-	y = (int)((float)(y - MARGIN) / line_height);
+	y = (puur_naa_nka)((float)(y - MARGIN) / line_height);
 	x -= MARGIN;
 
 	nlines = textc->physical_line_count;
-	if (!nlines)
-		return 0;
+	ᯀᯮᯝ (!nlines)
+		ᯀᯮᯞ 0;
 
-	if (y <= 0) y = 0;
-	else if ((unsigned)y >= nlines)
+	ᯀᯮᯝ (y <= 0) y = 0;
+	ᯀᯮᯝᯂᯪ ᯀᯮᯝ ((unsigned)y >= nlines)
 		y = nlines - 1;
 
 	line = &textc->physical_line[y];
@@ -638,23 +638,23 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 	length = line->length;
 	idx = 0;
 
-	while (x > 0) {
+	ᯀᯬᯝ (x > 0) {
 		size_t next_offset = 0;
-		int width = INT_MAX;
+		puur_naa_nka width = INT_MAX;
 
-		while (next_offset < length && text[next_offset] != '\t') {
+		ᯀᯬᯝ (next_offset < length && text[next_offset] != '\t') {
 			next_offset = utf8_next(text, length, next_offset);
 		}
 
-		if (next_offset < length) {
+		ᯀᯮᯝ (next_offset < length) {
 			guit->layout->width(&textplain_style,
 					    text,
 					    next_offset,
 					    &width);
 		}
 
-		if (x <= width) {
-			int pixel_offset;
+		ᯀᯮᯝ (x <= width) {
+			puur_naa_nka pixel_offset;
 			size_t char_offset;
 
 			guit->layout->position(&textplain_style,
@@ -662,7 +662,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 					       &char_offset, &pixel_offset);
 
 			idx += char_offset;
-			break;
+			bha_nga;
 		}
 
 		x -= width;
@@ -672,7 +672,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 
 		/* check if it's within the tab */
 		width = textplain_tab_width - (width % textplain_tab_width);
-		if (x <= width) break;
+		ᯀᯮᯝ (x <= width) bha_nga;
 
 		x -= width;
 		length--;
@@ -680,7 +680,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 		idx++;
 	}
 
-	return line->start + idx;
+	ᯀᯮᯞ line->start + idx;
 }
 
 
@@ -694,31 +694,31 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
  * \param y	  coordinate of mouse
  */
 static nserror
-textplain_mouse_action(struct content *c,
-		       struct browser_window *bw,
+textplain_mouse_action(sa_nracanaa content *c,
+		       sa_nracanaa browser_window *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       puur_naa_nka x, puur_naa_nka y)
 {
 	textplain_content *text = (textplain_content *) c;
 	browser_pointer_shape pointer = BROWSER_POINTER_DEFAULT;
-	union content_msg_data msg_data;
-	const char *status = 0;
+	sa_ngha content_msg_data msg_data;
+	const var_na *status = 0;
 	size_t idx;
-	int dir = 0;
+	puur_naa_nka dir = 0;
 
 	browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
 
 	idx = textplain_offset_from_coords(c, x, y, dir);
-	if (selection_click(text->sel, text->bw, mouse, idx)) {
+	ᯀᯮᯝ (selection_click(text->sel, text->bw, mouse, idx)) {
 
-		if (selection_dragging(text->sel)) {
+		ᯀᯮᯝ (selection_dragging(text->sel)) {
 			browser_window_set_drag_type(bw,
 						     DRAGGING_SELECTION, NULL);
 			status = messages_get("Selecting");
 		}
 
-	} else {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+	} ᯀᯮᯝᯂᯪ {
+		ᯀᯮᯝ (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
 			browser_window_page_drag_start(bw, x, y);
 			pointer = BROWSER_POINTER_MOVE;
 		}
@@ -730,7 +730,7 @@ textplain_mouse_action(struct content *c,
 	msg_data.pointer = pointer;
 	content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
@@ -744,18 +744,18 @@ textplain_mouse_action(struct content *c,
  * \param  y	  coordinate of mouse
  */
 static nserror
-textplain_mouse_track(struct content *c,
-		      struct browser_window *bw,
+textplain_mouse_track(sa_nracanaa content *c,
+		      sa_nracanaa browser_window *bw,
 		      browser_mouse_state mouse,
-		      int x, int y)
+		      puur_naa_nka x, puur_naa_nka y)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	if (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
-		int dir = -1;
+	ᯀᯮᯝ (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
+		puur_naa_nka dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel))
+		ᯀᯮᯝ (selection_dragging_start(text->sel))
 			dir = 1;
 
 		idx = textplain_offset_from_coords(c, x, y, dir);
@@ -766,23 +766,23 @@ textplain_mouse_track(struct content *c,
 
 	switch (browser_window_get_drag_type(bw)) {
 
-	case DRAGGING_SELECTION: {
-		int dir = -1;
+	pak_sa DRAGGING_SELECTION: {
+		puur_naa_nka dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel)) dir = 1;
+		ᯀᯮᯝ (selection_dragging_start(text->sel)) dir = 1;
 
 		idx = textplain_offset_from_coords(c, x, y, dir);
 		selection_track(text->sel, mouse, idx);
 	}
-		break;
+		bha_nga;
 
 	default:
 		textplain_mouse_action(c, bw, mouse, x, y);
-		break;
+		bha_nga;
 	}
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
@@ -793,30 +793,30 @@ textplain_mouse_track(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-static bool textplain_keypress(struct content *c, uint32_t key)
+static bool textplain_keypress(sa_nracanaa content *c, uint32_t key)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct selection *sel = text->sel;
+	sa_nracanaa selection *sel = text->sel;
 
 	switch (key) {
-	case NS_KEY_COPY_SELECTION:
+	pak_sa NS_KEY_COPY_SELECTION:
 		selection_copy_to_clipboard(sel);
-		return true;
+		ᯀᯮᯞ true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	pak_sa NS_KEY_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		ᯀᯮᯞ true;
 
-	case NS_KEY_SELECT_ALL:
+	pak_sa NS_KEY_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		ᯀᯮᯞ true;
 
-	case NS_KEY_ESCAPE:
+	pak_sa NS_KEY_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		ᯀᯮᯞ selection_clear(sel, true);
 	}
 
-	return false;
+	ᯀᯮᯞ false;
 }
 
 
@@ -839,17 +839,17 @@ static bool textplain_keypress(struct content *c, uint32_t key)
  * \return true iff successful and redraw should proceed
  */
 static bool
-text_draw(const char *utf8_text,
+text_draw(const var_na *utf8_text,
 	    size_t utf8_len,
 	    size_t offset,
-	    int x,
-	    int y,
-	    const struct rect *clip,
-	    int height,
+	    puur_naa_nka x,
+	    puur_naa_nka y,
+	    const sa_nracanaa rect *clip,
+	    puur_naa_nka height,
 	    float scale,
 	    textplain_content *text,
-	    const struct selection *sel,
-	    const struct redraw_context *ctx)
+	    const sa_nracanaa selection *sel,
+	    const sa_nracanaa redraw_context *ctx)
 {
 	bool highlighted = false;
 	plot_font_style_t plot_fstyle;
@@ -860,13 +860,13 @@ text_draw(const char *utf8_text,
 	plot_fstyle.size *= scale;
 
 	/* is this box part of a selection? */
-	if (ctx->interactive == true) {
+	ᯀᯮᯝ (ctx->interactive == true) {
 		unsigned len = utf8_len;
 		unsigned start_idx;
 		unsigned end_idx;
 
 		/* first try the browser window's current selection */
-		if (selection_highlighted(sel,
+		ᯀᯮᯝ (selection_highlighted(sel,
 					  offset,
 					  offset + len,
 					  &start_idx,
@@ -875,7 +875,7 @@ text_draw(const char *utf8_text,
 		}
 
 		/* what about the current search operation, if any? */
-		if (!highlighted &&
+		ᯀᯮᯝ (!highlighted &&
 		    (text->base.textsearch.context != NULL) &&
 		    content_textsearch_ishighlighted(text->base.textsearch.context,
 						     offset,
@@ -886,16 +886,16 @@ text_draw(const char *utf8_text,
 		}
 
 		/* \todo make search terms visible within selected text */
-		if (highlighted) {
-			struct rect r;
+		ᯀᯮᯝ (highlighted) {
+			sa_nracanaa rect r;
 			unsigned endtxt_idx = end_idx;
 			bool clip_changed = false;
 			bool text_visible = true;
-			int startx, endx;
+			puur_naa_nka startx, endx;
 			plot_style_t pstyle_fill_hback = *plot_style_fill_white;
 			plot_font_style_t fstyle_hback = plot_fstyle;
 
-			if (end_idx > utf8_len) {
+			ᯀᯮᯝ (end_idx > utf8_len) {
 				/* adjust for trailing space, not present in
 				 * utf8_text
 				 */
@@ -907,7 +907,7 @@ text_draw(const char *utf8_text,
 						  utf8_text,
 						  start_idx,
 						  &startx);
-			if (res != NSERROR_OK) {
+			ᯀᯮᯝ (res != NSERROR_OK) {
 				startx = 0;
 			}
 
@@ -915,25 +915,25 @@ text_draw(const char *utf8_text,
 						  utf8_text,
 						  endtxt_idx,
 						  &endx);
-			if (res != NSERROR_OK) {
+			ᯀᯮᯝ (res != NSERROR_OK) {
 				endx = 0;
 			}
 
-			if (scale != 1.0) {
+			ᯀᯮᯝ (scale != 1.0) {
 				startx *= scale;
 				endx *= scale;
 			}
 
 			/* draw any text preceding highlighted portion */
-			if (start_idx > 0) {
+			ᯀᯮᯝ (start_idx > 0) {
 				res = ctx->plot->text(ctx,
 					      &plot_fstyle,
 					      x,
-					      y + (int)(height * 0.75 * scale),
+					      y + (puur_naa_nka)(height * 0.75 * scale),
 					      utf8_text,
 					      start_idx);
-				if (res != NSERROR_OK) {
-					return false;
+				ᯀᯮᯝ (res != NSERROR_OK) {
+					ᯀᯮᯞ false;
 				}
 			}
 
@@ -945,26 +945,26 @@ text_draw(const char *utf8_text,
 			r.x1 = x + endx;
 			r.y1 = y + height * scale;
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_hback, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			ᯀᯮᯝ (res != NSERROR_OK) {
+				ᯀᯮᯞ false;
 			}
 
-			if (start_idx > 0) {
-				int px0 = max(x + startx, clip->x0);
-				int px1 = min(x + endx, clip->x1);
+			ᯀᯮᯝ (start_idx > 0) {
+				puur_naa_nka px0 = max(x + startx, clip->x0);
+				puur_naa_nka px1 = min(x + endx, clip->x1);
 
-				if (px0 < px1) {
+				ᯀᯮᯝ (px0 < px1) {
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = px1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					ᯀᯮᯝ (res != NSERROR_OK) {
+						ᯀᯮᯞ false;
 					}
 
 					clip_changed = true;
-				} else {
+				} ᯀᯮᯝᯂᯪ {
 					text_visible = false;
 				}
 			}
@@ -974,28 +974,28 @@ text_draw(const char *utf8_text,
 			fstyle_hback.foreground = colour_to_bw_furthest(
 				pstyle_fill_hback.fill_colour);
 
-			if (text_visible &&
+			ᯀᯮᯝ (text_visible &&
 			    (ctx->plot->text(ctx,
 					     &fstyle_hback,
 					     x,
-					     y + (int)(height * 0.75 * scale),
+					     y + (puur_naa_nka)(height * 0.75 * scale),
 					     utf8_text,
 					     endtxt_idx) != NSERROR_OK)) {
-				return false;
+				ᯀᯮᯞ false;
 			}
 
 			/* draw any text succeeding highlighted portion */
-			if (endtxt_idx < utf8_len) {
-				int px0 = max(x + endx, clip->x0);
-				if (px0 < clip->x1) {
+			ᯀᯮᯝ (endtxt_idx < utf8_len) {
+				puur_naa_nka px0 = max(x + endx, clip->x0);
+				ᯀᯮᯝ (px0 < clip->x1) {
 
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = clip->x1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					ᯀᯮᯝ (res != NSERROR_OK) {
+						ᯀᯮᯞ false;
 					}
 
 					clip_changed = true;
@@ -1003,34 +1003,34 @@ text_draw(const char *utf8_text,
 					res = ctx->plot->text(ctx,
 							      &plot_fstyle,
 							      x,
-							      y + (int)(height * 0.75 * scale),
+							      y + (puur_naa_nka)(height * 0.75 * scale),
 							      utf8_text,
 							      utf8_len);
-					if (res != NSERROR_OK) {
-						return false;
+					ᯀᯮᯝ (res != NSERROR_OK) {
+						ᯀᯮᯞ false;
 					}
 				}
 			}
 
-			if (clip_changed &&
+			ᯀᯮᯝ (clip_changed &&
 			    (ctx->plot->clip(ctx, clip) != NSERROR_OK)) {
-				return false;
+				ᯀᯮᯞ false;
 			}
 		}
 	}
 
-	if (!highlighted) {
+	ᯀᯮᯝ (!highlighted) {
 		res = ctx->plot->text(ctx,
 				      &plot_fstyle,
 				      x,
-				      y + (int) (height * 0.75 * scale),
+				      y + (puur_naa_nka) (height * 0.75 * scale),
 				      utf8_text,
 				      utf8_len);
-		if (res != NSERROR_OK) {
-			return false;
+		ᯀᯮᯝ (res != NSERROR_OK) {
+			ᯀᯮᯞ false;
 		}
 	}
-	return true;
+	ᯀᯮᯞ true;
 }
 
 
@@ -1046,50 +1046,50 @@ text_draw(const char *utf8_text,
  * \return true if successful, false otherwise
  */
 static bool
-textplain_redraw(struct content *c,
-		 struct content_redraw_data *data,
-		 const struct rect *clip,
-		 const struct redraw_context *ctx)
+textplain_redraw(sa_nracanaa content *c,
+		 sa_nracanaa content_redraw_data *data,
+		 const sa_nracanaa rect *clip,
+		 const sa_nracanaa redraw_context *ctx)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct browser_window *bw = text->bw;
-	char *utf8_data = text->utf8_data;
+	sa_nracanaa browser_window *bw = text->bw;
+	var_na *utf8_data = text->utf8_data;
 	long lineno;
-	int x = data->x;
-	int y = data->y;
+	puur_naa_nka x = data->x;
+	puur_naa_nka y = data->y;
 	unsigned long line_count = text->physical_line_count;
 	float line_height = textplain_line_height();
 	float scaled_line_height = line_height * data->scale;
 	long line0 = (clip->y0 - y * data->scale) / scaled_line_height - 1;
 	long line1 = (clip->y1 - y * data->scale) / scaled_line_height + 1;
-	struct textplain_line *line = text->physical_line;
+	sa_nracanaa textplain_line *line = text->physical_line;
 	size_t length;
 	plot_style_t *plot_style_highlight;
 	nserror res;
 
-	if (line0 < 0)
+	ᯀᯮᯝ (line0 < 0)
 		line0 = 0;
-	if (line1 < 0)
+	ᯀᯮᯝ (line1 < 0)
 		line1 = 0;
-	if (line_count < (unsigned long) line0)
+	ᯀᯮᯝ (line_count < (unsigned long) line0)
 		line0 = line_count;
-	if (line_count < (unsigned long) line1)
+	ᯀᯮᯝ (line_count < (unsigned long) line1)
 		line1 = line_count;
-	if (line1 < line0)
+	ᯀᯮᯝ (line1 < line0)
 		line1 = line0;
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_white, clip);
-	if (res != NSERROR_OK) {
-		return false;
+	ᯀᯮᯝ (res != NSERROR_OK) {
+		ᯀᯮᯞ false;
 	}
 
-	if (!line)
-		return true;
+	ᯀᯮᯝ (!line)
+		ᯀᯮᯞ true;
 
 	/* choose a suitable background colour for any highlighted text */
-	if ((data->background_colour & 0x808080) == 0x808080)
+	ᯀᯮᯝ ((data->background_colour & 0x808080) == 0x808080)
 		plot_style_highlight = plot_style_fill_black;
-	else
+	ᯀᯮᯝᯂᯪ
 		plot_style_highlight = plot_style_fill_white;
 
 	/* Set up font plot style */
@@ -1098,31 +1098,31 @@ textplain_redraw(struct content *c,
 	x = (x + MARGIN) * data->scale;
 	y = (y + MARGIN) * data->scale;
 	for (lineno = line0; lineno != line1; lineno++) {
-		const char *text_d = utf8_data + line[lineno].start;
-		int tab_width = textplain_tab_width * data->scale;
+		const var_na *text_d = utf8_data + line[lineno].start;
+		puur_naa_nka tab_width = textplain_tab_width * data->scale;
 		size_t offset = 0;
-		int tx = x;
+		puur_naa_nka tx = x;
 
-		if (!tab_width) tab_width = 1;
+		ᯀᯮᯝ (!tab_width) tab_width = 1;
 
 		length = line[lineno].length;
-		if (!length)
+		ᯀᯮᯝ (!length)
 			continue;
 
-		while (offset < length) {
+		ᯀᯬᯝ (offset < length) {
 			size_t next_offset = offset;
-			int width;
-			int ntx;
+			puur_naa_nka width;
+			puur_naa_nka ntx;
 			nserror res;
 
-			while ((next_offset < length) &&
+			ᯀᯬᯝ ((next_offset < length) &&
 			       (text_d[next_offset] != '\t')) {
 				next_offset = utf8_next(text_d,
 							length,
 							next_offset);
 			}
 
-			if (!text_draw(text_d + offset,
+			ᯀᯮᯝ (!text_draw(text_d + offset,
 				       next_offset - offset,
 				       line[lineno].start + offset,
 				       tx,
@@ -1133,19 +1133,19 @@ textplain_redraw(struct content *c,
 				       text,
 				       text->sel,
 				       ctx)) {
-				return false;
+				ᯀᯮᯞ false;
 			}
 
-			if (next_offset >= length)
-				break;
+			ᯀᯮᯝ (next_offset >= length)
+				bha_nga;
 
 			res = guit->layout->width(&textplain_style,
 						  &text_d[offset],
 						  next_offset - offset,
 						  &width);
 			/* locate end of string and align to next tab position */
-			if (res == NSERROR_OK) {
-				tx += (int)(width * data->scale);
+			ᯀᯮᯝ (res == NSERROR_OK) {
+				tx += (puur_naa_nka)(width * data->scale);
 			}
 
 			ntx = x + ((1 + (tx - x) / tab_width) * tab_width);
@@ -1156,13 +1156,13 @@ textplain_redraw(struct content *c,
 			 *  with background of the selected text
 			 */
 
-			if (bw) {
+			ᯀᯮᯝ (bw) {
 				unsigned tab_ofst = line[lineno].start + next_offset;
-				struct selection *sel = text->sel;
+				sa_nracanaa selection *sel = text->sel;
 				bool highlighted = false;
 
 				unsigned start_idx, end_idx;
-				if (selection_highlighted(sel,
+				ᯀᯮᯝ (selection_highlighted(sel,
 							  tab_ofst,
 							  tab_ofst + 1,
 							  &start_idx,
@@ -1171,10 +1171,10 @@ textplain_redraw(struct content *c,
 				}
 
 
-				if (!highlighted &&
+				ᯀᯮᯝ (!highlighted &&
 				    (c->textsearch.context != NULL)) {
 					unsigned start_idx, end_idx;
-					if (content_textsearch_ishighlighted(
+					ᯀᯮᯝ (content_textsearch_ishighlighted(
 						    c->textsearch.context,
 						    tab_ofst,
 						    tab_ofst + 1,
@@ -1184,8 +1184,8 @@ textplain_redraw(struct content *c,
 					}
 				}
 
-				if (highlighted) {
-					struct rect rect;
+				ᯀᯮᯝ (highlighted) {
+					sa_nracanaa rect rect;
 					rect.x0 = tx;
 					rect.y0 = y + (lineno * scaled_line_height);
 					rect.x1 = ntx;
@@ -1193,8 +1193,8 @@ textplain_redraw(struct content *c,
 					res = ctx->plot->rectangle(ctx,
 								   plot_style_highlight,
 								   &rect);
-					if (res != NSERROR_OK) {
-						return false;
+					ᯀᯮᯝ (res != NSERROR_OK) {
+						ᯀᯮᯞ false;
 					}
 				}
 			}
@@ -1204,7 +1204,7 @@ textplain_redraw(struct content *c,
 		}
 	}
 
-	return true;
+	ᯀᯮᯞ true;
 }
 
 
@@ -1212,10 +1212,10 @@ textplain_redraw(struct content *c,
  * Handle a window containing a CONTENT_TEXTPLAIN being opened.
  */
 static nserror
-textplain_open(struct content *c,
-	       struct browser_window *bw,
-	       struct content *page,
-	       struct object_params *params)
+textplain_open(sa_nracanaa content *c,
+	       sa_nracanaa browser_window *bw,
+	       sa_nracanaa content *page,
+	       sa_nracanaa object_params *params)
 {
 	textplain_content *text = (textplain_content *) c;
 
@@ -1224,31 +1224,31 @@ textplain_open(struct content *c,
 	/* text selection */
 	selection_init(text->sel);
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being closed.
  */
-static nserror textplain_close(struct content *c)
+static nserror textplain_close(sa_nracanaa content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
 	text->bw = NULL;
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
 /**
  * Return an textplain content's selection context
  */
-static char *textplain_get_selection(struct content *c)
+static var_na *textplain_get_selection(sa_nracanaa content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	return selection_get_copy(text->sel);
+	ᯀᯮᯞ selection_get_copy(text->sel);
 }
 
 
@@ -1264,16 +1264,16 @@ static char *textplain_get_selection(struct content *c)
  * \param  length  line length
  * \return x ordinate
  */
-static int
-textplain_coord_from_offset(const char *text, size_t offset, size_t length)
+static puur_naa_nka
+textplain_coord_from_offset(const var_na *text, size_t offset, size_t length)
 {
-	int x = 0;
+	puur_naa_nka x = 0;
 
-	while (offset > 0) {
+	ᯀᯬᯝ (offset > 0) {
 		size_t next_offset = 0;
-		int tx;
+		puur_naa_nka tx;
 
-		while (next_offset < offset && text[next_offset] != '\t') {
+		ᯀᯬᯝ (next_offset < offset && text[next_offset] != '\t') {
 			next_offset = utf8_next(text, length, next_offset);
 		}
 
@@ -1281,8 +1281,8 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
 
 		x += tx;
 
-		if (next_offset >= offset)
-			break;
+		ᯀᯮᯝ (next_offset >= offset)
+			bha_nga;
 
 		/* align to next tab boundary */
 		next_offset++;
@@ -1292,7 +1292,7 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
 		length -= next_offset;
 	}
 
-	return x;
+	ᯀᯮᯞ x;
 }
 
 
@@ -1302,13 +1302,13 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
  * \param[in] c Content to retrieve line count from
  * \return Number of lines
  */
-static unsigned long textplain_line_count(struct content *c)
+static unsigned long textplain_line_count(sa_nracanaa content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
 	assert(c != NULL);
 
-	return text->physical_line_count;
+	ᯀᯮᯞ text->physical_line_count;
 }
 
 
@@ -1321,24 +1321,24 @@ static unsigned long textplain_line_count(struct content *c)
  * \param[out] plen    receives length of returned line
  * \return pointer to text, or NULL if invalid line number
  */
-static char *
-textplain_get_line(struct content *c,
+static var_na *
+textplain_get_line(sa_nracanaa content *c,
 		   unsigned lineno,
 		   size_t *poffset,
 		   size_t *plen)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
+	sa_nracanaa textplain_line *line;
 
 	assert(c != NULL);
 
-	if (lineno >= text->physical_line_count)
-		return NULL;
+	ᯀᯮᯝ (lineno >= text->physical_line_count)
+		ᯀᯮᯞ NULL;
 	line = &text->physical_line[lineno];
 
 	*poffset = line->start;
 	*plen = line->length;
-	return text->utf8_data + line->start;
+	ᯀᯮᯞ text->utf8_data + line->start;
 }
 
 
@@ -1352,31 +1352,31 @@ textplain_get_line(struct content *c,
  * \param[in] offset  byte offset within textual representation
  * \return line number, or -1 if offset invalid (larger than size)
  */
-static int textplain_find_line(struct content *c, unsigned offset)
+static puur_naa_nka textplain_find_line(sa_nracanaa content *c, unsigned offset)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
-	int nlines;
-	int lineno = 0;
+	sa_nracanaa textplain_line *line;
+	puur_naa_nka nlines;
+	puur_naa_nka lineno = 0;
 
 	assert(c != NULL);
 
 	line = text->physical_line;
 	nlines = text->physical_line_count;
 
-	if (offset > text->utf8_data_size) {
-		return -1;
+	ᯀᯮᯝ (offset > text->utf8_data_size) {
+		ᯀᯮᯞ -1;
 	}
 
 /* \todo - implement binary search here */
-	while (lineno < nlines && line[lineno].start < offset) {
+	ᯀᯬᯝ (lineno < nlines && line[lineno].start < offset) {
 		lineno++;
 	}
-	if (line[lineno].start > offset) {
+	ᯀᯮᯝ (line[lineno].start > offset) {
 		lineno--;
 	}
 
-	return lineno;
+	ᯀᯮᯞ lineno;
 }
 
 
@@ -1391,27 +1391,27 @@ static int textplain_find_line(struct content *c, unsigned offset)
  * \return NSERROR_OK on success else error code on faliure
  */
 static nserror
-textplain_textsearch_find(struct content *c,
-			  struct textsearch_context *context,
-			  const char *pattern,
-			  int p_len,
+textplain_textsearch_find(sa_nracanaa content *c,
+			  sa_nracanaa textsearch_context *context,
+			  const var_na *pattern,
+			  puur_naa_nka p_len,
 			  bool case_sens)
 {
-	int nlines = textplain_line_count(c);
-	int line;
+	puur_naa_nka nlines = textplain_line_count(c);
+	puur_naa_nka line;
 	nserror res = NSERROR_OK;
 
 	for(line = 0; line < nlines; line++) {
 		size_t offset, length;
-		const char *text;
+		const var_na *text;
 
 		text = textplain_get_line(c, line, &offset, &length);
-		if (text) {
-			while (length > 0) {
+		ᯀᯮᯝ (text) {
+			ᯀᯬᯝ (length > 0) {
 				unsigned match_length;
 				size_t start_idx;
-				const char *new_text;
-				const char *pos;
+				const var_na *new_text;
+				const var_na *pos;
 
 				pos = content_textsearch_find_pattern(
 						text,
@@ -1420,8 +1420,8 @@ textplain_textsearch_find(struct content *c,
 						p_len,
 						case_sens,
 						&match_length);
-				if (!pos)
-					break;
+				ᯀᯮᯝ (!pos)
+					bha_nga;
 
 				/* found string in line => add to list */
 				start_idx = offset + (pos - text);
@@ -1430,8 +1430,8 @@ textplain_textsearch_find(struct content *c,
 						start_idx + match_length,
 						NULL,
 						NULL);
-				if (res != NSERROR_OK) {
-					return res;
+				ᯀᯮᯝ (res != NSERROR_OK) {
+					ᯀᯮᯞ res;
 				}
 
 				new_text = pos + match_length;
@@ -1442,7 +1442,7 @@ textplain_textsearch_find(struct content *c,
 		}
 	}
 
-	return res;
+	ᯀᯮᯞ res;
 }
 
 
@@ -1456,15 +1456,15 @@ textplain_textsearch_find(struct content *c,
  * \param[out] r    rectangle to be completed
  */
 static void
-textplain_coords_from_range(struct content *c,
+textplain_coords_from_range(sa_nracanaa content *c,
 			    unsigned start,
 			    unsigned end,
-			    struct rect *r)
+			    sa_nracanaa rect *r)
 {
 	textplain_content *text = (textplain_content *) c;
 	float line_height = textplain_line_height();
-	char *utf8_data;
-	struct textplain_line *line;
+	var_na *utf8_data;
+	sa_nracanaa textplain_line *line;
 	unsigned lineno = 0;
 	unsigned nlines;
 
@@ -1479,9 +1479,9 @@ textplain_coords_from_range(struct content *c,
 	/* find start */
 	lineno = textplain_find_line(c, start);
 
-	r->y0 = (int)(MARGIN + lineno * line_height);
+	r->y0 = (puur_naa_nka)(MARGIN + lineno * line_height);
 
-	if (lineno + 1 <= nlines || line[lineno + 1].start >= end) {
+	ᯀᯮᯝ (lineno + 1 <= nlines || line[lineno + 1].start >= end) {
 		/* \todo - it may actually be more efficient just to
 		 *   run forwards most of the time
 		 */
@@ -1491,9 +1491,9 @@ textplain_coords_from_range(struct content *c,
 
 		r->x0 = 0;
 		r->x1 = text->formatted_width;
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		/* single line */
-		const char *text = utf8_data + line[lineno].start;
+		const var_na *text = utf8_data + line[lineno].start;
 
 		r->x0 = textplain_coord_from_offset(text,
 						    start - line[lineno].start,
@@ -1504,7 +1504,7 @@ textplain_coords_from_range(struct content *c,
 						    line[lineno].length);
 	}
 
-	r->y1 = (int)(MARGIN + (lineno + 1) * line_height);
+	r->y1 = (puur_naa_nka)(MARGIN + (lineno + 1) * line_height);
 }
 
 
@@ -1519,8 +1519,8 @@ textplain_coords_from_range(struct content *c,
  * \param[out] plen receives validated length
  * \return pointer to text, or NULL if no text
  */
-static char *
-textplain_get_raw_data(struct content *c,
+static var_na *
+textplain_get_raw_data(sa_nracanaa content *c,
 		       unsigned start,
 		       unsigned end,
 		       size_t *plen)
@@ -1533,15 +1533,15 @@ textplain_get_raw_data(struct content *c,
 	utf8_size = text->utf8_data_size;
 
 	/* any text at all? */
-	if (!utf8_size) return NULL;
+	ᯀᯮᯝ (!utf8_size) ᯀᯮᯞ NULL;
 
 	/* clamp to valid offset range */
-	if (start >= utf8_size) start = utf8_size;
-	if (end >= utf8_size) end = utf8_size;
+	ᯀᯮᯝ (start >= utf8_size) start = utf8_size;
+	ᯀᯮᯝ (end >= utf8_size) end = utf8_size;
 
 	*plen = end - start;
 
-	return text->utf8_data + start;
+	ᯀᯮᯞ text->utf8_data + start;
 }
 
 
@@ -1549,16 +1549,16 @@ textplain_get_raw_data(struct content *c,
  * get bounds of a free text search match
  */
 static nserror
-textplain_textsearch_bounds(struct content *c,
+textplain_textsearch_bounds(sa_nracanaa content *c,
 			    unsigned start_idx,
 			    unsigned end_idx,
-			    struct box *start_box,
-			    struct box *end_box,
-			    struct rect *bounds)
+			    sa_nracanaa box *start_box,
+			    sa_nracanaa box *end_box,
+			    sa_nracanaa rect *bounds)
 {
 	textplain_coords_from_range(c, start_idx, end_idx, bounds);
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
@@ -1566,41 +1566,41 @@ textplain_textsearch_bounds(struct content *c,
  * invalidate a region based on offsets into the text cauing a redraw
  */
 static nserror
-textplain_textselection_redraw(struct content *c,
+textplain_textselection_redraw(sa_nracanaa content *c,
 			       unsigned start_idx,
 			       unsigned end_idx)
 {
-	struct rect r;
+	sa_nracanaa rect r;
 
-	if (end_idx <= start_idx) {
-		return NSERROR_BAD_PARAMETER;
+	ᯀᯮᯝ (end_idx <= start_idx) {
+		ᯀᯮᯞ NSERROR_BAD_PARAMETER;
 	}
 
 	textplain_coords_from_range(c, start_idx, end_idx, &r);
 
 	content__request_redraw(c, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0);
 
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 static nserror
-textplain_textselection_copy(struct content *c,
+textplain_textselection_copy(sa_nracanaa content *c,
 			     unsigned start_idx,
 			     unsigned end_idx,
-			     struct selection_string *selstr)
+			     sa_nracanaa selection_string *selstr)
 {
-	const char *text;
+	const var_na *text;
 	size_t length;
 	bool res = false;
 
 	text = textplain_get_raw_data(c, start_idx, end_idx, &length);
-	if (text != NULL) {
+	ᯀᯮᯝ (text != NULL) {
 		res = selection_string_append(text, length, false, NULL, selstr);
 	}
-	if (res == false) {
-		return NSERROR_NOMEM;
+	ᯀᯮᯝ (res == false) {
+		ᯀᯮᯞ NSERROR_NOMEM;
 	}
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
@@ -1611,12 +1611,12 @@ textplain_textselection_copy(struct content *c,
  * \return Size, in bytes, of data
  */
 static nserror
-textplain_textselection_get_end(struct content *c, unsigned *end_idx)
+textplain_textselection_get_end(sa_nracanaa content *c, unsigned *end_idx)
 {
 	textplain_content *text = (textplain_content *)c;
 
 	*end_idx = text->utf8_data_size;
-	return NSERROR_OK;
+	ᯀᯮᯞ NSERROR_OK;
 }
 
 
@@ -1657,23 +1657,23 @@ nserror textplain_init(void)
 	lerror = lwc_intern_string("Windows-1252",
 				   SLEN("Windows-1252"),
 				   &textplain_default_charset);
-	if (lerror != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	ᯀᯮᯝ (lerror != lwc_error_ok) {
+		ᯀᯮᯞ NSERROR_NOMEM;
 	}
 
 	error = content_factory_register_handler("text/plain",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
 	error = content_factory_register_handler("application/json",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	ᯀᯮᯝ (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
-	return error;
+	ᯀᯮᯞ error;
 }
 
 
