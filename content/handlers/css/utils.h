@@ -19,88 +19,88 @@
 #ifndef NETSURF_CSS_UTILS_H_
 #define NETSURF_CSS_UTILS_H_
 
-#include <libcss/libcss.h>
+#ಅನ್ತರ್ಭಾವ <libcss/libcss.h>
 
-#include "netsurf/css.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/css.h"
 
 /** DPI of the screen, in fixed point units */
-extern css_fixed nscss_screen_dpi;
+ಬಾಹ್ಯ css_fixed nscss_screen_dpi;
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display(
-		const css_computed_style *style, bool root)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ uint8_t ns_computed_display(
+		ಧ್ರುವ css_computed_style *style, bool ಬೇರು)
 {
-	uint8_t value = css_computed_display(style, root);
+	uint8_t ಮೌಲ್ಯ = css_computed_display(style, ಬೇರು);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	ವಿಕಲ್ಪ (ಮೌಲ್ಯ) {
+	ಪಕ್ಷ CSS_DISPLAY_GRID:
+		ಪ್ರತ್ಯಾಗಮ CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	ಪಕ್ಷ CSS_DISPLAY_INLINE_GRID:
+		ಪ್ರತ್ಯಾಗಮ CSS_DISPLAY_INLINE_BLOCK;
 
-	default:
-		break;
+	ಸ್ವಭಾವ:
+		ಭಙ್ಗ;
 	}
 
-	return value;
+	ಪ್ರತ್ಯಾಗಮ ಮೌಲ್ಯ;
 }
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display_static(
-		const css_computed_style *style)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ uint8_t ns_computed_display_static(
+		ಧ್ರುವ css_computed_style *style)
 {
-	uint8_t value = css_computed_display_static(style);
+	uint8_t ಮೌಲ್ಯ = css_computed_display_static(style);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	ವಿಕಲ್ಪ (ಮೌಲ್ಯ) {
+	ಪಕ್ಷ CSS_DISPLAY_GRID:
+		ಪ್ರತ್ಯಾಗಮ CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	ಪಕ್ಷ CSS_DISPLAY_INLINE_GRID:
+		ಪ್ರತ್ಯಾಗಮ CSS_DISPLAY_INLINE_BLOCK;
 
-	default:
-		break;
+	ಸ್ವಭಾವ:
+		ಭಙ್ಗ;
 	}
 
-	return value;
+	ಪ್ರತ್ಯಾಗಮ ಮೌಲ್ಯ;
 }
 
-static inline uint8_t ns_computed_min_height(
-		const css_computed_style *style,
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ uint8_t ns_computed_min_height(
+		ಧ್ರುವ css_computed_style *style,
 		css_fixed *length, css_unit *unit)
 {
-	uint8_t value = css_computed_min_height(style, length, unit);
+	uint8_t ಮೌಲ್ಯ = css_computed_min_height(style, length, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
-		value = CSS_MIN_HEIGHT_SET;
+	ಯದಿ (ಮೌಲ್ಯ == CSS_MIN_HEIGHT_AUTO) {
+		ಮೌಲ್ಯ = CSS_MIN_HEIGHT_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	ಪ್ರತ್ಯಾಗಮ ಮೌಲ್ಯ;
 }
 
 
-static inline uint8_t ns_computed_min_width(
-		const css_computed_style *style,
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ uint8_t ns_computed_min_width(
+		ಧ್ರುವ css_computed_style *style,
 		css_fixed *length, css_unit *unit)
 {
-	uint8_t value = css_computed_min_width(style, length, unit);
+	uint8_t ಮೌಲ್ಯ = css_computed_min_width(style, length, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
-		value = CSS_MIN_WIDTH_SET;
+	ಯದಿ (ಮೌಲ್ಯ == CSS_MIN_WIDTH_AUTO) {
+		ಮೌಲ್ಯ = CSS_MIN_WIDTH_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	ಪ್ರತ್ಯಾಗಮ ಮೌಲ್ಯ;
 }
 
 #endif

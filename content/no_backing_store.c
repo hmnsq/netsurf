@@ -20,41 +20,41 @@
  * Low-level resource cache null persistant storage implementation.
  */
 
-#include "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
 
-#include "content/backing_store.h"
+#ಅನ್ತರ್ಭಾವ "content/backing_store.h"
 
 
 /* default to disabled backing store */
-static nserror initialise(const struct llcache_store_parameters *parameters)
+ಸ್ಥಿರ nserror initialise(ಧ್ರುವ ಸಂರಚನಾ llcache_store_parameters *parameters)
 {
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
-static nserror finalise(void)
+ಸ್ಥಿರ nserror finalise(ಶೂನ್ಯ)
 {
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
-static nserror store(nsurl *url,
-		     enum backing_store_flags flags,
+ಸ್ಥಿರ nserror store(nsurl *url,
+		     ಗಣನಾ backing_store_flags flags,
 		     uint8_t *data,
-		     const size_t datalen)
+		     ಧ್ರುವ size_t datalen)
 {
-	return NSERROR_SAVE_FAILED;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_SAVE_FAILED;
 }
 
-static nserror fetch(nsurl *url,
-		     enum backing_store_flags flags,
+ಸ್ಥಿರ nserror fetch(nsurl *url,
+		     ಗಣನಾ backing_store_flags flags,
 		     uint8_t **data_out,
 		     size_t *datalen_out)
 {
-	return NSERROR_NOT_FOUND;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_NOT_FOUND;
 }
 
-static nserror invalidate(nsurl *url)
+ಸ್ಥಿರ nserror invalidate(nsurl *url)
 {
-	return NSERROR_NOT_FOUND;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_NOT_FOUND;
 }
 
 /**
@@ -69,12 +69,12 @@ static nserror invalidate(nsurl *url)
  * @param[in] flags The flags to control how the object data is released.
  * @return NSERROR_OK on success or error code on faliure.
  */
-static nserror release(nsurl *url, enum backing_store_flags flags)
+ಸ್ಥಿರ nserror release(nsurl *url, ಗಣನಾ backing_store_flags flags)
 {
-	return NSERROR_NOT_FOUND;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_NOT_FOUND;
 }
 
-static struct gui_llcache_table llcache_table = {
+ಸ್ಥಿರ ಸಂರಚನಾ gui_llcache_table llcache_table = {
 	.initialise = initialise,
 	.finalise = finalise,
 	.store = store,
@@ -83,4 +83,4 @@ static struct gui_llcache_table llcache_table = {
 	.release = release,
 };
 
-struct gui_llcache_table *null_llcache_table = &llcache_table;
+ಸಂರಚನಾ gui_llcache_table *null_llcache_table = &llcache_table;

@@ -20,61 +20,61 @@
  * Dummy implementation of javascript engine functions.
  */
 
-#include "utils/errors.h"
-#include "content/content.h"
-#include "utils/nsoption.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "content/content.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsoption.h"
 
-#include "javascript/js.h"
-#include "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "javascript/js.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
 
-void js_initialise(void)
+ಶೂನ್ಯ js_initialise(ಶೂನ್ಯ)
 {
 	nsoption_set_bool(enable_javascript, false);
 }
 
-void js_finalise(void)
+ಶೂನ್ಯ js_finalise(ಶೂನ್ಯ)
 {
 }
 
-nserror js_newheap(int timeout, jsheap **heap)
+nserror js_newheap(ಪೂರ್ಣಾಙ್ಕ timeout, jsheap **heap)
 {
-	*heap = NULL;
-	return NSERROR_OK;
+	*heap = ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
-void js_destroyheap(jsheap *heap)
+ಶೂನ್ಯ js_destroyheap(jsheap *heap)
 {
 }
 
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
+nserror js_newthread(jsheap *heap, ಶೂನ್ಯ *win_priv, ಶೂನ್ಯ *doc_priv, jsthread **thread)
 {
-	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	*thread = ರಿಕ್ತ;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
-void js_destroythread(jsthread *thread)
+ಶೂನ್ಯ js_destroythread(jsthread *thread)
 {
 }
 
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+bool js_exec(jsthread *thread, ಧ್ರುವ uint8_t *txt, size_t txtlen, ಧ್ರುವ ವರ್ಣ *name)
 {
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, ಧ್ರುವ ವರ್ಣ *type, ಸಂರಚನಾ dom_document *doc, ಸಂರಚನಾ dom_ಗಂಟು *target)
 {
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+ಶೂನ್ಯ js_handle_new_element(jsthread *thread, ಸಂರಚನಾ dom_element *ಗಂಟು)
 {
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+ಶೂನ್ಯ js_event_cleanup(jsthread *thread, ಸಂರಚನಾ dom_event *evt)
 {
 }

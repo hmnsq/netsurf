@@ -42,7 +42,7 @@
  * styles is always owned by the box, if it is set.
  * style is only owned by the box in the case of implied boxes.
  */
-struct box * box_create(css_select_results *styles, css_computed_style *style, bool style_owned, struct nsurl *href, const char *target, const char *title, lwc_string *id, void *context);
+ಸಂರಚನಾ box * box_create(css_select_results *styles, css_computed_style *style, bool style_owned, ಸಂರಚನಾ nsurl *href, ಧ್ರುವ ವರ್ಣ *target, ಧ್ರುವ ವರ್ಣ *title, lwc_string *id, ಶೂನ್ಯ *context);
 
 
 /**
@@ -51,7 +51,7 @@ struct box * box_create(css_select_results *styles, css_computed_style *style, b
  * \param parent box giving birth
  * \param child box to link as last child of parent
  */
-void box_add_child(struct box *parent, struct box *child);
+ಶೂನ್ಯ box_add_child(ಸಂರಚನಾ box *parent, ಸಂರಚನಾ box *child);
 
 
 /**
@@ -60,7 +60,7 @@ void box_add_child(struct box *parent, struct box *child);
  * \param box box already in tree
  * \param new_box box to link into tree as next sibling
  */
-void box_insert_sibling(struct box *box, struct box *new_box);
+ಶೂನ್ಯ box_ಸೇರಿಸು_sibling(ಸಂರಚನಾ box *box, ಸಂರಚನಾ box *new_box);
 
 
 /**
@@ -68,7 +68,7 @@ void box_insert_sibling(struct box *box, struct box *new_box);
  *
  * \param box box to unlink and free recursively.
  */
-void box_unlink_and_free(struct box *box);
+ಶೂನ್ಯ box_unlink_and_free(ಸಂರಚನಾ box *box);
 
 
 /**
@@ -78,7 +78,7 @@ void box_unlink_and_free(struct box *box);
  *
  * The box and all its children is freed.
  */
-void box_free(struct box *box);
+ಶೂನ್ಯ box_free(ಸಂರಚನಾ box *box);
 
 
 /**
@@ -86,7 +86,7 @@ void box_free(struct box *box);
  *
  * \param box box to free
  */
-void box_free_box(struct box *box);
+ಶೂನ್ಯ box_free_box(ಸಂರಚನಾ box *box);
 
 
 /**
@@ -99,8 +99,8 @@ void box_free_box(struct box *box);
  * \param right		whether the vertical scrollbar should be present
  * \return		true on success false otherwise
  */
-nserror box_handle_scrollbars(struct content *c, struct box *box,
-		bool bottom, bool right);
+nserror box_handle_scrollbars(ಸಂರಚನಾ content *c, ಸಂರಚನಾ box *box,
+		bool bottom, bool ಬಲ);
 
 
 #endif

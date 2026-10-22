@@ -30,17 +30,17 @@
 /**
  * get the dom document of a html content from a handle
  */
-dom_document *html_get_document(struct hlcache_handle *h);
+dom_document *html_get_document(ಸಂರಚನಾ hlcache_handle *h);
 
 
 /**
  * get the render box tree of a html content from a handle
  */
-struct box *html_get_box_tree(struct hlcache_handle *h);
+ಸಂರಚನಾ box *html_get_box_ವೃಕ್ಷ(ಸಂರಚನಾ hlcache_handle *h);
 
 /**
  * get the base url of an html content from a handle
  */
-struct nsurl *html_get_base_url(struct hlcache_handle *h);
+ಸಂರಚನಾ nsurl *html_get_base_url(ಸಂರಚನಾ hlcache_handle *h);
 
 #endif

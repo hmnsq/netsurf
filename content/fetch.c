@@ -31,34 +31,34 @@
  * fetches are stored in the ::queue_ring waiting for use.
  */
 
-#include <stdlib.h>
-#include <assert.h>
-#include <errno.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <libwapcaplet/libwapcaplet.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <strings.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <libwapcaplet/libwapcaplet.h>
 
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/nsurl.h"
-#include "utils/ring.h"
-#include "netsurf/misc.h"
-#include "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "utils/config.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsoption.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "utils/ring.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/misc.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/resource.h"
-#include "content/fetchers/about/about.h"
-#include "content/fetchers/curl.h"
-#include "content/fetchers/data.h"
-#include "content/fetchers/file/file.h"
-#include "javascript/fetcher.h"
-#include "content/urldb.h"
+#ಅನ್ತರ್ಭಾವ "content/fetch.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers/resource.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers/about/about.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers/curl.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers/data.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers/file/file.h"
+#ಅನ್ತರ್ಭಾವ "javascript/fetcher.h"
+#ಅನ್ತರ್ಭಾವ "content/urldb.h"
 
 /** The maximum number of fetchers that can be added */
 #define MAX_FETCHERS 10
@@ -76,48 +76,48 @@
 /**
  * Information about a fetcher for a given scheme.
  */
-typedef struct scheme_fetcher_s {
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ scheme_fetcher_s {
 	lwc_string *scheme; /**< The scheme. */
 
-	struct fetcher_operation_table ops; /**< The fetchers operations. */
-	int refcount; /**< When zero the fetcher is no longer in use. */
+	ಸಂರಚನಾ fetcher_operation_table ops; /**< The fetchers operations. */
+	ಪೂರ್ಣಾಙ್ಕ refcount; /**< When zero the fetcher is no longer in use. */
 } scheme_fetcher;
 
-static scheme_fetcher fetchers[MAX_FETCHERS];
+ಸ್ಥಿರ scheme_fetcher fetchers[MAX_FETCHERS];
 
 /** Information for a single fetch. */
-struct fetch {
+ಸಂರಚನಾ fetch {
 	fetch_callback callback;/**< Callback function. */
 	nsurl *url;		/**< URL. */
 	nsurl *referer;		/**< Referer URL. */
 	bool verifiable;	/**< Transaction is verifiable */
-	void *p;		/**< Private data for callback. */
+	ಶೂನ್ಯ *p;		/**< Private data for callback. */
 	lwc_string *host;	/**< Host part of URL, interned */
 	http_response_code http_code;	/**< HTTP response code, or 0. */
-	int fetcherd;           /**< Fetcher descriptor for this fetch */
-	void *fetcher_handle;	/**< The handle for the fetcher. */
+	ಪೂರ್ಣಾಙ್ಕ fetcherd;           /**< Fetcher descriptor for this fetch */
+	ಶೂನ್ಯ *fetcher_handle;	/**< The handle for the fetcher. */
 	bool fetch_is_active;	/**< This fetch is active. */
-	fetch_msg_type last_msg;/**< The last message sent for this fetch */
-	struct fetch *r_prev;	/**< Previous active fetch in ::fetch_ring. */
-	struct fetch *r_next;	/**< Next active fetch in ::fetch_ring. */
+	fetch_ಸಂದೇಶ_type last_ಸಂದೇಶ;/**< The last message sent for this fetch */
+	ಸಂರಚನಾ fetch *r_prev;	/**< Previous active fetch in ::fetch_ring. */
+	ಸಂರಚನಾ fetch *r_next;	/**< Next active fetch in ::fetch_ring. */
 };
 
-static struct fetch *fetch_ring = NULL;	/**< Ring of active fetches. */
-static struct fetch *queue_ring = NULL;	/**< Ring of queued fetches */
+ಸ್ಥಿರ ಸಂರಚನಾ fetch *fetch_ring = ರಿಕ್ತ;	/**< Ring of active fetches. */
+ಸ್ಥಿರ ಸಂರಚನಾ fetch *queue_ring = ರಿಕ್ತ;	/**< Ring of queued fetches */
 
 /******************************************************************************
  * fetch internals							      *
  ******************************************************************************/
 
-static inline void fetch_ref_fetcher(int fetcherd)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ fetch_ref_fetcher(ಪೂರ್ಣಾಙ್ಕ fetcherd)
 {
 	fetchers[fetcherd].refcount++;
 }
 
-static inline void fetch_unref_fetcher(int fetcherd)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ fetch_unref_fetcher(ಪೂರ್ಣಾಙ್ಕ fetcherd)
 {
 	fetchers[fetcherd].refcount--;
-	if (fetchers[fetcherd].refcount == 0) {
+	ಯದಿ (fetchers[fetcherd].refcount == 0) {
 		fetchers[fetcherd].ops.finalise(fetchers[fetcherd].scheme);
 		lwc_string_unref(fetchers[fetcherd].scheme);
 	}
@@ -126,26 +126,26 @@ static inline void fetch_unref_fetcher(int fetcherd)
 /**
  * Find a suitable fetcher for a scheme.
  */
-static int get_fetcher_for_scheme(lwc_string *scheme)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ get_fetcher_for_scheme(lwc_string *scheme)
 {
-	int fetcherd;
+	ಪೂರ್ಣಾಙ್ಕ fetcherd;
 	bool match;
 
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if ((fetchers[fetcherd].refcount > 0) &&
+	ಪ್ರತಿ (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		ಯದಿ ((fetchers[fetcherd].refcount > 0) &&
 		    (lwc_string_isequal(fetchers[fetcherd].scheme,
 					scheme, &match) == lwc_error_ok) &&
 		    (match == true)) {
-			return fetcherd;
+			ಪ್ರತ್ಯಾಗಮ fetcherd;
 	       }
 	}
-	return -1;
+	ಪ್ರತ್ಯಾಗಮ -1;
 }
 
 /**
  * Dispatch a single job
  */
-static bool fetch_dispatch_job(struct fetch *fetch)
+ಸ್ಥಿರ bool fetch_dispatch_job(ಸಂರಚನಾ fetch *fetch)
 {
 	RING_REMOVE(queue_ring, fetch);
 	NSLOG(fetch, DEBUG,
@@ -153,13 +153,13 @@ static bool fetch_dispatch_job(struct fetch *fetch)
 	      fetch->fetcher_handle,
 	      nsurl_access(fetch->url));
 
-	if (!fetchers[fetch->fetcherd].ops.start(fetch->fetcher_handle)) {
-		RING_INSERT(queue_ring, fetch); /* Put it back on the end of the queue */
-		return false;
-	} else {
-		RING_INSERT(fetch_ring, fetch);
+	ಯದಿ (!fetchers[fetch->fetcherd].ops.start(fetch->fetcher_handle)) {
+		RING_ಸೇರಿಸು(queue_ring, fetch); /* Put it back on the end of the queue */
+		ಪ್ರತ್ಯಾಗಮ false;
+	} ಅನ್ಯಥಾ {
+		RING_ಸೇರಿಸು(fetch_ring, fetch);
 		fetch->fetch_is_active = true;
-		return true;
+		ಪ್ರತ್ಯಾಗಮ true;
 	}
 }
 
@@ -170,56 +170,56 @@ static bool fetch_dispatch_job(struct fetch *fetch)
  * We don't check the overall dispatch size here because we're not called unless
  * there is room in the fetch queue for us.
  */
-static bool fetch_choose_and_dispatch(void)
+ಸ್ಥಿರ bool fetch_choose_and_dispatch(ಶೂನ್ಯ)
 {
 	bool same_host;
-	struct fetch *queueitem;
+	ಸಂರಚನಾ fetch *queueitem;
 	queueitem = queue_ring;
-	do {
+	ಕುರು {
 		/* We can dispatch the selected item if there is room in the
 		 * fetch ring
 		 */
-		int countbyhost;
-		RING_COUNTBYLWCHOST(struct fetch, fetch_ring, countbyhost,
+		ಪೂರ್ಣಾಙ್ಕ countbyhost;
+		RING_COUNTBYLWCHOST(ಸಂರಚನಾ fetch, fetch_ring, countbyhost,
 				    queueitem->host);
-		if (countbyhost < nsoption_int(max_fetchers_per_host)) {
+		ಯದಿ (countbyhost < nsoption_int(max_fetchers_per_host)) {
 			/* We can dispatch this item in theory */
-			return fetch_dispatch_job(queueitem);
+			ಪ್ರತ್ಯಾಗಮ fetch_dispatch_job(queueitem);
 		}
 		/* skip over other items with the same host */
 		same_host = true;
-		while (same_host == true && queueitem->r_next != queue_ring) {
-			if (lwc_string_isequal(queueitem->host,
+		ಯಾವತ್ (same_host == true && queueitem->r_next != queue_ring) {
+			ಯದಿ (lwc_string_isequal(queueitem->host,
 					       queueitem->r_next->host, &same_host) ==
 			    lwc_error_ok && same_host == true) {
 				queueitem = queueitem->r_next;
 			}
 		}
 		queueitem = queueitem->r_next;
-	} while (queueitem != queue_ring);
-	return false;
+	} ಯಾವತ್ (queueitem != queue_ring);
+	ಪ್ರತ್ಯಾಗಮ false;
 }
 
-static void dump_rings(void)
+ಸ್ಥಿರ ಶೂನ್ಯ dump_rings(ಶೂನ್ಯ)
 {
-	struct fetch *q;
-	struct fetch *f;
+	ಸಂರಚನಾ fetch *q;
+	ಸಂರಚನಾ fetch *f;
 
 	q = queue_ring;
-	if (q) {
-		do {
+	ಯದಿ (q) {
+		ಕುರು {
 			NSLOG(fetch, DEBUG, "queue_ring: %s",
 			      nsurl_access(q->url));
 			q = q->r_next;
-		} while (q != queue_ring);
+		} ಯಾವತ್ (q != queue_ring);
 	}
 	f = fetch_ring;
-	if (f) {
-		do {
+	ಯದಿ (f) {
+		ಕುರು {
 			NSLOG(fetch, DEBUG, "fetch_ring: %s",
 			      nsurl_access(f->url));
 			f = f->r_next;
-		} while (f != fetch_ring);
+		} ಯಾವತ್ (f != fetch_ring);
 	}
 }
 
@@ -228,13 +228,13 @@ static void dump_rings(void)
  *
  * @return true if there are active fetchers that require polling else false.
  */
-static bool fetch_dispatch_jobs(void)
+ಸ್ಥಿರ bool fetch_dispatch_jobs(ಶೂನ್ಯ)
 {
-	int all_active;
-	int all_queued;
+	ಪೂರ್ಣಾಙ್ಕ all_active;
+	ಪೂರ್ಣಾಙ್ಕ all_queued;
 
-	RING_GETSIZE(struct fetch, queue_ring, all_queued);
-	RING_GETSIZE(struct fetch, fetch_ring, all_active);
+	RING_GETSIZE(ಸಂರಚನಾ fetch, queue_ring, all_queued);
+	RING_GETSIZE(ಸಂರಚನಾ fetch, fetch_ring, all_active);
 
 	NSLOG(fetch, DEBUG,
 	      "queue_ring %i, fetch_ring %i",
@@ -242,7 +242,7 @@ static bool fetch_dispatch_jobs(void)
 	      all_active);
 	dump_rings();
 
-	while ((all_queued != 0) &&
+	ಯಾವತ್ ((all_queued != 0) &&
 	       (all_active < nsoption_int(max_fetchers)) &&
 	       fetch_choose_and_dispatch()) {
 			all_queued--;
@@ -256,24 +256,24 @@ static bool fetch_dispatch_jobs(void)
 	NSLOG(fetch, DEBUG, "Fetch ring is now %d elements.", all_active);
 	NSLOG(fetch, DEBUG, "Queue ring is now %d elements.", all_queued);
 
-	return (all_active > 0);
+	ಪ್ರತ್ಯಾಗಮ (all_active > 0);
 }
 
-static void fetcher_poll(void *unused)
+ಸ್ಥಿರ ಶೂನ್ಯ fetcher_poll(ಶೂನ್ಯ *unused)
 {
-	int fetcherd;
+	ಪೂರ್ಣಾಙ್ಕ fetcherd;
 
-	if (fetch_dispatch_jobs()) {
+	ಯದಿ (fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "Polling fetchers");
-		for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-			if (fetchers[fetcherd].refcount > 0) {
+		ಪ್ರತಿ (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+			ಯದಿ (fetchers[fetcherd].refcount > 0) {
 				/* fetcher present */
 				fetchers[fetcherd].ops.poll(fetchers[fetcherd].scheme);
 			}
 		}
 
 		/* schedule active fetchers to run again in 10ms */
-		guit->misc->schedule(SCHEDULE_TIME, fetcher_poll, NULL);
+		guit->misc->schedule(SCHEDULE_TIME, fetcher_poll, ರಿಕ್ತ);
 	}
 }
 
@@ -282,48 +282,48 @@ static void fetcher_poll(void *unused)
  ******************************************************************************/
 
 /* exported interface documented in content/fetch.h */
-nserror fetcher_init(void)
+nserror fetcher_init(ಶೂನ್ಯ)
 {
 	nserror ret;
 
 #ifdef WITH_CURL
 	ret = fetch_curl_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ಯದಿ (ret != NSERROR_OK) {
+		ಪ್ರತ್ಯಾಗಮ ret;
 	}
 #endif
 
 	ret = fetch_data_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ಯದಿ (ret != NSERROR_OK) {
+		ಪ್ರತ್ಯಾಗಮ ret;
 	}
 
 	ret = fetch_file_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ಯದಿ (ret != NSERROR_OK) {
+		ಪ್ರತ್ಯಾಗಮ ret;
 	}
 
 	ret = fetch_resource_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ಯದಿ (ret != NSERROR_OK) {
+		ಪ್ರತ್ಯಾಗಮ ret;
 	}
 
 	ret = fetch_about_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ಯದಿ (ret != NSERROR_OK) {
+		ಪ್ರತ್ಯಾಗಮ ret;
 	}
 
 	ret = fetch_javascript_register();
 
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 /* exported interface documented in content/fetchers.h */
-void fetcher_quit(void)
+ಶೂನ್ಯ fetcher_quit(ಶೂನ್ಯ)
 {
-	int fetcherd; /* fetcher index */
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount > 1) {
+	ಪೂರ್ಣಾಙ್ಕ fetcherd; /* fetcher index */
+	ಪ್ರತಿ (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		ಯದಿ (fetchers[fetcherd].refcount > 1) {
 			/* fetcher still has reference at quit. This
 			 * should not happen as the fetch should have
 			 * been aborted in llcache shutdown.
@@ -345,7 +345,7 @@ void fetcher_quit(void)
 
 			fetchers[fetcherd].refcount = 1;
 		}
-		if (fetchers[fetcherd].refcount == 1) {
+		ಯದಿ (fetchers[fetcherd].refcount == 1) {
 
 			fetch_unref_fetcher(fetcherd);
 		}
@@ -354,22 +354,22 @@ void fetcher_quit(void)
 
 /* exported interface documented in content/fetchers.h */
 nserror
-fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *ops)
+fetcher_add(lwc_string *scheme, ಧ್ರುವ ಸಂರಚನಾ fetcher_operation_table *ops)
 {
-	int fetcherd;
+	ಪೂರ್ಣಾಙ್ಕ fetcherd;
 
 	/* find unused fetcher descriptor */
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount == 0) {
-			break;
+	ಪ್ರತಿ (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		ಯದಿ (fetchers[fetcherd].refcount == 0) {
+			ಭಙ್ಗ;
 		}
 	}
-	if (fetcherd == MAX_FETCHERS) {
-		return NSERROR_INIT_FAILED;
+	ಯದಿ (fetcherd == MAX_FETCHERS) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_INIT_FAILED;
 	}
 
-	if (!ops->initialise(scheme)) {
-		return NSERROR_INIT_FAILED;
+	ಯದಿ (!ops->initialise(scheme)) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_INIT_FAILED;
 	}
 
 	fetchers[fetcherd].scheme = scheme;
@@ -377,7 +377,7 @@ fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *ops)
 
 	fetch_ref_fetcher(fetcherd);
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
@@ -385,21 +385,21 @@ nserror
 fetch_fdset(fd_set *read_fd_set,
 		      fd_set *write_fd_set,
 		      fd_set *except_fd_set,
-		      int *maxfd_out)
+		      ಪೂರ್ಣಾಙ್ಕ *maxfd_out)
 {
-	int maxfd = -1;
-	int fetcherd; /* fetcher index */
+	ಪೂರ್ಣಾಙ್ಕ maxfd = -1;
+	ಪೂರ್ಣಾಙ್ಕ fetcherd; /* fetcher index */
 
-	if (!fetch_dispatch_jobs()) {
+	ಯದಿ (!fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "No jobs");
 		*maxfd_out = -1;
-		return NSERROR_OK;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	NSLOG(fetch, DEBUG, "Polling fetchers");
 
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount > 0) {
+	ಪ್ರತಿ (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		ಯದಿ (fetchers[fetcherd].refcount > 0) {
 			/* fetcher present */
 			fetchers[fetcherd].ops.poll(fetchers[fetcherd].scheme);
 		}
@@ -409,20 +409,20 @@ fetch_fdset(fd_set *read_fd_set,
 	FD_ZERO(write_fd_set);
 	FD_ZERO(except_fd_set);
 
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if ((fetchers[fetcherd].refcount > 0) &&
-		    (fetchers[fetcherd].ops.fdset != NULL)) {
+	ಪ್ರತಿ (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		ಯದಿ ((fetchers[fetcherd].refcount > 0) &&
+		    (fetchers[fetcherd].ops.fdset != ರಿಕ್ತ)) {
 			/* fetcher present */
-			int fetcher_maxfd;
+			ಪೂರ್ಣಾಙ್ಕ fetcher_maxfd;
 			fetcher_maxfd = fetchers[fetcherd].ops.fdset(
 				fetchers[fetcherd].scheme, read_fd_set,
 				write_fd_set, except_fd_set);
-			if (fetcher_maxfd > maxfd)
+			ಯದಿ (fetcher_maxfd > maxfd)
 				maxfd = fetcher_maxfd;
 		}
 	}
 
-	if (maxfd >= 0) {
+	ಯದಿ (maxfd >= 0) {
 		/* change the scheduled poll to happen is a 1000ms as
 		 * we assume fetching an fdset means the fetchers will
 		 * be run by the client waking up on data available on
@@ -436,12 +436,12 @@ fetch_fdset(fd_set *read_fd_set,
 		 * select on. All the other fetchers continue to need
 		 * polling frequently.
 		 */
-		guit->misc->schedule(FDSET_TIMEOUT, fetcher_poll, NULL);
+		guit->misc->schedule(FDSET_TIMEOUT, fetcher_poll, ರಿಕ್ತ);
 	}
 
 	*maxfd_out = maxfd;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
@@ -449,33 +449,33 @@ nserror
 fetch_start(nsurl *url,
 	    nsurl *referer,
 	    fetch_callback callback,
-	    void *p,
+	    ಶೂನ್ಯ *p,
 	    bool only_2xx,
-	    const char *post_urlenc,
-	    const struct fetch_multipart_data *post_multipart,
+	    ಧ್ರುವ ವರ್ಣ *post_urlenc,
+	    ಧ್ರುವ ಸಂರಚನಾ fetch_multipart_data *post_multipart,
 	    bool verifiable,
 	    bool downgrade_tls,
-	    const char *headers[],
-	    struct fetch **fetch_out)
+	    ಧ್ರುವ ವರ್ಣ *headers[],
+	    ಸಂರಚನಾ fetch **fetch_out)
 {
-	struct fetch *fetch;
+	ಸಂರಚನಾ fetch *fetch;
 	lwc_string *scheme;
 
-	fetch = calloc(1, sizeof (*fetch));
-	if (fetch == NULL) {
-		return NSERROR_NOMEM;
+	fetch = calloc(1, ಪರಿಮಾಣ (*fetch));
+	ಯದಿ (fetch == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 	}
 
 	/* The URL we're fetching must have a scheme */
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	assert(scheme != NULL);
+	ಪ್ರತಿಜ್ಞಾ(scheme != ರಿಕ್ತ);
 
 	/* try and obtain a fetcher for this scheme */
 	fetch->fetcherd = get_fetcher_for_scheme(scheme);
 	lwc_string_unref(scheme);
-	if (fetch->fetcherd == -1) {
-		free(fetch);
-		return NSERROR_NO_FETCH_HANDLER;
+	ಯದಿ (fetch->fetcherd == -1) {
+		ಮುಕ್ತ(fetch);
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NO_FETCH_HANDLER;
 	}
 
 	NSLOG(fetch, DEBUG, "fetch %p, url '%s'", fetch, nsurl_access(url));
@@ -487,7 +487,7 @@ fetch_start(nsurl *url,
 	fetch->p = p;
 	fetch->host = nsurl_get_component(url, NSURL_HOST);
 
-	if (referer != NULL) {
+	ಯದಿ (referer != ರಿಕ್ತ) {
 		fetch->referer = nsurl_ref(referer);
 	}
 
@@ -496,46 +496,46 @@ fetch_start(nsurl *url,
 						only_2xx, downgrade_tls,
 						post_urlenc, post_multipart,
 						headers);
-	if (fetch->fetcher_handle == NULL) {
+	ಯದಿ (fetch->fetcher_handle == ರಿಕ್ತ) {
 		lwc_string_unref(fetch->host);
 
-		if (fetch->url != NULL)
+		ಯದಿ (fetch->url != ರಿಕ್ತ)
 			nsurl_unref(fetch->url);
 
-		if (fetch->referer != NULL)
+		ಯದಿ (fetch->referer != ರಿಕ್ತ)
 			nsurl_unref(fetch->referer);
 
-		free(fetch);
+		ಮುಕ್ತ(fetch);
 
 
 	/** \todo The fetchers setup should return nserror and that be
 	 * passed back rather than assuming a bad url
 	 */
-		return NSERROR_BAD_URL;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_BAD_URL;
 	}
 
 	/* Rah, got it, so ref the fetcher. */
 	fetch_ref_fetcher(fetch->fetcherd);
 
 	/* Dump new fetch in the queue. */
-	RING_INSERT(queue_ring, fetch);
+	RING_ಸೇರಿಸು(queue_ring, fetch);
 
 	/* Ask the queue to run. */
-	if (fetch_dispatch_jobs()) {
+	ಯದಿ (fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "scheduling poll");
 		/* schedule active fetchers to run again in 10ms */
-		guit->misc->schedule(10, fetcher_poll, NULL);
+		guit->misc->schedule(10, fetcher_poll, ರಿಕ್ತ);
 	}
 
 	*fetch_out = fetch;
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_abort(struct fetch *f)
+ಶೂನ್ಯ fetch_abort(ಸಂರಚನಾ fetch *f)
 {
-	assert(f);
-	f->last_msg = FETCH__INTERNAL_ABORTED;
+	ಪ್ರತಿಜ್ಞಾ(f);
+	f->last_ಸಂದೇಶ = FETCH__INTERNAL_ABORTED;
 	NSLOG(fetch, DEBUG,
 	      "fetch %p, fetcher %p, url '%s'", f, f->fetcher_handle,
 	     nsurl_access(f->url));
@@ -543,20 +543,20 @@ void fetch_abort(struct fetch *f)
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_free(struct fetch *f)
+ಶೂನ್ಯ fetch_free(ಸಂರಚನಾ fetch *f)
 {
-	if (f->last_msg < FETCH_MIN_FINISHED_MSG) {
+	ಯದಿ (f->last_ಸಂದೇಶ < FETCH_MIN_FINISHED_ಸಂದೇಶ) {
 		/* We didn't finish, so tell our user that an error occurred */
-		fetch_msg msg;
+		fetch_ಸಂದೇಶ ಸಂದೇಶ;
 
-		msg.type = FETCH_ERROR;
-		msg.data.error = "FetchFailedToFinish";
+		ಸಂದೇಶ.type = FETCH_ERROR;
+		ಸಂದೇಶ.data.error = "FetchFailedToFinish";
 
 		NSLOG(fetch, CRITICAL,
 		      "During the fetch of %s, the fetcher did not finish.",
 		      nsurl_access(f->url));
 
-		fetch_send_callback(&msg, f);
+		fetch_send_callback(&ಸಂದೇಶ, f);
 	}
 
 	NSLOG(fetch, DEBUG,
@@ -564,206 +564,206 @@ void fetch_free(struct fetch *f)
 	      f,
 	      f->fetcher_handle);
 
-	fetchers[f->fetcherd].ops.free(f->fetcher_handle);
+	fetchers[f->fetcherd].ops.ಮುಕ್ತ(f->fetcher_handle);
 
 	fetch_unref_fetcher(f->fetcherd);
 
 	nsurl_unref(f->url);
-	if (f->referer != NULL) {
+	ಯದಿ (f->referer != ರಿಕ್ತ) {
 		nsurl_unref(f->referer);
 	}
 	lwc_string_unref(f->host);
-	free(f);
+	ಮುಕ್ತ(f);
 }
 
 
 
 /* exported interface documented in content/fetch.h */
-bool fetch_can_fetch(const nsurl *url)
+bool fetch_can_fetch(ಧ್ರುವ nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
-	int fetcherd;
+	ಪೂರ್ಣಾಙ್ಕ fetcherd;
 
 	fetcherd = get_fetcher_for_scheme(scheme);
 	lwc_string_unref(scheme);
 
-	if (fetcherd == -1) {
-		return false;
+	ಯದಿ (fetcherd == -1) {
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
-	return fetchers[fetcherd].ops.acceptable(url);
+	ಪ್ರತ್ಯಾಗಮ fetchers[fetcherd].ops.acceptable(url);
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_change_callback(struct fetch *fetch,
+ಶೂನ್ಯ fetch_change_callback(ಸಂರಚನಾ fetch *fetch,
 			   fetch_callback callback,
-			   void *p)
+			   ಶೂನ್ಯ *p)
 {
-	assert(fetch);
+	ಪ್ರತಿಜ್ಞಾ(fetch);
 	fetch->callback = callback;
 	fetch->p = p;
 }
 
 /* exported interface documented in content/fetch.h */
-http_response_code fetch_http_code(struct fetch *fetch)
+http_response_code fetch_http_code(ಸಂರಚನಾ fetch *fetch)
 {
-	return fetch->http_code;
+	ಪ್ರತ್ಯಾಗಮ fetch->http_code;
 }
 
 
 /* exported interface documented in content/fetch.h */
-struct fetch_multipart_data *
-fetch_multipart_data_clone(const struct fetch_multipart_data *list)
+ಸಂರಚನಾ fetch_multipart_data *
+fetch_multipart_data_clone(ಧ್ರುವ ಸಂರಚನಾ fetch_multipart_data *list)
 {
-	struct fetch_multipart_data *clone, *last = NULL;
-	struct fetch_multipart_data *result = NULL;
+	ಸಂರಚನಾ fetch_multipart_data *clone, *last = ರಿಕ್ತ;
+	ಸಂರಚನಾ fetch_multipart_data *result = ರಿಕ್ತ;
 
-	for (; list != NULL; list = list->next) {
-		clone = malloc(sizeof(struct fetch_multipart_data));
-		if (clone == NULL) {
-			if (result != NULL)
+	ಪ್ರತಿ (; list != ರಿಕ್ತ; list = list->next) {
+		clone = malloc(ಪರಿಮಾಣ(ಸಂರಚನಾ fetch_multipart_data));
+		ಯದಿ (clone == ರಿಕ್ತ) {
+			ಯದಿ (result != ರಿಕ್ತ)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 		}
 
 		clone->file = list->file;
 
 		clone->name = strdup(list->name);
-		if (clone->name == NULL) {
-			free(clone);
-			if (result != NULL)
+		ಯದಿ (clone->name == ರಿಕ್ತ) {
+			ಮುಕ್ತ(clone);
+			ಯದಿ (result != ರಿಕ್ತ)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 		}
 
-		clone->value = strdup(list->value);
-		if (clone->value == NULL) {
-			free(clone->name);
-			free(clone);
-			if (result != NULL)
+		clone->ಮೌಲ್ಯ = strdup(list->ಮೌಲ್ಯ);
+		ಯದಿ (clone->ಮೌಲ್ಯ == ರಿಕ್ತ) {
+			ಮುಕ್ತ(clone->name);
+			ಮುಕ್ತ(clone);
+			ಯದಿ (result != ರಿಕ್ತ)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 		}
 
-		if (clone->file) {
+		ಯದಿ (clone->file) {
 			clone->rawfile = strdup(list->rawfile);
-			if (clone->rawfile == NULL) {
-				free(clone->value);
-				free(clone->name);
-				free(clone);
-				if (result != NULL)
+			ಯದಿ (clone->rawfile == ರಿಕ್ತ) {
+				ಮುಕ್ತ(clone->ಮೌಲ್ಯ);
+				ಮುಕ್ತ(clone->name);
+				ಮುಕ್ತ(clone);
+				ಯದಿ (result != ರಿಕ್ತ)
 					fetch_multipart_data_destroy(result);
 
-				return NULL;
+				ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 			}
-		} else {
-			clone->rawfile = NULL;
+		} ಅನ್ಯಥಾ {
+			clone->rawfile = ರಿಕ್ತ;
 		}
 
-		clone->next = NULL;
+		clone->next = ರಿಕ್ತ;
 
-		if (result == NULL)
+		ಯದಿ (result == ರಿಕ್ತ)
 			result = clone;
-		else
+		ಅನ್ಯಥಾ
 			last->next = clone;
 
 		last = clone;
 	}
 
-	return result;
+	ಪ್ರತ್ಯಾಗಮ result;
 }
 
 
 /* exported interface documented in content/fetch.h */
-const char *
-fetch_multipart_data_find(const struct fetch_multipart_data *list,
-			  const char *name)
+ಧ್ರುವ ವರ್ಣ *
+fetch_multipart_data_find(ಧ್ರುವ ಸಂರಚನಾ fetch_multipart_data *list,
+			  ಧ್ರುವ ವರ್ಣ *name)
 {
-	while (list != NULL) {
-		if (strcmp(list->name, name) == 0) {
-			return list->value;
+	ಯಾವತ್ (list != ರಿಕ್ತ) {
+		ಯದಿ (strcmp(list->name, name) == 0) {
+			ಪ್ರತ್ಯಾಗಮ list->ಮೌಲ್ಯ;
 		}
 		list = list->next;
 	}
 
-	return NULL;
+	ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list)
+ಶೂನ್ಯ fetch_multipart_data_destroy(ಸಂರಚನಾ fetch_multipart_data *list)
 {
-	struct fetch_multipart_data *next;
+	ಸಂರಚನಾ fetch_multipart_data *next;
 
-	for (; list != NULL; list = next) {
+	ಪ್ರತಿ (; list != ರಿಕ್ತ; list = next) {
 		next = list->next;
-		free(list->name);
-		free(list->value);
-		if (list->file) {
+		ಮುಕ್ತ(list->name);
+		ಮುಕ್ತ(list->ಮೌಲ್ಯ);
+		ಯದಿ (list->file) {
 			NSLOG(fetch, DEBUG,
 			      "Freeing rawfile: %s", list->rawfile);
-			free(list->rawfile);
+			ಮುಕ್ತ(list->rawfile);
 		}
-		free(list);
+		ಮುಕ್ತ(list);
 	}
 }
 
 
 /* exported interface documented in content/fetch.h */
 nserror
-fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-			    const char *name,
-			    const char *value)
+fetch_multipart_data_new_kv(ಸಂರಚನಾ fetch_multipart_data **list,
+			    ಧ್ರುವ ವರ್ಣ *name,
+			    ಧ್ರುವ ವರ್ಣ *ಮೌಲ್ಯ)
 {
-	struct fetch_multipart_data *newdata;
+	ಸಂರಚನಾ fetch_multipart_data *newdata;
 
-	assert(list);
+	ಪ್ರತಿಜ್ಞಾ(list);
 
-	newdata = calloc(1, sizeof(*newdata));
+	newdata = calloc(1, ಪರಿಮಾಣ(*newdata));
 
-	if (newdata == NULL) {
-		return NSERROR_NOMEM;
+	ಯದಿ (newdata == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 	}
 
 	newdata->name = strdup(name);
-	if (newdata->name == NULL) {
-		free(newdata);
-		return NSERROR_NOMEM;
+	ಯದಿ (newdata->name == ರಿಕ್ತ) {
+		ಮುಕ್ತ(newdata);
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 	}
 
-	newdata->value = strdup(value);
-	if (newdata->value == NULL) {
-		free(newdata->name);
-		free(newdata);
-		return NSERROR_NOMEM;
+	newdata->ಮೌಲ್ಯ = strdup(ಮೌಲ್ಯ);
+	ಯದಿ (newdata->ಮೌಲ್ಯ == ರಿಕ್ತ) {
+		ಮುಕ್ತ(newdata->name);
+		ಮುಕ್ತ(newdata);
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 	}
 
 	newdata->next = *list;
 	*list = newdata;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /* exported interface documented in content/fetch.h */
-void
-fetch_send_callback(const fetch_msg *msg, struct fetch *fetch)
+ಶೂನ್ಯ
+fetch_send_callback(ಧ್ರುವ fetch_ಸಂದೇಶ *ಸಂದೇಶ, ಸಂರಚನಾ fetch *fetch)
 {
 	/* Bump the last_msg to the greatest seen msg */
-	if (msg->type > fetch->last_msg)
-		fetch->last_msg = msg->type;
-	fetch->callback(msg, fetch->p);
+	ಯದಿ (ಸಂದೇಶ->type > fetch->last_ಸಂದೇಶ)
+		fetch->last_ಸಂದೇಶ = ಸಂದೇಶ->type;
+	fetch->callback(ಸಂದೇಶ, fetch->p);
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_remove_from_queues(struct fetch *fetch)
+ಶೂನ್ಯ fetch_remove_from_queues(ಸಂರಚನಾ fetch *fetch)
 {
-	int all_active;
-	int all_queued;
+	ಪೂರ್ಣಾಙ್ಕ all_active;
+	ಪೂರ್ಣಾಙ್ಕ all_queued;
 
 	NSLOG(fetch, DEBUG,
 	      "Fetch %p, fetcher %p can be freed",
@@ -771,15 +771,15 @@ void fetch_remove_from_queues(struct fetch *fetch)
 	      fetch->fetcher_handle);
 
 	/* Go ahead and free the fetch properly now */
-	if (fetch->fetch_is_active) {
+	ಯದಿ (fetch->fetch_is_active) {
 		RING_REMOVE(fetch_ring, fetch);
-	} else {
+	} ಅನ್ಯಥಾ {
 		RING_REMOVE(queue_ring, fetch);
 	}
 
 
-	RING_GETSIZE(struct fetch, fetch_ring, all_active);
-	RING_GETSIZE(struct fetch, queue_ring, all_queued);
+	RING_GETSIZE(ಸಂರಚನಾ fetch, fetch_ring, all_active);
+	RING_GETSIZE(ಸಂರಚನಾ fetch, queue_ring, all_queued);
 
 	NSLOG(fetch, DEBUG, "Fetch ring is now %d elements.", all_active);
 	NSLOG(fetch, DEBUG, "Queue ring is now %d elements.", all_queued);
@@ -787,30 +787,30 @@ void fetch_remove_from_queues(struct fetch *fetch)
 
 
 /* exported interface documented in content/fetch.h */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code)
+nserror fetch_set_http_code(ಸಂರಚನಾ fetch *fetch, http_response_code http_code)
 {
 	NSLOG(fetch, DEBUG, "Setting HTTP code to %d", http_code);
 
 	fetch->http_code = http_code;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_set_cookie(struct fetch *fetch, const char *data)
+ಶೂನ್ಯ fetch_set_cookie(ಸಂರಚನಾ fetch *fetch, ಧ್ರುವ ವರ್ಣ *data)
 {
-	assert(fetch && data);
+	ಪ್ರತಿಜ್ಞಾ(fetch && data);
 
 	/* If the fetch is unverifiable err on the side of caution and
 	 * do not set the cookie */
 
-	if (fetch->verifiable) {
+	ಯದಿ (fetch->verifiable) {
 		/* If the transaction's verifiable, we don't require
 		 * that the request uri and the parent domain match,
 		 * so don't pass in any referer/parent in this case. */
-		urldb_set_cookie(data, fetch->url, NULL);
-	} else if (fetch->referer != NULL) {
+		urldb_set_cookie(data, fetch->url, ರಿಕ್ತ);
+	} ಅನ್ಯಥಾ ಯದಿ (fetch->referer != ರಿಕ್ತ) {
 		/* Permit the cookie to be set if the fetch is unverifiable
 		 * and the fetch URI domain matches the referer. */
 		/** \todo Long-term, this needs to be replaced with a

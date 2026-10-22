@@ -23,34 +23,34 @@
  * This implementation uses the JXL library.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <setjmp.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include <jxl/decode.h>
+#ಅನ್ತರ್ಭಾವ <jxl/decode.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "content/llcache.h"
+#ಅನ್ತರ್ಭಾವ "content/content.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#ಅನ್ತರ್ಭಾವ "image/image_cache.h"
 
-#include "image/jpegxl.h"
+#ಅನ್ತರ್ಭಾವ "image/jpegxl.h"
 
 
 /**
  * output image format
  */
-static const JxlPixelFormat jxl_output_format = {
-	.num_channels = 4,
+ಸ್ಥಿರ ಧ್ರುವ JxlPixelFormat jxl_output_format = {
+	.ಅಂಕೆ_channels = 4,
 	.data_type    = JXL_TYPE_UINT8,
 	.endianness   = JXL_LITTLE_ENDIAN,
 	.align        = 0,
@@ -59,42 +59,42 @@ static const JxlPixelFormat jxl_output_format = {
 /**
  * Content create entry point.
  */
-static nserror
-nsjpegxl_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ಸ್ಥಿರ nserror
+nsjpegxl_create(ಧ್ರುವ content_handler *handler,
+		lwc_string *imime_type, ಧ್ರುವ ಸಂರಚನಾ http_parameter *params,
+		llcache_handle *llcache, ಧ್ರುವ ವರ್ಣ *fallback_charset,
+		bool quirks, ಸಂರಚನಾ content **c)
 {
-	struct content *jpeg;
+	ಸಂರಚನಾ content *jpeg;
 	nserror error;
 
-	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	jpeg = calloc(1, ಪರಿಮಾಣ(ಸಂರಚನಾ content));
+	ಯದಿ (jpeg == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(jpeg);
-		return error;
+	ಯದಿ (error != NSERROR_OK) {
+		ಮುಕ್ತ(jpeg);
+		ಪ್ರತ್ಯಾಗಮ error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 /**
  * create a bitmap from jpeg xl content.
  */
-static struct bitmap *
-jpegxl_cache_convert(struct content *c)
+ಸ್ಥಿರ ಸಂರಚನಾ bitmap *
+jpegxl_cache_convert(ಸಂರಚನಾ content *c)
 {
-	struct bitmap * bitmap = NULL;
+	ಸಂರಚನಾ bitmap * bitmap = ರಿಕ್ತ;
 	JxlDecoder *jxldec;
 	JxlDecoderStatus decstatus;
 	JxlBasicInfo binfo;
-	const uint8_t *src_data;
+	ಧ್ರುವ uint8_t *src_data;
 	size_t src_size;
 	uint8_t * output;
 	bitmap_fmt_t jxl_fmt = {
@@ -109,84 +109,84 @@ jpegxl_cache_convert(struct content *c)
 		.pma    = bitmap_fmt.pma,
 	};
 
-	jxldec = JxlDecoderCreate(NULL);
-	if (jxldec == NULL) {
+	jxldec = JxlDecoderCreate(ರಿಕ್ತ);
+	ಯದಿ (jxldec == ರಿಕ್ತ) {
 		NSLOG(netsurf, ERROR, "Unable to allocate decoder");
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
 	decstatus = JxlDecoderSetUnpremultiplyAlpha(jxldec, !bitmap_fmt.pma);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set premultiplied alpha status: %d",
 				decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
 	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_FULL_IMAGE);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "Unable to subscribe");
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 	src_data = content__get_source_data(c, &src_size);
 
-	decstatus = JxlDecoderSetInput(jxldec, src_data, src_size);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus = Jxl_Decoder_Set_ಒಳಹರಿವು(jxldec, src_data, src_size);
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set input");
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
+	decstatus = Jxl_Decoder_Process_ಒಳಹರಿವು(jxldec);
+	ಯದಿ (decstatus != JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
 		NSLOG(netsurf, ERROR,
 		      "expected status JXL_DEC_NEED_IMAGE_OUT_BUFFER(%d) got %d",
 		      JXL_DEC_NEED_IMAGE_OUT_BUFFER,
 		      decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
 	decstatus = JxlDecoderGetBasicInfo(jxldec, &binfo);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to get basic info status:%d",decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
 	/* create bitmap with appropriate opacity */
-	if (binfo.alpha_bits > 0) {
+	ಯದಿ (binfo.alpha_bits > 0) {
 		bitmap = guit->bitmap->create(c->width, c->height, BITMAP_OPAQUE);
-	} else {
+	} ಅನ್ಯಥಾ {
 		bitmap = guit->bitmap->create(c->width, c->height, BITMAP_NONE);
 	}
-	if (bitmap == NULL) {
+	ಯದಿ (bitmap == ರಿಕ್ತ) {
 		/* empty bitmap could not be created */
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
 	/* ensure buffer was allocated */
 	output = guit->bitmap->get_buffer(bitmap);
-	if (output == NULL) {
+	ಯದಿ (output == ರಿಕ್ತ) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 	decstatus = JxlDecoderSetImageOutBuffer(jxldec, &jxl_output_format, output, c->size);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set output buffer callback status:%d",decstatus);
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_FULL_IMAGE) {
+	decstatus = Jxl_Decoder_Process_ಒಳಹರಿವು(jxldec);
+	ಯದಿ (decstatus != JXL_DEC_FULL_IMAGE) {
 		NSLOG(netsurf, ERROR, "did not get decode event");
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 	
 	JxlDecoderDestroy(jxldec);
@@ -194,72 +194,72 @@ jpegxl_cache_convert(struct content *c)
 	bitmap_format_to_client(bitmap, &jxl_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	ಪ್ರತ್ಯಾಗಮ bitmap;
 }
 
 /**
  * report failiure
  */
-static bool jxl_report_fail(struct content *c, JxlDecoderStatus decstatus, const char *msg)
+ಸ್ಥಿರ bool jxl_report_fail(ಸಂರಚನಾ content *c, JxlDecoderStatus decstatus, ಧ್ರುವ ವರ್ಣ *ಸಂದೇಶ)
 {
-	union content_msg_data msg_data;
-	NSLOG(netsurf, ERROR, "%s decoder status:%d", msg, decstatus);
-	msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-	msg_data.errordata.errormsg = msg;
-	content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-	return false;
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
+	NSLOG(netsurf, ERROR, "%s decoder status:%d", ಸಂದೇಶ, decstatus);
+	ಸಂದೇಶ_data.errordata.errorcode = NSERROR_UNKNOWN;
+	ಸಂದೇಶ_data.errordata.errormsg = ಸಂದೇಶ;
+	content_broadcast(c, CONTENT_ಸಂದೇಶ_ERROR, &ಸಂದೇಶ_data);
+	ಪ್ರತ್ಯಾಗಮ false;
 }
 
 /**
  * Convert a CONTENT_JPEGXL for display.
  */
-static bool nsjpegxl_convert(struct content *c)
+ಸ್ಥಿರ bool nsjpegxl_convert(ಸಂರಚನಾ content *c)
 {
 	JxlDecoder *jxldec;
 	JxlSignature decsig;
 	JxlDecoderStatus decstatus = JXL_DEC_ERROR;
 	JxlBasicInfo binfo;
-	union content_msg_data msg_data;
-	const uint8_t *data;
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
+	ಧ್ರುವ uint8_t *data;
 	size_t size;
-	char *title;
+	ವರ್ಣ *title;
 	size_t image_size;
 
 	/* check image header is valid and get width/height */
 	data = content__get_source_data(c, &size);
 
 	decsig = JxlSignatureCheck(data,size);
-	if ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
+	ಯದಿ ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
 		NSLOG(netsurf, ERROR, "signature failed");
-		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-		msg_data.errordata.errormsg = "Signature failed";
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		ಸಂದೇಶ_data.errordata.errorcode = NSERROR_UNKNOWN;
+		ಸಂದೇಶ_data.errordata.errormsg = "Signature failed";
+		content_broadcast(c, CONTENT_ಸಂದೇಶ_ERROR, &ಸಂದೇಶ_data);
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
-	jxldec = JxlDecoderCreate(NULL);
-	if (jxldec == NULL) {
-		return jxl_report_fail(c, decstatus, "Unable to allocate decoder");
+	jxldec = JxlDecoderCreate(ರಿಕ್ತ);
+	ಯದಿ (jxldec == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ jxl_report_fail(c, decstatus, "Unable to allocate decoder");
 	}
 	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_BASIC_INFO);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "Unable to subscribe");
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
+		ಪ್ರತ್ಯಾಗಮ jxl_report_fail(c, decstatus, "Unable to subscribe");
 	}
-	decstatus = JxlDecoderSetInput(jxldec, data,size);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable to set input");
+	decstatus = Jxl_Decoder_Set_ಒಳಹರಿವು(jxldec, data,size);
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
+		ಪ್ರತ್ಯಾಗಮ jxl_report_fail(c, decstatus, "unable to set input");
 	}
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_BASIC_INFO) {
-		return jxl_report_fail(c, decstatus, "did not get basic info event");
+	decstatus = Jxl_Decoder_Process_ಒಳಹರಿವು(jxldec);
+	ಯದಿ (decstatus != JXL_DEC_BASIC_INFO) {
+		ಪ್ರತ್ಯಾಗಮ jxl_report_fail(c, decstatus, "did not get basic info event");
 	}
 	decstatus = JxlDecoderGetBasicInfo(jxldec, &binfo);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable to get basic info");
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
+		ಪ್ರತ್ಯಾಗಮ jxl_report_fail(c, decstatus, "unable to get basic info");
 	}
 	decstatus = JxlDecoderImageOutBufferSize(jxldec, &jxl_output_format, &image_size);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable get image size");
+	ಯದಿ (decstatus != JXL_DEC_SUCCESS) {
+		ಪ್ರತ್ಯಾಗಮ jxl_report_fail(c, decstatus, "unable get image size");
 	}
 	
 	JxlDecoderDestroy(jxldec);
@@ -270,58 +270,58 @@ static bool nsjpegxl_convert(struct content *c)
 	c->height = binfo.ysize;
 	c->size = image_size;
 
-	image_cache_add(c, NULL, jpegxl_cache_convert);
+	image_cache_add(c, ರಿಕ್ತ, jpegxl_cache_convert);
 
 	/* set title text */
 	title = messages_get_buff("JPEGXLTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	ಯದಿ (title != ರಿಕ್ತ) {
 		content__set_title(c, title);
-		free(title);
+		ಮುಕ್ತ(title);
 	}
 
 	content_set_ready(c);
 	content_set_done(c);	
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
 
 /**
  * Clone content.
  */
-static nserror nsjpegxl_clone(const struct content *old, struct content **newc)
+ಸ್ಥಿರ nserror nsjpegxl_clone(ಧ್ರುವ ಸಂರಚನಾ content *old, ಸಂರಚನಾ content **newc)
 {
-	struct content *jpegxl_c;
+	ಸಂರಚನಾ content *jpegxl_c;
 	nserror error;
 
-	jpegxl_c = calloc(1, sizeof(struct content));
-	if (jpegxl_c == NULL)
-		return NSERROR_NOMEM;
+	jpegxl_c = calloc(1, ಪರಿಮಾಣ(ಸಂರಚನಾ content));
+	ಯದಿ (jpegxl_c == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 
 	error = content__clone(old, jpegxl_c);
-	if (error != NSERROR_OK) {
+	ಯದಿ (error != NSERROR_OK) {
 		content_destroy(jpegxl_c);
-		return error;
+		ಪ್ರತ್ಯಾಗಮ error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	ಯದಿ ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpegxl_convert(jpegxl_c) == false) {
+		ಯದಿ (nsjpegxl_convert(jpegxl_c) == false) {
 			content_destroy(jpegxl_c);
-			return NSERROR_CLONE_FAILED;
+			ಪ್ರತ್ಯಾಗಮ NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpegxl_c;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
-static const content_handler nsjpegxl_content_handler = {
+ಸ್ಥಿರ ಧ್ರುವ content_handler nsjpegxl_content_handler = {
 	.create = nsjpegxl_create,
 	.data_complete = nsjpegxl_convert,
 	.destroy = image_cache_destroy,
@@ -333,7 +333,7 @@ static const content_handler nsjpegxl_content_handler = {
 	.no_share = false,
 };
 
-static const char *nsjpegxl_types[] = {
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *nsjpegxl_types[] = {
 	"image/jxl",
 };
 

@@ -22,28 +22,28 @@
  * Implementation of HTML content DOM event handling.
  */
 
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/ascii.h"
-#include "utils/string.h"
-#include "utils/nsurl.h"
-#include "content/content.h"
-#include "javascript/js.h"
+#ಅನ್ತರ್ಭಾವ "utils/config.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsoption.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/ascii.h"
+#ಅನ್ತರ್ಭಾವ "utils/string.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "content/content.h"
+#ಅನ್ತರ್ಭಾವ "javascript/js.h"
 
-#include "netsurf/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/bitmap.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/css.h"
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/form_internal.h"
-#include "html/dom_event.h"
+#ಅನ್ತರ್ಭಾವ "html/private.h"
+#ಅನ್ತರ್ಭಾವ "html/object.h"
+#ಅನ್ತರ್ಭಾವ "html/css.h"
+#ಅನ್ತರ್ಭಾವ "html/box.h"
+#ಅನ್ತರ್ಭಾವ "html/box_construct.h"
+#ಅನ್ತರ್ಭಾವ "html/form_internal.h"
+#ಅನ್ತರ್ಭಾವ "html/dom_event.h"
 
 
 /**
@@ -53,22 +53,22 @@
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
+ಸ್ಥಿರ bool html_process_inserted_base(html_content *htmlc, dom_ಗಂಟು *ಗಂಟು)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 
 	/* get href attribute if present */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	exc = dom_element_get_attribute(ಗಂಟು, corestring_dom_href, &atr_string);
+	ಯದಿ ((exc == DOM_NO_ERR) && (atr_string != ರಿಕ್ತ)) {
 		nsurl *url;
 		nserror error;
 
 		/* get url from string */
 		error = nsurl_create(dom_string_data(atr_string), &url);
 		dom_string_unref(atr_string);
-		if (error == NSERROR_OK) {
-			if (htmlc->base_url != NULL) {
+		ಯದಿ (error == NSERROR_OK) {
+			ಯದಿ (htmlc->base_url != ರಿಕ್ತ) {
 				nsurl_unref(htmlc->base_url);
 			}
 			htmlc->base_url = url;
@@ -77,20 +77,20 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 
 
 	/* get target attribute if present and not already set */
-	if (htmlc->base_target != NULL) {
-		return true;
+	ಯದಿ (htmlc->base_target != ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ true;
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ಗಂಟು,
 					corestring_dom_target,
 					&atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ಯದಿ ((exc == DOM_NO_ERR) && (atr_string != ರಿಕ್ತ)) {
 		/* Validation rules from the HTML5 spec for the base element:
 		 *  The target must be one of _blank, _self, _parent, or
 		 *  _top or any identifier which does not begin with an
 		 *  underscore
 		 */
-		if (*dom_string_data(atr_string) != '_' ||
+		ಯದಿ (*dom_string_data(atr_string) != '_' ||
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__blank) ||
 				dom_string_caseless_lwc_isequal(atr_string,
@@ -98,13 +98,13 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__parent) ||
 				dom_string_caseless_lwc_isequal(atr_string,
-						corestring_lwc__top)) {
+						corestring_lwc_ತುದಿ_2)) {
 			htmlc->base_target = strdup(dom_string_data(atr_string));
 		}
 		dom_string_unref(atr_string);
 	}
 
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
 
@@ -116,7 +116,7 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
+ಸ್ಥಿರ bool html_process_inserted_img(html_content *htmlc, dom_ಗಂಟು *ಗಂಟು)
 {
 	dom_string *src;
 	nsurl *url;
@@ -125,27 +125,27 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	bool success;
 
 	/* Do nothing if foreground images are disabled */
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	ಯದಿ (nsoption_bool(foreground_images) == false) {
+		ಪ್ರತ್ಯಾಗಮ true;
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		return true;
+	exc = dom_element_get_attribute(ಗಂಟು, corestring_dom_src, &src);
+	ಯದಿ (exc != DOM_NO_ERR || src == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ true;
 	}
 
 	err = nsurl_join(htmlc->base_url, dom_string_data(src), &url);
-	if (err != NSERROR_OK) {
+	ಯದಿ (err != NSERROR_OK) {
 		dom_string_unref(src);
-		return false;
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 	dom_string_unref(src);
 
 	/* Speculatively fetch the image */
-	success = html_fetch_object(htmlc, url, NULL, CONTENT_IMAGE, false);
+	success = html_fetch_object(htmlc, url, ರಿಕ್ತ, CONTENT_IMAGE, false);
 	nsurl_unref(url);
 
-	return success;
+	ಪ್ರತ್ಯಾಗಮ success;
 }
 
 
@@ -158,79 +158,79 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_link(html_content *c, dom_node *node)
+ಸ್ಥಿರ bool html_process_inserted_link(html_content *c, dom_ಗಂಟು *ಗಂಟು)
 {
-	struct content_rfc5988_link link; /* the link added to the content */
+	ಸಂರಚನಾ content_rfc5988_link link; /* the link added to the content */
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 	nserror error;
 
 	/* Handle stylesheet loading */
-	html_css_process_link(c, (dom_node *)node);
+	html_css_process_link(c, (dom_ಗಂಟು *)ಗಂಟು);
 
 	/* try Generic link handling */
 
-	memset(&link, 0, sizeof(struct content_rfc5988_link));
+	memset(&link, 0, ಪರಿಮಾಣ(ಸಂರಚನಾ content_rfc5988_link));
 
 	/* check that the relation exists - w3c spec says must be present */
-	exc = dom_element_get_attribute(node, corestring_dom_rel, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
-		return false;
+	exc = dom_element_get_attribute(ಗಂಟು, corestring_dom_rel, &atr_string);
+	ಯದಿ ((exc != DOM_NO_ERR) || (atr_string == ರಿಕ್ತ)) {
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 	/* get a lwc string containing the link relation */
 	exc = dom_string_intern(atr_string, &link.rel);
 	dom_string_unref(atr_string);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	ಯದಿ (exc != DOM_NO_ERR) {
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
 	/* check that the href exists - w3c spec says must be present */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+	exc = dom_element_get_attribute(ಗಂಟು, corestring_dom_href, &atr_string);
+	ಯದಿ ((exc != DOM_NO_ERR) || (atr_string == ರಿಕ್ತ)) {
 		lwc_string_unref(link.rel);
-		return false;
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
 	/* get nsurl */
 	error = nsurl_join(c->base_url, dom_string_data(atr_string),
 			&link.href);
 	dom_string_unref(atr_string);
-	if (error != NSERROR_OK) {
+	ಯದಿ (error != NSERROR_OK) {
 		lwc_string_unref(link.rel);
-		return false;
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
 	/* look for optional properties -- we don't care if internment fails */
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ಗಂಟು,
 			corestring_dom_hreflang, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ಯದಿ ((exc == DOM_NO_ERR) && (atr_string != ರಿಕ್ತ)) {
 		/* get a lwc string containing the href lang */
-		(void)dom_string_intern(atr_string, &link.hreflang);
+		(ಶೂನ್ಯ)dom_string_intern(atr_string, &link.hreflang);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ಗಂಟು,
 			corestring_dom_type, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ಯದಿ ((exc == DOM_NO_ERR) && (atr_string != ರಿಕ್ತ)) {
 		/* get a lwc string containing the type */
-		(void)dom_string_intern(atr_string, &link.type);
+		(ಶೂನ್ಯ)dom_string_intern(atr_string, &link.type);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ಗಂಟು,
 			corestring_dom_media, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ಯದಿ ((exc == DOM_NO_ERR) && (atr_string != ರಿಕ್ತ)) {
 		/* get a lwc string containing the media */
-		(void)dom_string_intern(atr_string, &link.media);
+		(ಶೂನ್ಯ)dom_string_intern(atr_string, &link.media);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ಗಂಟು,
 			corestring_dom_sizes, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ಯದಿ ((exc == DOM_NO_ERR) && (atr_string != ರಿಕ್ತ)) {
 		/* get a lwc string containing the sizes */
-		(void)dom_string_intern(atr_string, &link.sizes);
+		(ಶೂನ್ಯ)dom_string_intern(atr_string, &link.sizes);
 		dom_string_unref(atr_string);
 	}
 
@@ -245,12 +245,12 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 	nsurl_unref(link.href);
 	lwc_string_unref(link.rel);
 
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
 
 /* handler for a SCRIPT which has been added to a tree */
-static void
+ಸ್ಥಿರ ಶೂನ್ಯ
 dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 {
 	dom_exception exc;
@@ -258,42 +258,42 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 	dom_hubbub_error res;
 	bool within;
 
-	if (!htmlc->enable_scripting) {
+	ಯದಿ (!htmlc->enable_scripting) {
 		NSLOG(netsurf, INFO, "Encountered a script, but scripting is off, ignoring");
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG, "Encountered a script, node %p showed up", script);
 
 	exc = dom_html_script_element_get_flags(script, &flags);
-	if (exc != DOM_NO_ERR) {
+	ಯದಿ (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve flags, giving up");
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
-	if (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
+	ಯದಿ (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
 		NSLOG(netsurf, DEBUG, "Script was parser inserted, skipping");
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
-	exc = dom_node_contains(htmlc->document, script, &within);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_ಗಂಟು_contains(htmlc->document, script, &within);
+	ಯದಿ (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEBUG, "Unable to determine if script was within document, ignoring");
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
-	if (!within) {
+	ಯದಿ (!within) {
 		NSLOG(netsurf, DEBUG, "Script was not within the document, ignoring for now");
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
-	res = html_process_script(htmlc, (dom_node *) script);
-	if (res == DOM_HUBBUB_OK) {
+	res = html_process_script(htmlc, (dom_ಗಂಟು *) script);
+	ಯದಿ (res == DOM_HUBBUB_OK) {
 		NSLOG(netsurf, DEEPDEBUG, "Inserted script has finished running");
-	} else {
-		if (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
+	} ಅನ್ಯಥಾ {
+		ಯದಿ (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
 			NSLOG(netsurf, DEEPDEBUG, "Inserted script has launced asynchronously");
-		} else {
+		} ಅನ್ಯಥಾ {
 			NSLOG(netsurf, DEEPDEBUG, "Failure starting script");
 		}
 	}
@@ -309,45 +309,45 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_meta(html_content *c, dom_node *n)
+ಸ್ಥಿರ nserror html_process_inserted_meta(html_content *c, dom_ಗಂಟು *n)
 {
-	union content_msg_data msg_data;
-	const char *url, *end, *refresh = NULL;
-	char *new_url;
-	char quote = '\0';
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
+	ಧ್ರುವ ವರ್ಣ *url, *end, *refresh = ರಿಕ್ತ;
+	ವರ್ಣ *new_url;
+	ವರ್ಣ quote = '\0';
 	dom_string *equiv, *content;
 	dom_exception exc;
 	nsurl *nsurl;
 	nserror error = NSERROR_OK;
 
-	if (c->refresh) {
+	ಯದಿ (c->refresh) {
 		/* refresh already delt with */
-		return NSERROR_OK;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_http_equiv, &equiv);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	ಯದಿ (exc != DOM_NO_ERR) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_DOM;
 	}
 
-	if (equiv == NULL) {
-		return NSERROR_OK;
+	ಯದಿ (equiv == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
+	ಯದಿ (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
 		dom_string_unref(equiv);
-		return NSERROR_OK;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	dom_string_unref(equiv);
 
 	exc = dom_element_get_attribute(n, corestring_dom_content, &content);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	ಯದಿ (exc != DOM_NO_ERR) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_DOM;
 	}
 
-	if (content == NULL) {
-		return NSERROR_OK;
+	ಯದಿ (content == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	end = dom_string_data(content) + dom_string_byte_length(content);
@@ -366,100 +366,100 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	url = dom_string_data(content);
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ಯಾವತ್ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* intpart */
-	if (url == end || (*url < '0' || '9' < *url)) {
+	ಯದಿ (url == end || (*url < '0' || '9' < *url)) {
 		/* Empty content, or invalid timeval */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
-	msg_data.delay = (int) strtol(url, &new_url, 10);
+	ಸಂದೇಶ_data.delay = (ಪೂರ್ಣಾಙ್ಕ) strtol(url, &new_url, 10);
 	/* a very small delay and self-referencing URL can cause a loop
 	 * that grinds machines to a halt. To prevent this we set a
 	 * minimum refresh delay of 1s. */
-	if (msg_data.delay < 1) {
-		msg_data.delay = 1;
+	ಯದಿ (ಸಂದೇಶ_data.delay < 1) {
+		ಸಂದೇಶ_data.delay = 1;
 	}
 
 	url = new_url;
 
 	/* fracpart? (ignored, as delay is integer only) */
-	while (url < end && (('0' <= *url && *url <= '9') ||
+	ಯಾವತ್ (url < end && (('0' <= *url && *url <= '9') ||
 			*url == '.')) {
 		url++;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ಯಾವತ್ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* ';' */
-	if (url < end && *url == ';')
+	ಯದಿ (url < end && *url == ';')
 		url++;
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ಯಾವತ್ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
-	if (url == end) {
+	ಯದಿ (url == end) {
 		/* Just delay specified, so refresh current page */
 		dom_string_unref(content);
 
 		c->base.refresh = nsurl_ref(content_get_url(&c->base));
 
-		content_broadcast(&c->base, CONTENT_MSG_REFRESH, &msg_data);
+		content_broadcast(&c->base, CONTENT_ಸಂದೇಶ_REFRESH, &ಸಂದೇಶ_data);
 
-		return NSERROR_OK;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	/* "url" */
-	if (url <= end - 3) {
-		if (strncasecmp(url, "url", 3) == 0) {
+	ಯದಿ (url <= end - 3) {
+		ಯದಿ (strncasecmp(url, "url", 3) == 0) {
 			url += 3;
-		} else {
+		} ಅನ್ಯಥಾ {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 		}
-	} else {
+	} ಅನ್ಯಥಾ {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ಯಾವತ್ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '=' */
-	if (url < end) {
-		if (*url == '=') {
+	ಯದಿ (url < end) {
+		ಯದಿ (*url == '=') {
 			url++;
-		} else {
+		} ಅನ್ಯಥಾ {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 		}
-	} else {
+	} ಅನ್ಯಥಾ {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ಯಾವತ್ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '"' or "'" */
-	if (url < end && (*url == '"' || *url == '\'')) {
+	ಯದಿ (url < end && (*url == '"' || *url == '\'')) {
 		quote = *url;
 		url++;
 	}
@@ -467,44 +467,44 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	/* Start of URL */
 	refresh = url;
 
-	if (quote != 0) {
+	ಯದಿ (quote != 0) {
 		/* url-sq | url-dq */
-		while (url < end && *url != quote)
+		ಯಾವತ್ (url < end && *url != quote)
 			url++;
-	} else {
+	} ಅನ್ಯಥಾ {
 		/* url-nq */
-		while (url < end && !ascii_is_space(*url))
+		ಯಾವತ್ (url < end && !ascii_is_space(*url))
 			url++;
 	}
 
 	/* '"' or "'" or *LWS (we don't care) */
-	if (url > refresh) {
+	ಯದಿ (url > refresh) {
 		/* There's a URL */
 		new_url = strndup(refresh, url - refresh);
-		if (new_url == NULL) {
+		ಯದಿ (new_url == ರಿಕ್ತ) {
 			dom_string_unref(content);
-			return NSERROR_NOMEM;
+			ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 		}
 
 		error = nsurl_join(c->base_url, new_url, &nsurl);
-		if (error == NSERROR_OK) {
+		ಯದಿ (error == NSERROR_OK) {
 			/* broadcast valid refresh url */
 
 			c->base.refresh = nsurl;
 
 			content_broadcast(&c->base,
-					  CONTENT_MSG_REFRESH,
-					  &msg_data);
+					  CONTENT_ಸಂದೇಶ_REFRESH,
+					  &ಸಂದೇಶ_data);
 			c->refresh = true;
 		}
 
-		free(new_url);
+		ಮುಕ್ತ(new_url);
 
 	}
 
 	dom_string_unref(content);
 
-	return error;
+	ಪ್ರತ್ಯಾಗಮ error;
 }
 
 
@@ -517,41 +517,41 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_title(html_content *htmlc, dom_node *node)
+ಸ್ಥಿರ nserror html_process_inserted_title(html_content *htmlc, dom_ಗಂಟು *ಗಂಟು)
 {
-	if (htmlc->title == NULL) {
+	ಯದಿ (htmlc->title == ರಿಕ್ತ) {
 		/* only the first title is considered */
-		htmlc->title = dom_node_ref(node);
+		htmlc->title = dom_ಗಂಟು_ref(ಗಂಟು);
 	}
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /** process title node */
-static bool html_process_title(html_content *c, dom_node *node)
+ಸ್ಥಿರ bool html_process_title(html_content *c, dom_ಗಂಟು *ಗಂಟು)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *title;
-	char *title_str;
+	ವರ್ಣ *title_str;
 	bool success;
 
-	exc = dom_node_get_text_content(node, &title);
-	if ((exc != DOM_NO_ERR) || (title == NULL)) {
-		return false;
+	exc = dom_ಗಂಟು_get_text_content(ಗಂಟು, &title);
+	ಯದಿ ((exc != DOM_NO_ERR) || (title == ರಿಕ್ತ)) {
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
 	title_str = squash_whitespace(dom_string_data(title));
 	dom_string_unref(title);
 
-	if (title_str == NULL) {
-		return false;
+	ಯದಿ (title_str == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
 	success = content__set_title(&c->base, title_str);
 
-	free(title_str);
+	ಮುಕ್ತ(title_str);
 
-	return success;
+	ಪ್ರತ್ಯಾಗಮ success;
 }
 
 
@@ -559,14 +559,14 @@ static bool html_process_title(html_content *c, dom_node *node)
  * Deal with input elements being modified by resyncing their gadget
  * if they have one.
  */
-static void html_texty_element_update(html_content *htmlc, dom_node *node)
+ಸ್ಥಿರ ಶೂನ್ಯ html_texty_element_update(html_content *htmlc, dom_ಗಂಟು *ಗಂಟು)
 {
-	struct box *box = box_for_node(node);
-	if (box == NULL) {
-		return; /* No Box (yet?) so no gadget to update */
+	ಸಂರಚನಾ box *box = box_for_ಗಂಟು(ಗಂಟು);
+	ಯದಿ (box == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ; /* No Box (yet?) so no gadget to update */
 	}
-	if (box->gadget == NULL) {
-		return; /* No gadget yet (under construction perhaps?) */
+	ಯದಿ (box->gadget == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ; /* No gadget yet (under construction perhaps?) */
 	}
 	form_gadget_sync_with_dom(box->gadget);
 	/* And schedule a redraw for the box */
@@ -577,123 +577,123 @@ static void html_texty_element_update(html_content *htmlc, dom_node *node)
 /**
  * callback for DOMNodeInserted end type
  */
-static void
-dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
+ಸ್ಥಿರ ಶೂನ್ಯ
+dom_default_action_DOMNodeInserted_cb(ಸಂರಚನಾ dom_event *evt, ಶೂನ್ಯ *pw)
 {
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *ಗಂಟು;
+	dom_ಗಂಟು_type type;
 	dom_exception exc;
 	html_content *htmlc = pw;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc != DOM_NO_ERR) || (node == NULL)) {
+	exc = dom_event_get_target(evt, &ಗಂಟು);
+	ಯದಿ ((exc != DOM_NO_ERR) || (ಗಂಟು == ರಿಕ್ತ)) {
 		/* failed to obtain the event target node */
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	exc = dom_ಗಂಟು_get_ಗಂಟು_type(ಗಂಟು, &type);
+	ಯದಿ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_ಗಂಟು)) {
 		/* an element node has been inserted */
 		dom_html_element_type tag_type;
 
-		exc = dom_html_element_get_tag_type(node, &tag_type);
-		if (exc != DOM_NO_ERR) {
+		exc = dom_html_element_get_tag_type(ಗಂಟು, &tag_type);
+		ಯದಿ (exc != DOM_NO_ERR) {
 			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
 
-		switch (tag_type) {
-		case DOM_HTML_ELEMENT_TYPE_BASE:
-			html_process_inserted_base(htmlc, (dom_node *)node);
-			break;
+		ವಿಕಲ್ಪ (tag_type) {
+		ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_BASE:
+			html_process_inserted_base(htmlc, (dom_ಗಂಟು *)ಗಂಟು);
+			ಭಙ್ಗ;
 
-		case DOM_HTML_ELEMENT_TYPE_IMG:
-			html_process_inserted_img(htmlc, (dom_node *)node);
-			break;
+		ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_IMG:
+			html_process_inserted_img(htmlc, (dom_ಗಂಟು *)ಗಂಟು);
+			ಭಙ್ಗ;
 
-		case DOM_HTML_ELEMENT_TYPE_LINK:
-			html_process_inserted_link(htmlc, (dom_node *)node);
-			break;
+		ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_LINK:
+			html_process_inserted_link(htmlc, (dom_ಗಂಟು *)ಗಂಟು);
+			ಭಙ್ಗ;
 
-		case DOM_HTML_ELEMENT_TYPE_META:
-			html_process_inserted_meta(htmlc, (dom_node *)node);
-			break;
+		ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_META:
+			html_process_inserted_meta(htmlc, (dom_ಗಂಟು *)ಗಂಟು);
+			ಭಙ್ಗ;
 
-		case DOM_HTML_ELEMENT_TYPE_STYLE:
-			if (nsoption_bool(author_level_css)) {
-				html_css_process_style(htmlc, (dom_node *)node);
+		ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_STYLE:
+			ಯದಿ (nsoption_bool(author_level_css)) {
+				html_css_process_style(htmlc, (dom_ಗಂಟು *)ಗಂಟು);
 			}
-			break;
+			ಭಙ್ಗ;
 
-		case DOM_HTML_ELEMENT_TYPE_SCRIPT:
+		ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_SCRIPT:
 			dom_SCRIPT_showed_up(htmlc,
-					     (dom_html_script_element *)node);
-			break;
+					     (dom_html_script_element *)ಗಂಟು);
+			ಭಙ್ಗ;
 
-		case DOM_HTML_ELEMENT_TYPE_TITLE:
-			html_process_inserted_title(htmlc, (dom_node *)node);
-			break;
+		ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_TITLE:
+			html_process_inserted_title(htmlc, (dom_ಗಂಟು *)ಗಂಟು);
+			ಭಙ್ಗ;
 
-		default:
-			break;
+		ಸ್ವಭಾವ:
+			ಭಙ್ಗ;
 		}
 
-		if (htmlc->enable_scripting) {
+		ಯದಿ (htmlc->enable_scripting) {
 			/* ensure javascript context is available */
-			if (htmlc->jsthread == NULL) {
-				union content_msg_data msg_data;
+			ಯದಿ (htmlc->jsthread == ರಿಕ್ತ) {
+				ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
 
-				msg_data.jsthread = &htmlc->jsthread;
+				ಸಂದೇಶ_data.jsthread = &htmlc->jsthread;
 				content_broadcast(&htmlc->base,
-						  CONTENT_MSG_GETTHREAD,
-						  &msg_data);
+						  CONTENT_ಸಂದೇಶ_GETTHREAD,
+						  &ಸಂದೇಶ_data);
 				NSLOG(netsurf, INFO,
 				      "javascript context: %p (htmlc: %p)",
 				      htmlc->jsthread,
 				      htmlc);
 			}
-			if (htmlc->jsthread != NULL) {
+			ಯದಿ (htmlc->jsthread != ರಿಕ್ತ) {
 				js_handle_new_element(htmlc->jsthread,
-						      (dom_element *) node);
+						      (dom_element *) ಗಂಟು);
 			}
 		}
 	}
-	dom_node_unref(node);
+	dom_ಗಂಟು_unref(ಗಂಟು);
 }
 
 
 /**
  * callback for DOMNodeInsertedIntoDocument end type
  */
-static void
-dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
-						  void *pw)
+ಸ್ಥಿರ ಶೂನ್ಯ
+dom_default_action_DOMNodeInsertedIntoDocument_cb(ಸಂರಚನಾ dom_event *evt,
+						  ಶೂನ್ಯ *pw)
 {
 	html_content *htmlc = pw;
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *ಗಂಟು;
+	dom_ಗಂಟು_type type;
 	dom_exception exc;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	exc = dom_event_get_target(evt, &ಗಂಟು);
+	ಯದಿ ((exc == DOM_NO_ERR) && (ಗಂಟು != ರಿಕ್ತ)) {
+		exc = dom_ಗಂಟು_get_ಗಂಟು_type(ಗಂಟು, &type);
+		ಯದಿ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_ಗಂಟು)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
-			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			exc = dom_html_element_get_tag_type(ಗಂಟು, &tag_type);
+			ಯದಿ (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_SCRIPT:
-				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) node);
+			ವಿಕಲ್ಪ (tag_type) {
+			ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_SCRIPT:
+				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) ಗಂಟು);
 				fallthrough;
-			default:
-				break;
+			ಸ್ವಭಾವ:
+				ಭಙ್ಗ;
 			}
 		}
-		dom_node_unref(node);
+		dom_ಗಂಟು_unref(ಗಂಟು);
 	}
 }
 
@@ -701,49 +701,49 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
 /**
  * callback for DOMSubtreeModified end type
  */
-static void
-dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
+ಸ್ಥಿರ ಶೂನ್ಯ
+dom_default_action_DOMSubtreeModified_cb(ಸಂರಚನಾ dom_event *evt, ಶೂನ್ಯ *pw)
 {
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *ಗಂಟು;
+	dom_ಗಂಟು_type type;
 	dom_exception exc;
 	html_content *htmlc = pw;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		if (htmlc->title == (dom_node *)node) {
+	exc = dom_event_get_target(evt, &ಗಂಟು);
+	ಯದಿ ((exc == DOM_NO_ERR) && (ಗಂಟು != ರಿಕ್ತ)) {
+		ಯದಿ (htmlc->title == (dom_ಗಂಟು *)ಗಂಟು) {
 			/* Node is our title node */
-			html_process_title(htmlc, (dom_node *)node);
-			dom_node_unref(node);
-			return;
+			html_process_title(htmlc, (dom_ಗಂಟು *)ಗಂಟು);
+			dom_ಗಂಟು_unref(ಗಂಟು);
+			ಪ್ರತ್ಯಾಗಮ;
 		}
 
-		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		exc = dom_ಗಂಟು_get_ಗಂಟು_type(ಗಂಟು, &type);
+		ಯದಿ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_ಗಂಟು)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
-			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			exc = dom_html_element_get_tag_type(ಗಂಟು, &tag_type);
+			ಯದಿ (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_STYLE:
-				if (nsoption_bool(author_level_css)) {
+			ವಿಕಲ್ಪ (tag_type) {
+			ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_STYLE:
+				ಯದಿ (nsoption_bool(author_level_css)) {
 					html_css_update_style(htmlc,
-							(dom_node *)node);
+							(dom_ಗಂಟು *)ಗಂಟು);
 				}
-				break;
-			case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-			case DOM_HTML_ELEMENT_TYPE_INPUT:
-				html_texty_element_update(htmlc, (dom_node *)node);
+				ಭಙ್ಗ;
+			ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+			ಪಕ್ಷ DOM_HTML_ELEMENT_TYPE_ಒಳಹರಿವು:
+				html_texty_element_update(htmlc, (dom_ಗಂಟು *)ಗಂಟು);
 				fallthrough;
-			default:
-				break;
+			ಸ್ವಭಾವ:
+				ಭಙ್ಗ;
 			}
 		}
-		dom_node_unref(node);
+		dom_ಗಂಟು_unref(ಗಂಟು);
 	}
 }
 
@@ -751,12 +751,12 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
 /**
  * callback for default action finished
  */
-static void
-dom_default_action_finished_cb(struct dom_event *evt, void *pw)
+ಸ್ಥಿರ ಶೂನ್ಯ
+dom_default_action_finished_cb(ಸಂರಚನಾ dom_event *evt, ಶೂನ್ಯ *pw)
 {
 	html_content *htmlc = pw;
 
-	if (htmlc->jsthread != NULL)
+	ಯದಿ (htmlc->jsthread != ರಿಕ್ತ)
 		js_event_cleanup(htmlc->jsthread, evt);
 }
 
@@ -765,21 +765,21 @@ dom_default_action_finished_cb(struct dom_event *evt, void *pw)
 dom_default_action_callback
 html_dom_event_fetcher(dom_string *type,
 		  dom_default_action_phase phase,
-		  void **pw)
+		  ಶೂನ್ಯ **pw)
 {
 	NSLOG(netsurf, DEEPDEBUG,
 	      "phase:%d type:%s", phase, dom_string_data(type));
 
-	if (phase == DOM_DEFAULT_ACTION_END) {
-		if (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
-			return dom_default_action_DOMNodeInserted_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
-			return dom_default_action_DOMNodeInsertedIntoDocument_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
-			return dom_default_action_DOMSubtreeModified_cb;
+	ಯದಿ (phase == DOM_DEFAULT_ACTION_END) {
+		ಯದಿ (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
+			ಪ್ರತ್ಯಾಗಮ dom_default_action_DOMNodeInserted_cb;
+		} ಅನ್ಯಥಾ ಯದಿ (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
+			ಪ್ರತ್ಯಾಗಮ dom_default_action_DOMNodeInsertedIntoDocument_cb;
+		} ಅನ್ಯಥಾ ಯದಿ (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
+			ಪ್ರತ್ಯಾಗಮ dom_default_action_DOMSubtreeModified_cb;
 		}
-	} else if (phase == DOM_DEFAULT_ACTION_FINISHED) {
-		return dom_default_action_finished_cb;
+	} ಅನ್ಯಥಾ ಯದಿ (phase == DOM_DEFAULT_ACTION_FINISHED) {
+		ಪ್ರತ್ಯಾಗಮ dom_default_action_finished_cb;
 	}
-	return NULL;
+	ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }

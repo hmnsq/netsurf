@@ -19,44 +19,44 @@
 #ifndef NETSURF_CSS_SELECT_H_
 #define NETSURF_CSS_SELECT_H_
 
-#include <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
 
-#include <dom/dom.h>
+#ಅನ್ತರ್ಭಾವ <dom/dom.h>
 
-#include <libcss/libcss.h>
+#ಅನ್ತರ್ಭಾವ <libcss/libcss.h>
 
-struct content;
-struct nsurl;
+ಸಂರಚನಾ content;
+ಸಂರಚನಾ nsurl;
 
 /**
  * Selection context
  */
-typedef struct nscss_select_ctx
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ nscss_select_ctx
 {
 	css_select_ctx *ctx;
 	bool quirks;
-	struct nsurl *base_url;
+	ಸಂರಚನಾ nsurl *base_url;
 	lwc_string *universal;
-	const css_computed_style *root_style;
-	const css_computed_style *parent_style;
+	ಧ್ರುವ css_computed_style *ಬೇರು_style;
+	ಧ್ರುವ css_computed_style *parent_style;
 } nscss_select_ctx;
 
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks);
+css_stylesheet *nscss_create_inline_style(ಧ್ರುವ uint8_t *data, size_t len,
+		ಧ್ರುವ ವರ್ಣ *charset, ಧ್ರುವ ವರ್ಣ *url, bool allow_quirks);
 
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style);
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_ಗಂಟು *n,
+		ಧ್ರುವ css_media *media,
+		ಧ್ರುವ css_unit_ctx *unit_len_ctx,
+		ಧ್ರುವ css_stylesheet *inline_style);
 
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent);
+		ಧ್ರುವ css_unit_ctx *unit_len_ctx,
+		ಧ್ರುವ css_computed_style *parent);
 
 
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor);
+css_error named_ancestor_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಧ್ರುವ css_qname *qname, ಶೂನ್ಯ **ancestor);
 
-css_error node_is_visited(void *pw, void *node, bool *match);
+css_error ಗಂಟು_is_visited(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *match);
 
 #endif

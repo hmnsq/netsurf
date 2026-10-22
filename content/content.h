@@ -27,29 +27,29 @@
 #ifndef NETSURF_CONTENT_CONTENT_H_
 #define NETSURF_CONTENT_CONTENT_H_
 
-#include <libwapcaplet/libwapcaplet.h>
+#ಅನ್ತರ್ಭಾವ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/content_type.h"
-#include "netsurf/mouse.h" /* mouse state enums */
-#include "netsurf/console.h" /* console state and flags enums */
+#ಅನ್ತರ್ಭಾವ "netsurf/content_type.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/mouse.h" /* mouse state enums */
+#ಅನ್ತರ್ಭಾವ "netsurf/console.h" /* console state and flags enums */
 
-struct browser_window;
-struct browser_window_features;
-struct content;
-struct llcache_handle;
-struct hlcache_handle;
-struct object_params;
-struct rect;
-struct redraw_context;
-struct cert_chain;
+ಸಂರಚನಾ browser_window;
+ಸಂರಚನಾ browser_window_features;
+ಸಂರಚನಾ content;
+ಸಂರಚನಾ llcache_handle;
+ಸಂರಚನಾ hlcache_handle;
+ಸಂರಚನಾ object_params;
+ಸಂರಚನಾ rect;
+ಸಂರಚನಾ redraw_context;
+ಸಂರಚನಾ cert_chain;
 
 
 /** RFC5988 metadata link */
-struct content_rfc5988_link {
-	struct content_rfc5988_link *next; /**< next rfc5988_link in list */
+ಸಂರಚನಾ content_rfc5988_link {
+	ಸಂರಚನಾ content_rfc5988_link *next; /**< next rfc5988_link in list */
 
 	lwc_string *rel; /**< the link relationship - must be present */
-	struct nsurl *href; /**< the link href - must be present */
+	ಸಂರಚನಾ nsurl *href; /**< the link href - must be present */
 	lwc_string *hreflang;
 	lwc_string *type;
 	lwc_string *media;
@@ -57,15 +57,15 @@ struct content_rfc5988_link {
 };
 
 /** Extra data for some content_msg messages. */
-union content_msg_data {
+ಸಙ್ಘ content_ಸಂದೇಶ_data {
 	/**
 	 * CONTENT_MSG_LOG - Information for logging
 	 */
-	struct {
+	ಸಂರಚನಾ {
 		/** The source of the logging */
 		browser_window_console_source src;
 		/** The message to log */
-		const char *msg;
+		ಧ್ರುವ ವರ್ಣ *ಸಂದೇಶ;
 		/** The length of that message */
 		size_t msglen;
 		/** The flags of the logging */
@@ -76,12 +76,12 @@ union content_msg_data {
 	 * CONTENT_MSG_SSL_CERTS - The certificate chain from the
 	 *   underlying fetch
 	 */
-	const struct cert_chain *chain;
+	ಧ್ರುವ ಸಂರಚನಾ cert_chain *chain;
 
 	/**
 	 * CONTENT_MSG_ERROR - Error from content or underlying fetch
 	 */
-	struct {
+	ಸಂರಚನಾ {
 		/**
 		 * The error code to convey meaning
 		 */
@@ -92,28 +92,28 @@ union content_msg_data {
 		 *   message name or somesuch) but always a null terminated
 		 *   string.
 		 */
-		const char *errormsg;
+		ಧ್ರುವ ವರ್ಣ *errormsg;
 	} errordata;
 
 	/**
 	 * CONTENT_MSG_REDIRECT - Redirect info
 	 */
-	struct {
-		struct nsurl *from;	/**< Redirect origin */
-		struct nsurl *to;	/**< Redirect target */
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ nsurl *from;	/**< Redirect origin */
+		ಸಂರಚನಾ nsurl *to;	/**< Redirect target */
 	} redirect;		/**< Fetch URL redirect occured */
 
 	/**
 	 * CONTENT_MSG_REDRAW - Area of content which needs redrawing
 	 */
-	struct {
-		int x, y, width, height;
+	ಸಂರಚನಾ {
+		ಪೂರ್ಣಾಙ್ಕ x, y, width, height;
 	} redraw;
 
 	/**
 	 * CONTENT_MSG_REFRESH - Minimum delay
 	 */
-	int delay;
+	ಪೂರ್ಣಾಙ್ಕ delay;
 
 	/**
 	 * CONTENT_MSG_REFORMAT - Reformat should not cause a redraw
@@ -125,27 +125,27 @@ union content_msg_data {
 	 * content's internal status text has been updated, and
 	 * listener should use content_get_status_message()
 	 */
-	const char *explicit_status_text;
+	ಧ್ರುವ ವರ್ಣ *explicit_status_text;
 
 	/**
 	 * CONTENT_MSG_DOWNLOAD - Low-level cache handle
 	 */
-	struct llcache_handle *download;
+	ಸಂರಚನಾ llcache_handle *download;
 
 	/**
 	 * CONTENT_MSG_RFC5988_LINK - rfc5988 link data
 	 */
-	struct content_rfc5988_link *rfc5988_link;
+	ಸಂರಚನಾ content_rfc5988_link *rfc5988_link;
 
 	/**
 	 * CONTENT_MSG_GETTHREAD - Javascript context (thread)
 	 */
-	struct jsthread **jsthread;
+	ಸಂರಚನಾ jsthread **jsthread;
 
 	/**
 	 * CONTENT_MSG_GETDIMS - Get the viewport dimensions
 	 */
-	struct {
+	ಸಂರಚನಾ {
 		/** \todo Consider getting screen_width, screen_height too. */
 		unsigned *viewport_width;
 		unsigned *viewport_height;
@@ -154,36 +154,36 @@ union content_msg_data {
 	/**
 	 * CONTENT_MSG_SCROLL - Part of content to scroll to show
 	 */
-	struct {
+	ಸಂರಚನಾ {
 		/*
 		 * if true, scroll to show area given by (x0, y0) and (x1,y1).
 		 * if false, scroll point (x0, y0) to top left of viewport
 		 */
 		bool area;
-		int x0, y0;
-		int x1, y1;
+		ಪೂರ್ಣಾಙ್ಕ x0, y0;
+		ಪೂರ್ಣಾಙ್ಕ x1, y1;
 	} scroll;
 
 	/**
 	 * CONTENT_MSG_DRAGSAVE - Drag save a content
 	 */
-	struct {
-		enum {
+	ಸಂರಚನಾ {
+		ಗಣನಾ {
 			CONTENT_SAVE_ORIG,
 			CONTENT_SAVE_NATIVE,
 			CONTENT_SAVE_COMPLETE,
 			CONTENT_SAVE_SOURCE
 		} type;
 		 /** if NULL, save the content generating the message */
-		struct hlcache_handle *content;
+		ಸಂರಚನಾ hlcache_handle *content;
 	} dragsave;
 
 	/**
 	 * CONTENT_MSG_SAVELINK - Save a URL
 	 */
-	struct {
-		struct nsurl *url;
-		const char *title;
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ nsurl *url;
+		ಧ್ರುವ ವರ್ಣ *title;
 	} savelink;
 
 	/**
@@ -194,7 +194,7 @@ union content_msg_data {
 	/**
 	 * CONTENT_MSG_SELECTION - Selection made or cleared
 	 */
-	struct {
+	ಸಂರಚನಾ {
 		bool selection; /**< false for selection cleared */
 		bool read_only;
 	} selection;
@@ -202,54 +202,54 @@ union content_msg_data {
 	/**
 	 * CONTENT_MSG_CARET - set caret position or, hide caret
 	 */
-	struct {
-		enum {
+	ಸಂರಚನಾ {
+		ಗಣನಾ {
 			CONTENT_CARET_SET_POS,
 			CONTENT_CARET_HIDE,
 			CONTENT_CARET_REMOVE
 		} type;
-		struct {
-			int x;				/**< Carret x-coord */
-			int y;				/**< Carret y-coord */
-			int height;			/**< Carret height */
-			const struct rect *clip;	/**< Carret clip rect */
+		ಸಂರಚನಾ {
+			ಪೂರ್ಣಾಙ್ಕ x;				/**< Carret x-coord */
+			ಪೂರ್ಣಾಙ್ಕ y;				/**< Carret y-coord */
+			ಪೂರ್ಣಾಙ್ಕ height;			/**< Carret height */
+			ಧ್ರುವ ಸಂರಚನಾ rect *clip;	/**< Carret clip rect */
 		} pos;			/**< With CONTENT_CARET_SET_POS */
 	} caret;
 
 	/**
 	 * CONTENT_MSG_DRAG - Drag start or end
 	 */
-	struct {
-		enum {
+	ಸಂರಚನಾ {
+		ಗಣನಾ {
 			CONTENT_DRAG_NONE,
 			CONTENT_DRAG_SCROLL,
 			CONTENT_DRAG_SELECTION
 		} type;
-		const struct rect *rect;
+		ಧ್ರುವ ಸಂರಚನಾ rect *rect;
 	} drag;
 
 	/**
 	 * CONTENT_MSG_SELECTMENU - Create select menu at pointer
 	 */
-	struct {
-		struct form_control *gadget;
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ form_control *gadget;
 	} select_menu;
 
 	/**
 	 * CONTENT_MSG_GADGETCLICK - User clicked on a form gadget
 	 */
-	struct {
-		struct form_control *gadget;
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ form_control *gadget;
 	} gadget_click;
 
 	/**
 	 * CONTENT_MSG_TEXTSEARCH - Free text search action
 	 */
-	struct {
+	ಸಂರಚನಾ {
 		/**
 		 * The type of text search operation
 		 */
-		enum {
+		ಗಣನಾ {
 		      /**
 		       * Free text search find operation has started or finished
 		       */
@@ -274,7 +274,7 @@ union content_msg_data {
 		/**
 		 * context passed to browser_window_search()
 		 */
-		void *ctx;
+		ಶೂನ್ಯ *ctx;
 		/**
 		 * state for operation
 		 */
@@ -282,7 +282,7 @@ union content_msg_data {
 		/**
 		 * search string
 		 */
-		const char *string;
+		ಧ್ರುವ ವರ್ಣ *string;
 	} textsearch;
 
 };
@@ -294,15 +294,15 @@ union content_msg_data {
  * \param h  content to check
  * \return whether the content can reformat
  */
-bool content_can_reformat(struct hlcache_handle *h);
+bool content_can_reformat(ಸಂರಚನಾ hlcache_handle *h);
 
 /**
  * Reformat to new size.
  *
  * Calls the reformat function for the content.
  */
-void content_reformat(struct hlcache_handle *h, bool background,
-		int width, int height);
+ಶೂನ್ಯ content_reformat(ಸಂರಚನಾ hlcache_handle *h, bool background,
+		ಪೂರ್ಣಾಙ್ಕ width, ಪೂರ್ಣಾಙ್ಕ height);
 
 /**
  * Request a redraw of an area of a content
@@ -313,8 +313,8 @@ void content_reformat(struct hlcache_handle *h, bool background,
  * \param width	  Width of rectangle
  * \param height  Height of rectangle
  */
-void content_request_redraw(struct hlcache_handle *h,
-		int x, int y, int width, int height);
+ಶೂನ್ಯ content_request_redraw(ಸಂರಚನಾ hlcache_handle *h,
+		ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y, ಪೂರ್ಣಾಙ್ಕ width, ಪೂರ್ಣಾಙ್ಕ height);
 
 /**
  * Handle mouse movements in a content window.
@@ -325,8 +325,8 @@ void content_request_redraw(struct hlcache_handle *h,
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-void content_mouse_track(struct hlcache_handle *h, struct browser_window *bw,
-		browser_mouse_state mouse, int x, int y);
+ಶೂನ್ಯ content_mouse_track(ಸಂರಚನಾ hlcache_handle *h, ಸಂರಚನಾ browser_window *bw,
+		browser_mouse_state mouse, ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y);
 
 /**
  * Handle mouse clicks and movements in a content window.
@@ -343,8 +343,8 @@ void content_mouse_track(struct hlcache_handle *h, struct browser_window *bw,
  * code paths opens the possibility that an attacker will make the status bar
  * show some harmless action where clicking will be harmful.
  */
-void content_mouse_action(struct hlcache_handle *h, struct browser_window *bw,
-		browser_mouse_state mouse, int x, int y);
+ಶೂನ್ಯ content_mouse_action(ಸಂರಚನಾ hlcache_handle *h, ಸಂರಚನಾ browser_window *bw,
+		browser_mouse_state mouse, ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y);
 
 /**
  * Handle keypresses.
@@ -353,7 +353,7 @@ void content_mouse_action(struct hlcache_handle *h, struct browser_window *bw,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-bool content_keypress(struct hlcache_handle *h, uint32_t key);
+bool content_keypress(ಸಂರಚನಾ hlcache_handle *h, uint32_t ಕೀಲಿ);
 
 
 /**
@@ -367,27 +367,27 @@ bool content_keypress(struct hlcache_handle *h, uint32_t key);
  *
  * Calls the open function for the content.
  */
-nserror content_open(struct hlcache_handle *h, struct browser_window *bw,
-		struct content *page, struct object_params *params);
+nserror content_open(ಸಂರಚನಾ hlcache_handle *h, ಸಂರಚನಾ browser_window *bw,
+		ಸಂರಚನಾ content *page, ಸಂರಚನಾ object_params *params);
 
 /**
  * The window containing the content has been closed.
  *
  * Calls the close function for the content.
  */
-nserror content_close(struct hlcache_handle *h);
+nserror content_close(ಸಂರಚನಾ hlcache_handle *h);
 
 /**
  * Tell a content that any selection it has, or one of its objects
  * has, must be cleared.
  */
-void content_clear_selection(struct hlcache_handle *h);
+ಶೂನ್ಯ content_clear_selection(ಸಂರಚನಾ hlcache_handle *h);
 
 /**
  * Get a text selection from a content.  Ownership is passed to the caller,
  * who must free() it.
  */
-char * content_get_selection(struct hlcache_handle *h);
+ವರ್ಣ * content_get_selection(ಸಂರಚನಾ hlcache_handle *h);
 
 /**
  * Get positional contextural information for a content.
@@ -397,8 +397,8 @@ char * content_get_selection(struct hlcache_handle *h);
  * \param[in] y The y coordinate to examine.
  * \param[out] data The context structure to fill in.
  */
-nserror content_get_contextual_content(struct hlcache_handle *h,
-		int x, int y, struct browser_window_features *data);
+nserror content_get_contextual_content(ಸಂರಚನಾ hlcache_handle *h,
+		ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y, ಸಂರಚನಾ browser_window_features *data);
 
 /**
  * scroll content at coordnate
@@ -407,8 +407,8 @@ nserror content_get_contextual_content(struct hlcache_handle *h,
  * \param[in] x The x coordinate to examine.
  * \param[in] y The y coordinate to examine.
  */
-bool content_scroll_at_point(struct hlcache_handle *h,
-		int x, int y, int scrx, int scry);
+bool content_scroll_at_point(ಸಂರಚನಾ hlcache_handle *h,
+		ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y, ಪೂರ್ಣಾಙ್ಕ scrx, ಪೂರ್ಣಾಙ್ಕ scry);
 
 /**
  * Drag and drop a file at coordinate
@@ -417,8 +417,8 @@ bool content_scroll_at_point(struct hlcache_handle *h,
  * \param[in] x The x coordinate to examine.
  * \param[in] y The y coordinate to examine.
  */
-bool content_drop_file_at_point(struct hlcache_handle *h,
-		int x, int y, char *file);
+bool content_drop_file_at_point(ಸಂರಚನಾ hlcache_handle *h,
+		ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y, ವರ್ಣ *file);
 
 
 /**
@@ -427,7 +427,7 @@ bool content_drop_file_at_point(struct hlcache_handle *h,
  * \param h content handle to debug.
  * \param op Debug operation type.
  */
-nserror content_debug(struct hlcache_handle *h, enum content_debug op);
+nserror content_debug(ಸಂರಚನಾ hlcache_handle *h, ಗಣನಾ content_debug op);
 
 
 /**
@@ -438,7 +438,7 @@ nserror content_debug(struct hlcache_handle *h, enum content_debug op);
  * \return A matching rfc5988 link or NULL if none is found.
  *
  */
-struct content_rfc5988_link *content_find_rfc5988_link(struct hlcache_handle *h, lwc_string *rel);
+ಸಂರಚನಾ content_rfc5988_link *content_find_rfc5988_link(ಸಂರಚನಾ hlcache_handle *h, lwc_string *rel);
 
 
 /**
@@ -447,7 +447,7 @@ struct content_rfc5988_link *content_find_rfc5988_link(struct hlcache_handle *h,
  * \param h handle to the content to retrieve status from
  * \return Content status
  */
-content_status content_get_status(struct hlcache_handle *h);
+content_status content_get_status(ಸಂರಚನಾ hlcache_handle *h);
 
 
 /**
@@ -456,7 +456,7 @@ content_status content_get_status(struct hlcache_handle *h);
  * \param c Content to retrieve status from.
  * \return Content status
  */
-content_status content__get_status(struct content *c);
+content_status content__get_status(ಸಂರಚನಾ content *c);
 
 
 /**
@@ -465,7 +465,7 @@ content_status content__get_status(struct content *c);
  * \param h handle to the content to retrieve status message from
  * \return Pointer to status message, or NULL if not found.
  */
-const char *content_get_status_message(struct hlcache_handle *h);
+ಧ್ರುವ ವರ್ಣ *content_get_status_message(ಸಂರಚನಾ hlcache_handle *h);
 
 
 /**
@@ -474,7 +474,7 @@ const char *content_get_status_message(struct hlcache_handle *h);
  * \param h handle to the content to get available width of.
  * \return Available width of content.
  */
-int content_get_available_width(struct hlcache_handle *h);
+ಪೂರ್ಣಾಙ್ಕ content_get_available_width(ಸಂರಚನಾ hlcache_handle *h);
 
 
 /**
@@ -483,7 +483,7 @@ int content_get_available_width(struct hlcache_handle *h);
  * \param h Content to retrieve refresh URL from
  * \return Pointer to URL, or NULL if none
  */
-struct nsurl *content_get_refresh_url(struct hlcache_handle *h);
+ಸಂರಚನಾ nsurl *content_get_refresh_url(ಸಂರಚನಾ hlcache_handle *h);
 
 
 /**
@@ -493,7 +493,7 @@ struct nsurl *content_get_refresh_url(struct hlcache_handle *h);
  * \return false if the content is not opaque or information is not
  *         known else true.
  */
-bool content_get_opaque(struct hlcache_handle *h);
+bool content_get_opaque(ಸಂರಚನಾ hlcache_handle *h);
 
 
 /**
@@ -502,7 +502,7 @@ bool content_get_opaque(struct hlcache_handle *h);
  * \param h Content to examine
  * \return True if content is quirky, false otherwise
  */
-bool content_get_quirks(struct hlcache_handle *h);
+bool content_get_quirks(ಸಂರಚನಾ hlcache_handle *h);
 
 
 /**
@@ -511,7 +511,7 @@ bool content_get_quirks(struct hlcache_handle *h);
  * \param h handle to the content.
  * \return true iff locked, else false
  */
-bool content_is_locked(struct hlcache_handle *h);
+bool content_is_locked(ಸಂರಚನಾ hlcache_handle *h);
 
 
 /**
@@ -524,7 +524,7 @@ bool content_is_locked(struct hlcache_handle *h);
  * \param srclen The length of the source code
  * \return Whether the JS function was successfully injected into the content
  */
-bool content_exec(struct hlcache_handle *h, const char *src, size_t srclen);
+bool content_exec(ಸಂರಚನಾ hlcache_handle *h, ಧ್ರುವ ವರ್ಣ *src, size_t srclen);
 
 /**
  * Determine if the content referred to any insecure objects.
@@ -537,6 +537,6 @@ bool content_exec(struct hlcache_handle *h, const char *src, size_t srclen);
  * \param h The handle to the content
  * \return Whether the content referred to any insecure objects
  */
-bool content_saw_insecure_objects(struct hlcache_handle *h);
+bool content_saw_insecure_objects(ಸಂರಚನಾ hlcache_handle *h);
 
 #endif

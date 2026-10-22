@@ -23,6 +23,6 @@
 #ifndef _NETSURF_IMAGE_ICO_H_
 #define _NETSURF_IMAGE_ICO_H_
 
-nserror nsico_init(void);
+nserror nsico_init(ಶೂನ್ಯ);
 
 #endif

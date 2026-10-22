@@ -24,41 +24,41 @@
  * implementation of user interaction with a CONTENT_HTML.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include <dom/dom.h>
+#ಅನ್ತರ್ಭಾವ <dom/dom.h>
 
-#include "utils/corestrings.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/mouse.h"
-#include "netsurf/misc.h"
-#include "netsurf/layout.h"
-#include "netsurf/keypress.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
-#include "desktop/browser_history.h"
-#include "desktop/frames.h"
-#include "desktop/scrollbar.h"
-#include "desktop/selection.h"
-#include "desktop/textarea.h"
-#include "javascript/js.h"
-#include "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsoption.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/browser_window.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/mouse.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/misc.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/layout.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/keypress.h"
+#ಅನ್ತರ್ಭಾವ "content/hlcache.h"
+#ಅನ್ತರ್ಭಾವ "content/textsearch.h"
+#ಅನ್ತರ್ಭಾವ "desktop/browser_history.h"
+#ಅನ್ತರ್ಭಾವ "desktop/frames.h"
+#ಅನ್ತರ್ಭಾವ "desktop/scrollbar.h"
+#ಅನ್ತರ್ಭಾವ "desktop/selection.h"
+#ಅನ್ತರ್ಭಾವ "desktop/textarea.h"
+#ಅನ್ತರ್ಭಾವ "javascript/js.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
 
-#include "html/box.h"
-#include "html/box_textarea.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
-#include "html/private.h"
-#include "html/imagemap.h"
-#include "html/interaction.h"
+#ಅನ್ತರ್ಭಾವ "html/box.h"
+#ಅನ್ತರ್ಭಾವ "html/box_textarea.h"
+#ಅನ್ತರ್ಭಾವ "html/box_inspect.h"
+#ಅನ್ತರ್ಭಾವ "html/font.h"
+#ಅನ್ತರ್ಭಾವ "html/form_internal.h"
+#ಅನ್ತರ್ಭಾವ "html/private.h"
+#ಅನ್ತರ್ಭಾವ "html/imagemap.h"
+#ಅನ್ತರ್ಭಾವ "html/interaction.h"
 
 /**
  * Get pointer shape for given box
@@ -67,93 +67,93 @@
  * \param imagemap  whether an imagemap applies to the box
  */
 
-static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
+ಸ್ಥಿರ browser_pointer_shape get_pointer_shape(ಸಂರಚನಾ box *box, bool imagemap)
 {
 	browser_pointer_shape pointer;
 	css_computed_style *style;
-	enum css_cursor_e cursor;
+	ಗಣನಾ css_cursor_e cursor;
 	lwc_string **cursor_uris;
 
-	if (box->type == BOX_FLOAT_LEFT || box->type == BOX_FLOAT_RIGHT)
+	ಯದಿ (box->type == BOX_FLOAT_ಎಡ || box->type == BOX_FLOAT_ಬಲ)
 		style = box->children->style;
-	else
+	ಅನ್ಯಥಾ
 		style = box->style;
 
-	if (style == NULL)
-		return BROWSER_POINTER_DEFAULT;
+	ಯದಿ (style == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ BROWSER_POINTER_DEFAULT;
 
 	cursor = css_computed_cursor(style, &cursor_uris);
 
-	switch (cursor) {
-	case CSS_CURSOR_AUTO:
-		if (box->href || (box->gadget &&
+	ವಿಕಲ್ಪ (cursor) {
+	ಪಕ್ಷ CSS_CURSOR_AUTO:
+		ಯದಿ (box->href || (box->gadget &&
 				(box->gadget->type == GADGET_IMAGE ||
 				box->gadget->type == GADGET_SUBMIT)) ||
 				imagemap) {
 			/* link */
 			pointer = BROWSER_POINTER_POINT;
-		} else if (box->gadget &&
+		} ಅನ್ಯಥಾ ಯದಿ (box->gadget &&
 				(box->gadget->type == GADGET_TEXTBOX ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_TEXTAREA)) {
 			/* text input */
 			pointer = BROWSER_POINTER_CARET;
-		} else {
+		} ಅನ್ಯಥಾ {
 			/* html content doesn't mind */
 			pointer = BROWSER_POINTER_AUTO;
 		}
-		break;
-	case CSS_CURSOR_CROSSHAIR:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_CROSSHAIR:
 		pointer = BROWSER_POINTER_CROSS;
-		break;
-	case CSS_CURSOR_POINTER:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_POINTER:
 		pointer = BROWSER_POINTER_POINT;
-		break;
-	case CSS_CURSOR_MOVE:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_MOVE:
 		pointer = BROWSER_POINTER_MOVE;
-		break;
-	case CSS_CURSOR_E_RESIZE:
-		pointer = BROWSER_POINTER_RIGHT;
-		break;
-	case CSS_CURSOR_W_RESIZE:
-		pointer = BROWSER_POINTER_LEFT;
-		break;
-	case CSS_CURSOR_N_RESIZE:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_E_RESIZE:
+		pointer = BROWSER_POINTER_ಬಲ;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_W_RESIZE:
+		pointer = BROWSER_POINTER_ಎಡ;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_N_RESIZE:
 		pointer = BROWSER_POINTER_UP;
-		break;
-	case CSS_CURSOR_S_RESIZE:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_S_RESIZE:
 		pointer = BROWSER_POINTER_DOWN;
-		break;
-	case CSS_CURSOR_NE_RESIZE:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_NE_RESIZE:
 		pointer = BROWSER_POINTER_RU;
-		break;
-	case CSS_CURSOR_SW_RESIZE:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_SW_RESIZE:
 		pointer = BROWSER_POINTER_LD;
-		break;
-	case CSS_CURSOR_SE_RESIZE:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_SE_RESIZE:
 		pointer = BROWSER_POINTER_RD;
-		break;
-	case CSS_CURSOR_NW_RESIZE:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_NW_RESIZE:
 		pointer = BROWSER_POINTER_LU;
-		break;
-	case CSS_CURSOR_TEXT:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_TEXT:
 		pointer = BROWSER_POINTER_CARET;
-		break;
-	case CSS_CURSOR_WAIT:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_WAIT:
 		pointer = BROWSER_POINTER_WAIT;
-		break;
-	case CSS_CURSOR_PROGRESS:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_PROGRESS:
 		pointer = BROWSER_POINTER_PROGRESS;
-		break;
-	case CSS_CURSOR_HELP:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ CSS_CURSOR_HELP:
 		pointer = BROWSER_POINTER_HELP;
-		break;
-	default:
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
 		pointer = BROWSER_POINTER_DEFAULT;
-		break;
+		ಭಙ್ಗ;
 	}
 
-	return pointer;
+	ಪ್ರತ್ಯಾಗಮ pointer;
 }
 
 
@@ -165,23 +165,23 @@ static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
  * \param y	y ordinate
  */
 
-static void html_box_drag_start(struct box *box, int x, int y)
+ಸ್ಥಿರ ಶೂನ್ಯ html_box_drag_start(ಸಂರಚನಾ box *box, ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
-	int box_x, box_y;
-	int scroll_mouse_x, scroll_mouse_y;
+	ಪೂರ್ಣಾಙ್ಕ box_x, box_y;
+	ಪೂರ್ಣಾಙ್ಕ scroll_mouse_x, scroll_mouse_y;
 
 	box_coords(box, &box_x, &box_y);
 
-	if (box->scroll_x != NULL) {
+	ಯದಿ (box->scroll_x != ರಿಕ್ತ) {
 		scroll_mouse_x = x - box_x ;
-		scroll_mouse_y = y - (box_y + box->padding[TOP] +
+		scroll_mouse_y = y - (box_y + box->padding[ತುದಿ_2] +
 				box->height + box->padding[BOTTOM] -
 				SCROLLBAR_WIDTH);
 		scrollbar_start_content_drag(box->scroll_x,
 				scroll_mouse_x, scroll_mouse_y);
-	} else if (box->scroll_y != NULL) {
-		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
-				box->width + box->padding[RIGHT] -
+	} ಅನ್ಯಥಾ ಯದಿ (box->scroll_y != ರಿಕ್ತ) {
+		scroll_mouse_x = x - (box_x + box->padding[ಎಡ_2] +
+				box->width + box->padding[ಬಲ_2] -
 				SCROLLBAR_WIDTH);
 		scroll_mouse_y = y - box_y;
 
@@ -200,16 +200,16 @@ static void html_box_drag_start(struct box *box, int x, int y)
  * \param y	 coordinate of mouse
  * \param dir    Direction of drag
  */
-static size_t html_selection_drag_end(struct html_content *html,
-		browser_mouse_state mouse, int x, int y, int dir)
+ಸ್ಥಿರ size_t html_selection_drag_end(ಸಂರಚನಾ html_content *html,
+		browser_mouse_state mouse, ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y, ಪೂರ್ಣಾಙ್ಕ dir)
 {
-	int pixel_offset;
-	struct box *box;
-	int dx, dy;
+	ಪೂರ್ಣಾಙ್ಕ pixel_offset;
+	ಸಂರಚನಾ box *box;
+	ಪೂರ್ಣಾಙ್ಕ dx, dy;
 	size_t idx = 0;
 
 	box = box_pick_text_box(html, x, y, dir, &dx, &dy);
-	if (box) {
+	ಯದಿ (box) {
 		plot_font_style_t fstyle;
 
 		font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
@@ -220,7 +220,7 @@ static size_t html_selection_drag_end(struct html_content *html,
 		idx += box->byte_offset;
 	}
 
-	return idx;
+	ಪ್ರತ್ಯಾಗಮ idx;
 }
 
 
@@ -238,47 +238,47 @@ static size_t html_selection_drag_end(struct html_content *html,
  * \param src The source DOM node.
  * \param dst The destination DOM node.
  */
-static void
-html__image_coords_dom_user_data_handler(dom_node_operation operation,
-					 dom_string *key,
-					 void *_data,
-					 struct dom_node *src,
-					 struct dom_node *dst)
+ಸ್ಥಿರ ಶೂನ್ಯ
+html__image_coords_dom_user_data_handler(dom_ಗಂಟು_operation operation,
+					 dom_string *ಕೀಲಿ,
+					 ಶೂನ್ಯ *_data,
+					 ಸಂರಚನಾ dom_ಗಂಟು *src,
+					 ಸಂರಚನಾ dom_ಗಂಟು *dst)
 {
-	struct image_input_coords *oldcoords, *coords = _data, *newcoords;
+	ಸಂರಚನಾ image_ಒಳಹರಿವು_coords *oldcoords, *coords = _data, *newcoords;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_image_coords_node_data,
-				key) || coords == NULL) {
-		return;
+	ಯದಿ (!dom_string_isequal(corestring_dom_ns_ಕೀಲಿ_image_coords_ಗಂಟು_data,
+				ಕೀಲಿ) || coords == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		newcoords = calloc(1, sizeof(*newcoords));
-		if (newcoords != NULL) {
+	ವಿಕಲ್ಪ (operation) {
+	ಪಕ್ಷ DOM_ಗಂಟು_CLONED:
+		newcoords = calloc(1, ಪರಿಮಾಣ(*newcoords));
+		ಯದಿ (newcoords != ರಿಕ್ತ) {
 			*newcoords = *coords;
-			if (dom_node_set_user_data(dst,
-				 corestring_dom___ns_key_image_coords_node_data,
+			ಯದಿ (dom_ಗಂಟು_set_user_data(dst,
+				 corestring_dom_ns_ಕೀಲಿ_image_coords_ಗಂಟು_data,
 				 newcoords,
 				 html__image_coords_dom_user_data_handler,
 				 &oldcoords) == DOM_NO_ERR) {
-				free(oldcoords);
+				ಮುಕ್ತ(oldcoords);
 			}
 		}
-		break;
+		ಭಙ್ಗ;
 
-	case DOM_NODE_DELETED:
-		free(coords);
-		break;
+	ಪಕ್ಷ DOM_ಗಂಟು_DELETED:
+		ಮುಕ್ತ(coords);
+		ಭಙ್ಗ;
 
-	case DOM_NODE_RENAMED:
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-		break;
+	ಪಕ್ಷ DOM_ಗಂಟು_RENAMED:
+	ಪಕ್ಷ DOM_ಗಂಟು_IMPORTED:
+	ಪಕ್ಷ DOM_ಗಂಟು_ADOPTED:
+		ಭಙ್ಗ;
 
-	default:
+	ಸ್ವಭಾವ:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ಪ್ರತಿಜ್ಞಾ(0);
 	}
 }
 
@@ -291,28 +291,28 @@ html__image_coords_dom_user_data_handler(dom_node_operation operation,
  * \param  x	   coordinate of mouse
  * \param  y	   coordinate of mouse
  */
-static void
-html_overflow_scroll_drag_end(struct scrollbar *scrollbar,
+ಸ್ಥಿರ ಶೂನ್ಯ
+html_overflow_scroll_drag_end(ಸಂರಚನಾ scrollbar *scrollbar,
 			      browser_mouse_state mouse,
-			      int x, int y)
+			      ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
-	int scroll_mouse_x, scroll_mouse_y, box_x, box_y;
-	struct html_scrollbar_data *data = scrollbar_get_data(scrollbar);
-	struct box *box;
+	ಪೂರ್ಣಾಙ್ಕ scroll_mouse_x, scroll_mouse_y, box_x, box_y;
+	ಸಂರಚನಾ html_scrollbar_data *data = scrollbar_get_data(scrollbar);
+	ಸಂರಚನಾ box *box;
 
 	box = data->box;
 	box_coords(box, &box_x, &box_y);
 
-	if (scrollbar_is_horizontal(scrollbar)) {
+	ಯದಿ (scrollbar_is_horizontal(scrollbar)) {
 		scroll_mouse_x = x - box_x;
-		scroll_mouse_y = y - (box_y + box->padding[TOP] +
+		scroll_mouse_y = y - (box_y + box->padding[ತುದಿ_2] +
 				box->height + box->padding[BOTTOM] -
 				SCROLLBAR_WIDTH);
 		scrollbar_mouse_drag_end(scrollbar, mouse,
 				scroll_mouse_x, scroll_mouse_y);
-	} else {
-		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
-				box->width + box->padding[RIGHT] -
+	} ಅನ್ಯಥಾ {
+		scroll_mouse_x = x - (box_x + box->padding[ಎಡ_2] +
+				box->width + box->padding[ಬಲ_2] -
 				SCROLLBAR_WIDTH);
 		scroll_mouse_y = y - box_y;
 		scrollbar_mouse_drag_end(scrollbar, mouse,
@@ -325,24 +325,24 @@ html_overflow_scroll_drag_end(struct scrollbar *scrollbar,
  * handle html mouse action when select menu is open
  *
  */
-static nserror
+ಸ್ಥಿರ nserror
 mouse_action_select_menu(html_content *html,
-			 struct browser_window *bw,
+			 ಸಂರಚನಾ browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
-	const char *status;
-	int width, height;
-	struct hlcache_handle *bw_content;
+	ಸಂರಚನಾ box *box;
+	ಪೂರ್ಣಾಙ್ಕ box_x = 0;
+	ಪೂರ್ಣಾಙ್ಕ box_y = 0;
+	ಧ್ರುವ ವರ್ಣ *status;
+	ಪೂರ್ಣಾಙ್ಕ width, height;
+	ಸಂರಚನಾ hlcache_handle *bw_content;
 	browser_drag_type bw_drag_type;
 
-	assert(html->visible_select_menu != NULL);
+	ಪ್ರತಿಜ್ಞಾ(html->visible_select_menu != ರಿಕ್ತ);
 
 	bw_drag_type = browser_window_get_drag_type(bw);
-	if (bw_drag_type != DRAGGING_NONE && !mouse) {
+	ಯದಿ (bw_drag_type != DRAGGING_NONE && !mouse) {
 		/* drag end: select menu */
 		form_select_mouse_drag_end(html->visible_select_menu, mouse, x, y);
 	}
@@ -350,28 +350,28 @@ mouse_action_select_menu(html_content *html,
 	box = html->visible_select_menu->box;
 	box_coords(box, &box_x, &box_y);
 
-	box_x -= box->border[LEFT].width;
+	box_x -= box->border[ಎಡ_2].width;
 	box_y += box->height + box->border[BOTTOM].width +
-		box->padding[BOTTOM] + box->padding[TOP];
+		box->padding[BOTTOM] + box->padding[ತುದಿ_2];
 
 	status = form_select_mouse_action(html->visible_select_menu,
 					  mouse,
 					  x - box_x,
 					  y - box_y);
-	if (status != NULL) {
+	ಯದಿ (status != ರಿಕ್ತ) {
 		/* set status if menu still open */
-		union content_msg_data msg_data;
-		msg_data.explicit_status_text = status;
-		content_broadcast((struct content *)html,
-				  CONTENT_MSG_STATUS,
-				  &msg_data);
-		return NSERROR_OK;
+		ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
+		ಸಂದೇಶ_data.explicit_status_text = status;
+		content_broadcast((ಸಂರಚನಾ content *)html,
+				  CONTENT_ಸಂದೇಶ_STATUS,
+				  &ಸಂದೇಶ_data);
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	/* close menu and redraw where it was */
 	form_select_get_dimensions(html->visible_select_menu, &width, &height);
 
-	html->visible_select_menu = NULL;
+	html->visible_select_menu = ರಿಕ್ತ;
 
 	bw_content = browser_window_get_content(bw);
 	content_request_redraw(bw_content,
@@ -379,7 +379,7 @@ mouse_action_select_menu(html_content *html,
 			       box_y,
 			       width,
 			       height);
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
@@ -387,44 +387,44 @@ mouse_action_select_menu(html_content *html,
  * handle html mouse action when a selection drag is being performed
  *
  */
-static nserror
+ಸ್ಥಿರ nserror
 mouse_action_drag_selection(html_content *html,
-			    struct browser_window *bw,
+			    ಸಂರಚನಾ browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
-	struct box *box;
-	int dir = -1;
-	int dx, dy;
+	ಸಂರಚನಾ box *box;
+	ಪೂರ್ಣಾಙ್ಕ dir = -1;
+	ಪೂರ್ಣಾಙ್ಕ dx, dy;
 	size_t idx;
-	union html_drag_owner drag_owner;
-	int pixel_offset;
+	ಸಙ್ಘ html_drag_owner drag_owner;
+	ಪೂರ್ಣಾಙ್ಕ pixel_offset;
 	plot_font_style_t fstyle;
 
-	if (!mouse) {
+	ಯದಿ (!mouse) {
 		/* End of selection drag */
-		if (selection_dragging_start(html->sel)) {
+		ಯದಿ (selection_dragging_start(html->sel)) {
 			dir = 1;
 		}
 
 		idx = html_selection_drag_end(html, mouse, x, y, dir);
 
-		if (idx != 0) {
+		ಯದಿ (idx != 0) {
 			selection_track(html->sel, mouse, idx);
 		}
 
 		drag_owner.no_owner = true;
-		html_set_drag_type(html, HTML_DRAG_NONE, drag_owner, NULL);
+		html_set_drag_type(html, HTML_DRAG_NONE, drag_owner, ರಿಕ್ತ);
 
-		return NSERROR_OK;
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
-	if (selection_dragging_start(html->sel)) {
+	ಯದಿ (selection_dragging_start(html->sel)) {
 		dir = 1;
 	}
 
 	box = box_pick_text_box(html, x, y, dir, &dx, &dy);
-	if (box != NULL) {
+	ಯದಿ (box != ರಿಕ್ತ) {
 		font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
 
 		guit->layout->position(&fstyle,
@@ -436,7 +436,7 @@ mouse_action_drag_selection(html_content *html,
 
 		selection_track(html->sel, mouse, box->byte_offset + idx);
 	}
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
@@ -444,24 +444,24 @@ mouse_action_drag_selection(html_content *html,
  * handle html mouse action when a scrollbar drag is being performed
  *
  */
-static nserror
+ಸ್ಥಿರ nserror
 mouse_action_drag_scrollbar(html_content *html,
-			    struct browser_window *bw,
+			    ಸಂರಚನಾ browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
-	struct scrollbar *scr;
-	struct html_scrollbar_data *data;
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
-	const char *status;
-	int scroll_mouse_x = 0, scroll_mouse_y = 0;
+	ಸಂರಚನಾ scrollbar *scr;
+	ಸಂರಚನಾ html_scrollbar_data *data;
+	ಸಂರಚನಾ box *box;
+	ಪೂರ್ಣಾಙ್ಕ box_x = 0;
+	ಪೂರ್ಣಾಙ್ಕ box_y = 0;
+	ಧ್ರುವ ವರ್ಣ *status;
+	ಪೂರ್ಣಾಙ್ಕ scroll_mouse_x = 0, scroll_mouse_y = 0;
 	scrollbar_mouse_status scrollbar_status;
 
 	scr = html->drag_owner.scrollbar;
 
-	if (!mouse) {
+	ಯದಿ (!mouse) {
 		/* drag end: scrollbar */
 		html_overflow_scroll_drag_end(scr, mouse, x, y);
 	}
@@ -472,18 +472,18 @@ mouse_action_drag_scrollbar(html_content *html,
 
 	box_coords(box, &box_x, &box_y);
 
-	if (scrollbar_is_horizontal(scr)) {
+	ಯದಿ (scrollbar_is_horizontal(scr)) {
 		scroll_mouse_x = x - box_x ;
-		scroll_mouse_y = y - (box_y + box->padding[TOP] +
+		scroll_mouse_y = y - (box_y + box->padding[ತುದಿ_2] +
 				      box->height + box->padding[BOTTOM] -
 				      SCROLLBAR_WIDTH);
 		scrollbar_status = scrollbar_mouse_action(scr,
 							  mouse,
 							  scroll_mouse_x,
 							  scroll_mouse_y);
-	} else {
-		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
-				      box->width + box->padding[RIGHT] -
+	} ಅನ್ಯಥಾ {
+		scroll_mouse_x = x - (box_x + box->padding[ಎಡ_2] +
+				      box->width + box->padding[ಬಲ_2] -
 				      SCROLLBAR_WIDTH);
 		scroll_mouse_y = y - box_y;
 
@@ -494,36 +494,36 @@ mouse_action_drag_scrollbar(html_content *html,
 	}
 	status = scrollbar_mouse_status_to_message(scrollbar_status);
 
-	if (status != NULL) {
-		union content_msg_data msg_data;
+	ಯದಿ (status != ರಿಕ್ತ) {
+		ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
 
-		msg_data.explicit_status_text = status;
-		content_broadcast((struct content *)html,
-				  CONTENT_MSG_STATUS,
-				  &msg_data);
+		ಸಂದೇಶ_data.explicit_status_text = status;
+		content_broadcast((ಸಂರಚನಾ content *)html,
+				  CONTENT_ಸಂದೇಶ_STATUS,
+				  &ಸಂದೇಶ_data);
 	}
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /**
  * handle mouse actions while dragging in a text area
  */
-static nserror
+ಸ್ಥಿರ nserror
 mouse_action_drag_textarea(html_content *html,
-			    struct browser_window *bw,
+			    ಸಂರಚನಾ browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	ಸಂರಚನಾ box *box;
+	ಪೂರ್ಣಾಙ್ಕ box_x = 0;
+	ಪೂರ್ಣಾಙ್ಕ box_y = 0;
 
 	box = html->drag_owner.textarea;
 
-	assert(box->gadget != NULL);
-	assert(box->gadget->type == GADGET_TEXTAREA ||
+	ಪ್ರತಿಜ್ಞಾ(box->gadget != ರಿಕ್ತ);
+	ಪ್ರತಿಜ್ಞಾ(box->gadget->type == GADGET_TEXTAREA ||
 	       box->gadget->type == GADGET_PASSWORD ||
 	       box->gadget->type == GADGET_TEXTBOX);
 
@@ -534,43 +534,43 @@ mouse_action_drag_textarea(html_content *html,
 			      y - box_y);
 
 	/* TODO: Set appropriate statusbar message */
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /**
  * handle mouse actions while dragging in a content
  */
-static nserror
+ಸ್ಥಿರ nserror
 mouse_action_drag_content(html_content *html,
-			  struct browser_window *bw,
+			  ಸಂರಚನಾ browser_window *bw,
 			  browser_mouse_state mouse,
-			  int x, int y)
+			  ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	ಸಂರಚನಾ box *box;
+	ಪೂರ್ಣಾಙ್ಕ box_x = 0;
+	ಪೂರ್ಣಾಙ್ಕ box_y = 0;
 
 	box = html->drag_owner.content;
-	assert(box->object != NULL);
+	ಪ್ರತಿಜ್ಞಾ(box->object != ರಿಕ್ತ);
 
 	box_coords(box, &box_x, &box_y);
 	content_mouse_track(box->object,
 			    bw, mouse,
 			    x - box_x,
 			    y - box_y);
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /**
  * local structure containing all the mouse action state information
  */
-struct mouse_action_state {
-	struct {
-		const char *status; /**< status text */
+ಸಂರಚನಾ mouse_action_state {
+	ಸಂರಚನಾ {
+		ಧ್ರುವ ವರ್ಣ *status; /**< status text */
 		browser_pointer_shape pointer; /**< pointer shape */
-		enum {
+		ಗಣನಾ {
 		      ACTION_NONE, /**< default of no action */
 		      ACTION_NOSEND, /**< do not send status and pointer message */
 		      ACTION_SUBMIT, /**< submit form */
@@ -582,55 +582,55 @@ struct mouse_action_state {
 	} result;
 
 	/** dom node */
-	struct dom_node *node;
+	ಸಂರಚನಾ dom_ಗಂಟು *ಗಂಟು;
 
 	/** html object */
-	struct {
-		struct box *box;
-		int pos_x;
-		int pos_y;
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ box *box;
+		ಪೂರ್ಣಾಙ್ಕ pos_x;
+		ಪೂರ್ಣಾಙ್ಕ pos_y;
 	} html_object;
 
 	/** non html object */
 	hlcache_handle *object;
 
 	/** iframe */
-	struct browser_window *iframe;
+	ಸಂರಚನಾ browser_window *iframe;
 
 	/** link either from href or imagemap */
-	struct {
-		struct box *box;
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ box *box;
 		nsurl *url;
-		const char *target;
+		ಧ್ರುವ ವರ್ಣ *target;
 		bool is_imagemap;
 	} link;
 
 	/** gadget */
-	struct {
-		struct form_control *control;
-		struct box *box;
-		int box_x;
-		int box_y;
-		const char *target;
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ form_control *control;
+		ಸಂರಚನಾ box *box;
+		ಪೂರ್ಣಾಙ್ಕ box_x;
+		ಪೂರ್ಣಾಙ್ಕ box_y;
+		ಧ್ರುವ ವರ್ಣ *target;
 	} gadget;
 
 	/** title */
-	const char *title;
+	ಧ್ರುವ ವರ್ಣ *title;
 
 	/** candidate box for drag operation */
-	struct box *drag_candidate;
+	ಸಂರಚನಾ box *drag_candidate;
 
 	/** scrollbar */
-	struct {
-		struct scrollbar *bar;
-		int mouse_x;
-		int mouse_y;
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ scrollbar *bar;
+		ಪೂರ್ಣಾಙ್ಕ mouse_x;
+		ಪೂರ್ಣಾಙ್ಕ mouse_y;
 	} scroll;
 
 	/** text in box */
-	struct {
-		struct box *box;
-		int box_x;
+	ಸಂರಚನಾ {
+		ಸಂರಚನಾ box *box;
+		ಪೂರ್ಣಾಙ್ಕ box_x;
 	} text;
 };
 
@@ -670,18 +670,18 @@ struct mouse_action_state {
  * text_box - text box
  * text_box_x - text_box
  */
-static nserror
-get_mouse_action_node(html_content *html,
-		      int x, int y,
-		      struct mouse_action_state *man)
+ಸ್ಥಿರ nserror
+get_mouse_action_ಗಂಟು(html_content *html,
+		      ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y,
+		      ಸಂರಚನಾ mouse_action_state *man)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	ಸಂರಚನಾ box *box;
+	ಪೂರ್ಣಾಙ್ಕ box_x = 0;
+	ಪೂರ್ಣಾಙ್ಕ box_y = 0;
 
 	/* initialise the mouse action state data */
-	memset(man, 0, sizeof(struct mouse_action_state));
-	man->node = html->layout->node; /* Default dom node to the <HTML> */
+	memset(man, 0, ಪರಿಮಾಣ(ಸಂರಚನಾ mouse_action_state));
+	man->ಗಂಟು = html->layout->ಗಂಟು; /* Default dom node to the <HTML> */
 	man->result.pointer = BROWSER_POINTER_DEFAULT;
 
 	/* search the box tree for a link, imagemap, form control, or
@@ -690,43 +690,43 @@ get_mouse_action_node(html_content *html,
 	box = html->layout;
 
 	/* Consider the margins of the html page now */
-	box_x = box->margin[LEFT];
-	box_y = box->margin[TOP];
+	box_x = box->margin[ಎಡ_2];
+	box_y = box->margin[ತುದಿ_2];
 
-	do {
+	ಕುರು {
 		/* skip hidden boxes */
-		if ((box->style != NULL) &&
+		ಯದಿ ((box->style != ರಿಕ್ತ) &&
 		    (css_computed_visibility(box->style) ==
 		     CSS_VISIBILITY_HIDDEN)) {
-			goto next_box;
+			ಗಚ್ಛ next_box;
 		}
 
-		if (box->node != NULL) {
-			man->node = box->node;
+		ಯದಿ (box->ಗಂಟು != ರಿಕ್ತ) {
+			man->ಗಂಟು = box->ಗಂಟು;
 		}
 
-		if (box->object) {
-			if (content_get_type(box->object) == CONTENT_HTML) {
+		ಯದಿ (box->object) {
+			ಯದಿ (content_get_type(box->object) == CONTENT_HTML) {
 				man->html_object.box = box;
 				man->html_object.pos_x = box_x;
 				man->html_object.pos_y = box_y;
-			} else {
+			} ಅನ್ಯಥಾ {
 				man->object = box->object;
 			}
 		}
 
-		if (box->iframe) {
+		ಯದಿ (box->iframe) {
 			man->iframe = box->iframe;
 		}
 
-		if (box->href) {
+		ಯದಿ (box->href) {
 			man->link.url = box->href;
 			man->link.target = box->target;
 			man->link.box = box;
 			man->link.is_imagemap = false;
 		}
 
-		if (box->usemap) {
+		ಯದಿ (box->usemap) {
 			man->link.url = imagemap_get(html,
 						     box->usemap,
 						     box_x,
@@ -737,71 +737,71 @@ get_mouse_action_node(html_content *html,
 			man->link.is_imagemap = true;
 		}
 
-		if (box->gadget) {
+		ಯದಿ (box->gadget) {
 			man->gadget.control = box->gadget;
 			man->gadget.box = box;
 			man->gadget.box_x = box_x;
 			man->gadget.box_y = box_y;
-			if (box->gadget->form) {
+			ಯದಿ (box->gadget->form) {
 				man->gadget.target = box->gadget->form->target;
 			}
 		}
 
-		if (box->title) {
+		ಯದಿ (box->title) {
 			man->title = box->title;
 		}
 
 		man->result.pointer = get_pointer_shape(box, false);
 
-		if ((box->scroll_x != NULL) ||
-		    (box->scroll_y != NULL)) {
-			int padding_left;
-			int padding_right;
-			int padding_top;
-			int padding_bottom;
+		ಯದಿ ((box->scroll_x != ರಿಕ್ತ) ||
+		    (box->scroll_y != ರಿಕ್ತ)) {
+			ಪೂರ್ಣಾಙ್ಕ padding_ಎಡ;
+			ಪೂರ್ಣಾಙ್ಕ padding_ಬಲ;
+			ಪೂರ್ಣಾಙ್ಕ padding_ತುದಿ;
+			ಪೂರ್ಣಾಙ್ಕ padding_bottom;
 
-			if (man->drag_candidate == NULL) {
+			ಯದಿ (man->drag_candidate == ರಿಕ್ತ) {
 				man->drag_candidate = box;
 			}
 
-			padding_left = box_x +
+			padding_ಎಡ = box_x +
 					scrollbar_get_offset(box->scroll_x);
-			padding_right = padding_left + box->padding[LEFT] +
-					box->width + box->padding[RIGHT];
-			padding_top = box_y +
+			padding_ಬಲ = padding_ಎಡ + box->padding[ಎಡ_2] +
+					box->width + box->padding[ಬಲ_2];
+			padding_ತುದಿ = box_y +
 					scrollbar_get_offset(box->scroll_y);
-			padding_bottom = padding_top + box->padding[TOP] +
+			padding_bottom = padding_ತುದಿ + box->padding[ತುದಿ_2] +
 					box->height + box->padding[BOTTOM];
 
-			if ((x > padding_left) &&
-			    (x < padding_right) &&
-			    (y > padding_top) &&
+			ಯದಿ ((x > padding_ಎಡ) &&
+			    (x < padding_ಬಲ) &&
+			    (y > padding_ತುದಿ) &&
 			    (y < padding_bottom)) {
 				/* mouse inside padding box */
 
-				if ((box->scroll_y != NULL) &&
-				    (x > (padding_right - SCROLLBAR_WIDTH))) {
+				ಯದಿ ((box->scroll_y != ರಿಕ್ತ) &&
+				    (x > (padding_ಬಲ - SCROLLBAR_WIDTH))) {
 					/* mouse above vertical box scroll */
 
 					man->scroll.bar = box->scroll_y;
-					man->scroll.mouse_x = x - (padding_right - SCROLLBAR_WIDTH);
-					man->scroll.mouse_y = y - padding_top;
-					break;
+					man->scroll.mouse_x = x - (padding_ಬಲ - SCROLLBAR_WIDTH);
+					man->scroll.mouse_y = y - padding_ತುದಿ;
+					ಭಙ್ಗ;
 
-				} else if ((box->scroll_x != NULL) &&
+				} ಅನ್ಯಥಾ ಯದಿ ((box->scroll_x != ರಿಕ್ತ) &&
 					   (y > (padding_bottom -
 							SCROLLBAR_WIDTH))) {
 					/* mouse above horizontal box scroll */
 
 					man->scroll.bar = box->scroll_x;
-					man->scroll.mouse_x = x - padding_left;
+					man->scroll.mouse_x = x - padding_ಎಡ;
 					man->scroll.mouse_y = y - (padding_bottom - SCROLLBAR_WIDTH);
-					break;
+					ಭಙ್ಗ;
 				}
 			}
 		}
 
-		if (box->text && !box->object) {
+		ಯದಿ (box->text && !box->object) {
 			man->text.box = box;
 			man->text.box_x = box_x;
 		}
@@ -809,134 +809,134 @@ get_mouse_action_node(html_content *html,
 	next_box:
 		/* iterate to next box */
 		box = box_at_point(&html->unit_len_ctx, box, x, y, &box_x, &box_y);
-	} while (box != NULL);
+	} ಯಾವತ್ (box != ರಿಕ್ತ);
 
 	/* use of box_x, box_y, or content below this point is probably a
 	 * mistake; they will refer to the last box returned by box_at_point */
 
-	assert(man->node != NULL);
+	ಪ್ರತಿಜ್ಞಾ(man->ಗಂಟು != ರಿಕ್ತ);
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on a form gadget
  */
-static nserror
+ಸ್ಥಿರ nserror
 gadget_mouse_action(html_content *html,
 		    browser_mouse_state mouse,
-		    int x, int y,
-		    struct mouse_action_state *mas)
+		    ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y,
+		    ಸಂರಚನಾ mouse_action_state *mas)
 {
-	struct content *c = (struct content *)html;
+	ಸಂರಚನಾ content *c = (ಸಂರಚನಾ content *)html;
 	textarea_mouse_status ta_status;
-	union content_msg_data msg_data;
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
 	nserror res;
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	switch (mas->gadget.control->type) {
-	case GADGET_SELECT:
+	ವಿಕಲ್ಪ (mas->gadget.control->type) {
+	ಪಕ್ಷ GADGET_SELECT:
 		mas->result.status = messages_get("FormSelect");
 		mas->result.pointer = BROWSER_POINTER_MENU;
-		if (mouse & BROWSER_MOUSE_CLICK_1 &&
+		ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1 &&
 		    nsoption_bool(core_select_menu)) {
 			html->visible_select_menu = mas->gadget.control;
 			res = form_open_select_menu(c,
 						    mas->gadget.control,
 						    form_select_menu_callback,
 						    c);
-			if (res != NSERROR_OK) {
+			ಯದಿ (res != NSERROR_OK) {
 				NSLOG(netsurf, ERROR, "%s",
 				      messages_get_errorcode(res));
-				html->visible_select_menu = NULL;
+				html->visible_select_menu = ರಿಕ್ತ;
 			}
 			mas->result.pointer = BROWSER_POINTER_DEFAULT;
-		} else if (mouse & BROWSER_MOUSE_CLICK_1) {
-			msg_data.select_menu.gadget = mas->gadget.control;
+		} ಅನ್ಯಥಾ ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1) {
+			ಸಂದೇಶ_data.select_menu.gadget = mas->gadget.control;
 			content_broadcast(c,
-					  CONTENT_MSG_SELECTMENU,
-					  &msg_data);
+					  CONTENT_ಸಂದೇಶ_SELECTMENU,
+					  &ಸಂದೇಶ_data);
 		}
-		break;
+		ಭಙ್ಗ;
 
-	case GADGET_CHECKBOX:
+	ಪಕ್ಷ GADGET_CHECKBOX:
 		mas->result.status = messages_get("FormCheckbox");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1) {
 			mas->gadget.control->selected = !mas->gadget.control->selected;
-			dom_html_input_element_set_checked(
-				(dom_html_input_element *)(mas->gadget.control->node),
+			dom_html_ಒಳಹರಿವು_element_set_checked(
+				(dom_html_ಒಳಹರಿವು_element *)(mas->gadget.control->ಗಂಟು),
 				mas->gadget.control->selected);
 			html__redraw_a_box(html, mas->gadget.box);
 		}
-		break;
+		ಭಙ್ಗ;
 
-	case GADGET_RADIO:
+	ಪಕ್ಷ GADGET_RADIO:
 		mas->result.status = messages_get("FormRadio");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1) {
 			form_radio_set(mas->gadget.control);
 		}
-		break;
+		ಭಙ್ಗ;
 
-	case GADGET_IMAGE:
+	ಪಕ್ಷ GADGET_IMAGE:
 		/* This falls through to SUBMIT */
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
-			struct image_input_coords *coords, *oldcoords;
+		ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1) {
+			ಸಂರಚನಾ image_ಒಳಹರಿವು_coords *coords, *oldcoords;
 			/** \todo Find a way to not ignore errors */
-			coords = calloc(1, sizeof(*coords));
-			if (coords == NULL) {
-				return NSERROR_OK;
+			coords = calloc(1, ಪರಿಮಾಣ(*coords));
+			ಯದಿ (coords == ರಿಕ್ತ) {
+				ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 			}
 			coords->x = x - mas->gadget.box_x;
 			coords->y = y - mas->gadget.box_y;
-			if (dom_node_set_user_data(
-				mas->gadget.control->node,
-				corestring_dom___ns_key_image_coords_node_data,
+			ಯದಿ (dom_ಗಂಟು_set_user_data(
+				mas->gadget.control->ಗಂಟು,
+				corestring_dom_ns_ಕೀಲಿ_image_coords_ಗಂಟು_data,
 				coords,
 				html__image_coords_dom_user_data_handler,
 				&oldcoords) != DOM_NO_ERR) {
-				return NSERROR_OK;
+				ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 			}
-			free(oldcoords);
+			ಮುಕ್ತ(oldcoords);
 		}
 		fallthrough;
 
-	case GADGET_SUBMIT:
-		if (mas->gadget.control->form) {
-			static char status_buffer[200];
+	ಪಕ್ಷ GADGET_SUBMIT:
+		ಯದಿ (mas->gadget.control->form) {
+			ಸ್ಥಿರ ವರ್ಣ status_buffer[200];
 
 			snprintf(status_buffer,
-				 sizeof status_buffer,
+				 ಪರಿಮಾಣ status_buffer,
 				 messages_get("FormSubmit"),
 				 mas->gadget.control->form->action);
 			mas->result.status = status_buffer;
 			mas->result.pointer = get_pointer_shape(mas->gadget.box,
 								false);
-			if (mouse & (BROWSER_MOUSE_CLICK_1 |
+			ಯದಿ (mouse & (BROWSER_MOUSE_CLICK_1 |
 				     BROWSER_MOUSE_CLICK_2)) {
 				mas->result.action = ACTION_SUBMIT;
 			}
-		} else {
+		} ಅನ್ಯಥಾ {
 			mas->result.status = messages_get("FormBadSubmit");
 		}
-		break;
+		ಭಙ್ಗ;
 
-	case GADGET_TEXTBOX:
-	case GADGET_PASSWORD:
-	case GADGET_TEXTAREA:
-		if (mas->gadget.control->type == GADGET_TEXTAREA) {
+	ಪಕ್ಷ GADGET_TEXTBOX:
+	ಪಕ್ಷ GADGET_PASSWORD:
+	ಪಕ್ಷ GADGET_TEXTAREA:
+		ಯದಿ (mas->gadget.control->type == GADGET_TEXTAREA) {
 			mas->result.status = messages_get("FormTextarea");
-		} else {
+		} ಅನ್ಯಥಾ {
 			mas->result.status = messages_get("FormTextbox");
 		}
 
-		if (click &&
+		ಯದಿ (click &&
 		    (html->selection_type != HTML_SELECTION_TEXTAREA ||
 		     html->selection_owner.textarea != mas->gadget.box)) {
-			union html_selection_owner sel_owner;
+			ಸಙ್ಘ html_selection_owner sel_owner;
 			sel_owner.none = true;
 			html_set_selection(html,
 					   HTML_SELECTION_NONE,
@@ -949,65 +949,65 @@ gadget_mouse_action(html_content *html,
 						  x - mas->gadget.box_x,
 						  y - mas->gadget.box_y);
 
-		if (ta_status & TEXTAREA_MOUSE_EDITOR) {
+		ಯದಿ (ta_status & TEXTAREA_MOUSE_EDITOR) {
 			mas->result.pointer = get_pointer_shape(mas->gadget.box, false);
-		} else {
+		} ಅನ್ಯಥಾ {
 			mas->result.pointer = BROWSER_POINTER_DEFAULT;
 			mas->result.status = scrollbar_mouse_status_to_message(ta_status >> 3);
 		}
-		break;
+		ಭಙ್ಗ;
 
-	case GADGET_HIDDEN:
+	ಪಕ್ಷ GADGET_HIDDEN:
 		/* not possible: no box generated */
-		break;
+		ಭಙ್ಗ;
 
-	case GADGET_RESET:
+	ಪಕ್ಷ GADGET_RESET:
 		mas->result.status = messages_get("FormReset");
-		break;
+		ಭಙ್ಗ;
 
-	case GADGET_FILE:
+	ಪಕ್ಷ GADGET_FILE:
 		mas->result.status = messages_get("FormFile");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
-			msg_data.gadget_click.gadget = mas->gadget.control;
+		ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1) {
+			ಸಂದೇಶ_data.gadget_click.gadget = mas->gadget.control;
 			content_broadcast(c,
-					  CONTENT_MSG_GADGETCLICK,
-					  &msg_data);
+					  CONTENT_ಸಂದೇಶ_GADGETCLICK,
+					  &ಸಂದೇಶ_data);
 		}
-		break;
+		ಭಙ್ಗ;
 
-	case GADGET_BUTTON:
+	ಪಕ್ಷ GADGET_BUTTON:
 		/* This gadget cannot be activated */
 		mas->result.status = messages_get("FormButton");
-		break;
+		ಭಙ್ಗ;
 	}
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on an iframe
  */
-static nserror
-iframe_mouse_action(struct browser_window *bw,
+ಸ್ಥಿರ nserror
+iframe_mouse_action(ಸಂರಚನಾ browser_window *bw,
 		    browser_mouse_state mouse,
-		    int x, int y,
-		    struct mouse_action_state *mas)
+		    ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y,
+		    ಸಂರಚನಾ mouse_action_state *mas)
 {
-	int pos_x, pos_y;
-	float scale;
+	ಪೂರ್ಣಾಙ್ಕ pos_x, pos_y;
+	ಭಿನ್ನ scale;
 
 	scale = browser_window_get_scale(bw);
 
 	browser_window_get_position(mas->iframe, false, &pos_x, &pos_y);
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 ||
+	ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1 ||
 	    mouse & BROWSER_MOUSE_CLICK_2) {
 		browser_window_mouse_click(mas->iframe,
 					   mouse,
 					   (x * scale) - pos_x,
 					   (y * scale) - pos_y);
-	} else {
+	} ಅನ್ಯಥಾ {
 		browser_window_mouse_track(mas->iframe,
 					   mouse,
 					   (x * scale) - pos_x,
@@ -1015,41 +1015,41 @@ iframe_mouse_action(struct browser_window *bw,
 	}
 	mas->result.action = ACTION_NOSEND;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on an html object
  */
-static nserror
+ಸ್ಥಿರ nserror
 html_object_mouse_action(html_content *html,
-			 struct browser_window *bw,
+			 ಸಂರಚನಾ browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y,
-			 struct mouse_action_state *mas)
+			 ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y,
+			 ಸಂರಚನಾ mouse_action_state *mas)
 {
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	if (click &&
+	ಯದಿ (click &&
 	    (html->selection_type != HTML_SELECTION_CONTENT ||
 	     html->selection_owner.content != mas->html_object.box)) {
-		union html_selection_owner sel_owner;
+		ಸಙ್ಘ html_selection_owner sel_owner;
 		sel_owner.none = true;
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 ||
+	ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1 ||
 	    mouse & BROWSER_MOUSE_CLICK_2) {
 		content_mouse_action(mas->html_object.box->object,
 				     bw,
 				     mouse,
 				     x - mas->html_object.pos_x,
 				     y - mas->html_object.pos_y);
-	} else {
+	} ಅನ್ಯಥಾ {
 		content_mouse_track(mas->html_object.box->object,
 				    bw,
 				    mouse,
@@ -1058,7 +1058,7 @@ html_object_mouse_action(html_content *html,
 	}
 
 	mas->result.action = ACTION_NOSEND;
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
@@ -1068,64 +1068,64 @@ html_object_mouse_action(html_content *html,
  * \param urm The url to check.
  * \return true if the url is a javascript scheme else false
  */
-static bool is_javascript_navigate_url(nsurl *url)
+ಸ್ಥಿರ bool is_javascript_navigate_url(nsurl *url)
 {
 	bool is_js = false;
 	lwc_string *scheme;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme != NULL) {
-		if (scheme == corestring_lwc_javascript) {
+	ಯದಿ (scheme != ರಿಕ್ತ) {
+		ಯದಿ (scheme == corestring_lwc_javascript) {
 			is_js = true;
 		}
 		lwc_string_unref(scheme);
 	}
-	return is_js;
+	ಪ್ರತ್ಯಾಗಮ is_js;
 }
 
 
 /**
  * process mouse activity on a link
  */
-static nserror
+ಸ್ಥಿರ nserror
 link_mouse_action(html_content *html,
-		  struct browser_window *bw,
+		  ಸಂರಚನಾ browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y,
-		  struct mouse_action_state *mas)
+		  ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y,
+		  ಸಂರಚನಾ mouse_action_state *mas)
 {
 	nserror res;
-	char *url_s = NULL;
+	ವರ್ಣ *url_s = ರಿಕ್ತ;
 	size_t url_l = 0;
-	static char status_buffer[200];
-	union content_msg_data msg_data;
+	ಸ್ಥಿರ ವರ್ಣ status_buffer[200];
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
 
-	if (nsoption_bool(display_decoded_idn) == true) {
+	ಯದಿ (nsoption_bool(display_decoded_idn) == true) {
 		res = nsurl_get_utf8(mas->link.url, &url_s, &url_l);
-		if (res != NSERROR_OK) {
+		ಯದಿ (res != NSERROR_OK) {
 			/* Unable to obtain a decoded IDN. This is not
 			 *  a fatal error.  Ensure the string pointer
 			 *  is NULL so we use the encoded version.
 			 */
-			url_s = NULL;
+			url_s = ರಿಕ್ತ;
 		}
 	}
 
-	if (mas->title) {
+	ಯದಿ (mas->title) {
 		snprintf(status_buffer,
-			 sizeof status_buffer,
+			 ಪರಿಮಾಣ status_buffer,
 			 "%s: %s",
 			 url_s ? url_s : nsurl_access(mas->link.url),
 			 mas->title);
-	} else {
+	} ಅನ್ಯಥಾ {
 		snprintf(status_buffer,
-			 sizeof status_buffer,
+			 ಪರಿಮಾಣ status_buffer,
 			 "%s",
 			 url_s ? url_s : nsurl_access(mas->link.url));
 	}
 
-	if (url_s != NULL) {
-		free(url_s);
+	ಯದಿ (url_s != ರಿಕ್ತ) {
+		ಮುಕ್ತ(url_s);
 	}
 
 	mas->result.status = status_buffer;
@@ -1133,91 +1133,91 @@ link_mouse_action(html_content *html,
 	mas->result.pointer = get_pointer_shape(mas->link.box,
 						mas->link.is_imagemap);
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 &&
+	ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1 &&
 	    mouse & BROWSER_MOUSE_MOD_1) {
 		/* force download of link */
 		browser_window_navigate(bw,
 					mas->link.url,
-					content_get_url((struct content *)html),
+					content_get_url((ಸಂರಚನಾ content *)html),
 					BW_NAVIGATE_DOWNLOAD,
-					NULL,
-					NULL,
-					NULL);
+					ರಿಕ್ತ,
+					ರಿಕ್ತ,
+					ರಿಕ್ತ);
 
-	} else if (mouse & BROWSER_MOUSE_CLICK_2 &&
+	} ಅನ್ಯಥಾ ಯದಿ (mouse & BROWSER_MOUSE_CLICK_2 &&
 		   mouse & BROWSER_MOUSE_MOD_1) {
-		msg_data.savelink.url = mas->link.url;
-		msg_data.savelink.title = mas->title;
-		content_broadcast((struct content *)html,
-				  CONTENT_MSG_SAVELINK,
-				  &msg_data);
+		ಸಂದೇಶ_data.savelink.url = mas->link.url;
+		ಸಂದೇಶ_data.savelink.title = mas->title;
+		content_broadcast((ಸಂರಚನಾ content *)html,
+				  CONTENT_ಸಂದೇಶ_SAVELINK,
+				  &ಸಂದೇಶ_data);
 
-	} else if (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)) {
-		if (is_javascript_navigate_url(mas->link.url)) {
+	} ಅನ್ಯಥಾ ಯದಿ (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)) {
+		ಯದಿ (is_javascript_navigate_url(mas->link.url)) {
 			mas->result.action = ACTION_JS;
-		} else {
+		} ಅನ್ಯಥಾ {
 			mas->result.action = ACTION_NAVIGATE;
 		}
 	}
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
-static nserror
+ಸ್ಥಿರ nserror
 default_mouse_action_focus(html_content *html, browser_mouse_state mouse)
 {
-	if (mouse && mouse < BROWSER_MOUSE_MOD_1) {
+	ಯದಿ (mouse && mouse < BROWSER_MOUSE_MOD_1) {
 		/* ensure key presses still act on the browser window */
-		union html_focus_owner fo;
+		ಸಙ್ಘ html_focus_owner fo;
 		fo.self = true;
-		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, NULL);
+		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, ರಿಕ್ತ);
 	}
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /**
  * process mouse activity if it is not anything else
  */
-static nserror
+ಸ್ಥಿರ nserror
 default_mouse_action(html_content *html,
-		  struct browser_window *bw,
+		  ಸಂರಚನಾ browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y,
-		  struct mouse_action_state *mas)
+		  ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y,
+		  ಸಂರಚನಾ mouse_action_state *mas)
 {
-	struct content *c = (struct content *)html;
+	ಸಂರಚನಾ content *c = (ಸಂರಚನಾ content *)html;
 
 	/* frame resizing */
-	if (browser_window_frame_resize_start(bw, mouse, x, y, &mas->result.pointer)) {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+	ಯದಿ (browser_window_frame_resize_start(bw, mouse, x, y, &mas->result.pointer)) {
+		ಯದಿ (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
 			mas->result.status = messages_get("FrameDrag");
 		}
-		return default_mouse_action_focus(html, mouse);
+		ಪ್ರತ್ಯಾಗಮ default_mouse_action_focus(html, mouse);
 	}
 
 	/* clicking in the main page removes the selection from any text areas.
 	 */
-	union html_selection_owner sel_owner;
+	ಸಙ್ಘ html_selection_owner sel_owner;
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	if (click && html->focus_type != HTML_FOCUS_SELF) {
-		union html_focus_owner fo;
+	ಯದಿ (click && html->focus_type != HTML_FOCUS_SELF) {
+		ಸಙ್ಘ html_focus_owner fo;
 		fo.self = true;
-		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, NULL);
+		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, ರಿಕ್ತ);
 	}
-	if (click && html->selection_type != HTML_SELECTION_SELF) {
+	ಯದಿ (click && html->selection_type != HTML_SELECTION_SELF) {
 		sel_owner.none = true;
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mas->text.box) {
-		int pixel_offset;
+	ಯದಿ (mas->text.box) {
+		ಪೂರ್ಣಾಙ್ಕ pixel_offset;
 		size_t idx;
 		plot_font_style_t fstyle;
 
@@ -1232,7 +1232,7 @@ default_mouse_action(html_content *html,
 				       &idx,
 				       &pixel_offset);
 
-		if (selection_click(html->sel,
+		ಯದಿ (selection_click(html->sel,
 				    html->bw,
 				    mouse,
 				    mas->text.box->byte_offset + idx)) {
@@ -1240,72 +1240,72 @@ default_mouse_action(html_content *html,
 			 * main browser window, paste text
 			 * operations ignored */
 			html_drag_type drag_type;
-			union html_drag_owner drag_owner;
+			ಸಙ್ಘ html_drag_owner drag_owner;
 
-			if (selection_dragging(html->sel)) {
+			ಯದಿ (selection_dragging(html->sel)) {
 				drag_type = HTML_DRAG_SELECTION;
 				drag_owner.no_owner = true;
 				html_set_drag_type(html,
 						   drag_type,
 						   drag_owner,
-						   NULL);
+						   ರಿಕ್ತ);
 				mas->result.status = messages_get("Selecting");
 			}
 
-			if (selection_active(html->sel)) {
+			ಯದಿ (selection_active(html->sel)) {
 				sel_owner.none = false;
 				html_set_selection(html, HTML_SELECTION_SELF,
 						   sel_owner, true);
-			} else if (click && html->selection_type != HTML_SELECTION_NONE) {
+			} ಅನ್ಯಥಾ ಯದಿ (click && html->selection_type != HTML_SELECTION_NONE) {
 				sel_owner.none = true;
 				html_set_selection(html, HTML_SELECTION_NONE,
 						   sel_owner, true);
 			}
 
-			return default_mouse_action_focus(html, mouse);
+			ಪ್ರತ್ಯಾಗಮ default_mouse_action_focus(html, mouse);
 		}
 
-	} else if (mouse & BROWSER_MOUSE_PRESS_1) {
+	} ಅನ್ಯಥಾ ಯದಿ (mouse & BROWSER_MOUSE_PRESS_1) {
 		sel_owner.none = true;
 		selection_clear(html->sel, true);
 	}
 
-	if (selection_active(html->sel)) {
+	ಯದಿ (selection_active(html->sel)) {
 		sel_owner.none = false;
 		html_set_selection(html, HTML_SELECTION_SELF, sel_owner, true);
-	} else if (click && html->selection_type != HTML_SELECTION_NONE) {
+	} ಅನ್ಯಥಾ ಯದಿ (click && html->selection_type != HTML_SELECTION_NONE) {
 		sel_owner.none = true;
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mas->title) {
+	ಯದಿ (mas->title) {
 		mas->result.status = mas->title;
 	}
 
-	if (mouse & BROWSER_MOUSE_DRAG_1) {
-		if (mouse & BROWSER_MOUSE_MOD_2) {
-			union content_msg_data msg_data;
-			msg_data.dragsave.type = CONTENT_SAVE_COMPLETE;
-			msg_data.dragsave.content = NULL;
-			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
-		} else {
-			if (mas->drag_candidate == NULL) {
+	ಯದಿ (mouse & BROWSER_MOUSE_DRAG_1) {
+		ಯದಿ (mouse & BROWSER_MOUSE_MOD_2) {
+			ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
+			ಸಂದೇಶ_data.dragsave.type = CONTENT_SAVE_COMPLETE;
+			ಸಂದೇಶ_data.dragsave.content = ರಿಕ್ತ;
+			content_broadcast(c, CONTENT_ಸಂದೇಶ_DRAGSAVE, &ಸಂದೇಶ_data);
+		} ಅನ್ಯಥಾ {
+			ಯದಿ (mas->drag_candidate == ರಿಕ್ತ) {
 				browser_window_page_drag_start(bw, x, y);
-			} else {
+			} ಅನ್ಯಥಾ {
 				html_box_drag_start(mas->drag_candidate, x, y);
 			}
 			mas->result.pointer = BROWSER_POINTER_MOVE;
 		}
-	} else if (mouse & BROWSER_MOUSE_DRAG_2) {
-		if (mouse & BROWSER_MOUSE_MOD_2) {
-			union content_msg_data msg_data;
-			msg_data.dragsave.type = CONTENT_SAVE_SOURCE;
-			msg_data.dragsave.content = NULL;
-			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
-		} else {
-			if (mas->drag_candidate == NULL) {
+	} ಅನ್ಯಥಾ ಯದಿ (mouse & BROWSER_MOUSE_DRAG_2) {
+		ಯದಿ (mouse & BROWSER_MOUSE_MOD_2) {
+			ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
+			ಸಂದೇಶ_data.dragsave.type = CONTENT_SAVE_SOURCE;
+			ಸಂದೇಶ_data.dragsave.content = ರಿಕ್ತ;
+			content_broadcast(c, CONTENT_ಸಂದೇಶ_DRAGSAVE, &ಸಂದೇಶ_data);
+		} ಅನ್ಯಥಾ {
+			ಯದಿ (mas->drag_candidate == ರಿಕ್ತ) {
 				browser_window_page_drag_start(bw, x, y);
-			} else {
+			} ಅನ್ಯಥಾ {
 				html_box_drag_start(mas->drag_candidate, x, y);
 			}
 			mas->result.pointer = BROWSER_POINTER_MOVE;
@@ -1313,22 +1313,22 @@ default_mouse_action(html_content *html,
 	}
 
 
-	return default_mouse_action_focus(html, mouse);
+	ಪ್ರತ್ಯಾಗಮ default_mouse_action_focus(html, mouse);
 }
 
 
 /**
  * handle non dragging mouse actions
  */
-static nserror
+ಸ್ಥಿರ nserror
 mouse_action_drag_none(html_content *html,
-		       struct browser_window *bw,
+		       ಸಂರಚನಾ browser_window *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
 	nserror res;
-	struct content *c = (struct content *)html;
-	union content_msg_data msg_data;
+	ಸಂರಚನಾ content *c = (ಸಂರಚನಾ content *)html;
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
 	lwc_string *path;
 
 	/**
@@ -1336,18 +1336,18 @@ mouse_action_drag_none(html_content *html,
 	 *
 	 * not on heap to avoid allocation or stack because it is large
 	 */
-	static struct mouse_action_state mas;
+	ಸ್ಥಿರ ಸಂರಚನಾ mouse_action_state mas;
 
-	res = get_mouse_action_node(html, x, y, &mas);
-	if (res != NSERROR_OK) {
-		return res;
+	res = get_mouse_action_ಗಂಟು(html, x, y, &mas);
+	ಯದಿ (res != NSERROR_OK) {
+		ಪ್ರತ್ಯಾಗಮ res;
 	}
 
-	if (mouse & BROWSER_MOUSE_CLICK_4) {
+	ಯದಿ (mouse & BROWSER_MOUSE_CLICK_4) {
 		mas.result.action = ACTION_BACK;
-	} else if (mouse & BROWSER_MOUSE_CLICK_5) {
+	} ಅನ್ಯಥಾ ಯದಿ (mouse & BROWSER_MOUSE_CLICK_5) {
 		mas.result.action = ACTION_FORWARD;
-	} else if (mas.scroll.bar) {
+	} ಅನ್ಯಥಾ ಯದಿ (mas.scroll.bar) {
 		mas.result.status = scrollbar_mouse_status_to_message(
 				scrollbar_mouse_action(mas.scroll.bar,
 						       mouse,
@@ -1355,69 +1355,69 @@ mouse_action_drag_none(html_content *html,
 						       mas.scroll.mouse_y));
 		mas.result.pointer = BROWSER_POINTER_DEFAULT;
 
-	} else if (mas.gadget.control) {
+	} ಅನ್ಯಥಾ ಯದಿ (mas.gadget.control) {
 		res = gadget_mouse_action(html, mouse, x, y, &mas);
 
-	} else if ((mas.object != NULL) && (mouse & BROWSER_MOUSE_MOD_2)) {
+	} ಅನ್ಯಥಾ ಯದಿ ((mas.object != ರಿಕ್ತ) && (mouse & BROWSER_MOUSE_MOD_2)) {
 
-		if (mouse & BROWSER_MOUSE_DRAG_2) {
-			msg_data.dragsave.type = CONTENT_SAVE_NATIVE;
-			msg_data.dragsave.content = mas.object;
-			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
+		ಯದಿ (mouse & BROWSER_MOUSE_DRAG_2) {
+			ಸಂದೇಶ_data.dragsave.type = CONTENT_SAVE_NATIVE;
+			ಸಂದೇಶ_data.dragsave.content = mas.object;
+			content_broadcast(c, CONTENT_ಸಂದೇಶ_DRAGSAVE, &ಸಂದೇಶ_data);
 
-		} else if (mouse & BROWSER_MOUSE_DRAG_1) {
-			msg_data.dragsave.type = CONTENT_SAVE_ORIG;
-			msg_data.dragsave.content = mas.object;
-			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
+		} ಅನ್ಯಥಾ ಯದಿ (mouse & BROWSER_MOUSE_DRAG_1) {
+			ಸಂದೇಶ_data.dragsave.type = CONTENT_SAVE_ORIG;
+			ಸಂದೇಶ_data.dragsave.content = mas.object;
+			content_broadcast(c, CONTENT_ಸಂದೇಶ_DRAGSAVE, &ಸಂದೇಶ_data);
 		}
 
 		/* \todo should have a drag-saving object msg */
 
-	} else if (mas.iframe != NULL) {
+	} ಅನ್ಯಥಾ ಯದಿ (mas.iframe != ರಿಕ್ತ) {
 		res = iframe_mouse_action(bw, mouse, x, y, &mas);
 
-	} else if (mas.html_object.box != NULL) {
+	} ಅನ್ಯಥಾ ಯದಿ (mas.html_object.box != ರಿಕ್ತ) {
 		res = html_object_mouse_action(html, bw, mouse, x, y, &mas);
 
-	} else if (mas.link.url != NULL) {
+	} ಅನ್ಯಥಾ ಯದಿ (mas.link.url != ರಿಕ್ತ) {
 		res = link_mouse_action(html, bw, mouse, x, y, &mas);
 
-	} else {
+	} ಅನ್ಯಥಾ {
 		res = default_mouse_action(html, bw, mouse, x, y, &mas);
 
 	}
-	if (res != NSERROR_OK) {
-		return res;
+	ಯದಿ (res != NSERROR_OK) {
+		ಪ್ರತ್ಯಾಗಮ res;
 	}
 
 	/* send status and pointer message */
-	if (mas.result.action != ACTION_NOSEND) {
-		msg_data.explicit_status_text = mas.result.status;
-		content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+	ಯದಿ (mas.result.action != ACTION_NOSEND) {
+		ಸಂದೇಶ_data.explicit_status_text = mas.result.status;
+		content_broadcast(c, CONTENT_ಸಂದೇಶ_STATUS, &ಸಂದೇಶ_data);
 
-		msg_data.pointer = mas.result.pointer;
-		content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+		ಸಂದೇಶ_data.pointer = mas.result.pointer;
+		content_broadcast(c, CONTENT_ಸಂದೇಶ_POINTER, &ಸಂದೇಶ_data);
 	}
 
 	/* fire dom click event */
-	if (mouse & BROWSER_MOUSE_CLICK_1) {
-		fire_generic_dom_event(corestring_dom_click, mas.node, true, true);
+	ಯದಿ (mouse & BROWSER_MOUSE_CLICK_1) {
+		fire_generic_dom_event(corestring_dom_click, mas.ಗಂಟು, true, true);
 	}
 
 	/* deferred actions that can cause this browser_window to be destroyed
 	 * and must therefore be done after set_status/pointer
 	 */
-	switch (mas.result.action) {
-	case ACTION_SUBMIT:
+	ವಿಕಲ್ಪ (mas.result.action) {
+	ಪಕ್ಷ ACTION_SUBMIT:
 		res = form_submit(content_get_url(c),
 				  browser_window_find_target(bw,
 							     mas.gadget.target,
 							     mouse),
 				  mas.gadget.control->form,
 				  mas.gadget.control);
-		break;
+		ಭಙ್ಗ;
 
-	case ACTION_NAVIGATE:
+	ಪಕ್ಷ ACTION_NAVIGATE:
 		res = browser_window_navigate(
 				browser_window_find_target(bw,
 							   mas.link.target,
@@ -1425,98 +1425,98 @@ mouse_action_drag_none(html_content *html,
 				mas.link.url,
 				content_get_url(c),
 				BW_NAVIGATE_HISTORY,
-				NULL,
-				NULL,
-				NULL);
-		break;
+				ರಿಕ್ತ,
+				ರಿಕ್ತ,
+				ರಿಕ್ತ);
+		ಭಙ್ಗ;
 
-	case ACTION_JS:
+	ಪಕ್ಷ ACTION_JS:
 		path = nsurl_get_component(mas.link.url, NSURL_PATH);
-		if (path != NULL) {
+		ಯದಿ (path != ರಿಕ್ತ) {
 			html_exec(c,
 				  lwc_string_data(path),
 				  lwc_string_length(path));
 			lwc_string_unref(path);
 		}
-		break;
+		ಭಙ್ಗ;
 
-	case ACTION_BACK:
+	ಪಕ್ಷ ACTION_BACK:
 		res = browser_window_history_back(bw, false);
-		break;
+		ಭಙ್ಗ;
 
-	case ACTION_FORWARD:
+	ಪಕ್ಷ ACTION_FORWARD:
 		res = browser_window_history_forward(bw, false);
-		break;
+		ಭಙ್ಗ;
 
-	case ACTION_NOSEND:
-	case ACTION_NONE:
+	ಪಕ್ಷ ACTION_NOSEND:
+	ಪಕ್ಷ ACTION_NONE:
 		res = NSERROR_OK;
-		break;
+		ಭಙ್ಗ;
 	}
 
-	return res;
+	ಪ್ರತ್ಯಾಗಮ res;
 }
 
 
 /* exported interface documented in html/interaction.h */
-nserror html_mouse_track(struct content *c,
-			 struct browser_window *bw,
+nserror html_mouse_track(ಸಂರಚನಾ content *c,
+			 ಸಂರಚನಾ browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
-	return html_mouse_action(c, bw, mouse, x, y);
+	ಪ್ರತ್ಯಾಗಮ html_mouse_action(c, bw, mouse, x, y);
 }
 
 
 /* exported interface documented in html/interaction.h */
 nserror
-html_mouse_action(struct content *c,
-		  struct browser_window *bw,
+html_mouse_action(ಸಂರಚನಾ content *c,
+		  ಸಂರಚನಾ browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y)
+		  ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y)
 {
 	html_content *html = (html_content *)c;
 	nserror res = NSERROR_OK;
 
 	/* handle open select menu */
-	if (html->visible_select_menu != NULL) {
-		return mouse_action_select_menu(html, bw, mouse, x, y);
+	ಯದಿ (html->visible_select_menu != ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ mouse_action_select_menu(html, bw, mouse, x, y);
 	}
 
 	/* handle content drag */
-	switch (html->drag_type) {
-	case HTML_DRAG_SELECTION:
+	ವಿಕಲ್ಪ (html->drag_type) {
+	ಪಕ್ಷ HTML_DRAG_SELECTION:
 		res = mouse_action_drag_selection(html, bw, mouse, x, y);
-		break;
+		ಭಙ್ಗ;
 
-	case HTML_DRAG_SCROLLBAR:
+	ಪಕ್ಷ HTML_DRAG_SCROLLBAR:
 		res = mouse_action_drag_scrollbar(html, bw, mouse, x, y);
-		break;
+		ಭಙ್ಗ;
 
-	case HTML_DRAG_TEXTAREA_SELECTION:
-	case HTML_DRAG_TEXTAREA_SCROLLBAR:
+	ಪಕ್ಷ HTML_DRAG_TEXTAREA_SELECTION:
+	ಪಕ್ಷ HTML_DRAG_TEXTAREA_SCROLLBAR:
 		res = mouse_action_drag_textarea(html, bw, mouse, x, y);
-		break;
+		ಭಙ್ಗ;
 
-	case HTML_DRAG_CONTENT_SELECTION:
-	case HTML_DRAG_CONTENT_SCROLL:
+	ಪಕ್ಷ HTML_DRAG_CONTENT_SELECTION:
+	ಪಕ್ಷ HTML_DRAG_CONTENT_SCROLL:
 		res = mouse_action_drag_content(html, bw, mouse, x, y);
-		break;
+		ಭಙ್ಗ;
 
-	case HTML_DRAG_NONE:
+	ಪಕ್ಷ HTML_DRAG_NONE:
 		res = mouse_action_drag_none(html, bw, mouse, x, y);
-		break;
+		ಭಙ್ಗ;
 
-	default:
+	ಸ್ವಭಾವ:
 		/* Unknown content related drag type */
-		assert(0 && "Unknown content related drag type");
+		ಪ್ರತಿಜ್ಞಾ(0 && "Unknown content related drag type");
 	}
 
-	if (res != NSERROR_OK) {
+	ಯದಿ (res != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "%s", messages_get_errorcode(res));
 	}
 
-	return res;
+	ಪ್ರತ್ಯಾಗಮ res;
 }
 
 
@@ -1527,10 +1527,10 @@ html_mouse_action(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-bool html_keypress(struct content *c, uint32_t key)
+bool html_keypress(ಸಂರಚನಾ content *c, uint32_t ಕೀಲಿ)
 {
 	html_content *html = (html_content *) c;
-	struct selection *sel = html->sel;
+	ಸಂರಚನಾ selection *sel = html->sel;
 
 	/** \todo
 	 * At the moment, the front end interface for keypress only gives
@@ -1563,76 +1563,76 @@ bool html_keypress(struct content *c, uint32_t key)
 	 * `event.preventDefault()` then we won't handle the event when
 	 * we're not supposed to.
 	 */
-	if (html->layout != NULL && html->layout->node != NULL) {
+	ಯದಿ (html->layout != ರಿಕ್ತ && html->layout->ಗಂಟು != ರಿಕ್ತ) {
 		fire_dom_keyboard_event(corestring_dom_keydown,
-				html->layout->node, true, true, key);
+				html->layout->ಗಂಟು, true, true, ಕೀಲಿ);
 	}
 
-	switch (html->focus_type) {
-	case HTML_FOCUS_CONTENT:
-		return content_keypress(html->focus_owner.content->object, key);
+	ವಿಕಲ್ಪ (html->focus_type) {
+	ಪಕ್ಷ HTML_FOCUS_CONTENT:
+		ಪ್ರತ್ಯಾಗಮ content_keypress(html->focus_owner.content->object, ಕೀಲಿ);
 
-	case HTML_FOCUS_TEXTAREA:
-		if (box_textarea_keypress(html, html->focus_owner.textarea, key) == NSERROR_OK) {
-			return true;
-		} else {
-			return false;
+	ಪಕ್ಷ HTML_FOCUS_TEXTAREA:
+		ಯದಿ (box_textarea_keypress(html, html->focus_owner.textarea, ಕೀಲಿ) == NSERROR_OK) {
+			ಪ್ರತ್ಯಾಗಮ true;
+		} ಅನ್ಯಥಾ {
+			ಪ್ರತ್ಯಾಗಮ false;
 		}
 
-	default:
+	ಸ್ವಭಾವ:
 		/* Deal with it below */
-		break;
+		ಭಙ್ಗ;
 	}
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
+	ವಿಕಲ್ಪ (ಕೀಲಿ) {
+	ಪಕ್ಷ NS_ಕೀಲಿ_COPY_SELECTION:
 		selection_copy_to_clipboard(sel);
-		return true;
+		ಪ್ರತ್ಯಾಗಮ true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	ಪಕ್ಷ NS_ಕೀಲಿ_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		ಪ್ರತ್ಯಾಗಮ true;
 
-	case NS_KEY_SELECT_ALL:
+	ಪಕ್ಷ NS_ಕೀಲಿ_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		ಪ್ರತ್ಯಾಗಮ true;
 
-	case NS_KEY_ESCAPE:
+	ಪಕ್ಷ NS_ಕೀಲಿ_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		ಪ್ರತ್ಯಾಗಮ selection_clear(sel, true);
 	}
 
-	return false;
+	ಪ್ರತ್ಯಾಗಮ false;
 }
 
 
 /**
  * Callback for in-page scrollbars.
  */
-void html_overflow_scroll_callback(void *client_data,
-		struct scrollbar_msg_data *scrollbar_data)
+ಶೂನ್ಯ html_overflow_scroll_callback(ಶೂನ್ಯ *client_data,
+		ಸಂರಚನಾ scrollbar_ಸಂದೇಶ_data *scrollbar_data)
 {
-	struct html_scrollbar_data *data = client_data;
+	ಸಂರಚನಾ html_scrollbar_data *data = client_data;
 	html_content *html = (html_content *)data->c;
-	struct box *box = data->box;
-	union content_msg_data msg_data;
+	ಸಂರಚನಾ box *box = data->box;
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
 	html_drag_type drag_type;
-	union html_drag_owner drag_owner;
+	ಸಙ್ಘ html_drag_owner drag_owner;
 
-	switch(scrollbar_data->msg) {
-	case SCROLLBAR_MSG_MOVED:
+	ವಿಕಲ್ಪ(scrollbar_data->ಸಂದೇಶ) {
+	ಪಕ್ಷ SCROLLBAR_ಸಂದೇಶ_MOVED:
 
-		if (html->reflowing == true) {
+		ಯದಿ (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
-			break;
+			ಭಙ್ಗ;
 		}
 
 		html__redraw_a_box(html, box);
-		break;
-	case SCROLLBAR_MSG_SCROLL_START:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ SCROLLBAR_ಸಂದೇಶ_SCROLL_START:
 	{
-		struct rect rect = {
+		ಸಂರಚನಾ rect rect = {
 			.x0 = scrollbar_data->x0,
 			.y0 = scrollbar_data->y0,
 			.x1 = scrollbar_data->x1,
@@ -1642,96 +1642,96 @@ void html_overflow_scroll_callback(void *client_data,
 		drag_owner.scrollbar = scrollbar_data->scrollbar;
 		html_set_drag_type(html, drag_type, drag_owner, &rect);
 	}
-		break;
-	case SCROLLBAR_MSG_SCROLL_FINISHED:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ SCROLLBAR_ಸಂದೇಶ_SCROLL_FINISHED:
 		drag_type = HTML_DRAG_NONE;
 		drag_owner.no_owner = true;
-		html_set_drag_type(html, drag_type, drag_owner, NULL);
+		html_set_drag_type(html, drag_type, drag_owner, ರಿಕ್ತ);
 
-		msg_data.pointer = BROWSER_POINTER_AUTO;
-		content_broadcast(data->c, CONTENT_MSG_POINTER, &msg_data);
-		break;
+		ಸಂದೇಶ_data.pointer = BROWSER_POINTER_AUTO;
+		content_broadcast(data->c, CONTENT_ಸಂದೇಶ_POINTER, &ಸಂದೇಶ_data);
+		ಭಙ್ಗ;
 	}
 }
 
 
 /* Documented in html_internal.h */
-void html_set_drag_type(html_content *html, html_drag_type drag_type,
-		union html_drag_owner drag_owner, const struct rect *rect)
+ಶೂನ್ಯ html_set_drag_type(html_content *html, html_drag_type drag_type,
+		ಸಙ್ಘ html_drag_owner drag_owner, ಧ್ರುವ ಸಂರಚನಾ rect *rect)
 {
-	union content_msg_data msg_data;
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
 
-	assert(html != NULL);
+	ಪ್ರತಿಜ್ಞಾ(html != ರಿಕ್ತ);
 
 	html->drag_type = drag_type;
 	html->drag_owner = drag_owner;
 
-	switch (drag_type) {
-	case HTML_DRAG_NONE:
-		assert(drag_owner.no_owner == true);
-		msg_data.drag.type = CONTENT_DRAG_NONE;
-		break;
+	ವಿಕಲ್ಪ (drag_type) {
+	ಪಕ್ಷ HTML_DRAG_NONE:
+		ಪ್ರತಿಜ್ಞಾ(drag_owner.no_owner == true);
+		ಸಂದೇಶ_data.drag.type = CONTENT_DRAG_NONE;
+		ಭಙ್ಗ;
 
-	case HTML_DRAG_SCROLLBAR:
-	case HTML_DRAG_TEXTAREA_SCROLLBAR:
-	case HTML_DRAG_CONTENT_SCROLL:
-		msg_data.drag.type = CONTENT_DRAG_SCROLL;
-		break;
+	ಪಕ್ಷ HTML_DRAG_SCROLLBAR:
+	ಪಕ್ಷ HTML_DRAG_TEXTAREA_SCROLLBAR:
+	ಪಕ್ಷ HTML_DRAG_CONTENT_SCROLL:
+		ಸಂದೇಶ_data.drag.type = CONTENT_DRAG_SCROLL;
+		ಭಙ್ಗ;
 
-	case HTML_DRAG_SELECTION:
-		assert(drag_owner.no_owner == true);
+	ಪಕ್ಷ HTML_DRAG_SELECTION:
+		ಪ್ರತಿಜ್ಞಾ(drag_owner.no_owner == true);
 		fallthrough;
-	case HTML_DRAG_TEXTAREA_SELECTION:
-	case HTML_DRAG_CONTENT_SELECTION:
-		msg_data.drag.type = CONTENT_DRAG_SELECTION;
-		break;
+	ಪಕ್ಷ HTML_DRAG_TEXTAREA_SELECTION:
+	ಪಕ್ಷ HTML_DRAG_CONTENT_SELECTION:
+		ಸಂದೇಶ_data.drag.type = CONTENT_DRAG_SELECTION;
+		ಭಙ್ಗ;
 	}
-	msg_data.drag.rect = rect;
+	ಸಂದೇಶ_data.drag.rect = rect;
 
 	/* Inform of the content's drag status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_DRAG, &msg_data);
+	content_broadcast((ಸಂರಚನಾ content *)html, CONTENT_ಸಂದೇಶ_DRAG, &ಸಂದೇಶ_data);
 }
 
 /* Documented in html_internal.h */
-void html_set_focus(html_content *html, html_focus_type focus_type,
-		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip)
+ಶೂನ್ಯ html_set_focus(html_content *html, html_focus_type focus_type,
+		ಸಙ್ಘ html_focus_owner focus_owner, bool hide_caret,
+		ಪೂರ್ಣಾಙ್ಕ x, ಪೂರ್ಣಾಙ್ಕ y, ಪೂರ್ಣಾಙ್ಕ height, ಧ್ರುವ ಸಂರಚನಾ rect *clip)
 {
-	union content_msg_data msg_data;
-	int x_off = 0;
-	int y_off = 0;
-	struct rect cr;
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
+	ಪೂರ್ಣಾಙ್ಕ x_off = 0;
+	ಪೂರ್ಣಾಙ್ಕ y_off = 0;
+	ಸಂರಚನಾ rect cr;
 	bool textarea_lost_focus = html->focus_type == HTML_FOCUS_TEXTAREA &&
 			focus_type != HTML_FOCUS_TEXTAREA;
 
-	assert(html != NULL);
+	ಪ್ರತಿಜ್ಞಾ(html != ರಿಕ್ತ);
 
-	switch (focus_type) {
-	case HTML_FOCUS_SELF:
-		assert(focus_owner.self == true);
-		if (html->focus_type == HTML_FOCUS_SELF)
+	ವಿಕಲ್ಪ (focus_type) {
+	ಪಕ್ಷ HTML_FOCUS_SELF:
+		ಪ್ರತಿಜ್ಞಾ(focus_owner.self == true);
+		ಯದಿ (html->focus_type == HTML_FOCUS_SELF)
 			/* Don't need to tell anyone anything */
-			return;
-		break;
+			ಪ್ರತ್ಯಾಗಮ;
+		ಭಙ್ಗ;
 
-	case HTML_FOCUS_CONTENT:
+	ಪಕ್ಷ HTML_FOCUS_CONTENT:
 		box_coords(focus_owner.content, &x_off, &y_off);
-		break;
+		ಭಙ್ಗ;
 
-	case HTML_FOCUS_TEXTAREA:
+	ಪಕ್ಷ HTML_FOCUS_TEXTAREA:
 		box_coords(focus_owner.textarea, &x_off, &y_off);
-		break;
+		ಭಙ್ಗ;
 	}
 
 	html->focus_type = focus_type;
 	html->focus_owner = focus_owner;
 
-	if (textarea_lost_focus) {
-		msg_data.caret.type = CONTENT_CARET_REMOVE;
-	} else if (focus_type != HTML_FOCUS_SELF && hide_caret) {
-		msg_data.caret.type = CONTENT_CARET_HIDE;
-	} else {
-		if (clip != NULL) {
+	ಯದಿ (textarea_lost_focus) {
+		ಸಂದೇಶ_data.caret.type = CONTENT_CARET_REMOVE;
+	} ಅನ್ಯಥಾ ಯದಿ (focus_type != HTML_FOCUS_SELF && hide_caret) {
+		ಸಂದೇಶ_data.caret.type = CONTENT_CARET_HIDE;
+	} ಅನ್ಯಥಾ {
+		ಯದಿ (clip != ರಿಕ್ತ) {
 			cr = *clip;
 			cr.x0 += x_off;
 			cr.y0 += y_off;
@@ -1739,29 +1739,29 @@ void html_set_focus(html_content *html, html_focus_type focus_type,
 			cr.y1 += y_off;
 		}
 
-		msg_data.caret.type = CONTENT_CARET_SET_POS;
-		msg_data.caret.pos.x = x + x_off;
-		msg_data.caret.pos.y = y + y_off;
-		msg_data.caret.pos.height = height;
-		msg_data.caret.pos.clip = (clip == NULL) ? NULL : &cr;
+		ಸಂದೇಶ_data.caret.type = CONTENT_CARET_SET_POS;
+		ಸಂದೇಶ_data.caret.pos.x = x + x_off;
+		ಸಂದೇಶ_data.caret.pos.y = y + y_off;
+		ಸಂದೇಶ_data.caret.pos.height = height;
+		ಸಂದೇಶ_data.caret.pos.clip = (clip == ರಿಕ್ತ) ? ರಿಕ್ತ : &cr;
 	}
 
 	/* Inform of the content's drag status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_CARET, &msg_data);
+	content_broadcast((ಸಂರಚನಾ content *)html, CONTENT_ಸಂದೇಶ_CARET, &ಸಂದೇಶ_data);
 }
 
 /* Documented in html_internal.h */
-void html_set_selection(html_content *html, html_selection_type selection_type,
-		union html_selection_owner selection_owner, bool read_only)
+ಶೂನ್ಯ html_set_selection(html_content *html, html_selection_type selection_type,
+		ಸಙ್ಘ html_selection_owner selection_owner, bool read_only)
 {
-	union content_msg_data msg_data;
-	struct box *box;
+	ಸಙ್ಘ content_ಸಂದೇಶ_data ಸಂದೇಶ_data;
+	ಸಂರಚನಾ box *box;
 	bool changed = false;
 	bool same_type = html->selection_type == selection_type;
 
-	assert(html != NULL);
+	ಪ್ರತಿಜ್ಞಾ(html != ರಿಕ್ತ);
 
-	if ((selection_type == HTML_SELECTION_NONE &&
+	ಯದಿ ((selection_type == HTML_SELECTION_NONE &&
 			html->selection_type != HTML_SELECTION_NONE) ||
 			(selection_type != HTML_SELECTION_NONE &&
 			html->selection_type == HTML_SELECTION_NONE))
@@ -1770,58 +1770,58 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
 		changed = true;
 
 	/* Clear any existing selection */
-	if (html->selection_type != HTML_SELECTION_NONE) {
-		switch (html->selection_type) {
-		case HTML_SELECTION_SELF:
-			if (same_type)
-				break;
+	ಯದಿ (html->selection_type != HTML_SELECTION_NONE) {
+		ವಿಕಲ್ಪ (html->selection_type) {
+		ಪಕ್ಷ HTML_SELECTION_SELF:
+			ಯದಿ (same_type)
+				ಭಙ್ಗ;
 			selection_clear(html->sel, true);
-			break;
-		case HTML_SELECTION_TEXTAREA:
-			if (same_type && html->selection_owner.textarea ==
+			ಭಙ್ಗ;
+		ಪಕ್ಷ HTML_SELECTION_TEXTAREA:
+			ಯದಿ (same_type && html->selection_owner.textarea ==
 					selection_owner.textarea)
-				break;
+				ಭಙ್ಗ;
 			box = html->selection_owner.textarea;
 			textarea_clear_selection(box->gadget->data.text.ta);
-			break;
-		case HTML_SELECTION_CONTENT:
-			if (same_type && html->selection_owner.content ==
+			ಭಙ್ಗ;
+		ಪಕ್ಷ HTML_SELECTION_CONTENT:
+			ಯದಿ (same_type && html->selection_owner.content ==
 					selection_owner.content)
-				break;
+				ಭಙ್ಗ;
 			box = html->selection_owner.content;
 			content_clear_selection(box->object);
-			break;
-		default:
-			break;
+			ಭಙ್ಗ;
+		ಸ್ವಭಾವ:
+			ಭಙ್ಗ;
 		}
 	}
 
 	html->selection_type = selection_type;
 	html->selection_owner = selection_owner;
 
-	if (!changed)
+	ಯದಿ (!changed)
 		/* Don't need to report lack of change to owner */
-		return;
+		ಪ್ರತ್ಯಾಗಮ;
 
 	/* Prepare msg */
-	switch (selection_type) {
-	case HTML_SELECTION_NONE:
-		assert(selection_owner.none == true);
-		msg_data.selection.selection = false;
-		break;
-	case HTML_SELECTION_SELF:
-		assert(selection_owner.none == false);
+	ವಿಕಲ್ಪ (selection_type) {
+	ಪಕ್ಷ HTML_SELECTION_NONE:
+		ಪ್ರತಿಜ್ಞಾ(selection_owner.none == true);
+		ಸಂದೇಶ_data.selection.selection = false;
+		ಭಙ್ಗ;
+	ಪಕ್ಷ HTML_SELECTION_SELF:
+		ಪ್ರತಿಜ್ಞಾ(selection_owner.none == false);
 		fallthrough;
-	case HTML_SELECTION_TEXTAREA:
-	case HTML_SELECTION_CONTENT:
-		msg_data.selection.selection = true;
-		break;
-	default:
-		break;
+	ಪಕ್ಷ HTML_SELECTION_TEXTAREA:
+	ಪಕ್ಷ HTML_SELECTION_CONTENT:
+		ಸಂದೇಶ_data.selection.selection = true;
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
+		ಭಙ್ಗ;
 	}
-	msg_data.selection.read_only = read_only;
+	ಸಂದೇಶ_data.selection.read_only = read_only;
 
 	/* Inform of the content's selection status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_SELECTION,
-			&msg_data);
+	content_broadcast((ಸಂರಚನಾ content *)html, CONTENT_ಸಂದೇಶ_SELECTION,
+			&ಸಂದೇಶ_data);
 }

@@ -21,28 +21,28 @@
  * implementation for image/ico content handler
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libnsbmp.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <libnsbmp.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content.h"
+#ಅನ್ತರ್ಭಾವ "content/llcache.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "desktop/bitmap.h"
 
-#include "image/image.h"
-#include "image/ico.h"
+#ಅನ್ತರ್ಭಾವ "image/image.h"
+#ಅನ್ತರ್ಭಾವ "image/ico.h"
 
-typedef struct nsico_content {
-	struct content base;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ nsico_content {
+	ಸಂರಚನಾ content base;
 
-	struct ico_collection *ico; /** ICO collection data */
+	ಸಂರಚನಾ ico_collection *ico; /** ICO collection data */
 } nsico_content;
 
 /**
@@ -53,9 +53,9 @@ typedef struct nsico_content {
  * \param  bmp_state A flag word indicating the initial state
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsico_bitmap_create(int width, int height, unsigned int bmp_state)
+ಸ್ಥಿರ ಶೂನ್ಯ *nsico_bitmap_create(ಪೂರ್ಣಾಙ್ಕ width, ಪೂರ್ಣಾಙ್ಕ height, unsigned ಪೂರ್ಣಾಙ್ಕ bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	unsigned ಪೂರ್ಣಾಙ್ಕ bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
@@ -63,10 +63,10 @@ static void *nsico_bitmap_create(int width, int height, unsigned int bmp_state)
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	ಪ್ರತ್ಯಾಗಮ guit->bitmap->create(width, height, bitmap_state);
 }
 
-static nserror nsico_create_ico_data(nsico_content *c)
+ಸ್ಥಿರ nserror nsico_create_ico_data(nsico_content *c)
 {
 	bmp_bitmap_callback_vt bmp_bitmap_callbacks = {
 		.bitmap_create = nsico_bitmap_create,
@@ -74,73 +74,73 @@ static nserror nsico_create_ico_data(nsico_content *c)
 		.bitmap_get_buffer = guit->bitmap->get_buffer,
 	};
 
-	c->ico = calloc(1, sizeof(ico_collection));
-	if (c->ico == NULL) {
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	c->ico = calloc(1, ಪರಿಮಾಣ(ico_collection));
+	ಯದಿ (c->ico == ರಿಕ್ತ) {
+		content_broadcast_error(&c->base, NSERROR_NOMEM, ರಿಕ್ತ);
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 	}
 	ico_collection_create(c->ico, &bmp_bitmap_callbacks);
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
-static nserror nsico_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ಸ್ಥಿರ nserror nsico_create(ಧ್ರುವ content_handler *handler,
+		lwc_string *imime_type, ಧ್ರುವ ಸಂರಚನಾ http_parameter *params,
+		llcache_handle *llcache, ಧ್ರುವ ವರ್ಣ *fallback_charset,
+		bool quirks, ಸಂರಚನಾ content **c)
 {
 	nsico_content *result;
 	nserror error;
 
-	result = calloc(1, sizeof(nsico_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	result = calloc(1, ಪರಿಮಾಣ(nsico_content));
+	ಯದಿ (result == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	ಯದಿ (error != NSERROR_OK) {
+		ಮುಕ್ತ(result);
+		ಪ್ರತ್ಯಾಗಮ error;
 	}
 
 	error = nsico_create_ico_data(result);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	ಯದಿ (error != NSERROR_OK) {
+		ಮುಕ್ತ(result);
+		ಪ್ರತ್ಯಾಗಮ error;
 	}
 
-	*c = (struct content *) result;
+	*c = (ಸಂರಚನಾ content *) result;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 
-static bool nsico_convert(struct content *c)
+ಸ್ಥಿರ bool nsico_convert(ಸಂರಚನಾ content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
-	struct bmp_image *bmp;
+	ಸಂರಚನಾ bmp_image *bmp;
 	bmp_result res;
-	const uint8_t *data;
+	ಧ್ರುವ uint8_t *data;
 	size_t size;
-	char *title;
+	ವರ್ಣ *title;
 
 	/* set the ico data */
 	data = content__get_source_data(c, &size);
 
 	/* analyse the ico */
-	res = ico_analyse(ico->ico, size, (unsigned char *) data);
+	res = ico_analyse(ico->ico, size, (unsigned ವರ್ಣ *) data);
 
-	switch (res) {
-	case BMP_OK:
-		break;
-	case BMP_INSUFFICIENT_MEMORY:
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
-	case BMP_INSUFFICIENT_DATA:
-	case BMP_DATA_ERROR:
-		content_broadcast_error(c, NSERROR_ICO_ERROR, NULL);
-		return false;
+	ವಿಕಲ್ಪ (res) {
+	ಪಕ್ಷ BMP_OK:
+		ಭಙ್ಗ;
+	ಪಕ್ಷ BMP_INSUFFICIENT_MEMORY:
+		content_broadcast_error(c, NSERROR_NOMEM, ರಿಕ್ತ);
+		ಪ್ರತ್ಯಾಗಮ false;
+	ಪಕ್ಷ BMP_INSUFFICIENT_DATA:
+	ಪಕ್ಷ BMP_DATA_ERROR:
+		content_broadcast_error(c, NSERROR_ICO_ERROR, ರಿಕ್ತ);
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
 	/* Store our content width, height and calculate size */
@@ -152,17 +152,17 @@ static bool nsico_convert(struct content *c)
 	title = messages_get_buff("ICOTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	ಯದಿ (title != ರಿಕ್ತ) {
 		content__set_title(c, title);
-		free(title);
+		ಮುಕ್ತ(title);
 	}
 
 	/* select largest icon to ensure one can be selected */
 	bmp = ico_find(ico->ico, 255, 255);
-	if (bmp == NULL) {
+	ಯದಿ (bmp == ರಿಕ್ತ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
 	content_set_ready(c);
@@ -170,15 +170,15 @@ static bool nsico_convert(struct content *c)
 
 	/* Done: update status bar */
 	content_set_status(c, "");
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
-static bool nsico__decode(struct bmp_image *ico)
+ಸ್ಥಿರ bool nsico__decode(ಸಂರಚನಾ bmp_image *ico)
 {
-	if (ico->decoded == false) {
+	ಯದಿ (ico->decoded == false) {
 		NSLOG(netsurf, DEBUG, "Decoding ICO %p", ico);
-		if (bmp_decode(ico) != BMP_OK) {
-			return false;
+		ಯದಿ (bmp_decode(ico) != BMP_OK) {
+			ಪ್ರತ್ಯಾಗಮ false;
 		}
 
 		bitmap_format_to_client(ico->bitmap, &(bitmap_fmt_t) {
@@ -188,125 +188,125 @@ static bool nsico__decode(struct bmp_image *ico)
 
 	}
 
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
-static bool nsico_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ಸ್ಥಿರ bool nsico_redraw(ಸಂರಚನಾ content *c, ಸಂರಚನಾ content_redraw_data *data,
+		ಧ್ರುವ ಸಂರಚನಾ rect *clip, ಧ್ರುವ ಸಂರಚನಾ redraw_context *ctx)
 {
 	nsico_content *ico = (nsico_content *)c;
-	struct bmp_image *bmp;
+	ಸಂರಚನಾ bmp_image *bmp;
 
 	/* select most appropriate sized icon for size */
 	bmp = ico_find(ico->ico, data->width, data->height);
-	if (bmp == NULL) {
+	ಯದಿ (bmp == ರಿಕ್ತ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
 	/* ensure its decided */
-	if (!nsico__decode(bmp)) {
-		return false;
+	ಯದಿ (!nsico__decode(bmp)) {
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
-	return image_bitmap_plot(bmp->bitmap, data, clip, ctx);
+	ಪ್ರತ್ಯಾಗಮ image_bitmap_plot(bmp->bitmap, data, clip, ctx);
 }
 
 
-static void nsico_destroy(struct content *c)
+ಸ್ಥಿರ ಶೂನ್ಯ nsico_destroy(ಸಂರಚನಾ content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
 
 	ico_finalise(ico->ico);
-	free(ico->ico);
+	ಮುಕ್ತ(ico->ico);
 }
 
-static nserror nsico_clone(const struct content *old, struct content **newc)
+ಸ್ಥಿರ nserror nsico_clone(ಧ್ರುವ ಸಂರಚನಾ content *old, ಸಂರಚನಾ content **newc)
 {
 	nsico_content *ico;
 	nserror error;
 
-	ico = calloc(1, sizeof(nsico_content));
-	if (ico == NULL)
-		return NSERROR_NOMEM;
+	ico = calloc(1, ಪರಿಮಾಣ(nsico_content));
+	ಯದಿ (ico == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 
 	error = content__clone(old, &ico->base);
-	if (error != NSERROR_OK) {
+	ಯದಿ (error != NSERROR_OK) {
 		content_destroy(&ico->base);
-		return error;
+		ಪ್ರತ್ಯಾಗಮ error;
 	}
 
 	/* Simply replay creation and conversion */
 	error = nsico_create_ico_data(ico);
-	if (error != NSERROR_OK) {
+	ಯದಿ (error != NSERROR_OK) {
 		content_destroy(&ico->base);
-		return error;
+		ಪ್ರತ್ಯಾಗಮ error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	ಯದಿ (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nsico_convert(&ico->base) == false) {
+		ಯದಿ (nsico_convert(&ico->base) == false) {
 			content_destroy(&ico->base);
-			return NSERROR_CLONE_FAILED;
+			ಪ್ರತ್ಯಾಗಮ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) ico;
+	*newc = (ಸಂರಚನಾ content *) ico;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
-static void *nsico_get_internal(const struct content *c, void *context)
+ಸ್ಥಿರ ಶೂನ್ಯ *nsico_get_internal(ಧ್ರುವ ಸಂರಚನಾ content *c, ಶೂನ್ಯ *context)
 {
 	nsico_content *ico = (nsico_content *) c;
 	/* TODO: Pick best size for purpose.
 	 *       Currently assumes it's for a URL bar. */
-	struct bmp_image *bmp;
+	ಸಂರಚನಾ bmp_image *bmp;
 
 	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	ಯದಿ (bmp == ರಿಕ್ತ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return NULL;
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return NULL;
+	ಯದಿ (!nsico__decode(bmp)) {
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 	}
 
-	return bmp->bitmap;
+	ಪ್ರತ್ಯಾಗಮ bmp->bitmap;
 }
 
-static content_type nsico_content_type(void)
+ಸ್ಥಿರ content_type nsico_content_type(ಶೂನ್ಯ)
 {
-	return CONTENT_IMAGE;
+	ಪ್ರತ್ಯಾಗಮ CONTENT_IMAGE;
 }
 
-static bool nsico_is_opaque(struct content *c)
+ಸ್ಥಿರ bool nsico_is_opaque(ಸಂರಚನಾ content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
-	struct bmp_image *bmp;
+	ಸಂರಚನಾ bmp_image *bmp;
 
 	/**
 	 * \todo Pick best size for purpose. Currently assumes
 	 *         it's for a URL bar.
 	 */
 	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	ಯದಿ (bmp == ರಿಕ್ತ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return false;
+	ಯದಿ (!nsico__decode(bmp)) {
+		ಪ್ರತ್ಯಾಗಮ false;
 	}
 
-	return guit->bitmap->get_opaque(bmp->bitmap);
+	ಪ್ರತ್ಯಾಗಮ guit->bitmap->get_opaque(bmp->bitmap);
 }
 
-static const content_handler nsico_content_handler = {
+ಸ್ಥಿರ ಧ್ರುವ content_handler nsico_content_handler = {
 	.create = nsico_create,
 	.data_complete = nsico_convert,
 	.destroy = nsico_destroy,
@@ -318,7 +318,7 @@ static const content_handler nsico_content_handler = {
 	.no_share = false,
 };
 
-static const char *nsico_types[] = {
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *nsico_types[] = {
 	"application/ico",
 	"application/x-ico",
 	"image/ico",

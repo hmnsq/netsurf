@@ -21,26 +21,26 @@
  * implementation of text selection for a HTML content.
  */
 
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "netsurf/types.h"
-#include "netsurf/plot_style.h"
-#include "desktop/selection.h"
-#include "desktop/save_text.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/types.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/plot_style.h"
+#ಅನ್ತರ್ಭಾವ "desktop/selection.h"
+#ಅನ್ತರ್ಭಾವ "desktop/save_text.h"
 
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/textselection.h"
+#ಅನ್ತರ್ಭಾವ "html/private.h"
+#ಅನ್ತರ್ಭಾವ "html/box.h"
+#ಅನ್ತರ್ಭಾವ "html/box_inspect.h"
+#ಅನ್ತರ್ಭಾವ "html/font.h"
+#ಅನ್ತರ್ಭಾವ "html/textselection.h"
 
 #define SPACE_LEN(b) ((b->space == 0) ? 0 : 1)
 
-struct rdw_info {
+ಸಂರಚನಾ rdw_info {
 	bool inited;
-	struct rect r;
+	ಸಂರಚನಾ rect r;
 };
 
 
@@ -56,8 +56,8 @@ struct rdw_info {
  * \param end_offset receives the end offset of the selected part
  * \return true iff the range encloses at least part of the box
  */
-static bool
-selected_part(struct box *box,
+ಸ್ಥಿರ bool
+selected_part(ಸಂರಚನಾ box *box,
 	      unsigned start_idx,
 	      unsigned end_idx,
 	      unsigned *start_offset,
@@ -65,37 +65,37 @@ selected_part(struct box *box,
 {
 	size_t box_length = box->length + SPACE_LEN(box);
 
-	if (box_length > 0) {
-		if ((box->byte_offset >= start_idx) &&
+	ಯದಿ (box_length > 0) {
+		ಯದಿ ((box->byte_offset >= start_idx) &&
 		    (box->byte_offset + box_length <= end_idx)) {
 
 			/* fully enclosed */
 			*start_offset = 0;
 			*end_offset = box_length;
-			return true;
-		} else if ((box->byte_offset + box_length > start_idx) &&
+			ಪ್ರತ್ಯಾಗಮ true;
+		} ಅನ್ಯಥಾ ಯದಿ ((box->byte_offset + box_length > start_idx) &&
 			   (box->byte_offset < end_idx)) {
 			/* partly enclosed */
-			int offset = 0;
-			int len;
+			ಪೂರ್ಣಾಙ್ಕ offset = 0;
+			ಪೂರ್ಣಾಙ್ಕ len;
 
-			if (box->byte_offset < start_idx) {
+			ಯದಿ (box->byte_offset < start_idx) {
 				offset = start_idx - box->byte_offset;
 			}
 
 			len = box_length - offset;
 
-			if (box->byte_offset + box_length > end_idx) {
+			ಯದಿ (box->byte_offset + box_length > end_idx) {
 				len = end_idx - (box->byte_offset + offset);
 			}
 
 			*start_offset = offset;
 			*end_offset = offset + len;
 
-			return true;
+			ಪ್ರತ್ಯಾಗಮ true;
 		}
 	}
-	return false;
+	ಪ್ರತ್ಯಾಗಮ false;
 }
 
 
@@ -110,20 +110,20 @@ selected_part(struct box *box,
  * \param do_marker whether deal enter any marker box
  * \return NSERROR_OK on success else error code
  */
-static nserror
-coords_from_range(struct box *box,
+ಸ್ಥಿರ nserror
+coords_from_range(ಸಂರಚನಾ box *box,
 		  unsigned start_idx,
 		  unsigned end_idx,
-		  struct rdw_info *rdwi,
+		  ಸಂರಚನಾ rdw_info *rdwi,
 		  bool do_marker)
 {
-	struct box *child;
+	ಸಂರಚನಾ box *child;
 	nserror res;
 
-	assert(box);
+	ಪ್ರತಿಜ್ಞಾ(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
+	ಯದಿ (box->parent &&
 	    box->parent->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
@@ -131,7 +131,7 @@ coords_from_range(struct box *box,
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	ಯದಿ (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = coords_from_range(box->list_marker,
@@ -139,29 +139,29 @@ coords_from_range(struct box *box,
 					end_idx,
 					rdwi,
 					true);
-		if (res != NSERROR_OK) {
-			return res;
+		ಯದಿ (res != NSERROR_OK) {
+			ಪ್ರತ್ಯಾಗಮ res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	ಯದಿ (box->byte_offset >= end_idx) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
 	child = box->children;
 
-	if ((box->type != BOX_BR) &&
-	    !((box->type == BOX_FLOAT_LEFT ||
-	       box->type == BOX_FLOAT_RIGHT) &&
+	ಯದಿ ((box->type != BOX_BR) &&
+	    !((box->type == BOX_FLOAT_ಎಡ ||
+	       box->type == BOX_FLOAT_ಬಲ) &&
 	      !box->text)) {
 		unsigned start_off;
 		unsigned end_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
-			int width, height;
-			int x, y;
+		ಯದಿ (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
+			ಪೂರ್ಣಾಙ್ಕ width, height;
+			ಪೂರ್ಣಾಙ್ಕ x, y;
 
 			/**
 			 * \todo it should be possible to reduce the redrawn
@@ -169,28 +169,28 @@ coords_from_range(struct box *box,
 			 */
 			box_coords(box, &x, &y);
 
-			width = box->padding[LEFT] + box->width + box->padding[RIGHT];
-			height = box->padding[TOP] + box->height + box->padding[BOTTOM];
+			width = box->padding[ಎಡ_2] + box->width + box->padding[ಬಲ_2];
+			height = box->padding[ತುದಿ_2] + box->height + box->padding[BOTTOM];
 
-			if ((box->type == BOX_TEXT) &&
+			ಯದಿ ((box->type == BOX_TEXT) &&
 			    (box->space != 0)) {
 				width += box->space;
 			}
 
-			if (rdwi->inited) {
-				if (x < rdwi->r.x0) {
+			ಯದಿ (rdwi->inited) {
+				ಯದಿ (x < rdwi->r.x0) {
 					rdwi->r.x0 = x;
 				}
-				if (y < rdwi->r.y0) {
+				ಯದಿ (y < rdwi->r.y0) {
 					rdwi->r.y0 = y;
 				}
-				if (x + width > rdwi->r.x1) {
+				ಯದಿ (x + width > rdwi->r.x1) {
 					rdwi->r.x1 = x + width;
 				}
-				if (y + height > rdwi->r.y1) {
+				ಯದಿ (y + height > rdwi->r.y1) {
 					rdwi->r.y1 = y + height;
 				}
-			} else {
+			} ಅನ್ಯಥಾ {
 				rdwi->inited = true;
 				rdwi->r.x0 = x;
 				rdwi->r.y0 = y;
@@ -204,33 +204,33 @@ coords_from_range(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
-		struct box *next = child->next;
+	ಯದಿ (child) {
+		ಸಂರಚನಾ box *next = child->next;
 
-		while (next && next->byte_offset < start_idx) {
+		ಯಾವತ್ (next && next->byte_offset < start_idx) {
 			child = next;
 			next = child->next;
 		}
 
-		while (child) {
+		ಯಾವತ್ (child) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
-			struct box *next = child->next;
+			ಸಂರಚನಾ box *next = child->next;
 
 			res = coords_from_range(child,
 						start_idx,
 						end_idx,
 						rdwi,
 						false);
-			if (res != NSERROR_OK) {
-				return res;
+			ಯದಿ (res != NSERROR_OK) {
+				ಪ್ರತ್ಯಾಗಮ res;
 			}
 
 			child = next;
 		}
 	}
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
@@ -247,51 +247,51 @@ coords_from_range(struct box *box,
  * \param whitespace_length  length of whitespace_text
  * \return NSERROR_OK iff successful and traversal should continue else error code
  */
-static nserror
-selection_copy_box(const char *text,
+ಸ್ಥಿರ nserror
+selection_copy_box(ಧ್ರುವ ವರ್ಣ *text,
 		   size_t length,
-		   struct box *box,
-		   const css_unit_ctx *unit_len_ctx,
-		   struct selection_string *handle,
-		   const char *whitespace_text,
+		   ಸಂರಚನಾ box *box,
+		   ಧ್ರುವ css_unit_ctx *unit_len_ctx,
+		   ಸಂರಚನಾ selection_string *handle,
+		   ಧ್ರುವ ವರ್ಣ *whitespace_text,
 		   size_t whitespace_length)
 {
 	bool add_space = false;
 	plot_font_style_t style;
-	plot_font_style_t *pstyle = NULL;
+	plot_font_style_t *pstyle = ರಿಕ್ತ;
 
 	/* add any whitespace which precedes the text from this box */
-	if (whitespace_text != NULL &&
+	ಯದಿ (whitespace_text != ರಿಕ್ತ &&
 	    whitespace_length > 0) {
-		if (!selection_string_append(whitespace_text,
+		ಯದಿ (!selection_string_append(whitespace_text,
 					     whitespace_length,
 					     false,
 					     pstyle,
 					     handle)) {
-			return NSERROR_NOMEM;
+			ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 		}
 	}
 
-	if (box != NULL) {
+	ಯದಿ (box != ರಿಕ್ತ) {
 		/* HTML */
 		add_space = (box->space != 0);
 
-		if (box->style != NULL) {
+		ಯದಿ (box->style != ರಿಕ್ತ) {
 			/* Override default font style */
 			font_plot_style_from_css(unit_len_ctx, box->style, &style);
 			pstyle = &style;
-		} else {
+		} ಅನ್ಯಥಾ {
 			/* If there's no style, there must be no text */
-			assert(box->text == NULL);
+			ಪ್ರತಿಜ್ಞಾ(box->text == ರಿಕ್ತ);
 		}
 	}
 
 	/* add the text from this box */
-	if (!selection_string_append(text, length, add_space, pstyle, handle)) {
-		return NSERROR_NOMEM;
+	ಯದಿ (!selection_string_append(text, length, add_space, pstyle, handle)) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
@@ -310,25 +310,25 @@ selection_copy_box(const char *text,
  * \param do_marker  whether deal enter any marker box
  * \return NSERROR_OK on sucess else error code
  */
-static nserror
-selection_copy(struct box *box,
-	       const css_unit_ctx *unit_len_ctx,
+ಸ್ಥಿರ nserror
+selection_copy(ಸಂರಚನಾ box *box,
+	       ಧ್ರುವ css_unit_ctx *unit_len_ctx,
 	       unsigned start_idx,
 	       unsigned end_idx,
-	       struct selection_string *selstr,
+	       ಸಂರಚನಾ selection_string *selstr,
 	       save_text_whitespace *before,
 	       bool *first,
 	       bool do_marker)
 {
 	nserror res;
-	struct box *child;
-	const char *whitespace_text = "";
+	ಸಂರಚನಾ box *child;
+	ಧ್ರುವ ವರ್ಣ *whitespace_text = "";
 	size_t whitespace_length = 0;
 
-	assert(box);
+	ಪ್ರತಿಜ್ಞಾ(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
+	ಯದಿ (box->parent &&
 	    box->parent->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
@@ -336,7 +336,7 @@ selection_copy(struct box *box,
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	ಯದಿ (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = selection_copy(box->list_marker,
@@ -347,14 +347,14 @@ selection_copy(struct box *box,
 				     before,
 				     first,
 				     true);
-		if (res != NSERROR_OK) {
-			return res;
+		ಯದಿ (res != NSERROR_OK) {
+			ಪ್ರತ್ಯಾಗಮ res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	ಯದಿ (box->byte_offset >= end_idx) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
@@ -362,24 +362,24 @@ selection_copy(struct box *box,
 
 	/* If nicely formatted output of the selected text is required, work
 	 * out what whitespace should be placed before the next bit of text */
-	if (before) {
+	ಯದಿ (before) {
 		save_text_solve_whitespace(box,
 					   first,
 					   before,
 					   &whitespace_text,
 					   &whitespace_length);
-	} else {
-		whitespace_text = NULL;
+	} ಅನ್ಯಥಾ {
+		whitespace_text = ರಿಕ್ತ;
 	}
 
-	if ((box->type != BOX_BR) &&
-	    !((box->type == BOX_FLOAT_LEFT ||
-	       box->type == BOX_FLOAT_RIGHT) &&
+	ಯದಿ ((box->type != BOX_BR) &&
+	    !((box->type == BOX_FLOAT_ಎಡ ||
+	       box->type == BOX_FLOAT_ಬಲ) &&
 	      !box->text)) {
 		unsigned start_off;
 		unsigned end_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
+		ಯದಿ (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
 			res = selection_copy_box(box->text + start_off,
 						 min(box->length, end_off) - start_off,
 						 box,
@@ -387,10 +387,10 @@ selection_copy(struct box *box,
 						 selstr,
 						 whitespace_text,
 						 whitespace_length);
-			if (res != NSERROR_OK) {
-				return res;
+			ಯದಿ (res != NSERROR_OK) {
+				ಪ್ರತ್ಯಾಗಮ res;
 			}
-			if (before) {
+			ಯದಿ (before) {
 				*first = false;
 				*before = WHITESPACE_NONE;
 			}
@@ -401,18 +401,18 @@ selection_copy(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
-		struct box *next = child->next;
+	ಯದಿ (child) {
+		ಸಂರಚನಾ box *next = child->next;
 
-		while (next && next->byte_offset < start_idx) {
+		ಯಾವತ್ (next && next->byte_offset < start_idx) {
 			child = next;
 			next = child->next;
 		}
 
-		while (child) {
+		ಯಾವತ್ (child) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
-			struct box *next = child->next;
+			ಸಂರಚನಾ box *next = child->next;
 
 			res = selection_copy(child,
 					     unit_len_ctx,
@@ -422,15 +422,15 @@ selection_copy(struct box *box,
 					     before,
 					     first,
 					     false);
-			if (res != NSERROR_OK) {
-				return res;
+			ಯದಿ (res != NSERROR_OK) {
+				ಪ್ರತ್ಯಾಗಮ res;
 			}
 
 			child = next;
 		}
 	}
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
@@ -442,22 +442,22 @@ selection_copy(struct box *box,
  * \param idx current position within textual representation
  * \return updated position
  */
-static unsigned selection_label_subtree(struct box *box, unsigned idx)
+ಸ್ಥಿರ unsigned selection_label_subtree(ಸಂರಚನಾ box *box, unsigned idx)
 {
-	struct box *child;
+	ಸಂರಚನಾ box *child;
 
-	assert(box != NULL);
+	ಪ್ರತಿಜ್ಞಾ(box != ರಿಕ್ತ);
 
 	child = box->children;
 
 	box->byte_offset = idx;
 
-	if (box->text) {
+	ಯದಿ (box->text) {
 		idx += box->length + SPACE_LEN(box);
 	}
 
-	while (child) {
-		if (child->list_marker) {
+	ಯಾವತ್ (child) {
+		ಯದಿ (child->list_marker) {
 			idx = selection_label_subtree(child->list_marker, idx);
 		}
 
@@ -465,32 +465,32 @@ static unsigned selection_label_subtree(struct box *box, unsigned idx)
 		child = child->next;
 	}
 
-	return idx;
+	ಪ್ರತ್ಯಾಗಮ idx;
 }
 
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_redraw(struct content *c,
+html_textselection_redraw(ಸಂರಚನಾ content *c,
 			  unsigned start_idx,
 			  unsigned end_idx)
 {
 	nserror res;
 	html_content *html = (html_content *)c;
-	struct rdw_info rdw;
+	ಸಂರಚನಾ rdw_info rdw;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	ಯದಿ (html->layout == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_INVALID;
 	}
 
 	rdw.inited = false;
 
 	res = coords_from_range(html->layout, start_idx, end_idx, &rdw, false);
-	if (res != NSERROR_OK) {
-		return res;
+	ಯದಿ (res != NSERROR_OK) {
+		ಪ್ರತ್ಯಾಗಮ res;
 	}
 
-	if (rdw.inited) {
+	ಯದಿ (rdw.inited) {
 		content__request_redraw(c,
 					rdw.r.x0,
 					rdw.r.y0,
@@ -498,26 +498,26 @@ html_textselection_redraw(struct content *c,
 					rdw.r.y1 - rdw.r.y0);
 	}
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_copy(struct content *c,
+html_textselection_copy(ಸಂರಚನಾ content *c,
 			unsigned start_idx,
 			unsigned end_idx,
-			struct selection_string *selstr)
+			ಸಂರಚನಾ selection_string *selstr)
 {
 	html_content *html = (html_content *)c;
 	save_text_whitespace before = WHITESPACE_NONE;
 	bool first = true;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	ಯದಿ (html->layout == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_INVALID;
 	}
 
-	return selection_copy(html->layout,
+	ಪ್ರತ್ಯಾಗಮ selection_copy(html->layout,
 			      &html->unit_len_ctx,
 			      start_idx,
 			      end_idx,
@@ -530,18 +530,18 @@ html_textselection_copy(struct content *c,
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_get_end(struct content *c, unsigned *end_idx)
+html_textselection_get_end(ಸಂರಚನಾ content *c, unsigned *end_idx)
 {
 	html_content *html = (html_content *)c;
-	unsigned root_idx;
+	unsigned ಬೇರು_idx;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	ಯದಿ (html->layout == ರಿಕ್ತ) {
+		ಪ್ರತ್ಯಾಗಮ NSERROR_INVALID;
 	}
 
-	root_idx = 0;
+	ಬೇರು_idx = 0;
 
-	*end_idx = selection_label_subtree(html->layout, root_idx);
+	*end_idx = selection_label_subtree(html->layout, ಬೇರು_idx);
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }

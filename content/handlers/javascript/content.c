@@ -21,89 +21,89 @@
  * javascript content implementation
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/config.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "javascript/content.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/config.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "content/hlcache.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ javascript_content {
+	ಸಂರಚನಾ content base;
 } javascript_content;
 
-static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ಸ್ಥಿರ nserror javascript_create(ಧ್ರುವ content_handler *handler,
+		lwc_string *imime_type, ಧ್ರುವ ಸಂರಚನಾ http_parameter *params,
+		llcache_handle *llcache, ಧ್ರುವ ವರ್ಣ *fallback_charset,
+		bool quirks, ಸಂರಚನಾ content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, ಪರಿಮಾಣ(javascript_content));
+	ಯದಿ (script == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 
 	error = content__init(&script->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(script);
-		return error;
+	ಯದಿ (error != NSERROR_OK) {
+		ಮುಕ್ತ(script);
+		ಪ್ರತ್ಯಾಗಮ error;
 	}
 
-	*c = (struct content *) script;
+	*c = (ಸಂರಚನಾ content *) script;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+ಸ್ಥಿರ bool javascript_convert(ಸಂರಚನಾ content *c)
 {
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
-static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+ಸ್ಥಿರ nserror 
+javascript_clone(ಧ್ರುವ ಸಂರಚನಾ content *old, ಸಂರಚನಾ content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, ಪರಿಮಾಣ(javascript_content));
+	ಯದಿ (script == ರಿಕ್ತ)
+		ಪ್ರತ್ಯಾಗಮ NSERROR_NOMEM;
 
 	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
+	ಯದಿ (error != NSERROR_OK) {
 		content_destroy(&script->base);
-		return error;
+		ಪ್ರತ್ಯಾಗಮ error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (ಸಂರಚನಾ content *) script;
 
-	return NSERROR_OK;
+	ಪ್ರತ್ಯಾಗಮ NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+ಸ್ಥಿರ ಶೂನ್ಯ javascript_destroy(ಸಂರಚನಾ content *c)
 {
 }
 
-static content_type javascript_content_type(void)
+ಸ್ಥಿರ content_type javascript_content_type(ಶೂನ್ಯ)
 {
-	return CONTENT_JS;
+	ಪ್ರತ್ಯಾಗಮ CONTENT_JS;
 }
 
 
-static const content_handler javascript_content_handler = {
+ಸ್ಥಿರ ಧ್ರುವ content_handler javascript_content_handler = {
 	.create = javascript_create,
 	.data_complete = javascript_convert,
 	.destroy = javascript_destroy,
@@ -112,7 +112,7 @@ static const content_handler javascript_content_handler = {
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */
