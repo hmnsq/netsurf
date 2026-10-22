@@ -16,17 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <strings.h>
+#ضمن <string.h>
+#ضمن <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
+#ضمن "utils/nsoption.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/log.h"
+#ضمن "utils/nsurl.h"
+#ضمن "utils/utils.h"
 
-#include "css/hints.h"
-#include "css/select.h"
+#ضمن "css/hints.h"
+#ضمن "css/select.h"
 
 #define LOG_STATS
 #undef LOG_STATS
@@ -41,9 +41,9 @@
  * \param c  Character to consider
  * \return true if character is whitespace, false otherwise
  */
-static bool isWhitespace(char c)
+ساكن bool isWhitespace(حرف c)
 {
-	return c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
+	أرجع c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
 }
 
 /**
@@ -52,9 +52,9 @@ static bool isWhitespace(char c)
  * \param c  Character to consider
  * \return true if character is a valid hex digit, false otherwise
  */
-static bool isHex(char c)
+ساكن bool isHex(حرف c)
 {
-	return ('0' <= c && c <= '9') ||
+	أرجع ('0' <= c && c <= '9') ||
 			('A' <= (c & ~0x20) && (c & ~0x20) <= 'F');
 }
 
@@ -66,20 +66,20 @@ static bool isHex(char c)
  *
  * \note This function assumes an ASCII-compatible character set
  */
-static uint8_t charToHex(char c)
+ساكن uint8_t charToHex(حرف c)
 {
 	/* 0-9 */
 	c -= '0';
 
 	/* A-F */
-	if (c > 9)
+	𐡄𐡍 (c > 9)
 		c -= 'A' - '9' - 1;
 
 	/* a-f */
-	if (c > 15)
+	𐡄𐡍 (c > 15)
 		c -= 'a' - 'A';
 
-	return c;
+	أرجع c;
 }
 
 
@@ -98,58 +98,58 @@ static uint8_t charToHex(char c)
  *                        bytes consumed
  * \return true on success, false on invalid input
  */
-static bool parse_number(const char *data, bool maybe_negative, bool real,
+ساكن bool parse_number(ثابت حرف *data, bool maybe_negative, bool real,
 		css_fixed *value, size_t *consumed)
 {
 	size_t len;
-	const uint8_t *ptr;
+	ثابت uint8_t *ptr;
 	int32_t intpart = 0;
 	int32_t fracpart = 0;
 	int32_t pwr = 1;
-	int sign = 1;
+	صحيح sign = 1;
 
 	*consumed = 0;
 
 	len = strlen(data);
-	ptr = (const uint8_t *) data;
+	ptr = (ثابت uint8_t *) data;
 
-	if (len == 0)
-		return false;
+	𐡄𐡍 (len == 0)
+		أرجع false;
 
 	/* Skip leading whitespace */
-	while (len > 0 && isWhitespace(ptr[0])) {
+	طالما (len > 0 && isWhitespace(ptr[0])) {
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	𐡄𐡍 (len == 0)
+		أرجع false;
 
 	/* Extract sign, if any */
-	if (ptr[0] == '+') {
+	𐡄𐡍 (ptr[0] == '+') {
 		len--;
 		ptr++;
-	} else if (ptr[0] == '-' && maybe_negative) {
+	} وإلا 𐡄𐡍 (ptr[0] == '-' && maybe_negative) {
 		sign = -1;
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	𐡄𐡍 (len == 0)
+		أرجع false;
 
 	/* Must have a digit [0,9] */
-	if ('0' > ptr[0] || ptr[0] > '9')
-		return false;
+	𐡄𐡍 ('0' > ptr[0] || ptr[0] > '9')
+		أرجع false;
 
 	/* Now extract intpart, assuming base 10 */
-	while (len > 0) {
+	طالما (len > 0) {
 		/* Stop on first non-digit */
-		if (ptr[0] < '0' || '9' < ptr[0])
-			break;
+		𐡄𐡍 (ptr[0] < '0' || '9' < ptr[0])
+			اكسر;
 
 		/* Prevent overflow of 'intpart'; proper clamping below */
-		if (intpart < (1 << 22)) {
+		𐡄𐡍 (intpart < (1 << 22)) {
 			intpart *= 10;
 			intpart += ptr[0] - '0';
 		}
@@ -158,16 +158,16 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 	}
 
 	/* And fracpart, again, assuming base 10 */
-	if (real && len > 1 && ptr[0] == '.' &&
+	𐡄𐡍 (real && len > 1 && ptr[0] == '.' &&
 			('0' <= ptr[1] && ptr[1] <= '9')) {
 		ptr++;
 		len--;
 
-		while (len > 0) {
-			if (ptr[0] < '0' || '9' < ptr[0])
-				break;
+		طالما (len > 0) {
+			𐡄𐡍 (ptr[0] < '0' || '9' < ptr[0])
+				اكسر;
 
-			if (pwr < 1000000) {
+			𐡄𐡍 (pwr < 1000000) {
 				pwr *= 10;
 				fracpart *= 10;
 				fracpart += ptr[0] - '0';
@@ -177,28 +177,28 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 		}
 
 		fracpart = ((1 << 10) * fracpart + pwr/2) / pwr;
-		if (fracpart >= (1 << 10)) {
+		𐡄𐡍 (fracpart >= (1 << 10)) {
 			intpart++;
 			fracpart &= (1 << 10) - 1;
 		}
 	}
 
-	if (sign > 0) {
+	𐡄𐡍 (sign > 0) {
 		/* If the result is larger than we can represent,
 		 * then clamp to the maximum value we can store. */
-		if (intpart >= (1 << 21)) {
+		𐡄𐡍 (intpart >= (1 << 21)) {
 			intpart = (1 << 21) - 1;
 			fracpart = (1 << 10) - 1;
 		}
-	} else {
+	} وإلا {
 		/* If the negated result is smaller than we can represent
 		 * then clamp to the minimum value we can store. */
-		if (intpart >= (1 << 21)) {
+		𐡄𐡍 (intpart >= (1 << 21)) {
 			intpart = -(1 << 21);
 			fracpart = 0;
-		} else {
+		} وإلا {
 			intpart = -intpart;
-			if (fracpart) {
+			𐡄𐡍 (fracpart) {
 				fracpart = (1 << 10) - fracpart;
 				intpart--;
 			}
@@ -207,9 +207,9 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 
 	*value = (intpart << 10) | fracpart;
 
-	*consumed = ptr - (const uint8_t *) data;
+	*consumed = ptr - (ثابت uint8_t *) data;
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -221,36 +221,36 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
  * \param unit    Pointer to location to receive dimension's unit
  * \return true on success, false on invalid input
  */
-static bool parse_dimension(const char *data, bool strict, css_fixed *length,
+ساكن bool parse_dimension(ثابت حرف *data, bool strict, css_fixed *length,
 		css_unit *unit)
 {
 	size_t len;
-	size_t read;
+	size_t اقرأ;
 	css_fixed value;
 
 	len = strlen(data);
 
-	if (parse_number(data, false, true, &value, &read) == false)
-		return false;
+	𐡄𐡍 (parse_number(data, false, true, &value, &اقرأ) == false)
+		أرجع false;
 
-	if (strict && value < INTTOFIX(1))
-		return false;
+	𐡄𐡍 (strict && value < INTTOFIX(1))
+		أرجع false;
 
 	*length = value;
 
-	if (len > read && data[read] == '%')
+	𐡄𐡍 (len > اقرأ && data[اقرأ] == '%')
 		*unit = CSS_UNIT_PCT;
-	else
+	وإلا
 		*unit = CSS_UNIT_PX;
 
-	return true;
+	أرجع true;
 }
 
 /**
  * Mapping of colour name to CSS color
  */
-struct colour_map {
-	const char *name;
+بنية colour_map {
+	ثابت حرف *name;
 	css_color color;
 };
 
@@ -263,12 +263,12 @@ struct colour_map {
  *         < 0 if a < b,
  *         > 0 if b > a.
  */
-static int cmp_colour_name(const void *a, const void *b)
+ساكن صحيح cmp_colour_name(ثابت فراغ *a, ثابت فراغ *b)
 {
-	const char *aa = a;
-	const struct colour_map *bb = b;
+	ثابت حرف *aa = a;
+	ثابت بنية colour_map *bb = b;
 
-	return strcasecmp(aa, bb->name);
+	أرجع strcasecmp(aa, bb->name);
 }
 
 /**
@@ -278,9 +278,9 @@ static int cmp_colour_name(const void *a, const void *b)
  * \param result  Pointer to location to receive css_color
  * \return true on success, false on invalid input
  */
-static bool parse_named_colour(const char *name, css_color *result)
+ساكن bool parse_named_colour(ثابت حرف *name, css_color *result)
 {
-	static const struct colour_map named_colours[] = {
+	ساكن ثابت بنية colour_map named_colours[] = {
 		{ "aliceblue",		0xfff0f8ff },
 		{ "antiquewhite",	0xfffaebd7 },
 		{ "aqua",		0xff00ffff },
@@ -432,45 +432,45 @@ static bool parse_named_colour(const char *name, css_color *result)
 		{ "yellow",		0xffffff00 },
 		{ "yellowgreen",	0xff9acd32 }
 	};
-	const struct colour_map *entry;
+	ثابت بنية colour_map *entry;
 
 	entry = bsearch(name, named_colours,
-			sizeof(named_colours) / sizeof(named_colours[0]),
-			sizeof(named_colours[0]),
+			حجم(named_colours) / حجم(named_colours[0]),
+			حجم(named_colours[0]),
 			cmp_colour_name);
 
-	if (entry != NULL)
+	𐡄𐡍 (entry != عدم)
 		*result = entry->color;
 
-	return entry != NULL;
+	أرجع entry != عدم;
 }
 
 /* exported interface documented in content/handlers/css/hints.h */
-bool nscss_parse_colour(const char *data, css_color *result)
+bool nscss_parse_colour(ثابت حرف *data, css_color *result)
 {
 	size_t len = strlen(data);
 	uint8_t r, g, b;
 
 	/* 2 */
-	if (len == 0)
-		return false;
+	𐡄𐡍 (len == 0)
+		أرجع false;
 
 	/* 3 */
-	if (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
-		return false;
+	𐡄𐡍 (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
+		أرجع false;
 
 	/* 4 */
-	if (parse_named_colour(data, result))
-		return true;
+	𐡄𐡍 (parse_named_colour(data, result))
+		أرجع true;
 
 	/** \todo Implement HTML5's utterly insane legacy colour parsing */
 
-	if (data[0] == '#') {
+	𐡄𐡍 (data[0] == '#') {
 		data++;
 		len--;
 	}
 
-	if (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
+	𐡄𐡍 (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
 		r = charToHex(data[0]);
 		g = charToHex(data[1]);
 		b = charToHex(data[2]);
@@ -481,8 +481,8 @@ bool nscss_parse_colour(const char *data, css_color *result)
 
 		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
-	} else if (len == 6 && isHex(data[0]) && isHex(data[1]) &&
+		أرجع true;
+	} وإلا 𐡄𐡍 (len == 6 && isHex(data[0]) && isHex(data[1]) &&
 			isHex(data[2]) && isHex(data[3]) && isHex(data[4]) &&
 			isHex(data[5])) {
 		r = (charToHex(data[0]) << 4) | charToHex(data[1]);
@@ -491,10 +491,10 @@ bool nscss_parse_colour(const char *data, css_color *result)
 
 		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
+		أرجع true;
 	}
 
-	return false;
+	أرجع false;
 }
 
 /**
@@ -506,10 +506,10 @@ bool nscss_parse_colour(const char *data, css_color *result)
  * \param unit  Pointer to location to receive unit
  * \return True on success, false on failure
  */
-static bool parse_font_size(const char *size, uint8_t *val,
+ساكن bool parse_font_size(ثابت حرف *size, uint8_t *val,
 		css_fixed *len, css_unit *unit)
 {
-	static const uint8_t size_map[] = {
+	ساكن ثابت uint8_t size_map[] = {
 		CSS_FONT_SIZE_XX_SMALL,
 		CSS_FONT_SIZE_SMALL,
 		CSS_FONT_SIZE_MEDIUM,
@@ -519,48 +519,48 @@ static bool parse_font_size(const char *size, uint8_t *val,
 		CSS_FONT_SIZE_DIMENSION	/* xxx-large (see below) */
 	};
 
-	const char *p = size;
-	char mode;
-	int value = 0;
+	ثابت حرف *p = size;
+	حرف mode;
+	صحيح value = 0;
 
 	/* Skip whitespace */
-	while (*p != '\0' && isWhitespace(*p))
+	طالما (*p != '\0' && isWhitespace(*p))
 		p++;
 
 	mode = *p;
 
 	/* Skip +/- */
-	if (mode == '+' || mode == '-')
+	𐡄𐡍 (mode == '+' || mode == '-')
 		p++;
 
 	/* Need at least one digit */
-	if (*p < '0' || *p > '9') {
-		return false;
+	𐡄𐡍 (*p < '0' || *p > '9') {
+		أرجع false;
 	}
 
 	/* Consume digits, computing value */
-	while ('0' <= *p && *p <= '9') {
+	طالما ('0' <= *p && *p <= '9') {
 		value = value * 10 + (*p - '0');
 		p++;
 	}
 
 	/* Resolve relative sizes */
-	if (mode == '+')
+	𐡄𐡍 (mode == '+')
 		value += 3;
-	else if (mode == '-')
+	وإلا 𐡄𐡍 (mode == '-')
 		value = 3 - value;
 
 	/* Clamp to range [1,7] */
-	if (value < 1)
+	𐡄𐡍 (value < 1)
 		value = 1;
-	else if (value > 7)
+	وإلا 𐡄𐡍 (value > 7)
 		value = 7;
 
-	if (value == 7) {
+	𐡄𐡍 (value == 7) {
 		/* Manufacture xxx-large */
 	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_size))),
 				F_10);
-	} else {
+	} وإلا {
 		/* Len is irrelevant */
 		*len = 0;
 	}
@@ -568,7 +568,7 @@ static bool parse_font_size(const char *size, uint8_t *val,
 	*unit = CSS_UNIT_PT;
 	*val = size_map[value - 1];
 
-	return true;
+	أرجع true;
 }
 
 
@@ -578,44 +578,44 @@ static bool parse_font_size(const char *size, uint8_t *val,
 
 #define MAX_HINTS_PER_ELEMENT 32
 
-struct css_hint_ctx {
-	struct css_hint *hints;
+بنية css_hint_ctx {
+	بنية css_hint *hints;
 	uint32_t len;
 };
 
-struct css_hint_ctx hint_ctx;
+بنية css_hint_ctx hint_ctx;
 
-nserror css_hint_init(void)
+nserror css_hint_init(فراغ)
 {
-	hint_ctx.hints = malloc(sizeof(struct css_hint) *
+	hint_ctx.hints = malloc(حجم(بنية css_hint) *
 			MAX_HINTS_PER_ELEMENT);
-	if (hint_ctx.hints == NULL) {
-		return NSERROR_NOMEM;
+	𐡄𐡍 (hint_ctx.hints == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-void css_hint_fini(void)
+فراغ css_hint_fini(فراغ)
 {
 	hint_ctx.len = 0;
-	free(hint_ctx.hints);
+	حرر(hint_ctx.hints);
 }
 
-static void css_hint_clean(void)
+ساكن فراغ css_hint_clean(فراغ)
 {
 	hint_ctx.len = 0;
 }
 
-static inline void css_hint_advance(struct css_hint **hint)
+ساكن مضمن فراغ css_hint_advance(بنية css_hint **hint)
 {
 	hint_ctx.len++;
-	assert(hint_ctx.len < MAX_HINTS_PER_ELEMENT);
+	أكد(hint_ctx.len < MAX_HINTS_PER_ELEMENT);
 
 	(*hint)++;
 }
 
-static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
+ساكن فراغ css_hint_get_hints(بنية css_hint **hints, uint32_t *nhints)
 {
 	*hints = hint_ctx.hints;
 	*nhints = hint_ctx.len;
@@ -626,28 +626,28 @@ static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
  * Presentational hint handlers                                               *
  ******************************************************************************/
 
-static void css_hint_table_cell_border_padding(
+ساكن فراغ css_hint_table_cell_border_padding(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_qname qs;
-	dom_string *attr = NULL;
-	dom_node *tablenode = NULL;
+	dom_string *attr = عدم;
+	dom_node *tablenode = عدم;
 	dom_exception exc;
 
-	qs.ns = NULL;
+	qs.ns = عدم;
 	qs.name = lwc_string_ref(corestring_lwc_table);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&tablenode) != CSS_OK) {
+	𐡄𐡍 (named_ancestor_node(ctx, node, &qs,
+			(فراغ *)&tablenode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return;
+		أرجع;
 	}
 	lwc_string_unref(qs.name);
 
-	if (tablenode == NULL) {
-		return;
+	𐡄𐡍 (tablenode == عدم) {
+		أرجع;
 	}
 	/* No need to unref tablenode, named_ancestor_node does not
 	 * return a reffed node to the CSS
@@ -656,17 +656,17 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		if (parse_dimension(
+		𐡄𐡍 (parse_dimension(
 				dom_string_data(attr), false,
 						&hint_length.value,
 						&hint_length.unit) &&
 				INTTOFIX(0) != hint_length.value) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
+			لكل (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -674,7 +674,7 @@ static void css_hint_table_cell_border_padding(
 				css_hint_advance(&hint);
 			}
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
+			لكل (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -690,15 +690,15 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		𐡄𐡍 (nscss_parse_colour(
+				(ثابت حرف *)dom_string_data(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
+			لكل (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -713,16 +713,16 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_cellpadding, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		if (parse_dimension(
+		𐡄𐡍 (parse_dimension(
 				dom_string_data(attr), false,
 						&hint_length.value,
 						&hint_length.unit)) {
 
-			for (hint_prop = CSS_PROP_PADDING_TOP;
+			لكل (hint_prop = CSS_PROP_PADDING_TOP;
 			     hint_prop <= CSS_PROP_PADDING_LEFT;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -736,39 +736,39 @@ static void css_hint_table_cell_border_padding(
 	}
 }
 
-static void css_hint_vertical_align_table_cells(
+ساكن فراغ css_hint_vertical_align_table_cells(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = عدم;
 	dom_exception err;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
 		hint->data.length.value = 0;
 		hint->data.length.unit = CSS_UNIT_PX;
-		if (dom_string_caseless_lwc_isequal(attr,
+		𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_top)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_TOP;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_middle)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_BOTTOM;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
@@ -778,25 +778,25 @@ static void css_hint_vertical_align_table_cells(
 	}
 }
 
-static void css_hint_vertical_align_replaced(
+ساكن فراغ css_hint_vertical_align_replaced(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = عدم;
 	dom_exception err;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (dom_string_caseless_lwc_isequal(attr,
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_top)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_TOP;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
@@ -804,13 +804,13 @@ static void css_hint_vertical_align_replaced(
 			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_texttop)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_TEXT_TOP;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_absmiddle) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_abscenter)) {
@@ -822,36 +822,36 @@ static void css_hint_vertical_align_replaced(
 	}
 }
 
-static void css_hint_text_align_normal(
+ساكن فراغ css_hint_text_align_normal(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = عدم;
 	dom_exception err;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	𐡄𐡍 (err == DOM_NO_ERR && align != عدم) {
+		𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_left)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LEFT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_center)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_right)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_RIGHT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
@@ -861,31 +861,31 @@ static void css_hint_text_align_normal(
 	}
 }
 
-static void css_hint_text_align_center(
+ساكن فراغ css_hint_text_align_center(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
 	hint->prop = CSS_PROP_TEXT_ALIGN;
 	hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_left_right_align_center(
+ساكن فراغ css_hint_margin_left_right_align_center(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
+		memset(hint, 0, حجم(*hint) * 2);
+		𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_center) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_abscenter) ||
@@ -905,37 +905,37 @@ static void css_hint_margin_left_right_align_center(
 	}
 }
 
-static void css_hint_text_align_special(
+ساكن فراغ css_hint_text_align_special(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = عدم;
 	dom_exception err;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_align, &align);
 
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	𐡄𐡍 (err == DOM_NO_ERR && align != عدم) {
+		𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_center)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_left)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LIBCSS_LEFT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_right)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LIBCSS_RIGHT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
@@ -945,31 +945,31 @@ static void css_hint_text_align_special(
 	}
 }
 
-static void css_hint_text_align_table_special(
+ساكن فراغ css_hint_text_align_table_special(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
 	hint->prop = CSS_PROP_TEXT_ALIGN;
 	hint->status = CSS_TEXT_ALIGN_INHERIT_IF_NON_MAGIC;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_hspace_vspace(
+ساكن فراغ css_hint_margin_hspace_vspace(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = عدم;
 	dom_exception exc;
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_vspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
 		css_hint_length hint_length;
-		if (parse_dimension(
+		𐡄𐡍 (parse_dimension(
 				dom_string_data(attr), false,
 				&hint_length.value,
 				&hint_length.unit)) {
@@ -991,9 +991,9 @@ static void css_hint_margin_hspace_vspace(
 	exc = dom_element_get_attribute(node,
 			corestring_dom_hspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
 		css_hint_length hint_length;
-		if (parse_dimension(
+		𐡄𐡍 (parse_dimension(
 				dom_string_data(attr), false,
 				&hint_length.value,
 				&hint_length.unit)) {
@@ -1013,20 +1013,20 @@ static void css_hint_margin_hspace_vspace(
 	}
 }
 
-static void css_hint_margin_left_right_hr(
+ساكن فراغ css_hint_margin_left_right_hr(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
 	exc = dom_element_get_attribute(node,
 				corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
+		memset(hint, 0, حجم(*hint) * 2);
+		𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_left)) {
 			hint->prop = CSS_PROP_MARGIN_LEFT;
 			hint->data.length.value = 0;
@@ -1038,7 +1038,7 @@ static void css_hint_margin_left_right_hr(
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_center)) {
 			hint->prop = CSS_PROP_MARGIN_LEFT;
 			hint->status = CSS_MARGIN_AUTO;
@@ -1048,7 +1048,7 @@ static void css_hint_margin_left_right_hr(
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_right)) {
 			hint->prop = CSS_PROP_MARGIN_LEFT;
 			hint->status = CSS_MARGIN_AUTO;
@@ -1064,21 +1064,21 @@ static void css_hint_margin_left_right_hr(
 	}
 }
 
-static void css_hint_table_spacing_border(
+ساكن فراغ css_hint_table_spacing_border(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception exc;
-	dom_string *attr = NULL;
+	dom_string *attr = عدم;
 
 	exc = dom_element_get_attribute(node, corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
+		لكل (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -1086,12 +1086,12 @@ static void css_hint_table_spacing_border(
 				css_hint_advance(&hint);
 		}
 
-		if (parse_dimension(
+		𐡄𐡍 (parse_dimension(
 				dom_string_data(attr), false,
 						&hint_length.value,
 						&hint_length.unit)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
+			لكل (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -1107,15 +1107,15 @@ static void css_hint_table_spacing_border(
 	exc = dom_element_get_attribute(node,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		𐡄𐡍 (nscss_parse_colour(
+				(ثابت حرف *)dom_string_data(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
+			لكل (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -1130,9 +1130,9 @@ static void css_hint_table_spacing_border(
 	exc = dom_element_get_attribute(node,
 			corestring_dom_cellspacing, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
+	𐡄𐡍 (exc == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (parse_dimension(
+				(ثابت حرف *)dom_string_data(attr), false,
 						&hint->data.position.h.value,
 						&hint->data.position.h.unit)) {
 			hint->prop = CSS_PROP_BORDER_SPACING;
@@ -1144,20 +1144,20 @@ static void css_hint_table_spacing_border(
 	}
 }
 
-static void css_hint_height(
+ساكن فراغ css_hint_height(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = عدم;
 	dom_exception err;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_height, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (parse_dimension(
+				(ثابت حرف *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_HEIGHT;
@@ -1168,20 +1168,20 @@ static void css_hint_height(
 	}
 }
 
-static void css_hint_width(
+ساكن فراغ css_hint_width(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = عدم;
 	dom_exception err;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_width, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (parse_dimension(
+				(ثابت حرف *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_WIDTH;
@@ -1192,20 +1192,20 @@ static void css_hint_width(
 	}
 }
 
-static void css_hint_height_width_textarea(
+ساكن فراغ css_hint_height_width_textarea(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = عدم;
 	dom_exception err;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_rows, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (parse_dimension(
+				(ثابت حرف *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_HEIGHT;
@@ -1219,9 +1219,9 @@ static void css_hint_height_width_textarea(
 	err = dom_element_get_attribute(node,
 			corestring_dom_cols, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (parse_dimension(
+				(ثابت حرف *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_WIDTH;
@@ -1233,21 +1233,21 @@ static void css_hint_height_width_textarea(
 	}
 }
 
-static void css_hint_height_width_canvas(
+ساكن فراغ css_hint_height_width_canvas(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = عدم;
 	dom_exception err;
 	bool set_dim = false;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_height, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (parse_dimension(
+				(ثابت حرف *)dom_string_data(attr), true,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_HEIGHT;
@@ -1258,23 +1258,23 @@ static void css_hint_height_width_canvas(
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	𐡄𐡍 (set_dim == false) {
 		/* canvas defaults to 150px tall */
 		hint->prop = CSS_PROP_HEIGHT;
 		hint->data.length.unit = CSS_UNIT_PX;
 		hint->data.length.value = INTTOFIX(150);
 		hint->status = CSS_HEIGHT_SET;
 		css_hint_advance(&hint);
-	} else {
+	} وإلا {
 		set_dim = false;
 	}
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_width, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (parse_dimension(
+				(ثابت حرف *)dom_string_data(attr), true,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_WIDTH;
@@ -1285,7 +1285,7 @@ static void css_hint_height_width_canvas(
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	𐡄𐡍 (set_dim == false) {
 		/* canvas defaults to 300px wide */
 		hint->prop = CSS_PROP_WIDTH;
 		hint->data.length.unit = CSS_UNIT_PX;
@@ -1295,32 +1295,32 @@ static void css_hint_height_width_canvas(
 	}
 }
 
-static void css_hint_width_input(
+ساكن فراغ css_hint_width_input(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
-	dom_string *attr = NULL;
+	بنية css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	dom_string *attr = عدم;
 	dom_exception err;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_size, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		𐡄𐡍 (parse_dimension(
+				(ثابت حرف *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
-			dom_string *attr2 = NULL;
+			dom_string *attr2 = عدم;
 
 			err = dom_element_get_attribute(node,
 					corestring_dom_type, &attr2);
-			if (err == DOM_NO_ERR) {
+			𐡄𐡍 (err == DOM_NO_ERR) {
 
 				hint->prop = CSS_PROP_WIDTH;
 				hint->status = CSS_WIDTH_SET;
 
-				if (attr2 == NULL ||
+				𐡄𐡍 (attr2 == عدم ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_text) ||
@@ -1335,7 +1335,7 @@ static void css_hint_width_input(
 						corestring_lwc_file)) {
 					hint->data.length.unit = CSS_UNIT_EX;
 				}
-				if (attr2 != NULL) {
+				𐡄𐡍 (attr2 != عدم) {
 					dom_string_unref(attr2);
 				}
 				css_hint_advance(&hint);
@@ -1345,49 +1345,49 @@ static void css_hint_width_input(
 	}
 }
 
-static void css_hint_anchor_color(
+ساكن فراغ css_hint_anchor_color(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_error error;
 	dom_exception err;
 	dom_string *color;
-	dom_node *bodynode = NULL;
+	dom_node *bodynode = عدم;
 
 	/* find body node */
 	css_qname qs;
 	bool is_visited;
 
-	qs.ns = NULL;
+	qs.ns = عدم;
 	qs.name = lwc_string_ref(corestring_lwc_body);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&bodynode) != CSS_OK) {
+	𐡄𐡍 (named_ancestor_node(ctx, node, &qs,
+			(فراغ *)&bodynode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return ;
+		أرجع ;
 	}
 	lwc_string_unref(qs.name);
 
-	if (bodynode == NULL) {
-		return;
+	𐡄𐡍 (bodynode == عدم) {
+		أرجع;
 	}
 
 	error = node_is_visited(ctx, node, &is_visited);
-	if (error != CSS_OK)
-		return;
+	𐡄𐡍 (error != CSS_OK)
+		أرجع;
 
-	if (is_visited) {
+	𐡄𐡍 (is_visited) {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_vlink, &color);
-	} else {
+	} وإلا {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_link, &color);
 	}
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
+	𐡄𐡍 (err == DOM_NO_ERR && color != عدم) {
+		𐡄𐡍 (nscss_parse_colour(
+				(ثابت حرف *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
 			hint->status = CSS_COLOR_COLOR;
@@ -1397,19 +1397,19 @@ static void css_hint_anchor_color(
 	}
 }
 
-static void css_hint_body_color(
+ساكن فراغ css_hint_body_color(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
 	err = dom_element_get_attribute(node, corestring_dom_text, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
+	𐡄𐡍 (err == DOM_NO_ERR && color != عدم) {
+		𐡄𐡍 (nscss_parse_colour(
+				(ثابت حرف *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
 			hint->status = CSS_COLOR_COLOR;
@@ -1419,19 +1419,19 @@ static void css_hint_body_color(
 	}
 }
 
-static void css_hint_color(
+ساكن فراغ css_hint_color(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
 	err = dom_element_get_attribute(node, corestring_dom_color, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
+	𐡄𐡍 (err == DOM_NO_ERR && color != عدم) {
+		𐡄𐡍 (nscss_parse_colour(
+				(ثابت حرف *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
 			hint->status = CSS_COLOR_COLOR;
@@ -1441,18 +1441,18 @@ static void css_hint_color(
 	}
 }
 
-static void css_hint_font_size(
+ساكن فراغ css_hint_font_size(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *size;
 
 	err = dom_element_get_attribute(node, corestring_dom_size, &size);
-	if (err == DOM_NO_ERR && size != NULL) {
-		if (parse_font_size(
-				(const char *)dom_string_data(size),
+	𐡄𐡍 (err == DOM_NO_ERR && size != عدم) {
+		𐡄𐡍 (parse_font_size(
+				(ثابت حرف *)dom_string_data(size),
 						&hint->status,
 						&hint->data.length.value,
 						&hint->data.length.unit)) {
@@ -1463,23 +1463,23 @@ static void css_hint_font_size(
 	}
 }
 
-static void css_hint_float(
+ساكن فراغ css_hint_float(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *align;
 
 	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	𐡄𐡍 (err == DOM_NO_ERR && align != عدم) {
+		𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_left)) {
 			hint->prop = CSS_PROP_FLOAT;
 			hint->status = CSS_FLOAT_LEFT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} وإلا 𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_right)) {
 			hint->prop = CSS_PROP_FLOAT;
 			hint->status = CSS_FLOAT_RIGHT;
@@ -1489,17 +1489,17 @@ static void css_hint_float(
 	}
 }
 
-static void css_hint_caption_side(
+ساكن فراغ css_hint_caption_side(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
-	dom_string *align = NULL;
+	dom_string *align = عدم;
 
 	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	𐡄𐡍 (err == DOM_NO_ERR && align != عدم) {
+		𐡄𐡍 (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_CAPTION_SIDE;
 			hint->status = CSS_CAPTION_SIDE_BOTTOM;
@@ -1509,19 +1509,19 @@ static void css_hint_caption_side(
 	}
 }
 
-static void css_hint_bg_color(
+ساكن فراغ css_hint_bg_color(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	بنية css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *bgcolor;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_bgcolor, &bgcolor);
-	if (err == DOM_NO_ERR && bgcolor != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(bgcolor),
+	𐡄𐡍 (err == DOM_NO_ERR && bgcolor != عدم) {
+		𐡄𐡍 (nscss_parse_colour(
+				(ثابت حرف *)dom_string_data(bgcolor),
 				&hint->data.color)) {
 			hint->prop = CSS_PROP_BACKGROUND_COLOR;
 			hint->status = CSS_BACKGROUND_COLOR_COLOR;
@@ -1531,29 +1531,29 @@ static void css_hint_bg_color(
 	}
 }
 
-static void css_hint_bg_image(
+ساكن فراغ css_hint_bg_image(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	بنية css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_background, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
 		nsurl *url;
 		nserror error = nsurl_join(ctx->base_url,
-				(const char *)dom_string_data(attr), &url);
+				(ثابت حرف *)dom_string_data(attr), &url);
 		dom_string_unref(attr);
 
-		if (error == NSERROR_OK) {
+		𐡄𐡍 (error == NSERROR_OK) {
 			lwc_string *iurl;
 			lwc_error lerror = lwc_intern_string(nsurl_access(url),
 					nsurl_length(url), &iurl);
 			nsurl_unref(url);
 
-			if (lerror == lwc_error_ok) {
+			𐡄𐡍 (lerror == lwc_error_ok) {
 				hint->prop = CSS_PROP_BACKGROUND_IMAGE;
 				hint->data.string = iurl;
 				hint->status = CSS_BACKGROUND_IMAGE_IMAGE;
@@ -1563,57 +1563,57 @@ static void css_hint_bg_image(
 	}
 }
 
-static void css_hint_white_space_nowrap(
+ساكن فراغ css_hint_white_space_nowrap(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	بنية css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	bool nowrap;
 
 	err = dom_element_has_attribute(node, corestring_dom_nowrap, &nowrap);
-	if (err == DOM_NO_ERR && nowrap == true) {
+	𐡄𐡍 (err == DOM_NO_ERR && nowrap == true) {
 		hint->prop = CSS_PROP_WHITE_SPACE;
 		hint->status = CSS_WHITE_SPACE_NOWRAP;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_list(
+ساكن فراغ css_hint_list(
 		nscss_select_ctx *ctx,
 		dom_node *node)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	بنية css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
 	err = dom_element_get_attribute(node, corestring_dom_type, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
-		const char *attr_str = dom_string_data(attr);
+	𐡄𐡍 (err == DOM_NO_ERR && attr != عدم) {
+		ثابت حرف *attr_str = dom_string_data(attr);
 		size_t attr_len = dom_string_byte_length(attr);
-		enum css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
+		تعداد css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
 
-		if (attr_len == 1) {
-			switch (attr_str[0]) {
-			case 'a':
+		𐡄𐡍 (attr_len == 1) {
+			بدل (attr_str[0]) {
+			حالة 'a':
 				type = CSS_LIST_STYLE_TYPE_LOWER_ALPHA;
-				break;
-			case 'A':
+				اكسر;
+			حالة 'A':
 				type = CSS_LIST_STYLE_TYPE_UPPER_ALPHA;
-				break;
-			case 'i':
+				اكسر;
+			حالة 'i':
 				type = CSS_LIST_STYLE_TYPE_LOWER_ROMAN;
-				break;
-			case 'I':
+				اكسر;
+			حالة 'I':
 				type = CSS_LIST_STYLE_TYPE_UPPER_ROMAN;
-				break;
-			case '1':
+				اكسر;
+			حالة '1':
 				type = CSS_LIST_STYLE_TYPE_DECIMAL;
-				break;
+				اكسر;
 			}
 		}
 
-		if (type != CSS_LIST_STYLE_TYPE_INHERIT) {
+		𐡄𐡍 (type != CSS_LIST_STYLE_TYPE_INHERIT) {
 			hint->prop = CSS_PROP_LIST_STYLE_TYPE;
 			hint->status = type;
 			css_hint_advance(&hint);
@@ -1625,110 +1625,110 @@ static void css_hint_list(
 
 
 /* Exported function, documented in css/hints.h */
-css_error node_presentational_hint(void *pw, void *node,
+css_error node_presentational_hint(فراغ *pw, فراغ *node,
 		uint32_t *nhints, css_hint **hints)
 {
 	dom_exception exc;
 	dom_html_element_type tag_type;
 
-	if (nsoption_bool(author_level_css) == false) {
+	𐡄𐡍 (nsoption_bool(author_level_css) == false) {
 		*nhints = 0;
-		*hints = NULL;
-		return CSS_OK;
+		*hints = عدم;
+		أرجع CSS_OK;
 	}
 
 	css_hint_clean();
 
 	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
+	𐡄𐡍 (exc != DOM_NO_ERR) {
 		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	switch (tag_type) {
-	case DOM_HTML_ELEMENT_TYPE_TH:
-	case DOM_HTML_ELEMENT_TYPE_TD:
+	بدل (tag_type) {
+	حالة DOM_HTML_ELEMENT_TYPE_TH:
+	حالة DOM_HTML_ELEMENT_TYPE_TD:
 		css_hint_width(pw, node);
 		css_hint_table_cell_border_padding(pw, node);
 		css_hint_white_space_nowrap(pw, node);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_TR:
+	حالة DOM_HTML_ELEMENT_TYPE_TR:
 		css_hint_height(pw, node);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_THEAD:
-	case DOM_HTML_ELEMENT_TYPE_TBODY:
-	case DOM_HTML_ELEMENT_TYPE_TFOOT:
+	حالة DOM_HTML_ELEMENT_TYPE_THEAD:
+	حالة DOM_HTML_ELEMENT_TYPE_TBODY:
+	حالة DOM_HTML_ELEMENT_TYPE_TFOOT:
 		css_hint_text_align_special(pw, node);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_COL:
+	حالة DOM_HTML_ELEMENT_TYPE_COL:
 		css_hint_vertical_align_table_cells(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_APPLET:
-	case DOM_HTML_ELEMENT_TYPE_IMG:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_APPLET:
+	حالة DOM_HTML_ELEMENT_TYPE_IMG:
 		css_hint_margin_hspace_vspace(pw, node);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_EMBED:
-	case DOM_HTML_ELEMENT_TYPE_IFRAME:
-	case DOM_HTML_ELEMENT_TYPE_OBJECT:
+	حالة DOM_HTML_ELEMENT_TYPE_EMBED:
+	حالة DOM_HTML_ELEMENT_TYPE_IFRAME:
+	حالة DOM_HTML_ELEMENT_TYPE_OBJECT:
 		css_hint_height(pw, node);
 		css_hint_width(pw, node);
 		css_hint_vertical_align_replaced(pw, node);
 		css_hint_float(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_P:
-	case DOM_HTML_ELEMENT_TYPE_H1:
-	case DOM_HTML_ELEMENT_TYPE_H2:
-	case DOM_HTML_ELEMENT_TYPE_H3:
-	case DOM_HTML_ELEMENT_TYPE_H4:
-	case DOM_HTML_ELEMENT_TYPE_H5:
-	case DOM_HTML_ELEMENT_TYPE_H6:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_P:
+	حالة DOM_HTML_ELEMENT_TYPE_H1:
+	حالة DOM_HTML_ELEMENT_TYPE_H2:
+	حالة DOM_HTML_ELEMENT_TYPE_H3:
+	حالة DOM_HTML_ELEMENT_TYPE_H4:
+	حالة DOM_HTML_ELEMENT_TYPE_H5:
+	حالة DOM_HTML_ELEMENT_TYPE_H6:
 		css_hint_text_align_normal(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CENTER:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_CENTER:
 		css_hint_text_align_center(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CAPTION:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_CAPTION:
 		css_hint_caption_side(pw, node);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_DIV:
+	حالة DOM_HTML_ELEMENT_TYPE_DIV:
 		css_hint_text_align_special(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TABLE:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_TABLE:
 		css_hint_text_align_table_special(pw, node);
 		css_hint_table_spacing_border(pw, node);
 		css_hint_float(pw, node);
 		css_hint_margin_left_right_align_center(pw, node);
 		css_hint_width(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_HR:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_HR:
 		css_hint_width(pw, node);
 		css_hint_margin_left_right_hr(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_TEXTAREA:
 		css_hint_height_width_textarea(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_INPUT:
 		css_hint_width_input(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_A:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_A:
 		css_hint_anchor_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FONT:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_FONT:
 		css_hint_font_size(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BODY:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_BODY:
 		css_hint_body_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CANVAS:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_CANVAS:
 		css_hint_height_width_canvas(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OL:
+		اكسر;
+	حالة DOM_HTML_ELEMENT_TYPE_OL:
 		css_hint_list(pw, node);
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
+	𐡄𐡍 (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
 		css_hint_color(pw, node);
 		css_hint_bg_color(pw, node);
 		css_hint_bg_image(pw, node);
@@ -1740,5 +1740,5 @@ css_error node_presentational_hint(void *pw, void *node,
 
 	css_hint_get_hints(hints, nhints);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }

@@ -22,28 +22,28 @@
  * Implementation of HTML content DOM event handling.
  */
 
-#include <string.h>
+#ضمن <string.h>
 
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/ascii.h"
-#include "utils/string.h"
-#include "utils/nsurl.h"
-#include "content/content.h"
-#include "javascript/js.h"
+#ضمن "utils/config.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/nsoption.h"
+#ضمن "utils/log.h"
+#ضمن "utils/ascii.h"
+#ضمن "utils/string.h"
+#ضمن "utils/nsurl.h"
+#ضمن "content/content.h"
+#ضمن "javascript/js.h"
 
-#include "netsurf/bitmap.h"
+#ضمن "netsurf/bitmap.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/css.h"
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/form_internal.h"
-#include "html/dom_event.h"
+#ضمن "html/private.h"
+#ضمن "html/object.h"
+#ضمن "html/css.h"
+#ضمن "html/box.h"
+#ضمن "html/box_construct.h"
+#ضمن "html/form_internal.h"
+#ضمن "html/dom_event.h"
 
 
 /**
@@ -53,22 +53,22 @@
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
+ساكن bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 
 	/* get href attribute if present */
 	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (atr_string != عدم)) {
 		nsurl *url;
 		nserror error;
 
 		/* get url from string */
 		error = nsurl_create(dom_string_data(atr_string), &url);
 		dom_string_unref(atr_string);
-		if (error == NSERROR_OK) {
-			if (htmlc->base_url != NULL) {
+		𐡄𐡍 (error == NSERROR_OK) {
+			𐡄𐡍 (htmlc->base_url != عدم) {
 				nsurl_unref(htmlc->base_url);
 			}
 			htmlc->base_url = url;
@@ -77,20 +77,20 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 
 
 	/* get target attribute if present and not already set */
-	if (htmlc->base_target != NULL) {
-		return true;
+	𐡄𐡍 (htmlc->base_target != عدم) {
+		أرجع true;
 	}
 
 	exc = dom_element_get_attribute(node,
 					corestring_dom_target,
 					&atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (atr_string != عدم)) {
 		/* Validation rules from the HTML5 spec for the base element:
 		 *  The target must be one of _blank, _self, _parent, or
 		 *  _top or any identifier which does not begin with an
 		 *  underscore
 		 */
-		if (*dom_string_data(atr_string) != '_' ||
+		𐡄𐡍 (*dom_string_data(atr_string) != '_' ||
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__blank) ||
 				dom_string_caseless_lwc_isequal(atr_string,
@@ -104,7 +104,7 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 		dom_string_unref(atr_string);
 	}
 
-	return true;
+	أرجع true;
 }
 
 
@@ -116,7 +116,7 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
+ساكن bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 {
 	dom_string *src;
 	nsurl *url;
@@ -125,27 +125,27 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	bool success;
 
 	/* Do nothing if foreground images are disabled */
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	𐡄𐡍 (nsoption_bool(foreground_images) == false) {
+		أرجع true;
 	}
 
 	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		return true;
+	𐡄𐡍 (exc != DOM_NO_ERR || src == عدم) {
+		أرجع true;
 	}
 
 	err = nsurl_join(htmlc->base_url, dom_string_data(src), &url);
-	if (err != NSERROR_OK) {
+	𐡄𐡍 (err != NSERROR_OK) {
 		dom_string_unref(src);
-		return false;
+		أرجع false;
 	}
 	dom_string_unref(src);
 
 	/* Speculatively fetch the image */
-	success = html_fetch_object(htmlc, url, NULL, CONTENT_IMAGE, false);
+	success = html_fetch_object(htmlc, url, عدم, CONTENT_IMAGE, false);
 	nsurl_unref(url);
 
-	return success;
+	أرجع success;
 }
 
 
@@ -158,9 +158,9 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_link(html_content *c, dom_node *node)
+ساكن bool html_process_inserted_link(html_content *c, dom_node *node)
 {
-	struct content_rfc5988_link link; /* the link added to the content */
+	بنية content_rfc5988_link link; /* the link added to the content */
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 	nserror error;
@@ -170,67 +170,67 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	/* try Generic link handling */
 
-	memset(&link, 0, sizeof(struct content_rfc5988_link));
+	memset(&link, 0, حجم(بنية content_rfc5988_link));
 
 	/* check that the relation exists - w3c spec says must be present */
 	exc = dom_element_get_attribute(node, corestring_dom_rel, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
-		return false;
+	𐡄𐡍 ((exc != DOM_NO_ERR) || (atr_string == عدم)) {
+		أرجع false;
 	}
 	/* get a lwc string containing the link relation */
 	exc = dom_string_intern(atr_string, &link.rel);
 	dom_string_unref(atr_string);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	𐡄𐡍 (exc != DOM_NO_ERR) {
+		أرجع false;
 	}
 
 	/* check that the href exists - w3c spec says must be present */
 	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+	𐡄𐡍 ((exc != DOM_NO_ERR) || (atr_string == عدم)) {
 		lwc_string_unref(link.rel);
-		return false;
+		أرجع false;
 	}
 
 	/* get nsurl */
 	error = nsurl_join(c->base_url, dom_string_data(atr_string),
 			&link.href);
 	dom_string_unref(atr_string);
-	if (error != NSERROR_OK) {
+	𐡄𐡍 (error != NSERROR_OK) {
 		lwc_string_unref(link.rel);
-		return false;
+		أرجع false;
 	}
 
 	/* look for optional properties -- we don't care if internment fails */
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_hreflang, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (atr_string != عدم)) {
 		/* get a lwc string containing the href lang */
-		(void)dom_string_intern(atr_string, &link.hreflang);
+		(فراغ)dom_string_intern(atr_string, &link.hreflang);
 		dom_string_unref(atr_string);
 	}
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_type, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (atr_string != عدم)) {
 		/* get a lwc string containing the type */
-		(void)dom_string_intern(atr_string, &link.type);
+		(فراغ)dom_string_intern(atr_string, &link.type);
 		dom_string_unref(atr_string);
 	}
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_media, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (atr_string != عدم)) {
 		/* get a lwc string containing the media */
-		(void)dom_string_intern(atr_string, &link.media);
+		(فراغ)dom_string_intern(atr_string, &link.media);
 		dom_string_unref(atr_string);
 	}
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_sizes, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (atr_string != عدم)) {
 		/* get a lwc string containing the sizes */
-		(void)dom_string_intern(atr_string, &link.sizes);
+		(فراغ)dom_string_intern(atr_string, &link.sizes);
 		dom_string_unref(atr_string);
 	}
 
@@ -245,12 +245,12 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 	nsurl_unref(link.href);
 	lwc_string_unref(link.rel);
 
-	return true;
+	أرجع true;
 }
 
 
 /* handler for a SCRIPT which has been added to a tree */
-static void
+ساكن فراغ
 dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 {
 	dom_exception exc;
@@ -258,42 +258,42 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 	dom_hubbub_error res;
 	bool within;
 
-	if (!htmlc->enable_scripting) {
+	𐡄𐡍 (!htmlc->enable_scripting) {
 		NSLOG(netsurf, INFO, "Encountered a script, but scripting is off, ignoring");
-		return;
+		أرجع;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG, "Encountered a script, node %p showed up", script);
 
 	exc = dom_html_script_element_get_flags(script, &flags);
-	if (exc != DOM_NO_ERR) {
+	𐡄𐡍 (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve flags, giving up");
-		return;
+		أرجع;
 	}
 
-	if (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
+	𐡄𐡍 (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
 		NSLOG(netsurf, DEBUG, "Script was parser inserted, skipping");
-		return;
+		أرجع;
 	}
 
 	exc = dom_node_contains(htmlc->document, script, &within);
-	if (exc != DOM_NO_ERR) {
+	𐡄𐡍 (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEBUG, "Unable to determine if script was within document, ignoring");
-		return;
+		أرجع;
 	}
 
-	if (!within) {
+	𐡄𐡍 (!within) {
 		NSLOG(netsurf, DEBUG, "Script was not within the document, ignoring for now");
-		return;
+		أرجع;
 	}
 
 	res = html_process_script(htmlc, (dom_node *) script);
-	if (res == DOM_HUBBUB_OK) {
+	𐡄𐡍 (res == DOM_HUBBUB_OK) {
 		NSLOG(netsurf, DEEPDEBUG, "Inserted script has finished running");
-	} else {
-		if (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
+	} وإلا {
+		𐡄𐡍 (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
 			NSLOG(netsurf, DEEPDEBUG, "Inserted script has launced asynchronously");
-		} else {
+		} وإلا {
 			NSLOG(netsurf, DEEPDEBUG, "Failure starting script");
 		}
 	}
@@ -309,45 +309,45 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_meta(html_content *c, dom_node *n)
+ساكن nserror html_process_inserted_meta(html_content *c, dom_node *n)
 {
-	union content_msg_data msg_data;
-	const char *url, *end, *refresh = NULL;
-	char *new_url;
-	char quote = '\0';
+	اتحاد content_msg_data msg_data;
+	ثابت حرف *url, *end, *refresh = عدم;
+	حرف *new_url;
+	حرف quote = '\0';
 	dom_string *equiv, *content;
 	dom_exception exc;
 	nsurl *nsurl;
 	nserror error = NSERROR_OK;
 
-	if (c->refresh) {
+	𐡄𐡍 (c->refresh) {
 		/* refresh already delt with */
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_http_equiv, &equiv);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	𐡄𐡍 (exc != DOM_NO_ERR) {
+		أرجع NSERROR_DOM;
 	}
 
-	if (equiv == NULL) {
-		return NSERROR_OK;
+	𐡄𐡍 (equiv == عدم) {
+		أرجع NSERROR_OK;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
+	𐡄𐡍 (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
 		dom_string_unref(equiv);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	dom_string_unref(equiv);
 
 	exc = dom_element_get_attribute(n, corestring_dom_content, &content);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	𐡄𐡍 (exc != DOM_NO_ERR) {
+		أرجع NSERROR_DOM;
 	}
 
-	if (content == NULL) {
-		return NSERROR_OK;
+	𐡄𐡍 (content == عدم) {
+		أرجع NSERROR_OK;
 	}
 
 	end = dom_string_data(content) + dom_string_byte_length(content);
@@ -366,48 +366,48 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	url = dom_string_data(content);
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	طالما (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* intpart */
-	if (url == end || (*url < '0' || '9' < *url)) {
+	𐡄𐡍 (url == end || (*url < '0' || '9' < *url)) {
 		/* Empty content, or invalid timeval */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
-	msg_data.delay = (int) strtol(url, &new_url, 10);
+	msg_data.delay = (صحيح) strtol(url, &new_url, 10);
 	/* a very small delay and self-referencing URL can cause a loop
 	 * that grinds machines to a halt. To prevent this we set a
 	 * minimum refresh delay of 1s. */
-	if (msg_data.delay < 1) {
+	𐡄𐡍 (msg_data.delay < 1) {
 		msg_data.delay = 1;
 	}
 
 	url = new_url;
 
 	/* fracpart? (ignored, as delay is integer only) */
-	while (url < end && (('0' <= *url && *url <= '9') ||
+	طالما (url < end && (('0' <= *url && *url <= '9') ||
 			*url == '.')) {
 		url++;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	طالما (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* ';' */
-	if (url < end && *url == ';')
+	𐡄𐡍 (url < end && *url == ';')
 		url++;
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	طالما (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
-	if (url == end) {
+	𐡄𐡍 (url == end) {
 		/* Just delay specified, so refresh current page */
 		dom_string_unref(content);
 
@@ -415,51 +415,51 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 
 		content_broadcast(&c->base, CONTENT_MSG_REFRESH, &msg_data);
 
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	/* "url" */
-	if (url <= end - 3) {
-		if (strncasecmp(url, "url", 3) == 0) {
+	𐡄𐡍 (url <= end - 3) {
+		𐡄𐡍 (strncasecmp(url, "url", 3) == 0) {
 			url += 3;
-		} else {
+		} وإلا {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
-	} else {
+	} وإلا {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	طالما (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '=' */
-	if (url < end) {
-		if (*url == '=') {
+	𐡄𐡍 (url < end) {
+		𐡄𐡍 (*url == '=') {
 			url++;
-		} else {
+		} وإلا {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
-	} else {
+	} وإلا {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	طالما (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '"' or "'" */
-	if (url < end && (*url == '"' || *url == '\'')) {
+	𐡄𐡍 (url < end && (*url == '"' || *url == '\'')) {
 		quote = *url;
 		url++;
 	}
@@ -467,27 +467,27 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	/* Start of URL */
 	refresh = url;
 
-	if (quote != 0) {
+	𐡄𐡍 (quote != 0) {
 		/* url-sq | url-dq */
-		while (url < end && *url != quote)
+		طالما (url < end && *url != quote)
 			url++;
-	} else {
+	} وإلا {
 		/* url-nq */
-		while (url < end && !ascii_is_space(*url))
+		طالما (url < end && !ascii_is_space(*url))
 			url++;
 	}
 
 	/* '"' or "'" or *LWS (we don't care) */
-	if (url > refresh) {
+	𐡄𐡍 (url > refresh) {
 		/* There's a URL */
 		new_url = strndup(refresh, url - refresh);
-		if (new_url == NULL) {
+		𐡄𐡍 (new_url == عدم) {
 			dom_string_unref(content);
-			return NSERROR_NOMEM;
+			أرجع NSERROR_NOMEM;
 		}
 
 		error = nsurl_join(c->base_url, new_url, &nsurl);
-		if (error == NSERROR_OK) {
+		𐡄𐡍 (error == NSERROR_OK) {
 			/* broadcast valid refresh url */
 
 			c->base.refresh = nsurl;
@@ -498,13 +498,13 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 			c->refresh = true;
 		}
 
-		free(new_url);
+		حرر(new_url);
 
 	}
 
 	dom_string_unref(content);
 
-	return error;
+	أرجع error;
 }
 
 
@@ -517,41 +517,41 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_title(html_content *htmlc, dom_node *node)
+ساكن nserror html_process_inserted_title(html_content *htmlc, dom_node *node)
 {
-	if (htmlc->title == NULL) {
+	𐡄𐡍 (htmlc->title == عدم) {
 		/* only the first title is considered */
 		htmlc->title = dom_node_ref(node);
 	}
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /** process title node */
-static bool html_process_title(html_content *c, dom_node *node)
+ساكن bool html_process_title(html_content *c, dom_node *node)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *title;
-	char *title_str;
+	حرف *title_str;
 	bool success;
 
 	exc = dom_node_get_text_content(node, &title);
-	if ((exc != DOM_NO_ERR) || (title == NULL)) {
-		return false;
+	𐡄𐡍 ((exc != DOM_NO_ERR) || (title == عدم)) {
+		أرجع false;
 	}
 
 	title_str = squash_whitespace(dom_string_data(title));
 	dom_string_unref(title);
 
-	if (title_str == NULL) {
-		return false;
+	𐡄𐡍 (title_str == عدم) {
+		أرجع false;
 	}
 
 	success = content__set_title(&c->base, title_str);
 
-	free(title_str);
+	حرر(title_str);
 
-	return success;
+	أرجع success;
 }
 
 
@@ -559,14 +559,14 @@ static bool html_process_title(html_content *c, dom_node *node)
  * Deal with input elements being modified by resyncing their gadget
  * if they have one.
  */
-static void html_texty_element_update(html_content *htmlc, dom_node *node)
+ساكن فراغ html_texty_element_update(html_content *htmlc, dom_node *node)
 {
-	struct box *box = box_for_node(node);
-	if (box == NULL) {
-		return; /* No Box (yet?) so no gadget to update */
+	بنية box *box = box_for_node(node);
+	𐡄𐡍 (box == عدم) {
+		أرجع; /* No Box (yet?) so no gadget to update */
 	}
-	if (box->gadget == NULL) {
-		return; /* No gadget yet (under construction perhaps?) */
+	𐡄𐡍 (box->gadget == عدم) {
+		أرجع; /* No gadget yet (under construction perhaps?) */
 	}
 	form_gadget_sync_with_dom(box->gadget);
 	/* And schedule a redraw for the box */
@@ -577,8 +577,8 @@ static void html_texty_element_update(html_content *htmlc, dom_node *node)
 /**
  * callback for DOMNodeInserted end type
  */
-static void
-dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
+ساكن فراغ
+dom_default_action_DOMNodeInserted_cb(بنية dom_event *evt, فراغ *pw)
 {
 	dom_event_target *node;
 	dom_node_type type;
@@ -586,61 +586,61 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 	html_content *htmlc = pw;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc != DOM_NO_ERR) || (node == NULL)) {
+	𐡄𐡍 ((exc != DOM_NO_ERR) || (node == عدم)) {
 		/* failed to obtain the event target node */
-		return;
+		أرجع;
 	}
 
 	exc = dom_node_get_node_type(node, &type);
-	if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 		/* an element node has been inserted */
 		dom_html_element_type tag_type;
 
 		exc = dom_html_element_get_tag_type(node, &tag_type);
-		if (exc != DOM_NO_ERR) {
+		𐡄𐡍 (exc != DOM_NO_ERR) {
 			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
 
-		switch (tag_type) {
-		case DOM_HTML_ELEMENT_TYPE_BASE:
+		بدل (tag_type) {
+		حالة DOM_HTML_ELEMENT_TYPE_BASE:
 			html_process_inserted_base(htmlc, (dom_node *)node);
-			break;
+			اكسر;
 
-		case DOM_HTML_ELEMENT_TYPE_IMG:
+		حالة DOM_HTML_ELEMENT_TYPE_IMG:
 			html_process_inserted_img(htmlc, (dom_node *)node);
-			break;
+			اكسر;
 
-		case DOM_HTML_ELEMENT_TYPE_LINK:
+		حالة DOM_HTML_ELEMENT_TYPE_LINK:
 			html_process_inserted_link(htmlc, (dom_node *)node);
-			break;
+			اكسر;
 
-		case DOM_HTML_ELEMENT_TYPE_META:
+		حالة DOM_HTML_ELEMENT_TYPE_META:
 			html_process_inserted_meta(htmlc, (dom_node *)node);
-			break;
+			اكسر;
 
-		case DOM_HTML_ELEMENT_TYPE_STYLE:
-			if (nsoption_bool(author_level_css)) {
+		حالة DOM_HTML_ELEMENT_TYPE_STYLE:
+			𐡄𐡍 (nsoption_bool(author_level_css)) {
 				html_css_process_style(htmlc, (dom_node *)node);
 			}
-			break;
+			اكسر;
 
-		case DOM_HTML_ELEMENT_TYPE_SCRIPT:
+		حالة DOM_HTML_ELEMENT_TYPE_SCRIPT:
 			dom_SCRIPT_showed_up(htmlc,
 					     (dom_html_script_element *)node);
-			break;
+			اكسر;
 
-		case DOM_HTML_ELEMENT_TYPE_TITLE:
+		حالة DOM_HTML_ELEMENT_TYPE_TITLE:
 			html_process_inserted_title(htmlc, (dom_node *)node);
-			break;
+			اكسر;
 
-		default:
-			break;
+		افتراضي:
+			اكسر;
 		}
 
-		if (htmlc->enable_scripting) {
+		𐡄𐡍 (htmlc->enable_scripting) {
 			/* ensure javascript context is available */
-			if (htmlc->jsthread == NULL) {
-				union content_msg_data msg_data;
+			𐡄𐡍 (htmlc->jsthread == عدم) {
+				اتحاد content_msg_data msg_data;
 
 				msg_data.jsthread = &htmlc->jsthread;
 				content_broadcast(&htmlc->base,
@@ -651,7 +651,7 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 				      htmlc->jsthread,
 				      htmlc);
 			}
-			if (htmlc->jsthread != NULL) {
+			𐡄𐡍 (htmlc->jsthread != عدم) {
 				js_handle_new_element(htmlc->jsthread,
 						      (dom_element *) node);
 			}
@@ -664,9 +664,9 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 /**
  * callback for DOMNodeInsertedIntoDocument end type
  */
-static void
-dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
-						  void *pw)
+ساكن فراغ
+dom_default_action_DOMNodeInsertedIntoDocument_cb(بنية dom_event *evt,
+						  فراغ *pw)
 {
 	html_content *htmlc = pw;
 	dom_event_target *node;
@@ -674,23 +674,23 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
 	dom_exception exc;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (node != عدم)) {
 		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		𐡄𐡍 ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
 			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			𐡄𐡍 (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_SCRIPT:
+			بدل (tag_type) {
+			حالة DOM_HTML_ELEMENT_TYPE_SCRIPT:
 				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) node);
 				fallthrough;
-			default:
-				break;
+			افتراضي:
+				اكسر;
 			}
 		}
 		dom_node_unref(node);
@@ -701,8 +701,8 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
 /**
  * callback for DOMSubtreeModified end type
  */
-static void
-dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
+ساكن فراغ
+dom_default_action_DOMSubtreeModified_cb(بنية dom_event *evt, فراغ *pw)
 {
 	dom_event_target *node;
 	dom_node_type type;
@@ -710,37 +710,37 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
 	html_content *htmlc = pw;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		if (htmlc->title == (dom_node *)node) {
+	𐡄𐡍 ((exc == DOM_NO_ERR) && (node != عدم)) {
+		𐡄𐡍 (htmlc->title == (dom_node *)node) {
 			/* Node is our title node */
 			html_process_title(htmlc, (dom_node *)node);
 			dom_node_unref(node);
-			return;
+			أرجع;
 		}
 
 		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		𐡄𐡍 ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
 			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			𐡄𐡍 (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_STYLE:
-				if (nsoption_bool(author_level_css)) {
+			بدل (tag_type) {
+			حالة DOM_HTML_ELEMENT_TYPE_STYLE:
+				𐡄𐡍 (nsoption_bool(author_level_css)) {
 					html_css_update_style(htmlc,
 							(dom_node *)node);
 				}
-				break;
-			case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-			case DOM_HTML_ELEMENT_TYPE_INPUT:
+				اكسر;
+			حالة DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+			حالة DOM_HTML_ELEMENT_TYPE_INPUT:
 				html_texty_element_update(htmlc, (dom_node *)node);
 				fallthrough;
-			default:
-				break;
+			افتراضي:
+				اكسر;
 			}
 		}
 		dom_node_unref(node);
@@ -751,12 +751,12 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
 /**
  * callback for default action finished
  */
-static void
-dom_default_action_finished_cb(struct dom_event *evt, void *pw)
+ساكن فراغ
+dom_default_action_finished_cb(بنية dom_event *evt, فراغ *pw)
 {
 	html_content *htmlc = pw;
 
-	if (htmlc->jsthread != NULL)
+	𐡄𐡍 (htmlc->jsthread != عدم)
 		js_event_cleanup(htmlc->jsthread, evt);
 }
 
@@ -765,21 +765,21 @@ dom_default_action_finished_cb(struct dom_event *evt, void *pw)
 dom_default_action_callback
 html_dom_event_fetcher(dom_string *type,
 		  dom_default_action_phase phase,
-		  void **pw)
+		  فراغ **pw)
 {
 	NSLOG(netsurf, DEEPDEBUG,
 	      "phase:%d type:%s", phase, dom_string_data(type));
 
-	if (phase == DOM_DEFAULT_ACTION_END) {
-		if (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
-			return dom_default_action_DOMNodeInserted_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
-			return dom_default_action_DOMNodeInsertedIntoDocument_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
-			return dom_default_action_DOMSubtreeModified_cb;
+	𐡄𐡍 (phase == DOM_DEFAULT_ACTION_END) {
+		𐡄𐡍 (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
+			أرجع dom_default_action_DOMNodeInserted_cb;
+		} وإلا 𐡄𐡍 (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
+			أرجع dom_default_action_DOMNodeInsertedIntoDocument_cb;
+		} وإلا 𐡄𐡍 (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
+			أرجع dom_default_action_DOMSubtreeModified_cb;
 		}
-	} else if (phase == DOM_DEFAULT_ACTION_FINISHED) {
-		return dom_default_action_finished_cb;
+	} وإلا 𐡄𐡍 (phase == DOM_DEFAULT_ACTION_FINISHED) {
+		أرجع dom_default_action_finished_cb;
 	}
-	return NULL;
+	أرجع عدم;
 }
