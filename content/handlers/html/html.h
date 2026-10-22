@@ -106,13 +106,13 @@ struct content_html_object {
  * Frame tree (frameset or frame tag)
  */
 struct content_html_frames {
-	int cols;	/** number of columns in frameset */
-	int rows;	/** number of rows in frameset */
+	整数 cols;	/** number of columns in frameset */
+	整数 rows;	/** number of rows in frameset */
 
 	struct frame_dimension width;	/** frame width */
 	struct frame_dimension height;	/** frame width */
-	int margin_width;	/** frame margin width */
-	int margin_height;	/** frame margin height */
+	整数 margin_width;	/** frame margin width */
+	整数 margin_height;	/** frame margin height */
 
 	char *name;	/** frame name (for targetting) */
 	struct nsurl *url;	/** frame url */
@@ -131,8 +131,8 @@ struct content_html_frames {
 struct content_html_iframe {
 	struct box *box;
 
-	int margin_width;	/** frame margin width */
-	int margin_height;	/** frame margin height */
+	整数 margin_width;	/** frame margin width */
+	整数 margin_height;	/** frame margin height */
 
 	char *name;	/** frame name (for targetting) */
 	struct nsurl *url;	/** frame url */
@@ -202,7 +202,7 @@ void html_set_file_gadget_filename(struct hlcache_handle *hl,
  * \return Pointer to array of stylesheets
  */
 struct html_stylesheet *html_get_stylesheets(struct hlcache_handle *h,
-		unsigned int *n);
+		unsigned 整数 *n);
 
 /**
  * Retrieve objects used by HTML document
@@ -212,12 +212,12 @@ struct html_stylesheet *html_get_stylesheets(struct hlcache_handle *h,
  * \return Pointer to array of objects
  */
 struct content_html_object *html_get_objects(struct hlcache_handle *h,
-		unsigned int *n);
+		unsigned 整数 *n);
 
 /**
  * get the offset within the docuemnt of a fragment id
  */
 bool html_get_id_offset(struct hlcache_handle *h, lwc_string *frag_id,
-		int *x, int *y);
+		整数 *x, 整数 *y);
 
 #endif

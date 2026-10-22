@@ -53,9 +53,9 @@ typedef struct nsico_content {
  * \param  bmp_state A flag word indicating the initial state
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsico_bitmap_create(int width, int height, unsigned int bmp_state)
+static void *nsico_bitmap_create(整数 width, 整数 height, unsigned 整数 bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	unsigned 整数 bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
@@ -63,7 +63,7 @@ static void *nsico_bitmap_create(int width, int height, unsigned int bmp_state)
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	戻る guit->bitmap->create(width, height, bitmap_state);
 }
 
 static nserror nsico_create_ico_data(nsico_content *c)
@@ -75,12 +75,12 @@ static nserror nsico_create_ico_data(nsico_content *c)
 	};
 
 	c->ico = calloc(1, sizeof(ico_collection));
-	if (c->ico == NULL) {
+	もし (c->ico == NULL) {
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		戻る NSERROR_NOMEM;
 	}
 	ico_collection_create(c->ico, &bmp_bitmap_callbacks);
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -93,25 +93,25 @@ static nserror nsico_create(const content_handler *handler,
 	nserror error;
 
 	result = calloc(1, sizeof(nsico_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	もし (result == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		free(result);
-		return error;
+		戻る error;
 	}
 
 	error = nsico_create_ico_data(result);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		free(result);
-		return error;
+		戻る error;
 	}
 
 	*c = (struct content *) result;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -136,11 +136,11 @@ static bool nsico_convert(struct content *c)
 		break;
 	case BMP_INSUFFICIENT_MEMORY:
 		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		戻る false;
 	case BMP_INSUFFICIENT_DATA:
 	case BMP_DATA_ERROR:
 		content_broadcast_error(c, NSERROR_ICO_ERROR, NULL);
-		return false;
+		戻る false;
 	}
 
 	/* Store our content width, height and calculate size */
@@ -152,17 +152,17 @@ static bool nsico_convert(struct content *c)
 	title = messages_get_buff("ICOTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	もし (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
 
 	/* select largest icon to ensure one can be selected */
 	bmp = ico_find(ico->ico, 255, 255);
-	if (bmp == NULL) {
+	もし (bmp == NULL) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		戻る false;
 	}
 
 	content_set_ready(c);
@@ -170,15 +170,15 @@ static bool nsico_convert(struct content *c)
 
 	/* Done: update status bar */
 	content_set_status(c, "");
-	return true;
+	戻る true;
 }
 
 static bool nsico__decode(struct bmp_image *ico)
 {
-	if (ico->decoded == false) {
+	もし (ico->decoded == false) {
 		NSLOG(netsurf, DEBUG, "Decoding ICO %p", ico);
-		if (bmp_decode(ico) != BMP_OK) {
-			return false;
+		もし (bmp_decode(ico) != BMP_OK) {
+			戻る false;
 		}
 
 		bitmap_format_to_client(ico->bitmap, &(bitmap_fmt_t) {
@@ -188,7 +188,7 @@ static bool nsico__decode(struct bmp_image *ico)
 
 	}
 
-	return true;
+	戻る true;
 }
 
 static bool nsico_redraw(struct content *c, struct content_redraw_data *data,
@@ -199,18 +199,18 @@ static bool nsico_redraw(struct content *c, struct content_redraw_data *data,
 
 	/* select most appropriate sized icon for size */
 	bmp = ico_find(ico->ico, data->width, data->height);
-	if (bmp == NULL) {
+	もし (bmp == NULL) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		戻る false;
 	}
 
 	/* ensure its decided */
-	if (!nsico__decode(bmp)) {
-		return false;
+	もし (!nsico__decode(bmp)) {
+		戻る false;
 	}
 
-	return image_bitmap_plot(bmp->bitmap, data, clip, ctx);
+	戻る image_bitmap_plot(bmp->bitmap, data, clip, ctx);
 }
 
 
@@ -228,33 +228,33 @@ static nserror nsico_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	ico = calloc(1, sizeof(nsico_content));
-	if (ico == NULL)
-		return NSERROR_NOMEM;
+	もし (ico == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__clone(old, &ico->base);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_destroy(&ico->base);
-		return error;
+		戻る error;
 	}
 
 	/* Simply replay creation and conversion */
 	error = nsico_create_ico_data(ico);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_destroy(&ico->base);
-		return error;
+		戻る error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	もし (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nsico_convert(&ico->base) == false) {
+		もし (nsico_convert(&ico->base) == false) {
 			content_destroy(&ico->base);
-			return NSERROR_CLONE_FAILED;
+			戻る NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = (struct content *) ico;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 static void *nsico_get_internal(const struct content *c, void *context)
@@ -265,22 +265,22 @@ static void *nsico_get_internal(const struct content *c, void *context)
 	struct bmp_image *bmp;
 
 	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	もし (bmp == NULL) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return NULL;
+		戻る NULL;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return NULL;
+	もし (!nsico__decode(bmp)) {
+		戻る NULL;
 	}
 
-	return bmp->bitmap;
+	戻る bmp->bitmap;
 }
 
 static content_type nsico_content_type(void)
 {
-	return CONTENT_IMAGE;
+	戻る CONTENT_IMAGE;
 }
 
 static bool nsico_is_opaque(struct content *c)
@@ -293,17 +293,17 @@ static bool nsico_is_opaque(struct content *c)
 	 *         it's for a URL bar.
 	 */
 	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	もし (bmp == NULL) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		戻る false;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return false;
+	もし (!nsico__decode(bmp)) {
+		戻る false;
 	}
 
-	return guit->bitmap->get_opaque(bmp->bitmap);
+	戻る guit->bitmap->get_opaque(bmp->bitmap);
 }
 
 static const content_handler nsico_content_handler = {

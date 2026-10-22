@@ -100,11 +100,11 @@ static bool fire_dom_event(dom_event *event, dom_node *target)
 	bool result;
 
 	exc = dom_event_target_dispatch_event(target, event, &result);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	もし (exc != DOM_NO_ERR) {
+		戻る false;
 	}
 
-	return result;
+	戻る result;
 }
 
 /* Exported interface, see html_internal.h */
@@ -116,17 +116,17 @@ bool fire_generic_dom_event(dom_string *type, dom_node *target,
 	bool result;
 
 	exc = dom_event_create(&evt);
-	if (exc != DOM_NO_ERR) return false;
+	もし (exc != DOM_NO_ERR) 戻る false;
 	exc = dom_event_init(evt, type, bubbles, cancelable);
-	if (exc != DOM_NO_ERR) {
+	もし (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return false;
+		戻る false;
 	}
 	NSLOG(netsurf, INFO, "Dispatching '%*s' against %p",
-	      (int)dom_string_length(type), dom_string_data(type), target);
+	      (整数)dom_string_length(type), dom_string_data(type), target);
 	result = fire_dom_event(evt, target);
 	dom_event_unref(evt);
-	return result;
+	戻る result;
 }
 
 /* Exported interface, see html_internal.h */
@@ -139,7 +139,7 @@ bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
 	dom_exception exc;
 	bool result;
 
-	if (is_special) {
+	もし (is_special) {
 		switch (key) {
 		case NS_KEY_ESCAPE:
 			dom_key = dom_string_ref(corestring_dom_Escape);
@@ -172,39 +172,39 @@ bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
 			dom_key = NULL;
 			break;
 		}
-	} else {
+	} 否则 {
 		char utf8[6];
 		size_t length = utf8_from_ucs4(key, utf8);
 		utf8[length] = '\0';
 
 		exc = dom_string_create((const uint8_t *)utf8, strlen(utf8),
 				&dom_key);
-		if (exc != DOM_NO_ERR) {
-			return exc;
+		もし (exc != DOM_NO_ERR) {
+			戻る exc;
 		}
 	}
 
 	exc = dom_keyboard_event_create(&evt);
-	if (exc != DOM_NO_ERR) {
+	もし (exc != DOM_NO_ERR) {
 		dom_string_unref(dom_key);
-		return false;
+		戻る false;
 	}
 
 	exc = dom_keyboard_event_init(evt, type, bubbles, cancelable, NULL,
 			dom_key, NULL, DOM_KEY_LOCATION_STANDARD, false,
 			false, false, false, false, false);
 	dom_string_unref(dom_key);
-	if (exc != DOM_NO_ERR) {
+	もし (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return false;
+		戻る false;
 	}
 
 	NSLOG(netsurf, INFO, "Dispatching '%*s' against %p",
-			(int)dom_string_length(type), dom_string_data(type), target);
+			(整数)dom_string_length(type), dom_string_data(type), target);
 
 	result = fire_dom_event((dom_event *) evt, target);
 	dom_event_unref(evt);
-	return result;
+	戻る result;
 }
 
 /**
@@ -224,48 +224,48 @@ static void html_box_convert_done(html_content *c, bool success)
 	c->box_conversion_context = NULL;
 
 	/* Clean up and report error if unsuccessful or aborted */
-	if ((success == false) || (c->aborted)) {
+	もし ((success == false) || (c->aborted)) {
 		html_object_free_objects(c);
 
-		if (success == false) {
+		もし (success == false) {
 			content_broadcast_error(&c->base, NSERROR_BOX_CONVERT, NULL);
-		} else {
+		} 否则 {
 			content_broadcast_error(&c->base, NSERROR_STOPPED, NULL);
 		}
 
 		content_set_error(&c->base);
-		return;
+		戻る;
 	}
 
 
-#if ALWAYS_DUMP_BOX
+#もし ALWAYS_DUMP_BOX
 	box_dump(stderr, c->layout->children, 0, true);
 #endif
-#if ALWAYS_DUMP_FRAMESET
-	if (c->frameset)
+#もし ALWAYS_DUMP_FRAMESET
+	もし (c->frameset)
 		html_dump_frameset(c->frameset, 0);
 #endif
 
 	exc = dom_document_get_document_element(c->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	もし ((exc != DOM_NO_ERR) || (html == NULL)) {
 		/** @todo should this call html_object_free_objects(c);
 		 * like the other error paths
 		 */
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
 		content_broadcast_error(&c->base, NSERROR_DOM, NULL);
 		content_set_error(&c->base);
-		return;
+		戻る;
 	}
 
 	/* extract image maps - can't do this sensibly in dom_to_box */
 	err = imagemap_extract(c);
-	if (err != NSERROR_OK) {
+	もし (err != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "imagemap extraction failed");
 		html_object_free_objects(c);
 		content_broadcast_error(&c->base, err, NULL);
 		content_set_error(&c->base);
 		dom_node_unref(html);
-		return;
+		戻る;
 	}
 	/*imagemap_dump(c);*/
 
@@ -286,20 +286,20 @@ html_proceed_to_done(html_content *html)
 {
 	switch (content__get_status(&html->base)) {
 	case CONTENT_STATUS_READY:
-		if (html->base.active == 0) {
+		もし (html->base.active == 0) {
 			content_set_done(&html->base);
-			return NSERROR_OK;
+			戻る NSERROR_OK;
 		}
 		break;
 	case CONTENT_STATUS_DONE:
 		/* fallthrough */
 	case CONTENT_STATUS_LOADING:
-		return NSERROR_OK;
+		戻る NSERROR_OK;
 	default:
 		NSLOG(netsurf, ERROR, "Content status unexpectedly not LOADING/READY/DONE");
 		break;
 	}
-	return NSERROR_UNKNOWN;
+	戻る NSERROR_UNKNOWN;
 }
 
 
@@ -346,10 +346,10 @@ void html_finish_conversion(html_content *htmlc)
 	nserror error;
 
 	/* Bail out if we've been aborted */
-	if (htmlc->aborted) {
+	もし (htmlc->aborted) {
 		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, NULL);
 		content_set_error(&htmlc->base);
-		return;
+		戻る;
 	}
 
 	/* If we already have a selection context, then we have already
@@ -362,18 +362,18 @@ void html_finish_conversion(html_content *htmlc)
 	 * NetSurf has no concept of dynamically changing documents, so this
 	 * would break badly.
 	 */
-	if (htmlc->select_ctx != NULL) {
+	もし (htmlc->select_ctx != NULL) {
 		NSLOG(netsurf, INFO,
 				"Ignoring style change: NS layout is static.");
-		return;
+		戻る;
 	}
 
 	/* create new css selection context */
 	error = html_css_new_selection_context(htmlc, &htmlc->select_ctx);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_broadcast_error(&htmlc->base, error, NULL);
 		content_set_error(&htmlc->base);
-		return;
+		戻る;
 	}
 
 
@@ -381,7 +381,7 @@ void html_finish_conversion(html_content *htmlc)
 	 * object, but with its target set to the Document object (and
 	 * the currentTarget set to the Window object)
 	 */
-	if (htmlc->jsthread != NULL) {
+	もし (htmlc->jsthread != NULL) {
 		js_fire_event(htmlc->jsthread, "load", htmlc->document, NULL);
 	}
 
@@ -392,23 +392,23 @@ void html_finish_conversion(html_content *htmlc)
 	content_broadcast(&htmlc->base, CONTENT_MSG_STATUS, &msg_data);
 
 	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	もし ((exc != DOM_NO_ERR) || (html == NULL)) {
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
 		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
 		content_set_error(&htmlc->base);
-		return;
+		戻る;
 	}
 
 	html_get_dimensions(htmlc);
 
 	error = dom_to_box(html, htmlc, html_box_convert_done, &htmlc->box_conversion_context);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "box conversion failed");
 		dom_node_unref(html);
 		html_object_free_objects(htmlc);
 		content_broadcast_error(&htmlc->base, error, NULL);
 		content_set_error(&htmlc->base);
-		return;
+		戻る;
 	}
 
 	dom_node_unref(html);
@@ -421,9 +421,9 @@ html_document_user_data_handler(dom_node_operation operation,
 				struct dom_node *src,
 				struct dom_node *dst)
 {
-	if (dom_string_isequal(corestring_dom___ns_key_html_content_data,
+	もし (dom_string_isequal(corestring_dom___ns_key_html_content_data,
 			       key) == false || data == NULL) {
-		return;
+		戻る;
 	}
 
 	switch (operation) {
@@ -503,31 +503,31 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	c->enable_scripting = nsoption_bool(enable_javascript);
 	c->base.active = 1; /* The html content itself is active */
 
-	if (lwc_intern_string("*", SLEN("*"), &c->universal) != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	もし (lwc_intern_string("*", SLEN("*"), &c->universal) != lwc_error_ok) {
+		戻る NSERROR_NOMEM;
 	}
 
-	if (lwc_intern_string(prefer_color_mode, strlen(prefer_color_mode),
+	もし (lwc_intern_string(prefer_color_mode, strlen(prefer_color_mode),
 			&c->media.prefers_color_scheme) != lwc_error_ok) {
 		lwc_string_unref(c->universal);
 		c->universal = NULL;
-		return NSERROR_NOMEM;
+		戻る NSERROR_NOMEM;
 	}
 
 	c->sel = selection_create((struct content *)c);
 
 	nerror = http_parameter_list_find_item(params, corestring_lwc_charset, &charset);
-	if (nerror == NSERROR_OK) {
+	もし (nerror == NSERROR_OK) {
 		c->encoding = strdup(lwc_string_data(charset));
 
 		lwc_string_unref(charset);
 
-		if (c->encoding == NULL) {
+		もし (c->encoding == NULL) {
 			lwc_string_unref(c->universal);
 			c->universal = NULL;
 			lwc_string_unref(c->media.prefers_color_scheme);
 			c->media.prefers_color_scheme = NULL;
-			return NSERROR_NOMEM;
+			戻る NSERROR_NOMEM;
 
 		}
 		c->encoding_source = DOM_HUBBUB_ENCODING_SOURCE_HEADER;
@@ -545,7 +545,7 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	error = dom_hubbub_parser_create(&parse_params,
 					 &c->parser,
 					 &c->document);
-	if ((error != DOM_HUBBUB_OK) && (c->encoding != NULL)) {
+	もし ((error != DOM_HUBBUB_OK) && (c->encoding != NULL)) {
 		/* Ok, we don't support the declared encoding. Bailing out
 		 * isn't exactly user-friendly, so fall back to autodetect */
 		free(c->encoding);
@@ -557,7 +557,7 @@ html_create_html_data(html_content *c, const http_parameter *params)
 						 &c->parser,
 						 &c->document);
 	}
-	if (error != DOM_HUBBUB_OK) {
+	もし (error != DOM_HUBBUB_OK) {
 		nsurl_unref(c->base_url);
 		c->base_url = NULL;
 
@@ -566,14 +566,14 @@ html_create_html_data(html_content *c, const http_parameter *params)
 		lwc_string_unref(c->media.prefers_color_scheme);
 		c->media.prefers_color_scheme = NULL;
 
-		return libdom_hubbub_error_to_nserror(error);
+		戻る libdom_hubbub_error_to_nserror(error);
 	}
 
 	err = dom_node_set_user_data(c->document,
 				     corestring_dom___ns_key_html_content_data,
 				     c, html_document_user_data_handler,
 				     (void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
+	もし (err != DOM_NO_ERR) {
 		dom_hubbub_parser_destroy(c->parser);
 		c->parser = NULL;
 		nsurl_unref(c->base_url);
@@ -585,12 +585,12 @@ html_create_html_data(html_content *c, const http_parameter *params)
 		c->media.prefers_color_scheme = NULL;
 
 		NSLOG(netsurf, INFO, "Unable to set user data.");
-		return NSERROR_DOM;
+		戻る NSERROR_DOM;
 	}
 
 	assert(old_node_data == NULL);
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 
 }
 
@@ -614,33 +614,33 @@ html_create(const content_handler *handler,
 	nserror error;
 
 	html = calloc(1, sizeof(html_content));
-	if (html == NULL)
-		return NSERROR_NOMEM;
+	もし (html == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__init(&html->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		free(html);
-		return error;
+		戻る error;
 	}
 
 	error = html_create_html_data(html, params);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_broadcast_error(&html->base, error, NULL);
 		free(html);
-		return error;
+		戻る error;
 	}
 
 	error = html_css_new_stylesheets(html);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_broadcast_error(&html->base, error, NULL);
 		free(html);
-		return error;
+		戻る error;
 	}
 
 	*c = (struct content *) html;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -648,7 +648,7 @@ html_create(const content_handler *handler,
 static nserror
 html_process_encoding_change(struct content *c,
 			     const char *data,
-			     unsigned int size)
+			     unsigned 整数 size)
 {
 	html_content *html = (html_content *) c;
 	dom_hubbub_parser_params parse_params;
@@ -660,25 +660,25 @@ html_process_encoding_change(struct content *c,
 	/* Retrieve new encoding */
 	encoding = dom_hubbub_parser_get_encoding(html->parser,
 						  &html->encoding_source);
-	if (encoding == NULL) {
-		return NSERROR_NOMEM;
+	もし (encoding == NULL) {
+		戻る NSERROR_NOMEM;
 	}
 
-	if (html->encoding != NULL) {
+	もし (html->encoding != NULL) {
 		free(html->encoding);
 		html->encoding = NULL;
 	}
 
 	html->encoding = strdup(encoding);
-	if (html->encoding == NULL) {
-		return NSERROR_NOMEM;
+	もし (html->encoding == NULL) {
+		戻る NSERROR_NOMEM;
 	}
 
 	/* Destroy binding */
 	dom_hubbub_parser_destroy(html->parser);
 	html->parser = NULL;
 
-	if (html->document != NULL) {
+	もし (html->document != NULL) {
 		dom_node_unref(html->document);
 	}
 
@@ -694,13 +694,13 @@ html_process_encoding_change(struct content *c,
 	error = dom_hubbub_parser_create(&parse_params,
 					 &html->parser,
 					 &html->document);
-	if (error != DOM_HUBBUB_OK) {
+	もし (error != DOM_HUBBUB_OK) {
 		/* Ok, we don't support the declared encoding. Bailing out
 		 * isn't exactly user-friendly, so fall back to Windows-1252 */
 		free(html->encoding);
 		html->encoding = strdup("Windows-1252");
-		if (html->encoding == NULL) {
-			return NSERROR_NOMEM;
+		もし (html->encoding == NULL) {
+			戻る NSERROR_NOMEM;
 		}
 		parse_params.enc = html->encoding;
 
@@ -708,8 +708,8 @@ html_process_encoding_change(struct content *c,
 						 &html->parser,
 						 &html->document);
 
-		if (error != DOM_HUBBUB_OK) {
-			return libdom_hubbub_error_to_nserror(error);
+		もし (error != DOM_HUBBUB_OK) {
+			戻る libdom_hubbub_error_to_nserror(error);
 		}
 
 	}
@@ -724,7 +724,7 @@ html_process_encoding_change(struct content *c,
 					      source_data,
 					      source_size);
 
-	return libdom_hubbub_error_to_nserror(error);
+	戻る libdom_hubbub_error_to_nserror(error);
 }
 
 
@@ -733,7 +733,7 @@ html_process_encoding_change(struct content *c,
  */
 
 static bool
-html_process_data(struct content *c, const char *data, unsigned int size)
+html_process_data(struct content *c, const char *data, unsigned 整数 size)
 {
 	html_content *html = (html_content *) c;
 	dom_hubbub_error dom_ret;
@@ -746,17 +746,17 @@ html_process_data(struct content *c, const char *data, unsigned int size)
 	err = libdom_hubbub_error_to_nserror(dom_ret);
 
 	/* deal with encoding change */
-	if (err == NSERROR_ENCODING_CHANGE) {
+	もし (err == NSERROR_ENCODING_CHANGE) {
 		 err = html_process_encoding_change(c, data, size);
 	}
 
 	/* broadcast the error if necessary */
-	if (err != NSERROR_OK) {
+	もし (err != NSERROR_OK) {
 		content_broadcast_error(c, err, NULL);
-		return false;
+		戻る false;
 	}
 
-	return true;
+	戻る true;
 }
 
 
@@ -789,7 +789,7 @@ static bool html_convert(struct content *c)
 	 * render for want of a quirks stylesheet.
 	 */
 	exc = dom_document_get_quirks_mode(htmlc->document, &htmlc->quirks);
-	if (exc == DOM_NO_ERR) {
+	もし (exc == DOM_NO_ERR) {
 		html_css_quirks_stylesheets(htmlc);
 		NSLOG(netsurf, INFO, "quirks set to %d", htmlc->quirks);
 	}
@@ -804,29 +804,29 @@ static bool html_convert(struct content *c)
 	/* if there are no active fetches in progress no scripts are
 	 * being fetched or they completed already.
 	 */
-	if (html_can_begin_conversion(htmlc)) {
-		return html_begin_conversion(htmlc);
+	もし (html_can_begin_conversion(htmlc)) {
+		戻る html_begin_conversion(htmlc);
 	}
-	return true;
+	戻る true;
 }
 
 /* Exported interface documented in html_internal.h */
 bool html_can_begin_conversion(html_content *htmlc)
 {
-	unsigned int i;
+	unsigned 整数 i;
 
 	/* Cannot begin conversion if we're still fetching stuff */
-	if (htmlc->base.active != 0)
-		return false;
+	もし (htmlc->base.active != 0)
+		戻る false;
 
-	for (i = 0; i != htmlc->stylesheet_count; i++) {
+	ために (i = 0; i != htmlc->stylesheet_count; i++) {
 		/* Cannot begin conversion if the stylesheets are modified */
-		if (htmlc->stylesheets[i].modified)
-			return false;
+		もし (htmlc->stylesheets[i].modified)
+			戻る false;
 	}
 
 	/* All is good, begin */
-	return true;
+	戻る true;
 }
 
 bool
@@ -850,42 +850,42 @@ html_begin_conversion(html_content *htmlc)
 	 * multiple times, so store a flag to indicate that parsing is
 	 * complete to avoid repeating the completion pointlessly.
 	 */
-	if (htmlc->parse_completed == false) {
+	もし (htmlc->parse_completed == false) {
 		NSLOG(netsurf, INFO, "Completing parse (%p)", htmlc);
 		/* complete parsing */
 		error = dom_hubbub_parser_completed(htmlc->parser);
-		if (error == DOM_HUBBUB_HUBBUB_ERR_PAUSED && htmlc->base.active > 0) {
+		もし (error == DOM_HUBBUB_HUBBUB_ERR_PAUSED && htmlc->base.active > 0) {
 			/* The act of completing the parse failed because we've
 			 * encountered a sync script which needs to run
 			 */
 			NSLOG(netsurf, INFO, "Completing parse brought synchronous JS to light, cannot complete yet");
-			return true;
+			戻る true;
 		}
-		if (error != DOM_HUBBUB_OK) {
+		もし (error != DOM_HUBBUB_OK) {
 			NSLOG(netsurf, INFO, "Parsing failed");
 
 			content_broadcast_error(&htmlc->base,
 						libdom_hubbub_error_to_nserror(error),
 						NULL);
 
-			return false;
+			戻る false;
 		}
 		htmlc->parse_completed = true;
 	}
 
-	if (html_can_begin_conversion(htmlc) == false) {
+	もし (html_can_begin_conversion(htmlc) == false) {
 		NSLOG(netsurf, INFO, "Can't begin conversion (%p)", htmlc);
 		/* We can't proceed (see commentary above) */
-		return true;
+		戻る true;
 	}
 
 	/* Give up processing if we've been aborted */
-	if (htmlc->aborted) {
+	もし (htmlc->aborted) {
 		NSLOG(netsurf, INFO, "Conversion aborted (%p) (active: %u)",
 		      htmlc, htmlc->base.active);
 		content_set_error(&htmlc->base);
 		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, NULL);
-		return false;
+		戻る false;
 	}
 
 	/* Conversion begins proper at this point */
@@ -899,105 +899,105 @@ html_begin_conversion(html_content *htmlc)
 	 */
 
 	/* get encoding */
-	if (htmlc->encoding == NULL) {
+	もし (htmlc->encoding == NULL) {
 		const char *encoding;
 
 		encoding = dom_hubbub_parser_get_encoding(htmlc->parser,
 					&htmlc->encoding_source);
-		if (encoding == NULL) {
+		もし (encoding == NULL) {
 			content_broadcast_error(&htmlc->base,
 						NSERROR_NOMEM,
 						NULL);
-			return false;
+			戻る false;
 		}
 
 		htmlc->encoding = strdup(encoding);
-		if (htmlc->encoding == NULL) {
+		もし (htmlc->encoding == NULL) {
 			content_broadcast_error(&htmlc->base,
 						NSERROR_NOMEM,
 						NULL);
-			return false;
+			戻る false;
 		}
 	}
 
 	/* locate root element and ensure it is html */
 	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	もし ((exc != DOM_NO_ERR) || (html == NULL)) {
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
 		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		return false;
+		戻る false;
 	}
 
 	exc = dom_node_get_node_name(html, &node_name);
-	if ((exc != DOM_NO_ERR) ||
+	もし ((exc != DOM_NO_ERR) ||
 	    (node_name == NULL) ||
 	    (!dom_string_caseless_lwc_isequal(node_name,
 			corestring_lwc_html))) {
 		NSLOG(netsurf, INFO, "root element not html");
 		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
 		dom_node_unref(html);
-		return false;
+		戻る false;
 	}
 	dom_string_unref(node_name);
 
 	/* Retrieve forms from parser */
 	htmlc->forms = html_forms_get_forms(htmlc->encoding,
 			(dom_html_document *) htmlc->document);
-	for (f = htmlc->forms; f != NULL; f = f->prev) {
+	ために (f = htmlc->forms; f != NULL; f = f->prev) {
 		nsurl *action;
 
 		/* Make all actions absolute */
-		if (f->action == NULL || f->action[0] == '\0') {
+		もし (f->action == NULL || f->action[0] == '\0') {
 			/* HTML5 4.10.22.3 step 9 */
 			nsurl *doc_addr = content_get_url(&htmlc->base);
 			ns_error = nsurl_join(htmlc->base_url,
 					      nsurl_access(doc_addr),
 					      &action);
-		} else {
+		} 否则 {
 			ns_error = nsurl_join(htmlc->base_url,
 					      f->action,
 					      &action);
 		}
 
-		if (ns_error != NSERROR_OK) {
+		もし (ns_error != NSERROR_OK) {
 			content_broadcast_error(&htmlc->base, ns_error, NULL);
 
 			dom_node_unref(html);
-			return false;
+			戻る false;
 		}
 
 		free(f->action);
 		f->action = strdup(nsurl_access(action));
 		nsurl_unref(action);
-		if (f->action == NULL) {
+		もし (f->action == NULL) {
 			content_broadcast_error(&htmlc->base,
 						NSERROR_NOMEM,
 						NULL);
 
 			dom_node_unref(html);
-			return false;
+			戻る false;
 		}
 
 		/* Ensure each form has a document encoding */
-		if (f->document_charset == NULL) {
+		もし (f->document_charset == NULL) {
 			f->document_charset = strdup(htmlc->encoding);
-			if (f->document_charset == NULL) {
+			もし (f->document_charset == NULL) {
 				content_broadcast_error(&htmlc->base,
 							NSERROR_NOMEM,
 							NULL);
 				dom_node_unref(html);
-				return false;
+				戻る false;
 			}
 		}
 	}
 
 	dom_node_unref(html);
 
-	if (htmlc->base.active == 0) {
+	もし (htmlc->base.active == 0) {
 		html_finish_conversion(htmlc);
 	}
 
-	return true;
+	戻る true;
 }
 
 
@@ -1017,7 +1017,7 @@ static void html_stop(struct content *c)
 		/* Still loading; simply flag that we've been aborted
 		 * html_convert/html_finish_conversion will do the rest */
 		htmlc->aborted = true;
-		if (htmlc->jsthread != NULL) {
+		もし (htmlc->jsthread != NULL) {
 			/* Close the JS thread to cancel out any callbacks */
 			js_closethread(htmlc->jsthread);
 		}
@@ -1028,7 +1028,7 @@ static void html_stop(struct content *c)
 
 		/* If there are no further active fetches and we're still
 		 * in the READY state, transition to the DONE state. */
-		if (c->status == CONTENT_STATUS_READY && c->active == 0) {
+		もし (c->status == CONTENT_STATUS_READY && c->active == 0) {
 			content_set_done(c);
 		}
 
@@ -1050,7 +1050,7 @@ static void html_stop(struct content *c)
  * Reformat a CONTENT_HTML to a new width.
  */
 
-static void html_reformat(struct content *c, int width, int height)
+static void html_reformat(struct content *c, 整数 width, 整数 height)
 {
 	html_content *htmlc = (html_content *) c;
 	struct box *layout;
@@ -1080,9 +1080,9 @@ static void html_reformat(struct content *c, int width, int height)
 		layout->margin[BOTTOM];
 
 	/* if boxes overflow right or bottom edge, expand to contain it */
-	if (c->width < layout->x + layout->descendant_x1)
+	もし (c->width < layout->x + layout->descendant_x1)
 		c->width = layout->x + layout->descendant_x1;
-	if (c->height < layout->y + layout->descendant_y1)
+	もし (c->height < layout->y + layout->descendant_y1)
 		c->height = layout->y + layout->descendant_y1;
 
 	selection_reinit(htmlc->sel);
@@ -1094,7 +1094,7 @@ static void html_reformat(struct content *c, int width, int height)
 	nsu_getmonotonic_ms(&ms_after);
 
 	ms_interval = (ms_after - ms_before) * 3;
-	if (ms_interval < (nsoption_uint(min_reflow_period) * 10)) {
+	もし (ms_interval < (nsoption_uint(min_reflow_period) * 10)) {
 		ms_interval = nsoption_uint(min_reflow_period) * 10;
 	}
 	c->reformat_time = ms_after + ms_interval;
@@ -1110,7 +1110,7 @@ static void html_reformat(struct content *c, int width, int height)
 
 void html_redraw_a_box(hlcache_handle *h, struct box *box)
 {
-	int x, y;
+	整数 x, y;
 
 	box_coords(box, &x, &y);
 
@@ -1129,7 +1129,7 @@ void html_redraw_a_box(hlcache_handle *h, struct box *box)
 
 void html__redraw_a_box(struct html_content *html, struct box *box)
 {
-	int x, y;
+	整数 x, y;
 
 	box_coords(box, &x, &y);
 
@@ -1140,27 +1140,27 @@ void html__redraw_a_box(struct html_content *html, struct box *box)
 
 static void html_destroy_frameset(struct content_html_frames *frameset)
 {
-	int i;
+	整数 i;
 
-	if (frameset->name) {
+	もし (frameset->name) {
 		talloc_free(frameset->name);
 		frameset->name = NULL;
 	}
-	if (frameset->url) {
+	もし (frameset->url) {
 		talloc_free(frameset->url);
 		frameset->url = NULL;
 	}
-	if (frameset->children) {
-		for (i = 0; i < (frameset->rows * frameset->cols); i++) {
-			if (frameset->children[i].name) {
+	もし (frameset->children) {
+		ために (i = 0; i < (frameset->rows * frameset->cols); i++) {
+			もし (frameset->children[i].name) {
 				talloc_free(frameset->children[i].name);
 				frameset->children[i].name = NULL;
 			}
-			if (frameset->children[i].url) {
+			もし (frameset->children[i].url) {
 				nsurl_unref(frameset->children[i].url);
 				frameset->children[i].url = NULL;
 			}
-			if (frameset->children[i].children)
+			もし (frameset->children[i].children)
 				html_destroy_frameset(&frameset->children[i]);
 		}
 		talloc_free(frameset->children);
@@ -1172,11 +1172,11 @@ static void html_destroy_iframe(struct content_html_iframe *iframe)
 {
 	struct content_html_iframe *next;
 	next = iframe;
-	while ((iframe = next) != NULL) {
+	ながら ((iframe = next) != NULL) {
 		next = iframe->next;
-		if (iframe->name)
+		もし (iframe->name)
 			talloc_free(iframe->name);
-		if (iframe->url) {
+		もし (iframe->url) {
 			nsurl_unref(iframe->url);
 			iframe->url = NULL;
 		}
@@ -1187,7 +1187,7 @@ static void html_destroy_iframe(struct content_html_iframe *iframe)
 
 static void html_free_layout(html_content *htmlc)
 {
-	if (htmlc->bctx != NULL) {
+	もし (htmlc->bctx != NULL) {
 		/* freeing talloc context should let the entire box
 		 * set be destroyed
 		 */
@@ -1207,8 +1207,8 @@ static void html_destroy(struct content *c)
 	NSLOG(netsurf, INFO, "content %p", c);
 
 	/* If we're still converting a layout, cancel it */
-	if (html->box_conversion_context != NULL) {
-		if (cancel_dom_to_box(html->box_conversion_context) != NSERROR_OK) {
+	もし (html->box_conversion_context != NULL) {
+		もし (cancel_dom_to_box(html->box_conversion_context) != NSERROR_OK) {
 			NSLOG(netsurf, CRITICAL, "WARNING, Unable to cancel conversion context, browser may crash");
 		}
 	}
@@ -1216,7 +1216,7 @@ static void html_destroy(struct content *c)
 	selection_destroy(html->sel);
 
 	/* Destroy forms */
-	for (f = html->forms; f != NULL; f = g) {
+	ために (f = html->forms; f != NULL; f = g) {
 		g = f->prev;
 
 		form_free(f);
@@ -1224,62 +1224,62 @@ static void html_destroy(struct content *c)
 
 	imagemap_destroy(html);
 
-	if (c->refresh)
+	もし (c->refresh)
 		nsurl_unref(c->refresh);
 
-	if (html->base_url)
+	もし (html->base_url)
 		nsurl_unref(html->base_url);
 
 	/* At this point we can be moderately confident the JS is offline
 	 * so we destroy the JS thread.
 	 */
-	if (html->jsthread != NULL) {
+	もし (html->jsthread != NULL) {
 		js_destroythread(html->jsthread);
 		html->jsthread = NULL;
 	}
 
-	if (html->parser != NULL) {
+	もし (html->parser != NULL) {
 		dom_hubbub_parser_destroy(html->parser);
 		html->parser = NULL;
 	}
 
-	if (html->document != NULL) {
+	もし (html->document != NULL) {
 		dom_node_unref(html->document);
 		html->document = NULL;
 	}
 
-	if (html->title != NULL) {
+	もし (html->title != NULL) {
 		dom_node_unref(html->title);
 		html->title = NULL;
 	}
 
 	/* Free encoding */
-	if (html->encoding != NULL) {
+	もし (html->encoding != NULL) {
 		free(html->encoding);
 		html->encoding = NULL;
 	}
 
 	/* Free base target */
-	if (html->base_target != NULL) {
+	もし (html->base_target != NULL) {
 		free(html->base_target);
 		html->base_target = NULL;
 	}
 
 	/* Free frameset */
-	if (html->frameset != NULL) {
+	もし (html->frameset != NULL) {
 		html_destroy_frameset(html->frameset);
 		talloc_free(html->frameset);
 		html->frameset = NULL;
 	}
 
 	/* Free iframes */
-	if (html->iframe != NULL) {
+	もし (html->iframe != NULL) {
 		html_destroy_iframe(html->iframe);
 		html->iframe = NULL;
 	}
 
 	/* Destroy selection context */
-	if (html->select_ctx != NULL) {
+	もし (html->select_ctx != NULL) {
 		css_select_ctx_destroy(html->select_ctx);
 		html->select_ctx = NULL;
 	}
@@ -1313,7 +1313,7 @@ static nserror html_clone(const struct content *old, struct content **newc)
 	 * cloning of documents. */
 	assert(0 && "html_clone should never be called");
 
-	return true;
+	戻る true;
 }
 
 
@@ -1342,7 +1342,7 @@ html_open(struct content *c,
 
 	html_object_open_objects(html, bw);
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -1363,12 +1363,12 @@ static nserror html_close(struct content *c)
 	/* remove all object references from the html content */
 	html_object_close_objects(htmlc);
 
-	if (htmlc->jsthread != NULL) {
+	もし (htmlc->jsthread != NULL) {
 		/* Close, but do not destroy (yet) the JS thread */
 		ret = js_closethread(htmlc->jsthread);
 	}
 
-	return ret;
+	戻る ret;
 }
 
 
@@ -1416,13 +1416,13 @@ static char *html_get_selection(struct content *c)
 
 	switch (html->selection_type) {
 	case HTML_SELECTION_TEXTAREA:
-		return textarea_get_selection(html->selection_owner.textarea->
+		戻る textarea_get_selection(html->selection_owner.textarea->
 				gadget->data.text.ta);
 	case HTML_SELECTION_SELF:
 		assert(html->selection_owner.none == false);
-		return selection_get_copy(html->sel);
+		戻る selection_get_copy(html->sel);
 	case HTML_SELECTION_CONTENT:
-		return content_get_selection(
+		戻る content_get_selection(
 				html->selection_owner.content->object);
 	case HTML_SELECTION_NONE:
 		/* Nothing to do */
@@ -1432,7 +1432,7 @@ static char *html_get_selection(struct content *c)
 		break;
 	}
 
-	return NULL;
+	戻る NULL;
 }
 
 
@@ -1448,26 +1448,26 @@ static char *html_get_selection(struct content *c)
  * \return NSERROR_OK on success else appropriate error code.
  */
 static nserror
-html_get_contextual_content(struct content *c, int x, int y,
+html_get_contextual_content(struct content *c, 整数 x, 整数 y,
 			    struct browser_window_features *data)
 {
 	html_content *html = (html_content *) c;
 
 	struct box *box = html->layout;
 	struct box *next;
-	int box_x = 0, box_y = 0;
+	整数 box_x = 0, box_y = 0;
 
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
+	ながら ((next = box_at_point(&html->unit_len_ctx, box, x, y,
 			&box_x, &box_y)) != NULL) {
 		box = next;
 
 		/* hidden boxes are ignored */
-		if ((box->style != NULL) &&
+		もし ((box->style != NULL) &&
 		    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
 			continue;
 		}
 
-		if (box->iframe) {
+		もし (box->iframe) {
 			float scale = browser_window_get_scale(box->iframe);
 			browser_window_get_features(box->iframe,
 						    (x - box_x) * scale,
@@ -1475,29 +1475,29 @@ html_get_contextual_content(struct content *c, int x, int y,
 						    data);
 		}
 
-		if (box->object)
+		もし (box->object)
 			content_get_contextual_content(box->object,
 					x - box_x, y - box_y, data);
 
-		if (box->object)
+		もし (box->object)
 			data->object = box->object;
 
-		if (box->href) {
+		もし (box->href) {
 			data->link = box->href;
 			data->link_title = box->text;
 			data->link_title_length = box->length;
 		}
 
-		if (box->usemap) {
+		もし (box->usemap) {
 			const char *target = NULL;
 			nsurl *url = imagemap_get(html, box->usemap, box_x,
 					box_y, x, y, &target);
 			/* Box might have imagemap, but no actual link area
 			 * at point */
-			if (url != NULL)
+			もし (url != NULL)
 				data->link = url;
 		}
-		if (box->gadget) {
+		もし (box->gadget) {
 			switch (box->gadget->type) {
 			case GADGET_TEXTBOX:
 			case GADGET_TEXTAREA:
@@ -1515,7 +1515,7 @@ html_get_contextual_content(struct content *c, int x, int y,
 			}
 		}
 	}
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -1530,62 +1530,62 @@ html_get_contextual_content(struct content *c, int x, int y,
  * \return true iff scroll was consumed by something in the content
  */
 static bool
-html_scroll_at_point(struct content *c, int x, int y, int scrx, int scry)
+html_scroll_at_point(struct content *c, 整数 x, 整数 y, 整数 scrx, 整数 scry)
 {
 	html_content *html = (html_content *) c;
 
 	struct box *box = html->layout;
 	struct box *next;
-	int box_x = 0, box_y = 0;
+	整数 box_x = 0, box_y = 0;
 	bool handled_scroll = false;
 
 	/* TODO: invert order; visit deepest box first */
 
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
+	ながら ((next = box_at_point(&html->unit_len_ctx, box, x, y,
 			&box_x, &box_y)) != NULL) {
 		box = next;
 
-		if (box->style && css_computed_visibility(box->style) ==
+		もし (box->style && css_computed_visibility(box->style) ==
 				CSS_VISIBILITY_HIDDEN)
 			continue;
 
 		/* Pass into iframe */
-		if (box->iframe) {
+		もし (box->iframe) {
 			float scale = browser_window_get_scale(box->iframe);
 
-			if (browser_window_scroll_at_point(box->iframe,
+			もし (browser_window_scroll_at_point(box->iframe,
 							   (x - box_x) * scale,
 							   (y - box_y) * scale,
 							   scrx, scry) == true)
-				return true;
+				戻る true;
 		}
 
 		/* Pass into textarea widget */
-		if (box->gadget && (box->gadget->type == GADGET_TEXTAREA ||
+		もし (box->gadget && (box->gadget->type == GADGET_TEXTAREA ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_TEXTBOX) &&
 				textarea_scroll(box->gadget->data.text.ta,
 						scrx, scry) == true)
-			return true;
+			戻る true;
 
 		/* Pass into object */
-		if (box->object != NULL && content_scroll_at_point(
+		もし (box->object != NULL && content_scroll_at_point(
 				box->object, x - box_x, y - box_y,
 				scrx, scry) == true)
-			return true;
+			戻る true;
 
 		/* Handle box scrollbars */
-		if (box->scroll_y && scrollbar_scroll(box->scroll_y, scry))
+		もし (box->scroll_y && scrollbar_scroll(box->scroll_y, scry))
 			handled_scroll = true;
 
-		if (box->scroll_x && scrollbar_scroll(box->scroll_x, scrx))
+		もし (box->scroll_x && scrollbar_scroll(box->scroll_x, scrx))
 			handled_scroll = true;
 
-		if (handled_scroll == true)
-			return true;
+		もし (handled_scroll == true)
+			戻る true;
 	}
 
-	return false;
+	戻る false;
 }
 
 /** Helper for file gadgets to store their filename unencoded on the
@@ -1600,18 +1600,18 @@ static void html__dom_user_data_handler(dom_node_operation operation,
 	char *oldfile;
 	char *data = (char *)_data;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_file_name_node_data,
+	もし (!dom_string_isequal(corestring_dom___ns_key_file_name_node_data,
 				key) || data == NULL) {
-		return;
+		戻る;
 	}
 
 	switch (operation) {
 	case DOM_NODE_CLONED:
-		if (dom_node_set_user_data(dst,
+		もし (dom_node_set_user_data(dst,
 					   corestring_dom___ns_key_file_name_node_data,
 					   strdup(data), html__dom_user_data_handler,
 					   &oldfile) == DOM_NO_ERR) {
-			if (oldfile != NULL)
+			もし (oldfile != NULL)
 				free(oldfile);
 		}
 		break;
@@ -1639,22 +1639,22 @@ static void html__set_file_gadget_filename(struct content *c,
 	struct box *file_box = gadget->box;
 
 	ret = guit->utf8->local_to_utf8(fn, 0, &utf8_fn);
-	if (ret != NSERROR_OK) {
+	もし (ret != NSERROR_OK) {
 		assert(ret != NSERROR_BAD_ENCODING);
 		NSLOG(netsurf, INFO,
 		      "utf8 to local encoding conversion failed");
 		/* Load was for us - just no memory */
-		return;
+		戻る;
 	}
 
 	form_gadget_update_value(gadget, utf8_fn);
 
 	/* corestring_dom___ns_key_file_name_node_data */
-	if (dom_node_set_user_data((dom_node *)file_box->gadget->node,
+	もし (dom_node_set_user_data((dom_node *)file_box->gadget->node,
 				   corestring_dom___ns_key_file_name_node_data,
 				   strdup(fn), html__dom_user_data_handler,
 				   &oldfile) == DOM_NO_ERR) {
-		if (oldfile != NULL)
+		もし (oldfile != NULL)
 			free(oldfile);
 	}
 
@@ -1665,7 +1665,7 @@ static void html__set_file_gadget_filename(struct content *c,
 void html_set_file_gadget_filename(struct hlcache_handle *hl,
 	struct form_control *gadget, const char *fn)
 {
-	return html__set_file_gadget_filename(hlcache_handle_get_content(hl),
+	戻る html__set_file_gadget_filename(hlcache_handle_get_content(hl),
 		gadget, fn);
 }
 
@@ -1679,7 +1679,7 @@ void html_set_file_gadget_filename(struct hlcache_handle *hl,
  * \param file	path to file to be dropped, or NULL to know if drop allowed
  * \return true iff file drop has been handled, or if drop possible (NULL file)
  */
-static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
+static bool html_drop_file_at_point(struct content *c, 整数 x, 整数 y, char *file)
 {
 	html_content *html = (html_content *) c;
 
@@ -1687,32 +1687,32 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 	struct box *next;
 	struct box *file_box = NULL;
 	struct box *text_box = NULL;
-	int box_x = 0, box_y = 0;
+	整数 box_x = 0, box_y = 0;
 
 	/* Scan box tree for boxes that can handle drop */
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
+	ながら ((next = box_at_point(&html->unit_len_ctx, box, x, y,
 			&box_x, &box_y)) != NULL) {
 		box = next;
 
-		if (box->style &&
+		もし (box->style &&
 		    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN)
 			continue;
 
-		if (box->iframe) {
+		もし (box->iframe) {
 			float scale = browser_window_get_scale(box->iframe);
-			return browser_window_drop_file_at_point(
+			戻る browser_window_drop_file_at_point(
 				box->iframe,
 				(x - box_x) * scale,
 				(y - box_y) * scale,
 				file);
 		}
 
-		if (box->object &&
+		もし (box->object &&
 		    content_drop_file_at_point(box->object,
 					x - box_x, y - box_y, file) == true)
-			return true;
+			戻る true;
 
-		if (box->gadget) {
+		もし (box->gadget) {
 			switch (box->gadget->type) {
 				case GADGET_FILE:
 					file_box = box;
@@ -1730,20 +1730,20 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 		}
 	}
 
-	if (!file_box && !text_box)
+	もし (!file_box && !text_box)
 		/* No box capable of handling drop */
-		return false;
+		戻る false;
 
-	if (file == NULL)
+	もし (file == NULL)
 		/* There is a box capable of handling drop here */
-		return true;
+		戻る true;
 
 	/* Handle the drop */
-	if (file_box) {
+	もし (file_box) {
 		/* File dropped on file input */
 		html__set_file_gadget_filename(c, file_box->gadget, file);
 
-	} else {
+	} 否则 {
 		/* File dropped on text input */
 
 		size_t file_len;
@@ -1751,14 +1751,14 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 		char *buffer;
 		char *utf8_buff;
 		nserror ret;
-		unsigned int size;
-		int bx, by;
+		unsigned 整数 size;
+		整数 bx, by;
 
 		/* Open file */
 		fp = fopen(file, "rb");
-		if (fp == NULL) {
+		もし (fp == NULL) {
 			/* Couldn't open file, but drop was for us */
-			return true;
+			戻る true;
 		}
 
 		/* Get filesize */
@@ -1766,26 +1766,26 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 		file_len = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 
-		if ((long)file_len == -1) {
+		もし ((long)file_len == -1) {
 			/* unable to get file length, but drop was for us */
 			fclose(fp);
-			return true;
+			戻る true;
 		}
 
 		/* Allocate buffer for file data */
 		buffer = malloc(file_len + 1);
-		if (buffer == NULL) {
+		もし (buffer == NULL) {
 			/* No memory, but drop was for us */
 			fclose(fp);
-			return true;
+			戻る true;
 		}
 
 		/* Stick file into buffer */
-		if (file_len != fread(buffer, 1, file_len, fp)) {
+		もし (file_len != fread(buffer, 1, file_len, fp)) {
 			/* Failed, but drop was for us */
 			free(buffer);
 			fclose(fp);
-			return true;
+			戻る true;
 		}
 
 		/* Done with file */
@@ -1798,14 +1798,14 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 
 		/* Convert to UTF-8 */
 		ret = guit->utf8->local_to_utf8(buffer, file_len, &utf8_buff);
-		if (ret != NSERROR_OK) {
+		もし (ret != NSERROR_OK) {
 			/* bad encoding shouldn't happen */
 			NSLOG(netsurf, ERROR,
 			      "local to utf8 encoding failed (%s)",
 			      messages_get_errorcode(ret));
 			assert(ret != NSERROR_BAD_ENCODING);
 			free(buffer);
-			return true;
+			戻る true;
 		}
 
 		/* Done with buffer */
@@ -1826,7 +1826,7 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 		free(utf8_buff);
 	}
 
-	return true;
+	戻る true;
 }
 
 
@@ -1841,7 +1841,7 @@ html_debug(struct content *c, enum content_debug op)
 {
 	html_redraw_debug = !html_redraw_debug;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -1862,20 +1862,20 @@ html_debug_dump(struct content *c, FILE *f, enum content_debug op)
 
 	assert(htmlc != NULL);
 
-	if (op == CONTENT_DEBUG_RENDER) {
+	もし (op == CONTENT_DEBUG_RENDER) {
 		assert(htmlc->layout != NULL);
 		box_dump(f, htmlc->layout, 0, true);
 		ret = NSERROR_OK;
-	} else {
-		if (htmlc->document == NULL) {
+	} 否则 {
+		もし (htmlc->document == NULL) {
 			NSLOG(netsurf, INFO, "No document to dump");
-			return NSERROR_DOM;
+			戻る NSERROR_DOM;
 		}
 
 		exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-		if ((exc != DOM_NO_ERR) || (html == NULL)) {
+		もし ((exc != DOM_NO_ERR) || (html == NULL)) {
 			NSLOG(netsurf, INFO, "Unable to obtain root node");
-			return NSERROR_DOM;
+			戻る NSERROR_DOM;
 		}
 
 		ret = libdom_dump_structure(html, f, 0);
@@ -1885,20 +1885,20 @@ html_debug_dump(struct content *c, FILE *f, enum content_debug op)
 		dom_node_unref(html);
 	}
 
-	return ret;
+	戻る ret;
 }
 
 
-#if ALWAYS_DUMP_FRAMESET
+#もし ALWAYS_DUMP_FRAMESET
 /**
  * Print a frameset tree to stderr.
  */
 
 static void
-html_dump_frameset(struct content_html_frames *frame, unsigned int depth)
+html_dump_frameset(struct content_html_frames *frame, unsigned 整数 depth)
 {
-	unsigned int i;
-	int row, col, index;
+	unsigned 整数 i;
+	整数 row, col, index;
 	const char *unit[] = {"px", "%", "*"};
 	const char *scrolling[] = {"auto", "yes", "no"};
 
@@ -1913,24 +1913,24 @@ html_dump_frameset(struct content_html_frames *frame, unsigned int depth)
 	fprintf(stderr, "(margin w%i h%i) ",
 			frame->margin_width, frame->margin_height);
 
-	if (frame->name)
+	もし (frame->name)
 		fprintf(stderr, "'%s' ", frame->name);
-	if (frame->url)
+	もし (frame->url)
 		fprintf(stderr, "<%s> ", frame->url);
 
-	if (frame->no_resize)
+	もし (frame->no_resize)
 		fprintf(stderr, "noresize ");
 	fprintf(stderr, "(scrolling %s) ", scrolling[frame->scrolling]);
-	if (frame->border)
+	もし (frame->border)
 		fprintf(stderr, "border %x ",
-				(unsigned int) frame->border_colour);
+				(unsigned 整数) frame->border_colour);
 
 	fprintf(stderr, "\n");
 
-	if (frame->children) {
-		for (row = 0; row != frame->rows; row++) {
-			for (col = 0; col != frame->cols; col++) {
-				for (i = 0; i != depth; i++)
+	もし (frame->children) {
+		ために (row = 0; row != frame->rows; row++) {
+			ために (col = 0; col != frame->cols; col++) {
+				ために (i = 0; i != depth; i++)
 					fprintf(stderr, "  ");
 				fprintf(stderr, "(%i %i): ", row, col);
 				index = (row * frame->cols) + col;
@@ -1955,7 +1955,7 @@ dom_document *html_get_document(hlcache_handle *h)
 
 	assert(c != NULL);
 
-	return c->document;
+	戻る c->document;
 }
 
 /**
@@ -1973,7 +1973,7 @@ struct box *html_get_box_tree(hlcache_handle *h)
 
 	assert(c != NULL);
 
-	return c->layout;
+	戻る c->layout;
 }
 
 /**
@@ -1990,12 +1990,12 @@ static const char *html_encoding(const struct content *c, enum content_encoding_
 
 	assert(html != NULL);
 
-	if (op == CONTENT_ENCODING_SOURCE) {
+	もし (op == CONTENT_ENCODING_SOURCE) {
 		enc_token[8] = '0' + html->encoding_source;
-		return messages_get(enc_token);
+		戻る messages_get(enc_token);
 	}
 
-	return html->encoding;
+	戻る html->encoding;
 }
 
 
@@ -2011,7 +2011,7 @@ struct content_html_frames *html_get_frameset(hlcache_handle *h)
 
 	assert(c != NULL);
 
-	return c->frameset;
+	戻る c->frameset;
 }
 
 /**
@@ -2026,7 +2026,7 @@ struct content_html_iframe *html_get_iframe(hlcache_handle *h)
 
 	assert(c != NULL);
 
-	return c->iframe;
+	戻る c->iframe;
 }
 
 /**
@@ -2041,7 +2041,7 @@ nsurl *html_get_base_url(hlcache_handle *h)
 
 	assert(c != NULL);
 
-	return c->base_url;
+	戻る c->base_url;
 }
 
 /**
@@ -2056,7 +2056,7 @@ const char *html_get_base_target(hlcache_handle *h)
 
 	assert(c != NULL);
 
-	return c->base_target;
+	戻る c->base_target;
 }
 
 
@@ -2069,21 +2069,21 @@ const char *html_get_base_target(hlcache_handle *h)
  * \param y        Updated to global y coord iff id found
  * \return  true iff id found
  */
-bool html_get_id_offset(hlcache_handle *h, lwc_string *frag_id, int *x, int *y)
+bool html_get_id_offset(hlcache_handle *h, lwc_string *frag_id, 整数 *x, 整数 *y)
 {
 	struct box *pos;
 	struct box *layout;
 
-	if (content_get_type(h) != CONTENT_HTML)
-		return false;
+	もし (content_get_type(h) != CONTENT_HTML)
+		戻る false;
 
 	layout = html_get_box_tree(h);
 
-	if ((pos = box_find_by_id(layout, frag_id)) != 0) {
+	もし ((pos = box_find_by_id(layout, frag_id)) != 0) {
 		box_coords(pos, x, y);
-		return true;
+		戻る true;
 	}
-	return false;
+	戻る false;
 }
 
 bool html_exec(struct content *c, const char *src, size_t srclen)
@@ -2097,44 +2097,44 @@ bool html_exec(struct content *c, const char *src, size_t srclen)
 	dom_node *spare_node;
 	dom_html_script_element *script_node;
 
-	if (htmlc->document == NULL) {
+	もし (htmlc->document == NULL) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no document");
 		goto out_no_string;
 	}
 
 	err = dom_string_create((const uint8_t *)src, srclen, &dom_src);
-	if (err != DOM_NO_ERR) {
+	もし (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create string");
 		goto out_no_string;
 	}
 
 	err = dom_html_document_get_body(htmlc->document, &body_node);
-	if (err != DOM_NO_ERR) {
+	もし (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve body element");
 		goto out_no_body;
 	}
 
 	err = dom_document_create_text_node(htmlc->document, dom_src, &text_node);
-	if (err != DOM_NO_ERR) {
+	もし (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create text node");
 		goto out_no_text_node;
 	}
 
 	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_node);
-	if (err != DOM_NO_ERR) {
+	もし (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create script node");
 		goto out_no_script_node;
 	}
 
 	err = dom_node_append_child(script_node, text_node, &spare_node);
-	if (err != DOM_NO_ERR) {
+	もし (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert code node into script node");
 		goto out_unparented;
 	}
 	dom_node_unref(spare_node); /* We do not need the spare ref at all */
 
 	err = dom_node_append_child(body_node, script_node, &spare_node);
-	if (err != DOM_NO_ERR) {
+	もし (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert script node into document body");
 		goto out_unparented;
 	}
@@ -2149,10 +2149,10 @@ bool html_exec(struct content *c, const char *src, size_t srclen)
 	 */
 
 	err = dom_node_get_parent_node(script_node, &spare_node);
-	if (err == DOM_NO_ERR && spare_node != NULL) {
+	もし (err == DOM_NO_ERR && spare_node != NULL) {
 		dom_node *second_spare;
 		err = dom_node_remove_child(spare_node, script_node, &second_spare);
-		if (err == DOM_NO_ERR) {
+		もし (err == DOM_NO_ERR) {
 			dom_node_unref(second_spare);
 		}
 		dom_node_unref(spare_node);
@@ -2167,7 +2167,7 @@ out_no_text_node:
 out_no_body:
 	dom_string_unref(dom_src);
 out_no_string:
-	return result;
+	戻る result;
 }
 
 /* See \ref content_saw_insecure_objects */
@@ -2178,25 +2178,25 @@ html_saw_insecure_objects(struct content *c)
 	struct content_html_object *obj = htmlc->object_list;
 
 	/* Check through the object list */
-	while (obj != NULL) {
-		if (obj->content != NULL) {
-			if (content_saw_insecure_objects(obj->content))
-				return true;
+	ながら (obj != NULL) {
+		もし (obj->content != NULL) {
+			もし (content_saw_insecure_objects(obj->content))
+				戻る true;
 		}
 		obj = obj->next;
 	}
 
 	/* Now check the script list */
-	if (html_saw_insecure_scripts(htmlc)) {
-		return true;
+	もし (html_saw_insecure_scripts(htmlc)) {
+		戻る true;
 	}
 
 	/* Now check stylesheets */
-	if (html_css_saw_insecure_stylesheets(htmlc)) {
-		return true;
+	もし (html_css_saw_insecure_stylesheets(htmlc)) {
+		戻る true;
 	}
 
-	return false;
+	戻る false;
 }
 
 /**
@@ -2206,7 +2206,7 @@ html_saw_insecure_objects(struct content *c)
  */
 static content_type html_content_type(void)
 {
-	return CONTENT_HTML;
+	戻る CONTENT_HTML;
 }
 
 
@@ -2227,7 +2227,7 @@ static void html_fini(void)
  */
 static nserror
 find_occurrences_html_box(const char *pattern,
-			  int p_len,
+			  整数 p_len,
 			  struct box *cur,
 			  bool case_sens,
 			  struct textsearch_context *context)
@@ -2236,11 +2236,11 @@ find_occurrences_html_box(const char *pattern,
 	nserror res = NSERROR_OK;
 
 	/* ignore this box, if there's no visible text */
-	if (!cur->object && cur->text) {
+	もし (!cur->object && cur->text) {
 		const char *text = cur->text;
 		unsigned length = cur->length;
 
-		while (length > 0) {
+		ながら (length > 0) {
 			unsigned match_length;
 			unsigned match_offset;
 			const char *new_text;
@@ -2252,7 +2252,7 @@ find_occurrences_html_box(const char *pattern,
 					   p_len,
 					   case_sens,
 					   &match_length);
-			if (!pos)
+			もし (!pos)
 				break;
 
 			/* found string in box => add to list */
@@ -2263,8 +2263,8 @@ find_occurrences_html_box(const char *pattern,
 					cur->byte_offset + match_offset + match_length,
 					cur,
 					cur);
-			if (res != NSERROR_OK) {
-				return res;
+			もし (res != NSERROR_OK) {
+				戻る res;
 			}
 
 			new_text = pos + match_length;
@@ -2274,18 +2274,18 @@ find_occurrences_html_box(const char *pattern,
 	}
 
 	/* and recurse */
-	for (a = cur->children; a; a = a->next) {
+	ために (a = cur->children; a; a = a->next) {
 		res = find_occurrences_html_box(pattern,
 						p_len,
 						a,
 						case_sens,
 						context);
-		if (res != NSERROR_OK) {
-			return res;
+		もし (res != NSERROR_OK) {
+			戻る res;
 		}
 	}
 
-	return res;
+	戻る res;
 }
 
 /**
@@ -2302,16 +2302,16 @@ static nserror
 html_textsearch_find(struct content *c,
 		     struct textsearch_context *context,
 		     const char *pattern,
-		     int p_len,
+		     整数 p_len,
 		     bool csens)
 {
 	html_content *html = (html_content *)c;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	もし (html->layout == NULL) {
+		戻る NSERROR_INVALID;
 	}
 
-	return find_occurrences_html_box(pattern,
+	戻る find_occurrences_html_box(pattern,
 					 p_len,
 					 html->layout,
 					 csens,
@@ -2335,7 +2335,7 @@ html_textsearch_bounds(struct content *c,
 	bounds->x1 += end_box->width;
 	bounds->y1 += end_box->height;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -2384,20 +2384,20 @@ nserror html_init(void)
 	nserror error;
 
 	error = html_css_init();
-	if (error != NSERROR_OK)
+	もし (error != NSERROR_OK)
 		goto error;
 
-	for (i = 0; i < NOF_ELEMENTS(html_types); i++) {
+	ために (i = 0; i < NOF_ELEMENTS(html_types); i++) {
 		error = content_factory_register_handler(html_types[i],
 				&html_content_handler);
-		if (error != NSERROR_OK)
+		もし (error != NSERROR_OK)
 			goto error;
 	}
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 
 error:
 	html_fini();
 
-	return error;
+	戻る error;
 }

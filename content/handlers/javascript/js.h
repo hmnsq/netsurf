@@ -71,7 +71,7 @@ void js_finalise(void);
  * \param heap Updated to the created JS heap
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror js_newheap(int timeout, jsheap **heap);
+nserror js_newheap(整数 timeout, jsheap **heap);
 
 /**
  * Destroy a previously created heap.

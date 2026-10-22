@@ -57,7 +57,7 @@ static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
 	fetch_send_callback(msg, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	戻る ctx->aborted;
 }
 
 
@@ -69,7 +69,7 @@ static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
 static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
 {
 	fetch_msg msg;
-	int code = 204;
+	整数 code = 204;
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
@@ -77,7 +77,7 @@ static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
 	msg.type = FETCH_FINISHED;
 	fetch_javascript_send_callback(&msg, ctx);
 
-	return true;
+	戻る true;
 }
 
 
@@ -85,7 +85,7 @@ static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
 /** callback to initialise the resource fetcher. */
 static bool fetch_javascript_initialise(lwc_string *scheme)
 {
-	return true;
+	戻る true;
 }
 
 /** callback to finalise the resource fetcher. */
@@ -95,7 +95,7 @@ static void fetch_javascript_finalise(lwc_string *scheme)
 
 static bool fetch_javascript_can_fetch(const nsurl *url)
 {
-	return true;
+	戻る true;
 }
 
 /** callback to set up a resource fetch context. */
@@ -111,8 +111,8 @@ fetch_javascript_setup(struct fetch *fetchh,
 	struct fetch_javascript_context *ctx;
 
 	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	もし (ctx == NULL)
+		戻る NULL;
 
 	ctx->url = nsurl_ref(url);
 
@@ -120,14 +120,14 @@ fetch_javascript_setup(struct fetch *fetchh,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	戻る ctx;
 }
 
 /** callback to free a resource fetch */
 static void fetch_javascript_free(void *ctx)
 {
 	struct fetch_javascript_context *c = ctx;
-	if (c->url != NULL) {
+	もし (c->url != NULL) {
 		nsurl_unref(c->url);
 	}
 	RING_REMOVE(ring, c);
@@ -137,7 +137,7 @@ static void fetch_javascript_free(void *ctx)
 /** callback to start a resource fetch */
 static bool fetch_javascript_start(void *ctx)
 {
-	return true;
+	戻る true;
 }
 
 /** callback to abort a resource fetch */
@@ -158,7 +158,7 @@ static void fetch_javascript_poll(lwc_string *scheme)
 {
 	struct fetch_javascript_context *c, *next;
 
-	if (ring == NULL) return;
+	もし (ring == NULL) 戻る;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
@@ -169,13 +169,13 @@ static void fetch_javascript_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		もし (c->locked == true) {
 			next = c->r_next;
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		もし (c->aborted == false) {
 			/* resource fetches can be processed in one go */
 			fetch_javascript_handler(c);
 		}
@@ -191,7 +191,7 @@ static void fetch_javascript_poll(lwc_string *scheme)
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} ながら ( (c = next) != ring && ring != NULL);
 }
 
 /**
@@ -213,5 +213,5 @@ nserror fetch_javascript_register(void)
 		.finalise = fetch_javascript_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	戻る fetcher_add(scheme, &fetcher_ops);
 }

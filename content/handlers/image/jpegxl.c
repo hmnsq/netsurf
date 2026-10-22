@@ -69,19 +69,19 @@ nsjpegxl_create(const content_handler *handler,
 	nserror error;
 
 	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	もし (jpeg == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		free(jpeg);
-		return error;
+		戻る error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 /**
@@ -110,83 +110,83 @@ jpegxl_cache_convert(struct content *c)
 	};
 
 	jxldec = JxlDecoderCreate(NULL);
-	if (jxldec == NULL) {
+	もし (jxldec == NULL) {
 		NSLOG(netsurf, ERROR, "Unable to allocate decoder");
-		return NULL;
+		戻る NULL;
 	}
 
 	decstatus = JxlDecoderSetUnpremultiplyAlpha(jxldec, !bitmap_fmt.pma);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	もし (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set premultiplied alpha status: %d",
 				decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		戻る NULL;
 	}
 
 	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_FULL_IMAGE);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	もし (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "Unable to subscribe");
-		return NULL;
+		戻る NULL;
 	}
 	src_data = content__get_source_data(c, &src_size);
 
 	decstatus = JxlDecoderSetInput(jxldec, src_data, src_size);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	もし (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set input");
-		return NULL;
+		戻る NULL;
 	}
 
 	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
+	もし (decstatus != JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
 		NSLOG(netsurf, ERROR,
 		      "expected status JXL_DEC_NEED_IMAGE_OUT_BUFFER(%d) got %d",
 		      JXL_DEC_NEED_IMAGE_OUT_BUFFER,
 		      decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		戻る NULL;
 	}
 
 	decstatus = JxlDecoderGetBasicInfo(jxldec, &binfo);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	もし (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to get basic info status:%d",decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		戻る NULL;
 	}
 
 	/* create bitmap with appropriate opacity */
-	if (binfo.alpha_bits > 0) {
+	もし (binfo.alpha_bits > 0) {
 		bitmap = guit->bitmap->create(c->width, c->height, BITMAP_OPAQUE);
-	} else {
+	} 否则 {
 		bitmap = guit->bitmap->create(c->width, c->height, BITMAP_NONE);
 	}
-	if (bitmap == NULL) {
+	もし (bitmap == NULL) {
 		/* empty bitmap could not be created */
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		戻る NULL;
 	}
 
 	/* ensure buffer was allocated */
 	output = guit->bitmap->get_buffer(bitmap);
-	if (output == NULL) {
+	もし (output == NULL) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		戻る NULL;
 	}
 	decstatus = JxlDecoderSetImageOutBuffer(jxldec, &jxl_output_format, output, c->size);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	もし (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set output buffer callback status:%d",decstatus);
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		戻る NULL;
 	}
 
 	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_FULL_IMAGE) {
+	もし (decstatus != JXL_DEC_FULL_IMAGE) {
 		NSLOG(netsurf, ERROR, "did not get decode event");
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		戻る NULL;
 	}
 	
 	JxlDecoderDestroy(jxldec);
@@ -194,7 +194,7 @@ jpegxl_cache_convert(struct content *c)
 	bitmap_format_to_client(bitmap, &jxl_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	戻る bitmap;
 }
 
 /**
@@ -207,7 +207,7 @@ static bool jxl_report_fail(struct content *c, JxlDecoderStatus decstatus, const
 	msg_data.errordata.errorcode = NSERROR_UNKNOWN;
 	msg_data.errordata.errormsg = msg;
 	content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-	return false;
+	戻る false;
 }
 
 /**
@@ -229,37 +229,37 @@ static bool nsjpegxl_convert(struct content *c)
 	data = content__get_source_data(c, &size);
 
 	decsig = JxlSignatureCheck(data,size);
-	if ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
+	もし ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
 		NSLOG(netsurf, ERROR, "signature failed");
 		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
 		msg_data.errordata.errormsg = "Signature failed";
 		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		戻る false;
 	}
 
 	jxldec = JxlDecoderCreate(NULL);
-	if (jxldec == NULL) {
-		return jxl_report_fail(c, decstatus, "Unable to allocate decoder");
+	もし (jxldec == NULL) {
+		戻る jxl_report_fail(c, decstatus, "Unable to allocate decoder");
 	}
 	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_BASIC_INFO);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "Unable to subscribe");
+	もし (decstatus != JXL_DEC_SUCCESS) {
+		戻る jxl_report_fail(c, decstatus, "Unable to subscribe");
 	}
 	decstatus = JxlDecoderSetInput(jxldec, data,size);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable to set input");
+	もし (decstatus != JXL_DEC_SUCCESS) {
+		戻る jxl_report_fail(c, decstatus, "unable to set input");
 	}
 	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_BASIC_INFO) {
-		return jxl_report_fail(c, decstatus, "did not get basic info event");
+	もし (decstatus != JXL_DEC_BASIC_INFO) {
+		戻る jxl_report_fail(c, decstatus, "did not get basic info event");
 	}
 	decstatus = JxlDecoderGetBasicInfo(jxldec, &binfo);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable to get basic info");
+	もし (decstatus != JXL_DEC_SUCCESS) {
+		戻る jxl_report_fail(c, decstatus, "unable to get basic info");
 	}
 	decstatus = JxlDecoderImageOutBufferSize(jxldec, &jxl_output_format, &image_size);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable get image size");
+	もし (decstatus != JXL_DEC_SUCCESS) {
+		戻る jxl_report_fail(c, decstatus, "unable get image size");
 	}
 	
 	JxlDecoderDestroy(jxldec);
@@ -276,7 +276,7 @@ static bool nsjpegxl_convert(struct content *c)
 	title = messages_get_buff("JPEGXLTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	もし (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
@@ -285,7 +285,7 @@ static bool nsjpegxl_convert(struct content *c)
 	content_set_done(c);	
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	戻る true;
 }
 
 
@@ -298,27 +298,27 @@ static nserror nsjpegxl_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	jpegxl_c = calloc(1, sizeof(struct content));
-	if (jpegxl_c == NULL)
-		return NSERROR_NOMEM;
+	もし (jpegxl_c == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__clone(old, jpegxl_c);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_destroy(jpegxl_c);
-		return error;
+		戻る error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	もし ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpegxl_convert(jpegxl_c) == false) {
+		もし (nsjpegxl_convert(jpegxl_c) == false) {
 			content_destroy(jpegxl_c);
-			return NSERROR_CLONE_FAILED;
+			戻る NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpegxl_c;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 static const content_handler nsjpegxl_content_handler = {

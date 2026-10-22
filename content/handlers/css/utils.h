@@ -37,16 +37,16 @@ static inline uint8_t ns_computed_display(
 
 	switch (value) {
 	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+		戻る CSS_DISPLAY_BLOCK;
 
 	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+		戻る CSS_DISPLAY_INLINE_BLOCK;
 
 	default:
 		break;
 	}
 
-	return value;
+	戻る value;
 }
 
 /**
@@ -60,16 +60,16 @@ static inline uint8_t ns_computed_display_static(
 
 	switch (value) {
 	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+		戻る CSS_DISPLAY_BLOCK;
 
 	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+		戻る CSS_DISPLAY_INLINE_BLOCK;
 
 	default:
 		break;
 	}
 
-	return value;
+	戻る value;
 }
 
 static inline uint8_t ns_computed_min_height(
@@ -78,13 +78,13 @@ static inline uint8_t ns_computed_min_height(
 {
 	uint8_t value = css_computed_min_height(style, length, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
+	もし (value == CSS_MIN_HEIGHT_AUTO) {
 		value = CSS_MIN_HEIGHT_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	戻る value;
 }
 
 
@@ -94,13 +94,13 @@ static inline uint8_t ns_computed_min_width(
 {
 	uint8_t value = css_computed_min_width(style, length, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
+	もし (value == CSS_MIN_WIDTH_AUTO) {
 		value = CSS_MIN_WIDTH_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	戻る value;
 }
 
 #endif

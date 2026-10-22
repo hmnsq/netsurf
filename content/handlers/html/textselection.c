@@ -65,37 +65,37 @@ selected_part(struct box *box,
 {
 	size_t box_length = box->length + SPACE_LEN(box);
 
-	if (box_length > 0) {
-		if ((box->byte_offset >= start_idx) &&
+	もし (box_length > 0) {
+		もし ((box->byte_offset >= start_idx) &&
 		    (box->byte_offset + box_length <= end_idx)) {
 
 			/* fully enclosed */
 			*start_offset = 0;
 			*end_offset = box_length;
-			return true;
-		} else if ((box->byte_offset + box_length > start_idx) &&
+			戻る true;
+		} 否则 もし ((box->byte_offset + box_length > start_idx) &&
 			   (box->byte_offset < end_idx)) {
 			/* partly enclosed */
-			int offset = 0;
-			int len;
+			整数 offset = 0;
+			整数 len;
 
-			if (box->byte_offset < start_idx) {
+			もし (box->byte_offset < start_idx) {
 				offset = start_idx - box->byte_offset;
 			}
 
 			len = box_length - offset;
 
-			if (box->byte_offset + box_length > end_idx) {
+			もし (box->byte_offset + box_length > end_idx) {
 				len = end_idx - (box->byte_offset + offset);
 			}
 
 			*start_offset = offset;
 			*end_offset = offset + len;
 
-			return true;
+			戻る true;
 		}
 	}
-	return false;
+	戻る false;
 }
 
 
@@ -123,7 +123,7 @@ coords_from_range(struct box *box,
 	assert(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
+	もし (box->parent &&
 	    box->parent->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
@@ -131,7 +131,7 @@ coords_from_range(struct box *box,
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	もし (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = coords_from_range(box->list_marker,
@@ -139,29 +139,29 @@ coords_from_range(struct box *box,
 					end_idx,
 					rdwi,
 					true);
-		if (res != NSERROR_OK) {
-			return res;
+		もし (res != NSERROR_OK) {
+			戻る res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	もし (box->byte_offset >= end_idx) {
+		戻る NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
 	child = box->children;
 
-	if ((box->type != BOX_BR) &&
+	もし ((box->type != BOX_BR) &&
 	    !((box->type == BOX_FLOAT_LEFT ||
 	       box->type == BOX_FLOAT_RIGHT) &&
 	      !box->text)) {
 		unsigned start_off;
 		unsigned end_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
-			int width, height;
-			int x, y;
+		もし (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
+			整数 width, height;
+			整数 x, y;
 
 			/**
 			 * \todo it should be possible to reduce the redrawn
@@ -172,25 +172,25 @@ coords_from_range(struct box *box,
 			width = box->padding[LEFT] + box->width + box->padding[RIGHT];
 			height = box->padding[TOP] + box->height + box->padding[BOTTOM];
 
-			if ((box->type == BOX_TEXT) &&
+			もし ((box->type == BOX_TEXT) &&
 			    (box->space != 0)) {
 				width += box->space;
 			}
 
-			if (rdwi->inited) {
-				if (x < rdwi->r.x0) {
+			もし (rdwi->inited) {
+				もし (x < rdwi->r.x0) {
 					rdwi->r.x0 = x;
 				}
-				if (y < rdwi->r.y0) {
+				もし (y < rdwi->r.y0) {
 					rdwi->r.y0 = y;
 				}
-				if (x + width > rdwi->r.x1) {
+				もし (x + width > rdwi->r.x1) {
 					rdwi->r.x1 = x + width;
 				}
-				if (y + height > rdwi->r.y1) {
+				もし (y + height > rdwi->r.y1) {
 					rdwi->r.y1 = y + height;
 				}
-			} else {
+			} 否则 {
 				rdwi->inited = true;
 				rdwi->r.x0 = x;
 				rdwi->r.y0 = y;
@@ -204,15 +204,15 @@ coords_from_range(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
+	もし (child) {
 		struct box *next = child->next;
 
-		while (next && next->byte_offset < start_idx) {
+		ながら (next && next->byte_offset < start_idx) {
 			child = next;
 			next = child->next;
 		}
 
-		while (child) {
+		ながら (child) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
 			struct box *next = child->next;
@@ -222,15 +222,15 @@ coords_from_range(struct box *box,
 						end_idx,
 						rdwi,
 						false);
-			if (res != NSERROR_OK) {
-				return res;
+			もし (res != NSERROR_OK) {
+				戻る res;
 			}
 
 			child = next;
 		}
 	}
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -261,37 +261,37 @@ selection_copy_box(const char *text,
 	plot_font_style_t *pstyle = NULL;
 
 	/* add any whitespace which precedes the text from this box */
-	if (whitespace_text != NULL &&
+	もし (whitespace_text != NULL &&
 	    whitespace_length > 0) {
-		if (!selection_string_append(whitespace_text,
+		もし (!selection_string_append(whitespace_text,
 					     whitespace_length,
 					     false,
 					     pstyle,
 					     handle)) {
-			return NSERROR_NOMEM;
+			戻る NSERROR_NOMEM;
 		}
 	}
 
-	if (box != NULL) {
+	もし (box != NULL) {
 		/* HTML */
 		add_space = (box->space != 0);
 
-		if (box->style != NULL) {
+		もし (box->style != NULL) {
 			/* Override default font style */
 			font_plot_style_from_css(unit_len_ctx, box->style, &style);
 			pstyle = &style;
-		} else {
+		} 否则 {
 			/* If there's no style, there must be no text */
 			assert(box->text == NULL);
 		}
 	}
 
 	/* add the text from this box */
-	if (!selection_string_append(text, length, add_space, pstyle, handle)) {
-		return NSERROR_NOMEM;
+	もし (!selection_string_append(text, length, add_space, pstyle, handle)) {
+		戻る NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -328,7 +328,7 @@ selection_copy(struct box *box,
 	assert(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
+	もし (box->parent &&
 	    box->parent->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
@@ -336,7 +336,7 @@ selection_copy(struct box *box,
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	もし (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = selection_copy(box->list_marker,
@@ -347,14 +347,14 @@ selection_copy(struct box *box,
 				     before,
 				     first,
 				     true);
-		if (res != NSERROR_OK) {
-			return res;
+		もし (res != NSERROR_OK) {
+			戻る res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	もし (box->byte_offset >= end_idx) {
+		戻る NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
@@ -362,24 +362,24 @@ selection_copy(struct box *box,
 
 	/* If nicely formatted output of the selected text is required, work
 	 * out what whitespace should be placed before the next bit of text */
-	if (before) {
+	もし (before) {
 		save_text_solve_whitespace(box,
 					   first,
 					   before,
 					   &whitespace_text,
 					   &whitespace_length);
-	} else {
+	} 否则 {
 		whitespace_text = NULL;
 	}
 
-	if ((box->type != BOX_BR) &&
+	もし ((box->type != BOX_BR) &&
 	    !((box->type == BOX_FLOAT_LEFT ||
 	       box->type == BOX_FLOAT_RIGHT) &&
 	      !box->text)) {
 		unsigned start_off;
 		unsigned end_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
+		もし (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
 			res = selection_copy_box(box->text + start_off,
 						 min(box->length, end_off) - start_off,
 						 box,
@@ -387,10 +387,10 @@ selection_copy(struct box *box,
 						 selstr,
 						 whitespace_text,
 						 whitespace_length);
-			if (res != NSERROR_OK) {
-				return res;
+			もし (res != NSERROR_OK) {
+				戻る res;
 			}
-			if (before) {
+			もし (before) {
 				*first = false;
 				*before = WHITESPACE_NONE;
 			}
@@ -401,15 +401,15 @@ selection_copy(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
+	もし (child) {
 		struct box *next = child->next;
 
-		while (next && next->byte_offset < start_idx) {
+		ながら (next && next->byte_offset < start_idx) {
 			child = next;
 			next = child->next;
 		}
 
-		while (child) {
+		ながら (child) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
 			struct box *next = child->next;
@@ -422,15 +422,15 @@ selection_copy(struct box *box,
 					     before,
 					     first,
 					     false);
-			if (res != NSERROR_OK) {
-				return res;
+			もし (res != NSERROR_OK) {
+				戻る res;
 			}
 
 			child = next;
 		}
 	}
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -452,12 +452,12 @@ static unsigned selection_label_subtree(struct box *box, unsigned idx)
 
 	box->byte_offset = idx;
 
-	if (box->text) {
+	もし (box->text) {
 		idx += box->length + SPACE_LEN(box);
 	}
 
-	while (child) {
-		if (child->list_marker) {
+	ながら (child) {
+		もし (child->list_marker) {
 			idx = selection_label_subtree(child->list_marker, idx);
 		}
 
@@ -465,7 +465,7 @@ static unsigned selection_label_subtree(struct box *box, unsigned idx)
 		child = child->next;
 	}
 
-	return idx;
+	戻る idx;
 }
 
 
@@ -479,18 +479,18 @@ html_textselection_redraw(struct content *c,
 	html_content *html = (html_content *)c;
 	struct rdw_info rdw;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	もし (html->layout == NULL) {
+		戻る NSERROR_INVALID;
 	}
 
 	rdw.inited = false;
 
 	res = coords_from_range(html->layout, start_idx, end_idx, &rdw, false);
-	if (res != NSERROR_OK) {
-		return res;
+	もし (res != NSERROR_OK) {
+		戻る res;
 	}
 
-	if (rdw.inited) {
+	もし (rdw.inited) {
 		content__request_redraw(c,
 					rdw.r.x0,
 					rdw.r.y0,
@@ -498,7 +498,7 @@ html_textselection_redraw(struct content *c,
 					rdw.r.y1 - rdw.r.y0);
 	}
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -513,11 +513,11 @@ html_textselection_copy(struct content *c,
 	save_text_whitespace before = WHITESPACE_NONE;
 	bool first = true;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	もし (html->layout == NULL) {
+		戻る NSERROR_INVALID;
 	}
 
-	return selection_copy(html->layout,
+	戻る selection_copy(html->layout,
 			      &html->unit_len_ctx,
 			      start_idx,
 			      end_idx,
@@ -535,13 +535,13 @@ html_textselection_get_end(struct content *c, unsigned *end_idx)
 	html_content *html = (html_content *)c;
 	unsigned root_idx;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	もし (html->layout == NULL) {
+		戻る NSERROR_INVALID;
 	}
 
 	root_idx = 0;
 
 	*end_idx = selection_label_subtree(html->layout, root_idx);
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }

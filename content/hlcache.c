@@ -92,8 +92,8 @@ struct hlcache_s {
 	hlcache_retrieval_ctx *retrieval_ctx_ring;
 
 	/* statistics */
-	unsigned int hit_count;
-	unsigned int miss_count;
+	unsigned 整数 hit_count;
+	unsigned 整数 miss_count;
 };
 
 /** high level cache state */
@@ -113,17 +113,17 @@ static void hlcache_clean(void *force_clean_flag)
 	hlcache_entry *entry, *next;
 	bool force_clean = (force_clean_flag != NULL);
 
-	for (entry = hlcache->content_list; entry != NULL; entry = next) {
+	ために (entry = hlcache->content_list; entry != NULL; entry = next) {
 		next = entry->next;
 
-		if (entry->content == NULL)
+		もし (entry->content == NULL)
 			continue;
 
-		if (content_count_users(entry->content) != 0)
+		もし (content_count_users(entry->content) != 0)
 			continue;
 
-		if (content__get_status(entry->content) == CONTENT_STATUS_LOADING) {
-			if (force_clean == false)
+		もし (content__get_status(entry->content) == CONTENT_STATUS_LOADING) {
+			もし (force_clean == false)
 				continue;
 			NSLOG(netsurf, DEBUG, "Forcing content cleanup during shutdown");
 			content_abort(entry->content);
@@ -138,12 +138,12 @@ static void hlcache_clean(void *force_clean_flag)
 		 */
 
 		/* Remove entry from cache */
-		if (entry->prev == NULL)
+		もし (entry->prev == NULL)
 			hlcache->content_list = entry->next;
-		else
+		否则
 			entry->prev->next = entry->next;
 
-		if (entry->next != NULL)
+		もし (entry->next != NULL)
 			entry->next->prev = entry->prev;
 
 		/* Destroy content */
@@ -177,7 +177,7 @@ static bool hlcache_type_is_acceptable(lwc_string *mime_type,
 
 	*computed_type = type;
 
-	return ((accepted_types & type) != 0);
+	戻る ((accepted_types & type) != 0);
 }
 
 /**
@@ -197,14 +197,14 @@ static void hlcache_content_callback(struct content *c, content_msg msg,
 		.type = msg,
 	};
 
-	if (data != NULL) {
+	もし (data != NULL) {
 		event.data = *data;
 	}
 
-	if (handle->cb != NULL)
+	もし (handle->cb != NULL)
 		error = handle->cb(handle, &event, handle->pw);
 
-	if (error != NSERROR_OK)
+	もし (error != NSERROR_OK)
 		NSLOG(netsurf, INFO, "Error in callback: %d", error);
 }
 
@@ -230,23 +230,23 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 	nserror error = NSERROR_OK;
 
 	/* Search list of cached contents for a suitable one */
-	for (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
+	ために (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
 		hlcache_handle entry_handle = { entry, NULL, NULL };
 		const llcache_handle *entry_llcache;
 
-		if (entry->content == NULL)
+		もし (entry->content == NULL)
 			continue;
 
 		/* Ignore contents in the error state */
-		if (content_get_status(&entry_handle) == CONTENT_STATUS_ERROR)
+		もし (content_get_status(&entry_handle) == CONTENT_STATUS_ERROR)
 			continue;
 
 		/* Ensure that content is shareable */
-		if (content_is_shareable(entry->content) == false)
+		もし (content_is_shareable(entry->content) == false)
 			continue;
 
 		/* Ensure that quirks mode is acceptable */
-		if (content_matches_quirks(entry->content,
+		もし (content_matches_quirks(entry->content,
 				ctx->child.quirks) == false)
 			continue;
 
@@ -254,30 +254,30 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		 * low-level handle */
 		entry_llcache = content_get_llcache_handle(entry->content);
 
-		if (llcache_handle_references_same_object(entry_llcache,
+		もし (llcache_handle_references_same_object(entry_llcache,
 				ctx->llcache))
 			break;
 	}
 
-	if (entry == NULL) {
+	もし (entry == NULL) {
 		/* No existing entry, so need to create one */
 		entry = malloc(sizeof(hlcache_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+		もし (entry == NULL)
+			戻る NSERROR_NOMEM;
 
 		/* Create content using llhandle */
 		entry->content = content_factory_create_content(ctx->llcache,
 				ctx->child.charset, ctx->child.quirks,
 				effective_type);
-		if (entry->content == NULL) {
+		もし (entry->content == NULL) {
 			free(entry);
-			return NSERROR_NOMEM;
+			戻る NSERROR_NOMEM;
 		}
 
 		/* Insert into cache */
 		entry->prev = NULL;
 		entry->next = hlcache->content_list;
-		if (hlcache->content_list != NULL)
+		もし (hlcache->content_list != NULL)
 			hlcache->content_list->prev = entry;
 		hlcache->content_list = entry;
 
@@ -285,47 +285,47 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		error = NSERROR_NEED_DATA;
 
 		hlcache->miss_count++;
-	} else {
+	} 否则 {
 		/* Found a suitable content: no longer need low-level handle */
 		llcache_handle_release(ctx->llcache);
 		hlcache->hit_count++;
 	}
 
 	/* Associate handle with content */
-	if (content_add_user(entry->content,
+	もし (content_add_user(entry->content,
 			hlcache_content_callback, ctx->handle) == false)
-		return NSERROR_NOMEM;
+		戻る NSERROR_NOMEM;
 
 	/* Associate cache entry with handle */
 	ctx->handle->entry = entry;
 
 	/* Catch handle up with state of content */
-	if (ctx->handle->cb != NULL) {
+	もし (ctx->handle->cb != NULL) {
 		content_status status = content_get_status(ctx->handle);
 
-		if (status == CONTENT_STATUS_LOADING) {
+		もし (status == CONTENT_STATUS_LOADING) {
 			event.type = CONTENT_MSG_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
-		} else if (status == CONTENT_STATUS_READY) {
+		} 否则 もし (status == CONTENT_STATUS_READY) {
 			event.type = CONTENT_MSG_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
-			if (ctx->handle->cb != NULL) {
+			もし (ctx->handle->cb != NULL) {
 				event.type = CONTENT_MSG_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
-		} else if (status == CONTENT_STATUS_DONE) {
+		} 否则 もし (status == CONTENT_STATUS_DONE) {
 			event.type = CONTENT_MSG_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
-			if (ctx->handle->cb != NULL) {
+			もし (ctx->handle->cb != NULL) {
 				event.type = CONTENT_MSG_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
 
-			if (ctx->handle->cb != NULL) {
+			もし (ctx->handle->cb != NULL) {
 				event.type = CONTENT_MSG_DONE;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
@@ -333,7 +333,7 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		}
 	}
 
-	return error;
+	戻る error;
 }
 
 /**
@@ -353,13 +353,13 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 
 	ctx->migrate_target = true;
 
-	if ((effective_type != NULL) &&
+	もし ((effective_type != NULL) &&
 	    hlcache_type_is_acceptable(effective_type,
 				       ctx->accepted_types,
 				       &type)) {
 		error = hlcache_find_content(ctx, effective_type);
-		if (error != NSERROR_OK && error != NSERROR_NEED_DATA) {
-			if (ctx->handle->cb != NULL) {
+		もし (error != NSERROR_OK && error != NSERROR_NEED_DATA) {
+			もし (ctx->handle->cb != NULL) {
 				hlcache_event hlevent;
 
 				hlevent.type = CONTENT_MSG_ERROR;
@@ -373,12 +373,12 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 			llcache_handle_abort(ctx->llcache);
 			llcache_handle_release(ctx->llcache);
 		}
-	} else if (type == CONTENT_NONE &&
+	} 否则 もし (type == CONTENT_NONE &&
 			(ctx->flags & HLCACHE_RETRIEVE_MAY_DOWNLOAD)) {
 		/* Unknown type, and we can download, so convert */
 		llcache_handle_force_stream(ctx->llcache);
 
-		if (ctx->handle->cb != NULL) {
+		もし (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_DOWNLOAD;
@@ -390,9 +390,9 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 
 		/* Ensure caller knows we need data */
 		error = NSERROR_NEED_DATA;
-	} else {
+	} 否则 {
 		/* Unacceptable type: report error */
-		if (ctx->handle->cb != NULL) {
+		もし (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_ERROR;
@@ -414,7 +414,7 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 	free((char *) ctx->child.charset);
 	free(ctx);
 
-	return error;
+	戻る error;
 }
 
 /**
@@ -439,7 +439,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 	switch (event->type) {
 	case LLCACHE_EVENT_GOT_CERTS:
 		/* Pass them on upward */
-		if (ctx->handle->cb != NULL) {
+		もし (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_SSL_CERTS;
@@ -453,7 +453,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 				ctx->flags & HLCACHE_RETRIEVE_SNIFF_TYPE,
 				ctx->accepted_types == CONTENT_IMAGE,
 				&effective_type);
-		if (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
+		もし (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
 			/* If the sniffer was successful or failed to find
 			 * a Content-Type header when sniffing was
 			 * prohibited, we must migrate the retrieval context. */
@@ -464,10 +464,10 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 		/* No need to report that we need data:
 		 * we'll get some anyway if there is any */
-		if (error == NSERROR_NEED_DATA)
+		もし (error == NSERROR_NEED_DATA)
 			error = NSERROR_OK;
 
-		return error;
+		戻る error;
 
 		break;
 	case LLCACHE_EVENT_HAD_DATA:
@@ -476,7 +476,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 				ctx->flags & HLCACHE_RETRIEVE_SNIFF_TYPE,
 				ctx->accepted_types == CONTENT_IMAGE,
 				&effective_type);
-		if (error != NSERROR_OK) {
+		もし (error != NSERROR_OK) {
 			assert(0 && "MIME sniff failed with data");
 		}
 
@@ -484,7 +484,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 		lwc_string_unref(effective_type);
 
-		return error;
+		戻る error;
 
 		break;
 	case LLCACHE_EVENT_DONE:
@@ -492,14 +492,14 @@ hlcache_llcache_callback(llcache_handle *handle,
 		 */
 		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"),
 				NULL, 0, false, false, &effective_type);
-		if (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
+		もし (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
 			error = hlcache_migrate_ctx(ctx, effective_type);
 
 			lwc_string_unref(effective_type);
-			return error;
+			戻る error;
 		}
 
-		if (ctx->handle->cb != NULL) {
+		もし (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_ERROR;
@@ -510,7 +510,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 		}
 		break;
 	case LLCACHE_EVENT_ERROR:
-		if (ctx->handle->cb != NULL) {
+		もし (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_ERROR;
@@ -523,7 +523,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 	case LLCACHE_EVENT_PROGRESS:
 		break;
 	case LLCACHE_EVENT_REDIRECT:
-		if (ctx->handle->cb != NULL) {
+		もし (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
 			hlevent.type = CONTENT_MSG_REDIRECT;
@@ -535,7 +535,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 		break;
 	}
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
@@ -550,15 +550,15 @@ hlcache_initialise(const struct hlcache_parameters *hlcache_parameters)
 	nserror ret;
 
 	hlcache = calloc(1, sizeof(struct hlcache_s));
-	if (hlcache == NULL) {
-		return NSERROR_NOMEM;
+	もし (hlcache == NULL) {
+		戻る NSERROR_NOMEM;
 	}
 
 	ret = llcache_initialise(&hlcache_parameters->llcache);
-	if (ret != NSERROR_OK) {
+	もし (ret != NSERROR_OK) {
 		free(hlcache);
 		hlcache = NULL;
-		return ret;
+		戻る ret;
 	}
 
 	hlcache->params = *hlcache_parameters;
@@ -566,7 +566,7 @@ hlcache_initialise(const struct hlcache_parameters *hlcache_parameters)
 	/* Schedule the cache cleanup */
 	guit->misc->schedule(hlcache->params.bg_clean_time, hlcache_clean, NULL);
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 /* See hlcache.h for documentation */
@@ -584,7 +584,7 @@ void hlcache_finalise(void)
 	hlcache_retrieval_ctx *ctx, *next;
 
 	/* Obtain initial count of contents remaining */
-	for (num_contents = 0, entry = hlcache->content_list;
+	ために (num_contents = 0, entry = hlcache->content_list;
 			entry != NULL; entry = entry->next) {
 		num_contents++;
 	}
@@ -598,11 +598,11 @@ void hlcache_finalise(void)
 
 		hlcache_clean(NULL);
 
-		for (num_contents = 0, entry = hlcache->content_list;
+		ために (num_contents = 0, entry = hlcache->content_list;
 				entry != NULL; entry = entry->next) {
 			num_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} ながら (num_contents > 0 && num_contents != prev_contents);
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining after being polite",
 			num_contents);
@@ -613,46 +613,46 @@ void hlcache_finalise(void)
 
 		hlcache_clean(&entry); // Any non-NULL pointer will do
 
-		for (num_contents = 0, entry = hlcache->content_list;
+		ために (num_contents = 0, entry = hlcache->content_list;
 				entry != NULL; entry = entry->next) {
 			num_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} ながら (num_contents > 0 && num_contents != prev_contents);
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining:", num_contents);
-	for (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
+	ために (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
 		hlcache_handle entry_handle = { entry, NULL, NULL };
 
-		if (entry->content != NULL) {
+		もし (entry->content != NULL) {
 			NSLOG(netsurf, INFO, "	%p : %s (%"PRIu32" users)",
 			      entry,
 			      nsurl_access(hlcache_handle_get_url(&entry_handle)),
 			      content_count_users(entry->content));
-		} else {
+		} 否则 {
 			NSLOG(netsurf, INFO, "	%p", entry);
 		}
 	}
 
 	/* Clean up retrieval contexts */
-	if (hlcache->retrieval_ctx_ring != NULL) {
+	もし (hlcache->retrieval_ctx_ring != NULL) {
 		ctx = hlcache->retrieval_ctx_ring;
 
 		do {
 			next = ctx->r_next;
 
-			if (ctx->llcache != NULL)
+			もし (ctx->llcache != NULL)
 				llcache_handle_release(ctx->llcache);
 
-			if (ctx->handle != NULL)
+			もし (ctx->handle != NULL)
 				free(ctx->handle);
 
-			if (ctx->child.charset != NULL)
+			もし (ctx->child.charset != NULL)
 				free((char *) ctx->child.charset);
 
 			free(ctx);
 
 			ctx = next;
-		} while (ctx != hlcache->retrieval_ctx_ring);
+		} ながら (ctx != hlcache->retrieval_ctx_ring);
 
 		hlcache->retrieval_ctx_ring = NULL;
 	}
@@ -687,23 +687,23 @@ hlcache_handle_retrieve(nsurl *url,
 	assert(cb != NULL);
 
 	ctx = calloc(1, sizeof(hlcache_retrieval_ctx));
-	if (ctx == NULL) {
-		return NSERROR_NOMEM;
+	もし (ctx == NULL) {
+		戻る NSERROR_NOMEM;
 	}
 
 	ctx->handle = calloc(1, sizeof(hlcache_handle));
-	if (ctx->handle == NULL) {
+	もし (ctx->handle == NULL) {
 		free(ctx);
-		return NSERROR_NOMEM;
+		戻る NSERROR_NOMEM;
 	}
 
-	if (child != NULL) {
-		if (child->charset != NULL) {
+	もし (child != NULL) {
+		もし (child->charset != NULL) {
 			ctx->child.charset = strdup(child->charset);
-			if (ctx->child.charset == NULL) {
+			もし (ctx->child.charset == NULL) {
 				free(ctx->handle);
 				free(ctx);
-				return NSERROR_NOMEM;
+				戻る NSERROR_NOMEM;
 			}
 		}
 		ctx->child.quirks = child->quirks;
@@ -718,31 +718,31 @@ hlcache_handle_retrieve(nsurl *url,
 	error = llcache_handle_retrieve(url, flags, referer, post,
 			hlcache_llcache_callback, ctx,
 			&ctx->llcache);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		/* error retrieving handle so free context and return error */
 		free((char *) ctx->child.charset);
 		free(ctx->handle);
 		free(ctx);
-	} else {
+	} 否则 {
 		/* successfully started fetch so add new context to list */
 		RING_INSERT(hlcache->retrieval_ctx_ring, ctx);
 
 		*result = ctx->handle;
 	}
-	return error;
+	戻る error;
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_release(hlcache_handle *handle)
 {
-	if (handle->entry != NULL) {
+	もし (handle->entry != NULL) {
 		content_remove_user(handle->entry->content,
 				hlcache_content_callback, handle);
-	} else {
+	} 否则 {
 		RING_ITERATE_START(struct hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle &&
+			もし (ictx->handle == handle &&
 					ictx->migrate_target == false) {
 				/* This is the nascent context for us,
 				 * so abort the fetch */
@@ -765,17 +765,17 @@ nserror hlcache_handle_release(hlcache_handle *handle)
 
 	free(handle);
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 /* See hlcache.h for documentation */
 struct content *hlcache_handle_get_content(const hlcache_handle *handle)
 {
-	if ((handle != NULL) && (handle->entry != NULL)) {
-		return handle->entry->content;
+	もし ((handle != NULL) && (handle->entry != NULL)) {
+		戻る handle->entry->content;
 	}
 
-	return NULL;
+	戻る NULL;
 }
 
 /* See hlcache.h for documentation */
@@ -784,7 +784,7 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 	struct hlcache_entry *entry = handle->entry;
 	struct content *c;
 
-	if (entry == NULL) {
+	もし (entry == NULL) {
 		/* This handle is not yet associated with a cache entry.
 		 * The implication is that the fetch for the handle has
 		 * not progressed to the point where the entry can be
@@ -793,7 +793,7 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 		RING_ITERATE_START(struct hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle &&
+			もし (ictx->handle == handle &&
 					ictx->migrate_target == false) {
 				/* This is the nascent context for us,
 				 * so abort the fetch */
@@ -810,30 +810,30 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 			}
 		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
 
-		return NSERROR_OK;
+		戻る NSERROR_OK;
 	}
 
 	c = entry->content;
 
-	if (content_count_users(c) > 1) {
+	もし (content_count_users(c) > 1) {
 		/* We are not the only user of 'c' so clone it. */
 		struct content *clone = content_clone(c);
 
-		if (clone == NULL)
-			return NSERROR_NOMEM;
+		もし (clone == NULL)
+			戻る NSERROR_NOMEM;
 
 		entry = calloc(1, sizeof(struct hlcache_entry));
 
-		if (entry == NULL) {
+		もし (entry == NULL) {
 			content_destroy(clone);
-			return NSERROR_NOMEM;
+			戻る NSERROR_NOMEM;
 		}
 
-		if (content_add_user(clone,
+		もし (content_add_user(clone,
 				hlcache_content_callback, handle) == false) {
 			content_destroy(clone);
 			free(entry);
-			return NSERROR_NOMEM;
+			戻る NSERROR_NOMEM;
 		}
 
 		content_remove_user(c, hlcache_content_callback, handle);
@@ -842,14 +842,14 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 		handle->entry = entry;
 		entry->prev = NULL;
 		entry->next = hlcache->content_list;
-		if (hlcache->content_list != NULL)
+		もし (hlcache->content_list != NULL)
 			hlcache->content_list->prev = entry;
 		hlcache->content_list = entry;
 
 		c = clone;
 	}
 
-	return content_abort(c);
+	戻る content_abort(c);
 }
 
 /* See hlcache.h for documentation */
@@ -859,13 +859,13 @@ nserror hlcache_handle_replace_callback(hlcache_handle *handle,
 	handle->cb = cb;
 	handle->pw = pw;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 nserror hlcache_handle_clone(hlcache_handle *handle, hlcache_handle **result)
 {
 	*result = NULL;
-	return NSERROR_CLONE_FAILED;
+	戻る NSERROR_CLONE_FAILED;
 }
 
 /* See hlcache.h for documentation */
@@ -875,13 +875,13 @@ nsurl *hlcache_handle_get_url(const hlcache_handle *handle)
 
 	assert(handle != NULL);
 
-	if (handle->entry != NULL) {
+	もし (handle->entry != NULL) {
 		result = content_get_url(handle->entry->content);
-	} else {
+	} 否则 {
 		RING_ITERATE_START(struct hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle) {
+			もし (ictx->handle == handle) {
 				/* This is the nascent context for us */
 				result = llcache_handle_get_url(ictx->llcache);
 
@@ -892,5 +892,5 @@ nsurl *hlcache_handle_get_url(const hlcache_handle *handle)
 		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
 	}
 
-	return result;
+	戻る result;
 }

@@ -44,7 +44,7 @@
 #define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
 #endif
 
-#if PNG_LIBPNG_VER < 10209
+#もし PNG_LIBPNG_VER < 10209
 #define png_set_expand_gray_1_2_4_to_8(png) png_set_gray_1_2_4_to_8(png)
 #endif
 
@@ -54,16 +54,16 @@ typedef struct nspng_content {
 	bool no_process_data; /**< Do not continue to process data as it arrives */
 	png_structp png;
 	png_infop info;
-	int interlace;
+	整数 interlace;
 	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
 	size_t rowstride, bpp; /**< Bitmap rowstride and bpp */
 	size_t rowbytes; /**< Number of bytes per row */
 } nspng_content;
 
-static unsigned int interlace_start[8] = {0, 16, 0, 8, 0, 4, 0};
-static unsigned int interlace_step[8] = {28, 28, 12, 12, 4, 4, 0};
-static unsigned int interlace_row_start[8] = {0, 0, 4, 0, 2, 0, 1};
-static unsigned int interlace_row_step[8] = {8, 8, 8, 4, 4, 2, 2};
+static unsigned 整数 interlace_start[8] = {0, 16, 0, 8, 0, 4, 0};
+static unsigned 整数 interlace_step[8] = {28, 28, 12, 12, 4, 4, 0};
+static unsigned 整数 interlace_row_start[8] = {0, 0, 4, 0, 2, 0, 1};
+static unsigned 整数 interlace_row_step[8] = {8, 8, 8, 4, 4, 2, 2};
 
 /** Callbak error numbers*/
 enum nspng_cberr {
@@ -91,30 +91,30 @@ static void nspng_error(png_structp png_ptr, png_const_charp error_message)
 
 static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
 {
-	int bit_depth, color_type, intent;
+	整数 bit_depth, color_type, intent;
 	double gamma;
 
 	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 	color_type = png_get_color_type(png_ptr, info_ptr);
 
 	/* Set up our transformations */
-	if (color_type == PNG_COLOR_TYPE_PALETTE) {
+	もし (color_type == PNG_COLOR_TYPE_PALETTE) {
 		png_set_palette_to_rgb(png_ptr);
 	}
 
-	if ((color_type == PNG_COLOR_TYPE_GRAY) && (bit_depth < 8)) {
+	もし ((color_type == PNG_COLOR_TYPE_GRAY) && (bit_depth < 8)) {
 		png_set_expand_gray_1_2_4_to_8(png_ptr);
 	}
 
-	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
+	もし (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
 		png_set_tRNS_to_alpha(png_ptr);
 	}
 
-	if (bit_depth == 16) {
+	もし (bit_depth == 16) {
 		png_set_strip_16(png_ptr);
 	}
 
-	if (color_type == PNG_COLOR_TYPE_GRAY ||
+	もし (color_type == PNG_COLOR_TYPE_GRAY ||
 	    color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
 		png_set_gray_to_rgb(png_ptr);
 	}
@@ -129,7 +129,7 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
 		break;
 	}
 
-	if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
+	もし (!(color_type & PNG_COLOR_MASK_ALPHA)) {
 		switch (bitmap_fmt.layout) {
 		case BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
 		case BITMAP_LAYOUT_A8B8G8R8:
@@ -140,7 +140,7 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
 			png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
 			break;
 		}
-	} else {
+	} 否则 {
 		switch (bitmap_fmt.layout) {
 		case BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
 		case BITMAP_LAYOUT_A8B8G8R8:
@@ -156,12 +156,12 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
 	 * this appears to be correct (at least in respect to !Browse)
 	 * see http://www.w3.org/Graphics/PNG/all_seven.html for a test case
 	 */
-	if (png_get_sRGB(png_ptr, info_ptr, &intent)) {
+	もし (png_get_sRGB(png_ptr, info_ptr, &intent)) {
 		png_set_gamma(png_ptr, 2.2, 0.45455);
-	} else {
-		if (png_get_gAMA(png_ptr, info_ptr, &gamma)) {
+	} 否则 {
+		もし (png_get_gAMA(png_ptr, info_ptr, &gamma)) {
 			png_set_gamma(png_ptr, 2.2, gamma);
-		} else {
+		} 否则 {
 			png_set_gamma(png_ptr, 2.2, 0.45455);
 		}
 	}
@@ -175,7 +175,7 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
  */
 static void info_callback(png_structp png_s, png_infop info)
 {
-	int interlace;
+	整数 interlace;
 	png_uint_32 width, height;
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
 
@@ -188,13 +188,13 @@ static void info_callback(png_structp png_s, png_infop info)
 	png_c->base.size += width * height * 4;
 
 	/* see if progressive-conversion should continue */
-	if (image_cache_speculate((struct content *)png_c) == false) {
+	もし (image_cache_speculate((struct content *)png_c) == false) {
 		longjmp(png_jmpbuf(png_s), CBERR_NOPRE);
 	}
 
 	/* Claim the required memory for the converted PNG */
 	png_c->bitmap = guit->bitmap->create(width, height, BITMAP_NONE);
-	if (png_c->bitmap == NULL) {
+	もし (png_c->bitmap == NULL) {
 		/* Failed to create bitmap skip pre-conversion */
 		longjmp(png_jmpbuf(png_s), CBERR_NOPRE);
 	}
@@ -212,23 +212,23 @@ static void info_callback(png_structp png_s, png_infop info)
 }
 
 static void row_callback(png_structp png_s, png_bytep new_row,
-			 png_uint_32 row_num, int pass)
+			 png_uint_32 row_num, 整数 pass)
 {
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
 	unsigned long rowbytes = png_c->rowbytes;
 	unsigned char *buffer, *row;
 
 	/* Give up if there's no bitmap */
-	if (png_c->bitmap == NULL)
-		return;
+	もし (png_c->bitmap == NULL)
+		戻る;
 
 	/* Abort if we've not got any data */
-	if (new_row == NULL)
-		return;
+	もし (new_row == NULL)
+		戻る;
 
 	/* Get bitmap buffer */
 	buffer = guit->bitmap->get_buffer(png_c->bitmap);
-	if (buffer == NULL) {
+	もし (buffer == NULL) {
 		/* No buffer, bail out */
 		longjmp(png_jmpbuf(png_s), 1);
 	}
@@ -237,10 +237,10 @@ static void row_callback(png_structp png_s, png_bytep new_row,
 	row = buffer + (png_c->rowstride * row_num);
 
 	/* Handle interlaced sprites using the Adam7 algorithm */
-	if (png_c->interlace) {
+	もし (png_c->interlace) {
 		unsigned long dst_off;
 		unsigned long src_off = 0;
-		unsigned int start, step;
+		unsigned 整数 start, step;
 
 		start = interlace_start[pass];
 		step = interlace_step[pass];
@@ -251,13 +251,13 @@ static void row_callback(png_structp png_s, png_bytep new_row,
 		 * into consideration */
 		row = buffer + (png_c->rowstride * row_num);
 
-		for (dst_off = start; dst_off < rowbytes; dst_off += step) {
+		ために (dst_off = start; dst_off < rowbytes; dst_off += step) {
 			row[dst_off++] = new_row[src_off++];
 			row[dst_off++] = new_row[src_off++];
 			row[dst_off++] = new_row[src_off++];
 			row[dst_off++] = new_row[src_off++];
 		}
-	} else {
+	} 否则 {
 		/* Do a fast memcpy of the row data */
 		memcpy(row, new_row, rowbytes);
 	}
@@ -273,35 +273,35 @@ static nserror nspng_create_png_data(nspng_content *png_c)
 	png_c->bitmap = NULL;
 
 	png_c->png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-	if (png_c->png == NULL) {
+	もし (png_c->png == NULL) {
 		content_broadcast_error(&png_c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		戻る NSERROR_NOMEM;
 	}
 
 	png_set_error_fn(png_c->png, NULL, nspng_error, nspng_warning);
 
 	png_c->info = png_create_info_struct(png_c->png);
-	if (png_c->info == NULL) {
+	もし (png_c->info == NULL) {
 		png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 
 		content_broadcast_error(&png_c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		戻る NSERROR_NOMEM;
 	}
 
-	if (setjmp(png_jmpbuf(png_c->png))) {
+	もし (setjmp(png_jmpbuf(png_c->png))) {
 		png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 		NSLOG(netsurf, INFO, "Failed to set callbacks");
 		png_c->png = NULL;
 		png_c->info = NULL;
 
 		content_broadcast_error(&png_c->base, NSERROR_PNG_ERROR, NULL);
-		return NSERROR_NOMEM;
+		戻る NSERROR_NOMEM;
 	}
 
 	png_set_progressive_read_fn(png_c->png, png_c,
 			info_callback, row_callback, end_callback);
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 static nserror
@@ -317,8 +317,8 @@ nspng_create(const content_handler *handler,
 	nserror error;
 
 	png_c = calloc(1, sizeof(nspng_content));
-	if (png_c == NULL)
-		return NSERROR_NOMEM;
+	もし (png_c == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__init(&png_c->base, 
 			      handler, 
@@ -327,31 +327,31 @@ nspng_create(const content_handler *handler,
 			      llcache, 
 			      fallback_charset, 
 			      quirks);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		free(png_c);
-		return error;
+		戻る error;
 	}
 
 	error = nspng_create_png_data(png_c);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		free(png_c);
-		return error;
+		戻る error;
 	}
 
 	*c = (struct content *)png_c;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 
 static bool nspng_process_data(struct content *c, const char *data,
-			       unsigned int size)
+			       unsigned 整数 size)
 {
 	nspng_content *png_c = (nspng_content *)c;
 	volatile bool ret = true;
 
-	if (png_c->no_process_data) {
-		return ret;
+	もし (png_c->no_process_data) {
+		戻る ret;
 	}
 
 	switch (setjmp(png_jmpbuf(png_c->png))) {
@@ -364,7 +364,7 @@ static bool nspng_process_data(struct content *c, const char *data,
 		break;
 
 	default: /* fatal error from library processing png */
-		if (png_c->bitmap != NULL) {
+		もし (png_c->bitmap != NULL) {
 			/* A bitmap managed to get created so
 			 * operation is past header and possibly some
 			 * conversion happened before faliure. 
@@ -375,7 +375,7 @@ static bool nspng_process_data(struct content *c, const char *data,
 			 * last byte and hence end of image marker)
 			 */
 			png_c->no_process_data = true;
-		} else {
+		} 否则 {
 			/* not managed to progress past header, clean
 			 * up png conversion and signal the content
 			 * error 
@@ -395,7 +395,7 @@ static bool nspng_process_data(struct content *c, const char *data,
 		break;
 	}
 
-	return ret;
+	戻る ret;
 }
 
 struct png_cache_read_data_s {
@@ -411,11 +411,11 @@ png_cache_read_fn(png_structp png_ptr, png_bytep data, png_size_t length)
 	struct png_cache_read_data_s *png_cache_read_data;
 	png_cache_read_data = png_get_io_ptr(png_ptr);
 
-	if (length > png_cache_read_data->size) {
+	もし (length > png_cache_read_data->size) {
 		length = png_cache_read_data->size;
 	}
 
-	if (length == 0) {
+	もし (length == 0) {
 		png_error(png_ptr, "Read Error");
 	}
 
@@ -429,28 +429,28 @@ png_cache_read_fn(png_structp png_ptr, png_bytep data, png_size_t length)
  */
 static png_bytep *calc_row_pointers(struct bitmap *bitmap)
 {
-	int height = guit->bitmap->get_height(bitmap);
+	整数 height = guit->bitmap->get_height(bitmap);
 	unsigned char *buffer= guit->bitmap->get_buffer(bitmap);
 	size_t rowstride = guit->bitmap->get_rowstride(bitmap);
 	png_bytep *row_ptrs;
-	int hloop;
+	整数 hloop;
 
 	/* The buffer allocation may occour when the buffer is aquired
 	 * and therefore may fail.
 	 */
-	if (buffer == NULL) {
-		return NULL;
+	もし (buffer == NULL) {
+		戻る NULL;
 	}
 
 	row_ptrs = malloc(sizeof(png_bytep) * height);
 
-	if (row_ptrs != NULL) {
-		for (hloop = 0; hloop < height; hloop++) {
+	もし (row_ptrs != NULL) {
+		ために (hloop = 0; hloop < height; hloop++) {
 			row_ptrs[hloop] = buffer + (rowstride * hloop);
 		}
 	}
 
-	return row_ptrs;
+	戻る row_ptrs;
 }
 
 /** PNG content to bitmap conversion.
@@ -471,31 +471,31 @@ png_cache_convert(struct content *c)
 	png_cache_read_data.data = 
 		content__get_source_data(c, &png_cache_read_data.size);
 
-	if ((png_cache_read_data.data == NULL) || 
+	もし ((png_cache_read_data.data == NULL) || 
 	    (png_cache_read_data.size <= 8)) {
-		return NULL;
+		戻る NULL;
 	}
 
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL,
 			nspng_error, nspng_warning);
-	if (png_ptr == NULL) {
-		return NULL;
+	もし (png_ptr == NULL) {
+		戻る NULL;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL) {
+	もし (info_ptr == NULL) {
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
-		return NULL;
+		戻る NULL;
 	}
 
 	end_info_ptr = png_create_info_struct(png_ptr);
-	if (end_info_ptr == NULL) {
+	もし (end_info_ptr == NULL) {
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		return NULL;
+		戻る NULL;
 	}
 
 	/* setup error exit path */
-	if (setjmp(png_jmpbuf(png_ptr))) {
+	もし (setjmp(png_jmpbuf(png_ptr))) {
 		/* cleanup and bail */
 		goto png_cache_convert_error;
 	}
@@ -514,16 +514,16 @@ png_cache_convert(struct content *c)
 
 	/* Claim the required memory for the converted PNG */
 	bitmap = guit->bitmap->create(width, height, BITMAP_NONE);
-	if (bitmap == NULL) {
+	もし (bitmap == NULL) {
 		/* cleanup and bail */
 		goto png_cache_convert_error;
 	}
 
 	row_pointers = calc_row_pointers((struct bitmap *) bitmap);
 
-	if (row_pointers != NULL) {
+	もし (row_pointers != NULL) {
 		png_read_image(png_ptr, (png_bytep *) row_pointers);
-	} else {
+	} 否则 {
 		guit->bitmap->destroy((struct bitmap *)bitmap);
 		bitmap = NULL;
 	}
@@ -533,11 +533,11 @@ png_cache_convert_error:
 	/* cleanup png read */
 	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info_ptr);
 
-	if (row_pointers != NULL) {
+	もし (row_pointers != NULL) {
 		free((png_bytep *) row_pointers);
 	}
 
-	if (bitmap != NULL) {
+	もし (bitmap != NULL) {
 		bool opaque = bitmap_test_opaque((void *)bitmap);
 		guit->bitmap->set_opaque((void *)bitmap, opaque);
 		bitmap_format_to_client((void *)bitmap, &(bitmap_fmt_t) {
@@ -547,7 +547,7 @@ png_cache_convert_error:
 		guit->bitmap->modified((void *)bitmap);
 	}
 
-	return (struct bitmap *)bitmap;
+	戻る (struct bitmap *)bitmap;
 }
 
 static bool nspng_convert(struct content *c)
@@ -565,12 +565,12 @@ static bool nspng_convert(struct content *c)
 	title = messages_get_buff("PNGTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	もし (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
 
-	if (png_c->bitmap != NULL) {
+	もし (png_c->bitmap != NULL) {
 		bool opaque = bitmap_test_opaque(png_c->bitmap);
 		guit->bitmap->set_opaque(png_c->bitmap, opaque);
 		bitmap_format_to_client(png_c->bitmap, &(bitmap_fmt_t) {
@@ -586,7 +586,7 @@ static bool nspng_convert(struct content *c)
 	content_set_done(c);
 	content_set_status(c, "");
 
-	return true;
+	戻る true;
 }
 
 
@@ -598,41 +598,41 @@ static nserror nspng_clone(const struct content *old_c, struct content **new_c)
 	size_t size;
 
 	clone_png_c = calloc(1, sizeof(nspng_content));
-	if (clone_png_c == NULL)
-		return NSERROR_NOMEM;
+	もし (clone_png_c == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__clone(old_c, &clone_png_c->base);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_destroy(&clone_png_c->base);
-		return error;
+		戻る error;
 	}
 
 	/* Simply replay create/process/convert */
 	error = nspng_create_png_data(clone_png_c);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_destroy(&clone_png_c->base);
-		return error;
+		戻る error;
 	}
 
 	data = content__get_source_data(&clone_png_c->base, &size);
-	if (size > 0) {
-		if (nspng_process_data(&clone_png_c->base, (const char *)data, size) == false) {
+	もし (size > 0) {
+		もし (nspng_process_data(&clone_png_c->base, (const char *)data, size) == false) {
 			content_destroy(&clone_png_c->base);
-			return NSERROR_NOMEM;
+			戻る NSERROR_NOMEM;
 		}
 	}
 
-	if ((old_c->status == CONTENT_STATUS_READY) ||
+	もし ((old_c->status == CONTENT_STATUS_READY) ||
 	    (old_c->status == CONTENT_STATUS_DONE)) {
-		if (nspng_convert(&clone_png_c->base) == false) {
+		もし (nspng_convert(&clone_png_c->base) == false) {
 			content_destroy(&clone_png_c->base);
-			return NSERROR_CLONE_FAILED;
+			戻る NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*new_c = (struct content *)clone_png_c;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 static const content_handler nspng_content_handler = {

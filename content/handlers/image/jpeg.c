@@ -70,19 +70,19 @@ static nserror nsjpeg_create(const content_handler *handler,
 	nserror error;
 
 	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	もし (jpeg == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		free(jpeg);
-		return error;
+		戻る error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 /**
@@ -103,7 +103,7 @@ static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
 {
 	cinfo->src->next_input_byte = nsjpeg_eoi;
 	cinfo->src->bytes_in_buffer = 2;
- 	return TRUE;
+ 	戻る TRUE;
 }
 
 
@@ -113,10 +113,10 @@ static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
 
 static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 {
-	if ((long) cinfo->src->bytes_in_buffer < num_bytes) {
+	もし ((long) cinfo->src->bytes_in_buffer < num_bytes) {
 		cinfo->src->next_input_byte = 0;
 		cinfo->src->bytes_in_buffer = 0;
-	} else {
+	} 否则 {
 		cinfo->src->next_input_byte += num_bytes;
 		cinfo->src->bytes_in_buffer -= num_bytes;
 	}
@@ -168,7 +168,7 @@ static inline void nsjpeg__decode_cmyk(
 		uint8_t * volatile pixels,
 		size_t rowstride)
 {
-	int width = cinfo->output_width * 4;
+	整数 width = cinfo->output_width * 4;
 
 	do {
 		JSAMPROW scanlines[1] = {
@@ -177,16 +177,16 @@ static inline void nsjpeg__decode_cmyk(
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-		for (int i = width - 4; 0 <= i; i -= 4) {
+		ために (整数 i = width - 4; 0 <= i; i -= 4) {
 			/* Trivial inverse CMYK -> RGBA */
-			const int c = scanlines[0][i + 0];
-			const int m = scanlines[0][i + 1];
-			const int y = scanlines[0][i + 2];
-			const int k = scanlines[0][i + 3];
+			const 整数 c = scanlines[0][i + 0];
+			const 整数 m = scanlines[0][i + 1];
+			const 整数 y = scanlines[0][i + 2];
+			const 整数 k = scanlines[0][i + 3];
 
-			const int ck = c * k;
-			const int mk = m * k;
-			const int yk = y * k;
+			const 整数 ck = c * k;
+			const 整数 mk = m * k;
+			const 整数 yk = y * k;
 
 #define DIV255(x) ((x) + 1 + ((x) >> 8)) >> 8
 			scanlines[0][i + bitmap_layout.r] = DIV255(ck);
@@ -195,7 +195,7 @@ static inline void nsjpeg__decode_cmyk(
 			scanlines[0][i + bitmap_layout.a] = 0xff;
 #undef DIV255
 		}
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} ながら (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
@@ -206,8 +206,8 @@ static inline void nsjpeg__decode_rgb(
 		uint8_t * volatile pixels,
 		size_t rowstride)
 {
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
-	int width = cinfo->output_width;
+#もし RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+	整数 width = cinfo->output_width;
 #endif
 
 	do {
@@ -217,20 +217,20 @@ static inline void nsjpeg__decode_rgb(
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+#もし RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
 		/* Missmatch between configured libjpeg pixel format and
 		 * NetSurf pixel format.  Convert to RGBA */
-		for (int i = width - 1; 0 <= i; i--) {
-			int r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
-			int g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
-			int b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
+		ために (整数 i = width - 1; 0 <= i; i--) {
+			整数 r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
+			整数 g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
+			整数 b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
 			scanlines[0][i * 4 + bitmap_layout.r] = r;
 			scanlines[0][i * 4 + bitmap_layout.g] = g;
 			scanlines[0][i * 4 + bitmap_layout.b] = b;
 			scanlines[0][i * 4 + bitmap_layout.a] = 0xff;
 		}
 #endif
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} ながら (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
@@ -247,7 +247,7 @@ static inline void nsjpeg__decode_client_fmt(
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} ながら (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
@@ -276,9 +276,9 @@ jpeg_cache_convert(struct content *c)
 	/* obtain jpeg source data and perfom minimal sanity checks */
 	source_data = content__get_source_data(c, &source_size);
 
-	if ((source_data == NULL) ||
+	もし ((source_data == NULL) ||
 	    (source_size < MIN_JPEG_SIZE)) {
-		return NULL;
+		戻る NULL;
 	}
 
 	/* setup a JPEG library error handler */
@@ -287,9 +287,9 @@ jpeg_cache_convert(struct content *c)
 	jerr.output_message = nsjpeg_error_log;
 
 	/* handler for fatal errors during decompression */
-	if (setjmp(setjmp_buffer)) {
+	もし (setjmp(setjmp_buffer)) {
 		jpeg_destroy_decompress(&cinfo);
-		return bitmap;
+		戻る bitmap;
 	}
 
 	cinfo.client_data = &setjmp_buffer;
@@ -304,10 +304,10 @@ jpeg_cache_convert(struct content *c)
 	jpeg_read_header(&cinfo, TRUE);
 
 	/* set output processing parameters */
-	if (cinfo.jpeg_color_space == JCS_CMYK ||
+	もし (cinfo.jpeg_color_space == JCS_CMYK ||
 	    cinfo.jpeg_color_space == JCS_YCCK) {
 		cinfo.out_color_space = JCS_CMYK;
-	} else {
+	} 否则 {
 #ifdef JCS_ALPHA_EXTENSIONS
 		switch (bitmap_fmt.layout) {
 		case BITMAP_LAYOUT_R8G8B8A8:
@@ -326,9 +326,9 @@ jpeg_cache_convert(struct content *c)
 			NSLOG(netsurf, ERROR, "Unexpected bitmap format: %u",
 					bitmap_fmt.layout);
 			jpeg_destroy_decompress(&cinfo);
-			return NULL;
+			戻る NULL;
 		}
-#else
+#否则
 		cinfo.out_color_space = JCS_RGB;
 #endif
 	}
@@ -341,18 +341,18 @@ jpeg_cache_convert(struct content *c)
 	bitmap = guit->bitmap->create(
 			cinfo.output_width,
 			cinfo.output_height, BITMAP_OPAQUE);
-	if (bitmap == NULL) {
+	もし (bitmap == NULL) {
 		/* empty bitmap could not be created */
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		戻る NULL;
 	}
 
 	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	もし (pixels == NULL) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		戻る NULL;
 	}
 
 	/* Convert scanlines from jpeg into bitmap */
@@ -377,7 +377,7 @@ jpeg_cache_convert(struct content *c)
 	jpeg_finish_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
 
-	return bitmap;
+	戻る bitmap;
 }
 
 /**
@@ -404,13 +404,13 @@ static bool nsjpeg_convert(struct content *c)
 	jerr.error_exit = nsjpeg_error_exit;
 	jerr.output_message = nsjpeg_error_log;
 
-	if (setjmp(setjmp_buffer)) {
+	もし (setjmp(setjmp_buffer)) {
 		jpeg_destroy_decompress(&cinfo);
 
 		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
 		msg_data.errordata.errormsg = nsjpeg_error_buffer;
 		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		戻る false;
 	}
 
 	cinfo.client_data = &setjmp_buffer;
@@ -436,7 +436,7 @@ static bool nsjpeg_convert(struct content *c)
 	title = messages_get_buff("JPEGTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	もし (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
@@ -445,7 +445,7 @@ static bool nsjpeg_convert(struct content *c)
 	content_set_done(c);	
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	戻る true;
 }
 
 
@@ -459,27 +459,27 @@ static nserror nsjpeg_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	jpeg_c = calloc(1, sizeof(struct content));
-	if (jpeg_c == NULL)
-		return NSERROR_NOMEM;
+	もし (jpeg_c == NULL)
+		戻る NSERROR_NOMEM;
 
 	error = content__clone(old, jpeg_c);
-	if (error != NSERROR_OK) {
+	もし (error != NSERROR_OK) {
 		content_destroy(jpeg_c);
-		return error;
+		戻る error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	もし ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpeg_convert(jpeg_c) == false) {
+		もし (nsjpeg_convert(jpeg_c) == false) {
 			content_destroy(jpeg_c);
-			return NSERROR_CLONE_FAILED;
+			戻る NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpeg_c;
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
 
 static const content_handler nsjpeg_content_handler = {

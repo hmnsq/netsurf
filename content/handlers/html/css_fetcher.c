@@ -69,7 +69,7 @@ static bool html_css_fetcher_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_initialise called for %s",
 	      lwc_string_data(scheme));
-	return true;
+	戻る true;
 }
 
 static void html_css_fetcher_finalise(lwc_string *scheme)
@@ -80,7 +80,7 @@ static void html_css_fetcher_finalise(lwc_string *scheme)
 
 static bool html_css_fetcher_can_fetch(const nsurl *url)
 {
-	return true;
+	戻る true;
 }
 
 static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
@@ -100,8 +100,8 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 
 	path = nsurl_get_component(url, NSURL_PATH);
 	/* The path must exist */
-	if (path == NULL) {
-		return NULL;
+	もし (path == NULL) {
+		戻る NULL;
 	}
 
 	key = strtoul(lwc_string_data(path), NULL, 10);
@@ -109,28 +109,28 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 	lwc_string_unref(path);
 
 	/* There must be at least one item */
-	if (items == NULL) {
-		return NULL;
+	もし (items == NULL) {
+		戻る NULL;
 	}
 
 	item = items;
 	do {
-		if (item->key == key) {
+		もし (item->key == key) {
 			found = item;
 			break;
 		}
 
 		item = item->r_next;
-	} while (item != items);
+	} ながら (item != items);
 
 	/* We must have found the item */
-	if (found == NULL) {
-		return NULL;
+	もし (found == NULL) {
+		戻る NULL;
 	}
 
 	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	もし (ctx == NULL)
+		戻る NULL;
 
 	ctx->parent_fetch = parent_fetch;
 	ctx->url = nsurl_ref(url);
@@ -138,12 +138,12 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	戻る ctx;
 }
 
 static bool html_css_fetcher_start(void *ctx)
 {
-	return true;
+	戻る true;
 }
 
 static void html_css_fetcher_free(void *ctx)
@@ -151,7 +151,7 @@ static void html_css_fetcher_free(void *ctx)
 	html_css_fetcher_context *c = ctx;
 
 	nsurl_unref(c->url);
-	if (c->item != NULL) {
+	もし (c->item != NULL) {
 		nsurl_unref(c->item->base_url);
 		dom_string_unref(c->item->data);
 		RING_REMOVE(items, c->item);
@@ -185,7 +185,7 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 	fetch_msg msg;
 	html_css_fetcher_context *c, *next;
 
-	if (ring == NULL) return;
+	もし (ring == NULL) 戻る;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
@@ -196,16 +196,16 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		もし (c->locked == true) {
 			next = c->r_next;
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted) {
+		もし (c->aborted) {
 			/* Nothing to do */
 			assert(c->locked == false);
-		} else if (c->item != NULL) {
+		} 否则 もし (c->item != NULL) {
 			char header[4096];
 
 			fetch_set_http_code(c->parent_fetch, 200);
@@ -221,7 +221,7 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 			msg.data.header_or_data.len = strlen(header);
 			html_css_fetcher_send_callback(&msg, c);
 
-			if (c->aborted == false) {
+			もし (c->aborted == false) {
 				snprintf(header, sizeof header,
 					"Content-Length: %"PRIsizet,
 					dom_string_byte_length(c->item->data));
@@ -232,10 +232,10 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 				html_css_fetcher_send_callback(&msg, c);
 			}
 
-			if (c->aborted == false) {
+			もし (c->aborted == false) {
 				snprintf(header, sizeof header,
 					"X-NS-Base: %.*s",
-					(int) nsurl_length(c->item->base_url),
+					(整数) nsurl_length(c->item->base_url),
 					nsurl_access(c->item->base_url));
 				msg.type = FETCH_HEADER;
 				msg.data.header_or_data.buf =
@@ -244,7 +244,7 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 				html_css_fetcher_send_callback(&msg, c);
 			}
 
-			if (c->aborted == false) {
+			もし (c->aborted == false) {
 				msg.type = FETCH_DATA;
 				msg.data.header_or_data.buf =
 						(const uint8_t *)
@@ -254,11 +254,11 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 				html_css_fetcher_send_callback(&msg, c);
 			}
 
-			if (c->aborted == false) {
+			もし (c->aborted == false) {
 				msg.type = FETCH_FINISHED;
 				html_css_fetcher_send_callback(&msg, c);
 			}
-		} else {
+		} 否则 {
 			NSLOG(netsurf, INFO, "Processing of %s failed!",
 			      nsurl_access(c->url));
 
@@ -279,7 +279,7 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} ながら ( (c = next) != ring && ring != NULL);
 }
 
 /* exported interface documented in html_internal.h */
@@ -296,7 +296,7 @@ nserror html_css_fetcher_register(void)
 		.finalise = html_css_fetcher_finalise
 	};
 
-	return fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
+	戻る fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
 			&html_css_fetcher_ops);
 }
 
@@ -306,8 +306,8 @@ html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
 {
 	html_css_fetcher_item *item = malloc(sizeof(*item));
 
-	if (item == NULL) {
-		return NSERROR_NOMEM;
+	もし (item == NULL) {
+		戻る NSERROR_NOMEM;
 	}
 
 	*key = item->key = current_key++;
@@ -316,5 +316,5 @@ html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
 
 	RING_INSERT(items, item);
 
-	return NSERROR_OK;
+	戻る NSERROR_OK;
 }
