@@ -56,20 +56,20 @@
 /**
  * dukky javascript heap
  */
-struct jsheap {
+sa_nracanaa jsheap {
 	duk_context *ctx; /**< duktape base context */
 	duk_uarridx_t next_thread; /**< monotonic thread counter */
 	bool pending_destroy; /**< Whether this heap is pending destruction */
-	unsigned int live_threads; /**< number of live threads */
+	unsigned පූර්ණ_සංඛ්‍යා live_threads; /**< number of live threads */
 	uint64_t exec_start_time;
 };
 
 /**
  * dukky javascript thread
  */
-struct jsthread {
+sa_nracanaa jsthread {
 	bool pending_destroy; /**< Whether this thread is pending destruction */
-	unsigned int in_use; /**< The number of times this thread is in use */
+	unsigned පූර්ණ_සංඛ්‍යා in_use; /**< The number of times this thread is in use */
 	jsheap *heap; /**< The heap this thread belongs to */
 	duk_context *ctx; /**< The duktape thread context */
 	duk_uarridx_t thread_idx; /**< The thread number */
@@ -78,7 +78,7 @@ struct jsthread {
 static duk_ret_t dukky_populate_object(duk_context *ctx, void *udata)
 {
 	/* ... obj args protoname nargs */
-	int nargs = duk_get_int(ctx, -1);
+	පූර්ණ_සංඛ්‍යා nargs = duk_get_int(ctx, -1);
 	duk_pop(ctx);
 	/* ... obj args protoname */
 	duk_get_global_string(ctx, PROTO_MAGIC);
@@ -87,7 +87,7 @@ static duk_ret_t dukky_populate_object(duk_context *ctx, void *udata)
 	/* ... obj args protoname prototab protoname */
 	duk_get_prop(ctx, -2);
 	/* ... obj args protoname prototab {proto/undefined} */
-	if (duk_is_undefined(ctx, -1)) {
+	නම් (duk_is_undefined(ctx, -1)) {
 		NSLOG(dukky, WARNING,
 		      "Unable to find dukky prototype for `%s` - falling back to HTMLUnknownElement",
 		      duk_get_string(ctx, -3) + 2 /* Skip the two unprintables */);
@@ -110,10 +110,10 @@ static duk_ret_t dukky_populate_object(duk_context *ctx, void *udata)
 	/* ... initfn obj[proto] args */
 	NSLOG(dukky, DEEPDEBUG, "Call the init function");
 	duk_call(ctx, nargs + 1);
-	return 1; /* The object */
+	ආපසු 1; /* The object */
 }
 
-duk_ret_t dukky_create_object(duk_context *ctx, const char *name, int args)
+duk_ret_t dukky_create_object(duk_context *ctx, const var_na *name, පූර්ණ_සංඛ්‍යා args)
 {
 	duk_ret_t ret;
 	NSLOG(dukky, DEEPDEBUG, "name=%s nargs=%d", name + 2, args);
@@ -134,11 +134,11 @@ duk_ret_t dukky_create_object(duk_context *ctx, const char *name, int args)
 	/* ... obj args name */
 	duk_push_int(ctx, args);
 	/* ... obj args name nargs */
-	if ((ret = duk_safe_call(ctx, dukky_populate_object, NULL, args + 3, 1))
+	නම් ((ret = duk_safe_call(ctx, dukky_populate_object, NULL, args + 3, 1))
 	    != DUK_EXEC_SUCCESS)
-		return ret;
+		ආපසු ret;
 	NSLOG(dukky, DEEPDEBUG, "created");
-	return DUK_EXEC_SUCCESS;
+	ආපසු DUK_EXEC_SUCCESS;
 }
 
 
@@ -146,7 +146,7 @@ duk_ret_t dukky_create_object(duk_context *ctx, const char *name, int args)
 duk_bool_t
 dukky_push_node_stacked(duk_context *ctx)
 {
-	int top_at_fail = duk_get_top(ctx) - 2;
+	පූර්ණ_සංඛ්‍යා top_at_fail = duk_get_top(ctx) - 2;
 	/* ... nodeptr klass */
 	duk_get_global_string(ctx, NODE_MAGIC);
 	/* ... nodeptr klass nodes */
@@ -154,7 +154,7 @@ dukky_push_node_stacked(duk_context *ctx)
 	/* ... nodeptr klass nodes nodeptr */
 	duk_get_prop(ctx, -2);
 	/* ... nodeptr klass nodes node/undefined */
-	if (duk_is_undefined(ctx, -1)) {
+	නම් (duk_is_undefined(ctx, -1)) {
 		/* ... nodeptr klass nodes undefined */
 		duk_pop(ctx);
 		/* ... nodeptr klass nodes */
@@ -174,11 +174,11 @@ dukky_push_node_stacked(duk_context *ctx)
 		/* ... nodeptr klass nodes obj nodeptr klass */
 		duk_push_int(ctx, 1);
 		/* ... nodeptr klass nodes obj nodeptr klass 1 */
-		if (duk_safe_call(ctx, dukky_populate_object, NULL, 4, 1)
+		නම් (duk_safe_call(ctx, dukky_populate_object, NULL, 4, 1)
 		    != DUK_EXEC_SUCCESS) {
 			duk_set_top(ctx, top_at_fail);
 			NSLOG(dukky, ERROR, "Failed to populate object prototype");
-			return false;
+			ආපසු false;
 		}
 		/* ... nodeptr klass nodes node */
 		duk_dup(ctx, -4);
@@ -193,13 +193,13 @@ dukky_push_node_stacked(duk_context *ctx)
 	/* ... node nodeptr klass nodes */
 	duk_pop_3(ctx);
 	/* ... node */
-	if (NSLOG_COMPILED_MIN_LEVEL <= NSLOG_LEVEL_DEEPDEBUG) {
+	නම් (NSLOG_COMPILED_MIN_LEVEL <= NSLOG_LEVEL_DEEPDEBUG) {
 		duk_dup(ctx, -1);
-		const char * what = duk_safe_to_string(ctx, -1);
+		const var_na * what = duk_safe_to_string(ctx, -1);
 		NSLOG(dukky, DEEPDEBUG, "Created: %s", what);
 		duk_pop(ctx);
 	}
-	return true;
+	ආපසු true;
 }
 
 #define SET_HTML_CLASS(CLASS) \
@@ -210,242 +210,242 @@ dukky_push_node_stacked(duk_context *ctx)
 				SLEN("ELEMENT");
 
 static void dukky_html_element_class_from_tag_type(dom_html_element_type type,
-		const char **html_class, size_t *html_class_len)
+		const var_na **html_class, size_t *html_class_len)
 {
 	switch(type) {
-	case DOM_HTML_ELEMENT_TYPE_HTML:
+	pak_sa DOM_HTML_ELEMENT_TYPE_HTML:
 		SET_HTML_CLASS(HTML)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_HEAD:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_HEAD:
 		SET_HTML_CLASS(HEAD)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_META:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_META:
 		SET_HTML_CLASS(META)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BASE:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_BASE:
 		SET_HTML_CLASS(BASE)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TITLE:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_TITLE:
 		SET_HTML_CLASS(TITLE)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BODY:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_BODY:
 		SET_HTML_CLASS(BODY)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_DIV:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_DIV:
 		SET_HTML_CLASS(DIV)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FORM:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_FORM:
 		SET_HTML_CLASS(FORM)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_LINK:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_LINK:
 		SET_HTML_CLASS(LINK)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BUTTON:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_BUTTON:
 		SET_HTML_CLASS(BUTTON)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_INPUT:
 		SET_HTML_CLASS(INPUT)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_TEXTAREA:
 		SET_HTML_CLASS(TEXTAREA)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OPTGROUP:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_OPTGROUP:
 		SET_HTML_CLASS(OPTGROUP)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OPTION:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_OPTION:
 		SET_HTML_CLASS(OPTION)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_SELECT:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_SELECT:
 		SET_HTML_CLASS(SELECT)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_HR:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_HR:
 		SET_HTML_CLASS(HR)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_DL:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_DL:
 		SET_HTML_CLASS(DLIST)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_DIR:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_DIR:
 		SET_HTML_CLASS(DIRECTORY)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_MENU:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_MENU:
 		SET_HTML_CLASS(MENU)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FIELDSET:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_FIELDSET:
 		SET_HTML_CLASS(FIELDSET)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_LEGEND:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_LEGEND:
 		SET_HTML_CLASS(LEGEND)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_P:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_P:
 		SET_HTML_CLASS(PARAGRAPH)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_H1:
-	case DOM_HTML_ELEMENT_TYPE_H2:
-	case DOM_HTML_ELEMENT_TYPE_H3:
-	case DOM_HTML_ELEMENT_TYPE_H4:
-	case DOM_HTML_ELEMENT_TYPE_H5:
-	case DOM_HTML_ELEMENT_TYPE_H6:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_H1:
+	pak_sa DOM_HTML_ELEMENT_TYPE_H2:
+	pak_sa DOM_HTML_ELEMENT_TYPE_H3:
+	pak_sa DOM_HTML_ELEMENT_TYPE_H4:
+	pak_sa DOM_HTML_ELEMENT_TYPE_H5:
+	pak_sa DOM_HTML_ELEMENT_TYPE_H6:
 		SET_HTML_CLASS(HEADING)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BLOCKQUOTE:
-	case DOM_HTML_ELEMENT_TYPE_Q:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_BLOCKQUOTE:
+	pak_sa DOM_HTML_ELEMENT_TYPE_Q:
 		SET_HTML_CLASS(QUOTE)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_PRE:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_PRE:
 		SET_HTML_CLASS(PRE)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BR:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_BR:
 		SET_HTML_CLASS(BR)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_LABEL:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_LABEL:
 		SET_HTML_CLASS(LABEL)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_UL:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_UL:
 		SET_HTML_CLASS(ULIST)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OL:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_OL:
 		SET_HTML_CLASS(OLIST)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_LI:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_LI:
 		SET_HTML_CLASS(LI)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FONT:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_FONT:
 		SET_HTML_CLASS(FONT)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_DEL:
-	case DOM_HTML_ELEMENT_TYPE_INS:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_DEL:
+	pak_sa DOM_HTML_ELEMENT_TYPE_INS:
 		SET_HTML_CLASS(MOD)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_A:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_A:
 		SET_HTML_CLASS(ANCHOR)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BASEFONT:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_BASEFONT:
 		SET_HTML_CLASS(BASEFONT)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_IMG:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_IMG:
 		SET_HTML_CLASS(IMAGE)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OBJECT:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_OBJECT:
 		SET_HTML_CLASS(OBJECT)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_PARAM:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_PARAM:
 		SET_HTML_CLASS(PARAM)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_APPLET:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_APPLET:
 		SET_HTML_CLASS(APPLET)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_MAP:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_MAP:
 		SET_HTML_CLASS(MAP)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_AREA:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_AREA:
 		SET_HTML_CLASS(AREA)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_SCRIPT:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_SCRIPT:
 		SET_HTML_CLASS(SCRIPT)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CAPTION:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_CAPTION:
 		SET_HTML_CLASS(TABLECAPTION)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TD:
-	case DOM_HTML_ELEMENT_TYPE_TH:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_TD:
+	pak_sa DOM_HTML_ELEMENT_TYPE_TH:
 		SET_HTML_CLASS(TABLECELL)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_COL:
-	case DOM_HTML_ELEMENT_TYPE_COLGROUP:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_COL:
+	pak_sa DOM_HTML_ELEMENT_TYPE_COLGROUP:
 		SET_HTML_CLASS(TABLECOL)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_THEAD:
-	case DOM_HTML_ELEMENT_TYPE_TBODY:
-	case DOM_HTML_ELEMENT_TYPE_TFOOT:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_THEAD:
+	pak_sa DOM_HTML_ELEMENT_TYPE_TBODY:
+	pak_sa DOM_HTML_ELEMENT_TYPE_TFOOT:
 		SET_HTML_CLASS(TABLESECTION)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TABLE:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_TABLE:
 		SET_HTML_CLASS(TABLE)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TR:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_TR:
 		SET_HTML_CLASS(TABLEROW)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_STYLE:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_STYLE:
 		SET_HTML_CLASS(STYLE)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FRAMESET:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_FRAMESET:
 		SET_HTML_CLASS(FRAMESET)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FRAME:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_FRAME:
 		SET_HTML_CLASS(FRAME)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_IFRAME:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_IFRAME:
 		SET_HTML_CLASS(IFRAME)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_ISINDEX:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_ISINDEX:
 		SET_HTML_CLASS(ISINDEX)
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CANVAS:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE_CANVAS:
 		SET_HTML_CLASS(CANVAS)
-		break;
-	case DOM_HTML_ELEMENT_TYPE__COUNT:
+		bha_nga;
+	pak_sa DOM_HTML_ELEMENT_TYPE__COUNT:
 		assert(type != DOM_HTML_ELEMENT_TYPE__COUNT);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE__UNKNOWN:
+	pak_sa DOM_HTML_ELEMENT_TYPE__UNKNOWN:
 		SET_HTML_CLASS(UNKNOWN)
-		break;
+		bha_nga;
 	default:
 		/* Known HTML element without a specialisation */
 		*html_class = PROTO_NAME(HTMLELEMENT);
 		*html_class_len =
 				SLEN(PROTO_NAME(HTML)) +
 				SLEN("ELEMENT");
-		break;
+		bha_nga;
 	}
-	return;
+	ආපසු;
 }
 
 #undef SET_HTML_CLASS
 
 static void
-dukky_push_node_klass(duk_context *ctx, struct dom_node *node)
+dukky_push_node_klass(duk_context *ctx, sa_nracanaa dom_node *node)
 {
 	dom_node_type nodetype;
 	dom_exception err;
 
 	err = dom_node_get_node_type(node, &nodetype);
-	if (err != DOM_NO_ERR) {
+	නම් (err != DOM_NO_ERR) {
 		/* Oh bum, just node then */
 		duk_push_string(ctx, PROTO_NAME(NODE));
-		return;
+		ආපසු;
 	}
 
 	switch(nodetype) {
-	case DOM_ELEMENT_NODE: {
+	pak_sa DOM_ELEMENT_NODE: {
 		dom_string *namespace;
 		dom_html_element_type type;
-		const char *html_class;
+		const var_na *html_class;
 		size_t html_class_len;
 		err = dom_node_get_namespace(node, &namespace);
-		if (err != DOM_NO_ERR) {
+		නම් (err != DOM_NO_ERR) {
 			/* Feck it, element */
 			NSLOG(dukky, ERROR,
 			      "dom_node_get_namespace() failed");
 			duk_push_string(ctx, PROTO_NAME(ELEMENT));
-			break;
+			bha_nga;
 		}
-		if (namespace == NULL) {
+		නම් (namespace == NULL) {
 			/* No namespace, -> element */
 			NSLOG(dukky, DEBUG, "no namespace");
 			duk_push_string(ctx, PROTO_NAME(ELEMENT));
-			break;
+			bha_nga;
 		}
 
-		if (dom_string_isequal(namespace, corestring_dom_html_namespace) == false) {
+		නම් (dom_string_isequal(namespace, corestring_dom_html_namespace) == false) {
 			/* definitely not an HTML element of some kind */
 			duk_push_string(ctx, PROTO_NAME(ELEMENT));
 			dom_string_unref(namespace);
-			break;
+			bha_nga;
 		}
 		dom_string_unref(namespace);
 
 		err = dom_html_element_get_tag_type(node, &type);
-		if (err != DOM_NO_ERR) {
+		නම් (err != DOM_NO_ERR) {
 			type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
 
@@ -453,25 +453,25 @@ dukky_push_node_klass(duk_context *ctx, struct dom_node *node)
 				&html_class, &html_class_len);
 
 		duk_push_lstring(ctx, html_class, html_class_len);
-		break;
+		bha_nga;
 	}
-	case DOM_TEXT_NODE:
+	pak_sa DOM_TEXT_NODE:
 		duk_push_string(ctx, PROTO_NAME(TEXT));
-		break;
-	case DOM_COMMENT_NODE:
+		bha_nga;
+	pak_sa DOM_COMMENT_NODE:
 		duk_push_string(ctx, PROTO_NAME(COMMENT));
-		break;
-	case DOM_DOCUMENT_NODE:
+		bha_nga;
+	pak_sa DOM_DOCUMENT_NODE:
 		duk_push_string(ctx, PROTO_NAME(DOCUMENT));
-		break;
-	case DOM_ATTRIBUTE_NODE:
-	case DOM_PROCESSING_INSTRUCTION_NODE:
-	case DOM_DOCUMENT_TYPE_NODE:
-	case DOM_DOCUMENT_FRAGMENT_NODE:
-	case DOM_NOTATION_NODE:
-	case DOM_ENTITY_REFERENCE_NODE:
-	case DOM_ENTITY_NODE:
-	case DOM_CDATA_SECTION_NODE:
+		bha_nga;
+	pak_sa DOM_ATTRIBUTE_NODE:
+	pak_sa DOM_PROCESSING_INSTRUCTION_NODE:
+	pak_sa DOM_DOCUMENT_TYPE_NODE:
+	pak_sa DOM_DOCUMENT_FRAGMENT_NODE:
+	pak_sa DOM_NOTATION_NODE:
+	pak_sa DOM_ENTITY_REFERENCE_NODE:
+	pak_sa DOM_ENTITY_NODE:
+	pak_sa DOM_CDATA_SECTION_NODE:
 	default:
 		/* Oh bum, just node then */
 		duk_push_string(ctx, PROTO_NAME(NODE));
@@ -479,7 +479,7 @@ dukky_push_node_klass(duk_context *ctx, struct dom_node *node)
 }
 
 duk_bool_t
-dukky_push_node(duk_context *ctx, struct dom_node *node)
+dukky_push_node(duk_context *ctx, sa_nracanaa dom_node *node)
 {
 	NSLOG(dukky, DEEPDEBUG, "Pushing node %p", node);
 	/* First check if we can find the node */
@@ -490,19 +490,19 @@ dukky_push_node(duk_context *ctx, struct dom_node *node)
 	/* ... nodes nodeptr */
 	duk_get_prop(ctx, -2);
 	/* ... nodes node/undefined */
-	if (!duk_is_undefined(ctx, -1)) {
+	නම් (!duk_is_undefined(ctx, -1)) {
 		/* ... nodes node */
 		duk_insert(ctx, -2);
 		/* ... node nodes */
 		duk_pop(ctx);
 		/* ... node */
-		if (NSLOG_COMPILED_MIN_LEVEL <= NSLOG_LEVEL_DEEPDEBUG) {
+		නම් (NSLOG_COMPILED_MIN_LEVEL <= NSLOG_LEVEL_DEEPDEBUG) {
 			duk_dup(ctx, -1);
-			const char * what = duk_safe_to_string(ctx, -1);
+			const var_na * what = duk_safe_to_string(ctx, -1);
 			NSLOG(dukky, DEEPDEBUG, "Found it memoised: %s", what);
 			duk_pop(ctx);
 		}
-		return true;
+		ආපසු true;
 	}
 	/* ... nodes undefined */
 	duk_pop_2(ctx);
@@ -514,17 +514,17 @@ dukky_push_node(duk_context *ctx, struct dom_node *node)
 	/* ... nodeptr */
 	dukky_push_node_klass(ctx, node);
 	/* ... nodeptr klass */
-	return dukky_push_node_stacked(ctx);
+	ආපසු dukky_push_node_stacked(ctx);
 }
 
 static duk_ret_t
 dukky_bad_constructor(duk_context *ctx)
 {
-	return duk_error(ctx, DUK_ERR_ERROR, "Bad constructor");
+	ආපසු duk_error(ctx, DUK_ERR_ERROR, "Bad constructor");
 }
 
 void
-dukky_inject_not_ctr(duk_context *ctx, int idx, const char *name)
+dukky_inject_not_ctr(duk_context *ctx, පූර්ණ_සංඛ්‍යා idx, const var_na *name)
 {
 	/* ... p[idx] ... proto */
 	duk_push_c_function(ctx, dukky_bad_constructor, 0);
@@ -535,7 +535,7 @@ dukky_inject_not_ctr(duk_context *ctx, int idx, const char *name)
 	/* ... p[idx] ... cons[proto] */
 	duk_put_prop_string(ctx, idx, name);
 	/* ... p ... */
-	return;
+	ආපසු;
 }
 
 /* Duktape heap utility functions */
@@ -547,29 +547,29 @@ dukky_inject_not_ctr(duk_context *ctx, int idx, const char *name)
 
 static void *dukky_alloc_function(void *udata, duk_size_t size)
 {
-	if (size == 0)
-		return NULL;
+	නම් (size == 0)
+		ආපසු NULL;
 
-	return malloc(size);
+	ආපසු malloc(size);
 }
 
 static void *dukky_realloc_function(void *udata, void *ptr, duk_size_t size)
 {
-	if (ptr == NULL && size == 0)
-		return NULL;
+	නම් (ptr == NULL && size == 0)
+		ආපසු NULL;
 
-	if (size == 0) {
+	නම් (size == 0) {
 		free(ptr);
-		return NULL;
+		ආපසු NULL;
 	}
 
-	return realloc(ptr, size);
+	ආපසු realloc(ptr, size);
 }
 
 
 static void dukky_free_function(void *udata, void *ptr)
 {
-	if (ptr != NULL)
+	නම් (ptr != NULL)
 		free(ptr);
 }
 
@@ -595,20 +595,20 @@ void js_finalise(void)
 
 /* exported interface documented in js.h */
 nserror
-js_newheap(int timeout, jsheap **heap)
+js_newheap(පූර්ණ_සංඛ්‍යා timeout, jsheap **heap)
 {
 	duk_context *ctx;
-	jsheap *ret = calloc(1, sizeof(*ret));
+	jsheap *ret = calloc(1, parimaa_na(*ret));
 	*heap = NULL;
 	NSLOG(dukky, DEBUG, "Creating new duktape javascript heap");
-	if (ret == NULL) return NSERROR_NOMEM;
+	නම් (ret == NULL) ආපසු NSERROR_NOMEM;
 	ctx = ret->ctx = duk_create_heap(
 		dukky_alloc_function,
 		dukky_realloc_function,
 		dukky_free_function,
 		ret,
 		NULL);
-	if (ret->ctx == NULL) { free(ret); return NSERROR_NOMEM; }
+	නම් (ret->ctx == NULL) { free(ret); ආපසු NSERROR_NOMEM; }
 	/* Create the prototype stuffs */
 	duk_push_global_object(ctx);
 	duk_push_boolean(ctx, true);
@@ -621,7 +621,7 @@ js_newheap(int timeout, jsheap **heap)
 	duk_put_global_string(ctx, THREAD_MAP);
 
 	*heap = ret;
-	return NSERROR_OK;
+	ආපසු NSERROR_OK;
 }
 
 
@@ -638,7 +638,7 @@ static void dukky_destroyheap(jsheap *heap)
 void js_destroyheap(jsheap *heap)
 {
 	heap->pending_destroy = true;
-	if (heap->live_threads == 0) {
+	නම් (heap->live_threads == 0) {
 		dukky_destroyheap(heap);
 	}
 }
@@ -653,10 +653,10 @@ nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **th
 	assert(heap != NULL);
 	assert(heap->pending_destroy == false);
 
-	ret = calloc(1, sizeof (*ret));
-	if (ret == NULL) {
+	ret = calloc(1, parimaa_na (*ret));
+	නම් (ret == NULL) {
 		NSLOG(dukky, ERROR, "Unable to allocate new JS thread structure");
-		return NSERROR_NOMEM;
+		ආපසු NSERROR_NOMEM;
 	}
 
 	NSLOG(dukky, DEBUG,
@@ -699,18 +699,18 @@ nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **th
 	/* ... */
 	duk_push_string(CTX, "polyfill.js");
 	/* ..., polyfill.js */
-	if (duk_pcompile_lstring_filename(CTX, DUK_COMPILE_EVAL,
-					  (const char *)polyfill_js, polyfill_js_len) != 0) {
+	නම් (duk_pcompile_lstring_filename(CTX, DUK_COMPILE_EVAL,
+					  (const var_na *)polyfill_js, polyfill_js_len) != 0) {
 		NSLOG(dukky, CRITICAL, "%s", duk_safe_to_string(CTX, -1));
 		NSLOG(dukky, CRITICAL, "Unable to compile polyfill.js, thread aborted");
 		js_destroythread(ret);
-		return NSERROR_INIT_FAILED;
+		ආපසු NSERROR_INIT_FAILED;
 	}
 	/* ..., (generics.js) */
-	if (dukky_pcall(CTX, 0, true) != 0) {
+	නම් (dukky_pcall(CTX, 0, true) != 0) {
 		NSLOG(dukky, CRITICAL, "Unable to run polyfill.js, thread aborted");
 		js_destroythread(ret);
-		return NSERROR_INIT_FAILED;
+		ආපසු NSERROR_INIT_FAILED;
 	}
 	/* ..., result */
 	duk_pop(CTX);
@@ -720,18 +720,18 @@ nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **th
 	/* ... */
 	duk_push_string(CTX, "generics.js");
 	/* ..., generics.js */
-	if (duk_pcompile_lstring_filename(CTX, DUK_COMPILE_EVAL,
-					  (const char *)generics_js, generics_js_len) != 0) {
+	නම් (duk_pcompile_lstring_filename(CTX, DUK_COMPILE_EVAL,
+					  (const var_na *)generics_js, generics_js_len) != 0) {
 		NSLOG(dukky, CRITICAL, "%s", duk_safe_to_string(CTX, -1));
 		NSLOG(dukky, CRITICAL, "Unable to compile generics.js, thread aborted");
 		js_destroythread(ret);
-		return NSERROR_INIT_FAILED;
+		ආපසු NSERROR_INIT_FAILED;
 	}
 	/* ..., (generics.js) */
-	if (dukky_pcall(CTX, 0, true) != 0) {
+	නම් (dukky_pcall(CTX, 0, true) != 0) {
 		NSLOG(dukky, CRITICAL, "Unable to run generics.js, thread aborted");
 		js_destroythread(ret);
-		return NSERROR_INIT_FAILED;
+		ආපසු NSERROR_INIT_FAILED;
 	}
 	/* ..., result */
 	duk_pop(CTX);
@@ -750,7 +750,7 @@ nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **th
 	NSLOG(dukky, DEBUG, "New thread is %p in heap %p", thread, heap);
 	*thread = ret;
 
-	return NSERROR_OK;
+	ආපසු NSERROR_OK;
 }
 
 /* Now switch to the long term CTX behaviour */
@@ -774,7 +774,7 @@ nserror js_closethread(jsthread *thread)
 	/* Restore whatever stack we had */
 	duk_set_top(CTX, top);
 
-	return NSERROR_OK;
+	ආපසු NSERROR_OK;
 }
 
 /**
@@ -806,7 +806,7 @@ static void dukky_destroythread(jsthread *thread)
 	heap->live_threads--;
 
 	/* And if the heap should now go, blow it away */
-	if (heap->pending_destroy == true && heap->live_threads == 0) {
+	නම් (heap->pending_destroy == true && heap->live_threads == 0) {
 		dukky_destroyheap(heap);
 	}
 }
@@ -815,7 +815,7 @@ static void dukky_destroythread(jsthread *thread)
 void js_destroythread(jsthread *thread)
 {
 	thread->pending_destroy = true;
-	if (thread->in_use == 0) {
+	නම් (thread->in_use == 0) {
 		dukky_destroythread(thread);
 	}
 }
@@ -832,7 +832,7 @@ static void dukky_leave_thread(jsthread *thread)
 	assert(thread->in_use > 0);
 
 	thread->in_use--;
-	if (thread->in_use == 0 && thread->pending_destroy == true) {
+	නම් (thread->in_use == 0 && thread->pending_destroy == true) {
 		dukky_destroythread(thread);
 	}
 }
@@ -849,7 +849,7 @@ duk_bool_t dukky_check_timeout(void *udata)
 	 * so only test for execution timeout if we've recorded a
 	 * start time.
 	 */
-	return heap->exec_start_time != 0 &&
+	ආපසු heap->exec_start_time != 0 &&
 			now > (heap->exec_start_time + JS_EXEC_TIMEOUT_MS);
 }
 
@@ -875,21 +875,21 @@ static void dukky_reset_start_time(duk_context *ctx)
 
 duk_int_t dukky_pcall(duk_context *ctx, duk_size_t argc, bool reset_timeout)
 {
-	if (reset_timeout) {
+	නම් (reset_timeout) {
 		dukky_reset_start_time(ctx);
 	}
 
 	duk_int_t ret = duk_pcall(ctx, argc);
-	if (ret) {
+	නම් (ret) {
 		/* Something went wrong calling this... */
 		dukky_dump_error(ctx);
 	}
 
-	return ret;
+	ආපසු ret;
 }
 
 
-void dukky_push_generics(duk_context *ctx, const char *generic)
+void dukky_push_generics(duk_context *ctx, const var_na *generic)
 {
 	/* ... */
 	duk_get_global_string(ctx, GENERICS_MAGIC);
@@ -903,12 +903,12 @@ void dukky_push_generics(duk_context *ctx, const char *generic)
 static duk_int_t dukky_push_context_dump(duk_context *ctx, void *udata)
 {
 	duk_push_context_dump(ctx);
-	return 1;
+	ආපසු 1;
 }
 
-void dukky_log_stack_frame(duk_context *ctx, const char * reason)
+void dukky_log_stack_frame(duk_context *ctx, const var_na * reason)
 {
-	if (duk_safe_call(ctx, dukky_push_context_dump, NULL, 0, 1) != 0) {
+	නම් (duk_safe_call(ctx, dukky_push_context_dump, NULL, 0, 1) != 0) {
 		duk_pop(ctx);
 		duk_push_string(ctx, "[???]");
 	}
@@ -919,18 +919,18 @@ void dukky_log_stack_frame(duk_context *ctx, const char * reason)
 
 /* exported interface documented in js.h */
 bool
-js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const var_na *name)
 {
 	bool ret = false;
 	assert(thread);
 
-	if (txt == NULL || txtlen == 0) {
-		return false;
+	නම් (txt == NULL || txtlen == 0) {
+		ආපසු false;
 	}
 
-	if (thread->pending_destroy) {
+	නම් (thread->pending_destroy) {
 		NSLOG(dukky, DEEPDEBUG, "Skipping exec call because thread is dead");
-		return false;
+		ආපසු false;
 	}
 
 	dukky_enter_thread(thread);
@@ -940,25 +940,25 @@ js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
 	/* NSLOG(dukky, DEEPDEBUG, "\n%s\n", txt); */
 
 	dukky_reset_start_time(CTX);
-	if (name != NULL) {
+	නම් (name != NULL) {
 		duk_push_string(CTX, name);
-	} else {
+	} නැතහොත් {
 		duk_push_string(CTX, "?unknown source?");
 	}
-	if (duk_pcompile_lstring_filename(CTX,
+	නම් (duk_pcompile_lstring_filename(CTX,
 					  DUK_COMPILE_EVAL,
-					  (const char *)txt,
+					  (const var_na *)txt,
 					  txtlen) != 0) {
 		NSLOG(dukky, DEBUG, "Failed to compile JavaScript input");
 		goto handle_error;
 	}
 
-	if (duk_pcall(CTX, 0/*nargs*/) == DUK_EXEC_ERROR) {
+	නම් (duk_pcall(CTX, 0/*nargs*/) == DUK_EXEC_ERROR) {
 		NSLOG(dukky, DEBUG, "Failed to execute JavaScript");
 		goto handle_error;
 	}
 
-	if (duk_get_top(CTX) == 0) duk_push_boolean(CTX, false);
+	නම් (duk_get_top(CTX) == 0) duk_push_boolean(CTX, false);
 	NSLOG(dukky, DEEPDEBUG, "Returning %s",
 	      duk_get_boolean(CTX, 0) ? "true" : "false");
 	ret = duk_get_boolean(CTX, 0);
@@ -968,37 +968,37 @@ handle_error:
 	dukky_dump_error(CTX);
 out:
 	dukky_leave_thread(thread);
-	return ret;
+	ආපසු ret;
 }
 
-static const char* dukky_event_proto(dom_event *evt)
+static const var_na* dukky_event_proto(dom_event *evt)
 {
-	const char *ret = PROTO_NAME(EVENT);
+	const var_na *ret = PROTO_NAME(EVENT);
 	dom_string *type = NULL;
 	dom_exception err;
 
 	err = dom_event_get_type(evt, &type);
-	if (err != DOM_NO_ERR) {
+	නම් (err != DOM_NO_ERR) {
 		goto out;
 	}
 
-	if (dom_string_isequal(type, corestring_dom_keydown)) {
+	නම් (dom_string_isequal(type, corestring_dom_keydown)) {
 		ret = PROTO_NAME(KEYBOARDEVENT);
 		goto out;
-	} else if (dom_string_isequal(type, corestring_dom_keyup)) {
+	} නැතහොත් නම් (dom_string_isequal(type, corestring_dom_keyup)) {
 		ret = PROTO_NAME(KEYBOARDEVENT);
 		goto out;
-	} else if (dom_string_isequal(type, corestring_dom_keypress)) {
+	} නැතහොත් නම් (dom_string_isequal(type, corestring_dom_keypress)) {
 		ret = PROTO_NAME(KEYBOARDEVENT);
 		goto out;
 	}
 
 out:
-	if (type != NULL) {
+	නම් (type != NULL) {
 		dom_string_unref(type);
 	}
 
-	return ret;
+	ආපසු ret;
 }
 
 /*** New style event handling ***/
@@ -1012,12 +1012,12 @@ void dukky_push_event(duk_context *ctx, dom_event *evt)
 	/* ... events eventptr */
 	duk_get_prop(ctx, -2);
 	/* ... events event? */
-	if (duk_is_undefined(ctx, -1)) {
+	නම් (duk_is_undefined(ctx, -1)) {
 		/* ... events undefined */
 		duk_pop(ctx);
 		/* ... events */
 		duk_push_pointer(ctx, evt);
-		if (dukky_create_object(ctx, dukky_event_proto(evt), 1) != DUK_EXEC_SUCCESS) {
+		නම් (dukky_create_object(ctx, dukky_event_proto(evt), 1) != DUK_EXEC_SUCCESS) {
 			/* ... events err */
 			duk_pop(ctx);
 			/* ... events */
@@ -1049,9 +1049,9 @@ static void dukky_push_handler_code_(duk_context *ctx, dom_string *name,
 	 * which has no default handlers and no way to assign handlers
 	 * which aren't directly stored in the HANDLER_MAGIC
 	 */
-	if (et == NULL) {
+	නම් (et == NULL) {
 		duk_push_lstring(ctx, "", 0);
-		return;
+		ආපසු;
 	}
 
 	/* The rest of this assumes et is a proper event target and expands
@@ -1059,27 +1059,27 @@ static void dukky_push_handler_code_(duk_context *ctx, dom_string *name,
 	 * are nodes.
 	 */
 	exc = dom_node_get_node_type(et, &ntype);
-	if (exc != DOM_NO_ERR) {
+	නම් (exc != DOM_NO_ERR) {
 		duk_push_lstring(ctx, "", 0);
-		return;
+		ආපසු;
 	}
 
-	if (ntype != DOM_ELEMENT_NODE) {
+	නම් (ntype != DOM_ELEMENT_NODE) {
 		duk_push_lstring(ctx, "", 0);
-		return;
+		ආපසු;
 	}
 
 	exc = dom_string_concat(corestring_dom_on, name, &onname);
-	if (exc != DOM_NO_ERR) {
+	නම් (exc != DOM_NO_ERR) {
 		duk_push_lstring(ctx, "", 0);
-		return;
+		ආපසු;
 	}
 
 	exc = dom_element_get_attribute(ele, onname, &val);
-	if ((exc != DOM_NO_ERR) || (val == NULL)) {
+	නම් ((exc != DOM_NO_ERR) || (val == NULL)) {
 		dom_string_unref(onname);
 		duk_push_lstring(ctx, "", 0);
-		return;
+		ආපසු;
 	}
 
 	dom_string_unref(onname);
@@ -1100,7 +1100,7 @@ bool dukky_get_current_value_of_event_handler(duk_context *ctx,
 	/* ... node handlers name */
 	duk_get_prop(ctx, -2);
 	/* ... node handlers handler? */
-	if (duk_is_undefined(ctx, -1)) {
+	නම් (duk_is_undefined(ctx, -1)) {
 		/* ... node handlers undefined */
 		duk_pop_2(ctx);
 		/* ... node */
@@ -1119,17 +1119,17 @@ bool dukky_get_current_value_of_event_handler(duk_context *ctx,
 		/* ... node fullhandlersrc */
 		duk_push_string(ctx, "internal raw uncompiled handler");
 		/* ... node fullhandlersrc filename */
-		if (duk_pcompile(ctx, DUK_COMPILE_FUNCTION) != 0) {
+		නම් (duk_pcompile(ctx, DUK_COMPILE_FUNCTION) != 0) {
 			/* ... node err */
 			NSLOG(dukky, DEBUG,
 			      "Unable to proceed with handler, could not compile");
 			duk_pop_2(ctx);
-			return false;
+			ආපසු false;
 		}
 		/* ... node handler */
 		duk_insert(ctx, -2);
 		/* ... handler node */
-	} else {
+	} නැතහොත් {
 		/* ... node handlers handler */
 		duk_insert(ctx, -3);
 		/* ... handler node handlers */
@@ -1137,7 +1137,7 @@ bool dukky_get_current_value_of_event_handler(duk_context *ctx,
 		/* ... handler node */
 	}
 	/* ... handler node */
-	return true;
+	ආපසු true;
 }
 
 static void dukky_generic_event_handler(dom_event *evt, void *pw)
@@ -1152,44 +1152,44 @@ static void dukky_generic_event_handler(dom_event *evt, void *pw)
 
 	NSLOG(dukky, DEBUG, "Handling an event in duktape interface...");
 	exc = dom_event_get_type(evt, &name);
-	if (exc != DOM_NO_ERR) {
+	නම් (exc != DOM_NO_ERR) {
 		NSLOG(dukky, DEBUG, "Unable to find the event name");
-		return;
+		ආපසු;
 	}
-	NSLOG(dukky, DEBUG, "Event's name is %*s", (int)dom_string_length(name),
+	NSLOG(dukky, DEBUG, "Event's name is %*s", (පූර්ණ_සංඛ්‍යා)dom_string_length(name),
 	      dom_string_data(name));
 	exc = dom_event_get_event_phase(evt, &phase);
-	if (exc != DOM_NO_ERR) {
+	නම් (exc != DOM_NO_ERR) {
 		NSLOG(dukky, WARNING, "Unable to get event phase");
-		return;
+		ආපසු;
 	}
 	NSLOG(dukky, DEBUG, "Event phase is: %s (%d)",
 	      phase == DOM_CAPTURING_PHASE ? "capturing" : phase == DOM_AT_TARGET ? "at-target" : phase == DOM_BUBBLING_PHASE ? "bubbling" : "unknown",
-	      (int)phase);
+	      (පූර්ණ_සංඛ්‍යා)phase);
 
 	exc = dom_event_get_current_target(evt, &targ);
-	if (exc != DOM_NO_ERR) {
+	නම් (exc != DOM_NO_ERR) {
 		dom_string_unref(name);
 		NSLOG(dukky, DEBUG, "Unable to find the event target");
-		return;
+		ආපසු;
 	}
 
 	/* If we're capturing right now, we skip the 'event handler'
 	 * and go straight to the extras
 	 */
-	if (phase == DOM_CAPTURING_PHASE)
+	නම් (phase == DOM_CAPTURING_PHASE)
 		goto handle_extras;
 
 	/* ... */
-	if (dukky_push_node(ctx, (dom_node *)targ) == false) {
+	නම් (dukky_push_node(ctx, (dom_node *)targ) == false) {
 		dom_string_unref(name);
 		dom_node_unref(targ);
 		NSLOG(dukky, DEBUG,
 		      "Unable to push JS node representation?!");
-		return;
+		ආපසු;
 	}
 	/* ... node */
-	if (dukky_get_current_value_of_event_handler(
+	නම් (dukky_get_current_value_of_event_handler(
 		    ctx, name, (dom_event_target *)targ) == false) {
 		/* ... */
 		goto handle_extras;
@@ -1198,13 +1198,13 @@ static void dukky_generic_event_handler(dom_event *evt, void *pw)
 	dukky_push_event(ctx, evt);
 	/* ... handler node event */
 	dukky_reset_start_time(ctx);
-	if (duk_pcall_method(ctx, 1) != 0) {
+	නම් (duk_pcall_method(ctx, 1) != 0) {
 		/* Failed to run the method */
 		/* ... err */
 		NSLOG(dukky, DEBUG,
 		      "OH NOES! An error running a callback.  Meh.");
 		exc = dom_event_stop_immediate_propagation(evt);
-		if (exc != DOM_NO_ERR)
+		නම් (exc != DOM_NO_ERR)
 			NSLOG(dukky, DEBUG,
 			      "WORSE! could not stop propagation");
 		duk_get_prop_string(ctx, -1, "name");
@@ -1227,7 +1227,7 @@ static void dukky_generic_event_handler(dom_event *evt, void *pw)
 		goto handle_extras;
 	}
 	/* ... result */
-	if (duk_is_boolean(ctx, -1) &&
+	නම් (duk_is_boolean(ctx, -1) &&
 	    duk_to_boolean(ctx, -1) == 0) {
 		dom_event_prevent_default(evt);
 	}
@@ -1237,7 +1237,7 @@ handle_extras:
 	duk_push_lstring(ctx, dom_string_data(name), dom_string_length(name));
 	dukky_push_node(ctx, (dom_node *)targ);
 	/* ... type node */
-	if (dukky_event_target_push_listeners(ctx, true)) {
+	නම් (dukky_event_target_push_listeners(ctx, true)) {
 		/* Nothing to do */
 		duk_pop(ctx);
 		goto out;
@@ -1246,11 +1246,11 @@ handle_extras:
 	duk_push_array(ctx);
 	/* ... sublisteners copy */
 	idx = 0;
-	while (duk_get_prop_index(ctx, -2, idx)) {
+	අතරතුර (duk_get_prop_index(ctx, -2, idx)) {
 		/* ... sublisteners copy handler */
 		duk_get_prop_index(ctx, -1, 1);
 		/* ... sublisteners copy handler flags */
-		if ((event_listener_flags)duk_to_int(ctx, -1) & ELF_ONCE) {
+		නම් ((event_listener_flags)duk_to_int(ctx, -1) & ELF_ONCE) {
 			duk_dup(ctx, -4);
 			/* ... subl copy handler flags subl */
 			dukky_shuffle_array(ctx, idx);
@@ -1271,9 +1271,9 @@ handle_extras:
 	duk_pop(ctx);
 	/* ... copy */
 	idx = 0;
-	while (duk_get_prop_index(ctx, -1, idx++)) {
+	අතරතුර (duk_get_prop_index(ctx, -1, idx++)) {
 		/* ... copy handler */
-		if (duk_get_prop_index(ctx, -1, 2)) {
+		නම් (duk_get_prop_index(ctx, -1, 2)) {
 			/* ... copy handler meh */
 			duk_pop_2(ctx);
 			continue;
@@ -1285,7 +1285,7 @@ handle_extras:
 		flags = (event_listener_flags)duk_get_int(ctx, -1);
 		duk_pop(ctx);
 		/* ... copy handler callback */
-		if (((phase == DOM_CAPTURING_PHASE) && !(flags & ELF_CAPTURE)) ||
+		නම් (((phase == DOM_CAPTURING_PHASE) && !(flags & ELF_CAPTURE)) ||
 		    ((phase != DOM_CAPTURING_PHASE) && (flags & ELF_CAPTURE))) {
 			duk_pop_2(ctx);
 			/* ... copy */
@@ -1297,13 +1297,13 @@ handle_extras:
 		dukky_push_event(ctx, evt);
 		/* ... copy handler callback node event */
 		dukky_reset_start_time(ctx);
-		if (duk_pcall_method(ctx, 1) != 0) {
+		නම් (duk_pcall_method(ctx, 1) != 0) {
 			/* Failed to run the method */
 			/* ... copy handler err */
 			NSLOG(dukky, DEBUG,
 			      "OH NOES! An error running a callback.  Meh.");
 			exc = dom_event_stop_immediate_propagation(evt);
-			if (exc != DOM_NO_ERR)
+			නම් (exc != DOM_NO_ERR)
 				NSLOG(dukky, DEBUG,
 				      "WORSE! could not stop propagation");
 			duk_get_prop_string(ctx, -1, "name");
@@ -1327,7 +1327,7 @@ handle_extras:
 			continue;
 		}
 		/* ... copy handler result */
-		if (duk_is_boolean(ctx, -1) &&
+		නම් (duk_is_boolean(ctx, -1) &&
 		    duk_to_boolean(ctx, -1) == 0) {
 			dom_event_prevent_default(evt);
 		}
@@ -1342,7 +1342,7 @@ out:
 }
 
 void dukky_register_event_listener_for(duk_context *ctx,
-				       struct dom_element *ele,
+				       sa_nracanaa dom_element *ele,
 				       dom_string *name,
 				       bool capture)
 {
@@ -1350,24 +1350,24 @@ void dukky_register_event_listener_for(duk_context *ctx,
 	dom_exception exc;
 
 	/* ... */
-	if (ele == NULL) {
+	නම් (ele == NULL) {
 		/* A null element is the Window object */
 		duk_push_global_object(ctx);
-	} else {
+	} නැතහොත් {
 		/* Non null elements must be pushed as a node object */
-		if (dukky_push_node(ctx, (struct dom_node *)ele) == false)
-			return;
+		නම් (dukky_push_node(ctx, (sa_nracanaa dom_node *)ele) == false)
+			ආපසු;
 	}
 	/* ... node */
 	duk_get_prop_string(ctx, -1, HANDLER_LISTENER_MAGIC);
 	/* ... node handlers */
 	duk_push_lstring(ctx, dom_string_data(name), dom_string_length(name));
 	/* ... node handlers name */
-	if (duk_has_prop(ctx, -2)) {
+	නම් (duk_has_prop(ctx, -2)) {
 		/* ... node handlers */
 		duk_pop_2(ctx);
 		/* ... */
-		return;
+		ආපසු;
 	}
 	/* ... node handlers */
 	duk_push_lstring(ctx, dom_string_data(name), dom_string_length(name));
@@ -1378,26 +1378,26 @@ void dukky_register_event_listener_for(duk_context *ctx,
 	/* ... node handlers */
 	duk_pop_2(ctx);
 	/* ... */
-	if (ele == NULL) {
+	නම් (ele == NULL) {
 		/* Nothing more to do, Window doesn't register in the
 		 * normal event listener flow
 		 */
-		return;
+		ආපසු;
 	}
 
 	/* Otherwise add an event listener to the element */
 	exc = dom_event_listener_create(dukky_generic_event_handler, ctx,
 					&listen);
-	if (exc != DOM_NO_ERR) return;
+	නම් (exc != DOM_NO_ERR) ආපසු;
 	exc = dom_event_target_add_event_listener(
 		ele, name, listen, capture);
-	if (exc != DOM_NO_ERR) {
+	නම් (exc != DOM_NO_ERR) {
 		NSLOG(dukky, DEBUG,
 		      "Unable to register listener for %p.%*s", ele,
-		      (int)dom_string_length(name), dom_string_data(name));
-	} else {
+		      (පූර්ණ_සංඛ්‍යා)dom_string_length(name), dom_string_data(name));
+	} නැතහොත් {
 		NSLOG(dukky, DEBUG, "have registered listener for %p.%*s",
-		      ele, (int)dom_string_length(name), dom_string_data(name));
+		      ele, (පූර්ණ_සංඛ්‍යා)dom_string_length(name), dom_string_data(name));
 	}
 	dom_event_listener_unref(listen);
 }
@@ -1410,7 +1410,7 @@ bool dukky_event_target_push_listeners(duk_context *ctx, bool dont_create)
 	bool ret = false;
 	/* ... type this */
 	duk_get_prop_string(ctx, -1, EVENT_LISTENER_JS_MAGIC);
-	if (duk_is_undefined(ctx, -1)) {
+	නම් (duk_is_undefined(ctx, -1)) {
 		/* ... type this null */
 		duk_pop(ctx);
 		duk_push_object(ctx);
@@ -1428,12 +1428,12 @@ bool dukky_event_target_push_listeners(duk_context *ctx, bool dont_create)
 	/* ... listeners type type */
 	duk_get_prop(ctx, -3);
 	/* ... listeners type ??? */
-	if (duk_is_undefined(ctx, -1)) {
+	නම් (duk_is_undefined(ctx, -1)) {
 		/* ... listeners type ??? */
-		if (dont_create == true) {
+		නම් (dont_create == true) {
 			duk_pop_3(ctx);
 			duk_push_undefined(ctx);
-			return true;
+			ආපසු true;
 		}
 		duk_pop(ctx);
 		duk_push_array(ctx);
@@ -1448,7 +1448,7 @@ bool dukky_event_target_push_listeners(duk_context *ctx, bool dont_create)
 	/* ... sublisteners listeners type */
 	duk_pop_2(ctx);
 	/* ... sublisteners */
-	return ret;
+	ආපසු ret;
 }
 
 /* Shuffle a duktape array "down" one.  This involves iterating from
@@ -1458,7 +1458,7 @@ bool dukky_event_target_push_listeners(duk_context *ctx, bool dont_create)
 void dukky_shuffle_array(duk_context *ctx, duk_uarridx_t idx)
 {
 	/* ... somearr */
-	while (duk_get_prop_index(ctx, -1, idx + 1)) {
+	අතරතුර (duk_get_prop_index(ctx, -1, idx + 1)) {
 		duk_put_prop_index(ctx, -2, idx);
 		idx++;
 	}
@@ -1468,7 +1468,7 @@ void dukky_shuffle_array(duk_context *ctx, duk_uarridx_t idx)
 }
 
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+void js_handle_new_element(jsthread *thread, sa_nracanaa dom_element *node)
 {
 	assert(thread);
 	assert(node);
@@ -1482,28 +1482,28 @@ void js_handle_new_element(jsthread *thread, struct dom_element *node)
 	duk_bool_t is_body = false;
 
 	exc = dom_node_get_node_name(node, &nodename);
-	if (exc != DOM_NO_ERR) return;
+	නම් (exc != DOM_NO_ERR) ආපසු;
 
-	if (nodename == corestring_dom_BODY)
+	නම් (nodename == corestring_dom_BODY)
 		is_body = true;
 
 	dom_string_unref(nodename);
 
 	exc = dom_node_get_attributes(node, &map);
-	if (exc != DOM_NO_ERR) return;
-	if (map == NULL) return;
+	නම් (exc != DOM_NO_ERR) ආපසු;
+	නම් (map == NULL) ආපසු;
 
 	dukky_enter_thread(thread);
 
 	exc = dom_namednodemap_get_length(map, &siz);
-	if (exc != DOM_NO_ERR) goto out;
+	නම් (exc != DOM_NO_ERR) goto out;
 
-	for (idx = 0; idx < siz; idx++) {
+	සඳහා (idx = 0; idx < siz; idx++) {
 		exc = dom_namednodemap_item(map, idx, &attr);
-		if (exc != DOM_NO_ERR) goto out;
+		නම් (exc != DOM_NO_ERR) goto out;
 		exc = dom_attr_get_name(attr, &key);
-		if (exc != DOM_NO_ERR) goto out;
-		if (is_body && (
+		නම් (exc != DOM_NO_ERR) goto out;
+		නම් (is_body && (
 			    key == corestring_dom_onblur ||
 			    key == corestring_dom_onerror ||
 			    key == corestring_dom_onfocus ||
@@ -1516,15 +1516,15 @@ void js_handle_new_element(jsthread *thread, struct dom_element *node)
 			 */
 			goto skip_register;
 		}
-		if (dom_string_length(key) > 2) {
+		නම් (dom_string_length(key) > 2) {
 			/* Can be on* */
 			const uint8_t *data = (const uint8_t *)dom_string_data(key);
-			if (data[0] == 'o' && data[1] == 'n') {
+			නම් (data[0] == 'o' && data[1] == 'n') {
 				dom_string *sub = NULL;
 				exc = dom_string_substr(
 					key, 2, dom_string_length(key),
 					&sub);
-				if (exc == DOM_NO_ERR) {
+				නම් (exc == DOM_NO_ERR) {
 					dukky_register_event_listener_for(
 						CTX, node, sub, false);
 					dom_string_unref(sub);
@@ -1537,10 +1537,10 @@ void js_handle_new_element(jsthread *thread, struct dom_element *node)
 	}
 
 out:
-	if (key != NULL)
+	නම් (key != NULL)
 		dom_string_unref(key);
 
-	if (attr != NULL)
+	නම් (attr != NULL)
 		dom_node_unref(attr);
 
 	dom_namednodemap_unref(map);
@@ -1548,7 +1548,7 @@ out:
 	dukky_leave_thread(thread);
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+void js_event_cleanup(jsthread *thread, sa_nracanaa dom_event *evt)
 {
 	assert(thread);
 	dukky_enter_thread(thread);
@@ -1564,7 +1564,7 @@ void js_event_cleanup(jsthread *thread, struct dom_event *evt)
 	dukky_leave_thread(thread);
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, const var_na *type, sa_nracanaa dom_document *doc, sa_nracanaa dom_node *target)
 {
 	dom_exception exc;
 	dom_event *evt;
@@ -1578,13 +1578,13 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 	 * getting 3.4 out.
 	 */
 
-	if (target != NULL)
+	නම් (target != NULL)
 		/* Swallow non-Window-targetted events quietly */
-		return true;
+		ආපසු true;
 
-	if (strcmp(type, "load") != 0)
+	නම් (strcmp(type, "load") != 0)
 		/* Swallow non-load events quietly */
-		return true;
+		ආපසු true;
 
 	/* Okay, we're processing load, targetted at Window, do the single
 	 * thing which gets us there, which is to find the appropriate event
@@ -1594,11 +1594,11 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 	 */
 
 	exc = dom_event_create(&evt);
-	if (exc != DOM_NO_ERR) return true;
+	නම් (exc != DOM_NO_ERR) ආපසු true;
 	exc = dom_event_init(evt, corestring_dom_load, false, false);
-	if (exc != DOM_NO_ERR) {
+	නම් (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return true;
+		ආපසු true;
 	}
 	dukky_enter_thread(thread);
 	/* ... */
@@ -1608,28 +1608,28 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 	/* ... handlers "load" */
 	duk_get_prop(CTX, -2);
 	/* ... handlers handler? */
-	if (duk_is_undefined(CTX, -1)) {
+	නම් (duk_is_undefined(CTX, -1)) {
 		/* No handler here, *try* and retrieve a handler from
 		 * the body
 		 */
 		duk_pop(CTX);
 		/* ... handlers */
 		exc = dom_html_document_get_body(doc, &body);
-		if (exc != DOM_NO_ERR) {
+		නම් (exc != DOM_NO_ERR) {
 			dom_event_unref(evt);
 			dukky_leave_thread(thread);
-			return true;
+			ආපසු true;
 		}
-		dukky_push_node(CTX, (struct dom_node *)body);
+		dukky_push_node(CTX, (sa_nracanaa dom_node *)body);
 		/* ... handlers bodynode */
-		if (dukky_get_current_value_of_event_handler(
+		නම් (dukky_get_current_value_of_event_handler(
 			    CTX, corestring_dom_load, body) == false) {
 			/* Unref the body, we don't need it any more */
 			dom_node_unref(body);
 			/* ... handlers */
 			duk_pop(CTX);
 			dukky_leave_thread(thread);
-			return true;
+			ආපසු true;
 		}
 		/* Unref the body, we don't need it any more */
 		dom_node_unref(body);
@@ -1646,7 +1646,7 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 	dukky_push_event(CTX, evt);
 	/* ... handler Window event */
 	dukky_reset_start_time(CTX);
-	if (duk_pcall_method(CTX, 1) != 0) {
+	නම් (duk_pcall_method(CTX, 1) != 0) {
 		/* Failed to run the handler */
 		/* ... err */
 		NSLOG(dukky, DEBUG,
@@ -1671,7 +1671,7 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 		js_event_cleanup(thread, evt);
 		dom_event_unref(evt);
 		dukky_leave_thread(thread);
-		return true;
+		ආපසු true;
 	}
 	/* ... result */
 	duk_pop(CTX);
@@ -1679,5 +1679,5 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 	js_event_cleanup(thread, evt);
 	dom_event_unref(evt);
 	dukky_leave_thread(thread);
-	return true;
+	ආපසු true;
 }

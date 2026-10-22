@@ -25,7 +25,7 @@
 
 #include "utils/errors.h"
 
-struct content_redraw_data;
+sa_nracanaa content_redraw_data;
 
 /** Initialise the content handlers for image types.
  */
@@ -37,9 +37,9 @@ nserror image_init(void);
  * and specific content redraw data. It is a helper specifically
  * provided for image content handlers redraw callback.
  */
-bool image_bitmap_plot(struct bitmap *bitmap,
-		       struct content_redraw_data *data, 
-		       const struct rect *clip,
-		       const struct redraw_context *ctx);
+bool image_bitmap_plot(sa_nracanaa bitmap *bitmap,
+		       sa_nracanaa content_redraw_data *data, 
+		       const sa_nracanaa rect *clip,
+		       const sa_nracanaa redraw_context *ctx);
 
 #endif

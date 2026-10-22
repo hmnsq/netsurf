@@ -33,28 +33,28 @@ nserror HNAME##_init(void)						\
 	uint32_t i;							\
 	nserror error = NSERROR_OK;					\
 									\
-	for (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
+	සඳහා (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
 		error = content_factory_register_handler(		\
 			HTYPELIST[i],					\
 			&HHANDLER);					\
-		if (error != NSERROR_OK)				\
-			break;						\
+		නම් (error != NSERROR_OK)				\
+			bha_nga;						\
 	}								\
 									\
-	return error;							\
+	ආපසු error;							\
 }
 
-struct content;
-struct llcache_handle;
-struct content_handler;
+sa_nracanaa content;
+sa_nracanaa llcache_handle;
+sa_nracanaa content_handler;
 
 void content_factory_fini(void);
 
-nserror content_factory_register_handler(const char *mime_type,
-		const struct content_handler *handler);
+nserror content_factory_register_handler(const var_na *mime_type,
+		const sa_nracanaa content_handler *handler);
 
-struct content *content_factory_create_content(struct llcache_handle *llcache, 
-		const char *fallback_charset, bool quirks,
+sa_nracanaa content *content_factory_create_content(sa_nracanaa llcache_handle *llcache, 
+		const var_na *fallback_charset, bool quirks,
 		lwc_string *effective_type);
 
 content_type content_factory_type_from_mime_type(lwc_string *mime_type);

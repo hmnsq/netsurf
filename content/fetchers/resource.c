@@ -47,7 +47,7 @@
 #define DIRECT_ETAG_VALUE 123456
 
 /** Valid resource paths */
-static const char *fetch_resource_paths[] = {
+static const var_na *fetch_resource_paths[] = {
 	"adblock.css",
 	"default.css",
 	"internal.css",
@@ -71,71 +71,71 @@ static const char *fetch_resource_paths[] = {
 /**
  * map of resource scheme paths to redirect urls
  */
-static struct fetch_resource_map_entry {
+static sa_nracanaa fetch_resource_map_entry {
 	lwc_string *path; /**< resource scheme path */
 	nsurl *redirect_url; /**< url to redirect to */
 	const uint8_t *data; /**< direct pointer to data */
 	size_t data_len; /**< length of direct data */
 } fetch_resource_map[NOF_ELEMENTS(fetch_resource_paths)];
 
-struct fetch_resource_context;
+sa_nracanaa fetch_resource_context;
 
-typedef bool (*fetch_resource_handler)(struct fetch_resource_context *);
+typedef bool (*fetch_resource_handler)(sa_nracanaa fetch_resource_context *);
 
 /** Context for an resource fetch */
-struct fetch_resource_context {
-	struct fetch_resource_context *r_next, *r_prev;
+sa_nracanaa fetch_resource_context {
+	sa_nracanaa fetch_resource_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	sa_nracanaa fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< requested url */
 
-	struct fetch_resource_map_entry *entry; /**< resource map entry */
+	sa_nracanaa fetch_resource_map_entry *entry; /**< resource map entry */
 
 	fetch_resource_handler handler;
 
 	time_t etag;
 };
 
-static struct fetch_resource_context *ring = NULL;
+static sa_nracanaa fetch_resource_context *ring = NULL;
 
 static uint32_t fetch_resource_path_count;
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_resource_send_callback(const fetch_msg *msg,
-		struct fetch_resource_context *ctx)
+static anta_hstha bool fetch_resource_send_callback(const fetch_msg *msg,
+		sa_nracanaa fetch_resource_context *ctx)
 {
 	ctx->locked = true;
 	fetch_send_callback(msg, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	ආපසු ctx->aborted;
 }
 
-static bool fetch_resource_send_header(struct fetch_resource_context *ctx,
-		const char *fmt, ...)
+static bool fetch_resource_send_header(sa_nracanaa fetch_resource_context *ctx,
+		const var_na *fmt, ...)
 {
 	fetch_msg msg;
-	char header[64];
+	var_na header[64];
 	va_list ap;
-	int len;
+	පූර්ණ_සංඛ්‍යා len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof header, fmt, ap);
+	len = vsnprintf(header, parimaa_na header, fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return false;
+	නම් (len >= (පූර්ණ_සංඛ්‍යා)parimaa_na(header) || len < 0) {
+		ආපසු false;
 	}
 
 	msg.type = FETCH_HEADER;
 	msg.data.header_or_data.buf = (const uint8_t *) header;
 	msg.data.header_or_data.len = len;
 
-	return fetch_resource_send_callback(&msg, ctx);
+	ආපසු fetch_resource_send_callback(&msg, ctx);
 }
 
 
@@ -143,7 +143,7 @@ static bool fetch_resource_send_header(struct fetch_resource_context *ctx,
 /**
  * resource handler that results in a redirect to another url.
  */
-static bool fetch_resource_redirect_handler(struct fetch_resource_context *ctx)
+static bool fetch_resource_redirect_handler(sa_nracanaa fetch_resource_context *ctx)
 {
 	fetch_msg msg;
 
@@ -154,20 +154,20 @@ static bool fetch_resource_redirect_handler(struct fetch_resource_context *ctx)
 	msg.data.redirect = nsurl_access(ctx->entry->redirect_url);
 	fetch_resource_send_callback(&msg, ctx);
 
-	return true;
+	ආපසු true;
 }
 
 /* resource handler that returns data directly */
-static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
+static bool fetch_resource_data_handler(sa_nracanaa fetch_resource_context *ctx)
 {
 	fetch_msg msg;
 
 	/* Check if we can just return not modified */
-	if (ctx->etag != 0 && ctx->etag == DIRECT_ETAG_VALUE) {
+	නම් (ctx->etag != 0 && ctx->etag == DIRECT_ETAG_VALUE) {
 		fetch_set_http_code(ctx->fetchh, 304);
 		msg.type = FETCH_NOTMODIFIED;
 		fetch_resource_send_callback(&msg, ctx);
-		return true;
+		ආපසු true;
 	}
 
 	/* fetch is going to be successful */
@@ -179,25 +179,25 @@ static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
 	 */
 
 	/* content type */
-	if (fetch_resource_send_header(ctx, "Content-Type: %s",
+	නම් (fetch_resource_send_header(ctx, "Content-Type: %s",
 				       guit->fetch->filetype(lwc_string_data(ctx->entry->path)))) {
 		goto fetch_resource_data_aborted;
 	}
 
 	/* content length */
-	if (fetch_resource_send_header(ctx, "Content-Length: %" PRIsizet,
+	නම් (fetch_resource_send_header(ctx, "Content-Length: %" PRIsizet,
 				       ctx->entry->data_len)) {
 		goto fetch_resource_data_aborted;
 	}
 
 	/* create etag */
-	if (fetch_resource_send_header(ctx, "ETag: \"%10" PRId64 "\"",
+	නම් (fetch_resource_send_header(ctx, "ETag: \"%10" PRId64 "\"",
 				       (int64_t) DIRECT_ETAG_VALUE)) {
 		goto fetch_resource_data_aborted;
 	}
 
 	/* create max-age of 1 year */
-	if (fetch_resource_send_header(ctx,
+	නම් (fetch_resource_send_header(ctx,
 			"Cache-Control: max-age=31536000")) {
 		goto fetch_resource_data_aborted;
 	}
@@ -207,35 +207,35 @@ static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
 	msg.data.header_or_data.len = ctx->entry->data_len;
 	fetch_resource_send_callback(&msg, ctx);
 
-	if (ctx->aborted == false) {
+	නම් (ctx->aborted == false) {
 		msg.type = FETCH_FINISHED;
 		fetch_resource_send_callback(&msg, ctx);
 	}
 
 fetch_resource_data_aborted:
 
-	return true;
+	ආපසු true;
 }
 
-static bool fetch_resource_notfound_handler(struct fetch_resource_context *ctx)
+static bool fetch_resource_notfound_handler(sa_nracanaa fetch_resource_context *ctx)
 {
 	fetch_msg msg;
-	int code = 404;
-	char buffer[1024];
-	const char *title;
-	char key[8];
+	පූර්ණ_සංඛ්‍යා code = 404;
+	var_na buffer[1024];
+	const var_na *title;
+	var_na key[8];
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
 
 	/* content type */
-	if (fetch_resource_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+	නම් (fetch_resource_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_resource_notfound_handler_aborted;
 
-	snprintf(key, sizeof key, "HTTP%03d", code);
+	snprintf(key, parimaa_na key, "HTTP%03d", code);
 	title = messages_get(key);
 
-	snprintf(buffer, sizeof buffer,
+	snprintf(buffer, parimaa_na buffer,
 		 "<html><head>"
 		 "<title>%s</title>"
 		 "<link rel=\"stylesheet\" type=\"text/css\" "
@@ -253,14 +253,14 @@ static bool fetch_resource_notfound_handler(struct fetch_resource_context *ctx)
 	msg.type = FETCH_DATA;
 	msg.data.header_or_data.buf = (const uint8_t *) buffer;
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_resource_send_callback(&msg, ctx))
+	නම් (fetch_resource_send_callback(&msg, ctx))
 		goto fetch_resource_notfound_handler_aborted;
 
 	msg.type = FETCH_FINISHED;
 	fetch_resource_send_callback(&msg, ctx);
 
 fetch_resource_notfound_handler_aborted:
-	return false;
+	ආපසු false;
 }
 
 
@@ -268,19 +268,19 @@ fetch_resource_notfound_handler_aborted:
 /** callback to initialise the resource fetcher. */
 static bool fetch_resource_initialise(lwc_string *scheme)
 {
-	struct fetch_resource_map_entry *e;
+	sa_nracanaa fetch_resource_map_entry *e;
 	uint32_t i;
 	nserror res;
 
 	fetch_resource_path_count = 0;
 
-	for (i = 0; i < NOF_ELEMENTS(fetch_resource_paths); i++) {
+	සඳහා (i = 0; i < NOF_ELEMENTS(fetch_resource_paths); i++) {
 		e = &fetch_resource_map[fetch_resource_path_count];
 
-		if (lwc_intern_string(fetch_resource_paths[i],
+		නම් (lwc_intern_string(fetch_resource_paths[i],
 				strlen(fetch_resource_paths[i]),
 				&e->path) != lwc_error_ok) {
-			while (i > 0) {
+			අතරතුර (i > 0) {
 				i--;
 				lwc_string_unref(fetch_resource_map[i].path);
 				nsurl_unref(fetch_resource_map[i].redirect_url);
@@ -292,15 +292,15 @@ static bool fetch_resource_initialise(lwc_string *scheme)
 		res = guit->fetch->get_resource_data(lwc_string_data(e->path),
 						     &e->data,
 						     &e->data_len);
-		if (res == NSERROR_OK) {
+		නම් (res == NSERROR_OK) {
 			NSLOG(netsurf, INFO, "direct data for %s",
 			      fetch_resource_paths[i]);
 			fetch_resource_path_count++;
-		} else {
+		} නැතහොත් {
 			e->redirect_url = guit->fetch->get_resource_url(fetch_resource_paths[i]);
-			if (e->redirect_url == NULL) {
+			නම් (e->redirect_url == NULL) {
 				lwc_string_unref(e->path);
-			} else {
+			} නැතහොත් {
 				NSLOG(netsurf, INFO, "redirect url for %s",
 				      fetch_resource_paths[i]);
 				fetch_resource_path_count++;
@@ -308,7 +308,7 @@ static bool fetch_resource_initialise(lwc_string *scheme)
 		}
 	}
 
-	return true;
+	ආපසු true;
 }
 
 /** callback to finalise the resource fetcher. */
@@ -316,11 +316,11 @@ static void fetch_resource_finalise(lwc_string *scheme)
 {
 	uint32_t i;
 
-	for (i = 0; i < fetch_resource_path_count; i++) {
+	සඳහා (i = 0; i < fetch_resource_path_count; i++) {
 		lwc_string_unref(fetch_resource_map[i].path);
-		if (fetch_resource_map[i].data != NULL) {
+		නම් (fetch_resource_map[i].data != NULL) {
 			guit->fetch->release_resource_data(fetch_resource_map[i].data);
-		} else {
+		} නැතහොත් {
 			nsurl_unref(fetch_resource_map[i].redirect_url);
 		}
 	}
@@ -328,49 +328,49 @@ static void fetch_resource_finalise(lwc_string *scheme)
 
 static bool fetch_resource_can_fetch(const nsurl *url)
 {
-	return true;
+	ආපසු true;
 }
 
 /**
  * set up a resource fetch context.
  */
 static void *
-fetch_resource_setup(struct fetch *fetchh,
+fetch_resource_setup(sa_nracanaa fetch *fetchh,
 		     nsurl *url,
 		     bool only_2xx,
 		     bool downgrade_tls,
-		     const char *post_urlenc,
-		     const struct fetch_multipart_data *post_multipart,
-		     const char **headers)
+		     const var_na *post_urlenc,
+		     const sa_nracanaa fetch_multipart_data *post_multipart,
+		     const var_na **headers)
 {
-	struct fetch_resource_context *ctx;
+	sa_nracanaa fetch_resource_context *ctx;
 	lwc_string *path;
 	nserror ret;
 	uint32_t i;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL) {
-		return NULL;
+	ctx = calloc(1, parimaa_na(*ctx));
+	නම් (ctx == NULL) {
+		ආපසු NULL;
 	}
 
 	ctx->handler = fetch_resource_notfound_handler;
 
-	if ((path = nsurl_get_component(url, NSURL_PATH)) != NULL) {
+	නම් ((path = nsurl_get_component(url, NSURL_PATH)) != NULL) {
 		bool match;
 
 		/* Ensure requested path is valid */
-		for (i = 0; i < fetch_resource_path_count; i++) {
-			if (lwc_string_isequal(path,
+		සඳහා (i = 0; i < fetch_resource_path_count; i++) {
+			නම් (lwc_string_isequal(path,
 					fetch_resource_map[i].path,
 					&match) == lwc_error_ok && match) {
 				/* found a url match, select handler */
 				ctx->entry = &fetch_resource_map[i];
-				if (ctx->entry->data != NULL) {
+				නම් (ctx->entry->data != NULL) {
 					ctx->handler = fetch_resource_data_handler;
-				} else {
+				} නැතහොත් {
 					ctx->handler = fetch_resource_redirect_handler;
 				}
-				break;
+				bha_nga;
 			}
 		}
 
@@ -380,23 +380,23 @@ fetch_resource_setup(struct fetch *fetchh,
 	ctx->url = nsurl_ref(url);
 
 	/* Scan request headers looking for If-None-Match */
-	for (i = 0; headers[i] != NULL; i++) {
-		if (strncasecmp(headers[i], "If-None-Match:",
+	සඳහා (i = 0; headers[i] != NULL; i++) {
+		නම් (strncasecmp(headers[i], "If-None-Match:",
 				SLEN("If-None-Match:")) != 0) {
 			continue;
 		}
 
 		/* If-None-Match: "12345678" */
-		const char *d = headers[i] + SLEN("If-None-Match:");
+		const var_na *d = headers[i] + SLEN("If-None-Match:");
 
 		/* Scan to first digit, if any */
-		while (*d != '\0' && (*d < '0' || '9' < *d))
+		අතරතුර (*d != '\0' && (*d < '0' || '9' < *d))
 			d++;
 
 		/* Convert to time_t */
-		if (*d != '\0') {
+		නම් (*d != '\0') {
 			ret = nsc_snptimet(d, strlen(d), &ctx->etag);
-			if (ret != NSERROR_OK) {
+			නම් (ret != NSERROR_OK) {
 				NSLOG(fetch, WARNING,
 						"Bad If-None-Match value");
 			}
@@ -407,14 +407,14 @@ fetch_resource_setup(struct fetch *fetchh,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	ආපසු ctx;
 }
 
 /** callback to free a resource fetch */
 static void fetch_resource_free(void *ctx)
 {
-	struct fetch_resource_context *c = ctx;
-	if (c->url != NULL)
+	sa_nracanaa fetch_resource_context *c = ctx;
+	නම් (c->url != NULL)
 		nsurl_unref(c->url);
 	free(ctx);
 }
@@ -422,13 +422,13 @@ static void fetch_resource_free(void *ctx)
 /** callback to start a resource fetch */
 static bool fetch_resource_start(void *ctx)
 {
-	return true;
+	ආපසු true;
 }
 
 /** callback to abort a resource fetch */
 static void fetch_resource_abort(void *ctx)
 {
-	struct fetch_resource_context *c = ctx;
+	sa_nracanaa fetch_resource_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -441,9 +441,9 @@ static void fetch_resource_abort(void *ctx)
 /** callback to poll for additional resource fetch contents */
 static void fetch_resource_poll(lwc_string *scheme)
 {
-	struct fetch_resource_context *c, *save_ring = NULL;
+	sa_nracanaa fetch_resource_context *c, *save_ring = NULL;
 
-	while (ring != NULL) {
+	අතරතුර (ring != NULL) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -454,13 +454,13 @@ static void fetch_resource_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		නම් (c->locked == true) {
 			RING_INSERT(save_ring, c);
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		නම් (c->aborted == false) {
 			/* resource fetches can be processed in one go */
 			c->handler(c);
 		}
@@ -479,7 +479,7 @@ static void fetch_resource_poll(lwc_string *scheme)
 nserror fetch_resource_register(void)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_resource);
-	const struct fetcher_operation_table fetcher_ops = {
+	const sa_nracanaa fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_resource_initialise,
 		.acceptable = fetch_resource_can_fetch,
 		.setup = fetch_resource_setup,
@@ -490,5 +490,5 @@ nserror fetch_resource_register(void)
 		.finalise = fetch_resource_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ආපසු fetcher_add(scheme, &fetcher_ops);
 }
