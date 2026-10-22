@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_choices_handler(struct fetch_about_context *ctx);
+bool fetch_about_choices_handler(sa_nracanaa fetch_about_context *ctx);
 
 #endif

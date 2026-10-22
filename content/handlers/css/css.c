@@ -43,7 +43,7 @@
 /** Screen DPI in fixed point units: defaults to 90, which RISC OS uses */
 css_fixed nscss_screen_dpi = F_90;
 
-struct content_css_data;
+sa_nracanaa content_css_data;
 
 /**
  * Type of callback called when a CSS object has finished
@@ -51,16 +51,16 @@ struct content_css_data;
  * \param css  CSS object that has completed
  * \param pw   Client-specific data
  */
-typedef void (*nscss_done_callback)(struct content_css_data *css, void *pw);
+typedef void (*nscss_done_callback)(sa_nracanaa content_css_data *css, void *pw);
 
 /**
  * CSS content data
  */
-struct content_css_data
+sa_nracanaa content_css_data
 {
 	css_stylesheet *sheet;		/**< Stylesheet object */
-	char *charset;			/**< Character set of stylesheet */
-	struct nscss_import *imports;	/**< Array of imported sheets */
+	var_na *charset;			/**< Character set of stylesheet */
+	sa_nracanaa nscss_import *imports;	/**< Array of imported sheets */
 	uint32_t import_count;		/**< Number of sheets imported */
 	uint32_t next_to_register;	/**< Index of next import to register */
 	nscss_done_callback done;	/**< Completion callback */
@@ -70,45 +70,45 @@ struct content_css_data
 /**
  * CSS content data
  */
-typedef struct nscss_content
+typedef sa_nracanaa nscss_content
 {
-	struct content base;		/**< Underlying content object */
+	sa_nracanaa content base;		/**< Underlying content object */
 
-	struct content_css_data data;	/**< CSS data */
+	sa_nracanaa content_css_data data;	/**< CSS data */
 } nscss_content;
 
 /**
  * Context for import fetches
  */
-typedef struct {
-	struct content_css_data *css;		/**< Object containing import */
+typedef sa_nracanaa {
+	sa_nracanaa content_css_data *css;		/**< Object containing import */
 	uint32_t index;				/**< Index into parent sheet's
 						 *   imports array */
 } nscss_import_ctx;
 
-static bool nscss_convert(struct content *c);
-static void nscss_destroy(struct content *c);
-static nserror nscss_clone(const struct content *old, struct content **newc);
-static bool nscss_matches_quirks(const struct content *c, bool quirks);
+static bool nscss_convert(sa_nracanaa content *c);
+static void nscss_destroy(sa_nracanaa content *c);
+static nserror nscss_clone(const sa_nracanaa content *old, sa_nracanaa content **newc);
+static bool nscss_matches_quirks(const sa_nracanaa content *c, bool quirks);
 static content_type nscss_content_type(void);
 
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
+static nserror nscss_create_css_data(sa_nracanaa content_css_data *c,
+		const var_na *url, const var_na *charset, bool quirks,
 		nscss_done_callback done, void *pw);
-static css_error nscss_process_css_data(struct content_css_data *c, const char *data,
-		unsigned int size);
-static css_error nscss_convert_css_data(struct content_css_data *c);
-static void nscss_destroy_css_data(struct content_css_data *c);
+static css_error nscss_process_css_data(sa_nracanaa content_css_data *c, const var_na *data,
+		unsigned puur_naa_nka size);
+static css_error nscss_convert_css_data(sa_nracanaa content_css_data *c);
+static void nscss_destroy_css_data(sa_nracanaa content_css_data *c);
 
-static void nscss_content_done(struct content_css_data *css, void *pw);
+static void nscss_content_done(sa_nracanaa content_css_data *css, void *pw);
 static css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 		lwc_string *url);
 static nserror nscss_import(hlcache_handle *handle,
 		const hlcache_event *event, void *pw);
 static css_error nscss_import_complete(nscss_import_ctx *ctx);
 
-static css_error nscss_register_imports(struct content_css_data *c);
-static css_error nscss_register_import(struct content_css_data *c,
+static css_error nscss_register_imports(sa_nracanaa content_css_data *c);
+static css_error nscss_register_import(sa_nracanaa content_css_data *c,
 		const hlcache_handle *import);
 
 
@@ -132,59 +132,59 @@ nscss_create(const content_handler *handler,
 	     lwc_string *imime_type,
 	     const http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     const var_na *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     sa_nracanaa content **c)
 {
 	nscss_content *result;
-	const char *charset = NULL;
-	const char *xnsbase = NULL;
+	const var_na *charset = NULL;
+	const var_na *xnsbase = NULL;
 	lwc_string *charset_value = NULL;
 	nserror error;
 
-	result = calloc(1, sizeof(nscss_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	result = calloc(1, parimaa_na(nscss_content));
+	ᬬᬾᬦ᭄ (result == NULL)
+		ᬯᬮᬶ NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type,
 			params, llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	ᬬᬾᬦ᭄ (error != NSERROR_OK) {
 		free(result);
-		return error;
+		ᬯᬮᬶ error;
 	}
 
 	/* Find charset specified on HTTP layer, if any */
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
 			&charset_value);
-	if (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
+	ᬬᬾᬦ᭄ (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
 		/* No charset specified, use fallback, if any */
 		/** \todo libcss will take this as gospel, which is wrong */
 		charset = fallback_charset;
-	} else {
+	} ᬮᬶᬬ {
 		charset = lwc_string_data(charset_value);
 	}
 
 	/* Compute base URL for stylesheet */
 	xnsbase = llcache_handle_get_header(llcache, "X-NS-Base");
-	if (xnsbase == NULL) {
+	ᬬᬾᬦ᭄ (xnsbase == NULL) {
 		xnsbase = nsurl_access(content_get_url(&result->base));
 	}
 
 	error = nscss_create_css_data(&result->data,
 			xnsbase, charset, result->base.quirks,
 			nscss_content_done, result);
-	if (error != NSERROR_OK) {
+	ᬬᬾᬦ᭄ (error != NSERROR_OK) {
 		content_broadcast_error(&result->base, NSERROR_NOMEM, NULL);
 		lwc_string_unref(charset_value);
 		free(result);
-		return error;
+		ᬯᬮᬶ error;
 	}
 
 	lwc_string_unref(charset_value);
 
-	*c = (struct content *) result;
+	*c = (sa_nracanaa content *) result;
 
-	return NSERROR_OK;
+	ᬯᬮᬶ NSERROR_OK;
 }
 
 /**
@@ -198,8 +198,8 @@ nscss_create(const content_handler *handler,
  * \param pw       Client data for \a done
  * \return NSERROR_OK on success, NSERROR_NOMEM on memory exhaustion
  */
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
+static nserror nscss_create_css_data(sa_nracanaa content_css_data *c,
+		const var_na *url, const var_na *charset, bool quirks,
 		nscss_done_callback done, void *pw)
 {
 	css_error error;
@@ -210,9 +210,9 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	c->next_to_register = (uint32_t) -1;
 	c->import_count = 0;
 	c->imports = NULL;
-	if (charset != NULL)
+	ᬬᬾᬦ᭄ (charset != NULL)
 		c->charset = strdup(charset);
-	else
+	ᬮᬶᬬ
 		c->charset = NULL;
 
 	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
@@ -232,11 +232,11 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	params.font_pw = NULL;
 
 	error = css_stylesheet_create(&params, &c->sheet);
-	if (error != CSS_OK) {
-		return NSERROR_NOMEM;
+	ᬬᬾᬦ᭄ (error != CSS_OK) {
+		ᬯᬮᬶ NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	ᬯᬮᬶ NSERROR_OK;
 }
 
 /**
@@ -248,17 +248,17 @@ static nserror nscss_create_css_data(struct content_css_data *c,
  * \return true on success, false on failure
  */
 static bool
-nscss_process_data(struct content *c, const char *data, unsigned int size)
+nscss_process_data(sa_nracanaa content *c, const var_na *data, unsigned puur_naa_nka size)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
 	error = nscss_process_css_data(&css->data, data, size);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	ᬬᬾᬦ᭄ (error != CSS_OK && error != CSS_NEEDDATA) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
 	}
 
-	return (error == CSS_OK || error == CSS_NEEDDATA);
+	ᬯᬮᬶ (error == CSS_OK || error == CSS_NEEDDATA);
 }
 
 /**
@@ -269,10 +269,10 @@ nscss_process_data(struct content *c, const char *data, unsigned int size)
  * \param size  Number of bytes to process
  * \return CSS_OK on success, appropriate error otherwise
  */
-static css_error nscss_process_css_data(struct content_css_data *c,
-		const char *data, unsigned int size)
+static css_error nscss_process_css_data(sa_nracanaa content_css_data *c,
+		const var_na *data, unsigned puur_naa_nka size)
 {
-	return css_stylesheet_append_data(c->sheet,
+	ᬯᬮᬶ css_stylesheet_append_data(c->sheet,
 			(const uint8_t *) data, size);
 }
 
@@ -282,18 +282,18 @@ static css_error nscss_process_css_data(struct content_css_data *c,
  * \param c  Content to convert
  * \return true on success, false on failure
  */
-bool nscss_convert(struct content *c)
+bool nscss_convert(sa_nracanaa content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
 	error = nscss_convert_css_data(&css->data);
-	if (error != CSS_OK) {
+	ᬬᬾᬦ᭄ (error != CSS_OK) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
-		return false;
+		ᬯᬮᬶ false;
 	}
 
-	return true;
+	ᬯᬮᬶ true;
 }
 
 /**
@@ -302,14 +302,14 @@ bool nscss_convert(struct content *c)
  * \param c  CSS data to convert
  * \return CSS error
  */
-static css_error nscss_convert_css_data(struct content_css_data *c)
+static css_error nscss_convert_css_data(sa_nracanaa content_css_data *c)
 {
 	css_error error;
 
 	error = css_stylesheet_data_done(c->sheet);
 
 	/* Process pending imports */
-	if (error == CSS_IMPORTS_PENDING) {
+	ᬬᬾᬦ᭄ (error == CSS_IMPORTS_PENDING) {
 		/* We must not have registered any imports yet */
 		assert(c->next_to_register == (uint32_t) -1);
 
@@ -317,22 +317,22 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
 		 * hasn't finished fetching */
 		c->next_to_register = 0;
 		error = nscss_register_imports(c);
-	} else if (error == CSS_OK) {
+	} ᬮᬶᬬ ᬬᬾᬦ᭄ (error == CSS_OK) {
 		/* No imports, and no errors, so complete conversion */
 		c->done(c, c->pw);
-	} else {
-		const char *url;
+	} ᬮᬶᬬ {
+		const var_na *url;
 
-		if (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
+		ᬬᬾᬦ᭄ (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
 			NSLOG(netsurf, INFO, "Failed converting %p %s (%d)",
 			      c, url, error);
-		} else {
+		} ᬮᬶᬬ {
 			NSLOG(netsurf, INFO, "Failed converting %p (%d)", c,
 			      error);
 		}
 	}
 
-	return error;
+	ᬯᬮᬶ error;
 }
 
 /**
@@ -340,7 +340,7 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
  *
  * \param c  Content to clean up
  */
-void nscss_destroy(struct content *c)
+void nscss_destroy(sa_nracanaa content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 
@@ -352,12 +352,12 @@ void nscss_destroy(struct content *c)
  *
  * \param c  CSS data to clean up
  */
-static void nscss_destroy_css_data(struct content_css_data *c)
+static void nscss_destroy_css_data(sa_nracanaa content_css_data *c)
 {
 	uint32_t i;
 
 	for (i = 0; i < c->import_count; i++) {
-		if (c->imports[i].c != NULL) {
+		ᬬᬾᬦ᭄ (c->imports[i].c != NULL) {
 			hlcache_handle_release(c->imports[i].c);
 		}
 		c->imports[i].c = NULL;
@@ -365,7 +365,7 @@ static void nscss_destroy_css_data(struct content_css_data *c)
 
 	free(c->imports);
 
-	if (c->sheet != NULL) {
+	ᬬᬾᬦ᭄ (c->sheet != NULL) {
 		css_stylesheet_destroy(c->sheet);
 		c->sheet = NULL;
 	}
@@ -373,7 +373,7 @@ static void nscss_destroy_css_data(struct content_css_data *c)
 	free(c->charset);
 }
 
-nserror nscss_clone(const struct content *old, struct content **newc)
+nserror nscss_clone(const sa_nracanaa content *old, sa_nracanaa content **newc)
 {
 	const nscss_content *old_css = (const nscss_content *) old;
 	nscss_content *new_css;
@@ -381,15 +381,15 @@ nserror nscss_clone(const struct content *old, struct content **newc)
 	size_t size;
 	nserror error;
 
-	new_css = calloc(1, sizeof(nscss_content));
-	if (new_css == NULL)
-		return NSERROR_NOMEM;
+	new_css = calloc(1, parimaa_na(nscss_content));
+	ᬬᬾᬦ᭄ (new_css == NULL)
+		ᬯᬮᬶ NSERROR_NOMEM;
 
 	/* Clone content */
 	error = content__clone(old, &new_css->base);
-	if (error != NSERROR_OK) {
+	ᬬᬾᬦ᭄ (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		ᬯᬮᬶ error;
 	}
 
 	/* Simply replay create/process/convert */
@@ -398,51 +398,51 @@ nserror nscss_clone(const struct content *old, struct content **newc)
 			old_css->data.charset,
 			new_css->base.quirks,
 			nscss_content_done, new_css);
-	if (error != NSERROR_OK) {
+	ᬬᬾᬦ᭄ (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		ᬯᬮᬶ error;
 	}
 
 	data = content__get_source_data(&new_css->base, &size);
-	if (size > 0) {
-		if (nscss_process_data(&new_css->base,
-				       (char *)data,
-				       (unsigned int)size) == false) {
+	ᬬᬾᬦ᭄ (size > 0) {
+		ᬬᬾᬦ᭄ (nscss_process_data(&new_css->base,
+				       (var_na *)data,
+				       (unsigned puur_naa_nka)size) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			ᬯᬮᬶ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	ᬬᬾᬦ᭄ (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nscss_convert(&new_css->base) == false) {
+		ᬬᬾᬦ᭄ (nscss_convert(&new_css->base) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			ᬯᬮᬶ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_css;
+	*newc = (sa_nracanaa content *) new_css;
 
-	return NSERROR_OK;
+	ᬯᬮᬶ NSERROR_OK;
 }
 
-bool nscss_matches_quirks(const struct content *c, bool quirks)
+bool nscss_matches_quirks(const sa_nracanaa content *c, bool quirks)
 {
-	return c->quirks == quirks;
+	ᬯᬮᬶ c->quirks == quirks;
 }
 
 /* exported interface documented in netsurf/css.h */
-css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h)
+css_stylesheet *nscss_get_stylesheet(sa_nracanaa hlcache_handle *h)
 {
 	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
 
 	assert(c != NULL);
 
-	return c->data.sheet;
+	ᬯᬮᬶ c->data.sheet;
 }
 
 /* exported interface documented in netsurf/css.h */
-struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+sa_nracanaa nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
 {
 	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
 
@@ -451,7 +451,7 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
 
 	*n = c->data.import_count;
 
-	return c->data.imports;
+	ᬯᬮᬶ c->data.imports;
 }
 
 /**
@@ -461,7 +461,7 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
  */
 content_type nscss_content_type(void)
 {
-	return CONTENT_CSS;
+	ᬯᬮᬶ CONTENT_CSS;
 }
 
 /*****************************************************************************
@@ -474,29 +474,29 @@ content_type nscss_content_type(void)
  * \param css  CSS object
  * \param pw   Private data
  */
-void nscss_content_done(struct content_css_data *css, void *pw)
+void nscss_content_done(sa_nracanaa content_css_data *css, void *pw)
 {
-	struct content *c = pw;
+	sa_nracanaa content *c = pw;
 	uint32_t i;
 	size_t size;
 	css_error error;
 
 	/* Retrieve the size of this sheet */
 	error = css_stylesheet_size(css->sheet, &size);
-	if (error != CSS_OK) {
+	ᬬᬾᬦ᭄ (error != CSS_OK) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
 		content_set_error(c);
-		return;
+		ᬯᬮᬶ;
 	}
 	c->size += size;
 
 	/* Add on the size of the imported sheets */
 	for (i = 0; i < css->import_count; i++) {
-		if (css->imports[i].c != NULL) {
-			struct content *import = hlcache_handle_get_content(
+		ᬬᬾᬦ᭄ (css->imports[i].c != NULL) {
+			sa_nracanaa content *import = hlcache_handle_get_content(
 					css->imports[i].c);
 
-			if (import != NULL) {
+			ᬬᬾᬦ᭄ (import != NULL) {
 				c->size += import->size;
 			}
 		}
@@ -523,11 +523,11 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 		lwc_string *url)
 {
 	content_type accept = CONTENT_CSS;
-	struct content_css_data *c = pw;
+	sa_nracanaa content_css_data *c = pw;
 	nscss_import_ctx *ctx;
 	hlcache_child_context child;
-	struct nscss_import *imports;
-	const char *referer;
+	sa_nracanaa nscss_import *imports;
+	const var_na *referer;
 	css_error error;
 	nserror nerror;
 
@@ -537,65 +537,65 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 	assert(parent == c->sheet);
 
 	error = css_stylesheet_get_url(c->sheet, &referer);
-	if (error != CSS_OK) {
-		return error;
+	ᬬᬾᬦ᭄ (error != CSS_OK) {
+		ᬯᬮᬶ error;
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL)
-		return CSS_NOMEM;
+	ctx = malloc(parimaa_na(*ctx));
+	ᬬᬾᬦ᭄ (ctx == NULL)
+		ᬯᬮᬶ CSS_NOMEM;
 
 	ctx->css = c;
 	ctx->index = c->import_count;
 
 	/* Increase space in table */
 	imports = realloc(c->imports, (c->import_count + 1) *
-			sizeof(struct nscss_import));
-	if (imports == NULL) {
+			parimaa_na(sa_nracanaa nscss_import));
+	ᬬᬾᬦ᭄ (imports == NULL) {
 		free(ctx);
-		return CSS_NOMEM;
+		ᬯᬮᬶ CSS_NOMEM;
 	}
 	c->imports = imports;
 
 	/** \todo fallback charset */
 	child.charset = NULL;
 	error = css_stylesheet_quirks_allowed(c->sheet, &child.quirks);
-	if (error != CSS_OK) {
+	ᬬᬾᬦ᭄ (error != CSS_OK) {
 		free(ctx);
-		return error;
+		ᬯᬮᬶ error;
 	}
 
 	/* Create content */
 
 	/** \todo Why aren't we getting a relative url part, to join? */
 	nerror = nsurl_create(lwc_string_data(url), &ns_url);
-	if (nerror != NSERROR_OK) {
+	ᬬᬾᬦ᭄ (nerror != NSERROR_OK) {
 		free(ctx);
-		return CSS_NOMEM;
+		ᬯᬮᬶ CSS_NOMEM;
 	}
 
 	/** \todo Constructing nsurl for referer here is silly, avoid */
 	nerror = nsurl_create(referer, &ns_ref);
-	if (nerror != NSERROR_OK) {
+	ᬬᬾᬦ᭄ (nerror != NSERROR_OK) {
 		nsurl_unref(ns_url);
 		free(ctx);
-		return CSS_NOMEM;
+		ᬯᬮᬶ CSS_NOMEM;
 	}
 
 	/* Avoid importing ourself */
-	if (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
+	ᬬᬾᬦ᭄ (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
 		c->imports[c->import_count].c = NULL;
 		/* No longer require context as we're not fetching anything */
 		free(ctx);
 		ctx = NULL;
-	} else {
+	} ᬮᬶᬬ {
 		nerror = hlcache_handle_retrieve(ns_url,
 				0, ns_ref, NULL, nscss_import, ctx,
 				&child, accept,
 				&c->imports[c->import_count].c);
-		if (nerror != NSERROR_OK) {
+		ᬬᬾᬦ᭄ (nerror != NSERROR_OK) {
 			free(ctx);
-			return CSS_NOMEM;
+			ᬯᬮᬶ CSS_NOMEM;
 		}
 	}
 
@@ -610,7 +610,7 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 
 	c->import_count++;
 
-	return CSS_OK;
+	ᬯᬮᬶ CSS_OK;
 }
 
 /**
@@ -634,23 +634,23 @@ nserror nscss_import(hlcache_handle *handle,
 	assert(ctx->css->imports[ctx->index].c == handle);
 
 	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	pak_sa CONTENT_MSG_DONE:
 		error = nscss_import_complete(ctx);
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_ERROR:
+	pak_sa CONTENT_MSG_ERROR:
 		hlcache_handle_release(handle);
 		ctx->css->imports[ctx->index].c = NULL;
 
 		error = nscss_import_complete(ctx);
 		/* Already released handle */
-		break;
+		bha_nga;
 	default:
-		break;
+		bha_nga;
 	}
 
 	/* Preserve out-of-memory. Anything else is OK */
-	return error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
+	ᬯᬮᬶ error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
 }
 
 /**
@@ -664,7 +664,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	css_error error = CSS_OK;
 
 	/* If this import is the next to be registered, do so */
-	if (ctx->css->next_to_register == ctx->index)
+	ᬬᬾᬦ᭄ (ctx->css->next_to_register == ctx->index)
 		error = nscss_register_imports(ctx->css);
 
 #ifdef NSCSS_IMPORT_TRACE
@@ -675,7 +675,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	/* No longer need import context */
 	free(ctx);
 
-	return error;
+	ᬯᬮᬶ error;
 }
 
 /*****************************************************************************
@@ -688,7 +688,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
  * \param c  CSS object containing the imports
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_imports(struct content_css_data *c)
+css_error nscss_register_imports(sa_nracanaa content_css_data *c)
 {
 	uint32_t index;
 	css_error error;
@@ -702,26 +702,26 @@ css_error nscss_register_imports(struct content_css_data *c)
 		 * completed yet. We'll resume at this point when it has
 		 * completed.
 		 */
-		if (c->imports[index].c != NULL &&
+		ᬬᬾᬦ᭄ (c->imports[index].c != NULL &&
 			content_get_status(c->imports[index].c) !=
 				CONTENT_STATUS_DONE) {
-			break;
+			bha_nga;
 		}
 
 		error = nscss_register_import(c, c->imports[index].c);
-		if (error != CSS_OK)
-			return error;
+		ᬬᬾᬦ᭄ (error != CSS_OK)
+			ᬯᬮᬶ error;
 	}
 
 	/* Record identity of the next import to register */
 	c->next_to_register = (uint32_t) index;
 
-	if (c->next_to_register == c->import_count) {
+	ᬬᬾᬦ᭄ (c->next_to_register == c->import_count) {
 		/* No more imports: notify parent that we're DONE */
 		c->done(c, c->pw);
 	}
 
-	return CSS_OK;
+	ᬯᬮᬶ CSS_OK;
 }
 
 
@@ -732,19 +732,19 @@ css_error nscss_register_imports(struct content_css_data *c)
  * \param import  Cache handle of import, or NULL for blank
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_import(struct content_css_data *c,
+css_error nscss_register_import(sa_nracanaa content_css_data *c,
 		const hlcache_handle *import)
 {
 	css_stylesheet *sheet;
 	css_error error;
 
-	if (import != NULL) {
+	ᬬᬾᬦ᭄ (import != NULL) {
 		nscss_content *s =
 			(nscss_content *) hlcache_handle_get_content(import);
 		sheet = s->data.sheet;
-	} else {
+	} ᬮᬶᬬ {
 		/* Create a blank sheet if needed. */
-		if (blank_import == NULL) {
+		ᬬᬾᬦ᭄ (blank_import == NULL) {
 			css_stylesheet_params params;
 
 			params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
@@ -764,14 +764,14 @@ css_error nscss_register_import(struct content_css_data *c,
 			params.font_pw = NULL;
 
 			error = css_stylesheet_create(&params, &blank_import);
-			if (error != CSS_OK) {
-				return error;
+			ᬬᬾᬦ᭄ (error != CSS_OK) {
+				ᬯᬮᬶ error;
 			}
 
 			error = css_stylesheet_data_done(blank_import);
-			if (error != CSS_OK) {
+			ᬬᬾᬦ᭄ (error != CSS_OK) {
 				css_stylesheet_destroy(blank_import);
-				return error;
+				ᬯᬮᬶ error;
 			}
 		}
 
@@ -779,11 +779,11 @@ css_error nscss_register_import(struct content_css_data *c,
 	}
 
 	error = css_stylesheet_register_import(c->sheet, sheet);
-	if (error != CSS_OK) {
-		return error;
+	ᬬᬾᬦ᭄ (error != CSS_OK) {
+		ᬯᬮᬶ error;
 	}
 
-	return error;
+	ᬯᬮᬶ error;
 }
 
 /**
@@ -791,7 +791,7 @@ css_error nscss_register_import(struct content_css_data *c,
  */
 static void nscss_fini(void)
 {
-	if (blank_import != NULL) {
+	ᬬᬾᬦ᭄ (blank_import != NULL) {
 		css_stylesheet_destroy(blank_import);
 		blank_import = NULL;
 	}
@@ -817,17 +817,17 @@ nserror nscss_init(void)
 
 	error = content_factory_register_handler("text/css",
 			&css_content_handler);
-	if (error != NSERROR_OK)
+	ᬬᬾᬦ᭄ (error != NSERROR_OK)
 		goto error;
 
 	error = css_hint_init();
-	if (error != NSERROR_OK)
+	ᬬᬾᬦ᭄ (error != NSERROR_OK)
 		goto error;
 
-	return NSERROR_OK;
+	ᬯᬮᬶ NSERROR_OK;
 
 error:
 	nscss_fini();
 
-	return error;
+	ᬯᬮᬶ error;
 }

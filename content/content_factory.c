@@ -35,9 +35,9 @@
 /**
  * Entry in list of content handlers
  */
-typedef struct content_handler_entry {
+typedef sa_nracanaa content_handler_entry {
 	/** Next entry */
-	struct content_handler_entry *next;
+	sa_nracanaa content_handler_entry *next;
 
 	/** MIME type handled by handler */
 	lwc_string *mime_type;
@@ -54,12 +54,12 @@ void content_factory_fini(void)
 {
 	content_handler_entry *victim;
 
-	while (content_handlers != NULL) {
+	ᬲᭂᬤᭂᬮ (content_handlers != NULL) {
 		victim = content_handlers;
 
 		content_handlers = content_handlers->next;
 
-		if (victim->handler->fini != NULL)
+		ᬬᬾᬦ᭄ (victim->handler->fini != NULL)
 			victim->handler->fini();
 
 		lwc_string_unref(victim->mime_type);
@@ -77,7 +77,7 @@ void content_factory_fini(void)
  *
  * \note Latest registration for a MIME type wins
  */
-nserror content_factory_register_handler(const char *mime_type,
+nserror content_factory_register_handler(const var_na *mime_type,
 		const content_handler *handler)
 {
 	lwc_string *imime_type;
@@ -86,31 +86,31 @@ nserror content_factory_register_handler(const char *mime_type,
 	bool match;
 
 	lerror = lwc_intern_string(mime_type, strlen(mime_type), &imime_type);
-	if (lerror != lwc_error_ok)
-		return NSERROR_NOMEM;
+	ᬬᬾᬦ᭄ (lerror != lwc_error_ok)
+		ᬯᬮᬶ NSERROR_NOMEM;
 
 	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(imime_type, entry->mime_type,
+		ᬬᬾᬦ᭄ (lwc_string_caseless_isequal(imime_type, entry->mime_type,
 				&match) == lwc_error_ok && match)
-			break;
+			bha_nga;
 	}
 
-	if (entry == NULL) {
-		entry = malloc(sizeof(content_handler_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+	ᬬᬾᬦ᭄ (entry == NULL) {
+		entry = malloc(parimaa_na(content_handler_entry));
+		ᬬᬾᬦ᭄ (entry == NULL)
+			ᬯᬮᬶ NSERROR_NOMEM;
 
 		entry->next = content_handlers;
 		content_handlers = entry;
 
 		entry->mime_type = imime_type;
-	} else {
+	} ᬮᬶᬬ {
 		lwc_string_unref(imime_type);
 	}
 
 	entry->handler = handler;
 
-	return NSERROR_OK;
+	ᬯᬮᬶ NSERROR_OK;
 }
 
 /**
@@ -125,17 +125,17 @@ static const content_handler *content_lookup(lwc_string *mime_type)
 	bool match;
 
 	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(mime_type, entry->mime_type,
+		ᬬᬾᬦ᭄ (lwc_string_caseless_isequal(mime_type, entry->mime_type,
 					&match) == lwc_error_ok && match) {
-			break;
+			bha_nga;
 		}
 	}
 
-	if (entry != NULL) {
-		return entry->handler;
+	ᬬᬾᬦ᭄ (entry != NULL) {
+		ᬯᬮᬶ entry->handler;
 	}
 
-	return NULL;
+	ᬯᬮᬶ NULL;
 }
 
 /**
@@ -150,11 +150,11 @@ content_type content_factory_type_from_mime_type(lwc_string *mime_type)
 	content_type type = CONTENT_NONE;
 
 	handler = content_lookup(mime_type);
-	if (handler != NULL) {
+	ᬬᬾᬦ᭄ (handler != NULL) {
 		type = handler->type();
 	}
 
-	return type;
+	ᬯᬮᬶ type;
 }
 
 /**
@@ -166,26 +166,26 @@ content_type content_factory_type_from_mime_type(lwc_string *mime_type)
  * \param effective_type    Effective MIME type of content
  * \return Pointer to content object, or NULL on failure
  */
-struct content *content_factory_create_content(llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
+sa_nracanaa content *content_factory_create_content(llcache_handle *llcache,
+		const var_na *fallback_charset, bool quirks,
 		lwc_string *effective_type)
 {
-	struct content *c;
-	const char *content_type_header;
+	sa_nracanaa content *c;
+	const var_na *content_type_header;
 	const content_handler *handler;
 	http_content_type *ct = NULL;
 	nserror error;
 
 	handler = content_lookup(effective_type);
-	if (handler == NULL)
-		return NULL;
+	ᬬᬾᬦ᭄ (handler == NULL)
+		ᬯᬮᬶ NULL;
 
 	assert(handler->create != NULL);
 
 	/* Use the parameters from the declared Content-Type header */
 	content_type_header = 
 			llcache_handle_get_header(llcache, "Content-Type");
-	if (content_type_header != NULL) {
+	ᬬᬾᬦ᭄ (content_type_header != NULL) {
 		/* We don't care if this fails */
 		http_parse_content_type(content_type_header, &ct);
 	}
@@ -195,12 +195,12 @@ struct content *content_factory_create_content(llcache_handle *llcache,
 			llcache, fallback_charset, quirks, 
 			&c);
 
-	if (ct != NULL)
+	ᬬᬾᬦ᭄ (ct != NULL)
 		http_content_type_destroy(ct);
 
-	if (error != NSERROR_OK)
-		return NULL;
+	ᬬᬾᬦ᭄ (error != NSERROR_OK)
+		ᬯᬮᬶ NULL;
 
-	return c;
+	ᬯᬮᬶ c;
 }
 
