@@ -21,8 +21,8 @@
  * HTML Box tree construction special element conversion interface.
  */
 
-#ifndef NETSURF_HTML_BOX_SPECIAL_H
-#define NETSURF_HTML_BOX_SPECIAL_H
+#यदि_अपरिभाषितम् NETSURF_HTML_BOX_SPECIAL_H
+#परिभाषय NETSURF_HTML_BOX_SPECIAL_H
 
 
 /**
@@ -30,6 +30,6 @@
  *
  * \return true if box construction should continue else false on error.
  */
-bool convert_special_elements(dom_node *node, html_content *content, struct box *box, bool *convert_children);
+bool convert_special_elements(dom_ग्रन्थिः *ग्रन्थिः, html_content *content, संरचना box *box, bool *convert_children);
 
-#endif
+#यदि_अन्तः

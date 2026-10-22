@@ -21,14 +21,14 @@
  * about scheme URL method handler
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_ABOUT_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_ABOUT_H
+#यदि_अपरिभाषितम् NETSURF_CONTENT_FETCHERS_ABOUT_ABOUT_H
+#परिभाषय NETSURF_CONTENT_FETCHERS_ABOUT_ABOUT_H
 
 /**
  * Register about scheme handler.
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_about_register(void);
+nserror fetch_about_पञ्जिकाकोशः(शून्य);
 
-#endif
+#यदि_अन्तः

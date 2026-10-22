@@ -28,41 +28,41 @@
  * Redrawing CONTENT_HTML implementation.
  */
 
-#include "utils/config.h"
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <dom/dom.h>
+#अन्तर्भाव "utils/config.h"
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <math.h>
+#अन्तर्भाव <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/layout.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/textsearch.h"
-#include "css/utils.h"
-#include "desktop/selection.h"
-#include "desktop/print.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
-#include "desktop/gui_internal.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/messages.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/nsoption.h"
+#अन्तर्भाव "utils/corestrings.h"
+#अन्तर्भाव "netsurf/content.h"
+#अन्तर्भाव "netsurf/browser_window.h"
+#अन्तर्भाव "netsurf/plotters.h"
+#अन्तर्भाव "netsurf/bitmap.h"
+#अन्तर्भाव "netsurf/layout.h"
+#अन्तर्भाव "content/content.h"
+#अन्तर्भाव "content/content_protected.h"
+#अन्तर्भाव "content/textsearch.h"
+#अन्तर्भाव "css/utils.h"
+#अन्तर्भाव "desktop/selection.h"
+#अन्तर्भाव "desktop/print.h"
+#अन्तर्भाव "desktop/scrollbar.h"
+#अन्तर्भाव "desktop/textarea.h"
+#अन्तर्भाव "desktop/gui_internal.h"
 
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/box_manipulate.h"
-#include "html/font.h"
-#include "html/form_internal.h"
-#include "html/private.h"
-#include "html/layout.h"
+#अन्तर्भाव "html/box.h"
+#अन्तर्भाव "html/box_inspect.h"
+#अन्तर्भाव "html/box_manipulate.h"
+#अन्तर्भाव "html/font.h"
+#अन्तर्भाव "html/form_internal.h"
+#अन्तर्भाव "html/private.h"
+#अन्तर्भाव "html/layout.h"
 
 
 bool html_redraw_debug = false;
@@ -73,21 +73,21 @@ bool html_redraw_debug = false;
  * \param box  Box to consider
  * \return True if box has a background, false otherwise.
  */
-static bool html_redraw_box_has_background(struct box *box)
+स्थिर bool html_redraw_box_has_background(संरचना box *box)
 {
-	if (box->background != NULL)
-		return true;
+	यदि (box->background != रिक्त)
+		प्रत्यागम true;
 
-	if (box->style != NULL) {
-		css_color colour;
+	यदि (box->style != रिक्त) {
+		css_color रङ्गः;
 
-		css_computed_background_color(box->style, &colour);
+		css_computed_background_color(box->style, &रङ्गः);
 
-		if (nscss_color_is_transparent(colour) == false)
-			return true;
+		यदि (nscss_color_is_transparent(रङ्गः) == false)
+			प्रत्यागम true;
 	}
 
-	return false;
+	प्रत्यागम false;
 }
 
 /**
@@ -96,7 +96,7 @@ static bool html_redraw_box_has_background(struct box *box)
  * \param box  Box to find background box for
  * \return Pointer to background box, or NULL if there is none
  */
-static struct box *html_redraw_find_bg_box(struct box *box)
+स्थिर संरचना box *html_redraw_find_bg_box(संरचना box *box)
 {
 	/* Thanks to backwards compatibility, CSS defines the following:
 	 *
@@ -108,28 +108,28 @@ static struct box *html_redraw_find_bg_box(struct box *box)
 	 *   element is processed, ignore the background.
 	 * + For any other box, just use its own styling.
 	 */
-	if (box->parent == NULL) {
+	यदि (box->parent == रिक्त) {
 		/* Root box */
-		if (html_redraw_box_has_background(box))
-			return box;
+		यदि (html_redraw_box_has_background(box))
+			प्रत्यागम box;
 
 		/* No background on root box: consider body box, if any */
-		if (box->children != NULL) {
-			if (html_redraw_box_has_background(box->children))
-				return box->children;
+		यदि (box->children != रिक्त) {
+			यदि (html_redraw_box_has_background(box->children))
+				प्रत्यागम box->children;
 		}
-	} else if (box->parent != NULL && box->parent->parent == NULL) {
+	} अन्यथा यदि (box->parent != रिक्त && box->parent->parent == रिक्त) {
 		/* Body box: only render background if root has its own */
-		if (html_redraw_box_has_background(box) &&
+		यदि (html_redraw_box_has_background(box) &&
 				html_redraw_box_has_background(box->parent))
-			return box;
-	} else {
+			प्रत्यागम box;
+	} अन्यथा {
 		/* Any other box */
-		if (html_redraw_box_has_background(box))
-			return box;
+		यदि (html_redraw_box_has_background(box))
+			प्रत्यागम box;
 	}
 
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
 /**
@@ -154,108 +154,108 @@ static struct box *html_redraw_find_bg_box(struct box *box)
  * \return true iff successful and redraw should proceed
  */
 
-static bool
-text_redraw(const char *utf8_text,
+स्थिर bool
+text_redraw(ध्रुव वर्ण *utf8_text,
 	    size_t utf8_len,
-	    size_t offset,
-	    int space,
-	    const plot_font_style_t *fstyle,
-	    int x,
-	    int y,
-	    const struct rect *clip,
-	    int height,
-	    float scale,
+	    size_t विस्थापनम्,
+	    पूर्णाङ्क space,
+	    ध्रुव plot_font_style_t *fstyle,
+	    पूर्णाङ्क x,
+	    पूर्णाङ्क y,
+	    ध्रुव संरचना rect *clip,
+	    पूर्णाङ्क height,
+	    भिन्न scale,
 	    bool excluded,
-	    struct content *c,
-	    const struct selection *sel,
-	    const struct redraw_context *ctx)
+	    संरचना content *c,
+	    ध्रुव संरचना selection *sel,
+	    ध्रुव संरचना redraw_context *ctx)
 {
 	bool highlighted = false;
 	plot_font_style_t plot_fstyle = *fstyle;
 	nserror res;
 
 	/* Need scaled text size to pass to plotters */
-	plot_fstyle.size *= scale;
+	plot_fstyle.आकार *= scale;
 
 	/* is this box part of a selection? */
-	if (!excluded && ctx->interactive == true) {
-		unsigned len = utf8_len + (space ? 1 : 0);
-		unsigned start_idx;
-		unsigned end_idx;
+	यदि (!excluded && ctx->interactive == true) {
+		अचिह्नित len = utf8_len + (space ? 1 : 0);
+		अचिह्नित start_idx;
+		अचिह्नित अन्तः_idx;
 
 		/* first try the browser window's current selection */
-		if (selection_highlighted(sel,
-					  offset,
-					  offset + len,
+		यदि (selection_highlighted(sel,
+					  विस्थापनम्,
+					  विस्थापनम् + len,
 					  &start_idx,
-					  &end_idx)) {
+					  &अन्तः_idx)) {
 			highlighted = true;
 		}
 
 		/* what about the current search operation, if any? */
-		if (!highlighted &&
-		    (c->textsearch.context != NULL) &&
+		यदि (!highlighted &&
+		    (c->textsearch.context != रिक्त) &&
 		    content_textsearch_ishighlighted(c->textsearch.context,
-						     offset,
-						     offset + len,
+						     विस्थापनम्,
+						     विस्थापनम् + len,
 						     &start_idx,
-						     &end_idx)) {
+						     &अन्तः_idx)) {
 			highlighted = true;
 		}
 
 		/* \todo make search terms visible within selected text */
-		if (highlighted) {
-			struct rect r;
-			unsigned endtxt_idx = end_idx;
-			bool clip_changed = false;
+		यदि (highlighted) {
+			संरचना rect r;
+			अचिह्नित endtxt_idx = अन्तः_idx;
+			bool clip_परिवर्तितम् = false;
 			bool text_visible = true;
-			int startx, endx;
+			पूर्णाङ्क startx, endx;
 			plot_style_t pstyle_fill_hback = *plot_style_fill_white;
 			plot_font_style_t fstyle_hback = plot_fstyle;
 
-			if (end_idx > utf8_len) {
+			यदि (अन्तः_idx > utf8_len) {
 				/* adjust for trailing space, not present in
 				 * utf8_text */
-				assert(end_idx == utf8_len + 1);
+				प्रतिज्ञा(अन्तः_idx == utf8_len + 1);
 				endtxt_idx = utf8_len;
 			}
 
-			res = guit->layout->width(fstyle,
+			res = guit->layout->विस्तारः(fstyle,
 						  utf8_text, start_idx,
 						  &startx);
-			if (res != NSERROR_OK) {
+			यदि (res != NSERROR_OK) {
 				startx = 0;
 			}
 
-			res = guit->layout->width(fstyle,
+			res = guit->layout->विस्तारः(fstyle,
 						  utf8_text, endtxt_idx,
 						  &endx);
-			if (res != NSERROR_OK) {
+			यदि (res != NSERROR_OK) {
 				endx = 0;
 			}
 
 			/* is there a trailing space that should be highlighted
 			 * as well? */
-			if (end_idx > utf8_len) {
+			यदि (अन्तः_idx > utf8_len) {
 					endx += space;
 			}
 
-			if (scale != 1.0) {
+			यदि (scale != 1.0) {
 				startx *= scale;
 				endx *= scale;
 			}
 
 			/* draw any text preceding highlighted portion */
-			if ((start_idx > 0) &&
+			यदि ((start_idx > 0) &&
 			    (ctx->plot->text(ctx,
 					     &plot_fstyle,
 					     x,
-					     y + (int)(height * 0.75 * scale),
+					     y + (पूर्णाङ्क)(height * 0.75 * scale),
 					     utf8_text,
 					     start_idx) != NSERROR_OK))
-				return false;
+				प्रत्यागम false;
 
-			pstyle_fill_hback.fill_colour = fstyle->foreground;
+			pstyle_fill_hback.fill_रङ्गः = fstyle->foreground;
 
 			/* highlighted portion */
 			r.x0 = x + startx;
@@ -263,92 +263,92 @@ text_redraw(const char *utf8_text,
 			r.x1 = x + endx;
 			r.y1 = y + height * scale;
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_hback, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
 
-			if (start_idx > 0) {
-				int px0 = max(x + startx, clip->x0);
-				int px1 = min(x + endx, clip->x1);
+			यदि (start_idx > 0) {
+				पूर्णाङ्क px0 = max(x + startx, clip->x0);
+				पूर्णाङ्क px1 = min(x + endx, clip->x1);
 
-				if (px0 < px1) {
+				यदि (px0 < px1) {
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = px1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					यदि (res != NSERROR_OK) {
+						प्रत्यागम false;
 					}
 
-					clip_changed = true;
-				} else {
+					clip_परिवर्तितम् = true;
+				} अन्यथा {
 					text_visible = false;
 				}
 			}
 
 			fstyle_hback.background =
-				pstyle_fill_hback.fill_colour;
-			fstyle_hback.foreground = colour_to_bw_furthest(
-				pstyle_fill_hback.fill_colour);
+				pstyle_fill_hback.fill_रङ्गः;
+			fstyle_hback.foreground = रङ्गः_गन्तव्यम्_bw_furthest(
+				pstyle_fill_hback.fill_रङ्गः);
 
-			if (text_visible &&
+			यदि (text_visible &&
 			    (ctx->plot->text(ctx,
 					     &fstyle_hback,
 					     x,
-					     y + (int)(height * 0.75 * scale),
+					     y + (पूर्णाङ्क)(height * 0.75 * scale),
 					     utf8_text,
 					     endtxt_idx) != NSERROR_OK)) {
-				return false;
+				प्रत्यागम false;
 			}
 
 			/* draw any text succeeding highlighted portion */
-			if (endtxt_idx < utf8_len) {
-				int px0 = max(x + endx, clip->x0);
-				if (px0 < clip->x1) {
+			यदि (endtxt_idx < utf8_len) {
+				पूर्णाङ्क px0 = max(x + endx, clip->x0);
+				यदि (px0 < clip->x1) {
 
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = clip->x1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					यदि (res != NSERROR_OK) {
+						प्रत्यागम false;
 					}
 
-					clip_changed = true;
+					clip_परिवर्तितम् = true;
 
 					res = ctx->plot->text(ctx,
 							      &plot_fstyle,
 							      x,
-							      y + (int)(height * 0.75 * scale),
+							      y + (पूर्णाङ्क)(height * 0.75 * scale),
 							      utf8_text,
 							      utf8_len);
-					if (res != NSERROR_OK) {
-						return false;
+					यदि (res != NSERROR_OK) {
+						प्रत्यागम false;
 					}
 				}
 			}
 
-			if (clip_changed &&
+			यदि (clip_परिवर्तितम् &&
 			    (ctx->plot->clip(ctx, clip) != NSERROR_OK)) {
-				return false;
+				प्रत्यागम false;
 			}
 		}
 	}
 
-	if (!highlighted) {
+	यदि (!highlighted) {
 		res = ctx->plot->text(ctx,
 				      &plot_fstyle,
 				      x,
-				      y + (int) (height * 0.75 * scale),
+				      y + (पूर्णाङ्क) (height * 0.75 * scale),
 				      utf8_text,
 				      utf8_len);
-		if (res != NSERROR_OK) {
-			return false;
+		यदि (res != NSERROR_OK) {
+			प्रत्यागम false;
 		}
 	}
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -364,91 +364,91 @@ text_redraw(const char *utf8_text,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_checkbox(int x, int y, int width, int height,
-		bool selected, const struct redraw_context *ctx)
+स्थिर bool html_redraw_checkbox(पूर्णाङ्क x, पूर्णाङ्क y, पूर्णाङ्क विस्तारः, पूर्णाङ्क height,
+		bool selected, ध्रुव संरचना redraw_context *ctx)
 {
-	double z;
+	द्विगुण z;
 	nserror res;
-	struct rect rect;
+	संरचना rect rect;
 
-	z = width * 0.15;
-	if (z == 0) {
+	z = विस्तारः * 0.15;
+	यदि (z == 0) {
 		z = 1;
 	}
 
 	rect.x0 = x;
 	rect.y0 = y ;
-	rect.x1 = x + width;
+	rect.x1 = x + विस्तारः;
 	rect.y1 = y + height;
 	res = ctx->plot->rectangle(ctx, plot_style_fill_wbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
 	/* dark line across top */
 	rect.y1 = y;
-	res = ctx->plot->line(ctx, plot_style_stroke_darkwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	res = ctx->plot->पङ्क्तिः(ctx, plot_style_stroke_darkwbasec, &rect);
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
 	/* dark line across left */
 	rect.x1 = x;
 	rect.y1 = y + height;
-	res = ctx->plot->line(ctx, plot_style_stroke_darkwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	res = ctx->plot->पङ्क्तिः(ctx, plot_style_stroke_darkwbasec, &rect);
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
 	/* light line across right */
-	rect.x0 = x + width;
-	rect.x1 = x + width;
-	res = ctx->plot->line(ctx, plot_style_stroke_lightwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	rect.x0 = x + विस्तारः;
+	rect.x1 = x + विस्तारः;
+	res = ctx->plot->पङ्क्तिः(ctx, plot_style_stroke_lightwbasec, &rect);
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
 	/* light line across bottom */
 	rect.x0 = x;
 	rect.y0 = y + height;
-	res = ctx->plot->line(ctx, plot_style_stroke_lightwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	res = ctx->plot->पङ्क्तिः(ctx, plot_style_stroke_lightwbasec, &rect);
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
-	if (selected) {
-		if (width < 12 || height < 12) {
+	यदि (selected) {
+		यदि (विस्तारः < 12 || height < 12) {
 			/* render a solid box instead of a tick */
 			rect.x0 = x + z + z;
 			rect.y0 = y + z + z;
-			rect.x1 = x + width - z;
+			rect.x1 = x + विस्तारः - z;
 			rect.y1 = y + height - z;
 			res = ctx->plot->rectangle(ctx, plot_style_fill_wblobc, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
-		} else {
+		} अन्यथा {
 			/* render a tick, as it'll fit comfortably */
-			rect.x0 = x + width - z;
+			rect.x0 = x + विस्तारः - z;
 			rect.y0 = y + z;
 			rect.x1 = x + (z * 3);
 			rect.y1 = y + height - z;
-			res = ctx->plot->line(ctx, plot_style_stroke_wblobc, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			res = ctx->plot->पङ्क्तिः(ctx, plot_style_stroke_wblobc, &rect);
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
 
 			rect.x0 = x + (z * 3);
 			rect.y0 = y + height - z;
 			rect.x1 = x + z + z;
 			rect.y1 = y + (height / 2);
-			res = ctx->plot->line(ctx, plot_style_stroke_wblobc, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			res = ctx->plot->पङ्क्तिः(ctx, plot_style_stroke_wblobc, &rect);
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
 		}
 	}
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -463,58 +463,58 @@ static bool html_redraw_checkbox(int x, int y, int width, int height,
  * \param  ctx	     current redraw context
  * \return true if successful, false otherwise
  */
-static bool html_redraw_radio(int x, int y, int width, int height,
-		bool selected, const struct redraw_context *ctx)
+स्थिर bool html_redraw_radio(पूर्णाङ्क x, पूर्णाङ्क y, पूर्णाङ्क विस्तारः, पूर्णाङ्क height,
+		bool selected, ध्रुव संरचना redraw_context *ctx)
 {
 	nserror res;
 
 	/* plot background of radio button */
 	res = ctx->plot->disc(ctx,
 			      plot_style_fill_wbasec,
-			      x + width * 0.5,
+			      x + विस्तारः * 0.5,
 			      y + height * 0.5,
-			      width * 0.5 - 1);
-	if (res != NSERROR_OK) {
-		return false;
+			      विस्तारः * 0.5 - 1);
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
 	/* plot dark arc */
 	res = ctx->plot->arc(ctx,
 			     plot_style_fill_darkwbasec,
-			     x + width * 0.5,
+			     x + विस्तारः * 0.5,
 			     y + height * 0.5,
-			     width * 0.5 - 1,
+			     विस्तारः * 0.5 - 1,
 			     45,
 			     225);
-	if (res != NSERROR_OK) {
-		return false;
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
 	/* plot light arc */
 	res = ctx->plot->arc(ctx,
 			     plot_style_fill_lightwbasec,
-			     x + width * 0.5,
+			     x + विस्तारः * 0.5,
 			     y + height * 0.5,
-			     width * 0.5 - 1,
+			     विस्तारः * 0.5 - 1,
 			     225,
 			     45);
-	if (res != NSERROR_OK) {
-		return false;
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
-	if (selected) {
+	यदि (selected) {
 		/* plot selection blob */
 		res = ctx->plot->disc(ctx,
 				      plot_style_fill_wblobc,
-				      x + width * 0.5,
+				      x + विस्तारः * 0.5,
 				      y + height * 0.5,
-				      width * 0.3 - 1);
-		if (res != NSERROR_OK) {
-			return false;
+				      विस्तारः * 0.3 - 1);
+		यदि (res != NSERROR_OK) {
+			प्रत्यागम false;
 		}
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -533,43 +533,43 @@ static bool html_redraw_radio(int x, int y, int width, int height,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_file(int x, int y, int width, int height,
-		struct box *box, float scale, colour background_colour,
-		const css_unit_ctx *unit_len_ctx,
-		const struct redraw_context *ctx)
+स्थिर bool html_redraw_file(पूर्णाङ्क x, पूर्णाङ्क y, पूर्णाङ्क विस्तारः, पूर्णाङ्क height,
+		संरचना box *box, भिन्न scale, रङ्गः background_रङ्गः,
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		ध्रुव संरचना redraw_context *ctx)
 {
-	int text_width;
-	const char *text;
-	size_t length;
+	पूर्णाङ्क text_विस्तारः;
+	ध्रुव वर्ण *text;
+	size_t दीर्घता;
 	plot_font_style_t fstyle;
 	nserror res;
 
 	font_plot_style_from_css(unit_len_ctx, box->style, &fstyle);
-	fstyle.background = background_colour;
+	fstyle.background = background_रङ्गः;
 
-	if (box->gadget->value) {
-		text = box->gadget->value;
-	} else {
+	यदि (box->gadget->मानम्) {
+		text = box->gadget->मानम्;
+	} अन्यथा {
 		text = messages_get("Form_Drop");
 	}
-	length = strlen(text);
+	दीर्घता = वाक्यदैर्घ्यम्(text);
 
-	res = guit->layout->width(&fstyle, text, length, &text_width);
-	if (res != NSERROR_OK) {
-		return false;
+	res = guit->layout->विस्तारः(&fstyle, text, दीर्घता, &text_विस्तारः);
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
-	text_width *= scale;
-	if (width < text_width + 8) {
-		x = x + width - text_width - 4;
-	} else {
+	text_विस्तारः *= scale;
+	यदि (विस्तारः < text_विस्तारः + 8) {
+		x = x + विस्तारः - text_विस्तारः - 4;
+	} अन्यथा {
 		x = x + 4;
 	}
 
-	res = ctx->plot->text(ctx, &fstyle, x, y + height * 0.75, text, length);
-	if (res != NSERROR_OK) {
-		return false;
+	res = ctx->plot->text(ctx, &fstyle, x, y + height * 0.75, text, दीर्घता);
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -592,97 +592,97 @@ static bool html_redraw_file(int x, int y, int width, int height,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_background(int x, int y, struct box *box, float scale,
-		const struct rect *clip, colour *background_colour,
-		struct box *background,
-		const css_unit_ctx *unit_len_ctx,
-		const struct redraw_context *ctx)
+स्थिर bool html_redraw_background(पूर्णाङ्क x, पूर्णाङ्क y, संरचना box *box, भिन्न scale,
+		ध्रुव संरचना rect *clip, रङ्गः *background_रङ्गः,
+		संरचना box *background,
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		ध्रुव संरचना redraw_context *ctx)
 {
 	bool repeat_x = false;
 	bool repeat_y = false;
-	bool plot_colour = true;
+	bool plot_रङ्गः = true;
 	bool plot_content;
-	bool clip_to_children = false;
-	struct box *clip_box = box;
-	int ox = x, oy = y;
-	int width, height;
+	bool clip_गन्तव्यम्_children = false;
+	संरचना box *clip_box = box;
+	पूर्णाङ्क ox = x, oy = y;
+	पूर्णाङ्क विस्तारः, height;
 	css_fixed hpos = 0, vpos = 0;
 	css_unit hunit = CSS_UNIT_PX, vunit = CSS_UNIT_PX;
-	struct box *parent;
-	struct rect r = *clip;
+	संरचना box *parent;
+	संरचना rect r = *clip;
 	css_color bgcol;
 	plot_style_t pstyle_fill_bg = {
 		.fill_type = PLOT_OP_TYPE_SOLID,
-		.fill_colour = *background_colour,
+		.fill_रङ्गः = *background_रङ्गः,
 	};
 	nserror res;
 
-	if (ctx->background_images == false)
-		return true;
+	यदि (ctx->background_images == false)
+		प्रत्यागम true;
 
-	plot_content = (background->background != NULL);
+	plot_content = (background->background != रिक्त);
 
-	if (plot_content) {
-		if (!box->parent) {
+	यदि (plot_content) {
+		यदि (!box->parent) {
 			/* Root element, special case:
 			 * background origin calc. is based on margin box */
-			x -= box->margin[LEFT] * scale;
-			y -= box->margin[TOP] * scale;
-			width = box->margin[LEFT] + box->padding[LEFT] +
-					box->width + box->padding[RIGHT] +
-					box->margin[RIGHT];
-			height = box->margin[TOP] + box->padding[TOP] +
+			x -= box->margin[वामः_2] * scale;
+			y -= box->margin[शिखरम्_2] * scale;
+			विस्तारः = box->margin[वामः_2] + box->padding[वामः_2] +
+					box->विस्तारः + box->padding[दक्षिणः_2] +
+					box->margin[दक्षिणः_2];
+			height = box->margin[शिखरम्_2] + box->padding[शिखरम्_2] +
 					box->height + box->padding[BOTTOM] +
 					box->margin[BOTTOM];
-		} else {
-			width = box->padding[LEFT] + box->width +
-					box->padding[RIGHT];
-			height = box->padding[TOP] + box->height +
+		} अन्यथा {
+			विस्तारः = box->padding[वामः_2] + box->विस्तारः +
+					box->padding[दक्षिणः_2];
+			height = box->padding[शिखरम्_2] + box->height +
 					box->padding[BOTTOM];
 		}
 		/* handle background-repeat */
-		switch (css_computed_background_repeat(background->style)) {
-		case CSS_BACKGROUND_REPEAT_REPEAT:
+		विकल्प (css_computed_background_repeat(background->style)) {
+		पक्ष CSS_BACKGROUND_REPEAT_REPEAT:
 			repeat_x = repeat_y = true;
 			/* optimisation: only plot the colour if
 			 * bitmap is not opaque */
-			plot_colour = !content_get_opaque(background->background);
-			break;
+			plot_रङ्गः = !content_get_opaque(background->background);
+			भङ्ग;
 
-		case CSS_BACKGROUND_REPEAT_REPEAT_X:
+		पक्ष CSS_BACKGROUND_REPEAT_REPEAT_X:
 			repeat_x = true;
-			break;
+			भङ्ग;
 
-		case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+		पक्ष CSS_BACKGROUND_REPEAT_REPEAT_Y:
 			repeat_y = true;
-			break;
+			भङ्ग;
 
-		case CSS_BACKGROUND_REPEAT_NO_REPEAT:
-			break;
+		पक्ष CSS_BACKGROUND_REPEAT_NO_REPEAT:
+			भङ्ग;
 
-		default:
-			break;
+		स्वभाव:
+			भङ्ग;
 		}
 
 		/* handle background-position */
 		css_computed_background_position(background->style,
 				&hpos, &hunit, &vpos, &vunit);
-		if (hunit == CSS_UNIT_PCT) {
-			x += (width -
-				content_get_width(background->background)) *
+		यदि (hunit == CSS_UNIT_PCT) {
+			x += (विस्तारः -
+				content_get_विस्तारः(background->background)) *
 				scale * FIXTOFLT(hpos) / 100.;
-		} else {
-			x += (int) (FIXTOFLT(css_unit_len2device_px(
+		} अन्यथा {
+			x += (पूर्णाङ्क) (FIXTOFLT(css_unit_len2device_px(
 					background->style, unit_len_ctx,
 					hpos, hunit)) * scale);
 		}
 
-		if (vunit == CSS_UNIT_PCT) {
+		यदि (vunit == CSS_UNIT_PCT) {
 			y += (height -
 				content_get_height(background->background)) *
 				scale * FIXTOFLT(vpos) / 100.;
-		} else {
-			y += (int) (FIXTOFLT(css_unit_len2device_px(
+		} अन्यथा {
+			y += (पूर्णाङ्क) (FIXTOFLT(css_unit_len2device_px(
 					background->style, unit_len_ctx,
 					vpos, vunit)) * scale);
 		}
@@ -690,42 +690,42 @@ static bool html_redraw_background(int x, int y, struct box *box, float scale,
 
 	/* special case for table rows as their background needs
 	 * to be clipped to all the cells */
-	if (box->type == BOX_TABLE_ROW) {
+	यदि (box->type == BOX_सारणी_ROW) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
 
-		for (parent = box->parent;
-			((parent) && (parent->type != BOX_TABLE));
+		प्रति (parent = box->parent;
+			((parent) && (parent->type != BOX_सारणी));
 				parent = parent->parent);
-		assert(parent && (parent->style));
+		प्रतिज्ञा(parent && (parent->style));
 
 		css_computed_border_spacing(parent->style, &h, &hu, &v, &vu);
 
-		clip_to_children = (h > 0) || (v > 0);
+		clip_गन्तव्यम्_children = (h > 0) || (v > 0);
 
-		if (clip_to_children)
+		यदि (clip_गन्तव्यम्_children)
 			clip_box = box->children;
 	}
 
-	for (; clip_box; clip_box = clip_box->next) {
+	प्रति (; clip_box; clip_box = clip_box->अग्र) {
 		/* clip to child boxes if needed */
-		if (clip_to_children) {
-			assert(clip_box->type == BOX_TABLE_CELL);
+		यदि (clip_गन्तव्यम्_children) {
+			प्रतिज्ञा(clip_box->type == BOX_सारणी_CELL);
 
 			/* update clip.* to the child cell */
 			r.x0 = ox + (clip_box->x * scale);
 			r.y0 = oy + (clip_box->y * scale);
-			r.x1 = r.x0 + (clip_box->padding[LEFT] +
-					clip_box->width +
-					clip_box->padding[RIGHT]) * scale;
-			r.y1 = r.y0 + (clip_box->padding[TOP] +
+			r.x1 = r.x0 + (clip_box->padding[वामः_2] +
+					clip_box->विस्तारः +
+					clip_box->padding[दक्षिणः_2]) * scale;
+			r.y1 = r.y0 + (clip_box->padding[शिखरम्_2] +
 					clip_box->height +
 					clip_box->padding[BOTTOM]) * scale;
 
-			if (r.x0 < clip->x0) r.x0 = clip->x0;
-			if (r.y0 < clip->y0) r.y0 = clip->y0;
-			if (r.x1 > clip->x1) r.x1 = clip->x1;
-			if (r.y1 > clip->y1) r.y1 = clip->y1;
+			यदि (r.x0 < clip->x0) r.x0 = clip->x0;
+			यदि (r.y0 < clip->y0) r.y0 = clip->y0;
+			यदि (r.x1 > clip->x1) r.x1 = clip->x1;
+			यदि (r.y1 > clip->y1) r.y1 = clip->y1;
 
 			css_computed_background_color(clip_box->style, &bgcol);
 
@@ -733,74 +733,74 @@ static bool html_redraw_background(int x, int y, struct box *box, float scale,
 			/* if the background content is opaque there
 			 * is no need to plot underneath it.
 			 */
-			if ((r.x0 >= r.x1) ||
+			यदि ((r.x0 >= r.x1) ||
 			    (r.y0 >= r.y1) ||
 			    (nscss_color_is_transparent(bgcol) == false) ||
-			    ((clip_box->background != NULL) &&
+			    ((clip_box->background != रिक्त) &&
 			     content_get_opaque(clip_box->background)))
-				continue;
+				अनुवर्त;
 		}
 
 		/* plot the background colour */
 		css_computed_background_color(background->style, &bgcol);
 
-		if (nscss_color_is_transparent(bgcol) == false) {
-			*background_colour = nscss_color_to_ns(bgcol);
-			pstyle_fill_bg.fill_colour = *background_colour;
-			if (plot_colour) {
+		यदि (nscss_color_is_transparent(bgcol) == false) {
+			*background_रङ्गः = nscss_color_गन्तव्यम्_ns(bgcol);
+			pstyle_fill_bg.fill_रङ्गः = *background_रङ्गः;
+			यदि (plot_रङ्गः) {
 				res = ctx->plot->rectangle(ctx, &pstyle_fill_bg, &r);
-				if (res != NSERROR_OK) {
-					return false;
+				यदि (res != NSERROR_OK) {
+					प्रत्यागम false;
 				}
 			}
 		}
 		/* and plot the image */
-		if (plot_content) {
-			width = content_get_width(background->background);
+		यदि (plot_content) {
+			विस्तारः = content_get_विस्तारः(background->background);
 			height = content_get_height(background->background);
 
 			/* ensure clip area only as large as required */
-			if (!repeat_x) {
-				if (r.x0 < x)
+			यदि (!repeat_x) {
+				यदि (r.x0 < x)
 					r.x0 = x;
-				if (r.x1 > x + width * scale)
-					r.x1 = x + width * scale;
+				यदि (r.x1 > x + विस्तारः * scale)
+					r.x1 = x + विस्तारः * scale;
 			}
-			if (!repeat_y) {
-				if (r.y0 < y)
+			यदि (!repeat_y) {
+				यदि (r.y0 < y)
 					r.y0 = y;
-				if (r.y1 > y + height * scale)
+				यदि (r.y1 > y + height * scale)
 					r.y1 = y + height * scale;
 			}
 			/* valid clipping rectangles only */
-			if ((r.x0 < r.x1) && (r.y0 < r.y1)) {
-				struct content_redraw_data bg_data;
+			यदि ((r.x0 < r.x1) && (r.y0 < r.y1)) {
+				संरचना content_redraw_दत्त bg_दत्त;
 
 				res = ctx->plot->clip(ctx, &r);
-				if (res != NSERROR_OK) {
-					return false;
+				यदि (res != NSERROR_OK) {
+					प्रत्यागम false;
 				}
 
-				bg_data.x = x;
-				bg_data.y = y;
-				bg_data.width = ceilf(width * scale);
-				bg_data.height = ceilf(height * scale);
-				bg_data.background_colour = *background_colour;
-				bg_data.scale = scale;
-				bg_data.repeat_x = repeat_x;
-				bg_data.repeat_y = repeat_y;
+				bg_दत्त.x = x;
+				bg_दत्त.y = y;
+				bg_दत्त.विस्तारः = ceilf(विस्तारः * scale);
+				bg_दत्त.height = ceilf(height * scale);
+				bg_दत्त.background_रङ्गः = *background_रङ्गः;
+				bg_दत्त.scale = scale;
+				bg_दत्त.repeat_x = repeat_x;
+				bg_दत्त.repeat_y = repeat_y;
 
 				/* We just continue if redraw fails */
 				content_redraw(background->background,
-						&bg_data, &r, ctx);
+						&bg_दत्त, &r, ctx);
 			}
 		}
 
 		/* only <tr> rows being clipped to child boxes loop */
-		if (!clip_to_children)
-			return true;
+		यदि (!clip_गन्तव्यम्_children)
+			प्रत्यागम true;
 	}
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -821,81 +821,81 @@ static bool html_redraw_background(int x, int y, struct box *box, float scale,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_inline_background(int x, int y, struct box *box,
-		float scale, const struct rect *clip, struct rect b,
-		bool first, bool last, colour *background_colour,
-		const css_unit_ctx *unit_len_ctx,
-		const struct redraw_context *ctx)
+स्थिर bool html_redraw_inline_background(पूर्णाङ्क x, पूर्णाङ्क y, संरचना box *box,
+		भिन्न scale, ध्रुव संरचना rect *clip, संरचना rect b,
+		bool first, bool चरमः, रङ्गः *background_रङ्गः,
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		ध्रुव संरचना redraw_context *ctx)
 {
-	struct rect r = *clip;
+	संरचना rect r = *clip;
 	bool repeat_x = false;
 	bool repeat_y = false;
-	bool plot_colour = true;
+	bool plot_रङ्गः = true;
 	bool plot_content;
 	css_fixed hpos = 0, vpos = 0;
 	css_unit hunit = CSS_UNIT_PX, vunit = CSS_UNIT_PX;
 	css_color bgcol;
 	plot_style_t pstyle_fill_bg = {
 		.fill_type = PLOT_OP_TYPE_SOLID,
-		.fill_colour = *background_colour,
+		.fill_रङ्गः = *background_रङ्गः,
 	};
 	nserror res;
 
-	plot_content = (box->background != NULL);
+	plot_content = (box->background != रिक्त);
 
-	if (html_redraw_printing && nsoption_bool(remove_backgrounds))
-		return true;
+	यदि (html_redraw_printing && nsoption_bool(remove_backgrounds))
+		प्रत्यागम true;
 
-	if (plot_content) {
+	यदि (plot_content) {
 		/* handle background-repeat */
-		switch (css_computed_background_repeat(box->style)) {
-		case CSS_BACKGROUND_REPEAT_REPEAT:
+		विकल्प (css_computed_background_repeat(box->style)) {
+		पक्ष CSS_BACKGROUND_REPEAT_REPEAT:
 			repeat_x = repeat_y = true;
 			/* optimisation: only plot the colour if
 			 * bitmap is not opaque
 			 */
-			plot_colour = !content_get_opaque(box->background);
-			break;
+			plot_रङ्गः = !content_get_opaque(box->background);
+			भङ्ग;
 
-		case CSS_BACKGROUND_REPEAT_REPEAT_X:
+		पक्ष CSS_BACKGROUND_REPEAT_REPEAT_X:
 			repeat_x = true;
-			break;
+			भङ्ग;
 
-		case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+		पक्ष CSS_BACKGROUND_REPEAT_REPEAT_Y:
 			repeat_y = true;
-			break;
+			भङ्ग;
 
-		case CSS_BACKGROUND_REPEAT_NO_REPEAT:
-			break;
+		पक्ष CSS_BACKGROUND_REPEAT_NO_REPEAT:
+			भङ्ग;
 
-		default:
-			break;
+		स्वभाव:
+			भङ्ग;
 		}
 
 		/* handle background-position */
 		css_computed_background_position(box->style,
 				&hpos, &hunit, &vpos, &vunit);
-		if (hunit == CSS_UNIT_PCT) {
+		यदि (hunit == CSS_UNIT_PCT) {
 			x += (b.x1 - b.x0 -
-					content_get_width(box->background) *
+					content_get_विस्तारः(box->background) *
 					scale) * FIXTOFLT(hpos) / 100.;
 
-			if (!repeat_x && ((hpos < 2 && !first) ||
-					(hpos > 98 && !last))){
+			यदि (!repeat_x && ((hpos < 2 && !first) ||
+					(hpos > 98 && !चरमः))){
 				plot_content = false;
 			}
-		} else {
-			x += (int) (FIXTOFLT(css_unit_len2device_px(
+		} अन्यथा {
+			x += (पूर्णाङ्क) (FIXTOFLT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
 					hpos, hunit)) * scale);
 		}
 
-		if (vunit == CSS_UNIT_PCT) {
+		यदि (vunit == CSS_UNIT_PCT) {
 			y += (b.y1 - b.y0 -
 					content_get_height(box->background) *
 					scale) * FIXTOFLT(vpos) / 100.;
-		} else {
-			y += (int) (FIXTOFLT(css_unit_len2device_px(
+		} अन्यथा {
+			y += (पूर्णाङ्क) (FIXTOFLT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
 					vpos, vunit)) * scale);
 		}
@@ -904,58 +904,58 @@ static bool html_redraw_inline_background(int x, int y, struct box *box,
 	/* plot the background colour */
 	css_computed_background_color(box->style, &bgcol);
 
-	if (nscss_color_is_transparent(bgcol) == false) {
-		*background_colour = nscss_color_to_ns(bgcol);
-		pstyle_fill_bg.fill_colour = *background_colour;
+	यदि (nscss_color_is_transparent(bgcol) == false) {
+		*background_रङ्गः = nscss_color_गन्तव्यम्_ns(bgcol);
+		pstyle_fill_bg.fill_रङ्गः = *background_रङ्गः;
 
-		if (plot_colour) {
+		यदि (plot_रङ्गः) {
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_bg, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
 		}
 	}
 	/* and plot the image */
-	if (plot_content) {
-		int width = content_get_width(box->background);
-		int height = content_get_height(box->background);
+	यदि (plot_content) {
+		पूर्णाङ्क विस्तारः = content_get_विस्तारः(box->background);
+		पूर्णाङ्क height = content_get_height(box->background);
 
-		if (!repeat_x) {
-			if (r.x0 < x)
+		यदि (!repeat_x) {
+			यदि (r.x0 < x)
 				r.x0 = x;
-			if (r.x1 > x + width * scale)
-				r.x1 = x + width * scale;
+			यदि (r.x1 > x + विस्तारः * scale)
+				r.x1 = x + विस्तारः * scale;
 		}
-		if (!repeat_y) {
-			if (r.y0 < y)
+		यदि (!repeat_y) {
+			यदि (r.y0 < y)
 				r.y0 = y;
-			if (r.y1 > y + height * scale)
+			यदि (r.y1 > y + height * scale)
 				r.y1 = y + height * scale;
 		}
 		/* valid clipping rectangles only */
-		if ((r.x0 < r.x1) && (r.y0 < r.y1)) {
-			struct content_redraw_data bg_data;
+		यदि ((r.x0 < r.x1) && (r.y0 < r.y1)) {
+			संरचना content_redraw_दत्त bg_दत्त;
 
 			res = ctx->plot->clip(ctx, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
 
-			bg_data.x = x;
-			bg_data.y = y;
-			bg_data.width = ceilf(width * scale);
-			bg_data.height = ceilf(height * scale);
-			bg_data.background_colour = *background_colour;
-			bg_data.scale = scale;
-			bg_data.repeat_x = repeat_x;
-			bg_data.repeat_y = repeat_y;
+			bg_दत्त.x = x;
+			bg_दत्त.y = y;
+			bg_दत्त.विस्तारः = ceilf(विस्तारः * scale);
+			bg_दत्त.height = ceilf(height * scale);
+			bg_दत्त.background_रङ्गः = *background_रङ्गः;
+			bg_दत्त.scale = scale;
+			bg_दत्त.repeat_x = repeat_x;
+			bg_दत्त.repeat_y = repeat_y;
 
 			/* We just continue if redraw fails */
-			content_redraw(box->background, &bg_data, &r, ctx);
+			content_redraw(box->background, &bg_दत्त, &r, ctx);
 		}
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -972,38 +972,38 @@ static bool html_redraw_inline_background(int x, int y, struct box *box,
  * \return true if successful, false otherwise
  */
 
-static bool
-html_redraw_text_decoration_inline(struct box *box,
-				   int x, int y,
-				   float scale,
-				   colour colour,
-				   float ratio,
-				   const struct redraw_context *ctx)
+स्थिर bool
+html_redraw_text_decoration_inline(संरचना box *box,
+				   पूर्णाङ्क x, पूर्णाङ्क y,
+				   भिन्न scale,
+				   रङ्गः रङ्गः,
+				   भिन्न अनुपातः,
+				   ध्रुव संरचना redraw_context *ctx)
 {
-	struct box *c;
+	संरचना box *c;
 	plot_style_t plot_style_box = {
 		.stroke_type = PLOT_OP_TYPE_SOLID,
-		.stroke_colour = colour,
+		.stroke_रङ्गः = रङ्गः,
 	};
 	nserror res;
-	struct rect rect;
+	संरचना rect rect;
 
-	for (c = box->next;
-	     c && c != box->inline_end;
-	     c = c->next) {
-		if (c->type != BOX_TEXT) {
-			continue;
+	प्रति (c = box->अग्र;
+	     c && c != box->inline_अन्तः;
+	     c = c->अग्र) {
+		यदि (c->type != BOX_TEXT) {
+			अनुवर्त;
 		}
 		rect.x0 = (x + c->x) * scale;
-		rect.y0 = (y + c->y + c->height * ratio) * scale;
-		rect.x1 = (x + c->x + c->width) * scale;
-		rect.y1 = (y + c->y + c->height * ratio) * scale;
-		res = ctx->plot->line(ctx, &plot_style_box, &rect);
-		if (res != NSERROR_OK) {
-			return false;
+		rect.y0 = (y + c->y + c->height * अनुपातः) * scale;
+		rect.x1 = (x + c->x + c->विस्तारः) * scale;
+		rect.y1 = (y + c->y + c->height * अनुपातः) * scale;
+		res = ctx->plot->पङ्क्तिः(ctx, &plot_style_box, &rect);
+		यदि (res != NSERROR_OK) {
+			प्रत्यागम false;
 		}
 	}
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -1020,41 +1020,41 @@ html_redraw_text_decoration_inline(struct box *box,
  * \return true if successful, false otherwise
  */
 
-static bool
-html_redraw_text_decoration_block(struct box *box,
-				  int x, int y,
-				  float scale,
-				  colour colour,
-				  float ratio,
-				  const struct redraw_context *ctx)
+स्थिर bool
+html_redraw_text_decoration_खण्डम्(संरचना box *box,
+				  पूर्णाङ्क x, पूर्णाङ्क y,
+				  भिन्न scale,
+				  रङ्गः रङ्गः,
+				  भिन्न अनुपातः,
+				  ध्रुव संरचना redraw_context *ctx)
 {
-	struct box *c;
+	संरचना box *c;
 	plot_style_t plot_style_box = {
 		.stroke_type = PLOT_OP_TYPE_SOLID,
-		.stroke_colour = colour,
+		.stroke_रङ्गः = रङ्गः,
 	};
 	nserror res;
-	struct rect rect;
+	संरचना rect rect;
 
 	/* draw through text descendants */
-	for (c = box->children; c; c = c->next) {
-		if (c->type == BOX_TEXT) {
+	प्रति (c = box->children; c; c = c->अग्र) {
+		यदि (c->type == BOX_TEXT) {
 			rect.x0 = (x + c->x) * scale;
-			rect.y0 = (y + c->y + c->height * ratio) * scale;
-			rect.x1 = (x + c->x + c->width) * scale;
-			rect.y1 = (y + c->y + c->height * ratio) * scale;
-			res = ctx->plot->line(ctx, &plot_style_box, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			rect.y0 = (y + c->y + c->height * अनुपातः) * scale;
+			rect.x1 = (x + c->x + c->विस्तारः) * scale;
+			rect.y1 = (y + c->y + c->height * अनुपातः) * scale;
+			res = ctx->plot->पङ्क्तिः(ctx, &plot_style_box, &rect);
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
-		} else if ((c->type == BOX_INLINE_CONTAINER) || (c->type == BOX_BLOCK)) {
-			if (!html_redraw_text_decoration_block(c,
+		} अन्यथा यदि ((c->type == BOX_INLINE_CONTAINER) || (c->type == BOX_खण्डम्)) {
+			यदि (!html_redraw_text_decoration_खण्डम्(c,
 					x + c->x, y + c->y,
-					scale, colour, ratio, ctx))
-				return false;
+					scale, रङ्गः, अनुपातः, ctx))
+				प्रत्यागम false;
 		}
 	}
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -1070,48 +1070,48 @@ html_redraw_text_decoration_block(struct box *box,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_text_decoration(struct box *box,
-		int x_parent, int y_parent, float scale,
-		colour background_colour, const struct redraw_context *ctx)
+स्थिर bool html_redraw_text_decoration(संरचना box *box,
+		पूर्णाङ्क x_parent, पूर्णाङ्क y_parent, भिन्न scale,
+		रङ्गः background_रङ्गः, ध्रुव संरचना redraw_context *ctx)
 {
-	static const enum css_text_decoration_e decoration[] = {
+	स्थिर ध्रुव गणना css_text_decoration_e decoration[] = {
 		CSS_TEXT_DECORATION_UNDERLINE, CSS_TEXT_DECORATION_OVERLINE,
-		CSS_TEXT_DECORATION_LINE_THROUGH };
-	static const float line_ratio[] = { 0.9, 0.1, 0.5 };
-	colour fgcol;
-	unsigned int i;
+		CSS_TEXT_DECORATION_पङ्क्तिः_THROUGH };
+	स्थिर ध्रुव भिन्न पङ्क्तिः_अनुपातः[] = { 0.9, 0.1, 0.5 };
+	रङ्गः fgcol;
+	अचिह्नित पूर्णाङ्क i;
 	css_color col;
 
 	css_computed_color(box->style, &col);
-	fgcol = nscss_color_to_ns(col);
+	fgcol = nscss_color_गन्तव्यम्_ns(col);
 
 	/* antialias colour for under/overline */
-	if (html_redraw_printing == false)
-		fgcol = blend_colour(background_colour, fgcol);
+	यदि (html_redraw_printing == false)
+		fgcol = blend_रङ्गः(background_रङ्गः, fgcol);
 
-	if (box->type == BOX_INLINE) {
-		if (!box->inline_end)
-			return true;
-		for (i = 0; i != NOF_ELEMENTS(decoration); i++)
-			if (css_computed_text_decoration(box->style) &
+	यदि (box->type == BOX_INLINE) {
+		यदि (!box->inline_अन्तः)
+			प्रत्यागम true;
+		प्रति (i = 0; i != NOF_ELEMENTS(decoration); i++)
+			यदि (css_computed_text_decoration(box->style) &
 					decoration[i])
-				if (!html_redraw_text_decoration_inline(box,
+				यदि (!html_redraw_text_decoration_inline(box,
 						x_parent, y_parent, scale,
-						fgcol, line_ratio[i], ctx))
-					return false;
-	} else {
-		for (i = 0; i != NOF_ELEMENTS(decoration); i++)
-			if (css_computed_text_decoration(box->style) &
+						fgcol, पङ्क्तिः_अनुपातः[i], ctx))
+					प्रत्यागम false;
+	} अन्यथा {
+		प्रति (i = 0; i != NOF_ELEMENTS(decoration); i++)
+			यदि (css_computed_text_decoration(box->style) &
 					decoration[i])
-				if (!html_redraw_text_decoration_block(box,
+				यदि (!html_redraw_text_decoration_खण्डम्(box,
 						x_parent + box->x,
 						y_parent + box->y,
 						scale,
-						fgcol, line_ratio[i], ctx))
-					return false;
+						fgcol, पङ्क्तिः_अनुपातः[i], ctx))
+					प्रत्यागम false;
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -1130,20 +1130,20 @@ static bool html_redraw_text_decoration(struct box *box,
  * \return true iff successful and redraw should proceed
  */
 
-static bool html_redraw_text_box(const html_content *html, struct box *box,
-		int x, int y, const struct rect *clip, float scale,
-		colour current_background_color,
-		const struct redraw_context *ctx)
+स्थिर bool html_redraw_text_box(ध्रुव html_content *html, संरचना box *box,
+		पूर्णाङ्क x, पूर्णाङ्क y, ध्रुव संरचना rect *clip, भिन्न scale,
+		रङ्गः current_background_color,
+		ध्रुव संरचना redraw_context *ctx)
 {
-	bool excluded = (box->object != NULL);
+	bool excluded = (box->object != रिक्त);
 	plot_font_style_t fstyle;
 
 	font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
 	fstyle.background = current_background_color;
 
-	if (!text_redraw(box->text,
-			 box->length,
-			 box->byte_offset,
+	यदि (!text_redraw(box->text,
+			 box->दीर्घता,
+			 box->byte_विस्थापनम्,
 			 box->space,
 			 &fstyle,
 			 x, y,
@@ -1151,19 +1151,19 @@ static bool html_redraw_text_box(const html_content *html, struct box *box,
 			 box->height,
 			 scale,
 			 excluded,
-			 (struct content *)html,
+			 (संरचना content *)html,
 			 html->sel,
 			 ctx))
-		return false;
+		प्रत्यागम false;
 
-	return true;
+	प्रत्यागम true;
 }
 
-bool html_redraw_box(const html_content *html, struct box *box,
-		int x_parent, int y_parent,
-		const struct rect *clip, float scale,
-		colour current_background_color,
-		const struct redraw_context *ctx);
+bool html_redraw_box(ध्रुव html_content *html, संरचना box *box,
+		पूर्णाङ्क x_parent, पूर्णाङ्क y_parent,
+		ध्रुव संरचना rect *clip, भिन्न scale,
+		रङ्गः current_background_color,
+		ध्रुव संरचना redraw_context *ctx);
 
 /**
  * Draw the various children of a box.
@@ -1179,37 +1179,37 @@ bool html_redraw_box(const html_content *html, struct box *box,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_box_children(const html_content *html, struct box *box,
-		int x_parent, int y_parent,
-		const struct rect *clip, float scale,
-		colour current_background_color,
-		const struct redraw_context *ctx)
+स्थिर bool html_redraw_box_children(ध्रुव html_content *html, संरचना box *box,
+		पूर्णाङ्क x_parent, पूर्णाङ्क y_parent,
+		ध्रुव संरचना rect *clip, भिन्न scale,
+		रङ्गः current_background_color,
+		ध्रुव संरचना redraw_context *ctx)
 {
-	struct box *c;
+	संरचना box *c;
 
-	for (c = box->children; c; c = c->next) {
+	प्रति (c = box->children; c; c = c->अग्र) {
 
-		if (c->type != BOX_FLOAT_LEFT && c->type != BOX_FLOAT_RIGHT)
-			if (!html_redraw_box(html, c,
+		यदि (c->type != BOX_FLOAT_वामः && c->type != BOX_FLOAT_दक्षिणः)
+			यदि (!html_redraw_box(html, c,
 					x_parent + box->x -
-					scrollbar_get_offset(box->scroll_x),
+					scrollbar_get_विस्थापनम्(box->scroll_x),
 					y_parent + box->y -
-					scrollbar_get_offset(box->scroll_y),
+					scrollbar_get_विस्थापनम्(box->scroll_y),
 					clip, scale, current_background_color,
 					ctx))
-				return false;
+				प्रत्यागम false;
 	}
-	for (c = box->float_children; c; c = c->next_float)
-		if (!html_redraw_box(html, c,
+	प्रति (c = box->float_children; c; c = c->अग्र_float)
+		यदि (!html_redraw_box(html, c,
 				x_parent + box->x -
-				scrollbar_get_offset(box->scroll_x),
+				scrollbar_get_विस्थापनम्(box->scroll_x),
 				y_parent + box->y -
-				scrollbar_get_offset(box->scroll_y),
+				scrollbar_get_विस्थापनम्(box->scroll_y),
 				clip, scale, current_background_color,
 				ctx))
-			return false;
+			प्रत्यागम false;
 
-	return true;
+	प्रत्यागम true;
 }
 
 /**
@@ -1228,133 +1228,133 @@ static bool html_redraw_box_children(const html_content *html, struct box *box,
  * x, y, clip_[xy][01] are in target coordinates.
  */
 
-bool html_redraw_box(const html_content *html, struct box *box,
-		int x_parent, int y_parent,
-		const struct rect *clip, const float scale,
-		colour current_background_color,
-		const struct redraw_context *ctx)
+bool html_redraw_box(ध्रुव html_content *html, संरचना box *box,
+		पूर्णाङ्क x_parent, पूर्णाङ्क y_parent,
+		ध्रुव संरचना rect *clip, ध्रुव भिन्न scale,
+		रङ्गः current_background_color,
+		ध्रुव संरचना redraw_context *ctx)
 {
-	const struct plotter_table *plot = ctx->plot;
-	int x, y;
-	int width, height;
-	int padding_left, padding_top, padding_width, padding_height;
-	int border_left, border_top, border_right, border_bottom;
-	struct rect r;
-	struct rect rect;
-	int x_scrolled, y_scrolled;
-	struct box *bg_box = NULL;
+	ध्रुव संरचना plotter_सारणी *plot = ctx->plot;
+	पूर्णाङ्क x, y;
+	पूर्णाङ्क विस्तारः, height;
+	पूर्णाङ्क padding_वामः, padding_शिखरम्, padding_विस्तारः, padding_height;
+	पूर्णाङ्क border_वामः, border_शिखरम्, border_दक्षिणः, border_bottom;
+	संरचना rect r;
+	संरचना rect rect;
+	पूर्णाङ्क x_scrolled, y_scrolled;
+	संरचना box *bg_box = रिक्त;
 	css_computed_clip_rect css_rect;
-	enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
-	enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
+	गणना css_अतिप्रवाहः_e अतिप्रवाहः_x = CSS_अतिप्रवाहः_VISIBLE;
+	गणना css_अतिप्रवाहः_e अतिप्रवाहः_y = CSS_अतिप्रवाहः_VISIBLE;
 	dom_exception exc;
-	dom_html_element_type tag_type;
+	dom_html_element_type चिह्नकम्_type;
 
 
-	if (html_redraw_printing && (box->flags & PRINTED))
-		return true;
+	यदि (html_redraw_printing && (box->flags & PRINTED))
+		प्रत्यागम true;
 
-	if (box->style != NULL) {
-		overflow_x = css_computed_overflow_x(box->style);
-		overflow_y = css_computed_overflow_y(box->style);
+	यदि (box->style != रिक्त) {
+		अतिप्रवाहः_x = css_computed_अतिप्रवाहः_x(box->style);
+		अतिप्रवाहः_y = css_computed_अतिप्रवाहः_y(box->style);
 	}
 
 	/* avoid trivial FP maths */
-	if (scale == 1.0) {
+	यदि (scale == 1.0) {
 		x = x_parent + box->x;
 		y = y_parent + box->y;
-		width = box->width;
+		विस्तारः = box->विस्तारः;
 		height = box->height;
-		padding_left = box->padding[LEFT];
-		padding_top = box->padding[TOP];
-		padding_width = padding_left + box->width + box->padding[RIGHT];
-		padding_height = padding_top + box->height +
+		padding_वामः = box->padding[वामः_2];
+		padding_शिखरम् = box->padding[शिखरम्_2];
+		padding_विस्तारः = padding_वामः + box->विस्तारः + box->padding[दक्षिणः_2];
+		padding_height = padding_शिखरम् + box->height +
 				box->padding[BOTTOM];
-		border_left = box->border[LEFT].width;
-		border_top = box->border[TOP].width;
-		border_right = box->border[RIGHT].width;
-		border_bottom = box->border[BOTTOM].width;
-	} else {
+		border_वामः = box->border[वामः_2].विस्तारः;
+		border_शिखरम् = box->border[शिखरम्_2].विस्तारः;
+		border_दक्षिणः = box->border[दक्षिणः_2].विस्तारः;
+		border_bottom = box->border[BOTTOM].विस्तारः;
+	} अन्यथा {
 		x = (x_parent + box->x) * scale;
 		y = (y_parent + box->y) * scale;
-		width = box->width * scale;
+		विस्तारः = box->विस्तारः * scale;
 		height = box->height * scale;
 		/* left and top padding values are normally zero,
 		 * so avoid trivial FP maths */
-		padding_left = box->padding[LEFT] ? box->padding[LEFT] * scale
+		padding_वामः = box->padding[वामः_2] ? box->padding[वामः_2] * scale
 				: 0;
-		padding_top = box->padding[TOP] ? box->padding[TOP] * scale
+		padding_शिखरम् = box->padding[शिखरम्_2] ? box->padding[शिखरम्_2] * scale
 				: 0;
-		padding_width = (box->padding[LEFT] + box->width +
-				box->padding[RIGHT]) * scale;
-		padding_height = (box->padding[TOP] + box->height +
+		padding_विस्तारः = (box->padding[वामः_2] + box->विस्तारः +
+				box->padding[दक्षिणः_2]) * scale;
+		padding_height = (box->padding[शिखरम्_2] + box->height +
 				box->padding[BOTTOM]) * scale;
-		border_left = box->border[LEFT].width * scale;
-		border_top = box->border[TOP].width * scale;
-		border_right = box->border[RIGHT].width * scale;
-		border_bottom = box->border[BOTTOM].width * scale;
+		border_वामः = box->border[वामः_2].विस्तारः * scale;
+		border_शिखरम् = box->border[शिखरम्_2].विस्तारः * scale;
+		border_दक्षिणः = box->border[दक्षिणः_2].विस्तारः * scale;
+		border_bottom = box->border[BOTTOM].विस्तारः * scale;
 	}
 
 	/* calculate rectangle covering this box and descendants */
-	if (box->style && overflow_x != CSS_OVERFLOW_VISIBLE &&
-			box->parent != NULL) {
+	यदि (box->style && अतिप्रवाहः_x != CSS_अतिप्रवाहः_VISIBLE &&
+			box->parent != रिक्त) {
 		/* box contents clipped to box size */
-		r.x0 = x - border_left;
-		r.x1 = x + padding_width + border_right;
-	} else {
+		r.x0 = x - border_वामः;
+		r.x1 = x + padding_विस्तारः + border_दक्षिणः;
+	} अन्यथा {
 		/* box contents can hang out of the box; use descendant box */
-		if (scale == 1.0) {
+		यदि (scale == 1.0) {
 			r.x0 = x + box->descendant_x0;
 			r.x1 = x + box->descendant_x1 + 1;
-		} else {
+		} अन्यथा {
 			r.x0 = x + box->descendant_x0 * scale;
 			r.x1 = x + box->descendant_x1 * scale + 1;
 		}
-		if (!box->parent) {
+		यदि (!box->parent) {
 			/* root element */
-			int margin_left, margin_right;
-			if (scale == 1.0) {
-				margin_left = box->margin[LEFT];
-				margin_right = box->margin[RIGHT];
-			} else {
-				margin_left = box->margin[LEFT] * scale;
-				margin_right = box->margin[RIGHT] * scale;
+			पूर्णाङ्क margin_वामः, margin_दक्षिणः;
+			यदि (scale == 1.0) {
+				margin_वामः = box->margin[वामः_2];
+				margin_दक्षिणः = box->margin[दक्षिणः_2];
+			} अन्यथा {
+				margin_वामः = box->margin[वामः_2] * scale;
+				margin_दक्षिणः = box->margin[दक्षिणः_2] * scale;
 			}
-			r.x0 = x - border_left - margin_left < r.x0 ?
-					x - border_left - margin_left : r.x0;
-			r.x1 = x + padding_width + border_right +
-					margin_right > r.x1 ?
-					x + padding_width + border_right +
-					margin_right : r.x1;
+			r.x0 = x - border_वामः - margin_वामः < r.x0 ?
+					x - border_वामः - margin_वामः : r.x0;
+			r.x1 = x + padding_विस्तारः + border_दक्षिणः +
+					margin_दक्षिणः > r.x1 ?
+					x + padding_विस्तारः + border_दक्षिणः +
+					margin_दक्षिणः : r.x1;
 		}
 	}
 
 	/* calculate rectangle covering this box and descendants */
-	if (box->style && overflow_y != CSS_OVERFLOW_VISIBLE &&
-			box->parent != NULL) {
+	यदि (box->style && अतिप्रवाहः_y != CSS_अतिप्रवाहः_VISIBLE &&
+			box->parent != रिक्त) {
 		/* box contents clipped to box size */
-		r.y0 = y - border_top;
+		r.y0 = y - border_शिखरम्;
 		r.y1 = y + padding_height + border_bottom;
-	} else {
+	} अन्यथा {
 		/* box contents can hang out of the box; use descendant box */
-		if (scale == 1.0) {
+		यदि (scale == 1.0) {
 			r.y0 = y + box->descendant_y0;
 			r.y1 = y + box->descendant_y1 + 1;
-		} else {
+		} अन्यथा {
 			r.y0 = y + box->descendant_y0 * scale;
 			r.y1 = y + box->descendant_y1 * scale + 1;
 		}
-		if (!box->parent) {
+		यदि (!box->parent) {
 			/* root element */
-			int margin_top, margin_bottom;
-			if (scale == 1.0) {
-				margin_top = box->margin[TOP];
+			पूर्णाङ्क margin_शिखरम्, margin_bottom;
+			यदि (scale == 1.0) {
+				margin_शिखरम् = box->margin[शिखरम्_2];
 				margin_bottom = box->margin[BOTTOM];
-			} else {
-				margin_top = box->margin[TOP] * scale;
+			} अन्यथा {
+				margin_शिखरम् = box->margin[शिखरम्_2] * scale;
 				margin_bottom = box->margin[BOTTOM] * scale;
 			}
-			r.y0 = y - border_top - margin_top < r.y0 ?
-					y - border_top - margin_top : r.y0;
+			r.y0 = y - border_शिखरम् - margin_शिखरम् < r.y0 ?
+					y - border_शिखरम् - margin_शिखरम् : r.y0;
 			r.y1 = y + padding_height + border_bottom +
 					margin_bottom > r.y1 ?
 					y + padding_height + border_bottom +
@@ -1363,105 +1363,105 @@ bool html_redraw_box(const html_content *html, struct box *box,
 	}
 
 	/* return if the rectangle is completely outside the clip rectangle */
-	if (clip->y1 < r.y0 || r.y1 < clip->y0 ||
+	यदि (clip->y1 < r.y0 || r.y1 < clip->y0 ||
 			clip->x1 < r.x0 || r.x1 < clip->x0)
-		return true;
+		प्रत्यागम true;
 
 	/*if the rectangle is under the page bottom but it can fit in a page,
 	don't print it now*/
-	if (html_redraw_printing) {
-		if (r.y1 > html_redraw_printing_border) {
-			if (r.y1 - r.y0 <= html_redraw_printing_border &&
+	यदि (html_redraw_printing) {
+		यदि (r.y1 > html_redraw_printing_border) {
+			यदि (r.y1 - r.y0 <= html_redraw_printing_border &&
 					(box->type == BOX_TEXT ||
-					box->type == BOX_TABLE_CELL
+					box->type == BOX_सारणी_CELL
 					|| box->object || box->gadget)) {
 				/*remember the highest of all points from the
 				not printed elements*/
-				if (r.y0 < html_redraw_printing_top_cropped)
-					html_redraw_printing_top_cropped = r.y0;
-				return true;
+				यदि (r.y0 < html_redraw_printing_शिखरम्_cropped)
+					html_redraw_printing_शिखरम्_cropped = r.y0;
+				प्रत्यागम true;
 			}
 		}
-		else box->flags |= PRINTED; /*it won't be printed anymore*/
+		अन्यथा box->flags |= PRINTED; /*it won't be printed anymore*/
 	}
 
 	/* if visibility is hidden render children only */
-	if (box->style && css_computed_visibility(box->style) ==
+	यदि (box->style && css_computed_visibility(box->style) ==
 			CSS_VISIBILITY_HIDDEN) {
-		if ((ctx->plot->group_start) &&
-		    (ctx->plot->group_start(ctx, "hidden box") != NSERROR_OK))
-			return false;
-		if (!html_redraw_box_children(html, box, x_parent, y_parent,
+		यदि ((ctx->plot->गणः_start) &&
+		    (ctx->plot->गणः_start(ctx, "hidden box") != NSERROR_OK))
+			प्रत्यागम false;
+		यदि (!html_redraw_box_children(html, box, x_parent, y_parent,
 				&r, scale, current_background_color, ctx))
-			return false;
-		return ((!ctx->plot->group_end) || (ctx->plot->group_end(ctx) == NSERROR_OK));
+			प्रत्यागम false;
+		प्रत्यागम ((!ctx->plot->गणः_अन्तः) || (ctx->plot->गणः_अन्तः(ctx) == NSERROR_OK));
 	}
 
-	if ((ctx->plot->group_start) &&
-	    (ctx->plot->group_start(ctx,"vis box") != NSERROR_OK)) {
-		return false;
+	यदि ((ctx->plot->गणः_start) &&
+	    (ctx->plot->गणः_start(ctx,"vis box") != NSERROR_OK)) {
+		प्रत्यागम false;
 	}
 
-	if (box->style != NULL &&
+	यदि (box->style != रिक्त &&
 			css_computed_position(box->style) ==
 					CSS_POSITION_ABSOLUTE &&
 			css_computed_clip(box->style, &css_rect) ==
 					CSS_CLIP_RECT) {
 		/* We have an absolutly positioned box with a clip rect */
-		if (css_rect.left_auto == false)
-			r.x0 = x - border_left + FIXTOINT(css_unit_len2device_px(
+		यदि (css_rect.वामः_auto == false)
+			r.x0 = x - border_वामः + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.left, css_rect.lunit));
+					css_rect.वामः, css_rect.lunit));
 
-		if (css_rect.top_auto == false)
-			r.y0 = y - border_top + FIXTOINT(css_unit_len2device_px(
+		यदि (css_rect.शिखरम्_auto == false)
+			r.y0 = y - border_शिखरम् + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.top, css_rect.tunit));
+					css_rect.शिखरम्, css_rect.tunit));
 
-		if (css_rect.right_auto == false)
-			r.x1 = x - border_left + FIXTOINT(css_unit_len2device_px(
+		यदि (css_rect.दक्षिणः_auto == false)
+			r.x1 = x - border_वामः + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.right, css_rect.runit));
+					css_rect.दक्षिणः, css_rect.runit));
 
-		if (css_rect.bottom_auto == false)
-			r.y1 = y - border_top + FIXTOINT(css_unit_len2device_px(
+		यदि (css_rect.bottom_auto == false)
+			r.y1 = y - border_शिखरम् + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
 					css_rect.bottom, css_rect.bunit));
 
 		/* find intersection of clip rectangle and box */
-		if (r.x0 < clip->x0) r.x0 = clip->x0;
-		if (r.y0 < clip->y0) r.y0 = clip->y0;
-		if (clip->x1 < r.x1) r.x1 = clip->x1;
-		if (clip->y1 < r.y1) r.y1 = clip->y1;
+		यदि (r.x0 < clip->x0) r.x0 = clip->x0;
+		यदि (r.y0 < clip->y0) r.y0 = clip->y0;
+		यदि (clip->x1 < r.x1) r.x1 = clip->x1;
+		यदि (clip->y1 < r.y1) r.y1 = clip->y1;
 		/* Nothing to do for invalid rectangles */
-		if (r.x0 >= r.x1 || r.y0 >= r.y1)
+		यदि (r.x0 >= r.x1 || r.y0 >= r.y1)
 			/* not an error */
-			return ((!ctx->plot->group_end) ||
-				(ctx->plot->group_end(ctx) == NSERROR_OK));
+			प्रत्यागम ((!ctx->plot->गणः_अन्तः) ||
+				(ctx->plot->गणः_अन्तः(ctx) == NSERROR_OK));
 		/* clip to it */
-		if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-			return false;
+		यदि (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+			प्रत्यागम false;
 
-	} else if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
-			box->type == BOX_TABLE_CELL || box->object) {
+	} अन्यथा यदि (box->type == BOX_खण्डम् || box->type == BOX_INLINE_खण्डम् ||
+			box->type == BOX_सारणी_CELL || box->object) {
 		/* find intersection of clip rectangle and box */
-		if (r.x0 < clip->x0) r.x0 = clip->x0;
-		if (r.y0 < clip->y0) r.y0 = clip->y0;
-		if (clip->x1 < r.x1) r.x1 = clip->x1;
-		if (clip->y1 < r.y1) r.y1 = clip->y1;
+		यदि (r.x0 < clip->x0) r.x0 = clip->x0;
+		यदि (r.y0 < clip->y0) r.y0 = clip->y0;
+		यदि (clip->x1 < r.x1) r.x1 = clip->x1;
+		यदि (clip->y1 < r.y1) r.y1 = clip->y1;
 		/* no point trying to draw 0-width/height boxes */
-		if (r.x0 == r.x1 || r.y0 == r.y1)
+		यदि (r.x0 == r.x1 || r.y0 == r.y1)
 			/* not an error */
-			return ((!ctx->plot->group_end) ||
-				(ctx->plot->group_end(ctx) == NSERROR_OK));
+			प्रत्यागम ((!ctx->plot->गणः_अन्तः) ||
+				(ctx->plot->गणः_अन्तः(ctx) == NSERROR_OK));
 		/* clip to it */
-		if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-			return false;
-	} else {
+		यदि (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+			प्रत्यागम false;
+	} अन्यथा {
 		/* clip box is fine, clip to it */
 		r = *clip;
-		if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-			return false;
+		यदि (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+			प्रत्यागम false;
 	}
 
 	/* background colour and image for block level content and replaced
@@ -1473,140 +1473,140 @@ bool html_redraw_box(const html_content *html, struct box *box,
 	* its background rendered. Otherwise filter out linebreaks,
 	* optimize away non-differing inlines, only plot background
 	* for BOX_TEXT it's in an inline */
-	if (bg_box && bg_box->type != BOX_BR &&
+	यदि (bg_box && bg_box->type != BOX_BR &&
 			bg_box->type != BOX_TEXT &&
-			bg_box->type != BOX_INLINE_END &&
+			bg_box->type != BOX_INLINE_अन्तः &&
 			(bg_box->type != BOX_INLINE || bg_box->object ||
 			bg_box->flags & IFRAME || box->flags & REPLACE_DIM ||
-			(bg_box->gadget != NULL &&
+			(bg_box->gadget != रिक्त &&
 			(bg_box->gadget->type == GADGET_TEXTAREA ||
 			bg_box->gadget->type == GADGET_TEXTBOX ||
 			bg_box->gadget->type == GADGET_PASSWORD)))) {
 		/* find intersection of clip box and border edge */
-		struct rect p;
-		p.x0 = x - border_left < r.x0 ? r.x0 : x - border_left;
-		p.y0 = y - border_top < r.y0 ? r.y0 : y - border_top;
-		p.x1 = x + padding_width + border_right < r.x1 ?
-				x + padding_width + border_right : r.x1;
+		संरचना rect p;
+		p.x0 = x - border_वामः < r.x0 ? r.x0 : x - border_वामः;
+		p.y0 = y - border_शिखरम् < r.y0 ? r.y0 : y - border_शिखरम्;
+		p.x1 = x + padding_विस्तारः + border_दक्षिणः < r.x1 ?
+				x + padding_विस्तारः + border_दक्षिणः : r.x1;
 		p.y1 = y + padding_height + border_bottom < r.y1 ?
 				y + padding_height + border_bottom : r.y1;
-		if (!box->parent) {
+		यदि (!box->parent) {
 			/* Root element, special case:
 			 * background covers margins too */
-			int m_left, m_top, m_right, m_bottom;
-			if (scale == 1.0) {
-				m_left = box->margin[LEFT];
-				m_top = box->margin[TOP];
-				m_right = box->margin[RIGHT];
+			पूर्णाङ्क m_वामः, m_शिखरम्, m_दक्षिणः, m_bottom;
+			यदि (scale == 1.0) {
+				m_वामः = box->margin[वामः_2];
+				m_शिखरम् = box->margin[शिखरम्_2];
+				m_दक्षिणः = box->margin[दक्षिणः_2];
 				m_bottom = box->margin[BOTTOM];
-			} else {
-				m_left = box->margin[LEFT] * scale;
-				m_top = box->margin[TOP] * scale;
-				m_right = box->margin[RIGHT] * scale;
+			} अन्यथा {
+				m_वामः = box->margin[वामः_2] * scale;
+				m_शिखरम् = box->margin[शिखरम्_2] * scale;
+				m_दक्षिणः = box->margin[दक्षिणः_2] * scale;
 				m_bottom = box->margin[BOTTOM] * scale;
 			}
-			p.x0 = p.x0 - m_left < r.x0 ? r.x0 : p.x0 - m_left;
-			p.y0 = p.y0 - m_top < r.y0 ? r.y0 : p.y0 - m_top;
-			p.x1 = p.x1 + m_right < r.x1 ? p.x1 + m_right : r.x1;
+			p.x0 = p.x0 - m_वामः < r.x0 ? r.x0 : p.x0 - m_वामः;
+			p.y0 = p.y0 - m_शिखरम् < r.y0 ? r.y0 : p.y0 - m_शिखरम्;
+			p.x1 = p.x1 + m_दक्षिणः < r.x1 ? p.x1 + m_दक्षिणः : r.x1;
 			p.y1 = p.y1 + m_bottom < r.y1 ? p.y1 + m_bottom : r.y1;
 		}
 		/* valid clipping rectangles only */
-		if ((p.x0 < p.x1) && (p.y0 < p.y1)) {
+		यदि ((p.x0 < p.x1) && (p.y0 < p.y1)) {
 			/* plot background */
-			if (!html_redraw_background(x, y, box, scale, &p,
+			यदि (!html_redraw_background(x, y, box, scale, &p,
 					&current_background_color, bg_box,
 					&html->unit_len_ctx, ctx))
-				return false;
+				प्रत्यागम false;
 			/* restore previous graphics window */
-			if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-				return false;
+			यदि (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+				प्रत्यागम false;
 		}
 	}
 
 	/* borders for block level content and replaced inlines */
-	if (box->style &&
+	यदि (box->style &&
 	    box->type != BOX_TEXT &&
-	    box->type != BOX_INLINE_END &&
+	    box->type != BOX_INLINE_अन्तः &&
 	    (box->type != BOX_INLINE || box->object ||
 	     box->flags & IFRAME || box->flags & REPLACE_DIM ||
-	     (box->gadget != NULL &&
+	     (box->gadget != रिक्त &&
 	      (box->gadget->type == GADGET_TEXTAREA ||
 	       box->gadget->type == GADGET_TEXTBOX ||
 	       box->gadget->type == GADGET_PASSWORD))) &&
-	    (border_top || border_right || border_bottom || border_left)) {
-		if (!html_redraw_borders(box, x_parent, y_parent,
-				padding_width, padding_height, &r,
+	    (border_शिखरम् || border_दक्षिणः || border_bottom || border_वामः)) {
+		यदि (!html_redraw_borders(box, x_parent, y_parent,
+				padding_विस्तारः, padding_height, &r,
 				scale, ctx))
-			return false;
+			प्रत्यागम false;
 	}
 
 	/* backgrounds and borders for non-replaced inlines */
-	if (box->style && box->type == BOX_INLINE && box->inline_end &&
+	यदि (box->style && box->type == BOX_INLINE && box->inline_अन्तः &&
 			(html_redraw_box_has_background(box) ||
-			border_top || border_right ||
-			border_bottom || border_left)) {
+			border_शिखरम् || border_दक्षिणः ||
+			border_bottom || border_वामः)) {
 		/* inline backgrounds and borders span other boxes and may
 		 * wrap onto separate lines */
-		struct box *ib;
-		struct rect b; /* border edge rectangle */
-		struct rect p; /* clipped rect */
+		संरचना box *ib;
+		संरचना rect b; /* border edge rectangle */
+		संरचना rect p; /* clipped rect */
 		bool first = true;
-		int ib_x;
-		int ib_y = y;
-		int ib_p_width;
-		int ib_b_left, ib_b_right;
+		पूर्णाङ्क ib_x;
+		पूर्णाङ्क ib_y = y;
+		पूर्णाङ्क ib_p_विस्तारः;
+		पूर्णाङ्क ib_b_वामः, ib_b_दक्षिणः;
 
-		b.x0 = x - border_left;
-		b.x1 = x + padding_width + border_right;
-		b.y0 = y - border_top;
+		b.x0 = x - border_वामः;
+		b.x1 = x + padding_विस्तारः + border_दक्षिणः;
+		b.y0 = y - border_शिखरम्;
 		b.y1 = y + padding_height + border_bottom;
 
 		p.x0 = b.x0 < r.x0 ? r.x0 : b.x0;
 		p.x1 = b.x1 < r.x1 ? b.x1 : r.x1;
 		p.y0 = b.y0 < r.y0 ? r.y0 : b.y0;
 		p.y1 = b.y1 < r.y1 ? b.y1 : r.y1;
-		for (ib = box; ib; ib = ib->next) {
+		प्रति (ib = box; ib; ib = ib->अग्र) {
 			/* to get extents of rectangle(s) associated with
 			 * inline, cycle though all boxes in inline, skipping
 			 * over floats */
-			if (ib->type == BOX_FLOAT_LEFT ||
-					ib->type == BOX_FLOAT_RIGHT)
-				continue;
-			if (scale == 1.0) {
+			यदि (ib->type == BOX_FLOAT_वामः ||
+					ib->type == BOX_FLOAT_दक्षिणः)
+				अनुवर्त;
+			यदि (scale == 1.0) {
 				ib_x = x_parent + ib->x;
 				ib_y = y_parent + ib->y;
-				ib_p_width = ib->padding[LEFT] + ib->width +
-						ib->padding[RIGHT];
-				ib_b_left = ib->border[LEFT].width;
-				ib_b_right = ib->border[RIGHT].width;
-			} else {
+				ib_p_विस्तारः = ib->padding[वामः_2] + ib->विस्तारः +
+						ib->padding[दक्षिणः_2];
+				ib_b_वामः = ib->border[वामः_2].विस्तारः;
+				ib_b_दक्षिणः = ib->border[दक्षिणः_2].विस्तारः;
+			} अन्यथा {
 				ib_x = (x_parent + ib->x) * scale;
 				ib_y = (y_parent + ib->y) * scale;
-				ib_p_width = (ib->padding[LEFT] + ib->width +
-						ib->padding[RIGHT]) * scale;
-				ib_b_left = ib->border[LEFT].width * scale;
-				ib_b_right = ib->border[RIGHT].width * scale;
+				ib_p_विस्तारः = (ib->padding[वामः_2] + ib->विस्तारः +
+						ib->padding[दक्षिणः_2]) * scale;
+				ib_b_वामः = ib->border[वामः_2].विस्तारः * scale;
+				ib_b_दक्षिणः = ib->border[दक्षिणः_2].विस्तारः * scale;
 			}
 
-			if ((ib->flags & NEW_LINE) && ib != box) {
+			यदि ((ib->flags & NEW_पङ्क्तिः) && ib != box) {
 				/* inline element has wrapped, plot background
 				 * and borders */
-				if (!html_redraw_inline_background(
+				यदि (!html_redraw_inline_background(
 						x, y, box, scale, &p, b,
 						first, false,
 						&current_background_color,
 						&html->unit_len_ctx, ctx))
-					return false;
+					प्रत्यागम false;
 				/* restore previous graphics window */
-				if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-					return false;
-				if (!html_redraw_inline_borders(box, b, &r,
+				यदि (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+					प्रत्यागम false;
+				यदि (!html_redraw_inline_borders(box, b, &r,
 						scale, first, false, ctx))
-					return false;
+					प्रत्यागम false;
 				/* reset coords */
-				b.x0 = ib_x - ib_b_left;
-				b.y0 = ib_y - border_top - padding_top;
-				b.y1 = ib_y + padding_height - padding_top +
+				b.x0 = ib_x - ib_b_वामः;
+				b.y0 = ib_y - border_शिखरम् - padding_शिखरम्;
+				b.y1 = ib_y + padding_height - padding_शिखरम् +
 						border_bottom;
 
 				p.x0 = b.x0 < r.x0 ? r.x0 : b.x0;
@@ -1617,316 +1617,316 @@ bool html_redraw_box(const html_content *html, struct box *box,
 			}
 
 			/* increase width for current box */
-			b.x1 = ib_x + ib_p_width + ib_b_right;
+			b.x1 = ib_x + ib_p_विस्तारः + ib_b_दक्षिणः;
 			p.x1 = b.x1 < r.x1 ? b.x1 : r.x1;
 
-			if (ib == box->inline_end)
+			यदि (ib == box->inline_अन्तः)
 				/* reached end of BOX_INLINE span */
-				break;
+				भङ्ग;
 		}
 		/* plot background and borders for last rectangle of
 		 * the inline */
-		if (!html_redraw_inline_background(x, ib_y, box, scale, &p, b,
+		यदि (!html_redraw_inline_background(x, ib_y, box, scale, &p, b,
 				first, true, &current_background_color,
 				&html->unit_len_ctx, ctx))
-			return false;
+			प्रत्यागम false;
 		/* restore previous graphics window */
-		if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-			return false;
-		if (!html_redraw_inline_borders(box, b, &r, scale, first, true,
+		यदि (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+			प्रत्यागम false;
+		यदि (!html_redraw_inline_borders(box, b, &r, scale, first, true,
 				ctx))
-			return false;
+			प्रत्यागम false;
 
 	}
 
 	/* Debug outlines */
-	if (html_redraw_debug) {
-		int margin_left, margin_right;
-		int margin_top, margin_bottom;
-		if (scale == 1.0) {
+	यदि (html_redraw_debug) {
+		पूर्णाङ्क margin_वामः, margin_दक्षिणः;
+		पूर्णाङ्क margin_शिखरम्, margin_bottom;
+		यदि (scale == 1.0) {
 			/* avoid trivial fp maths */
-			margin_left = box->margin[LEFT];
-			margin_top = box->margin[TOP];
-			margin_right = box->margin[RIGHT];
+			margin_वामः = box->margin[वामः_2];
+			margin_शिखरम् = box->margin[शिखरम्_2];
+			margin_दक्षिणः = box->margin[दक्षिणः_2];
 			margin_bottom = box->margin[BOTTOM];
-		} else {
-			margin_left = box->margin[LEFT] * scale;
-			margin_top = box->margin[TOP] * scale;
-			margin_right = box->margin[RIGHT] * scale;
+		} अन्यथा {
+			margin_वामः = box->margin[वामः_2] * scale;
+			margin_शिखरम् = box->margin[शिखरम्_2] * scale;
+			margin_दक्षिणः = box->margin[दक्षिणः_2] * scale;
 			margin_bottom = box->margin[BOTTOM] * scale;
 		}
 		/* Content edge -- blue */
-		rect.x0 = x + padding_left;
-		rect.y0 = y + padding_top;
-		rect.x1 = x + padding_left + width;
-		rect.y1 = y + padding_top + height;
-		if (ctx->plot->rectangle(ctx, plot_style_content_edge, &rect) != NSERROR_OK)
-			return false;
+		rect.x0 = x + padding_वामः;
+		rect.y0 = y + padding_शिखरम्;
+		rect.x1 = x + padding_वामः + विस्तारः;
+		rect.y1 = y + padding_शिखरम् + height;
+		यदि (ctx->plot->rectangle(ctx, plot_style_content_edge, &rect) != NSERROR_OK)
+			प्रत्यागम false;
 
 		/* Padding edge -- red */
 		rect.x0 = x;
 		rect.y0 = y;
-		rect.x1 = x + padding_width;
+		rect.x1 = x + padding_विस्तारः;
 		rect.y1 = y + padding_height;
-		if (ctx->plot->rectangle(ctx, plot_style_padding_edge, &rect) != NSERROR_OK)
-			return false;
+		यदि (ctx->plot->rectangle(ctx, plot_style_padding_edge, &rect) != NSERROR_OK)
+			प्रत्यागम false;
 
 		/* Margin edge -- yellow */
-		rect.x0 = x - border_left - margin_left;
-		rect.y0 = y - border_top - margin_top;
-		rect.x1 = x + padding_width + border_right + margin_right;
+		rect.x0 = x - border_वामः - margin_वामः;
+		rect.y0 = y - border_शिखरम् - margin_शिखरम्;
+		rect.x1 = x + padding_विस्तारः + border_दक्षिणः + margin_दक्षिणः;
 		rect.y1 = y + padding_height + border_bottom + margin_bottom;
-		if (ctx->plot->rectangle(ctx, plot_style_margin_edge, &rect) != NSERROR_OK)
-			return false;
+		यदि (ctx->plot->rectangle(ctx, plot_style_margin_edge, &rect) != NSERROR_OK)
+			प्रत्यागम false;
 	}
 
 	/* clip to the padding edge for objects, or boxes with overflow hidden
 	 * or scroll, unless it's the root element */
-	if (box->parent != NULL) {
+	यदि (box->parent != रिक्त) {
 		bool need_clip = false;
-		if (box->object || box->flags & IFRAME ||
-				(overflow_x != CSS_OVERFLOW_VISIBLE &&
-				 overflow_y != CSS_OVERFLOW_VISIBLE)) {
+		यदि (box->object || box->flags & IFRAME ||
+				(अतिप्रवाहः_x != CSS_अतिप्रवाहः_VISIBLE &&
+				 अतिप्रवाहः_y != CSS_अतिप्रवाहः_VISIBLE)) {
 			r.x0 = x;
 			r.y0 = y;
-			r.x1 = x + padding_width;
+			r.x1 = x + padding_विस्तारः;
 			r.y1 = y + padding_height;
-			if (r.x0 < clip->x0) r.x0 = clip->x0;
-			if (r.y0 < clip->y0) r.y0 = clip->y0;
-			if (clip->x1 < r.x1) r.x1 = clip->x1;
-			if (clip->y1 < r.y1) r.y1 = clip->y1;
-			if (r.x1 <= r.x0 || r.y1 <= r.y0) {
-				return (!ctx->plot->group_end ||
-					(ctx->plot->group_end(ctx) == NSERROR_OK));
+			यदि (r.x0 < clip->x0) r.x0 = clip->x0;
+			यदि (r.y0 < clip->y0) r.y0 = clip->y0;
+			यदि (clip->x1 < r.x1) r.x1 = clip->x1;
+			यदि (clip->y1 < r.y1) r.y1 = clip->y1;
+			यदि (r.x1 <= r.x0 || r.y1 <= r.y0) {
+				प्रत्यागम (!ctx->plot->गणः_अन्तः ||
+					(ctx->plot->गणः_अन्तः(ctx) == NSERROR_OK));
 			}
 			need_clip = true;
 
-		} else if (overflow_x != CSS_OVERFLOW_VISIBLE) {
+		} अन्यथा यदि (अतिप्रवाहः_x != CSS_अतिप्रवाहः_VISIBLE) {
 			r.x0 = x;
 			r.y0 = clip->y0;
-			r.x1 = x + padding_width;
+			r.x1 = x + padding_विस्तारः;
 			r.y1 = clip->y1;
-			if (r.x0 < clip->x0) r.x0 = clip->x0;
-			if (clip->x1 < r.x1) r.x1 = clip->x1;
-			if (r.x1 <= r.x0) {
-				return (!ctx->plot->group_end ||
-					(ctx->plot->group_end(ctx) == NSERROR_OK));
+			यदि (r.x0 < clip->x0) r.x0 = clip->x0;
+			यदि (clip->x1 < r.x1) r.x1 = clip->x1;
+			यदि (r.x1 <= r.x0) {
+				प्रत्यागम (!ctx->plot->गणः_अन्तः ||
+					(ctx->plot->गणः_अन्तः(ctx) == NSERROR_OK));
 			}
 			need_clip = true;
 
-		} else if (overflow_y != CSS_OVERFLOW_VISIBLE) {
+		} अन्यथा यदि (अतिप्रवाहः_y != CSS_अतिप्रवाहः_VISIBLE) {
 			r.x0 = clip->x0;
 			r.y0 = y;
 			r.x1 = clip->x1;
 			r.y1 = y + padding_height;
-			if (r.y0 < clip->y0) r.y0 = clip->y0;
-			if (clip->y1 < r.y1) r.y1 = clip->y1;
-			if (r.y1 <= r.y0) {
-				return (!ctx->plot->group_end ||
-					(ctx->plot->group_end(ctx) == NSERROR_OK));
+			यदि (r.y0 < clip->y0) r.y0 = clip->y0;
+			यदि (clip->y1 < r.y1) r.y1 = clip->y1;
+			यदि (r.y1 <= r.y0) {
+				प्रत्यागम (!ctx->plot->गणः_अन्तः ||
+					(ctx->plot->गणः_अन्तः(ctx) == NSERROR_OK));
 			}
 			need_clip = true;
 		}
 
-		if (need_clip &&
-		    (box->type == BOX_BLOCK ||
-		     box->type == BOX_INLINE_BLOCK ||
-		     box->type == BOX_TABLE_CELL || box->object)) {
-			if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-				return false;
+		यदि (need_clip &&
+		    (box->type == BOX_खण्डम् ||
+		     box->type == BOX_INLINE_खण्डम् ||
+		     box->type == BOX_सारणी_CELL || box->object)) {
+			यदि (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+				प्रत्यागम false;
 		}
 	}
 
 	/* text decoration */
-	if ((box->type != BOX_TEXT) &&
+	यदि ((box->type != BOX_TEXT) &&
 	    box->style &&
 	    css_computed_text_decoration(box->style) !=	CSS_TEXT_DECORATION_NONE) {
-		if (!html_redraw_text_decoration(box, x_parent, y_parent,
+		यदि (!html_redraw_text_decoration(box, x_parent, y_parent,
 				scale, current_background_color, ctx))
-			return false;
+			प्रत्यागम false;
 	}
 
-	if (box->node != NULL) {
-		exc = dom_html_element_get_tag_type(box->node, &tag_type);
-		if (exc != DOM_NO_ERR) {
-			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+	यदि (box->ग्रन्थिः != रिक्त) {
+		exc = dom_html_element_get_चिह्नकम्_type(box->ग्रन्थिः, &चिह्नकम्_type);
+		यदि (exc != DOM_NO_ERR) {
+			चिह्नकम्_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
-	} else {
-		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+	} अन्यथा {
+		चिह्नकम्_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	if (box->object && width != 0 && height != 0) {
-		struct content_redraw_data obj_data;
+	यदि (box->object && विस्तारः != 0 && height != 0) {
+		संरचना content_redraw_दत्त obj_दत्त;
 
-		x_scrolled = x - scrollbar_get_offset(box->scroll_x) * scale;
-		y_scrolled = y - scrollbar_get_offset(box->scroll_y) * scale;
+		x_scrolled = x - scrollbar_get_विस्थापनम्(box->scroll_x) * scale;
+		y_scrolled = y - scrollbar_get_विस्थापनम्(box->scroll_y) * scale;
 
-		obj_data.x = x_scrolled + padding_left;
-		obj_data.y = y_scrolled + padding_top;
-		obj_data.width = width;
-		obj_data.height = height;
-		obj_data.background_colour = current_background_color;
-		obj_data.scale = scale;
-		obj_data.repeat_x = false;
-		obj_data.repeat_y = false;
+		obj_दत्त.x = x_scrolled + padding_वामः;
+		obj_दत्त.y = y_scrolled + padding_शिखरम्;
+		obj_दत्त.विस्तारः = विस्तारः;
+		obj_दत्त.height = height;
+		obj_दत्त.background_रङ्गः = current_background_color;
+		obj_दत्त.scale = scale;
+		obj_दत्त.repeat_x = false;
+		obj_दत्त.repeat_y = false;
 
-		if (content_get_type(box->object) == CONTENT_HTML) {
-			obj_data.x /= scale;
-			obj_data.y /= scale;
+		यदि (content_get_type(box->object) == CONTENT_HTML) {
+			obj_दत्त.x /= scale;
+			obj_दत्त.y /= scale;
 		}
 
-		if (!content_redraw(box->object, &obj_data, &r, ctx)) {
+		यदि (!content_redraw(box->object, &obj_दत्त, &r, ctx)) {
 			/* Show image fail */
 			/* Unicode (U+FFFC) 'OBJECT REPLACEMENT CHARACTER' */
-			const char *obj = "\xef\xbf\xbc";
-			int obj_width;
-			int obj_x = x + padding_left;
+			ध्रुव वर्ण *obj = "\xef\xbf\xbc";
+			पूर्णाङ्क obj_विस्तारः;
+			पूर्णाङ्क obj_x = x + padding_वामः;
 			nserror res;
 
-			rect.x0 = x + padding_left;
-			rect.y0 = y + padding_top;
-			rect.x1 = x + padding_left + width - 1;
-			rect.y1 = y + padding_top + height - 1;
+			rect.x0 = x + padding_वामः;
+			rect.y0 = y + padding_शिखरम्;
+			rect.x1 = x + padding_वामः + विस्तारः - 1;
+			rect.y1 = y + padding_शिखरम् + height - 1;
 			res = ctx->plot->rectangle(ctx, plot_style_broken_object, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
 
-			res = guit->layout->width(plot_fstyle_broken_object,
+			res = guit->layout->विस्तारः(plot_fstyle_broken_object,
 						  obj,
-						  sizeof(obj) - 1,
-						  &obj_width);
-			if (res != NSERROR_OK) {
+						  परिमाण(obj) - 1,
+						  &obj_विस्तारः);
+			यदि (res != NSERROR_OK) {
 				obj_x += 1;
-			} else {
-				obj_x += width / 2 - obj_width / 2;
+			} अन्यथा {
+				obj_x += विस्तारः / 2 - obj_विस्तारः / 2;
 			}
 
-			if (ctx->plot->text(ctx,
+			यदि (ctx->plot->text(ctx,
 					    plot_fstyle_broken_object,
-					    obj_x, y + padding_top + (int)(height * 0.75),
-					    obj, sizeof(obj) - 1) != NSERROR_OK)
-				return false;
+					    obj_x, y + padding_शिखरम् + (पूर्णाङ्क)(height * 0.75),
+					    obj, परिमाण(obj) - 1) != NSERROR_OK)
+				प्रत्यागम false;
 		}
-	} else if (tag_type == DOM_HTML_ELEMENT_TYPE_CANVAS &&
-		   box->node != NULL &&
+	} अन्यथा यदि (चिह्नकम्_type == DOM_HTML_ELEMENT_TYPE_CANVAS &&
+		   box->ग्रन्थिः != रिक्त &&
 		   box->flags & REPLACE_DIM) {
 		/* Canvas to draw */
-		struct bitmap *bitmap = NULL;
-		exc = dom_node_get_user_data(box->node,
-					     corestring_dom___ns_key_canvas_node_data,
+		संरचना bitmap *bitmap = रिक्त;
+		exc = dom_ग्रन्थिः_get_user_दत्त(box->ग्रन्थिः,
+					     corestring_dom_ns_कुञ्चिका_canvas_ग्रन्थिः_दत्त,
 					     &bitmap);
-		if (exc != DOM_NO_ERR) {
-			bitmap = NULL;
+		यदि (exc != DOM_NO_ERR) {
+			bitmap = रिक्त;
 		}
-		if (bitmap != NULL &&
-		    ctx->plot->bitmap(ctx, bitmap, x + padding_left, y + padding_top,
-				      width, height, current_background_color,
+		यदि (bitmap != रिक्त &&
+		    ctx->plot->bitmap(ctx, bitmap, x + padding_वामः, y + padding_शिखरम्,
+				      विस्तारः, height, current_background_color,
 				      BITMAPF_NONE) != NSERROR_OK)
-			return false;
-	} else if (box->iframe) {
+			प्रत्यागम false;
+	} अन्यथा यदि (box->iframe) {
 		/* Offset is passed to browser window redraw unscaled */
-		browser_window_redraw(box->iframe,
-				x + padding_left,
-				y + padding_top, &r, ctx);
+		browser_गवाक्षः_redraw(box->iframe,
+				x + padding_वामः,
+				y + padding_शिखरम्, &r, ctx);
 
-	} else if (box->gadget && box->gadget->type == GADGET_CHECKBOX) {
-		if (!html_redraw_checkbox(x + padding_left, y + padding_top,
-				width, height, box->gadget->selected, ctx))
-			return false;
+	} अन्यथा यदि (box->gadget && box->gadget->type == GADGET_CHECKBOX) {
+		यदि (!html_redraw_checkbox(x + padding_वामः, y + padding_शिखरम्,
+				विस्तारः, height, box->gadget->selected, ctx))
+			प्रत्यागम false;
 
-	} else if (box->gadget && box->gadget->type == GADGET_RADIO) {
-		if (!html_redraw_radio(x + padding_left, y + padding_top,
-				width, height, box->gadget->selected, ctx))
-			return false;
+	} अन्यथा यदि (box->gadget && box->gadget->type == GADGET_RADIO) {
+		यदि (!html_redraw_radio(x + padding_वामः, y + padding_शिखरम्,
+				विस्तारः, height, box->gadget->selected, ctx))
+			प्रत्यागम false;
 
-	} else if (box->gadget && box->gadget->type == GADGET_FILE) {
-		if (!html_redraw_file(x + padding_left, y + padding_top,
-				width, height, box, scale,
+	} अन्यथा यदि (box->gadget && box->gadget->type == GADGET_FILE) {
+		यदि (!html_redraw_file(x + padding_वामः, y + padding_शिखरम्,
+				विस्तारः, height, box, scale,
 				current_background_color, &html->unit_len_ctx, ctx))
-			return false;
+			प्रत्यागम false;
 
-	} else if (box->gadget &&
+	} अन्यथा यदि (box->gadget &&
 			(box->gadget->type == GADGET_TEXTAREA ||
 			box->gadget->type == GADGET_PASSWORD ||
 			box->gadget->type == GADGET_TEXTBOX)) {
-		textarea_redraw(box->gadget->data.text.ta, x, y,
+		textarea_redraw(box->gadget->दत्त.text.ta, x, y,
 				current_background_color, scale, &r, ctx);
 
-	} else if (box->text) {
-		if (!html_redraw_text_box(html, box, x, y, &r, scale,
+	} अन्यथा यदि (box->text) {
+		यदि (!html_redraw_text_box(html, box, x, y, &r, scale,
 				current_background_color, ctx))
-			return false;
+			प्रत्यागम false;
 
-	} else {
-		if (!html_redraw_box_children(html, box, x_parent, y_parent, &r,
+	} अन्यथा {
+		यदि (!html_redraw_box_children(html, box, x_parent, y_parent, &r,
 				scale, current_background_color, ctx))
-			return false;
+			प्रत्यागम false;
 	}
 
-	if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
-			box->type == BOX_TABLE_CELL || box->type == BOX_INLINE)
-		if (ctx->plot->clip(ctx, clip) != NSERROR_OK)
-			return false;
+	यदि (box->type == BOX_खण्डम् || box->type == BOX_INLINE_खण्डम् ||
+			box->type == BOX_सारणी_CELL || box->type == BOX_INLINE)
+		यदि (ctx->plot->clip(ctx, clip) != NSERROR_OK)
+			प्रत्यागम false;
 
 	/* list marker */
-	if (box->list_marker) {
-		if (!html_redraw_box(html, box->list_marker,
+	यदि (box->list_marker) {
+		यदि (!html_redraw_box(html, box->list_marker,
 				x_parent + box->x -
-				scrollbar_get_offset(box->scroll_x),
+				scrollbar_get_विस्थापनम्(box->scroll_x),
 				y_parent + box->y -
-				scrollbar_get_offset(box->scroll_y),
+				scrollbar_get_विस्थापनम्(box->scroll_y),
 				clip, scale, current_background_color, ctx))
-			return false;
+			प्रत्यागम false;
 	}
 
 	/* scrollbars */
-	if (((box->style && box->type != BOX_BR &&
-	      box->type != BOX_TABLE && box->type != BOX_INLINE &&
-	      (box->gadget == NULL || box->gadget->type != GADGET_TEXTAREA) &&
-	      (overflow_x == CSS_OVERFLOW_SCROLL ||
-	       overflow_x == CSS_OVERFLOW_AUTO ||
-	       overflow_y == CSS_OVERFLOW_SCROLL ||
-	       overflow_y == CSS_OVERFLOW_AUTO)) ||
+	यदि (((box->style && box->type != BOX_BR &&
+	      box->type != BOX_सारणी && box->type != BOX_INLINE &&
+	      (box->gadget == रिक्त || box->gadget->type != GADGET_TEXTAREA) &&
+	      (अतिप्रवाहः_x == CSS_अतिप्रवाहः_SCROLL ||
+	       अतिप्रवाहः_x == CSS_अतिप्रवाहः_AUTO ||
+	       अतिप्रवाहः_y == CSS_अतिप्रवाहः_SCROLL ||
+	       अतिप्रवाहः_y == CSS_अतिप्रवाहः_AUTO)) ||
 	     (box->object && content_get_type(box->object) ==
-	      CONTENT_HTML)) && box->parent != NULL) {
+	      CONTENT_HTML)) && box->parent != रिक्त) {
 		nserror res;
-		bool has_x_scroll = (overflow_x == CSS_OVERFLOW_SCROLL);
-		bool has_y_scroll = (overflow_y == CSS_OVERFLOW_SCROLL);
+		bool has_x_scroll = (अतिप्रवाहः_x == CSS_अतिप्रवाहः_SCROLL);
+		bool has_y_scroll = (अतिप्रवाहः_y == CSS_अतिप्रवाहः_SCROLL);
 
-		has_x_scroll |= (overflow_x == CSS_OVERFLOW_AUTO) &&
+		has_x_scroll |= (अतिप्रवाहः_x == CSS_अतिप्रवाहः_AUTO) &&
 				box_hscrollbar_present(box);
-		has_y_scroll |= (overflow_y == CSS_OVERFLOW_AUTO) &&
+		has_y_scroll |= (अतिप्रवाहः_y == CSS_अतिप्रवाहः_AUTO) &&
 				box_vscrollbar_present(box);
 
-		res = box_handle_scrollbars((struct content *)html,
+		res = box_handle_scrollbars((संरचना content *)html,
 					    box, has_x_scroll, has_y_scroll);
-		if (res != NSERROR_OK) {
+		यदि (res != NSERROR_OK) {
 			NSLOG(netsurf, INFO, "%s", messages_get_errorcode(res));
-			return false;
+			प्रत्यागम false;
 		}
 
-		if (box->scroll_x != NULL)
+		यदि (box->scroll_x != रिक्त)
 			scrollbar_redraw(box->scroll_x,
 					x_parent + box->x,
-					y_parent + box->y + box->padding[TOP] +
+					y_parent + box->y + box->padding[शिखरम्_2] +
 					box->height + box->padding[BOTTOM] -
-					SCROLLBAR_WIDTH, clip, scale, ctx);
-		if (box->scroll_y != NULL)
+					SCROLLBAR_विस्तारः, clip, scale, ctx);
+		यदि (box->scroll_y != रिक्त)
 			scrollbar_redraw(box->scroll_y,
-					x_parent + box->x + box->padding[LEFT] +
-					box->width + box->padding[RIGHT] -
-					SCROLLBAR_WIDTH,
+					x_parent + box->x + box->padding[वामः_2] +
+					box->विस्तारः + box->padding[दक्षिणः_2] -
+					SCROLLBAR_विस्तारः,
 					y_parent + box->y, clip, scale, ctx);
 	}
 
-	if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
-	    box->type == BOX_TABLE_CELL || box->type == BOX_INLINE) {
-		if (ctx->plot->clip(ctx, clip) != NSERROR_OK)
-			return false;
+	यदि (box->type == BOX_खण्डम् || box->type == BOX_INLINE_खण्डम् ||
+	    box->type == BOX_सारणी_CELL || box->type == BOX_INLINE) {
+		यदि (ctx->plot->clip(ctx, clip) != NSERROR_OK)
+			प्रत्यागम false;
 	}
 
-	return ((!plot->group_end) || (ctx->plot->group_end(ctx) == NSERROR_OK));
+	प्रत्यागम ((!plot->गणः_अन्तः) || (ctx->plot->गणः_अन्तः(ctx) == NSERROR_OK));
 }
 
 /**
@@ -1941,61 +1941,61 @@ bool html_redraw_box(const html_content *html, struct box *box,
  * x, y, clip_[xy][01] are in target coordinates.
  */
 
-bool html_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+bool html_redraw(संरचना content *c, संरचना content_redraw_दत्त *दत्त,
+		ध्रुव संरचना rect *clip, ध्रुव संरचना redraw_context *ctx)
 {
 	html_content *html = (html_content *) c;
-	struct box *box;
-	bool result = true;
+	संरचना box *box;
+	bool परिणाम = true;
 	bool select, select_only;
 	plot_style_t pstyle_fill_bg = {
 		.fill_type = PLOT_OP_TYPE_SOLID,
-		.fill_colour = data->background_colour,
+		.fill_रङ्गः = दत्त->background_रङ्गः,
 	};
 
 	box = html->layout;
-	assert(box);
+	प्रतिज्ञा(box);
 
 	/* The select menu needs special treating because, when opened, it
 	 * reaches beyond its layout box.
 	 */
 	select = false;
 	select_only = false;
-	if (ctx->interactive && html->visible_select_menu != NULL) {
-		struct form_control *control = html->visible_select_menu;
+	यदि (ctx->interactive && html->visible_select_menu != रिक्त) {
+		संरचना form_control *control = html->visible_select_menu;
 		select = true;
 		/* check if the redraw rectangle is completely inside of the
 		   select menu */
 		select_only = form_clip_inside_select_menu(control,
-				data->scale, clip);
+				दत्त->scale, clip);
 	}
 
-	if (!select_only) {
+	यदि (!select_only) {
 		/* clear to background colour */
-		result = (ctx->plot->clip(ctx, clip) == NSERROR_OK);
+		परिणाम = (ctx->plot->clip(ctx, clip) == NSERROR_OK);
 
-		if (html->background_colour != NS_TRANSPARENT)
-			pstyle_fill_bg.fill_colour = html->background_colour;
+		यदि (html->background_रङ्गः != NS_TRANSPARENT)
+			pstyle_fill_bg.fill_रङ्गः = html->background_रङ्गः;
 
-		result &= (ctx->plot->rectangle(ctx, &pstyle_fill_bg, clip) == NSERROR_OK);
+		परिणाम &= (ctx->plot->rectangle(ctx, &pstyle_fill_bg, clip) == NSERROR_OK);
 
-		result &= html_redraw_box(html, box, data->x, data->y, clip,
-				data->scale, pstyle_fill_bg.fill_colour, ctx);
+		परिणाम &= html_redraw_box(html, box, दत्त->x, दत्त->y, clip,
+				दत्त->scale, pstyle_fill_bg.fill_रङ्गः, ctx);
 	}
 
-	if (select) {
-		int menu_x, menu_y;
+	यदि (select) {
+		पूर्णाङ्क menu_x, menu_y;
 		box = html->visible_select_menu->box;
 		box_coords(box, &menu_x, &menu_y);
 
-		menu_x -= box->border[LEFT].width;
-		menu_y += box->height + box->border[BOTTOM].width +
-				box->padding[BOTTOM] + box->padding[TOP];
-		result &= form_redraw_select_menu(html->visible_select_menu,
-				data->x + menu_x, data->y + menu_y,
-				data->scale, clip, ctx);
+		menu_x -= box->border[वामः_2].विस्तारः;
+		menu_y += box->height + box->border[BOTTOM].विस्तारः +
+				box->padding[BOTTOM] + box->padding[शिखरम्_2];
+		परिणाम &= form_redraw_select_menu(html->visible_select_menu,
+				दत्त->x + menu_x, दत्त->y + menu_y,
+				दत्त->scale, clip, ctx);
 	}
 
-	return result;
+	प्रत्यागम परिणाम;
 
 }

@@ -20,9 +20,9 @@
  * Content for image/x-riscos-sprite (librosprite interface).
  */
 
-#ifndef _NETSURF_NS_SPRITE_H_
-#define _NETSURF_NS_SPRITE_H_
+#यदि_अपरिभाषितम् _NETSURF_NS_SPRITE_H_
+#परिभाषय _NETSURF_NS_SPRITE_H_
 
-nserror nssprite_init(void);
+nserror nssprite_init(शून्य);
 
-#endif
+#यदि_अन्तः

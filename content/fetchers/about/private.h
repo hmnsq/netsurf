@@ -21,16 +21,16 @@
  * Private interfaces for the about scheme fetcher.
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_PRIVATE_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_PRIVATE_H
+#यदि_अपरिभाषितम् NETSURF_CONTENT_FETCHERS_ABOUT_वैयक्तिकम्_H
+#परिभाषय NETSURF_CONTENT_FETCHERS_ABOUT_वैयक्तिकम्_H
 
-struct fetch_about_context;
-struct fetch_multipart_data;
+संरचना fetch_about_context;
+संरचना fetch_multipart_दत्त;
 
 /**
  * set http response code on about response
  */
-bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code);
+bool fetch_about_समुच्चयः_http_संहिता(संरचना fetch_about_context *ctx, दीर्घ संहिता);
 
 /**
  * Send a header on the about response
@@ -39,22 +39,22 @@ bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code);
  * \param fmt The format specifier of the header
  * \return true if the fetch has been aborted else false
  */
-bool fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...);
+bool fetch_about_send_शीर्षकम्(संरचना fetch_about_context *ctx, ध्रुव वर्ण *fmt, ...);
 
 /**
  * send data on the about response
  */
-nserror fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len);
+nserror fetch_about_senddata(संरचना fetch_about_context *ctx, ध्रुव uint8_t *दत्त, size_t दत्त_len);
 
 /**
  * send formatted data on the about response
  */
-nserror fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...);
+nserror fetch_about_ssenddataf(संरचना fetch_about_context *ctx, ध्रुव वर्ण *fmt, ...);
 
 /**
  * complete the about fetch response
  */
-bool fetch_about_send_finished(struct fetch_about_context *ctx);
+bool fetch_about_send_परिसमाप्तम्(संरचना fetch_about_context *ctx);
 
 /**
  * Generate a 500 server error respnse
@@ -62,22 +62,22 @@ bool fetch_about_send_finished(struct fetch_about_context *ctx);
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_srverror(struct fetch_about_context *ctx);
+bool fetch_about_srverror(संरचना fetch_about_context *ctx);
 
 /**
  * get the fetch url
  */
-struct nsurl *fetch_about_get_url(struct fetch_about_context *ctx);
+संरचना nsurl *fetch_about_get_url(संरचना fetch_about_context *ctx);
 
 /**
  * get multipart fetch data
  */
-const struct fetch_multipart_data *fetch_about_get_multipart(struct fetch_about_context *ctx);
+ध्रुव संरचना fetch_multipart_दत्त *fetch_about_get_multipart(संरचना fetch_about_context *ctx);
 
 
 /**
  * cause a 302 redirect to target
  */
-bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target);
+bool fetch_about_redirect(संरचना fetch_about_context *ctx, ध्रुव वर्ण *target);
 
-#endif
+#यदि_अन्तः

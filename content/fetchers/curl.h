@@ -20,19 +20,19 @@
  * Fetching of data from a URL (Registration).
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
-#define NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
+#यदि_अपरिभाषितम् NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
+#परिभाषय NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
 
-#include <curl/curl.h>
+#अन्तर्भाव <curl/curl.h>
 
 /**
  * Register curl scheme handler.
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_curl_register(void);
+nserror fetch_curl_पञ्जिकाकोशः(शून्य);
 
 /** Global cURL multi handle. */
-extern CURLM *fetch_curl_multi;
+बाह्य CURLM *fetch_curl_multi;
 
-#endif
+#यदि_अन्तः

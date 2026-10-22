@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_INTERNAL_H_
-#define NETSURF_CSS_INTERNAL_H_
+#यदि_अपरिभाषितम् NETSURF_CSS_आन्तरिकम्_H
+#परिभाषय NETSURF_CSS_आन्तरिकम्_H
 
 /**
  * URL resolution callback for libcss
@@ -30,6 +30,6 @@
  *         CSS_NOMEM    on memory exhaustion,
  *         CSS_INVALID  if resolution failed.
  */
-css_error nscss_resolve_url(void *pw, const char *base, lwc_string *rel, lwc_string **abs);
+css_error nscss_resolve_url(शून्य *pw, ध्रुव वर्ण *आधारः, lwc_string *rel, lwc_string **निरपेक्षम्);
 
-#endif
+#यदि_अन्तः

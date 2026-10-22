@@ -34,87 +34,87 @@
  * layout_minmax_X() and layout_X().
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <dom/dom.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <math.h>
+#अन्तर्भाव <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/talloc.h"
-#include "utils/utils.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/nsurl.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/layout.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "css/utils.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/talloc.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/nsoption.h"
+#अन्तर्भाव "utils/corestrings.h"
+#अन्तर्भाव "utils/nsurl.h"
+#अन्तर्भाव "netsurf/inttypes.h"
+#अन्तर्भाव "netsurf/content.h"
+#अन्तर्भाव "netsurf/browser_window.h"
+#अन्तर्भाव "netsurf/layout.h"
+#अन्तर्भाव "content/content.h"
+#अन्तर्भाव "content/content_protected.h"
+#अन्तर्भाव "css/utils.h"
+#अन्तर्भाव "desktop/scrollbar.h"
+#अन्तर्भाव "desktop/textarea.h"
 
-#include "html/html.h"
-#include "html/html_save.h"
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
-#include "html/layout.h"
-#include "html/layout_internal.h"
-#include "html/table.h"
+#अन्तर्भाव "html/html.h"
+#अन्तर्भाव "html/html_save.h"
+#अन्तर्भाव "html/private.h"
+#अन्तर्भाव "html/box.h"
+#अन्तर्भाव "html/box_inspect.h"
+#अन्तर्भाव "html/font.h"
+#अन्तर्भाव "html/form_internal.h"
+#अन्तर्भाव "html/layout.h"
+#अन्तर्भाव "html/layout_internal.h"
+#अन्तर्भाव "html/table.h"
 
 /** Array of per-side access functions for computed style margins. */
-const css_len_func margin_funcs[4] = {
-	[TOP]    = css_computed_margin_top,
-	[RIGHT]  = css_computed_margin_right,
+ध्रुव css_len_func margin_funcs[4] = {
+	[शिखरम्_2]    = css_computed_margin_शिखरम्,
+	[दक्षिणः_2]  = css_computed_margin_दक्षिणः,
 	[BOTTOM] = css_computed_margin_bottom,
-	[LEFT]   = css_computed_margin_left,
+	[वामः_2]   = css_computed_margin_वामः,
 };
 
 /** Array of per-side access functions for computed style paddings. */
-const css_len_func padding_funcs[4] = {
-	[TOP]    = css_computed_padding_top,
-	[RIGHT]  = css_computed_padding_right,
+ध्रुव css_len_func padding_funcs[4] = {
+	[शिखरम्_2]    = css_computed_padding_शिखरम्,
+	[दक्षिणः_2]  = css_computed_padding_दक्षिणः,
 	[BOTTOM] = css_computed_padding_bottom,
-	[LEFT]   = css_computed_padding_left,
+	[वामः_2]   = css_computed_padding_वामः,
 };
 
 /** Array of per-side access functions for computed style border_widths. */
-const css_len_func border_width_funcs[4] = {
-	[TOP]    = css_computed_border_top_width,
-	[RIGHT]  = css_computed_border_right_width,
-	[BOTTOM] = css_computed_border_bottom_width,
-	[LEFT]   = css_computed_border_left_width,
+ध्रुव css_len_func border_विस्तारः_funcs[4] = {
+	[शिखरम्_2]    = css_computed_border_शिखरम्_विस्तारः,
+	[दक्षिणः_2]  = css_computed_border_दक्षिणः_विस्तारः,
+	[BOTTOM] = css_computed_border_bottom_विस्तारः,
+	[वामः_2]   = css_computed_border_वामः_विस्तारः,
 };
 
 /** Array of per-side access functions for computed style border styles. */
-const css_border_style_func border_style_funcs[4] = {
-	[TOP]    = css_computed_border_top_style,
-	[RIGHT]  = css_computed_border_right_style,
+ध्रुव css_border_style_func border_style_funcs[4] = {
+	[शिखरम्_2]    = css_computed_border_शिखरम्_style,
+	[दक्षिणः_2]  = css_computed_border_दक्षिणः_style,
 	[BOTTOM] = css_computed_border_bottom_style,
-	[LEFT]   = css_computed_border_left_style,
+	[वामः_2]   = css_computed_border_वामः_style,
 };
 
 /** Array of per-side access functions for computed style border colors. */
-const css_border_color_func border_color_funcs[4] = {
-	[TOP]    = css_computed_border_top_color,
-	[RIGHT]  = css_computed_border_right_color,
+ध्रुव css_border_color_func border_color_funcs[4] = {
+	[शिखरम्_2]    = css_computed_border_शिखरम्_color,
+	[दक्षिणः_2]  = css_computed_border_दक्षिणः_color,
 	[BOTTOM] = css_computed_border_bottom_color,
-	[LEFT]   = css_computed_border_left_color,
+	[वामः_2]   = css_computed_border_वामः_color,
 };
 
 /* forward declaration to break cycles */
-static void layout_minmax_block(
-		struct box *block,
-		const struct gui_layout_table *font_func,
-		const html_content *content);
+स्थिर शून्य layout_minmax_खण्डम्(
+		संरचना box *खण्डम्,
+		ध्रुव संरचना gui_layout_सारणी *font_func,
+		ध्रुव html_content *content);
 
 /**
  * Compute the size of replaced boxes with auto dimensions, according to
@@ -130,91 +130,91 @@ static void layout_minmax_block(
  *
  * See CSS 2.1 sections 10.3 and 10.6.
  */
-static void
-layout_get_object_dimensions(struct box *box,
-			     int *width, int *height,
-			     int min_width, int max_width,
-			     int min_height, int max_height)
+स्थिर शून्य
+layout_get_object_dimensions(संरचना box *box,
+			     पूर्णाङ्क *विस्तारः, पूर्णाङ्क *height,
+			     पूर्णाङ्क min_विस्तारः, पूर्णाङ्क max_विस्तारः,
+			     पूर्णाङ्क min_height, पूर्णाङ्क max_height)
 {
-	assert(box->object != NULL);
-	assert(width != NULL && height != NULL);
+	प्रतिज्ञा(box->object != रिक्त);
+	प्रतिज्ञा(विस्तारः != रिक्त && height != रिक्त);
 
-	if (*width == AUTO && *height == AUTO) {
+	यदि (*विस्तारः == AUTO && *height == AUTO) {
 		/* No given dimensions */
 
 		bool scaled = false;
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		पूर्णाङ्क intrinsic_विस्तारः = content_get_विस्तारः(box->object);
+		पूर्णाङ्क intrinsic_height = content_get_height(box->object);
 
 		/* use intrinsic dimensions */
-		*width = intrinsic_width;
+		*विस्तारः = intrinsic_विस्तारः;
 		*height = intrinsic_height;
 
 		/* Deal with min/max-width first */
-		if (min_width >  0 && min_width > *width) {
-			*width = min_width;
+		यदि (min_विस्तारः >  0 && min_विस्तारः > *विस्तारः) {
+			*विस्तारः = min_विस्तारः;
 			scaled = true;
 		}
-		if (max_width >= 0 && max_width < *width) {
-			*width = max_width;
+		यदि (max_विस्तारः >= 0 && max_विस्तारः < *विस्तारः) {
+			*विस्तारः = max_विस्तारः;
 			scaled = true;
 		}
 
-		if (scaled && (intrinsic_width != 0)) {
+		यदि (scaled && (intrinsic_विस्तारः != 0)) {
 			/* Update height */
-			*height = (*width * intrinsic_height) /
-					intrinsic_width;
+			*height = (*विस्तारः * intrinsic_height) /
+					intrinsic_विस्तारः;
 		}
 
 		scaled = false;
 		/* Deal with min/max-height */
-		if (min_height >  0 && min_height > *height) {
+		यदि (min_height >  0 && min_height > *height) {
 			*height = min_height;
 			scaled = true;
 		}
-		if (max_height >= 0 && max_height < *height) {
+		यदि (max_height >= 0 && max_height < *height) {
 			*height = max_height;
 			scaled = true;
 		}
 
-		if (scaled && (intrinsic_height != 0)) {
+		यदि (scaled && (intrinsic_height != 0)) {
 			/* Update width */
-			*width = (*height * intrinsic_width) /
+			*विस्तारः = (*height * intrinsic_विस्तारः) /
 					intrinsic_height;
 		}
 
-	} else if (*width == AUTO) {
+	} अन्यथा यदि (*विस्तारः == AUTO) {
 		/* Have given height; width is calculated from the given height
 		 * and ratio of intrinsic dimensions */
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		पूर्णाङ्क intrinsic_विस्तारः = content_get_विस्तारः(box->object);
+		पूर्णाङ्क intrinsic_height = content_get_height(box->object);
 
-		if (intrinsic_height != 0)
-			*width = (*height * intrinsic_width) /
+		यदि (intrinsic_height != 0)
+			*विस्तारः = (*height * intrinsic_विस्तारः) /
 					intrinsic_height;
-		else
-			*width = intrinsic_width;
+		अन्यथा
+			*विस्तारः = intrinsic_विस्तारः;
 
-		if (min_width >  0 && min_width > *width)
-			*width = min_width;
-		if (max_width >= 0 && max_width < *width)
-			*width = max_width;
+		यदि (min_विस्तारः >  0 && min_विस्तारः > *विस्तारः)
+			*विस्तारः = min_विस्तारः;
+		यदि (max_विस्तारः >= 0 && max_विस्तारः < *विस्तारः)
+			*विस्तारः = max_विस्तारः;
 
-	} else if (*height == AUTO) {
+	} अन्यथा यदि (*height == AUTO) {
 		/* Have given width; height is calculated from the given width
 		 * and ratio of intrinsic dimensions */
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		पूर्णाङ्क intrinsic_विस्तारः = content_get_विस्तारः(box->object);
+		पूर्णाङ्क intrinsic_height = content_get_height(box->object);
 
-		if (min_width >  0 && min_width > *width)
-			*width = min_width;
-		if (max_width >= 0 && max_width < *width)
-			*width = max_width;
+		यदि (min_विस्तारः >  0 && min_विस्तारः > *विस्तारः)
+			*विस्तारः = min_विस्तारः;
+		यदि (max_विस्तारः >= 0 && max_विस्तारः < *विस्तारः)
+			*विस्तारः = max_विस्तारः;
 
-		if (intrinsic_width != 0)
-			*height = (*width * intrinsic_height) /
-					intrinsic_width;
-		else
+		यदि (intrinsic_विस्तारः != 0)
+			*height = (*विस्तारः * intrinsic_height) /
+					intrinsic_विस्तारः;
+		अन्यथा
 			*height = intrinsic_height;
 	}
 }
@@ -227,20 +227,20 @@ layout_get_object_dimensions(struct box *box,
  * \param  width  width of containing block
  * \return  length of indent
  */
-static int layout_text_indent(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style, int width)
+स्थिर पूर्णाङ्क layout_text_indent(
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		ध्रुव css_computed_style *style, पूर्णाङ्क विस्तारः)
 {
-	css_fixed value = 0;
+	css_fixed मानम् = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	css_computed_text_indent(style, &value, &unit);
+	css_computed_text_indent(style, &मानम्, &unit);
 
-	if (unit == CSS_UNIT_PCT) {
-		return FPCT_OF_INT_TOINT(value, width);
-	} else {
-		return FIXTOINT(css_unit_len2device_px(style, unit_len_ctx,
-				value, unit));
+	यदि (unit == CSS_UNIT_PCT) {
+		प्रत्यागम FPCT_सम्बन्धि_INT_TOINT(मानम्, विस्तारः);
+	} अन्यथा {
+		प्रत्यागम FIXTOINT(css_unit_len2device_px(style, unit_len_ctx,
+				मानम्, unit));
 	}
 }
 
@@ -254,120 +254,120 @@ static int layout_text_indent(
  * \post  table->min_width and table->max_width filled in,
  *        0 <= table->min_width <= table->max_width
  */
-static void layout_minmax_table(struct box *table,
-		const struct gui_layout_table *font_func,
-		const html_content *content)
+स्थिर शून्य layout_minmax_सारणी(संरचना box *सारणी,
+		ध्रुव संरचना gui_layout_सारणी *font_func,
+		ध्रुव html_content *content)
 {
-	unsigned int i, j;
-	int width;
-	int border_spacing_h = 0;
-	int table_min = 0, table_max = 0;
-	int extra_fixed = 0;
-	float extra_frac = 0;
-	struct column *col;
-	struct box *row_group, *row, *cell;
+	अचिह्नित पूर्णाङ्क i, j;
+	पूर्णाङ्क विस्तारः;
+	पूर्णाङ्क border_spacing_h = 0;
+	पूर्णाङ्क सारणी_min = 0, सारणी_max = 0;
+	पूर्णाङ्क extra_fixed = 0;
+	भिन्न extra_frac = 0;
+	संरचना column *col;
+	संरचना box *row_गणः, *row, *cell;
 
 	/* check if the widths have already been calculated */
-	if (table->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	यदि (सारणी->max_विस्तारः != UNKNOWN_MAX_विस्तारः)
+		प्रत्यागम;
 
-	if (table_calculate_column_types(&content->unit_len_ctx, table) == false) {
+	यदि (सारणी_calculate_column_types(&content->unit_len_ctx, सारणी) == false) {
 		NSLOG(netsurf, ERROR,
 				"Could not establish table column types.");
-		return;
+		प्रत्यागम;
 	}
-	col = table->col;
+	col = सारणी->col;
 
 	/* start with 0 except for fixed-width columns */
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_FIXED)
-			col[i].min = col[i].max = col[i].width;
-		else
+	प्रति (i = 0; i != सारणी->columns; i++) {
+		यदि (col[i].type == COLUMN_विस्तारः_FIXED)
+			col[i].min = col[i].max = col[i].विस्तारः;
+		अन्यथा
 			col[i].min = col[i].max = 0;
 	}
 
 	/* border-spacing is used in the separated borders model */
-	if (css_computed_border_collapse(table->style) ==
+	यदि (css_computed_border_collapse(सारणी->style) ==
 			CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
 
-		css_computed_border_spacing(table->style, &h, &hu, &v, &vu);
+		css_computed_border_spacing(सारणी->style, &h, &hu, &v, &vu);
 
 		border_spacing_h = FIXTOINT(css_unit_len2device_px(
-				table->style,
+				सारणी->style,
 				&content->unit_len_ctx,
 				h, hu));
 	}
 
 	/* 1st pass: consider cells with colspan 1 only */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-	for (row = row_group->children; row; row = row->next)
-	for (cell = row->children; cell; cell = cell->next) {
-		assert(cell->type == BOX_TABLE_CELL);
-		assert(cell->style);
+	प्रति (row_गणः = सारणी->children; row_गणः; row_गणः =row_गणः->अग्र)
+	प्रति (row = row_गणः->children; row; row = row->अग्र)
+	प्रति (cell = row->children; cell; cell = cell->अग्र) {
+		प्रतिज्ञा(cell->type == BOX_सारणी_CELL);
+		प्रतिज्ञा(cell->style);
 		/** TODO: Handle colspan="0" correctly.
 		 *        It's currently converted to 1 in box normaisation */
-		assert(cell->columns != 0);
+		प्रतिज्ञा(cell->columns != 0);
 
-		if (cell->columns != 1)
-			continue;
+		यदि (cell->columns != 1)
+			अनुवर्त;
 
-		layout_minmax_block(cell, font_func, content);
+		layout_minmax_खण्डम्(cell, font_func, content);
 		i = cell->start_column;
 
-		if (col[i].positioned)
-			continue;
+		यदि (col[i].positioned)
+			अनुवर्त;
 
 		/* update column min, max widths using cell widths */
-		if (col[i].min < cell->min_width)
-			col[i].min = cell->min_width;
-		if (col[i].max < cell->max_width)
-			col[i].max = cell->max_width;
+		यदि (col[i].min < cell->min_विस्तारः)
+			col[i].min = cell->min_विस्तारः;
+		यदि (col[i].max < cell->max_विस्तारः)
+			col[i].max = cell->max_विस्तारः;
 	}
 
 	/* 2nd pass: cells which span multiple columns */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-	for (row = row_group->children; row; row = row->next)
-	for (cell = row->children; cell; cell = cell->next) {
-		unsigned int flexible_columns = 0;
-		int min = 0, max = 0, fixed_width = 0, extra;
+	प्रति (row_गणः = सारणी->children; row_गणः; row_गणः =row_गणः->अग्र)
+	प्रति (row = row_गणः->children; row; row = row->अग्र)
+	प्रति (cell = row->children; cell; cell = cell->अग्र) {
+		अचिह्नित पूर्णाङ्क flexible_columns = 0;
+		पूर्णाङ्क min = 0, max = 0, fixed_विस्तारः = 0, extra;
 
-		if (cell->columns == 1)
-			continue;
+		यदि (cell->columns == 1)
+			अनुवर्त;
 
-		layout_minmax_block(cell, font_func, content);
+		layout_minmax_खण्डम्(cell, font_func, content);
 		i = cell->start_column;
 
 		/* find min width so far of spanned columns, and count
 		 * number of non-fixed spanned columns and total fixed width */
-		for (j = 0; j != cell->columns; j++) {
+		प्रति (j = 0; j != cell->columns; j++) {
 			min += col[i + j].min;
-			if (col[i + j].type == COLUMN_WIDTH_FIXED)
-				fixed_width += col[i + j].width;
-			else
+			यदि (col[i + j].type == COLUMN_विस्तारः_FIXED)
+				fixed_विस्तारः += col[i + j].विस्तारः;
+			अन्यथा
 				flexible_columns++;
 		}
 		min += (cell->columns - 1) * border_spacing_h;
 
 		/* distribute extra min to spanned columns */
-		if (min < cell->min_width) {
-			if (flexible_columns == 0) {
-				extra = 1 + (cell->min_width - min) /
+		यदि (min < cell->min_विस्तारः) {
+			यदि (flexible_columns == 0) {
+				extra = 1 + (cell->min_विस्तारः - min) /
 						cell->columns;
-				for (j = 0; j != cell->columns; j++) {
+				प्रति (j = 0; j != cell->columns; j++) {
 					col[i + j].min += extra;
-					if (col[i + j].max < col[i + j].min)
+					यदि (col[i + j].max < col[i + j].min)
 						col[i + j].max = col[i + j].min;
 				}
-			} else {
-				extra = 1 + (cell->min_width - min) /
+			} अन्यथा {
+				extra = 1 + (cell->min_विस्तारः - min) /
 						flexible_columns;
-				for (j = 0; j != cell->columns; j++) {
-					if (col[i + j].type !=
-							COLUMN_WIDTH_FIXED) {
+				प्रति (j = 0; j != cell->columns; j++) {
+					यदि (col[i + j].type !=
+							COLUMN_विस्तारः_FIXED) {
 						col[i + j].min += extra;
-						if (col[i + j].max <
+						यदि (col[i + j].max <
 								col[i + j].min)
 							col[i + j].max =
 								col[i + j].min;
@@ -377,56 +377,56 @@ static void layout_minmax_table(struct box *table,
 		}
 
 		/* find max width so far of spanned columns */
-		for (j = 0; j != cell->columns; j++)
+		प्रति (j = 0; j != cell->columns; j++)
 			max += col[i + j].max;
 		max += (cell->columns - 1) * border_spacing_h;
 
 		/* distribute extra max to spanned columns */
-		if (max < cell->max_width && flexible_columns) {
-			extra = 1 + (cell->max_width - max) / flexible_columns;
-			for (j = 0; j != cell->columns; j++)
-				if (col[i + j].type != COLUMN_WIDTH_FIXED)
+		यदि (max < cell->max_विस्तारः && flexible_columns) {
+			extra = 1 + (cell->max_विस्तारः - max) / flexible_columns;
+			प्रति (j = 0; j != cell->columns; j++)
+				यदि (col[i + j].type != COLUMN_विस्तारः_FIXED)
 					col[i + j].max += extra;
 		}
 	}
 
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].max < col[i].min) {
-			box_dump(stderr, table, 0, true);
-			assert(0);
+	प्रति (i = 0; i != सारणी->columns; i++) {
+		यदि (col[i].max < col[i].min) {
+			box_dump(stderr, सारणी, 0, true);
+			प्रतिज्ञा(0);
 		}
-		table_min += col[i].min;
-		table_max += col[i].max;
+		सारणी_min += col[i].min;
+		सारणी_max += col[i].max;
 	}
 
 	/* fixed width takes priority, unless it is too narrow */
-	if (css_computed_width_px(table->style, &content->unit_len_ctx,
-			-1, &width) == CSS_WIDTH_SET) {
-		if (table_min < width)
-			table_min = width;
-		if (table_max < width)
-			table_max = width;
+	यदि (css_computed_विस्तारः_px(सारणी->style, &content->unit_len_ctx,
+			-1, &विस्तारः) == CSS_विस्तारः_समुच्चयः) {
+		यदि (सारणी_min < विस्तारः)
+			सारणी_min = विस्तारः;
+		यदि (सारणी_max < विस्तारः)
+			सारणी_max = विस्तारः;
 	}
 
 	/* add margins, border, padding to min, max widths */
-	calculate_mbp_width(&content->unit_len_ctx,
-			table->style, LEFT, true, true, true,
+	calculate_mbp_विस्तारः(&content->unit_len_ctx,
+			सारणी->style, वामः_2, true, true, true,
 			&extra_fixed, &extra_frac);
-	calculate_mbp_width(&content->unit_len_ctx,
-			table->style, RIGHT, true, true, true,
+	calculate_mbp_विस्तारः(&content->unit_len_ctx,
+			सारणी->style, दक्षिणः_2, true, true, true,
 			&extra_fixed, &extra_frac);
-	if (extra_fixed < 0)
+	यदि (extra_fixed < 0)
 		extra_fixed = 0;
-	if (extra_frac < 0)
+	यदि (extra_frac < 0)
 		extra_frac = 0;
-	if (1.0 <= extra_frac)
+	यदि (1.0 <= extra_frac)
 		extra_frac = 0.9;
-	table->min_width = (table_min + extra_fixed) / (1.0 - extra_frac);
-	table->max_width = (table_max + extra_fixed) / (1.0 - extra_frac);
-	table->min_width += (table->columns + 1) * border_spacing_h;
-	table->max_width += (table->columns + 1) * border_spacing_h;
+	सारणी->min_विस्तारः = (सारणी_min + extra_fixed) / (1.0 - extra_frac);
+	सारणी->max_विस्तारः = (सारणी_max + extra_fixed) / (1.0 - extra_frac);
+	सारणी->min_विस्तारः += (सारणी->columns + 1) * border_spacing_h;
+	सारणी->max_विस्तारः += (सारणी->columns + 1) * border_spacing_h;
 
-	assert(0 <= table->min_width && table->min_width <= table->max_width);
+	प्रतिज्ञा(0 <= सारणी->min_विस्तारः && सारणी->min_विस्तारः <= सारणी->max_विस्तारः);
 }
 
 /**
@@ -435,16 +435,16 @@ static void layout_minmax_table(struct box *table,
  * \param[in]  b  Box to check.
  * \return true iff box has percnetage max width.
  */
-static inline bool box_has_percentage_max_width(struct box *b)
+स्थिर अन्तःस्थ bool box_has_percentage_max_विस्तारः(संरचना box *b)
 {
 	css_unit unit = CSS_UNIT_PX;
-	enum css_max_width_e type;
-	css_fixed value = 0;
+	गणना css_max_विस्तारः_e type;
+	css_fixed मानम् = 0;
 
-	assert(b != NULL);
+	प्रतिज्ञा(b != रिक्त);
 
-	type = css_computed_max_width(b->style, &value, &unit);
-	return ((type == CSS_MAX_WIDTH_SET) && (unit == CSS_UNIT_PCT));
+	type = css_computed_max_विस्तारः(b->style, &मानम्, &unit);
+	प्रत्यागम ((type == CSS_MAX_विस्तारः_समुच्चयः) && (unit == CSS_UNIT_PCT));
 }
 
 /**
@@ -459,342 +459,342 @@ static inline bool box_has_percentage_max_width(struct box *b)
  * \return  first box in next line, or 0 if no more lines
  * \post  0 <= *line_min <= *line_max
  */
-static struct box *
-layout_minmax_line(struct box *first,
-		   int *line_min,
-		   int *line_max,
-		   bool first_line,
-		   bool *line_has_height,
-		   const struct gui_layout_table *font_func,
-		   const html_content *content)
+स्थिर संरचना box *
+layout_minmax_पङ्क्तिः(संरचना box *first,
+		   पूर्णाङ्क *पङ्क्तिः_min,
+		   पूर्णाङ्क *पङ्क्तिः_max,
+		   bool first_पङ्क्तिः,
+		   bool *पङ्क्तिः_has_height,
+		   ध्रुव संरचना gui_layout_सारणी *font_func,
+		   ध्रुव html_content *content)
 {
-	int min = 0, max = 0, width, height, fixed;
-	float frac;
+	पूर्णाङ्क min = 0, max = 0, विस्तारः, height, fixed;
+	भिन्न frac;
 	size_t i, j;
-	struct box *b;
-	struct box *block;
+	संरचना box *b;
+	संरचना box *खण्डम्;
 	plot_font_style_t fstyle;
 	bool no_wrap;
 
-	assert(first->parent);
-	assert(first->parent->parent);
-	assert(first->parent->parent->style);
+	प्रतिज्ञा(first->parent);
+	प्रतिज्ञा(first->parent->parent);
+	प्रतिज्ञा(first->parent->parent->style);
 
-	block = first->parent->parent;
-	no_wrap = (css_computed_white_space(block->style) ==
+	खण्डम् = first->parent->parent;
+	no_wrap = (css_computed_white_space(खण्डम्->style) ==
 			CSS_WHITE_SPACE_NOWRAP ||
-			css_computed_white_space(block->style) ==
+			css_computed_white_space(खण्डम्->style) ==
 			CSS_WHITE_SPACE_PRE);
 
-	*line_has_height = false;
+	*पङ्क्तिः_has_height = false;
 
 	/* corresponds to the pass 1 loop in layout_line() */
-	for (b = first; b; b = b->next) {
-		enum css_width_e wtype;
-		enum css_height_e htype;
-		enum css_box_sizing_e bs;
-		css_fixed value = 0;
+	प्रति (b = first; b; b = b->अग्र) {
+		गणना css_विस्तारः_e wtype;
+		गणना css_height_e htype;
+		गणना css_box_sizing_e bs;
+		css_fixed मानम् = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		assert(lh__box_is_inline_content(b));
+		प्रतिज्ञा(lh__box_is_inline_content(b));
 
 		NSLOG(layout, DEBUG, "%p: min %i, max %i", b, min, max);
 
-		if (b->type == BOX_BR) {
-			b = b->next;
-			break;
+		यदि (b->type == BOX_BR) {
+			b = b->अग्र;
+			भङ्ग;
 		}
 
-		if (lh__box_is_float_box(b)) {
-			assert(b->children);
-			if (b->children->type == BOX_TABLE)
-				layout_minmax_table(b->children, font_func,
+		यदि (lh__box_is_float_box(b)) {
+			प्रतिज्ञा(b->children);
+			यदि (b->children->type == BOX_सारणी)
+				layout_minmax_सारणी(b->children, font_func,
 						content);
-			else
-				layout_minmax_block(b->children, font_func,
+			अन्यथा
+				layout_minmax_खण्डम्(b->children, font_func,
 						content);
-			b->min_width = b->children->min_width;
-			b->max_width = b->children->max_width;
-			if (min < b->min_width)
-				min = b->min_width;
-			max += b->max_width;
-			continue;
+			b->min_विस्तारः = b->children->min_विस्तारः;
+			b->max_विस्तारः = b->children->max_विस्तारः;
+			यदि (min < b->min_विस्तारः)
+				min = b->min_विस्तारः;
+			max += b->max_विस्तारः;
+			अनुवर्त;
 		}
 
-		if (b->type == BOX_INLINE_BLOCK || b->type == BOX_INLINE_FLEX) {
-			layout_minmax_block(b, font_func, content);
-			if (min < b->min_width)
-				min = b->min_width;
-			max += b->max_width;
+		यदि (b->type == BOX_INLINE_खण्डम् || b->type == BOX_INLINE_FLEX) {
+			layout_minmax_खण्डम्(b, font_func, content);
+			यदि (min < b->min_विस्तारः)
+				min = b->min_विस्तारः;
+			max += b->max_विस्तारः;
 
-			if (b->flags & HAS_HEIGHT)
-				*line_has_height = true;
-			continue;
+			यदि (b->flags & HAS_HEIGHT)
+				*पङ्क्तिः_has_height = true;
+			अनुवर्त;
 		}
 
-		assert(b->style);
+		प्रतिज्ञा(b->style);
 		font_plot_style_from_css(&content->unit_len_ctx, b->style, &fstyle);
 
-		if (b->type == BOX_INLINE && !b->object &&
+		यदि (b->type == BOX_INLINE && !b->object &&
 				!(b->flags & REPLACE_DIM) &&
 				!(b->flags & IFRAME)) {
 			fixed = frac = 0;
-			calculate_mbp_width(&content->unit_len_ctx,
-					b->style, LEFT, true, true, true,
+			calculate_mbp_विस्तारः(&content->unit_len_ctx,
+					b->style, वामः_2, true, true, true,
 					&fixed, &frac);
-			if (!b->inline_end)
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+			यदि (!b->inline_अन्तः)
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, दक्षिणः_2,
 						true, true, true,
 						&fixed, &frac);
-			if (0 < fixed)
+			यदि (0 < fixed)
 				max += fixed;
-			*line_has_height = true;
+			*पङ्क्तिः_has_height = true;
 			/* \todo  update min width, consider fractional extra */
-		} else if (b->type == BOX_INLINE_END) {
+		} अन्यथा यदि (b->type == BOX_INLINE_अन्तः) {
 			fixed = frac = 0;
-			calculate_mbp_width(&content->unit_len_ctx,
-					b->inline_end->style, RIGHT,
+			calculate_mbp_विस्तारः(&content->unit_len_ctx,
+					b->inline_अन्तः->style, दक्षिणः_2,
 					true, true, true,
 					&fixed, &frac);
-			if (0 < fixed)
+			यदि (0 < fixed)
 				max += fixed;
 
-			if (b->next) {
-				if (b->space == UNKNOWN_WIDTH) {
-					font_func->width(&fstyle, " ", 1,
+			यदि (b->अग्र) {
+				यदि (b->space == UNKNOWN_विस्तारः) {
+					font_func->विस्तारः(&fstyle, " ", 1,
 							 &b->space);
 				}
 				max += b->space;
 			}
 
-			*line_has_height = true;
-			continue;
+			*पङ्क्तिः_has_height = true;
+			अनुवर्त;
 		}
 
-		if (lh__box_is_replace(b) == false) {
+		यदि (lh__box_is_replace(b) == false) {
 			/* inline non-replaced, 10.3.1 and 10.6.1 */
 			bool no_wrap_box;
-			if (!b->text)
-				continue;
+			यदि (!b->text)
+				अनुवर्त;
 
 			no_wrap_box = (css_computed_white_space(b->style) ==
 					CSS_WHITE_SPACE_NOWRAP ||
 					css_computed_white_space(b->style) ==
 					CSS_WHITE_SPACE_PRE);
 
-			if (b->width == UNKNOWN_WIDTH) {
+			यदि (b->विस्तारः == UNKNOWN_विस्तारः) {
 				/** \todo handle errors */
 
 				/* If it's a select element, we must use the
 				 * width of the widest option text */
-				if (b->parent->parent->gadget &&
+				यदि (b->parent->parent->gadget &&
 						b->parent->parent->gadget->type
 						== GADGET_SELECT) {
-					int opt_maxwidth = 0;
-					struct form_option *o;
+					पूर्णाङ्क opt_maxwidth = 0;
+					संरचना form_option *o;
 
-					for (o = b->parent->parent->gadget->
-							data.select.items; o;
-							o = o->next) {
-						int opt_width;
-						font_func->width(&fstyle,
+					प्रति (o = b->parent->parent->gadget->
+							दत्त.select.वस्तूनि; o;
+							o = o->अग्र) {
+						पूर्णाङ्क opt_विस्तारः;
+						font_func->विस्तारः(&fstyle,
 								o->text,
-								strlen(o->text),
-								&opt_width);
+								वाक्यदैर्घ्यम्(o->text),
+								&opt_विस्तारः);
 
-						if (opt_maxwidth < opt_width)
-							opt_maxwidth =opt_width;
+						यदि (opt_maxwidth < opt_विस्तारः)
+							opt_maxwidth =opt_विस्तारः;
 					}
 
-					b->width = opt_maxwidth;
-					if (nsoption_bool(core_select_menu))
-						b->width += SCROLLBAR_WIDTH;
+					b->विस्तारः = opt_maxwidth;
+					यदि (nsoption_bool(core_select_menu))
+						b->विस्तारः += SCROLLBAR_विस्तारः;
 
-				} else {
-					font_func->width(&fstyle, b->text,
-						b->length, &b->width);
+				} अन्यथा {
+					font_func->विस्तारः(&fstyle, b->text,
+						b->दीर्घता, &b->विस्तारः);
 					b->flags |= MEASURED;
 				}
 			}
-			max += b->width;
-			if (b->next) {
-				if (b->space == UNKNOWN_WIDTH) {
-					font_func->width(&fstyle, " ", 1,
+			max += b->विस्तारः;
+			यदि (b->अग्र) {
+				यदि (b->space == UNKNOWN_विस्तारः) {
+					font_func->विस्तारः(&fstyle, " ", 1,
 							 &b->space);
 				}
 				max += b->space;
 			}
 
-			if (no_wrap) {
+			यदि (no_wrap) {
 				/* Don't wrap due to block style,
 				 * so min is the same as max */
 				min = max;
 
-			} else if (no_wrap_box) {
+			} अन्यथा यदि (no_wrap_box) {
 				/* This inline box can't be wrapped,
 				 * for min, consider box's width */
-				if (min < b->width)
-					min = b->width;
+				यदि (min < b->विस्तारः)
+					min = b->विस्तारः;
 
-			} else if (b->parent->flags & NEED_MIN) {
+			} अन्यथा यदि (b->parent->flags & NEED_MIN) {
 				/* If we care what the minimum width is,
 				 * calculate it.  (It's only needed if we're
 				 * shrinking-to-fit.) */
 				/* min = widest single word */
 				i = 0;
-				do {
-					for (j = i; j != b->length &&
+				कुरु {
+					प्रति (j = i; j != b->दीर्घता &&
 							b->text[j] != ' '; j++)
 						;
-					font_func->width(&fstyle, b->text + i,
-							 j - i, &width);
-					if (min < width)
-						min = width;
+					font_func->विस्तारः(&fstyle, b->text + i,
+							 j - i, &विस्तारः);
+					यदि (min < विस्तारः)
+						min = विस्तारः;
 					i = j + 1;
-				} while (j != b->length);
+				} यावत् (j != b->दीर्घता);
 			}
 
-			*line_has_height = true;
+			*पङ्क्तिः_has_height = true;
 
-			continue;
+			अनुवर्त;
 		}
 
 		/* inline replaced, 10.3.2 and 10.6.2 */
-		assert(b->style);
+		प्रतिज्ञा(b->style);
 
-		bs = css_computed_box_sizing(block->style);
+		bs = css_computed_box_sizing(खण्डम्->style);
 
 		/* calculate box width */
-		wtype = css_computed_width_px(b->style,
-				&content->unit_len_ctx, -1, &width);
-		if (wtype == CSS_WIDTH_SET) {
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		wtype = css_computed_विस्तारः_px(b->style,
+				&content->unit_len_ctx, -1, &विस्तारः);
+		यदि (wtype == CSS_विस्तारः_समुच्चयः) {
+			यदि (bs == CSS_BOX_SIZING_BORDER_BOX) {
 				fixed = frac = 0;
-				calculate_mbp_width(&content->unit_len_ctx,
-						block->style, LEFT,
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						खण्डम्->style, वामः_2,
 						false, true, true,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						block->style, RIGHT,
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						खण्डम्->style, दक्षिणः_2,
 						false, true, true,
 						&fixed, &frac);
-				if (width < fixed) {
-					width = fixed;
+				यदि (विस्तारः < fixed) {
+					विस्तारः = fixed;
 				}
 			}
-			if (width < 0)
-				width = 0;
-		} else {
-			width = AUTO;
+			यदि (विस्तारः < 0)
+				विस्तारः = 0;
+		} अन्यथा {
+			विस्तारः = AUTO;
 		}
 
 		/* height */
-		htype = css_computed_height(b->style, &value, &unit);
-		if (htype == CSS_HEIGHT_SET) {
+		htype = css_computed_height(b->style, &मानम्, &unit);
+		यदि (htype == CSS_HEIGHT_समुच्चयः) {
 			height = FIXTOINT(css_unit_len2device_px(
 					b->style,
 					&content->unit_len_ctx,
-					value, unit));
-		} else {
+					मानम्, unit));
+		} अन्यथा {
 			height = AUTO;
 		}
 
-		if (b->object || (b->flags & REPLACE_DIM)) {
-			if (b->object) {
-				int temp_height = height;
+		यदि (b->object || (b->flags & REPLACE_DIM)) {
+			यदि (b->object) {
+				पूर्णाङ्क अस्थायी_height = height;
 				layout_get_object_dimensions(b,
-						&width, &temp_height,
-						INT_MIN, INT_MAX,
-						INT_MIN, INT_MAX);
+						&विस्तारः, &अस्थायी_height,
+						INT_MIN, अधिकतम_पूर्णाङ्कः,
+						INT_MIN, अधिकतम_पूर्णाङ्कः);
 			}
 
 			fixed = frac = 0;
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+			यदि (bs == CSS_BOX_SIZING_BORDER_BOX) {
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, वामः_2,
 						true, false, false,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, दक्षिणः_2,
 						true, false, false,
 						&fixed, &frac);
-			} else {
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+			} अन्यथा {
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, वामः_2,
 						true, true, true,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, दक्षिणः_2,
 						true, true, true,
 						&fixed, &frac);
 			}
-			if (0 < width + fixed)
-				width += fixed;
-		} else if (b->flags & IFRAME) {
+			यदि (0 < विस्तारः + fixed)
+				विस्तारः += fixed;
+		} अन्यथा यदि (b->flags & IFRAME) {
 			/* TODO: handle percentage widths properly */
-			if (width == AUTO)
-				width = 400;
+			यदि (विस्तारः == AUTO)
+				विस्तारः = 400;
 
 			fixed = frac = 0;
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+			यदि (bs == CSS_BOX_SIZING_BORDER_BOX) {
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, वामः_2,
 						true, false, false,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, दक्षिणः_2,
 						true, false, false,
 						&fixed, &frac);
-			} else {
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+			} अन्यथा {
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, वामः_2,
 						true, true, true,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+				calculate_mbp_विस्तारः(&content->unit_len_ctx,
+						b->style, दक्षिणः_2,
 						true, true, true,
 						&fixed, &frac);
 			}
 
-			if (0 < width + fixed)
-				width += fixed;
+			यदि (0 < विस्तारः + fixed)
+				विस्तारः += fixed;
 
-		} else {
+		} अन्यथा {
 			/* form control with no object */
-			if (width == AUTO)
-				width = FIXTOINT(css_unit_len2device_px(
+			यदि (विस्तारः == AUTO)
+				विस्तारः = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx,
 						INTTOFIX(1), CSS_UNIT_EM));
 		}
 
-		if (min < width && !box_has_percentage_max_width(b))
-			min = width;
-		if (width > 0)
-			max += width;
+		यदि (min < विस्तारः && !box_has_percentage_max_विस्तारः(b))
+			min = विस्तारः;
+		यदि (विस्तारः > 0)
+			max += विस्तारः;
 
-		*line_has_height = true;
+		*पङ्क्तिः_has_height = true;
 	}
 
-	if (first_line) {
+	यदि (first_पङ्क्तिः) {
 		/* todo: handle percentage values properly */
 		/* todo: handle text-indent interaction with floats */
-		int text_indent = layout_text_indent(&content->unit_len_ctx,
+		पूर्णाङ्क text_indent = layout_text_indent(&content->unit_len_ctx,
 				first->parent->parent->style, 100);
 		min = (min + text_indent < 0) ? 0 : min + text_indent;
 		max = (max + text_indent < 0) ? 0 : max + text_indent;
 	}
 
-	*line_min = min;
-	*line_max = max;
+	*पङ्क्तिः_min = min;
+	*पङ्क्तिः_max = max;
 
 	NSLOG(layout, DEBUG,  "line_min %i, line_max %i", min, max);
 
-	assert(b != first);
-	assert(0 <= *line_min);
-	assert(*line_min <= *line_max);
-	return b;
+	प्रतिज्ञा(b != first);
+	प्रतिज्ञा(0 <= *पङ्क्तिः_min);
+	प्रतिज्ञा(*पङ्क्तिः_min <= *पङ्क्तिः_max);
+	प्रत्यागम b;
 }
 
 
@@ -807,44 +807,44 @@ layout_minmax_line(struct box *first,
  * \post  inline_container->min_width and inline_container->max_width filled in,
  *        0 <= inline_container->min_width <= inline_container->max_width
  */
-static void
-layout_minmax_inline_container(struct box *inline_container,
+स्थिर शून्य
+layout_minmax_inline_container(संरचना box *inline_container,
 			       bool *has_height,
-			       const struct gui_layout_table *font_func,
-			       const html_content *content)
+			       ध्रुव संरचना gui_layout_सारणी *font_func,
+			       ध्रुव html_content *content)
 {
-	struct box *child;
-	int line_min = 0, line_max = 0;
-	int min = 0, max = 0;
-	bool first_line = true;
-	bool line_has_height;
+	संरचना box *child;
+	पूर्णाङ्क पङ्क्तिः_min = 0, पङ्क्तिः_max = 0;
+	पूर्णाङ्क min = 0, max = 0;
+	bool first_पङ्क्तिः = true;
+	bool पङ्क्तिः_has_height;
 
-	assert(inline_container->type == BOX_INLINE_CONTAINER);
+	प्रतिज्ञा(inline_container->type == BOX_INLINE_CONTAINER);
 
 	/* check if the widths have already been calculated */
-	if (inline_container->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	यदि (inline_container->max_विस्तारः != UNKNOWN_MAX_विस्तारः)
+		प्रत्यागम;
 
 	*has_height = false;
 
-	for (child = inline_container->children; child; ) {
-		child = layout_minmax_line(child, &line_min, &line_max,
-				first_line, &line_has_height, font_func,
+	प्रति (child = inline_container->children; child; ) {
+		child = layout_minmax_पङ्क्तिः(child, &पङ्क्तिः_min, &पङ्क्तिः_max,
+				first_पङ्क्तिः, &पङ्क्तिः_has_height, font_func,
 				content);
-		if (min < line_min)
-			min = line_min;
-		if (max < line_max)
-			max = line_max;
-		first_line = false;
-		*has_height |= line_has_height;
+		यदि (min < पङ्क्तिः_min)
+			min = पङ्क्तिः_min;
+		यदि (max < पङ्क्तिः_max)
+			max = पङ्क्तिः_max;
+		first_पङ्क्तिः = false;
+		*has_height |= पङ्क्तिः_has_height;
 	}
 
-	inline_container->min_width = min;
-	inline_container->max_width = max;
+	inline_container->min_विस्तारः = min;
+	inline_container->max_विस्तारः = max;
 
-	assert(0 <= inline_container->min_width &&
-			inline_container->min_width <=
-			inline_container->max_width);
+	प्रतिज्ञा(0 <= inline_container->min_विस्तारः &&
+			inline_container->min_विस्तारः <=
+			inline_container->max_विस्तारः);
 }
 
 /**
@@ -856,271 +856,271 @@ layout_minmax_inline_container(struct box *inline_container,
  * \post  block->min_width and block->max_width filled in,
  *        0 <= block->min_width <= block->max_width
  */
-static void layout_minmax_block(
-		struct box *block,
-		const struct gui_layout_table *font_func,
-		const html_content *content)
+स्थिर शून्य layout_minmax_खण्डम्(
+		संरचना box *खण्डम्,
+		ध्रुव संरचना gui_layout_सारणी *font_func,
+		ध्रुव html_content *content)
 {
-	struct box *child;
-	int min = 0, max = 0;
-	int extra_fixed = 0;
-	float extra_frac = 0;
-	enum css_width_e wtype = CSS_WIDTH_AUTO;
-	css_fixed width = 0;
+	संरचना box *child;
+	पूर्णाङ्क min = 0, max = 0;
+	पूर्णाङ्क extra_fixed = 0;
+	भिन्न extra_frac = 0;
+	गणना css_विस्तारः_e wtype = CSS_विस्तारः_AUTO;
+	css_fixed विस्तारः = 0;
 	css_unit wunit = CSS_UNIT_PX;
-	enum css_height_e htype = CSS_HEIGHT_AUTO;
+	गणना css_height_e htype = CSS_HEIGHT_AUTO;
 	css_fixed height = 0;
 	css_unit hunit = CSS_UNIT_PX;
-	enum css_box_sizing_e bs = CSS_BOX_SIZING_CONTENT_BOX;
+	गणना css_box_sizing_e bs = CSS_BOX_SIZING_CONTENT_BOX;
 	bool using_min_border_box = false;
 	bool using_max_border_box = false;
 	bool child_has_height = false;
 
-	assert(block->type == BOX_BLOCK ||
-			block->type == BOX_FLEX ||
-			block->type == BOX_INLINE_FLEX ||
-			block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_TABLE_CELL);
+	प्रतिज्ञा(खण्डम्->type == BOX_खण्डम् ||
+			खण्डम्->type == BOX_FLEX ||
+			खण्डम्->type == BOX_INLINE_FLEX ||
+			खण्डम्->type == BOX_INLINE_खण्डम् ||
+			खण्डम्->type == BOX_सारणी_CELL);
 
 	/* check if the widths have already been calculated */
-	if (block->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	यदि (खण्डम्->max_विस्तारः != UNKNOWN_MAX_विस्तारः)
+		प्रत्यागम;
 
-	if (block->style != NULL) {
-		wtype = css_computed_width(block->style, &width, &wunit);
-		htype = css_computed_height(block->style, &height, &hunit);
-		bs = css_computed_box_sizing(block->style);
+	यदि (खण्डम्->style != रिक्त) {
+		wtype = css_computed_विस्तारः(खण्डम्->style, &विस्तारः, &wunit);
+		htype = css_computed_height(खण्डम्->style, &height, &hunit);
+		bs = css_computed_box_sizing(खण्डम्->style);
 	}
 
 	/* set whether the minimum width is of any interest for this box */
-	if (((block->parent && lh__box_is_float_box(block->parent)) ||
-			block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_INLINE_FLEX) &&
-			wtype != CSS_WIDTH_SET) {
+	यदि (((खण्डम्->parent && lh__box_is_float_box(खण्डम्->parent)) ||
+			खण्डम्->type == BOX_INLINE_खण्डम् ||
+			खण्डम्->type == BOX_INLINE_FLEX) &&
+			wtype != CSS_विस्तारः_समुच्चयः) {
 		/* box shrinks to fit; need minimum width */
-		block->flags |= NEED_MIN;
-	} else if (block->type == BOX_TABLE_CELL) {
+		खण्डम्->flags |= NEED_MIN;
+	} अन्यथा यदि (खण्डम्->type == BOX_सारणी_CELL) {
 		/* box shrinks to fit; need minimum width */
-		block->flags |= NEED_MIN;
-	} else if (block->parent && (block->parent->flags & NEED_MIN) &&
-			wtype != CSS_WIDTH_SET) {
+		खण्डम्->flags |= NEED_MIN;
+	} अन्यथा यदि (खण्डम्->parent && (खण्डम्->parent->flags & NEED_MIN) &&
+			wtype != CSS_विस्तारः_समुच्चयः) {
 		/* box inside shrink-to-fit context; need minimum width */
-		block->flags |= NEED_MIN;
-	} else if (block->parent && (block->parent->type == BOX_FLEX)) {
+		खण्डम्->flags |= NEED_MIN;
+	} अन्यथा यदि (खण्डम्->parent && (खण्डम्->parent->type == BOX_FLEX)) {
 		/* box is flex item */
-		block->flags |= NEED_MIN;
+		खण्डम्->flags |= NEED_MIN;
 	}
 
-	if (block->gadget && (block->gadget->type == GADGET_TEXTBOX ||
-			block->gadget->type == GADGET_PASSWORD ||
-			block->gadget->type == GADGET_FILE ||
-			block->gadget->type == GADGET_TEXTAREA) &&
-			block->style && wtype == CSS_WIDTH_AUTO) {
-		css_fixed size = INTTOFIX(10);
+	यदि (खण्डम्->gadget && (खण्डम्->gadget->type == GADGET_TEXTBOX ||
+			खण्डम्->gadget->type == GADGET_PASSWORD ||
+			खण्डम्->gadget->type == GADGET_FILE ||
+			खण्डम्->gadget->type == GADGET_TEXTAREA) &&
+			खण्डम्->style && wtype == CSS_विस्तारः_AUTO) {
+		css_fixed आकार = INTTOFIX(10);
 		css_unit unit = CSS_UNIT_EM;
 
-		min = max = FIXTOINT(css_unit_len2device_px(block->style,
-				&content->unit_len_ctx, size, unit));
+		min = max = FIXTOINT(css_unit_len2device_px(खण्डम्->style,
+				&content->unit_len_ctx, आकार, unit));
 
-		block->flags |= HAS_HEIGHT;
+		खण्डम्->flags |= HAS_HEIGHT;
 	}
 
-	if (block->gadget && (block->gadget->type == GADGET_RADIO ||
-			block->gadget->type == GADGET_CHECKBOX) &&
-			block->style && wtype == CSS_WIDTH_AUTO) {
-		css_fixed size = INTTOFIX(1);
+	यदि (खण्डम्->gadget && (खण्डम्->gadget->type == GADGET_RADIO ||
+			खण्डम्->gadget->type == GADGET_CHECKBOX) &&
+			खण्डम्->style && wtype == CSS_विस्तारः_AUTO) {
+		css_fixed आकार = INTTOFIX(1);
 		css_unit unit = CSS_UNIT_EM;
 
 		/* form checkbox or radio button
 		 * if width is AUTO, set it to 1em */
-		min = max = FIXTOINT(css_unit_len2device_px(block->style,
-				&content->unit_len_ctx, size, unit));
+		min = max = FIXTOINT(css_unit_len2device_px(खण्डम्->style,
+				&content->unit_len_ctx, आकार, unit));
 
-		block->flags |= HAS_HEIGHT;
+		खण्डम्->flags |= HAS_HEIGHT;
 	}
 
-	if (block->object) {
-		if (content_get_type(block->object) == CONTENT_HTML) {
-			layout_minmax_block(html_get_box_tree(block->object),
+	यदि (खण्डम्->object) {
+		यदि (content_get_type(खण्डम्->object) == CONTENT_HTML) {
+			layout_minmax_खण्डम्(html_get_box_वृक्षः(खण्डम्->object),
 					font_func, content);
-			min = html_get_box_tree(block->object)->min_width;
-			max = html_get_box_tree(block->object)->max_width;
-		} else {
-			min = max = content_get_width(block->object);
+			min = html_get_box_वृक्षः(खण्डम्->object)->min_विस्तारः;
+			max = html_get_box_वृक्षः(खण्डम्->object)->max_विस्तारः;
+		} अन्यथा {
+			min = max = content_get_विस्तारः(खण्डम्->object);
 		}
 
-		block->flags |= HAS_HEIGHT;
-	} else if (block->flags & IFRAME) {
+		खण्डम्->flags |= HAS_HEIGHT;
+	} अन्यथा यदि (खण्डम्->flags & IFRAME) {
 		/** \todo do we need to know the min/max width of the iframe's
 		 * content? */
-		block->flags |= HAS_HEIGHT;
-	} else {
+		खण्डम्->flags |= HAS_HEIGHT;
+	} अन्यथा {
 		/* recurse through children */
-		for (child = block->children; child; child = child->next) {
-			switch (child->type) {
-			case BOX_FLEX:
-			case BOX_BLOCK:
-				layout_minmax_block(child, font_func,
+		प्रति (child = खण्डम्->children; child; child = child->अग्र) {
+			विकल्प (child->type) {
+			पक्ष BOX_FLEX:
+			पक्ष BOX_खण्डम्:
+				layout_minmax_खण्डम्(child, font_func,
 						content);
-				if (child->flags & HAS_HEIGHT)
+				यदि (child->flags & HAS_HEIGHT)
 					child_has_height = true;
-				break;
-			case BOX_INLINE_CONTAINER:
-				if (block->flags & NEED_MIN)
+				भङ्ग;
+			पक्ष BOX_INLINE_CONTAINER:
+				यदि (खण्डम्->flags & NEED_MIN)
 					child->flags |= NEED_MIN;
 
 				layout_minmax_inline_container(child,
 						&child_has_height, font_func,
 						content);
-				if (child_has_height &&
+				यदि (child_has_height &&
 						child ==
 						child->parent->children) {
-					block->flags |= MAKE_HEIGHT;
+					खण्डम्->flags |= MAKE_HEIGHT;
 				}
-				break;
-			case BOX_TABLE:
-				layout_minmax_table(child, font_func,
+				भङ्ग;
+			पक्ष BOX_सारणी:
+				layout_minmax_सारणी(child, font_func,
 						content);
 				/* todo: fix for zero height tables */
 				child_has_height = true;
 				child->flags |= MAKE_HEIGHT;
-				break;
-			default:
-				assert(0);
+				भङ्ग;
+			स्वभाव:
+				प्रतिज्ञा(0);
 			}
-			assert(child->max_width != UNKNOWN_MAX_WIDTH);
+			प्रतिज्ञा(child->max_विस्तारः != UNKNOWN_MAX_विस्तारः);
 
-			if (child->style &&
+			यदि (child->style &&
 					(css_computed_position(child->style) ==
 							CSS_POSITION_ABSOLUTE ||
 					css_computed_position(child->style) ==
 							CSS_POSITION_FIXED)) {
 				/* This child is positioned out of normal flow,
 				 * so it will have no affect on width */
-				continue;
+				अनुवर्त;
 			}
 
-			if (lh__box_is_flex_container(block) &&
-			    lh__flex_main_is_horizontal(block)) {
-				if (block->style != NULL &&
-				    css_computed_flex_wrap(block->style) ==
+			यदि (lh__box_is_flex_container(खण्डम्) &&
+			    lh__flex_main_is_horizontal(खण्डम्)) {
+				यदि (खण्डम्->style != रिक्त &&
+				    css_computed_flex_wrap(खण्डम्->style) ==
 						CSS_FLEX_WRAP_NOWRAP) {
-					min += child->min_width;
-				} else {
-					if (min < child->min_width)
-						min = child->min_width;
+					min += child->min_विस्तारः;
+				} अन्यथा {
+					यदि (min < child->min_विस्तारः)
+						min = child->min_विस्तारः;
 				}
-				max += child->max_width;
+				max += child->max_विस्तारः;
 
-			} else {
-				if (min < child->min_width)
-					min = child->min_width;
-				if (max < child->max_width)
-					max = child->max_width;
+			} अन्यथा {
+				यदि (min < child->min_विस्तारः)
+					min = child->min_विस्तारः;
+				यदि (max < child->max_विस्तारः)
+					max = child->max_विस्तारः;
 			}
 
-			if (child_has_height)
-				block->flags |= HAS_HEIGHT;
+			यदि (child_has_height)
+				खण्डम्->flags |= HAS_HEIGHT;
 		}
 	}
 
-	if (max < min) {
-		box_dump(stderr, block, 0, true);
-		assert(0);
+	यदि (max < min) {
+		box_dump(stderr, खण्डम्, 0, true);
+		प्रतिज्ञा(0);
 	}
 
 	/* fixed width takes priority */
-	if (block->type != BOX_TABLE_CELL && !lh__box_is_flex_item(block)) {
+	यदि (खण्डम्->type != BOX_सारणी_CELL && !lh__box_is_flex_item(खण्डम्)) {
 		bool border_box = bs == CSS_BOX_SIZING_BORDER_BOX;
-		enum css_max_width_e max_type;
-		enum css_min_width_e min_type;
+		गणना css_max_विस्तारः_e max_type;
+		गणना css_min_विस्तारः_e min_type;
 		css_unit unit = CSS_UNIT_PX;
-		css_fixed value = 0;
-		int width;
+		css_fixed मानम् = 0;
+		पूर्णाङ्क विस्तारः;
 
-		if (css_computed_width_px(block->style, &content->unit_len_ctx,
-				-1, &width) == CSS_WIDTH_SET) {
-			min = max = width;
+		यदि (css_computed_विस्तारः_px(खण्डम्->style, &content->unit_len_ctx,
+				-1, &विस्तारः) == CSS_विस्तारः_समुच्चयः) {
+			min = max = विस्तारः;
 			using_max_border_box = border_box;
 			using_min_border_box = border_box;
 		}
 
-		min_type = css_computed_min_width(block->style, &value, &unit);
-		if (min_type == CSS_MIN_WIDTH_SET && unit != CSS_UNIT_PCT) {
-			int val = FIXTOINT(css_unit_len2device_px(block->style,
-					&content->unit_len_ctx, value, unit));
+		min_type = css_computed_min_विस्तारः(खण्डम्->style, &मानम्, &unit);
+		यदि (min_type == CSS_MIN_विस्तारः_समुच्चयः && unit != CSS_UNIT_PCT) {
+			पूर्णाङ्क val = FIXTOINT(css_unit_len2device_px(खण्डम्->style,
+					&content->unit_len_ctx, मानम्, unit));
 
-			if (min < val) {
+			यदि (min < val) {
 				min = val;
 				using_min_border_box = border_box;
 			}
 		}
 
-		max_type = css_computed_max_width(block->style, &value, &unit);
-		if (max_type == CSS_MAX_WIDTH_SET && unit != CSS_UNIT_PCT) {
-			int val = FIXTOINT(css_unit_len2device_px(block->style,
-					&content->unit_len_ctx, value, unit));
+		max_type = css_computed_max_विस्तारः(खण्डम्->style, &मानम्, &unit);
+		यदि (max_type == CSS_MAX_विस्तारः_समुच्चयः && unit != CSS_UNIT_PCT) {
+			पूर्णाङ्क val = FIXTOINT(css_unit_len2device_px(खण्डम्->style,
+					&content->unit_len_ctx, मानम्, unit));
 
-			if (val >= 0 && max > val) {
+			यदि (val >= 0 && max > val) {
 				max = val;
 				using_max_border_box = border_box;
 			}
 		}
 	}
 
-	if (htype == CSS_HEIGHT_SET && hunit != CSS_UNIT_PCT &&
+	यदि (htype == CSS_HEIGHT_समुच्चयः && hunit != CSS_UNIT_PCT &&
 			height > INTTOFIX(0)) {
-		block->flags |= MAKE_HEIGHT;
-		block->flags |= HAS_HEIGHT;
+		खण्डम्->flags |= MAKE_HEIGHT;
+		खण्डम्->flags |= HAS_HEIGHT;
 	}
 
 	/* add margins, border, padding to min, max widths */
 	/* Note: we don't know available width here so percentage margin
 	 * and paddings are wrong. */
-	calculate_mbp_width(&content->unit_len_ctx, block->style, LEFT,
+	calculate_mbp_विस्तारः(&content->unit_len_ctx, खण्डम्->style, वामः_2,
 			false, true, true, &extra_fixed, &extra_frac);
-	calculate_mbp_width(&content->unit_len_ctx, block->style, RIGHT,
+	calculate_mbp_विस्तारः(&content->unit_len_ctx, खण्डम्->style, दक्षिणः_2,
 			false, true, true, &extra_fixed, &extra_frac);
 
-	if (using_max_border_box) {
+	यदि (using_max_border_box) {
 		max -= extra_fixed;
 		max = max(max, 0);
 	}
 
-	if (using_min_border_box) {
+	यदि (using_min_border_box) {
 		min -= extra_fixed;
 		min = max(min, 0);
 	}
 
-	if (max < min) {
+	यदि (max < min) {
 		min = max;
 	}
 
-	calculate_mbp_width(&content->unit_len_ctx, block->style, LEFT,
+	calculate_mbp_विस्तारः(&content->unit_len_ctx, खण्डम्->style, वामः_2,
 			true, false, false, &extra_fixed, &extra_frac);
-	calculate_mbp_width(&content->unit_len_ctx, block->style, RIGHT,
+	calculate_mbp_विस्तारः(&content->unit_len_ctx, खण्डम्->style, दक्षिणः_2,
 			true, false, false, &extra_fixed, &extra_frac);
 
-	if (extra_fixed < 0)
+	यदि (extra_fixed < 0)
 		extra_fixed = 0;
-	if (extra_frac < 0)
+	यदि (extra_frac < 0)
 		extra_frac = 0;
-	if (1.0 <= extra_frac)
+	यदि (1.0 <= extra_frac)
 		extra_frac = 0.9;
-	if (block->style != NULL &&
-			(css_computed_float(block->style) == CSS_FLOAT_LEFT ||
-			css_computed_float(block->style) == CSS_FLOAT_RIGHT)) {
+	यदि (खण्डम्->style != रिक्त &&
+			(css_computed_float(खण्डम्->style) == CSS_FLOAT_वामः ||
+			css_computed_float(खण्डम्->style) == CSS_FLOAT_दक्षिणः)) {
 		/* floated boxs */
-		block->min_width = min + extra_fixed;
-		block->max_width = max + extra_fixed;
-	} else {
+		खण्डम्->min_विस्तारः = min + extra_fixed;
+		खण्डम्->max_विस्तारः = max + extra_fixed;
+	} अन्यथा {
 		/* not floated */
-		block->min_width = (min + extra_fixed) / (1.0 - extra_frac);
-		block->max_width = (max + extra_fixed) / (1.0 - extra_frac);
+		खण्डम्->min_विस्तारः = (min + extra_fixed) / (1.0 - extra_frac);
+		खण्डम्->max_विस्तारः = (max + extra_fixed) / (1.0 - extra_frac);
 	}
 
-	assert(0 <= block->min_width);
-	assert(block->min_width <= block->max_width);
+	प्रतिज्ञा(0 <= खण्डम्->min_विस्तारः);
+	प्रतिज्ञा(खण्डम्->min_विस्तारः <= खण्डम्->max_विस्तारः);
 }
 
 
@@ -1135,19 +1135,19 @@ static void layout_minmax_block(
  * \param  max_neg_margin  updated to to maximum negative margin encountered
  * \return  next box that current margin collapses to, or NULL if none.
  */
-static struct box*
-layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
-			 struct box *box,
-			 struct box *block,
-			 int viewport_height,
-			 int *max_pos_margin,
-			 int *max_neg_margin)
+स्थिर संरचना box*
+layout_अग्र_margin_खण्डम्(ध्रुव css_unit_ctx *unit_len_ctx,
+			 संरचना box *box,
+			 संरचना box *खण्डम्,
+			 पूर्णाङ्क viewport_height,
+			 पूर्णाङ्क *max_pos_margin,
+			 पूर्णाङ्क *max_neg_margin)
 {
-	assert(block != NULL);
+	प्रतिज्ञा(खण्डम् != रिक्त);
 
-	while (box != NULL) {
+	यावत् (box != रिक्त) {
 
-		if (box->type == BOX_INLINE_CONTAINER || (box->style &&
+		यदि (box->type == BOX_INLINE_CONTAINER || (box->style &&
 				(css_computed_position(box->style) !=
 					CSS_POSITION_ABSOLUTE &&
 				 css_computed_position(box->style) !=
@@ -1155,94 +1155,94 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
 			/* Not positioned */
 
 			/* Get margins */
-			if (box->style) {
+			यदि (box->style) {
 				layout_find_dimensions(unit_len_ctx,
-						box->parent->width,
+						box->parent->विस्तारः,
 						viewport_height, box,
 						box->style,
-						NULL, NULL, NULL, NULL,
-						NULL, NULL, box->margin,
+						रिक्त, रिक्त, रिक्त, रिक्त,
+						रिक्त, रिक्त, box->margin,
 						box->padding, box->border);
 
 				/* Apply top margin */
-				if (*max_pos_margin < box->margin[TOP])
-					*max_pos_margin = box->margin[TOP];
-				else if (*max_neg_margin < -box->margin[TOP])
-					*max_neg_margin = -box->margin[TOP];
+				यदि (*max_pos_margin < box->margin[शिखरम्_2])
+					*max_pos_margin = box->margin[शिखरम्_2];
+				अन्यथा यदि (*max_neg_margin < -box->margin[शिखरम्_2])
+					*max_neg_margin = -box->margin[शिखरम्_2];
 			}
 
 			/* Check whether box is the box current margin collapses
 			 * to */
-			if (box->flags & MAKE_HEIGHT ||
-					box->border[TOP].width ||
-					box->padding[TOP] ||
+			यदि (box->flags & MAKE_HEIGHT ||
+					box->border[शिखरम्_2].विस्तारः ||
+					box->padding[शिखरम्_2] ||
 					(box->style &&
-					css_computed_overflow_y(box->style) !=
-					CSS_OVERFLOW_VISIBLE) ||
+					css_computed_अतिप्रवाहः_y(box->style) !=
+					CSS_अतिप्रवाहः_VISIBLE) ||
 					(box->type == BOX_INLINE_CONTAINER &&
 					!box_is_first_child(box))) {
 				/* Collapse to this box; return it */
-				return box;
+				प्रत्यागम box;
 			}
 		}
 
 
 		/* Find next box */
-		if (box->type == BOX_BLOCK && !box->object && box->children &&
+		यदि (box->type == BOX_खण्डम् && !box->object && box->children &&
 				box->style &&
-				css_computed_overflow_y(box->style) ==
-				CSS_OVERFLOW_VISIBLE) {
+				css_computed_अतिप्रवाहः_y(box->style) ==
+				CSS_अतिप्रवाहः_VISIBLE) {
 			/* Down into children. */
 			box = box->children;
-		} else {
-			if (!box->next) {
+		} अन्यथा {
+			यदि (!box->अग्र) {
 				/* No more siblings:
 				 * Go up to first ancestor with a sibling. */
-				do {
+				कुरु {
 					/* Apply bottom margin */
-					if (*max_pos_margin <
+					यदि (*max_pos_margin <
 							box->margin[BOTTOM])
 						*max_pos_margin =
 							box->margin[BOTTOM];
-					else if (*max_neg_margin <
+					अन्यथा यदि (*max_neg_margin <
 							-box->margin[BOTTOM])
 						*max_neg_margin =
 							-box->margin[BOTTOM];
 
 					box = box->parent;
-				} while (box != block && !box->next);
+				} यावत् (box != खण्डम् && !box->अग्र);
 
-				if (box == block) {
+				यदि (box == खण्डम्) {
 					/* Margins don't collapse with stuff
 					 * outside the block formatting context
 					 */
-					return block;
+					प्रत्यागम खण्डम्;
 				}
 			}
 
 			/* Apply bottom margin */
-			if (*max_pos_margin < box->margin[BOTTOM])
+			यदि (*max_pos_margin < box->margin[BOTTOM])
 				*max_pos_margin = box->margin[BOTTOM];
-			else if (*max_neg_margin < -box->margin[BOTTOM])
+			अन्यथा यदि (*max_neg_margin < -box->margin[BOTTOM])
 				*max_neg_margin = -box->margin[BOTTOM];
 
 			/* To next sibling. */
-			box = box->next;
+			box = box->अग्र;
 
 			/* Get margins */
-			if (box->style) {
+			यदि (box->style) {
 				layout_find_dimensions(unit_len_ctx,
-						box->parent->width,
+						box->parent->विस्तारः,
 						viewport_height, box,
 						box->style,
-						NULL, NULL, NULL, NULL,
-						NULL, NULL, box->margin,
+						रिक्त, रिक्त, रिक्त, रिक्त,
+						रिक्त, रिक्त, box->margin,
 						box->padding, box->border);
 			}
 		}
 	}
 
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
 
@@ -1253,20 +1253,20 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
  * \param  clear  type of clear
  * \return  y coordinate relative to ancestor box for floats
  */
-static int layout_clear(struct box *fl, enum css_clear_e clear)
+स्थिर पूर्णाङ्क layout_clear(संरचना box *fl, गणना css_clear_e clear)
 {
-	int y = 0;
-	for (; fl; fl = fl->next_float) {
-		if ((clear == CSS_CLEAR_LEFT || clear == CSS_CLEAR_BOTH) &&
-				fl->type == BOX_FLOAT_LEFT)
-			if (y < fl->y + fl->height)
+	पूर्णाङ्क y = 0;
+	प्रति (; fl; fl = fl->अग्र_float) {
+		यदि ((clear == CSS_CLEAR_वामः || clear == CSS_CLEAR_BOTH) &&
+				fl->type == BOX_FLOAT_वामः)
+			यदि (y < fl->y + fl->height)
 				y = fl->y + fl->height;
-		if ((clear == CSS_CLEAR_RIGHT || clear == CSS_CLEAR_BOTH) &&
-				fl->type == BOX_FLOAT_RIGHT)
-			if (y < fl->y + fl->height)
+		यदि ((clear == CSS_CLEAR_दक्षिणः || clear == CSS_CLEAR_BOTH) &&
+				fl->type == BOX_FLOAT_दक्षिणः)
+			यदि (y < fl->y + fl->height)
 				y = fl->y + fl->height;
 	}
-	return y;
+	प्रत्यागम y;
 }
 
 
@@ -1281,46 +1281,46 @@ static int layout_clear(struct box *fl, enum css_clear_e clear)
  * \param  left	  returns float on left if present
  * \param  right  returns float on right if present
  */
-static void
-find_sides(struct box *fl,
-	   int y0, int y1,
-	   int *x0, int *x1,
-	   struct box **left,
-	   struct box **right)
+स्थिर शून्य
+find_sides(संरचना box *fl,
+	   पूर्णाङ्क y0, पूर्णाङ्क y1,
+	   पूर्णाङ्क *x0, पूर्णाङ्क *x1,
+	   संरचना box **वामः,
+	   संरचना box **दक्षिणः)
 {
-	int fy0, fy1, fx0, fx1;
+	पूर्णाङ्क fy0, fy1, fx0, fx1;
 
 	NSLOG(layout, DEBUG, "y0 %i, y1 %i, x0 %i, x1 %i", y0, y1, *x0, *x1);
 
-	*left = *right = 0;
-	for (; fl; fl = fl->next_float) {
+	*वामः = *दक्षिणः = 0;
+	प्रति (; fl; fl = fl->अग्र_float) {
 		fy1 = fl->y + fl->height;
-		if (fy1 < y0) {
+		यदि (fy1 < y0) {
 			/* Floats are sorted in order of decreasing bottom pos.
 			 * Past here, all floats will be too high to concern us.
 			 */
-			return;
+			प्रत्यागम;
 		}
 		fy0 = fl->y;
-		if (y0 < fy1 && fy0 <= y1) {
-			if (fl->type == BOX_FLOAT_LEFT) {
-				fx1 = fl->x + fl->width;
-				if (*x0 < fx1) {
+		यदि (y0 < fy1 && fy0 <= y1) {
+			यदि (fl->type == BOX_FLOAT_वामः) {
+				fx1 = fl->x + fl->विस्तारः;
+				यदि (*x0 < fx1) {
 					*x0 = fx1;
-					*left = fl;
+					*वामः = fl;
 				}
-			} else {
+			} अन्यथा {
 				fx0 = fl->x;
-				if (fx0 < *x1) {
+				यदि (fx0 < *x1) {
 					*x1 = fx0;
-					*right = fl;
+					*दक्षिणः = fl;
 				}
 			}
 		}
 	}
 
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, left %p, right %p", *x0, *x1,
-	      *left, *right);
+	      *वामः, *दक्षिणः);
 }
 
 
@@ -1342,125 +1342,125 @@ find_sides(struct box *fl,
  *
  * \post \a box's left/right margins will be updated.
  */
-static int
-layout_solve_width(struct box *box,
-		   int available_width,
-		   int width,
-		   int lm,
-		   int rm,
-		   int max_width,
-		   int min_width)
+स्थिर पूर्णाङ्क
+layout_solve_विस्तारः(संरचना box *box,
+		   पूर्णाङ्क उपलब्धम्_विस्तारः,
+		   पूर्णाङ्क विस्तारः,
+		   पूर्णाङ्क lm,
+		   पूर्णाङ्क rm,
+		   पूर्णाङ्क max_विस्तारः,
+		   पूर्णाङ्क min_विस्तारः)
 {
-	bool auto_width = false;
+	bool auto_विस्तारः = false;
 
 	/* Increase specified left/right margins */
-	if (box->margin[LEFT] != AUTO && box->margin[LEFT] < lm &&
-			box->margin[LEFT] >= 0)
-		box->margin[LEFT] = lm;
-	if (box->margin[RIGHT] != AUTO && box->margin[RIGHT] < rm &&
-			box->margin[RIGHT] >= 0)
-		box->margin[RIGHT] = rm;
+	यदि (box->margin[वामः_2] != AUTO && box->margin[वामः_2] < lm &&
+			box->margin[वामः_2] >= 0)
+		box->margin[वामः_2] = lm;
+	यदि (box->margin[दक्षिणः_2] != AUTO && box->margin[दक्षिणः_2] < rm &&
+			box->margin[दक्षिणः_2] >= 0)
+		box->margin[दक्षिणः_2] = rm;
 
 	/* Find width */
-	if (width == AUTO) {
-		int margin_left = box->margin[LEFT];
-		int margin_right = box->margin[RIGHT];
+	यदि (विस्तारः == AUTO) {
+		पूर्णाङ्क margin_वामः = box->margin[वामः_2];
+		पूर्णाङ्क margin_दक्षिणः = box->margin[दक्षिणः_2];
 
-		if (margin_left == AUTO) {
-			margin_left = lm;
+		यदि (margin_वामः == AUTO) {
+			margin_वामः = lm;
 		}
-		if (margin_right == AUTO) {
-			margin_right = rm;
+		यदि (margin_दक्षिणः == AUTO) {
+			margin_दक्षिणः = rm;
 		}
 
-		width = available_width -
-				(margin_left + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + margin_right);
-		width = width < 0 ? 0 : width;
-		auto_width = true;
+		विस्तारः = उपलब्धम्_विस्तारः -
+				(margin_वामः + box->border[वामः_2].विस्तारः +
+				box->padding[वामः_2] + box->padding[दक्षिणः_2] +
+				box->border[दक्षिणः_2].विस्तारः + margin_दक्षिणः);
+		विस्तारः = विस्तारः < 0 ? 0 : विस्तारः;
+		auto_विस्तारः = true;
 	}
 
-	if (max_width >= 0 && width > max_width) {
+	यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः) {
 		/* max-width is admissable and width exceeds max-width */
-		width = max_width;
-		auto_width = false;
+		विस्तारः = max_विस्तारः;
+		auto_विस्तारः = false;
 	}
 
-	if (min_width > 0 && width < min_width) {
+	यदि (min_विस्तारः > 0 && विस्तारः < min_विस्तारः) {
 		/* min-width is admissable and width is less than max-width */
-		width = min_width;
-		auto_width = false;
+		विस्तारः = min_विस्तारः;
+		auto_विस्तारः = false;
 	}
 
 	/* Width was auto, and unconstrained by min/max width, so we're done */
-	if (auto_width) {
+	यदि (auto_विस्तारः) {
 		/* any other 'auto' become 0 or the minimum required values */
-		if (box->margin[LEFT] == AUTO) {
-			box->margin[LEFT] = lm;
+		यदि (box->margin[वामः_2] == AUTO) {
+			box->margin[वामः_2] = lm;
 		}
-		if (box->margin[RIGHT] == AUTO) {
-			box->margin[RIGHT] = rm;
+		यदि (box->margin[दक्षिणः_2] == AUTO) {
+			box->margin[दक्षिणः_2] = rm;
 		}
-		return width;
+		प्रत्यागम विस्तारः;
 	}
 
 	/* Width was not auto, or was constrained by min/max width
 	 * Need to compute left/right margins */
 
 	/* HTML alignment (only applies to over-constrained boxes) */
-	if (box->margin[LEFT] != AUTO && box->margin[RIGHT] != AUTO &&
-			box->parent != NULL && box->parent->style != NULL) {
-		switch (css_computed_text_align(box->parent->style)) {
-		case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
-			box->margin[LEFT] = AUTO;
-			box->margin[RIGHT] = 0;
-			break;
-		case CSS_TEXT_ALIGN_LIBCSS_CENTER:
-			box->margin[LEFT] = box->margin[RIGHT] = AUTO;
-			break;
-		case CSS_TEXT_ALIGN_LIBCSS_LEFT:
-			box->margin[LEFT] = 0;
-			box->margin[RIGHT] = AUTO;
-			break;
-		default:
+	यदि (box->margin[वामः_2] != AUTO && box->margin[दक्षिणः_2] != AUTO &&
+			box->parent != रिक्त && box->parent->style != रिक्त) {
+		विकल्प (css_computed_text_align(box->parent->style)) {
+		पक्ष CSS_TEXT_ALIGN_LIBCSS_दक्षिणः:
+			box->margin[वामः_2] = AUTO;
+			box->margin[दक्षिणः_2] = 0;
+			भङ्ग;
+		पक्ष CSS_TEXT_ALIGN_LIBCSS_CENTER:
+			box->margin[वामः_2] = box->margin[दक्षिणः_2] = AUTO;
+			भङ्ग;
+		पक्ष CSS_TEXT_ALIGN_LIBCSS_वामः:
+			box->margin[वामः_2] = 0;
+			box->margin[दक्षिणः_2] = AUTO;
+			भङ्ग;
+		स्वभाव:
 			/* Leave it alone; no HTML alignment */
-			break;
+			भङ्ग;
 		}
 	}
 
-	if (box->margin[LEFT] == AUTO && box->margin[RIGHT] == AUTO) {
+	यदि (box->margin[वामः_2] == AUTO && box->margin[दक्षिणः_2] == AUTO) {
 		/* make the margins equal, centering the element */
-		box->margin[LEFT] = box->margin[RIGHT] =
-				(available_width - lm - rm -
-				(box->border[LEFT].width + box->padding[LEFT] +
-				width + box->padding[RIGHT] +
-				box->border[RIGHT].width)) / 2;
+		box->margin[वामः_2] = box->margin[दक्षिणः_2] =
+				(उपलब्धम्_विस्तारः - lm - rm -
+				(box->border[वामः_2].विस्तारः + box->padding[वामः_2] +
+				विस्तारः + box->padding[दक्षिणः_2] +
+				box->border[दक्षिणः_2].विस्तारः)) / 2;
 
-		if (box->margin[LEFT] < 0) {
-			box->margin[RIGHT] += box->margin[LEFT];
-			box->margin[LEFT] = 0;
+		यदि (box->margin[वामः_2] < 0) {
+			box->margin[दक्षिणः_2] += box->margin[वामः_2];
+			box->margin[वामः_2] = 0;
 		}
 
-		box->margin[LEFT] += lm;
+		box->margin[वामः_2] += lm;
 
-	} else if (box->margin[LEFT] == AUTO) {
-		box->margin[LEFT] = available_width - lm -
-				(box->border[LEFT].width + box->padding[LEFT] +
-				width + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT]);
-		box->margin[LEFT] = box->margin[LEFT] < lm
-				? lm : box->margin[LEFT];
-	} else {
+	} अन्यथा यदि (box->margin[वामः_2] == AUTO) {
+		box->margin[वामः_2] = उपलब्धम्_विस्तारः - lm -
+				(box->border[वामः_2].विस्तारः + box->padding[वामः_2] +
+				विस्तारः + box->padding[दक्षिणः_2] +
+				box->border[दक्षिणः_2].विस्तारः + box->margin[दक्षिणः_2]);
+		box->margin[वामः_2] = box->margin[वामः_2] < lm
+				? lm : box->margin[वामः_2];
+	} अन्यथा {
 		/* margin-right auto or "over-constrained" */
-		box->margin[RIGHT] = available_width - rm -
-				(box->margin[LEFT] + box->border[LEFT].width +
-				 box->padding[LEFT] + width +
-				 box->padding[RIGHT] +
-				 box->border[RIGHT].width);
+		box->margin[दक्षिणः_2] = उपलब्धम्_विस्तारः - rm -
+				(box->margin[वामः_2] + box->border[वामः_2].विस्तारः +
+				 box->padding[वामः_2] + विस्तारः +
+				 box->padding[दक्षिणः_2] +
+				 box->border[दक्षिणः_2].विस्तारः);
 	}
 
-	return width;
+	प्रत्यागम विस्तारः;
 }
 
 
@@ -1480,39 +1480,39 @@ layout_solve_width(struct box *box,
  *
  * See CSS 2.1 10.3.3, 10.3.4, 10.6.2, and 10.6.3.
  */
-static void
-layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
-			     int available_width,
-			     int viewport_height,
-			     int lm,
-			     int rm,
-			     struct box *box)
+स्थिर शून्य
+layout_खण्डम्_find_dimensions(ध्रुव css_unit_ctx *unit_len_ctx,
+			     पूर्णाङ्क उपलब्धम्_विस्तारः,
+			     पूर्णाङ्क viewport_height,
+			     पूर्णाङ्क lm,
+			     पूर्णाङ्क rm,
+			     संरचना box *box)
 {
-	int width, max_width, min_width;
-	int height, max_height, min_height;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	const css_computed_style *style = box->style;
+	पूर्णाङ्क विस्तारः, max_विस्तारः, min_विस्तारः;
+	पूर्णाङ्क height, max_height, min_height;
+	पूर्णाङ्क *margin = box->margin;
+	पूर्णाङ्क *padding = box->padding;
+	संरचना box_border *border = box->border;
+	ध्रुव css_computed_style *style = box->style;
 
-	layout_find_dimensions(unit_len_ctx, available_width, viewport_height, box,
-			style, &width, &height, &max_width, &min_width,
+	layout_find_dimensions(unit_len_ctx, उपलब्धम्_विस्तारः, viewport_height, box,
+			style, &विस्तारः, &height, &max_विस्तारः, &min_विस्तारः,
 			&max_height, &min_height, margin, padding, border);
 
-	if (box->object && !(box->flags & REPLACE_DIM) &&
+	यदि (box->object && !(box->flags & REPLACE_DIM) &&
 			content_get_type(box->object) != CONTENT_HTML) {
 		/* block-level replaced element, see 10.3.4 and 10.6.2 */
-		layout_get_object_dimensions(box, &width, &height,
-				min_width, max_width, min_height, max_height);
+		layout_get_object_dimensions(box, &विस्तारः, &height,
+				min_विस्तारः, max_विस्तारः, min_height, max_height);
 	}
 
-	box->width = layout_solve_width(box, available_width, width, lm, rm,
-			max_width, min_width);
+	box->विस्तारः = layout_solve_विस्तारः(box, उपलब्धम्_विस्तारः, विस्तारः, lm, rm,
+			max_विस्तारः, min_विस्तारः);
 	box->height = height;
 
-	if (margin[TOP] == AUTO)
-		margin[TOP] = 0;
-	if (margin[BOTTOM] == AUTO)
+	यदि (margin[शिखरम्_2] == AUTO)
+		margin[शिखरम्_2] = 0;
+	यदि (margin[BOTTOM] == AUTO)
 		margin[BOTTOM] = 0;
 }
 
@@ -1523,47 +1523,47 @@ layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
  * \param  box	  Box to apply scrollbar space too. Must be BOX_BLOCK.
  * \param  which  Which scrollbar to make space for. Must be RIGHT or BOTTOM.
  */
-static void layout_block_add_scrollbar(struct box *box, int which)
+स्थिर शून्य layout_खण्डम्_सङ्कलय_scrollbar(संरचना box *box, पूर्णाङ्क which)
 {
-	enum css_overflow_e overflow_x, overflow_y;
+	गणना css_अतिप्रवाहः_e अतिप्रवाहः_x, अतिप्रवाहः_y;
 
-	assert(box->type == BOX_BLOCK && (which == RIGHT || which == BOTTOM));
+	प्रतिज्ञा(box->type == BOX_खण्डम् && (which == दक्षिणः_2 || which == BOTTOM));
 
-	if (box->style == NULL)
-		return;
+	यदि (box->style == रिक्त)
+		प्रत्यागम;
 
-	overflow_x = css_computed_overflow_x(box->style);
-	overflow_y = css_computed_overflow_y(box->style);
+	अतिप्रवाहः_x = css_computed_अतिप्रवाहः_x(box->style);
+	अतिप्रवाहः_y = css_computed_अतिप्रवाहः_y(box->style);
 
-	if (which == BOTTOM &&
-			(overflow_x == CSS_OVERFLOW_SCROLL ||
-			 overflow_x == CSS_OVERFLOW_AUTO ||
+	यदि (which == BOTTOM &&
+			(अतिप्रवाहः_x == CSS_अतिप्रवाहः_SCROLL ||
+			 अतिप्रवाहः_x == CSS_अतिप्रवाहः_AUTO ||
 			(box->object &&
 			 content_get_type(box->object) == CONTENT_HTML))) {
 		/* make space for scrollbar, unless height is AUTO */
-		if (box->height != AUTO &&
-				(overflow_x == CSS_OVERFLOW_SCROLL ||
+		यदि (box->height != AUTO &&
+				(अतिप्रवाहः_x == CSS_अतिप्रवाहः_SCROLL ||
 				box_hscrollbar_present(box))) {
-			box->padding[BOTTOM] += SCROLLBAR_WIDTH;
+			box->padding[BOTTOM] += SCROLLBAR_विस्तारः;
 		}
 
-	} else if (which == RIGHT &&
-			(overflow_y == CSS_OVERFLOW_SCROLL ||
-			 overflow_y == CSS_OVERFLOW_AUTO ||
+	} अन्यथा यदि (which == दक्षिणः_2 &&
+			(अतिप्रवाहः_y == CSS_अतिप्रवाहः_SCROLL ||
+			 अतिप्रवाहः_y == CSS_अतिप्रवाहः_AUTO ||
 			(box->object &&
 			 content_get_type(box->object) == CONTENT_HTML))) {
 		/* make space for scrollbars, unless width is AUTO */
-		enum css_height_e htype;
+		गणना css_height_e htype;
 		css_fixed height = 0;
 		css_unit hunit = CSS_UNIT_PX;
 		htype = css_computed_height(box->style, &height, &hunit);
 
-		if (which == RIGHT && box->width != AUTO &&
-				htype == CSS_HEIGHT_SET &&
-				(overflow_y == CSS_OVERFLOW_SCROLL ||
+		यदि (which == दक्षिणः_2 && box->विस्तारः != AUTO &&
+				htype == CSS_HEIGHT_समुच्चयः &&
+				(अतिप्रवाहः_y == CSS_अतिप्रवाहः_SCROLL ||
 				box_vscrollbar_present(box))) {
-			box->width -= SCROLLBAR_WIDTH;
-			box->padding[RIGHT] += SCROLLBAR_WIDTH;
+			box->विस्तारः -= SCROLLBAR_विस्तारः;
+			box->padding[दक्षिणः_2] += SCROLLBAR_विस्तारः;
 		}
 	}
 }
@@ -1576,11 +1576,11 @@ static void layout_block_add_scrollbar(struct box *box, int which)
  * \param  x	the amount to move children by horizontally
  * \param  y	the amount to move children by vertically
  */
-static void layout_move_children(struct box *box, int x, int y)
+स्थिर शून्य layout_move_children(संरचना box *box, पूर्णाङ्क x, पूर्णाङ्क y)
 {
-	assert(box);
+	प्रतिज्ञा(box);
 
-	for (box = box->children; box; box = box->next) {
+	प्रति (box = box->children; box; box = box->अग्र) {
 		box->x += x;
 		box->y += y;
 	}
@@ -1588,98 +1588,98 @@ static void layout_move_children(struct box *box, int x, int y)
 
 
 /* Documented in layout_internal.h */
-bool layout_table(
-		struct box *table,
-		int available_width,
+bool layout_सारणी(
+		संरचना box *सारणी,
+		पूर्णाङ्क उपलब्धम्_विस्तारः,
 		html_content *content)
 {
-	unsigned int columns = table->columns;  /* total columns */
-	unsigned int i;
-	unsigned int *row_span;
-	int *excess_y;
-	int table_width, min_width = 0, max_width = 0;
-	int required_width = 0;
-	int x, remainder = 0, count = 0;
-	int table_height = 0;
-	int min_height = 0;
-	int *xs;  /* array of column x positions */
-	int auto_width;
-	int spare_width;
-	int relative_sum = 0;
-	int border_spacing_h = 0, border_spacing_v = 0;
-	int spare_height;
-	int positioned_columns = 0;
-	struct box *containing_block = NULL;
-	struct box *c;
-	struct box *row;
-	struct box *row_group;
-	struct box **row_span_cell;
-	struct column *col;
-	const css_computed_style *style = table->style;
-	enum css_height_e htype;
-	css_fixed value = 0;
+	अचिह्नित पूर्णाङ्क columns = सारणी->columns;  /* total columns */
+	अचिह्नित पूर्णाङ्क i;
+	अचिह्नित पूर्णाङ्क *row_विस्तृतिः;
+	पूर्णाङ्क *excess_y;
+	पूर्णाङ्क सारणी_विस्तारः, min_विस्तारः = 0, max_विस्तारः = 0;
+	पूर्णाङ्क required_विस्तारः = 0;
+	पूर्णाङ्क x, remainder = 0, गणनम् = 0;
+	पूर्णाङ्क सारणी_height = 0;
+	पूर्णाङ्क min_height = 0;
+	पूर्णाङ्क *xs;  /* array of column x positions */
+	पूर्णाङ्क auto_विस्तारः;
+	पूर्णाङ्क अतिरिक्तः_विस्तारः;
+	पूर्णाङ्क relative_योग = 0;
+	पूर्णाङ्क border_spacing_h = 0, border_spacing_v = 0;
+	पूर्णाङ्क अतिरिक्तः_height;
+	पूर्णाङ्क positioned_columns = 0;
+	संरचना box *containing_खण्डम् = रिक्त;
+	संरचना box *c;
+	संरचना box *row;
+	संरचना box *row_गणः;
+	संरचना box **row_विस्तृतिः_cell;
+	संरचना column *col;
+	ध्रुव css_computed_style *style = सारणी->style;
+	गणना css_height_e htype;
+	css_fixed मानम् = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(table->type == BOX_TABLE);
-	assert(style);
-	assert(table->children && table->children->children);
-	assert(columns);
+	प्रतिज्ञा(सारणी->type == BOX_सारणी);
+	प्रतिज्ञा(style);
+	प्रतिज्ञा(सारणी->children && सारणी->children->children);
+	प्रतिज्ञा(columns);
 
 	/* allocate working buffers */
-	col = malloc(columns * sizeof col[0]);
-	excess_y = malloc(columns * sizeof excess_y[0]);
-	row_span = malloc(columns * sizeof row_span[0]);
-	row_span_cell = malloc(columns * sizeof row_span_cell[0]);
-	xs = malloc((columns + 1) * sizeof xs[0]);
-	if (!col || !xs || !row_span || !excess_y || !row_span_cell) {
-		free(col);
-		free(excess_y);
-		free(row_span);
-		free(row_span_cell);
-		free(xs);
-		return false;
+	col = स्मृतिं_देहि(columns * परिमाण col[0]);
+	excess_y = स्मृतिं_देहि(columns * परिमाण excess_y[0]);
+	row_विस्तृतिः = स्मृतिं_देहि(columns * परिमाण row_विस्तृतिः[0]);
+	row_विस्तृतिः_cell = स्मृतिं_देहि(columns * परिमाण row_विस्तृतिः_cell[0]);
+	xs = स्मृतिं_देहि((columns + 1) * परिमाण xs[0]);
+	यदि (!col || !xs || !row_विस्तृतिः || !excess_y || !row_विस्तृतिः_cell) {
+		मुक्त(col);
+		मुक्त(excess_y);
+		मुक्त(row_विस्तृतिः);
+		मुक्त(row_विस्तृतिः_cell);
+		मुक्त(xs);
+		प्रत्यागम false;
 	}
 
-	memcpy(col, table->col, sizeof(col[0]) * columns);
+	स्मृतिं_प्रतिलिख(col, सारणी->col, परिमाण(col[0]) * columns);
 
 	/* find margins, paddings, and borders for table and cells */
-	layout_find_dimensions(&content->unit_len_ctx, available_width, -1, table,
-			style, 0, 0, 0, 0, 0, 0, table->margin, table->padding,
-			table->border);
-	for (row_group = table->children; row_group;
-			row_group = row_group->next) {
-		for (row = row_group->children; row; row = row->next) {
-			for (c = row->children; c; c = c->next) {
-				enum css_overflow_e overflow_x;
-				enum css_overflow_e overflow_y;
+	layout_find_dimensions(&content->unit_len_ctx, उपलब्धम्_विस्तारः, -1, सारणी,
+			style, 0, 0, 0, 0, 0, 0, सारणी->margin, सारणी->padding,
+			सारणी->border);
+	प्रति (row_गणः = सारणी->children; row_गणः;
+			row_गणः = row_गणः->अग्र) {
+		प्रति (row = row_गणः->children; row; row = row->अग्र) {
+			प्रति (c = row->children; c; c = c->अग्र) {
+				गणना css_अतिप्रवाहः_e अतिप्रवाहः_x;
+				गणना css_अतिप्रवाहः_e अतिप्रवाहः_y;
 
-				assert(c->style);
-				table_used_border_for_cell(
+				प्रतिज्ञा(c->style);
+				सारणी_प्रयुक्तम्_border_for_cell(
 						&content->unit_len_ctx, c);
 				layout_find_dimensions(&content->unit_len_ctx,
-						available_width, -1, c,
+						उपलब्धम्_विस्तारः, -1, c,
 						c->style, 0, 0, 0, 0, 0, 0,
 						0, c->padding, c->border);
 
-				overflow_x = css_computed_overflow_x(c->style);
-				overflow_y = css_computed_overflow_y(c->style);
+				अतिप्रवाहः_x = css_computed_अतिप्रवाहः_x(c->style);
+				अतिप्रवाहः_y = css_computed_अतिप्रवाहः_y(c->style);
 
-				if (overflow_x == CSS_OVERFLOW_SCROLL ||
-						overflow_x ==
-						CSS_OVERFLOW_AUTO) {
-					c->padding[BOTTOM] += SCROLLBAR_WIDTH;
+				यदि (अतिप्रवाहः_x == CSS_अतिप्रवाहः_SCROLL ||
+						अतिप्रवाहः_x ==
+						CSS_अतिप्रवाहः_AUTO) {
+					c->padding[BOTTOM] += SCROLLBAR_विस्तारः;
 				}
-				if (overflow_y == CSS_OVERFLOW_SCROLL ||
-						overflow_y ==
-						CSS_OVERFLOW_AUTO) {
-					c->padding[RIGHT] += SCROLLBAR_WIDTH;
+				यदि (अतिप्रवाहः_y == CSS_अतिप्रवाहः_SCROLL ||
+						अतिप्रवाहः_y ==
+						CSS_अतिप्रवाहः_AUTO) {
+					c->padding[दक्षिणः_2] += SCROLLBAR_विस्तारः;
 				}
 			}
 		}
 	}
 
 	/* border-spacing is used in the separated borders model */
-	if (css_computed_border_collapse(style) ==
+	यदि (css_computed_border_collapse(style) ==
 			CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
@@ -1693,300 +1693,300 @@ bool layout_table(
 	}
 
 	/* find specified table width, or available width if auto-width */
-	if (css_computed_width_px(style, &content->unit_len_ctx,
-			available_width, &table_width) == CSS_WIDTH_SET) {
+	यदि (css_computed_विस्तारः_px(style, &content->unit_len_ctx,
+			उपलब्धम्_विस्तारः, &सारणी_विस्तारः) == CSS_विस्तारः_समुच्चयः) {
 		/* specified width includes border */
-		table_width -= table->border[LEFT].width +
-				table->border[RIGHT].width;
-		table_width = table_width < 0 ? 0 : table_width;
+		सारणी_विस्तारः -= सारणी->border[वामः_2].विस्तारः +
+				सारणी->border[दक्षिणः_2].विस्तारः;
+		सारणी_विस्तारः = सारणी_विस्तारः < 0 ? 0 : सारणी_विस्तारः;
 
-		auto_width = table_width;
-	} else {
-		table_width = AUTO;
-		auto_width = available_width -
-				((table->margin[LEFT] == AUTO ? 0 :
-						table->margin[LEFT]) +
-				 table->border[LEFT].width +
-				 table->padding[LEFT] +
-				 table->padding[RIGHT] +
-				 table->border[RIGHT].width +
-				 (table->margin[RIGHT] == AUTO ? 0 :
-						table->margin[RIGHT]));
+		auto_विस्तारः = सारणी_विस्तारः;
+	} अन्यथा {
+		सारणी_विस्तारः = AUTO;
+		auto_विस्तारः = उपलब्धम्_विस्तारः -
+				((सारणी->margin[वामः_2] == AUTO ? 0 :
+						सारणी->margin[वामः_2]) +
+				 सारणी->border[वामः_2].विस्तारः +
+				 सारणी->padding[वामः_2] +
+				 सारणी->padding[दक्षिणः_2] +
+				 सारणी->border[दक्षिणः_2].विस्तारः +
+				 (सारणी->margin[दक्षिणः_2] == AUTO ? 0 :
+						सारणी->margin[दक्षिणः_2]));
 	}
 
 	/* Find any table height specified within CSS/HTML */
-	htype = css_computed_height(style, &value, &unit);
-	if (htype == CSS_HEIGHT_SET) {
-		if (unit == CSS_UNIT_PCT) {
+	htype = css_computed_height(style, &मानम्, &unit);
+	यदि (htype == CSS_HEIGHT_समुच्चयः) {
+		यदि (unit == CSS_UNIT_PCT) {
 			/* This is the minimum height for the table
 			 * (see 17.5.3) */
-			if (css_computed_position(table->style) ==
+			यदि (css_computed_position(सारणी->style) ==
 					CSS_POSITION_ABSOLUTE) {
 				/* Table is absolutely positioned */
-				assert(table->float_container);
-				containing_block = table->float_container;
-			} else if (table->float_container &&
-					css_computed_position(table->style) !=
+				प्रतिज्ञा(सारणी->float_container);
+				containing_खण्डम् = सारणी->float_container;
+			} अन्यथा यदि (सारणी->float_container &&
+					css_computed_position(सारणी->style) !=
 						CSS_POSITION_ABSOLUTE &&
-					(css_computed_float(table->style) ==
-						CSS_FLOAT_LEFT ||
-					css_computed_float(table->style) ==
-						CSS_FLOAT_RIGHT)) {
+					(css_computed_float(सारणी->style) ==
+						CSS_FLOAT_वामः ||
+					css_computed_float(सारणी->style) ==
+						CSS_FLOAT_दक्षिणः)) {
 				/* Table is a float */
-				assert(table->parent && table->parent->parent &&
-						table->parent->parent->parent);
-				containing_block =
-						table->parent->parent->parent;
-			} else if (table->parent && table->parent->type !=
+				प्रतिज्ञा(सारणी->parent && सारणी->parent->parent &&
+						सारणी->parent->parent->parent);
+				containing_खण्डम् =
+						सारणी->parent->parent->parent;
+			} अन्यथा यदि (सारणी->parent && सारणी->parent->type !=
 					BOX_INLINE_CONTAINER) {
 				/* Table is a block level element */
-				containing_block = table->parent;
-			} else if (table->parent && table->parent->type ==
+				containing_खण्डम् = सारणी->parent;
+			} अन्यथा यदि (सारणी->parent && सारणी->parent->type ==
 					BOX_INLINE_CONTAINER) {
 				/* Table is an inline block */
-				assert(table->parent->parent);
-				containing_block = table->parent->parent;
+				प्रतिज्ञा(सारणी->parent->parent);
+				containing_खण्डम् = सारणी->parent->parent;
 			}
 
-			if (containing_block) {
+			यदि (containing_खण्डम्) {
 				css_fixed ignored = 0;
 
 				htype = css_computed_height(
-						containing_block->style,
+						containing_खण्डम्->style,
 						&ignored, &unit);
 			}
 
-			if (containing_block &&
-					containing_block->height != AUTO &&
-					(css_computed_position(table->style) ==
+			यदि (containing_खण्डम् &&
+					containing_खण्डम्->height != AUTO &&
+					(css_computed_position(सारणी->style) ==
 							CSS_POSITION_ABSOLUTE ||
-					htype == CSS_HEIGHT_SET)) {
+					htype == CSS_HEIGHT_समुच्चयः)) {
 				/* Table is absolutely positioned or its
 				 * containing block has a valid specified
 				 * height. (CSS 2.1 Section 10.5) */
-				min_height = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
+				min_height = FPCT_सम्बन्धि_INT_TOINT(मानम्,
+						containing_खण्डम्->height);
 			}
-		} else {
+		} अन्यथा {
 			/* This is the minimum height for the table
 			 * (see 17.5.3) */
 			min_height = FIXTOINT(css_unit_len2device_px(
 					style, &content->unit_len_ctx,
-					value, unit));
+					मानम्, unit));
 		}
 	}
 
 	/* calculate width required by cells */
-	for (i = 0; i != columns; i++) {
+	प्रति (i = 0; i != columns; i++) {
 
 		NSLOG(layout, DEBUG,
 		      "table %p, column %u: type %s, width %i, min %i, max %i",
-		      table,
+		      सारणी,
 		      i,
-		      ((const char *[]){
+		      ((ध्रुव वर्ण *[]){
 			      "UNKNOWN",
 				      "FIXED",
 				      "AUTO",
 				      "PERCENT",
 				      "RELATIVE",
 				      })[col[i].type],
-		      col[i].width,
+		      col[i].विस्तारः,
 		      col[i].min,
 		      col[i].max);
 
 
-		if (col[i].positioned) {
+		यदि (col[i].positioned) {
 			positioned_columns++;
-			continue;
-		} else if (col[i].type == COLUMN_WIDTH_FIXED) {
-			if (col[i].width < col[i].min)
-				col[i].width = col[i].max = col[i].min;
-			else
-				col[i].min = col[i].max = col[i].width;
-			required_width += col[i].width;
-		} else if (col[i].type == COLUMN_WIDTH_PERCENT) {
-			int width = col[i].width * auto_width / 100;
-			required_width += col[i].min < width ? width :
+			अनुवर्त;
+		} अन्यथा यदि (col[i].type == COLUMN_विस्तारः_FIXED) {
+			यदि (col[i].विस्तारः < col[i].min)
+				col[i].विस्तारः = col[i].max = col[i].min;
+			अन्यथा
+				col[i].min = col[i].max = col[i].विस्तारः;
+			required_विस्तारः += col[i].विस्तारः;
+		} अन्यथा यदि (col[i].type == COLUMN_विस्तारः_PERCENT) {
+			पूर्णाङ्क विस्तारः = col[i].विस्तारः * auto_विस्तारः / 100;
+			required_विस्तारः += col[i].min < विस्तारः ? विस्तारः :
 					col[i].min;
-		} else
-			required_width += col[i].min;
+		} अन्यथा
+			required_विस्तारः += col[i].min;
 
-		NSLOG(layout, DEBUG,  "required_width %i", required_width);
+		NSLOG(layout, DEBUG,  "required_width %i", required_विस्तारः);
 	}
-	required_width += (columns + 1 - positioned_columns) *
+	required_विस्तारः += (columns + 1 - positioned_columns) *
 			border_spacing_h;
 
 	NSLOG(layout, DEBUG,
-	      "width %i, min %i, max %i, auto %i, required %i", table_width,
-	      table->min_width, table->max_width, auto_width, required_width);
+	      "width %i, min %i, max %i, auto %i, required %i", सारणी_विस्तारः,
+	      सारणी->min_विस्तारः, सारणी->max_विस्तारः, auto_विस्तारः, required_विस्तारः);
 
-	if (auto_width < required_width) {
+	यदि (auto_विस्तारः < required_विस्तारः) {
 		/* table narrower than required width for columns:
 		 * treat percentage widths as maximums */
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE)
-				continue;
-			if (col[i].type == COLUMN_WIDTH_PERCENT) {
-				col[i].max = auto_width * col[i].width / 100;
-				if (col[i].max < col[i].min)
+		प्रति (i = 0; i != columns; i++) {
+			यदि (col[i].type == COLUMN_विस्तारः_RELATIVE)
+				अनुवर्त;
+			यदि (col[i].type == COLUMN_विस्तारः_PERCENT) {
+				col[i].max = auto_विस्तारः * col[i].विस्तारः / 100;
+				यदि (col[i].max < col[i].min)
 					col[i].max = col[i].min;
 			}
-			min_width += col[i].min;
-			max_width += col[i].max;
+			min_विस्तारः += col[i].min;
+			max_विस्तारः += col[i].max;
 		}
-	} else {
+	} अन्यथा {
 		/* take percentages exactly */
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE)
-				continue;
-			if (col[i].type == COLUMN_WIDTH_PERCENT) {
-				int width = auto_width * col[i].width / 100;
-				if (width < col[i].min)
-					width = col[i].min;
-				col[i].min = col[i].width = col[i].max = width;
-				col[i].type = COLUMN_WIDTH_FIXED;
+		प्रति (i = 0; i != columns; i++) {
+			यदि (col[i].type == COLUMN_विस्तारः_RELATIVE)
+				अनुवर्त;
+			यदि (col[i].type == COLUMN_विस्तारः_PERCENT) {
+				पूर्णाङ्क विस्तारः = auto_विस्तारः * col[i].विस्तारः / 100;
+				यदि (विस्तारः < col[i].min)
+					विस्तारः = col[i].min;
+				col[i].min = col[i].विस्तारः = col[i].max = विस्तारः;
+				col[i].type = COLUMN_विस्तारः_FIXED;
 			}
-			min_width += col[i].min;
-			max_width += col[i].max;
+			min_विस्तारः += col[i].min;
+			max_विस्तारः += col[i].max;
 		}
 	}
 
 	/* allocate relative widths */
-	spare_width = auto_width;
-	for (i = 0; i != columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_RELATIVE)
-			relative_sum += col[i].width;
-		else if (col[i].type == COLUMN_WIDTH_FIXED)
-			spare_width -= col[i].width;
-		else
-			spare_width -= col[i].min;
+	अतिरिक्तः_विस्तारः = auto_विस्तारः;
+	प्रति (i = 0; i != columns; i++) {
+		यदि (col[i].type == COLUMN_विस्तारः_RELATIVE)
+			relative_योग += col[i].विस्तारः;
+		अन्यथा यदि (col[i].type == COLUMN_विस्तारः_FIXED)
+			अतिरिक्तः_विस्तारः -= col[i].विस्तारः;
+		अन्यथा
+			अतिरिक्तः_विस्तारः -= col[i].min;
 	}
-	spare_width -= (columns + 1) * border_spacing_h;
-	if (relative_sum != 0) {
-		if (spare_width < 0)
-			spare_width = 0;
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE) {
+	अतिरिक्तः_विस्तारः -= (columns + 1) * border_spacing_h;
+	यदि (relative_योग != 0) {
+		यदि (अतिरिक्तः_विस्तारः < 0)
+			अतिरिक्तः_विस्तारः = 0;
+		प्रति (i = 0; i != columns; i++) {
+			यदि (col[i].type == COLUMN_विस्तारः_RELATIVE) {
 				col[i].min = ceil(col[i].max =
-						(float) spare_width
-						* (float) col[i].width
-						/ relative_sum);
-				min_width += col[i].min;
-				max_width += col[i].max;
+						(भिन्न) अतिरिक्तः_विस्तारः
+						* (भिन्न) col[i].विस्तारः
+						/ relative_योग);
+				min_विस्तारः += col[i].min;
+				max_विस्तारः += col[i].max;
 			}
 		}
 	}
-	min_width += (columns + 1) * border_spacing_h;
-	max_width += (columns + 1) * border_spacing_h;
+	min_विस्तारः += (columns + 1) * border_spacing_h;
+	max_विस्तारः += (columns + 1) * border_spacing_h;
 
-	if (auto_width <= min_width) {
+	यदि (auto_विस्तारः <= min_विस्तारः) {
 		/* not enough space: minimise column widths */
-		for (i = 0; i < columns; i++) {
-			col[i].width = col[i].min;
+		प्रति (i = 0; i < columns; i++) {
+			col[i].विस्तारः = col[i].min;
 		}
-		table_width = min_width;
-	} else if (max_width <= auto_width) {
+		सारणी_विस्तारः = min_विस्तारः;
+	} अन्यथा यदि (max_विस्तारः <= auto_विस्तारः) {
 		/* more space than maximum width */
-		if (table_width == AUTO) {
+		यदि (सारणी_विस्तारः == AUTO) {
 			/* for auto-width tables, make columns max width */
-			for (i = 0; i < columns; i++) {
-				col[i].width = col[i].max;
+			प्रति (i = 0; i < columns; i++) {
+				col[i].विस्तारः = col[i].max;
 			}
-			table_width = max_width;
-		} else {
+			सारणी_विस्तारः = max_विस्तारः;
+		} अन्यथा {
 			/* for fixed-width tables, distribute the extra space
 			 * too */
-			unsigned int flexible_columns = 0;
-			for (i = 0; i != columns; i++)
-				if (col[i].type != COLUMN_WIDTH_FIXED)
+			अचिह्नित पूर्णाङ्क flexible_columns = 0;
+			प्रति (i = 0; i != columns; i++)
+				यदि (col[i].type != COLUMN_विस्तारः_FIXED)
 					flexible_columns++;
-			if (flexible_columns == 0) {
-				int extra = (table_width - max_width) / columns;
-				remainder = (table_width - max_width) -
+			यदि (flexible_columns == 0) {
+				पूर्णाङ्क extra = (सारणी_विस्तारः - max_विस्तारः) / columns;
+				remainder = (सारणी_विस्तारः - max_विस्तारः) -
 						(extra * columns);
-				for (i = 0; i != columns; i++) {
-					col[i].width = col[i].max + extra;
-					count -= remainder;
-					if (count < 0) {
-						col[i].width++;
-						count += columns;
+				प्रति (i = 0; i != columns; i++) {
+					col[i].विस्तारः = col[i].max + extra;
+					गणनम् -= remainder;
+					यदि (गणनम् < 0) {
+						col[i].विस्तारः++;
+						गणनम् += columns;
 					}
 				}
 
-			} else {
-				int extra = (table_width - max_width) /
+			} अन्यथा {
+				पूर्णाङ्क extra = (सारणी_विस्तारः - max_विस्तारः) /
 						flexible_columns;
-				remainder = (table_width - max_width) -
+				remainder = (सारणी_विस्तारः - max_विस्तारः) -
 						(extra * flexible_columns);
-				for (i = 0; i != columns; i++)
-					if (col[i].type != COLUMN_WIDTH_FIXED) {
-						col[i].width = col[i].max +
+				प्रति (i = 0; i != columns; i++)
+					यदि (col[i].type != COLUMN_विस्तारः_FIXED) {
+						col[i].विस्तारः = col[i].max +
 								extra;
-						count -= remainder;
-						if (count < 0) {
-							col[i].width++;
-							count += flexible_columns;
+						गणनम् -= remainder;
+						यदि (गणनम् < 0) {
+							col[i].विस्तारः++;
+							गणनम् += flexible_columns;
 						}
 					}
 			}
 		}
-	} else {
+	} अन्यथा {
 		/* space between min and max: fill it exactly */
-		float scale = (float) (auto_width - min_width) /
-				(float) (max_width - min_width);
+		भिन्न scale = (भिन्न) (auto_विस्तारः - min_विस्तारः) /
+				(भिन्न) (max_विस्तारः - min_विस्तारः);
 		/* fprintf(stderr, "filling, scale %f\n", scale); */
-		for (i = 0; i < columns; i++) {
-			col[i].width = col[i].min + (int) (0.5 +
+		प्रति (i = 0; i < columns; i++) {
+			col[i].विस्तारः = col[i].min + (पूर्णाङ्क) (0.5 +
 					(col[i].max - col[i].min) * scale);
 		}
-		table_width = auto_width;
+		सारणी_विस्तारः = auto_विस्तारः;
 	}
 
 	xs[0] = x = border_spacing_h;
-	for (i = 0; i != columns; i++) {
-		if (!col[i].positioned)
-			x += col[i].width + border_spacing_h;
+	प्रति (i = 0; i != columns; i++) {
+		यदि (!col[i].positioned)
+			x += col[i].विस्तारः + border_spacing_h;
 		xs[i + 1] = x;
-		row_span[i] = 0;
+		row_विस्तृतिः[i] = 0;
 		excess_y[i] = 0;
-		row_span_cell[i] = 0;
+		row_विस्तृतिः_cell[i] = 0;
 	}
 
 	/* position cells */
-	table_height = border_spacing_v;
-	for (row_group = table->children; row_group;
-			row_group = row_group->next) {
-		int row_group_height = 0;
-		for (row = row_group->children; row; row = row->next) {
-			int row_height = 0;
+	सारणी_height = border_spacing_v;
+	प्रति (row_गणः = सारणी->children; row_गणः;
+			row_गणः = row_गणः->अग्र) {
+		पूर्णाङ्क row_गणः_height = 0;
+		प्रति (row = row_गणः->children; row; row = row->अग्र) {
+			पूर्णाङ्क row_height = 0;
 
-			htype = css_computed_height(row->style, &value, &unit);
-			if (htype == CSS_HEIGHT_SET && unit != CSS_UNIT_PCT) {
+			htype = css_computed_height(row->style, &मानम्, &unit);
+			यदि (htype == CSS_HEIGHT_समुच्चयः && unit != CSS_UNIT_PCT) {
 				row_height = FIXTOINT(css_unit_len2device_px(
 						row->style,
 						&content->unit_len_ctx,
-						value, unit));
+						मानम्, unit));
 			}
-			for (c = row->children; c; c = c->next) {
-				assert(c->style);
-				c->width = xs[c->start_column + c->columns] -
+			प्रति (c = row->children; c; c = c->अग्र) {
+				प्रतिज्ञा(c->style);
+				c->विस्तारः = xs[c->start_column + c->columns] -
 						xs[c->start_column] -
 						border_spacing_h -
-						c->border[LEFT].width -
-						c->padding[LEFT] -
-						c->padding[RIGHT] -
-						c->border[RIGHT].width;
+						c->border[वामः_2].विस्तारः -
+						c->padding[वामः_2] -
+						c->padding[दक्षिणः_2] -
+						c->border[दक्षिणः_2].विस्तारः;
 				c->float_children = 0;
-				c->cached_place_below_level = 0;
+				c->cached_place_अधः_level = 0;
 
 				c->height = AUTO;
-				if (!layout_block_context(c, -1, content)) {
-					free(col);
-					free(excess_y);
-					free(row_span);
-					free(row_span_cell);
-					free(xs);
-					return false;
+				यदि (!layout_खण्डम्_context(c, -1, content)) {
+					मुक्त(col);
+					मुक्त(excess_y);
+					मुक्त(row_विस्तृतिः);
+					मुक्त(row_विस्तृतिः_cell);
+					मुक्त(xs);
+					प्रत्यागम false;
 				}
 				/* warning: c->descendant_y0 and
 				 * c->descendant_y1 used as temporary storage
@@ -1995,154 +1995,154 @@ bool layout_table(
 				c->descendant_y1 = c->padding[BOTTOM];
 
 				htype = css_computed_height(c->style,
-						&value, &unit);
+						&मानम्, &unit);
 
-				if (htype == CSS_HEIGHT_SET &&
+				यदि (htype == CSS_HEIGHT_समुच्चयः &&
 						unit != CSS_UNIT_PCT) {
 					/* some sites use height="1" or similar
 					 * to attempt to make cells as small as
 					 * possible, so treat it as a minimum */
-					int h = FIXTOINT(css_unit_len2device_px(
+					पूर्णाङ्क h = FIXTOINT(css_unit_len2device_px(
 							c->style,
 							&content->unit_len_ctx,
-							value, unit));
-					if (c->height < h)
+							मानम्, unit));
+					यदि (c->height < h)
 						c->height = h;
 				}
 				/* specified row height is treated as a minimum
 				 */
-				if (c->height < row_height)
+				यदि (c->height < row_height)
 					c->height = row_height;
 				c->x = xs[c->start_column] +
-						c->border[LEFT].width;
-				c->y = c->border[TOP].width;
-				for (i = 0; i != c->columns; i++) {
-					row_span[c->start_column + i] = c->rows;
+						c->border[वामः_2].विस्तारः;
+				c->y = c->border[शिखरम्_2].विस्तारः;
+				प्रति (i = 0; i != c->columns; i++) {
+					row_विस्तृतिः[c->start_column + i] = c->पङ्क्तिकाः;
 					excess_y[c->start_column + i] =
-							c->border[TOP].width +
-							c->padding[TOP] +
+							c->border[शिखरम्_2].विस्तारः +
+							c->padding[शिखरम्_2] +
 							c->height +
 							c->padding[BOTTOM] +
-							c->border[BOTTOM].width;
-					row_span_cell[c->start_column + i] = 0;
+							c->border[BOTTOM].विस्तारः;
+					row_विस्तृतिः_cell[c->start_column + i] = 0;
 				}
-				row_span_cell[c->start_column] = c;
+				row_विस्तृतिः_cell[c->start_column] = c;
 				c->padding[BOTTOM] = -border_spacing_v -
-						c->border[TOP].width -
-						c->padding[TOP] -
+						c->border[शिखरम्_2].विस्तारः -
+						c->padding[शिखरम्_2] -
 						c->height -
-						c->border[BOTTOM].width;
+						c->border[BOTTOM].विस्तारः;
 			}
-			for (i = 0; i != columns; i++)
-				if (row_span[i] != 0)
-					row_span[i]--;
-				else
-					row_span_cell[i] = 0;
-			if (row->next || row_group->next) {
+			प्रति (i = 0; i != columns; i++)
+				यदि (row_विस्तृतिः[i] != 0)
+					row_विस्तृतिः[i]--;
+				अन्यथा
+					row_विस्तृतिः_cell[i] = 0;
+			यदि (row->अग्र || row_गणः->अग्र) {
 				/* row height is greatest excess of a cell
 				 * which ends in this row */
-				for (i = 0; i != columns; i++)
-					if (row_span[i] == 0 && row_height <
+				प्रति (i = 0; i != columns; i++)
+					यदि (row_विस्तृतिः[i] == 0 && row_height <
 							excess_y[i])
 						row_height = excess_y[i];
-			} else {
+			} अन्यथा {
 				/* except in the last row */
-				for (i = 0; i != columns; i++)
-					if (row_height < excess_y[i])
+				प्रति (i = 0; i != columns; i++)
+					यदि (row_height < excess_y[i])
 						row_height = excess_y[i];
 			}
-			for (i = 0; i != columns; i++) {
-				if (row_height < excess_y[i])
+			प्रति (i = 0; i != columns; i++) {
+				यदि (row_height < excess_y[i])
 					excess_y[i] -= row_height;
-				else
+				अन्यथा
 					excess_y[i] = 0;
-				if (row_span_cell[i] != 0)
-					row_span_cell[i]->padding[BOTTOM] +=
+				यदि (row_विस्तृतिः_cell[i] != 0)
+					row_विस्तृतिः_cell[i]->padding[BOTTOM] +=
 							row_height +
 							border_spacing_v;
 			}
 
 			row->x = 0;
-			row->y = row_group_height;
-			row->width = table_width;
+			row->y = row_गणः_height;
+			row->विस्तारः = सारणी_विस्तारः;
 			row->height = row_height;
-			row_group_height += row_height + border_spacing_v;
+			row_गणः_height += row_height + border_spacing_v;
 		}
-		row_group->x = 0;
-		row_group->y = table_height;
-		row_group->width = table_width;
-		row_group->height = row_group_height;
-		table_height += row_group_height;
+		row_गणः->x = 0;
+		row_गणः->y = सारणी_height;
+		row_गणः->विस्तारः = सारणी_विस्तारः;
+		row_गणः->height = row_गणः_height;
+		सारणी_height += row_गणः_height;
 	}
 	/* Table height is either the height of the contents, or specified
 	 * height if greater */
-	table_height = max(table_height, min_height);
+	सारणी_height = max(सारणी_height, min_height);
 	/** \todo distribute spare height over the row groups / rows / cells */
 
 	/* perform vertical alignment */
-	for (row_group = table->children; row_group;
-			row_group = row_group->next) {
-		for (row = row_group->children; row; row = row->next) {
-			for (c = row->children; c; c = c->next) {
-				enum css_vertical_align_e vertical_align;
+	प्रति (row_गणः = सारणी->children; row_गणः;
+			row_गणः = row_गणः->अग्र) {
+		प्रति (row = row_गणः->children; row; row = row->अग्र) {
+			प्रति (c = row->children; c; c = c->अग्र) {
+				गणना css_vertical_align_e vertical_align;
 
 				/* unextended bottom padding is in
 				 * c->descendant_y1, and unextended
 				 * cell height is in c->descendant_y0 */
-				spare_height = (c->padding[BOTTOM] -
+				अतिरिक्तः_height = (c->padding[BOTTOM] -
 						c->descendant_y1) +
 						(c->height - c->descendant_y0);
 
 				vertical_align = css_computed_vertical_align(
-						c->style, &value, &unit);
+						c->style, &मानम्, &unit);
 
-				switch (vertical_align) {
-				case CSS_VERTICAL_ALIGN_SUB:
-				case CSS_VERTICAL_ALIGN_SUPER:
-				case CSS_VERTICAL_ALIGN_TEXT_TOP:
-				case CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
-				case CSS_VERTICAL_ALIGN_SET:
-				case CSS_VERTICAL_ALIGN_BASELINE:
+				विकल्प (vertical_align) {
+				पक्ष CSS_VERTICAL_ALIGN_SUB:
+				पक्ष CSS_VERTICAL_ALIGN_SUPER:
+				पक्ष CSS_VERTICAL_ALIGN_TEXT_शिखरम्:
+				पक्ष CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
+				पक्ष CSS_VERTICAL_ALIGN_समुच्चयः:
+				पक्ष CSS_VERTICAL_ALIGN_BASELINE:
 					/* todo: baseline alignment, for now
 					 * just use ALIGN_TOP */
-				case CSS_VERTICAL_ALIGN_TOP:
-					break;
-				case CSS_VERTICAL_ALIGN_MIDDLE:
-					c->padding[TOP] += spare_height / 2;
-					c->padding[BOTTOM] -= spare_height / 2;
+				पक्ष CSS_VERTICAL_ALIGN_शिखरम्:
+					भङ्ग;
+				पक्ष CSS_VERTICAL_ALIGN_मध्यः:
+					c->padding[शिखरम्_2] += अतिरिक्तः_height / 2;
+					c->padding[BOTTOM] -= अतिरिक्तः_height / 2;
 					layout_move_children(c, 0,
-							spare_height / 2);
-					break;
-				case CSS_VERTICAL_ALIGN_BOTTOM:
-					c->padding[TOP] += spare_height;
-					c->padding[BOTTOM] -= spare_height;
+							अतिरिक्तः_height / 2);
+					भङ्ग;
+				पक्ष CSS_VERTICAL_ALIGN_BOTTOM:
+					c->padding[शिखरम्_2] += अतिरिक्तः_height;
+					c->padding[BOTTOM] -= अतिरिक्तः_height;
 					layout_move_children(c, 0,
-							spare_height);
-					break;
-				case CSS_VERTICAL_ALIGN_INHERIT:
-					assert(0);
-					break;
+							अतिरिक्तः_height);
+					भङ्ग;
+				पक्ष CSS_VERTICAL_ALIGN_INHERIT:
+					प्रतिज्ञा(0);
+					भङ्ग;
 				}
 			}
 		}
 	}
 
 	/* Top and bottom margins of 'auto' are set to 0.  CSS2.1 10.6.3 */
-	if (table->margin[TOP] == AUTO)
-		table->margin[TOP] = 0;
-	if (table->margin[BOTTOM] == AUTO)
-		table->margin[BOTTOM] = 0;
+	यदि (सारणी->margin[शिखरम्_2] == AUTO)
+		सारणी->margin[शिखरम्_2] = 0;
+	यदि (सारणी->margin[BOTTOM] == AUTO)
+		सारणी->margin[BOTTOM] = 0;
 
-	free(col);
-	free(excess_y);
-	free(row_span);
-	free(row_span_cell);
-	free(xs);
+	मुक्त(col);
+	मुक्त(excess_y);
+	मुक्त(row_विस्तृतिः);
+	मुक्त(row_विस्तृतिः_cell);
+	मुक्त(xs);
 
-	table->width = table_width;
-	table->height = table_height;
+	सारणी->विस्तारः = सारणी_विस्तारः;
+	सारणी->height = सारणी_height;
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -2155,72 +2155,72 @@ bool layout_table(
  *			NULL for non absolutely positioned elements.
  * \return		whether the height has been changed
  */
-static bool layout_apply_minmax_height(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		struct box *container)
+स्थिर bool layout_apply_minmax_height(
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		संरचना box *box,
+		संरचना box *container)
 {
-	int h;
-	struct box *containing_block = NULL;
+	पूर्णाङ्क h;
+	संरचना box *containing_खण्डम् = रिक्त;
 	bool updated = false;
 
 	/* Find containing block for percentage heights */
-	if (box->style != NULL && css_computed_position(box->style) ==
+	यदि (box->style != रिक्त && css_computed_position(box->style) ==
 			CSS_POSITION_ABSOLUTE) {
 		/* Box is absolutely positioned */
-		assert(container);
-		containing_block = container;
-	} else if (box->float_container && box->style != NULL &&
-			(css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-			 css_computed_float(box->style) == CSS_FLOAT_RIGHT)) {
+		प्रतिज्ञा(container);
+		containing_खण्डम् = container;
+	} अन्यथा यदि (box->float_container && box->style != रिक्त &&
+			(css_computed_float(box->style) == CSS_FLOAT_वामः ||
+			 css_computed_float(box->style) == CSS_FLOAT_दक्षिणः)) {
 		/* Box is a float */
-		assert(box->parent && box->parent->parent &&
+		प्रतिज्ञा(box->parent && box->parent->parent &&
 				box->parent->parent->parent);
-		containing_block = box->parent->parent->parent;
-	} else if (box->parent && box->parent->type != BOX_INLINE_CONTAINER) {
+		containing_खण्डम् = box->parent->parent->parent;
+	} अन्यथा यदि (box->parent && box->parent->type != BOX_INLINE_CONTAINER) {
 		/* Box is a block level element */
-		containing_block = box->parent;
-	} else if (box->parent && box->parent->type == BOX_INLINE_CONTAINER) {
+		containing_खण्डम् = box->parent;
+	} अन्यथा यदि (box->parent && box->parent->type == BOX_INLINE_CONTAINER) {
 		/* Box is an inline block */
-		assert(box->parent->parent);
-		containing_block = box->parent->parent;
+		प्रतिज्ञा(box->parent->parent);
+		containing_खण्डम् = box->parent->parent;
 	}
 
-	if (box->style) {
-		enum css_height_e htype = CSS_HEIGHT_AUTO;
-		css_fixed value = 0;
+	यदि (box->style) {
+		गणना css_height_e htype = CSS_HEIGHT_AUTO;
+		css_fixed मानम् = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		if (containing_block) {
-			htype = css_computed_height(containing_block->style,
-					&value, &unit);
+		यदि (containing_खण्डम्) {
+			htype = css_computed_height(containing_खण्डम्->style,
+					&मानम्, &unit);
 		}
 
 		/* max-height */
-		if (css_computed_max_height(box->style, &value, &unit) ==
-				CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				if (containing_block &&
-					containing_block->height != AUTO &&
+		यदि (css_computed_max_height(box->style, &मानम्, &unit) ==
+				CSS_MAX_HEIGHT_समुच्चयः) {
+			यदि (unit == CSS_UNIT_PCT) {
+				यदि (containing_खण्डम् &&
+					containing_खण्डम्->height != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
-						htype == CSS_HEIGHT_SET)) {
+						htype == CSS_HEIGHT_समुच्चयः)) {
 					/* Box is absolutely positioned or its
 					 * containing block has a valid
 					 * specified height. (CSS 2.1
 					 * Section 10.5) */
-					h = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
-					if (h < box->height) {
+					h = FPCT_सम्बन्धि_INT_TOINT(मानम्,
+						containing_खण्डम्->height);
+					यदि (h < box->height) {
 						box->height = h;
 						updated = true;
 					}
 				}
-			} else {
+			} अन्यथा {
 				h = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						value, unit));
-				if (h < box->height) {
+						मानम्, unit));
+				यदि (h < box->height) {
 					box->height = h;
 					updated = true;
 				}
@@ -2228,37 +2228,37 @@ static bool layout_apply_minmax_height(
 		}
 
 		/* min-height */
-		if (ns_computed_min_height(box->style, &value, &unit) ==
-				CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				if (containing_block &&
-					containing_block->height != AUTO &&
+		यदि (ns_computed_min_height(box->style, &मानम्, &unit) ==
+				CSS_MIN_HEIGHT_समुच्चयः) {
+			यदि (unit == CSS_UNIT_PCT) {
+				यदि (containing_खण्डम् &&
+					containing_खण्डम्->height != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
-						htype == CSS_HEIGHT_SET)) {
+						htype == CSS_HEIGHT_समुच्चयः)) {
 					/* Box is absolutely positioned or its
 					 * containing block has a valid
 					 * specified height. (CSS 2.1
 					 * Section 10.5) */
-					h = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
-					if (h > box->height) {
+					h = FPCT_सम्बन्धि_INT_TOINT(मानम्,
+						containing_खण्डम्->height);
+					यदि (h > box->height) {
 						box->height = h;
 						updated = true;
 					}
 				}
-			} else {
+			} अन्यथा {
 				h = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						value, unit));
-				if (h > box->height) {
+						मानम्, unit));
+				यदि (h > box->height) {
 					box->height = h;
 					updated = true;
 				}
 			}
 		}
 	}
-	return updated;
+	प्रत्यागम updated;
 }
 
 
@@ -2268,29 +2268,29 @@ static bool layout_apply_minmax_height(
  * \param  block  box of type BLOCK, INLINE_BLOCK, TABLE, or TABLE_CELL
  * \return  true on success, false on memory exhaustion
  */
-static bool layout_block_object(struct box *block)
+स्थिर bool layout_खण्डम्_object(संरचना box *खण्डम्)
 {
-	assert(block);
-	assert(block->type == BOX_BLOCK ||
-			block->type == BOX_FLEX ||
-			block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_INLINE_FLEX ||
-			block->type == BOX_TABLE ||
-			block->type == BOX_TABLE_CELL);
-	assert(block->object);
+	प्रतिज्ञा(खण्डम्);
+	प्रतिज्ञा(खण्डम्->type == BOX_खण्डम् ||
+			खण्डम्->type == BOX_FLEX ||
+			खण्डम्->type == BOX_INLINE_खण्डम् ||
+			खण्डम्->type == BOX_INLINE_FLEX ||
+			खण्डम्->type == BOX_सारणी ||
+			खण्डम्->type == BOX_सारणी_CELL);
+	प्रतिज्ञा(खण्डम्->object);
 
-	NSLOG(layout, DEBUG,  "block %p, object %p, width %i", block,
-	      hlcache_handle_get_url(block->object), block->width);
+	NSLOG(layout, DEBUG,  "block %p, object %p, width %i", खण्डम्,
+	      hlcache_handle_get_url(खण्डम्->object), खण्डम्->विस्तारः);
 
-	if (content_can_reformat(block->object)) {
-		content_reformat(block->object, false, block->width, 1);
-	} else {
+	यदि (content_can_reformat(खण्डम्->object)) {
+		content_reformat(खण्डम्->object, false, खण्डम्->विस्तारः, 1);
+	} अन्यथा {
 		/* Non-HTML objects */
 		/* this case handled already in
 		 * layout_block_find_dimensions() */
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -2302,31 +2302,31 @@ static bool layout_block_object(struct box *block)
  *
  * This sorts floats in order of descending bottom edges.
  */
-static void add_float_to_container(struct box *cont, struct box *b)
+स्थिर शून्य सङ्कलय_float_गन्तव्यम्_container(संरचना box *cont, संरचना box *b)
 {
-	struct box *box = cont->float_children;
-	int b_bottom = b->y + b->height;
+	संरचना box *box = cont->float_children;
+	पूर्णाङ्क b_bottom = b->y + b->height;
 
-	assert(b->type == BOX_FLOAT_LEFT || b->type == BOX_FLOAT_RIGHT);
+	प्रतिज्ञा(b->type == BOX_FLOAT_वामः || b->type == BOX_FLOAT_दक्षिणः);
 
-	if (box == NULL) {
+	यदि (box == रिक्त) {
 		/* No other float children */
-		b->next_float = NULL;
+		b->अग्र_float = रिक्त;
 		cont->float_children = b;
-		return;
-	} else if (b_bottom >= box->y + box->height) {
+		प्रत्यागम;
+	} अन्यथा यदि (b_bottom >= box->y + box->height) {
 		/* Goes at start of list */
-		b->next_float = cont->float_children;
+		b->अग्र_float = cont->float_children;
 		cont->float_children = b;
-	} else {
-		struct box *prev = NULL;
-		while (box != NULL && b_bottom < box->y + box->height) {
-			prev = box;
-			box = box->next_float;
+	} अन्यथा {
+		संरचना box *पूर्व = रिक्त;
+		यावत् (box != रिक्त && b_bottom < box->y + box->height) {
+			पूर्व = box;
+			box = box->अग्र_float;
 		}
-		if (prev != NULL) {
-			b->next_float = prev->next_float;
-			prev->next_float = b;
+		यदि (पूर्व != रिक्त) {
+			b->अग्र_float = पूर्व->अग्र_float;
+			पूर्व->अग्र_float = b;
 		}
 	}
 }
@@ -2345,74 +2345,74 @@ static void add_float_to_container(struct box *cont, struct box *b)
  * A new box is created and inserted into the box tree after split_box,
  * containing the text after new_length excluding the initial space character.
  */
-static bool
-layout_text_box_split(html_content *content,
+स्थिर bool
+layout_text_box_विभज(html_content *content,
 		      plot_font_style_t *fstyle,
-		      struct box *split_box,
-		      size_t new_length,
-		      int new_width)
+		      संरचना box *विभज_box,
+		      size_t new_दीर्घता,
+		      पूर्णाङ्क new_विस्तारः)
 {
-	int space_width = split_box->space;
-	struct box *c2;
-	const struct gui_layout_table *font_func = content->font_func;
-	bool space = (split_box->text[new_length] == ' ');
-	int used_length = new_length + (space ? 1 : 0);
+	पूर्णाङ्क space_विस्तारः = विभज_box->space;
+	संरचना box *c2;
+	ध्रुव संरचना gui_layout_सारणी *font_func = content->font_func;
+	bool space = (विभज_box->text[new_दीर्घता] == ' ');
+	पूर्णाङ्क प्रयुक्तम्_दीर्घता = new_दीर्घता + (space ? 1 : 0);
 
-	if ((space && space_width == 0) || space_width == UNKNOWN_WIDTH) {
+	यदि ((space && space_विस्तारः == 0) || space_विस्तारः == UNKNOWN_विस्तारः) {
 		/* We're need to add a space, and we don't know how big
 		 * it's to be, OR we have a space of unknown width anyway;
 		 * Calculate space width */
-		font_func->width(fstyle, " ", 1, &space_width);
+		font_func->विस्तारः(fstyle, " ", 1, &space_विस्तारः);
 	}
 
-	if (split_box->space == UNKNOWN_WIDTH)
-		split_box->space = space_width;
-	if (!space)
-		space_width = 0;
+	यदि (विभज_box->space == UNKNOWN_विस्तारः)
+		विभज_box->space = space_विस्तारः;
+	यदि (!space)
+		space_विस्तारः = 0;
 
 	/* Create clone of split_box, c2 */
-	c2 = talloc_memdup(content->bctx, split_box, sizeof *c2);
-	if (!c2)
-		return false;
+	c2 = talloc_memdup(content->bctx, विभज_box, परिमाण *c2);
+	यदि (!c2)
+		प्रत्यागम false;
 	c2->flags |= CLONE;
 
 	/* Set remaining text in c2 */
-	c2->text += used_length;
+	c2->text += प्रयुक्तम्_दीर्घता;
 
 	/* Set c2 according to the remaining text */
-	c2->width -= new_width + space_width;
+	c2->विस्तारः -= new_विस्तारः + space_विस्तारः;
 	c2->flags &= ~MEASURED; /* width has been estimated */
-	c2->length = split_box->length - used_length;
+	c2->दीर्घता = विभज_box->दीर्घता - प्रयुक्तम्_दीर्घता;
 
 	/* Update split_box for its reduced text */
-	split_box->width = new_width;
-	split_box->flags |= MEASURED;
-	split_box->length = new_length;
-	split_box->space = space_width;
+	विभज_box->विस्तारः = new_विस्तारः;
+	विभज_box->flags |= MEASURED;
+	विभज_box->दीर्घता = new_दीर्घता;
+	विभज_box->space = space_विस्तारः;
 
 	/* Insert c2 into box list */
-	c2->next = split_box->next;
-	split_box->next = c2;
-	c2->prev = split_box;
-	if (c2->next)
-		c2->next->prev = c2;
-	else
-		c2->parent->last = c2;
+	c2->अग्र = विभज_box->अग्र;
+	विभज_box->अग्र = c2;
+	c2->पूर्व = विभज_box;
+	यदि (c2->अग्र)
+		c2->अग्र->पूर्व = c2;
+	अन्यथा
+		c2->parent->चरमः = c2;
 
 	NSLOG(layout, DEBUG,
 	      "split_box %p len: %" PRIsizet " \"%.*s\"",
-	      split_box,
-	      split_box->length,
-	      (int)split_box->length,
-	      split_box->text);
+	      विभज_box,
+	      विभज_box->दीर्घता,
+	      (पूर्णाङ्क)विभज_box->दीर्घता,
+	      विभज_box->text);
 	NSLOG(layout, DEBUG,
 	      "  new_box %p len: %" PRIsizet " \"%.*s\"",
 	      c2,
-	      c2->length,
-	      (int)c2->length,
+	      c2->दीर्घता,
+	      (पूर्णाङ्क)c2->दीर्घता,
 	      c2->text);
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -2427,133 +2427,133 @@ layout_text_box_split(html_content *content,
  *				Box margins, borders, paddings, width and
  *				height are updated.
  */
-static void
+स्थिर शून्य
 layout_float_find_dimensions(
-		const css_unit_ctx *unit_len_ctx,
-		int available_width,
-		const css_computed_style *style,
-		struct box *box)
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		पूर्णाङ्क उपलब्धम्_विस्तारः,
+		ध्रुव css_computed_style *style,
+		संरचना box *box)
 {
-	int width, height, max_width, min_width, max_height, min_height;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	enum css_overflow_e overflow_x = css_computed_overflow_x(style);
-	enum css_overflow_e overflow_y = css_computed_overflow_y(style);
-	int scrollbar_width_x =
-			(overflow_x == CSS_OVERFLOW_SCROLL ||
-			 overflow_x == CSS_OVERFLOW_AUTO) ?
-			SCROLLBAR_WIDTH : 0;
-	int scrollbar_width_y =
-			(overflow_y == CSS_OVERFLOW_SCROLL ||
-			 overflow_y == CSS_OVERFLOW_AUTO) ?
-			SCROLLBAR_WIDTH : 0;
+	पूर्णाङ्क विस्तारः, height, max_विस्तारः, min_विस्तारः, max_height, min_height;
+	पूर्णाङ्क *margin = box->margin;
+	पूर्णाङ्क *padding = box->padding;
+	संरचना box_border *border = box->border;
+	गणना css_अतिप्रवाहः_e अतिप्रवाहः_x = css_computed_अतिप्रवाहः_x(style);
+	गणना css_अतिप्रवाहः_e अतिप्रवाहः_y = css_computed_अतिप्रवाहः_y(style);
+	पूर्णाङ्क scrollbar_विस्तारः_x =
+			(अतिप्रवाहः_x == CSS_अतिप्रवाहः_SCROLL ||
+			 अतिप्रवाहः_x == CSS_अतिप्रवाहः_AUTO) ?
+			SCROLLBAR_विस्तारः : 0;
+	पूर्णाङ्क scrollbar_विस्तारः_y =
+			(अतिप्रवाहः_y == CSS_अतिप्रवाहः_SCROLL ||
+			 अतिप्रवाहः_y == CSS_अतिप्रवाहः_AUTO) ?
+			SCROLLBAR_विस्तारः : 0;
 
-	layout_find_dimensions(unit_len_ctx, available_width, -1, box, style,
-			&width, &height, &max_width, &min_width,
+	layout_find_dimensions(unit_len_ctx, उपलब्धम्_विस्तारः, -1, box, style,
+			&विस्तारः, &height, &max_विस्तारः, &min_विस्तारः,
 			&max_height, &min_height, margin, padding, border);
 
-	if (margin[LEFT] == AUTO)
-		margin[LEFT] = 0;
-	if (margin[RIGHT] == AUTO)
-		margin[RIGHT] = 0;
+	यदि (margin[वामः_2] == AUTO)
+		margin[वामः_2] = 0;
+	यदि (margin[दक्षिणः_2] == AUTO)
+		margin[दक्षिणः_2] = 0;
 
-	if (box->gadget == NULL) {
-		padding[RIGHT] += scrollbar_width_y;
-		padding[BOTTOM] += scrollbar_width_x;
+	यदि (box->gadget == रिक्त) {
+		padding[दक्षिणः_2] += scrollbar_विस्तारः_y;
+		padding[BOTTOM] += scrollbar_विस्तारः_x;
 	}
 
-	if (box->object && !(box->flags & REPLACE_DIM) &&
+	यदि (box->object && !(box->flags & REPLACE_DIM) &&
 			content_get_type(box->object) != CONTENT_HTML) {
 		/* Floating replaced element, with intrinsic width or height.
 		 * See 10.3.6 and 10.6.2 */
-		layout_get_object_dimensions(box, &width, &height,
-				min_width, max_width, min_height, max_height);
-	} else if (box->gadget && (box->gadget->type == GADGET_TEXTBOX ||
+		layout_get_object_dimensions(box, &विस्तारः, &height,
+				min_विस्तारः, max_विस्तारः, min_height, max_height);
+	} अन्यथा यदि (box->gadget && (box->gadget->type == GADGET_TEXTBOX ||
 			box->gadget->type == GADGET_PASSWORD ||
 			box->gadget->type == GADGET_FILE ||
 			box->gadget->type == GADGET_TEXTAREA)) {
-		css_fixed size = 0;
+		css_fixed आकार = 0;
 		css_unit unit = CSS_UNIT_EM;
 
 		/* Give sensible dimensions to gadgets, with auto width/height,
 		 * that don't shrink to fit contained text. */
-		assert(box->style);
+		प्रतिज्ञा(box->style);
 
-		if (box->gadget->type == GADGET_TEXTBOX ||
+		यदि (box->gadget->type == GADGET_TEXTBOX ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_FILE) {
-			if (width == AUTO) {
-				size = INTTOFIX(10);
-				width = FIXTOINT(css_unit_len2device_px(
+			यदि (विस्तारः == AUTO) {
+				आकार = INTTOFIX(10);
+				विस्तारः = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						size, unit));
+						आकार, unit));
 			}
-			if (box->gadget->type == GADGET_FILE &&
+			यदि (box->gadget->type == GADGET_FILE &&
 					height == AUTO) {
-				size = FLTTOFIX(1.5);
+				आकार = FLTTOFIX(1.5);
 				height = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						size, unit));
+						आकार, unit));
 			}
 		}
-		if (box->gadget->type == GADGET_TEXTAREA) {
-			if (width == AUTO) {
-				size = INTTOFIX(10);
-				width = FIXTOINT(css_unit_len2device_px(
+		यदि (box->gadget->type == GADGET_TEXTAREA) {
+			यदि (विस्तारः == AUTO) {
+				आकार = INTTOFIX(10);
+				विस्तारः = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						size, unit));
+						आकार, unit));
 			}
-			if (height == AUTO) {
-				size = INTTOFIX(4);
+			यदि (height == AUTO) {
+				आकार = INTTOFIX(4);
 				height = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						size, unit));
+						आकार, unit));
 			}
 		}
-	} else if (width == AUTO) {
+	} अन्यथा यदि (विस्तारः == AUTO) {
 		/* CSS 2.1 section 10.3.5 */
-		width = min(max(box->min_width, available_width),
-				box->max_width);
+		विस्तारः = min(max(box->min_विस्तारः, उपलब्धम्_विस्तारः),
+				box->max_विस्तारः);
 
 		/* width includes margin, borders and padding */
-		if (width == available_width) {
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-					box->padding[LEFT] +
-					box->padding[RIGHT] +
-					box->border[RIGHT].width +
-					box->margin[RIGHT];
-		} else {
+		यदि (विस्तारः == उपलब्धम्_विस्तारः) {
+			विस्तारः -= box->margin[वामः_2] + box->border[वामः_2].विस्तारः +
+					box->padding[वामः_2] +
+					box->padding[दक्षिणः_2] +
+					box->border[दक्षिणः_2].विस्तारः +
+					box->margin[दक्षिणः_2];
+		} अन्यथा {
 			/* width was obtained from a min_width or max_width
 			 * value, so need to use the same method for calculating
 			 * mbp as was used in layout_minmax_block() */
-			int fixed = 0;
-			float frac = 0;
-			calculate_mbp_width(unit_len_ctx, box->style, LEFT,
+			पूर्णाङ्क fixed = 0;
+			भिन्न frac = 0;
+			calculate_mbp_विस्तारः(unit_len_ctx, box->style, वामः_2,
 					true, true, true, &fixed, &frac);
-			calculate_mbp_width(unit_len_ctx, box->style, RIGHT,
+			calculate_mbp_विस्तारः(unit_len_ctx, box->style, दक्षिणः_2,
 					true, true, true, &fixed, &frac);
-			if (fixed < 0)
+			यदि (fixed < 0)
 				fixed = 0;
 
-			width -= fixed;
+			विस्तारः -= fixed;
 		}
 
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+		यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः) विस्तारः = max_विस्तारः;
+		यदि (min_विस्तारः >  0 && विस्तारः < min_विस्तारः) विस्तारः = min_विस्तारः;
 
-	} else {
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
-		width -= scrollbar_width_y;
+	} अन्यथा {
+		यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः) विस्तारः = max_विस्तारः;
+		यदि (min_विस्तारः >  0 && विस्तारः < min_विस्तारः) विस्तारः = min_विस्तारः;
+		विस्तारः -= scrollbar_विस्तारः_y;
 	}
 
-	box->width = width;
+	box->विस्तारः = विस्तारः;
 	box->height = height;
 
-	if (margin[TOP] == AUTO)
-		margin[TOP] = 0;
-	if (margin[BOTTOM] == AUTO)
+	यदि (margin[शिखरम्_2] == AUTO)
+		margin[शिखरम्_2] = 0;
+	यदि (margin[BOTTOM] == AUTO)
 		margin[BOTTOM] = 0;
 }
 
@@ -2566,34 +2566,34 @@ layout_float_find_dimensions(
  * \param  content  memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool layout_float(struct box *b, int width, html_content *content)
+स्थिर bool layout_float(संरचना box *b, पूर्णाङ्क विस्तारः, html_content *content)
 {
-	assert(b->type == BOX_TABLE ||
-	       b->type == BOX_BLOCK ||
-	       b->type == BOX_INLINE_BLOCK ||
+	प्रतिज्ञा(b->type == BOX_सारणी ||
+	       b->type == BOX_खण्डम् ||
+	       b->type == BOX_INLINE_खण्डम् ||
 	       b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX);
-	layout_float_find_dimensions(&content->unit_len_ctx, width, b->style, b);
-	if (b->type == BOX_TABLE || b->type == BOX_INLINE_FLEX) {
-		if (b->type == BOX_TABLE) {
-			if (!layout_table(b, width, content))
-				return false;
-		} else {
-			if (!layout_flex(b, width, content))
-				return false;
+	layout_float_find_dimensions(&content->unit_len_ctx, विस्तारः, b->style, b);
+	यदि (b->type == BOX_सारणी || b->type == BOX_INLINE_FLEX) {
+		यदि (b->type == BOX_सारणी) {
+			यदि (!layout_सारणी(b, विस्तारः, content))
+				प्रत्यागम false;
+		} अन्यथा {
+			यदि (!layout_flex(b, विस्तारः, content))
+				प्रत्यागम false;
 		}
-		if (b->margin[LEFT] == AUTO)
-			b->margin[LEFT] = 0;
-		if (b->margin[RIGHT] == AUTO)
-			b->margin[RIGHT] = 0;
-		if (b->margin[TOP] == AUTO)
-			b->margin[TOP] = 0;
-		if (b->margin[BOTTOM] == AUTO)
+		यदि (b->margin[वामः_2] == AUTO)
+			b->margin[वामः_2] = 0;
+		यदि (b->margin[दक्षिणः_2] == AUTO)
+			b->margin[दक्षिणः_2] = 0;
+		यदि (b->margin[शिखरम्_2] == AUTO)
+			b->margin[शिखरम्_2] = 0;
+		यदि (b->margin[BOTTOM] == AUTO)
 			b->margin[BOTTOM] = 0;
-	} else {
-		return layout_block_context(b, -1, content);
+	} अन्यथा {
+		प्रत्यागम layout_खण्डम्_context(b, -1, content);
 	}
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -2606,84 +2606,84 @@ static bool layout_float(struct box *b, int width, html_content *content)
  * \param  y	  y coordinate relative to cont to place float below
  * \param  cont	  ancestor box which defines horizontal space, for floats
  */
-static void
-place_float_below(struct box *c, int width, int cx, int y, struct box *cont)
+स्थिर शून्य
+place_float_अधः(संरचना box *c, पूर्णाङ्क विस्तारः, पूर्णाङ्क cx, पूर्णाङ्क y, संरचना box *cont)
 {
-	int x0, x1, yy;
-	struct box *left;
-	struct box *right;
+	पूर्णाङ्क x0, x1, yy;
+	संरचना box *वामः;
+	संरचना box *दक्षिणः;
 
-	yy = y > cont->cached_place_below_level ?
-			y : cont->cached_place_below_level;
+	yy = y > cont->cached_place_अधः_level ?
+			y : cont->cached_place_अधः_level;
 
 	NSLOG(layout, DEBUG,
 	      "c %p, width %i, cx %i, y %i, cont %p", c,
-	      width, cx, y, cont);
+	      विस्तारः, cx, y, cont);
 
-	do {
+	कुरु {
 		y = yy;
 		x0 = cx;
-		x1 = cx + width;
+		x1 = cx + विस्तारः;
 		find_sides(cont->float_children, y, y + c->height, &x0, &x1,
-				&left, &right);
-		if (left != 0 && right != 0) {
-			yy = (left->y + left->height <
-					right->y + right->height ?
-					left->y + left->height :
-					right->y + right->height);
-		} else if (left == 0 && right != 0) {
-			yy = right->y + right->height;
-		} else if (left != 0 && right == 0) {
-			yy = left->y + left->height;
+				&वामः, &दक्षिणः);
+		यदि (वामः != 0 && दक्षिणः != 0) {
+			yy = (वामः->y + वामः->height <
+					दक्षिणः->y + दक्षिणः->height ?
+					वामः->y + वामः->height :
+					दक्षिणः->y + दक्षिणः->height);
+		} अन्यथा यदि (वामः == 0 && दक्षिणः != 0) {
+			yy = दक्षिणः->y + दक्षिणः->height;
+		} अन्यथा यदि (वामः != 0 && दक्षिणः == 0) {
+			yy = वामः->y + वामः->height;
 		}
-	} while ((left != 0 || right != 0) && (c->width > x1 - x0));
+	} यावत् ((वामः != 0 || दक्षिणः != 0) && (c->विस्तारः > x1 - x0));
 
-	if (c->type == BOX_FLOAT_LEFT) {
+	यदि (c->type == BOX_FLOAT_वामः) {
 		c->x = x0;
-	} else {
-		c->x = x1 - c->width;
+	} अन्यथा {
+		c->x = x1 - c->विस्तारः;
 	}
 	c->y = y;
-	cont->cached_place_below_level = y;
+	cont->cached_place_अधः_level = y;
 }
 
 
 /**
  * Calculate line height from a style.
  */
-static int line_height(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style)
+स्थिर पूर्णाङ्क पङ्क्तिः_height(
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		ध्रुव css_computed_style *style)
 {
-	enum css_line_height_e lhtype;
+	गणना css_पङ्क्तिः_height_e lhtype;
 	css_fixed lhvalue = 0;
 	css_unit lhunit = CSS_UNIT_PX;
-	css_fixed line_height;
+	css_fixed पङ्क्तिः_height;
 
-	assert(style);
+	प्रतिज्ञा(style);
 
-	lhtype = css_computed_line_height(style, &lhvalue, &lhunit);
-	if (lhtype == CSS_LINE_HEIGHT_NORMAL) {
+	lhtype = css_computed_पङ्क्तिः_height(style, &lhvalue, &lhunit);
+	यदि (lhtype == CSS_पङ्क्तिः_HEIGHT_प्रसामान्यम्) {
 		/* Normal => use a constant of 1.3 * font-size */
 		lhvalue = FLTTOFIX(1.3);
-		lhtype = CSS_LINE_HEIGHT_NUMBER;
+		lhtype = CSS_पङ्क्तिः_HEIGHT_सङ्ख्या;
 	}
 
-	if (lhtype == CSS_LINE_HEIGHT_NUMBER ||
+	यदि (lhtype == CSS_पङ्क्तिः_HEIGHT_सङ्ख्या ||
 			lhunit == CSS_UNIT_PCT) {
-		line_height = css_unit_len2device_px(style, unit_len_ctx,
+		पङ्क्तिः_height = css_unit_len2device_px(style, unit_len_ctx,
 				lhvalue, CSS_UNIT_EM);
 
-		if (lhtype != CSS_LINE_HEIGHT_NUMBER)
-			line_height = FDIV(line_height, F_100);
-	} else {
-		assert(lhunit != CSS_UNIT_PCT);
+		यदि (lhtype != CSS_पङ्क्तिः_HEIGHT_सङ्ख्या)
+			पङ्क्तिः_height = FDIV(पङ्क्तिः_height, F_100);
+	} अन्यथा {
+		प्रतिज्ञा(lhunit != CSS_UNIT_PCT);
 
-		line_height = css_unit_len2device_px(style, unit_len_ctx,
+		पङ्क्तिः_height = css_unit_len2device_px(style, unit_len_ctx,
 				lhvalue, lhunit);
 	}
 
-	return FIXTOINT(line_height);
+	प्रत्यागम FIXTOINT(पङ्क्तिः_height);
 }
 
 
@@ -2703,43 +2703,43 @@ static int line_height(
  * \param  content  memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_line(struct box *first,
-	    int *width,
-	    int *y,
-	    int cx,
-	    int cy,
-	    struct box *cont,
+स्थिर bool
+layout_पङ्क्तिः(संरचना box *first,
+	    पूर्णाङ्क *विस्तारः,
+	    पूर्णाङ्क *y,
+	    पूर्णाङ्क cx,
+	    पूर्णाङ्क cy,
+	    संरचना box *cont,
 	    bool indent,
 	    bool has_text_children,
 	    html_content *content,
-	    struct box **next_box)
+	    संरचना box **अग्र_box)
 {
-	int height, used_height;
-	int x0 = 0;
-	int x1 = *width;
-	int x, h, x_previous;
-	int fy = cy;
-	struct box *left;
-	struct box *right;
-	struct box *b;
-	struct box *split_box = 0;
-	struct box *d;
-	struct box *br_box = 0;
+	पूर्णाङ्क height, प्रयुक्तम्_height;
+	पूर्णाङ्क x0 = 0;
+	पूर्णाङ्क x1 = *विस्तारः;
+	पूर्णाङ्क x, h, x_previous;
+	पूर्णाङ्क fy = cy;
+	संरचना box *वामः;
+	संरचना box *दक्षिणः;
+	संरचना box *b;
+	संरचना box *विभज_box = 0;
+	संरचना box *d;
+	संरचना box *br_box = 0;
 	bool move_y = false;
-	bool place_below = false;
-	int space_before = 0, space_after = 0;
-	unsigned int inline_count = 0;
-	unsigned int i;
-	const struct gui_layout_table *font_func = content->font_func;
+	bool place_अधः = false;
+	पूर्णाङ्क space_before = 0, space_after = 0;
+	अचिह्नित पूर्णाङ्क inline_गणनम् = 0;
+	अचिह्नित पूर्णाङ्क i;
+	ध्रुव संरचना gui_layout_सारणी *font_func = content->font_func;
 	plot_font_style_t fstyle;
 
 	NSLOG(layout, DEBUG,
 	      "first %p, first->text '%.*s', width %i, y %i, cx %i, cy %i",
 	      first,
-	      (int)first->length,
+	      (पूर्णाङ्क)first->दीर्घता,
 	      first->text,
-	      *width,
+	      *विस्तारः,
 	      *y,
 	      cx,
 	      cy);
@@ -2747,27 +2747,27 @@ layout_line(struct box *first,
 	/* find sides at top of line */
 	x0 += cx;
 	x1 += cx;
-	find_sides(cont->float_children, cy, cy, &x0, &x1, &left, &right);
+	find_sides(cont->float_children, cy, cy, &x0, &x1, &वामः, &दक्षिणः);
 	x0 -= cx;
 	x1 -= cx;
 
-	if (indent)
+	यदि (indent)
 		x0 += layout_text_indent(&content->unit_len_ctx,
-				first->parent->parent->style, *width);
+				first->parent->parent->style, *विस्तारः);
 
-	if (x1 < x0)
+	यदि (x1 < x0)
 		x1 = x0;
 
 	/* get minimum line height from containing block.
 	 * this is the line-height if there are text children and also in the
 	 * case of an initially empty text input */
-	if (has_text_children || first->parent->parent->gadget)
-		used_height = height = line_height(&content->unit_len_ctx,
+	यदि (has_text_children || first->parent->parent->gadget)
+		प्रयुक्तम्_height = height = पङ्क्तिः_height(&content->unit_len_ctx,
 				first->parent->parent->style);
-	else
+	अन्यथा
 		/* inline containers with no text are usually for layout and
 		 * look better with no minimum line-height */
-		used_height = height = 0;
+		प्रयुक्तम्_height = height = 0;
 
 	/* pass 1: find height of line assuming sides at top of line: loop
 	 * body executed at least once
@@ -2776,126 +2776,126 @@ layout_line(struct box *first,
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, x1 - x0 %i", x0, x1, x1 - x0);
 
 
-	for (x = 0, b = first; x <= x1 - x0 && b != 0; b = b->next) {
-		int min_width, max_width, min_height, max_height;
+	प्रति (x = 0, b = first; x <= x1 - x0 && b != 0; b = b->अग्र) {
+		पूर्णाङ्क min_विस्तारः, max_विस्तारः, min_height, max_height;
 
-		assert(lh__box_is_inline_content(b));
+		प्रतिज्ञा(lh__box_is_inline_content(b));
 
 		NSLOG(layout, DEBUG,  "pass 1: b %p, x %i", b, x);
 
-		if (b->type == BOX_BR)
-			break;
+		यदि (b->type == BOX_BR)
+			भङ्ग;
 
-		if (lh__box_is_float_box(b))
-			continue;
-		if (b->type == BOX_INLINE_BLOCK &&
+		यदि (lh__box_is_float_box(b))
+			अनुवर्त;
+		यदि (b->type == BOX_INLINE_खण्डम् &&
 				(css_computed_position(b->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(b->style) ==
 						CSS_POSITION_FIXED))
-			continue;
+			अनुवर्त;
 
-		assert(b->style != NULL);
+		प्रतिज्ञा(b->style != रिक्त);
 		font_plot_style_from_css(&content->unit_len_ctx, b->style, &fstyle);
 
 		x += space_after;
 
-		if (b->type == BOX_INLINE_BLOCK ||
+		यदि (b->type == BOX_INLINE_खण्डम् ||
 		    b->type == BOX_INLINE_FLEX) {
-			if (b->max_width != UNKNOWN_WIDTH)
-				if (!layout_float(b, *width, content))
-					return false;
-			h = b->border[TOP].width + b->padding[TOP] + b->height +
+			यदि (b->max_विस्तारः != UNKNOWN_विस्तारः)
+				यदि (!layout_float(b, *विस्तारः, content))
+					प्रत्यागम false;
+			h = b->border[शिखरम्_2].विस्तारः + b->padding[शिखरम्_2] + b->height +
 					b->padding[BOTTOM] +
-					b->border[BOTTOM].width;
-			if (height < h)
+					b->border[BOTTOM].विस्तारः;
+			यदि (height < h)
 				height = h;
-			x += b->margin[LEFT] + b->border[LEFT].width +
-					b->padding[LEFT] + b->width +
-					b->padding[RIGHT] +
-					b->border[RIGHT].width +
-					b->margin[RIGHT];
+			x += b->margin[वामः_2] + b->border[वामः_2].विस्तारः +
+					b->padding[वामः_2] + b->विस्तारः +
+					b->padding[दक्षिणः_2] +
+					b->border[दक्षिणः_2].विस्तारः +
+					b->margin[दक्षिणः_2];
 			space_after = 0;
-			continue;
+			अनुवर्त;
 		}
 
-		if (b->type == BOX_INLINE) {
+		यदि (b->type == BOX_INLINE) {
 			/* calculate borders, margins, and padding */
 			layout_find_dimensions(&content->unit_len_ctx,
-					*width, -1, b, b->style, 0, 0, 0, 0,
+					*विस्तारः, -1, b, b->style, 0, 0, 0, 0,
 					0, 0, b->margin, b->padding, b->border);
-			for (i = 0; i != 4; i++)
-				if (b->margin[i] == AUTO)
+			प्रति (i = 0; i != 4; i++)
+				यदि (b->margin[i] == AUTO)
 					b->margin[i] = 0;
-			x += b->margin[LEFT] + b->border[LEFT].width +
-					b->padding[LEFT];
-			if (b->inline_end) {
-				b->inline_end->margin[RIGHT] = b->margin[RIGHT];
-				b->inline_end->padding[RIGHT] =
-						b->padding[RIGHT];
-				b->inline_end->border[RIGHT] =
-						b->border[RIGHT];
-			} else {
-				x += b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
+			x += b->margin[वामः_2] + b->border[वामः_2].विस्तारः +
+					b->padding[वामः_2];
+			यदि (b->inline_अन्तः) {
+				b->inline_अन्तः->margin[दक्षिणः_2] = b->margin[दक्षिणः_2];
+				b->inline_अन्तः->padding[दक्षिणः_2] =
+						b->padding[दक्षिणः_2];
+				b->inline_अन्तः->border[दक्षिणः_2] =
+						b->border[दक्षिणः_2];
+			} अन्यथा {
+				x += b->padding[दक्षिणः_2] +
+						b->border[दक्षिणः_2].विस्तारः +
+						b->margin[दक्षिणः_2];
 			}
-		} else if (b->type == BOX_INLINE_END) {
-			b->width = 0;
-			if (b->space == UNKNOWN_WIDTH) {
-				font_func->width(&fstyle, " ", 1, &b->space);
+		} अन्यथा यदि (b->type == BOX_INLINE_अन्तः) {
+			b->विस्तारः = 0;
+			यदि (b->space == UNKNOWN_विस्तारः) {
+				font_func->विस्तारः(&fstyle, " ", 1, &b->space);
 				/** \todo handle errors */
 			}
 			space_after = b->space;
 
-			x += b->padding[RIGHT] + b->border[RIGHT].width +
-					b->margin[RIGHT];
-			continue;
+			x += b->padding[दक्षिणः_2] + b->border[दक्षिणः_2].विस्तारः +
+					b->margin[दक्षिणः_2];
+			अनुवर्त;
 		}
 
-		if (lh__box_is_replace(b) == false) {
+		यदि (lh__box_is_replace(b) == false) {
 			/* inline non-replaced, 10.3.1 and 10.6.1 */
-			b->height = line_height(&content->unit_len_ctx,
+			b->height = पङ्क्तिः_height(&content->unit_len_ctx,
 					b->style ? b->style :
 					b->parent->parent->style);
-			if (height < b->height)
+			यदि (height < b->height)
 				height = b->height;
 
-			if (!b->text) {
-				b->width = 0;
+			यदि (!b->text) {
+				b->विस्तारः = 0;
 				space_after = 0;
-				continue;
+				अनुवर्त;
 			}
 
-			if (b->width == UNKNOWN_WIDTH) {
+			यदि (b->विस्तारः == UNKNOWN_विस्तारः) {
 				/** \todo handle errors */
 
 				/* If it's a select element, we must use the
 				 * width of the widest option text */
-				if (b->parent->parent->gadget &&
+				यदि (b->parent->parent->gadget &&
 						b->parent->parent->gadget->type
 						== GADGET_SELECT) {
-					int opt_maxwidth = 0;
-					struct form_option *o;
+					पूर्णाङ्क opt_maxwidth = 0;
+					संरचना form_option *o;
 
-					for (o = b->parent->parent->gadget->
-							data.select.items; o;
-							o = o->next) {
-						int opt_width;
-						font_func->width(&fstyle,
+					प्रति (o = b->parent->parent->gadget->
+							दत्त.select.वस्तूनि; o;
+							o = o->अग्र) {
+						पूर्णाङ्क opt_विस्तारः;
+						font_func->विस्तारः(&fstyle,
 								o->text,
-								strlen(o->text),
-								&opt_width);
+								वाक्यदैर्घ्यम्(o->text),
+								&opt_विस्तारः);
 
-						if (opt_maxwidth < opt_width)
-							opt_maxwidth =opt_width;
+						यदि (opt_maxwidth < opt_विस्तारः)
+							opt_maxwidth =opt_विस्तारः;
 					}
-					b->width = opt_maxwidth;
-					if (nsoption_bool(core_select_menu))
-						b->width += SCROLLBAR_WIDTH;
-				} else {
-					font_func->width(&fstyle, b->text,
-							b->length, &b->width);
+					b->विस्तारः = opt_maxwidth;
+					यदि (nsoption_bool(core_select_menu))
+						b->विस्तारः += SCROLLBAR_विस्तारः;
+				} अन्यथा {
+					font_func->विस्तारः(&fstyle, b->text,
+							b->दीर्घता, &b->विस्तारः);
 					b->flags |= MEASURED;
 				}
 			}
@@ -2904,56 +2904,56 @@ layout_line(struct box *first,
 			 * width was estimated after splitting), and it fits on
 			 * the line, measure it properly, so next box is placed
 			 * correctly. */
-			if (b->text && (x + b->width < x1 - x0) &&
+			यदि (b->text && (x + b->विस्तारः < x1 - x0) &&
 					!(b->flags & MEASURED) &&
-					b->next) {
-				font_func->width(&fstyle, b->text,
-						 b->length, &b->width);
+					b->अग्र) {
+				font_func->विस्तारः(&fstyle, b->text,
+						 b->दीर्घता, &b->विस्तारः);
 				b->flags |= MEASURED;
 			}
 
-			x += b->width;
-			if (b->space == UNKNOWN_WIDTH) {
-				font_func->width(&fstyle, " ", 1, &b->space);
+			x += b->विस्तारः;
+			यदि (b->space == UNKNOWN_विस्तारः) {
+				font_func->विस्तारः(&fstyle, " ", 1, &b->space);
 				/** \todo handle errors */
 			}
 			space_after = b->space;
-			continue;
+			अनुवर्त;
 		}
 
 		space_after = 0;
 
 		/* inline replaced, 10.3.2 and 10.6.2 */
-		assert(b->style);
+		प्रतिज्ञा(b->style);
 
 		layout_find_dimensions(&content->unit_len_ctx,
-				*width, -1, b, b->style,
-				&b->width, &b->height,
-				&max_width, &min_width,
+				*विस्तारः, -1, b, b->style,
+				&b->विस्तारः, &b->height,
+				&max_विस्तारः, &min_विस्तारः,
 				&max_height, &min_height,
-				NULL, NULL, NULL);
+				रिक्त, रिक्त, रिक्त);
 
-		if (b->object && !(b->flags & REPLACE_DIM)) {
-			layout_get_object_dimensions(b, &b->width, &b->height,
-					min_width, max_width,
+		यदि (b->object && !(b->flags & REPLACE_DIM)) {
+			layout_get_object_dimensions(b, &b->विस्तारः, &b->height,
+					min_विस्तारः, max_विस्तारः,
 					min_height, max_height);
-		} else if (b->flags & IFRAME) {
+		} अन्यथा यदि (b->flags & IFRAME) {
 			/* TODO: should we look at the content dimensions? */
-			if (b->width == AUTO)
-				b->width = 400;
-			if (b->height == AUTO)
+			यदि (b->विस्तारः == AUTO)
+				b->विस्तारः = 400;
+			यदि (b->height == AUTO)
 				b->height = 300;
 
 			/* We reformat the iframe browser window to new
 			 * dimensions in pass 2 */
-		} else {
+		} अन्यथा {
 			/* form control with no object */
-			if (b->width == AUTO)
-				b->width = FIXTOINT(css_unit_len2device_px(
+			यदि (b->विस्तारः == AUTO)
+				b->विस्तारः = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx, INTTOFIX(1),
 						CSS_UNIT_EM));
-			if (b->height == AUTO)
+			यदि (b->height == AUTO)
 				b->height = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx, INTTOFIX(1),
@@ -2961,39 +2961,39 @@ layout_line(struct box *first,
 		}
 
 		/* Reformat object to new box size */
-		if (b->object && content_can_reformat(b->object) &&
-				b->width !=
-				content_get_available_width(b->object)) {
-			css_fixed value = 0;
+		यदि (b->object && content_can_reformat(b->object) &&
+				b->विस्तारः !=
+				content_get_उपलब्धम्_विस्तारः(b->object)) {
+			css_fixed मानम् = 0;
 			css_unit unit = CSS_UNIT_PX;
-			enum css_height_e htype = css_computed_height(b->style,
-					&value, &unit);
+			गणना css_height_e htype = css_computed_height(b->style,
+					&मानम्, &unit);
 
-			content_reformat(b->object, false, b->width, b->height);
+			content_reformat(b->object, false, b->विस्तारः, b->height);
 
-			if (htype == CSS_HEIGHT_AUTO)
+			यदि (htype == CSS_HEIGHT_AUTO)
 				b->height = content_get_height(b->object);
 		}
 
-		if (height < b->height)
+		यदि (height < b->height)
 			height = b->height;
 
-		x += b->width;
+		x += b->विस्तारः;
 	}
 
 	/* find new sides using this height */
 	x0 = cx;
-	x1 = cx + *width;
+	x1 = cx + *विस्तारः;
 	find_sides(cont->float_children, cy, cy + height, &x0, &x1,
-			&left, &right);
+			&वामः, &दक्षिणः);
 	x0 -= cx;
 	x1 -= cx;
 
-	if (indent)
+	यदि (indent)
 		x0 += layout_text_indent(&content->unit_len_ctx,
-				first->parent->parent->style, *width);
+				first->parent->parent->style, *विस्तारः);
 
-	if (x1 < x0)
+	यदि (x1 < x0)
 		x1 = x0;
 
 	space_after = space_before = 0;
@@ -3002,120 +3002,120 @@ layout_line(struct box *first,
 
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, x1 - x0 %i", x0, x1, x1 - x0);
 
-	for (x = x_previous = 0, b = first; x <= x1 - x0 && b; b = b->next) {
+	प्रति (x = x_previous = 0, b = first; x <= x1 - x0 && b; b = b->अग्र) {
 
 		NSLOG(layout, DEBUG,  "pass 2: b %p, x %i", b, x);
 
-		if (b->type == BOX_INLINE_BLOCK &&
+		यदि (b->type == BOX_INLINE_खण्डम् &&
 				(css_computed_position(b->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(b->style) ==
 						CSS_POSITION_FIXED)) {
 			b->x = x + space_after;
 
-		} else if (lh__box_is_inline_flow(b)) {
-			assert(b->width != UNKNOWN_WIDTH);
+		} अन्यथा यदि (lh__box_is_inline_flow(b)) {
+			प्रतिज्ञा(b->विस्तारः != UNKNOWN_विस्तारः);
 
 			x_previous = x;
 			x += space_after;
 			b->x = x;
 
-			if ((b->type == BOX_INLINE && !b->inline_end) ||
-					b->type == BOX_INLINE_BLOCK ||
+			यदि ((b->type == BOX_INLINE && !b->inline_अन्तः) ||
+					b->type == BOX_INLINE_खण्डम् ||
 					b->type == BOX_INLINE_FLEX) {
-				b->x += b->margin[LEFT] + b->border[LEFT].width;
-				x = b->x + b->padding[LEFT] + b->width +
-						b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
-			} else if (b->type == BOX_INLINE) {
-				b->x += b->margin[LEFT] + b->border[LEFT].width;
-				x = b->x + b->padding[LEFT] + b->width;
-			} else if (b->type == BOX_INLINE_END) {
-				b->height = b->inline_end->height;
-				x += b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
-			} else {
-				x += b->width;
+				b->x += b->margin[वामः_2] + b->border[वामः_2].विस्तारः;
+				x = b->x + b->padding[वामः_2] + b->विस्तारः +
+						b->padding[दक्षिणः_2] +
+						b->border[दक्षिणः_2].विस्तारः +
+						b->margin[दक्षिणः_2];
+			} अन्यथा यदि (b->type == BOX_INLINE) {
+				b->x += b->margin[वामः_2] + b->border[वामः_2].विस्तारः;
+				x = b->x + b->padding[वामः_2] + b->विस्तारः;
+			} अन्यथा यदि (b->type == BOX_INLINE_अन्तः) {
+				b->height = b->inline_अन्तः->height;
+				x += b->padding[दक्षिणः_2] +
+						b->border[दक्षिणः_2].विस्तारः +
+						b->margin[दक्षिणः_2];
+			} अन्यथा {
+				x += b->विस्तारः;
 			}
 
 			space_before = space_after;
-			if (b->object || b->flags & REPLACE_DIM ||
+			यदि (b->object || b->flags & REPLACE_DIM ||
 					b->flags & IFRAME)
 				space_after = 0;
-			else if (b->text || b->type == BOX_INLINE_END) {
-				if (b->space == UNKNOWN_WIDTH) {
+			अन्यथा यदि (b->text || b->type == BOX_INLINE_अन्तः) {
+				यदि (b->space == UNKNOWN_विस्तारः) {
 					font_plot_style_from_css(
 							&content->unit_len_ctx,
 							b->style, &fstyle);
 					/** \todo handle errors */
-					font_func->width(&fstyle, " ", 1,
+					font_func->विस्तारः(&fstyle, " ", 1,
 							 &b->space);
 				}
 				space_after = b->space;
-			} else {
+			} अन्यथा {
 				space_after = 0;
 			}
-			split_box = b;
+			विभज_box = b;
 			move_y = true;
-			inline_count++;
-		} else if (b->type == BOX_BR) {
+			inline_गणनम्++;
+		} अन्यथा यदि (b->type == BOX_BR) {
 			b->x = x;
-			b->width = 0;
+			b->विस्तारः = 0;
 			br_box = b;
-			b = b->next;
-			split_box = 0;
+			b = b->अग्र;
+			विभज_box = 0;
 			move_y = true;
-			break;
+			भङ्ग;
 
-		} else {
+		} अन्यथा {
 			/* float */
 			NSLOG(layout, DEBUG,  "float %p", b);
 
 			d = b->children;
 			d->float_children = 0;
-			d->cached_place_below_level = 0;
+			d->cached_place_अधः_level = 0;
 			b->float_container = d->float_container = cont;
 
-			if (!layout_float(d, *width, content))
-				return false;
+			यदि (!layout_float(d, *विस्तारः, content))
+				प्रत्यागम false;
 
 			NSLOG(layout, DEBUG,
 			      "%p : %d %d",
 			      d,
-			      d->margin[TOP],
-			      d->border[TOP].width);
+			      d->margin[शिखरम्_2],
+			      d->border[शिखरम्_2].विस्तारः);
 
-			d->x = d->margin[LEFT] + d->border[LEFT].width;
-			d->y = d->margin[TOP] + d->border[TOP].width;
-			b->width = d->margin[LEFT] + d->border[LEFT].width +
-					d->padding[LEFT] + d->width +
-					d->padding[RIGHT] +
-					d->border[RIGHT].width +
-					d->margin[RIGHT];
-			b->height = d->margin[TOP] + d->border[TOP].width +
-					d->padding[TOP] + d->height +
+			d->x = d->margin[वामः_2] + d->border[वामः_2].विस्तारः;
+			d->y = d->margin[शिखरम्_2] + d->border[शिखरम्_2].विस्तारः;
+			b->विस्तारः = d->margin[वामः_2] + d->border[वामः_2].विस्तारः +
+					d->padding[वामः_2] + d->विस्तारः +
+					d->padding[दक्षिणः_2] +
+					d->border[दक्षिणः_2].विस्तारः +
+					d->margin[दक्षिणः_2];
+			b->height = d->margin[शिखरम्_2] + d->border[शिखरम्_2].विस्तारः +
+					d->padding[शिखरम्_2] + d->height +
 					d->padding[BOTTOM] +
-					d->border[BOTTOM].width +
+					d->border[BOTTOM].विस्तारः +
 					d->margin[BOTTOM];
 
-			if (b->width > (x1 - x0) - x)
-				place_below = true;
-			if (d->style && (css_computed_clear(d->style) ==
+			यदि (b->विस्तारः > (x1 - x0) - x)
+				place_अधः = true;
+			यदि (d->style && (css_computed_clear(d->style) ==
 						CSS_CLEAR_NONE ||
 					(css_computed_clear(d->style) ==
-						CSS_CLEAR_LEFT && left == 0) ||
+						CSS_CLEAR_वामः && वामः == 0) ||
 					(css_computed_clear(d->style) ==
-						CSS_CLEAR_RIGHT &&
-						right == 0) ||
+						CSS_CLEAR_दक्षिणः &&
+						दक्षिणः == 0) ||
 					(css_computed_clear(d->style) ==
 						CSS_CLEAR_BOTH &&
-						left == 0 && right == 0)) &&
-					(!place_below ||
-					(left == 0 && right == 0 && x == 0)) &&
+						वामः == 0 && दक्षिणः == 0)) &&
+					(!place_अधः ||
+					(वामः == 0 && दक्षिणः == 0 && x == 0)) &&
 					cy >= cont->clear_level &&
-					cy >= cont->cached_place_below_level) {
+					cy >= cont->cached_place_अधः_level) {
 				/* + not cleared or,
 				 *   cleared and there are no floats to clear
 				 * + fits without needing to be placed below or,
@@ -3123,184 +3123,184 @@ layout_line(struct box *first,
 				 * + current y, cy, is below the clear level
 				 *
 				 * Float affects current line */
-				if (b->type == BOX_FLOAT_LEFT) {
+				यदि (b->type == BOX_FLOAT_वामः) {
 					b->x = cx + x0;
-					if (b->width > 0)
-						x0 += b->width;
-					left = b;
-				} else {
-					b->x = cx + x1 - b->width;
-					if (b->width > 0)
-						x1 -= b->width;
-					right = b;
+					यदि (b->विस्तारः > 0)
+						x0 += b->विस्तारः;
+					वामः = b;
+				} अन्यथा {
+					b->x = cx + x1 - b->विस्तारः;
+					यदि (b->विस्तारः > 0)
+						x1 -= b->विस्तारः;
+					दक्षिणः = b;
 				}
 				b->y = cy;
-			} else {
+			} अन्यथा {
 				/* cleared or doesn't fit on line */
 				/* place below into next available space */
-				int fcy = (cy > cont->clear_level) ? cy :
+				पूर्णाङ्क fcy = (cy > cont->clear_level) ? cy :
 						cont->clear_level;
-				fcy = (fcy > cont->cached_place_below_level) ?
+				fcy = (fcy > cont->cached_place_अधः_level) ?
 						fcy :
-						cont->cached_place_below_level;
+						cont->cached_place_अधः_level;
 				fy = (fy > fcy) ? fy : fcy;
 				fy = (fy == cy) ? fy + height : fy;
 
-				place_float_below(b, *width, cx, fy, cont);
+				place_float_अधः(b, *विस्तारः, cx, fy, cont);
 				fy = b->y;
-				if (d->style && (
+				यदि (d->style && (
 						(css_computed_clear(d->style) ==
-						CSS_CLEAR_LEFT && left != 0) ||
+						CSS_CLEAR_वामः && वामः != 0) ||
 						(css_computed_clear(d->style) ==
-						CSS_CLEAR_RIGHT &&
-						right != 0) ||
+						CSS_CLEAR_दक्षिणः &&
+						दक्षिणः != 0) ||
 						(css_computed_clear(d->style) ==
 						CSS_CLEAR_BOTH &&
-						(left != 0 || right != 0)))) {
+						(वामः != 0 || दक्षिणः != 0)))) {
 					/* to be cleared below existing
 					 * floats */
-					if (b->type == BOX_FLOAT_LEFT)
+					यदि (b->type == BOX_FLOAT_वामः)
 						b->x = cx;
-					else
-						b->x = cx + *width - b->width;
+					अन्यथा
+						b->x = cx + *विस्तारः - b->विस्तारः;
 
 					fcy = layout_clear(cont->float_children,
 						css_computed_clear(d->style));
-					if (fcy > cont->clear_level)
+					यदि (fcy > cont->clear_level)
 						cont->clear_level = fcy;
-					if (b->y < fcy)
+					यदि (b->y < fcy)
 						b->y = fcy;
 				}
-				if (b->type == BOX_FLOAT_LEFT)
-					left = b;
-				else
-					right = b;
+				यदि (b->type == BOX_FLOAT_वामः)
+					वामः = b;
+				अन्यथा
+					दक्षिणः = b;
 			}
-			add_float_to_container(cont, b);
+			सङ्कलय_float_गन्तव्यम्_container(cont, b);
 
-			split_box = 0;
+			विभज_box = 0;
 		}
 	}
 
-	if (x1 - x0 < x && split_box) {
+	यदि (x1 - x0 < x && विभज_box) {
 		/* the last box went over the end */
-		size_t split = 0;
-		int w;
+		size_t विभज = 0;
+		पूर्णाङ्क w;
 		bool no_wrap = css_computed_white_space(
-				split_box->style) == CSS_WHITE_SPACE_NOWRAP ||
+				विभज_box->style) == CSS_WHITE_SPACE_NOWRAP ||
 				css_computed_white_space(
-				split_box->style) == CSS_WHITE_SPACE_PRE;
+				विभज_box->style) == CSS_WHITE_SPACE_PRE;
 
 		x = x_previous;
 
-		if (!no_wrap &&
-		    (split_box->type == BOX_INLINE ||
-		     split_box->type == BOX_TEXT) &&
-		    !split_box->object &&
-		    !(split_box->flags & REPLACE_DIM) &&
-		    !(split_box->flags & IFRAME) &&
-		    !split_box->gadget && split_box->text) {
+		यदि (!no_wrap &&
+		    (विभज_box->type == BOX_INLINE ||
+		     विभज_box->type == BOX_TEXT) &&
+		    !विभज_box->object &&
+		    !(विभज_box->flags & REPLACE_DIM) &&
+		    !(विभज_box->flags & IFRAME) &&
+		    !विभज_box->gadget && विभज_box->text) {
 
 			font_plot_style_from_css(&content->unit_len_ctx,
-					split_box->style, &fstyle);
+					विभज_box->style, &fstyle);
 			/** \todo handle errors */
-			font_func->split(&fstyle,
-					 split_box->text,
-					 split_box->length,
+			font_func->विभज(&fstyle,
+					 विभज_box->text,
+					 विभज_box->दीर्घता,
 					 x1 - x0 - x - space_before,
-					 &split,
+					 &विभज,
 					 &w);
 		}
 
 		/* split == 0 implies that text can't be split */
 
-		if (split == 0)
-			w = split_box->width;
+		यदि (विभज == 0)
+			w = विभज_box->विस्तारः;
 
 
 		NSLOG(layout, DEBUG,
 		      "splitting: split_box %p \"%.*s\", spilt %"PRIsizet
 		      ", w %i, left %p, right %p, inline_count %u",
-		      split_box,
-		      (int)split_box->length,
-		      split_box->text,
-		      split,
+		      विभज_box,
+		      (पूर्णाङ्क)विभज_box->दीर्घता,
+		      विभज_box->text,
+		      विभज,
 		      w,
-		      left,
-		      right,
-		      inline_count);
+		      वामः,
+		      दक्षिणः,
+		      inline_गणनम्);
 
-		if ((split == 0 || x1 - x0 <= x + space_before + w) &&
-				!left && !right && inline_count == 1) {
+		यदि ((विभज == 0 || x1 - x0 <= x + space_before + w) &&
+				!वामः && !दक्षिणः && inline_गणनम् == 1) {
 			/* first word of box doesn't fit, but no floats and
 			 * first box on line so force in */
-			if (split == 0 || split == split_box->length) {
+			यदि (विभज == 0 || विभज == विभज_box->दीर्घता) {
 				/* only one word in this box, or not text
 				 * or white-space:nowrap */
-				b = split_box->next;
-			} else {
+				b = विभज_box->अग्र;
+			} अन्यथा {
 				/* cut off first word for this line */
-				if (!layout_text_box_split(content, &fstyle,
-						split_box, split, w))
-					return false;
-				b = split_box->next;
+				यदि (!layout_text_box_विभज(content, &fstyle,
+						विभज_box, विभज, w))
+					प्रत्यागम false;
+				b = विभज_box->अग्र;
 			}
 			x += space_before + w;
 
 			NSLOG(layout, DEBUG,  "forcing");
 
-		} else if ((split == 0 || x1 - x0 <= x + space_before + w) &&
-				inline_count == 1) {
+		} अन्यथा यदि ((विभज == 0 || x1 - x0 <= x + space_before + w) &&
+				inline_गणनम् == 1) {
 			/* first word of first box doesn't fit, but a float is
 			 * taking some of the width so move below it */
-			assert(left || right);
-			used_height = 0;
-			if (left) {
+			प्रतिज्ञा(वामः || दक्षिणः);
+			प्रयुक्तम्_height = 0;
+			यदि (वामः) {
 
 				NSLOG(layout, DEBUG,
 				      "cy %i, left->y %i, left->height %i",
 				      cy,
-				      left->y,
-				      left->height);
+				      वामः->y,
+				      वामः->height);
 
-				used_height = left->y + left->height - cy + 1;
+				प्रयुक्तम्_height = वामः->y + वामः->height - cy + 1;
 
 				NSLOG(layout, DEBUG,  "used_height %i",
-				      used_height);
+				      प्रयुक्तम्_height);
 
 			}
-			if (right && used_height <
-					right->y + right->height - cy + 1)
-				used_height = right->y + right->height - cy + 1;
+			यदि (दक्षिणः && प्रयुक्तम्_height <
+					दक्षिणः->y + दक्षिणः->height - cy + 1)
+				प्रयुक्तम्_height = दक्षिणः->y + दक्षिणः->height - cy + 1;
 
-			if (used_height < 0)
-				used_height = 0;
+			यदि (प्रयुक्तम्_height < 0)
+				प्रयुक्तम्_height = 0;
 
-			b = split_box;
+			b = विभज_box;
 
 			NSLOG(layout, DEBUG,  "moving below float");
 
-		} else if (split == 0 || x1 - x0 <= x + space_before + w) {
+		} अन्यथा यदि (विभज == 0 || x1 - x0 <= x + space_before + w) {
 			/* first word of box doesn't fit so leave box for next
 			 * line */
-			b = split_box;
+			b = विभज_box;
 
 			NSLOG(layout, DEBUG,  "leaving for next line");
 
-		} else {
+		} अन्यथा {
 			/* fit as many words as possible */
-			assert(split != 0);
+			प्रतिज्ञा(विभज != 0);
 
 			NSLOG(layout, DEBUG,
 			      "'%.*s' %i %"PRIsizet" %i",
-			      (int)split_box->length, split_box->text,
-			      x1 - x0, split, w);
+			      (पूर्णाङ्क)विभज_box->दीर्घता, विभज_box->text,
+			      x1 - x0, विभज, w);
 
-			if (split != split_box->length) {
-				if (!layout_text_box_split(content, &fstyle,
-						split_box, split, w))
-					return false;
-				b = split_box->next;
+			यदि (विभज != विभज_box->दीर्घता) {
+				यदि (!layout_text_box_विभज(content, &fstyle,
+						विभज_box, विभज, w))
+					प्रत्यागम false;
+				b = विभज_box->अग्र;
 			}
 			x += space_before + w;
 
@@ -3311,37 +3311,37 @@ layout_line(struct box *first,
 	}
 
 	/* set positions */
-	switch (css_computed_text_align(first->parent->parent->style)) {
-	case CSS_TEXT_ALIGN_RIGHT:
-	case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
+	विकल्प (css_computed_text_align(first->parent->parent->style)) {
+	पक्ष CSS_TEXT_ALIGN_दक्षिणः:
+	पक्ष CSS_TEXT_ALIGN_LIBCSS_दक्षिणः:
 		x0 = x1 - x;
-		break;
-	case CSS_TEXT_ALIGN_CENTER:
-	case CSS_TEXT_ALIGN_LIBCSS_CENTER:
+		भङ्ग;
+	पक्ष CSS_TEXT_ALIGN_CENTER:
+	पक्ष CSS_TEXT_ALIGN_LIBCSS_CENTER:
 		x0 = (x0 + (x1 - x)) / 2;
-		break;
-	case CSS_TEXT_ALIGN_LEFT:
-	case CSS_TEXT_ALIGN_LIBCSS_LEFT:
-	case CSS_TEXT_ALIGN_JUSTIFY:
+		भङ्ग;
+	पक्ष CSS_TEXT_ALIGN_वामः:
+	पक्ष CSS_TEXT_ALIGN_LIBCSS_वामः:
+	पक्ष CSS_TEXT_ALIGN_JUSTIFY:
 		/* leave on left */
-		break;
-	case CSS_TEXT_ALIGN_DEFAULT:
+		भङ्ग;
+	पक्ष CSS_TEXT_ALIGN_DEFAULT:
 		/* None; consider text direction */
-		switch (css_computed_direction(first->parent->parent->style)) {
-		case CSS_DIRECTION_LTR:
+		विकल्प (css_computed_direction(first->parent->parent->style)) {
+		पक्ष CSS_DIRECTION_LTR:
 			/* leave on left */
-			break;
-		case CSS_DIRECTION_RTL:
+			भङ्ग;
+		पक्ष CSS_DIRECTION_RTL:
 			x0 = x1 - x;
-			break;
+			भङ्ग;
 		}
-		break;
+		भङ्ग;
 	}
 
-	for (d = first; d != b; d = d->next) {
-		d->flags &= ~NEW_LINE;
+	प्रति (d = first; d != b; d = d->अग्र) {
+		d->flags &= ~NEW_पङ्क्तिः;
 
-		if (d->type == BOX_INLINE_BLOCK &&
+		यदि (d->type == BOX_INLINE_खण्डम् &&
 				(css_computed_position(d->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(d->style) ==
@@ -3351,81 +3351,81 @@ layout_line(struct box *first,
 			 * is handled later */
 			d->x += x0;
 			d->y = *y;
-			continue;
-		} else if ((d->type == BOX_INLINE &&
+			अनुवर्त;
+		} अन्यथा यदि ((d->type == BOX_INLINE &&
 				lh__box_is_replace(d) == false) ||
 				d->type == BOX_BR ||
 				d->type == BOX_TEXT ||
-				d->type == BOX_INLINE_END) {
+				d->type == BOX_INLINE_अन्तः) {
 			/* regular (non-replaced) inlines */
 			d->x += x0;
-			d->y = *y - d->padding[TOP];
+			d->y = *y - d->padding[शिखरम्_2];
 
-			if (d->type == BOX_TEXT && d->height > used_height) {
+			यदि (d->type == BOX_TEXT && d->height > प्रयुक्तम्_height) {
 				/* text */
-				used_height = d->height;
+				प्रयुक्तम्_height = d->height;
 			}
-		} else if ((d->type == BOX_INLINE) ||
-				d->type == BOX_INLINE_BLOCK) {
+		} अन्यथा यदि ((d->type == BOX_INLINE) ||
+				d->type == BOX_INLINE_खण्डम्) {
 			/* replaced inlines and inline-blocks */
 			d->x += x0;
-			d->y = *y + d->border[TOP].width + d->margin[TOP];
-			h = d->margin[TOP] + d->border[TOP].width +
-					d->padding[TOP] + d->height +
+			d->y = *y + d->border[शिखरम्_2].विस्तारः + d->margin[शिखरम्_2];
+			h = d->margin[शिखरम्_2] + d->border[शिखरम्_2].विस्तारः +
+					d->padding[शिखरम्_2] + d->height +
 					d->padding[BOTTOM] +
-					d->border[BOTTOM].width +
+					d->border[BOTTOM].विस्तारः +
 					d->margin[BOTTOM];
-			if (used_height < h)
-				used_height = h;
+			यदि (प्रयुक्तम्_height < h)
+				प्रयुक्तम्_height = h;
 		}
 	}
 
-	first->flags |= NEW_LINE;
+	first->flags |= NEW_पङ्क्तिः;
 
-	assert(b != first || (move_y && 0 < used_height && (left || right)));
+	प्रतिज्ञा(b != first || (move_y && 0 < प्रयुक्तम्_height && (वामः || दक्षिणः)));
 
 	/* handle vertical-align by adjusting box y values */
 	/** \todo  proper vertical alignment handling */
-	for (d = first; d != b; d = d->next) {
-		if ((d->type == BOX_INLINE && d->inline_end) ||
+	प्रति (d = first; d != b; d = d->अग्र) {
+		यदि ((d->type == BOX_INLINE && d->inline_अन्तः) ||
 				d->type == BOX_BR ||
 				d->type == BOX_TEXT ||
-				d->type == BOX_INLINE_END) {
-			css_fixed value = 0;
+				d->type == BOX_INLINE_अन्तः) {
+			css_fixed मानम् = 0;
 			css_unit unit = CSS_UNIT_PX;
-			switch (css_computed_vertical_align(d->style, &value,
+			विकल्प (css_computed_vertical_align(d->style, &मानम्,
 					&unit)) {
-			case CSS_VERTICAL_ALIGN_SUPER:
-			case CSS_VERTICAL_ALIGN_TOP:
-			case CSS_VERTICAL_ALIGN_TEXT_TOP:
+			पक्ष CSS_VERTICAL_ALIGN_SUPER:
+			पक्ष CSS_VERTICAL_ALIGN_शिखरम्:
+			पक्ष CSS_VERTICAL_ALIGN_TEXT_शिखरम्:
 				/* already at top */
-				break;
-			case CSS_VERTICAL_ALIGN_SUB:
-			case CSS_VERTICAL_ALIGN_BOTTOM:
-			case CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
-				d->y += used_height - d->height;
-				break;
-			default:
-			case CSS_VERTICAL_ALIGN_BASELINE:
-				d->y += 0.75 * (used_height - d->height);
-				break;
+				भङ्ग;
+			पक्ष CSS_VERTICAL_ALIGN_SUB:
+			पक्ष CSS_VERTICAL_ALIGN_BOTTOM:
+			पक्ष CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
+				d->y += प्रयुक्तम्_height - d->height;
+				भङ्ग;
+			स्वभाव:
+			पक्ष CSS_VERTICAL_ALIGN_BASELINE:
+				d->y += 0.75 * (प्रयुक्तम्_height - d->height);
+				भङ्ग;
 			}
 		}
 	}
 
 	/* handle clearance for br */
-	if (br_box && css_computed_clear(br_box->style) != CSS_CLEAR_NONE) {
-		int clear_y = layout_clear(cont->float_children,
+	यदि (br_box && css_computed_clear(br_box->style) != CSS_CLEAR_NONE) {
+		पूर्णाङ्क clear_y = layout_clear(cont->float_children,
 				css_computed_clear(br_box->style));
-		if (used_height < clear_y - cy)
-			used_height = clear_y - cy;
+		यदि (प्रयुक्तम्_height < clear_y - cy)
+			प्रयुक्तम्_height = clear_y - cy;
 	}
 
-	if (move_y)
-		*y += used_height;
-	*next_box = b;
-	*width = x; /* return actual width */
-	return true;
+	यदि (move_y)
+		*y += प्रयुक्तम्_height;
+	*अग्र_box = b;
+	*विस्तारः = x; /* return actual width */
+	प्रत्यागम true;
 }
 
 
@@ -3440,42 +3440,42 @@ layout_line(struct box *first,
  * \param content  memory pool for any new boxes
  * \return true on success, false on memory exhaustion
  */
-static bool layout_inline_container(struct box *inline_container, int width,
-		struct box *cont, int cx, int cy, html_content *content)
+स्थिर bool layout_inline_container(संरचना box *inline_container, पूर्णाङ्क विस्तारः,
+		संरचना box *cont, पूर्णाङ्क cx, पूर्णाङ्क cy, html_content *content)
 {
-	bool first_line = true;
+	bool first_पङ्क्तिः = true;
 	bool has_text_children;
-	struct box *c, *next;
-	int y = 0;
-	int curwidth,maxwidth = width;
+	संरचना box *c, *अग्र;
+	पूर्णाङ्क y = 0;
+	पूर्णाङ्क curwidth,maxwidth = विस्तारः;
 
-	assert(inline_container->type == BOX_INLINE_CONTAINER);
+	प्रतिज्ञा(inline_container->type == BOX_INLINE_CONTAINER);
 
 	NSLOG(layout, DEBUG,
 	      "inline_container %p, width %i, cont %p, cx %i, cy %i",
 	      inline_container,
-	      width,
+	      विस्तारः,
 	      cont,
 	      cx,
 	      cy);
 
 
 	has_text_children = false;
-	for (c = inline_container->children; c; c = c->next) {
+	प्रति (c = inline_container->children; c; c = c->अग्र) {
 		bool is_pre = false;
 
-		if (c->style) {
-			enum css_white_space_e whitespace;
+		यदि (c->style) {
+			गणना css_white_space_e whitespace;
 
 			whitespace = css_computed_white_space(c->style);
 
 			is_pre = (whitespace == CSS_WHITE_SPACE_PRE ||
-				whitespace == CSS_WHITE_SPACE_PRE_LINE ||
+				whitespace == CSS_WHITE_SPACE_PRE_पङ्क्तिः ||
 				whitespace == CSS_WHITE_SPACE_PRE_WRAP);
 		}
 
-		if ((lh__box_is_object(c) == false &&
-				c->text && (c->length || is_pre)) ||
+		यदि ((lh__box_is_object(c) == false &&
+				c->text && (c->दीर्घता || is_pre)) ||
 				c->type == BOX_BR)
 			has_text_children = true;
 	}
@@ -3484,88 +3484,88 @@ static bool layout_inline_container(struct box *inline_container, int width,
 	 * shrink back to 'width' if no word is wider than 'width' (Or just set
 	 * curwidth = width and have the multiword lines wrap to the min width)
 	 */
-	for (c = inline_container->children; c; ) {
+	प्रति (c = inline_container->children; c; ) {
 
 		NSLOG(layout, DEBUG, "c %p", c);
 
-		curwidth = inline_container->width;
-		if (!layout_line(c, &curwidth, &y, cx, cy + y, cont, first_line,
-				has_text_children, content, &next))
-			return false;
+		curwidth = inline_container->विस्तारः;
+		यदि (!layout_पङ्क्तिः(c, &curwidth, &y, cx, cy + y, cont, first_पङ्क्तिः,
+				has_text_children, content, &अग्र))
+			प्रत्यागम false;
 		maxwidth = max(maxwidth,curwidth);
-		c = next;
-		first_line = false;
+		c = अग्र;
+		first_पङ्क्तिः = false;
 	}
 
-	inline_container->width = maxwidth;
+	inline_container->विस्तारः = maxwidth;
 	inline_container->height = y;
 
-	return true;
+	प्रत्यागम true;
 }
 
 
 /* Documented in layout_intertnal.h */
-bool layout_block_context(
-		struct box *block,
-		int viewport_height,
+bool layout_खण्डम्_context(
+		संरचना box *खण्डम्,
+		पूर्णाङ्क viewport_height,
 		html_content *content)
 {
-	struct box *box;
-	int cx, cy;  /**< current coordinates */
-	int max_pos_margin = 0;
-	int max_neg_margin = 0;
-	int y = 0;
-	int lm, rm;
-	struct box *margin_collapse = NULL;
-	bool in_margin = false;
-	css_fixed gadget_size;
+	संरचना box *box;
+	पूर्णाङ्क cx, cy;  /**< current coordinates */
+	पूर्णाङ्क max_pos_margin = 0;
+	पूर्णाङ्क max_neg_margin = 0;
+	पूर्णाङ्क y = 0;
+	पूर्णाङ्क lm, rm;
+	संरचना box *margin_collapse = रिक्त;
+	bool अन्तर्_margin = false;
+	css_fixed gadget_आकार;
 	css_unit gadget_unit; /* Checkbox / radio buttons */
 
-	assert(block->type == BOX_BLOCK ||
-			block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_TABLE_CELL ||
-			block->type == BOX_FLEX ||
-			block->type == BOX_INLINE_FLEX);
-	assert(block->width != UNKNOWN_WIDTH);
-	assert(block->width != AUTO);
+	प्रतिज्ञा(खण्डम्->type == BOX_खण्डम् ||
+			खण्डम्->type == BOX_INLINE_खण्डम् ||
+			खण्डम्->type == BOX_सारणी_CELL ||
+			खण्डम्->type == BOX_FLEX ||
+			खण्डम्->type == BOX_INLINE_FLEX);
+	प्रतिज्ञा(खण्डम्->विस्तारः != UNKNOWN_विस्तारः);
+	प्रतिज्ञा(खण्डम्->विस्तारः != AUTO);
 
-	block->float_children = NULL;
-	block->cached_place_below_level = 0;
-	block->clear_level = 0;
+	खण्डम्->float_children = रिक्त;
+	खण्डम्->cached_place_अधः_level = 0;
+	खण्डम्->clear_level = 0;
 
 	/* special case if the block contains an object */
-	if (block->object) {
-		int temp_width = block->width;
-		if (!layout_block_object(block))
-			return false;
-		layout_get_object_dimensions(block, &temp_width,
-				&block->height, INT_MIN, INT_MAX,
-				INT_MIN, INT_MAX);
-		return true;
-	} else if (block->flags & REPLACE_DIM) {
-		return true;
+	यदि (खण्डम्->object) {
+		पूर्णाङ्क अस्थायी_विस्तारः = खण्डम्->विस्तारः;
+		यदि (!layout_खण्डम्_object(खण्डम्))
+			प्रत्यागम false;
+		layout_get_object_dimensions(खण्डम्, &अस्थायी_विस्तारः,
+				&खण्डम्->height, INT_MIN, अधिकतम_पूर्णाङ्कः,
+				INT_MIN, अधिकतम_पूर्णाङ्कः);
+		प्रत्यागम true;
+	} अन्यथा यदि (खण्डम्->flags & REPLACE_DIM) {
+		प्रत्यागम true;
 	}
 
 	/* special case if the block contains an radio button or checkbox */
-	if (block->gadget && (block->gadget->type == GADGET_RADIO ||
-			block->gadget->type == GADGET_CHECKBOX)) {
+	यदि (खण्डम्->gadget && (खण्डम्->gadget->type == GADGET_RADIO ||
+			खण्डम्->gadget->type == GADGET_CHECKBOX)) {
 		/* form checkbox or radio button
 		 * if width or height is AUTO, set it to 1em */
 		gadget_unit = CSS_UNIT_EM;
-		gadget_size = INTTOFIX(1);
-		if (block->height == AUTO)
-			block->height = FIXTOINT(css_unit_len2device_px(
-					block->style,
+		gadget_आकार = INTTOFIX(1);
+		यदि (खण्डम्->height == AUTO)
+			खण्डम्->height = FIXTOINT(css_unit_len2device_px(
+					खण्डम्->style,
 					&content->unit_len_ctx,
-					gadget_size, gadget_unit));
+					gadget_आकार, gadget_unit));
 	}
 
-	box = block->children;
+	box = खण्डम्->children;
 	/* set current coordinates to top-left of the block */
 	cx = 0;
-	y = cy = block->padding[TOP];
-	if (box)
-		box->y = block->padding[TOP];
+	y = cy = खण्डम्->padding[शिखरम्_2];
+	यदि (box)
+		box->y = खण्डम्->padding[शिखरम्_2];
 
 	/* Step through the descendants of the block in depth-first order, but
 	 * not into the children of boxes which aren't blocks. For example, if
@@ -3590,13 +3590,13 @@ bool layout_block_context(
 	 *                   ...
 	 * then the while loop will visit each box marked with *, setting box
 	 * to each in the order shown. */
-	while (box) {
-		enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
-		enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
+	यावत् (box) {
+		गणना css_अतिप्रवाहः_e अतिप्रवाहः_x = CSS_अतिप्रवाहः_VISIBLE;
+		गणना css_अतिप्रवाहः_e अतिप्रवाहः_y = CSS_अतिप्रवाहः_VISIBLE;
 
-		assert(box->type == BOX_BLOCK ||
+		प्रतिज्ञा(box->type == BOX_खण्डम् ||
 				box->type == BOX_FLEX ||
-				box->type == BOX_TABLE ||
+				box->type == BOX_सारणी ||
 				box->type == BOX_INLINE_CONTAINER);
 
 		/* Tables are laid out before being positioned, because the
@@ -3607,151 +3607,151 @@ bool layout_block_context(
 		 * correct handling of floats.
 		 */
 
-		if (box->style &&
+		यदि (box->style &&
 				(css_computed_position(box->style) ==
 					CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(box->style) ==
 					CSS_POSITION_FIXED)) {
-			box->x = box->parent->padding[LEFT];
+			box->x = box->parent->padding[वामः_2];
 			/* absolute positioned; this element will establish
 			 * its own block context when it gets laid out later,
 			 * so no need to look at its children now. */
-			goto advance_to_next_box;
+			गच्छ advance_गन्तव्यम्_अग्र_box;
 		}
 
 		/* If we don't know which box the current margin collapses
 		 * through to, find out.  Update the pos/neg margin values. */
-		if (margin_collapse == NULL) {
-			margin_collapse = layout_next_margin_block(
-					&content->unit_len_ctx, box, block,
+		यदि (margin_collapse == रिक्त) {
+			margin_collapse = layout_अग्र_margin_खण्डम्(
+					&content->unit_len_ctx, box, खण्डम्,
 					viewport_height,
 					&max_pos_margin, &max_neg_margin);
 			/* We have a margin that has not yet been applied. */
-			in_margin = true;
+			अन्तर्_margin = true;
 		}
 
 		/* Clearance. */
 		y = 0;
-		if (box->style && css_computed_clear(box->style) !=
+		यदि (box->style && css_computed_clear(box->style) !=
 				CSS_CLEAR_NONE)
-			y = layout_clear(block->float_children,
+			y = layout_clear(खण्डम्->float_children,
 					css_computed_clear(box->style));
 
 		/* Find box's overflow properties */
-		if (box->style) {
-			overflow_x = css_computed_overflow_x(box->style);
-			overflow_y = css_computed_overflow_y(box->style);
+		यदि (box->style) {
+			अतिप्रवाहः_x = css_computed_अतिप्रवाहः_x(box->style);
+			अतिप्रवाहः_y = css_computed_अतिप्रवाहः_y(box->style);
 		}
 
 		/* Blocks establishing a block formatting context get minimum
 		 * left and right margins to avoid any floats. */
 		lm = rm = 0;
 
-		if (box->type == BOX_FLEX ||
-		    box->type == BOX_BLOCK ||
+		यदि (box->type == BOX_FLEX ||
+		    box->type == BOX_खण्डम् ||
 		    box->flags & IFRAME) {
-			if (lh__box_is_object(box) == false &&
+			यदि (lh__box_is_object(box) == false &&
 					box->style &&
-					(overflow_x != CSS_OVERFLOW_VISIBLE ||
-					 overflow_y != CSS_OVERFLOW_VISIBLE)) {
+					(अतिप्रवाहः_x != CSS_अतिप्रवाहः_VISIBLE ||
+					 अतिप्रवाहः_y != CSS_अतिप्रवाहः_VISIBLE)) {
 				/* box establishes new block formatting context
 				 * so available width may be diminished due to
 				 * floats. */
-				int x0, x1, top;
-				struct box *left, *right;
-				top = cy + max_pos_margin - max_neg_margin;
-				top = (top > y) ? top : y;
+				पूर्णाङ्क x0, x1, शिखरम्;
+				संरचना box *वामः, *दक्षिणः;
+				शिखरम् = cy + max_pos_margin - max_neg_margin;
+				शिखरम् = (शिखरम् > y) ? शिखरम् : y;
 				x0 = cx;
-				x1 = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT];
-				find_sides(block->float_children, top, top,
-						&x0, &x1, &left, &right);
+				x1 = cx + box->parent->विस्तारः -
+						box->parent->padding[वामः_2] -
+						box->parent->padding[दक्षिणः_2];
+				find_sides(खण्डम्->float_children, शिखरम्, शिखरम्,
+						&x0, &x1, &वामः, &दक्षिणः);
 				/* calculate min required left & right margins
 				 * needed to avoid floats */
 				lm = x0 - cx;
-				rm = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT] -
+				rm = cx + box->parent->विस्तारः -
+						box->parent->padding[वामः_2] -
+						box->parent->padding[दक्षिणः_2] -
 						x1;
 			}
-			layout_block_find_dimensions(&content->unit_len_ctx,
-					box->parent->width,
+			layout_खण्डम्_find_dimensions(&content->unit_len_ctx,
+					box->parent->विस्तारः,
 					viewport_height, lm, rm, box);
-			if (box->type == BOX_BLOCK && !(box->flags & IFRAME)) {
-				layout_block_add_scrollbar(box, RIGHT);
-				layout_block_add_scrollbar(box, BOTTOM);
+			यदि (box->type == BOX_खण्डम् && !(box->flags & IFRAME)) {
+				layout_खण्डम्_सङ्कलय_scrollbar(box, दक्षिणः_2);
+				layout_खण्डम्_सङ्कलय_scrollbar(box, BOTTOM);
 			}
-		} else if (box->type == BOX_TABLE) {
-			if (box->style != NULL) {
-				enum css_width_e wtype;
-				css_fixed width = 0;
+		} अन्यथा यदि (box->type == BOX_सारणी) {
+			यदि (box->style != रिक्त) {
+				गणना css_विस्तारः_e wtype;
+				css_fixed विस्तारः = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				wtype = css_computed_width(box->style, &width,
+				wtype = css_computed_विस्तारः(box->style, &विस्तारः,
 						&unit);
 
-				if (wtype == CSS_WIDTH_AUTO) {
+				यदि (wtype == CSS_विस्तारः_AUTO) {
 					/* max available width may be
 					 * diminished due to floats. */
-					int x0, x1, top;
-					struct box *left, *right;
-					top = cy + max_pos_margin -
+					पूर्णाङ्क x0, x1, शिखरम्;
+					संरचना box *वामः, *दक्षिणः;
+					शिखरम् = cy + max_pos_margin -
 							max_neg_margin;
-					top = (top > y) ? top : y;
+					शिखरम् = (शिखरम् > y) ? शिखरम् : y;
 					x0 = cx;
-					x1 = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT];
-					find_sides(block->float_children,
-						top, top, &x0, &x1,
-						&left, &right);
+					x1 = cx + box->parent->विस्तारः -
+						box->parent->padding[वामः_2] -
+						box->parent->padding[दक्षिणः_2];
+					find_sides(खण्डम्->float_children,
+						शिखरम्, शिखरम्, &x0, &x1,
+						&वामः, &दक्षिणः);
 					/* calculate min required left & right
 					 * margins needed to avoid floats */
 					lm = x0 - cx;
-					rm = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT] -
+					rm = cx + box->parent->विस्तारः -
+						box->parent->padding[वामः_2] -
+						box->parent->padding[दक्षिणः_2] -
 						x1;
 				}
 			}
-			if (!layout_table(box, box->parent->width - lm - rm,
+			यदि (!layout_सारणी(box, box->parent->विस्तारः - lm - rm,
 					content))
-				return false;
-			layout_solve_width(box, box->parent->width, box->width,
+				प्रत्यागम false;
+			layout_solve_विस्तारः(box, box->parent->विस्तारः, box->विस्तारः,
 					lm, rm, -1, -1);
 		}
 
 		/* Position box: horizontal. */
-		box->x = box->parent->padding[LEFT] + box->margin[LEFT] +
-				box->border[LEFT].width;
+		box->x = box->parent->padding[वामः_2] + box->margin[वामः_2] +
+				box->border[वामः_2].विस्तारः;
 		cx += box->x;
 
 		/* Position box: vertical. */
-		if (box->border[TOP].width) {
-			box->y += box->border[TOP].width;
-			cy += box->border[TOP].width;
+		यदि (box->border[शिखरम्_2].विस्तारः) {
+			box->y += box->border[शिखरम्_2].विस्तारः;
+			cy += box->border[शिखरम्_2].विस्तारः;
 		}
 
 		/* Vertical margin */
-		if (((box->type == BOX_BLOCK && (box->flags & HAS_HEIGHT)) ||
+		यदि (((box->type == BOX_खण्डम् && (box->flags & HAS_HEIGHT)) ||
 		     box->type == BOX_FLEX ||
-		     box->type == BOX_TABLE ||
+		     box->type == BOX_सारणी ||
 		     (box->type == BOX_INLINE_CONTAINER &&
 		      !box_is_first_child(box)) ||
 		     margin_collapse == box) &&
-		    in_margin == true) {
+		    अन्तर्_margin == true) {
 			/* Margin goes above this box. */
 			cy += max_pos_margin - max_neg_margin;
 			box->y += max_pos_margin - max_neg_margin;
 
 			/* Current margin has been applied. */
-			in_margin = false;
+			अन्तर्_margin = false;
 			max_pos_margin = max_neg_margin = 0;
 		}
 
 		/* Handle clearance */
-		if (box->type != BOX_INLINE_CONTAINER &&
+		यदि (box->type != BOX_INLINE_CONTAINER &&
 				(y > 0) && (cy < y)) {
 			/* box clears something*/
 			box->y += y - cy;
@@ -3760,86 +3760,86 @@ bool layout_block_context(
 
 		/* Unless the box has an overflow style of visible, the box
 		 * establishes a new block context. */
-		if (box->type == BOX_FLEX ||
-				(box->type == BOX_BLOCK && box->style &&
-				 (overflow_x != CSS_OVERFLOW_VISIBLE ||
-				  overflow_y != CSS_OVERFLOW_VISIBLE))) {
+		यदि (box->type == BOX_FLEX ||
+				(box->type == BOX_खण्डम् && box->style &&
+				 (अतिप्रवाहः_x != CSS_अतिप्रवाहः_VISIBLE ||
+				  अतिप्रवाहः_y != CSS_अतिप्रवाहः_VISIBLE))) {
 
-			if (box->type == BOX_FLEX) {
-				if (!layout_flex(box, box->width, content)) {
-					return false;
+			यदि (box->type == BOX_FLEX) {
+				यदि (!layout_flex(box, box->विस्तारः, content)) {
+					प्रत्यागम false;
 				}
-			} else {
-				layout_block_context(box,
+			} अन्यथा {
+				layout_खण्डम्_context(box,
 						viewport_height, content);
 			}
 
-			cy += box->padding[TOP];
+			cy += box->padding[शिखरम्_2];
 
-			if (box->height == AUTO) {
+			यदि (box->height == AUTO) {
 				box->height = 0;
-				layout_block_add_scrollbar(box, BOTTOM);
+				layout_खण्डम्_सङ्कलय_scrollbar(box, BOTTOM);
 			}
 
 			cx -= box->x;
 			cy += box->height + box->padding[BOTTOM] +
-					box->border[BOTTOM].width;
-			y = box->y + box->padding[TOP] + box->height +
+					box->border[BOTTOM].विस्तारः;
+			y = box->y + box->padding[शिखरम्_2] + box->height +
 					box->padding[BOTTOM] +
-					box->border[BOTTOM].width;
+					box->border[BOTTOM].विस्तारः;
 
 			/* Skip children, because they are done in the new
 			 * block context */
-			goto advance_to_next_box;
+			गच्छ advance_गन्तव्यम्_अग्र_box;
 		}
 
 		NSLOG(layout, DEBUG,  "box %p, cx %i, cy %i, width %i",
-				box, cx, cy, box->width);
+				box, cx, cy, box->विस्तारः);
 
 		/* Layout (except tables). */
-		if (box->object) {
-			if (!layout_block_object(box))
-				return false;
+		यदि (box->object) {
+			यदि (!layout_खण्डम्_object(box))
+				प्रत्यागम false;
 
-		} else if (box->type == BOX_INLINE_CONTAINER) {
-			box->width = box->parent->width;
-			if (!layout_inline_container(box, box->width, block,
+		} अन्यथा यदि (box->type == BOX_INLINE_CONTAINER) {
+			box->विस्तारः = box->parent->विस्तारः;
+			यदि (!layout_inline_container(box, box->विस्तारः, खण्डम्,
 					cx, cy, content))
-				return false;
+				प्रत्यागम false;
 
-		} else if (box->type == BOX_TABLE) {
+		} अन्यथा यदि (box->type == BOX_सारणी) {
 			/* Move down to avoid floats if necessary. */
-			int x0, x1;
-			struct box *left, *right;
+			पूर्णाङ्क x0, x1;
+			संरचना box *वामः, *दक्षिणः;
 			y = cy;
-			while (1) {
-				enum css_width_e wtype;
-				css_fixed width = 0;
+			यावत् (1) {
+				गणना css_विस्तारः_e wtype;
+				css_fixed विस्तारः = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				wtype = css_computed_width(box->style,
-						&width, &unit);
+				wtype = css_computed_विस्तारः(box->style,
+						&विस्तारः, &unit);
 
 				x0 = cx;
-				x1 = cx + box->parent->width;
-				find_sides(block->float_children, y,
+				x1 = cx + box->parent->विस्तारः;
+				find_sides(खण्डम्->float_children, y,
 						y + box->height,
-						&x0, &x1, &left, &right);
-				if (wtype == CSS_WIDTH_AUTO)
-					break;
-				if (box->width <= x1 - x0)
-					break;
-				if (!left && !right)
-					break;
-				else if (!left)
-					y = right->y + right->height + 1;
-				else if (!right)
-					y = left->y + left->height + 1;
-				else if (left->y + left->height <
-						right->y + right->height)
-					y = left->y + left->height + 1;
-				else
-					y = right->y + right->height + 1;
+						&x0, &x1, &वामः, &दक्षिणः);
+				यदि (wtype == CSS_विस्तारः_AUTO)
+					भङ्ग;
+				यदि (box->विस्तारः <= x1 - x0)
+					भङ्ग;
+				यदि (!वामः && !दक्षिणः)
+					भङ्ग;
+				अन्यथा यदि (!वामः)
+					y = दक्षिणः->y + दक्षिणः->height + 1;
+				अन्यथा यदि (!दक्षिणः)
+					y = वामः->y + वामः->height + 1;
+				अन्यथा यदि (वामः->y + वामः->height <
+						दक्षिणः->y + दक्षिणः->height)
+					y = वामः->y + वामः->height + 1;
+				अन्यथा
+					y = दक्षिणः->y + दक्षिणः->height + 1;
 			}
 			box->x += x0 - cx;
 			cx = x0;
@@ -3848,118 +3848,118 @@ bool layout_block_context(
 		}
 
 		/* Advance to next box. */
-		if (box->type == BOX_BLOCK && !box->object && !(box->iframe) &&
+		यदि (box->type == BOX_खण्डम् && !box->object && !(box->iframe) &&
 				box->children) {
 			/* Down into children. */
 
-			if (box == margin_collapse) {
+			यदि (box == margin_collapse) {
 				/* Current margin collapsed though to this box.
 				 * Unset margin_collapse. */
-				margin_collapse = NULL;
+				margin_collapse = रिक्त;
 			}
 
-			y = box->padding[TOP];
+			y = box->padding[शिखरम्_2];
 			box = box->children;
 			box->y = y;
 			cy += y;
-			continue;
-		} else if (box->type == BOX_BLOCK || box->object ||
+			अनुवर्त;
+		} अन्यथा यदि (box->type == BOX_खण्डम् || box->object ||
 				box->flags & IFRAME)
-			cy += box->padding[TOP];
+			cy += box->padding[शिखरम्_2];
 
-		if (box->type == BOX_BLOCK && box->height == AUTO) {
+		यदि (box->type == BOX_खण्डम् && box->height == AUTO) {
 			box->height = 0;
-			layout_block_add_scrollbar(box, BOTTOM);
+			layout_खण्डम्_सङ्कलय_scrollbar(box, BOTTOM);
 		}
 
 		cy += box->height + box->padding[BOTTOM] +
-				box->border[BOTTOM].width;
+				box->border[BOTTOM].विस्तारः;
 		cx -= box->x;
-		y = box->y + box->padding[TOP] + box->height +
+		y = box->y + box->padding[शिखरम्_2] + box->height +
 				box->padding[BOTTOM] +
-				box->border[BOTTOM].width;
+				box->border[BOTTOM].विस्तारः;
 
-	advance_to_next_box:
-		if (!box->next) {
+	advance_गन्तव्यम्_अग्र_box:
+		यदि (!box->अग्र) {
 			/* No more siblings:
 			 * up to first ancestor with a sibling. */
 
-			do {
-				if (box == margin_collapse) {
+			कुरु {
+				यदि (box == margin_collapse) {
 					/* Current margin collapsed though to
 					 * this box.  Unset margin_collapse. */
-					margin_collapse = NULL;
+					margin_collapse = रिक्त;
 				}
 
 				/* Apply bottom margin */
-				if (max_pos_margin < box->margin[BOTTOM])
+				यदि (max_pos_margin < box->margin[BOTTOM])
 					max_pos_margin = box->margin[BOTTOM];
-				else if (max_neg_margin < -box->margin[BOTTOM])
+				अन्यथा यदि (max_neg_margin < -box->margin[BOTTOM])
 					max_neg_margin = -box->margin[BOTTOM];
 
 				box = box->parent;
-				if (box == block)
-					break;
+				यदि (box == खण्डम्)
+					भङ्ग;
 
 				/* Margin is invalidated if this is a box
 				 * margins can't collapse through. */
-				if (box->type == BOX_BLOCK &&
+				यदि (box->type == BOX_खण्डम् &&
 						box->flags & MAKE_HEIGHT) {
-					margin_collapse = NULL;
-					in_margin = false;
+					margin_collapse = रिक्त;
+					अन्तर्_margin = false;
 					max_pos_margin = max_neg_margin = 0;
 				}
 
-				if (box->height == AUTO) {
-					box->height = y - box->padding[TOP];
+				यदि (box->height == AUTO) {
+					box->height = y - box->padding[शिखरम्_2];
 
-					if (box->type == BOX_BLOCK)
-						layout_block_add_scrollbar(box,
+					यदि (box->type == BOX_खण्डम्)
+						layout_खण्डम्_सङ्कलय_scrollbar(box,
 								BOTTOM);
-				} else
+				} अन्यथा
 					cy += box->height -
-							(y - box->padding[TOP]);
+							(y - box->padding[शिखरम्_2]);
 
 				/* Apply any min-height and max-height to
 				 * boxes in normal flow */
-				if (box->style &&
+				यदि (box->style &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 						layout_apply_minmax_height(
 							&content->unit_len_ctx,
-							box, NULL)) {
+							box, रिक्त)) {
 					/* Height altered */
 					/* Set current cy */
 					cy += box->height -
-							(y - box->padding[TOP]);
+							(y - box->padding[शिखरम्_2]);
 				}
 
 				cy += box->padding[BOTTOM] +
-						box->border[BOTTOM].width;
+						box->border[BOTTOM].विस्तारः;
 				cx -= box->x;
-				y = box->y + box->padding[TOP] + box->height +
+				y = box->y + box->padding[शिखरम्_2] + box->height +
 						box->padding[BOTTOM] +
-						box->border[BOTTOM].width;
+						box->border[BOTTOM].विस्तारः;
 
-			} while (box->next == NULL);
-			if (box == block)
-				break;
+			} यावत् (box->अग्र == रिक्त);
+			यदि (box == खण्डम्)
+				भङ्ग;
 		}
 
 		/* To next sibling. */
 
-		if (box == margin_collapse) {
+		यदि (box == margin_collapse) {
 			/* Current margin collapsed though to this box.
 			 * Unset margin_collapse. */
-			margin_collapse = NULL;
+			margin_collapse = रिक्त;
 		}
 
-		if (max_pos_margin < box->margin[BOTTOM])
+		यदि (max_pos_margin < box->margin[BOTTOM])
 			max_pos_margin = box->margin[BOTTOM];
-		else if (max_neg_margin < -box->margin[BOTTOM])
+		अन्यथा यदि (max_neg_margin < -box->margin[BOTTOM])
 			max_neg_margin = -box->margin[BOTTOM];
 
-		box = box->next;
+		box = box->अग्र;
 		box->y = y;
 	}
 
@@ -3967,44 +3967,44 @@ bool layout_block_context(
 	cy += max_pos_margin - max_neg_margin;
 
 	/* Increase height to contain any floats inside (CSS 2.1 10.6.7). */
-	for (box = block->float_children; box; box = box->next_float) {
+	प्रति (box = खण्डम्->float_children; box; box = box->अग्र_float) {
 		y = box->y + box->height + box->padding[BOTTOM] +
-				box->border[BOTTOM].width + box->margin[BOTTOM];
-		if (cy < y)
+				box->border[BOTTOM].विस्तारः + box->margin[BOTTOM];
+		यदि (cy < y)
 			cy = y;
 	}
 
-	if (block->height == AUTO) {
-		block->height = cy - block->padding[TOP];
-		if (block->type == BOX_BLOCK)
-			layout_block_add_scrollbar(block, BOTTOM);
+	यदि (खण्डम्->height == AUTO) {
+		खण्डम्->height = cy - खण्डम्->padding[शिखरम्_2];
+		यदि (खण्डम्->type == BOX_खण्डम्)
+			layout_खण्डम्_सङ्कलय_scrollbar(खण्डम्, BOTTOM);
 	}
 
-	if (block->style && css_computed_position(block->style) !=
+	यदि (खण्डम्->style && css_computed_position(खण्डम्->style) !=
 			CSS_POSITION_ABSOLUTE) {
 		/* Block is in normal flow */
-		layout_apply_minmax_height(&content->unit_len_ctx, block, NULL);
+		layout_apply_minmax_height(&content->unit_len_ctx, खण्डम्, रिक्त);
 	}
 
-	if (block->gadget &&
-			(block->gadget->type == GADGET_TEXTAREA ||
-			block->gadget->type == GADGET_PASSWORD ||
-			block->gadget->type == GADGET_TEXTBOX)) {
+	यदि (खण्डम्->gadget &&
+			(खण्डम्->gadget->type == GADGET_TEXTAREA ||
+			खण्डम्->gadget->type == GADGET_PASSWORD ||
+			खण्डम्->gadget->type == GADGET_TEXTBOX)) {
 		plot_font_style_t fstyle;
-		int ta_width = block->padding[LEFT] + block->width +
-				block->padding[RIGHT];
-		int ta_height = block->padding[TOP] + block->height +
-				block->padding[BOTTOM];
+		पूर्णाङ्क ta_विस्तारः = खण्डम्->padding[वामः_2] + खण्डम्->विस्तारः +
+				खण्डम्->padding[दक्षिणः_2];
+		पूर्णाङ्क ta_height = खण्डम्->padding[शिखरम्_2] + खण्डम्->height +
+				खण्डम्->padding[BOTTOM];
 		font_plot_style_from_css(&content->unit_len_ctx,
-				block->style, &fstyle);
+				खण्डम्->style, &fstyle);
 		fstyle.background = NS_TRANSPARENT;
-		textarea_set_layout(block->gadget->data.text.ta,
-				&fstyle, ta_width, ta_height,
-				block->padding[TOP], block->padding[RIGHT],
-				block->padding[BOTTOM], block->padding[LEFT]);
+		textarea_समुच्चयः_layout(खण्डम्->gadget->दत्त.text.ta,
+				&fstyle, ta_विस्तारः, ta_height,
+				खण्डम्->padding[शिखरम्_2], खण्डम्->padding[दक्षिणः_2],
+				खण्डम्->padding[BOTTOM], खण्डम्->padding[वामः_2]);
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
 /**
@@ -4014,28 +4014,28 @@ bool layout_block_context(
  * \param[in]  type  Returns element tag type on success.
  * \return true if on success, false otherwise.
  */
-static bool
-layout__get_element_tag(
-		const dom_node *node,
+स्थिर bool
+layout_get_element_चिह्नकम्(
+		ध्रुव dom_ग्रन्थिः *ग्रन्थिः,
 		dom_html_element_type *type)
 {
 	dom_html_element_type element_type;
-	dom_node_type node_type;
+	dom_ग्रन्थिः_type ग्रन्थिः_type;
 	dom_exception exc;
 
-	exc = dom_node_get_node_type(node, &node_type);
-	if (exc != DOM_NO_ERR ||
-	    node_type != DOM_ELEMENT_NODE) {
-		return false;
+	exc = dom_ग्रन्थिः_get_ग्रन्थिः_type(ग्रन्थिः, &ग्रन्थिः_type);
+	यदि (exc != DOM_NO_ERR ||
+	    ग्रन्थिः_type != DOM_ELEMENT_ग्रन्थिः) {
+		प्रत्यागम false;
 	}
 
-	exc = dom_html_element_get_tag_type(node, &element_type);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_html_element_get_चिह्नकम्_type(ग्रन्थिः, &element_type);
+	यदि (exc != DOM_NO_ERR) {
+		प्रत्यागम false;
 	}
 
 	*type = element_type;
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -4046,18 +4046,18 @@ layout__get_element_tag(
  * \param[in]  type  Tag type to test for.
  * \return true if if node has given type, false otherwise.
  */
-static inline bool
+स्थिर अन्तःस्थ bool
 layout__check_element_type(
-		const dom_node *node,
+		ध्रुव dom_ग्रन्थिः *ग्रन्थिः,
 		dom_html_element_type type)
 {
 	dom_html_element_type element_type;
 
-	if (!layout__get_element_tag(node, &element_type)) {
-		return false;
+	यदि (!layout_get_element_चिह्नकम्(ग्रन्थिः, &element_type)) {
+		प्रत्यागम false;
 	}
 
-	return element_type == type;
+	प्रत्यागम element_type == type;
 }
 
 
@@ -4068,12 +4068,12 @@ layout__check_element_type(
  * \param[out] value_out  Returns the value on success.
  * \return true if node has value, otherwise false.
  */
-static bool
-layout__get_li_value(dom_node *li_node, dom_long *value_out)
+स्थिर bool
+layout_get_li_मानम्(dom_ग्रन्थिः *li_ग्रन्थिः, dom_long *मानम्_बहिर्गमनम्)
 {
 	dom_exception exc;
-	dom_long value;
-	bool has_value;
+	dom_long मानम्;
+	bool has_मानम्;
 
 	/** \todo
 	 * dom_html_li_element_get_value() is rubbish and we can't tell
@@ -4084,22 +4084,22 @@ layout__get_li_value(dom_node *li_node, dom_long *value_out)
 	 * fix libdom to have some kind of sane interface to get numerical
 	 * attributes.
 	 */
-	exc = dom_element_has_attribute(li_node,
-			corestring_dom_value,
-			&has_value);
-	if (exc != DOM_NO_ERR || has_value == false) {
-		return false;
+	exc = dom_element_has_attribute(li_ग्रन्थिः,
+			corestring_dom_मानम्,
+			&has_मानम्);
+	यदि (exc != DOM_NO_ERR || has_मानम् == false) {
+		प्रत्यागम false;
 	}
 
-	exc = dom_html_li_element_get_value(
-			(dom_html_li_element *)li_node,
-			&value);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_html_li_element_get_मानम्(
+			(dom_html_li_element *)li_ग्रन्थिः,
+			&मानम्);
+	यदि (exc != DOM_NO_ERR) {
+		प्रत्यागम false;
 	}
 
-	*value_out = value;
-	return true;
+	*मानम्_बहिर्गमनम् = मानम्;
+	प्रत्यागम true;
 }
 
 
@@ -4110,8 +4110,8 @@ layout__get_li_value(dom_node *li_node, dom_long *value_out)
  * \param[out] start_out  Returns the value on success.
  * \return true if node has value, otherwise false.
  */
-static bool
-layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
+स्थिर bool
+layout__get_ol_start(dom_ग्रन्थिः *ol_ग्रन्थिः, dom_long *start_बहिर्गमनम्)
 {
 	dom_exception exc;
 	dom_long start;
@@ -4120,22 +4120,22 @@ layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
 	/** \todo
 	 * see layout__get_li_value().
 	 */
-	exc = dom_element_has_attribute(ol_node,
+	exc = dom_element_has_attribute(ol_ग्रन्थिः,
 			corestring_dom_start,
 			&has_start);
-	if (exc != DOM_NO_ERR || has_start == false) {
-		return false;
+	यदि (exc != DOM_NO_ERR || has_start == false) {
+		प्रत्यागम false;
 	}
 
 	exc = dom_html_olist_element_get_start(
-			(dom_html_olist_element *)ol_node,
+			(dom_html_olist_element *)ol_ग्रन्थिः,
 			&start);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	यदि (exc != DOM_NO_ERR) {
+		प्रत्यागम false;
 	}
 
-	*start_out = start;
-	return true;
+	*start_बहिर्गमनम् = start;
+	प्रत्यागम true;
 }
 
 
@@ -4145,20 +4145,20 @@ layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
  * \param[in]  ol_node    DOM node for the OL element;
  * \return true if node has reversed, otherwise false.
  */
-static bool
-layout__get_ol_reversed(dom_node *ol_node)
+स्थिर bool
+layout__get_ol_reversed(dom_ग्रन्थिः *ol_ग्रन्थिः)
 {
 	dom_exception exc;
 	bool has_reversed;
 
-	exc = dom_element_has_attribute(ol_node,
+	exc = dom_element_has_attribute(ol_ग्रन्थिः,
 			corestring_dom_reversed,
 			&has_reversed);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	यदि (exc != DOM_NO_ERR) {
+		प्रत्यागम false;
 	}
 
-	return has_reversed;
+	प्रत्यागम has_reversed;
 }
 
 
@@ -4169,64 +4169,64 @@ layout__get_ol_reversed(dom_node *ol_node)
  * \param[in]  count_out   Returns list item count on success.
  * \return true on success, otherwise false.
  */
-static bool
-layout__get_list_item_count(
-		dom_node *list_owner, dom_long *count_out)
+स्थिर bool
+layout_get_list_item_गणनम्(
+		dom_ग्रन्थिः *list_owner, dom_long *गणनम्_बहिर्गमनम्)
 {
-	dom_html_element_type tag_type;
+	dom_html_element_type चिह्नकम्_type;
 	dom_exception exc;
-	dom_node *child;
-	int count;
+	dom_ग्रन्थिः *child;
+	पूर्णाङ्क गणनम्;
 
-	if (list_owner == NULL) {
-		return false;
+	यदि (list_owner == रिक्त) {
+		प्रत्यागम false;
 	}
 
-	if (!layout__get_element_tag(list_owner, &tag_type)) {
-		return false;
+	यदि (!layout_get_element_चिह्नकम्(list_owner, &चिह्नकम्_type)) {
+		प्रत्यागम false;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
-	    tag_type != DOM_HTML_ELEMENT_TYPE_UL) {
-		return false;
+	यदि (चिह्नकम्_type != DOM_HTML_ELEMENT_TYPE_OL &&
+	    चिह्नकम्_type != DOM_HTML_ELEMENT_TYPE_UL) {
+		प्रत्यागम false;
 	}
 
-	exc = dom_node_get_first_child(list_owner, &child);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_ग्रन्थिः_get_first_child(list_owner, &child);
+	यदि (exc != DOM_NO_ERR) {
+		प्रत्यागम false;
 	}
 
-	count = 0;
-	while (child != NULL) {
-		dom_node *temp_node;
+	गणनम् = 0;
+	यावत् (child != रिक्त) {
+		dom_ग्रन्थिः *अस्थायी_ग्रन्थिः;
 
-		if (layout__check_element_type(child,
+		यदि (layout__check_element_type(child,
 				DOM_HTML_ELEMENT_TYPE_LI)) {
-			struct box *child_box;
-			if (dom_node_get_user_data(child,
-					corestring_dom___ns_key_box_node_data,
+			संरचना box *child_box;
+			यदि (dom_ग्रन्थिः_get_user_दत्त(child,
+					corestring_dom_ns_कुञ्चिका_box_ग्रन्थिः_दत्त,
 					&child_box) != DOM_NO_ERR) {
-				dom_node_unref(child);
-				return false;
+				dom_ग्रन्थिः_unref(child);
+				प्रत्यागम false;
 			}
 
-			if (child_box != NULL &&
-			    child_box->list_marker != NULL) {
-				count++;
+			यदि (child_box != रिक्त &&
+			    child_box->list_marker != रिक्त) {
+				गणनम्++;
 			}
 		}
 
-		exc = dom_node_get_next_sibling(child, &temp_node);
-		dom_node_unref(child);
-		if (exc != DOM_NO_ERR) {
-			return false;
+		exc = dom_ग्रन्थिः_get_अग्र_sibling(child, &अस्थायी_ग्रन्थिः);
+		dom_ग्रन्थिः_unref(child);
+		यदि (exc != DOM_NO_ERR) {
+			प्रत्यागम false;
 		}
 
-		child = temp_node;
+		child = अस्थायी_ग्रन्थिः;
 	}
 
-	*count_out = count;
-	return true;
+	*गणनम्_बहिर्गमनम् = गणनम्;
+	प्रत्यागम true;
 }
 
 
@@ -4235,83 +4235,83 @@ layout__get_list_item_count(
  *
  * \param[in]  box  Box to do list item counting for.
  */
-static void
-layout__ordered_list_count(
-		struct box *box)
+स्थिर शून्य
+layout_ordered_list_गणनम्(
+		संरचना box *box)
 {
-	dom_html_element_type tag_type;
+	dom_html_element_type चिह्नकम्_type;
 	dom_exception exc;
-	dom_node *child;
-	int step = 1;
-	dom_long next;
+	dom_ग्रन्थिः *child;
+	पूर्णाङ्क चरणः = 1;
+	dom_long अग्र;
 
-	if (box->node == NULL) {
-		return;
+	यदि (box->ग्रन्थिः == रिक्त) {
+		प्रत्यागम;
 	}
 
-	if (!layout__get_element_tag(box->node, &tag_type)) {
-		return;
+	यदि (!layout_get_element_चिह्नकम्(box->ग्रन्थिः, &चिह्नकम्_type)) {
+		प्रत्यागम;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
-	    tag_type != DOM_HTML_ELEMENT_TYPE_UL) {
-		return;
+	यदि (चिह्नकम्_type != DOM_HTML_ELEMENT_TYPE_OL &&
+	    चिह्नकम्_type != DOM_HTML_ELEMENT_TYPE_UL) {
+		प्रत्यागम;
 	}
 
-	next = 1;
-	if (tag_type == DOM_HTML_ELEMENT_TYPE_OL) {
-		bool have_start = layout__get_ol_start(box->node, &next);
-		bool have_reversed = layout__get_ol_reversed(box->node);
+	अग्र = 1;
+	यदि (चिह्नकम्_type == DOM_HTML_ELEMENT_TYPE_OL) {
+		bool have_start = layout__get_ol_start(box->ग्रन्थिः, &अग्र);
+		bool have_reversed = layout__get_ol_reversed(box->ग्रन्थिः);
 
-		if (have_reversed) {
-			step = -1;
+		यदि (have_reversed) {
+			चरणः = -1;
 		}
 
-		if (!have_start && have_reversed) {
-			layout__get_list_item_count(box->node, &next);
+		यदि (!have_start && have_reversed) {
+			layout_get_list_item_गणनम्(box->ग्रन्थिः, &अग्र);
 		}
 	}
 
-	exc = dom_node_get_first_child(box->node, &child);
-	if (exc != DOM_NO_ERR) {
-		return;
+	exc = dom_ग्रन्थिः_get_first_child(box->ग्रन्थिः, &child);
+	यदि (exc != DOM_NO_ERR) {
+		प्रत्यागम;
 	}
 
-	while (child != NULL) {
-		dom_node *temp_node;
+	यावत् (child != रिक्त) {
+		dom_ग्रन्थिः *अस्थायी_ग्रन्थिः;
 
-		if (layout__check_element_type(child,
+		यदि (layout__check_element_type(child,
 				DOM_HTML_ELEMENT_TYPE_LI)) {
-			struct box *child_box;
+			संरचना box *child_box;
 
-			if (dom_node_get_user_data(child,
-					corestring_dom___ns_key_box_node_data,
+			यदि (dom_ग्रन्थिः_get_user_दत्त(child,
+					corestring_dom_ns_कुञ्चिका_box_ग्रन्थिः_दत्त,
 					&child_box) != DOM_NO_ERR) {
-				dom_node_unref(child);
-				return;
+				dom_ग्रन्थिः_unref(child);
+				प्रत्यागम;
 			}
 
-			if (child_box != NULL &&
-			    child_box->list_marker != NULL) {
-				dom_long value;
-				struct box *marker = child_box->list_marker;
-				if (layout__get_li_value(child, &value)) {
-					marker->list_value = value;
-					next = marker->list_value;
-				} else {
-					marker->list_value = next;
+			यदि (child_box != रिक्त &&
+			    child_box->list_marker != रिक्त) {
+				dom_long मानम्;
+				संरचना box *marker = child_box->list_marker;
+				यदि (layout_get_li_मानम्(child, &मानम्)) {
+					marker->list_मानम् = मानम्;
+					अग्र = marker->list_मानम्;
+				} अन्यथा {
+					marker->list_मानम् = अग्र;
 				}
-				next += step;
+				अग्र += चरणः;
 			}
 		}
 
-		exc = dom_node_get_next_sibling(child, &temp_node);
-		dom_node_unref(child);
-		if (exc != DOM_NO_ERR) {
-			return;
+		exc = dom_ग्रन्थिः_get_अग्र_sibling(child, &अस्थायी_ग्रन्थिः);
+		dom_ग्रन्थिः_unref(child);
+		यदि (exc != DOM_NO_ERR) {
+			प्रत्यागम;
 		}
 
-		child = temp_node;
+		child = अस्थायी_ग्रन्थिः;
 	}
 }
 
@@ -4321,47 +4321,47 @@ layout__ordered_list_count(
  * \param[in]  content  The HTML content.
  * \param[in]  box      The list item's main box.
  */
-static void
-layout__set_numerical_marker_text(
-		const html_content *content,
-		struct box *box)
+स्थिर शून्य
+layout_समुच्चयः_numerical_marker_text(
+		ध्रुव html_content *content,
+		संरचना box *box)
 {
-	struct box *marker = box->list_marker;
-	size_t counter_len;
+	संरचना box *marker = box->list_marker;
+	size_t गणक_len;
 	css_error css_res;
-	enum {
+	गणना {
 		/**
 		 * initial length of a list marker buffer
 		 *
 		 * enough for 9,999,999,999,999,999,999 in decimal
 		 * or five characters for 4-byte UTF-8.
 		 */
-		LIST_MARKER_SIZE = 20,
+		LIST_MARKER_आकार = 20,
 	};
 
-	marker->text = talloc_array(content->bctx, char, LIST_MARKER_SIZE);
-	if (marker->text == NULL) {
-		return;
+	marker->text = talloc_array(content->bctx, वर्ण, LIST_MARKER_आकार);
+	यदि (marker->text == रिक्त) {
+		प्रत्यागम;
 	}
 
-	css_res = css_computed_format_list_style(box->style, marker->list_value,
-			marker->text, LIST_MARKER_SIZE, &counter_len);
-	if (css_res == CSS_OK) {
-		if (counter_len > LIST_MARKER_SIZE) {
+	css_res = css_computed_format_list_style(box->style, marker->list_मानम्,
+			marker->text, LIST_MARKER_आकार, &गणक_len);
+	यदि (css_res == CSS_OK) {
+		यदि (गणक_len > LIST_MARKER_आकार) {
 			/* Use computed size as marker did not fit in
 			 * default allocation. */
 			marker->text = talloc_realloc(content->bctx,
 					marker->text,
-					char,
-					counter_len);
-			if (marker->text == NULL) {
-				return;
+					वर्ण,
+					गणक_len);
+			यदि (marker->text == रिक्त) {
+				प्रत्यागम;
 			}
 			css_computed_format_list_style(box->style,
-					marker->list_value, marker->text,
-					counter_len, &counter_len);
+					marker->list_मानम्, marker->text,
+					गणक_len, &गणक_len);
 		}
-		marker->length = counter_len;
+		marker->दीर्घता = गणक_len;
 	}
 }
 
@@ -4371,76 +4371,76 @@ layout__set_numerical_marker_text(
  * \param[in]  b  Box with style to test.
  * \return true if box has numerical list style type, false otherwise.
  */
-static bool
+स्थिर bool
 layout__list_item_is_numerical(
-		const struct box *b)
+		ध्रुव संरचना box *b)
 {
-	enum css_list_style_type_e t = css_computed_list_style_type(b->style);
+	गणना css_list_style_type_e t = css_computed_list_style_type(b->style);
 
-	switch (t) {
-	case CSS_LIST_STYLE_TYPE_DISC:   /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_CIRCLE: /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_SQUARE: /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_NONE:
-		return false;
+	विकल्प (t) {
+	पक्ष CSS_LIST_STYLE_TYPE_DISC:   /* Fall through. */
+	पक्ष CSS_LIST_STYLE_TYPE_CIRCLE: /* Fall through. */
+	पक्ष CSS_LIST_STYLE_TYPE_वर्गफलम्: /* Fall through. */
+	पक्ष CSS_LIST_STYLE_TYPE_NONE:
+		प्रत्यागम false;
 
-	default:
-		return true;
+	स्वभाव:
+		प्रत्यागम true;
 	}
 }
 
 /**
  * Layout list markers.
  */
-static void
-layout_lists(const html_content *content, struct box *box)
+स्थिर शून्य
+layout_lists(ध्रुव html_content *content, संरचना box *box)
 {
-	struct box *child;
+	संरचना box *child;
 
-	layout__ordered_list_count(box);
+	layout_ordered_list_गणनम्(box);
 
-	for (child = box->children; child; child = child->next) {
-		if (child->list_marker) {
-			struct box *marker = child->list_marker;
+	प्रति (child = box->children; child; child = child->अग्र) {
+		यदि (child->list_marker) {
+			संरचना box *marker = child->list_marker;
 
-			if (layout__list_item_is_numerical(child)) {
-				if (marker->text == NULL) {
-					layout__set_numerical_marker_text(
+			यदि (layout__list_item_is_numerical(child)) {
+				यदि (marker->text == रिक्त) {
+					layout_समुच्चयः_numerical_marker_text(
 							content, child);
 				}
 			}
-			if (marker->object) {
-				marker->width =
-					content_get_width(marker->object);
-				marker->x = -marker->width;
+			यदि (marker->object) {
+				marker->विस्तारः =
+					content_get_विस्तारः(marker->object);
+				marker->x = -marker->विस्तारः;
 				marker->height =
 					content_get_height(marker->object);
-				marker->y = (line_height(
+				marker->y = (पङ्क्तिः_height(
 						&content->unit_len_ctx,
 						marker->style) -
 						marker->height) / 2;
-			} else if (marker->text) {
-				if (marker->width == UNKNOWN_WIDTH) {
+			} अन्यथा यदि (marker->text) {
+				यदि (marker->विस्तारः == UNKNOWN_विस्तारः) {
 					plot_font_style_t fstyle;
 					font_plot_style_from_css(
 							&content->unit_len_ctx,
 							marker->style,
 							&fstyle);
-					content->font_func->width(&fstyle,
+					content->font_func->विस्तारः(&fstyle,
 							marker->text,
-							marker->length,
-							&marker->width);
+							marker->दीर्घता,
+							&marker->विस्तारः);
 					marker->flags |= MEASURED;
 				}
-				marker->x = -marker->width;
+				marker->x = -marker->विस्तारः;
 				marker->y = 0;
-				marker->height = line_height(
+				marker->height = पङ्क्तिः_height(
 						&content->unit_len_ctx,
 						marker->style);
-			} else {
+			} अन्यथा {
 				marker->x = 0;
 				marker->y = 0;
-				marker->width = 0;
+				marker->विस्तारः = 0;
 				marker->height = 0;
 			}
 			/* Gap between marker and content */
@@ -4465,80 +4465,80 @@ layout_lists(const html_content *content, struct box *box)
  *
  * See CSS 2.1 9.3.2. containing_block must have width and height.
  */
-static void
-layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
-		       struct box *box,
-		       struct box *containing_block,
-		       int *top,
-		       int *right,
-		       int *bottom,
-		       int *left)
+स्थिर शून्य
+layout_compute_offsets(ध्रुव css_unit_ctx *unit_len_ctx,
+		       संरचना box *box,
+		       संरचना box *containing_खण्डम्,
+		       पूर्णाङ्क *शिखरम्,
+		       पूर्णाङ्क *दक्षिणः,
+		       पूर्णाङ्क *bottom,
+		       पूर्णाङ्क *वामः)
 {
 	uint32_t type;
-	css_fixed value = 0;
+	css_fixed मानम् = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(containing_block->width != UNKNOWN_WIDTH);
-	assert(containing_block->width != AUTO);
-	assert(containing_block->height != AUTO);
+	प्रतिज्ञा(containing_खण्डम्->विस्तारः != UNKNOWN_विस्तारः);
+	प्रतिज्ञा(containing_खण्डम्->विस्तारः != AUTO);
+	प्रतिज्ञा(containing_खण्डम्->height != AUTO);
 
-	/* left */
-	type = css_computed_left(box->style, &value, &unit);
-	if (type == CSS_LEFT_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*left = FPCT_OF_INT_TOINT(value,
-					containing_block->width);
-		} else {
-			*left = FIXTOINT(css_unit_len2device_px(
+	/*वामः*/
+	type = css_computed_वामः(box->style, &मानम्, &unit);
+	यदि (type == CSS_वामः_समुच्चयः) {
+		यदि (unit == CSS_UNIT_PCT) {
+			*वामः = FPCT_सम्बन्धि_INT_TOINT(मानम्,
+					containing_खण्डम्->विस्तारः);
+		} अन्यथा {
+			*वामः = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					मानम्, unit));
 		}
-	} else {
-		*left = AUTO;
+	} अन्यथा {
+		*वामः = AUTO;
 	}
 
-	/* right */
-	type = css_computed_right(box->style, &value, &unit);
-	if (type == CSS_RIGHT_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*right = FPCT_OF_INT_TOINT(value,
-					containing_block->width);
-		} else {
-			*right = FIXTOINT(css_unit_len2device_px(
+	/*दक्षिणः*/
+	type = css_computed_दक्षिणः(box->style, &मानम्, &unit);
+	यदि (type == CSS_दक्षिणः_समुच्चयः) {
+		यदि (unit == CSS_UNIT_PCT) {
+			*दक्षिणः = FPCT_सम्बन्धि_INT_TOINT(मानम्,
+					containing_खण्डम्->विस्तारः);
+		} अन्यथा {
+			*दक्षिणः = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					मानम्, unit));
 		}
-	} else {
-		*right = AUTO;
+	} अन्यथा {
+		*दक्षिणः = AUTO;
 	}
 
-	/* top */
-	type = css_computed_top(box->style, &value, &unit);
-	if (type == CSS_TOP_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*top = FPCT_OF_INT_TOINT(value,
-					containing_block->height);
-		} else {
-			*top = FIXTOINT(css_unit_len2device_px(
+	/*शिखरम्*/
+	type = css_computed_शिखरम्(box->style, &मानम्, &unit);
+	यदि (type == CSS_शिखरम्_समुच्चयः) {
+		यदि (unit == CSS_UNIT_PCT) {
+			*शिखरम् = FPCT_सम्बन्धि_INT_TOINT(मानम्,
+					containing_खण्डम्->height);
+		} अन्यथा {
+			*शिखरम् = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					मानम्, unit));
 		}
-	} else {
-		*top = AUTO;
+	} अन्यथा {
+		*शिखरम् = AUTO;
 	}
 
 	/* bottom */
-	type = css_computed_bottom(box->style, &value, &unit);
-	if (type == CSS_BOTTOM_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*bottom = FPCT_OF_INT_TOINT(value,
-					containing_block->height);
-		} else {
+	type = css_computed_bottom(box->style, &मानम्, &unit);
+	यदि (type == CSS_BOTTOM_समुच्चयः) {
+		यदि (unit == CSS_UNIT_PCT) {
+			*bottom = FPCT_सम्बन्धि_INT_TOINT(मानम्,
+					containing_खण्डम्->height);
+		} अन्यथा {
 			*bottom = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					मानम्, unit));
 		}
-	} else {
+	} अन्यथा {
 		*bottom = AUTO;
 	}
 }
@@ -4554,379 +4554,379 @@ layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
  * \param  content           memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_absolute(struct box *box,
-		struct box *containing_block,
-		int cx, int cy,
+स्थिर bool
+layout_absolute(संरचना box *box,
+		संरचना box *containing_खण्डम्,
+		पूर्णाङ्क cx, पूर्णाङ्क cy,
 		html_content *content)
 {
-	int static_left, static_top;  /* static position */
-	int top, right, bottom, left;
-	int width, height, max_width, min_width;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	int available_width = containing_block->width;
-	int space;
+	पूर्णाङ्क static_वामः, static_शिखरम्;  /* static position */
+	पूर्णाङ्क शिखरम्, दक्षिणः, bottom, वामः;
+	पूर्णाङ्क विस्तारः, height, max_विस्तारः, min_विस्तारः;
+	पूर्णाङ्क *margin = box->margin;
+	पूर्णाङ्क *padding = box->padding;
+	संरचना box_border *border = box->border;
+	पूर्णाङ्क उपलब्धम्_विस्तारः = containing_खण्डम्->विस्तारः;
+	पूर्णाङ्क space;
 
-	assert(box->type == BOX_BLOCK || box->type == BOX_TABLE ||
-			box->type == BOX_INLINE_BLOCK ||
+	प्रतिज्ञा(box->type == BOX_खण्डम् || box->type == BOX_सारणी ||
+			box->type == BOX_INLINE_खण्डम् ||
 			box->type == BOX_FLEX ||
 			box->type == BOX_INLINE_FLEX);
 
 	/* The static position is where the box would be if it was not
 	 * absolutely positioned. The x and y are filled in by
 	 * layout_block_context(). */
-	static_left = cx + box->x;
-	static_top = cy + box->y;
+	static_वामः = cx + box->x;
+	static_शिखरम् = cy + box->y;
 
-	if (containing_block->type == BOX_BLOCK ||
-			containing_block->type == BOX_INLINE_BLOCK ||
-			containing_block->type == BOX_TABLE_CELL) {
+	यदि (containing_खण्डम्->type == BOX_खण्डम् ||
+			containing_खण्डम्->type == BOX_INLINE_खण्डम् ||
+			containing_खण्डम्->type == BOX_सारणी_CELL) {
 		/* Block level container => temporarily increase containing
 		 * block dimensions to include padding (we restore this
 		 * again at the end) */
-		containing_block->width += containing_block->padding[LEFT] +
-				containing_block->padding[RIGHT];
-		containing_block->height += containing_block->padding[TOP] +
-				containing_block->padding[BOTTOM];
+		containing_खण्डम्->विस्तारः += containing_खण्डम्->padding[वामः_2] +
+				containing_खण्डम्->padding[दक्षिणः_2];
+		containing_खण्डम्->height += containing_खण्डम्->padding[शिखरम्_2] +
+				containing_खण्डम्->padding[BOTTOM];
 	}
 
-	layout_compute_offsets(&content->unit_len_ctx, box, containing_block,
-			&top, &right, &bottom, &left);
+	layout_compute_offsets(&content->unit_len_ctx, box, containing_खण्डम्,
+			&शिखरम्, &दक्षिणः, &bottom, &वामः);
 
 	/* Pass containing block into layout_find_dimensions via the float
 	 * containing block box member. This is unused for absolutely positioned
 	 * boxes because a box can't be floated and absolutely positioned. */
-	box->float_container = containing_block;
-	layout_find_dimensions(&content->unit_len_ctx, available_width, -1,
-			box, box->style, &width, &height,
-			&max_width, &min_width, 0, 0,
+	box->float_container = containing_खण्डम्;
+	layout_find_dimensions(&content->unit_len_ctx, उपलब्धम्_विस्तारः, -1,
+			box, box->style, &विस्तारः, &height,
+			&max_विस्तारः, &min_विस्तारः, 0, 0,
 			margin, padding, border);
-	box->float_container = NULL;
+	box->float_container = रिक्त;
 
 	/* 10.3.7 */
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      left, margin[LEFT], border[LEFT].width, padding[LEFT], width,
-	      padding[RIGHT], border[RIGHT].width, margin[RIGHT], right,
-	      containing_block->width);
+	      वामः, margin[वामः_2], border[वामः_2].विस्तारः, padding[वामः_2], विस्तारः,
+	      padding[दक्षिणः_2], border[दक्षिणः_2].विस्तारः, margin[दक्षिणः_2], दक्षिणः,
+	      containing_खण्डम्->विस्तारः);
 
 
-	if (left == AUTO && width == AUTO && right == AUTO) {
-		if (margin[LEFT] == AUTO)
-			margin[LEFT] = 0;
-		if (margin[RIGHT] == AUTO)
-			margin[RIGHT] = 0;
-		left = static_left;
+	यदि (वामः == AUTO && विस्तारः == AUTO && दक्षिणः == AUTO) {
+		यदि (margin[वामः_2] == AUTO)
+			margin[वामः_2] = 0;
+		यदि (margin[दक्षिणः_2] == AUTO)
+			margin[दक्षिणः_2] = 0;
+		वामः = static_वामः;
 
-		width = min(max(box->min_width, available_width),
-			box->max_width);
-		width -= box->margin[LEFT] + box->border[LEFT].width +
-			box->padding[LEFT] + box->padding[RIGHT] +
-			box->border[RIGHT].width + box->margin[RIGHT];
-
-		/* Adjust for {min|max}-width */
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (width < min_width) width = min_width;
-
-		right = containing_block->width -
-			left -
-			margin[LEFT] - border[LEFT].width - padding[LEFT] -
-			width -
-			padding[RIGHT] - border[RIGHT].width - margin[RIGHT];
-	} else if (left != AUTO && width != AUTO && right != AUTO) {
+		विस्तारः = min(max(box->min_विस्तारः, उपलब्धम्_विस्तारः),
+			box->max_विस्तारः);
+		विस्तारः -= box->margin[वामः_2] + box->border[वामः_2].विस्तारः +
+			box->padding[वामः_2] + box->padding[दक्षिणः_2] +
+			box->border[दक्षिणः_2].विस्तारः + box->margin[दक्षिणः_2];
 
 		/* Adjust for {min|max}-width */
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+		यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः) विस्तारः = max_विस्तारः;
+		यदि (विस्तारः < min_विस्तारः) विस्तारः = min_विस्तारः;
 
-		if (margin[LEFT] == AUTO && margin[RIGHT] == AUTO) {
-			space = containing_block->width -
-					left - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - right;
-			if (space < 0) {
-				margin[LEFT] = 0;
-				margin[RIGHT] = space;
-			} else {
-				margin[LEFT] = margin[RIGHT] = space / 2;
+		दक्षिणः = containing_खण्डम्->विस्तारः -
+			वामः -
+			margin[वामः_2] - border[वामः_2].विस्तारः - padding[वामः_2] -
+			विस्तारः -
+			padding[दक्षिणः_2] - border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2];
+	} अन्यथा यदि (वामः != AUTO && विस्तारः != AUTO && दक्षिणः != AUTO) {
+
+		/* Adjust for {min|max}-width */
+		यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः) विस्तारः = max_विस्तारः;
+		यदि (min_विस्तारः >  0 && विस्तारः < min_विस्तारः) विस्तारः = min_विस्तारः;
+
+		यदि (margin[वामः_2] == AUTO && margin[दक्षिणः_2] == AUTO) {
+			space = containing_खण्डम्->विस्तारः -
+					वामः - border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - दक्षिणः;
+			यदि (space < 0) {
+				margin[वामः_2] = 0;
+				margin[दक्षिणः_2] = space;
+			} अन्यथा {
+				margin[वामः_2] = margin[दक्षिणः_2] = space / 2;
 			}
-		} else if (margin[LEFT] == AUTO) {
-			margin[LEFT] = containing_block->width -
-					left - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (margin[RIGHT] == AUTO) {
-			margin[RIGHT] = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - right;
-		} else {
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
+		} अन्यथा यदि (margin[वामः_2] == AUTO) {
+			margin[वामः_2] = containing_खण्डम्->विस्तारः -
+					वामः - border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2] -
+					दक्षिणः;
+		} अन्यथा यदि (margin[दक्षिणः_2] == AUTO) {
+			margin[दक्षिणः_2] = containing_खण्डम्->विस्तारः -
+					वामः - margin[वामः_2] -
+					border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - दक्षिणः;
+		} अन्यथा {
+			दक्षिणः = containing_खण्डम्->विस्तारः -
+					वामः - margin[वामः_2] -
+					border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2];
 		}
-	} else {
-		if (margin[LEFT] == AUTO)
-			margin[LEFT] = 0;
-		if (margin[RIGHT] == AUTO)
-			margin[RIGHT] = 0;
+	} अन्यथा {
+		यदि (margin[वामः_2] == AUTO)
+			margin[वामः_2] = 0;
+		यदि (margin[दक्षिणः_2] == AUTO)
+			margin[दक्षिणः_2] = 0;
 
-		if (left == AUTO && width == AUTO && right != AUTO) {
-			available_width -= right;
+		यदि (वामः == AUTO && विस्तारः == AUTO && दक्षिणः != AUTO) {
+			उपलब्धम्_विस्तारः -= दक्षिणः;
 
-			width = min(max(box->min_width, available_width),
-				box->max_width);
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT];
-
-			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
-
-			left = containing_block->width -
-					margin[LEFT] - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (left == AUTO && width != AUTO && right == AUTO) {
+			विस्तारः = min(max(box->min_विस्तारः, उपलब्धम्_विस्तारः),
+				box->max_विस्तारः);
+			विस्तारः -= box->margin[वामः_2] + box->border[वामः_2].विस्तारः +
+				box->padding[वामः_2] + box->padding[दक्षिणः_2] +
+				box->border[दक्षिणः_2].विस्तारः + box->margin[दक्षिणः_2];
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (min_width >  0 && width < min_width)
-				width = min_width;
+			यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः)
+				विस्तारः = max_विस्तारः;
+			यदि (विस्तारः < min_विस्तारः)
+				विस्तारः = min_विस्तारः;
 
-			left = static_left;
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
-		} else if (left != AUTO && width == AUTO && right == AUTO) {
-			available_width -= left;
-
-			width = min(max(box->min_width, available_width),
-				box->max_width);
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT];
+			वामः = containing_खण्डम्->विस्तारः -
+					margin[वामः_2] - border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2] -
+					दक्षिणः;
+		} अन्यथा यदि (वामः == AUTO && विस्तारः != AUTO && दक्षिणः == AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
+			यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः)
+				विस्तारः = max_विस्तारः;
+			यदि (min_विस्तारः >  0 && विस्तारः < min_विस्तारः)
+				विस्तारः = min_विस्तारः;
 
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
-		} else if (left == AUTO && width != AUTO && right != AUTO) {
+			वामः = static_वामः;
+			दक्षिणः = containing_खण्डम्->विस्तारः -
+					वामः - margin[वामः_2] -
+					border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2];
+		} अन्यथा यदि (वामः != AUTO && विस्तारः == AUTO && दक्षिणः == AUTO) {
+			उपलब्धम्_विस्तारः -= वामः;
 
-			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
-
-			left = containing_block->width -
-					margin[LEFT] - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (left != AUTO && width == AUTO && right != AUTO) {
-			width = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
+			विस्तारः = min(max(box->min_विस्तारः, उपलब्धम्_विस्तारः),
+				box->max_विस्तारः);
+			विस्तारः -= box->margin[वामः_2] + box->border[वामः_2].विस्तारः +
+				box->padding[वामः_2] + box->padding[दक्षिणः_2] +
+				box->border[दक्षिणः_2].विस्तारः + box->margin[दक्षिणः_2];
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
+			यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः)
+				विस्तारः = max_विस्तारः;
+			यदि (विस्तारः < min_विस्तारः)
+				विस्तारः = min_विस्तारः;
 
-		} else if (left != AUTO && width != AUTO && right == AUTO) {
+			दक्षिणः = containing_खण्डम्->विस्तारः -
+					वामः - margin[वामः_2] -
+					border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2];
+		} अन्यथा यदि (वामः == AUTO && विस्तारः != AUTO && दक्षिणः != AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
+			यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः)
+				विस्तारः = max_विस्तारः;
+			यदि (विस्तारः < min_विस्तारः)
+				विस्तारः = min_विस्तारः;
 
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
+			वामः = containing_खण्डम्->विस्तारः -
+					margin[वामः_2] - border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2] -
+					दक्षिणः;
+		} अन्यथा यदि (वामः != AUTO && विस्तारः == AUTO && दक्षिणः != AUTO) {
+			विस्तारः = containing_खण्डम्->विस्तारः -
+					वामः - margin[वामः_2] -
+					border[वामः_2].विस्तारः -
+					padding[वामः_2] - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2] -
+					दक्षिणः;
+
+			/* Adjust for {min|max}-width */
+			यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः)
+				विस्तारः = max_विस्तारः;
+			यदि (विस्तारः < min_विस्तारः)
+				विस्तारः = min_विस्तारः;
+
+		} अन्यथा यदि (वामः != AUTO && विस्तारः != AUTO && दक्षिणः == AUTO) {
+
+			/* Adjust for {min|max}-width */
+			यदि (max_विस्तारः >= 0 && विस्तारः > max_विस्तारः)
+				विस्तारः = max_विस्तारः;
+			यदि (विस्तारः < min_विस्तारः)
+				विस्तारः = min_विस्तारः;
+
+			दक्षिणः = containing_खण्डम्->विस्तारः -
+					वामः - margin[वामः_2] -
+					border[वामः_2].विस्तारः -
+					padding[वामः_2] - विस्तारः - padding[दक्षिणः_2] -
+					border[दक्षिणः_2].विस्तारः - margin[दक्षिणः_2];
 		}
 	}
 
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      left, margin[LEFT], border[LEFT].width, padding[LEFT], width,
-	      padding[RIGHT], border[RIGHT].width, margin[RIGHT], right,
-	      containing_block->width);
+	      वामः, margin[वामः_2], border[वामः_2].विस्तारः, padding[वामः_2], विस्तारः,
+	      padding[दक्षिणः_2], border[दक्षिणः_2].विस्तारः, margin[दक्षिणः_2], दक्षिणः,
+	      containing_खण्डम्->विस्तारः);
 
-	box->x = left + margin[LEFT] + border[LEFT].width - cx;
-	if (containing_block->type == BOX_BLOCK ||
-			containing_block->type == BOX_INLINE_BLOCK ||
-			containing_block->type == BOX_TABLE_CELL) {
+	box->x = वामः + margin[वामः_2] + border[वामः_2].विस्तारः - cx;
+	यदि (containing_खण्डम्->type == BOX_खण्डम् ||
+			containing_खण्डम्->type == BOX_INLINE_खण्डम् ||
+			containing_खण्डम्->type == BOX_सारणी_CELL) {
 		/* Block-level ancestor => reset container's width */
-		containing_block->width -= containing_block->padding[LEFT] +
-				containing_block->padding[RIGHT];
-	} else {
+		containing_खण्डम्->विस्तारः -= containing_खण्डम्->padding[वामः_2] +
+				containing_खण्डम्->padding[दक्षिणः_2];
+	} अन्यथा {
 		/** \todo inline ancestors */
 	}
-	box->width = width;
+	box->विस्तारः = विस्तारः;
 	box->height = height;
 
-	if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
+	यदि (box->type == BOX_खण्डम् || box->type == BOX_INLINE_खण्डम् ||
 			box->object || box->flags & IFRAME) {
-		if (!layout_block_context(box, -1, content))
-			return false;
-	} else if (box->type == BOX_TABLE) {
+		यदि (!layout_खण्डम्_context(box, -1, content))
+			प्रत्यागम false;
+	} अन्यथा यदि (box->type == BOX_सारणी) {
 		/* layout_table also expects the containing block to be
 		 * stored in the float_container field */
-		box->float_container = containing_block;
+		box->float_container = containing_खण्डम्;
 		/* \todo  layout_table considers margins etc. again */
-		if (!layout_table(box, width, content))
-			return false;
-		box->float_container = NULL;
-		layout_solve_width(box, box->parent->width, box->width, 0, 0,
+		यदि (!layout_सारणी(box, विस्तारः, content))
+			प्रत्यागम false;
+		box->float_container = रिक्त;
+		layout_solve_विस्तारः(box, box->parent->विस्तारः, box->विस्तारः, 0, 0,
 				-1, -1);
-	} else if (box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX) {
+	} अन्यथा यदि (box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX) {
 		/* layout_table also expects the containing block to be
 		 * stored in the float_container field */
-		box->float_container = containing_block;
-		if (!layout_flex(box, width, content))
-			return false;
-		box->float_container = NULL;
+		box->float_container = containing_खण्डम्;
+		यदि (!layout_flex(box, विस्तारः, content))
+			प्रत्यागम false;
+		box->float_container = रिक्त;
 	}
 
 	/* 10.6.4 */
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      top, margin[TOP], border[TOP].width, padding[TOP], height,
-	      padding[BOTTOM], border[BOTTOM].width, margin[BOTTOM], bottom,
-	      containing_block->height);
+	      शिखरम्, margin[शिखरम्_2], border[शिखरम्_2].विस्तारः, padding[शिखरम्_2], height,
+	      padding[BOTTOM], border[BOTTOM].विस्तारः, margin[BOTTOM], bottom,
+	      containing_खण्डम्->height);
 
-	if (top == AUTO && height == AUTO && bottom == AUTO) {
-		top = static_top;
+	यदि (शिखरम् == AUTO && height == AUTO && bottom == AUTO) {
+		शिखरम् = static_शिखरम्;
 		height = box->height;
-		if (margin[TOP] == AUTO)
-			margin[TOP] = 0;
-		if (margin[BOTTOM] == AUTO)
+		यदि (margin[शिखरम्_2] == AUTO)
+			margin[शिखरम्_2] = 0;
+		यदि (margin[BOTTOM] == AUTO)
 			margin[BOTTOM] = 0;
-		bottom = containing_block->height -
-				top - margin[TOP] - border[TOP].width -
-				padding[TOP] - height - padding[BOTTOM] -
-				border[BOTTOM].width - margin[BOTTOM];
-	} else if (top != AUTO && height != AUTO && bottom != AUTO) {
-		if (margin[TOP] == AUTO && margin[BOTTOM] == AUTO) {
-			space = containing_block->height -
-					top - border[TOP].width - padding[TOP] -
+		bottom = containing_खण्डम्->height -
+				शिखरम् - margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+				padding[शिखरम्_2] - height - padding[BOTTOM] -
+				border[BOTTOM].विस्तारः - margin[BOTTOM];
+	} अन्यथा यदि (शिखरम् != AUTO && height != AUTO && bottom != AUTO) {
+		यदि (margin[शिखरम्_2] == AUTO && margin[BOTTOM] == AUTO) {
+			space = containing_खण्डम्->height -
+					शिखरम् - border[शिखरम्_2].विस्तारः - padding[शिखरम्_2] -
 					height - padding[BOTTOM] -
-					border[BOTTOM].width - bottom;
-			margin[TOP] = margin[BOTTOM] = space / 2;
-		} else if (margin[TOP] == AUTO) {
-			margin[TOP] = containing_block->height -
-					top - border[TOP].width - padding[TOP] -
+					border[BOTTOM].विस्तारः - bottom;
+			margin[शिखरम्_2] = margin[BOTTOM] = space / 2;
+		} अन्यथा यदि (margin[शिखरम्_2] == AUTO) {
+			margin[शिखरम्_2] = containing_खण्डम्->height -
+					शिखरम् - border[शिखरम्_2].विस्तारः - padding[शिखरम्_2] -
 					height - padding[BOTTOM] -
-					border[BOTTOM].width - margin[BOTTOM] -
+					border[BOTTOM].विस्तारः - margin[BOTTOM] -
 					bottom;
-		} else if (margin[BOTTOM] == AUTO) {
-			margin[BOTTOM] = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} अन्यथा यदि (margin[BOTTOM] == AUTO) {
+			margin[BOTTOM] = containing_खण्डम्->height -
+					शिखरम् - margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+					padding[शिखरम्_2] - height -
+					padding[BOTTOM] - border[BOTTOM].विस्तारः -
 					bottom;
-		} else {
-			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} अन्यथा {
+			bottom = containing_खण्डम्->height -
+					शिखरम् - margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+					padding[शिखरम्_2] - height -
+					padding[BOTTOM] - border[BOTTOM].विस्तारः -
 					margin[BOTTOM];
 		}
-	} else {
-		if (margin[TOP] == AUTO)
-			margin[TOP] = 0;
-		if (margin[BOTTOM] == AUTO)
+	} अन्यथा {
+		यदि (margin[शिखरम्_2] == AUTO)
+			margin[शिखरम्_2] = 0;
+		यदि (margin[BOTTOM] == AUTO)
 			margin[BOTTOM] = 0;
-		if (top == AUTO && height == AUTO && bottom != AUTO) {
+		यदि (शिखरम् == AUTO && height == AUTO && bottom != AUTO) {
 			height = box->height;
-			top = containing_block->height -
-					margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+			शिखरम् = containing_खण्डम्->height -
+					margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+					padding[शिखरम्_2] - height -
+					padding[BOTTOM] - border[BOTTOM].विस्तारः -
 					margin[BOTTOM] - bottom;
-		} else if (top == AUTO && height != AUTO && bottom == AUTO) {
-			top = static_top;
-			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} अन्यथा यदि (शिखरम् == AUTO && height != AUTO && bottom == AUTO) {
+			शिखरम् = static_शिखरम्;
+			bottom = containing_खण्डम्->height -
+					शिखरम् - margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+					padding[शिखरम्_2] - height -
+					padding[BOTTOM] - border[BOTTOM].विस्तारः -
 					margin[BOTTOM];
-		} else if (top != AUTO && height == AUTO && bottom == AUTO) {
+		} अन्यथा यदि (शिखरम् != AUTO && height == AUTO && bottom == AUTO) {
 			height = box->height;
-			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+			bottom = containing_खण्डम्->height -
+					शिखरम् - margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+					padding[शिखरम्_2] - height -
+					padding[BOTTOM] - border[BOTTOM].विस्तारः -
 					margin[BOTTOM];
-		} else if (top == AUTO && height != AUTO && bottom != AUTO) {
-			top = containing_block->height -
-					margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} अन्यथा यदि (शिखरम् == AUTO && height != AUTO && bottom != AUTO) {
+			शिखरम् = containing_खण्डम्->height -
+					margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+					padding[शिखरम्_2] - height -
+					padding[BOTTOM] - border[BOTTOM].विस्तारः -
 					margin[BOTTOM] - bottom;
-		} else if (top != AUTO && height == AUTO && bottom != AUTO) {
-			height = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - padding[BOTTOM] -
-					border[BOTTOM].width - margin[BOTTOM] -
+		} अन्यथा यदि (शिखरम् != AUTO && height == AUTO && bottom != AUTO) {
+			height = containing_खण्डम्->height -
+					शिखरम् - margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+					padding[शिखरम्_2] - padding[BOTTOM] -
+					border[BOTTOM].विस्तारः - margin[BOTTOM] -
 					bottom;
-		} else if (top != AUTO && height != AUTO && bottom == AUTO) {
-			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} अन्यथा यदि (शिखरम् != AUTO && height != AUTO && bottom == AUTO) {
+			bottom = containing_खण्डम्->height -
+					शिखरम् - margin[शिखरम्_2] - border[शिखरम्_2].विस्तारः -
+					padding[शिखरम्_2] - height -
+					padding[BOTTOM] - border[BOTTOM].विस्तारः -
 					margin[BOTTOM];
 		}
 	}
 
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      top, margin[TOP], border[TOP].width, padding[TOP], height,
-	      padding[BOTTOM], border[BOTTOM].width, margin[BOTTOM], bottom,
-	      containing_block->height);
+	      शिखरम्, margin[शिखरम्_2], border[शिखरम्_2].विस्तारः, padding[शिखरम्_2], height,
+	      padding[BOTTOM], border[BOTTOM].विस्तारः, margin[BOTTOM], bottom,
+	      containing_खण्डम्->height);
 
-	box->y = top + margin[TOP] + border[TOP].width - cy;
-	if (containing_block->type == BOX_BLOCK ||
-			containing_block->type == BOX_INLINE_BLOCK ||
-			containing_block->type == BOX_TABLE_CELL) {
+	box->y = शिखरम् + margin[शिखरम्_2] + border[शिखरम्_2].विस्तारः - cy;
+	यदि (containing_खण्डम्->type == BOX_खण्डम् ||
+			containing_खण्डम्->type == BOX_INLINE_खण्डम् ||
+			containing_खण्डम्->type == BOX_सारणी_CELL) {
 		/* Block-level ancestor => reset container's height */
-		containing_block->height -= containing_block->padding[TOP] +
-				containing_block->padding[BOTTOM];
-	} else {
+		containing_खण्डम्->height -= containing_खण्डम्->padding[शिखरम्_2] +
+				containing_खण्डम्->padding[BOTTOM];
+	} अन्यथा {
 		/** \todo Inline ancestors */
 	}
 	box->height = height;
-	layout_apply_minmax_height(&content->unit_len_ctx, box, containing_block);
+	layout_apply_minmax_height(&content->unit_len_ctx, box, containing_खण्डम्);
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -4940,63 +4940,63 @@ layout_absolute(struct box *box,
  * \param  content           memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_position_absolute(struct box *box,
-			 struct box *containing_block,
-			 int cx, int cy,
+स्थिर bool
+layout_position_absolute(संरचना box *box,
+			 संरचना box *containing_खण्डम्,
+			 पूर्णाङ्क cx, पूर्णाङ्क cy,
 			 html_content *content)
 {
-	struct box *c;
+	संरचना box *c;
 
-	for (c = box->children; c; c = c->next) {
-		if ((c->type == BOX_BLOCK || c->type == BOX_TABLE ||
-				c->type == BOX_INLINE_BLOCK ||
+	प्रति (c = box->children; c; c = c->अग्र) {
+		यदि ((c->type == BOX_खण्डम् || c->type == BOX_सारणी ||
+				c->type == BOX_INLINE_खण्डम् ||
 				c->type == BOX_FLEX ||
 				c->type == BOX_INLINE_FLEX) &&
 				(css_computed_position(c->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(c->style) ==
 						CSS_POSITION_FIXED)) {
-			if (!layout_absolute(c, containing_block,
+			यदि (!layout_absolute(c, containing_खण्डम्,
 					cx, cy, content))
-				return false;
-			if (!layout_position_absolute(c, c, 0, 0, content))
-				return false;
-		} else if (c->style && css_computed_position(c->style) ==
+				प्रत्यागम false;
+			यदि (!layout_position_absolute(c, c, 0, 0, content))
+				प्रत्यागम false;
+		} अन्यथा यदि (c->style && css_computed_position(c->style) ==
 				CSS_POSITION_RELATIVE) {
-			if (!layout_position_absolute(c, c, 0, 0, content))
-				return false;
-		} else {
-			int px, py;
-			if (c->style && (css_computed_float(c->style) ==
-						CSS_FLOAT_LEFT ||
+			यदि (!layout_position_absolute(c, c, 0, 0, content))
+				प्रत्यागम false;
+		} अन्यथा {
+			पूर्णाङ्क px, py;
+			यदि (c->style && (css_computed_float(c->style) ==
+						CSS_FLOAT_वामः ||
 					css_computed_float(c->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_दक्षिणः)) {
 				/* Float x/y coords are relative to nearest
 				 * ansestor with float_children, rather than
 				 * relative to parent. Need to get x/y relative
 				 * to parent */
-				struct box *p;
+				संरचना box *p;
 				px = c->x;
 				py = c->y;
-				for (p = box->parent; p && !p->float_children;
+				प्रति (p = box->parent; p && !p->float_children;
 						p = p->parent) {
 					px -= p->x;
 					py -= p->y;
 				}
-			} else {
+			} अन्यथा {
 				/* Not a float, so box x/y coords are relative
 				 * to parent */
 				px = c->x;
 				py = c->y;
 			}
-			if (!layout_position_absolute(c, containing_block,
+			यदि (!layout_position_absolute(c, containing_खण्डम्,
 					cx + px, cy + py, content))
-				return false;
+				प्रत्यागम false;
 		}
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -5008,69 +5008,69 @@ layout_position_absolute(struct box *box,
  * \param  x	Receives relative offset in x.
  * \param  y	Receives relative offset in y.
  */
-static void layout_compute_relative_offset(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		int *x,
-		int *y)
+स्थिर शून्य layout_compute_relative_विस्थापनम्(
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		संरचना box *box,
+		पूर्णाङ्क *x,
+		पूर्णाङ्क *y)
 {
-	int left, right, top, bottom;
-	struct box *containing_block;
+	पूर्णाङ्क वामः, दक्षिणः, शिखरम्, bottom;
+	संरचना box *containing_खण्डम्;
 
-	assert(box && box->parent && box->style &&
+	प्रतिज्ञा(box && box->parent && box->style &&
 			css_computed_position(box->style) ==
 			CSS_POSITION_RELATIVE);
 
-	if (box->float_container &&
-			(css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-			css_computed_float(box->style) == CSS_FLOAT_RIGHT)) {
-		containing_block = box->float_container;
-	} else {
-		containing_block = box->parent;
+	यदि (box->float_container &&
+			(css_computed_float(box->style) == CSS_FLOAT_वामः ||
+			css_computed_float(box->style) == CSS_FLOAT_दक्षिणः)) {
+		containing_खण्डम् = box->float_container;
+	} अन्यथा {
+		containing_खण्डम् = box->parent;
 	}
 
-	layout_compute_offsets(unit_len_ctx, box, containing_block,
-			&top, &right, &bottom, &left);
+	layout_compute_offsets(unit_len_ctx, box, containing_खण्डम्,
+			&शिखरम्, &दक्षिणः, &bottom, &वामः);
 
-	if (left == AUTO && right == AUTO)
-		left = right = 0;
-	else if (left == AUTO)
+	यदि (वामः == AUTO && दक्षिणः == AUTO)
+		वामः = दक्षिणः = 0;
+	अन्यथा यदि (वामः == AUTO)
 		/* left is auto => computed = -right */
-		left = -right;
-	else if (right == AUTO)
+		वामः = -दक्षिणः;
+	अन्यथा यदि (दक्षिणः == AUTO)
 		/* right is auto => computed = -left */
-		right = -left;
-	else {
+		दक्षिणः = -वामः;
+	अन्यथा {
 		/* over constrained => examine direction property
 		 * of containing block */
-		if (containing_block->style &&
+		यदि (containing_खण्डम्->style &&
 				css_computed_direction(
-				containing_block->style) ==
+				containing_खण्डम्->style) ==
 				CSS_DIRECTION_RTL) {
 			/* right wins */
-			left = -right;
-		} else {
+			वामः = -दक्षिणः;
+		} अन्यथा {
 			/* assume LTR in all other cases */
-			right = -left;
+			दक्षिणः = -वामः;
 		}
 	}
 
-	assert(left == -right);
+	प्रतिज्ञा(वामः == -दक्षिणः);
 
-	if (top == AUTO && bottom == AUTO) {
-		top = bottom = 0;
-	} else if (top == AUTO) {
-		top = -bottom;
-	} else {
+	यदि (शिखरम् == AUTO && bottom == AUTO) {
+		शिखरम् = bottom = 0;
+	} अन्यथा यदि (शिखरम् == AUTO) {
+		शिखरम् = -bottom;
+	} अन्यथा {
 		/* bottom is AUTO, or neither are AUTO */
-		bottom = -top;
+		bottom = -शिखरम्;
 	}
 
-	NSLOG(layout, DEBUG,  "left %i, right %i, top %i, bottom %i", left,
-	      right, top, bottom);
+	NSLOG(layout, DEBUG,  "left %i, right %i, top %i, bottom %i", वामः,
+	      दक्षिणः, शिखरम्, bottom);
 
-	*x = left;
-	*y = top;
+	*x = वामः;
+	*y = शिखरम्;
 }
 
 
@@ -5088,53 +5088,53 @@ static void layout_compute_relative_offset(
  *               between current box, "root", and the block formatting context
  *               box, "fp", for float children of "root"
  */
-static void
+स्थिर शून्य
 layout_position_relative(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *root,
-		struct box *fp,
-		int fx,
-		int fy)
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		संरचना box *मूलम्,
+		संरचना box *fp,
+		पूर्णाङ्क fx,
+		पूर्णाङ्क fy)
 {
-	struct box *box; /* for children of "root" */
-	struct box *fn;  /* for block formatting context box for children of
+	संरचना box *box; /* for children of "root" */
+	संरचना box *fn;  /* for block formatting context box for children of
 			  * "box" */
-	struct box *fc;  /* for float children of the block formatting context,
+	संरचना box *fc;  /* for float children of the block formatting context,
 			  * "fp" */
-	int x, y;	 /* for the offsets resulting from any relative
+	पूर्णाङ्क x, y;	 /* for the offsets resulting from any relative
 			  * positioning on the current block */
-	int fnx, fny;    /* for affsets which apply to flat children of "box" */
+	पूर्णाङ्क fnx, fny;    /* for affsets which apply to flat children of "box" */
 
 	/**\todo ensure containing box is large enough after moving boxes */
 
-	assert(root);
+	प्रतिज्ञा(मूलम्);
 
 	/* Normal children */
-	for (box = root->children; box; box = box->next) {
+	प्रति (box = मूलम्->children; box; box = box->अग्र) {
 
-		if (box->type == BOX_TEXT)
-			continue;
+		यदि (box->type == BOX_TEXT)
+			अनुवर्त;
 
 		/* If relatively positioned, get offsets */
-		if (box->style && css_computed_position(box->style) ==
+		यदि (box->style && css_computed_position(box->style) ==
 				CSS_POSITION_RELATIVE)
-			layout_compute_relative_offset(
+			layout_compute_relative_विस्थापनम्(
 					unit_len_ctx, box, &x, &y);
-		else
+		अन्यथा
 			x = y = 0;
 
 		/* Adjust float coordinates.
 		 * (note float x and y are relative to their block formatting
 		 * context box and not their parent) */
-		if (box->style && (css_computed_float(box->style) ==
-					CSS_FLOAT_LEFT ||
+		यदि (box->style && (css_computed_float(box->style) ==
+					CSS_FLOAT_वामः ||
 				css_computed_float(box->style) ==
-					CSS_FLOAT_RIGHT) &&
+					CSS_FLOAT_दक्षिणः) &&
 				(fx != 0 || fy != 0)) {
 			/* box is a float and there is a float offset to
 			 * apply */
-			for (fc = fp->float_children; fc; fc = fc->next_float) {
-				if (box == fc->children) {
+			प्रति (fc = fp->float_children; fc; fc = fc->अग्र_float) {
+				यदि (box == fc->children) {
 					/* Box is floated in the block
 					 * formatting context block, fp.
 					 * Apply float offsets. */
@@ -5145,10 +5145,10 @@ layout_position_relative(
 			}
 		}
 
-		if (box->float_children) {
+		यदि (box->float_children) {
 			fn = box;
 			fnx = fny = 0;
-		} else {
+		} अन्यथा {
 			fn = fp;
 			fnx = fx + x;
 			fny = fy + y;
@@ -5158,10 +5158,10 @@ layout_position_relative(
 		layout_position_relative(unit_len_ctx, box, fn, fnx, fny);
 
 		/* Ignore things we're not interested in. */
-		if (!box->style || (box->style &&
+		यदि (!box->style || (box->style &&
 				css_computed_position(box->style) !=
 				CSS_POSITION_RELATIVE))
-			continue;
+			अनुवर्त;
 
 		box->x += x;
 		box->y += y;
@@ -5169,10 +5169,10 @@ layout_position_relative(
 		/* Handle INLINEs - their "children" are in fact
 		 * the sibling boxes between the INLINE and
 		 * INLINE_END boxes */
-		if (box->type == BOX_INLINE && box->inline_end) {
-			struct box *b;
-			for (b = box->next; b && b != box->inline_end;
-					b = b->next) {
+		यदि (box->type == BOX_INLINE && box->inline_अन्तः) {
+			संरचना box *b;
+			प्रति (b = box->अग्र; b && b != box->inline_अन्तः;
+					b = b->अग्र) {
 				b->x += x;
 				b->y += y;
 			}
@@ -5191,33 +5191,33 @@ layout_position_relative(
  * \param  desc_x1  updated to right of box's bbox
  * \param  desc_y1  updated to bottom of box's bbox
  */
-static void
+स्थिर शून्य
 layout_get_box_bbox(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		int *desc_x0, int *desc_y0,
-		int *desc_x1, int *desc_y1)
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		संरचना box *box,
+		पूर्णाङ्क *desc_x0, पूर्णाङ्क *desc_y0,
+		पूर्णाङ्क *desc_x1, पूर्णाङ्क *desc_y1)
 {
-	*desc_x0 = -box->border[LEFT].width;
-	*desc_y0 = -box->border[TOP].width;
-	*desc_x1 = box->padding[LEFT] + box->width + box->padding[RIGHT] +
-			box->border[RIGHT].width;
-	*desc_y1 = box->padding[TOP] + box->height + box->padding[BOTTOM] +
-			box->border[BOTTOM].width;
+	*desc_x0 = -box->border[वामः_2].विस्तारः;
+	*desc_y0 = -box->border[शिखरम्_2].विस्तारः;
+	*desc_x1 = box->padding[वामः_2] + box->विस्तारः + box->padding[दक्षिणः_2] +
+			box->border[दक्षिणः_2].विस्तारः;
+	*desc_y1 = box->padding[शिखरम्_2] + box->height + box->padding[BOTTOM] +
+			box->border[BOTTOM].विस्तारः;
 
 	/* To stop the top of text getting clipped when css line-height is
 	 * reduced, we increase the top of the descendant bbox. */
-	if (box->type == BOX_BLOCK && box->style != NULL &&
-			css_computed_overflow_y(box->style) ==
-					CSS_OVERFLOW_VISIBLE &&
-			box->object == NULL) {
-		css_fixed font_size = 0;
+	यदि (box->type == BOX_खण्डम् && box->style != रिक्त &&
+			css_computed_अतिप्रवाहः_y(box->style) ==
+					CSS_अतिप्रवाहः_VISIBLE &&
+			box->object == रिक्त) {
+		css_fixed font_आकार = 0;
 		css_unit font_unit = CSS_UNIT_PT;
-		int text_height;
+		पूर्णाङ्क text_height;
 
-		css_computed_font_size(box->style, &font_size, &font_unit);
+		css_computed_font_आकार(box->style, &font_आकार, &font_unit);
 		text_height = css_unit_len2device_px(box->style, unit_len_ctx,
-				font_size, font_unit);
+				font_आकार, font_unit);
 		text_height = FIXTOINT(text_height * 3 / 4);
 		*desc_y0 = (*desc_y0 < -text_height) ? *desc_y0 : -text_height;
 	}
@@ -5233,29 +5233,29 @@ layout_get_box_bbox(
  * \param  off_x    offset to apply to child->x coord to treat as child of box
  * \param  off_y    offset to apply to child->y coord to treat as child of box
  */
-static void
+स्थिर शून्य
 layout_update_descendant_bbox(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		struct box *child,
-		int off_x,
-		int off_y)
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		संरचना box *box,
+		संरचना box *child,
+		पूर्णाङ्क off_x,
+		पूर्णाङ्क off_y)
 {
-	int child_desc_x0, child_desc_y0, child_desc_x1, child_desc_y1;
+	पूर्णाङ्क child_desc_x0, child_desc_y0, child_desc_x1, child_desc_y1;
 
 	/* get coordinates of child relative to box */
-	int child_x = child->x - off_x;
-	int child_y = child->y - off_y;
+	पूर्णाङ्क child_x = child->x - off_x;
+	पूर्णाङ्क child_y = child->y - off_y;
 
 	bool html_object = (child->object &&
 			content_get_type(child->object) == CONTENT_HTML);
 
-	enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
-	enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
+	गणना css_अतिप्रवाहः_e अतिप्रवाहः_x = CSS_अतिप्रवाहः_VISIBLE;
+	गणना css_अतिप्रवाहः_e अतिप्रवाहः_y = CSS_अतिप्रवाहः_VISIBLE;
 
-	if (child->style != NULL) {
-		overflow_x = css_computed_overflow_x(child->style);
-		overflow_y = css_computed_overflow_y(child->style);
+	यदि (child->style != रिक्त) {
+		अतिप्रवाहः_x = css_computed_अतिप्रवाहः_x(child->style);
+		अतिप्रवाहः_y = css_computed_अतिप्रवाहः_y(child->style);
 	}
 
 	/* Get child's border edge */
@@ -5263,13 +5263,13 @@ layout_update_descendant_bbox(
 			&child_desc_x0, &child_desc_y0,
 			&child_desc_x1, &child_desc_y1);
 
-	if (overflow_x == CSS_OVERFLOW_VISIBLE &&
+	यदि (अतिप्रवाहः_x == CSS_अतिप्रवाहः_VISIBLE &&
 			html_object == false) {
 		/* get child's descendant bbox relative to box */
 		child_desc_x0 = child->descendant_x0;
 		child_desc_x1 = child->descendant_x1;
 	}
-	if (overflow_y == CSS_OVERFLOW_VISIBLE &&
+	यदि (अतिप्रवाहः_y == CSS_अतिप्रवाहः_VISIBLE &&
 			html_object == false) {
 		/* get child's descendant bbox relative to box */
 		child_desc_y0 = child->descendant_y0;
@@ -5282,13 +5282,13 @@ layout_update_descendant_bbox(
 	child_desc_y1 += child_y;
 
 	/* increase box's descendant bbox to contain descendants */
-	if (child_desc_x0 < box->descendant_x0)
+	यदि (child_desc_x0 < box->descendant_x0)
 		box->descendant_x0 = child_desc_x0;
-	if (child_desc_y0 < box->descendant_y0)
+	यदि (child_desc_y0 < box->descendant_y0)
 		box->descendant_y0 = child_desc_y0;
-	if (box->descendant_x1 < child_desc_x1)
+	यदि (box->descendant_x1 < child_desc_x1)
 		box->descendant_x1 = child_desc_x1;
-	if (box->descendant_y1 < child_desc_y1)
+	यदि (box->descendant_y1 < child_desc_y1)
 		box->descendant_y1 = child_desc_y1;
 }
 
@@ -5300,14 +5300,14 @@ layout_update_descendant_bbox(
  * \param  unit_len_ctx  Length conversion context
  * \param  box      tree of boxes to update
  */
-static void layout_calculate_descendant_bboxes(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box)
+स्थिर शून्य layout_calculate_descendant_bboxes(
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		संरचना box *box)
 {
-	struct box *child;
+	संरचना box *child;
 
-	assert(box->width != UNKNOWN_WIDTH);
-	assert(box->height != AUTO);
+	प्रतिज्ञा(box->विस्तारः != UNKNOWN_विस्तारः);
+	प्रतिज्ञा(box->height != AUTO);
 	/* assert((box->width >= 0) && (box->height >= 0)); */
 
 	/* Initialise box's descendant box to border edge box */
@@ -5316,74 +5316,74 @@ static void layout_calculate_descendant_bboxes(
 			&box->descendant_x1, &box->descendant_y1);
 
 	/* Extend it to contain HTML contents if box is replaced */
-	if (box->object && content_get_type(box->object) == CONTENT_HTML) {
-		if (box->descendant_x1 < content_get_width(box->object))
-			box->descendant_x1 = content_get_width(box->object);
-		if (box->descendant_y1 < content_get_height(box->object))
+	यदि (box->object && content_get_type(box->object) == CONTENT_HTML) {
+		यदि (box->descendant_x1 < content_get_विस्तारः(box->object))
+			box->descendant_x1 = content_get_विस्तारः(box->object);
+		यदि (box->descendant_y1 < content_get_height(box->object))
 			box->descendant_y1 = content_get_height(box->object);
 	}
 
-	if (box->iframe != NULL) {
-		int x, y;
+	यदि (box->iframe != रिक्त) {
+		पूर्णाङ्क x, y;
 		box_coords(box, &x, &y);
 
-		browser_window_set_position(box->iframe, x, y);
-		browser_window_set_dimensions(box->iframe,
-				box->width, box->height);
-		browser_window_reformat(box->iframe, true,
-				box->width, box->height);
+		browser_गवाक्षः_समुच्चयः_position(box->iframe, x, y);
+		browser_गवाक्षः_समुच्चयः_dimensions(box->iframe,
+				box->विस्तारः, box->height);
+		browser_गवाक्षः_reformat(box->iframe, true,
+				box->विस्तारः, box->height);
 	}
 
-	if (box->type == BOX_INLINE || box->type == BOX_TEXT)
-		return;
+	यदि (box->type == BOX_INLINE || box->type == BOX_TEXT)
+		प्रत्यागम;
 
-	if (box->type == BOX_INLINE_END) {
-		box = box->inline_end;
-		for (child = box->next; child;
-				child = child->next) {
-			if (child->type == BOX_FLOAT_LEFT ||
-					child->type == BOX_FLOAT_RIGHT)
-				continue;
+	यदि (box->type == BOX_INLINE_अन्तः) {
+		box = box->inline_अन्तः;
+		प्रति (child = box->अग्र; child;
+				child = child->अग्र) {
+			यदि (child->type == BOX_FLOAT_वामः ||
+					child->type == BOX_FLOAT_दक्षिणः)
+				अनुवर्त;
 
 			layout_update_descendant_bbox(unit_len_ctx, box, child,
 					box->x, box->y);
 
-			if (child == box->inline_end)
-				break;
+			यदि (child == box->inline_अन्तः)
+				भङ्ग;
 		}
-		return;
+		प्रत्यागम;
 	}
 
-	if (box->flags & REPLACE_DIM)
+	यदि (box->flags & REPLACE_DIM)
 		/* Box's children aren't displayed if the box is replaced */
-		return;
+		प्रत्यागम;
 
-	for (child = box->children; child; child = child->next) {
-		if (child->type == BOX_FLOAT_LEFT ||
-				child->type == BOX_FLOAT_RIGHT)
-			continue;
+	प्रति (child = box->children; child; child = child->अग्र) {
+		यदि (child->type == BOX_FLOAT_वामः ||
+				child->type == BOX_FLOAT_दक्षिणः)
+			अनुवर्त;
 
 		layout_calculate_descendant_bboxes(unit_len_ctx, child);
 
-		if (box->style && css_computed_overflow_x(box->style) ==
-				CSS_OVERFLOW_HIDDEN &&
-				css_computed_overflow_y(box->style) ==
-				CSS_OVERFLOW_HIDDEN)
-			continue;
+		यदि (box->style && css_computed_अतिप्रवाहः_x(box->style) ==
+				CSS_अतिप्रवाहः_HIDDEN &&
+				css_computed_अतिप्रवाहः_y(box->style) ==
+				CSS_अतिप्रवाहः_HIDDEN)
+			अनुवर्त;
 
 		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
 	}
 
-	for (child = box->float_children; child; child = child->next_float) {
-		assert(child->type == BOX_FLOAT_LEFT ||
-				child->type == BOX_FLOAT_RIGHT);
+	प्रति (child = box->float_children; child; child = child->अग्र_float) {
+		प्रतिज्ञा(child->type == BOX_FLOAT_वामः ||
+				child->type == BOX_FLOAT_दक्षिणः);
 
 		layout_calculate_descendant_bboxes(unit_len_ctx, child);
 
 		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
 	}
 
-	if (box->list_marker) {
+	यदि (box->list_marker) {
 		child = box->list_marker;
 		layout_calculate_descendant_bboxes(unit_len_ctx, child);
 
@@ -5393,47 +5393,47 @@ static void layout_calculate_descendant_bboxes(
 
 
 /* exported function documented in html/layout.h */
-bool layout_document(html_content *content, int width, int height)
+bool layout_document(html_content *content, पूर्णाङ्क विस्तारः, पूर्णाङ्क height)
 {
 	bool ret;
-	struct box *doc = content->layout;
-	const struct gui_layout_table *font_func = content->font_func;
+	संरचना box *doc = content->layout;
+	ध्रुव संरचना gui_layout_सारणी *font_func = content->font_func;
 
 	NSLOG(layout, DEBUG, "Doing layout to %ix%i of %s",
-			width, height, nsurl_access(content_get_url(
-					&content->base)));
+			विस्तारः, height, nsurl_access(content_get_url(
+					&content->आधारः)));
 
-	layout_minmax_block(doc, font_func, content);
+	layout_minmax_खण्डम्(doc, font_func, content);
 
-	layout_block_find_dimensions(&content->unit_len_ctx,
-			width, height, 0, 0, doc);
-	doc->x = doc->margin[LEFT] + doc->border[LEFT].width;
-	doc->y = doc->margin[TOP] + doc->border[TOP].width;
-	width -= doc->margin[LEFT] + doc->border[LEFT].width +
-			doc->padding[LEFT] + doc->padding[RIGHT] +
-			doc->border[RIGHT].width + doc->margin[RIGHT];
-	if (width < 0) {
-		width = 0;
+	layout_खण्डम्_find_dimensions(&content->unit_len_ctx,
+			विस्तारः, height, 0, 0, doc);
+	doc->x = doc->margin[वामः_2] + doc->border[वामः_2].विस्तारः;
+	doc->y = doc->margin[शिखरम्_2] + doc->border[शिखरम्_2].विस्तारः;
+	विस्तारः -= doc->margin[वामः_2] + doc->border[वामः_2].विस्तारः +
+			doc->padding[वामः_2] + doc->padding[दक्षिणः_2] +
+			doc->border[दक्षिणः_2].विस्तारः + doc->margin[दक्षिणः_2];
+	यदि (विस्तारः < 0) {
+		विस्तारः = 0;
 	}
-	doc->width = width;
+	doc->विस्तारः = विस्तारः;
 
-	ret = layout_block_context(doc, height, content);
+	ret = layout_खण्डम्_context(doc, height, content);
 
 	/* make <html> and <body> fill available height */
-	if (doc->y + doc->padding[TOP] + doc->height + doc->padding[BOTTOM] +
-			doc->border[BOTTOM].width + doc->margin[BOTTOM] <
+	यदि (doc->y + doc->padding[शिखरम्_2] + doc->height + doc->padding[BOTTOM] +
+			doc->border[BOTTOM].विस्तारः + doc->margin[BOTTOM] <
 			height) {
-		doc->height = height - (doc->y + doc->padding[TOP] +
+		doc->height = height - (doc->y + doc->padding[शिखरम्_2] +
 				doc->padding[BOTTOM] +
-				doc->border[BOTTOM].width +
+				doc->border[BOTTOM].विस्तारः +
 				doc->margin[BOTTOM]);
-		if (doc->children)
+		यदि (doc->children)
 			doc->children->height = doc->height -
-					(doc->children->margin[TOP] +
-					 doc->children->border[TOP].width +
-					 doc->children->padding[TOP] +
+					(doc->children->margin[शिखरम्_2] +
+					 doc->children->border[शिखरम्_2].विस्तारः +
+					 doc->children->padding[शिखरम्_2] +
 					 doc->children->padding[BOTTOM] +
-					 doc->children->border[BOTTOM].width +
+					 doc->children->border[BOTTOM].विस्तारः +
 					 doc->children->margin[BOTTOM]);
 	}
 
@@ -5443,5 +5443,5 @@ bool layout_document(html_content *content, int width, int height)
 
 	layout_calculate_descendant_bboxes(&content->unit_len_ctx, doc);
 
-	return ret;
+	प्रत्यागम ret;
 }

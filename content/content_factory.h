@@ -16,47 +16,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CONTENT_CONTENT_FACTORY_H_
-#define NETSURF_CONTENT_CONTENT_FACTORY_H_
+#यदि_अपरिभाषितम् NETSURF_CONTENT_CONTENT_FACTORY_H_
+#परिभाषय NETSURF_CONTENT_CONTENT_FACTORY_H_
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
-#include <libwapcaplet/libwapcaplet.h>
+#अन्तर्भाव <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/content_type.h"
-#include "utils/errors.h"
+#अन्तर्भाव "netsurf/content_type.h"
+#अन्तर्भाव "utils/errors.h"
 
-#define CONTENT_FACTORY_REGISTER_TYPES(HNAME, HTYPELIST, HHANDLER)	\
+#परिभाषय CONTENT_FACTORY_पञ्जिकाकोशः_TYPES(HNAME, HTYPELIST, HHANDLER)	\
 									\
-nserror HNAME##_init(void)						\
+nserror HNAME##_init(शून्य)						\
 {									\
 	uint32_t i;							\
 	nserror error = NSERROR_OK;					\
 									\
-	for (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
-		error = content_factory_register_handler(		\
+	प्रति (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
+		error = content_factory_पञ्जिकाकोशः_handler(		\
 			HTYPELIST[i],					\
 			&HHANDLER);					\
-		if (error != NSERROR_OK)				\
-			break;						\
+		यदि (error != NSERROR_OK)				\
+			भङ्ग;						\
 	}								\
 									\
-	return error;							\
+	प्रत्यागम error;							\
 }
 
-struct content;
-struct llcache_handle;
-struct content_handler;
+संरचना content;
+संरचना llcache_handle;
+संरचना content_handler;
 
-void content_factory_fini(void);
+शून्य content_factory_fini(शून्य);
 
-nserror content_factory_register_handler(const char *mime_type,
-		const struct content_handler *handler);
+nserror content_factory_पञ्जिकाकोशः_handler(ध्रुव वर्ण *mime_type,
+		ध्रुव संरचना content_handler *handler);
 
-struct content *content_factory_create_content(struct llcache_handle *llcache, 
-		const char *fallback_charset, bool quirks,
+संरचना content *content_factory_create_content(संरचना llcache_handle *llcache, 
+		ध्रुव वर्ण *fallback_charset, bool quirks,
 		lwc_string *effective_type);
 
 content_type content_factory_type_from_mime_type(lwc_string *mime_type);
 
-#endif
+#यदि_अन्तः

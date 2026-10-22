@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_DUMP_H_
-#define NETSURF_CSS_DUMP_H_
+#यदि_अपरिभाषितम् NETSURF_CSS_DUMP_H_
+#परिभाषय NETSURF_CSS_DUMP_H_
 
 /**
  * Dump a computed style \a style to the give file handle \a stream.
@@ -25,6 +25,6 @@
  * \param stream  Stream to write to
  * \param style   Computed style to dump
  */
-void nscss_dump_computed_style(FILE *stream, const css_computed_style *style);
+शून्य nscss_dump_computed_style(FILE *प्रवाहः, ध्रुव css_computed_style *style);
 
-#endif
+#यदि_अन्तः

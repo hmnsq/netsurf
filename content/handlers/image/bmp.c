@@ -22,30 +22,30 @@
  * implementation of content handler for BMP images.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libnsbmp.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <libnsbmp.h>
 
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/messages.h"
+#अन्तर्भाव "netsurf/plotters.h"
+#अन्तर्भाव "netsurf/bitmap.h"
+#अन्तर्भाव "netsurf/content.h"
+#अन्तर्भाव "content/llcache.h"
+#अन्तर्भाव "content/content_protected.h"
+#अन्तर्भाव "content/content_factory.h"
+#अन्तर्भाव "desktop/gui_internal.h"
+#अन्तर्भाव "desktop/bitmap.h"
 
-#include "image/bmp.h"
+#अन्तर्भाव "image/bmp.h"
 
 /** bmp context. */
-typedef struct nsbmp_content {
-	struct content base;
+प्रकारनिर्देश संरचना nsbmp_content {
+	संरचना content आधारः;
 
 	bmp_image *bmp;	/** BMP image data */
 
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	संरचना bitmap *bitmap;	/**< Created NetSurf bitmap */
 } nsbmp_content;
 
 /**
@@ -56,240 +56,240 @@ typedef struct nsbmp_content {
  * \param bmp_state A flag word indicating the initial state
  * \return An opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsbmp_bitmap_create(int width, int height, unsigned int bmp_state)
+स्थिर शून्य *nsbmp_bitmap_create(पूर्णाङ्क विस्तारः, पूर्णाङ्क height, अचिह्नित पूर्णाङ्क bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	अचिह्नित पूर्णाङ्क bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
-	bitmap_state |= (bmp_state & BMP_CLEAR_MEMORY) ?
+	bitmap_state |= (bmp_state & BMP_CLEAR_स्मृतिः) ?
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	प्रत्यागम guit->bitmap->create(विस्तारः, height, bitmap_state);
 }
 
-static nserror nsbmp_create_bmp_data(nsbmp_content *bmp)
+स्थिर nserror nsbmp_create_bmp_दत्त(nsbmp_content *bmp)
 {
 	bmp_bitmap_callback_vt bmp_bitmap_callbacks = {
 		.bitmap_create = nsbmp_bitmap_create,
 		.bitmap_destroy = guit->bitmap->destroy,
-		.bitmap_get_buffer = guit->bitmap->get_buffer,
+		.bitmap_get_बफर = guit->bitmap->get_बफर,
 	};
 
-	bmp->bmp = calloc(1, sizeof(struct bmp_image));
-	if (bmp->bmp == NULL) {
-		content_broadcast_error(&bmp->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	bmp->bmp = शून्यस्मृतिं_देहि(1, परिमाण(संरचना bmp_image));
+	यदि (bmp->bmp == रिक्त) {
+		content_प्रसारणम्_error(&bmp->आधारः, NSERROR_NOMEM, रिक्त);
+		प्रत्यागम NSERROR_NOMEM;
 	}
 
 	bmp_create(bmp->bmp, &bmp_bitmap_callbacks);
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-static nserror
-nsbmp_create(const struct content_handler *handler,
+स्थिर nserror
+nsbmp_create(ध्रुव संरचना content_handler *handler,
 	     lwc_string *imime_type,
-	     const struct http_parameter *params,
+	     ध्रुव संरचना http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     ध्रुव वर्ण *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     संरचना content **c)
 {
 	nsbmp_content *bmp;
 	nserror error;
 
-	bmp = calloc(1, sizeof(nsbmp_content));
-	if (bmp == NULL)
-		return NSERROR_NOMEM;
+	bmp = शून्यस्मृतिं_देहि(1, परिमाण(nsbmp_content));
+	यदि (bmp == रिक्त)
+		प्रत्यागम NSERROR_NOMEM;
 
-	error = content__init(&bmp->base, handler, imime_type, params,
+	error = content__init(&bmp->आधारः, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(bmp);
-		return error;
+	यदि (error != NSERROR_OK) {
+		मुक्त(bmp);
+		प्रत्यागम error;
 	}
 
-	error = nsbmp_create_bmp_data(bmp);
-	if (error != NSERROR_OK) {
-		free(bmp);
-		return error;
+	error = nsbmp_create_bmp_दत्त(bmp);
+	यदि (error != NSERROR_OK) {
+		मुक्त(bmp);
+		प्रत्यागम error;
 	}
 
-	*c = (struct content *) bmp;
+	*c = (संरचना content *) bmp;
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-static bool nsbmp_convert(struct content *c)
+स्थिर bool nsbmp_convert(संरचना content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
-	bmp_result res;
+	bmp_परिणाम res;
 	uint32_t swidth;
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	ध्रुव uint8_t *दत्त;
+	size_t आकार;
+	वर्ण *title;
 
 	/* set the bmp data */
-	data = content__get_source_data(c, &size);
+	दत्त = content_get_source_दत्त_2(c, &आकार);
 
 	/* analyse the BMP */
-	res = bmp_analyse(bmp->bmp, size, (unsigned char *) data);
-	switch (res) {
-		case BMP_OK:
-			break;
-		case BMP_INSUFFICIENT_MEMORY:
-			content_broadcast_error(c, NSERROR_NOMEM, NULL);
-			return false;
-		case BMP_INSUFFICIENT_DATA:
-		case BMP_DATA_ERROR:
-			content_broadcast_error(c, NSERROR_BMP_ERROR, NULL);
-			return false;
+	res = bmp_analyse(bmp->bmp, आकार, (अचिह्नित वर्ण *) दत्त);
+	विकल्प (res) {
+		पक्ष BMP_OK:
+			भङ्ग;
+		पक्ष BMP_INSUFFICIENT_स्मृतिः:
+			content_प्रसारणम्_error(c, NSERROR_NOMEM, रिक्त);
+			प्रत्यागम false;
+		पक्ष BMP_INSUFFICIENT_दत्त:
+		पक्ष BMP_दत्त_ERROR:
+			content_प्रसारणम्_error(c, NSERROR_BMP_ERROR, रिक्त);
+			प्रत्यागम false;
 	}
 
 	/* Store our content width and description */
-	c->width = bmp->bmp->width;
+	c->विस्तारः = bmp->bmp->विस्तारः;
 	c->height = bmp->bmp->height;
-	swidth = sizeof(uint32_t) * bmp->bmp->width;
-	c->size += (swidth * bmp->bmp->height) + 16 + 44;
+	swidth = परिमाण(uint32_t) * bmp->bmp->विस्तारः;
+	c->आकार += (swidth * bmp->bmp->height) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("BMPTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_पर्णम्(llcache_handle_get_url(c->llcache)),
+			c->विस्तारः, c->height);
+	यदि (title != रिक्त) {
+		content_समुच्चयः_title(c, title);
+		मुक्त(title);
 	}
 
 	/* exit as a success */
 	bmp->bitmap = bmp->bmp->bitmap;
 
-	content_set_ready(c);
-	content_set_done(c);
+	content_समुच्चयः_ready(c);
+	content_समुच्चयः_समाप्तम्(c);
 
 	/* Done: update status bar */
-	content_set_status(c, "");
-	return true;
+	content_समुच्चयः_स्थितिः(c, "");
+	प्रत्यागम true;
 }
 
-static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+स्थिर bool nsbmp_redraw(संरचना content *c, संरचना content_redraw_दत्त *दत्त,
+		ध्रुव संरचना rect *clip, ध्रुव संरचना redraw_context *ctx)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (bmp->bmp->decoded == false) {
-		bmp_result res;
+	यदि (bmp->bmp->decoded == false) {
+		bmp_परिणाम res;
 		res = bmp_decode(bmp->bmp);
 		/* allow short or incomplete image data giving a partial image*/
-		if ((res != BMP_OK) &&
-		    (res != BMP_INSUFFICIENT_DATA) &&
-		    (res != BMP_DATA_ERROR)) {
-			return false;
+		यदि ((res != BMP_OK) &&
+		    (res != BMP_INSUFFICIENT_दत्त) &&
+		    (res != BMP_दत्त_ERROR)) {
+			प्रत्यागम false;
 		}
 
-		bitmap_format_to_client(bmp->bitmap, &(bitmap_fmt_t) {
+		bitmap_format_गन्तव्यम्_client(bmp->bitmap, &(bitmap_fmt_t) {
 			.layout = BITMAP_LAYOUT_R8G8B8A8,
 		});
 		guit->bitmap->modified(bmp->bitmap);
 	}
 
-	if (data->repeat_x)
+	यदि (दत्त->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	यदि (दत्त->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	प्रत्यागम (ctx->plot->bitmap(ctx,
 				  bmp->bitmap,
-				  data->x, data->y,
-				  data->width, data->height,
-				  data->background_colour,
+				  दत्त->x, दत्त->y,
+				  दत्त->विस्तारः, दत्त->height,
+				  दत्त->background_रङ्गः,
 				  flags) == NSERROR_OK);
 }
 
 
-static void nsbmp_destroy(struct content *c)
+स्थिर शून्य nsbmp_destroy(संरचना content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 
 	bmp_finalise(bmp->bmp);
-	free(bmp->bmp);
+	मुक्त(bmp->bmp);
 }
 
 
-static nserror nsbmp_clone(const struct content *old, struct content **newc)
+स्थिर nserror nsbmp_clone(ध्रुव संरचना content *old, संरचना content **newc)
 {
 	nsbmp_content *new_bmp;
 	nserror error;
 
-	new_bmp = calloc(1, sizeof(nsbmp_content));
-	if (new_bmp == NULL)
-		return NSERROR_NOMEM;
+	new_bmp = शून्यस्मृतिं_देहि(1, परिमाण(nsbmp_content));
+	यदि (new_bmp == रिक्त)
+		प्रत्यागम NSERROR_NOMEM;
 
-	error = content__clone(old, &new_bmp->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_bmp->base);
-		return error;
+	error = content__clone(old, &new_bmp->आधारः);
+	यदि (error != NSERROR_OK) {
+		content_destroy(&new_bmp->आधारः);
+		प्रत्यागम error;
 	}
 
 	/* We "clone" the old content by replaying creation and conversion */
-	error = nsbmp_create_bmp_data(new_bmp);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_bmp->base);
-		return error;
+	error = nsbmp_create_bmp_दत्त(new_bmp);
+	यदि (error != NSERROR_OK) {
+		content_destroy(&new_bmp->आधारः);
+		प्रत्यागम error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY || 
-			old->status == CONTENT_STATUS_DONE) {
-		if (nsbmp_convert(&new_bmp->base) == false) {
-			content_destroy(&new_bmp->base);
-			return NSERROR_CLONE_FAILED;
+	यदि (old->स्थितिः == CONTENT_स्थितिः_READY || 
+			old->स्थितिः == CONTENT_स्थितिः_समाप्तम्) {
+		यदि (nsbmp_convert(&new_bmp->आधारः) == false) {
+			content_destroy(&new_bmp->आधारः);
+			प्रत्यागम NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_bmp;
+	*newc = (संरचना content *) new_bmp;
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-static void *nsbmp_get_internal(const struct content *c, void *context)
+स्थिर शून्य *nsbmp_get_आन्तरिकम्(ध्रुव संरचना content *c, शून्य *context)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	return bmp->bitmap;
+	प्रत्यागम bmp->bitmap;
 }
 
-static content_type nsbmp_content_type(void)
+स्थिर content_type nsbmp_content_type(शून्य)
 {
-	return CONTENT_IMAGE;
+	प्रत्यागम CONTENT_IMAGE;
 }
 
-static bool nsbmp_content_is_opaque(struct content *c)
+स्थिर bool nsbmp_content_is_opaque(संरचना content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	if (bmp->bitmap != NULL) {
-		return guit->bitmap->get_opaque(bmp->bitmap);
+	यदि (bmp->bitmap != रिक्त) {
+		प्रत्यागम guit->bitmap->get_opaque(bmp->bitmap);
 	}
 
-	return false;
+	प्रत्यागम false;
 }
 
-static const content_handler nsbmp_content_handler = {
+स्थिर ध्रुव content_handler nsbmp_content_handler = {
 	.create = nsbmp_create,
-	.data_complete = nsbmp_convert,
+	.दत्त_complete = nsbmp_convert,
 	.destroy = nsbmp_destroy,
 	.redraw = nsbmp_redraw,
 	.clone = nsbmp_clone,
-	.get_internal = nsbmp_get_internal,
+	.get_आन्तरिकम् = nsbmp_get_आन्तरिकम्,
 	.type = nsbmp_content_type,
 	.is_opaque = nsbmp_content_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsbmp_types[] = {
+स्थिर ध्रुव वर्ण *nsbmp_types[] = {
 	"application/bmp",
 	"application/preview",
 	"application/x-bmp",
@@ -304,4 +304,4 @@ static const char *nsbmp_types[] = {
 	"image/x-xbitmap"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsbmp, nsbmp_types, nsbmp_content_handler);
+CONTENT_FACTORY_पञ्जिकाकोशः_TYPES(nsbmp, nsbmp_types, nsbmp_content_handler);

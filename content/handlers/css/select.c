@@ -16,123 +16,123 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <string.h>
-#include <strings.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "netsurf/url_db.h"
-#include "desktop/system_colour.h"
+#अन्तर्भाव "utils/nsoption.h"
+#अन्तर्भाव "utils/corestrings.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/nsurl.h"
+#अन्तर्भाव "netsurf/plot_style.h"
+#अन्तर्भाव "netsurf/url_db.h"
+#अन्तर्भाव "desktop/system_colour.h"
 
-#include "css/internal.h"
-#include "css/hints.h"
-#include "css/select.h"
+#अन्तर्भाव "css/internal.h"
+#अन्तर्भाव "css/hints.h"
+#अन्तर्भाव "css/select.h"
 
-static css_error node_name(void *pw, void *node, css_qname *qname);
-static css_error node_classes(void *pw, void *node,
+स्थिर css_error ग्रन्थिः_name(शून्य *pw, शून्य *ग्रन्थिः, css_qname *qname);
+स्थिर css_error ग्रन्थिः_classes(शून्य *pw, शून्य *ग्रन्थिः,
 		lwc_string ***classes, uint32_t *n_classes);
-static css_error node_id(void *pw, void *node, lwc_string **id);
-static css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent);
-static css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error parent_node(void *pw, void *node, void **parent);
-static css_error sibling_node(void *pw, void *node, void **sibling);
-static css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_class(void *pw, void *node,
-		lwc_string *name, bool *match);
-static css_error node_has_id(void *pw, void *node,
-		lwc_string *name, bool *match);
-static css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_is_root(void *pw, void *node, bool *match);
-static css_error node_count_siblings(void *pw, void *node,
-		bool same_name, bool after, int32_t *count);
-static css_error node_is_empty(void *pw, void *node, bool *match);
-static css_error node_is_link(void *pw, void *node, bool *match);
-static css_error node_is_hover(void *pw, void *node, bool *match);
-static css_error node_is_active(void *pw, void *node, bool *match);
-static css_error node_is_focus(void *pw, void *node, bool *match);
-static css_error node_is_enabled(void *pw, void *node, bool *match);
-static css_error node_is_disabled(void *pw, void *node, bool *match);
-static css_error node_is_checked(void *pw, void *node, bool *match);
-static css_error node_is_target(void *pw, void *node, bool *match);
-static css_error node_is_lang(void *pw, void *node,
-		lwc_string *lang, bool *match);
-static css_error ua_default_for_property(void *pw, uint32_t property,
+स्थिर css_error ग्रन्थिः_id(शून्य *pw, शून्य *ग्रन्थिः, lwc_string **id);
+स्थिर css_error named_parent_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, शून्य **parent);
+स्थिर css_error named_sibling_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, शून्य **sibling);
+स्थिर css_error named_generic_sibling_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, शून्य **sibling);
+स्थिर css_error parent_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः, शून्य **parent);
+स्थिर css_error sibling_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः, शून्य **sibling);
+स्थिर css_error ग्रन्थिः_has_name(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_class(शून्य *pw, शून्य *ग्रन्थिः,
+		lwc_string *name, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_id(शून्य *pw, शून्य *ग्रन्थिः,
+		lwc_string *name, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_attribute(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_attribute_equal(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_attribute_dashmatch(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_attribute_includes(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_attribute_उपसर्गः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_attribute_suffix(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_has_attribute_substring(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_मूलम्(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_गणनम्_siblings(शून्य *pw, शून्य *ग्रन्थिः,
+		bool same_name, bool after, int32_t *गणनम्);
+स्थिर css_error ग्रन्थिः_is_रिक्तानि(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_link(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_hover(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_सक्रिय(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_focus(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_enabled(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_disabled(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_checked(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_target(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्);
+स्थिर css_error ग्रन्थिः_is_lang(शून्य *pw, शून्य *ग्रन्थिः,
+		lwc_string *lang, bool *मेलनम्);
+स्थिर css_error ua_default_for_property(शून्य *pw, uint32_t property,
 		css_hint *hint);
-static css_error set_libcss_node_data(void *pw, void *node,
-		void *libcss_node_data);
-static css_error get_libcss_node_data(void *pw, void *node,
-		void **libcss_node_data);
+स्थिर css_error समुच्चयः_libcss_ग्रन्थिः_दत्त(शून्य *pw, शून्य *ग्रन्थिः,
+		शून्य *libcss_ग्रन्थिः_दत्त);
+स्थिर css_error get_libcss_ग्रन्थिः_दत्त(शून्य *pw, शून्य *ग्रन्थिः,
+		शून्य **libcss_ग्रन्थिः_दत्त);
 
 /**
  * Selection callback table for libcss
  */
-static css_select_handler selection_handler = {
-	CSS_SELECT_HANDLER_VERSION_1,
+स्थिर css_select_handler selection_handler = {
+	CSS_SELECT_HANDLER_संस्करणम्_1,
 
-	node_name,
-	node_classes,
-	node_id,
-	named_ancestor_node,
-	named_parent_node,
-	named_sibling_node,
-	named_generic_sibling_node,
-	parent_node,
-	sibling_node,
-	node_has_name,
-	node_has_class,
-	node_has_id,
-	node_has_attribute,
-	node_has_attribute_equal,
-	node_has_attribute_dashmatch,
-	node_has_attribute_includes,
-	node_has_attribute_prefix,
-	node_has_attribute_suffix,
-	node_has_attribute_substring,
-	node_is_root,
-	node_count_siblings,
-	node_is_empty,
-	node_is_link,
-	node_is_visited,
-	node_is_hover,
-	node_is_active,
-	node_is_focus,
-	node_is_enabled,
-	node_is_disabled,
-	node_is_checked,
-	node_is_target,
-	node_is_lang,
-	node_presentational_hint,
+	ग्रन्थिः_name,
+	ग्रन्थिः_classes,
+	ग्रन्थिः_id,
+	named_ancestor_ग्रन्थिः,
+	named_parent_ग्रन्थिः,
+	named_sibling_ग्रन्थिः,
+	named_generic_sibling_ग्रन्थिः,
+	parent_ग्रन्थिः,
+	sibling_ग्रन्थिः,
+	ग्रन्थिः_has_name,
+	ग्रन्थिः_has_class,
+	ग्रन्थिः_has_id,
+	ग्रन्थिः_has_attribute,
+	ग्रन्थिः_has_attribute_equal,
+	ग्रन्थिः_has_attribute_dashmatch,
+	ग्रन्थिः_has_attribute_includes,
+	ग्रन्थिः_has_attribute_उपसर्गः,
+	ग्रन्थिः_has_attribute_suffix,
+	ग्रन्थिः_has_attribute_substring,
+	ग्रन्थिः_is_मूलम्,
+	ग्रन्थिः_गणनम्_siblings,
+	ग्रन्थिः_is_रिक्तानि,
+	ग्रन्थिः_is_link,
+	ग्रन्थिः_is_visited,
+	ग्रन्थिः_is_hover,
+	ग्रन्थिः_is_सक्रिय,
+	ग्रन्थिः_is_focus,
+	ग्रन्थिः_is_enabled,
+	ग्रन्थिः_is_disabled,
+	ग्रन्थिः_is_checked,
+	ग्रन्थिः_is_target,
+	ग्रन्थिः_is_lang,
+	ग्रन्थिः_presentational_hint,
 	ua_default_for_property,
-	set_libcss_node_data,
-	get_libcss_node_data,
+	समुच्चयः_libcss_ग्रन्थिः_दत्त,
+	get_libcss_ग्रन्थिः_दत्त,
 };
 
 /**
@@ -145,97 +145,97 @@ static css_select_handler selection_handler = {
  * \param allow_quirks  True to permit CSS parsing quirks
  * \return Pointer to stylesheet, or NULL on failure.
  */
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks)
+css_stylesheet *nscss_create_inline_style(ध्रुव uint8_t *दत्त, size_t len,
+		ध्रुव वर्ण *charset, ध्रुव वर्ण *url, bool allow_quirks)
 {
 	css_stylesheet_params params;
 	css_stylesheet *sheet;
 	css_error error;
 
-	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+	params.params_संस्करणम् = CSS_STYLESHEET_PARAMS_संस्करणम्_1;
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = रिक्त;
 	params.allow_quirks = allow_quirks;
 	params.inline_style = true;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
-	params.import = NULL;
-	params.import_pw = NULL;
-	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.resolve_pw = रिक्त;
+	params.import = रिक्त;
+	params.import_pw = रिक्त;
+	params.color = ns_system_रङ्गः;
+	params.color_pw = रिक्त;
+	params.font = रिक्त;
+	params.font_pw = रिक्त;
 
 	error = css_stylesheet_create(&params, &sheet);
-	if (error != CSS_OK) {
+	यदि (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "Failed creating sheet: %d", error);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
-	error = css_stylesheet_append_data(sheet, data, len);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	error = css_stylesheet_append_दत्त(sheet, दत्त, len);
+	यदि (error != CSS_OK && error != CSS_NEEDDATA) {
 		NSLOG(netsurf, INFO, "failed appending data: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
-	error = css_stylesheet_data_done(sheet);
-	if (error != CSS_OK) {
+	error = css_stylesheet_दत्त_समाप्तम्(sheet);
+	यदि (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "failed completing parse: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
-	return sheet;
+	प्रत्यागम sheet;
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
-static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+स्थिर शून्य nscss_dom_user_दत्त_handler(dom_ग्रन्थिः_operation operation,
+		dom_string *कुञ्चिका, शून्य *दत्त, संरचना dom_ग्रन्थिः *src,
+		संरचना dom_ग्रन्थिः *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
-			key) == false || data == NULL) {
-		return;
+	यदि (dom_string_isequal(corestring_dom_ns_कुञ्चिका_libcss_ग्रन्थिः_दत्त,
+			कुञ्चिका) == false || दत्त == रिक्त) {
+		प्रत्यागम;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_CLONED,
-				NULL, src, dst, data);
-		if (error != CSS_OK)
+	विकल्प (operation) {
+	पक्ष DOM_ग्रन्थिः_CLONED:
+		error = css_libcss_ग्रन्थिः_दत्त_handler(&selection_handler,
+				CSS_ग्रन्थिः_CLONED,
+				रिक्त, src, dst, दत्त);
+		यदि (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
-		break;
+		भङ्ग;
 
-	case DOM_NODE_RENAMED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_MODIFIED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	पक्ष DOM_ग्रन्थिः_RENAMED:
+		error = css_libcss_ग्रन्थिः_दत्त_handler(&selection_handler,
+				CSS_ग्रन्थिः_MODIFIED,
+				रिक्त, src, रिक्त, दत्त);
+		यदि (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
-		break;
+		भङ्ग;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_DELETED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	पक्ष DOM_ग्रन्थिः_IMPORTED:
+	पक्ष DOM_ग्रन्थिः_ADOPTED:
+	पक्ष DOM_ग्रन्थिः_DELETED:
+		error = css_libcss_ग्रन्थिः_दत्त_handler(&selection_handler,
+				CSS_ग्रन्थिः_DELETED,
+				रिक्त, src, रिक्त, दत्त);
+		यदि (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to delete libcss_node_data.");
-		break;
+		भङ्ग;
 
-	default:
+	स्वभाव:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		प्रतिज्ञा(0);
 	}
 }
 
@@ -250,36 +250,36 @@ static void nscss_dom_user_data_handler(dom_node_operation operation,
  * \return Pointer to selection results (containing computed styles),
  *         or NULL on failure
  */
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style)
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_ग्रन्थिः *n,
+		ध्रुव css_media *media,
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		ध्रुव css_stylesheet *inline_style)
 {
 	css_computed_style *composed;
 	css_select_results *styles;
-	int pseudo_element;
+	पूर्णाङ्क pseudo_element;
 	css_error error;
 
 	/* Select style for node */
 	error = css_select_style(ctx->ctx, n, unit_len_ctx, media, inline_style,
 			&selection_handler, ctx, &styles);
 
-	if (error != CSS_OK || styles == NULL) {
+	यदि (error != CSS_OK || styles == रिक्त) {
 		/* Failed selecting partial style -- bail out */
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
 	/* If there's a parent style, compose with partial to obtain
 	 * complete computed style for element */
-	if (ctx->parent_style != NULL) {
+	यदि (ctx->parent_style != रिक्त) {
 		/* Complete the computed style, by composing with the parent
 		 * element's style */
 		error = css_computed_style_compose(ctx->parent_style,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		यदि (error != CSS_OK) {
 			css_select_results_destroy(styles);
-			return NULL;
+			प्रत्यागम रिक्त;
 		}
 
 		/* Replace select_results style with composed style */
@@ -288,19 +288,19 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[CSS_PSEUDO_ELEMENT_NONE] = composed;
 	}
 
-	for (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
-			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
+	प्रति (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
+			pseudo_element < CSS_PSEUDO_ELEMENT_गणनम्;
 			pseudo_element++) {
 
-		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
-				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
+		यदि (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
+				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_पङ्क्तिः)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
-			continue;
+			अनुवर्त;
 
-		if (styles->styles[pseudo_element] == NULL)
+		यदि (styles->styles[pseudo_element] == रिक्त)
 			/* There were no rules concerning this pseudo element */
-			continue;
+			अनुवर्त;
 
 		/* Complete the pseudo element's computed style, by composing
 		 * with the base element's style */
@@ -308,11 +308,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				styles->styles[pseudo_element],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		यदि (error != CSS_OK) {
 			/* TODO: perhaps this shouldn't be quite so
 			 * catastrophic? */
 			css_select_results_destroy(styles);
-			return NULL;
+			प्रत्यागम रिक्त;
 		}
 
 		/* Replace select_results style with composed style */
@@ -320,7 +320,7 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[pseudo_element] = composed;
 	}
 
-	return styles;
+	प्रत्यागम styles;
 }
 
 /**
@@ -332,16 +332,16 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
  * \return Pointer to blank style, or NULL on failure
  */
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent)
+		ध्रुव css_unit_ctx *unit_len_ctx,
+		ध्रुव css_computed_style *parent)
 {
 	css_computed_style *partial, *composed;
 	css_error error;
 
 	error = css_select_default_style(ctx->ctx,
 			&selection_handler, ctx, &partial);
-	if (error != CSS_OK) {
-		return NULL;
+	यदि (error != CSS_OK) {
+		प्रत्यागम रिक्त;
 	}
 
 	/* TODO: Do we really need to compose?  Initial style shouldn't
@@ -349,12 +349,12 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
 	error = css_computed_style_compose(parent, partial,
 			unit_len_ctx, &composed);
 	css_computed_style_destroy(partial);
-	if (error != CSS_OK) {
+	यदि (error != CSS_OK) {
 		css_computed_style_destroy(composed);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
-	return composed;
+	प्रत्यागम composed;
 }
 
 /******************************************************************************
@@ -370,27 +370,27 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_name(void *pw, void *node, css_qname *qname)
+css_error ग्रन्थिः_name(शून्य *pw, शून्य *ग्रन्थिः, css_qname *qname)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *name;
 	dom_exception err;
 
-	err = dom_node_get_node_name(n, &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	err = dom_ग्रन्थिः_get_ग्रन्थिः_name(n, &name);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
-	qname->ns = NULL;
+	qname->ns = रिक्त;
 
 	err = dom_string_intern(name, &qname->name);
-	if (err != DOM_NO_ERR) {
+	यदि (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_NOMEM;
+		प्रत्यागम CSS_NOMEM;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -407,20 +407,20 @@ css_error node_name(void *pw, void *node, css_qname *qname)
  *       be allocated using the same allocator as used by libcss during style
  *       selection.
  */
-css_error node_classes(void *pw, void *node,
+css_error ग्रन्थिः_classes(शून्य *pw, शून्य *ग्रन्थिः,
 		lwc_string ***classes, uint32_t *n_classes)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_exception err;
 
-	*classes = NULL;
+	*classes = रिक्त;
 	*n_classes = 0;
 
 	err = dom_element_get_classes(n, classes, n_classes);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -432,29 +432,29 @@ css_error node_classes(void *pw, void *node,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_id(void *pw, void *node, lwc_string **id)
+css_error ग्रन्थिः_id(शून्य *pw, शून्य *ग्रन्थिः, lwc_string **id)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *attr;
 	dom_exception err;
 
-	*id = NULL;
+	*id = रिक्त;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
-	if (attr != NULL) {
+	यदि (attr != रिक्त) {
 		err = dom_string_intern(attr, id);
-		if (err != DOM_NO_ERR) {
+		यदि (err != DOM_NO_ERR) {
 			dom_string_unref(attr);
-			return CSS_NOMEM;
+			प्रत्यागम CSS_NOMEM;
 		}
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -468,14 +468,14 @@ css_error node_id(void *pw, void *node, lwc_string **id)
  *
  * \post \a ancestor will contain the result, or NULL if there is no match
  */
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor)
+css_error named_ancestor_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, शून्य **ancestor)
 {
-	dom_element_named_ancestor_node(node, qname->name,
-			(struct dom_element **)ancestor);
-	dom_node_unref(*ancestor);
+	dom_element_named_ancestor_ग्रन्थिः(ग्रन्थिः, qname->name,
+			(संरचना dom_element **)ancestor);
+	dom_ग्रन्थिः_unref(*ancestor);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -489,14 +489,14 @@ css_error named_ancestor_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent)
+css_error named_parent_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, शून्य **parent)
 {
-	dom_element_named_parent_node(node, qname->name,
-			(struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_named_parent_ग्रन्थिः(ग्रन्थिः, qname->name,
+			(संरचना dom_element **)parent);
+	dom_ग्रन्थिः_unref(*parent);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -510,61 +510,61 @@ css_error named_parent_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_sibling_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, शून्य **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
+	dom_ग्रन्थिः *पूर्व;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = रिक्त;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_ग्रन्थिः_get_previous_sibling(n, &n);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	यावत् (n != रिक्त) {
+		dom_ग्रन्थिः_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ग्रन्थिः_get_ग्रन्थिः_type(n, &type);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		यदि (type == DOM_ELEMENT_ग्रन्थिः)
+			भङ्ग;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ग्रन्थिः_get_previous_sibling(n, &पूर्व);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_OK;
 		}
 
-		dom_node_unref(n);
-		n = prev;
+		dom_ग्रन्थिः_unref(n);
+		n = पूर्व;
 	}
 
-	if (n != NULL) {
+	यदि (n != रिक्त) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ग्रन्थिः_get_ग्रन्थिः_name(n, &name);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_ग्रन्थिः_unref(n);
 
-		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
+		यदि (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
 		}
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -578,57 +578,57 @@ css_error named_sibling_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_generic_sibling_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, शून्य **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
+	dom_ग्रन्थिः *पूर्व;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = रिक्त;
 
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_ग्रन्थिः_get_previous_sibling(n, &n);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	यावत् (n != रिक्त) {
+		dom_ग्रन्थिः_type type;
 		dom_string *name;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ग्रन्थिः_get_ग्रन्थिः_type(n, &type);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
-			err = dom_node_get_node_name(n, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(n);
-				return CSS_OK;
+		यदि (type == DOM_ELEMENT_ग्रन्थिः) {
+			err = dom_ग्रन्थिः_get_ग्रन्थिः_name(n, &name);
+			यदि (err != DOM_NO_ERR) {
+				dom_ग्रन्थिः_unref(n);
+				प्रत्यागम CSS_OK;
 			}
 
-			if (dom_string_caseless_lwc_isequal(name,
+			यदि (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
-				dom_node_unref(n);
+				dom_ग्रन्थिः_unref(n);
 				*sibling = n;
-				break;
+				भङ्ग;
 			}
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ग्रन्थिः_get_previous_sibling(n, &पूर्व);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_OK;
 		}
 
-		dom_node_unref(n);
-		n = prev;
+		dom_ग्रन्थिः_unref(n);
+		n = पूर्व;
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -641,12 +641,12 @@ css_error named_generic_sibling_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error parent_node(void *pw, void *node, void **parent)
+css_error parent_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः, शून्य **parent)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_parent_ग्रन्थिः(ग्रन्थिः, (संरचना dom_element **)parent);
+	dom_ग्रन्थिः_unref(*parent);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -659,49 +659,49 @@ css_error parent_node(void *pw, void *node, void **parent)
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error sibling_node(void *pw, void *node, void **sibling)
+css_error sibling_ग्रन्थिः(शून्य *pw, शून्य *ग्रन्थिः, शून्य **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
+	dom_ग्रन्थिः *पूर्व;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = रिक्त;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_ग्रन्थिः_get_previous_sibling(n, &n);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	यावत् (n != रिक्त) {
+		dom_ग्रन्थिः_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ग्रन्थिः_get_ग्रन्थिः_type(n, &type);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		यदि (type == DOM_ELEMENT_ग्रन्थिः)
+			भङ्ग;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ग्रन्थिः_get_previous_sibling(n, &पूर्व);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_OK;
 		}
 
-		dom_node_unref(n);
-		n = prev;
+		dom_ग्रन्थिः_unref(n);
+		n = पूर्व;
 	}
 
-	if (n != NULL) {
+	यदि (n != रिक्त) {
 		/** \todo Sort out reference counting */
-		dom_node_unref(n);
+		dom_ग्रन्थिः_unref(n);
 
 		*sibling = n;
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -715,28 +715,28 @@ css_error sibling_node(void *pw, void *node, void **sibling)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error ग्रन्थिः_has_name(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, bool *मेलनम्)
 {
 	nscss_select_ctx *ctx = pw;
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 
-	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
-			lwc_error_ok && *match == false) {
+	यदि (lwc_string_isequal(qname->name, ctx->universal, मेलनम्) ==
+			lwc_error_ok && *मेलनम् == false) {
 		dom_string *name;
 		dom_exception err;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR)
-			return CSS_OK;
+		err = dom_ग्रन्थिः_get_ग्रन्थिः_name(n, &name);
+		यदि (err != DOM_NO_ERR)
+			प्रत्यागम CSS_OK;
 
 		/* Element names are case insensitive in HTML */
-		*match = dom_string_caseless_lwc_isequal(name, qname->name);
+		*मेलनम् = dom_string_caseless_lwc_isequal(name, qname->name);
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -750,19 +750,19 @@ css_error node_has_name(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_class(void *pw, void *node,
-		lwc_string *name, bool *match)
+css_error ग्रन्थिः_has_class(शून्य *pw, शून्य *ग्रन्थिः,
+		lwc_string *name, bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_exception err;
 
 	/** \todo: Ensure that libdom performs case-insensitive
 	 * matching in quirks mode */
-	err = dom_element_has_class(n, name, match);
+	err = dom_element_has_class(n, name, मेलनम्);
 
-	assert(err == DOM_NO_ERR);
+	प्रतिज्ञा(err == DOM_NO_ERR);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -776,27 +776,27 @@ css_error node_has_class(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_id(void *pw, void *node,
-		lwc_string *name, bool *match)
+css_error ग्रन्थिः_has_id(शून्य *pw, शून्य *ग्रन्थिः,
+		lwc_string *name, bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *attr;
 	dom_exception err;
 
-	*match = false;
+	*मेलनम् = false;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_OK;
 
-	if (attr != NULL) {
-		*match = dom_string_lwc_isequal(attr, name);
+	यदि (attr != रिक्त) {
+		*मेलनम् = dom_string_lwc_isequal(attr, name);
 
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -811,28 +811,28 @@ css_error node_has_id(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error ग्रन्थिः_has_attribute(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *name;
 	dom_exception err;
 
 	err = dom_string_create_interned(
-			(const uint8_t *) lwc_string_data(qname->name),
-			lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+			(ध्रुव uint8_t *) lwc_string_दत्त(qname->name),
+			lwc_string_दीर्घता(qname->name), &name);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
-	err = dom_element_has_attribute(n, name, match);
-	if (err != DOM_NO_ERR) {
+	err = dom_element_has_attribute(n, name, मेलनम्);
+	यदि (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_OK;
+		प्रत्यागम CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -848,42 +848,42 @@ css_error node_has_attribute(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ग्रन्थिः_has_attribute_equal(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_दीर्घता(मानम्);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	यदि (vlen == 0) {
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ध्रुव uint8_t *) lwc_string_दत्त(qname->name),
+		lwc_string_दीर्घता(qname->name), &name);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*मेलनम् = dom_string_caseless_lwc_isequal(atr_val, मानम्);
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -900,55 +900,55 @@ css_error node_has_attribute_equal(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ग्रन्थिः_has_attribute_dashmatch(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_दीर्घता(मानम्);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	यदि (vlen == 0) {
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ध्रुव uint8_t *) lwc_string_दत्त(qname->name),
+		lwc_string_दीर्घता(qname->name), &name);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*मेलनम् = dom_string_caseless_lwc_isequal(atr_val, मानम्);
 
 	/* check for dashmatch */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	यदि (*मेलनम् == false) {
+		ध्रुव वर्ण *vdata = lwc_string_दत्त(मानम्);
+		ध्रुव वर्ण *दत्त = (ध्रुव वर्ण *) dom_string_दत्त(atr_val);
+		size_t len = dom_string_byte_दीर्घता(atr_val);
 
-		if (len > vlen && data[vlen] == '-' &&
-		    strncasecmp(data, vdata, vlen) == 0) {
-				*match = true;
+		यदि (len > vlen && दत्त[vlen] == '-' &&
+		    strncasecmp(दत्त, vdata, vlen) == 0) {
+				*मेलनम् = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -965,52 +965,52 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ग्रन्थिः_has_attribute_includes(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
-	size_t vlen = lwc_string_length(value);
-	const char *p;
-	const char *start;
-	const char *end;
+	size_t vlen = lwc_string_दीर्घता(मानम्);
+	ध्रुव वर्ण *p;
+	ध्रुव वर्ण *start;
+	ध्रुव वर्ण *अन्तः;
 
-	*match = false;
+	*मेलनम् = false;
 
-	if (vlen == 0) {
-		return CSS_OK;
+	यदि (vlen == 0) {
+		प्रत्यागम CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ध्रुव uint8_t *) lwc_string_दत्त(qname->name),
+		lwc_string_दीर्घता(qname->name), &name);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for match */
-	start = (const char *) dom_string_data(atr_val);
-	end = start + dom_string_byte_length(atr_val);
+	start = (ध्रुव वर्ण *) dom_string_दत्त(atr_val);
+	अन्तः = start + dom_string_byte_दीर्घता(atr_val);
 
-	for (p = start; p <= end; p++) {
-		if (*p == ' ' || *p == '\0') {
-			if ((size_t) (p - start) == vlen &&
+	प्रति (p = start; p <= अन्तः; p++) {
+		यदि (*p == ' ' || *p == '\0') {
+			यदि ((size_t) (p - start) == vlen &&
 			    strncasecmp(start,
-					lwc_string_data(value),
+					lwc_string_दत्त(मानम्),
 					vlen) == 0) {
-				*match = true;
-				break;
+				*मेलनम् = true;
+				भङ्ग;
 			}
 
 			start = p + 1;
@@ -1019,7 +1019,7 @@ css_error node_has_attribute_includes(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1036,54 +1036,54 @@ css_error node_has_attribute_includes(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ग्रन्थिः_has_attribute_उपसर्गः(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_दीर्घता(मानम्);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	यदि (vlen == 0) {
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ध्रुव uint8_t *) lwc_string_दत्त(qname->name),
+		lwc_string_दीर्घता(qname->name), &name);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*मेलनम् = dom_string_caseless_lwc_isequal(atr_val, मानम्);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	यदि (*मेलनम् == false) {
+		ध्रुव वर्ण *दत्त = (ध्रुव वर्ण *) dom_string_दत्त(atr_val);
+		size_t len = dom_string_byte_दीर्घता(atr_val);
 
-		if ((len >= vlen) &&
-		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
-			*match = true;
+		यदि ((len >= vlen) &&
+		    (strncasecmp(दत्त, lwc_string_दत्त(मानम्), vlen) == 0)) {
+			*मेलनम् = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1100,50 +1100,50 @@ css_error node_has_attribute_prefix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ग्रन्थिः_has_attribute_suffix(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_दीर्घता(मानम्);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	यदि (vlen == 0) {
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ध्रुव uint8_t *) lwc_string_दत्त(qname->name),
+		lwc_string_दीर्घता(qname->name), &name);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*मेलनम् = dom_string_caseless_lwc_isequal(atr_val, मानम्);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	यदि (*मेलनम् == false) {
+		ध्रुव वर्ण *दत्त = (ध्रुव वर्ण *) dom_string_दत्त(atr_val);
+		size_t len = dom_string_byte_दीर्घता(atr_val);
 
-		const char *start = (char *) data + len - vlen;
+		ध्रुव वर्ण *start = (वर्ण *) दत्त + len - vlen;
 
-		if ((len >= vlen) &&
-		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
-			*match = true;
+		यदि ((len >= vlen) &&
+		    (strncasecmp(start, lwc_string_दत्त(मानम्), vlen) == 0)) {
+			*मेलनम् = true;
 		}
 
 
@@ -1151,7 +1151,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1168,53 +1168,53 @@ css_error node_has_attribute_suffix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ग्रन्थिः_has_attribute_substring(शून्य *pw, शून्य *ग्रन्थिः,
+		ध्रुव css_qname *qname, lwc_string *मानम्,
+		bool *मेलनम्)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_दीर्घता(मानम्);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	यदि (vlen == 0) {
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ध्रुव uint8_t *) lwc_string_दत्त(qname->name),
+		lwc_string_दीर्घता(qname->name), &name);
+	यदि (err != DOM_NO_ERR)
+		प्रत्यागम CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*मेलनम् = false;
+		प्रत्यागम CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*मेलनम् = dom_string_caseless_lwc_isequal(atr_val, मानम्);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *start = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
-		const char *last_start = start + len - vlen;
+	यदि (*मेलनम् == false) {
+		ध्रुव वर्ण *vdata = lwc_string_दत्त(मानम्);
+		ध्रुव वर्ण *start = (ध्रुव वर्ण *) dom_string_दत्त(atr_val);
+		size_t len = dom_string_byte_दीर्घता(atr_val);
+		ध्रुव वर्ण *चरमः_start = start + len - vlen;
 
-		if (len >= vlen) {
-			while (start <= last_start) {
-				if (strncasecmp(start, vdata,
+		यदि (len >= vlen) {
+			यावत् (start <= चरमः_start) {
+				यदि (strncasecmp(start, vdata,
 						vlen) == 0) {
-					*match = true;
-					break;
+					*मेलनम् = true;
+					भङ्ग;
 				}
 
 				start++;
@@ -1224,7 +1224,7 @@ css_error node_has_attribute_substring(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1237,71 +1237,71 @@ css_error node_has_attribute_substring(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_root(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_मूलम्(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
-	dom_node *n = node;
-	dom_node *parent;
-	dom_node_type type;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
+	dom_ग्रन्थिः *parent;
+	dom_ग्रन्थिः_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_ग्रन्थिः_get_parent_ग्रन्थिः(n, &parent);
+	यदि (err != DOM_NO_ERR) {
+		प्रत्यागम CSS_NOMEM;
 	}
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	यदि (parent != रिक्त) {
+		err = dom_ग्रन्थिः_get_ग्रन्थिः_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_ग्रन्थिः_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return CSS_NOMEM;
+		यदि (err != DOM_NO_ERR)
+			प्रत्यागम CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
-			*match = false;
-			return CSS_OK;
+		यदि (type != DOM_DOCUMENT_ग्रन्थिः) {
+			*मेलनम् = false;
+			प्रत्यागम CSS_OK;
 		}
 	}
 
-	*match = true;
+	*मेलनम् = true;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
-static int
-node_count_siblings_check(dom_node *node,
+स्थिर पूर्णाङ्क
+ग्रन्थिः_गणनम्_siblings_check(dom_ग्रन्थिः *ग्रन्थिः,
 			  bool check_name,
 			  dom_string *name)
 {
-	dom_node_type type;
-	int ret = 0;
+	dom_ग्रन्थिः_type type;
+	पूर्णाङ्क ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
-		return 0;
+	यदि (ग्रन्थिः == रिक्त)
+		प्रत्यागम 0;
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
-		return 0;
+	exc = dom_ग्रन्थिः_get_ग्रन्थिः_type(ग्रन्थिः, &type);
+	यदि ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_ग्रन्थिः)) {
+		प्रत्यागम 0;
 	}
 
-	if (check_name) {
-		dom_string *node_name = NULL;
-		exc = dom_node_get_node_name(node, &node_name);
+	यदि (check_name) {
+		dom_string *ग्रन्थिः_name = रिक्त;
+		exc = dom_ग्रन्थिः_get_ग्रन्थिः_name(ग्रन्थिः, &ग्रन्थिः_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		यदि ((exc == DOM_NO_ERR) && (ग्रन्थिः_name != रिक्त)) {
 
-			if (dom_string_caseless_isequal(name,
-							node_name)) {
+			यदि (dom_string_caseless_isequal(name,
+							ग्रन्थिः_name)) {
 				ret = 1;
 			}
-			dom_string_unref(node_name);
+			dom_string_unref(ग्रन्थिः_name);
 		}
-	} else {
+	} अन्यथा {
 		ret = 1;
 	}
 
-	return ret;
+	प्रत्यागम ret;
 }
 
 /**
@@ -1316,58 +1316,58 @@ node_count_siblings_check(dom_node *node,
  *
  * \post \a count will contain the number of siblings
  */
-css_error node_count_siblings(void *pw, void *n, bool same_name,
-		bool after, int32_t *count)
+css_error ग्रन्थिः_गणनम्_siblings(शून्य *pw, शून्य *n, bool same_name,
+		bool after, int32_t *गणनम्)
 {
 	int32_t cnt = 0;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *ग्रन्थिः_name = रिक्त;
 
-	if (same_name) {
-		dom_node *node = n;
-		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-			return CSS_NOMEM;
+	यदि (same_name) {
+		dom_ग्रन्थिः *ग्रन्थिः = n;
+		exc = dom_ग्रन्थिः_get_ग्रन्थिः_name(ग्रन्थिः, &ग्रन्थिः_name);
+		यदि ((exc != DOM_NO_ERR) || (ग्रन्थिः_name == रिक्त)) {
+			प्रत्यागम CSS_NOMEM;
 		}
 	}
 
-	if (after) {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+	यदि (after) {
+		dom_ग्रन्थिः *ग्रन्थिः = dom_ग्रन्थिः_ref(n);
+		dom_ग्रन्थिः *अग्र;
 
-		do {
-			exc = dom_node_get_next_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		कुरु {
+			exc = dom_ग्रन्थिः_get_अग्र_sibling(ग्रन्थिः, &अग्र);
+			यदि ((exc != DOM_NO_ERR))
+				भङ्ग;
 
-			dom_node_unref(node);
-			node = next;
+			dom_ग्रन्थिः_unref(ग्रन्थिः);
+			ग्रन्थिः = अग्र;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
-	} else {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+			cnt += ग्रन्थिः_गणनम्_siblings_check(ग्रन्थिः, same_name, ग्रन्थिः_name);
+		} यावत् (ग्रन्थिः != रिक्त);
+	} अन्यथा {
+		dom_ग्रन्थिः *ग्रन्थिः = dom_ग्रन्थिः_ref(n);
+		dom_ग्रन्थिः *अग्र;
 
-		do {
-			exc = dom_node_get_previous_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		कुरु {
+			exc = dom_ग्रन्थिः_get_previous_sibling(ग्रन्थिः, &अग्र);
+			यदि ((exc != DOM_NO_ERR))
+				भङ्ग;
 
-			dom_node_unref(node);
-			node = next;
+			dom_ग्रन्थिः_unref(ग्रन्थिः);
+			ग्रन्थिः = अग्र;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
+			cnt += ग्रन्थिः_गणनम्_siblings_check(ग्रन्थिः, same_name, ग्रन्थिः_name);
 
-		} while (node != NULL);
+		} यावत् (ग्रन्थिः != रिक्त);
 	}
 
-	if (node_name != NULL) {
-		dom_string_unref(node_name);
+	यदि (ग्रन्थिः_name != रिक्त) {
+		dom_string_unref(ग्रन्थिः_name);
 	}
 
-	*count = cnt;
-	return CSS_OK;
+	*गणनम् = cnt;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1380,43 +1380,43 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
  *
  * \post \a match will contain true if the node is empty and false otherwise.
  */
-css_error node_is_empty(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_रिक्तानि(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
-	dom_node *n = node, *next;
+	dom_ग्रन्थिः *n = ग्रन्थिः, *अग्र;
 	dom_exception err;
 
-	*match = true;
+	*मेलनम् = true;
 
-	err = dom_node_get_first_child(n, &n);
-	if (err != DOM_NO_ERR) {
-		return CSS_BADPARM;
+	err = dom_ग्रन्थिः_get_first_child(n, &n);
+	यदि (err != DOM_NO_ERR) {
+		प्रत्यागम CSS_BADPARM;
 	}
 
-	while (n != NULL) {
-		dom_node_type ntype;
-		err = dom_node_get_node_type(n, &ntype);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+	यावत् (n != रिक्त) {
+		dom_ग्रन्थिः_type ntype;
+		err = dom_ग्रन्थिः_get_ग्रन्थिः_type(n, &ntype);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
-		    ntype == DOM_TEXT_NODE) {
-			*match = false;
-			dom_node_unref(n);
-			break;
+		यदि (ntype == DOM_ELEMENT_ग्रन्थिः ||
+		    ntype == DOM_TEXT_ग्रन्थिः) {
+			*मेलनम् = false;
+			dom_ग्रन्थिः_unref(n);
+			भङ्ग;
 		}
 
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+		err = dom_ग्रन्थिः_get_अग्र_sibling(n, &अग्र);
+		यदि (err != DOM_NO_ERR) {
+			dom_ग्रन्थिः_unref(n);
+			प्रत्यागम CSS_BADPARM;
 		}
-		dom_node_unref(n);
-		n = next;
+		dom_ग्रन्थिः_unref(n);
+		n = अग्र;
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1429,32 +1429,32 @@ css_error node_is_empty(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_link(void *pw, void *n, bool *match)
+css_error ग्रन्थिः_is_link(शून्य *pw, शून्य *n, bool *मेलनम्)
 {
-	dom_node *node = n;
+	dom_ग्रन्थिः *ग्रन्थिः = n;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *ग्रन्थिः_name = रिक्त;
 
-	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_ग्रन्थिः_get_ग्रन्थिः_name(ग्रन्थिः, &ग्रन्थिः_name);
+	यदि ((exc != DOM_NO_ERR) || (ग्रन्थिः_name == रिक्त)) {
+		प्रत्यागम CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	यदि (dom_string_caseless_lwc_isequal(ग्रन्थिः_name, corestring_lwc_a)) {
 		bool has_href;
-		exc = dom_element_has_attribute(node, corestring_dom_href,
+		exc = dom_element_has_attribute(ग्रन्थिः, corestring_dom_href,
 				&has_href);
-		if ((exc == DOM_NO_ERR) && (has_href)) {
-			*match = true;
-		} else {
-			*match = false;
+		यदि ((exc == DOM_NO_ERR) && (has_href)) {
+			*मेलनम् = true;
+		} अन्यथा {
+			*मेलनम् = false;
 		}
-	} else {
-		*match = false;
+	} अन्यथा {
+		*मेलनम् = false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(ग्रन्थिः_name);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1468,63 +1468,63 @@ css_error node_is_link(void *pw, void *n, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_visited(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_visited(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
 	nserror error;
-	const struct url_data *data;
+	ध्रुव संरचना url_दत्त *दत्त;
 
 	dom_exception exc;
-	dom_node *n = node;
-	dom_string *s = NULL;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
+	dom_string *s = रिक्त;
 
-	*match = false;
+	*मेलनम् = false;
 
-	exc = dom_node_get_node_name(n, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_ग्रन्थिः_get_ग्रन्थिः_name(n, &s);
+	यदि ((exc != DOM_NO_ERR) || (s == रिक्त)) {
+		प्रत्यागम CSS_NOMEM;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
+	यदि (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
 		/* Can't be visited; not ancher element */
 		dom_string_unref(s);
-		return CSS_OK;
+		प्रत्यागम CSS_OK;
 	}
 
 	/* Finished with node name string */
 	dom_string_unref(s);
-	s = NULL;
+	s = रिक्त;
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
+	यदि ((exc != DOM_NO_ERR) || (s == रिक्त)) {
 		/* Can't be visited; not got a URL */
-		return CSS_OK;
+		प्रत्यागम CSS_OK;
 	}
 
 	/* Make href absolute */
 	/* TODO: this duplicates what we do for box->href
 	 *       should we put the absolute URL on the dom node? */
-	error = nsurl_join(ctx->base_url, dom_string_data(s), &url);
+	error = nsurl_join(ctx->आधारः_url, dom_string_दत्त(s), &url);
 
 	/* Finished with href string */
 	dom_string_unref(s);
 
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		/* Couldn't make nsurl object */
-		return CSS_NOMEM;
+		प्रत्यागम CSS_NOMEM;
 	}
 
-	data = urldb_get_url_data(url);
+	दत्त = urldb_get_url_दत्त(url);
 
 	/* Visited if in the db and has
 	 * non-zero visit count */
-	if (data != NULL && data->visits > 0)
-		*match = true;
+	यदि (दत्त != रिक्त && दत्त->visits > 0)
+		*मेलनम् = true;
 
 	nsurl_unref(url);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1537,13 +1537,13 @@ css_error node_is_visited(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_hover(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_hover(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
 	/** \todo Support hovering */
 
-	*match = false;
+	*मेलनम् = false;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1556,13 +1556,13 @@ css_error node_is_hover(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_active(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_सक्रिय(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
 	/** \todo Support active nodes */
 
-	*match = false;
+	*मेलनम् = false;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1575,13 +1575,13 @@ css_error node_is_active(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_focus(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_focus(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
 	/** \todo Support focussed nodes */
 
-	*match = false;
+	*मेलनम् = false;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1594,13 +1594,13 @@ css_error node_is_focus(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is enabled and false otherwise.
  */
-css_error node_is_enabled(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_enabled(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
 	/** \todo Support enabled nodes */
 
-	*match = false;
+	*मेलनम् = false;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1613,13 +1613,13 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is disabled and false otherwise.
  */
-css_error node_is_disabled(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_disabled(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
 	/** \todo Support disabled nodes */
 
-	*match = false;
+	*मेलनम् = false;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1632,13 +1632,13 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is checked and false otherwise.
  */
-css_error node_is_checked(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_checked(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
 	/** \todo Support checked nodes */
 
-	*match = false;
+	*मेलनम् = false;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1651,13 +1651,13 @@ css_error node_is_checked(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node matches and false otherwise.
  */
-css_error node_is_target(void *pw, void *node, bool *match)
+css_error ग्रन्थिः_is_target(शून्य *pw, शून्य *ग्रन्थिः, bool *मेलनम्)
 {
 	/** \todo Support target */
 
-	*match = false;
+	*मेलनम् = false;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1671,14 +1671,14 @@ css_error node_is_target(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_lang(void *pw, void *node,
-		lwc_string *lang, bool *match)
+css_error ग्रन्थिः_is_lang(शून्य *pw, शून्य *ग्रन्थिः,
+		lwc_string *lang, bool *मेलनम्)
 {
 	/** \todo Support languages */
 
-	*match = false;
+	*मेलनम् = false;
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
 /**
@@ -1690,77 +1690,77 @@ css_error node_is_lang(void *pw, void *node,
  * \return CSS_OK       on success,
  *         CSS_INVALID  if the property should not have a user-agent default.
  */
-css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
+css_error ua_default_for_property(शून्य *pw, uint32_t property, css_hint *hint)
 {
-	if (property == CSS_PROP_COLOR) {
-		hint->data.color = 0xff000000;
-		hint->status = CSS_COLOR_COLOR;
-	} else if (property == CSS_PROP_FONT_FAMILY) {
-		hint->data.strings = NULL;
-		switch (nsoption_int(font_default)) {
-		case PLOT_FONT_FAMILY_SANS_SERIF:
-			hint->status = CSS_FONT_FAMILY_SANS_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_SERIF:
-			hint->status = CSS_FONT_FAMILY_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_MONOSPACE:
-			hint->status = CSS_FONT_FAMILY_MONOSPACE;
-			break;
-		case PLOT_FONT_FAMILY_CURSIVE:
-			hint->status = CSS_FONT_FAMILY_CURSIVE;
-			break;
-		case PLOT_FONT_FAMILY_FANTASY:
-			hint->status = CSS_FONT_FAMILY_FANTASY;
-			break;
+	यदि (property == CSS_PROP_COLOR) {
+		hint->दत्त.color = 0xff000000;
+		hint->स्थितिः = CSS_COLOR_COLOR;
+	} अन्यथा यदि (property == CSS_PROP_FONT_FAMILY) {
+		hint->दत्त.वाक्यानि = रिक्त;
+		विकल्प (nsoption_int(font_default)) {
+		पक्ष PLOT_FONT_FAMILY_SANS_SERIF:
+			hint->स्थितिः = CSS_FONT_FAMILY_SANS_SERIF;
+			भङ्ग;
+		पक्ष PLOT_FONT_FAMILY_SERIF:
+			hint->स्थितिः = CSS_FONT_FAMILY_SERIF;
+			भङ्ग;
+		पक्ष PLOT_FONT_FAMILY_MONOSPACE:
+			hint->स्थितिः = CSS_FONT_FAMILY_MONOSPACE;
+			भङ्ग;
+		पक्ष PLOT_FONT_FAMILY_CURSIVE:
+			hint->स्थितिः = CSS_FONT_FAMILY_CURSIVE;
+			भङ्ग;
+		पक्ष PLOT_FONT_FAMILY_FANTASY:
+			hint->स्थितिः = CSS_FONT_FAMILY_FANTASY;
+			भङ्ग;
 		}
-	} else if (property == CSS_PROP_QUOTES) {
+	} अन्यथा यदि (property == CSS_PROP_QUOTES) {
 		/** \todo Not exactly useful :) */
-		hint->data.strings = NULL;
-		hint->status = CSS_QUOTES_NONE;
-	} else if (property == CSS_PROP_VOICE_FAMILY) {
+		hint->दत्त.वाक्यानि = रिक्त;
+		hint->स्थितिः = CSS_QUOTES_NONE;
+	} अन्यथा यदि (property == CSS_PROP_VOICE_FAMILY) {
 		/** \todo Fix this when we have voice-family done */
-		hint->data.strings = NULL;
-		hint->status = 0;
-	} else {
-		return CSS_INVALID;
+		hint->दत्त.वाक्यानि = रिक्त;
+		hint->स्थितिः = 0;
+	} अन्यथा {
+		प्रत्यागम CSS_INVALID;
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
-css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
+css_error समुच्चयः_libcss_ग्रन्थिः_दत्त(शून्य *pw, शून्य *ग्रन्थिः, शून्य *libcss_ग्रन्थिः_दत्त)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_exception err;
-	void *old_node_data;
+	शून्य *old_ग्रन्थिः_दत्त;
 
 	/* Set this node's node data */
-	err = dom_node_set_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data, nscss_dom_user_data_handler,
-			(void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_ग्रन्थिः_समुच्चयः_user_दत्त(n,
+			corestring_dom_ns_कुञ्चिका_libcss_ग्रन्थिः_दत्त,
+			libcss_ग्रन्थिः_दत्त, nscss_dom_user_दत्त_handler,
+			(शून्य *) &old_ग्रन्थिः_दत्त);
+	यदि (err != DOM_NO_ERR) {
+		प्रत्यागम CSS_NOMEM;
 	}
 
-	assert(old_node_data == NULL);
+	प्रतिज्ञा(old_ग्रन्थिः_दत्त == रिक्त);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
 
-css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
+css_error get_libcss_ग्रन्थिः_दत्त(शून्य *pw, शून्य *ग्रन्थिः, शून्य **libcss_ग्रन्थिः_दत्त)
 {
-	dom_node *n = node;
+	dom_ग्रन्थिः *n = ग्रन्थिः;
 	dom_exception err;
 
 	/* Get this node's node data */
-	err = dom_node_get_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_ग्रन्थिः_get_user_दत्त(n,
+			corestring_dom_ns_कुञ्चिका_libcss_ग्रन्थिः_दत्त,
+			libcss_ग्रन्थिः_दत्त);
+	यदि (err != DOM_NO_ERR) {
+		प्रत्यागम CSS_NOMEM;
 	}
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }
