@@ -34,87 +34,87 @@
  * layout_minmax_X() and layout_X().
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <dom/dom.h>
+#ضمن <assert.h>
+#ضمن <limits.h>
+#ضمن <stdbool.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <math.h>
+#ضمن <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/talloc.h"
-#include "utils/utils.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/nsurl.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/layout.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "css/utils.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
+#ضمن "utils/log.h"
+#ضمن "utils/talloc.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/nsoption.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/nsurl.h"
+#ضمن "netsurf/inttypes.h"
+#ضمن "netsurf/content.h"
+#ضمن "netsurf/browser_window.h"
+#ضمن "netsurf/layout.h"
+#ضمن "content/content.h"
+#ضمن "content/content_protected.h"
+#ضمن "css/utils.h"
+#ضمن "desktop/scrollbar.h"
+#ضمن "desktop/textarea.h"
 
-#include "html/html.h"
-#include "html/html_save.h"
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
-#include "html/layout.h"
-#include "html/layout_internal.h"
-#include "html/table.h"
+#ضمن "html/html.h"
+#ضمن "html/html_save.h"
+#ضمن "html/private.h"
+#ضمن "html/box.h"
+#ضمن "html/box_inspect.h"
+#ضمن "html/font.h"
+#ضمن "html/form_internal.h"
+#ضمن "html/layout.h"
+#ضمن "html/layout_internal.h"
+#ضمن "html/table.h"
 
 /** Array of per-side access functions for computed style margins. */
-const css_len_func margin_funcs[4] = {
-	[TOP]    = css_computed_margin_top,
-	[RIGHT]  = css_computed_margin_right,
+ثابت css_len_func margin_funcs[4] = {
+	[بالاترین_2]    = css_computed_margin_بالاترین,
+	[راست_2]  = css_computed_margin_راست,
 	[BOTTOM] = css_computed_margin_bottom,
-	[LEFT]   = css_computed_margin_left,
+	[چپ_2]   = css_computed_margin_چپ,
 };
 
 /** Array of per-side access functions for computed style paddings. */
-const css_len_func padding_funcs[4] = {
-	[TOP]    = css_computed_padding_top,
-	[RIGHT]  = css_computed_padding_right,
+ثابت css_len_func padding_funcs[4] = {
+	[بالاترین_2]    = css_computed_padding_بالاترین,
+	[راست_2]  = css_computed_padding_راست,
 	[BOTTOM] = css_computed_padding_bottom,
-	[LEFT]   = css_computed_padding_left,
+	[چپ_2]   = css_computed_padding_چپ,
 };
 
 /** Array of per-side access functions for computed style border_widths. */
-const css_len_func border_width_funcs[4] = {
-	[TOP]    = css_computed_border_top_width,
-	[RIGHT]  = css_computed_border_right_width,
-	[BOTTOM] = css_computed_border_bottom_width,
-	[LEFT]   = css_computed_border_left_width,
+ثابت css_len_func border_عرض_funcs[4] = {
+	[بالاترین_2]    = css_computed_border_بالاترین_عرض,
+	[راست_2]  = css_computed_border_راست_عرض,
+	[BOTTOM] = css_computed_border_bottom_عرض,
+	[چپ_2]   = css_computed_border_چپ_عرض,
 };
 
 /** Array of per-side access functions for computed style border styles. */
-const css_border_style_func border_style_funcs[4] = {
-	[TOP]    = css_computed_border_top_style,
-	[RIGHT]  = css_computed_border_right_style,
+ثابت css_border_style_func border_style_funcs[4] = {
+	[بالاترین_2]    = css_computed_border_بالاترین_style,
+	[راست_2]  = css_computed_border_راست_style,
 	[BOTTOM] = css_computed_border_bottom_style,
-	[LEFT]   = css_computed_border_left_style,
+	[چپ_2]   = css_computed_border_چپ_style,
 };
 
 /** Array of per-side access functions for computed style border colors. */
-const css_border_color_func border_color_funcs[4] = {
-	[TOP]    = css_computed_border_top_color,
-	[RIGHT]  = css_computed_border_right_color,
+ثابت css_border_color_func border_color_funcs[4] = {
+	[بالاترین_2]    = css_computed_border_بالاترین_color,
+	[راست_2]  = css_computed_border_راست_color,
 	[BOTTOM] = css_computed_border_bottom_color,
-	[LEFT]   = css_computed_border_left_color,
+	[چپ_2]   = css_computed_border_چپ_color,
 };
 
 /* forward declaration to break cycles */
-static void layout_minmax_block(
-		struct box *block,
-		const struct gui_layout_table *font_func,
-		const html_content *content);
+ساكن فراغ layout_minmax_بلوک(
+		بنية box *بلوک,
+		ثابت بنية gui_layout_جدول *font_func,
+		ثابت html_content *content);
 
 /**
  * Compute the size of replaced boxes with auto dimensions, according to
@@ -130,92 +130,92 @@ static void layout_minmax_block(
  *
  * See CSS 2.1 sections 10.3 and 10.6.
  */
-static void
-layout_get_object_dimensions(struct box *box,
-			     int *width, int *height,
-			     int min_width, int max_width,
-			     int min_height, int max_height)
+ساكن فراغ
+layout_get_object_dimensions(بنية box *box,
+			     صحيح *عرض, صحيح *ارتفاع,
+			     صحيح min_عرض, صحيح max_عرض,
+			     صحيح min_ارتفاع, صحيح max_ارتفاع)
 {
-	assert(box->object != NULL);
-	assert(width != NULL && height != NULL);
+	أكد(box->object != عدم);
+	أكد(عرض != عدم && ارتفاع != عدم);
 
-	if (*width == AUTO && *height == AUTO) {
+	إذا (*عرض == AUTO && *ارتفاع == AUTO) {
 		/* No given dimensions */
 
 		bool scaled = false;
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		صحيح intrinsic_عرض = content_get_عرض(box->object);
+		صحيح intrinsic_ارتفاع = content_get_ارتفاع(box->object);
 
 		/* use intrinsic dimensions */
-		*width = intrinsic_width;
-		*height = intrinsic_height;
+		*عرض = intrinsic_عرض;
+		*ارتفاع = intrinsic_ارتفاع;
 
 		/* Deal with min/max-width first */
-		if (min_width >  0 && min_width > *width) {
-			*width = min_width;
+		إذا (min_عرض >  0 && min_عرض > *عرض) {
+			*عرض = min_عرض;
 			scaled = true;
 		}
-		if (max_width >= 0 && max_width < *width) {
-			*width = max_width;
+		إذا (max_عرض >= 0 && max_عرض < *عرض) {
+			*عرض = max_عرض;
 			scaled = true;
 		}
 
-		if (scaled && (intrinsic_width != 0)) {
+		إذا (scaled && (intrinsic_عرض != 0)) {
 			/* Update height */
-			*height = (*width * intrinsic_height) /
-					intrinsic_width;
+			*ارتفاع = (*عرض * intrinsic_ارتفاع) /
+					intrinsic_عرض;
 		}
 
 		scaled = false;
 		/* Deal with min/max-height */
-		if (min_height >  0 && min_height > *height) {
-			*height = min_height;
+		إذا (min_ارتفاع >  0 && min_ارتفاع > *ارتفاع) {
+			*ارتفاع = min_ارتفاع;
 			scaled = true;
 		}
-		if (max_height >= 0 && max_height < *height) {
-			*height = max_height;
+		إذا (max_ارتفاع >= 0 && max_ارتفاع < *ارتفاع) {
+			*ارتفاع = max_ارتفاع;
 			scaled = true;
 		}
 
-		if (scaled && (intrinsic_height != 0)) {
+		إذا (scaled && (intrinsic_ارتفاع != 0)) {
 			/* Update width */
-			*width = (*height * intrinsic_width) /
-					intrinsic_height;
+			*عرض = (*ارتفاع * intrinsic_عرض) /
+					intrinsic_ارتفاع;
 		}
 
-	} else if (*width == AUTO) {
+	} وإلا إذا (*عرض == AUTO) {
 		/* Have given height; width is calculated from the given height
 		 * and ratio of intrinsic dimensions */
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		صحيح intrinsic_عرض = content_get_عرض(box->object);
+		صحيح intrinsic_ارتفاع = content_get_ارتفاع(box->object);
 
-		if (intrinsic_height != 0)
-			*width = (*height * intrinsic_width) /
-					intrinsic_height;
-		else
-			*width = intrinsic_width;
+		إذا (intrinsic_ارتفاع != 0)
+			*عرض = (*ارتفاع * intrinsic_عرض) /
+					intrinsic_ارتفاع;
+		وإلا
+			*عرض = intrinsic_عرض;
 
-		if (min_width >  0 && min_width > *width)
-			*width = min_width;
-		if (max_width >= 0 && max_width < *width)
-			*width = max_width;
+		إذا (min_عرض >  0 && min_عرض > *عرض)
+			*عرض = min_عرض;
+		إذا (max_عرض >= 0 && max_عرض < *عرض)
+			*عرض = max_عرض;
 
-	} else if (*height == AUTO) {
+	} وإلا إذا (*ارتفاع == AUTO) {
 		/* Have given width; height is calculated from the given width
 		 * and ratio of intrinsic dimensions */
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		صحيح intrinsic_عرض = content_get_عرض(box->object);
+		صحيح intrinsic_ارتفاع = content_get_ارتفاع(box->object);
 
-		if (min_width >  0 && min_width > *width)
-			*width = min_width;
-		if (max_width >= 0 && max_width < *width)
-			*width = max_width;
+		إذا (min_عرض >  0 && min_عرض > *عرض)
+			*عرض = min_عرض;
+		إذا (max_عرض >= 0 && max_عرض < *عرض)
+			*عرض = max_عرض;
 
-		if (intrinsic_width != 0)
-			*height = (*width * intrinsic_height) /
-					intrinsic_width;
-		else
-			*height = intrinsic_height;
+		إذا (intrinsic_عرض != 0)
+			*ارتفاع = (*عرض * intrinsic_ارتفاع) /
+					intrinsic_عرض;
+		وإلا
+			*ارتفاع = intrinsic_ارتفاع;
 	}
 }
 
@@ -227,20 +227,20 @@ layout_get_object_dimensions(struct box *box,
  * \param  width  width of containing block
  * \return  length of indent
  */
-static int layout_text_indent(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style, int width)
+ساكن صحيح layout_متن_indent(
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت css_computed_style *style, صحيح عرض)
 {
-	css_fixed value = 0;
+	css_fixed مقدار = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	css_computed_text_indent(style, &value, &unit);
+	css_computed_متن_indent(style, &مقدار, &unit);
 
-	if (unit == CSS_UNIT_PCT) {
-		return FPCT_OF_INT_TOINT(value, width);
-	} else {
-		return FIXTOINT(css_unit_len2device_px(style, unit_len_ctx,
-				value, unit));
+	إذا (unit == CSS_UNIT_PCT) {
+		أرجع FPCT_از_INT_TOINT(مقدار, عرض);
+	} وإلا {
+		أرجع FIXTOINT(css_unit_len2device_px(style, unit_len_ctx,
+				مقدار, unit));
 	}
 }
 
@@ -254,179 +254,179 @@ static int layout_text_indent(
  * \post  table->min_width and table->max_width filled in,
  *        0 <= table->min_width <= table->max_width
  */
-static void layout_minmax_table(struct box *table,
-		const struct gui_layout_table *font_func,
-		const html_content *content)
+ساكن فراغ layout_minmax_جدول(بنية box *جدول,
+		ثابت بنية gui_layout_جدول *font_func,
+		ثابت html_content *content)
 {
-	unsigned int i, j;
-	int width;
-	int border_spacing_h = 0;
-	int table_min = 0, table_max = 0;
-	int extra_fixed = 0;
-	float extra_frac = 0;
-	struct column *col;
-	struct box *row_group, *row, *cell;
+	بیعلامت صحيح i, j;
+	صحيح عرض;
+	صحيح border_spacing_h = 0;
+	صحيح جدول_min = 0, جدول_max = 0;
+	صحيح extra_fixed = 0;
+	عائم extra_frac = 0;
+	بنية ستونی *ستون;
+	بنية box *ردیف_گروه, *ردیف, *cell;
 
 	/* check if the widths have already been calculated */
-	if (table->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	إذا (جدول->max_عرض != UNKNOWN_MAX_عرض)
+		أرجع;
 
-	if (table_calculate_column_types(&content->unit_len_ctx, table) == false) {
+	إذا (جدول_calculate_ستونی_types(&content->unit_len_ctx, جدول) == false) {
 		NSLOG(netsurf, ERROR,
 				"Could not establish table column types.");
-		return;
+		أرجع;
 	}
-	col = table->col;
+	ستون = جدول->ستون;
 
 	/* start with 0 except for fixed-width columns */
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_FIXED)
-			col[i].min = col[i].max = col[i].width;
-		else
-			col[i].min = col[i].max = 0;
+	لكل (i = 0; i != جدول->columns; i++) {
+		إذا (ستون[i].type == ستونی_عرض_FIXED)
+			ستون[i].min = ستون[i].max = ستون[i].عرض;
+		وإلا
+			ستون[i].min = ستون[i].max = 0;
 	}
 
 	/* border-spacing is used in the separated borders model */
-	if (css_computed_border_collapse(table->style) ==
+	إذا (css_computed_border_collapse(جدول->style) ==
 			CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
 
-		css_computed_border_spacing(table->style, &h, &hu, &v, &vu);
+		css_computed_border_spacing(جدول->style, &h, &hu, &v, &vu);
 
 		border_spacing_h = FIXTOINT(css_unit_len2device_px(
-				table->style,
+				جدول->style,
 				&content->unit_len_ctx,
 				h, hu));
 	}
 
 	/* 1st pass: consider cells with colspan 1 only */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-	for (row = row_group->children; row; row = row->next)
-	for (cell = row->children; cell; cell = cell->next) {
-		assert(cell->type == BOX_TABLE_CELL);
-		assert(cell->style);
+	لكل (ردیف_گروه = جدول->children; ردیف_گروه; ردیف_گروه =ردیف_گروه->بعدی)
+	لكل (ردیف = ردیف_گروه->children; ردیف; ردیف = ردیف->بعدی)
+	لكل (cell = ردیف->children; cell; cell = cell->بعدی) {
+		أكد(cell->type == BOX_جدول_CELL);
+		أكد(cell->style);
 		/** TODO: Handle colspan="0" correctly.
 		 *        It's currently converted to 1 in box normaisation */
-		assert(cell->columns != 0);
+		أكد(cell->columns != 0);
 
-		if (cell->columns != 1)
-			continue;
+		إذا (cell->columns != 1)
+			استمر;
 
-		layout_minmax_block(cell, font_func, content);
-		i = cell->start_column;
+		layout_minmax_بلوک(cell, font_func, content);
+		i = cell->شروع_ستونی;
 
-		if (col[i].positioned)
-			continue;
+		إذا (ستون[i].positioned)
+			استمر;
 
 		/* update column min, max widths using cell widths */
-		if (col[i].min < cell->min_width)
-			col[i].min = cell->min_width;
-		if (col[i].max < cell->max_width)
-			col[i].max = cell->max_width;
+		إذا (ستون[i].min < cell->min_عرض)
+			ستون[i].min = cell->min_عرض;
+		إذا (ستون[i].max < cell->max_عرض)
+			ستون[i].max = cell->max_عرض;
 	}
 
 	/* 2nd pass: cells which span multiple columns */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-	for (row = row_group->children; row; row = row->next)
-	for (cell = row->children; cell; cell = cell->next) {
-		unsigned int flexible_columns = 0;
-		int min = 0, max = 0, fixed_width = 0, extra;
+	لكل (ردیف_گروه = جدول->children; ردیف_گروه; ردیف_گروه =ردیف_گروه->بعدی)
+	لكل (ردیف = ردیف_گروه->children; ردیف; ردیف = ردیف->بعدی)
+	لكل (cell = ردیف->children; cell; cell = cell->بعدی) {
+		بیعلامت صحيح flexible_columns = 0;
+		صحيح min = 0, max = 0, fixed_عرض = 0, extra;
 
-		if (cell->columns == 1)
-			continue;
+		إذا (cell->columns == 1)
+			استمر;
 
-		layout_minmax_block(cell, font_func, content);
-		i = cell->start_column;
+		layout_minmax_بلوک(cell, font_func, content);
+		i = cell->شروع_ستونی;
 
 		/* find min width so far of spanned columns, and count
 		 * number of non-fixed spanned columns and total fixed width */
-		for (j = 0; j != cell->columns; j++) {
-			min += col[i + j].min;
-			if (col[i + j].type == COLUMN_WIDTH_FIXED)
-				fixed_width += col[i + j].width;
-			else
+		لكل (j = 0; j != cell->columns; j++) {
+			min += ستون[i + j].min;
+			إذا (ستون[i + j].type == ستونی_عرض_FIXED)
+				fixed_عرض += ستون[i + j].عرض;
+			وإلا
 				flexible_columns++;
 		}
 		min += (cell->columns - 1) * border_spacing_h;
 
 		/* distribute extra min to spanned columns */
-		if (min < cell->min_width) {
-			if (flexible_columns == 0) {
-				extra = 1 + (cell->min_width - min) /
+		إذا (min < cell->min_عرض) {
+			إذا (flexible_columns == 0) {
+				extra = 1 + (cell->min_عرض - min) /
 						cell->columns;
-				for (j = 0; j != cell->columns; j++) {
-					col[i + j].min += extra;
-					if (col[i + j].max < col[i + j].min)
-						col[i + j].max = col[i + j].min;
+				لكل (j = 0; j != cell->columns; j++) {
+					ستون[i + j].min += extra;
+					إذا (ستون[i + j].max < ستون[i + j].min)
+						ستون[i + j].max = ستون[i + j].min;
 				}
-			} else {
-				extra = 1 + (cell->min_width - min) /
+			} وإلا {
+				extra = 1 + (cell->min_عرض - min) /
 						flexible_columns;
-				for (j = 0; j != cell->columns; j++) {
-					if (col[i + j].type !=
-							COLUMN_WIDTH_FIXED) {
-						col[i + j].min += extra;
-						if (col[i + j].max <
-								col[i + j].min)
-							col[i + j].max =
-								col[i + j].min;
+				لكل (j = 0; j != cell->columns; j++) {
+					إذا (ستون[i + j].type !=
+							ستونی_عرض_FIXED) {
+						ستون[i + j].min += extra;
+						إذا (ستون[i + j].max <
+								ستون[i + j].min)
+							ستون[i + j].max =
+								ستون[i + j].min;
 					}
 				}
 			}
 		}
 
 		/* find max width so far of spanned columns */
-		for (j = 0; j != cell->columns; j++)
-			max += col[i + j].max;
+		لكل (j = 0; j != cell->columns; j++)
+			max += ستون[i + j].max;
 		max += (cell->columns - 1) * border_spacing_h;
 
 		/* distribute extra max to spanned columns */
-		if (max < cell->max_width && flexible_columns) {
-			extra = 1 + (cell->max_width - max) / flexible_columns;
-			for (j = 0; j != cell->columns; j++)
-				if (col[i + j].type != COLUMN_WIDTH_FIXED)
-					col[i + j].max += extra;
+		إذا (max < cell->max_عرض && flexible_columns) {
+			extra = 1 + (cell->max_عرض - max) / flexible_columns;
+			لكل (j = 0; j != cell->columns; j++)
+				إذا (ستون[i + j].type != ستونی_عرض_FIXED)
+					ستون[i + j].max += extra;
 		}
 	}
 
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].max < col[i].min) {
-			box_dump(stderr, table, 0, true);
-			assert(0);
+	لكل (i = 0; i != جدول->columns; i++) {
+		إذا (ستون[i].max < ستون[i].min) {
+			box_dump(stderr, جدول, 0, true);
+			أكد(0);
 		}
-		table_min += col[i].min;
-		table_max += col[i].max;
+		جدول_min += ستون[i].min;
+		جدول_max += ستون[i].max;
 	}
 
 	/* fixed width takes priority, unless it is too narrow */
-	if (css_computed_width_px(table->style, &content->unit_len_ctx,
-			-1, &width) == CSS_WIDTH_SET) {
-		if (table_min < width)
-			table_min = width;
-		if (table_max < width)
-			table_max = width;
+	إذا (css_computed_عرض_px(جدول->style, &content->unit_len_ctx,
+			-1, &عرض) == CSS_عرض_مجموعه) {
+		إذا (جدول_min < عرض)
+			جدول_min = عرض;
+		إذا (جدول_max < عرض)
+			جدول_max = عرض;
 	}
 
 	/* add margins, border, padding to min, max widths */
-	calculate_mbp_width(&content->unit_len_ctx,
-			table->style, LEFT, true, true, true,
+	calculate_mbp_عرض(&content->unit_len_ctx,
+			جدول->style, چپ_2, true, true, true,
 			&extra_fixed, &extra_frac);
-	calculate_mbp_width(&content->unit_len_ctx,
-			table->style, RIGHT, true, true, true,
+	calculate_mbp_عرض(&content->unit_len_ctx,
+			جدول->style, راست_2, true, true, true,
 			&extra_fixed, &extra_frac);
-	if (extra_fixed < 0)
+	إذا (extra_fixed < 0)
 		extra_fixed = 0;
-	if (extra_frac < 0)
+	إذا (extra_frac < 0)
 		extra_frac = 0;
-	if (1.0 <= extra_frac)
+	إذا (1.0 <= extra_frac)
 		extra_frac = 0.9;
-	table->min_width = (table_min + extra_fixed) / (1.0 - extra_frac);
-	table->max_width = (table_max + extra_fixed) / (1.0 - extra_frac);
-	table->min_width += (table->columns + 1) * border_spacing_h;
-	table->max_width += (table->columns + 1) * border_spacing_h;
+	جدول->min_عرض = (جدول_min + extra_fixed) / (1.0 - extra_frac);
+	جدول->max_عرض = (جدول_max + extra_fixed) / (1.0 - extra_frac);
+	جدول->min_عرض += (جدول->columns + 1) * border_spacing_h;
+	جدول->max_عرض += (جدول->columns + 1) * border_spacing_h;
 
-	assert(0 <= table->min_width && table->min_width <= table->max_width);
+	أكد(0 <= جدول->min_عرض && جدول->min_عرض <= جدول->max_عرض);
 }
 
 /**
@@ -435,16 +435,16 @@ static void layout_minmax_table(struct box *table,
  * \param[in]  b  Box to check.
  * \return true iff box has percnetage max width.
  */
-static inline bool box_has_percentage_max_width(struct box *b)
+ساكن مضمن bool box_has_percentage_max_عرض(بنية box *b)
 {
 	css_unit unit = CSS_UNIT_PX;
-	enum css_max_width_e type;
-	css_fixed value = 0;
+	تعداد css_max_عرض_e type;
+	css_fixed مقدار = 0;
 
-	assert(b != NULL);
+	أكد(b != عدم);
 
-	type = css_computed_max_width(b->style, &value, &unit);
-	return ((type == CSS_MAX_WIDTH_SET) && (unit == CSS_UNIT_PCT));
+	type = css_computed_max_عرض(b->style, &مقدار, &unit);
+	أرجع ((type == CSS_MAX_عرض_مجموعه) && (unit == CSS_UNIT_PCT));
 }
 
 /**
@@ -459,342 +459,342 @@ static inline bool box_has_percentage_max_width(struct box *b)
  * \return  first box in next line, or 0 if no more lines
  * \post  0 <= *line_min <= *line_max
  */
-static struct box *
-layout_minmax_line(struct box *first,
-		   int *line_min,
-		   int *line_max,
-		   bool first_line,
-		   bool *line_has_height,
-		   const struct gui_layout_table *font_func,
-		   const html_content *content)
+ساكن بنية box *
+layout_minmax_سطر(بنية box *اولی,
+		   صحيح *سطر_min,
+		   صحيح *سطر_max,
+		   bool اولی_سطر,
+		   bool *سطر_has_ارتفاع,
+		   ثابت بنية gui_layout_جدول *font_func,
+		   ثابت html_content *content)
 {
-	int min = 0, max = 0, width, height, fixed;
-	float frac;
+	صحيح min = 0, max = 0, عرض, ارتفاع, fixed;
+	عائم frac;
 	size_t i, j;
-	struct box *b;
-	struct box *block;
+	بنية box *b;
+	بنية box *بلوک;
 	plot_font_style_t fstyle;
 	bool no_wrap;
 
-	assert(first->parent);
-	assert(first->parent->parent);
-	assert(first->parent->parent->style);
+	أكد(اولی->والد);
+	أكد(اولی->والد->والد);
+	أكد(اولی->والد->والد->style);
 
-	block = first->parent->parent;
-	no_wrap = (css_computed_white_space(block->style) ==
+	بلوک = اولی->والد->والد;
+	no_wrap = (css_computed_white_space(بلوک->style) ==
 			CSS_WHITE_SPACE_NOWRAP ||
-			css_computed_white_space(block->style) ==
+			css_computed_white_space(بلوک->style) ==
 			CSS_WHITE_SPACE_PRE);
 
-	*line_has_height = false;
+	*سطر_has_ارتفاع = false;
 
 	/* corresponds to the pass 1 loop in layout_line() */
-	for (b = first; b; b = b->next) {
-		enum css_width_e wtype;
-		enum css_height_e htype;
-		enum css_box_sizing_e bs;
-		css_fixed value = 0;
+	لكل (b = اولی; b; b = b->بعدی) {
+		تعداد css_عرض_e wtype;
+		تعداد css_ارتفاع_e htype;
+		تعداد css_box_sizing_e bs;
+		css_fixed مقدار = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		assert(lh__box_is_inline_content(b));
+		أكد(lh__box_is_inline_content(b));
 
 		NSLOG(layout, DEBUG, "%p: min %i, max %i", b, min, max);
 
-		if (b->type == BOX_BR) {
-			b = b->next;
-			break;
+		إذا (b->type == BOX_BR) {
+			b = b->بعدی;
+			اكسر;
 		}
 
-		if (lh__box_is_float_box(b)) {
-			assert(b->children);
-			if (b->children->type == BOX_TABLE)
-				layout_minmax_table(b->children, font_func,
+		إذا (lh__box_is_float_box(b)) {
+			أكد(b->children);
+			إذا (b->children->type == BOX_جدول)
+				layout_minmax_جدول(b->children, font_func,
 						content);
-			else
-				layout_minmax_block(b->children, font_func,
+			وإلا
+				layout_minmax_بلوک(b->children, font_func,
 						content);
-			b->min_width = b->children->min_width;
-			b->max_width = b->children->max_width;
-			if (min < b->min_width)
-				min = b->min_width;
-			max += b->max_width;
-			continue;
+			b->min_عرض = b->children->min_عرض;
+			b->max_عرض = b->children->max_عرض;
+			إذا (min < b->min_عرض)
+				min = b->min_عرض;
+			max += b->max_عرض;
+			استمر;
 		}
 
-		if (b->type == BOX_INLINE_BLOCK || b->type == BOX_INLINE_FLEX) {
-			layout_minmax_block(b, font_func, content);
-			if (min < b->min_width)
-				min = b->min_width;
-			max += b->max_width;
+		إذا (b->type == BOX_INLINE_بلوک || b->type == BOX_INLINE_FLEX) {
+			layout_minmax_بلوک(b, font_func, content);
+			إذا (min < b->min_عرض)
+				min = b->min_عرض;
+			max += b->max_عرض;
 
-			if (b->flags & HAS_HEIGHT)
-				*line_has_height = true;
-			continue;
+			إذا (b->flags & HAS_ارتفاع)
+				*سطر_has_ارتفاع = true;
+			استمر;
 		}
 
-		assert(b->style);
+		أكد(b->style);
 		font_plot_style_from_css(&content->unit_len_ctx, b->style, &fstyle);
 
-		if (b->type == BOX_INLINE && !b->object &&
+		إذا (b->type == BOX_INLINE && !b->object &&
 				!(b->flags & REPLACE_DIM) &&
 				!(b->flags & IFRAME)) {
 			fixed = frac = 0;
-			calculate_mbp_width(&content->unit_len_ctx,
-					b->style, LEFT, true, true, true,
+			calculate_mbp_عرض(&content->unit_len_ctx,
+					b->style, چپ_2, true, true, true,
 					&fixed, &frac);
-			if (!b->inline_end)
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+			إذا (!b->inline_انتها)
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, راست_2,
 						true, true, true,
 						&fixed, &frac);
-			if (0 < fixed)
+			إذا (0 < fixed)
 				max += fixed;
-			*line_has_height = true;
+			*سطر_has_ارتفاع = true;
 			/* \todo  update min width, consider fractional extra */
-		} else if (b->type == BOX_INLINE_END) {
+		} وإلا إذا (b->type == BOX_INLINE_انتها) {
 			fixed = frac = 0;
-			calculate_mbp_width(&content->unit_len_ctx,
-					b->inline_end->style, RIGHT,
+			calculate_mbp_عرض(&content->unit_len_ctx,
+					b->inline_انتها->style, راست_2,
 					true, true, true,
 					&fixed, &frac);
-			if (0 < fixed)
+			إذا (0 < fixed)
 				max += fixed;
 
-			if (b->next) {
-				if (b->space == UNKNOWN_WIDTH) {
-					font_func->width(&fstyle, " ", 1,
+			إذا (b->بعدی) {
+				إذا (b->space == UNKNOWN_عرض) {
+					font_func->عرض(&fstyle, " ", 1,
 							 &b->space);
 				}
 				max += b->space;
 			}
 
-			*line_has_height = true;
-			continue;
+			*سطر_has_ارتفاع = true;
+			استمر;
 		}
 
-		if (lh__box_is_replace(b) == false) {
+		إذا (lh__box_is_replace(b) == false) {
 			/* inline non-replaced, 10.3.1 and 10.6.1 */
 			bool no_wrap_box;
-			if (!b->text)
-				continue;
+			إذا (!b->متن)
+				استمر;
 
 			no_wrap_box = (css_computed_white_space(b->style) ==
 					CSS_WHITE_SPACE_NOWRAP ||
 					css_computed_white_space(b->style) ==
 					CSS_WHITE_SPACE_PRE);
 
-			if (b->width == UNKNOWN_WIDTH) {
+			إذا (b->عرض == UNKNOWN_عرض) {
 				/** \todo handle errors */
 
 				/* If it's a select element, we must use the
 				 * width of the widest option text */
-				if (b->parent->parent->gadget &&
-						b->parent->parent->gadget->type
+				إذا (b->والد->والد->gadget &&
+						b->والد->والد->gadget->type
 						== GADGET_SELECT) {
-					int opt_maxwidth = 0;
-					struct form_option *o;
+					صحيح opt_maxwidth = 0;
+					بنية form_option *o;
 
-					for (o = b->parent->parent->gadget->
-							data.select.items; o;
-							o = o->next) {
-						int opt_width;
-						font_func->width(&fstyle,
-								o->text,
-								strlen(o->text),
-								&opt_width);
+					لكل (o = b->والد->والد->gadget->
+							داده.select.اقلام; o;
+							o = o->بعدی) {
+						صحيح opt_عرض;
+						font_func->عرض(&fstyle,
+								o->متن,
+								طول_رشته(o->متن),
+								&opt_عرض);
 
-						if (opt_maxwidth < opt_width)
-							opt_maxwidth =opt_width;
+						إذا (opt_maxwidth < opt_عرض)
+							opt_maxwidth =opt_عرض;
 					}
 
-					b->width = opt_maxwidth;
-					if (nsoption_bool(core_select_menu))
-						b->width += SCROLLBAR_WIDTH;
+					b->عرض = opt_maxwidth;
+					إذا (nsoption_bool(core_select_menu))
+						b->عرض += SCROLLBAR_عرض;
 
-				} else {
-					font_func->width(&fstyle, b->text,
-						b->length, &b->width);
+				} وإلا {
+					font_func->عرض(&fstyle, b->متن,
+						b->درازی, &b->عرض);
 					b->flags |= MEASURED;
 				}
 			}
-			max += b->width;
-			if (b->next) {
-				if (b->space == UNKNOWN_WIDTH) {
-					font_func->width(&fstyle, " ", 1,
+			max += b->عرض;
+			إذا (b->بعدی) {
+				إذا (b->space == UNKNOWN_عرض) {
+					font_func->عرض(&fstyle, " ", 1,
 							 &b->space);
 				}
 				max += b->space;
 			}
 
-			if (no_wrap) {
+			إذا (no_wrap) {
 				/* Don't wrap due to block style,
 				 * so min is the same as max */
 				min = max;
 
-			} else if (no_wrap_box) {
+			} وإلا إذا (no_wrap_box) {
 				/* This inline box can't be wrapped,
 				 * for min, consider box's width */
-				if (min < b->width)
-					min = b->width;
+				إذا (min < b->عرض)
+					min = b->عرض;
 
-			} else if (b->parent->flags & NEED_MIN) {
+			} وإلا إذا (b->والد->flags & NEED_MIN) {
 				/* If we care what the minimum width is,
 				 * calculate it.  (It's only needed if we're
 				 * shrinking-to-fit.) */
 				/* min = widest single word */
 				i = 0;
-				do {
-					for (j = i; j != b->length &&
-							b->text[j] != ' '; j++)
+				افعل {
+					لكل (j = i; j != b->درازی &&
+							b->متن[j] != ' '; j++)
 						;
-					font_func->width(&fstyle, b->text + i,
-							 j - i, &width);
-					if (min < width)
-						min = width;
+					font_func->عرض(&fstyle, b->متن + i,
+							 j - i, &عرض);
+					إذا (min < عرض)
+						min = عرض;
 					i = j + 1;
-				} while (j != b->length);
+				} طالما (j != b->درازی);
 			}
 
-			*line_has_height = true;
+			*سطر_has_ارتفاع = true;
 
-			continue;
+			استمر;
 		}
 
 		/* inline replaced, 10.3.2 and 10.6.2 */
-		assert(b->style);
+		أكد(b->style);
 
-		bs = css_computed_box_sizing(block->style);
+		bs = css_computed_box_sizing(بلوک->style);
 
 		/* calculate box width */
-		wtype = css_computed_width_px(b->style,
-				&content->unit_len_ctx, -1, &width);
-		if (wtype == CSS_WIDTH_SET) {
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		wtype = css_computed_عرض_px(b->style,
+				&content->unit_len_ctx, -1, &عرض);
+		إذا (wtype == CSS_عرض_مجموعه) {
+			إذا (bs == CSS_BOX_SIZING_BORDER_BOX) {
 				fixed = frac = 0;
-				calculate_mbp_width(&content->unit_len_ctx,
-						block->style, LEFT,
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						بلوک->style, چپ_2,
 						false, true, true,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						block->style, RIGHT,
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						بلوک->style, راست_2,
 						false, true, true,
 						&fixed, &frac);
-				if (width < fixed) {
-					width = fixed;
+				إذا (عرض < fixed) {
+					عرض = fixed;
 				}
 			}
-			if (width < 0)
-				width = 0;
-		} else {
-			width = AUTO;
+			إذا (عرض < 0)
+				عرض = 0;
+		} وإلا {
+			عرض = AUTO;
 		}
 
-		/* height */
-		htype = css_computed_height(b->style, &value, &unit);
-		if (htype == CSS_HEIGHT_SET) {
-			height = FIXTOINT(css_unit_len2device_px(
+		/*ارتفاع*/
+		htype = css_computed_ارتفاع(b->style, &مقدار, &unit);
+		إذا (htype == CSS_ارتفاع_مجموعه) {
+			ارتفاع = FIXTOINT(css_unit_len2device_px(
 					b->style,
 					&content->unit_len_ctx,
-					value, unit));
-		} else {
-			height = AUTO;
+					مقدار, unit));
+		} وإلا {
+			ارتفاع = AUTO;
 		}
 
-		if (b->object || (b->flags & REPLACE_DIM)) {
-			if (b->object) {
-				int temp_height = height;
+		إذا (b->object || (b->flags & REPLACE_DIM)) {
+			إذا (b->object) {
+				صحيح موقت_ارتفاع = ارتفاع;
 				layout_get_object_dimensions(b,
-						&width, &temp_height,
-						INT_MIN, INT_MAX,
-						INT_MIN, INT_MAX);
+						&عرض, &موقت_ارتفاع,
+						INT_MIN, بیشترین_صحیح,
+						INT_MIN, بیشترین_صحیح);
 			}
 
 			fixed = frac = 0;
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+			إذا (bs == CSS_BOX_SIZING_BORDER_BOX) {
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, چپ_2,
 						true, false, false,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, راست_2,
 						true, false, false,
 						&fixed, &frac);
-			} else {
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+			} وإلا {
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, چپ_2,
 						true, true, true,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, راست_2,
 						true, true, true,
 						&fixed, &frac);
 			}
-			if (0 < width + fixed)
-				width += fixed;
-		} else if (b->flags & IFRAME) {
+			إذا (0 < عرض + fixed)
+				عرض += fixed;
+		} وإلا إذا (b->flags & IFRAME) {
 			/* TODO: handle percentage widths properly */
-			if (width == AUTO)
-				width = 400;
+			إذا (عرض == AUTO)
+				عرض = 400;
 
 			fixed = frac = 0;
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+			إذا (bs == CSS_BOX_SIZING_BORDER_BOX) {
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, چپ_2,
 						true, false, false,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, راست_2,
 						true, false, false,
 						&fixed, &frac);
-			} else {
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+			} وإلا {
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, چپ_2,
 						true, true, true,
 						&fixed, &frac);
-				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+				calculate_mbp_عرض(&content->unit_len_ctx,
+						b->style, راست_2,
 						true, true, true,
 						&fixed, &frac);
 			}
 
-			if (0 < width + fixed)
-				width += fixed;
+			إذا (0 < عرض + fixed)
+				عرض += fixed;
 
-		} else {
+		} وإلا {
 			/* form control with no object */
-			if (width == AUTO)
-				width = FIXTOINT(css_unit_len2device_px(
+			إذا (عرض == AUTO)
+				عرض = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx,
 						INTTOFIX(1), CSS_UNIT_EM));
 		}
 
-		if (min < width && !box_has_percentage_max_width(b))
-			min = width;
-		if (width > 0)
-			max += width;
+		إذا (min < عرض && !box_has_percentage_max_عرض(b))
+			min = عرض;
+		إذا (عرض > 0)
+			max += عرض;
 
-		*line_has_height = true;
+		*سطر_has_ارتفاع = true;
 	}
 
-	if (first_line) {
+	إذا (اولی_سطر) {
 		/* todo: handle percentage values properly */
 		/* todo: handle text-indent interaction with floats */
-		int text_indent = layout_text_indent(&content->unit_len_ctx,
-				first->parent->parent->style, 100);
-		min = (min + text_indent < 0) ? 0 : min + text_indent;
-		max = (max + text_indent < 0) ? 0 : max + text_indent;
+		صحيح متن_indent = layout_متن_indent(&content->unit_len_ctx,
+				اولی->والد->والد->style, 100);
+		min = (min + متن_indent < 0) ? 0 : min + متن_indent;
+		max = (max + متن_indent < 0) ? 0 : max + متن_indent;
 	}
 
-	*line_min = min;
-	*line_max = max;
+	*سطر_min = min;
+	*سطر_max = max;
 
 	NSLOG(layout, DEBUG,  "line_min %i, line_max %i", min, max);
 
-	assert(b != first);
-	assert(0 <= *line_min);
-	assert(*line_min <= *line_max);
-	return b;
+	أكد(b != اولی);
+	أكد(0 <= *سطر_min);
+	أكد(*سطر_min <= *سطر_max);
+	أرجع b;
 }
 
 
@@ -807,44 +807,44 @@ layout_minmax_line(struct box *first,
  * \post  inline_container->min_width and inline_container->max_width filled in,
  *        0 <= inline_container->min_width <= inline_container->max_width
  */
-static void
-layout_minmax_inline_container(struct box *inline_container,
-			       bool *has_height,
-			       const struct gui_layout_table *font_func,
-			       const html_content *content)
+ساكن فراغ
+layout_minmax_inline_container(بنية box *inline_container,
+			       bool *has_ارتفاع,
+			       ثابت بنية gui_layout_جدول *font_func,
+			       ثابت html_content *content)
 {
-	struct box *child;
-	int line_min = 0, line_max = 0;
-	int min = 0, max = 0;
-	bool first_line = true;
-	bool line_has_height;
+	بنية box *فرزند;
+	صحيح سطر_min = 0, سطر_max = 0;
+	صحيح min = 0, max = 0;
+	bool اولی_سطر = true;
+	bool سطر_has_ارتفاع;
 
-	assert(inline_container->type == BOX_INLINE_CONTAINER);
+	أكد(inline_container->type == BOX_INLINE_CONTAINER);
 
 	/* check if the widths have already been calculated */
-	if (inline_container->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	إذا (inline_container->max_عرض != UNKNOWN_MAX_عرض)
+		أرجع;
 
-	*has_height = false;
+	*has_ارتفاع = false;
 
-	for (child = inline_container->children; child; ) {
-		child = layout_minmax_line(child, &line_min, &line_max,
-				first_line, &line_has_height, font_func,
+	لكل (فرزند = inline_container->children; فرزند; ) {
+		فرزند = layout_minmax_سطر(فرزند, &سطر_min, &سطر_max,
+				اولی_سطر, &سطر_has_ارتفاع, font_func,
 				content);
-		if (min < line_min)
-			min = line_min;
-		if (max < line_max)
-			max = line_max;
-		first_line = false;
-		*has_height |= line_has_height;
+		إذا (min < سطر_min)
+			min = سطر_min;
+		إذا (max < سطر_max)
+			max = سطر_max;
+		اولی_سطر = false;
+		*has_ارتفاع |= سطر_has_ارتفاع;
 	}
 
-	inline_container->min_width = min;
-	inline_container->max_width = max;
+	inline_container->min_عرض = min;
+	inline_container->max_عرض = max;
 
-	assert(0 <= inline_container->min_width &&
-			inline_container->min_width <=
-			inline_container->max_width);
+	أكد(0 <= inline_container->min_عرض &&
+			inline_container->min_عرض <=
+			inline_container->max_عرض);
 }
 
 /**
@@ -856,271 +856,271 @@ layout_minmax_inline_container(struct box *inline_container,
  * \post  block->min_width and block->max_width filled in,
  *        0 <= block->min_width <= block->max_width
  */
-static void layout_minmax_block(
-		struct box *block,
-		const struct gui_layout_table *font_func,
-		const html_content *content)
+ساكن فراغ layout_minmax_بلوک(
+		بنية box *بلوک,
+		ثابت بنية gui_layout_جدول *font_func,
+		ثابت html_content *content)
 {
-	struct box *child;
-	int min = 0, max = 0;
-	int extra_fixed = 0;
-	float extra_frac = 0;
-	enum css_width_e wtype = CSS_WIDTH_AUTO;
-	css_fixed width = 0;
+	بنية box *فرزند;
+	صحيح min = 0, max = 0;
+	صحيح extra_fixed = 0;
+	عائم extra_frac = 0;
+	تعداد css_عرض_e wtype = CSS_عرض_AUTO;
+	css_fixed عرض = 0;
 	css_unit wunit = CSS_UNIT_PX;
-	enum css_height_e htype = CSS_HEIGHT_AUTO;
-	css_fixed height = 0;
+	تعداد css_ارتفاع_e htype = CSS_ارتفاع_AUTO;
+	css_fixed ارتفاع = 0;
 	css_unit hunit = CSS_UNIT_PX;
-	enum css_box_sizing_e bs = CSS_BOX_SIZING_CONTENT_BOX;
+	تعداد css_box_sizing_e bs = CSS_BOX_SIZING_CONTENT_BOX;
 	bool using_min_border_box = false;
 	bool using_max_border_box = false;
-	bool child_has_height = false;
+	bool فرزند_has_ارتفاع = false;
 
-	assert(block->type == BOX_BLOCK ||
-			block->type == BOX_FLEX ||
-			block->type == BOX_INLINE_FLEX ||
-			block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_TABLE_CELL);
+	أكد(بلوک->type == BOX_بلوک ||
+			بلوک->type == BOX_FLEX ||
+			بلوک->type == BOX_INLINE_FLEX ||
+			بلوک->type == BOX_INLINE_بلوک ||
+			بلوک->type == BOX_جدول_CELL);
 
 	/* check if the widths have already been calculated */
-	if (block->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	إذا (بلوک->max_عرض != UNKNOWN_MAX_عرض)
+		أرجع;
 
-	if (block->style != NULL) {
-		wtype = css_computed_width(block->style, &width, &wunit);
-		htype = css_computed_height(block->style, &height, &hunit);
-		bs = css_computed_box_sizing(block->style);
+	إذا (بلوک->style != عدم) {
+		wtype = css_computed_عرض(بلوک->style, &عرض, &wunit);
+		htype = css_computed_ارتفاع(بلوک->style, &ارتفاع, &hunit);
+		bs = css_computed_box_sizing(بلوک->style);
 	}
 
 	/* set whether the minimum width is of any interest for this box */
-	if (((block->parent && lh__box_is_float_box(block->parent)) ||
-			block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_INLINE_FLEX) &&
-			wtype != CSS_WIDTH_SET) {
+	إذا (((بلوک->والد && lh__box_is_float_box(بلوک->والد)) ||
+			بلوک->type == BOX_INLINE_بلوک ||
+			بلوک->type == BOX_INLINE_FLEX) &&
+			wtype != CSS_عرض_مجموعه) {
 		/* box shrinks to fit; need minimum width */
-		block->flags |= NEED_MIN;
-	} else if (block->type == BOX_TABLE_CELL) {
+		بلوک->flags |= NEED_MIN;
+	} وإلا إذا (بلوک->type == BOX_جدول_CELL) {
 		/* box shrinks to fit; need minimum width */
-		block->flags |= NEED_MIN;
-	} else if (block->parent && (block->parent->flags & NEED_MIN) &&
-			wtype != CSS_WIDTH_SET) {
+		بلوک->flags |= NEED_MIN;
+	} وإلا إذا (بلوک->والد && (بلوک->والد->flags & NEED_MIN) &&
+			wtype != CSS_عرض_مجموعه) {
 		/* box inside shrink-to-fit context; need minimum width */
-		block->flags |= NEED_MIN;
-	} else if (block->parent && (block->parent->type == BOX_FLEX)) {
+		بلوک->flags |= NEED_MIN;
+	} وإلا إذا (بلوک->والد && (بلوک->والد->type == BOX_FLEX)) {
 		/* box is flex item */
-		block->flags |= NEED_MIN;
+		بلوک->flags |= NEED_MIN;
 	}
 
-	if (block->gadget && (block->gadget->type == GADGET_TEXTBOX ||
-			block->gadget->type == GADGET_PASSWORD ||
-			block->gadget->type == GADGET_FILE ||
-			block->gadget->type == GADGET_TEXTAREA) &&
-			block->style && wtype == CSS_WIDTH_AUTO) {
-		css_fixed size = INTTOFIX(10);
+	إذا (بلوک->gadget && (بلوک->gadget->type == GADGET_TEXTBOX ||
+			بلوک->gadget->type == GADGET_PASSWORD ||
+			بلوک->gadget->type == GADGET_FILE ||
+			بلوک->gadget->type == GADGET_TEXTAREA) &&
+			بلوک->style && wtype == CSS_عرض_AUTO) {
+		css_fixed اندازه = INTTOFIX(10);
 		css_unit unit = CSS_UNIT_EM;
 
-		min = max = FIXTOINT(css_unit_len2device_px(block->style,
-				&content->unit_len_ctx, size, unit));
+		min = max = FIXTOINT(css_unit_len2device_px(بلوک->style,
+				&content->unit_len_ctx, اندازه, unit));
 
-		block->flags |= HAS_HEIGHT;
+		بلوک->flags |= HAS_ارتفاع;
 	}
 
-	if (block->gadget && (block->gadget->type == GADGET_RADIO ||
-			block->gadget->type == GADGET_CHECKBOX) &&
-			block->style && wtype == CSS_WIDTH_AUTO) {
-		css_fixed size = INTTOFIX(1);
+	إذا (بلوک->gadget && (بلوک->gadget->type == GADGET_RADIO ||
+			بلوک->gadget->type == GADGET_CHECKBOX) &&
+			بلوک->style && wtype == CSS_عرض_AUTO) {
+		css_fixed اندازه = INTTOFIX(1);
 		css_unit unit = CSS_UNIT_EM;
 
 		/* form checkbox or radio button
 		 * if width is AUTO, set it to 1em */
-		min = max = FIXTOINT(css_unit_len2device_px(block->style,
-				&content->unit_len_ctx, size, unit));
+		min = max = FIXTOINT(css_unit_len2device_px(بلوک->style,
+				&content->unit_len_ctx, اندازه, unit));
 
-		block->flags |= HAS_HEIGHT;
+		بلوک->flags |= HAS_ارتفاع;
 	}
 
-	if (block->object) {
-		if (content_get_type(block->object) == CONTENT_HTML) {
-			layout_minmax_block(html_get_box_tree(block->object),
+	إذا (بلوک->object) {
+		إذا (content_get_type(بلوک->object) == CONTENT_HTML) {
+			layout_minmax_بلوک(html_get_box_درخت(بلوک->object),
 					font_func, content);
-			min = html_get_box_tree(block->object)->min_width;
-			max = html_get_box_tree(block->object)->max_width;
-		} else {
-			min = max = content_get_width(block->object);
+			min = html_get_box_درخت(بلوک->object)->min_عرض;
+			max = html_get_box_درخت(بلوک->object)->max_عرض;
+		} وإلا {
+			min = max = content_get_عرض(بلوک->object);
 		}
 
-		block->flags |= HAS_HEIGHT;
-	} else if (block->flags & IFRAME) {
+		بلوک->flags |= HAS_ارتفاع;
+	} وإلا إذا (بلوک->flags & IFRAME) {
 		/** \todo do we need to know the min/max width of the iframe's
 		 * content? */
-		block->flags |= HAS_HEIGHT;
-	} else {
+		بلوک->flags |= HAS_ارتفاع;
+	} وإلا {
 		/* recurse through children */
-		for (child = block->children; child; child = child->next) {
-			switch (child->type) {
-			case BOX_FLEX:
-			case BOX_BLOCK:
-				layout_minmax_block(child, font_func,
+		لكل (فرزند = بلوک->children; فرزند; فرزند = فرزند->بعدی) {
+			بدل (فرزند->type) {
+			حالة BOX_FLEX:
+			حالة BOX_بلوک:
+				layout_minmax_بلوک(فرزند, font_func,
 						content);
-				if (child->flags & HAS_HEIGHT)
-					child_has_height = true;
-				break;
-			case BOX_INLINE_CONTAINER:
-				if (block->flags & NEED_MIN)
-					child->flags |= NEED_MIN;
+				إذا (فرزند->flags & HAS_ارتفاع)
+					فرزند_has_ارتفاع = true;
+				اكسر;
+			حالة BOX_INLINE_CONTAINER:
+				إذا (بلوک->flags & NEED_MIN)
+					فرزند->flags |= NEED_MIN;
 
-				layout_minmax_inline_container(child,
-						&child_has_height, font_func,
+				layout_minmax_inline_container(فرزند,
+						&فرزند_has_ارتفاع, font_func,
 						content);
-				if (child_has_height &&
-						child ==
-						child->parent->children) {
-					block->flags |= MAKE_HEIGHT;
+				إذا (فرزند_has_ارتفاع &&
+						فرزند ==
+						فرزند->والد->children) {
+					بلوک->flags |= MAKE_ارتفاع;
 				}
-				break;
-			case BOX_TABLE:
-				layout_minmax_table(child, font_func,
+				اكسر;
+			حالة BOX_جدول:
+				layout_minmax_جدول(فرزند, font_func,
 						content);
 				/* todo: fix for zero height tables */
-				child_has_height = true;
-				child->flags |= MAKE_HEIGHT;
-				break;
-			default:
-				assert(0);
+				فرزند_has_ارتفاع = true;
+				فرزند->flags |= MAKE_ارتفاع;
+				اكسر;
+			افتراضي:
+				أكد(0);
 			}
-			assert(child->max_width != UNKNOWN_MAX_WIDTH);
+			أكد(فرزند->max_عرض != UNKNOWN_MAX_عرض);
 
-			if (child->style &&
-					(css_computed_position(child->style) ==
+			إذا (فرزند->style &&
+					(css_computed_position(فرزند->style) ==
 							CSS_POSITION_ABSOLUTE ||
-					css_computed_position(child->style) ==
+					css_computed_position(فرزند->style) ==
 							CSS_POSITION_FIXED)) {
 				/* This child is positioned out of normal flow,
 				 * so it will have no affect on width */
-				continue;
+				استمر;
 			}
 
-			if (lh__box_is_flex_container(block) &&
-			    lh__flex_main_is_horizontal(block)) {
-				if (block->style != NULL &&
-				    css_computed_flex_wrap(block->style) ==
+			إذا (lh__box_is_flex_container(بلوک) &&
+			    lh__flex_main_is_horizontal(بلوک)) {
+				إذا (بلوک->style != عدم &&
+				    css_computed_flex_wrap(بلوک->style) ==
 						CSS_FLEX_WRAP_NOWRAP) {
-					min += child->min_width;
-				} else {
-					if (min < child->min_width)
-						min = child->min_width;
+					min += فرزند->min_عرض;
+				} وإلا {
+					إذا (min < فرزند->min_عرض)
+						min = فرزند->min_عرض;
 				}
-				max += child->max_width;
+				max += فرزند->max_عرض;
 
-			} else {
-				if (min < child->min_width)
-					min = child->min_width;
-				if (max < child->max_width)
-					max = child->max_width;
+			} وإلا {
+				إذا (min < فرزند->min_عرض)
+					min = فرزند->min_عرض;
+				إذا (max < فرزند->max_عرض)
+					max = فرزند->max_عرض;
 			}
 
-			if (child_has_height)
-				block->flags |= HAS_HEIGHT;
+			إذا (فرزند_has_ارتفاع)
+				بلوک->flags |= HAS_ارتفاع;
 		}
 	}
 
-	if (max < min) {
-		box_dump(stderr, block, 0, true);
-		assert(0);
+	إذا (max < min) {
+		box_dump(stderr, بلوک, 0, true);
+		أكد(0);
 	}
 
 	/* fixed width takes priority */
-	if (block->type != BOX_TABLE_CELL && !lh__box_is_flex_item(block)) {
+	إذا (بلوک->type != BOX_جدول_CELL && !lh_box_is_flex_قلم(بلوک)) {
 		bool border_box = bs == CSS_BOX_SIZING_BORDER_BOX;
-		enum css_max_width_e max_type;
-		enum css_min_width_e min_type;
+		تعداد css_max_عرض_e max_type;
+		تعداد css_min_عرض_e min_type;
 		css_unit unit = CSS_UNIT_PX;
-		css_fixed value = 0;
-		int width;
+		css_fixed مقدار = 0;
+		صحيح عرض;
 
-		if (css_computed_width_px(block->style, &content->unit_len_ctx,
-				-1, &width) == CSS_WIDTH_SET) {
-			min = max = width;
+		إذا (css_computed_عرض_px(بلوک->style, &content->unit_len_ctx,
+				-1, &عرض) == CSS_عرض_مجموعه) {
+			min = max = عرض;
 			using_max_border_box = border_box;
 			using_min_border_box = border_box;
 		}
 
-		min_type = css_computed_min_width(block->style, &value, &unit);
-		if (min_type == CSS_MIN_WIDTH_SET && unit != CSS_UNIT_PCT) {
-			int val = FIXTOINT(css_unit_len2device_px(block->style,
-					&content->unit_len_ctx, value, unit));
+		min_type = css_computed_min_عرض(بلوک->style, &مقدار, &unit);
+		إذا (min_type == CSS_MIN_عرض_مجموعه && unit != CSS_UNIT_PCT) {
+			صحيح val = FIXTOINT(css_unit_len2device_px(بلوک->style,
+					&content->unit_len_ctx, مقدار, unit));
 
-			if (min < val) {
+			إذا (min < val) {
 				min = val;
 				using_min_border_box = border_box;
 			}
 		}
 
-		max_type = css_computed_max_width(block->style, &value, &unit);
-		if (max_type == CSS_MAX_WIDTH_SET && unit != CSS_UNIT_PCT) {
-			int val = FIXTOINT(css_unit_len2device_px(block->style,
-					&content->unit_len_ctx, value, unit));
+		max_type = css_computed_max_عرض(بلوک->style, &مقدار, &unit);
+		إذا (max_type == CSS_MAX_عرض_مجموعه && unit != CSS_UNIT_PCT) {
+			صحيح val = FIXTOINT(css_unit_len2device_px(بلوک->style,
+					&content->unit_len_ctx, مقدار, unit));
 
-			if (val >= 0 && max > val) {
+			إذا (val >= 0 && max > val) {
 				max = val;
 				using_max_border_box = border_box;
 			}
 		}
 	}
 
-	if (htype == CSS_HEIGHT_SET && hunit != CSS_UNIT_PCT &&
-			height > INTTOFIX(0)) {
-		block->flags |= MAKE_HEIGHT;
-		block->flags |= HAS_HEIGHT;
+	إذا (htype == CSS_ارتفاع_مجموعه && hunit != CSS_UNIT_PCT &&
+			ارتفاع > INTTOFIX(0)) {
+		بلوک->flags |= MAKE_ارتفاع;
+		بلوک->flags |= HAS_ارتفاع;
 	}
 
 	/* add margins, border, padding to min, max widths */
 	/* Note: we don't know available width here so percentage margin
 	 * and paddings are wrong. */
-	calculate_mbp_width(&content->unit_len_ctx, block->style, LEFT,
+	calculate_mbp_عرض(&content->unit_len_ctx, بلوک->style, چپ_2,
 			false, true, true, &extra_fixed, &extra_frac);
-	calculate_mbp_width(&content->unit_len_ctx, block->style, RIGHT,
+	calculate_mbp_عرض(&content->unit_len_ctx, بلوک->style, راست_2,
 			false, true, true, &extra_fixed, &extra_frac);
 
-	if (using_max_border_box) {
+	إذا (using_max_border_box) {
 		max -= extra_fixed;
 		max = max(max, 0);
 	}
 
-	if (using_min_border_box) {
+	إذا (using_min_border_box) {
 		min -= extra_fixed;
 		min = max(min, 0);
 	}
 
-	if (max < min) {
+	إذا (max < min) {
 		min = max;
 	}
 
-	calculate_mbp_width(&content->unit_len_ctx, block->style, LEFT,
+	calculate_mbp_عرض(&content->unit_len_ctx, بلوک->style, چپ_2,
 			true, false, false, &extra_fixed, &extra_frac);
-	calculate_mbp_width(&content->unit_len_ctx, block->style, RIGHT,
+	calculate_mbp_عرض(&content->unit_len_ctx, بلوک->style, راست_2,
 			true, false, false, &extra_fixed, &extra_frac);
 
-	if (extra_fixed < 0)
+	إذا (extra_fixed < 0)
 		extra_fixed = 0;
-	if (extra_frac < 0)
+	إذا (extra_frac < 0)
 		extra_frac = 0;
-	if (1.0 <= extra_frac)
+	إذا (1.0 <= extra_frac)
 		extra_frac = 0.9;
-	if (block->style != NULL &&
-			(css_computed_float(block->style) == CSS_FLOAT_LEFT ||
-			css_computed_float(block->style) == CSS_FLOAT_RIGHT)) {
+	إذا (بلوک->style != عدم &&
+			(css_computed_float(بلوک->style) == CSS_FLOAT_چپ ||
+			css_computed_float(بلوک->style) == CSS_FLOAT_راست)) {
 		/* floated boxs */
-		block->min_width = min + extra_fixed;
-		block->max_width = max + extra_fixed;
-	} else {
+		بلوک->min_عرض = min + extra_fixed;
+		بلوک->max_عرض = max + extra_fixed;
+	} وإلا {
 		/* not floated */
-		block->min_width = (min + extra_fixed) / (1.0 - extra_frac);
-		block->max_width = (max + extra_fixed) / (1.0 - extra_frac);
+		بلوک->min_عرض = (min + extra_fixed) / (1.0 - extra_frac);
+		بلوک->max_عرض = (max + extra_fixed) / (1.0 - extra_frac);
 	}
 
-	assert(0 <= block->min_width);
-	assert(block->min_width <= block->max_width);
+	أكد(0 <= بلوک->min_عرض);
+	أكد(بلوک->min_عرض <= بلوک->max_عرض);
 }
 
 
@@ -1135,19 +1135,19 @@ static void layout_minmax_block(
  * \param  max_neg_margin  updated to to maximum negative margin encountered
  * \return  next box that current margin collapses to, or NULL if none.
  */
-static struct box*
-layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
-			 struct box *box,
-			 struct box *block,
-			 int viewport_height,
-			 int *max_pos_margin,
-			 int *max_neg_margin)
+ساكن بنية box*
+layout_بعدی_margin_بلوک(ثابت css_unit_ctx *unit_len_ctx,
+			 بنية box *box,
+			 بنية box *بلوک,
+			 صحيح viewport_ارتفاع,
+			 صحيح *max_pos_margin,
+			 صحيح *max_neg_margin)
 {
-	assert(block != NULL);
+	أكد(بلوک != عدم);
 
-	while (box != NULL) {
+	طالما (box != عدم) {
 
-		if (box->type == BOX_INLINE_CONTAINER || (box->style &&
+		إذا (box->type == BOX_INLINE_CONTAINER || (box->style &&
 				(css_computed_position(box->style) !=
 					CSS_POSITION_ABSOLUTE &&
 				 css_computed_position(box->style) !=
@@ -1155,94 +1155,94 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
 			/* Not positioned */
 
 			/* Get margins */
-			if (box->style) {
-				layout_find_dimensions(unit_len_ctx,
-						box->parent->width,
-						viewport_height, box,
+			إذا (box->style) {
+				layout_پیدا_کن_dimensions(unit_len_ctx,
+						box->والد->عرض,
+						viewport_ارتفاع, box,
 						box->style,
-						NULL, NULL, NULL, NULL,
-						NULL, NULL, box->margin,
+						عدم, عدم, عدم, عدم,
+						عدم, عدم, box->margin,
 						box->padding, box->border);
 
 				/* Apply top margin */
-				if (*max_pos_margin < box->margin[TOP])
-					*max_pos_margin = box->margin[TOP];
-				else if (*max_neg_margin < -box->margin[TOP])
-					*max_neg_margin = -box->margin[TOP];
+				إذا (*max_pos_margin < box->margin[بالاترین_2])
+					*max_pos_margin = box->margin[بالاترین_2];
+				وإلا إذا (*max_neg_margin < -box->margin[بالاترین_2])
+					*max_neg_margin = -box->margin[بالاترین_2];
 			}
 
 			/* Check whether box is the box current margin collapses
 			 * to */
-			if (box->flags & MAKE_HEIGHT ||
-					box->border[TOP].width ||
-					box->padding[TOP] ||
+			إذا (box->flags & MAKE_ارتفاع ||
+					box->border[بالاترین_2].عرض ||
+					box->padding[بالاترین_2] ||
 					(box->style &&
-					css_computed_overflow_y(box->style) !=
-					CSS_OVERFLOW_VISIBLE) ||
+					css_computed_سرریز_y(box->style) !=
+					CSS_سرریز_VISIBLE) ||
 					(box->type == BOX_INLINE_CONTAINER &&
-					!box_is_first_child(box))) {
+					!box_is_اولی_فرزند(box))) {
 				/* Collapse to this box; return it */
-				return box;
+				أرجع box;
 			}
 		}
 
 
 		/* Find next box */
-		if (box->type == BOX_BLOCK && !box->object && box->children &&
+		إذا (box->type == BOX_بلوک && !box->object && box->children &&
 				box->style &&
-				css_computed_overflow_y(box->style) ==
-				CSS_OVERFLOW_VISIBLE) {
+				css_computed_سرریز_y(box->style) ==
+				CSS_سرریز_VISIBLE) {
 			/* Down into children. */
 			box = box->children;
-		} else {
-			if (!box->next) {
+		} وإلا {
+			إذا (!box->بعدی) {
 				/* No more siblings:
 				 * Go up to first ancestor with a sibling. */
-				do {
+				افعل {
 					/* Apply bottom margin */
-					if (*max_pos_margin <
+					إذا (*max_pos_margin <
 							box->margin[BOTTOM])
 						*max_pos_margin =
 							box->margin[BOTTOM];
-					else if (*max_neg_margin <
+					وإلا إذا (*max_neg_margin <
 							-box->margin[BOTTOM])
 						*max_neg_margin =
 							-box->margin[BOTTOM];
 
-					box = box->parent;
-				} while (box != block && !box->next);
+					box = box->والد;
+				} طالما (box != بلوک && !box->بعدی);
 
-				if (box == block) {
+				إذا (box == بلوک) {
 					/* Margins don't collapse with stuff
 					 * outside the block formatting context
 					 */
-					return block;
+					أرجع بلوک;
 				}
 			}
 
 			/* Apply bottom margin */
-			if (*max_pos_margin < box->margin[BOTTOM])
+			إذا (*max_pos_margin < box->margin[BOTTOM])
 				*max_pos_margin = box->margin[BOTTOM];
-			else if (*max_neg_margin < -box->margin[BOTTOM])
+			وإلا إذا (*max_neg_margin < -box->margin[BOTTOM])
 				*max_neg_margin = -box->margin[BOTTOM];
 
 			/* To next sibling. */
-			box = box->next;
+			box = box->بعدی;
 
 			/* Get margins */
-			if (box->style) {
-				layout_find_dimensions(unit_len_ctx,
-						box->parent->width,
-						viewport_height, box,
+			إذا (box->style) {
+				layout_پیدا_کن_dimensions(unit_len_ctx,
+						box->والد->عرض,
+						viewport_ارتفاع, box,
 						box->style,
-						NULL, NULL, NULL, NULL,
-						NULL, NULL, box->margin,
+						عدم, عدم, عدم, عدم,
+						عدم, عدم, box->margin,
 						box->padding, box->border);
 			}
 		}
 	}
 
-	return NULL;
+	أرجع عدم;
 }
 
 
@@ -1253,20 +1253,20 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
  * \param  clear  type of clear
  * \return  y coordinate relative to ancestor box for floats
  */
-static int layout_clear(struct box *fl, enum css_clear_e clear)
+ساكن صحيح layout_clear(بنية box *fl, تعداد css_clear_e clear)
 {
-	int y = 0;
-	for (; fl; fl = fl->next_float) {
-		if ((clear == CSS_CLEAR_LEFT || clear == CSS_CLEAR_BOTH) &&
-				fl->type == BOX_FLOAT_LEFT)
-			if (y < fl->y + fl->height)
-				y = fl->y + fl->height;
-		if ((clear == CSS_CLEAR_RIGHT || clear == CSS_CLEAR_BOTH) &&
-				fl->type == BOX_FLOAT_RIGHT)
-			if (y < fl->y + fl->height)
-				y = fl->y + fl->height;
+	صحيح y = 0;
+	لكل (; fl; fl = fl->بعدی_float) {
+		إذا ((clear == CSS_CLEAR_چپ || clear == CSS_CLEAR_BOTH) &&
+				fl->type == BOX_FLOAT_چپ)
+			إذا (y < fl->y + fl->ارتفاع)
+				y = fl->y + fl->ارتفاع;
+		إذا ((clear == CSS_CLEAR_راست || clear == CSS_CLEAR_BOTH) &&
+				fl->type == BOX_FLOAT_راست)
+			إذا (y < fl->y + fl->ارتفاع)
+				y = fl->y + fl->ارتفاع;
 	}
-	return y;
+	أرجع y;
 }
 
 
@@ -1281,46 +1281,46 @@ static int layout_clear(struct box *fl, enum css_clear_e clear)
  * \param  left	  returns float on left if present
  * \param  right  returns float on right if present
  */
-static void
-find_sides(struct box *fl,
-	   int y0, int y1,
-	   int *x0, int *x1,
-	   struct box **left,
-	   struct box **right)
+ساكن فراغ
+پیدا_کن_sides(بنية box *fl,
+	   صحيح y0, صحيح y1,
+	   صحيح *x0, صحيح *x1,
+	   بنية box **چپ,
+	   بنية box **راست)
 {
-	int fy0, fy1, fx0, fx1;
+	صحيح fy0, fy1, fx0, fx1;
 
 	NSLOG(layout, DEBUG, "y0 %i, y1 %i, x0 %i, x1 %i", y0, y1, *x0, *x1);
 
-	*left = *right = 0;
-	for (; fl; fl = fl->next_float) {
-		fy1 = fl->y + fl->height;
-		if (fy1 < y0) {
+	*چپ = *راست = 0;
+	لكل (; fl; fl = fl->بعدی_float) {
+		fy1 = fl->y + fl->ارتفاع;
+		إذا (fy1 < y0) {
 			/* Floats are sorted in order of decreasing bottom pos.
 			 * Past here, all floats will be too high to concern us.
 			 */
-			return;
+			أرجع;
 		}
 		fy0 = fl->y;
-		if (y0 < fy1 && fy0 <= y1) {
-			if (fl->type == BOX_FLOAT_LEFT) {
-				fx1 = fl->x + fl->width;
-				if (*x0 < fx1) {
+		إذا (y0 < fy1 && fy0 <= y1) {
+			إذا (fl->type == BOX_FLOAT_چپ) {
+				fx1 = fl->x + fl->عرض;
+				إذا (*x0 < fx1) {
 					*x0 = fx1;
-					*left = fl;
+					*چپ = fl;
 				}
-			} else {
+			} وإلا {
 				fx0 = fl->x;
-				if (fx0 < *x1) {
+				إذا (fx0 < *x1) {
 					*x1 = fx0;
-					*right = fl;
+					*راست = fl;
 				}
 			}
 		}
 	}
 
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, left %p, right %p", *x0, *x1,
-	      *left, *right);
+	      *چپ, *راست);
 }
 
 
@@ -1342,125 +1342,125 @@ find_sides(struct box *fl,
  *
  * \post \a box's left/right margins will be updated.
  */
-static int
-layout_solve_width(struct box *box,
-		   int available_width,
-		   int width,
-		   int lm,
-		   int rm,
-		   int max_width,
-		   int min_width)
+ساكن صحيح
+layout_solve_عرض(بنية box *box,
+		   صحيح موجود_عرض,
+		   صحيح عرض,
+		   صحيح lm,
+		   صحيح rm,
+		   صحيح max_عرض,
+		   صحيح min_عرض)
 {
-	bool auto_width = false;
+	bool auto_عرض = false;
 
 	/* Increase specified left/right margins */
-	if (box->margin[LEFT] != AUTO && box->margin[LEFT] < lm &&
-			box->margin[LEFT] >= 0)
-		box->margin[LEFT] = lm;
-	if (box->margin[RIGHT] != AUTO && box->margin[RIGHT] < rm &&
-			box->margin[RIGHT] >= 0)
-		box->margin[RIGHT] = rm;
+	إذا (box->margin[چپ_2] != AUTO && box->margin[چپ_2] < lm &&
+			box->margin[چپ_2] >= 0)
+		box->margin[چپ_2] = lm;
+	إذا (box->margin[راست_2] != AUTO && box->margin[راست_2] < rm &&
+			box->margin[راست_2] >= 0)
+		box->margin[راست_2] = rm;
 
 	/* Find width */
-	if (width == AUTO) {
-		int margin_left = box->margin[LEFT];
-		int margin_right = box->margin[RIGHT];
+	إذا (عرض == AUTO) {
+		صحيح margin_چپ = box->margin[چپ_2];
+		صحيح margin_راست = box->margin[راست_2];
 
-		if (margin_left == AUTO) {
-			margin_left = lm;
+		إذا (margin_چپ == AUTO) {
+			margin_چپ = lm;
 		}
-		if (margin_right == AUTO) {
-			margin_right = rm;
+		إذا (margin_راست == AUTO) {
+			margin_راست = rm;
 		}
 
-		width = available_width -
-				(margin_left + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + margin_right);
-		width = width < 0 ? 0 : width;
-		auto_width = true;
+		عرض = موجود_عرض -
+				(margin_چپ + box->border[چپ_2].عرض +
+				box->padding[چپ_2] + box->padding[راست_2] +
+				box->border[راست_2].عرض + margin_راست);
+		عرض = عرض < 0 ? 0 : عرض;
+		auto_عرض = true;
 	}
 
-	if (max_width >= 0 && width > max_width) {
+	إذا (max_عرض >= 0 && عرض > max_عرض) {
 		/* max-width is admissable and width exceeds max-width */
-		width = max_width;
-		auto_width = false;
+		عرض = max_عرض;
+		auto_عرض = false;
 	}
 
-	if (min_width > 0 && width < min_width) {
+	إذا (min_عرض > 0 && عرض < min_عرض) {
 		/* min-width is admissable and width is less than max-width */
-		width = min_width;
-		auto_width = false;
+		عرض = min_عرض;
+		auto_عرض = false;
 	}
 
 	/* Width was auto, and unconstrained by min/max width, so we're done */
-	if (auto_width) {
+	إذا (auto_عرض) {
 		/* any other 'auto' become 0 or the minimum required values */
-		if (box->margin[LEFT] == AUTO) {
-			box->margin[LEFT] = lm;
+		إذا (box->margin[چپ_2] == AUTO) {
+			box->margin[چپ_2] = lm;
 		}
-		if (box->margin[RIGHT] == AUTO) {
-			box->margin[RIGHT] = rm;
+		إذا (box->margin[راست_2] == AUTO) {
+			box->margin[راست_2] = rm;
 		}
-		return width;
+		أرجع عرض;
 	}
 
 	/* Width was not auto, or was constrained by min/max width
 	 * Need to compute left/right margins */
 
 	/* HTML alignment (only applies to over-constrained boxes) */
-	if (box->margin[LEFT] != AUTO && box->margin[RIGHT] != AUTO &&
-			box->parent != NULL && box->parent->style != NULL) {
-		switch (css_computed_text_align(box->parent->style)) {
-		case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
-			box->margin[LEFT] = AUTO;
-			box->margin[RIGHT] = 0;
-			break;
-		case CSS_TEXT_ALIGN_LIBCSS_CENTER:
-			box->margin[LEFT] = box->margin[RIGHT] = AUTO;
-			break;
-		case CSS_TEXT_ALIGN_LIBCSS_LEFT:
-			box->margin[LEFT] = 0;
-			box->margin[RIGHT] = AUTO;
-			break;
-		default:
+	إذا (box->margin[چپ_2] != AUTO && box->margin[راست_2] != AUTO &&
+			box->والد != عدم && box->والد->style != عدم) {
+		بدل (css_computed_متن_align(box->والد->style)) {
+		حالة CSS_متن_ALIGN_LIBCSS_راست:
+			box->margin[چپ_2] = AUTO;
+			box->margin[راست_2] = 0;
+			اكسر;
+		حالة CSS_متن_ALIGN_LIBCSS_CENTER:
+			box->margin[چپ_2] = box->margin[راست_2] = AUTO;
+			اكسر;
+		حالة CSS_متن_ALIGN_LIBCSS_چپ:
+			box->margin[چپ_2] = 0;
+			box->margin[راست_2] = AUTO;
+			اكسر;
+		افتراضي:
 			/* Leave it alone; no HTML alignment */
-			break;
+			اكسر;
 		}
 	}
 
-	if (box->margin[LEFT] == AUTO && box->margin[RIGHT] == AUTO) {
+	إذا (box->margin[چپ_2] == AUTO && box->margin[راست_2] == AUTO) {
 		/* make the margins equal, centering the element */
-		box->margin[LEFT] = box->margin[RIGHT] =
-				(available_width - lm - rm -
-				(box->border[LEFT].width + box->padding[LEFT] +
-				width + box->padding[RIGHT] +
-				box->border[RIGHT].width)) / 2;
+		box->margin[چپ_2] = box->margin[راست_2] =
+				(موجود_عرض - lm - rm -
+				(box->border[چپ_2].عرض + box->padding[چپ_2] +
+				عرض + box->padding[راست_2] +
+				box->border[راست_2].عرض)) / 2;
 
-		if (box->margin[LEFT] < 0) {
-			box->margin[RIGHT] += box->margin[LEFT];
-			box->margin[LEFT] = 0;
+		إذا (box->margin[چپ_2] < 0) {
+			box->margin[راست_2] += box->margin[چپ_2];
+			box->margin[چپ_2] = 0;
 		}
 
-		box->margin[LEFT] += lm;
+		box->margin[چپ_2] += lm;
 
-	} else if (box->margin[LEFT] == AUTO) {
-		box->margin[LEFT] = available_width - lm -
-				(box->border[LEFT].width + box->padding[LEFT] +
-				width + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT]);
-		box->margin[LEFT] = box->margin[LEFT] < lm
-				? lm : box->margin[LEFT];
-	} else {
+	} وإلا إذا (box->margin[چپ_2] == AUTO) {
+		box->margin[چپ_2] = موجود_عرض - lm -
+				(box->border[چپ_2].عرض + box->padding[چپ_2] +
+				عرض + box->padding[راست_2] +
+				box->border[راست_2].عرض + box->margin[راست_2]);
+		box->margin[چپ_2] = box->margin[چپ_2] < lm
+				? lm : box->margin[چپ_2];
+	} وإلا {
 		/* margin-right auto or "over-constrained" */
-		box->margin[RIGHT] = available_width - rm -
-				(box->margin[LEFT] + box->border[LEFT].width +
-				 box->padding[LEFT] + width +
-				 box->padding[RIGHT] +
-				 box->border[RIGHT].width);
+		box->margin[راست_2] = موجود_عرض - rm -
+				(box->margin[چپ_2] + box->border[چپ_2].عرض +
+				 box->padding[چپ_2] + عرض +
+				 box->padding[راست_2] +
+				 box->border[راست_2].عرض);
 	}
 
-	return width;
+	أرجع عرض;
 }
 
 
@@ -1480,39 +1480,39 @@ layout_solve_width(struct box *box,
  *
  * See CSS 2.1 10.3.3, 10.3.4, 10.6.2, and 10.6.3.
  */
-static void
-layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
-			     int available_width,
-			     int viewport_height,
-			     int lm,
-			     int rm,
-			     struct box *box)
+ساكن فراغ
+layout_بلوک_پیدا_کن_dimensions(ثابت css_unit_ctx *unit_len_ctx,
+			     صحيح موجود_عرض,
+			     صحيح viewport_ارتفاع,
+			     صحيح lm,
+			     صحيح rm,
+			     بنية box *box)
 {
-	int width, max_width, min_width;
-	int height, max_height, min_height;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	const css_computed_style *style = box->style;
+	صحيح عرض, max_عرض, min_عرض;
+	صحيح ارتفاع, max_ارتفاع, min_ارتفاع;
+	صحيح *margin = box->margin;
+	صحيح *padding = box->padding;
+	بنية box_border *border = box->border;
+	ثابت css_computed_style *style = box->style;
 
-	layout_find_dimensions(unit_len_ctx, available_width, viewport_height, box,
-			style, &width, &height, &max_width, &min_width,
-			&max_height, &min_height, margin, padding, border);
+	layout_پیدا_کن_dimensions(unit_len_ctx, موجود_عرض, viewport_ارتفاع, box,
+			style, &عرض, &ارتفاع, &max_عرض, &min_عرض,
+			&max_ارتفاع, &min_ارتفاع, margin, padding, border);
 
-	if (box->object && !(box->flags & REPLACE_DIM) &&
+	إذا (box->object && !(box->flags & REPLACE_DIM) &&
 			content_get_type(box->object) != CONTENT_HTML) {
 		/* block-level replaced element, see 10.3.4 and 10.6.2 */
-		layout_get_object_dimensions(box, &width, &height,
-				min_width, max_width, min_height, max_height);
+		layout_get_object_dimensions(box, &عرض, &ارتفاع,
+				min_عرض, max_عرض, min_ارتفاع, max_ارتفاع);
 	}
 
-	box->width = layout_solve_width(box, available_width, width, lm, rm,
-			max_width, min_width);
-	box->height = height;
+	box->عرض = layout_solve_عرض(box, موجود_عرض, عرض, lm, rm,
+			max_عرض, min_عرض);
+	box->ارتفاع = ارتفاع;
 
-	if (margin[TOP] == AUTO)
-		margin[TOP] = 0;
-	if (margin[BOTTOM] == AUTO)
+	إذا (margin[بالاترین_2] == AUTO)
+		margin[بالاترین_2] = 0;
+	إذا (margin[BOTTOM] == AUTO)
 		margin[BOTTOM] = 0;
 }
 
@@ -1523,47 +1523,47 @@ layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
  * \param  box	  Box to apply scrollbar space too. Must be BOX_BLOCK.
  * \param  which  Which scrollbar to make space for. Must be RIGHT or BOTTOM.
  */
-static void layout_block_add_scrollbar(struct box *box, int which)
+ساكن فراغ layout_بلوک_جمع_کن_scrollbar(بنية box *box, صحيح which)
 {
-	enum css_overflow_e overflow_x, overflow_y;
+	تعداد css_سرریز_e سرریز_x, سرریز_y;
 
-	assert(box->type == BOX_BLOCK && (which == RIGHT || which == BOTTOM));
+	أكد(box->type == BOX_بلوک && (which == راست_2 || which == BOTTOM));
 
-	if (box->style == NULL)
-		return;
+	إذا (box->style == عدم)
+		أرجع;
 
-	overflow_x = css_computed_overflow_x(box->style);
-	overflow_y = css_computed_overflow_y(box->style);
+	سرریز_x = css_computed_سرریز_x(box->style);
+	سرریز_y = css_computed_سرریز_y(box->style);
 
-	if (which == BOTTOM &&
-			(overflow_x == CSS_OVERFLOW_SCROLL ||
-			 overflow_x == CSS_OVERFLOW_AUTO ||
+	إذا (which == BOTTOM &&
+			(سرریز_x == CSS_سرریز_SCROLL ||
+			 سرریز_x == CSS_سرریز_AUTO ||
 			(box->object &&
 			 content_get_type(box->object) == CONTENT_HTML))) {
 		/* make space for scrollbar, unless height is AUTO */
-		if (box->height != AUTO &&
-				(overflow_x == CSS_OVERFLOW_SCROLL ||
+		إذا (box->ارتفاع != AUTO &&
+				(سرریز_x == CSS_سرریز_SCROLL ||
 				box_hscrollbar_present(box))) {
-			box->padding[BOTTOM] += SCROLLBAR_WIDTH;
+			box->padding[BOTTOM] += SCROLLBAR_عرض;
 		}
 
-	} else if (which == RIGHT &&
-			(overflow_y == CSS_OVERFLOW_SCROLL ||
-			 overflow_y == CSS_OVERFLOW_AUTO ||
+	} وإلا إذا (which == راست_2 &&
+			(سرریز_y == CSS_سرریز_SCROLL ||
+			 سرریز_y == CSS_سرریز_AUTO ||
 			(box->object &&
 			 content_get_type(box->object) == CONTENT_HTML))) {
 		/* make space for scrollbars, unless width is AUTO */
-		enum css_height_e htype;
-		css_fixed height = 0;
+		تعداد css_ارتفاع_e htype;
+		css_fixed ارتفاع = 0;
 		css_unit hunit = CSS_UNIT_PX;
-		htype = css_computed_height(box->style, &height, &hunit);
+		htype = css_computed_ارتفاع(box->style, &ارتفاع, &hunit);
 
-		if (which == RIGHT && box->width != AUTO &&
-				htype == CSS_HEIGHT_SET &&
-				(overflow_y == CSS_OVERFLOW_SCROLL ||
+		إذا (which == راست_2 && box->عرض != AUTO &&
+				htype == CSS_ارتفاع_مجموعه &&
+				(سرریز_y == CSS_سرریز_SCROLL ||
 				box_vscrollbar_present(box))) {
-			box->width -= SCROLLBAR_WIDTH;
-			box->padding[RIGHT] += SCROLLBAR_WIDTH;
+			box->عرض -= SCROLLBAR_عرض;
+			box->padding[راست_2] += SCROLLBAR_عرض;
 		}
 	}
 }
@@ -1576,11 +1576,11 @@ static void layout_block_add_scrollbar(struct box *box, int which)
  * \param  x	the amount to move children by horizontally
  * \param  y	the amount to move children by vertically
  */
-static void layout_move_children(struct box *box, int x, int y)
+ساكن فراغ layout_move_children(بنية box *box, صحيح x, صحيح y)
 {
-	assert(box);
+	أكد(box);
 
-	for (box = box->children; box; box = box->next) {
+	لكل (box = box->children; box; box = box->بعدی) {
 		box->x += x;
 		box->y += y;
 	}
@@ -1588,98 +1588,98 @@ static void layout_move_children(struct box *box, int x, int y)
 
 
 /* Documented in layout_internal.h */
-bool layout_table(
-		struct box *table,
-		int available_width,
+bool layout_جدول(
+		بنية box *جدول,
+		صحيح موجود_عرض,
 		html_content *content)
 {
-	unsigned int columns = table->columns;  /* total columns */
-	unsigned int i;
-	unsigned int *row_span;
-	int *excess_y;
-	int table_width, min_width = 0, max_width = 0;
-	int required_width = 0;
-	int x, remainder = 0, count = 0;
-	int table_height = 0;
-	int min_height = 0;
-	int *xs;  /* array of column x positions */
-	int auto_width;
-	int spare_width;
-	int relative_sum = 0;
-	int border_spacing_h = 0, border_spacing_v = 0;
-	int spare_height;
-	int positioned_columns = 0;
-	struct box *containing_block = NULL;
-	struct box *c;
-	struct box *row;
-	struct box *row_group;
-	struct box **row_span_cell;
-	struct column *col;
-	const css_computed_style *style = table->style;
-	enum css_height_e htype;
-	css_fixed value = 0;
+	بیعلامت صحيح columns = جدول->columns;  /* total columns */
+	بیعلامت صحيح i;
+	بیعلامت صحيح *ردیف_بازه;
+	صحيح *excess_y;
+	صحيح جدول_عرض, min_عرض = 0, max_عرض = 0;
+	صحيح required_عرض = 0;
+	صحيح x, remainder = 0, شمار = 0;
+	صحيح جدول_ارتفاع = 0;
+	صحيح min_ارتفاع = 0;
+	صحيح *xs;  /* array of column x positions */
+	صحيح auto_عرض;
+	صحيح یدکی_عرض;
+	صحيح relative_جمع = 0;
+	صحيح border_spacing_h = 0, border_spacing_v = 0;
+	صحيح یدکی_ارتفاع;
+	صحيح positioned_columns = 0;
+	بنية box *containing_بلوک = عدم;
+	بنية box *c;
+	بنية box *ردیف;
+	بنية box *ردیف_گروه;
+	بنية box **ردیف_بازه_cell;
+	بنية ستونی *ستون;
+	ثابت css_computed_style *style = جدول->style;
+	تعداد css_ارتفاع_e htype;
+	css_fixed مقدار = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(table->type == BOX_TABLE);
-	assert(style);
-	assert(table->children && table->children->children);
-	assert(columns);
+	أكد(جدول->type == BOX_جدول);
+	أكد(style);
+	أكد(جدول->children && جدول->children->children);
+	أكد(columns);
 
 	/* allocate working buffers */
-	col = malloc(columns * sizeof col[0]);
-	excess_y = malloc(columns * sizeof excess_y[0]);
-	row_span = malloc(columns * sizeof row_span[0]);
-	row_span_cell = malloc(columns * sizeof row_span_cell[0]);
-	xs = malloc((columns + 1) * sizeof xs[0]);
-	if (!col || !xs || !row_span || !excess_y || !row_span_cell) {
-		free(col);
-		free(excess_y);
-		free(row_span);
-		free(row_span_cell);
-		free(xs);
-		return false;
+	ستون = حافظه_بده(columns * حجم ستون[0]);
+	excess_y = حافظه_بده(columns * حجم excess_y[0]);
+	ردیف_بازه = حافظه_بده(columns * حجم ردیف_بازه[0]);
+	ردیف_بازه_cell = حافظه_بده(columns * حجم ردیف_بازه_cell[0]);
+	xs = حافظه_بده((columns + 1) * حجم xs[0]);
+	إذا (!ستون || !xs || !ردیف_بازه || !excess_y || !ردیف_بازه_cell) {
+		حرر(ستون);
+		حرر(excess_y);
+		حرر(ردیف_بازه);
+		حرر(ردیف_بازه_cell);
+		حرر(xs);
+		أرجع false;
 	}
 
-	memcpy(col, table->col, sizeof(col[0]) * columns);
+	کپی_حافظه(ستون, جدول->ستون, حجم(ستون[0]) * columns);
 
 	/* find margins, paddings, and borders for table and cells */
-	layout_find_dimensions(&content->unit_len_ctx, available_width, -1, table,
-			style, 0, 0, 0, 0, 0, 0, table->margin, table->padding,
-			table->border);
-	for (row_group = table->children; row_group;
-			row_group = row_group->next) {
-		for (row = row_group->children; row; row = row->next) {
-			for (c = row->children; c; c = c->next) {
-				enum css_overflow_e overflow_x;
-				enum css_overflow_e overflow_y;
+	layout_پیدا_کن_dimensions(&content->unit_len_ctx, موجود_عرض, -1, جدول,
+			style, 0, 0, 0, 0, 0, 0, جدول->margin, جدول->padding,
+			جدول->border);
+	لكل (ردیف_گروه = جدول->children; ردیف_گروه;
+			ردیف_گروه = ردیف_گروه->بعدی) {
+		لكل (ردیف = ردیف_گروه->children; ردیف; ردیف = ردیف->بعدی) {
+			لكل (c = ردیف->children; c; c = c->بعدی) {
+				تعداد css_سرریز_e سرریز_x;
+				تعداد css_سرریز_e سرریز_y;
 
-				assert(c->style);
-				table_used_border_for_cell(
+				أكد(c->style);
+				جدول_استفاده_شده_border_for_cell(
 						&content->unit_len_ctx, c);
-				layout_find_dimensions(&content->unit_len_ctx,
-						available_width, -1, c,
+				layout_پیدا_کن_dimensions(&content->unit_len_ctx,
+						موجود_عرض, -1, c,
 						c->style, 0, 0, 0, 0, 0, 0,
 						0, c->padding, c->border);
 
-				overflow_x = css_computed_overflow_x(c->style);
-				overflow_y = css_computed_overflow_y(c->style);
+				سرریز_x = css_computed_سرریز_x(c->style);
+				سرریز_y = css_computed_سرریز_y(c->style);
 
-				if (overflow_x == CSS_OVERFLOW_SCROLL ||
-						overflow_x ==
-						CSS_OVERFLOW_AUTO) {
-					c->padding[BOTTOM] += SCROLLBAR_WIDTH;
+				إذا (سرریز_x == CSS_سرریز_SCROLL ||
+						سرریز_x ==
+						CSS_سرریز_AUTO) {
+					c->padding[BOTTOM] += SCROLLBAR_عرض;
 				}
-				if (overflow_y == CSS_OVERFLOW_SCROLL ||
-						overflow_y ==
-						CSS_OVERFLOW_AUTO) {
-					c->padding[RIGHT] += SCROLLBAR_WIDTH;
+				إذا (سرریز_y == CSS_سرریز_SCROLL ||
+						سرریز_y ==
+						CSS_سرریز_AUTO) {
+					c->padding[راست_2] += SCROLLBAR_عرض;
 				}
 			}
 		}
 	}
 
 	/* border-spacing is used in the separated borders model */
-	if (css_computed_border_collapse(style) ==
+	إذا (css_computed_border_collapse(style) ==
 			CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
@@ -1693,456 +1693,456 @@ bool layout_table(
 	}
 
 	/* find specified table width, or available width if auto-width */
-	if (css_computed_width_px(style, &content->unit_len_ctx,
-			available_width, &table_width) == CSS_WIDTH_SET) {
+	إذا (css_computed_عرض_px(style, &content->unit_len_ctx,
+			موجود_عرض, &جدول_عرض) == CSS_عرض_مجموعه) {
 		/* specified width includes border */
-		table_width -= table->border[LEFT].width +
-				table->border[RIGHT].width;
-		table_width = table_width < 0 ? 0 : table_width;
+		جدول_عرض -= جدول->border[چپ_2].عرض +
+				جدول->border[راست_2].عرض;
+		جدول_عرض = جدول_عرض < 0 ? 0 : جدول_عرض;
 
-		auto_width = table_width;
-	} else {
-		table_width = AUTO;
-		auto_width = available_width -
-				((table->margin[LEFT] == AUTO ? 0 :
-						table->margin[LEFT]) +
-				 table->border[LEFT].width +
-				 table->padding[LEFT] +
-				 table->padding[RIGHT] +
-				 table->border[RIGHT].width +
-				 (table->margin[RIGHT] == AUTO ? 0 :
-						table->margin[RIGHT]));
+		auto_عرض = جدول_عرض;
+	} وإلا {
+		جدول_عرض = AUTO;
+		auto_عرض = موجود_عرض -
+				((جدول->margin[چپ_2] == AUTO ? 0 :
+						جدول->margin[چپ_2]) +
+				 جدول->border[چپ_2].عرض +
+				 جدول->padding[چپ_2] +
+				 جدول->padding[راست_2] +
+				 جدول->border[راست_2].عرض +
+				 (جدول->margin[راست_2] == AUTO ? 0 :
+						جدول->margin[راست_2]));
 	}
 
 	/* Find any table height specified within CSS/HTML */
-	htype = css_computed_height(style, &value, &unit);
-	if (htype == CSS_HEIGHT_SET) {
-		if (unit == CSS_UNIT_PCT) {
+	htype = css_computed_ارتفاع(style, &مقدار, &unit);
+	إذا (htype == CSS_ارتفاع_مجموعه) {
+		إذا (unit == CSS_UNIT_PCT) {
 			/* This is the minimum height for the table
 			 * (see 17.5.3) */
-			if (css_computed_position(table->style) ==
+			إذا (css_computed_position(جدول->style) ==
 					CSS_POSITION_ABSOLUTE) {
 				/* Table is absolutely positioned */
-				assert(table->float_container);
-				containing_block = table->float_container;
-			} else if (table->float_container &&
-					css_computed_position(table->style) !=
+				أكد(جدول->float_container);
+				containing_بلوک = جدول->float_container;
+			} وإلا إذا (جدول->float_container &&
+					css_computed_position(جدول->style) !=
 						CSS_POSITION_ABSOLUTE &&
-					(css_computed_float(table->style) ==
-						CSS_FLOAT_LEFT ||
-					css_computed_float(table->style) ==
-						CSS_FLOAT_RIGHT)) {
+					(css_computed_float(جدول->style) ==
+						CSS_FLOAT_چپ ||
+					css_computed_float(جدول->style) ==
+						CSS_FLOAT_راست)) {
 				/* Table is a float */
-				assert(table->parent && table->parent->parent &&
-						table->parent->parent->parent);
-				containing_block =
-						table->parent->parent->parent;
-			} else if (table->parent && table->parent->type !=
+				أكد(جدول->والد && جدول->والد->والد &&
+						جدول->والد->والد->والد);
+				containing_بلوک =
+						جدول->والد->والد->والد;
+			} وإلا إذا (جدول->والد && جدول->والد->type !=
 					BOX_INLINE_CONTAINER) {
 				/* Table is a block level element */
-				containing_block = table->parent;
-			} else if (table->parent && table->parent->type ==
+				containing_بلوک = جدول->والد;
+			} وإلا إذا (جدول->والد && جدول->والد->type ==
 					BOX_INLINE_CONTAINER) {
 				/* Table is an inline block */
-				assert(table->parent->parent);
-				containing_block = table->parent->parent;
+				أكد(جدول->والد->والد);
+				containing_بلوک = جدول->والد->والد;
 			}
 
-			if (containing_block) {
+			إذا (containing_بلوک) {
 				css_fixed ignored = 0;
 
-				htype = css_computed_height(
-						containing_block->style,
+				htype = css_computed_ارتفاع(
+						containing_بلوک->style,
 						&ignored, &unit);
 			}
 
-			if (containing_block &&
-					containing_block->height != AUTO &&
-					(css_computed_position(table->style) ==
+			إذا (containing_بلوک &&
+					containing_بلوک->ارتفاع != AUTO &&
+					(css_computed_position(جدول->style) ==
 							CSS_POSITION_ABSOLUTE ||
-					htype == CSS_HEIGHT_SET)) {
+					htype == CSS_ارتفاع_مجموعه)) {
 				/* Table is absolutely positioned or its
 				 * containing block has a valid specified
 				 * height. (CSS 2.1 Section 10.5) */
-				min_height = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
+				min_ارتفاع = FPCT_از_INT_TOINT(مقدار,
+						containing_بلوک->ارتفاع);
 			}
-		} else {
+		} وإلا {
 			/* This is the minimum height for the table
 			 * (see 17.5.3) */
-			min_height = FIXTOINT(css_unit_len2device_px(
+			min_ارتفاع = FIXTOINT(css_unit_len2device_px(
 					style, &content->unit_len_ctx,
-					value, unit));
+					مقدار, unit));
 		}
 	}
 
 	/* calculate width required by cells */
-	for (i = 0; i != columns; i++) {
+	لكل (i = 0; i != columns; i++) {
 
 		NSLOG(layout, DEBUG,
 		      "table %p, column %u: type %s, width %i, min %i, max %i",
-		      table,
+		      جدول,
 		      i,
-		      ((const char *[]){
+		      ((ثابت حرف *[]){
 			      "UNKNOWN",
 				      "FIXED",
 				      "AUTO",
 				      "PERCENT",
 				      "RELATIVE",
-				      })[col[i].type],
-		      col[i].width,
-		      col[i].min,
-		      col[i].max);
+				      })[ستون[i].type],
+		      ستون[i].عرض,
+		      ستون[i].min,
+		      ستون[i].max);
 
 
-		if (col[i].positioned) {
+		إذا (ستون[i].positioned) {
 			positioned_columns++;
-			continue;
-		} else if (col[i].type == COLUMN_WIDTH_FIXED) {
-			if (col[i].width < col[i].min)
-				col[i].width = col[i].max = col[i].min;
-			else
-				col[i].min = col[i].max = col[i].width;
-			required_width += col[i].width;
-		} else if (col[i].type == COLUMN_WIDTH_PERCENT) {
-			int width = col[i].width * auto_width / 100;
-			required_width += col[i].min < width ? width :
-					col[i].min;
-		} else
-			required_width += col[i].min;
+			استمر;
+		} وإلا إذا (ستون[i].type == ستونی_عرض_FIXED) {
+			إذا (ستون[i].عرض < ستون[i].min)
+				ستون[i].عرض = ستون[i].max = ستون[i].min;
+			وإلا
+				ستون[i].min = ستون[i].max = ستون[i].عرض;
+			required_عرض += ستون[i].عرض;
+		} وإلا إذا (ستون[i].type == ستونی_عرض_PERCENT) {
+			صحيح عرض = ستون[i].عرض * auto_عرض / 100;
+			required_عرض += ستون[i].min < عرض ? عرض :
+					ستون[i].min;
+		} وإلا
+			required_عرض += ستون[i].min;
 
-		NSLOG(layout, DEBUG,  "required_width %i", required_width);
+		NSLOG(layout, DEBUG,  "required_width %i", required_عرض);
 	}
-	required_width += (columns + 1 - positioned_columns) *
+	required_عرض += (columns + 1 - positioned_columns) *
 			border_spacing_h;
 
 	NSLOG(layout, DEBUG,
-	      "width %i, min %i, max %i, auto %i, required %i", table_width,
-	      table->min_width, table->max_width, auto_width, required_width);
+	      "width %i, min %i, max %i, auto %i, required %i", جدول_عرض,
+	      جدول->min_عرض, جدول->max_عرض, auto_عرض, required_عرض);
 
-	if (auto_width < required_width) {
+	إذا (auto_عرض < required_عرض) {
 		/* table narrower than required width for columns:
 		 * treat percentage widths as maximums */
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE)
-				continue;
-			if (col[i].type == COLUMN_WIDTH_PERCENT) {
-				col[i].max = auto_width * col[i].width / 100;
-				if (col[i].max < col[i].min)
-					col[i].max = col[i].min;
+		لكل (i = 0; i != columns; i++) {
+			إذا (ستون[i].type == ستونی_عرض_RELATIVE)
+				استمر;
+			إذا (ستون[i].type == ستونی_عرض_PERCENT) {
+				ستون[i].max = auto_عرض * ستون[i].عرض / 100;
+				إذا (ستون[i].max < ستون[i].min)
+					ستون[i].max = ستون[i].min;
 			}
-			min_width += col[i].min;
-			max_width += col[i].max;
+			min_عرض += ستون[i].min;
+			max_عرض += ستون[i].max;
 		}
-	} else {
+	} وإلا {
 		/* take percentages exactly */
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE)
-				continue;
-			if (col[i].type == COLUMN_WIDTH_PERCENT) {
-				int width = auto_width * col[i].width / 100;
-				if (width < col[i].min)
-					width = col[i].min;
-				col[i].min = col[i].width = col[i].max = width;
-				col[i].type = COLUMN_WIDTH_FIXED;
+		لكل (i = 0; i != columns; i++) {
+			إذا (ستون[i].type == ستونی_عرض_RELATIVE)
+				استمر;
+			إذا (ستون[i].type == ستونی_عرض_PERCENT) {
+				صحيح عرض = auto_عرض * ستون[i].عرض / 100;
+				إذا (عرض < ستون[i].min)
+					عرض = ستون[i].min;
+				ستون[i].min = ستون[i].عرض = ستون[i].max = عرض;
+				ستون[i].type = ستونی_عرض_FIXED;
 			}
-			min_width += col[i].min;
-			max_width += col[i].max;
+			min_عرض += ستون[i].min;
+			max_عرض += ستون[i].max;
 		}
 	}
 
 	/* allocate relative widths */
-	spare_width = auto_width;
-	for (i = 0; i != columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_RELATIVE)
-			relative_sum += col[i].width;
-		else if (col[i].type == COLUMN_WIDTH_FIXED)
-			spare_width -= col[i].width;
-		else
-			spare_width -= col[i].min;
+	یدکی_عرض = auto_عرض;
+	لكل (i = 0; i != columns; i++) {
+		إذا (ستون[i].type == ستونی_عرض_RELATIVE)
+			relative_جمع += ستون[i].عرض;
+		وإلا إذا (ستون[i].type == ستونی_عرض_FIXED)
+			یدکی_عرض -= ستون[i].عرض;
+		وإلا
+			یدکی_عرض -= ستون[i].min;
 	}
-	spare_width -= (columns + 1) * border_spacing_h;
-	if (relative_sum != 0) {
-		if (spare_width < 0)
-			spare_width = 0;
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE) {
-				col[i].min = ceil(col[i].max =
-						(float) spare_width
-						* (float) col[i].width
-						/ relative_sum);
-				min_width += col[i].min;
-				max_width += col[i].max;
+	یدکی_عرض -= (columns + 1) * border_spacing_h;
+	إذا (relative_جمع != 0) {
+		إذا (یدکی_عرض < 0)
+			یدکی_عرض = 0;
+		لكل (i = 0; i != columns; i++) {
+			إذا (ستون[i].type == ستونی_عرض_RELATIVE) {
+				ستون[i].min = ceil(ستون[i].max =
+						(عائم) یدکی_عرض
+						* (عائم) ستون[i].عرض
+						/ relative_جمع);
+				min_عرض += ستون[i].min;
+				max_عرض += ستون[i].max;
 			}
 		}
 	}
-	min_width += (columns + 1) * border_spacing_h;
-	max_width += (columns + 1) * border_spacing_h;
+	min_عرض += (columns + 1) * border_spacing_h;
+	max_عرض += (columns + 1) * border_spacing_h;
 
-	if (auto_width <= min_width) {
+	إذا (auto_عرض <= min_عرض) {
 		/* not enough space: minimise column widths */
-		for (i = 0; i < columns; i++) {
-			col[i].width = col[i].min;
+		لكل (i = 0; i < columns; i++) {
+			ستون[i].عرض = ستون[i].min;
 		}
-		table_width = min_width;
-	} else if (max_width <= auto_width) {
+		جدول_عرض = min_عرض;
+	} وإلا إذا (max_عرض <= auto_عرض) {
 		/* more space than maximum width */
-		if (table_width == AUTO) {
+		إذا (جدول_عرض == AUTO) {
 			/* for auto-width tables, make columns max width */
-			for (i = 0; i < columns; i++) {
-				col[i].width = col[i].max;
+			لكل (i = 0; i < columns; i++) {
+				ستون[i].عرض = ستون[i].max;
 			}
-			table_width = max_width;
-		} else {
+			جدول_عرض = max_عرض;
+		} وإلا {
 			/* for fixed-width tables, distribute the extra space
 			 * too */
-			unsigned int flexible_columns = 0;
-			for (i = 0; i != columns; i++)
-				if (col[i].type != COLUMN_WIDTH_FIXED)
+			بیعلامت صحيح flexible_columns = 0;
+			لكل (i = 0; i != columns; i++)
+				إذا (ستون[i].type != ستونی_عرض_FIXED)
 					flexible_columns++;
-			if (flexible_columns == 0) {
-				int extra = (table_width - max_width) / columns;
-				remainder = (table_width - max_width) -
+			إذا (flexible_columns == 0) {
+				صحيح extra = (جدول_عرض - max_عرض) / columns;
+				remainder = (جدول_عرض - max_عرض) -
 						(extra * columns);
-				for (i = 0; i != columns; i++) {
-					col[i].width = col[i].max + extra;
-					count -= remainder;
-					if (count < 0) {
-						col[i].width++;
-						count += columns;
+				لكل (i = 0; i != columns; i++) {
+					ستون[i].عرض = ستون[i].max + extra;
+					شمار -= remainder;
+					إذا (شمار < 0) {
+						ستون[i].عرض++;
+						شمار += columns;
 					}
 				}
 
-			} else {
-				int extra = (table_width - max_width) /
+			} وإلا {
+				صحيح extra = (جدول_عرض - max_عرض) /
 						flexible_columns;
-				remainder = (table_width - max_width) -
+				remainder = (جدول_عرض - max_عرض) -
 						(extra * flexible_columns);
-				for (i = 0; i != columns; i++)
-					if (col[i].type != COLUMN_WIDTH_FIXED) {
-						col[i].width = col[i].max +
+				لكل (i = 0; i != columns; i++)
+					إذا (ستون[i].type != ستونی_عرض_FIXED) {
+						ستون[i].عرض = ستون[i].max +
 								extra;
-						count -= remainder;
-						if (count < 0) {
-							col[i].width++;
-							count += flexible_columns;
+						شمار -= remainder;
+						إذا (شمار < 0) {
+							ستون[i].عرض++;
+							شمار += flexible_columns;
 						}
 					}
 			}
 		}
-	} else {
+	} وإلا {
 		/* space between min and max: fill it exactly */
-		float scale = (float) (auto_width - min_width) /
-				(float) (max_width - min_width);
+		عائم scale = (عائم) (auto_عرض - min_عرض) /
+				(عائم) (max_عرض - min_عرض);
 		/* fprintf(stderr, "filling, scale %f\n", scale); */
-		for (i = 0; i < columns; i++) {
-			col[i].width = col[i].min + (int) (0.5 +
-					(col[i].max - col[i].min) * scale);
+		لكل (i = 0; i < columns; i++) {
+			ستون[i].عرض = ستون[i].min + (صحيح) (0.5 +
+					(ستون[i].max - ستون[i].min) * scale);
 		}
-		table_width = auto_width;
+		جدول_عرض = auto_عرض;
 	}
 
 	xs[0] = x = border_spacing_h;
-	for (i = 0; i != columns; i++) {
-		if (!col[i].positioned)
-			x += col[i].width + border_spacing_h;
+	لكل (i = 0; i != columns; i++) {
+		إذا (!ستون[i].positioned)
+			x += ستون[i].عرض + border_spacing_h;
 		xs[i + 1] = x;
-		row_span[i] = 0;
+		ردیف_بازه[i] = 0;
 		excess_y[i] = 0;
-		row_span_cell[i] = 0;
+		ردیف_بازه_cell[i] = 0;
 	}
 
 	/* position cells */
-	table_height = border_spacing_v;
-	for (row_group = table->children; row_group;
-			row_group = row_group->next) {
-		int row_group_height = 0;
-		for (row = row_group->children; row; row = row->next) {
-			int row_height = 0;
+	جدول_ارتفاع = border_spacing_v;
+	لكل (ردیف_گروه = جدول->children; ردیف_گروه;
+			ردیف_گروه = ردیف_گروه->بعدی) {
+		صحيح ردیف_گروه_ارتفاع = 0;
+		لكل (ردیف = ردیف_گروه->children; ردیف; ردیف = ردیف->بعدی) {
+			صحيح ردیف_ارتفاع = 0;
 
-			htype = css_computed_height(row->style, &value, &unit);
-			if (htype == CSS_HEIGHT_SET && unit != CSS_UNIT_PCT) {
-				row_height = FIXTOINT(css_unit_len2device_px(
-						row->style,
+			htype = css_computed_ارتفاع(ردیف->style, &مقدار, &unit);
+			إذا (htype == CSS_ارتفاع_مجموعه && unit != CSS_UNIT_PCT) {
+				ردیف_ارتفاع = FIXTOINT(css_unit_len2device_px(
+						ردیف->style,
 						&content->unit_len_ctx,
-						value, unit));
+						مقدار, unit));
 			}
-			for (c = row->children; c; c = c->next) {
-				assert(c->style);
-				c->width = xs[c->start_column + c->columns] -
-						xs[c->start_column] -
+			لكل (c = ردیف->children; c; c = c->بعدی) {
+				أكد(c->style);
+				c->عرض = xs[c->شروع_ستونی + c->columns] -
+						xs[c->شروع_ستونی] -
 						border_spacing_h -
-						c->border[LEFT].width -
-						c->padding[LEFT] -
-						c->padding[RIGHT] -
-						c->border[RIGHT].width;
+						c->border[چپ_2].عرض -
+						c->padding[چپ_2] -
+						c->padding[راست_2] -
+						c->border[راست_2].عرض;
 				c->float_children = 0;
-				c->cached_place_below_level = 0;
+				c->cached_قراربده_زیر_level = 0;
 
-				c->height = AUTO;
-				if (!layout_block_context(c, -1, content)) {
-					free(col);
-					free(excess_y);
-					free(row_span);
-					free(row_span_cell);
-					free(xs);
-					return false;
+				c->ارتفاع = AUTO;
+				إذا (!layout_بلوک_context(c, -1, content)) {
+					حرر(ستون);
+					حرر(excess_y);
+					حرر(ردیف_بازه);
+					حرر(ردیف_بازه_cell);
+					حرر(xs);
+					أرجع false;
 				}
 				/* warning: c->descendant_y0 and
 				 * c->descendant_y1 used as temporary storage
 				 * until after vertical alignment is complete */
-				c->descendant_y0 = c->height;
+				c->descendant_y0 = c->ارتفاع;
 				c->descendant_y1 = c->padding[BOTTOM];
 
-				htype = css_computed_height(c->style,
-						&value, &unit);
+				htype = css_computed_ارتفاع(c->style,
+						&مقدار, &unit);
 
-				if (htype == CSS_HEIGHT_SET &&
+				إذا (htype == CSS_ارتفاع_مجموعه &&
 						unit != CSS_UNIT_PCT) {
 					/* some sites use height="1" or similar
 					 * to attempt to make cells as small as
 					 * possible, so treat it as a minimum */
-					int h = FIXTOINT(css_unit_len2device_px(
+					صحيح h = FIXTOINT(css_unit_len2device_px(
 							c->style,
 							&content->unit_len_ctx,
-							value, unit));
-					if (c->height < h)
-						c->height = h;
+							مقدار, unit));
+					إذا (c->ارتفاع < h)
+						c->ارتفاع = h;
 				}
 				/* specified row height is treated as a minimum
 				 */
-				if (c->height < row_height)
-					c->height = row_height;
-				c->x = xs[c->start_column] +
-						c->border[LEFT].width;
-				c->y = c->border[TOP].width;
-				for (i = 0; i != c->columns; i++) {
-					row_span[c->start_column + i] = c->rows;
-					excess_y[c->start_column + i] =
-							c->border[TOP].width +
-							c->padding[TOP] +
-							c->height +
+				إذا (c->ارتفاع < ردیف_ارتفاع)
+					c->ارتفاع = ردیف_ارتفاع;
+				c->x = xs[c->شروع_ستونی] +
+						c->border[چپ_2].عرض;
+				c->y = c->border[بالاترین_2].عرض;
+				لكل (i = 0; i != c->columns; i++) {
+					ردیف_بازه[c->شروع_ستونی + i] = c->ردیفها;
+					excess_y[c->شروع_ستونی + i] =
+							c->border[بالاترین_2].عرض +
+							c->padding[بالاترین_2] +
+							c->ارتفاع +
 							c->padding[BOTTOM] +
-							c->border[BOTTOM].width;
-					row_span_cell[c->start_column + i] = 0;
+							c->border[BOTTOM].عرض;
+					ردیف_بازه_cell[c->شروع_ستونی + i] = 0;
 				}
-				row_span_cell[c->start_column] = c;
+				ردیف_بازه_cell[c->شروع_ستونی] = c;
 				c->padding[BOTTOM] = -border_spacing_v -
-						c->border[TOP].width -
-						c->padding[TOP] -
-						c->height -
-						c->border[BOTTOM].width;
+						c->border[بالاترین_2].عرض -
+						c->padding[بالاترین_2] -
+						c->ارتفاع -
+						c->border[BOTTOM].عرض;
 			}
-			for (i = 0; i != columns; i++)
-				if (row_span[i] != 0)
-					row_span[i]--;
-				else
-					row_span_cell[i] = 0;
-			if (row->next || row_group->next) {
+			لكل (i = 0; i != columns; i++)
+				إذا (ردیف_بازه[i] != 0)
+					ردیف_بازه[i]--;
+				وإلا
+					ردیف_بازه_cell[i] = 0;
+			إذا (ردیف->بعدی || ردیف_گروه->بعدی) {
 				/* row height is greatest excess of a cell
 				 * which ends in this row */
-				for (i = 0; i != columns; i++)
-					if (row_span[i] == 0 && row_height <
+				لكل (i = 0; i != columns; i++)
+					إذا (ردیف_بازه[i] == 0 && ردیف_ارتفاع <
 							excess_y[i])
-						row_height = excess_y[i];
-			} else {
+						ردیف_ارتفاع = excess_y[i];
+			} وإلا {
 				/* except in the last row */
-				for (i = 0; i != columns; i++)
-					if (row_height < excess_y[i])
-						row_height = excess_y[i];
+				لكل (i = 0; i != columns; i++)
+					إذا (ردیف_ارتفاع < excess_y[i])
+						ردیف_ارتفاع = excess_y[i];
 			}
-			for (i = 0; i != columns; i++) {
-				if (row_height < excess_y[i])
-					excess_y[i] -= row_height;
-				else
+			لكل (i = 0; i != columns; i++) {
+				إذا (ردیف_ارتفاع < excess_y[i])
+					excess_y[i] -= ردیف_ارتفاع;
+				وإلا
 					excess_y[i] = 0;
-				if (row_span_cell[i] != 0)
-					row_span_cell[i]->padding[BOTTOM] +=
-							row_height +
+				إذا (ردیف_بازه_cell[i] != 0)
+					ردیف_بازه_cell[i]->padding[BOTTOM] +=
+							ردیف_ارتفاع +
 							border_spacing_v;
 			}
 
-			row->x = 0;
-			row->y = row_group_height;
-			row->width = table_width;
-			row->height = row_height;
-			row_group_height += row_height + border_spacing_v;
+			ردیف->x = 0;
+			ردیف->y = ردیف_گروه_ارتفاع;
+			ردیف->عرض = جدول_عرض;
+			ردیف->ارتفاع = ردیف_ارتفاع;
+			ردیف_گروه_ارتفاع += ردیف_ارتفاع + border_spacing_v;
 		}
-		row_group->x = 0;
-		row_group->y = table_height;
-		row_group->width = table_width;
-		row_group->height = row_group_height;
-		table_height += row_group_height;
+		ردیف_گروه->x = 0;
+		ردیف_گروه->y = جدول_ارتفاع;
+		ردیف_گروه->عرض = جدول_عرض;
+		ردیف_گروه->ارتفاع = ردیف_گروه_ارتفاع;
+		جدول_ارتفاع += ردیف_گروه_ارتفاع;
 	}
 	/* Table height is either the height of the contents, or specified
 	 * height if greater */
-	table_height = max(table_height, min_height);
+	جدول_ارتفاع = max(جدول_ارتفاع, min_ارتفاع);
 	/** \todo distribute spare height over the row groups / rows / cells */
 
 	/* perform vertical alignment */
-	for (row_group = table->children; row_group;
-			row_group = row_group->next) {
-		for (row = row_group->children; row; row = row->next) {
-			for (c = row->children; c; c = c->next) {
-				enum css_vertical_align_e vertical_align;
+	لكل (ردیف_گروه = جدول->children; ردیف_گروه;
+			ردیف_گروه = ردیف_گروه->بعدی) {
+		لكل (ردیف = ردیف_گروه->children; ردیف; ردیف = ردیف->بعدی) {
+			لكل (c = ردیف->children; c; c = c->بعدی) {
+				تعداد css_vertical_align_e vertical_align;
 
 				/* unextended bottom padding is in
 				 * c->descendant_y1, and unextended
 				 * cell height is in c->descendant_y0 */
-				spare_height = (c->padding[BOTTOM] -
+				یدکی_ارتفاع = (c->padding[BOTTOM] -
 						c->descendant_y1) +
-						(c->height - c->descendant_y0);
+						(c->ارتفاع - c->descendant_y0);
 
 				vertical_align = css_computed_vertical_align(
-						c->style, &value, &unit);
+						c->style, &مقدار, &unit);
 
-				switch (vertical_align) {
-				case CSS_VERTICAL_ALIGN_SUB:
-				case CSS_VERTICAL_ALIGN_SUPER:
-				case CSS_VERTICAL_ALIGN_TEXT_TOP:
-				case CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
-				case CSS_VERTICAL_ALIGN_SET:
-				case CSS_VERTICAL_ALIGN_BASELINE:
+				بدل (vertical_align) {
+				حالة CSS_VERTICAL_ALIGN_SUB:
+				حالة CSS_VERTICAL_ALIGN_SUPER:
+				حالة CSS_VERTICAL_ALIGN_متن_بالاترین:
+				حالة CSS_VERTICAL_ALIGN_متن_BOTTOM:
+				حالة CSS_VERTICAL_ALIGN_مجموعه:
+				حالة CSS_VERTICAL_ALIGN_BASELINE:
 					/* todo: baseline alignment, for now
 					 * just use ALIGN_TOP */
-				case CSS_VERTICAL_ALIGN_TOP:
-					break;
-				case CSS_VERTICAL_ALIGN_MIDDLE:
-					c->padding[TOP] += spare_height / 2;
-					c->padding[BOTTOM] -= spare_height / 2;
+				حالة CSS_VERTICAL_ALIGN_بالاترین:
+					اكسر;
+				حالة CSS_VERTICAL_ALIGN_میانه:
+					c->padding[بالاترین_2] += یدکی_ارتفاع / 2;
+					c->padding[BOTTOM] -= یدکی_ارتفاع / 2;
 					layout_move_children(c, 0,
-							spare_height / 2);
-					break;
-				case CSS_VERTICAL_ALIGN_BOTTOM:
-					c->padding[TOP] += spare_height;
-					c->padding[BOTTOM] -= spare_height;
+							یدکی_ارتفاع / 2);
+					اكسر;
+				حالة CSS_VERTICAL_ALIGN_BOTTOM:
+					c->padding[بالاترین_2] += یدکی_ارتفاع;
+					c->padding[BOTTOM] -= یدکی_ارتفاع;
 					layout_move_children(c, 0,
-							spare_height);
-					break;
-				case CSS_VERTICAL_ALIGN_INHERIT:
-					assert(0);
-					break;
+							یدکی_ارتفاع);
+					اكسر;
+				حالة CSS_VERTICAL_ALIGN_INHERIT:
+					أكد(0);
+					اكسر;
 				}
 			}
 		}
 	}
 
 	/* Top and bottom margins of 'auto' are set to 0.  CSS2.1 10.6.3 */
-	if (table->margin[TOP] == AUTO)
-		table->margin[TOP] = 0;
-	if (table->margin[BOTTOM] == AUTO)
-		table->margin[BOTTOM] = 0;
+	إذا (جدول->margin[بالاترین_2] == AUTO)
+		جدول->margin[بالاترین_2] = 0;
+	إذا (جدول->margin[BOTTOM] == AUTO)
+		جدول->margin[BOTTOM] = 0;
 
-	free(col);
-	free(excess_y);
-	free(row_span);
-	free(row_span_cell);
-	free(xs);
+	حرر(ستون);
+	حرر(excess_y);
+	حرر(ردیف_بازه);
+	حرر(ردیف_بازه_cell);
+	حرر(xs);
 
-	table->width = table_width;
-	table->height = table_height;
+	جدول->عرض = جدول_عرض;
+	جدول->ارتفاع = جدول_ارتفاع;
 
-	return true;
+	أرجع true;
 }
 
 
@@ -2155,110 +2155,110 @@ bool layout_table(
  *			NULL for non absolutely positioned elements.
  * \return		whether the height has been changed
  */
-static bool layout_apply_minmax_height(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		struct box *container)
+ساكن bool layout_apply_minmax_ارتفاع(
+		ثابت css_unit_ctx *unit_len_ctx,
+		بنية box *box,
+		بنية box *container)
 {
-	int h;
-	struct box *containing_block = NULL;
+	صحيح h;
+	بنية box *containing_بلوک = عدم;
 	bool updated = false;
 
 	/* Find containing block for percentage heights */
-	if (box->style != NULL && css_computed_position(box->style) ==
+	إذا (box->style != عدم && css_computed_position(box->style) ==
 			CSS_POSITION_ABSOLUTE) {
 		/* Box is absolutely positioned */
-		assert(container);
-		containing_block = container;
-	} else if (box->float_container && box->style != NULL &&
-			(css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-			 css_computed_float(box->style) == CSS_FLOAT_RIGHT)) {
+		أكد(container);
+		containing_بلوک = container;
+	} وإلا إذا (box->float_container && box->style != عدم &&
+			(css_computed_float(box->style) == CSS_FLOAT_چپ ||
+			 css_computed_float(box->style) == CSS_FLOAT_راست)) {
 		/* Box is a float */
-		assert(box->parent && box->parent->parent &&
-				box->parent->parent->parent);
-		containing_block = box->parent->parent->parent;
-	} else if (box->parent && box->parent->type != BOX_INLINE_CONTAINER) {
+		أكد(box->والد && box->والد->والد &&
+				box->والد->والد->والد);
+		containing_بلوک = box->والد->والد->والد;
+	} وإلا إذا (box->والد && box->والد->type != BOX_INLINE_CONTAINER) {
 		/* Box is a block level element */
-		containing_block = box->parent;
-	} else if (box->parent && box->parent->type == BOX_INLINE_CONTAINER) {
+		containing_بلوک = box->والد;
+	} وإلا إذا (box->والد && box->والد->type == BOX_INLINE_CONTAINER) {
 		/* Box is an inline block */
-		assert(box->parent->parent);
-		containing_block = box->parent->parent;
+		أكد(box->والد->والد);
+		containing_بلوک = box->والد->والد;
 	}
 
-	if (box->style) {
-		enum css_height_e htype = CSS_HEIGHT_AUTO;
-		css_fixed value = 0;
+	إذا (box->style) {
+		تعداد css_ارتفاع_e htype = CSS_ارتفاع_AUTO;
+		css_fixed مقدار = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		if (containing_block) {
-			htype = css_computed_height(containing_block->style,
-					&value, &unit);
+		إذا (containing_بلوک) {
+			htype = css_computed_ارتفاع(containing_بلوک->style,
+					&مقدار, &unit);
 		}
 
 		/* max-height */
-		if (css_computed_max_height(box->style, &value, &unit) ==
-				CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				if (containing_block &&
-					containing_block->height != AUTO &&
+		إذا (css_computed_max_ارتفاع(box->style, &مقدار, &unit) ==
+				CSS_MAX_ارتفاع_مجموعه) {
+			إذا (unit == CSS_UNIT_PCT) {
+				إذا (containing_بلوک &&
+					containing_بلوک->ارتفاع != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
-						htype == CSS_HEIGHT_SET)) {
+						htype == CSS_ارتفاع_مجموعه)) {
 					/* Box is absolutely positioned or its
 					 * containing block has a valid
 					 * specified height. (CSS 2.1
 					 * Section 10.5) */
-					h = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
-					if (h < box->height) {
-						box->height = h;
+					h = FPCT_از_INT_TOINT(مقدار,
+						containing_بلوک->ارتفاع);
+					إذا (h < box->ارتفاع) {
+						box->ارتفاع = h;
 						updated = true;
 					}
 				}
-			} else {
+			} وإلا {
 				h = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						value, unit));
-				if (h < box->height) {
-					box->height = h;
+						مقدار, unit));
+				إذا (h < box->ارتفاع) {
+					box->ارتفاع = h;
 					updated = true;
 				}
 			}
 		}
 
 		/* min-height */
-		if (ns_computed_min_height(box->style, &value, &unit) ==
-				CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				if (containing_block &&
-					containing_block->height != AUTO &&
+		إذا (ns_computed_min_ارتفاع(box->style, &مقدار, &unit) ==
+				CSS_MIN_ارتفاع_مجموعه) {
+			إذا (unit == CSS_UNIT_PCT) {
+				إذا (containing_بلوک &&
+					containing_بلوک->ارتفاع != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
-						htype == CSS_HEIGHT_SET)) {
+						htype == CSS_ارتفاع_مجموعه)) {
 					/* Box is absolutely positioned or its
 					 * containing block has a valid
 					 * specified height. (CSS 2.1
 					 * Section 10.5) */
-					h = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
-					if (h > box->height) {
-						box->height = h;
+					h = FPCT_از_INT_TOINT(مقدار,
+						containing_بلوک->ارتفاع);
+					إذا (h > box->ارتفاع) {
+						box->ارتفاع = h;
 						updated = true;
 					}
 				}
-			} else {
+			} وإلا {
 				h = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						value, unit));
-				if (h > box->height) {
-					box->height = h;
+						مقدار, unit));
+				إذا (h > box->ارتفاع) {
+					box->ارتفاع = h;
 					updated = true;
 				}
 			}
 		}
 	}
-	return updated;
+	أرجع updated;
 }
 
 
@@ -2268,29 +2268,29 @@ static bool layout_apply_minmax_height(
  * \param  block  box of type BLOCK, INLINE_BLOCK, TABLE, or TABLE_CELL
  * \return  true on success, false on memory exhaustion
  */
-static bool layout_block_object(struct box *block)
+ساكن bool layout_بلوک_object(بنية box *بلوک)
 {
-	assert(block);
-	assert(block->type == BOX_BLOCK ||
-			block->type == BOX_FLEX ||
-			block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_INLINE_FLEX ||
-			block->type == BOX_TABLE ||
-			block->type == BOX_TABLE_CELL);
-	assert(block->object);
+	أكد(بلوک);
+	أكد(بلوک->type == BOX_بلوک ||
+			بلوک->type == BOX_FLEX ||
+			بلوک->type == BOX_INLINE_بلوک ||
+			بلوک->type == BOX_INLINE_FLEX ||
+			بلوک->type == BOX_جدول ||
+			بلوک->type == BOX_جدول_CELL);
+	أكد(بلوک->object);
 
-	NSLOG(layout, DEBUG,  "block %p, object %p, width %i", block,
-	      hlcache_handle_get_url(block->object), block->width);
+	NSLOG(layout, DEBUG,  "block %p, object %p, width %i", بلوک,
+	      hlcache_handle_get_url(بلوک->object), بلوک->عرض);
 
-	if (content_can_reformat(block->object)) {
-		content_reformat(block->object, false, block->width, 1);
-	} else {
+	إذا (content_can_reformat(بلوک->object)) {
+		content_reformat(بلوک->object, false, بلوک->عرض, 1);
+	} وإلا {
 		/* Non-HTML objects */
 		/* this case handled already in
 		 * layout_block_find_dimensions() */
 	}
 
-	return true;
+	أرجع true;
 }
 
 
@@ -2302,31 +2302,31 @@ static bool layout_block_object(struct box *block)
  *
  * This sorts floats in order of descending bottom edges.
  */
-static void add_float_to_container(struct box *cont, struct box *b)
+ساكن فراغ جمع_کن_float_مقصد_container(بنية box *cont, بنية box *b)
 {
-	struct box *box = cont->float_children;
-	int b_bottom = b->y + b->height;
+	بنية box *box = cont->float_children;
+	صحيح b_bottom = b->y + b->ارتفاع;
 
-	assert(b->type == BOX_FLOAT_LEFT || b->type == BOX_FLOAT_RIGHT);
+	أكد(b->type == BOX_FLOAT_چپ || b->type == BOX_FLOAT_راست);
 
-	if (box == NULL) {
+	إذا (box == عدم) {
 		/* No other float children */
-		b->next_float = NULL;
+		b->بعدی_float = عدم;
 		cont->float_children = b;
-		return;
-	} else if (b_bottom >= box->y + box->height) {
+		أرجع;
+	} وإلا إذا (b_bottom >= box->y + box->ارتفاع) {
 		/* Goes at start of list */
-		b->next_float = cont->float_children;
+		b->بعدی_float = cont->float_children;
 		cont->float_children = b;
-	} else {
-		struct box *prev = NULL;
-		while (box != NULL && b_bottom < box->y + box->height) {
+	} وإلا {
+		بنية box *prev = عدم;
+		طالما (box != عدم && b_bottom < box->y + box->ارتفاع) {
 			prev = box;
-			box = box->next_float;
+			box = box->بعدی_float;
 		}
-		if (prev != NULL) {
-			b->next_float = prev->next_float;
-			prev->next_float = b;
+		إذا (prev != عدم) {
+			b->بعدی_float = prev->بعدی_float;
+			prev->بعدی_float = b;
 		}
 	}
 }
@@ -2345,74 +2345,74 @@ static void add_float_to_container(struct box *cont, struct box *b)
  * A new box is created and inserted into the box tree after split_box,
  * containing the text after new_length excluding the initial space character.
  */
-static bool
-layout_text_box_split(html_content *content,
+ساكن bool
+layout_متن_box_تقسیم(html_content *content,
 		      plot_font_style_t *fstyle,
-		      struct box *split_box,
-		      size_t new_length,
-		      int new_width)
+		      بنية box *تقسیم_box,
+		      size_t new_درازی,
+		      صحيح new_عرض)
 {
-	int space_width = split_box->space;
-	struct box *c2;
-	const struct gui_layout_table *font_func = content->font_func;
-	bool space = (split_box->text[new_length] == ' ');
-	int used_length = new_length + (space ? 1 : 0);
+	صحيح space_عرض = تقسیم_box->space;
+	بنية box *c2;
+	ثابت بنية gui_layout_جدول *font_func = content->font_func;
+	bool space = (تقسیم_box->متن[new_درازی] == ' ');
+	صحيح استفاده_شده_درازی = new_درازی + (space ? 1 : 0);
 
-	if ((space && space_width == 0) || space_width == UNKNOWN_WIDTH) {
+	إذا ((space && space_عرض == 0) || space_عرض == UNKNOWN_عرض) {
 		/* We're need to add a space, and we don't know how big
 		 * it's to be, OR we have a space of unknown width anyway;
 		 * Calculate space width */
-		font_func->width(fstyle, " ", 1, &space_width);
+		font_func->عرض(fstyle, " ", 1, &space_عرض);
 	}
 
-	if (split_box->space == UNKNOWN_WIDTH)
-		split_box->space = space_width;
-	if (!space)
-		space_width = 0;
+	إذا (تقسیم_box->space == UNKNOWN_عرض)
+		تقسیم_box->space = space_عرض;
+	إذا (!space)
+		space_عرض = 0;
 
 	/* Create clone of split_box, c2 */
-	c2 = talloc_memdup(content->bctx, split_box, sizeof *c2);
-	if (!c2)
-		return false;
+	c2 = talloc_memdup(content->bctx, تقسیم_box, حجم *c2);
+	إذا (!c2)
+		أرجع false;
 	c2->flags |= CLONE;
 
 	/* Set remaining text in c2 */
-	c2->text += used_length;
+	c2->متن += استفاده_شده_درازی;
 
 	/* Set c2 according to the remaining text */
-	c2->width -= new_width + space_width;
+	c2->عرض -= new_عرض + space_عرض;
 	c2->flags &= ~MEASURED; /* width has been estimated */
-	c2->length = split_box->length - used_length;
+	c2->درازی = تقسیم_box->درازی - استفاده_شده_درازی;
 
 	/* Update split_box for its reduced text */
-	split_box->width = new_width;
-	split_box->flags |= MEASURED;
-	split_box->length = new_length;
-	split_box->space = space_width;
+	تقسیم_box->عرض = new_عرض;
+	تقسیم_box->flags |= MEASURED;
+	تقسیم_box->درازی = new_درازی;
+	تقسیم_box->space = space_عرض;
 
 	/* Insert c2 into box list */
-	c2->next = split_box->next;
-	split_box->next = c2;
-	c2->prev = split_box;
-	if (c2->next)
-		c2->next->prev = c2;
-	else
-		c2->parent->last = c2;
+	c2->بعدی = تقسیم_box->بعدی;
+	تقسیم_box->بعدی = c2;
+	c2->prev = تقسیم_box;
+	إذا (c2->بعدی)
+		c2->بعدی->prev = c2;
+	وإلا
+		c2->والد->آخرین = c2;
 
 	NSLOG(layout, DEBUG,
 	      "split_box %p len: %" PRIsizet " \"%.*s\"",
-	      split_box,
-	      split_box->length,
-	      (int)split_box->length,
-	      split_box->text);
+	      تقسیم_box,
+	      تقسیم_box->درازی,
+	      (صحيح)تقسیم_box->درازی,
+	      تقسیم_box->متن);
 	NSLOG(layout, DEBUG,
 	      "  new_box %p len: %" PRIsizet " \"%.*s\"",
 	      c2,
-	      c2->length,
-	      (int)c2->length,
-	      c2->text);
+	      c2->درازی,
+	      (صحيح)c2->درازی,
+	      c2->متن);
 
-	return true;
+	أرجع true;
 }
 
 
@@ -2427,133 +2427,133 @@ layout_text_box_split(html_content *content,
  *				Box margins, borders, paddings, width and
  *				height are updated.
  */
-static void
-layout_float_find_dimensions(
-		const css_unit_ctx *unit_len_ctx,
-		int available_width,
-		const css_computed_style *style,
-		struct box *box)
+ساكن فراغ
+layout_float_پیدا_کن_dimensions(
+		ثابت css_unit_ctx *unit_len_ctx,
+		صحيح موجود_عرض,
+		ثابت css_computed_style *style,
+		بنية box *box)
 {
-	int width, height, max_width, min_width, max_height, min_height;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	enum css_overflow_e overflow_x = css_computed_overflow_x(style);
-	enum css_overflow_e overflow_y = css_computed_overflow_y(style);
-	int scrollbar_width_x =
-			(overflow_x == CSS_OVERFLOW_SCROLL ||
-			 overflow_x == CSS_OVERFLOW_AUTO) ?
-			SCROLLBAR_WIDTH : 0;
-	int scrollbar_width_y =
-			(overflow_y == CSS_OVERFLOW_SCROLL ||
-			 overflow_y == CSS_OVERFLOW_AUTO) ?
-			SCROLLBAR_WIDTH : 0;
+	صحيح عرض, ارتفاع, max_عرض, min_عرض, max_ارتفاع, min_ارتفاع;
+	صحيح *margin = box->margin;
+	صحيح *padding = box->padding;
+	بنية box_border *border = box->border;
+	تعداد css_سرریز_e سرریز_x = css_computed_سرریز_x(style);
+	تعداد css_سرریز_e سرریز_y = css_computed_سرریز_y(style);
+	صحيح scrollbar_عرض_x =
+			(سرریز_x == CSS_سرریز_SCROLL ||
+			 سرریز_x == CSS_سرریز_AUTO) ?
+			SCROLLBAR_عرض : 0;
+	صحيح scrollbar_عرض_y =
+			(سرریز_y == CSS_سرریز_SCROLL ||
+			 سرریز_y == CSS_سرریز_AUTO) ?
+			SCROLLBAR_عرض : 0;
 
-	layout_find_dimensions(unit_len_ctx, available_width, -1, box, style,
-			&width, &height, &max_width, &min_width,
-			&max_height, &min_height, margin, padding, border);
+	layout_پیدا_کن_dimensions(unit_len_ctx, موجود_عرض, -1, box, style,
+			&عرض, &ارتفاع, &max_عرض, &min_عرض,
+			&max_ارتفاع, &min_ارتفاع, margin, padding, border);
 
-	if (margin[LEFT] == AUTO)
-		margin[LEFT] = 0;
-	if (margin[RIGHT] == AUTO)
-		margin[RIGHT] = 0;
+	إذا (margin[چپ_2] == AUTO)
+		margin[چپ_2] = 0;
+	إذا (margin[راست_2] == AUTO)
+		margin[راست_2] = 0;
 
-	if (box->gadget == NULL) {
-		padding[RIGHT] += scrollbar_width_y;
-		padding[BOTTOM] += scrollbar_width_x;
+	إذا (box->gadget == عدم) {
+		padding[راست_2] += scrollbar_عرض_y;
+		padding[BOTTOM] += scrollbar_عرض_x;
 	}
 
-	if (box->object && !(box->flags & REPLACE_DIM) &&
+	إذا (box->object && !(box->flags & REPLACE_DIM) &&
 			content_get_type(box->object) != CONTENT_HTML) {
 		/* Floating replaced element, with intrinsic width or height.
 		 * See 10.3.6 and 10.6.2 */
-		layout_get_object_dimensions(box, &width, &height,
-				min_width, max_width, min_height, max_height);
-	} else if (box->gadget && (box->gadget->type == GADGET_TEXTBOX ||
+		layout_get_object_dimensions(box, &عرض, &ارتفاع,
+				min_عرض, max_عرض, min_ارتفاع, max_ارتفاع);
+	} وإلا إذا (box->gadget && (box->gadget->type == GADGET_TEXTBOX ||
 			box->gadget->type == GADGET_PASSWORD ||
 			box->gadget->type == GADGET_FILE ||
 			box->gadget->type == GADGET_TEXTAREA)) {
-		css_fixed size = 0;
+		css_fixed اندازه = 0;
 		css_unit unit = CSS_UNIT_EM;
 
 		/* Give sensible dimensions to gadgets, with auto width/height,
 		 * that don't shrink to fit contained text. */
-		assert(box->style);
+		أكد(box->style);
 
-		if (box->gadget->type == GADGET_TEXTBOX ||
+		إذا (box->gadget->type == GADGET_TEXTBOX ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_FILE) {
-			if (width == AUTO) {
-				size = INTTOFIX(10);
-				width = FIXTOINT(css_unit_len2device_px(
+			إذا (عرض == AUTO) {
+				اندازه = INTTOFIX(10);
+				عرض = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						size, unit));
+						اندازه, unit));
 			}
-			if (box->gadget->type == GADGET_FILE &&
-					height == AUTO) {
-				size = FLTTOFIX(1.5);
-				height = FIXTOINT(css_unit_len2device_px(
+			إذا (box->gadget->type == GADGET_FILE &&
+					ارتفاع == AUTO) {
+				اندازه = FLTTOFIX(1.5);
+				ارتفاع = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						size, unit));
-			}
-		}
-		if (box->gadget->type == GADGET_TEXTAREA) {
-			if (width == AUTO) {
-				size = INTTOFIX(10);
-				width = FIXTOINT(css_unit_len2device_px(
-						box->style, unit_len_ctx,
-						size, unit));
-			}
-			if (height == AUTO) {
-				size = INTTOFIX(4);
-				height = FIXTOINT(css_unit_len2device_px(
-						box->style, unit_len_ctx,
-						size, unit));
+						اندازه, unit));
 			}
 		}
-	} else if (width == AUTO) {
+		إذا (box->gadget->type == GADGET_TEXTAREA) {
+			إذا (عرض == AUTO) {
+				اندازه = INTTOFIX(10);
+				عرض = FIXTOINT(css_unit_len2device_px(
+						box->style, unit_len_ctx,
+						اندازه, unit));
+			}
+			إذا (ارتفاع == AUTO) {
+				اندازه = INTTOFIX(4);
+				ارتفاع = FIXTOINT(css_unit_len2device_px(
+						box->style, unit_len_ctx,
+						اندازه, unit));
+			}
+		}
+	} وإلا إذا (عرض == AUTO) {
 		/* CSS 2.1 section 10.3.5 */
-		width = min(max(box->min_width, available_width),
-				box->max_width);
+		عرض = min(max(box->min_عرض, موجود_عرض),
+				box->max_عرض);
 
 		/* width includes margin, borders and padding */
-		if (width == available_width) {
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-					box->padding[LEFT] +
-					box->padding[RIGHT] +
-					box->border[RIGHT].width +
-					box->margin[RIGHT];
-		} else {
+		إذا (عرض == موجود_عرض) {
+			عرض -= box->margin[چپ_2] + box->border[چپ_2].عرض +
+					box->padding[چپ_2] +
+					box->padding[راست_2] +
+					box->border[راست_2].عرض +
+					box->margin[راست_2];
+		} وإلا {
 			/* width was obtained from a min_width or max_width
 			 * value, so need to use the same method for calculating
 			 * mbp as was used in layout_minmax_block() */
-			int fixed = 0;
-			float frac = 0;
-			calculate_mbp_width(unit_len_ctx, box->style, LEFT,
+			صحيح fixed = 0;
+			عائم frac = 0;
+			calculate_mbp_عرض(unit_len_ctx, box->style, چپ_2,
 					true, true, true, &fixed, &frac);
-			calculate_mbp_width(unit_len_ctx, box->style, RIGHT,
+			calculate_mbp_عرض(unit_len_ctx, box->style, راست_2,
 					true, true, true, &fixed, &frac);
-			if (fixed < 0)
+			إذا (fixed < 0)
 				fixed = 0;
 
-			width -= fixed;
+			عرض -= fixed;
 		}
 
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+		إذا (max_عرض >= 0 && عرض > max_عرض) عرض = max_عرض;
+		إذا (min_عرض >  0 && عرض < min_عرض) عرض = min_عرض;
 
-	} else {
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
-		width -= scrollbar_width_y;
+	} وإلا {
+		إذا (max_عرض >= 0 && عرض > max_عرض) عرض = max_عرض;
+		إذا (min_عرض >  0 && عرض < min_عرض) عرض = min_عرض;
+		عرض -= scrollbar_عرض_y;
 	}
 
-	box->width = width;
-	box->height = height;
+	box->عرض = عرض;
+	box->ارتفاع = ارتفاع;
 
-	if (margin[TOP] == AUTO)
-		margin[TOP] = 0;
-	if (margin[BOTTOM] == AUTO)
+	إذا (margin[بالاترین_2] == AUTO)
+		margin[بالاترین_2] = 0;
+	إذا (margin[BOTTOM] == AUTO)
 		margin[BOTTOM] = 0;
 }
 
@@ -2566,34 +2566,34 @@ layout_float_find_dimensions(
  * \param  content  memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool layout_float(struct box *b, int width, html_content *content)
+ساكن bool layout_float(بنية box *b, صحيح عرض, html_content *content)
 {
-	assert(b->type == BOX_TABLE ||
-	       b->type == BOX_BLOCK ||
-	       b->type == BOX_INLINE_BLOCK ||
+	أكد(b->type == BOX_جدول ||
+	       b->type == BOX_بلوک ||
+	       b->type == BOX_INLINE_بلوک ||
 	       b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX);
-	layout_float_find_dimensions(&content->unit_len_ctx, width, b->style, b);
-	if (b->type == BOX_TABLE || b->type == BOX_INLINE_FLEX) {
-		if (b->type == BOX_TABLE) {
-			if (!layout_table(b, width, content))
-				return false;
-		} else {
-			if (!layout_flex(b, width, content))
-				return false;
+	layout_float_پیدا_کن_dimensions(&content->unit_len_ctx, عرض, b->style, b);
+	إذا (b->type == BOX_جدول || b->type == BOX_INLINE_FLEX) {
+		إذا (b->type == BOX_جدول) {
+			إذا (!layout_جدول(b, عرض, content))
+				أرجع false;
+		} وإلا {
+			إذا (!layout_flex(b, عرض, content))
+				أرجع false;
 		}
-		if (b->margin[LEFT] == AUTO)
-			b->margin[LEFT] = 0;
-		if (b->margin[RIGHT] == AUTO)
-			b->margin[RIGHT] = 0;
-		if (b->margin[TOP] == AUTO)
-			b->margin[TOP] = 0;
-		if (b->margin[BOTTOM] == AUTO)
+		إذا (b->margin[چپ_2] == AUTO)
+			b->margin[چپ_2] = 0;
+		إذا (b->margin[راست_2] == AUTO)
+			b->margin[راست_2] = 0;
+		إذا (b->margin[بالاترین_2] == AUTO)
+			b->margin[بالاترین_2] = 0;
+		إذا (b->margin[BOTTOM] == AUTO)
 			b->margin[BOTTOM] = 0;
-	} else {
-		return layout_block_context(b, -1, content);
+	} وإلا {
+		أرجع layout_بلوک_context(b, -1, content);
 	}
-	return true;
+	أرجع true;
 }
 
 
@@ -2606,84 +2606,84 @@ static bool layout_float(struct box *b, int width, html_content *content)
  * \param  y	  y coordinate relative to cont to place float below
  * \param  cont	  ancestor box which defines horizontal space, for floats
  */
-static void
-place_float_below(struct box *c, int width, int cx, int y, struct box *cont)
+ساكن فراغ
+قراربده_float_زیر(بنية box *c, صحيح عرض, صحيح cx, صحيح y, بنية box *cont)
 {
-	int x0, x1, yy;
-	struct box *left;
-	struct box *right;
+	صحيح x0, x1, yy;
+	بنية box *چپ;
+	بنية box *راست;
 
-	yy = y > cont->cached_place_below_level ?
-			y : cont->cached_place_below_level;
+	yy = y > cont->cached_قراربده_زیر_level ?
+			y : cont->cached_قراربده_زیر_level;
 
 	NSLOG(layout, DEBUG,
 	      "c %p, width %i, cx %i, y %i, cont %p", c,
-	      width, cx, y, cont);
+	      عرض, cx, y, cont);
 
-	do {
+	افعل {
 		y = yy;
 		x0 = cx;
-		x1 = cx + width;
-		find_sides(cont->float_children, y, y + c->height, &x0, &x1,
-				&left, &right);
-		if (left != 0 && right != 0) {
-			yy = (left->y + left->height <
-					right->y + right->height ?
-					left->y + left->height :
-					right->y + right->height);
-		} else if (left == 0 && right != 0) {
-			yy = right->y + right->height;
-		} else if (left != 0 && right == 0) {
-			yy = left->y + left->height;
+		x1 = cx + عرض;
+		پیدا_کن_sides(cont->float_children, y, y + c->ارتفاع, &x0, &x1,
+				&چپ, &راست);
+		إذا (چپ != 0 && راست != 0) {
+			yy = (چپ->y + چپ->ارتفاع <
+					راست->y + راست->ارتفاع ?
+					چپ->y + چپ->ارتفاع :
+					راست->y + راست->ارتفاع);
+		} وإلا إذا (چپ == 0 && راست != 0) {
+			yy = راست->y + راست->ارتفاع;
+		} وإلا إذا (چپ != 0 && راست == 0) {
+			yy = چپ->y + چپ->ارتفاع;
 		}
-	} while ((left != 0 || right != 0) && (c->width > x1 - x0));
+	} طالما ((چپ != 0 || راست != 0) && (c->عرض > x1 - x0));
 
-	if (c->type == BOX_FLOAT_LEFT) {
+	إذا (c->type == BOX_FLOAT_چپ) {
 		c->x = x0;
-	} else {
-		c->x = x1 - c->width;
+	} وإلا {
+		c->x = x1 - c->عرض;
 	}
 	c->y = y;
-	cont->cached_place_below_level = y;
+	cont->cached_قراربده_زیر_level = y;
 }
 
 
 /**
  * Calculate line height from a style.
  */
-static int line_height(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style)
+ساكن صحيح سطر_ارتفاع(
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت css_computed_style *style)
 {
-	enum css_line_height_e lhtype;
+	تعداد css_سطر_ارتفاع_e lhtype;
 	css_fixed lhvalue = 0;
 	css_unit lhunit = CSS_UNIT_PX;
-	css_fixed line_height;
+	css_fixed سطر_ارتفاع;
 
-	assert(style);
+	أكد(style);
 
-	lhtype = css_computed_line_height(style, &lhvalue, &lhunit);
-	if (lhtype == CSS_LINE_HEIGHT_NORMAL) {
+	lhtype = css_computed_سطر_ارتفاع(style, &lhvalue, &lhunit);
+	إذا (lhtype == CSS_سطر_ارتفاع_نرمال) {
 		/* Normal => use a constant of 1.3 * font-size */
 		lhvalue = FLTTOFIX(1.3);
-		lhtype = CSS_LINE_HEIGHT_NUMBER;
+		lhtype = CSS_سطر_ارتفاع_عدد;
 	}
 
-	if (lhtype == CSS_LINE_HEIGHT_NUMBER ||
+	إذا (lhtype == CSS_سطر_ارتفاع_عدد ||
 			lhunit == CSS_UNIT_PCT) {
-		line_height = css_unit_len2device_px(style, unit_len_ctx,
+		سطر_ارتفاع = css_unit_len2device_px(style, unit_len_ctx,
 				lhvalue, CSS_UNIT_EM);
 
-		if (lhtype != CSS_LINE_HEIGHT_NUMBER)
-			line_height = FDIV(line_height, F_100);
-	} else {
-		assert(lhunit != CSS_UNIT_PCT);
+		إذا (lhtype != CSS_سطر_ارتفاع_عدد)
+			سطر_ارتفاع = FDIV(سطر_ارتفاع, F_100);
+	} وإلا {
+		أكد(lhunit != CSS_UNIT_PCT);
 
-		line_height = css_unit_len2device_px(style, unit_len_ctx,
+		سطر_ارتفاع = css_unit_len2device_px(style, unit_len_ctx,
 				lhvalue, lhunit);
 	}
 
-	return FIXTOINT(line_height);
+	أرجع FIXTOINT(سطر_ارتفاع);
 }
 
 
@@ -2703,43 +2703,43 @@ static int line_height(
  * \param  content  memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_line(struct box *first,
-	    int *width,
-	    int *y,
-	    int cx,
-	    int cy,
-	    struct box *cont,
+ساكن bool
+layout_سطر(بنية box *اولی,
+	    صحيح *عرض,
+	    صحيح *y,
+	    صحيح cx,
+	    صحيح cy,
+	    بنية box *cont,
 	    bool indent,
-	    bool has_text_children,
+	    bool has_متن_children,
 	    html_content *content,
-	    struct box **next_box)
+	    بنية box **بعدی_box)
 {
-	int height, used_height;
-	int x0 = 0;
-	int x1 = *width;
-	int x, h, x_previous;
-	int fy = cy;
-	struct box *left;
-	struct box *right;
-	struct box *b;
-	struct box *split_box = 0;
-	struct box *d;
-	struct box *br_box = 0;
+	صحيح ارتفاع, استفاده_شده_ارتفاع;
+	صحيح x0 = 0;
+	صحيح x1 = *عرض;
+	صحيح x, h, x_قبلی;
+	صحيح fy = cy;
+	بنية box *چپ;
+	بنية box *راست;
+	بنية box *b;
+	بنية box *تقسیم_box = 0;
+	بنية box *d;
+	بنية box *br_box = 0;
 	bool move_y = false;
-	bool place_below = false;
-	int space_before = 0, space_after = 0;
-	unsigned int inline_count = 0;
-	unsigned int i;
-	const struct gui_layout_table *font_func = content->font_func;
+	bool قراربده_زیر = false;
+	صحيح space_before = 0, space_after = 0;
+	بیعلامت صحيح inline_شمار = 0;
+	بیعلامت صحيح i;
+	ثابت بنية gui_layout_جدول *font_func = content->font_func;
 	plot_font_style_t fstyle;
 
 	NSLOG(layout, DEBUG,
 	      "first %p, first->text '%.*s', width %i, y %i, cx %i, cy %i",
-	      first,
-	      (int)first->length,
-	      first->text,
-	      *width,
+	      اولی,
+	      (صحيح)اولی->درازی,
+	      اولی->متن,
+	      *عرض,
 	      *y,
 	      cx,
 	      cy);
@@ -2747,27 +2747,27 @@ layout_line(struct box *first,
 	/* find sides at top of line */
 	x0 += cx;
 	x1 += cx;
-	find_sides(cont->float_children, cy, cy, &x0, &x1, &left, &right);
+	پیدا_کن_sides(cont->float_children, cy, cy, &x0, &x1, &چپ, &راست);
 	x0 -= cx;
 	x1 -= cx;
 
-	if (indent)
-		x0 += layout_text_indent(&content->unit_len_ctx,
-				first->parent->parent->style, *width);
+	إذا (indent)
+		x0 += layout_متن_indent(&content->unit_len_ctx,
+				اولی->والد->والد->style, *عرض);
 
-	if (x1 < x0)
+	إذا (x1 < x0)
 		x1 = x0;
 
 	/* get minimum line height from containing block.
 	 * this is the line-height if there are text children and also in the
 	 * case of an initially empty text input */
-	if (has_text_children || first->parent->parent->gadget)
-		used_height = height = line_height(&content->unit_len_ctx,
-				first->parent->parent->style);
-	else
+	إذا (has_متن_children || اولی->والد->والد->gadget)
+		استفاده_شده_ارتفاع = ارتفاع = سطر_ارتفاع(&content->unit_len_ctx,
+				اولی->والد->والد->style);
+	وإلا
 		/* inline containers with no text are usually for layout and
 		 * look better with no minimum line-height */
-		used_height = height = 0;
+		استفاده_شده_ارتفاع = ارتفاع = 0;
 
 	/* pass 1: find height of line assuming sides at top of line: loop
 	 * body executed at least once
@@ -2776,126 +2776,126 @@ layout_line(struct box *first,
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, x1 - x0 %i", x0, x1, x1 - x0);
 
 
-	for (x = 0, b = first; x <= x1 - x0 && b != 0; b = b->next) {
-		int min_width, max_width, min_height, max_height;
+	لكل (x = 0, b = اولی; x <= x1 - x0 && b != 0; b = b->بعدی) {
+		صحيح min_عرض, max_عرض, min_ارتفاع, max_ارتفاع;
 
-		assert(lh__box_is_inline_content(b));
+		أكد(lh__box_is_inline_content(b));
 
 		NSLOG(layout, DEBUG,  "pass 1: b %p, x %i", b, x);
 
-		if (b->type == BOX_BR)
-			break;
+		إذا (b->type == BOX_BR)
+			اكسر;
 
-		if (lh__box_is_float_box(b))
-			continue;
-		if (b->type == BOX_INLINE_BLOCK &&
+		إذا (lh__box_is_float_box(b))
+			استمر;
+		إذا (b->type == BOX_INLINE_بلوک &&
 				(css_computed_position(b->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(b->style) ==
 						CSS_POSITION_FIXED))
-			continue;
+			استمر;
 
-		assert(b->style != NULL);
+		أكد(b->style != عدم);
 		font_plot_style_from_css(&content->unit_len_ctx, b->style, &fstyle);
 
 		x += space_after;
 
-		if (b->type == BOX_INLINE_BLOCK ||
+		إذا (b->type == BOX_INLINE_بلوک ||
 		    b->type == BOX_INLINE_FLEX) {
-			if (b->max_width != UNKNOWN_WIDTH)
-				if (!layout_float(b, *width, content))
-					return false;
-			h = b->border[TOP].width + b->padding[TOP] + b->height +
+			إذا (b->max_عرض != UNKNOWN_عرض)
+				إذا (!layout_float(b, *عرض, content))
+					أرجع false;
+			h = b->border[بالاترین_2].عرض + b->padding[بالاترین_2] + b->ارتفاع +
 					b->padding[BOTTOM] +
-					b->border[BOTTOM].width;
-			if (height < h)
-				height = h;
-			x += b->margin[LEFT] + b->border[LEFT].width +
-					b->padding[LEFT] + b->width +
-					b->padding[RIGHT] +
-					b->border[RIGHT].width +
-					b->margin[RIGHT];
+					b->border[BOTTOM].عرض;
+			إذا (ارتفاع < h)
+				ارتفاع = h;
+			x += b->margin[چپ_2] + b->border[چپ_2].عرض +
+					b->padding[چپ_2] + b->عرض +
+					b->padding[راست_2] +
+					b->border[راست_2].عرض +
+					b->margin[راست_2];
 			space_after = 0;
-			continue;
+			استمر;
 		}
 
-		if (b->type == BOX_INLINE) {
+		إذا (b->type == BOX_INLINE) {
 			/* calculate borders, margins, and padding */
-			layout_find_dimensions(&content->unit_len_ctx,
-					*width, -1, b, b->style, 0, 0, 0, 0,
+			layout_پیدا_کن_dimensions(&content->unit_len_ctx,
+					*عرض, -1, b, b->style, 0, 0, 0, 0,
 					0, 0, b->margin, b->padding, b->border);
-			for (i = 0; i != 4; i++)
-				if (b->margin[i] == AUTO)
+			لكل (i = 0; i != 4; i++)
+				إذا (b->margin[i] == AUTO)
 					b->margin[i] = 0;
-			x += b->margin[LEFT] + b->border[LEFT].width +
-					b->padding[LEFT];
-			if (b->inline_end) {
-				b->inline_end->margin[RIGHT] = b->margin[RIGHT];
-				b->inline_end->padding[RIGHT] =
-						b->padding[RIGHT];
-				b->inline_end->border[RIGHT] =
-						b->border[RIGHT];
-			} else {
-				x += b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
+			x += b->margin[چپ_2] + b->border[چپ_2].عرض +
+					b->padding[چپ_2];
+			إذا (b->inline_انتها) {
+				b->inline_انتها->margin[راست_2] = b->margin[راست_2];
+				b->inline_انتها->padding[راست_2] =
+						b->padding[راست_2];
+				b->inline_انتها->border[راست_2] =
+						b->border[راست_2];
+			} وإلا {
+				x += b->padding[راست_2] +
+						b->border[راست_2].عرض +
+						b->margin[راست_2];
 			}
-		} else if (b->type == BOX_INLINE_END) {
-			b->width = 0;
-			if (b->space == UNKNOWN_WIDTH) {
-				font_func->width(&fstyle, " ", 1, &b->space);
+		} وإلا إذا (b->type == BOX_INLINE_انتها) {
+			b->عرض = 0;
+			إذا (b->space == UNKNOWN_عرض) {
+				font_func->عرض(&fstyle, " ", 1, &b->space);
 				/** \todo handle errors */
 			}
 			space_after = b->space;
 
-			x += b->padding[RIGHT] + b->border[RIGHT].width +
-					b->margin[RIGHT];
-			continue;
+			x += b->padding[راست_2] + b->border[راست_2].عرض +
+					b->margin[راست_2];
+			استمر;
 		}
 
-		if (lh__box_is_replace(b) == false) {
+		إذا (lh__box_is_replace(b) == false) {
 			/* inline non-replaced, 10.3.1 and 10.6.1 */
-			b->height = line_height(&content->unit_len_ctx,
+			b->ارتفاع = سطر_ارتفاع(&content->unit_len_ctx,
 					b->style ? b->style :
-					b->parent->parent->style);
-			if (height < b->height)
-				height = b->height;
+					b->والد->والد->style);
+			إذا (ارتفاع < b->ارتفاع)
+				ارتفاع = b->ارتفاع;
 
-			if (!b->text) {
-				b->width = 0;
+			إذا (!b->متن) {
+				b->عرض = 0;
 				space_after = 0;
-				continue;
+				استمر;
 			}
 
-			if (b->width == UNKNOWN_WIDTH) {
+			إذا (b->عرض == UNKNOWN_عرض) {
 				/** \todo handle errors */
 
 				/* If it's a select element, we must use the
 				 * width of the widest option text */
-				if (b->parent->parent->gadget &&
-						b->parent->parent->gadget->type
+				إذا (b->والد->والد->gadget &&
+						b->والد->والد->gadget->type
 						== GADGET_SELECT) {
-					int opt_maxwidth = 0;
-					struct form_option *o;
+					صحيح opt_maxwidth = 0;
+					بنية form_option *o;
 
-					for (o = b->parent->parent->gadget->
-							data.select.items; o;
-							o = o->next) {
-						int opt_width;
-						font_func->width(&fstyle,
-								o->text,
-								strlen(o->text),
-								&opt_width);
+					لكل (o = b->والد->والد->gadget->
+							داده.select.اقلام; o;
+							o = o->بعدی) {
+						صحيح opt_عرض;
+						font_func->عرض(&fstyle,
+								o->متن,
+								طول_رشته(o->متن),
+								&opt_عرض);
 
-						if (opt_maxwidth < opt_width)
-							opt_maxwidth =opt_width;
+						إذا (opt_maxwidth < opt_عرض)
+							opt_maxwidth =opt_عرض;
 					}
-					b->width = opt_maxwidth;
-					if (nsoption_bool(core_select_menu))
-						b->width += SCROLLBAR_WIDTH;
-				} else {
-					font_func->width(&fstyle, b->text,
-							b->length, &b->width);
+					b->عرض = opt_maxwidth;
+					إذا (nsoption_bool(core_select_menu))
+						b->عرض += SCROLLBAR_عرض;
+				} وإلا {
+					font_func->عرض(&fstyle, b->متن,
+							b->درازی, &b->عرض);
 					b->flags |= MEASURED;
 				}
 			}
@@ -2904,96 +2904,96 @@ layout_line(struct box *first,
 			 * width was estimated after splitting), and it fits on
 			 * the line, measure it properly, so next box is placed
 			 * correctly. */
-			if (b->text && (x + b->width < x1 - x0) &&
+			إذا (b->متن && (x + b->عرض < x1 - x0) &&
 					!(b->flags & MEASURED) &&
-					b->next) {
-				font_func->width(&fstyle, b->text,
-						 b->length, &b->width);
+					b->بعدی) {
+				font_func->عرض(&fstyle, b->متن,
+						 b->درازی, &b->عرض);
 				b->flags |= MEASURED;
 			}
 
-			x += b->width;
-			if (b->space == UNKNOWN_WIDTH) {
-				font_func->width(&fstyle, " ", 1, &b->space);
+			x += b->عرض;
+			إذا (b->space == UNKNOWN_عرض) {
+				font_func->عرض(&fstyle, " ", 1, &b->space);
 				/** \todo handle errors */
 			}
 			space_after = b->space;
-			continue;
+			استمر;
 		}
 
 		space_after = 0;
 
 		/* inline replaced, 10.3.2 and 10.6.2 */
-		assert(b->style);
+		أكد(b->style);
 
-		layout_find_dimensions(&content->unit_len_ctx,
-				*width, -1, b, b->style,
-				&b->width, &b->height,
-				&max_width, &min_width,
-				&max_height, &min_height,
-				NULL, NULL, NULL);
+		layout_پیدا_کن_dimensions(&content->unit_len_ctx,
+				*عرض, -1, b, b->style,
+				&b->عرض, &b->ارتفاع,
+				&max_عرض, &min_عرض,
+				&max_ارتفاع, &min_ارتفاع,
+				عدم, عدم, عدم);
 
-		if (b->object && !(b->flags & REPLACE_DIM)) {
-			layout_get_object_dimensions(b, &b->width, &b->height,
-					min_width, max_width,
-					min_height, max_height);
-		} else if (b->flags & IFRAME) {
+		إذا (b->object && !(b->flags & REPLACE_DIM)) {
+			layout_get_object_dimensions(b, &b->عرض, &b->ارتفاع,
+					min_عرض, max_عرض,
+					min_ارتفاع, max_ارتفاع);
+		} وإلا إذا (b->flags & IFRAME) {
 			/* TODO: should we look at the content dimensions? */
-			if (b->width == AUTO)
-				b->width = 400;
-			if (b->height == AUTO)
-				b->height = 300;
+			إذا (b->عرض == AUTO)
+				b->عرض = 400;
+			إذا (b->ارتفاع == AUTO)
+				b->ارتفاع = 300;
 
 			/* We reformat the iframe browser window to new
 			 * dimensions in pass 2 */
-		} else {
+		} وإلا {
 			/* form control with no object */
-			if (b->width == AUTO)
-				b->width = FIXTOINT(css_unit_len2device_px(
+			إذا (b->عرض == AUTO)
+				b->عرض = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx, INTTOFIX(1),
 						CSS_UNIT_EM));
-			if (b->height == AUTO)
-				b->height = FIXTOINT(css_unit_len2device_px(
+			إذا (b->ارتفاع == AUTO)
+				b->ارتفاع = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx, INTTOFIX(1),
 						CSS_UNIT_EM));
 		}
 
 		/* Reformat object to new box size */
-		if (b->object && content_can_reformat(b->object) &&
-				b->width !=
-				content_get_available_width(b->object)) {
-			css_fixed value = 0;
+		إذا (b->object && content_can_reformat(b->object) &&
+				b->عرض !=
+				content_get_موجود_عرض(b->object)) {
+			css_fixed مقدار = 0;
 			css_unit unit = CSS_UNIT_PX;
-			enum css_height_e htype = css_computed_height(b->style,
-					&value, &unit);
+			تعداد css_ارتفاع_e htype = css_computed_ارتفاع(b->style,
+					&مقدار, &unit);
 
-			content_reformat(b->object, false, b->width, b->height);
+			content_reformat(b->object, false, b->عرض, b->ارتفاع);
 
-			if (htype == CSS_HEIGHT_AUTO)
-				b->height = content_get_height(b->object);
+			إذا (htype == CSS_ارتفاع_AUTO)
+				b->ارتفاع = content_get_ارتفاع(b->object);
 		}
 
-		if (height < b->height)
-			height = b->height;
+		إذا (ارتفاع < b->ارتفاع)
+			ارتفاع = b->ارتفاع;
 
-		x += b->width;
+		x += b->عرض;
 	}
 
 	/* find new sides using this height */
 	x0 = cx;
-	x1 = cx + *width;
-	find_sides(cont->float_children, cy, cy + height, &x0, &x1,
-			&left, &right);
+	x1 = cx + *عرض;
+	پیدا_کن_sides(cont->float_children, cy, cy + ارتفاع, &x0, &x1,
+			&چپ, &راست);
 	x0 -= cx;
 	x1 -= cx;
 
-	if (indent)
-		x0 += layout_text_indent(&content->unit_len_ctx,
-				first->parent->parent->style, *width);
+	إذا (indent)
+		x0 += layout_متن_indent(&content->unit_len_ctx,
+				اولی->والد->والد->style, *عرض);
 
-	if (x1 < x0)
+	إذا (x1 < x0)
 		x1 = x0;
 
 	space_after = space_before = 0;
@@ -3002,120 +3002,120 @@ layout_line(struct box *first,
 
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, x1 - x0 %i", x0, x1, x1 - x0);
 
-	for (x = x_previous = 0, b = first; x <= x1 - x0 && b; b = b->next) {
+	لكل (x = x_قبلی = 0, b = اولی; x <= x1 - x0 && b; b = b->بعدی) {
 
 		NSLOG(layout, DEBUG,  "pass 2: b %p, x %i", b, x);
 
-		if (b->type == BOX_INLINE_BLOCK &&
+		إذا (b->type == BOX_INLINE_بلوک &&
 				(css_computed_position(b->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(b->style) ==
 						CSS_POSITION_FIXED)) {
 			b->x = x + space_after;
 
-		} else if (lh__box_is_inline_flow(b)) {
-			assert(b->width != UNKNOWN_WIDTH);
+		} وإلا إذا (lh__box_is_inline_flow(b)) {
+			أكد(b->عرض != UNKNOWN_عرض);
 
-			x_previous = x;
+			x_قبلی = x;
 			x += space_after;
 			b->x = x;
 
-			if ((b->type == BOX_INLINE && !b->inline_end) ||
-					b->type == BOX_INLINE_BLOCK ||
+			إذا ((b->type == BOX_INLINE && !b->inline_انتها) ||
+					b->type == BOX_INLINE_بلوک ||
 					b->type == BOX_INLINE_FLEX) {
-				b->x += b->margin[LEFT] + b->border[LEFT].width;
-				x = b->x + b->padding[LEFT] + b->width +
-						b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
-			} else if (b->type == BOX_INLINE) {
-				b->x += b->margin[LEFT] + b->border[LEFT].width;
-				x = b->x + b->padding[LEFT] + b->width;
-			} else if (b->type == BOX_INLINE_END) {
-				b->height = b->inline_end->height;
-				x += b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
-			} else {
-				x += b->width;
+				b->x += b->margin[چپ_2] + b->border[چپ_2].عرض;
+				x = b->x + b->padding[چپ_2] + b->عرض +
+						b->padding[راست_2] +
+						b->border[راست_2].عرض +
+						b->margin[راست_2];
+			} وإلا إذا (b->type == BOX_INLINE) {
+				b->x += b->margin[چپ_2] + b->border[چپ_2].عرض;
+				x = b->x + b->padding[چپ_2] + b->عرض;
+			} وإلا إذا (b->type == BOX_INLINE_انتها) {
+				b->ارتفاع = b->inline_انتها->ارتفاع;
+				x += b->padding[راست_2] +
+						b->border[راست_2].عرض +
+						b->margin[راست_2];
+			} وإلا {
+				x += b->عرض;
 			}
 
 			space_before = space_after;
-			if (b->object || b->flags & REPLACE_DIM ||
+			إذا (b->object || b->flags & REPLACE_DIM ||
 					b->flags & IFRAME)
 				space_after = 0;
-			else if (b->text || b->type == BOX_INLINE_END) {
-				if (b->space == UNKNOWN_WIDTH) {
+			وإلا إذا (b->متن || b->type == BOX_INLINE_انتها) {
+				إذا (b->space == UNKNOWN_عرض) {
 					font_plot_style_from_css(
 							&content->unit_len_ctx,
 							b->style, &fstyle);
 					/** \todo handle errors */
-					font_func->width(&fstyle, " ", 1,
+					font_func->عرض(&fstyle, " ", 1,
 							 &b->space);
 				}
 				space_after = b->space;
-			} else {
+			} وإلا {
 				space_after = 0;
 			}
-			split_box = b;
+			تقسیم_box = b;
 			move_y = true;
-			inline_count++;
-		} else if (b->type == BOX_BR) {
+			inline_شمار++;
+		} وإلا إذا (b->type == BOX_BR) {
 			b->x = x;
-			b->width = 0;
+			b->عرض = 0;
 			br_box = b;
-			b = b->next;
-			split_box = 0;
+			b = b->بعدی;
+			تقسیم_box = 0;
 			move_y = true;
-			break;
+			اكسر;
 
-		} else {
+		} وإلا {
 			/* float */
 			NSLOG(layout, DEBUG,  "float %p", b);
 
 			d = b->children;
 			d->float_children = 0;
-			d->cached_place_below_level = 0;
+			d->cached_قراربده_زیر_level = 0;
 			b->float_container = d->float_container = cont;
 
-			if (!layout_float(d, *width, content))
-				return false;
+			إذا (!layout_float(d, *عرض, content))
+				أرجع false;
 
 			NSLOG(layout, DEBUG,
 			      "%p : %d %d",
 			      d,
-			      d->margin[TOP],
-			      d->border[TOP].width);
+			      d->margin[بالاترین_2],
+			      d->border[بالاترین_2].عرض);
 
-			d->x = d->margin[LEFT] + d->border[LEFT].width;
-			d->y = d->margin[TOP] + d->border[TOP].width;
-			b->width = d->margin[LEFT] + d->border[LEFT].width +
-					d->padding[LEFT] + d->width +
-					d->padding[RIGHT] +
-					d->border[RIGHT].width +
-					d->margin[RIGHT];
-			b->height = d->margin[TOP] + d->border[TOP].width +
-					d->padding[TOP] + d->height +
+			d->x = d->margin[چپ_2] + d->border[چپ_2].عرض;
+			d->y = d->margin[بالاترین_2] + d->border[بالاترین_2].عرض;
+			b->عرض = d->margin[چپ_2] + d->border[چپ_2].عرض +
+					d->padding[چپ_2] + d->عرض +
+					d->padding[راست_2] +
+					d->border[راست_2].عرض +
+					d->margin[راست_2];
+			b->ارتفاع = d->margin[بالاترین_2] + d->border[بالاترین_2].عرض +
+					d->padding[بالاترین_2] + d->ارتفاع +
 					d->padding[BOTTOM] +
-					d->border[BOTTOM].width +
+					d->border[BOTTOM].عرض +
 					d->margin[BOTTOM];
 
-			if (b->width > (x1 - x0) - x)
-				place_below = true;
-			if (d->style && (css_computed_clear(d->style) ==
+			إذا (b->عرض > (x1 - x0) - x)
+				قراربده_زیر = true;
+			إذا (d->style && (css_computed_clear(d->style) ==
 						CSS_CLEAR_NONE ||
 					(css_computed_clear(d->style) ==
-						CSS_CLEAR_LEFT && left == 0) ||
+						CSS_CLEAR_چپ && چپ == 0) ||
 					(css_computed_clear(d->style) ==
-						CSS_CLEAR_RIGHT &&
-						right == 0) ||
+						CSS_CLEAR_راست &&
+						راست == 0) ||
 					(css_computed_clear(d->style) ==
 						CSS_CLEAR_BOTH &&
-						left == 0 && right == 0)) &&
-					(!place_below ||
-					(left == 0 && right == 0 && x == 0)) &&
+						چپ == 0 && راست == 0)) &&
+					(!قراربده_زیر ||
+					(چپ == 0 && راست == 0 && x == 0)) &&
 					cy >= cont->clear_level &&
-					cy >= cont->cached_place_below_level) {
+					cy >= cont->cached_قراربده_زیر_level) {
 				/* + not cleared or,
 				 *   cleared and there are no floats to clear
 				 * + fits without needing to be placed below or,
@@ -3123,184 +3123,184 @@ layout_line(struct box *first,
 				 * + current y, cy, is below the clear level
 				 *
 				 * Float affects current line */
-				if (b->type == BOX_FLOAT_LEFT) {
+				إذا (b->type == BOX_FLOAT_چپ) {
 					b->x = cx + x0;
-					if (b->width > 0)
-						x0 += b->width;
-					left = b;
-				} else {
-					b->x = cx + x1 - b->width;
-					if (b->width > 0)
-						x1 -= b->width;
-					right = b;
+					إذا (b->عرض > 0)
+						x0 += b->عرض;
+					چپ = b;
+				} وإلا {
+					b->x = cx + x1 - b->عرض;
+					إذا (b->عرض > 0)
+						x1 -= b->عرض;
+					راست = b;
 				}
 				b->y = cy;
-			} else {
+			} وإلا {
 				/* cleared or doesn't fit on line */
 				/* place below into next available space */
-				int fcy = (cy > cont->clear_level) ? cy :
+				صحيح fcy = (cy > cont->clear_level) ? cy :
 						cont->clear_level;
-				fcy = (fcy > cont->cached_place_below_level) ?
+				fcy = (fcy > cont->cached_قراربده_زیر_level) ?
 						fcy :
-						cont->cached_place_below_level;
+						cont->cached_قراربده_زیر_level;
 				fy = (fy > fcy) ? fy : fcy;
-				fy = (fy == cy) ? fy + height : fy;
+				fy = (fy == cy) ? fy + ارتفاع : fy;
 
-				place_float_below(b, *width, cx, fy, cont);
+				قراربده_float_زیر(b, *عرض, cx, fy, cont);
 				fy = b->y;
-				if (d->style && (
+				إذا (d->style && (
 						(css_computed_clear(d->style) ==
-						CSS_CLEAR_LEFT && left != 0) ||
+						CSS_CLEAR_چپ && چپ != 0) ||
 						(css_computed_clear(d->style) ==
-						CSS_CLEAR_RIGHT &&
-						right != 0) ||
+						CSS_CLEAR_راست &&
+						راست != 0) ||
 						(css_computed_clear(d->style) ==
 						CSS_CLEAR_BOTH &&
-						(left != 0 || right != 0)))) {
+						(چپ != 0 || راست != 0)))) {
 					/* to be cleared below existing
 					 * floats */
-					if (b->type == BOX_FLOAT_LEFT)
+					إذا (b->type == BOX_FLOAT_چپ)
 						b->x = cx;
-					else
-						b->x = cx + *width - b->width;
+					وإلا
+						b->x = cx + *عرض - b->عرض;
 
 					fcy = layout_clear(cont->float_children,
 						css_computed_clear(d->style));
-					if (fcy > cont->clear_level)
+					إذا (fcy > cont->clear_level)
 						cont->clear_level = fcy;
-					if (b->y < fcy)
+					إذا (b->y < fcy)
 						b->y = fcy;
 				}
-				if (b->type == BOX_FLOAT_LEFT)
-					left = b;
-				else
-					right = b;
+				إذا (b->type == BOX_FLOAT_چپ)
+					چپ = b;
+				وإلا
+					راست = b;
 			}
-			add_float_to_container(cont, b);
+			جمع_کن_float_مقصد_container(cont, b);
 
-			split_box = 0;
+			تقسیم_box = 0;
 		}
 	}
 
-	if (x1 - x0 < x && split_box) {
+	إذا (x1 - x0 < x && تقسیم_box) {
 		/* the last box went over the end */
-		size_t split = 0;
-		int w;
+		size_t تقسیم = 0;
+		صحيح w;
 		bool no_wrap = css_computed_white_space(
-				split_box->style) == CSS_WHITE_SPACE_NOWRAP ||
+				تقسیم_box->style) == CSS_WHITE_SPACE_NOWRAP ||
 				css_computed_white_space(
-				split_box->style) == CSS_WHITE_SPACE_PRE;
+				تقسیم_box->style) == CSS_WHITE_SPACE_PRE;
 
-		x = x_previous;
+		x = x_قبلی;
 
-		if (!no_wrap &&
-		    (split_box->type == BOX_INLINE ||
-		     split_box->type == BOX_TEXT) &&
-		    !split_box->object &&
-		    !(split_box->flags & REPLACE_DIM) &&
-		    !(split_box->flags & IFRAME) &&
-		    !split_box->gadget && split_box->text) {
+		إذا (!no_wrap &&
+		    (تقسیم_box->type == BOX_INLINE ||
+		     تقسیم_box->type == BOX_متن) &&
+		    !تقسیم_box->object &&
+		    !(تقسیم_box->flags & REPLACE_DIM) &&
+		    !(تقسیم_box->flags & IFRAME) &&
+		    !تقسیم_box->gadget && تقسیم_box->متن) {
 
 			font_plot_style_from_css(&content->unit_len_ctx,
-					split_box->style, &fstyle);
+					تقسیم_box->style, &fstyle);
 			/** \todo handle errors */
-			font_func->split(&fstyle,
-					 split_box->text,
-					 split_box->length,
+			font_func->تقسیم(&fstyle,
+					 تقسیم_box->متن,
+					 تقسیم_box->درازی,
 					 x1 - x0 - x - space_before,
-					 &split,
+					 &تقسیم,
 					 &w);
 		}
 
 		/* split == 0 implies that text can't be split */
 
-		if (split == 0)
-			w = split_box->width;
+		إذا (تقسیم == 0)
+			w = تقسیم_box->عرض;
 
 
 		NSLOG(layout, DEBUG,
 		      "splitting: split_box %p \"%.*s\", spilt %"PRIsizet
 		      ", w %i, left %p, right %p, inline_count %u",
-		      split_box,
-		      (int)split_box->length,
-		      split_box->text,
-		      split,
+		      تقسیم_box,
+		      (صحيح)تقسیم_box->درازی,
+		      تقسیم_box->متن,
+		      تقسیم,
 		      w,
-		      left,
-		      right,
-		      inline_count);
+		      چپ,
+		      راست,
+		      inline_شمار);
 
-		if ((split == 0 || x1 - x0 <= x + space_before + w) &&
-				!left && !right && inline_count == 1) {
+		إذا ((تقسیم == 0 || x1 - x0 <= x + space_before + w) &&
+				!چپ && !راست && inline_شمار == 1) {
 			/* first word of box doesn't fit, but no floats and
 			 * first box on line so force in */
-			if (split == 0 || split == split_box->length) {
+			إذا (تقسیم == 0 || تقسیم == تقسیم_box->درازی) {
 				/* only one word in this box, or not text
 				 * or white-space:nowrap */
-				b = split_box->next;
-			} else {
+				b = تقسیم_box->بعدی;
+			} وإلا {
 				/* cut off first word for this line */
-				if (!layout_text_box_split(content, &fstyle,
-						split_box, split, w))
-					return false;
-				b = split_box->next;
+				إذا (!layout_متن_box_تقسیم(content, &fstyle,
+						تقسیم_box, تقسیم, w))
+					أرجع false;
+				b = تقسیم_box->بعدی;
 			}
 			x += space_before + w;
 
 			NSLOG(layout, DEBUG,  "forcing");
 
-		} else if ((split == 0 || x1 - x0 <= x + space_before + w) &&
-				inline_count == 1) {
+		} وإلا إذا ((تقسیم == 0 || x1 - x0 <= x + space_before + w) &&
+				inline_شمار == 1) {
 			/* first word of first box doesn't fit, but a float is
 			 * taking some of the width so move below it */
-			assert(left || right);
-			used_height = 0;
-			if (left) {
+			أكد(چپ || راست);
+			استفاده_شده_ارتفاع = 0;
+			إذا (چپ) {
 
 				NSLOG(layout, DEBUG,
 				      "cy %i, left->y %i, left->height %i",
 				      cy,
-				      left->y,
-				      left->height);
+				      چپ->y,
+				      چپ->ارتفاع);
 
-				used_height = left->y + left->height - cy + 1;
+				استفاده_شده_ارتفاع = چپ->y + چپ->ارتفاع - cy + 1;
 
 				NSLOG(layout, DEBUG,  "used_height %i",
-				      used_height);
+				      استفاده_شده_ارتفاع);
 
 			}
-			if (right && used_height <
-					right->y + right->height - cy + 1)
-				used_height = right->y + right->height - cy + 1;
+			إذا (راست && استفاده_شده_ارتفاع <
+					راست->y + راست->ارتفاع - cy + 1)
+				استفاده_شده_ارتفاع = راست->y + راست->ارتفاع - cy + 1;
 
-			if (used_height < 0)
-				used_height = 0;
+			إذا (استفاده_شده_ارتفاع < 0)
+				استفاده_شده_ارتفاع = 0;
 
-			b = split_box;
+			b = تقسیم_box;
 
 			NSLOG(layout, DEBUG,  "moving below float");
 
-		} else if (split == 0 || x1 - x0 <= x + space_before + w) {
+		} وإلا إذا (تقسیم == 0 || x1 - x0 <= x + space_before + w) {
 			/* first word of box doesn't fit so leave box for next
 			 * line */
-			b = split_box;
+			b = تقسیم_box;
 
 			NSLOG(layout, DEBUG,  "leaving for next line");
 
-		} else {
+		} وإلا {
 			/* fit as many words as possible */
-			assert(split != 0);
+			أكد(تقسیم != 0);
 
 			NSLOG(layout, DEBUG,
 			      "'%.*s' %i %"PRIsizet" %i",
-			      (int)split_box->length, split_box->text,
-			      x1 - x0, split, w);
+			      (صحيح)تقسیم_box->درازی, تقسیم_box->متن,
+			      x1 - x0, تقسیم, w);
 
-			if (split != split_box->length) {
-				if (!layout_text_box_split(content, &fstyle,
-						split_box, split, w))
-					return false;
-				b = split_box->next;
+			إذا (تقسیم != تقسیم_box->درازی) {
+				إذا (!layout_متن_box_تقسیم(content, &fstyle,
+						تقسیم_box, تقسیم, w))
+					أرجع false;
+				b = تقسیم_box->بعدی;
 			}
 			x += space_before + w;
 
@@ -3311,37 +3311,37 @@ layout_line(struct box *first,
 	}
 
 	/* set positions */
-	switch (css_computed_text_align(first->parent->parent->style)) {
-	case CSS_TEXT_ALIGN_RIGHT:
-	case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
+	بدل (css_computed_متن_align(اولی->والد->والد->style)) {
+	حالة CSS_متن_ALIGN_راست:
+	حالة CSS_متن_ALIGN_LIBCSS_راست:
 		x0 = x1 - x;
-		break;
-	case CSS_TEXT_ALIGN_CENTER:
-	case CSS_TEXT_ALIGN_LIBCSS_CENTER:
+		اكسر;
+	حالة CSS_متن_ALIGN_CENTER:
+	حالة CSS_متن_ALIGN_LIBCSS_CENTER:
 		x0 = (x0 + (x1 - x)) / 2;
-		break;
-	case CSS_TEXT_ALIGN_LEFT:
-	case CSS_TEXT_ALIGN_LIBCSS_LEFT:
-	case CSS_TEXT_ALIGN_JUSTIFY:
+		اكسر;
+	حالة CSS_متن_ALIGN_چپ:
+	حالة CSS_متن_ALIGN_LIBCSS_چپ:
+	حالة CSS_متن_ALIGN_JUSTIFY:
 		/* leave on left */
-		break;
-	case CSS_TEXT_ALIGN_DEFAULT:
+		اكسر;
+	حالة CSS_متن_ALIGN_DEFAULT:
 		/* None; consider text direction */
-		switch (css_computed_direction(first->parent->parent->style)) {
-		case CSS_DIRECTION_LTR:
+		بدل (css_computed_direction(اولی->والد->والد->style)) {
+		حالة CSS_DIRECTION_LTR:
 			/* leave on left */
-			break;
-		case CSS_DIRECTION_RTL:
+			اكسر;
+		حالة CSS_DIRECTION_RTL:
 			x0 = x1 - x;
-			break;
+			اكسر;
 		}
-		break;
+		اكسر;
 	}
 
-	for (d = first; d != b; d = d->next) {
-		d->flags &= ~NEW_LINE;
+	لكل (d = اولی; d != b; d = d->بعدی) {
+		d->flags &= ~NEW_سطر;
 
-		if (d->type == BOX_INLINE_BLOCK &&
+		إذا (d->type == BOX_INLINE_بلوک &&
 				(css_computed_position(d->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(d->style) ==
@@ -3351,81 +3351,81 @@ layout_line(struct box *first,
 			 * is handled later */
 			d->x += x0;
 			d->y = *y;
-			continue;
-		} else if ((d->type == BOX_INLINE &&
+			استمر;
+		} وإلا إذا ((d->type == BOX_INLINE &&
 				lh__box_is_replace(d) == false) ||
 				d->type == BOX_BR ||
-				d->type == BOX_TEXT ||
-				d->type == BOX_INLINE_END) {
+				d->type == BOX_متن ||
+				d->type == BOX_INLINE_انتها) {
 			/* regular (non-replaced) inlines */
 			d->x += x0;
-			d->y = *y - d->padding[TOP];
+			d->y = *y - d->padding[بالاترین_2];
 
-			if (d->type == BOX_TEXT && d->height > used_height) {
-				/* text */
-				used_height = d->height;
+			إذا (d->type == BOX_متن && d->ارتفاع > استفاده_شده_ارتفاع) {
+				/*متن*/
+				استفاده_شده_ارتفاع = d->ارتفاع;
 			}
-		} else if ((d->type == BOX_INLINE) ||
-				d->type == BOX_INLINE_BLOCK) {
+		} وإلا إذا ((d->type == BOX_INLINE) ||
+				d->type == BOX_INLINE_بلوک) {
 			/* replaced inlines and inline-blocks */
 			d->x += x0;
-			d->y = *y + d->border[TOP].width + d->margin[TOP];
-			h = d->margin[TOP] + d->border[TOP].width +
-					d->padding[TOP] + d->height +
+			d->y = *y + d->border[بالاترین_2].عرض + d->margin[بالاترین_2];
+			h = d->margin[بالاترین_2] + d->border[بالاترین_2].عرض +
+					d->padding[بالاترین_2] + d->ارتفاع +
 					d->padding[BOTTOM] +
-					d->border[BOTTOM].width +
+					d->border[BOTTOM].عرض +
 					d->margin[BOTTOM];
-			if (used_height < h)
-				used_height = h;
+			إذا (استفاده_شده_ارتفاع < h)
+				استفاده_شده_ارتفاع = h;
 		}
 	}
 
-	first->flags |= NEW_LINE;
+	اولی->flags |= NEW_سطر;
 
-	assert(b != first || (move_y && 0 < used_height && (left || right)));
+	أكد(b != اولی || (move_y && 0 < استفاده_شده_ارتفاع && (چپ || راست)));
 
 	/* handle vertical-align by adjusting box y values */
 	/** \todo  proper vertical alignment handling */
-	for (d = first; d != b; d = d->next) {
-		if ((d->type == BOX_INLINE && d->inline_end) ||
+	لكل (d = اولی; d != b; d = d->بعدی) {
+		إذا ((d->type == BOX_INLINE && d->inline_انتها) ||
 				d->type == BOX_BR ||
-				d->type == BOX_TEXT ||
-				d->type == BOX_INLINE_END) {
-			css_fixed value = 0;
+				d->type == BOX_متن ||
+				d->type == BOX_INLINE_انتها) {
+			css_fixed مقدار = 0;
 			css_unit unit = CSS_UNIT_PX;
-			switch (css_computed_vertical_align(d->style, &value,
+			بدل (css_computed_vertical_align(d->style, &مقدار,
 					&unit)) {
-			case CSS_VERTICAL_ALIGN_SUPER:
-			case CSS_VERTICAL_ALIGN_TOP:
-			case CSS_VERTICAL_ALIGN_TEXT_TOP:
+			حالة CSS_VERTICAL_ALIGN_SUPER:
+			حالة CSS_VERTICAL_ALIGN_بالاترین:
+			حالة CSS_VERTICAL_ALIGN_متن_بالاترین:
 				/* already at top */
-				break;
-			case CSS_VERTICAL_ALIGN_SUB:
-			case CSS_VERTICAL_ALIGN_BOTTOM:
-			case CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
-				d->y += used_height - d->height;
-				break;
-			default:
-			case CSS_VERTICAL_ALIGN_BASELINE:
-				d->y += 0.75 * (used_height - d->height);
-				break;
+				اكسر;
+			حالة CSS_VERTICAL_ALIGN_SUB:
+			حالة CSS_VERTICAL_ALIGN_BOTTOM:
+			حالة CSS_VERTICAL_ALIGN_متن_BOTTOM:
+				d->y += استفاده_شده_ارتفاع - d->ارتفاع;
+				اكسر;
+			افتراضي:
+			حالة CSS_VERTICAL_ALIGN_BASELINE:
+				d->y += 0.75 * (استفاده_شده_ارتفاع - d->ارتفاع);
+				اكسر;
 			}
 		}
 	}
 
 	/* handle clearance for br */
-	if (br_box && css_computed_clear(br_box->style) != CSS_CLEAR_NONE) {
-		int clear_y = layout_clear(cont->float_children,
+	إذا (br_box && css_computed_clear(br_box->style) != CSS_CLEAR_NONE) {
+		صحيح clear_y = layout_clear(cont->float_children,
 				css_computed_clear(br_box->style));
-		if (used_height < clear_y - cy)
-			used_height = clear_y - cy;
+		إذا (استفاده_شده_ارتفاع < clear_y - cy)
+			استفاده_شده_ارتفاع = clear_y - cy;
 	}
 
-	if (move_y)
-		*y += used_height;
-	*next_box = b;
-	*width = x; /* return actual width */
-	return true;
+	إذا (move_y)
+		*y += استفاده_شده_ارتفاع;
+	*بعدی_box = b;
+	*عرض = x; /* return actual width */
+	أرجع true;
 }
 
 
@@ -3440,132 +3440,132 @@ layout_line(struct box *first,
  * \param content  memory pool for any new boxes
  * \return true on success, false on memory exhaustion
  */
-static bool layout_inline_container(struct box *inline_container, int width,
-		struct box *cont, int cx, int cy, html_content *content)
+ساكن bool layout_inline_container(بنية box *inline_container, صحيح عرض,
+		بنية box *cont, صحيح cx, صحيح cy, html_content *content)
 {
-	bool first_line = true;
-	bool has_text_children;
-	struct box *c, *next;
-	int y = 0;
-	int curwidth,maxwidth = width;
+	bool اولی_سطر = true;
+	bool has_متن_children;
+	بنية box *c, *بعدی;
+	صحيح y = 0;
+	صحيح curwidth,maxwidth = عرض;
 
-	assert(inline_container->type == BOX_INLINE_CONTAINER);
+	أكد(inline_container->type == BOX_INLINE_CONTAINER);
 
 	NSLOG(layout, DEBUG,
 	      "inline_container %p, width %i, cont %p, cx %i, cy %i",
 	      inline_container,
-	      width,
+	      عرض,
 	      cont,
 	      cx,
 	      cy);
 
 
-	has_text_children = false;
-	for (c = inline_container->children; c; c = c->next) {
+	has_متن_children = false;
+	لكل (c = inline_container->children; c; c = c->بعدی) {
 		bool is_pre = false;
 
-		if (c->style) {
-			enum css_white_space_e whitespace;
+		إذا (c->style) {
+			تعداد css_white_space_e whitespace;
 
 			whitespace = css_computed_white_space(c->style);
 
 			is_pre = (whitespace == CSS_WHITE_SPACE_PRE ||
-				whitespace == CSS_WHITE_SPACE_PRE_LINE ||
+				whitespace == CSS_WHITE_SPACE_PRE_سطر ||
 				whitespace == CSS_WHITE_SPACE_PRE_WRAP);
 		}
 
-		if ((lh__box_is_object(c) == false &&
-				c->text && (c->length || is_pre)) ||
+		إذا ((lh__box_is_object(c) == false &&
+				c->متن && (c->درازی || is_pre)) ||
 				c->type == BOX_BR)
-			has_text_children = true;
+			has_متن_children = true;
 	}
 
 	/** \todo fix wrapping so that a box with horizontal scrollbar will
 	 * shrink back to 'width' if no word is wider than 'width' (Or just set
 	 * curwidth = width and have the multiword lines wrap to the min width)
 	 */
-	for (c = inline_container->children; c; ) {
+	لكل (c = inline_container->children; c; ) {
 
 		NSLOG(layout, DEBUG, "c %p", c);
 
-		curwidth = inline_container->width;
-		if (!layout_line(c, &curwidth, &y, cx, cy + y, cont, first_line,
-				has_text_children, content, &next))
-			return false;
+		curwidth = inline_container->عرض;
+		إذا (!layout_سطر(c, &curwidth, &y, cx, cy + y, cont, اولی_سطر,
+				has_متن_children, content, &بعدی))
+			أرجع false;
 		maxwidth = max(maxwidth,curwidth);
-		c = next;
-		first_line = false;
+		c = بعدی;
+		اولی_سطر = false;
 	}
 
-	inline_container->width = maxwidth;
-	inline_container->height = y;
+	inline_container->عرض = maxwidth;
+	inline_container->ارتفاع = y;
 
-	return true;
+	أرجع true;
 }
 
 
 /* Documented in layout_intertnal.h */
-bool layout_block_context(
-		struct box *block,
-		int viewport_height,
+bool layout_بلوک_context(
+		بنية box *بلوک,
+		صحيح viewport_ارتفاع,
 		html_content *content)
 {
-	struct box *box;
-	int cx, cy;  /**< current coordinates */
-	int max_pos_margin = 0;
-	int max_neg_margin = 0;
-	int y = 0;
-	int lm, rm;
-	struct box *margin_collapse = NULL;
-	bool in_margin = false;
-	css_fixed gadget_size;
+	بنية box *box;
+	صحيح cx, cy;  /**< current coordinates */
+	صحيح max_pos_margin = 0;
+	صحيح max_neg_margin = 0;
+	صحيح y = 0;
+	صحيح lm, rm;
+	بنية box *margin_collapse = عدم;
+	bool درون_margin = false;
+	css_fixed gadget_اندازه;
 	css_unit gadget_unit; /* Checkbox / radio buttons */
 
-	assert(block->type == BOX_BLOCK ||
-			block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_TABLE_CELL ||
-			block->type == BOX_FLEX ||
-			block->type == BOX_INLINE_FLEX);
-	assert(block->width != UNKNOWN_WIDTH);
-	assert(block->width != AUTO);
+	أكد(بلوک->type == BOX_بلوک ||
+			بلوک->type == BOX_INLINE_بلوک ||
+			بلوک->type == BOX_جدول_CELL ||
+			بلوک->type == BOX_FLEX ||
+			بلوک->type == BOX_INLINE_FLEX);
+	أكد(بلوک->عرض != UNKNOWN_عرض);
+	أكد(بلوک->عرض != AUTO);
 
-	block->float_children = NULL;
-	block->cached_place_below_level = 0;
-	block->clear_level = 0;
+	بلوک->float_children = عدم;
+	بلوک->cached_قراربده_زیر_level = 0;
+	بلوک->clear_level = 0;
 
 	/* special case if the block contains an object */
-	if (block->object) {
-		int temp_width = block->width;
-		if (!layout_block_object(block))
-			return false;
-		layout_get_object_dimensions(block, &temp_width,
-				&block->height, INT_MIN, INT_MAX,
-				INT_MIN, INT_MAX);
-		return true;
-	} else if (block->flags & REPLACE_DIM) {
-		return true;
+	إذا (بلوک->object) {
+		صحيح موقت_عرض = بلوک->عرض;
+		إذا (!layout_بلوک_object(بلوک))
+			أرجع false;
+		layout_get_object_dimensions(بلوک, &موقت_عرض,
+				&بلوک->ارتفاع, INT_MIN, بیشترین_صحیح,
+				INT_MIN, بیشترین_صحیح);
+		أرجع true;
+	} وإلا إذا (بلوک->flags & REPLACE_DIM) {
+		أرجع true;
 	}
 
 	/* special case if the block contains an radio button or checkbox */
-	if (block->gadget && (block->gadget->type == GADGET_RADIO ||
-			block->gadget->type == GADGET_CHECKBOX)) {
+	إذا (بلوک->gadget && (بلوک->gadget->type == GADGET_RADIO ||
+			بلوک->gadget->type == GADGET_CHECKBOX)) {
 		/* form checkbox or radio button
 		 * if width or height is AUTO, set it to 1em */
 		gadget_unit = CSS_UNIT_EM;
-		gadget_size = INTTOFIX(1);
-		if (block->height == AUTO)
-			block->height = FIXTOINT(css_unit_len2device_px(
-					block->style,
+		gadget_اندازه = INTTOFIX(1);
+		إذا (بلوک->ارتفاع == AUTO)
+			بلوک->ارتفاع = FIXTOINT(css_unit_len2device_px(
+					بلوک->style,
 					&content->unit_len_ctx,
-					gadget_size, gadget_unit));
+					gadget_اندازه, gadget_unit));
 	}
 
-	box = block->children;
+	box = بلوک->children;
 	/* set current coordinates to top-left of the block */
 	cx = 0;
-	y = cy = block->padding[TOP];
-	if (box)
-		box->y = block->padding[TOP];
+	y = cy = بلوک->padding[بالاترین_2];
+	إذا (box)
+		box->y = بلوک->padding[بالاترین_2];
 
 	/* Step through the descendants of the block in depth-first order, but
 	 * not into the children of boxes which aren't blocks. For example, if
@@ -3590,13 +3590,13 @@ bool layout_block_context(
 	 *                   ...
 	 * then the while loop will visit each box marked with *, setting box
 	 * to each in the order shown. */
-	while (box) {
-		enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
-		enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
+	طالما (box) {
+		تعداد css_سرریز_e سرریز_x = CSS_سرریز_VISIBLE;
+		تعداد css_سرریز_e سرریز_y = CSS_سرریز_VISIBLE;
 
-		assert(box->type == BOX_BLOCK ||
+		أكد(box->type == BOX_بلوک ||
 				box->type == BOX_FLEX ||
-				box->type == BOX_TABLE ||
+				box->type == BOX_جدول ||
 				box->type == BOX_INLINE_CONTAINER);
 
 		/* Tables are laid out before being positioned, because the
@@ -3607,151 +3607,151 @@ bool layout_block_context(
 		 * correct handling of floats.
 		 */
 
-		if (box->style &&
+		إذا (box->style &&
 				(css_computed_position(box->style) ==
 					CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(box->style) ==
 					CSS_POSITION_FIXED)) {
-			box->x = box->parent->padding[LEFT];
+			box->x = box->والد->padding[چپ_2];
 			/* absolute positioned; this element will establish
 			 * its own block context when it gets laid out later,
 			 * so no need to look at its children now. */
-			goto advance_to_next_box;
+			اذهب advance_مقصد_بعدی_box;
 		}
 
 		/* If we don't know which box the current margin collapses
 		 * through to, find out.  Update the pos/neg margin values. */
-		if (margin_collapse == NULL) {
-			margin_collapse = layout_next_margin_block(
-					&content->unit_len_ctx, box, block,
-					viewport_height,
+		إذا (margin_collapse == عدم) {
+			margin_collapse = layout_بعدی_margin_بلوک(
+					&content->unit_len_ctx, box, بلوک,
+					viewport_ارتفاع,
 					&max_pos_margin, &max_neg_margin);
 			/* We have a margin that has not yet been applied. */
-			in_margin = true;
+			درون_margin = true;
 		}
 
 		/* Clearance. */
 		y = 0;
-		if (box->style && css_computed_clear(box->style) !=
+		إذا (box->style && css_computed_clear(box->style) !=
 				CSS_CLEAR_NONE)
-			y = layout_clear(block->float_children,
+			y = layout_clear(بلوک->float_children,
 					css_computed_clear(box->style));
 
 		/* Find box's overflow properties */
-		if (box->style) {
-			overflow_x = css_computed_overflow_x(box->style);
-			overflow_y = css_computed_overflow_y(box->style);
+		إذا (box->style) {
+			سرریز_x = css_computed_سرریز_x(box->style);
+			سرریز_y = css_computed_سرریز_y(box->style);
 		}
 
 		/* Blocks establishing a block formatting context get minimum
 		 * left and right margins to avoid any floats. */
 		lm = rm = 0;
 
-		if (box->type == BOX_FLEX ||
-		    box->type == BOX_BLOCK ||
+		إذا (box->type == BOX_FLEX ||
+		    box->type == BOX_بلوک ||
 		    box->flags & IFRAME) {
-			if (lh__box_is_object(box) == false &&
+			إذا (lh__box_is_object(box) == false &&
 					box->style &&
-					(overflow_x != CSS_OVERFLOW_VISIBLE ||
-					 overflow_y != CSS_OVERFLOW_VISIBLE)) {
+					(سرریز_x != CSS_سرریز_VISIBLE ||
+					 سرریز_y != CSS_سرریز_VISIBLE)) {
 				/* box establishes new block formatting context
 				 * so available width may be diminished due to
 				 * floats. */
-				int x0, x1, top;
-				struct box *left, *right;
-				top = cy + max_pos_margin - max_neg_margin;
-				top = (top > y) ? top : y;
+				صحيح x0, x1, بالاترین;
+				بنية box *چپ, *راست;
+				بالاترین = cy + max_pos_margin - max_neg_margin;
+				بالاترین = (بالاترین > y) ? بالاترین : y;
 				x0 = cx;
-				x1 = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT];
-				find_sides(block->float_children, top, top,
-						&x0, &x1, &left, &right);
+				x1 = cx + box->والد->عرض -
+						box->والد->padding[چپ_2] -
+						box->والد->padding[راست_2];
+				پیدا_کن_sides(بلوک->float_children, بالاترین, بالاترین,
+						&x0, &x1, &چپ, &راست);
 				/* calculate min required left & right margins
 				 * needed to avoid floats */
 				lm = x0 - cx;
-				rm = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT] -
+				rm = cx + box->والد->عرض -
+						box->والد->padding[چپ_2] -
+						box->والد->padding[راست_2] -
 						x1;
 			}
-			layout_block_find_dimensions(&content->unit_len_ctx,
-					box->parent->width,
-					viewport_height, lm, rm, box);
-			if (box->type == BOX_BLOCK && !(box->flags & IFRAME)) {
-				layout_block_add_scrollbar(box, RIGHT);
-				layout_block_add_scrollbar(box, BOTTOM);
+			layout_بلوک_پیدا_کن_dimensions(&content->unit_len_ctx,
+					box->والد->عرض,
+					viewport_ارتفاع, lm, rm, box);
+			إذا (box->type == BOX_بلوک && !(box->flags & IFRAME)) {
+				layout_بلوک_جمع_کن_scrollbar(box, راست_2);
+				layout_بلوک_جمع_کن_scrollbar(box, BOTTOM);
 			}
-		} else if (box->type == BOX_TABLE) {
-			if (box->style != NULL) {
-				enum css_width_e wtype;
-				css_fixed width = 0;
+		} وإلا إذا (box->type == BOX_جدول) {
+			إذا (box->style != عدم) {
+				تعداد css_عرض_e wtype;
+				css_fixed عرض = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				wtype = css_computed_width(box->style, &width,
+				wtype = css_computed_عرض(box->style, &عرض,
 						&unit);
 
-				if (wtype == CSS_WIDTH_AUTO) {
+				إذا (wtype == CSS_عرض_AUTO) {
 					/* max available width may be
 					 * diminished due to floats. */
-					int x0, x1, top;
-					struct box *left, *right;
-					top = cy + max_pos_margin -
+					صحيح x0, x1, بالاترین;
+					بنية box *چپ, *راست;
+					بالاترین = cy + max_pos_margin -
 							max_neg_margin;
-					top = (top > y) ? top : y;
+					بالاترین = (بالاترین > y) ? بالاترین : y;
 					x0 = cx;
-					x1 = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT];
-					find_sides(block->float_children,
-						top, top, &x0, &x1,
-						&left, &right);
+					x1 = cx + box->والد->عرض -
+						box->والد->padding[چپ_2] -
+						box->والد->padding[راست_2];
+					پیدا_کن_sides(بلوک->float_children,
+						بالاترین, بالاترین, &x0, &x1,
+						&چپ, &راست);
 					/* calculate min required left & right
 					 * margins needed to avoid floats */
 					lm = x0 - cx;
-					rm = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT] -
+					rm = cx + box->والد->عرض -
+						box->والد->padding[چپ_2] -
+						box->والد->padding[راست_2] -
 						x1;
 				}
 			}
-			if (!layout_table(box, box->parent->width - lm - rm,
+			إذا (!layout_جدول(box, box->والد->عرض - lm - rm,
 					content))
-				return false;
-			layout_solve_width(box, box->parent->width, box->width,
+				أرجع false;
+			layout_solve_عرض(box, box->والد->عرض, box->عرض,
 					lm, rm, -1, -1);
 		}
 
 		/* Position box: horizontal. */
-		box->x = box->parent->padding[LEFT] + box->margin[LEFT] +
-				box->border[LEFT].width;
+		box->x = box->والد->padding[چپ_2] + box->margin[چپ_2] +
+				box->border[چپ_2].عرض;
 		cx += box->x;
 
 		/* Position box: vertical. */
-		if (box->border[TOP].width) {
-			box->y += box->border[TOP].width;
-			cy += box->border[TOP].width;
+		إذا (box->border[بالاترین_2].عرض) {
+			box->y += box->border[بالاترین_2].عرض;
+			cy += box->border[بالاترین_2].عرض;
 		}
 
 		/* Vertical margin */
-		if (((box->type == BOX_BLOCK && (box->flags & HAS_HEIGHT)) ||
+		إذا (((box->type == BOX_بلوک && (box->flags & HAS_ارتفاع)) ||
 		     box->type == BOX_FLEX ||
-		     box->type == BOX_TABLE ||
+		     box->type == BOX_جدول ||
 		     (box->type == BOX_INLINE_CONTAINER &&
-		      !box_is_first_child(box)) ||
+		      !box_is_اولی_فرزند(box)) ||
 		     margin_collapse == box) &&
-		    in_margin == true) {
+		    درون_margin == true) {
 			/* Margin goes above this box. */
 			cy += max_pos_margin - max_neg_margin;
 			box->y += max_pos_margin - max_neg_margin;
 
 			/* Current margin has been applied. */
-			in_margin = false;
+			درون_margin = false;
 			max_pos_margin = max_neg_margin = 0;
 		}
 
 		/* Handle clearance */
-		if (box->type != BOX_INLINE_CONTAINER &&
+		إذا (box->type != BOX_INLINE_CONTAINER &&
 				(y > 0) && (cy < y)) {
 			/* box clears something*/
 			box->y += y - cy;
@@ -3760,86 +3760,86 @@ bool layout_block_context(
 
 		/* Unless the box has an overflow style of visible, the box
 		 * establishes a new block context. */
-		if (box->type == BOX_FLEX ||
-				(box->type == BOX_BLOCK && box->style &&
-				 (overflow_x != CSS_OVERFLOW_VISIBLE ||
-				  overflow_y != CSS_OVERFLOW_VISIBLE))) {
+		إذا (box->type == BOX_FLEX ||
+				(box->type == BOX_بلوک && box->style &&
+				 (سرریز_x != CSS_سرریز_VISIBLE ||
+				  سرریز_y != CSS_سرریز_VISIBLE))) {
 
-			if (box->type == BOX_FLEX) {
-				if (!layout_flex(box, box->width, content)) {
-					return false;
+			إذا (box->type == BOX_FLEX) {
+				إذا (!layout_flex(box, box->عرض, content)) {
+					أرجع false;
 				}
-			} else {
-				layout_block_context(box,
-						viewport_height, content);
+			} وإلا {
+				layout_بلوک_context(box,
+						viewport_ارتفاع, content);
 			}
 
-			cy += box->padding[TOP];
+			cy += box->padding[بالاترین_2];
 
-			if (box->height == AUTO) {
-				box->height = 0;
-				layout_block_add_scrollbar(box, BOTTOM);
+			إذا (box->ارتفاع == AUTO) {
+				box->ارتفاع = 0;
+				layout_بلوک_جمع_کن_scrollbar(box, BOTTOM);
 			}
 
 			cx -= box->x;
-			cy += box->height + box->padding[BOTTOM] +
-					box->border[BOTTOM].width;
-			y = box->y + box->padding[TOP] + box->height +
+			cy += box->ارتفاع + box->padding[BOTTOM] +
+					box->border[BOTTOM].عرض;
+			y = box->y + box->padding[بالاترین_2] + box->ارتفاع +
 					box->padding[BOTTOM] +
-					box->border[BOTTOM].width;
+					box->border[BOTTOM].عرض;
 
 			/* Skip children, because they are done in the new
 			 * block context */
-			goto advance_to_next_box;
+			اذهب advance_مقصد_بعدی_box;
 		}
 
 		NSLOG(layout, DEBUG,  "box %p, cx %i, cy %i, width %i",
-				box, cx, cy, box->width);
+				box, cx, cy, box->عرض);
 
 		/* Layout (except tables). */
-		if (box->object) {
-			if (!layout_block_object(box))
-				return false;
+		إذا (box->object) {
+			إذا (!layout_بلوک_object(box))
+				أرجع false;
 
-		} else if (box->type == BOX_INLINE_CONTAINER) {
-			box->width = box->parent->width;
-			if (!layout_inline_container(box, box->width, block,
+		} وإلا إذا (box->type == BOX_INLINE_CONTAINER) {
+			box->عرض = box->والد->عرض;
+			إذا (!layout_inline_container(box, box->عرض, بلوک,
 					cx, cy, content))
-				return false;
+				أرجع false;
 
-		} else if (box->type == BOX_TABLE) {
+		} وإلا إذا (box->type == BOX_جدول) {
 			/* Move down to avoid floats if necessary. */
-			int x0, x1;
-			struct box *left, *right;
+			صحيح x0, x1;
+			بنية box *چپ, *راست;
 			y = cy;
-			while (1) {
-				enum css_width_e wtype;
-				css_fixed width = 0;
+			طالما (1) {
+				تعداد css_عرض_e wtype;
+				css_fixed عرض = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				wtype = css_computed_width(box->style,
-						&width, &unit);
+				wtype = css_computed_عرض(box->style,
+						&عرض, &unit);
 
 				x0 = cx;
-				x1 = cx + box->parent->width;
-				find_sides(block->float_children, y,
-						y + box->height,
-						&x0, &x1, &left, &right);
-				if (wtype == CSS_WIDTH_AUTO)
-					break;
-				if (box->width <= x1 - x0)
-					break;
-				if (!left && !right)
-					break;
-				else if (!left)
-					y = right->y + right->height + 1;
-				else if (!right)
-					y = left->y + left->height + 1;
-				else if (left->y + left->height <
-						right->y + right->height)
-					y = left->y + left->height + 1;
-				else
-					y = right->y + right->height + 1;
+				x1 = cx + box->والد->عرض;
+				پیدا_کن_sides(بلوک->float_children, y,
+						y + box->ارتفاع,
+						&x0, &x1, &چپ, &راست);
+				إذا (wtype == CSS_عرض_AUTO)
+					اكسر;
+				إذا (box->عرض <= x1 - x0)
+					اكسر;
+				إذا (!چپ && !راست)
+					اكسر;
+				وإلا إذا (!چپ)
+					y = راست->y + راست->ارتفاع + 1;
+				وإلا إذا (!راست)
+					y = چپ->y + چپ->ارتفاع + 1;
+				وإلا إذا (چپ->y + چپ->ارتفاع <
+						راست->y + راست->ارتفاع)
+					y = چپ->y + چپ->ارتفاع + 1;
+				وإلا
+					y = راست->y + راست->ارتفاع + 1;
 			}
 			box->x += x0 - cx;
 			cx = x0;
@@ -3848,118 +3848,118 @@ bool layout_block_context(
 		}
 
 		/* Advance to next box. */
-		if (box->type == BOX_BLOCK && !box->object && !(box->iframe) &&
+		إذا (box->type == BOX_بلوک && !box->object && !(box->iframe) &&
 				box->children) {
 			/* Down into children. */
 
-			if (box == margin_collapse) {
+			إذا (box == margin_collapse) {
 				/* Current margin collapsed though to this box.
 				 * Unset margin_collapse. */
-				margin_collapse = NULL;
+				margin_collapse = عدم;
 			}
 
-			y = box->padding[TOP];
+			y = box->padding[بالاترین_2];
 			box = box->children;
 			box->y = y;
 			cy += y;
-			continue;
-		} else if (box->type == BOX_BLOCK || box->object ||
+			استمر;
+		} وإلا إذا (box->type == BOX_بلوک || box->object ||
 				box->flags & IFRAME)
-			cy += box->padding[TOP];
+			cy += box->padding[بالاترین_2];
 
-		if (box->type == BOX_BLOCK && box->height == AUTO) {
-			box->height = 0;
-			layout_block_add_scrollbar(box, BOTTOM);
+		إذا (box->type == BOX_بلوک && box->ارتفاع == AUTO) {
+			box->ارتفاع = 0;
+			layout_بلوک_جمع_کن_scrollbar(box, BOTTOM);
 		}
 
-		cy += box->height + box->padding[BOTTOM] +
-				box->border[BOTTOM].width;
+		cy += box->ارتفاع + box->padding[BOTTOM] +
+				box->border[BOTTOM].عرض;
 		cx -= box->x;
-		y = box->y + box->padding[TOP] + box->height +
+		y = box->y + box->padding[بالاترین_2] + box->ارتفاع +
 				box->padding[BOTTOM] +
-				box->border[BOTTOM].width;
+				box->border[BOTTOM].عرض;
 
-	advance_to_next_box:
-		if (!box->next) {
+	advance_مقصد_بعدی_box:
+		إذا (!box->بعدی) {
 			/* No more siblings:
 			 * up to first ancestor with a sibling. */
 
-			do {
-				if (box == margin_collapse) {
+			افعل {
+				إذا (box == margin_collapse) {
 					/* Current margin collapsed though to
 					 * this box.  Unset margin_collapse. */
-					margin_collapse = NULL;
+					margin_collapse = عدم;
 				}
 
 				/* Apply bottom margin */
-				if (max_pos_margin < box->margin[BOTTOM])
+				إذا (max_pos_margin < box->margin[BOTTOM])
 					max_pos_margin = box->margin[BOTTOM];
-				else if (max_neg_margin < -box->margin[BOTTOM])
+				وإلا إذا (max_neg_margin < -box->margin[BOTTOM])
 					max_neg_margin = -box->margin[BOTTOM];
 
-				box = box->parent;
-				if (box == block)
-					break;
+				box = box->والد;
+				إذا (box == بلوک)
+					اكسر;
 
 				/* Margin is invalidated if this is a box
 				 * margins can't collapse through. */
-				if (box->type == BOX_BLOCK &&
-						box->flags & MAKE_HEIGHT) {
-					margin_collapse = NULL;
-					in_margin = false;
+				إذا (box->type == BOX_بلوک &&
+						box->flags & MAKE_ارتفاع) {
+					margin_collapse = عدم;
+					درون_margin = false;
 					max_pos_margin = max_neg_margin = 0;
 				}
 
-				if (box->height == AUTO) {
-					box->height = y - box->padding[TOP];
+				إذا (box->ارتفاع == AUTO) {
+					box->ارتفاع = y - box->padding[بالاترین_2];
 
-					if (box->type == BOX_BLOCK)
-						layout_block_add_scrollbar(box,
+					إذا (box->type == BOX_بلوک)
+						layout_بلوک_جمع_کن_scrollbar(box,
 								BOTTOM);
-				} else
-					cy += box->height -
-							(y - box->padding[TOP]);
+				} وإلا
+					cy += box->ارتفاع -
+							(y - box->padding[بالاترین_2]);
 
 				/* Apply any min-height and max-height to
 				 * boxes in normal flow */
-				if (box->style &&
+				إذا (box->style &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
-						layout_apply_minmax_height(
+						layout_apply_minmax_ارتفاع(
 							&content->unit_len_ctx,
-							box, NULL)) {
+							box, عدم)) {
 					/* Height altered */
 					/* Set current cy */
-					cy += box->height -
-							(y - box->padding[TOP]);
+					cy += box->ارتفاع -
+							(y - box->padding[بالاترین_2]);
 				}
 
 				cy += box->padding[BOTTOM] +
-						box->border[BOTTOM].width;
+						box->border[BOTTOM].عرض;
 				cx -= box->x;
-				y = box->y + box->padding[TOP] + box->height +
+				y = box->y + box->padding[بالاترین_2] + box->ارتفاع +
 						box->padding[BOTTOM] +
-						box->border[BOTTOM].width;
+						box->border[BOTTOM].عرض;
 
-			} while (box->next == NULL);
-			if (box == block)
-				break;
+			} طالما (box->بعدی == عدم);
+			إذا (box == بلوک)
+				اكسر;
 		}
 
 		/* To next sibling. */
 
-		if (box == margin_collapse) {
+		إذا (box == margin_collapse) {
 			/* Current margin collapsed though to this box.
 			 * Unset margin_collapse. */
-			margin_collapse = NULL;
+			margin_collapse = عدم;
 		}
 
-		if (max_pos_margin < box->margin[BOTTOM])
+		إذا (max_pos_margin < box->margin[BOTTOM])
 			max_pos_margin = box->margin[BOTTOM];
-		else if (max_neg_margin < -box->margin[BOTTOM])
+		وإلا إذا (max_neg_margin < -box->margin[BOTTOM])
 			max_neg_margin = -box->margin[BOTTOM];
 
-		box = box->next;
+		box = box->بعدی;
 		box->y = y;
 	}
 
@@ -3967,44 +3967,44 @@ bool layout_block_context(
 	cy += max_pos_margin - max_neg_margin;
 
 	/* Increase height to contain any floats inside (CSS 2.1 10.6.7). */
-	for (box = block->float_children; box; box = box->next_float) {
-		y = box->y + box->height + box->padding[BOTTOM] +
-				box->border[BOTTOM].width + box->margin[BOTTOM];
-		if (cy < y)
+	لكل (box = بلوک->float_children; box; box = box->بعدی_float) {
+		y = box->y + box->ارتفاع + box->padding[BOTTOM] +
+				box->border[BOTTOM].عرض + box->margin[BOTTOM];
+		إذا (cy < y)
 			cy = y;
 	}
 
-	if (block->height == AUTO) {
-		block->height = cy - block->padding[TOP];
-		if (block->type == BOX_BLOCK)
-			layout_block_add_scrollbar(block, BOTTOM);
+	إذا (بلوک->ارتفاع == AUTO) {
+		بلوک->ارتفاع = cy - بلوک->padding[بالاترین_2];
+		إذا (بلوک->type == BOX_بلوک)
+			layout_بلوک_جمع_کن_scrollbar(بلوک, BOTTOM);
 	}
 
-	if (block->style && css_computed_position(block->style) !=
+	إذا (بلوک->style && css_computed_position(بلوک->style) !=
 			CSS_POSITION_ABSOLUTE) {
 		/* Block is in normal flow */
-		layout_apply_minmax_height(&content->unit_len_ctx, block, NULL);
+		layout_apply_minmax_ارتفاع(&content->unit_len_ctx, بلوک, عدم);
 	}
 
-	if (block->gadget &&
-			(block->gadget->type == GADGET_TEXTAREA ||
-			block->gadget->type == GADGET_PASSWORD ||
-			block->gadget->type == GADGET_TEXTBOX)) {
+	إذا (بلوک->gadget &&
+			(بلوک->gadget->type == GADGET_TEXTAREA ||
+			بلوک->gadget->type == GADGET_PASSWORD ||
+			بلوک->gadget->type == GADGET_TEXTBOX)) {
 		plot_font_style_t fstyle;
-		int ta_width = block->padding[LEFT] + block->width +
-				block->padding[RIGHT];
-		int ta_height = block->padding[TOP] + block->height +
-				block->padding[BOTTOM];
+		صحيح ta_عرض = بلوک->padding[چپ_2] + بلوک->عرض +
+				بلوک->padding[راست_2];
+		صحيح ta_ارتفاع = بلوک->padding[بالاترین_2] + بلوک->ارتفاع +
+				بلوک->padding[BOTTOM];
 		font_plot_style_from_css(&content->unit_len_ctx,
-				block->style, &fstyle);
+				بلوک->style, &fstyle);
 		fstyle.background = NS_TRANSPARENT;
-		textarea_set_layout(block->gadget->data.text.ta,
-				&fstyle, ta_width, ta_height,
-				block->padding[TOP], block->padding[RIGHT],
-				block->padding[BOTTOM], block->padding[LEFT]);
+		textarea_مجموعه_layout(بلوک->gadget->داده.متن.ta,
+				&fstyle, ta_عرض, ta_ارتفاع,
+				بلوک->padding[بالاترین_2], بلوک->padding[راست_2],
+				بلوک->padding[BOTTOM], بلوک->padding[چپ_2]);
 	}
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -4014,28 +4014,28 @@ bool layout_block_context(
  * \param[in]  type  Returns element tag type on success.
  * \return true if on success, false otherwise.
  */
-static bool
-layout__get_element_tag(
-		const dom_node *node,
+ساكن bool
+layout_get_element_برچسب(
+		ثابت dom_گره *گره,
 		dom_html_element_type *type)
 {
 	dom_html_element_type element_type;
-	dom_node_type node_type;
+	dom_گره_type گره_type;
 	dom_exception exc;
 
-	exc = dom_node_get_node_type(node, &node_type);
-	if (exc != DOM_NO_ERR ||
-	    node_type != DOM_ELEMENT_NODE) {
-		return false;
+	exc = dom_گره_get_گره_type(گره, &گره_type);
+	إذا (exc != DOM_NO_ERR ||
+	    گره_type != DOM_ELEMENT_گره) {
+		أرجع false;
 	}
 
-	exc = dom_html_element_get_tag_type(node, &element_type);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_html_element_get_برچسب_type(گره, &element_type);
+	إذا (exc != DOM_NO_ERR) {
+		أرجع false;
 	}
 
 	*type = element_type;
-	return true;
+	أرجع true;
 }
 
 
@@ -4046,18 +4046,18 @@ layout__get_element_tag(
  * \param[in]  type  Tag type to test for.
  * \return true if if node has given type, false otherwise.
  */
-static inline bool
+ساكن مضمن bool
 layout__check_element_type(
-		const dom_node *node,
+		ثابت dom_گره *گره,
 		dom_html_element_type type)
 {
 	dom_html_element_type element_type;
 
-	if (!layout__get_element_tag(node, &element_type)) {
-		return false;
+	إذا (!layout_get_element_برچسب(گره, &element_type)) {
+		أرجع false;
 	}
 
-	return element_type == type;
+	أرجع element_type == type;
 }
 
 
@@ -4068,12 +4068,12 @@ layout__check_element_type(
  * \param[out] value_out  Returns the value on success.
  * \return true if node has value, otherwise false.
  */
-static bool
-layout__get_li_value(dom_node *li_node, dom_long *value_out)
+ساكن bool
+layout_get_li_مقدار(dom_گره *li_گره, dom_long *مقدار_بیرون)
 {
 	dom_exception exc;
-	dom_long value;
-	bool has_value;
+	dom_long مقدار;
+	bool has_مقدار;
 
 	/** \todo
 	 * dom_html_li_element_get_value() is rubbish and we can't tell
@@ -4084,22 +4084,22 @@ layout__get_li_value(dom_node *li_node, dom_long *value_out)
 	 * fix libdom to have some kind of sane interface to get numerical
 	 * attributes.
 	 */
-	exc = dom_element_has_attribute(li_node,
-			corestring_dom_value,
-			&has_value);
-	if (exc != DOM_NO_ERR || has_value == false) {
-		return false;
+	exc = dom_element_has_attribute(li_گره,
+			corestring_dom_مقدار,
+			&has_مقدار);
+	إذا (exc != DOM_NO_ERR || has_مقدار == false) {
+		أرجع false;
 	}
 
-	exc = dom_html_li_element_get_value(
-			(dom_html_li_element *)li_node,
-			&value);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_html_li_element_get_مقدار(
+			(dom_html_li_element *)li_گره,
+			&مقدار);
+	إذا (exc != DOM_NO_ERR) {
+		أرجع false;
 	}
 
-	*value_out = value;
-	return true;
+	*مقدار_بیرون = مقدار;
+	أرجع true;
 }
 
 
@@ -4110,32 +4110,32 @@ layout__get_li_value(dom_node *li_node, dom_long *value_out)
  * \param[out] start_out  Returns the value on success.
  * \return true if node has value, otherwise false.
  */
-static bool
-layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
+ساكن bool
+layout_get_ol_شروع(dom_گره *ol_گره, dom_long *شروع_بیرون)
 {
 	dom_exception exc;
-	dom_long start;
-	bool has_start;
+	dom_long شروع;
+	bool has_شروع;
 
 	/** \todo
 	 * see layout__get_li_value().
 	 */
-	exc = dom_element_has_attribute(ol_node,
-			corestring_dom_start,
-			&has_start);
-	if (exc != DOM_NO_ERR || has_start == false) {
-		return false;
+	exc = dom_element_has_attribute(ol_گره,
+			corestring_dom_شروع,
+			&has_شروع);
+	إذا (exc != DOM_NO_ERR || has_شروع == false) {
+		أرجع false;
 	}
 
-	exc = dom_html_olist_element_get_start(
-			(dom_html_olist_element *)ol_node,
-			&start);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_html_olist_element_get_شروع(
+			(dom_html_olist_element *)ol_گره,
+			&شروع);
+	إذا (exc != DOM_NO_ERR) {
+		أرجع false;
 	}
 
-	*start_out = start;
-	return true;
+	*شروع_بیرون = شروع;
+	أرجع true;
 }
 
 
@@ -4145,20 +4145,20 @@ layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
  * \param[in]  ol_node    DOM node for the OL element;
  * \return true if node has reversed, otherwise false.
  */
-static bool
-layout__get_ol_reversed(dom_node *ol_node)
+ساكن bool
+layout__get_ol_reversed(dom_گره *ol_گره)
 {
 	dom_exception exc;
 	bool has_reversed;
 
-	exc = dom_element_has_attribute(ol_node,
+	exc = dom_element_has_attribute(ol_گره,
 			corestring_dom_reversed,
 			&has_reversed);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	إذا (exc != DOM_NO_ERR) {
+		أرجع false;
 	}
 
-	return has_reversed;
+	أرجع has_reversed;
 }
 
 
@@ -4169,64 +4169,64 @@ layout__get_ol_reversed(dom_node *ol_node)
  * \param[in]  count_out   Returns list item count on success.
  * \return true on success, otherwise false.
  */
-static bool
-layout__get_list_item_count(
-		dom_node *list_owner, dom_long *count_out)
+ساكن bool
+layout_get_list_قلم_شمار(
+		dom_گره *list_owner, dom_long *شمار_بیرون)
 {
-	dom_html_element_type tag_type;
+	dom_html_element_type برچسب_type;
 	dom_exception exc;
-	dom_node *child;
-	int count;
+	dom_گره *فرزند;
+	صحيح شمار;
 
-	if (list_owner == NULL) {
-		return false;
+	إذا (list_owner == عدم) {
+		أرجع false;
 	}
 
-	if (!layout__get_element_tag(list_owner, &tag_type)) {
-		return false;
+	إذا (!layout_get_element_برچسب(list_owner, &برچسب_type)) {
+		أرجع false;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
-	    tag_type != DOM_HTML_ELEMENT_TYPE_UL) {
-		return false;
+	إذا (برچسب_type != DOM_HTML_ELEMENT_TYPE_OL &&
+	    برچسب_type != DOM_HTML_ELEMENT_TYPE_UL) {
+		أرجع false;
 	}
 
-	exc = dom_node_get_first_child(list_owner, &child);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_گره_get_اولی_فرزند(list_owner, &فرزند);
+	إذا (exc != DOM_NO_ERR) {
+		أرجع false;
 	}
 
-	count = 0;
-	while (child != NULL) {
-		dom_node *temp_node;
+	شمار = 0;
+	طالما (فرزند != عدم) {
+		dom_گره *موقت_گره;
 
-		if (layout__check_element_type(child,
+		إذا (layout__check_element_type(فرزند,
 				DOM_HTML_ELEMENT_TYPE_LI)) {
-			struct box *child_box;
-			if (dom_node_get_user_data(child,
-					corestring_dom___ns_key_box_node_data,
-					&child_box) != DOM_NO_ERR) {
-				dom_node_unref(child);
-				return false;
+			بنية box *فرزند_box;
+			إذا (dom_گره_get_user_داده(فرزند,
+					corestring_dom_ns_کلید_box_گره_داده,
+					&فرزند_box) != DOM_NO_ERR) {
+				dom_گره_unref(فرزند);
+				أرجع false;
 			}
 
-			if (child_box != NULL &&
-			    child_box->list_marker != NULL) {
-				count++;
+			إذا (فرزند_box != عدم &&
+			    فرزند_box->list_marker != عدم) {
+				شمار++;
 			}
 		}
 
-		exc = dom_node_get_next_sibling(child, &temp_node);
-		dom_node_unref(child);
-		if (exc != DOM_NO_ERR) {
-			return false;
+		exc = dom_گره_get_بعدی_sibling(فرزند, &موقت_گره);
+		dom_گره_unref(فرزند);
+		إذا (exc != DOM_NO_ERR) {
+			أرجع false;
 		}
 
-		child = temp_node;
+		فرزند = موقت_گره;
 	}
 
-	*count_out = count;
-	return true;
+	*شمار_بیرون = شمار;
+	أرجع true;
 }
 
 
@@ -4235,83 +4235,83 @@ layout__get_list_item_count(
  *
  * \param[in]  box  Box to do list item counting for.
  */
-static void
-layout__ordered_list_count(
-		struct box *box)
+ساكن فراغ
+layout_ordered_list_شمار(
+		بنية box *box)
 {
-	dom_html_element_type tag_type;
+	dom_html_element_type برچسب_type;
 	dom_exception exc;
-	dom_node *child;
-	int step = 1;
-	dom_long next;
+	dom_گره *فرزند;
+	صحيح گام = 1;
+	dom_long بعدی;
 
-	if (box->node == NULL) {
-		return;
+	إذا (box->گره == عدم) {
+		أرجع;
 	}
 
-	if (!layout__get_element_tag(box->node, &tag_type)) {
-		return;
+	إذا (!layout_get_element_برچسب(box->گره, &برچسب_type)) {
+		أرجع;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
-	    tag_type != DOM_HTML_ELEMENT_TYPE_UL) {
-		return;
+	إذا (برچسب_type != DOM_HTML_ELEMENT_TYPE_OL &&
+	    برچسب_type != DOM_HTML_ELEMENT_TYPE_UL) {
+		أرجع;
 	}
 
-	next = 1;
-	if (tag_type == DOM_HTML_ELEMENT_TYPE_OL) {
-		bool have_start = layout__get_ol_start(box->node, &next);
-		bool have_reversed = layout__get_ol_reversed(box->node);
+	بعدی = 1;
+	إذا (برچسب_type == DOM_HTML_ELEMENT_TYPE_OL) {
+		bool have_شروع = layout_get_ol_شروع(box->گره, &بعدی);
+		bool have_reversed = layout__get_ol_reversed(box->گره);
 
-		if (have_reversed) {
-			step = -1;
+		إذا (have_reversed) {
+			گام = -1;
 		}
 
-		if (!have_start && have_reversed) {
-			layout__get_list_item_count(box->node, &next);
+		إذا (!have_شروع && have_reversed) {
+			layout_get_list_قلم_شمار(box->گره, &بعدی);
 		}
 	}
 
-	exc = dom_node_get_first_child(box->node, &child);
-	if (exc != DOM_NO_ERR) {
-		return;
+	exc = dom_گره_get_اولی_فرزند(box->گره, &فرزند);
+	إذا (exc != DOM_NO_ERR) {
+		أرجع;
 	}
 
-	while (child != NULL) {
-		dom_node *temp_node;
+	طالما (فرزند != عدم) {
+		dom_گره *موقت_گره;
 
-		if (layout__check_element_type(child,
+		إذا (layout__check_element_type(فرزند,
 				DOM_HTML_ELEMENT_TYPE_LI)) {
-			struct box *child_box;
+			بنية box *فرزند_box;
 
-			if (dom_node_get_user_data(child,
-					corestring_dom___ns_key_box_node_data,
-					&child_box) != DOM_NO_ERR) {
-				dom_node_unref(child);
-				return;
+			إذا (dom_گره_get_user_داده(فرزند,
+					corestring_dom_ns_کلید_box_گره_داده,
+					&فرزند_box) != DOM_NO_ERR) {
+				dom_گره_unref(فرزند);
+				أرجع;
 			}
 
-			if (child_box != NULL &&
-			    child_box->list_marker != NULL) {
-				dom_long value;
-				struct box *marker = child_box->list_marker;
-				if (layout__get_li_value(child, &value)) {
-					marker->list_value = value;
-					next = marker->list_value;
-				} else {
-					marker->list_value = next;
+			إذا (فرزند_box != عدم &&
+			    فرزند_box->list_marker != عدم) {
+				dom_long مقدار;
+				بنية box *marker = فرزند_box->list_marker;
+				إذا (layout_get_li_مقدار(فرزند, &مقدار)) {
+					marker->list_مقدار = مقدار;
+					بعدی = marker->list_مقدار;
+				} وإلا {
+					marker->list_مقدار = بعدی;
 				}
-				next += step;
+				بعدی += گام;
 			}
 		}
 
-		exc = dom_node_get_next_sibling(child, &temp_node);
-		dom_node_unref(child);
-		if (exc != DOM_NO_ERR) {
-			return;
+		exc = dom_گره_get_بعدی_sibling(فرزند, &موقت_گره);
+		dom_گره_unref(فرزند);
+		إذا (exc != DOM_NO_ERR) {
+			أرجع;
 		}
 
-		child = temp_node;
+		فرزند = موقت_گره;
 	}
 }
 
@@ -4321,47 +4321,47 @@ layout__ordered_list_count(
  * \param[in]  content  The HTML content.
  * \param[in]  box      The list item's main box.
  */
-static void
-layout__set_numerical_marker_text(
-		const html_content *content,
-		struct box *box)
+ساكن فراغ
+layout_مجموعه_numerical_marker_متن(
+		ثابت html_content *content,
+		بنية box *box)
 {
-	struct box *marker = box->list_marker;
+	بنية box *marker = box->list_marker;
 	size_t counter_len;
 	css_error css_res;
-	enum {
+	تعداد {
 		/**
 		 * initial length of a list marker buffer
 		 *
 		 * enough for 9,999,999,999,999,999,999 in decimal
 		 * or five characters for 4-byte UTF-8.
 		 */
-		LIST_MARKER_SIZE = 20,
+		LIST_MARKER_اندازه = 20,
 	};
 
-	marker->text = talloc_array(content->bctx, char, LIST_MARKER_SIZE);
-	if (marker->text == NULL) {
-		return;
+	marker->متن = talloc_array(content->bctx, حرف, LIST_MARKER_اندازه);
+	إذا (marker->متن == عدم) {
+		أرجع;
 	}
 
-	css_res = css_computed_format_list_style(box->style, marker->list_value,
-			marker->text, LIST_MARKER_SIZE, &counter_len);
-	if (css_res == CSS_OK) {
-		if (counter_len > LIST_MARKER_SIZE) {
+	css_res = css_computed_format_list_style(box->style, marker->list_مقدار,
+			marker->متن, LIST_MARKER_اندازه, &counter_len);
+	إذا (css_res == CSS_OK) {
+		إذا (counter_len > LIST_MARKER_اندازه) {
 			/* Use computed size as marker did not fit in
 			 * default allocation. */
-			marker->text = talloc_realloc(content->bctx,
-					marker->text,
-					char,
+			marker->متن = talloc_realloc(content->bctx,
+					marker->متن,
+					حرف,
 					counter_len);
-			if (marker->text == NULL) {
-				return;
+			إذا (marker->متن == عدم) {
+				أرجع;
 			}
 			css_computed_format_list_style(box->style,
-					marker->list_value, marker->text,
+					marker->list_مقدار, marker->متن,
 					counter_len, &counter_len);
 		}
-		marker->length = counter_len;
+		marker->درازی = counter_len;
 	}
 }
 
@@ -4371,82 +4371,82 @@ layout__set_numerical_marker_text(
  * \param[in]  b  Box with style to test.
  * \return true if box has numerical list style type, false otherwise.
  */
-static bool
-layout__list_item_is_numerical(
-		const struct box *b)
+ساكن bool
+layout_list_قلم_is_numerical(
+		ثابت بنية box *b)
 {
-	enum css_list_style_type_e t = css_computed_list_style_type(b->style);
+	تعداد css_list_style_type_e t = css_computed_list_style_type(b->style);
 
-	switch (t) {
-	case CSS_LIST_STYLE_TYPE_DISC:   /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_CIRCLE: /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_SQUARE: /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_NONE:
-		return false;
+	بدل (t) {
+	حالة CSS_LIST_STYLE_TYPE_DISC:   /* Fall through. */
+	حالة CSS_LIST_STYLE_TYPE_CIRCLE: /* Fall through. */
+	حالة CSS_LIST_STYLE_TYPE_مربع: /* Fall through. */
+	حالة CSS_LIST_STYLE_TYPE_NONE:
+		أرجع false;
 
-	default:
-		return true;
+	افتراضي:
+		أرجع true;
 	}
 }
 
 /**
  * Layout list markers.
  */
-static void
-layout_lists(const html_content *content, struct box *box)
+ساكن فراغ
+layout_lists(ثابت html_content *content, بنية box *box)
 {
-	struct box *child;
+	بنية box *فرزند;
 
-	layout__ordered_list_count(box);
+	layout_ordered_list_شمار(box);
 
-	for (child = box->children; child; child = child->next) {
-		if (child->list_marker) {
-			struct box *marker = child->list_marker;
+	لكل (فرزند = box->children; فرزند; فرزند = فرزند->بعدی) {
+		إذا (فرزند->list_marker) {
+			بنية box *marker = فرزند->list_marker;
 
-			if (layout__list_item_is_numerical(child)) {
-				if (marker->text == NULL) {
-					layout__set_numerical_marker_text(
-							content, child);
+			إذا (layout_list_قلم_is_numerical(فرزند)) {
+				إذا (marker->متن == عدم) {
+					layout_مجموعه_numerical_marker_متن(
+							content, فرزند);
 				}
 			}
-			if (marker->object) {
-				marker->width =
-					content_get_width(marker->object);
-				marker->x = -marker->width;
-				marker->height =
-					content_get_height(marker->object);
-				marker->y = (line_height(
+			إذا (marker->object) {
+				marker->عرض =
+					content_get_عرض(marker->object);
+				marker->x = -marker->عرض;
+				marker->ارتفاع =
+					content_get_ارتفاع(marker->object);
+				marker->y = (سطر_ارتفاع(
 						&content->unit_len_ctx,
 						marker->style) -
-						marker->height) / 2;
-			} else if (marker->text) {
-				if (marker->width == UNKNOWN_WIDTH) {
+						marker->ارتفاع) / 2;
+			} وإلا إذا (marker->متن) {
+				إذا (marker->عرض == UNKNOWN_عرض) {
 					plot_font_style_t fstyle;
 					font_plot_style_from_css(
 							&content->unit_len_ctx,
 							marker->style,
 							&fstyle);
-					content->font_func->width(&fstyle,
-							marker->text,
-							marker->length,
-							&marker->width);
+					content->font_func->عرض(&fstyle,
+							marker->متن,
+							marker->درازی,
+							&marker->عرض);
 					marker->flags |= MEASURED;
 				}
-				marker->x = -marker->width;
+				marker->x = -marker->عرض;
 				marker->y = 0;
-				marker->height = line_height(
+				marker->ارتفاع = سطر_ارتفاع(
 						&content->unit_len_ctx,
 						marker->style);
-			} else {
+			} وإلا {
 				marker->x = 0;
 				marker->y = 0;
-				marker->width = 0;
-				marker->height = 0;
+				marker->عرض = 0;
+				marker->ارتفاع = 0;
 			}
 			/* Gap between marker and content */
 			marker->x -= 4;
 		}
-		layout_lists(content, child);
+		layout_lists(content, فرزند);
 	}
 }
 
@@ -4465,80 +4465,80 @@ layout_lists(const html_content *content, struct box *box)
  *
  * See CSS 2.1 9.3.2. containing_block must have width and height.
  */
-static void
-layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
-		       struct box *box,
-		       struct box *containing_block,
-		       int *top,
-		       int *right,
-		       int *bottom,
-		       int *left)
+ساكن فراغ
+layout_compute_offsets(ثابت css_unit_ctx *unit_len_ctx,
+		       بنية box *box,
+		       بنية box *containing_بلوک,
+		       صحيح *بالاترین,
+		       صحيح *راست,
+		       صحيح *bottom,
+		       صحيح *چپ)
 {
 	uint32_t type;
-	css_fixed value = 0;
+	css_fixed مقدار = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(containing_block->width != UNKNOWN_WIDTH);
-	assert(containing_block->width != AUTO);
-	assert(containing_block->height != AUTO);
+	أكد(containing_بلوک->عرض != UNKNOWN_عرض);
+	أكد(containing_بلوک->عرض != AUTO);
+	أكد(containing_بلوک->ارتفاع != AUTO);
 
-	/* left */
-	type = css_computed_left(box->style, &value, &unit);
-	if (type == CSS_LEFT_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*left = FPCT_OF_INT_TOINT(value,
-					containing_block->width);
-		} else {
-			*left = FIXTOINT(css_unit_len2device_px(
+	/*چپ*/
+	type = css_computed_چپ(box->style, &مقدار, &unit);
+	إذا (type == CSS_چپ_مجموعه) {
+		إذا (unit == CSS_UNIT_PCT) {
+			*چپ = FPCT_از_INT_TOINT(مقدار,
+					containing_بلوک->عرض);
+		} وإلا {
+			*چپ = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					مقدار, unit));
 		}
-	} else {
-		*left = AUTO;
+	} وإلا {
+		*چپ = AUTO;
 	}
 
-	/* right */
-	type = css_computed_right(box->style, &value, &unit);
-	if (type == CSS_RIGHT_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*right = FPCT_OF_INT_TOINT(value,
-					containing_block->width);
-		} else {
-			*right = FIXTOINT(css_unit_len2device_px(
+	/*راست*/
+	type = css_computed_راست(box->style, &مقدار, &unit);
+	إذا (type == CSS_راست_مجموعه) {
+		إذا (unit == CSS_UNIT_PCT) {
+			*راست = FPCT_از_INT_TOINT(مقدار,
+					containing_بلوک->عرض);
+		} وإلا {
+			*راست = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					مقدار, unit));
 		}
-	} else {
-		*right = AUTO;
+	} وإلا {
+		*راست = AUTO;
 	}
 
-	/* top */
-	type = css_computed_top(box->style, &value, &unit);
-	if (type == CSS_TOP_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*top = FPCT_OF_INT_TOINT(value,
-					containing_block->height);
-		} else {
-			*top = FIXTOINT(css_unit_len2device_px(
+	/*بالاترین*/
+	type = css_computed_بالاترین(box->style, &مقدار, &unit);
+	إذا (type == CSS_بالاترین_مجموعه) {
+		إذا (unit == CSS_UNIT_PCT) {
+			*بالاترین = FPCT_از_INT_TOINT(مقدار,
+					containing_بلوک->ارتفاع);
+		} وإلا {
+			*بالاترین = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					مقدار, unit));
 		}
-	} else {
-		*top = AUTO;
+	} وإلا {
+		*بالاترین = AUTO;
 	}
 
 	/* bottom */
-	type = css_computed_bottom(box->style, &value, &unit);
-	if (type == CSS_BOTTOM_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*bottom = FPCT_OF_INT_TOINT(value,
-					containing_block->height);
-		} else {
+	type = css_computed_bottom(box->style, &مقدار, &unit);
+	إذا (type == CSS_BOTTOM_مجموعه) {
+		إذا (unit == CSS_UNIT_PCT) {
+			*bottom = FPCT_از_INT_TOINT(مقدار,
+					containing_بلوک->ارتفاع);
+		} وإلا {
 			*bottom = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					مقدار, unit));
 		}
-	} else {
+	} وإلا {
 		*bottom = AUTO;
 	}
 }
@@ -4554,379 +4554,379 @@ layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
  * \param  content           memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_absolute(struct box *box,
-		struct box *containing_block,
-		int cx, int cy,
+ساكن bool
+layout_absolute(بنية box *box,
+		بنية box *containing_بلوک,
+		صحيح cx, صحيح cy,
 		html_content *content)
 {
-	int static_left, static_top;  /* static position */
-	int top, right, bottom, left;
-	int width, height, max_width, min_width;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	int available_width = containing_block->width;
-	int space;
+	صحيح static_چپ, static_بالاترین;  /* static position */
+	صحيح بالاترین, راست, bottom, چپ;
+	صحيح عرض, ارتفاع, max_عرض, min_عرض;
+	صحيح *margin = box->margin;
+	صحيح *padding = box->padding;
+	بنية box_border *border = box->border;
+	صحيح موجود_عرض = containing_بلوک->عرض;
+	صحيح space;
 
-	assert(box->type == BOX_BLOCK || box->type == BOX_TABLE ||
-			box->type == BOX_INLINE_BLOCK ||
+	أكد(box->type == BOX_بلوک || box->type == BOX_جدول ||
+			box->type == BOX_INLINE_بلوک ||
 			box->type == BOX_FLEX ||
 			box->type == BOX_INLINE_FLEX);
 
 	/* The static position is where the box would be if it was not
 	 * absolutely positioned. The x and y are filled in by
 	 * layout_block_context(). */
-	static_left = cx + box->x;
-	static_top = cy + box->y;
+	static_چپ = cx + box->x;
+	static_بالاترین = cy + box->y;
 
-	if (containing_block->type == BOX_BLOCK ||
-			containing_block->type == BOX_INLINE_BLOCK ||
-			containing_block->type == BOX_TABLE_CELL) {
+	إذا (containing_بلوک->type == BOX_بلوک ||
+			containing_بلوک->type == BOX_INLINE_بلوک ||
+			containing_بلوک->type == BOX_جدول_CELL) {
 		/* Block level container => temporarily increase containing
 		 * block dimensions to include padding (we restore this
 		 * again at the end) */
-		containing_block->width += containing_block->padding[LEFT] +
-				containing_block->padding[RIGHT];
-		containing_block->height += containing_block->padding[TOP] +
-				containing_block->padding[BOTTOM];
+		containing_بلوک->عرض += containing_بلوک->padding[چپ_2] +
+				containing_بلوک->padding[راست_2];
+		containing_بلوک->ارتفاع += containing_بلوک->padding[بالاترین_2] +
+				containing_بلوک->padding[BOTTOM];
 	}
 
-	layout_compute_offsets(&content->unit_len_ctx, box, containing_block,
-			&top, &right, &bottom, &left);
+	layout_compute_offsets(&content->unit_len_ctx, box, containing_بلوک,
+			&بالاترین, &راست, &bottom, &چپ);
 
 	/* Pass containing block into layout_find_dimensions via the float
 	 * containing block box member. This is unused for absolutely positioned
 	 * boxes because a box can't be floated and absolutely positioned. */
-	box->float_container = containing_block;
-	layout_find_dimensions(&content->unit_len_ctx, available_width, -1,
-			box, box->style, &width, &height,
-			&max_width, &min_width, 0, 0,
+	box->float_container = containing_بلوک;
+	layout_پیدا_کن_dimensions(&content->unit_len_ctx, موجود_عرض, -1,
+			box, box->style, &عرض, &ارتفاع,
+			&max_عرض, &min_عرض, 0, 0,
 			margin, padding, border);
-	box->float_container = NULL;
+	box->float_container = عدم;
 
 	/* 10.3.7 */
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      left, margin[LEFT], border[LEFT].width, padding[LEFT], width,
-	      padding[RIGHT], border[RIGHT].width, margin[RIGHT], right,
-	      containing_block->width);
+	      چپ, margin[چپ_2], border[چپ_2].عرض, padding[چپ_2], عرض,
+	      padding[راست_2], border[راست_2].عرض, margin[راست_2], راست,
+	      containing_بلوک->عرض);
 
 
-	if (left == AUTO && width == AUTO && right == AUTO) {
-		if (margin[LEFT] == AUTO)
-			margin[LEFT] = 0;
-		if (margin[RIGHT] == AUTO)
-			margin[RIGHT] = 0;
-		left = static_left;
+	إذا (چپ == AUTO && عرض == AUTO && راست == AUTO) {
+		إذا (margin[چپ_2] == AUTO)
+			margin[چپ_2] = 0;
+		إذا (margin[راست_2] == AUTO)
+			margin[راست_2] = 0;
+		چپ = static_چپ;
 
-		width = min(max(box->min_width, available_width),
-			box->max_width);
-		width -= box->margin[LEFT] + box->border[LEFT].width +
-			box->padding[LEFT] + box->padding[RIGHT] +
-			box->border[RIGHT].width + box->margin[RIGHT];
-
-		/* Adjust for {min|max}-width */
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (width < min_width) width = min_width;
-
-		right = containing_block->width -
-			left -
-			margin[LEFT] - border[LEFT].width - padding[LEFT] -
-			width -
-			padding[RIGHT] - border[RIGHT].width - margin[RIGHT];
-	} else if (left != AUTO && width != AUTO && right != AUTO) {
+		عرض = min(max(box->min_عرض, موجود_عرض),
+			box->max_عرض);
+		عرض -= box->margin[چپ_2] + box->border[چپ_2].عرض +
+			box->padding[چپ_2] + box->padding[راست_2] +
+			box->border[راست_2].عرض + box->margin[راست_2];
 
 		/* Adjust for {min|max}-width */
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+		إذا (max_عرض >= 0 && عرض > max_عرض) عرض = max_عرض;
+		إذا (عرض < min_عرض) عرض = min_عرض;
 
-		if (margin[LEFT] == AUTO && margin[RIGHT] == AUTO) {
-			space = containing_block->width -
-					left - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - right;
-			if (space < 0) {
-				margin[LEFT] = 0;
-				margin[RIGHT] = space;
-			} else {
-				margin[LEFT] = margin[RIGHT] = space / 2;
+		راست = containing_بلوک->عرض -
+			چپ -
+			margin[چپ_2] - border[چپ_2].عرض - padding[چپ_2] -
+			عرض -
+			padding[راست_2] - border[راست_2].عرض - margin[راست_2];
+	} وإلا إذا (چپ != AUTO && عرض != AUTO && راست != AUTO) {
+
+		/* Adjust for {min|max}-width */
+		إذا (max_عرض >= 0 && عرض > max_عرض) عرض = max_عرض;
+		إذا (min_عرض >  0 && عرض < min_عرض) عرض = min_عرض;
+
+		إذا (margin[چپ_2] == AUTO && margin[راست_2] == AUTO) {
+			space = containing_بلوک->عرض -
+					چپ - border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - راست;
+			إذا (space < 0) {
+				margin[چپ_2] = 0;
+				margin[راست_2] = space;
+			} وإلا {
+				margin[چپ_2] = margin[راست_2] = space / 2;
 			}
-		} else if (margin[LEFT] == AUTO) {
-			margin[LEFT] = containing_block->width -
-					left - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (margin[RIGHT] == AUTO) {
-			margin[RIGHT] = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - right;
-		} else {
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
+		} وإلا إذا (margin[چپ_2] == AUTO) {
+			margin[چپ_2] = containing_بلوک->عرض -
+					چپ - border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - margin[راست_2] -
+					راست;
+		} وإلا إذا (margin[راست_2] == AUTO) {
+			margin[راست_2] = containing_بلوک->عرض -
+					چپ - margin[چپ_2] -
+					border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - راست;
+		} وإلا {
+			راست = containing_بلوک->عرض -
+					چپ - margin[چپ_2] -
+					border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - margin[راست_2];
 		}
-	} else {
-		if (margin[LEFT] == AUTO)
-			margin[LEFT] = 0;
-		if (margin[RIGHT] == AUTO)
-			margin[RIGHT] = 0;
+	} وإلا {
+		إذا (margin[چپ_2] == AUTO)
+			margin[چپ_2] = 0;
+		إذا (margin[راست_2] == AUTO)
+			margin[راست_2] = 0;
 
-		if (left == AUTO && width == AUTO && right != AUTO) {
-			available_width -= right;
+		إذا (چپ == AUTO && عرض == AUTO && راست != AUTO) {
+			موجود_عرض -= راست;
 
-			width = min(max(box->min_width, available_width),
-				box->max_width);
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT];
-
-			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
-
-			left = containing_block->width -
-					margin[LEFT] - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (left == AUTO && width != AUTO && right == AUTO) {
+			عرض = min(max(box->min_عرض, موجود_عرض),
+				box->max_عرض);
+			عرض -= box->margin[چپ_2] + box->border[چپ_2].عرض +
+				box->padding[چپ_2] + box->padding[راست_2] +
+				box->border[راست_2].عرض + box->margin[راست_2];
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (min_width >  0 && width < min_width)
-				width = min_width;
+			إذا (max_عرض >= 0 && عرض > max_عرض)
+				عرض = max_عرض;
+			إذا (عرض < min_عرض)
+				عرض = min_عرض;
 
-			left = static_left;
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
-		} else if (left != AUTO && width == AUTO && right == AUTO) {
-			available_width -= left;
-
-			width = min(max(box->min_width, available_width),
-				box->max_width);
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT];
+			چپ = containing_بلوک->عرض -
+					margin[چپ_2] - border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - margin[راست_2] -
+					راست;
+		} وإلا إذا (چپ == AUTO && عرض != AUTO && راست == AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
+			إذا (max_عرض >= 0 && عرض > max_عرض)
+				عرض = max_عرض;
+			إذا (min_عرض >  0 && عرض < min_عرض)
+				عرض = min_عرض;
 
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
-		} else if (left == AUTO && width != AUTO && right != AUTO) {
+			چپ = static_چپ;
+			راست = containing_بلوک->عرض -
+					چپ - margin[چپ_2] -
+					border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - margin[راست_2];
+		} وإلا إذا (چپ != AUTO && عرض == AUTO && راست == AUTO) {
+			موجود_عرض -= چپ;
 
-			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
-
-			left = containing_block->width -
-					margin[LEFT] - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (left != AUTO && width == AUTO && right != AUTO) {
-			width = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
+			عرض = min(max(box->min_عرض, موجود_عرض),
+				box->max_عرض);
+			عرض -= box->margin[چپ_2] + box->border[چپ_2].عرض +
+				box->padding[چپ_2] + box->padding[راست_2] +
+				box->border[راست_2].عرض + box->margin[راست_2];
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
+			إذا (max_عرض >= 0 && عرض > max_عرض)
+				عرض = max_عرض;
+			إذا (عرض < min_عرض)
+				عرض = min_عرض;
 
-		} else if (left != AUTO && width != AUTO && right == AUTO) {
+			راست = containing_بلوک->عرض -
+					چپ - margin[چپ_2] -
+					border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - margin[راست_2];
+		} وإلا إذا (چپ == AUTO && عرض != AUTO && راست != AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
+			إذا (max_عرض >= 0 && عرض > max_عرض)
+				عرض = max_عرض;
+			إذا (عرض < min_عرض)
+				عرض = min_عرض;
 
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
+			چپ = containing_بلوک->عرض -
+					margin[چپ_2] - border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - margin[راست_2] -
+					راست;
+		} وإلا إذا (چپ != AUTO && عرض == AUTO && راست != AUTO) {
+			عرض = containing_بلوک->عرض -
+					چپ - margin[چپ_2] -
+					border[چپ_2].عرض -
+					padding[چپ_2] - padding[راست_2] -
+					border[راست_2].عرض - margin[راست_2] -
+					راست;
+
+			/* Adjust for {min|max}-width */
+			إذا (max_عرض >= 0 && عرض > max_عرض)
+				عرض = max_عرض;
+			إذا (عرض < min_عرض)
+				عرض = min_عرض;
+
+		} وإلا إذا (چپ != AUTO && عرض != AUTO && راست == AUTO) {
+
+			/* Adjust for {min|max}-width */
+			إذا (max_عرض >= 0 && عرض > max_عرض)
+				عرض = max_عرض;
+			إذا (عرض < min_عرض)
+				عرض = min_عرض;
+
+			راست = containing_بلوک->عرض -
+					چپ - margin[چپ_2] -
+					border[چپ_2].عرض -
+					padding[چپ_2] - عرض - padding[راست_2] -
+					border[راست_2].عرض - margin[راست_2];
 		}
 	}
 
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      left, margin[LEFT], border[LEFT].width, padding[LEFT], width,
-	      padding[RIGHT], border[RIGHT].width, margin[RIGHT], right,
-	      containing_block->width);
+	      چپ, margin[چپ_2], border[چپ_2].عرض, padding[چپ_2], عرض,
+	      padding[راست_2], border[راست_2].عرض, margin[راست_2], راست,
+	      containing_بلوک->عرض);
 
-	box->x = left + margin[LEFT] + border[LEFT].width - cx;
-	if (containing_block->type == BOX_BLOCK ||
-			containing_block->type == BOX_INLINE_BLOCK ||
-			containing_block->type == BOX_TABLE_CELL) {
+	box->x = چپ + margin[چپ_2] + border[چپ_2].عرض - cx;
+	إذا (containing_بلوک->type == BOX_بلوک ||
+			containing_بلوک->type == BOX_INLINE_بلوک ||
+			containing_بلوک->type == BOX_جدول_CELL) {
 		/* Block-level ancestor => reset container's width */
-		containing_block->width -= containing_block->padding[LEFT] +
-				containing_block->padding[RIGHT];
-	} else {
+		containing_بلوک->عرض -= containing_بلوک->padding[چپ_2] +
+				containing_بلوک->padding[راست_2];
+	} وإلا {
 		/** \todo inline ancestors */
 	}
-	box->width = width;
-	box->height = height;
+	box->عرض = عرض;
+	box->ارتفاع = ارتفاع;
 
-	if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
+	إذا (box->type == BOX_بلوک || box->type == BOX_INLINE_بلوک ||
 			box->object || box->flags & IFRAME) {
-		if (!layout_block_context(box, -1, content))
-			return false;
-	} else if (box->type == BOX_TABLE) {
+		إذا (!layout_بلوک_context(box, -1, content))
+			أرجع false;
+	} وإلا إذا (box->type == BOX_جدول) {
 		/* layout_table also expects the containing block to be
 		 * stored in the float_container field */
-		box->float_container = containing_block;
+		box->float_container = containing_بلوک;
 		/* \todo  layout_table considers margins etc. again */
-		if (!layout_table(box, width, content))
-			return false;
-		box->float_container = NULL;
-		layout_solve_width(box, box->parent->width, box->width, 0, 0,
+		إذا (!layout_جدول(box, عرض, content))
+			أرجع false;
+		box->float_container = عدم;
+		layout_solve_عرض(box, box->والد->عرض, box->عرض, 0, 0,
 				-1, -1);
-	} else if (box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX) {
+	} وإلا إذا (box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX) {
 		/* layout_table also expects the containing block to be
 		 * stored in the float_container field */
-		box->float_container = containing_block;
-		if (!layout_flex(box, width, content))
-			return false;
-		box->float_container = NULL;
+		box->float_container = containing_بلوک;
+		إذا (!layout_flex(box, عرض, content))
+			أرجع false;
+		box->float_container = عدم;
 	}
 
 	/* 10.6.4 */
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      top, margin[TOP], border[TOP].width, padding[TOP], height,
-	      padding[BOTTOM], border[BOTTOM].width, margin[BOTTOM], bottom,
-	      containing_block->height);
+	      بالاترین, margin[بالاترین_2], border[بالاترین_2].عرض, padding[بالاترین_2], ارتفاع,
+	      padding[BOTTOM], border[BOTTOM].عرض, margin[BOTTOM], bottom,
+	      containing_بلوک->ارتفاع);
 
-	if (top == AUTO && height == AUTO && bottom == AUTO) {
-		top = static_top;
-		height = box->height;
-		if (margin[TOP] == AUTO)
-			margin[TOP] = 0;
-		if (margin[BOTTOM] == AUTO)
+	إذا (بالاترین == AUTO && ارتفاع == AUTO && bottom == AUTO) {
+		بالاترین = static_بالاترین;
+		ارتفاع = box->ارتفاع;
+		إذا (margin[بالاترین_2] == AUTO)
+			margin[بالاترین_2] = 0;
+		إذا (margin[BOTTOM] == AUTO)
 			margin[BOTTOM] = 0;
-		bottom = containing_block->height -
-				top - margin[TOP] - border[TOP].width -
-				padding[TOP] - height - padding[BOTTOM] -
-				border[BOTTOM].width - margin[BOTTOM];
-	} else if (top != AUTO && height != AUTO && bottom != AUTO) {
-		if (margin[TOP] == AUTO && margin[BOTTOM] == AUTO) {
-			space = containing_block->height -
-					top - border[TOP].width - padding[TOP] -
-					height - padding[BOTTOM] -
-					border[BOTTOM].width - bottom;
-			margin[TOP] = margin[BOTTOM] = space / 2;
-		} else if (margin[TOP] == AUTO) {
-			margin[TOP] = containing_block->height -
-					top - border[TOP].width - padding[TOP] -
-					height - padding[BOTTOM] -
-					border[BOTTOM].width - margin[BOTTOM] -
+		bottom = containing_بلوک->ارتفاع -
+				بالاترین - margin[بالاترین_2] - border[بالاترین_2].عرض -
+				padding[بالاترین_2] - ارتفاع - padding[BOTTOM] -
+				border[BOTTOM].عرض - margin[BOTTOM];
+	} وإلا إذا (بالاترین != AUTO && ارتفاع != AUTO && bottom != AUTO) {
+		إذا (margin[بالاترین_2] == AUTO && margin[BOTTOM] == AUTO) {
+			space = containing_بلوک->ارتفاع -
+					بالاترین - border[بالاترین_2].عرض - padding[بالاترین_2] -
+					ارتفاع - padding[BOTTOM] -
+					border[BOTTOM].عرض - bottom;
+			margin[بالاترین_2] = margin[BOTTOM] = space / 2;
+		} وإلا إذا (margin[بالاترین_2] == AUTO) {
+			margin[بالاترین_2] = containing_بلوک->ارتفاع -
+					بالاترین - border[بالاترین_2].عرض - padding[بالاترین_2] -
+					ارتفاع - padding[BOTTOM] -
+					border[BOTTOM].عرض - margin[BOTTOM] -
 					bottom;
-		} else if (margin[BOTTOM] == AUTO) {
-			margin[BOTTOM] = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} وإلا إذا (margin[BOTTOM] == AUTO) {
+			margin[BOTTOM] = containing_بلوک->ارتفاع -
+					بالاترین - margin[بالاترین_2] - border[بالاترین_2].عرض -
+					padding[بالاترین_2] - ارتفاع -
+					padding[BOTTOM] - border[BOTTOM].عرض -
 					bottom;
-		} else {
-			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} وإلا {
+			bottom = containing_بلوک->ارتفاع -
+					بالاترین - margin[بالاترین_2] - border[بالاترین_2].عرض -
+					padding[بالاترین_2] - ارتفاع -
+					padding[BOTTOM] - border[BOTTOM].عرض -
 					margin[BOTTOM];
 		}
-	} else {
-		if (margin[TOP] == AUTO)
-			margin[TOP] = 0;
-		if (margin[BOTTOM] == AUTO)
+	} وإلا {
+		إذا (margin[بالاترین_2] == AUTO)
+			margin[بالاترین_2] = 0;
+		إذا (margin[BOTTOM] == AUTO)
 			margin[BOTTOM] = 0;
-		if (top == AUTO && height == AUTO && bottom != AUTO) {
-			height = box->height;
-			top = containing_block->height -
-					margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		إذا (بالاترین == AUTO && ارتفاع == AUTO && bottom != AUTO) {
+			ارتفاع = box->ارتفاع;
+			بالاترین = containing_بلوک->ارتفاع -
+					margin[بالاترین_2] - border[بالاترین_2].عرض -
+					padding[بالاترین_2] - ارتفاع -
+					padding[BOTTOM] - border[BOTTOM].عرض -
 					margin[BOTTOM] - bottom;
-		} else if (top == AUTO && height != AUTO && bottom == AUTO) {
-			top = static_top;
-			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} وإلا إذا (بالاترین == AUTO && ارتفاع != AUTO && bottom == AUTO) {
+			بالاترین = static_بالاترین;
+			bottom = containing_بلوک->ارتفاع -
+					بالاترین - margin[بالاترین_2] - border[بالاترین_2].عرض -
+					padding[بالاترین_2] - ارتفاع -
+					padding[BOTTOM] - border[BOTTOM].عرض -
 					margin[BOTTOM];
-		} else if (top != AUTO && height == AUTO && bottom == AUTO) {
-			height = box->height;
-			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} وإلا إذا (بالاترین != AUTO && ارتفاع == AUTO && bottom == AUTO) {
+			ارتفاع = box->ارتفاع;
+			bottom = containing_بلوک->ارتفاع -
+					بالاترین - margin[بالاترین_2] - border[بالاترین_2].عرض -
+					padding[بالاترین_2] - ارتفاع -
+					padding[BOTTOM] - border[BOTTOM].عرض -
 					margin[BOTTOM];
-		} else if (top == AUTO && height != AUTO && bottom != AUTO) {
-			top = containing_block->height -
-					margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} وإلا إذا (بالاترین == AUTO && ارتفاع != AUTO && bottom != AUTO) {
+			بالاترین = containing_بلوک->ارتفاع -
+					margin[بالاترین_2] - border[بالاترین_2].عرض -
+					padding[بالاترین_2] - ارتفاع -
+					padding[BOTTOM] - border[BOTTOM].عرض -
 					margin[BOTTOM] - bottom;
-		} else if (top != AUTO && height == AUTO && bottom != AUTO) {
-			height = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - padding[BOTTOM] -
-					border[BOTTOM].width - margin[BOTTOM] -
+		} وإلا إذا (بالاترین != AUTO && ارتفاع == AUTO && bottom != AUTO) {
+			ارتفاع = containing_بلوک->ارتفاع -
+					بالاترین - margin[بالاترین_2] - border[بالاترین_2].عرض -
+					padding[بالاترین_2] - padding[BOTTOM] -
+					border[BOTTOM].عرض - margin[BOTTOM] -
 					bottom;
-		} else if (top != AUTO && height != AUTO && bottom == AUTO) {
-			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
-					padding[BOTTOM] - border[BOTTOM].width -
+		} وإلا إذا (بالاترین != AUTO && ارتفاع != AUTO && bottom == AUTO) {
+			bottom = containing_بلوک->ارتفاع -
+					بالاترین - margin[بالاترین_2] - border[بالاترین_2].عرض -
+					padding[بالاترین_2] - ارتفاع -
+					padding[BOTTOM] - border[BOTTOM].عرض -
 					margin[BOTTOM];
 		}
 	}
 
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      top, margin[TOP], border[TOP].width, padding[TOP], height,
-	      padding[BOTTOM], border[BOTTOM].width, margin[BOTTOM], bottom,
-	      containing_block->height);
+	      بالاترین, margin[بالاترین_2], border[بالاترین_2].عرض, padding[بالاترین_2], ارتفاع,
+	      padding[BOTTOM], border[BOTTOM].عرض, margin[BOTTOM], bottom,
+	      containing_بلوک->ارتفاع);
 
-	box->y = top + margin[TOP] + border[TOP].width - cy;
-	if (containing_block->type == BOX_BLOCK ||
-			containing_block->type == BOX_INLINE_BLOCK ||
-			containing_block->type == BOX_TABLE_CELL) {
+	box->y = بالاترین + margin[بالاترین_2] + border[بالاترین_2].عرض - cy;
+	إذا (containing_بلوک->type == BOX_بلوک ||
+			containing_بلوک->type == BOX_INLINE_بلوک ||
+			containing_بلوک->type == BOX_جدول_CELL) {
 		/* Block-level ancestor => reset container's height */
-		containing_block->height -= containing_block->padding[TOP] +
-				containing_block->padding[BOTTOM];
-	} else {
+		containing_بلوک->ارتفاع -= containing_بلوک->padding[بالاترین_2] +
+				containing_بلوک->padding[BOTTOM];
+	} وإلا {
 		/** \todo Inline ancestors */
 	}
-	box->height = height;
-	layout_apply_minmax_height(&content->unit_len_ctx, box, containing_block);
+	box->ارتفاع = ارتفاع;
+	layout_apply_minmax_ارتفاع(&content->unit_len_ctx, box, containing_بلوک);
 
-	return true;
+	أرجع true;
 }
 
 
@@ -4940,63 +4940,63 @@ layout_absolute(struct box *box,
  * \param  content           memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_position_absolute(struct box *box,
-			 struct box *containing_block,
-			 int cx, int cy,
+ساكن bool
+layout_position_absolute(بنية box *box,
+			 بنية box *containing_بلوک,
+			 صحيح cx, صحيح cy,
 			 html_content *content)
 {
-	struct box *c;
+	بنية box *c;
 
-	for (c = box->children; c; c = c->next) {
-		if ((c->type == BOX_BLOCK || c->type == BOX_TABLE ||
-				c->type == BOX_INLINE_BLOCK ||
+	لكل (c = box->children; c; c = c->بعدی) {
+		إذا ((c->type == BOX_بلوک || c->type == BOX_جدول ||
+				c->type == BOX_INLINE_بلوک ||
 				c->type == BOX_FLEX ||
 				c->type == BOX_INLINE_FLEX) &&
 				(css_computed_position(c->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(c->style) ==
 						CSS_POSITION_FIXED)) {
-			if (!layout_absolute(c, containing_block,
+			إذا (!layout_absolute(c, containing_بلوک,
 					cx, cy, content))
-				return false;
-			if (!layout_position_absolute(c, c, 0, 0, content))
-				return false;
-		} else if (c->style && css_computed_position(c->style) ==
+				أرجع false;
+			إذا (!layout_position_absolute(c, c, 0, 0, content))
+				أرجع false;
+		} وإلا إذا (c->style && css_computed_position(c->style) ==
 				CSS_POSITION_RELATIVE) {
-			if (!layout_position_absolute(c, c, 0, 0, content))
-				return false;
-		} else {
-			int px, py;
-			if (c->style && (css_computed_float(c->style) ==
-						CSS_FLOAT_LEFT ||
+			إذا (!layout_position_absolute(c, c, 0, 0, content))
+				أرجع false;
+		} وإلا {
+			صحيح px, py;
+			إذا (c->style && (css_computed_float(c->style) ==
+						CSS_FLOAT_چپ ||
 					css_computed_float(c->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_راست)) {
 				/* Float x/y coords are relative to nearest
 				 * ansestor with float_children, rather than
 				 * relative to parent. Need to get x/y relative
 				 * to parent */
-				struct box *p;
+				بنية box *p;
 				px = c->x;
 				py = c->y;
-				for (p = box->parent; p && !p->float_children;
-						p = p->parent) {
+				لكل (p = box->والد; p && !p->float_children;
+						p = p->والد) {
 					px -= p->x;
 					py -= p->y;
 				}
-			} else {
+			} وإلا {
 				/* Not a float, so box x/y coords are relative
 				 * to parent */
 				px = c->x;
 				py = c->y;
 			}
-			if (!layout_position_absolute(c, containing_block,
+			إذا (!layout_position_absolute(c, containing_بلوک,
 					cx + px, cy + py, content))
-				return false;
+				أرجع false;
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
 
@@ -5008,69 +5008,69 @@ layout_position_absolute(struct box *box,
  * \param  x	Receives relative offset in x.
  * \param  y	Receives relative offset in y.
  */
-static void layout_compute_relative_offset(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		int *x,
-		int *y)
+ساكن فراغ layout_compute_relative_جابه_جایی(
+		ثابت css_unit_ctx *unit_len_ctx,
+		بنية box *box,
+		صحيح *x,
+		صحيح *y)
 {
-	int left, right, top, bottom;
-	struct box *containing_block;
+	صحيح چپ, راست, بالاترین, bottom;
+	بنية box *containing_بلوک;
 
-	assert(box && box->parent && box->style &&
+	أكد(box && box->والد && box->style &&
 			css_computed_position(box->style) ==
 			CSS_POSITION_RELATIVE);
 
-	if (box->float_container &&
-			(css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-			css_computed_float(box->style) == CSS_FLOAT_RIGHT)) {
-		containing_block = box->float_container;
-	} else {
-		containing_block = box->parent;
+	إذا (box->float_container &&
+			(css_computed_float(box->style) == CSS_FLOAT_چپ ||
+			css_computed_float(box->style) == CSS_FLOAT_راست)) {
+		containing_بلوک = box->float_container;
+	} وإلا {
+		containing_بلوک = box->والد;
 	}
 
-	layout_compute_offsets(unit_len_ctx, box, containing_block,
-			&top, &right, &bottom, &left);
+	layout_compute_offsets(unit_len_ctx, box, containing_بلوک,
+			&بالاترین, &راست, &bottom, &چپ);
 
-	if (left == AUTO && right == AUTO)
-		left = right = 0;
-	else if (left == AUTO)
+	إذا (چپ == AUTO && راست == AUTO)
+		چپ = راست = 0;
+	وإلا إذا (چپ == AUTO)
 		/* left is auto => computed = -right */
-		left = -right;
-	else if (right == AUTO)
+		چپ = -راست;
+	وإلا إذا (راست == AUTO)
 		/* right is auto => computed = -left */
-		right = -left;
-	else {
+		راست = -چپ;
+	وإلا {
 		/* over constrained => examine direction property
 		 * of containing block */
-		if (containing_block->style &&
+		إذا (containing_بلوک->style &&
 				css_computed_direction(
-				containing_block->style) ==
+				containing_بلوک->style) ==
 				CSS_DIRECTION_RTL) {
 			/* right wins */
-			left = -right;
-		} else {
+			چپ = -راست;
+		} وإلا {
 			/* assume LTR in all other cases */
-			right = -left;
+			راست = -چپ;
 		}
 	}
 
-	assert(left == -right);
+	أكد(چپ == -راست);
 
-	if (top == AUTO && bottom == AUTO) {
-		top = bottom = 0;
-	} else if (top == AUTO) {
-		top = -bottom;
-	} else {
+	إذا (بالاترین == AUTO && bottom == AUTO) {
+		بالاترین = bottom = 0;
+	} وإلا إذا (بالاترین == AUTO) {
+		بالاترین = -bottom;
+	} وإلا {
 		/* bottom is AUTO, or neither are AUTO */
-		bottom = -top;
+		bottom = -بالاترین;
 	}
 
-	NSLOG(layout, DEBUG,  "left %i, right %i, top %i, bottom %i", left,
-	      right, top, bottom);
+	NSLOG(layout, DEBUG,  "left %i, right %i, top %i, bottom %i", چپ,
+	      راست, بالاترین, bottom);
 
-	*x = left;
-	*y = top;
+	*x = چپ;
+	*y = بالاترین;
 }
 
 
@@ -5088,53 +5088,53 @@ static void layout_compute_relative_offset(
  *               between current box, "root", and the block formatting context
  *               box, "fp", for float children of "root"
  */
-static void
+ساكن فراغ
 layout_position_relative(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *root,
-		struct box *fp,
-		int fx,
-		int fy)
+		ثابت css_unit_ctx *unit_len_ctx,
+		بنية box *ریشه,
+		بنية box *fp,
+		صحيح fx,
+		صحيح fy)
 {
-	struct box *box; /* for children of "root" */
-	struct box *fn;  /* for block formatting context box for children of
+	بنية box *box; /* for children of "root" */
+	بنية box *fn;  /* for block formatting context box for children of
 			  * "box" */
-	struct box *fc;  /* for float children of the block formatting context,
+	بنية box *fc;  /* for float children of the block formatting context,
 			  * "fp" */
-	int x, y;	 /* for the offsets resulting from any relative
+	صحيح x, y;	 /* for the offsets resulting from any relative
 			  * positioning on the current block */
-	int fnx, fny;    /* for affsets which apply to flat children of "box" */
+	صحيح fnx, fny;    /* for affsets which apply to flat children of "box" */
 
 	/**\todo ensure containing box is large enough after moving boxes */
 
-	assert(root);
+	أكد(ریشه);
 
 	/* Normal children */
-	for (box = root->children; box; box = box->next) {
+	لكل (box = ریشه->children; box; box = box->بعدی) {
 
-		if (box->type == BOX_TEXT)
-			continue;
+		إذا (box->type == BOX_متن)
+			استمر;
 
 		/* If relatively positioned, get offsets */
-		if (box->style && css_computed_position(box->style) ==
+		إذا (box->style && css_computed_position(box->style) ==
 				CSS_POSITION_RELATIVE)
-			layout_compute_relative_offset(
+			layout_compute_relative_جابه_جایی(
 					unit_len_ctx, box, &x, &y);
-		else
+		وإلا
 			x = y = 0;
 
 		/* Adjust float coordinates.
 		 * (note float x and y are relative to their block formatting
 		 * context box and not their parent) */
-		if (box->style && (css_computed_float(box->style) ==
-					CSS_FLOAT_LEFT ||
+		إذا (box->style && (css_computed_float(box->style) ==
+					CSS_FLOAT_چپ ||
 				css_computed_float(box->style) ==
-					CSS_FLOAT_RIGHT) &&
+					CSS_FLOAT_راست) &&
 				(fx != 0 || fy != 0)) {
 			/* box is a float and there is a float offset to
 			 * apply */
-			for (fc = fp->float_children; fc; fc = fc->next_float) {
-				if (box == fc->children) {
+			لكل (fc = fp->float_children; fc; fc = fc->بعدی_float) {
+				إذا (box == fc->children) {
 					/* Box is floated in the block
 					 * formatting context block, fp.
 					 * Apply float offsets. */
@@ -5145,10 +5145,10 @@ layout_position_relative(
 			}
 		}
 
-		if (box->float_children) {
+		إذا (box->float_children) {
 			fn = box;
 			fnx = fny = 0;
-		} else {
+		} وإلا {
 			fn = fp;
 			fnx = fx + x;
 			fny = fy + y;
@@ -5158,10 +5158,10 @@ layout_position_relative(
 		layout_position_relative(unit_len_ctx, box, fn, fnx, fny);
 
 		/* Ignore things we're not interested in. */
-		if (!box->style || (box->style &&
+		إذا (!box->style || (box->style &&
 				css_computed_position(box->style) !=
 				CSS_POSITION_RELATIVE))
-			continue;
+			استمر;
 
 		box->x += x;
 		box->y += y;
@@ -5169,10 +5169,10 @@ layout_position_relative(
 		/* Handle INLINEs - their "children" are in fact
 		 * the sibling boxes between the INLINE and
 		 * INLINE_END boxes */
-		if (box->type == BOX_INLINE && box->inline_end) {
-			struct box *b;
-			for (b = box->next; b && b != box->inline_end;
-					b = b->next) {
+		إذا (box->type == BOX_INLINE && box->inline_انتها) {
+			بنية box *b;
+			لكل (b = box->بعدی; b && b != box->inline_انتها;
+					b = b->بعدی) {
 				b->x += x;
 				b->y += y;
 			}
@@ -5191,35 +5191,35 @@ layout_position_relative(
  * \param  desc_x1  updated to right of box's bbox
  * \param  desc_y1  updated to bottom of box's bbox
  */
-static void
+ساكن فراغ
 layout_get_box_bbox(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		int *desc_x0, int *desc_y0,
-		int *desc_x1, int *desc_y1)
+		ثابت css_unit_ctx *unit_len_ctx,
+		بنية box *box,
+		صحيح *desc_x0, صحيح *desc_y0,
+		صحيح *desc_x1, صحيح *desc_y1)
 {
-	*desc_x0 = -box->border[LEFT].width;
-	*desc_y0 = -box->border[TOP].width;
-	*desc_x1 = box->padding[LEFT] + box->width + box->padding[RIGHT] +
-			box->border[RIGHT].width;
-	*desc_y1 = box->padding[TOP] + box->height + box->padding[BOTTOM] +
-			box->border[BOTTOM].width;
+	*desc_x0 = -box->border[چپ_2].عرض;
+	*desc_y0 = -box->border[بالاترین_2].عرض;
+	*desc_x1 = box->padding[چپ_2] + box->عرض + box->padding[راست_2] +
+			box->border[راست_2].عرض;
+	*desc_y1 = box->padding[بالاترین_2] + box->ارتفاع + box->padding[BOTTOM] +
+			box->border[BOTTOM].عرض;
 
 	/* To stop the top of text getting clipped when css line-height is
 	 * reduced, we increase the top of the descendant bbox. */
-	if (box->type == BOX_BLOCK && box->style != NULL &&
-			css_computed_overflow_y(box->style) ==
-					CSS_OVERFLOW_VISIBLE &&
-			box->object == NULL) {
-		css_fixed font_size = 0;
+	إذا (box->type == BOX_بلوک && box->style != عدم &&
+			css_computed_سرریز_y(box->style) ==
+					CSS_سرریز_VISIBLE &&
+			box->object == عدم) {
+		css_fixed font_اندازه = 0;
 		css_unit font_unit = CSS_UNIT_PT;
-		int text_height;
+		صحيح متن_ارتفاع;
 
-		css_computed_font_size(box->style, &font_size, &font_unit);
-		text_height = css_unit_len2device_px(box->style, unit_len_ctx,
-				font_size, font_unit);
-		text_height = FIXTOINT(text_height * 3 / 4);
-		*desc_y0 = (*desc_y0 < -text_height) ? *desc_y0 : -text_height;
+		css_computed_font_اندازه(box->style, &font_اندازه, &font_unit);
+		متن_ارتفاع = css_unit_len2device_px(box->style, unit_len_ctx,
+				font_اندازه, font_unit);
+		متن_ارتفاع = FIXTOINT(متن_ارتفاع * 3 / 4);
+		*desc_y0 = (*desc_y0 < -متن_ارتفاع) ? *desc_y0 : -متن_ارتفاع;
 	}
 }
 
@@ -5233,63 +5233,63 @@ layout_get_box_bbox(
  * \param  off_x    offset to apply to child->x coord to treat as child of box
  * \param  off_y    offset to apply to child->y coord to treat as child of box
  */
-static void
+ساكن فراغ
 layout_update_descendant_bbox(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		struct box *child,
-		int off_x,
-		int off_y)
+		ثابت css_unit_ctx *unit_len_ctx,
+		بنية box *box,
+		بنية box *فرزند,
+		صحيح off_x,
+		صحيح off_y)
 {
-	int child_desc_x0, child_desc_y0, child_desc_x1, child_desc_y1;
+	صحيح فرزند_desc_x0, فرزند_desc_y0, فرزند_desc_x1, فرزند_desc_y1;
 
 	/* get coordinates of child relative to box */
-	int child_x = child->x - off_x;
-	int child_y = child->y - off_y;
+	صحيح فرزند_x = فرزند->x - off_x;
+	صحيح فرزند_y = فرزند->y - off_y;
 
-	bool html_object = (child->object &&
-			content_get_type(child->object) == CONTENT_HTML);
+	bool html_object = (فرزند->object &&
+			content_get_type(فرزند->object) == CONTENT_HTML);
 
-	enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
-	enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
+	تعداد css_سرریز_e سرریز_x = CSS_سرریز_VISIBLE;
+	تعداد css_سرریز_e سرریز_y = CSS_سرریز_VISIBLE;
 
-	if (child->style != NULL) {
-		overflow_x = css_computed_overflow_x(child->style);
-		overflow_y = css_computed_overflow_y(child->style);
+	إذا (فرزند->style != عدم) {
+		سرریز_x = css_computed_سرریز_x(فرزند->style);
+		سرریز_y = css_computed_سرریز_y(فرزند->style);
 	}
 
 	/* Get child's border edge */
-	layout_get_box_bbox(unit_len_ctx, child,
-			&child_desc_x0, &child_desc_y0,
-			&child_desc_x1, &child_desc_y1);
+	layout_get_box_bbox(unit_len_ctx, فرزند,
+			&فرزند_desc_x0, &فرزند_desc_y0,
+			&فرزند_desc_x1, &فرزند_desc_y1);
 
-	if (overflow_x == CSS_OVERFLOW_VISIBLE &&
+	إذا (سرریز_x == CSS_سرریز_VISIBLE &&
 			html_object == false) {
 		/* get child's descendant bbox relative to box */
-		child_desc_x0 = child->descendant_x0;
-		child_desc_x1 = child->descendant_x1;
+		فرزند_desc_x0 = فرزند->descendant_x0;
+		فرزند_desc_x1 = فرزند->descendant_x1;
 	}
-	if (overflow_y == CSS_OVERFLOW_VISIBLE &&
+	إذا (سرریز_y == CSS_سرریز_VISIBLE &&
 			html_object == false) {
 		/* get child's descendant bbox relative to box */
-		child_desc_y0 = child->descendant_y0;
-		child_desc_y1 = child->descendant_y1;
+		فرزند_desc_y0 = فرزند->descendant_y0;
+		فرزند_desc_y1 = فرزند->descendant_y1;
 	}
 
-	child_desc_x0 += child_x;
-	child_desc_y0 += child_y;
-	child_desc_x1 += child_x;
-	child_desc_y1 += child_y;
+	فرزند_desc_x0 += فرزند_x;
+	فرزند_desc_y0 += فرزند_y;
+	فرزند_desc_x1 += فرزند_x;
+	فرزند_desc_y1 += فرزند_y;
 
 	/* increase box's descendant bbox to contain descendants */
-	if (child_desc_x0 < box->descendant_x0)
-		box->descendant_x0 = child_desc_x0;
-	if (child_desc_y0 < box->descendant_y0)
-		box->descendant_y0 = child_desc_y0;
-	if (box->descendant_x1 < child_desc_x1)
-		box->descendant_x1 = child_desc_x1;
-	if (box->descendant_y1 < child_desc_y1)
-		box->descendant_y1 = child_desc_y1;
+	إذا (فرزند_desc_x0 < box->descendant_x0)
+		box->descendant_x0 = فرزند_desc_x0;
+	إذا (فرزند_desc_y0 < box->descendant_y0)
+		box->descendant_y0 = فرزند_desc_y0;
+	إذا (box->descendant_x1 < فرزند_desc_x1)
+		box->descendant_x1 = فرزند_desc_x1;
+	إذا (box->descendant_y1 < فرزند_desc_y1)
+		box->descendant_y1 = فرزند_desc_y1;
 }
 
 
@@ -5300,14 +5300,14 @@ layout_update_descendant_bbox(
  * \param  unit_len_ctx  Length conversion context
  * \param  box      tree of boxes to update
  */
-static void layout_calculate_descendant_bboxes(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box)
+ساكن فراغ layout_calculate_descendant_bboxes(
+		ثابت css_unit_ctx *unit_len_ctx,
+		بنية box *box)
 {
-	struct box *child;
+	بنية box *فرزند;
 
-	assert(box->width != UNKNOWN_WIDTH);
-	assert(box->height != AUTO);
+	أكد(box->عرض != UNKNOWN_عرض);
+	أكد(box->ارتفاع != AUTO);
 	/* assert((box->width >= 0) && (box->height >= 0)); */
 
 	/* Initialise box's descendant box to border edge box */
@@ -5316,124 +5316,124 @@ static void layout_calculate_descendant_bboxes(
 			&box->descendant_x1, &box->descendant_y1);
 
 	/* Extend it to contain HTML contents if box is replaced */
-	if (box->object && content_get_type(box->object) == CONTENT_HTML) {
-		if (box->descendant_x1 < content_get_width(box->object))
-			box->descendant_x1 = content_get_width(box->object);
-		if (box->descendant_y1 < content_get_height(box->object))
-			box->descendant_y1 = content_get_height(box->object);
+	إذا (box->object && content_get_type(box->object) == CONTENT_HTML) {
+		إذا (box->descendant_x1 < content_get_عرض(box->object))
+			box->descendant_x1 = content_get_عرض(box->object);
+		إذا (box->descendant_y1 < content_get_ارتفاع(box->object))
+			box->descendant_y1 = content_get_ارتفاع(box->object);
 	}
 
-	if (box->iframe != NULL) {
-		int x, y;
+	إذا (box->iframe != عدم) {
+		صحيح x, y;
 		box_coords(box, &x, &y);
 
-		browser_window_set_position(box->iframe, x, y);
-		browser_window_set_dimensions(box->iframe,
-				box->width, box->height);
-		browser_window_reformat(box->iframe, true,
-				box->width, box->height);
+		browser_پنجره_مجموعه_position(box->iframe, x, y);
+		browser_پنجره_مجموعه_dimensions(box->iframe,
+				box->عرض, box->ارتفاع);
+		browser_پنجره_reformat(box->iframe, true,
+				box->عرض, box->ارتفاع);
 	}
 
-	if (box->type == BOX_INLINE || box->type == BOX_TEXT)
-		return;
+	إذا (box->type == BOX_INLINE || box->type == BOX_متن)
+		أرجع;
 
-	if (box->type == BOX_INLINE_END) {
-		box = box->inline_end;
-		for (child = box->next; child;
-				child = child->next) {
-			if (child->type == BOX_FLOAT_LEFT ||
-					child->type == BOX_FLOAT_RIGHT)
-				continue;
+	إذا (box->type == BOX_INLINE_انتها) {
+		box = box->inline_انتها;
+		لكل (فرزند = box->بعدی; فرزند;
+				فرزند = فرزند->بعدی) {
+			إذا (فرزند->type == BOX_FLOAT_چپ ||
+					فرزند->type == BOX_FLOAT_راست)
+				استمر;
 
-			layout_update_descendant_bbox(unit_len_ctx, box, child,
+			layout_update_descendant_bbox(unit_len_ctx, box, فرزند,
 					box->x, box->y);
 
-			if (child == box->inline_end)
-				break;
+			إذا (فرزند == box->inline_انتها)
+				اكسر;
 		}
-		return;
+		أرجع;
 	}
 
-	if (box->flags & REPLACE_DIM)
+	إذا (box->flags & REPLACE_DIM)
 		/* Box's children aren't displayed if the box is replaced */
-		return;
+		أرجع;
 
-	for (child = box->children; child; child = child->next) {
-		if (child->type == BOX_FLOAT_LEFT ||
-				child->type == BOX_FLOAT_RIGHT)
-			continue;
+	لكل (فرزند = box->children; فرزند; فرزند = فرزند->بعدی) {
+		إذا (فرزند->type == BOX_FLOAT_چپ ||
+				فرزند->type == BOX_FLOAT_راست)
+			استمر;
 
-		layout_calculate_descendant_bboxes(unit_len_ctx, child);
+		layout_calculate_descendant_bboxes(unit_len_ctx, فرزند);
 
-		if (box->style && css_computed_overflow_x(box->style) ==
-				CSS_OVERFLOW_HIDDEN &&
-				css_computed_overflow_y(box->style) ==
-				CSS_OVERFLOW_HIDDEN)
-			continue;
+		إذا (box->style && css_computed_سرریز_x(box->style) ==
+				CSS_سرریز_HIDDEN &&
+				css_computed_سرریز_y(box->style) ==
+				CSS_سرریز_HIDDEN)
+			استمر;
 
-		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
+		layout_update_descendant_bbox(unit_len_ctx, box, فرزند, 0, 0);
 	}
 
-	for (child = box->float_children; child; child = child->next_float) {
-		assert(child->type == BOX_FLOAT_LEFT ||
-				child->type == BOX_FLOAT_RIGHT);
+	لكل (فرزند = box->float_children; فرزند; فرزند = فرزند->بعدی_float) {
+		أكد(فرزند->type == BOX_FLOAT_چپ ||
+				فرزند->type == BOX_FLOAT_راست);
 
-		layout_calculate_descendant_bboxes(unit_len_ctx, child);
+		layout_calculate_descendant_bboxes(unit_len_ctx, فرزند);
 
-		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
+		layout_update_descendant_bbox(unit_len_ctx, box, فرزند, 0, 0);
 	}
 
-	if (box->list_marker) {
-		child = box->list_marker;
-		layout_calculate_descendant_bboxes(unit_len_ctx, child);
+	إذا (box->list_marker) {
+		فرزند = box->list_marker;
+		layout_calculate_descendant_bboxes(unit_len_ctx, فرزند);
 
-		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
+		layout_update_descendant_bbox(unit_len_ctx, box, فرزند, 0, 0);
 	}
 }
 
 
 /* exported function documented in html/layout.h */
-bool layout_document(html_content *content, int width, int height)
+bool layout_document(html_content *content, صحيح عرض, صحيح ارتفاع)
 {
 	bool ret;
-	struct box *doc = content->layout;
-	const struct gui_layout_table *font_func = content->font_func;
+	بنية box *doc = content->layout;
+	ثابت بنية gui_layout_جدول *font_func = content->font_func;
 
 	NSLOG(layout, DEBUG, "Doing layout to %ix%i of %s",
-			width, height, nsurl_access(content_get_url(
-					&content->base)));
+			عرض, ارتفاع, nsurl_access(content_get_url(
+					&content->پایه)));
 
-	layout_minmax_block(doc, font_func, content);
+	layout_minmax_بلوک(doc, font_func, content);
 
-	layout_block_find_dimensions(&content->unit_len_ctx,
-			width, height, 0, 0, doc);
-	doc->x = doc->margin[LEFT] + doc->border[LEFT].width;
-	doc->y = doc->margin[TOP] + doc->border[TOP].width;
-	width -= doc->margin[LEFT] + doc->border[LEFT].width +
-			doc->padding[LEFT] + doc->padding[RIGHT] +
-			doc->border[RIGHT].width + doc->margin[RIGHT];
-	if (width < 0) {
-		width = 0;
+	layout_بلوک_پیدا_کن_dimensions(&content->unit_len_ctx,
+			عرض, ارتفاع, 0, 0, doc);
+	doc->x = doc->margin[چپ_2] + doc->border[چپ_2].عرض;
+	doc->y = doc->margin[بالاترین_2] + doc->border[بالاترین_2].عرض;
+	عرض -= doc->margin[چپ_2] + doc->border[چپ_2].عرض +
+			doc->padding[چپ_2] + doc->padding[راست_2] +
+			doc->border[راست_2].عرض + doc->margin[راست_2];
+	إذا (عرض < 0) {
+		عرض = 0;
 	}
-	doc->width = width;
+	doc->عرض = عرض;
 
-	ret = layout_block_context(doc, height, content);
+	ret = layout_بلوک_context(doc, ارتفاع, content);
 
 	/* make <html> and <body> fill available height */
-	if (doc->y + doc->padding[TOP] + doc->height + doc->padding[BOTTOM] +
-			doc->border[BOTTOM].width + doc->margin[BOTTOM] <
-			height) {
-		doc->height = height - (doc->y + doc->padding[TOP] +
+	إذا (doc->y + doc->padding[بالاترین_2] + doc->ارتفاع + doc->padding[BOTTOM] +
+			doc->border[BOTTOM].عرض + doc->margin[BOTTOM] <
+			ارتفاع) {
+		doc->ارتفاع = ارتفاع - (doc->y + doc->padding[بالاترین_2] +
 				doc->padding[BOTTOM] +
-				doc->border[BOTTOM].width +
+				doc->border[BOTTOM].عرض +
 				doc->margin[BOTTOM]);
-		if (doc->children)
-			doc->children->height = doc->height -
-					(doc->children->margin[TOP] +
-					 doc->children->border[TOP].width +
-					 doc->children->padding[TOP] +
+		إذا (doc->children)
+			doc->children->ارتفاع = doc->ارتفاع -
+					(doc->children->margin[بالاترین_2] +
+					 doc->children->border[بالاترین_2].عرض +
+					 doc->children->padding[بالاترین_2] +
 					 doc->children->padding[BOTTOM] +
-					 doc->children->border[BOTTOM].width +
+					 doc->children->border[BOTTOM].عرض +
 					 doc->children->margin[BOTTOM]);
 	}
 
@@ -5443,5 +5443,5 @@ bool layout_document(html_content *content, int width, int height)
 
 	layout_calculate_descendant_bboxes(&content->unit_len_ctx, doc);
 
-	return ret;
+	أرجع ret;
 }

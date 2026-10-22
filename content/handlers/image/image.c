@@ -16,163 +16,163 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
+#ضمن <stdbool.h>
+#ضمن <stdlib.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "netsurf/plotters.h"
+#ضمن "netsurf/bitmap.h"
+#ضمن "netsurf/content.h"
+#ضمن "desktop/gui_internal.h"
+#ضمن "desktop/bitmap.h"
 
-#include "image/bmp.h"
-#include "image/gif.h"
-#include "image/ico.h"
-#include "image/jpeg.h"
-#include "image/jpegxl.h"
-#include "image/nssprite.h"
-#include "image/png.h"
-#include "image/rsvg.h"
-#include "image/svg.h"
-#include "image/webp.h"
-#include "image/image.h"
+#ضمن "image/bmp.h"
+#ضمن "image/gif.h"
+#ضمن "image/ico.h"
+#ضمن "image/jpeg.h"
+#ضمن "image/jpegxl.h"
+#ضمن "image/nssprite.h"
+#ضمن "image/png.h"
+#ضمن "image/rsvg.h"
+#ضمن "image/svg.h"
+#ضمن "image/webp.h"
+#ضمن "image/image.h"
 
 /**
  * Initialise image content handlers
  *
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror image_init(void)
+nserror image_init(فراغ)
 {
 	nserror error = NSERROR_OK;
 
-#ifdef WITH_BMP
+#اگر_تعریف_شده WITH_BMP
 	error = nsbmp_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
-#ifdef WITH_GIF
+#اگر_تعریف_شده WITH_GIF
 	error = nsgif_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
-#ifdef WITH_BMP
+#اگر_تعریف_شده WITH_BMP
 	error = nsico_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
-#ifdef WITH_JPEG
+#اگر_تعریف_شده WITH_JPEG
 	error = nsjpeg_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
-#ifdef WITH_JPEGXL
+#اگر_تعریف_شده WITH_JPEGXL
 	error = nsjpegxl_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
-#ifdef WITH_PNG
+#اگر_تعریف_شده WITH_PNG
 	error = nspng_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
-#ifdef WITH_NSSPRITE
+#اگر_تعریف_شده WITH_NSSPRITE
 	error = nssprite_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
 	/* Prefer rsvg over libsvgtiny for svgs */
-#ifdef WITH_NS_SVG
+#اگر_تعریف_شده WITH_NS_SVG
 	error = svg_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
-#ifdef WITH_RSVG
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
+#اگر_تعریف_شده WITH_RSVG
 	error = nsrsvg_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
-#ifdef WITH_WEBP
+#اگر_تعریف_شده WITH_WEBP
 	error = nswebp_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	إذا (error != NSERROR_OK)
+		أرجع error;
+#پایان_اگر
 
-	return error;
+	أرجع error;
 }
 
 
-bool image_bitmap_plot(struct bitmap *bitmap,
-		       struct content_redraw_data *data,
-		       const struct rect *clip,
-		       const struct redraw_context *ctx)
+bool image_bitmap_plot(بنية bitmap *bitmap,
+		       بنية content_redraw_داده *داده,
+		       ثابت بنية rect *clip,
+		       ثابت بنية redraw_context *ctx)
 {
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	int width;
-	int height;
-	unsigned char *pixel;
+	صحيح عرض;
+	صحيح ارتفاع;
+	بیعلامت حرف *pixel;
 	plot_style_t fill_style;
-	struct rect area;
+	بنية rect area;
 
-	width = guit->bitmap->get_width(bitmap);
-	if (width == 1) {
-		height = guit->bitmap->get_height(bitmap);
-		if (height == 1) {
+	عرض = guit->bitmap->get_عرض(bitmap);
+	إذا (عرض == 1) {
+		ارتفاع = guit->bitmap->get_ارتفاع(bitmap);
+		إذا (ارتفاع == 1) {
 			/* optimise 1x1 bitmap plot */
-			pixel = guit->bitmap->get_buffer(bitmap);
-			fill_style.fill_colour = bitmap_pixel_to_colour(pixel);
+			pixel = guit->bitmap->get_میانگیر(bitmap);
+			fill_style.fill_رنگ = bitmap_pixel_مقصد_رنگ(pixel);
 
-			if (guit->bitmap->get_opaque(bitmap) ||
-			    ((fill_style.fill_colour & 0xff000000) == 0xff000000)) {
+			إذا (guit->bitmap->get_opaque(bitmap) ||
+			    ((fill_style.fill_رنگ & 0xff000000) == 0xff000000)) {
 
 				area = *clip;
 
-				if (data->repeat_x != true) {
-					area.x0 = data->x;
-					area.x1 = data->x + data->width;
+				إذا (داده->repeat_x != true) {
+					area.x0 = داده->x;
+					area.x1 = داده->x + داده->عرض;
 				}
 
-				if (data->repeat_y != true) {
-					area.y0 = data->y;
-					area.y1 = data->y + data->height;
+				إذا (داده->repeat_y != true) {
+					area.y0 = داده->y;
+					area.y1 = داده->y + داده->ارتفاع;
 				}
 
 				fill_style.stroke_type = PLOT_OP_TYPE_NONE;
 				fill_style.fill_type = PLOT_OP_TYPE_SOLID;
 
-				return (ctx->plot->rectangle(ctx,
+				أرجع (ctx->plot->rectangle(ctx,
 							     &fill_style,
 							     &area) == NSERROR_OK);
 
-			} else if ((fill_style.fill_colour & 0xff000000) == 0) {
+			} وإلا إذا ((fill_style.fill_رنگ & 0xff000000) == 0) {
 				/* transparent pixel used as spacer, skip it */
-				return true;
+				أرجع true;
 			}
 		}
 	}
 
 	/* do the plot */
-	if (data->repeat_x)
+	إذا (داده->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	إذا (داده->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	أرجع (ctx->plot->bitmap(ctx,
 				  bitmap,
-				  data->x, data->y,
-				  data->width, data->height,
-				  data->background_colour,
+				  داده->x, داده->y,
+				  داده->عرض, داده->ارتفاع,
+				  داده->background_رنگ,
 				  flags) == NSERROR_OK);
 }

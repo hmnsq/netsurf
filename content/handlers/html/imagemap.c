@@ -23,61 +23,61 @@
  * \todo should this should use the general hashmap instead of its own
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
+#ضمن <assert.h>
+#ضمن <stdbool.h>
+#ضمن <string.h>
+#ضمن <strings.h>
 
-#include <dom/dom.h>
+#ضمن <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/corestrings.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
+#ضمن "utils/log.h"
+#ضمن "utils/corestrings.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/hlcache.h"
 
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/private.h"
-#include "html/imagemap.h"
+#ضمن "html/box.h"
+#ضمن "html/box_construct.h"
+#ضمن "html/private.h"
+#ضمن "html/imagemap.h"
 
-#define HASH_SIZE 31 /* fixed size hash table */
+#تعریف_کن HASH_اندازه 31 /* fixed size hash table */
 
-typedef enum {
+تعريفنوع تعداد {
 	IMAGEMAP_DEFAULT,
 	IMAGEMAP_RECT,
 	IMAGEMAP_CIRCLE,
 	IMAGEMAP_POLY
-} imagemap_entry_type;
+} imagemap_مدخل_type;
 
-struct mapentry {
-	imagemap_entry_type type;	/**< type of shape */
+بنية mapentry {
+	imagemap_مدخل_type type;	/**< type of shape */
 	nsurl *url;			/**< absolute url to go to */
-	char *target;			/**< target frame (if any) */
-	union {
-		struct {
-			int x;		/**< x coordinate of centre */
-			int y;		/**< y coordinate of center */
-			int r;		/**< radius of circle */
+	حرف *هدف;			/**< target frame (if any) */
+	اتحاد {
+		بنية {
+			صحيح x;		/**< x coordinate of centre */
+			صحيح y;		/**< y coordinate of center */
+			صحيح r;		/**< radius of circle */
 		} circle;
-		struct {
-			int x0;		/**< left hand edge */
-			int y0;		/**< top edge */
-			int x1;		/**< right hand edge */
-			int y1;		/**< bottom edge */
+		بنية {
+			صحيح x0;		/**< left hand edge */
+			صحيح y0;		/**< top edge */
+			صحيح x1;		/**< right hand edge */
+			صحيح y1;		/**< bottom edge */
 		} rect;
-		struct {
-			int num;	/**< number of points */
-			float *xcoords;	/**< x coordinates */
-			float *ycoords;	/**< y coordinates */
+		بنية {
+			صحيح رقم;	/**< number of points */
+			عائم *xcoords;	/**< x coordinates */
+			عائم *ycoords;	/**< y coordinates */
 		} poly;
 	} bounds;
-	struct mapentry *next;		/**< next entry in list */
+	بنية mapentry *بعدی;		/**< next entry in list */
 };
 
-struct imagemap {
-	char *key;		/**< key for this entry */
-	struct mapentry *list;	/**< pointer to linked list of entries */
-	struct imagemap *next;	/**< next entry in this hash chain */
+بنية imagemap {
+	حرف *کلید;		/**< key for this entry */
+	بنية mapentry *list;	/**< pointer to linked list of entries */
+	بنية imagemap *بعدی;	/**< next entry in this hash chain */
 };
 
 /**
@@ -86,18 +86,18 @@ struct imagemap {
  * \param c The containing content
  * \return true on success, false otherwise
  */
-static bool imagemap_create(html_content *c)
+ساكن bool imagemap_create(html_content *c)
 {
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	if (c->imagemaps == NULL) {
-		c->imagemaps = calloc(HASH_SIZE, sizeof(struct imagemap *));
-		if (c->imagemaps == NULL) {
-			return false;
+	إذا (c->imagemaps == عدم) {
+		c->imagemaps = حافظه_صفر_بده(HASH_اندازه, حجم(بنية imagemap *));
+		إذا (c->imagemaps == عدم) {
+			أرجع false;
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -106,17 +106,17 @@ static bool imagemap_create(html_content *c)
  * \param key The key to hash.
  * \return The hashed value.
  */
-static unsigned int imagemap_hash(const char *key)
+ساكن بیعلامت صحيح imagemap_hash(ثابت حرف *کلید)
 {
-	unsigned int z = 0;
+	بیعلامت صحيح z = 0;
 
-	if (key == 0) return 0;
+	إذا (کلید == 0) أرجع 0;
 
-	for (; *key != 0; key++) {
-		z += *key & 0x1f;
+	لكل (; *کلید != 0; کلید++) {
+		z += *کلید & 0x1f;
 	}
 
-	return (z % (HASH_SIZE - 1)) + 1;
+	أرجع (z % (HASH_اندازه - 1)) + 1;
 }
 
 /**
@@ -127,38 +127,38 @@ static unsigned int imagemap_hash(const char *key)
  * \param list List of map regions
  * \return true on succes, false otherwise
  */
-static bool
-imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
+ساكن bool
+imagemap_جمع_کن(html_content *c, dom_string *کلید, بنية mapentry *list)
 {
-	struct imagemap *map;
-	unsigned int slot;
+	بنية imagemap *map;
+	بیعلامت صحيح جایگاه;
 
-	assert(c != NULL);
-	assert(key != NULL);
-	assert(list != NULL);
+	أكد(c != عدم);
+	أكد(کلید != عدم);
+	أكد(list != عدم);
 
-	if (imagemap_create(c) == false)
-		return false;
+	إذا (imagemap_create(c) == false)
+		أرجع false;
 
-	map = calloc(1, sizeof(*map));
-	if (map == NULL)
-		return false;
+	map = حافظه_صفر_بده(1, حجم(*map));
+	إذا (map == عدم)
+		أرجع false;
 
 	/* \todo Stop relying on NULL termination of dom_string */
-	map->key = strdup(dom_string_data(key));
-	if (map->key == NULL) {
-		free(map);
-		return false;
+	map->کلید = strdup(dom_string_داده(کلید));
+	إذا (map->کلید == عدم) {
+		حرر(map);
+		أرجع false;
 	}
 
 	map->list = list;
 
-	slot = imagemap_hash(map->key);
+	جایگاه = imagemap_hash(map->کلید);
 
-	map->next = c->imagemaps[slot];
-	c->imagemaps[slot] = map;
+	map->بعدی = c->imagemaps[جایگاه];
+	c->imagemaps[جایگاه] = map;
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -166,29 +166,29 @@ imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
  *
  * \param list Pointer to head of list
  */
-static void imagemap_freelist(struct mapentry *list)
+ساكن فراغ imagemap_freelist(بنية mapentry *list)
 {
-	struct mapentry *entry, *prev;
+	بنية mapentry *مدخل, *prev;
 
-	assert(list != NULL);
+	أكد(list != عدم);
 
-	entry = list;
+	مدخل = list;
 
-	while (entry != NULL) {
-		prev = entry;
+	طالما (مدخل != عدم) {
+		prev = مدخل;
 
-		nsurl_unref(entry->url);
+		nsurl_unref(مدخل->url);
 
-		if (entry->target)
-			free(entry->target);
+		إذا (مدخل->هدف)
+			حرر(مدخل->هدف);
 
-		if (entry->type == IMAGEMAP_POLY) {
-			free(entry->bounds.poly.xcoords);
-			free(entry->bounds.poly.ycoords);
+		إذا (مدخل->type == IMAGEMAP_POLY) {
+			حرر(مدخل->bounds.poly.xcoords);
+			حرر(مدخل->bounds.poly.ycoords);
 		}
 
-		entry = entry->next;
-		free(prev);
+		مدخل = مدخل->بعدی;
+		حرر(prev);
 	}
 }
 
@@ -197,30 +197,30 @@ static void imagemap_freelist(struct mapentry *list)
  *
  * \param c The containing content
  */
-void imagemap_destroy(html_content *c)
+فراغ imagemap_destroy(html_content *c)
 {
-	unsigned int i;
+	بیعلامت صحيح i;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
 	/* no imagemaps -> return */
-	if (c->imagemaps == NULL)
-		return;
+	إذا (c->imagemaps == عدم)
+		أرجع;
 
-	for (i = 0; i != HASH_SIZE; i++) {
-		struct imagemap *map, *next;
+	لكل (i = 0; i != HASH_اندازه; i++) {
+		بنية imagemap *map, *بعدی;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
-			next = map->next;
+		طالما (map != عدم) {
+			بعدی = map->بعدی;
 			imagemap_freelist(map->list);
-			free(map->key);
-			free(map);
-			map = next;
+			حرر(map->کلید);
+			حرر(map);
+			map = بعدی;
 		}
 	}
 
-	free(c->imagemaps);
+	حرر(c->imagemaps);
 }
 
 /**
@@ -228,63 +228,63 @@ void imagemap_destroy(html_content *c)
  *
  * \param c The containing content
  */
-void imagemap_dump(html_content *c)
+فراغ imagemap_dump(html_content *c)
 {
-	unsigned int i;
+	بیعلامت صحيح i;
 
-	int j;
+	صحيح j;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	if (c->imagemaps == NULL)
-		return;
+	إذا (c->imagemaps == عدم)
+		أرجع;
 
-	for (i = 0; i != HASH_SIZE; i++) {
-		struct imagemap *map;
-		struct mapentry *entry;
+	لكل (i = 0; i != HASH_اندازه; i++) {
+		بنية imagemap *map;
+		بنية mapentry *مدخل;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
-			NSLOG(netsurf, INFO, "Imagemap: %s", map->key);
+		طالما (map != عدم) {
+			NSLOG(netsurf, INFO, "Imagemap: %s", map->کلید);
 
-			for (entry = map->list; entry; entry = entry->next) {
-				switch (entry->type) {
-				case IMAGEMAP_DEFAULT:
+			لكل (مدخل = map->list; مدخل; مدخل = مدخل->بعدی) {
+				بدل (مدخل->type) {
+				حالة IMAGEMAP_DEFAULT:
 					NSLOG(netsurf, INFO, "\tDefault: %s",
-					      nsurl_access(entry->url));
-					break;
-				case IMAGEMAP_RECT:
+					      nsurl_access(مدخل->url));
+					اكسر;
+				حالة IMAGEMAP_RECT:
 					NSLOG(netsurf, INFO,
 					      "\tRectangle: %s: [(%d,%d),(%d,%d)]",
-					      nsurl_access(entry->url),
-					      entry->bounds.rect.x0,
-					      entry->bounds.rect.y0,
-					      entry->bounds.rect.x1,
-					      entry->bounds.rect.y1);
-					break;
-				case IMAGEMAP_CIRCLE:
+					      nsurl_access(مدخل->url),
+					      مدخل->bounds.rect.x0,
+					      مدخل->bounds.rect.y0,
+					      مدخل->bounds.rect.x1,
+					      مدخل->bounds.rect.y1);
+					اكسر;
+				حالة IMAGEMAP_CIRCLE:
 					NSLOG(netsurf, INFO,
 					      "\tCircle: %s: [(%d,%d),%d]",
-					      nsurl_access(entry->url),
-					      entry->bounds.circle.x,
-					      entry->bounds.circle.y,
-					      entry->bounds.circle.r);
-					break;
-				case IMAGEMAP_POLY:
+					      nsurl_access(مدخل->url),
+					      مدخل->bounds.circle.x,
+					      مدخل->bounds.circle.y,
+					      مدخل->bounds.circle.r);
+					اكسر;
+				حالة IMAGEMAP_POLY:
 					NSLOG(netsurf, INFO,
 					      "\tPolygon: %s:",
-					      nsurl_access(entry->url));
-					for (j = 0; j != entry->bounds.poly.num;
+					      nsurl_access(مدخل->url));
+					لكل (j = 0; j != مدخل->bounds.poly.رقم;
 							j++) {
 						fprintf(stderr, "(%d,%d) ",
-							(int)entry->bounds.poly.xcoords[j],
-							(int)entry->bounds.poly.ycoords[j]);
+							(صحيح)مدخل->bounds.poly.xcoords[j],
+							(صحيح)مدخل->bounds.poly.ycoords[j]);
 					}
 					fprintf(stderr,"\n");
-					break;
+					اكسر;
 				}
 			}
-			map = map->next;
+			map = map->بعدی;
 		}
 	}
 }
@@ -299,229 +299,229 @@ void imagemap_dump(html_content *c)
  * \param tagtype  The type of tag
  * \return false on memory exhaustion, true otherwise
  */
-static bool
-imagemap_addtolist(const struct html_content *c,
-		   dom_node *n,
-		   nsurl *base_url,
-		   struct mapentry **entry,
+ساكن bool
+imagemap_addtolist(ثابت بنية html_content *c,
+		   dom_گره *n,
+		   nsurl *پایه_url,
+		   بنية mapentry **مدخل,
 		   dom_string *tagtype)
 {
 	dom_exception exc;
-	dom_string *href = NULL, *target = NULL, *shape = NULL;
-	dom_string *coords = NULL;
-	struct mapentry *new_map, *temp;
+	dom_string *href = عدم, *هدف = عدم, *shape = عدم;
+	dom_string *coords = عدم;
+	بنية mapentry *new_map, *موقت;
 	bool ret = true;
 
-	if (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
+	إذا (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
 		bool nohref = false;
 		exc = dom_element_has_attribute(n,
 				corestring_dom_nohref, &nohref);
-		if ((exc != DOM_NO_ERR) || nohref)
+		إذا ((exc != DOM_NO_ERR) || nohref)
 			/* Skip <area nohref="anything" /> */
-			goto ok_out;
+			اذهب ok_بیرون;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL) {
+	إذا (exc != DOM_NO_ERR || href == عدم) {
 		/* No href="" attribute, skip this element */
-		goto ok_out;
+		اذهب ok_بیرون;
 	}
 
-	exc = dom_element_get_attribute(n, corestring_dom_target, &target);
-	if (exc != DOM_NO_ERR) {
-		goto ok_out;
+	exc = dom_element_get_attribute(n, corestring_dom_هدف, &هدف);
+	إذا (exc != DOM_NO_ERR) {
+		اذهب ok_بیرون;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_shape, &shape);
-	if (exc != DOM_NO_ERR) {
-		goto ok_out;
+	إذا (exc != DOM_NO_ERR) {
+		اذهب ok_بیرون;
 	}
 
 	/* If there's no shape, we default to rectangles */
-	if (shape == NULL)
+	إذا (shape == عدم)
 		shape = dom_string_ref(corestring_dom_rect);
 
-	if (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
+	إذا (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
 		/* If not 'default' and there's no 'coords' give up */
 		exc = dom_element_get_attribute(n, corestring_dom_coords,
 						&coords);
-		if (exc != DOM_NO_ERR || coords == NULL) {
-			goto ok_out;
+		إذا (exc != DOM_NO_ERR || coords == عدم) {
+			اذهب ok_بیرون;
 		}
 	}
 
-	new_map = calloc(1, sizeof(*new_map));
-	if (new_map == NULL) {
-		goto bad_out;
+	new_map = حافظه_صفر_بده(1, حجم(*new_map));
+	إذا (new_map == عدم) {
+		اذهب bad_بیرون;
 	}
 
-	if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
+	إذا (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
 	    dom_string_caseless_lwc_isequal(shape, corestring_lwc_rectangle))
 		new_map->type = IMAGEMAP_RECT;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
+	وإلا إذا (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
 		new_map->type = IMAGEMAP_CIRCLE;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
+	وإلا إذا (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
 		 dom_string_caseless_lwc_isequal(shape, corestring_lwc_polygon))
 		new_map->type = IMAGEMAP_POLY;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
+	وإلا إذا (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
 		new_map->type = IMAGEMAP_DEFAULT;
-	else
-		goto bad_out;
+	وإلا
+		اذهب bad_بیرون;
 
-	if (box_extract_link(c, href, base_url, &new_map->url) == false)
-		goto bad_out;
+	إذا (box_استخراج_link(c, href, پایه_url, &new_map->url) == false)
+		اذهب bad_بیرون;
 
-	if (new_map->url == NULL) {
+	إذا (new_map->url == عدم) {
 		/* non-fatal error -> ignore this */
-		goto ok_free_map_out;
+		اذهب ok_free_map_بیرون;
 	}
 
-	if (target != NULL) {
+	إذا (هدف != عدم) {
 		/* Copy target dom string into the map data */
-		new_map->target = malloc(dom_string_byte_length(target) + 1);
-		if (new_map->target == NULL)
-			goto bad_out;
+		new_map->هدف = حافظه_بده(dom_string_byte_درازی(هدف) + 1);
+		إذا (new_map->هدف == عدم)
+			اذهب bad_بیرون;
 
-		memcpy(new_map->target,
-		       dom_string_data(target),
-		       dom_string_byte_length(target));
+		کپی_حافظه(new_map->هدف,
+		       dom_string_داده(هدف),
+		       dom_string_byte_درازی(هدف));
 
-		new_map->target[dom_string_byte_length(target)] = 0;
+		new_map->هدف[dom_string_byte_درازی(هدف)] = 0;
 	}
 
-	if (new_map->type != IMAGEMAP_DEFAULT) {
-		int x, y;
-		float *xcoords, *ycoords;
+	إذا (new_map->type != IMAGEMAP_DEFAULT) {
+		صحيح x, y;
+		عائم *xcoords, *ycoords;
 		/* coordinates are a comma-separated list of values */
-		char *val = strtok((char *)dom_string_data(coords), ",");
-		int num = 1;
+		حرف *val = strtok((حرف *)dom_string_داده(coords), ",");
+		صحيح رقم = 1;
 
-		switch (new_map->type) {
-		case IMAGEMAP_RECT:
+		بدل (new_map->type) {
+		حالة IMAGEMAP_RECT:
 			/* (left, top, right, bottom) */
-			while (val != NULL && num <= 4) {
-				switch (num) {
-				case 1:
+			طالما (val != عدم && رقم <= 4) {
+				بدل (رقم) {
+				حالة 1:
 					new_map->bounds.rect.x0 = atoi(val);
-					break;
-				case 2:
+					اكسر;
+				حالة 2:
 					new_map->bounds.rect.y0 = atoi(val);
-					break;
-				case 3:
+					اكسر;
+				حالة 3:
 					new_map->bounds.rect.x1 = atoi(val);
-					break;
-				case 4:
+					اكسر;
+				حالة 4:
 					new_map->bounds.rect.y1 = atoi(val);
-					break;
+					اكسر;
 				}
 
-				num++;
-				val = strtok(NULL, ",");
+				رقم++;
+				val = strtok(عدم, ",");
 			}
-			break;
-		case IMAGEMAP_CIRCLE:
+			اكسر;
+		حالة IMAGEMAP_CIRCLE:
 			/* (x, y, radius ) */
-			while (val != NULL && num <= 3) {
-				switch (num) {
-				case 1:
+			طالما (val != عدم && رقم <= 3) {
+				بدل (رقم) {
+				حالة 1:
 					new_map->bounds.circle.x = atoi(val);
-					break;
-				case 2:
+					اكسر;
+				حالة 2:
 					new_map->bounds.circle.y = atoi(val);
-					break;
-				case 3:
+					اكسر;
+				حالة 3:
 					new_map->bounds.circle.r = atoi(val);
-					break;
+					اكسر;
 				}
 
-				num++;
-				val = strtok(NULL, ",");
+				رقم++;
+				val = strtok(عدم, ",");
 			}
-			break;
-		case IMAGEMAP_POLY:
-			new_map->bounds.poly.xcoords = NULL;
-			new_map->bounds.poly.ycoords = NULL;
+			اكسر;
+		حالة IMAGEMAP_POLY:
+			new_map->bounds.poly.xcoords = عدم;
+			new_map->bounds.poly.ycoords = عدم;
 
-			while (val != NULL) {
+			طالما (val != عدم) {
 				x = atoi(val);
 
-				val = strtok(NULL, ",");
-				if (val == NULL)
-					break;
+				val = strtok(عدم, ",");
+				إذا (val == عدم)
+					اكسر;
 
 				y = atoi(val);
 
 				xcoords = realloc(new_map->bounds.poly.xcoords,
-						num * sizeof(float));
-				if (xcoords == NULL) {
-					goto bad_out;
+						رقم * حجم(عائم));
+				إذا (xcoords == عدم) {
+					اذهب bad_بیرون;
 				}
 				new_map->bounds.poly.xcoords = xcoords;
 
 				ycoords = realloc(new_map->bounds.poly.ycoords,
-					num * sizeof(float));
-				if (ycoords == NULL) {
-					goto bad_out;
+					رقم * حجم(عائم));
+				إذا (ycoords == عدم) {
+					اذهب bad_بیرون;
 				}
 				new_map->bounds.poly.ycoords = ycoords;
 
-				new_map->bounds.poly.xcoords[num - 1] = x;
-				new_map->bounds.poly.ycoords[num - 1] = y;
+				new_map->bounds.poly.xcoords[رقم - 1] = x;
+				new_map->bounds.poly.ycoords[رقم - 1] = y;
 
-				num++;
-				val = strtok(NULL, ",");
+				رقم++;
+				val = strtok(عدم, ",");
 			}
 
-			new_map->bounds.poly.num = num - 1;
+			new_map->bounds.poly.رقم = رقم - 1;
 
-			break;
-		default:
-			break;
+			اكسر;
+		افتراضي:
+			اكسر;
 		}
 	}
 
-	new_map->next = NULL;
+	new_map->بعدی = عدم;
 
-	if (*entry) {
+	إذا (*مدخل) {
 		/* add to END of list */
-		for (temp = (*entry); temp->next != NULL; temp = temp->next)
+		لكل (موقت = (*مدخل); موقت->بعدی != عدم; موقت = موقت->بعدی)
 			;
-		temp->next = new_map;
-	} else {
-		(*entry) = new_map;
+		موقت->بعدی = new_map;
+	} وإلا {
+		(*مدخل) = new_map;
 	}
 
 	/* All good, linked in, let's clean up */
-	goto ok_out;
+	اذهب ok_بیرون;
 
-bad_out:
+bad_بیرون:
 	ret = false;
-ok_free_map_out:
-	if (new_map != NULL) {
-		if (new_map->url != NULL)
+ok_free_map_بیرون:
+	إذا (new_map != عدم) {
+		إذا (new_map->url != عدم)
 			nsurl_unref(new_map->url);
-		if (new_map->type == IMAGEMAP_POLY &&
-				new_map->bounds.poly.ycoords != NULL)
-			free(new_map->bounds.poly.ycoords);
-		if (new_map->type == IMAGEMAP_POLY &&
-				new_map->bounds.poly.xcoords != NULL)
-			free(new_map->bounds.poly.xcoords);
-		if (new_map->target != NULL)
-			free(new_map->target);
+		إذا (new_map->type == IMAGEMAP_POLY &&
+				new_map->bounds.poly.ycoords != عدم)
+			حرر(new_map->bounds.poly.ycoords);
+		إذا (new_map->type == IMAGEMAP_POLY &&
+				new_map->bounds.poly.xcoords != عدم)
+			حرر(new_map->bounds.poly.xcoords);
+		إذا (new_map->هدف != عدم)
+			حرر(new_map->هدف);
 
-		free(new_map);
+		حرر(new_map);
 	}
-ok_out:
-	if (href != NULL)
+ok_بیرون:
+	إذا (href != عدم)
 		dom_string_unref(href);
-	if (target != NULL)
-		dom_string_unref(target);
-	if (shape != NULL)
+	إذا (هدف != عدم)
+		dom_string_unref(هدف);
+	إذا (shape != عدم)
 		dom_string_unref(shape);
-	if (coords != NULL)
+	إذا (coords != عدم)
 		dom_string_unref(coords);
 
-	return ret;
+	أرجع ret;
 }
 
 /**
@@ -533,46 +533,46 @@ ok_out:
  * \param tname The sub-tags to consider on this pass
  * \return false on memory exhaustion, true otherwise
  */
-static bool
-imagemap_extract_map_entries(dom_node *node, html_content *c,
-			     struct mapentry **entry, dom_string *tname)
+ساكن bool
+imagemap_استخراج_map_entries(dom_گره *گره, html_content *c,
+			     بنية mapentry **مدخل, dom_string *tname)
 {
 	dom_nodelist *nlist;
 	dom_exception exc;
-	unsigned long ent;
-	uint32_t tag_count;
+	بیعلامت دراز ent;
+	uint32_t برچسب_شمار;
 
-	exc = dom_element_get_elements_by_tag_name(node, tname, &nlist);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_element_get_elements_by_برچسب_name(گره, tname, &nlist);
+	إذا (exc != DOM_NO_ERR) {
+		أرجع false;
 	}
 
-	exc = dom_nodelist_get_length(nlist, &tag_count);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_nodelist_get_درازی(nlist, &برچسب_شمار);
+	إذا (exc != DOM_NO_ERR) {
 		dom_nodelist_unref(nlist);
-		return false;
+		أرجع false;
 	}
 
-	for (ent = 0; ent < tag_count; ++ent) {
-		dom_node *subnode;
+	لكل (ent = 0; ent < برچسب_شمار; ++ent) {
+		dom_گره *subnode;
 
-		exc = dom_nodelist_item(nlist, ent, &subnode);
-		if (exc != DOM_NO_ERR) {
+		exc = dom_nodelist_قلم(nlist, ent, &subnode);
+		إذا (exc != DOM_NO_ERR) {
 			dom_nodelist_unref(nlist);
-			return false;
+			أرجع false;
 		}
-		if (imagemap_addtolist(c, subnode, c->base_url,
-				       entry, tname) == false) {
-			dom_node_unref(subnode);
+		إذا (imagemap_addtolist(c, subnode, c->پایه_url,
+				       مدخل, tname) == false) {
+			dom_گره_unref(subnode);
 			dom_nodelist_unref(nlist);
-			return false;
+			أرجع false;
 		}
-		dom_node_unref(subnode);
+		dom_گره_unref(subnode);
 	}
 
 	dom_nodelist_unref(nlist);
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -583,13 +583,13 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
  * \param entry List of map entries
  * \return false on memory exhaustion, true otherwise
  */
-static bool imagemap_extract_map(dom_node *node, html_content *c,
-		struct mapentry **entry)
+ساكن bool imagemap_استخراج_map(dom_گره *گره, html_content *c,
+		بنية mapentry **مدخل)
 {
-	if (imagemap_extract_map_entries(node, c, entry,
+	إذا (imagemap_استخراج_map_entries(گره, c, مدخل,
 			corestring_dom_area) == false)
-		return false;
-	return imagemap_extract_map_entries(node, c, entry,
+		أرجع false;
+	أرجع imagemap_استخراج_map_entries(گره, c, مدخل,
 			corestring_dom_a);
 }
 
@@ -600,66 +600,66 @@ static bool imagemap_extract_map(dom_node *node, html_content *c,
  * \return false on memory exhaustion, true otherwise
  */
 nserror
-imagemap_extract(html_content *c)
+imagemap_استخراج(html_content *c)
 {
 	dom_nodelist *nlist;
 	dom_exception exc;
-	unsigned long mapnr;
+	بیعلامت دراز mapnr;
 	uint32_t maybe_maps;
 	nserror ret = NSERROR_OK;
 
-	exc = dom_document_get_elements_by_tag_name(c->document,
+	exc = dom_document_get_elements_by_برچسب_name(c->document,
 						    corestring_dom_map,
 						    &nlist);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	إذا (exc != DOM_NO_ERR) {
+		أرجع NSERROR_DOM;
 	}
 
-	exc = dom_nodelist_get_length(nlist, &maybe_maps);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_nodelist_get_درازی(nlist, &maybe_maps);
+	إذا (exc != DOM_NO_ERR) {
 		ret = NSERROR_DOM;
-		goto out_nlist;
+		اذهب بیرون_nlist;
 	}
 
-	for (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
-		dom_node *node;
+	لكل (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
+		dom_گره *گره;
 		dom_string *name;
-		exc = dom_nodelist_item(nlist, mapnr, &node);
-		if (exc != DOM_NO_ERR) {
+		exc = dom_nodelist_قلم(nlist, mapnr, &گره);
+		إذا (exc != DOM_NO_ERR) {
 			ret = NSERROR_DOM;
-			goto out_nlist;
+			اذهب بیرون_nlist;
 		}
 
-		exc = dom_element_get_attribute(node, corestring_dom_id,
+		exc = dom_element_get_attribute(گره, corestring_dom_id,
 						&name);
-		if (exc != DOM_NO_ERR) {
-			dom_node_unref(node);
+		إذا (exc != DOM_NO_ERR) {
+			dom_گره_unref(گره);
 			ret = NSERROR_DOM;
-			goto out_nlist;
+			اذهب بیرون_nlist;
 		}
 
-		if (name == NULL) {
-			exc = dom_element_get_attribute(node,
+		إذا (name == عدم) {
+			exc = dom_element_get_attribute(گره,
 							corestring_dom_name,
 							&name);
-			if (exc != DOM_NO_ERR) {
-				dom_node_unref(node);
+			إذا (exc != DOM_NO_ERR) {
+				dom_گره_unref(گره);
 				ret = NSERROR_DOM;
-				goto out_nlist;
+				اذهب بیرون_nlist;
 			}
 		}
 
-		if (name != NULL) {
-			struct mapentry *entry = NULL;
-			if (imagemap_extract_map(node, c, &entry) == false) {
-				if (entry != NULL) {
-					imagemap_freelist(entry);
+		إذا (name != عدم) {
+			بنية mapentry *مدخل = عدم;
+			إذا (imagemap_استخراج_map(گره, c, &مدخل) == false) {
+				إذا (مدخل != عدم) {
+					imagemap_freelist(مدخل);
 				}
 
 				dom_string_unref(name);
-				dom_node_unref(node);
+				dom_گره_unref(گره);
 				ret = NSERROR_NOMEM; /** @todo check this */
-				goto out_nlist;
+				اذهب بیرون_nlist;
 			}
 
 			/* imagemap_extract_map may not extract anything,
@@ -667,26 +667,26 @@ imagemap_extract(html_content *c)
 			 * error as it just means that we've encountered
 			 * an incorrectly defined <map>...</map> block
 			 */
-			if ((entry != NULL) &&
-			    (imagemap_add(c, name, entry) == false)) {
-				imagemap_freelist(entry);
+			إذا ((مدخل != عدم) &&
+			    (imagemap_جمع_کن(c, name, مدخل) == false)) {
+				imagemap_freelist(مدخل);
 
 				dom_string_unref(name);
-				dom_node_unref(node);
+				dom_گره_unref(گره);
 				ret = NSERROR_NOMEM; /** @todo check this */
-				goto out_nlist;
+				اذهب بیرون_nlist;
 			}
 		}
 
 		dom_string_unref(name);
-		dom_node_unref(node);
+		dom_گره_unref(گره);
 	}
 
-out_nlist:
+بیرون_nlist:
 
 	dom_nodelist_unref(nlist);
 
-	return ret;
+	أرجع ret;
 }
 
 /**
@@ -702,24 +702,24 @@ out_nlist:
  * \param click_y Y coordinate of click
  * \return 1 if point is in polygon, 0 if outside. 0 or 1 if on boundary
  */
-static int
-imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
-		unsigned long y, unsigned long click_x,	unsigned long click_y)
+ساكن صحيح
+imagemap_نقطه_درون_poly(صحيح رقم, عائم *xpt, عائم *ypt, بیعلامت دراز x,
+		بیعلامت دراز y, بیعلامت دراز click_x,	بیعلامت دراز click_y)
 {
-	int i, j, c = 0;
+	صحيح i, j, c = 0;
 
-	assert(xpt != NULL);
-	assert(ypt != NULL);
+	أكد(xpt != عدم);
+	أكد(ypt != عدم);
 
-	for (i = 0, j = num - 1; i < num; j = i++) {
-		if ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
+	لكل (i = 0, j = رقم - 1; i < رقم; j = i++) {
+		إذا ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
 		     ((ypt[j] + y <= click_y) && (click_y < ypt[i] + y))) &&
 		     (click_x < (xpt[j] - xpt[i]) *
 		     (click_y - (ypt[i] + y)) / (ypt[j] - ypt[i]) + xpt[i] + x))
 			c = !c;
 	}
 
-	return c;
+	أرجع c;
 }
 
 /**
@@ -734,78 +734,78 @@ imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
  * \param target   Pointer to location to receive target pointer (if any)
  * \return The url associated with this area, or NULL if not found
  */
-nsurl *imagemap_get(struct html_content *c, const char *key,
-		unsigned long x, unsigned long y,
-		unsigned long click_x, unsigned long click_y,
-		const char **target)
+nsurl *imagemap_get(بنية html_content *c, ثابت حرف *کلید,
+		بیعلامت دراز x, بیعلامت دراز y,
+		بیعلامت دراز click_x, بیعلامت دراز click_y,
+		ثابت حرف **هدف)
 {
-	unsigned int slot = 0;
-	struct imagemap *map;
-	struct mapentry *entry;
-	unsigned long cx, cy;
+	بیعلامت صحيح جایگاه = 0;
+	بنية imagemap *map;
+	بنية mapentry *مدخل;
+	بیعلامت دراز cx, cy;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	if (key == NULL)
-		return NULL;
+	إذا (کلید == عدم)
+		أرجع عدم;
 
-	if (c->imagemaps == NULL)
-		return NULL;
+	إذا (c->imagemaps == عدم)
+		أرجع عدم;
 
-	slot = imagemap_hash(key);
+	جایگاه = imagemap_hash(کلید);
 
-	for (map = c->imagemaps[slot]; map != NULL; map = map->next) {
-		if (map->key != NULL && strcasecmp(map->key, key) == 0)
-			break;
+	لكل (map = c->imagemaps[جایگاه]; map != عدم; map = map->بعدی) {
+		إذا (map->کلید != عدم && strcasecmp(map->کلید, کلید) == 0)
+			اكسر;
 	}
 
-	if (map == NULL || map->list == NULL)
-		return NULL;
+	إذا (map == عدم || map->list == عدم)
+		أرجع عدم;
 
-	for (entry = map->list; entry; entry = entry->next) {
-		switch (entry->type) {
-		case IMAGEMAP_DEFAULT:
+	لكل (مدخل = map->list; مدخل; مدخل = مدخل->بعدی) {
+		بدل (مدخل->type) {
+		حالة IMAGEMAP_DEFAULT:
 			/* just return the URL. no checks required */
-			if (target)
-				*target = entry->target;
-			return entry->url;
-			break;
-		case IMAGEMAP_RECT:
-			if (click_x >= x + entry->bounds.rect.x0 &&
-				    click_x <= x + entry->bounds.rect.x1 &&
-				    click_y >= y + entry->bounds.rect.y0 &&
-				    click_y <= y + entry->bounds.rect.y1) {
-				if (target)
-					*target = entry->target;
-				return entry->url;
+			إذا (هدف)
+				*هدف = مدخل->هدف;
+			أرجع مدخل->url;
+			اكسر;
+		حالة IMAGEMAP_RECT:
+			إذا (click_x >= x + مدخل->bounds.rect.x0 &&
+				    click_x <= x + مدخل->bounds.rect.x1 &&
+				    click_y >= y + مدخل->bounds.rect.y0 &&
+				    click_y <= y + مدخل->bounds.rect.y1) {
+				إذا (هدف)
+					*هدف = مدخل->هدف;
+				أرجع مدخل->url;
 			}
-			break;
-		case IMAGEMAP_CIRCLE:
-			cx = x + entry->bounds.circle.x - click_x;
-			cy = y + entry->bounds.circle.y - click_y;
-			if ((cx * cx + cy * cy) <=
-				(unsigned long) (entry->bounds.circle.r *
-					entry->bounds.circle.r)) {
-				if (target)
-					*target = entry->target;
-				return entry->url;
+			اكسر;
+		حالة IMAGEMAP_CIRCLE:
+			cx = x + مدخل->bounds.circle.x - click_x;
+			cy = y + مدخل->bounds.circle.y - click_y;
+			إذا ((cx * cx + cy * cy) <=
+				(بیعلامت دراز) (مدخل->bounds.circle.r *
+					مدخل->bounds.circle.r)) {
+				إذا (هدف)
+					*هدف = مدخل->هدف;
+				أرجع مدخل->url;
 			}
-			break;
-		case IMAGEMAP_POLY:
-			if (imagemap_point_in_poly(entry->bounds.poly.num,
-					entry->bounds.poly.xcoords,
-					entry->bounds.poly.ycoords, x, y,
+			اكسر;
+		حالة IMAGEMAP_POLY:
+			إذا (imagemap_نقطه_درون_poly(مدخل->bounds.poly.رقم,
+					مدخل->bounds.poly.xcoords,
+					مدخل->bounds.poly.ycoords, x, y,
 					click_x, click_y)) {
-				if (target)
-					*target = entry->target;
-				return entry->url;
+				إذا (هدف)
+					*هدف = مدخل->هدف;
+				أرجع مدخل->url;
 			}
-			break;
+			اكسر;
 		}
 	}
 
-	if (target)
-		*target = NULL;
+	إذا (هدف)
+		*هدف = عدم;
 
-	return NULL;
+	أرجع عدم;
 }

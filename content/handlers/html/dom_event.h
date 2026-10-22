@@ -21,8 +21,8 @@
  * HTML content DOM event handling interface
  */
 
-#ifndef NETSURF_HTML_DOM_EVENT_H
-#define NETSURF_HTML_DOM_EVENT_H
+#اگر_تعریف_نشده NETSURF_HTML_DOM_EVENT_H
+#تعریف_کن NETSURF_HTML_DOM_EVENT_H
 
 /**
  * html content DOM action callback function selector
@@ -38,6 +38,6 @@
  *
  * @return callback function pointer or NULL for none
  */
-dom_default_action_callback html_dom_event_fetcher(dom_string *type, dom_default_action_phase phase, void **pw);
+dom_default_action_callback html_dom_event_fetcher(dom_string *type, dom_default_action_phase phase, فراغ **pw);
 
-#endif
+#پایان_اگر

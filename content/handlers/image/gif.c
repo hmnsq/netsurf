@@ -30,53 +30,53 @@
  * [rjw] - Sun 4th April 2004
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#ضمن <assert.h>
+#ضمن <string.h>
+#ضمن <stdbool.h>
+#ضمن <stdlib.h>
 
-#include <nsutils/assert.h>
+#ضمن <nsutils/assert.h>
 
-#include <nsgif.h>
+#ضمن <nsgif.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "utils/nsoption.h"
-#include "netsurf/misc.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ضمن "utils/log.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/nsoption.h"
+#ضمن "netsurf/misc.h"
+#ضمن "netsurf/bitmap.h"
+#ضمن "netsurf/content.h"
+#ضمن "content/llcache.h"
+#ضمن "content/content.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "desktop/gui_internal.h"
+#ضمن "desktop/bitmap.h"
 
-#include "image/image.h"
-#include "image/gif.h"
+#ضمن "image/image.h"
+#ضمن "image/gif.h"
 
-typedef struct gif_content {
-	struct content base;
+تعريفنوع بنية gif_content {
+	بنية content پایه;
 
 	nsgif_t *gif; /**< GIF animation data */
-	uint32_t current_frame;   /**< current frame to display [0...(max-1)] */
+	uint32_t current_قاب;   /**< current frame to display [0...(max-1)] */
 } gif_content;
 
-static inline nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
+ساكن مضمن nserror gif_nsgif_error_مقصد_ns(nsgif_error gif_res)
 {
 	nserror err;
 
-	switch (gif_res) {
-	case NSGIF_ERR_OOM:
+	بدل (gif_res) {
+	حالة NSGIF_ERR_OOM:
 		err = NSERROR_NOMEM;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		err = NSERROR_GIF_ERROR;
-		break;
+		اكسر;
 	}
 
-	return err;
+	أرجع err;
 }
 
 /**
@@ -86,79 +86,79 @@ static inline nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
  * \param  height  width of image in pixels
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *gif_bitmap_create(int width, int height)
+ساكن فراغ *gif_bitmap_create(صحيح عرض, صحيح ارتفاع)
 {
-	return guit->bitmap->create(width, height, BITMAP_NONE);
+	أرجع guit->bitmap->create(عرض, ارتفاع, BITMAP_NONE);
 }
 
 /**
  * Convert client bitmap format to a LibNSGIF format specifier.
  */
-static nsgif_bitmap_fmt_t nsgif__get_bitmap_format(void)
+ساكن nsgif_bitmap_fmt_t nsgif__get_bitmap_format(فراغ)
 {
-	ns_static_assert((int)BITMAP_LAYOUT_R8G8B8A8 == (int)NSGIF_BITMAP_FMT_R8G8B8A8);
-	ns_static_assert((int)BITMAP_LAYOUT_B8G8R8A8 == (int)NSGIF_BITMAP_FMT_B8G8R8A8);
-	ns_static_assert((int)BITMAP_LAYOUT_A8R8G8B8 == (int)NSGIF_BITMAP_FMT_A8R8G8B8);
-	ns_static_assert((int)BITMAP_LAYOUT_A8B8G8R8 == (int)NSGIF_BITMAP_FMT_A8B8G8R8);
-	ns_static_assert((int)BITMAP_LAYOUT_RGBA8888 == (int)NSGIF_BITMAP_FMT_RGBA8888);
-	ns_static_assert((int)BITMAP_LAYOUT_BGRA8888 == (int)NSGIF_BITMAP_FMT_BGRA8888);
-	ns_static_assert((int)BITMAP_LAYOUT_ARGB8888 == (int)NSGIF_BITMAP_FMT_ARGB8888);
-	ns_static_assert((int)BITMAP_LAYOUT_ABGR8888 == (int)NSGIF_BITMAP_FMT_ABGR8888);
+	ns_static_assert((صحيح)BITMAP_LAYOUT_R8G8B8A8 == (صحيح)NSGIF_BITMAP_FMT_R8G8B8A8);
+	ns_static_assert((صحيح)BITMAP_LAYOUT_B8G8R8A8 == (صحيح)NSGIF_BITMAP_FMT_B8G8R8A8);
+	ns_static_assert((صحيح)BITMAP_LAYOUT_A8R8G8B8 == (صحيح)NSGIF_BITMAP_FMT_A8R8G8B8);
+	ns_static_assert((صحيح)BITMAP_LAYOUT_A8B8G8R8 == (صحيح)NSGIF_BITMAP_FMT_A8B8G8R8);
+	ns_static_assert((صحيح)BITMAP_LAYOUT_RGBA8888 == (صحيح)NSGIF_BITMAP_FMT_RGBA8888);
+	ns_static_assert((صحيح)BITMAP_LAYOUT_BGRA8888 == (صحيح)NSGIF_BITMAP_FMT_BGRA8888);
+	ns_static_assert((صحيح)BITMAP_LAYOUT_ARGB8888 == (صحيح)NSGIF_BITMAP_FMT_ARGB8888);
+	ns_static_assert((صحيح)BITMAP_LAYOUT_ABGR8888 == (صحيح)NSGIF_BITMAP_FMT_ABGR8888);
 
-	return (nsgif_bitmap_fmt_t)bitmap_fmt.layout;
+	أرجع (nsgif_bitmap_fmt_t)bitmap_fmt.layout;
 }
 
-static nserror gif_create_gif_data(gif_content *c)
+ساكن nserror gif_create_gif_داده(gif_content *c)
 {
 	nsgif_error gif_res;
-	const nsgif_bitmap_cb_vt gif_bitmap_callbacks = {
+	ثابت nsgif_bitmap_cb_vt gif_bitmap_callbacks = {
 		.create = gif_bitmap_create,
 		.destroy = guit->bitmap->destroy,
-		.get_buffer = guit->bitmap->get_buffer,
-		.set_opaque = guit->bitmap->set_opaque,
+		.get_میانگیر = guit->bitmap->get_میانگیر,
+		.مجموعه_opaque = guit->bitmap->مجموعه_opaque,
 		.test_opaque = bitmap_test_opaque,
 		.modified = guit->bitmap->modified,
 	};
 
 	gif_res = nsgif_create(&gif_bitmap_callbacks,
 			nsgif__get_bitmap_format(), &c->gif);
-	if (gif_res != NSGIF_OK) {
-		nserror err = gif__nsgif_error_to_ns(gif_res);
-		content_broadcast_error(&c->base, err, NULL);
-		return err;
+	إذا (gif_res != NSGIF_OK) {
+		nserror err = gif_nsgif_error_مقصد_ns(gif_res);
+		content_پخش_error(&c->پایه, err, عدم);
+		أرجع err;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static nserror gif_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ساكن nserror gif_create(ثابت content_handler *handler,
+		lwc_string *imime_type, ثابت بنية http_parameter *params,
+		llcache_handle *llcache, ثابت حرف *fallback_charset,
+		bool quirks, بنية content **c)
 {
-	gif_content *result;
+	gif_content *نتیجه;
 	nserror error;
 
-	result = calloc(1, sizeof(gif_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	نتیجه = حافظه_صفر_بده(1, حجم(gif_content));
+	إذا (نتیجه == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__init(&result->base, handler, imime_type, params,
+	error = content__init(&نتیجه->پایه, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(نتیجه);
+		أرجع error;
 	}
 
-	error = gif_create_gif_data(result);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	error = gif_create_gif_داده(نتیجه);
+	إذا (error != NSERROR_OK) {
+		حرر(نتیجه);
+		أرجع error;
 	}
 
-	*c = (struct content *) result;
+	*c = (بنية content *) نتیجه;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -166,117 +166,117 @@ static nserror gif_create(const content_handler *handler,
  *
  * \param p  The content to animate
 */
-static void gif_animate_cb(void *p);
+ساكن فراغ gif_animate_cb(فراغ *p);
 
 /**
  * Performs any necessary animation.
  *
  * \param p  The content to animate
 */
-static nserror gif__animate(gif_content *gif, bool redraw)
+ساكن nserror gif__animate(gif_content *gif, bool redraw)
 {
 	nsgif_error gif_res;
 	nsgif_rect_t rect;
 	uint32_t delay;
 	uint32_t f;
 
-	gif_res = nsgif_frame_prepare(gif->gif, &rect, &delay, &f);
-	if (gif_res != NSGIF_OK) {
-		return gif__nsgif_error_to_ns(gif_res);
+	gif_res = nsgif_قاب_prepare(gif->gif, &rect, &delay, &f);
+	إذا (gif_res != NSGIF_OK) {
+		أرجع gif_nsgif_error_مقصد_ns(gif_res);
 	}
 
-	gif->current_frame = f;
+	gif->current_قاب = f;
 
 	/* Continue animating if we should */
-	if (nsoption_bool(animate_images) && delay != NSGIF_INFINITE) {
-		guit->misc->schedule(delay * 10, gif_animate_cb, gif);
+	إذا (nsoption_bool(animate_images) && delay != NSGIF_INFINITE) {
+		guit->misc->زمانبندی(delay * 10, gif_animate_cb, gif);
 	}
 
-	if (redraw) {
-		union content_msg_data data;
+	إذا (redraw) {
+		اتحاد content_پیام_داده داده;
 
 		/* area within gif to redraw */
-		data.redraw.x = rect.x0;
-		data.redraw.y = rect.y0;
-		data.redraw.width  = rect.x1 - rect.x0;
-		data.redraw.height = rect.y1 - rect.y0;
+		داده.redraw.x = rect.x0;
+		داده.redraw.y = rect.y0;
+		داده.redraw.عرض  = rect.x1 - rect.x0;
+		داده.redraw.ارتفاع = rect.y1 - rect.y0;
 
-		content_broadcast(&gif->base, CONTENT_MSG_REDRAW, &data);
+		content_پخش(&gif->پایه, CONTENT_پیام_REDRAW, &داده);
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static void gif_animate_cb(void *p)
+ساكن فراغ gif_animate_cb(فراغ *p)
 {
 	gif_content *gif = p;
 
 	gif__animate(gif, true);
 }
 
-static bool gif_convert(struct content *c)
+ساكن bool gif_convert(بنية content *c)
 {
 	gif_content *gif = (gif_content *) c;
-	const nsgif_info_t *gif_info;
-	const uint8_t *data;
+	ثابت nsgif_info_t *gif_info;
+	ثابت uint8_t *داده;
 	nsgif_error gif_err;
 	nserror err;
-	size_t size;
-	char *title;
+	size_t اندازه;
+	حرف *title;
 
 	/* Get the animation */
-	data = content__get_source_data(c, &size);
+	داده = content_get_منبع_داده_2(c, &اندازه);
 
 	/* Initialise the GIF */
-	gif_err = nsgif_data_scan(gif->gif, size, data);
-	if (gif_err != NSGIF_OK) {
+	gif_err = nsgif_داده_پیمایش(gif->gif, اندازه, داده);
+	إذا (gif_err != NSGIF_OK) {
 		NSLOG(netsurf, INFO, "nsgif scan: %s", nsgif_strerror(gif_err));
 		/* Not fatal unless we have no frames. */
 	}
 
-	nsgif_data_complete(gif->gif);
+	nsgif_داده_complete(gif->gif);
 
 	gif_info = nsgif_get_info(gif->gif);
-	assert(gif_info != NULL);
+	أكد(gif_info != عدم);
 
 	/* Abort on bad GIFs */
-	if (gif_info->frame_count == 0) {
-		err = gif__nsgif_error_to_ns(gif_err);
-		content_broadcast_error(c, err, "GIF with no frames.");
-		return false;
-	} else if (gif_info->width == 0 || gif_info->height == 0) {
-		err = gif__nsgif_error_to_ns(gif_err);
-		content_broadcast_error(c, err, "Zero size image.");
-		return false;
+	إذا (gif_info->قاب_شمار == 0) {
+		err = gif_nsgif_error_مقصد_ns(gif_err);
+		content_پخش_error(c, err, "GIF with no frames.");
+		أرجع false;
+	} وإلا إذا (gif_info->عرض == 0 || gif_info->ارتفاع == 0) {
+		err = gif_nsgif_error_مقصد_ns(gif_err);
+		content_پخش_error(c, err, "Zero size image.");
+		أرجع false;
 	}
 
 	/* Store our content width, height and calculate size */
-	c->width = gif_info->width;
-	c->height = gif_info->height;
-	c->size += (gif_info->width * gif_info->height * 4) + 16 + 44;
+	c->عرض = gif_info->عرض;
+	c->ارتفاع = gif_info->ارتفاع;
+	c->اندازه += (gif_info->عرض * gif_info->ارتفاع * 4) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("GIFTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_برگ(llcache_handle_get_url(c->llcache)),
+			c->عرض, c->ارتفاع);
+	إذا (title != عدم) {
+		content_مجموعه_title(c, title);
+		حرر(title);
 	}
 
 	err = gif__animate(gif, false);
-	if (err != NSERROR_OK) {
-		content_broadcast_error(c, NSERROR_GIF_ERROR, NULL);
-		return false;
+	إذا (err != NSERROR_OK) {
+		content_پخش_error(c, NSERROR_GIF_ERROR, عدم);
+		أرجع false;
 	}
 
 	/* Exit as a success */
-	content_set_ready(c);
-	content_set_done(c);
+	content_مجموعه_ready(c);
+	content_مجموعه_انجامشده(c);
 
 	/* Done: update status bar */
-	content_set_status(c, "");
-	return true;
+	content_مجموعه_وضعیت(c, "");
+	أرجع true;
 }
 
 /**
@@ -285,144 +285,144 @@ static bool gif_convert(struct content *c)
  * \param gif The gif context to update.
  * \return NSGIF_OK on success else apropriate error code.
  */
-static nsgif_error gif_get_frame(gif_content *gif,
+ساكن nsgif_error gif_get_قاب(gif_content *gif,
 		nsgif_bitmap_t **bitmap)
 {
-	uint32_t current_frame = gif->current_frame;
-	if (!nsoption_bool(animate_images)) {
-		current_frame = 0;
+	uint32_t current_قاب = gif->current_قاب;
+	إذا (!nsoption_bool(animate_images)) {
+		current_قاب = 0;
 	}
 
-	return nsgif_frame_decode(gif->gif, current_frame, bitmap);
+	أرجع nsgif_قاب_decode(gif->gif, current_قاب, bitmap);
 }
 
-static bool gif_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ساكن bool gif_redraw(بنية content *c, بنية content_redraw_داده *داده,
+		ثابت بنية rect *clip, ثابت بنية redraw_context *ctx)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return false;
+	إذا (gif_get_قاب(gif, &bitmap) != NSGIF_OK) {
+		أرجع false;
 	}
 
-	return image_bitmap_plot(bitmap, data, clip, ctx);
+	أرجع image_bitmap_plot(bitmap, داده, clip, ctx);
 }
 
-static void gif_destroy(struct content *c)
+ساكن فراغ gif_destroy(بنية content *c)
 {
 	gif_content *gif = (gif_content *) c;
 
 	/* Free all the associated memory buffers */
-	guit->misc->schedule(-1, gif_animate_cb, c);
+	guit->misc->زمانبندی(-1, gif_animate_cb, c);
 	nsgif_destroy(gif->gif);
 }
 
-static nserror gif_clone(const struct content *old, struct content **newc)
+ساكن nserror gif_clone(ثابت بنية content *old, بنية content **newc)
 {
 	gif_content *gif;
 	nserror error;
 
-	gif = calloc(1, sizeof(gif_content));
-	if (gif == NULL)
-		return NSERROR_NOMEM;
+	gif = حافظه_صفر_بده(1, حجم(gif_content));
+	إذا (gif == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__clone(old, &gif->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&gif->base);
-		return error;
+	error = content__clone(old, &gif->پایه);
+	إذا (error != NSERROR_OK) {
+		content_destroy(&gif->پایه);
+		أرجع error;
 	}
 
 	/* Simply replay creation and conversion of content */
-	error = gif_create_gif_data(gif);
-	if (error != NSERROR_OK) {
-		content_destroy(&gif->base);
-		return error;
+	error = gif_create_gif_داده(gif);
+	إذا (error != NSERROR_OK) {
+		content_destroy(&gif->پایه);
+		أرجع error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (gif_convert(&gif->base) == false) {
-			content_destroy(&gif->base);
-			return NSERROR_CLONE_FAILED;
+	إذا (old->وضعیت == CONTENT_وضعیت_READY ||
+			old->وضعیت == CONTENT_وضعیت_انجامشده) {
+		إذا (gif_convert(&gif->پایه) == false) {
+			content_destroy(&gif->پایه);
+			أرجع NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) gif;
+	*newc = (بنية content *) gif;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static void gif_add_user(struct content *c)
+ساكن فراغ gif_جمع_کن_user(بنية content *c)
 {
 	gif_content *gif = (gif_content *) c;
 
 	/* Ensure this content has already been converted.
 	 * If it hasn't, the animation will start at the conversion phase instead. */
-	if (gif->gif == NULL) return;
+	إذا (gif->gif == عدم) أرجع;
 
-	if (content_count_users(c) == 1) {
+	إذا (content_شمار_users(c) == 1) {
 		/* First user, and content already converted, so start the animation. */
-		if (nsgif_reset(gif->gif) == NSGIF_OK) {
+		إذا (nsgif_reset(gif->gif) == NSGIF_OK) {
 			gif__animate(gif, true);
 		}
 	}
 }
 
-static void gif_remove_user(struct content *c)
+ساكن فراغ gif_remove_user(بنية content *c)
 {
-	if (content_count_users(c) == 1) {
+	إذا (content_شمار_users(c) == 1) {
 		/* Last user is about to be removed from this content, so stop the animation. */
-		guit->misc->schedule(-1, gif_animate_cb, c);
+		guit->misc->زمانبندی(-1, gif_animate_cb, c);
 	}
 }
 
-static nsgif_bitmap_t *gif_get_bitmap(
-		const struct content *c, void *context)
+ساكن nsgif_bitmap_t *gif_get_bitmap(
+		ثابت بنية content *c, فراغ *context)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return NULL;
+	إذا (gif_get_قاب(gif, &bitmap) != NSGIF_OK) {
+		أرجع عدم;
 	}
 
-	return bitmap;
+	أرجع bitmap;
 }
 
-static content_type gif_content_type(void)
+ساكن content_type gif_content_type(فراغ)
 {
-	return CONTENT_IMAGE;
+	أرجع CONTENT_IMAGE;
 }
 
-static bool gif_content_is_opaque(struct content *c)
+ساكن bool gif_content_is_opaque(بنية content *c)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return false;
+	إذا (gif_get_قاب(gif, &bitmap) != NSGIF_OK) {
+		أرجع false;
 	}
 
-	return guit->bitmap->get_opaque(bitmap);
+	أرجع guit->bitmap->get_opaque(bitmap);
 }
 
-static const content_handler gif_content_handler = {
+ساكن ثابت content_handler gif_content_handler = {
 	.create = gif_create,
-	.data_complete = gif_convert,
+	.داده_complete = gif_convert,
 	.destroy = gif_destroy,
 	.redraw = gif_redraw,
 	.clone = gif_clone,
-	.add_user = gif_add_user,
+	.جمع_کن_user = gif_جمع_کن_user,
 	.remove_user = gif_remove_user,
-	.get_internal = gif_get_bitmap,
+	.get_داخلی = gif_get_bitmap,
 	.type = gif_content_type,
 	.is_opaque = gif_content_is_opaque,
 	.no_share = false,
 };
 
-static const char *gif_types[] = {
+ساكن ثابت حرف *gif_types[] = {
 	"image/gif"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsgif, gif_types, gif_content_handler);
+CONTENT_FACTORY_ثبات_TYPES(nsgif, gif_types, gif_content_handler);

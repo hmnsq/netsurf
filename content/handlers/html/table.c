@@ -22,28 +22,28 @@
  * implementation of HTML table processing and layout.
  */
 
-#include <assert.h>
-#include <dom/dom.h>
+#ضمن <assert.h>
+#ضمن <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/talloc.h"
-#include "css/utils.h"
+#ضمن "utils/log.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/talloc.h"
+#ضمن "css/utils.h"
 
-#include "html/box.h"
-#include "html/table.h"
+#ضمن "html/box.h"
+#ضمن "html/table.h"
 
 /* Define to enable verbose table debug */
-#undef TABLE_DEBUG
+#لغو_تعریف جدول_DEBUG
 
 /**
  * Container for border values during table border calculations
  */
-struct border {
-	enum css_border_style_e style;	/**< border-style */
-	enum css_border_color_e color;	/**< border-color type */
+بنية border {
+	تعداد css_border_style_e style;	/**< border-style */
+	تعداد css_border_color_e color;	/**< border-color type */
 	css_color c;			/**< border-color value */
-	css_fixed width;		/**< border-width length */
+	css_fixed عرض;		/**< border-width length */
 	css_unit unit;			/**< border-width units */
 };
 
@@ -58,103 +58,103 @@ struct border {
  * \param b_src    Source of \a b
  * \return True if \a b is more eyecatching than \a a
  */
-static bool
-table_border_is_more_eyecatching(const css_unit_ctx *unit_len_ctx,
-				 const struct border *a,
+ساكن bool
+جدول_border_is_بیشتر_eyecatching(ثابت css_unit_ctx *unit_len_ctx,
+				 ثابت بنية border *a,
 				 box_type a_src,
-				 const struct border *b,
+				 ثابت بنية border *b,
 				 box_type b_src)
 {
 	css_fixed awidth, bwidth;
-	int impact = 0;
+	صحيح impact = 0;
 
 	/* See CSS 2.1 $17.6.2.1 */
 
 	/* 1 + 2 -- hidden beats everything, none beats nothing */
-	if (a->style == CSS_BORDER_STYLE_HIDDEN ||
+	إذا (a->style == CSS_BORDER_STYLE_HIDDEN ||
 	    b->style == CSS_BORDER_STYLE_NONE)
-		return false;
+		أرجع false;
 
-	if (b->style == CSS_BORDER_STYLE_HIDDEN ||
+	إذا (b->style == CSS_BORDER_STYLE_HIDDEN ||
 	    a->style == CSS_BORDER_STYLE_NONE)
-		return true;
+		أرجع true;
 
 	/* 3a -- wider borders beat narrow ones */
 	/* The widths must be absolute, which will be the case
 	 * if they've come from a computed style. */
-	assert(a->unit != CSS_UNIT_EM && a->unit != CSS_UNIT_EX);
-	assert(b->unit != CSS_UNIT_EM && b->unit != CSS_UNIT_EX);
-	awidth = css_unit_len2device_px(NULL, unit_len_ctx, a->width, a->unit);
-	bwidth = css_unit_len2device_px(NULL, unit_len_ctx, b->width, b->unit);
+	أكد(a->unit != CSS_UNIT_EM && a->unit != CSS_UNIT_EX);
+	أكد(b->unit != CSS_UNIT_EM && b->unit != CSS_UNIT_EX);
+	awidth = css_unit_len2device_px(عدم, unit_len_ctx, a->عرض, a->unit);
+	bwidth = css_unit_len2device_px(عدم, unit_len_ctx, b->عرض, b->unit);
 
-	if (awidth < bwidth)
-		return true;
-	else if (bwidth < awidth)
-		return false;
+	إذا (awidth < bwidth)
+		أرجع true;
+	وإلا إذا (bwidth < awidth)
+		أرجع false;
 
 	/* 3b -- sort by style */
-	switch (a->style) {
-	case CSS_BORDER_STYLE_DOUBLE: impact++; fallthrough;
-	case CSS_BORDER_STYLE_SOLID:  impact++; fallthrough;
-	case CSS_BORDER_STYLE_DASHED: impact++; fallthrough;
-	case CSS_BORDER_STYLE_DOTTED: impact++; fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:  impact++; fallthrough;
-	case CSS_BORDER_STYLE_OUTSET: impact++; fallthrough;
-	case CSS_BORDER_STYLE_GROOVE: impact++; fallthrough;
-	case CSS_BORDER_STYLE_INSET:  impact++; fallthrough;
-	default:
-		break;
+	بدل (a->style) {
+	حالة CSS_BORDER_STYLE_DOUBLE: impact++; fallthrough;
+	حالة CSS_BORDER_STYLE_SOLID:  impact++; fallthrough;
+	حالة CSS_BORDER_STYLE_DASHED: impact++; fallthrough;
+	حالة CSS_BORDER_STYLE_DOTTED: impact++; fallthrough;
+	حالة CSS_BORDER_STYLE_RIDGE:  impact++; fallthrough;
+	حالة CSS_BORDER_STYLE_OUTSET: impact++; fallthrough;
+	حالة CSS_BORDER_STYLE_GROOVE: impact++; fallthrough;
+	حالة CSS_BORDER_STYLE_INSET:  impact++; fallthrough;
+	افتراضي:
+		اكسر;
 	}
 
-	switch (b->style) {
-	case CSS_BORDER_STYLE_DOUBLE: impact--; fallthrough;
-	case CSS_BORDER_STYLE_SOLID:  impact--; fallthrough;
-	case CSS_BORDER_STYLE_DASHED: impact--; fallthrough;
-	case CSS_BORDER_STYLE_DOTTED: impact--; fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:  impact--; fallthrough;
-	case CSS_BORDER_STYLE_OUTSET: impact--; fallthrough;
-	case CSS_BORDER_STYLE_GROOVE: impact--; fallthrough;
-	case CSS_BORDER_STYLE_INSET:  impact--; fallthrough;
-	default:
-		break;
+	بدل (b->style) {
+	حالة CSS_BORDER_STYLE_DOUBLE: impact--; fallthrough;
+	حالة CSS_BORDER_STYLE_SOLID:  impact--; fallthrough;
+	حالة CSS_BORDER_STYLE_DASHED: impact--; fallthrough;
+	حالة CSS_BORDER_STYLE_DOTTED: impact--; fallthrough;
+	حالة CSS_BORDER_STYLE_RIDGE:  impact--; fallthrough;
+	حالة CSS_BORDER_STYLE_OUTSET: impact--; fallthrough;
+	حالة CSS_BORDER_STYLE_GROOVE: impact--; fallthrough;
+	حالة CSS_BORDER_STYLE_INSET:  impact--; fallthrough;
+	افتراضي:
+		اكسر;
 	}
 
-	if (impact < 0)
-		return true;
-	else if (impact > 0)
-		return false;
+	إذا (impact < 0)
+		أرجع true;
+	وإلا إذا (impact > 0)
+		أرجع false;
 
 	/* 4a -- sort by origin */
 	impact = 0;
 
 	/** \todo COL/COL_GROUP */
-	switch (a_src) {
-	case BOX_TABLE_CELL:       impact++; fallthrough;
-	case BOX_TABLE_ROW:        impact++; fallthrough;
-	case BOX_TABLE_ROW_GROUP:  impact++; fallthrough;
-	case BOX_TABLE:            impact++; fallthrough;
-	default:
-		break;
+	بدل (a_src) {
+	حالة BOX_جدول_CELL:       impact++; fallthrough;
+	حالة BOX_جدول_ردیف:        impact++; fallthrough;
+	حالة BOX_جدول_ردیف_گروه:  impact++; fallthrough;
+	حالة BOX_جدول:            impact++; fallthrough;
+	افتراضي:
+		اكسر;
 	}
 
 	/** \todo COL/COL_GROUP */
-	switch (b_src) {
-	case BOX_TABLE_CELL:       impact--; fallthrough;
-	case BOX_TABLE_ROW:        impact--; fallthrough;
-	case BOX_TABLE_ROW_GROUP:  impact--; fallthrough;
-	case BOX_TABLE:            impact--; fallthrough;
-	default:
-		break;
+	بدل (b_src) {
+	حالة BOX_جدول_CELL:       impact--; fallthrough;
+	حالة BOX_جدول_ردیف:        impact--; fallthrough;
+	حالة BOX_جدول_ردیف_گروه:  impact--; fallthrough;
+	حالة BOX_جدول:            impact--; fallthrough;
+	افتراضي:
+		اكسر;
 	}
 
-	if (impact < 0)
-		return true;
-	else if (impact > 0)
-		return false;
+	إذا (impact < 0)
+		أرجع true;
+	وإلا إذا (impact > 0)
+		أرجع false;
 
 	/* 4b -- furthest left (if direction: ltr) and towards top wins */
 	/** \todo Currently assumes b satisifies this */
-	return true;
+	أرجع true;
 }
 
 
@@ -169,25 +169,25 @@ table_border_is_more_eyecatching(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static void
-table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
-			     struct box *table,
-			     struct border *a,
+ساكن فراغ
+جدول_cell_بالاترین_process_جدول(ثابت css_unit_ctx *unit_len_ctx,
+			     بنية box *جدول,
+			     بنية border *a,
 			     box_type *a_src)
 {
-	struct border b;
+	بنية border b;
 	box_type b_src;
 
 	/* Top border of table */
-	b.style = css_computed_border_top_style(table->style);
-	b.color = css_computed_border_top_color(table->style, &b.c);
-	css_computed_border_top_width(table->style, &b.width, &b.unit);
-	b.width = css_unit_len2device_px(table->style, unit_len_ctx,
-			b.width, b.unit);
+	b.style = css_computed_border_بالاترین_style(جدول->style);
+	b.color = css_computed_border_بالاترین_color(جدول->style, &b.c);
+	css_computed_border_بالاترین_عرض(جدول->style, &b.عرض, &b.unit);
+	b.عرض = css_unit_len2device_px(جدول->style, unit_len_ctx,
+			b.عرض, b.unit);
 	b.unit = CSS_UNIT_PX;
-	b_src = BOX_TABLE;
+	b_src = BOX_جدول;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
@@ -207,64 +207,64 @@ table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static bool
-table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
-			   struct box *cell,
-			   struct box *row,
-			   struct border *a,
+ساكن bool
+جدول_cell_بالاترین_process_ردیف(ثابت css_unit_ctx *unit_len_ctx,
+			   بنية box *cell,
+			   بنية box *ردیف,
+			   بنية border *a,
 			   box_type *a_src)
 {
-	struct border b;
+	بنية border b;
 	box_type b_src;
 
 	/* Bottom border of row */
-	b.style = css_computed_border_bottom_style(row->style);
-	b.color = css_computed_border_bottom_color(row->style, &b.c);
-	css_computed_border_bottom_width(row->style, &b.width, &b.unit);
-	b.width = css_unit_len2device_px(row->style, unit_len_ctx,
-			b.width, b.unit);
+	b.style = css_computed_border_bottom_style(ردیف->style);
+	b.color = css_computed_border_bottom_color(ردیف->style, &b.c);
+	css_computed_border_bottom_عرض(ردیف->style, &b.عرض, &b.unit);
+	b.عرض = css_unit_len2device_px(ردیف->style, unit_len_ctx,
+			b.عرض, b.unit);
 	b.unit = CSS_UNIT_PX;
-	b_src = BOX_TABLE_ROW;
+	b_src = BOX_جدول_ردیف;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
 
-	if (row->children == NULL) {
+	إذا (ردیف->children == عدم) {
 		/* Row is empty, so consider its top border */
-		b.style = css_computed_border_top_style(row->style);
-		b.color = css_computed_border_top_color(row->style, &b.c);
-		css_computed_border_top_width(row->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(row->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_بالاترین_style(ردیف->style);
+		b.color = css_computed_border_بالاترین_color(ردیف->style, &b.c);
+		css_computed_border_بالاترین_عرض(ردیف->style, &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(ردیف->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW;
+		b_src = BOX_جدول_ردیف;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     a, *a_src, &b, b_src)) {
 			*a = b;
 			*a_src = b_src;
 		}
 
-		return false;
-	} else {
+		أرجع false;
+	} وإلا {
 		/* Process cells that are directly above the cell being
 		 * considered. They may not be in this row, but in one of the
 		 * rows above it in the case where rowspan > 1. */
-		struct box *c;
+		بنية box *c;
 		bool processed = false;
 
-		while (processed == false) {
-			for (c = row->children; c != NULL; c = c->next) {
+		طالما (processed == false) {
+			لكل (c = ردیف->children; c != عدم; c = c->بعدی) {
 				/* Ignore cells to the left */
-				if (c->start_column + c->columns - 1 <
-				    cell->start_column)
-					continue;
+				إذا (c->شروع_ستونی + c->columns - 1 <
+				    cell->شروع_ستونی)
+					استمر;
 				/* Ignore cells to the right */
-				if (c->start_column > cell->start_column +
+				إذا (c->شروع_ستونی > cell->شروع_ستونی +
 				    cell->columns - 1)
-					continue;
+					استمر;
 
 				/* Flag that we've processed a cell */
 				processed = true;
@@ -274,15 +274,15 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
 							c->style);
 				b.color = css_computed_border_bottom_color(
 							c->style, &b.c);
-				css_computed_border_bottom_width(c->style,
-							&b.width, &b.unit);
-				b.width = css_unit_len2device_px(
+				css_computed_border_bottom_عرض(c->style,
+							&b.عرض, &b.unit);
+				b.عرض = css_unit_len2device_px(
 						c->style, unit_len_ctx,
-						b.width, b.unit);
+						b.عرض, b.unit);
 				b.unit = CSS_UNIT_PX;
-				b_src = BOX_TABLE_CELL;
+				b_src = BOX_جدول_CELL;
 
-				if (table_border_is_more_eyecatching(unit_len_ctx,
+				إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 								     a,
 								     *a_src,
 								     &b,
@@ -292,16 +292,16 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
 				}
 			}
 
-			if (processed == false) {
+			إذا (processed == false) {
 				/* There must be a preceding row */
-				assert(row->prev != NULL);
+				أكد(ردیف->prev != عدم);
 
-				row = row->prev;
+				ردیف = ردیف->prev;
 			}
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
 
@@ -318,62 +318,62 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static bool
-table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
-			     struct box *cell,
-			     struct box *group,
-			     struct border *a,
+ساكن bool
+جدول_cell_بالاترین_process_گروه(ثابت css_unit_ctx *unit_len_ctx,
+			     بنية box *cell,
+			     بنية box *گروه,
+			     بنية border *a,
 			     box_type *a_src)
 {
-	struct border b;
+	بنية border b;
 	box_type b_src;
 
 	/* Bottom border of group */
-	b.style = css_computed_border_bottom_style(group->style);
-	b.color = css_computed_border_bottom_color(group->style, &b.c);
-	css_computed_border_bottom_width(group->style, &b.width, &b.unit);
-	b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-			b.width, b.unit);
+	b.style = css_computed_border_bottom_style(گروه->style);
+	b.color = css_computed_border_bottom_color(گروه->style, &b.c);
+	css_computed_border_bottom_عرض(گروه->style, &b.عرض, &b.unit);
+	b.عرض = css_unit_len2device_px(گروه->style, unit_len_ctx,
+			b.عرض, b.unit);
 	b.unit = CSS_UNIT_PX;
-	b_src = BOX_TABLE_ROW_GROUP;
+	b_src = BOX_جدول_ردیف_گروه;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
 
-	if (group->last != NULL) {
+	إذا (گروه->آخرین != عدم) {
 		/* Process rows in group, starting with last */
-		struct box *row = group->last;
+		بنية box *ردیف = گروه->آخرین;
 
-		while (table_cell_top_process_row(unit_len_ctx, cell, row,
+		طالما (جدول_cell_بالاترین_process_ردیف(unit_len_ctx, cell, ردیف,
 						  a, a_src) == false) {
-			if (row->prev == NULL) {
-				return false;
-			} else {
-				row = row->prev;
+			إذا (ردیف->prev == عدم) {
+				أرجع false;
+			} وإلا {
+				ردیف = ردیف->prev;
 			}
 		}
-	} else {
+	} وإلا {
 		/* Group is empty, so consider its top border */
-		b.style = css_computed_border_top_style(group->style);
-		b.color = css_computed_border_top_color(group->style, &b.c);
-		css_computed_border_top_width(group->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_بالاترین_style(گروه->style);
+		b.color = css_computed_border_بالاترین_color(گروه->style, &b.c);
+		css_computed_border_بالاترین_عرض(گروه->style, &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(گروه->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_جدول_ردیف_گروه;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     a, *a_src, &b, b_src)) {
 			*a = b;
 			*a_src = b_src;
 		}
 
-		return false;
+		أرجع false;
 	}
 
-	return true;
+	أرجع true;
 }
 
 
@@ -383,118 +383,118 @@ table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+ساكن فراغ
+جدول_استفاده_شده_چپ_border_for_cell(ثابت css_unit_ctx *unit_len_ctx, بنية box *cell)
 {
-	struct border a, b;
+	بنية border a, b;
 	box_type a_src, b_src;
 
 	/** \todo Need column and column_group, too */
 
 	/* Initialise to computed left border for cell */
-	a.style = css_computed_border_left_style(cell->style);
-	a.color = css_computed_border_left_color(cell->style, &a.c);
-	css_computed_border_left_width(cell->style, &a.width, &a.unit);
-	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
-			a.width, a.unit);
+	a.style = css_computed_border_چپ_style(cell->style);
+	a.color = css_computed_border_چپ_color(cell->style, &a.c);
+	css_computed_border_چپ_عرض(cell->style, &a.عرض, &a.unit);
+	a.عرض = css_unit_len2device_px(cell->style, unit_len_ctx,
+			a.عرض, a.unit);
 	a.unit = CSS_UNIT_PX;
-	a_src = BOX_TABLE_CELL;
+	a_src = BOX_جدول_CELL;
 
-	if (cell->prev != NULL || cell->start_column != 0) {
+	إذا (cell->prev != عدم || cell->شروع_ستونی != 0) {
 		/* Cell to the left -- consider its right border */
-		struct box *prev = NULL;
+		بنية box *prev = عدم;
 
-		if (cell->prev == NULL) {
-			struct box *row;
+		إذا (cell->prev == عدم) {
+			بنية box *ردیف;
 
 			/* Spanned from a previous row in current row group */
-			for (row = cell->parent; row != NULL; row = row->prev) {
-				for (prev = row->children; prev != NULL;
-				     prev = prev->next) {
-					if (prev->start_column +
+			لكل (ردیف = cell->والد; ردیف != عدم; ردیف = ردیف->prev) {
+				لكل (prev = ردیف->children; prev != عدم;
+				     prev = prev->بعدی) {
+					إذا (prev->شروع_ستونی +
 					    prev->columns ==
-					    cell->start_column)
-						break;
+					    cell->شروع_ستونی)
+						اكسر;
 				}
 
-				if (prev != NULL)
-					break;
+				إذا (prev != عدم)
+					اكسر;
 			}
 
-			assert(prev != NULL);
-		} else {
+			أكد(prev != عدم);
+		} وإلا {
 			prev = cell->prev;
 		}
 
-		b.style = css_computed_border_right_style(prev->style);
-		b.color = css_computed_border_right_color(prev->style, &b.c);
-		css_computed_border_right_width(prev->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(prev->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_راست_style(prev->style);
+		b.color = css_computed_border_راست_color(prev->style, &b.c);
+		css_computed_border_راست_عرض(prev->style, &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(prev->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_CELL;
+		b_src = BOX_جدول_CELL;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
-	} else {
+	} وإلا {
 		/* First cell in row, so consider rows and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
-		unsigned int rows = cell->rows;
+		بنية box *ردیف = cell->والد;
+		بنية box *گروه = ردیف->والد;
+		بنية box *جدول = گروه->والد;
+		بیعلامت صحيح ردیفها = cell->ردیفها;
 
-		while (rows-- > 0 && row != NULL) {
+		طالما (ردیفها-- > 0 && ردیف != عدم) {
 			/* Spanned rows -- consider their left border */
-			b.style = css_computed_border_left_style(row->style);
-			b.color = css_computed_border_left_color(
-								 row->style, &b.c);
-			css_computed_border_left_width(
-						       row->style, &b.width, &b.unit);
-			b.width = css_unit_len2device_px(
-					row->style, unit_len_ctx,
-					b.width, b.unit);
+			b.style = css_computed_border_چپ_style(ردیف->style);
+			b.color = css_computed_border_چپ_color(
+								 ردیف->style, &b.c);
+			css_computed_border_چپ_عرض(
+						       ردیف->style, &b.عرض, &b.unit);
+			b.عرض = css_unit_len2device_px(
+					ردیف->style, unit_len_ctx,
+					b.عرض, b.unit);
 			b.unit = CSS_UNIT_PX;
-			b_src = BOX_TABLE_ROW;
+			b_src = BOX_جدول_ردیف;
 
-			if (table_border_is_more_eyecatching(unit_len_ctx,
+			إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 							     &a, a_src, &b, b_src)) {
 				a = b;
 				a_src = b_src;
 			}
 
-			row = row->next;
+			ردیف = ردیف->بعدی;
 		}
 
 		/** \todo can cells span row groups? */
 
 		/* Row group -- consider its left border */
-		b.style = css_computed_border_left_style(group->style);
-		b.color = css_computed_border_left_color(group->style, &b.c);
-		css_computed_border_left_width(group->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_چپ_style(گروه->style);
+		b.color = css_computed_border_چپ_color(گروه->style, &b.c);
+		css_computed_border_چپ_عرض(گروه->style, &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(گروه->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_جدول_ردیف_گروه;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* The table itself -- consider its left border */
-		b.style = css_computed_border_left_style(table->style);
-		b.color = css_computed_border_left_color(table->style, &b.c);
-		css_computed_border_left_width(table->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_چپ_style(جدول->style);
+		b.color = css_computed_border_چپ_color(جدول->style, &b.c);
+		css_computed_border_چپ_عرض(جدول->style, &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(جدول->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE;
+		b_src = BOX_جدول;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
@@ -502,10 +502,10 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 	}
 
 	/* a now contains the used left border for the cell */
-	cell->border[LEFT].style = a.style;
-	cell->border[LEFT].c = a.c;
-	cell->border[LEFT].width = FIXTOINT(css_unit_len2device_px(
-			cell->style, unit_len_ctx, a.width, a.unit));
+	cell->border[چپ_2].style = a.style;
+	cell->border[چپ_2].c = a.c;
+	cell->border[چپ_2].عرض = FIXTOINT(css_unit_len2device_px(
+			cell->style, unit_len_ctx, a.عرض, a.unit));
 }
 
 
@@ -515,98 +515,98 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+ساكن فراغ
+جدول_استفاده_شده_بالاترین_border_for_cell(ثابت css_unit_ctx *unit_len_ctx, بنية box *cell)
 {
-	struct border a, b;
+	بنية border a, b;
 	box_type a_src, b_src;
-	struct box *row = cell->parent;
-	bool process_group = false;
+	بنية box *ردیف = cell->والد;
+	bool process_گروه = false;
 
 	/* Initialise to computed top border for cell */
-	a.style = css_computed_border_top_style(cell->style);
-	css_computed_border_top_color(cell->style, &a.c);
-	css_computed_border_top_width(cell->style, &a.width, &a.unit);
-	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
-			a.width, a.unit);
+	a.style = css_computed_border_بالاترین_style(cell->style);
+	css_computed_border_بالاترین_color(cell->style, &a.c);
+	css_computed_border_بالاترین_عرض(cell->style, &a.عرض, &a.unit);
+	a.عرض = css_unit_len2device_px(cell->style, unit_len_ctx,
+			a.عرض, a.unit);
 	a.unit = CSS_UNIT_PX;
-	a_src = BOX_TABLE_CELL;
+	a_src = BOX_جدول_CELL;
 
 	/* Top border of row */
-	b.style = css_computed_border_top_style(row->style);
-	css_computed_border_top_color(row->style, &b.c);
-	css_computed_border_top_width(row->style, &b.width, &b.unit);
-	b.width = css_unit_len2device_px(row->style, unit_len_ctx,
-			b.width, b.unit);
+	b.style = css_computed_border_بالاترین_style(ردیف->style);
+	css_computed_border_بالاترین_color(ردیف->style, &b.c);
+	css_computed_border_بالاترین_عرض(ردیف->style, &b.عرض, &b.unit);
+	b.عرض = css_unit_len2device_px(ردیف->style, unit_len_ctx,
+			b.عرض, b.unit);
 	b.unit = CSS_UNIT_PX;
-	b_src = BOX_TABLE_ROW;
+	b_src = BOX_جدول_ردیف;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, &a, a_src, &b, b_src)) {
+	إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx, &a, a_src, &b, b_src)) {
 		a = b;
 		a_src = b_src;
 	}
 
-	if (row->prev != NULL) {
+	إذا (ردیف->prev != عدم) {
 		/* Consider row(s) above */
-		while (table_cell_top_process_row(unit_len_ctx, cell, row->prev,
+		طالما (جدول_cell_بالاترین_process_ردیف(unit_len_ctx, cell, ردیف->prev,
 						  &a, &a_src) == false) {
-			if (row->prev->prev == NULL) {
+			إذا (ردیف->prev->prev == عدم) {
 				/* Consider row group */
-				process_group = true;
-				break;
-			} else {
-				row = row->prev;
+				process_گروه = true;
+				اكسر;
+			} وإلا {
+				ردیف = ردیف->prev;
 			}
 		}
-	} else {
-		process_group = true;
+	} وإلا {
+		process_گروه = true;
 	}
 
-	if (process_group) {
-		struct box *group = row->parent;
+	إذا (process_گروه) {
+		بنية box *گروه = ردیف->والد;
 
 		/* Top border of row group */
-		b.style = css_computed_border_top_style(group->style);
-		b.color = css_computed_border_top_color(group->style, &b.c);
-		css_computed_border_top_width(group->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_بالاترین_style(گروه->style);
+		b.color = css_computed_border_بالاترین_color(گروه->style, &b.c);
+		css_computed_border_بالاترین_عرض(گروه->style, &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(گروه->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_جدول_ردیف_گروه;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
-		if (group->prev == NULL) {
+		إذا (گروه->prev == عدم) {
 			/* Top border of table */
-			table_cell_top_process_table(unit_len_ctx,
-						     group->parent, &a, &a_src);
-		} else {
+			جدول_cell_بالاترین_process_جدول(unit_len_ctx,
+						     گروه->والد, &a, &a_src);
+		} وإلا {
 			/* Process previous group(s) */
-			while (table_cell_top_process_group(unit_len_ctx,
-							    cell, group->prev,
+			طالما (جدول_cell_بالاترین_process_گروه(unit_len_ctx,
+							    cell, گروه->prev,
 							    &a, &a_src) == false) {
-				if (group->prev->prev == NULL) {
+				إذا (گروه->prev->prev == عدم) {
 					/* Top border of table */
-					table_cell_top_process_table(unit_len_ctx,
-								     group->parent,
+					جدول_cell_بالاترین_process_جدول(unit_len_ctx,
+								     گروه->والد,
 								     &a, &a_src);
-					break;
-				} else {
-					group = group->prev;
+					اكسر;
+				} وإلا {
+					گروه = گروه->prev;
 				}
 			}
 		}
 	}
 
 	/* a now contains the used top border for the cell */
-	cell->border[TOP].style = a.style;
-	cell->border[TOP].c = a.c;
-	cell->border[TOP].width = FIXTOINT(css_unit_len2device_px(
-			cell->style, unit_len_ctx, a.width, a.unit));
+	cell->border[بالاترین_2].style = a.style;
+	cell->border[بالاترین_2].c = a.c;
+	cell->border[بالاترین_2].عرض = FIXTOINT(css_unit_len2device_px(
+			cell->style, unit_len_ctx, a.عرض, a.unit));
 }
 
 /**
@@ -615,89 +615,89 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+ساكن فراغ
+جدول_استفاده_شده_راست_border_for_cell(ثابت css_unit_ctx *unit_len_ctx, بنية box *cell)
 {
-	struct border a, b;
+	بنية border a, b;
 	box_type a_src, b_src;
 
 	/** \todo Need column and column_group, too */
 
 	/* Initialise to computed right border for cell */
-	a.style = css_computed_border_right_style(cell->style);
-	css_computed_border_right_color(cell->style, &a.c);
-	css_computed_border_right_width(cell->style, &a.width, &a.unit);
-	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
-			a.width, a.unit);
+	a.style = css_computed_border_راست_style(cell->style);
+	css_computed_border_راست_color(cell->style, &a.c);
+	css_computed_border_راست_عرض(cell->style, &a.عرض, &a.unit);
+	a.عرض = css_unit_len2device_px(cell->style, unit_len_ctx,
+			a.عرض, a.unit);
 	a.unit = CSS_UNIT_PX;
-	a_src = BOX_TABLE_CELL;
+	a_src = BOX_جدول_CELL;
 
-	if (cell->next != NULL || cell->start_column + cell->columns !=
-	    cell->parent->parent->parent->columns) {
+	إذا (cell->بعدی != عدم || cell->شروع_ستونی + cell->columns !=
+	    cell->والد->والد->والد->columns) {
 		/* Cell is not at right edge of table -- no right border */
 		a.style = CSS_BORDER_STYLE_NONE;
-		a.width = 0;
+		a.عرض = 0;
 		a.unit = CSS_UNIT_PX;
-	} else {
+	} وإلا {
 		/* Last cell in row, so consider rows and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
-		unsigned int rows = cell->rows;
+		بنية box *ردیف = cell->والد;
+		بنية box *گروه = ردیف->والد;
+		بنية box *جدول = گروه->والد;
+		بیعلامت صحيح ردیفها = cell->ردیفها;
 
-		while (rows-- > 0 && row != NULL) {
+		طالما (ردیفها-- > 0 && ردیف != عدم) {
 			/* Spanned rows -- consider their right border */
-			b.style = css_computed_border_right_style(row->style);
-			b.color = css_computed_border_right_color(row->style,
+			b.style = css_computed_border_راست_style(ردیف->style);
+			b.color = css_computed_border_راست_color(ردیف->style,
 								  &b.c);
-			css_computed_border_right_width(row->style,
-							&b.width,
+			css_computed_border_راست_عرض(ردیف->style,
+							&b.عرض,
 							&b.unit);
-			b.width = css_unit_len2device_px(
-					row->style, unit_len_ctx,
-					b.width, b.unit);
+			b.عرض = css_unit_len2device_px(
+					ردیف->style, unit_len_ctx,
+					b.عرض, b.unit);
 			b.unit = CSS_UNIT_PX;
-			b_src = BOX_TABLE_ROW;
+			b_src = BOX_جدول_ردیف;
 
-			if (table_border_is_more_eyecatching(unit_len_ctx,
+			إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 							     &a, a_src,
 							     &b, b_src)) {
 				a = b;
 				a_src = b_src;
 			}
 
-			row = row->next;
+			ردیف = ردیف->بعدی;
 		}
 
 		/** \todo can cells span row groups? */
 
 		/* Row group -- consider its right border */
-		b.style = css_computed_border_right_style(group->style);
-		b.color = css_computed_border_right_color(group->style, &b.c);
-		css_computed_border_right_width(group->style,
-						&b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_راست_style(گروه->style);
+		b.color = css_computed_border_راست_color(گروه->style, &b.c);
+		css_computed_border_راست_عرض(گروه->style,
+						&b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(گروه->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_جدول_ردیف_گروه;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* The table itself -- consider its right border */
-		b.style = css_computed_border_right_style(table->style);
-		b.color = css_computed_border_right_color(table->style, &b.c);
-		css_computed_border_right_width(table->style,
-						&b.width, &b.unit);
-		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_راست_style(جدول->style);
+		b.color = css_computed_border_راست_color(جدول->style, &b.c);
+		css_computed_border_راست_عرض(جدول->style,
+						&b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(جدول->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE;
+		b_src = BOX_جدول;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src,
 						     &b, b_src)) {
 			a = b;
@@ -706,10 +706,10 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 	}
 
 	/* a now contains the used right border for the cell */
-	cell->border[RIGHT].style = a.style;
-	cell->border[RIGHT].c = a.c;
-	cell->border[RIGHT].width = FIXTOINT(css_unit_len2device_px(
-			cell->style, unit_len_ctx, a.width, a.unit));
+	cell->border[راست_2].style = a.style;
+	cell->border[راست_2].c = a.c;
+	cell->border[راست_2].عرض = FIXTOINT(css_unit_len2device_px(
+			cell->style, unit_len_ctx, a.عرض, a.unit));
 }
 
 
@@ -719,82 +719,82 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
-				  struct box *cell)
+ساكن فراغ
+جدول_استفاده_شده_bottom_border_for_cell(ثابت css_unit_ctx *unit_len_ctx,
+				  بنية box *cell)
 {
-	struct border a, b;
+	بنية border a, b;
 	box_type a_src, b_src;
-	struct box *row = cell->parent;
-	unsigned int rows = cell->rows;
+	بنية box *ردیف = cell->والد;
+	بیعلامت صحيح ردیفها = cell->ردیفها;
 
 	/* Initialise to computed bottom border for cell */
 	a.style = css_computed_border_bottom_style(cell->style);
 	css_computed_border_bottom_color(cell->style, &a.c);
-	css_computed_border_bottom_width(cell->style, &a.width, &a.unit);
-	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
-			a.width, a.unit);
+	css_computed_border_bottom_عرض(cell->style, &a.عرض, &a.unit);
+	a.عرض = css_unit_len2device_px(cell->style, unit_len_ctx,
+			a.عرض, a.unit);
 	a.unit = CSS_UNIT_PX;
-	a_src = BOX_TABLE_CELL;
+	a_src = BOX_جدول_CELL;
 
-	while (rows-- > 0 && row != NULL)
-		row = row->next;
+	طالما (ردیفها-- > 0 && ردیف != عدم)
+		ردیف = ردیف->بعدی;
 
 	/** \todo Can cells span row groups? */
 
-	if (row != NULL) {
+	إذا (ردیف != عدم) {
 		/* Cell is not at bottom edge of table -- no bottom border */
 		a.style = CSS_BORDER_STYLE_NONE;
-		a.width = 0;
+		a.عرض = 0;
 		a.unit = CSS_UNIT_PX;
-	} else {
+	} وإلا {
 		/* Cell at bottom of table, so consider row and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
+		بنية box *ردیف = cell->والد;
+		بنية box *گروه = ردیف->والد;
+		بنية box *جدول = گروه->والد;
 
 		/* Bottom border of row */
-		b.style = css_computed_border_bottom_style(row->style);
-		b.color = css_computed_border_bottom_color(row->style, &b.c);
-		css_computed_border_bottom_width(row->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(row->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_bottom_style(ردیف->style);
+		b.color = css_computed_border_bottom_color(ردیف->style, &b.c);
+		css_computed_border_bottom_عرض(ردیف->style, &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(ردیف->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW;
+		b_src = BOX_جدول_ردیف;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* Row group -- consider its bottom border */
-		b.style = css_computed_border_bottom_style(group->style);
-		b.color = css_computed_border_bottom_color(group->style, &b.c);
-		css_computed_border_bottom_width(group->style,
-						 &b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_bottom_style(گروه->style);
+		b.color = css_computed_border_bottom_color(گروه->style, &b.c);
+		css_computed_border_bottom_عرض(گروه->style,
+						 &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(گروه->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_جدول_ردیف_گروه;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* The table itself -- consider its bottom border */
-		b.style = css_computed_border_bottom_style(table->style);
-		b.color = css_computed_border_bottom_color(table->style, &b.c);
-		css_computed_border_bottom_width(table->style,
-						 &b.width, &b.unit);
-		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_bottom_style(جدول->style);
+		b.color = css_computed_border_bottom_color(جدول->style, &b.c);
+		css_computed_border_bottom_عرض(جدول->style,
+						 &b.عرض, &b.unit);
+		b.عرض = css_unit_len2device_px(جدول->style, unit_len_ctx,
+				b.عرض, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE;
+		b_src = BOX_جدول;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		إذا (جدول_border_is_بیشتر_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 		}
@@ -803,262 +803,262 @@ table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
 	/* a now contains the used bottom border for the cell */
 	cell->border[BOTTOM].style = a.style;
 	cell->border[BOTTOM].c = a.c;
-	cell->border[BOTTOM].width = FIXTOINT(css_unit_len2device_px(
-			cell->style, unit_len_ctx, a.width, a.unit));
+	cell->border[BOTTOM].عرض = FIXTOINT(css_unit_len2device_px(
+			cell->style, unit_len_ctx, a.عرض, a.unit));
 }
 
 
 /* exported interface documented in html/table.h */
 bool
-table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table)
+جدول_calculate_ستونی_types(ثابت css_unit_ctx *unit_len_ctx, بنية box *جدول)
 {
-	unsigned int i, j;
-	struct column *col;
-	struct box *row_group, *row, *cell;
+	بیعلامت صحيح i, j;
+	بنية ستونی *ستون;
+	بنية box *ردیف_گروه, *ردیف, *cell;
 
-	if (table->col)
+	إذا (جدول->ستون)
 		/* table->col already constructed, for example frameset table */
-		return true;
+		أرجع true;
 
-	table->col = col = talloc_array(table, struct column, table->columns);
-	if (!col)
-		return false;
+	جدول->ستون = ستون = talloc_array(جدول, بنية ستونی, جدول->columns);
+	إذا (!ستون)
+		أرجع false;
 
-	for (i = 0; i != table->columns; i++) {
-		col[i].type = COLUMN_WIDTH_UNKNOWN;
-		col[i].width = 0;
-		col[i].positioned = true;
+	لكل (i = 0; i != جدول->columns; i++) {
+		ستون[i].type = ستونی_عرض_UNKNOWN;
+		ستون[i].عرض = 0;
+		ستون[i].positioned = true;
 	}
 
 	/* 1st pass: cells with colspan 1 only */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-		for (row = row_group->children; row; row = row->next)
-			for (cell = row->children; cell; cell = cell->next) {
-				enum css_width_e type;
-				css_fixed value = 0;
+	لكل (ردیف_گروه = جدول->children; ردیف_گروه; ردیف_گروه =ردیف_گروه->بعدی)
+		لكل (ردیف = ردیف_گروه->children; ردیف; ردیف = ردیف->بعدی)
+			لكل (cell = ردیف->children; cell; cell = cell->بعدی) {
+				تعداد css_عرض_e type;
+				css_fixed مقدار = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				assert(cell->type == BOX_TABLE_CELL);
-				assert(cell->style);
+				أكد(cell->type == BOX_جدول_CELL);
+				أكد(cell->style);
 
-				if (cell->columns != 1)
-					continue;
-				i = cell->start_column;
+				إذا (cell->columns != 1)
+					استمر;
+				i = cell->شروع_ستونی;
 
-				if (css_computed_position(cell->style) !=
+				إذا (css_computed_position(cell->style) !=
 				    CSS_POSITION_ABSOLUTE &&
 				    css_computed_position(cell->style) !=
 				    CSS_POSITION_FIXED) {
-					col[i].positioned = false;
+					ستون[i].positioned = false;
 				}
 
-				type = css_computed_width(cell->style, &value, &unit);
+				type = css_computed_عرض(cell->style, &مقدار, &unit);
 
 				/* fixed width takes priority over any other width type */
-				if (col[i].type != COLUMN_WIDTH_FIXED &&
-				    type == CSS_WIDTH_SET && unit != CSS_UNIT_PCT) {
-					col[i].type = COLUMN_WIDTH_FIXED;
-					col[i].width = FIXTOINT(css_unit_len2device_px(
+				إذا (ستون[i].type != ستونی_عرض_FIXED &&
+				    type == CSS_عرض_مجموعه && unit != CSS_UNIT_PCT) {
+					ستون[i].type = ستونی_عرض_FIXED;
+					ستون[i].عرض = FIXTOINT(css_unit_len2device_px(
 							cell->style,
 							unit_len_ctx,
-							value, unit));
-					if (col[i].width < 0)
-						col[i].width = 0;
-					continue;
+							مقدار, unit));
+					إذا (ستون[i].عرض < 0)
+						ستون[i].عرض = 0;
+					استمر;
 				}
 
-				if (col[i].type != COLUMN_WIDTH_UNKNOWN)
-					continue;
+				إذا (ستون[i].type != ستونی_عرض_UNKNOWN)
+					استمر;
 
-				if (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT) {
-					col[i].type = COLUMN_WIDTH_PERCENT;
-					col[i].width = FIXTOINT(value);
-					if (col[i].width < 0)
-						col[i].width = 0;
-				} else if (type == CSS_WIDTH_AUTO) {
-					col[i].type = COLUMN_WIDTH_AUTO;
+				إذا (type == CSS_عرض_مجموعه && unit == CSS_UNIT_PCT) {
+					ستون[i].type = ستونی_عرض_PERCENT;
+					ستون[i].عرض = FIXTOINT(مقدار);
+					إذا (ستون[i].عرض < 0)
+						ستون[i].عرض = 0;
+				} وإلا إذا (type == CSS_عرض_AUTO) {
+					ستون[i].type = ستونی_عرض_AUTO;
 				}
 			}
 
 	/* 2nd pass: cells which span multiple columns */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-		for (row = row_group->children; row; row = row->next)
-			for (cell = row->children; cell; cell = cell->next) {
-				unsigned int fixed_columns = 0,
+	لكل (ردیف_گروه = جدول->children; ردیف_گروه; ردیف_گروه =ردیف_گروه->بعدی)
+		لكل (ردیف = ردیف_گروه->children; ردیف; ردیف = ردیف->بعدی)
+			لكل (cell = ردیف->children; cell; cell = cell->بعدی) {
+				بیعلامت صحيح fixed_columns = 0,
 					percent_columns = 0,
 					auto_columns = 0,
 					unknown_columns = 0;
-				int fixed_width = 0, percent_width = 0;
-				enum css_width_e type;
-				css_fixed value = 0;
+				صحيح fixed_عرض = 0, percent_عرض = 0;
+				تعداد css_عرض_e type;
+				css_fixed مقدار = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				if (cell->columns == 1)
-					continue;
-				i = cell->start_column;
+				إذا (cell->columns == 1)
+					استمر;
+				i = cell->شروع_ستونی;
 
-				for (j = i; j < i + cell->columns; j++) {
-					col[j].positioned = false;
+				لكل (j = i; j < i + cell->columns; j++) {
+					ستون[j].positioned = false;
 				}
 
 				/* count column types in spanned cells */
-				for (j = 0; j != cell->columns; j++) {
-					if (col[i + j].type == COLUMN_WIDTH_FIXED) {
-						fixed_width += col[i + j].width;
+				لكل (j = 0; j != cell->columns; j++) {
+					إذا (ستون[i + j].type == ستونی_عرض_FIXED) {
+						fixed_عرض += ستون[i + j].عرض;
 						fixed_columns++;
-					} else if (col[i + j].type == COLUMN_WIDTH_PERCENT) {
-						percent_width += col[i + j].width;
+					} وإلا إذا (ستون[i + j].type == ستونی_عرض_PERCENT) {
+						percent_عرض += ستون[i + j].عرض;
 						percent_columns++;
-					} else if (col[i + j].type == COLUMN_WIDTH_AUTO) {
+					} وإلا إذا (ستون[i + j].type == ستونی_عرض_AUTO) {
 						auto_columns++;
-					} else {
+					} وإلا {
 						unknown_columns++;
 					}
 				}
 
-				if (!unknown_columns)
-					continue;
+				إذا (!unknown_columns)
+					استمر;
 
-				type = css_computed_width(cell->style, &value, &unit);
+				type = css_computed_عرض(cell->style, &مقدار, &unit);
 
 				/* if cell is fixed width, and all spanned columns are fixed
 				 * or unknown width, split extra width among unknown columns */
-				if (type == CSS_WIDTH_SET && unit != CSS_UNIT_PCT &&
+				إذا (type == CSS_عرض_مجموعه && unit != CSS_UNIT_PCT &&
 				    fixed_columns + unknown_columns ==
 				    cell->columns) {
-					int width = (FIXTOFLT(css_unit_len2device_px(
+					صحيح عرض = (FIXTOFLT(css_unit_len2device_px(
 							cell->style,
 							unit_len_ctx,
-							value, unit)) -
-						fixed_width) / unknown_columns;
-					if (width < 0)
-						width = 0;
-					for (j = 0; j != cell->columns; j++) {
-						if (col[i + j].type == COLUMN_WIDTH_UNKNOWN) {
-							col[i + j].type = COLUMN_WIDTH_FIXED;
-							col[i + j].width = width;
+							مقدار, unit)) -
+						fixed_عرض) / unknown_columns;
+					إذا (عرض < 0)
+						عرض = 0;
+					لكل (j = 0; j != cell->columns; j++) {
+						إذا (ستون[i + j].type == ستونی_عرض_UNKNOWN) {
+							ستون[i + j].type = ستونی_عرض_FIXED;
+							ستون[i + j].عرض = عرض;
 						}
 					}
 				}
 
 				/* as above for percentage width */
-				if (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT &&
+				إذا (type == CSS_عرض_مجموعه && unit == CSS_UNIT_PCT &&
 				    percent_columns + unknown_columns ==
 				    cell->columns) {
-					int width = (FIXTOFLT(value) -
-						     percent_width) / unknown_columns;
-					if (width < 0)
-						width = 0;
-					for (j = 0; j != cell->columns; j++) {
-						if (col[i + j].type == COLUMN_WIDTH_UNKNOWN) {
-							col[i + j].type = COLUMN_WIDTH_PERCENT;
-							col[i + j].width = width;
+					صحيح عرض = (FIXTOFLT(مقدار) -
+						     percent_عرض) / unknown_columns;
+					إذا (عرض < 0)
+						عرض = 0;
+					لكل (j = 0; j != cell->columns; j++) {
+						إذا (ستون[i + j].type == ستونی_عرض_UNKNOWN) {
+							ستون[i + j].type = ستونی_عرض_PERCENT;
+							ستون[i + j].عرض = عرض;
 						}
 					}
 				}
 			}
 
 	/* use AUTO if no width type was specified */
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_UNKNOWN)
-			col[i].type = COLUMN_WIDTH_AUTO;
+	لكل (i = 0; i != جدول->columns; i++) {
+		إذا (ستون[i].type == ستونی_عرض_UNKNOWN)
+			ستون[i].type = ستونی_عرض_AUTO;
 	}
 
-#ifdef TABLE_DEBUG
-	for (i = 0; i != table->columns; i++)
+#اگر_تعریف_شده جدول_DEBUG
+	لكل (i = 0; i != جدول->columns; i++)
 		NSLOG(netsurf, INFO,
 		      "table %p, column %u: type %s, width %i",
-		      table,
+		      جدول,
 		      i,
-		      ((const char *[]){
+		      ((ثابت حرف *[]){
 					"UNKNOWN",
 					"FIXED",
 					"AUTO",
 					"PERCENT",
 					"RELATIVE",
-				      })[col[i].type],
-		      col[i].width);
-#endif
+				      })[ستون[i].type],
+		      ستون[i].عرض);
+#پایان_اگر
 
-	return true;
+	أرجع true;
 }
 
 
 /* exported interface documented in html/table.h */
-void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+فراغ جدول_استفاده_شده_border_for_cell(ثابت css_unit_ctx *unit_len_ctx, بنية box *cell)
 {
-	int side;
+	صحيح side;
 
-	assert(cell->type == BOX_TABLE_CELL);
+	أكد(cell->type == BOX_جدول_CELL);
 
-	if (css_computed_border_collapse(cell->style) ==
+	إذا (css_computed_border_collapse(cell->style) ==
 	    CSS_BORDER_COLLAPSE_SEPARATE) {
-		css_fixed width = 0;
+		css_fixed عرض = 0;
 		css_unit unit = CSS_UNIT_PX;
 
 		/* Left border */
-		cell->border[LEFT].style =
-			css_computed_border_left_style(cell->style);
-		css_computed_border_left_color(cell->style,
-					       &cell->border[LEFT].c);
-		css_computed_border_left_width(cell->style, &width, &unit);
-		cell->border[LEFT].width =
+		cell->border[چپ_2].style =
+			css_computed_border_چپ_style(cell->style);
+		css_computed_border_چپ_color(cell->style,
+					       &cell->border[چپ_2].c);
+		css_computed_border_چپ_عرض(cell->style, &عرض, &unit);
+		cell->border[چپ_2].عرض =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
-					width, unit));
+					عرض, unit));
 
 		/* Top border */
-		cell->border[TOP].style =
-			css_computed_border_top_style(cell->style);
-		css_computed_border_top_color(cell->style,
-					      &cell->border[TOP].c);
-		css_computed_border_top_width(cell->style, &width, &unit);
-		cell->border[TOP].width =
+		cell->border[بالاترین_2].style =
+			css_computed_border_بالاترین_style(cell->style);
+		css_computed_border_بالاترین_color(cell->style,
+					      &cell->border[بالاترین_2].c);
+		css_computed_border_بالاترین_عرض(cell->style, &عرض, &unit);
+		cell->border[بالاترین_2].عرض =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
-					width, unit));
+					عرض, unit));
 
 		/* Right border */
-		cell->border[RIGHT].style =
-			css_computed_border_right_style(cell->style);
-		css_computed_border_right_color(cell->style,
-						&cell->border[RIGHT].c);
-		css_computed_border_right_width(cell->style, &width, &unit);
-		cell->border[RIGHT].width =
+		cell->border[راست_2].style =
+			css_computed_border_راست_style(cell->style);
+		css_computed_border_راست_color(cell->style,
+						&cell->border[راست_2].c);
+		css_computed_border_راست_عرض(cell->style, &عرض, &unit);
+		cell->border[راست_2].عرض =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
-					width, unit));
+					عرض, unit));
 
 		/* Bottom border */
 		cell->border[BOTTOM].style =
 			css_computed_border_bottom_style(cell->style);
 		css_computed_border_bottom_color(cell->style,
 						 &cell->border[BOTTOM].c);
-		css_computed_border_bottom_width(cell->style, &width, &unit);
-		cell->border[BOTTOM].width =
+		css_computed_border_bottom_عرض(cell->style, &عرض, &unit);
+		cell->border[BOTTOM].عرض =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
-					width, unit));
-	} else {
+					عرض, unit));
+	} وإلا {
 		/* Left border */
-		table_used_left_border_for_cell(unit_len_ctx, cell);
+		جدول_استفاده_شده_چپ_border_for_cell(unit_len_ctx, cell);
 
 		/* Top border */
-		table_used_top_border_for_cell(unit_len_ctx, cell);
+		جدول_استفاده_شده_بالاترین_border_for_cell(unit_len_ctx, cell);
 
 		/* Right border */
-		table_used_right_border_for_cell(unit_len_ctx, cell);
+		جدول_استفاده_شده_راست_border_for_cell(unit_len_ctx, cell);
 
 		/* Bottom border */
-		table_used_bottom_border_for_cell(unit_len_ctx, cell);
+		جدول_استفاده_شده_bottom_border_for_cell(unit_len_ctx, cell);
 	}
 
 	/* Finally, ensure that any borders configured as
 	 * hidden or none have zero width. (c.f. layout_find_dimensions) */
-	for (side = 0; side != 4; side++) {
-		if (cell->border[side].style == CSS_BORDER_STYLE_HIDDEN ||
+	لكل (side = 0; side != 4; side++) {
+		إذا (cell->border[side].style == CSS_BORDER_STYLE_HIDDEN ||
 		    cell->border[side].style ==
 		    CSS_BORDER_STYLE_NONE)
-			cell->border[side].width = 0;
+			cell->border[side].عرض = 0;
 	}
 }

@@ -22,37 +22,37 @@
  * implementation of box tree inspection.
  */
 
-#include <stdio.h>
-#include <dom/dom.h>
+#ضمن <stdio.h>
+#ضمن <dom/dom.h>
 
-#include "utils/utils.h"
-#include "utils/nsurl.h"
-#include "utils/errors.h"
-#include "netsurf/types.h"
-#include "netsurf/content.h"
-#include "netsurf/mouse.h"
-#include "css/utils.h"
-#include "css/dump.h"
-#include "desktop/scrollbar.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/nsurl.h"
+#ضمن "utils/errors.h"
+#ضمن "netsurf/types.h"
+#ضمن "netsurf/content.h"
+#ضمن "netsurf/mouse.h"
+#ضمن "css/utils.h"
+#ضمن "css/dump.h"
+#ضمن "desktop/scrollbar.h"
 
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
+#ضمن "html/private.h"
+#ضمن "html/box.h"
+#ضمن "html/box_inspect.h"
 
 /**
  * Direction to move in a box-tree walk
  */
-enum box_walk_dir {
+تعداد box_walk_dir {
 		   BOX_WALK_CHILDREN,
-		   BOX_WALK_PARENT,
-		   BOX_WALK_NEXT_SIBLING,
+		   BOX_WALK_والد,
+		   BOX_WALK_بعدی_SIBLING,
 		   BOX_WALK_FLOAT_CHILDREN,
-		   BOX_WALK_NEXT_FLOAT_SIBLING,
+		   BOX_WALK_بعدی_FLOAT_SIBLING,
 		   BOX_WALK_FLOAT_CONTAINER
 };
 
-#define box_is_float(box) (box->type == BOX_FLOAT_LEFT ||	\
-			   box->type == BOX_FLOAT_RIGHT)
+#تعریف_کن box_is_float(box) (box->type == BOX_FLOAT_چپ ||	\
+			   box->type == BOX_FLOAT_راست)
 
 /**
  * Determine if a point lies within a box.
@@ -71,60 +71,60 @@ enum box_walk_dir {
  *
  * This is a helper function for box_at_point().
  */
-static bool
-box_contains_point(const css_unit_ctx *unit_len_ctx,
-		   const struct box *box,
-		   int x,
-		   int y,
+ساكن bool
+box_شامل_است_نقطه(ثابت css_unit_ctx *unit_len_ctx,
+		   ثابت بنية box *box,
+		   صحيح x,
+		   صحيح y,
 		   bool *physically)
 {
 	css_computed_clip_rect css_rect;
 
-	if (box->style != NULL &&
+	إذا (box->style != عدم &&
 	    css_computed_position(box->style) == CSS_POSITION_ABSOLUTE &&
 	    css_computed_clip(box->style, &css_rect) == CSS_CLIP_RECT) {
 		/* We have an absolutly positioned box with a clip rect */
-		struct rect r = {
-				 .x0 = box->border[LEFT].width,
-				 .y0 = box->border[TOP].width,
-				 .x1 = box->padding[LEFT] + box->width +
-				 box->border[RIGHT].width +
-				 box->padding[RIGHT],
-				 .y1 = box->padding[TOP] + box->height +
-				 box->border[BOTTOM].width +
+		بنية rect r = {
+				 .x0 = box->border[چپ_2].عرض,
+				 .y0 = box->border[بالاترین_2].عرض,
+				 .x1 = box->padding[چپ_2] + box->عرض +
+				 box->border[راست_2].عرض +
+				 box->padding[راست_2],
+				 .y1 = box->padding[بالاترین_2] + box->ارتفاع +
+				 box->border[BOTTOM].عرض +
 				 box->padding[BOTTOM]
 		};
-		if (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
+		إذا (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
 			*physically = true;
-		} else {
+		} وإلا {
 			*physically = false;
 		}
 
 		/* Adjust rect to css clip region */
-		if (css_rect.left_auto == false) {
+		إذا (css_rect.چپ_auto == false) {
 			r.x0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.left,
+						css_rect.چپ,
 						css_rect.lunit));
 		}
-		if (css_rect.top_auto == false) {
+		إذا (css_rect.بالاترین_auto == false) {
 			r.y0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.top,
+						css_rect.بالاترین,
 						css_rect.tunit));
 		}
-		if (css_rect.right_auto == false) {
-			r.x1 = box->border[LEFT].width +
+		إذا (css_rect.راست_auto == false) {
+			r.x1 = box->border[چپ_2].عرض +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.right,
+						css_rect.راست,
 						css_rect.runit));
 		}
-		if (css_rect.bottom_auto == false) {
-			r.y1 = box->border[TOP].width +
+		إذا (css_rect.bottom_auto == false) {
+			r.y1 = box->border[بالاترین_2].عرض +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
@@ -133,57 +133,57 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 		}
 
 		/* Test if point is in clipped box */
-		if (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
+		إذا (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
 			/* inside clip area */
-			return true;
+			أرجع true;
 		}
 
 		/* Not inside clip area */
-		return false;
+		أرجع false;
 	}
-	if (x >= -box->border[LEFT].width &&
-	    x < box->padding[LEFT] + box->width +
-	    box->padding[RIGHT] + box->border[RIGHT].width &&
-	    y >= -box->border[TOP].width &&
-	    y < box->padding[TOP] + box->height +
-	    box->padding[BOTTOM] + box->border[BOTTOM].width) {
+	إذا (x >= -box->border[چپ_2].عرض &&
+	    x < box->padding[چپ_2] + box->عرض +
+	    box->padding[راست_2] + box->border[راست_2].عرض &&
+	    y >= -box->border[بالاترین_2].عرض &&
+	    y < box->padding[بالاترین_2] + box->ارتفاع +
+	    box->padding[BOTTOM] + box->border[BOTTOM].عرض) {
 		*physically = true;
-		return true;
+		أرجع true;
 	}
-	if (box->list_marker && box->list_marker->x - box->x <= x +
-	    box->list_marker->border[LEFT].width &&
+	إذا (box->list_marker && box->list_marker->x - box->x <= x +
+	    box->list_marker->border[چپ_2].عرض &&
 	    x < box->list_marker->x - box->x +
-	    box->list_marker->padding[LEFT] +
-	    box->list_marker->width +
-	    box->list_marker->border[RIGHT].width +
-	    box->list_marker->padding[RIGHT] &&
+	    box->list_marker->padding[چپ_2] +
+	    box->list_marker->عرض +
+	    box->list_marker->border[راست_2].عرض +
+	    box->list_marker->padding[راست_2] &&
 	    box->list_marker->y - box->y <= y +
-	    box->list_marker->border[TOP].width &&
+	    box->list_marker->border[بالاترین_2].عرض &&
 	    y < box->list_marker->y - box->y +
-	    box->list_marker->padding[TOP] +
-	    box->list_marker->height +
-	    box->list_marker->border[BOTTOM].width +
+	    box->list_marker->padding[بالاترین_2] +
+	    box->list_marker->ارتفاع +
+	    box->list_marker->border[BOTTOM].عرض +
 	    box->list_marker->padding[BOTTOM]) {
 		*physically = true;
-		return true;
+		أرجع true;
 	}
-	if ((box->style && css_computed_overflow_x(box->style) ==
-	     CSS_OVERFLOW_VISIBLE) || !box->style) {
-		if (box->descendant_x0 <= x &&
+	إذا ((box->style && css_computed_سرریز_x(box->style) ==
+	     CSS_سرریز_VISIBLE) || !box->style) {
+		إذا (box->descendant_x0 <= x &&
 		    x < box->descendant_x1) {
 			*physically = false;
-			return true;
+			أرجع true;
 		}
 	}
-	if ((box->style && css_computed_overflow_y(box->style) ==
-	     CSS_OVERFLOW_VISIBLE) || !box->style) {
-		if (box->descendant_y0 <= y &&
+	إذا ((box->style && css_computed_سرریز_y(box->style) ==
+	     CSS_سرریز_VISIBLE) || !box->style) {
+		إذا (box->descendant_y0 <= y &&
 		    y < box->descendant_y1) {
 			*physically = false;
-			return true;
+			أرجع true;
 		}
 	}
-	return false;
+	أرجع false;
 }
 
 
@@ -197,74 +197,74 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
  *
  * If no box can be found in given direction, NULL is returned.
  */
-static inline struct box *
-box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
+ساكن مضمن بنية box *
+box_move_xy(بنية box *b, تعداد box_walk_dir dir, صحيح *x, صحيح *y)
 {
-	struct box *rb = NULL;
+	بنية box *rb = عدم;
 
-	switch (dir) {
-	case BOX_WALK_CHILDREN:
+	بدل (dir) {
+	حالة BOX_WALK_CHILDREN:
 		b = b->children;
-		if (b == NULL)
-			break;
+		إذا (b == عدم)
+			اكسر;
 		*x += b->x;
 		*y += b->y;
-		if (!box_is_float(b)) {
+		إذا (!box_is_float(b)) {
 			rb = b;
-			break;
+			اكسر;
 		}
 		fallthrough;
 
-	case BOX_WALK_NEXT_SIBLING:
-		do {
+	حالة BOX_WALK_بعدی_SIBLING:
+		افعل {
 			*x -= b->x;
 			*y -= b->y;
-			b = b->next;
-			if (b == NULL)
-				break;
+			b = b->بعدی;
+			إذا (b == عدم)
+				اكسر;
 			*x += b->x;
 			*y += b->y;
-		} while (box_is_float(b));
+		} طالما (box_is_float(b));
 		rb = b;
-		break;
+		اكسر;
 
-	case BOX_WALK_PARENT:
+	حالة BOX_WALK_والد:
 		*x -= b->x;
 		*y -= b->y;
-		rb = b->parent;
-		break;
+		rb = b->والد;
+		اكسر;
 
-	case BOX_WALK_FLOAT_CHILDREN:
+	حالة BOX_WALK_FLOAT_CHILDREN:
 		b = b->float_children;
-		if (b == NULL)
-			break;
+		إذا (b == عدم)
+			اكسر;
 		*x += b->x;
 		*y += b->y;
 		rb = b;
-		break;
+		اكسر;
 
-	case BOX_WALK_NEXT_FLOAT_SIBLING:
+	حالة BOX_WALK_بعدی_FLOAT_SIBLING:
 		*x -= b->x;
 		*y -= b->y;
-		b = b->next_float;
-		if (b == NULL)
-			break;
+		b = b->بعدی_float;
+		إذا (b == عدم)
+			اكسر;
 		*x += b->x;
 		*y += b->y;
 		rb = b;
-		break;
+		اكسر;
 
-	case BOX_WALK_FLOAT_CONTAINER:
+	حالة BOX_WALK_FLOAT_CONTAINER:
 		*x -= b->x;
 		*y -= b->y;
 		rb = b->float_container;
-		break;
+		اكسر;
 
-	default:
-		assert(0 && "Bad box walk type.");
+	افتراضي:
+		أكد(0 && "Bad box walk type.");
 	}
 
-	return rb;
+	أرجع rb;
 }
 
 
@@ -279,94 +279,94 @@ box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
  * This walks to a boxes float children before its children.  When walking
  * children, floating boxes are skipped.
  */
-static inline struct box *
-box_next_xy(struct box *b, int *x, int *y, bool skip_children)
+ساكن مضمن بنية box *
+box_بعدی_xy(بنية box *b, صحيح *x, صحيح *y, bool skip_children)
 {
-	struct box *n;
-	int tx, ty;
+	بنية box *n;
+	صحيح tx, ty;
 
-	assert(b != NULL);
+	أكد(b != عدم);
 
-	if (skip_children) {
+	إذا (skip_children) {
 		/* Caller is not interested in any kind of children */
-		goto skip_children;
+		اذهب skip_children;
 	}
 
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_FLOAT_CHILDREN, &tx, &ty);
-	if (n) {
+	إذا (n) {
 		/* Next node is float child */
 		*x = tx;
 		*y = ty;
-		return n;
+		أرجع n;
 	}
- done_float_children:
+ انجامشده_float_children:
 
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_CHILDREN, &tx, &ty);
-	if (n) {
+	إذا (n) {
 		/* Next node is child */
 		*x = tx;
 		*y = ty;
-		return n;
+		أرجع n;
 	}
 
  skip_children:
 	tx = *x; ty = *y;
-	n = box_move_xy(b, BOX_WALK_NEXT_FLOAT_SIBLING, &tx, &ty);
-	if (n) {
+	n = box_move_xy(b, BOX_WALK_بعدی_FLOAT_SIBLING, &tx, &ty);
+	إذا (n) {
 		/* Go to next float sibling */
 		*x = tx;
 		*y = ty;
-		return n;
+		أرجع n;
 	}
 
-	if (box_is_float(b)) {
+	إذا (box_is_float(b)) {
 		/* Done floats, but the float container may have children,
 		 * or siblings, or ansestors with siblings.  Change to
 		 * float container and move past handling its float children.
 		 */
 		b = box_move_xy(b, BOX_WALK_FLOAT_CONTAINER, x, y);
-		goto done_float_children;
+		اذهب انجامشده_float_children;
 	}
 
 	/* Go to next sibling, or nearest ancestor with next sibling. */
-	while (b) {
-		while (!b->next && b->parent) {
-			b = box_move_xy(b, BOX_WALK_PARENT, x, y);
-			if (box_is_float(b)) {
+	طالما (b) {
+		طالما (!b->بعدی && b->والد) {
+			b = box_move_xy(b, BOX_WALK_والد, x, y);
+			إذا (box_is_float(b)) {
 				/* Go on to next float, if there is one */
-				goto skip_children;
+				اذهب skip_children;
 			}
 		}
-		if (!b->next) {
+		إذا (!b->بعدی) {
 			/* No more boxes */
-			return NULL;
+			أرجع عدم;
 		}
 
 		tx = *x; ty = *y;
-		n = box_move_xy(b, BOX_WALK_NEXT_SIBLING, &tx, &ty);
-		if (n) {
+		n = box_move_xy(b, BOX_WALK_بعدی_SIBLING, &tx, &ty);
+		إذا (n) {
 			/* Go to non-float (ancestor) sibling */
 			*x = tx;
 			*y = ty;
-			return n;
+			أرجع n;
 
-		} else if (b->parent) {
-			b = box_move_xy(b, BOX_WALK_PARENT, x, y);
-			if (box_is_float(b)) {
+		} وإلا إذا (b->والد) {
+			b = box_move_xy(b, BOX_WALK_والد, x, y);
+			إذا (box_is_float(b)) {
 				/* Go on to next float, if there is one */
-				goto skip_children;
+				اذهب skip_children;
 			}
 
-		} else {
+		} وإلا {
 			/* No more boxes */
-			return NULL;
+			أرجع عدم;
 		}
 	}
 
-	assert(b != NULL);
-	return NULL;
+	أكد(b != عدم);
+	أرجع عدم;
 }
 
 
@@ -392,54 +392,54 @@ box_next_xy(struct box *b, int *x, int *y, bool skip_children)
  *		    updated if box is nearer than existing nearest
  * \return true if mouse point is inside box
  */
-static bool
-box_nearer_text_box(struct box *box,
-		    int bx, int by,
-		    int x, int y,
-		    int dir,
-		    struct box **nearest,
-		    int *tx, int *ty,
-		    int *nr_xd, int *nr_yd)
+ساكن bool
+box_nearer_متن_box(بنية box *box,
+		    صحيح bx, صحيح by,
+		    صحيح x, صحيح y,
+		    صحيح dir,
+		    بنية box **نزدیکترین,
+		    صحيح *tx, صحيح *ty,
+		    صحيح *nr_xd, صحيح *nr_yd)
 {
-	int w = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	int h = box->padding[TOP] + box->height + box->padding[BOTTOM];
-	int y1 = by + h;
-	int x1 = bx + w;
-	int yd = INT_MAX;
-	int xd = INT_MAX;
+	صحيح w = box->padding[چپ_2] + box->عرض + box->padding[راست_2];
+	صحيح h = box->padding[بالاترین_2] + box->ارتفاع + box->padding[BOTTOM];
+	صحيح y1 = by + h;
+	صحيح x1 = bx + w;
+	صحيح yd = بیشترین_صحیح;
+	صحيح xd = بیشترین_صحیح;
 
-	if (x >= bx && x1 > x && y >= by && y1 > y) {
-		*nearest = box;
+	إذا (x >= bx && x1 > x && y >= by && y1 > y) {
+		*نزدیکترین = box;
 		*tx = bx;
 		*ty = by;
-		return true;
+		أرجع true;
 	}
 
-	if (box->parent->list_marker != box) {
-		if (dir < 0) {
+	إذا (box->والد->list_marker != box) {
+		إذا (dir < 0) {
 			/* consider only those children (partly) above-left */
-			if (by <= y && bx < x) {
+			إذا (by <= y && bx < x) {
 				yd = y <= y1 ? 0 : y - y1;
 				xd = x <= x1 ? 0 : x - x1;
 			}
-		} else {
+		} وإلا {
 			/* consider only those children (partly) below-right */
-			if (y1 > y && x1 > x) {
+			إذا (y1 > y && x1 > x) {
 				yd = y > by ? 0 : by - y;
 				xd = x > bx ? 0 : bx - x;
 			}
 		}
 
 		/* give y displacement precedence over x */
-		if (yd < *nr_yd || (yd == *nr_yd && xd <= *nr_xd)) {
+		إذا (yd < *nr_yd || (yd == *nr_yd && xd <= *nr_xd)) {
 			*nr_yd = yd;
 			*nr_xd = xd;
-			*nearest = box;
+			*نزدیکترین = box;
 			*tx = bx;
 			*ty = by;
 		}
 	}
-	return false;
+	أرجع false;
 }
 
 
@@ -468,425 +468,425 @@ box_nearer_text_box(struct box *box,
  *		    updated if a descendant of box is nearer than old nearest
  * \return true if mouse point is inside text_box
  */
-static bool
-box_nearest_text_box(struct box *box,
-		     int bx, int by,
-		     int fx, int fy,
-		     int x, int y,
-		     int dir,
-		     struct box **nearest,
-		     int *tx, int *ty,
-		     int *nr_xd, int *nr_yd)
+ساكن bool
+box_نزدیکترین_متن_box(بنية box *box,
+		     صحيح bx, صحيح by,
+		     صحيح fx, صحيح fy,
+		     صحيح x, صحيح y,
+		     صحيح dir,
+		     بنية box **نزدیکترین,
+		     صحيح *tx, صحيح *ty,
+		     صحيح *nr_xd, صحيح *nr_yd)
 {
-	struct box *child = box->children;
-	int c_bx, c_by;
-	int c_fx, c_fy;
-	bool in_box = false;
+	بنية box *فرزند = box->children;
+	صحيح c_bx, c_by;
+	صحيح c_fx, c_fy;
+	bool درون_box = false;
 
-	if (*nearest == NULL) {
-		*nr_xd = INT_MAX / 2; /* displacement of 'nearest so far' */
-		*nr_yd = INT_MAX / 2;
+	إذا (*نزدیکترین == عدم) {
+		*nr_xd = بیشترین_صحیح / 2; /* displacement of 'nearest so far' */
+		*nr_yd = بیشترین_صحیح / 2;
 	}
-	if (box->type == BOX_INLINE_CONTAINER) {
-		int bw = box->padding[LEFT] + box->width + box->padding[RIGHT];
-		int bh = box->padding[TOP] + box->height + box->padding[BOTTOM];
-		int b_y1 = by + bh;
-		int b_x1 = bx + bw;
-		if (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
-			in_box = true;
+	إذا (box->type == BOX_INLINE_CONTAINER) {
+		صحيح bw = box->padding[چپ_2] + box->عرض + box->padding[راست_2];
+		صحيح bh = box->padding[بالاترین_2] + box->ارتفاع + box->padding[BOTTOM];
+		صحيح b_y1 = by + bh;
+		صحيح b_x1 = bx + bw;
+		إذا (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
+			درون_box = true;
 		}
 	}
 
-	while (child) {
-		if (child->type == BOX_FLOAT_LEFT ||
-		    child->type == BOX_FLOAT_RIGHT) {
-			c_bx = fx + child->x -
-				scrollbar_get_offset(child->scroll_x);
-			c_by = fy + child->y -
-				scrollbar_get_offset(child->scroll_y);
-		} else {
-			c_bx = bx + child->x -
-				scrollbar_get_offset(child->scroll_x);
-			c_by = by + child->y -
-				scrollbar_get_offset(child->scroll_y);
+	طالما (فرزند) {
+		إذا (فرزند->type == BOX_FLOAT_چپ ||
+		    فرزند->type == BOX_FLOAT_راست) {
+			c_bx = fx + فرزند->x -
+				scrollbar_get_جابه_جایی(فرزند->scroll_x);
+			c_by = fy + فرزند->y -
+				scrollbar_get_جابه_جایی(فرزند->scroll_y);
+		} وإلا {
+			c_bx = bx + فرزند->x -
+				scrollbar_get_جابه_جایی(فرزند->scroll_x);
+			c_by = by + فرزند->y -
+				scrollbar_get_جابه_جایی(فرزند->scroll_y);
 		}
-		if (child->float_children) {
+		إذا (فرزند->float_children) {
 			c_fx = c_bx;
 			c_fy = c_by;
-		} else {
+		} وإلا {
 			c_fx = fx;
 			c_fy = fy;
 		}
-		if (in_box && child->text && !child->object) {
-			if (box_nearer_text_box(child,
-						c_bx, c_by, x, y, dir, nearest,
+		إذا (درون_box && فرزند->متن && !فرزند->object) {
+			إذا (box_nearer_متن_box(فرزند,
+						c_bx, c_by, x, y, dir, نزدیکترین,
 						tx, ty, nr_xd, nr_yd))
-				return true;
-		} else {
-			if (child->list_marker) {
-				if (box_nearer_text_box(
-						child->list_marker,
-						c_bx + child->list_marker->x,
-						c_by + child->list_marker->y,
-						x, y, dir, nearest,
+				أرجع true;
+		} وإلا {
+			إذا (فرزند->list_marker) {
+				إذا (box_nearer_متن_box(
+						فرزند->list_marker,
+						c_bx + فرزند->list_marker->x,
+						c_by + فرزند->list_marker->y,
+						x, y, dir, نزدیکترین,
 						tx, ty, nr_xd, nr_yd))
-					return true;
+					أرجع true;
 			}
-			if (box_nearest_text_box(child, c_bx, c_by,
+			إذا (box_نزدیکترین_متن_box(فرزند, c_bx, c_by,
 						 c_fx, c_fy,
-						 x, y, dir, nearest, tx, ty,
+						 x, y, dir, نزدیکترین, tx, ty,
 						 nr_xd, nr_yd))
-				return true;
+				أرجع true;
 		}
-		child = child->next;
+		فرزند = فرزند->بعدی;
 	}
 
-	return false;
+	أرجع false;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_coords(struct box *box, int *x, int *y)
+فراغ box_coords(بنية box *box, صحيح *x, صحيح *y)
 {
 	*x = box->x;
 	*y = box->y;
-	while (box->parent) {
-		if (box_is_float(box)) {
-			assert(box->float_container);
+	طالما (box->والد) {
+		إذا (box_is_float(box)) {
+			أكد(box->float_container);
 			box = box->float_container;
-		} else {
-			box = box->parent;
+		} وإلا {
+			box = box->والد;
 		}
-		*x += box->x - scrollbar_get_offset(box->scroll_x);
-		*y += box->y - scrollbar_get_offset(box->scroll_y);
+		*x += box->x - scrollbar_get_جابه_جایی(box->scroll_x);
+		*y += box->y - scrollbar_get_جابه_جایی(box->scroll_y);
 	}
 }
 
 
 /* Exported function documented in html/box.h */
-void box_bounds(struct box *box, struct rect *r)
+فراغ box_bounds(بنية box *box, بنية rect *r)
 {
-	int width, height;
+	صحيح عرض, ارتفاع;
 
 	box_coords(box, &r->x0, &r->y0);
 
-	width = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	height = box->padding[TOP] + box->height + box->padding[BOTTOM];
+	عرض = box->padding[چپ_2] + box->عرض + box->padding[راست_2];
+	ارتفاع = box->padding[بالاترین_2] + box->ارتفاع + box->padding[BOTTOM];
 
-	r->x1 = r->x0 + width;
-	r->y1 = r->y0 + height;
+	r->x1 = r->x0 + عرض;
+	r->y1 = r->y0 + ارتفاع;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
-box_at_point(const css_unit_ctx *unit_len_ctx,
-	     struct box *box,
-	     const int x, const int y,
-	     int *box_x, int *box_y)
+بنية box *
+box_at_نقطه(ثابت css_unit_ctx *unit_len_ctx,
+	     بنية box *box,
+	     ثابت صحيح x, ثابت صحيح y,
+	     صحيح *box_x, صحيح *box_y)
 {
 	bool skip_children;
 	bool physically;
 
-	assert(box);
+	أكد(box);
 
 	skip_children = false;
-	while ((box = box_next_xy(box, box_x, box_y, skip_children))) {
-		if (box_contains_point(unit_len_ctx, box, x - *box_x, y - *box_y,
+	طالما ((box = box_بعدی_xy(box, box_x, box_y, skip_children))) {
+		إذا (box_شامل_است_نقطه(unit_len_ctx, box, x - *box_x, y - *box_y,
 				       &physically)) {
-			*box_x -= scrollbar_get_offset(box->scroll_x);
-			*box_y -= scrollbar_get_offset(box->scroll_y);
+			*box_x -= scrollbar_get_جابه_جایی(box->scroll_x);
+			*box_y -= scrollbar_get_جابه_جایی(box->scroll_y);
 
-			if (physically)
-				return box;
+			إذا (physically)
+				أرجع box;
 
 			skip_children = false;
-		} else {
+		} وإلا {
 			skip_children = true;
 		}
 	}
 
-	return NULL;
+	أرجع عدم;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *box_find_by_id(struct box *box, lwc_string *id)
+بنية box *box_پیدا_کن_by_id(بنية box *box, lwc_string *id)
 {
-	struct box *a, *b;
+	بنية box *a, *b;
 	bool m;
 
-	if (box->id != NULL &&
+	إذا (box->id != عدم &&
 	    lwc_string_isequal(id, box->id, &m) == lwc_error_ok &&
 	    m == true) {
-		return box;
+		أرجع box;
 	}
 
-	for (a = box->children; a; a = a->next) {
-		if ((b = box_find_by_id(a, id)) != NULL) {
-			return b;
+	لكل (a = box->children; a; a = a->بعدی) {
+		إذا ((b = box_پیدا_کن_by_id(a, id)) != عدم) {
+			أرجع b;
 		}
 	}
 
-	return NULL;
+	أرجع عدم;
 }
 
 
 /* Exported function documented in html/box.h */
-bool box_visible(struct box *box)
+bool box_visible(بنية box *box)
 {
 	/* visibility: hidden */
-	if (box->style &&
+	إذا (box->style &&
 	    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
-		return false;
+		أرجع false;
 	}
 
-	return true;
+	أرجع true;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
+فراغ box_dump(FILE *جریان, بنية box *box, بیعلامت صحيح عمق, bool style)
 {
-	unsigned int i;
-	struct box *c, *prev;
+	بیعلامت صحيح i;
+	بنية box *c, *prev;
 
-	for (i = 0; i != depth; i++) {
-		fprintf(stream, "  ");
+	لكل (i = 0; i != عمق; i++) {
+		fprintf(جریان, "  ");
 	}
 
-	fprintf(stream, "%p ", box);
-	fprintf(stream, "x%i y%i w%i h%i ",
-		box->x, box->y, box->width, box->height);
-	if (box->max_width != UNKNOWN_MAX_WIDTH) {
-		fprintf(stream, "min%i max%i ", box->min_width, box->max_width);
+	fprintf(جریان, "%p ", box);
+	fprintf(جریان, "x%i y%i w%i h%i ",
+		box->x, box->y, box->عرض, box->ارتفاع);
+	إذا (box->max_عرض != UNKNOWN_MAX_عرض) {
+		fprintf(جریان, "min%i max%i ", box->min_عرض, box->max_عرض);
 	}
-	fprintf(stream, "desc(%i %i %i %i) ",
+	fprintf(جریان, "desc(%i %i %i %i) ",
 		box->descendant_x0, box->descendant_y0,
 		box->descendant_x1, box->descendant_y1);
 
-	fprintf(stream, "m(%i %i %i %i) ",
-		box->margin[TOP], box->margin[LEFT],
-		box->margin[BOTTOM], box->margin[RIGHT]);
+	fprintf(جریان, "m(%i %i %i %i) ",
+		box->margin[بالاترین_2], box->margin[چپ_2],
+		box->margin[BOTTOM], box->margin[راست_2]);
 
-	switch (box->type) {
-	case BOX_BLOCK:
-		fprintf(stream, "BLOCK ");
-		break;
+	بدل (box->type) {
+	حالة BOX_بلوک:
+		fprintf(جریان, "BLOCK ");
+		اكسر;
 
-	case BOX_INLINE_CONTAINER:
-		fprintf(stream, "INLINE_CONTAINER ");
-		break;
+	حالة BOX_INLINE_CONTAINER:
+		fprintf(جریان, "INLINE_CONTAINER ");
+		اكسر;
 
-	case BOX_INLINE:
-		fprintf(stream, "INLINE ");
-		break;
+	حالة BOX_INLINE:
+		fprintf(جریان, "INLINE ");
+		اكسر;
 
-	case BOX_INLINE_END:
-		fprintf(stream, "INLINE_END ");
-		break;
+	حالة BOX_INLINE_انتها:
+		fprintf(جریان, "INLINE_END ");
+		اكسر;
 
-	case BOX_INLINE_BLOCK:
-		fprintf(stream, "INLINE_BLOCK ");
-		break;
+	حالة BOX_INLINE_بلوک:
+		fprintf(جریان, "INLINE_BLOCK ");
+		اكسر;
 
-	case BOX_TABLE:
-		fprintf(stream, "TABLE [columns %i] ", box->columns);
-		break;
+	حالة BOX_جدول:
+		fprintf(جریان, "TABLE [columns %i] ", box->columns);
+		اكسر;
 
-	case BOX_TABLE_ROW:
-		fprintf(stream, "TABLE_ROW ");
-		break;
+	حالة BOX_جدول_ردیف:
+		fprintf(جریان, "TABLE_ROW ");
+		اكسر;
 
-	case BOX_TABLE_CELL:
-		fprintf(stream, "TABLE_CELL [columns %i, start %i, rows %i] ",
+	حالة BOX_جدول_CELL:
+		fprintf(جریان, "TABLE_CELL [columns %i, start %i, rows %i] ",
 			box->columns,
-			box->start_column,
-			box->rows);
-		break;
+			box->شروع_ستونی,
+			box->ردیفها);
+		اكسر;
 
-	case BOX_TABLE_ROW_GROUP:
-		fprintf(stream, "TABLE_ROW_GROUP ");
-		break;
+	حالة BOX_جدول_ردیف_گروه:
+		fprintf(جریان, "TABLE_ROW_GROUP ");
+		اكسر;
 
-	case BOX_FLOAT_LEFT:
-		fprintf(stream, "FLOAT_LEFT ");
-		break;
+	حالة BOX_FLOAT_چپ:
+		fprintf(جریان, "FLOAT_LEFT ");
+		اكسر;
 
-	case BOX_FLOAT_RIGHT:
-		fprintf(stream, "FLOAT_RIGHT ");
-		break;
+	حالة BOX_FLOAT_راست:
+		fprintf(جریان, "FLOAT_RIGHT ");
+		اكسر;
 
-	case BOX_BR:
-		fprintf(stream, "BR ");
-		break;
+	حالة BOX_BR:
+		fprintf(جریان, "BR ");
+		اكسر;
 
-	case BOX_TEXT:
-		fprintf(stream, "TEXT ");
-		break;
+	حالة BOX_متن:
+		fprintf(جریان, "TEXT ");
+		اكسر;
 
-	case BOX_FLEX:
-		fprintf(stream, "FLEX ");
-		break;
+	حالة BOX_FLEX:
+		fprintf(جریان, "FLEX ");
+		اكسر;
 
-	case BOX_INLINE_FLEX:
-		fprintf(stream, "INLINE_FLEX ");
-		break;
+	حالة BOX_INLINE_FLEX:
+		fprintf(جریان, "INLINE_FLEX ");
+		اكسر;
 
-	default:
-		fprintf(stream, "Unknown box type ");
+	افتراضي:
+		fprintf(جریان, "Unknown box type ");
 	}
 
-	if (box->text)
-		fprintf(stream, "%li '%.*s' ", (unsigned long) box->byte_offset,
-			(int) box->length, box->text);
-	if (box->space)
-		fprintf(stream, "space ");
-	if (box->object) {
-		fprintf(stream, "(object '%s') ",
+	إذا (box->متن)
+		fprintf(جریان, "%li '%.*s' ", (بیعلامت دراز) box->byte_جابه_جایی,
+			(صحيح) box->درازی, box->متن);
+	إذا (box->space)
+		fprintf(جریان, "space ");
+	إذا (box->object) {
+		fprintf(جریان, "(object '%s') ",
 			nsurl_access(hlcache_handle_get_url(box->object)));
 	}
-	if (box->iframe) {
-		fprintf(stream, "(iframe) ");
+	إذا (box->iframe) {
+		fprintf(جریان, "(iframe) ");
 	}
-	if (box->gadget)
-		fprintf(stream, "(gadget) ");
-	if (style && box->style)
-		nscss_dump_computed_style(stream, box->style);
-	if (box->href)
-		fprintf(stream, " -> '%s'", nsurl_access(box->href));
-	if (box->target)
-		fprintf(stream, " |%s|", box->target);
-	if (box->title)
-		fprintf(stream, " [%s]", box->title);
-	if (box->id)
-		fprintf(stream, " ID:%s", lwc_string_data(box->id));
-	if (box->type == BOX_INLINE || box->type == BOX_INLINE_END)
-		fprintf(stream, " inline_end %p", box->inline_end);
-	if (box->float_children)
-		fprintf(stream, " float_children %p", box->float_children);
-	if (box->next_float)
-		fprintf(stream, " next_float %p", box->next_float);
-	if (box->float_container)
-		fprintf(stream, " float_container %p", box->float_container);
-	if (box->col) {
-		fprintf(stream, " (columns");
-		for (i = 0; i != box->columns; i++) {
-			fprintf(stream, " (%s %s %i %i %i)",
-				((const char *[]) {
+	إذا (box->gadget)
+		fprintf(جریان, "(gadget) ");
+	إذا (style && box->style)
+		nscss_dump_computed_style(جریان, box->style);
+	إذا (box->href)
+		fprintf(جریان, " -> '%s'", nsurl_access(box->href));
+	إذا (box->هدف)
+		fprintf(جریان, " |%s|", box->هدف);
+	إذا (box->title)
+		fprintf(جریان, " [%s]", box->title);
+	إذا (box->id)
+		fprintf(جریان, " ID:%s", lwc_string_داده(box->id));
+	إذا (box->type == BOX_INLINE || box->type == BOX_INLINE_انتها)
+		fprintf(جریان, " inline_end %p", box->inline_انتها);
+	إذا (box->float_children)
+		fprintf(جریان, " float_children %p", box->float_children);
+	إذا (box->بعدی_float)
+		fprintf(جریان, " next_float %p", box->بعدی_float);
+	إذا (box->float_container)
+		fprintf(جریان, " float_container %p", box->float_container);
+	إذا (box->ستون) {
+		fprintf(جریان, " (columns");
+		لكل (i = 0; i != box->columns; i++) {
+			fprintf(جریان, " (%s %s %i %i %i)",
+				((ثابت حرف *[]) {
 					"UNKNOWN",
 					"FIXED",
 					"AUTO",
 					"PERCENT",
 					"RELATIVE"
 						})
-				[box->col[i].type],
-				((const char *[]) {
+				[box->ستون[i].type],
+				((ثابت حرف *[]) {
 					"normal",
 					"positioned"})
-				[box->col[i].positioned],
-				box->col[i].width,
-				box->col[i].min, box->col[i].max);
+				[box->ستون[i].positioned],
+				box->ستون[i].عرض,
+				box->ستون[i].min, box->ستون[i].max);
 		}
-		fprintf(stream, ")");
+		fprintf(جریان, ")");
 	}
-	if (box->node != NULL) {
+	إذا (box->گره != عدم) {
 		dom_string *name;
-		if (dom_node_get_node_name(box->node, &name) == DOM_NO_ERR) {
-			fprintf(stream, " <%s>", dom_string_data(name));
+		إذا (dom_گره_get_گره_name(box->گره, &name) == DOM_NO_ERR) {
+			fprintf(جریان, " <%s>", dom_string_داده(name));
 			dom_string_unref(name);
 		}
 	}
-	fprintf(stream, "\n");
+	fprintf(جریان, "\n");
 
-	if (box->list_marker) {
-		for (i = 0; i != depth; i++)
-			fprintf(stream, "  ");
-		fprintf(stream, "list_marker:\n");
-		box_dump(stream, box->list_marker, depth + 1, style);
+	إذا (box->list_marker) {
+		لكل (i = 0; i != عمق; i++)
+			fprintf(جریان, "  ");
+		fprintf(جریان, "list_marker:\n");
+		box_dump(جریان, box->list_marker, عمق + 1, style);
 	}
 
-	for (c = box->children; c && c->next; c = c->next)
+	لكل (c = box->children; c && c->بعدی; c = c->بعدی)
 		;
-	if (box->last != c)
-		fprintf(stream, "warning: box->last %p (should be %p) "
-			"(box %p)\n", box->last, c, box);
-	for (prev = 0, c = box->children; c; prev = c, c = c->next) {
-		if (c->parent != box)
-			fprintf(stream, "warning: box->parent %p (should be "
+	إذا (box->آخرین != c)
+		fprintf(جریان, "warning: box->last %p (should be %p) "
+			"(box %p)\n", box->آخرین, c, box);
+	لكل (prev = 0, c = box->children; c; prev = c, c = c->بعدی) {
+		إذا (c->والد != box)
+			fprintf(جریان, "warning: box->parent %p (should be "
 				"%p) (box on next line)\n",
-				c->parent, box);
-		if (c->prev != prev)
-			fprintf(stream, "warning: box->prev %p (should be "
+				c->والد, box);
+		إذا (c->prev != prev)
+			fprintf(جریان, "warning: box->prev %p (should be "
 				"%p) (box on next line)\n",
 				c->prev, prev);
-		box_dump(stream, c, depth + 1, style);
+		box_dump(جریان, c, عمق + 1, style);
 	}
 }
 
 
 /* exported interface documented in html/box.h */
-bool box_vscrollbar_present(const struct box * const box)
+bool box_vscrollbar_present(ثابت بنية box * ثابت box)
 {
-	return box->padding[TOP] +
-		box->height +
+	أرجع box->padding[بالاترین_2] +
+		box->ارتفاع +
 		box->padding[BOTTOM] +
-		box->border[BOTTOM].width < box->descendant_y1;
+		box->border[BOTTOM].عرض < box->descendant_y1;
 }
 
 
 /* exported interface documented in html/box.h */
-bool box_hscrollbar_present(const struct box * const box)
+bool box_hscrollbar_present(ثابت بنية box * ثابت box)
 {
-	return box->padding[LEFT] +
-		box->width +
-		box->padding[RIGHT] +
-		box->border[RIGHT].width < box->descendant_x1;
+	أرجع box->padding[چپ_2] +
+		box->عرض +
+		box->padding[راست_2] +
+		box->border[راست_2].عرض < box->descendant_x1;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
-box_pick_text_box(struct html_content *html,
-		  int x, int y,
-		  int dir,
-		  int *dx, int *dy)
+بنية box *
+box_pick_متن_box(بنية html_content *html,
+		  صحيح x, صحيح y,
+		  صحيح dir,
+		  صحيح *dx, صحيح *dy)
 {
-	struct box *text_box = NULL;
-	struct box *box;
-	int nr_xd, nr_yd;
-	int bx, by;
-	int fx, fy;
-	int tx, ty;
+	بنية box *متن_box = عدم;
+	بنية box *box;
+	صحيح nr_xd, nr_yd;
+	صحيح bx, by;
+	صحيح fx, fy;
+	صحيح tx, ty;
 
-	if (html == NULL)
-		return NULL;
+	إذا (html == عدم)
+		أرجع عدم;
 
 	box = html->layout;
-	bx = box->margin[LEFT];
-	by = box->margin[TOP];
+	bx = box->margin[چپ_2];
+	by = box->margin[بالاترین_2];
 	fx = bx;
 	fy = by;
 
-	if (!box_nearest_text_box(box, bx, by, fx, fy, x, y,
-				  dir, &text_box, &tx, &ty, &nr_xd, &nr_yd)) {
-		if (text_box && text_box->text && !text_box->object) {
-			int w = (text_box->padding[LEFT] +
-				 text_box->width +
-				 text_box->padding[RIGHT]);
-			int h = (text_box->padding[TOP] +
-				 text_box->height +
-				 text_box->padding[BOTTOM]);
-			int x1, y1;
+	إذا (!box_نزدیکترین_متن_box(box, bx, by, fx, fy, x, y,
+				  dir, &متن_box, &tx, &ty, &nr_xd, &nr_yd)) {
+		إذا (متن_box && متن_box->متن && !متن_box->object) {
+			صحيح w = (متن_box->padding[چپ_2] +
+				 متن_box->عرض +
+				 متن_box->padding[راست_2]);
+			صحيح h = (متن_box->padding[بالاترین_2] +
+				 متن_box->ارتفاع +
+				 متن_box->padding[BOTTOM]);
+			صحيح x1, y1;
 
 			y1 = ty + h;
 			x1 = tx + w;
 
 			/* ensure point lies within the text box */
-			if (x < tx) x = tx;
-			if (y < ty) y = ty;
-			if (y > y1) y = y1;
-			if (x > x1) x = x1;
+			إذا (x < tx) x = tx;
+			إذا (y < ty) y = ty;
+			إذا (y > y1) y = y1;
+			إذا (x > x1) x = x1;
 		}
 	}
 
@@ -894,5 +894,5 @@ box_pick_text_box(struct html_content *html,
 	*dx = x - tx;
 	*dy = y - ty;
 
-	return text_box;
+	أرجع متن_box;
 }

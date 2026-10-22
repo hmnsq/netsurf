@@ -21,8 +21,8 @@
  * about scheme nscolours handler interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_NSCOLOURS_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_NSCOLOURS_H
+#اگر_تعریف_نشده NETSURF_CONTENT_FETCHERS_ABOUT_NSCOLOURS_H
+#تعریف_کن NETSURF_CONTENT_FETCHERS_ABOUT_NSCOLOURS_H
 
 /**
  * Handler to generate the nscolours stylesheet
@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_nscolours_handler(struct fetch_about_context *ctx);
+bool fetch_about_nscolours_handler(بنية fetch_about_context *ctx);
 
-#endif
+#پایان_اگر

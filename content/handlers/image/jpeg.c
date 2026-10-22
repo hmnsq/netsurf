@@ -24,71 +24,71 @@
  * This implementation uses the IJG JPEG library.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
+#ضمن <stdbool.h>
+#ضمن <stdlib.h>
+#ضمن <setjmp.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "netsurf/bitmap.h"
+#ضمن "content/llcache.h"
+#ضمن "content/content.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "desktop/gui_internal.h"
+#ضمن "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#ضمن "image/image_cache.h"
 
-#define JPEG_INTERNAL_OPTIONS
-#include "jpeglib.h"
-#include "jpeg.h"
+#تعریف_کن JPEG_داخلی_OPTIONS
+#ضمن "jpeglib.h"
+#ضمن "jpeg.h"
 
 /** absolute minimum size of a jpeg below which it is not even worth
  * trying to read header data
  */
-#define MIN_JPEG_SIZE 20
+#تعریف_کن MIN_JPEG_اندازه 20
 
-#ifndef LIBJPEG_TURBO_VERSION
+#اگر_تعریف_نشده LIBJPEG_TURBO_نسخه
 #warning Using libjpeg (libjpeg-turbo is recommended)
-#endif
+#پایان_اگر
 
-static char nsjpeg_error_buffer[JMSG_LENGTH_MAX];
+ساكن حرف nsjpeg_error_میانگیر[JMSG_درازی_MAX];
 
-static unsigned char nsjpeg_eoi[] = { 0xff, JPEG_EOI };
+ساكن بیعلامت حرف nsjpeg_eoi[] = { 0xff, JPEG_EOI };
 
 /**
  * Content create entry point.
  */
-static nserror nsjpeg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ساكن nserror nsjpeg_create(ثابت content_handler *handler,
+		lwc_string *imime_type, ثابت بنية http_parameter *params,
+		llcache_handle *llcache, ثابت حرف *fallback_charset,
+		bool quirks, بنية content **c)
 {
-	struct content *jpeg;
+	بنية content *jpeg;
 	nserror error;
 
-	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	jpeg = حافظه_صفر_بده(1, حجم(بنية content));
+	إذا (jpeg == عدم)
+		أرجع NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(jpeg);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(jpeg);
+		أرجع error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
  * JPEG data source manager: initialize source.
  */
-static void nsjpeg_init_source(j_decompress_ptr cinfo)
+ساكن فراغ nsjpeg_init_منبع(j_decompress_ptr cinfo)
 {
 }
 
@@ -99,11 +99,11 @@ static void nsjpeg_init_source(j_decompress_ptr cinfo)
  * This can only occur if the JPEG data was truncated or corrupted. Insert a
  * fake EOI marker to allow the decompressor to output as much as possible.
  */
-static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
+ساكن boolean nsjpeg_fill_درون_داد_میانگیر(j_decompress_ptr cinfo)
 {
-	cinfo->src->next_input_byte = nsjpeg_eoi;
-	cinfo->src->bytes_in_buffer = 2;
- 	return TRUE;
+	cinfo->src->بعدی_درون_داد_byte = nsjpeg_eoi;
+	cinfo->src->بایتها_درون_میانگیر = 2;
+ 	أرجع TRUE;
 }
 
 
@@ -111,14 +111,14 @@ static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
  * JPEG data source manager: skip num_bytes worth of data.
  */
 
-static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
+ساكن فراغ nsjpeg_skip_درون_داد_داده(j_decompress_ptr cinfo, دراز رقم_بایتها)
 {
-	if ((long) cinfo->src->bytes_in_buffer < num_bytes) {
-		cinfo->src->next_input_byte = 0;
-		cinfo->src->bytes_in_buffer = 0;
-	} else {
-		cinfo->src->next_input_byte += num_bytes;
-		cinfo->src->bytes_in_buffer -= num_bytes;
+	إذا ((دراز) cinfo->src->بایتها_درون_میانگیر < رقم_بایتها) {
+		cinfo->src->بعدی_درون_داد_byte = 0;
+		cinfo->src->بایتها_درون_میانگیر = 0;
+	} وإلا {
+		cinfo->src->بعدی_درون_داد_byte += رقم_بایتها;
+		cinfo->src->بایتها_درون_میانگیر -= رقم_بایتها;
 	}
 }
 
@@ -126,7 +126,7 @@ static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 /**
  * JPEG data source manager: terminate source.
  */
-static void nsjpeg_term_source(j_decompress_ptr cinfo)
+ساكن فراغ nsjpeg_جمله_منبع(j_decompress_ptr cinfo)
 {
 }
 
@@ -138,10 +138,10 @@ static void nsjpeg_term_source(j_decompress_ptr cinfo)
  * Warnings only - fatal errors are trapped by nsjpeg_error_exit
  *                 and do not call the output handler.
  */
-static void nsjpeg_error_log(j_common_ptr cinfo)
+ساكن فراغ nsjpeg_error_log(j_common_ptr cinfo)
 {
-	cinfo->err->format_message(cinfo, nsjpeg_error_buffer);
-	NSLOG(netsurf, INFO, "%s", nsjpeg_error_buffer);
+	cinfo->err->format_پیام(cinfo, nsjpeg_error_میانگیر);
+	NSLOG(netsurf, INFO, "%s", nsjpeg_error_میانگیر);
 }
 
 
@@ -150,302 +150,302 @@ static void nsjpeg_error_log(j_common_ptr cinfo)
  *
  * This prevents jpeglib calling exit() on a fatal error.
  */
-static void nsjpeg_error_exit(j_common_ptr cinfo)
+ساكن فراغ nsjpeg_error_exit(j_common_ptr cinfo)
 {
-	jmp_buf *setjmp_buffer = (jmp_buf *) cinfo->client_data;
+	jmp_buf *setjmp_میانگیر = (jmp_buf *) cinfo->client_داده;
 
-	cinfo->err->format_message(cinfo, nsjpeg_error_buffer);
-	NSLOG(netsurf, INFO, "%s", nsjpeg_error_buffer);
+	cinfo->err->format_پیام(cinfo, nsjpeg_error_میانگیر);
+	NSLOG(netsurf, INFO, "%s", nsjpeg_error_میانگیر);
 
-	longjmp(*setjmp_buffer, 1);
+	longjmp(*setjmp_میانگیر, 1);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_cmyk(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+ساكن مضمن فراغ nsjpeg__decode_cmyk(
+		بنية jpeg_decompress_struct *cinfo,
+		uint8_t * متطاير pixels,
 		size_t rowstride)
 {
-	int width = cinfo->output_width * 4;
+	صحيح عرض = cinfo->output_عرض * 4;
 
-	do {
+	افعل {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-		for (int i = width - 4; 0 <= i; i -= 4) {
+		لكل (صحيح i = عرض - 4; 0 <= i; i -= 4) {
 			/* Trivial inverse CMYK -> RGBA */
-			const int c = scanlines[0][i + 0];
-			const int m = scanlines[0][i + 1];
-			const int y = scanlines[0][i + 2];
-			const int k = scanlines[0][i + 3];
+			ثابت صحيح c = scanlines[0][i + 0];
+			ثابت صحيح m = scanlines[0][i + 1];
+			ثابت صحيح y = scanlines[0][i + 2];
+			ثابت صحيح k = scanlines[0][i + 3];
 
-			const int ck = c * k;
-			const int mk = m * k;
-			const int yk = y * k;
+			ثابت صحيح ck = c * k;
+			ثابت صحيح mk = m * k;
+			ثابت صحيح yk = y * k;
 
-#define DIV255(x) ((x) + 1 + ((x) >> 8)) >> 8
+#تعریف_کن DIV255(x) ((x) + 1 + ((x) >> 8)) >> 8
 			scanlines[0][i + bitmap_layout.r] = DIV255(ck);
 			scanlines[0][i + bitmap_layout.g] = DIV255(mk);
 			scanlines[0][i + bitmap_layout.b] = DIV255(yk);
 			scanlines[0][i + bitmap_layout.a] = 0xff;
-#undef DIV255
+#لغو_تعریف DIV255
 		}
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} طالما (cinfo->output_scanline != cinfo->output_ارتفاع);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_rgb(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+ساكن مضمن فراغ nsjpeg__decode_rgb(
+		بنية jpeg_decompress_struct *cinfo,
+		uint8_t * متطاير pixels,
 		size_t rowstride)
 {
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
-	int width = cinfo->output_width;
-#endif
+#إذا RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+	صحيح عرض = cinfo->output_عرض;
+#پایان_اگر
 
-	do {
+	افعل {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+#إذا RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
 		/* Missmatch between configured libjpeg pixel format and
 		 * NetSurf pixel format.  Convert to RGBA */
-		for (int i = width - 1; 0 <= i; i--) {
-			int r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
-			int g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
-			int b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
+		لكل (صحيح i = عرض - 1; 0 <= i; i--) {
+			صحيح r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
+			صحيح g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
+			صحيح b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
 			scanlines[0][i * 4 + bitmap_layout.r] = r;
 			scanlines[0][i * 4 + bitmap_layout.g] = g;
 			scanlines[0][i * 4 + bitmap_layout.b] = b;
 			scanlines[0][i * 4 + bitmap_layout.a] = 0xff;
 		}
-#endif
-	} while (cinfo->output_scanline != cinfo->output_height);
+#پایان_اگر
+	} طالما (cinfo->output_scanline != cinfo->output_ارتفاع);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_client_fmt(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+ساكن مضمن فراغ nsjpeg__decode_client_fmt(
+		بنية jpeg_decompress_struct *cinfo,
+		uint8_t * متطاير pixels,
 		size_t rowstride)
 {
-	do {
+	افعل {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} طالما (cinfo->output_scanline != cinfo->output_ارتفاع);
 }
 
 /**
  * create a bitmap from jpeg content.
  */
-static struct bitmap *
-jpeg_cache_convert(struct content *c)
+ساكن بنية bitmap *
+jpeg_cache_convert(بنية content *c)
 {
-	const uint8_t *source_data; /* Jpeg source data */
-	size_t source_size; /* length of Jpeg source data */
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
-	jmp_buf setjmp_buffer;
-	struct bitmap * volatile bitmap = NULL;
-	uint8_t * volatile pixels = NULL;
+	ثابت uint8_t *منبع_داده; /* Jpeg source data */
+	size_t منبع_اندازه; /* length of Jpeg source data */
+	بنية jpeg_decompress_struct cinfo;
+	بنية jpeg_error_mgr jerr;
+	jmp_buf setjmp_میانگیر;
+	بنية bitmap * متطاير bitmap = عدم;
+	uint8_t * متطاير pixels = عدم;
 	size_t rowstride;
-	struct jpeg_source_mgr source_mgr = {
+	بنية jpeg_منبع_mgr منبع_mgr = {
 		0,
 		0,
-		nsjpeg_init_source,
-		nsjpeg_fill_input_buffer,
-		nsjpeg_skip_input_data,
-		jpeg_resync_to_restart,
-		nsjpeg_term_source };
+		nsjpeg_init_منبع,
+		nsjpeg_fill_درون_داد_میانگیر,
+		nsjpeg_skip_درون_داد_داده,
+		jpeg_resync_مقصد_restart,
+		nsjpeg_جمله_منبع };
 
 	/* obtain jpeg source data and perfom minimal sanity checks */
-	source_data = content__get_source_data(c, &source_size);
+	منبع_داده = content_get_منبع_داده_2(c, &منبع_اندازه);
 
-	if ((source_data == NULL) ||
-	    (source_size < MIN_JPEG_SIZE)) {
-		return NULL;
+	إذا ((منبع_داده == عدم) ||
+	    (منبع_اندازه < MIN_JPEG_اندازه)) {
+		أرجع عدم;
 	}
 
 	/* setup a JPEG library error handler */
 	cinfo.err = jpeg_std_error(&jerr);
 	jerr.error_exit = nsjpeg_error_exit;
-	jerr.output_message = nsjpeg_error_log;
+	jerr.output_پیام = nsjpeg_error_log;
 
 	/* handler for fatal errors during decompression */
-	if (setjmp(setjmp_buffer)) {
+	إذا (setjmp(setjmp_میانگیر)) {
 		jpeg_destroy_decompress(&cinfo);
-		return bitmap;
+		أرجع bitmap;
 	}
 
-	cinfo.client_data = &setjmp_buffer;
+	cinfo.client_داده = &setjmp_میانگیر;
 	jpeg_create_decompress(&cinfo);
 
 	/* setup data source */
-	source_mgr.next_input_byte = source_data;
-	source_mgr.bytes_in_buffer = source_size;
-	cinfo.src = &source_mgr;
+	منبع_mgr.بعدی_درون_داد_byte = منبع_داده;
+	منبع_mgr.بایتها_درون_میانگیر = منبع_اندازه;
+	cinfo.src = &منبع_mgr;
 
 	/* read JPEG header information */
-	jpeg_read_header(&cinfo, TRUE);
+	jpeg_read_سرآیند(&cinfo, TRUE);
 
 	/* set output processing parameters */
-	if (cinfo.jpeg_color_space == JCS_CMYK ||
+	إذا (cinfo.jpeg_color_space == JCS_CMYK ||
 	    cinfo.jpeg_color_space == JCS_YCCK) {
-		cinfo.out_color_space = JCS_CMYK;
-	} else {
-#ifdef JCS_ALPHA_EXTENSIONS
-		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_R8G8B8A8:
-			cinfo.out_color_space = JCS_EXT_RGBA;
-			break;
-		case BITMAP_LAYOUT_B8G8R8A8:
-			cinfo.out_color_space = JCS_EXT_BGRA;
-			break;
-		case BITMAP_LAYOUT_A8R8G8B8:
-			cinfo.out_color_space = JCS_EXT_ARGB;
-			break;
-		case BITMAP_LAYOUT_A8B8G8R8:
-			cinfo.out_color_space = JCS_EXT_ABGR;
-			break;
-		default:
+		cinfo.بیرون_color_space = JCS_CMYK;
+	} وإلا {
+#اگر_تعریف_شده JCS_ALPHA_EXTENSIONS
+		بدل (bitmap_fmt.layout) {
+		حالة BITMAP_LAYOUT_R8G8B8A8:
+			cinfo.بیرون_color_space = JCS_EXT_RGBA;
+			اكسر;
+		حالة BITMAP_LAYOUT_B8G8R8A8:
+			cinfo.بیرون_color_space = JCS_EXT_BGRA;
+			اكسر;
+		حالة BITMAP_LAYOUT_A8R8G8B8:
+			cinfo.بیرون_color_space = JCS_EXT_ARGB;
+			اكسر;
+		حالة BITMAP_LAYOUT_A8B8G8R8:
+			cinfo.بیرون_color_space = JCS_EXT_ABGR;
+			اكسر;
+		افتراضي:
 			NSLOG(netsurf, ERROR, "Unexpected bitmap format: %u",
 					bitmap_fmt.layout);
 			jpeg_destroy_decompress(&cinfo);
-			return NULL;
+			أرجع عدم;
 		}
-#else
-		cinfo.out_color_space = JCS_RGB;
-#endif
+#وإلا
+		cinfo.بیرون_color_space = JCS_RGB;
+#پایان_اگر
 	}
-	cinfo.dct_method = JDCT_ISLOW;
+	cinfo.dct_روش = JDCT_ISLOW;
 
 	/* commence the decompression, output parameters now valid */
-	jpeg_start_decompress(&cinfo);
+	jpeg_شروع_decompress(&cinfo);
 
 	/* create opaque bitmap (jpegs cannot be transparent) */
 	bitmap = guit->bitmap->create(
-			cinfo.output_width,
-			cinfo.output_height, BITMAP_OPAQUE);
-	if (bitmap == NULL) {
+			cinfo.output_عرض,
+			cinfo.output_ارتفاع, BITMAP_OPAQUE);
+	إذا (bitmap == عدم) {
 		/* empty bitmap could not be created */
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		أرجع عدم;
 	}
 
-	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	pixels = guit->bitmap->get_میانگیر(bitmap);
+	إذا (pixels == عدم) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		أرجع عدم;
 	}
 
 	/* Convert scanlines from jpeg into bitmap */
 	rowstride = guit->bitmap->get_rowstride(bitmap);
 
-	switch (cinfo.out_color_space) {
-	case JCS_CMYK:
+	بدل (cinfo.بیرون_color_space) {
+	حالة JCS_CMYK:
 		nsjpeg__decode_cmyk(&cinfo, pixels, rowstride);
-		break;
+		اكسر;
 
-	case JCS_RGB:
+	حالة JCS_RGB:
 		nsjpeg__decode_rgb(&cinfo, pixels, rowstride);
-		break;
+		اكسر;
 
-	default:
+	افتراضي:
 		nsjpeg__decode_client_fmt(&cinfo, pixels, rowstride);
-		break;
+		اكسر;
 	}
 
 	guit->bitmap->modified(bitmap);
 
-	jpeg_finish_decompress(&cinfo);
+	jpeg_پایان_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
 
-	return bitmap;
+	أرجع bitmap;
 }
 
 /**
  * Convert a CONTENT_JPEG for display.
  */
-static bool nsjpeg_convert(struct content *c)
+ساكن bool nsjpeg_convert(بنية content *c)
 {
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
-	jmp_buf setjmp_buffer;
-	struct jpeg_source_mgr source_mgr = { 0, 0,
-		nsjpeg_init_source, nsjpeg_fill_input_buffer,
-		nsjpeg_skip_input_data, jpeg_resync_to_restart,
-		nsjpeg_term_source };
-	union content_msg_data msg_data;
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	بنية jpeg_decompress_struct cinfo;
+	بنية jpeg_error_mgr jerr;
+	jmp_buf setjmp_میانگیر;
+	بنية jpeg_منبع_mgr منبع_mgr = { 0, 0,
+		nsjpeg_init_منبع, nsjpeg_fill_درون_داد_میانگیر,
+		nsjpeg_skip_درون_داد_داده, jpeg_resync_مقصد_restart,
+		nsjpeg_جمله_منبع };
+	اتحاد content_پیام_داده پیام_داده;
+	ثابت uint8_t *داده;
+	size_t اندازه;
+	حرف *title;
 
 	/* check image header is valid and get width/height */
-	data = content__get_source_data(c, &size);
+	داده = content_get_منبع_داده_2(c, &اندازه);
 
 	cinfo.err = jpeg_std_error(&jerr);
 	jerr.error_exit = nsjpeg_error_exit;
-	jerr.output_message = nsjpeg_error_log;
+	jerr.output_پیام = nsjpeg_error_log;
 
-	if (setjmp(setjmp_buffer)) {
+	إذا (setjmp(setjmp_میانگیر)) {
 		jpeg_destroy_decompress(&cinfo);
 
-		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-		msg_data.errordata.errormsg = nsjpeg_error_buffer;
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		پیام_داده.errordata.errorcode = NSERROR_UNKNOWN;
+		پیام_داده.errordata.errormsg = nsjpeg_error_میانگیر;
+		content_پخش(c, CONTENT_پیام_ERROR, &پیام_داده);
+		أرجع false;
 	}
 
-	cinfo.client_data = &setjmp_buffer;
+	cinfo.client_داده = &setjmp_میانگیر;
 	jpeg_create_decompress(&cinfo);
-	source_mgr.next_input_byte = (unsigned char *) data;
-	source_mgr.bytes_in_buffer = size;
-	cinfo.src = &source_mgr;
-	jpeg_read_header(&cinfo, TRUE);
-	cinfo.out_color_space = JCS_RGB;
-	cinfo.dct_method = JDCT_ISLOW;
+	منبع_mgr.بعدی_درون_داد_byte = (بیعلامت حرف *) داده;
+	منبع_mgr.بایتها_درون_میانگیر = اندازه;
+	cinfo.src = &منبع_mgr;
+	jpeg_read_سرآیند(&cinfo, TRUE);
+	cinfo.بیرون_color_space = JCS_RGB;
+	cinfo.dct_روش = JDCT_ISLOW;
 
 	jpeg_calc_output_dimensions(&cinfo);
 
-	c->width = cinfo.output_width;
-	c->height = cinfo.output_height;
-	c->size = c->width * c->height * 4;
+	c->عرض = cinfo.output_عرض;
+	c->ارتفاع = cinfo.output_ارتفاع;
+	c->اندازه = c->عرض * c->ارتفاع * 4;
 
 	jpeg_destroy_decompress(&cinfo);
 
-	image_cache_add(c, NULL, jpeg_cache_convert);
+	image_cache_جمع_کن(c, عدم, jpeg_cache_convert);
 
 	/* set title text */
 	title = messages_get_buff("JPEGTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_برگ(llcache_handle_get_url(c->llcache)),
+			c->عرض, c->ارتفاع);
+	إذا (title != عدم) {
+		content_مجموعه_title(c, title);
+		حرر(title);
 	}
 
-	content_set_ready(c);
-	content_set_done(c);	
-	content_set_status(c, ""); /* Done: update status bar */
+	content_مجموعه_ready(c);
+	content_مجموعه_انجامشده(c);	
+	content_مجموعه_وضعیت(c, ""); /* Done: update status bar */
 
-	return true;
+	أرجع true;
 }
 
 
@@ -453,51 +453,51 @@ static bool nsjpeg_convert(struct content *c)
 /**
  * Clone content.
  */
-static nserror nsjpeg_clone(const struct content *old, struct content **newc)
+ساكن nserror nsjpeg_clone(ثابت بنية content *old, بنية content **newc)
 {
-	struct content *jpeg_c;
+	بنية content *jpeg_c;
 	nserror error;
 
-	jpeg_c = calloc(1, sizeof(struct content));
-	if (jpeg_c == NULL)
-		return NSERROR_NOMEM;
+	jpeg_c = حافظه_صفر_بده(1, حجم(بنية content));
+	إذا (jpeg_c == عدم)
+		أرجع NSERROR_NOMEM;
 
 	error = content__clone(old, jpeg_c);
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		content_destroy(jpeg_c);
-		return error;
+		أرجع error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
-	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpeg_convert(jpeg_c) == false) {
+	إذا ((old->وضعیت == CONTENT_وضعیت_READY) ||
+	    (old->وضعیت == CONTENT_وضعیت_انجامشده)) {
+		إذا (nsjpeg_convert(jpeg_c) == false) {
 			content_destroy(jpeg_c);
-			return NSERROR_CLONE_FAILED;
+			أرجع NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpeg_c;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static const content_handler nsjpeg_content_handler = {
+ساكن ثابت content_handler nsjpeg_content_handler = {
 	.create = nsjpeg_create,
-	.data_complete = nsjpeg_convert,
+	.داده_complete = nsjpeg_convert,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
 	.clone = nsjpeg_clone,
-	.get_internal = image_cache_get_internal,
+	.get_داخلی = image_cache_get_داخلی,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsjpeg_types[] = {
+ساكن ثابت حرف *nsjpeg_types[] = {
 	"image/jpeg",
 	"image/jpg",
 	"image/pjpeg"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsjpeg, nsjpeg_types, nsjpeg_content_handler);
+CONTENT_FACTORY_ثبات_TYPES(nsjpeg, nsjpeg_types, nsjpeg_content_handler);

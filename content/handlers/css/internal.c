@@ -16,16 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <libcss/libcss.h>
+#ضمن <string.h>
+#ضمن <libcss/libcss.h>
 
-#include "utils/nsurl.h"
+#ضمن "utils/nsurl.h"
 
-#include "css/internal.h"
+#ضمن "css/internal.h"
 
 /* exported interface documented in content/handlers/css/internal.h */
-css_error nscss_resolve_url(void *pw, const char *base,
-		lwc_string *rel, lwc_string **abs)
+css_error nscss_resolve_url(فراغ *pw, ثابت حرف *پایه,
+		lwc_string *rel, lwc_string **قدر_مطلق)
 {
 	lwc_error lerror;
 	nserror error;
@@ -34,30 +34,30 @@ css_error nscss_resolve_url(void *pw, const char *base,
 
 	/* Create nsurl from base */
 	/* TODO: avoid this */
-	error = nsurl_create(base, &nsbase);
-	if (error != NSERROR_OK) {
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+	error = nsurl_create(پایه, &nsbase);
+	إذا (error != NSERROR_OK) {
+		أرجع error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	/* Resolve URI */
-	error = nsurl_join(nsbase, lwc_string_data(rel), &nsabs);
-	if (error != NSERROR_OK) {
+	error = nsurl_join(nsbase, lwc_string_داده(rel), &nsabs);
+	إذا (error != NSERROR_OK) {
 		nsurl_unref(nsbase);
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+		أرجع error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsbase);
 
 	/* Intern it */
 	lerror = lwc_intern_string(nsurl_access(nsabs),
-			nsurl_length(nsabs), abs);
-	if (lerror != lwc_error_ok) {
-		*abs = NULL;
+			nsurl_درازی(nsabs), قدر_مطلق);
+	إذا (lerror != lwc_error_ok) {
+		*قدر_مطلق = عدم;
 		nsurl_unref(nsabs);
-		return lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
+		أرجع lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsabs);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }

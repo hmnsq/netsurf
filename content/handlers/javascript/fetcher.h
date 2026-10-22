@@ -20,9 +20,9 @@
  * javascript scheme handler
  */
 
-#ifndef NETSURF_JAVASCRIPT_FETCHER_H
-#define NETSURF_JAVASCRIPT_FETCHER_H
+#اگر_تعریف_نشده NETSURF_JAVASCRIPT_FETCHER_H
+#تعریف_کن NETSURF_JAVASCRIPT_FETCHER_H
 
-nserror fetch_javascript_register(void);
+nserror fetch_javascript_ثبات(فراغ);
 
-#endif
+#پایان_اگر

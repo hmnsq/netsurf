@@ -22,12 +22,12 @@
  * Interface to HTML table processing and layout.
  */
 
-#ifndef NETSURF_HTML_TABLE_H
-#define NETSURF_HTML_TABLE_H
+#اگر_تعریف_نشده NETSURF_HTML_جدول_H
+#تعریف_کن NETSURF_HTML_جدول_H
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-struct box;
+بنية box;
 
 
 /**
@@ -40,7 +40,7 @@ struct box;
  * The table->col array is allocated and type and width are filled in for each
  * column.
  */
-bool table_calculate_column_types(const css_unit_ctx *unit_len_ctx,	struct box *table);
+bool جدول_calculate_ستونی_types(ثابت css_unit_ctx *unit_len_ctx,	بنية box *جدول);
 
 
 /**
@@ -51,6 +51,6 @@ bool table_calculate_column_types(const css_unit_ctx *unit_len_ctx,	struct box *
  *
  * \post \a cell's border array is populated
  */
-void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell);
+فراغ جدول_استفاده_شده_border_for_cell(ثابت css_unit_ctx *unit_len_ctx, بنية box *cell);
 
-#endif
+#پایان_اگر

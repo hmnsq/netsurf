@@ -69,8 +69,8 @@
  * Here implied boxes have been added and a float is present.
  */
 
-#ifndef NETSURF_HTML_BOX_CONSTRUCT_H
-#define NETSURF_HTML_BOX_CONSTRUCT_H
+#اگر_تعریف_نشده NETSURF_HTML_BOX_CONSTRUCT_H
+#تعریف_کن NETSURF_HTML_BOX_CONSTRUCT_H
 
 /**
  * Construct a box tree from a dom and html content
@@ -81,13 +81,13 @@
  * \param box_conversion_context pointer that recives the conversion context
  * \return netsurf error code indicating status of call
  */
-nserror dom_to_box(struct dom_node *n, struct html_content *c, box_construct_complete_cb cb, void **box_conversion_context);
+nserror dom_مقصد_box(بنية dom_گره *n, بنية html_content *c, box_construct_complete_cb cb, فراغ **box_conversion_context);
 
 
 /**
  * aborts any ongoing box construction
  */
-nserror cancel_dom_to_box(void *box_conversion_context);
+nserror cancel_dom_مقصد_box(فراغ *box_conversion_context);
 
 
 /**
@@ -96,7 +96,7 @@ nserror cancel_dom_to_box(void *box_conversion_context);
  * \param node The DOM node
  * \return The box if there is one
  */
-struct box *box_for_node(struct dom_node *node);
+بنية box *box_for_گره(بنية dom_گره *گره);
 
 /**
  * Extract a URL from a relative link, handling junk like whitespace and
@@ -108,6 +108,6 @@ struct box *box_for_node(struct dom_node *node);
  * \param result updated to target URL on heap, unchanged if extract failed
  * \return true on success, false on memory exhaustion
  */
-bool box_extract_link(const struct html_content *content, const struct dom_string *dsrel, struct nsurl *base, struct nsurl **result);
+bool box_استخراج_link(ثابت بنية html_content *content, ثابت بنية dom_string *dsrel, بنية nsurl *پایه, بنية nsurl **نتیجه);
 
-#endif
+#پایان_اگر

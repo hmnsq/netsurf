@@ -24,158 +24,158 @@
  * output dates and directory ordering are affected by the current locale
  */
 
-#include "utils/config.h"
+#ضمن "utils/config.h"
 
-#include <stdlib.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdarg.h>
-#ifdef HAVE_MMAP
-#include <sys/mman.h>
-#endif
-#include <libwapcaplet/libwapcaplet.h>
+#ضمن <stdlib.h>
+#ضمن <ctype.h>
+#ضمن <sys/types.h>
+#ضمن <sys/stat.h>
+#ضمن <fcntl.h>
+#ضمن <unistd.h>
+#ضمن <errno.h>
+#ضمن <stdbool.h>
+#ضمن <string.h>
+#ضمن <strings.h>
+#ضمن <time.h>
+#ضمن <stdio.h>
+#ضمن <stdarg.h>
+#اگر_تعریف_شده HAVE_MMAP
+#ضمن <sys/mman.h>
+#پایان_اگر
+#ضمن <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/nsurl.h"
-#include "utils/dirent.h"
-#include "utils/corestrings.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/time.h"
-#include "utils/ring.h"
-#include "utils/file.h"
-#include "netsurf/fetch.h"
-#include "desktop/gui_internal.h"
+#ضمن "netsurf/inttypes.h"
+#ضمن "utils/nsurl.h"
+#ضمن "utils/dirent.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/log.h"
+#ضمن "utils/time.h"
+#ضمن "utils/ring.h"
+#ضمن "utils/file.h"
+#ضمن "netsurf/fetch.h"
+#ضمن "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "dirlist.h"
-#include "file.h"
+#ضمن "content/fetch.h"
+#ضمن "content/fetchers.h"
+#ضمن "dirlist.h"
+#ضمن "file.h"
 
 /* Maximum size of read buffer */
-#define FETCH_FILE_MAX_BUF_SIZE (1024 * 1024)
+#تعریف_کن FETCH_FILE_MAX_BUF_اندازه (1024 * 1024)
 
 /** Context for a fetch */
-struct fetch_file_context {
-	struct fetch_file_context *r_next, *r_prev;
+بنية fetch_file_context {
+	بنية fetch_file_context *r_بعدی, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	بنية fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
-	char *path; /**< The actual path to be used with open() */
+	حرف *مسیر; /**< The actual path to be used with open() */
 
 	time_t file_etag; /**< Request etag for file (previous st.m_time) */
 };
 
-static struct fetch_file_context *ring = NULL;
+ساكن بنية fetch_file_context *ring = عدم;
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_file_send_callback(const fetch_msg *msg,
-		struct fetch_file_context *ctx)
+ساكن مضمن bool fetch_file_send_callback(ثابت fetch_پیام *پیام,
+		بنية fetch_file_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(پیام, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	أرجع ctx->aborted;
 }
 
-static bool fetch_file_send_header(struct fetch_file_context *ctx,
-		const char *fmt, ...)
+ساكن bool fetch_file_send_سرآیند(بنية fetch_file_context *ctx,
+		ثابت حرف *fmt, ...)
 {
-	fetch_msg msg;
-	char header[64];
+	fetch_پیام پیام;
+	حرف سرآیند[64];
 	va_list ap;
-	int len;
+	صحيح len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof header, fmt, ap);
+	len = vsnprintf(سرآیند, حجم سرآیند, fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return false;
+	إذا (len >= (صحيح)حجم(سرآیند) || len < 0) {
+		أرجع false;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = len;
+	پیام.type = FETCH_سرآیند;
+	پیام.داده.سرآیند_or_داده.buf = (ثابت uint8_t *) سرآیند;
+	پیام.داده.سرآیند_or_داده.len = len;
 
-	return fetch_file_send_callback(&msg, ctx);
+	أرجع fetch_file_send_callback(&پیام, ctx);
 }
 
 /** callback to initialise the file fetcher. */
-static bool fetch_file_initialise(lwc_string *scheme)
+ساكن bool fetch_file_initialise(lwc_string *scheme)
 {
-	return true;
+	أرجع true;
 }
 
 /** callback to initialise the file fetcher. */
-static void fetch_file_finalise(lwc_string *scheme)
+ساكن فراغ fetch_file_finalise(lwc_string *scheme)
 {
 }
 
-static bool fetch_file_can_fetch(const nsurl *url)
+ساكن bool fetch_file_can_fetch(ثابت nsurl *url)
 {
-	return true;
+	أرجع true;
 }
 
 /** callback to set up a file fetch context. */
-static void *
-fetch_file_setup(struct fetch *fetchh,
+ساكن فراغ *
+fetch_file_راهاندازی(بنية fetch *fetchh,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 ثابت حرف *post_urlenc,
+		 ثابت بنية fetch_multipart_داده *post_multipart,
+		 ثابت حرف **سرآیندها)
 {
-	struct fetch_file_context *ctx;
-	int i;
+	بنية fetch_file_context *ctx;
+	صحيح i;
 	nserror ret;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = حافظه_صفر_بده(1, حجم(*ctx));
+	إذا (ctx == عدم)
+		أرجع عدم;
 
-	ret = guit->file->nsurl_to_path(url, &ctx->path);
-	if (ret != NSERROR_OK) {
-		free(ctx);
-		return NULL;
+	ret = guit->file->nsurl_مقصد_مسیر(url, &ctx->مسیر);
+	إذا (ret != NSERROR_OK) {
+		حرر(ctx);
+		أرجع عدم;
 	}
 
 	ctx->url = nsurl_ref(url);
 
 	/* Scan request headers looking for If-None-Match */
-	for (i = 0; headers[i] != NULL; i++) {
-		if (strncasecmp(headers[i], "If-None-Match:",
+	لكل (i = 0; سرآیندها[i] != عدم; i++) {
+		إذا (strncasecmp(سرآیندها[i], "If-None-Match:",
 				SLEN("If-None-Match:")) != 0) {
-			continue;
+			استمر;
 		}
 
 		/* If-None-Match: "12345678" */
-		const char *d = headers[i] + SLEN("If-None-Match:");
+		ثابت حرف *d = سرآیندها[i] + SLEN("If-None-Match:");
 
 		/* Scan to first digit, if any */
-		while (*d != '\0' && (*d < '0' || '9' < *d))
+		طالما (*d != '\0' && (*d < '0' || '9' < *d))
 			d++;
 
 		/* Convert to time_t */
-		if (*d != '\0') {
-			ret = nsc_snptimet(d, strlen(d), &ctx->file_etag);
-			if (ret != NSERROR_OK) {
+		إذا (*d != '\0') {
+			ret = nsc_snptimet(d, طول_رشته(d), &ctx->file_etag);
+			إذا (ret != NSERROR_OK) {
 				NSLOG(fetch, WARNING,
 						"Bad If-None-Match value");
 			}
@@ -184,30 +184,30 @@ fetch_file_setup(struct fetch *fetchh,
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_درج(ring, ctx);
 
-	return ctx;
+	أرجع ctx;
 }
 
 /** callback to free a file fetch */
-static void fetch_file_free(void *ctx)
+ساكن فراغ fetch_file_free(فراغ *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	بنية fetch_file_context *c = ctx;
 	nsurl_unref(c->url);
-	free(c->path);
-	free(ctx);
+	حرر(c->مسیر);
+	حرر(ctx);
 }
 
 /** callback to start a file fetch */
-static bool fetch_file_start(void *ctx)
+ساكن bool fetch_file_شروع(فراغ *ctx)
 {
-	return true;
+	أرجع true;
 }
 
 /** callback to abort a file fetch */
-static void fetch_file_abort(void *ctx)
+ساكن فراغ fetch_file_abort(فراغ *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	بنية fetch_file_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -216,40 +216,40 @@ static void fetch_file_abort(void *ctx)
 	c->aborted = true;
 }
 
-static int fetch_file_errno_to_http_code(int error_no)
+ساكن صحيح fetch_file_errno_مقصد_http_کد(صحيح error_no)
 {
-	switch (error_no) {
-	case ENAMETOOLONG:
-		return 400;
-	case EACCES:
-		return 403;
-	case ENOENT:
-		return 404;
-	default:
-		break;
+	بدل (error_no) {
+	حالة ENAMETOOLONG:
+		أرجع 400;
+	حالة EACCES:
+		أرجع 403;
+	حالة ENOENT:
+		أرجع 404;
+	افتراضي:
+		اكسر;
 	}
 
-	return 500;
+	أرجع 500;
 }
 
-static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
+ساكن فراغ fetch_file_process_error(بنية fetch_file_context *ctx, صحيح کد)
 {
-	fetch_msg msg;
-	char buffer[1024];
-	const char *title;
-	char key[8];
+	fetch_پیام پیام;
+	حرف میانگیر[1024];
+	ثابت حرف *title;
+	حرف کلید[8];
 
 	/* content is going to return error code */
-	fetch_set_http_code(ctx->fetchh, code);
+	fetch_مجموعه_http_کد(ctx->fetchh, کد);
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_file_process_error_aborted;
+	إذا (fetch_file_send_سرآیند(ctx, "Content-Type: text/html; charset=utf-8"))
+		اذهب fetch_file_process_error_aborted;
 
-	snprintf(key, sizeof key, "HTTP%03d", code);
-	title = messages_get(key);
+	snprintf(کلید, حجم کلید, "HTTP%03d", کد);
+	title = messages_get(کلید);
 
-	snprintf(buffer, sizeof buffer,
+	snprintf(میانگیر, حجم میانگیر,
 		 "<html><head>"
 		 "<title>%s</title>"
 		 "<link rel=\"stylesheet\" type=\"text/css\" "
@@ -261,67 +261,67 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 		 "<p>%s %d %s %s</p>\n"
 		 "</body>\n</html>\n",
 		 title, title,
-		 messages_get("FetchErrorCode"), code,
+		 messages_get("FetchErrorCode"), کد,
 		 messages_get("FetchFile"), nsurl_access(ctx->url));
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_error_aborted;
+	پیام.type = FETCH_داده;
+	پیام.داده.سرآیند_or_داده.buf = (ثابت uint8_t *) میانگیر;
+	پیام.داده.سرآیند_or_داده.len = طول_رشته(میانگیر);
+	إذا (fetch_file_send_callback(&پیام, ctx))
+		اذهب fetch_file_process_error_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	پیام.type = FETCH_پایانیافته;
+	fetch_file_send_callback(&پیام, ctx);
 
 fetch_file_process_error_aborted:
-	return;
+	أرجع;
 }
 
 
 /** Process object as a regular file */
-static void fetch_file_process_plain(struct fetch_file_context *ctx,
-				     struct stat *fdstat)
+ساكن فراغ fetch_file_process_plain(بنية fetch_file_context *ctx,
+				     بنية stat *fdstat)
 {
-#ifdef HAVE_MMAP
-	fetch_msg msg;
-	char *buf = NULL;
-	size_t buf_size;
+#اگر_تعریف_شده HAVE_MMAP
+	fetch_پیام پیام;
+	حرف *buf = عدم;
+	size_t buf_اندازه;
 
-	int fd; /**< The file descriptor of the object */
+	صحيح fd; /**< The file descriptor of the object */
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
-		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
-		return;
+	إذا (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+		fetch_مجموعه_http_کد(ctx->fetchh, 304);
+		پیام.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&پیام, ctx);
+		أرجع;
 	}
 
-	fd = open(ctx->path, O_RDONLY);
-	if (fd < 0) {
+	fd = open(ctx->مسیر, O_RDONLY);
+	إذا (fd < 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_مقصد_http_کد(errno));
+		أرجع;
 	}
 
 	/* set buffer size */
-	buf_size = fdstat->st_size;
+	buf_اندازه = fdstat->st_size;
 
 	/* allocate the buffer storage */
-	if (buf_size > 0) {
-		buf = mmap(NULL, buf_size, PROT_READ, MAP_SHARED, fd, 0);
-		if (buf == MAP_FAILED) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to map memory for file data buffer";
-			fetch_file_send_callback(&msg, ctx);
+	إذا (buf_اندازه > 0) {
+		buf = mmap(عدم, buf_اندازه, PROT_READ, MAP_SHARED, fd, 0);
+		إذا (buf == MAP_FAILED) {
+			پیام.type = FETCH_ERROR;
+			پیام.داده.error = "Unable to map memory for file data buffer";
+			fetch_file_send_callback(&پیام, ctx);
 			close(fd);
-			return;
+			أرجع;
 		}
 	}
 
 	/* fetch is going to be successful */
-	fetch_set_http_code(ctx->fetchh, 200);
+	fetch_مجموعه_http_کد(ctx->fetchh, 200);
 
 	/* Any callback can result in the fetch being aborted.
 	 * Therefore, we _must_ check for this after _every_ call to
@@ -329,42 +329,42 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
-				   guit->fetch->filetype(ctx->path))) {
-		goto fetch_file_process_aborted;
+	إذا (fetch_file_send_سرآیند(ctx, "Content-Type: %s", 
+				   guit->fetch->filetype(ctx->مسیر))) {
+		اذهب fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	إذا (fetch_file_send_سرآیند(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
-		goto fetch_file_process_aborted;
+		اذهب fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
+	إذا (fetch_file_send_سرآیند(ctx, "ETag: \"%10" PRId64 "\"",
 				   (int64_t) fdstat->st_mtime)) {
-		goto fetch_file_process_aborted;
+		اذهب fetch_file_process_aborted;
 	}
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buf;
-	msg.data.header_or_data.len = buf_size;
-	fetch_file_send_callback(&msg, ctx);
+	پیام.type = FETCH_داده;
+	پیام.داده.سرآیند_or_داده.buf = (ثابت uint8_t *) buf;
+	پیام.داده.سرآیند_or_داده.len = buf_اندازه;
+	fetch_file_send_callback(&پیام, ctx);
 
-	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+	إذا (ctx->aborted == false) {
+		پیام.type = FETCH_پایانیافته;
+		fetch_file_send_callback(&پیام, ctx);
 	}
 
 fetch_file_process_aborted:
 
-	if (buf != NULL)
-		munmap(buf, buf_size);
+	إذا (buf != عدم)
+		munmap(buf, buf_اندازه);
 	close(fd);
-#else
-	fetch_msg msg;
-	char *buf;
-	size_t buf_size;
+#وإلا
+	fetch_پیام پیام;
+	حرف *buf;
+	size_t buf_اندازه;
 
 	ssize_t tot_read = 0;
 	ssize_t res;
@@ -372,39 +372,39 @@ fetch_file_process_aborted:
 	FILE *infile;
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
-		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
-		return;
+	إذا (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+		fetch_مجموعه_http_کد(ctx->fetchh, 304);
+		پیام.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&پیام, ctx);
+		أرجع;
 	}
 
-	infile = fopen(ctx->path, "rb");
-	if (infile == NULL) {
+	infile = fopen(ctx->مسیر, "rb");
+	إذا (infile == عدم) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_مقصد_http_کد(errno));
+		أرجع;
 	}
 
 	/* set buffer size */
-	buf_size = fdstat->st_size;
-	if (buf_size > FETCH_FILE_MAX_BUF_SIZE)
-		buf_size = FETCH_FILE_MAX_BUF_SIZE;
+	buf_اندازه = fdstat->st_size;
+	إذا (buf_اندازه > FETCH_FILE_MAX_BUF_اندازه)
+		buf_اندازه = FETCH_FILE_MAX_BUF_اندازه;
 
 	/* allocate the buffer storage */
-	buf = malloc(buf_size);
-	if (buf == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error =
+	buf = حافظه_بده(buf_اندازه);
+	إذا (buf == عدم) {
+		پیام.type = FETCH_ERROR;
+		پیام.داده.error =
 			"Unable to allocate memory for file data buffer";
-		fetch_file_send_callback(&msg, ctx);
+		fetch_file_send_callback(&پیام, ctx);
 		fclose(infile);
-		return;
+		أرجع;
 	}
 
 	/* fetch is going to be successful */
-	fetch_set_http_code(ctx->fetchh, 200);
+	fetch_مجموعه_http_کد(ctx->fetchh, 200);
 
 	/* Any callback can result in the fetch being aborted.
 	 * Therefore, we _must_ check for this after _every_ call to
@@ -412,112 +412,112 @@ fetch_file_process_aborted:
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
-				   guit->fetch->filetype(ctx->path))) {
-		goto fetch_file_process_aborted;
+	إذا (fetch_file_send_سرآیند(ctx, "Content-Type: %s", 
+				   guit->fetch->filetype(ctx->مسیر))) {
+		اذهب fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	إذا (fetch_file_send_سرآیند(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
-		goto fetch_file_process_aborted;
+		اذهب fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
+	إذا (fetch_file_send_سرآیند(ctx, "ETag: \"%10" PRId64 "\"", 
 				   (int64_t) fdstat->st_mtime)) {
-		goto fetch_file_process_aborted;
+		اذهب fetch_file_process_aborted;
 	}
 
 	/* main data loop */
-	while (tot_read < fdstat->st_size) {
-		res = fread(buf, 1, buf_size, infile);
-		if (res == 0) {
-			if (feof(infile)) {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Unexpected EOF reading file";
-				fetch_file_send_callback(&msg, ctx);
-				goto fetch_file_process_aborted;
-			} else {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Error reading file";
-				fetch_file_send_callback(&msg, ctx);
-				goto fetch_file_process_aborted;
+	طالما (tot_read < fdstat->st_size) {
+		res = fread(buf, 1, buf_اندازه, infile);
+		إذا (res == 0) {
+			إذا (feof(infile)) {
+				پیام.type = FETCH_ERROR;
+				پیام.داده.error = "Unexpected EOF reading file";
+				fetch_file_send_callback(&پیام, ctx);
+				اذهب fetch_file_process_aborted;
+			} وإلا {
+				پیام.type = FETCH_ERROR;
+				پیام.داده.error = "Error reading file";
+				fetch_file_send_callback(&پیام, ctx);
+				اذهب fetch_file_process_aborted;
 			}
 		}
 		tot_read += res;
 
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buf;
-		msg.data.header_or_data.len = res;
-		if (fetch_file_send_callback(&msg, ctx))
-			break;
+		پیام.type = FETCH_داده;
+		پیام.داده.سرآیند_or_داده.buf = (ثابت uint8_t *) buf;
+		پیام.داده.سرآیند_or_داده.len = res;
+		إذا (fetch_file_send_callback(&پیام, ctx))
+			اكسر;
 	}
 
-	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+	إذا (ctx->aborted == false) {
+		پیام.type = FETCH_پایانیافته;
+		fetch_file_send_callback(&پیام, ctx);
 	}
 
 fetch_file_process_aborted:
 
 	fclose(infile);
-	free(buf);
-#endif
-	return;
+	حرر(buf);
+#پایان_اگر
+	أرجع;
 }
 
-static char *gen_nice_title(char *path)
+ساكن حرف *gen_nice_title(حرف *مسیر)
 {
-	char *nice_path, *cnv, *tmp;
-	char *title;
-	int title_length;
+	حرف *nice_مسیر, *cnv, *tmp;
+	حرف *title;
+	صحيح title_درازی;
 
 	/* Convert path for display */
-	nice_path = malloc(strlen(path) * SLEN("&amp;") + 1);
-	if (nice_path == NULL) {
-		return NULL;
+	nice_مسیر = حافظه_بده(طول_رشته(مسیر) * SLEN("&amp;") + 1);
+	إذا (nice_مسیر == عدم) {
+		أرجع عدم;
 	}
 
 	/* Escape special HTML characters */
-	for (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
-		if (*tmp == '<') {
+	لكل (cnv = nice_مسیر, tmp = مسیر; *tmp != '\0'; tmp++) {
+		إذا (*tmp == '<') {
 			*cnv++ = '&';
 			*cnv++ = 'l';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '>') {
+		} وإلا إذا (*tmp == '>') {
 			*cnv++ = '&';
 			*cnv++ = 'g';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '&') {
+		} وإلا إذا (*tmp == '&') {
 			*cnv++ = '&';
 			*cnv++ = 'a';
 			*cnv++ = 'm';
 			*cnv++ = 'p';
 			*cnv++ = ';';
-		} else {
+		} وإلا {
 			*cnv++ = *tmp;
 		}
 	}
 	*cnv = '\0';
 
 	/* Construct a localised title string */
-	title_length = (cnv - nice_path) + strlen(messages_get("FileIndex"));
-	title = malloc(title_length + 1);
+	title_درازی = (cnv - nice_مسیر) + طول_رشته(messages_get("FileIndex"));
+	title = حافظه_بده(title_درازی + 1);
 
-	if (title == NULL) {
-		free(nice_path);
-		return NULL;
+	إذا (title == عدم) {
+		حرر(nice_مسیر);
+		أرجع عدم;
 	}
 
 	/* Set title to localised "Index of <nice_path>" */
-	snprintf(title, title_length, messages_get("FileIndex"), nice_path);
+	snprintf(title, title_درازی, messages_get("FileIndex"), nice_مسیر);
 
-	free(nice_path);
+	حرر(nice_مسیر);
 
-	return title;
+	أرجع title;
 }
 
 /**
@@ -530,94 +530,94 @@ static char *gen_nice_title(char *path)
  * \param buffer_len The space available in the output buffer.
  * \return NSERROR_OK or error code on faliure.
  */
-static nserror
-process_dir_ent(struct fetch_file_context *ctx,
-		 struct dirent *ent,
+ساكن nserror
+process_dir_ent(بنية fetch_file_context *ctx,
+		 بنية dirent *ent,
 		 bool even,
-		 char *buffer,
-		 size_t buffer_len)
+		 حرف *میانگیر,
+		 size_t میانگیر_len)
 {
 	nserror ret;
-	char *urlpath = NULL; /* buffer for leaf entry path */
-	struct stat ent_stat; /* stat result of leaf entry */
-	char datebuf[64]; /* buffer for date text */
-	char timebuf[64]; /* buffer for time text */
+	حرف *urlpath = عدم; /* buffer for leaf entry path */
+	بنية stat ent_stat; /* stat result of leaf entry */
+	حرف datebuf[64]; /* buffer for date text */
+	حرف timebuf[64]; /* buffer for time text */
 	nsurl *url;
 
 	/* skip hidden files */
-	if (ent->d_name[0] == '.') {
-		return NSERROR_BAD_PARAMETER;
+	إذا (ent->d_name[0] == '.') {
+		أرجع NSERROR_BAD_PARAMETER;
 	}
 
-	ret = netsurf_mkpath(&urlpath, NULL, 2, ctx->path, ent->d_name);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&urlpath, عدم, 2, ctx->مسیر, ent->d_name);
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
-	if (stat(urlpath, &ent_stat) != 0) {
+	إذا (stat(urlpath, &ent_stat) != 0) {
 		ent_stat.st_mode = 0;
 		datebuf[0] = 0;
 		timebuf[0] = 0;
-	} else {
+	} وإلا {
 		/* Get date in output format. a (day of week) and b
 		 * (month) are both affected by the locale
 		 */
-		if (strftime((char *)&datebuf, sizeof datebuf, "%a %d %b %Y",
+		إذا (strftime((حرف *)&datebuf, حجم datebuf, "%a %d %b %Y",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			datebuf[0] = '-';
 			datebuf[1] = 0;
 		}
 
 		/* Get time in output format */
-		if (strftime((char *)&timebuf, sizeof timebuf, "%H:%M",
+		إذا (strftime((حرف *)&timebuf, حجم timebuf, "%H:%M",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			timebuf[0] = '-';
 			timebuf[1] = 0;
 		}
 	}
 
-	ret = guit->file->path_to_nsurl(urlpath, &url);
-	if (ret != NSERROR_OK) {
-		free(urlpath);
-		return ret;
+	ret = guit->file->مسیر_مقصد_nsurl(urlpath, &url);
+	إذا (ret != NSERROR_OK) {
+		حرر(urlpath);
+		أرجع ret;
 	}
 
-	if (S_ISREG(ent_stat.st_mode)) {
+	إذا (S_ISREG(ent_stat.st_mode)) {
 		/* regular file */
-		dirlist_generate_row(even,
+		dirlist_generate_ردیف(even,
 				     false,
 				     url,
 				     ent->d_name,
 				     guit->fetch->filetype(urlpath),
 				     ent_stat.st_size,
 				     datebuf, timebuf,
-				     buffer, buffer_len);
-	} else if (S_ISDIR(ent_stat.st_mode)) {
+				     میانگیر, میانگیر_len);
+	} وإلا إذا (S_ISDIR(ent_stat.st_mode)) {
 		/* directory */
-		dirlist_generate_row(even,
+		dirlist_generate_ردیف(even,
 				     true,
 				     url,
 				     ent->d_name,
 				     messages_get("FileDirectory"),
 				     -1,
 				     datebuf, timebuf,
-				     buffer, buffer_len);
-	} else {
+				     میانگیر, میانگیر_len);
+	} وإلا {
 		/* something else */
-		dirlist_generate_row(even,
+		dirlist_generate_ردیف(even,
 				     false,
 				     url,
 				     ent->d_name,
 				     "",
 				     -1,
 				     datebuf, timebuf,
-				     buffer, buffer_len);
+				     میانگیر, میانگیر_len);
 	}
 
 	nsurl_unref(url);
-	free(urlpath);
+	حرر(urlpath);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -629,180 +629,180 @@ process_dir_ent(struct fetch_file_context *ctx,
  * \param d1 first directory entry
  * \param d2 second directory entry
  */
-static int dir_sort_alpha(const struct dirent **d1, const struct dirent **d2)
+ساكن صحيح dir_مرتب_سازی_alpha(ثابت بنية dirent **d1, ثابت بنية dirent **d2)
 {
-	const char *s1 = (*d1)->d_name;
-	const char *s2 = (*d2)->d_name;
+	ثابت حرف *s1 = (*d1)->d_name;
+	ثابت حرف *s2 = (*d2)->d_name;
 
-	while (*s1 != '\0' && *s2 != '\0') {
-		if ((*s1 >= '0' && *s1 <= '9') &&
+	طالما (*s1 != '\0' && *s2 != '\0') {
+		إذا ((*s1 >= '0' && *s1 <= '9') &&
 				(*s2 >= '0' && *s2 <= '9')) {
-			int n1 = 0,  n2 = 0;
-			while (*s1 >= '0' && *s1 <= '9') {
+			صحيح n1 = 0,  n2 = 0;
+			طالما (*s1 >= '0' && *s1 <= '9') {
 				n1 = n1 * 10 + (*s1) - '0';
 				s1++;
 			}
-			while (*s2 >= '0' && *s2 <= '9') {
+			طالما (*s2 >= '0' && *s2 <= '9') {
 				n2 = n2 * 10 + (*s2) - '0';
 				s2++;
 			}
-			if (n1 != n2) {
-				return n1 - n2;
+			إذا (n1 != n2) {
+				أرجع n1 - n2;
 			}
-			if (*s1 == '\0' || *s2 == '\0')
-				break;
+			إذا (*s1 == '\0' || *s2 == '\0')
+				اكسر;
 		}
-		if (tolower(*s1) != tolower(*s2))
-			break;
+		إذا (tolower(*s1) != tolower(*s2))
+			اكسر;
 
 		s1++;
 		s2++;
 	}
 
-	return tolower(*s1) - tolower(*s2);
+	أرجع tolower(*s1) - tolower(*s2);
 }
 
-static void fetch_file_process_dir(struct fetch_file_context *ctx,
-				   struct stat *fdstat)
+ساكن فراغ fetch_file_process_dir(بنية fetch_file_context *ctx,
+				   بنية stat *fdstat)
 {
-	fetch_msg msg;
-	char buffer[1024]; /* Output buffer */
+	fetch_پیام پیام;
+	حرف میانگیر[1024]; /* Output buffer */
 	bool even = false; /* formatting flag */
-	char *title; /* pretty printed title */
+	حرف *title; /* pretty printed title */
 	nserror err; /* result from url routines */
-	nsurl *up; /* url of parent */
+	nsurl *به_بالا; /* url of parent */
 
-	struct dirent **listing = NULL; /* directory entry listing */
-	int i; /* directory entry index */
-	int n; /* number of directory entries */
+	بنية dirent **listing = عدم; /* directory entry listing */
+	صحيح i; /* directory entry index */
+	صحيح n; /* number of directory entries */
 
-	n = scandir(ctx->path, &listing, 0, dir_sort_alpha);
-	if (n < 0) {
+	n = scandir(ctx->مسیر, &listing, 0, dir_مرتب_سازی_alpha);
+	إذا (n < 0) {
 		fetch_file_process_error(ctx,
-			fetch_file_errno_to_http_code(errno));
-		return;
+			fetch_file_errno_مقصد_http_کد(errno));
+		أرجع;
 	}
 
 	/* fetch is going to be successful */
-	fetch_set_http_code(ctx->fetchh, 200);
+	fetch_مجموعه_http_کد(ctx->fetchh, 200);
 
 	/* force no-cache */
-	if (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
-		goto fetch_file_process_dir_aborted;
+	إذا (fetch_file_send_سرآیند(ctx, "Cache-Control: no-cache"))
+		اذهب fetch_file_process_dir_aborted;
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_file_process_dir_aborted;
+	إذا (fetch_file_send_سرآیند(ctx, "Content-Type: text/html; charset=utf-8"))
+		اذهب fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
+	پیام.type = FETCH_داده;
+	پیام.داده.سرآیند_or_داده.buf = (ثابت uint8_t *) میانگیر;
 
 	/* directory listing top */
-	dirlist_generate_top(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_بالاترین(میانگیر, حجم میانگیر);
+	پیام.داده.سرآیند_or_داده.len = طول_رشته(میانگیر);
+	إذا (fetch_file_send_callback(&پیام, ctx))
+		اذهب fetch_file_process_dir_aborted;
 
 	/* directory listing title */
-	title = gen_nice_title(ctx->path);
-	dirlist_generate_title(title, buffer, sizeof buffer);
-	free(title);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	title = gen_nice_title(ctx->مسیر);
+	dirlist_generate_title(title, میانگیر, حجم میانگیر);
+	حرر(title);
+	پیام.داده.سرآیند_or_داده.len = طول_رشته(میانگیر);
+	إذا (fetch_file_send_callback(&پیام, ctx))
+		اذهب fetch_file_process_dir_aborted;
 
 	/* Print parent directory link */
-	err = nsurl_parent(ctx->url, &up);
-	if (err == NSERROR_OK) {
-		if (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
+	err = nsurl_والد(ctx->url, &به_بالا);
+	إذا (err == NSERROR_OK) {
+		إذا (nsurl_compare(ctx->url, به_بالا, NSURL_COMPLETE) == false) {
 			/* different URL; have parent */
-			dirlist_generate_parent_link(nsurl_access(up),
-					buffer, sizeof buffer);
+			dirlist_generate_والد_link(nsurl_access(به_بالا),
+					میانگیر, حجم میانگیر);
 
-			msg.data.header_or_data.len = strlen(buffer);
-			fetch_file_send_callback(&msg, ctx);
+			پیام.داده.سرآیند_or_داده.len = طول_رشته(میانگیر);
+			fetch_file_send_callback(&پیام, ctx);
 		}
-		nsurl_unref(up);
+		nsurl_unref(به_بالا);
 
-		if (ctx->aborted)
-			goto fetch_file_process_dir_aborted;
+		إذا (ctx->aborted)
+			اذهب fetch_file_process_dir_aborted;
 
 	}
 
 	/* directory list headings */
-	dirlist_generate_headings(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_headings(میانگیر, حجم میانگیر);
+	پیام.داده.سرآیند_or_داده.len = طول_رشته(میانگیر);
+	إذا (fetch_file_send_callback(&پیام, ctx))
+		اذهب fetch_file_process_dir_aborted;
 
-	for (i = 0; i < n; i++) {
+	لكل (i = 0; i < n; i++) {
 
-		err = process_dir_ent(ctx, listing[i], even, buffer,
-				       sizeof(buffer));
+		err = process_dir_ent(ctx, listing[i], even, میانگیر,
+				       حجم(میانگیر));
 
-		if (err == NSERROR_OK) {
-			msg.data.header_or_data.len = strlen(buffer);
-			if (fetch_file_send_callback(&msg, ctx))
-				goto fetch_file_process_dir_aborted;
+		إذا (err == NSERROR_OK) {
+			پیام.داده.سرآیند_or_داده.len = طول_رشته(میانگیر);
+			إذا (fetch_file_send_callback(&پیام, ctx))
+				اذهب fetch_file_process_dir_aborted;
 
 			even = !even;
 		}
 	}
 
 	/* directory listing bottom */
-	dirlist_generate_bottom(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_bottom(میانگیر, حجم میانگیر);
+	پیام.داده.سرآیند_or_داده.len = طول_رشته(میانگیر);
+	إذا (fetch_file_send_callback(&پیام, ctx))
+		اذهب fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	پیام.type = FETCH_پایانیافته;
+	fetch_file_send_callback(&پیام, ctx);
 
 fetch_file_process_dir_aborted:
 
-	if (listing != NULL) {
-		for (i = 0; i < n; i++) {
-			free(listing[i]);
+	إذا (listing != عدم) {
+		لكل (i = 0; i < n; i++) {
+			حرر(listing[i]);
 		}
-		free(listing);
+		حرر(listing);
 	}
 }
 
 
 /* process a file fetch */
-static void fetch_file_process(struct fetch_file_context *ctx)
+ساكن فراغ fetch_file_process(بنية fetch_file_context *ctx)
 {
-	struct stat fdstat; /**< The objects stat */
+	بنية stat fdstat; /**< The objects stat */
 
-	if (stat(ctx->path, &fdstat) != 0) {
+	إذا (stat(ctx->مسیر, &fdstat) != 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_مقصد_http_کد(errno));
+		أرجع;
 	}
 
-	if (S_ISDIR(fdstat.st_mode)) {
+	إذا (S_ISDIR(fdstat.st_mode)) {
 		/* directory listing */
 		fetch_file_process_dir(ctx, &fdstat);
-		return;
-	} else if (S_ISREG(fdstat.st_mode)) {
+		أرجع;
+	} وإلا إذا (S_ISREG(fdstat.st_mode)) {
 		/* regular file */
 		fetch_file_process_plain(ctx, &fdstat);
-		return;
-	} else {
+		أرجع;
+	} وإلا {
 		/* unhandled type of file */
 		fetch_file_process_error(ctx, 501);
 	}
 
-	return;
+	أرجع;
 }
 
 /** callback to poll for additional file fetch contents */
-static void fetch_file_poll(lwc_string *scheme)
+ساكن فراغ fetch_file_poll(lwc_string *scheme)
 {
-	struct fetch_file_context *c, *save_ring = NULL;
+	بنية fetch_file_context *c, *save_ring = عدم;
 
-	while (ring != NULL) {
+	طالما (ring != عدم) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -813,13 +813,13 @@ static void fetch_file_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		إذا (c->locked == true) {
+			RING_درج(save_ring, c);
+			استمر;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		إذا (c->aborted == false) {
 			/* file fetches can be processed in one go */
 			fetch_file_process(c);
 		}
@@ -836,19 +836,19 @@ static void fetch_file_poll(lwc_string *scheme)
 	ring = save_ring;
 }
 
-nserror fetch_file_register(void)
+nserror fetch_file_ثبات(فراغ)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_file);
-	const struct fetcher_operation_table fetcher_ops = {
+	ثابت بنية fetcher_operation_جدول fetcher_ops = {
 		.initialise = fetch_file_initialise,
 		.acceptable = fetch_file_can_fetch,
-		.setup = fetch_file_setup,
-		.start = fetch_file_start,
+		.راهاندازی = fetch_file_راهاندازی,
+		.شروع = fetch_file_شروع,
 		.abort = fetch_file_abort,
-		.free = fetch_file_free,
+		.حرر = fetch_file_free,
 		.poll = fetch_file_poll,
 		.finalise = fetch_file_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	أرجع fetcher_جمع_کن(scheme, &fetcher_ops);
 }

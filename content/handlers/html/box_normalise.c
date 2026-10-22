@@ -24,47 +24,47 @@
  * Box tree normalisation implementation.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
+#ضمن <assert.h>
+#ضمن <stdbool.h>
+#ضمن <string.h>
 
-#include "utils/log.h"
-#include "utils/errors.h"
-#include "css/select.h"
+#ضمن "utils/log.h"
+#ضمن "utils/errors.h"
+#ضمن "css/select.h"
 
-#include "html/private.h"
-#include "html/table.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_normalise.h"
+#ضمن "html/private.h"
+#ضمن "html/table.h"
+#ضمن "html/box.h"
+#ضمن "html/box_manipulate.h"
+#ضمن "html/box_normalise.h"
 
 /* Define to enable box normalise debug */
-#undef BOX_NORMALISE_DEBUG
+#لغو_تعریف BOX_NORMALISE_DEBUG
 
 /**
  * Row spanning information for a cell
  */
-struct span_info {
+بنية بازه_info {
 	/** Number of rows this cell spans */
-	unsigned int row_span;
+	بیعلامت صحيح ردیف_بازه;
 	/** Row group of cell */
-	struct box *rg;
+	بنية box *rg;
 	/** The cell in this column spans all rows until the end of the table */
-	bool auto_row;
+	bool auto_ردیف;
 };
 
 /**
  * Column record for a table
  */
-struct columns {
+بنية columns {
 	/** Current column index */
-	unsigned int current_column;
+	بیعلامت صحيح current_ستونی;
 	/** Number of columns in main part of table 1..max columns */
-	unsigned int num_columns;
+	بیعلامت صحيح رقم_columns;
 	/** Information about columns in main table, array [0, num_columns) */
-	struct span_info *spans;
+	بنية بازه_info *spans;
 	/** Number of rows in table */
-	unsigned int num_rows;
+	بیعلامت صحيح رقم_ردیفها;
 };
 
 
@@ -79,367 +79,367 @@ struct columns {
  * \param cell		Box for current table cell
  * \return  true on success, false on memory exhaustion
  */
-static bool
-calculate_table_row(struct columns *col_info,
-		    unsigned int col_span,
-		    unsigned int row_span,
-		    unsigned int *start_column,
-		    struct box *cell)
+ساكن bool
+calculate_جدول_ردیف(بنية columns *ستون_info,
+		    بیعلامت صحيح ستون_بازه,
+		    بیعلامت صحيح ردیف_بازه,
+		    بیعلامت صحيح *شروع_ستونی,
+		    بنية box *cell)
 {
-	unsigned int cell_start_col = col_info->current_column;
-	unsigned int cell_end_col;
-	unsigned int i;
-	struct span_info *spans;
-	struct box *rg = cell->parent->parent; /* Cell's row group */
+	بیعلامت صحيح cell_شروع_ستون = ستون_info->current_ستونی;
+	بیعلامت صحيح cell_انتها_ستون;
+	بیعلامت صحيح i;
+	بنية بازه_info *spans;
+	بنية box *rg = cell->والد->والد; /* Cell's row group */
 
 	/* Skip columns with cells spanning from above */
 	/* TODO: Need to ignore cells spanning from above that belong to
 	 *       different row group.  We don't have that info here. */
-	while (col_info->spans[cell_start_col].row_span != 0 &&
-			col_info->spans[cell_start_col].rg == rg) {
-		cell_start_col++;
+	طالما (ستون_info->spans[cell_شروع_ستون].ردیف_بازه != 0 &&
+			ستون_info->spans[cell_شروع_ستون].rg == rg) {
+		cell_شروع_ستون++;
 	}
 
 	/* Update current column with calculated start */
-	col_info->current_column = cell_start_col;
+	ستون_info->current_ستونی = cell_شروع_ستون;
 
 	/* If this cell has a colspan of 0, then assume 1.
 	 * No other browser supports colspan=0, anyway. */
-	if (col_span == 0)
-		col_span = 1;
+	إذا (ستون_بازه == 0)
+		ستون_بازه = 1;
 
-	cell_end_col = cell_start_col + col_span;
+	cell_انتها_ستون = cell_شروع_ستون + ستون_بازه;
 
-	if (col_info->num_columns < cell_end_col) {
+	إذا (ستون_info->رقم_columns < cell_انتها_ستون) {
 		/* It appears that this row has more columns than
 		 * the maximum recorded for the table so far.
 		 * Allocate more span records. */
-		spans = realloc(col_info->spans,
-				sizeof *spans * (cell_end_col + 1));
-		if (spans == NULL)
-			return false;
+		spans = realloc(ستون_info->spans,
+				حجم *spans * (cell_انتها_ستون + 1));
+		إذا (spans == عدم)
+			أرجع false;
 
-		col_info->spans = spans;
-		col_info->num_columns = cell_end_col;
+		ستون_info->spans = spans;
+		ستون_info->رقم_columns = cell_انتها_ستون;
 
 		/* Mark new final column as sentinel */
-		col_info->spans[cell_end_col].row_span = 0;
-		col_info->spans[cell_end_col].auto_row = false;
+		ستون_info->spans[cell_انتها_ستون].ردیف_بازه = 0;
+		ستون_info->spans[cell_انتها_ستون].auto_ردیف = false;
 	}
 
 	/* This cell may span multiple columns. If it also wants to span
 	 * multiple rows, temporarily assume it spans 1 row only. This will
 	 * be fixed up in box_normalise_table_spans() */
-	for (i = cell_start_col; i < cell_end_col; i++) {
-		col_info->spans[i].row_span = (row_span == 0) ? 1 : row_span;
-		col_info->spans[i].auto_row = (row_span == 0);
-		col_info->spans[i].rg = rg;
+	لكل (i = cell_شروع_ستون; i < cell_انتها_ستون; i++) {
+		ستون_info->spans[i].ردیف_بازه = (ردیف_بازه == 0) ? 1 : ردیف_بازه;
+		ستون_info->spans[i].auto_ردیف = (ردیف_بازه == 0);
+		ستون_info->spans[i].rg = rg;
 	}
 
 	/* Update current column with calculated end. */
-	col_info->current_column = cell_end_col;
+	ستون_info->current_ستونی = cell_انتها_ستون;
 
-	*start_column = cell_start_col;
+	*شروع_ستونی = cell_شروع_ستون;
 
-	return true;
+	أرجع true;
 }
 
 
-static bool
-box_normalise_table_row(struct box *row,
-			const struct box *root,
-			struct columns *col_info,
+ساكن bool
+box_normalise_جدول_ردیف(بنية box *ردیف,
+			ثابت بنية box *ریشه,
+			بنية columns *ستون_info,
 			html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *cell = NULL;
+	بنية box *فرزند;
+	بنية box *بعدی_فرزند;
+	بنية box *cell = عدم;
 	css_computed_style *style;
-	unsigned int i;
+	بیعلامت صحيح i;
 	nscss_select_ctx ctx;
 
-	assert(row != NULL);
-	assert(row->type == BOX_TABLE_ROW);
+	أكد(ردیف != عدم);
+	أكد(ردیف->type == BOX_جدول_ردیف);
 
-	ctx.root_style = root->style;
+	ctx.ریشه_style = ریشه->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row %p", row);
-#endif
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row %p", ردیف);
+#پایان_اگر
 
-	for (child = row->children; child != NULL; child = next_child) {
-		next_child = child->next;
+	لكل (فرزند = ردیف->children; فرزند != عدم; فرزند = بعدی_فرزند) {
+		بعدی_فرزند = فرزند->بعدی;
 
-		switch (child->type) {
-		case BOX_TABLE_CELL:
+		بدل (فرزند->type) {
+		حالة BOX_جدول_CELL:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			cell = child;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
+			إذا (box_normalise_بلوک(فرزند, ریشه, c) == false)
+				أرجع false;
+			cell = فرزند;
+			اكسر;
+		حالة BOX_FLEX:
+		حالة BOX_بلوک:
+		حالة BOX_INLINE_CONTAINER:
+		حالة BOX_جدول:
+		حالة BOX_جدول_ردیف_گروه:
+		حالة BOX_جدول_ردیف:
 			/* insert implied table cell */
-			assert(row->style != NULL);
+			أكد(ردیف->style != عدم);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_نما_پر);
+			ctx.پایه_url = c->پایه_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					row->style);
-			if (style == NULL)
-				return false;
+					ردیف->style);
+			إذا (style == عدم)
+				أرجع false;
 
-			cell = box_create(NULL, style, true, row->href,
-					row->target, NULL, NULL, c->bctx);
-			if (cell == NULL) {
+			cell = box_create(عدم, style, true, ردیف->href,
+					ردیف->هدف, عدم, عدم, c->bctx);
+			إذا (cell == عدم) {
 				css_computed_style_destroy(style);
-				return false;
+				أرجع false;
 			}
-			cell->type = BOX_TABLE_CELL;
+			cell->type = BOX_جدول_CELL;
 
-			if (child->prev == NULL)
-				row->children = cell;
-			else
-				child->prev->next = cell;
+			إذا (فرزند->prev == عدم)
+				ردیف->children = cell;
+			وإلا
+				فرزند->prev->بعدی = cell;
 
-			cell->prev = child->prev;
+			cell->prev = فرزند->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW)) {
-				box_add_child(cell, child);
+			طالما (فرزند != عدم && (
+					فرزند->type == BOX_FLEX ||
+					فرزند->type == BOX_بلوک ||
+					فرزند->type == BOX_INLINE_CONTAINER ||
+					فرزند->type == BOX_جدول ||
+					فرزند->type == BOX_جدول_ردیف_گروه ||
+					فرزند->type == BOX_جدول_ردیف)) {
+				box_جمع_کن_فرزند(cell, فرزند);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				بعدی_فرزند = فرزند->بعدی;
+				فرزند->بعدی = عدم;
+				فرزند = بعدی_فرزند;
 			}
 
-			assert(cell->last != NULL);
+			أكد(cell->آخرین != عدم);
 
-			cell->last->next = NULL;
-			cell->next = next_child = child;
-			if (cell->next != NULL)
-				cell->next->prev = cell;
-			else
-				row->last = cell;
-			cell->parent = row;
+			cell->آخرین->بعدی = عدم;
+			cell->بعدی = بعدی_فرزند = فرزند;
+			إذا (cell->بعدی != عدم)
+				cell->بعدی->prev = cell;
+			وإلا
+				ردیف->آخرین = cell;
+			cell->والد = ردیف;
 
-			if (box_normalise_block(cell, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			إذا (box_normalise_بلوک(cell, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_INLINE:
+		حالة BOX_INLINE_انتها:
+		حالة BOX_INLINE_FLEX:
+		حالة BOX_INLINE_بلوک:
+		حالة BOX_FLOAT_چپ:
+		حالة BOX_FLOAT_راست:
+		حالة BOX_BR:
+		حالة BOX_متن:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			أكد(0);
+			اكسر;
+		افتراضي:
+			أكد(0);
 		}
 
-		if (calculate_table_row(col_info, cell->columns, cell->rows,
-				&cell->start_column, cell) == false)
-			return false;
+		إذا (calculate_جدول_ردیف(ستون_info, cell->columns, cell->ردیفها,
+				&cell->شروع_ستونی, cell) == false)
+			أرجع false;
 	}
 
 
 	/* Update row spanning details for all columns */
-	for (i = 0; i < col_info->num_columns; i++) {
-		if (col_info->spans[i].row_span != 0 &&
-				col_info->spans[i].auto_row == false) {
+	لكل (i = 0; i < ستون_info->رقم_columns; i++) {
+		إذا (ستون_info->spans[i].ردیف_بازه != 0 &&
+				ستون_info->spans[i].auto_ردیف == false) {
 			/* This cell spans rows, and is not an auto row.
 			 * Reduce number of rows left to span */
-			col_info->spans[i].row_span--;
+			ستون_info->spans[i].ردیف_بازه--;
 		}
 	}
 
 	/* Reset current column for next row */
-	col_info->current_column = 0;
+	ستون_info->current_ستونی = 0;
 
 	/* Increment row counter */
-	col_info->num_rows++;
+	ستون_info->رقم_ردیفها++;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row %p done", row);
-#endif
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row %p done", ردیف);
+#پایان_اگر
 
-	return true;
+	أرجع true;
 }
 
 
-static bool
-box_normalise_table_row_group(struct box *row_group,
-			      const struct box *root,
-			      struct columns *col_info,
+ساكن bool
+box_normalise_جدول_ردیف_گروه(بنية box *ردیف_گروه,
+			      ثابت بنية box *ریشه,
+			      بنية columns *ستون_info,
 			      html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row;
+	بنية box *فرزند;
+	بنية box *بعدی_فرزند;
+	بنية box *ردیف;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
-	unsigned int group_row_count = 0;
+	بیعلامت صحيح گروه_ردیف_شمار = 0;
 
-	assert(row_group != 0);
-	assert(row_group->type == BOX_TABLE_ROW_GROUP);
+	أكد(ردیف_گروه != 0);
+	أكد(ردیف_گروه->type == BOX_جدول_ردیف_گروه);
 
-	ctx.root_style = root->style;
+	ctx.ریشه_style = ریشه->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row_group %p", row_group);
-#endif
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row_group %p", ردیف_گروه);
+#پایان_اگر
 
-	for (child = row_group->children; child != NULL; child = next_child) {
-		next_child = child->next;
+	لكل (فرزند = ردیف_گروه->children; فرزند != عدم; فرزند = بعدی_فرزند) {
+		بعدی_فرزند = فرزند->بعدی;
 
-		switch (child->type) {
-		case BOX_TABLE_ROW:
+		بدل (فرزند->type) {
+		حالة BOX_جدول_ردیف:
 			/* ok */
-			group_row_count++;
-			if (box_normalise_table_row(child, root, col_info,
+			گروه_ردیف_شمار++;
+			إذا (box_normalise_جدول_ردیف(فرزند, ریشه, ستون_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_CELL:
+				أرجع false;
+			اكسر;
+		حالة BOX_FLEX:
+		حالة BOX_بلوک:
+		حالة BOX_INLINE_CONTAINER:
+		حالة BOX_جدول:
+		حالة BOX_جدول_ردیف_گروه:
+		حالة BOX_جدول_CELL:
 			/* insert implied table row */
-			assert(row_group->style != NULL);
+			أكد(ردیف_گروه->style != عدم);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_نما_پر);
+			ctx.پایه_url = c->پایه_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					row_group->style);
-			if (style == NULL)
-				return false;
+					ردیف_گروه->style);
+			إذا (style == عدم)
+				أرجع false;
 
-			row = box_create(NULL, style, true, row_group->href,
-					row_group->target, NULL, NULL, c->bctx);
-			if (row == NULL) {
+			ردیف = box_create(عدم, style, true, ردیف_گروه->href,
+					ردیف_گروه->هدف, عدم, عدم, c->bctx);
+			إذا (ردیف == عدم) {
 				css_computed_style_destroy(style);
-				return false;
+				أرجع false;
 			}
-			row->type = BOX_TABLE_ROW;
+			ردیف->type = BOX_جدول_ردیف;
 
-			if (child->prev == NULL)
-				row_group->children = row;
-			else
-				child->prev->next = row;
+			إذا (فرزند->prev == عدم)
+				ردیف_گروه->children = ردیف;
+			وإلا
+				فرزند->prev->بعدی = ردیف;
 
-			row->prev = child->prev;
+			ردیف->prev = فرزند->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(row, child);
+			طالما (فرزند != عدم && (
+					فرزند->type == BOX_FLEX ||
+					فرزند->type == BOX_بلوک ||
+					فرزند->type == BOX_INLINE_CONTAINER ||
+					فرزند->type == BOX_جدول ||
+					فرزند->type == BOX_جدول_ردیف_گروه ||
+					فرزند->type == BOX_جدول_CELL)) {
+				box_جمع_کن_فرزند(ردیف, فرزند);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				بعدی_فرزند = فرزند->بعدی;
+				فرزند->بعدی = عدم;
+				فرزند = بعدی_فرزند;
 			}
 
-			assert(row->last != NULL);
+			أكد(ردیف->آخرین != عدم);
 
-			row->last->next = NULL;
-			row->next = next_child = child;
-			if (row->next != NULL)
-				row->next->prev = row;
-			else
-				row_group->last = row;
-			row->parent = row_group;
+			ردیف->آخرین->بعدی = عدم;
+			ردیف->بعدی = بعدی_فرزند = فرزند;
+			إذا (ردیف->بعدی != عدم)
+				ردیف->بعدی->prev = ردیف;
+			وإلا
+				ردیف_گروه->آخرین = ردیف;
+			ردیف->والد = ردیف_گروه;
 
-			group_row_count++;
-			if (box_normalise_table_row(row, root, col_info,
+			گروه_ردیف_شمار++;
+			إذا (box_normalise_جدول_ردیف(ردیف, ریشه, ستون_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+				أرجع false;
+			اكسر;
+		حالة BOX_INLINE:
+		حالة BOX_INLINE_انتها:
+		حالة BOX_INLINE_FLEX:
+		حالة BOX_INLINE_بلوک:
+		حالة BOX_FLOAT_چپ:
+		حالة BOX_FLOAT_راست:
+		حالة BOX_BR:
+		حالة BOX_متن:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			أكد(0);
+			اكسر;
+		افتراضي:
+			أكد(0);
 		}
 	}
 
-	if (row_group->children == NULL) {
-#ifdef BOX_NORMALISE_DEBUG
+	إذا (ردیف_گروه->children == عدم) {
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "row_group->children == 0, inserting implied row");
-#endif
+#پایان_اگر
 
-		assert(row_group->style != NULL);
+		أكد(ردیف_گروه->style != عدم);
 
 		ctx.ctx = c->select_ctx;
-		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-		ctx.base_url = c->base_url;
+		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_نما_پر);
+		ctx.پایه_url = c->پایه_url;
 		ctx.universal = c->universal;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				row_group->style);
-		if (style == NULL) {
-			return false;
+				ردیف_گروه->style);
+		إذا (style == عدم) {
+			أرجع false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		ردیف = box_create(عدم, style, true, ردیف_گروه->href,
+				ردیف_گروه->هدف, عدم, عدم, c->bctx);
+		إذا (ردیف == عدم) {
 			css_computed_style_destroy(style);
-			return false;
+			أرجع false;
 		}
-		row->type = BOX_TABLE_ROW;
+		ردیف->type = BOX_جدول_ردیف;
 
-		row->parent = row_group;
-		row_group->children = row_group->last = row;
+		ردیف->والد = ردیف_گروه;
+		ردیف_گروه->children = ردیف_گروه->آخرین = ردیف;
 
-		group_row_count = 1;
+		گروه_ردیف_شمار = 1;
 
 		/* Keep table's row count in sync */
-		col_info->num_rows++;
+		ستون_info->رقم_ردیفها++;
 	}
 
-	row_group->rows = group_row_count;
+	ردیف_گروه->ردیفها = گروه_ردیف_شمار;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row_group %p done", row_group);
-#endif
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row_group %p done", ردیف_گروه);
+#پایان_اگر
 
-	return true;
+	أرجع true;
 }
 
 
@@ -453,754 +453,754 @@ box_normalise_table_row_group(struct box *row_group,
  * \param c      Content containing table
  * \return True on success, false on memory exhaustion.
  */
-static bool
-box_normalise_table_spans(struct box *table,
-			  const struct box *root,
-			  struct span_info *spans,
+ساكن bool
+box_normalise_جدول_spans(بنية box *جدول,
+			  ثابت بنية box *ریشه,
+			  بنية بازه_info *spans,
 			  html_content *c)
 {
-	struct box *table_row_group;
-	struct box *table_row;
-	struct box *table_cell;
-	unsigned int rows_left = table->rows;
-	unsigned int group_rows_left;
-	unsigned int col;
+	بنية box *جدول_ردیف_گروه;
+	بنية box *جدول_ردیف;
+	بنية box *جدول_cell;
+	بیعلامت صحيح ردیفها_چپ = جدول->ردیفها;
+	بیعلامت صحيح گروه_ردیفها_چپ;
+	بیعلامت صحيح ستون;
 	nscss_select_ctx ctx;
 
-	ctx.root_style = root->style;
+	ctx.ریشه_style = ریشه->style;
 
 	/* Clear span data */
-	memset(spans, 0, table->columns * sizeof(struct span_info));
+	memset(spans, 0, جدول->columns * حجم(بنية بازه_info));
 
 	/* Scan table, filling in width and height of table cells with
 	 * colspan = 0 and rowspan = 0. Also generate empty cells */
-	for (table_row_group = table->children;
-	     table_row_group != NULL;
-	     table_row_group = table_row_group->next) {
+	لكل (جدول_ردیف_گروه = جدول->children;
+	     جدول_ردیف_گروه != عدم;
+	     جدول_ردیف_گروه = جدول_ردیف_گروه->بعدی) {
 
-		group_rows_left = table_row_group->rows;
+		گروه_ردیفها_چپ = جدول_ردیف_گروه->ردیفها;
 
-		for (table_row = table_row_group->children;
-		     table_row != NULL;
-		     table_row = table_row->next) {
+		لكل (جدول_ردیف = جدول_ردیف_گروه->children;
+		     جدول_ردیف != عدم;
+		     جدول_ردیف = جدول_ردیف->بعدی) {
 
-			for (table_cell = table_row->children;
-			     table_cell != NULL;
-			     table_cell = table_cell->next) {
+			لكل (جدول_cell = جدول_ردیف->children;
+			     جدول_cell != عدم;
+			     جدول_cell = جدول_cell->بعدی) {
 
 				/* colspan = 0 -> colspan = 1 */
-				if (table_cell->columns == 0) {
-					table_cell->columns = 1;
+				إذا (جدول_cell->columns == 0) {
+					جدول_cell->columns = 1;
 				}
 
 				/* if rowspan is 0 it is expanded to
 				 * the number of rows left in the row
 				 * group
 				 */
-				if (table_cell->rows == 0) {
-					table_cell->rows = group_rows_left;
+				إذا (جدول_cell->ردیفها == 0) {
+					جدول_cell->ردیفها = گروه_ردیفها_چپ;
 				}
 
 				/* limit rowspans within group */
-				if (table_cell->rows > group_rows_left) {
-					table_cell->rows = group_rows_left;
+				إذا (جدول_cell->ردیفها > گروه_ردیفها_چپ) {
+					جدول_cell->ردیفها = گروه_ردیفها_چپ;
 				}
 
 				/* Record span information */
-				for (col = table_cell->start_column;
-						col < table_cell->start_column +
-						table_cell->columns; col++) {
-					spans[col].row_span = table_cell->rows;
+				لكل (ستون = جدول_cell->شروع_ستونی;
+						ستون < جدول_cell->شروع_ستونی +
+						جدول_cell->columns; ستون++) {
+					spans[ستون].ردیف_بازه = جدول_cell->ردیفها;
 				}
 			}
 
 			/* Reduce span count of each column */
-			for (col = 0; col < table->columns; col++) {
-				if (spans[col].row_span == 0) {
-					unsigned int start = col;
+			لكل (ستون = 0; ستون < جدول->columns; ستون++) {
+				إذا (spans[ستون].ردیف_بازه == 0) {
+					بیعلامت صحيح شروع = ستون;
 					css_computed_style *style;
-					struct box *cell, *prev;
+					بنية box *cell, *prev;
 
 					/* If it's already zero, then we need
 					 * to generate an empty cell for the
 					 * gap in the row that spans as many
 					 * columns as remain blank.
 					 */
-					assert(table_row->style != NULL);
+					أكد(جدول_ردیف->style != عدم);
 
 					/* Find width of gap */
-					while (col < table->columns &&
-							spans[col].row_span ==
+					طالما (ستون < جدول->columns &&
+							spans[ستون].ردیف_بازه ==
 							0) {
-						col++;
+						ستون++;
 					}
 
 					ctx.ctx = c->select_ctx;
 					ctx.quirks = (c->quirks ==
-						DOM_DOCUMENT_QUIRKS_MODE_FULL);
-					ctx.base_url = c->base_url;
+						DOM_DOCUMENT_QUIRKS_نما_پر);
+					ctx.پایه_url = c->پایه_url;
 					ctx.universal = c->universal;
 
 					style = nscss_get_blank_style(&ctx,
 							&c->unit_len_ctx,
-							table_row->style);
-					if (style == NULL)
-						return false;
+							جدول_ردیف->style);
+					إذا (style == عدم)
+						أرجع false;
 
-					cell = box_create(NULL, style, true,
-							table_row->href,
-							table_row->target,
-							NULL, NULL, c->bctx);
-					if (cell == NULL) {
+					cell = box_create(عدم, style, true,
+							جدول_ردیف->href,
+							جدول_ردیف->هدف,
+							عدم, عدم, c->bctx);
+					إذا (cell == عدم) {
 						css_computed_style_destroy(
 								style);
-						return false;
+						أرجع false;
 					}
-					cell->type = BOX_TABLE_CELL;
+					cell->type = BOX_جدول_CELL;
 
-					cell->rows = 1;
-					cell->columns = col - start;
-					cell->start_column = start;
+					cell->ردیفها = 1;
+					cell->columns = ستون - شروع;
+					cell->شروع_ستونی = شروع;
 
 					/* Find place to insert cell */
-					for (prev = table_row->children;
-							prev != NULL;
-							prev = prev->next) {
-						if (prev->start_column +
+					لكل (prev = جدول_ردیف->children;
+							prev != عدم;
+							prev = prev->بعدی) {
+						إذا (prev->شروع_ستونی +
 							prev->columns ==
-								start)
-							break;
-						if (prev->next == NULL)
-							break;
+								شروع)
+							اكسر;
+						إذا (prev->بعدی == عدم)
+							اكسر;
 					}
 
 					/* Insert it */
-					if (prev == NULL) {
-						if (table_row->children != NULL)
-							table_row->children->
+					إذا (prev == عدم) {
+						إذا (جدول_ردیف->children != عدم)
+							جدول_ردیف->children->
 								prev = cell;
-						else
-							table_row->last = cell;
+						وإلا
+							جدول_ردیف->آخرین = cell;
 
-						cell->next =
-							table_row->children;
-						table_row->children = cell;
-					} else {
-						if (prev->next != NULL)
-							prev->next->prev = cell;
-						else
-							table_row->last = cell;
+						cell->بعدی =
+							جدول_ردیف->children;
+						جدول_ردیف->children = cell;
+					} وإلا {
+						إذا (prev->بعدی != عدم)
+							prev->بعدی->prev = cell;
+						وإلا
+							جدول_ردیف->آخرین = cell;
 
-						cell->next = prev->next;
-						prev->next = cell;
+						cell->بعدی = prev->بعدی;
+						prev->بعدی = cell;
 						cell->prev = prev;
 					}
-					cell->parent = table_row;
-				} else {
-					spans[col].row_span--;
+					cell->والد = جدول_ردیف;
+				} وإلا {
+					spans[ستون].ردیف_بازه--;
 				}
 			}
 
-			assert(rows_left > 0);
+			أكد(ردیفها_چپ > 0);
 
-			rows_left--;
+			ردیفها_چپ--;
 		}
 
-		group_rows_left--;
+		گروه_ردیفها_چپ--;
 	}
 
-	return true;
+	أرجع true;
 }
 
 
-static bool
-box_normalise_table(struct box *table, const struct box *root, html_content * c)
+ساكن bool
+box_normalise_جدول(بنية box *جدول, ثابت بنية box *ریشه, html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row_group;
+	بنية box *فرزند;
+	بنية box *بعدی_فرزند;
+	بنية box *ردیف_گروه;
 	css_computed_style *style;
-	struct columns col_info;
+	بنية columns ستون_info;
 	nscss_select_ctx ctx;
 
-	assert(table != NULL);
-	assert(table->type == BOX_TABLE);
+	أكد(جدول != عدم);
+	أكد(جدول->type == BOX_جدول);
 
-	ctx.root_style = root->style;
+	ctx.ریشه_style = ریشه->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "table %p", table);
-#endif
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "table %p", جدول);
+#پایان_اگر
 
-	col_info.num_columns = 1;
-	col_info.current_column = 0;
-	col_info.spans = malloc(2 * sizeof *col_info.spans);
-	if (col_info.spans == NULL)
-		return false;
+	ستون_info.رقم_columns = 1;
+	ستون_info.current_ستونی = 0;
+	ستون_info.spans = حافظه_بده(2 * حجم *ستون_info.spans);
+	إذا (ستون_info.spans == عدم)
+		أرجع false;
 
-	col_info.spans[0].row_span = col_info.spans[1].row_span = 0;
-	col_info.spans[0].auto_row = false;
-	col_info.spans[1].auto_row = false;
-	col_info.num_rows = 0;
+	ستون_info.spans[0].ردیف_بازه = ستون_info.spans[1].ردیف_بازه = 0;
+	ستون_info.spans[0].auto_ردیف = false;
+	ستون_info.spans[1].auto_ردیف = false;
+	ستون_info.رقم_ردیفها = 0;
 
-	for (child = table->children; child != NULL; child = next_child) {
-		next_child = child->next;
-		switch (child->type) {
-		case BOX_TABLE_ROW_GROUP:
+	لكل (فرزند = جدول->children; فرزند != عدم; فرزند = بعدی_فرزند) {
+		بعدی_فرزند = فرزند->بعدی;
+		بدل (فرزند->type) {
+		حالة BOX_جدول_ردیف_گروه:
 			/* ok */
-			if (box_normalise_table_row_group(child, root,
-					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+			إذا (box_normalise_جدول_ردیف_گروه(فرزند, ریشه,
+					&ستون_info, c) == false) {
+				حرر(ستون_info.spans);
+				أرجع false;
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			اكسر;
+		حالة BOX_FLEX:
+		حالة BOX_بلوک:
+		حالة BOX_INLINE_CONTAINER:
+		حالة BOX_جدول:
+		حالة BOX_جدول_ردیف:
+		حالة BOX_جدول_CELL:
 			/* insert implied table row group */
-			assert(table->style != NULL);
+			أكد(جدول->style != عدم);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_نما_پر);
+			ctx.پایه_url = c->پایه_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					table->style);
-			if (style == NULL) {
-				free(col_info.spans);
-				return false;
+					جدول->style);
+			إذا (style == عدم) {
+				حرر(ستون_info.spans);
+				أرجع false;
 			}
 
-			row_group = box_create(NULL, style, true, table->href,
-					table->target, NULL, NULL, c->bctx);
-			if (row_group == NULL) {
+			ردیف_گروه = box_create(عدم, style, true, جدول->href,
+					جدول->هدف, عدم, عدم, c->bctx);
+			إذا (ردیف_گروه == عدم) {
 				css_computed_style_destroy(style);
-				free(col_info.spans);
-				return false;
+				حرر(ستون_info.spans);
+				أرجع false;
 			}
 
-			row_group->type = BOX_TABLE_ROW_GROUP;
+			ردیف_گروه->type = BOX_جدول_ردیف_گروه;
 
-			if (child->prev == NULL)
-				table->children = row_group;
-			else
-				child->prev->next = row_group;
+			إذا (فرزند->prev == عدم)
+				جدول->children = ردیف_گروه;
+			وإلا
+				فرزند->prev->بعدی = ردیف_گروه;
 
-			row_group->prev = child->prev;
+			ردیف_گروه->prev = فرزند->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(row_group, child);
+			طالما (فرزند != عدم && (
+					فرزند->type == BOX_FLEX ||
+					فرزند->type == BOX_بلوک ||
+					فرزند->type == BOX_INLINE_CONTAINER ||
+					فرزند->type == BOX_جدول ||
+					فرزند->type == BOX_جدول_ردیف ||
+					فرزند->type == BOX_جدول_CELL)) {
+				box_جمع_کن_فرزند(ردیف_گروه, فرزند);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				بعدی_فرزند = فرزند->بعدی;
+				فرزند->بعدی = عدم;
+				فرزند = بعدی_فرزند;
 			}
 
-			assert(row_group->last != NULL);
+			أكد(ردیف_گروه->آخرین != عدم);
 
-			row_group->last->next = NULL;
-			row_group->next = next_child = child;
-			if (row_group->next != NULL)
-				row_group->next->prev = row_group;
-			else
-				table->last = row_group;
-			row_group->parent = table;
+			ردیف_گروه->آخرین->بعدی = عدم;
+			ردیف_گروه->بعدی = بعدی_فرزند = فرزند;
+			إذا (ردیف_گروه->بعدی != عدم)
+				ردیف_گروه->بعدی->prev = ردیف_گروه;
+			وإلا
+				جدول->آخرین = ردیف_گروه;
+			ردیف_گروه->والد = جدول;
 
-			if (box_normalise_table_row_group(row_group, root,
-					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+			إذا (box_normalise_جدول_ردیف_گروه(ردیف_گروه, ریشه,
+					&ستون_info, c) == false) {
+				حرر(ستون_info.spans);
+				أرجع false;
 			}
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			اكسر;
+		حالة BOX_INLINE:
+		حالة BOX_INLINE_انتها:
+		حالة BOX_INLINE_FLEX:
+		حالة BOX_INLINE_بلوک:
+		حالة BOX_FLOAT_چپ:
+		حالة BOX_FLOAT_راست:
+		حالة BOX_BR:
+		حالة BOX_متن:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			fprintf(stderr, "%i\n", child->type);
-			assert(0);
+			أكد(0);
+			اكسر;
+		افتراضي:
+			fprintf(stderr, "%i\n", فرزند->type);
+			أكد(0);
 		}
 	}
 
-	table->columns = col_info.num_columns;
-	table->rows = col_info.num_rows;
+	جدول->columns = ستون_info.رقم_columns;
+	جدول->ردیفها = ستون_info.رقم_ردیفها;
 
-	if (table->children == NULL) {
-		struct box *row;
+	إذا (جدول->children == عدم) {
+		بنية box *ردیف;
 
-#ifdef BOX_NORMALISE_DEBUG
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "table->children == 0, creating implied row");
-#endif
+#پایان_اگر
 
-		assert(table->style != NULL);
+		أكد(جدول->style != عدم);
 
 		ctx.ctx = c->select_ctx;
-		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-		ctx.base_url = c->base_url;
+		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_نما_پر);
+		ctx.پایه_url = c->پایه_url;
 		ctx.universal = c->universal;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				table->style);
-		if (style == NULL) {
-			free(col_info.spans);
-			return false;
+				جدول->style);
+		إذا (style == عدم) {
+			حرر(ستون_info.spans);
+			أرجع false;
 		}
 
-		row_group = box_create(NULL, style, true, table->href,
-				table->target, NULL, NULL, c->bctx);
-		if (row_group == NULL) {
+		ردیف_گروه = box_create(عدم, style, true, جدول->href,
+				جدول->هدف, عدم, عدم, c->bctx);
+		إذا (ردیف_گروه == عدم) {
 			css_computed_style_destroy(style);
-			free(col_info.spans);
-			return false;
+			حرر(ستون_info.spans);
+			أرجع false;
 		}
-		row_group->type = BOX_TABLE_ROW_GROUP;
+		ردیف_گروه->type = BOX_جدول_ردیف_گروه;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				row_group->style);
-		if (style == NULL) {
-			box_free(row_group);
-			free(col_info.spans);
-			return false;
+				ردیف_گروه->style);
+		إذا (style == عدم) {
+			box_free(ردیف_گروه);
+			حرر(ستون_info.spans);
+			أرجع false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		ردیف = box_create(عدم, style, true, ردیف_گروه->href,
+				ردیف_گروه->هدف, عدم, عدم, c->bctx);
+		إذا (ردیف == عدم) {
 			css_computed_style_destroy(style);
-			box_free(row_group);
-			free(col_info.spans);
-			return false;
+			box_free(ردیف_گروه);
+			حرر(ستون_info.spans);
+			أرجع false;
 		}
-		row->type = BOX_TABLE_ROW;
+		ردیف->type = BOX_جدول_ردیف;
 
-		row->parent = row_group;
-		row_group->children = row_group->last = row;
+		ردیف->والد = ردیف_گروه;
+		ردیف_گروه->children = ردیف_گروه->آخرین = ردیف;
 
-		row_group->parent = table;
-		table->children = table->last = row_group;
+		ردیف_گروه->والد = جدول;
+		جدول->children = جدول->آخرین = ردیف_گروه;
 
-		table->rows = 1;
+		جدول->ردیفها = 1;
 	}
 
-	if (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
-		free(col_info.spans);
-		return false;
+	إذا (box_normalise_جدول_spans(جدول, ریشه, ستون_info.spans, c) == false) {
+		حرر(ستون_info.spans);
+		أرجع false;
 	}
 
-	free(col_info.spans);
+	حرر(ستون_info.spans);
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "table %p done", table);
-#endif
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "table %p done", جدول);
+#پایان_اگر
 
-	return true;
+	أرجع true;
 }
 
-static bool box_normalise_flex(
-		struct box *flex_container,
-		const struct box *root,
+ساكن bool box_normalise_flex(
+		بنية box *flex_container,
+		ثابت بنية box *ریشه,
 		html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *implied_flex_item;
+	بنية box *فرزند;
+	بنية box *بعدی_فرزند;
+	بنية box *implied_flex_قلم;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(flex_container != NULL);
-	assert(root != NULL);
+	أكد(flex_container != عدم);
+	أكد(ریشه != عدم);
 
-	ctx.root_style = root->style;
+	ctx.ریشه_style = ریشه->style;
 
-#ifdef BOX_NORMALISE_DEBUG
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "flex_container %p, flex_container->type %u",
 			flex_container, flex_container->type);
-#endif
+#پایان_اگر
 
-	assert(flex_container->type == BOX_FLEX ||
+	أكد(flex_container->type == BOX_FLEX ||
 	       flex_container->type == BOX_INLINE_FLEX);
 
-	for (child = flex_container->children; child != NULL; child = next_child) {
-#ifdef BOX_NORMALISE_DEBUG
+	لكل (فرزند = flex_container->children; فرزند != عدم; فرزند = بعدی_فرزند) {
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d",
-				child, child->type);
-#endif
+				فرزند, فرزند->type);
+#پایان_اگر
 
-		next_child = child->next;	/* child may be destroyed */
+		بعدی_فرزند = فرزند->بعدی;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		بدل (فرزند->type) {
+		حالة BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			إذا (box_normalise_flex(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_بلوک:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
+			إذا (box_normalise_بلوک(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_INLINE_CONTAINER:
 			/* insert implied flex item */
-			assert(flex_container->style != NULL);
+			أكد(flex_container->style != عدم);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_نما_پر);
+			ctx.پایه_url = c->پایه_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			إذا (style == عدم)
+				أرجع false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_قلم = box_create(عدم, style, true,
 					flex_container->href,
-					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					flex_container->هدف,
+					عدم, عدم, c->bctx);
+			إذا (implied_flex_قلم == عدم) {
 				css_computed_style_destroy(style);
-				return false;
+				أرجع false;
 			}
-			implied_flex_item->type = BOX_BLOCK;
+			implied_flex_قلم->type = BOX_بلوک;
 
-			if (child->prev == NULL)
-				flex_container->children = implied_flex_item;
-			else
-				child->prev->next = implied_flex_item;
+			إذا (فرزند->prev == عدم)
+				flex_container->children = implied_flex_قلم;
+			وإلا
+				فرزند->prev->بعدی = implied_flex_قلم;
 
-			implied_flex_item->prev = child->prev;
+			implied_flex_قلم->prev = فرزند->prev;
 
-			while (child != NULL &&
-					child->type == BOX_INLINE_CONTAINER) {
-				box_add_child(implied_flex_item, child);
+			طالما (فرزند != عدم &&
+					فرزند->type == BOX_INLINE_CONTAINER) {
+				box_جمع_کن_فرزند(implied_flex_قلم, فرزند);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				بعدی_فرزند = فرزند->بعدی;
+				فرزند->بعدی = عدم;
+				فرزند = بعدی_فرزند;
 			}
 
-			implied_flex_item->last->next = NULL;
-			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
-				implied_flex_item->next->prev = implied_flex_item;
-			else
-				flex_container->last = implied_flex_item;
-			implied_flex_item->parent = flex_container;
+			implied_flex_قلم->آخرین->بعدی = عدم;
+			implied_flex_قلم->بعدی = بعدی_فرزند = فرزند;
+			إذا (implied_flex_قلم->بعدی != عدم)
+				implied_flex_قلم->بعدی->prev = implied_flex_قلم;
+			وإلا
+				flex_container->آخرین = implied_flex_قلم;
+			implied_flex_قلم->والد = flex_container;
 
-			if (box_normalise_block(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
+			إذا (box_normalise_بلوک(implied_flex_قلم,
+					ریشه, c) == false)
+				أرجع false;
+			اكسر;
 
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+		حالة BOX_جدول:
+			إذا (box_normalise_جدول(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_INLINE:
+		حالة BOX_INLINE_انتها:
+		حالة BOX_INLINE_FLEX:
+		حالة BOX_INLINE_بلوک:
+		حالة BOX_FLOAT_چپ:
+		حالة BOX_FLOAT_راست:
+		حالة BOX_BR:
+		حالة BOX_متن:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			أكد(0);
+			اكسر;
+		حالة BOX_جدول_ردیف_گروه:
+		حالة BOX_جدول_ردیف:
+		حالة BOX_جدول_CELL:
 			/* insert implied table */
-			assert(flex_container->style != NULL);
+			أكد(flex_container->style != عدم);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_نما_پر);
+			ctx.پایه_url = c->پایه_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			إذا (style == عدم)
+				أرجع false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_قلم = box_create(عدم, style, true,
 					flex_container->href,
-					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					flex_container->هدف,
+					عدم, عدم, c->bctx);
+			إذا (implied_flex_قلم == عدم) {
 				css_computed_style_destroy(style);
-				return false;
+				أرجع false;
 			}
-			implied_flex_item->type = BOX_TABLE;
+			implied_flex_قلم->type = BOX_جدول;
 
-			if (child->prev == NULL)
-				flex_container->children = implied_flex_item;
-			else
-				child->prev->next = implied_flex_item;
+			إذا (فرزند->prev == عدم)
+				flex_container->children = implied_flex_قلم;
+			وإلا
+				فرزند->prev->بعدی = implied_flex_قلم;
 
-			implied_flex_item->prev = child->prev;
+			implied_flex_قلم->prev = فرزند->prev;
 
-			while (child != NULL && (
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(implied_flex_item, child);
+			طالما (فرزند != عدم && (
+					فرزند->type == BOX_جدول_ردیف_گروه ||
+					فرزند->type == BOX_جدول_ردیف ||
+					فرزند->type == BOX_جدول_CELL)) {
+				box_جمع_کن_فرزند(implied_flex_قلم, فرزند);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				بعدی_فرزند = فرزند->بعدی;
+				فرزند->بعدی = عدم;
+				فرزند = بعدی_فرزند;
 			}
 
-			implied_flex_item->last->next = NULL;
-			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
-				implied_flex_item->next->prev = implied_flex_item;
-			else
-				flex_container->last = implied_flex_item;
-			implied_flex_item->parent = flex_container;
+			implied_flex_قلم->آخرین->بعدی = عدم;
+			implied_flex_قلم->بعدی = بعدی_فرزند = فرزند;
+			إذا (implied_flex_قلم->بعدی != عدم)
+				implied_flex_قلم->بعدی->prev = implied_flex_قلم;
+			وإلا
+				flex_container->آخرین = implied_flex_قلم;
+			implied_flex_قلم->والد = flex_container;
 
-			if (box_normalise_table(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			إذا (box_normalise_جدول(implied_flex_قلم,
+					ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		افتراضي:
+			أكد(0);
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
-static bool
-box_normalise_inline_container(struct box *cont,
-			       const struct box *root,
+ساكن bool
+box_normalise_inline_container(بنية box *cont,
+			       ثابت بنية box *ریشه,
 			       html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
+	بنية box *فرزند;
+	بنية box *بعدی_فرزند;
 
-	assert(cont != NULL);
-	assert(cont->type == BOX_INLINE_CONTAINER);
+	أكد(cont != عدم);
+	أكد(cont->type == BOX_INLINE_CONTAINER);
 
-#ifdef BOX_NORMALISE_DEBUG
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "cont %p", cont);
-#endif
+#پایان_اگر
 
-	for (child = cont->children; child != NULL; child = next_child) {
-		next_child = child->next;
-		switch (child->type) {
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_BR:
-		case BOX_TEXT:
+	لكل (فرزند = cont->children; فرزند != عدم; فرزند = بعدی_فرزند) {
+		بعدی_فرزند = فرزند->بعدی;
+		بدل (فرزند->type) {
+		حالة BOX_INLINE:
+		حالة BOX_INLINE_انتها:
+		حالة BOX_BR:
+		حالة BOX_متن:
 			/* ok */
-			break;
-		case BOX_INLINE_BLOCK:
+			اكسر;
+		حالة BOX_INLINE_بلوک:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_FLEX:
+			إذا (box_normalise_بلوک(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_INLINE_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+			إذا (box_normalise_flex(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_FLOAT_چپ:
+		حالة BOX_FLOAT_راست:
 			/* ok */
-			assert(child->children != NULL);
+			أكد(فرزند->children != عدم);
 
-			switch (child->children->type) {
-			case BOX_BLOCK:
-				if (box_normalise_block(child->children, root,
+			بدل (فرزند->children->type) {
+			حالة BOX_بلوک:
+				إذا (box_normalise_بلوک(فرزند->children, ریشه,
 						c) == false)
-					return false;
-				break;
-			case BOX_TABLE:
-				if (box_normalise_table(child->children, root,
+					أرجع false;
+				اكسر;
+			حالة BOX_جدول:
+				إذا (box_normalise_جدول(فرزند->children, ریشه,
 						c) == false)
-					return false;
-				break;
-			case BOX_FLEX:
-				if (box_normalise_flex(child->children, root,
+					أرجع false;
+				اكسر;
+			حالة BOX_FLEX:
+				إذا (box_normalise_flex(فرزند->children, ریشه,
 						c) == false)
-					return false;
-				break;
-			default:
-				assert(0);
+					أرجع false;
+				اكسر;
+			افتراضي:
+				أكد(0);
 			}
 
-			if (child->children == NULL) {
+			إذا (فرزند->children == عدم) {
 				/* the child has destroyed itself: remove float */
-				if (child->prev == NULL)
-					child->parent->children = child->next;
-				else
-					child->prev->next = child->next;
-				if (child->next != NULL)
-					child->next->prev = child->prev;
-				else
-					child->parent->last = child->prev;
+				إذا (فرزند->prev == عدم)
+					فرزند->والد->children = فرزند->بعدی;
+				وإلا
+					فرزند->prev->بعدی = فرزند->بعدی;
+				إذا (فرزند->بعدی != عدم)
+					فرزند->بعدی->prev = فرزند->prev;
+				وإلا
+					فرزند->والد->آخرین = فرزند->prev;
 
-				box_free(child);
+				box_free(فرزند);
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
-		default:
-			assert(0);
+			اكسر;
+		حالة BOX_FLEX:
+		حالة BOX_بلوک:
+		حالة BOX_INLINE_CONTAINER:
+		حالة BOX_جدول:
+		حالة BOX_جدول_ردیف_گروه:
+		حالة BOX_جدول_ردیف:
+		حالة BOX_جدول_CELL:
+		افتراضي:
+			أكد(0);
 		}
 	}
 
-#ifdef BOX_NORMALISE_DEBUG
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "cont %p done", cont);
-#endif
+#پایان_اگر
 
-	return true;
+	أرجع true;
 }
 
 /* Exported function documented in html/box_normalise.h */
 bool
-box_normalise_block(struct box *block, const struct box *root, html_content *c)
+box_normalise_بلوک(بنية box *بلوک, ثابت بنية box *ریشه, html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *table;
+	بنية box *فرزند;
+	بنية box *بعدی_فرزند;
+	بنية box *جدول;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(block != NULL);
-	assert(root != NULL);
+	أكد(بلوک != عدم);
+	أكد(ریشه != عدم);
 
-	ctx.root_style = root->style;
+	ctx.ریشه_style = ریشه->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "block %p, block->type %u", block, block->type);
-#endif
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "block %p, block->type %u", بلوک, بلوک->type);
+#پایان_اگر
 
-	assert(block->type == BOX_BLOCK || block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_TABLE_CELL);
+	أكد(بلوک->type == BOX_بلوک || بلوک->type == BOX_INLINE_بلوک ||
+			بلوک->type == BOX_جدول_CELL);
 
-	for (child = block->children; child != NULL; child = next_child) {
-#ifdef BOX_NORMALISE_DEBUG
-		NSLOG(netsurf, INFO, "child %p, child->type = %d", child,
-		      child->type);
-#endif
+	لكل (فرزند = بلوک->children; فرزند != عدم; فرزند = بعدی_فرزند) {
+#اگر_تعریف_شده BOX_NORMALISE_DEBUG
+		NSLOG(netsurf, INFO, "child %p, child->type = %d", فرزند,
+		      فرزند->type);
+#پایان_اگر
 
-		next_child = child->next;	/* child may be destroyed */
+		بعدی_فرزند = فرزند->بعدی;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		بدل (فرزند->type) {
+		حالة BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			إذا (box_normalise_flex(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_بلوک:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
-			if (box_normalise_inline_container(child, root, c) == false)
-				return false;
-			break;
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			إذا (box_normalise_بلوک(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_INLINE_CONTAINER:
+			إذا (box_normalise_inline_container(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_جدول:
+			إذا (box_normalise_جدول(فرزند, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		حالة BOX_INLINE:
+		حالة BOX_INLINE_انتها:
+		حالة BOX_INLINE_FLEX:
+		حالة BOX_INLINE_بلوک:
+		حالة BOX_FLOAT_چپ:
+		حالة BOX_FLOAT_راست:
+		حالة BOX_BR:
+		حالة BOX_متن:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			أكد(0);
+			اكسر;
+		حالة BOX_جدول_ردیف_گروه:
+		حالة BOX_جدول_ردیف:
+		حالة BOX_جدول_CELL:
 			/* insert implied table */
-			assert(block->style != NULL);
+			أكد(بلوک->style != عدم);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_نما_پر);
+			ctx.پایه_url = c->پایه_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					block->style);
-			if (style == NULL)
-				return false;
+					بلوک->style);
+			إذا (style == عدم)
+				أرجع false;
 
-			table = box_create(NULL, style, true, block->href,
-					block->target, NULL, NULL, c->bctx);
-			if (table == NULL) {
+			جدول = box_create(عدم, style, true, بلوک->href,
+					بلوک->هدف, عدم, عدم, c->bctx);
+			إذا (جدول == عدم) {
 				css_computed_style_destroy(style);
-				return false;
+				أرجع false;
 			}
-			table->type = BOX_TABLE;
+			جدول->type = BOX_جدول;
 
-			if (child->prev == NULL)
-				block->children = table;
-			else
-				child->prev->next = table;
+			إذا (فرزند->prev == عدم)
+				بلوک->children = جدول;
+			وإلا
+				فرزند->prev->بعدی = جدول;
 
-			table->prev = child->prev;
+			جدول->prev = فرزند->prev;
 
-			while (child != NULL && (
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(table, child);
+			طالما (فرزند != عدم && (
+					فرزند->type == BOX_جدول_ردیف_گروه ||
+					فرزند->type == BOX_جدول_ردیف ||
+					فرزند->type == BOX_جدول_CELL)) {
+				box_جمع_کن_فرزند(جدول, فرزند);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				بعدی_فرزند = فرزند->بعدی;
+				فرزند->بعدی = عدم;
+				فرزند = بعدی_فرزند;
 			}
 
-			table->last->next = NULL;
-			table->next = next_child = child;
-			if (table->next != NULL)
-				table->next->prev = table;
-			else
-				block->last = table;
-			table->parent = block;
+			جدول->آخرین->بعدی = عدم;
+			جدول->بعدی = بعدی_فرزند = فرزند;
+			إذا (جدول->بعدی != عدم)
+				جدول->بعدی->prev = جدول;
+			وإلا
+				بلوک->آخرین = جدول;
+			جدول->والد = بلوک;
 
-			if (box_normalise_table(table, root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			إذا (box_normalise_جدول(جدول, ریشه, c) == false)
+				أرجع false;
+			اكسر;
+		افتراضي:
+			أكد(0);
 		}
 	}
 
-	return true;
+	أرجع true;
 }

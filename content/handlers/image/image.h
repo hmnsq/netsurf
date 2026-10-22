@@ -20,16 +20,16 @@
  * Initialisation/finalisation of image handlers.
  */
 
-#ifndef NETSURF_IMAGE_IMAGE_H_
-#define NETSURF_IMAGE_IMAGE_H_
+#اگر_تعریف_نشده NETSURF_IMAGE_IMAGE_H_
+#تعریف_کن NETSURF_IMAGE_IMAGE_H_
 
-#include "utils/errors.h"
+#ضمن "utils/errors.h"
 
-struct content_redraw_data;
+بنية content_redraw_داده;
 
 /** Initialise the content handlers for image types.
  */
-nserror image_init(void);
+nserror image_init(فراغ);
 
 /** Common image content handler bitmap plot call.
  *
@@ -37,9 +37,9 @@ nserror image_init(void);
  * and specific content redraw data. It is a helper specifically
  * provided for image content handlers redraw callback.
  */
-bool image_bitmap_plot(struct bitmap *bitmap,
-		       struct content_redraw_data *data, 
-		       const struct rect *clip,
-		       const struct redraw_context *ctx);
+bool image_bitmap_plot(بنية bitmap *bitmap,
+		       بنية content_redraw_داده *داده, 
+		       ثابت بنية rect *clip,
+		       ثابت بنية redraw_context *ctx);
 
-#endif
+#پایان_اگر

@@ -21,98 +21,98 @@
  * javascript content implementation
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#ضمن <assert.h>
+#ضمن <string.h>
+#ضمن <stdbool.h>
+#ضمن <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/config.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "javascript/content.h"
+#ضمن "utils/errors.h"
+#ضمن "utils/config.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "content/hlcache.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/utils.h"
+#ضمن "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+تعريفنوع بنية javascript_content {
+	بنية content پایه;
 } javascript_content;
 
-static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ساكن nserror javascript_create(ثابت content_handler *handler,
+		lwc_string *imime_type, ثابت بنية http_parameter *params,
+		llcache_handle *llcache, ثابت حرف *fallback_charset,
+		bool quirks, بنية content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = حافظه_صفر_بده(1, حجم(javascript_content));
+	إذا (script == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__init(&script->base, handler, imime_type, params,
+	error = content__init(&script->پایه, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(script);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(script);
+		أرجع error;
 	}
 
-	*c = (struct content *) script;
+	*c = (بنية content *) script;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+ساكن bool javascript_convert(بنية content *c)
 {
-	content_set_ready(c);
-	content_set_done(c);
+	content_مجموعه_ready(c);
+	content_مجموعه_انجامشده(c);
 
-	return true;
+	أرجع true;
 }
 
-static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+ساكن nserror 
+javascript_clone(ثابت بنية content *old, بنية content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = حافظه_صفر_بده(1, حجم(javascript_content));
+	إذا (script == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&script->base);
-		return error;
+	error = content__clone(old, &script->پایه);
+	إذا (error != NSERROR_OK) {
+		content_destroy(&script->پایه);
+		أرجع error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (بنية content *) script;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+ساكن فراغ javascript_destroy(بنية content *c)
 {
 }
 
-static content_type javascript_content_type(void)
+ساكن content_type javascript_content_type(فراغ)
 {
-	return CONTENT_JS;
+	أرجع CONTENT_JS;
 }
 
 
-static const content_handler javascript_content_handler = {
+ساكن ثابت content_handler javascript_content_handler = {
 	.create = javascript_create,
-	.data_complete = javascript_convert,
+	.داده_complete = javascript_convert,
 	.destroy = javascript_destroy,
 	.clone = javascript_clone,
 	.type = javascript_content_type,
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+ساكن ثابت حرف *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */
@@ -120,4 +120,4 @@ static const char *javascript_types[] = {
 	"text/ecmascript", /* common usage */
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(javascript, javascript_types, javascript_content_handler);
+CONTENT_FACTORY_ثبات_TYPES(javascript, javascript_types, javascript_content_handler);

@@ -36,8 +36,8 @@
  *
  */
 
-#ifndef NETSURF_HTML_BOX_NORMALISE_H
-#define NETSURF_HTML_BOX_NORMALISE_H
+#اگر_تعریف_نشده NETSURF_HTML_BOX_NORMALISE_H
+#تعریف_کن NETSURF_HTML_BOX_NORMALISE_H
 
 /**
  * Ensure the box tree is correctly nested by adding and removing nodes.
@@ -61,6 +61,6 @@
  * FLOAT_(LEFT|RIGHT)   exactly 1 BLOCK, TABLE or FLEX
  * \endcode
  */
-bool box_normalise_block(struct box *block, const struct box *root, struct html_content *c);
+bool box_normalise_بلوک(بنية box *بلوک, ثابت بنية box *ریشه, بنية html_content *c);
 
-#endif
+#پایان_اگر
