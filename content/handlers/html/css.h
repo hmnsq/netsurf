@@ -29,12 +29,12 @@
  *
  * \return NSERROR_OK on success else error code
  */
-nserror html_css_init(void);
+nserror html_css_init(فراغ);
 
 /**
  * Finalise html content css handling.
  */
-void html_css_fini(void);
+فراغ html_css_fini(فراغ);
 
 /**
  * create a new css selection context for an html content.
@@ -43,7 +43,7 @@ void html_css_fini(void);
  * \param select_ctx A pointer to receive the new context.
  * \return NSERROR_OK on success and \a select_ctx updated else error code
  */
-nserror html_css_new_selection_context(struct html_content *c, css_select_ctx **select_ctx);
+nserror html_css_new_selection_context(بنية html_content *c, css_select_ctx **select_ctx);
 
 /**
  * Initialise core stylesheets for a content
@@ -51,7 +51,7 @@ nserror html_css_new_selection_context(struct html_content *c, css_select_ctx **
  * \param c content structure to update
  * \return NSERROR_OK on success or error code
  */
-nserror html_css_new_stylesheets(struct html_content *c);
+nserror html_css_new_stylesheets(بنية html_content *c);
 
 /**
  * Initialise quirk stylesheets for a content
@@ -59,7 +59,7 @@ nserror html_css_new_stylesheets(struct html_content *c);
  * \param c content structure to update
  * \return NSERROR_OK on success or error code
  */
-nserror html_css_quirks_stylesheets(struct html_content *c);
+nserror html_css_quirks_stylesheets(بنية html_content *c);
 
 /**
  * Free all css stylesheets associated with an HTML content. 
@@ -67,7 +67,7 @@ nserror html_css_quirks_stylesheets(struct html_content *c);
  * \param html The HTML content to free stylesheets from.
  * \return NSERROR_OK on success or error code.
  */
-nserror html_css_free_stylesheets(struct html_content *html);
+nserror html_css_free_stylesheets(بنية html_content *html);
 
 /**
  * determine if any of the stylesheets were loaded insecurely
@@ -75,7 +75,7 @@ nserror html_css_free_stylesheets(struct html_content *html);
  * \param htmlc The HTML content to check.
  * \return true if there were insecurely loadd stylesheets else false.
  */
-bool html_css_saw_insecure_stylesheets(struct html_content *htmlc);
+bool html_css_saw_insecure_stylesheets(بنية html_content *htmlc);
 
 /**
  * process a css stylesheet dom LINK node 
@@ -84,7 +84,7 @@ bool html_css_saw_insecure_stylesheets(struct html_content *htmlc);
  * \param node the DOM link node to process. 
  * \return true on success else false.
  */
-bool html_css_process_link(struct html_content *htmlc, dom_node *node);
+bool html_css_process_link(بنية html_content *htmlc, dom_گرێ *گرێ);
 
 /**
  * process a css style dom node 
@@ -93,7 +93,7 @@ bool html_css_process_link(struct html_content *htmlc, dom_node *node);
  * \param node the DOM node to process. 
  * \return true on success else false.
  */
-bool html_css_process_style(struct html_content *htmlc, dom_node *node);
+bool html_css_process_style(بنية html_content *htmlc, dom_گرێ *گرێ);
 
 /**
  * process a css style dom node update 
@@ -102,7 +102,7 @@ bool html_css_process_style(struct html_content *htmlc, dom_node *node);
  * \param node the DOM node to process. 
  * \return true on success else false.
  */
-bool html_css_update_style(struct html_content *htmlc, dom_node *node);
+bool html_css_update_style(بنية html_content *htmlc, dom_گرێ *گرێ);
 
 
 
