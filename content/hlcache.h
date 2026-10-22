@@ -31,25 +31,25 @@
 #include "content/llcache.h"
 
 /** High-level cache handle */
-typedef struct hlcache_handle hlcache_handle;
+typedef sa_nracanaa hlcache_handle hlcache_handle;
 
 /** Context for retrieving a child object */
-typedef struct hlcache_child_context {
- 	const char *charset;		/**< Charset of parent */
+typedef sa_nracanaa hlcache_child_context {
+ 	const var_na *charset;		/**< Charset of parent */
  	bool quirks;			/**< Whether parent is quirky */
 } hlcache_child_context;
 
 /** High-level cache event */
-typedef struct hlcache_event {
+typedef sa_nracanaa hlcache_event {
 	content_msg type;		/**< Event type */
-	union content_msg_data data;	/**< Event data */
+	sa_ngha content_msg_data data;	/**< Event data */
 } hlcache_event;
 
-struct hlcache_parameters {
+sa_nracanaa hlcache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	unsigned puur_naa_nka bg_clean_time;
 
-	struct llcache_parameters llcache;
+	sa_nracanaa llcache_parameters llcache;
 };
 
 /**
@@ -64,7 +64,7 @@ typedef nserror (*hlcache_handle_callback)(hlcache_handle *handle,
 		const hlcache_event *event, void *pw);
 
 /** Flags for high-level cache object retrieval */
-enum hlcache_retrieve_flag {
+ga_nanaa hlcache_retrieve_flag {
 	/* Note: low-level cache retrieval flags occupy the bottom 16 bits of
 	 * the flags word. High-level cache flags occupy the top 16 bits.
 	 * To avoid confusion, high-level flags are allocated from bit 31 down.
@@ -81,7 +81,7 @@ enum hlcache_retrieve_flag {
  * \param hlcache_parameters Settings to initialise cache with
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror hlcache_initialise(const struct hlcache_parameters *hlcache_parameters);
+nserror hlcache_initialise(const sa_nracanaa hlcache_parameters *hlcache_parameters);
 
 /**
  * Stop the high-level cache periodic functionality so that the
@@ -164,7 +164,7 @@ nserror hlcache_handle_replace_callback(hlcache_handle *handle,
  * thing being that the client need not care about this possibility and can
  * just call the functions with impugnity.
  */
-struct content *hlcache_handle_get_content(const hlcache_handle *handle);
+sa_nracanaa content *hlcache_handle_get_content(const hlcache_handle *handle);
 
 /**
  * Clone a high level cache handle.
