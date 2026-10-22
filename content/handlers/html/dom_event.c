@@ -22,28 +22,28 @@
  * Implementation of HTML content DOM event handling.
  */
 
-#include <string.h>
+#شامل <string.h>
 
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/ascii.h"
-#include "utils/string.h"
-#include "utils/nsurl.h"
-#include "content/content.h"
-#include "javascript/js.h"
+#شامل "utils/config.h"
+#شامل "utils/utils.h"
+#شامل "utils/corestrings.h"
+#شامل "utils/nsoption.h"
+#شامل "utils/log.h"
+#شامل "utils/ascii.h"
+#شامل "utils/string.h"
+#شامل "utils/nsurl.h"
+#شامل "content/content.h"
+#شامل "javascript/js.h"
 
-#include "netsurf/bitmap.h"
+#شامل "netsurf/bitmap.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/css.h"
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/form_internal.h"
-#include "html/dom_event.h"
+#شامل "html/private.h"
+#شامل "html/object.h"
+#شامل "html/css.h"
+#شامل "html/box.h"
+#شامل "html/box_construct.h"
+#شامل "html/form_internal.h"
+#شامل "html/dom_event.h"
 
 
 /**
@@ -53,22 +53,22 @@
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
+ایستا bool html_process_inserted_base(html_content *htmlc, dom_گره *گره)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 
 	/* get href attribute if present */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	exc = dom_element_get_attribute(گره, corestring_dom_href, &atr_string);
+	اگر ((exc == DOM_NO_ERR) && (atr_string != پوچ)) {
 		nsurl *url;
 		nserror error;
 
 		/* get url from string */
 		error = nsurl_create(dom_string_data(atr_string), &url);
 		dom_string_unref(atr_string);
-		if (error == NSERROR_OK) {
-			if (htmlc->base_url != NULL) {
+		اگر (error == NSERROR_OK) {
+			اگر (htmlc->base_url != پوچ) {
 				nsurl_unref(htmlc->base_url);
 			}
 			htmlc->base_url = url;
@@ -77,20 +77,20 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 
 
 	/* get target attribute if present and not already set */
-	if (htmlc->base_target != NULL) {
-		return true;
+	اگر (htmlc->base_target != پوچ) {
+		بازگشت true;
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گره,
 					corestring_dom_target,
 					&atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	اگر ((exc == DOM_NO_ERR) && (atr_string != پوچ)) {
 		/* Validation rules from the HTML5 spec for the base element:
 		 *  The target must be one of _blank, _self, _parent, or
 		 *  _top or any identifier which does not begin with an
 		 *  underscore
 		 */
-		if (*dom_string_data(atr_string) != '_' ||
+		اگر (*dom_string_data(atr_string) != '_' ||
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__blank) ||
 				dom_string_caseless_lwc_isequal(atr_string,
@@ -98,13 +98,13 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__parent) ||
 				dom_string_caseless_lwc_isequal(atr_string,
-						corestring_lwc__top)) {
+						corestring_lwc_بالاترین_2)) {
 			htmlc->base_target = strdup(dom_string_data(atr_string));
 		}
 		dom_string_unref(atr_string);
 	}
 
-	return true;
+	بازگشت true;
 }
 
 
@@ -116,7 +116,7 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
+ایستا bool html_process_inserted_img(html_content *htmlc, dom_گره *گره)
 {
 	dom_string *src;
 	nsurl *url;
@@ -125,27 +125,27 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	bool success;
 
 	/* Do nothing if foreground images are disabled */
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	اگر (nsoption_bool(foreground_images) == false) {
+		بازگشت true;
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		return true;
+	exc = dom_element_get_attribute(گره, corestring_dom_src, &src);
+	اگر (exc != DOM_NO_ERR || src == پوچ) {
+		بازگشت true;
 	}
 
 	err = nsurl_join(htmlc->base_url, dom_string_data(src), &url);
-	if (err != NSERROR_OK) {
+	اگر (err != NSERROR_OK) {
 		dom_string_unref(src);
-		return false;
+		بازگشت false;
 	}
 	dom_string_unref(src);
 
 	/* Speculatively fetch the image */
-	success = html_fetch_object(htmlc, url, NULL, CONTENT_IMAGE, false);
+	success = html_fetch_object(htmlc, url, پوچ, CONTENT_IMAGE, false);
 	nsurl_unref(url);
 
-	return success;
+	بازگشت success;
 }
 
 
@@ -158,79 +158,79 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_link(html_content *c, dom_node *node)
+ایستا bool html_process_inserted_link(html_content *c, dom_گره *گره)
 {
-	struct content_rfc5988_link link; /* the link added to the content */
+	ساختار content_rfc5988_link link; /* the link added to the content */
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 	nserror error;
 
 	/* Handle stylesheet loading */
-	html_css_process_link(c, (dom_node *)node);
+	html_css_process_link(c, (dom_گره *)گره);
 
 	/* try Generic link handling */
 
-	memset(&link, 0, sizeof(struct content_rfc5988_link));
+	memset(&link, 0, اندازه(ساختار content_rfc5988_link));
 
 	/* check that the relation exists - w3c spec says must be present */
-	exc = dom_element_get_attribute(node, corestring_dom_rel, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
-		return false;
+	exc = dom_element_get_attribute(گره, corestring_dom_rel, &atr_string);
+	اگر ((exc != DOM_NO_ERR) || (atr_string == پوچ)) {
+		بازگشت false;
 	}
 	/* get a lwc string containing the link relation */
 	exc = dom_string_intern(atr_string, &link.rel);
 	dom_string_unref(atr_string);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	اگر (exc != DOM_NO_ERR) {
+		بازگشت false;
 	}
 
 	/* check that the href exists - w3c spec says must be present */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+	exc = dom_element_get_attribute(گره, corestring_dom_href, &atr_string);
+	اگر ((exc != DOM_NO_ERR) || (atr_string == پوچ)) {
 		lwc_string_unref(link.rel);
-		return false;
+		بازگشت false;
 	}
 
 	/* get nsurl */
 	error = nsurl_join(c->base_url, dom_string_data(atr_string),
 			&link.href);
 	dom_string_unref(atr_string);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		lwc_string_unref(link.rel);
-		return false;
+		بازگشت false;
 	}
 
 	/* look for optional properties -- we don't care if internment fails */
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گره,
 			corestring_dom_hreflang, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	اگر ((exc == DOM_NO_ERR) && (atr_string != پوچ)) {
 		/* get a lwc string containing the href lang */
-		(void)dom_string_intern(atr_string, &link.hreflang);
+		(تهی)dom_string_intern(atr_string, &link.hreflang);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گره,
 			corestring_dom_type, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	اگر ((exc == DOM_NO_ERR) && (atr_string != پوچ)) {
 		/* get a lwc string containing the type */
-		(void)dom_string_intern(atr_string, &link.type);
+		(تهی)dom_string_intern(atr_string, &link.type);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گره,
 			corestring_dom_media, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	اگر ((exc == DOM_NO_ERR) && (atr_string != پوچ)) {
 		/* get a lwc string containing the media */
-		(void)dom_string_intern(atr_string, &link.media);
+		(تهی)dom_string_intern(atr_string, &link.media);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گره,
 			corestring_dom_sizes, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	اگر ((exc == DOM_NO_ERR) && (atr_string != پوچ)) {
 		/* get a lwc string containing the sizes */
-		(void)dom_string_intern(atr_string, &link.sizes);
+		(تهی)dom_string_intern(atr_string, &link.sizes);
 		dom_string_unref(atr_string);
 	}
 
@@ -245,12 +245,12 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 	nsurl_unref(link.href);
 	lwc_string_unref(link.rel);
 
-	return true;
+	بازگشت true;
 }
 
 
 /* handler for a SCRIPT which has been added to a tree */
-static void
+ایستا تهی
 dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 {
 	dom_exception exc;
@@ -258,42 +258,42 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 	dom_hubbub_error res;
 	bool within;
 
-	if (!htmlc->enable_scripting) {
+	اگر (!htmlc->enable_scripting) {
 		NSLOG(netsurf, INFO, "Encountered a script, but scripting is off, ignoring");
-		return;
+		بازگشت;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG, "Encountered a script, node %p showed up", script);
 
 	exc = dom_html_script_element_get_flags(script, &flags);
-	if (exc != DOM_NO_ERR) {
+	اگر (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve flags, giving up");
-		return;
+		بازگشت;
 	}
 
-	if (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
+	اگر (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
 		NSLOG(netsurf, DEBUG, "Script was parser inserted, skipping");
-		return;
+		بازگشت;
 	}
 
-	exc = dom_node_contains(htmlc->document, script, &within);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_گره_contains(htmlc->document, script, &within);
+	اگر (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEBUG, "Unable to determine if script was within document, ignoring");
-		return;
+		بازگشت;
 	}
 
-	if (!within) {
+	اگر (!within) {
 		NSLOG(netsurf, DEBUG, "Script was not within the document, ignoring for now");
-		return;
+		بازگشت;
 	}
 
-	res = html_process_script(htmlc, (dom_node *) script);
-	if (res == DOM_HUBBUB_OK) {
+	res = html_process_script(htmlc, (dom_گره *) script);
+	اگر (res == DOM_HUBBUB_OK) {
 		NSLOG(netsurf, DEEPDEBUG, "Inserted script has finished running");
-	} else {
-		if (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
+	} وگرنه {
+		اگر (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
 			NSLOG(netsurf, DEEPDEBUG, "Inserted script has launced asynchronously");
-		} else {
+		} وگرنه {
 			NSLOG(netsurf, DEEPDEBUG, "Failure starting script");
 		}
 	}
@@ -309,45 +309,45 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_meta(html_content *c, dom_node *n)
+ایستا nserror html_process_inserted_meta(html_content *c, dom_گره *n)
 {
-	union content_msg_data msg_data;
-	const char *url, *end, *refresh = NULL;
-	char *new_url;
-	char quote = '\0';
+	اجتماع content_پیام_data پیام_data;
+	ثابت نویسه *url, *end, *refresh = پوچ;
+	نویسه *new_url;
+	نویسه quote = '\0';
 	dom_string *equiv, *content;
 	dom_exception exc;
 	nsurl *nsurl;
 	nserror error = NSERROR_OK;
 
-	if (c->refresh) {
+	اگر (c->refresh) {
 		/* refresh already delt with */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_http_equiv, &equiv);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	اگر (exc != DOM_NO_ERR) {
+		بازگشت NSERROR_DOM;
 	}
 
-	if (equiv == NULL) {
-		return NSERROR_OK;
+	اگر (equiv == پوچ) {
+		بازگشت NSERROR_OK;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
+	اگر (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
 		dom_string_unref(equiv);
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	dom_string_unref(equiv);
 
 	exc = dom_element_get_attribute(n, corestring_dom_content, &content);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	اگر (exc != DOM_NO_ERR) {
+		بازگشت NSERROR_DOM;
 	}
 
-	if (content == NULL) {
-		return NSERROR_OK;
+	اگر (content == پوچ) {
+		بازگشت NSERROR_OK;
 	}
 
 	end = dom_string_data(content) + dom_string_byte_length(content);
@@ -366,100 +366,100 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	url = dom_string_data(content);
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	وقتی (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* intpart */
-	if (url == end || (*url < '0' || '9' < *url)) {
+	اگر (url == end || (*url < '0' || '9' < *url)) {
 		/* Empty content, or invalid timeval */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
-	msg_data.delay = (int) strtol(url, &new_url, 10);
+	پیام_data.delay = (صحیح) strtol(url, &new_url, 10);
 	/* a very small delay and self-referencing URL can cause a loop
 	 * that grinds machines to a halt. To prevent this we set a
 	 * minimum refresh delay of 1s. */
-	if (msg_data.delay < 1) {
-		msg_data.delay = 1;
+	اگر (پیام_data.delay < 1) {
+		پیام_data.delay = 1;
 	}
 
 	url = new_url;
 
 	/* fracpart? (ignored, as delay is integer only) */
-	while (url < end && (('0' <= *url && *url <= '9') ||
+	وقتی (url < end && (('0' <= *url && *url <= '9') ||
 			*url == '.')) {
 		url++;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	وقتی (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* ';' */
-	if (url < end && *url == ';')
+	اگر (url < end && *url == ';')
 		url++;
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	وقتی (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
-	if (url == end) {
+	اگر (url == end) {
 		/* Just delay specified, so refresh current page */
 		dom_string_unref(content);
 
 		c->base.refresh = nsurl_ref(content_get_url(&c->base));
 
-		content_broadcast(&c->base, CONTENT_MSG_REFRESH, &msg_data);
+		content_broadcast(&c->base, CONTENT_پیام_REFRESH, &پیام_data);
 
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* "url" */
-	if (url <= end - 3) {
-		if (strncasecmp(url, "url", 3) == 0) {
+	اگر (url <= end - 3) {
+		اگر (strncasecmp(url, "url", 3) == 0) {
 			url += 3;
-		} else {
+		} وگرنه {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			بازگشت NSERROR_OK;
 		}
-	} else {
+	} وگرنه {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	وقتی (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '=' */
-	if (url < end) {
-		if (*url == '=') {
+	اگر (url < end) {
+		اگر (*url == '=') {
 			url++;
-		} else {
+		} وگرنه {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			بازگشت NSERROR_OK;
 		}
-	} else {
+	} وگرنه {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	وقتی (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '"' or "'" */
-	if (url < end && (*url == '"' || *url == '\'')) {
+	اگر (url < end && (*url == '"' || *url == '\'')) {
 		quote = *url;
 		url++;
 	}
@@ -467,44 +467,44 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	/* Start of URL */
 	refresh = url;
 
-	if (quote != 0) {
+	اگر (quote != 0) {
 		/* url-sq | url-dq */
-		while (url < end && *url != quote)
+		وقتی (url < end && *url != quote)
 			url++;
-	} else {
+	} وگرنه {
 		/* url-nq */
-		while (url < end && !ascii_is_space(*url))
+		وقتی (url < end && !ascii_is_space(*url))
 			url++;
 	}
 
 	/* '"' or "'" or *LWS (we don't care) */
-	if (url > refresh) {
+	اگر (url > refresh) {
 		/* There's a URL */
 		new_url = strndup(refresh, url - refresh);
-		if (new_url == NULL) {
+		اگر (new_url == پوچ) {
 			dom_string_unref(content);
-			return NSERROR_NOMEM;
+			بازگشت NSERROR_NOMEM;
 		}
 
 		error = nsurl_join(c->base_url, new_url, &nsurl);
-		if (error == NSERROR_OK) {
+		اگر (error == NSERROR_OK) {
 			/* broadcast valid refresh url */
 
 			c->base.refresh = nsurl;
 
 			content_broadcast(&c->base,
-					  CONTENT_MSG_REFRESH,
-					  &msg_data);
+					  CONTENT_پیام_REFRESH,
+					  &پیام_data);
 			c->refresh = true;
 		}
 
-		free(new_url);
+		آزاد(new_url);
 
 	}
 
 	dom_string_unref(content);
 
-	return error;
+	بازگشت error;
 }
 
 
@@ -517,41 +517,41 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_title(html_content *htmlc, dom_node *node)
+ایستا nserror html_process_inserted_title(html_content *htmlc, dom_گره *گره)
 {
-	if (htmlc->title == NULL) {
+	اگر (htmlc->title == پوچ) {
 		/* only the first title is considered */
-		htmlc->title = dom_node_ref(node);
+		htmlc->title = dom_گره_ref(گره);
 	}
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /** process title node */
-static bool html_process_title(html_content *c, dom_node *node)
+ایستا bool html_process_title(html_content *c, dom_گره *گره)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *title;
-	char *title_str;
+	نویسه *title_str;
 	bool success;
 
-	exc = dom_node_get_text_content(node, &title);
-	if ((exc != DOM_NO_ERR) || (title == NULL)) {
-		return false;
+	exc = dom_گره_get_text_content(گره, &title);
+	اگر ((exc != DOM_NO_ERR) || (title == پوچ)) {
+		بازگشت false;
 	}
 
 	title_str = squash_whitespace(dom_string_data(title));
 	dom_string_unref(title);
 
-	if (title_str == NULL) {
-		return false;
+	اگر (title_str == پوچ) {
+		بازگشت false;
 	}
 
 	success = content__set_title(&c->base, title_str);
 
-	free(title_str);
+	آزاد(title_str);
 
-	return success;
+	بازگشت success;
 }
 
 
@@ -559,14 +559,14 @@ static bool html_process_title(html_content *c, dom_node *node)
  * Deal with input elements being modified by resyncing their gadget
  * if they have one.
  */
-static void html_texty_element_update(html_content *htmlc, dom_node *node)
+ایستا تهی html_texty_element_update(html_content *htmlc, dom_گره *گره)
 {
-	struct box *box = box_for_node(node);
-	if (box == NULL) {
-		return; /* No Box (yet?) so no gadget to update */
+	ساختار box *box = box_for_گره(گره);
+	اگر (box == پوچ) {
+		بازگشت; /* No Box (yet?) so no gadget to update */
 	}
-	if (box->gadget == NULL) {
-		return; /* No gadget yet (under construction perhaps?) */
+	اگر (box->gadget == پوچ) {
+		بازگشت; /* No gadget yet (under construction perhaps?) */
 	}
 	form_gadget_sync_with_dom(box->gadget);
 	/* And schedule a redraw for the box */
@@ -577,123 +577,123 @@ static void html_texty_element_update(html_content *htmlc, dom_node *node)
 /**
  * callback for DOMNodeInserted end type
  */
-static void
-dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
+ایستا تهی
+dom_default_action_DOMNodeInserted_cb(ساختار dom_event *evt, تهی *pw)
 {
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *گره;
+	dom_گره_type type;
 	dom_exception exc;
 	html_content *htmlc = pw;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc != DOM_NO_ERR) || (node == NULL)) {
+	exc = dom_event_get_target(evt, &گره);
+	اگر ((exc != DOM_NO_ERR) || (گره == پوچ)) {
 		/* failed to obtain the event target node */
-		return;
+		بازگشت;
 	}
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	exc = dom_گره_get_گره_type(گره, &type);
+	اگر ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_گره)) {
 		/* an element node has been inserted */
 		dom_html_element_type tag_type;
 
-		exc = dom_html_element_get_tag_type(node, &tag_type);
-		if (exc != DOM_NO_ERR) {
+		exc = dom_html_element_get_tag_type(گره, &tag_type);
+		اگر (exc != DOM_NO_ERR) {
 			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
 
-		switch (tag_type) {
-		case DOM_HTML_ELEMENT_TYPE_BASE:
-			html_process_inserted_base(htmlc, (dom_node *)node);
-			break;
+		انتخاب (tag_type) {
+		حالت DOM_HTML_ELEMENT_TYPE_BASE:
+			html_process_inserted_base(htmlc, (dom_گره *)گره);
+			بشکن;
 
-		case DOM_HTML_ELEMENT_TYPE_IMG:
-			html_process_inserted_img(htmlc, (dom_node *)node);
-			break;
+		حالت DOM_HTML_ELEMENT_TYPE_IMG:
+			html_process_inserted_img(htmlc, (dom_گره *)گره);
+			بشکن;
 
-		case DOM_HTML_ELEMENT_TYPE_LINK:
-			html_process_inserted_link(htmlc, (dom_node *)node);
-			break;
+		حالت DOM_HTML_ELEMENT_TYPE_LINK:
+			html_process_inserted_link(htmlc, (dom_گره *)گره);
+			بشکن;
 
-		case DOM_HTML_ELEMENT_TYPE_META:
-			html_process_inserted_meta(htmlc, (dom_node *)node);
-			break;
+		حالت DOM_HTML_ELEMENT_TYPE_META:
+			html_process_inserted_meta(htmlc, (dom_گره *)گره);
+			بشکن;
 
-		case DOM_HTML_ELEMENT_TYPE_STYLE:
-			if (nsoption_bool(author_level_css)) {
-				html_css_process_style(htmlc, (dom_node *)node);
+		حالت DOM_HTML_ELEMENT_TYPE_STYLE:
+			اگر (nsoption_bool(author_level_css)) {
+				html_css_process_style(htmlc, (dom_گره *)گره);
 			}
-			break;
+			بشکن;
 
-		case DOM_HTML_ELEMENT_TYPE_SCRIPT:
+		حالت DOM_HTML_ELEMENT_TYPE_SCRIPT:
 			dom_SCRIPT_showed_up(htmlc,
-					     (dom_html_script_element *)node);
-			break;
+					     (dom_html_script_element *)گره);
+			بشکن;
 
-		case DOM_HTML_ELEMENT_TYPE_TITLE:
-			html_process_inserted_title(htmlc, (dom_node *)node);
-			break;
+		حالت DOM_HTML_ELEMENT_TYPE_TITLE:
+			html_process_inserted_title(htmlc, (dom_گره *)گره);
+			بشکن;
 
-		default:
-			break;
+		پیشفرض:
+			بشکن;
 		}
 
-		if (htmlc->enable_scripting) {
+		اگر (htmlc->enable_scripting) {
 			/* ensure javascript context is available */
-			if (htmlc->jsthread == NULL) {
-				union content_msg_data msg_data;
+			اگر (htmlc->jsthread == پوچ) {
+				اجتماع content_پیام_data پیام_data;
 
-				msg_data.jsthread = &htmlc->jsthread;
+				پیام_data.jsthread = &htmlc->jsthread;
 				content_broadcast(&htmlc->base,
-						  CONTENT_MSG_GETTHREAD,
-						  &msg_data);
+						  CONTENT_پیام_GETTHREAD,
+						  &پیام_data);
 				NSLOG(netsurf, INFO,
 				      "javascript context: %p (htmlc: %p)",
 				      htmlc->jsthread,
 				      htmlc);
 			}
-			if (htmlc->jsthread != NULL) {
+			اگر (htmlc->jsthread != پوچ) {
 				js_handle_new_element(htmlc->jsthread,
-						      (dom_element *) node);
+						      (dom_element *) گره);
 			}
 		}
 	}
-	dom_node_unref(node);
+	dom_گره_unref(گره);
 }
 
 
 /**
  * callback for DOMNodeInsertedIntoDocument end type
  */
-static void
-dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
-						  void *pw)
+ایستا تهی
+dom_default_action_DOMNodeInsertedIntoDocument_cb(ساختار dom_event *evt,
+						  تهی *pw)
 {
 	html_content *htmlc = pw;
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *گره;
+	dom_گره_type type;
 	dom_exception exc;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	exc = dom_event_get_target(evt, &گره);
+	اگر ((exc == DOM_NO_ERR) && (گره != پوچ)) {
+		exc = dom_گره_get_گره_type(گره, &type);
+		اگر ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_گره)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
-			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			exc = dom_html_element_get_tag_type(گره, &tag_type);
+			اگر (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_SCRIPT:
-				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) node);
+			انتخاب (tag_type) {
+			حالت DOM_HTML_ELEMENT_TYPE_SCRIPT:
+				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) گره);
 				fallthrough;
-			default:
-				break;
+			پیشفرض:
+				بشکن;
 			}
 		}
-		dom_node_unref(node);
+		dom_گره_unref(گره);
 	}
 }
 
@@ -701,49 +701,49 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
 /**
  * callback for DOMSubtreeModified end type
  */
-static void
-dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
+ایستا تهی
+dom_default_action_DOMSubtreeModified_cb(ساختار dom_event *evt, تهی *pw)
 {
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *گره;
+	dom_گره_type type;
 	dom_exception exc;
 	html_content *htmlc = pw;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		if (htmlc->title == (dom_node *)node) {
+	exc = dom_event_get_target(evt, &گره);
+	اگر ((exc == DOM_NO_ERR) && (گره != پوچ)) {
+		اگر (htmlc->title == (dom_گره *)گره) {
 			/* Node is our title node */
-			html_process_title(htmlc, (dom_node *)node);
-			dom_node_unref(node);
-			return;
+			html_process_title(htmlc, (dom_گره *)گره);
+			dom_گره_unref(گره);
+			بازگشت;
 		}
 
-		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		exc = dom_گره_get_گره_type(گره, &type);
+		اگر ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_گره)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
-			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			exc = dom_html_element_get_tag_type(گره, &tag_type);
+			اگر (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_STYLE:
-				if (nsoption_bool(author_level_css)) {
+			انتخاب (tag_type) {
+			حالت DOM_HTML_ELEMENT_TYPE_STYLE:
+				اگر (nsoption_bool(author_level_css)) {
 					html_css_update_style(htmlc,
-							(dom_node *)node);
+							(dom_گره *)گره);
 				}
-				break;
-			case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-			case DOM_HTML_ELEMENT_TYPE_INPUT:
-				html_texty_element_update(htmlc, (dom_node *)node);
+				بشکن;
+			حالت DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+			حالت DOM_HTML_ELEMENT_TYPE_درون_داد:
+				html_texty_element_update(htmlc, (dom_گره *)گره);
 				fallthrough;
-			default:
-				break;
+			پیشفرض:
+				بشکن;
 			}
 		}
-		dom_node_unref(node);
+		dom_گره_unref(گره);
 	}
 }
 
@@ -751,12 +751,12 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
 /**
  * callback for default action finished
  */
-static void
-dom_default_action_finished_cb(struct dom_event *evt, void *pw)
+ایستا تهی
+dom_default_action_finished_cb(ساختار dom_event *evt, تهی *pw)
 {
 	html_content *htmlc = pw;
 
-	if (htmlc->jsthread != NULL)
+	اگر (htmlc->jsthread != پوچ)
 		js_event_cleanup(htmlc->jsthread, evt);
 }
 
@@ -765,21 +765,21 @@ dom_default_action_finished_cb(struct dom_event *evt, void *pw)
 dom_default_action_callback
 html_dom_event_fetcher(dom_string *type,
 		  dom_default_action_phase phase,
-		  void **pw)
+		  تهی **pw)
 {
 	NSLOG(netsurf, DEEPDEBUG,
 	      "phase:%d type:%s", phase, dom_string_data(type));
 
-	if (phase == DOM_DEFAULT_ACTION_END) {
-		if (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
-			return dom_default_action_DOMNodeInserted_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
-			return dom_default_action_DOMNodeInsertedIntoDocument_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
-			return dom_default_action_DOMSubtreeModified_cb;
+	اگر (phase == DOM_DEFAULT_ACTION_END) {
+		اگر (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
+			بازگشت dom_default_action_DOMNodeInserted_cb;
+		} وگرنه اگر (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
+			بازگشت dom_default_action_DOMNodeInsertedIntoDocument_cb;
+		} وگرنه اگر (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
+			بازگشت dom_default_action_DOMSubtreeModified_cb;
 		}
-	} else if (phase == DOM_DEFAULT_ACTION_FINISHED) {
-		return dom_default_action_finished_cb;
+	} وگرنه اگر (phase == DOM_DEFAULT_ACTION_FINISHED) {
+		بازگشت dom_default_action_finished_cb;
 	}
-	return NULL;
+	بازگشت پوچ;
 }

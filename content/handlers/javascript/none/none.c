@@ -20,61 +20,61 @@
  * Dummy implementation of javascript engine functions.
  */
 
-#include "utils/errors.h"
-#include "content/content.h"
-#include "utils/nsoption.h"
+#شامل "utils/errors.h"
+#شامل "content/content.h"
+#شامل "utils/nsoption.h"
 
-#include "javascript/js.h"
-#include "utils/log.h"
+#شامل "javascript/js.h"
+#شامل "utils/log.h"
 
-void js_initialise(void)
+تهی js_initialise(تهی)
 {
 	nsoption_set_bool(enable_javascript, false);
 }
 
-void js_finalise(void)
+تهی js_finalise(تهی)
 {
 }
 
-nserror js_newheap(int timeout, jsheap **heap)
+nserror js_newheap(صحیح timeout, jsheap **heap)
 {
-	*heap = NULL;
-	return NSERROR_OK;
+	*heap = پوچ;
+	بازگشت NSERROR_OK;
 }
 
-void js_destroyheap(jsheap *heap)
+تهی js_destroyheap(jsheap *heap)
 {
 }
 
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
+nserror js_newthread(jsheap *heap, تهی *win_priv, تهی *doc_priv, jsthread **thread)
 {
-	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	*thread = پوچ;
+	بازگشت NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
-void js_destroythread(jsthread *thread)
+تهی js_destroythread(jsthread *thread)
 {
 }
 
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+bool js_exec(jsthread *thread, ثابت uint8_t *txt, size_t txtlen, ثابت نویسه *name)
 {
-	return true;
+	بازگشت true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, ثابت نویسه *type, ساختار dom_document *doc, ساختار dom_گره *target)
 {
-	return true;
+	بازگشت true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+تهی js_handle_new_element(jsthread *thread, ساختار dom_element *گره)
 {
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+تهی js_event_cleanup(jsthread *thread, ساختار dom_event *evt)
 {
 }

@@ -16,49 +16,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gst/gst.h>
+#شامل <gst/gst.h>
 
-#include "content/content_factory.h"
-#include "content/content_protected.h"
+#شامل "content/content_factory.h"
+#شامل "content/content_protected.h"
 
-#include "image/video.h"
+#شامل "image/video.h"
 
-typedef struct nsvideo_content {
-	struct content base;
+تعریفنوع ساختار nsvideo_content {
+	ساختار content base;
 
 	GstElement *playbin;
 	GstElement *appsrc;
 } nsvideo_content;
 
-static gboolean nsvideo_bus_call(GstBus *bus, GstMessage *msg, 
+ایستا gboolean nsvideo_bus_call(GstBus *bus, GstMessage *پیام, 
 		nsvideo_content *video)
 {
-	switch (GST_MESSAGE_TYPE(msg)) {
-	case GST_MESSAGE_ERROR:
-		break;
-	case GST_MESSAGE_EOS:
-		break;
-	default:
-		break;
+	انتخاب (GST_MESSAGE_TYPE(پیام)) {
+	حالت GST_MESSAGE_ERROR:
+		بشکن;
+	حالت GST_MESSAGE_EOS:
+		بشکن;
+	پیشفرض:
+		بشکن;
 	}
 
-	return TRUE;
+	بازگشت TRUE;
 }
 
-static void nsvideo_need_data_event(GstElement *playbin, guint size,
+ایستا تهی nsvideo_need_data_event(GstElement *playbin, guint size,
 		nsvideo_content *video)
 {
 }
 
-static void nsvideo_enough_data_event(GstElement *playbin,
+ایستا تهی nsvideo_enough_data_event(GstElement *playbin,
 		nsvideo_content *video)
 {
 }
 
-static void nsvideo_source_event(GObject *object, GObject *orig, 
+ایستا تهی nsvideo_source_event(GObject *object, GObject *orig, 
 		GParamSpec *pspec, nsvideo_content *video)
 {
-	g_object_get(orig, pspec->name, &video->appsrc, NULL);
+	g_object_get(orig, pspec->name, &video->appsrc, پوچ);
 
 	g_signal_connect(video->appsrc, "need-data", 
 			G_CALLBACK(nsvideo_need_data_event), video);
@@ -66,44 +66,44 @@ static void nsvideo_source_event(GObject *object, GObject *orig,
 			G_CALLBACK(nsvideo_enough_data_event), video);
 }
 
-static nserror nsvideo_create(const content_handler *handler,
-		lwc_string *imime_type, const http_parameter *params,
+ایستا nserror nsvideo_create(ثابت content_handler *handler,
+		lwc_string *imime_type, ثابت http_parameter *params,
 		llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
-		struct content **c)
+		ثابت نویسه *fallback_charset, bool quirks,
+		ساختار content **c)
 {
 	nsvideo_content *video;
 	nserror error;
 	GstBus *bus;
 
-	video = calloc(1, sizeof(nsvideo_content));
-	if (video == NULL)
-		return NSERROR_NOMEM;
+	video = calloc(1, اندازه(nsvideo_content));
+	اگر (video == پوچ)
+		بازگشت NSERROR_NOMEM;
 
 	error = content__init(&video->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(video);
-		return error;
+	اگر (error != NSERROR_OK) {
+		آزاد(video);
+		بازگشت error;
 	}
 
 	error = llcache_handle_force_stream(llcache);
-	if (error != NSERROR_OK) {
-		free(video);
-		return error;
+	اگر (error != NSERROR_OK) {
+		آزاد(video);
+		بازگشت error;
 	}
 
-	video->playbin = gst_element_factory_make("playbin2", NULL);
-	if (video->playbin == NULL) {
-		free(video);
-		return NSERROR_NOMEM;
+	video->playbin = gst_element_factory_make("playbin2", پوچ);
+	اگر (video->playbin == پوچ) {
+		آزاد(video);
+		بازگشت NSERROR_NOMEM;
 	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(video->playbin));
 	gst_bus_add_watch(bus, (GstBusFunc) nsvideo_bus_call, video);
 	gst_object_unref(bus);
 
-	g_object_set(video->playbin, "uri", "appsrc://", NULL);
+	g_object_set(video->playbin, "uri", "appsrc://", پوچ);
 	g_signal_connect(video->playbin, "deep-notify::source",
 			G_CALLBACK(nsvideo_source_event), video);
 
@@ -111,13 +111,13 @@ static nserror nsvideo_create(const content_handler *handler,
 
 	gst_element_set_state(video->playbin, GST_STATE_PLAYING);
 	
-	*c = (struct content *) video;
+	*c = (ساختار content *) video;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
-static bool nsvideo_process_data(struct content *c, const char *data, 
-		unsigned int size)
+ایستا bool nsvideo_process_data(ساختار content *c, ثابت نویسه *data, 
+		unsigned صحیح size)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstBuffer *buffer;
@@ -130,10 +130,10 @@ static bool nsvideo_process_data(struct content *c, const char *data,
 	/* Send data to appsrc */
 	g_signal_emit_by_name(video->appsrc, "push-buffer", buffer, &ret);
 
-	return ret == GST_FLOW_OK;
+	بازگشت ret == GST_FLOW_OK;
 }
 
-static bool nsvideo_convert(struct content *c)
+ایستا bool nsvideo_convert(ساختار content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstFlowReturn ret;
@@ -143,10 +143,10 @@ static bool nsvideo_convert(struct content *c)
 
 	/* Appsink will flag DONE on receipt of first frame */
 
-	return ret == GST_FLOW_OK;
+	بازگشت ret == GST_FLOW_OK;
 }
 
-static void nsvideo_destroy(struct content *c)
+ایستا تهی nsvideo_destroy(ساختار content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 
@@ -154,32 +154,32 @@ static void nsvideo_destroy(struct content *c)
 	gst_object_unref(video->playbin);
 }
 
-static bool nsvideo_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ایستا bool nsvideo_redraw(ساختار content *c, ساختار content_redraw_data *data,
+		ثابت ساختار rect *clip, ثابت ساختار redraw_context *ctx)
 {
 	/** \todo Implement */
-	return true;
+	بازگشت true;
 }
 
-static nserror nsvideo_clone(const struct content *old, struct content **newc)
+ایستا nserror nsvideo_clone(ثابت ساختار content *old, ساختار content **newc)
 {
 	/** \todo Implement */
-	return NSERROR_CLONE_FAILED;
+	بازگشت NSERROR_CLONE_FAILED;
 }
 
-static content_type nsvideo_type(void)
+ایستا content_type nsvideo_type(تهی)
 {
 	/** \todo Lies */
-	return CONTENT_IMAGE;
+	بازگشت CONTENT_IMAGE;
 }
 
-static void *nsvideo_get_internal(const struct content *c, void *context)
+ایستا تهی *nsvideo_get_internal(ثابت ساختار content *c, تهی *context)
 {
 	/** \todo Return pointer to bitmap containing current frame, if any? */
-	return NULL;
+	بازگشت پوچ;
 }
 
-static const content_handler nsvideo_content_handler = {
+ایستا ثابت content_handler nsvideo_content_handler = {
 	.create = nsvideo_create,
 	.process_data = nsvideo_process_data,
 	.data_complete = nsvideo_convert,
@@ -192,7 +192,7 @@ static const content_handler nsvideo_content_handler = {
 	.no_share = true
 };
 
-static const char *nsvideo_types[] = {
+ایستا ثابت نویسه *nsvideo_types[] = {
 	"video/mp4",
 	"video/webm"
 };

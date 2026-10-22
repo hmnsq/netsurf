@@ -21,126 +21,126 @@
  * data scheme handling.  See http://tools.ietf.org/html/rfc2397
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <libwapcaplet/libwapcaplet.h>
-#include <nsutils/base64.h>
+#شامل <stdbool.h>
+#شامل <string.h>
+#شامل <stdarg.h>
+#شامل <stdlib.h>
+#شامل <libwapcaplet/libwapcaplet.h>
+#شامل <nsutils/base64.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/url.h"
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
+#شامل "netsurf/inttypes.h"
+#شامل "utils/url.h"
+#شامل "utils/nsurl.h"
+#شامل "utils/corestrings.h"
+#شامل "utils/log.h"
+#شامل "utils/utils.h"
+#شامل "utils/ring.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/data.h"
+#شامل "content/fetch.h"
+#شامل "content/fetchers.h"
+#شامل "content/fetchers/data.h"
 
-struct fetch_data_context {
-	struct fetch *parent_fetch;
+ساختار fetch_data_context {
+	ساختار fetch *parent_fetch;
 	nsurl *url;
-	char *mimetype;
-	char *data;
+	نویسه *mimetype;
+	نویسه *data;
 	size_t datalen;
 	bool base64;
 
 	bool aborted;
 	bool locked;
 	
-	struct fetch_data_context *r_next, *r_prev;
+	ساختار fetch_data_context *r_next, *r_prev;
 };
 
-static struct fetch_data_context *ring = NULL;
+ایستا ساختار fetch_data_context *ring = پوچ;
 
-static bool fetch_data_initialise(lwc_string *scheme)
+ایستا bool fetch_data_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_initialise called for %s",
 	      lwc_string_data(scheme));
 
-	return true;
+	بازگشت true;
 }
 
-static void fetch_data_finalise(lwc_string *scheme)
+ایستا تهی fetch_data_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_finalise called for %s",
 	      lwc_string_data(scheme));
 }
 
-static bool fetch_data_can_fetch(const nsurl *url)
+ایستا bool fetch_data_can_fetch(ثابت nsurl *url)
 {
-	return true;
+	بازگشت true;
 }
 
-static void fetch_data_send_callback(const fetch_msg *msg,
-		struct fetch_data_context *c)
+ایستا تهی fetch_data_send_callback(ثابت fetch_پیام *پیام,
+		ساختار fetch_data_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(پیام, c->parent_fetch);
 	c->locked = false;
 }
 
-static void fetch_data_send_header(struct fetch_data_context *ctx,
-		const char *fmt, ...)
+ایستا تهی fetch_data_send_header(ساختار fetch_data_context *ctx,
+		ثابت نویسه *fmt, ...)
 {
-	char header[64];
-	fetch_msg msg;
+	نویسه header[64];
+	fetch_پیام پیام;
 	va_list ap;
-	int len;
+	صحیح len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof(header), fmt, ap);
+	len = vsnprintf(header, اندازه(header), fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return;
+	اگر (len >= (صحیح)اندازه(header) || len < 0) {
+		بازگشت;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.len = len;
-	msg.data.header_or_data.buf = (const uint8_t *)header;
-	fetch_data_send_callback(&msg, ctx);
+	پیام.type = FETCH_HEADER;
+	پیام.data.header_or_data.len = len;
+	پیام.data.header_or_data.buf = (ثابت uint8_t *)header;
+	fetch_data_send_callback(&پیام, ctx);
 }
 
-static void *fetch_data_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+ایستا تهی *fetch_data_setup(ساختار fetch *parent_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, ثابت نویسه *post_urlenc,
+		 ثابت ساختار fetch_multipart_data *post_multipart,
+		 ثابت نویسه **headers)
 {
-	struct fetch_data_context *ctx = calloc(1, sizeof(*ctx));
+	ساختار fetch_data_context *ctx = calloc(1, اندازه(*ctx));
 	
-	if (ctx == NULL)
-		return NULL;
+	اگر (ctx == پوچ)
+		بازگشت پوچ;
 		
 	ctx->parent_fetch = parent_fetch;
 	ctx->url = nsurl_ref(url);
 
-	RING_INSERT(ring, ctx);
+	RING_درج(ring, ctx);
 	
-	return ctx;
+	بازگشت ctx;
 }
 
-static bool fetch_data_start(void *ctx)
+ایستا bool fetch_data_start(تهی *ctx)
 {
-	return true;
+	بازگشت true;
 }
 
-static void fetch_data_free(void *ctx)
+ایستا تهی fetch_data_free(تهی *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	ساختار fetch_data_context *c = ctx;
 
 	nsurl_unref(c->url);
-	free(c->data);
-	free(c->mimetype);
-	free(ctx);
+	آزاد(c->data);
+	آزاد(c->mimetype);
+	آزاد(ctx);
 }
 
-static void fetch_data_abort(void *ctx)
+ایستا تهی fetch_data_abort(تهی *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	ساختار fetch_data_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here. 
@@ -149,13 +149,13 @@ static void fetch_data_abort(void *ctx)
 	c->aborted = true;
 }
 
-static bool fetch_data_process(struct fetch_data_context *c)
+ایستا bool fetch_data_process(ساختار fetch_data_context *c)
 {
 	nserror res;
-	fetch_msg msg;
-	const char *params;
-	const char *comma;
-	char *unescaped;
+	fetch_پیام پیام;
+	ثابت نویسه *params;
+	ثابت نویسه *comma;
+	نویسه *unescaped;
 	size_t unescaped_len;
 	
 	/* format of a data: URL is:
@@ -166,45 +166,45 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	
 	NSLOG(netsurf, DEEPDEBUG, "url: %.140s", nsurl_access(c->url));
 	
-	if (nsurl_length(c->url) < 6) {
+	اگر (nsurl_length(c->url) < 6) {
 		/* 6 is the minimum possible length (data:,) */
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+		پیام.type = FETCH_ERROR;
+		پیام.data.error = "Malformed data: URL";
+		fetch_data_send_callback(&پیام, c);
+		بازگشت false;
 	}
 	
 	/* skip the data: part */
 	params = nsurl_access(c->url) + SLEN("data:");
 	
 	/* find the comma */
-	if ( (comma = strchr(params, ',')) == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+	اگر ( (comma = strchr(params, ',')) == پوچ) {
+		پیام.type = FETCH_ERROR;
+		پیام.data.error = "Malformed data: URL";
+		fetch_data_send_callback(&پیام, c);
+		بازگشت false;
 	}
 	
-	if (params[0] == ',') {
+	اگر (params[0] == ',') {
 		/* there is no mimetype here, assume text/plain */
 		c->mimetype = strdup("text/plain;charset=US-ASCII");
-	} else {	
+	} وگرنه {	
 		/* make a copy of everything between data: and the comma */
 		c->mimetype = strndup(params, comma - params);
 	}
 	
-	if (c->mimetype == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = 
+	اگر (c->mimetype == پوچ) {
+		پیام.type = FETCH_ERROR;
+		پیام.data.error = 
 			"Unable to allocate memory for mimetype in data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+		fetch_data_send_callback(&پیام, c);
+		بازگشت false;
 	}
 	
-	if (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
+	اگر (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
 		c->base64 = true;
 		c->mimetype[strlen(c->mimetype) - 7] = '\0';
-	} else {
+	} وگرنه {
 		c->base64 = false;
 	}
 	
@@ -212,42 +212,42 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	 * decides to nest URL and base64 encoding.  Like, say, Acid2.
 	 */
 	res = url_unescape(comma + 1, 0, &unescaped_len, &unescaped);
-	if (res != NSERROR_OK) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Unable to URL decode data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+	اگر (res != NSERROR_OK) {
+		پیام.type = FETCH_ERROR;
+		پیام.data.error = "Unable to URL decode data: URL";
+		fetch_data_send_callback(&پیام, c);
+		بازگشت false;
 	}
 	
-	if (c->base64) {
-		if ((nsu_base64_decode_alloc((uint8_t *)unescaped,
+	اگر (c->base64) {
+		اگر ((nsu_base64_decode_alloc((uint8_t *)unescaped,
 					     unescaped_len,
 					     (uint8_t **)&c->data,
 					     &c->datalen) != NSUERROR_OK) ||
-		    (c->data == NULL)) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to Base64 decode data: URL";
-			fetch_data_send_callback(&msg, c);
-			free(unescaped);
-			return false;
+		    (c->data == پوچ)) {
+			پیام.type = FETCH_ERROR;
+			پیام.data.error = "Unable to Base64 decode data: URL";
+			fetch_data_send_callback(&پیام, c);
+			آزاد(unescaped);
+			بازگشت false;
 		}
-		free(unescaped);
-	} else {
+		آزاد(unescaped);
+	} وگرنه {
 		c->datalen = unescaped_len;
 		c->data = unescaped;
 	}
 	
 	
-	return true;
+	بازگشت true;
 }
 
-static void fetch_data_poll(lwc_string *scheme)
+ایستا تهی fetch_data_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	struct fetch_data_context *c, *save_ring = NULL;
+	fetch_پیام پیام;
+	ساختار fetch_data_context *c, *save_ring = پوچ;
 	
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	وقتی (ring != پوچ) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -258,13 +258,13 @@ static void fetch_data_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called 
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		اگر (c->locked == true) {
+			RING_درج(save_ring, c);
+			ادامه;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false && fetch_data_process(c) == true) {
+		اگر (c->aborted == false && fetch_data_process(c) == true) {
 			fetch_set_http_code(c->parent_fetch, 200);
 			NSLOG(netsurf, INFO,
 			      "setting data: MIME type to %s, length to %"PRIsizet,
@@ -277,37 +277,37 @@ static void fetch_data_poll(lwc_string *scheme)
 			fetch_data_send_header(c, "Content-Type: %s",
 					c->mimetype);
 
-			if (c->aborted == false) {
+			اگر (c->aborted == false) {
 				fetch_data_send_header(c, "Content-Length: %"
 						PRIsizet, c->datalen);
 			}
 
-			if (c->aborted == false) {
+			اگر (c->aborted == false) {
 				/* Set max-age to 1 year. */
 				fetch_data_send_header(c, "Cache-Control: "
 						"max-age=31536000");
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf = 
-						(const uint8_t *) c->data;
-				msg.data.header_or_data.len = c->datalen;
-				fetch_data_send_callback(&msg, c);
+			اگر (c->aborted == false) {
+				پیام.type = FETCH_DATA;
+				پیام.data.header_or_data.buf = 
+						(ثابت uint8_t *) c->data;
+				پیام.data.header_or_data.len = c->datalen;
+				fetch_data_send_callback(&پیام, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				fetch_data_send_callback(&msg, c);
+			اگر (c->aborted == false) {
+				پیام.type = FETCH_FINISHED;
+				fetch_data_send_callback(&پیام, c);
 			}
-		} else {
+		} وگرنه {
 			NSLOG(netsurf, INFO, "Processing of %.140s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't, 
 			 * then fetch_data_process() is broken.
 			 */
-			assert(c->locked == false);
+			أكد(c->locked == false);
 		}
 
 		/* And now finish */
@@ -321,19 +321,19 @@ static void fetch_data_poll(lwc_string *scheme)
 	ring = save_ring;
 }
 
-nserror fetch_data_register(void)
+nserror fetch_data_register(تهی)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_data);
-	const struct fetcher_operation_table fetcher_ops = {
+	ثابت ساختار fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_data_initialise,
 		.acceptable = fetch_data_can_fetch,
 		.setup = fetch_data_setup,
 		.start = fetch_data_start,
 		.abort = fetch_data_abort,
-		.free = fetch_data_free,
+		.آزاد = fetch_data_free,
 		.poll = fetch_data_poll,
 		.finalise = fetch_data_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	بازگشت fetcher_add(scheme, &fetcher_ops);
 }

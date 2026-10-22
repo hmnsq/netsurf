@@ -21,16 +21,16 @@
  * content generator for the about scheme blank page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
+#شامل <stdbool.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
 
-#include "netsurf/types.h"
-#include "utils/errors.h"
-#include "utils/nsoption.h"
+#شامل "netsurf/types.h"
+#شامل "utils/errors.h"
+#شامل "utils/nsoption.h"
 
-#include "private.h"
-#include "choices.h"
+#شامل "private.h"
+#شامل "choices.h"
 
 /**
  * Generate the text of a Choices file which represents the current
@@ -39,55 +39,55 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_choices_handler(struct fetch_about_context *ctx)
+bool fetch_about_choices_handler(ساختار fetch_about_context *ctx)
 {
-	char buffer[1024];
-	int code = 200;
-	int slen;
-	unsigned int opt_loop = 0;
-	int res = 0;
+	نویسه buffer[1024];
+	صحیح code = 200;
+	صحیح slen;
+	unsigned صحیح opt_loop = 0;
+	صحیح res = 0;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		goto fetch_about_choices_handler_aborted;
+	اگر (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+		برو fetch_about_choices_handler_aborted;
 
-	slen = snprintf(buffer, sizeof buffer,
+	slen = snprintf(buffer, اندازه buffer,
 		 "# Automatically generated current NetSurf browser Choices\n");
 
-	do {
+	انجامبده {
 		res = nsoption_snoptionf(buffer + slen,
-				sizeof buffer - slen,
+				اندازه buffer - slen,
 				opt_loop,
 				"%k:%v\n");
-		if (res <= 0)
-			break; /* last option */
+		اگر (res <= 0)
+			بشکن; /* last option */
 
-		if (res >= (int) (sizeof buffer - slen)) {
+		اگر (res >= (صحیح) (اندازه buffer - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
-			res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-			if (res != NSERROR_OK) {
-				goto fetch_about_choices_handler_aborted;
+			res = fetch_about_senddata(ctx, (ثابت uint8_t *)buffer, slen);
+			اگر (res != NSERROR_OK) {
+				برو fetch_about_choices_handler_aborted;
 			}
 			slen = 0;
-		} else {
+		} وگرنه {
 			/* normal addition */
 			slen += res;
 			opt_loop++;
 		}
-	} while (res > 0);
+	} وقتی (res > 0);
 
-	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
-		goto fetch_about_choices_handler_aborted;
+	res = fetch_about_senddata(ctx, (ثابت uint8_t *)buffer, slen);
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_choices_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	بازگشت true;
 
 fetch_about_choices_handler_aborted:
-	return false;
+	بازگشت false;
 }

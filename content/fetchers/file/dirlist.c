@@ -20,25 +20,25 @@
  * Generate HTML content for displaying directory listings (implementation).
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#شامل <stdbool.h>
+#شامل <string.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
 
-#include "utils/nsurl.h"
-#include "utils/messages.h"
-#include "utils/nscolour.h"
+#شامل "utils/nsurl.h"
+#شامل "utils/messages.h"
+#شامل "utils/nscolour.h"
 
-#include "netsurf/inttypes.h"
-#include "netsurf/types.h"
-#include "netsurf/plot_style.h"
+#شامل "netsurf/inttypes.h"
+#شامل "netsurf/types.h"
+#شامل "netsurf/plot_style.h"
 
-#include "dirlist.h"
-#include "desktop/system_colour.h"
+#شامل "dirlist.h"
+#شامل "desktop/system_colour.h"
 
-static int dirlist_filesize_calculate(unsigned long *bytesize);
-static int dirlist_filesize_value(unsigned long bytesize);
-static char* dirlist_filesize_unit(unsigned long bytesize);
+ایستا صحیح dirlist_filesize_calculate(unsigned long *bytesize);
+ایستا صحیح dirlist_filesize_مقدار(unsigned long bytesize);
+ایستا نویسه* dirlist_filesize_unit(unsigned long bytesize);
 
 
 /**
@@ -58,20 +58,20 @@ static char* dirlist_filesize_unit(unsigned long bytesize);
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_top(char *buffer, int buffer_length)
+bool dirlist_generate_بالاترین(نویسه *buffer, صحیح buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	صحیح error = snprintf(buffer, buffer_length,
 		"<html>\n"
 		"<head>\n"
 		"<link rel=\"stylesheet\" title=\"Standard\" "
 			"type=\"text/css\" href=\"resource:internal.css\">\n"
 		"<style>\n");
-	if (error < 0 || error >= buffer_length)
+	اگر (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		بازگشت false;
+	وگرنه
 		/* OK */
-		return true;
+		بازگشت true;
 
 }
 
@@ -97,9 +97,9 @@ bool dirlist_generate_top(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
+bool dirlist_generate_hide_columns(صحیح flags, نویسه *buffer, صحیح buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	صحیح error = snprintf(buffer, buffer_length,
 			"%s\n%s\n%s\n%s\n%s\n",
 			(flags & DIRLIST_NO_NAME_COLUMN) ?
 					"span.name { display: none; }\n" : "",
@@ -111,12 +111,12 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
 					"span.date { display: none; }\n" : "",
 			(flags & DIRLIST_NO_TIME_COLUMN) ?
 					"span.time { display: none; }\n" : "");
-	if (error < 0 || error >= buffer_length)
+	اگر (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		بازگشت false;
+	وگرنه
 		/* OK */
-		return true;
+		بازگشت true;
 }
 
 
@@ -140,18 +140,18 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
+bool dirlist_generate_title(ثابت نویسه *title, نویسه *buffer, صحیح buffer_length)
 {
-	const char *stylesheet;
+	ثابت نویسه *stylesheet;
 	nserror err;
-	int error;
+	صحیح error;
 
-	if (title == NULL)
+	اگر (title == پوچ)
 		title = "";
 
 	err = nscolour_get_stylesheet(&stylesheet);
-	if (err != NSERROR_OK) {
-		return false;
+	اگر (err != NSERROR_OK) {
+		بازگشت false;
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -169,12 +169,12 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
 			title,
 			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet, title);
-	if (error < 0 || error >= buffer_length)
+	اگر (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		بازگشت false;
+	وگرنه
 		/* OK */
-		return true;
+		بازگشت true;
 }
 
 
@@ -199,18 +199,18 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length)
+bool dirlist_generate_parent_link(ثابت نویسه *parent, نویسه *buffer,
+		صحیح buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	صحیح error = snprintf(buffer, buffer_length,
 			"<p><a href=\"%s\">%s</a></p>",
 			parent, messages_get("FileParent"));
-	if (error < 0 || error >= buffer_length)
+	اگر (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		بازگشت false;
+	وگرنه
 		/* OK */
-		return true;
+		بازگشت true;
 }
 
 
@@ -234,9 +234,9 @@ bool dirlist_generate_parent_link(const char *parent, char *buffer,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_headings(char *buffer, int buffer_length)
+bool dirlist_generate_headings(نویسه *buffer, صحیح buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	صحیح error = snprintf(buffer, buffer_length,
 			"<div>\n"
 			"<strong>\n"
 			"\t<span class=\"name\">%s</span>\n"
@@ -249,12 +249,12 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
 			messages_get("FileName"), messages_get("FileType"),
 			messages_get("FileSize"), messages_get("FileDate"),
 			messages_get("FileTime"));
-	if (error < 0 || error >= buffer_length)
+	اگر (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		بازگشت false;
+	وگرنه
 		/* OK */
-		return true;
+		بازگشت true;
 }
 
 
@@ -286,21 +286,21 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
-		const char *mimetype, long long size, char *date, char *time,
-		char *buffer, int buffer_length)
+bool dirlist_generate_row(bool even, bool directory, nsurl *url, نویسه *name,
+		ثابت نویسه *mimetype, long long size, نویسه *date, نویسه *time,
+		نویسه *buffer, صحیح buffer_length)
 {
-	const char *unit;
-	char size_string[100];
-	int error;
+	ثابت نویسه *unit;
+	نویسه size_string[100];
+	صحیح error;
 
-	if (size < 0) {
+	اگر (size < 0) {
 		unit = "";
-		strncpy(size_string, "", sizeof size_string);
-	} else {
+		strncpy(size_string, "", اندازه size_string);
+	} وگرنه {
 		unit = messages_get(dirlist_filesize_unit((unsigned long)size));
-		snprintf(size_string, sizeof size_string, "%d",
-				dirlist_filesize_value((unsigned long)size));
+		snprintf(size_string, اندازه size_string, "%d",
+				dirlist_filesize_مقدار((unsigned long)size));
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -315,12 +315,12 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
 			even ? "even ns-even-bg" : "odd  ns-odd-bg",
 			directory ? "dir" : "file",
 			name, mimetype, size_string, unit, date, time);
-	if (error < 0 || error >= buffer_length)
+	اگر (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		بازگشت false;
+	وگرنه
 		/* OK */
-		return true;
+		بازگشت true;
 }
 
 
@@ -341,18 +341,18 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_bottom(char *buffer, int buffer_length)
+bool dirlist_generate_bottom(نویسه *buffer, صحیح buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	صحیح error = snprintf(buffer, buffer_length,
 			"</div>\n"
 			"</body>\n"
 			"</html>\n");
-	if (error < 0 || error >= buffer_length)
+	اگر (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		بازگشت false;
+	وگرنه
 		/* OK */
-		return true;
+		بازگشت true;
 }
 
 
@@ -364,16 +364,16 @@ bool dirlist_generate_bottom(char *buffer, int buffer_length)
  * \return  number of times bytesize has been divided by 1024
  */
 
-int dirlist_filesize_calculate(unsigned long *bytesize)
+صحیح dirlist_filesize_calculate(unsigned long *bytesize)
 {
-	int i = 0;
-	while (*bytesize > 1024 * 4) {
+	صحیح i = 0;
+	وقتی (*bytesize > 1024 * 4) {
 		*bytesize /= 1024;
 		i++;
-		if (i == 3)
-			break;
+		اگر (i == 3)
+			بشکن;
 	}
-	return i;
+	بازگشت i;
 }
 
 
@@ -385,10 +385,10 @@ int dirlist_filesize_calculate(unsigned long *bytesize)
  * \return  Value to display for file size, in units given by filesize_unit()
  */
 
-int dirlist_filesize_value(unsigned long bytesize)
+صحیح dirlist_filesize_مقدار(unsigned long bytesize)
 {
 	dirlist_filesize_calculate(&bytesize);
-	return (int)bytesize;
+	بازگشت (صحیح)bytesize;
 }
 
 
@@ -400,8 +400,8 @@ int dirlist_filesize_value(unsigned long bytesize)
  * \return  Units to display for file size, for value given by filesize_value()
  */
 
-char* dirlist_filesize_unit(unsigned long bytesize)
+نویسه* dirlist_filesize_unit(unsigned long bytesize)
 {
-	const char* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
-	return (char*)units[dirlist_filesize_calculate(&bytesize)];
+	ثابت نویسه* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
+	بازگشت (نویسه*)units[dirlist_filesize_calculate(&bytesize)];
 }

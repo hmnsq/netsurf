@@ -26,62 +26,62 @@
  * Form handling functions (implementation).
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-#include <dom/dom.h>
+#شامل <assert.h>
+#شامل <limits.h>
+#شامل <stdbool.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <dom/dom.h>
 
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/talloc.h"
-#include "utils/url.h"
-#include "utils/utf8.h"
-#include "utils/ascii.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/mouse.h"
-#include "netsurf/plotters.h"
-#include "netsurf/misc.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
-#include "css/utils.h"
-#include "desktop/knockout.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
+#شامل "utils/corestrings.h"
+#شامل "utils/log.h"
+#شامل "utils/messages.h"
+#شامل "utils/talloc.h"
+#شامل "utils/url.h"
+#شامل "utils/utf8.h"
+#شامل "utils/ascii.h"
+#شامل "netsurf/browser_window.h"
+#شامل "netsurf/inttypes.h"
+#شامل "netsurf/mouse.h"
+#شامل "netsurf/plotters.h"
+#شامل "netsurf/misc.h"
+#شامل "content/fetch.h"
+#شامل "content/hlcache.h"
+#شامل "css/utils.h"
+#شامل "desktop/knockout.h"
+#شامل "desktop/scrollbar.h"
+#شامل "desktop/textarea.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/layout.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
+#شامل "html/html.h"
+#شامل "html/private.h"
+#شامل "html/layout.h"
+#شامل "html/box.h"
+#شامل "html/box_inspect.h"
+#شامل "html/font.h"
+#شامل "html/form_internal.h"
 
 #define MAX_SELECT_HEIGHT 210
-#define SELECT_LINE_SPACING 0.2
+#define SELECT_سطر_SPACING 0.2
 #define SELECT_BORDER_WIDTH 1
 #define SELECT_SELECTED_COLOUR 0xDB9370
 
-struct form_select_menu {
-	int line_height;
-	int width, height;
-	struct scrollbar *scrollbar;
-	int f_size;
+ساختار form_select_menu {
+	صحیح سطر_height;
+	صحیح width, height;
+	ساختار scrollbar *scrollbar;
+	صحیح f_size;
 	bool scroll_capture;
 	select_menu_redraw_callback callback;
-	void *client_data;
-	struct content *c;
+	تهی *client_data;
+	ساختار content *c;
 };
 
-static plot_style_t plot_style_fill_selected = {
+ایستا plot_style_t plot_style_fill_selected = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 	.fill_colour = SELECT_SELECTED_COLOUR,
 };
 
-static plot_font_style_t plot_fstyle_entry = {
+ایستا plot_font_style_t plot_fstyle_entry = {
 	.family = PLOT_FONT_FAMILY_SANS_SERIF,
 	.weight = 400,
 	.flags = FONTF_NONE,
@@ -103,47 +103,47 @@ static plot_font_style_t plot_fstyle_entry = {
  *                 used iff converting to charset fails
  * \return Pointer to converted string (on heap, caller frees), or NULL
  */
-static char *
-form_encode_item(const char *item,
+ایستا نویسه *
+form_encode_item(ثابت نویسه *item,
 		 uint32_t len,
-		 const char *charset,
-		 const char *fallback)
+		 ثابت نویسه *charset,
+		 ثابت نویسه *fallback)
 {
 	nserror err;
-	char *ret = NULL;
-	char cset[256];
+	نویسه *ret = پوچ;
+	نویسه cset[256];
 
-	if (!item || !charset)
-		return NULL;
+	اگر (!item || !charset)
+		بازگشت پوچ;
 
-	snprintf(cset, sizeof cset, "%s//TRANSLIT", charset);
+	snprintf(cset, اندازه cset, "%s//TRANSLIT", charset);
 
 	err = utf8_to_enc(item, cset, 0, &ret);
-	if (err == NSERROR_BAD_ENCODING) {
+	اگر (err == NSERROR_BAD_ENCODING) {
 		/* charset not understood, try without transliteration */
-		snprintf(cset, sizeof cset, "%s", charset);
+		snprintf(cset, اندازه cset, "%s", charset);
 		err = utf8_to_enc(item, cset, len, &ret);
 
-		if (err == NSERROR_BAD_ENCODING) {
+		اگر (err == NSERROR_BAD_ENCODING) {
 			/* nope, try fallback charset (if any) */
-			if (fallback) {
-				snprintf(cset, sizeof cset,
+			اگر (fallback) {
+				snprintf(cset, اندازه cset,
 						"%s//TRANSLIT", fallback);
 				err = utf8_to_enc(item, cset, 0, &ret);
 
-				if (err == NSERROR_BAD_ENCODING) {
+				اگر (err == NSERROR_BAD_ENCODING) {
 					/* and without transliteration */
-					snprintf(cset, sizeof cset,
+					snprintf(cset, اندازه cset,
 							"%s", fallback);
 					err = utf8_to_enc(item, cset, 0, &ret);
 				}
 			}
 
-			if (err == NSERROR_BAD_ENCODING) {
+			اگر (err == NSERROR_BAD_ENCODING) {
 				/* that also failed, use 8859-1 */
 				err = utf8_to_enc(item, "ISO-8859-1//TRANSLIT",
 						0, &ret);
-				if (err == NSERROR_BAD_ENCODING) {
+				اگر (err == NSERROR_BAD_ENCODING) {
 					/* and without transliteration */
 					err = utf8_to_enc(item, "ISO-8859-1",
 							0, &ret);
@@ -151,18 +151,18 @@ form_encode_item(const char *item,
 			}
 		}
 	}
-	if (err == NSERROR_NOMEM) {
-		return NULL;
+	اگر (err == NSERROR_NOMEM) {
+		بازگشت پوچ;
 	}
 
-	return ret;
+	بازگشت ret;
 }
 
 
 /**
  * string allocation size for numeric values in multipart data
  */
-#define FETCH_DATA_INT_VALUE_SIZE 20
+#define FETCH_DATA_INT_مقدار_SIZE 20
 
 
 /**
@@ -173,47 +173,47 @@ form_encode_item(const char *item,
  * \param value The value to encode
  * \param fetch_data_next_ptr The multipart data list to append to.
  */
-static nserror
-fetch_data_list_add_sname(const char *name,
-			  const char *ksfx,
-			  int value,
-			  struct fetch_multipart_data ***fetch_data_next_ptr)
+ایستا nserror
+fetch_data_list_add_sname(ثابت نویسه *name,
+			  ثابت نویسه *ksfx,
+			  صحیح مقدار,
+			  ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
-	struct fetch_multipart_data *fetch_data;
-	int keysize;
+	ساختار fetch_multipart_data *fetch_data;
+	صحیح keysize;
 
-	fetch_data = calloc(1, sizeof(*fetch_data));
-	if (fetch_data == NULL) {
+	fetch_data = calloc(1, اندازه(*fetch_data));
+	اگر (fetch_data == پوچ) {
 		NSLOG(netsurf, INFO, "failed allocation for fetch data");
-		return NSERROR_NOMEM;
+		بازگشت NSERROR_NOMEM;
 	}
 
 	/* key name */
 	keysize = snprintf(fetch_data->name, 0, "%s%s", name, ksfx);
 	fetch_data->name = malloc(keysize + 1); /* allow for null */
-	if (fetch_data->name == NULL) {
-		free(fetch_data);
+	اگر (fetch_data->name == پوچ) {
+		آزاد(fetch_data);
 		NSLOG(netsurf, INFO,
 		      "keyname allocation failure for %s%s", name, ksfx);
-		return NSERROR_NOMEM;
+		بازگشت NSERROR_NOMEM;
 	}
 	snprintf(fetch_data->name, keysize + 1, "%s%s", name, ksfx);
 
-	/* value */
-	fetch_data->value = malloc(FETCH_DATA_INT_VALUE_SIZE);
-	if (fetch_data->value == NULL) {
-		free(fetch_data->name);
-		free(fetch_data);
+	/*مقدار*/
+	fetch_data->مقدار = malloc(FETCH_DATA_INT_مقدار_SIZE);
+	اگر (fetch_data->مقدار == پوچ) {
+		آزاد(fetch_data->name);
+		آزاد(fetch_data);
 		NSLOG(netsurf, INFO, "value allocation failure");
-		return NSERROR_NOMEM;
+		بازگشت NSERROR_NOMEM;
 	}
-	snprintf(fetch_data->value, FETCH_DATA_INT_VALUE_SIZE, "%d", value);
+	snprintf(fetch_data->مقدار, FETCH_DATA_INT_مقدار_SIZE, "%d", مقدار);
 
 	/* link into list */
 	**fetch_data_next_ptr = fetch_data;
 	*fetch_data_next_ptr = &fetch_data->next;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
@@ -228,60 +228,60 @@ fetch_data_list_add_sname(const char *name,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
+ایستا nserror
 fetch_data_list_add(dom_string *name,
-		    dom_string *value,
-		    const char *rawfile,
-		    const char *form_charset,
-		    const char *docu_charset,
-		    struct fetch_multipart_data ***fetch_data_next_ptr)
+		    dom_string *مقدار,
+		    ثابت نویسه *rawfile,
+		    ثابت نویسه *form_charset,
+		    ثابت نویسه *docu_charset,
+		    ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
-	struct fetch_multipart_data *fetch_data;
+	ساختار fetch_multipart_data *fetch_data;
 
-	assert(name != NULL);
+	أكد(name != پوچ);
 
-	fetch_data = calloc(1, sizeof(*fetch_data));
-	if (fetch_data == NULL) {
+	fetch_data = calloc(1, اندازه(*fetch_data));
+	اگر (fetch_data == پوچ) {
 		NSLOG(netsurf, INFO, "failed allocation for fetch data");
-		return NSERROR_NOMEM;
+		بازگشت NSERROR_NOMEM;
 	}
 
 	fetch_data->name = form_encode_item(dom_string_data(name),
 					    dom_string_byte_length(name),
 					    form_charset,
 					    docu_charset);
-	if (fetch_data->name == NULL) {
+	اگر (fetch_data->name == پوچ) {
 		NSLOG(netsurf, INFO, "Could not encode name for fetch data");
-		free(fetch_data);
-		return NSERROR_NOMEM;
+		آزاد(fetch_data);
+		بازگشت NSERROR_NOMEM;
 	}
 
-	if (value == NULL) {
-		fetch_data->value = strdup("");
-	} else {
-		fetch_data->value = form_encode_item(dom_string_data(value),
-						     dom_string_byte_length(value),
+	اگر (مقدار == پوچ) {
+		fetch_data->مقدار = strdup("");
+	} وگرنه {
+		fetch_data->مقدار = form_encode_item(dom_string_data(مقدار),
+						     dom_string_byte_length(مقدار),
 						     form_charset,
 						     docu_charset);
 	}
-	if (fetch_data->value == NULL) {
+	اگر (fetch_data->مقدار == پوچ) {
 		NSLOG(netsurf, INFO, "Could not encode value for fetch data");
-		free(fetch_data->name);
-		free(fetch_data);
-		return NSERROR_NOMEM;
+		آزاد(fetch_data->name);
+		آزاد(fetch_data);
+		بازگشت NSERROR_NOMEM;
 	}
 
 	/* deal with raw file name */
-	if (rawfile != NULL) {
+	اگر (rawfile != پوچ) {
 		fetch_data->file = true;
 		fetch_data->rawfile = strdup(rawfile);
-		if (fetch_data->rawfile == NULL) {
+		اگر (fetch_data->rawfile == پوچ) {
 			NSLOG(netsurf, INFO,
 			      "Could not encode rawfile value for fetch data");
-			free(fetch_data->value);
-			free(fetch_data->name);
-			free(fetch_data);
-			return NSERROR_NOMEM;
+			آزاد(fetch_data->مقدار);
+			آزاد(fetch_data->name);
+			آزاد(fetch_data);
+			بازگشت NSERROR_NOMEM;
 		}
 	}
 
@@ -289,7 +289,7 @@ fetch_data_list_add(dom_string *name,
 	**fetch_data_next_ptr = fetch_data;
 	*fetch_data_next_ptr = &fetch_data->next;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
@@ -302,11 +302,11 @@ fetch_data_list_add(dom_string *name,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
+ایستا nserror
 form_dom_to_data_textarea(dom_html_text_area_element *text_area_element,
-			  const char *form_charset,
-			  const char *doc_charset,
-			  struct fetch_multipart_data ***fetch_data_next_ptr)
+			  ثابت نویسه *form_charset,
+			  ثابت نویسه *doc_charset,
+			  ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	dom_exception exp; /* the result from DOM operations */
 	bool element_disabled;
@@ -317,45 +317,45 @@ form_dom_to_data_textarea(dom_html_text_area_element *text_area_element,
 	/* check if element is disabled */
 	exp = dom_html_text_area_element_get_disabled(text_area_element,
 						      &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get text area disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	اگر (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* obtain name property */
 	exp = dom_html_text_area_element_get_name(text_area_element,
 						  &inputname);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get text area name property. exp %d", exp);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	اگر (inputname == پوچ) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* obtain text area value */
-	exp = dom_html_text_area_element_get_value(text_area_element,
+	exp = dom_html_text_area_element_get_مقدار(text_area_element,
 						   &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get text area content. exp %d", exp);
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(inputname,
 				  inputvalue,
-				  NULL,
+				  پوچ,
 				  form_charset,
 				  doc_charset,
 				  fetch_data_next_ptr);
@@ -363,50 +363,50 @@ form_dom_to_data_textarea(dom_html_text_area_element *text_area_element,
 	dom_string_unref(inputvalue);
 	dom_string_unref(inputname);
 
-	return res;
+	بازگشت res;
 }
 
 
-static nserror
+ایستا nserror
 form_dom_to_data_select_option(dom_html_option_element *option_element,
 			      dom_string *keyname,
-			      const char *form_charset,
-			      const char *docu_charset,
-			      struct fetch_multipart_data ***fetch_data_next_ptr)
+			      ثابت نویسه *form_charset,
+			      ثابت نویسه *docu_charset,
+			      ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
-	dom_string *value;
+	dom_string *مقدار;
 	bool selected;
 
 	exp = dom_html_option_element_get_selected(option_element, &selected);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get option selected property");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (!selected) {
+	اگر (!selected) {
 		/* unselected options do not add fetch data entries */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
-	exp = dom_html_option_element_get_value(option_element, &value);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_option_element_get_مقدار(option_element, &مقدار);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get option value");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(keyname,
-				  value,
-				  NULL,
+				  مقدار,
+				  پوچ,
 				  form_charset,
 				  docu_charset,
 				  fetch_data_next_ptr);
 
-	dom_string_unref(value);
+	dom_string_unref(مقدار);
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -419,77 +419,77 @@ form_dom_to_data_select_option(dom_html_option_element *option_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
+ایستا nserror
 form_dom_to_data_select(dom_html_select_element *select_element,
-			const char *form_charset,
-			const char *doc_charset,
-			struct fetch_multipart_data ***fetch_data_next_ptr)
+			ثابت نویسه *form_charset,
+			ثابت نویسه *doc_charset,
+			ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res = NSERROR_OK;
 	dom_exception exp; /* the result from DOM operations */
 	bool element_disabled;
 	dom_string *inputname;
-	dom_html_options_collection *options = NULL;
-	uint32_t options_count;
+	dom_html_options_collection *options = پوچ;
+	uint32_t options_شمار;
 	uint32_t option_index;
-	dom_node *option_element = NULL;
+	dom_گره *option_element = پوچ;
 
 	/* check if element is disabled */
 	exp = dom_html_select_element_get_disabled(select_element,
 						   &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	اگر (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* obtain name property */
 	exp = dom_html_select_element_get_name(select_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select name property. exp %d", exp);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	اگر (inputname == پوچ) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* get options collection */
 	exp = dom_html_select_element_get_options(select_element, &options);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select options collection");
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* get options collection length */
-	exp = dom_html_options_collection_get_length(options, &options_count);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_options_collection_get_length(options, &options_شمار);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select options collection length");
 		dom_html_options_collection_unref(options);
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* iterate over options collection */
-	for (option_index = 0; option_index < options_count; ++option_index) {
+	برای (option_index = 0; option_index < options_شمار; ++option_index) {
 		exp = dom_html_options_collection_item(options,
 						       option_index,
 						       &option_element);
-		if (exp != DOM_NO_ERR) {
+		اگر (exp != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "Could not get options item %"PRId32, option_index);
 			res = NSERROR_DOM;
-		} else {
+		} وگرنه {
 			res = form_dom_to_data_select_option(
 				(dom_html_option_element *)option_element,
 				inputname,
@@ -497,90 +497,90 @@ form_dom_to_data_select(dom_html_select_element *select_element,
 				doc_charset,
 				fetch_data_next_ptr);
 
-			dom_node_unref(option_element);
+			dom_گره_unref(option_element);
 		}
 
-		if (res != NSERROR_OK) {
-			break;
+		اگر (res != NSERROR_OK) {
+			بشکن;
 		}
 	}
 
 	dom_html_options_collection_unref(options);
 	dom_string_unref(inputname);
 
-	return res;
+	بازگشت res;
 }
 
 
-static nserror
-form_dom_to_data_input_submit(dom_html_input_element *input_element,
+ایستا nserror
+form_dom_to_data_درون_داد_submit(dom_html_درون_داد_element *درون_داد_element,
 			      dom_string *inputname,
-			      const char *charset,
-			      const char *document_charset,
+			      ثابت نویسه *charset,
+			      ثابت نویسه *document_charset,
 			      dom_html_element **submit_button,
-			      struct fetch_multipart_data ***fetch_data_next_ptr)
+			      ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	dom_exception exp; /* the result from DOM operations */
 	dom_string *inputvalue;
 	nserror res;
 
-	if (*submit_button == NULL) {
+	اگر (*submit_button == پوچ) {
 		/* caller specified no button so use this one */
-		*submit_button = (dom_html_element *)input_element;
-	} else if (*submit_button != (dom_html_element *)input_element) {
-		return NSERROR_OK;
+		*submit_button = (dom_html_element *)درون_داد_element;
+	} وگرنه اگر (*submit_button != (dom_html_element *)درون_داد_element) {
+		بازگشت NSERROR_OK;
 	}
 
 	/* matched button used to submit form */
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_درون_داد_element_get_مقدار(درون_داد_element, &inputvalue);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get submit button value");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(inputname,
 				  inputvalue,
-				  NULL,
+				  پوچ,
 				  charset,
 				  document_charset,
 				  fetch_data_next_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	بازگشت res;
 }
 
 
-static nserror
-form_dom_to_data_input_image(dom_html_input_element *input_element,
+ایستا nserror
+form_dom_to_data_درون_داد_image(dom_html_درون_داد_element *درون_داد_element,
 			     dom_string *inputname,
-			     const char *charset,
-			     const char *document_charset,
+			     ثابت نویسه *charset,
+			     ثابت نویسه *document_charset,
 			     dom_html_element **submit_button,
-			     struct fetch_multipart_data ***fetch_data_next_ptr)
+			     ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
-	struct image_input_coords *coords;
-	char *basename;
+	ساختار image_درون_داد_coords *coords;
+	نویسه *basename;
 
 	/* Only use an image input if it was the thing which activated us */
-	if (*submit_button != (dom_html_element *)input_element) {
-		return NSERROR_OK;
+	اگر (*submit_button != (dom_html_element *)درون_داد_element) {
+		بازگشت NSERROR_OK;
 	}
 
-	exp = dom_node_get_user_data((dom_node *)input_element,
-				     corestring_dom___ns_key_image_coords_node_data,
+	exp = dom_گره_get_user_data((dom_گره *)درون_داد_element,
+				     corestring_dom_ns_کلید_image_coords_گره_data,
 				     &coords);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get image XY data");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (coords == NULL) {
+	اگر (coords == پوچ) {
 		NSLOG(netsurf, INFO, "No XY data on the image input");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* encode input name once */
@@ -588,104 +588,104 @@ form_dom_to_data_input_image(dom_html_input_element *input_element,
 				    dom_string_byte_length(inputname),
 				    charset,
 				    document_charset);
-	if (basename == NULL) {
+	اگر (basename == پوچ) {
 		NSLOG(netsurf, INFO, "Could not encode basename");
-		return NSERROR_NOMEM;
+		بازگشت NSERROR_NOMEM;
 	}
 
 	res = fetch_data_list_add_sname(basename, ".x",
 					coords->x,
 					fetch_data_next_ptr);
 
-	if (res == NSERROR_OK) {
+	اگر (res == NSERROR_OK) {
 		res = fetch_data_list_add_sname(basename, ".y",
 						coords->y,
 						fetch_data_next_ptr);
 	}
 
-	free(basename);
+	آزاد(basename);
 
-	return res;
+	بازگشت res;
 }
 
 
-static nserror
-form_dom_to_data_input_checkbox(dom_html_input_element *input_element,
+ایستا nserror
+form_dom_to_data_درون_داد_checkbox(dom_html_درون_داد_element *درون_داد_element,
 				dom_string *inputname,
-				const char *charset,
-				const char *document_charset,
-				struct fetch_multipart_data ***fetch_data_next_ptr)
+				ثابت نویسه *charset,
+				ثابت نویسه *document_charset,
+				ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
 	bool checked;
 	dom_string *inputvalue;
 
-	exp = dom_html_input_element_get_checked(input_element, &checked);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_درون_داد_element_get_checked(درون_داد_element, &checked);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input element checked");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (!checked) {
+	اگر (!checked) {
 		/* unchecked items do not generate a data entry */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_درون_داد_element_get_مقدار(درون_داد_element, &inputvalue);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input element value");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* ensure a default value */
-	if (inputvalue == NULL) {
+	اگر (inputvalue == پوچ) {
 		inputvalue = dom_string_ref(corestring_dom_on);
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(inputname,
 				  inputvalue,
-				  NULL,
+				  پوچ,
 				  charset,
 				  document_charset,
 				  fetch_data_next_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	بازگشت res;
 }
 
 
-static nserror
-form_dom_to_data_input_file(dom_html_input_element *input_element,
+ایستا nserror
+form_dom_to_data_درون_داد_file(dom_html_درون_داد_element *درون_داد_element,
 			    dom_string *inputname,
-			    const char *charset,
-			    const char *document_charset,
-			    struct fetch_multipart_data ***fetch_data_next_ptr)
+			    ثابت نویسه *charset,
+			    ثابت نویسه *document_charset,
+			    ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
 	dom_string *inputvalue;
-	const char *rawfile = NULL;
+	ثابت نویسه *rawfile = پوچ;
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_درون_داد_element_get_مقدار(درون_داد_element, &inputvalue);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get file value");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	exp = dom_node_get_user_data((dom_node *)input_element,
-				     corestring_dom___ns_key_file_name_node_data,
+	exp = dom_گره_get_user_data((dom_گره *)درون_داد_element,
+				     corestring_dom_ns_کلید_file_name_گره_data,
 				     &rawfile);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get file rawname");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (rawfile == NULL) {
+	اگر (rawfile == پوچ) {
 		rawfile = "";
 	}
 
@@ -699,38 +699,38 @@ form_dom_to_data_input_file(dom_html_input_element *input_element,
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	بازگشت res;
 }
 
 
-static nserror
-form_dom_to_data_input_text(dom_html_input_element *input_element,
+ایستا nserror
+form_dom_to_data_درون_داد_text(dom_html_درون_داد_element *درون_داد_element,
 			    dom_string *inputname,
-			    const char *charset,
-			    const char *document_charset,
-			    struct fetch_multipart_data ***fetch_data_next_ptr)
+			    ثابت نویسه *charset,
+			    ثابت نویسه *document_charset,
+			    ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
 	dom_string *inputvalue;
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_درون_داد_element_get_مقدار(درون_داد_element, &inputvalue);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get input value");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(inputname,
 				  inputvalue,
-				  NULL,
+				  پوچ,
 				  charset,
 				  document_charset,
 				  fetch_data_next_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -746,12 +746,12 @@ form_dom_to_data_input_text(dom_html_input_element *input_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-form_dom_to_data_input(dom_html_input_element *input_element,
-		       const char *charset,
-		       const char *document_charset,
+ایستا nserror
+form_dom_to_data_درون_داد(dom_html_درون_داد_element *درون_داد_element,
+		       ثابت نویسه *charset,
+		       ثابت نویسه *document_charset,
 		       dom_html_element **submit_button,
-		       struct fetch_multipart_data ***fetch_data_next_ptr)
+		       ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	dom_exception exp; /* the result from DOM operations */
 	bool element_disabled;
@@ -760,81 +760,81 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	nserror res;
 
 	/* check if element is disabled */
-	exp = dom_html_input_element_get_disabled(input_element,
+	exp = dom_html_درون_داد_element_get_disabled(درون_داد_element,
 						  &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	اگر (element_disabled) {
 		/* disabled element requires no more processing */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* obtain name property */
-	exp = dom_html_input_element_get_name(input_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_درون_داد_element_get_name(درون_داد_element, &inputname);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input name property. exp %d", exp);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	اگر (inputname == پوچ) {
 		/* element with no name is not converted */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* get input type */
-	exp = dom_html_input_element_get_type(input_element, &inputtype);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_درون_داد_element_get_type(درون_داد_element, &inputtype);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get input element type");
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* process according to input element type */
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_submit)) {
+	اگر (dom_string_caseless_isequal(inputtype, corestring_dom_submit)) {
 
-		res = form_dom_to_data_input_submit(input_element,
+		res = form_dom_to_data_درون_داد_submit(درون_داد_element,
 						    inputname,
 						    charset,
 						    document_charset,
 						    submit_button,
 						    fetch_data_next_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} وگرنه اگر (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_image)) {
 
-		res = form_dom_to_data_input_image(input_element,
+		res = form_dom_to_data_درون_داد_image(درون_داد_element,
 						   inputname,
 						   charset,
 						   document_charset,
 						   submit_button,
 						   fetch_data_next_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} وگرنه اگر (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_radio) ||
 		   dom_string_caseless_isequal(inputtype,
 					       corestring_dom_checkbox)) {
 
-		res = form_dom_to_data_input_checkbox(input_element,
+		res = form_dom_to_data_درون_داد_checkbox(درون_داد_element,
 						      inputname,
 						      charset,
 						      document_charset,
 						      fetch_data_next_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} وگرنه اگر (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_file)) {
 
-		res = form_dom_to_data_input_file(input_element,
+		res = form_dom_to_data_درون_داد_file(درون_داد_element,
 						  inputname,
 						  charset,
 						  document_charset,
 						  fetch_data_next_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} وگرنه اگر (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_reset) ||
 		   dom_string_caseless_isequal(inputtype,
 					       corestring_dom_button)) {
@@ -842,9 +842,9 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 		NSLOG(netsurf, INFO, "Skipping RESET and BUTTON");
 		res = NSERROR_OK;
 
-	} else {
+	} وگرنه {
 		/* Everything else is treated as text values */
-		res = form_dom_to_data_input_text(input_element,
+		res = form_dom_to_data_درون_داد_text(درون_داد_element,
 						  inputname,
 						  charset,
 						  document_charset,
@@ -855,7 +855,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	dom_string_unref(inputtype);
 	dom_string_unref(inputname);
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -871,12 +871,12 @@ form_dom_to_data_input(dom_html_input_element *input_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
+ایستا nserror
 form_dom_to_data_button(dom_html_button_element *button_element,
-			const char *form_charset,
-			const char *doc_charset,
+			ثابت نویسه *form_charset,
+			ثابت نویسه *doc_charset,
 			dom_html_element **submit_button,
-			struct fetch_multipart_data ***fetch_data_next_ptr)
+			ساختار fetch_multipart_data ***fetch_data_next_ptr)
 {
 	dom_exception exp; /* the result from DOM operations */
 	bool element_disabled;
@@ -888,22 +888,22 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 	/* check if element is disabled */
 	exp = dom_html_button_element_get_disabled(button_element,
 						   &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Unable to get disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	اگر (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* get the type attribute */
 	exp = dom_html_button_element_get_type(button_element, &inputtype);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get button element type");
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
 	/* If the type attribute is "reset" or "button" the element is
@@ -911,49 +911,49 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 	 *  default and invalid values result in submit which will
 	 *  be considered.
 	 */
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_reset)) {
+	اگر (dom_string_caseless_isequal(inputtype, corestring_dom_reset)) {
 		/* multipart data entry not required for reset type */
 		dom_string_unref(inputtype);
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_button)) {
+	اگر (dom_string_caseless_isequal(inputtype, corestring_dom_button)) {
 		/* multipart data entry not required for button type */
 		dom_string_unref(inputtype);
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 	dom_string_unref(inputtype);
 
 	/* only submision button generates an element */
-	if (*submit_button == NULL) {
+	اگر (*submit_button == پوچ) {
 		/* no submission button selected yet so use this one */
 		*submit_button = (dom_html_element *)button_element;
 	}
-	if (*submit_button != (dom_html_element *)button_element) {
-		return NSERROR_OK;
+	اگر (*submit_button != (dom_html_element *)button_element) {
+		بازگشت NSERROR_OK;
 	}
 
 	/* obtain name property */
 	exp = dom_html_button_element_get_name(button_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get button name property. exp %d", exp);
-		return NSERROR_DOM;
+		بازگشت NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	اگر (inputname == پوچ) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		بازگشت NSERROR_OK;
 	}
 
 	/* get button value and add to fetch data list */
-	exp = dom_html_button_element_get_value(button_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_button_element_get_مقدار(button_element, &inputvalue);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get submit button value");
 		res = NSERROR_DOM;
-	} else {
+	} وگرنه {
 		res = fetch_data_list_add(inputname,
 					  inputvalue,
-					  NULL,
+					  پوچ,
 					  form_charset,
 					  doc_charset,
 					  fetch_data_next_ptr);
@@ -963,7 +963,7 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 
 	dom_string_unref(inputname);
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -973,40 +973,40 @@ form_dom_to_data_button(dom_html_button_element *button_element,
  * \param form  The form
  * \return Pointer to charset name (on heap, caller should free) or NULL
  */
-static char *form_acceptable_charset(struct form *form)
+ایستا نویسه *form_acceptable_charset(ساختار form *form)
 {
-	char *temp, *c;
+	نویسه *temp, *c;
 
-	if (!form->accept_charsets) {
+	اگر (!form->accept_charsets) {
 		/* no accept-charsets attribute for this form */
-		if (form->document_charset) {
+		اگر (form->document_charset) {
 			/* document charset present, so use it */
-			return strdup(form->document_charset);
-		} else {
+			بازگشت strdup(form->document_charset);
+		} وگرنه {
 			/* no document charset, so default to 8859-1 */
-			return strdup("ISO-8859-1");
+			بازگشت strdup("ISO-8859-1");
 		}
 	}
 
 	/* make temporary copy of accept-charsets attribute */
 	temp = strdup(form->accept_charsets);
-	if (!temp)
-		return NULL;
+	اگر (!temp)
+		بازگشت پوچ;
 
 	/* make it upper case */
-	for (c = temp; *c; c++) {
+	برای (c = temp; *c; c++) {
 		*c = ascii_to_upper(*c);
 	}
 
 	/* is UTF-8 specified? */
 	c = strstr(temp, "UTF-8");
-	if (c) {
-		free(temp);
-		return strdup("UTF-8");
+	اگر (c) {
+		آزاد(temp);
+		بازگشت strdup("UTF-8");
 	}
 
 	/* dispense with temporary copy */
-	free(temp);
+	آزاد(temp);
 
 	/* according to RFC2070, the accept-charsets attribute of the
 	 * form element contains a space and/or comma separated list */
@@ -1019,13 +1019,13 @@ static char *form_acceptable_charset(struct form *form)
 	 * textual input values.  For now, we just extract the first
 	 * element of the charset list
 	 */
-	while (*c && !ascii_is_space(*c)) {
-		if (*c == ',')
-			break;
+	وقتی (*c && !ascii_is_space(*c)) {
+		اگر (*c == ',')
+			بشکن;
 		c++;
 	}
 
-	return strndup(form->accept_charsets, c - form->accept_charsets);
+	بازگشت strndup(form->accept_charsets, c - form->accept_charsets);
 }
 
 
@@ -1050,75 +1050,75 @@ static char *form_acceptable_charset(struct form *form)
  *                             fetch_multipart_data, NULL if no controls
  * \return NSERROR_OK on success or appropriate error code
  */
-static nserror
-form_dom_to_data(struct form *form,
-		 struct form_control *submit_control,
-		 struct fetch_multipart_data **fetch_data_out)
+ایستا nserror
+form_dom_to_data(ساختار form *form,
+		 ساختار form_control *submit_control,
+		 ساختار fetch_multipart_data **fetch_data_out)
 {
 	nserror res = NSERROR_OK;
-	char *charset; /* form characterset */
+	نویسه *charset; /* form characterset */
 	dom_exception exp; /* the result from DOM operations */
-	dom_html_collection *elements = NULL; /* the dom form elements */
-	uint32_t element_count; /* the number of elements in the DOM form */
+	dom_html_collection *elements = پوچ; /* the dom form elements */
+	uint32_t element_شمار; /* the number of elements in the DOM form */
 	uint32_t element_idx; /* the index of thr enumerated element */
-	dom_node *element = NULL; /* the DOM form element */
-	dom_string *nodename = NULL; /* the DOM node name of the element */
-	struct fetch_multipart_data *fetch_data = NULL; /* fetch data list */
-	struct fetch_multipart_data **fetch_data_next = &fetch_data;
+	dom_گره *element = پوچ; /* the DOM form element */
+	dom_string *nodename = پوچ; /* the DOM node name of the element */
+	ساختار fetch_multipart_data *fetch_data = پوچ; /* fetch data list */
+	ساختار fetch_multipart_data **fetch_data_next = &fetch_data;
 	dom_html_element *submit_button;
 
 	/* obtain the submit_button DOM node from the control */
-	if (submit_control != NULL) {
-		submit_button = submit_control->node;
-	} else {
-		submit_button = NULL;
+	اگر (submit_control != پوچ) {
+		submit_button = submit_control->گره;
+	} وگرنه {
+		submit_button = پوچ;
 	}
 
 	/** \todo Replace this call with something DOMish */
 	charset = form_acceptable_charset(form);
-	if (charset == NULL) {
+	اگر (charset == پوچ) {
 		NSLOG(netsurf, INFO, "failed to find charset");
-		return NSERROR_NOMEM;
+		بازگشت NSERROR_NOMEM;
 	}
 
 	/* obtain the form elements and count */
-	exp = dom_html_form_element_get_elements(form->node, &elements);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_form_element_get_elements(form->گره, &elements);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get form elements");
-		free(charset);
-		return NSERROR_DOM;
+		آزاد(charset);
+		بازگشت NSERROR_DOM;
 	}
 
-	exp = dom_html_collection_get_length(elements, &element_count);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_collection_get_length(elements, &element_شمار);
+	اگر (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get form element count");
 		res = NSERROR_DOM;
-		goto form_dom_to_data_error;
+		برو form_dom_to_data_error;
 	}
 
-	for (element_idx = 0; element_idx < element_count; element_idx++) {
+	برای (element_idx = 0; element_idx < element_شمار; element_idx++) {
 		/* obtain a form element */
 		exp = dom_html_collection_item(elements, element_idx, &element);
-		if (exp != DOM_NO_ERR) {
+		اگر (exp != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "retrieving form element %"PRIu32" failed with %d",
 			      element_idx, exp);
 			res = NSERROR_DOM;
-			goto form_dom_to_data_error;
+			برو form_dom_to_data_error;
 		}
 
 		/* node name from element */
-		exp = dom_node_get_node_name(element, &nodename);
-		if (exp != DOM_NO_ERR) {
+		exp = dom_گره_get_گره_name(element, &nodename);
+		اگر (exp != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "getting element node name %"PRIu32" failed with %d",
 			      element_idx, exp);
-			dom_node_unref(element);
+			dom_گره_unref(element);
 			res = NSERROR_DOM;
-			goto form_dom_to_data_error;
+			برو form_dom_to_data_error;
 		}
 
-		if (dom_string_isequal(nodename, corestring_dom_TEXTAREA)) {
+		اگر (dom_string_isequal(nodename, corestring_dom_TEXTAREA)) {
 			/* Form element is HTMLTextAreaElement */
 			res = form_dom_to_data_textarea(
 				(dom_html_text_area_element *)element,
@@ -1126,7 +1126,7 @@ form_dom_to_data(struct form *form,
 				form->document_charset,
 				&fetch_data_next);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_SELECT)) {
+		} وگرنه اگر (dom_string_isequal(nodename, corestring_dom_SELECT)) {
 			/* Form element is HTMLSelectElement */
 			res = form_dom_to_data_select(
 				(dom_html_select_element *)element,
@@ -1134,16 +1134,16 @@ form_dom_to_data(struct form *form,
 				form->document_charset,
 				&fetch_data_next);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_INPUT)) {
+		} وگرنه اگر (dom_string_isequal(nodename, corestring_dom_درون_داد)) {
 			/* Form element is HTMLInputElement */
-			res = form_dom_to_data_input(
-				(dom_html_input_element *)element,
+			res = form_dom_to_data_درون_داد(
+				(dom_html_درون_داد_element *)element,
 				charset,
 				form->document_charset,
 				&submit_button,
 				&fetch_data_next);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_BUTTON)) {
+		} وگرنه اگر (dom_string_isequal(nodename, corestring_dom_BUTTON)) {
 			/* Form element is HTMLButtonElement */
 			res = form_dom_to_data_button(
 				(dom_html_button_element *)element,
@@ -1152,37 +1152,37 @@ form_dom_to_data(struct form *form,
 				&submit_button,
 				&fetch_data_next);
 
-		} else {
+		} وگرنه {
 			/* Form element is not handled */
 			NSLOG(netsurf, INFO,
 			      "Unhandled element type: %*s",
-			      (int)dom_string_byte_length(nodename),
+			      (صحیح)dom_string_byte_length(nodename),
 			      dom_string_data(nodename));
 			res = NSERROR_DOM;
 
 		}
 
 		dom_string_unref(nodename);
-		dom_node_unref(element);
+		dom_گره_unref(element);
 
 		/* abort form element enumeration on error */
-		if (res != NSERROR_OK) {
-			goto form_dom_to_data_error;
+		اگر (res != NSERROR_OK) {
+			برو form_dom_to_data_error;
 		}
 	}
 
 	*fetch_data_out = fetch_data;
 	dom_html_collection_unref(elements);
-	free(charset);
+	آزاد(charset);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 
 form_dom_to_data_error:
 	fetch_multipart_data_destroy(fetch_data);
 	dom_html_collection_unref(elements);
-	free(charset);
+	آزاد(charset);
 
-	return res;
+	بازگشت res;
 }
 
 /**
@@ -1193,90 +1193,90 @@ form_dom_to_data_error:
  * \param[out] encoded_out URL-encoded form data
  * \return NSERROR_OK on success and \a encoded_out updated else appropriate error code
  */
-static nserror
-form_url_encode(struct form *form,
-		struct fetch_multipart_data *control,
-		char **encoded_out)
+ایستا nserror
+form_url_encode(ساختار form *form,
+		ساختار fetch_multipart_data *control,
+		نویسه **encoded_out)
 {
-	char *name, *value;
-	char *s, *s2;
-	unsigned int len, len1, len_init;
+	نویسه *name, *مقدار;
+	نویسه *s, *s2;
+	unsigned صحیح len, len1, len_init;
 	nserror res;
 
 	s = malloc(1);
 
-	if (s == NULL) {
-		return NSERROR_NOMEM;
+	اگر (s == پوچ) {
+		بازگشت NSERROR_NOMEM;
 	}
 
 	s[0] = '\0';
 	len_init = len = 0;
 
-	for (; control; control = control->next) {
-		res = url_escape(control->name, true, NULL, &name);
-		if (res != NSERROR_OK) {
-			free(s);
-			return res;
+	برای (; control; control = control->next) {
+		res = url_escape(control->name, true, پوچ, &name);
+		اگر (res != NSERROR_OK) {
+			آزاد(s);
+			بازگشت res;
 		}
 
-		res = url_escape(control->value, true, NULL, &value);
-		if (res != NSERROR_OK) {
-			free(name);
-			free(s);
-			return res;
+		res = url_escape(control->مقدار, true, پوچ, &مقدار);
+		اگر (res != NSERROR_OK) {
+			آزاد(name);
+			آزاد(s);
+			بازگشت res;
 		}
 
 		/* resize string to allow for new key/value pair,
 		 *  equals, amphersand and terminator
 		 */
-		len1 = len + strlen(name) + strlen(value) + 2;
+		len1 = len + strlen(name) + strlen(مقدار) + 2;
 		s2 = realloc(s, len1 + 1);
-		if (s2 == NULL) {
-			free(value);
-			free(name);
-			free(s);
-			return NSERROR_NOMEM;
+		اگر (s2 == پوچ) {
+			آزاد(مقدار);
+			آزاد(name);
+			آزاد(s);
+			بازگشت NSERROR_NOMEM;
 		}
 		s = s2;
 
-		snprintf(s + len, (len1 + 1) - len, "%s=%s&", name, value);
+		snprintf(s + len, (len1 + 1) - len, "%s=%s&", name, مقدار);
 		len = len1;
-		free(name);
-		free(value);
+		آزاد(name);
+		آزاد(مقدار);
 	}
 
-	if (len > len_init) {
+	اگر (len > len_init) {
 		/* Replace trailing '&' */
 		s[len - 1] = '\0';
 	}
 
 	*encoded_out = s;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /**
  * Callback for the select menus scroll
  */
-static void
-form_select_menu_scroll_callback(void *client_data,
-				 struct scrollbar_msg_data *scrollbar_data)
+ایستا تهی
+form_select_menu_scroll_callback(تهی *client_data,
+				 ساختار scrollbar_پیام_data *scrollbar_data)
 {
-	struct form_control *control = client_data;
-	struct form_select_menu *menu = control->data.select.menu;
+	ساختار form_control *control = client_data;
+	ساختار form_select_menu *menu = control->data.select.menu;
 	html_content *html = (html_content *)menu->c;
 
-	switch (scrollbar_data->msg) {
-		case SCROLLBAR_MSG_MOVED:
+	انتخاب (scrollbar_data->پیام) {
+		حالت SCROLLBAR_پیام_MOVED:
 			menu->callback(menu->client_data,
 					0, 0,
 					menu->width,
 					menu->height);
-			break;
-		case SCROLLBAR_MSG_SCROLL_START:
+			بشکن;
+		حالت SCROLLBAR_پیام_SCROLL_START:
 		{
-			struct rect rect = {
+			ساختار rect rect = {
 				.x0 = scrollbar_data->x0,
 				.y0 = scrollbar_data->y0,
 				.x1 = scrollbar_data->x1,
@@ -1288,15 +1288,15 @@ form_select_menu_scroll_callback(void *client_data,
 
 			menu->scroll_capture = true;
 		}
-			break;
-		case SCROLLBAR_MSG_SCROLL_FINISHED:
+			بشکن;
+		حالت SCROLLBAR_پیام_SCROLL_FINISHED:
 			menu->scroll_capture = false;
 
 			browser_window_set_drag_type(html->bw,
-					DRAGGING_NONE, NULL);
-			break;
-		default:
-			break;
+					DRAGGING_NONE, پوچ);
+			بشکن;
+		پیشفرض:
+			بشکن;
 	}
 }
 
@@ -1309,18 +1309,18 @@ form_select_menu_scroll_callback(void *client_data,
  * \param  item	    index of item selected from the menu
  * \return NSERROR_OK or appropriate error code.
  */
-static nserror
+ایستا nserror
 form__select_process_selection(html_content *html,
-			       struct form_control *control,
-			       int item)
+			       ساختار form_control *control,
+			       صحیح item)
 {
-	struct box *inline_box;
-	struct form_option *o;
-	int count;
+	ساختار box *inline_box;
+	ساختار form_option *o;
+	صحیح شمار;
 	nserror ret = NSERROR_OK;
 
-	assert(control != NULL);
-	assert(html != NULL);
+	أكد(control != پوچ);
+	أكد(html != پوچ);
 
 	/**
 	 * \todo Even though the form code is effectively part of the html
@@ -1329,35 +1329,35 @@ form__select_process_selection(html_content *html,
 
 	inline_box = control->box->children->children;
 
-	for (count = 0, o = control->data.select.items;
-			o != NULL;
-			count++, o = o->next) {
-		if (!control->data.select.multiple && o->selected) {
+	برای (شمار = 0, o = control->data.select.اقلام;
+			o != پوچ;
+			شمار++, o = o->next) {
+		اگر (!control->data.select.multiple && o->selected) {
 			o->selected = false;
-			dom_html_option_element_set_selected(o->node, false);
+			dom_html_option_element_set_selected(o->گره, false);
 		}
 
-		if (count == item) {
-			if (control->data.select.multiple) {
-				if (o->selected) {
+		اگر (شمار == item) {
+			اگر (control->data.select.multiple) {
+				اگر (o->selected) {
 					o->selected = false;
 					dom_html_option_element_set_selected(
-							o->node, false);
-					control->data.select.num_selected--;
-				} else {
+							o->گره, false);
+					control->data.select.رقم_selected--;
+				} وگرنه {
 					o->selected = true;
 					dom_html_option_element_set_selected(
-							o->node, true);
-					control->data.select.num_selected++;
+							o->گره, true);
+					control->data.select.رقم_selected++;
 				}
-			} else {
+			} وگرنه {
 				dom_html_option_element_set_selected(
-						o->node, true);
+						o->گره, true);
 				o->selected = true;
 			}
 		}
 
-		if (o->selected) {
+		اگر (o->selected) {
 			control->data.select.current = o;
 		}
 	}
@@ -1365,28 +1365,28 @@ form__select_process_selection(html_content *html,
 	talloc_free(inline_box->text);
 	inline_box->text = 0;
 
-	if (control->data.select.num_selected == 0) {
+	اگر (control->data.select.رقم_selected == 0) {
 		inline_box->text = talloc_strdup(html->bctx,
 				messages_get("Form_None"));
-	} else if (control->data.select.num_selected == 1) {
+	} وگرنه اگر (control->data.select.رقم_selected == 1) {
 		inline_box->text = talloc_strdup(html->bctx,
 				control->data.select.current->text);
-	} else {
+	} وگرنه {
 		inline_box->text = talloc_strdup(html->bctx,
 				messages_get("Form_Many"));
 	}
 
-	if (!inline_box->text) {
+	اگر (!inline_box->text) {
 		ret = NSERROR_NOMEM;
 		inline_box->length = 0;
-	} else {
+	} وگرنه {
 		inline_box->length = strlen(inline_box->text);
 	}
 	inline_box->width = control->box->width;
 
 	html__redraw_a_box(html, control->box);
 
-	return ret;
+	بازگشت ret;
 }
 
 
@@ -1397,31 +1397,31 @@ form__select_process_selection(html_content *html,
  * \param x X coordinate of click
  * \param y Y coordinate of click
  */
-static void form_select_menu_clicked(struct form_control *control, int x, int y)
+ایستا تهی form_select_menu_clicked(ساختار form_control *control, صحیح x, صحیح y)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	struct form_option *option;
+	ساختار form_select_menu *menu = control->data.select.menu;
+	ساختار form_option *option;
 	html_content *html = (html_content *)menu->c;
-	int line_height, line_height_with_spacing;
-	int item_bottom_y;
-	int scroll, i;
+	صحیح سطر_height, سطر_height_with_spacing;
+	صحیح item_bottom_y;
+	صحیح scroll, i;
 
 	scroll = scrollbar_get_offset(menu->scrollbar);
 
-	line_height = menu->line_height;
-	line_height_with_spacing = line_height +
-			line_height * SELECT_LINE_SPACING;
+	سطر_height = menu->سطر_height;
+	سطر_height_with_spacing = سطر_height +
+			سطر_height * SELECT_سطر_SPACING;
 
-	option = control->data.select.items;
-	item_bottom_y = line_height_with_spacing;
+	option = control->data.select.اقلام;
+	item_bottom_y = سطر_height_with_spacing;
 	i = 0;
-	while (option && item_bottom_y < scroll + y) {
-		item_bottom_y += line_height_with_spacing;
+	وقتی (option && item_bottom_y < scroll + y) {
+		item_bottom_y += سطر_height_with_spacing;
 		option = option->next;
 		i++;
 	}
 
-	if (option != NULL) {
+	اگر (option != پوچ) {
 		form__select_process_selection(html, control, i);
 	}
 
@@ -1430,161 +1430,161 @@ static void form_select_menu_clicked(struct form_control *control, int x, int y)
 
 
 /* exported interface documented in html/form_internal.h */
-void form_add_control(struct form *form, struct form_control *control)
+تهی form_add_control(ساختار form *form, ساختار form_control *control)
 {
-	if (form == NULL) {
-		return;
+	اگر (form == پوچ) {
+		بازگشت;
 	}
 
 	control->form = form;
 
-	if (form->controls != NULL) {
-		assert(form->last_control);
+	اگر (form->controls != پوچ) {
+		أكد(form->last_control);
 
 		form->last_control->next = control;
 		control->prev = form->last_control;
-		control->next = NULL;
+		control->next = پوچ;
 		form->last_control = control;
-	} else {
+	} وگرنه {
 		form->controls = form->last_control = control;
 	}
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free_control(struct form_control *control)
+تهی form_free_control(ساختار form_control *control)
 {
-	struct form_control *c;
-	assert(control != NULL);
+	ساختار form_control *c;
+	أكد(control != پوچ);
 
 	NSLOG(netsurf, INFO, "Control:%p name:%p value:%p initial:%p",
-	      control, control->name, control->value, control->initial_value);
-	free(control->name);
-	free(control->value);
-	free(control->initial_value);
-	if (control->last_synced_value != NULL) {
-		free(control->last_synced_value);
+	      control, control->name, control->مقدار, control->initial_مقدار);
+	آزاد(control->name);
+	آزاد(control->مقدار);
+	آزاد(control->initial_مقدار);
+	اگر (control->last_synced_مقدار != پوچ) {
+		آزاد(control->last_synced_مقدار);
 	}
 
-	if (control->type == GADGET_SELECT) {
-		struct form_option *option, *next;
+	اگر (control->type == GADGET_SELECT) {
+		ساختار form_option *option, *next;
 
-		for (option = control->data.select.items; option;
+		برای (option = control->data.select.اقلام; option;
 				option = next) {
 			next = option->next;
 			NSLOG(netsurf, INFO,
 			      "select option:%p text:%p value:%p", option,
-			      option->text, option->value);
-			free(option->text);
-			free(option->value);
-			free(option);
+			      option->text, option->مقدار);
+			آزاد(option->text);
+			آزاد(option->مقدار);
+			آزاد(option);
 		}
-		if (control->data.select.menu != NULL) {
+		اگر (control->data.select.menu != پوچ) {
 			form_free_select_menu(control);
 		}
 	}
 
-	if (control->type == GADGET_TEXTAREA ||
+	اگر (control->type == GADGET_TEXTAREA ||
 			control->type == GADGET_TEXTBOX ||
 			control->type == GADGET_PASSWORD) {
 
-		if (control->data.text.initial != NULL) {
+		اگر (control->data.text.initial != پوچ) {
 			dom_string_unref(control->data.text.initial);
 		}
 
-		if (control->data.text.ta != NULL) {
+		اگر (control->data.text.ta != پوچ) {
 			textarea_destroy(control->data.text.ta);
 		}
 	}
 
 	/* unlink the control from the form */
-	if (control->form != NULL) {
-		for (c = control->form->controls; c != NULL; c = c->next) {
-			if (c->next == control) {
+	اگر (control->form != پوچ) {
+		برای (c = control->form->controls; c != پوچ; c = c->next) {
+			اگر (c->next == control) {
 				c->next = control->next;
-				if (control->form->last_control == control)
+				اگر (control->form->last_control == control)
 					control->form->last_control = c;
-				break;
+				بشکن;
 			}
-			if (c == control) {
+			اگر (c == control) {
 				/* can only happen if control was first control */
 				control->form->controls = control->next;
-				if (control->form->last_control == control)
+				اگر (control->form->last_control == control)
 					control->form->controls =
-						control->form->last_control = NULL;
-				break;
+						control->form->last_control = پوچ;
+				بشکن;
 			}
 		}
 	}
 
-	if (control->node_value != NULL) {
-		dom_string_unref(control->node_value);
+	اگر (control->گره_مقدار != پوچ) {
+		dom_string_unref(control->گره_مقدار);
 	}
 
-	free(control);
+	آزاد(control);
 }
 
 
 /* exported interface documented in html/form_internal.h */
-bool form_add_option(struct form_control *control, char *value, char *text,
-		     bool selected, void *node)
+bool form_add_option(ساختار form_control *control, نویسه *مقدار, نویسه *text,
+		     bool selected, تهی *گره)
 {
-	struct form_option *option;
+	ساختار form_option *option;
 
-	assert(control);
-	assert(control->type == GADGET_SELECT);
+	أكد(control);
+	أكد(control->type == GADGET_SELECT);
 
-	option = calloc(1, sizeof *option);
-	if (!option)
-		return false;
+	option = calloc(1, اندازه *option);
+	اگر (!option)
+		بازگشت false;
 
-	option->value = value;
+	option->مقدار = مقدار;
 	option->text = text;
 
 	/* add to linked list */
-	if (control->data.select.items == 0)
-		control->data.select.items = option;
-	else
+	اگر (control->data.select.اقلام == 0)
+		control->data.select.اقلام = option;
+	وگرنه
 		control->data.select.last_item->next = option;
 	control->data.select.last_item = option;
 
 	/* set selected */
-	if (selected && (control->data.select.num_selected == 0 ||
+	اگر (selected && (control->data.select.رقم_selected == 0 ||
 			control->data.select.multiple)) {
 		option->selected = option->initial_selected = true;
-		control->data.select.num_selected++;
+		control->data.select.رقم_selected++;
 		control->data.select.current = option;
 	}
 
-	control->data.select.num_items++;
+	control->data.select.رقم_اقلام++;
 
-	option->node = node;
+	option->گره = گره;
 
-	return true;
+	بازگشت true;
 }
 
 
 /* exported interface documented in html/form_internal.h */
 nserror
-form_open_select_menu(void *client_data,
-		      struct form_control *control,
+form_open_select_menu(تهی *client_data,
+		      ساختار form_control *control,
 		      select_menu_redraw_callback callback,
-		      struct content *c)
+		      ساختار content *c)
 {
-	int line_height_with_spacing;
-	struct box *box;
+	صحیح سطر_height_with_spacing;
+	ساختار box *box;
 	plot_font_style_t fstyle;
-	int total_height;
-	struct form_select_menu *menu;
+	صحیح total_height;
+	ساختار form_select_menu *menu;
 	html_content *html = (html_content *)c;
 	nserror res;
 
 	/* if the menu is opened for the first time */
-	if (control->data.select.menu == NULL) {
+	اگر (control->data.select.menu == پوچ) {
 
-		menu = calloc(1, sizeof (struct form_select_menu));
-		if (menu == NULL) {
-			return NSERROR_NOMEM;
+		menu = calloc(1, اندازه (ساختار form_select_menu));
+		اگر (menu == پوچ) {
+			بازگشت NSERROR_NOMEM;
 		}
 
 		control->data.select.menu = menu;
@@ -1592,27 +1592,27 @@ form_open_select_menu(void *client_data,
 		box = control->box;
 
 		menu->width = box->width +
-			box->border[RIGHT].width + box->padding[RIGHT] +
-			box->border[LEFT].width + box->padding[LEFT];
+			box->border[راست_2].width + box->padding[راست_2] +
+			box->border[چپ_2].width + box->padding[چپ_2];
 
 		font_plot_style_from_css(&html->unit_len_ctx,
 				control->box->style, &fstyle);
 		menu->f_size = fstyle.size;
 
-		menu->line_height = FIXTOINT(FDIV((FMUL(FLTTOFIX(1.2),
+		menu->سطر_height = FIXTOINT(FDIV((FMUL(FLTTOFIX(1.2),
 				FMUL(html->unit_len_ctx.device_dpi,
 				INTTOFIX(fstyle.size / PLOT_STYLE_SCALE)))),
 				F_72));
 
-		line_height_with_spacing = menu->line_height +
-				menu->line_height *
-				SELECT_LINE_SPACING;
+		سطر_height_with_spacing = menu->سطر_height +
+				menu->سطر_height *
+				SELECT_سطر_SPACING;
 
-		total_height = control->data.select.num_items *
-				line_height_with_spacing;
+		total_height = control->data.select.رقم_اقلام *
+				سطر_height_with_spacing;
 		menu->height = total_height;
 
-		if (menu->height > MAX_SELECT_HEIGHT) {
+		اگر (menu->height > MAX_SELECT_HEIGHT) {
 			menu->height = MAX_SELECT_HEIGHT;
 		}
 
@@ -1625,54 +1625,54 @@ form_open_select_menu(void *client_data,
 				       control,
 				       form_select_menu_scroll_callback,
 				       &(menu->scrollbar));
-		if (res != NSERROR_OK) {
-			control->data.select.menu = NULL;
-			free(menu);
-			return res;
+		اگر (res != NSERROR_OK) {
+			control->data.select.menu = پوچ;
+			آزاد(menu);
+			بازگشت res;
 		}
 		menu->c = c;
-	} else {
+	} وگرنه {
 		menu = control->data.select.menu;
 	}
 
 	menu->callback(client_data, 0, 0, menu->width, menu->height);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free_select_menu(struct form_control *control)
+تهی form_free_select_menu(ساختار form_control *control)
 {
-	if (control->data.select.menu->scrollbar != NULL)
+	اگر (control->data.select.menu->scrollbar != پوچ)
 		scrollbar_destroy(control->data.select.menu->scrollbar);
-	free(control->data.select.menu);
-	control->data.select.menu = NULL;
+	آزاد(control->data.select.menu);
+	control->data.select.menu = پوچ;
 }
 
 
 /* exported interface documented in html/form_internal.h */
 bool
-form_redraw_select_menu(struct form_control *control,
-			int x, int y,
-			float scale,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+form_redraw_select_menu(ساختار form_control *control,
+			صحیح x, صحیح y,
+			اعشاری scale,
+			ثابت ساختار rect *clip,
+			ثابت ساختار redraw_context *ctx)
 {
-	struct box *box;
-	struct form_select_menu *menu = control->data.select.menu;
-	struct form_option *option;
-	int line_height, line_height_with_spacing;
-	int width, height;
-	int x0, y0, x1, scrollbar_x, y1, y2, y3;
-	int item_y;
-	int text_pos_offset, text_x;
-	int scrollbar_width = SCROLLBAR_WIDTH;
-	int i;
-	int scroll;
-	int x_cp, y_cp;
-	struct rect r;
-	struct rect rect;
+	ساختار box *box;
+	ساختار form_select_menu *menu = control->data.select.menu;
+	ساختار form_option *option;
+	صحیح سطر_height, سطر_height_with_spacing;
+	صحیح width, height;
+	صحیح x0, y0, x1, scrollbar_x, y1, y2, y3;
+	صحیح item_y;
+	صحیح text_pos_offset, text_x;
+	صحیح scrollbar_width = SCROLLBAR_WIDTH;
+	صحیح i;
+	صحیح scroll;
+	صحیح x_cp, y_cp;
+	ساختار rect r;
+	ساختار rect rect;
 	nserror res;
 
 	box = control->box;
@@ -1681,25 +1681,25 @@ form_redraw_select_menu(struct form_control *control,
 	y_cp = y;
 	width = menu->width;
 	height = menu->height;
-	line_height = menu->line_height;
+	سطر_height = menu->سطر_height;
 
-	line_height_with_spacing = line_height +
-			line_height * SELECT_LINE_SPACING;
+	سطر_height_with_spacing = سطر_height +
+			سطر_height * SELECT_سطر_SPACING;
 	scroll = scrollbar_get_offset(menu->scrollbar);
 
-	if (scale != 1.0) {
+	اگر (scale != 1.0) {
 		x *= scale;
 		y *= scale;
 		width *= scale;
 		height *= scale;
 		scrollbar_width *= scale;
 
-		i = scroll / line_height_with_spacing;
-		scroll -= i * line_height_with_spacing;
-		line_height *= scale;
-		line_height_with_spacing *= scale;
+		i = scroll / سطر_height_with_spacing;
+		scroll -= i * سطر_height_with_spacing;
+		سطر_height *= scale;
+		سطر_height_with_spacing *= scale;
 		scroll *= scale;
-		scroll += i * line_height_with_spacing;
+		scroll += i * سطر_height_with_spacing;
 	}
 
 
@@ -1714,8 +1714,8 @@ form_redraw_select_menu(struct form_control *control,
 	r.x1 = x1 + 1;
 	r.y1 = y1 + 1;
 	res = ctx->plot->clip(ctx, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		بازگشت false;
 	}
 
 	rect.x0 = x0;
@@ -1723,8 +1723,8 @@ form_redraw_select_menu(struct form_control *control,
 	rect.x1 = x1;
 	rect.y1 = y1;
 	res = ctx->plot->rectangle(ctx, plot_style_stroke_darkwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		بازگشت false;
 	}
 
 	x0 = x0 + SELECT_BORDER_WIDTH;
@@ -1738,42 +1738,42 @@ form_redraw_select_menu(struct form_control *control,
 	r.x1 = x1 + 1;
 	r.y1 = y1 + 1;
 	res = ctx->plot->clip(ctx, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		بازگشت false;
 	}
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_lightwbasec, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		بازگشت false;
 	}
 
-	option = control->data.select.items;
-	item_y = line_height_with_spacing;
+	option = control->data.select.اقلام;
+	item_y = سطر_height_with_spacing;
 
-	while (item_y < scroll) {
+	وقتی (item_y < scroll) {
 		option = option->next;
-		item_y += line_height_with_spacing;
+		item_y += سطر_height_with_spacing;
 	}
-	item_y -= line_height_with_spacing;
+	item_y -= سطر_height_with_spacing;
 	text_pos_offset = y - scroll +
-			(int) (line_height * (0.75 + SELECT_LINE_SPACING));
-	text_x = x + (box->border[LEFT].width + box->padding[LEFT]) * scale;
+			(صحیح) (سطر_height * (0.75 + SELECT_سطر_SPACING));
+	text_x = x + (box->border[چپ_2].width + box->padding[چپ_2]) * scale;
 
 	plot_fstyle_entry.size = menu->f_size;
 
-	while (option && item_y - scroll < height) {
+	وقتی (option && item_y - scroll < height) {
 
-		if (option->selected) {
+		اگر (option->selected) {
 			y2 = y + item_y - scroll;
-			y3 = y + item_y + line_height_with_spacing - scroll;
+			y3 = y + item_y + سطر_height_with_spacing - scroll;
 
 			rect.x0 = x0;
 			rect.y0 = y0 > y2 ? y0 : y2;
 			rect.x1 = scrollbar_x + 1;
 			rect.y1 = y3 < y1 + 1 ? y3 : y1 + 1;
 			res = ctx->plot->rectangle(ctx, &plot_style_fill_selected, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				بازگشت false;
 			}
 		}
 
@@ -1782,11 +1782,11 @@ form_redraw_select_menu(struct form_control *control,
 				      &plot_fstyle_entry,
 				      text_x, y2,
 				      option->text, strlen(option->text));
-		if (res != NSERROR_OK) {
-			return false;
+		اگر (res != NSERROR_OK) {
+			بازگشت false;
 		}
 
-		item_y += line_height_with_spacing;
+		item_y += سطر_height_with_spacing;
 		option = option->next;
 	}
 
@@ -1794,90 +1794,90 @@ form_redraw_select_menu(struct form_control *control,
 			       x_cp + menu->width - SCROLLBAR_WIDTH,
 			       y_cp,
 			       clip, scale, ctx);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		بازگشت false;
 	}
 
-	return true;
+	بازگشت true;
 }
 
 
 /* private interface described in html/form_internal.h */
 bool
-form_clip_inside_select_menu(struct form_control *control,
-			     float scale,
-			     const struct rect *clip)
+form_clip_inside_select_menu(ساختار form_control *control,
+			     اعشاری scale,
+			     ثابت ساختار rect *clip)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	int width, height;
+	ساختار form_select_menu *menu = control->data.select.menu;
+	صحیح width, height;
 
 
 	width = menu->width;
 	height = menu->height;
 
-	if (scale != 1.0) {
+	اگر (scale != 1.0) {
 		width *= scale;
 		height *= scale;
 	}
 
-	if (clip->x0 >= 0 &&
+	اگر (clip->x0 >= 0 &&
 	    clip->x1 <= width &&
 	    clip->y0 >= 0 &&
 	    clip->y1 <= height)
-		return true;
+		بازگشت true;
 
-	return false;
+	بازگشت false;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-nserror form_select_process_selection(struct form_control *control, int item)
+nserror form_select_process_selection(ساختار form_control *control, صحیح item)
 {
-	assert(control != NULL);
+	أكد(control != پوچ);
 
-	return form__select_process_selection(control->html, control, item);
+	بازگشت form__select_process_selection(control->html, control, item);
 }
 
 
 /* exported interface documented in netsurf/form.h */
-struct form_option *
-form_select_get_option(struct form_control *control, int item)
+ساختار form_option *
+form_select_get_option(ساختار form_control *control, صحیح item)
 {
-	struct form_option *opt;
+	ساختار form_option *opt;
 
-	opt = control->data.select.items;
-	while ((opt != NULL) && (item > 0)) {
+	opt = control->data.select.اقلام;
+	وقتی ((opt != پوچ) && (item > 0)) {
 		opt = opt->next;
 		item--;
 	}
-	return opt;
+	بازگشت opt;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-char *form_control_get_name(struct form_control *control)
+نویسه *form_control_get_name(ساختار form_control *control)
 {
-	return control->name;
+	بازگشت control->name;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-nserror form_control_bounding_rect(struct form_control *control, struct rect *r)
+nserror form_control_bounding_rect(ساختار form_control *control, ساختار rect *r)
 {
 	box_bounds( control->box, r );
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* private interface described in html/form_internal.h */
-const char *
-form_select_mouse_action(struct form_control *control,
+ثابت نویسه *
+form_select_mouse_action(ساختار form_control *control,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 صحیح x, صحیح y)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	int x0, y0, x1, y1, scrollbar_x;
-	const char *status = NULL;
+	ساختار form_select_menu *menu = control->data.select.menu;
+	صحیح x0, y0, x1, y1, scrollbar_x;
+	ثابت نویسه *status = پوچ;
 	bool multiple = control->data.select.multiple;
 
 	x0 = 0;
@@ -1886,66 +1886,66 @@ form_select_mouse_action(struct form_control *control,
 	y1 = menu->height;
 	scrollbar_x = x1 - SCROLLBAR_WIDTH;
 
-	if (menu->scroll_capture ||
+	اگر (menu->scroll_capture ||
 			(x > scrollbar_x && x < x1 && y > y0 && y < y1)) {
 		/* The scroll is currently capturing all events or the mouse
 		 * event is taking place on the scrollbar widget area
 		 */
 		x -= scrollbar_x;
-		return scrollbar_mouse_status_to_message(
+		بازگشت scrollbar_mouse_status_to_message(
 				scrollbar_mouse_action(menu->scrollbar,
 						mouse, x, y));
 	}
 
 
-	if (x > x0 && x < scrollbar_x && y > y0 && y < y1) {
+	اگر (x > x0 && x < scrollbar_x && y > y0 && y < y1) {
 		/* over option area */
 
-		if (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2))
+		اگر (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2))
 			/* button 1 or 2 click */
 			form_select_menu_clicked(control, x, y);
 
-		if (!(mouse & BROWSER_MOUSE_CLICK_1 && !multiple))
+		اگر (!(mouse & BROWSER_MOUSE_CLICK_1 && !multiple))
 			/* anything but a button 1 click over a single select
 			   menu */
 			status = messages_get(control->data.select.multiple ?
 					"SelectMClick" : "SelectClick");
 
-	} else if (!(mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)))
+	} وگرنه اگر (!(mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)))
 		/* if not a button 1 or 2 click*/
 		status = messages_get("SelectClose");
 
-	return status;
+	بازگشت status;
 }
 
 
 /* private interface described in html/form_internal.h */
-void
-form_select_mouse_drag_end(struct form_control *control,
+تهی
+form_select_mouse_drag_end(ساختار form_control *control,
 			   browser_mouse_state mouse,
-			   int x, int y)
+			   صحیح x, صحیح y)
 {
-	int x0, y0, x1, y1;
-	int box_x, box_y;
-	struct box *box;
-	struct form_select_menu *menu = control->data.select.menu;
+	صحیح x0, y0, x1, y1;
+	صحیح box_x, box_y;
+	ساختار box *box;
+	ساختار form_select_menu *menu = control->data.select.menu;
 
 	box = control->box;
 
 	/* Get global coords of scrollbar */
 	box_coords(box, &box_x, &box_y);
-	box_x -= box->border[LEFT].width;
+	box_x -= box->border[چپ_2].width;
 	box_y += box->height + box->border[BOTTOM].width +
-			box->padding[BOTTOM] + box->padding[TOP];
+			box->padding[BOTTOM] + box->padding[بالاترین_2];
 
 	/* Get drag end coords relative to scrollbar */
 	x = x - box_x;
 	y = y - box_y;
 
-	if (menu->scroll_capture) {
+	اگر (menu->scroll_capture) {
 		x -= menu->width - SCROLLBAR_WIDTH;
 		scrollbar_mouse_drag_end(menu->scrollbar, mouse, x, y);
-		return;
+		بازگشت;
 	}
 
 	x0 = 0;
@@ -1954,7 +1954,7 @@ form_select_mouse_drag_end(struct form_control *control,
 	y1 = menu->height;
 
 
-	if (x > x0 && x < x1 - SCROLLBAR_WIDTH && y >  y0 && y < y1) {
+	اگر (x > x0 && x < x1 - SCROLLBAR_WIDTH && y >  y0 && y < y1) {
 		/* handle drag end above the option area like a regular click */
 		form_select_menu_clicked(control, x, y);
 	}
@@ -1962,8 +1962,8 @@ form_select_mouse_drag_end(struct form_control *control,
 
 
 /* private interface described in html/form_internal.h */
-void form_select_get_dimensions(struct form_control *control,
-		int *width, int *height)
+تهی form_select_get_dimensions(ساختار form_control *control,
+		صحیح *width, صحیح *height)
 {
 	*width = control->data.select.menu->width;
 	*height = control->data.select.menu->height;
@@ -1971,73 +1971,73 @@ void form_select_get_dimensions(struct form_control *control,
 
 
 /* private interface described in html/form_internal.h */
-void form_select_menu_callback(void *client_data,
-		int x, int y, int width, int height)
+تهی form_select_menu_callback(تهی *client_data,
+		صحیح x, صحیح y, صحیح width, صحیح height)
 {
 	html_content *html = client_data;
-	int menu_x, menu_y;
-	struct box *box;
+	صحیح menu_x, menu_y;
+	ساختار box *box;
 
 	box = html->visible_select_menu->box;
 	box_coords(box, &menu_x, &menu_y);
 
-	menu_x -= box->border[LEFT].width;
+	menu_x -= box->border[چپ_2].width;
 	menu_y += box->height + box->border[BOTTOM].width +
 			box->padding[BOTTOM] +
-			box->padding[TOP];
-	content__request_redraw((struct content *)html, menu_x + x, menu_y + y,
+			box->padding[بالاترین_2];
+	content__request_redraw((ساختار content *)html, menu_x + x, menu_y + y,
 			width, height);
 }
 
 
 /* private interface described in html/form_internal.h */
-void form_radio_set(struct form_control *radio)
+تهی form_radio_set(ساختار form_control *radio)
 {
-	struct form_control *control;
+	ساختار form_control *control;
 
-	assert(radio);
-	if (!radio->form)
-		return;
+	أكد(radio);
+	اگر (!radio->form)
+		بازگشت;
 
-	if (radio->selected)
-		return;
+	اگر (radio->selected)
+		بازگشت;
 
 	/* Clear selected state for other controls in
 	 * the same radio button group */
-	for (control = radio->form->controls;
-	     control != NULL;
+	برای (control = radio->form->controls;
+	     control != پوچ;
 	     control = control->next) {
 		/* Only interested in radio inputs */
-		if (control->type != GADGET_RADIO)
-			continue;
+		اگر (control->type != GADGET_RADIO)
+			ادامه;
 
 		/* Ignore ourself */
-		if (control == radio)
-			continue;
+		اگر (control == radio)
+			ادامه;
 
 		/* Ignore inputs where:
 		 *   a) this or the other control have no name attribute
 		 *   b) this or the other control have an empty name attribute
 		 *   c) the control names do not match
 		 */
-		if ((control->name == NULL) ||
-		    (radio->name == NULL) ||
+		اگر ((control->name == پوچ) ||
+		    (radio->name == پوچ) ||
 		    (control->name[0] == '\0') ||
 		    (radio->name[0] == '\0') ||
 		    strcmp(control->name, radio->name) != 0)
-			continue;
+			ادامه;
 
 		/* Other control is in the same radio button group: clear its
 		 * selected state */
-		if (control->selected) {
+		اگر (control->selected) {
 			control->selected = false;
-			dom_html_input_element_set_checked(control->node, false);
+			dom_html_درون_داد_element_set_checked(control->گره, false);
 			html__redraw_a_box(radio->html, control->box);
 		}
 	}
 
 	radio->selected = true;
-	dom_html_input_element_set_checked(radio->node, true);
+	dom_html_درون_داد_element_set_checked(radio->گره, true);
 	html__redraw_a_box(radio->html, radio->box);
 }
 
@@ -2045,119 +2045,119 @@ void form_radio_set(struct form_control *radio)
 /* private interface described in html/form_internal.h */
 nserror
 form_submit(nsurl *page_url,
-	    struct browser_window *target,
-	    struct form *form,
-	    struct form_control *submit_button)
+	    ساختار browser_window *target,
+	    ساختار form *form,
+	    ساختار form_control *submit_button)
 {
 	nserror res;
-	char *data = NULL; /* encoded form data */
-	struct fetch_multipart_data *success = NULL; /* gcc is incapable of correctly reasoning about use and generates "maybe used uninitialised" warnings */
+	نویسه *data = پوچ; /* encoded form data */
+	ساختار fetch_multipart_data *success = پوچ; /* gcc is incapable of correctly reasoning about use and generates "maybe used uninitialised" warnings */
 	nsurl *action_url;
 	nsurl *query_url;
 
-	assert(form != NULL);
+	أكد(form != پوچ);
 
 	/* obtain list of controls from DOM */
 	res = form_dom_to_data(form, submit_button, &success);
-	if (res != NSERROR_OK) {
-		return res;
+	اگر (res != NSERROR_OK) {
+		بازگشت res;
 	}
 
 	/* Decompose action */
 	res = nsurl_create(form->action, &action_url);
-	if (res != NSERROR_OK) {
+	اگر (res != NSERROR_OK) {
 		fetch_multipart_data_destroy(success);
-		return res;
+		بازگشت res;
 	}
 
-	switch (form->method) {
-	case method_GET:
+	انتخاب (form->method) {
+	حالت method_GET:
 		res = form_url_encode(form, success, &data);
-		if (res == NSERROR_OK) {
+		اگر (res == NSERROR_OK) {
 			/* Replace query segment */
 			res = nsurl_replace_query(action_url, data, &query_url);
-			if (res == NSERROR_OK) {
+			اگر (res == NSERROR_OK) {
 				res = browser_window_navigate(target,
 							      query_url,
 							      page_url,
 							      BW_NAVIGATE_HISTORY,
-							      NULL,
-							      NULL,
-							      NULL);
+							      پوچ,
+							      پوچ,
+							      پوچ);
 
 				nsurl_unref(query_url);
 			}
-			free(data);
+			آزاد(data);
 		}
-		break;
+		بشکن;
 
-	case method_POST_URLENC:
+	حالت method_POST_URLENC:
 		res = form_url_encode(form, success, &data);
-		if (res == NSERROR_OK) {
+		اگر (res == NSERROR_OK) {
 			res = browser_window_navigate(target,
 						      action_url,
 						      page_url,
 						      BW_NAVIGATE_HISTORY,
 						      data,
-						      NULL,
-						      NULL);
-			free(data);
+						      پوچ,
+						      پوچ);
+			آزاد(data);
 		}
-		break;
+		بشکن;
 
-	case method_POST_MULTIPART:
+	حالت method_POST_MULTIPART:
 		res = browser_window_navigate(target,
 					      action_url,
 					      page_url,
 					      BW_NAVIGATE_HISTORY,
-					      NULL,
+					      پوچ,
 					      success,
-					      NULL);
+					      پوچ);
 
-		break;
+		بشکن;
 	}
 
 	nsurl_unref(action_url);
 	fetch_multipart_data_destroy(success);
 
-	return res;
+	بازگشت res;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_gadget_update_value(struct form_control *control, char *value)
+تهی form_gadget_update_مقدار(ساختار form_control *control, نویسه *مقدار)
 {
-	switch (control->type) {
-	case GADGET_HIDDEN:
-	case GADGET_TEXTBOX:
-	case GADGET_TEXTAREA:
-	case GADGET_PASSWORD:
-	case GADGET_FILE:
-		if (control->value != NULL) {
-			free(control->value);
+	انتخاب (control->type) {
+	حالت GADGET_HIDDEN:
+	حالت GADGET_TEXTBOX:
+	حالت GADGET_TEXTAREA:
+	حالت GADGET_PASSWORD:
+	حالت GADGET_FILE:
+		اگر (control->مقدار != پوچ) {
+			آزاد(control->مقدار);
 		}
-		control->value = value;
-		if (control->node != NULL) {
+		control->مقدار = مقدار;
+		اگر (control->گره != پوچ) {
 			dom_exception err;
 			dom_string *str;
-			err = dom_string_create((uint8_t *)value,
-						strlen(value), &str);
-			if (err == DOM_NO_ERR) {
-				if (control->type == GADGET_TEXTAREA)
-					err = dom_html_text_area_element_set_value(
-						(dom_html_text_area_element *)(control->node),
+			err = dom_string_create((uint8_t *)مقدار,
+						strlen(مقدار), &str);
+			اگر (err == DOM_NO_ERR) {
+				اگر (control->type == GADGET_TEXTAREA)
+					err = dom_html_text_area_element_set_مقدار(
+						(dom_html_text_area_element *)(control->گره),
 						str);
-				else
-					err = dom_html_input_element_set_value(
-						(dom_html_input_element *)(control->node),
+				وگرنه
+					err = dom_html_درون_داد_element_set_مقدار(
+						(dom_html_درون_داد_element *)(control->گره),
 						str);
 				dom_string_unref(str);
 			}
 		}
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		/* Do nothing */
-		break;
+		بشکن;
 	}
 
 	/* Finally, sync this with the DOM */
@@ -2166,14 +2166,14 @@ void form_gadget_update_value(struct form_control *control, char *value)
 
 
 /* Exported API, see html/form_internal.h */
-void
-form_gadget_sync_with_dom(struct form_control *control)
+تهی
+form_gadget_sync_with_dom(ساختار form_control *control)
 {
 	dom_exception exc;
-	dom_string *value = NULL;
+	dom_string *مقدار = پوچ;
 	bool changed_dom = false;
 
-	if (control->syncing ||
+	اگر (control->syncing ||
 	    (control->type != GADGET_TEXTBOX &&
 	     control->type != GADGET_PASSWORD &&
 	     control->type != GADGET_HIDDEN &&
@@ -2181,181 +2181,181 @@ form_gadget_sync_with_dom(struct form_control *control)
 		/* Not a control we support, or the control is already
 		 * mid-sync so we don't want to disrupt that
 		 */
-		return;
+		بازگشت;
 	}
 
 	control->syncing = true;
 
 	/* If we've changed value, sync that toward the DOM */
-	if ((control->last_synced_value == NULL &&
-	     control->value != NULL &&
-	     control->value[0] != '\0') ||
-	    (control->last_synced_value != NULL &&
-	     control->value != NULL &&
-	     strcmp(control->value, control->last_synced_value) != 0)) {
-		char *dup = strdup(control->value);
-		if (dup == NULL) {
-			goto out;
+	اگر ((control->last_synced_مقدار == پوچ &&
+	     control->مقدار != پوچ &&
+	     control->مقدار[0] != '\0') ||
+	    (control->last_synced_مقدار != پوچ &&
+	     control->مقدار != پوچ &&
+	     strcmp(control->مقدار, control->last_synced_مقدار) != 0)) {
+		نویسه *dup = strdup(control->مقدار);
+		اگر (dup == پوچ) {
+			برو out;
 		}
-		if (control->last_synced_value != NULL) {
-			free(control->last_synced_value);
+		اگر (control->last_synced_مقدار != پوچ) {
+			آزاد(control->last_synced_مقدار);
 		}
-		control->last_synced_value = dup;
-		exc = dom_string_create((uint8_t *)(control->value),
-					strlen(control->value), &value);
-		if (exc != DOM_NO_ERR) {
-			goto out;
+		control->last_synced_مقدار = dup;
+		exc = dom_string_create((uint8_t *)(control->مقدار),
+					strlen(control->مقدار), &مقدار);
+		اگر (exc != DOM_NO_ERR) {
+			برو out;
 		}
-		if (control->node_value != NULL) {
-			dom_string_unref(control->node_value);
+		اگر (control->گره_مقدار != پوچ) {
+			dom_string_unref(control->گره_مقدار);
 		}
-		control->node_value = value;
-		value = NULL;
-		if (control->type == GADGET_TEXTAREA) {
-			exc = dom_html_text_area_element_set_value(control->node, control->node_value);
-		} else {
-			exc = dom_html_input_element_set_value(control->node, control->node_value);
+		control->گره_مقدار = مقدار;
+		مقدار = پوچ;
+		اگر (control->type == GADGET_TEXTAREA) {
+			exc = dom_html_text_area_element_set_مقدار(control->گره, control->گره_مقدار);
+		} وگرنه {
+			exc = dom_html_درون_داد_element_set_مقدار(control->گره, control->گره_مقدار);
 		}
-		if (exc != DOM_NO_ERR) {
-			goto out;
+		اگر (exc != DOM_NO_ERR) {
+			برو out;
 		}
 		changed_dom = true;
 	}
 
 	/* Now check if the DOM has changed since our last go */
-	if (control->type == GADGET_TEXTAREA) {
-		exc = dom_html_text_area_element_get_value(control->node, &value);
-	} else {
-		exc = dom_html_input_element_get_value(control->node, &value);
+	اگر (control->type == GADGET_TEXTAREA) {
+		exc = dom_html_text_area_element_get_مقدار(control->گره, &مقدار);
+	} وگرنه {
+		exc = dom_html_درون_داد_element_get_مقدار(control->گره, &مقدار);
 	}
 
-	if (exc != DOM_NO_ERR) {
+	اگر (exc != DOM_NO_ERR) {
 		/* Nothing much we can do here */
-		goto out;
+		برو out;
 	}
 
-	if (!dom_string_isequal(control->node_value, value)) {
+	اگر (!dom_string_isequal(control->گره_مقدار, مقدار)) {
 		/* The DOM has changed */
-		if (!changed_dom) {
+		اگر (!changed_dom) {
 			/* And it wasn't us */
-			char *value_s = strndup(
-				dom_string_data(value),
-				dom_string_byte_length(value));
-			char *dup = NULL;
-			if (value_s == NULL) {
-				goto out;
+			نویسه *مقدار_s = strndup(
+				dom_string_data(مقدار),
+				dom_string_byte_length(مقدار));
+			نویسه *dup = پوچ;
+			اگر (مقدار_s == پوچ) {
+				برو out;
 			}
-			dup = strdup(value_s);
-			if (dup == NULL) {
-				free(value_s);
-				goto out;
+			dup = strdup(مقدار_s);
+			اگر (dup == پوچ) {
+				آزاد(مقدار_s);
+				برو out;
 			}
-			free(control->value);
-			control->value = value_s;
-			free(control->last_synced_value);
-			control->last_synced_value = dup;
-			if (control->type != GADGET_HIDDEN &&
-			    control->data.text.ta != NULL) {
+			آزاد(control->مقدار);
+			control->مقدار = مقدار_s;
+			آزاد(control->last_synced_مقدار);
+			control->last_synced_مقدار = dup;
+			اگر (control->type != GADGET_HIDDEN &&
+			    control->data.text.ta != پوچ) {
 				textarea_set_text(control->data.text.ta,
-						  value_s);
+						  مقدار_s);
 			}
 		}
-		control->node_value = value;
-		value = NULL;
+		control->گره_مقدار = مقدار;
+		مقدار = پوچ;
 	}
 
 out:
-	if (value != NULL)
-		dom_string_unref(value);
+	اگر (مقدار != پوچ)
+		dom_string_unref(مقدار);
 	control->syncing = false;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-struct form *
-form_new(void *node,
-	 const char *action,
-	 const char *target,
+ساختار form *
+form_new(تهی *گره,
+	 ثابت نویسه *action,
+	 ثابت نویسه *target,
 	 form_method method,
-	 const char *charset,
-	 const char *doc_charset)
+	 ثابت نویسه *charset,
+	 ثابت نویسه *doc_charset)
 {
-	struct form *form;
+	ساختار form *form;
 
-	form = calloc(1, sizeof *form);
-	if (!form)
-		return NULL;
+	form = calloc(1, اندازه *form);
+	اگر (!form)
+		بازگشت پوچ;
 
-	form->action = strdup(action != NULL ? action : "");
-	if (form->action == NULL) {
-		free(form);
-		return NULL;
+	form->action = strdup(action != پوچ ? action : "");
+	اگر (form->action == پوچ) {
+		آزاد(form);
+		بازگشت پوچ;
 	}
 
-	form->target = target != NULL ? strdup(target) : NULL;
-	if (target != NULL && form->target == NULL) {
-		free(form->action);
-		free(form);
-		return NULL;
+	form->target = target != پوچ ? strdup(target) : پوچ;
+	اگر (target != پوچ && form->target == پوچ) {
+		آزاد(form->action);
+		آزاد(form);
+		بازگشت پوچ;
 	}
 
 	form->method = method;
 
-	form->accept_charsets = charset != NULL ? strdup(charset) : NULL;
-	if (charset != NULL && form->accept_charsets == NULL) {
-		free(form->target);
-		free(form->action);
-		free(form);
-		return NULL;
+	form->accept_charsets = charset != پوچ ? strdup(charset) : پوچ;
+	اگر (charset != پوچ && form->accept_charsets == پوچ) {
+		آزاد(form->target);
+		آزاد(form->action);
+		آزاد(form);
+		بازگشت پوچ;
 	}
 
-	form->document_charset = doc_charset != NULL ? strdup(doc_charset)
-						     : NULL;
-	if (doc_charset && form->document_charset == NULL) {
-		free(form->accept_charsets);
-		free(form->target);
-		free(form->action);
-		free(form);
-		return NULL;
+	form->document_charset = doc_charset != پوچ ? strdup(doc_charset)
+						     : پوچ;
+	اگر (doc_charset && form->document_charset == پوچ) {
+		آزاد(form->accept_charsets);
+		آزاد(form->target);
+		آزاد(form->action);
+		آزاد(form);
+		بازگشت پوچ;
 	}
 
-	form->node = node;
+	form->گره = گره;
 
-	return form;
+	بازگشت form;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free(struct form *form)
+تهی form_free(ساختار form *form)
 {
-	struct form_control *c, *d;
+	ساختار form_control *c, *d;
 
-	for (c = form->controls; c != NULL; c = d) {
+	برای (c = form->controls; c != پوچ; c = d) {
 		d = c->next;
 
 		form_free_control(c);
 	}
 
-	free(form->action);
-	free(form->target);
-	free(form->accept_charsets);
-	free(form->document_charset);
+	آزاد(form->action);
+	آزاد(form->target);
+	آزاد(form->accept_charsets);
+	آزاد(form->document_charset);
 
-	free(form);
+	آزاد(form);
 }
 
 
 /* exported interface documented in html/form_internal.h */
-struct form_control *form_new_control(void *node, form_control_type type)
+ساختار form_control *form_new_control(تهی *گره, form_control_type type)
 {
-	struct form_control *control;
+	ساختار form_control *control;
 
-	control = calloc(1, sizeof *control);
-	if (control == NULL)
-		return NULL;
+	control = calloc(1, اندازه *control);
+	اگر (control == پوچ)
+		بازگشت پوچ;
 
-	control->node = node;
+	control->گره = گره;
 	control->type = type;
 
-	return control;
+	بازگشت control;
 }

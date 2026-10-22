@@ -21,34 +21,34 @@
  * Processing for html content object operations.
  */
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
-#include <nsutils/time.h>
+#شامل <assert.h>
+#شامل <ctype.h>
+#شامل <stdint.h>
+#شامل <string.h>
+#شامل <strings.h>
+#شامل <stdlib.h>
+#شامل <nsutils/time.h>
 
-#include "utils/corestrings.h"
-#include "utils/config.h"
-#include "utils/log.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/misc.h"
-#include "content/hlcache.h"
-#include "css/utils.h"
-#include "desktop/scrollbar.h"
-#include "desktop/gui_internal.h"
+#شامل "utils/corestrings.h"
+#شامل "utils/config.h"
+#شامل "utils/log.h"
+#شامل "utils/nsoption.h"
+#شامل "netsurf/content.h"
+#شامل "netsurf/misc.h"
+#شامل "content/hlcache.h"
+#شامل "css/utils.h"
+#شامل "desktop/scrollbar.h"
+#شامل "desktop/gui_internal.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/object.h"
+#شامل "html/html.h"
+#شامل "html/private.h"
+#شامل "html/interaction.h"
+#شامل "html/box.h"
+#شامل "html/box_inspect.h"
+#شامل "html/object.h"
 
 /* break reference loop */
-static void html_object_refresh(void *p);
+ایستا تهی html_object_refresh(تهی *p);
 
 /**
  * Retrieve objects used by HTML document
@@ -57,16 +57,16 @@ static void html_object_refresh(void *p);
  * \param n  Pointer to location to receive number of objects
  * \return Pointer to list of objects
  */
-struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
+ساختار content_html_object *html_get_objects(hlcache_handle *h, unsigned صحیح *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	أكد(c != پوچ);
+	أكد(n != پوچ);
 
-	*n = c->num_objects;
+	*n = c->رقم_objects;
 
-	return c->object_list;
+	بازگشت c->object_list;
 }
 
 /**
@@ -77,48 +77,48 @@ struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
  * \param  background  the object was the background image for the box
  */
 
-static void
-html_object_failed(struct box *box, html_content *content, bool background)
+ایستا تهی
+html_object_failed(ساختار box *box, html_content *content, bool background)
 {
 	/* Nothing to do */
-	return;
+	بازگشت;
 }
 
 /**
  * Update a box whose content has completed rendering.
  */
 
-static void
-html_object_done(struct box *box,
+ایستا تهی
+html_object_done(ساختار box *box,
 		 hlcache_handle *object,
 		 bool background)
 {
-	struct box *b;
+	ساختار box *b;
 
-	if (background) {
+	اگر (background) {
 		box->background = object;
-		return;
+		بازگشت;
 	}
 
 	box->object = object;
 
 	/* Normalise the box type, now it has been replaced. */
-	switch (box->type) {
-	case BOX_TABLE:
+	انتخاب (box->type) {
+	حالت BOX_TABLE:
 		box->type = BOX_BLOCK;
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		/* TODO: Any other box types need mapping? */
-		break;
+		بشکن;
 	}
 
-	if (!(box->flags & REPLACE_DIM)) {
+	اگر (!(box->flags & REPLACE_DIM)) {
 		/* invalidate parent min, max widths */
-		for (b = box; b; b = b->parent)
+		برای (b = box; b; b = b->parent)
 			b->max_width = UNKNOWN_MAX_WIDTH;
 
 		/* delete any clones of this box */
-		while (box->next && (box->next->flags & CLONE)) {
+		وقتی (box->next && (box->next->flags & CLONE)) {
 			/* box_free_box(box->next); */
 			box->next = box->next->next;
 		}
@@ -129,53 +129,53 @@ html_object_done(struct box *box,
 /**
  * Callback for hlcache_handle_retrieve() for objects with no box.
  */
-static nserror
+ایستا nserror
 html_object_nobox_callback(hlcache_handle *object,
-			   const hlcache_event *event,
-			   void *pw)
+			   ثابت hlcache_event *event,
+			   تهی *pw)
 {
-	struct content_html_object *chobject = pw;
+	ساختار content_html_object *chobject = pw;
 
-	switch (event->type) {
-	case CONTENT_MSG_ERROR:
+	انتخاب (event->type) {
+	حالت CONTENT_پیام_ERROR:
 		hlcache_handle_release(object);
 
-		chobject->content = NULL;
-		break;
+		chobject->content = پوچ;
+		بشکن;
 
-	default:
-		break;
+	پیشفرض:
+		بشکن;
 	}
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /**
  * Callback for hlcache_handle_retrieve() for objects with a box.
  */
-static nserror
+ایستا nserror
 html_object_callback(hlcache_handle *object,
-		     const hlcache_event *event,
-		     void *pw)
+		     ثابت hlcache_event *event,
+		     تهی *pw)
 {
-	struct content_html_object *o = pw;
+	ساختار content_html_object *o = pw;
 	html_content *c = (html_content *) o->parent;
-	int x, y;
-	struct box *box;
+	صحیح x, y;
+	ساختار box *box;
 
 	box = o->box;
 
-	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		if (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
+	انتخاب (event->type) {
+	حالت CONTENT_پیام_LOADING:
+		اگر (c->base.status != CONTENT_STATUS_LOADING && c->bw != پوچ)
 			content_open(object,
 					c->bw, &c->base,
 					box->object_params);
-		break;
+		بشکن;
 
-	case CONTENT_MSG_READY:
-		if (content_can_reformat(object)) {
+	حالت CONTENT_پیام_READY:
+		اگر (content_can_reformat(object)) {
 			/* TODO: avoid knowledge of box internals here */
 			content_reformat(object, false,
 					box->max_width != UNKNOWN_MAX_WIDTH ?
@@ -185,86 +185,86 @@ html_object_callback(hlcache_handle *object,
 
 			/* Adjust parent content for new object size */
 			html_object_done(box, object, o->background);
-			if (c->base.status == CONTENT_STATUS_READY ||
+			اگر (c->base.status == CONTENT_STATUS_READY ||
 					c->base.status == CONTENT_STATUS_DONE)
 				content__reformat(&c->base, false,
 						c->base.available_width,
 						c->base.available_height);
 		}
-		break;
+		بشکن;
 
-	case CONTENT_MSG_DONE:
+	حالت CONTENT_پیام_DONE:
 		c->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		html_object_done(box, object, o->background);
 
-		if (c->base.status != CONTENT_STATUS_LOADING &&
+		اگر (c->base.status != CONTENT_STATUS_LOADING &&
 				box->flags & REPLACE_DIM) {
-			union content_msg_data data;
+			اجتماع content_پیام_data data;
 
-			if (c->had_initial_layout == false) {
-				break;
+			اگر (c->had_initial_layout == false) {
+				بشکن;
 			}
 
-			if (!box_visible(box))
-				break;
+			اگر (!box_visible(box))
+				بشکن;
 
 			box_coords(box, &x, &y);
 
-			data.redraw.x = x + box->padding[LEFT];
-			data.redraw.y = y + box->padding[TOP];
+			data.redraw.x = x + box->padding[چپ_2];
+			data.redraw.y = y + box->padding[بالاترین_2];
 			data.redraw.width = box->width;
 			data.redraw.height = box->height;
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_broadcast(&c->base, CONTENT_پیام_REDRAW, &data);
 		}
-		break;
+		بشکن;
 
-	case CONTENT_MSG_ERROR:
+	حالت CONTENT_پیام_ERROR:
 		hlcache_handle_release(object);
 
-		o->content = NULL;
+		o->content = پوچ;
 
 		c->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		html_object_failed(box, c, o->background);
 
-		break;
+		بشکن;
 
-	case CONTENT_MSG_REDRAW:
-		if (c->base.status != CONTENT_STATUS_LOADING) {
-			union content_msg_data data = event->data;
+	حالت CONTENT_پیام_REDRAW:
+		اگر (c->base.status != CONTENT_STATUS_LOADING) {
+			اجتماع content_پیام_data data = event->data;
 
-			if (c->had_initial_layout == false) {
-				break;
+			اگر (c->had_initial_layout == false) {
+				بشکن;
 			}
 
-			if (!box_visible(box))
-				break;
+			اگر (!box_visible(box))
+				بشکن;
 
 			box_coords(box, &x, &y);
 
-			if (object == box->background) {
+			اگر (object == box->background) {
 				/* Redraw request is for background */
 				css_fixed hpos = 0, vpos = 0;
 				css_unit hunit = CSS_UNIT_PX;
 				css_unit vunit = CSS_UNIT_PX;
-				int width = box->padding[LEFT] + box->width +
-						box->padding[RIGHT];
-				int height = box->padding[TOP] + box->height +
+				صحیح width = box->padding[چپ_2] + box->width +
+						box->padding[راست_2];
+				صحیح height = box->padding[بالاترین_2] + box->height +
 						box->padding[BOTTOM];
-				int t, h, l, w;
+				صحیح t, h, l, w;
 
 				/* Need to know background-position */
 				css_computed_background_position(box->style,
 						&hpos, &hunit, &vpos, &vunit);
 
 				w = content_get_width(box->background);
-				if (hunit == CSS_UNIT_PCT) {
+				اگر (hunit == CSS_UNIT_PCT) {
 					l = (width - w) * hpos / INTTOFIX(100);
-				} else {
+				} وگرنه {
 					l = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -272,9 +272,9 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				h = content_get_height(box->background);
-				if (vunit == CSS_UNIT_PCT) {
+				اگر (vunit == CSS_UNIT_PCT) {
 					t = (height - h) * vpos / INTTOFIX(100);
-				} else {
+				} وگرنه {
 					t = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -282,46 +282,46 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				/* Redraw area depends on background-repeat */
-				switch (css_computed_background_repeat(
+				انتخاب (css_computed_background_repeat(
 						box->style)) {
-				case CSS_BACKGROUND_REPEAT_REPEAT:
+				حالت CSS_BACKGROUND_REPEAT_REPEAT:
 					data.redraw.x = 0;
 					data.redraw.y = 0;
 					data.redraw.width = box->width;
 					data.redraw.height = box->height;
-					break;
+					بشکن;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_X:
+				حالت CSS_BACKGROUND_REPEAT_REPEAT_X:
 					data.redraw.x = 0;
 					data.redraw.y += t;
 					data.redraw.width = box->width;
-					break;
+					بشکن;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+				حالت CSS_BACKGROUND_REPEAT_REPEAT_Y:
 					data.redraw.x += l;
 					data.redraw.y = 0;
 					data.redraw.height = box->height;
-					break;
+					بشکن;
 
-				case CSS_BACKGROUND_REPEAT_NO_REPEAT:
+				حالت CSS_BACKGROUND_REPEAT_NO_REPEAT:
 					data.redraw.x += l;
 					data.redraw.y += t;
-					break;
+					بشکن;
 
-				default:
-					break;
+				پیشفرض:
+					بشکن;
 				}
 
 				/* Add offset to box */
 				data.redraw.x += x;
 				data.redraw.y += y;
 
-			} else {
+			} وگرنه {
 				/* Non-background case */
-				int w = content_get_width(object);
-				int h = content_get_height(object);
+				صحیح w = content_get_width(object);
+				صحیح h = content_get_height(object);
 
-				if (w != 0 && box->width != w) {
+				اگر (w != 0 && box->width != w) {
 					/* Not showing image at intrinsic
 					 * width; need to scale the redraw
 					 * request area. */
@@ -332,7 +332,7 @@ html_object_callback(hlcache_handle *object,
 							box->width / w;
 				}
 
-				if (h != 0 && box->height != w) {
+				اگر (h != 0 && box->height != w) {
 					/* Not showing image at intrinsic
 					 * height; need to scale the redraw
 					 * request area. */
@@ -343,148 +343,148 @@ html_object_callback(hlcache_handle *object,
 							box->height / h;
 				}
 
-				data.redraw.x += x + box->padding[LEFT];
-				data.redraw.y += y + box->padding[TOP];
+				data.redraw.x += x + box->padding[چپ_2];
+				data.redraw.y += y + box->padding[بالاترین_2];
 			}
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_broadcast(&c->base, CONTENT_پیام_REDRAW, &data);
 		}
-		break;
+		بشکن;
 
-	case CONTENT_MSG_REFRESH:
-		if (content_get_type(object) == CONTENT_HTML) {
+	حالت CONTENT_پیام_REFRESH:
+		اگر (content_get_type(object) == CONTENT_HTML) {
 			/* only for HTML objects */
 			guit->misc->schedule(event->data.delay * 1000,
 					html_object_refresh, o);
 		}
 
-		break;
+		بشکن;
 
-	case CONTENT_MSG_LINK:
+	حالت CONTENT_پیام_LINK:
 		/* Don't care about favicons that aren't on top level content */
-		break;
+		بشکن;
 
-	case CONTENT_MSG_GETTHREAD:
+	حالت CONTENT_پیام_GETTHREAD:
 		/* Objects don't have JS threads */
-		*(event->data.jsthread) = NULL;
-		break;
+		*(event->data.jsthread) = پوچ;
+		بشکن;
 
-	case CONTENT_MSG_GETDIMS:
+	حالت CONTENT_پیام_GETDIMS:
 		*(event->data.getdims.viewport_width) =
 				content__get_width(&c->base);
 		*(event->data.getdims.viewport_height) =
 				content__get_height(&c->base);
-		break;
+		بشکن;
 
-	case CONTENT_MSG_SCROLL:
-		if (box->scroll_x != NULL)
+	حالت CONTENT_پیام_SCROLL:
+		اگر (box->scroll_x != پوچ)
 			scrollbar_set(box->scroll_x, event->data.scroll.x0,
 					false);
-		if (box->scroll_y != NULL)
+		اگر (box->scroll_y != پوچ)
 			scrollbar_set(box->scroll_y, event->data.scroll.y0,
 					false);
-		break;
+		بشکن;
 
-	case CONTENT_MSG_DRAGSAVE:
+	حالت CONTENT_پیام_DRAGSAVE:
 	{
-		union content_msg_data msg_data;
-		if (event->data.dragsave.content == NULL)
-			msg_data.dragsave.content = object;
-		else
-			msg_data.dragsave.content =
+		اجتماع content_پیام_data پیام_data;
+		اگر (event->data.dragsave.content == پوچ)
+			پیام_data.dragsave.content = object;
+		وگرنه
+			پیام_data.dragsave.content =
 					event->data.dragsave.content;
 
-		content_broadcast(&c->base, CONTENT_MSG_DRAGSAVE, &msg_data);
+		content_broadcast(&c->base, CONTENT_پیام_DRAGSAVE, &پیام_data);
 	}
-		break;
+		بشکن;
 
-	case CONTENT_MSG_SAVELINK:
-	case CONTENT_MSG_POINTER:
-	case CONTENT_MSG_SELECTMENU:
-	case CONTENT_MSG_GADGETCLICK:
+	حالت CONTENT_پیام_SAVELINK:
+	حالت CONTENT_پیام_POINTER:
+	حالت CONTENT_پیام_SELECTMENU:
+	حالت CONTENT_پیام_GADGETCLICK:
 		/* These messages are for browser window layer.
 		 * we're not interested, so pass them on. */
 		content_broadcast(&c->base, event->type, &event->data);
-		break;
+		بشکن;
 
-	case CONTENT_MSG_CARET:
+	حالت CONTENT_پیام_CARET:
 	{
-		union html_focus_owner focus_owner;
+		اجتماع html_focus_owner focus_owner;
 		focus_owner.content = box;
 
-		switch (event->data.caret.type) {
-		case CONTENT_CARET_REMOVE:
-		case CONTENT_CARET_HIDE:
+		انتخاب (event->data.caret.type) {
+		حالت CONTENT_CARET_REMOVE:
+		حالت CONTENT_CARET_HIDE:
 			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
-					true, 0, 0, 0, NULL);
-			break;
-		case CONTENT_CARET_SET_POS:
+					true, 0, 0, 0, پوچ);
+			بشکن;
+		حالت CONTENT_CARET_SET_POS:
 			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
 					false, event->data.caret.pos.x,
 					event->data.caret.pos.y,
 					event->data.caret.pos.height,
 					event->data.caret.pos.clip);
-			break;
+			بشکن;
 		}
 	}
-		break;
+		بشکن;
 
-	case CONTENT_MSG_DRAG:
+	حالت CONTENT_پیام_DRAG:
 	{
 		html_drag_type drag_type = HTML_DRAG_NONE;
-		union html_drag_owner drag_owner;
+		اجتماع html_drag_owner drag_owner;
 		drag_owner.content = box;
 
-		switch (event->data.drag.type) {
-		case CONTENT_DRAG_NONE:
+		انتخاب (event->data.drag.type) {
+		حالت CONTENT_DRAG_NONE:
 			drag_type = HTML_DRAG_NONE;
 			drag_owner.no_owner = true;
-			break;
-		case CONTENT_DRAG_SCROLL:
+			بشکن;
+		حالت CONTENT_DRAG_SCROLL:
 			drag_type = HTML_DRAG_CONTENT_SCROLL;
-			break;
-		case CONTENT_DRAG_SELECTION:
+			بشکن;
+		حالت CONTENT_DRAG_SELECTION:
 			drag_type = HTML_DRAG_CONTENT_SELECTION;
-			break;
+			بشکن;
 		}
 		html_set_drag_type(c, drag_type, drag_owner,
 				event->data.drag.rect);
 	}
-		break;
+		بشکن;
 
-	case CONTENT_MSG_SELECTION:
+	حالت CONTENT_پیام_SELECTION:
 	{
 		html_selection_type sel_type;
-		union html_selection_owner sel_owner;
+		اجتماع html_selection_owner sel_owner;
 
-		if (event->data.selection.selection) {
+		اگر (event->data.selection.selection) {
 			sel_type = HTML_SELECTION_CONTENT;
 			sel_owner.content = box;
-		} else {
+		} وگرنه {
 			sel_type = HTML_SELECTION_NONE;
 			sel_owner.none = true;
 		}
 		html_set_selection(c, sel_type, sel_owner,
 				event->data.selection.read_only);
 	}
-		break;
+		بشکن;
 
-	default:
-		break;
+	پیشفرض:
+		بشکن;
 	}
 
-	if (c->base.status == CONTENT_STATUS_READY &&
+	اگر (c->base.status == CONTENT_STATUS_READY &&
 	    c->base.active == 0 &&
-	    (event->type == CONTENT_MSG_LOADING ||
-	     event->type == CONTENT_MSG_DONE ||
-	     event->type == CONTENT_MSG_ERROR)) {
+	    (event->type == CONTENT_پیام_LOADING ||
+	     event->type == CONTENT_پیام_DONE ||
+	     event->type == CONTENT_پیام_ERROR)) {
 		/* all objects have arrived */
 		content__reformat(&c->base, false, c->base.available_width,
 				c->base.available_height);
 		content_set_done(&c->base);
-	} else if (nsoption_bool(incremental_reflow) &&
-		   event->type == CONTENT_MSG_DONE &&
-		   box != NULL &&
+	} وگرنه اگر (nsoption_bool(incremental_reflow) &&
+		   event->type == CONTENT_پیام_DONE &&
+		   box != پوچ &&
 		   !(box->flags & REPLACE_DIM) &&
 		   (c->base.status == CONTENT_STATUS_READY ||
 		    c->base.status == CONTENT_STATUS_DONE)) {
@@ -496,7 +496,7 @@ html_object_callback(hlcache_handle *object,
 		 */
 		uint64_t ms_now;
 		nsu_getmonotonic_ms(&ms_now);
-		if (ms_now > c->base.reformat_time) {
+		اگر (ms_now > c->base.reformat_time) {
 			/* The time since the previous reformat is
 			 *  more than the configured minimum time
 			 *  between reformats so reformat the page to
@@ -509,7 +509,7 @@ html_object_callback(hlcache_handle *object,
 		}
 	}
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
@@ -520,188 +520,188 @@ html_object_callback(hlcache_handle *object,
  * \param  url             URL of object to fetch (copied)
  * \return  true on success, false on memory exhaustion
  */
-static bool html_replace_object(struct content_html_object *object, nsurl *url)
+ایستا bool html_replace_object(ساختار content_html_object *object, nsurl *url)
 {
 	html_content *c;
 	hlcache_child_context child;
 	html_content *page;
 	nserror error;
 
-	assert(object != NULL);
-	assert(object->box != NULL);
+	أكد(object != پوچ);
+	أكد(object->box != پوچ);
 
 	c = (html_content *) object->parent;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	if (object->content != NULL) {
+	اگر (object->content != پوچ) {
 		/* remove existing object */
-		if (content_get_status(object->content) != CONTENT_STATUS_DONE) {
+		اگر (content_get_status(object->content) != CONTENT_STATUS_DONE) {
 			c->base.active--;
 			NSLOG(netsurf, INFO, "%d fetches active",
 			      c->base.active);
 		}
 
 		hlcache_handle_release(object->content);
-		object->content = NULL;
+		object->content = پوچ;
 
-		object->box->object = NULL;
+		object->box->object = پوچ;
 	}
 
 	/* initialise fetch */
 	error = hlcache_handle_retrieve(url, HLCACHE_RETRIEVE_SNIFF_TYPE,
-			content_get_url(&c->base), NULL,
+			content_get_url(&c->base), پوچ,
 			html_object_callback, object, &child,
 			object->permitted_types,
 			&object->content);
 
-	if (error != NSERROR_OK)
-		return false;
+	اگر (error != NSERROR_OK)
+		بازگشت false;
 
-	for (page = c; page != NULL; page = page->page) {
+	برای (page = c; page != پوچ; page = page->page) {
 		page->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		page->base.status = CONTENT_STATUS_READY;
 	}
 
-	return true;
+	بازگشت true;
 }
 
 /**
  * schedule callback for object refresh
  */
-static void html_object_refresh(void *p)
+ایستا تهی html_object_refresh(تهی *p)
 {
-	struct content_html_object *object = p;
+	ساختار content_html_object *object = p;
 	nsurl *refresh_url;
 
-	assert(content_get_type(object->content) == CONTENT_HTML);
+	أكد(content_get_type(object->content) == CONTENT_HTML);
 
 	refresh_url = content_get_refresh_url(object->content);
 
 	/* Ignore if refresh URL has gone
 	 * (may happen if fetch errored) */
-	if (refresh_url == NULL)
-		return;
+	اگر (refresh_url == پوچ)
+		بازگشت;
 
 	content_invalidate_reuse_data(object->content);
 
-	if (!html_replace_object(object, refresh_url)) {
+	اگر (!html_replace_object(object, refresh_url)) {
 		/** \todo handle memory exhaustion */
 	}
 }
 
 
 /* exported interface documented in html/object.h */
-nserror html_object_open_objects(html_content *html, struct browser_window *bw)
+nserror html_object_open_objects(html_content *html, ساختار browser_window *bw)
 {
-	struct content_html_object *object, *next;
+	ساختار content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	برای (object = html->object_list; object != پوچ; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
-			continue;
+		اگر (object->content == پوچ || object->box == پوچ)
+			ادامه;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
-			continue;
+		اگر (content_get_type(object->content) == CONTENT_NONE)
+			ادامه;
 
 		content_open(object->content,
 			     bw,
 			     &html->base,
 			     object->box->object_params);
 	}
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_abort_objects(html_content *htmlc)
 {
-	struct content_html_object *object;
+	ساختار content_html_object *object;
 
-	for (object = htmlc->object_list;
-	     object != NULL;
+	برای (object = htmlc->object_list;
+	     object != پوچ;
 	     object = object->next) {
-		if (object->content == NULL)
-			continue;
+		اگر (object->content == پوچ)
+			ادامه;
 
-		switch (content_get_status(object->content)) {
-		case CONTENT_STATUS_DONE:
+		انتخاب (content_get_status(object->content)) {
+		حالت CONTENT_STATUS_DONE:
 			/* already loaded: do nothing */
-			break;
+			بشکن;
 
-		case CONTENT_STATUS_READY:
+		حالت CONTENT_STATUS_READY:
 			hlcache_handle_abort(object->content);
 			/* Active count will be updated when
 			 * html_object_callback receives
 			 * CONTENT_MSG_DONE from this object
 			 */
-			break;
+			بشکن;
 
-		default:
+		پیشفرض:
 			hlcache_handle_abort(object->content);
 			hlcache_handle_release(object->content);
-			object->content = NULL;
-			if (object->box != NULL) {
+			object->content = پوچ;
+			اگر (object->box != پوچ) {
 				htmlc->base.active--;
 				NSLOG(netsurf, INFO, "%d fetches active",
 				      htmlc->base.active);
 			}
-			break;
+			بشکن;
 
 		}
 	}
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_close_objects(html_content *html)
 {
-	struct content_html_object *object, *next;
+	ساختار content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	برای (object = html->object_list; object != پوچ; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
-			continue;
+		اگر (object->content == پوچ || object->box == پوچ)
+			ادامه;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
-			continue;
+		اگر (content_get_type(object->content) == CONTENT_NONE)
+			ادامه;
 
-		if (content_get_type(object->content) == CONTENT_HTML) {
+		اگر (content_get_type(object->content) == CONTENT_HTML) {
 			guit->misc->schedule(-1, html_object_refresh, object);
 		}
 
 		content_close(object->content);
 	}
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_free_objects(html_content *html)
 {
-	while (html->object_list != NULL) {
-		struct content_html_object *victim = html->object_list;
+	وقتی (html->object_list != پوچ) {
+		ساختار content_html_object *victim = html->object_list;
 
-		if (victim->content != NULL) {
+		اگر (victim->content != پوچ) {
 			NSLOG(netsurf, INFO, "object %p", victim->content);
 
-			if (content_get_type(victim->content) == CONTENT_HTML) {
+			اگر (content_get_type(victim->content) == CONTENT_HTML) {
 				guit->misc->schedule(-1, html_object_refresh, victim);
 			}
 			hlcache_handle_release(victim->content);
 		}
 
 		html->object_list = victim->next;
-		free(victim);
+		آزاد(victim);
 	}
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
@@ -709,36 +709,36 @@ nserror html_object_free_objects(html_content *html)
 bool
 html_fetch_object(html_content *c,
 		  nsurl *url,
-		  struct box *box,
+		  ساختار box *box,
 		  content_type permitted_types,
 		  bool background)
 {
-	struct content_html_object *object;
+	ساختار content_html_object *object;
 	hlcache_handle_callback object_callback;
 	hlcache_child_context child;
 	nserror error;
 
 	/* If we've already been aborted, don't bother attempting the fetch */
-	if (c->aborted)
-		return true;
+	اگر (c->aborted)
+		بازگشت true;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	object = calloc(1, sizeof(struct content_html_object));
-	if (object == NULL) {
-		return false;
+	object = calloc(1, اندازه(ساختار content_html_object));
+	اگر (object == پوچ) {
+		بازگشت false;
 	}
 
-	if (box == NULL) {
+	اگر (box == پوچ) {
 		object_callback = html_object_nobox_callback;
-	} else {
+	} وگرنه {
 		object_callback = html_object_callback;
 	}
 
-	object->parent = (struct content *) c;
-	object->next = NULL;
-	object->content = NULL;
+	object->parent = (ساختار content *) c;
+	object->next = پوچ;
+	object->content = پوچ;
 	object->box = box;
 	object->permitted_types = permitted_types;
 	object->background = background;
@@ -746,26 +746,26 @@ html_fetch_object(html_content *c,
 	error = hlcache_handle_retrieve(url,
 					HLCACHE_RETRIEVE_SNIFF_TYPE,
 					content_get_url(&c->base),
-					NULL,
+					پوچ,
 					object_callback,
 					object,
 					&child,
 					object->permitted_types,
 					&object->content);
-	if (error != NSERROR_OK) {
-		free(object);
-		return error != NSERROR_NOMEM;
+	اگر (error != NSERROR_OK) {
+		آزاد(object);
+		بازگشت error != NSERROR_NOMEM;
 	}
 
 	/* add to content object list */
 	object->next = c->object_list;
 	c->object_list = object;
 
-	c->num_objects++;
-	if (box != NULL) {
+	c->رقم_objects++;
+	اگر (box != پوچ) {
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 	}
 
-	return true;
+	بازگشت true;
 }

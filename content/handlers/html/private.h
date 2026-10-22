@@ -24,19 +24,19 @@
 #ifndef NETSURF_HTML_PRIVATE_H
 #define NETSURF_HTML_PRIVATE_H
 
-#include <dom/bindings/hubbub/parser.h>
+#شامل <dom/bindings/hubbub/parser.h>
 
-#include "netsurf/types.h"
-#include "content/content_protected.h"
-#include "content/handlers/css/utils.h"
+#شامل "netsurf/types.h"
+#شامل "content/content_protected.h"
+#شامل "content/handlers/css/utils.h"
 
 
-struct gui_layout_table;
-struct scrollbar_msg_data;
-struct content_redraw_data;
-struct selection;
+ساختار gui_layout_table;
+ساختار scrollbar_پیام_data;
+ساختار content_redraw_data;
+ساختار selection;
 
-typedef enum {
+تعریفنوع شمارش {
 	HTML_DRAG_NONE,			/** No drag */
 	HTML_DRAG_SELECTION,		/** Own; Text selection */
 	HTML_DRAG_SCROLLBAR,		/** Not own; drag in scrollbar widget */
@@ -49,14 +49,14 @@ typedef enum {
 /**
  * For drags we don't own
  */
-union html_drag_owner {
+اجتماع html_drag_owner {
 	bool no_owner;
-	struct box *content;
-	struct scrollbar *scrollbar;
-	struct box *textarea;
+	ساختار box *content;
+	ساختار scrollbar *scrollbar;
+	ساختار box *textarea;
 };
 
-typedef enum {
+تعریفنوع شمارش {
 	HTML_SELECTION_NONE,		/** No selection */
 	HTML_SELECTION_TEXTAREA,	/** Selection in one of our textareas */
 	HTML_SELECTION_SELF,		/** Selection in this html content */
@@ -66,13 +66,13 @@ typedef enum {
 /**
  * For getting at selections in this content or things in this content
  */
-union html_selection_owner {
+اجتماع html_selection_owner {
 	bool none;
-	struct box *textarea;
-	struct box *content;
+	ساختار box *textarea;
+	ساختار box *content;
 };
 
-typedef enum {
+تعریفنوع شمارش {
 	HTML_FOCUS_SELF,		/**< Focus is our own */
 	HTML_FOCUS_CONTENT,		/**< Focus belongs to child content */
 	HTML_FOCUS_TEXTAREA		/**< Focus belongs to textarea */
@@ -81,17 +81,17 @@ typedef enum {
 /**
  * For directing input
  */
-union html_focus_owner {
+اجتماع html_focus_owner {
 	bool self;
-	struct box *textarea;
-	struct box *content;
+	ساختار box *textarea;
+	ساختار box *content;
 };
 
 /**
  * Data specific to CONTENT_HTML.
  */
-typedef struct html_content {
-	struct content base;
+تعریفنوع ساختار html_content {
+	ساختار content base;
 
 	dom_hubbub_parser *parser; /**< Parser object handle */
 	bool parse_completed; /**< Whether the parse has been completed */
@@ -103,14 +103,14 @@ typedef struct html_content {
 	dom_document_quirks_mode quirks;
 
 	/** Encoding of source, NULL if unknown. */
-	char *encoding;
+	نویسه *encoding;
 	/** Source of encoding information. */
 	dom_hubbub_encoding_source encoding_source;
 
 	/** Base URL (may be a copy of content->url). */
-	struct nsurl *base_url;
+	ساختار nsurl *base_url;
 	/** Base target */
-	char *base_target;
+	نویسه *base_target;
 
 	/** Content has been aborted in the LOADING state */
 	bool aborted;
@@ -128,33 +128,33 @@ typedef struct html_content {
 	bool enable_scripting;
 
 	/* Title element node */
-	dom_node *title;
+	dom_گره *title;
 
 	/** A talloc context purely for the render box tree */
-	int *bctx;
+	صحیح *bctx;
 	/** A context pointer for the box conversion, NULL if no conversion
 	 * is in progress.
 	 */
-	void *box_conversion_context;
+	تهی *box_conversion_context;
 	/** Box tree, or NULL. */
-	struct box *layout;
+	ساختار box *layout;
 	/** Document background colour. */
 	colour background_colour;
 
 	/** Font callback table */
-	const struct gui_layout_table *font_func;
+	ثابت ساختار gui_layout_table *font_func;
 
 	/** Number of entries in scripts */
-	unsigned int scripts_count;
+	unsigned صحیح scripts_شمار;
 	/** Scripts */
-	struct html_script *scripts;
+	ساختار html_script *scripts;
 	/** javascript thread in use */
-	struct jsthread *jsthread;
+	ساختار jsthread *jsthread;
 
 	/** Number of entries in stylesheet_content. */
-	unsigned int stylesheet_count;
+	unsigned صحیح stylesheet_شمار;
 	/** Stylesheets. Each may be NULL. */
-	struct html_stylesheet *stylesheets;
+	ساختار html_stylesheet *stylesheets;
 	/**< Style selection context */
 	css_select_ctx *select_ctx;
 	/**< Style selection media specification */
@@ -165,57 +165,57 @@ typedef struct html_content {
 	lwc_string *universal;
 
 	/** Number of entries in object_list. */
-	unsigned int num_objects;
+	unsigned صحیح رقم_objects;
 	/** List of objects. */
-	struct content_html_object *object_list;
+	ساختار content_html_object *object_list;
 	/** Forms, in reverse order to document. */
-	struct form *forms;
+	ساختار form *forms;
 	/** Hash table of imagemaps. */
-	struct imagemap **imagemaps;
+	ساختار imagemap **imagemaps;
 
 	/** Browser window containing this document, or NULL if not open. */
-	struct browser_window *bw;
+	ساختار browser_window *bw;
 
 	/** Frameset information */
-	struct content_html_frames *frameset;
+	ساختار content_html_frames *frameset;
 
 	/** Inline frame information */
-	struct content_html_iframe *iframe;
+	ساختار content_html_iframe *iframe;
 
 	/** Content of type CONTENT_HTML containing this, or NULL if not an
 	 * object within a page. */
-	struct html_content *page;
+	ساختار html_content *page;
 
 	/** Current drag type */
 	html_drag_type drag_type;
 	/** Widget capturing all mouse events */
-	union html_drag_owner drag_owner;
+	اجتماع html_drag_owner drag_owner;
 
 	/** Current selection state */
 	html_selection_type selection_type;
 	/** Current selection owner */
-	union html_selection_owner selection_owner;
+	اجتماع html_selection_owner selection_owner;
 
 	/** Current input focus target type */
 	html_focus_type focus_type;
 	/** Current input focus target */
-	union html_focus_owner focus_owner;
+	اجتماع html_focus_owner focus_owner;
 
 	/** HTML content's own text selection object */
-	struct selection *sel;
+	ساختار selection *sel;
 
 	/**
 	 * Open core-handled form SELECT menu, or NULL if none
 	 *  currently open.
 	 */
-	struct form_control *visible_select_menu;
+	ساختار form_control *visible_select_menu;
 
 } html_content;
 
 /**
  * Render padding and margin box outlines in html_redraw().
  */
-extern bool html_redraw_debug;
+بیرونی bool html_redraw_debug;
 
 
 /* in html/html.c */
@@ -226,7 +226,7 @@ extern bool html_redraw_debug;
  * \param htmlc HTML content
  * \param box The box to redraw.
  */
-void html__redraw_a_box(html_content *htmlc, struct box *box);
+تهی html__redraw_a_box(html_content *htmlc, ساختار box *box);
 
 
 /**
@@ -234,7 +234,7 @@ void html__redraw_a_box(html_content *htmlc, struct box *box);
  *
  * \param htmlc Content to convert
  */
-void html_finish_conversion(html_content *htmlc);
+تهی html_finish_conversion(html_content *htmlc);
 
 
 /**
@@ -257,7 +257,7 @@ bool html_begin_conversion(html_content *htmlc);
 /**
  * execute some text as a script element
  */
-bool html_exec(struct content *c, const char *src, size_t srclen);
+bool html_exec(ساختار content *c, ثابت نویسه *src, size_t srclen);
 
 
 /**
@@ -295,29 +295,29 @@ nserror html_proceed_to_done(html_content *html);
 
 
 /* in html/redraw.c */
-bool html_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx);
+bool html_redraw(ساختار content *c, ساختار content_redraw_data *data,
+		ثابت ساختار rect *clip, ثابت ساختار redraw_context *ctx);
 
 
 /* in html/redraw_border.c */
-bool html_redraw_borders(struct box *box, int x_parent, int y_parent,
-		int p_width, int p_height, const struct rect *clip, float scale,
-		const struct redraw_context *ctx);
+bool html_redraw_borders(ساختار box *box, صحیح x_parent, صحیح y_parent,
+		صحیح p_width, صحیح p_height, ثابت ساختار rect *clip, اعشاری scale,
+		ثابت ساختار redraw_context *ctx);
 
 
-bool html_redraw_inline_borders(struct box *box, struct rect b,
-		const struct rect *clip, float scale, bool first, bool last,
-		const struct redraw_context *ctx);
+bool html_redraw_inline_borders(ساختار box *box, ساختار rect b,
+		ثابت ساختار rect *clip, اعشاری scale, bool first, bool last,
+		ثابت ساختار redraw_context *ctx);
 
 
 /* in html/script.c */
-dom_hubbub_error html_process_script(void *ctx, dom_node *node);
+dom_hubbub_error html_process_script(تهی *ctx, dom_گره *گره);
 
 
 /* in html/forms.c */
-struct form *html_forms_get_forms(const char *docenc, dom_html_document *doc);
-struct form_control *html_forms_get_control_for_node(struct form *forms,
-		dom_node *node);
+ساختار form *html_forms_get_forms(ثابت نویسه *docenc, dom_html_document *doc);
+ساختار form_control *html_forms_get_control_for_گره(ساختار form *forms,
+		dom_گره *گره);
 
 
 /* in html/css_fetcher.c */
@@ -326,9 +326,9 @@ struct form_control *html_forms_get_control_for_node(struct form *forms,
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror html_css_fetcher_register(void);
-nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
-		uint32_t *key);
+nserror html_css_fetcher_register(تهی);
+nserror html_css_fetcher_add_item(dom_string *data, ساختار nsurl *base_url,
+		uint32_t *کلید);
 
 
 /* Events */
@@ -336,36 +336,36 @@ nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
  * Construct an event and fire it at the DOM
  *
  */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_گره *target,
 		    bool bubbles, bool cancelable);
 
 /**
  * Construct a keyboard event and fire it at the DOM
  */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key);
+bool fire_dom_keyboard_event(dom_string *type, dom_گره *target,
+		bool bubbles, bool cancelable, uint32_t کلید);
 
 /* Useful dom_string pointers */
-struct dom_string;
+ساختار dom_string;
 
-extern struct dom_string *html_dom_string_map;
-extern struct dom_string *html_dom_string_id;
-extern struct dom_string *html_dom_string_name;
-extern struct dom_string *html_dom_string_area;
-extern struct dom_string *html_dom_string_a;
-extern struct dom_string *html_dom_string_nohref;
-extern struct dom_string *html_dom_string_href;
-extern struct dom_string *html_dom_string_target;
-extern struct dom_string *html_dom_string_shape;
-extern struct dom_string *html_dom_string_default;
-extern struct dom_string *html_dom_string_rect;
-extern struct dom_string *html_dom_string_rectangle;
-extern struct dom_string *html_dom_string_coords;
-extern struct dom_string *html_dom_string_circle;
-extern struct dom_string *html_dom_string_poly;
-extern struct dom_string *html_dom_string_polygon;
-extern struct dom_string *html_dom_string_text_javascript;
-extern struct dom_string *html_dom_string_type;
-extern struct dom_string *html_dom_string_src;
+بیرونی ساختار dom_string *html_dom_string_map;
+بیرونی ساختار dom_string *html_dom_string_id;
+بیرونی ساختار dom_string *html_dom_string_name;
+بیرونی ساختار dom_string *html_dom_string_area;
+بیرونی ساختار dom_string *html_dom_string_a;
+بیرونی ساختار dom_string *html_dom_string_nohref;
+بیرونی ساختار dom_string *html_dom_string_href;
+بیرونی ساختار dom_string *html_dom_string_target;
+بیرونی ساختار dom_string *html_dom_string_shape;
+بیرونی ساختار dom_string *html_dom_string_default;
+بیرونی ساختار dom_string *html_dom_string_rect;
+بیرونی ساختار dom_string *html_dom_string_rectangle;
+بیرونی ساختار dom_string *html_dom_string_coords;
+بیرونی ساختار dom_string *html_dom_string_circle;
+بیرونی ساختار dom_string *html_dom_string_poly;
+بیرونی ساختار dom_string *html_dom_string_polygon;
+بیرونی ساختار dom_string *html_dom_string_text_javascript;
+بیرونی ساختار dom_string *html_dom_string_type;
+بیرونی ساختار dom_string *html_dom_string_src;
 
 #endif

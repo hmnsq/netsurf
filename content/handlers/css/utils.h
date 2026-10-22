@@ -19,88 +19,88 @@
 #ifndef NETSURF_CSS_UTILS_H_
 #define NETSURF_CSS_UTILS_H_
 
-#include <libcss/libcss.h>
+#شامل <libcss/libcss.h>
 
-#include "netsurf/css.h"
+#شامل "netsurf/css.h"
 
 /** DPI of the screen, in fixed point units */
-extern css_fixed nscss_screen_dpi;
+بیرونی css_fixed nscss_screen_dpi;
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display(
-		const css_computed_style *style, bool root)
+ایستا درونخطی uint8_t ns_computed_display(
+		ثابت css_computed_style *style, bool ریشه)
 {
-	uint8_t value = css_computed_display(style, root);
+	uint8_t مقدار = css_computed_display(style, ریشه);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	انتخاب (مقدار) {
+	حالت CSS_DISPLAY_GRID:
+		بازگشت CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	حالت CSS_DISPLAY_INLINE_GRID:
+		بازگشت CSS_DISPLAY_INLINE_BLOCK;
 
-	default:
-		break;
+	پیشفرض:
+		بشکن;
 	}
 
-	return value;
+	بازگشت مقدار;
 }
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display_static(
-		const css_computed_style *style)
+ایستا درونخطی uint8_t ns_computed_display_static(
+		ثابت css_computed_style *style)
 {
-	uint8_t value = css_computed_display_static(style);
+	uint8_t مقدار = css_computed_display_static(style);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	انتخاب (مقدار) {
+	حالت CSS_DISPLAY_GRID:
+		بازگشت CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	حالت CSS_DISPLAY_INLINE_GRID:
+		بازگشت CSS_DISPLAY_INLINE_BLOCK;
 
-	default:
-		break;
+	پیشفرض:
+		بشکن;
 	}
 
-	return value;
+	بازگشت مقدار;
 }
 
-static inline uint8_t ns_computed_min_height(
-		const css_computed_style *style,
+ایستا درونخطی uint8_t ns_computed_min_height(
+		ثابت css_computed_style *style,
 		css_fixed *length, css_unit *unit)
 {
-	uint8_t value = css_computed_min_height(style, length, unit);
+	uint8_t مقدار = css_computed_min_height(style, length, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
-		value = CSS_MIN_HEIGHT_SET;
+	اگر (مقدار == CSS_MIN_HEIGHT_AUTO) {
+		مقدار = CSS_MIN_HEIGHT_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	بازگشت مقدار;
 }
 
 
-static inline uint8_t ns_computed_min_width(
-		const css_computed_style *style,
+ایستا درونخطی uint8_t ns_computed_min_width(
+		ثابت css_computed_style *style,
 		css_fixed *length, css_unit *unit)
 {
-	uint8_t value = css_computed_min_width(style, length, unit);
+	uint8_t مقدار = css_computed_min_width(style, length, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
-		value = CSS_MIN_WIDTH_SET;
+	اگر (مقدار == CSS_MIN_WIDTH_AUTO) {
+		مقدار = CSS_MIN_WIDTH_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	بازگشت مقدار;
 }
 
 #endif

@@ -37,18 +37,18 @@
 #ifndef NETSURF_IMAGE_IMAGE_CACHE_H_
 #define NETSURF_IMAGE_IMAGE_CACHE_H_
 
-#include "utils/errors.h"
-#include "netsurf/content_type.h"
+#شامل "utils/errors.h"
+#شامل "netsurf/content_type.h"
 
-struct content;
-struct content_redraw_data;
-struct redraw_context;
+ساختار content;
+ساختار content_redraw_data;
+ساختار redraw_context;
 
-typedef struct bitmap * (image_cache_convert_fn) (struct content *content);
+تعریفنوع ساختار bitmap * (image_cache_convert_fn) (ساختار content *content);
 
-struct image_cache_parameters {
+ساختار image_cache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	unsigned صحیح bg_clean_time;
 
 	/** The target upper bound for the image cache size */
 	size_t limit;
@@ -64,8 +64,8 @@ struct image_cache_parameters {
  *
  * @param image_cache_parameters The control parameters for the image cache
  */
-nserror image_cache_init(const struct image_cache_parameters *image_cache_parameters);
-nserror image_cache_fini(void);
+nserror image_cache_init(ثابت ساختار image_cache_parameters *image_cache_parameters);
+nserror image_cache_fini(تهی);
 
 /** adds an image content to be cached. 
  * 
@@ -74,18 +74,18 @@ nserror image_cache_fini(void);
  * @param convert A function pointer to convert the content into a bitmap or NULL.
  * @return A netsurf error code.
  */
-nserror image_cache_add(struct content *content, 
-			struct bitmap *bitmap, 
+nserror image_cache_add(ساختار content *content, 
+			ساختار bitmap *bitmap, 
 			image_cache_convert_fn *convert);
 
-nserror image_cache_remove(struct content *content);
+nserror image_cache_remove(ساختار content *content);
 
 
 /** Obtain a bitmap from a content converting from source if neccessary. */
-struct bitmap *image_cache_get_bitmap(const struct content *c);
+ساختار bitmap *image_cache_get_bitmap(ثابت ساختار content *c);
 
 /** Obtain a bitmap from a content with no conversion */
-struct bitmap *image_cache_find_bitmap(struct content *c);
+ساختار bitmap *image_cache_find_bitmap(ساختار content *c);
 
 /** Decide if a content should be speculatively converted.
  *
@@ -97,7 +97,7 @@ struct bitmap *image_cache_find_bitmap(struct content *c);
  * @param c The content to be considered.
  * @return true if a speculative conversion is desired false otherwise.
  */
-bool image_cache_speculate(struct content *c);
+bool image_cache_speculate(ساختار content *c);
 
 /**
  * Fill a buffer with information about a cache entry using a format.
@@ -116,8 +116,8 @@ bool image_cache_speculate(struct content *c);
  * \param fmt     The format string.
  * \return The number of bytes written to \a string or -1 on error
  */
-int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
-			 const char *fmt);
+صحیح image_cache_snentryf(نویسه *string, size_t size, unsigned صحیح entryn,
+			 ثابت نویسه *fmt);
 
 /**
  * Fill a buffer with information about the image cache using a format.
@@ -167,7 +167,7 @@ int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
  * \return The number of bytes written to \a string or -1 on error
  */
 
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
+صحیح image_cache_snsummaryf(نویسه *string, size_t size, ثابت نویسه *fmt);
 
 /********* Image content handler generic cache callbacks ************/
 
@@ -178,17 +178,17 @@ int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
  * callback. Performs all neccissary cache lookups and conversions and
  * calls the bitmap plot function in the redraw context.
  */
-bool image_cache_redraw(struct content *c, 
-			struct content_redraw_data *data,
-			const struct rect *clip, 
-			const struct redraw_context *ctx);
+bool image_cache_redraw(ساختار content *c, 
+			ساختار content_redraw_data *data,
+			ثابت ساختار rect *clip, 
+			ثابت ساختار redraw_context *ctx);
 
-void image_cache_destroy(struct content *c);
+تهی image_cache_destroy(ساختار content *c);
 
-void *image_cache_get_internal(const struct content *c, void *context);
+تهی *image_cache_get_internal(ثابت ساختار content *c, تهی *context);
 
-bool image_cache_is_opaque(struct content *c);
+bool image_cache_is_opaque(ساختار content *c);
 
-content_type image_cache_content_type(void);
+content_type image_cache_content_type(تهی);
 
 #endif

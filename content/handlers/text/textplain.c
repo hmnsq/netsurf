@@ -23,33 +23,33 @@
  * plain text content handling implementation.
  */
 
-#include <string.h>
-#include <parserutils/input/inputstream.h>
+#شامل <string.h>
+#شامل <parserutils/input/inputstream.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/utf8.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/keypress.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/plotters.h"
-#include "netsurf/layout.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
-#include "content/handlers/css/utils.h"
-#include "desktop/selection.h"
-#include "desktop/gui_internal.h"
+#شامل "utils/errors.h"
+#شامل "utils/corestrings.h"
+#شامل "utils/http.h"
+#شامل "utils/log.h"
+#شامل "utils/messages.h"
+#شامل "utils/utils.h"
+#شامل "utils/utf8.h"
+#شامل "utils/nsoption.h"
+#شامل "netsurf/content.h"
+#شامل "netsurf/keypress.h"
+#شامل "netsurf/browser_window.h"
+#شامل "netsurf/plotters.h"
+#شامل "netsurf/layout.h"
+#شامل "content/content_protected.h"
+#شامل "content/content_factory.h"
+#شامل "content/hlcache.h"
+#شامل "content/textsearch.h"
+#شامل "content/handlers/css/utils.h"
+#شامل "desktop/selection.h"
+#شامل "desktop/gui_internal.h"
 
-#include "text/textplain.h"
+#شامل "text/textplain.h"
 
-struct textplain_line {
+ساختار textplain_سطر {
 	size_t	start;
 	size_t	length;
 };
@@ -57,20 +57,20 @@ struct textplain_line {
 /**
  * plain text content
  */
-typedef struct textplain_content {
-	struct content base;
+تعریفنوع ساختار textplain_content {
+	ساختار content base;
 
 	lwc_string *encoding;
-	void *inputstream;
-	char *utf8_data;
+	تهی *inputstream;
+	نویسه *utf8_data;
 	size_t utf8_data_size;
 	size_t utf8_data_allocated;
-	unsigned long physical_line_count;
-	struct textplain_line *physical_line;
-	int formatted_width;
-	struct browser_window *bw;
+	unsigned long physical_سطر_شمار;
+	ساختار textplain_سطر *physical_سطر;
+	صحیح formatted_width;
+	ساختار browser_window *bw;
 
-	struct selection *sel; /** Selection state */
+	ساختار selection *sel; /** Selection state */
 
 } textplain_content;
 
@@ -81,7 +81,7 @@ typedef struct textplain_content {
 #define TAB_WIDTH 8  /* must be power of 2 currently */
 #define TEXT_SIZE 10 * PLOT_STYLE_SCALE  /* Unscaled text size in pt */
 
-static plot_font_style_t textplain_style = {
+ایستا plot_font_style_t textplain_style = {
 	.family = PLOT_FONT_FAMILY_MONOSPACE,
 	.size = TEXT_SIZE,
 	.weight = 400,
@@ -90,18 +90,18 @@ static plot_font_style_t textplain_style = {
 	.foreground = 0x000000,
 };
 
-static int textplain_tab_width = 256;  /* try for a sensible default */
+ایستا صحیح textplain_tab_width = 256;  /* try for a sensible default */
 
-static lwc_string *textplain_default_charset;
+ایستا lwc_string *textplain_default_charset;
 
 
 /**
  * Clean up after the text content handler
  */
-static void textplain_fini(void)
+ایستا تهی textplain_fini(تهی)
 {
 	lwc_string_unref(textplain_default_charset);
-	textplain_default_charset = NULL;
+	textplain_default_charset = پوچ;
 }
 
 
@@ -116,13 +116,13 @@ static void textplain_fini(void)
  * thus preserving whatever charset information we decided on in
  * textplain_create.
  */
-static parserutils_error
-textplain_charset_hack(const uint8_t *data,
+ایستا parserutils_error
+textplain_charset_hack(ثابت uint8_t *data,
 		       size_t len,
 		       uint16_t *mibenum,
 		       uint32_t *source)
 {
-	return PARSERUTILS_OK;
+	بازگشت PARSERUTILS_OK;
 }
 
 
@@ -133,29 +133,29 @@ textplain_charset_hack(const uint8_t *data,
  * \param[in] encoding the encoding of the content.
  * \return NSERROR_OK else appropriate error code.
  */
-static nserror
+ایستا nserror
 textplain_create_internal(textplain_content *c, lwc_string *encoding)
 {
-	char *utf8_data;
+	نویسه *utf8_data;
 	parserutils_inputstream *stream;
 	parserutils_error error;
 
 	textplain_style.size = (nsoption_int(font_size) * PLOT_STYLE_SCALE) / 10;
 
 	utf8_data = malloc(CHUNK);
-	if (utf8_data == NULL)
-		goto no_memory;
+	اگر (utf8_data == پوچ)
+		برو no_memory;
 
 	error = parserutils_inputstream_create(lwc_string_data(encoding), 0,
 					       textplain_charset_hack, &stream);
-	if (error == PARSERUTILS_BADENCODING) {
+	اگر (error == PARSERUTILS_BADENCODING) {
 		/* Fall back to Windows-1252 */
 		error = parserutils_inputstream_create("Windows-1252", 0,
 					textplain_charset_hack, &stream);
 	}
-	if (error != PARSERUTILS_OK) {
-		free(utf8_data);
-		goto no_memory;
+	اگر (error != PARSERUTILS_OK) {
+		آزاد(utf8_data);
+		برو no_memory;
 	}
 
 	c->encoding = lwc_string_ref(encoding);
@@ -163,85 +163,85 @@ textplain_create_internal(textplain_content *c, lwc_string *encoding)
 	c->utf8_data = utf8_data;
 	c->utf8_data_size = 0;
 	c->utf8_data_allocated = CHUNK;
-	c->physical_line = 0;
-	c->physical_line_count = 0;
+	c->physical_سطر = 0;
+	c->physical_سطر_شمار = 0;
 	c->formatted_width = 0;
-	c->bw = NULL;
-	c->sel = selection_create((struct content *)c);
+	c->bw = پوچ;
+	c->sel = selection_create((ساختار content *)c);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 
 no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
+	content_broadcast_error(&c->base, NSERROR_NOMEM, پوچ);
 
-	return NSERROR_NOMEM;
+	بازگشت NSERROR_NOMEM;
 }
 
 
 /**
  * Create a CONTENT_TEXTPLAIN.
  */
-static nserror
-textplain_create(const content_handler *handler,
+ایستا nserror
+textplain_create(ثابت content_handler *handler,
 		 lwc_string *imime_type,
-		 const struct http_parameter *params,
+		 ثابت ساختار http_parameter *params,
 		 llcache_handle *llcache,
-		 const char *fallback_charset,
+		 ثابت نویسه *fallback_charset,
 		 bool quirks,
-		 struct content **c)
+		 ساختار content **c)
 {
 	textplain_content *text;
 	nserror error;
 	lwc_string *encoding;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL) {
-		return NSERROR_NOMEM;
+	text = calloc(1, اندازه(textplain_content));
+	اگر (text == پوچ) {
+		بازگشت NSERROR_NOMEM;
 	}
 
 	error = content__init(&text->base, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(text);
-		return error;
+	اگر (error != NSERROR_OK) {
+		آزاد(text);
+		بازگشت error;
 	}
 
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
 					      &encoding);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		encoding = lwc_string_ref(textplain_default_charset);
 	}
 
 	error = textplain_create_internal(text, encoding);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		lwc_string_unref(encoding);
-		free(text);
-		return error;
+		آزاد(text);
+		بازگشت error;
 	}
 
 	lwc_string_unref(encoding);
 
-	*c = (struct content *) text;
+	*c = (ساختار content *) text;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /**
  * copy utf8 encoded data
  */
-static bool
-textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
+ایستا bool
+textplain_copy_utf8_data(textplain_content *c, ثابت uint8_t *buf, size_t len)
 {
-	if (c->utf8_data_size + len >= c->utf8_data_allocated) {
+	اگر (c->utf8_data_size + len >= c->utf8_data_allocated) {
 		/* Compute next multiple of chunk above the required space */
 		size_t allocated;
-		char *utf8_data;
+		نویسه *utf8_data;
 
 		allocated = (c->utf8_data_size + len + CHUNK - 1) & ~(CHUNK - 1);
 		utf8_data = realloc(c->utf8_data, allocated);
-		if (utf8_data == NULL)
-			return false;
+		اگر (utf8_data == پوچ)
+			بازگشت false;
 
 		c->utf8_data = utf8_data;
 		c->utf8_data_allocated = allocated;
@@ -250,57 +250,57 @@ textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
 	memcpy(c->utf8_data + c->utf8_data_size, buf, len);
 	c->utf8_data_size += len;
 
-	return true;
+	بازگشت true;
 }
 
 
 /**
  * drain input
  */
-static bool
-textplain_drain_input(textplain_content *c,
+ایستا bool
+textplain_drain_درون_داد(textplain_content *c,
 		      parserutils_inputstream *stream,
 		      parserutils_error terminator)
 {
-	static const uint8_t *u_fffd = (const uint8_t *) "\xef\xbf\xbd";
-	const uint8_t *ch;
+	ایستا ثابت uint8_t *u_fffd = (ثابت uint8_t *) "\xef\xbf\xbd";
+	ثابت uint8_t *ch;
 	size_t chlen, offset = 0;
 
-	while (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
+	وقتی (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
 	       terminator) {
 		/* Replace all instances of NUL with U+FFFD */
-		if (chlen == 1 && *ch == 0) {
-			if (offset > 0) {
+		اگر (chlen == 1 && *ch == 0) {
+			اگر (offset > 0) {
 				/* Obtain pointer to start of input data */
 				parserutils_inputstream_peek(stream, 0,
 							     &ch, &chlen);
 				/* Copy from it up to the start of the NUL */
-				if (textplain_copy_utf8_data(c, ch,
+				اگر (textplain_copy_utf8_data(c, ch,
 							     offset) == false)
-					return false;
+					بازگشت false;
 			}
 
 			/* Emit U+FFFD */
-			if (textplain_copy_utf8_data(c, u_fffd, 3) == false)
-				return false;
+			اگر (textplain_copy_utf8_data(c, u_fffd, 3) == false)
+				بازگشت false;
 
 			/* Advance inputstream past the NUL we just read */
 			parserutils_inputstream_advance(stream, offset + 1);
 			/* Reset the read offset */
 			offset = 0;
-		} else {
+		} وگرنه {
 			/* Accumulate input */
 			offset += chlen;
 
-			if (offset > CHUNK) {
+			اگر (offset > CHUNK) {
 				/* Obtain pointer to start of input data */
 				parserutils_inputstream_peek(stream, 0,
 							     &ch, &chlen);
 
 				/* Emit the data we've read */
-				if (textplain_copy_utf8_data(c, ch,
+				اگر (textplain_copy_utf8_data(c, ch,
 							     offset) == false)
-					return false;
+					بازگشت false;
 
 				/* Advance the inputstream */
 				parserutils_inputstream_advance(stream, offset);
@@ -310,73 +310,73 @@ textplain_drain_input(textplain_content *c,
 		}
 	}
 
-	if (offset > 0) {
+	اگر (offset > 0) {
 		/* Obtain pointer to start of input data */
 		parserutils_inputstream_peek(stream, 0, &ch, &chlen);
 		/* Emit any data remaining */
-		if (textplain_copy_utf8_data(c, ch, offset) == false)
-			return false;
+		اگر (textplain_copy_utf8_data(c, ch, offset) == false)
+			بازگشت false;
 
 		/* Advance the inputstream past the data we've read */
 		parserutils_inputstream_advance(stream, offset);
 	}
 
-	return true;
+	بازگشت true;
 }
 
 
 /**
  * Process data for CONTENT_TEXTPLAIN.
  */
-static bool
-textplain_process_data(struct content *c, const char *data, unsigned int size)
+ایستا bool
+textplain_process_data(ساختار content *c, ثابت نویسه *data, unsigned صحیح size)
 {
 	textplain_content *text = (textplain_content *) c;
 	parserutils_inputstream *stream = text->inputstream;
 	parserutils_error error;
 
 	error = parserutils_inputstream_append(stream,
-					       (const uint8_t *) data, size);
-	if (error != PARSERUTILS_OK) {
-		goto no_memory;
+					       (ثابت uint8_t *) data, size);
+	اگر (error != PARSERUTILS_OK) {
+		برو no_memory;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_NEEDDATA) == false)
-		goto no_memory;
+	اگر (textplain_drain_درون_داد(text, stream, PARSERUTILS_NEEDDATA) == false)
+		برو no_memory;
 
-	return true;
+	بازگشت true;
 
 no_memory:
-	content_broadcast_error(c, NSERROR_NOMEM, NULL);
-	return false;
+	content_broadcast_error(c, NSERROR_NOMEM, پوچ);
+	بازگشت false;
 }
 
 
 /**
  * Convert a CONTENT_TEXTPLAIN for display.
  */
-static bool textplain_convert(struct content *c)
+ایستا bool textplain_convert(ساختار content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 	parserutils_inputstream *stream = text->inputstream;
 	parserutils_error error;
 
-	error = parserutils_inputstream_append(stream, NULL, 0);
-	if (error != PARSERUTILS_OK) {
-		return false;
+	error = parserutils_inputstream_append(stream, پوچ, 0);
+	اگر (error != PARSERUTILS_OK) {
+		بازگشت false;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_EOF) == false)
-		return false;
+	اگر (textplain_drain_درون_داد(text, stream, PARSERUTILS_EOF) == false)
+		بازگشت false;
 
 	parserutils_inputstream_destroy(stream);
-	text->inputstream = NULL;
+	text->inputstream = پوچ;
 
 	content_set_ready(c);
 	content_set_done(c);
 	content_set_status(c, messages_get("Done"));
 
-	return true;
+	بازگشت true;
 }
 
 
@@ -385,30 +385,30 @@ static bool textplain_convert(struct content *c)
  *
  * \return Line height, in pixels
  */
-static float textplain_line_height(void)
+ایستا اعشاری textplain_سطر_height(تهی)
 {
 	/* Size is in points, so convert to pixels.
 	 * Then use a constant line height of 1.2 x font size.
 	 */
-	return FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
+	بازگشت FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
 }
 
 
 /**
  * Reformat a CONTENT_TEXTPLAIN to a new width.
  */
-static void textplain_reformat(struct content *c, int width, int height)
+ایستا تهی textplain_reformat(ساختار content *c, صحیح width, صحیح height)
 {
 	textplain_content *text = (textplain_content *) c;
-	char *utf8_data = text->utf8_data;
+	نویسه *utf8_data = text->utf8_data;
 	size_t utf8_data_size = text->utf8_data_size;
-	unsigned long line_count = 0;
-	struct textplain_line *line = text->physical_line;
-	struct textplain_line *line1;
+	unsigned long سطر_شمار = 0;
+	ساختار textplain_سطر *سطر = text->physical_سطر;
+	ساختار textplain_سطر *line1;
 	size_t i, space, col;
 	size_t columns = 80;
-	int character_width;
-	size_t line_start;
+	صحیح character_width;
+	size_t سطر_start;
 	nserror res;
 
 	NSLOG(netsurf, INFO, "content %p w:%d h:%d", c, width, height);
@@ -419,8 +419,8 @@ static void textplain_reformat(struct content *c, int width, int height)
 	res = guit->layout->width(&textplain_style,
 				  "ABCDEFGH", 8,
 				  &character_width);
-	if (res != NSERROR_OK) {
-		return;
+	اگر (res != NSERROR_OK) {
+		بازگشت;
 	}
 
 	columns = (width - MARGIN - MARGIN) * 8 / character_width;
@@ -428,28 +428,28 @@ static void textplain_reformat(struct content *c, int width, int height)
 
 	text->formatted_width = width;
 
-	text->physical_line_count = 0;
+	text->physical_سطر_شمار = 0;
 
-	if (!line) {
-		text->physical_line = line =
-			malloc(sizeof(struct textplain_line) * (1024 + 3));
-		if (!line)
-			goto no_memory;
+	اگر (!سطر) {
+		text->physical_سطر = سطر =
+			malloc(اندازه(ساختار textplain_سطر) * (1024 + 3));
+		اگر (!سطر)
+			برو no_memory;
 	}
 
-	line[line_count++].start = line_start = 0;
+	سطر[سطر_شمار++].start = سطر_start = 0;
 	space = 0;
 	i = 0;
 	col = 0;
-	while (i < utf8_data_size) {
+	وقتی (i < utf8_data_size) {
 		size_t csize; /* number of bytes in character */
 		uint32_t chr;
 		bool term;
 		size_t next_col;
 		parserutils_error perror;
 
-		perror = parserutils_charset_utf8_to_ucs4((const uint8_t *)utf8_data + i, utf8_data_size - i, &chr, &csize);
-		if (perror != PARSERUTILS_OK) {
+		perror = parserutils_charset_utf8_to_ucs4((ثابت uint8_t *)utf8_data + i, utf8_data_size - i, &chr, &csize);
+		اگر (perror != PARSERUTILS_OK) {
 			chr = 0xfffd;
 		}
 
@@ -457,61 +457,61 @@ static void textplain_reformat(struct content *c, int width, int height)
 
 		next_col = col + 1;
 
-		if (chr == '\t') {
+		اگر (chr == '\t') {
 			next_col = (next_col + TAB_WIDTH - 1) & ~(TAB_WIDTH - 1);
 		}
 
-		if (term || next_col >= columns) {
-			if (line_count % 1024 == 0) {
-				line1 = realloc(line,
-						sizeof(struct textplain_line) *
-						(line_count + 1024 + 3));
-				if (!line1)
-					goto no_memory;
-				text->physical_line = line = line1;
+		اگر (term || next_col >= columns) {
+			اگر (سطر_شمار % 1024 == 0) {
+				line1 = realloc(سطر,
+						اندازه(ساختار textplain_سطر) *
+						(سطر_شمار + 1024 + 3));
+				اگر (!line1)
+					برو no_memory;
+				text->physical_سطر = سطر = line1;
 			}
 
-			if (term) {
-				line[line_count-1].length = i - line_start;
+			اگر (term) {
+				سطر[سطر_شمار-1].length = i - سطر_start;
 
 				/* skip second char of CR/LF or LF/CR pair */
-				if (i + 1 < utf8_data_size &&
+				اگر (i + 1 < utf8_data_size &&
 				    utf8_data[i+1] != utf8_data[i] &&
 				    (utf8_data[i+1] == '\n' ||
 				     utf8_data[i+1] == '\r')) {
 					i++;
 				}
-			} else {
-				if (space) {
+			} وگرنه {
+				اگر (space) {
 					/* break at last space in line */
 					i = space;
-					line[line_count-1].length = (i + 1) - line_start;
-				} else
-					line[line_count-1].length = i - line_start;
+					سطر[سطر_شمار-1].length = (i + 1) - سطر_start;
+				} وگرنه
+					سطر[سطر_شمار-1].length = i - سطر_start;
 			}
 
-			line[line_count++].start = line_start = i + 1;
+			سطر[سطر_شمار++].start = سطر_start = i + 1;
 			col = 0;
 			space = 0;
-		} else {
+		} وگرنه {
 			col++;
-			if (chr == ' ')
+			اگر (chr == ' ')
 				space = i;
 		}
 		i += csize;
 	}
-	line[line_count-1].length = i - line[line_count-1].start;
-	line[line_count].start = utf8_data_size;
+	سطر[سطر_شمار-1].length = i - سطر[سطر_شمار-1].start;
+	سطر[سطر_شمار].start = utf8_data_size;
 
-	text->physical_line_count = line_count;
+	text->physical_سطر_شمار = سطر_شمار;
 	c->width = width;
-	c->height = line_count * textplain_line_height() + MARGIN + MARGIN;
+	c->height = سطر_شمار * textplain_سطر_height() + MARGIN + MARGIN;
 
-	return;
+	بازگشت;
 
 no_memory:
-	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", line_count);
-	return;
+	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", سطر_شمار);
+	بازگشت;
 }
 
 
@@ -519,80 +519,80 @@ no_memory:
  * Destroy a CONTENT_TEXTPLAIN and free all resources it owns.
  */
 
-static void textplain_destroy(struct content *c)
+ایستا تهی textplain_destroy(ساختار content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
 	lwc_string_unref(text->encoding);
 
-	if (text->inputstream != NULL) {
+	اگر (text->inputstream != پوچ) {
 		parserutils_inputstream_destroy(text->inputstream);
 	}
 
-	if (text->physical_line != NULL) {
-		free(text->physical_line);
+	اگر (text->physical_سطر != پوچ) {
+		آزاد(text->physical_سطر);
 	}
 
-	if (text->utf8_data != NULL) {
-		free(text->utf8_data);
+	اگر (text->utf8_data != پوچ) {
+		آزاد(text->utf8_data);
 	}
 
-	if (text->sel != NULL) {
+	اگر (text->sel != پوچ) {
 		selection_destroy(text->sel);
 	}
 }
 
 
-static nserror textplain_clone(const struct content *old, struct content **newc)
+ایستا nserror textplain_clone(ثابت ساختار content *old, ساختار content **newc)
 {
-	const textplain_content *old_text = (textplain_content *) old;
+	ثابت textplain_content *old_text = (textplain_content *) old;
 	textplain_content *text;
 	nserror error;
-	const uint8_t *data;
+	ثابت uint8_t *data;
 	size_t size;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL)
-		return NSERROR_NOMEM;
+	text = calloc(1, اندازه(textplain_content));
+	اگر (text == پوچ)
+		بازگشت NSERROR_NOMEM;
 
 	error = content__clone(old, &text->base);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		content_destroy(&text->base);
-		return error;
+		بازگشت error;
 	}
 
 	/* Simply replay create/process/convert */
 	error = textplain_create_internal(text, old_text->encoding);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		content_destroy(&text->base);
-		return error;
+		بازگشت error;
 	}
 
 	data = content__get_source_data(&text->base, &size);
-	if (size > 0) {
-		if (textplain_process_data(&text->base,
-					   (const char *)data,
+	اگر (size > 0) {
+		اگر (textplain_process_data(&text->base,
+					   (ثابت نویسه *)data,
 					   size) == false) {
 			content_destroy(&text->base);
-			return NSERROR_NOMEM;
+			بازگشت NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	اگر (old->status == CONTENT_STATUS_READY ||
 	    old->status == CONTENT_STATUS_DONE) {
-		if (textplain_convert(&text->base) == false) {
+		اگر (textplain_convert(&text->base) == false) {
 			content_destroy(&text->base);
-			return NSERROR_CLONE_FAILED;
+			بازگشت NSERROR_CLONE_FAILED;
 		}
 	}
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
-static content_type textplain_content_type(void)
+ایستا content_type textplain_content_type(تهی)
 {
-	return CONTENT_TEXTPLAIN;
+	بازگشت CONTENT_TEXTPLAIN;
 }
 
 
@@ -609,52 +609,52 @@ static content_type textplain_content_type(void)
  * \param[in] dir direction of search if not within line
  * \return byte offset of character containing (or nearest to) point
  */
-static size_t
-textplain_offset_from_coords(struct content *c, int x, int y, int dir)
+ایستا size_t
+textplain_offset_from_coords(ساختار content *c, صحیح x, صحیح y, صحیح dir)
 {
 	textplain_content *textc = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	struct textplain_line *line;
-	const char *text;
+	اعشاری سطر_height = textplain_سطر_height();
+	ساختار textplain_سطر *سطر;
+	ثابت نویسه *text;
 	unsigned nlines;
 	size_t length;
-	int idx;
+	صحیح idx;
 
-	assert(c != NULL);
+	أكد(c != پوچ);
 
-	y = (int)((float)(y - MARGIN) / line_height);
+	y = (صحیح)((اعشاری)(y - MARGIN) / سطر_height);
 	x -= MARGIN;
 
-	nlines = textc->physical_line_count;
-	if (!nlines)
-		return 0;
+	nlines = textc->physical_سطر_شمار;
+	اگر (!nlines)
+		بازگشت 0;
 
-	if (y <= 0) y = 0;
-	else if ((unsigned)y >= nlines)
+	اگر (y <= 0) y = 0;
+	وگرنه اگر ((unsigned)y >= nlines)
 		y = nlines - 1;
 
-	line = &textc->physical_line[y];
-	text = textc->utf8_data + line->start;
-	length = line->length;
+	سطر = &textc->physical_سطر[y];
+	text = textc->utf8_data + سطر->start;
+	length = سطر->length;
 	idx = 0;
 
-	while (x > 0) {
+	وقتی (x > 0) {
 		size_t next_offset = 0;
-		int width = INT_MAX;
+		صحیح width = INT_MAX;
 
-		while (next_offset < length && text[next_offset] != '\t') {
+		وقتی (next_offset < length && text[next_offset] != '\t') {
 			next_offset = utf8_next(text, length, next_offset);
 		}
 
-		if (next_offset < length) {
+		اگر (next_offset < length) {
 			guit->layout->width(&textplain_style,
 					    text,
 					    next_offset,
 					    &width);
 		}
 
-		if (x <= width) {
-			int pixel_offset;
+		اگر (x <= width) {
+			صحیح pixel_offset;
 			size_t char_offset;
 
 			guit->layout->position(&textplain_style,
@@ -662,7 +662,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 					       &char_offset, &pixel_offset);
 
 			idx += char_offset;
-			break;
+			بشکن;
 		}
 
 		x -= width;
@@ -672,7 +672,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 
 		/* check if it's within the tab */
 		width = textplain_tab_width - (width % textplain_tab_width);
-		if (x <= width) break;
+		اگر (x <= width) بشکن;
 
 		x -= width;
 		length--;
@@ -680,7 +680,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 		idx++;
 	}
 
-	return line->start + idx;
+	بازگشت سطر->start + idx;
 }
 
 
@@ -693,44 +693,44 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
  * \param x	  coordinate of mouse
  * \param y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_action(struct content *c,
-		       struct browser_window *bw,
+ایستا nserror
+textplain_mouse_action(ساختار content *c,
+		       ساختار browser_window *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       صحیح x, صحیح y)
 {
 	textplain_content *text = (textplain_content *) c;
 	browser_pointer_shape pointer = BROWSER_POINTER_DEFAULT;
-	union content_msg_data msg_data;
-	const char *status = 0;
+	اجتماع content_پیام_data پیام_data;
+	ثابت نویسه *status = 0;
 	size_t idx;
-	int dir = 0;
+	صحیح dir = 0;
 
-	browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+	browser_window_set_drag_type(bw, DRAGGING_NONE, پوچ);
 
 	idx = textplain_offset_from_coords(c, x, y, dir);
-	if (selection_click(text->sel, text->bw, mouse, idx)) {
+	اگر (selection_click(text->sel, text->bw, mouse, idx)) {
 
-		if (selection_dragging(text->sel)) {
+		اگر (selection_dragging(text->sel)) {
 			browser_window_set_drag_type(bw,
-						     DRAGGING_SELECTION, NULL);
+						     DRAGGING_SELECTION, پوچ);
 			status = messages_get("Selecting");
 		}
 
-	} else {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+	} وگرنه {
+		اگر (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
 			browser_window_page_drag_start(bw, x, y);
 			pointer = BROWSER_POINTER_MOVE;
 		}
 	}
 
-	msg_data.explicit_status_text = status;
-	content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+	پیام_data.explicit_status_text = status;
+	content_broadcast(c, CONTENT_پیام_STATUS, &پیام_data);
 
-	msg_data.pointer = pointer;
-	content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	پیام_data.pointer = pointer;
+	content_broadcast(c, CONTENT_پیام_POINTER, &پیام_data);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
@@ -743,46 +743,46 @@ textplain_mouse_action(struct content *c,
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_track(struct content *c,
-		      struct browser_window *bw,
+ایستا nserror
+textplain_mouse_track(ساختار content *c,
+		      ساختار browser_window *bw,
 		      browser_mouse_state mouse,
-		      int x, int y)
+		      صحیح x, صحیح y)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	if (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
-		int dir = -1;
+	اگر (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
+		صحیح dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel))
+		اگر (selection_dragging_start(text->sel))
 			dir = 1;
 
 		idx = textplain_offset_from_coords(c, x, y, dir);
 		selection_track(text->sel, mouse, idx);
 
-		browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+		browser_window_set_drag_type(bw, DRAGGING_NONE, پوچ);
 	}
 
-	switch (browser_window_get_drag_type(bw)) {
+	انتخاب (browser_window_get_drag_type(bw)) {
 
-	case DRAGGING_SELECTION: {
-		int dir = -1;
+	حالت DRAGGING_SELECTION: {
+		صحیح dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel)) dir = 1;
+		اگر (selection_dragging_start(text->sel)) dir = 1;
 
 		idx = textplain_offset_from_coords(c, x, y, dir);
 		selection_track(text->sel, mouse, idx);
 	}
-		break;
+		بشکن;
 
-	default:
+	پیشفرض:
 		textplain_mouse_action(c, bw, mouse, x, y);
-		break;
+		بشکن;
 	}
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
@@ -793,30 +793,30 @@ textplain_mouse_track(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-static bool textplain_keypress(struct content *c, uint32_t key)
+ایستا bool textplain_keypress(ساختار content *c, uint32_t کلید)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct selection *sel = text->sel;
+	ساختار selection *sel = text->sel;
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
+	انتخاب (کلید) {
+	حالت NS_کلید_COPY_SELECTION:
 		selection_copy_to_clipboard(sel);
-		return true;
+		بازگشت true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	حالت NS_کلید_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		بازگشت true;
 
-	case NS_KEY_SELECT_ALL:
+	حالت NS_کلید_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		بازگشت true;
 
-	case NS_KEY_ESCAPE:
+	حالت NS_کلید_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		بازگشت selection_clear(sel, true);
 	}
 
-	return false;
+	بازگشت false;
 }
 
 
@@ -838,18 +838,18 @@ static bool textplain_keypress(struct content *c, uint32_t key)
  * \param ctx	    current redraw context
  * \return true iff successful and redraw should proceed
  */
-static bool
-text_draw(const char *utf8_text,
+ایستا bool
+text_draw(ثابت نویسه *utf8_text,
 	    size_t utf8_len,
 	    size_t offset,
-	    int x,
-	    int y,
-	    const struct rect *clip,
-	    int height,
-	    float scale,
+	    صحیح x,
+	    صحیح y,
+	    ثابت ساختار rect *clip,
+	    صحیح height,
+	    اعشاری scale,
 	    textplain_content *text,
-	    const struct selection *sel,
-	    const struct redraw_context *ctx)
+	    ثابت ساختار selection *sel,
+	    ثابت ساختار redraw_context *ctx)
 {
 	bool highlighted = false;
 	plot_font_style_t plot_fstyle;
@@ -860,13 +860,13 @@ text_draw(const char *utf8_text,
 	plot_fstyle.size *= scale;
 
 	/* is this box part of a selection? */
-	if (ctx->interactive == true) {
+	اگر (ctx->interactive == true) {
 		unsigned len = utf8_len;
 		unsigned start_idx;
 		unsigned end_idx;
 
 		/* first try the browser window's current selection */
-		if (selection_highlighted(sel,
+		اگر (selection_highlighted(sel,
 					  offset,
 					  offset + len,
 					  &start_idx,
@@ -875,8 +875,8 @@ text_draw(const char *utf8_text,
 		}
 
 		/* what about the current search operation, if any? */
-		if (!highlighted &&
-		    (text->base.textsearch.context != NULL) &&
+		اگر (!highlighted &&
+		    (text->base.textsearch.context != پوچ) &&
 		    content_textsearch_ishighlighted(text->base.textsearch.context,
 						     offset,
 						     offset + len,
@@ -886,20 +886,20 @@ text_draw(const char *utf8_text,
 		}
 
 		/* \todo make search terms visible within selected text */
-		if (highlighted) {
-			struct rect r;
+		اگر (highlighted) {
+			ساختار rect r;
 			unsigned endtxt_idx = end_idx;
 			bool clip_changed = false;
 			bool text_visible = true;
-			int startx, endx;
+			صحیح startx, endx;
 			plot_style_t pstyle_fill_hback = *plot_style_fill_white;
 			plot_font_style_t fstyle_hback = plot_fstyle;
 
-			if (end_idx > utf8_len) {
+			اگر (end_idx > utf8_len) {
 				/* adjust for trailing space, not present in
 				 * utf8_text
 				 */
-				assert(end_idx == utf8_len + 1);
+				أكد(end_idx == utf8_len + 1);
 				endtxt_idx = utf8_len;
 			}
 
@@ -907,7 +907,7 @@ text_draw(const char *utf8_text,
 						  utf8_text,
 						  start_idx,
 						  &startx);
-			if (res != NSERROR_OK) {
+			اگر (res != NSERROR_OK) {
 				startx = 0;
 			}
 
@@ -915,25 +915,25 @@ text_draw(const char *utf8_text,
 						  utf8_text,
 						  endtxt_idx,
 						  &endx);
-			if (res != NSERROR_OK) {
+			اگر (res != NSERROR_OK) {
 				endx = 0;
 			}
 
-			if (scale != 1.0) {
+			اگر (scale != 1.0) {
 				startx *= scale;
 				endx *= scale;
 			}
 
 			/* draw any text preceding highlighted portion */
-			if (start_idx > 0) {
+			اگر (start_idx > 0) {
 				res = ctx->plot->text(ctx,
 					      &plot_fstyle,
 					      x,
-					      y + (int)(height * 0.75 * scale),
+					      y + (صحیح)(height * 0.75 * scale),
 					      utf8_text,
 					      start_idx);
-				if (res != NSERROR_OK) {
-					return false;
+				اگر (res != NSERROR_OK) {
+					بازگشت false;
 				}
 			}
 
@@ -945,26 +945,26 @@ text_draw(const char *utf8_text,
 			r.x1 = x + endx;
 			r.y1 = y + height * scale;
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_hback, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				بازگشت false;
 			}
 
-			if (start_idx > 0) {
-				int px0 = max(x + startx, clip->x0);
-				int px1 = min(x + endx, clip->x1);
+			اگر (start_idx > 0) {
+				صحیح px0 = max(x + startx, clip->x0);
+				صحیح px1 = min(x + endx, clip->x1);
 
-				if (px0 < px1) {
+				اگر (px0 < px1) {
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = px1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					اگر (res != NSERROR_OK) {
+						بازگشت false;
 					}
 
 					clip_changed = true;
-				} else {
+				} وگرنه {
 					text_visible = false;
 				}
 			}
@@ -974,28 +974,28 @@ text_draw(const char *utf8_text,
 			fstyle_hback.foreground = colour_to_bw_furthest(
 				pstyle_fill_hback.fill_colour);
 
-			if (text_visible &&
+			اگر (text_visible &&
 			    (ctx->plot->text(ctx,
 					     &fstyle_hback,
 					     x,
-					     y + (int)(height * 0.75 * scale),
+					     y + (صحیح)(height * 0.75 * scale),
 					     utf8_text,
 					     endtxt_idx) != NSERROR_OK)) {
-				return false;
+				بازگشت false;
 			}
 
 			/* draw any text succeeding highlighted portion */
-			if (endtxt_idx < utf8_len) {
-				int px0 = max(x + endx, clip->x0);
-				if (px0 < clip->x1) {
+			اگر (endtxt_idx < utf8_len) {
+				صحیح px0 = max(x + endx, clip->x0);
+				اگر (px0 < clip->x1) {
 
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = clip->x1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					اگر (res != NSERROR_OK) {
+						بازگشت false;
 					}
 
 					clip_changed = true;
@@ -1003,34 +1003,34 @@ text_draw(const char *utf8_text,
 					res = ctx->plot->text(ctx,
 							      &plot_fstyle,
 							      x,
-							      y + (int)(height * 0.75 * scale),
+							      y + (صحیح)(height * 0.75 * scale),
 							      utf8_text,
 							      utf8_len);
-					if (res != NSERROR_OK) {
-						return false;
+					اگر (res != NSERROR_OK) {
+						بازگشت false;
 					}
 				}
 			}
 
-			if (clip_changed &&
+			اگر (clip_changed &&
 			    (ctx->plot->clip(ctx, clip) != NSERROR_OK)) {
-				return false;
+				بازگشت false;
 			}
 		}
 	}
 
-	if (!highlighted) {
+	اگر (!highlighted) {
 		res = ctx->plot->text(ctx,
 				      &plot_fstyle,
 				      x,
-				      y + (int) (height * 0.75 * scale),
+				      y + (صحیح) (height * 0.75 * scale),
 				      utf8_text,
 				      utf8_len);
-		if (res != NSERROR_OK) {
-			return false;
+		اگر (res != NSERROR_OK) {
+			بازگشت false;
 		}
 	}
-	return true;
+	بازگشت true;
 }
 
 
@@ -1045,51 +1045,51 @@ text_draw(const char *utf8_text,
  * \param  ctx	 current redraw context
  * \return true if successful, false otherwise
  */
-static bool
-textplain_redraw(struct content *c,
-		 struct content_redraw_data *data,
-		 const struct rect *clip,
-		 const struct redraw_context *ctx)
+ایستا bool
+textplain_redraw(ساختار content *c,
+		 ساختار content_redraw_data *data,
+		 ثابت ساختار rect *clip,
+		 ثابت ساختار redraw_context *ctx)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct browser_window *bw = text->bw;
-	char *utf8_data = text->utf8_data;
+	ساختار browser_window *bw = text->bw;
+	نویسه *utf8_data = text->utf8_data;
 	long lineno;
-	int x = data->x;
-	int y = data->y;
-	unsigned long line_count = text->physical_line_count;
-	float line_height = textplain_line_height();
-	float scaled_line_height = line_height * data->scale;
-	long line0 = (clip->y0 - y * data->scale) / scaled_line_height - 1;
-	long line1 = (clip->y1 - y * data->scale) / scaled_line_height + 1;
-	struct textplain_line *line = text->physical_line;
+	صحیح x = data->x;
+	صحیح y = data->y;
+	unsigned long سطر_شمار = text->physical_سطر_شمار;
+	اعشاری سطر_height = textplain_سطر_height();
+	اعشاری scaled_سطر_height = سطر_height * data->scale;
+	long line0 = (clip->y0 - y * data->scale) / scaled_سطر_height - 1;
+	long line1 = (clip->y1 - y * data->scale) / scaled_سطر_height + 1;
+	ساختار textplain_سطر *سطر = text->physical_سطر;
 	size_t length;
 	plot_style_t *plot_style_highlight;
 	nserror res;
 
-	if (line0 < 0)
+	اگر (line0 < 0)
 		line0 = 0;
-	if (line1 < 0)
+	اگر (line1 < 0)
 		line1 = 0;
-	if (line_count < (unsigned long) line0)
-		line0 = line_count;
-	if (line_count < (unsigned long) line1)
-		line1 = line_count;
-	if (line1 < line0)
+	اگر (سطر_شمار < (unsigned long) line0)
+		line0 = سطر_شمار;
+	اگر (سطر_شمار < (unsigned long) line1)
+		line1 = سطر_شمار;
+	اگر (line1 < line0)
 		line1 = line0;
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_white, clip);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		بازگشت false;
 	}
 
-	if (!line)
-		return true;
+	اگر (!سطر)
+		بازگشت true;
 
 	/* choose a suitable background colour for any highlighted text */
-	if ((data->background_colour & 0x808080) == 0x808080)
+	اگر ((data->background_colour & 0x808080) == 0x808080)
 		plot_style_highlight = plot_style_fill_black;
-	else
+	وگرنه
 		plot_style_highlight = plot_style_fill_white;
 
 	/* Set up font plot style */
@@ -1097,55 +1097,55 @@ textplain_redraw(struct content *c,
 
 	x = (x + MARGIN) * data->scale;
 	y = (y + MARGIN) * data->scale;
-	for (lineno = line0; lineno != line1; lineno++) {
-		const char *text_d = utf8_data + line[lineno].start;
-		int tab_width = textplain_tab_width * data->scale;
+	برای (lineno = line0; lineno != line1; lineno++) {
+		ثابت نویسه *text_d = utf8_data + سطر[lineno].start;
+		صحیح tab_width = textplain_tab_width * data->scale;
 		size_t offset = 0;
-		int tx = x;
+		صحیح tx = x;
 
-		if (!tab_width) tab_width = 1;
+		اگر (!tab_width) tab_width = 1;
 
-		length = line[lineno].length;
-		if (!length)
-			continue;
+		length = سطر[lineno].length;
+		اگر (!length)
+			ادامه;
 
-		while (offset < length) {
+		وقتی (offset < length) {
 			size_t next_offset = offset;
-			int width;
-			int ntx;
+			صحیح width;
+			صحیح ntx;
 			nserror res;
 
-			while ((next_offset < length) &&
+			وقتی ((next_offset < length) &&
 			       (text_d[next_offset] != '\t')) {
 				next_offset = utf8_next(text_d,
 							length,
 							next_offset);
 			}
 
-			if (!text_draw(text_d + offset,
+			اگر (!text_draw(text_d + offset,
 				       next_offset - offset,
-				       line[lineno].start + offset,
+				       سطر[lineno].start + offset,
 				       tx,
-				       y + (lineno * scaled_line_height),
+				       y + (lineno * scaled_سطر_height),
 				       clip,
-				       line_height,
+				       سطر_height,
 				       data->scale,
 				       text,
 				       text->sel,
 				       ctx)) {
-				return false;
+				بازگشت false;
 			}
 
-			if (next_offset >= length)
-				break;
+			اگر (next_offset >= length)
+				بشکن;
 
 			res = guit->layout->width(&textplain_style,
 						  &text_d[offset],
 						  next_offset - offset,
 						  &width);
 			/* locate end of string and align to next tab position */
-			if (res == NSERROR_OK) {
-				tx += (int)(width * data->scale);
+			اگر (res == NSERROR_OK) {
+				tx += (صحیح)(width * data->scale);
 			}
 
 			ntx = x + ((1 + (tx - x) / tab_width) * tab_width);
@@ -1156,13 +1156,13 @@ textplain_redraw(struct content *c,
 			 *  with background of the selected text
 			 */
 
-			if (bw) {
-				unsigned tab_ofst = line[lineno].start + next_offset;
-				struct selection *sel = text->sel;
+			اگر (bw) {
+				unsigned tab_ofst = سطر[lineno].start + next_offset;
+				ساختار selection *sel = text->sel;
 				bool highlighted = false;
 
 				unsigned start_idx, end_idx;
-				if (selection_highlighted(sel,
+				اگر (selection_highlighted(sel,
 							  tab_ofst,
 							  tab_ofst + 1,
 							  &start_idx,
@@ -1171,10 +1171,10 @@ textplain_redraw(struct content *c,
 				}
 
 
-				if (!highlighted &&
-				    (c->textsearch.context != NULL)) {
+				اگر (!highlighted &&
+				    (c->textsearch.context != پوچ)) {
 					unsigned start_idx, end_idx;
-					if (content_textsearch_ishighlighted(
+					اگر (content_textsearch_ishighlighted(
 						    c->textsearch.context,
 						    tab_ofst,
 						    tab_ofst + 1,
@@ -1184,17 +1184,17 @@ textplain_redraw(struct content *c,
 					}
 				}
 
-				if (highlighted) {
-					struct rect rect;
+				اگر (highlighted) {
+					ساختار rect rect;
 					rect.x0 = tx;
-					rect.y0 = y + (lineno * scaled_line_height);
+					rect.y0 = y + (lineno * scaled_سطر_height);
 					rect.x1 = ntx;
-					rect.y1 = rect.y0 + scaled_line_height;
+					rect.y1 = rect.y0 + scaled_سطر_height;
 					res = ctx->plot->rectangle(ctx,
 								   plot_style_highlight,
 								   &rect);
-					if (res != NSERROR_OK) {
-						return false;
+					اگر (res != NSERROR_OK) {
+						بازگشت false;
 					}
 				}
 			}
@@ -1204,18 +1204,18 @@ textplain_redraw(struct content *c,
 		}
 	}
 
-	return true;
+	بازگشت true;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being opened.
  */
-static nserror
-textplain_open(struct content *c,
-	       struct browser_window *bw,
-	       struct content *page,
-	       struct object_params *params)
+ایستا nserror
+textplain_open(ساختار content *c,
+	       ساختار browser_window *bw,
+	       ساختار content *page,
+	       ساختار object_params *params)
 {
 	textplain_content *text = (textplain_content *) c;
 
@@ -1224,31 +1224,31 @@ textplain_open(struct content *c,
 	/* text selection */
 	selection_init(text->sel);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being closed.
  */
-static nserror textplain_close(struct content *c)
+ایستا nserror textplain_close(ساختار content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	text->bw = NULL;
+	text->bw = پوچ;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /**
  * Return an textplain content's selection context
  */
-static char *textplain_get_selection(struct content *c)
+ایستا نویسه *textplain_get_selection(ساختار content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	return selection_get_copy(text->sel);
+	بازگشت selection_get_copy(text->sel);
 }
 
 
@@ -1264,16 +1264,16 @@ static char *textplain_get_selection(struct content *c)
  * \param  length  line length
  * \return x ordinate
  */
-static int
-textplain_coord_from_offset(const char *text, size_t offset, size_t length)
+ایستا صحیح
+textplain_coord_from_offset(ثابت نویسه *text, size_t offset, size_t length)
 {
-	int x = 0;
+	صحیح x = 0;
 
-	while (offset > 0) {
+	وقتی (offset > 0) {
 		size_t next_offset = 0;
-		int tx;
+		صحیح tx;
 
-		while (next_offset < offset && text[next_offset] != '\t') {
+		وقتی (next_offset < offset && text[next_offset] != '\t') {
 			next_offset = utf8_next(text, length, next_offset);
 		}
 
@@ -1281,8 +1281,8 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
 
 		x += tx;
 
-		if (next_offset >= offset)
-			break;
+		اگر (next_offset >= offset)
+			بشکن;
 
 		/* align to next tab boundary */
 		next_offset++;
@@ -1292,7 +1292,7 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
 		length -= next_offset;
 	}
 
-	return x;
+	بازگشت x;
 }
 
 
@@ -1302,13 +1302,13 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
  * \param[in] c Content to retrieve line count from
  * \return Number of lines
  */
-static unsigned long textplain_line_count(struct content *c)
+ایستا unsigned long textplain_سطر_شمار(ساختار content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	assert(c != NULL);
+	أكد(c != پوچ);
 
-	return text->physical_line_count;
+	بازگشت text->physical_سطر_شمار;
 }
 
 
@@ -1321,24 +1321,24 @@ static unsigned long textplain_line_count(struct content *c)
  * \param[out] plen    receives length of returned line
  * \return pointer to text, or NULL if invalid line number
  */
-static char *
-textplain_get_line(struct content *c,
+ایستا نویسه *
+textplain_get_سطر(ساختار content *c,
 		   unsigned lineno,
 		   size_t *poffset,
 		   size_t *plen)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
+	ساختار textplain_سطر *سطر;
 
-	assert(c != NULL);
+	أكد(c != پوچ);
 
-	if (lineno >= text->physical_line_count)
-		return NULL;
-	line = &text->physical_line[lineno];
+	اگر (lineno >= text->physical_سطر_شمار)
+		بازگشت پوچ;
+	سطر = &text->physical_سطر[lineno];
 
-	*poffset = line->start;
-	*plen = line->length;
-	return text->utf8_data + line->start;
+	*poffset = سطر->start;
+	*plen = سطر->length;
+	بازگشت text->utf8_data + سطر->start;
 }
 
 
@@ -1352,31 +1352,31 @@ textplain_get_line(struct content *c,
  * \param[in] offset  byte offset within textual representation
  * \return line number, or -1 if offset invalid (larger than size)
  */
-static int textplain_find_line(struct content *c, unsigned offset)
+ایستا صحیح textplain_find_سطر(ساختار content *c, unsigned offset)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
-	int nlines;
-	int lineno = 0;
+	ساختار textplain_سطر *سطر;
+	صحیح nlines;
+	صحیح lineno = 0;
 
-	assert(c != NULL);
+	أكد(c != پوچ);
 
-	line = text->physical_line;
-	nlines = text->physical_line_count;
+	سطر = text->physical_سطر;
+	nlines = text->physical_سطر_شمار;
 
-	if (offset > text->utf8_data_size) {
-		return -1;
+	اگر (offset > text->utf8_data_size) {
+		بازگشت -1;
 	}
 
 /* \todo - implement binary search here */
-	while (lineno < nlines && line[lineno].start < offset) {
+	وقتی (lineno < nlines && سطر[lineno].start < offset) {
 		lineno++;
 	}
-	if (line[lineno].start > offset) {
+	اگر (سطر[lineno].start > offset) {
 		lineno--;
 	}
 
-	return lineno;
+	بازگشت lineno;
 }
 
 
@@ -1390,28 +1390,28 @@ static int textplain_find_line(struct content *c, unsigned offset)
  * \param case_sens whether to perform a case sensitive search
  * \return NSERROR_OK on success else error code on faliure
  */
-static nserror
-textplain_textsearch_find(struct content *c,
-			  struct textsearch_context *context,
-			  const char *pattern,
-			  int p_len,
+ایستا nserror
+textplain_textsearch_find(ساختار content *c,
+			  ساختار textsearch_context *context,
+			  ثابت نویسه *pattern,
+			  صحیح p_len,
 			  bool case_sens)
 {
-	int nlines = textplain_line_count(c);
-	int line;
+	صحیح nlines = textplain_سطر_شمار(c);
+	صحیح سطر;
 	nserror res = NSERROR_OK;
 
-	for(line = 0; line < nlines; line++) {
+	برای(سطر = 0; سطر < nlines; سطر++) {
 		size_t offset, length;
-		const char *text;
+		ثابت نویسه *text;
 
-		text = textplain_get_line(c, line, &offset, &length);
-		if (text) {
-			while (length > 0) {
+		text = textplain_get_سطر(c, سطر, &offset, &length);
+		اگر (text) {
+			وقتی (length > 0) {
 				unsigned match_length;
 				size_t start_idx;
-				const char *new_text;
-				const char *pos;
+				ثابت نویسه *new_text;
+				ثابت نویسه *pos;
 
 				pos = content_textsearch_find_pattern(
 						text,
@@ -1420,18 +1420,18 @@ textplain_textsearch_find(struct content *c,
 						p_len,
 						case_sens,
 						&match_length);
-				if (!pos)
-					break;
+				اگر (!pos)
+					بشکن;
 
 				/* found string in line => add to list */
 				start_idx = offset + (pos - text);
 				res = content_textsearch_add_match(context,
 						start_idx,
 						start_idx + match_length,
-						NULL,
-						NULL);
-				if (res != NSERROR_OK) {
-					return res;
+						پوچ,
+						پوچ);
+				اگر (res != NSERROR_OK) {
+					بازگشت res;
 				}
 
 				new_text = pos + match_length;
@@ -1442,7 +1442,7 @@ textplain_textsearch_find(struct content *c,
 		}
 	}
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -1455,56 +1455,56 @@ textplain_textsearch_find(struct content *c,
  * \param[in] end   byte offset of end
  * \param[out] r    rectangle to be completed
  */
-static void
-textplain_coords_from_range(struct content *c,
+ایستا تهی
+textplain_coords_from_range(ساختار content *c,
 			    unsigned start,
 			    unsigned end,
-			    struct rect *r)
+			    ساختار rect *r)
 {
 	textplain_content *text = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	char *utf8_data;
-	struct textplain_line *line;
+	اعشاری سطر_height = textplain_سطر_height();
+	نویسه *utf8_data;
+	ساختار textplain_سطر *سطر;
 	unsigned lineno = 0;
 	unsigned nlines;
 
-	assert(c != NULL);
-	assert(start <= end);
-	assert(end <= text->utf8_data_size);
+	أكد(c != پوچ);
+	أكد(start <= end);
+	أكد(end <= text->utf8_data_size);
 
 	utf8_data = text->utf8_data;
-	nlines = text->physical_line_count;
-	line = text->physical_line;
+	nlines = text->physical_سطر_شمار;
+	سطر = text->physical_سطر;
 
 	/* find start */
-	lineno = textplain_find_line(c, start);
+	lineno = textplain_find_سطر(c, start);
 
-	r->y0 = (int)(MARGIN + lineno * line_height);
+	r->y0 = (صحیح)(MARGIN + lineno * سطر_height);
 
-	if (lineno + 1 <= nlines || line[lineno + 1].start >= end) {
+	اگر (lineno + 1 <= nlines || سطر[lineno + 1].start >= end) {
 		/* \todo - it may actually be more efficient just to
 		 *   run forwards most of the time
 		 */
 
 		/* find end */
-		lineno = textplain_find_line(c, end);
+		lineno = textplain_find_سطر(c, end);
 
 		r->x0 = 0;
 		r->x1 = text->formatted_width;
-	} else {
+	} وگرنه {
 		/* single line */
-		const char *text = utf8_data + line[lineno].start;
+		ثابت نویسه *text = utf8_data + سطر[lineno].start;
 
 		r->x0 = textplain_coord_from_offset(text,
-						    start - line[lineno].start,
-						    line[lineno].length);
+						    start - سطر[lineno].start,
+						    سطر[lineno].length);
 
 		r->x1 = textplain_coord_from_offset(text,
-						    end - line[lineno].start,
-						    line[lineno].length);
+						    end - سطر[lineno].start,
+						    سطر[lineno].length);
 	}
 
-	r->y1 = (int)(MARGIN + (lineno + 1) * line_height);
+	r->y1 = (صحیح)(MARGIN + (lineno + 1) * سطر_height);
 }
 
 
@@ -1519,8 +1519,8 @@ textplain_coords_from_range(struct content *c,
  * \param[out] plen receives validated length
  * \return pointer to text, or NULL if no text
  */
-static char *
-textplain_get_raw_data(struct content *c,
+ایستا نویسه *
+textplain_get_raw_data(ساختار content *c,
 		       unsigned start,
 		       unsigned end,
 		       size_t *plen)
@@ -1528,79 +1528,79 @@ textplain_get_raw_data(struct content *c,
 	textplain_content *text = (textplain_content *) c;
 	size_t utf8_size;
 
-	assert(c != NULL);
+	أكد(c != پوچ);
 
 	utf8_size = text->utf8_data_size;
 
 	/* any text at all? */
-	if (!utf8_size) return NULL;
+	اگر (!utf8_size) بازگشت پوچ;
 
 	/* clamp to valid offset range */
-	if (start >= utf8_size) start = utf8_size;
-	if (end >= utf8_size) end = utf8_size;
+	اگر (start >= utf8_size) start = utf8_size;
+	اگر (end >= utf8_size) end = utf8_size;
 
 	*plen = end - start;
 
-	return text->utf8_data + start;
+	بازگشت text->utf8_data + start;
 }
 
 
 /**
  * get bounds of a free text search match
  */
-static nserror
-textplain_textsearch_bounds(struct content *c,
+ایستا nserror
+textplain_textsearch_bounds(ساختار content *c,
 			    unsigned start_idx,
 			    unsigned end_idx,
-			    struct box *start_box,
-			    struct box *end_box,
-			    struct rect *bounds)
+			    ساختار box *start_box,
+			    ساختار box *end_box,
+			    ساختار rect *bounds)
 {
 	textplain_coords_from_range(c, start_idx, end_idx, bounds);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /**
  * invalidate a region based on offsets into the text cauing a redraw
  */
-static nserror
-textplain_textselection_redraw(struct content *c,
+ایستا nserror
+textplain_textselection_redraw(ساختار content *c,
 			       unsigned start_idx,
 			       unsigned end_idx)
 {
-	struct rect r;
+	ساختار rect r;
 
-	if (end_idx <= start_idx) {
-		return NSERROR_BAD_PARAMETER;
+	اگر (end_idx <= start_idx) {
+		بازگشت NSERROR_BAD_PARAMETER;
 	}
 
 	textplain_coords_from_range(c, start_idx, end_idx, &r);
 
 	content__request_redraw(c, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
-static nserror
-textplain_textselection_copy(struct content *c,
+ایستا nserror
+textplain_textselection_copy(ساختار content *c,
 			     unsigned start_idx,
 			     unsigned end_idx,
-			     struct selection_string *selstr)
+			     ساختار selection_string *selstr)
 {
-	const char *text;
+	ثابت نویسه *text;
 	size_t length;
 	bool res = false;
 
 	text = textplain_get_raw_data(c, start_idx, end_idx, &length);
-	if (text != NULL) {
-		res = selection_string_append(text, length, false, NULL, selstr);
+	اگر (text != پوچ) {
+		res = selection_string_append(text, length, false, پوچ, selstr);
 	}
-	if (res == false) {
-		return NSERROR_NOMEM;
+	اگر (res == false) {
+		بازگشت NSERROR_NOMEM;
 	}
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
@@ -1610,20 +1610,20 @@ textplain_textselection_copy(struct content *c,
  * \param[in] c Content to retrieve size of
  * \return Size, in bytes, of data
  */
-static nserror
-textplain_textselection_get_end(struct content *c, unsigned *end_idx)
+ایستا nserror
+textplain_textselection_get_end(ساختار content *c, unsigned *end_idx)
 {
 	textplain_content *text = (textplain_content *)c;
 
 	*end_idx = text->utf8_data_size;
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /**
  * plain text content handler table
  */
-static const content_handler textplain_content_handler = {
+ایستا ثابت content_handler textplain_content_handler = {
 	.fini = textplain_fini,
 	.create = textplain_create,
 	.process_data = textplain_process_data,
@@ -1649,7 +1649,7 @@ static const content_handler textplain_content_handler = {
 
 
 /* exported interface documented in html/textplain.h */
-nserror textplain_init(void)
+nserror textplain_init(تهی)
 {
 	lwc_error lerror;
 	nserror error;
@@ -1657,23 +1657,23 @@ nserror textplain_init(void)
 	lerror = lwc_intern_string("Windows-1252",
 				   SLEN("Windows-1252"),
 				   &textplain_default_charset);
-	if (lerror != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	اگر (lerror != lwc_error_ok) {
+		بازگشت NSERROR_NOMEM;
 	}
 
 	error = content_factory_register_handler("text/plain",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
 	error = content_factory_register_handler("application/json",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
-	return error;
+	بازگشت error;
 }
 
 

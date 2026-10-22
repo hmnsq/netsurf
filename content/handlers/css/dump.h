@@ -25,6 +25,6 @@
  * \param stream  Stream to write to
  * \param style   Computed style to dump
  */
-void nscss_dump_computed_style(FILE *stream, const css_computed_style *style);
+تهی nscss_dump_computed_style(FILE *stream, ثابت css_computed_style *style);
 
 #endif

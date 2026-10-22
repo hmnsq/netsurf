@@ -26,18 +26,18 @@
  */
 
 
-#include "utils/errors.h"
-#include "utils/talloc.h"
-#include "utils/nsurl.h"
-#include "netsurf/types.h"
-#include "netsurf/mouse.h"
-#include "desktop/scrollbar.h"
+#شامل "utils/errors.h"
+#شامل "utils/talloc.h"
+#شامل "utils/nsurl.h"
+#شامل "netsurf/types.h"
+#شامل "netsurf/mouse.h"
+#شامل "desktop/scrollbar.h"
 
-#include "html/private.h"
-#include "html/form_internal.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
+#شامل "html/private.h"
+#شامل "html/form_internal.h"
+#شامل "html/interaction.h"
+#شامل "html/box.h"
+#شامل "html/box_manipulate.h"
 
 
 /**
@@ -46,62 +46,62 @@
  * \param b The box being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_talloc_destructor(struct box *b)
+ایستا صحیح box_talloc_destructor(ساختار box *b)
 {
-	struct html_scrollbar_data *data;
+	ساختار html_scrollbar_data *data;
 
-	if ((b->flags & STYLE_OWNED) && b->style != NULL) {
+	اگر ((b->flags & STYLE_OWNED) && b->style != پوچ) {
 		css_computed_style_destroy(b->style);
-		b->style = NULL;
+		b->style = پوچ;
 	}
 
-	if (b->styles != NULL) {
+	اگر (b->styles != پوچ) {
 		css_select_results_destroy(b->styles);
-		b->styles = NULL;
+		b->styles = پوچ;
 	}
 
-	if (b->href != NULL)
+	اگر (b->href != پوچ)
 		nsurl_unref(b->href);
 
 	lwc_string_unref(b->id);
 
-	if (b->node != NULL) {
-		dom_node_unref(b->node);
+	اگر (b->گره != پوچ) {
+		dom_گره_unref(b->گره);
 	}
 
-	if (b->scroll_x != NULL) {
+	اگر (b->scroll_x != پوچ) {
 		data = scrollbar_get_data(b->scroll_x);
 		scrollbar_destroy(b->scroll_x);
-		free(data);
+		آزاد(data);
 	}
 
-	if (b->scroll_y != NULL) {
+	اگر (b->scroll_y != پوچ) {
 		data = scrollbar_get_data(b->scroll_y);
 		scrollbar_destroy(b->scroll_y);
-		free(data);
+		آزاد(data);
 	}
 
-	return 0;
+	بازگشت 0;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
+ساختار box *
 box_create(css_select_results *styles,
 	   css_computed_style *style,
 	   bool style_owned,
 	   nsurl *href,
-	   const char *target,
-	   const char *title,
+	   ثابت نویسه *target,
+	   ثابت نویسه *title,
 	   lwc_string *id,
-	   void *context)
+	   تهی *context)
 {
-	unsigned int i;
-	struct box *box;
+	unsigned صحیح i;
+	ساختار box *box;
 
-	box = talloc(context, struct box);
-	if (!box) {
-		return 0;
+	box = talloc(context, ساختار box);
+	اگر (!box) {
+		بازگشت 0;
 	}
 
 	talloc_set_destructor(box, box_talloc_destructor);
@@ -116,57 +116,57 @@ box_create(css_select_results *styles,
 	box->height = 0;
 	box->descendant_x0 = box->descendant_y0 = 0;
 	box->descendant_x1 = box->descendant_y1 = 0;
-	for (i = 0; i != 4; i++)
+	برای (i = 0; i != 4; i++)
 		box->margin[i] = box->padding[i] = box->border[i].width = 0;
-	box->scroll_x = box->scroll_y = NULL;
+	box->scroll_x = box->scroll_y = پوچ;
 	box->min_width = 0;
 	box->max_width = UNKNOWN_MAX_WIDTH;
 	box->byte_offset = 0;
-	box->text = NULL;
+	box->text = پوچ;
 	box->length = 0;
 	box->space = 0;
-	box->href = (href == NULL) ? NULL : nsurl_ref(href);
+	box->href = (href == پوچ) ? پوچ : nsurl_ref(href);
 	box->target = target;
 	box->title = title;
 	box->columns = 1;
 	box->rows = 1;
 	box->start_column = 0;
-	box->next = NULL;
-	box->prev = NULL;
-	box->children = NULL;
-	box->last = NULL;
-	box->parent = NULL;
-	box->inline_end = NULL;
-	box->float_children = NULL;
-	box->float_container = NULL;
-	box->next_float = NULL;
+	box->next = پوچ;
+	box->prev = پوچ;
+	box->children = پوچ;
+	box->last = پوچ;
+	box->parent = پوچ;
+	box->inline_end = پوچ;
+	box->float_children = پوچ;
+	box->float_container = پوچ;
+	box->next_float = پوچ;
 	box->cached_place_below_level = 0;
-	box->list_value = 1;
-	box->list_marker = NULL;
-	box->col = NULL;
-	box->gadget = NULL;
-	box->usemap = NULL;
+	box->list_مقدار = 1;
+	box->list_marker = پوچ;
+	box->col = پوچ;
+	box->gadget = پوچ;
+	box->usemap = پوچ;
 	box->id = id;
-	box->background = NULL;
-	box->object = NULL;
-	box->object_params = NULL;
-	box->iframe = NULL;
-	box->node = NULL;
+	box->background = پوچ;
+	box->object = پوچ;
+	box->object_params = پوچ;
+	box->iframe = پوچ;
+	box->گره = پوچ;
 
-	return box;
+	بازگشت box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_add_child(struct box *parent, struct box *child)
+تهی box_add_child(ساختار box *parent, ساختار box *child)
 {
-	assert(parent);
-	assert(child);
+	أكد(parent);
+	أكد(child);
 
-	if (parent->children != 0) {	/* has children already */
+	اگر (parent->children != 0) {	/* has children already */
 		parent->last->next = child;
 		child->prev = parent->last;
-	} else {			/* this is the first child */
+	} وگرنه {			/* this is the first child */
 		parent->children = child;
 		child->prev = 0;
 	}
@@ -177,36 +177,36 @@ void box_add_child(struct box *parent, struct box *child)
 
 
 /* Exported function documented in html/box.h */
-void box_insert_sibling(struct box *box, struct box *new_box)
+تهی box_درج_sibling(ساختار box *box, ساختار box *new_box)
 {
 	new_box->parent = box->parent;
 	new_box->prev = box;
 	new_box->next = box->next;
 	box->next = new_box;
-	if (new_box->next)
+	اگر (new_box->next)
 		new_box->next->prev = new_box;
-	else if (new_box->parent)
+	وگرنه اگر (new_box->parent)
 		new_box->parent->last = new_box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_unlink_and_free(struct box *box)
+تهی box_unlink_and_free(ساختار box *box)
 {
-	struct box *parent = box->parent;
-	struct box *next = box->next;
-	struct box *prev = box->prev;
+	ساختار box *parent = box->parent;
+	ساختار box *next = box->next;
+	ساختار box *prev = box->prev;
 
-	if (parent) {
-		if (parent->children == box)
+	اگر (parent) {
+		اگر (parent->children == box)
 			parent->children = next;
-		if (parent->last == box)
+		اگر (parent->last == box)
 			parent->last = next ? next : prev;
 	}
 
-	if (prev)
+	اگر (prev)
 		prev->next = next;
-	if (next)
+	اگر (next)
 		next->prev = prev;
 
 	box_free(box);
@@ -214,12 +214,12 @@ void box_unlink_and_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free(struct box *box)
+تهی box_free(ساختار box *box)
 {
-	struct box *child, *next;
+	ساختار box *child, *next;
 
 	/* free children first */
-	for (child = box->children; child; child = next) {
+	برای (child = box->children; child; child = next) {
 		next = child->next;
 		box_free(child);
 	}
@@ -230,16 +230,16 @@ void box_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free_box(struct box *box)
+تهی box_free_box(ساختار box *box)
 {
-	if (!(box->flags & CLONE)) {
-		if (box->gadget)
+	اگر (!(box->flags & CLONE)) {
+		اگر (box->gadget)
 			form_free_control(box->gadget);
-		if (box->scroll_x != NULL)
+		اگر (box->scroll_x != پوچ)
 			scrollbar_destroy(box->scroll_x);
-		if (box->scroll_y != NULL)
+		اگر (box->scroll_y != پوچ)
 			scrollbar_destroy(box->scroll_y);
-		if (box->styles != NULL)
+		اگر (box->styles != پوچ)
 			css_select_results_destroy(box->styles);
 	}
 
@@ -249,51 +249,51 @@ void box_free_box(struct box *box)
 
 /* exported interface documented in html/box.h */
 nserror
-box_handle_scrollbars(struct content *c,
-		      struct box *box,
+box_handle_scrollbars(ساختار content *c,
+		      ساختار box *box,
 		      bool bottom,
-		      bool right)
+		      bool راست)
 {
-	struct html_scrollbar_data *data;
-	int visible_width, visible_height;
-	int full_width, full_height;
+	ساختار html_scrollbar_data *data;
+	صحیح visible_width, visible_height;
+	صحیح full_width, full_height;
 	nserror res;
 
-	if (!bottom && box->scroll_x != NULL) {
+	اگر (!bottom && box->scroll_x != پوچ) {
 		data = scrollbar_get_data(box->scroll_x);
 		scrollbar_destroy(box->scroll_x);
-		free(data);
-		box->scroll_x = NULL;
+		آزاد(data);
+		box->scroll_x = پوچ;
 	}
 
-	if (!right && box->scroll_y != NULL) {
+	اگر (!راست && box->scroll_y != پوچ) {
 		data = scrollbar_get_data(box->scroll_y);
 		scrollbar_destroy(box->scroll_y);
-		free(data);
-		box->scroll_y = NULL;
+		آزاد(data);
+		box->scroll_y = پوچ;
 	}
 
-	if (!bottom && !right) {
-		return NSERROR_OK;
+	اگر (!bottom && !راست) {
+		بازگشت NSERROR_OK;
 	}
 
-	visible_width = box->width + box->padding[RIGHT] + box->padding[LEFT];
-	visible_height = box->height + box->padding[TOP] + box->padding[BOTTOM];
+	visible_width = box->width + box->padding[راست_2] + box->padding[چپ_2];
+	visible_height = box->height + box->padding[بالاترین_2] + box->padding[BOTTOM];
 
-	full_width = ((box->descendant_x1 - box->border[RIGHT].width) >
+	full_width = ((box->descendant_x1 - box->border[راست_2].width) >
 			visible_width) ?
-			box->descendant_x1 + box->padding[RIGHT] :
+			box->descendant_x1 + box->padding[راست_2] :
 			visible_width;
 	full_height = ((box->descendant_y1 - box->border[BOTTOM].width) >
 			visible_height) ?
 			box->descendant_y1 + box->padding[BOTTOM] :
 			visible_height;
 
-	if (right) {
-		if (box->scroll_y == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_NOMEM;
+	اگر (راست) {
+		اگر (box->scroll_y == پوچ) {
+			data = malloc(اندازه(ساختار html_scrollbar_data));
+			اگر (data == پوچ) {
+				بازگشت NSERROR_NOMEM;
 			}
 			data->c = c;
 			data->box = box;
@@ -304,47 +304,47 @@ box_handle_scrollbars(struct content *c,
 					       data,
 					       html_overflow_scroll_callback,
 					       &(box->scroll_y));
-			if (res != NSERROR_OK) {
-				return res;
+			اگر (res != NSERROR_OK) {
+				بازگشت res;
 			}
-		} else  {
+		} وگرنه  {
 			scrollbar_set_extents(box->scroll_y,
 					      visible_height,
 					      visible_height,
 					      full_height);
 		}
 	}
-	if (bottom) {
-		if (box->scroll_x == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_OK;
+	اگر (bottom) {
+		اگر (box->scroll_x == پوچ) {
+			data = malloc(اندازه(ساختار html_scrollbar_data));
+			اگر (data == پوچ) {
+				بازگشت NSERROR_OK;
 			}
 			data->c = c;
 			data->box = box;
 			res = scrollbar_create(true,
-					       visible_width - (right ? SCROLLBAR_WIDTH : 0),
+					       visible_width - (راست ? SCROLLBAR_WIDTH : 0),
 					       full_width,
 					       visible_width,
 					       data,
 					       html_overflow_scroll_callback,
 					       &box->scroll_x);
-			if (res != NSERROR_OK) {
-				return res;
+			اگر (res != NSERROR_OK) {
+				بازگشت res;
 			}
-		} else {
+		} وگرنه {
 			scrollbar_set_extents(box->scroll_x,
 					visible_width -
-					(right ? SCROLLBAR_WIDTH : 0),
+					(راست ? SCROLLBAR_WIDTH : 0),
 					visible_width, full_width);
 		}
 	}
 
-	if (right && bottom) {
+	اگر (راست && bottom) {
 		scrollbar_make_pair(box->scroll_x, box->scroll_y);
 	}
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 

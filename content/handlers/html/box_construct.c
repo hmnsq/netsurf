@@ -25,71 +25,71 @@
  * Implementation of conversion from DOM tree to box tree.
  */
 
-#include <string.h>
-#include <dom/dom.h>
+#شامل <string.h>
+#شامل <dom/dom.h>
 
-#include "utils/errors.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/talloc.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "netsurf/misc.h"
-#include "css/select.h"
-#include "desktop/gui_internal.h"
+#شامل "utils/errors.h"
+#شامل "utils/nsoption.h"
+#شامل "utils/corestrings.h"
+#شامل "utils/talloc.h"
+#شامل "utils/string.h"
+#شامل "utils/ascii.h"
+#شامل "utils/nsurl.h"
+#شامل "utils/utils.h"
+#شامل "netsurf/misc.h"
+#شامل "css/select.h"
+#شامل "desktop/gui_internal.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_construct.h"
-#include "html/box_special.h"
-#include "html/box_normalise.h"
-#include "html/form_internal.h"
+#شامل "html/private.h"
+#شامل "html/object.h"
+#شامل "html/box.h"
+#شامل "html/box_manipulate.h"
+#شامل "html/box_construct.h"
+#شامل "html/box_special.h"
+#شامل "html/box_normalise.h"
+#شامل "html/form_internal.h"
 
 /**
  * Context for box tree construction
  */
-struct box_construct_ctx {
+ساختار box_construct_ctx {
 	html_content *content;		/**< Content we're constructing for */
 
-	dom_node *n;			/**< Current node to process */
+	dom_گره *n;			/**< Current node to process */
 
-	struct box *root_box;		/**< Root box in the tree */
+	ساختار box *ریشه_box;		/**< Root box in the tree */
 
 	box_construct_complete_cb cb;	/**< Callback to invoke on completion */
 
-	int *bctx;			/**< talloc context */
+	صحیح *bctx;			/**< talloc context */
 };
 
 /**
  * Transient properties for construction of current node
  */
-struct box_construct_props {
+ساختار box_construct_props {
 	/** Style from which to inherit, or NULL if none */
-	const css_computed_style *parent_style;
+	ثابت css_computed_style *parent_style;
 	/** Current link target, or NULL if none */
-	struct nsurl *href;
+	ساختار nsurl *href;
 	/** Current frame target, or NULL if none */
-	const char *target;
+	ثابت نویسه *target;
 	/** Current title attribute, or NULL if none */
-	const char *title;
+	ثابت نویسه *title;
 	/** Identity of the current block-level container */
-	struct box *containing_block;
+	ساختار box *containing_block;
 	/** Current container for inlines, or NULL if none
 	 * \note If non-NULL, will be the last child of containing_block */
-	struct box *inline_container;
+	ساختار box *inline_container;
 	/** Whether the current node is the root of the DOM tree */
-	bool node_is_root;
+	bool گره_is_ریشه;
 };
 
-static const content_type image_types = CONTENT_IMAGE;
+ایستا ثابت content_type image_types = CONTENT_IMAGE;
 
 /* mapping from CSS display to box type
  * this table must be in sync with libcss' css_display enum */
-static const box_type box_map[] = {
+ایستا ثابت box_type box_map[] = {
 	BOX_BLOCK,           /* CSS_DISPLAY_INHERIT */
 	BOX_INLINE,          /* CSS_DISPLAY_INLINE */
 	BOX_BLOCK,           /* CSS_DISPLAY_BLOCK */
@@ -120,29 +120,29 @@ static const box_type box_map[] = {
  * \param n node to check
  * \return true if node is root else false.
  */
-static inline bool box_is_root(dom_node *n)
+ایستا درونخطی bool box_is_ریشه(dom_گره *n)
 {
-	dom_node *parent;
-	dom_node_type type;
+	dom_گره *parent;
+	dom_گره_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_گره_get_parent_گره(n, &parent);
+	اگر (err != DOM_NO_ERR)
+		بازگشت false;
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	اگر (parent != پوچ) {
+		err = dom_گره_get_گره_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_گره_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return false;
+		اگر (err != DOM_NO_ERR)
+			بازگشت false;
 
-		if (type != DOM_DOCUMENT_NODE)
-			return false;
+		اگر (type != DOM_DOCUMENT_گره)
+			بازگشت false;
 	}
 
-	return true;
+	بازگشت true;
 }
 
 /**
@@ -151,61 +151,61 @@ static inline bool box_is_root(dom_node *n)
  * \param n      Current DOM node to convert
  * \param props  Property object to populate
  */
-static void
-box_extract_properties(dom_node *n, struct box_construct_props *props)
+ایستا تهی
+box_extract_properties(dom_گره *n, ساختار box_construct_props *props)
 {
-	memset(props, 0, sizeof(*props));
+	memset(props, 0, اندازه(*props));
 
-	props->node_is_root = box_is_root(n);
+	props->گره_is_ریشه = box_is_ریشه(n);
 
 	/* Extract properties from containing DOM node */
-	if (props->node_is_root == false) {
-		dom_node *current_node = n;
-		dom_node *parent_node = NULL;
-		struct box *parent_box;
+	اگر (props->گره_is_ریشه == false) {
+		dom_گره *current_گره = n;
+		dom_گره *parent_گره = پوچ;
+		ساختار box *parent_box;
 		dom_exception err;
 
 		/* Find ancestor node containing parent box */
-		while (true) {
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL)
-				break;
+		وقتی (true) {
+			err = dom_گره_get_parent_گره(current_گره,
+					&parent_گره);
+			اگر (err != DOM_NO_ERR || parent_گره == پوچ)
+				بشکن;
 
-			parent_box = box_for_node(parent_node);
+			parent_box = box_for_گره(parent_گره);
 
-			if (parent_box != NULL) {
+			اگر (parent_box != پوچ) {
 				props->parent_style = parent_box->style;
 				props->href = parent_box->href;
 				props->target = parent_box->target;
 				props->title = parent_box->title;
 
-				dom_node_unref(parent_node);
-				break;
-			} else {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				current_node = parent_node;
-				parent_node = NULL;
+				dom_گره_unref(parent_گره);
+				بشکن;
+			} وگرنه {
+				اگر (current_گره != n)
+					dom_گره_unref(current_گره);
+				current_گره = parent_گره;
+				parent_گره = پوچ;
 			}
 		}
 
 		/* Find containing block (may be parent) */
-		while (true) {
-			struct box *b;
+		وقتی (true) {
+			ساختار box *b;
 
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL) {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				break;
+			err = dom_گره_get_parent_گره(current_گره,
+					&parent_گره);
+			اگر (err != DOM_NO_ERR || parent_گره == پوچ) {
+				اگر (current_گره != n)
+					dom_گره_unref(current_گره);
+				بشکن;
 			}
 
-			if (current_node != n)
-				dom_node_unref(current_node);
+			اگر (current_گره != n)
+				dom_گره_unref(current_گره);
 
-			b = box_for_node(parent_node);
+			b = box_for_گره(parent_گره);
 
 			/* Children of nodes that created an inline box
 			 * will generate boxes which are attached as
@@ -213,22 +213,22 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
 			 * parent node. Note, however, that we'll still
 			 * use the parent node's styling as the parent
 			 * style, above. */
-			if (b != NULL && b->type != BOX_INLINE &&
+			اگر (b != پوچ && b->type != BOX_INLINE &&
 					b->type != BOX_BR) {
 				props->containing_block = b;
 
-				dom_node_unref(parent_node);
-				break;
-			} else {
-				current_node = parent_node;
-				parent_node = NULL;
+				dom_گره_unref(parent_گره);
+				بشکن;
+			} وگرنه {
+				current_گره = parent_گره;
+				parent_گره = پوچ;
 			}
 		}
 	}
 
 	/* Compute current inline container, if any */
-	if (props->containing_block != NULL &&
-			props->containing_block->last != NULL &&
+	اگر (props->containing_block != پوچ &&
+			props->containing_block->last != پوچ &&
 			props->containing_block->last->type ==
 				BOX_INLINE_CONTAINER)
 		props->inline_container = props->containing_block->last;
@@ -244,29 +244,29 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
  * \param  n               node in xml tree
  * \return  the new style, or NULL on memory exhaustion
  */
-static css_select_results *
+ایستا css_select_results *
 box_get_style(html_content *c,
-	      const css_computed_style *parent_style,
-	      const css_computed_style *root_style,
-	      dom_node *n)
+	      ثابت css_computed_style *parent_style,
+	      ثابت css_computed_style *ریشه_style,
+	      dom_گره *n)
 {
-	dom_string *s = NULL;
-	css_stylesheet *inline_style = NULL;
+	dom_string *s = پوچ;
+	css_stylesheet *inline_style = پوچ;
 	css_select_results *styles;
 	nscss_select_ctx ctx;
 
 	/* Firstly, construct inline stylesheet, if any */
-	if (nsoption_bool(author_level_css)) {
+	اگر (nsoption_bool(author_level_css)) {
 		dom_exception err;
 		err = dom_element_get_attribute(n, corestring_dom_style, &s);
-		if (err != DOM_NO_ERR) {
-			return NULL;
+		اگر (err != DOM_NO_ERR) {
+			بازگشت پوچ;
 		}
 	}
 
-	if (s != NULL) {
+	اگر (s != پوچ) {
 		inline_style = nscss_create_inline_style(
-				(const uint8_t *) dom_string_data(s),
+				(ثابت uint8_t *) dom_string_data(s),
 				dom_string_byte_length(s),
 				c->encoding,
 				nsurl_access(c->base_url),
@@ -274,8 +274,8 @@ box_get_style(html_content *c,
 
 		dom_string_unref(s);
 
-		if (inline_style == NULL)
-			return NULL;
+		اگر (inline_style == پوچ)
+			بازگشت پوچ;
 	}
 
 	/* Populate selection context */
@@ -283,7 +283,7 @@ box_get_style(html_content *c,
 	ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
 	ctx.base_url = c->base_url;
 	ctx.universal = c->universal;
-	ctx.root_style = root_style;
+	ctx.ریشه_style = ریشه_style;
 	ctx.parent_style = parent_style;
 
 	/* Select style for element */
@@ -291,10 +291,10 @@ box_get_style(html_content *c,
 			inline_style);
 
 	/* No longer need inline style */
-	if (inline_style != NULL)
+	اگر (inline_style != پوچ)
 		css_stylesheet_destroy(inline_style);
 
-	return styles;
+	بازگشت styles;
 }
 
 
@@ -309,46 +309,46 @@ box_get_style(html_content *c,
  * \todo This is currently incomplete. It just does enough to support
  * the clearfix hack. (http://www.positioniseverything.net/easyclearing.html )
  */
-static void
-box_construct_generate(dom_node *n,
+ایستا تهی
+box_construct_generate(dom_گره *n,
 		       html_content *content,
-		       struct box *box,
-		       const css_computed_style *style)
+		       ساختار box *box,
+		       ثابت css_computed_style *style)
 {
-	struct box *gen = NULL;
-	enum css_display_e computed_display;
-	const css_computed_content_item *c_item;
+	ساختار box *gen = پوچ;
+	شمارش css_display_e computed_display;
+	ثابت css_computed_content_item *c_item;
 
 	/* Nothing to generate if the parent box is not a block */
-	if (box->type != BOX_BLOCK)
-		return;
+	اگر (box->type != BOX_BLOCK)
+		بازگشت;
 
 	/* To determine if an element has a pseudo element, we select
 	 * for it and test to see if the returned style's content
 	 * property is set to normal. */
-	if (style == NULL ||
+	اگر (style == پوچ ||
 			css_computed_content(style, &c_item) ==
 			CSS_CONTENT_NORMAL) {
 		/* No pseudo element */
-		return;
+		بازگشت;
 	}
 
 	/* create box for this element */
-	computed_display = ns_computed_display(style, box_is_root(n));
-	if (computed_display == CSS_DISPLAY_BLOCK ||
+	computed_display = ns_computed_display(style, box_is_ریشه(n));
+	اگر (computed_display == CSS_DISPLAY_BLOCK ||
 			computed_display == CSS_DISPLAY_TABLE) {
 		/* currently only support block level boxes */
 
 		/** \todo Not wise to drop const from the computed style */
-		gen = box_create(NULL, (css_computed_style *) style,
-				false, NULL, NULL, NULL, NULL, content->bctx);
-		if (gen == NULL) {
-			return;
+		gen = box_create(پوچ, (css_computed_style *) style,
+				false, پوچ, پوچ, پوچ, پوچ, content->bctx);
+		اگر (gen == پوچ) {
+			بازگشت;
 		}
 
 		/* set box type from computed display */
 		gen->type = box_map[ns_computed_display(
-				style, box_is_root(n))];
+				style, box_is_ریشه(n))];
 
 		box_add_child(box, gen);
 	}
@@ -364,56 +364,56 @@ box_construct_generate(dom_node *n,
  * \param parent   Current block-level container
  * \return true on success, false on memory exhaustion
  */
-static bool
-box_construct_marker(struct box *box,
-		     const char *title,
-		     struct box_construct_ctx *ctx,
-		     struct box *parent)
+ایستا bool
+box_construct_marker(ساختار box *box,
+		     ثابت نویسه *title,
+		     ساختار box_construct_ctx *ctx,
+		     ساختار box *parent)
 {
 	lwc_string *image_uri;
-	struct box *marker;
-	enum css_list_style_type_e list_style_type;
+	ساختار box *marker;
+	شمارش css_list_style_type_e list_style_type;
 
-	marker = box_create(NULL, box->style, false, NULL, NULL, title,
-			NULL, ctx->bctx);
-	if (marker == false)
-		return false;
+	marker = box_create(پوچ, box->style, false, پوچ, پوچ, title,
+			پوچ, ctx->bctx);
+	اگر (marker == false)
+		بازگشت false;
 
 	marker->type = BOX_BLOCK;
 
 	list_style_type = css_computed_list_style_type(box->style);
 
 	/** \todo marker content (list-style-type) */
-	switch (list_style_type) {
-	case CSS_LIST_STYLE_TYPE_DISC:
+	انتخاب (list_style_type) {
+	حالت CSS_LIST_STYLE_TYPE_DISC:
 		/* 2022 BULLET */
-		marker->text = (char *) "\342\200\242";
+		marker->text = (نویسه *) "\342\200\242";
 		marker->length = 3;
-		break;
+		بشکن;
 
-	case CSS_LIST_STYLE_TYPE_CIRCLE:
+	حالت CSS_LIST_STYLE_TYPE_CIRCLE:
 		/* 25CB WHITE CIRCLE */
-		marker->text = (char *) "\342\227\213";
+		marker->text = (نویسه *) "\342\227\213";
 		marker->length = 3;
-		break;
+		بشکن;
 
-	case CSS_LIST_STYLE_TYPE_SQUARE:
+	حالت CSS_LIST_STYLE_TYPE_SQUARE:
 		/* 25AA BLACK SMALL SQUARE */
-		marker->text = (char *) "\342\226\252";
+		marker->text = (نویسه *) "\342\226\252";
 		marker->length = 3;
-		break;
+		بشکن;
 
-	default:
+	پیشفرض:
 		/* Numerical list counters get handled in layout. */
 		/* Fall through. */
-	case CSS_LIST_STYLE_TYPE_NONE:
-		marker->text = NULL;
+	حالت CSS_LIST_STYLE_TYPE_NONE:
+		marker->text = پوچ;
 		marker->length = 0;
-		break;
+		بشکن;
 	}
 
-	if (css_computed_list_style_image(box->style, &image_uri) == CSS_LIST_STYLE_IMAGE_URI &&
-	    (image_uri != NULL) &&
+	اگر (css_computed_list_style_image(box->style, &image_uri) == CSS_LIST_STYLE_IMAGE_URI &&
+	    (image_uri != پوچ) &&
 	    (nsoption_bool(foreground_images) == true)) {
 		nsurl *url;
 		nserror error;
@@ -423,16 +423,16 @@ box_construct_marker(struct box *box,
 		 *       nsurl_joined it.  Can this be improved?
 		 *       For now, just making another nsurl. */
 		error = nsurl_create(lwc_string_data(image_uri), &url);
-		if (error != NSERROR_OK)
-			return false;
+		اگر (error != NSERROR_OK)
+			بازگشت false;
 
-		if (html_fetch_object(ctx->content,
+		اگر (html_fetch_object(ctx->content,
 				      url,
 				      marker,
 				      image_types,
 				      false) ==	false) {
 			nsurl_unref(url);
-			return false;
+			بازگشت false;
 		}
 		nsurl_unref(url);
 	}
@@ -440,24 +440,24 @@ box_construct_marker(struct box *box,
 	box->list_marker = marker;
 	marker->parent = box;
 
-	return true;
+	بازگشت true;
 }
 
-static inline bool box__style_is_float(const struct box *box)
+ایستا درونخطی bool box__style_is_float(ثابت ساختار box *box)
 {
-	return css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-	       css_computed_float(box->style) == CSS_FLOAT_RIGHT;
+	بازگشت css_computed_float(box->style) == CSS_FLOAT_چپ ||
+	       css_computed_float(box->style) == CSS_FLOAT_راست;
 }
 
-static inline bool box__is_flex(const struct box *box)
+ایستا درونخطی bool box__is_flex(ثابت ساختار box *box)
 {
-	return box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX;
+	بازگشت box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX;
 }
 
-static inline bool box__containing_block_is_flex(
-		const struct box_construct_props *props)
+ایستا درونخطی bool box__containing_block_is_flex(
+		ثابت ساختار box_construct_props *props)
 {
-	return props->containing_block != NULL &&
+	بازگشت props->containing_block != پوچ &&
 	       box__is_flex(props->containing_block);
 }
 
@@ -468,69 +468,69 @@ static inline bool box__containing_block_is_flex(
  * \param convert_children  Whether to convert children
  * \return  true on success, false on memory exhaustion
  */
-static bool
-box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
+ایستا bool
+box_construct_element(ساختار box_construct_ctx *ctx, bool *convert_children)
 {
 	dom_string *title0, *s;
-	lwc_string *id = NULL;
-	enum css_display_e css_display;
-	struct box *box = NULL, *old_box;
-	css_select_results *styles = NULL;
+	lwc_string *id = پوچ;
+	شمارش css_display_e css_display;
+	ساختار box *box = پوچ, *old_box;
+	css_select_results *styles = پوچ;
 	lwc_string *bgimage_uri;
 	dom_exception err;
-	struct box_construct_props props;
-	const css_computed_style *root_style = NULL;
+	ساختار box_construct_props props;
+	ثابت css_computed_style *ریشه_style = پوچ;
 
-	assert(ctx->n != NULL);
+	أكد(ctx->n != پوچ);
 
 	box_extract_properties(ctx->n, &props);
 
-	if (props.containing_block != NULL) {
+	اگر (props.containing_block != پوچ) {
 		/* In case the containing block is a pre block, we clear
 		 * the PRE_STRIP flag since it is not used if we follow
 		 * the pre with a tag */
 		props.containing_block->flags &= ~PRE_STRIP;
 	}
 
-	if (props.node_is_root == false) {
-		root_style = ctx->root_box->style;
+	اگر (props.گره_is_ریشه == false) {
+		ریشه_style = ctx->ریشه_box->style;
 	}
 
-	styles = box_get_style(ctx->content, props.parent_style, root_style,
+	styles = box_get_style(ctx->content, props.parent_style, ریشه_style,
 			ctx->n);
-	if (styles == NULL)
-		return false;
+	اگر (styles == پوچ)
+		بازگشت false;
 
 	/* Extract title attribute, if present */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_title, &title0);
-	if (err != DOM_NO_ERR)
-		return false;
+	اگر (err != DOM_NO_ERR)
+		بازگشت false;
 
-	if (title0 != NULL) {
-		char *t = squash_whitespace(dom_string_data(title0));
+	اگر (title0 != پوچ) {
+		نویسه *t = squash_whitespace(dom_string_data(title0));
 
 		dom_string_unref(title0);
 
-		if (t == NULL)
-			return false;
+		اگر (t == پوچ)
+			بازگشت false;
 
 		props.title = talloc_strdup(ctx->bctx, t);
 
-		free(t);
+		آزاد(t);
 
-		if (props.title == NULL)
-			return false;
+		اگر (props.title == پوچ)
+			بازگشت false;
 	}
 
 	/* Extract id attribute, if present */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_id, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	اگر (err != DOM_NO_ERR)
+		بازگشت false;
 
-	if (s != NULL) {
+	اگر (s != پوچ) {
 		err = dom_string_intern(s, &id);
-		if (err != DOM_NO_ERR)
-			id = NULL;
+		اگر (err != DOM_NO_ERR)
+			id = پوچ;
 
 		dom_string_unref(s);
 	}
@@ -538,38 +538,38 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	box = box_create(styles, styles->styles[CSS_PSEUDO_ELEMENT_NONE], false,
 			props.href, props.target, props.title, id,
 			ctx->bctx);
-	if (box == NULL)
-		return false;
+	اگر (box == پوچ)
+		بازگشت false;
 
 	/* If this is the root box, add it to the context */
-	if (props.node_is_root)
-		ctx->root_box = box;
+	اگر (props.گره_is_ریشه)
+		ctx->ریشه_box = box;
 
 	/* Deal with colspan/rowspan */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_colspan, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	اگر (err != DOM_NO_ERR)
+		بازگشت false;
 
-	if (s != NULL) {
-		const char *val = dom_string_data(s);
+	اگر (s != پوچ) {
+		ثابت نویسه *val = dom_string_data(s);
 
 		/* Convert to a number, clamping to [1,1000] according to 4.9.11 */
-		if ('0' <= val[0] && val[0] <= '9')
-			box->columns = clamp(strtol(val, NULL, 10), 1, 1000);
+		اگر ('0' <= val[0] && val[0] <= '9')
+			box->columns = clamp(strtol(val, پوچ, 10), 1, 1000);
 
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(ctx->n, corestring_dom_rowspan, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	اگر (err != DOM_NO_ERR)
+		بازگشت false;
 
-	if (s != NULL) {
-		const char *val = dom_string_data(s);
+	اگر (s != پوچ) {
+		ثابت نویسه *val = dom_string_data(s);
 
 		/* Convert to a number, clamping to [0,65534] according to 4.9.11 */
-		if ('0' <= val[0] && val[0] <= '9')
-			box->rows = clamp(strtol(val, NULL, 10), 0, 65534);
+		اگر ('0' <= val[0] && val[0] <= '9')
+			box->rows = clamp(strtol(val, پوچ, 10), 0, 65534);
 
 		dom_string_unref(s);
 	}
@@ -577,7 +577,7 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	css_display = ns_computed_display_static(box->style);
 
 	/* Set box type from computed display */
-	if ((css_computed_position(box->style) == CSS_POSITION_ABSOLUTE ||
+	اگر ((css_computed_position(box->style) == CSS_POSITION_ABSOLUTE ||
 	     css_computed_position(box->style) == CSS_POSITION_FIXED) &&
 			(css_display == CSS_DISPLAY_INLINE ||
 			 css_display == CSS_DISPLAY_INLINE_BLOCK ||
@@ -588,55 +588,55 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		 * inline container as if they were not absolutely positioned.
 		 * Layout expects and handles this. */
 		box->type = box_map[CSS_DISPLAY_INLINE_BLOCK];
-	} else if (props.node_is_root) {
+	} وگرنه اگر (props.گره_is_ریشه) {
 		/* Special case for root element: force it to BLOCK, or the
 		 * rest of the layout will break. */
 		box->type = BOX_BLOCK;
-	} else {
+	} وگرنه {
 		/* Normal mapping */
 		box->type = box_map[ns_computed_display(box->style,
-				props.node_is_root)];
+				props.گره_is_ریشه)];
 
-		if (props.containing_block->type == BOX_FLEX ||
+		اگر (props.containing_block->type == BOX_FLEX ||
 		    props.containing_block->type == BOX_INLINE_FLEX) {
 			/* Blockification */
-			switch (box->type) {
-			case BOX_INLINE_FLEX:
+			انتخاب (box->type) {
+			حالت BOX_INLINE_FLEX:
 				box->type = BOX_FLEX;
-				break;
-			case BOX_INLINE_BLOCK:
+				بشکن;
+			حالت BOX_INLINE_BLOCK:
 				box->type = BOX_BLOCK;
-				break;
-			default:
-				break;
+				بشکن;
+			پیشفرض:
+				بشکن;
 			}
 		}
 	}
 
-	if (convert_special_elements(ctx->n,
+	اگر (convert_special_elements(ctx->n,
 				     ctx->content,
 				     box,
 				     convert_children) == false) {
-		return false;
+		بازگشت false;
 	}
 
 	/* Handle the :before pseudo element */
-	if (!(box->flags & IS_REPLACED)) {
+	اگر (!(box->flags & IS_REPLACED)) {
 		box_construct_generate(ctx->n, ctx->content, box,
 				box->styles->styles[CSS_PSEUDO_ELEMENT_BEFORE]);
 	}
 
-	if (box->type == BOX_NONE || (ns_computed_display(box->style,
-			props.node_is_root) == CSS_DISPLAY_NONE &&
-			props.node_is_root == false)) {
+	اگر (box->type == BOX_NONE || (ns_computed_display(box->style,
+			props.گره_is_ریشه) == CSS_DISPLAY_NONE &&
+			props.گره_is_ریشه == false)) {
 		css_select_results_destroy(styles);
-		box->styles = NULL;
-		box->style = NULL;
+		box->styles = پوچ;
+		box->style = پوچ;
 
 		/* Invalidate associated gadget, if any */
-		if (box->gadget != NULL) {
-			box->gadget->box = NULL;
-			box->gadget = NULL;
+		اگر (box->gadget != پوچ) {
+			box->gadget->box = پوچ;
+			box->gadget = پوچ;
 		}
 
 		/* Can't do this, because the lifetimes of boxes and gadgets
@@ -646,37 +646,37 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 
 		*convert_children = false;
 
-		return true;
+		بازگشت true;
 	}
 
 	/* Attach DOM node to box */
-	err = dom_node_set_user_data(ctx->n,
-			corestring_dom___ns_key_box_node_data, box, NULL,
-			(void *) &old_box);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_گره_set_user_data(ctx->n,
+			corestring_dom_ns_کلید_box_گره_data, box, پوچ,
+			(تهی *) &old_box);
+	اگر (err != DOM_NO_ERR)
+		بازگشت false;
 
 	/* Attach box to DOM node */
-	box->node = dom_node_ref(ctx->n);
+	box->گره = dom_گره_ref(ctx->n);
 
-	if (props.inline_container == NULL &&
+	اگر (props.inline_container == پوچ &&
 			(box->type == BOX_INLINE ||
 			 box->type == BOX_BR ||
 			 box->type == BOX_INLINE_BLOCK ||
 			 box->type == BOX_INLINE_FLEX ||
 			 (box__style_is_float(box) &&
 			  !box__containing_block_is_flex(&props))) &&
-			props.node_is_root == false) {
+			props.گره_is_ریشه == false) {
 		/* Found an inline child of a block without a current container
 		 * (i.e. this box is the first child of its parent, or was
 		 * preceded by block-level siblings) */
-		assert(props.containing_block != NULL &&
+		أكد(props.containing_block != پوچ &&
 				"Box must have containing block.");
 
-		props.inline_container = box_create(NULL, NULL, false, NULL,
-				NULL, NULL, NULL, ctx->bctx);
-		if (props.inline_container == NULL)
-			return false;
+		props.inline_container = box_create(پوچ, پوچ, false, پوچ,
+				پوچ, پوچ, پوچ, ctx->bctx);
+		اگر (props.inline_container == پوچ)
+			بازگشت false;
 
 		props.inline_container->type = BOX_INLINE_CONTAINER;
 
@@ -684,8 +684,8 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	}
 
 	/* Kick off fetch for any background image */
-	if (css_computed_background_image(box->style, &bgimage_uri) ==
-			CSS_BACKGROUND_IMAGE_IMAGE && bgimage_uri != NULL &&
+	اگر (css_computed_background_image(box->style, &bgimage_uri) ==
+			CSS_BACKGROUND_IMAGE_IMAGE && bgimage_uri != پوچ &&
 			nsoption_bool(background_images) == true) {
 		nsurl *url;
 		nserror error;
@@ -695,70 +695,70 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		 *       nsurl_joined it.  Can this be improved?
 		 *       For now, just making another nsurl. */
 		error = nsurl_create(lwc_string_data(bgimage_uri), &url);
-		if (error == NSERROR_OK) {
+		اگر (error == NSERROR_OK) {
 			/* Fetch image if we got a valid URL */
-			if (html_fetch_object(ctx->content,
+			اگر (html_fetch_object(ctx->content,
 					      url,
 					      box,
 					      image_types,
 					      true) == false) {
 				nsurl_unref(url);
-				return false;
+				بازگشت false;
 			}
 			nsurl_unref(url);
 		}
 	}
 
-	if (*convert_children)
+	اگر (*convert_children)
 		box->flags |= CONVERT_CHILDREN;
 
-	if (box->type == BOX_INLINE || box->type == BOX_BR ||
+	اگر (box->type == BOX_INLINE || box->type == BOX_BR ||
 			box->type == BOX_INLINE_FLEX ||
 			box->type == BOX_INLINE_BLOCK) {
 		/* Inline container must exist, as we'll have
 		 * created it above if it didn't */
-		assert(props.inline_container != NULL);
+		أكد(props.inline_container != پوچ);
 
 		box_add_child(props.inline_container, box);
-	} else {
-		if (ns_computed_display(box->style, props.node_is_root) ==
+	} وگرنه {
+		اگر (ns_computed_display(box->style, props.گره_is_ریشه) ==
 				CSS_DISPLAY_LIST_ITEM) {
 			/* List item: compute marker */
-			if (box_construct_marker(box, props.title, ctx,
+			اگر (box_construct_marker(box, props.title, ctx,
 					props.containing_block) == false)
-				return false;
+				بازگشت false;
 		}
 
-		if (props.node_is_root == false &&
+		اگر (props.گره_is_ریشه == false &&
 				box__containing_block_is_flex(&props) == false &&
 				(css_computed_float(box->style) ==
-				CSS_FLOAT_LEFT ||
+				CSS_FLOAT_چپ ||
 				css_computed_float(box->style) ==
-				CSS_FLOAT_RIGHT)) {
+				CSS_FLOAT_راست)) {
 			/* Float: insert a float between the parent and box. */
-			struct box *flt = box_create(NULL, NULL, false,
+			ساختار box *flt = box_create(پوچ, پوچ, false,
 					props.href, props.target, props.title,
-					NULL, ctx->bctx);
-			if (flt == NULL)
-				return false;
+					پوچ, ctx->bctx);
+			اگر (flt == پوچ)
+				بازگشت false;
 
-			if (css_computed_float(box->style) == CSS_FLOAT_LEFT)
-				flt->type = BOX_FLOAT_LEFT;
-			else
-				flt->type = BOX_FLOAT_RIGHT;
+			اگر (css_computed_float(box->style) == CSS_FLOAT_چپ)
+				flt->type = BOX_FLOAT_چپ;
+			وگرنه
+				flt->type = BOX_FLOAT_راست;
 
 			box_add_child(props.inline_container, flt);
 			box_add_child(flt, box);
-		} else {
+		} وگرنه {
 			/* Non-floated block-level box: add to containing block
 			 * if there is one. If we're the root box, then there
 			 * won't be. */
-			if (props.containing_block != NULL)
+			اگر (props.containing_block != پوچ)
 				box_add_child(props.containing_block, box);
 		}
 	}
 
-	return true;
+	بازگشت true;
 }
 
 
@@ -770,37 +770,37 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
  *
  * This will be called after all children of an element have been processed
  */
-static void box_construct_element_after(dom_node *n, html_content *content)
+ایستا تهی box_construct_element_after(dom_گره *n, html_content *content)
 {
-	struct box_construct_props props;
-	struct box *box = box_for_node(n);
+	ساختار box_construct_props props;
+	ساختار box *box = box_for_گره(n);
 
-	assert(box != NULL);
+	أكد(box != پوچ);
 
 	box_extract_properties(n, &props);
 
-	if (box->type == BOX_INLINE || box->type == BOX_BR) {
+	اگر (box->type == BOX_INLINE || box->type == BOX_BR) {
 		/* Insert INLINE_END into containing block */
-		struct box *inline_end;
+		ساختار box *inline_end;
 		bool has_children;
 		dom_exception err;
 
-		err = dom_node_has_child_nodes(n, &has_children);
-		if (err != DOM_NO_ERR)
-			return;
+		err = dom_گره_has_child_nodes(n, &has_children);
+		اگر (err != DOM_NO_ERR)
+			بازگشت;
 
-		if (has_children == false ||
+		اگر (has_children == false ||
 				(box->flags & CONVERT_CHILDREN) == 0) {
 			/* No children, or didn't want children converted */
-			return;
+			بازگشت;
 		}
 
-		if (props.inline_container == NULL) {
+		اگر (props.inline_container == پوچ) {
 			/* Create inline container if we don't have one */
-			props.inline_container = box_create(NULL, NULL, false,
-					NULL, NULL, NULL, NULL, content->bctx);
-			if (props.inline_container == NULL)
-				return;
+			props.inline_container = box_create(پوچ, پوچ, false,
+					پوچ, پوچ, پوچ, پوچ, content->bctx);
+			اگر (props.inline_container == پوچ)
+				بازگشت;
 
 			props.inline_container->type = BOX_INLINE_CONTAINER;
 
@@ -808,21 +808,21 @@ static void box_construct_element_after(dom_node *n, html_content *content)
 					props.inline_container);
 		}
 
-		inline_end = box_create(NULL, box->style, false,
+		inline_end = box_create(پوچ, box->style, false,
 				box->href, box->target, box->title,
-				box->id == NULL ? NULL :
+				box->id == پوچ ? پوچ :
 				lwc_string_ref(box->id), content->bctx);
-		if (inline_end != NULL) {
+		اگر (inline_end != پوچ) {
 			inline_end->type = BOX_INLINE_END;
 
-			assert(props.inline_container != NULL);
+			أكد(props.inline_container != پوچ);
 
 			box_add_child(props.inline_container, inline_end);
 
 			box->inline_end = inline_end;
 			inline_end->inline_end = box;
 		}
-	} else if (!(box->flags & IS_REPLACED)) {
+	} وگرنه اگر (!(box->flags & IS_REPLACED)) {
 		/* Handle the :after pseudo element */
 		box_construct_generate(n, content, box,
 				box->styles->styles[CSS_PSEUDO_ELEMENT_AFTER]);
@@ -841,108 +841,108 @@ static void box_construct_element_after(dom_node *n, html_content *content)
  *
  * \note \a n will be unreferenced
  */
-static dom_node *
-next_node(dom_node *n, html_content *content, bool convert_children)
+ایستا dom_گره *
+next_گره(dom_گره *n, html_content *content, bool convert_children)
 {
-	dom_node *next = NULL;
+	dom_گره *next = پوچ;
 	bool has_children;
 	dom_exception err;
 
-	err = dom_node_has_child_nodes(n, &has_children);
-	if (err != DOM_NO_ERR) {
-		dom_node_unref(n);
-		return NULL;
+	err = dom_گره_has_child_nodes(n, &has_children);
+	اگر (err != DOM_NO_ERR) {
+		dom_گره_unref(n);
+		بازگشت پوچ;
 	}
 
-	if (convert_children && has_children) {
-		err = dom_node_get_first_child(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return NULL;
+	اگر (convert_children && has_children) {
+		err = dom_گره_get_first_child(n, &next);
+		اگر (err != DOM_NO_ERR) {
+			dom_گره_unref(n);
+			بازگشت پوچ;
 		}
-		dom_node_unref(n);
-	} else {
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return NULL;
+		dom_گره_unref(n);
+	} وگرنه {
+		err = dom_گره_get_next_sibling(n, &next);
+		اگر (err != DOM_NO_ERR) {
+			dom_گره_unref(n);
+			بازگشت پوچ;
 		}
 
-		if (next != NULL) {
-			if (box_for_node(n) != NULL)
+		اگر (next != پوچ) {
+			اگر (box_for_گره(n) != پوچ)
 				box_construct_element_after(n, content);
-			dom_node_unref(n);
-		} else {
-			if (box_for_node(n) != NULL)
+			dom_گره_unref(n);
+		} وگرنه {
+			اگر (box_for_گره(n) != پوچ)
 				box_construct_element_after(n, content);
 
-			while (box_is_root(n) == false) {
-				dom_node *parent = NULL;
-				dom_node *parent_next = NULL;
+			وقتی (box_is_ریشه(n) == false) {
+				dom_گره *parent = پوچ;
+				dom_گره *parent_next = پوچ;
 
-				err = dom_node_get_parent_node(n, &parent);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
-					return NULL;
+				err = dom_گره_get_parent_گره(n, &parent);
+				اگر (err != DOM_NO_ERR) {
+					dom_گره_unref(n);
+					بازگشت پوچ;
 				}
 
-				assert(parent != NULL);
+				أكد(parent != پوچ);
 
-				err = dom_node_get_next_sibling(parent,
+				err = dom_گره_get_next_sibling(parent,
 						&parent_next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
-					return NULL;
+				اگر (err != DOM_NO_ERR) {
+					dom_گره_unref(parent);
+					dom_گره_unref(n);
+					بازگشت پوچ;
 				}
 
-				if (parent_next != NULL) {
-					dom_node_unref(parent_next);
-					dom_node_unref(parent);
-					break;
+				اگر (parent_next != پوچ) {
+					dom_گره_unref(parent_next);
+					dom_گره_unref(parent);
+					بشکن;
 				}
 
-				dom_node_unref(n);
+				dom_گره_unref(n);
 				n = parent;
-				parent = NULL;
+				parent = پوچ;
 
-				if (box_for_node(n) != NULL) {
+				اگر (box_for_گره(n) != پوچ) {
 					box_construct_element_after(
 							n, content);
 				}
 			}
 
-			if (box_is_root(n) == false) {
-				dom_node *parent = NULL;
+			اگر (box_is_ریشه(n) == false) {
+				dom_گره *parent = پوچ;
 
-				err = dom_node_get_parent_node(n, &parent);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
-					return NULL;
+				err = dom_گره_get_parent_گره(n, &parent);
+				اگر (err != DOM_NO_ERR) {
+					dom_گره_unref(n);
+					بازگشت پوچ;
 				}
 
-				assert(parent != NULL);
+				أكد(parent != پوچ);
 
-				err = dom_node_get_next_sibling(parent, &next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
-					return NULL;
+				err = dom_گره_get_next_sibling(parent, &next);
+				اگر (err != DOM_NO_ERR) {
+					dom_گره_unref(parent);
+					dom_گره_unref(n);
+					بازگشت پوچ;
 				}
 
-				if (box_for_node(parent) != NULL) {
+				اگر (box_for_گره(parent) != پوچ) {
 					box_construct_element_after(parent,
 							content);
 				}
 
-				dom_node_unref(parent);
+				dom_گره_unref(parent);
 			}
 
-			dom_node_unref(n);
+			dom_گره_unref(n);
 		}
 	}
 
-	return next;
+	بازگشت next;
 }
 
 
@@ -953,33 +953,33 @@ next_node(dom_node *n, html_content *content, bool convert_children)
  * \param  len  length of s
  * \param  tt	transform type
  */
-static void
-box_text_transform(char *s, unsigned int len, enum css_text_transform_e tt)
+ایستا تهی
+box_text_transform(نویسه *s, unsigned صحیح len, شمارش css_text_transform_e tt)
 {
-	unsigned int i;
-	if (len == 0)
-		return;
-	switch (tt) {
-		case CSS_TEXT_TRANSFORM_UPPERCASE:
-			for (i = 0; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80)
+	unsigned صحیح i;
+	اگر (len == 0)
+		بازگشت;
+	انتخاب (tt) {
+		حالت CSS_TEXT_TRANSFORM_UPPERCASE:
+			برای (i = 0; i < len; ++i)
+				اگر ((unsigned نویسه) s[i] < 0x80)
 					s[i] = ascii_to_upper(s[i]);
-			break;
-		case CSS_TEXT_TRANSFORM_LOWERCASE:
-			for (i = 0; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80)
+			بشکن;
+		حالت CSS_TEXT_TRANSFORM_LOWERCASE:
+			برای (i = 0; i < len; ++i)
+				اگر ((unsigned نویسه) s[i] < 0x80)
 					s[i] = ascii_to_lower(s[i]);
-			break;
-		case CSS_TEXT_TRANSFORM_CAPITALIZE:
-			if ((unsigned char) s[0] < 0x80)
+			بشکن;
+		حالت CSS_TEXT_TRANSFORM_CAPITALIZE:
+			اگر ((unsigned نویسه) s[0] < 0x80)
 				s[0] = ascii_to_upper(s[0]);
-			for (i = 1; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80 &&
+			برای (i = 1; i < len; ++i)
+				اگر ((unsigned نویسه) s[i] < 0x80 &&
 						ascii_is_space(s[i - 1]))
 					s[i] = ascii_to_upper(s[i]);
-			break;
-		default:
-			break;
+			بشکن;
+		پیشفرض:
+			بشکن;
 	}
 }
 
@@ -990,60 +990,60 @@ box_text_transform(char *s, unsigned int len, enum css_text_transform_e tt)
  * \param  ctx  Tree construction context
  * \return  true on success, false on memory exhaustion
  */
-static bool box_construct_text(struct box_construct_ctx *ctx)
+ایستا bool box_construct_text(ساختار box_construct_ctx *ctx)
 {
-	struct box_construct_props props;
-	struct box *box = NULL;
+	ساختار box_construct_props props;
+	ساختار box *box = پوچ;
 	dom_string *content;
 	dom_exception err;
 
-	assert(ctx->n != NULL);
+	أكد(ctx->n != پوچ);
 
 	box_extract_properties(ctx->n, &props);
 
-	assert(props.containing_block != NULL);
+	أكد(props.containing_block != پوچ);
 
 	err = dom_characterdata_get_data(ctx->n, &content);
-	if (err != DOM_NO_ERR || content == NULL)
-		return false;
+	اگر (err != DOM_NO_ERR || content == پوچ)
+		بازگشت false;
 
-	if (css_computed_white_space(props.parent_style) ==
+	اگر (css_computed_white_space(props.parent_style) ==
 			CSS_WHITE_SPACE_NORMAL ||
 			css_computed_white_space(props.parent_style) ==
 			CSS_WHITE_SPACE_NOWRAP) {
-		char *text;
+		نویسه *text;
 
 		text = squash_whitespace(dom_string_data(content));
 
 		dom_string_unref(content);
 
-		if (text == NULL)
-			return false;
+		اگر (text == پوچ)
+			بازگشت false;
 
 		/* if the text is just a space, combine it with the preceding
 		 * text node, if any */
-		if (text[0] == ' ' && text[1] == 0) {
-			if (props.inline_container != NULL) {
-				assert(props.inline_container->last != NULL);
+		اگر (text[0] == ' ' && text[1] == 0) {
+			اگر (props.inline_container != پوچ) {
+				أكد(props.inline_container->last != پوچ);
 
 				props.inline_container->last->space =
 						UNKNOWN_WIDTH;
 			}
 
-			free(text);
+			آزاد(text);
 
-			return true;
+			بازگشت true;
 		}
 
-		if (props.inline_container == NULL) {
+		اگر (props.inline_container == پوچ) {
 			/* Child of a block without a current container
 			 * (i.e. this box is the first child of its parent, or
 			 * was preceded by block-level siblings) */
-			props.inline_container = box_create(NULL, NULL, false,
-					NULL, NULL, NULL, NULL, ctx->bctx);
-			if (props.inline_container == NULL) {
-				free(text);
-				return false;
+			props.inline_container = box_create(پوچ, پوچ, false,
+					پوچ, پوچ, پوچ, پوچ, ctx->bctx);
+			اگر (props.inline_container == پوچ) {
+				آزاد(text);
+				بازگشت false;
 			}
 
 			props.inline_container->type = BOX_INLINE_CONTAINER;
@@ -1053,31 +1053,31 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 		}
 
 		/** \todo Dropping const here is not clever */
-		box = box_create(NULL,
+		box = box_create(پوچ,
 				(css_computed_style *) props.parent_style,
 				false, props.href, props.target, props.title,
-				NULL, ctx->bctx);
-		if (box == NULL) {
-			free(text);
-			return false;
+				پوچ, ctx->bctx);
+		اگر (box == پوچ) {
+			آزاد(text);
+			بازگشت false;
 		}
 
 		box->type = BOX_TEXT;
 
 		box->text = talloc_strdup(ctx->bctx, text);
-		free(text);
-		if (box->text == NULL)
-			return false;
+		آزاد(text);
+		اگر (box->text == پوچ)
+			بازگشت false;
 
 		box->length = strlen(box->text);
 
 		/* strip ending space char off */
-		if (box->length > 1 && box->text[box->length - 1] == ' ') {
+		اگر (box->length > 1 && box->text[box->length - 1] == ' ') {
 			box->space = UNKNOWN_WIDTH;
 			box->length--;
 		}
 
-		if (css_computed_text_transform(props.parent_style) !=
+		اگر (css_computed_text_transform(props.parent_style) !=
 				CSS_TEXT_TRANSFORM_NONE)
 			box_text_transform(box->text, box->length,
 				css_computed_text_transform(
@@ -1085,43 +1085,43 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 
 		box_add_child(props.inline_container, box);
 
-		if (box->text[0] == ' ') {
+		اگر (box->text[0] == ' ') {
 			box->length--;
 
 			memmove(box->text, &box->text[1], box->length);
 
-			if (box->prev != NULL)
+			اگر (box->prev != پوچ)
 				box->prev->space = UNKNOWN_WIDTH;
 		}
-	} else {
+	} وگرنه {
 		/* white-space: pre */
-		char *text;
+		نویسه *text;
 		size_t text_len = dom_string_byte_length(content);
 		size_t i;
-		char *current;
-		enum css_white_space_e white_space =
+		نویسه *current;
+		شمارش css_white_space_e white_space =
 				css_computed_white_space(props.parent_style);
 
 		/* note: pre-wrap/pre-line are unimplemented */
-		assert(white_space == CSS_WHITE_SPACE_PRE ||
-				white_space == CSS_WHITE_SPACE_PRE_LINE ||
+		أكد(white_space == CSS_WHITE_SPACE_PRE ||
+				white_space == CSS_WHITE_SPACE_PRE_سطر ||
 				white_space == CSS_WHITE_SPACE_PRE_WRAP);
 
 		text = malloc(text_len + 1);
 		dom_string_unref(content);
 
-		if (text == NULL)
-			return false;
+		اگر (text == پوچ)
+			بازگشت false;
 
 		memcpy(text, dom_string_data(content), text_len);
 		text[text_len] = '\0';
 
 		/* TODO: Handle tabs properly */
-		for (i = 0; i < text_len; i++)
-			if (text[i] == '\t')
+		برای (i = 0; i < text_len; i++)
+			اگر (text[i] == '\t')
 				text[i] = ' ';
 
-		if (css_computed_text_transform(props.parent_style) !=
+		اگر (css_computed_text_transform(props.parent_style) !=
 				CSS_TEXT_TRANSFORM_NONE)
 			box_text_transform(text, strlen(text),
 				css_computed_text_transform(
@@ -1130,38 +1130,38 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 		current = text;
 
 		/* swallow a single leading new line */
-		if (props.containing_block->flags & PRE_STRIP) {
-			switch (*current) {
-			case '\n':
+		اگر (props.containing_block->flags & PRE_STRIP) {
+			انتخاب (*current) {
+			حالت '\n':
 				current++;
-				break;
-			case '\r':
+				بشکن;
+			حالت '\r':
 				current++;
-				if (*current == '\n')
+				اگر (*current == '\n')
 					current++;
-				break;
+				بشکن;
 			}
 			props.containing_block->flags &= ~PRE_STRIP;
 		}
 
-		do {
+		انجامبده {
 			size_t len = strcspn(current, "\r\n");
 
-			char old = current[len];
+			نویسه old = current[len];
 
 			current[len] = 0;
 
-			if (props.inline_container == NULL) {
+			اگر (props.inline_container == پوچ) {
 				/* Child of a block without a current container
 				 * (i.e. this box is the first child of its
 				 * parent, or was preceded by block-level
 				 * siblings) */
-				props.inline_container = box_create(NULL, NULL,
-						false, NULL, NULL, NULL, NULL,
+				props.inline_container = box_create(پوچ, پوچ,
+						false, پوچ, پوچ, پوچ, پوچ,
 						ctx->bctx);
-				if (props.inline_container == NULL) {
-					free(text);
-					return false;
+				اگر (props.inline_container == پوچ) {
+					آزاد(text);
+					بازگشت false;
 				}
 
 				props.inline_container->type =
@@ -1172,21 +1172,21 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 			}
 
 			/** \todo Dropping const isn't clever */
-			box = box_create(NULL,
+			box = box_create(پوچ,
 				(css_computed_style *) props.parent_style,
 				false, props.href, props.target, props.title,
-				NULL, ctx->bctx);
-			if (box == NULL) {
-				free(text);
-				return false;
+				پوچ, ctx->bctx);
+			اگر (box == پوچ) {
+				آزاد(text);
+				بازگشت false;
 			}
 
 			box->type = BOX_TEXT;
 
 			box->text = talloc_strdup(ctx->bctx, current);
-			if (box->text == NULL) {
-				free(text);
-				return false;
+			اگر (box->text == پوچ) {
+				آزاد(text);
+				بازگشت false;
 			}
 
 			box->length = strlen(box->text);
@@ -1197,14 +1197,14 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 
 			current += len;
 
-			if (current[0] != '\0') {
+			اگر (current[0] != '\0') {
 				/* Linebreak: create new inline container */
-				props.inline_container = box_create(NULL, NULL,
-						false, NULL, NULL, NULL, NULL,
+				props.inline_container = box_create(پوچ, پوچ,
+						false, پوچ, پوچ, پوچ, پوچ,
 						ctx->bctx);
-				if (props.inline_container == NULL) {
-					free(text);
-					return false;
+				اگر (props.inline_container == پوچ) {
+					آزاد(text);
+					بازگشت false;
 				}
 
 				props.inline_container->type =
@@ -1213,17 +1213,17 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 				box_add_child(props.containing_block,
 						props.inline_container);
 
-				if (current[0] == '\r' && current[1] == '\n')
+				اگر (current[0] == '\r' && current[1] == '\n')
 					current += 2;
-				else
+				وگرنه
 					current++;
 			}
-		} while (*current);
+		} وقتی (*current);
 
-		free(text);
+		آزاد(text);
 	}
 
-	return true;
+	بازگشت true;
 }
 
 
@@ -1231,210 +1231,210 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
  * Convert an ELEMENT node to a box tree fragment,
  * then schedule conversion of the next ELEMENT node
  */
-static void convert_xml_to_box(struct box_construct_ctx *ctx)
+ایستا تهی convert_xml_to_box(ساختار box_construct_ctx *ctx)
 {
-	dom_node *next;
+	dom_گره *next;
 	bool convert_children;
-	uint32_t num_processed = 0;
-	const uint32_t max_processed_before_yield = 10;
+	uint32_t رقم_processed = 0;
+	ثابت uint32_t max_processed_before_yield = 10;
 
-	do {
+	انجامبده {
 		convert_children = true;
 
-		assert(ctx->n != NULL);
+		أكد(ctx->n != پوچ);
 
-		if (box_construct_element(ctx, &convert_children) == false) {
+		اگر (box_construct_element(ctx, &convert_children) == false) {
 			ctx->cb(ctx->content, false);
-			dom_node_unref(ctx->n);
-			free(ctx);
-			return;
+			dom_گره_unref(ctx->n);
+			آزاد(ctx);
+			بازگشت;
 		}
 
 		/* Find next element to process, converting text nodes as we go */
-		next = next_node(ctx->n, ctx->content, convert_children);
-		while (next != NULL) {
-			dom_node_type type;
+		next = next_گره(ctx->n, ctx->content, convert_children);
+		وقتی (next != پوچ) {
+			dom_گره_type type;
 			dom_exception err;
 
-			err = dom_node_get_node_type(next, &type);
-			if (err != DOM_NO_ERR) {
+			err = dom_گره_get_گره_type(next, &type);
+			اگر (err != DOM_NO_ERR) {
 				ctx->cb(ctx->content, false);
-				dom_node_unref(next);
-				free(ctx);
-				return;
+				dom_گره_unref(next);
+				آزاد(ctx);
+				بازگشت;
 			}
 
-			if (type == DOM_ELEMENT_NODE)
-				break;
+			اگر (type == DOM_ELEMENT_گره)
+				بشکن;
 
-			if (type == DOM_TEXT_NODE) {
+			اگر (type == DOM_TEXT_گره) {
 				ctx->n = next;
-				if (box_construct_text(ctx) == false) {
+				اگر (box_construct_text(ctx) == false) {
 					ctx->cb(ctx->content, false);
-					dom_node_unref(ctx->n);
-					free(ctx);
-					return;
+					dom_گره_unref(ctx->n);
+					آزاد(ctx);
+					بازگشت;
 				}
 			}
 
-			next = next_node(next, ctx->content, true);
+			next = next_گره(next, ctx->content, true);
 		}
 
 		ctx->n = next;
 
-		if (next == NULL) {
+		اگر (next == پوچ) {
 			/* Conversion complete */
-			struct box root;
+			ساختار box ریشه;
 
-			memset(&root, 0, sizeof(root));
+			memset(&ریشه, 0, اندازه(ریشه));
 
-			root.type = BOX_BLOCK;
-			root.children = root.last = ctx->root_box;
-			root.children->parent = &root;
+			ریشه.type = BOX_BLOCK;
+			ریشه.children = ریشه.last = ctx->ریشه_box;
+			ریشه.children->parent = &ریشه;
 
 			/** \todo Remove box_normalise_block */
-			if (box_normalise_block(&root, ctx->root_box,
+			اگر (box_normalise_block(&ریشه, ctx->ریشه_box,
 					ctx->content) == false) {
 				ctx->cb(ctx->content, false);
-			} else {
-				ctx->content->layout = root.children;
-				ctx->content->layout->parent = NULL;
+			} وگرنه {
+				ctx->content->layout = ریشه.children;
+				ctx->content->layout->parent = پوچ;
 
 				ctx->cb(ctx->content, true);
 			}
 
-			assert(ctx->n == NULL);
+			أكد(ctx->n == پوچ);
 
-			free(ctx);
-			return;
+			آزاد(ctx);
+			بازگشت;
 		}
-	} while (++num_processed < max_processed_before_yield);
+	} وقتی (++رقم_processed < max_processed_before_yield);
 
 	/* More work to do: schedule a continuation */
-	guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
+	guit->misc->schedule(0, (تهی *)convert_xml_to_box, ctx);
 }
 
 
 /* exported function documented in html/box_construct.h */
 nserror
-dom_to_box(dom_node *n,
+dom_to_box(dom_گره *n,
 	   html_content *c,
 	   box_construct_complete_cb cb,
-	   void **box_conversion_context)
+	   تهی **box_conversion_context)
 {
-	struct box_construct_ctx *ctx;
+	ساختار box_construct_ctx *ctx;
 
-	assert(box_conversion_context != NULL);
+	أكد(box_conversion_context != پوچ);
 
-	if (c->bctx == NULL) {
+	اگر (c->bctx == پوچ) {
 		/* create a context allocation for this box tree */
-		c->bctx = talloc_zero(0, int);
-		if (c->bctx == NULL) {
-			return NSERROR_NOMEM;
+		c->bctx = talloc_zero(0, صحیح);
+		اگر (c->bctx == پوچ) {
+			بازگشت NSERROR_NOMEM;
 		}
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL) {
-		return NSERROR_NOMEM;
+	ctx = malloc(اندازه(*ctx));
+	اگر (ctx == پوچ) {
+		بازگشت NSERROR_NOMEM;
 	}
 
 	ctx->content = c;
-	ctx->n = dom_node_ref(n);
-	ctx->root_box = NULL;
+	ctx->n = dom_گره_ref(n);
+	ctx->ریشه_box = پوچ;
 	ctx->cb = cb;
 	ctx->bctx = c->bctx;
 
 	*box_conversion_context = ctx;
 
-	return guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
+	بازگشت guit->misc->schedule(0, (تهی *)convert_xml_to_box, ctx);
 }
 
 
 /* exported function documented in html/box_construct.h */
-nserror cancel_dom_to_box(void *box_conversion_context)
+nserror cancel_dom_to_box(تهی *box_conversion_context)
 {
-	struct box_construct_ctx *ctx = box_conversion_context;
+	ساختار box_construct_ctx *ctx = box_conversion_context;
 	nserror err;
 
-	err = guit->misc->schedule(-1, (void *)convert_xml_to_box, ctx);
-	if (err != NSERROR_OK) {
-		return err;
+	err = guit->misc->schedule(-1, (تهی *)convert_xml_to_box, ctx);
+	اگر (err != NSERROR_OK) {
+		بازگشت err;
 	}
 
-	dom_node_unref(ctx->n);
-	free(ctx);
+	dom_گره_unref(ctx->n);
+	آزاد(ctx);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported function documented in html/box_construct.h */
-struct box *box_for_node(dom_node *n)
+ساختار box *box_for_گره(dom_گره *n)
 {
-	struct box *box = NULL;
+	ساختار box *box = پوچ;
 	dom_exception err;
 
-	err = dom_node_get_user_data(n, corestring_dom___ns_key_box_node_data,
-			(void *) &box);
-	if (err != DOM_NO_ERR)
-		return NULL;
+	err = dom_گره_get_user_data(n, corestring_dom_ns_کلید_box_گره_data,
+			(تهی *) &box);
+	اگر (err != DOM_NO_ERR)
+		بازگشت پوچ;
 
-	return box;
+	بازگشت box;
 }
 
 /* exported function documented in html/box_construct.h */
 bool
-box_extract_link(const html_content *content,
-		 const dom_string *dsrel,
+box_extract_link(ثابت html_content *content,
+		 ثابت dom_string *dsrel,
 		 nsurl *base,
 		 nsurl **result)
 {
-	char *s, *s1, *apos0 = 0, *apos1 = 0, *quot0 = 0, *quot1 = 0;
-	unsigned int i, j, end;
+	نویسه *s, *s1, *apos0 = 0, *apos1 = 0, *quot0 = 0, *quot1 = 0;
+	unsigned صحیح i, j, end;
 	nserror error;
-	const char *rel;
+	ثابت نویسه *rel;
 
 	rel = dom_string_data(dsrel);
 
 	s1 = s = malloc(3 * strlen(rel) + 1);
-	if (!s)
-		return false;
+	اگر (!s)
+		بازگشت false;
 
 	/* copy to s, removing white space and control characters */
-	for (i = 0; rel[i] && ascii_is_space(rel[i]); i++)
+	برای (i = 0; rel[i] && ascii_is_space(rel[i]); i++)
 		;
-	for (end = strlen(rel);
+	برای (end = strlen(rel);
 	     (end != i) && ascii_is_space(rel[end - 1]);
 	     end--)
 		;
-	for (j = 0; i != end; i++) {
-		if ((unsigned char) rel[i] < 0x20) {
+	برای (j = 0; i != end; i++) {
+		اگر ((unsigned نویسه) rel[i] < 0x20) {
 			; /* skip control characters */
-		} else if (rel[i] == ' ') {
+		} وگرنه اگر (rel[i] == ' ') {
 			s[j++] = '%';
 			s[j++] = '2';
 			s[j++] = '0';
-		} else {
+		} وگرنه {
 			s[j++] = rel[i];
 		}
 	}
 	s[j] = 0;
 
-	if (content->enable_scripting == false) {
+	اگر (content->enable_scripting == false) {
 		/* extract first quoted string out of "javascript:" link */
-		if (strncmp(s, "javascript:", 11) == 0) {
+		اگر (strncmp(s, "javascript:", 11) == 0) {
 			apos0 = strchr(s, '\'');
-			if (apos0)
+			اگر (apos0)
 				apos1 = strchr(apos0 + 1, '\'');
 			quot0 = strchr(s, '"');
-			if (quot0)
+			اگر (quot0)
 				quot1 = strchr(quot0 + 1, '"');
-			if (apos0 && apos1 &&
+			اگر (apos0 && apos1 &&
 					(!quot0 || !quot1 || apos0 < quot0)) {
 				*apos1 = 0;
 				s1 = apos0 + 1;
-			} else if (quot0 && quot1) {
+			} وگرنه اگر (quot0 && quot1) {
 				*quot1 = 0;
 				s1 = quot0 + 1;
 			}
@@ -1443,11 +1443,11 @@ box_extract_link(const html_content *content,
 
 	/* construct absolute URL */
 	error = nsurl_join(base, s1, result);
-	free(s);
-	if (error != NSERROR_OK) {
-		*result = NULL;
-		return false;
+	آزاد(s);
+	اگر (error != NSERROR_OK) {
+		*result = پوچ;
+		بازگشت false;
 	}
 
-	return true;
+	بازگشت true;
 }

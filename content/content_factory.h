@@ -19,42 +19,42 @@
 #ifndef NETSURF_CONTENT_CONTENT_FACTORY_H_
 #define NETSURF_CONTENT_CONTENT_FACTORY_H_
 
-#include <stdbool.h>
+#شامل <stdbool.h>
 
-#include <libwapcaplet/libwapcaplet.h>
+#شامل <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/content_type.h"
-#include "utils/errors.h"
+#شامل "netsurf/content_type.h"
+#شامل "utils/errors.h"
 
 #define CONTENT_FACTORY_REGISTER_TYPES(HNAME, HTYPELIST, HHANDLER)	\
 									\
-nserror HNAME##_init(void)						\
+nserror HNAME##_init(تهی)						\
 {									\
 	uint32_t i;							\
 	nserror error = NSERROR_OK;					\
 									\
-	for (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
+	برای (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
 		error = content_factory_register_handler(		\
 			HTYPELIST[i],					\
 			&HHANDLER);					\
-		if (error != NSERROR_OK)				\
-			break;						\
+		اگر (error != NSERROR_OK)				\
+			بشکن;						\
 	}								\
 									\
-	return error;							\
+	بازگشت error;							\
 }
 
-struct content;
-struct llcache_handle;
-struct content_handler;
+ساختار content;
+ساختار llcache_handle;
+ساختار content_handler;
 
-void content_factory_fini(void);
+تهی content_factory_fini(تهی);
 
-nserror content_factory_register_handler(const char *mime_type,
-		const struct content_handler *handler);
+nserror content_factory_register_handler(ثابت نویسه *mime_type,
+		ثابت ساختار content_handler *handler);
 
-struct content *content_factory_create_content(struct llcache_handle *llcache, 
-		const char *fallback_charset, bool quirks,
+ساختار content *content_factory_create_content(ساختار llcache_handle *llcache, 
+		ثابت نویسه *fallback_charset, bool quirks,
 		lwc_string *effective_type);
 
 content_type content_factory_type_from_mime_type(lwc_string *mime_type);

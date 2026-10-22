@@ -21,50 +21,50 @@
  * Content factory implementation
  */
 
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <assert.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "utils/http.h"
+#شامل "utils/http.h"
 
-#include "content/content.h"
-#include "content/content_factory.h"
-#include "content/content_protected.h"
-#include "content/llcache.h"
+#شامل "content/content.h"
+#شامل "content/content_factory.h"
+#شامل "content/content_protected.h"
+#شامل "content/llcache.h"
 
 /**
  * Entry in list of content handlers
  */
-typedef struct content_handler_entry {
+تعریفنوع ساختار content_handler_entry {
 	/** Next entry */
-	struct content_handler_entry *next;
+	ساختار content_handler_entry *next;
 
 	/** MIME type handled by handler */
 	lwc_string *mime_type;
 	/** Content handler object */
-	const content_handler *handler;
+	ثابت content_handler *handler;
 } content_handler_entry;
 
-static content_handler_entry *content_handlers;
+ایستا content_handler_entry *content_handlers;
 
 /**
  * Clean up after the content factory
  */
-void content_factory_fini(void)
+تهی content_factory_fini(تهی)
 {
 	content_handler_entry *victim;
 
-	while (content_handlers != NULL) {
+	وقتی (content_handlers != پوچ) {
 		victim = content_handlers;
 
 		content_handlers = content_handlers->next;
 
-		if (victim->handler->fini != NULL)
+		اگر (victim->handler->fini != پوچ)
 			victim->handler->fini();
 
 		lwc_string_unref(victim->mime_type);
 
-		free(victim);
+		آزاد(victim);
 	}
 }
 
@@ -77,8 +77,8 @@ void content_factory_fini(void)
  *
  * \note Latest registration for a MIME type wins
  */
-nserror content_factory_register_handler(const char *mime_type,
-		const content_handler *handler)
+nserror content_factory_register_handler(ثابت نویسه *mime_type,
+		ثابت content_handler *handler)
 {
 	lwc_string *imime_type;
 	lwc_error lerror;
@@ -86,31 +86,31 @@ nserror content_factory_register_handler(const char *mime_type,
 	bool match;
 
 	lerror = lwc_intern_string(mime_type, strlen(mime_type), &imime_type);
-	if (lerror != lwc_error_ok)
-		return NSERROR_NOMEM;
+	اگر (lerror != lwc_error_ok)
+		بازگشت NSERROR_NOMEM;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(imime_type, entry->mime_type,
+	برای (entry = content_handlers; entry != پوچ; entry = entry->next) {
+		اگر (lwc_string_caseless_isequal(imime_type, entry->mime_type,
 				&match) == lwc_error_ok && match)
-			break;
+			بشکن;
 	}
 
-	if (entry == NULL) {
-		entry = malloc(sizeof(content_handler_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+	اگر (entry == پوچ) {
+		entry = malloc(اندازه(content_handler_entry));
+		اگر (entry == پوچ)
+			بازگشت NSERROR_NOMEM;
 
 		entry->next = content_handlers;
 		content_handlers = entry;
 
 		entry->mime_type = imime_type;
-	} else {
+	} وگرنه {
 		lwc_string_unref(imime_type);
 	}
 
 	entry->handler = handler;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 /**
@@ -119,23 +119,23 @@ nserror content_factory_register_handler(const char *mime_type,
  * \param mime_type  MIME type to search for
  * \return Associated handler, or NULL if none
  */
-static const content_handler *content_lookup(lwc_string *mime_type)
+ایستا ثابت content_handler *content_lookup(lwc_string *mime_type)
 {
 	content_handler_entry *entry;
 	bool match;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(mime_type, entry->mime_type,
+	برای (entry = content_handlers; entry != پوچ; entry = entry->next) {
+		اگر (lwc_string_caseless_isequal(mime_type, entry->mime_type,
 					&match) == lwc_error_ok && match) {
-			break;
+			بشکن;
 		}
 	}
 
-	if (entry != NULL) {
-		return entry->handler;
+	اگر (entry != پوچ) {
+		بازگشت entry->handler;
 	}
 
-	return NULL;
+	بازگشت پوچ;
 }
 
 /**
@@ -146,15 +146,15 @@ static const content_handler *content_lookup(lwc_string *mime_type)
  */
 content_type content_factory_type_from_mime_type(lwc_string *mime_type)
 {
-	const content_handler *handler;
+	ثابت content_handler *handler;
 	content_type type = CONTENT_NONE;
 
 	handler = content_lookup(mime_type);
-	if (handler != NULL) {
+	اگر (handler != پوچ) {
 		type = handler->type();
 	}
 
-	return type;
+	بازگشت type;
 }
 
 /**
@@ -166,41 +166,41 @@ content_type content_factory_type_from_mime_type(lwc_string *mime_type)
  * \param effective_type    Effective MIME type of content
  * \return Pointer to content object, or NULL on failure
  */
-struct content *content_factory_create_content(llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
+ساختار content *content_factory_create_content(llcache_handle *llcache,
+		ثابت نویسه *fallback_charset, bool quirks,
 		lwc_string *effective_type)
 {
-	struct content *c;
-	const char *content_type_header;
-	const content_handler *handler;
-	http_content_type *ct = NULL;
+	ساختار content *c;
+	ثابت نویسه *content_type_header;
+	ثابت content_handler *handler;
+	http_content_type *ct = پوچ;
 	nserror error;
 
 	handler = content_lookup(effective_type);
-	if (handler == NULL)
-		return NULL;
+	اگر (handler == پوچ)
+		بازگشت پوچ;
 
-	assert(handler->create != NULL);
+	أكد(handler->create != پوچ);
 
 	/* Use the parameters from the declared Content-Type header */
 	content_type_header = 
 			llcache_handle_get_header(llcache, "Content-Type");
-	if (content_type_header != NULL) {
+	اگر (content_type_header != پوچ) {
 		/* We don't care if this fails */
 		http_parse_content_type(content_type_header, &ct);
 	}
 
 	error = handler->create(handler, effective_type, 
-			ct != NULL ? ct->parameters : NULL, 
+			ct != پوچ ? ct->parameters : پوچ, 
 			llcache, fallback_charset, quirks, 
 			&c);
 
-	if (ct != NULL)
+	اگر (ct != پوچ)
 		http_content_type_destroy(ct);
 
-	if (error != NSERROR_OK)
-		return NULL;
+	اگر (error != NSERROR_OK)
+		بازگشت پوچ;
 
-	return c;
+	بازگشت c;
 }
 

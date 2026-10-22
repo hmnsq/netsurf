@@ -21,62 +21,62 @@
  * content generator for the about scheme query privacy page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
+#شامل <stdbool.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "content/fetch.h"
+#شامل "utils/errors.h"
+#شامل "utils/log.h"
+#شامل "utils/messages.h"
+#شامل "content/fetch.h"
 
-#include "private.h"
-#include "query_auth.h"
+#شامل "private.h"
+#شامل "query_auth.h"
 
 
 /**
  * generate the description of the login query
  */
-static nserror
-get_authentication_description(struct nsurl *url,
-			       const char *realm,
-			       const char *username,
-			       const char *password,
-			       char **out_str)
+ایستا nserror
+get_authentication_description(ساختار nsurl *url,
+			       ثابت نویسه *realm,
+			       ثابت نویسه *username,
+			       ثابت نویسه *password,
+			       نویسه **out_str)
 {
 	nserror res;
-	char *url_s;
+	نویسه *url_s;
 	size_t url_l;
-	char *str = NULL;
-	const char *key;
+	نویسه *str = پوچ;
+	ثابت نویسه *کلید;
 
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	اگر (res != NSERROR_OK) {
+		بازگشت res;
 	}
 
-	if ((*username == 0) && (*password == 0)) {
-		key = "LoginDescription";
-	} else {
-		key = "LoginAgain";
+	اگر ((*username == 0) && (*password == 0)) {
+		کلید = "LoginDescription";
+	} وگرنه {
+		کلید = "LoginAgain";
 	}
 
-	str = messages_get_buff(key, url_s, realm);
-	if (str != NULL) {
+	str = messages_get_buff(کلید, url_s, realm);
+	اگر (str != پوچ) {
 		NSLOG(netsurf, INFO,
 		      "key:%s url:%s realm:%s str:%s",
-		      key, url_s, realm, str);
+		      کلید, url_s, realm, str);
 		*out_str = str;
-	} else {
+	} وگرنه {
 		res = NSERROR_NOMEM;
 	}
 
-	free(url_s);
+	آزاد(url_s);
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -86,47 +86,47 @@ get_authentication_description(struct nsurl *url,
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
+bool fetch_about_query_auth_handler(ساختار fetch_about_context *ctx)
 {
 	nserror res;
-	char *url_s;
+	نویسه *url_s;
 	size_t url_l;
-	const char *realm = "";
-	const char *username = "";
-	const char *password = "";
-	const char *title;
-	char *description = NULL;
-	struct nsurl *siteurl = NULL;
-	const struct fetch_multipart_data *curmd; /* mutipart data iterator */
+	ثابت نویسه *realm = "";
+	ثابت نویسه *username = "";
+	ثابت نویسه *password = "";
+	ثابت نویسه *title;
+	نویسه *description = پوچ;
+	ساختار nsurl *siteurl = پوچ;
+	ثابت ساختار fetch_multipart_data *curmd; /* mutipart data iterator */
 
 	/* extract parameters from multipart post data */
 	curmd = fetch_about_get_multipart(ctx);
-	while (curmd != NULL) {
-		if (strcmp(curmd->name, "siteurl") == 0) {
-			res = nsurl_create(curmd->value, &siteurl);
-			if (res != NSERROR_OK) {
-				return fetch_about_srverror(ctx);
+	وقتی (curmd != پوچ) {
+		اگر (strcmp(curmd->name, "siteurl") == 0) {
+			res = nsurl_create(curmd->مقدار, &siteurl);
+			اگر (res != NSERROR_OK) {
+				بازگشت fetch_about_srverror(ctx);
 			}
-		} else if (strcmp(curmd->name, "realm") == 0) {
-			realm = curmd->value;
-		} else if (strcmp(curmd->name, "username") == 0) {
-			username = curmd->value;
-		} else if (strcmp(curmd->name, "password") == 0) {
-			password = curmd->value;
+		} وگرنه اگر (strcmp(curmd->name, "realm") == 0) {
+			realm = curmd->مقدار;
+		} وگرنه اگر (strcmp(curmd->name, "username") == 0) {
+			username = curmd->مقدار;
+		} وگرنه اگر (strcmp(curmd->name, "password") == 0) {
+			password = curmd->مقدار;
 		}
 		curmd = curmd->next;
 	}
 
-	if (siteurl == NULL) {
-		return fetch_about_srverror(ctx);
+	اگر (siteurl == پوچ) {
+		بازگشت fetch_about_srverror(ctx);
 	}
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	title = messages_get("LoginTitle");
@@ -139,15 +139,15 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\" id =\"authentication\">\n"
 			"<h1 class=\"ns-border\">%s</h1>\n",
 			title, title);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<form method=\"post\""
 			 " enctype=\"multipart/form-data\">");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = get_authentication_description(siteurl,
@@ -155,17 +155,17 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 					     username,
 					     password,
 					     &description);
-	if (res == NSERROR_OK) {
+	اگر (res == NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<p>%s</p>", description);
-		free(description);
-		if (res != NSERROR_OK) {
-			goto fetch_about_query_auth_handler_aborted;
+		آزاد(description);
+		اگر (res != NSERROR_OK) {
+			برو fetch_about_query_auth_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "<table>");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -175,8 +175,8 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "name=\"username\" value=\"%s\"></td>"
 			 "</tr>",
 			 messages_get("Username"), username);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -186,13 +186,13 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "name=\"password\" value=\"%s\"></td>"
 			 "</tr>",
 			 messages_get("Password"), password);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -204,43 +204,43 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "</div>",
 			 messages_get("Login"),
 			 messages_get("Cancel"));
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = nsurl_get(siteurl, NSURL_COMPLETE, &url_s, &url_l);
-	if (res != NSERROR_OK) {
+	اگر (res != NSERROR_OK) {
 		url_s = strdup("");
 	}
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"siteurl\" value=\"%s\">",
 			 url_s);
-	free(url_s);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	آزاد(url_s);
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"realm\" value=\"%s\">",
 			 realm);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</form></body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	اگر (res != NSERROR_OK) {
+		برو fetch_about_query_auth_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
 	nsurl_unref(siteurl);
 
-	return true;
+	بازگشت true;
 
 fetch_about_query_auth_handler_aborted:
 
 	nsurl_unref(siteurl);
 
-	return false;
+	بازگشت false;
 }

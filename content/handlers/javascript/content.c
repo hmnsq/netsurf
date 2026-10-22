@@ -21,89 +21,89 @@
  * javascript content implementation
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#شامل <assert.h>
+#شامل <string.h>
+#شامل <stdbool.h>
+#شامل <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/config.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "javascript/content.h"
+#شامل "utils/errors.h"
+#شامل "utils/config.h"
+#شامل "content/content_protected.h"
+#شامل "content/content_factory.h"
+#شامل "content/hlcache.h"
+#شامل "utils/log.h"
+#شامل "utils/messages.h"
+#شامل "utils/utils.h"
+#شامل "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+تعریفنوع ساختار javascript_content {
+	ساختار content base;
 } javascript_content;
 
-static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ایستا nserror javascript_create(ثابت content_handler *handler,
+		lwc_string *imime_type, ثابت ساختار http_parameter *params,
+		llcache_handle *llcache, ثابت نویسه *fallback_charset,
+		bool quirks, ساختار content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, اندازه(javascript_content));
+	اگر (script == پوچ)
+		بازگشت NSERROR_NOMEM;
 
 	error = content__init(&script->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(script);
-		return error;
+	اگر (error != NSERROR_OK) {
+		آزاد(script);
+		بازگشت error;
 	}
 
-	*c = (struct content *) script;
+	*c = (ساختار content *) script;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+ایستا bool javascript_convert(ساختار content *c)
 {
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	بازگشت true;
 }
 
-static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+ایستا nserror 
+javascript_clone(ثابت ساختار content *old, ساختار content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, اندازه(javascript_content));
+	اگر (script == پوچ)
+		بازگشت NSERROR_NOMEM;
 
 	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		content_destroy(&script->base);
-		return error;
+		بازگشت error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (ساختار content *) script;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+ایستا تهی javascript_destroy(ساختار content *c)
 {
 }
 
-static content_type javascript_content_type(void)
+ایستا content_type javascript_content_type(تهی)
 {
-	return CONTENT_JS;
+	بازگشت CONTENT_JS;
 }
 
 
-static const content_handler javascript_content_handler = {
+ایستا ثابت content_handler javascript_content_handler = {
 	.create = javascript_create,
 	.data_complete = javascript_convert,
 	.destroy = javascript_destroy,
@@ -112,7 +112,7 @@ static const content_handler javascript_content_handler = {
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+ایستا ثابت نویسه *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */

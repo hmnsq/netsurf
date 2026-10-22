@@ -16,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <libcss/libcss.h>
+#شامل <string.h>
+#شامل <libcss/libcss.h>
 
-#include "utils/nsurl.h"
+#شامل "utils/nsurl.h"
 
-#include "css/internal.h"
+#شامل "css/internal.h"
 
 /* exported interface documented in content/handlers/css/internal.h */
-css_error nscss_resolve_url(void *pw, const char *base,
+css_error nscss_resolve_url(تهی *pw, ثابت نویسه *base,
 		lwc_string *rel, lwc_string **abs)
 {
 	lwc_error lerror;
@@ -35,15 +35,15 @@ css_error nscss_resolve_url(void *pw, const char *base,
 	/* Create nsurl from base */
 	/* TODO: avoid this */
 	error = nsurl_create(base, &nsbase);
-	if (error != NSERROR_OK) {
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+	اگر (error != NSERROR_OK) {
+		بازگشت error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	/* Resolve URI */
 	error = nsurl_join(nsbase, lwc_string_data(rel), &nsabs);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		nsurl_unref(nsbase);
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+		بازگشت error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsbase);
@@ -51,13 +51,13 @@ css_error nscss_resolve_url(void *pw, const char *base,
 	/* Intern it */
 	lerror = lwc_intern_string(nsurl_access(nsabs),
 			nsurl_length(nsabs), abs);
-	if (lerror != lwc_error_ok) {
-		*abs = NULL;
+	اگر (lerror != lwc_error_ok) {
+		*abs = پوچ;
 		nsurl_unref(nsabs);
-		return lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
+		بازگشت lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsabs);
 
-	return CSS_OK;
+	بازگشت CSS_OK;
 }

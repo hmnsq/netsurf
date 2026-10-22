@@ -22,43 +22,43 @@
  * Redrawing CONTENT_HTML borders implementation.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
+#شامل <stdbool.h>
+#شامل <stdlib.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "netsurf/plotters.h"
-#include "netsurf/css.h"
+#شامل "utils/utils.h"
+#شامل "utils/log.h"
+#شامل "netsurf/plotters.h"
+#شامل "netsurf/css.h"
 
-#include "html/box.h"
-#include "html/private.h"
+#شامل "html/box.h"
+#شامل "html/private.h"
 
 
-static plot_style_t plot_style_bdr = {
+ایستا plot_style_t plot_style_bdr = {
 	.stroke_type = PLOT_OP_TYPE_DASH,
 };
-static plot_style_t plot_style_fillbdr = {
+ایستا plot_style_t plot_style_fillbdr = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_dark = {
+ایستا plot_style_t plot_style_fillbdr_dark = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_light = {
+ایستا plot_style_t plot_style_fillbdr_light = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_ddark = {
+ایستا plot_style_t plot_style_fillbdr_ddark = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_dlight = {
+ایستا plot_style_t plot_style_fillbdr_dlight = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
 
 
-static inline nserror
-plot_clipped_rectangle(const struct redraw_context *ctx,
-		       const plot_style_t *style,
-		       const struct rect *clip,
-		       struct rect *rect)
+ایستا درونخطی nserror
+plot_clipped_rectangle(ثابت ساختار redraw_context *ctx,
+		       ثابت plot_style_t *style,
+		       ثابت ساختار rect *clip,
+		       ساختار rect *rect)
 {
 	nserror res;
 
@@ -66,13 +66,13 @@ plot_clipped_rectangle(const struct redraw_context *ctx,
 	rect->y0 = (clip->y0 > rect->y0) ? clip->y0 : rect->y0;
 	rect->x1 = (clip->x1 < rect->x1) ? clip->x1 : rect->x1;
 	rect->y1 = (clip->y1 < rect->y1) ? clip->y1 : rect->y1;
-	if ((rect->x0 < rect->x1) && (rect->y0 < rect->y1)) {
+	اگر ((rect->x0 < rect->x1) && (rect->y0 < rect->y1)) {
 		/* valid clip rectangles only */
 		res = ctx->plot->rectangle(ctx, style, rect);
-	} else {
+	} وگرنه {
 		res = NSERROR_OK;
 	}
-	return res;
+	بازگشت res;
 }
 
 
@@ -89,25 +89,25 @@ plot_clipped_rectangle(const struct redraw_context *ctx,
  * \param ctx current redraw context
  * \return NSERROR_OK if successful otherwise appropriate error code
  */
-static nserror
-html_redraw_border_plot(const int side,
-			const int *p,
+ایستا nserror
+html_redraw_border_plot(ثابت صحیح side,
+			ثابت صحیح *p,
 			colour c,
-			enum css_border_style_e style,
-			int thickness,
+			شمارش css_border_style_e style,
+			صحیح thickness,
 			bool rectangular,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+			ثابت ساختار rect *clip,
+			ثابت ساختار redraw_context *ctx)
 {
-	int z[8]; /* Vertices of border part */
-	unsigned int light = side;
+	صحیح z[8]; /* Vertices of border part */
+	unsigned صحیح light = side;
 	plot_style_t *plot_style_bdr_in;
 	plot_style_t *plot_style_bdr_out;
 	nserror res = NSERROR_OK;
-	struct rect rect;
+	ساختار rect rect;
 
-	if (c == NS_TRANSPARENT) {
-		return res;
+	اگر (c == NS_TRANSPARENT) {
+		بازگشت res;
 	}
 
 	plot_style_bdr.stroke_type = PLOT_OP_TYPE_DASH;
@@ -119,41 +119,41 @@ html_redraw_border_plot(const int side,
 	plot_style_fillbdr_ddark.fill_colour = double_darken_colour(c);
 	plot_style_fillbdr_dlight.fill_colour = double_lighten_colour(c);
 
-	switch (style) {
-	case CSS_BORDER_STYLE_DOTTED:
+	انتخاب (style) {
+	حالت CSS_BORDER_STYLE_DOTTED:
 		plot_style_bdr.stroke_type = PLOT_OP_TYPE_DOT;
 		fallthrough;
-	case CSS_BORDER_STYLE_DASHED:
+	حالت CSS_BORDER_STYLE_DASHED:
 		rect.x0 = (p[0] + p[2]) / 2;
 		rect.y0 = (p[1] + p[3]) / 2;
 		rect.x1 = (p[4] + p[6]) / 2;
 		rect.y1 = (p[5] + p[7]) / 2;
-		res = ctx->plot->line(ctx, &plot_style_bdr, &rect);
-		break;
+		res = ctx->plot->سطر(ctx, &plot_style_bdr, &rect);
+		بشکن;
 
-	case CSS_BORDER_STYLE_SOLID:
+	حالت CSS_BORDER_STYLE_SOLID:
 		/* solid is the default */
-	default:
-		if (rectangular || thickness == 1) {
+	پیشفرض:
+		اگر (rectangular || thickness == 1) {
 
-			if (side == TOP || side == RIGHT) {
+			اگر (side == بالاترین_2 || side == راست_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
-				if ((side == TOP) &&
+				اگر ((side == بالاترین_2) &&
 				    (p[4] - p[6] != 0)) {
 					rect.x1 = p[4];
-				} else {
+				} وگرنه {
 					rect.x1 = p[6];
 				}
 				rect.y1 = p[7];
-			} else {
+			} وگرنه {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
-				if ((side == LEFT) &&
+				اگر ((side == چپ_2) &&
 				    (p[1] - p[3] != 0)) {
 					rect.y1 = p[1];
-				} else {
+				} وگرنه {
 					rect.y1 = p[3];
 				}
 			}
@@ -161,12 +161,12 @@ html_redraw_border_plot(const int side,
 						     &plot_style_fillbdr,
 						     clip,
 						     &rect);
-		} else {
+		} وگرنه {
 			res = ctx->plot->polygon(ctx, &plot_style_fillbdr, p, 4);
 		}
-		break;
+		بشکن;
 
-	case CSS_BORDER_STYLE_DOUBLE:
+	حالت CSS_BORDER_STYLE_DOUBLE:
 		z[0] = p[0];
 		z[1] = p[1];
 		z[2] = (p[0] * 2 + p[2]) / 3;
@@ -176,7 +176,7 @@ html_redraw_border_plot(const int side,
 		z[6] = p[6];
 		z[7] = p[7];
 		res = ctx->plot->polygon(ctx, &plot_style_fillbdr, z, 4);
-		if (res == NSERROR_OK) {
+		اگر (res == NSERROR_OK) {
 			z[0] = p[2];
 			z[1] = p[3];
 			z[2] = (p[2] * 2 + p[0]) / 3;
@@ -187,34 +187,34 @@ html_redraw_border_plot(const int side,
 			z[7] = p[5];
 			res = ctx->plot->polygon(ctx, &plot_style_fillbdr, z, 4);
 		}
-		break;
+		بشکن;
 
-	case CSS_BORDER_STYLE_GROOVE:
+	حالت CSS_BORDER_STYLE_GROOVE:
 		light = 3 - light;
 		fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:
+	حالت CSS_BORDER_STYLE_RIDGE:
 		/* choose correct colours for each part of the border line */
-		if (light <= 1) {
+		اگر (light <= 1) {
 			plot_style_bdr_in = &plot_style_fillbdr_dark;
 			plot_style_bdr_out = &plot_style_fillbdr_light;
-		} else {
+		} وگرنه {
 			plot_style_bdr_in = &plot_style_fillbdr_light;
 			plot_style_bdr_out = &plot_style_fillbdr_dark;
 		}
 
 		/* Render border */
-		if ((rectangular || thickness == 2) && thickness != 1) {
+		اگر ((rectangular || thickness == 2) && thickness != 1) {
 			/* Border made up from two parts and can be
 			 * plotted with rectangles
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			اگر (side == بالاترین_2 || side == راست_2) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-			} else {
+			} وگرنه {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = (p[0] + p[2]) / 2;
@@ -224,17 +224,17 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_in,
 						     clip,
 						     &rect);
-			if (res != NSERROR_OK) {
-				return res;
+			اگر (res != NSERROR_OK) {
+				بازگشت res;
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			اگر (side == بالاترین_2 || side == راست_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
 				rect.y1 = (p[7] + p[5]) / 2;
-			} else {
+			} وگرنه {
 				rect.x0 = (p[6] + p[4]) / 2;
 				rect.y0 = (p[7] + p[5]) / 2;
 				rect.x1 = p[2];
@@ -244,36 +244,36 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_out,
 						     clip,
 						     &rect);
-		} else if (thickness == 1) {
+		} وگرنه اگر (thickness == 1) {
 			/* Border made up from one part which can be
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			اگر (side == بالاترین_2 || side == راست_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-				rect.x1 = ((side == TOP) && (p[4] - p[6] != 0)) ?
+				rect.x1 = ((side == بالاترین_2) && (p[4] - p[6] != 0)) ?
 					rect.x1 + p[4] - p[6] : rect.x1;
 
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_in,
 							     clip,
 							     &rect);
-			} else {
+			} وگرنه {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
 				rect.y1 = p[3];
-				rect.y1 = ((side == LEFT) && (p[1] - p[3] != 0)) ?
+				rect.y1 = ((side == چپ_2) && (p[1] - p[3] != 0)) ?
 					rect.y1 + p[1] - p[3] : rect.y1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_out,
 							     clip,
 							     &rect);
 			}
-		} else {
+		} وگرنه {
 			/* Border made up from two parts and can't be
 			 * plotted with rectangles
 			 */
@@ -286,7 +286,7 @@ html_redraw_border_plot(const int side,
 			z[6] = p[6];
 			z[7] = p[7];
 			res = ctx->plot->polygon(ctx, plot_style_bdr_in, z, 4);
-			if (res == NSERROR_OK) {
+			اگر (res == NSERROR_OK) {
 				z[0] = p[2];
 				z[1] = p[3];
 				z[6] = p[4];
@@ -297,49 +297,49 @@ html_redraw_border_plot(const int side,
 							 4);
 			}
 		}
-		break;
+		بشکن;
 
-	case CSS_BORDER_STYLE_INSET:
+	حالت CSS_BORDER_STYLE_INSET:
 		light = (light + 2) % 4;
 		fallthrough;
-	case CSS_BORDER_STYLE_OUTSET:
+	حالت CSS_BORDER_STYLE_OUTSET:
 		/* choose correct colours for each part of the border line */
-		switch (light) {
-		case 0:
+		انتخاب (light) {
+		حالت 0:
 			plot_style_bdr_in = &plot_style_fillbdr_light;
 			plot_style_bdr_out = &plot_style_fillbdr_dlight;
-			break;
-		case 1:
+			بشکن;
+		حالت 1:
 			plot_style_bdr_in = &plot_style_fillbdr_ddark;
 			plot_style_bdr_out = &plot_style_fillbdr_dark;
-			break;
-		case 2:
+			بشکن;
+		حالت 2:
 			plot_style_bdr_in = &plot_style_fillbdr_dark;
 			plot_style_bdr_out = &plot_style_fillbdr_ddark;
-			break;
-		case 3:
+			بشکن;
+		حالت 3:
 			plot_style_bdr_in = &plot_style_fillbdr_dlight;
 			plot_style_bdr_out = &plot_style_fillbdr_light;
-			break;
-		default:
+			بشکن;
+		پیشفرض:
 			plot_style_bdr_in = &plot_style_fillbdr;
 			plot_style_bdr_out = &plot_style_fillbdr;
-			break;
+			بشکن;
 		}
 
 		/* Render border */
-		if ((rectangular || thickness == 2) && thickness != 1) {
+		اگر ((rectangular || thickness == 2) && thickness != 1) {
 			/* Border made up from two parts and can be
 			 * plotted with rectangles
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			اگر (side == بالاترین_2 || side == راست_2) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-			} else {
+			} وگرنه {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = (p[0] + p[2]) / 2;
@@ -349,17 +349,17 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_in,
 						     clip,
 						     &rect);
-			if (res != NSERROR_OK) {
-				return res;
+			اگر (res != NSERROR_OK) {
+				بازگشت res;
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			اگر (side == بالاترین_2 || side == راست_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
 				rect.y1 = (p[7] + p[5]) / 2;
-			} else {
+			} وگرنه {
 				rect.x0 = (p[6] + p[4]) / 2;
 				rect.y0 = (p[7] + p[5]) / 2;
 				rect.x1 = p[2];
@@ -369,35 +369,35 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_out,
 						     clip,
 						     &rect);
-		} else if (thickness == 1) {
+		} وگرنه اگر (thickness == 1) {
 			/* Border made up from one part which can be
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			اگر (side == بالاترین_2 || side == راست_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-				rect.x1 = ((side == TOP) && (p[4] - p[6] != 0)) ?
+				rect.x1 = ((side == بالاترین_2) && (p[4] - p[6] != 0)) ?
 					rect.x1 + p[4] - p[6] : rect.x1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_in,
 							     clip,
 							     &rect);
-			} else {
+			} وگرنه {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
 				rect.y1 = p[3];
-				rect.y1 = ((side == LEFT) && (p[1] - p[3] != 0)) ?
+				rect.y1 = ((side == چپ_2) && (p[1] - p[3] != 0)) ?
 					rect.y1 + p[1] - p[3] : rect.y1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_out,
 							     clip,
 							     &rect);
 			}
-		} else {
+		} وگرنه {
 			/* Border made up from two parts and can't be
 			 * plotted with rectangles
 			 */
@@ -411,8 +411,8 @@ html_redraw_border_plot(const int side,
 			z[6] = p[6];
 			z[7] = p[7];
 			res = ctx->plot->polygon(ctx, plot_style_bdr_in, z, 4);
-			if (res != NSERROR_OK) {
-				return res;
+			اگر (res != NSERROR_OK) {
+				بازگشت res;
 			}
 			z[0] = p[2];
 			z[1] = p[3];
@@ -420,10 +420,10 @@ html_redraw_border_plot(const int side,
 			z[7] = p[5];
 			res = ctx->plot->polygon(ctx, plot_style_bdr_out, z, 4);
 		}
-		break;
+		بشکن;
 	}
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -441,24 +441,24 @@ html_redraw_border_plot(const int side,
  * \return true if successful, false otherwise
  */
 bool
-html_redraw_borders(struct box *box,
-		    int x_parent,
-		    int y_parent,
-		    int p_width,
-		    int p_height,
-		    const struct rect *clip,
-		    float scale,
-		    const struct redraw_context *ctx)
+html_redraw_borders(ساختار box *box,
+		    صحیح x_parent,
+		    صحیح y_parent,
+		    صحیح p_width,
+		    صحیح p_height,
+		    ثابت ساختار rect *clip,
+		    اعشاری scale,
+		    ثابت ساختار redraw_context *ctx)
 {
-	unsigned int sides[] = { LEFT, RIGHT, TOP, BOTTOM };
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
-	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
-	int x, y;
-	unsigned int i, side;
-	int p[8]; /* Box border vertices */
-	int z[8]; /* Border vertices */
+	unsigned صحیح sides[] = { چپ_2, راست_2, بالاترین_2, BOTTOM };
+	صحیح بالاترین = box->border[بالاترین_2].width;
+	صحیح راست = box->border[راست_2].width;
+	صحیح bottom = box->border[BOTTOM].width;
+	صحیح چپ = box->border[چپ_2].width;
+	صحیح x, y;
+	unsigned صحیح i, side;
+	صحیح p[8]; /* Box border vertices */
+	صحیح z[8]; /* Border vertices */
 	bool square_end_1 = false;
 	bool square_end_2 = false;
 	nserror res;
@@ -466,16 +466,16 @@ html_redraw_borders(struct box *box,
 	x = x_parent + box->x;
 	y = y_parent + box->y;
 
-	if (scale != 1.0) {
-		top *= scale;
-		right *= scale;
+	اگر (scale != 1.0) {
+		بالاترین *= scale;
+		راست *= scale;
 		bottom *= scale;
-		left *= scale;
+		چپ *= scale;
 		x *= scale;
 		y *= scale;
 	}
 
-	assert(box->style);
+	أكد(box->style);
 
 	/* Calculate border vertices
 	 *
@@ -487,23 +487,23 @@ html_redraw_borders(struct box *box,
 	 *    | /                  \ |
 	 *    +----------------------D
 	 */
-	p[0] = x - left;		p[1] = y - top;			/* A */
+	p[0] = x - چپ;		p[1] = y - بالاترین;			/* A */
 	p[2] = x;			p[3] = y;			/* B */
 	p[4] = x + p_width;		p[5] = y + p_height;		/* C */
-	p[6] = x + p_width + right;	p[7] = y + p_height + bottom;	/* D */
+	p[6] = x + p_width + راست;	p[7] = y + p_height + bottom;	/* D */
 
-	for (i = 0; i != 4; i++) {
+	برای (i = 0; i != 4; i++) {
 		colour col = 0;
 		side = sides[i]; /* plot order */
 
-		if (box->border[side].width == 0 ||
+		اگر (box->border[side].width == 0 ||
 		    nscss_color_is_transparent(box->border[side].c)) {
-			continue;
+			ادامه;
 		}
 
-		switch (side) {
-		case LEFT:
-			square_end_1 = (top == 0);
+		انتخاب (side) {
+		حالت چپ_2:
+			square_end_1 = (بالاترین == 0);
 			square_end_2 = (bottom == 0);
 
 			z[0] = p[0];	z[1] = p[7];
@@ -511,15 +511,15 @@ html_redraw_borders(struct box *box,
 			z[4] = p[2];	z[5] = p[3];
 			z[6] = p[0];	z[7] = p[1];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+			اگر (nscss_color_is_transparent(box->border[بالاترین_2].c) == false &&
+			    box->border[بالاترین_2].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
 				 */
-				z[5] -= top;
+				z[5] -= بالاترین;
 				square_end_1 = true;
 			}
-			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+			اگر (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 			    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang bottom corner fully,
 				 * if bottom border is opaque
@@ -538,13 +538,13 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				بازگشت false;
 			}
-			break;
+			بشکن;
 
-		case RIGHT:
-			square_end_1 = (top == 0);
+		حالت راست_2:
+			square_end_1 = (بالاترین == 0);
 			square_end_2 = (bottom == 0);
 
 			z[0] = p[6];	z[1] = p[1];
@@ -552,15 +552,15 @@ html_redraw_borders(struct box *box,
 			z[4] = p[4];	z[5] = p[5];
 			z[6] = p[6];	z[7] = p[7];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+			اگر (nscss_color_is_transparent(box->border[بالاترین_2].c) == false &&
+			    box->border[بالاترین_2].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
 				 */
-				z[3] -= top;
+				z[3] -= بالاترین;
 				square_end_1 = true;
 			}
-			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+			اگر (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 			    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang bottom corner fully,
 				 * if bottom border is opaque
@@ -579,41 +579,41 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				بازگشت false;
 			}
-			break;
+			بشکن;
 
-		case TOP:
-			if (clip->y0 > p[3]) {
+		حالت بالاترین_2:
+			اگر (clip->y0 > p[3]) {
 				/* clip rectangle is below border; nothing to
 				 * plot
 				 */
-				continue;
+				ادامه;
 			}
 
-			square_end_1 = (left == 0);
-			square_end_2 = (right == 0);
+			square_end_1 = (چپ == 0);
+			square_end_2 = (راست == 0);
 
 			z[0] = p[2];	z[1] = p[3];
 			z[2] = p[0];	z[3] = p[1];
 			z[4] = p[6];	z[5] = p[1];
 			z[6] = p[4];	z[7] = p[3];
 
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[TOP].c == box->border[LEFT].c) {
+			اگر (box->border[بالاترین_2].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[بالاترین_2].c == box->border[چپ_2].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
 				 */
-				z[2] += left;
+				z[2] += چپ;
 				square_end_1 = true;
 			}
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[TOP].c == box->border[RIGHT].c) {
+			اگر (box->border[بالاترین_2].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[بالاترین_2].c == box->border[راست_2].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
 				 */
-				z[4] -= right;
+				z[4] -= راست;
 				square_end_2 = true;
 			}
 
@@ -627,41 +627,41 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				بازگشت false;
 			}
-			break;
+			بشکن;
 
-		case BOTTOM:
-			if (clip->y1 < p[5]) {
+		حالت BOTTOM:
+			اگر (clip->y1 < p[5]) {
 				/* clip rectangle is above border; nothing to
 				 * plot
 				 */
-				continue;
+				ادامه;
 			}
 
-			square_end_1 = (left == 0);
-			square_end_2 = (right == 0);
+			square_end_1 = (چپ == 0);
+			square_end_2 = (راست == 0);
 
 			z[0] = p[4];	z[1] = p[5];
 			z[2] = p[6];	z[3] = p[7];
 			z[4] = p[0];	z[5] = p[7];
 			z[6] = p[2];	z[7] = p[5];
 
-			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[BOTTOM].c == box->border[LEFT].c) {
+			اگر (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[BOTTOM].c == box->border[چپ_2].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
 				 */
-				z[4] += left;
+				z[4] += چپ;
 				square_end_1 = true;
 			}
-			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[BOTTOM].c == box->border[RIGHT].c) {
+			اگر (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[BOTTOM].c == box->border[راست_2].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
 				 */
-				z[2] -= right;
+				z[2] -= راست;
 				square_end_2 = true;
 			}
 
@@ -675,19 +675,19 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				بازگشت false;
 			}
-			break;
+			بشکن;
 
-		default:
-			assert(side == TOP || side == BOTTOM ||
-			       side == LEFT || side == RIGHT);
-			break;
+		پیشفرض:
+			أكد(side == بالاترین_2 || side == BOTTOM ||
+			       side == چپ_2 || side == راست_2);
+			بشکن;
 		}
 	}
 
-	return true;
+	بازگشت true;
 }
 
 
@@ -704,30 +704,30 @@ html_redraw_borders(struct box *box,
  * \return true if successful, false otherwise
  */
 bool
-html_redraw_inline_borders(struct box *box,
-			   struct rect b,
-			   const struct rect *clip,
-			   float scale,
+html_redraw_inline_borders(ساختار box *box,
+			   ساختار rect b,
+			   ثابت ساختار rect *clip,
+			   اعشاری scale,
 			   bool first,
 			   bool last,
-			   const struct redraw_context *ctx)
+			   ثابت ساختار redraw_context *ctx)
 {
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
-	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
+	صحیح بالاترین = box->border[بالاترین_2].width;
+	صحیح راست = box->border[راست_2].width;
+	صحیح bottom = box->border[BOTTOM].width;
+	صحیح چپ = box->border[چپ_2].width;
 	colour col;
-	int p[8]; /* Box border vertices */
-	int z[8]; /* Border vertices */
+	صحیح p[8]; /* Box border vertices */
+	صحیح z[8]; /* Border vertices */
 	bool square_end_1;
 	bool square_end_2;
 	nserror res;
 
-	if (scale != 1.0) {
-		top *= scale;
-		right *= scale;
+	اگر (scale != 1.0) {
+		بالاترین *= scale;
+		راست *= scale;
 		bottom *= scale;
-		left *= scale;
+		چپ *= scale;
 	}
 
 	/* Calculate border vertices
@@ -741,35 +741,35 @@ html_redraw_inline_borders(struct box *box,
 	 *    +----------------------D
 	 */
 	p[0] = b.x0;				p[1] = b.y0;		/* A */
-	p[2] = first ? b.x0 + left : b.x0;	p[3] = b.y0 + top;	/* B */
-	p[4] = last ? b.x1 - right : b.x1;	p[5] = b.y1 - bottom;	/* C */
+	p[2] = first ? b.x0 + چپ : b.x0;	p[3] = b.y0 + بالاترین;	/* B */
+	p[4] = last ? b.x1 - راست : b.x1;	p[5] = b.y1 - bottom;	/* C */
 	p[6] = b.x1;				p[7] = b.y1;		/* D */
 
-	assert(box->style);
+	أكد(box->style);
 
 	/* Left */
-	square_end_1 = (top == 0);
+	square_end_1 = (بالاترین == 0);
 	square_end_2 = (bottom == 0);
-	if (left != 0 &&
+	اگر (چپ != 0 &&
 	    first &&
-	    nscss_color_is_transparent(box->border[LEFT].c) == false) {
-		col = nscss_color_to_ns(box->border[LEFT].c);
+	    nscss_color_is_transparent(box->border[چپ_2].c) == false) {
+		col = nscss_color_to_ns(box->border[چپ_2].c);
 
 		z[0] = p[0];	z[1] = p[7];
 		z[2] = p[2];	z[3] = p[5];
 		z[4] = p[2];	z[5] = p[3];
 		z[6] = p[0];	z[7] = p[1];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+		اگر (nscss_color_is_transparent(box->border[بالاترین_2].c) == false &&
+		    box->border[بالاترین_2].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
 			 */
-			z[5] -= top;
+			z[5] -= بالاترین;
 			square_end_1 = true;
 		}
 
-		if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+		اگر (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 		    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang bottom corner fully,
 			 * if bottom border is opaque
@@ -778,42 +778,42 @@ html_redraw_inline_borders(struct box *box,
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(LEFT,
+		res = html_redraw_border_plot(چپ_2,
 					      z,
 					      col,
-					      box->border[LEFT].style,
-					      left,
+					      box->border[چپ_2].style,
+					      چپ,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		اگر (res != NSERROR_OK) {
+			بازگشت false;
 		}
 	}
 
 	/* Right */
-	square_end_1 = (top == 0);
+	square_end_1 = (بالاترین == 0);
 	square_end_2 = (bottom == 0);
-	if (right != 0 &&
+	اگر (راست != 0 &&
 	    last &&
-	    nscss_color_is_transparent(box->border[RIGHT].c) == false) {
-		col = nscss_color_to_ns(box->border[RIGHT].c);
+	    nscss_color_is_transparent(box->border[راست_2].c) == false) {
+		col = nscss_color_to_ns(box->border[راست_2].c);
 
 		z[0] = p[6];	z[1] = p[1];
 		z[2] = p[4];	z[3] = p[3];
 		z[4] = p[4];	z[5] = p[5];
 		z[6] = p[6];	z[7] = p[7];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+		اگر (nscss_color_is_transparent(box->border[بالاترین_2].c) == false &&
+		    box->border[بالاترین_2].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
 			 */
-			z[3] -= top;
+			z[3] -= بالاترین;
 			square_end_1 = true;
 		}
 
-		if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+		اگر (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 		    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang bottom corner fully,
 			 * if bottom border is opaque
@@ -822,68 +822,68 @@ html_redraw_inline_borders(struct box *box,
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(RIGHT,
+		res = html_redraw_border_plot(راست_2,
 					      z,
 					      col,
-					      box->border[RIGHT].style,
-					      right,
+					      box->border[راست_2].style,
+					      راست,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		اگر (res != NSERROR_OK) {
+			بازگشت false;
 		}
 	}
 
 	/* Top */
-	square_end_1 = (left == 0);
-	square_end_2 = (right == 0);
-	if (top != 0 &&
-	    nscss_color_is_transparent(box->border[TOP].c) == false) {
-		col = nscss_color_to_ns(box->border[TOP].c);
+	square_end_1 = (چپ == 0);
+	square_end_2 = (راست == 0);
+	اگر (بالاترین != 0 &&
+	    nscss_color_is_transparent(box->border[بالاترین_2].c) == false) {
+		col = nscss_color_to_ns(box->border[بالاترین_2].c);
 
 		z[0] = p[2];	z[1] = p[3];
 		z[2] = p[0];	z[3] = p[1];
 		z[4] = p[6];	z[5] = p[1];
 		z[6] = p[4];	z[7] = p[3];
 
-		if (first &&
-		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[TOP].c == box->border[LEFT].c) {
+		اگر (first &&
+		    box->border[بالاترین_2].style == CSS_BORDER_STYLE_SOLID &&
+		    box->border[بالاترین_2].c == box->border[چپ_2].c) {
 			/* don't bother overlapping left corner if
 			 * it's the same colour anyway
 			 */
-			z[2] += left;
+			z[2] += چپ;
 			square_end_1 = true;
 		}
 
-		if (last &&
-		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[TOP].c == box->border[RIGHT].c) {
+		اگر (last &&
+		    box->border[بالاترین_2].style == CSS_BORDER_STYLE_SOLID &&
+		    box->border[بالاترین_2].c == box->border[راست_2].c) {
 			/* don't bother overlapping right corner if
 			 * it's the same colour anyway
 			 */
-			z[4] -= right;
+			z[4] -= راست;
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(TOP,
+		res = html_redraw_border_plot(بالاترین_2,
 					      z,
 					      col,
-					      box->border[TOP].style,
-					      top,
+					      box->border[بالاترین_2].style,
+					      بالاترین,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		اگر (res != NSERROR_OK) {
+			بازگشت false;
 		}
 	}
 
 	/* Bottom */
-	square_end_1 = (left == 0);
-	square_end_2 = (right == 0);
-	if (bottom != 0 &&
+	square_end_1 = (چپ == 0);
+	square_end_2 = (راست == 0);
+	اگر (bottom != 0 &&
 	    nscss_color_is_transparent(box->border[BOTTOM].c) == false) {
 		col = nscss_color_to_ns(box->border[BOTTOM].c);
 
@@ -892,23 +892,23 @@ html_redraw_inline_borders(struct box *box,
 		z[4] = p[0];	z[5] = p[7];
 		z[6] = p[2];	z[7] = p[5];
 
-		if (first &&
+		اگر (first &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[BOTTOM].c == box->border[LEFT].c) {
+		    box->border[BOTTOM].c == box->border[چپ_2].c) {
 			/* don't bother overlapping left corner if
 			 * it's the same colour anyway
 			 */
-			z[4] += left;
+			z[4] += چپ;
 			square_end_1 = true;
 		}
 
-		if (last &&
+		اگر (last &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[BOTTOM].c == box->border[RIGHT].c) {
+		    box->border[BOTTOM].c == box->border[راست_2].c) {
 			/* don't bother overlapping right corner if
 			 * it's the same colour anyway
 			 */
-			z[2] -= right;
+			z[2] -= راست;
 			square_end_2 = true;
 		}
 
@@ -920,10 +920,10 @@ html_redraw_inline_borders(struct box *box,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		اگر (res != NSERROR_OK) {
+			بازگشت false;
 		}
 	}
 
-	return true;
+	بازگشت true;
 }

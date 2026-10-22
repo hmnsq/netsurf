@@ -22,35 +22,35 @@
  * Free text search
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <stdbool.h>
+#شامل <stddef.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "utils/ascii.h"
-#include "netsurf/types.h"
-#include "desktop/selection.h"
+#شامل "utils/errors.h"
+#شامل "utils/utils.h"
+#شامل "utils/ascii.h"
+#شامل "netsurf/types.h"
+#شامل "desktop/selection.h"
 
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
+#شامل "content/content.h"
+#شامل "content/content_protected.h"
+#شامل "content/hlcache.h"
+#شامل "content/textsearch.h"
 
 /**
  * search match
  */
-struct list_entry {
+ساختار list_entry {
 	/**
 	 * previous match
 	 */
-	struct list_entry *prev;
+	ساختار list_entry *prev;
 
 	/**
 	 * next match
 	 */
-	struct list_entry *next;
+	ساختار list_entry *next;
 
 	/**
 	 * start position of match
@@ -65,48 +65,48 @@ struct list_entry {
 	/**
 	 * content opaque start pointer
 	 */
-	struct box *start_box;
+	ساختار box *start_box;
 
 	/**
 	 * content opaque end pointer
 	 */
-	struct box *end_box;
+	ساختار box *end_box;
 
 	/**
 	 * content specific selection object
 	 */
-	struct selection *sel;
+	ساختار selection *sel;
 };
 
 /**
  * The context for a free text search
  */
-struct textsearch_context {
+ساختار textsearch_context {
 
 	/**
 	 * content search was performed upon
 	 */
-	struct content *c;
+	ساختار content *c;
 
 	/**
 	 * opaque pointer passed to constructor.
 	 */
-	void *gui_p;
+	تهی *gui_p;
 
 	/**
 	 * List of matches
 	 */
-	struct list_entry *found;
+	ساختار list_entry *found;
 
 	/**
 	 * current selected match
 	 */
-	struct list_entry *current; /* first for select all */
+	ساختار list_entry *current; /* first for select all */
 
 	/**
 	 * query string search results are for
 	 */
-	char *string;
+	نویسه *string;
 	bool prev_case_sens;
 	bool newsearch;
 };
@@ -115,18 +115,18 @@ struct textsearch_context {
 /**
  * broadcast textsearch message
  */
-static inline void
-textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+ایستا درونخطی تهی
+textsearch_broadcast(ساختار textsearch_context *textsearch,
+		     صحیح type,
 		     bool state,
-		     const char *string)
+		     ثابت نویسه *string)
 {
-	union content_msg_data msg_data;
-	msg_data.textsearch.type = type;
-	msg_data.textsearch.ctx = textsearch->gui_p;
-	msg_data.textsearch.state = state;
-	msg_data.textsearch.string = string;
-	content_broadcast(textsearch->c, CONTENT_MSG_TEXTSEARCH, &msg_data);
+	اجتماع content_پیام_data پیام_data;
+	پیام_data.textsearch.type = type;
+	پیام_data.textsearch.ctx = textsearch->gui_p;
+	پیام_data.textsearch.state = state;
+	پیام_data.textsearch.string = string;
+	content_broadcast(textsearch->c, CONTENT_پیام_TEXTSEARCH, &پیام_data);
 }
 
 
@@ -134,10 +134,10 @@ textsearch_broadcast(struct textsearch_context *textsearch,
  * Release the memory used by the list of matches,
  * deleting selection objects too
  */
-static void free_matches(struct textsearch_context *textsearch)
+ایستا تهی free_matches(ساختار textsearch_context *textsearch)
 {
-	struct list_entry *cur;
-	struct list_entry *nxt;
+	ساختار list_entry *cur;
+	ساختار list_entry *nxt;
 
 	cur = textsearch->found->next;
 
@@ -147,15 +147,15 @@ static void free_matches(struct textsearch_context *textsearch)
 	 * causing nested accesses to the list
 	 */
 
-	textsearch->found->prev = NULL;
-	textsearch->found->next = NULL;
+	textsearch->found->prev = پوچ;
+	textsearch->found->next = پوچ;
 
-	for (; cur; cur = nxt) {
+	برای (; cur; cur = nxt) {
 		nxt = cur->next;
-		if (cur->sel) {
+		اگر (cur->sel) {
 			selection_destroy(cur->sel);
 		}
-		free(cur);
+		آزاد(cur);
 	}
 }
 
@@ -164,24 +164,24 @@ static void free_matches(struct textsearch_context *textsearch)
  * Specifies whether all matches or just the current match should
  * be highlighted in the search text.
  */
-static void search_show_all(bool all, struct textsearch_context *context)
+ایستا تهی جستجو_show_all(bool all, ساختار textsearch_context *context)
 {
-	struct list_entry *a;
+	ساختار list_entry *a;
 
-	for (a = context->found->next; a; a = a->next) {
+	برای (a = context->found->next; a; a = a->next) {
 		bool add = true;
-		if (!all && a != context->current) {
+		اگر (!all && a != context->current) {
 			add = false;
-			if (a->sel) {
+			اگر (a->sel) {
 				selection_destroy(a->sel);
-				a->sel = NULL;
+				a->sel = پوچ;
 			}
 		}
 
-		if (add && !a->sel) {
+		اگر (add && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			اگر (a->sel != پوچ) {
 				selection_init(a->sel);
 				selection_set_position(a->sel,
 						       a->start_idx,
@@ -200,45 +200,45 @@ static void search_show_all(bool all, struct textsearch_context *context)
  * \param string_len length of search string
  * \param flags flags to control the search.
  */
-static nserror
-search_text(struct textsearch_context *context,
-	    const char *string,
-	    int string_len,
-	    search_flags_t flags)
+ایستا nserror
+جستجو_text(ساختار textsearch_context *context,
+	    ثابت نویسه *string,
+	    صحیح string_len,
+	    جستجو_flags_t flags)
 {
-	struct rect bounds;
-	union content_msg_data msg_data;
+	ساختار rect bounds;
+	اجتماع content_پیام_data پیام_data;
 	bool case_sensitive, forwards, showall;
 	nserror res = NSERROR_OK;
 
-	case_sensitive = ((flags & SEARCH_FLAG_CASE_SENSITIVE) != 0) ?
+	case_sensitive = ((flags & جستجو_FLAG_CASE_SENSITIVE) != 0) ?
 			true : false;
-	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
-	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
+	forwards = ((flags & جستجو_FLAG_FORWARDS) != 0) ? true : false;
+	showall = ((flags & جستجو_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	اگر (context->c == پوچ) {
+		بازگشت res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	اگر ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
-			free(context->string);
+		اگر (context->string != پوچ) {
+			آزاد(context->string);
 		}
 
-		context->current = NULL;
+		context->current = پوچ;
 		free_matches(context);
 
 		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
+		اگر (context->string != پوچ) {
 			memcpy(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
 
 		/* indicate find operation starting */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, NULL);
+		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, پوچ);
 
 
 		/* call content find handler */
@@ -249,11 +249,11 @@ search_text(struct textsearch_context *context,
 							   case_sensitive);
 
 		/* indicate find operation finished */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
+		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, پوچ);
 
-		if (res != NSERROR_OK) {
+		اگر (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			بازگشت res;
 		}
 
 		context->prev_case_sens = case_sensitive;
@@ -262,13 +262,13 @@ search_text(struct textsearch_context *context,
 		context->current = context->found->next;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} وگرنه اگر (context->current != پوچ) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
+		اگر (forwards) {
+			اگر (context->current->next)
 				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		} وگرنه {
+			اگر (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
@@ -276,29 +276,29 @@ search_text(struct textsearch_context *context,
 	/* update match state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_MATCH,
-			     (context->current != NULL),
-			     NULL);
+			     (context->current != پوچ),
+			     پوچ);
 
-	search_show_all(showall, context);
+	جستجو_show_all(showall, context);
 
 	/* update back state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_BACK,
-			     ((context->current != NULL) &&
-			      (context->current->prev != NULL)),
-			     NULL);
+			     ((context->current != پوچ) &&
+			      (context->current->prev != پوچ)),
+			     پوچ);
 
 	/* update forward state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_FORWARD,
-			     ((context->current != NULL) &&
-			      (context->current->next != NULL)),
-			     NULL);
+			     ((context->current != پوچ) &&
+			      (context->current->next != پوچ)),
+			     پوچ);
 
 
-	if (context->current == NULL) {
+	اگر (context->current == پوچ) {
 		/* no current match */
-		return res;
+		بازگشت res;
 	}
 
 	/* call content match bounds handler */
@@ -308,16 +308,16 @@ search_text(struct textsearch_context *context,
 					context->current->start_box,
 					context->current->end_box,
 					&bounds);
-	if (res == NSERROR_OK) {
-		msg_data.scroll.area = true;
-		msg_data.scroll.x0 = bounds.x0;
-		msg_data.scroll.y0 = bounds.y0;
-		msg_data.scroll.x1 = bounds.x1;
-		msg_data.scroll.y1 = bounds.y1;
-		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
+	اگر (res == NSERROR_OK) {
+		پیام_data.scroll.area = true;
+		پیام_data.scroll.x0 = bounds.x0;
+		پیام_data.scroll.y0 = bounds.y0;
+		پیام_data.scroll.x1 = bounds.x1;
+		پیام_data.scroll.y1 = bounds.y1;
+		content_broadcast(context->c, CONTENT_پیام_SCROLL, &پیام_data);
 	}
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -330,16 +330,16 @@ search_text(struct textsearch_context *context,
  * \param flags   The flags forward/back etc
  * \param string  The string to match
  */
-static nserror
-content_textsearch_step(struct textsearch_context *textsearch,
-			search_flags_t flags,
-			const char *string)
+ایستا nserror
+content_textsearch_step(ساختار textsearch_context *textsearch,
+			جستجو_flags_t flags,
+			ثابت نویسه *string)
 {
-	int string_len;
-	int i = 0;
+	صحیح string_len;
+	صحیح i = 0;
 	nserror res = NSERROR_OK;
 
-	assert(textsearch != NULL);
+	أكد(textsearch != پوچ);
 
 	/* broadcast recent query string */
 	textsearch_broadcast(textsearch,
@@ -348,15 +348,15 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			     string);
 
 	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
-			break;
+	برای (i = 0; i < string_len; i++) {
+		اگر (string[i] != '#' && string[i] != '*')
+			بشکن;
 	}
 
-	if (i < string_len) {
-		res = search_text(textsearch, string, string_len, flags);
-	} else {
-		union content_msg_data msg_data;
+	اگر (i < string_len) {
+		res = جستجو_text(textsearch, string, string_len, flags);
+	} وگرنه {
+		اجتماع content_پیام_data پیام_data;
 
 		free_matches(textsearch);
 
@@ -364,30 +364,30 @@ content_textsearch_step(struct textsearch_context *textsearch,
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_MATCH,
 				     true,
-				     NULL);
+				     پوچ);
 
 		/* update back state */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_BACK,
 				     false,
-				     NULL);
+				     پوچ);
 
 		/* update forward state */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_FORWARD,
 				     false,
-				     NULL);
+				     پوچ);
 
 		/* clear scroll */
-		msg_data.scroll.area = false;
-		msg_data.scroll.x0 = 0;
-		msg_data.scroll.y0 = 0;
+		پیام_data.scroll.area = false;
+		پیام_data.scroll.x0 = 0;
+		پیام_data.scroll.y0 = 0;
 		content_broadcast(textsearch->c,
-				  CONTENT_MSG_SCROLL,
-				  &msg_data);
+				  CONTENT_پیام_SCROLL,
+				  &پیام_data);
 	}
 
-	return res;
+	بازگشت res;
 }
 
 
@@ -396,16 +396,16 @@ content_textsearch_step(struct textsearch_context *textsearch,
  *
  * \param c content to clear
  */
-static nserror content_textsearch__clear(struct content *c)
+ایستا nserror content_textsearch__clear(ساختار content *c)
 {
-	free(c->textsearch.string);
-	c->textsearch.string = NULL;
+	آزاد(c->textsearch.string);
+	c->textsearch.string = پوچ;
 
-	if (c->textsearch.context != NULL) {
+	اگر (c->textsearch.context != پوچ) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = پوچ;
 	}
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
@@ -417,48 +417,48 @@ static nserror content_textsearch__clear(struct content *c)
  * \param search_out A pointer to recive the new text search context
  * \return NSERROR_OK on success and \a search_out updated else error code
  */
-static nserror
-content_textsearch_create(struct content *c,
-			  void *gui_data,
-			  struct textsearch_context **textsearch_out)
+ایستا nserror
+content_textsearch_create(ساختار content *c,
+			  تهی *gui_data,
+			  ساختار textsearch_context **textsearch_out)
 {
-	struct textsearch_context *context;
-	struct list_entry *search_head;
+	ساختار textsearch_context *context;
+	ساختار list_entry *جستجو_head;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
-	    (c->handler->textsearch_bounds == NULL)) {
+	اگر ((c->handler->textsearch_find == پوچ) ||
+	    (c->handler->textsearch_bounds == پوچ)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		بازگشت NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
-	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	context = malloc(اندازه(ساختار textsearch_context));
+	اگر (context == پوچ) {
+		بازگشت NSERROR_NOMEM;
 	}
 
-	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
-		free(context);
-		return NSERROR_NOMEM;
+	جستجو_head = malloc(اندازه(ساختار list_entry));
+	اگر (جستجو_head == پوچ) {
+		آزاد(context);
+		بازگشت NSERROR_NOMEM;
 	}
 
-	search_head->start_idx = 0;
-	search_head->end_idx = 0;
-	search_head->start_box = NULL;
-	search_head->end_box = NULL;
-	search_head->sel = NULL;
-	search_head->prev = NULL;
-	search_head->next = NULL;
+	جستجو_head->start_idx = 0;
+	جستجو_head->end_idx = 0;
+	جستجو_head->start_box = پوچ;
+	جستجو_head->end_box = پوچ;
+	جستجو_head->sel = پوچ;
+	جستجو_head->prev = پوچ;
+	جستجو_head->next = پوچ;
 
-	context->found = search_head;
-	context->current = NULL;
-	context->string = NULL;
+	context->found = جستجو_head;
+	context->current = پوچ;
+	context->string = پوچ;
 	context->prev_case_sens = false;
 	context->newsearch = true;
 	context->c = c;
@@ -466,275 +466,275 @@ content_textsearch_create(struct content *c,
 
 	*textsearch_out = context;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-const char *
-content_textsearch_find_pattern(const char *string,
-				int s_len,
-				const char *pattern,
-				int p_len,
+ثابت نویسه *
+content_textsearch_find_pattern(ثابت نویسه *string,
+				صحیح s_len,
+				ثابت نویسه *pattern,
+				صحیح p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				unsigned صحیح *m_len)
 {
-	struct { const char *ss, *s, *p; bool first; } context[16];
-	const char *ep = pattern + p_len;
-	const char *es = string  + s_len;
-	const char *p = pattern - 1;  /* a virtual '*' before the pattern */
-	const char *ss = string;
-	const char *s = string;
+	ساختار { ثابت نویسه *ss, *s, *p; bool first; } context[16];
+	ثابت نویسه *ep = pattern + p_len;
+	ثابت نویسه *es = string  + s_len;
+	ثابت نویسه *p = pattern - 1;  /* a virtual '*' before the pattern */
+	ثابت نویسه *ss = string;
+	ثابت نویسه *s = string;
 	bool first = true;
-	int top = 0;
+	صحیح بالاترین = 0;
 
-	while (p < ep) {
+	وقتی (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
-			char ch;
+		اگر (p < pattern || *p == '*') {
+			نویسه ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			انجامبده p++; وقتی (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			اگر (p >= ep) بشکن;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			اگر (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
-						break;
+				اگر (!case_sens) ch = ascii_to_upper(ch);
+				وقتی (s < es) {
+					اگر (case_sens) {
+						اگر (*s == ch) بشکن;
+					} وگرنه اگر (ascii_to_upper(*s) == ch)
+						بشکن;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			اگر (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
-					context[top].ss = ss;
-					context[top].s  = s + 1;
-					context[top].p  = p - 1;
+				اگر (بالاترین < (صحیح)NOF_ELEMENTS(context)) {
+					context[بالاترین].ss = ss;
+					context[بالاترین].s  = s + 1;
+					context[بالاترین].p  = p - 1;
 					/* ptr to last asterisk */
-					context[top].first = first;
-					top++;
+					context[بالاترین].first = first;
+					بالاترین++;
 				}
 
-				if (first) {
+				اگر (first) {
 					ss = s;
 					/* remember first non-'*' char */
 					first = false;
 				}
 
 				matches = true;
-			} else {
+			} وگرنه {
 				matches = false;
 			}
 
-		} else if (s < es) {
-			char ch = *p;
-			if (ch == '#')
+		} وگرنه اگر (s < es) {
+			نویسه ch = *p;
+			اگر (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			وگرنه {
+				اگر (case_sens)
 					matches = (*s == ch);
-				else
+				وگرنه
 					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
 			}
-			if (matches && first) {
+			اگر (matches && first) {
 				ss = s;  /* remember first non-'*' char */
 				first = false;
 			}
-		} else {
+		} وگرنه {
 			matches = false;
 		}
 
-		if (matches) {
+		اگر (matches) {
 			p++; s++;
-		} else {
+		} وگرنه {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			اگر (--بالاترین < 0)
+				بازگشت پوچ;  /* no match, give up */
 
-			ss = context[top].ss;
-			s  = context[top].s;
-			p  = context[top].p;
-			first = context[top].first;
+			ss = context[بالاترین].ss;
+			s  = context[بالاترین].s;
+			p  = context[بالاترین].p;
+			first = context[بالاترین].first;
 		}
 	}
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	بازگشت ss;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 nserror
-content_textsearch_add_match(struct textsearch_context *context,
+content_textsearch_add_match(ساختار textsearch_context *context,
 			     unsigned start_idx,
 			     unsigned end_idx,
-			     struct box *start_box,
-			     struct box *end_box)
+			     ساختار box *start_box,
+			     ساختار box *end_box)
 {
-	struct list_entry *entry;
+	ساختار list_entry *entry;
 
 	/* found string in box => add to list */
-	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	entry = calloc(1, اندازه(*entry));
+	اگر (entry == پوچ) {
+		بازگشت NSERROR_NOMEM;
 	}
 
 	entry->start_idx = start_idx;
 	entry->end_idx = end_idx;
 	entry->start_box = start_box;
 	entry->end_box = end_box;
-	entry->sel = NULL;
+	entry->sel = پوچ;
 
-	entry->next = NULL;
+	entry->next = پوچ;
 	entry->prev = context->found->prev;
 
-	if (context->found->prev == NULL) {
+	اگر (context->found->prev == پوچ) {
 		context->found->next = entry;
-	} else {
+	} وگرنه {
 		context->found->prev->next = entry;
 	}
 
 	context->found->prev = entry;
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 bool
-content_textsearch_ishighlighted(struct textsearch_context *textsearch,
+content_textsearch_ishighlighted(ساختار textsearch_context *textsearch,
 				 unsigned start_offset,
 				 unsigned end_offset,
 				 unsigned *start_idx,
 				 unsigned *end_idx)
 {
-	struct list_entry *cur;
+	ساختار list_entry *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	برای (cur = textsearch->found->next; cur != پوچ; cur = cur->next) {
+		اگر (cur->sel &&
 		    selection_highlighted(cur->sel,
 					  start_offset,
 					  end_offset,
 					  start_idx,
 					  end_idx)) {
-			return true;
+			بازگشت true;
 		}
 	}
 
-	return false;
+	بازگشت false;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch)
+nserror content_textsearch_destroy(ساختار textsearch_context *textsearch)
 {
-	assert(textsearch != NULL);
+	أكد(textsearch != پوچ);
 
-	if (textsearch->string != NULL) {
+	اگر (textsearch->string != پوچ) {
 		/* broadcast recent query string */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
 				     false,
 				     textsearch->string);
 
-		free(textsearch->string);
+		آزاد(textsearch->string);
 	}
 
 	/* update back state */
 	textsearch_broadcast(textsearch,
 			     CONTENT_TEXTSEARCH_BACK,
 			     true,
-			     NULL);
+			     پوچ);
 
 	/* update forward state */
 	textsearch_broadcast(textsearch,
 			     CONTENT_TEXTSEARCH_FORWARD,
 			     true,
-			     NULL);
+			     پوچ);
 
 	free_matches(textsearch);
-	free(textsearch);
+	آزاد(textsearch);
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror
-content_textsearch(struct hlcache_handle *h,
-		   void *context,
-		   search_flags_t flags,
-		   const char *string)
+content_textsearch(ساختار hlcache_handle *h,
+		   تهی *context,
+		   جستجو_flags_t flags,
+		   ثابت نویسه *string)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ساختار content *c = hlcache_handle_get_content(h);
 	nserror res;
 
-	assert(c != NULL);
+	أكد(c != پوچ);
 
-	if (string != NULL &&
-	    c->textsearch.string != NULL &&
-	    c->textsearch.context != NULL &&
+	اگر (string != پوچ &&
+	    c->textsearch.string != پوچ &&
+	    c->textsearch.context != پوچ &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} وگرنه اگر (string != پوچ) {
 		/* New search */
-		free(c->textsearch.string);
+		آزاد(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		اگر (c->textsearch.string == پوچ) {
+			بازگشت NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		اگر (c->textsearch.context != پوچ) {
 			content_textsearch_destroy(c->textsearch.context);
-			c->textsearch.context = NULL;
+			c->textsearch.context = پوچ;
 		}
 
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		اگر (res != NSERROR_OK) {
+			بازگشت res;
 		}
 
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else {
+	} وگرنه {
 		/* Clear search */
 		content_textsearch__clear(c);
 
-		free(c->textsearch.string);
-		c->textsearch.string = NULL;
+		آزاد(c->textsearch.string);
+		c->textsearch.string = پوچ;
 	}
 
-	return NSERROR_OK;
+	بازگشت NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
-nserror content_textsearch_clear(struct hlcache_handle *h)
+nserror content_textsearch_clear(ساختار hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ساختار content *c = hlcache_handle_get_content(h);
+	أكد(c != 0);
 
-	return(content_textsearch__clear(c));
+	بازگشت(content_textsearch__clear(c));
 }

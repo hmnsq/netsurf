@@ -27,32 +27,32 @@
 #ifndef NETSURF_HTML_BOX_H
 #define NETSURF_HTML_BOX_H
 
-#include <limits.h>
-#include <stdbool.h>
-#include <libcss/libcss.h>
+#شامل <limits.h>
+#شامل <stdbool.h>
+#شامل <libcss/libcss.h>
 
-#include "content/handlers/css/utils.h"
+#شامل "content/handlers/css/utils.h"
 
-struct content;
-struct box;
-struct browser_window;
-struct html_content;
-struct nsurl;
-struct dom_node;
-struct dom_string;
-struct rect;
+ساختار content;
+ساختار box;
+ساختار browser_window;
+ساختار html_content;
+ساختار nsurl;
+ساختار dom_گره;
+ساختار dom_string;
+ساختار rect;
 
 #define UNKNOWN_WIDTH INT_MAX
 #define UNKNOWN_MAX_WIDTH INT_MAX
 
 
-typedef void (*box_construct_complete_cb)(struct html_content *c, bool success);
+تعریفنوع تهی (*box_construct_complete_cb)(ساختار html_content *c, bool success);
 
 
 /**
  * Type of a struct box.
  */
-typedef enum {
+تعریفنوع شمارش {
 	BOX_BLOCK,
 	BOX_INLINE_CONTAINER,
 	BOX_INLINE,
@@ -60,8 +60,8 @@ typedef enum {
 	BOX_TABLE_ROW,
 	BOX_TABLE_CELL,
 	BOX_TABLE_ROW_GROUP,
-	BOX_FLOAT_LEFT,
-	BOX_FLOAT_RIGHT,
+	BOX_FLOAT_چپ,
+	BOX_FLOAT_راست,
 	BOX_INLINE_BLOCK,
 	BOX_BR,
 	BOX_TEXT,
@@ -75,8 +75,8 @@ typedef enum {
 /**
  * Flags for a struct box.
  */
-typedef enum {
-	NEW_LINE    = 1 << 0,	/* first inline on a new line */
+تعریفنوع شمارش {
+	NEW_سطر    = 1 << 0,	/* first inline on a new line */
 	STYLE_OWNED = 1 << 1,	/* style is owned by this box */
 	PRINTED     = 1 << 2,	/* box has already been printed */
 	PRE_STRIP   = 1 << 3,	/* PRE tag needing leading newline stripped */
@@ -95,27 +95,27 @@ typedef enum {
 /**
  * Sides of a box
  */
-enum box_side { TOP, RIGHT, BOTTOM, LEFT };
+شمارش box_side { بالاترین_2, راست_2, BOTTOM, چپ_2 };
 
 
 /**
  * Container for box border details
  */
-struct box_border {
-	enum css_border_style_e style;	/**< border-style */
+ساختار box_border {
+	شمارش css_border_style_e style;	/**< border-style */
 	css_color c;			/**< border-color value */
-	int width;			/**< border-width (pixels) */
+	صحیح width;			/**< border-width (pixels) */
 };
 
 
 /**
  * Table column data.
  */
-struct column {
+ساختار column {
 	/**
 	 * Type of column.
 	 */
-	enum {
+	شمارش {
 	      COLUMN_WIDTH_UNKNOWN,
 	      COLUMN_WIDTH_FIXED,
 	      COLUMN_WIDTH_AUTO,
@@ -127,17 +127,17 @@ struct column {
 	 * Preferred width of column. Pixels for FIXED, percentage for
 	 *  PERCENT, relative units for RELATIVE, unused for AUTO.
 	 */
-	int width;
+	صحیح width;
 
 	/**
 	 * Minimum width of content.
 	 */
-	int min;
+	صحیح min;
 
 	/**
 	 * Maximum width of content.
 	 */
-	int max;
+	صحیح max;
 
 	/**
 	 * Whether all of column's cells are css positioned.
@@ -149,32 +149,32 @@ struct column {
 /**
  * Linked list of object element parameters.
  */
-struct object_param {
-	char *name;
-	char *value;
-	char *type;
-	char *valuetype;
-	struct object_param *next;
+ساختار object_param {
+	نویسه *name;
+	نویسه *مقدار;
+	نویسه *type;
+	نویسه *valuetype;
+	ساختار object_param *next;
 };
 
 
 /**
  * Parameters for object element and similar elements.
  */
-struct object_params {
-	struct nsurl *data;
-	char *type;
-	char *codetype;
-	struct nsurl *codebase;
-	struct nsurl *classid;
-	struct object_param *params;
+ساختار object_params {
+	ساختار nsurl *data;
+	نویسه *type;
+	نویسه *codetype;
+	ساختار nsurl *codebase;
+	ساختار nsurl *classid;
+	ساختار object_param *params;
 };
 
 
 /**
  * Node in box tree. All dimensions are in pixels.
  */
-struct box {
+ساختار box {
 	/**
 	 * Type of box.
 	 */
@@ -188,7 +188,7 @@ struct box {
 	/**
 	 * DOM node that generated this box or NULL
 	 */
-	struct dom_node *node;
+	ساختار dom_گره *گره;
 
 	/**
 	 * Computed styles for elements and their pseudo elements.
@@ -213,33 +213,33 @@ struct box {
 	/**
 	 * Next sibling box, or NULL.
 	 */
-	struct box *next;
+	ساختار box *next;
 
 	/**
 	 * Previous sibling box, or NULL.
 	 */
-	struct box *prev;
+	ساختار box *prev;
 
 	/**
 	 * First child box, or NULL.
 	 */
-	struct box *children;
+	ساختار box *children;
 
 	/**
 	 * Last child box, or NULL.
 	 */
-	struct box *last;
+	ساختار box *last;
 
 	/**
 	 * Parent box, or NULL.
 	 */
-	struct box *parent;
+	ساختار box *parent;
 
 	/**
 	 * INLINE_END box corresponding to this INLINE box, or INLINE
 	 * box corresponding to this INLINE_END box.
 	 */
-	struct box *inline_end;
+	ساختار box *inline_end;
 
 
 	/**
@@ -248,28 +248,28 @@ struct box {
 	 * area for floats, and also in the standard tree given by
 	 * children, next, prev, etc.
 	 */
-	struct box *float_children;
+	ساختار box *float_children;
 
 	/**
 	 * Next sibling float box.
 	 */
-	struct box *next_float;
+	ساختار box *next_float;
 
 	/**
 	 * If box is a float, points to box's containing block
 	 */
-	struct box *float_container;
+	ساختار box *float_container;
 
 	/**
 	 * Level below which subsequent floats must be cleared.  This
 	 * is used only for boxes with float_children
 	 */
-	int clear_level;
+	صحیح clear_level;
 
 	/**
 	 * Level below which floats have been placed.
 	 */
-	int cached_place_below_level;
+	صحیح cached_place_below_level;
 
 
 	/**
@@ -277,20 +277,20 @@ struct box {
 	 * relative to ancestor that contains this box in
 	 * float_children for FLOAT_.
 	 */
-	int x;
+	صحیح x;
 	/**
 	 * Coordinate of top padding edge, relative as for x.
 	 */
-	int y;
+	صحیح y;
 
 	/**
 	 * Width of content box (excluding padding etc.).
 	 */
-	int width;
+	صحیح width;
 	/**
 	 * Height of content box (excluding padding etc.).
 	 */
-	int height;
+	صحیح height;
 
 	/* These four variables determine the maximum extent of a box's
 	 * descendants. They are relative to the x,y coordinates of the box.
@@ -306,53 +306,53 @@ struct box {
 	 *		scrollable area.
 	 * auto		As "scroll".
 	 */
-	int descendant_x0;  /**< left edge of descendants */
-	int descendant_y0;  /**< top edge of descendants */
-	int descendant_x1;  /**< right edge of descendants */
-	int descendant_y1;  /**< bottom edge of descendants */
+	صحیح descendant_x0;  /**< left edge of descendants */
+	صحیح descendant_y0;  /**< top edge of descendants */
+	صحیح descendant_x1;  /**< right edge of descendants */
+	صحیح descendant_y1;  /**< bottom edge of descendants */
 
 	/**
 	 * Margin: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	int margin[4];
+	صحیح margin[4];
 
 	/**
 	 * Padding: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	int padding[4];
+	صحیح padding[4];
 
 	/**
 	 * Border: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	struct box_border border[4];
+	ساختار box_border border[4];
 
 	/**
 	 * Horizontal scroll.
 	 */
-	struct scrollbar *scroll_x;
+	ساختار scrollbar *scroll_x;
 
 	/**
 	 * Vertical scroll.
 	 */
-	struct scrollbar *scroll_y;
+	ساختار scrollbar *scroll_y;
 
 	/**
 	 * Width of box taking all line breaks (including margins
 	 * etc). Must be non-negative.
 	 */
-	int min_width;
+	صحیح min_width;
 
 	/**
 	 * Width that would be taken with no line breaks. Must be
 	 * non-negative.
 	 */
-	int max_width;
+	صحیح max_width;
 
 
 	/**
 	 * Text, or NULL if none. Unterminated.
 	 */
-	char *text;
+	نویسه *text;
 
 	/**
 	 * Length of text.
@@ -362,7 +362,7 @@ struct box {
 	/**
 	 * Width of space after current text (depends on font and size).
 	 */
-	int space;
+	صحیح space;
 
 	/**
 	 * Byte offset within a textual representation of this content.
@@ -373,83 +373,83 @@ struct box {
 	/**
 	 * Link, or NULL.
 	 */
-	struct nsurl *href;
+	ساختار nsurl *href;
 
 	/**
 	 * Link target, or NULL.
 	 */
-	const char *target;
+	ثابت نویسه *target;
 
 	/**
 	 * Title, or NULL.
 	 */
-	const char *title;
+	ثابت نویسه *title;
 
 
 	/**
 	 * Number of columns for TABLE / TABLE_CELL.
 	 */
-	unsigned int columns;
+	unsigned صحیح columns;
 
 	/**
 	 * Number of rows for TABLE only.
 	 */
-	unsigned int rows;
+	unsigned صحیح rows;
 
 	/**
 	 * Start column for TABLE_CELL only.
 	 */
-	unsigned int start_column;
+	unsigned صحیح start_column;
 
 	/**
 	 * Array of table column data for TABLE only.
 	 */
-	struct column *col;
+	ساختار column *col;
 
 	/**
 	 * List item value.
 	 */
-	int list_value;
+	صحیح list_مقدار;
 
 	/**
 	 * List marker box if this is a list-item, or NULL.
 	 */
-	struct box *list_marker;
+	ساختار box *list_marker;
 
 
 	/**
 	 * Form control data, or NULL if not a form control.
 	 */
-	struct form_control* gadget;
+	ساختار form_control* gadget;
 
 
 	/**
 	 * (Image)map to use with this object, or NULL if none
 	 */
-	char *usemap;
+	نویسه *usemap;
 
 
 	/**
 	 * Background image for this box, or NULL if none
 	 */
-	struct hlcache_handle *background;
+	ساختار hlcache_handle *background;
 
 
 	/**
 	 * Object in this box (usually an image), or NULL if none.
 	 */
-	struct hlcache_handle* object;
+	ساختار hlcache_handle* object;
 
 	/**
 	 * Parameters for the object, or NULL.
 	 */
-	struct object_params *object_params;
+	ساختار object_params *object_params;
 
 
 	/**
 	 * Iframe's browser_window, or NULL if none
 	 */
-	struct browser_window *iframe;
+	ساختار browser_window *iframe;
 
 };
 
