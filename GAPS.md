@@ -1,0 +1,557 @@
+# What is still missing
+
+76 languages. Each line says in how many languages it is missing.
+
+## Files in languages BURP cannot read yet
+
+- `.js`: 2 files
+
+## Keywords with no word in a language's table
+
+- guru:__FILE__: 75
+- guru:fprintf: 71
+- guru:size_t: 71
+- guru:time_t: 71
+- guru:tm: 71
+- guru:atoi: 71
+- guru:time: 71
+- guru:va_list: 71
+- guru:FILE: 71
+- guru:realloc: 71
+- guru:close: 71
+- guru:fclose: 71
+- guru:abort: 71
+- guru:stderr: 71
+- guru:va_end: 71
+- guru:strchr: 71
+- guru:va_start: 71
+- guru:va_arg: 71
+- guru:errno: 71
+- guru:fgets: 71
+- guru:INT_MIN: 71
+- guru:memcmp: 71
+- guru:UINT_MAX: 71
+- guru:fopen: 71
+- guru:jmp_buf: 71
+- guru:strtoul: 71
+- guru:longjmp: 71
+- guru:setjmp: 71
+- guru:strncpy: 71
+- guru:strtok: 71
+- guru:tolower: 71
+- guru:perror: 71
+- guru:memmove: 71
+- guru:ULONG_MAX: 71
+- guru:mktime: 71
+- guru:strftime: 71
+- guru:localtime: 71
+- guru:strtol: 71
+- guru:SEEK_END: 71
+- guru:fread: 71
+- guru:remove: 71
+- guru:rename: 71
+- guru:fseek: 71
+- guru:ceil: 71
+- guru:CHAR_BIT: 71
+- guru:UCHAR_MAX: 71
+- guru:USHRT_MAX: 71
+- guru:INFINITY: 71
+- guru:NAN: 71
+- guru:strrchr: 71
+- guru:SEEK_CUR: 71
+- guru:atol: 71
+- guru:feof: 71
+- guru:fscanf: 71
+- guru:fgetc: 71
+- guru:bsearch: 71
+- guru:strcspn: 71
+- guru:ftell: 71
+- guru:SEEK_SET: 71
+- guru:RAND_MAX: 71
+- guru:ptrdiff_t: 71
+- guru:sprintf: 71
+- guru:vsprintf: 71
+- guru:isfinite: 71
+- guru:fabs: 71
+- guru:floor: 71
+- guru:fmod: 71
+- guru:gmtime: 71
+- guru:difftime: 71
+- guru:strspn: 71
+- guru:strcmp: 70
+- guru:memset: 70
+- guru:open: 70
+- guru:div: 70
+- guru:qsort: 70
+- guru:rand: 70
+- guru:exp: 67
+- guru:cos: 67
+- guru:sin: 67
+- guru:log: 67
+- guru:#define: 66
+- guru:#endif: 66
+- guru:#undef: 66
+- guru:#error: 66
+- guru:#ifndef: 66
+- guru:#ifdef: 66
+- guru:#pragma: 66
+- guru:long: 62
+- guru:unsigned: 62
+- guru:strlen: 62
+- guru:calloc: 62
+- guru:malloc: 62
+- guru:INT_MAX: 62
+- guru:memcpy: 62
+- guru:strncmp: 62
+- guru:signed: 62
+- guru:abs: 62
+- guru:sscanf: 62
+- guru:short: 62
+- guru:strstr: 62
+- guru:pow: 62
+- guru:sqrt: 62
+- guru:virtual: 40
+- guru:NULL: 25
+- guru:void: 25
+- guru:const: 25
+- guru:goto: 25
+- guru:static: 25
+- guru:do: 25
+- guru:free: 25
+- guru:assert: 25
+- guru:switch: 25
+- guru:typedef: 25
+- guru:default: 25
+- guru:continue: 25
+- guru:#elif: 25
+- guru:float: 25
+- guru:extern: 25
+- guru:read: 25
+- guru:write: 25
+- guru:public: 25
+- guru:for: 9
+- guru:struct: 9
+- guru:case: 9
+- guru:break: 9
+- guru:char: 9
+- guru:sizeof: 9
+- guru:double: 9
+- guru:enum: 9
+- guru:union: 9
+- guru:inline: 9
+- guru:volatile: 9
+- guru:if: 1
+- guru:return: 1
+- guru:else: 1
+- guru:#if: 1
+- guru:int: 1
+- guru:while: 1
+- guru:#else: 1
+
+## Names with no dictionary entry (the most common first)
+
+- `thr`: 76
+- `DUK_ASSERT`: 76
+- `h`: 76
+- `c`: 76
+- `box`: 76
+- `defined`: 76
+- `ctx`: 76
+- `x`: 76
+- `i`: 76
+- `p`: 76
+- `duk_hthread`: 76
+- `res`: 76
+- `tv`: 76
+- `comp_ctx`: 76
+- `idx`: 76
+- `duk_uint8_t`: 76
+- `b`: 76
+- `len`: 76
+- `duk_idx_t`: 76
+- `duk_tval`: 76
+- `DUK_DDDPRINT`: 76
+- `DUK_DDD`: 76
+- `type`: 76
+- `content`: 76
+- `NSERROR_OK`: 76
+- `y`: 76
+- `style`: 76
+- `duk_int_t`: 76
+- `t`: 76
+- `flags`: 76
+- `obj`: 76
+- `duk_uint32_t`: 76
+- `DUK_LOCAL`: 76
+- `d`: 76
+- `duk_hobject`: 76
+- `object`: 76
+- `duk_bool_t`: 76
+- `error`: 76
+- `nserror`: 76
+- `n`: 76
+- `duk_small_uint_t`: 76
+- `js_ctx`: 76
+- `act`: 76
+- `ret`: 76
+- `NSLOG`: 76
+- `url`: 76
+- `ins`: 76
+- `val`: 76
+- `err`: 76
+- `buf`: 76
+- `duk_uint_t`: 76
+- `duk_context`: 76
+- `name`: 76
+- `duk_hstring`: 76
+- `func`: 76
+- `duk_double_t`: 76
+- `s`: 76
+- `duk_ret_t`: 76
+- `a`: 76
+- `duk_heaphdr`: 76
+- `html`: 76
+- `r`: 76
+- `netsurf`: 76
+- `f`: 76
+- `u`: 76
+- `re_ctx`: 76
+- `duk_small_int_t`: 76
+- `fetch`: 76
+- `hdr`: 76
+- `DOM_NO_ERR`: 76
+- `x1`: 76
+- `control`: 76
+- `DUK_DPRINT`: 76
+- `DUK_D`: 76
+- `border`: 76
+- `curr`: 76
+- `tmp`: 76
+- `DUK_EXTERNAL`: 76
+- `DUK_WO_NORETURN`: 76
+- `padding`: 76
+- `rect`: 76
+- `INFO`: 76
+- `exc`: 76
+- `cp`: 76
+- `nc_ctx`: 76
+- `DUK_EXTERNAL_DECL`: 76
+- `ptr`: 76
+- `hint`: 76
+- `bw`: 76
+- `DUK_UNREF`: 76
+- `unit_len_ctx`: 76
+- `dec_ctx`: 76
+- `margin`: 76
+- `unit`: 76
+- `v`: 76
+- `obj_idx`: 76
+- `bitmap`: 76
+- `html_content`: 76
+- `nargs`: 76
+- `handle`: 76
+- `nsurl`: 76
+- `lex_ctx`: 76
+- `q`: 76
+- `duk_regconst_t`: 76
+- `DUK_UNLIKELY`: 76
+- `state`: 76
+- `curr_func`: 76
+- `h_bufobj`: 76
+- `dom_string_unref`: 76
+- `llcache`: 76
+- `x0`: 76
+- `bw_ctx`: 76
+- `DUK_DDPRINT`: 76
+- `fb`: 76
+- `duk_get_tval`: 76
+- `DUK_DD`: 76
+- `gadget`: 76
+- `arr_idx`: 76
+- `z`: 76
+- `duk_uint16_t`: 76
+- `tv1`: 76
+- `BOTTOM`: 76
+- `cat`: 76
+- `pw`: 76
+- `duk_compiler_ctx`: 76
+- `htmlc`: 76
+- `scale`: 76
+- `clip`: 76
+- `cell`: 76
+- `lwc_string`: 76
+- `valstack_bottom`: 76
+- `enc_ctx`: 76
+- `scheme`: 76
+- `y1`: 76
+- `du`: 76
+- `params`: 76
+- `dom_string`: 76
+- `children`: 76
+- `y0`: 76
+- `DUK_HTHREAD_GET_STRING`: 76
+- `NSERROR_NOMEM`: 76
+- `user`: 76
+- `DUK_LOCAL_DECL`: 76
+- `callstack_curr`: 76
+- `env`: 76
+- `st`: 76
+- `ch`: 76
+- `str`: 76
+- `duk_codepoint_t`: 76
+- `fmt`: 76
+- `rc`: 76
+- `title`: 76
+- `duk_int32_t`: 76
+- `src`: 76
+- `AUTO`: 76
+- `idx_func`: 76
+- `duk_uint_fast32_t`: 76
+- `form`: 76
+- `j`: 76
+- `guit`: 76
+- `handler`: 76
+- `attr`: 76
+- `h_obj`: 76
+- `hlcache_handle`: 76
+- `valstack`: 76
+- `event`: 76
+- `e`: 76
+- `DEBUG`: 76
+- `duk_uarridx_t`: 76
+- `op`: 76
+- `stridx`: 76
+- `lwc_string_unref`: 76
+- `duk_activation`: 76
+- `curr_token`: 76
+- `e_idx`: 76
+- `dom_exception`: 76
+- `DUK_USE_ASSERTIONS`: 76
+- `tv__dst`: 76
+- `layout`: 76
+- `duk_hbuffer`: 76
+- `context`: 76
+- `centry`: 76
+- `host`: 76
+- `mas`: 76
+- `parts`: 76
+- `builtins`: 76
+- `duk_fb_sprintf`: 76
+- `h_this`: 76
+- `props`: 76
+- `mouse`: 76
+- `magic`: 76
+- `slen`: 76
+- `desc`: 76
+- `k`: 76
+- `ap`: 76
+- `lj`: 76
+- `nsurl_unref`: 76
+- `dst`: 76
+- `filename`: 76
+- `plot`: 76
+- `udata`: 76
+- `ui`: 76
+- `duk__tv`: 76
+- `image_cache`: 76
+- `DUK_HSTRING_GET_BYTELEN`: 76
+- `tv_obj`: 76
+- `quirks`: 76
+- `css_error`: 76
+- `duk_hbufobj`: 76
+- `dom_element_get_attribute`: 76
+- `duk_ivalue`: 76
+- `CSS_OK`: 76
+- `fp`: 76
+- `cinfo`: 76
+- `dom_string_caseless_lwc_isequal`: 76
+- `min`: 76
+- `max`: 76
+- `DUK_LIKELY`: 76
+- `elem_idx`: 76
+- `duk_uint64_t`: 76
+- `call_flags`: 76
+- `tv_val`: 76
+- `advtok`: 76
+- `chart`: 76
+- `elem`: 76
+- `duk_hcompfunc`: 76
+- `pc`: 76
+- `fetch_about_ssenddataf`: 76
+- `DUK_USE_FASTINT`: 76
+- `uc`: 76
+- `tv2`: 76
+- `DUK__DUMPSZ`: 76
+- `DUK__ADVTOK`: 76
+- `DUK__MK_LBP`: 76
+- `space`: 76
+- `columns`: 76
+- `css_unit_len2device_px`: 76
+- `tv_x`: 76
+- `resumer`: 76
+- `thread`: 76
+- `CSS_UNIT_PX`: 76
+- `DUK_DEC_A`: 76
+- `dparts`: 76
+- `chain`: 76
+- `charset`: 76
+- `flex`: 76
+- `CTX`: 76
+- `len1`: 76
+- `string`: 76
+- `duk_dup`: 76
+- `off`: 76
+- `DUK__MKBITS`: 76
+- `cache`: 76
+- `nsurl_access`: 76
+- `pos`: 76
+- `form_control`: 76
+- `t1`: 76
+- `d1`: 76
+- `color`: 76
+- `menu`: 76
+- `tv_y`: 76
+- `bse`: 76
+- `DUK_ERROR_TYPE`: 76
+- `h_str`: 76
+- `ent`: 76
+- `tvptr_dst`: 76
+- `skip`: 76
+- `css_fixed`: 76
+- `cb`: 76
+- `fstyle`: 76
+- `svg`: 76
+- `h_bufarg`: 76
+- `messages_get`: 76
+- `duk_harray`: 76
+- `DUK_USE_DEBUG`: 76
+- `DUK_ACT_GET_FUNC`: 76
+- `DUK_U64_CONSTANT`: 76
+- `duk_replace`: 76
+- `tfm_ctx`: 76
+- `DUK__COMMA`: 76
+- `llcache_object`: 76
+- `inline_container`: 76
+- `cy`: 76
+- `bmp`: 76
+- `png_c`: 76
+- `DUK_ASSERT_DISABLE`: 76
+- `effective_type`: 76
+- `fd`: 76
+- `bctx`: 76
+- `DUK_USE_REFERENCE_COUNTING`: 76
+- `expt`: 76
+- `d2`: 76
+- `map`: 76
+- `duk_instr_t`: 76
+- `llcache_handle`: 76
+- `fetcherd`: 76
+- `fetch_about_context`: 76
+- `FIXTOINT`: 76
+- `ib`: 76
+- `duk_require_tval`: 76
+
+## Comments with no translation
+
+- #include duk_internal.h -> already included: 76
+- side effects: 76
+- nop: 76
+- flags: 76
+- DUK_USE_BUFFEROBJECT_SUPPORT: 76
+- rbp_flags: 76
+- DUK_USE_EXEC_PREFER_SIZE: 76
+- unsigned: 76
+- exported interface documented in content/content.h: 76
+- automatic undefs: 76
+- DUK_USE_REGEXP_SUPPORT: 76
+- DUK_USE_FASTINT: 76
+- DUK_USE_PREFER_SIZE: 76
+- nargs: 76
+- DUK_USE_REFERENCE_COUNTING: 76
+- content type: 76
+- DUK_USE_FINALIZER_SUPPORT: 76
+- forced_reg: 76
+- DUK_USE_ES6_PROXY: 76
+- DUK_USE_ROM_STRINGS: 76
+- exported interface documented in content/fetch.h: 76
+- exported interface documented in content/content_protected.h: 76
+- throw_flag: 76
+- exported interface documented in content/urldb.h: 76
+- exported interface documented in image_cache.h: 76
+- *  Prototypes: 76
+- DUK_USE_DEBUGGER_SUPPORT: 76
+- DUK_USE_ASSERTIONS: 76
+- content is going to return ok: 76
+- Exported function documented in html/box.h: 76
+- DUK_USE_ES6: 76
+- right associative: 76
+- exported interface, documented in content/content.h: 76
+- DUK_USE_64BIT_OPS: 76
+- *  Automatically generated by extract_chars.py, do not edit!: 76
+- udata: 76
+- allow_source_elem: 76
+- exported interface documented in content/protected.h: 76
+- returned by libdom functions: 76
+- the result from DOM operations: 76
+- remove key: 76
+- may be NULL: 76
+- exported function documented in html/css.h: 76
+- exported interface documented in html/form_internal.h: 76
+- !DUK_SINGLE_FILE: 76
+- DUK_USE_VARIADIC_MACROS: 76
+- DUK_USE_DEBUG: 76
+- nrets: 76
+- def_value: 76
+- DUK_USE_OBJECT_BUILTIN: 76
+- exported interface documented in about/private.h: 76
+- fallthrough: 76
+- Done: update status bar: 76
+- DUK_USE_VERBOSE_ERRORS: 76
+- no side effects: 76
+- idx_value: 76
+- radix: 76
+- !DUK_USE_PREFER_SIZE: 76
+- end switch: 76
+- DUK_USE_JX || DUK_USE_JC: 76
+- UnaryExpression: 76
+- does not count the null: 76
+- do nothing: 76
+- exported interface documented in netsurf/url_db.h: 76
+- Adjust for {min|max}-width: 76
+- exported interface documented in js.h: 76
+- DUK_USE_PACKED_TVAL: 76
+- DUK_USE_ROM_OBJECTS: 76
+- fall through: 76
+- idx_replacer: 76
+- XXX: direct implementation: 76
+- require: 76
+- Caller must ensure space.: 76
+- break jump: 76
+- [ ... closure template ]: 76
+- See hlcache.h for documentation: 76
+- Error or buffer too small: 76
+- Fall through.: 76
+- private interface described in html/form_internal.h: 76
+- set title text: 76
+- DUK_USE_HEX_FASTPATH: 76
+- DUK_USE_LITCACHE_SIZE: 76
+- get_value: 76
+- DUK_USE_OBJECT_BUILTIN || DUK_USE_REFLECT_BUILTIN: 76
+- Allow RegExp as part of next stmt.: 76
+- expect_eof: 76
+- Release candidate, if any: 76
+- See llcache.h for documentation: 76
+- output truncated: 76
+- To avoid the poll loop having to deal with the fetch context
+	 * disappearing from under it, we simp: 76
+- Ignore fetches that have been flagged as locked.
+		 * This allows safe re-entrant calls to this func: 76
+- Only process non-aborted fetches: 76
+- Nothing to do: 76
+- add key/value pair to fetch data list: 76
+- * \todo handle errors: 76
+- Fallthrough.: 76
+- packed tval: 76
+- Shared object part.: 76
+- omit: 76
+- *  Automatically generated by extract_caseconv.py, do not edit!: 76
