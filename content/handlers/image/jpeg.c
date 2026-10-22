@@ -24,26 +24,26 @@
  * This implementation uses the IJG JPEG library.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <setjmp.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/messages.h"
+#अन्तर्भाव "netsurf/bitmap.h"
+#अन्तर्भाव "content/llcache.h"
+#अन्तर्भाव "content/content.h"
+#अन्तर्भाव "content/content_protected.h"
+#अन्तर्भाव "content/content_factory.h"
+#अन्तर्भाव "desktop/gui_internal.h"
+#अन्तर्भाव "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#अन्तर्भाव "image/image_cache.h"
 
 #define JPEG_INTERNAL_OPTIONS
-#include "jpeglib.h"
-#include "jpeg.h"
+#अन्तर्भाव "jpeglib.h"
+#अन्तर्भाव "jpeg.h"
 
 /** absolute minimum size of a jpeg below which it is not even worth
  * trying to read header data
@@ -54,41 +54,41 @@
 #warning Using libjpeg (libjpeg-turbo is recommended)
 #endif
 
-static char nsjpeg_error_buffer[JMSG_LENGTH_MAX];
+स्थिर वर्ण nsjpeg_error_buffer[JMSG_LENGTH_MAX];
 
-static unsigned char nsjpeg_eoi[] = { 0xff, JPEG_EOI };
+स्थिर अचिन्हित वर्ण nsjpeg_eoi[] = { 0xff, JPEG_EOI };
 
 /**
  * Content create entry point.
  */
-static nserror nsjpeg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+स्थिर nserror nsjpeg_create(ध्रुव content_handler *handler,
+		lwc_string *imime_type, ध्रुव संरचना http_parameter *params,
+		llcache_handle *llcache, ध्रुव वर्ण *fallback_charset,
+		bool quirks, संरचना content **c)
 {
-	struct content *jpeg;
+	संरचना content *jpeg;
 	nserror error;
 
-	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	jpeg = सुस्मृति(1, परिमाण(संरचना content));
+	यदि (jpeg == रिक्त)
+		प्रत्यागम NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(jpeg);
-		return error;
+	यदि (error != NSERROR_OK) {
+		मुक्त(jpeg);
+		प्रत्यागम error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 /**
  * JPEG data source manager: initialize source.
  */
-static void nsjpeg_init_source(j_decompress_ptr cinfo)
+स्थिर शून्य nsjpeg_init_source(j_decompress_ptr cinfo)
 {
 }
 
@@ -99,11 +99,11 @@ static void nsjpeg_init_source(j_decompress_ptr cinfo)
  * This can only occur if the JPEG data was truncated or corrupted. Insert a
  * fake EOI marker to allow the decompressor to output as much as possible.
  */
-static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
+स्थिर boolean nsjpeg_fill_निवेश_buffer(j_decompress_ptr cinfo)
 {
-	cinfo->src->next_input_byte = nsjpeg_eoi;
+	cinfo->src->next_निवेश_byte = nsjpeg_eoi;
 	cinfo->src->bytes_in_buffer = 2;
- 	return TRUE;
+ 	प्रत्यागम TRUE;
 }
 
 
@@ -111,14 +111,14 @@ static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
  * JPEG data source manager: skip num_bytes worth of data.
  */
 
-static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
+स्थिर शून्य nsjpeg_skip_निवेश_data(j_decompress_ptr cinfo, दीर्घ अंक_bytes)
 {
-	if ((long) cinfo->src->bytes_in_buffer < num_bytes) {
-		cinfo->src->next_input_byte = 0;
+	यदि ((दीर्घ) cinfo->src->bytes_in_buffer < अंक_bytes) {
+		cinfo->src->next_निवेश_byte = 0;
 		cinfo->src->bytes_in_buffer = 0;
-	} else {
-		cinfo->src->next_input_byte += num_bytes;
-		cinfo->src->bytes_in_buffer -= num_bytes;
+	} अन्यथा {
+		cinfo->src->next_निवेश_byte += अंक_bytes;
+		cinfo->src->bytes_in_buffer -= अंक_bytes;
 	}
 }
 
@@ -126,7 +126,7 @@ static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 /**
  * JPEG data source manager: terminate source.
  */
-static void nsjpeg_term_source(j_decompress_ptr cinfo)
+स्थिर शून्य nsjpeg_term_source(j_decompress_ptr cinfo)
 {
 }
 
@@ -138,7 +138,7 @@ static void nsjpeg_term_source(j_decompress_ptr cinfo)
  * Warnings only - fatal errors are trapped by nsjpeg_error_exit
  *                 and do not call the output handler.
  */
-static void nsjpeg_error_log(j_common_ptr cinfo)
+स्थिर शून्य nsjpeg_error_log(j_common_ptr cinfo)
 {
 	cinfo->err->format_message(cinfo, nsjpeg_error_buffer);
 	NSLOG(netsurf, INFO, "%s", nsjpeg_error_buffer);
@@ -150,43 +150,43 @@ static void nsjpeg_error_log(j_common_ptr cinfo)
  *
  * This prevents jpeglib calling exit() on a fatal error.
  */
-static void nsjpeg_error_exit(j_common_ptr cinfo)
+स्थिर शून्य nsjpeg_error_exit(j_common_ptr cinfo)
 {
-	jmp_buf *setjmp_buffer = (jmp_buf *) cinfo->client_data;
+	लाँघ_बफ *setjmp_buffer = (लाँघ_बफ *) cinfo->client_data;
 
 	cinfo->err->format_message(cinfo, nsjpeg_error_buffer);
 	NSLOG(netsurf, INFO, "%s", nsjpeg_error_buffer);
 
-	longjmp(*setjmp_buffer, 1);
+	दीर्घ_लाँघ(*setjmp_buffer, 1);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_cmyk(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
-		size_t rowstride)
+स्थिर अन्तःस्थ शून्य nsjpeg__decode_cmyk(
+		संरचना jpeg_decompress_struct *cinfo,
+		uint8_t * चञ्चल pixels,
+		माप_प्रकार rowstride)
 {
-	int width = cinfo->output_width * 4;
+	पूर्णाङ्क width = cinfo->output_width * 4;
 
-	do {
+	कुरु {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-		for (int i = width - 4; 0 <= i; i -= 4) {
+		प्रति (पूर्णाङ्क i = width - 4; 0 <= i; i -= 4) {
 			/* Trivial inverse CMYK -> RGBA */
-			const int c = scanlines[0][i + 0];
-			const int m = scanlines[0][i + 1];
-			const int y = scanlines[0][i + 2];
-			const int k = scanlines[0][i + 3];
+			ध्रुव पूर्णाङ्क c = scanlines[0][i + 0];
+			ध्रुव पूर्णाङ्क m = scanlines[0][i + 1];
+			ध्रुव पूर्णाङ्क y = scanlines[0][i + 2];
+			ध्रुव पूर्णाङ्क k = scanlines[0][i + 3];
 
-			const int ck = c * k;
-			const int mk = m * k;
-			const int yk = y * k;
+			ध्रुव पूर्णाङ्क ck = c * k;
+			ध्रुव पूर्णाङ्क mk = m * k;
+			ध्रुव पूर्णाङ्क yk = y * k;
 
 #define DIV255(x) ((x) + 1 + ((x) >> 8)) >> 8
 			scanlines[0][i + bitmap_layout.r] = DIV255(ck);
@@ -195,90 +195,90 @@ static inline void nsjpeg__decode_cmyk(
 			scanlines[0][i + bitmap_layout.a] = 0xff;
 #undef DIV255
 		}
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} यावत् (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_rgb(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
-		size_t rowstride)
+स्थिर अन्तःस्थ शून्य nsjpeg__decode_rgb(
+		संरचना jpeg_decompress_struct *cinfo,
+		uint8_t * चञ्चल pixels,
+		माप_प्रकार rowstride)
 {
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
-	int width = cinfo->output_width;
+#यदि RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+	पूर्णाङ्क width = cinfo->output_width;
 #endif
 
-	do {
+	कुरु {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+#यदि RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
 		/* Missmatch between configured libjpeg pixel format and
 		 * NetSurf pixel format.  Convert to RGBA */
-		for (int i = width - 1; 0 <= i; i--) {
-			int r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
-			int g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
-			int b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
+		प्रति (पूर्णाङ्क i = width - 1; 0 <= i; i--) {
+			पूर्णाङ्क r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
+			पूर्णाङ्क g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
+			पूर्णाङ्क b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
 			scanlines[0][i * 4 + bitmap_layout.r] = r;
 			scanlines[0][i * 4 + bitmap_layout.g] = g;
 			scanlines[0][i * 4 + bitmap_layout.b] = b;
 			scanlines[0][i * 4 + bitmap_layout.a] = 0xff;
 		}
 #endif
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} यावत् (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_client_fmt(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
-		size_t rowstride)
+स्थिर अन्तःस्थ शून्य nsjpeg__decode_client_fmt(
+		संरचना jpeg_decompress_struct *cinfo,
+		uint8_t * चञ्चल pixels,
+		माप_प्रकार rowstride)
 {
-	do {
+	कुरु {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} यावत् (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
  * create a bitmap from jpeg content.
  */
-static struct bitmap *
-jpeg_cache_convert(struct content *c)
+स्थिर संरचना bitmap *
+jpeg_cache_convert(संरचना content *c)
 {
-	const uint8_t *source_data; /* Jpeg source data */
-	size_t source_size; /* length of Jpeg source data */
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
-	jmp_buf setjmp_buffer;
-	struct bitmap * volatile bitmap = NULL;
-	uint8_t * volatile pixels = NULL;
-	size_t rowstride;
-	struct jpeg_source_mgr source_mgr = {
+	ध्रुव uint8_t *source_data; /* Jpeg source data */
+	माप_प्रकार source_size; /* length of Jpeg source data */
+	संरचना jpeg_decompress_struct cinfo;
+	संरचना jpeg_error_mgr jerr;
+	लाँघ_बफ setjmp_buffer;
+	संरचना bitmap * चञ्चल bitmap = रिक्त;
+	uint8_t * चञ्चल pixels = रिक्त;
+	माप_प्रकार rowstride;
+	संरचना jpeg_source_mgr source_mgr = {
 		0,
 		0,
 		nsjpeg_init_source,
-		nsjpeg_fill_input_buffer,
-		nsjpeg_skip_input_data,
+		nsjpeg_fill_निवेश_buffer,
+		nsjpeg_skip_निवेश_data,
 		jpeg_resync_to_restart,
 		nsjpeg_term_source };
 
 	/* obtain jpeg source data and perfom minimal sanity checks */
 	source_data = content__get_source_data(c, &source_size);
 
-	if ((source_data == NULL) ||
+	यदि ((source_data == रिक्त) ||
 	    (source_size < MIN_JPEG_SIZE)) {
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
 	/* setup a JPEG library error handler */
@@ -287,16 +287,16 @@ jpeg_cache_convert(struct content *c)
 	jerr.output_message = nsjpeg_error_log;
 
 	/* handler for fatal errors during decompression */
-	if (setjmp(setjmp_buffer)) {
+	यदि (बनाओ_लाँघ(setjmp_buffer)) {
 		jpeg_destroy_decompress(&cinfo);
-		return bitmap;
+		प्रत्यागम bitmap;
 	}
 
 	cinfo.client_data = &setjmp_buffer;
 	jpeg_create_decompress(&cinfo);
 
 	/* setup data source */
-	source_mgr.next_input_byte = source_data;
+	source_mgr.next_निवेश_byte = source_data;
 	source_mgr.bytes_in_buffer = source_size;
 	cinfo.src = &source_mgr;
 
@@ -304,31 +304,31 @@ jpeg_cache_convert(struct content *c)
 	jpeg_read_header(&cinfo, TRUE);
 
 	/* set output processing parameters */
-	if (cinfo.jpeg_color_space == JCS_CMYK ||
+	यदि (cinfo.jpeg_color_space == JCS_CMYK ||
 	    cinfo.jpeg_color_space == JCS_YCCK) {
 		cinfo.out_color_space = JCS_CMYK;
-	} else {
+	} अन्यथा {
 #ifdef JCS_ALPHA_EXTENSIONS
-		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_R8G8B8A8:
+		विकल्प (bitmap_fmt.layout) {
+		पक्ष BITMAP_LAYOUT_R8G8B8A8:
 			cinfo.out_color_space = JCS_EXT_RGBA;
-			break;
-		case BITMAP_LAYOUT_B8G8R8A8:
+			भङ्ग;
+		पक्ष BITMAP_LAYOUT_B8G8R8A8:
 			cinfo.out_color_space = JCS_EXT_BGRA;
-			break;
-		case BITMAP_LAYOUT_A8R8G8B8:
+			भङ्ग;
+		पक्ष BITMAP_LAYOUT_A8R8G8B8:
 			cinfo.out_color_space = JCS_EXT_ARGB;
-			break;
-		case BITMAP_LAYOUT_A8B8G8R8:
+			भङ्ग;
+		पक्ष BITMAP_LAYOUT_A8B8G8R8:
 			cinfo.out_color_space = JCS_EXT_ABGR;
-			break;
-		default:
+			भङ्ग;
+		स्वभाव:
 			NSLOG(netsurf, ERROR, "Unexpected bitmap format: %u",
 					bitmap_fmt.layout);
 			jpeg_destroy_decompress(&cinfo);
-			return NULL;
+			प्रत्यागम रिक्त;
 		}
-#else
+#अन्यथा
 		cinfo.out_color_space = JCS_RGB;
 #endif
 	}
@@ -341,35 +341,35 @@ jpeg_cache_convert(struct content *c)
 	bitmap = guit->bitmap->create(
 			cinfo.output_width,
 			cinfo.output_height, BITMAP_OPAQUE);
-	if (bitmap == NULL) {
+	यदि (bitmap == रिक्त) {
 		/* empty bitmap could not be created */
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
 	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	यदि (pixels == रिक्त) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 
 	/* Convert scanlines from jpeg into bitmap */
 	rowstride = guit->bitmap->get_rowstride(bitmap);
 
-	switch (cinfo.out_color_space) {
-	case JCS_CMYK:
+	विकल्प (cinfo.out_color_space) {
+	पक्ष JCS_CMYK:
 		nsjpeg__decode_cmyk(&cinfo, pixels, rowstride);
-		break;
+		भङ्ग;
 
-	case JCS_RGB:
+	पक्ष JCS_RGB:
 		nsjpeg__decode_rgb(&cinfo, pixels, rowstride);
-		break;
+		भङ्ग;
 
-	default:
+	स्वभाव:
 		nsjpeg__decode_client_fmt(&cinfo, pixels, rowstride);
-		break;
+		भङ्ग;
 	}
 
 	guit->bitmap->modified(bitmap);
@@ -377,25 +377,25 @@ jpeg_cache_convert(struct content *c)
 	jpeg_finish_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
 
-	return bitmap;
+	प्रत्यागम bitmap;
 }
 
 /**
  * Convert a CONTENT_JPEG for display.
  */
-static bool nsjpeg_convert(struct content *c)
+स्थिर bool nsjpeg_convert(संरचना content *c)
 {
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
-	jmp_buf setjmp_buffer;
-	struct jpeg_source_mgr source_mgr = { 0, 0,
-		nsjpeg_init_source, nsjpeg_fill_input_buffer,
-		nsjpeg_skip_input_data, jpeg_resync_to_restart,
+	संरचना jpeg_decompress_struct cinfo;
+	संरचना jpeg_error_mgr jerr;
+	लाँघ_बफ setjmp_buffer;
+	संरचना jpeg_source_mgr source_mgr = { 0, 0,
+		nsjpeg_init_source, nsjpeg_fill_निवेश_buffer,
+		nsjpeg_skip_निवेश_data, jpeg_resync_to_restart,
 		nsjpeg_term_source };
-	union content_msg_data msg_data;
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	सङ्घ content_संदेश_data संदेश_data;
+	ध्रुव uint8_t *data;
+	माप_प्रकार size;
+	वर्ण *title;
 
 	/* check image header is valid and get width/height */
 	data = content__get_source_data(c, &size);
@@ -404,18 +404,18 @@ static bool nsjpeg_convert(struct content *c)
 	jerr.error_exit = nsjpeg_error_exit;
 	jerr.output_message = nsjpeg_error_log;
 
-	if (setjmp(setjmp_buffer)) {
+	यदि (बनाओ_लाँघ(setjmp_buffer)) {
 		jpeg_destroy_decompress(&cinfo);
 
-		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-		msg_data.errordata.errormsg = nsjpeg_error_buffer;
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		संदेश_data.errordata.errorcode = NSERROR_UNKNOWN;
+		संदेश_data.errordata.errormsg = nsjpeg_error_buffer;
+		content_broadcast(c, CONTENT_संदेश_ERROR, &संदेश_data);
+		प्रत्यागम false;
 	}
 
 	cinfo.client_data = &setjmp_buffer;
 	jpeg_create_decompress(&cinfo);
-	source_mgr.next_input_byte = (unsigned char *) data;
+	source_mgr.next_निवेश_byte = (अचिन्हित वर्ण *) data;
 	source_mgr.bytes_in_buffer = size;
 	cinfo.src = &source_mgr;
 	jpeg_read_header(&cinfo, TRUE);
@@ -430,22 +430,22 @@ static bool nsjpeg_convert(struct content *c)
 
 	jpeg_destroy_decompress(&cinfo);
 
-	image_cache_add(c, NULL, jpeg_cache_convert);
+	image_cache_add(c, रिक्त, jpeg_cache_convert);
 
 	/* set title text */
 	title = messages_get_buff("JPEGTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	यदि (title != रिक्त) {
 		content__set_title(c, title);
-		free(title);
+		मुक्त(title);
 	}
 
 	content_set_ready(c);
 	content_set_done(c);	
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -453,36 +453,36 @@ static bool nsjpeg_convert(struct content *c)
 /**
  * Clone content.
  */
-static nserror nsjpeg_clone(const struct content *old, struct content **newc)
+स्थिर nserror nsjpeg_clone(ध्रुव संरचना content *old, संरचना content **newc)
 {
-	struct content *jpeg_c;
+	संरचना content *jpeg_c;
 	nserror error;
 
-	jpeg_c = calloc(1, sizeof(struct content));
-	if (jpeg_c == NULL)
-		return NSERROR_NOMEM;
+	jpeg_c = सुस्मृति(1, परिमाण(संरचना content));
+	यदि (jpeg_c == रिक्त)
+		प्रत्यागम NSERROR_NOMEM;
 
 	error = content__clone(old, jpeg_c);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		content_destroy(jpeg_c);
-		return error;
+		प्रत्यागम error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	यदि ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpeg_convert(jpeg_c) == false) {
+		यदि (nsjpeg_convert(jpeg_c) == false) {
 			content_destroy(jpeg_c);
-			return NSERROR_CLONE_FAILED;
+			प्रत्यागम NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpeg_c;
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-static const content_handler nsjpeg_content_handler = {
+स्थिर ध्रुव content_handler nsjpeg_content_handler = {
 	.create = nsjpeg_create,
 	.data_complete = nsjpeg_convert,
 	.destroy = image_cache_destroy,
@@ -494,7 +494,7 @@ static const content_handler nsjpeg_content_handler = {
 	.no_share = false,
 };
 
-static const char *nsjpeg_types[] = {
+स्थिर ध्रुव वर्ण *nsjpeg_types[] = {
 	"image/jpeg",
 	"image/jpg",
 	"image/pjpeg"

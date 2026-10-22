@@ -24,158 +24,158 @@
  * output dates and directory ordering are affected by the current locale
  */
 
-#include "utils/config.h"
+#अन्तर्भाव "utils/config.h"
 
-#include <stdlib.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdarg.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <strings.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdarg.h>
 #ifdef HAVE_MMAP
-#include <sys/mman.h>
+#अन्तर्भाव <sys/mman.h>
 #endif
-#include <libwapcaplet/libwapcaplet.h>
+#अन्तर्भाव <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/nsurl.h"
-#include "utils/dirent.h"
-#include "utils/corestrings.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/time.h"
-#include "utils/ring.h"
-#include "utils/file.h"
-#include "netsurf/fetch.h"
-#include "desktop/gui_internal.h"
+#अन्तर्भाव "netsurf/inttypes.h"
+#अन्तर्भाव "utils/nsurl.h"
+#अन्तर्भाव "utils/dirent.h"
+#अन्तर्भाव "utils/corestrings.h"
+#अन्तर्भाव "utils/messages.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/time.h"
+#अन्तर्भाव "utils/ring.h"
+#अन्तर्भाव "utils/file.h"
+#अन्तर्भाव "netsurf/fetch.h"
+#अन्तर्भाव "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "dirlist.h"
-#include "file.h"
+#अन्तर्भाव "content/fetch.h"
+#अन्तर्भाव "content/fetchers.h"
+#अन्तर्भाव "dirlist.h"
+#अन्तर्भाव "file.h"
 
 /* Maximum size of read buffer */
 #define FETCH_FILE_MAX_BUF_SIZE (1024 * 1024)
 
 /** Context for a fetch */
-struct fetch_file_context {
-	struct fetch_file_context *r_next, *r_prev;
+संरचना fetch_file_context {
+	संरचना fetch_file_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	संरचना fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
-	char *path; /**< The actual path to be used with open() */
+	वर्ण *path; /**< The actual path to be used with open() */
 
-	time_t file_etag; /**< Request etag for file (previous st.m_time) */
+	समय_प्रकार file_etag; /**< Request etag for file (previous st.m_time) */
 };
 
-static struct fetch_file_context *ring = NULL;
+स्थिर संरचना fetch_file_context *ring = रिक्त;
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_file_send_callback(const fetch_msg *msg,
-		struct fetch_file_context *ctx)
+स्थिर अन्तःस्थ bool fetch_file_send_callback(ध्रुव fetch_संदेश *संदेश,
+		संरचना fetch_file_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(संदेश, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	प्रत्यागम ctx->aborted;
 }
 
-static bool fetch_file_send_header(struct fetch_file_context *ctx,
-		const char *fmt, ...)
+स्थिर bool fetch_file_send_header(संरचना fetch_file_context *ctx,
+		ध्रुव वर्ण *fmt, ...)
 {
-	fetch_msg msg;
-	char header[64];
-	va_list ap;
-	int len;
+	fetch_संदेश संदेश;
+	वर्ण header[64];
+	बहु_सूची ap;
+	पूर्णाङ्क len;
 
-	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof header, fmt, ap);
-	va_end(ap);
+	बहु_शुरू(ap, fmt);
+	len = vsnprintf(header, परिमाण header, fmt, ap);
+	बहु_पूर्ण(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return false;
+	यदि (len >= (पूर्णाङ्क)परिमाण(header) || len < 0) {
+		प्रत्यागम false;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = len;
+	संदेश.type = FETCH_HEADER;
+	संदेश.data.header_or_data.buf = (ध्रुव uint8_t *) header;
+	संदेश.data.header_or_data.len = len;
 
-	return fetch_file_send_callback(&msg, ctx);
+	प्रत्यागम fetch_file_send_callback(&संदेश, ctx);
 }
 
 /** callback to initialise the file fetcher. */
-static bool fetch_file_initialise(lwc_string *scheme)
+स्थिर bool fetch_file_initialise(lwc_string *scheme)
 {
-	return true;
+	प्रत्यागम true;
 }
 
 /** callback to initialise the file fetcher. */
-static void fetch_file_finalise(lwc_string *scheme)
+स्थिर शून्य fetch_file_finalise(lwc_string *scheme)
 {
 }
 
-static bool fetch_file_can_fetch(const nsurl *url)
+स्थिर bool fetch_file_can_fetch(ध्रुव nsurl *url)
 {
-	return true;
+	प्रत्यागम true;
 }
 
 /** callback to set up a file fetch context. */
-static void *
-fetch_file_setup(struct fetch *fetchh,
+स्थिर शून्य *
+fetch_file_setup(संरचना fetch *fetchh,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 ध्रुव वर्ण *post_urlenc,
+		 ध्रुव संरचना fetch_multipart_data *post_multipart,
+		 ध्रुव वर्ण **headers)
 {
-	struct fetch_file_context *ctx;
-	int i;
+	संरचना fetch_file_context *ctx;
+	पूर्णाङ्क i;
 	nserror ret;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = सुस्मृति(1, परिमाण(*ctx));
+	यदि (ctx == रिक्त)
+		प्रत्यागम रिक्त;
 
 	ret = guit->file->nsurl_to_path(url, &ctx->path);
-	if (ret != NSERROR_OK) {
-		free(ctx);
-		return NULL;
+	यदि (ret != NSERROR_OK) {
+		मुक्त(ctx);
+		प्रत्यागम रिक्त;
 	}
 
 	ctx->url = nsurl_ref(url);
 
 	/* Scan request headers looking for If-None-Match */
-	for (i = 0; headers[i] != NULL; i++) {
-		if (strncasecmp(headers[i], "If-None-Match:",
+	प्रति (i = 0; headers[i] != रिक्त; i++) {
+		यदि (strncasecmp(headers[i], "If-None-Match:",
 				SLEN("If-None-Match:")) != 0) {
-			continue;
+			अनुवर्त;
 		}
 
 		/* If-None-Match: "12345678" */
-		const char *d = headers[i] + SLEN("If-None-Match:");
+		ध्रुव वर्ण *d = headers[i] + SLEN("If-None-Match:");
 
 		/* Scan to first digit, if any */
-		while (*d != '\0' && (*d < '0' || '9' < *d))
+		यावत् (*d != '\0' && (*d < '0' || '9' < *d))
 			d++;
 
 		/* Convert to time_t */
-		if (*d != '\0') {
-			ret = nsc_snptimet(d, strlen(d), &ctx->file_etag);
-			if (ret != NSERROR_OK) {
+		यदि (*d != '\0') {
+			ret = nsc_snptimet(d, म_माप(d), &ctx->file_etag);
+			यदि (ret != NSERROR_OK) {
 				NSLOG(fetch, WARNING,
 						"Bad If-None-Match value");
 			}
@@ -184,30 +184,30 @@ fetch_file_setup(struct fetch *fetchh,
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_जोड़ो(ring, ctx);
 
-	return ctx;
+	प्रत्यागम ctx;
 }
 
 /** callback to free a file fetch */
-static void fetch_file_free(void *ctx)
+स्थिर शून्य fetch_file_free(शून्य *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	संरचना fetch_file_context *c = ctx;
 	nsurl_unref(c->url);
-	free(c->path);
-	free(ctx);
+	मुक्त(c->path);
+	मुक्त(ctx);
 }
 
 /** callback to start a file fetch */
-static bool fetch_file_start(void *ctx)
+स्थिर bool fetch_file_start(शून्य *ctx)
 {
-	return true;
+	प्रत्यागम true;
 }
 
 /** callback to abort a file fetch */
-static void fetch_file_abort(void *ctx)
+स्थिर शून्य fetch_file_abort(शून्य *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	संरचना fetch_file_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -216,40 +216,40 @@ static void fetch_file_abort(void *ctx)
 	c->aborted = true;
 }
 
-static int fetch_file_errno_to_http_code(int error_no)
+स्थिर पूर्णाङ्क fetch_file_errno_to_http_code(पूर्णाङ्क error_no)
 {
-	switch (error_no) {
-	case ENAMETOOLONG:
-		return 400;
-	case EACCES:
-		return 403;
-	case ENOENT:
-		return 404;
-	default:
-		break;
+	विकल्प (error_no) {
+	पक्ष ENAMETOOLONG:
+		प्रत्यागम 400;
+	पक्ष EACCES:
+		प्रत्यागम 403;
+	पक्ष ENOENT:
+		प्रत्यागम 404;
+	स्वभाव:
+		भङ्ग;
 	}
 
-	return 500;
+	प्रत्यागम 500;
 }
 
-static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
+स्थिर शून्य fetch_file_process_error(संरचना fetch_file_context *ctx, पूर्णाङ्क code)
 {
-	fetch_msg msg;
-	char buffer[1024];
-	const char *title;
-	char key[8];
+	fetch_संदेश संदेश;
+	वर्ण buffer[1024];
+	ध्रुव वर्ण *title;
+	वर्ण कुंजी[8];
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_file_process_error_aborted;
+	यदि (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+		गच्छ fetch_file_process_error_aborted;
 
-	snprintf(key, sizeof key, "HTTP%03d", code);
-	title = messages_get(key);
+	snprintf(कुंजी, परिमाण कुंजी, "HTTP%03d", code);
+	title = messages_get(कुंजी);
 
-	snprintf(buffer, sizeof buffer,
+	snprintf(buffer, परिमाण buffer,
 		 "<html><head>"
 		 "<title>%s</title>"
 		 "<link rel=\"stylesheet\" type=\"text/css\" "
@@ -264,59 +264,59 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 		 messages_get("FetchErrorCode"), code,
 		 messages_get("FetchFile"), nsurl_access(ctx->url));
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_error_aborted;
+	संदेश.type = FETCH_DATA;
+	संदेश.data.header_or_data.buf = (ध्रुव uint8_t *) buffer;
+	संदेश.data.header_or_data.len = म_माप(buffer);
+	यदि (fetch_file_send_callback(&संदेश, ctx))
+		गच्छ fetch_file_process_error_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	संदेश.type = FETCH_FINISHED;
+	fetch_file_send_callback(&संदेश, ctx);
 
 fetch_file_process_error_aborted:
-	return;
+	प्रत्यागम;
 }
 
 
 /** Process object as a regular file */
-static void fetch_file_process_plain(struct fetch_file_context *ctx,
-				     struct stat *fdstat)
+स्थिर शून्य fetch_file_process_plain(संरचना fetch_file_context *ctx,
+				     संरचना stat *fdstat)
 {
 #ifdef HAVE_MMAP
-	fetch_msg msg;
-	char *buf = NULL;
-	size_t buf_size;
+	fetch_संदेश संदेश;
+	वर्ण *buf = रिक्त;
+	माप_प्रकार buf_size;
 
-	int fd; /**< The file descriptor of the object */
+	पूर्णाङ्क fd; /**< The file descriptor of the object */
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+	यदि (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
-		return;
+		संदेश.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&संदेश, ctx);
+		प्रत्यागम;
 	}
 
-	fd = open(ctx->path, O_RDONLY);
-	if (fd < 0) {
+	fd = खोलो(ctx->path, O_RDONLY);
+	यदि (fd < 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_to_http_code(त्रुटि_सं));
+		प्रत्यागम;
 	}
 
 	/* set buffer size */
 	buf_size = fdstat->st_size;
 
 	/* allocate the buffer storage */
-	if (buf_size > 0) {
-		buf = mmap(NULL, buf_size, PROT_READ, MAP_SHARED, fd, 0);
-		if (buf == MAP_FAILED) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to map memory for file data buffer";
-			fetch_file_send_callback(&msg, ctx);
-			close(fd);
-			return;
+	यदि (buf_size > 0) {
+		buf = mmap(रिक्त, buf_size, PROT_READ, MAP_SHARED, fd, 0);
+		यदि (buf == MAP_FAILED) {
+			संदेश.type = FETCH_ERROR;
+			संदेश.data.error = "Unable to map memory for file data buffer";
+			fetch_file_send_callback(&संदेश, ctx);
+			बंद(fd);
+			प्रत्यागम;
 		}
 	}
 
@@ -329,78 +329,78 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
+	यदि (fetch_file_send_header(ctx, "Content-Type: %s", 
 				   guit->fetch->filetype(ctx->path))) {
-		goto fetch_file_process_aborted;
+		गच्छ fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	यदि (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
-		goto fetch_file_process_aborted;
+		गच्छ fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
+	यदि (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
 				   (int64_t) fdstat->st_mtime)) {
-		goto fetch_file_process_aborted;
+		गच्छ fetch_file_process_aborted;
 	}
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buf;
-	msg.data.header_or_data.len = buf_size;
-	fetch_file_send_callback(&msg, ctx);
+	संदेश.type = FETCH_DATA;
+	संदेश.data.header_or_data.buf = (ध्रुव uint8_t *) buf;
+	संदेश.data.header_or_data.len = buf_size;
+	fetch_file_send_callback(&संदेश, ctx);
 
-	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+	यदि (ctx->aborted == false) {
+		संदेश.type = FETCH_FINISHED;
+		fetch_file_send_callback(&संदेश, ctx);
 	}
 
 fetch_file_process_aborted:
 
-	if (buf != NULL)
+	यदि (buf != रिक्त)
 		munmap(buf, buf_size);
-	close(fd);
-#else
-	fetch_msg msg;
-	char *buf;
-	size_t buf_size;
+	बंद(fd);
+#अन्यथा
+	fetch_संदेश संदेश;
+	वर्ण *buf;
+	माप_प्रकार buf_size;
 
 	ssize_t tot_read = 0;
 	ssize_t res;
 
-	FILE *infile;
+	खाता *infile;
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+	यदि (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
-		return;
+		संदेश.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&संदेश, ctx);
+		प्रत्यागम;
 	}
 
-	infile = fopen(ctx->path, "rb");
-	if (infile == NULL) {
+	infile = ख_खोलो(ctx->path, "rb");
+	यदि (infile == रिक्त) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_to_http_code(त्रुटि_सं));
+		प्रत्यागम;
 	}
 
 	/* set buffer size */
 	buf_size = fdstat->st_size;
-	if (buf_size > FETCH_FILE_MAX_BUF_SIZE)
+	यदि (buf_size > FETCH_FILE_MAX_BUF_SIZE)
 		buf_size = FETCH_FILE_MAX_BUF_SIZE;
 
 	/* allocate the buffer storage */
-	buf = malloc(buf_size);
-	if (buf == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error =
+	buf = दो_स्मृति(buf_size);
+	यदि (buf == रिक्त) {
+		संदेश.type = FETCH_ERROR;
+		संदेश.data.error =
 			"Unable to allocate memory for file data buffer";
-		fetch_file_send_callback(&msg, ctx);
-		fclose(infile);
-		return;
+		fetch_file_send_callback(&संदेश, ctx);
+		ख_बंद(infile);
+		प्रत्यागम;
 	}
 
 	/* fetch is going to be successful */
@@ -412,112 +412,112 @@ fetch_file_process_aborted:
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
+	यदि (fetch_file_send_header(ctx, "Content-Type: %s", 
 				   guit->fetch->filetype(ctx->path))) {
-		goto fetch_file_process_aborted;
+		गच्छ fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	यदि (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
-		goto fetch_file_process_aborted;
+		गच्छ fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
+	यदि (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
 				   (int64_t) fdstat->st_mtime)) {
-		goto fetch_file_process_aborted;
+		गच्छ fetch_file_process_aborted;
 	}
 
 	/* main data loop */
-	while (tot_read < fdstat->st_size) {
-		res = fread(buf, 1, buf_size, infile);
-		if (res == 0) {
-			if (feof(infile)) {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Unexpected EOF reading file";
-				fetch_file_send_callback(&msg, ctx);
-				goto fetch_file_process_aborted;
-			} else {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Error reading file";
-				fetch_file_send_callback(&msg, ctx);
-				goto fetch_file_process_aborted;
+	यावत् (tot_read < fdstat->st_size) {
+		res = ख_पढ़ो(buf, 1, buf_size, infile);
+		यदि (res == 0) {
+			यदि (ख_पूर्ण(infile)) {
+				संदेश.type = FETCH_ERROR;
+				संदेश.data.error = "Unexpected EOF reading file";
+				fetch_file_send_callback(&संदेश, ctx);
+				गच्छ fetch_file_process_aborted;
+			} अन्यथा {
+				संदेश.type = FETCH_ERROR;
+				संदेश.data.error = "Error reading file";
+				fetch_file_send_callback(&संदेश, ctx);
+				गच्छ fetch_file_process_aborted;
 			}
 		}
 		tot_read += res;
 
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buf;
-		msg.data.header_or_data.len = res;
-		if (fetch_file_send_callback(&msg, ctx))
-			break;
+		संदेश.type = FETCH_DATA;
+		संदेश.data.header_or_data.buf = (ध्रुव uint8_t *) buf;
+		संदेश.data.header_or_data.len = res;
+		यदि (fetch_file_send_callback(&संदेश, ctx))
+			भङ्ग;
 	}
 
-	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+	यदि (ctx->aborted == false) {
+		संदेश.type = FETCH_FINISHED;
+		fetch_file_send_callback(&संदेश, ctx);
 	}
 
 fetch_file_process_aborted:
 
-	fclose(infile);
-	free(buf);
+	ख_बंद(infile);
+	मुक्त(buf);
 #endif
-	return;
+	प्रत्यागम;
 }
 
-static char *gen_nice_title(char *path)
+स्थिर वर्ण *gen_nice_title(वर्ण *path)
 {
-	char *nice_path, *cnv, *tmp;
-	char *title;
-	int title_length;
+	वर्ण *nice_path, *cnv, *tmp;
+	वर्ण *title;
+	पूर्णाङ्क title_length;
 
 	/* Convert path for display */
-	nice_path = malloc(strlen(path) * SLEN("&amp;") + 1);
-	if (nice_path == NULL) {
-		return NULL;
+	nice_path = दो_स्मृति(म_माप(path) * SLEN("&amp;") + 1);
+	यदि (nice_path == रिक्त) {
+		प्रत्यागम रिक्त;
 	}
 
 	/* Escape special HTML characters */
-	for (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
-		if (*tmp == '<') {
+	प्रति (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
+		यदि (*tmp == '<') {
 			*cnv++ = '&';
 			*cnv++ = 'l';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '>') {
+		} अन्यथा यदि (*tmp == '>') {
 			*cnv++ = '&';
 			*cnv++ = 'g';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '&') {
+		} अन्यथा यदि (*tmp == '&') {
 			*cnv++ = '&';
 			*cnv++ = 'a';
 			*cnv++ = 'm';
 			*cnv++ = 'p';
 			*cnv++ = ';';
-		} else {
+		} अन्यथा {
 			*cnv++ = *tmp;
 		}
 	}
 	*cnv = '\0';
 
 	/* Construct a localised title string */
-	title_length = (cnv - nice_path) + strlen(messages_get("FileIndex"));
-	title = malloc(title_length + 1);
+	title_length = (cnv - nice_path) + म_माप(messages_get("FileIndex"));
+	title = दो_स्मृति(title_length + 1);
 
-	if (title == NULL) {
-		free(nice_path);
-		return NULL;
+	यदि (title == रिक्त) {
+		मुक्त(nice_path);
+		प्रत्यागम रिक्त;
 	}
 
 	/* Set title to localised "Index of <nice_path>" */
 	snprintf(title, title_length, messages_get("FileIndex"), nice_path);
 
-	free(nice_path);
+	मुक्त(nice_path);
 
-	return title;
+	प्रत्यागम title;
 }
 
 /**
@@ -530,59 +530,59 @@ static char *gen_nice_title(char *path)
  * \param buffer_len The space available in the output buffer.
  * \return NSERROR_OK or error code on faliure.
  */
-static nserror
-process_dir_ent(struct fetch_file_context *ctx,
-		 struct dirent *ent,
+स्थिर nserror
+process_dir_ent(संरचना fetch_file_context *ctx,
+		 संरचना dirent *ent,
 		 bool even,
-		 char *buffer,
-		 size_t buffer_len)
+		 वर्ण *buffer,
+		 माप_प्रकार buffer_len)
 {
 	nserror ret;
-	char *urlpath = NULL; /* buffer for leaf entry path */
-	struct stat ent_stat; /* stat result of leaf entry */
-	char datebuf[64]; /* buffer for date text */
-	char timebuf[64]; /* buffer for time text */
+	वर्ण *urlpath = रिक्त; /* buffer for leaf entry path */
+	संरचना stat ent_stat; /* stat result of leaf entry */
+	वर्ण datebuf[64]; /* buffer for date text */
+	वर्ण timebuf[64]; /* buffer for time text */
 	nsurl *url;
 
 	/* skip hidden files */
-	if (ent->d_name[0] == '.') {
-		return NSERROR_BAD_PARAMETER;
+	यदि (ent->d_name[0] == '.') {
+		प्रत्यागम NSERROR_BAD_PARAMETER;
 	}
 
-	ret = netsurf_mkpath(&urlpath, NULL, 2, ctx->path, ent->d_name);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&urlpath, रिक्त, 2, ctx->path, ent->d_name);
+	यदि (ret != NSERROR_OK) {
+		प्रत्यागम ret;
 	}
 
-	if (stat(urlpath, &ent_stat) != 0) {
+	यदि (stat(urlpath, &ent_stat) != 0) {
 		ent_stat.st_mode = 0;
 		datebuf[0] = 0;
 		timebuf[0] = 0;
-	} else {
+	} अन्यथा {
 		/* Get date in output format. a (day of week) and b
 		 * (month) are both affected by the locale
 		 */
-		if (strftime((char *)&datebuf, sizeof datebuf, "%a %d %b %Y",
-			     localtime(&ent_stat.st_mtime)) == 0) {
+		यदि (स_माला((वर्ण *)&datebuf, परिमाण datebuf, "%a %d %b %Y",
+			     स_स्थानीय(&ent_stat.st_mtime)) == 0) {
 			datebuf[0] = '-';
 			datebuf[1] = 0;
 		}
 
 		/* Get time in output format */
-		if (strftime((char *)&timebuf, sizeof timebuf, "%H:%M",
-			     localtime(&ent_stat.st_mtime)) == 0) {
+		यदि (स_माला((वर्ण *)&timebuf, परिमाण timebuf, "%H:%M",
+			     स_स्थानीय(&ent_stat.st_mtime)) == 0) {
 			timebuf[0] = '-';
 			timebuf[1] = 0;
 		}
 	}
 
 	ret = guit->file->path_to_nsurl(urlpath, &url);
-	if (ret != NSERROR_OK) {
-		free(urlpath);
-		return ret;
+	यदि (ret != NSERROR_OK) {
+		मुक्त(urlpath);
+		प्रत्यागम ret;
 	}
 
-	if (S_ISREG(ent_stat.st_mode)) {
+	यदि (S_ISREG(ent_stat.st_mode)) {
 		/* regular file */
 		dirlist_generate_row(even,
 				     false,
@@ -592,7 +592,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 				     ent_stat.st_size,
 				     datebuf, timebuf,
 				     buffer, buffer_len);
-	} else if (S_ISDIR(ent_stat.st_mode)) {
+	} अन्यथा यदि (S_ISDIR(ent_stat.st_mode)) {
 		/* directory */
 		dirlist_generate_row(even,
 				     true,
@@ -602,7 +602,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 				     -1,
 				     datebuf, timebuf,
 				     buffer, buffer_len);
-	} else {
+	} अन्यथा {
 		/* something else */
 		dirlist_generate_row(even,
 				     false,
@@ -615,9 +615,9 @@ process_dir_ent(struct fetch_file_context *ctx,
 	}
 
 	nsurl_unref(url);
-	free(urlpath);
+	मुक्त(urlpath);
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 /**
@@ -629,180 +629,180 @@ process_dir_ent(struct fetch_file_context *ctx,
  * \param d1 first directory entry
  * \param d2 second directory entry
  */
-static int dir_sort_alpha(const struct dirent **d1, const struct dirent **d2)
+स्थिर पूर्णाङ्क dir_sort_alpha(ध्रुव संरचना dirent **d1, ध्रुव संरचना dirent **d2)
 {
-	const char *s1 = (*d1)->d_name;
-	const char *s2 = (*d2)->d_name;
+	ध्रुव वर्ण *s1 = (*d1)->d_name;
+	ध्रुव वर्ण *s2 = (*d2)->d_name;
 
-	while (*s1 != '\0' && *s2 != '\0') {
-		if ((*s1 >= '0' && *s1 <= '9') &&
+	यावत् (*s1 != '\0' && *s2 != '\0') {
+		यदि ((*s1 >= '0' && *s1 <= '9') &&
 				(*s2 >= '0' && *s2 <= '9')) {
-			int n1 = 0,  n2 = 0;
-			while (*s1 >= '0' && *s1 <= '9') {
+			पूर्णाङ्क n1 = 0,  n2 = 0;
+			यावत् (*s1 >= '0' && *s1 <= '9') {
 				n1 = n1 * 10 + (*s1) - '0';
 				s1++;
 			}
-			while (*s2 >= '0' && *s2 <= '9') {
+			यावत् (*s2 >= '0' && *s2 <= '9') {
 				n2 = n2 * 10 + (*s2) - '0';
 				s2++;
 			}
-			if (n1 != n2) {
-				return n1 - n2;
+			यदि (n1 != n2) {
+				प्रत्यागम n1 - n2;
 			}
-			if (*s1 == '\0' || *s2 == '\0')
-				break;
+			यदि (*s1 == '\0' || *s2 == '\0')
+				भङ्ग;
 		}
-		if (tolower(*s1) != tolower(*s2))
-			break;
+		यदि (छोटे(*s1) != छोटे(*s2))
+			भङ्ग;
 
 		s1++;
 		s2++;
 	}
 
-	return tolower(*s1) - tolower(*s2);
+	प्रत्यागम छोटे(*s1) - छोटे(*s2);
 }
 
-static void fetch_file_process_dir(struct fetch_file_context *ctx,
-				   struct stat *fdstat)
+स्थिर शून्य fetch_file_process_dir(संरचना fetch_file_context *ctx,
+				   संरचना stat *fdstat)
 {
-	fetch_msg msg;
-	char buffer[1024]; /* Output buffer */
+	fetch_संदेश संदेश;
+	वर्ण buffer[1024]; /* Output buffer */
 	bool even = false; /* formatting flag */
-	char *title; /* pretty printed title */
+	वर्ण *title; /* pretty printed title */
 	nserror err; /* result from url routines */
 	nsurl *up; /* url of parent */
 
-	struct dirent **listing = NULL; /* directory entry listing */
-	int i; /* directory entry index */
-	int n; /* number of directory entries */
+	संरचना dirent **listing = रिक्त; /* directory entry listing */
+	पूर्णाङ्क i; /* directory entry index */
+	पूर्णाङ्क n; /* number of directory entries */
 
 	n = scandir(ctx->path, &listing, 0, dir_sort_alpha);
-	if (n < 0) {
+	यदि (n < 0) {
 		fetch_file_process_error(ctx,
-			fetch_file_errno_to_http_code(errno));
-		return;
+			fetch_file_errno_to_http_code(त्रुटि_सं));
+		प्रत्यागम;
 	}
 
 	/* fetch is going to be successful */
 	fetch_set_http_code(ctx->fetchh, 200);
 
 	/* force no-cache */
-	if (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
-		goto fetch_file_process_dir_aborted;
+	यदि (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
+		गच्छ fetch_file_process_dir_aborted;
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_file_process_dir_aborted;
+	यदि (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+		गच्छ fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
+	संदेश.type = FETCH_DATA;
+	संदेश.data.header_or_data.buf = (ध्रुव uint8_t *) buffer;
 
 	/* directory listing top */
-	dirlist_generate_top(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_शीर्ष(buffer, परिमाण buffer);
+	संदेश.data.header_or_data.len = म_माप(buffer);
+	यदि (fetch_file_send_callback(&संदेश, ctx))
+		गच्छ fetch_file_process_dir_aborted;
 
 	/* directory listing title */
 	title = gen_nice_title(ctx->path);
-	dirlist_generate_title(title, buffer, sizeof buffer);
-	free(title);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_title(title, buffer, परिमाण buffer);
+	मुक्त(title);
+	संदेश.data.header_or_data.len = म_माप(buffer);
+	यदि (fetch_file_send_callback(&संदेश, ctx))
+		गच्छ fetch_file_process_dir_aborted;
 
 	/* Print parent directory link */
 	err = nsurl_parent(ctx->url, &up);
-	if (err == NSERROR_OK) {
-		if (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
+	यदि (err == NSERROR_OK) {
+		यदि (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
 			/* different URL; have parent */
 			dirlist_generate_parent_link(nsurl_access(up),
-					buffer, sizeof buffer);
+					buffer, परिमाण buffer);
 
-			msg.data.header_or_data.len = strlen(buffer);
-			fetch_file_send_callback(&msg, ctx);
+			संदेश.data.header_or_data.len = म_माप(buffer);
+			fetch_file_send_callback(&संदेश, ctx);
 		}
 		nsurl_unref(up);
 
-		if (ctx->aborted)
-			goto fetch_file_process_dir_aborted;
+		यदि (ctx->aborted)
+			गच्छ fetch_file_process_dir_aborted;
 
 	}
 
 	/* directory list headings */
-	dirlist_generate_headings(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_headings(buffer, परिमाण buffer);
+	संदेश.data.header_or_data.len = म_माप(buffer);
+	यदि (fetch_file_send_callback(&संदेश, ctx))
+		गच्छ fetch_file_process_dir_aborted;
 
-	for (i = 0; i < n; i++) {
+	प्रति (i = 0; i < n; i++) {
 
 		err = process_dir_ent(ctx, listing[i], even, buffer,
-				       sizeof(buffer));
+				       परिमाण(buffer));
 
-		if (err == NSERROR_OK) {
-			msg.data.header_or_data.len = strlen(buffer);
-			if (fetch_file_send_callback(&msg, ctx))
-				goto fetch_file_process_dir_aborted;
+		यदि (err == NSERROR_OK) {
+			संदेश.data.header_or_data.len = म_माप(buffer);
+			यदि (fetch_file_send_callback(&संदेश, ctx))
+				गच्छ fetch_file_process_dir_aborted;
 
 			even = !even;
 		}
 	}
 
 	/* directory listing bottom */
-	dirlist_generate_bottom(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_bottom(buffer, परिमाण buffer);
+	संदेश.data.header_or_data.len = म_माप(buffer);
+	यदि (fetch_file_send_callback(&संदेश, ctx))
+		गच्छ fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	संदेश.type = FETCH_FINISHED;
+	fetch_file_send_callback(&संदेश, ctx);
 
 fetch_file_process_dir_aborted:
 
-	if (listing != NULL) {
-		for (i = 0; i < n; i++) {
-			free(listing[i]);
+	यदि (listing != रिक्त) {
+		प्रति (i = 0; i < n; i++) {
+			मुक्त(listing[i]);
 		}
-		free(listing);
+		मुक्त(listing);
 	}
 }
 
 
 /* process a file fetch */
-static void fetch_file_process(struct fetch_file_context *ctx)
+स्थिर शून्य fetch_file_process(संरचना fetch_file_context *ctx)
 {
-	struct stat fdstat; /**< The objects stat */
+	संरचना stat fdstat; /**< The objects stat */
 
-	if (stat(ctx->path, &fdstat) != 0) {
+	यदि (stat(ctx->path, &fdstat) != 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_to_http_code(त्रुटि_सं));
+		प्रत्यागम;
 	}
 
-	if (S_ISDIR(fdstat.st_mode)) {
+	यदि (S_ISDIR(fdstat.st_mode)) {
 		/* directory listing */
 		fetch_file_process_dir(ctx, &fdstat);
-		return;
-	} else if (S_ISREG(fdstat.st_mode)) {
+		प्रत्यागम;
+	} अन्यथा यदि (S_ISREG(fdstat.st_mode)) {
 		/* regular file */
 		fetch_file_process_plain(ctx, &fdstat);
-		return;
-	} else {
+		प्रत्यागम;
+	} अन्यथा {
 		/* unhandled type of file */
 		fetch_file_process_error(ctx, 501);
 	}
 
-	return;
+	प्रत्यागम;
 }
 
 /** callback to poll for additional file fetch contents */
-static void fetch_file_poll(lwc_string *scheme)
+स्थिर शून्य fetch_file_poll(lwc_string *scheme)
 {
-	struct fetch_file_context *c, *save_ring = NULL;
+	संरचना fetch_file_context *c, *save_ring = रिक्त;
 
-	while (ring != NULL) {
+	यावत् (ring != रिक्त) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -813,13 +813,13 @@ static void fetch_file_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		यदि (c->locked == true) {
+			RING_जोड़ो(save_ring, c);
+			अनुवर्त;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		यदि (c->aborted == false) {
 			/* file fetches can be processed in one go */
 			fetch_file_process(c);
 		}
@@ -836,19 +836,19 @@ static void fetch_file_poll(lwc_string *scheme)
 	ring = save_ring;
 }
 
-nserror fetch_file_register(void)
+nserror fetch_file_register(शून्य)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_file);
-	const struct fetcher_operation_table fetcher_ops = {
+	ध्रुव संरचना fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_file_initialise,
 		.acceptable = fetch_file_can_fetch,
 		.setup = fetch_file_setup,
 		.start = fetch_file_start,
-		.abort = fetch_file_abort,
-		.free = fetch_file_free,
+		.पात = fetch_file_abort,
+		.मुक्त = fetch_file_free,
 		.poll = fetch_file_poll,
 		.finalise = fetch_file_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	प्रत्यागम fetcher_add(scheme, &fetcher_ops);
 }

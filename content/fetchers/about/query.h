@@ -31,6 +31,6 @@
  * \param key message key
  * \param out_str pointer to buffer with output
  */
-nserror get_query_description(struct nsurl *url, const char *key, char **out_str);
+nserror get_query_description(संरचना nsurl *url, ध्रुव वर्ण *कुंजी, वर्ण **out_str);
 
 #endif
