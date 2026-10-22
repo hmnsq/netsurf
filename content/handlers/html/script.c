@@ -43,53 +43,53 @@
 #include "html/html.h"
 #include "html/private.h"
 
-typedef bool (script_handler_t)(struct jsthread *jsthread, const uint8_t *data, size_t size, const char *name);
+typedef bool (script_handler_t)(sa_nracanaa jsthread *jsthread, const uint8_t *data, size_t size, const var_na *name);
 
 
 static script_handler_t *select_script_handler(content_type ctype)
 {
-	if (ctype == CONTENT_JS) {
-		return js_exec;
+	ប្រសិនបើ (ctype == CONTENT_JS) {
+		ត្រឡប់ js_exec;
 	}
-	return NULL;
+	ត្រឡប់ NULL;
 }
 
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_exec(html_content *c, bool allow_defer)
 {
-	unsigned int i;
-	struct html_script *s;
+	unsigned ចំនួនគត់ i;
+	sa_nracanaa html_script *s;
 	script_handler_t *script_handler;
 	bool have_run_something = false;
 
-	if (c->jsthread == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	ប្រសិនបើ (c->jsthread == NULL) {
+		ត្រឡប់ NSERROR_BAD_PARAMETER;
 	}
 
-	for (i = 0, s = c->scripts; i != c->scripts_count; i++, s++) {
-		if (s->already_started) {
+	សម្រាប់ (i = 0, s = c->scripts; i != c->scripts_count; i++, s++) {
+		ប្រសិនបើ (s->already_started) {
 			continue;
 		}
 
-		if ((s->type == HTML_SCRIPT_ASYNC) ||
+		ប្រសិនបើ ((s->type == HTML_SCRIPT_ASYNC) ||
 		    (allow_defer && (s->type == HTML_SCRIPT_DEFER))) {
 			/* ensure script content is present */
-			if (s->data.handle == NULL)
+			ប្រសិនបើ (s->data.handle == NULL)
 				continue;
 
 			/* ensure script content fetch status is not an error */
-			if (content_get_status(s->data.handle) ==
+			ប្រសិនបើ (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_ERROR)
 				continue;
 
 			/* ensure script handler for content type */
 			script_handler = select_script_handler(
 					content_get_type(s->data.handle));
-			if (script_handler == NULL)
+			ប្រសិនបើ (script_handler == NULL)
 				continue; /* unsupported type */
 
-			if (content_get_status(s->data.handle) ==
+			ប្រសិនបើ (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_DONE) {
 				/* external script is now available */
 				const uint8_t *data;
@@ -111,25 +111,25 @@ nserror html_script_exec(html_content *c, bool allow_defer)
 		}
 	}
 
-	if (have_run_something) {
-		return html_proceed_to_done(c);
+	ប្រសិនបើ (have_run_something) {
+		ត្រឡប់ html_proceed_to_done(c);
 	}
 
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 /* create new html script entry */
-static struct html_script *
+static sa_nracanaa html_script *
 html_process_new_script(html_content *c,
 			dom_string *mimetype,
-			enum html_script_type type)
+			ga_nanaa html_script_type type)
 {
-	struct html_script *nscript;
+	sa_nracanaa html_script *nscript;
 	/* add space for new script entry */
 	nscript = realloc(c->scripts,
-			  sizeof(struct html_script) * (c->scripts_count + 1));
-	if (nscript == NULL) {
-		return NULL;
+			  parimaa_na(sa_nracanaa html_script) * (c->scripts_count + 1));
+	ប្រសិនបើ (nscript == NULL) {
+		ត្រឡប់ NULL;
 	}
 
 	c->scripts = nscript;
@@ -149,7 +149,7 @@ html_process_new_script(html_content *c,
 
 	nscript->mimetype = dom_string_ref(mimetype); /* reference mimetype */
 
-	return nscript;
+	ត្រឡប់ nscript;
 }
 
 /**
@@ -161,33 +161,33 @@ convert_script_async_cb(hlcache_handle *script,
 			  void *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned ចំនួនគត់ i;
+	sa_nracanaa html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
-			break;
+	សម្រាប់ (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+		ប្រសិនបើ (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
+			bha_nga;
 	}
 
 	assert(i != parent->scripts_count);
 
 	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		break;
+	pak_sa CONTENT_MSG_LOADING:
+		bha_nga;
 
-	case CONTENT_MSG_READY:
-		break;
+	pak_sa CONTENT_MSG_READY:
+		bha_nga;
 
-	case CONTENT_MSG_DONE:
+	pak_sa CONTENT_MSG_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_ERROR:
+	pak_sa CONTENT_MSG_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
@@ -197,27 +197,27 @@ convert_script_async_cb(hlcache_handle *script,
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		bha_nga;
 
 	default:
-		break;
+		bha_nga;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	ប្រសិនបើ (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
 	/* if we have already started converting though, then we can handle the
 	 * scripts as they come in.
 	 */
-	else if (parent->conversion_begun) {
-		return html_script_exec(parent, false);
+	បើមិនដូច្នេះ ប្រសិនបើ (parent->conversion_begun) {
+		ត្រឡប់ html_script_exec(parent, false);
 	}
 
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 /**
@@ -229,28 +229,28 @@ convert_script_defer_cb(hlcache_handle *script,
 			  void *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned ចំនួនគត់ i;
+	sa_nracanaa html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
-			break;
+	សម្រាប់ (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+		ប្រសិនបើ (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
+			bha_nga;
 	}
 
 	assert(i != parent->scripts_count);
 
 	switch (event->type) {
 
-	case CONTENT_MSG_DONE:
+	pak_sa CONTENT_MSG_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_ERROR:
+	pak_sa CONTENT_MSG_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
@@ -260,20 +260,20 @@ convert_script_defer_cb(hlcache_handle *script,
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		bha_nga;
 
 	default:
-		break;
+		bha_nga;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	ប្រសិនបើ (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 /**
@@ -285,30 +285,30 @@ convert_script_sync_cb(hlcache_handle *script,
 			  void *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned ចំនួនគត់ i;
+	sa_nracanaa html_script *s;
 	script_handler_t *script_handler;
 	dom_hubbub_error err;
-	unsigned int active_sync_scripts = 0;
+	unsigned ចំនួនគត់ active_sync_scripts = 0;
 
 	/* Count sync scripts which have yet to complete (other than us) */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC &&
+	សម្រាប់ (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+		ប្រសិនបើ (s->type == HTML_SCRIPT_SYNC &&
 		    s->data.handle != script && s->already_started == false) {
 			active_sync_scripts++;
 		}
 	}
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
-			break;
+	សម្រាប់ (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+		ប្រសិនបើ (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
+			bha_nga;
 	}
 
 	assert(i != parent->scripts_count);
 
 	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	pak_sa CONTENT_MSG_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
@@ -318,7 +318,7 @@ convert_script_sync_cb(hlcache_handle *script,
 
 		/* attempt to execute script */
 		script_handler = select_script_handler(content_get_type(s->data.handle));
-		if (script_handler != NULL && parent->jsthread != NULL) {
+		ប្រសិនបើ (script_handler != NULL && parent->jsthread != NULL) {
 			/* script has a handler */
 			const uint8_t *data;
 			size_t size;
@@ -328,16 +328,16 @@ convert_script_sync_cb(hlcache_handle *script,
 		}
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		ប្រសិនបើ (parent->parser != NULL && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			ប្រសិនបើ (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
 
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_ERROR:
+	pak_sa CONTENT_MSG_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
@@ -351,27 +351,27 @@ convert_script_sync_cb(hlcache_handle *script,
 		s->already_started = true;
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		ប្រសិនបើ (parent->parser != NULL && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			ប្រសិនបើ (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
 
-		break;
+		bha_nga;
 
 	default:
-		break;
+		bha_nga;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	ប្រសិនបើ (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 /**
@@ -386,19 +386,19 @@ exec_src_script(html_content *c,
 	nserror ns_error;
 	nsurl *joined;
 	hlcache_child_context child;
-	struct html_script *nscript;
+	sa_nracanaa html_script *nscript;
 	bool async;
 	bool defer;
-	enum html_script_type script_type;
+	ga_nanaa html_script_type script_type;
 	hlcache_handle_callback script_cb;
 	dom_hubbub_error ret = DOM_HUBBUB_OK;
 	dom_exception exc; /* returned by libdom functions */
 
 	/* src url */
 	ns_error = nsurl_join(c->base_url, dom_string_data(src), &joined);
-	if (ns_error != NSERROR_OK) {
+	ប្រសិនបើ (ns_error != NSERROR_OK) {
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		ត្រឡប់ DOM_HUBBUB_NOMEM;
 	}
 
 	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_count,
@@ -423,33 +423,33 @@ exec_src_script(html_content *c,
 	 * value. Note setting the values to "false" still makes them true!
 	 */
 	exc = dom_element_has_attribute(node, corestring_dom_async, &async);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_OK; /* dom error */
+	ប្រសិនបើ (exc != DOM_NO_ERR) {
+		ត្រឡប់ DOM_HUBBUB_OK; /* dom error */
 	}
 
-	if (c->parse_completed) {
+	ប្រសិនបើ (c->parse_completed) {
 		/* After parse completed, all scripts are essentially async */
 		async = true;
 		defer = false;
 	}
 
-	if (async) {
+	ប្រសិនបើ (async) {
 		/* asyncronous script */
 		script_type = HTML_SCRIPT_ASYNC;
 		script_cb = convert_script_async_cb;
 
-	} else {
+	} បើមិនដូច្នេះ {
 		exc = dom_element_has_attribute(node,
 						corestring_dom_defer, &defer);
-		if (exc != DOM_NO_ERR) {
-			return DOM_HUBBUB_OK; /* dom error */
+		ប្រសិនបើ (exc != DOM_NO_ERR) {
+			ត្រឡប់ DOM_HUBBUB_OK; /* dom error */
 		}
 
-		if (defer) {
+		ប្រសិនបើ (defer) {
 			/* defered script */
 			script_type = HTML_SCRIPT_DEFER;
 			script_cb = convert_script_defer_cb;
-		} else {
+		} បើមិនដូច្នេះ {
 			/* syncronous script */
 			script_type = HTML_SCRIPT_SYNC;
 			script_cb = convert_script_sync_cb;
@@ -457,10 +457,10 @@ exec_src_script(html_content *c,
 	}
 
 	nscript = html_process_new_script(c, mimetype, script_type);
-	if (nscript == NULL) {
+	ប្រសិនបើ (nscript == NULL) {
 		nsurl_unref(joined);
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		ត្រឡប់ DOM_HUBBUB_NOMEM;
 	}
 
 	/* set up child fetch encoding and quirks */
@@ -480,35 +480,35 @@ exec_src_script(html_content *c,
 
 	nsurl_unref(joined);
 
-	if (ns_error != NSERROR_OK) {
+	ប្រសិនបើ (ns_error != NSERROR_OK) {
 		/* @todo Deal with fetch error better. currently assume
 		 * fetch never became active
 		 */
 		/* mark duff script fetch as already started */
 		nscript->already_started = true;
 		NSLOG(netsurf, INFO, "Fetch failed with error %d", ns_error);
-	} else {
+	} បើមិនដូច្នេះ {
 		/* update base content active fetch count */
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		switch (script_type) {
-		case HTML_SCRIPT_SYNC:
+		pak_sa HTML_SCRIPT_SYNC:
 			ret =  DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED;
-			break;
+			bha_nga;
 
-		case HTML_SCRIPT_ASYNC:
-			break;
+		pak_sa HTML_SCRIPT_ASYNC:
+			bha_nga;
 
-		case HTML_SCRIPT_DEFER:
-			break;
+		pak_sa HTML_SCRIPT_DEFER:
+			bha_nga;
 
 		default:
 			assert(0);
 		}
 	}
 
-	return ret;
+	ត្រឡប់ ret;
 }
 
 static dom_hubbub_error
@@ -516,22 +516,22 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
 {
 	dom_string *script;
 	dom_exception exc; /* returned by libdom functions */
-	struct lwc_string_s *lwcmimetype;
+	sa_nracanaa lwc_string_s *lwcmimetype;
 	script_handler_t *script_handler;
-	struct html_script *nscript;
+	sa_nracanaa html_script *nscript;
 
 	/* does not appear to be a src so script is inline content */
 	exc = dom_node_get_text_content(node, &script);
-	if ((exc != DOM_NO_ERR) || (script == NULL)) {
-		return DOM_HUBBUB_OK; /* no contents, skip */
+	ប្រសិនបើ ((exc != DOM_NO_ERR) || (script == NULL)) {
+		ត្រឡប់ DOM_HUBBUB_OK; /* no contents, skip */
 	}
 
 	nscript = html_process_new_script(c, mimetype, HTML_SCRIPT_INLINE);
-	if (nscript == NULL) {
+	ប្រសិនបើ (nscript == NULL) {
 		dom_string_unref(script);
 
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		ត្រឡប់ DOM_HUBBUB_NOMEM;
 
 	}
 
@@ -540,20 +540,20 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
 
 	/* ensure script handler for content type */
 	exc = dom_string_intern(mimetype, &lwcmimetype);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_DOM;
+	ប្រសិនបើ (exc != DOM_NO_ERR) {
+		ត្រឡប់ DOM_HUBBUB_DOM;
 	}
 
 	script_handler = select_script_handler(content_factory_type_from_mime_type(lwcmimetype));
 	lwc_string_unref(lwcmimetype);
 
-	if (script_handler != NULL) {
+	ប្រសិនបើ (script_handler != NULL) {
 		script_handler(c->jsthread,
 			       (const uint8_t *)dom_string_data(script),
 			       dom_string_byte_length(script),
 			       "?inline script?");
 	}
-	return DOM_HUBBUB_OK;
+	ត្រឡប់ DOM_HUBBUB_OK;
 }
 
 
@@ -574,15 +574,15 @@ html_process_script(void *ctx, dom_node *node)
 	/* We should only ever be here if scripting was enabled for this
 	 * content so it's correct to make a javascript context if there
 	 * isn't one already. */
-	if (c->jsthread == NULL) {
-		union content_msg_data msg_data;
+	ប្រសិនបើ (c->jsthread == NULL) {
+		sa_ngha content_msg_data msg_data;
 
 		msg_data.jsthread = &c->jsthread;
 		content_broadcast(&c->base, CONTENT_MSG_GETTHREAD, &msg_data);
 		NSLOG(netsurf, INFO, "javascript context %p ", c->jsthread);
-		if (c->jsthread == NULL) {
+		ប្រសិនបើ (c->jsthread == NULL) {
 			/* no context and it could not be created, abort */
-			return DOM_HUBBUB_OK;
+			ត្រឡប់ DOM_HUBBUB_OK;
 		}
 	}
 
@@ -590,76 +590,76 @@ html_process_script(void *ctx, dom_node *node)
 	      node);
 
 	exc = dom_element_get_attribute(node, corestring_dom_type, &mimetype);
-	if (exc != DOM_NO_ERR || mimetype == NULL) {
+	ប្រសិនបើ (exc != DOM_NO_ERR || mimetype == NULL) {
 		mimetype = dom_string_ref(corestring_dom_text_javascript);
 	}
 
 	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
+	ប្រសិនបើ (exc != DOM_NO_ERR || src == NULL) {
 		err = exec_inline_script(c, node, mimetype);
-	} else {
+	} បើមិនដូច្នេះ {
 		err = exec_src_script(c, node, mimetype, src);
 		dom_string_unref(src);
 	}
 
 	dom_string_unref(mimetype);
 
-	return err;
+	ត្រឡប់ err;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 bool html_saw_insecure_scripts(html_content *htmlc)
 {
-	struct html_script *s;
-	unsigned int i;
+	sa_nracanaa html_script *s;
+	unsigned ចំនួនគត់ i;
 
-	for (i = 0, s = htmlc->scripts; i != htmlc->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_INLINE) {
+	សម្រាប់ (i = 0, s = htmlc->scripts; i != htmlc->scripts_count; i++, s++) {
+		ប្រសិនបើ (s->type == HTML_SCRIPT_INLINE) {
 			/* Inline scripts are no less secure than their
 			 * containing HTML content
 			 */
 			continue;
 		}
-		if (s->data.handle == NULL) {
+		ប្រសិនបើ (s->data.handle == NULL) {
 			/* We've not begun loading this? */
 			continue;
 		}
-		if (content_saw_insecure_objects(s->data.handle)) {
-			return true;
+		ប្រសិនបើ (content_saw_insecure_objects(s->data.handle)) {
+			ត្រឡប់ true;
 		}
 	}
 
-	return false;
+	ត្រឡប់ false;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_free(html_content *html)
 {
-	unsigned int i;
+	unsigned ចំនួនគត់ i;
 
-	for (i = 0; i != html->scripts_count; i++) {
-		if (html->scripts[i].mimetype != NULL) {
+	សម្រាប់ (i = 0; i != html->scripts_count; i++) {
+		ប្រសិនបើ (html->scripts[i].mimetype != NULL) {
 			dom_string_unref(html->scripts[i].mimetype);
 		}
 
 		switch (html->scripts[i].type) {
-		case HTML_SCRIPT_INLINE:
-			if (html->scripts[i].data.string != NULL) {
+		pak_sa HTML_SCRIPT_INLINE:
+			ប្រសិនបើ (html->scripts[i].data.string != NULL) {
 				dom_string_unref(html->scripts[i].data.string);
 			}
-			break;
-		case HTML_SCRIPT_SYNC:
+			bha_nga;
+		pak_sa HTML_SCRIPT_SYNC:
 			/* fallthrough */
-		case HTML_SCRIPT_ASYNC:
+		pak_sa HTML_SCRIPT_ASYNC:
 			/* fallthrough */
-		case HTML_SCRIPT_DEFER:
-			if (html->scripts[i].data.handle != NULL) {
+		pak_sa HTML_SCRIPT_DEFER:
+			ប្រសិនបើ (html->scripts[i].data.handle != NULL) {
 				hlcache_handle_release(html->scripts[i].data.handle);
 			}
-			break;
+			bha_nga;
 		}
 	}
 	free(html->scripts);
 
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }

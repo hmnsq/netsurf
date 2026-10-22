@@ -57,7 +57,7 @@ static void html_object_refresh(void *p);
  * \param n  Pointer to location to receive number of objects
  * \return Pointer to list of objects
  */
-struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
+sa_nracanaa content_html_object *html_get_objects(hlcache_handle *h, unsigned ចំនួនគត់ *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
@@ -66,7 +66,7 @@ struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
 
 	*n = c->num_objects;
 
-	return c->object_list;
+	ត្រឡប់ c->object_list;
 }
 
 /**
@@ -78,10 +78,10 @@ struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
  */
 
 static void
-html_object_failed(struct box *box, html_content *content, bool background)
+html_object_failed(sa_nracanaa box *box, html_content *content, bool background)
 {
 	/* Nothing to do */
-	return;
+	ត្រឡប់;
 }
 
 /**
@@ -89,36 +89,36 @@ html_object_failed(struct box *box, html_content *content, bool background)
  */
 
 static void
-html_object_done(struct box *box,
+html_object_done(sa_nracanaa box *box,
 		 hlcache_handle *object,
 		 bool background)
 {
-	struct box *b;
+	sa_nracanaa box *b;
 
-	if (background) {
+	ប្រសិនបើ (background) {
 		box->background = object;
-		return;
+		ត្រឡប់;
 	}
 
 	box->object = object;
 
 	/* Normalise the box type, now it has been replaced. */
 	switch (box->type) {
-	case BOX_TABLE:
+	pak_sa BOX_TABLE:
 		box->type = BOX_BLOCK;
-		break;
+		bha_nga;
 	default:
 		/* TODO: Any other box types need mapping? */
-		break;
+		bha_nga;
 	}
 
-	if (!(box->flags & REPLACE_DIM)) {
+	ប្រសិនបើ (!(box->flags & REPLACE_DIM)) {
 		/* invalidate parent min, max widths */
-		for (b = box; b; b = b->parent)
+		សម្រាប់ (b = box; b; b = b->parent)
 			b->max_width = UNKNOWN_MAX_WIDTH;
 
 		/* delete any clones of this box */
-		while (box->next && (box->next->flags & CLONE)) {
+		ខណៈពេល (box->next && (box->next->flags & CLONE)) {
 			/* box_free_box(box->next); */
 			box->next = box->next->next;
 		}
@@ -134,20 +134,20 @@ html_object_nobox_callback(hlcache_handle *object,
 			   const hlcache_event *event,
 			   void *pw)
 {
-	struct content_html_object *chobject = pw;
+	sa_nracanaa content_html_object *chobject = pw;
 
 	switch (event->type) {
-	case CONTENT_MSG_ERROR:
+	pak_sa CONTENT_MSG_ERROR:
 		hlcache_handle_release(object);
 
 		chobject->content = NULL;
-		break;
+		bha_nga;
 
 	default:
-		break;
+		bha_nga;
 	}
 
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 
@@ -159,23 +159,23 @@ html_object_callback(hlcache_handle *object,
 		     const hlcache_event *event,
 		     void *pw)
 {
-	struct content_html_object *o = pw;
+	sa_nracanaa content_html_object *o = pw;
 	html_content *c = (html_content *) o->parent;
-	int x, y;
-	struct box *box;
+	ចំនួនគត់ x, y;
+	sa_nracanaa box *box;
 
 	box = o->box;
 
 	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		if (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
+	pak_sa CONTENT_MSG_LOADING:
+		ប្រសិនបើ (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
 			content_open(object,
 					c->bw, &c->base,
 					box->object_params);
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_READY:
-		if (content_can_reformat(object)) {
+	pak_sa CONTENT_MSG_READY:
+		ប្រសិនបើ (content_can_reformat(object)) {
 			/* TODO: avoid knowledge of box internals here */
 			content_reformat(object, false,
 					box->max_width != UNKNOWN_MAX_WIDTH ?
@@ -185,30 +185,30 @@ html_object_callback(hlcache_handle *object,
 
 			/* Adjust parent content for new object size */
 			html_object_done(box, object, o->background);
-			if (c->base.status == CONTENT_STATUS_READY ||
+			ប្រសិនបើ (c->base.status == CONTENT_STATUS_READY ||
 					c->base.status == CONTENT_STATUS_DONE)
 				content__reformat(&c->base, false,
 						c->base.available_width,
 						c->base.available_height);
 		}
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_DONE:
+	pak_sa CONTENT_MSG_DONE:
 		c->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		html_object_done(box, object, o->background);
 
-		if (c->base.status != CONTENT_STATUS_LOADING &&
+		ប្រសិនបើ (c->base.status != CONTENT_STATUS_LOADING &&
 				box->flags & REPLACE_DIM) {
-			union content_msg_data data;
+			sa_ngha content_msg_data data;
 
-			if (c->had_initial_layout == false) {
-				break;
+			ប្រសិនបើ (c->had_initial_layout == false) {
+				bha_nga;
 			}
 
-			if (!box_visible(box))
-				break;
+			ប្រសិនបើ (!box_visible(box))
+				bha_nga;
 
 			box_coords(box, &x, &y);
 
@@ -219,9 +219,9 @@ html_object_callback(hlcache_handle *object,
 
 			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
 		}
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_ERROR:
+	pak_sa CONTENT_MSG_ERROR:
 		hlcache_handle_release(object);
 
 		o->content = NULL;
@@ -231,40 +231,40 @@ html_object_callback(hlcache_handle *object,
 
 		html_object_failed(box, c, o->background);
 
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_REDRAW:
-		if (c->base.status != CONTENT_STATUS_LOADING) {
-			union content_msg_data data = event->data;
+	pak_sa CONTENT_MSG_REDRAW:
+		ប្រសិនបើ (c->base.status != CONTENT_STATUS_LOADING) {
+			sa_ngha content_msg_data data = event->data;
 
-			if (c->had_initial_layout == false) {
-				break;
+			ប្រសិនបើ (c->had_initial_layout == false) {
+				bha_nga;
 			}
 
-			if (!box_visible(box))
-				break;
+			ប្រសិនបើ (!box_visible(box))
+				bha_nga;
 
 			box_coords(box, &x, &y);
 
-			if (object == box->background) {
+			ប្រសិនបើ (object == box->background) {
 				/* Redraw request is for background */
 				css_fixed hpos = 0, vpos = 0;
 				css_unit hunit = CSS_UNIT_PX;
 				css_unit vunit = CSS_UNIT_PX;
-				int width = box->padding[LEFT] + box->width +
+				ចំនួនគត់ width = box->padding[LEFT] + box->width +
 						box->padding[RIGHT];
-				int height = box->padding[TOP] + box->height +
+				ចំនួនគត់ height = box->padding[TOP] + box->height +
 						box->padding[BOTTOM];
-				int t, h, l, w;
+				ចំនួនគត់ t, h, l, w;
 
 				/* Need to know background-position */
 				css_computed_background_position(box->style,
 						&hpos, &hunit, &vpos, &vunit);
 
 				w = content_get_width(box->background);
-				if (hunit == CSS_UNIT_PCT) {
+				ប្រសិនបើ (hunit == CSS_UNIT_PCT) {
 					l = (width - w) * hpos / INTTOFIX(100);
-				} else {
+				} បើមិនដូច្នេះ {
 					l = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -272,9 +272,9 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				h = content_get_height(box->background);
-				if (vunit == CSS_UNIT_PCT) {
+				ប្រសិនបើ (vunit == CSS_UNIT_PCT) {
 					t = (height - h) * vpos / INTTOFIX(100);
-				} else {
+				} បើមិនដូច្នេះ {
 					t = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -284,44 +284,44 @@ html_object_callback(hlcache_handle *object,
 				/* Redraw area depends on background-repeat */
 				switch (css_computed_background_repeat(
 						box->style)) {
-				case CSS_BACKGROUND_REPEAT_REPEAT:
+				pak_sa CSS_BACKGROUND_REPEAT_REPEAT:
 					data.redraw.x = 0;
 					data.redraw.y = 0;
 					data.redraw.width = box->width;
 					data.redraw.height = box->height;
-					break;
+					bha_nga;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_X:
+				pak_sa CSS_BACKGROUND_REPEAT_REPEAT_X:
 					data.redraw.x = 0;
 					data.redraw.y += t;
 					data.redraw.width = box->width;
-					break;
+					bha_nga;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+				pak_sa CSS_BACKGROUND_REPEAT_REPEAT_Y:
 					data.redraw.x += l;
 					data.redraw.y = 0;
 					data.redraw.height = box->height;
-					break;
+					bha_nga;
 
-				case CSS_BACKGROUND_REPEAT_NO_REPEAT:
+				pak_sa CSS_BACKGROUND_REPEAT_NO_REPEAT:
 					data.redraw.x += l;
 					data.redraw.y += t;
-					break;
+					bha_nga;
 
 				default:
-					break;
+					bha_nga;
 				}
 
 				/* Add offset to box */
 				data.redraw.x += x;
 				data.redraw.y += y;
 
-			} else {
+			} បើមិនដូច្នេះ {
 				/* Non-background case */
-				int w = content_get_width(object);
-				int h = content_get_height(object);
+				ចំនួនគត់ w = content_get_width(object);
+				ចំនួនគត់ h = content_get_height(object);
 
-				if (w != 0 && box->width != w) {
+				ប្រសិនបើ (w != 0 && box->width != w) {
 					/* Not showing image at intrinsic
 					 * width; need to scale the redraw
 					 * request area. */
@@ -332,7 +332,7 @@ html_object_callback(hlcache_handle *object,
 							box->width / w;
 				}
 
-				if (h != 0 && box->height != w) {
+				ប្រសិនបើ (h != 0 && box->height != w) {
 					/* Not showing image at intrinsic
 					 * height; need to scale the redraw
 					 * request area. */
@@ -349,131 +349,131 @@ html_object_callback(hlcache_handle *object,
 
 			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
 		}
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_REFRESH:
-		if (content_get_type(object) == CONTENT_HTML) {
+	pak_sa CONTENT_MSG_REFRESH:
+		ប្រសិនបើ (content_get_type(object) == CONTENT_HTML) {
 			/* only for HTML objects */
 			guit->misc->schedule(event->data.delay * 1000,
 					html_object_refresh, o);
 		}
 
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_LINK:
+	pak_sa CONTENT_MSG_LINK:
 		/* Don't care about favicons that aren't on top level content */
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_GETTHREAD:
+	pak_sa CONTENT_MSG_GETTHREAD:
 		/* Objects don't have JS threads */
 		*(event->data.jsthread) = NULL;
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_GETDIMS:
+	pak_sa CONTENT_MSG_GETDIMS:
 		*(event->data.getdims.viewport_width) =
 				content__get_width(&c->base);
 		*(event->data.getdims.viewport_height) =
 				content__get_height(&c->base);
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_SCROLL:
-		if (box->scroll_x != NULL)
+	pak_sa CONTENT_MSG_SCROLL:
+		ប្រសិនបើ (box->scroll_x != NULL)
 			scrollbar_set(box->scroll_x, event->data.scroll.x0,
 					false);
-		if (box->scroll_y != NULL)
+		ប្រសិនបើ (box->scroll_y != NULL)
 			scrollbar_set(box->scroll_y, event->data.scroll.y0,
 					false);
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_DRAGSAVE:
+	pak_sa CONTENT_MSG_DRAGSAVE:
 	{
-		union content_msg_data msg_data;
-		if (event->data.dragsave.content == NULL)
+		sa_ngha content_msg_data msg_data;
+		ប្រសិនបើ (event->data.dragsave.content == NULL)
 			msg_data.dragsave.content = object;
-		else
+		បើមិនដូច្នេះ
 			msg_data.dragsave.content =
 					event->data.dragsave.content;
 
 		content_broadcast(&c->base, CONTENT_MSG_DRAGSAVE, &msg_data);
 	}
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_SAVELINK:
-	case CONTENT_MSG_POINTER:
-	case CONTENT_MSG_SELECTMENU:
-	case CONTENT_MSG_GADGETCLICK:
+	pak_sa CONTENT_MSG_SAVELINK:
+	pak_sa CONTENT_MSG_POINTER:
+	pak_sa CONTENT_MSG_SELECTMENU:
+	pak_sa CONTENT_MSG_GADGETCLICK:
 		/* These messages are for browser window layer.
 		 * we're not interested, so pass them on. */
 		content_broadcast(&c->base, event->type, &event->data);
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_CARET:
+	pak_sa CONTENT_MSG_CARET:
 	{
-		union html_focus_owner focus_owner;
+		sa_ngha html_focus_owner focus_owner;
 		focus_owner.content = box;
 
 		switch (event->data.caret.type) {
-		case CONTENT_CARET_REMOVE:
-		case CONTENT_CARET_HIDE:
+		pak_sa CONTENT_CARET_REMOVE:
+		pak_sa CONTENT_CARET_HIDE:
 			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
 					true, 0, 0, 0, NULL);
-			break;
-		case CONTENT_CARET_SET_POS:
+			bha_nga;
+		pak_sa CONTENT_CARET_SET_POS:
 			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
 					false, event->data.caret.pos.x,
 					event->data.caret.pos.y,
 					event->data.caret.pos.height,
 					event->data.caret.pos.clip);
-			break;
+			bha_nga;
 		}
 	}
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_DRAG:
+	pak_sa CONTENT_MSG_DRAG:
 	{
 		html_drag_type drag_type = HTML_DRAG_NONE;
-		union html_drag_owner drag_owner;
+		sa_ngha html_drag_owner drag_owner;
 		drag_owner.content = box;
 
 		switch (event->data.drag.type) {
-		case CONTENT_DRAG_NONE:
+		pak_sa CONTENT_DRAG_NONE:
 			drag_type = HTML_DRAG_NONE;
 			drag_owner.no_owner = true;
-			break;
-		case CONTENT_DRAG_SCROLL:
+			bha_nga;
+		pak_sa CONTENT_DRAG_SCROLL:
 			drag_type = HTML_DRAG_CONTENT_SCROLL;
-			break;
-		case CONTENT_DRAG_SELECTION:
+			bha_nga;
+		pak_sa CONTENT_DRAG_SELECTION:
 			drag_type = HTML_DRAG_CONTENT_SELECTION;
-			break;
+			bha_nga;
 		}
 		html_set_drag_type(c, drag_type, drag_owner,
 				event->data.drag.rect);
 	}
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_SELECTION:
+	pak_sa CONTENT_MSG_SELECTION:
 	{
 		html_selection_type sel_type;
-		union html_selection_owner sel_owner;
+		sa_ngha html_selection_owner sel_owner;
 
-		if (event->data.selection.selection) {
+		ប្រសិនបើ (event->data.selection.selection) {
 			sel_type = HTML_SELECTION_CONTENT;
 			sel_owner.content = box;
-		} else {
+		} បើមិនដូច្នេះ {
 			sel_type = HTML_SELECTION_NONE;
 			sel_owner.none = true;
 		}
 		html_set_selection(c, sel_type, sel_owner,
 				event->data.selection.read_only);
 	}
-		break;
+		bha_nga;
 
 	default:
-		break;
+		bha_nga;
 	}
 
-	if (c->base.status == CONTENT_STATUS_READY &&
+	ប្រសិនបើ (c->base.status == CONTENT_STATUS_READY &&
 	    c->base.active == 0 &&
 	    (event->type == CONTENT_MSG_LOADING ||
 	     event->type == CONTENT_MSG_DONE ||
@@ -482,7 +482,7 @@ html_object_callback(hlcache_handle *object,
 		content__reformat(&c->base, false, c->base.available_width,
 				c->base.available_height);
 		content_set_done(&c->base);
-	} else if (nsoption_bool(incremental_reflow) &&
+	} បើមិនដូច្នេះ ប្រសិនបើ (nsoption_bool(incremental_reflow) &&
 		   event->type == CONTENT_MSG_DONE &&
 		   box != NULL &&
 		   !(box->flags & REPLACE_DIM) &&
@@ -496,7 +496,7 @@ html_object_callback(hlcache_handle *object,
 		 */
 		uint64_t ms_now;
 		nsu_getmonotonic_ms(&ms_now);
-		if (ms_now > c->base.reformat_time) {
+		ប្រសិនបើ (ms_now > c->base.reformat_time) {
 			/* The time since the previous reformat is
 			 *  more than the configured minimum time
 			 *  between reformats so reformat the page to
@@ -509,7 +509,7 @@ html_object_callback(hlcache_handle *object,
 		}
 	}
 
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 
@@ -520,7 +520,7 @@ html_object_callback(hlcache_handle *object,
  * \param  url             URL of object to fetch (copied)
  * \return  true on success, false on memory exhaustion
  */
-static bool html_replace_object(struct content_html_object *object, nsurl *url)
+static bool html_replace_object(sa_nracanaa content_html_object *object, nsurl *url)
 {
 	html_content *c;
 	hlcache_child_context child;
@@ -535,9 +535,9 @@ static bool html_replace_object(struct content_html_object *object, nsurl *url)
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	if (object->content != NULL) {
+	ប្រសិនបើ (object->content != NULL) {
 		/* remove existing object */
-		if (content_get_status(object->content) != CONTENT_STATUS_DONE) {
+		ប្រសិនបើ (content_get_status(object->content) != CONTENT_STATUS_DONE) {
 			c->base.active--;
 			NSLOG(netsurf, INFO, "%d fetches active",
 			      c->base.active);
@@ -556,17 +556,17 @@ static bool html_replace_object(struct content_html_object *object, nsurl *url)
 			object->permitted_types,
 			&object->content);
 
-	if (error != NSERROR_OK)
-		return false;
+	ប្រសិនបើ (error != NSERROR_OK)
+		ត្រឡប់ false;
 
-	for (page = c; page != NULL; page = page->page) {
+	សម្រាប់ (page = c; page != NULL; page = page->page) {
 		page->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		page->base.status = CONTENT_STATUS_READY;
 	}
 
-	return true;
+	ត្រឡប់ true;
 }
 
 /**
@@ -574,7 +574,7 @@ static bool html_replace_object(struct content_html_object *object, nsurl *url)
  */
 static void html_object_refresh(void *p)
 {
-	struct content_html_object *object = p;
+	sa_nracanaa content_html_object *object = p;
 	nsurl *refresh_url;
 
 	assert(content_get_type(object->content) == CONTENT_HTML);
@@ -583,29 +583,29 @@ static void html_object_refresh(void *p)
 
 	/* Ignore if refresh URL has gone
 	 * (may happen if fetch errored) */
-	if (refresh_url == NULL)
-		return;
+	ប្រសិនបើ (refresh_url == NULL)
+		ត្រឡប់;
 
 	content_invalidate_reuse_data(object->content);
 
-	if (!html_replace_object(object, refresh_url)) {
+	ប្រសិនបើ (!html_replace_object(object, refresh_url)) {
 		/** \todo handle memory exhaustion */
 	}
 }
 
 
 /* exported interface documented in html/object.h */
-nserror html_object_open_objects(html_content *html, struct browser_window *bw)
+nserror html_object_open_objects(html_content *html, sa_nracanaa browser_window *bw)
 {
-	struct content_html_object *object, *next;
+	sa_nracanaa content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	សម្រាប់ (object = html->object_list; object != NULL; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
+		ប្រសិនបើ (object->content == NULL || object->box == NULL)
 			continue;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
+		ប្រសិនបើ (content_get_type(object->content) == CONTENT_NONE)
 			continue;
 
 		content_open(object->content,
@@ -613,86 +613,86 @@ nserror html_object_open_objects(html_content *html, struct browser_window *bw)
 			     &html->base,
 			     object->box->object_params);
 	}
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_abort_objects(html_content *htmlc)
 {
-	struct content_html_object *object;
+	sa_nracanaa content_html_object *object;
 
-	for (object = htmlc->object_list;
+	សម្រាប់ (object = htmlc->object_list;
 	     object != NULL;
 	     object = object->next) {
-		if (object->content == NULL)
+		ប្រសិនបើ (object->content == NULL)
 			continue;
 
 		switch (content_get_status(object->content)) {
-		case CONTENT_STATUS_DONE:
+		pak_sa CONTENT_STATUS_DONE:
 			/* already loaded: do nothing */
-			break;
+			bha_nga;
 
-		case CONTENT_STATUS_READY:
+		pak_sa CONTENT_STATUS_READY:
 			hlcache_handle_abort(object->content);
 			/* Active count will be updated when
 			 * html_object_callback receives
 			 * CONTENT_MSG_DONE from this object
 			 */
-			break;
+			bha_nga;
 
 		default:
 			hlcache_handle_abort(object->content);
 			hlcache_handle_release(object->content);
 			object->content = NULL;
-			if (object->box != NULL) {
+			ប្រសិនបើ (object->box != NULL) {
 				htmlc->base.active--;
 				NSLOG(netsurf, INFO, "%d fetches active",
 				      htmlc->base.active);
 			}
-			break;
+			bha_nga;
 
 		}
 	}
 
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_close_objects(html_content *html)
 {
-	struct content_html_object *object, *next;
+	sa_nracanaa content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	សម្រាប់ (object = html->object_list; object != NULL; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
+		ប្រសិនបើ (object->content == NULL || object->box == NULL)
 			continue;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
+		ប្រសិនបើ (content_get_type(object->content) == CONTENT_NONE)
 			continue;
 
-		if (content_get_type(object->content) == CONTENT_HTML) {
+		ប្រសិនបើ (content_get_type(object->content) == CONTENT_HTML) {
 			guit->misc->schedule(-1, html_object_refresh, object);
 		}
 
 		content_close(object->content);
 	}
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_free_objects(html_content *html)
 {
-	while (html->object_list != NULL) {
-		struct content_html_object *victim = html->object_list;
+	ខណៈពេល (html->object_list != NULL) {
+		sa_nracanaa content_html_object *victim = html->object_list;
 
-		if (victim->content != NULL) {
+		ប្រសិនបើ (victim->content != NULL) {
 			NSLOG(netsurf, INFO, "object %p", victim->content);
 
-			if (content_get_type(victim->content) == CONTENT_HTML) {
+			ប្រសិនបើ (content_get_type(victim->content) == CONTENT_HTML) {
 				guit->misc->schedule(-1, html_object_refresh, victim);
 			}
 			hlcache_handle_release(victim->content);
@@ -701,7 +701,7 @@ nserror html_object_free_objects(html_content *html)
 		html->object_list = victim->next;
 		free(victim);
 	}
-	return NSERROR_OK;
+	ត្រឡប់ NSERROR_OK;
 }
 
 
@@ -709,34 +709,34 @@ nserror html_object_free_objects(html_content *html)
 bool
 html_fetch_object(html_content *c,
 		  nsurl *url,
-		  struct box *box,
+		  sa_nracanaa box *box,
 		  content_type permitted_types,
 		  bool background)
 {
-	struct content_html_object *object;
+	sa_nracanaa content_html_object *object;
 	hlcache_handle_callback object_callback;
 	hlcache_child_context child;
 	nserror error;
 
 	/* If we've already been aborted, don't bother attempting the fetch */
-	if (c->aborted)
-		return true;
+	ប្រសិនបើ (c->aborted)
+		ត្រឡប់ true;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	object = calloc(1, sizeof(struct content_html_object));
-	if (object == NULL) {
-		return false;
+	object = calloc(1, parimaa_na(sa_nracanaa content_html_object));
+	ប្រសិនបើ (object == NULL) {
+		ត្រឡប់ false;
 	}
 
-	if (box == NULL) {
+	ប្រសិនបើ (box == NULL) {
 		object_callback = html_object_nobox_callback;
-	} else {
+	} បើមិនដូច្នេះ {
 		object_callback = html_object_callback;
 	}
 
-	object->parent = (struct content *) c;
+	object->parent = (sa_nracanaa content *) c;
 	object->next = NULL;
 	object->content = NULL;
 	object->box = box;
@@ -752,9 +752,9 @@ html_fetch_object(html_content *c,
 					&child,
 					object->permitted_types,
 					&object->content);
-	if (error != NSERROR_OK) {
+	ប្រសិនបើ (error != NSERROR_OK) {
 		free(object);
-		return error != NSERROR_NOMEM;
+		ត្រឡប់ error != NSERROR_NOMEM;
 	}
 
 	/* add to content object list */
@@ -762,10 +762,10 @@ html_fetch_object(html_content *c,
 	c->object_list = object;
 
 	c->num_objects++;
-	if (box != NULL) {
+	ប្រសិនបើ (box != NULL) {
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 	}
 
-	return true;
+	ត្រឡប់ true;
 }

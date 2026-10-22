@@ -39,55 +39,55 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_choices_handler(struct fetch_about_context *ctx)
+bool fetch_about_choices_handler(sa_nracanaa fetch_about_context *ctx)
 {
-	char buffer[1024];
-	int code = 200;
-	int slen;
-	unsigned int opt_loop = 0;
-	int res = 0;
+	var_na buffer[1024];
+	ចំនួនគត់ code = 200;
+	ចំនួនគត់ slen;
+	unsigned ចំនួនគត់ opt_loop = 0;
+	ចំនួនគត់ res = 0;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+	ប្រសិនបើ (fetch_about_send_header(ctx, "Content-Type: text/plain"))
 		goto fetch_about_choices_handler_aborted;
 
-	slen = snprintf(buffer, sizeof buffer,
+	slen = snprintf(buffer, parimaa_na buffer,
 		 "# Automatically generated current NetSurf browser Choices\n");
 
 	do {
 		res = nsoption_snoptionf(buffer + slen,
-				sizeof buffer - slen,
+				parimaa_na buffer - slen,
 				opt_loop,
 				"%k:%v\n");
-		if (res <= 0)
-			break; /* last option */
+		ប្រសិនបើ (res <= 0)
+			bha_nga; /* last option */
 
-		if (res >= (int) (sizeof buffer - slen)) {
+		ប្រសិនបើ (res >= (ចំនួនគត់) (parimaa_na buffer - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
 			res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-			if (res != NSERROR_OK) {
+			ប្រសិនបើ (res != NSERROR_OK) {
 				goto fetch_about_choices_handler_aborted;
 			}
 			slen = 0;
-		} else {
+		} បើមិនដូច្នេះ {
 			/* normal addition */
 			slen += res;
 			opt_loop++;
 		}
-	} while (res > 0);
+	} ខណៈពេល (res > 0);
 
 	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
+	ប្រសិនបើ (res != NSERROR_OK) {
 		goto fetch_about_choices_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ត្រឡប់ true;
 
 fetch_about_choices_handler_aborted:
-	return false;
+	ត្រឡប់ false;
 }
