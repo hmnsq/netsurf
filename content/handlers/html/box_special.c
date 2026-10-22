@@ -70,22 +70,22 @@ static inline bool box_is_root(dom_node *n)
 	dom_exception err;
 
 	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR)
-		return false;
+	ако (err != DOM_NO_ERR)
+		върни false;
 
-	if (parent != NULL) {
+	ако (parent != NULL) {
 		err = dom_node_get_node_type(parent, &type);
 
 		dom_node_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return false;
+		ако (err != DOM_NO_ERR)
+			върни false;
 
-		if (type != DOM_DOCUMENT_NODE)
-			return false;
+		ако (type != DOM_DOCUMENT_NODE)
+			върни false;
 	}
 
-	return true;
+	върни true;
 }
 
 
@@ -95,16 +95,16 @@ static inline bool box_is_root(dom_node *n)
  * \param o  The object params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_object_talloc_destructor(struct object_params *o)
+static цяло box_object_talloc_destructor(struct object_params *o)
 {
-	if (o->codebase != NULL)
+	ако (o->codebase != NULL)
 		nsurl_unref(o->codebase);
-	if (o->classid != NULL)
+	ако (o->classid != NULL)
 		nsurl_unref(o->classid);
-	if (o->data != NULL)
+	ако (o->data != NULL)
 		nsurl_unref(o->data);
 
-	return 0;
+	върни 0;
 }
 
 
@@ -116,29 +116,29 @@ static int box_object_talloc_destructor(struct object_params *o)
  * \return array of struct box_multi_length, or 0 on memory exhaustion
  */
 static struct frame_dimension *
-box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
+box_parse_multi_lengths(const dom_string *ds, unsigned цяло *count)
 {
 	char *end;
-	unsigned int i, n;
+	unsigned цяло i, n;
 	struct frame_dimension *length;
 	const char *s;
 
 	s = dom_string_data(ds);
 
-	for (i = 0, n = 1; s[i]; i++)
-		if (s[i] == ',')
+	за (i = 0, n = 1; s[i]; i++)
+		ако (s[i] == ',')
 			n++;
 
 	length = calloc(n, sizeof(struct frame_dimension));
-	if (!length)
-		return NULL;
+	ако (!length)
+		върни NULL;
 
-	for (i = 0; i != n; i++) {
-		while (ascii_is_space(*s)) {
+	за (i = 0; i != n; i++) {
+		докато (ascii_is_space(*s)) {
 			s++;
 		}
 		length[i].value = strtof(s, &end);
-		if (length[i].value <= 0) {
+		ако (length[i].value <= 0) {
 			length[i].value = 1;
 		}
 		s = end;
@@ -153,16 +153,16 @@ box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
 				length[i].unit = FRAME_DIMENSION_PIXELS;
 				break;
 		}
-		while (*s && *s != ',') {
+		докато (*s && *s != ',') {
 			s++;
 		}
-		if (*s == ',') {
+		ако (*s == ',') {
 			s++;
 		}
 	}
 
 	*count = n;
-	return length;
+	върни length;
 }
 
 
@@ -172,14 +172,14 @@ box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
  * \param f  The frame params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_frames_talloc_destructor(struct content_html_frames *f)
+static цяло box_frames_talloc_destructor(struct content_html_frames *f)
 {
-	if (f->url != NULL) {
+	ако (f->url != NULL) {
 		nsurl_unref(f->url);
 		f->url = NULL;
 	}
 
-	return 0;
+	върни 0;
 }
 
 
@@ -191,8 +191,8 @@ box_create_frameset(struct content_html_frames *f,
 		    dom_node *n,
 		    html_content *content)
 {
-	unsigned int row, col, index, i;
-	unsigned int rows = 1, cols = 1;
+	unsigned цяло row, col, index, i;
+	unsigned цяло rows = 1, cols = 1;
 	dom_string *s;
 	dom_exception err;
 	nsurl *url;
@@ -204,32 +204,32 @@ box_create_frameset(struct content_html_frames *f,
 
 	/* parse rows and columns */
 	err = dom_element_get_attribute(n, corestring_dom_rows, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		row_height = box_parse_multi_lengths(s, &rows);
 		dom_string_unref(s);
-		if (row_height == NULL)
-			return false;
-	} else {
+		ако (row_height == NULL)
+			върни false;
+	} иначе {
 		row_height = calloc(1, sizeof(struct frame_dimension));
-		if (row_height == NULL)
-			return false;
+		ако (row_height == NULL)
+			върни false;
 		row_height->value = 100;
 		row_height->unit = FRAME_DIMENSION_PERCENT;
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_cols, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		col_width = box_parse_multi_lengths(s, &cols);
 		dom_string_unref(s);
-		if (col_width == NULL) {
+		ако (col_width == NULL) {
 			free(row_height);
-			return false;
+			върни false;
 		}
-	} else {
+	} иначе {
 		col_width = calloc(1, sizeof(struct frame_dimension));
-		if (col_width == NULL) {
+		ако (col_width == NULL) {
 			free(row_height);
-			return false;
+			върни false;
 		}
 		col_width->value = 100;
 		col_width->unit = FRAME_DIMENSION_PERCENT;
@@ -237,8 +237,8 @@ box_create_frameset(struct content_html_frames *f,
 
 	/* common extension: border="0|1" to control all children */
 	err = dom_element_get_attribute(n, corestring_dom_border, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if ((dom_string_data(s)[0] == '0') &&
+	ако (err == DOM_NO_ERR && s != NULL) {
+		ако ((dom_string_data(s)[0] == '0') &&
 				(dom_string_data(s)[1] == '\0'))
 			default_border = false;
 		dom_string_unref(s);
@@ -246,8 +246,8 @@ box_create_frameset(struct content_html_frames *f,
 
 	/* common extension: frameborder="yes|no" to control all children */
 	err = dom_element_get_attribute(n, corestring_dom_frameborder, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	ако (err == DOM_NO_ERR && s != NULL) {
+		ако (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_no) == 0)
 			default_border = false;
 		dom_string_unref(s);
@@ -256,10 +256,10 @@ box_create_frameset(struct content_html_frames *f,
 	/* common extension: bordercolor="#RRGGBB|<named colour>" to control
 	 *all children */
 	err = dom_element_get_attribute(n, corestring_dom_bordercolor, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		css_color color;
 
-		if (nscss_parse_colour(dom_string_data(s), &color))
+		ако (nscss_parse_colour(dom_string_data(s), &color))
 			default_border_colour = nscss_color_to_ns(color);
 
 		dom_string_unref(s);
@@ -274,8 +274,8 @@ box_create_frameset(struct content_html_frames *f,
 
 	talloc_set_destructor(f->children, box_frames_talloc_destructor);
 
-	for (row = 0; row < rows; row++) {
-		for (col = 0; col < cols; col++) {
+	за (row = 0; row < rows; row++) {
+		за (col = 0; col < cols; col++) {
 			index = (row * cols) + col;
 			frame = &f->children[index];
 			frame->cols = 0;
@@ -298,28 +298,28 @@ box_create_frameset(struct content_html_frames *f,
 
 	/* create the frameset windows */
 	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR)
-		return false;
+	ако (err != DOM_NO_ERR)
+		върни false;
 
-	for (row = 0; c != NULL && row < rows; row++) {
-		for (col = 0; c != NULL && col < cols; col++) {
-			while (c != NULL) {
+	за (row = 0; c != NULL && row < rows; row++) {
+		за (col = 0; c != NULL && col < cols; col++) {
+			докато (c != NULL) {
 				dom_node_type type;
 				dom_string *name;
 
 				err = dom_node_get_node_type(c, &type);
-				if (err != DOM_NO_ERR) {
+				ако (err != DOM_NO_ERR) {
 					dom_node_unref(c);
-					return false;
+					върни false;
 				}
 
 				err = dom_node_get_node_name(c, &name);
-				if (err != DOM_NO_ERR) {
+				ако (err != DOM_NO_ERR) {
 					dom_node_unref(c);
-					return false;
+					върни false;
 				}
 
-				if (type != DOM_ELEMENT_NODE ||
+				ако (type != DOM_ELEMENT_NODE ||
 					(!dom_string_caseless_lwc_isequal(
 							name,
 							corestring_lwc_frame) &&
@@ -329,23 +329,23 @@ box_create_frameset(struct content_html_frames *f,
 							))) {
 					err = dom_node_get_next_sibling(c,
 							&next);
-					if (err != DOM_NO_ERR) {
+					ако (err != DOM_NO_ERR) {
 						dom_string_unref(name);
 						dom_node_unref(c);
-						return false;
+						върни false;
 					}
 
 					dom_string_unref(name);
 					dom_node_unref(c);
 					c = next;
-				} else {
+				} иначе {
 					/* Got a FRAME or FRAMESET element */
 					dom_string_unref(name);
 					break;
 				}
 			}
 
-			if (c == NULL)
+			ако (c == NULL)
 				break;
 
 			/* get current frame */
@@ -354,25 +354,25 @@ box_create_frameset(struct content_html_frames *f,
 
 			/* nest framesets */
 			err = dom_node_get_node_name(c, &s);
-			if (err != DOM_NO_ERR) {
+			ако (err != DOM_NO_ERR) {
 				dom_node_unref(c);
-				return false;
+				върни false;
 			}
 
-			if (dom_string_caseless_lwc_isequal(s,
+			ако (dom_string_caseless_lwc_isequal(s,
 					corestring_lwc_frameset)) {
 				dom_string_unref(s);
 				frame->border = 0;
-				if (box_create_frameset(frame, c,
+				ако (box_create_frameset(frame, c,
 						content) == false) {
 					dom_node_unref(c);
-					return false;
+					върни false;
 				}
 
 				err = dom_node_get_next_sibling(c, &next);
-				if (err != DOM_NO_ERR) {
+				ако (err != DOM_NO_ERR) {
 					dom_node_unref(c);
-					return false;
+					върни false;
 				}
 
 				dom_node_unref(c);
@@ -385,16 +385,16 @@ box_create_frameset(struct content_html_frames *f,
 			/* get frame URL (not required) */
 			url = NULL;
 			err = dom_element_get_attribute(c, corestring_dom_src, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			ако (err == DOM_NO_ERR && s != NULL) {
 				box_extract_link(content, s, content->base_url,
 						 &url);
 				dom_string_unref(s);
 			}
 
 			/* copy url */
-			if (url != NULL) {
+			ако (url != NULL) {
 				/* no self-references */
-				if (nsurl_compare(content->base_url, url,
+				ако (nsurl_compare(content->base_url, url,
 						NSURL_COMPLETE) == false)
 					frame->url = url;
 				url = NULL;
@@ -402,13 +402,13 @@ box_create_frameset(struct content_html_frames *f,
 
 			/* fill in specified values */
 			err = dom_element_get_attribute(c, corestring_dom_name, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			ако (err == DOM_NO_ERR && s != NULL) {
 				frame->name = talloc_strdup(content->bctx,
 						dom_string_data(s));
 				dom_string_unref(s);
 			}
 
-			if (dom_element_has_attribute(c, corestring_dom_noresize,
+			ако (dom_element_has_attribute(c, corestring_dom_noresize,
 						      &frame->no_resize) != DOM_NO_ERR) {
 				/* If we can't read the attribute for some reason,
 				 * assume we didn't have it.
@@ -418,18 +418,18 @@ box_create_frameset(struct content_html_frames *f,
 
 			err = dom_element_get_attribute(c, corestring_dom_frameborder,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			ако (err == DOM_NO_ERR && s != NULL) {
 				i = atoi(dom_string_data(s));
 				frame->border = (i != 0);
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_scrolling, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				if (dom_string_caseless_lwc_isequal(s,
+			ако (err == DOM_NO_ERR && s != NULL) {
+				ако (dom_string_caseless_lwc_isequal(s,
 						corestring_lwc_yes))
 					frame->scrolling = BW_SCROLLING_YES;
-				else if (dom_string_caseless_lwc_isequal(s,
+				иначе ако (dom_string_caseless_lwc_isequal(s,
 						corestring_lwc_no))
 					frame->scrolling = BW_SCROLLING_NO;
 				dom_string_unref(s);
@@ -437,24 +437,24 @@ box_create_frameset(struct content_html_frames *f,
 
 			err = dom_element_get_attribute(c, corestring_dom_marginwidth,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			ако (err == DOM_NO_ERR && s != NULL) {
 				frame->margin_width = atoi(dom_string_data(s));
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_marginheight,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			ако (err == DOM_NO_ERR && s != NULL) {
 				frame->margin_height = atoi(dom_string_data(s));
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_bordercolor,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			ако (err == DOM_NO_ERR && s != NULL) {
 				css_color color;
 
-				if (nscss_parse_colour(dom_string_data(s),
+				ако (nscss_parse_colour(dom_string_data(s),
 						&color))
 					frame->border_colour =
 						nscss_color_to_ns(color);
@@ -464,9 +464,9 @@ box_create_frameset(struct content_html_frames *f,
 
 			/* advance */
 			err = dom_node_get_next_sibling(c, &next);
-			if (err != DOM_NO_ERR) {
+			ако (err != DOM_NO_ERR) {
 				dom_node_unref(c);
-				return false;
+				върни false;
 			}
 
 			dom_node_unref(c);
@@ -475,11 +475,11 @@ box_create_frameset(struct content_html_frames *f,
 	}
 
 	/* If the last child wasn't a frame, we still need to unref it */
-	if (c != NULL) {
+	ако (c != NULL) {
 		dom_node_unref(c);
 	}
 
-	return true;
+	върни true;
 }
 
 
@@ -489,14 +489,14 @@ box_create_frameset(struct content_html_frames *f,
  * \param f The iframe params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_iframes_talloc_destructor(struct content_html_iframe *f)
+static цяло box_iframes_talloc_destructor(struct content_html_iframe *f)
 {
-	if (f->url != NULL) {
+	ако (f->url != NULL) {
 		nsurl_unref(f->url);
 		f->url = NULL;
 	}
 
-	return 0;
+	върни 0;
 }
 
 
@@ -524,29 +524,29 @@ box_get_attribute(dom_node *n,
 
 	err = dom_string_create_interned((const uint8_t *) attribute,
 			strlen(attribute), &attr_name);
-	if (err != DOM_NO_ERR)
-		return false;
+	ако (err != DOM_NO_ERR)
+		върни false;
 
 	err = dom_element_get_attribute(n, attr_name, &attr);
-	if (err != DOM_NO_ERR) {
+	ако (err != DOM_NO_ERR) {
 		dom_string_unref(attr_name);
-		return false;
+		върни false;
 	}
 
 	dom_string_unref(attr_name);
 
-	if (attr != NULL) {
+	ако (attr != NULL) {
 		result = talloc_strdup(context, dom_string_data(attr));
 
 		dom_string_unref(attr);
 
-		if (result == NULL)
-			return false;
+		ако (result == NULL)
+			върни false;
 
 		*value = result;
 	}
 
-	return true;
+	върни true;
 }
 
 
@@ -574,20 +574,20 @@ box_input_text(html_content *html, struct box *box, struct dom_node *node)
 	}
 
 	inline_container = box_create(NULL, 0, false, 0, 0, 0, 0, html->bctx);
-	if (!inline_container)
-		return false;
+	ако (!inline_container)
+		върни false;
 	inline_container->type = BOX_INLINE_CONTAINER;
 	inline_box = box_create(NULL, box->style, false, 0, 0, box->title, 0,
 			html->bctx);
-	if (!inline_box)
-		return false;
+	ако (!inline_box)
+		върни false;
 	inline_box->type = BOX_TEXT;
 	inline_box->text = talloc_strdup(html->bctx, "");
 
 	box_add_child(inline_container, inline_box);
 	box_add_child(box, inline_container);
 
-	return box_textarea_create_textarea(html, box, node);
+	върни box_textarea_create_textarea(html, box, node);
 }
 
 
@@ -608,52 +608,52 @@ static bool box_select_add_option(struct form_control *control, dom_node *n)
 	dom_exception err;
 
 	err = dom_node_get_text_content(n, &content);
-	if (err != DOM_NO_ERR)
-		return false;
+	ако (err != DOM_NO_ERR)
+		върни false;
 
-	if (content != NULL) {
+	ако (content != NULL) {
 		text = squash_whitespace(dom_string_data(content));
 		dom_string_unref(content);
-	} else {
+	} иначе {
 		text = strdup("");
 	}
 
-	if (text == NULL)
+	ако (text == NULL)
 		goto no_memory;
 
 	err = dom_element_get_attribute(n, corestring_dom_value, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		value = strdup(dom_string_data(s));
 		dom_string_unref(s);
-	} else {
+	} иначе {
 		value = strdup(text);
 	}
 
-	if (value == NULL)
+	ако (value == NULL)
 		goto no_memory;
 
-	if (dom_element_has_attribute(n, corestring_dom_selected, &selected) != DOM_NO_ERR) {
+	ако (dom_element_has_attribute(n, corestring_dom_selected, &selected) != DOM_NO_ERR) {
 		/* Assume not selected if we can't read the attribute presence */
 		selected = false;
 	}
 
 	/* replace spaces/TABs with hard spaces to prevent line wrapping */
 	text_nowrap = cnv_space2nbsp(text);
-	if (text_nowrap == NULL)
+	ако (text_nowrap == NULL)
 		goto no_memory;
 
-	if (form_add_option(control, value, text_nowrap, selected, n) == false)
+	ако (form_add_option(control, value, text_nowrap, selected, n) == false)
 		goto no_memory;
 
 	free(text);
 
-	return true;
+	върни true;
 
 no_memory:
 	free(value);
 	free(text);
 	free(text_nowrap);
-	return false;
+	върни false;
 }
 
 
@@ -691,13 +691,13 @@ box_a(dom_node *n,
 	dom_exception err;
 
 	err = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		ok = box_extract_link(content, s, content->base_url, &url);
 		dom_string_unref(s);
-		if (!ok)
-			return false;
-		if (url) {
-			if (box->href != NULL)
+		ако (!ok)
+			върни false;
+		ако (url) {
+			ако (box->href != NULL)
 				nsurl_unref(box->href);
 			box->href = url;
 		}
@@ -705,14 +705,14 @@ box_a(dom_node *n,
 
 	/* name and id share the same namespace */
 	err = dom_element_get_attribute(n, corestring_dom_name, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		lwc_string *lwc_name;
 
 		err = dom_string_intern(s, &lwc_name);
 
 		dom_string_unref(s);
 
-		if (err == DOM_NO_ERR) {
+		ако (err == DOM_NO_ERR) {
 			/* name replaces existing id
 			 * TODO: really? */
 			lwc_string_unref(box->id);
@@ -722,35 +722,35 @@ box_a(dom_node *n,
 
 	/* target frame [16.3] */
 	err = dom_element_get_attribute(n, corestring_dom_target, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	ако (err == DOM_NO_ERR && s != NULL) {
+		ако (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__blank))
 			box->target = "_blank";
-		else if (dom_string_caseless_lwc_isequal(s,
+		иначе ако (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__top))
 			box->target = "_top";
-		else if (dom_string_caseless_lwc_isequal(s,
+		иначе ако (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__parent))
 			box->target = "_parent";
-		else if (dom_string_caseless_lwc_isequal(s,
+		иначе ако (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__self))
 			/* the default may have been overridden by a
 			 * <base target=...>, so this is different to 0 */
 			box->target = "_self";
-		else {
+		иначе {
 			/* 6.16 says that frame names must begin with [a-zA-Z]
 			 * This doesn't match reality, so just take anything */
 			box->target = talloc_strdup(content->bctx,
 					dom_string_data(s));
-			if (!box->target) {
+			ако (!box->target) {
 				dom_string_unref(s);
-				return false;
+				върни false;
 			}
 		}
 		dom_string_unref(s);
 	}
 
-	return true;
+	върни true;
 }
 
 
@@ -766,13 +766,13 @@ box_body(dom_node *n,
 	css_color color;
 
 	css_computed_background_color(box->style, &color);
-	if (nscss_color_is_transparent(color)) {
+	ако (nscss_color_is_transparent(color)) {
 		content->background_colour = NS_TRANSPARENT;
-	} else {
+	} иначе {
 		content->background_colour = nscss_color_to_ns(color);
 	}
 
-	return true;
+	върни true;
 }
 
 
@@ -786,7 +786,7 @@ box_br(dom_node *n,
        bool *convert_children)
 {
 	box->type = BOX_BR;
-	return true;
+	върни true;
 }
 
 
@@ -802,8 +802,8 @@ box_button(dom_node *n,
 	struct form_control *gadget;
 
 	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (!gadget)
-		return false;
+	ако (!gadget)
+		върни false;
 
 	gadget->html = content;
 	box->gadget = gadget;
@@ -814,7 +814,7 @@ box_button(dom_node *n,
 
 	/* Just render the contents */
 
-	return true;
+	върни true;
 }
 
 
@@ -828,19 +828,19 @@ box_canvas(dom_node *n,
 	     bool *convert_children)
 {
 	/* If scripting is not enabled display the contents of canvas */
-	if (!content->enable_scripting) {
-		return true;
+	ако (!content->enable_scripting) {
+		върни true;
 	}
 	*convert_children = false;
 
-	if (box->style && ns_computed_display(box->style,
+	ако (box->style && ns_computed_display(box->style,
 			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+		върни true;
 
 	/* This is replaced content */
 	box->flags |= IS_REPLACED | REPLACE_DIM;
 
-	return true;
+	върни true;
 }
 
 
@@ -862,13 +862,13 @@ box_embed(dom_node *n,
 	dom_string *src;
 	dom_exception err;
 
-	if (box->style && ns_computed_display(box->style,
+	ако (box->style && ns_computed_display(box->style,
 			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+		върни true;
 
 	params = talloc(content->bctx, struct object_params);
-	if (params == NULL)
-		return false;
+	ако (params == NULL)
+		върни false;
 
 	talloc_set_destructor(params, box_object_talloc_destructor);
 
@@ -881,72 +881,72 @@ box_embed(dom_node *n,
 
 	/* src is a URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &src);
-	if (err != DOM_NO_ERR || src == NULL)
-		return true;
-	if (box_extract_link(content, src, content->base_url,
+	ако (err != DOM_NO_ERR || src == NULL)
+		върни true;
+	ако (box_extract_link(content, src, content->base_url,
 			     &params->data) == false) {
 		dom_string_unref(src);
-		return false;
+		върни false;
 	}
 
 	dom_string_unref(src);
 
-	if (params->data == NULL)
-		return true;
+	ако (params->data == NULL)
+		върни true;
 
 	/* Don't include ourself */
-	if (nsurl_compare(content->base_url, params->data, NSURL_COMPLETE))
-		return true;
+	ако (nsurl_compare(content->base_url, params->data, NSURL_COMPLETE))
+		върни true;
 
 	/* add attributes as parameters to linked list */
 	err = dom_node_get_attributes(n, &attrs);
-	if (err != DOM_NO_ERR)
-		return false;
+	ако (err != DOM_NO_ERR)
+		върни false;
 
 	err = dom_namednodemap_get_length(attrs, &num_attrs);
-	if (err != DOM_NO_ERR) {
+	ако (err != DOM_NO_ERR) {
 		dom_namednodemap_unref(attrs);
-		return false;
+		върни false;
 	}
 
-	for (idx = 0; idx < num_attrs; idx++) {
+	за (idx = 0; idx < num_attrs; idx++) {
 		dom_attr *attr;
 		dom_string *name, *value;
 
 		err = dom_namednodemap_item(attrs, idx, (void *) &attr);
-		if (err != DOM_NO_ERR) {
+		ако (err != DOM_NO_ERR) {
 			dom_namednodemap_unref(attrs);
-			return false;
+			върни false;
 		}
 
 		err = dom_attr_get_name(attr, &name);
-		if (err != DOM_NO_ERR) {
+		ако (err != DOM_NO_ERR) {
 			dom_node_unref(attr);
 			dom_namednodemap_unref(attrs);
-			return false;
+			върни false;
 		}
 
-		if (dom_string_caseless_lwc_isequal(name, corestring_lwc_src)) {
+		ако (dom_string_caseless_lwc_isequal(name, corestring_lwc_src)) {
 			dom_node_unref(attr);
 			dom_string_unref(name);
 			continue;
 		}
 
 		err = dom_attr_get_value(attr, &value);
-		if (err != DOM_NO_ERR) {
+		ако (err != DOM_NO_ERR) {
 			dom_node_unref(attr);
 			dom_string_unref(name);
 			dom_namednodemap_unref(attrs);
-			return false;
+			върни false;
 		}
 
 		param = talloc(content->bctx, struct object_param);
-		if (param == NULL) {
+		ако (param == NULL) {
 			dom_node_unref(attr);
 			dom_string_unref(value);
 			dom_string_unref(name);
 			dom_namednodemap_unref(attrs);
-			return false;
+			върни false;
 		}
 
 		param->name = talloc_strdup(content->bctx, dom_string_data(name));
@@ -959,10 +959,10 @@ box_embed(dom_node *n,
 		dom_string_unref(name);
 		dom_node_unref(attr);
 
-		if (param->name == NULL || param->value == NULL ||
+		ако (param->name == NULL || param->value == NULL ||
 				param->valuetype == NULL) {
 			dom_namednodemap_unref(attrs);
-			return false;
+			върни false;
 		}
 
 		param->next = params->params;
@@ -975,7 +975,7 @@ box_embed(dom_node *n,
 
 	/* start fetch */
 	box->flags |= IS_REPLACED;
-	return html_fetch_object(content, params->data, box, CONTENT_ANY, false);
+	върни html_fetch_object(content, params->data, box, CONTENT_ANY, false);
 }
 
 
@@ -990,31 +990,31 @@ box_frameset(dom_node *n,
 {
 	bool ok;
 
-	if (content->frameset) {
+	ако (content->frameset) {
 		NSLOG(netsurf, INFO, "Error: multiple framesets in document.");
 		/* Don't convert children */
-		if (convert_children)
+		ако (convert_children)
 			*convert_children = false;
 		/* And ignore this spurious frameset */
 		box->type = BOX_NONE;
-		return true;
+		върни true;
 	}
 
 	content->frameset = talloc_zero(content->bctx,
 					struct content_html_frames);
-	if (!content->frameset) {
-		return false;
+	ако (!content->frameset) {
+		върни false;
 	}
 
 	ok = box_create_frameset(content->frameset, n, content);
-	if (ok) {
+	ако (ok) {
 		box->type = BOX_NONE;
 	}
 
-	if (convert_children) {
+	ако (convert_children) {
 		*convert_children = false;
 	}
-	return ok;
+	върни ok;
 }
 
 
@@ -1031,43 +1031,43 @@ box_iframe(dom_node *n,
 	dom_string *s;
 	dom_exception err;
 	struct content_html_iframe *iframe;
-	int i;
+	цяло i;
 
-	if (box->style && ns_computed_display(box->style,
+	ако (box->style && ns_computed_display(box->style,
 			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+		върни true;
 
-	if (box->style &&
+	ако (box->style &&
 	    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
 		/* Don't create iframe discriptors for invisible iframes
 		 * TODO: handle hidden iframes at browser_window generation
 		 * time instead? */
-		return true;
+		върни true;
 	}
 
 	/* get frame URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &s);
-	if (err != DOM_NO_ERR || s == NULL)
-		return true;
-	if (box_extract_link(content, s, content->base_url, &url) == false) {
+	ако (err != DOM_NO_ERR || s == NULL)
+		върни true;
+	ако (box_extract_link(content, s, content->base_url, &url) == false) {
 		dom_string_unref(s);
-		return false;
+		върни false;
 	}
 	dom_string_unref(s);
-	if (url == NULL)
-		return true;
+	ако (url == NULL)
+		върни true;
 
 	/* don't include ourself */
-	if (nsurl_compare(content->base_url, url, NSURL_COMPLETE)) {
+	ако (nsurl_compare(content->base_url, url, NSURL_COMPLETE)) {
 		nsurl_unref(url);
-		return true;
+		върни true;
 	}
 
 	/* create a new iframe */
 	iframe = talloc(content->bctx, struct content_html_iframe);
-	if (iframe == NULL) {
+	ако (iframe == NULL) {
 		nsurl_unref(url);
-		return false;
+		върни false;
 	}
 
 	talloc_set_destructor(iframe, box_iframes_talloc_destructor);
@@ -1086,47 +1086,47 @@ box_iframe(dom_node *n,
 
 	/* fill in specified values */
 	err = dom_element_get_attribute(n, corestring_dom_name, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		iframe->name = talloc_strdup(content->bctx, dom_string_data(s));
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_frameborder, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		i = atoi(dom_string_data(s));
 		iframe->border = (i != 0);
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_bordercolor, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		css_color color;
 
-		if (nscss_parse_colour(dom_string_data(s), &color))
+		ако (nscss_parse_colour(dom_string_data(s), &color))
 			iframe->border_colour = nscss_color_to_ns(color);
 
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_scrolling, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	ако (err == DOM_NO_ERR && s != NULL) {
+		ако (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_yes))
 			iframe->scrolling = BW_SCROLLING_YES;
-		else if (dom_string_caseless_lwc_isequal(s,
+		иначе ако (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_no))
 			iframe->scrolling = BW_SCROLLING_NO;
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_marginwidth, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		iframe->margin_width = atoi(dom_string_data(s));
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_marginheight, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		iframe->margin_height = atoi(dom_string_data(s));
 		dom_string_unref(s);
 	}
@@ -1137,9 +1137,9 @@ box_iframe(dom_node *n,
 	box->flags |= IS_REPLACED;
 
 	/* Showing iframe, so don't show alternate content */
-	if (convert_children)
+	ако (convert_children)
 		*convert_children = false;
-	return true;
+	върни true;
 }
 
 
@@ -1162,48 +1162,48 @@ box_image(dom_node *n,
 	css_unit wunit = CSS_UNIT_PX;
 	css_unit hunit = CSS_UNIT_PX;
 
-	if (box->style && ns_computed_display(box->style,
+	ако (box->style && ns_computed_display(box->style,
 			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+		върни true;
 
 	/* handle alt text */
 	err = dom_element_get_attribute(n, corestring_dom_alt, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	ако (err == DOM_NO_ERR && s != NULL) {
 		char *alt = squash_whitespace(dom_string_data(s));
 		dom_string_unref(s);
-		if (alt == NULL)
-			return false;
+		ако (alt == NULL)
+			върни false;
 		box->text = talloc_strdup(content->bctx, alt);
 		free(alt);
-		if (box->text == NULL)
-			return false;
+		ако (box->text == NULL)
+			върни false;
 		box->length = strlen(box->text);
 	}
 
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	ако (nsoption_bool(foreground_images) == false) {
+		върни true;
 	}
 
 	/* imagemap associated with this image */
-	if (!box_get_attribute(n, "usemap", content->bctx, &box->usemap))
-		return false;
-	if (box->usemap && box->usemap[0] == '#')
+	ако (!box_get_attribute(n, "usemap", content->bctx, &box->usemap))
+		върни false;
+	ако (box->usemap && box->usemap[0] == '#')
 		box->usemap++;
 
 	/* get image URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &s);
-	if (err != DOM_NO_ERR || s == NULL)
-		return true;
+	ако (err != DOM_NO_ERR || s == NULL)
+		върни true;
 
-	if (box_extract_link(content, s, content->base_url, &url) == false) {
+	ако (box_extract_link(content, s, content->base_url, &url) == false) {
 		dom_string_unref(s);
-		return false;
+		върни false;
 	}
 
 	dom_string_unref(s);
 
-	if (url == NULL)
-		return true;
+	ако (url == NULL)
+		върни true;
 
 	/* start fetch */
 	box->flags |= IS_REPLACED;
@@ -1213,7 +1213,7 @@ box_image(dom_node *n,
 	wtype = css_computed_width(box->style, &value, &wunit);
 	htype = css_computed_height(box->style, &value, &hunit);
 
-	if (wtype == CSS_WIDTH_SET &&
+	ако (wtype == CSS_WIDTH_SET &&
 	    wunit != CSS_UNIT_PCT &&
 	    htype == CSS_HEIGHT_SET &&
 	    hunit != CSS_UNIT_PCT) {
@@ -1222,7 +1222,7 @@ box_image(dom_node *n,
 		box->flags |= REPLACE_DIM;
 	}
 
-	return ok;
+	върни ok;
 }
 
 
@@ -1242,8 +1242,8 @@ box_input(dom_node *n,
 	nserror error;
 
 	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (gadget == NULL) {
-		return false;
+	ако (gadget == NULL) {
+		върни false;
 	}
 
 	box->gadget = gadget;
@@ -1253,33 +1253,33 @@ box_input(dom_node *n,
 
 	/* get entry type */
 	err = dom_element_get_attribute(n, corestring_dom_type, &type);
-	if ((err != DOM_NO_ERR) || (type == NULL)) {
+	ако ((err != DOM_NO_ERR) || (type == NULL)) {
 		/* no type so "text" is assumed */
-		if (box_input_text(content, box, n) == false) {
-			return false;
+		ако (box_input_text(content, box, n) == false) {
+			върни false;
 		}
 		*convert_children = false;
-		return true;
+		върни true;
 	}
 
-	if (dom_string_caseless_lwc_isequal(type, corestring_lwc_password)) {
-		if (box_input_text(content, box, n) == false)
+	ако (dom_string_caseless_lwc_isequal(type, corestring_lwc_password)) {
+		ако (box_input_text(content, box, n) == false)
 			goto no_memory;
 
-	} else if (dom_string_caseless_lwc_isequal(type, corestring_lwc_file)) {
+	} иначе ако (dom_string_caseless_lwc_isequal(type, corestring_lwc_file)) {
 		box->type = BOX_INLINE_BLOCK;
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} иначе ако (dom_string_caseless_lwc_isequal(type,
 			corestring_lwc_hidden)) {
 		/* no box for hidden inputs */
 		box->type = BOX_NONE;
 
-	} else if ((dom_string_caseless_lwc_isequal(type,
+	} иначе ако ((dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_checkbox) ||
 			dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_radio))) {
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} иначе ако (dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_submit) ||
 			dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_reset) ||
@@ -1287,37 +1287,37 @@ box_input(dom_node *n,
 				corestring_lwc_button)) {
 		struct box *inline_container, *inline_box;
 
-		if (box_button(n, content, box, 0) == false)
+		ако (box_button(n, content, box, 0) == false)
 			goto no_memory;
 
 		inline_container = box_create(NULL, 0, false, 0, 0, 0, 0,
 				content->bctx);
-		if (inline_container == NULL)
+		ако (inline_container == NULL)
 			goto no_memory;
 
 		inline_container->type = BOX_INLINE_CONTAINER;
 
 		inline_box = box_create(NULL, box->style, false, 0, 0,
 				box->title, 0, content->bctx);
-		if (inline_box == NULL)
+		ако (inline_box == NULL)
 			goto no_memory;
 
 		inline_box->type = BOX_TEXT;
 
-		if (box->gadget->value != NULL)
+		ако (box->gadget->value != NULL)
 			inline_box->text = talloc_strdup(content->bctx,
 					box->gadget->value);
-		else if (box->gadget->type == GADGET_SUBMIT)
+		иначе ако (box->gadget->type == GADGET_SUBMIT)
 			inline_box->text = talloc_strdup(content->bctx,
 					messages_get("Form_Submit"));
-		else if (box->gadget->type == GADGET_RESET)
+		иначе ако (box->gadget->type == GADGET_RESET)
 			inline_box->text = talloc_strdup(content->bctx,
 					messages_get("Form_Reset"));
-		else
+		иначе
 			inline_box->text = talloc_strdup(content->bctx,
 							 "Button");
 
-		if (inline_box->text == NULL)
+		ако (inline_box->text == NULL)
 			goto no_memory;
 
 		inline_box->length = strlen(inline_box->text);
@@ -1326,29 +1326,29 @@ box_input(dom_node *n,
 
 		box_add_child(box, inline_container);
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} иначе ако (dom_string_caseless_lwc_isequal(type,
 						   corestring_lwc_image)) {
 		gadget->type = GADGET_IMAGE;
 
-		if (box->style && ns_computed_display(box->style,
+		ако (box->style && ns_computed_display(box->style,
 				box_is_root(n)) != CSS_DISPLAY_NONE &&
 				nsoption_bool(foreground_images) == true) {
 			dom_string *s;
 
 			err = dom_element_get_attribute(n, corestring_dom_src, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			ако (err == DOM_NO_ERR && s != NULL) {
 				error = nsurl_join(content->base_url,
 						dom_string_data(s), &url);
 				dom_string_unref(s);
-				if (error != NSERROR_OK)
+				ако (error != NSERROR_OK)
 					goto no_memory;
 
 				/* if url is equivalent to the parent's url,
 				 * we've got infinite inclusion. stop it here
 				 */
-				if (nsurl_compare(url, content->base_url,
+				ако (nsurl_compare(url, content->base_url,
 						NSURL_COMPLETE) == false) {
-					if (!html_fetch_object(content,
+					ако (!html_fetch_object(content,
 							       url,
 							       box,
 							       image_types,
@@ -1360,9 +1360,9 @@ box_input(dom_node *n,
 				nsurl_unref(url);
 			}
 		}
-	} else {
+	} иначе {
 		/* unhandled type the default is "text" */
-		if (box_input_text(content, box, n) == false)
+		ако (box_input_text(content, box, n) == false)
 			goto no_memory;
 	}
 
@@ -1370,12 +1370,12 @@ box_input(dom_node *n,
 
 	*convert_children = false;
 
-	return true;
+	върни true;
 
 no_memory:
 	dom_string_unref(type);
 
-	return false;
+	върни false;
 }
 
 
@@ -1389,11 +1389,11 @@ box_noscript(dom_node *n,
 	     bool *convert_children)
 {
 	/* If scripting is enabled, do not display the contents of noscript */
-	if (content->enable_scripting) {
+	ако (content->enable_scripting) {
 		*convert_children = false;
 	}
 
-	return true;
+	върни true;
 }
 
 
@@ -1412,19 +1412,19 @@ box_object(dom_node *n,
 	dom_node *c;
 	dom_exception err;
 
-	if (box->style && ns_computed_display(box->style,
+	ако (box->style && ns_computed_display(box->style,
 			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+		върни true;
 
-	if (box_get_attribute(n, "usemap", content->bctx, &box->usemap) ==
+	ако (box_get_attribute(n, "usemap", content->bctx, &box->usemap) ==
 			false)
-		return false;
-	if (box->usemap && box->usemap[0] == '#')
+		върни false;
+	ако (box->usemap && box->usemap[0] == '#')
 		box->usemap++;
 
 	params = talloc(content->bctx, struct object_params);
-	if (params == NULL)
-		return false;
+	ако (params == NULL)
+		върни false;
 
 	talloc_set_destructor(params, box_object_talloc_destructor);
 
@@ -1438,95 +1438,95 @@ box_object(dom_node *n,
 	/* codebase, classid, and data are URLs
 	 * (codebase is the base for the other two) */
 	err = dom_element_get_attribute(n, corestring_dom_codebase, &codebase);
-	if (err == DOM_NO_ERR && codebase != NULL) {
-		if (box_extract_link(content, codebase,	content->base_url,
+	ако (err == DOM_NO_ERR && codebase != NULL) {
+		ако (box_extract_link(content, codebase,	content->base_url,
 				&params->codebase) == false) {
 			dom_string_unref(codebase);
-			return false;
+			върни false;
 		}
 		dom_string_unref(codebase);
 	}
-	if (params->codebase == NULL)
+	ако (params->codebase == NULL)
 		params->codebase = nsurl_ref(content->base_url);
 
 	err = dom_element_get_attribute(n, corestring_dom_classid, &classid);
-	if (err == DOM_NO_ERR && classid != NULL) {
-		if (box_extract_link(content, classid,
+	ако (err == DOM_NO_ERR && classid != NULL) {
+		ако (box_extract_link(content, classid,
 				params->codebase, &params->classid) == false) {
 			dom_string_unref(classid);
-			return false;
+			върни false;
 		}
 		dom_string_unref(classid);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_data, &data);
-	if (err == DOM_NO_ERR && data != NULL) {
-		if (box_extract_link(content, data,
+	ако (err == DOM_NO_ERR && data != NULL) {
+		ако (box_extract_link(content, data,
 				params->codebase, &params->data) == false) {
 			dom_string_unref(data);
-			return false;
+			върни false;
 		}
 		dom_string_unref(data);
 	}
 
-	if (params->classid == NULL && params->data == NULL)
+	ако (params->classid == NULL && params->data == NULL)
 		/* nothing to embed; ignore */
-		return true;
+		върни true;
 
 	/* Don't include ourself */
-	if (params->classid != NULL && nsurl_compare(content->base_url,
+	ако (params->classid != NULL && nsurl_compare(content->base_url,
 			params->classid, NSURL_COMPLETE))
-		return true;
+		върни true;
 
-	if (params->data != NULL && nsurl_compare(content->base_url,
+	ако (params->data != NULL && nsurl_compare(content->base_url,
 			params->data, NSURL_COMPLETE))
-		return true;
+		върни true;
 
 	/* codetype and type are MIME types */
-	if (box_get_attribute(n, "codetype", params,
+	ако (box_get_attribute(n, "codetype", params,
 			&params->codetype) == false)
-		return false;
-	if (box_get_attribute(n, "type", params, &params->type) == false)
-		return false;
+		върни false;
+	ако (box_get_attribute(n, "type", params, &params->type) == false)
+		върни false;
 
 	/* classid && !data => classid is used (consult codetype)
 	 * (classid || !classid) && data => data is used (consult type)
 	 * !classid && !data => invalid; ignored */
 
-	if (params->classid != NULL && params->data == NULL &&
+	ако (params->classid != NULL && params->data == NULL &&
 			params->codetype != NULL) {
 		lwc_string *icodetype;
 		lwc_error lerror;
 
 		lerror = lwc_intern_string(params->codetype,
 				strlen(params->codetype), &icodetype);
-		if (lerror != lwc_error_ok)
-			return false;
+		ако (lerror != lwc_error_ok)
+			върни false;
 
-		if (content_factory_type_from_mime_type(icodetype) ==
+		ако (content_factory_type_from_mime_type(icodetype) ==
 				CONTENT_NONE) {
 			/* can't handle this MIME type */
 			lwc_string_unref(icodetype);
-			return true;
+			върни true;
 		}
 
 		lwc_string_unref(icodetype);
 	}
 
-	if (params->data != NULL && params->type != NULL) {
+	ако (params->data != NULL && params->type != NULL) {
 		lwc_string *itype;
 		lwc_error lerror;
 
 		lerror = lwc_intern_string(params->type, strlen(params->type),
 				&itype);
-		if (lerror != lwc_error_ok)
-			return false;
+		ако (lerror != lwc_error_ok)
+			върни false;
 
-		if (content_factory_type_from_mime_type(itype) ==
+		ако (content_factory_type_from_mime_type(itype) ==
 				CONTENT_NONE) {
 			/* can't handle this MIME type */
 			lwc_string_unref(itype);
-			return true;
+			върни true;
 		}
 
 		lwc_string_unref(itype);
@@ -1534,29 +1534,29 @@ box_object(dom_node *n,
 
 	/* add parameters to linked list */
 	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR)
-		return false;
+	ако (err != DOM_NO_ERR)
+		върни false;
 
-	while (c != NULL) {
+	докато (c != NULL) {
 		dom_node *next;
 		dom_node_type type;
 
 		err = dom_node_get_node_type(c, &type);
-		if (err != DOM_NO_ERR) {
+		ако (err != DOM_NO_ERR) {
 			dom_node_unref(c);
-			return false;
+			върни false;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
+		ако (type == DOM_ELEMENT_NODE) {
 			dom_string *name;
 
 			err = dom_node_get_node_name(c, &name);
-			if (err != DOM_NO_ERR) {
+			ако (err != DOM_NO_ERR) {
 				dom_node_unref(c);
-				return false;
+				върни false;
 			}
 
-			if (!dom_string_caseless_lwc_isequal(name,
+			ако (!dom_string_caseless_lwc_isequal(name,
 					corestring_lwc_param)) {
 				/* The first non-param child is the start of
 				 * the alt html. Therefore, we should break
@@ -1568,9 +1568,9 @@ box_object(dom_node *n,
 			dom_string_unref(name);
 
 			param = talloc(params, struct object_param);
-			if (param == NULL) {
+			ако (param == NULL) {
 				dom_node_unref(c);
-				return false;
+				върни false;
 			}
 			param->name = NULL;
 			param->value = NULL;
@@ -1578,35 +1578,35 @@ box_object(dom_node *n,
 			param->valuetype = NULL;
 			param->next = NULL;
 
-			if (box_get_attribute(c, "name", param,
+			ако (box_get_attribute(c, "name", param,
 					&param->name) == false) {
 				dom_node_unref(c);
-				return false;
+				върни false;
 			}
 
-			if (box_get_attribute(c, "value", param,
+			ако (box_get_attribute(c, "value", param,
 					&param->value) == false) {
 				dom_node_unref(c);
-				return false;
+				върни false;
 			}
 
-			if (box_get_attribute(c, "type", param,
+			ако (box_get_attribute(c, "type", param,
 					&param->type) == false) {
 				dom_node_unref(c);
-				return false;
+				върни false;
 			}
 
-			if (box_get_attribute(c, "valuetype", param,
+			ако (box_get_attribute(c, "valuetype", param,
 					&param->valuetype) == false) {
 				dom_node_unref(c);
-				return false;
+				върни false;
 			}
 
-			if (param->valuetype == NULL) {
+			ако (param->valuetype == NULL) {
 				param->valuetype = talloc_strdup(param, "data");
-				if (param->valuetype == NULL) {
+				ако (param->valuetype == NULL) {
 					dom_node_unref(c);
-					return false;
+					върни false;
 				}
 			}
 
@@ -1615,9 +1615,9 @@ box_object(dom_node *n,
 		}
 
 		err = dom_node_get_next_sibling(c, &next);
-		if (err != DOM_NO_ERR) {
+		ако (err != DOM_NO_ERR) {
 			dom_node_unref(c);
-			return false;
+			върни false;
 		}
 
 		dom_node_unref(c);
@@ -1628,15 +1628,15 @@ box_object(dom_node *n,
 
 	/* start fetch (MIME type is ok or not specified) */
 	box->flags |= IS_REPLACED;
-	if (!html_fetch_object(content,
+	ако (!html_fetch_object(content,
 			       params->data ? params->data : params->classid,
 			       box,
 			       CONTENT_ANY,
 			       false))
-		return false;
+		върни false;
 
 	*convert_children = false;
-	return true;
+	върни true;
 }
 
 
@@ -1650,7 +1650,7 @@ box_pre(dom_node *n,
 	bool *convert_children)
 {
 	box->flags |= PRE_STRIP;
-	return true;
+	върни true;
 }
 
 
@@ -1671,102 +1671,102 @@ box_select(dom_node *n,
 	dom_exception err;
 
 	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (gadget == NULL)
-		return false;
+	ако (gadget == NULL)
+		върни false;
 
 	gadget->html = content;
 	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR) {
+	ако (err != DOM_NO_ERR) {
 		form_free_control(gadget);
-		return false;
+		върни false;
 	}
 
-	while (c != NULL) {
+	докато (c != NULL) {
 		dom_string *name;
 
 		err = dom_node_get_node_name(c, &name);
-		if (err != DOM_NO_ERR) {
+		ако (err != DOM_NO_ERR) {
 			dom_node_unref(c);
 			form_free_control(gadget);
-			return false;
+			върни false;
 		}
 
-		if (dom_string_caseless_lwc_isequal(name,
+		ако (dom_string_caseless_lwc_isequal(name,
 				corestring_lwc_option)) {
 			dom_string_unref(name);
 
-			if (box_select_add_option(gadget, c) == false) {
+			ако (box_select_add_option(gadget, c) == false) {
 				dom_node_unref(c);
 				form_free_control(gadget);
-				return false;
+				върни false;
 			}
-		} else if (dom_string_caseless_lwc_isequal(name,
+		} иначе ако (dom_string_caseless_lwc_isequal(name,
 				corestring_lwc_optgroup)) {
 			dom_string_unref(name);
 
 			err = dom_node_get_first_child(c, &c2);
-			if (err != DOM_NO_ERR) {
+			ако (err != DOM_NO_ERR) {
 				dom_node_unref(c);
 				form_free_control(gadget);
-				return false;
+				върни false;
 			}
 
-			while (c2 != NULL) {
+			докато (c2 != NULL) {
 				dom_string *c2_name;
 
 				err = dom_node_get_node_name(c2, &c2_name);
-				if (err != DOM_NO_ERR) {
+				ако (err != DOM_NO_ERR) {
 					dom_node_unref(c2);
 					dom_node_unref(c);
 					form_free_control(gadget);
-					return false;
+					върни false;
 				}
 
-				if (dom_string_caseless_lwc_isequal(c2_name,
+				ако (dom_string_caseless_lwc_isequal(c2_name,
 						corestring_lwc_option)) {
 					dom_string_unref(c2_name);
 
-					if (box_select_add_option(gadget,
+					ако (box_select_add_option(gadget,
 							c2) == false) {
 						dom_node_unref(c2);
 						dom_node_unref(c);
 						form_free_control(gadget);
-						return false;
+						върни false;
 					}
-				} else {
+				} иначе {
 					dom_string_unref(c2_name);
 				}
 
 				err = dom_node_get_next_sibling(c2, &next2);
-				if (err != DOM_NO_ERR) {
+				ако (err != DOM_NO_ERR) {
 					dom_node_unref(c2);
 					dom_node_unref(c);
 					form_free_control(gadget);
-					return false;
+					върни false;
 				}
 
 				dom_node_unref(c2);
 				c2 = next2;
 			}
-		} else {
+		} иначе {
 			dom_string_unref(name);
 		}
 
 		err = dom_node_get_next_sibling(c, &next);
-		if (err != DOM_NO_ERR) {
+		ако (err != DOM_NO_ERR) {
 			dom_node_unref(c);
 			form_free_control(gadget);
-			return false;
+			върни false;
 		}
 
 		dom_node_unref(c);
 		c = next;
 	}
 
-	if (gadget->data.select.num_items == 0) {
+	ако (gadget->data.select.num_items == 0) {
 		/* no options: ignore entire select */
 		form_free_control(gadget);
-		return true;
+		върни true;
 	}
 
 	box->type = BOX_INLINE_BLOCK;
@@ -1775,18 +1775,18 @@ box_select(dom_node *n,
 	gadget->box = box;
 
 	inline_container = box_create(NULL, 0, false, 0, 0, 0, 0, content->bctx);
-	if (inline_container == NULL)
+	ако (inline_container == NULL)
 		goto no_memory;
 	inline_container->type = BOX_INLINE_CONTAINER;
 	inline_box = box_create(NULL, box->style, false, 0, 0, box->title, 0,
 			content->bctx);
-	if (inline_box == NULL)
+	ако (inline_box == NULL)
 		goto no_memory;
 	inline_box->type = BOX_TEXT;
 	box_add_child(inline_container, inline_box);
 	box_add_child(box, inline_container);
 
-	if (gadget->data.select.multiple == false &&
+	ако (gadget->data.select.multiple == false &&
 			gadget->data.select.num_selected == 0) {
 		gadget->data.select.current = gadget->data.select.items;
 		gadget->data.select.current->initial_selected =
@@ -1796,25 +1796,25 @@ box_select(dom_node *n,
 				gadget->data.select.current->node, true);
 	}
 
-	if (gadget->data.select.num_selected == 0)
+	ако (gadget->data.select.num_selected == 0)
 		inline_box->text = talloc_strdup(content->bctx,
 				messages_get("Form_None"));
-	else if (gadget->data.select.num_selected == 1)
+	иначе ако (gadget->data.select.num_selected == 1)
 		inline_box->text = talloc_strdup(content->bctx,
 				gadget->data.select.current->text);
-	else
+	иначе
 		inline_box->text = talloc_strdup(content->bctx,
 				messages_get("Form_Many"));
-	if (inline_box->text == NULL)
+	ако (inline_box->text == NULL)
 		goto no_memory;
 
 	inline_box->length = strlen(inline_box->text);
 
 	*convert_children = false;
-	return true;
+	върни true;
 
 no_memory:
-	return false;
+	върни false;
 }
 
 
@@ -1828,18 +1828,18 @@ static bool box_textarea(dom_node *n,
 {
 	/* Get the form_control for the DOM node */
 	box->gadget = html_forms_get_control_for_node(content->forms, n);
-	if (box->gadget == NULL)
-		return false;
+	ако (box->gadget == NULL)
+		върни false;
 
 	box->flags |= IS_REPLACED;
 	box->gadget->html = content;
 	box->gadget->box = box;
 
-	if (!box_input_text(content, box, n))
-		return false;
+	ако (!box_input_text(content, box, n))
+		върни false;
 
 	*convert_children = false;
-	return true;
+	върни true;
 }
 
 
@@ -1860,7 +1860,7 @@ convert_special_elements(dom_node *node,
 	bool res;
 
 	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
+	ако (exc != DOM_NO_ERR) {
 		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
@@ -1929,5 +1929,5 @@ convert_special_elements(dom_node *node,
 		res = true;
 	}
 
-	return res;
+	върни res;
 }

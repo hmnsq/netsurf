@@ -54,12 +54,12 @@ void content_factory_fini(void)
 {
 	content_handler_entry *victim;
 
-	while (content_handlers != NULL) {
+	докато (content_handlers != NULL) {
 		victim = content_handlers;
 
 		content_handlers = content_handlers->next;
 
-		if (victim->handler->fini != NULL)
+		ако (victim->handler->fini != NULL)
 			victim->handler->fini();
 
 		lwc_string_unref(victim->mime_type);
@@ -86,31 +86,31 @@ nserror content_factory_register_handler(const char *mime_type,
 	bool match;
 
 	lerror = lwc_intern_string(mime_type, strlen(mime_type), &imime_type);
-	if (lerror != lwc_error_ok)
-		return NSERROR_NOMEM;
+	ако (lerror != lwc_error_ok)
+		върни NSERROR_NOMEM;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(imime_type, entry->mime_type,
+	за (entry = content_handlers; entry != NULL; entry = entry->next) {
+		ако (lwc_string_caseless_isequal(imime_type, entry->mime_type,
 				&match) == lwc_error_ok && match)
 			break;
 	}
 
-	if (entry == NULL) {
+	ако (entry == NULL) {
 		entry = malloc(sizeof(content_handler_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+		ако (entry == NULL)
+			върни NSERROR_NOMEM;
 
 		entry->next = content_handlers;
 		content_handlers = entry;
 
 		entry->mime_type = imime_type;
-	} else {
+	} иначе {
 		lwc_string_unref(imime_type);
 	}
 
 	entry->handler = handler;
 
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 /**
@@ -124,18 +124,18 @@ static const content_handler *content_lookup(lwc_string *mime_type)
 	content_handler_entry *entry;
 	bool match;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(mime_type, entry->mime_type,
+	за (entry = content_handlers; entry != NULL; entry = entry->next) {
+		ако (lwc_string_caseless_isequal(mime_type, entry->mime_type,
 					&match) == lwc_error_ok && match) {
 			break;
 		}
 	}
 
-	if (entry != NULL) {
-		return entry->handler;
+	ако (entry != NULL) {
+		върни entry->handler;
 	}
 
-	return NULL;
+	върни NULL;
 }
 
 /**
@@ -150,11 +150,11 @@ content_type content_factory_type_from_mime_type(lwc_string *mime_type)
 	content_type type = CONTENT_NONE;
 
 	handler = content_lookup(mime_type);
-	if (handler != NULL) {
+	ако (handler != NULL) {
 		type = handler->type();
 	}
 
-	return type;
+	върни type;
 }
 
 /**
@@ -177,15 +177,15 @@ struct content *content_factory_create_content(llcache_handle *llcache,
 	nserror error;
 
 	handler = content_lookup(effective_type);
-	if (handler == NULL)
-		return NULL;
+	ако (handler == NULL)
+		върни NULL;
 
 	assert(handler->create != NULL);
 
 	/* Use the parameters from the declared Content-Type header */
 	content_type_header = 
 			llcache_handle_get_header(llcache, "Content-Type");
-	if (content_type_header != NULL) {
+	ако (content_type_header != NULL) {
 		/* We don't care if this fails */
 		http_parse_content_type(content_type_header, &ct);
 	}
@@ -195,12 +195,12 @@ struct content *content_factory_create_content(llcache_handle *llcache,
 			llcache, fallback_charset, quirks, 
 			&c);
 
-	if (ct != NULL)
+	ако (ct != NULL)
 		http_content_type_destroy(ct);
 
-	if (error != NSERROR_OK)
-		return NULL;
+	ако (error != NSERROR_OK)
+		върни NULL;
 
-	return c;
+	върни c;
 }
 

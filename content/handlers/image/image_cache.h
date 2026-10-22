@@ -48,7 +48,7 @@ typedef struct bitmap * (image_cache_convert_fn) (struct content *content);
 
 struct image_cache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	unsigned цяло bg_clean_time;
 
 	/** The target upper bound for the image cache size */
 	size_t limit;
@@ -116,7 +116,7 @@ bool image_cache_speculate(struct content *c);
  * \param fmt     The format string.
  * \return The number of bytes written to \a string or -1 on error
  */
-int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
+цяло image_cache_snentryf(char *string, size_t size, unsigned цяло entryn,
 			 const char *fmt);
 
 /**
@@ -167,7 +167,7 @@ int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
  * \return The number of bytes written to \a string or -1 on error
  */
 
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
+цяло image_cache_snsummaryf(char *string, size_t size, const char *fmt);
 
 /********* Image content handler generic cache callbacks ************/
 

@@ -66,21 +66,21 @@ enum key_type {
 
 struct chart_label {
 	char *title; /* label title */
-	unsigned int colour; /* colour */
+	unsigned цяло colour; /* colour */
 };
 
 struct chart_series {
-	unsigned int len; /* number of values in the series */
+	unsigned цяло len; /* number of values in the series */
 	float *value; /* array of values */
 };
 
 #define MAX_SERIES 4
 
 struct chart_data {
-	unsigned int series_len;
+	unsigned цяло series_len;
 	struct chart_series series[MAX_SERIES];
 
-	unsigned int label_len; /* number of labels */
+	unsigned цяло label_len; /* number of labels */
 	struct chart_label *label;
 
 };
@@ -91,21 +91,21 @@ struct chart_data {
 struct chart_param {
 	enum chart_type type;
 	enum key_type key; /* what type of key to use */
-	unsigned int width; /* width of figure */
-	unsigned int height; /* height of figure */
+	unsigned цяло width; /* width of figure */
+	unsigned цяло height; /* height of figure */
 	char *title; /* title */
 	struct {
-		unsigned int x;
-		unsigned int y;
-		unsigned int width;
-		unsigned int height;
+		unsigned цяло x;
+		unsigned цяло y;
+		unsigned цяло width;
+		unsigned цяло height;
 	} area; /* chart area within figure */
 	struct chart_data data;
 };
 
 #define DEF_COLOUR_NUM 8
 /** default colour series */
-static unsigned int colour_series[DEF_COLOUR_NUM] =
+static unsigned цяло colour_series[DEF_COLOUR_NUM] =
 	{
 	 0x00ff00, /* green */
 	 0x0000ff, /* blue */
@@ -119,26 +119,26 @@ static unsigned int colour_series[DEF_COLOUR_NUM] =
 
 
 /* ensures there are labels present for every value */
-static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
+static nserror ensure_label_count(struct chart_param *chart, unsigned цяло count)
 {
-	unsigned int lidx;
-	int deltac;
+	unsigned цяло lidx;
+	цяло deltac;
 	struct chart_label *nlabels;
 
 	deltac = count - chart->data.label_len;
-	if (deltac <= 0) {
+	ако (deltac <= 0) {
 		/* there are enough labels */
-		return NSERROR_OK;
+		върни NSERROR_OK;
 	}
 
 	nlabels = realloc(chart->data.label,
 			  count * sizeof(struct chart_label));
-	if (nlabels == NULL) {
-		return NSERROR_NOMEM;
+	ако (nlabels == NULL) {
+		върни NSERROR_NOMEM;
 	}
 	chart->data.label = nlabels;
 
-	for (lidx = chart->data.label_len; lidx < count; lidx++) {
+	за (lidx = chart->data.label_len; lidx < count; lidx++) {
 		chart->data.label[lidx].title = calloc(1, 20);
 		snprintf(chart->data.label[lidx].title, 19, "item %d", lidx + 1);
 		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_NUM];
@@ -146,7 +146,7 @@ static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
 
 	chart->data.label_len = count;
 
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 /**
@@ -154,12 +154,12 @@ static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
  */
 static nserror
 extract_series_values(struct chart_param *chart,
-		      unsigned int series_num,
+		      unsigned цяло series_num,
 		      const char *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcur;
+	unsigned цяло valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
 	struct chart_series *series;
@@ -167,30 +167,30 @@ extract_series_values(struct chart_param *chart,
 	series = chart->data.series + series_num;
 
 	/* ensure we do not leak any data in this series */
-	if (series->value != NULL) {
+	ако (series->value != NULL) {
 		free(series->value);
 	}
 
 	/* count how many values present */
-	for (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	за (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
+		ако (valstr[valstart] == ',') {
 			series->len++;
 		}
 	}
 
 	/* allocate storage for values */
 	series->value = calloc(series->len, sizeof(float));
-	if (series->value == NULL) {
-		return NSERROR_NOMEM;
+	ако (series->value == NULL) {
+		върни NSERROR_NOMEM;
 	}
 
 	/* extract values from query string */
-	for (valcur = 0, vallen = 0, valstart = 0;
+	за (valcur = 0, vallen = 0, valstart = 0;
 	     (valstart < valstrlen) && (valcur < series->len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		докато (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
@@ -201,7 +201,7 @@ extract_series_values(struct chart_param *chart,
 
 	res = ensure_label_count(chart, series->len);
 
-	return res;
+	върни res;
 }
 
 
@@ -215,19 +215,19 @@ extract_next_series_values(struct chart_param *chart,
 {
 	nserror res;
 
-	if (chart->data.series_len >= MAX_SERIES) {
-		return NSERROR_NOSPACE;
+	ако (chart->data.series_len >= MAX_SERIES) {
+		върни NSERROR_NOSPACE;
 	}
 
 	res = extract_series_values(chart,
 				    chart->data.series_len,
 				    valstr,
 				    valstrlen);
-	if (res == NSERROR_OK) {
+	ако (res == NSERROR_OK) {
 		chart->data.series_len++;
 	}
 
-	return res;
+	върни res;
 }
 
 
@@ -240,29 +240,29 @@ extract_series_labels(struct chart_param *chart,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcount; /* count of values in valstr */
-	unsigned int valcur;
+	unsigned цяло valcount; /* count of values in valstr */
+	unsigned цяло valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
 
-	for (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	за (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
+		ако (valstr[valstart] == ',') {
 			valcount++;
 		}
 	}
 
 	res = ensure_label_count(chart, valcount);
-	if (res != NSERROR_OK) {
-		return res;
+	ако (res != NSERROR_OK) {
+		върни res;
 	}
 
 
-	for (valcur = 0, vallen = 0, valstart = 0;
+	за (valcur = 0, vallen = 0, valstart = 0;
 	     (valstart < valstrlen) && (valcur < chart->data.label_len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		докато (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
@@ -270,7 +270,7 @@ extract_series_labels(struct chart_param *chart,
 		chart->data.label[valcur].title = strndup(valstr + valstart, vallen);
 		vallen++; /* account for , separator */
 	}
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 
@@ -282,7 +282,7 @@ extract_series_colours(struct chart_param *chart,
 		      const char *valstr,
 		      size_t valstrlen)
 {
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 /**
@@ -293,48 +293,48 @@ process_query_section(const char *str, size_t len, struct chart_param *chart)
 {
 	nserror res = NSERROR_OK;
 
-	if ((len > 6) &&
+	ако ((len > 6) &&
 	    (strncmp(str, "width=", 6) == 0)) {
 		/* figure width */
 		chart->width = strtoul(str + 6, NULL, 10);
-	} else if ((len > 7) &&
+	} иначе ако ((len > 7) &&
 	    (strncmp(str, "height=", 7) == 0)) {
 		/* figure height */
 		chart->height = strtoul(str + 7, NULL, 10);
-	} else if ((len > 8) &&
+	} иначе ако ((len > 8) &&
 	    (strncmp(str, "cawidth=", 8) == 0)) {
 		/* chart area width */
 		chart->area.width = strtoul(str + 8, NULL, 10);
-	} else if ((len > 9) &&
+	} иначе ако ((len > 9) &&
 	    (strncmp(str, "caheight=", 9) == 0)) {
 		/* chart area height */
 		chart->area.height = strtoul(str + 9, NULL, 10);
-	} else if ((len > 4) &&
+	} иначе ако ((len > 4) &&
 	    (strncmp(str, "key=", 4) == 0)) {
 		/* figure has key */
 		chart->key = strtoul(str + 4, NULL, 10);
-	} else if ((len > 6) &&
+	} иначе ако ((len > 6) &&
 	    (strncmp(str, "title=", 6) == 0)) {
 		chart->title = strndup(str + 6, len - 6);
-	} else if ((len > 5) &&
+	} иначе ако ((len > 5) &&
 	    (strncmp(str, "type=", 5) == 0)) {
-		if (strncmp(str + 5, "pie", len - 5) == 0) {
+		ако (strncmp(str + 5, "pie", len - 5) == 0) {
 			chart->type = CHART_TYPE_PIE;
-		} else {
+		} иначе {
 			chart->type = CHART_TYPE_UNKNOWN;
 		}
-	} else if ((len > 7) &&
+	} иначе ако ((len > 7) &&
 	    (strncmp(str, "values=", 7) == 0)) {
 		res = extract_next_series_values(chart, str + 7, len - 7);
-	} else if ((len > 7) &&
+	} иначе ако ((len > 7) &&
 	    (strncmp(str, "labels=", 7) == 0)) {
 		res = extract_series_labels(chart, str + 7, len - 7);
-	} else if ((len > 8) &&
+	} иначе ако ((len > 8) &&
 	    (strncmp(str, "colours=", 8) == 0)) {
 		res = extract_series_colours(chart, str + 8, len - 8);
 	}
 
-	return res;
+	върни res;
 }
 
 
@@ -349,20 +349,20 @@ chart_from_query(struct nsurl *url, struct chart_param *chart)
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	ако (res != NSERROR_OK) {
+		върни res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	за (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		докато (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, chart);
-		if (res != NSERROR_OK) {
+		ако (res != NSERROR_OK) {
 			break;
 		}
 		kvlen++; /* account for & separator */
@@ -370,32 +370,32 @@ chart_from_query(struct nsurl *url, struct chart_param *chart)
 	free(querystr);
 
 	/* sanity check dimensions */
-	if (chart->width < FIGURE_MIN_WIDTH) {
+	ако (chart->width < FIGURE_MIN_WIDTH) {
 		/* bad width - check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		ако (chart->height < FIGURE_MIN_HEIGHT) {
 			/* both bad set to defaults */
 			chart->width = FIGURE_MIN_WIDTH;
 			chart->height = FIGURE_MIN_HEIGHT;
-		} else {
+		} иначе {
 			/* base width on valid height */
 			chart->width = (chart->height * 3) / 2;
 		}
-	} else {
+	} иначе {
 		/* good width check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		ако (chart->height < FIGURE_MIN_HEIGHT) {
 			/* base height on valid width */
 			chart->height = (chart->width * 2) / 3;
 		}
 	}
 
 	/* ensure legend type correct */
-	if ((chart->key == CHART_KEY_UNSET) ||
+	ако ((chart->key == CHART_KEY_UNSET) ||
 	    (chart->key >= CHART_KEY_END )) {
 		/* default to putting key on right */
 		chart->key = CHART_KEY_RIGHT;
 	}
 
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 
@@ -403,10 +403,10 @@ static nserror
 output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 {
 	nserror res;
-	unsigned int lblidx;
-	unsigned int legend_width;
-	unsigned int legend_height;
-	unsigned int vertical_spacing;
+	unsigned цяло lblidx;
+	unsigned цяло legend_width;
+	unsigned цяло legend_height;
+	unsigned цяло vertical_spacing;
 
 	switch (chart->key) {
 
@@ -418,7 +418,7 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 		legend_height = chart->height;
 		vertical_spacing = legend_height / (chart->data.label_len + 1);
 
-		for(lblidx = 0; lblidx < chart->data.label_len ; lblidx++) {
+		за(lblidx = 0; lblidx < chart->data.label_len ; lblidx++) {
 			res = fetch_about_ssenddataf(ctx,
 				"<rect  x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#%06x\" />",
 				chart->width - legend_width,
@@ -426,8 +426,8 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 				vertical_spacing * 2 / 3,
 				vertical_spacing * 2 / 3,
 				chart->data.label[lblidx].colour);
-			if (res != NSERROR_OK) {
-				return res;
+			ако (res != NSERROR_OK) {
+				върни res;
 			}
 			res = fetch_about_ssenddataf(ctx,
 				"<text x=\"%d\" y=\"%d\" fill=\"#%06x\" >%s</text>",
@@ -435,8 +435,8 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 				vertical_spacing * (lblidx+1),
 			     chart->data.label[lblidx].colour,
 				chart->data.label[lblidx].title);
-			if (res != NSERROR_OK) {
-				return res;
+			ако (res != NSERROR_OK) {
+				върни res;
 			}
 		}
 		break;
@@ -444,21 +444,21 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 		break;
 	}
 
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 static float
-compute_series_total(struct chart_param *chart, unsigned int series)
+compute_series_total(struct chart_param *chart, unsigned цяло series)
 {
 	float total;
-	unsigned int curdata;
+	unsigned цяло curdata;
 
-	for (total = 0, curdata = 0;
+	за (total = 0, curdata = 0;
 	     curdata < chart->data.series[series].len;
 	     curdata++) {
 		total += chart->data.series[series].value[curdata];
 	}
-	return total;
+	върни total;
 }
 
 /**
@@ -471,7 +471,7 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	float ra; /* pie a radius */
 	float rb; /* pie b radius */
 	float series_total;
-	unsigned int curdata; /* current data point index */
+	unsigned цяло curdata; /* current data point index */
 	float last_x, last_y;
 	float end_x, end_y;
 	float start;
@@ -480,15 +480,15 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	float circle_centre_x, circle_centre_y;
 
 	/* ensure there is data to render */
-	if ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
-		return NSERROR_BAD_PARAMETER;
+	ако ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
+		върни NSERROR_BAD_PARAMETER;
 	}
 
 	/* get the first series total value */
 	series_total = compute_series_total(chart, 0);
-	if (series_total == 0) {
+	ако (series_total == 0) {
 		/* dividing by zero is embarasing */
-		return NSERROR_BAD_PARAMETER;
+		върни NSERROR_BAD_PARAMETER;
 	}
 
 	/*
@@ -497,14 +497,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	 * this is left to each chart type as different charts
 	 *  have differnt requirements
 	 */
-	if ((chart->area.width == 0) || (chart->area.height == 0)) {
+	ако ((chart->area.width == 0) || (chart->area.height == 0)) {
 		/*
 		 * pie chart defaults to square of smaller of figure
 		 *  width and height
 		 */
-		if (chart->width > chart->height) {
+		ако (chart->width > chart->height) {
 			chart->area.width = chart->area.height = (chart->height - chart->area.x);
-		} else {
+		} иначе {
 			chart->area.width = chart->area.height = (chart->width - chart->area.y);
 		}
 	}
@@ -513,7 +513,7 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	ако (fetch_about_send_header(ctx,
 			"Content-Type: image/svg; charset=utf-8")) {
 		goto aborted;
 	}
@@ -532,13 +532,13 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			"<svg width=\"%u\" height=\"%u\" "
 			"xmlns=\"http://www.w3.org/2000/svg\">\n",
 			chart->width, chart->height);
-	if (res != NSERROR_OK) {
+	ако (res != NSERROR_OK) {
 		goto aborted;
 	}
 
 	/* generate the legend */
 	res = output_pie_legend(ctx, chart);
-	if (res != NSERROR_OK) {
+	ако (res != NSERROR_OK) {
 		goto aborted;
 	}
 
@@ -548,14 +548,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	last_y = (rb * sin(start));
 
 	/* iterate over each data point creating a slice o pie */
-	for (curdata=0; curdata < chart->data.series[0].len; curdata++) {
+	за (curdata=0; curdata < chart->data.series[0].len; curdata++) {
 		extent = ((chart->data.series[0].value[curdata] / series_total) * 2 * M_PI);
 		end_x = (ra * cos(start + extent));
 		end_y = (rb * sin(start + extent));
 
-		if (extent > M_PI) {
+		ако (extent > M_PI) {
 			large = true;
-		} else {
+		} иначе {
 			large = false;
 		}
 
@@ -572,7 +572,7 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			circle_centre_x,
 			circle_centre_y,
 			chart->data.label[curdata].colour);
-		if (res != NSERROR_OK) {
+		ако (res != NSERROR_OK) {
 			goto aborted;
 		}
 		last_x = end_x;
@@ -581,17 +581,17 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</svg>\n");
-	if (res != NSERROR_OK) {
+	ако (res != NSERROR_OK) {
 		goto aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	върни true;
 
  aborted:
 
-	return false;
+	върни false;
 
 }
 
@@ -610,13 +610,13 @@ bool fetch_about_chart_handler(struct fetch_about_context *ctx)
 	memset(&chart, 0, sizeof(struct chart_param));
 
 	res = chart_from_query(fetch_about_get_url(ctx), &chart);
-	if (res != NSERROR_OK) {
+	ако (res != NSERROR_OK) {
 		goto aborted;
 	}
 
 	switch (chart.type) {
 	case CHART_TYPE_PIE:
-		return pie_chart(ctx, &chart);
+		върни pie_chart(ctx, &chart);
 
 
 	default:
@@ -625,6 +625,6 @@ bool fetch_about_chart_handler(struct fetch_about_context *ctx)
 
 aborted:
 
-	return false;
+	върни false;
 
 }

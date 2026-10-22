@@ -117,7 +117,7 @@ struct textsearch_context {
  */
 static inline void
 textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+		     цяло type,
 		     bool state,
 		     const char *string)
 {
@@ -150,9 +150,9 @@ static void free_matches(struct textsearch_context *textsearch)
 	textsearch->found->prev = NULL;
 	textsearch->found->next = NULL;
 
-	for (; cur; cur = nxt) {
+	за (; cur; cur = nxt) {
 		nxt = cur->next;
-		if (cur->sel) {
+		ако (cur->sel) {
 			selection_destroy(cur->sel);
 		}
 		free(cur);
@@ -168,20 +168,20 @@ static void search_show_all(bool all, struct textsearch_context *context)
 {
 	struct list_entry *a;
 
-	for (a = context->found->next; a; a = a->next) {
+	за (a = context->found->next; a; a = a->next) {
 		bool add = true;
-		if (!all && a != context->current) {
+		ако (!all && a != context->current) {
 			add = false;
-			if (a->sel) {
+			ако (a->sel) {
 				selection_destroy(a->sel);
 				a->sel = NULL;
 			}
 		}
 
-		if (add && !a->sel) {
+		ако (add && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			ако (a->sel != NULL) {
 				selection_init(a->sel);
 				selection_set_position(a->sel,
 						       a->start_idx,
@@ -203,7 +203,7 @@ static void search_show_all(bool all, struct textsearch_context *context)
 static nserror
 search_text(struct textsearch_context *context,
 	    const char *string,
-	    int string_len,
+	    цяло string_len,
 	    search_flags_t flags)
 {
 	struct rect bounds;
@@ -216,15 +216,15 @@ search_text(struct textsearch_context *context,
 	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
 	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	ако (context->c == NULL) {
+		върни res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	ако ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
+		ако (context->string != NULL) {
 			free(context->string);
 		}
 
@@ -232,7 +232,7 @@ search_text(struct textsearch_context *context,
 		free_matches(context);
 
 		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
+		ако (context->string != NULL) {
 			memcpy(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
@@ -251,9 +251,9 @@ search_text(struct textsearch_context *context,
 		/* indicate find operation finished */
 		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
 
-		if (res != NSERROR_OK) {
+		ако (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			върни res;
 		}
 
 		context->prev_case_sens = case_sensitive;
@@ -262,13 +262,13 @@ search_text(struct textsearch_context *context,
 		context->current = context->found->next;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} иначе ако (context->current != NULL) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
+		ако (forwards) {
+			ако (context->current->next)
 				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		} иначе {
+			ако (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
@@ -296,9 +296,9 @@ search_text(struct textsearch_context *context,
 			     NULL);
 
 
-	if (context->current == NULL) {
+	ако (context->current == NULL) {
 		/* no current match */
-		return res;
+		върни res;
 	}
 
 	/* call content match bounds handler */
@@ -308,7 +308,7 @@ search_text(struct textsearch_context *context,
 					context->current->start_box,
 					context->current->end_box,
 					&bounds);
-	if (res == NSERROR_OK) {
+	ако (res == NSERROR_OK) {
 		msg_data.scroll.area = true;
 		msg_data.scroll.x0 = bounds.x0;
 		msg_data.scroll.y0 = bounds.y0;
@@ -317,7 +317,7 @@ search_text(struct textsearch_context *context,
 		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
 	}
 
-	return res;
+	върни res;
 }
 
 
@@ -335,8 +335,8 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			search_flags_t flags,
 			const char *string)
 {
-	int string_len;
-	int i = 0;
+	цяло string_len;
+	цяло i = 0;
 	nserror res = NSERROR_OK;
 
 	assert(textsearch != NULL);
@@ -348,14 +348,14 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			     string);
 
 	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
+	за (i = 0; i < string_len; i++) {
+		ако (string[i] != '#' && string[i] != '*')
 			break;
 	}
 
-	if (i < string_len) {
+	ако (i < string_len) {
 		res = search_text(textsearch, string, string_len, flags);
-	} else {
+	} иначе {
 		union content_msg_data msg_data;
 
 		free_matches(textsearch);
@@ -387,7 +387,7 @@ content_textsearch_step(struct textsearch_context *textsearch,
 				  &msg_data);
 	}
 
-	return res;
+	върни res;
 }
 
 
@@ -401,11 +401,11 @@ static nserror content_textsearch__clear(struct content *c)
 	free(c->textsearch.string);
 	c->textsearch.string = NULL;
 
-	if (c->textsearch.context != NULL) {
+	ако (c->textsearch.context != NULL) {
 		content_textsearch_destroy(c->textsearch.context);
 		c->textsearch.context = NULL;
 	}
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 
@@ -426,26 +426,26 @@ content_textsearch_create(struct content *c,
 	struct list_entry *search_head;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
+	ако ((c->handler->textsearch_find == NULL) ||
 	    (c->handler->textsearch_bounds == NULL)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		върни NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
 	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	ако (context == NULL) {
+		върни NSERROR_NOMEM;
 	}
 
 	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
+	ако (search_head == NULL) {
 		free(context);
-		return NSERROR_NOMEM;
+		върни NSERROR_NOMEM;
 	}
 
 	search_head->start_idx = 0;
@@ -466,18 +466,18 @@ content_textsearch_create(struct content *c,
 
 	*textsearch_out = context;
 
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 const char *
 content_textsearch_find_pattern(const char *string,
-				int s_len,
+				цяло s_len,
 				const char *pattern,
-				int p_len,
+				цяло p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				unsigned цяло *m_len)
 {
 	struct { const char *ss, *s, *p; bool first; } context[16];
 	const char *ep = pattern + p_len;
@@ -486,43 +486,43 @@ content_textsearch_find_pattern(const char *string,
 	const char *ss = string;
 	const char *s = string;
 	bool first = true;
-	int top = 0;
+	цяло top = 0;
 
-	while (p < ep) {
+	докато (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
+		ако (p < pattern || *p == '*') {
 			char ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			do p++; докато (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			ако (p >= ep) break;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			ако (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
+				ако (!case_sens) ch = ascii_to_upper(ch);
+				докато (s < es) {
+					ако (case_sens) {
+						ако (*s == ch) break;
+					} иначе ако (ascii_to_upper(*s) == ch)
 						break;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			ако (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
+				ако (top < (цяло)NOF_ELEMENTS(context)) {
 					context[top].ss = ss;
 					context[top].s  = s + 1;
 					context[top].p  = p - 1;
@@ -531,42 +531,42 @@ content_textsearch_find_pattern(const char *string,
 					top++;
 				}
 
-				if (first) {
+				ако (first) {
 					ss = s;
 					/* remember first non-'*' char */
 					first = false;
 				}
 
 				matches = true;
-			} else {
+			} иначе {
 				matches = false;
 			}
 
-		} else if (s < es) {
+		} иначе ако (s < es) {
 			char ch = *p;
-			if (ch == '#')
+			ако (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			иначе {
+				ако (case_sens)
 					matches = (*s == ch);
-				else
+				иначе
 					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
 			}
-			if (matches && first) {
+			ако (matches && first) {
 				ss = s;  /* remember first non-'*' char */
 				first = false;
 			}
-		} else {
+		} иначе {
 			matches = false;
 		}
 
-		if (matches) {
+		ако (matches) {
 			p++; s++;
-		} else {
+		} иначе {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			ако (--top < 0)
+				върни NULL;  /* no match, give up */
 
 			ss = context[top].ss;
 			s  = context[top].s;
@@ -577,7 +577,7 @@ content_textsearch_find_pattern(const char *string,
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	върни ss;
 }
 
 
@@ -593,8 +593,8 @@ content_textsearch_add_match(struct textsearch_context *context,
 
 	/* found string in box => add to list */
 	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	ако (entry == NULL) {
+		върни NSERROR_NOMEM;
 	}
 
 	entry->start_idx = start_idx;
@@ -606,15 +606,15 @@ content_textsearch_add_match(struct textsearch_context *context,
 	entry->next = NULL;
 	entry->prev = context->found->prev;
 
-	if (context->found->prev == NULL) {
+	ако (context->found->prev == NULL) {
 		context->found->next = entry;
-	} else {
+	} иначе {
 		context->found->prev->next = entry;
 	}
 
 	context->found->prev = entry;
 
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 
@@ -628,18 +628,18 @@ content_textsearch_ishighlighted(struct textsearch_context *textsearch,
 {
 	struct list_entry *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	за (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
+		ако (cur->sel &&
 		    selection_highlighted(cur->sel,
 					  start_offset,
 					  end_offset,
 					  start_idx,
 					  end_idx)) {
-			return true;
+			върни true;
 		}
 	}
 
-	return false;
+	върни false;
 }
 
 
@@ -648,7 +648,7 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch)
 {
 	assert(textsearch != NULL);
 
-	if (textsearch->string != NULL) {
+	ако (textsearch->string != NULL) {
 		/* broadcast recent query string */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
@@ -673,7 +673,7 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch)
 	free_matches(textsearch);
 	free(textsearch);
 
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 
@@ -689,22 +689,22 @@ content_textsearch(struct hlcache_handle *h,
 
 	assert(c != NULL);
 
-	if (string != NULL &&
+	ако (string != NULL &&
 	    c->textsearch.string != NULL &&
 	    c->textsearch.context != NULL &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} иначе ако (string != NULL) {
 		/* New search */
 		free(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		ако (c->textsearch.string == NULL) {
+			върни NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		ако (c->textsearch.context != NULL) {
 			content_textsearch_destroy(c->textsearch.context);
 			c->textsearch.context = NULL;
 		}
@@ -712,13 +712,13 @@ content_textsearch(struct hlcache_handle *h,
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		ако (res != NSERROR_OK) {
+			върни res;
 		}
 
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else {
+	} иначе {
 		/* Clear search */
 		content_textsearch__clear(c);
 
@@ -726,7 +726,7 @@ content_textsearch(struct hlcache_handle *h,
 		c->textsearch.string = NULL;
 	}
 
-	return NSERROR_OK;
+	върни NSERROR_OK;
 }
 
 
@@ -736,5 +736,5 @@ nserror content_textsearch_clear(struct hlcache_handle *h)
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	return(content_textsearch__clear(c));
+	върни(content_textsearch__clear(c));
 }

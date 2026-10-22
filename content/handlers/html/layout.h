@@ -40,6 +40,6 @@ struct gui_layout_table;
  * \param height available height
  * \return true on success, false on memory exhaustion
  */
-bool layout_document(struct html_content *content, int width, int height);
+bool layout_document(struct html_content *content, цяло width, цяло height);
 
 #endif

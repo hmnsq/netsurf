@@ -67,15 +67,15 @@ struct content_handler {
                           struct content **c);
 
 	bool (*process_data)(struct content *c,
-			const char *data, unsigned int size);
+			const char *data, unsigned цяло size);
 	bool (*data_complete)(struct content *c);
-	void (*reformat)(struct content *c, int width, int height);
+	void (*reformat)(struct content *c, цяло width, цяло height);
 	void (*destroy)(struct content *c);
 	void (*stop)(struct content *c);
 	nserror (*mouse_track)(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+			browser_mouse_state mouse, цяло x, цяло y);
 	nserror (*mouse_action)(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+			browser_mouse_state mouse, цяло x, цяло y);
 	bool (*keypress)(struct content *c, uint32_t key);
 	bool (*redraw)(struct content *c, struct content_redraw_data *data,
 			const struct rect *clip,
@@ -85,11 +85,11 @@ struct content_handler {
 	nserror (*close)(struct content *c);
 	void (*clear_selection)(struct content *c);
 	char * (*get_selection)(struct content *c);
-	nserror (*get_contextual_content)(struct content *c, int x, int y,
+	nserror (*get_contextual_content)(struct content *c, цяло x, цяло y,
 			struct browser_window_features *data);
-	bool (*scroll_at_point)(struct content *c, int x, int y,
-			int scrx, int scry);
-	bool (*drop_file_at_point)(struct content *c, int x, int y,
+	bool (*scroll_at_point)(struct content *c, цяло x, цяло y,
+			цяло scrx, цяло scry);
+	bool (*drop_file_at_point)(struct content *c, цяло x, цяло y,
 			char *file);
 	nserror (*debug_dump)(struct content *c, FILE *f, enum content_debug op);
 	nserror (*debug)(struct content *c, enum content_debug op);
@@ -105,7 +105,7 @@ struct content_handler {
 	/**
 	 * content specific free text search find
 	 */
-	nserror (*textsearch_find)(struct content *c, struct textsearch_context *context, const char *pattern, int p_len, bool case_sens);
+	nserror (*textsearch_find)(struct content *c, struct textsearch_context *context, const char *pattern, цяло p_len, bool case_sens);
 
 	/**
 	 * get bounds of free text search match
@@ -201,19 +201,19 @@ struct content {
 	/**
 	 * Width dimension, if applicable.
 	 */
-	int width;
+	цяло width;
 	/**
 	 * Height dimension, if applicable.
 	 */
-	int height;
+	цяло height;
 	/**
 	 * Viewport width.
 	 */
-	int available_width;
+	цяло available_width;
 	/**
 	 * Viewport height.
 	 */
-	int available_height;
+	цяло available_height;
 
 	/**
 	 * Content is in quirks mode
@@ -249,7 +249,7 @@ struct content {
 	/**
 	 * Estimated size of all data associated with this content
 	 */
-	unsigned int size;
+	unsigned цяло size;
 	/**
 	 * Title for browser window.
 	 */
@@ -257,7 +257,7 @@ struct content {
 	/**
 	 * Number of child fetches or conversions currently in progress.
 	 */
-	unsigned int active;
+	unsigned цяло active;
 	/**
 	 * List of users.
 	 */
@@ -389,7 +389,7 @@ struct content_rfc5988_link *content__free_rfc5988_link(struct content_rfc5988_l
  * \param width The available width to reformat content in
  * \param height The available height to reformat content in
  */
-void content__reformat(struct content *c, bool background, int width, int height);
+void content__reformat(struct content *c, bool background, цяло width, цяло height);
 
 /**
  * Request a redraw of an area of a content
@@ -400,7 +400,7 @@ void content__reformat(struct content *c, bool background, int width, int height
  * \param width	  Width of rectangle
  * \param height  Height of rectangle
  */
-void content__request_redraw(struct content *c, int x, int y, int width, int height);
+void content__request_redraw(struct content *c, цяло x, цяло y, цяло width, цяло height);
 
 /**
  * Retrieve mime-type of content
@@ -441,7 +441,7 @@ const char *content__get_status_message(struct content *c);
  * \param c Content to retrieve width of
  * \return Content width
  */
-int content__get_width(struct content *c);
+цяло content__get_width(struct content *c);
 
 /**
  * Retrieve height of content
@@ -449,7 +449,7 @@ int content__get_width(struct content *c);
  * \param c Content to retrieve height of
  * \return Content height
  */
-int content__get_height(struct content *c);
+цяло content__get_height(struct content *c);
 
 /**
  * Retrieve available width of content
@@ -457,7 +457,7 @@ int content__get_height(struct content *c);
  * \param c content to get available width of.
  * \return Available width of content.
  */
-int content__get_available_width(struct content *c);
+цяло content__get_available_width(struct content *c);
 
 /**
  * Retrieve source of content.

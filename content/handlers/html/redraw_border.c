@@ -66,13 +66,13 @@ plot_clipped_rectangle(const struct redraw_context *ctx,
 	rect->y0 = (clip->y0 > rect->y0) ? clip->y0 : rect->y0;
 	rect->x1 = (clip->x1 < rect->x1) ? clip->x1 : rect->x1;
 	rect->y1 = (clip->y1 < rect->y1) ? clip->y1 : rect->y1;
-	if ((rect->x0 < rect->x1) && (rect->y0 < rect->y1)) {
+	ако ((rect->x0 < rect->x1) && (rect->y0 < rect->y1)) {
 		/* valid clip rectangles only */
 		res = ctx->plot->rectangle(ctx, style, rect);
-	} else {
+	} иначе {
 		res = NSERROR_OK;
 	}
-	return res;
+	върни res;
 }
 
 
@@ -90,24 +90,24 @@ plot_clipped_rectangle(const struct redraw_context *ctx,
  * \return NSERROR_OK if successful otherwise appropriate error code
  */
 static nserror
-html_redraw_border_plot(const int side,
-			const int *p,
+html_redraw_border_plot(const цяло side,
+			const цяло *p,
 			colour c,
 			enum css_border_style_e style,
-			int thickness,
+			цяло thickness,
 			bool rectangular,
 			const struct rect *clip,
 			const struct redraw_context *ctx)
 {
-	int z[8]; /* Vertices of border part */
-	unsigned int light = side;
+	цяло z[8]; /* Vertices of border part */
+	unsigned цяло light = side;
 	plot_style_t *plot_style_bdr_in;
 	plot_style_t *plot_style_bdr_out;
 	nserror res = NSERROR_OK;
 	struct rect rect;
 
-	if (c == NS_TRANSPARENT) {
-		return res;
+	ако (c == NS_TRANSPARENT) {
+		върни res;
 	}
 
 	plot_style_bdr.stroke_type = PLOT_OP_TYPE_DASH;
@@ -134,26 +134,26 @@ html_redraw_border_plot(const int side,
 	case CSS_BORDER_STYLE_SOLID:
 		/* solid is the default */
 	default:
-		if (rectangular || thickness == 1) {
+		ако (rectangular || thickness == 1) {
 
-			if (side == TOP || side == RIGHT) {
+			ако (side == TOP || side == RIGHT) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
-				if ((side == TOP) &&
+				ако ((side == TOP) &&
 				    (p[4] - p[6] != 0)) {
 					rect.x1 = p[4];
-				} else {
+				} иначе {
 					rect.x1 = p[6];
 				}
 				rect.y1 = p[7];
-			} else {
+			} иначе {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
-				if ((side == LEFT) &&
+				ако ((side == LEFT) &&
 				    (p[1] - p[3] != 0)) {
 					rect.y1 = p[1];
-				} else {
+				} иначе {
 					rect.y1 = p[3];
 				}
 			}
@@ -161,7 +161,7 @@ html_redraw_border_plot(const int side,
 						     &plot_style_fillbdr,
 						     clip,
 						     &rect);
-		} else {
+		} иначе {
 			res = ctx->plot->polygon(ctx, &plot_style_fillbdr, p, 4);
 		}
 		break;
@@ -176,7 +176,7 @@ html_redraw_border_plot(const int side,
 		z[6] = p[6];
 		z[7] = p[7];
 		res = ctx->plot->polygon(ctx, &plot_style_fillbdr, z, 4);
-		if (res == NSERROR_OK) {
+		ако (res == NSERROR_OK) {
 			z[0] = p[2];
 			z[1] = p[3];
 			z[2] = (p[2] * 2 + p[0]) / 3;
@@ -194,27 +194,27 @@ html_redraw_border_plot(const int side,
 		fallthrough;
 	case CSS_BORDER_STYLE_RIDGE:
 		/* choose correct colours for each part of the border line */
-		if (light <= 1) {
+		ако (light <= 1) {
 			plot_style_bdr_in = &plot_style_fillbdr_dark;
 			plot_style_bdr_out = &plot_style_fillbdr_light;
-		} else {
+		} иначе {
 			plot_style_bdr_in = &plot_style_fillbdr_light;
 			plot_style_bdr_out = &plot_style_fillbdr_dark;
 		}
 
 		/* Render border */
-		if ((rectangular || thickness == 2) && thickness != 1) {
+		ако ((rectangular || thickness == 2) && thickness != 1) {
 			/* Border made up from two parts and can be
 			 * plotted with rectangles
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			ако (side == TOP || side == RIGHT) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-			} else {
+			} иначе {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = (p[0] + p[2]) / 2;
@@ -224,17 +224,17 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_in,
 						     clip,
 						     &rect);
-			if (res != NSERROR_OK) {
-				return res;
+			ако (res != NSERROR_OK) {
+				върни res;
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			ако (side == TOP || side == RIGHT) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
 				rect.y1 = (p[7] + p[5]) / 2;
-			} else {
+			} иначе {
 				rect.x0 = (p[6] + p[4]) / 2;
 				rect.y0 = (p[7] + p[5]) / 2;
 				rect.x1 = p[2];
@@ -244,12 +244,12 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_out,
 						     clip,
 						     &rect);
-		} else if (thickness == 1) {
+		} иначе ако (thickness == 1) {
 			/* Border made up from one part which can be
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			ако (side == TOP || side == RIGHT) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
@@ -261,7 +261,7 @@ html_redraw_border_plot(const int side,
 							     plot_style_bdr_in,
 							     clip,
 							     &rect);
-			} else {
+			} иначе {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
@@ -273,7 +273,7 @@ html_redraw_border_plot(const int side,
 							     clip,
 							     &rect);
 			}
-		} else {
+		} иначе {
 			/* Border made up from two parts and can't be
 			 * plotted with rectangles
 			 */
@@ -286,7 +286,7 @@ html_redraw_border_plot(const int side,
 			z[6] = p[6];
 			z[7] = p[7];
 			res = ctx->plot->polygon(ctx, plot_style_bdr_in, z, 4);
-			if (res == NSERROR_OK) {
+			ако (res == NSERROR_OK) {
 				z[0] = p[2];
 				z[1] = p[3];
 				z[6] = p[4];
@@ -328,18 +328,18 @@ html_redraw_border_plot(const int side,
 		}
 
 		/* Render border */
-		if ((rectangular || thickness == 2) && thickness != 1) {
+		ако ((rectangular || thickness == 2) && thickness != 1) {
 			/* Border made up from two parts and can be
 			 * plotted with rectangles
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			ако (side == TOP || side == RIGHT) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-			} else {
+			} иначе {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = (p[0] + p[2]) / 2;
@@ -349,17 +349,17 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_in,
 						     clip,
 						     &rect);
-			if (res != NSERROR_OK) {
-				return res;
+			ако (res != NSERROR_OK) {
+				върни res;
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			ако (side == TOP || side == RIGHT) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
 				rect.y1 = (p[7] + p[5]) / 2;
-			} else {
+			} иначе {
 				rect.x0 = (p[6] + p[4]) / 2;
 				rect.y0 = (p[7] + p[5]) / 2;
 				rect.x1 = p[2];
@@ -369,12 +369,12 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_out,
 						     clip,
 						     &rect);
-		} else if (thickness == 1) {
+		} иначе ако (thickness == 1) {
 			/* Border made up from one part which can be
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			ако (side == TOP || side == RIGHT) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
@@ -385,7 +385,7 @@ html_redraw_border_plot(const int side,
 							     plot_style_bdr_in,
 							     clip,
 							     &rect);
-			} else {
+			} иначе {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
@@ -397,7 +397,7 @@ html_redraw_border_plot(const int side,
 							     clip,
 							     &rect);
 			}
-		} else {
+		} иначе {
 			/* Border made up from two parts and can't be
 			 * plotted with rectangles
 			 */
@@ -411,8 +411,8 @@ html_redraw_border_plot(const int side,
 			z[6] = p[6];
 			z[7] = p[7];
 			res = ctx->plot->polygon(ctx, plot_style_bdr_in, z, 4);
-			if (res != NSERROR_OK) {
-				return res;
+			ако (res != NSERROR_OK) {
+				върни res;
 			}
 			z[0] = p[2];
 			z[1] = p[3];
@@ -423,7 +423,7 @@ html_redraw_border_plot(const int side,
 		break;
 	}
 
-	return res;
+	върни res;
 }
 
 
@@ -442,23 +442,23 @@ html_redraw_border_plot(const int side,
  */
 bool
 html_redraw_borders(struct box *box,
-		    int x_parent,
-		    int y_parent,
-		    int p_width,
-		    int p_height,
+		    цяло x_parent,
+		    цяло y_parent,
+		    цяло p_width,
+		    цяло p_height,
 		    const struct rect *clip,
 		    float scale,
 		    const struct redraw_context *ctx)
 {
-	unsigned int sides[] = { LEFT, RIGHT, TOP, BOTTOM };
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
-	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
-	int x, y;
-	unsigned int i, side;
-	int p[8]; /* Box border vertices */
-	int z[8]; /* Border vertices */
+	unsigned цяло sides[] = { LEFT, RIGHT, TOP, BOTTOM };
+	цяло top = box->border[TOP].width;
+	цяло right = box->border[RIGHT].width;
+	цяло bottom = box->border[BOTTOM].width;
+	цяло left = box->border[LEFT].width;
+	цяло x, y;
+	unsigned цяло i, side;
+	цяло p[8]; /* Box border vertices */
+	цяло z[8]; /* Border vertices */
 	bool square_end_1 = false;
 	bool square_end_2 = false;
 	nserror res;
@@ -466,7 +466,7 @@ html_redraw_borders(struct box *box,
 	x = x_parent + box->x;
 	y = y_parent + box->y;
 
-	if (scale != 1.0) {
+	ако (scale != 1.0) {
 		top *= scale;
 		right *= scale;
 		bottom *= scale;
@@ -492,11 +492,11 @@ html_redraw_borders(struct box *box,
 	p[4] = x + p_width;		p[5] = y + p_height;		/* C */
 	p[6] = x + p_width + right;	p[7] = y + p_height + bottom;	/* D */
 
-	for (i = 0; i != 4; i++) {
+	за (i = 0; i != 4; i++) {
 		colour col = 0;
 		side = sides[i]; /* plot order */
 
-		if (box->border[side].width == 0 ||
+		ако (box->border[side].width == 0 ||
 		    nscss_color_is_transparent(box->border[side].c)) {
 			continue;
 		}
@@ -511,7 +511,7 @@ html_redraw_borders(struct box *box,
 			z[4] = p[2];	z[5] = p[3];
 			z[6] = p[0];	z[7] = p[1];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
+			ако (nscss_color_is_transparent(box->border[TOP].c) == false &&
 			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
@@ -519,7 +519,7 @@ html_redraw_borders(struct box *box,
 				z[5] -= top;
 				square_end_1 = true;
 			}
-			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+			ако (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 			    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang bottom corner fully,
 				 * if bottom border is opaque
@@ -538,8 +538,8 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			ако (res != NSERROR_OK) {
+				върни false;
 			}
 			break;
 
@@ -552,7 +552,7 @@ html_redraw_borders(struct box *box,
 			z[4] = p[4];	z[5] = p[5];
 			z[6] = p[6];	z[7] = p[7];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
+			ако (nscss_color_is_transparent(box->border[TOP].c) == false &&
 			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
@@ -560,7 +560,7 @@ html_redraw_borders(struct box *box,
 				z[3] -= top;
 				square_end_1 = true;
 			}
-			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+			ако (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 			    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang bottom corner fully,
 				 * if bottom border is opaque
@@ -579,13 +579,13 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			ако (res != NSERROR_OK) {
+				върни false;
 			}
 			break;
 
 		case TOP:
-			if (clip->y0 > p[3]) {
+			ако (clip->y0 > p[3]) {
 				/* clip rectangle is below border; nothing to
 				 * plot
 				 */
@@ -600,7 +600,7 @@ html_redraw_borders(struct box *box,
 			z[4] = p[6];	z[5] = p[1];
 			z[6] = p[4];	z[7] = p[3];
 
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
+			ако (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
 			    box->border[TOP].c == box->border[LEFT].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
@@ -608,7 +608,7 @@ html_redraw_borders(struct box *box,
 				z[2] += left;
 				square_end_1 = true;
 			}
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
+			ако (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
 			    box->border[TOP].c == box->border[RIGHT].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
@@ -627,13 +627,13 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			ако (res != NSERROR_OK) {
+				върни false;
 			}
 			break;
 
 		case BOTTOM:
-			if (clip->y1 < p[5]) {
+			ако (clip->y1 < p[5]) {
 				/* clip rectangle is above border; nothing to
 				 * plot
 				 */
@@ -648,7 +648,7 @@ html_redraw_borders(struct box *box,
 			z[4] = p[0];	z[5] = p[7];
 			z[6] = p[2];	z[7] = p[5];
 
-			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
+			ако (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
 			    box->border[BOTTOM].c == box->border[LEFT].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
@@ -656,7 +656,7 @@ html_redraw_borders(struct box *box,
 				z[4] += left;
 				square_end_1 = true;
 			}
-			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
+			ако (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
 			    box->border[BOTTOM].c == box->border[RIGHT].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
@@ -675,8 +675,8 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			ако (res != NSERROR_OK) {
+				върни false;
 			}
 			break;
 
@@ -687,7 +687,7 @@ html_redraw_borders(struct box *box,
 		}
 	}
 
-	return true;
+	върни true;
 }
 
 
@@ -712,18 +712,18 @@ html_redraw_inline_borders(struct box *box,
 			   bool last,
 			   const struct redraw_context *ctx)
 {
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
-	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
+	цяло top = box->border[TOP].width;
+	цяло right = box->border[RIGHT].width;
+	цяло bottom = box->border[BOTTOM].width;
+	цяло left = box->border[LEFT].width;
 	colour col;
-	int p[8]; /* Box border vertices */
-	int z[8]; /* Border vertices */
+	цяло p[8]; /* Box border vertices */
+	цяло z[8]; /* Border vertices */
 	bool square_end_1;
 	bool square_end_2;
 	nserror res;
 
-	if (scale != 1.0) {
+	ако (scale != 1.0) {
 		top *= scale;
 		right *= scale;
 		bottom *= scale;
@@ -750,7 +750,7 @@ html_redraw_inline_borders(struct box *box,
 	/* Left */
 	square_end_1 = (top == 0);
 	square_end_2 = (bottom == 0);
-	if (left != 0 &&
+	ако (left != 0 &&
 	    first &&
 	    nscss_color_is_transparent(box->border[LEFT].c) == false) {
 		col = nscss_color_to_ns(box->border[LEFT].c);
@@ -760,7 +760,7 @@ html_redraw_inline_borders(struct box *box,
 		z[4] = p[2];	z[5] = p[3];
 		z[6] = p[0];	z[7] = p[1];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
+		ако (nscss_color_is_transparent(box->border[TOP].c) == false &&
 		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
@@ -769,7 +769,7 @@ html_redraw_inline_borders(struct box *box,
 			square_end_1 = true;
 		}
 
-		if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+		ако (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 		    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang bottom corner fully,
 			 * if bottom border is opaque
@@ -786,15 +786,15 @@ html_redraw_inline_borders(struct box *box,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		ако (res != NSERROR_OK) {
+			върни false;
 		}
 	}
 
 	/* Right */
 	square_end_1 = (top == 0);
 	square_end_2 = (bottom == 0);
-	if (right != 0 &&
+	ако (right != 0 &&
 	    last &&
 	    nscss_color_is_transparent(box->border[RIGHT].c) == false) {
 		col = nscss_color_to_ns(box->border[RIGHT].c);
@@ -804,7 +804,7 @@ html_redraw_inline_borders(struct box *box,
 		z[4] = p[4];	z[5] = p[5];
 		z[6] = p[6];	z[7] = p[7];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
+		ако (nscss_color_is_transparent(box->border[TOP].c) == false &&
 		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
@@ -813,7 +813,7 @@ html_redraw_inline_borders(struct box *box,
 			square_end_1 = true;
 		}
 
-		if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+		ако (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 		    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang bottom corner fully,
 			 * if bottom border is opaque
@@ -830,15 +830,15 @@ html_redraw_inline_borders(struct box *box,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		ако (res != NSERROR_OK) {
+			върни false;
 		}
 	}
 
 	/* Top */
 	square_end_1 = (left == 0);
 	square_end_2 = (right == 0);
-	if (top != 0 &&
+	ако (top != 0 &&
 	    nscss_color_is_transparent(box->border[TOP].c) == false) {
 		col = nscss_color_to_ns(box->border[TOP].c);
 
@@ -847,7 +847,7 @@ html_redraw_inline_borders(struct box *box,
 		z[4] = p[6];	z[5] = p[1];
 		z[6] = p[4];	z[7] = p[3];
 
-		if (first &&
+		ако (first &&
 		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
 		    box->border[TOP].c == box->border[LEFT].c) {
 			/* don't bother overlapping left corner if
@@ -857,7 +857,7 @@ html_redraw_inline_borders(struct box *box,
 			square_end_1 = true;
 		}
 
-		if (last &&
+		ако (last &&
 		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
 		    box->border[TOP].c == box->border[RIGHT].c) {
 			/* don't bother overlapping right corner if
@@ -875,15 +875,15 @@ html_redraw_inline_borders(struct box *box,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		ако (res != NSERROR_OK) {
+			върни false;
 		}
 	}
 
 	/* Bottom */
 	square_end_1 = (left == 0);
 	square_end_2 = (right == 0);
-	if (bottom != 0 &&
+	ако (bottom != 0 &&
 	    nscss_color_is_transparent(box->border[BOTTOM].c) == false) {
 		col = nscss_color_to_ns(box->border[BOTTOM].c);
 
@@ -892,7 +892,7 @@ html_redraw_inline_borders(struct box *box,
 		z[4] = p[0];	z[5] = p[7];
 		z[6] = p[2];	z[7] = p[5];
 
-		if (first &&
+		ако (first &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
 		    box->border[BOTTOM].c == box->border[LEFT].c) {
 			/* don't bother overlapping left corner if
@@ -902,7 +902,7 @@ html_redraw_inline_borders(struct box *box,
 			square_end_1 = true;
 		}
 
-		if (last &&
+		ако (last &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
 		    box->border[BOTTOM].c == box->border[RIGHT].c) {
 			/* don't bother overlapping right corner if
@@ -920,10 +920,10 @@ html_redraw_inline_borders(struct box *box,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		ако (res != NSERROR_OK) {
+			върни false;
 		}
 	}
 
-	return true;
+	върни true;
 }
