@@ -22,12 +22,12 @@
  * Interface to HTML table processing and layout.
  */
 
-#ifndef NETSURF_HTML_TABLE_H
-#define NETSURF_HTML_TABLE_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_HTML_ਸਾਰਣੀ_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_HTML_ਸਾਰਣੀ_H
 
-#include <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
 
-struct box;
+ਬਣਤਰ box;
 
 
 /**
@@ -40,7 +40,7 @@ struct box;
  * The table->col array is allocated and type and width are filled in for each
  * column.
  */
-bool table_calculate_column_types(const css_unit_ctx *unit_len_ctx,	struct box *table);
+bool ਸਾਰਣੀ_calculate_ਕਾਲਮ_types(ਅਚਲ css_unit_ctx *unit_len_ctx,	ਬਣਤਰ box *ਸਾਰਣੀ);
 
 
 /**
@@ -51,6 +51,6 @@ bool table_calculate_column_types(const css_unit_ctx *unit_len_ctx,	struct box *
  *
  * \post \a cell's border array is populated
  */
-void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell);
+ਖਾਲੀ ਸਾਰਣੀ_ਵਰਤਿਆ_border_for_cell(ਅਚਲ css_unit_ctx *unit_len_ctx, ਬਣਤਰ box *cell);
 
-#endif
+#ਜੇ_ਅੰਤ

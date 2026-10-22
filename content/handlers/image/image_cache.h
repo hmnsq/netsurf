@@ -34,24 +34,24 @@
  * content handler complete control.
  */
 
-#ifndef NETSURF_IMAGE_IMAGE_CACHE_H_
-#define NETSURF_IMAGE_IMAGE_CACHE_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_IMAGE_IMAGE_CACHE_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_IMAGE_IMAGE_CACHE_H_
 
-#include "utils/errors.h"
-#include "netsurf/content_type.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/errors.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/content_type.h"
 
-struct content;
-struct content_redraw_data;
-struct redraw_context;
+ਬਣਤਰ content;
+ਬਣਤਰ content_redraw_ਅੰਕੜੇ;
+ਬਣਤਰ redraw_context;
 
-typedef struct bitmap * (image_cache_convert_fn) (struct content *content);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ bitmap * (image_cache_convert_fn) (ਬਣਤਰ content *content);
 
-struct image_cache_parameters {
+ਬਣਤਰ image_cache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ bg_clean_ਸਮਾਂ;
 
 	/** The target upper bound for the image cache size */
-	size_t limit;
+	size_t ਹੱਦਬੰਦੀ;
 
 	/** The hysteresis allowed round the target size */
 	size_t hysteresis;
@@ -64,8 +64,8 @@ struct image_cache_parameters {
  *
  * @param image_cache_parameters The control parameters for the image cache
  */
-nserror image_cache_init(const struct image_cache_parameters *image_cache_parameters);
-nserror image_cache_fini(void);
+nserror image_cache_init(ਅਚਲ ਬਣਤਰ image_cache_parameters *image_cache_parameters);
+nserror image_cache_fini(ਖਾਲੀ);
 
 /** adds an image content to be cached. 
  * 
@@ -74,18 +74,18 @@ nserror image_cache_fini(void);
  * @param convert A function pointer to convert the content into a bitmap or NULL.
  * @return A netsurf error code.
  */
-nserror image_cache_add(struct content *content, 
-			struct bitmap *bitmap, 
+nserror image_cache_ਜੋੜੋ(ਬਣਤਰ content *content, 
+			ਬਣਤਰ bitmap *bitmap, 
 			image_cache_convert_fn *convert);
 
-nserror image_cache_remove(struct content *content);
+nserror image_cache_remove(ਬਣਤਰ content *content);
 
 
 /** Obtain a bitmap from a content converting from source if neccessary. */
-struct bitmap *image_cache_get_bitmap(const struct content *c);
+ਬਣਤਰ bitmap *image_cache_get_bitmap(ਅਚਲ ਬਣਤਰ content *c);
 
 /** Obtain a bitmap from a content with no conversion */
-struct bitmap *image_cache_find_bitmap(struct content *c);
+ਬਣਤਰ bitmap *image_cache_ਲੱਭੋ_bitmap(ਬਣਤਰ content *c);
 
 /** Decide if a content should be speculatively converted.
  *
@@ -97,7 +97,7 @@ struct bitmap *image_cache_find_bitmap(struct content *c);
  * @param c The content to be considered.
  * @return true if a speculative conversion is desired false otherwise.
  */
-bool image_cache_speculate(struct content *c);
+bool image_cache_speculate(ਬਣਤਰ content *c);
 
 /**
  * Fill a buffer with information about a cache entry using a format.
@@ -116,8 +116,8 @@ bool image_cache_speculate(struct content *c);
  * \param fmt     The format string.
  * \return The number of bytes written to \a string or -1 on error
  */
-int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
-			 const char *fmt);
+ਪੂਰਨ image_cache_snentryf(ਅੱਖਰ *string, size_t ਮਾਪ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ entryn,
+			 ਅਚਲ ਅੱਖਰ *fmt);
 
 /**
  * Fill a buffer with information about the image cache using a format.
@@ -167,7 +167,7 @@ int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
  * \return The number of bytes written to \a string or -1 on error
  */
 
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
+ਪੂਰਨ image_cache_snsummaryf(ਅੱਖਰ *string, size_t ਮਾਪ, ਅਚਲ ਅੱਖਰ *fmt);
 
 /********* Image content handler generic cache callbacks ************/
 
@@ -178,17 +178,17 @@ int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
  * callback. Performs all neccissary cache lookups and conversions and
  * calls the bitmap plot function in the redraw context.
  */
-bool image_cache_redraw(struct content *c, 
-			struct content_redraw_data *data,
-			const struct rect *clip, 
-			const struct redraw_context *ctx);
+bool image_cache_redraw(ਬਣਤਰ content *c, 
+			ਬਣਤਰ content_redraw_ਅੰਕੜੇ *ਅੰਕੜੇ,
+			ਅਚਲ ਬਣਤਰ rect *clip, 
+			ਅਚਲ ਬਣਤਰ redraw_context *ctx);
 
-void image_cache_destroy(struct content *c);
+ਖਾਲੀ image_cache_destroy(ਬਣਤਰ content *c);
 
-void *image_cache_get_internal(const struct content *c, void *context);
+ਖਾਲੀ *image_cache_get_ਅੰਦਰੂਨੀ(ਅਚਲ ਬਣਤਰ content *c, ਖਾਲੀ *context);
 
-bool image_cache_is_opaque(struct content *c);
+bool image_cache_is_opaque(ਬਣਤਰ content *c);
 
-content_type image_cache_content_type(void);
+content_type image_cache_content_type(ਖਾਲੀ);
 
-#endif
+#ਜੇ_ਅੰਤ

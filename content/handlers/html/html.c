@@ -22,65 +22,65 @@
  * Implementation of HTML content handling.
  */
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
-#include <nsutils/time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <strings.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <nsutils/time.h>
 
-#include "utils/utils.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/http.h"
-#include "utils/libdom.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/talloc.h"
-#include "utils/utf8.h"
-#include "utils/nsoption.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/utf8.h"
-#include "netsurf/keypress.h"
-#include "netsurf/layout.h"
-#include "netsurf/misc.h"
-#include "content/hlcache.h"
-#include "content/content_factory.h"
-#include "content/textsearch.h"
-#include "desktop/selection.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
-#include "netsurf/bitmap.h"
-#include "javascript/js.h"
-#include "desktop/gui_internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/corestrings.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/http.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/libdom.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/messages.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/talloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utf8.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/nsoption.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/string.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/ascii.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/content.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/browser_window.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/utf8.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/keypress.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/layout.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/hlcache.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_factory.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/textsearch.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/selection.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/scrollbar.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/textarea.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/bitmap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "javascript/js.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/gui_internal.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/dom_event.h"
-#include "html/css.h"
-#include "html/object.h"
-#include "html/html_save.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/box_inspect.h"
-#include "html/form_internal.h"
-#include "html/imagemap.h"
-#include "html/layout.h"
-#include "html/textselection.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/html.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/private.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/dom_event.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/css.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/object.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/html_save.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/interaction.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/box.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/box_construct.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/box_inspect.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/form_internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/imagemap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/layout.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/textselection.h"
 
-#define CHUNK 4096
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHUNK 4096
 
 /* Change these to 1 to cause a dump to stderr of the frameset or box
  * when the trees have been built.
  */
-#define ALWAYS_DUMP_FRAMESET 0
-#define ALWAYS_DUMP_BOX 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ALWAYS_DUMP_FRAMESET 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ALWAYS_DUMP_BOX 0
 
-static const char *html_types[] = {
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *html_types[] = {
 	"application/xhtml+xml",
 	"text/html"
 };
@@ -94,117 +94,117 @@ static const char *html_types[] = {
  * \param[in] target  the event target
  * \return true on success
  */
-static bool fire_dom_event(dom_event *event, dom_node *target)
+ਸਥਿਰ bool fire_dom_event(dom_event *event, dom_ਗੰਢ *ਨਿਸ਼ਾਨਾ)
 {
 	dom_exception exc;
-	bool result;
+	bool ਨਤੀਜਾ;
 
-	exc = dom_event_target_dispatch_event(target, event, &result);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_event_ਨਿਸ਼ਾਨਾ_dispatch_event(ਨਿਸ਼ਾਨਾ, event, &ਨਤੀਜਾ);
+	ਜੇ (exc != DOM_NO_ERR) {
+		ਵਾਪਸ false;
 	}
 
-	return result;
+	ਵਾਪਸ ਨਤੀਜਾ;
 }
 
 /* Exported interface, see html_internal.h */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_ਗੰਢ *ਨਿਸ਼ਾਨਾ,
 		bool bubbles, bool cancelable)
 {
 	dom_exception exc;
 	dom_event *evt;
-	bool result;
+	bool ਨਤੀਜਾ;
 
 	exc = dom_event_create(&evt);
-	if (exc != DOM_NO_ERR) return false;
+	ਜੇ (exc != DOM_NO_ERR) ਵਾਪਸ false;
 	exc = dom_event_init(evt, type, bubbles, cancelable);
-	if (exc != DOM_NO_ERR) {
+	ਜੇ (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return false;
+		ਵਾਪਸ false;
 	}
 	NSLOG(netsurf, INFO, "Dispatching '%*s' against %p",
-	      (int)dom_string_length(type), dom_string_data(type), target);
-	result = fire_dom_event(evt, target);
+	      (ਪੂਰਨ)dom_string_ਲੰਮਾਈ(type), dom_string_ਅੰਕੜੇ(type), ਨਿਸ਼ਾਨਾ);
+	ਨਤੀਜਾ = fire_dom_event(evt, ਨਿਸ਼ਾਨਾ);
 	dom_event_unref(evt);
-	return result;
+	ਵਾਪਸ ਨਤੀਜਾ;
 }
 
 /* Exported interface, see html_internal.h */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key)
+bool fire_dom_keyboard_event(dom_string *type, dom_ਗੰਢ *ਨਿਸ਼ਾਨਾ,
+		bool bubbles, bool cancelable, uint32_t ਕੁੰਜੀ)
 {
-	bool is_special = key <= 0x001F || (0x007F <= key && key <= 0x009F);
-	dom_string *dom_key = NULL;
+	bool is_special = ਕੁੰਜੀ <= 0x001F || (0x007F <= ਕੁੰਜੀ && ਕੁੰਜੀ <= 0x009F);
+	dom_string *dom_ਕੁੰਜੀ = ਨਿਰਾ;
 	dom_keyboard_event *evt;
 	dom_exception exc;
-	bool result;
+	bool ਨਤੀਜਾ;
 
-	if (is_special) {
-		switch (key) {
-		case NS_KEY_ESCAPE:
-			dom_key = dom_string_ref(corestring_dom_Escape);
-			break;
-		case NS_KEY_LEFT:
-			dom_key = dom_string_ref(corestring_dom_ArrowLeft);
-			break;
-		case NS_KEY_RIGHT:
-			dom_key = dom_string_ref(corestring_dom_ArrowRight);
-			break;
-		case NS_KEY_UP:
-			dom_key = dom_string_ref(corestring_dom_ArrowUp);
-			break;
-		case NS_KEY_DOWN:
-			dom_key = dom_string_ref(corestring_dom_ArrowDown);
-			break;
-		case NS_KEY_PAGE_UP:
-			dom_key = dom_string_ref(corestring_dom_PageUp);
-			break;
-		case NS_KEY_PAGE_DOWN:
-			dom_key = dom_string_ref(corestring_dom_PageDown);
-			break;
-		case NS_KEY_TEXT_START:
-			dom_key = dom_string_ref(corestring_dom_Home);
-			break;
-		case NS_KEY_TEXT_END:
-			dom_key = dom_string_ref(corestring_dom_End);
-			break;
-		default:
-			dom_key = NULL;
-			break;
+	ਜੇ (is_special) {
+		ਚੋਣ (ਕੁੰਜੀ) {
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ESCAPE:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_Escape);
+			ਰੋਕੋ;
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ਖੱਬਾ:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_Arrow_ਖੱਬਾ);
+			ਰੋਕੋ;
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ਸੱਜਾ:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_Arrow_ਸੱਜਾ);
+			ਰੋਕੋ;
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ਉੱਪਰ:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_Arrow_ਉੱਪਰ);
+			ਰੋਕੋ;
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ਥੱਲੇ:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_Arrow_ਥੱਲੇ);
+			ਰੋਕੋ;
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ਪੰਨਾ_ਉੱਪਰ:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_ਪੰਨਾ_ਉੱਪਰ);
+			ਰੋਕੋ;
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ਪੰਨਾ_ਥੱਲੇ:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_ਪੰਨਾ_ਥੱਲੇ);
+			ਰੋਕੋ;
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ਪਾਠ_ਸ਼ੁਰੂ:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_Home);
+			ਰੋਕੋ;
+		ਹਾਲਤ NS_ਕੁੰਜੀ_ਪਾਠ_ਸਿਰਾ:
+			dom_ਕੁੰਜੀ = dom_string_ref(corestring_dom_ਸਿਰਾ);
+			ਰੋਕੋ;
+		ਮੂਲ:
+			dom_ਕੁੰਜੀ = ਨਿਰਾ;
+			ਰੋਕੋ;
 		}
-	} else {
-		char utf8[6];
-		size_t length = utf8_from_ucs4(key, utf8);
-		utf8[length] = '\0';
+	} ਨਹੀਂਤਾਂ {
+		ਅੱਖਰ utf8[6];
+		size_t ਲੰਮਾਈ = utf8_from_ucs4(ਕੁੰਜੀ, utf8);
+		utf8[ਲੰਮਾਈ] = '\0';
 
-		exc = dom_string_create((const uint8_t *)utf8, strlen(utf8),
-				&dom_key);
-		if (exc != DOM_NO_ERR) {
-			return exc;
+		exc = dom_string_create((ਅਚਲ uint8_t *)utf8, ਲੜੀ_ਲੰਬਾਈ(utf8),
+				&dom_ਕੁੰਜੀ);
+		ਜੇ (exc != DOM_NO_ERR) {
+			ਵਾਪਸ exc;
 		}
 	}
 
 	exc = dom_keyboard_event_create(&evt);
-	if (exc != DOM_NO_ERR) {
-		dom_string_unref(dom_key);
-		return false;
+	ਜੇ (exc != DOM_NO_ERR) {
+		dom_string_unref(dom_ਕੁੰਜੀ);
+		ਵਾਪਸ false;
 	}
 
-	exc = dom_keyboard_event_init(evt, type, bubbles, cancelable, NULL,
-			dom_key, NULL, DOM_KEY_LOCATION_STANDARD, false,
+	exc = dom_keyboard_event_init(evt, type, bubbles, cancelable, ਨਿਰਾ,
+			dom_ਕੁੰਜੀ, ਨਿਰਾ, DOM_ਕੁੰਜੀ_LOCATION_STANDARD, false,
 			false, false, false, false, false);
-	dom_string_unref(dom_key);
-	if (exc != DOM_NO_ERR) {
+	dom_string_unref(dom_ਕੁੰਜੀ);
+	ਜੇ (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return false;
+		ਵਾਪਸ false;
 	}
 
 	NSLOG(netsurf, INFO, "Dispatching '%*s' against %p",
-			(int)dom_string_length(type), dom_string_data(type), target);
+			(ਪੂਰਨ)dom_string_ਲੰਮਾਈ(type), dom_string_ਅੰਕੜੇ(type), ਨਿਸ਼ਾਨਾ);
 
-	result = fire_dom_event((dom_event *) evt, target);
+	ਨਤੀਜਾ = fire_dom_event((dom_event *) evt, ਨਿਸ਼ਾਨਾ);
 	dom_event_unref(evt);
-	return result;
+	ਵਾਪਸ ਨਤੀਜਾ;
 }
 
 /**
@@ -213,143 +213,143 @@ bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
  * \param c        HTML content to complete conversion of
  * \param success  Whether box tree construction was successful
  */
-static void html_box_convert_done(html_content *c, bool success)
+ਸਥਿਰ ਖਾਲੀ html_box_convert_ਪੂਰਾ(html_content *c, bool success)
 {
 	nserror err;
 	dom_exception exc; /* returned by libdom functions */
-	dom_node *html;
+	dom_ਗੰਢ *html;
 
 	NSLOG(netsurf, INFO, "DOM to box conversion complete (content %p)", c);
 
-	c->box_conversion_context = NULL;
+	c->box_conversion_context = ਨਿਰਾ;
 
 	/* Clean up and report error if unsuccessful or aborted */
-	if ((success == false) || (c->aborted)) {
+	ਜੇ ((success == false) || (c->aborted)) {
 		html_object_free_objects(c);
 
-		if (success == false) {
-			content_broadcast_error(&c->base, NSERROR_BOX_CONVERT, NULL);
-		} else {
-			content_broadcast_error(&c->base, NSERROR_STOPPED, NULL);
+		ਜੇ (success == false) {
+			content_ਪ੍ਰਸਾਰਣ_error(&c->ਅਧਾਰ, NSERROR_BOX_CONVERT, ਨਿਰਾ);
+		} ਨਹੀਂਤਾਂ {
+			content_ਪ੍ਰਸਾਰਣ_error(&c->ਅਧਾਰ, NSERROR_STOPPED, ਨਿਰਾ);
 		}
 
-		content_set_error(&c->base);
-		return;
+		content_ਸੈੱਟ_error(&c->ਅਧਾਰ);
+		ਵਾਪਸ;
 	}
 
 
-#if ALWAYS_DUMP_BOX
+#ਜੇ ALWAYS_DUMP_BOX
 	box_dump(stderr, c->layout->children, 0, true);
-#endif
-#if ALWAYS_DUMP_FRAMESET
-	if (c->frameset)
+#ਜੇ_ਅੰਤ
+#ਜੇ ALWAYS_DUMP_FRAMESET
+	ਜੇ (c->frameset)
 		html_dump_frameset(c->frameset, 0);
-#endif
+#ਜੇ_ਅੰਤ
 
-	exc = dom_document_get_document_element(c->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(c->document, (ਖਾਲੀ *) &html);
+	ਜੇ ((exc != DOM_NO_ERR) || (html == ਨਿਰਾ)) {
 		/** @todo should this call html_object_free_objects(c);
 		 * like the other error paths
 		 */
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&c->base, NSERROR_DOM, NULL);
-		content_set_error(&c->base);
-		return;
+		content_ਪ੍ਰਸਾਰਣ_error(&c->ਅਧਾਰ, NSERROR_DOM, ਨਿਰਾ);
+		content_ਸੈੱਟ_error(&c->ਅਧਾਰ);
+		ਵਾਪਸ;
 	}
 
 	/* extract image maps - can't do this sensibly in dom_to_box */
-	err = imagemap_extract(c);
-	if (err != NSERROR_OK) {
+	err = imagemap_ਕੱਢੋ(c);
+	ਜੇ (err != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "imagemap extraction failed");
 		html_object_free_objects(c);
-		content_broadcast_error(&c->base, err, NULL);
-		content_set_error(&c->base);
-		dom_node_unref(html);
-		return;
+		content_ਪ੍ਰਸਾਰਣ_error(&c->ਅਧਾਰ, err, ਨਿਰਾ);
+		content_ਸੈੱਟ_error(&c->ਅਧਾਰ);
+		dom_ਗੰਢ_unref(html);
+		ਵਾਪਸ;
 	}
 	/*imagemap_dump(c);*/
 
 	/* Destroy the parser binding */
 	dom_hubbub_parser_destroy(c->parser);
-	c->parser = NULL;
+	c->parser = ਨਿਰਾ;
 
-	content_set_ready(&c->base);
+	content_ਸੈੱਟ_ready(&c->ਅਧਾਰ);
 
-	html_proceed_to_done(c);
+	html_proceed_ਮੰਜ਼ਿਲ_ਪੂਰਾ(c);
 
-	dom_node_unref(html);
+	dom_ਗੰਢ_unref(html);
 }
 
 /* Documented in html_internal.h */
 nserror
-html_proceed_to_done(html_content *html)
+html_proceed_ਮੰਜ਼ਿਲ_ਪੂਰਾ(html_content *html)
 {
-	switch (content__get_status(&html->base)) {
-	case CONTENT_STATUS_READY:
-		if (html->base.active == 0) {
-			content_set_done(&html->base);
-			return NSERROR_OK;
+	ਚੋਣ (content_get_ਸਥਿਤੀ_2(&html->ਅਧਾਰ)) {
+	ਹਾਲਤ CONTENT_ਸਥਿਤੀ_READY:
+		ਜੇ (html->ਅਧਾਰ.ਸਰਗਰਮ == 0) {
+			content_ਸੈੱਟ_ਪੂਰਾ(&html->ਅਧਾਰ);
+			ਵਾਪਸ NSERROR_OK;
 		}
-		break;
-	case CONTENT_STATUS_DONE:
+		ਰੋਕੋ;
+	ਹਾਲਤ CONTENT_ਸਥਿਤੀ_ਪੂਰਾ:
 		/* fallthrough */
-	case CONTENT_STATUS_LOADING:
-		return NSERROR_OK;
-	default:
+	ਹਾਲਤ CONTENT_ਸਥਿਤੀ_LOADING:
+		ਵਾਪਸ NSERROR_OK;
+	ਮੂਲ:
 		NSLOG(netsurf, ERROR, "Content status unexpectedly not LOADING/READY/DONE");
-		break;
+		ਰੋਕੋ;
 	}
-	return NSERROR_UNKNOWN;
+	ਵਾਪਸ NSERROR_UNKNOWN;
 }
 
 
-static void html_get_dimensions(html_content *htmlc)
+ਸਥਿਰ ਖਾਲੀ html_get_dimensions(html_content *htmlc)
 {
 	css_fixed device_dpi = nscss_screen_dpi;
-	unsigned f_size;
-	unsigned f_min;
-	unsigned w;
-	unsigned h;
-	union content_msg_data msg_data = {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ f_ਮਾਪ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ f_min;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ w;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ h;
+	ਸੰਘ content_ਸੁਨੇਹਾ_ਅੰਕੜੇ ਸੁਨੇਹਾ_ਅੰਕੜੇ = {
 		.getdims = {
-			.viewport_width = &w,
-			.viewport_height = &h,
+			.viewport_ਚੌੜਾਈ = &w,
+			.viewport_ਉਚਾਈ = &h,
 		},
 	};
 
-	content_broadcast(&htmlc->base, CONTENT_MSG_GETDIMS, &msg_data);
+	content_ਪ੍ਰਸਾਰਣ(&htmlc->ਅਧਾਰ, CONTENT_ਸੁਨੇਹਾ_GETDIMS, &ਸੁਨੇਹਾ_ਅੰਕੜੇ);
 
 
 	w = css_unit_device2css_px(INTTOFIX(w), device_dpi);
 	h = css_unit_device2css_px(INTTOFIX(h), device_dpi);
 
-	htmlc->media.width  = w;
-	htmlc->media.height = h;
-	htmlc->unit_len_ctx.viewport_width  = w;
-	htmlc->unit_len_ctx.viewport_height = h;
+	htmlc->media.ਚੌੜਾਈ  = w;
+	htmlc->media.ਉਚਾਈ = h;
+	htmlc->unit_len_ctx.viewport_ਚੌੜਾਈ  = w;
+	htmlc->unit_len_ctx.viewport_ਉਚਾਈ = h;
 	htmlc->unit_len_ctx.device_dpi = device_dpi;
 
 	/** \todo Change nsoption font sizes to px. */
-	f_size = FDIV(FMUL(F_96, FDIV(INTTOFIX(nsoption_int(font_size)), F_10)), F_72);
-	f_min  = FDIV(FMUL(F_96, FDIV(INTTOFIX(nsoption_int(font_min_size)), F_10)), F_72);
+	f_ਮਾਪ = FDIV(FMUL(F_96, FDIV(INTTOFIX(nsoption_int(font_ਮਾਪ)), F_10)), F_72);
+	f_min  = FDIV(FMUL(F_96, FDIV(INTTOFIX(nsoption_int(font_min_ਮਾਪ)), F_10)), F_72);
 
-	htmlc->unit_len_ctx.font_size_default = f_size;
-	htmlc->unit_len_ctx.font_size_minimum = f_min;
+	htmlc->unit_len_ctx.font_ਮਾਪ_default = f_ਮਾਪ;
+	htmlc->unit_len_ctx.font_ਮਾਪ_minimum = f_min;
 }
 
 /* exported function documented in html/html_internal.h */
-void html_finish_conversion(html_content *htmlc)
+ਖਾਲੀ html_ਅੰਤ_conversion(html_content *htmlc)
 {
-	union content_msg_data msg_data;
+	ਸੰਘ content_ਸੁਨੇਹਾ_ਅੰਕੜੇ ਸੁਨੇਹਾ_ਅੰਕੜੇ;
 	dom_exception exc; /* returned by libdom functions */
-	dom_node *html;
+	dom_ਗੰਢ *html;
 	nserror error;
 
 	/* Bail out if we've been aborted */
-	if (htmlc->aborted) {
-		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, NULL);
-		content_set_error(&htmlc->base);
-		return;
+	ਜੇ (htmlc->aborted) {
+		content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ, NSERROR_STOPPED, ਨਿਰਾ);
+		content_ਸੈੱਟ_error(&htmlc->ਅਧਾਰ);
+		ਵਾਪਸ;
 	}
 
 	/* If we already have a selection context, then we have already
@@ -362,18 +362,18 @@ void html_finish_conversion(html_content *htmlc)
 	 * NetSurf has no concept of dynamically changing documents, so this
 	 * would break badly.
 	 */
-	if (htmlc->select_ctx != NULL) {
+	ਜੇ (htmlc->select_ctx != ਨਿਰਾ) {
 		NSLOG(netsurf, INFO,
 				"Ignoring style change: NS layout is static.");
-		return;
+		ਵਾਪਸ;
 	}
 
 	/* create new css selection context */
 	error = html_css_new_selection_context(htmlc, &htmlc->select_ctx);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&htmlc->base, error, NULL);
-		content_set_error(&htmlc->base);
-		return;
+	ਜੇ (error != NSERROR_OK) {
+		content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ, error, ਨਿਰਾ);
+		content_ਸੈੱਟ_error(&htmlc->ਅਧਾਰ);
+		ਵਾਪਸ;
 	}
 
 
@@ -381,114 +381,114 @@ void html_finish_conversion(html_content *htmlc)
 	 * object, but with its target set to the Document object (and
 	 * the currentTarget set to the Window object)
 	 */
-	if (htmlc->jsthread != NULL) {
-		js_fire_event(htmlc->jsthread, "load", htmlc->document, NULL);
+	ਜੇ (htmlc->jsthread != ਨਿਰਾ) {
+		js_fire_event(htmlc->jsthread, "load", htmlc->document, ਨਿਰਾ);
 	}
 
 	/* convert dom tree to box tree */
 	NSLOG(netsurf, INFO, "DOM to box (%p)", htmlc);
-	content_set_status(&htmlc->base, messages_get("Processing"));
-	msg_data.explicit_status_text = NULL;
-	content_broadcast(&htmlc->base, CONTENT_MSG_STATUS, &msg_data);
+	content_ਸੈੱਟ_ਸਥਿਤੀ(&htmlc->ਅਧਾਰ, messages_get("Processing"));
+	ਸੁਨੇਹਾ_ਅੰਕੜੇ.explicit_ਸਥਿਤੀ_ਪਾਠ = ਨਿਰਾ;
+	content_ਪ੍ਰਸਾਰਣ(&htmlc->ਅਧਾਰ, CONTENT_ਸੁਨੇਹਾ_ਸਥਿਤੀ, &ਸੁਨੇਹਾ_ਅੰਕੜੇ);
 
-	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(htmlc->document, (ਖਾਲੀ *) &html);
+	ਜੇ ((exc != DOM_NO_ERR) || (html == ਨਿਰਾ)) {
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		content_set_error(&htmlc->base);
-		return;
+		content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ, NSERROR_DOM, ਨਿਰਾ);
+		content_ਸੈੱਟ_error(&htmlc->ਅਧਾਰ);
+		ਵਾਪਸ;
 	}
 
 	html_get_dimensions(htmlc);
 
-	error = dom_to_box(html, htmlc, html_box_convert_done, &htmlc->box_conversion_context);
-	if (error != NSERROR_OK) {
+	error = dom_ਮੰਜ਼ਿਲ_box(html, htmlc, html_box_convert_ਪੂਰਾ, &htmlc->box_conversion_context);
+	ਜੇ (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "box conversion failed");
-		dom_node_unref(html);
+		dom_ਗੰਢ_unref(html);
 		html_object_free_objects(htmlc);
-		content_broadcast_error(&htmlc->base, error, NULL);
-		content_set_error(&htmlc->base);
-		return;
+		content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ, error, ਨਿਰਾ);
+		content_ਸੈੱਟ_error(&htmlc->ਅਧਾਰ);
+		ਵਾਪਸ;
 	}
 
-	dom_node_unref(html);
+	dom_ਗੰਢ_unref(html);
 }
 
 
-static void
-html_document_user_data_handler(dom_node_operation operation,
-				dom_string *key, void *data,
-				struct dom_node *src,
-				struct dom_node *dst)
+ਸਥਿਰ ਖਾਲੀ
+html_document_user_ਅੰਕੜੇ_handler(dom_ਗੰਢ_operation operation,
+				dom_string *ਕੁੰਜੀ, ਖਾਲੀ *ਅੰਕੜੇ,
+				ਬਣਤਰ dom_ਗੰਢ *src,
+				ਬਣਤਰ dom_ਗੰਢ *dst)
 {
-	if (dom_string_isequal(corestring_dom___ns_key_html_content_data,
-			       key) == false || data == NULL) {
-		return;
+	ਜੇ (dom_string_isequal(corestring_dom_ns_ਕੁੰਜੀ_html_content_ਅੰਕੜੇ,
+			       ਕੁੰਜੀ) == false || ਅੰਕੜੇ == ਨਿਰਾ) {
+		ਵਾਪਸ;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
+	ਚੋਣ (operation) {
+	ਹਾਲਤ DOM_ਗੰਢ_CLONED:
 		NSLOG(netsurf, INFO, "Cloned");
-		break;
-	case DOM_NODE_RENAMED:
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_ਗੰਢ_RENAMED:
 		NSLOG(netsurf, INFO, "Renamed");
-		break;
-	case DOM_NODE_IMPORTED:
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_ਗੰਢ_IMPORTED:
 		NSLOG(netsurf, INFO, "imported");
-		break;
-	case DOM_NODE_ADOPTED:
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_ਗੰਢ_ADOPTED:
 		NSLOG(netsurf, INFO, "Adopted");
-		break;
-	case DOM_NODE_DELETED:
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_ਗੰਢ_DELETED:
 		/* This is the only path I expect */
-		break;
-	default:
+		ਰੋਕੋ;
+	ਮੂਲ:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ਪ੍ਰਤਿਜ੍ਞਾ(0);
 	}
 }
 
 
-static nserror
-html_create_html_data(html_content *c, const http_parameter *params)
+ਸਥਿਰ nserror
+html_create_html_ਅੰਕੜੇ(html_content *c, ਅਚਲ http_parameter *params)
 {
 	lwc_string *charset;
 	nserror nerror;
 	dom_hubbub_parser_params parse_params;
 	dom_hubbub_error error;
 	dom_exception err;
-	void *old_node_data;
-	const char *prefer_color_mode = (nsoption_bool(prefer_dark_mode)) ?
+	ਖਾਲੀ *old_ਗੰਢ_ਅੰਕੜੇ;
+	ਅਚਲ ਅੱਖਰ *prefer_color_ਬਹੁਲਕ = (nsoption_bool(prefer_dark_ਬਹੁਲਕ)) ?
 			"dark" : "light";
 
-	c->parser = NULL;
+	c->parser = ਨਿਰਾ;
 	c->parse_completed = false;
 	c->conversion_begun = false;
-	c->document = NULL;
-	c->quirks = DOM_DOCUMENT_QUIRKS_MODE_NONE;
-	c->encoding = NULL;
-	c->base_url = nsurl_ref(content_get_url(&c->base));
-	c->base_target = NULL;
+	c->document = ਨਿਰਾ;
+	c->quirks = DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_NONE;
+	c->encoding = ਨਿਰਾ;
+	c->ਅਧਾਰ_url = nsurl_ref(content_get_url(&c->ਅਧਾਰ));
+	c->ਅਧਾਰ_ਨਿਸ਼ਾਨਾ = ਨਿਰਾ;
 	c->aborted = false;
 	c->refresh = false;
 	c->reflowing = false;
-	c->title = NULL;
-	c->bctx = NULL;
-	c->layout = NULL;
-	c->background_colour = NS_TRANSPARENT;
-	c->stylesheet_count = 0;
-	c->stylesheets = NULL;
-	c->select_ctx = NULL;
+	c->title = ਨਿਰਾ;
+	c->bctx = ਨਿਰਾ;
+	c->layout = ਨਿਰਾ;
+	c->background_ਰੰਗ = NS_TRANSPARENT;
+	c->stylesheet_ਗਿਣਤੀ = 0;
+	c->stylesheets = ਨਿਰਾ;
+	c->select_ctx = ਨਿਰਾ;
 	c->media.type = CSS_MEDIA_SCREEN;
-	c->universal = NULL;
-	c->num_objects = 0;
-	c->object_list = NULL;
-	c->forms = NULL;
-	c->imagemaps = NULL;
-	c->bw = NULL;
-	c->frameset = NULL;
-	c->iframe = NULL;
-	c->page = NULL;
+	c->universal = ਨਿਰਾ;
+	c->ਅੰਕ_objects = 0;
+	c->object_list = ਨਿਰਾ;
+	c->forms = ਨਿਰਾ;
+	c->imagemaps = ਨਿਰਾ;
+	c->bw = ਨਿਰਾ;
+	c->frameset = ਨਿਰਾ;
+	c->iframe = ਨਿਰਾ;
+	c->ਪੰਨਾ = ਨਿਰਾ;
 	c->font_func = guit->layout;
 	c->drag_type = HTML_DRAG_NONE;
 	c->drag_owner.no_owner = true;
@@ -496,48 +496,48 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	c->selection_owner.none = true;
 	c->focus_type = HTML_FOCUS_SELF;
 	c->focus_owner.self = true;
-	c->scripts_count = 0;
-	c->scripts = NULL;
-	c->jsthread = NULL;
+	c->scripts_ਗਿਣਤੀ = 0;
+	c->scripts = ਨਿਰਾ;
+	c->jsthread = ਨਿਰਾ;
 
 	c->enable_scripting = nsoption_bool(enable_javascript);
-	c->base.active = 1; /* The html content itself is active */
+	c->ਅਧਾਰ.ਸਰਗਰਮ = 1; /* The html content itself is active */
 
-	if (lwc_intern_string("*", SLEN("*"), &c->universal) != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	ਜੇ (lwc_intern_string("*", SLEN("*"), &c->universal) != lwc_error_ok) {
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
-	if (lwc_intern_string(prefer_color_mode, strlen(prefer_color_mode),
+	ਜੇ (lwc_intern_string(prefer_color_ਬਹੁਲਕ, ਲੜੀ_ਲੰਬਾਈ(prefer_color_ਬਹੁਲਕ),
 			&c->media.prefers_color_scheme) != lwc_error_ok) {
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
-		return NSERROR_NOMEM;
+		c->universal = ਨਿਰਾ;
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
-	c->sel = selection_create((struct content *)c);
+	c->sel = selection_create((ਬਣਤਰ content *)c);
 
-	nerror = http_parameter_list_find_item(params, corestring_lwc_charset, &charset);
-	if (nerror == NSERROR_OK) {
-		c->encoding = strdup(lwc_string_data(charset));
+	nerror = http_parameter_list_ਲੱਭੋ_ਵਸਤੂ(params, corestring_lwc_charset, &charset);
+	ਜੇ (nerror == NSERROR_OK) {
+		c->encoding = strdup(lwc_string_ਅੰਕੜੇ(charset));
 
 		lwc_string_unref(charset);
 
-		if (c->encoding == NULL) {
+		ਜੇ (c->encoding == ਨਿਰਾ) {
 			lwc_string_unref(c->universal);
-			c->universal = NULL;
+			c->universal = ਨਿਰਾ;
 			lwc_string_unref(c->media.prefers_color_scheme);
-			c->media.prefers_color_scheme = NULL;
-			return NSERROR_NOMEM;
+			c->media.prefers_color_scheme = ਨਿਰਾ;
+			ਵਾਪਸ NSERROR_NOMEM;
 
 		}
-		c->encoding_source = DOM_HUBBUB_ENCODING_SOURCE_HEADER;
+		c->encoding_ਸਰੋਤ = DOM_HUBBUB_ENCODING_ਸਰੋਤ_ਸਿਰਲੇਖ;
 	}
 
 	/* Create the parser binding */
 	parse_params.enc = c->encoding;
 	parse_params.fix_enc = true;
 	parse_params.enable_script = c->enable_scripting;
-	parse_params.msg = NULL;
+	parse_params.ਸੁਨੇਹਾ = ਨਿਰਾ;
 	parse_params.script = html_process_script;
 	parse_params.ctx = c;
 	parse_params.daf = html_dom_event_fetcher;
@@ -545,11 +545,11 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	error = dom_hubbub_parser_create(&parse_params,
 					 &c->parser,
 					 &c->document);
-	if ((error != DOM_HUBBUB_OK) && (c->encoding != NULL)) {
+	ਜੇ ((error != DOM_HUBBUB_OK) && (c->encoding != ਨਿਰਾ)) {
 		/* Ok, we don't support the declared encoding. Bailing out
 		 * isn't exactly user-friendly, so fall back to autodetect */
-		free(c->encoding);
-		c->encoding = NULL;
+		ਮੁਕਤ(c->encoding);
+		c->encoding = ਨਿਰਾ;
 
 		parse_params.enc = c->encoding;
 
@@ -557,40 +557,40 @@ html_create_html_data(html_content *c, const http_parameter *params)
 						 &c->parser,
 						 &c->document);
 	}
-	if (error != DOM_HUBBUB_OK) {
-		nsurl_unref(c->base_url);
-		c->base_url = NULL;
+	ਜੇ (error != DOM_HUBBUB_OK) {
+		nsurl_unref(c->ਅਧਾਰ_url);
+		c->ਅਧਾਰ_url = ਨਿਰਾ;
 
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
+		c->universal = ਨਿਰਾ;
 		lwc_string_unref(c->media.prefers_color_scheme);
-		c->media.prefers_color_scheme = NULL;
+		c->media.prefers_color_scheme = ਨਿਰਾ;
 
-		return libdom_hubbub_error_to_nserror(error);
+		ਵਾਪਸ libdom_hubbub_error_ਮੰਜ਼ਿਲ_nserror(error);
 	}
 
-	err = dom_node_set_user_data(c->document,
-				     corestring_dom___ns_key_html_content_data,
-				     c, html_document_user_data_handler,
-				     (void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
+	err = dom_ਗੰਢ_ਸੈੱਟ_user_ਅੰਕੜੇ(c->document,
+				     corestring_dom_ns_ਕੁੰਜੀ_html_content_ਅੰਕੜੇ,
+				     c, html_document_user_ਅੰਕੜੇ_handler,
+				     (ਖਾਲੀ *) &old_ਗੰਢ_ਅੰਕੜੇ);
+	ਜੇ (err != DOM_NO_ERR) {
 		dom_hubbub_parser_destroy(c->parser);
-		c->parser = NULL;
-		nsurl_unref(c->base_url);
-		c->base_url = NULL;
+		c->parser = ਨਿਰਾ;
+		nsurl_unref(c->ਅਧਾਰ_url);
+		c->ਅਧਾਰ_url = ਨਿਰਾ;
 
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
+		c->universal = ਨਿਰਾ;
 		lwc_string_unref(c->media.prefers_color_scheme);
-		c->media.prefers_color_scheme = NULL;
+		c->media.prefers_color_scheme = ਨਿਰਾ;
 
 		NSLOG(netsurf, INFO, "Unable to set user data.");
-		return NSERROR_DOM;
+		ਵਾਪਸ NSERROR_DOM;
 	}
 
-	assert(old_node_data == NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(old_ਗੰਢ_ਅੰਕੜੇ == ਨਿਰਾ);
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 
 }
 
@@ -601,91 +601,91 @@ html_create_html_data(html_content *c, const http_parameter *params)
  * created.
  */
 
-static nserror
-html_create(const content_handler *handler,
+ਸਥਿਰ nserror
+html_create(ਅਚਲ content_handler *handler,
 	    lwc_string *imime_type,
-	    const http_parameter *params,
+	    ਅਚਲ http_parameter *params,
 	    llcache_handle *llcache,
-	    const char *fallback_charset,
+	    ਅਚਲ ਅੱਖਰ *fallback_charset,
 	    bool quirks,
-	    struct content **c)
+	    ਬਣਤਰ content **c)
 {
 	html_content *html;
 	nserror error;
 
-	html = calloc(1, sizeof(html_content));
-	if (html == NULL)
-		return NSERROR_NOMEM;
+	html = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(html_content));
+	ਜੇ (html == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__init(&html->base, handler, imime_type, params,
+	error = content__init(&html->ਅਧਾਰ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(html);
-		return error;
+	ਜੇ (error != NSERROR_OK) {
+		ਮੁਕਤ(html);
+		ਵਾਪਸ error;
 	}
 
-	error = html_create_html_data(html, params);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&html->base, error, NULL);
-		free(html);
-		return error;
+	error = html_create_html_ਅੰਕੜੇ(html, params);
+	ਜੇ (error != NSERROR_OK) {
+		content_ਪ੍ਰਸਾਰਣ_error(&html->ਅਧਾਰ, error, ਨਿਰਾ);
+		ਮੁਕਤ(html);
+		ਵਾਪਸ error;
 	}
 
 	error = html_css_new_stylesheets(html);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&html->base, error, NULL);
-		free(html);
-		return error;
+	ਜੇ (error != NSERROR_OK) {
+		content_ਪ੍ਰਸਾਰਣ_error(&html->ਅਧਾਰ, error, ਨਿਰਾ);
+		ਮੁਕਤ(html);
+		ਵਾਪਸ error;
 	}
 
-	*c = (struct content *) html;
+	*c = (ਬਣਤਰ content *) html;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 
 
-static nserror
-html_process_encoding_change(struct content *c,
-			     const char *data,
-			     unsigned int size)
+ਸਥਿਰ nserror
+html_process_encoding_change(ਬਣਤਰ content *c,
+			     ਅਚਲ ਅੱਖਰ *ਅੰਕੜੇ,
+			     ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ)
 {
 	html_content *html = (html_content *) c;
 	dom_hubbub_parser_params parse_params;
 	dom_hubbub_error error;
-	const char *encoding;
-	const uint8_t *source_data;
-	size_t source_size;
+	ਅਚਲ ਅੱਖਰ *encoding;
+	ਅਚਲ uint8_t *ਸਰੋਤ_ਅੰਕੜੇ;
+	size_t ਸਰੋਤ_ਮਾਪ;
 
 	/* Retrieve new encoding */
 	encoding = dom_hubbub_parser_get_encoding(html->parser,
-						  &html->encoding_source);
-	if (encoding == NULL) {
-		return NSERROR_NOMEM;
+						  &html->encoding_ਸਰੋਤ);
+	ਜੇ (encoding == ਨਿਰਾ) {
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
-	if (html->encoding != NULL) {
-		free(html->encoding);
-		html->encoding = NULL;
+	ਜੇ (html->encoding != ਨਿਰਾ) {
+		ਮੁਕਤ(html->encoding);
+		html->encoding = ਨਿਰਾ;
 	}
 
 	html->encoding = strdup(encoding);
-	if (html->encoding == NULL) {
-		return NSERROR_NOMEM;
+	ਜੇ (html->encoding == ਨਿਰਾ) {
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
 	/* Destroy binding */
 	dom_hubbub_parser_destroy(html->parser);
-	html->parser = NULL;
+	html->parser = ਨਿਰਾ;
 
-	if (html->document != NULL) {
-		dom_node_unref(html->document);
+	ਜੇ (html->document != ਨਿਰਾ) {
+		dom_ਗੰਢ_unref(html->document);
 	}
 
 	parse_params.enc = html->encoding;
 	parse_params.fix_enc = true;
 	parse_params.enable_script = html->enable_scripting;
-	parse_params.msg = NULL;
+	parse_params.ਸੁਨੇਹਾ = ਨਿਰਾ;
 	parse_params.script = html_process_script;
 	parse_params.ctx = html;
 	parse_params.daf = html_dom_event_fetcher;
@@ -694,13 +694,13 @@ html_process_encoding_change(struct content *c,
 	error = dom_hubbub_parser_create(&parse_params,
 					 &html->parser,
 					 &html->document);
-	if (error != DOM_HUBBUB_OK) {
+	ਜੇ (error != DOM_HUBBUB_OK) {
 		/* Ok, we don't support the declared encoding. Bailing out
 		 * isn't exactly user-friendly, so fall back to Windows-1252 */
-		free(html->encoding);
+		ਮੁਕਤ(html->encoding);
 		html->encoding = strdup("Windows-1252");
-		if (html->encoding == NULL) {
-			return NSERROR_NOMEM;
+		ਜੇ (html->encoding == ਨਿਰਾ) {
+			ਵਾਪਸ NSERROR_NOMEM;
 		}
 		parse_params.enc = html->encoding;
 
@@ -708,23 +708,23 @@ html_process_encoding_change(struct content *c,
 						 &html->parser,
 						 &html->document);
 
-		if (error != DOM_HUBBUB_OK) {
-			return libdom_hubbub_error_to_nserror(error);
+		ਜੇ (error != DOM_HUBBUB_OK) {
+			ਵਾਪਸ libdom_hubbub_error_ਮੰਜ਼ਿਲ_nserror(error);
 		}
 
 	}
 
-	source_data = content__get_source_data(c, &source_size);
+	ਸਰੋਤ_ਅੰਕੜੇ = content_get_ਸਰੋਤ_ਅੰਕੜੇ_2(c, &ਸਰੋਤ_ਮਾਪ);
 
 	/* Reprocess all the data.  This is safe because
 	 * the encoding is now specified at parser start which means
 	 * it cannot be changed again.
 	 */
 	error = dom_hubbub_parser_parse_chunk(html->parser,
-					      source_data,
-					      source_size);
+					      ਸਰੋਤ_ਅੰਕੜੇ,
+					      ਸਰੋਤ_ਮਾਪ);
 
-	return libdom_hubbub_error_to_nserror(error);
+	ਵਾਪਸ libdom_hubbub_error_ਮੰਜ਼ਿਲ_nserror(error);
 }
 
 
@@ -732,31 +732,31 @@ html_process_encoding_change(struct content *c,
  * Process data for CONTENT_HTML.
  */
 
-static bool
-html_process_data(struct content *c, const char *data, unsigned int size)
+ਸਥਿਰ bool
+html_process_ਅੰਕੜੇ(ਬਣਤਰ content *c, ਅਚਲ ਅੱਖਰ *ਅੰਕੜੇ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ)
 {
 	html_content *html = (html_content *) c;
 	dom_hubbub_error dom_ret;
 	nserror err = NSERROR_OK; /* assume its all going to be ok */
 
 	dom_ret = dom_hubbub_parser_parse_chunk(html->parser,
-					      (const uint8_t *) data,
-					      size);
+					      (ਅਚਲ uint8_t *) ਅੰਕੜੇ,
+					      ਮਾਪ);
 
-	err = libdom_hubbub_error_to_nserror(dom_ret);
+	err = libdom_hubbub_error_ਮੰਜ਼ਿਲ_nserror(dom_ret);
 
 	/* deal with encoding change */
-	if (err == NSERROR_ENCODING_CHANGE) {
-		 err = html_process_encoding_change(c, data, size);
+	ਜੇ (err == NSERROR_ENCODING_CHANGE) {
+		 err = html_process_encoding_change(c, ਅੰਕੜੇ, ਮਾਪ);
 	}
 
 	/* broadcast the error if necessary */
-	if (err != NSERROR_OK) {
-		content_broadcast_error(c, err, NULL);
-		return false;
+	ਜੇ (err != NSERROR_OK) {
+		content_ਪ੍ਰਸਾਰਣ_error(c, err, ਨਿਰਾ);
+		ਵਾਪਸ false;
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
@@ -774,7 +774,7 @@ html_process_data(struct content *c, const char *data, unsigned int size)
  * being fetched.
  */
 
-static bool html_convert(struct content *c)
+ਸਥਿਰ bool html_convert(ਬਣਤਰ content *c)
 {
 	html_content *htmlc = (html_content *) c;
 	dom_exception exc; /* returned by libdom functions */
@@ -788,14 +788,14 @@ static bool html_convert(struct content *c)
 	 * render and it would annoy the user to fail the entire
 	 * render for want of a quirks stylesheet.
 	 */
-	exc = dom_document_get_quirks_mode(htmlc->document, &htmlc->quirks);
-	if (exc == DOM_NO_ERR) {
+	exc = dom_document_get_quirks_ਬਹੁਲਕ(htmlc->document, &htmlc->quirks);
+	ਜੇ (exc == DOM_NO_ERR) {
 		html_css_quirks_stylesheets(htmlc);
 		NSLOG(netsurf, INFO, "quirks set to %d", htmlc->quirks);
 	}
 
-	htmlc->base.active--; /* the html fetch is no longer active */
-	NSLOG(netsurf, INFO, "%d fetches active (%p)", htmlc->base.active, c);
+	htmlc->ਅਧਾਰ.ਸਰਗਰਮ--; /* the html fetch is no longer active */
+	NSLOG(netsurf, INFO, "%d fetches active (%p)", htmlc->ਅਧਾਰ.ਸਰਗਰਮ, c);
 
 	/* The parse cannot be completed here because it may be paused
 	 * untill all the resources being fetched have completed.
@@ -804,39 +804,39 @@ static bool html_convert(struct content *c)
 	/* if there are no active fetches in progress no scripts are
 	 * being fetched or they completed already.
 	 */
-	if (html_can_begin_conversion(htmlc)) {
-		return html_begin_conversion(htmlc);
+	ਜੇ (html_can_begin_conversion(htmlc)) {
+		ਵਾਪਸ html_begin_conversion(htmlc);
 	}
-	return true;
+	ਵਾਪਸ true;
 }
 
 /* Exported interface documented in html_internal.h */
 bool html_can_begin_conversion(html_content *htmlc)
 {
-	unsigned int i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i;
 
 	/* Cannot begin conversion if we're still fetching stuff */
-	if (htmlc->base.active != 0)
-		return false;
+	ਜੇ (htmlc->ਅਧਾਰ.ਸਰਗਰਮ != 0)
+		ਵਾਪਸ false;
 
-	for (i = 0; i != htmlc->stylesheet_count; i++) {
+	ਲਈ (i = 0; i != htmlc->stylesheet_ਗਿਣਤੀ; i++) {
 		/* Cannot begin conversion if the stylesheets are modified */
-		if (htmlc->stylesheets[i].modified)
-			return false;
+		ਜੇ (htmlc->stylesheets[i].modified)
+			ਵਾਪਸ false;
 	}
 
 	/* All is good, begin */
-	return true;
+	ਵਾਪਸ true;
 }
 
 bool
 html_begin_conversion(html_content *htmlc)
 {
-	dom_node *html;
+	dom_ਗੰਢ *html;
 	nserror ns_error;
-	struct form *f;
+	ਬਣਤਰ form *f;
 	dom_exception exc; /* returned by libdom functions */
-	dom_string *node_name = NULL;
+	dom_string *ਗੰਢ_name = ਨਿਰਾ;
 	dom_hubbub_error error;
 
 	/* The act of completing the parse can result in additional data
@@ -850,42 +850,42 @@ html_begin_conversion(html_content *htmlc)
 	 * multiple times, so store a flag to indicate that parsing is
 	 * complete to avoid repeating the completion pointlessly.
 	 */
-	if (htmlc->parse_completed == false) {
+	ਜੇ (htmlc->parse_completed == false) {
 		NSLOG(netsurf, INFO, "Completing parse (%p)", htmlc);
 		/* complete parsing */
 		error = dom_hubbub_parser_completed(htmlc->parser);
-		if (error == DOM_HUBBUB_HUBBUB_ERR_PAUSED && htmlc->base.active > 0) {
+		ਜੇ (error == DOM_HUBBUB_HUBBUB_ERR_PAUSED && htmlc->ਅਧਾਰ.ਸਰਗਰਮ > 0) {
 			/* The act of completing the parse failed because we've
 			 * encountered a sync script which needs to run
 			 */
 			NSLOG(netsurf, INFO, "Completing parse brought synchronous JS to light, cannot complete yet");
-			return true;
+			ਵਾਪਸ true;
 		}
-		if (error != DOM_HUBBUB_OK) {
+		ਜੇ (error != DOM_HUBBUB_OK) {
 			NSLOG(netsurf, INFO, "Parsing failed");
 
-			content_broadcast_error(&htmlc->base,
-						libdom_hubbub_error_to_nserror(error),
-						NULL);
+			content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ,
+						libdom_hubbub_error_ਮੰਜ਼ਿਲ_nserror(error),
+						ਨਿਰਾ);
 
-			return false;
+			ਵਾਪਸ false;
 		}
 		htmlc->parse_completed = true;
 	}
 
-	if (html_can_begin_conversion(htmlc) == false) {
+	ਜੇ (html_can_begin_conversion(htmlc) == false) {
 		NSLOG(netsurf, INFO, "Can't begin conversion (%p)", htmlc);
 		/* We can't proceed (see commentary above) */
-		return true;
+		ਵਾਪਸ true;
 	}
 
 	/* Give up processing if we've been aborted */
-	if (htmlc->aborted) {
+	ਜੇ (htmlc->aborted) {
 		NSLOG(netsurf, INFO, "Conversion aborted (%p) (active: %u)",
-		      htmlc, htmlc->base.active);
-		content_set_error(&htmlc->base);
-		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, NULL);
-		return false;
+		      htmlc, htmlc->ਅਧਾਰ.ਸਰਗਰਮ);
+		content_ਸੈੱਟ_error(&htmlc->ਅਧਾਰ);
+		content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ, NSERROR_STOPPED, ਨਿਰਾ);
+		ਵਾਪਸ false;
 	}
 
 	/* Conversion begins proper at this point */
@@ -899,105 +899,105 @@ html_begin_conversion(html_content *htmlc)
 	 */
 
 	/* get encoding */
-	if (htmlc->encoding == NULL) {
-		const char *encoding;
+	ਜੇ (htmlc->encoding == ਨਿਰਾ) {
+		ਅਚਲ ਅੱਖਰ *encoding;
 
 		encoding = dom_hubbub_parser_get_encoding(htmlc->parser,
-					&htmlc->encoding_source);
-		if (encoding == NULL) {
-			content_broadcast_error(&htmlc->base,
+					&htmlc->encoding_ਸਰੋਤ);
+		ਜੇ (encoding == ਨਿਰਾ) {
+			content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ,
 						NSERROR_NOMEM,
-						NULL);
-			return false;
+						ਨਿਰਾ);
+			ਵਾਪਸ false;
 		}
 
 		htmlc->encoding = strdup(encoding);
-		if (htmlc->encoding == NULL) {
-			content_broadcast_error(&htmlc->base,
+		ਜੇ (htmlc->encoding == ਨਿਰਾ) {
+			content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ,
 						NSERROR_NOMEM,
-						NULL);
-			return false;
+						ਨਿਰਾ);
+			ਵਾਪਸ false;
 		}
 	}
 
 	/* locate root element and ensure it is html */
-	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(htmlc->document, (ਖਾਲੀ *) &html);
+	ਜੇ ((exc != DOM_NO_ERR) || (html == ਨਿਰਾ)) {
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		return false;
+		content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ, NSERROR_DOM, ਨਿਰਾ);
+		ਵਾਪਸ false;
 	}
 
-	exc = dom_node_get_node_name(html, &node_name);
-	if ((exc != DOM_NO_ERR) ||
-	    (node_name == NULL) ||
-	    (!dom_string_caseless_lwc_isequal(node_name,
+	exc = dom_ਗੰਢ_get_ਗੰਢ_name(html, &ਗੰਢ_name);
+	ਜੇ ((exc != DOM_NO_ERR) ||
+	    (ਗੰਢ_name == ਨਿਰਾ) ||
+	    (!dom_string_caseless_lwc_isequal(ਗੰਢ_name,
 			corestring_lwc_html))) {
 		NSLOG(netsurf, INFO, "root element not html");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		dom_node_unref(html);
-		return false;
+		content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ, NSERROR_DOM, ਨਿਰਾ);
+		dom_ਗੰਢ_unref(html);
+		ਵਾਪਸ false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(ਗੰਢ_name);
 
 	/* Retrieve forms from parser */
 	htmlc->forms = html_forms_get_forms(htmlc->encoding,
 			(dom_html_document *) htmlc->document);
-	for (f = htmlc->forms; f != NULL; f = f->prev) {
+	ਲਈ (f = htmlc->forms; f != ਨਿਰਾ; f = f->prev) {
 		nsurl *action;
 
 		/* Make all actions absolute */
-		if (f->action == NULL || f->action[0] == '\0') {
+		ਜੇ (f->action == ਨਿਰਾ || f->action[0] == '\0') {
 			/* HTML5 4.10.22.3 step 9 */
-			nsurl *doc_addr = content_get_url(&htmlc->base);
-			ns_error = nsurl_join(htmlc->base_url,
+			nsurl *doc_addr = content_get_url(&htmlc->ਅਧਾਰ);
+			ns_error = nsurl_join(htmlc->ਅਧਾਰ_url,
 					      nsurl_access(doc_addr),
 					      &action);
-		} else {
-			ns_error = nsurl_join(htmlc->base_url,
+		} ਨਹੀਂਤਾਂ {
+			ns_error = nsurl_join(htmlc->ਅਧਾਰ_url,
 					      f->action,
 					      &action);
 		}
 
-		if (ns_error != NSERROR_OK) {
-			content_broadcast_error(&htmlc->base, ns_error, NULL);
+		ਜੇ (ns_error != NSERROR_OK) {
+			content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ, ns_error, ਨਿਰਾ);
 
-			dom_node_unref(html);
-			return false;
+			dom_ਗੰਢ_unref(html);
+			ਵਾਪਸ false;
 		}
 
-		free(f->action);
+		ਮੁਕਤ(f->action);
 		f->action = strdup(nsurl_access(action));
 		nsurl_unref(action);
-		if (f->action == NULL) {
-			content_broadcast_error(&htmlc->base,
+		ਜੇ (f->action == ਨਿਰਾ) {
+			content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ,
 						NSERROR_NOMEM,
-						NULL);
+						ਨਿਰਾ);
 
-			dom_node_unref(html);
-			return false;
+			dom_ਗੰਢ_unref(html);
+			ਵਾਪਸ false;
 		}
 
 		/* Ensure each form has a document encoding */
-		if (f->document_charset == NULL) {
+		ਜੇ (f->document_charset == ਨਿਰਾ) {
 			f->document_charset = strdup(htmlc->encoding);
-			if (f->document_charset == NULL) {
-				content_broadcast_error(&htmlc->base,
+			ਜੇ (f->document_charset == ਨਿਰਾ) {
+				content_ਪ੍ਰਸਾਰਣ_error(&htmlc->ਅਧਾਰ,
 							NSERROR_NOMEM,
-							NULL);
-				dom_node_unref(html);
-				return false;
+							ਨਿਰਾ);
+				dom_ਗੰਢ_unref(html);
+				ਵਾਪਸ false;
 			}
 		}
 	}
 
-	dom_node_unref(html);
+	dom_ਗੰਢ_unref(html);
 
-	if (htmlc->base.active == 0) {
-		html_finish_conversion(htmlc);
+	ਜੇ (htmlc->ਅਧਾਰ.ਸਰਗਰਮ == 0) {
+		html_ਅੰਤ_conversion(htmlc);
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
@@ -1008,40 +1008,40 @@ html_begin_conversion(html_content *htmlc)
  * created during the fetch.
  */
 
-static void html_stop(struct content *c)
+ਸਥਿਰ ਖਾਲੀ html_stop(ਬਣਤਰ content *c)
 {
 	html_content *htmlc = (html_content *) c;
 
-	switch (c->status) {
-	case CONTENT_STATUS_LOADING:
+	ਚੋਣ (c->ਸਥਿਤੀ) {
+	ਹਾਲਤ CONTENT_ਸਥਿਤੀ_LOADING:
 		/* Still loading; simply flag that we've been aborted
 		 * html_convert/html_finish_conversion will do the rest */
 		htmlc->aborted = true;
-		if (htmlc->jsthread != NULL) {
+		ਜੇ (htmlc->jsthread != ਨਿਰਾ) {
 			/* Close the JS thread to cancel out any callbacks */
 			js_closethread(htmlc->jsthread);
 		}
-		break;
+		ਰੋਕੋ;
 
-	case CONTENT_STATUS_READY:
+	ਹਾਲਤ CONTENT_ਸਥਿਤੀ_READY:
 		html_object_abort_objects(htmlc);
 
 		/* If there are no further active fetches and we're still
 		 * in the READY state, transition to the DONE state. */
-		if (c->status == CONTENT_STATUS_READY && c->active == 0) {
-			content_set_done(c);
+		ਜੇ (c->ਸਥਿਤੀ == CONTENT_ਸਥਿਤੀ_READY && c->ਸਰਗਰਮ == 0) {
+			content_ਸੈੱਟ_ਪੂਰਾ(c);
 		}
 
-		break;
+		ਰੋਕੋ;
 
-	case CONTENT_STATUS_DONE:
+	ਹਾਲਤ CONTENT_ਸਥਿਤੀ_ਪੂਰਾ:
 		/* Nothing to do */
-		break;
+		ਰੋਕੋ;
 
-	default:
-		NSLOG(netsurf, INFO, "Unexpected status %d (%p)", c->status,
+	ਮੂਲ:
+		NSLOG(netsurf, INFO, "Unexpected status %d (%p)", c->ਸਥਿਤੀ,
 		      c);
-		assert(0);
+		ਪ੍ਰਤਿਜ੍ਞਾ(0);
 	}
 }
 
@@ -1050,10 +1050,10 @@ static void html_stop(struct content *c)
  * Reformat a CONTENT_HTML to a new width.
  */
 
-static void html_reformat(struct content *c, int width, int height)
+ਸਥਿਰ ਖਾਲੀ html_reformat(ਬਣਤਰ content *c, ਪੂਰਨ ਚੌੜਾਈ, ਪੂਰਨ ਉਚਾਈ)
 {
 	html_content *htmlc = (html_content *) c;
-	struct box *layout;
+	ਬਣਤਰ box *layout;
 	uint64_t ms_before;
 	uint64_t ms_after;
 	uint64_t ms_interval;
@@ -1062,28 +1062,28 @@ static void html_reformat(struct content *c, int width, int height)
 
 	htmlc->reflowing = true;
 
-	htmlc->unit_len_ctx.viewport_width = css_unit_device2css_px(
-			INTTOFIX(width), htmlc->unit_len_ctx.device_dpi);
-	htmlc->unit_len_ctx.viewport_height = css_unit_device2css_px(
-			INTTOFIX(height), htmlc->unit_len_ctx.device_dpi);
-	htmlc->unit_len_ctx.root_style = htmlc->layout->style;
+	htmlc->unit_len_ctx.viewport_ਚੌੜਾਈ = css_unit_device2css_px(
+			INTTOFIX(ਚੌੜਾਈ), htmlc->unit_len_ctx.device_dpi);
+	htmlc->unit_len_ctx.viewport_ਉਚਾਈ = css_unit_device2css_px(
+			INTTOFIX(ਉਚਾਈ), htmlc->unit_len_ctx.device_dpi);
+	htmlc->unit_len_ctx.ਜੜ੍ਹ_style = htmlc->layout->style;
 
-	layout_document(htmlc, width, height);
+	layout_document(htmlc, ਚੌੜਾਈ, ਉਚਾਈ);
 	layout = htmlc->layout;
 
 	/* width and height are at least margin box of document */
-	c->width = layout->x + layout->padding[LEFT] + layout->width +
-		layout->padding[RIGHT] + layout->border[RIGHT].width +
-		layout->margin[RIGHT];
-	c->height = layout->y + layout->padding[TOP] + layout->height +
-		layout->padding[BOTTOM] + layout->border[BOTTOM].width +
+	c->ਚੌੜਾਈ = layout->x + layout->padding[ਖੱਬਾ_2] + layout->ਚੌੜਾਈ +
+		layout->padding[ਸੱਜਾ_2] + layout->border[ਸੱਜਾ_2].ਚੌੜਾਈ +
+		layout->margin[ਸੱਜਾ_2];
+	c->ਉਚਾਈ = layout->y + layout->padding[ਸਿਖਰ_2] + layout->ਉਚਾਈ +
+		layout->padding[BOTTOM] + layout->border[BOTTOM].ਚੌੜਾਈ +
 		layout->margin[BOTTOM];
 
 	/* if boxes overflow right or bottom edge, expand to contain it */
-	if (c->width < layout->x + layout->descendant_x1)
-		c->width = layout->x + layout->descendant_x1;
-	if (c->height < layout->y + layout->descendant_y1)
-		c->height = layout->y + layout->descendant_y1;
+	ਜੇ (c->ਚੌੜਾਈ < layout->x + layout->descendant_x1)
+		c->ਚੌੜਾਈ = layout->x + layout->descendant_x1;
+	ਜੇ (c->ਉਚਾਈ < layout->y + layout->descendant_y1)
+		c->ਉਚਾਈ = layout->y + layout->descendant_y1;
 
 	selection_reinit(htmlc->sel);
 
@@ -1094,10 +1094,10 @@ static void html_reformat(struct content *c, int width, int height)
 	nsu_getmonotonic_ms(&ms_after);
 
 	ms_interval = (ms_after - ms_before) * 3;
-	if (ms_interval < (nsoption_uint(min_reflow_period) * 10)) {
+	ਜੇ (ms_interval < (nsoption_uint(min_reflow_period) * 10)) {
 		ms_interval = nsoption_uint(min_reflow_period) * 10;
 	}
-	c->reformat_time = ms_after + ms_interval;
+	c->reformat_ਸਮਾਂ = ms_after + ms_interval;
 }
 
 
@@ -1108,15 +1108,15 @@ static void html_reformat(struct content *c, int width, int height)
  * \param  box  box to redraw
  */
 
-void html_redraw_a_box(hlcache_handle *h, struct box *box)
+ਖਾਲੀ html_redraw_a_box(hlcache_handle *h, ਬਣਤਰ box *box)
 {
-	int x, y;
+	ਪੂਰਨ x, y;
 
 	box_coords(box, &x, &y);
 
 	content_request_redraw(h, x, y,
-			box->padding[LEFT] + box->width + box->padding[RIGHT],
-			box->padding[TOP] + box->height + box->padding[BOTTOM]);
+			box->padding[ਖੱਬਾ_2] + box->ਚੌੜਾਈ + box->padding[ਸੱਜਾ_2],
+			box->padding[ਸਿਖਰ_2] + box->ਉਚਾਈ + box->padding[BOTTOM]);
 }
 
 
@@ -1127,67 +1127,67 @@ void html_redraw_a_box(hlcache_handle *h, struct box *box)
  * \param box  box to redraw.
  */
 
-void html__redraw_a_box(struct html_content *html, struct box *box)
+ਖਾਲੀ html__redraw_a_box(ਬਣਤਰ html_content *html, ਬਣਤਰ box *box)
 {
-	int x, y;
+	ਪੂਰਨ x, y;
 
 	box_coords(box, &x, &y);
 
-	content__request_redraw((struct content *)html, x, y,
-			box->padding[LEFT] + box->width + box->padding[RIGHT],
-			box->padding[TOP] + box->height + box->padding[BOTTOM]);
+	content__request_redraw((ਬਣਤਰ content *)html, x, y,
+			box->padding[ਖੱਬਾ_2] + box->ਚੌੜਾਈ + box->padding[ਸੱਜਾ_2],
+			box->padding[ਸਿਖਰ_2] + box->ਉਚਾਈ + box->padding[BOTTOM]);
 }
 
-static void html_destroy_frameset(struct content_html_frames *frameset)
+ਸਥਿਰ ਖਾਲੀ html_destroy_frameset(ਬਣਤਰ content_html_ਚੌਖਟੇ *frameset)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (frameset->name) {
+	ਜੇ (frameset->name) {
 		talloc_free(frameset->name);
-		frameset->name = NULL;
+		frameset->name = ਨਿਰਾ;
 	}
-	if (frameset->url) {
+	ਜੇ (frameset->url) {
 		talloc_free(frameset->url);
-		frameset->url = NULL;
+		frameset->url = ਨਿਰਾ;
 	}
-	if (frameset->children) {
-		for (i = 0; i < (frameset->rows * frameset->cols); i++) {
-			if (frameset->children[i].name) {
+	ਜੇ (frameset->children) {
+		ਲਈ (i = 0; i < (frameset->ਪੰਕਤੀਆਂ * frameset->ਖਾਨੇ_ਗਿਣਤੀ); i++) {
+			ਜੇ (frameset->children[i].name) {
 				talloc_free(frameset->children[i].name);
-				frameset->children[i].name = NULL;
+				frameset->children[i].name = ਨਿਰਾ;
 			}
-			if (frameset->children[i].url) {
+			ਜੇ (frameset->children[i].url) {
 				nsurl_unref(frameset->children[i].url);
-				frameset->children[i].url = NULL;
+				frameset->children[i].url = ਨਿਰਾ;
 			}
-			if (frameset->children[i].children)
+			ਜੇ (frameset->children[i].children)
 				html_destroy_frameset(&frameset->children[i]);
 		}
 		talloc_free(frameset->children);
-		frameset->children = NULL;
+		frameset->children = ਨਿਰਾ;
 	}
 }
 
-static void html_destroy_iframe(struct content_html_iframe *iframe)
+ਸਥਿਰ ਖਾਲੀ html_destroy_iframe(ਬਣਤਰ content_html_iframe *iframe)
 {
-	struct content_html_iframe *next;
-	next = iframe;
-	while ((iframe = next) != NULL) {
-		next = iframe->next;
-		if (iframe->name)
+	ਬਣਤਰ content_html_iframe *ਅਗਲਾ;
+	ਅਗਲਾ = iframe;
+	ਜਦੋਂ ((iframe = ਅਗਲਾ) != ਨਿਰਾ) {
+		ਅਗਲਾ = iframe->ਅਗਲਾ;
+		ਜੇ (iframe->name)
 			talloc_free(iframe->name);
-		if (iframe->url) {
+		ਜੇ (iframe->url) {
 			nsurl_unref(iframe->url);
-			iframe->url = NULL;
+			iframe->url = ਨਿਰਾ;
 		}
 		talloc_free(iframe);
 	}
 }
 
 
-static void html_free_layout(html_content *htmlc)
+ਸਥਿਰ ਖਾਲੀ html_free_layout(html_content *htmlc)
 {
-	if (htmlc->bctx != NULL) {
+	ਜੇ (htmlc->bctx != ਨਿਰਾ) {
 		/* freeing talloc context should let the entire box
 		 * set be destroyed
 		 */
@@ -1199,16 +1199,16 @@ static void html_free_layout(html_content *htmlc)
  * Destroy a CONTENT_HTML and free all resources it owns.
  */
 
-static void html_destroy(struct content *c)
+ਸਥਿਰ ਖਾਲੀ html_destroy(ਬਣਤਰ content *c)
 {
 	html_content *html = (html_content *) c;
-	struct form *f, *g;
+	ਬਣਤਰ form *f, *g;
 
 	NSLOG(netsurf, INFO, "content %p", c);
 
 	/* If we're still converting a layout, cancel it */
-	if (html->box_conversion_context != NULL) {
-		if (cancel_dom_to_box(html->box_conversion_context) != NSERROR_OK) {
+	ਜੇ (html->box_conversion_context != ਨਿਰਾ) {
+		ਜੇ (cancel_dom_ਮੰਜ਼ਿਲ_box(html->box_conversion_context) != NSERROR_OK) {
 			NSLOG(netsurf, CRITICAL, "WARNING, Unable to cancel conversion context, browser may crash");
 		}
 	}
@@ -1216,7 +1216,7 @@ static void html_destroy(struct content *c)
 	selection_destroy(html->sel);
 
 	/* Destroy forms */
-	for (f = html->forms; f != NULL; f = g) {
+	ਲਈ (f = html->forms; f != ਨਿਰਾ; f = g) {
 		g = f->prev;
 
 		form_free(f);
@@ -1224,71 +1224,71 @@ static void html_destroy(struct content *c)
 
 	imagemap_destroy(html);
 
-	if (c->refresh)
+	ਜੇ (c->refresh)
 		nsurl_unref(c->refresh);
 
-	if (html->base_url)
-		nsurl_unref(html->base_url);
+	ਜੇ (html->ਅਧਾਰ_url)
+		nsurl_unref(html->ਅਧਾਰ_url);
 
 	/* At this point we can be moderately confident the JS is offline
 	 * so we destroy the JS thread.
 	 */
-	if (html->jsthread != NULL) {
+	ਜੇ (html->jsthread != ਨਿਰਾ) {
 		js_destroythread(html->jsthread);
-		html->jsthread = NULL;
+		html->jsthread = ਨਿਰਾ;
 	}
 
-	if (html->parser != NULL) {
+	ਜੇ (html->parser != ਨਿਰਾ) {
 		dom_hubbub_parser_destroy(html->parser);
-		html->parser = NULL;
+		html->parser = ਨਿਰਾ;
 	}
 
-	if (html->document != NULL) {
-		dom_node_unref(html->document);
-		html->document = NULL;
+	ਜੇ (html->document != ਨਿਰਾ) {
+		dom_ਗੰਢ_unref(html->document);
+		html->document = ਨਿਰਾ;
 	}
 
-	if (html->title != NULL) {
-		dom_node_unref(html->title);
-		html->title = NULL;
+	ਜੇ (html->title != ਨਿਰਾ) {
+		dom_ਗੰਢ_unref(html->title);
+		html->title = ਨਿਰਾ;
 	}
 
 	/* Free encoding */
-	if (html->encoding != NULL) {
-		free(html->encoding);
-		html->encoding = NULL;
+	ਜੇ (html->encoding != ਨਿਰਾ) {
+		ਮੁਕਤ(html->encoding);
+		html->encoding = ਨਿਰਾ;
 	}
 
 	/* Free base target */
-	if (html->base_target != NULL) {
-		free(html->base_target);
-		html->base_target = NULL;
+	ਜੇ (html->ਅਧਾਰ_ਨਿਸ਼ਾਨਾ != ਨਿਰਾ) {
+		ਮੁਕਤ(html->ਅਧਾਰ_ਨਿਸ਼ਾਨਾ);
+		html->ਅਧਾਰ_ਨਿਸ਼ਾਨਾ = ਨਿਰਾ;
 	}
 
 	/* Free frameset */
-	if (html->frameset != NULL) {
+	ਜੇ (html->frameset != ਨਿਰਾ) {
 		html_destroy_frameset(html->frameset);
 		talloc_free(html->frameset);
-		html->frameset = NULL;
+		html->frameset = ਨਿਰਾ;
 	}
 
 	/* Free iframes */
-	if (html->iframe != NULL) {
+	ਜੇ (html->iframe != ਨਿਰਾ) {
 		html_destroy_iframe(html->iframe);
-		html->iframe = NULL;
+		html->iframe = ਨਿਰਾ;
 	}
 
 	/* Destroy selection context */
-	if (html->select_ctx != NULL) {
+	ਜੇ (html->select_ctx != ਨਿਰਾ) {
 		css_select_ctx_destroy(html->select_ctx);
-		html->select_ctx = NULL;
+		html->select_ctx = ਨਿਰਾ;
 	}
 
 	lwc_string_unref(html->universal);
-	html->universal = NULL;
+	html->universal = ਨਿਰਾ;
 
 	lwc_string_unref(html->media.prefers_color_scheme);
-	html->media.prefers_color_scheme = NULL;
+	html->media.prefers_color_scheme = ਨਿਰਾ;
 
 	/* Free stylesheets */
 	html_css_free_stylesheets(html);
@@ -1304,16 +1304,16 @@ static void html_destroy(struct content *c)
 }
 
 
-static nserror html_clone(const struct content *old, struct content **newc)
+ਸਥਿਰ nserror html_clone(ਅਚਲ ਬਣਤਰ content *old, ਬਣਤਰ content **newc)
 {
 	/** \todo Clone HTML specifics */
 
 	/* In the meantime, we should never be called, as HTML contents
 	 * cannot be shared and we're not intending to fix printing's
 	 * cloning of documents. */
-	assert(0 && "html_clone should never be called");
+	ਪ੍ਰਤਿਜ੍ਞਾ(0 && "html_clone should never be called");
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
@@ -1321,16 +1321,16 @@ static nserror html_clone(const struct content *old, struct content **newc)
  * Handle a window containing a CONTENT_HTML being opened.
  */
 
-static nserror
-html_open(struct content *c,
-	  struct browser_window *bw,
-	  struct content *page,
-	  struct object_params *params)
+ਸਥਿਰ nserror
+html_open(ਬਣਤਰ content *c,
+	  ਬਣਤਰ browser_ਖਿੜਕੀ *bw,
+	  ਬਣਤਰ content *ਪੰਨਾ,
+	  ਬਣਤਰ object_params *params)
 {
 	html_content *html = (html_content *) c;
 
 	html->bw = bw;
-	html->page = (html_content *) page;
+	html->ਪੰਨਾ = (html_content *) ਪੰਨਾ;
 
 	html->drag_type = HTML_DRAG_NONE;
 	html->drag_owner.no_owner = true;
@@ -1342,7 +1342,7 @@ html_open(struct content *c,
 
 	html_object_open_objects(html, bw);
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 
@@ -1350,7 +1350,7 @@ html_open(struct content *c,
  * Handle a window containing a CONTENT_HTML being closed.
  */
 
-static nserror html_close(struct content *c)
+ਸਥਿਰ nserror html_close(ਬਣਤਰ content *c)
 {
 	html_content *htmlc = (html_content *) c;
 	nserror ret = NSERROR_OK;
@@ -1358,17 +1358,17 @@ static nserror html_close(struct content *c)
 	selection_clear(htmlc->sel, false);
 
 	/* clear the html content reference to the browser window */
-	htmlc->bw = NULL;
+	htmlc->bw = ਨਿਰਾ;
 
 	/* remove all object references from the html content */
 	html_object_close_objects(htmlc);
 
-	if (htmlc->jsthread != NULL) {
+	ਜੇ (htmlc->jsthread != ਨਿਰਾ) {
 		/* Close, but do not destroy (yet) the JS thread */
 		ret = js_closethread(htmlc->jsthread);
 	}
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 
@@ -1376,28 +1376,28 @@ static nserror html_close(struct content *c)
  * Return an HTML content's selection context
  */
 
-static void html_clear_selection(struct content *c)
+ਸਥਿਰ ਖਾਲੀ html_clear_selection(ਬਣਤਰ content *c)
 {
 	html_content *html = (html_content *) c;
 
-	switch (html->selection_type) {
-	case HTML_SELECTION_NONE:
+	ਚੋਣ (html->selection_type) {
+	ਹਾਲਤ HTML_SELECTION_NONE:
 		/* Nothing to do */
-		assert(html->selection_owner.none == true);
-		break;
-	case HTML_SELECTION_TEXTAREA:
+		ਪ੍ਰਤਿਜ੍ਞਾ(html->selection_owner.none == true);
+		ਰੋਕੋ;
+	ਹਾਲਤ HTML_SELECTION_TEXTAREA:
 		textarea_clear_selection(html->selection_owner.textarea->
-				gadget->data.text.ta);
-		break;
-	case HTML_SELECTION_SELF:
-		assert(html->selection_owner.none == false);
+				gadget->ਅੰਕੜੇ.ਪਾਠ.ta);
+		ਰੋਕੋ;
+	ਹਾਲਤ HTML_SELECTION_SELF:
+		ਪ੍ਰਤਿਜ੍ਞਾ(html->selection_owner.none == false);
 		selection_clear(html->sel, true);
-		break;
-	case HTML_SELECTION_CONTENT:
+		ਰੋਕੋ;
+	ਹਾਲਤ HTML_SELECTION_CONTENT:
 		content_clear_selection(html->selection_owner.content->object);
-		break;
-	default:
-		break;
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਰੋਕੋ;
 	}
 
 	/* There is no selection now. */
@@ -1410,29 +1410,29 @@ static void html_clear_selection(struct content *c)
  * Return an HTML content's selection context
  */
 
-static char *html_get_selection(struct content *c)
+ਸਥਿਰ ਅੱਖਰ *html_get_selection(ਬਣਤਰ content *c)
 {
 	html_content *html = (html_content *) c;
 
-	switch (html->selection_type) {
-	case HTML_SELECTION_TEXTAREA:
-		return textarea_get_selection(html->selection_owner.textarea->
-				gadget->data.text.ta);
-	case HTML_SELECTION_SELF:
-		assert(html->selection_owner.none == false);
-		return selection_get_copy(html->sel);
-	case HTML_SELECTION_CONTENT:
-		return content_get_selection(
+	ਚੋਣ (html->selection_type) {
+	ਹਾਲਤ HTML_SELECTION_TEXTAREA:
+		ਵਾਪਸ textarea_get_selection(html->selection_owner.textarea->
+				gadget->ਅੰਕੜੇ.ਪਾਠ.ta);
+	ਹਾਲਤ HTML_SELECTION_SELF:
+		ਪ੍ਰਤਿਜ੍ਞਾ(html->selection_owner.none == false);
+		ਵਾਪਸ selection_get_copy(html->sel);
+	ਹਾਲਤ HTML_SELECTION_CONTENT:
+		ਵਾਪਸ content_get_selection(
 				html->selection_owner.content->object);
-	case HTML_SELECTION_NONE:
+	ਹਾਲਤ HTML_SELECTION_NONE:
 		/* Nothing to do */
-		assert(html->selection_owner.none == true);
-		break;
-	default:
-		break;
+		ਪ੍ਰਤਿਜ੍ਞਾ(html->selection_owner.none == true);
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਰੋਕੋ;
 	}
 
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
 
@@ -1447,75 +1447,75 @@ static char *html_get_selection(struct content *c)
  *             relevent content, or set to NULL if none.
  * \return NSERROR_OK on success else appropriate error code.
  */
-static nserror
-html_get_contextual_content(struct content *c, int x, int y,
-			    struct browser_window_features *data)
+ਸਥਿਰ nserror
+html_get_contextual_content(ਬਣਤਰ content *c, ਪੂਰਨ x, ਪੂਰਨ y,
+			    ਬਣਤਰ browser_ਖਿੜਕੀ_features *ਅੰਕੜੇ)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	int box_x = 0, box_y = 0;
+	ਬਣਤਰ box *box = html->layout;
+	ਬਣਤਰ box *ਅਗਲਾ;
+	ਪੂਰਨ box_x = 0, box_y = 0;
 
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
-		box = next;
+	ਜਦੋਂ ((ਅਗਲਾ = box_at_ਬਿੰਦੂ(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ਨਿਰਾ) {
+		box = ਅਗਲਾ;
 
 		/* hidden boxes are ignored */
-		if ((box->style != NULL) &&
+		ਜੇ ((box->style != ਨਿਰਾ) &&
 		    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
-			continue;
+			ਜਾਰੀ;
 		}
 
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
-			browser_window_get_features(box->iframe,
+		ਜੇ (box->iframe) {
+			ਦਸ਼ਮਲਵ scale = browser_ਖਿੜਕੀ_get_scale(box->iframe);
+			browser_ਖਿੜਕੀ_get_features(box->iframe,
 						    (x - box_x) * scale,
 						    (y - box_y) * scale,
-						    data);
+						    ਅੰਕੜੇ);
 		}
 
-		if (box->object)
+		ਜੇ (box->object)
 			content_get_contextual_content(box->object,
-					x - box_x, y - box_y, data);
+					x - box_x, y - box_y, ਅੰਕੜੇ);
 
-		if (box->object)
-			data->object = box->object;
+		ਜੇ (box->object)
+			ਅੰਕੜੇ->object = box->object;
 
-		if (box->href) {
-			data->link = box->href;
-			data->link_title = box->text;
-			data->link_title_length = box->length;
+		ਜੇ (box->href) {
+			ਅੰਕੜੇ->link = box->href;
+			ਅੰਕੜੇ->link_title = box->ਪਾਠ;
+			ਅੰਕੜੇ->link_title_ਲੰਮਾਈ = box->ਲੰਮਾਈ;
 		}
 
-		if (box->usemap) {
-			const char *target = NULL;
+		ਜੇ (box->usemap) {
+			ਅਚਲ ਅੱਖਰ *ਨਿਸ਼ਾਨਾ = ਨਿਰਾ;
 			nsurl *url = imagemap_get(html, box->usemap, box_x,
-					box_y, x, y, &target);
+					box_y, x, y, &ਨਿਸ਼ਾਨਾ);
 			/* Box might have imagemap, but no actual link area
 			 * at point */
-			if (url != NULL)
-				data->link = url;
+			ਜੇ (url != ਨਿਰਾ)
+				ਅੰਕੜੇ->link = url;
 		}
-		if (box->gadget) {
-			switch (box->gadget->type) {
-			case GADGET_TEXTBOX:
-			case GADGET_TEXTAREA:
-			case GADGET_PASSWORD:
-				data->form_features = CTX_FORM_TEXT;
-				break;
+		ਜੇ (box->gadget) {
+			ਚੋਣ (box->gadget->type) {
+			ਹਾਲਤ GADGET_TEXTBOX:
+			ਹਾਲਤ GADGET_TEXTAREA:
+			ਹਾਲਤ GADGET_PASSWORD:
+				ਅੰਕੜੇ->form_features = CTX_FORM_ਪਾਠ;
+				ਰੋਕੋ;
 
-			case GADGET_FILE:
-				data->form_features = CTX_FORM_FILE;
-				break;
+			ਹਾਲਤ GADGET_FILE:
+				ਅੰਕੜੇ->form_features = CTX_FORM_FILE;
+				ਰੋਕੋ;
 
-			default:
-				data->form_features = CTX_FORM_NONE;
-				break;
+			ਮੂਲ:
+				ਅੰਕੜੇ->form_features = CTX_FORM_NONE;
+				ਰੋਕੋ;
 			}
 		}
 	}
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 
@@ -1529,63 +1529,63 @@ html_get_contextual_content(struct content *c, int x, int y,
  * \param scry	number of px try to scroll something in y direction
  * \return true iff scroll was consumed by something in the content
  */
-static bool
-html_scroll_at_point(struct content *c, int x, int y, int scrx, int scry)
+ਸਥਿਰ bool
+html_scroll_at_ਬਿੰਦੂ(ਬਣਤਰ content *c, ਪੂਰਨ x, ਪੂਰਨ y, ਪੂਰਨ scrx, ਪੂਰਨ scry)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	int box_x = 0, box_y = 0;
+	ਬਣਤਰ box *box = html->layout;
+	ਬਣਤਰ box *ਅਗਲਾ;
+	ਪੂਰਨ box_x = 0, box_y = 0;
 	bool handled_scroll = false;
 
 	/* TODO: invert order; visit deepest box first */
 
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
-		box = next;
+	ਜਦੋਂ ((ਅਗਲਾ = box_at_ਬਿੰਦੂ(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ਨਿਰਾ) {
+		box = ਅਗਲਾ;
 
-		if (box->style && css_computed_visibility(box->style) ==
+		ਜੇ (box->style && css_computed_visibility(box->style) ==
 				CSS_VISIBILITY_HIDDEN)
-			continue;
+			ਜਾਰੀ;
 
 		/* Pass into iframe */
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
+		ਜੇ (box->iframe) {
+			ਦਸ਼ਮਲਵ scale = browser_ਖਿੜਕੀ_get_scale(box->iframe);
 
-			if (browser_window_scroll_at_point(box->iframe,
+			ਜੇ (browser_ਖਿੜਕੀ_scroll_at_ਬਿੰਦੂ(box->iframe,
 							   (x - box_x) * scale,
 							   (y - box_y) * scale,
 							   scrx, scry) == true)
-				return true;
+				ਵਾਪਸ true;
 		}
 
 		/* Pass into textarea widget */
-		if (box->gadget && (box->gadget->type == GADGET_TEXTAREA ||
+		ਜੇ (box->gadget && (box->gadget->type == GADGET_TEXTAREA ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_TEXTBOX) &&
-				textarea_scroll(box->gadget->data.text.ta,
+				textarea_scroll(box->gadget->ਅੰਕੜੇ.ਪਾਠ.ta,
 						scrx, scry) == true)
-			return true;
+			ਵਾਪਸ true;
 
 		/* Pass into object */
-		if (box->object != NULL && content_scroll_at_point(
+		ਜੇ (box->object != ਨਿਰਾ && content_scroll_at_ਬਿੰਦੂ(
 				box->object, x - box_x, y - box_y,
 				scrx, scry) == true)
-			return true;
+			ਵਾਪਸ true;
 
 		/* Handle box scrollbars */
-		if (box->scroll_y && scrollbar_scroll(box->scroll_y, scry))
+		ਜੇ (box->scroll_y && scrollbar_scroll(box->scroll_y, scry))
 			handled_scroll = true;
 
-		if (box->scroll_x && scrollbar_scroll(box->scroll_x, scrx))
+		ਜੇ (box->scroll_x && scrollbar_scroll(box->scroll_x, scrx))
 			handled_scroll = true;
 
-		if (handled_scroll == true)
-			return true;
+		ਜੇ (handled_scroll == true)
+			ਵਾਪਸ true;
 	}
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /** Helper for file gadgets to store their filename unencoded on the
@@ -1593,79 +1593,79 @@ html_scroll_at_point(struct content *c, int x, int y, int scrx, int scry)
  *
  * \todo Get rid of this crap eventually
  */
-static void html__dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *_data, struct dom_node *src,
-		struct dom_node *dst)
+ਸਥਿਰ ਖਾਲੀ html_dom_user_ਅੰਕੜੇ_handler(dom_ਗੰਢ_operation operation,
+		dom_string *ਕੁੰਜੀ, ਖਾਲੀ *ਅੰਕੜੇ_2, ਬਣਤਰ dom_ਗੰਢ *src,
+		ਬਣਤਰ dom_ਗੰਢ *dst)
 {
-	char *oldfile;
-	char *data = (char *)_data;
+	ਅੱਖਰ *oldfile;
+	ਅੱਖਰ *ਅੰਕੜੇ = (ਅੱਖਰ *)ਅੰਕੜੇ_2;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_file_name_node_data,
-				key) || data == NULL) {
-		return;
+	ਜੇ (!dom_string_isequal(corestring_dom_ns_ਕੁੰਜੀ_file_name_ਗੰਢ_ਅੰਕੜੇ,
+				ਕੁੰਜੀ) || ਅੰਕੜੇ == ਨਿਰਾ) {
+		ਵਾਪਸ;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		if (dom_node_set_user_data(dst,
-					   corestring_dom___ns_key_file_name_node_data,
-					   strdup(data), html__dom_user_data_handler,
+	ਚੋਣ (operation) {
+	ਹਾਲਤ DOM_ਗੰਢ_CLONED:
+		ਜੇ (dom_ਗੰਢ_ਸੈੱਟ_user_ਅੰਕੜੇ(dst,
+					   corestring_dom_ns_ਕੁੰਜੀ_file_name_ਗੰਢ_ਅੰਕੜੇ,
+					   strdup(ਅੰਕੜੇ), html_dom_user_ਅੰਕੜੇ_handler,
 					   &oldfile) == DOM_NO_ERR) {
-			if (oldfile != NULL)
-				free(oldfile);
+			ਜੇ (oldfile != ਨਿਰਾ)
+				ਮੁਕਤ(oldfile);
 		}
-		break;
+		ਰੋਕੋ;
 
-	case DOM_NODE_RENAMED:
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-		break;
+	ਹਾਲਤ DOM_ਗੰਢ_RENAMED:
+	ਹਾਲਤ DOM_ਗੰਢ_IMPORTED:
+	ਹਾਲਤ DOM_ਗੰਢ_ADOPTED:
+		ਰੋਕੋ;
 
-	case DOM_NODE_DELETED:
-		free(data);
-		break;
-	default:
+	ਹਾਲਤ DOM_ਗੰਢ_DELETED:
+		ਮੁਕਤ(ਅੰਕੜੇ);
+		ਰੋਕੋ;
+	ਮੂਲ:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ਪ੍ਰਤਿਜ੍ਞਾ(0);
 	}
 }
 
-static void html__set_file_gadget_filename(struct content *c,
-	struct form_control *gadget, const char *fn)
+ਸਥਿਰ ਖਾਲੀ html_ਸੈੱਟ_file_gadget_filename(ਬਣਤਰ content *c,
+	ਬਣਤਰ form_control *gadget, ਅਚਲ ਅੱਖਰ *fn)
 {
 	nserror ret;
-	char *utf8_fn, *oldfile = NULL;
+	ਅੱਖਰ *utf8_fn, *oldfile = ਨਿਰਾ;
 	html_content *html = (html_content *)c;
-	struct box *file_box = gadget->box;
+	ਬਣਤਰ box *file_box = gadget->box;
 
-	ret = guit->utf8->local_to_utf8(fn, 0, &utf8_fn);
-	if (ret != NSERROR_OK) {
-		assert(ret != NSERROR_BAD_ENCODING);
+	ret = guit->utf8->local_ਮੰਜ਼ਿਲ_utf8(fn, 0, &utf8_fn);
+	ਜੇ (ret != NSERROR_OK) {
+		ਪ੍ਰਤਿਜ੍ਞਾ(ret != NSERROR_BAD_ENCODING);
 		NSLOG(netsurf, INFO,
 		      "utf8 to local encoding conversion failed");
 		/* Load was for us - just no memory */
-		return;
+		ਵਾਪਸ;
 	}
 
-	form_gadget_update_value(gadget, utf8_fn);
+	form_gadget_update_ਮੁੱਲ(gadget, utf8_fn);
 
 	/* corestring_dom___ns_key_file_name_node_data */
-	if (dom_node_set_user_data((dom_node *)file_box->gadget->node,
-				   corestring_dom___ns_key_file_name_node_data,
-				   strdup(fn), html__dom_user_data_handler,
+	ਜੇ (dom_ਗੰਢ_ਸੈੱਟ_user_ਅੰਕੜੇ((dom_ਗੰਢ *)file_box->gadget->ਗੰਢ,
+				   corestring_dom_ns_ਕੁੰਜੀ_file_name_ਗੰਢ_ਅੰਕੜੇ,
+				   strdup(fn), html_dom_user_ਅੰਕੜੇ_handler,
 				   &oldfile) == DOM_NO_ERR) {
-		if (oldfile != NULL)
-			free(oldfile);
+		ਜੇ (oldfile != ਨਿਰਾ)
+			ਮੁਕਤ(oldfile);
 	}
 
 	/* Redraw box. */
 	html__redraw_a_box(html, file_box);
 }
 
-void html_set_file_gadget_filename(struct hlcache_handle *hl,
-	struct form_control *gadget, const char *fn)
+ਖਾਲੀ html_ਸੈੱਟ_file_gadget_filename_2(ਬਣਤਰ hlcache_handle *hl,
+	ਬਣਤਰ form_control *gadget, ਅਚਲ ਅੱਖਰ *fn)
 {
-	return html__set_file_gadget_filename(hlcache_handle_get_content(hl),
+	ਵਾਪਸ html_ਸੈੱਟ_file_gadget_filename(hlcache_handle_get_content(hl),
 		gadget, fn);
 }
 
@@ -1679,86 +1679,86 @@ void html_set_file_gadget_filename(struct hlcache_handle *hl,
  * \param file	path to file to be dropped, or NULL to know if drop allowed
  * \return true iff file drop has been handled, or if drop possible (NULL file)
  */
-static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
+ਸਥਿਰ bool html_drop_file_at_ਬਿੰਦੂ(ਬਣਤਰ content *c, ਪੂਰਨ x, ਪੂਰਨ y, ਅੱਖਰ *file)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	struct box *file_box = NULL;
-	struct box *text_box = NULL;
-	int box_x = 0, box_y = 0;
+	ਬਣਤਰ box *box = html->layout;
+	ਬਣਤਰ box *ਅਗਲਾ;
+	ਬਣਤਰ box *file_box = ਨਿਰਾ;
+	ਬਣਤਰ box *ਪਾਠ_box = ਨਿਰਾ;
+	ਪੂਰਨ box_x = 0, box_y = 0;
 
 	/* Scan box tree for boxes that can handle drop */
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
-		box = next;
+	ਜਦੋਂ ((ਅਗਲਾ = box_at_ਬਿੰਦੂ(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ਨਿਰਾ) {
+		box = ਅਗਲਾ;
 
-		if (box->style &&
+		ਜੇ (box->style &&
 		    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN)
-			continue;
+			ਜਾਰੀ;
 
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
-			return browser_window_drop_file_at_point(
+		ਜੇ (box->iframe) {
+			ਦਸ਼ਮਲਵ scale = browser_ਖਿੜਕੀ_get_scale(box->iframe);
+			ਵਾਪਸ browser_ਖਿੜਕੀ_drop_file_at_ਬਿੰਦੂ(
 				box->iframe,
 				(x - box_x) * scale,
 				(y - box_y) * scale,
 				file);
 		}
 
-		if (box->object &&
-		    content_drop_file_at_point(box->object,
+		ਜੇ (box->object &&
+		    content_drop_file_at_ਬਿੰਦੂ(box->object,
 					x - box_x, y - box_y, file) == true)
-			return true;
+			ਵਾਪਸ true;
 
-		if (box->gadget) {
-			switch (box->gadget->type) {
-				case GADGET_FILE:
+		ਜੇ (box->gadget) {
+			ਚੋਣ (box->gadget->type) {
+				ਹਾਲਤ GADGET_FILE:
 					file_box = box;
-				break;
+				ਰੋਕੋ;
 
-				case GADGET_TEXTBOX:
-				case GADGET_TEXTAREA:
-				case GADGET_PASSWORD:
-					text_box = box;
-					break;
+				ਹਾਲਤ GADGET_TEXTBOX:
+				ਹਾਲਤ GADGET_TEXTAREA:
+				ਹਾਲਤ GADGET_PASSWORD:
+					ਪਾਠ_box = box;
+					ਰੋਕੋ;
 
-				default:	/* appease compiler */
-					break;
+				ਮੂਲ:	/* appease compiler */
+					ਰੋਕੋ;
 			}
 		}
 	}
 
-	if (!file_box && !text_box)
+	ਜੇ (!file_box && !ਪਾਠ_box)
 		/* No box capable of handling drop */
-		return false;
+		ਵਾਪਸ false;
 
-	if (file == NULL)
+	ਜੇ (file == ਨਿਰਾ)
 		/* There is a box capable of handling drop here */
-		return true;
+		ਵਾਪਸ true;
 
 	/* Handle the drop */
-	if (file_box) {
+	ਜੇ (file_box) {
 		/* File dropped on file input */
-		html__set_file_gadget_filename(c, file_box->gadget, file);
+		html_ਸੈੱਟ_file_gadget_filename(c, file_box->gadget, file);
 
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* File dropped on text input */
 
 		size_t file_len;
-		FILE *fp = NULL;
-		char *buffer;
-		char *utf8_buff;
+		FILE *fp = ਨਿਰਾ;
+		ਅੱਖਰ *ਬਫਰ;
+		ਅੱਖਰ *utf8_buff;
 		nserror ret;
-		unsigned int size;
-		int bx, by;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ;
+		ਪੂਰਨ bx, by;
 
 		/* Open file */
 		fp = fopen(file, "rb");
-		if (fp == NULL) {
+		ਜੇ (fp == ਨਿਰਾ) {
 			/* Couldn't open file, but drop was for us */
-			return true;
+			ਵਾਪਸ true;
 		}
 
 		/* Get filesize */
@@ -1766,67 +1766,67 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 		file_len = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 
-		if ((long)file_len == -1) {
+		ਜੇ ((ਲੰਮਾ)file_len == -1) {
 			/* unable to get file length, but drop was for us */
 			fclose(fp);
-			return true;
+			ਵਾਪਸ true;
 		}
 
 		/* Allocate buffer for file data */
-		buffer = malloc(file_len + 1);
-		if (buffer == NULL) {
+		ਬਫਰ = ਸਮ੍ਰਿਤੀ_ਦਿਓ(file_len + 1);
+		ਜੇ (ਬਫਰ == ਨਿਰਾ) {
 			/* No memory, but drop was for us */
 			fclose(fp);
-			return true;
+			ਵਾਪਸ true;
 		}
 
 		/* Stick file into buffer */
-		if (file_len != fread(buffer, 1, file_len, fp)) {
+		ਜੇ (file_len != fread(ਬਫਰ, 1, file_len, fp)) {
 			/* Failed, but drop was for us */
-			free(buffer);
+			ਮੁਕਤ(ਬਫਰ);
 			fclose(fp);
-			return true;
+			ਵਾਪਸ true;
 		}
 
 		/* Done with file */
 		fclose(fp);
 
 		/* Ensure buffer's string termination */
-		buffer[file_len] = '\0';
+		ਬਫਰ[file_len] = '\0';
 
 		/* TODO: Sniff for text? */
 
 		/* Convert to UTF-8 */
-		ret = guit->utf8->local_to_utf8(buffer, file_len, &utf8_buff);
-		if (ret != NSERROR_OK) {
+		ret = guit->utf8->local_ਮੰਜ਼ਿਲ_utf8(ਬਫਰ, file_len, &utf8_buff);
+		ਜੇ (ret != NSERROR_OK) {
 			/* bad encoding shouldn't happen */
 			NSLOG(netsurf, ERROR,
 			      "local to utf8 encoding failed (%s)",
 			      messages_get_errorcode(ret));
-			assert(ret != NSERROR_BAD_ENCODING);
-			free(buffer);
-			return true;
+			ਪ੍ਰਤਿਜ੍ਞਾ(ret != NSERROR_BAD_ENCODING);
+			ਮੁਕਤ(ਬਫਰ);
+			ਵਾਪਸ true;
 		}
 
 		/* Done with buffer */
-		free(buffer);
+		ਮੁਕਤ(ਬਫਰ);
 
 		/* Get new length */
-		size = strlen(utf8_buff);
+		ਮਾਪ = ਲੜੀ_ਲੰਬਾਈ(utf8_buff);
 
 		/* Simulate a click over the input box, to place caret */
-		box_coords(text_box, &bx, &by);
-		textarea_mouse_action(text_box->gadget->data.text.ta,
+		box_coords(ਪਾਠ_box, &bx, &by);
+		textarea_mouse_action(ਪਾਠ_box->gadget->ਅੰਕੜੇ.ਪਾਠ.ta,
 				BROWSER_MOUSE_PRESS_1, x - bx, y - by);
 
 		/* Paste the file as text */
-		textarea_drop_text(text_box->gadget->data.text.ta,
-				utf8_buff, size);
+		textarea_drop_ਪਾਠ(ਪਾਠ_box->gadget->ਅੰਕੜੇ.ਪਾਠ.ta,
+				utf8_buff, ਮਾਪ);
 
-		free(utf8_buff);
+		ਮੁਕਤ(utf8_buff);
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
@@ -1836,12 +1836,12 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
  * \param c The content to debug
  * \param op The debug operation type
  */
-static nserror
-html_debug(struct content *c, enum content_debug op)
+ਸਥਿਰ nserror
+html_debug(ਬਣਤਰ content *c, ਗਿਣਤੀ content_debug op)
 {
 	html_redraw_debug = !html_redraw_debug;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 
@@ -1852,96 +1852,96 @@ html_debug(struct content *c, enum content_debug op)
  * \param f The file to dump to
  * \param op The debug dump type
  */
-static nserror
-html_debug_dump(struct content *c, FILE *f, enum content_debug op)
+ਸਥਿਰ nserror
+html_debug_dump(ਬਣਤਰ content *c, FILE *f, ਗਿਣਤੀ content_debug op)
 {
 	html_content *htmlc = (html_content *)c;
-	dom_node *html;
+	dom_ਗੰਢ *html;
 	dom_exception exc; /* returned by libdom functions */
 	nserror ret;
 
-	assert(htmlc != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(htmlc != ਨਿਰਾ);
 
-	if (op == CONTENT_DEBUG_RENDER) {
-		assert(htmlc->layout != NULL);
+	ਜੇ (op == CONTENT_DEBUG_RENDER) {
+		ਪ੍ਰਤਿਜ੍ਞਾ(htmlc->layout != ਨਿਰਾ);
 		box_dump(f, htmlc->layout, 0, true);
 		ret = NSERROR_OK;
-	} else {
-		if (htmlc->document == NULL) {
+	} ਨਹੀਂਤਾਂ {
+		ਜੇ (htmlc->document == ਨਿਰਾ) {
 			NSLOG(netsurf, INFO, "No document to dump");
-			return NSERROR_DOM;
+			ਵਾਪਸ NSERROR_DOM;
 		}
 
-		exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-		if ((exc != DOM_NO_ERR) || (html == NULL)) {
+		exc = dom_document_get_document_element(htmlc->document, (ਖਾਲੀ *) &html);
+		ਜੇ ((exc != DOM_NO_ERR) || (html == ਨਿਰਾ)) {
 			NSLOG(netsurf, INFO, "Unable to obtain root node");
-			return NSERROR_DOM;
+			ਵਾਪਸ NSERROR_DOM;
 		}
 
 		ret = libdom_dump_structure(html, f, 0);
 
 		NSLOG(netsurf, INFO, "DOM structure dump returning %d", ret);
 
-		dom_node_unref(html);
+		dom_ਗੰਢ_unref(html);
 	}
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 
-#if ALWAYS_DUMP_FRAMESET
+#ਜੇ ALWAYS_DUMP_FRAMESET
 /**
  * Print a frameset tree to stderr.
  */
 
-static void
-html_dump_frameset(struct content_html_frames *frame, unsigned int depth)
+ਸਥਿਰ ਖਾਲੀ
+html_dump_frameset(ਬਣਤਰ content_html_ਚੌਖਟੇ *ਚੌਖਟਾ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਡੂੰਘਾਈ)
 {
-	unsigned int i;
-	int row, col, index;
-	const char *unit[] = {"px", "%", "*"};
-	const char *scrolling[] = {"auto", "yes", "no"};
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i;
+	ਪੂਰਨ ਪੰਕਤੀ, ਖਾਨਾ, index;
+	ਅਚਲ ਅੱਖਰ *unit[] = {"px", "%", "*"};
+	ਅਚਲ ਅੱਖਰ *scrolling[] = {"auto", "yes", "no"};
 
-	assert(frame);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਚੌਖਟਾ);
 
-	fprintf(stderr, "%p ", frame);
+	fprintf(stderr, "%p ", ਚੌਖਟਾ);
 
-	fprintf(stderr, "(%i %i) ", frame->rows, frame->cols);
+	fprintf(stderr, "(%i %i) ", ਚੌਖਟਾ->ਪੰਕਤੀਆਂ, ਚੌਖਟਾ->ਖਾਨੇ_ਗਿਣਤੀ);
 
-	fprintf(stderr, "w%g%s ", frame->width.value, unit[frame->width.unit]);
-	fprintf(stderr, "h%g%s ", frame->height.value,unit[frame->height.unit]);
+	fprintf(stderr, "w%g%s ", ਚੌਖਟਾ->ਚੌੜਾਈ.ਮੁੱਲ, unit[ਚੌਖਟਾ->ਚੌੜਾਈ.unit]);
+	fprintf(stderr, "h%g%s ", ਚੌਖਟਾ->ਉਚਾਈ.ਮੁੱਲ,unit[ਚੌਖਟਾ->ਉਚਾਈ.unit]);
 	fprintf(stderr, "(margin w%i h%i) ",
-			frame->margin_width, frame->margin_height);
+			ਚੌਖਟਾ->margin_ਚੌੜਾਈ, ਚੌਖਟਾ->margin_ਉਚਾਈ);
 
-	if (frame->name)
-		fprintf(stderr, "'%s' ", frame->name);
-	if (frame->url)
-		fprintf(stderr, "<%s> ", frame->url);
+	ਜੇ (ਚੌਖਟਾ->name)
+		fprintf(stderr, "'%s' ", ਚੌਖਟਾ->name);
+	ਜੇ (ਚੌਖਟਾ->url)
+		fprintf(stderr, "<%s> ", ਚੌਖਟਾ->url);
 
-	if (frame->no_resize)
+	ਜੇ (ਚੌਖਟਾ->no_resize)
 		fprintf(stderr, "noresize ");
-	fprintf(stderr, "(scrolling %s) ", scrolling[frame->scrolling]);
-	if (frame->border)
+	fprintf(stderr, "(scrolling %s) ", scrolling[ਚੌਖਟਾ->scrolling]);
+	ਜੇ (ਚੌਖਟਾ->border)
 		fprintf(stderr, "border %x ",
-				(unsigned int) frame->border_colour);
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ) ਚੌਖਟਾ->border_ਰੰਗ);
 
 	fprintf(stderr, "\n");
 
-	if (frame->children) {
-		for (row = 0; row != frame->rows; row++) {
-			for (col = 0; col != frame->cols; col++) {
-				for (i = 0; i != depth; i++)
+	ਜੇ (ਚੌਖਟਾ->children) {
+		ਲਈ (ਪੰਕਤੀ = 0; ਪੰਕਤੀ != ਚੌਖਟਾ->ਪੰਕਤੀਆਂ; ਪੰਕਤੀ++) {
+			ਲਈ (ਖਾਨਾ = 0; ਖਾਨਾ != ਚੌਖਟਾ->ਖਾਨੇ_ਗਿਣਤੀ; ਖਾਨਾ++) {
+				ਲਈ (i = 0; i != ਡੂੰਘਾਈ; i++)
 					fprintf(stderr, "  ");
-				fprintf(stderr, "(%i %i): ", row, col);
-				index = (row * frame->cols) + col;
-				html_dump_frameset(&frame->children[index],
-						depth + 1);
+				fprintf(stderr, "(%i %i): ", ਪੰਕਤੀ, ਖਾਨਾ);
+				index = (ਪੰਕਤੀ * ਚੌਖਟਾ->ਖਾਨੇ_ਗਿਣਤੀ) + ਖਾਨਾ;
+				html_dump_frameset(&ਚੌਖਟਾ->children[index],
+						ਡੂੰਘਾਈ + 1);
 			}
 		}
 	}
 }
 
-#endif
+#ਜੇ_ਅੰਤ
 
 /**
  * Retrieve HTML document tree
@@ -1953,9 +1953,9 @@ dom_document *html_get_document(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(c != ਨਿਰਾ);
 
-	return c->document;
+	ਵਾਪਸ c->document;
 }
 
 /**
@@ -1967,13 +1967,13 @@ dom_document *html_get_document(hlcache_handle *h)
  * \todo This API must die, as must all use of the box tree outside of
  *         HTML content handler
  */
-struct box *html_get_box_tree(hlcache_handle *h)
+ਬਣਤਰ box *html_get_box_ਰੁੱਖ(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(c != ਨਿਰਾ);
 
-	return c->layout;
+	ਵਾਪਸ c->layout;
 }
 
 /**
@@ -1983,19 +1983,19 @@ struct box *html_get_box_tree(hlcache_handle *h)
  * \param op The content encoding operation to perform.
  * \return Pointer to charset, or NULL
  */
-static const char *html_encoding(const struct content *c, enum content_encoding_type op)
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *html_encoding(ਅਚਲ ਬਣਤਰ content *c, ਗਿਣਤੀ content_encoding_type op)
 {
 	html_content *html = (html_content *) c;
-	static char enc_token[10] = "Encoding0";
+	ਸਥਿਰ ਅੱਖਰ enc_token[10] = "Encoding0";
 
-	assert(html != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(html != ਨਿਰਾ);
 
-	if (op == CONTENT_ENCODING_SOURCE) {
-		enc_token[8] = '0' + html->encoding_source;
-		return messages_get(enc_token);
+	ਜੇ (op == CONTENT_ENCODING_ਸਰੋਤ) {
+		enc_token[8] = '0' + html->encoding_ਸਰੋਤ;
+		ਵਾਪਸ messages_get(enc_token);
 	}
 
-	return html->encoding;
+	ਵਾਪਸ html->encoding;
 }
 
 
@@ -2005,13 +2005,13 @@ static const char *html_encoding(const struct content *c, enum content_encoding_
  * \param h  Content to inspect
  * \return Pointer to framesets, or NULL if none
  */
-struct content_html_frames *html_get_frameset(hlcache_handle *h)
+ਬਣਤਰ content_html_ਚੌਖਟੇ *html_get_frameset(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(c != ਨਿਰਾ);
 
-	return c->frameset;
+	ਵਾਪਸ c->frameset;
 }
 
 /**
@@ -2020,13 +2020,13 @@ struct content_html_frames *html_get_frameset(hlcache_handle *h)
  * \param h  Content to inspect
  * \return Pointer to iframes, or NULL if none
  */
-struct content_html_iframe *html_get_iframe(hlcache_handle *h)
+ਬਣਤਰ content_html_iframe *html_get_iframe(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(c != ਨਿਰਾ);
 
-	return c->iframe;
+	ਵਾਪਸ c->iframe;
 }
 
 /**
@@ -2035,13 +2035,13 @@ struct content_html_iframe *html_get_iframe(hlcache_handle *h)
  * \param h  Content to retrieve base target from
  * \return Pointer to URL
  */
-nsurl *html_get_base_url(hlcache_handle *h)
+nsurl *html_get_ਅਧਾਰ_url(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(c != ਨਿਰਾ);
 
-	return c->base_url;
+	ਵਾਪਸ c->ਅਧਾਰ_url;
 }
 
 /**
@@ -2050,13 +2050,13 @@ nsurl *html_get_base_url(hlcache_handle *h)
  * \param h  Content to retrieve base target from
  * \return Pointer to target, or NULL if none
  */
-const char *html_get_base_target(hlcache_handle *h)
+ਅਚਲ ਅੱਖਰ *html_get_ਅਧਾਰ_ਨਿਸ਼ਾਨਾ(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(c != ਨਿਰਾ);
 
-	return c->base_target;
+	ਵਾਪਸ c->ਅਧਾਰ_ਨਿਸ਼ਾਨਾ;
 }
 
 
@@ -2069,134 +2069,134 @@ const char *html_get_base_target(hlcache_handle *h)
  * \param y        Updated to global y coord iff id found
  * \return  true iff id found
  */
-bool html_get_id_offset(hlcache_handle *h, lwc_string *frag_id, int *x, int *y)
+bool html_get_id_ਵਿੱਥ(hlcache_handle *h, lwc_string *frag_id, ਪੂਰਨ *x, ਪੂਰਨ *y)
 {
-	struct box *pos;
-	struct box *layout;
+	ਬਣਤਰ box *pos;
+	ਬਣਤਰ box *layout;
 
-	if (content_get_type(h) != CONTENT_HTML)
-		return false;
+	ਜੇ (content_get_type(h) != CONTENT_HTML)
+		ਵਾਪਸ false;
 
-	layout = html_get_box_tree(h);
+	layout = html_get_box_ਰੁੱਖ(h);
 
-	if ((pos = box_find_by_id(layout, frag_id)) != 0) {
+	ਜੇ ((pos = box_ਲੱਭੋ_by_id(layout, frag_id)) != 0) {
 		box_coords(pos, x, y);
-		return true;
+		ਵਾਪਸ true;
 	}
-	return false;
+	ਵਾਪਸ false;
 }
 
-bool html_exec(struct content *c, const char *src, size_t srclen)
+bool html_exec(ਬਣਤਰ content *c, ਅਚਲ ਅੱਖਰ *src, size_t srclen)
 {
 	html_content *htmlc = (html_content *)c;
-	bool result = false;
+	bool ਨਤੀਜਾ = false;
 	dom_exception err;
-	dom_html_body_element *body_node;
+	dom_html_body_element *body_ਗੰਢ;
 	dom_string *dom_src;
-	dom_text *text_node;
-	dom_node *spare_node;
-	dom_html_script_element *script_node;
+	dom_ਪਾਠ *ਪਾਠ_ਗੰਢ;
+	dom_ਗੰਢ *ਵਾਧੂ_ਗੰਢ;
+	dom_html_script_element *script_ਗੰਢ;
 
-	if (htmlc->document == NULL) {
+	ਜੇ (htmlc->document == ਨਿਰਾ) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no document");
-		goto out_no_string;
+		ਜਾਓ ਬਾਹਰਲਾ_no_string;
 	}
 
-	err = dom_string_create((const uint8_t *)src, srclen, &dom_src);
-	if (err != DOM_NO_ERR) {
+	err = dom_string_create((ਅਚਲ uint8_t *)src, srclen, &dom_src);
+	ਜੇ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create string");
-		goto out_no_string;
+		ਜਾਓ ਬਾਹਰਲਾ_no_string;
 	}
 
-	err = dom_html_document_get_body(htmlc->document, &body_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_html_document_get_body(htmlc->document, &body_ਗੰਢ);
+	ਜੇ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve body element");
-		goto out_no_body;
+		ਜਾਓ ਬਾਹਰਲਾ_no_body;
 	}
 
-	err = dom_document_create_text_node(htmlc->document, dom_src, &text_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_document_create_ਪਾਠ_ਗੰਢ(htmlc->document, dom_src, &ਪਾਠ_ਗੰਢ);
+	ਜੇ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create text node");
-		goto out_no_text_node;
+		ਜਾਓ ਬਾਹਰਲਾ_no_ਪਾਠ_ਗੰਢ;
 	}
 
-	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_ਗੰਢ);
+	ਜੇ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create script node");
-		goto out_no_script_node;
+		ਜਾਓ ਬਾਹਰਲਾ_no_script_ਗੰਢ;
 	}
 
-	err = dom_node_append_child(script_node, text_node, &spare_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_ਗੰਢ_append_ਬੱਚਾ(script_ਗੰਢ, ਪਾਠ_ਗੰਢ, &ਵਾਧੂ_ਗੰਢ);
+	ਜੇ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert code node into script node");
-		goto out_unparented;
+		ਜਾਓ ਬਾਹਰਲਾ_unparented;
 	}
-	dom_node_unref(spare_node); /* We do not need the spare ref at all */
+	dom_ਗੰਢ_unref(ਵਾਧੂ_ਗੰਢ); /* We do not need the spare ref at all */
 
-	err = dom_node_append_child(body_node, script_node, &spare_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_ਗੰਢ_append_ਬੱਚਾ(body_ਗੰਢ, script_ਗੰਢ, &ਵਾਧੂ_ਗੰਢ);
+	ਜੇ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert script node into document body");
-		goto out_unparented;
+		ਜਾਓ ਬਾਹਰਲਾ_unparented;
 	}
-	dom_node_unref(spare_node); /* Again no need for the spare ref */
+	dom_ਗੰਢ_unref(ਵਾਧੂ_ਗੰਢ); /* Again no need for the spare ref */
 
 	/* We successfully inserted the node into the DOM */
 
-	result = true;
+	ਨਤੀਜਾ = true;
 
 	/* Now we unwind, starting by removing the script from wherever it
 	 * ended up parented
 	 */
 
-	err = dom_node_get_parent_node(script_node, &spare_node);
-	if (err == DOM_NO_ERR && spare_node != NULL) {
-		dom_node *second_spare;
-		err = dom_node_remove_child(spare_node, script_node, &second_spare);
-		if (err == DOM_NO_ERR) {
-			dom_node_unref(second_spare);
+	err = dom_ਗੰਢ_get_ਮਾਪਾ_ਗੰਢ(script_ਗੰਢ, &ਵਾਧੂ_ਗੰਢ);
+	ਜੇ (err == DOM_NO_ERR && ਵਾਧੂ_ਗੰਢ != ਨਿਰਾ) {
+		dom_ਗੰਢ *ਦੂਜਾ_ਵਾਧੂ;
+		err = dom_ਗੰਢ_remove_ਬੱਚਾ(ਵਾਧੂ_ਗੰਢ, script_ਗੰਢ, &ਦੂਜਾ_ਵਾਧੂ);
+		ਜੇ (err == DOM_NO_ERR) {
+			dom_ਗੰਢ_unref(ਦੂਜਾ_ਵਾਧੂ);
 		}
-		dom_node_unref(spare_node);
+		dom_ਗੰਢ_unref(ਵਾਧੂ_ਗੰਢ);
 	}
 
-out_unparented:
-	dom_node_unref(script_node);
-out_no_script_node:
-	dom_node_unref(text_node);
-out_no_text_node:
-	dom_node_unref(body_node);
-out_no_body:
+ਬਾਹਰਲਾ_unparented:
+	dom_ਗੰਢ_unref(script_ਗੰਢ);
+ਬਾਹਰਲਾ_no_script_ਗੰਢ:
+	dom_ਗੰਢ_unref(ਪਾਠ_ਗੰਢ);
+ਬਾਹਰਲਾ_no_ਪਾਠ_ਗੰਢ:
+	dom_ਗੰਢ_unref(body_ਗੰਢ);
+ਬਾਹਰਲਾ_no_body:
 	dom_string_unref(dom_src);
-out_no_string:
-	return result;
+ਬਾਹਰਲਾ_no_string:
+	ਵਾਪਸ ਨਤੀਜਾ;
 }
 
 /* See \ref content_saw_insecure_objects */
-static bool
-html_saw_insecure_objects(struct content *c)
+ਸਥਿਰ bool
+html_saw_insecure_objects(ਬਣਤਰ content *c)
 {
 	html_content *htmlc = (html_content *)c;
-	struct content_html_object *obj = htmlc->object_list;
+	ਬਣਤਰ content_html_object *obj = htmlc->object_list;
 
 	/* Check through the object list */
-	while (obj != NULL) {
-		if (obj->content != NULL) {
-			if (content_saw_insecure_objects(obj->content))
-				return true;
+	ਜਦੋਂ (obj != ਨਿਰਾ) {
+		ਜੇ (obj->content != ਨਿਰਾ) {
+			ਜੇ (content_saw_insecure_objects(obj->content))
+				ਵਾਪਸ true;
 		}
-		obj = obj->next;
+		obj = obj->ਅਗਲਾ;
 	}
 
 	/* Now check the script list */
-	if (html_saw_insecure_scripts(htmlc)) {
-		return true;
+	ਜੇ (html_saw_insecure_scripts(htmlc)) {
+		ਵਾਪਸ true;
 	}
 
 	/* Now check stylesheets */
-	if (html_css_saw_insecure_stylesheets(htmlc)) {
-		return true;
+	ਜੇ (html_css_saw_insecure_stylesheets(htmlc)) {
+		ਵਾਪਸ true;
 	}
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /**
@@ -2204,13 +2204,13 @@ html_saw_insecure_objects(struct content *c)
  *
  * \return CONTENT_HTML
  */
-static content_type html_content_type(void)
+ਸਥਿਰ content_type html_content_type(ਖਾਲੀ)
 {
-	return CONTENT_HTML;
+	ਵਾਪਸ CONTENT_HTML;
 }
 
 
-static void html_fini(void)
+ਸਥਿਰ ਖਾਲੀ html_fini(ਖਾਲੀ)
 {
 	html_css_fini();
 }
@@ -2225,67 +2225,67 @@ static void html_fini(void)
  * \param context   The search context to add the entry to.
  * \return true on success, false on memory allocation failure
  */
-static nserror
-find_occurrences_html_box(const char *pattern,
-			  int p_len,
-			  struct box *cur,
+ਸਥਿਰ nserror
+ਲੱਭੋ_occurrences_html_box(ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ,
+			  ਪੂਰਨ p_len,
+			  ਬਣਤਰ box *cur,
 			  bool case_sens,
-			  struct textsearch_context *context)
+			  ਬਣਤਰ textsearch_context *context)
 {
-	struct box *a;
+	ਬਣਤਰ box *a;
 	nserror res = NSERROR_OK;
 
 	/* ignore this box, if there's no visible text */
-	if (!cur->object && cur->text) {
-		const char *text = cur->text;
-		unsigned length = cur->length;
+	ਜੇ (!cur->object && cur->ਪਾਠ) {
+		ਅਚਲ ਅੱਖਰ *ਪਾਠ = cur->ਪਾਠ;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾਈ = cur->ਲੰਮਾਈ;
 
-		while (length > 0) {
-			unsigned match_length;
-			unsigned match_offset;
-			const char *new_text;
-			const char *pos;
+		ਜਦੋਂ (ਲੰਮਾਈ > 0) {
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਮੇਲ_ਲੰਮਾਈ;
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਮੇਲ_ਵਿੱਥ;
+			ਅਚਲ ਅੱਖਰ *new_ਪਾਠ;
+			ਅਚਲ ਅੱਖਰ *pos;
 
-			pos = content_textsearch_find_pattern(text,
-					   length,
-					   pattern,
+			pos = content_textsearch_ਲੱਭੋ_ਨਮੂਨਾ(ਪਾਠ,
+					   ਲੰਮਾਈ,
+					   ਨਮੂਨਾ,
 					   p_len,
 					   case_sens,
-					   &match_length);
-			if (!pos)
-				break;
+					   &ਮੇਲ_ਲੰਮਾਈ);
+			ਜੇ (!pos)
+				ਰੋਕੋ;
 
 			/* found string in box => add to list */
-			match_offset = pos - cur->text;
+			ਮੇਲ_ਵਿੱਥ = pos - cur->ਪਾਠ;
 
-			res = content_textsearch_add_match(context,
-					cur->byte_offset + match_offset,
-					cur->byte_offset + match_offset + match_length,
+			res = content_textsearch_ਜੋੜੋ_ਮੇਲ(context,
+					cur->byte_ਵਿੱਥ + ਮੇਲ_ਵਿੱਥ,
+					cur->byte_ਵਿੱਥ + ਮੇਲ_ਵਿੱਥ + ਮੇਲ_ਲੰਮਾਈ,
 					cur,
 					cur);
-			if (res != NSERROR_OK) {
-				return res;
+			ਜੇ (res != NSERROR_OK) {
+				ਵਾਪਸ res;
 			}
 
-			new_text = pos + match_length;
-			length -= (new_text - text);
-			text = new_text;
+			new_ਪਾਠ = pos + ਮੇਲ_ਲੰਮਾਈ;
+			ਲੰਮਾਈ -= (new_ਪਾਠ - ਪਾਠ);
+			ਪਾਠ = new_ਪਾਠ;
 		}
 	}
 
 	/* and recurse */
-	for (a = cur->children; a; a = a->next) {
-		res = find_occurrences_html_box(pattern,
+	ਲਈ (a = cur->children; a; a = a->ਅਗਲਾ) {
+		res = ਲੱਭੋ_occurrences_html_box(ਨਮੂਨਾ,
 						p_len,
 						a,
 						case_sens,
 						context);
-		if (res != NSERROR_OK) {
-			return res;
+		ਜੇ (res != NSERROR_OK) {
+			ਵਾਪਸ res;
 		}
 	}
 
-	return res;
+	ਵਾਪਸ res;
 }
 
 /**
@@ -2298,20 +2298,20 @@ find_occurrences_html_box(const char *pattern,
  * \param context   The search context to add the entry to.
  * \return true on success, false on memory allocation failure
  */
-static nserror
-html_textsearch_find(struct content *c,
-		     struct textsearch_context *context,
-		     const char *pattern,
-		     int p_len,
+ਸਥਿਰ nserror
+html_textsearch_ਲੱਭੋ(ਬਣਤਰ content *c,
+		     ਬਣਤਰ textsearch_context *context,
+		     ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ,
+		     ਪੂਰਨ p_len,
 		     bool csens)
 {
 	html_content *html = (html_content *)c;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	ਜੇ (html->layout == ਨਿਰਾ) {
+		ਵਾਪਸ NSERROR_INVALID;
 	}
 
-	return find_occurrences_html_box(pattern,
+	ਵਾਪਸ ਲੱਭੋ_occurrences_html_box(ਨਮੂਨਾ,
 					 p_len,
 					 html->layout,
 					 csens,
@@ -2319,34 +2319,34 @@ html_textsearch_find(struct content *c,
 }
 
 
-static nserror
-html_textsearch_bounds(struct content *c,
-		       unsigned start_idx,
-		       unsigned end_idx,
-		       struct box *start_box,
-		       struct box *end_box,
-		       struct rect *bounds)
+ਸਥਿਰ nserror
+html_textsearch_bounds(ਬਣਤਰ content *c,
+		       ਬਿਨਾਨਿਸ਼ਾਨੀ ਸ਼ੁਰੂ_idx,
+		       ਬਿਨਾਨਿਸ਼ਾਨੀ ਸਿਰਾ_idx,
+		       ਬਣਤਰ box *ਸ਼ੁਰੂ_box,
+		       ਬਣਤਰ box *ਸਿਰਾ_box,
+		       ਬਣਤਰ rect *bounds)
 {
 	/* get box position and jump to it */
-	box_coords(start_box, &bounds->x0, &bounds->y0);
+	box_coords(ਸ਼ੁਰੂ_box, &bounds->x0, &bounds->y0);
 	/* \todo: move x0 in by correct idx */
-	box_coords(end_box, &bounds->x1, &bounds->y1);
+	box_coords(ਸਿਰਾ_box, &bounds->x1, &bounds->y1);
 	/* \todo: move x1 in by correct idx */
-	bounds->x1 += end_box->width;
-	bounds->y1 += end_box->height;
+	bounds->x1 += ਸਿਰਾ_box->ਚੌੜਾਈ;
+	bounds->y1 += ਸਿਰਾ_box->ਉਚਾਈ;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 
 /**
  * HTML content handler function table
  */
-static const content_handler html_content_handler = {
+ਸਥਿਰ ਅਚਲ content_handler html_content_handler = {
 	.fini = html_fini,
 	.create = html_create,
-	.process_data = html_process_data,
-	.data_complete = html_convert,
+	.process_ਅੰਕੜੇ = html_process_ਅੰਕੜੇ,
+	.ਅੰਕੜੇ_complete = html_convert,
 	.reformat = html_reformat,
 	.destroy = html_destroy,
 	.stop = html_stop,
@@ -2359,8 +2359,8 @@ static const content_handler html_content_handler = {
 	.get_selection = html_get_selection,
 	.clear_selection = html_clear_selection,
 	.get_contextual_content = html_get_contextual_content,
-	.scroll_at_point = html_scroll_at_point,
-	.drop_file_at_point = html_drop_file_at_point,
+	.scroll_at_ਬਿੰਦੂ = html_scroll_at_ਬਿੰਦੂ,
+	.drop_file_at_ਬਿੰਦੂ = html_drop_file_at_ਬਿੰਦੂ,
 	.debug_dump = html_debug_dump,
 	.debug = html_debug,
 	.clone = html_clone,
@@ -2368,36 +2368,36 @@ static const content_handler html_content_handler = {
 	.type = html_content_type,
 	.exec = html_exec,
 	.saw_insecure_objects = html_saw_insecure_objects,
-	.textsearch_find = html_textsearch_find,
+	.textsearch_ਲੱਭੋ = html_textsearch_ਲੱਭੋ,
 	.textsearch_bounds = html_textsearch_bounds,
 	.textselection_redraw = html_textselection_redraw,
 	.textselection_copy = html_textselection_copy,
-	.textselection_get_end = html_textselection_get_end,
+	.textselection_get_ਸਿਰਾ = html_textselection_get_ਸਿਰਾ,
 	.no_share = true,
 };
 
 
 /* exported function documented in html/html.h */
-nserror html_init(void)
+nserror html_init(ਖਾਲੀ)
 {
 	uint32_t i;
 	nserror error;
 
 	error = html_css_init();
-	if (error != NSERROR_OK)
-		goto error;
+	ਜੇ (error != NSERROR_OK)
+		ਜਾਓ error;
 
-	for (i = 0; i < NOF_ELEMENTS(html_types); i++) {
-		error = content_factory_register_handler(html_types[i],
+	ਲਈ (i = 0; i < NOF_ELEMENTS(html_types); i++) {
+		error = content_factory_ਰਜਿਸਟਰ_handler(html_types[i],
 				&html_content_handler);
-		if (error != NSERROR_OK)
-			goto error;
+		ਜੇ (error != NSERROR_OK)
+			ਜਾਓ error;
 	}
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 
 error:
 	html_fini();
 
-	return error;
+	ਵਾਪਸ error;
 }

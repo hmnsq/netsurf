@@ -16,91 +16,91 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_UTILS_H_
-#define NETSURF_CSS_UTILS_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_CSS_UTILS_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_CSS_UTILS_H_
 
-#include <libcss/libcss.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <libcss/libcss.h>
 
-#include "netsurf/css.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/css.h"
 
 /** DPI of the screen, in fixed point units */
-extern css_fixed nscss_screen_dpi;
+ਬਾਹਰੀ css_fixed nscss_screen_dpi;
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display(
-		const css_computed_style *style, bool root)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint8_t ns_computed_display(
+		ਅਚਲ css_computed_style *style, bool ਜੜ੍ਹ)
 {
-	uint8_t value = css_computed_display(style, root);
+	uint8_t ਮੁੱਲ = css_computed_display(style, ਜੜ੍ਹ);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	ਚੋਣ (ਮੁੱਲ) {
+	ਹਾਲਤ CSS_DISPLAY_GRID:
+		ਵਾਪਸ CSS_DISPLAY_ਖੰਡ;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	ਹਾਲਤ CSS_DISPLAY_INLINE_GRID:
+		ਵਾਪਸ CSS_DISPLAY_INLINE_ਖੰਡ;
 
-	default:
-		break;
+	ਮੂਲ:
+		ਰੋਕੋ;
 	}
 
-	return value;
+	ਵਾਪਸ ਮੁੱਲ;
 }
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display_static(
-		const css_computed_style *style)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint8_t ns_computed_display_static(
+		ਅਚਲ css_computed_style *style)
 {
-	uint8_t value = css_computed_display_static(style);
+	uint8_t ਮੁੱਲ = css_computed_display_static(style);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	ਚੋਣ (ਮੁੱਲ) {
+	ਹਾਲਤ CSS_DISPLAY_GRID:
+		ਵਾਪਸ CSS_DISPLAY_ਖੰਡ;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	ਹਾਲਤ CSS_DISPLAY_INLINE_GRID:
+		ਵਾਪਸ CSS_DISPLAY_INLINE_ਖੰਡ;
 
-	default:
-		break;
+	ਮੂਲ:
+		ਰੋਕੋ;
 	}
 
-	return value;
+	ਵਾਪਸ ਮੁੱਲ;
 }
 
-static inline uint8_t ns_computed_min_height(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint8_t ns_computed_min_ਉਚਾਈ(
+		ਅਚਲ css_computed_style *style,
+		css_fixed *ਲੰਮਾਈ, css_unit *unit)
 {
-	uint8_t value = css_computed_min_height(style, length, unit);
+	uint8_t ਮੁੱਲ = css_computed_min_ਉਚਾਈ(style, ਲੰਮਾਈ, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
-		value = CSS_MIN_HEIGHT_SET;
-		*length = 0;
+	ਜੇ (ਮੁੱਲ == CSS_MIN_ਉਚਾਈ_AUTO) {
+		ਮੁੱਲ = CSS_MIN_ਉਚਾਈ_ਸੈੱਟ;
+		*ਲੰਮਾਈ = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	ਵਾਪਸ ਮੁੱਲ;
 }
 
 
-static inline uint8_t ns_computed_min_width(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint8_t ns_computed_min_ਚੌੜਾਈ(
+		ਅਚਲ css_computed_style *style,
+		css_fixed *ਲੰਮਾਈ, css_unit *unit)
 {
-	uint8_t value = css_computed_min_width(style, length, unit);
+	uint8_t ਮੁੱਲ = css_computed_min_ਚੌੜਾਈ(style, ਲੰਮਾਈ, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
-		value = CSS_MIN_WIDTH_SET;
-		*length = 0;
+	ਜੇ (ਮੁੱਲ == CSS_MIN_ਚੌੜਾਈ_AUTO) {
+		ਮੁੱਲ = CSS_MIN_ਚੌੜਾਈ_ਸੈੱਟ;
+		*ਲੰਮਾਈ = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	ਵਾਪਸ ਮੁੱਲ;
 }
 
-#endif
+#ਜੇ_ਅੰਤ

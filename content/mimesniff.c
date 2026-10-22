@@ -23,45 +23,45 @@
  * Spec version: 2011-11-27
  */
 
-#include <string.h>
-#include <strings.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <strings.h>
 
-#include "utils/http.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/http.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/corestrings.h"
 
-#include "content/content_factory.h"
-#include "content/mimesniff.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_factory.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/mimesniff.h"
 
-struct map_s {
-	const uint8_t *sig;
+ਬਣਤਰ map_s {
+	ਅਚਲ uint8_t *sig;
 	size_t len;
-	bool safe;
+	bool ਸੁਰੱਖਿਅਤ_2;
 	lwc_string **type;
 };
 
-static bool mimesniff__has_binary_octets(const uint8_t *data, size_t len)
+ਸਥਿਰ bool mimesniff_has_ਦੁਆਧਾਰੀ_octets(ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len)
 {
-	const uint8_t *end = data + len;
+	ਅਚਲ uint8_t *ਸਿਰਾ = ਅੰਕੜੇ + len;
 
-	while (data != end) {
-		const uint8_t c = *data;
+	ਜਦੋਂ (ਅੰਕੜੇ != ਸਿਰਾ) {
+		ਅਚਲ uint8_t c = *ਅੰਕੜੇ;
 
 		/* Binary iff in C0 and not ESC, CR, FF, LF, HT */
-		if (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
+		ਜੇ (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
 				c != '\n' && c != '\t')
-			break;
+			ਰੋਕੋ;
 
-		data++;
+		ਅੰਕੜੇ++;
 	}
 
-	return data != end;
+	ਵਾਪਸ ਅੰਕੜੇ != ਸਿਰਾ;
 }
 
-static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
+ਸਥਿਰ nserror mimesniff_ਮੇਲ_mp4(ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len,
 		lwc_string **effective_type)
 {
-	uint32_t box_size, i;
+	uint32_t box_ਮਾਪ, i;
 
 	/* ISO/IEC 14496-12:2008 $4.3 says (effectively):
 	 *
@@ -87,166 +87,166 @@ static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
 	/* 12 reflects the minimum number of octets needed to sniff useful
 	 * information out of an 'ftyp' box (i.e. the size, type,
 	 * and major_brand words). */
-	if (len < 12)
-		return NSERROR_NOT_FOUND;
+	ਜੇ (len < 12)
+		ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 
 	/* Box size is big-endian */
-	box_size = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+	box_ਮਾਪ = (ਅੰਕੜੇ[0] << 24) | (ਅੰਕੜੇ[1] << 16) | (ਅੰਕੜੇ[2] << 8) | ਅੰਕੜੇ[3];
 
 	/* Require that we can read the entire box, and reject bad box sizes */
-	if (len < box_size || box_size % 4 != 0)
-		return NSERROR_NOT_FOUND;
+	ਜੇ (len < box_ਮਾਪ || box_ਮਾਪ % 4 != 0)
+		ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 
 	/* Ensure this is an 'ftyp' box */
-	if (data[4] != 'f' || data[5] != 't' ||
-			data[6] != 'y' || data[7] != 'p')
-		return NSERROR_NOT_FOUND;
+	ਜੇ (ਅੰਕੜੇ[4] != 'f' || ਅੰਕੜੇ[5] != 't' ||
+			ਅੰਕੜੇ[6] != 'y' || ਅੰਕੜੇ[7] != 'p')
+		ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 
 	/* Check if major brand begins with 'mp4' */
-	if (data[8] == 'm' && data[9] == 'p' && data[10] == '4') {
+	ਜੇ (ਅੰਕੜੇ[8] == 'm' && ਅੰਕੜੇ[9] == 'p' && ਅੰਕੜੇ[10] == '4') {
 		*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 	}
 
 	/* Search each compatible brand in the box for "mp4" */
-	for (i = 16; i <= box_size - 4; i += 4) {
-		if (data[i] == 'm' &&
-		    data[i+1] == 'p' &&
-		    data[i+2] == '4') {
+	ਲਈ (i = 16; i <= box_ਮਾਪ - 4; i += 4) {
+		ਜੇ (ਅੰਕੜੇ[i] == 'm' &&
+		    ਅੰਕੜੇ[i+1] == 'p' &&
+		    ਅੰਕੜੇ[i+2] == '4') {
 			*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-			return NSERROR_OK;
+			ਵਾਪਸ NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 }
 
-static nserror mimesniff__match_unknown_ws(const uint8_t *data, size_t len,
+ਸਥਿਰ nserror mimesniff_ਮੇਲ_unknown_ws(ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s ws_exact_match_types[] = {
-		SIG(&corestring_lwc_text_xml, "<?xml", false),
-		{ NULL, 0, false, NULL }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIG(t, s, x) { (ਅਚਲ uint8_t *) s, SLEN(s), x, t }
+	ਸਥਿਰ ਅਚਲ ਬਣਤਰ map_s ws_exact_ਮੇਲ_types[] = {
+		SIG(&corestring_lwc_ਪਾਠ_xml, "<?xml", false),
+		{ ਨਿਰਾ, 0, false, ਨਿਰਾ }
 	};
 
-	static const struct map_s ws_inexact_match_types[] = {
-		SIG(&corestring_lwc_text_html, "<!DOCTYPE HTML", false),
-		SIG(&corestring_lwc_text_html, "<HTML",          false),
-		SIG(&corestring_lwc_text_html, "<HEAD",          false),
-		SIG(&corestring_lwc_text_html, "<SCRIPT",        false),
-		SIG(&corestring_lwc_text_html, "<IFRAME",        false),
-		SIG(&corestring_lwc_text_html, "<H1",            false),
-		SIG(&corestring_lwc_text_html, "<DIV",           false),
-		SIG(&corestring_lwc_text_html, "<FONT",          false),
-		SIG(&corestring_lwc_text_html, "<TABLE",         false),
-		SIG(&corestring_lwc_text_html, "<A",             false),
-		SIG(&corestring_lwc_text_html, "<STYLE",         false),
-		SIG(&corestring_lwc_text_html, "<TITLE",         false),
-		SIG(&corestring_lwc_text_html, "<B",             false),
-		SIG(&corestring_lwc_text_html, "<BODY",          false),
-		SIG(&corestring_lwc_text_html, "<BR",            false),
-		SIG(&corestring_lwc_text_html, "<P",             false),
-		SIG(&corestring_lwc_text_html, "<!--",           false),
-		{ NULL, 0, false, NULL }
+	ਸਥਿਰ ਅਚਲ ਬਣਤਰ map_s ws_inexact_ਮੇਲ_types[] = {
+		SIG(&corestring_lwc_ਪਾਠ_html, "<!DOCTYPE HTML", false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<HTML",          false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<HEAD",          false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<SCRIPT",        false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<IFRAME",        false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<H1",            false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<DIV",           false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<FONT",          false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<TABLE",         false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<A",             false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<STYLE",         false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<TITLE",         false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<B",             false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<BODY",          false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<BR",            false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<P",             false),
+		SIG(&corestring_lwc_ਪਾਠ_html, "<!--",           false),
+		{ ਨਿਰਾ, 0, false, ਨਿਰਾ }
 	};
-#undef SIG
-	const uint8_t *end = data + len;
-	const struct map_s *it;
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIG
+	ਅਚਲ uint8_t *ਸਿਰਾ = ਅੰਕੜੇ + len;
+	ਅਚਲ ਬਣਤਰ map_s *it;
 
 	/* Skip leading whitespace */
-	while (data != end) {
-		const uint8_t c = *data;
+	ਜਦੋਂ (ਅੰਕੜੇ != ਸਿਰਾ) {
+		ਅਚਲ uint8_t c = *ਅੰਕੜੇ;
 
-		if (c != '\t' && c != '\n' && c != '\f' &&
+		ਜੇ (c != '\t' && c != '\n' && c != '\f' &&
 				c != '\r' && c != ' ')
-			break;
+			ਰੋਕੋ;
 
-		data++;
+		ਅੰਕੜੇ++;
 	}
 
-	if (data == end)
-		return NSERROR_NOT_FOUND;
+	ਜੇ (ਅੰਕੜੇ == ਸਿਰਾ)
+		ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 
-	len = end - data;
+	len = ਸਿਰਾ - ਅੰਕੜੇ;
 
-	for (it = ws_exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	ਲਈ (it = ws_exact_ਮੇਲ_types; it->sig != ਨਿਰਾ; it++) {
+		ਜੇ (it->len <= len && memcmp(ਅੰਕੜੇ, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			ਵਾਪਸ NSERROR_OK;
 		}
 	}
 
-	for (it = ws_inexact_match_types; it->sig != NULL; it++) {
+	ਲਈ (it = ws_inexact_ਮੇਲ_types; it->sig != ਨਿਰਾ; it++) {
 		/* +1 for trailing space or > */
-		if (len < it->len + 1)
-			continue;
+		ਜੇ (len < it->len + 1)
+			ਜਾਰੀ;
 
-		if (strncasecmp((const char *) data,
-				(const char *) it->sig, it->len) == 0 &&
-				(data[it->len] == ' ' ||
-				data[it->len] == '>')) {
+		ਜੇ (strncasecmp((ਅਚਲ ਅੱਖਰ *) ਅੰਕੜੇ,
+				(ਅਚਲ ਅੱਖਰ *) it->sig, it->len) == 0 &&
+				(ਅੰਕੜੇ[it->len] == ' ' ||
+				ਅੰਕੜੇ[it->len] == '>')) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			ਵਾਪਸ NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 }
 
-static nserror mimesniff__match_unknown_bom(const uint8_t *data, size_t len,
+ਸਥਿਰ nserror mimesniff_ਮੇਲ_unknown_bom(ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s bom_match_types[] = {
-		SIG(&corestring_lwc_text_plain, "\xfe\xff",     false),
-		SIG(&corestring_lwc_text_plain, "\xff\xfe",     false),
-		SIG(&corestring_lwc_text_plain, "\xef\xbb\xbf", false),
-		{ NULL, 0, false, NULL }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIG(t, s, x) { (ਅਚਲ uint8_t *) s, SLEN(s), x, t }
+	ਸਥਿਰ ਅਚਲ ਬਣਤਰ map_s bom_ਮੇਲ_types[] = {
+		SIG(&corestring_lwc_ਪਾਠ_plain, "\xfe\xff",     false),
+		SIG(&corestring_lwc_ਪਾਠ_plain, "\xff\xfe",     false),
+		SIG(&corestring_lwc_ਪਾਠ_plain, "\xef\xbb\xbf", false),
+		{ ਨਿਰਾ, 0, false, ਨਿਰਾ }
 	};
-#undef SIG
-	const struct map_s *it;
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIG
+	ਅਚਲ ਬਣਤਰ map_s *it;
 
-	for (it = bom_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	ਲਈ (it = bom_ਮੇਲ_types; it->sig != ਨਿਰਾ; it++) {
+		ਜੇ (it->len <= len && memcmp(ਅੰਕੜੇ, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			ਵਾਪਸ NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 }
 
-static nserror mimesniff__match_unknown_riff(const uint8_t *data, size_t len,
+ਸਥਿਰ nserror mimesniff_ਮੇਲ_unknown_riff(ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s riff_match_types[] = {
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIG(t, s, x) { (ਅਚਲ uint8_t *) s, SLEN(s), x, t }
+	ਸਥਿਰ ਅਚਲ ਬਣਤਰ map_s riff_ਮੇਲ_types[] = {
 		SIG(&corestring_lwc_image_webp, "WEBPVP", true),
 		SIG(&corestring_lwc_audio_wave, "WAVE",   true),
-		{ NULL, 0, false, NULL }
+		{ ਨਿਰਾ, 0, false, ਨਿਰਾ }
 	};
-#undef SIG
-	const struct map_s *it;
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIG
+	ਅਚਲ ਬਣਤਰ map_s *it;
 
-	for (it = riff_match_types; it->sig != NULL; it++) {
-		if (it->len + SLEN("RIFF????") <= len &&
-				memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
-				memcmp(data + SLEN("RIFF????"),
+	ਲਈ (it = riff_ਮੇਲ_types; it->sig != ਨਿਰਾ; it++) {
+		ਜੇ (it->len + SLEN("RIFF????") <= len &&
+				memcmp(ਅੰਕੜੇ, "RIFF", SLEN("RIFF")) == 0 &&
+				memcmp(ਅੰਕੜੇ + SLEN("RIFF????"),
 						it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			ਵਾਪਸ NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 }
 
-static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
+ਸਥਿਰ nserror mimesniff_ਮੇਲ_unknown_exact(ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s exact_match_types[] = {
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIG(t, s, x) { (ਅਚਲ uint8_t *) s, SLEN(s), x, t }
+	ਸਥਿਰ ਅਚਲ ਬਣਤਰ map_s exact_ਮੇਲ_types[] = {
 		SIG(&corestring_lwc_image_gif, "GIF87a", true),
 		SIG(&corestring_lwc_image_gif, "GIF89a", true),
 		SIG(&corestring_lwc_image_png, "\x89PNG\r\n\x1a\n", true),
@@ -262,118 +262,118 @@ static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
 		SIG(&corestring_lwc_application_pdf, "%PDF-", false),
 		SIG(&corestring_lwc_image_jxl, "\xFF\x0A", true), /* containerless jpeg xl*/
 		{
-			(const uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
+			(ਅਚਲ uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
 			12,
 			true,
 			&corestring_lwc_image_jxl
 		}, /* containered jpeg xl*/
-		{ NULL, 0, false, NULL }
+		{ ਨਿਰਾ, 0, false, ਨਿਰਾ }
 	};
-#undef SIG
-	const struct map_s *it;
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIG
+	ਅਚਲ ਬਣਤਰ map_s *it;
 
-	for (it = exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0 &&
-				(allow_unsafe || it->safe)) {
+	ਲਈ (it = exact_ਮੇਲ_types; it->sig != ਨਿਰਾ; it++) {
+		ਜੇ (it->len <= len && memcmp(ਅੰਕੜੇ, it->sig, it->len) == 0 &&
+				(allow_unsafe || it->ਸੁਰੱਖਿਅਤ_2)) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			ਵਾਪਸ NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 }
 
-static nserror mimesniff__match_unknown(const uint8_t *data, size_t len,
+ਸਥਿਰ nserror mimesniff_ਮੇਲ_unknown(ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-	if (mimesniff__match_unknown_exact(data, len, allow_unsafe,
+	ਜੇ (mimesniff_ਮੇਲ_unknown_exact(ਅੰਕੜੇ, len, allow_unsafe,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 
-	if (mimesniff__match_unknown_riff(data, len,
+	ਜੇ (mimesniff_ਮੇਲ_unknown_riff(ਅੰਕੜੇ, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 
-	if (allow_unsafe == false)
-		return NSERROR_NOT_FOUND;
+	ਜੇ (allow_unsafe == false)
+		ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 
-	if (mimesniff__match_unknown_bom(data, len,
+	ਜੇ (mimesniff_ਮੇਲ_unknown_bom(ਅੰਕੜੇ, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 
-	if (mimesniff__match_unknown_ws(data, len,
+	ਜੇ (mimesniff_ਮੇਲ_unknown_ws(ਅੰਕੜੇ, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 
-	if (mimesniff__match_mp4(data, len, effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+	ਜੇ (mimesniff_ਮੇਲ_mp4(ਅੰਕੜੇ, len, effective_type) == NSERROR_OK)
+		ਵਾਪਸ NSERROR_OK;
 
-	return NSERROR_NOT_FOUND;
+	ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 }
 
-static nserror mimesniff__compute_unknown(const uint8_t *data, size_t len,
+ਸਥਿਰ nserror mimesniff__compute_unknown(ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len,
 		lwc_string **effective_type)
 {
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	ਜੇ (ਅੰਕੜੇ == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NEED_ਅੰਕੜੇ;
 
 	len = min(len, 512);
 
-	if (mimesniff__match_unknown(data, len, true,
+	ਜੇ (mimesniff_ਮੇਲ_unknown(ਅੰਕੜੇ, len, true,
 				     effective_type) == NSERROR_OK) {
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	ਜੇ (mimesniff_has_ਦੁਆਧਾਰੀ_octets(ਅੰਕੜੇ, len) == false) {
 		/* No binary octets => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_ਪਾਠ_plain);
+		ਵਾਪਸ NSERROR_OK;
 	}
 
-	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
+	*effective_type = lwc_string_ref(corestring_lwc_application_octet_ਧਾਰਾ);
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static nserror mimesniff__compute_text_or_binary(const uint8_t *data,
+ਸਥਿਰ nserror mimesniff_compute_ਪਾਠ_or_ਦੁਆਧਾਰੀ(ਅਚਲ uint8_t *ਅੰਕੜੇ,
 		size_t len, lwc_string **effective_type)
 {
-	if (data == NULL) {
-		return NSERROR_NEED_DATA;
+	ਜੇ (ਅੰਕੜੇ == ਨਿਰਾ) {
+		ਵਾਪਸ NSERROR_NEED_ਅੰਕੜੇ;
 	}
 
 	len = min(len, 512);
 
-	if (len >= 3 && ((data[0] == 0xfe && data[1] == 0xff) ||
-			(data[0] == 0xff && data[1] == 0xfe) ||
-			(data[0] == 0xef && data[1] == 0xbb &&
-				data[2] == 0xbf))) {
+	ਜੇ (len >= 3 && ((ਅੰਕੜੇ[0] == 0xfe && ਅੰਕੜੇ[1] == 0xff) ||
+			(ਅੰਕੜੇ[0] == 0xff && ਅੰਕੜੇ[1] == 0xfe) ||
+			(ਅੰਕੜੇ[0] == 0xef && ਅੰਕੜੇ[1] == 0xbb &&
+				ਅੰਕੜੇ[2] == 0xbf))) {
 		/* Found a BOM => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_ਪਾਠ_plain);
+		ਵਾਪਸ NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	ਜੇ (mimesniff_has_ਦੁਆਧਾਰੀ_octets(ਅੰਕੜੇ, len) == false) {
 		/* No binary octets => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_ਪਾਠ_plain);
+		ਵਾਪਸ NSERROR_OK;
 	}
 
-	if (mimesniff__match_unknown(data, len, false,
+	ਜੇ (mimesniff_ਮੇਲ_unknown(ਅੰਕੜੇ, len, false,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 
-	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
+	*effective_type = lwc_string_ref(corestring_lwc_application_octet_ਧਾਰਾ);
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static nserror mimesniff__compute_image(lwc_string *official_type,
-		const uint8_t *data, size_t len, lwc_string **effective_type)
+ਸਥਿਰ nserror mimesniff__compute_image(lwc_string *official_type,
+		ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t len, lwc_string **effective_type)
 {
-#define SIG(t, s) { (const uint8_t *) s, SLEN(s), t }
-	static const struct it_s {
-		const uint8_t *sig;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIG(t, s) { (ਅਚਲ uint8_t *) s, SLEN(s), t }
+	ਸਥਿਰ ਅਚਲ ਬਣਤਰ it_s {
+		ਅਚਲ uint8_t *sig;
 		size_t len;
 		lwc_string **type;
 	} image_types[] = {
@@ -385,316 +385,316 @@ static nserror mimesniff__compute_image(lwc_string *official_type,
 		SIG(&corestring_lwc_image_vnd_microsoft_icon, "\x00\x00\x01\x00"),
 		SIG(&corestring_lwc_image_jxl, "\xFF\x0A"), /* containerless jpeg xl*/
 		{
-			(const uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
+			(ਅਚਲ uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
 			12,
 			&corestring_lwc_image_jxl
 		}, /* containered jpeg xl*/
-		{ NULL, 0, NULL }
+		{ ਨਿਰਾ, 0, ਨਿਰਾ }
 	};
-#undef SIG
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIG
 
-	const struct it_s *it;
+	ਅਚਲ ਬਣਤਰ it_s *it;
 
-	if (data == NULL) {
+	ਜੇ (ਅੰਕੜੇ == ਨਿਰਾ) {
 		lwc_string_unref(official_type);
-		return NSERROR_NEED_DATA;
+		ਵਾਪਸ NSERROR_NEED_ਅੰਕੜੇ;
 	}
 
-	for (it = image_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	ਲਈ (it = image_types; it->sig != ਨਿਰਾ; it++) {
+		ਜੇ (it->len <= len && memcmp(ਅੰਕੜੇ, it->sig, it->len) == 0) {
 			lwc_string_unref(official_type);
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			ਵਾਪਸ NSERROR_OK;
 		}
 	}
 
 	/* WebP has a signature that doesn't fit into the above table */
-	if (SLEN("RIFF????WEBPVP") <= len &&
-			memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
-			memcmp(data + SLEN("RIFF????"),
+	ਜੇ (SLEN("RIFF????WEBPVP") <= len &&
+			memcmp(ਅੰਕੜੇ, "RIFF", SLEN("RIFF")) == 0 &&
+			memcmp(ਅੰਕੜੇ + SLEN("RIFF????"),
 					"WEBPVP", SLEN("WEBPVP")) == 0 ) {
 		lwc_string_unref(official_type);
 		*effective_type = lwc_string_ref(corestring_lwc_image_webp);
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 	}
 
 	*effective_type = official_type;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
+ਸਥਿਰ nserror mimesniff__compute_feed_or_html(ਅਚਲ uint8_t *ਅੰਕੜੇ,
 		size_t len, lwc_string **effective_type)
 {
-#define RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-#define RSS_NS "http://purl.org/rss/1.0"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RSS_NS "http://purl.org/rss/1.0"
 
-	enum state_e {
+	ਗਿਣਤੀ state_e {
 		BEFORE_BOM,
 		BEFORE_MARKUP,
-		MARKUP_START,
+		MARKUP_ਸ਼ੁਰੂ,
 		COMMENT_OR_DOCTYPE,
-		IN_COMMENT,
-		IN_DOCTYPE,
-		IN_PI,
-		IN_TAG,
-		IN_RDF
+		ਵਿੱਚ_COMMENT,
+		ਵਿੱਚ_DOCTYPE,
+		ਵਿੱਚ_PI,
+		ਵਿੱਚ_ਟੈਗ,
+		ਵਿੱਚ_RDF
 	} state = BEFORE_BOM;
 
 	bool rdf = false, rss = false;
-	const uint8_t *end;
+	ਅਚਲ uint8_t *ਸਿਰਾ;
 
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	ਜੇ (ਅੰਕੜੇ == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NEED_ਅੰਕੜੇ;
 
-	end = data + min(len, 512);
+	ਸਿਰਾ = ਅੰਕੜੇ + min(len, 512);
 
-	while (data < end) {
-		const uint8_t c = *data;
+	ਜਦੋਂ (ਅੰਕੜੇ < ਸਿਰਾ) {
+		ਅਚਲ uint8_t c = *ਅੰਕੜੇ;
 
-#define MATCH(s) SLEN(s) <= (size_t) (end - data) && \
-			memcmp(data, s, SLEN(s)) == 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਮੇਲ_2(s) SLEN(s) <= (size_t) (ਸਿਰਾ - ਅੰਕੜੇ) && \
+			memcmp(ਅੰਕੜੇ, s, SLEN(s)) == 0
 
-		switch (state) {
-		case BEFORE_BOM:
-			if (3 <= end - data && c == 0xef && data[1] == 0xbb &&
-					data[2] == 0xbf) {
-				data += 3;
+		ਚੋਣ (state) {
+		ਹਾਲਤ BEFORE_BOM:
+			ਜੇ (3 <= ਸਿਰਾ - ਅੰਕੜੇ && c == 0xef && ਅੰਕੜੇ[1] == 0xbb &&
+					ਅੰਕੜੇ[2] == 0xbf) {
+				ਅੰਕੜੇ += 3;
 			}
 
 			state = BEFORE_MARKUP;
-			break;
-		case BEFORE_MARKUP:
-			if (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
-				data++;
-			else if (c != '<')
-				data = end;
-			else {
-				state = MARKUP_START;
-				data++;
+			ਰੋਕੋ;
+		ਹਾਲਤ BEFORE_MARKUP:
+			ਜੇ (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
+				ਅੰਕੜੇ++;
+			ਨਹੀਂਤਾਂ ਜੇ (c != '<')
+				ਅੰਕੜੇ = ਸਿਰਾ;
+			ਨਹੀਂਤਾਂ {
+				state = MARKUP_ਸ਼ੁਰੂ;
+				ਅੰਕੜੇ++;
 			}
-			break;
-		case MARKUP_START:
-			if (c == '!') {
+			ਰੋਕੋ;
+		ਹਾਲਤ MARKUP_ਸ਼ੁਰੂ:
+			ਜੇ (c == '!') {
 				state = COMMENT_OR_DOCTYPE;
-				data++;
-			} else if (c == '?') {
-				state = IN_PI;
-				data++;
-			} else {
+				ਅੰਕੜੇ++;
+			} ਨਹੀਂਤਾਂ ਜੇ (c == '?') {
+				state = ਵਿੱਚ_PI;
+				ਅੰਕੜੇ++;
+			} ਨਹੀਂਤਾਂ {
 				/* Reconsume input */
-				state = IN_TAG;
+				state = ਵਿੱਚ_ਟੈਗ;
 			}
-			break;
-		case COMMENT_OR_DOCTYPE:
-			if (2 <= end - data && c == '-' && data[1] == '-') {
-				state = IN_COMMENT;
-				data += 2;
-			} else {
+			ਰੋਕੋ;
+		ਹਾਲਤ COMMENT_OR_DOCTYPE:
+			ਜੇ (2 <= ਸਿਰਾ - ਅੰਕੜੇ && c == '-' && ਅੰਕੜੇ[1] == '-') {
+				state = ਵਿੱਚ_COMMENT;
+				ਅੰਕੜੇ += 2;
+			} ਨਹੀਂਤਾਂ {
 				/* Reconsume input */
-				state = IN_DOCTYPE;
+				state = ਵਿੱਚ_DOCTYPE;
 			}
-			break;
-		case IN_COMMENT:
-			if (3 <= end - data && c == '-' && data[1] == '-' &&
-					data[2] == '>') {
+			ਰੋਕੋ;
+		ਹਾਲਤ ਵਿੱਚ_COMMENT:
+			ਜੇ (3 <= ਸਿਰਾ - ਅੰਕੜੇ && c == '-' && ਅੰਕੜੇ[1] == '-' &&
+					ਅੰਕੜੇ[2] == '>') {
 				state = BEFORE_MARKUP;
-				data += 3;
-			} else
-				data++;
-			break;
-		case IN_DOCTYPE:
-			if (c == '>')
+				ਅੰਕੜੇ += 3;
+			} ਨਹੀਂਤਾਂ
+				ਅੰਕੜੇ++;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਵਿੱਚ_DOCTYPE:
+			ਜੇ (c == '>')
 				state = BEFORE_MARKUP;
-			data++;
-			break;
-		case IN_PI:
-			if (2 <= end - data && c == '?' && data[1] == '>') {
+			ਅੰਕੜੇ++;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਵਿੱਚ_PI:
+			ਜੇ (2 <= ਸਿਰਾ - ਅੰਕੜੇ && c == '?' && ਅੰਕੜੇ[1] == '>') {
 				state = BEFORE_MARKUP;
-				data += 2;
-			} else
-				data++;
-			break;
-		case IN_TAG:
-			if (MATCH("rss")) {
+				ਅੰਕੜੇ += 2;
+			} ਨਹੀਂਤਾਂ
+				ਅੰਕੜੇ++;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਵਿੱਚ_ਟੈਗ:
+			ਜੇ (ਮੇਲ_2("rss")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
-			} else if (MATCH("feed")) {
+				ਵਾਪਸ NSERROR_OK;
+			} ਨਹੀਂਤਾਂ ਜੇ (ਮੇਲ_2("feed")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_atom_xml);
-				return NSERROR_OK;
-			} else if (MATCH("rdf:RDF")) {
-				state = IN_RDF;
-				data += SLEN("rdf:RDF");
-			} else
-				data = end;
-			break;
-		case IN_RDF:
-			if (MATCH(RSS_NS)) {
+				ਵਾਪਸ NSERROR_OK;
+			} ਨਹੀਂਤਾਂ ਜੇ (ਮੇਲ_2("rdf:RDF")) {
+				state = ਵਿੱਚ_RDF;
+				ਅੰਕੜੇ += SLEN("rdf:RDF");
+			} ਨਹੀਂਤਾਂ
+				ਅੰਕੜੇ = ਸਿਰਾ;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਵਿੱਚ_RDF:
+			ਜੇ (ਮੇਲ_2(RSS_NS)) {
 				rss = true;
-				data += SLEN(RSS_NS);
-			} else if (MATCH(RDF_NS)) {
+				ਅੰਕੜੇ += SLEN(RSS_NS);
+			} ਨਹੀਂਤਾਂ ਜੇ (ਮੇਲ_2(RDF_NS)) {
 				rdf = true;
-				data += SLEN(RDF_NS);
-			} else
-				data++;
+				ਅੰਕੜੇ += SLEN(RDF_NS);
+			} ਨਹੀਂਤਾਂ
+				ਅੰਕੜੇ++;
 
-			if (rdf && rss) {
+			ਜੇ (rdf && rss) {
 				*effective_type = lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
+				ਵਾਪਸ NSERROR_OK;
 			}
 
-			break;
+			ਰੋਕੋ;
 		}
-#undef MATCH
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ ਮੇਲ_2
 	}
 
-	*effective_type = lwc_string_ref(corestring_lwc_text_html);
+	*effective_type = lwc_string_ref(corestring_lwc_ਪਾਠ_html);
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 
-#undef RSS_NS
-#undef RDF_NS
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ RSS_NS
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ RDF_NS
 }
 
 /* See mimesniff.h for documentation */
 nserror
-mimesniff_compute_effective_type(const char *content_type_header,
-				 const uint8_t *data,
+mimesniff_compute_effective_type(ਅਚਲ ਅੱਖਰ *content_type_ਸਿਰਲੇਖ,
+				 ਅਚਲ uint8_t *ਅੰਕੜੇ,
 				 size_t len,
 				 bool sniff_allowed,
 				 bool image_only,
 				 lwc_string **effective_type)
 {
-#define S(s) { s, SLEN(s) }
-	static const struct tt_s {
-		const char *data;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ S(s) { s, SLEN(s) }
+	ਸਥਿਰ ਅਚਲ ਬਣਤਰ tt_s {
+		ਅਚਲ ਅੱਖਰ *ਅੰਕੜੇ;
 		size_t len;
-	} text_types[] = {
+	} ਪਾਠ_types[] = {
 		S("text/plain"),
 		S("text/plain; charset=ISO-8859-1"),
 		S("text/plain; charset=iso-8859-1"),
 		S("text/plain; charset=UTF-8"),
-		{ NULL, 0 }
+		{ ਨਿਰਾ, 0 }
 	};
-#undef S
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ S
 
-	size_t content_type_header_len;
+	size_t content_type_ਸਿਰਲੇਖ_len;
 	http_content_type *ct;
-	const struct tt_s *tt;
-	bool match;
+	ਅਚਲ ਬਣਤਰ tt_s *tt;
+	bool ਮੇਲ;
 	nserror error;
 
-	if (content_type_header == NULL) {
-		if (sniff_allowed == false) {
-			return NSERROR_NOT_FOUND;
+	ਜੇ (content_type_ਸਿਰਲੇਖ == ਨਿਰਾ) {
+		ਜੇ (sniff_allowed == false) {
+			ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 		}
 
 		/* No official type => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		ਵਾਪਸ mimesniff__compute_unknown(ਅੰਕੜੇ, len, effective_type);
 	}
 
-	error = http_parse_content_type(content_type_header, &ct);
-	if (error != NSERROR_OK) {
-		if (sniff_allowed == false)
-			return NSERROR_NOT_FOUND;
+	error = http_parse_content_type(content_type_ਸਿਰਲੇਖ, &ct);
+	ਜੇ (error != NSERROR_OK) {
+		ਜੇ (sniff_allowed == false)
+			ਵਾਪਸ NSERROR_NOT_ਮਿਲਿਆ;
 
 		/* Unparseable => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		ਵਾਪਸ mimesniff__compute_unknown(ਅੰਕੜੇ, len, effective_type);
 	}
 
-	if (sniff_allowed == false) {
+	ਜੇ (sniff_allowed == false) {
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 	}
 
-	if (image_only) {
+	ਜੇ (image_only) {
 		lwc_string *official_type;
 
-		if (lwc_string_caseless_isequal(ct->media_type,
+		ਜੇ (lwc_string_caseless_isequal(ct->media_type,
 						corestring_lwc_image_svg,
-						&match) == lwc_error_ok && match) {
+						&ਮੇਲ) == lwc_error_ok && ਮੇਲ) {
 			*effective_type = lwc_string_ref(corestring_lwc_image_svg);
 			http_content_type_destroy(ct);
-			return NSERROR_OK;
+			ਵਾਪਸ NSERROR_OK;
 		}
 
 		official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
-				data, len, effective_type);
+		ਵਾਪਸ mimesniff__compute_image(official_type,
+				ਅੰਕੜੇ, len, effective_type);
 	}
 
-	content_type_header_len = strlen(content_type_header);
+	content_type_ਸਿਰਲੇਖ_len = ਲੜੀ_ਲੰਬਾਈ(content_type_ਸਿਰਲੇਖ);
 
 	/* Look for text types */
-	for (tt = text_types; tt->data != NULL; tt++) {
-		if (tt->len == content_type_header_len &&
-		    memcmp(tt->data,
-			   content_type_header,
-			   content_type_header_len) == 0) {
+	ਲਈ (tt = ਪਾਠ_types; tt->ਅੰਕੜੇ != ਨਿਰਾ; tt++) {
+		ਜੇ (tt->len == content_type_ਸਿਰਲੇਖ_len &&
+		    memcmp(tt->ਅੰਕੜੇ,
+			   content_type_ਸਿਰਲੇਖ,
+			   content_type_ਸਿਰਲੇਖ_len) == 0) {
 			http_content_type_destroy(ct);
-			return mimesniff__compute_text_or_binary(data, len,
+			ਵਾਪਸ mimesniff_compute_ਪਾਠ_or_ਦੁਆਧਾਰੀ(ਅੰਕੜੇ, len,
 					effective_type);
 		}
 	}
 
 	/* unknown/unknown, application/unknown, * / * */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	ਜੇ ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_unknown_unknown,
-					 &match) == lwc_error_ok && match) ||
+					 &ਮੇਲ) == lwc_error_ok && ਮੇਲ) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_application_unknown,
-					 &match) == lwc_error_ok && match) ||
+					 &ਮੇਲ) == lwc_error_ok && ਮੇਲ) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_any,
-					 &match) == lwc_error_ok && match)) {
+					 &ਮੇਲ) == lwc_error_ok && ਮੇਲ)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_unknown(data, len, effective_type);
+		ਵਾਪਸ mimesniff__compute_unknown(ਅੰਕੜੇ, len, effective_type);
 	}
 
 	/* +xml */
-	if (lwc_string_length(ct->media_type) > SLEN("+xml") &&
-			strncasecmp(lwc_string_data(ct->media_type) +
-				lwc_string_length(ct->media_type) -
+	ਜੇ (lwc_string_ਲੰਮਾਈ(ct->media_type) > SLEN("+xml") &&
+			strncasecmp(lwc_string_ਅੰਕੜੇ(ct->media_type) +
+				lwc_string_ਲੰਮਾਈ(ct->media_type) -
 				SLEN("+xml"),
 				"+xml", SLEN("+xml")) == 0) {
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 	}
 
 	/* text/xml, application/xml */
-	if ((lwc_string_caseless_isequal(ct->media_type,
-					 corestring_lwc_text_xml,
-					 &match) == lwc_error_ok && match) ||
+	ਜੇ ((lwc_string_caseless_isequal(ct->media_type,
+					 corestring_lwc_ਪਾਠ_xml,
+					 &ਮੇਲ) == lwc_error_ok && ਮੇਲ) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_application_xml,
-					 &match) == lwc_error_ok && match)) {
+					 &ਮੇਲ) == lwc_error_ok && ਮੇਲ)) {
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 	}
 
 	/* Image types */
-	if (content_factory_type_from_mime_type(ct->media_type) ==
+	ਜੇ (content_factory_type_from_mime_type(ct->media_type) ==
 			CONTENT_IMAGE) {
 		lwc_string *official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
-				data, len, effective_type);
+		ਵਾਪਸ mimesniff__compute_image(official_type,
+				ਅੰਕੜੇ, len, effective_type);
 	}
 
 	/* text/html */
-	if ((lwc_string_caseless_isequal(ct->media_type,
-					 corestring_lwc_text_html,
-					 &match) == lwc_error_ok && match)) {
+	ਜੇ ((lwc_string_caseless_isequal(ct->media_type,
+					 corestring_lwc_ਪਾਠ_html,
+					 &ਮੇਲ) == lwc_error_ok && ਮੇਲ)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_feed_or_html(data, len,
+		ਵਾਪਸ mimesniff__compute_feed_or_html(ਅੰਕੜੇ, len,
 						       effective_type);
 	}
 
@@ -703,5 +703,5 @@ mimesniff_compute_effective_type(const char *content_type_header,
 
 	http_content_type_destroy(ct);
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }

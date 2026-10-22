@@ -22,39 +22,39 @@
  * Duktapeish implementation of javascript engine functions, prototypes.
  */
 
-#ifndef DUKKY_H
-#define DUKKY_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ DUKKY_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DUKKY_H
 
-duk_ret_t dukky_create_object(duk_context *ctx, const char *name, int args);
-duk_bool_t dukky_push_node_stacked(duk_context *ctx);
-duk_bool_t dukky_push_node(duk_context *ctx, struct dom_node *node);
-void dukky_inject_not_ctr(duk_context *ctx, int idx, const char *name);
-void dukky_register_event_listener_for(duk_context *ctx,
-				       struct dom_element *ele,
+duk_ret_t dukky_create_object(duk_context *ctx, ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ ਦਲੀਲਾਂ);
+duk_bool_t dukky_ਧੱਕੋ_ਗੰਢ_stacked(duk_context *ctx);
+duk_bool_t dukky_ਧੱਕੋ_ਗੰਢ(duk_context *ctx, ਬਣਤਰ dom_ਗੰਢ *ਗੰਢ);
+ਖਾਲੀ dukky_inject_not_ctr(duk_context *ctx, ਪੂਰਨ idx, ਅਚਲ ਅੱਖਰ *name);
+ਖਾਲੀ dukky_ਰਜਿਸਟਰ_event_listener_for(duk_context *ctx,
+				       ਬਣਤਰ dom_element *ele,
 				       dom_string *name,
 				       bool capture);
-bool dukky_get_current_value_of_event_handler(duk_context *ctx,
+bool dukky_get_current_ਮੁੱਲ_ਦਾ_event_handler(duk_context *ctx,
 					      dom_string *name,
-					      dom_event_target *et);
-void dukky_push_event(duk_context *ctx, dom_event *evt);
-bool dukky_event_target_push_listeners(duk_context *ctx, bool dont_create);
+					      dom_event_ਨਿਸ਼ਾਨਾ *et);
+ਖਾਲੀ dukky_ਧੱਕੋ_event(duk_context *ctx, dom_event *evt);
+bool dukky_event_ਨਿਸ਼ਾਨਾ_ਧੱਕੋ_listeners(duk_context *ctx, bool dont_create);
 
-typedef enum {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਗਿਣਤੀ {
 	ELF_CAPTURE = 1 << 0,
 	ELF_PASSIVE = 1 << 1,
 	ELF_ONCE    = 1 << 2,
 	ELF_NONE    = 0
 } event_listener_flags;
 
-void dukky_shuffle_array(duk_context *ctx, duk_uarridx_t idx);
+ਖਾਲੀ dukky_shuffle_array(duk_context *ctx, duk_uarridx_t idx);
 
 /* pcall something, and if it errored, also dump the error to the log */
-duk_int_t dukky_pcall(duk_context *ctx, duk_size_t argc, bool reset_timeout);
+duk_int_t dukky_pcall(duk_context *ctx, duk_ਮਾਪ_t argc, bool reset_timeout);
 
 /* Push a generics function onto the stack */
-void dukky_push_generics(duk_context *ctx, const char *generic);
+ਖਾਲੀ dukky_ਧੱਕੋ_generics(duk_context *ctx, ਅਚਲ ਅੱਖਰ *generic);
 
 /* Log the current stack frame if possible */
-void dukky_log_stack_frame(duk_context *ctx, const char * reason);
+ਖਾਲੀ dukky_log_ਢੇਰ_ਚੌਖਟਾ(duk_context *ctx, ਅਚਲ ਅੱਖਰ * reason);
 
-#endif
+#ਜੇ_ਅੰਤ

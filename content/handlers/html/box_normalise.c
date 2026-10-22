@@ -24,47 +24,47 @@
  * Box tree normalisation implementation.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "utils/log.h"
-#include "utils/errors.h"
-#include "css/select.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/errors.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "css/select.h"
 
-#include "html/private.h"
-#include "html/table.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_normalise.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/private.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/table.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/box.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/box_manipulate.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/box_normalise.h"
 
 /* Define to enable box normalise debug */
-#undef BOX_NORMALISE_DEBUG
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ BOX_NORMALISE_DEBUG
 
 /**
  * Row spanning information for a cell
  */
-struct span_info {
+ਬਣਤਰ ਵਿਸਤਾਰ_info {
 	/** Number of rows this cell spans */
-	unsigned int row_span;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਪੰਕਤੀ_ਵਿਸਤਾਰ;
 	/** Row group of cell */
-	struct box *rg;
+	ਬਣਤਰ box *rg;
 	/** The cell in this column spans all rows until the end of the table */
-	bool auto_row;
+	bool auto_ਪੰਕਤੀ;
 };
 
 /**
  * Column record for a table
  */
-struct columns {
+ਬਣਤਰ columns {
 	/** Current column index */
-	unsigned int current_column;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ current_ਕਾਲਮ;
 	/** Number of columns in main part of table 1..max columns */
-	unsigned int num_columns;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ_columns;
 	/** Information about columns in main table, array [0, num_columns) */
-	struct span_info *spans;
+	ਬਣਤਰ ਵਿਸਤਾਰ_info *spans;
 	/** Number of rows in table */
-	unsigned int num_rows;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਅੰਕ_ਪੰਕਤੀਆਂ;
 };
 
 
@@ -79,367 +79,367 @@ struct columns {
  * \param cell		Box for current table cell
  * \return  true on success, false on memory exhaustion
  */
-static bool
-calculate_table_row(struct columns *col_info,
-		    unsigned int col_span,
-		    unsigned int row_span,
-		    unsigned int *start_column,
-		    struct box *cell)
+ਸਥਿਰ bool
+calculate_ਸਾਰਣੀ_ਪੰਕਤੀ(ਬਣਤਰ columns *ਖਾਨਾ_info,
+		    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਖਾਨਾ_ਵਿਸਤਾਰ,
+		    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਪੰਕਤੀ_ਵਿਸਤਾਰ,
+		    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ *ਸ਼ੁਰੂ_ਕਾਲਮ,
+		    ਬਣਤਰ box *cell)
 {
-	unsigned int cell_start_col = col_info->current_column;
-	unsigned int cell_end_col;
-	unsigned int i;
-	struct span_info *spans;
-	struct box *rg = cell->parent->parent; /* Cell's row group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cell_ਸ਼ੁਰੂ_ਖਾਨਾ = ਖਾਨਾ_info->current_ਕਾਲਮ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cell_ਸਿਰਾ_ਖਾਨਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i;
+	ਬਣਤਰ ਵਿਸਤਾਰ_info *spans;
+	ਬਣਤਰ box *rg = cell->ਮਾਪਾ->ਮਾਪਾ; /* Cell's row group */
 
 	/* Skip columns with cells spanning from above */
 	/* TODO: Need to ignore cells spanning from above that belong to
 	 *       different row group.  We don't have that info here. */
-	while (col_info->spans[cell_start_col].row_span != 0 &&
-			col_info->spans[cell_start_col].rg == rg) {
-		cell_start_col++;
+	ਜਦੋਂ (ਖਾਨਾ_info->spans[cell_ਸ਼ੁਰੂ_ਖਾਨਾ].ਪੰਕਤੀ_ਵਿਸਤਾਰ != 0 &&
+			ਖਾਨਾ_info->spans[cell_ਸ਼ੁਰੂ_ਖਾਨਾ].rg == rg) {
+		cell_ਸ਼ੁਰੂ_ਖਾਨਾ++;
 	}
 
 	/* Update current column with calculated start */
-	col_info->current_column = cell_start_col;
+	ਖਾਨਾ_info->current_ਕਾਲਮ = cell_ਸ਼ੁਰੂ_ਖਾਨਾ;
 
 	/* If this cell has a colspan of 0, then assume 1.
 	 * No other browser supports colspan=0, anyway. */
-	if (col_span == 0)
-		col_span = 1;
+	ਜੇ (ਖਾਨਾ_ਵਿਸਤਾਰ == 0)
+		ਖਾਨਾ_ਵਿਸਤਾਰ = 1;
 
-	cell_end_col = cell_start_col + col_span;
+	cell_ਸਿਰਾ_ਖਾਨਾ = cell_ਸ਼ੁਰੂ_ਖਾਨਾ + ਖਾਨਾ_ਵਿਸਤਾਰ;
 
-	if (col_info->num_columns < cell_end_col) {
+	ਜੇ (ਖਾਨਾ_info->ਅੰਕ_columns < cell_ਸਿਰਾ_ਖਾਨਾ) {
 		/* It appears that this row has more columns than
 		 * the maximum recorded for the table so far.
 		 * Allocate more span records. */
-		spans = realloc(col_info->spans,
-				sizeof *spans * (cell_end_col + 1));
-		if (spans == NULL)
-			return false;
+		spans = realloc(ਖਾਨਾ_info->spans,
+				ਆਕਾਰ *spans * (cell_ਸਿਰਾ_ਖਾਨਾ + 1));
+		ਜੇ (spans == ਨਿਰਾ)
+			ਵਾਪਸ false;
 
-		col_info->spans = spans;
-		col_info->num_columns = cell_end_col;
+		ਖਾਨਾ_info->spans = spans;
+		ਖਾਨਾ_info->ਅੰਕ_columns = cell_ਸਿਰਾ_ਖਾਨਾ;
 
 		/* Mark new final column as sentinel */
-		col_info->spans[cell_end_col].row_span = 0;
-		col_info->spans[cell_end_col].auto_row = false;
+		ਖਾਨਾ_info->spans[cell_ਸਿਰਾ_ਖਾਨਾ].ਪੰਕਤੀ_ਵਿਸਤਾਰ = 0;
+		ਖਾਨਾ_info->spans[cell_ਸਿਰਾ_ਖਾਨਾ].auto_ਪੰਕਤੀ = false;
 	}
 
 	/* This cell may span multiple columns. If it also wants to span
 	 * multiple rows, temporarily assume it spans 1 row only. This will
 	 * be fixed up in box_normalise_table_spans() */
-	for (i = cell_start_col; i < cell_end_col; i++) {
-		col_info->spans[i].row_span = (row_span == 0) ? 1 : row_span;
-		col_info->spans[i].auto_row = (row_span == 0);
-		col_info->spans[i].rg = rg;
+	ਲਈ (i = cell_ਸ਼ੁਰੂ_ਖਾਨਾ; i < cell_ਸਿਰਾ_ਖਾਨਾ; i++) {
+		ਖਾਨਾ_info->spans[i].ਪੰਕਤੀ_ਵਿਸਤਾਰ = (ਪੰਕਤੀ_ਵਿਸਤਾਰ == 0) ? 1 : ਪੰਕਤੀ_ਵਿਸਤਾਰ;
+		ਖਾਨਾ_info->spans[i].auto_ਪੰਕਤੀ = (ਪੰਕਤੀ_ਵਿਸਤਾਰ == 0);
+		ਖਾਨਾ_info->spans[i].rg = rg;
 	}
 
 	/* Update current column with calculated end. */
-	col_info->current_column = cell_end_col;
+	ਖਾਨਾ_info->current_ਕਾਲਮ = cell_ਸਿਰਾ_ਖਾਨਾ;
 
-	*start_column = cell_start_col;
+	*ਸ਼ੁਰੂ_ਕਾਲਮ = cell_ਸ਼ੁਰੂ_ਖਾਨਾ;
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
-static bool
-box_normalise_table_row(struct box *row,
-			const struct box *root,
-			struct columns *col_info,
+ਸਥਿਰ bool
+box_normalise_ਸਾਰਣੀ_ਪੰਕਤੀ(ਬਣਤਰ box *ਪੰਕਤੀ,
+			ਅਚਲ ਬਣਤਰ box *ਜੜ੍ਹ,
+			ਬਣਤਰ columns *ਖਾਨਾ_info,
 			html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *cell = NULL;
+	ਬਣਤਰ box *ਬੱਚਾ;
+	ਬਣਤਰ box *ਅਗਲਾ_ਬੱਚਾ;
+	ਬਣਤਰ box *cell = ਨਿਰਾ;
 	css_computed_style *style;
-	unsigned int i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i;
 	nscss_select_ctx ctx;
 
-	assert(row != NULL);
-	assert(row->type == BOX_TABLE_ROW);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ != ਨਿਰਾ);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ);
 
-	ctx.root_style = root->style;
+	ctx.ਜੜ੍ਹ_style = ਜੜ੍ਹ->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row %p", row);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row %p", ਪੰਕਤੀ);
+#ਜੇ_ਅੰਤ
 
-	for (child = row->children; child != NULL; child = next_child) {
-		next_child = child->next;
+	ਲਈ (ਬੱਚਾ = ਪੰਕਤੀ->children; ਬੱਚਾ != ਨਿਰਾ; ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ) {
+		ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
 
-		switch (child->type) {
-		case BOX_TABLE_CELL:
+		ਚੋਣ (ਬੱਚਾ->type) {
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_CELL:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			cell = child;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
+			ਜੇ (box_normalise_ਖੰਡ(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			cell = ਬੱਚਾ;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_FLEX:
+		ਹਾਲਤ BOX_ਖੰਡ:
+		ਹਾਲਤ BOX_INLINE_CONTAINER:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ:
 			/* insert implied table cell */
-			assert(row->style != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ->style != ਨਿਰਾ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+			ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					row->style);
-			if (style == NULL)
-				return false;
+					ਪੰਕਤੀ->style);
+			ਜੇ (style == ਨਿਰਾ)
+				ਵਾਪਸ false;
 
-			cell = box_create(NULL, style, true, row->href,
-					row->target, NULL, NULL, c->bctx);
-			if (cell == NULL) {
+			cell = box_create(ਨਿਰਾ, style, true, ਪੰਕਤੀ->href,
+					ਪੰਕਤੀ->ਨਿਸ਼ਾਨਾ, ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+			ਜੇ (cell == ਨਿਰਾ) {
 				css_computed_style_destroy(style);
-				return false;
+				ਵਾਪਸ false;
 			}
-			cell->type = BOX_TABLE_CELL;
+			cell->type = BOX_ਸਾਰਣੀ_CELL;
 
-			if (child->prev == NULL)
-				row->children = cell;
-			else
-				child->prev->next = cell;
+			ਜੇ (ਬੱਚਾ->prev == ਨਿਰਾ)
+				ਪੰਕਤੀ->children = cell;
+			ਨਹੀਂਤਾਂ
+				ਬੱਚਾ->prev->ਅਗਲਾ = cell;
 
-			cell->prev = child->prev;
+			cell->prev = ਬੱਚਾ->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW)) {
-				box_add_child(cell, child);
+			ਜਦੋਂ (ਬੱਚਾ != ਨਿਰਾ && (
+					ਬੱਚਾ->type == BOX_FLEX ||
+					ਬੱਚਾ->type == BOX_ਖੰਡ ||
+					ਬੱਚਾ->type == BOX_INLINE_CONTAINER ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ)) {
+				box_ਜੋੜੋ_ਬੱਚਾ(cell, ਬੱਚਾ);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
+				ਬੱਚਾ->ਅਗਲਾ = ਨਿਰਾ;
+				ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ;
 			}
 
-			assert(cell->last != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(cell->ਆਖਰੀ != ਨਿਰਾ);
 
-			cell->last->next = NULL;
-			cell->next = next_child = child;
-			if (cell->next != NULL)
-				cell->next->prev = cell;
-			else
-				row->last = cell;
-			cell->parent = row;
+			cell->ਆਖਰੀ->ਅਗਲਾ = ਨਿਰਾ;
+			cell->ਅਗਲਾ = ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ;
+			ਜੇ (cell->ਅਗਲਾ != ਨਿਰਾ)
+				cell->ਅਗਲਾ->prev = cell;
+			ਨਹੀਂਤਾਂ
+				ਪੰਕਤੀ->ਆਖਰੀ = cell;
+			cell->ਮਾਪਾ = ਪੰਕਤੀ;
 
-			if (box_normalise_block(cell, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ਜੇ (box_normalise_ਖੰਡ(cell, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE:
+		ਹਾਲਤ BOX_INLINE_ਸਿਰਾ:
+		ਹਾਲਤ BOX_INLINE_FLEX:
+		ਹਾਲਤ BOX_INLINE_ਖੰਡ:
+		ਹਾਲਤ BOX_FLOAT_ਖੱਬਾ:
+		ਹਾਲਤ BOX_FLOAT_ਸੱਜਾ:
+		ਹਾਲਤ BOX_BR:
+		ਹਾਲਤ BOX_ਪਾਠ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
+			ਰੋਕੋ;
+		ਮੂਲ:
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
 		}
 
-		if (calculate_table_row(col_info, cell->columns, cell->rows,
-				&cell->start_column, cell) == false)
-			return false;
+		ਜੇ (calculate_ਸਾਰਣੀ_ਪੰਕਤੀ(ਖਾਨਾ_info, cell->columns, cell->ਪੰਕਤੀਆਂ,
+				&cell->ਸ਼ੁਰੂ_ਕਾਲਮ, cell) == false)
+			ਵਾਪਸ false;
 	}
 
 
 	/* Update row spanning details for all columns */
-	for (i = 0; i < col_info->num_columns; i++) {
-		if (col_info->spans[i].row_span != 0 &&
-				col_info->spans[i].auto_row == false) {
+	ਲਈ (i = 0; i < ਖਾਨਾ_info->ਅੰਕ_columns; i++) {
+		ਜੇ (ਖਾਨਾ_info->spans[i].ਪੰਕਤੀ_ਵਿਸਤਾਰ != 0 &&
+				ਖਾਨਾ_info->spans[i].auto_ਪੰਕਤੀ == false) {
 			/* This cell spans rows, and is not an auto row.
 			 * Reduce number of rows left to span */
-			col_info->spans[i].row_span--;
+			ਖਾਨਾ_info->spans[i].ਪੰਕਤੀ_ਵਿਸਤਾਰ--;
 		}
 	}
 
 	/* Reset current column for next row */
-	col_info->current_column = 0;
+	ਖਾਨਾ_info->current_ਕਾਲਮ = 0;
 
 	/* Increment row counter */
-	col_info->num_rows++;
+	ਖਾਨਾ_info->ਅੰਕ_ਪੰਕਤੀਆਂ++;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row %p done", row);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row %p done", ਪੰਕਤੀ);
+#ਜੇ_ਅੰਤ
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
-static bool
-box_normalise_table_row_group(struct box *row_group,
-			      const struct box *root,
-			      struct columns *col_info,
+ਸਥਿਰ bool
+box_normalise_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ(ਬਣਤਰ box *ਪੰਕਤੀ_ਸਮੂਹ,
+			      ਅਚਲ ਬਣਤਰ box *ਜੜ੍ਹ,
+			      ਬਣਤਰ columns *ਖਾਨਾ_info,
 			      html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row;
+	ਬਣਤਰ box *ਬੱਚਾ;
+	ਬਣਤਰ box *ਅਗਲਾ_ਬੱਚਾ;
+	ਬਣਤਰ box *ਪੰਕਤੀ;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
-	unsigned int group_row_count = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸਮੂਹ_ਪੰਕਤੀ_ਗਿਣਤੀ = 0;
 
-	assert(row_group != 0);
-	assert(row_group->type == BOX_TABLE_ROW_GROUP);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ_ਸਮੂਹ != 0);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ_ਸਮੂਹ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ);
 
-	ctx.root_style = root->style;
+	ctx.ਜੜ੍ਹ_style = ਜੜ੍ਹ->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row_group %p", row_group);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row_group %p", ਪੰਕਤੀ_ਸਮੂਹ);
+#ਜੇ_ਅੰਤ
 
-	for (child = row_group->children; child != NULL; child = next_child) {
-		next_child = child->next;
+	ਲਈ (ਬੱਚਾ = ਪੰਕਤੀ_ਸਮੂਹ->children; ਬੱਚਾ != ਨਿਰਾ; ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ) {
+		ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
 
-		switch (child->type) {
-		case BOX_TABLE_ROW:
+		ਚੋਣ (ਬੱਚਾ->type) {
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ:
 			/* ok */
-			group_row_count++;
-			if (box_normalise_table_row(child, root, col_info,
+			ਸਮੂਹ_ਪੰਕਤੀ_ਗਿਣਤੀ++;
+			ਜੇ (box_normalise_ਸਾਰਣੀ_ਪੰਕਤੀ(ਬੱਚਾ, ਜੜ੍ਹ, ਖਾਨਾ_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_CELL:
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_FLEX:
+		ਹਾਲਤ BOX_ਖੰਡ:
+		ਹਾਲਤ BOX_INLINE_CONTAINER:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_CELL:
 			/* insert implied table row */
-			assert(row_group->style != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ_ਸਮੂਹ->style != ਨਿਰਾ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+			ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					row_group->style);
-			if (style == NULL)
-				return false;
+					ਪੰਕਤੀ_ਸਮੂਹ->style);
+			ਜੇ (style == ਨਿਰਾ)
+				ਵਾਪਸ false;
 
-			row = box_create(NULL, style, true, row_group->href,
-					row_group->target, NULL, NULL, c->bctx);
-			if (row == NULL) {
+			ਪੰਕਤੀ = box_create(ਨਿਰਾ, style, true, ਪੰਕਤੀ_ਸਮੂਹ->href,
+					ਪੰਕਤੀ_ਸਮੂਹ->ਨਿਸ਼ਾਨਾ, ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+			ਜੇ (ਪੰਕਤੀ == ਨਿਰਾ) {
 				css_computed_style_destroy(style);
-				return false;
+				ਵਾਪਸ false;
 			}
-			row->type = BOX_TABLE_ROW;
+			ਪੰਕਤੀ->type = BOX_ਸਾਰਣੀ_ਪੰਕਤੀ;
 
-			if (child->prev == NULL)
-				row_group->children = row;
-			else
-				child->prev->next = row;
+			ਜੇ (ਬੱਚਾ->prev == ਨਿਰਾ)
+				ਪੰਕਤੀ_ਸਮੂਹ->children = ਪੰਕਤੀ;
+			ਨਹੀਂਤਾਂ
+				ਬੱਚਾ->prev->ਅਗਲਾ = ਪੰਕਤੀ;
 
-			row->prev = child->prev;
+			ਪੰਕਤੀ->prev = ਬੱਚਾ->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(row, child);
+			ਜਦੋਂ (ਬੱਚਾ != ਨਿਰਾ && (
+					ਬੱਚਾ->type == BOX_FLEX ||
+					ਬੱਚਾ->type == BOX_ਖੰਡ ||
+					ਬੱਚਾ->type == BOX_INLINE_CONTAINER ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_CELL)) {
+				box_ਜੋੜੋ_ਬੱਚਾ(ਪੰਕਤੀ, ਬੱਚਾ);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
+				ਬੱਚਾ->ਅਗਲਾ = ਨਿਰਾ;
+				ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ;
 			}
 
-			assert(row->last != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ->ਆਖਰੀ != ਨਿਰਾ);
 
-			row->last->next = NULL;
-			row->next = next_child = child;
-			if (row->next != NULL)
-				row->next->prev = row;
-			else
-				row_group->last = row;
-			row->parent = row_group;
+			ਪੰਕਤੀ->ਆਖਰੀ->ਅਗਲਾ = ਨਿਰਾ;
+			ਪੰਕਤੀ->ਅਗਲਾ = ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ;
+			ਜੇ (ਪੰਕਤੀ->ਅਗਲਾ != ਨਿਰਾ)
+				ਪੰਕਤੀ->ਅਗਲਾ->prev = ਪੰਕਤੀ;
+			ਨਹੀਂਤਾਂ
+				ਪੰਕਤੀ_ਸਮੂਹ->ਆਖਰੀ = ਪੰਕਤੀ;
+			ਪੰਕਤੀ->ਮਾਪਾ = ਪੰਕਤੀ_ਸਮੂਹ;
 
-			group_row_count++;
-			if (box_normalise_table_row(row, root, col_info,
+			ਸਮੂਹ_ਪੰਕਤੀ_ਗਿਣਤੀ++;
+			ਜੇ (box_normalise_ਸਾਰਣੀ_ਪੰਕਤੀ(ਪੰਕਤੀ, ਜੜ੍ਹ, ਖਾਨਾ_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE:
+		ਹਾਲਤ BOX_INLINE_ਸਿਰਾ:
+		ਹਾਲਤ BOX_INLINE_FLEX:
+		ਹਾਲਤ BOX_INLINE_ਖੰਡ:
+		ਹਾਲਤ BOX_FLOAT_ਖੱਬਾ:
+		ਹਾਲਤ BOX_FLOAT_ਸੱਜਾ:
+		ਹਾਲਤ BOX_BR:
+		ਹਾਲਤ BOX_ਪਾਠ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
+			ਰੋਕੋ;
+		ਮੂਲ:
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
 		}
 	}
 
-	if (row_group->children == NULL) {
-#ifdef BOX_NORMALISE_DEBUG
+	ਜੇ (ਪੰਕਤੀ_ਸਮੂਹ->children == ਨਿਰਾ) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "row_group->children == 0, inserting implied row");
-#endif
+#ਜੇ_ਅੰਤ
 
-		assert(row_group->style != NULL);
+		ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ_ਸਮੂਹ->style != ਨਿਰਾ);
 
 		ctx.ctx = c->select_ctx;
-		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-		ctx.base_url = c->base_url;
+		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+		ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 		ctx.universal = c->universal;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				row_group->style);
-		if (style == NULL) {
-			return false;
+				ਪੰਕਤੀ_ਸਮੂਹ->style);
+		ਜੇ (style == ਨਿਰਾ) {
+			ਵਾਪਸ false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		ਪੰਕਤੀ = box_create(ਨਿਰਾ, style, true, ਪੰਕਤੀ_ਸਮੂਹ->href,
+				ਪੰਕਤੀ_ਸਮੂਹ->ਨਿਸ਼ਾਨਾ, ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+		ਜੇ (ਪੰਕਤੀ == ਨਿਰਾ) {
 			css_computed_style_destroy(style);
-			return false;
+			ਵਾਪਸ false;
 		}
-		row->type = BOX_TABLE_ROW;
+		ਪੰਕਤੀ->type = BOX_ਸਾਰਣੀ_ਪੰਕਤੀ;
 
-		row->parent = row_group;
-		row_group->children = row_group->last = row;
+		ਪੰਕਤੀ->ਮਾਪਾ = ਪੰਕਤੀ_ਸਮੂਹ;
+		ਪੰਕਤੀ_ਸਮੂਹ->children = ਪੰਕਤੀ_ਸਮੂਹ->ਆਖਰੀ = ਪੰਕਤੀ;
 
-		group_row_count = 1;
+		ਸਮੂਹ_ਪੰਕਤੀ_ਗਿਣਤੀ = 1;
 
 		/* Keep table's row count in sync */
-		col_info->num_rows++;
+		ਖਾਨਾ_info->ਅੰਕ_ਪੰਕਤੀਆਂ++;
 	}
 
-	row_group->rows = group_row_count;
+	ਪੰਕਤੀ_ਸਮੂਹ->ਪੰਕਤੀਆਂ = ਸਮੂਹ_ਪੰਕਤੀ_ਗਿਣਤੀ;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row_group %p done", row_group);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row_group %p done", ਪੰਕਤੀ_ਸਮੂਹ);
+#ਜੇ_ਅੰਤ
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
@@ -453,754 +453,754 @@ box_normalise_table_row_group(struct box *row_group,
  * \param c      Content containing table
  * \return True on success, false on memory exhaustion.
  */
-static bool
-box_normalise_table_spans(struct box *table,
-			  const struct box *root,
-			  struct span_info *spans,
+ਸਥਿਰ bool
+box_normalise_ਸਾਰਣੀ_spans(ਬਣਤਰ box *ਸਾਰਣੀ,
+			  ਅਚਲ ਬਣਤਰ box *ਜੜ੍ਹ,
+			  ਬਣਤਰ ਵਿਸਤਾਰ_info *spans,
 			  html_content *c)
 {
-	struct box *table_row_group;
-	struct box *table_row;
-	struct box *table_cell;
-	unsigned int rows_left = table->rows;
-	unsigned int group_rows_left;
-	unsigned int col;
+	ਬਣਤਰ box *ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ;
+	ਬਣਤਰ box *ਸਾਰਣੀ_ਪੰਕਤੀ;
+	ਬਣਤਰ box *ਸਾਰਣੀ_cell;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਪੰਕਤੀਆਂ_ਖੱਬਾ = ਸਾਰਣੀ->ਪੰਕਤੀਆਂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸਮੂਹ_ਪੰਕਤੀਆਂ_ਖੱਬਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਖਾਨਾ;
 	nscss_select_ctx ctx;
 
-	ctx.root_style = root->style;
+	ctx.ਜੜ੍ਹ_style = ਜੜ੍ਹ->style;
 
 	/* Clear span data */
-	memset(spans, 0, table->columns * sizeof(struct span_info));
+	memset(spans, 0, ਸਾਰਣੀ->columns * ਆਕਾਰ(ਬਣਤਰ ਵਿਸਤਾਰ_info));
 
 	/* Scan table, filling in width and height of table cells with
 	 * colspan = 0 and rowspan = 0. Also generate empty cells */
-	for (table_row_group = table->children;
-	     table_row_group != NULL;
-	     table_row_group = table_row_group->next) {
+	ਲਈ (ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ = ਸਾਰਣੀ->children;
+	     ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ != ਨਿਰਾ;
+	     ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ = ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ->ਅਗਲਾ) {
 
-		group_rows_left = table_row_group->rows;
+		ਸਮੂਹ_ਪੰਕਤੀਆਂ_ਖੱਬਾ = ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ->ਪੰਕਤੀਆਂ;
 
-		for (table_row = table_row_group->children;
-		     table_row != NULL;
-		     table_row = table_row->next) {
+		ਲਈ (ਸਾਰਣੀ_ਪੰਕਤੀ = ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ->children;
+		     ਸਾਰਣੀ_ਪੰਕਤੀ != ਨਿਰਾ;
+		     ਸਾਰਣੀ_ਪੰਕਤੀ = ਸਾਰਣੀ_ਪੰਕਤੀ->ਅਗਲਾ) {
 
-			for (table_cell = table_row->children;
-			     table_cell != NULL;
-			     table_cell = table_cell->next) {
+			ਲਈ (ਸਾਰਣੀ_cell = ਸਾਰਣੀ_ਪੰਕਤੀ->children;
+			     ਸਾਰਣੀ_cell != ਨਿਰਾ;
+			     ਸਾਰਣੀ_cell = ਸਾਰਣੀ_cell->ਅਗਲਾ) {
 
 				/* colspan = 0 -> colspan = 1 */
-				if (table_cell->columns == 0) {
-					table_cell->columns = 1;
+				ਜੇ (ਸਾਰਣੀ_cell->columns == 0) {
+					ਸਾਰਣੀ_cell->columns = 1;
 				}
 
 				/* if rowspan is 0 it is expanded to
 				 * the number of rows left in the row
 				 * group
 				 */
-				if (table_cell->rows == 0) {
-					table_cell->rows = group_rows_left;
+				ਜੇ (ਸਾਰਣੀ_cell->ਪੰਕਤੀਆਂ == 0) {
+					ਸਾਰਣੀ_cell->ਪੰਕਤੀਆਂ = ਸਮੂਹ_ਪੰਕਤੀਆਂ_ਖੱਬਾ;
 				}
 
 				/* limit rowspans within group */
-				if (table_cell->rows > group_rows_left) {
-					table_cell->rows = group_rows_left;
+				ਜੇ (ਸਾਰਣੀ_cell->ਪੰਕਤੀਆਂ > ਸਮੂਹ_ਪੰਕਤੀਆਂ_ਖੱਬਾ) {
+					ਸਾਰਣੀ_cell->ਪੰਕਤੀਆਂ = ਸਮੂਹ_ਪੰਕਤੀਆਂ_ਖੱਬਾ;
 				}
 
 				/* Record span information */
-				for (col = table_cell->start_column;
-						col < table_cell->start_column +
-						table_cell->columns; col++) {
-					spans[col].row_span = table_cell->rows;
+				ਲਈ (ਖਾਨਾ = ਸਾਰਣੀ_cell->ਸ਼ੁਰੂ_ਕਾਲਮ;
+						ਖਾਨਾ < ਸਾਰਣੀ_cell->ਸ਼ੁਰੂ_ਕਾਲਮ +
+						ਸਾਰਣੀ_cell->columns; ਖਾਨਾ++) {
+					spans[ਖਾਨਾ].ਪੰਕਤੀ_ਵਿਸਤਾਰ = ਸਾਰਣੀ_cell->ਪੰਕਤੀਆਂ;
 				}
 			}
 
 			/* Reduce span count of each column */
-			for (col = 0; col < table->columns; col++) {
-				if (spans[col].row_span == 0) {
-					unsigned int start = col;
+			ਲਈ (ਖਾਨਾ = 0; ਖਾਨਾ < ਸਾਰਣੀ->columns; ਖਾਨਾ++) {
+				ਜੇ (spans[ਖਾਨਾ].ਪੰਕਤੀ_ਵਿਸਤਾਰ == 0) {
+					ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸ਼ੁਰੂ = ਖਾਨਾ;
 					css_computed_style *style;
-					struct box *cell, *prev;
+					ਬਣਤਰ box *cell, *prev;
 
 					/* If it's already zero, then we need
 					 * to generate an empty cell for the
 					 * gap in the row that spans as many
 					 * columns as remain blank.
 					 */
-					assert(table_row->style != NULL);
+					ਪ੍ਰਤਿਜ੍ਞਾ(ਸਾਰਣੀ_ਪੰਕਤੀ->style != ਨਿਰਾ);
 
 					/* Find width of gap */
-					while (col < table->columns &&
-							spans[col].row_span ==
+					ਜਦੋਂ (ਖਾਨਾ < ਸਾਰਣੀ->columns &&
+							spans[ਖਾਨਾ].ਪੰਕਤੀ_ਵਿਸਤਾਰ ==
 							0) {
-						col++;
+						ਖਾਨਾ++;
 					}
 
 					ctx.ctx = c->select_ctx;
 					ctx.quirks = (c->quirks ==
-						DOM_DOCUMENT_QUIRKS_MODE_FULL);
-					ctx.base_url = c->base_url;
+						DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+					ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 					ctx.universal = c->universal;
 
 					style = nscss_get_blank_style(&ctx,
 							&c->unit_len_ctx,
-							table_row->style);
-					if (style == NULL)
-						return false;
+							ਸਾਰਣੀ_ਪੰਕਤੀ->style);
+					ਜੇ (style == ਨਿਰਾ)
+						ਵਾਪਸ false;
 
-					cell = box_create(NULL, style, true,
-							table_row->href,
-							table_row->target,
-							NULL, NULL, c->bctx);
-					if (cell == NULL) {
+					cell = box_create(ਨਿਰਾ, style, true,
+							ਸਾਰਣੀ_ਪੰਕਤੀ->href,
+							ਸਾਰਣੀ_ਪੰਕਤੀ->ਨਿਸ਼ਾਨਾ,
+							ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+					ਜੇ (cell == ਨਿਰਾ) {
 						css_computed_style_destroy(
 								style);
-						return false;
+						ਵਾਪਸ false;
 					}
-					cell->type = BOX_TABLE_CELL;
+					cell->type = BOX_ਸਾਰਣੀ_CELL;
 
-					cell->rows = 1;
-					cell->columns = col - start;
-					cell->start_column = start;
+					cell->ਪੰਕਤੀਆਂ = 1;
+					cell->columns = ਖਾਨਾ - ਸ਼ੁਰੂ;
+					cell->ਸ਼ੁਰੂ_ਕਾਲਮ = ਸ਼ੁਰੂ;
 
 					/* Find place to insert cell */
-					for (prev = table_row->children;
-							prev != NULL;
-							prev = prev->next) {
-						if (prev->start_column +
+					ਲਈ (prev = ਸਾਰਣੀ_ਪੰਕਤੀ->children;
+							prev != ਨਿਰਾ;
+							prev = prev->ਅਗਲਾ) {
+						ਜੇ (prev->ਸ਼ੁਰੂ_ਕਾਲਮ +
 							prev->columns ==
-								start)
-							break;
-						if (prev->next == NULL)
-							break;
+								ਸ਼ੁਰੂ)
+							ਰੋਕੋ;
+						ਜੇ (prev->ਅਗਲਾ == ਨਿਰਾ)
+							ਰੋਕੋ;
 					}
 
 					/* Insert it */
-					if (prev == NULL) {
-						if (table_row->children != NULL)
-							table_row->children->
+					ਜੇ (prev == ਨਿਰਾ) {
+						ਜੇ (ਸਾਰਣੀ_ਪੰਕਤੀ->children != ਨਿਰਾ)
+							ਸਾਰਣੀ_ਪੰਕਤੀ->children->
 								prev = cell;
-						else
-							table_row->last = cell;
+						ਨਹੀਂਤਾਂ
+							ਸਾਰਣੀ_ਪੰਕਤੀ->ਆਖਰੀ = cell;
 
-						cell->next =
-							table_row->children;
-						table_row->children = cell;
-					} else {
-						if (prev->next != NULL)
-							prev->next->prev = cell;
-						else
-							table_row->last = cell;
+						cell->ਅਗਲਾ =
+							ਸਾਰਣੀ_ਪੰਕਤੀ->children;
+						ਸਾਰਣੀ_ਪੰਕਤੀ->children = cell;
+					} ਨਹੀਂਤਾਂ {
+						ਜੇ (prev->ਅਗਲਾ != ਨਿਰਾ)
+							prev->ਅਗਲਾ->prev = cell;
+						ਨਹੀਂਤਾਂ
+							ਸਾਰਣੀ_ਪੰਕਤੀ->ਆਖਰੀ = cell;
 
-						cell->next = prev->next;
-						prev->next = cell;
+						cell->ਅਗਲਾ = prev->ਅਗਲਾ;
+						prev->ਅਗਲਾ = cell;
 						cell->prev = prev;
 					}
-					cell->parent = table_row;
-				} else {
-					spans[col].row_span--;
+					cell->ਮਾਪਾ = ਸਾਰਣੀ_ਪੰਕਤੀ;
+				} ਨਹੀਂਤਾਂ {
+					spans[ਖਾਨਾ].ਪੰਕਤੀ_ਵਿਸਤਾਰ--;
 				}
 			}
 
-			assert(rows_left > 0);
+			ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀਆਂ_ਖੱਬਾ > 0);
 
-			rows_left--;
+			ਪੰਕਤੀਆਂ_ਖੱਬਾ--;
 		}
 
-		group_rows_left--;
+		ਸਮੂਹ_ਪੰਕਤੀਆਂ_ਖੱਬਾ--;
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
-static bool
-box_normalise_table(struct box *table, const struct box *root, html_content * c)
+ਸਥਿਰ bool
+box_normalise_ਸਾਰਣੀ(ਬਣਤਰ box *ਸਾਰਣੀ, ਅਚਲ ਬਣਤਰ box *ਜੜ੍ਹ, html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row_group;
+	ਬਣਤਰ box *ਬੱਚਾ;
+	ਬਣਤਰ box *ਅਗਲਾ_ਬੱਚਾ;
+	ਬਣਤਰ box *ਪੰਕਤੀ_ਸਮੂਹ;
 	css_computed_style *style;
-	struct columns col_info;
+	ਬਣਤਰ columns ਖਾਨਾ_info;
 	nscss_select_ctx ctx;
 
-	assert(table != NULL);
-	assert(table->type == BOX_TABLE);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਸਾਰਣੀ != ਨਿਰਾ);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਸਾਰਣੀ->type == BOX_ਸਾਰਣੀ);
 
-	ctx.root_style = root->style;
+	ctx.ਜੜ੍ਹ_style = ਜੜ੍ਹ->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "table %p", table);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "table %p", ਸਾਰਣੀ);
+#ਜੇ_ਅੰਤ
 
-	col_info.num_columns = 1;
-	col_info.current_column = 0;
-	col_info.spans = malloc(2 * sizeof *col_info.spans);
-	if (col_info.spans == NULL)
-		return false;
+	ਖਾਨਾ_info.ਅੰਕ_columns = 1;
+	ਖਾਨਾ_info.current_ਕਾਲਮ = 0;
+	ਖਾਨਾ_info.spans = ਸਮ੍ਰਿਤੀ_ਦਿਓ(2 * ਆਕਾਰ *ਖਾਨਾ_info.spans);
+	ਜੇ (ਖਾਨਾ_info.spans == ਨਿਰਾ)
+		ਵਾਪਸ false;
 
-	col_info.spans[0].row_span = col_info.spans[1].row_span = 0;
-	col_info.spans[0].auto_row = false;
-	col_info.spans[1].auto_row = false;
-	col_info.num_rows = 0;
+	ਖਾਨਾ_info.spans[0].ਪੰਕਤੀ_ਵਿਸਤਾਰ = ਖਾਨਾ_info.spans[1].ਪੰਕਤੀ_ਵਿਸਤਾਰ = 0;
+	ਖਾਨਾ_info.spans[0].auto_ਪੰਕਤੀ = false;
+	ਖਾਨਾ_info.spans[1].auto_ਪੰਕਤੀ = false;
+	ਖਾਨਾ_info.ਅੰਕ_ਪੰਕਤੀਆਂ = 0;
 
-	for (child = table->children; child != NULL; child = next_child) {
-		next_child = child->next;
-		switch (child->type) {
-		case BOX_TABLE_ROW_GROUP:
+	ਲਈ (ਬੱਚਾ = ਸਾਰਣੀ->children; ਬੱਚਾ != ਨਿਰਾ; ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ) {
+		ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
+		ਚੋਣ (ਬੱਚਾ->type) {
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ:
 			/* ok */
-			if (box_normalise_table_row_group(child, root,
-					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+			ਜੇ (box_normalise_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ(ਬੱਚਾ, ਜੜ੍ਹ,
+					&ਖਾਨਾ_info, c) == false) {
+				ਮੁਕਤ(ਖਾਨਾ_info.spans);
+				ਵਾਪਸ false;
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_FLEX:
+		ਹਾਲਤ BOX_ਖੰਡ:
+		ਹਾਲਤ BOX_INLINE_CONTAINER:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_CELL:
 			/* insert implied table row group */
-			assert(table->style != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(ਸਾਰਣੀ->style != ਨਿਰਾ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+			ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					table->style);
-			if (style == NULL) {
-				free(col_info.spans);
-				return false;
+					ਸਾਰਣੀ->style);
+			ਜੇ (style == ਨਿਰਾ) {
+				ਮੁਕਤ(ਖਾਨਾ_info.spans);
+				ਵਾਪਸ false;
 			}
 
-			row_group = box_create(NULL, style, true, table->href,
-					table->target, NULL, NULL, c->bctx);
-			if (row_group == NULL) {
+			ਪੰਕਤੀ_ਸਮੂਹ = box_create(ਨਿਰਾ, style, true, ਸਾਰਣੀ->href,
+					ਸਾਰਣੀ->ਨਿਸ਼ਾਨਾ, ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+			ਜੇ (ਪੰਕਤੀ_ਸਮੂਹ == ਨਿਰਾ) {
 				css_computed_style_destroy(style);
-				free(col_info.spans);
-				return false;
+				ਮੁਕਤ(ਖਾਨਾ_info.spans);
+				ਵਾਪਸ false;
 			}
 
-			row_group->type = BOX_TABLE_ROW_GROUP;
+			ਪੰਕਤੀ_ਸਮੂਹ->type = BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ;
 
-			if (child->prev == NULL)
-				table->children = row_group;
-			else
-				child->prev->next = row_group;
+			ਜੇ (ਬੱਚਾ->prev == ਨਿਰਾ)
+				ਸਾਰਣੀ->children = ਪੰਕਤੀ_ਸਮੂਹ;
+			ਨਹੀਂਤਾਂ
+				ਬੱਚਾ->prev->ਅਗਲਾ = ਪੰਕਤੀ_ਸਮੂਹ;
 
-			row_group->prev = child->prev;
+			ਪੰਕਤੀ_ਸਮੂਹ->prev = ਬੱਚਾ->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(row_group, child);
+			ਜਦੋਂ (ਬੱਚਾ != ਨਿਰਾ && (
+					ਬੱਚਾ->type == BOX_FLEX ||
+					ਬੱਚਾ->type == BOX_ਖੰਡ ||
+					ਬੱਚਾ->type == BOX_INLINE_CONTAINER ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_CELL)) {
+				box_ਜੋੜੋ_ਬੱਚਾ(ਪੰਕਤੀ_ਸਮੂਹ, ਬੱਚਾ);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
+				ਬੱਚਾ->ਅਗਲਾ = ਨਿਰਾ;
+				ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ;
 			}
 
-			assert(row_group->last != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(ਪੰਕਤੀ_ਸਮੂਹ->ਆਖਰੀ != ਨਿਰਾ);
 
-			row_group->last->next = NULL;
-			row_group->next = next_child = child;
-			if (row_group->next != NULL)
-				row_group->next->prev = row_group;
-			else
-				table->last = row_group;
-			row_group->parent = table;
+			ਪੰਕਤੀ_ਸਮੂਹ->ਆਖਰੀ->ਅਗਲਾ = ਨਿਰਾ;
+			ਪੰਕਤੀ_ਸਮੂਹ->ਅਗਲਾ = ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ;
+			ਜੇ (ਪੰਕਤੀ_ਸਮੂਹ->ਅਗਲਾ != ਨਿਰਾ)
+				ਪੰਕਤੀ_ਸਮੂਹ->ਅਗਲਾ->prev = ਪੰਕਤੀ_ਸਮੂਹ;
+			ਨਹੀਂਤਾਂ
+				ਸਾਰਣੀ->ਆਖਰੀ = ਪੰਕਤੀ_ਸਮੂਹ;
+			ਪੰਕਤੀ_ਸਮੂਹ->ਮਾਪਾ = ਸਾਰਣੀ;
 
-			if (box_normalise_table_row_group(row_group, root,
-					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+			ਜੇ (box_normalise_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ(ਪੰਕਤੀ_ਸਮੂਹ, ਜੜ੍ਹ,
+					&ਖਾਨਾ_info, c) == false) {
+				ਮੁਕਤ(ਖਾਨਾ_info.spans);
+				ਵਾਪਸ false;
 			}
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE:
+		ਹਾਲਤ BOX_INLINE_ਸਿਰਾ:
+		ਹਾਲਤ BOX_INLINE_FLEX:
+		ਹਾਲਤ BOX_INLINE_ਖੰਡ:
+		ਹਾਲਤ BOX_FLOAT_ਖੱਬਾ:
+		ਹਾਲਤ BOX_FLOAT_ਸੱਜਾ:
+		ਹਾਲਤ BOX_BR:
+		ਹਾਲਤ BOX_ਪਾਠ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			fprintf(stderr, "%i\n", child->type);
-			assert(0);
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
+			ਰੋਕੋ;
+		ਮੂਲ:
+			fprintf(stderr, "%i\n", ਬੱਚਾ->type);
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
 		}
 	}
 
-	table->columns = col_info.num_columns;
-	table->rows = col_info.num_rows;
+	ਸਾਰਣੀ->columns = ਖਾਨਾ_info.ਅੰਕ_columns;
+	ਸਾਰਣੀ->ਪੰਕਤੀਆਂ = ਖਾਨਾ_info.ਅੰਕ_ਪੰਕਤੀਆਂ;
 
-	if (table->children == NULL) {
-		struct box *row;
+	ਜੇ (ਸਾਰਣੀ->children == ਨਿਰਾ) {
+		ਬਣਤਰ box *ਪੰਕਤੀ;
 
-#ifdef BOX_NORMALISE_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "table->children == 0, creating implied row");
-#endif
+#ਜੇ_ਅੰਤ
 
-		assert(table->style != NULL);
+		ਪ੍ਰਤਿਜ੍ਞਾ(ਸਾਰਣੀ->style != ਨਿਰਾ);
 
 		ctx.ctx = c->select_ctx;
-		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-		ctx.base_url = c->base_url;
+		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+		ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 		ctx.universal = c->universal;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				table->style);
-		if (style == NULL) {
-			free(col_info.spans);
-			return false;
+				ਸਾਰਣੀ->style);
+		ਜੇ (style == ਨਿਰਾ) {
+			ਮੁਕਤ(ਖਾਨਾ_info.spans);
+			ਵਾਪਸ false;
 		}
 
-		row_group = box_create(NULL, style, true, table->href,
-				table->target, NULL, NULL, c->bctx);
-		if (row_group == NULL) {
+		ਪੰਕਤੀ_ਸਮੂਹ = box_create(ਨਿਰਾ, style, true, ਸਾਰਣੀ->href,
+				ਸਾਰਣੀ->ਨਿਸ਼ਾਨਾ, ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+		ਜੇ (ਪੰਕਤੀ_ਸਮੂਹ == ਨਿਰਾ) {
 			css_computed_style_destroy(style);
-			free(col_info.spans);
-			return false;
+			ਮੁਕਤ(ਖਾਨਾ_info.spans);
+			ਵਾਪਸ false;
 		}
-		row_group->type = BOX_TABLE_ROW_GROUP;
+		ਪੰਕਤੀ_ਸਮੂਹ->type = BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				row_group->style);
-		if (style == NULL) {
-			box_free(row_group);
-			free(col_info.spans);
-			return false;
+				ਪੰਕਤੀ_ਸਮੂਹ->style);
+		ਜੇ (style == ਨਿਰਾ) {
+			box_free(ਪੰਕਤੀ_ਸਮੂਹ);
+			ਮੁਕਤ(ਖਾਨਾ_info.spans);
+			ਵਾਪਸ false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		ਪੰਕਤੀ = box_create(ਨਿਰਾ, style, true, ਪੰਕਤੀ_ਸਮੂਹ->href,
+				ਪੰਕਤੀ_ਸਮੂਹ->ਨਿਸ਼ਾਨਾ, ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+		ਜੇ (ਪੰਕਤੀ == ਨਿਰਾ) {
 			css_computed_style_destroy(style);
-			box_free(row_group);
-			free(col_info.spans);
-			return false;
+			box_free(ਪੰਕਤੀ_ਸਮੂਹ);
+			ਮੁਕਤ(ਖਾਨਾ_info.spans);
+			ਵਾਪਸ false;
 		}
-		row->type = BOX_TABLE_ROW;
+		ਪੰਕਤੀ->type = BOX_ਸਾਰਣੀ_ਪੰਕਤੀ;
 
-		row->parent = row_group;
-		row_group->children = row_group->last = row;
+		ਪੰਕਤੀ->ਮਾਪਾ = ਪੰਕਤੀ_ਸਮੂਹ;
+		ਪੰਕਤੀ_ਸਮੂਹ->children = ਪੰਕਤੀ_ਸਮੂਹ->ਆਖਰੀ = ਪੰਕਤੀ;
 
-		row_group->parent = table;
-		table->children = table->last = row_group;
+		ਪੰਕਤੀ_ਸਮੂਹ->ਮਾਪਾ = ਸਾਰਣੀ;
+		ਸਾਰਣੀ->children = ਸਾਰਣੀ->ਆਖਰੀ = ਪੰਕਤੀ_ਸਮੂਹ;
 
-		table->rows = 1;
+		ਸਾਰਣੀ->ਪੰਕਤੀਆਂ = 1;
 	}
 
-	if (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
-		free(col_info.spans);
-		return false;
+	ਜੇ (box_normalise_ਸਾਰਣੀ_spans(ਸਾਰਣੀ, ਜੜ੍ਹ, ਖਾਨਾ_info.spans, c) == false) {
+		ਮੁਕਤ(ਖਾਨਾ_info.spans);
+		ਵਾਪਸ false;
 	}
 
-	free(col_info.spans);
+	ਮੁਕਤ(ਖਾਨਾ_info.spans);
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "table %p done", table);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "table %p done", ਸਾਰਣੀ);
+#ਜੇ_ਅੰਤ
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-static bool box_normalise_flex(
-		struct box *flex_container,
-		const struct box *root,
+ਸਥਿਰ bool box_normalise_flex(
+		ਬਣਤਰ box *flex_container,
+		ਅਚਲ ਬਣਤਰ box *ਜੜ੍ਹ,
 		html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *implied_flex_item;
+	ਬਣਤਰ box *ਬੱਚਾ;
+	ਬਣਤਰ box *ਅਗਲਾ_ਬੱਚਾ;
+	ਬਣਤਰ box *implied_flex_ਵਸਤੂ;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(flex_container != NULL);
-	assert(root != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(flex_container != ਨਿਰਾ);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਜੜ੍ਹ != ਨਿਰਾ);
 
-	ctx.root_style = root->style;
+	ctx.ਜੜ੍ਹ_style = ਜੜ੍ਹ->style;
 
-#ifdef BOX_NORMALISE_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "flex_container %p, flex_container->type %u",
 			flex_container, flex_container->type);
-#endif
+#ਜੇ_ਅੰਤ
 
-	assert(flex_container->type == BOX_FLEX ||
+	ਪ੍ਰਤਿਜ੍ਞਾ(flex_container->type == BOX_FLEX ||
 	       flex_container->type == BOX_INLINE_FLEX);
 
-	for (child = flex_container->children; child != NULL; child = next_child) {
-#ifdef BOX_NORMALISE_DEBUG
+	ਲਈ (ਬੱਚਾ = flex_container->children; ਬੱਚਾ != ਨਿਰਾ; ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d",
-				child, child->type);
-#endif
+				ਬੱਚਾ, ਬੱਚਾ->type);
+#ਜੇ_ਅੰਤ
 
-		next_child = child->next;	/* child may be destroyed */
+		ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		ਚੋਣ (ਬੱਚਾ->type) {
+		ਹਾਲਤ BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			ਜੇ (box_normalise_flex(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_ਖੰਡ:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
+			ਜੇ (box_normalise_ਖੰਡ(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE_CONTAINER:
 			/* insert implied flex item */
-			assert(flex_container->style != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(flex_container->style != ਨਿਰਾ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+			ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			ਜੇ (style == ਨਿਰਾ)
+				ਵਾਪਸ false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_ਵਸਤੂ = box_create(ਨਿਰਾ, style, true,
 					flex_container->href,
-					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					flex_container->ਨਿਸ਼ਾਨਾ,
+					ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+			ਜੇ (implied_flex_ਵਸਤੂ == ਨਿਰਾ) {
 				css_computed_style_destroy(style);
-				return false;
+				ਵਾਪਸ false;
 			}
-			implied_flex_item->type = BOX_BLOCK;
+			implied_flex_ਵਸਤੂ->type = BOX_ਖੰਡ;
 
-			if (child->prev == NULL)
-				flex_container->children = implied_flex_item;
-			else
-				child->prev->next = implied_flex_item;
+			ਜੇ (ਬੱਚਾ->prev == ਨਿਰਾ)
+				flex_container->children = implied_flex_ਵਸਤੂ;
+			ਨਹੀਂਤਾਂ
+				ਬੱਚਾ->prev->ਅਗਲਾ = implied_flex_ਵਸਤੂ;
 
-			implied_flex_item->prev = child->prev;
+			implied_flex_ਵਸਤੂ->prev = ਬੱਚਾ->prev;
 
-			while (child != NULL &&
-					child->type == BOX_INLINE_CONTAINER) {
-				box_add_child(implied_flex_item, child);
+			ਜਦੋਂ (ਬੱਚਾ != ਨਿਰਾ &&
+					ਬੱਚਾ->type == BOX_INLINE_CONTAINER) {
+				box_ਜੋੜੋ_ਬੱਚਾ(implied_flex_ਵਸਤੂ, ਬੱਚਾ);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
+				ਬੱਚਾ->ਅਗਲਾ = ਨਿਰਾ;
+				ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ;
 			}
 
-			implied_flex_item->last->next = NULL;
-			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
-				implied_flex_item->next->prev = implied_flex_item;
-			else
-				flex_container->last = implied_flex_item;
-			implied_flex_item->parent = flex_container;
+			implied_flex_ਵਸਤੂ->ਆਖਰੀ->ਅਗਲਾ = ਨਿਰਾ;
+			implied_flex_ਵਸਤੂ->ਅਗਲਾ = ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ;
+			ਜੇ (implied_flex_ਵਸਤੂ->ਅਗਲਾ != ਨਿਰਾ)
+				implied_flex_ਵਸਤੂ->ਅਗਲਾ->prev = implied_flex_ਵਸਤੂ;
+			ਨਹੀਂਤਾਂ
+				flex_container->ਆਖਰੀ = implied_flex_ਵਸਤੂ;
+			implied_flex_ਵਸਤੂ->ਮਾਪਾ = flex_container;
 
-			if (box_normalise_block(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
+			ਜੇ (box_normalise_ਖੰਡ(implied_flex_ਵਸਤੂ,
+					ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
 
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ:
+			ਜੇ (box_normalise_ਸਾਰਣੀ(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE:
+		ਹਾਲਤ BOX_INLINE_ਸਿਰਾ:
+		ਹਾਲਤ BOX_INLINE_FLEX:
+		ਹਾਲਤ BOX_INLINE_ਖੰਡ:
+		ਹਾਲਤ BOX_FLOAT_ਖੱਬਾ:
+		ਹਾਲਤ BOX_FLOAT_ਸੱਜਾ:
+		ਹਾਲਤ BOX_BR:
+		ਹਾਲਤ BOX_ਪਾਠ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_CELL:
 			/* insert implied table */
-			assert(flex_container->style != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(flex_container->style != ਨਿਰਾ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+			ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			ਜੇ (style == ਨਿਰਾ)
+				ਵਾਪਸ false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_ਵਸਤੂ = box_create(ਨਿਰਾ, style, true,
 					flex_container->href,
-					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					flex_container->ਨਿਸ਼ਾਨਾ,
+					ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+			ਜੇ (implied_flex_ਵਸਤੂ == ਨਿਰਾ) {
 				css_computed_style_destroy(style);
-				return false;
+				ਵਾਪਸ false;
 			}
-			implied_flex_item->type = BOX_TABLE;
+			implied_flex_ਵਸਤੂ->type = BOX_ਸਾਰਣੀ;
 
-			if (child->prev == NULL)
-				flex_container->children = implied_flex_item;
-			else
-				child->prev->next = implied_flex_item;
+			ਜੇ (ਬੱਚਾ->prev == ਨਿਰਾ)
+				flex_container->children = implied_flex_ਵਸਤੂ;
+			ਨਹੀਂਤਾਂ
+				ਬੱਚਾ->prev->ਅਗਲਾ = implied_flex_ਵਸਤੂ;
 
-			implied_flex_item->prev = child->prev;
+			implied_flex_ਵਸਤੂ->prev = ਬੱਚਾ->prev;
 
-			while (child != NULL && (
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(implied_flex_item, child);
+			ਜਦੋਂ (ਬੱਚਾ != ਨਿਰਾ && (
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_CELL)) {
+				box_ਜੋੜੋ_ਬੱਚਾ(implied_flex_ਵਸਤੂ, ਬੱਚਾ);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
+				ਬੱਚਾ->ਅਗਲਾ = ਨਿਰਾ;
+				ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ;
 			}
 
-			implied_flex_item->last->next = NULL;
-			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
-				implied_flex_item->next->prev = implied_flex_item;
-			else
-				flex_container->last = implied_flex_item;
-			implied_flex_item->parent = flex_container;
+			implied_flex_ਵਸਤੂ->ਆਖਰੀ->ਅਗਲਾ = ਨਿਰਾ;
+			implied_flex_ਵਸਤੂ->ਅਗਲਾ = ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ;
+			ਜੇ (implied_flex_ਵਸਤੂ->ਅਗਲਾ != ਨਿਰਾ)
+				implied_flex_ਵਸਤੂ->ਅਗਲਾ->prev = implied_flex_ਵਸਤੂ;
+			ਨਹੀਂਤਾਂ
+				flex_container->ਆਖਰੀ = implied_flex_ਵਸਤੂ;
+			implied_flex_ਵਸਤੂ->ਮਾਪਾ = flex_container;
 
-			if (box_normalise_table(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			ਜੇ (box_normalise_ਸਾਰਣੀ(implied_flex_ਵਸਤੂ,
+					ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਮੂਲ:
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
 		}
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-static bool
-box_normalise_inline_container(struct box *cont,
-			       const struct box *root,
+ਸਥਿਰ bool
+box_normalise_inline_container(ਬਣਤਰ box *cont,
+			       ਅਚਲ ਬਣਤਰ box *ਜੜ੍ਹ,
 			       html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
+	ਬਣਤਰ box *ਬੱਚਾ;
+	ਬਣਤਰ box *ਅਗਲਾ_ਬੱਚਾ;
 
-	assert(cont != NULL);
-	assert(cont->type == BOX_INLINE_CONTAINER);
+	ਪ੍ਰਤਿਜ੍ਞਾ(cont != ਨਿਰਾ);
+	ਪ੍ਰਤਿਜ੍ਞਾ(cont->type == BOX_INLINE_CONTAINER);
 
-#ifdef BOX_NORMALISE_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "cont %p", cont);
-#endif
+#ਜੇ_ਅੰਤ
 
-	for (child = cont->children; child != NULL; child = next_child) {
-		next_child = child->next;
-		switch (child->type) {
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_BR:
-		case BOX_TEXT:
+	ਲਈ (ਬੱਚਾ = cont->children; ਬੱਚਾ != ਨਿਰਾ; ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ) {
+		ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
+		ਚੋਣ (ਬੱਚਾ->type) {
+		ਹਾਲਤ BOX_INLINE:
+		ਹਾਲਤ BOX_INLINE_ਸਿਰਾ:
+		ਹਾਲਤ BOX_BR:
+		ਹਾਲਤ BOX_ਪਾਠ:
 			/* ok */
-			break;
-		case BOX_INLINE_BLOCK:
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE_ਖੰਡ:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_FLEX:
+			ਜੇ (box_normalise_ਖੰਡ(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+			ਜੇ (box_normalise_flex(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_FLOAT_ਖੱਬਾ:
+		ਹਾਲਤ BOX_FLOAT_ਸੱਜਾ:
 			/* ok */
-			assert(child->children != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(ਬੱਚਾ->children != ਨਿਰਾ);
 
-			switch (child->children->type) {
-			case BOX_BLOCK:
-				if (box_normalise_block(child->children, root,
+			ਚੋਣ (ਬੱਚਾ->children->type) {
+			ਹਾਲਤ BOX_ਖੰਡ:
+				ਜੇ (box_normalise_ਖੰਡ(ਬੱਚਾ->children, ਜੜ੍ਹ,
 						c) == false)
-					return false;
-				break;
-			case BOX_TABLE:
-				if (box_normalise_table(child->children, root,
+					ਵਾਪਸ false;
+				ਰੋਕੋ;
+			ਹਾਲਤ BOX_ਸਾਰਣੀ:
+				ਜੇ (box_normalise_ਸਾਰਣੀ(ਬੱਚਾ->children, ਜੜ੍ਹ,
 						c) == false)
-					return false;
-				break;
-			case BOX_FLEX:
-				if (box_normalise_flex(child->children, root,
+					ਵਾਪਸ false;
+				ਰੋਕੋ;
+			ਹਾਲਤ BOX_FLEX:
+				ਜੇ (box_normalise_flex(ਬੱਚਾ->children, ਜੜ੍ਹ,
 						c) == false)
-					return false;
-				break;
-			default:
-				assert(0);
+					ਵਾਪਸ false;
+				ਰੋਕੋ;
+			ਮੂਲ:
+				ਪ੍ਰਤਿਜ੍ਞਾ(0);
 			}
 
-			if (child->children == NULL) {
+			ਜੇ (ਬੱਚਾ->children == ਨਿਰਾ) {
 				/* the child has destroyed itself: remove float */
-				if (child->prev == NULL)
-					child->parent->children = child->next;
-				else
-					child->prev->next = child->next;
-				if (child->next != NULL)
-					child->next->prev = child->prev;
-				else
-					child->parent->last = child->prev;
+				ਜੇ (ਬੱਚਾ->prev == ਨਿਰਾ)
+					ਬੱਚਾ->ਮਾਪਾ->children = ਬੱਚਾ->ਅਗਲਾ;
+				ਨਹੀਂਤਾਂ
+					ਬੱਚਾ->prev->ਅਗਲਾ = ਬੱਚਾ->ਅਗਲਾ;
+				ਜੇ (ਬੱਚਾ->ਅਗਲਾ != ਨਿਰਾ)
+					ਬੱਚਾ->ਅਗਲਾ->prev = ਬੱਚਾ->prev;
+				ਨਹੀਂਤਾਂ
+					ਬੱਚਾ->ਮਾਪਾ->ਆਖਰੀ = ਬੱਚਾ->prev;
 
-				box_free(child);
+				box_free(ਬੱਚਾ);
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
-		default:
-			assert(0);
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_FLEX:
+		ਹਾਲਤ BOX_ਖੰਡ:
+		ਹਾਲਤ BOX_INLINE_CONTAINER:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_CELL:
+		ਮੂਲ:
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
 		}
 	}
 
-#ifdef BOX_NORMALISE_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "cont %p done", cont);
-#endif
+#ਜੇ_ਅੰਤ
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /* Exported function documented in html/box_normalise.h */
 bool
-box_normalise_block(struct box *block, const struct box *root, html_content *c)
+box_normalise_ਖੰਡ(ਬਣਤਰ box *ਖੰਡ, ਅਚਲ ਬਣਤਰ box *ਜੜ੍ਹ, html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *table;
+	ਬਣਤਰ box *ਬੱਚਾ;
+	ਬਣਤਰ box *ਅਗਲਾ_ਬੱਚਾ;
+	ਬਣਤਰ box *ਸਾਰਣੀ;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(block != NULL);
-	assert(root != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਖੰਡ != ਨਿਰਾ);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਜੜ੍ਹ != ਨਿਰਾ);
 
-	ctx.root_style = root->style;
+	ctx.ਜੜ੍ਹ_style = ਜੜ੍ਹ->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "block %p, block->type %u", block, block->type);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "block %p, block->type %u", ਖੰਡ, ਖੰਡ->type);
+#ਜੇ_ਅੰਤ
 
-	assert(block->type == BOX_BLOCK || block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_TABLE_CELL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(ਖੰਡ->type == BOX_ਖੰਡ || ਖੰਡ->type == BOX_INLINE_ਖੰਡ ||
+			ਖੰਡ->type == BOX_ਸਾਰਣੀ_CELL);
 
-	for (child = block->children; child != NULL; child = next_child) {
-#ifdef BOX_NORMALISE_DEBUG
-		NSLOG(netsurf, INFO, "child %p, child->type = %d", child,
-		      child->type);
-#endif
+	ਲਈ (ਬੱਚਾ = ਖੰਡ->children; ਬੱਚਾ != ਨਿਰਾ; ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BOX_NORMALISE_DEBUG
+		NSLOG(netsurf, INFO, "child %p, child->type = %d", ਬੱਚਾ,
+		      ਬੱਚਾ->type);
+#ਜੇ_ਅੰਤ
 
-		next_child = child->next;	/* child may be destroyed */
+		ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		ਚੋਣ (ਬੱਚਾ->type) {
+		ਹਾਲਤ BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			ਜੇ (box_normalise_flex(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_ਖੰਡ:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
-			if (box_normalise_inline_container(child, root, c) == false)
-				return false;
-			break;
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ਜੇ (box_normalise_ਖੰਡ(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE_CONTAINER:
+			ਜੇ (box_normalise_inline_container(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_ਸਾਰਣੀ:
+			ਜੇ (box_normalise_ਸਾਰਣੀ(ਬੱਚਾ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_INLINE:
+		ਹਾਲਤ BOX_INLINE_ਸਿਰਾ:
+		ਹਾਲਤ BOX_INLINE_FLEX:
+		ਹਾਲਤ BOX_INLINE_ਖੰਡ:
+		ਹਾਲਤ BOX_FLOAT_ਖੱਬਾ:
+		ਹਾਲਤ BOX_FLOAT_ਸੱਜਾ:
+		ਹਾਲਤ BOX_BR:
+		ਹਾਲਤ BOX_ਪਾਠ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
+			ਰੋਕੋ;
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_ਪੰਕਤੀ:
+		ਹਾਲਤ BOX_ਸਾਰਣੀ_CELL:
 			/* insert implied table */
-			assert(block->style != NULL);
+			ਪ੍ਰਤਿਜ੍ਞਾ(ਖੰਡ->style != ਨਿਰਾ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ਬਹੁਲਕ_ਭਰਿਆ);
+			ctx.ਅਧਾਰ_url = c->ਅਧਾਰ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					block->style);
-			if (style == NULL)
-				return false;
+					ਖੰਡ->style);
+			ਜੇ (style == ਨਿਰਾ)
+				ਵਾਪਸ false;
 
-			table = box_create(NULL, style, true, block->href,
-					block->target, NULL, NULL, c->bctx);
-			if (table == NULL) {
+			ਸਾਰਣੀ = box_create(ਨਿਰਾ, style, true, ਖੰਡ->href,
+					ਖੰਡ->ਨਿਸ਼ਾਨਾ, ਨਿਰਾ, ਨਿਰਾ, c->bctx);
+			ਜੇ (ਸਾਰਣੀ == ਨਿਰਾ) {
 				css_computed_style_destroy(style);
-				return false;
+				ਵਾਪਸ false;
 			}
-			table->type = BOX_TABLE;
+			ਸਾਰਣੀ->type = BOX_ਸਾਰਣੀ;
 
-			if (child->prev == NULL)
-				block->children = table;
-			else
-				child->prev->next = table;
+			ਜੇ (ਬੱਚਾ->prev == ਨਿਰਾ)
+				ਖੰਡ->children = ਸਾਰਣੀ;
+			ਨਹੀਂਤਾਂ
+				ਬੱਚਾ->prev->ਅਗਲਾ = ਸਾਰਣੀ;
 
-			table->prev = child->prev;
+			ਸਾਰਣੀ->prev = ਬੱਚਾ->prev;
 
-			while (child != NULL && (
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(table, child);
+			ਜਦੋਂ (ਬੱਚਾ != ਨਿਰਾ && (
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ_ਸਮੂਹ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_ਪੰਕਤੀ ||
+					ਬੱਚਾ->type == BOX_ਸਾਰਣੀ_CELL)) {
+				box_ਜੋੜੋ_ਬੱਚਾ(ਸਾਰਣੀ, ਬੱਚਾ);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ->ਅਗਲਾ;
+				ਬੱਚਾ->ਅਗਲਾ = ਨਿਰਾ;
+				ਬੱਚਾ = ਅਗਲਾ_ਬੱਚਾ;
 			}
 
-			table->last->next = NULL;
-			table->next = next_child = child;
-			if (table->next != NULL)
-				table->next->prev = table;
-			else
-				block->last = table;
-			table->parent = block;
+			ਸਾਰਣੀ->ਆਖਰੀ->ਅਗਲਾ = ਨਿਰਾ;
+			ਸਾਰਣੀ->ਅਗਲਾ = ਅਗਲਾ_ਬੱਚਾ = ਬੱਚਾ;
+			ਜੇ (ਸਾਰਣੀ->ਅਗਲਾ != ਨਿਰਾ)
+				ਸਾਰਣੀ->ਅਗਲਾ->prev = ਸਾਰਣੀ;
+			ਨਹੀਂਤਾਂ
+				ਖੰਡ->ਆਖਰੀ = ਸਾਰਣੀ;
+			ਸਾਰਣੀ->ਮਾਪਾ = ਖੰਡ;
 
-			if (box_normalise_table(table, root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			ਜੇ (box_normalise_ਸਾਰਣੀ(ਸਾਰਣੀ, ਜੜ੍ਹ, c) == false)
+				ਵਾਪਸ false;
+			ਰੋਕੋ;
+		ਮੂਲ:
+			ਪ੍ਰਤਿਜ੍ਞਾ(0);
 		}
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }

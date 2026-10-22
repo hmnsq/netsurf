@@ -24,10 +24,10 @@
  * UTF-8 strings with lengths given.
  */
 
-#ifndef NETSURF_HTML_FONT_H
-#define NETSURF_HTML_FONT_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_HTML_FONT_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_HTML_FONT_H
 
-struct plot_font_style;
+ਬਣਤਰ plot_font_style;
 
 /**
  * Populate a font style using data from a computed CSS style
@@ -36,8 +36,8 @@ struct plot_font_style;
  * \param css      Computed style to consider
  * \param fstyle   Font style to populate
  */
-void font_plot_style_from_css(const css_unit_ctx *unit_len_ctx,
-			      const css_computed_style *css,
-			      struct plot_font_style *fstyle);
+ਖਾਲੀ font_plot_style_from_css(ਅਚਲ css_unit_ctx *unit_len_ctx,
+			      ਅਚਲ css_computed_style *css,
+			      ਬਣਤਰ plot_font_style *fstyle);
 
-#endif
+#ਜੇ_ਅੰਤ

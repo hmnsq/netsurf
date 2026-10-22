@@ -21,8 +21,8 @@
  * about scheme certificate handler interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_CERTIFICATE_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_CERTIFICATE_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_CONTENT_FETCHERS_ABOUT_CERTIFICATE_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_CONTENT_FETCHERS_ABOUT_CERTIFICATE_H
 
 /**
  * Handler to generate about scheme certificate page.
@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_certificate_handler(struct fetch_about_context *ctx);
+bool fetch_about_certificate_handler(ਬਣਤਰ fetch_about_context *ctx);
 
-#endif
+#ਜੇ_ਅੰਤ

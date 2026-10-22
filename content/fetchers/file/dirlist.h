@@ -23,28 +23,28 @@
  * These functions should in general be called via the content interface.
  */
 
-#ifndef NETSURF_CONTENT_DIRLIST_H_
-#define NETSURF_CONTENT_DIRLIST_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_CONTENT_DIRLIST_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_CONTENT_DIRLIST_H_
 
-#include <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
 
-#define DIRLIST_NO_NAME_COLUMN 1
-#define DIRLIST_NO_TYPE_COLUMN 1 << 1
-#define DIRLIST_NO_SIZE_COLUMN 1 << 2
-#define DIRLIST_NO_DATE_COLUMN 1 << 3
-#define DIRLIST_NO_TIME_COLUMN 1 << 4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DIRLIST_NO_NAME_ਕਾਲਮ 1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DIRLIST_NO_TYPE_ਕਾਲਮ 1 << 1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DIRLIST_NO_ਮਾਪ_ਕਾਲਮ 1 << 2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DIRLIST_NO_DATE_ਕਾਲਮ 1 << 3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DIRLIST_NO_ਸਮਾਂ_ਕਾਲਮ 1 << 4
 
-struct nsurl;
+ਬਣਤਰ nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length);
-bool dirlist_generate_headings(char *buffer, int buffer_length);
-bool dirlist_generate_row(bool even, bool directory, struct nsurl *url,
-		char *name, const char *mimetype, long long size, char *date,
-		char *time, char *buffer, int buffer_length);
-bool dirlist_generate_bottom(char *buffer, int buffer_length);
+bool dirlist_generate_ਸਿਖਰ(ਅੱਖਰ *ਬਫਰ, ਪੂਰਨ ਬਫਰ_ਲੰਮਾਈ);
+bool dirlist_generate_hide_columns(ਪੂਰਨ flags, ਅੱਖਰ *ਬਫਰ, ਪੂਰਨ ਬਫਰ_ਲੰਮਾਈ);
+bool dirlist_generate_title(ਅਚਲ ਅੱਖਰ *title, ਅੱਖਰ *ਬਫਰ, ਪੂਰਨ ਬਫਰ_ਲੰਮਾਈ);
+bool dirlist_generate_ਮਾਪਾ_link(ਅਚਲ ਅੱਖਰ *ਮਾਪਾ, ਅੱਖਰ *ਬਫਰ,
+		ਪੂਰਨ ਬਫਰ_ਲੰਮਾਈ);
+bool dirlist_generate_headings(ਅੱਖਰ *ਬਫਰ, ਪੂਰਨ ਬਫਰ_ਲੰਮਾਈ);
+bool dirlist_generate_ਪੰਕਤੀ(bool even, bool directory, ਬਣਤਰ nsurl *url,
+		ਅੱਖਰ *name, ਅਚਲ ਅੱਖਰ *mimetype, ਲੰਮਾ ਲੰਮਾ ਮਾਪ, ਅੱਖਰ *date,
+		ਅੱਖਰ *time, ਅੱਖਰ *ਬਫਰ, ਪੂਰਨ ਬਫਰ_ਲੰਮਾਈ);
+bool dirlist_generate_bottom(ਅੱਖਰ *ਬਫਰ, ਪੂਰਨ ਬਫਰ_ਲੰਮਾਈ);
 
-#endif
+#ਜੇ_ਅੰਤ

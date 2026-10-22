@@ -21,16 +21,16 @@
  * Private interfaces for the about scheme fetcher.
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_PRIVATE_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_PRIVATE_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_CONTENT_FETCHERS_ABOUT_ਨਿੱਜੀ_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_CONTENT_FETCHERS_ABOUT_ਨਿੱਜੀ_H
 
-struct fetch_about_context;
-struct fetch_multipart_data;
+ਬਣਤਰ fetch_about_context;
+ਬਣਤਰ fetch_multipart_ਅੰਕੜੇ;
 
 /**
  * set http response code on about response
  */
-bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code);
+bool fetch_about_ਸੈੱਟ_http_ਕੋਡ(ਬਣਤਰ fetch_about_context *ctx, ਲੰਮਾ ਕੋਡ);
 
 /**
  * Send a header on the about response
@@ -39,22 +39,22 @@ bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code);
  * \param fmt The format specifier of the header
  * \return true if the fetch has been aborted else false
  */
-bool fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...);
+bool fetch_about_send_ਸਿਰਲੇਖ(ਬਣਤਰ fetch_about_context *ctx, ਅਚਲ ਅੱਖਰ *fmt, ...);
 
 /**
  * send data on the about response
  */
-nserror fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len);
+nserror fetch_about_senddata(ਬਣਤਰ fetch_about_context *ctx, ਅਚਲ uint8_t *ਅੰਕੜੇ, size_t ਅੰਕੜੇ_len);
 
 /**
  * send formatted data on the about response
  */
-nserror fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...);
+nserror fetch_about_ssenddataf(ਬਣਤਰ fetch_about_context *ctx, ਅਚਲ ਅੱਖਰ *fmt, ...);
 
 /**
  * complete the about fetch response
  */
-bool fetch_about_send_finished(struct fetch_about_context *ctx);
+bool fetch_about_send_ਮੁਕੰਮਲ(ਬਣਤਰ fetch_about_context *ctx);
 
 /**
  * Generate a 500 server error respnse
@@ -62,22 +62,22 @@ bool fetch_about_send_finished(struct fetch_about_context *ctx);
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_srverror(struct fetch_about_context *ctx);
+bool fetch_about_srverror(ਬਣਤਰ fetch_about_context *ctx);
 
 /**
  * get the fetch url
  */
-struct nsurl *fetch_about_get_url(struct fetch_about_context *ctx);
+ਬਣਤਰ nsurl *fetch_about_get_url(ਬਣਤਰ fetch_about_context *ctx);
 
 /**
  * get multipart fetch data
  */
-const struct fetch_multipart_data *fetch_about_get_multipart(struct fetch_about_context *ctx);
+ਅਚਲ ਬਣਤਰ fetch_multipart_ਅੰਕੜੇ *fetch_about_get_multipart(ਬਣਤਰ fetch_about_context *ctx);
 
 
 /**
  * cause a 302 redirect to target
  */
-bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target);
+bool fetch_about_redirect(ਬਣਤਰ fetch_about_context *ctx, ਅਚਲ ਅੱਖਰ *ਨਿਸ਼ਾਨਾ);
 
-#endif
+#ਜੇ_ਅੰਤ

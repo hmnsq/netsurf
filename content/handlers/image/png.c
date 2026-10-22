@@ -18,55 +18,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
-#include <png.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <png.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/inttypes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/messages.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/bitmap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/llcache.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_protected.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_factory.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/gui_internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/bitmap.h"
 
-#include "image/image_cache.h"
-#include "image/png.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "image/image_cache.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "image/png.h"
 
 /* accommodate for old versions of libpng (beware security holes!) */
 
-#ifndef png_jmpbuf
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ png_jmpbuf
 #warning you have an antique libpng
-#define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
-#endif
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
+#ਜੇ_ਅੰਤ
 
-#if PNG_LIBPNG_VER < 10209
-#define png_set_expand_gray_1_2_4_to_8(png) png_set_gray_1_2_4_to_8(png)
-#endif
+#ਜੇ PNG_LIBPNG_VER < 10209
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ png_ਸੈੱਟ_expand_ਸਲੇਟੀ_1_2_4_ਮੰਜ਼ਿਲ_8(png) png_ਸੈੱਟ_ਸਲੇਟੀ_1_2_4_ਮੰਜ਼ਿਲ_8(png)
+#ਜੇ_ਅੰਤ
 
-typedef struct nspng_content {
-	struct content base; /**< base content type */
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ nspng_content {
+	ਬਣਤਰ content ਅਧਾਰ; /**< base content type */
 
-	bool no_process_data; /**< Do not continue to process data as it arrives */
+	bool no_process_ਅੰਕੜੇ; /**< Do not continue to process data as it arrives */
 	png_structp png;
 	png_infop info;
-	int interlace;
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	ਪੂਰਨ interlace;
+	ਬਣਤਰ bitmap *bitmap;	/**< Created NetSurf bitmap */
 	size_t rowstride, bpp; /**< Bitmap rowstride and bpp */
 	size_t rowbytes; /**< Number of bytes per row */
 } nspng_content;
 
-static unsigned int interlace_start[8] = {0, 16, 0, 8, 0, 4, 0};
-static unsigned int interlace_step[8] = {28, 28, 12, 12, 4, 4, 0};
-static unsigned int interlace_row_start[8] = {0, 0, 4, 0, 2, 0, 1};
-static unsigned int interlace_row_step[8] = {8, 8, 8, 4, 4, 2, 2};
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ interlace_ਸ਼ੁਰੂ[8] = {0, 16, 0, 8, 0, 4, 0};
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ interlace_ਕਦਮ[8] = {28, 28, 12, 12, 4, 4, 0};
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ interlace_ਪੰਕਤੀ_ਸ਼ੁਰੂ[8] = {0, 0, 4, 0, 2, 0, 1};
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ interlace_ਪੰਕਤੀ_ਕਦਮ[8] = {8, 8, 8, 4, 4, 2, 2};
 
 /** Callbak error numbers*/
-enum nspng_cberr {
+ਗਿਣਤੀ nspng_cberr {
 	CBERR_NONE = 0, /* no error */
 	CBERR_LIBPNG, /* error from png library */
 	CBERR_NOPRE, /* no pre-conversion performed */
@@ -75,80 +75,80 @@ enum nspng_cberr {
 /**
  * nspng_warning -- callback for libpng warnings
  */
-static void nspng_warning(png_structp png_ptr, png_const_charp warning_message)
+ਸਥਿਰ ਖਾਲੀ nspng_warning(png_structp png_ptr, png_const_charp warning_ਸੁਨੇਹਾ)
 {
-	NSLOG(netsurf, INFO, "%s", warning_message);
+	NSLOG(netsurf, INFO, "%s", warning_ਸੁਨੇਹਾ);
 }
 
 /**
  * nspng_error -- callback for libpng errors
  */
-static void nspng_error(png_structp png_ptr, png_const_charp error_message)
+ਸਥਿਰ ਖਾਲੀ nspng_error(png_structp png_ptr, png_const_charp error_ਸੁਨੇਹਾ)
 {
-	NSLOG(netsurf, INFO, "%s", error_message);
+	NSLOG(netsurf, INFO, "%s", error_ਸੁਨੇਹਾ);
 	longjmp(png_jmpbuf(png_ptr), CBERR_LIBPNG);
 }
 
-static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
+ਸਥਿਰ ਖਾਲੀ nspng_ਤਿਆਰੀ_transforms(png_structp png_ptr, png_infop info_ptr)
 {
-	int bit_depth, color_type, intent;
-	double gamma;
+	ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_ਡੂੰਘਾਈ, color_type, intent;
+	ਦੁੱਗਣਾ gamma;
 
-	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	ਦੋਆਧਾਰੀ_ਅੰਕ_ਡੂੰਘਾਈ = png_get_ਦੋਆਧਾਰੀ_ਅੰਕ_ਡੂੰਘਾਈ(png_ptr, info_ptr);
 	color_type = png_get_color_type(png_ptr, info_ptr);
 
 	/* Set up our transformations */
-	if (color_type == PNG_COLOR_TYPE_PALETTE) {
-		png_set_palette_to_rgb(png_ptr);
+	ਜੇ (color_type == PNG_COLOR_TYPE_PALETTE) {
+		png_ਸੈੱਟ_palette_ਮੰਜ਼ਿਲ_rgb(png_ptr);
 	}
 
-	if ((color_type == PNG_COLOR_TYPE_GRAY) && (bit_depth < 8)) {
-		png_set_expand_gray_1_2_4_to_8(png_ptr);
+	ਜੇ ((color_type == PNG_COLOR_TYPE_ਸਲੇਟੀ) && (ਦੋਆਧਾਰੀ_ਅੰਕ_ਡੂੰਘਾਈ < 8)) {
+		png_ਸੈੱਟ_expand_ਸਲੇਟੀ_1_2_4_ਮੰਜ਼ਿਲ_8(png_ptr);
 	}
 
-	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
-		png_set_tRNS_to_alpha(png_ptr);
+	ਜੇ (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
+		png_ਸੈੱਟ_t_RNS_ਮੰਜ਼ਿਲ_alpha(png_ptr);
 	}
 
-	if (bit_depth == 16) {
-		png_set_strip_16(png_ptr);
+	ਜੇ (ਦੋਆਧਾਰੀ_ਅੰਕ_ਡੂੰਘਾਈ == 16) {
+		png_ਸੈੱਟ_strip_16(png_ptr);
 	}
 
-	if (color_type == PNG_COLOR_TYPE_GRAY ||
-	    color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
-		png_set_gray_to_rgb(png_ptr);
+	ਜੇ (color_type == PNG_COLOR_TYPE_ਸਲੇਟੀ ||
+	    color_type == PNG_COLOR_TYPE_ਸਲੇਟੀ_ALPHA) {
+		png_ਸੈੱਟ_ਸਲੇਟੀ_ਮੰਜ਼ਿਲ_rgb(png_ptr);
 	}
 
-	switch (bitmap_fmt.layout) {
-	case BITMAP_LAYOUT_B8G8R8A8: /* Fall through. */
-	case BITMAP_LAYOUT_A8B8G8R8:
-		png_set_bgr(png_ptr);
-		break;
-	default:
+	ਚੋਣ (bitmap_fmt.layout) {
+	ਹਾਲਤ BITMAP_LAYOUT_B8G8R8A8: /* Fall through. */
+	ਹਾਲਤ BITMAP_LAYOUT_A8B8G8R8:
+		png_ਸੈੱਟ_bgr(png_ptr);
+		ਰੋਕੋ;
+	ਮੂਲ:
 		/* RGB is the default. */
-		break;
+		ਰੋਕੋ;
 	}
 
-	if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
-		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
-		case BITMAP_LAYOUT_A8B8G8R8:
-			png_set_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
-			break;
+	ਜੇ (!(color_type & PNG_COLOR_ਨਕਾਬ_ALPHA)) {
+		ਚੋਣ (bitmap_fmt.layout) {
+		ਹਾਲਤ BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
+		ਹਾਲਤ BITMAP_LAYOUT_A8B8G8R8:
+			png_ਸੈੱਟ_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
+			ਰੋਕੋ;
 
-		default:
-			png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-			break;
+		ਮੂਲ:
+			png_ਸੈੱਟ_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+			ਰੋਕੋ;
 		}
-	} else {
-		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
-		case BITMAP_LAYOUT_A8B8G8R8:
-			png_set_swap_alpha(png_ptr);
-			break;
-		default:
+	} ਨਹੀਂਤਾਂ {
+		ਚੋਣ (bitmap_fmt.layout) {
+		ਹਾਲਤ BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
+		ਹਾਲਤ BITMAP_LAYOUT_A8B8G8R8:
+			png_ਸੈੱਟ_ਅਦਲਾ_ਬਦਲੀ_alpha(png_ptr);
+			ਰੋਕੋ;
+		ਮੂਲ:
 			/* Alpha as final component is the default. */
-			break;
+			ਰੋਕੋ;
 		}
 	}
 
@@ -156,13 +156,13 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
 	 * this appears to be correct (at least in respect to !Browse)
 	 * see http://www.w3.org/Graphics/PNG/all_seven.html for a test case
 	 */
-	if (png_get_sRGB(png_ptr, info_ptr, &intent)) {
-		png_set_gamma(png_ptr, 2.2, 0.45455);
-	} else {
-		if (png_get_gAMA(png_ptr, info_ptr, &gamma)) {
-			png_set_gamma(png_ptr, 2.2, gamma);
-		} else {
-			png_set_gamma(png_ptr, 2.2, 0.45455);
+	ਜੇ (png_get_sRGB(png_ptr, info_ptr, &intent)) {
+		png_ਸੈੱਟ_gamma(png_ptr, 2.2, 0.45455);
+	} ਨਹੀਂਤਾਂ {
+		ਜੇ (png_get_gAMA(png_ptr, info_ptr, &gamma)) {
+			png_ਸੈੱਟ_gamma(png_ptr, 2.2, gamma);
+		} ਨਹੀਂਤਾਂ {
+			png_ਸੈੱਟ_gamma(png_ptr, 2.2, 0.45455);
 		}
 	}
 
@@ -173,198 +173,198 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
  * info_callback -- PNG header has been completely received, prepare to process
  * image data
  */
-static void info_callback(png_structp png_s, png_infop info)
+ਸਥਿਰ ਖਾਲੀ info_callback(png_structp png_s, png_infop info)
 {
-	int interlace;
-	png_uint_32 width, height;
+	ਪੂਰਨ interlace;
+	png_uint_32 ਚੌੜਾਈ, ਉਚਾਈ;
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
 
-	width = png_get_image_width(png_s, info);
-	height = png_get_image_height(png_s, info);
+	ਚੌੜਾਈ = png_get_image_ਚੌੜਾਈ(png_s, info);
+	ਉਚਾਈ = png_get_image_ਉਚਾਈ(png_s, info);
 	interlace = png_get_interlace_type(png_s, info);
 
-	png_c->base.width = width;
-	png_c->base.height = height;
-	png_c->base.size += width * height * 4;
+	png_c->ਅਧਾਰ.ਚੌੜਾਈ = ਚੌੜਾਈ;
+	png_c->ਅਧਾਰ.ਉਚਾਈ = ਉਚਾਈ;
+	png_c->ਅਧਾਰ.ਮਾਪ += ਚੌੜਾਈ * ਉਚਾਈ * 4;
 
 	/* see if progressive-conversion should continue */
-	if (image_cache_speculate((struct content *)png_c) == false) {
+	ਜੇ (image_cache_speculate((ਬਣਤਰ content *)png_c) == false) {
 		longjmp(png_jmpbuf(png_s), CBERR_NOPRE);
 	}
 
 	/* Claim the required memory for the converted PNG */
-	png_c->bitmap = guit->bitmap->create(width, height, BITMAP_NONE);
-	if (png_c->bitmap == NULL) {
+	png_c->bitmap = guit->bitmap->create(ਚੌੜਾਈ, ਉਚਾਈ, BITMAP_NONE);
+	ਜੇ (png_c->bitmap == ਨਿਰਾ) {
 		/* Failed to create bitmap skip pre-conversion */
 		longjmp(png_jmpbuf(png_s), CBERR_NOPRE);
 	}
 
 	png_c->rowstride = guit->bitmap->get_rowstride(png_c->bitmap);
-	png_c->bpp = sizeof(uint32_t);
+	png_c->bpp = ਆਕਾਰ(uint32_t);
 
-	nspng_setup_transforms(png_s, info);
+	nspng_ਤਿਆਰੀ_transforms(png_s, info);
 
 	png_c->rowbytes = png_get_rowbytes(png_s, info);
 	png_c->interlace = (interlace == PNG_INTERLACE_ADAM7);
 
 	NSLOG(netsurf, INFO, "size %li * %li, rowbytes %"PRIsizet,
-	      (unsigned long)width, (unsigned long)height, png_c->rowbytes);
+	      (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਚੌੜਾਈ, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਉਚਾਈ, png_c->rowbytes);
 }
 
-static void row_callback(png_structp png_s, png_bytep new_row,
-			 png_uint_32 row_num, int pass)
+ਸਥਿਰ ਖਾਲੀ ਪੰਕਤੀ_callback(png_structp png_s, png_bytep new_ਪੰਕਤੀ,
+			 png_uint_32 ਪੰਕਤੀ_ਅੰਕ, ਪੂਰਨ pass)
 {
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
-	unsigned long rowbytes = png_c->rowbytes;
-	unsigned char *buffer, *row;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ rowbytes = png_c->rowbytes;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਬਫਰ, *ਪੰਕਤੀ;
 
 	/* Give up if there's no bitmap */
-	if (png_c->bitmap == NULL)
-		return;
+	ਜੇ (png_c->bitmap == ਨਿਰਾ)
+		ਵਾਪਸ;
 
 	/* Abort if we've not got any data */
-	if (new_row == NULL)
-		return;
+	ਜੇ (new_ਪੰਕਤੀ == ਨਿਰਾ)
+		ਵਾਪਸ;
 
 	/* Get bitmap buffer */
-	buffer = guit->bitmap->get_buffer(png_c->bitmap);
-	if (buffer == NULL) {
+	ਬਫਰ = guit->bitmap->get_ਬਫਰ(png_c->bitmap);
+	ਜੇ (ਬਫਰ == ਨਿਰਾ) {
 		/* No buffer, bail out */
 		longjmp(png_jmpbuf(png_s), 1);
 	}
 
 	/* Calculate address of row start */
-	row = buffer + (png_c->rowstride * row_num);
+	ਪੰਕਤੀ = ਬਫਰ + (png_c->rowstride * ਪੰਕਤੀ_ਅੰਕ);
 
 	/* Handle interlaced sprites using the Adam7 algorithm */
-	if (png_c->interlace) {
-		unsigned long dst_off;
-		unsigned long src_off = 0;
-		unsigned int start, step;
+	ਜੇ (png_c->interlace) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ dst_off;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ src_off = 0;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸ਼ੁਰੂ, ਕਦਮ;
 
-		start = interlace_start[pass];
-		step = interlace_step[pass];
-		row_num = interlace_row_start[pass] +
-			interlace_row_step[pass] * row_num;
+		ਸ਼ੁਰੂ = interlace_ਸ਼ੁਰੂ[pass];
+		ਕਦਮ = interlace_ਕਦਮ[pass];
+		ਪੰਕਤੀ_ਅੰਕ = interlace_ਪੰਕਤੀ_ਸ਼ੁਰੂ[pass] +
+			interlace_ਪੰਕਤੀ_ਕਦਮ[pass] * ਪੰਕਤੀ_ਅੰਕ;
 
 		/* Copy the data to our current row taking interlacing
 		 * into consideration */
-		row = buffer + (png_c->rowstride * row_num);
+		ਪੰਕਤੀ = ਬਫਰ + (png_c->rowstride * ਪੰਕਤੀ_ਅੰਕ);
 
-		for (dst_off = start; dst_off < rowbytes; dst_off += step) {
-			row[dst_off++] = new_row[src_off++];
-			row[dst_off++] = new_row[src_off++];
-			row[dst_off++] = new_row[src_off++];
-			row[dst_off++] = new_row[src_off++];
+		ਲਈ (dst_off = ਸ਼ੁਰੂ; dst_off < rowbytes; dst_off += ਕਦਮ) {
+			ਪੰਕਤੀ[dst_off++] = new_ਪੰਕਤੀ[src_off++];
+			ਪੰਕਤੀ[dst_off++] = new_ਪੰਕਤੀ[src_off++];
+			ਪੰਕਤੀ[dst_off++] = new_ਪੰਕਤੀ[src_off++];
+			ਪੰਕਤੀ[dst_off++] = new_ਪੰਕਤੀ[src_off++];
 		}
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* Do a fast memcpy of the row data */
-		memcpy(row, new_row, rowbytes);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਪੰਕਤੀ, new_ਪੰਕਤੀ, rowbytes);
 	}
 }
 
 
-static void end_callback(png_structp png_s, png_infop info)
+ਸਥਿਰ ਖਾਲੀ ਸਿਰਾ_callback(png_structp png_s, png_infop info)
 {
 }
 
-static nserror nspng_create_png_data(nspng_content *png_c)
+ਸਥਿਰ nserror nspng_create_png_ਅੰਕੜੇ(nspng_content *png_c)
 {
-	png_c->bitmap = NULL;
+	png_c->bitmap = ਨਿਰਾ;
 
 	png_c->png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-	if (png_c->png == NULL) {
-		content_broadcast_error(&png_c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	ਜੇ (png_c->png == ਨਿਰਾ) {
+		content_ਪ੍ਰਸਾਰਣ_error(&png_c->ਅਧਾਰ, NSERROR_NOMEM, ਨਿਰਾ);
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
-	png_set_error_fn(png_c->png, NULL, nspng_error, nspng_warning);
+	png_ਸੈੱਟ_error_fn(png_c->png, ਨਿਰਾ, nspng_error, nspng_warning);
 
 	png_c->info = png_create_info_struct(png_c->png);
-	if (png_c->info == NULL) {
+	ਜੇ (png_c->info == ਨਿਰਾ) {
 		png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 
-		content_broadcast_error(&png_c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		content_ਪ੍ਰਸਾਰਣ_error(&png_c->ਅਧਾਰ, NSERROR_NOMEM, ਨਿਰਾ);
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
-	if (setjmp(png_jmpbuf(png_c->png))) {
+	ਜੇ (setjmp(png_jmpbuf(png_c->png))) {
 		png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 		NSLOG(netsurf, INFO, "Failed to set callbacks");
-		png_c->png = NULL;
-		png_c->info = NULL;
+		png_c->png = ਨਿਰਾ;
+		png_c->info = ਨਿਰਾ;
 
-		content_broadcast_error(&png_c->base, NSERROR_PNG_ERROR, NULL);
-		return NSERROR_NOMEM;
+		content_ਪ੍ਰਸਾਰਣ_error(&png_c->ਅਧਾਰ, NSERROR_PNG_ERROR, ਨਿਰਾ);
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
-	png_set_progressive_read_fn(png_c->png, png_c,
-			info_callback, row_callback, end_callback);
+	png_ਸੈੱਟ_progressive_read_fn(png_c->png, png_c,
+			info_callback, ਪੰਕਤੀ_callback, ਸਿਰਾ_callback);
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static nserror
-nspng_create(const content_handler *handler,
+ਸਥਿਰ nserror
+nspng_create(ਅਚਲ content_handler *handler,
 	     lwc_string *imime_type,
-	     const struct http_parameter *params,
-	     struct llcache_handle *llcache,
-	     const char *fallback_charset,
+	     ਅਚਲ ਬਣਤਰ http_parameter *params,
+	     ਬਣਤਰ llcache_handle *llcache,
+	     ਅਚਲ ਅੱਖਰ *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     ਬਣਤਰ content **c)
 {
 	nspng_content *png_c;
 	nserror error;
 
-	png_c = calloc(1, sizeof(nspng_content));
-	if (png_c == NULL)
-		return NSERROR_NOMEM;
+	png_c = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(nspng_content));
+	ਜੇ (png_c == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__init(&png_c->base, 
+	error = content__init(&png_c->ਅਧਾਰ, 
 			      handler, 
 			      imime_type, 
 			      params,
 			      llcache, 
 			      fallback_charset, 
 			      quirks);
-	if (error != NSERROR_OK) {
-		free(png_c);
-		return error;
+	ਜੇ (error != NSERROR_OK) {
+		ਮੁਕਤ(png_c);
+		ਵਾਪਸ error;
 	}
 
-	error = nspng_create_png_data(png_c);
-	if (error != NSERROR_OK) {
-		free(png_c);
-		return error;
+	error = nspng_create_png_ਅੰਕੜੇ(png_c);
+	ਜੇ (error != NSERROR_OK) {
+		ਮੁਕਤ(png_c);
+		ਵਾਪਸ error;
 	}
 
-	*c = (struct content *)png_c;
+	*c = (ਬਣਤਰ content *)png_c;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 
-static bool nspng_process_data(struct content *c, const char *data,
-			       unsigned int size)
+ਸਥਿਰ bool nspng_process_ਅੰਕੜੇ(ਬਣਤਰ content *c, ਅਚਲ ਅੱਖਰ *ਅੰਕੜੇ,
+			       ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ)
 {
 	nspng_content *png_c = (nspng_content *)c;
-	volatile bool ret = true;
+	ਅਸਥਿਰ bool ret = true;
 
-	if (png_c->no_process_data) {
-		return ret;
+	ਜੇ (png_c->no_process_ਅੰਕੜੇ) {
+		ਵਾਪਸ ret;
 	}
 
-	switch (setjmp(png_jmpbuf(png_c->png))) {
-	case CBERR_NONE: /* direct return */	
-		png_process_data(png_c->png, png_c->info, (uint8_t *)data, size);
-		break;
+	ਚੋਣ (setjmp(png_jmpbuf(png_c->png))) {
+	ਹਾਲਤ CBERR_NONE: /* direct return */	
+		png_process_ਅੰਕੜੇ(png_c->png, png_c->info, (uint8_t *)ਅੰਕੜੇ, ਮਾਪ);
+		ਰੋਕੋ;
 
-	case CBERR_NOPRE: /* not going to progressive convert */
-		png_c->no_process_data = true;
-		break;
+	ਹਾਲਤ CBERR_NOPRE: /* not going to progressive convert */
+		png_c->no_process_ਅੰਕੜੇ = true;
+		ਰੋਕੋ;
 
-	default: /* fatal error from library processing png */
-		if (png_c->bitmap != NULL) {
+	ਮੂਲ: /* fatal error from library processing png */
+		ਜੇ (png_c->bitmap != ਨਿਰਾ) {
 			/* A bitmap managed to get created so
 			 * operation is past header and possibly some
 			 * conversion happened before faliure. 
@@ -374,8 +374,8 @@ static bool nspng_process_data(struct content *c, const char *data,
 			 * has been truncated (often jsut lost its
 			 * last byte and hence end of image marker)
 			 */
-			png_c->no_process_data = true;
-		} else {
+			png_c->no_process_ਅੰਕੜੇ = true;
+		} ਨਹੀਂਤਾਂ {
 			/* not managed to progress past header, clean
 			 * up png conversion and signal the content
 			 * error 
@@ -384,273 +384,273 @@ static bool nspng_process_data(struct content *c, const char *data,
 			      "Fatal PNG error during header, error content");
 
 			png_destroy_read_struct(&png_c->png, &png_c->info, 0);
-			png_c->png = NULL;
-			png_c->info = NULL;
+			png_c->png = ਨਿਰਾ;
+			png_c->info = ਨਿਰਾ;
 
-			content_broadcast_error(c, NSERROR_PNG_ERROR, NULL);
+			content_ਪ੍ਰਸਾਰਣ_error(c, NSERROR_PNG_ERROR, ਨਿਰਾ);
 
 			ret = false;
 
 		}
-		break;
+		ਰੋਕੋ;
 	}
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-struct png_cache_read_data_s {
-	const uint8_t *data;
-	size_t size;
+ਬਣਤਰ png_cache_read_ਅੰਕੜੇ_s {
+	ਅਚਲ uint8_t *ਅੰਕੜੇ;
+	size_t ਮਾਪ;
 };
 
 /** PNG library read fucntion to read data from a memory array 
  */
-static void 
-png_cache_read_fn(png_structp png_ptr, png_bytep data, png_size_t length)
+ਸਥਿਰ ਖਾਲੀ 
+png_cache_read_fn(png_structp png_ptr, png_bytep ਅੰਕੜੇ, png_ਮਾਪ_t ਲੰਮਾਈ)
 {
-	struct png_cache_read_data_s *png_cache_read_data;
-	png_cache_read_data = png_get_io_ptr(png_ptr);
+	ਬਣਤਰ png_cache_read_ਅੰਕੜੇ_s *png_cache_read_ਅੰਕੜੇ;
+	png_cache_read_ਅੰਕੜੇ = png_get_io_ptr(png_ptr);
 
-	if (length > png_cache_read_data->size) {
-		length = png_cache_read_data->size;
+	ਜੇ (ਲੰਮਾਈ > png_cache_read_ਅੰਕੜੇ->ਮਾਪ) {
+		ਲੰਮਾਈ = png_cache_read_ਅੰਕੜੇ->ਮਾਪ;
 	}
 
-	if (length == 0) {
+	ਜੇ (ਲੰਮਾਈ == 0) {
 		png_error(png_ptr, "Read Error");
 	}
 
-	memcpy(data, png_cache_read_data->data, length);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਅੰਕੜੇ, png_cache_read_ਅੰਕੜੇ->ਅੰਕੜੇ, ਲੰਮਾਈ);
 
-	png_cache_read_data->data += length;
-	png_cache_read_data->size -= length;
+	png_cache_read_ਅੰਕੜੇ->ਅੰਕੜੇ += ਲੰਮਾਈ;
+	png_cache_read_ਅੰਕੜੇ->ਮਾਪ -= ਲੰਮਾਈ;
 }
 
 /** calculate an array of row pointers into a bitmap data area
  */
-static png_bytep *calc_row_pointers(struct bitmap *bitmap)
+ਸਥਿਰ png_bytep *calc_ਪੰਕਤੀ_ਸੂਚਕ_ਸਾਰੇ(ਬਣਤਰ bitmap *bitmap)
 {
-	int height = guit->bitmap->get_height(bitmap);
-	unsigned char *buffer= guit->bitmap->get_buffer(bitmap);
+	ਪੂਰਨ ਉਚਾਈ = guit->bitmap->get_ਉਚਾਈ(bitmap);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਬਫਰ= guit->bitmap->get_ਬਫਰ(bitmap);
 	size_t rowstride = guit->bitmap->get_rowstride(bitmap);
-	png_bytep *row_ptrs;
-	int hloop;
+	png_bytep *ਪੰਕਤੀ_ptrs;
+	ਪੂਰਨ hloop;
 
 	/* The buffer allocation may occour when the buffer is aquired
 	 * and therefore may fail.
 	 */
-	if (buffer == NULL) {
-		return NULL;
+	ਜੇ (ਬਫਰ == ਨਿਰਾ) {
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	row_ptrs = malloc(sizeof(png_bytep) * height);
+	ਪੰਕਤੀ_ptrs = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(png_bytep) * ਉਚਾਈ);
 
-	if (row_ptrs != NULL) {
-		for (hloop = 0; hloop < height; hloop++) {
-			row_ptrs[hloop] = buffer + (rowstride * hloop);
+	ਜੇ (ਪੰਕਤੀ_ptrs != ਨਿਰਾ) {
+		ਲਈ (hloop = 0; hloop < ਉਚਾਈ; hloop++) {
+			ਪੰਕਤੀ_ptrs[hloop] = ਬਫਰ + (rowstride * hloop);
 		}
 	}
 
-	return row_ptrs;
+	ਵਾਪਸ ਪੰਕਤੀ_ptrs;
 }
 
 /** PNG content to bitmap conversion.
  *
  * This routine generates a bitmap object from a PNG image content
  */
-static struct bitmap *
-png_cache_convert(struct content *c)
+ਸਥਿਰ ਬਣਤਰ bitmap *
+png_cache_convert(ਬਣਤਰ content *c)
 {
 	png_structp png_ptr;
 	png_infop info_ptr;
-	png_infop end_info_ptr;
-	volatile struct bitmap * volatile bitmap = NULL;
-	struct png_cache_read_data_s png_cache_read_data;
-	png_uint_32 width, height;
-	volatile png_bytep * volatile row_pointers = NULL;
+	png_infop ਸਿਰਾ_info_ptr;
+	ਅਸਥਿਰ ਬਣਤਰ bitmap * ਅਸਥਿਰ bitmap = ਨਿਰਾ;
+	ਬਣਤਰ png_cache_read_ਅੰਕੜੇ_s png_cache_read_ਅੰਕੜੇ;
+	png_uint_32 ਚੌੜਾਈ, ਉਚਾਈ;
+	ਅਸਥਿਰ png_bytep * ਅਸਥਿਰ ਪੰਕਤੀ_ਸੂਚਕ_ਸਾਰੇ = ਨਿਰਾ;
 
-	png_cache_read_data.data = 
-		content__get_source_data(c, &png_cache_read_data.size);
+	png_cache_read_ਅੰਕੜੇ.ਅੰਕੜੇ = 
+		content_get_ਸਰੋਤ_ਅੰਕੜੇ_2(c, &png_cache_read_ਅੰਕੜੇ.ਮਾਪ);
 
-	if ((png_cache_read_data.data == NULL) || 
-	    (png_cache_read_data.size <= 8)) {
-		return NULL;
+	ਜੇ ((png_cache_read_ਅੰਕੜੇ.ਅੰਕੜੇ == ਨਿਰਾ) || 
+	    (png_cache_read_ਅੰਕੜੇ.ਮਾਪ <= 8)) {
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL,
+	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, ਨਿਰਾ,
 			nspng_error, nspng_warning);
-	if (png_ptr == NULL) {
-		return NULL;
+	ਜੇ (png_ptr == ਨਿਰਾ) {
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL) {
-		png_destroy_read_struct(&png_ptr, NULL, NULL);
-		return NULL;
+	ਜੇ (info_ptr == ਨਿਰਾ) {
+		png_destroy_read_struct(&png_ptr, ਨਿਰਾ, ਨਿਰਾ);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	end_info_ptr = png_create_info_struct(png_ptr);
-	if (end_info_ptr == NULL) {
-		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		return NULL;
+	ਸਿਰਾ_info_ptr = png_create_info_struct(png_ptr);
+	ਜੇ (ਸਿਰਾ_info_ptr == ਨਿਰਾ) {
+		png_destroy_read_struct(&png_ptr, &info_ptr, ਨਿਰਾ);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
 	/* setup error exit path */
-	if (setjmp(png_jmpbuf(png_ptr))) {
+	ਜੇ (setjmp(png_jmpbuf(png_ptr))) {
 		/* cleanup and bail */
-		goto png_cache_convert_error;
+		ਜਾਓ png_cache_convert_error;
 	}
 
 	/* read from a buffer instead of stdio */
-	png_set_read_fn(png_ptr, &png_cache_read_data, png_cache_read_fn);
+	png_ਸੈੱਟ_read_fn(png_ptr, &png_cache_read_ਅੰਕੜੇ, png_cache_read_fn);
 
 	/* ensure the png info structure is populated */
 	png_read_info(png_ptr, info_ptr);
 
 	/* setup output transforms */
-	nspng_setup_transforms(png_ptr, info_ptr);
+	nspng_ਤਿਆਰੀ_transforms(png_ptr, info_ptr);
 
-	width = png_get_image_width(png_ptr, info_ptr);
-	height = png_get_image_height(png_ptr, info_ptr);
+	ਚੌੜਾਈ = png_get_image_ਚੌੜਾਈ(png_ptr, info_ptr);
+	ਉਚਾਈ = png_get_image_ਉਚਾਈ(png_ptr, info_ptr);
 
 	/* Claim the required memory for the converted PNG */
-	bitmap = guit->bitmap->create(width, height, BITMAP_NONE);
-	if (bitmap == NULL) {
+	bitmap = guit->bitmap->create(ਚੌੜਾਈ, ਉਚਾਈ, BITMAP_NONE);
+	ਜੇ (bitmap == ਨਿਰਾ) {
 		/* cleanup and bail */
-		goto png_cache_convert_error;
+		ਜਾਓ png_cache_convert_error;
 	}
 
-	row_pointers = calc_row_pointers((struct bitmap *) bitmap);
+	ਪੰਕਤੀ_ਸੂਚਕ_ਸਾਰੇ = calc_ਪੰਕਤੀ_ਸੂਚਕ_ਸਾਰੇ((ਬਣਤਰ bitmap *) bitmap);
 
-	if (row_pointers != NULL) {
-		png_read_image(png_ptr, (png_bytep *) row_pointers);
-	} else {
-		guit->bitmap->destroy((struct bitmap *)bitmap);
-		bitmap = NULL;
+	ਜੇ (ਪੰਕਤੀ_ਸੂਚਕ_ਸਾਰੇ != ਨਿਰਾ) {
+		png_read_image(png_ptr, (png_bytep *) ਪੰਕਤੀ_ਸੂਚਕ_ਸਾਰੇ);
+	} ਨਹੀਂਤਾਂ {
+		guit->bitmap->destroy((ਬਣਤਰ bitmap *)bitmap);
+		bitmap = ਨਿਰਾ;
 	}
 
 png_cache_convert_error:
 
 	/* cleanup png read */
-	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info_ptr);
+	png_destroy_read_struct(&png_ptr, &info_ptr, &ਸਿਰਾ_info_ptr);
 
-	if (row_pointers != NULL) {
-		free((png_bytep *) row_pointers);
+	ਜੇ (ਪੰਕਤੀ_ਸੂਚਕ_ਸਾਰੇ != ਨਿਰਾ) {
+		ਮੁਕਤ((png_bytep *) ਪੰਕਤੀ_ਸੂਚਕ_ਸਾਰੇ);
 	}
 
-	if (bitmap != NULL) {
-		bool opaque = bitmap_test_opaque((void *)bitmap);
-		guit->bitmap->set_opaque((void *)bitmap, opaque);
-		bitmap_format_to_client((void *)bitmap, &(bitmap_fmt_t) {
+	ਜੇ (bitmap != ਨਿਰਾ) {
+		bool opaque = bitmap_test_opaque((ਖਾਲੀ *)bitmap);
+		guit->bitmap->ਸੈੱਟ_opaque((ਖਾਲੀ *)bitmap, opaque);
+		bitmap_format_ਮੰਜ਼ਿਲ_client((ਖਾਲੀ *)bitmap, &(bitmap_fmt_t) {
 			.layout = bitmap_fmt.layout,
 			.pma = opaque ? bitmap_fmt.pma : false,
 		});
-		guit->bitmap->modified((void *)bitmap);
+		guit->bitmap->modified((ਖਾਲੀ *)bitmap);
 	}
 
-	return (struct bitmap *)bitmap;
+	ਵਾਪਸ (ਬਣਤਰ bitmap *)bitmap;
 }
 
-static bool nspng_convert(struct content *c)
+ਸਥਿਰ bool nspng_convert(ਬਣਤਰ content *c)
 {
 	nspng_content *png_c = (nspng_content *) c;
-	char *title;
+	ਅੱਖਰ *title;
 
-	assert(png_c->png != NULL);
-	assert(png_c->info != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(png_c->png != ਨਿਰਾ);
+	ਪ੍ਰਤਿਜ੍ਞਾ(png_c->info != ਨਿਰਾ);
 
 	/* clean up png structures */
 	png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 
 	/* set title text */
 	title = messages_get_buff("PNGTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ਪੱਤੀ(llcache_handle_get_url(c->llcache)),
+			c->ਚੌੜਾਈ, c->ਉਚਾਈ);
+	ਜੇ (title != ਨਿਰਾ) {
+		content_ਸੈੱਟ_title(c, title);
+		ਮੁਕਤ(title);
 	}
 
-	if (png_c->bitmap != NULL) {
+	ਜੇ (png_c->bitmap != ਨਿਰਾ) {
 		bool opaque = bitmap_test_opaque(png_c->bitmap);
-		guit->bitmap->set_opaque(png_c->bitmap, opaque);
-		bitmap_format_to_client(png_c->bitmap, &(bitmap_fmt_t) {
+		guit->bitmap->ਸੈੱਟ_opaque(png_c->bitmap, opaque);
+		bitmap_format_ਮੰਜ਼ਿਲ_client(png_c->bitmap, &(bitmap_fmt_t) {
 			.layout = bitmap_fmt.layout,
 			.pma = opaque ? bitmap_fmt.pma : false,
 		});
 		guit->bitmap->modified(png_c->bitmap);
 	}
 
-	image_cache_add(c, png_c->bitmap, png_cache_convert);
+	image_cache_ਜੋੜੋ(c, png_c->bitmap, png_cache_convert);
 
-	content_set_ready(c);
-	content_set_done(c);
-	content_set_status(c, "");
+	content_ਸੈੱਟ_ready(c);
+	content_ਸੈੱਟ_ਪੂਰਾ(c);
+	content_ਸੈੱਟ_ਸਥਿਤੀ(c, "");
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
-static nserror nspng_clone(const struct content *old_c, struct content **new_c)
+ਸਥਿਰ nserror nspng_clone(ਅਚਲ ਬਣਤਰ content *old_c, ਬਣਤਰ content **new_c)
 {
 	nspng_content *clone_png_c;
 	nserror error;
-	const uint8_t *data;
-	size_t size;
+	ਅਚਲ uint8_t *ਅੰਕੜੇ;
+	size_t ਮਾਪ;
 
-	clone_png_c = calloc(1, sizeof(nspng_content));
-	if (clone_png_c == NULL)
-		return NSERROR_NOMEM;
+	clone_png_c = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(nspng_content));
+	ਜੇ (clone_png_c == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__clone(old_c, &clone_png_c->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&clone_png_c->base);
-		return error;
+	error = content__clone(old_c, &clone_png_c->ਅਧਾਰ);
+	ਜੇ (error != NSERROR_OK) {
+		content_destroy(&clone_png_c->ਅਧਾਰ);
+		ਵਾਪਸ error;
 	}
 
 	/* Simply replay create/process/convert */
-	error = nspng_create_png_data(clone_png_c);
-	if (error != NSERROR_OK) {
-		content_destroy(&clone_png_c->base);
-		return error;
+	error = nspng_create_png_ਅੰਕੜੇ(clone_png_c);
+	ਜੇ (error != NSERROR_OK) {
+		content_destroy(&clone_png_c->ਅਧਾਰ);
+		ਵਾਪਸ error;
 	}
 
-	data = content__get_source_data(&clone_png_c->base, &size);
-	if (size > 0) {
-		if (nspng_process_data(&clone_png_c->base, (const char *)data, size) == false) {
-			content_destroy(&clone_png_c->base);
-			return NSERROR_NOMEM;
+	ਅੰਕੜੇ = content_get_ਸਰੋਤ_ਅੰਕੜੇ_2(&clone_png_c->ਅਧਾਰ, &ਮਾਪ);
+	ਜੇ (ਮਾਪ > 0) {
+		ਜੇ (nspng_process_ਅੰਕੜੇ(&clone_png_c->ਅਧਾਰ, (ਅਚਲ ਅੱਖਰ *)ਅੰਕੜੇ, ਮਾਪ) == false) {
+			content_destroy(&clone_png_c->ਅਧਾਰ);
+			ਵਾਪਸ NSERROR_NOMEM;
 		}
 	}
 
-	if ((old_c->status == CONTENT_STATUS_READY) ||
-	    (old_c->status == CONTENT_STATUS_DONE)) {
-		if (nspng_convert(&clone_png_c->base) == false) {
-			content_destroy(&clone_png_c->base);
-			return NSERROR_CLONE_FAILED;
+	ਜੇ ((old_c->ਸਥਿਤੀ == CONTENT_ਸਥਿਤੀ_READY) ||
+	    (old_c->ਸਥਿਤੀ == CONTENT_ਸਥਿਤੀ_ਪੂਰਾ)) {
+		ਜੇ (nspng_convert(&clone_png_c->ਅਧਾਰ) == false) {
+			content_destroy(&clone_png_c->ਅਧਾਰ);
+			ਵਾਪਸ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*new_c = (struct content *)clone_png_c;
+	*new_c = (ਬਣਤਰ content *)clone_png_c;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static const content_handler nspng_content_handler = {
+ਸਥਿਰ ਅਚਲ content_handler nspng_content_handler = {
 	.create = nspng_create,
-	.process_data = nspng_process_data,
-	.data_complete = nspng_convert,
+	.process_ਅੰਕੜੇ = nspng_process_ਅੰਕੜੇ,
+	.ਅੰਕੜੇ_complete = nspng_convert,
 	.clone = nspng_clone,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
-	.get_internal = image_cache_get_internal,
+	.get_ਅੰਦਰੂਨੀ = image_cache_get_ਅੰਦਰੂਨੀ,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *nspng_types[] = {
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *nspng_types[] = {
 	"image/png",
 	"image/x-png"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nspng, nspng_types, nspng_content_handler);
+CONTENT_FACTORY_ਰਜਿਸਟਰ_TYPES(nspng, nspng_types, nspng_content_handler);

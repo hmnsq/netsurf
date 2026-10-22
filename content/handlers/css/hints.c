@@ -16,20 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <strings.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/nsoption.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/corestrings.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/nsurl.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
 
-#include "css/hints.h"
-#include "css/select.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "css/hints.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "css/select.h"
 
-#define LOG_STATS
-#undef LOG_STATS
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LOG_STATS
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LOG_STATS
 
 /******************************************************************************
  * Utility functions                                                          *
@@ -41,9 +41,9 @@
  * \param c  Character to consider
  * \return true if character is whitespace, false otherwise
  */
-static bool isWhitespace(char c)
+ਸਥਿਰ bool isWhitespace(ਅੱਖਰ c)
 {
-	return c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
+	ਵਾਪਸ c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
 }
 
 /**
@@ -52,9 +52,9 @@ static bool isWhitespace(char c)
  * \param c  Character to consider
  * \return true if character is a valid hex digit, false otherwise
  */
-static bool isHex(char c)
+ਸਥਿਰ bool isHex(ਅੱਖਰ c)
 {
-	return ('0' <= c && c <= '9') ||
+	ਵਾਪਸ ('0' <= c && c <= '9') ||
 			('A' <= (c & ~0x20) && (c & ~0x20) <= 'F');
 }
 
@@ -66,20 +66,20 @@ static bool isHex(char c)
  *
  * \note This function assumes an ASCII-compatible character set
  */
-static uint8_t charToHex(char c)
+ਸਥਿਰ uint8_t char_ਮੰਜ਼ਿਲ_Hex(ਅੱਖਰ c)
 {
 	/* 0-9 */
 	c -= '0';
 
 	/* A-F */
-	if (c > 9)
+	ਜੇ (c > 9)
 		c -= 'A' - '9' - 1;
 
 	/* a-f */
-	if (c > 15)
+	ਜੇ (c > 15)
 		c -= 'a' - 'A';
 
-	return c;
+	ਵਾਪਸ c;
 }
 
 
@@ -98,58 +98,58 @@ static uint8_t charToHex(char c)
  *                        bytes consumed
  * \return true on success, false on invalid input
  */
-static bool parse_number(const char *data, bool maybe_negative, bool real,
-		css_fixed *value, size_t *consumed)
+ਸਥਿਰ bool parse_ਸੰਖਿਆ(ਅਚਲ ਅੱਖਰ *ਅੰਕੜੇ, bool maybe_negative, bool real,
+		css_fixed *ਮੁੱਲ, size_t *consumed)
 {
 	size_t len;
-	const uint8_t *ptr;
+	ਅਚਲ uint8_t *ptr;
 	int32_t intpart = 0;
 	int32_t fracpart = 0;
 	int32_t pwr = 1;
-	int sign = 1;
+	ਪੂਰਨ sign = 1;
 
 	*consumed = 0;
 
-	len = strlen(data);
-	ptr = (const uint8_t *) data;
+	len = ਲੜੀ_ਲੰਬਾਈ(ਅੰਕੜੇ);
+	ptr = (ਅਚਲ uint8_t *) ਅੰਕੜੇ;
 
-	if (len == 0)
-		return false;
+	ਜੇ (len == 0)
+		ਵਾਪਸ false;
 
 	/* Skip leading whitespace */
-	while (len > 0 && isWhitespace(ptr[0])) {
+	ਜਦੋਂ (len > 0 && isWhitespace(ptr[0])) {
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	ਜੇ (len == 0)
+		ਵਾਪਸ false;
 
 	/* Extract sign, if any */
-	if (ptr[0] == '+') {
+	ਜੇ (ptr[0] == '+') {
 		len--;
 		ptr++;
-	} else if (ptr[0] == '-' && maybe_negative) {
+	} ਨਹੀਂਤਾਂ ਜੇ (ptr[0] == '-' && maybe_negative) {
 		sign = -1;
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	ਜੇ (len == 0)
+		ਵਾਪਸ false;
 
 	/* Must have a digit [0,9] */
-	if ('0' > ptr[0] || ptr[0] > '9')
-		return false;
+	ਜੇ ('0' > ptr[0] || ptr[0] > '9')
+		ਵਾਪਸ false;
 
 	/* Now extract intpart, assuming base 10 */
-	while (len > 0) {
+	ਜਦੋਂ (len > 0) {
 		/* Stop on first non-digit */
-		if (ptr[0] < '0' || '9' < ptr[0])
-			break;
+		ਜੇ (ptr[0] < '0' || '9' < ptr[0])
+			ਰੋਕੋ;
 
 		/* Prevent overflow of 'intpart'; proper clamping below */
-		if (intpart < (1 << 22)) {
+		ਜੇ (intpart < (1 << 22)) {
 			intpart *= 10;
 			intpart += ptr[0] - '0';
 		}
@@ -158,16 +158,16 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 	}
 
 	/* And fracpart, again, assuming base 10 */
-	if (real && len > 1 && ptr[0] == '.' &&
+	ਜੇ (real && len > 1 && ptr[0] == '.' &&
 			('0' <= ptr[1] && ptr[1] <= '9')) {
 		ptr++;
 		len--;
 
-		while (len > 0) {
-			if (ptr[0] < '0' || '9' < ptr[0])
-				break;
+		ਜਦੋਂ (len > 0) {
+			ਜੇ (ptr[0] < '0' || '9' < ptr[0])
+				ਰੋਕੋ;
 
-			if (pwr < 1000000) {
+			ਜੇ (pwr < 1000000) {
 				pwr *= 10;
 				fracpart *= 10;
 				fracpart += ptr[0] - '0';
@@ -177,39 +177,39 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 		}
 
 		fracpart = ((1 << 10) * fracpart + pwr/2) / pwr;
-		if (fracpart >= (1 << 10)) {
+		ਜੇ (fracpart >= (1 << 10)) {
 			intpart++;
 			fracpart &= (1 << 10) - 1;
 		}
 	}
 
-	if (sign > 0) {
+	ਜੇ (sign > 0) {
 		/* If the result is larger than we can represent,
 		 * then clamp to the maximum value we can store. */
-		if (intpart >= (1 << 21)) {
+		ਜੇ (intpart >= (1 << 21)) {
 			intpart = (1 << 21) - 1;
 			fracpart = (1 << 10) - 1;
 		}
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* If the negated result is smaller than we can represent
 		 * then clamp to the minimum value we can store. */
-		if (intpart >= (1 << 21)) {
+		ਜੇ (intpart >= (1 << 21)) {
 			intpart = -(1 << 21);
 			fracpart = 0;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			intpart = -intpart;
-			if (fracpart) {
+			ਜੇ (fracpart) {
 				fracpart = (1 << 10) - fracpart;
 				intpart--;
 			}
 		}
 	}
 
-	*value = (intpart << 10) | fracpart;
+	*ਮੁੱਲ = (intpart << 10) | fracpart;
 
-	*consumed = ptr - (const uint8_t *) data;
+	*consumed = ptr - (ਅਚਲ uint8_t *) ਅੰਕੜੇ;
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /**
@@ -221,36 +221,36 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
  * \param unit    Pointer to location to receive dimension's unit
  * \return true on success, false on invalid input
  */
-static bool parse_dimension(const char *data, bool strict, css_fixed *length,
+ਸਥਿਰ bool parse_dimension(ਅਚਲ ਅੱਖਰ *ਅੰਕੜੇ, bool strict, css_fixed *ਲੰਮਾਈ,
 		css_unit *unit)
 {
 	size_t len;
-	size_t read;
-	css_fixed value;
+	size_t ਪਠ;
+	css_fixed ਮੁੱਲ;
 
-	len = strlen(data);
+	len = ਲੜੀ_ਲੰਬਾਈ(ਅੰਕੜੇ);
 
-	if (parse_number(data, false, true, &value, &read) == false)
-		return false;
+	ਜੇ (parse_ਸੰਖਿਆ(ਅੰਕੜੇ, false, true, &ਮੁੱਲ, &ਪਠ) == false)
+		ਵਾਪਸ false;
 
-	if (strict && value < INTTOFIX(1))
-		return false;
+	ਜੇ (strict && ਮੁੱਲ < INTTOFIX(1))
+		ਵਾਪਸ false;
 
-	*length = value;
+	*ਲੰਮਾਈ = ਮੁੱਲ;
 
-	if (len > read && data[read] == '%')
+	ਜੇ (len > ਪਠ && ਅੰਕੜੇ[ਪਠ] == '%')
 		*unit = CSS_UNIT_PCT;
-	else
+	ਨਹੀਂਤਾਂ
 		*unit = CSS_UNIT_PX;
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /**
  * Mapping of colour name to CSS color
  */
-struct colour_map {
-	const char *name;
+ਬਣਤਰ ਰੰਗ_map {
+	ਅਚਲ ਅੱਖਰ *name;
 	css_color color;
 };
 
@@ -263,12 +263,12 @@ struct colour_map {
  *         < 0 if a < b,
  *         > 0 if b > a.
  */
-static int cmp_colour_name(const void *a, const void *b)
+ਸਥਿਰ ਪੂਰਨ cmp_ਰੰਗ_name(ਅਚਲ ਖਾਲੀ *a, ਅਚਲ ਖਾਲੀ *b)
 {
-	const char *aa = a;
-	const struct colour_map *bb = b;
+	ਅਚਲ ਅੱਖਰ *aa = a;
+	ਅਚਲ ਬਣਤਰ ਰੰਗ_map *bb = b;
 
-	return strcasecmp(aa, bb->name);
+	ਵਾਪਸ strcasecmp(aa, bb->name);
 }
 
 /**
@@ -278,9 +278,9 @@ static int cmp_colour_name(const void *a, const void *b)
  * \param result  Pointer to location to receive css_color
  * \return true on success, false on invalid input
  */
-static bool parse_named_colour(const char *name, css_color *result)
+ਸਥਿਰ bool parse_named_ਰੰਗ(ਅਚਲ ਅੱਖਰ *name, css_color *ਨਤੀਜਾ)
 {
-	static const struct colour_map named_colours[] = {
+	ਸਥਿਰ ਅਚਲ ਬਣਤਰ ਰੰਗ_map named_colours[] = {
 		{ "aliceblue",		0xfff0f8ff },
 		{ "antiquewhite",	0xfffaebd7 },
 		{ "aqua",		0xff00ffff },
@@ -432,69 +432,69 @@ static bool parse_named_colour(const char *name, css_color *result)
 		{ "yellow",		0xffffff00 },
 		{ "yellowgreen",	0xff9acd32 }
 	};
-	const struct colour_map *entry;
+	ਅਚਲ ਬਣਤਰ ਰੰਗ_map *ਇੰਦਰਾਜ;
 
-	entry = bsearch(name, named_colours,
-			sizeof(named_colours) / sizeof(named_colours[0]),
-			sizeof(named_colours[0]),
-			cmp_colour_name);
+	ਇੰਦਰਾਜ = bsearch(name, named_colours,
+			ਆਕਾਰ(named_colours) / ਆਕਾਰ(named_colours[0]),
+			ਆਕਾਰ(named_colours[0]),
+			cmp_ਰੰਗ_name);
 
-	if (entry != NULL)
-		*result = entry->color;
+	ਜੇ (ਇੰਦਰਾਜ != ਨਿਰਾ)
+		*ਨਤੀਜਾ = ਇੰਦਰਾਜ->color;
 
-	return entry != NULL;
+	ਵਾਪਸ ਇੰਦਰਾਜ != ਨਿਰਾ;
 }
 
 /* exported interface documented in content/handlers/css/hints.h */
-bool nscss_parse_colour(const char *data, css_color *result)
+bool nscss_parse_ਰੰਗ(ਅਚਲ ਅੱਖਰ *ਅੰਕੜੇ, css_color *ਨਤੀਜਾ)
 {
-	size_t len = strlen(data);
+	size_t len = ਲੜੀ_ਲੰਬਾਈ(ਅੰਕੜੇ);
 	uint8_t r, g, b;
 
 	/* 2 */
-	if (len == 0)
-		return false;
+	ਜੇ (len == 0)
+		ਵਾਪਸ false;
 
 	/* 3 */
-	if (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
-		return false;
+	ਜੇ (len == SLEN("transparent") && strcasecmp(ਅੰਕੜੇ, "transparent") == 0)
+		ਵਾਪਸ false;
 
 	/* 4 */
-	if (parse_named_colour(data, result))
-		return true;
+	ਜੇ (parse_named_ਰੰਗ(ਅੰਕੜੇ, ਨਤੀਜਾ))
+		ਵਾਪਸ true;
 
 	/** \todo Implement HTML5's utterly insane legacy colour parsing */
 
-	if (data[0] == '#') {
-		data++;
+	ਜੇ (ਅੰਕੜੇ[0] == '#') {
+		ਅੰਕੜੇ++;
 		len--;
 	}
 
-	if (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
-		r = charToHex(data[0]);
-		g = charToHex(data[1]);
-		b = charToHex(data[2]);
+	ਜੇ (len == 3 && isHex(ਅੰਕੜੇ[0]) && isHex(ਅੰਕੜੇ[1]) && isHex(ਅੰਕੜੇ[2])) {
+		r = char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[0]);
+		g = char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[1]);
+		b = char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[2]);
 
 		r |= (r << 4);
 		g |= (g << 4);
 		b |= (b << 4);
 
-		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
+		*ਨਤੀਜਾ = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
-	} else if (len == 6 && isHex(data[0]) && isHex(data[1]) &&
-			isHex(data[2]) && isHex(data[3]) && isHex(data[4]) &&
-			isHex(data[5])) {
-		r = (charToHex(data[0]) << 4) | charToHex(data[1]);
-		g = (charToHex(data[2]) << 4) | charToHex(data[3]);
-		b = (charToHex(data[4]) << 4) | charToHex(data[5]);
+		ਵਾਪਸ true;
+	} ਨਹੀਂਤਾਂ ਜੇ (len == 6 && isHex(ਅੰਕੜੇ[0]) && isHex(ਅੰਕੜੇ[1]) &&
+			isHex(ਅੰਕੜੇ[2]) && isHex(ਅੰਕੜੇ[3]) && isHex(ਅੰਕੜੇ[4]) &&
+			isHex(ਅੰਕੜੇ[5])) {
+		r = (char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[0]) << 4) | char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[1]);
+		g = (char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[2]) << 4) | char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[3]);
+		b = (char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[4]) << 4) | char_ਮੰਜ਼ਿਲ_Hex(ਅੰਕੜੇ[5]);
 
-		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
+		*ਨਤੀਜਾ = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
+		ਵਾਪਸ true;
 	}
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /**
@@ -506,69 +506,69 @@ bool nscss_parse_colour(const char *data, css_color *result)
  * \param unit  Pointer to location to receive unit
  * \return True on success, false on failure
  */
-static bool parse_font_size(const char *size, uint8_t *val,
+ਸਥਿਰ bool parse_font_ਮਾਪ(ਅਚਲ ਅੱਖਰ *ਮਾਪ, uint8_t *val,
 		css_fixed *len, css_unit *unit)
 {
-	static const uint8_t size_map[] = {
-		CSS_FONT_SIZE_XX_SMALL,
-		CSS_FONT_SIZE_SMALL,
-		CSS_FONT_SIZE_MEDIUM,
-		CSS_FONT_SIZE_LARGE,
-		CSS_FONT_SIZE_X_LARGE,
-		CSS_FONT_SIZE_XX_LARGE,
-		CSS_FONT_SIZE_DIMENSION	/* xxx-large (see below) */
+	ਸਥਿਰ ਅਚਲ uint8_t ਮਾਪ_map[] = {
+		CSS_FONT_ਮਾਪ_XX_SMALL,
+		CSS_FONT_ਮਾਪ_SMALL,
+		CSS_FONT_ਮਾਪ_MEDIUM,
+		CSS_FONT_ਮਾਪ_LARGE,
+		CSS_FONT_ਮਾਪ_X_LARGE,
+		CSS_FONT_ਮਾਪ_XX_LARGE,
+		CSS_FONT_ਮਾਪ_DIMENSION	/* xxx-large (see below) */
 	};
 
-	const char *p = size;
-	char mode;
-	int value = 0;
+	ਅਚਲ ਅੱਖਰ *p = ਮਾਪ;
+	ਅੱਖਰ ਬਹੁਲਕ;
+	ਪੂਰਨ ਮੁੱਲ = 0;
 
 	/* Skip whitespace */
-	while (*p != '\0' && isWhitespace(*p))
+	ਜਦੋਂ (*p != '\0' && isWhitespace(*p))
 		p++;
 
-	mode = *p;
+	ਬਹੁਲਕ = *p;
 
 	/* Skip +/- */
-	if (mode == '+' || mode == '-')
+	ਜੇ (ਬਹੁਲਕ == '+' || ਬਹੁਲਕ == '-')
 		p++;
 
 	/* Need at least one digit */
-	if (*p < '0' || *p > '9') {
-		return false;
+	ਜੇ (*p < '0' || *p > '9') {
+		ਵਾਪਸ false;
 	}
 
 	/* Consume digits, computing value */
-	while ('0' <= *p && *p <= '9') {
-		value = value * 10 + (*p - '0');
+	ਜਦੋਂ ('0' <= *p && *p <= '9') {
+		ਮੁੱਲ = ਮੁੱਲ * 10 + (*p - '0');
 		p++;
 	}
 
 	/* Resolve relative sizes */
-	if (mode == '+')
-		value += 3;
-	else if (mode == '-')
-		value = 3 - value;
+	ਜੇ (ਬਹੁਲਕ == '+')
+		ਮੁੱਲ += 3;
+	ਨਹੀਂਤਾਂ ਜੇ (ਬਹੁਲਕ == '-')
+		ਮੁੱਲ = 3 - ਮੁੱਲ;
 
 	/* Clamp to range [1,7] */
-	if (value < 1)
-		value = 1;
-	else if (value > 7)
-		value = 7;
+	ਜੇ (ਮੁੱਲ < 1)
+		ਮੁੱਲ = 1;
+	ਨਹੀਂਤਾਂ ਜੇ (ਮੁੱਲ > 7)
+		ਮੁੱਲ = 7;
 
-	if (value == 7) {
+	ਜੇ (ਮੁੱਲ == 7) {
 		/* Manufacture xxx-large */
-	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_size))),
+	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_ਮਾਪ))),
 				F_10);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* Len is irrelevant */
 		*len = 0;
 	}
 
 	*unit = CSS_UNIT_PT;
-	*val = size_map[value - 1];
+	*val = ਮਾਪ_map[ਮੁੱਲ - 1];
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 
@@ -576,46 +576,46 @@ static bool parse_font_size(const char *size, uint8_t *val,
  * Hint context management                                                    *
  ******************************************************************************/
 
-#define MAX_HINTS_PER_ELEMENT 32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_HINTS_ਪ੍ਰਤੀ_ELEMENT 32
 
-struct css_hint_ctx {
-	struct css_hint *hints;
+ਬਣਤਰ css_hint_ctx {
+	ਬਣਤਰ css_hint *hints;
 	uint32_t len;
 };
 
-struct css_hint_ctx hint_ctx;
+ਬਣਤਰ css_hint_ctx hint_ctx;
 
-nserror css_hint_init(void)
+nserror css_hint_init(ਖਾਲੀ)
 {
-	hint_ctx.hints = malloc(sizeof(struct css_hint) *
-			MAX_HINTS_PER_ELEMENT);
-	if (hint_ctx.hints == NULL) {
-		return NSERROR_NOMEM;
+	hint_ctx.hints = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(ਬਣਤਰ css_hint) *
+			MAX_HINTS_ਪ੍ਰਤੀ_ELEMENT);
+	ਜੇ (hint_ctx.hints == ਨਿਰਾ) {
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-void css_hint_fini(void)
+ਖਾਲੀ css_hint_fini(ਖਾਲੀ)
 {
 	hint_ctx.len = 0;
-	free(hint_ctx.hints);
+	ਮੁਕਤ(hint_ctx.hints);
 }
 
-static void css_hint_clean(void)
+ਸਥਿਰ ਖਾਲੀ css_hint_clean(ਖਾਲੀ)
 {
 	hint_ctx.len = 0;
 }
 
-static inline void css_hint_advance(struct css_hint **hint)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ css_hint_advance(ਬਣਤਰ css_hint **hint)
 {
 	hint_ctx.len++;
-	assert(hint_ctx.len < MAX_HINTS_PER_ELEMENT);
+	ਪ੍ਰਤਿਜ੍ਞਾ(hint_ctx.len < MAX_HINTS_ਪ੍ਰਤੀ_ELEMENT);
 
 	(*hint)++;
 }
 
-static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
+ਸਥਿਰ ਖਾਲੀ css_hint_get_hints(ਬਣਤਰ css_hint **hints, uint32_t *nhints)
 {
 	*hints = hint_ctx.hints;
 	*nhints = hint_ctx.len;
@@ -626,28 +626,28 @@ static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
  * Presentational hint handlers                                               *
  ******************************************************************************/
 
-static void css_hint_table_cell_border_padding(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਸਾਰਣੀ_cell_border_padding(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_qname qs;
-	dom_string *attr = NULL;
-	dom_node *tablenode = NULL;
+	dom_string *attr = ਨਿਰਾ;
+	dom_ਗੰਢ *tablenode = ਨਿਰਾ;
 	dom_exception exc;
 
-	qs.ns = NULL;
-	qs.name = lwc_string_ref(corestring_lwc_table);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&tablenode) != CSS_OK) {
+	qs.ns = ਨਿਰਾ;
+	qs.name = lwc_string_ref(corestring_lwc_ਸਾਰਣੀ);
+	ਜੇ (named_ancestor_ਗੰਢ(ctx, ਗੰਢ, &qs,
+			(ਖਾਲੀ *)&tablenode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return;
+		ਵਾਪਸ;
 	}
 	lwc_string_unref(qs.name);
 
-	if (tablenode == NULL) {
-		return;
+	ਜੇ (tablenode == ਨਿਰਾ) {
+		ਵਾਪਸ;
 	}
 	/* No need to unref tablenode, named_ancestor_node does not
 	 * return a reffed node to the CSS
@@ -656,31 +656,31 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_ਲੰਮਾਈ hint_ਲੰਮਾਈ;
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit) &&
-				INTTOFIX(0) != hint_length.value) {
+		ਜੇ (parse_dimension(
+				dom_string_ਅੰਕੜੇ(attr), false,
+						&hint_ਲੰਮਾਈ.ਮੁੱਲ,
+						&hint_ਲੰਮਾਈ.unit) &&
+				INTTOFIX(0) != hint_ਲੰਮਾਈ.ਮੁੱਲ) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
+			ਲਈ (hint_prop = CSS_PROP_BORDER_ਸਿਖਰ_STYLE;
+			     hint_prop <= CSS_PROP_BORDER_ਖੱਬਾ_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->status = CSS_BORDER_STYLE_INSET;
+				hint->ਸਥਿਤੀ = CSS_BORDER_STYLE_INSET;
 				css_hint_advance(&hint);
 			}
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
+			ਲਈ (hint_prop = CSS_PROP_BORDER_ਸਿਖਰ_ਚੌੜਾਈ;
+			     hint_prop <= CSS_PROP_BORDER_ਖੱਬਾ_ਚੌੜਾਈ;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = INTTOFIX(1);
-				hint->data.length.unit = CSS_UNIT_PX;
-				hint->status = CSS_BORDER_WIDTH_WIDTH;
+				hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = INTTOFIX(1);
+				hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_PX;
+				hint->ਸਥਿਤੀ = CSS_BORDER_ਚੌੜਾਈ_ਚੌੜਾਈ;
 				css_hint_advance(&hint);
 			}
 		}
@@ -690,20 +690,20 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		ਜੇ (nscss_parse_ਰੰਗ(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
+			ਲਈ (hint_prop = CSS_PROP_BORDER_ਸਿਖਰ_COLOR;
+			     hint_prop <= CSS_PROP_BORDER_ਖੱਬਾ_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.color = hint_color;
-				hint->status = CSS_BORDER_COLOR_COLOR;
+				hint->ਅੰਕੜੇ.color = hint_color;
+				hint->ਸਥਿਤੀ = CSS_BORDER_COLOR_COLOR;
 				css_hint_advance(&hint);
 			}
 		}
@@ -713,22 +713,22 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_cellpadding, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_ਲੰਮਾਈ hint_ਲੰਮਾਈ;
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit)) {
+		ਜੇ (parse_dimension(
+				dom_string_ਅੰਕੜੇ(attr), false,
+						&hint_ਲੰਮਾਈ.ਮੁੱਲ,
+						&hint_ਲੰਮਾਈ.unit)) {
 
-			for (hint_prop = CSS_PROP_PADDING_TOP;
-			     hint_prop <= CSS_PROP_PADDING_LEFT;
+			ਲਈ (hint_prop = CSS_PROP_PADDING_ਸਿਖਰ;
+			     hint_prop <= CSS_PROP_PADDING_ਖੱਬਾ;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = hint_length.value;
-				hint->data.length.unit = hint_length.unit;
-				hint->status = CSS_PADDING_SET;
+				hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = hint_ਲੰਮਾਈ.ਮੁੱਲ;
+				hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = hint_ਲੰਮਾਈ.unit;
+				hint->ਸਥਿਤੀ = CSS_PADDING_ਸੈੱਟ;
 				css_hint_advance(&hint);
 			}
 		}
@@ -736,606 +736,606 @@ static void css_hint_table_cell_border_padding(
 	}
 }
 
-static void css_hint_vertical_align_table_cells(
+ਸਥਿਰ ਖਾਲੀ css_hint_vertical_align_ਸਾਰਣੀ_cells(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ਨਿਰਾ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		hint->data.length.value = 0;
-		hint->data.length.unit = CSS_UNIT_PX;
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_top)) {
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = 0;
+		hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_PX;
+		ਜੇ (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_ਸਿਖਰ)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TOP;
+			hint->ਸਥਿਤੀ = CSS_VERTICAL_ALIGN_ਸਿਖਰ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
-					corestring_lwc_middle)) {
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(attr,
+					corestring_lwc_ਵਿਚਕਾਰ)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
+			hint->ਸਥਿਤੀ = CSS_VERTICAL_ALIGN_ਵਿਚਕਾਰ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BOTTOM;
+			hint->ਸਥਿਤੀ = CSS_VERTICAL_ALIGN_BOTTOM;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
+			hint->ਸਥਿਤੀ = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_vertical_align_replaced(
+ਸਥਿਰ ਖਾਲੀ css_hint_vertical_align_replaced(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ਨਿਰਾ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_top)) {
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_ਸਿਖਰ)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TOP;
+			hint->ਸਥਿਤੀ = CSS_VERTICAL_ALIGN_ਸਿਖਰ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
+			hint->ਸਥਿਤੀ = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_texttop)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TEXT_TOP;
+			hint->ਸਥਿਤੀ = CSS_VERTICAL_ALIGN_ਪਾਠ_ਸਿਖਰ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_absmiddle) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_abscenter)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
+			hint->ਸਥਿਤੀ = CSS_VERTICAL_ALIGN_ਵਿਚਕਾਰ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_text_align_normal(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਪਾਠ_align_ਸਾਧਾਰਨ(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = ਨਿਰਾ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_left)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LEFT;
+	ਜੇ (err == DOM_NO_ERR && align != ਨਿਰਾ) {
+		ਜੇ (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_ਖੱਬਾ)) {
+			hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+			hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_ਖੱਬਾ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_center)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_CENTER;
+			hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+			hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_right)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_RIGHT;
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_ਸੱਜਾ)) {
+			hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+			hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_ਸੱਜਾ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
+			hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+			hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_JUSTIFY;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_text_align_center(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਪਾਠ_align_center(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
-	hint->prop = CSS_PROP_TEXT_ALIGN;
-	hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
+	hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+	hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_LIBCSS_CENTER;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_left_right_align_center(
+ਸਥਿਰ ਖਾਲੀ css_hint_margin_ਖੱਬਾ_ਸੱਜਾ_align_center(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		memset(hint, 0, ਆਕਾਰ(*hint) * 2);
+		ਜੇ (dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_center) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_abscenter) ||
 				dom_string_caseless_lwc_isequal(attr,
-						corestring_lwc_middle) ||
+						corestring_lwc_ਵਿਚਕਾਰ) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_absmiddle)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_ਖੱਬਾ;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_ਸੱਜਾ;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_text_align_special(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਪਾਠ_align_special(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = ਨਿਰਾ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_align, &align);
 
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	ਜੇ (err == DOM_NO_ERR && align != ਨਿਰਾ) {
+		ਜੇ (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_center)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
+			hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+			hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_LIBCSS_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_left)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_LEFT;
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_ਖੱਬਾ)) {
+			hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+			hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_LIBCSS_ਖੱਬਾ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_right)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_RIGHT;
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_ਸੱਜਾ)) {
+			hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+			hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_LIBCSS_ਸੱਜਾ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
+			hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+			hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_JUSTIFY;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_text_align_table_special(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਪਾਠ_align_ਸਾਰਣੀ_special(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
-	hint->prop = CSS_PROP_TEXT_ALIGN;
-	hint->status = CSS_TEXT_ALIGN_INHERIT_IF_NON_MAGIC;
+	hint->prop = CSS_PROP_ਪਾਠ_ALIGN;
+	hint->ਸਥਿਤੀ = CSS_ਪਾਠ_ALIGN_INHERIT_IF_NON_MAGIC;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_hspace_vspace(
+ਸਥਿਰ ਖਾਲੀ css_hint_margin_hspace_vspace(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ਨਿਰਾ;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_vspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		css_hint_length hint_length;
-		if (parse_dimension(
-				dom_string_data(attr), false,
-				&hint_length.value,
-				&hint_length.unit)) {
-			hint->prop = CSS_PROP_MARGIN_TOP;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		css_hint_ਲੰਮਾਈ hint_ਲੰਮਾਈ;
+		ਜੇ (parse_dimension(
+				dom_string_ਅੰਕੜੇ(attr), false,
+				&hint_ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint_ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_MARGIN_ਸਿਖਰ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = hint_ਲੰਮਾਈ.ਮੁੱਲ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = hint_ਲੰਮਾਈ.unit;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_ਸੈੱਟ;
 			css_hint_advance(&hint);
 
 			hint->prop = CSS_PROP_MARGIN_BOTTOM;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = hint_ਲੰਮਾਈ.ਮੁੱਲ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = hint_ਲੰਮਾਈ.unit;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_ਸੈੱਟ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_hspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		css_hint_length hint_length;
-		if (parse_dimension(
-				dom_string_data(attr), false,
-				&hint_length.value,
-				&hint_length.unit)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		css_hint_ਲੰਮਾਈ hint_ਲੰਮਾਈ;
+		ਜੇ (parse_dimension(
+				dom_string_ਅੰਕੜੇ(attr), false,
+				&hint_ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint_ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_MARGIN_ਖੱਬਾ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = hint_ਲੰਮਾਈ.ਮੁੱਲ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = hint_ਲੰਮਾਈ.unit;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_ਸੈੱਟ;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+			hint->prop = CSS_PROP_MARGIN_ਸੱਜਾ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = hint_ਲੰਮਾਈ.ਮੁੱਲ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = hint_ਲੰਮਾਈ.unit;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_ਸੈੱਟ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_margin_left_right_hr(
+ਸਥਿਰ ਖਾਲੀ css_hint_margin_ਖੱਬਾ_ਸੱਜਾ_hr(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ਗੰਢ,
 				corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_left)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->data.length.value = 0;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_MARGIN_SET;
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		memset(hint, 0, ਆਕਾਰ(*hint) * 2);
+		ਜੇ (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_ਖੱਬਾ)) {
+			hint->prop = CSS_PROP_MARGIN_ਖੱਬਾ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = 0;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_PX;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_ਸੈੱਟ;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_ਸੱਜਾ;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_center)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_ਖੱਬਾ;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_ਸੱਜਾ;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_right)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_ਸੱਜਾ)) {
+			hint->prop = CSS_PROP_MARGIN_ਖੱਬਾ;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->data.length.value = 0;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_MARGIN_SET;
+			hint->prop = CSS_PROP_MARGIN_ਸੱਜਾ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = 0;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_PX;
+			hint->ਸਥਿਤੀ = CSS_MARGIN_ਸੈੱਟ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_table_spacing_border(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਸਾਰਣੀ_spacing_border(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception exc;
-	dom_string *attr = NULL;
+	dom_string *attr = ਨਿਰਾ;
 
-	exc = dom_element_get_attribute(node, corestring_dom_border, &attr);
+	exc = dom_element_get_attribute(ਗੰਢ, corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_ਲੰਮਾਈ hint_ਲੰਮਾਈ;
 
-		for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
+		ਲਈ (hint_prop = CSS_PROP_BORDER_ਸਿਖਰ_STYLE;
+			     hint_prop <= CSS_PROP_BORDER_ਖੱਬਾ_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->status = CSS_BORDER_STYLE_OUTSET;
+				hint->ਸਥਿਤੀ = CSS_BORDER_STYLE_OUTSET;
 				css_hint_advance(&hint);
 		}
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit)) {
+		ਜੇ (parse_dimension(
+				dom_string_ਅੰਕੜੇ(attr), false,
+						&hint_ਲੰਮਾਈ.ਮੁੱਲ,
+						&hint_ਲੰਮਾਈ.unit)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
+			ਲਈ (hint_prop = CSS_PROP_BORDER_ਸਿਖਰ_ਚੌੜਾਈ;
+			     hint_prop <= CSS_PROP_BORDER_ਖੱਬਾ_ਚੌੜਾਈ;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = hint_length.value;
-				hint->data.length.unit = hint_length.unit;
-				hint->status = CSS_BORDER_WIDTH_WIDTH;
+				hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = hint_ਲੰਮਾਈ.ਮੁੱਲ;
+				hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = hint_ਲੰਮਾਈ.unit;
+				hint->ਸਥਿਤੀ = CSS_BORDER_ਚੌੜਾਈ_ਚੌੜਾਈ;
 				css_hint_advance(&hint);
 			}
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		ਜੇ (nscss_parse_ਰੰਗ(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
+			ਲਈ (hint_prop = CSS_PROP_BORDER_ਸਿਖਰ_COLOR;
+			     hint_prop <= CSS_PROP_BORDER_ਖੱਬਾ_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.color = hint_color;
-				hint->status = CSS_BORDER_COLOR_COLOR;
+				hint->ਅੰਕੜੇ.color = hint_color;
+				hint->ਸਥਿਤੀ = CSS_BORDER_COLOR_COLOR;
 				css_hint_advance(&hint);
 			}
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_cellspacing, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-						&hint->data.position.h.value,
-						&hint->data.position.h.unit)) {
+	ਜੇ (exc == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (parse_dimension(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), false,
+						&hint->ਅੰਕੜੇ.position.h.ਮੁੱਲ,
+						&hint->ਅੰਕੜੇ.position.h.unit)) {
 			hint->prop = CSS_PROP_BORDER_SPACING;
-			hint->data.position.v = hint->data.position.h;
-			hint->status = CSS_BORDER_SPACING_SET;
+			hint->ਅੰਕੜੇ.position.v = hint->ਅੰਕੜੇ.position.h;
+			hint->ਸਥਿਤੀ = CSS_BORDER_SPACING_ਸੈੱਟ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਉਚਾਈ(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ਨਿਰਾ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_height, &attr);
+	err = dom_element_get_attribute(ਗੰਢ,
+			corestring_dom_ਉਚਾਈ, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->status = CSS_HEIGHT_SET;
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (parse_dimension(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), false,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_ਉਚਾਈ;
+			hint->ਸਥਿਤੀ = CSS_ਉਚਾਈ_ਸੈੱਟ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_width(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਚੌੜਾਈ(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ਨਿਰਾ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_width, &attr);
+	err = dom_element_get_attribute(ਗੰਢ,
+			corestring_dom_ਚੌੜਾਈ, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->status = CSS_WIDTH_SET;
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (parse_dimension(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), false,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_ਚੌੜਾਈ;
+			hint->ਸਥਿਤੀ = CSS_ਚੌੜਾਈ_ਸੈੱਟ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height_width_textarea(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਉਚਾਈ_ਚੌੜਾਈ_textarea(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ਨਿਰਾ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_rows, &attr);
+	err = dom_element_get_attribute(ਗੰਢ,
+			corestring_dom_ਪੰਕਤੀਆਂ, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->data.length.unit = CSS_UNIT_EM;
-			hint->status = CSS_HEIGHT_SET;
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (parse_dimension(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), false,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_ਉਚਾਈ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_EM;
+			hint->ਸਥਿਤੀ = CSS_ਉਚਾਈ_ਸੈੱਟ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_cols, &attr);
+	err = dom_element_get_attribute(ਗੰਢ,
+			corestring_dom_ਖਾਨੇ_ਗਿਣਤੀ, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->data.length.unit = CSS_UNIT_EX;
-			hint->status = CSS_WIDTH_SET;
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (parse_dimension(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), false,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_ਚੌੜਾਈ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_EX;
+			hint->ਸਥਿਤੀ = CSS_ਚੌੜਾਈ_ਸੈੱਟ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height_width_canvas(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਉਚਾਈ_ਚੌੜਾਈ_canvas(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ਨਿਰਾ;
 	dom_exception err;
-	bool set_dim = false;
+	bool ਸੈੱਟ_dim = false;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_height, &attr);
+	err = dom_element_get_attribute(ਗੰਢ,
+			corestring_dom_ਉਚਾਈ, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_HEIGHT_SET;
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (parse_dimension(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), true,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_ਉਚਾਈ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_PX;
+			hint->ਸਥਿਤੀ = CSS_ਉਚਾਈ_ਸੈੱਟ;
 			css_hint_advance(&hint);
-			set_dim = true;
+			ਸੈੱਟ_dim = true;
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	ਜੇ (ਸੈੱਟ_dim == false) {
 		/* canvas defaults to 150px tall */
-		hint->prop = CSS_PROP_HEIGHT;
-		hint->data.length.unit = CSS_UNIT_PX;
-		hint->data.length.value = INTTOFIX(150);
-		hint->status = CSS_HEIGHT_SET;
+		hint->prop = CSS_PROP_ਉਚਾਈ;
+		hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_PX;
+		hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = INTTOFIX(150);
+		hint->ਸਥਿਤੀ = CSS_ਉਚਾਈ_ਸੈੱਟ;
 		css_hint_advance(&hint);
-	} else {
-		set_dim = false;
+	} ਨਹੀਂਤਾਂ {
+		ਸੈੱਟ_dim = false;
 	}
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_width, &attr);
+	err = dom_element_get_attribute(ਗੰਢ,
+			corestring_dom_ਚੌੜਾਈ, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_WIDTH_SET;
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (parse_dimension(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), true,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_ਚੌੜਾਈ;
+			hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_PX;
+			hint->ਸਥਿਤੀ = CSS_ਚੌੜਾਈ_ਸੈੱਟ;
 			css_hint_advance(&hint);
-			set_dim = true;
+			ਸੈੱਟ_dim = true;
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	ਜੇ (ਸੈੱਟ_dim == false) {
 		/* canvas defaults to 300px wide */
-		hint->prop = CSS_PROP_WIDTH;
-		hint->data.length.unit = CSS_UNIT_PX;
-		hint->data.length.value = INTTOFIX(300);
-		hint->status = CSS_WIDTH_SET;
+		hint->prop = CSS_PROP_ਚੌੜਾਈ;
+		hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_PX;
+		hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ = INTTOFIX(300);
+		hint->ਸਥਿਤੀ = CSS_ਚੌੜਾਈ_ਸੈੱਟ;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_width_input(
+ਸਥਿਰ ਖਾਲੀ css_hint_ਚੌੜਾਈ_ਨਿਵੇਸ਼(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
-	dom_string *attr = NULL;
+	ਬਣਤਰ css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	dom_string *attr = ਨਿਰਾ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_size, &attr);
+	err = dom_element_get_attribute(ਗੰਢ,
+			corestring_dom_ਮਾਪ, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			dom_string *attr2 = NULL;
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਜੇ (parse_dimension(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), false,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ,
+				&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit)) {
+			dom_string *attr2 = ਨਿਰਾ;
 
-			err = dom_element_get_attribute(node,
+			err = dom_element_get_attribute(ਗੰਢ,
 					corestring_dom_type, &attr2);
-			if (err == DOM_NO_ERR) {
+			ਜੇ (err == DOM_NO_ERR) {
 
-				hint->prop = CSS_PROP_WIDTH;
-				hint->status = CSS_WIDTH_SET;
+				hint->prop = CSS_PROP_ਚੌੜਾਈ;
+				hint->ਸਥਿਤੀ = CSS_ਚੌੜਾਈ_ਸੈੱਟ;
 
-				if (attr2 == NULL ||
+				ਜੇ (attr2 == ਨਿਰਾ ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
-						corestring_lwc_text) ||
+						corestring_lwc_ਪਾਠ) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
-						corestring_lwc_search) ||
+						corestring_lwc_ਖੋਜ) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_password) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_file)) {
-					hint->data.length.unit = CSS_UNIT_EX;
+					hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit = CSS_UNIT_EX;
 				}
-				if (attr2 != NULL) {
+				ਜੇ (attr2 != ਨਿਰਾ) {
 					dom_string_unref(attr2);
 				}
 				css_hint_advance(&hint);
@@ -1345,277 +1345,277 @@ static void css_hint_width_input(
 	}
 }
 
-static void css_hint_anchor_color(
+ਸਥਿਰ ਖਾਲੀ css_hint_anchor_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_error error;
 	dom_exception err;
 	dom_string *color;
-	dom_node *bodynode = NULL;
+	dom_ਗੰਢ *bodynode = ਨਿਰਾ;
 
 	/* find body node */
 	css_qname qs;
-	bool is_visited;
+	bool is_ਦੇਖਿਆ;
 
-	qs.ns = NULL;
+	qs.ns = ਨਿਰਾ;
 	qs.name = lwc_string_ref(corestring_lwc_body);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&bodynode) != CSS_OK) {
+	ਜੇ (named_ancestor_ਗੰਢ(ctx, ਗੰਢ, &qs,
+			(ਖਾਲੀ *)&bodynode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return ;
+		ਵਾਪਸ ;
 	}
 	lwc_string_unref(qs.name);
 
-	if (bodynode == NULL) {
-		return;
+	ਜੇ (bodynode == ਨਿਰਾ) {
+		ਵਾਪਸ;
 	}
 
-	error = node_is_visited(ctx, node, &is_visited);
-	if (error != CSS_OK)
-		return;
+	error = ਗੰਢ_is_ਦੇਖਿਆ(ctx, ਗੰਢ, &is_ਦੇਖਿਆ);
+	ਜੇ (error != CSS_OK)
+		ਵਾਪਸ;
 
-	if (is_visited) {
+	ਜੇ (is_ਦੇਖਿਆ) {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_vlink, &color);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_link, &color);
 	}
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	ਜੇ (err == DOM_NO_ERR && color != ਨਿਰਾ) {
+		ਜੇ (nscss_parse_ਰੰਗ(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(color),
+						&hint->ਅੰਕੜੇ.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->ਸਥਿਤੀ = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_body_color(
+ਸਥਿਰ ਖਾਲੀ css_hint_body_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
-	err = dom_element_get_attribute(node, corestring_dom_text, &color);
+	err = dom_element_get_attribute(ਗੰਢ, corestring_dom_ਪਾਠ, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	ਜੇ (err == DOM_NO_ERR && color != ਨਿਰਾ) {
+		ਜੇ (nscss_parse_ਰੰਗ(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(color),
+						&hint->ਅੰਕੜੇ.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->ਸਥਿਤੀ = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_color(
+ਸਥਿਰ ਖਾਲੀ css_hint_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
-	err = dom_element_get_attribute(node, corestring_dom_color, &color);
+	err = dom_element_get_attribute(ਗੰਢ, corestring_dom_color, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	ਜੇ (err == DOM_NO_ERR && color != ਨਿਰਾ) {
+		ਜੇ (nscss_parse_ਰੰਗ(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(color),
+						&hint->ਅੰਕੜੇ.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->ਸਥਿਤੀ = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_font_size(
+ਸਥਿਰ ਖਾਲੀ css_hint_font_ਮਾਪ(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
-	dom_string *size;
+	dom_string *ਮਾਪ;
 
-	err = dom_element_get_attribute(node, corestring_dom_size, &size);
-	if (err == DOM_NO_ERR && size != NULL) {
-		if (parse_font_size(
-				(const char *)dom_string_data(size),
-						&hint->status,
-						&hint->data.length.value,
-						&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_FONT_SIZE;
+	err = dom_element_get_attribute(ਗੰਢ, corestring_dom_ਮਾਪ, &ਮਾਪ);
+	ਜੇ (err == DOM_NO_ERR && ਮਾਪ != ਨਿਰਾ) {
+		ਜੇ (parse_font_ਮਾਪ(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(ਮਾਪ),
+						&hint->ਸਥਿਤੀ,
+						&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.ਮੁੱਲ,
+						&hint->ਅੰਕੜੇ.ਲੰਮਾਈ.unit)) {
+			hint->prop = CSS_PROP_FONT_ਮਾਪ;
 			css_hint_advance(&hint);
 		}
-		dom_string_unref(size);
+		dom_string_unref(ਮਾਪ);
 	}
 }
 
-static void css_hint_float(
+ਸਥਿਰ ਖਾਲੀ css_hint_float(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *align;
 
-	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_left)) {
+	err = dom_element_get_attribute(ਗੰਢ, corestring_dom_align, &align);
+	ਜੇ (err == DOM_NO_ERR && align != ਨਿਰਾ) {
+		ਜੇ (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_ਖੱਬਾ)) {
 			hint->prop = CSS_PROP_FLOAT;
-			hint->status = CSS_FLOAT_LEFT;
+			hint->ਸਥਿਤੀ = CSS_FLOAT_ਖੱਬਾ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_right)) {
+		} ਨਹੀਂਤਾਂ ਜੇ (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_ਸੱਜਾ)) {
 			hint->prop = CSS_PROP_FLOAT;
-			hint->status = CSS_FLOAT_RIGHT;
+			hint->ਸਥਿਤੀ = CSS_FLOAT_ਸੱਜਾ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_caption_side(
+ਸਥਿਰ ਖਾਲੀ css_hint_caption_side(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
-	dom_string *align = NULL;
+	dom_string *align = ਨਿਰਾ;
 
-	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	err = dom_element_get_attribute(ਗੰਢ, corestring_dom_align, &align);
+	ਜੇ (err == DOM_NO_ERR && align != ਨਿਰਾ) {
+		ਜੇ (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_CAPTION_SIDE;
-			hint->status = CSS_CAPTION_SIDE_BOTTOM;
+			hint->ਸਥਿਤੀ = CSS_CAPTION_SIDE_BOTTOM;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_bg_color(
+ਸਥਿਰ ਖਾਲੀ css_hint_bg_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ਬਣਤਰ css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *bgcolor;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_bgcolor, &bgcolor);
-	if (err == DOM_NO_ERR && bgcolor != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(bgcolor),
-				&hint->data.color)) {
+	ਜੇ (err == DOM_NO_ERR && bgcolor != ਨਿਰਾ) {
+		ਜੇ (nscss_parse_ਰੰਗ(
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(bgcolor),
+				&hint->ਅੰਕੜੇ.color)) {
 			hint->prop = CSS_PROP_BACKGROUND_COLOR;
-			hint->status = CSS_BACKGROUND_COLOR_COLOR;
+			hint->ਸਥਿਤੀ = CSS_BACKGROUND_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(bgcolor);
 	}
 }
 
-static void css_hint_bg_image(
+ਸਥਿਰ ਖਾਲੀ css_hint_bg_image(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	ਬਣਤਰ css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(ਗੰਢ,
 			corestring_dom_background, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
 		nsurl *url;
-		nserror error = nsurl_join(ctx->base_url,
-				(const char *)dom_string_data(attr), &url);
+		nserror error = nsurl_join(ctx->ਅਧਾਰ_url,
+				(ਅਚਲ ਅੱਖਰ *)dom_string_ਅੰਕੜੇ(attr), &url);
 		dom_string_unref(attr);
 
-		if (error == NSERROR_OK) {
+		ਜੇ (error == NSERROR_OK) {
 			lwc_string *iurl;
 			lwc_error lerror = lwc_intern_string(nsurl_access(url),
-					nsurl_length(url), &iurl);
+					nsurl_ਲੰਮਾਈ(url), &iurl);
 			nsurl_unref(url);
 
-			if (lerror == lwc_error_ok) {
+			ਜੇ (lerror == lwc_error_ok) {
 				hint->prop = CSS_PROP_BACKGROUND_IMAGE;
-				hint->data.string = iurl;
-				hint->status = CSS_BACKGROUND_IMAGE_IMAGE;
+				hint->ਅੰਕੜੇ.string = iurl;
+				hint->ਸਥਿਤੀ = CSS_BACKGROUND_IMAGE_IMAGE;
 				css_hint_advance(&hint);
 			}
 		}
 	}
 }
 
-static void css_hint_white_space_nowrap(
+ਸਥਿਰ ਖਾਲੀ css_hint_white_space_nowrap(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	ਬਣਤਰ css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	bool nowrap;
 
-	err = dom_element_has_attribute(node, corestring_dom_nowrap, &nowrap);
-	if (err == DOM_NO_ERR && nowrap == true) {
+	err = dom_element_has_attribute(ਗੰਢ, corestring_dom_nowrap, &nowrap);
+	ਜੇ (err == DOM_NO_ERR && nowrap == true) {
 		hint->prop = CSS_PROP_WHITE_SPACE;
-		hint->status = CSS_WHITE_SPACE_NOWRAP;
+		hint->ਸਥਿਤੀ = CSS_WHITE_SPACE_NOWRAP;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_list(
+ਸਥਿਰ ਖਾਲੀ css_hint_list(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_ਗੰਢ *ਗੰਢ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	ਬਣਤਰ css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
-	err = dom_element_get_attribute(node, corestring_dom_type, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
-		const char *attr_str = dom_string_data(attr);
-		size_t attr_len = dom_string_byte_length(attr);
-		enum css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
+	err = dom_element_get_attribute(ਗੰਢ, corestring_dom_type, &attr);
+	ਜੇ (err == DOM_NO_ERR && attr != ਨਿਰਾ) {
+		ਅਚਲ ਅੱਖਰ *attr_str = dom_string_ਅੰਕੜੇ(attr);
+		size_t attr_len = dom_string_byte_ਲੰਮਾਈ(attr);
+		ਗਿਣਤੀ css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
 
-		if (attr_len == 1) {
-			switch (attr_str[0]) {
-			case 'a':
-				type = CSS_LIST_STYLE_TYPE_LOWER_ALPHA;
-				break;
-			case 'A':
-				type = CSS_LIST_STYLE_TYPE_UPPER_ALPHA;
-				break;
-			case 'i':
-				type = CSS_LIST_STYLE_TYPE_LOWER_ROMAN;
-				break;
-			case 'I':
-				type = CSS_LIST_STYLE_TYPE_UPPER_ROMAN;
-				break;
-			case '1':
+		ਜੇ (attr_len == 1) {
+			ਚੋਣ (attr_str[0]) {
+			ਹਾਲਤ 'a':
+				type = CSS_LIST_STYLE_TYPE_ਹੇਠਲਾ_ALPHA;
+				ਰੋਕੋ;
+			ਹਾਲਤ 'A':
+				type = CSS_LIST_STYLE_TYPE_ਉੱਤਲਾ_ALPHA;
+				ਰੋਕੋ;
+			ਹਾਲਤ 'i':
+				type = CSS_LIST_STYLE_TYPE_ਹੇਠਲਾ_ROMAN;
+				ਰੋਕੋ;
+			ਹਾਲਤ 'I':
+				type = CSS_LIST_STYLE_TYPE_ਉੱਤਲਾ_ROMAN;
+				ਰੋਕੋ;
+			ਹਾਲਤ '1':
 				type = CSS_LIST_STYLE_TYPE_DECIMAL;
-				break;
+				ਰੋਕੋ;
 			}
 		}
 
-		if (type != CSS_LIST_STYLE_TYPE_INHERIT) {
+		ਜੇ (type != CSS_LIST_STYLE_TYPE_INHERIT) {
 			hint->prop = CSS_PROP_LIST_STYLE_TYPE;
-			hint->status = type;
+			hint->ਸਥਿਤੀ = type;
 			css_hint_advance(&hint);
 		}
 
@@ -1625,120 +1625,120 @@ static void css_hint_list(
 
 
 /* Exported function, documented in css/hints.h */
-css_error node_presentational_hint(void *pw, void *node,
+css_error ਗੰਢ_presentational_hint(ਖਾਲੀ *pw, ਖਾਲੀ *ਗੰਢ,
 		uint32_t *nhints, css_hint **hints)
 {
 	dom_exception exc;
-	dom_html_element_type tag_type;
+	dom_html_element_type ਟੈਗ_type;
 
-	if (nsoption_bool(author_level_css) == false) {
+	ਜੇ (nsoption_bool(author_level_css) == false) {
 		*nhints = 0;
-		*hints = NULL;
-		return CSS_OK;
+		*hints = ਨਿਰਾ;
+		ਵਾਪਸ CSS_OK;
 	}
 
 	css_hint_clean();
 
-	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
-		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+	exc = dom_html_element_get_ਟੈਗ_type(ਗੰਢ, &ਟੈਗ_type);
+	ਜੇ (exc != DOM_NO_ERR) {
+		ਟੈਗ_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	switch (tag_type) {
-	case DOM_HTML_ELEMENT_TYPE_TH:
-	case DOM_HTML_ELEMENT_TYPE_TD:
-		css_hint_width(pw, node);
-		css_hint_table_cell_border_padding(pw, node);
-		css_hint_white_space_nowrap(pw, node);
+	ਚੋਣ (ਟੈਗ_type) {
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_TH:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_TD:
+		css_hint_ਚੌੜਾਈ(pw, ਗੰਢ);
+		css_hint_ਸਾਰਣੀ_cell_border_padding(pw, ਗੰਢ);
+		css_hint_white_space_nowrap(pw, ਗੰਢ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_TR:
-		css_hint_height(pw, node);
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_TR:
+		css_hint_ਉਚਾਈ(pw, ਗੰਢ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_THEAD:
-	case DOM_HTML_ELEMENT_TYPE_TBODY:
-	case DOM_HTML_ELEMENT_TYPE_TFOOT:
-		css_hint_text_align_special(pw, node);
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_THEAD:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_TBODY:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_TFOOT:
+		css_hint_ਪਾਠ_align_special(pw, ਗੰਢ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_COL:
-		css_hint_vertical_align_table_cells(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_APPLET:
-	case DOM_HTML_ELEMENT_TYPE_IMG:
-		css_hint_margin_hspace_vspace(pw, node);
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_ਖਾਨਾ:
+		css_hint_vertical_align_ਸਾਰਣੀ_cells(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_APPLET:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_IMG:
+		css_hint_margin_hspace_vspace(pw, ਗੰਢ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_EMBED:
-	case DOM_HTML_ELEMENT_TYPE_IFRAME:
-	case DOM_HTML_ELEMENT_TYPE_OBJECT:
-		css_hint_height(pw, node);
-		css_hint_width(pw, node);
-		css_hint_vertical_align_replaced(pw, node);
-		css_hint_float(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_P:
-	case DOM_HTML_ELEMENT_TYPE_H1:
-	case DOM_HTML_ELEMENT_TYPE_H2:
-	case DOM_HTML_ELEMENT_TYPE_H3:
-	case DOM_HTML_ELEMENT_TYPE_H4:
-	case DOM_HTML_ELEMENT_TYPE_H5:
-	case DOM_HTML_ELEMENT_TYPE_H6:
-		css_hint_text_align_normal(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CENTER:
-		css_hint_text_align_center(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CAPTION:
-		css_hint_caption_side(pw, node);
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_EMBED:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_IFRAME:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_OBJECT:
+		css_hint_ਉਚਾਈ(pw, ਗੰਢ);
+		css_hint_ਚੌੜਾਈ(pw, ਗੰਢ);
+		css_hint_vertical_align_replaced(pw, ਗੰਢ);
+		css_hint_float(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_P:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_H1:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_H2:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_H3:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_H4:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_H5:
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_H6:
+		css_hint_ਪਾਠ_align_ਸਾਧਾਰਨ(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_CENTER:
+		css_hint_ਪਾਠ_align_center(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_CAPTION:
+		css_hint_caption_side(pw, ਗੰਢ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_DIV:
-		css_hint_text_align_special(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TABLE:
-		css_hint_text_align_table_special(pw, node);
-		css_hint_table_spacing_border(pw, node);
-		css_hint_float(pw, node);
-		css_hint_margin_left_right_align_center(pw, node);
-		css_hint_width(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_HR:
-		css_hint_width(pw, node);
-		css_hint_margin_left_right_hr(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-		css_hint_height_width_textarea(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
-		css_hint_width_input(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_A:
-		css_hint_anchor_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FONT:
-		css_hint_font_size(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BODY:
-		css_hint_body_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CANVAS:
-		css_hint_height_width_canvas(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OL:
-		css_hint_list(pw, node);
-		break;
-	default:
-		break;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_DIV:
+		css_hint_ਪਾਠ_align_special(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_ਸਾਰਣੀ:
+		css_hint_ਪਾਠ_align_ਸਾਰਣੀ_special(pw, ਗੰਢ);
+		css_hint_ਸਾਰਣੀ_spacing_border(pw, ਗੰਢ);
+		css_hint_float(pw, ਗੰਢ);
+		css_hint_margin_ਖੱਬਾ_ਸੱਜਾ_align_center(pw, ਗੰਢ);
+		css_hint_ਚੌੜਾਈ(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_HR:
+		css_hint_ਚੌੜਾਈ(pw, ਗੰਢ);
+		css_hint_margin_ਖੱਬਾ_ਸੱਜਾ_hr(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+		css_hint_ਉਚਾਈ_ਚੌੜਾਈ_textarea(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_ਨਿਵੇਸ਼:
+		css_hint_ਚੌੜਾਈ_ਨਿਵੇਸ਼(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_A:
+		css_hint_anchor_color(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_FONT:
+		css_hint_font_ਮਾਪ(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_BODY:
+		css_hint_body_color(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_CANVAS:
+		css_hint_ਉਚਾਈ_ਚੌੜਾਈ_canvas(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਹਾਲਤ DOM_HTML_ELEMENT_TYPE_OL:
+		css_hint_list(pw, ਗੰਢ);
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਰੋਕੋ;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
-		css_hint_color(pw, node);
-		css_hint_bg_color(pw, node);
-		css_hint_bg_image(pw, node);
+	ਜੇ (ਟੈਗ_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
+		css_hint_color(pw, ਗੰਢ);
+		css_hint_bg_color(pw, ਗੰਢ);
+		css_hint_bg_image(pw, ਗੰਢ);
 	}
 
-#ifdef LOG_STATS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LOG_STATS
 	NSLOG(netsurf, INFO, "Properties with hints: %i", hint_ctx.len);
-#endif
+#ਜੇ_ਅੰਤ
 
 	css_hint_get_hints(hints, nhints);
 
-	return CSS_OK;
+	ਵਾਪਸ CSS_OK;
 }

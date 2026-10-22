@@ -22,146 +22,146 @@
  * HTML fetcher for CSS objects
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dom/dom.h>
-#include <libwapcaplet/libwapcaplet.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <dom/dom.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/ring.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/inttypes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/corestrings.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/ring.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/nsurl.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/fetch.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/fetchers.h"
 
-#include "html/private.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "html/private.h"
 
-typedef struct html_css_fetcher_item {
-	uint32_t key;
-	dom_string *data;
-	nsurl *base_url;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ html_css_fetcher_ਵਸਤੂ {
+	uint32_t ਕੁੰਜੀ;
+	dom_string *ਅੰਕੜੇ;
+	nsurl *ਅਧਾਰ_url;
 
-	struct html_css_fetcher_item *r_next, *r_prev;
-} html_css_fetcher_item;
+	ਬਣਤਰ html_css_fetcher_ਵਸਤੂ *r_ਅਗਲਾ, *r_prev;
+} html_css_fetcher_ਵਸਤੂ;
 
-typedef struct html_css_fetcher_context {
-	struct fetch *parent_fetch;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ html_css_fetcher_context {
+	ਬਣਤਰ fetch *ਮਾਪਾ_fetch;
 
 	nsurl *url;
-	html_css_fetcher_item *item;
+	html_css_fetcher_ਵਸਤੂ *ਵਸਤੂ;
 
 	bool aborted;
 	bool locked;
 
-	struct html_css_fetcher_context *r_next, *r_prev;
+	ਬਣਤਰ html_css_fetcher_context *r_ਅਗਲਾ, *r_prev;
 } html_css_fetcher_context;
 
-static uint32_t current_key = 0;
-static html_css_fetcher_item *items = NULL;
-static html_css_fetcher_context *ring = NULL;
+ਸਥਿਰ uint32_t current_ਕੁੰਜੀ = 0;
+ਸਥਿਰ html_css_fetcher_ਵਸਤੂ *ਚੀਜ਼ਾਂ = ਨਿਰਾ;
+ਸਥਿਰ html_css_fetcher_context *ring = ਨਿਰਾ;
 
-static bool html_css_fetcher_initialise(lwc_string *scheme)
+ਸਥਿਰ bool html_css_fetcher_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_initialise called for %s",
-	      lwc_string_data(scheme));
-	return true;
+	      lwc_string_ਅੰਕੜੇ(scheme));
+	ਵਾਪਸ true;
 }
 
-static void html_css_fetcher_finalise(lwc_string *scheme)
+ਸਥਿਰ ਖਾਲੀ html_css_fetcher_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_finalise called for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_ਅੰਕੜੇ(scheme));
 }
 
-static bool html_css_fetcher_can_fetch(const nsurl *url)
+ਸਥਿਰ bool html_css_fetcher_can_fetch(ਅਚਲ nsurl *url)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+ਸਥਿਰ ਖਾਲੀ *html_css_fetcher_ਤਿਆਰੀ(ਬਣਤਰ fetch *ਮਾਪਾ_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, ਅਚਲ ਅੱਖਰ *post_urlenc,
+		 ਅਚਲ ਬਣਤਰ fetch_multipart_ਅੰਕੜੇ *post_multipart,
+		 ਅਚਲ ਅੱਖਰ **ਸਿਰਲੇਖਾਂ)
 {
 	html_css_fetcher_context *ctx;
-	lwc_string *path;
-	uint32_t key;
-	html_css_fetcher_item *item, *found = NULL;
+	lwc_string *ਰਸਤਾ;
+	uint32_t ਕੁੰਜੀ;
+	html_css_fetcher_ਵਸਤੂ *ਵਸਤੂ, *ਮਿਲਿਆ = ਨਿਰਾ;
 
 	/* format of a x-ns-css URL is:
 	 *   x-ns-url:<key>
 	 * Where key is an unsigned 32bit integer
 	 */
 
-	path = nsurl_get_component(url, NSURL_PATH);
+	ਰਸਤਾ = nsurl_get_component(url, NSURL_ਰਸਤਾ);
 	/* The path must exist */
-	if (path == NULL) {
-		return NULL;
+	ਜੇ (ਰਸਤਾ == ਨਿਰਾ) {
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	key = strtoul(lwc_string_data(path), NULL, 10);
+	ਕੁੰਜੀ = strtoul(lwc_string_ਅੰਕੜੇ(ਰਸਤਾ), ਨਿਰਾ, 10);
 
-	lwc_string_unref(path);
+	lwc_string_unref(ਰਸਤਾ);
 
 	/* There must be at least one item */
-	if (items == NULL) {
-		return NULL;
+	ਜੇ (ਚੀਜ਼ਾਂ == ਨਿਰਾ) {
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	item = items;
-	do {
-		if (item->key == key) {
-			found = item;
-			break;
+	ਵਸਤੂ = ਚੀਜ਼ਾਂ;
+	ਕਰੋ {
+		ਜੇ (ਵਸਤੂ->ਕੁੰਜੀ == ਕੁੰਜੀ) {
+			ਮਿਲਿਆ = ਵਸਤੂ;
+			ਰੋਕੋ;
 		}
 
-		item = item->r_next;
-	} while (item != items);
+		ਵਸਤੂ = ਵਸਤੂ->r_ਅਗਲਾ;
+	} ਜਦੋਂ (ਵਸਤੂ != ਚੀਜ਼ਾਂ);
 
 	/* We must have found the item */
-	if (found == NULL) {
-		return NULL;
+	ਜੇ (ਮਿਲਿਆ == ਨਿਰਾ) {
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*ctx));
+	ਜੇ (ctx == ਨਿਰਾ)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	ctx->parent_fetch = parent_fetch;
+	ctx->ਮਾਪਾ_fetch = ਮਾਪਾ_fetch;
 	ctx->url = nsurl_ref(url);
-	ctx->item = found;
+	ctx->ਵਸਤੂ = ਮਿਲਿਆ;
 
-	RING_INSERT(ring, ctx);
+	RING_ਪਾਓ(ring, ctx);
 
-	return ctx;
+	ਵਾਪਸ ctx;
 }
 
-static bool html_css_fetcher_start(void *ctx)
+ਸਥਿਰ bool html_css_fetcher_ਸ਼ੁਰੂ(ਖਾਲੀ *ctx)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-static void html_css_fetcher_free(void *ctx)
+ਸਥਿਰ ਖਾਲੀ html_css_fetcher_free(ਖਾਲੀ *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
 	nsurl_unref(c->url);
-	if (c->item != NULL) {
-		nsurl_unref(c->item->base_url);
-		dom_string_unref(c->item->data);
-		RING_REMOVE(items, c->item);
-		free(c->item);
+	ਜੇ (c->ਵਸਤੂ != ਨਿਰਾ) {
+		nsurl_unref(c->ਵਸਤੂ->ਅਧਾਰ_url);
+		dom_string_unref(c->ਵਸਤੂ->ਅੰਕੜੇ);
+		RING_REMOVE(ਚੀਜ਼ਾਂ, c->ਵਸਤੂ);
+		ਮੁਕਤ(c->ਵਸਤੂ);
 	}
 	RING_REMOVE(ring, c);
-	free(ctx);
+	ਮੁਕਤ(ctx);
 }
 
-static void html_css_fetcher_abort(void *ctx)
+ਸਥਿਰ ਖਾਲੀ html_css_fetcher_abort(ਖਾਲੀ *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
@@ -172,149 +172,149 @@ static void html_css_fetcher_abort(void *ctx)
 	c->aborted = true;
 }
 
-static void html_css_fetcher_send_callback(const fetch_msg *msg,
+ਸਥਿਰ ਖਾਲੀ html_css_fetcher_send_callback(ਅਚਲ fetch_ਸੁਨੇਹਾ *ਸੁਨੇਹਾ,
 		html_css_fetcher_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(ਸੁਨੇਹਾ, c->ਮਾਪਾ_fetch);
 	c->locked = false;
 }
 
-static void html_css_fetcher_poll(lwc_string *scheme)
+ਸਥਿਰ ਖਾਲੀ html_css_fetcher_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	html_css_fetcher_context *c, *next;
+	fetch_ਸੁਨੇਹਾ ਸੁਨੇਹਾ;
+	html_css_fetcher_context *c, *ਅਗਲਾ;
 
-	if (ring == NULL) return;
+	ਜੇ (ring == ਨਿਰਾ) ਵਾਪਸ;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
-	do {
+	ਕਰੋ {
 		/* Ignore fetches that have been flagged as locked.
 		 * This allows safe re-entrant calls to this function.
 		 * Re-entrancy can occur if, as a result of a callback,
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			next = c->r_next;
-			continue;
+		ਜੇ (c->locked == true) {
+			ਅਗਲਾ = c->r_ਅਗਲਾ;
+			ਜਾਰੀ;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted) {
+		ਜੇ (c->aborted) {
 			/* Nothing to do */
-			assert(c->locked == false);
-		} else if (c->item != NULL) {
-			char header[4096];
+			ਪ੍ਰਤਿਜ੍ਞਾ(c->locked == false);
+		} ਨਹੀਂਤਾਂ ਜੇ (c->ਵਸਤੂ != ਨਿਰਾ) {
+			ਅੱਖਰ ਸਿਰਲੇਖ[4096];
 
-			fetch_set_http_code(c->parent_fetch, 200);
+			fetch_ਸੈੱਟ_http_ਕੋਡ(c->ਮਾਪਾ_fetch, 200);
 
 			/* Any callback can result in the fetch being aborted.
 			 * Therefore, we _must_ check for this after _every_
 			 * call to html_css_fetcher_send_callback().
 			 */
-			snprintf(header, sizeof header,
+			snprintf(ਸਿਰਲੇਖ, ਆਕਾਰ ਸਿਰਲੇਖ,
 				"Content-Type: text/css; charset=utf-8");
-			msg.type = FETCH_HEADER;
-			msg.data.header_or_data.buf = (const uint8_t *) header;
-			msg.data.header_or_data.len = strlen(header);
-			html_css_fetcher_send_callback(&msg, c);
+			ਸੁਨੇਹਾ.type = FETCH_ਸਿਰਲੇਖ;
+			ਸੁਨੇਹਾ.ਅੰਕੜੇ.ਸਿਰਲੇਖ_or_ਅੰਕੜੇ.buf = (ਅਚਲ uint8_t *) ਸਿਰਲੇਖ;
+			ਸੁਨੇਹਾ.ਅੰਕੜੇ.ਸਿਰਲੇਖ_or_ਅੰਕੜੇ.len = ਲੜੀ_ਲੰਬਾਈ(ਸਿਰਲੇਖ);
+			html_css_fetcher_send_callback(&ਸੁਨੇਹਾ, c);
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			ਜੇ (c->aborted == false) {
+				snprintf(ਸਿਰਲੇਖ, ਆਕਾਰ ਸਿਰਲੇਖ,
 					"Content-Length: %"PRIsizet,
-					dom_string_byte_length(c->item->data));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					dom_string_byte_ਲੰਮਾਈ(c->ਵਸਤੂ->ਅੰਕੜੇ));
+				ਸੁਨੇਹਾ.type = FETCH_ਸਿਰਲੇਖ;
+				ਸੁਨੇਹਾ.ਅੰਕੜੇ.ਸਿਰਲੇਖ_or_ਅੰਕੜੇ.buf =
+						(ਅਚਲ uint8_t *) ਸਿਰਲੇਖ;
+				ਸੁਨੇਹਾ.ਅੰਕੜੇ.ਸਿਰਲੇਖ_or_ਅੰਕੜੇ.len = ਲੜੀ_ਲੰਬਾਈ(ਸਿਰਲੇਖ);
+				html_css_fetcher_send_callback(&ਸੁਨੇਹਾ, c);
 			}
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			ਜੇ (c->aborted == false) {
+				snprintf(ਸਿਰਲੇਖ, ਆਕਾਰ ਸਿਰਲੇਖ,
 					"X-NS-Base: %.*s",
-					(int) nsurl_length(c->item->base_url),
-					nsurl_access(c->item->base_url));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					(ਪੂਰਨ) nsurl_ਲੰਮਾਈ(c->ਵਸਤੂ->ਅਧਾਰ_url),
+					nsurl_access(c->ਵਸਤੂ->ਅਧਾਰ_url));
+				ਸੁਨੇਹਾ.type = FETCH_ਸਿਰਲੇਖ;
+				ਸੁਨੇਹਾ.ਅੰਕੜੇ.ਸਿਰਲੇਖ_or_ਅੰਕੜੇ.buf =
+						(ਅਚਲ uint8_t *) ਸਿਰਲੇਖ;
+				ਸੁਨੇਹਾ.ਅੰਕੜੇ.ਸਿਰਲੇਖ_or_ਅੰਕੜੇ.len = ਲੜੀ_ਲੰਬਾਈ(ਸਿਰਲੇਖ);
+				html_css_fetcher_send_callback(&ਸੁਨੇਹਾ, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf =
-						(const uint8_t *)
-						dom_string_data(c->item->data);
-				msg.data.header_or_data.len =
-					dom_string_byte_length(c->item->data);
-				html_css_fetcher_send_callback(&msg, c);
+			ਜੇ (c->aborted == false) {
+				ਸੁਨੇਹਾ.type = FETCH_ਅੰਕੜੇ;
+				ਸੁਨੇਹਾ.ਅੰਕੜੇ.ਸਿਰਲੇਖ_or_ਅੰਕੜੇ.buf =
+						(ਅਚਲ uint8_t *)
+						dom_string_ਅੰਕੜੇ(c->ਵਸਤੂ->ਅੰਕੜੇ);
+				ਸੁਨੇਹਾ.ਅੰਕੜੇ.ਸਿਰਲੇਖ_or_ਅੰਕੜੇ.len =
+					dom_string_byte_ਲੰਮਾਈ(c->ਵਸਤੂ->ਅੰਕੜੇ);
+				html_css_fetcher_send_callback(&ਸੁਨੇਹਾ, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				html_css_fetcher_send_callback(&msg, c);
+			ਜੇ (c->aborted == false) {
+				ਸੁਨੇਹਾ.type = FETCH_ਮੁਕੰਮਲ;
+				html_css_fetcher_send_callback(&ਸੁਨੇਹਾ, c);
 			}
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			NSLOG(netsurf, INFO, "Processing of %s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't,
 			 * then html_css_fetcher_process() is broken.
 			 */
-			assert(c->locked == false);
+			ਪ੍ਰਤਿਜ੍ਞਾ(c->locked == false);
 		}
 
 		/* Compute next fetch item at the last possible moment as
 		 * processing this item may have added to the ring.
 		 */
-		next = c->r_next;
+		ਅਗਲਾ = c->r_ਅਗਲਾ;
 
-		fetch_remove_from_queues(c->parent_fetch);
-		fetch_free(c->parent_fetch);
+		fetch_remove_from_queues(c->ਮਾਪਾ_fetch);
+		fetch_free(c->ਮਾਪਾ_fetch);
 
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} ਜਦੋਂ ( (c = ਅਗਲਾ) != ring && ring != ਨਿਰਾ);
 }
 
 /* exported interface documented in html_internal.h */
-nserror html_css_fetcher_register(void)
+nserror html_css_fetcher_ਰਜਿਸਟਰ(ਖਾਲੀ)
 {
-	const struct fetcher_operation_table html_css_fetcher_ops = {
+	ਅਚਲ ਬਣਤਰ fetcher_operation_ਸਾਰਣੀ html_css_fetcher_ops = {
 		.initialise = html_css_fetcher_initialise,
 		.acceptable = html_css_fetcher_can_fetch,
-		.setup = html_css_fetcher_setup,
-		.start = html_css_fetcher_start,
+		.ਤਿਆਰੀ = html_css_fetcher_ਤਿਆਰੀ,
+		.ਸ਼ੁਰੂ = html_css_fetcher_ਸ਼ੁਰੂ,
 		.abort = html_css_fetcher_abort,
-		.free = html_css_fetcher_free,
+		.ਮੁਕਤ = html_css_fetcher_free,
 		.poll = html_css_fetcher_poll,
 		.finalise = html_css_fetcher_finalise
 	};
 
-	return fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
+	ਵਾਪਸ fetcher_ਜੋੜੋ(lwc_string_ref(corestring_lwc_x_ns_css),
 			&html_css_fetcher_ops);
 }
 
 /* exported interface documented in html_internal.h */
 nserror
-html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
+html_css_fetcher_ਜੋੜੋ_ਵਸਤੂ(dom_string *ਅੰਕੜੇ, nsurl *ਅਧਾਰ_url, uint32_t *ਕੁੰਜੀ)
 {
-	html_css_fetcher_item *item = malloc(sizeof(*item));
+	html_css_fetcher_ਵਸਤੂ *ਵਸਤੂ = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(*ਵਸਤੂ));
 
-	if (item == NULL) {
-		return NSERROR_NOMEM;
+	ਜੇ (ਵਸਤੂ == ਨਿਰਾ) {
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
-	*key = item->key = current_key++;
-	item->data = dom_string_ref(data);
-	item->base_url = nsurl_ref(base_url);
+	*ਕੁੰਜੀ = ਵਸਤੂ->ਕੁੰਜੀ = current_ਕੁੰਜੀ++;
+	ਵਸਤੂ->ਅੰਕੜੇ = dom_string_ref(ਅੰਕੜੇ);
+	ਵਸਤੂ->ਅਧਾਰ_url = nsurl_ref(ਅਧਾਰ_url);
 
-	RING_INSERT(items, item);
+	RING_ਪਾਓ(ਚੀਜ਼ਾਂ, ਵਸਤੂ);
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }

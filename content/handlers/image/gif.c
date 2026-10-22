@@ -30,53 +30,53 @@
  * [rjw] - Sun 4th April 2004
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#include <nsutils/assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <nsutils/assert.h>
 
-#include <nsgif.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <nsgif.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "utils/nsoption.h"
-#include "netsurf/misc.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/messages.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/nsoption.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/bitmap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/content.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/llcache.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_protected.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_factory.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/gui_internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/bitmap.h"
 
-#include "image/image.h"
-#include "image/gif.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "image/image.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "image/gif.h"
 
-typedef struct gif_content {
-	struct content base;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ gif_content {
+	ਬਣਤਰ content ਅਧਾਰ;
 
 	nsgif_t *gif; /**< GIF animation data */
-	uint32_t current_frame;   /**< current frame to display [0...(max-1)] */
+	uint32_t current_ਚੌਖਟਾ;   /**< current frame to display [0...(max-1)] */
 } gif_content;
 
-static inline nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
+ਸਥਿਰ ਸਤਰਅੰਦਰ nserror gif_nsgif_error_ਮੰਜ਼ਿਲ_ns(nsgif_error gif_res)
 {
 	nserror err;
 
-	switch (gif_res) {
-	case NSGIF_ERR_OOM:
+	ਚੋਣ (gif_res) {
+	ਹਾਲਤ NSGIF_ERR_OOM:
 		err = NSERROR_NOMEM;
-		break;
-	default:
+		ਰੋਕੋ;
+	ਮੂਲ:
 		err = NSERROR_GIF_ERROR;
-		break;
+		ਰੋਕੋ;
 	}
 
-	return err;
+	ਵਾਪਸ err;
 }
 
 /**
@@ -86,79 +86,79 @@ static inline nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
  * \param  height  width of image in pixels
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *gif_bitmap_create(int width, int height)
+ਸਥਿਰ ਖਾਲੀ *gif_bitmap_create(ਪੂਰਨ ਚੌੜਾਈ, ਪੂਰਨ ਉਚਾਈ)
 {
-	return guit->bitmap->create(width, height, BITMAP_NONE);
+	ਵਾਪਸ guit->bitmap->create(ਚੌੜਾਈ, ਉਚਾਈ, BITMAP_NONE);
 }
 
 /**
  * Convert client bitmap format to a LibNSGIF format specifier.
  */
-static nsgif_bitmap_fmt_t nsgif__get_bitmap_format(void)
+ਸਥਿਰ nsgif_bitmap_fmt_t nsgif__get_bitmap_format(ਖਾਲੀ)
 {
-	ns_static_assert((int)BITMAP_LAYOUT_R8G8B8A8 == (int)NSGIF_BITMAP_FMT_R8G8B8A8);
-	ns_static_assert((int)BITMAP_LAYOUT_B8G8R8A8 == (int)NSGIF_BITMAP_FMT_B8G8R8A8);
-	ns_static_assert((int)BITMAP_LAYOUT_A8R8G8B8 == (int)NSGIF_BITMAP_FMT_A8R8G8B8);
-	ns_static_assert((int)BITMAP_LAYOUT_A8B8G8R8 == (int)NSGIF_BITMAP_FMT_A8B8G8R8);
-	ns_static_assert((int)BITMAP_LAYOUT_RGBA8888 == (int)NSGIF_BITMAP_FMT_RGBA8888);
-	ns_static_assert((int)BITMAP_LAYOUT_BGRA8888 == (int)NSGIF_BITMAP_FMT_BGRA8888);
-	ns_static_assert((int)BITMAP_LAYOUT_ARGB8888 == (int)NSGIF_BITMAP_FMT_ARGB8888);
-	ns_static_assert((int)BITMAP_LAYOUT_ABGR8888 == (int)NSGIF_BITMAP_FMT_ABGR8888);
+	ns_static_assert((ਪੂਰਨ)BITMAP_LAYOUT_R8G8B8A8 == (ਪੂਰਨ)NSGIF_BITMAP_FMT_R8G8B8A8);
+	ns_static_assert((ਪੂਰਨ)BITMAP_LAYOUT_B8G8R8A8 == (ਪੂਰਨ)NSGIF_BITMAP_FMT_B8G8R8A8);
+	ns_static_assert((ਪੂਰਨ)BITMAP_LAYOUT_A8R8G8B8 == (ਪੂਰਨ)NSGIF_BITMAP_FMT_A8R8G8B8);
+	ns_static_assert((ਪੂਰਨ)BITMAP_LAYOUT_A8B8G8R8 == (ਪੂਰਨ)NSGIF_BITMAP_FMT_A8B8G8R8);
+	ns_static_assert((ਪੂਰਨ)BITMAP_LAYOUT_RGBA8888 == (ਪੂਰਨ)NSGIF_BITMAP_FMT_RGBA8888);
+	ns_static_assert((ਪੂਰਨ)BITMAP_LAYOUT_BGRA8888 == (ਪੂਰਨ)NSGIF_BITMAP_FMT_BGRA8888);
+	ns_static_assert((ਪੂਰਨ)BITMAP_LAYOUT_ARGB8888 == (ਪੂਰਨ)NSGIF_BITMAP_FMT_ARGB8888);
+	ns_static_assert((ਪੂਰਨ)BITMAP_LAYOUT_ABGR8888 == (ਪੂਰਨ)NSGIF_BITMAP_FMT_ABGR8888);
 
-	return (nsgif_bitmap_fmt_t)bitmap_fmt.layout;
+	ਵਾਪਸ (nsgif_bitmap_fmt_t)bitmap_fmt.layout;
 }
 
-static nserror gif_create_gif_data(gif_content *c)
+ਸਥਿਰ nserror gif_create_gif_ਅੰਕੜੇ(gif_content *c)
 {
 	nsgif_error gif_res;
-	const nsgif_bitmap_cb_vt gif_bitmap_callbacks = {
+	ਅਚਲ nsgif_bitmap_cb_vt gif_bitmap_callbacks = {
 		.create = gif_bitmap_create,
 		.destroy = guit->bitmap->destroy,
-		.get_buffer = guit->bitmap->get_buffer,
-		.set_opaque = guit->bitmap->set_opaque,
+		.get_ਬਫਰ = guit->bitmap->get_ਬਫਰ,
+		.ਸੈੱਟ_opaque = guit->bitmap->ਸੈੱਟ_opaque,
 		.test_opaque = bitmap_test_opaque,
 		.modified = guit->bitmap->modified,
 	};
 
 	gif_res = nsgif_create(&gif_bitmap_callbacks,
 			nsgif__get_bitmap_format(), &c->gif);
-	if (gif_res != NSGIF_OK) {
-		nserror err = gif__nsgif_error_to_ns(gif_res);
-		content_broadcast_error(&c->base, err, NULL);
-		return err;
+	ਜੇ (gif_res != NSGIF_OK) {
+		nserror err = gif_nsgif_error_ਮੰਜ਼ਿਲ_ns(gif_res);
+		content_ਪ੍ਰਸਾਰਣ_error(&c->ਅਧਾਰ, err, ਨਿਰਾ);
+		ਵਾਪਸ err;
 	}
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static nserror gif_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ਸਥਿਰ nserror gif_create(ਅਚਲ content_handler *handler,
+		lwc_string *imime_type, ਅਚਲ ਬਣਤਰ http_parameter *params,
+		llcache_handle *llcache, ਅਚਲ ਅੱਖਰ *fallback_charset,
+		bool quirks, ਬਣਤਰ content **c)
 {
-	gif_content *result;
+	gif_content *ਨਤੀਜਾ;
 	nserror error;
 
-	result = calloc(1, sizeof(gif_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	ਨਤੀਜਾ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(gif_content));
+	ਜੇ (ਨਤੀਜਾ == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__init(&result->base, handler, imime_type, params,
+	error = content__init(&ਨਤੀਜਾ->ਅਧਾਰ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	ਜੇ (error != NSERROR_OK) {
+		ਮੁਕਤ(ਨਤੀਜਾ);
+		ਵਾਪਸ error;
 	}
 
-	error = gif_create_gif_data(result);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	error = gif_create_gif_ਅੰਕੜੇ(ਨਤੀਜਾ);
+	ਜੇ (error != NSERROR_OK) {
+		ਮੁਕਤ(ਨਤੀਜਾ);
+		ਵਾਪਸ error;
 	}
 
-	*c = (struct content *) result;
+	*c = (ਬਣਤਰ content *) ਨਤੀਜਾ;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 /**
@@ -166,117 +166,117 @@ static nserror gif_create(const content_handler *handler,
  *
  * \param p  The content to animate
 */
-static void gif_animate_cb(void *p);
+ਸਥਿਰ ਖਾਲੀ gif_animate_cb(ਖਾਲੀ *p);
 
 /**
  * Performs any necessary animation.
  *
  * \param p  The content to animate
 */
-static nserror gif__animate(gif_content *gif, bool redraw)
+ਸਥਿਰ nserror gif__animate(gif_content *gif, bool redraw)
 {
 	nsgif_error gif_res;
 	nsgif_rect_t rect;
 	uint32_t delay;
 	uint32_t f;
 
-	gif_res = nsgif_frame_prepare(gif->gif, &rect, &delay, &f);
-	if (gif_res != NSGIF_OK) {
-		return gif__nsgif_error_to_ns(gif_res);
+	gif_res = nsgif_ਚੌਖਟਾ_prepare(gif->gif, &rect, &delay, &f);
+	ਜੇ (gif_res != NSGIF_OK) {
+		ਵਾਪਸ gif_nsgif_error_ਮੰਜ਼ਿਲ_ns(gif_res);
 	}
 
-	gif->current_frame = f;
+	gif->current_ਚੌਖਟਾ = f;
 
 	/* Continue animating if we should */
-	if (nsoption_bool(animate_images) && delay != NSGIF_INFINITE) {
-		guit->misc->schedule(delay * 10, gif_animate_cb, gif);
+	ਜੇ (nsoption_bool(animate_images) && delay != NSGIF_INFINITE) {
+		guit->misc->ਸਮਾਂ_ਸਾਰਣੀ(delay * 10, gif_animate_cb, gif);
 	}
 
-	if (redraw) {
-		union content_msg_data data;
+	ਜੇ (redraw) {
+		ਸੰਘ content_ਸੁਨੇਹਾ_ਅੰਕੜੇ ਅੰਕੜੇ;
 
 		/* area within gif to redraw */
-		data.redraw.x = rect.x0;
-		data.redraw.y = rect.y0;
-		data.redraw.width  = rect.x1 - rect.x0;
-		data.redraw.height = rect.y1 - rect.y0;
+		ਅੰਕੜੇ.redraw.x = rect.x0;
+		ਅੰਕੜੇ.redraw.y = rect.y0;
+		ਅੰਕੜੇ.redraw.ਚੌੜਾਈ  = rect.x1 - rect.x0;
+		ਅੰਕੜੇ.redraw.ਉਚਾਈ = rect.y1 - rect.y0;
 
-		content_broadcast(&gif->base, CONTENT_MSG_REDRAW, &data);
+		content_ਪ੍ਰਸਾਰਣ(&gif->ਅਧਾਰ, CONTENT_ਸੁਨੇਹਾ_REDRAW, &ਅੰਕੜੇ);
 	}
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static void gif_animate_cb(void *p)
+ਸਥਿਰ ਖਾਲੀ gif_animate_cb(ਖਾਲੀ *p)
 {
 	gif_content *gif = p;
 
 	gif__animate(gif, true);
 }
 
-static bool gif_convert(struct content *c)
+ਸਥਿਰ bool gif_convert(ਬਣਤਰ content *c)
 {
 	gif_content *gif = (gif_content *) c;
-	const nsgif_info_t *gif_info;
-	const uint8_t *data;
+	ਅਚਲ nsgif_info_t *gif_info;
+	ਅਚਲ uint8_t *ਅੰਕੜੇ;
 	nsgif_error gif_err;
 	nserror err;
-	size_t size;
-	char *title;
+	size_t ਮਾਪ;
+	ਅੱਖਰ *title;
 
 	/* Get the animation */
-	data = content__get_source_data(c, &size);
+	ਅੰਕੜੇ = content_get_ਸਰੋਤ_ਅੰਕੜੇ_2(c, &ਮਾਪ);
 
 	/* Initialise the GIF */
-	gif_err = nsgif_data_scan(gif->gif, size, data);
-	if (gif_err != NSGIF_OK) {
+	gif_err = nsgif_ਅੰਕੜੇ_ਜਾਂਚ(gif->gif, ਮਾਪ, ਅੰਕੜੇ);
+	ਜੇ (gif_err != NSGIF_OK) {
 		NSLOG(netsurf, INFO, "nsgif scan: %s", nsgif_strerror(gif_err));
 		/* Not fatal unless we have no frames. */
 	}
 
-	nsgif_data_complete(gif->gif);
+	nsgif_ਅੰਕੜੇ_complete(gif->gif);
 
 	gif_info = nsgif_get_info(gif->gif);
-	assert(gif_info != NULL);
+	ਪ੍ਰਤਿਜ੍ਞਾ(gif_info != ਨਿਰਾ);
 
 	/* Abort on bad GIFs */
-	if (gif_info->frame_count == 0) {
-		err = gif__nsgif_error_to_ns(gif_err);
-		content_broadcast_error(c, err, "GIF with no frames.");
-		return false;
-	} else if (gif_info->width == 0 || gif_info->height == 0) {
-		err = gif__nsgif_error_to_ns(gif_err);
-		content_broadcast_error(c, err, "Zero size image.");
-		return false;
+	ਜੇ (gif_info->ਚੌਖਟਾ_ਗਿਣਤੀ == 0) {
+		err = gif_nsgif_error_ਮੰਜ਼ਿਲ_ns(gif_err);
+		content_ਪ੍ਰਸਾਰਣ_error(c, err, "GIF with no frames.");
+		ਵਾਪਸ false;
+	} ਨਹੀਂਤਾਂ ਜੇ (gif_info->ਚੌੜਾਈ == 0 || gif_info->ਉਚਾਈ == 0) {
+		err = gif_nsgif_error_ਮੰਜ਼ਿਲ_ns(gif_err);
+		content_ਪ੍ਰਸਾਰਣ_error(c, err, "Zero size image.");
+		ਵਾਪਸ false;
 	}
 
 	/* Store our content width, height and calculate size */
-	c->width = gif_info->width;
-	c->height = gif_info->height;
-	c->size += (gif_info->width * gif_info->height * 4) + 16 + 44;
+	c->ਚੌੜਾਈ = gif_info->ਚੌੜਾਈ;
+	c->ਉਚਾਈ = gif_info->ਉਚਾਈ;
+	c->ਮਾਪ += (gif_info->ਚੌੜਾਈ * gif_info->ਉਚਾਈ * 4) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("GIFTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ਪੱਤੀ(llcache_handle_get_url(c->llcache)),
+			c->ਚੌੜਾਈ, c->ਉਚਾਈ);
+	ਜੇ (title != ਨਿਰਾ) {
+		content_ਸੈੱਟ_title(c, title);
+		ਮੁਕਤ(title);
 	}
 
 	err = gif__animate(gif, false);
-	if (err != NSERROR_OK) {
-		content_broadcast_error(c, NSERROR_GIF_ERROR, NULL);
-		return false;
+	ਜੇ (err != NSERROR_OK) {
+		content_ਪ੍ਰਸਾਰਣ_error(c, NSERROR_GIF_ERROR, ਨਿਰਾ);
+		ਵਾਪਸ false;
 	}
 
 	/* Exit as a success */
-	content_set_ready(c);
-	content_set_done(c);
+	content_ਸੈੱਟ_ready(c);
+	content_ਸੈੱਟ_ਪੂਰਾ(c);
 
 	/* Done: update status bar */
-	content_set_status(c, "");
-	return true;
+	content_ਸੈੱਟ_ਸਥਿਤੀ(c, "");
+	ਵਾਪਸ true;
 }
 
 /**
@@ -285,144 +285,144 @@ static bool gif_convert(struct content *c)
  * \param gif The gif context to update.
  * \return NSGIF_OK on success else apropriate error code.
  */
-static nsgif_error gif_get_frame(gif_content *gif,
+ਸਥਿਰ nsgif_error gif_get_ਚੌਖਟਾ(gif_content *gif,
 		nsgif_bitmap_t **bitmap)
 {
-	uint32_t current_frame = gif->current_frame;
-	if (!nsoption_bool(animate_images)) {
-		current_frame = 0;
+	uint32_t current_ਚੌਖਟਾ = gif->current_ਚੌਖਟਾ;
+	ਜੇ (!nsoption_bool(animate_images)) {
+		current_ਚੌਖਟਾ = 0;
 	}
 
-	return nsgif_frame_decode(gif->gif, current_frame, bitmap);
+	ਵਾਪਸ nsgif_ਚੌਖਟਾ_decode(gif->gif, current_ਚੌਖਟਾ, bitmap);
 }
 
-static bool gif_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ਸਥਿਰ bool gif_redraw(ਬਣਤਰ content *c, ਬਣਤਰ content_redraw_ਅੰਕੜੇ *ਅੰਕੜੇ,
+		ਅਚਲ ਬਣਤਰ rect *clip, ਅਚਲ ਬਣਤਰ redraw_context *ctx)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return false;
+	ਜੇ (gif_get_ਚੌਖਟਾ(gif, &bitmap) != NSGIF_OK) {
+		ਵਾਪਸ false;
 	}
 
-	return image_bitmap_plot(bitmap, data, clip, ctx);
+	ਵਾਪਸ image_bitmap_plot(bitmap, ਅੰਕੜੇ, clip, ctx);
 }
 
-static void gif_destroy(struct content *c)
+ਸਥਿਰ ਖਾਲੀ gif_destroy(ਬਣਤਰ content *c)
 {
 	gif_content *gif = (gif_content *) c;
 
 	/* Free all the associated memory buffers */
-	guit->misc->schedule(-1, gif_animate_cb, c);
+	guit->misc->ਸਮਾਂ_ਸਾਰਣੀ(-1, gif_animate_cb, c);
 	nsgif_destroy(gif->gif);
 }
 
-static nserror gif_clone(const struct content *old, struct content **newc)
+ਸਥਿਰ nserror gif_clone(ਅਚਲ ਬਣਤਰ content *old, ਬਣਤਰ content **newc)
 {
 	gif_content *gif;
 	nserror error;
 
-	gif = calloc(1, sizeof(gif_content));
-	if (gif == NULL)
-		return NSERROR_NOMEM;
+	gif = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(gif_content));
+	ਜੇ (gif == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__clone(old, &gif->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&gif->base);
-		return error;
+	error = content__clone(old, &gif->ਅਧਾਰ);
+	ਜੇ (error != NSERROR_OK) {
+		content_destroy(&gif->ਅਧਾਰ);
+		ਵਾਪਸ error;
 	}
 
 	/* Simply replay creation and conversion of content */
-	error = gif_create_gif_data(gif);
-	if (error != NSERROR_OK) {
-		content_destroy(&gif->base);
-		return error;
+	error = gif_create_gif_ਅੰਕੜੇ(gif);
+	ਜੇ (error != NSERROR_OK) {
+		content_destroy(&gif->ਅਧਾਰ);
+		ਵਾਪਸ error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (gif_convert(&gif->base) == false) {
-			content_destroy(&gif->base);
-			return NSERROR_CLONE_FAILED;
+	ਜੇ (old->ਸਥਿਤੀ == CONTENT_ਸਥਿਤੀ_READY ||
+			old->ਸਥਿਤੀ == CONTENT_ਸਥਿਤੀ_ਪੂਰਾ) {
+		ਜੇ (gif_convert(&gif->ਅਧਾਰ) == false) {
+			content_destroy(&gif->ਅਧਾਰ);
+			ਵਾਪਸ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) gif;
+	*newc = (ਬਣਤਰ content *) gif;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static void gif_add_user(struct content *c)
+ਸਥਿਰ ਖਾਲੀ gif_ਜੋੜੋ_user(ਬਣਤਰ content *c)
 {
 	gif_content *gif = (gif_content *) c;
 
 	/* Ensure this content has already been converted.
 	 * If it hasn't, the animation will start at the conversion phase instead. */
-	if (gif->gif == NULL) return;
+	ਜੇ (gif->gif == ਨਿਰਾ) ਵਾਪਸ;
 
-	if (content_count_users(c) == 1) {
+	ਜੇ (content_ਗਿਣਤੀ_users(c) == 1) {
 		/* First user, and content already converted, so start the animation. */
-		if (nsgif_reset(gif->gif) == NSGIF_OK) {
+		ਜੇ (nsgif_reset(gif->gif) == NSGIF_OK) {
 			gif__animate(gif, true);
 		}
 	}
 }
 
-static void gif_remove_user(struct content *c)
+ਸਥਿਰ ਖਾਲੀ gif_remove_user(ਬਣਤਰ content *c)
 {
-	if (content_count_users(c) == 1) {
+	ਜੇ (content_ਗਿਣਤੀ_users(c) == 1) {
 		/* Last user is about to be removed from this content, so stop the animation. */
-		guit->misc->schedule(-1, gif_animate_cb, c);
+		guit->misc->ਸਮਾਂ_ਸਾਰਣੀ(-1, gif_animate_cb, c);
 	}
 }
 
-static nsgif_bitmap_t *gif_get_bitmap(
-		const struct content *c, void *context)
+ਸਥਿਰ nsgif_bitmap_t *gif_get_bitmap(
+		ਅਚਲ ਬਣਤਰ content *c, ਖਾਲੀ *context)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return NULL;
+	ਜੇ (gif_get_ਚੌਖਟਾ(gif, &bitmap) != NSGIF_OK) {
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	return bitmap;
+	ਵਾਪਸ bitmap;
 }
 
-static content_type gif_content_type(void)
+ਸਥਿਰ content_type gif_content_type(ਖਾਲੀ)
 {
-	return CONTENT_IMAGE;
+	ਵਾਪਸ CONTENT_IMAGE;
 }
 
-static bool gif_content_is_opaque(struct content *c)
+ਸਥਿਰ bool gif_content_is_opaque(ਬਣਤਰ content *c)
 {
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return false;
+	ਜੇ (gif_get_ਚੌਖਟਾ(gif, &bitmap) != NSGIF_OK) {
+		ਵਾਪਸ false;
 	}
 
-	return guit->bitmap->get_opaque(bitmap);
+	ਵਾਪਸ guit->bitmap->get_opaque(bitmap);
 }
 
-static const content_handler gif_content_handler = {
+ਸਥਿਰ ਅਚਲ content_handler gif_content_handler = {
 	.create = gif_create,
-	.data_complete = gif_convert,
+	.ਅੰਕੜੇ_complete = gif_convert,
 	.destroy = gif_destroy,
 	.redraw = gif_redraw,
 	.clone = gif_clone,
-	.add_user = gif_add_user,
+	.ਜੋੜੋ_user = gif_ਜੋੜੋ_user,
 	.remove_user = gif_remove_user,
-	.get_internal = gif_get_bitmap,
+	.get_ਅੰਦਰੂਨੀ = gif_get_bitmap,
 	.type = gif_content_type,
 	.is_opaque = gif_content_is_opaque,
 	.no_share = false,
 };
 
-static const char *gif_types[] = {
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *gif_types[] = {
 	"image/gif"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsgif, gif_types, gif_content_handler);
+CONTENT_FACTORY_ਰਜਿਸਟਰ_TYPES(nsgif, gif_types, gif_content_handler);

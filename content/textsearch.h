@@ -21,15 +21,15 @@
  * Interface to HTML searching.
  */
 
-#ifndef NETSURF_CONTENT_SEARCH_H
-#define NETSURF_CONTENT_SEARCH_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_CONTENT_ਖੋਜ_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_CONTENT_ਖੋਜ_H
 
-#include "desktop/search.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/search.h"
 
-struct textsearch_context;
-struct content;
-struct hlcache_handle;
-struct box;
+ਬਣਤਰ textsearch_context;
+ਬਣਤਰ content;
+ਬਣਤਰ hlcache_handle;
+ਬਣਤਰ box;
 
 /**
  * Free text search a content
@@ -40,20 +40,20 @@ struct box;
  * \param[in] The string being searched for.
  * \retun NSERROR_OK on success else error code on faliure
  */
-nserror content_textsearch(struct hlcache_handle *h, void *context, search_flags_t flags, const char *string);
+nserror content_textsearch(ਬਣਤਰ hlcache_handle *h, ਖਾਲੀ *context, ਖੋਜ_flags_t flags, ਅਚਲ ਅੱਖਰ *string);
 
 /**
  * Clear a search
  *
  * \param[in] h Handle to content to clear search from.
  */
-nserror content_textsearch_clear(struct hlcache_handle *h);
+nserror content_textsearch_clear(ਬਣਤਰ hlcache_handle *h);
 
 /**
  * Ends the search process, invalidating all state freeing the list of
  * found boxes.
  */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch);
+nserror content_textsearch_destroy(ਬਣਤਰ textsearch_context *textsearch);
 
 /**
  * Determines whether any portion of the given text box should be
@@ -67,11 +67,11 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch);
  * \param end_idx      byte offset of highlight end
  * \return true iff part of the box should be highlighted
  */
-bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
-				      unsigned start_offset,
-				      unsigned end_offset,
-				      unsigned *start_idx,
-				      unsigned *end_idx);
+bool content_textsearch_ishighlighted(ਬਣਤਰ textsearch_context *textsearch,
+				      ਬਿਨਾਨਿਸ਼ਾਨੀ ਸ਼ੁਰੂ_ਵਿੱਥ,
+				      ਬਿਨਾਨਿਸ਼ਾਨੀ ਸਿਰਾ_ਵਿੱਥ,
+				      ਬਿਨਾਨਿਸ਼ਾਨੀ *ਸ਼ੁਰੂ_idx,
+				      ਬਿਨਾਨਿਸ਼ਾਨੀ *ਸਿਰਾ_idx);
 
 /**
  * Find the first occurrence of 'match' in 'string' and return its index
@@ -84,7 +84,7 @@ bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
  * \param  m_len      accepts length of match in bytes
  * \return pointer to first match, NULL if none
  */
-const char *content_textsearch_find_pattern(const char *string, int s_len, const char *pattern, int p_len, bool case_sens, unsigned int *m_len);
+ਅਚਲ ਅੱਖਰ *content_textsearch_ਲੱਭੋ_ਨਮੂਨਾ(ਅਚਲ ਅੱਖਰ *string, ਪੂਰਨ s_len, ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ, ਪੂਰਨ p_len, bool case_sens, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ *m_len);
 
 /**
  * Add a new entry to the list of matches
@@ -96,6 +96,6 @@ const char *content_textsearch_find_pattern(const char *string, int s_len, const
  * \param end A pointer for the end
  * \return NSERROR_OK on sucess else error code on faliure
  */
-nserror content_textsearch_add_match(struct textsearch_context *context, unsigned start_idx, unsigned end_idx, struct box *start_ptr, struct box *end_ptr);
+nserror content_textsearch_ਜੋੜੋ_ਮੇਲ(ਬਣਤਰ textsearch_context *context, ਬਿਨਾਨਿਸ਼ਾਨੀ ਸ਼ੁਰੂ_idx, ਬਿਨਾਨਿਸ਼ਾਨੀ ਸਿਰਾ_idx, ਬਣਤਰ box *ਸ਼ੁਰੂ_ptr, ਬਣਤਰ box *end_ptr);
 
-#endif
+#ਜੇ_ਅੰਤ

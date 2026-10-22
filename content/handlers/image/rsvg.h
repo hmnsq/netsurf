@@ -20,9 +20,9 @@
  * Content handler for image/svg using librsvg (interface).
  */
 
-#ifndef _NETSURF_IMAGE_RSVG_H_
-#define _NETSURF_IMAGE_RSVG_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _NETSURF_IMAGE_RSVG_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _NETSURF_IMAGE_RSVG_H_
 
-nserror nsrsvg_init(void);
+nserror nsrsvg_init(ਖਾਲੀ);
 
-#endif
+#ਜੇ_ਅੰਤ

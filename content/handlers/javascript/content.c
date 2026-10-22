@@ -21,98 +21,98 @@
  * javascript content implementation
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/config.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "javascript/content.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/errors.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_protected.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_factory.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/hlcache.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/messages.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ javascript_content {
+	ਬਣਤਰ content ਅਧਾਰ;
 } javascript_content;
 
-static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ਸਥਿਰ nserror javascript_create(ਅਚਲ content_handler *handler,
+		lwc_string *imime_type, ਅਚਲ ਬਣਤਰ http_parameter *params,
+		llcache_handle *llcache, ਅਚਲ ਅੱਖਰ *fallback_charset,
+		bool quirks, ਬਣਤਰ content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(javascript_content));
+	ਜੇ (script == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__init(&script->base, handler, imime_type, params,
+	error = content__init(&script->ਅਧਾਰ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(script);
-		return error;
+	ਜੇ (error != NSERROR_OK) {
+		ਮੁਕਤ(script);
+		ਵਾਪਸ error;
 	}
 
-	*c = (struct content *) script;
+	*c = (ਬਣਤਰ content *) script;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+ਸਥਿਰ bool javascript_convert(ਬਣਤਰ content *c)
 {
-	content_set_ready(c);
-	content_set_done(c);
+	content_ਸੈੱਟ_ready(c);
+	content_ਸੈੱਟ_ਪੂਰਾ(c);
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+ਸਥਿਰ nserror 
+javascript_clone(ਅਚਲ ਬਣਤਰ content *old, ਬਣਤਰ content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(javascript_content));
+	ਜੇ (script == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&script->base);
-		return error;
+	error = content__clone(old, &script->ਅਧਾਰ);
+	ਜੇ (error != NSERROR_OK) {
+		content_destroy(&script->ਅਧਾਰ);
+		ਵਾਪਸ error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (ਬਣਤਰ content *) script;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+ਸਥਿਰ ਖਾਲੀ javascript_destroy(ਬਣਤਰ content *c)
 {
 }
 
-static content_type javascript_content_type(void)
+ਸਥਿਰ content_type javascript_content_type(ਖਾਲੀ)
 {
-	return CONTENT_JS;
+	ਵਾਪਸ CONTENT_JS;
 }
 
 
-static const content_handler javascript_content_handler = {
+ਸਥਿਰ ਅਚਲ content_handler javascript_content_handler = {
 	.create = javascript_create,
-	.data_complete = javascript_convert,
+	.ਅੰਕੜੇ_complete = javascript_convert,
 	.destroy = javascript_destroy,
 	.clone = javascript_clone,
 	.type = javascript_content_type,
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */
@@ -120,4 +120,4 @@ static const char *javascript_types[] = {
 	"text/ecmascript", /* common usage */
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(javascript, javascript_types, javascript_content_handler);
+CONTENT_FACTORY_ਰਜਿਸਟਰ_TYPES(javascript, javascript_types, javascript_content_handler);

@@ -20,9 +20,9 @@
  * Content for image/jpegxl (interface).
  */
 
-#ifndef _NETSURF_IMAGE_JPEGXL_H_
-#define _NETSURF_IMAGE_JPEGXL_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _NETSURF_IMAGE_JPEGXL_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _NETSURF_IMAGE_JPEGXL_H_
 
-nserror nsjpegxl_init(void);
+nserror nsjpegxl_init(ਖਾਲੀ);
 
-#endif
+#ਜੇ_ਅੰਤ

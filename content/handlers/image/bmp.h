@@ -22,9 +22,9 @@
  * interface to image/bmp content handler initialisation.
  */
 
-#ifndef NETSURF_IMAGE_BMP_H_
-#define NETSURF_IMAGE_BMP_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NETSURF_IMAGE_BMP_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NETSURF_IMAGE_BMP_H_
 
-nserror nsbmp_init(void);
+nserror nsbmp_init(ਖਾਲੀ);
 
-#endif
+#ਜੇ_ਅੰਤ

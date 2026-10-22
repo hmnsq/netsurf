@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _NETSURF_RISCOS_PNG_H_
-#define _NETSURF_RISCOS_PNG_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _NETSURF_RISCOS_PNG_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _NETSURF_RISCOS_PNG_H_
 
-nserror nspng_init(void);
+nserror nspng_init(ਖਾਲੀ);
 
-#endif
+#ਜੇ_ਅੰਤ

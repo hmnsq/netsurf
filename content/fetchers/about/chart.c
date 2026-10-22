@@ -26,86 +26,86 @@
  *
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <math.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
 
-#include "utils/config.h"
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/errors.h"
-#include "utils/nsurl.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/inttypes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/config.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/errors.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/nsurl.h"
 
-#include "private.h"
-#include "chart.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "private.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "chart.h"
 
 /** minimum figure dimension */
-#define FIGURE_MIN_WIDTH 150
-#define FIGURE_MIN_HEIGHT 100
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FIGURE_MIN_ਚੌੜਾਈ 150
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FIGURE_MIN_ਉਚਾਈ 100
 
-enum chart_type {
+ਗਿਣਤੀ chart_type {
 		 CHART_TYPE_UNKNOWN,
 		 CHART_TYPE_PIE,
 };
 
 /* type of chart key */
-enum key_type {
-	       CHART_KEY_UNSET,
-	       CHART_KEY_NONE,
-	       CHART_KEY_LEFT,
-	       CHART_KEY_RIGHT,
-	       CHART_KEY_TOP,
-	       CHART_KEY_BOT,
-	       CHART_KEY_END
+ਗਿਣਤੀ ਕੁੰਜੀ_type {
+	       CHART_ਕੁੰਜੀ_UNSET,
+	       CHART_ਕੁੰਜੀ_NONE,
+	       CHART_ਕੁੰਜੀ_ਖੱਬਾ,
+	       CHART_ਕੁੰਜੀ_ਸੱਜਾ,
+	       CHART_ਕੁੰਜੀ_ਸਿਖਰ,
+	       CHART_ਕੁੰਜੀ_BOT,
+	       CHART_ਕੁੰਜੀ_ਸਿਰਾ
 };
 
 
-struct chart_label {
-	char *title; /* label title */
-	unsigned int colour; /* colour */
+ਬਣਤਰ chart_label {
+	ਅੱਖਰ *title; /* label title */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਰੰਗ; /*ਰੰਗ*/
 };
 
-struct chart_series {
-	unsigned int len; /* number of values in the series */
-	float *value; /* array of values */
+ਬਣਤਰ chart_series {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ len; /* number of values in the series */
+	ਦਸ਼ਮਲਵ *ਮੁੱਲ; /* array of values */
 };
 
-#define MAX_SERIES 4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_SERIES 4
 
-struct chart_data {
-	unsigned int series_len;
-	struct chart_series series[MAX_SERIES];
+ਬਣਤਰ chart_ਅੰਕੜੇ {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ series_len;
+	ਬਣਤਰ chart_series series[MAX_SERIES];
 
-	unsigned int label_len; /* number of labels */
-	struct chart_label *label;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ label_len; /* number of labels */
+	ਬਣਤਰ chart_label *label;
 
 };
 
 /**
  * parameters for a chart figure
  */
-struct chart_param {
-	enum chart_type type;
-	enum key_type key; /* what type of key to use */
-	unsigned int width; /* width of figure */
-	unsigned int height; /* height of figure */
-	char *title; /* title */
-	struct {
-		unsigned int x;
-		unsigned int y;
-		unsigned int width;
-		unsigned int height;
+ਬਣਤਰ chart_param {
+	ਗਿਣਤੀ chart_type type;
+	ਗਿਣਤੀ ਕੁੰਜੀ_type ਕੁੰਜੀ; /* what type of key to use */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਚੌੜਾਈ; /* width of figure */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਉਚਾਈ; /* height of figure */
+	ਅੱਖਰ *title; /* title */
+	ਬਣਤਰ {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ x;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ y;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਚੌੜਾਈ;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਉਚਾਈ;
 	} area; /* chart area within figure */
-	struct chart_data data;
+	ਬਣਤਰ chart_ਅੰਕੜੇ ਅੰਕੜੇ;
 };
 
-#define DEF_COLOUR_NUM 8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEF_ਰੰਗ_ਅੰਕ 8
 /** default colour series */
-static unsigned int colour_series[DEF_COLOUR_NUM] =
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਰੰਗ_series[DEF_ਰੰਗ_ਅੰਕ] =
 	{
 	 0x00ff00, /* green */
 	 0x0000ff, /* blue */
@@ -119,376 +119,376 @@ static unsigned int colour_series[DEF_COLOUR_NUM] =
 
 
 /* ensures there are labels present for every value */
-static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
+ਸਥਿਰ nserror ensure_label_ਗਿਣਤੀ(ਬਣਤਰ chart_param *chart, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਗਿਣਤੀ_2)
 {
-	unsigned int lidx;
-	int deltac;
-	struct chart_label *nlabels;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ lidx;
+	ਪੂਰਨ deltac;
+	ਬਣਤਰ chart_label *nlabels;
 
-	deltac = count - chart->data.label_len;
-	if (deltac <= 0) {
+	deltac = ਗਿਣਤੀ_2 - chart->ਅੰਕੜੇ.label_len;
+	ਜੇ (deltac <= 0) {
 		/* there are enough labels */
-		return NSERROR_OK;
+		ਵਾਪਸ NSERROR_OK;
 	}
 
-	nlabels = realloc(chart->data.label,
-			  count * sizeof(struct chart_label));
-	if (nlabels == NULL) {
-		return NSERROR_NOMEM;
+	nlabels = realloc(chart->ਅੰਕੜੇ.label,
+			  ਗਿਣਤੀ_2 * ਆਕਾਰ(ਬਣਤਰ chart_label));
+	ਜੇ (nlabels == ਨਿਰਾ) {
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
-	chart->data.label = nlabels;
+	chart->ਅੰਕੜੇ.label = nlabels;
 
-	for (lidx = chart->data.label_len; lidx < count; lidx++) {
-		chart->data.label[lidx].title = calloc(1, 20);
-		snprintf(chart->data.label[lidx].title, 19, "item %d", lidx + 1);
-		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_NUM];
+	ਲਈ (lidx = chart->ਅੰਕੜੇ.label_len; lidx < ਗਿਣਤੀ_2; lidx++) {
+		chart->ਅੰਕੜੇ.label[lidx].title = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, 20);
+		snprintf(chart->ਅੰਕੜੇ.label[lidx].title, 19, "item %d", lidx + 1);
+		chart->ਅੰਕੜੇ.label[lidx].ਰੰਗ = ਰੰਗ_series[lidx % DEF_ਰੰਗ_ਅੰਕ];
 	}
 
-	chart->data.label_len = count;
+	chart->ਅੰਕੜੇ.label_len = ਗਿਣਤੀ_2;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 /**
  * extract values for a series
  */
-static nserror
-extract_series_values(struct chart_param *chart,
-		      unsigned int series_num,
-		      const char *valstr,
+ਸਥਿਰ nserror
+ਕੱਢੋ_series_ਮੁੱਲਾਂ(ਬਣਤਰ chart_param *chart,
+		      ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ series_ਅੰਕ,
+		      ਅਚਲ ਅੱਖਰ *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcur;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
-	struct chart_series *series;
+	ਬਣਤਰ chart_series *series;
 
-	series = chart->data.series + series_num;
+	series = chart->ਅੰਕੜੇ.series + series_ਅੰਕ;
 
 	/* ensure we do not leak any data in this series */
-	if (series->value != NULL) {
-		free(series->value);
+	ਜੇ (series->ਮੁੱਲ != ਨਿਰਾ) {
+		ਮੁਕਤ(series->ਮੁੱਲ);
 	}
 
 	/* count how many values present */
-	for (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	ਲਈ (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
+		ਜੇ (valstr[valstart] == ',') {
 			series->len++;
 		}
 	}
 
 	/* allocate storage for values */
-	series->value = calloc(series->len, sizeof(float));
-	if (series->value == NULL) {
-		return NSERROR_NOMEM;
+	series->ਮੁੱਲ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(series->len, ਆਕਾਰ(ਦਸ਼ਮਲਵ));
+	ਜੇ (series->ਮੁੱਲ == ਨਿਰਾ) {
+		ਵਾਪਸ NSERROR_NOMEM;
 	}
 
 	/* extract values from query string */
-	for (valcur = 0, vallen = 0, valstart = 0;
+	ਲਈ (valcur = 0, vallen = 0, valstart = 0;
 	     (valstart < valstrlen) && (valcur < series->len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		ਜਦੋਂ (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		series->value[valcur] = strtof(valstr + valstart, NULL);
+		series->ਮੁੱਲ[valcur] = strtof(valstr + valstart, ਨਿਰਾ);
 		vallen++; /* account for , separator */
 	}
 
-	res = ensure_label_count(chart, series->len);
+	res = ensure_label_ਗਿਣਤੀ(chart, series->len);
 
-	return res;
+	ਵਾਪਸ res;
 }
 
 
 /**
  * extract values for next series
  */
-static nserror
-extract_next_series_values(struct chart_param *chart,
-		      const char *valstr,
+ਸਥਿਰ nserror
+ਕੱਢੋ_ਅਗਲਾ_series_ਮੁੱਲਾਂ(ਬਣਤਰ chart_param *chart,
+		      ਅਚਲ ਅੱਖਰ *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
 
-	if (chart->data.series_len >= MAX_SERIES) {
-		return NSERROR_NOSPACE;
+	ਜੇ (chart->ਅੰਕੜੇ.series_len >= MAX_SERIES) {
+		ਵਾਪਸ NSERROR_NOSPACE;
 	}
 
-	res = extract_series_values(chart,
-				    chart->data.series_len,
+	res = ਕੱਢੋ_series_ਮੁੱਲਾਂ(chart,
+				    chart->ਅੰਕੜੇ.series_len,
 				    valstr,
 				    valstrlen);
-	if (res == NSERROR_OK) {
-		chart->data.series_len++;
+	ਜੇ (res == NSERROR_OK) {
+		chart->ਅੰਕੜੇ.series_len++;
 	}
 
-	return res;
+	ਵਾਪਸ res;
 }
 
 
 /**
  * extract label title
  */
-static nserror
-extract_series_labels(struct chart_param *chart,
-		      const char *valstr,
+ਸਥਿਰ nserror
+ਕੱਢੋ_series_labels(ਬਣਤਰ chart_param *chart,
+		      ਅਚਲ ਅੱਖਰ *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcount; /* count of values in valstr */
-	unsigned int valcur;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ valcount; /* count of values in valstr */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
 
-	for (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	ਲਈ (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
+		ਜੇ (valstr[valstart] == ',') {
 			valcount++;
 		}
 	}
 
-	res = ensure_label_count(chart, valcount);
-	if (res != NSERROR_OK) {
-		return res;
+	res = ensure_label_ਗਿਣਤੀ(chart, valcount);
+	ਜੇ (res != NSERROR_OK) {
+		ਵਾਪਸ res;
 	}
 
 
-	for (valcur = 0, vallen = 0, valstart = 0;
-	     (valstart < valstrlen) && (valcur < chart->data.label_len);
+	ਲਈ (valcur = 0, vallen = 0, valstart = 0;
+	     (valstart < valstrlen) && (valcur < chart->ਅੰਕੜੇ.label_len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		ਜਦੋਂ (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		chart->data.label[valcur].title = strndup(valstr + valstart, vallen);
+		chart->ਅੰਕੜੇ.label[valcur].title = strndup(valstr + valstart, vallen);
 		vallen++; /* account for , separator */
 	}
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 
 /**
  * extract labels colour
  */
-static nserror
-extract_series_colours(struct chart_param *chart,
-		      const char *valstr,
+ਸਥਿਰ nserror
+ਕੱਢੋ_series_colours(ਬਣਤਰ chart_param *chart,
+		      ਅਚਲ ਅੱਖਰ *valstr,
 		      size_t valstrlen)
 {
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 /**
  * process a part of a query
  */
-static nserror
-process_query_section(const char *str, size_t len, struct chart_param *chart)
+ਸਥਿਰ nserror
+process_query_section(ਅਚਲ ਅੱਖਰ *str, size_t len, ਬਣਤਰ chart_param *chart)
 {
 	nserror res = NSERROR_OK;
 
-	if ((len > 6) &&
-	    (strncmp(str, "width=", 6) == 0)) {
+	ਜੇ ((len > 6) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "width=", 6) == 0)) {
 		/* figure width */
-		chart->width = strtoul(str + 6, NULL, 10);
-	} else if ((len > 7) &&
-	    (strncmp(str, "height=", 7) == 0)) {
+		chart->ਚੌੜਾਈ = strtoul(str + 6, ਨਿਰਾ, 10);
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 7) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "height=", 7) == 0)) {
 		/* figure height */
-		chart->height = strtoul(str + 7, NULL, 10);
-	} else if ((len > 8) &&
-	    (strncmp(str, "cawidth=", 8) == 0)) {
+		chart->ਉਚਾਈ = strtoul(str + 7, ਨਿਰਾ, 10);
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 8) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "cawidth=", 8) == 0)) {
 		/* chart area width */
-		chart->area.width = strtoul(str + 8, NULL, 10);
-	} else if ((len > 9) &&
-	    (strncmp(str, "caheight=", 9) == 0)) {
+		chart->area.ਚੌੜਾਈ = strtoul(str + 8, ਨਿਰਾ, 10);
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 9) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "caheight=", 9) == 0)) {
 		/* chart area height */
-		chart->area.height = strtoul(str + 9, NULL, 10);
-	} else if ((len > 4) &&
-	    (strncmp(str, "key=", 4) == 0)) {
+		chart->area.ਉਚਾਈ = strtoul(str + 9, ਨਿਰਾ, 10);
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 4) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "key=", 4) == 0)) {
 		/* figure has key */
-		chart->key = strtoul(str + 4, NULL, 10);
-	} else if ((len > 6) &&
-	    (strncmp(str, "title=", 6) == 0)) {
+		chart->ਕੁੰਜੀ = strtoul(str + 4, ਨਿਰਾ, 10);
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 6) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "title=", 6) == 0)) {
 		chart->title = strndup(str + 6, len - 6);
-	} else if ((len > 5) &&
-	    (strncmp(str, "type=", 5) == 0)) {
-		if (strncmp(str + 5, "pie", len - 5) == 0) {
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 5) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "type=", 5) == 0)) {
+		ਜੇ (ਲੜੀ_ਤੁਲਨਾ(str + 5, "pie", len - 5) == 0) {
 			chart->type = CHART_TYPE_PIE;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			chart->type = CHART_TYPE_UNKNOWN;
 		}
-	} else if ((len > 7) &&
-	    (strncmp(str, "values=", 7) == 0)) {
-		res = extract_next_series_values(chart, str + 7, len - 7);
-	} else if ((len > 7) &&
-	    (strncmp(str, "labels=", 7) == 0)) {
-		res = extract_series_labels(chart, str + 7, len - 7);
-	} else if ((len > 8) &&
-	    (strncmp(str, "colours=", 8) == 0)) {
-		res = extract_series_colours(chart, str + 8, len - 8);
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 7) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "values=", 7) == 0)) {
+		res = ਕੱਢੋ_ਅਗਲਾ_series_ਮੁੱਲਾਂ(chart, str + 7, len - 7);
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 7) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "labels=", 7) == 0)) {
+		res = ਕੱਢੋ_series_labels(chart, str + 7, len - 7);
+	} ਨਹੀਂਤਾਂ ਜੇ ((len > 8) &&
+	    (ਲੜੀ_ਤੁਲਨਾ(str, "colours=", 8) == 0)) {
+		res = ਕੱਢੋ_series_colours(chart, str + 8, len - 8);
 	}
 
-	return res;
+	ਵਾਪਸ res;
 }
 
 
 
-static nserror
-chart_from_query(struct nsurl *url, struct chart_param *chart)
+ਸਥਿਰ nserror
+chart_from_query(ਬਣਤਰ nsurl *url, ਬਣਤਰ chart_param *chart)
 {
 	nserror res;
-	char *querystr;
+	ਅੱਖਰ *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	ਜੇ (res != NSERROR_OK) {
+		ਵਾਪਸ res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	ਲਈ (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		ਜਦੋਂ (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, chart);
-		if (res != NSERROR_OK) {
-			break;
+		ਜੇ (res != NSERROR_OK) {
+			ਰੋਕੋ;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	ਮੁਕਤ(querystr);
 
 	/* sanity check dimensions */
-	if (chart->width < FIGURE_MIN_WIDTH) {
+	ਜੇ (chart->ਚੌੜਾਈ < FIGURE_MIN_ਚੌੜਾਈ) {
 		/* bad width - check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		ਜੇ (chart->ਉਚਾਈ < FIGURE_MIN_ਉਚਾਈ) {
 			/* both bad set to defaults */
-			chart->width = FIGURE_MIN_WIDTH;
-			chart->height = FIGURE_MIN_HEIGHT;
-		} else {
+			chart->ਚੌੜਾਈ = FIGURE_MIN_ਚੌੜਾਈ;
+			chart->ਉਚਾਈ = FIGURE_MIN_ਉਚਾਈ;
+		} ਨਹੀਂਤਾਂ {
 			/* base width on valid height */
-			chart->width = (chart->height * 3) / 2;
+			chart->ਚੌੜਾਈ = (chart->ਉਚਾਈ * 3) / 2;
 		}
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* good width check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		ਜੇ (chart->ਉਚਾਈ < FIGURE_MIN_ਉਚਾਈ) {
 			/* base height on valid width */
-			chart->height = (chart->width * 2) / 3;
+			chart->ਉਚਾਈ = (chart->ਚੌੜਾਈ * 2) / 3;
 		}
 	}
 
 	/* ensure legend type correct */
-	if ((chart->key == CHART_KEY_UNSET) ||
-	    (chart->key >= CHART_KEY_END )) {
+	ਜੇ ((chart->ਕੁੰਜੀ == CHART_ਕੁੰਜੀ_UNSET) ||
+	    (chart->ਕੁੰਜੀ >= CHART_ਕੁੰਜੀ_ਸਿਰਾ )) {
 		/* default to putting key on right */
-		chart->key = CHART_KEY_RIGHT;
+		chart->ਕੁੰਜੀ = CHART_ਕੁੰਜੀ_ਸੱਜਾ;
 	}
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 
-static nserror
-output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
+ਸਥਿਰ nserror
+output_pie_legend(ਬਣਤਰ fetch_about_context *ctx, ਬਣਤਰ chart_param *chart)
 {
 	nserror res;
-	unsigned int lblidx;
-	unsigned int legend_width;
-	unsigned int legend_height;
-	unsigned int vertical_spacing;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ lblidx;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ legend_ਚੌੜਾਈ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ legend_ਉਚਾਈ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ vertical_spacing;
 
-	switch (chart->key) {
+	ਚੋਣ (chart->ਕੁੰਜੀ) {
 
-	case CHART_KEY_NONE:
-		break;
-	case CHART_KEY_RIGHT:
-		legend_width = chart->width - chart->area.width - chart->area.x;
-		legend_width -= 10; /* margin */
-		legend_height = chart->height;
-		vertical_spacing = legend_height / (chart->data.label_len + 1);
+	ਹਾਲਤ CHART_ਕੁੰਜੀ_NONE:
+		ਰੋਕੋ;
+	ਹਾਲਤ CHART_ਕੁੰਜੀ_ਸੱਜਾ:
+		legend_ਚੌੜਾਈ = chart->ਚੌੜਾਈ - chart->area.ਚੌੜਾਈ - chart->area.x;
+		legend_ਚੌੜਾਈ -= 10; /* margin */
+		legend_ਉਚਾਈ = chart->ਉਚਾਈ;
+		vertical_spacing = legend_ਉਚਾਈ / (chart->ਅੰਕੜੇ.label_len + 1);
 
-		for(lblidx = 0; lblidx < chart->data.label_len ; lblidx++) {
+		ਲਈ(lblidx = 0; lblidx < chart->ਅੰਕੜੇ.label_len ; lblidx++) {
 			res = fetch_about_ssenddataf(ctx,
 				"<rect  x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#%06x\" />",
-				chart->width - legend_width,
+				chart->ਚੌੜਾਈ - legend_ਚੌੜਾਈ,
 				(vertical_spacing * lblidx) + (vertical_spacing/2),
 				vertical_spacing * 2 / 3,
 				vertical_spacing * 2 / 3,
-				chart->data.label[lblidx].colour);
-			if (res != NSERROR_OK) {
-				return res;
+				chart->ਅੰਕੜੇ.label[lblidx].ਰੰਗ);
+			ਜੇ (res != NSERROR_OK) {
+				ਵਾਪਸ res;
 			}
 			res = fetch_about_ssenddataf(ctx,
 				"<text x=\"%d\" y=\"%d\" fill=\"#%06x\" >%s</text>",
-				chart->width - legend_width + vertical_spacing,
+				chart->ਚੌੜਾਈ - legend_ਚੌੜਾਈ + vertical_spacing,
 				vertical_spacing * (lblidx+1),
-			     chart->data.label[lblidx].colour,
-				chart->data.label[lblidx].title);
-			if (res != NSERROR_OK) {
-				return res;
+			     chart->ਅੰਕੜੇ.label[lblidx].ਰੰਗ,
+				chart->ਅੰਕੜੇ.label[lblidx].title);
+			ਜੇ (res != NSERROR_OK) {
+				ਵਾਪਸ res;
 			}
 		}
-		break;
-	default:
-		break;
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਰੋਕੋ;
 	}
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static float
-compute_series_total(struct chart_param *chart, unsigned int series)
+ਸਥਿਰ ਦਸ਼ਮਲਵ
+compute_series_ਕੁੱਲ(ਬਣਤਰ chart_param *chart, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ series)
 {
-	float total;
-	unsigned int curdata;
+	ਦਸ਼ਮਲਵ ਕੁੱਲ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ curdata;
 
-	for (total = 0, curdata = 0;
-	     curdata < chart->data.series[series].len;
+	ਲਈ (ਕੁੱਲ = 0, curdata = 0;
+	     curdata < chart->ਅੰਕੜੇ.series[series].len;
 	     curdata++) {
-		total += chart->data.series[series].value[curdata];
+		ਕੁੱਲ += chart->ਅੰਕੜੇ.series[series].ਮੁੱਲ[curdata];
 	}
-	return total;
+	ਵਾਪਸ ਕੁੱਲ;
 }
 
 /**
  * render the data as a pie chart svg
  */
-static bool
-pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
+ਸਥਿਰ bool
+pie_chart(ਬਣਤਰ fetch_about_context *ctx, ਬਣਤਰ chart_param *chart)
 {
 	nserror res;
-	float ra; /* pie a radius */
-	float rb; /* pie b radius */
-	float series_total;
-	unsigned int curdata; /* current data point index */
-	float last_x, last_y;
-	float end_x, end_y;
-	float start;
-	float extent;
+	ਦਸ਼ਮਲਵ ra; /* pie a radius */
+	ਦਸ਼ਮਲਵ rb; /* pie b radius */
+	ਦਸ਼ਮਲਵ series_ਕੁੱਲ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ curdata; /* current data point index */
+	ਦਸ਼ਮਲਵ ਆਖਰੀ_x, ਆਖਰੀ_y;
+	ਦਸ਼ਮਲਵ ਸਿਰਾ_x, ਸਿਰਾ_y;
+	ਦਸ਼ਮਲਵ ਸ਼ੁਰੂ;
+	ਦਸ਼ਮਲਵ extent;
 	bool large;
-	float circle_centre_x, circle_centre_y;
+	ਦਸ਼ਮਲਵ circle_centre_x, circle_centre_y;
 
 	/* ensure there is data to render */
-	if ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
-		return NSERROR_BAD_PARAMETER;
+	ਜੇ ((chart->ਅੰਕੜੇ.series_len < 1) || (chart->ਅੰਕੜੇ.series[0].len < 2)) {
+		ਵਾਪਸ NSERROR_BAD_PARAMETER;
 	}
 
 	/* get the first series total value */
-	series_total = compute_series_total(chart, 0);
-	if (series_total == 0) {
+	series_ਕੁੱਲ = compute_series_ਕੁੱਲ(chart, 0);
+	ਜੇ (series_ਕੁੱਲ == 0) {
 		/* dividing by zero is embarasing */
-		return NSERROR_BAD_PARAMETER;
+		ਵਾਪਸ NSERROR_BAD_PARAMETER;
 	}
 
 	/*
@@ -497,30 +497,30 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	 * this is left to each chart type as different charts
 	 *  have differnt requirements
 	 */
-	if ((chart->area.width == 0) || (chart->area.height == 0)) {
+	ਜੇ ((chart->area.ਚੌੜਾਈ == 0) || (chart->area.ਉਚਾਈ == 0)) {
 		/*
 		 * pie chart defaults to square of smaller of figure
 		 *  width and height
 		 */
-		if (chart->width > chart->height) {
-			chart->area.width = chart->area.height = (chart->height - chart->area.x);
-		} else {
-			chart->area.width = chart->area.height = (chart->width - chart->area.y);
+		ਜੇ (chart->ਚੌੜਾਈ > chart->ਉਚਾਈ) {
+			chart->area.ਚੌੜਾਈ = chart->area.ਉਚਾਈ = (chart->ਉਚਾਈ - chart->area.x);
+		} ਨਹੀਂਤਾਂ {
+			chart->area.ਚੌੜਾਈ = chart->area.ਉਚਾਈ = (chart->ਚੌੜਾਈ - chart->area.y);
 		}
 	}
 
 	/* content is going to return ok */
-	fetch_about_set_http_code(ctx, 200);
+	fetch_about_ਸੈੱਟ_http_ਕੋਡ(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	ਜੇ (fetch_about_send_ਸਿਰਲੇਖ(ctx,
 			"Content-Type: image/svg; charset=utf-8")) {
-		goto aborted;
+		ਜਾਓ aborted;
 	}
 
 	/* get the pie charts elipse radii */
-	ra = chart->area.width / 2;
-	rb = chart->area.height / 2;
+	ra = chart->area.ਚੌੜਾਈ / 2;
+	rb = chart->area.ਉਚਾਈ / 2;
 
 	/* get the offset to the circle centre */
 	circle_centre_x = chart->area.x + ra;
@@ -531,31 +531,31 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	res = fetch_about_ssenddataf(ctx,
 			"<svg width=\"%u\" height=\"%u\" "
 			"xmlns=\"http://www.w3.org/2000/svg\">\n",
-			chart->width, chart->height);
-	if (res != NSERROR_OK) {
-		goto aborted;
+			chart->ਚੌੜਾਈ, chart->ਉਚਾਈ);
+	ਜੇ (res != NSERROR_OK) {
+		ਜਾਓ aborted;
 	}
 
 	/* generate the legend */
 	res = output_pie_legend(ctx, chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	ਜੇ (res != NSERROR_OK) {
+		ਜਾਓ aborted;
 	}
 
 	/* plot the arcs */
-	start = -M_PI_2;
-	last_x = (ra * cos(start));
-	last_y = (rb * sin(start));
+	ਸ਼ੁਰੂ = -M_PI_2;
+	ਆਖਰੀ_x = (ra * ਕੋਜੀਵਾ(ਸ਼ੁਰੂ));
+	ਆਖਰੀ_y = (rb * ਜੀਵਾ(ਸ਼ੁਰੂ));
 
 	/* iterate over each data point creating a slice o pie */
-	for (curdata=0; curdata < chart->data.series[0].len; curdata++) {
-		extent = ((chart->data.series[0].value[curdata] / series_total) * 2 * M_PI);
-		end_x = (ra * cos(start + extent));
-		end_y = (rb * sin(start + extent));
+	ਲਈ (curdata=0; curdata < chart->ਅੰਕੜੇ.series[0].len; curdata++) {
+		extent = ((chart->ਅੰਕੜੇ.series[0].ਮੁੱਲ[curdata] / series_ਕੁੱਲ) * 2 * M_PI);
+		ਸਿਰਾ_x = (ra * ਕੋਜੀਵਾ(ਸ਼ੁਰੂ + extent));
+		ਸਿਰਾ_y = (rb * ਜੀਵਾ(ਸ਼ੁਰੂ + extent));
 
-		if (extent > M_PI) {
+		ਜੇ (extent > M_PI) {
 			large = true;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			large = false;
 		}
 
@@ -564,34 +564,34 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			"<path d=\"M %g %g\n"
 			"A %g %g 0 %d 1 %g %g\n"
 			"L %g %g Z\" fill=\"#%06x\" />\n",
-			circle_centre_x + last_x,
-			circle_centre_y + last_y,
+			circle_centre_x + ਆਖਰੀ_x,
+			circle_centre_y + ਆਖਰੀ_y,
 			ra, rb, large?1:0,
-			circle_centre_x + end_x,
-			circle_centre_y + end_y,
+			circle_centre_x + ਸਿਰਾ_x,
+			circle_centre_y + ਸਿਰਾ_y,
 			circle_centre_x,
 			circle_centre_y,
-			chart->data.label[curdata].colour);
-		if (res != NSERROR_OK) {
-			goto aborted;
+			chart->ਅੰਕੜੇ.label[curdata].ਰੰਗ);
+		ਜੇ (res != NSERROR_OK) {
+			ਜਾਓ aborted;
 		}
-		last_x = end_x;
-		last_y = end_y;
-		start +=extent;
+		ਆਖਰੀ_x = ਸਿਰਾ_x;
+		ਆਖਰੀ_y = ਸਿਰਾ_y;
+		ਸ਼ੁਰੂ +=extent;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</svg>\n");
-	if (res != NSERROR_OK) {
-		goto aborted;
+	ਜੇ (res != NSERROR_OK) {
+		ਜਾਓ aborted;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ਮੁਕੰਮਲ(ctx);
 
-	return true;
+	ਵਾਪਸ true;
 
  aborted:
 
-	return false;
+	ਵਾਪਸ false;
 
 }
 
@@ -603,28 +603,28 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_chart_handler(struct fetch_about_context *ctx)
+bool fetch_about_chart_handler(ਬਣਤਰ fetch_about_context *ctx)
 {
 	nserror res;
-	struct chart_param chart;
-	memset(&chart, 0, sizeof(struct chart_param));
+	ਬਣਤਰ chart_param chart;
+	memset(&chart, 0, ਆਕਾਰ(ਬਣਤਰ chart_param));
 
 	res = chart_from_query(fetch_about_get_url(ctx), &chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	ਜੇ (res != NSERROR_OK) {
+		ਜਾਓ aborted;
 	}
 
-	switch (chart.type) {
-	case CHART_TYPE_PIE:
-		return pie_chart(ctx, &chart);
+	ਚੋਣ (chart.type) {
+	ਹਾਲਤ CHART_TYPE_PIE:
+		ਵਾਪਸ pie_chart(ctx, &chart);
 
 
-	default:
-		break;
+	ਮੂਲ:
+		ਰੋਕੋ;
 	}
 
 aborted:
 
-	return false;
+	ਵਾਪਸ false;
 
 }

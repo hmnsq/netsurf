@@ -21,73 +21,73 @@
  * librosprite implementation for content image/x-riscos-sprite
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdbool.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include <librosprite.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <librosprite.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/utils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/messages.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/plotters.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/bitmap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "netsurf/content.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/llcache.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_protected.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content_factory.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/gui_internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "desktop/bitmap.h"
 
-#include "image/nssprite.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "image/nssprite.h"
 
-typedef struct nssprite_content {
-	struct content base;
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ nssprite_content {
+	ਬਣਤਰ content ਅਧਾਰ;
+	ਬਣਤਰ bitmap *bitmap;	/**< Created NetSurf bitmap */
 
-	struct rosprite_area* sprite_area;
+	ਬਣਤਰ rosprite_area* sprite_area;
 } nssprite_content;
 
 
-#define ERRCHK(x) do { \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ERRCHK(x) ਕਰੋ { \
 	rosprite_error err = x; \
-	if (err == ROSPRITE_EOF) { \
+	ਜੇ (err == ROSPRITE_EOF) { \
 		NSLOG(netsurf, INFO, "Got ROSPRITE_EOF when loading sprite file"); \
-		goto ro_sprite_error; \
-	} else if (err == ROSPRITE_BADMODE) { \
+		ਜਾਓ ro_sprite_error; \
+	} ਨਹੀਂਤਾਂ ਜੇ (err == ROSPRITE_BADMODE) { \
 		NSLOG(netsurf, INFO, "Got ROSPRITE_BADMODE when loading sprite file"); \
-		goto ro_sprite_error; \
-	} else if (err == ROSPRITE_OK) { \
-	} else { \
-		goto ro_sprite_error; \
+		ਜਾਓ ro_sprite_error; \
+	} ਨਹੀਂਤਾਂ ਜੇ (err == ROSPRITE_OK) { \
+	} ਨਹੀਂਤਾਂ { \
+		ਜਾਓ ro_sprite_error; \
 	} \
-} while(0)
+} ਜਦੋਂ(0)
 
 
 
 
-static nserror nssprite_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		struct llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ਸਥਿਰ nserror nssprite_create(ਅਚਲ content_handler *handler,
+		lwc_string *imime_type, ਅਚਲ ਬਣਤਰ http_parameter *params,
+		ਬਣਤਰ llcache_handle *llcache, ਅਚਲ ਅੱਖਰ *fallback_charset,
+		bool quirks, ਬਣਤਰ content **c)
 {
 	nssprite_content *sprite;
 	nserror error;
 
-	sprite = calloc(1, sizeof(nssprite_content));
-	if (sprite == NULL)
-		return NSERROR_NOMEM;
+	sprite = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(nssprite_content));
+	ਜੇ (sprite == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__init(&sprite->base, handler, imime_type, params,
+	error = content__init(&sprite->ਅਧਾਰ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(sprite);
-		return error;
+	ਜੇ (error != NSERROR_OK) {
+		ਮੁਕਤ(sprite);
+		ਵਾਪਸ error;
 	}
 
-	*c = (struct content *) sprite;
+	*c = (ਬਣਤਰ content *) sprite;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
 /**
@@ -96,73 +96,73 @@ static nserror nssprite_create(const content_handler *handler,
  * No conversion is necessary. We merely read the sprite dimensions.
  */
 
-static bool nssprite_convert(struct content *c)
+ਸਥਿਰ bool nssprite_convert(ਬਣਤਰ content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	struct rosprite_mem_context* ctx = NULL;
+	ਬਣਤਰ rosprite_mem_context* ctx = ਨਿਰਾ;
 
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	ਅਚਲ uint8_t *ਅੰਕੜੇ;
+	size_t ਮਾਪ;
+	ਅੱਖਰ *title;
 
-	data = content__get_source_data(c, &size);
+	ਅੰਕੜੇ = content_get_ਸਰੋਤ_ਅੰਕੜੇ_2(c, &ਮਾਪ);
 
-	ERRCHK(rosprite_create_mem_context((uint8_t *) data, size, &ctx));
+	ERRCHK(rosprite_create_mem_context((uint8_t *) ਅੰਕੜੇ, ਮਾਪ, &ctx));
 
-	struct rosprite_area* sprite_area;
-	ERRCHK(rosprite_load(rosprite_mem_reader, ctx, &sprite_area));
+	ਬਣਤਰ rosprite_area* sprite_area;
+	ERRCHK(rosprite_ਲੱਦੋ(rosprite_mem_reader, ctx, &sprite_area));
 	rosprite_destroy_mem_context(ctx);
 	nssprite->sprite_area = sprite_area;
 
-	assert(sprite_area->sprite_count > 0);
+	ਪ੍ਰਤਿਜ੍ਞਾ(sprite_area->sprite_ਗਿਣਤੀ > 0);
 
-	struct rosprite* sprite = sprite_area->sprites[0];
+	ਬਣਤਰ rosprite* sprite = sprite_area->sprites[0];
 
-	nssprite->bitmap = guit->bitmap->create(sprite->width, sprite->height, BITMAP_NONE);
-	if (!nssprite->bitmap) {
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+	nssprite->bitmap = guit->bitmap->create(sprite->ਚੌੜਾਈ, sprite->ਉਚਾਈ, BITMAP_NONE);
+	ਜੇ (!nssprite->bitmap) {
+		content_ਪ੍ਰਸਾਰਣ_error(c, NSERROR_NOMEM, ਨਿਰਾ);
+		ਵਾਪਸ false;
 	}
-	uint32_t* imagebuf = (uint32_t *)(void *)guit->bitmap->get_buffer(nssprite->bitmap);
-	if (!imagebuf) {
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+	uint32_t* imagebuf = (uint32_t *)(ਖਾਲੀ *)guit->bitmap->get_ਬਫਰ(nssprite->bitmap);
+	ਜੇ (!imagebuf) {
+		content_ਪ੍ਰਸਾਰਣ_error(c, NSERROR_NOMEM, ਨਿਰਾ);
+		ਵਾਪਸ false;
 	}
-	unsigned char *spritebuf = (unsigned char *)sprite->image;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *spritebuf = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)sprite->image;
 
-	memcpy(imagebuf, spritebuf, sprite->width * sprite->height * 4);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(imagebuf, spritebuf, sprite->ਚੌੜਾਈ * sprite->ਉਚਾਈ * 4);
 
-	c->width = sprite->width;
-	c->height = sprite->height;
+	c->ਚੌੜਾਈ = sprite->ਚੌੜਾਈ;
+	c->ਉਚਾਈ = sprite->ਉਚਾਈ;
 
 	/* set title text */
 	title = messages_get_buff("SpriteTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ਪੱਤੀ(llcache_handle_get_url(c->llcache)),
+			c->ਚੌੜਾਈ, c->ਉਚਾਈ);
+	ਜੇ (title != ਨਿਰਾ) {
+		content_ਸੈੱਟ_title(c, title);
+		ਮੁਕਤ(title);
 	}
 
-	bitmap_format_to_client(nssprite->bitmap, &(bitmap_fmt_t) {
+	bitmap_format_ਮੰਜ਼ਿਲ_client(nssprite->bitmap, &(bitmap_fmt_t) {
 		.layout = BITMAP_LAYOUT_A8B8G8R8,
 	});
 	guit->bitmap->modified(nssprite->bitmap);
 
-	content_set_ready(c);
-	content_set_done(c);
-	content_set_status(c, ""); /* Done: update status bar */
+	content_ਸੈੱਟ_ready(c);
+	content_ਸੈੱਟ_ਪੂਰਾ(c);
+	content_ਸੈੱਟ_ਸਥਿਤੀ(c, ""); /* Done: update status bar */
 
-	return true;
+	ਵਾਪਸ true;
 
 ro_sprite_error:
-	if (ctx != NULL) {
+	ਜੇ (ctx != ਨਿਰਾ) {
 		rosprite_destroy_mem_context(ctx);
 	}
-	content_broadcast_error(c, NSERROR_SPRITE_ERROR, NULL);
+	content_ਪ੍ਰਸਾਰਣ_error(c, NSERROR_SPRITE_ERROR, ਨਿਰਾ);
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 
@@ -170,13 +170,13 @@ ro_sprite_error:
  * Destroy a CONTENT_SPRITE and free all resources it owns.
  */
 
-static void nssprite_destroy(struct content *c)
+ਸਥਿਰ ਖਾਲੀ nssprite_destroy(ਬਣਤਰ content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	if (nssprite->sprite_area != NULL)
+	ਜੇ (nssprite->sprite_area != ਨਿਰਾ)
 		rosprite_destroy_sprite_area(nssprite->sprite_area);
-	if (nssprite->bitmap != NULL)
+	ਜੇ (nssprite->bitmap != ਨਿਰਾ)
 		guit->bitmap->destroy(nssprite->bitmap);
 }
 
@@ -185,98 +185,98 @@ static void nssprite_destroy(struct content *c)
  * Redraw a CONTENT_SPRITE.
  */
 
-static bool
-nssprite_redraw(struct content *c,
-		struct content_redraw_data *data,
-		const struct rect *clip,
-		const struct redraw_context *ctx)
+ਸਥਿਰ bool
+nssprite_redraw(ਬਣਤਰ content *c,
+		ਬਣਤਰ content_redraw_ਅੰਕੜੇ *ਅੰਕੜੇ,
+		ਅਚਲ ਬਣਤਰ rect *clip,
+		ਅਚਲ ਬਣਤਰ redraw_context *ctx)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (data->repeat_x) {
+	ਜੇ (ਅੰਕੜੇ->repeat_x) {
 		flags |= BITMAPF_REPEAT_X;
 	}
-	if (data->repeat_y) {
+	ਜੇ (ਅੰਕੜੇ->repeat_y) {
 		flags |= BITMAPF_REPEAT_Y;
 	}
 
-	return (ctx->plot->bitmap(ctx,
+	ਵਾਪਸ (ctx->plot->bitmap(ctx,
 				  nssprite->bitmap,
-				  data->x, data->y,
-				  data->width, data->height,
-				  data->background_colour,
+				  ਅੰਕੜੇ->x, ਅੰਕੜੇ->y,
+				  ਅੰਕੜੇ->ਚੌੜਾਈ, ਅੰਕੜੇ->ਉਚਾਈ,
+				  ਅੰਕੜੇ->background_ਰੰਗ,
 				  flags) == NSERROR_OK);
 }
 
 
-static nserror nssprite_clone(const struct content *old, struct content **newc)
+ਸਥਿਰ nserror nssprite_clone(ਅਚਲ ਬਣਤਰ content *old, ਬਣਤਰ content **newc)
 {
 	nssprite_content *sprite;
 	nserror error;
 
-	sprite = calloc(1, sizeof(nssprite_content));
-	if (sprite == NULL)
-		return NSERROR_NOMEM;
+	sprite = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(nssprite_content));
+	ਜੇ (sprite == ਨਿਰਾ)
+		ਵਾਪਸ NSERROR_NOMEM;
 
-	error = content__clone(old, &sprite->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&sprite->base);
-		return error;
+	error = content__clone(old, &sprite->ਅਧਾਰ);
+	ਜੇ (error != NSERROR_OK) {
+		content_destroy(&sprite->ਅਧਾਰ);
+		ਵਾਪਸ error;
 	}
 
 	/* Simply replay convert */
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (nssprite_convert(&sprite->base) == false) {
-			content_destroy(&sprite->base);
-			return NSERROR_CLONE_FAILED;
+	ਜੇ (old->ਸਥਿਤੀ == CONTENT_ਸਥਿਤੀ_READY ||
+			old->ਸਥਿਤੀ == CONTENT_ਸਥਿਤੀ_ਪੂਰਾ) {
+		ਜੇ (nssprite_convert(&sprite->ਅਧਾਰ) == false) {
+			content_destroy(&sprite->ਅਧਾਰ);
+			ਵਾਪਸ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) sprite;
+	*newc = (ਬਣਤਰ content *) sprite;
 
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-static void *nssprite_get_internal(const struct content *c, void *context)
+ਸਥਿਰ ਖਾਲੀ *nssprite_get_ਅੰਦਰੂਨੀ(ਅਚਲ ਬਣਤਰ content *c, ਖਾਲੀ *context)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	return nssprite->bitmap;
+	ਵਾਪਸ nssprite->bitmap;
 }
 
-static content_type nssprite_content_type(void)
+ਸਥਿਰ content_type nssprite_content_type(ਖਾਲੀ)
 {
-	return CONTENT_IMAGE;
+	ਵਾਪਸ CONTENT_IMAGE;
 }
 
 
-static bool nssprite_content_is_opaque(struct content *c)
+ਸਥਿਰ bool nssprite_content_is_opaque(ਬਣਤਰ content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	if (nssprite->bitmap != NULL) {
-		return guit->bitmap->get_opaque(nssprite->bitmap);
+	ਜੇ (nssprite->bitmap != ਨਿਰਾ) {
+		ਵਾਪਸ guit->bitmap->get_opaque(nssprite->bitmap);
 	}
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-static const content_handler nssprite_content_handler = {
+ਸਥਿਰ ਅਚਲ content_handler nssprite_content_handler = {
 	.create = nssprite_create,
-	.data_complete = nssprite_convert,
+	.ਅੰਕੜੇ_complete = nssprite_convert,
 	.destroy = nssprite_destroy,
 	.redraw = nssprite_redraw,
 	.clone = nssprite_clone,
-	.get_internal = nssprite_get_internal,
+	.get_ਅੰਦਰੂਨੀ = nssprite_get_ਅੰਦਰੂਨੀ,
 	.type = nssprite_content_type,
 	.is_opaque = nssprite_content_is_opaque,
 	.no_share = false,
 };
 
-static const char *nssprite_types[] = {
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *nssprite_types[] = {
 	"image/x-riscos-sprite"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nssprite, nssprite_types, nssprite_content_handler);
+CONTENT_FACTORY_ਰਜਿਸਟਰ_TYPES(nssprite, nssprite_types, nssprite_content_handler);

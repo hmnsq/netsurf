@@ -20,61 +20,61 @@
  * Dummy implementation of javascript engine functions.
  */
 
-#include "utils/errors.h"
-#include "content/content.h"
-#include "utils/nsoption.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/errors.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "content/content.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/nsoption.h"
 
-#include "javascript/js.h"
-#include "utils/log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "javascript/js.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utils/log.h"
 
-void js_initialise(void)
+ਖਾਲੀ js_initialise(ਖਾਲੀ)
 {
-	nsoption_set_bool(enable_javascript, false);
+	nsoption_ਸੈੱਟ_bool(enable_javascript, false);
 }
 
-void js_finalise(void)
-{
-}
-
-nserror js_newheap(int timeout, jsheap **heap)
-{
-	*heap = NULL;
-	return NSERROR_OK;
-}
-
-void js_destroyheap(jsheap *heap)
+ਖਾਲੀ js_finalise(ਖਾਲੀ)
 {
 }
 
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
+nserror js_newheap(ਪੂਰਨ timeout, jsheap **ਢੇਰ)
 {
-	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	*ਢੇਰ = ਨਿਰਾ;
+	ਵਾਪਸ NSERROR_OK;
+}
+
+ਖਾਲੀ js_destroyheap(jsheap *ਢੇਰ)
+{
+}
+
+nserror js_newthread(jsheap *ਢੇਰ, ਖਾਲੀ *win_priv, ਖਾਲੀ *doc_priv, jsthread **thread)
+{
+	*thread = ਨਿਰਾ;
+	ਵਾਪਸ NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	ਵਾਪਸ NSERROR_OK;
 }
 
-void js_destroythread(jsthread *thread)
+ਖਾਲੀ js_destroythread(jsthread *thread)
 {
 }
 
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+bool js_exec(jsthread *thread, ਅਚਲ uint8_t *txt, size_t txtlen, ਅਚਲ ਅੱਖਰ *name)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, ਅਚਲ ਅੱਖਰ *type, ਬਣਤਰ dom_document *doc, ਬਣਤਰ dom_ਗੰਢ *ਨਿਸ਼ਾਨਾ)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+ਖਾਲੀ js_handle_new_element(jsthread *thread, ਬਣਤਰ dom_element *ਗੰਢ)
 {
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+ਖਾਲੀ js_event_cleanup(jsthread *thread, ਬਣਤਰ dom_event *evt)
 {
 }
