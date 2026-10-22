@@ -131,7 +131,7 @@ struct llcache_parameters {
 	size_t hysteresis; /**< The hysteresis around the target size */
 
 	/** The minimum lifetime to consider sending objects to backing store.*/
-	int minimum_lifetime;
+	целое minimum_lifetime;
 
 	/** The minimum bandwidth to allow the backing store to
 	 * use in bytes/second

@@ -51,17 +51,17 @@ typedef struct nssprite_content {
 
 #define ERRCHK(x) do { \
 	rosprite_error err = x; \
-	if (err == ROSPRITE_EOF) { \
+	если (err == ROSPRITE_EOF) { \
 		NSLOG(netsurf, INFO, "Got ROSPRITE_EOF when loading sprite file"); \
 		goto ro_sprite_error; \
-	} else if (err == ROSPRITE_BADMODE) { \
+	} иначе если (err == ROSPRITE_BADMODE) { \
 		NSLOG(netsurf, INFO, "Got ROSPRITE_BADMODE when loading sprite file"); \
 		goto ro_sprite_error; \
-	} else if (err == ROSPRITE_OK) { \
-	} else { \
+	} иначе если (err == ROSPRITE_OK) { \
+	} иначе { \
 		goto ro_sprite_error; \
 	} \
-} while(0)
+} пока(0)
 
 
 
@@ -75,19 +75,19 @@ static nserror nssprite_create(const content_handler *handler,
 	nserror error;
 
 	sprite = calloc(1, sizeof(nssprite_content));
-	if (sprite == NULL)
-		return NSERROR_NOMEM;
+	если (sprite == NULL)
+		вернуть NSERROR_NOMEM;
 
 	error = content__init(&sprite->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	если (error != NSERROR_OK) {
 		free(sprite);
-		return error;
+		вернуть error;
 	}
 
 	*c = (struct content *) sprite;
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }
 
 /**
@@ -120,14 +120,14 @@ static bool nssprite_convert(struct content *c)
 	struct rosprite* sprite = sprite_area->sprites[0];
 
 	nssprite->bitmap = guit->bitmap->create(sprite->width, sprite->height, BITMAP_NONE);
-	if (!nssprite->bitmap) {
+	если (!nssprite->bitmap) {
 		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		вернуть false;
 	}
 	uint32_t* imagebuf = (uint32_t *)(void *)guit->bitmap->get_buffer(nssprite->bitmap);
-	if (!imagebuf) {
+	если (!imagebuf) {
 		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		вернуть false;
 	}
 	unsigned char *spritebuf = (unsigned char *)sprite->image;
 
@@ -140,7 +140,7 @@ static bool nssprite_convert(struct content *c)
 	title = messages_get_buff("SpriteTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	если (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
@@ -154,15 +154,15 @@ static bool nssprite_convert(struct content *c)
 	content_set_done(c);
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	вернуть true;
 
 ro_sprite_error:
-	if (ctx != NULL) {
+	если (ctx != NULL) {
 		rosprite_destroy_mem_context(ctx);
 	}
 	content_broadcast_error(c, NSERROR_SPRITE_ERROR, NULL);
 
-	return false;
+	вернуть false;
 }
 
 
@@ -174,9 +174,9 @@ static void nssprite_destroy(struct content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	if (nssprite->sprite_area != NULL)
+	если (nssprite->sprite_area != NULL)
 		rosprite_destroy_sprite_area(nssprite->sprite_area);
-	if (nssprite->bitmap != NULL)
+	если (nssprite->bitmap != NULL)
 		guit->bitmap->destroy(nssprite->bitmap);
 }
 
@@ -194,14 +194,14 @@ nssprite_redraw(struct content *c,
 	nssprite_content *nssprite = (nssprite_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (data->repeat_x) {
+	если (data->repeat_x) {
 		flags |= BITMAPF_REPEAT_X;
 	}
-	if (data->repeat_y) {
+	если (data->repeat_y) {
 		flags |= BITMAPF_REPEAT_Y;
 	}
 
-	return (ctx->plot->bitmap(ctx,
+	вернуть (ctx->plot->bitmap(ctx,
 				  nssprite->bitmap,
 				  data->x, data->y,
 				  data->width, data->height,
@@ -216,39 +216,39 @@ static nserror nssprite_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	sprite = calloc(1, sizeof(nssprite_content));
-	if (sprite == NULL)
-		return NSERROR_NOMEM;
+	если (sprite == NULL)
+		вернуть NSERROR_NOMEM;
 
 	error = content__clone(old, &sprite->base);
-	if (error != NSERROR_OK) {
+	если (error != NSERROR_OK) {
 		content_destroy(&sprite->base);
-		return error;
+		вернуть error;
 	}
 
 	/* Simply replay convert */
-	if (old->status == CONTENT_STATUS_READY ||
+	если (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nssprite_convert(&sprite->base) == false) {
+		если (nssprite_convert(&sprite->base) == false) {
 			content_destroy(&sprite->base);
-			return NSERROR_CLONE_FAILED;
+			вернуть NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = (struct content *) sprite;
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }
 
 static void *nssprite_get_internal(const struct content *c, void *context)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	return nssprite->bitmap;
+	вернуть nssprite->bitmap;
 }
 
 static content_type nssprite_content_type(void)
 {
-	return CONTENT_IMAGE;
+	вернуть CONTENT_IMAGE;
 }
 
 
@@ -256,11 +256,11 @@ static bool nssprite_content_is_opaque(struct content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	if (nssprite->bitmap != NULL) {
-		return guit->bitmap->get_opaque(nssprite->bitmap);
+	если (nssprite->bitmap != NULL) {
+		вернуть guit->bitmap->get_opaque(nssprite->bitmap);
 	}
 
-	return false;
+	вернуть false;
 }
 
 static const content_handler nssprite_content_handler = {

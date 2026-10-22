@@ -36,8 +36,8 @@
 #include "dirlist.h"
 #include "desktop/system_colour.h"
 
-static int dirlist_filesize_calculate(unsigned long *bytesize);
-static int dirlist_filesize_value(unsigned long bytesize);
+static целое dirlist_filesize_calculate(unsigned long *bytesize);
+static целое dirlist_filesize_value(unsigned long bytesize);
 static char* dirlist_filesize_unit(unsigned long bytesize);
 
 
@@ -58,20 +58,20 @@ static char* dirlist_filesize_unit(unsigned long bytesize);
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_top(char *buffer, int buffer_length)
+bool dirlist_generate_top(char *buffer, целое buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	целое error = snprintf(buffer, buffer_length,
 		"<html>\n"
 		"<head>\n"
 		"<link rel=\"stylesheet\" title=\"Standard\" "
 			"type=\"text/css\" href=\"resource:internal.css\">\n"
 		"<style>\n");
-	if (error < 0 || error >= buffer_length)
+	если (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		вернуть false;
+	иначе
 		/* OK */
-		return true;
+		вернуть true;
 
 }
 
@@ -97,9 +97,9 @@ bool dirlist_generate_top(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
+bool dirlist_generate_hide_columns(целое flags, char *buffer, целое buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	целое error = snprintf(buffer, buffer_length,
 			"%s\n%s\n%s\n%s\n%s\n",
 			(flags & DIRLIST_NO_NAME_COLUMN) ?
 					"span.name { display: none; }\n" : "",
@@ -111,12 +111,12 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
 					"span.date { display: none; }\n" : "",
 			(flags & DIRLIST_NO_TIME_COLUMN) ?
 					"span.time { display: none; }\n" : "");
-	if (error < 0 || error >= buffer_length)
+	если (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		вернуть false;
+	иначе
 		/* OK */
-		return true;
+		вернуть true;
 }
 
 
@@ -140,18 +140,18 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
+bool dirlist_generate_title(const char *title, char *buffer, целое buffer_length)
 {
 	const char *stylesheet;
 	nserror err;
-	int error;
+	целое error;
 
-	if (title == NULL)
+	если (title == NULL)
 		title = "";
 
 	err = nscolour_get_stylesheet(&stylesheet);
-	if (err != NSERROR_OK) {
-		return false;
+	если (err != NSERROR_OK) {
+		вернуть false;
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -169,12 +169,12 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
 			title,
 			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet, title);
-	if (error < 0 || error >= buffer_length)
+	если (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		вернуть false;
+	иначе
 		/* OK */
-		return true;
+		вернуть true;
 }
 
 
@@ -200,17 +200,17 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
  */
 
 bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length)
+		целое buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	целое error = snprintf(buffer, buffer_length,
 			"<p><a href=\"%s\">%s</a></p>",
 			parent, messages_get("FileParent"));
-	if (error < 0 || error >= buffer_length)
+	если (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		вернуть false;
+	иначе
 		/* OK */
-		return true;
+		вернуть true;
 }
 
 
@@ -234,9 +234,9 @@ bool dirlist_generate_parent_link(const char *parent, char *buffer,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_headings(char *buffer, int buffer_length)
+bool dirlist_generate_headings(char *buffer, целое buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	целое error = snprintf(buffer, buffer_length,
 			"<div>\n"
 			"<strong>\n"
 			"\t<span class=\"name\">%s</span>\n"
@@ -249,12 +249,12 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
 			messages_get("FileName"), messages_get("FileType"),
 			messages_get("FileSize"), messages_get("FileDate"),
 			messages_get("FileTime"));
-	if (error < 0 || error >= buffer_length)
+	если (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		вернуть false;
+	иначе
 		/* OK */
-		return true;
+		вернуть true;
 }
 
 
@@ -288,16 +288,16 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
 
 bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
 		const char *mimetype, long long size, char *date, char *time,
-		char *buffer, int buffer_length)
+		char *buffer, целое buffer_length)
 {
 	const char *unit;
 	char size_string[100];
-	int error;
+	целое error;
 
-	if (size < 0) {
+	если (size < 0) {
 		unit = "";
 		strncpy(size_string, "", sizeof size_string);
-	} else {
+	} иначе {
 		unit = messages_get(dirlist_filesize_unit((unsigned long)size));
 		snprintf(size_string, sizeof size_string, "%d",
 				dirlist_filesize_value((unsigned long)size));
@@ -315,12 +315,12 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
 			even ? "even ns-even-bg" : "odd  ns-odd-bg",
 			directory ? "dir" : "file",
 			name, mimetype, size_string, unit, date, time);
-	if (error < 0 || error >= buffer_length)
+	если (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		вернуть false;
+	иначе
 		/* OK */
-		return true;
+		вернуть true;
 }
 
 
@@ -341,18 +341,18 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_bottom(char *buffer, int buffer_length)
+bool dirlist_generate_bottom(char *buffer, целое buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	целое error = snprintf(buffer, buffer_length,
 			"</div>\n"
 			"</body>\n"
 			"</html>\n");
-	if (error < 0 || error >= buffer_length)
+	если (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		вернуть false;
+	иначе
 		/* OK */
-		return true;
+		вернуть true;
 }
 
 
@@ -364,16 +364,16 @@ bool dirlist_generate_bottom(char *buffer, int buffer_length)
  * \return  number of times bytesize has been divided by 1024
  */
 
-int dirlist_filesize_calculate(unsigned long *bytesize)
+целое dirlist_filesize_calculate(unsigned long *bytesize)
 {
-	int i = 0;
-	while (*bytesize > 1024 * 4) {
+	целое i = 0;
+	пока (*bytesize > 1024 * 4) {
 		*bytesize /= 1024;
 		i++;
-		if (i == 3)
+		если (i == 3)
 			break;
 	}
-	return i;
+	вернуть i;
 }
 
 
@@ -385,10 +385,10 @@ int dirlist_filesize_calculate(unsigned long *bytesize)
  * \return  Value to display for file size, in units given by filesize_unit()
  */
 
-int dirlist_filesize_value(unsigned long bytesize)
+целое dirlist_filesize_value(unsigned long bytesize)
 {
 	dirlist_filesize_calculate(&bytesize);
-	return (int)bytesize;
+	вернуть (целое)bytesize;
 }
 
 
@@ -403,5 +403,5 @@ int dirlist_filesize_value(unsigned long bytesize)
 char* dirlist_filesize_unit(unsigned long bytesize)
 {
 	const char* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
-	return (char*)units[dirlist_filesize_calculate(&bytesize)];
+	вернуть (char*)units[dirlist_filesize_calculate(&bytesize)];
 }

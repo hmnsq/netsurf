@@ -44,7 +44,7 @@ struct html_scrollbar_data {
  * \param  y	  coordinate of mouse
  */
 nserror html_mouse_track(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+			browser_mouse_state mouse, целое x, целое y);
 
 
 /**
@@ -64,7 +64,7 @@ nserror html_mouse_track(struct content *c, struct browser_window *bw,
  * \return NSERROR_OK or appropriate error code.
  */
 nserror html_mouse_action(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+			browser_mouse_state mouse, целое x, целое y);
 
 
 bool html_keypress(struct content *c, uint32_t key);
@@ -119,7 +119,7 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
  */
 void html_set_focus(html_content *html, html_focus_type focus_type,
 		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip);
+		целое x, целое y, целое height, const struct rect *clip);
 
 
 #endif

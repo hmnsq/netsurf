@@ -104,7 +104,7 @@ enum box_side { TOP, RIGHT, BOTTOM, LEFT };
 struct box_border {
 	enum css_border_style_e style;	/**< border-style */
 	css_color c;			/**< border-color value */
-	int width;			/**< border-width (pixels) */
+	целое width;			/**< border-width (pixels) */
 };
 
 
@@ -127,17 +127,17 @@ struct column {
 	 * Preferred width of column. Pixels for FIXED, percentage for
 	 *  PERCENT, relative units for RELATIVE, unused for AUTO.
 	 */
-	int width;
+	целое width;
 
 	/**
 	 * Minimum width of content.
 	 */
-	int min;
+	целое min;
 
 	/**
 	 * Maximum width of content.
 	 */
-	int max;
+	целое max;
 
 	/**
 	 * Whether all of column's cells are css positioned.
@@ -264,12 +264,12 @@ struct box {
 	 * Level below which subsequent floats must be cleared.  This
 	 * is used only for boxes with float_children
 	 */
-	int clear_level;
+	целое clear_level;
 
 	/**
 	 * Level below which floats have been placed.
 	 */
-	int cached_place_below_level;
+	целое cached_place_below_level;
 
 
 	/**
@@ -277,20 +277,20 @@ struct box {
 	 * relative to ancestor that contains this box in
 	 * float_children for FLOAT_.
 	 */
-	int x;
+	целое x;
 	/**
 	 * Coordinate of top padding edge, relative as for x.
 	 */
-	int y;
+	целое y;
 
 	/**
 	 * Width of content box (excluding padding etc.).
 	 */
-	int width;
+	целое width;
 	/**
 	 * Height of content box (excluding padding etc.).
 	 */
-	int height;
+	целое height;
 
 	/* These four variables determine the maximum extent of a box's
 	 * descendants. They are relative to the x,y coordinates of the box.
@@ -306,20 +306,20 @@ struct box {
 	 *		scrollable area.
 	 * auto		As "scroll".
 	 */
-	int descendant_x0;  /**< left edge of descendants */
-	int descendant_y0;  /**< top edge of descendants */
-	int descendant_x1;  /**< right edge of descendants */
-	int descendant_y1;  /**< bottom edge of descendants */
+	целое descendant_x0;  /**< left edge of descendants */
+	целое descendant_y0;  /**< top edge of descendants */
+	целое descendant_x1;  /**< right edge of descendants */
+	целое descendant_y1;  /**< bottom edge of descendants */
 
 	/**
 	 * Margin: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	int margin[4];
+	целое margin[4];
 
 	/**
 	 * Padding: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	int padding[4];
+	целое padding[4];
 
 	/**
 	 * Border: TOP, RIGHT, BOTTOM, LEFT.
@@ -340,13 +340,13 @@ struct box {
 	 * Width of box taking all line breaks (including margins
 	 * etc). Must be non-negative.
 	 */
-	int min_width;
+	целое min_width;
 
 	/**
 	 * Width that would be taken with no line breaks. Must be
 	 * non-negative.
 	 */
-	int max_width;
+	целое max_width;
 
 
 	/**
@@ -362,7 +362,7 @@ struct box {
 	/**
 	 * Width of space after current text (depends on font and size).
 	 */
-	int space;
+	целое space;
 
 	/**
 	 * Byte offset within a textual representation of this content.
@@ -389,17 +389,17 @@ struct box {
 	/**
 	 * Number of columns for TABLE / TABLE_CELL.
 	 */
-	unsigned int columns;
+	unsigned целое columns;
 
 	/**
 	 * Number of rows for TABLE only.
 	 */
-	unsigned int rows;
+	unsigned целое rows;
 
 	/**
 	 * Start column for TABLE_CELL only.
 	 */
-	unsigned int start_column;
+	unsigned целое start_column;
 
 	/**
 	 * Array of table column data for TABLE only.
@@ -409,7 +409,7 @@ struct box {
 	/**
 	 * List item value.
 	 */
-	int list_value;
+	целое list_value;
 
 	/**
 	 * List marker box if this is a list-item, or NULL.

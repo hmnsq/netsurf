@@ -75,19 +75,19 @@ rsvg_create(const content_handler *handler,
 	nserror error;
 
 	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	если (svg == NULL)
+		вернуть NSERROR_NOMEM;
 
 	error = content__init(&svg->base, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	если (error != NSERROR_OK) {
 		free(svg);
-		return error;
+		вернуть error;
 	}
 
 	*c = (struct content *)svg;
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }
 
 
@@ -104,26 +104,26 @@ rsvg_cache_convert(struct content *c)
 	RsvgRectangle viewport;
 	gboolean renderres;
 
-	if ((bitmap = guit->bitmap->create(c->width, c->height,	BITMAP_NONE)) == NULL) {
+	если ((bitmap = guit->bitmap->create(c->width, c->height,	BITMAP_NONE)) == NULL) {
 		NSLOG(netsurf, INFO, "Failed to create bitmap for rsvg render.");
-		return NULL;
+		вернуть NULL;
 	}
 
-	if ((cs = cairo_image_surface_create_for_data(
+	если ((cs = cairo_image_surface_create_for_data(
 		     (unsigned char *)guit->bitmap->get_buffer(bitmap),
 		     CAIRO_FORMAT_ARGB32,
 		     c->width, c->height,
 		     guit->bitmap->get_rowstride(bitmap))) == NULL) {
 		NSLOG(netsurf, INFO, "Failed to create Cairo image surface for rsvg render.");
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		вернуть NULL;
 	}
-	if ((cr = cairo_create(cs)) == NULL) {
+	если ((cr = cairo_create(cs)) == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo drawing context for rsvg render.");
 		cairo_surface_destroy(cs);
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		вернуть NULL;
 	}
 
 	viewport.x = 0;
@@ -141,13 +141,13 @@ rsvg_cache_convert(struct content *c)
 	cairo_destroy(cr);
 	cairo_surface_destroy(cs);
 
-	return bitmap;
+	вернуть bitmap;
 }
 
 static void rsvg__get_demensions(const rsvg_content *svgc,
-		int *width, int *height)
+		целое *width, целое *height)
 {
-#if LIBRSVG_MAJOR_VERSION >= 2 && LIBRSVG_MINOR_VERSION >= 52
+#если LIBRSVG_MAJOR_VERSION >= 2 && LIBRSVG_MINOR_VERSION >= 52
 	gdouble rwidth;
 	gdouble rheight;
 	gboolean gotsize;
@@ -155,10 +155,10 @@ static void rsvg__get_demensions(const rsvg_content *svgc,
 	gotsize = rsvg_handle_get_intrinsic_size_in_pixels(svgc->rsvgh,
 							   &rwidth,
 							   &rheight);
-	if (gotsize == TRUE) {
+	если (gotsize == TRUE) {
 		*width = rwidth;
 		*height = rheight;
-	} else {
+	} иначе {
 		RsvgRectangle ink_rect;
 		RsvgRectangle logical_rect;
 		rsvg_handle_get_geometry_for_element(svgc->rsvgh,
@@ -169,7 +169,7 @@ static void rsvg__get_demensions(const rsvg_content *svgc,
 		*width = ink_rect.width;
 		*height = ink_rect.height;
 	}
-#else
+#иначе
 	RsvgDimensionData rsvgsize;
 
 	rsvg_handle_get_dimensions(svgc->rsvgh, &rsvgsize);
@@ -198,9 +198,9 @@ static bool rsvg_convert(struct content *c)
 						       NULL,
 						       &gerror);
 	g_object_unref(istream);
-	if (svgc->rsvgh == NULL) {
+	если (svgc->rsvgh == NULL) {
 		NSLOG(netsurf, INFO, "Failed to create rsvg handle for content.");
-		return false;
+		вернуть false;
 	}
 
 	rsvg__get_demensions(svgc, &c->width, &c->height);
@@ -213,7 +213,7 @@ static bool rsvg_convert(struct content *c)
 	content_set_done(c);
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	вернуть true;
 }
 
 
@@ -223,27 +223,27 @@ static nserror rsvg_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	если (svg == NULL)
+		вернуть NSERROR_NOMEM;
 
 	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
+	если (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		вернуть error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	если ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (rsvg_convert(&svg->base) == false) {
+		если (rsvg_convert(&svg->base) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+			вернуть NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = (struct content *)svg;
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }
 
 
@@ -251,12 +251,12 @@ static void rsvg_destroy(struct content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->rsvgh != NULL) {
+	если (d->rsvgh != NULL) {
 		g_object_unref(d->rsvgh);
 		d->rsvgh = NULL;
 	}
 
-	return image_cache_destroy(c);
+	вернуть image_cache_destroy(c);
 }
 
 static const content_handler rsvg_content_handler = {

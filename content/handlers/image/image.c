@@ -51,65 +51,65 @@ nserror image_init(void)
 
 #ifdef WITH_BMP
 	error = nsbmp_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
 #ifdef WITH_GIF
 	error = nsgif_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
 #ifdef WITH_BMP
 	error = nsico_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
 #ifdef WITH_JPEG
 	error = nsjpeg_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
 #ifdef WITH_JPEGXL
 	error = nsjpegxl_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
 #ifdef WITH_PNG
 	error = nspng_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
 #ifdef WITH_NSSPRITE
 	error = nssprite_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
 	/* Prefer rsvg over libsvgtiny for svgs */
 #ifdef WITH_NS_SVG
 	error = svg_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 #ifdef WITH_RSVG
 	error = nsrsvg_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
 #ifdef WITH_WEBP
 	error = nswebp_init();
-	if (error != NSERROR_OK)
-		return error;
+	если (error != NSERROR_OK)
+		вернуть error;
 #endif
 
-	return error;
+	вернуть error;
 }
 
 
@@ -120,31 +120,31 @@ bool image_bitmap_plot(struct bitmap *bitmap,
 {
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	int width;
-	int height;
+	целое width;
+	целое height;
 	unsigned char *pixel;
 	plot_style_t fill_style;
 	struct rect area;
 
 	width = guit->bitmap->get_width(bitmap);
-	if (width == 1) {
+	если (width == 1) {
 		height = guit->bitmap->get_height(bitmap);
-		if (height == 1) {
+		если (height == 1) {
 			/* optimise 1x1 bitmap plot */
 			pixel = guit->bitmap->get_buffer(bitmap);
 			fill_style.fill_colour = bitmap_pixel_to_colour(pixel);
 
-			if (guit->bitmap->get_opaque(bitmap) ||
+			если (guit->bitmap->get_opaque(bitmap) ||
 			    ((fill_style.fill_colour & 0xff000000) == 0xff000000)) {
 
 				area = *clip;
 
-				if (data->repeat_x != true) {
+				если (data->repeat_x != true) {
 					area.x0 = data->x;
 					area.x1 = data->x + data->width;
 				}
 
-				if (data->repeat_y != true) {
+				если (data->repeat_y != true) {
 					area.y0 = data->y;
 					area.y1 = data->y + data->height;
 				}
@@ -152,24 +152,24 @@ bool image_bitmap_plot(struct bitmap *bitmap,
 				fill_style.stroke_type = PLOT_OP_TYPE_NONE;
 				fill_style.fill_type = PLOT_OP_TYPE_SOLID;
 
-				return (ctx->plot->rectangle(ctx,
+				вернуть (ctx->plot->rectangle(ctx,
 							     &fill_style,
 							     &area) == NSERROR_OK);
 
-			} else if ((fill_style.fill_colour & 0xff000000) == 0) {
+			} иначе если ((fill_style.fill_colour & 0xff000000) == 0) {
 				/* transparent pixel used as spacer, skip it */
-				return true;
+				вернуть true;
 			}
 		}
 	}
 
 	/* do the plot */
-	if (data->repeat_x)
+	если (data->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	если (data->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	вернуть (ctx->plot->bitmap(ctx,
 				  bitmap,
 				  data->x, data->y,
 				  data->width, data->height,

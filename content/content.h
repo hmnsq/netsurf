@@ -107,13 +107,13 @@ union content_msg_data {
 	 * CONTENT_MSG_REDRAW - Area of content which needs redrawing
 	 */
 	struct {
-		int x, y, width, height;
+		целое x, y, width, height;
 	} redraw;
 
 	/**
 	 * CONTENT_MSG_REFRESH - Minimum delay
 	 */
-	int delay;
+	целое delay;
 
 	/**
 	 * CONTENT_MSG_REFORMAT - Reformat should not cause a redraw
@@ -160,8 +160,8 @@ union content_msg_data {
 		 * if false, scroll point (x0, y0) to top left of viewport
 		 */
 		bool area;
-		int x0, y0;
-		int x1, y1;
+		целое x0, y0;
+		целое x1, y1;
 	} scroll;
 
 	/**
@@ -209,9 +209,9 @@ union content_msg_data {
 			CONTENT_CARET_REMOVE
 		} type;
 		struct {
-			int x;				/**< Carret x-coord */
-			int y;				/**< Carret y-coord */
-			int height;			/**< Carret height */
+			целое x;				/**< Carret x-coord */
+			целое y;				/**< Carret y-coord */
+			целое height;			/**< Carret height */
 			const struct rect *clip;	/**< Carret clip rect */
 		} pos;			/**< With CONTENT_CARET_SET_POS */
 	} caret;
@@ -302,7 +302,7 @@ bool content_can_reformat(struct hlcache_handle *h);
  * Calls the reformat function for the content.
  */
 void content_reformat(struct hlcache_handle *h, bool background,
-		int width, int height);
+		целое width, целое height);
 
 /**
  * Request a redraw of an area of a content
@@ -314,7 +314,7 @@ void content_reformat(struct hlcache_handle *h, bool background,
  * \param height  Height of rectangle
  */
 void content_request_redraw(struct hlcache_handle *h,
-		int x, int y, int width, int height);
+		целое x, целое y, целое width, целое height);
 
 /**
  * Handle mouse movements in a content window.
@@ -326,7 +326,7 @@ void content_request_redraw(struct hlcache_handle *h,
  * \param  y	  coordinate of mouse
  */
 void content_mouse_track(struct hlcache_handle *h, struct browser_window *bw,
-		browser_mouse_state mouse, int x, int y);
+		browser_mouse_state mouse, целое x, целое y);
 
 /**
  * Handle mouse clicks and movements in a content window.
@@ -344,7 +344,7 @@ void content_mouse_track(struct hlcache_handle *h, struct browser_window *bw,
  * show some harmless action where clicking will be harmful.
  */
 void content_mouse_action(struct hlcache_handle *h, struct browser_window *bw,
-		browser_mouse_state mouse, int x, int y);
+		browser_mouse_state mouse, целое x, целое y);
 
 /**
  * Handle keypresses.
@@ -398,7 +398,7 @@ char * content_get_selection(struct hlcache_handle *h);
  * \param[out] data The context structure to fill in.
  */
 nserror content_get_contextual_content(struct hlcache_handle *h,
-		int x, int y, struct browser_window_features *data);
+		целое x, целое y, struct browser_window_features *data);
 
 /**
  * scroll content at coordnate
@@ -408,7 +408,7 @@ nserror content_get_contextual_content(struct hlcache_handle *h,
  * \param[in] y The y coordinate to examine.
  */
 bool content_scroll_at_point(struct hlcache_handle *h,
-		int x, int y, int scrx, int scry);
+		целое x, целое y, целое scrx, целое scry);
 
 /**
  * Drag and drop a file at coordinate
@@ -418,7 +418,7 @@ bool content_scroll_at_point(struct hlcache_handle *h,
  * \param[in] y The y coordinate to examine.
  */
 bool content_drop_file_at_point(struct hlcache_handle *h,
-		int x, int y, char *file);
+		целое x, целое y, char *file);
 
 
 /**
@@ -474,7 +474,7 @@ const char *content_get_status_message(struct hlcache_handle *h);
  * \param h handle to the content to get available width of.
  * \return Available width of content.
  */
-int content_get_available_width(struct hlcache_handle *h);
+целое content_get_available_width(struct hlcache_handle *h);
 
 
 /**

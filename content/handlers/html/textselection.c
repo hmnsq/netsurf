@@ -65,37 +65,37 @@ selected_part(struct box *box,
 {
 	size_t box_length = box->length + SPACE_LEN(box);
 
-	if (box_length > 0) {
-		if ((box->byte_offset >= start_idx) &&
+	если (box_length > 0) {
+		если ((box->byte_offset >= start_idx) &&
 		    (box->byte_offset + box_length <= end_idx)) {
 
 			/* fully enclosed */
 			*start_offset = 0;
 			*end_offset = box_length;
-			return true;
-		} else if ((box->byte_offset + box_length > start_idx) &&
+			вернуть true;
+		} иначе если ((box->byte_offset + box_length > start_idx) &&
 			   (box->byte_offset < end_idx)) {
 			/* partly enclosed */
-			int offset = 0;
-			int len;
+			целое offset = 0;
+			целое len;
 
-			if (box->byte_offset < start_idx) {
+			если (box->byte_offset < start_idx) {
 				offset = start_idx - box->byte_offset;
 			}
 
 			len = box_length - offset;
 
-			if (box->byte_offset + box_length > end_idx) {
+			если (box->byte_offset + box_length > end_idx) {
 				len = end_idx - (box->byte_offset + offset);
 			}
 
 			*start_offset = offset;
 			*end_offset = offset + len;
 
-			return true;
+			вернуть true;
 		}
 	}
-	return false;
+	вернуть false;
 }
 
 
@@ -123,7 +123,7 @@ coords_from_range(struct box *box,
 	assert(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
+	если (box->parent &&
 	    box->parent->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
@@ -131,7 +131,7 @@ coords_from_range(struct box *box,
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	если (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = coords_from_range(box->list_marker,
@@ -139,29 +139,29 @@ coords_from_range(struct box *box,
 					end_idx,
 					rdwi,
 					true);
-		if (res != NSERROR_OK) {
-			return res;
+		если (res != NSERROR_OK) {
+			вернуть res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	если (box->byte_offset >= end_idx) {
+		вернуть NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
 	child = box->children;
 
-	if ((box->type != BOX_BR) &&
+	если ((box->type != BOX_BR) &&
 	    !((box->type == BOX_FLOAT_LEFT ||
 	       box->type == BOX_FLOAT_RIGHT) &&
 	      !box->text)) {
 		unsigned start_off;
 		unsigned end_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
-			int width, height;
-			int x, y;
+		если (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
+			целое width, height;
+			целое x, y;
 
 			/**
 			 * \todo it should be possible to reduce the redrawn
@@ -172,25 +172,25 @@ coords_from_range(struct box *box,
 			width = box->padding[LEFT] + box->width + box->padding[RIGHT];
 			height = box->padding[TOP] + box->height + box->padding[BOTTOM];
 
-			if ((box->type == BOX_TEXT) &&
+			если ((box->type == BOX_TEXT) &&
 			    (box->space != 0)) {
 				width += box->space;
 			}
 
-			if (rdwi->inited) {
-				if (x < rdwi->r.x0) {
+			если (rdwi->inited) {
+				если (x < rdwi->r.x0) {
 					rdwi->r.x0 = x;
 				}
-				if (y < rdwi->r.y0) {
+				если (y < rdwi->r.y0) {
 					rdwi->r.y0 = y;
 				}
-				if (x + width > rdwi->r.x1) {
+				если (x + width > rdwi->r.x1) {
 					rdwi->r.x1 = x + width;
 				}
-				if (y + height > rdwi->r.y1) {
+				если (y + height > rdwi->r.y1) {
 					rdwi->r.y1 = y + height;
 				}
-			} else {
+			} иначе {
 				rdwi->inited = true;
 				rdwi->r.x0 = x;
 				rdwi->r.y0 = y;
@@ -204,15 +204,15 @@ coords_from_range(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
+	если (child) {
 		struct box *next = child->next;
 
-		while (next && next->byte_offset < start_idx) {
+		пока (next && next->byte_offset < start_idx) {
 			child = next;
 			next = child->next;
 		}
 
-		while (child) {
+		пока (child) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
 			struct box *next = child->next;
@@ -222,15 +222,15 @@ coords_from_range(struct box *box,
 						end_idx,
 						rdwi,
 						false);
-			if (res != NSERROR_OK) {
-				return res;
+			если (res != NSERROR_OK) {
+				вернуть res;
 			}
 
 			child = next;
 		}
 	}
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }
 
 
@@ -261,37 +261,37 @@ selection_copy_box(const char *text,
 	plot_font_style_t *pstyle = NULL;
 
 	/* add any whitespace which precedes the text from this box */
-	if (whitespace_text != NULL &&
+	если (whitespace_text != NULL &&
 	    whitespace_length > 0) {
-		if (!selection_string_append(whitespace_text,
+		если (!selection_string_append(whitespace_text,
 					     whitespace_length,
 					     false,
 					     pstyle,
 					     handle)) {
-			return NSERROR_NOMEM;
+			вернуть NSERROR_NOMEM;
 		}
 	}
 
-	if (box != NULL) {
+	если (box != NULL) {
 		/* HTML */
 		add_space = (box->space != 0);
 
-		if (box->style != NULL) {
+		если (box->style != NULL) {
 			/* Override default font style */
 			font_plot_style_from_css(unit_len_ctx, box->style, &style);
 			pstyle = &style;
-		} else {
+		} иначе {
 			/* If there's no style, there must be no text */
 			assert(box->text == NULL);
 		}
 	}
 
 	/* add the text from this box */
-	if (!selection_string_append(text, length, add_space, pstyle, handle)) {
-		return NSERROR_NOMEM;
+	если (!selection_string_append(text, length, add_space, pstyle, handle)) {
+		вернуть NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }
 
 
@@ -328,7 +328,7 @@ selection_copy(struct box *box,
 	assert(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
+	если (box->parent &&
 	    box->parent->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
@@ -336,7 +336,7 @@ selection_copy(struct box *box,
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	если (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = selection_copy(box->list_marker,
@@ -347,14 +347,14 @@ selection_copy(struct box *box,
 				     before,
 				     first,
 				     true);
-		if (res != NSERROR_OK) {
-			return res;
+		если (res != NSERROR_OK) {
+			вернуть res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	если (box->byte_offset >= end_idx) {
+		вернуть NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
@@ -362,24 +362,24 @@ selection_copy(struct box *box,
 
 	/* If nicely formatted output of the selected text is required, work
 	 * out what whitespace should be placed before the next bit of text */
-	if (before) {
+	если (before) {
 		save_text_solve_whitespace(box,
 					   first,
 					   before,
 					   &whitespace_text,
 					   &whitespace_length);
-	} else {
+	} иначе {
 		whitespace_text = NULL;
 	}
 
-	if ((box->type != BOX_BR) &&
+	если ((box->type != BOX_BR) &&
 	    !((box->type == BOX_FLOAT_LEFT ||
 	       box->type == BOX_FLOAT_RIGHT) &&
 	      !box->text)) {
 		unsigned start_off;
 		unsigned end_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
+		если (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
 			res = selection_copy_box(box->text + start_off,
 						 min(box->length, end_off) - start_off,
 						 box,
@@ -387,10 +387,10 @@ selection_copy(struct box *box,
 						 selstr,
 						 whitespace_text,
 						 whitespace_length);
-			if (res != NSERROR_OK) {
-				return res;
+			если (res != NSERROR_OK) {
+				вернуть res;
 			}
-			if (before) {
+			если (before) {
 				*first = false;
 				*before = WHITESPACE_NONE;
 			}
@@ -401,15 +401,15 @@ selection_copy(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
+	если (child) {
 		struct box *next = child->next;
 
-		while (next && next->byte_offset < start_idx) {
+		пока (next && next->byte_offset < start_idx) {
 			child = next;
 			next = child->next;
 		}
 
-		while (child) {
+		пока (child) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
 			struct box *next = child->next;
@@ -422,15 +422,15 @@ selection_copy(struct box *box,
 					     before,
 					     first,
 					     false);
-			if (res != NSERROR_OK) {
-				return res;
+			если (res != NSERROR_OK) {
+				вернуть res;
 			}
 
 			child = next;
 		}
 	}
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }
 
 
@@ -452,12 +452,12 @@ static unsigned selection_label_subtree(struct box *box, unsigned idx)
 
 	box->byte_offset = idx;
 
-	if (box->text) {
+	если (box->text) {
 		idx += box->length + SPACE_LEN(box);
 	}
 
-	while (child) {
-		if (child->list_marker) {
+	пока (child) {
+		если (child->list_marker) {
 			idx = selection_label_subtree(child->list_marker, idx);
 		}
 
@@ -465,7 +465,7 @@ static unsigned selection_label_subtree(struct box *box, unsigned idx)
 		child = child->next;
 	}
 
-	return idx;
+	вернуть idx;
 }
 
 
@@ -479,18 +479,18 @@ html_textselection_redraw(struct content *c,
 	html_content *html = (html_content *)c;
 	struct rdw_info rdw;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	если (html->layout == NULL) {
+		вернуть NSERROR_INVALID;
 	}
 
 	rdw.inited = false;
 
 	res = coords_from_range(html->layout, start_idx, end_idx, &rdw, false);
-	if (res != NSERROR_OK) {
-		return res;
+	если (res != NSERROR_OK) {
+		вернуть res;
 	}
 
-	if (rdw.inited) {
+	если (rdw.inited) {
 		content__request_redraw(c,
 					rdw.r.x0,
 					rdw.r.y0,
@@ -498,7 +498,7 @@ html_textselection_redraw(struct content *c,
 					rdw.r.y1 - rdw.r.y0);
 	}
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }
 
 
@@ -513,11 +513,11 @@ html_textselection_copy(struct content *c,
 	save_text_whitespace before = WHITESPACE_NONE;
 	bool first = true;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	если (html->layout == NULL) {
+		вернуть NSERROR_INVALID;
 	}
 
-	return selection_copy(html->layout,
+	вернуть selection_copy(html->layout,
 			      &html->unit_len_ctx,
 			      start_idx,
 			      end_idx,
@@ -535,13 +535,13 @@ html_textselection_get_end(struct content *c, unsigned *end_idx)
 	html_content *html = (html_content *)c;
 	unsigned root_idx;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	если (html->layout == NULL) {
+		вернуть NSERROR_INVALID;
 	}
 
 	root_idx = 0;
 
 	*end_idx = selection_label_subtree(html->layout, root_idx);
 
-	return NSERROR_OK;
+	вернуть NSERROR_OK;
 }

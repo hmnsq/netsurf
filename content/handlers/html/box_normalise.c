@@ -46,7 +46,7 @@
  */
 struct span_info {
 	/** Number of rows this cell spans */
-	unsigned int row_span;
+	unsigned целое row_span;
 	/** Row group of cell */
 	struct box *rg;
 	/** The cell in this column spans all rows until the end of the table */
@@ -58,13 +58,13 @@ struct span_info {
  */
 struct columns {
 	/** Current column index */
-	unsigned int current_column;
+	unsigned целое current_column;
 	/** Number of columns in main part of table 1..max columns */
-	unsigned int num_columns;
+	unsigned целое num_columns;
 	/** Information about columns in main table, array [0, num_columns) */
 	struct span_info *spans;
 	/** Number of rows in table */
-	unsigned int num_rows;
+	unsigned целое num_rows;
 };
 
 
@@ -81,21 +81,21 @@ struct columns {
  */
 static bool
 calculate_table_row(struct columns *col_info,
-		    unsigned int col_span,
-		    unsigned int row_span,
-		    unsigned int *start_column,
+		    unsigned целое col_span,
+		    unsigned целое row_span,
+		    unsigned целое *start_column,
 		    struct box *cell)
 {
-	unsigned int cell_start_col = col_info->current_column;
-	unsigned int cell_end_col;
-	unsigned int i;
+	unsigned целое cell_start_col = col_info->current_column;
+	unsigned целое cell_end_col;
+	unsigned целое i;
 	struct span_info *spans;
 	struct box *rg = cell->parent->parent; /* Cell's row group */
 
 	/* Skip columns with cells spanning from above */
 	/* TODO: Need to ignore cells spanning from above that belong to
 	 *       different row group.  We don't have that info here. */
-	while (col_info->spans[cell_start_col].row_span != 0 &&
+	пока (col_info->spans[cell_start_col].row_span != 0 &&
 			col_info->spans[cell_start_col].rg == rg) {
 		cell_start_col++;
 	}
@@ -105,19 +105,19 @@ calculate_table_row(struct columns *col_info,
 
 	/* If this cell has a colspan of 0, then assume 1.
 	 * No other browser supports colspan=0, anyway. */
-	if (col_span == 0)
+	если (col_span == 0)
 		col_span = 1;
 
 	cell_end_col = cell_start_col + col_span;
 
-	if (col_info->num_columns < cell_end_col) {
+	если (col_info->num_columns < cell_end_col) {
 		/* It appears that this row has more columns than
 		 * the maximum recorded for the table so far.
 		 * Allocate more span records. */
 		spans = realloc(col_info->spans,
 				sizeof *spans * (cell_end_col + 1));
-		if (spans == NULL)
-			return false;
+		если (spans == NULL)
+			вернуть false;
 
 		col_info->spans = spans;
 		col_info->num_columns = cell_end_col;
@@ -130,7 +130,7 @@ calculate_table_row(struct columns *col_info,
 	/* This cell may span multiple columns. If it also wants to span
 	 * multiple rows, temporarily assume it spans 1 row only. This will
 	 * be fixed up in box_normalise_table_spans() */
-	for (i = cell_start_col; i < cell_end_col; i++) {
+	для (i = cell_start_col; i < cell_end_col; i++) {
 		col_info->spans[i].row_span = (row_span == 0) ? 1 : row_span;
 		col_info->spans[i].auto_row = (row_span == 0);
 		col_info->spans[i].rg = rg;
@@ -141,7 +141,7 @@ calculate_table_row(struct columns *col_info,
 
 	*start_column = cell_start_col;
 
-	return true;
+	вернуть true;
 }
 
 
@@ -155,7 +155,7 @@ box_normalise_table_row(struct box *row,
 	struct box *next_child;
 	struct box *cell = NULL;
 	css_computed_style *style;
-	unsigned int i;
+	unsigned целое i;
 	nscss_select_ctx ctx;
 
 	assert(row != NULL);
@@ -167,14 +167,14 @@ box_normalise_table_row(struct box *row,
 	NSLOG(netsurf, INFO, "row %p", row);
 #endif
 
-	for (child = row->children; child != NULL; child = next_child) {
+	для (child = row->children; child != NULL; child = next_child) {
 		next_child = child->next;
 
 		switch (child->type) {
 		case BOX_TABLE_CELL:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
+			если (box_normalise_block(child, root, c) == false)
+				вернуть false;
 			cell = child;
 			break;
 		case BOX_FLEX:
@@ -193,25 +193,25 @@ box_normalise_table_row(struct box *row,
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					row->style);
-			if (style == NULL)
-				return false;
+			если (style == NULL)
+				вернуть false;
 
 			cell = box_create(NULL, style, true, row->href,
 					row->target, NULL, NULL, c->bctx);
-			if (cell == NULL) {
+			если (cell == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				вернуть false;
 			}
 			cell->type = BOX_TABLE_CELL;
 
-			if (child->prev == NULL)
+			если (child->prev == NULL)
 				row->children = cell;
-			else
+			иначе
 				child->prev->next = cell;
 
 			cell->prev = child->prev;
 
-			while (child != NULL && (
+			пока (child != NULL && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -229,14 +229,14 @@ box_normalise_table_row(struct box *row,
 
 			cell->last->next = NULL;
 			cell->next = next_child = child;
-			if (cell->next != NULL)
+			если (cell->next != NULL)
 				cell->next->prev = cell;
-			else
+			иначе
 				row->last = cell;
 			cell->parent = row;
 
-			if (box_normalise_block(cell, root, c) == false)
-				return false;
+			если (box_normalise_block(cell, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_INLINE:
 		case BOX_INLINE_END:
@@ -254,15 +254,15 @@ box_normalise_table_row(struct box *row,
 			assert(0);
 		}
 
-		if (calculate_table_row(col_info, cell->columns, cell->rows,
+		если (calculate_table_row(col_info, cell->columns, cell->rows,
 				&cell->start_column, cell) == false)
-			return false;
+			вернуть false;
 	}
 
 
 	/* Update row spanning details for all columns */
-	for (i = 0; i < col_info->num_columns; i++) {
-		if (col_info->spans[i].row_span != 0 &&
+	для (i = 0; i < col_info->num_columns; i++) {
+		если (col_info->spans[i].row_span != 0 &&
 				col_info->spans[i].auto_row == false) {
 			/* This cell spans rows, and is not an auto row.
 			 * Reduce number of rows left to span */
@@ -280,7 +280,7 @@ box_normalise_table_row(struct box *row,
 	NSLOG(netsurf, INFO, "row %p done", row);
 #endif
 
-	return true;
+	вернуть true;
 }
 
 
@@ -295,7 +295,7 @@ box_normalise_table_row_group(struct box *row_group,
 	struct box *row;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
-	unsigned int group_row_count = 0;
+	unsigned целое group_row_count = 0;
 
 	assert(row_group != 0);
 	assert(row_group->type == BOX_TABLE_ROW_GROUP);
@@ -306,16 +306,16 @@ box_normalise_table_row_group(struct box *row_group,
 	NSLOG(netsurf, INFO, "row_group %p", row_group);
 #endif
 
-	for (child = row_group->children; child != NULL; child = next_child) {
+	для (child = row_group->children; child != NULL; child = next_child) {
 		next_child = child->next;
 
 		switch (child->type) {
 		case BOX_TABLE_ROW:
 			/* ok */
 			group_row_count++;
-			if (box_normalise_table_row(child, root, col_info,
+			если (box_normalise_table_row(child, root, col_info,
 					c) == false)
-				return false;
+				вернуть false;
 			break;
 		case BOX_FLEX:
 		case BOX_BLOCK:
@@ -333,25 +333,25 @@ box_normalise_table_row_group(struct box *row_group,
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					row_group->style);
-			if (style == NULL)
-				return false;
+			если (style == NULL)
+				вернуть false;
 
 			row = box_create(NULL, style, true, row_group->href,
 					row_group->target, NULL, NULL, c->bctx);
-			if (row == NULL) {
+			если (row == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				вернуть false;
 			}
 			row->type = BOX_TABLE_ROW;
 
-			if (child->prev == NULL)
+			если (child->prev == NULL)
 				row_group->children = row;
-			else
+			иначе
 				child->prev->next = row;
 
 			row->prev = child->prev;
 
-			while (child != NULL && (
+			пока (child != NULL && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -369,16 +369,16 @@ box_normalise_table_row_group(struct box *row_group,
 
 			row->last->next = NULL;
 			row->next = next_child = child;
-			if (row->next != NULL)
+			если (row->next != NULL)
 				row->next->prev = row;
-			else
+			иначе
 				row_group->last = row;
 			row->parent = row_group;
 
 			group_row_count++;
-			if (box_normalise_table_row(row, root, col_info,
+			если (box_normalise_table_row(row, root, col_info,
 					c) == false)
-				return false;
+				вернуть false;
 			break;
 		case BOX_INLINE:
 		case BOX_INLINE_END:
@@ -397,7 +397,7 @@ box_normalise_table_row_group(struct box *row_group,
 		}
 	}
 
-	if (row_group->children == NULL) {
+	если (row_group->children == NULL) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "row_group->children == 0, inserting implied row");
@@ -412,15 +412,15 @@ box_normalise_table_row_group(struct box *row_group,
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				row_group->style);
-		if (style == NULL) {
-			return false;
+		если (style == NULL) {
+			вернуть false;
 		}
 
 		row = box_create(NULL, style, true, row_group->href,
 				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		если (row == NULL) {
 			css_computed_style_destroy(style);
-			return false;
+			вернуть false;
 		}
 		row->type = BOX_TABLE_ROW;
 
@@ -439,7 +439,7 @@ box_normalise_table_row_group(struct box *row_group,
 	NSLOG(netsurf, INFO, "row_group %p done", row_group);
 #endif
 
-	return true;
+	вернуть true;
 }
 
 
@@ -462,9 +462,9 @@ box_normalise_table_spans(struct box *table,
 	struct box *table_row_group;
 	struct box *table_row;
 	struct box *table_cell;
-	unsigned int rows_left = table->rows;
-	unsigned int group_rows_left;
-	unsigned int col;
+	unsigned целое rows_left = table->rows;
+	unsigned целое group_rows_left;
+	unsigned целое col;
 	nscss_select_ctx ctx;
 
 	ctx.root_style = root->style;
@@ -474,22 +474,22 @@ box_normalise_table_spans(struct box *table,
 
 	/* Scan table, filling in width and height of table cells with
 	 * colspan = 0 and rowspan = 0. Also generate empty cells */
-	for (table_row_group = table->children;
+	для (table_row_group = table->children;
 	     table_row_group != NULL;
 	     table_row_group = table_row_group->next) {
 
 		group_rows_left = table_row_group->rows;
 
-		for (table_row = table_row_group->children;
+		для (table_row = table_row_group->children;
 		     table_row != NULL;
 		     table_row = table_row->next) {
 
-			for (table_cell = table_row->children;
+			для (table_cell = table_row->children;
 			     table_cell != NULL;
 			     table_cell = table_cell->next) {
 
 				/* colspan = 0 -> colspan = 1 */
-				if (table_cell->columns == 0) {
+				если (table_cell->columns == 0) {
 					table_cell->columns = 1;
 				}
 
@@ -497,17 +497,17 @@ box_normalise_table_spans(struct box *table,
 				 * the number of rows left in the row
 				 * group
 				 */
-				if (table_cell->rows == 0) {
+				если (table_cell->rows == 0) {
 					table_cell->rows = group_rows_left;
 				}
 
 				/* limit rowspans within group */
-				if (table_cell->rows > group_rows_left) {
+				если (table_cell->rows > group_rows_left) {
 					table_cell->rows = group_rows_left;
 				}
 
 				/* Record span information */
-				for (col = table_cell->start_column;
+				для (col = table_cell->start_column;
 						col < table_cell->start_column +
 						table_cell->columns; col++) {
 					spans[col].row_span = table_cell->rows;
@@ -515,9 +515,9 @@ box_normalise_table_spans(struct box *table,
 			}
 
 			/* Reduce span count of each column */
-			for (col = 0; col < table->columns; col++) {
-				if (spans[col].row_span == 0) {
-					unsigned int start = col;
+			для (col = 0; col < table->columns; col++) {
+				если (spans[col].row_span == 0) {
+					unsigned целое start = col;
 					css_computed_style *style;
 					struct box *cell, *prev;
 
@@ -529,7 +529,7 @@ box_normalise_table_spans(struct box *table,
 					assert(table_row->style != NULL);
 
 					/* Find width of gap */
-					while (col < table->columns &&
+					пока (col < table->columns &&
 							spans[col].row_span ==
 							0) {
 						col++;
@@ -544,17 +544,17 @@ box_normalise_table_spans(struct box *table,
 					style = nscss_get_blank_style(&ctx,
 							&c->unit_len_ctx,
 							table_row->style);
-					if (style == NULL)
-						return false;
+					если (style == NULL)
+						вернуть false;
 
 					cell = box_create(NULL, style, true,
 							table_row->href,
 							table_row->target,
 							NULL, NULL, c->bctx);
-					if (cell == NULL) {
+					если (cell == NULL) {
 						css_computed_style_destroy(
 								style);
-						return false;
+						вернуть false;
 					}
 					cell->type = BOX_TABLE_CELL;
 
@@ -563,32 +563,32 @@ box_normalise_table_spans(struct box *table,
 					cell->start_column = start;
 
 					/* Find place to insert cell */
-					for (prev = table_row->children;
+					для (prev = table_row->children;
 							prev != NULL;
 							prev = prev->next) {
-						if (prev->start_column +
+						если (prev->start_column +
 							prev->columns ==
 								start)
 							break;
-						if (prev->next == NULL)
+						если (prev->next == NULL)
 							break;
 					}
 
 					/* Insert it */
-					if (prev == NULL) {
-						if (table_row->children != NULL)
+					если (prev == NULL) {
+						если (table_row->children != NULL)
 							table_row->children->
 								prev = cell;
-						else
+						иначе
 							table_row->last = cell;
 
 						cell->next =
 							table_row->children;
 						table_row->children = cell;
-					} else {
-						if (prev->next != NULL)
+					} иначе {
+						если (prev->next != NULL)
 							prev->next->prev = cell;
-						else
+						иначе
 							table_row->last = cell;
 
 						cell->next = prev->next;
@@ -596,7 +596,7 @@ box_normalise_table_spans(struct box *table,
 						cell->prev = prev;
 					}
 					cell->parent = table_row;
-				} else {
+				} иначе {
 					spans[col].row_span--;
 				}
 			}
@@ -609,7 +609,7 @@ box_normalise_table_spans(struct box *table,
 		group_rows_left--;
 	}
 
-	return true;
+	вернуть true;
 }
 
 
@@ -635,23 +635,23 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 	col_info.num_columns = 1;
 	col_info.current_column = 0;
 	col_info.spans = malloc(2 * sizeof *col_info.spans);
-	if (col_info.spans == NULL)
-		return false;
+	если (col_info.spans == NULL)
+		вернуть false;
 
 	col_info.spans[0].row_span = col_info.spans[1].row_span = 0;
 	col_info.spans[0].auto_row = false;
 	col_info.spans[1].auto_row = false;
 	col_info.num_rows = 0;
 
-	for (child = table->children; child != NULL; child = next_child) {
+	для (child = table->children; child != NULL; child = next_child) {
 		next_child = child->next;
 		switch (child->type) {
 		case BOX_TABLE_ROW_GROUP:
 			/* ok */
-			if (box_normalise_table_row_group(child, root,
+			если (box_normalise_table_row_group(child, root,
 					&col_info, c) == false) {
 				free(col_info.spans);
-				return false;
+				вернуть false;
 			}
 			break;
 		case BOX_FLEX:
@@ -670,29 +670,29 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					table->style);
-			if (style == NULL) {
+			если (style == NULL) {
 				free(col_info.spans);
-				return false;
+				вернуть false;
 			}
 
 			row_group = box_create(NULL, style, true, table->href,
 					table->target, NULL, NULL, c->bctx);
-			if (row_group == NULL) {
+			если (row_group == NULL) {
 				css_computed_style_destroy(style);
 				free(col_info.spans);
-				return false;
+				вернуть false;
 			}
 
 			row_group->type = BOX_TABLE_ROW_GROUP;
 
-			if (child->prev == NULL)
+			если (child->prev == NULL)
 				table->children = row_group;
-			else
+			иначе
 				child->prev->next = row_group;
 
 			row_group->prev = child->prev;
 
-			while (child != NULL && (
+			пока (child != NULL && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -710,16 +710,16 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 			row_group->last->next = NULL;
 			row_group->next = next_child = child;
-			if (row_group->next != NULL)
+			если (row_group->next != NULL)
 				row_group->next->prev = row_group;
-			else
+			иначе
 				table->last = row_group;
 			row_group->parent = table;
 
-			if (box_normalise_table_row_group(row_group, root,
+			если (box_normalise_table_row_group(row_group, root,
 					&col_info, c) == false) {
 				free(col_info.spans);
-				return false;
+				вернуть false;
 			}
 			break;
 		case BOX_INLINE:
@@ -743,7 +743,7 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 	table->columns = col_info.num_columns;
 	table->rows = col_info.num_rows;
 
-	if (table->children == NULL) {
+	если (table->children == NULL) {
 		struct box *row;
 
 #ifdef BOX_NORMALISE_DEBUG
@@ -760,35 +760,35 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				table->style);
-		if (style == NULL) {
+		если (style == NULL) {
 			free(col_info.spans);
-			return false;
+			вернуть false;
 		}
 
 		row_group = box_create(NULL, style, true, table->href,
 				table->target, NULL, NULL, c->bctx);
-		if (row_group == NULL) {
+		если (row_group == NULL) {
 			css_computed_style_destroy(style);
 			free(col_info.spans);
-			return false;
+			вернуть false;
 		}
 		row_group->type = BOX_TABLE_ROW_GROUP;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				row_group->style);
-		if (style == NULL) {
+		если (style == NULL) {
 			box_free(row_group);
 			free(col_info.spans);
-			return false;
+			вернуть false;
 		}
 
 		row = box_create(NULL, style, true, row_group->href,
 				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		если (row == NULL) {
 			css_computed_style_destroy(style);
 			box_free(row_group);
 			free(col_info.spans);
-			return false;
+			вернуть false;
 		}
 		row->type = BOX_TABLE_ROW;
 
@@ -801,9 +801,9 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 		table->rows = 1;
 	}
 
-	if (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
+	если (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
 		free(col_info.spans);
-		return false;
+		вернуть false;
 	}
 
 	free(col_info.spans);
@@ -812,7 +812,7 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 	NSLOG(netsurf, INFO, "table %p done", table);
 #endif
 
-	return true;
+	вернуть true;
 }
 
 static bool box_normalise_flex(
@@ -839,7 +839,7 @@ static bool box_normalise_flex(
 	assert(flex_container->type == BOX_FLEX ||
 	       flex_container->type == BOX_INLINE_FLEX);
 
-	for (child = flex_container->children; child != NULL; child = next_child) {
+	для (child = flex_container->children; child != NULL; child = next_child) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d",
 				child, child->type);
@@ -850,13 +850,13 @@ static bool box_normalise_flex(
 		switch (child->type) {
 		case BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
+			если (box_normalise_flex(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
+			если (box_normalise_block(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_INLINE_CONTAINER:
 			/* insert implied flex item */
@@ -869,27 +869,27 @@ static bool box_normalise_flex(
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			если (style == NULL)
+				вернуть false;
 
 			implied_flex_item = box_create(NULL, style, true,
 					flex_container->href,
 					flex_container->target,
 					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+			если (implied_flex_item == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				вернуть false;
 			}
 			implied_flex_item->type = BOX_BLOCK;
 
-			if (child->prev == NULL)
+			если (child->prev == NULL)
 				flex_container->children = implied_flex_item;
-			else
+			иначе
 				child->prev->next = implied_flex_item;
 
 			implied_flex_item->prev = child->prev;
 
-			while (child != NULL &&
+			пока (child != NULL &&
 					child->type == BOX_INLINE_CONTAINER) {
 				box_add_child(implied_flex_item, child);
 
@@ -900,20 +900,20 @@ static bool box_normalise_flex(
 
 			implied_flex_item->last->next = NULL;
 			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
+			если (implied_flex_item->next != NULL)
 				implied_flex_item->next->prev = implied_flex_item;
-			else
+			иначе
 				flex_container->last = implied_flex_item;
 			implied_flex_item->parent = flex_container;
 
-			if (box_normalise_block(implied_flex_item,
+			если (box_normalise_block(implied_flex_item,
 					root, c) == false)
-				return false;
+				вернуть false;
 			break;
 
 		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
+			если (box_normalise_table(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_INLINE:
 		case BOX_INLINE_END:
@@ -940,27 +940,27 @@ static bool box_normalise_flex(
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			если (style == NULL)
+				вернуть false;
 
 			implied_flex_item = box_create(NULL, style, true,
 					flex_container->href,
 					flex_container->target,
 					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+			если (implied_flex_item == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				вернуть false;
 			}
 			implied_flex_item->type = BOX_TABLE;
 
-			if (child->prev == NULL)
+			если (child->prev == NULL)
 				flex_container->children = implied_flex_item;
-			else
+			иначе
 				child->prev->next = implied_flex_item;
 
 			implied_flex_item->prev = child->prev;
 
-			while (child != NULL && (
+			пока (child != NULL && (
 					child->type == BOX_TABLE_ROW_GROUP ||
 					child->type == BOX_TABLE_ROW ||
 					child->type == BOX_TABLE_CELL)) {
@@ -973,22 +973,22 @@ static bool box_normalise_flex(
 
 			implied_flex_item->last->next = NULL;
 			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
+			если (implied_flex_item->next != NULL)
 				implied_flex_item->next->prev = implied_flex_item;
-			else
+			иначе
 				flex_container->last = implied_flex_item;
 			implied_flex_item->parent = flex_container;
 
-			if (box_normalise_table(implied_flex_item,
+			если (box_normalise_table(implied_flex_item,
 					root, c) == false)
-				return false;
+				вернуть false;
 			break;
 		default:
 			assert(0);
 		}
 	}
 
-	return true;
+	вернуть true;
 }
 
 static bool
@@ -1006,7 +1006,7 @@ box_normalise_inline_container(struct box *cont,
 	NSLOG(netsurf, INFO, "cont %p", cont);
 #endif
 
-	for (child = cont->children; child != NULL; child = next_child) {
+	для (child = cont->children; child != NULL; child = next_child) {
 		next_child = child->next;
 		switch (child->type) {
 		case BOX_INLINE:
@@ -1017,13 +1017,13 @@ box_normalise_inline_container(struct box *cont,
 			break;
 		case BOX_INLINE_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
+			если (box_normalise_block(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_INLINE_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
+			если (box_normalise_flex(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_FLOAT_LEFT:
 		case BOX_FLOAT_RIGHT:
@@ -1032,33 +1032,33 @@ box_normalise_inline_container(struct box *cont,
 
 			switch (child->children->type) {
 			case BOX_BLOCK:
-				if (box_normalise_block(child->children, root,
+				если (box_normalise_block(child->children, root,
 						c) == false)
-					return false;
+					вернуть false;
 				break;
 			case BOX_TABLE:
-				if (box_normalise_table(child->children, root,
+				если (box_normalise_table(child->children, root,
 						c) == false)
-					return false;
+					вернуть false;
 				break;
 			case BOX_FLEX:
-				if (box_normalise_flex(child->children, root,
+				если (box_normalise_flex(child->children, root,
 						c) == false)
-					return false;
+					вернуть false;
 				break;
 			default:
 				assert(0);
 			}
 
-			if (child->children == NULL) {
+			если (child->children == NULL) {
 				/* the child has destroyed itself: remove float */
-				if (child->prev == NULL)
+				если (child->prev == NULL)
 					child->parent->children = child->next;
-				else
+				иначе
 					child->prev->next = child->next;
-				if (child->next != NULL)
+				если (child->next != NULL)
 					child->next->prev = child->prev;
-				else
+				иначе
 					child->parent->last = child->prev;
 
 				box_free(child);
@@ -1080,7 +1080,7 @@ box_normalise_inline_container(struct box *cont,
 	NSLOG(netsurf, INFO, "cont %p done", cont);
 #endif
 
-	return true;
+	вернуть true;
 }
 
 /* Exported function documented in html/box_normalise.h */
@@ -1105,7 +1105,7 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 	assert(block->type == BOX_BLOCK || block->type == BOX_INLINE_BLOCK ||
 			block->type == BOX_TABLE_CELL);
 
-	for (child = block->children; child != NULL; child = next_child) {
+	для (child = block->children; child != NULL; child = next_child) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d", child,
 		      child->type);
@@ -1116,21 +1116,21 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 		switch (child->type) {
 		case BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
+			если (box_normalise_flex(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
+			если (box_normalise_block(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_INLINE_CONTAINER:
-			if (box_normalise_inline_container(child, root, c) == false)
-				return false;
+			если (box_normalise_inline_container(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
+			если (box_normalise_table(child, root, c) == false)
+				вернуть false;
 			break;
 		case BOX_INLINE:
 		case BOX_INLINE_END:
@@ -1157,25 +1157,25 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					block->style);
-			if (style == NULL)
-				return false;
+			если (style == NULL)
+				вернуть false;
 
 			table = box_create(NULL, style, true, block->href,
 					block->target, NULL, NULL, c->bctx);
-			if (table == NULL) {
+			если (table == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				вернуть false;
 			}
 			table->type = BOX_TABLE;
 
-			if (child->prev == NULL)
+			если (child->prev == NULL)
 				block->children = table;
-			else
+			иначе
 				child->prev->next = table;
 
 			table->prev = child->prev;
 
-			while (child != NULL && (
+			пока (child != NULL && (
 					child->type == BOX_TABLE_ROW_GROUP ||
 					child->type == BOX_TABLE_ROW ||
 					child->type == BOX_TABLE_CELL)) {
@@ -1188,19 +1188,19 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 
 			table->last->next = NULL;
 			table->next = next_child = child;
-			if (table->next != NULL)
+			если (table->next != NULL)
 				table->next->prev = table;
-			else
+			иначе
 				block->last = table;
 			table->parent = block;
 
-			if (box_normalise_table(table, root, c) == false)
-				return false;
+			если (box_normalise_table(table, root, c) == false)
+				вернуть false;
 			break;
 		default:
 			assert(0);
 		}
 	}
 
-	return true;
+	вернуть true;
 }
