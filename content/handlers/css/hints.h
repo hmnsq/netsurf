@@ -50,6 +50,6 @@ css_error node_presentational_hint(
  * \param result  Pointer to location to receive resulting css_color
  * \return true on success, false on invalid input
  */
-bool nscss_parse_colour(const char *data, css_color *result);
+bool nscss_parse_colour(const var_na *data, css_color *result);
 
 #endif

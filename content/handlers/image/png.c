@@ -44,29 +44,29 @@
 #define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
 #endif
 
-#if PNG_LIBPNG_VER < 10209
+#ꦪꦼꦤ꧀ PNG_LIBPNG_VER < 10209
 #define png_set_expand_gray_1_2_4_to_8(png) png_set_gray_1_2_4_to_8(png)
 #endif
 
-typedef struct nspng_content {
-	struct content base; /**< base content type */
+typedef sa_nracanaa nspng_content {
+	sa_nracanaa content base; /**< base content type */
 
 	bool no_process_data; /**< Do not continue to process data as it arrives */
 	png_structp png;
 	png_infop info;
-	int interlace;
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	puur_naa_nka interlace;
+	sa_nracanaa bitmap *bitmap;	/**< Created NetSurf bitmap */
 	size_t rowstride, bpp; /**< Bitmap rowstride and bpp */
 	size_t rowbytes; /**< Number of bytes per row */
 } nspng_content;
 
-static unsigned int interlace_start[8] = {0, 16, 0, 8, 0, 4, 0};
-static unsigned int interlace_step[8] = {28, 28, 12, 12, 4, 4, 0};
-static unsigned int interlace_row_start[8] = {0, 0, 4, 0, 2, 0, 1};
-static unsigned int interlace_row_step[8] = {8, 8, 8, 4, 4, 2, 2};
+static unsigned puur_naa_nka interlace_start[8] = {0, 16, 0, 8, 0, 4, 0};
+static unsigned puur_naa_nka interlace_step[8] = {28, 28, 12, 12, 4, 4, 0};
+static unsigned puur_naa_nka interlace_row_start[8] = {0, 0, 4, 0, 2, 0, 1};
+static unsigned puur_naa_nka interlace_row_step[8] = {8, 8, 8, 4, 4, 2, 2};
 
 /** Callbak error numbers*/
-enum nspng_cberr {
+ga_nanaa nspng_cberr {
 	CBERR_NONE = 0, /* no error */
 	CBERR_LIBPNG, /* error from png library */
 	CBERR_NOPRE, /* no pre-conversion performed */
@@ -91,64 +91,64 @@ static void nspng_error(png_structp png_ptr, png_const_charp error_message)
 
 static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
 {
-	int bit_depth, color_type, intent;
-	double gamma;
+	puur_naa_nka bit_depth, color_type, intent;
+	dviguu_na gamma;
 
 	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 	color_type = png_get_color_type(png_ptr, info_ptr);
 
 	/* Set up our transformations */
-	if (color_type == PNG_COLOR_TYPE_PALETTE) {
+	ꦪꦼꦤ꧀ (color_type == PNG_COLOR_TYPE_PALETTE) {
 		png_set_palette_to_rgb(png_ptr);
 	}
 
-	if ((color_type == PNG_COLOR_TYPE_GRAY) && (bit_depth < 8)) {
+	ꦪꦼꦤ꧀ ((color_type == PNG_COLOR_TYPE_GRAY) && (bit_depth < 8)) {
 		png_set_expand_gray_1_2_4_to_8(png_ptr);
 	}
 
-	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
+	ꦪꦼꦤ꧀ (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
 		png_set_tRNS_to_alpha(png_ptr);
 	}
 
-	if (bit_depth == 16) {
+	ꦪꦼꦤ꧀ (bit_depth == 16) {
 		png_set_strip_16(png_ptr);
 	}
 
-	if (color_type == PNG_COLOR_TYPE_GRAY ||
+	ꦪꦼꦤ꧀ (color_type == PNG_COLOR_TYPE_GRAY ||
 	    color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
 		png_set_gray_to_rgb(png_ptr);
 	}
 
 	switch (bitmap_fmt.layout) {
-	case BITMAP_LAYOUT_B8G8R8A8: /* Fall through. */
-	case BITMAP_LAYOUT_A8B8G8R8:
+	pak_sa BITMAP_LAYOUT_B8G8R8A8: /* Fall through. */
+	pak_sa BITMAP_LAYOUT_A8B8G8R8:
 		png_set_bgr(png_ptr);
-		break;
+		bha_nga;
 	default:
 		/* RGB is the default. */
-		break;
+		bha_nga;
 	}
 
-	if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
+	ꦪꦼꦤ꧀ (!(color_type & PNG_COLOR_MASK_ALPHA)) {
 		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
-		case BITMAP_LAYOUT_A8B8G8R8:
+		pak_sa BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
+		pak_sa BITMAP_LAYOUT_A8B8G8R8:
 			png_set_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
-			break;
+			bha_nga;
 
 		default:
 			png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-			break;
+			bha_nga;
 		}
-	} else {
+	} ꦭꦶꦪ {
 		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
-		case BITMAP_LAYOUT_A8B8G8R8:
+		pak_sa BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
+		pak_sa BITMAP_LAYOUT_A8B8G8R8:
 			png_set_swap_alpha(png_ptr);
-			break;
+			bha_nga;
 		default:
 			/* Alpha as final component is the default. */
-			break;
+			bha_nga;
 		}
 	}
 
@@ -156,12 +156,12 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
 	 * this appears to be correct (at least in respect to !Browse)
 	 * see http://www.w3.org/Graphics/PNG/all_seven.html for a test case
 	 */
-	if (png_get_sRGB(png_ptr, info_ptr, &intent)) {
+	ꦪꦼꦤ꧀ (png_get_sRGB(png_ptr, info_ptr, &intent)) {
 		png_set_gamma(png_ptr, 2.2, 0.45455);
-	} else {
-		if (png_get_gAMA(png_ptr, info_ptr, &gamma)) {
+	} ꦭꦶꦪ {
+		ꦪꦼꦤ꧀ (png_get_gAMA(png_ptr, info_ptr, &gamma)) {
 			png_set_gamma(png_ptr, 2.2, gamma);
-		} else {
+		} ꦭꦶꦪ {
 			png_set_gamma(png_ptr, 2.2, 0.45455);
 		}
 	}
@@ -175,7 +175,7 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
  */
 static void info_callback(png_structp png_s, png_infop info)
 {
-	int interlace;
+	puur_naa_nka interlace;
 	png_uint_32 width, height;
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
 
@@ -188,19 +188,19 @@ static void info_callback(png_structp png_s, png_infop info)
 	png_c->base.size += width * height * 4;
 
 	/* see if progressive-conversion should continue */
-	if (image_cache_speculate((struct content *)png_c) == false) {
+	ꦪꦼꦤ꧀ (image_cache_speculate((sa_nracanaa content *)png_c) == false) {
 		longjmp(png_jmpbuf(png_s), CBERR_NOPRE);
 	}
 
 	/* Claim the required memory for the converted PNG */
 	png_c->bitmap = guit->bitmap->create(width, height, BITMAP_NONE);
-	if (png_c->bitmap == NULL) {
+	ꦪꦼꦤ꧀ (png_c->bitmap == NULL) {
 		/* Failed to create bitmap skip pre-conversion */
 		longjmp(png_jmpbuf(png_s), CBERR_NOPRE);
 	}
 
 	png_c->rowstride = guit->bitmap->get_rowstride(png_c->bitmap);
-	png_c->bpp = sizeof(uint32_t);
+	png_c->bpp = parimaa_na(uint32_t);
 
 	nspng_setup_transforms(png_s, info);
 
@@ -212,23 +212,23 @@ static void info_callback(png_structp png_s, png_infop info)
 }
 
 static void row_callback(png_structp png_s, png_bytep new_row,
-			 png_uint_32 row_num, int pass)
+			 png_uint_32 row_num, puur_naa_nka pass)
 {
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
 	unsigned long rowbytes = png_c->rowbytes;
-	unsigned char *buffer, *row;
+	unsigned var_na *buffer, *row;
 
 	/* Give up if there's no bitmap */
-	if (png_c->bitmap == NULL)
-		return;
+	ꦪꦼꦤ꧀ (png_c->bitmap == NULL)
+		ꦮꦭꦶ;
 
 	/* Abort if we've not got any data */
-	if (new_row == NULL)
-		return;
+	ꦪꦼꦤ꧀ (new_row == NULL)
+		ꦮꦭꦶ;
 
 	/* Get bitmap buffer */
 	buffer = guit->bitmap->get_buffer(png_c->bitmap);
-	if (buffer == NULL) {
+	ꦪꦼꦤ꧀ (buffer == NULL) {
 		/* No buffer, bail out */
 		longjmp(png_jmpbuf(png_s), 1);
 	}
@@ -237,10 +237,10 @@ static void row_callback(png_structp png_s, png_bytep new_row,
 	row = buffer + (png_c->rowstride * row_num);
 
 	/* Handle interlaced sprites using the Adam7 algorithm */
-	if (png_c->interlace) {
+	ꦪꦼꦤ꧀ (png_c->interlace) {
 		unsigned long dst_off;
 		unsigned long src_off = 0;
-		unsigned int start, step;
+		unsigned puur_naa_nka start, step;
 
 		start = interlace_start[pass];
 		step = interlace_step[pass];
@@ -251,13 +251,13 @@ static void row_callback(png_structp png_s, png_bytep new_row,
 		 * into consideration */
 		row = buffer + (png_c->rowstride * row_num);
 
-		for (dst_off = start; dst_off < rowbytes; dst_off += step) {
+		ꦏꦁꦒꦺꦴ (dst_off = start; dst_off < rowbytes; dst_off += step) {
 			row[dst_off++] = new_row[src_off++];
 			row[dst_off++] = new_row[src_off++];
 			row[dst_off++] = new_row[src_off++];
 			row[dst_off++] = new_row[src_off++];
 		}
-	} else {
+	} ꦭꦶꦪ {
 		/* Do a fast memcpy of the row data */
 		memcpy(row, new_row, rowbytes);
 	}
@@ -273,52 +273,52 @@ static nserror nspng_create_png_data(nspng_content *png_c)
 	png_c->bitmap = NULL;
 
 	png_c->png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-	if (png_c->png == NULL) {
+	ꦪꦼꦤ꧀ (png_c->png == NULL) {
 		content_broadcast_error(&png_c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		ꦮꦭꦶ NSERROR_NOMEM;
 	}
 
 	png_set_error_fn(png_c->png, NULL, nspng_error, nspng_warning);
 
 	png_c->info = png_create_info_struct(png_c->png);
-	if (png_c->info == NULL) {
+	ꦪꦼꦤ꧀ (png_c->info == NULL) {
 		png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 
 		content_broadcast_error(&png_c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		ꦮꦭꦶ NSERROR_NOMEM;
 	}
 
-	if (setjmp(png_jmpbuf(png_c->png))) {
+	ꦪꦼꦤ꧀ (setjmp(png_jmpbuf(png_c->png))) {
 		png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 		NSLOG(netsurf, INFO, "Failed to set callbacks");
 		png_c->png = NULL;
 		png_c->info = NULL;
 
 		content_broadcast_error(&png_c->base, NSERROR_PNG_ERROR, NULL);
-		return NSERROR_NOMEM;
+		ꦮꦭꦶ NSERROR_NOMEM;
 	}
 
 	png_set_progressive_read_fn(png_c->png, png_c,
 			info_callback, row_callback, end_callback);
 
-	return NSERROR_OK;
+	ꦮꦭꦶ NSERROR_OK;
 }
 
 static nserror
 nspng_create(const content_handler *handler,
 	     lwc_string *imime_type,
-	     const struct http_parameter *params,
-	     struct llcache_handle *llcache,
-	     const char *fallback_charset,
+	     const sa_nracanaa http_parameter *params,
+	     sa_nracanaa llcache_handle *llcache,
+	     const var_na *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     sa_nracanaa content **c)
 {
 	nspng_content *png_c;
 	nserror error;
 
-	png_c = calloc(1, sizeof(nspng_content));
-	if (png_c == NULL)
-		return NSERROR_NOMEM;
+	png_c = calloc(1, parimaa_na(nspng_content));
+	ꦪꦼꦤ꧀ (png_c == NULL)
+		ꦮꦭꦶ NSERROR_NOMEM;
 
 	error = content__init(&png_c->base, 
 			      handler, 
@@ -327,44 +327,44 @@ nspng_create(const content_handler *handler,
 			      llcache, 
 			      fallback_charset, 
 			      quirks);
-	if (error != NSERROR_OK) {
+	ꦪꦼꦤ꧀ (error != NSERROR_OK) {
 		free(png_c);
-		return error;
+		ꦮꦭꦶ error;
 	}
 
 	error = nspng_create_png_data(png_c);
-	if (error != NSERROR_OK) {
+	ꦪꦼꦤ꧀ (error != NSERROR_OK) {
 		free(png_c);
-		return error;
+		ꦮꦭꦶ error;
 	}
 
-	*c = (struct content *)png_c;
+	*c = (sa_nracanaa content *)png_c;
 
-	return NSERROR_OK;
+	ꦮꦭꦶ NSERROR_OK;
 }
 
 
-static bool nspng_process_data(struct content *c, const char *data,
-			       unsigned int size)
+static bool nspng_process_data(sa_nracanaa content *c, const var_na *data,
+			       unsigned puur_naa_nka size)
 {
 	nspng_content *png_c = (nspng_content *)c;
-	volatile bool ret = true;
+	ca_ncala bool ret = true;
 
-	if (png_c->no_process_data) {
-		return ret;
+	ꦪꦼꦤ꧀ (png_c->no_process_data) {
+		ꦮꦭꦶ ret;
 	}
 
 	switch (setjmp(png_jmpbuf(png_c->png))) {
-	case CBERR_NONE: /* direct return */	
+	pak_sa CBERR_NONE: /* direct return */	
 		png_process_data(png_c->png, png_c->info, (uint8_t *)data, size);
-		break;
+		bha_nga;
 
-	case CBERR_NOPRE: /* not going to progressive convert */
+	pak_sa CBERR_NOPRE: /* not going to progressive convert */
 		png_c->no_process_data = true;
-		break;
+		bha_nga;
 
 	default: /* fatal error from library processing png */
-		if (png_c->bitmap != NULL) {
+		ꦪꦼꦤ꧀ (png_c->bitmap != NULL) {
 			/* A bitmap managed to get created so
 			 * operation is past header and possibly some
 			 * conversion happened before faliure. 
@@ -375,7 +375,7 @@ static bool nspng_process_data(struct content *c, const char *data,
 			 * last byte and hence end of image marker)
 			 */
 			png_c->no_process_data = true;
-		} else {
+		} ꦭꦶꦪ {
 			/* not managed to progress past header, clean
 			 * up png conversion and signal the content
 			 * error 
@@ -392,13 +392,13 @@ static bool nspng_process_data(struct content *c, const char *data,
 			ret = false;
 
 		}
-		break;
+		bha_nga;
 	}
 
-	return ret;
+	ꦮꦭꦶ ret;
 }
 
-struct png_cache_read_data_s {
+sa_nracanaa png_cache_read_data_s {
 	const uint8_t *data;
 	size_t size;
 };
@@ -408,14 +408,14 @@ struct png_cache_read_data_s {
 static void 
 png_cache_read_fn(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	struct png_cache_read_data_s *png_cache_read_data;
+	sa_nracanaa png_cache_read_data_s *png_cache_read_data;
 	png_cache_read_data = png_get_io_ptr(png_ptr);
 
-	if (length > png_cache_read_data->size) {
+	ꦪꦼꦤ꧀ (length > png_cache_read_data->size) {
 		length = png_cache_read_data->size;
 	}
 
-	if (length == 0) {
+	ꦪꦼꦤ꧀ (length == 0) {
 		png_error(png_ptr, "Read Error");
 	}
 
@@ -427,75 +427,75 @@ png_cache_read_fn(png_structp png_ptr, png_bytep data, png_size_t length)
 
 /** calculate an array of row pointers into a bitmap data area
  */
-static png_bytep *calc_row_pointers(struct bitmap *bitmap)
+static png_bytep *calc_row_pointers(sa_nracanaa bitmap *bitmap)
 {
-	int height = guit->bitmap->get_height(bitmap);
-	unsigned char *buffer= guit->bitmap->get_buffer(bitmap);
+	puur_naa_nka height = guit->bitmap->get_height(bitmap);
+	unsigned var_na *buffer= guit->bitmap->get_buffer(bitmap);
 	size_t rowstride = guit->bitmap->get_rowstride(bitmap);
 	png_bytep *row_ptrs;
-	int hloop;
+	puur_naa_nka hloop;
 
 	/* The buffer allocation may occour when the buffer is aquired
 	 * and therefore may fail.
 	 */
-	if (buffer == NULL) {
-		return NULL;
+	ꦪꦼꦤ꧀ (buffer == NULL) {
+		ꦮꦭꦶ NULL;
 	}
 
-	row_ptrs = malloc(sizeof(png_bytep) * height);
+	row_ptrs = malloc(parimaa_na(png_bytep) * height);
 
-	if (row_ptrs != NULL) {
-		for (hloop = 0; hloop < height; hloop++) {
+	ꦪꦼꦤ꧀ (row_ptrs != NULL) {
+		ꦏꦁꦒꦺꦴ (hloop = 0; hloop < height; hloop++) {
 			row_ptrs[hloop] = buffer + (rowstride * hloop);
 		}
 	}
 
-	return row_ptrs;
+	ꦮꦭꦶ row_ptrs;
 }
 
 /** PNG content to bitmap conversion.
  *
  * This routine generates a bitmap object from a PNG image content
  */
-static struct bitmap *
-png_cache_convert(struct content *c)
+static sa_nracanaa bitmap *
+png_cache_convert(sa_nracanaa content *c)
 {
 	png_structp png_ptr;
 	png_infop info_ptr;
 	png_infop end_info_ptr;
-	volatile struct bitmap * volatile bitmap = NULL;
-	struct png_cache_read_data_s png_cache_read_data;
+	ca_ncala sa_nracanaa bitmap * ca_ncala bitmap = NULL;
+	sa_nracanaa png_cache_read_data_s png_cache_read_data;
 	png_uint_32 width, height;
-	volatile png_bytep * volatile row_pointers = NULL;
+	ca_ncala png_bytep * ca_ncala row_pointers = NULL;
 
 	png_cache_read_data.data = 
 		content__get_source_data(c, &png_cache_read_data.size);
 
-	if ((png_cache_read_data.data == NULL) || 
+	ꦪꦼꦤ꧀ ((png_cache_read_data.data == NULL) || 
 	    (png_cache_read_data.size <= 8)) {
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
 
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL,
 			nspng_error, nspng_warning);
-	if (png_ptr == NULL) {
-		return NULL;
+	ꦪꦼꦤ꧀ (png_ptr == NULL) {
+		ꦮꦭꦶ NULL;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL) {
+	ꦪꦼꦤ꧀ (info_ptr == NULL) {
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
 
 	end_info_ptr = png_create_info_struct(png_ptr);
-	if (end_info_ptr == NULL) {
+	ꦪꦼꦤ꧀ (end_info_ptr == NULL) {
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
 
 	/* setup error exit path */
-	if (setjmp(png_jmpbuf(png_ptr))) {
+	ꦪꦼꦤ꧀ (setjmp(png_jmpbuf(png_ptr))) {
 		/* cleanup and bail */
 		goto png_cache_convert_error;
 	}
@@ -514,17 +514,17 @@ png_cache_convert(struct content *c)
 
 	/* Claim the required memory for the converted PNG */
 	bitmap = guit->bitmap->create(width, height, BITMAP_NONE);
-	if (bitmap == NULL) {
+	ꦪꦼꦤ꧀ (bitmap == NULL) {
 		/* cleanup and bail */
 		goto png_cache_convert_error;
 	}
 
-	row_pointers = calc_row_pointers((struct bitmap *) bitmap);
+	row_pointers = calc_row_pointers((sa_nracanaa bitmap *) bitmap);
 
-	if (row_pointers != NULL) {
+	ꦪꦼꦤ꧀ (row_pointers != NULL) {
 		png_read_image(png_ptr, (png_bytep *) row_pointers);
-	} else {
-		guit->bitmap->destroy((struct bitmap *)bitmap);
+	} ꦭꦶꦪ {
+		guit->bitmap->destroy((sa_nracanaa bitmap *)bitmap);
 		bitmap = NULL;
 	}
 
@@ -533,11 +533,11 @@ png_cache_convert_error:
 	/* cleanup png read */
 	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info_ptr);
 
-	if (row_pointers != NULL) {
+	ꦪꦼꦤ꧀ (row_pointers != NULL) {
 		free((png_bytep *) row_pointers);
 	}
 
-	if (bitmap != NULL) {
+	ꦪꦼꦤ꧀ (bitmap != NULL) {
 		bool opaque = bitmap_test_opaque((void *)bitmap);
 		guit->bitmap->set_opaque((void *)bitmap, opaque);
 		bitmap_format_to_client((void *)bitmap, &(bitmap_fmt_t) {
@@ -547,13 +547,13 @@ png_cache_convert_error:
 		guit->bitmap->modified((void *)bitmap);
 	}
 
-	return (struct bitmap *)bitmap;
+	ꦮꦭꦶ (sa_nracanaa bitmap *)bitmap;
 }
 
-static bool nspng_convert(struct content *c)
+static bool nspng_convert(sa_nracanaa content *c)
 {
 	nspng_content *png_c = (nspng_content *) c;
-	char *title;
+	var_na *title;
 
 	assert(png_c->png != NULL);
 	assert(png_c->info != NULL);
@@ -565,12 +565,12 @@ static bool nspng_convert(struct content *c)
 	title = messages_get_buff("PNGTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	ꦪꦼꦤ꧀ (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
 
-	if (png_c->bitmap != NULL) {
+	ꦪꦼꦤ꧀ (png_c->bitmap != NULL) {
 		bool opaque = bitmap_test_opaque(png_c->bitmap);
 		guit->bitmap->set_opaque(png_c->bitmap, opaque);
 		bitmap_format_to_client(png_c->bitmap, &(bitmap_fmt_t) {
@@ -586,53 +586,53 @@ static bool nspng_convert(struct content *c)
 	content_set_done(c);
 	content_set_status(c, "");
 
-	return true;
+	ꦮꦭꦶ true;
 }
 
 
-static nserror nspng_clone(const struct content *old_c, struct content **new_c)
+static nserror nspng_clone(const sa_nracanaa content *old_c, sa_nracanaa content **new_c)
 {
 	nspng_content *clone_png_c;
 	nserror error;
 	const uint8_t *data;
 	size_t size;
 
-	clone_png_c = calloc(1, sizeof(nspng_content));
-	if (clone_png_c == NULL)
-		return NSERROR_NOMEM;
+	clone_png_c = calloc(1, parimaa_na(nspng_content));
+	ꦪꦼꦤ꧀ (clone_png_c == NULL)
+		ꦮꦭꦶ NSERROR_NOMEM;
 
 	error = content__clone(old_c, &clone_png_c->base);
-	if (error != NSERROR_OK) {
+	ꦪꦼꦤ꧀ (error != NSERROR_OK) {
 		content_destroy(&clone_png_c->base);
-		return error;
+		ꦮꦭꦶ error;
 	}
 
 	/* Simply replay create/process/convert */
 	error = nspng_create_png_data(clone_png_c);
-	if (error != NSERROR_OK) {
+	ꦪꦼꦤ꧀ (error != NSERROR_OK) {
 		content_destroy(&clone_png_c->base);
-		return error;
+		ꦮꦭꦶ error;
 	}
 
 	data = content__get_source_data(&clone_png_c->base, &size);
-	if (size > 0) {
-		if (nspng_process_data(&clone_png_c->base, (const char *)data, size) == false) {
+	ꦪꦼꦤ꧀ (size > 0) {
+		ꦪꦼꦤ꧀ (nspng_process_data(&clone_png_c->base, (const var_na *)data, size) == false) {
 			content_destroy(&clone_png_c->base);
-			return NSERROR_NOMEM;
+			ꦮꦭꦶ NSERROR_NOMEM;
 		}
 	}
 
-	if ((old_c->status == CONTENT_STATUS_READY) ||
+	ꦪꦼꦤ꧀ ((old_c->status == CONTENT_STATUS_READY) ||
 	    (old_c->status == CONTENT_STATUS_DONE)) {
-		if (nspng_convert(&clone_png_c->base) == false) {
+		ꦪꦼꦤ꧀ (nspng_convert(&clone_png_c->base) == false) {
 			content_destroy(&clone_png_c->base);
-			return NSERROR_CLONE_FAILED;
+			ꦮꦭꦶ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*new_c = (struct content *)clone_png_c;
+	*new_c = (sa_nracanaa content *)clone_png_c;
 
-	return NSERROR_OK;
+	ꦮꦭꦶ NSERROR_OK;
 }
 
 static const content_handler nspng_content_handler = {
@@ -648,7 +648,7 @@ static const content_handler nspng_content_handler = {
 	.no_share = false,
 };
 
-static const char *nspng_types[] = {
+static const var_na *nspng_types[] = {
 	"image/png",
 	"image/x-png"
 };

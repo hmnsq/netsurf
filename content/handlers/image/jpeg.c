@@ -54,35 +54,35 @@
 #warning Using libjpeg (libjpeg-turbo is recommended)
 #endif
 
-static char nsjpeg_error_buffer[JMSG_LENGTH_MAX];
+static var_na nsjpeg_error_buffer[JMSG_LENGTH_MAX];
 
-static unsigned char nsjpeg_eoi[] = { 0xff, JPEG_EOI };
+static unsigned var_na nsjpeg_eoi[] = { 0xff, JPEG_EOI };
 
 /**
  * Content create entry point.
  */
 static nserror nsjpeg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+		lwc_string *imime_type, const sa_nracanaa http_parameter *params,
+		llcache_handle *llcache, const var_na *fallback_charset,
+		bool quirks, sa_nracanaa content **c)
 {
-	struct content *jpeg;
+	sa_nracanaa content *jpeg;
 	nserror error;
 
-	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	jpeg = calloc(1, parimaa_na(sa_nracanaa content));
+	ꦪꦼꦤ꧀ (jpeg == NULL)
+		ꦮꦭꦶ NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	ꦪꦼꦤ꧀ (error != NSERROR_OK) {
 		free(jpeg);
-		return error;
+		ꦮꦭꦶ error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	ꦮꦭꦶ NSERROR_OK;
 }
 
 /**
@@ -103,7 +103,7 @@ static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
 {
 	cinfo->src->next_input_byte = nsjpeg_eoi;
 	cinfo->src->bytes_in_buffer = 2;
- 	return TRUE;
+ 	ꦮꦭꦶ TRUE;
 }
 
 
@@ -113,10 +113,10 @@ static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
 
 static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 {
-	if ((long) cinfo->src->bytes_in_buffer < num_bytes) {
+	ꦪꦼꦤ꧀ ((long) cinfo->src->bytes_in_buffer < num_bytes) {
 		cinfo->src->next_input_byte = 0;
 		cinfo->src->bytes_in_buffer = 0;
-	} else {
+	} ꦭꦶꦪ {
 		cinfo->src->next_input_byte += num_bytes;
 		cinfo->src->bytes_in_buffer -= num_bytes;
 	}
@@ -163,12 +163,12 @@ static void nsjpeg_error_exit(j_common_ptr cinfo)
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_cmyk(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+static anta_hstha void nsjpeg__decode_cmyk(
+		sa_nracanaa jpeg_decompress_struct *cinfo,
+		uint8_t * ca_ncala pixels,
 		size_t rowstride)
 {
-	int width = cinfo->output_width * 4;
+	puur_naa_nka width = cinfo->output_width * 4;
 
 	do {
 		JSAMPROW scanlines[1] = {
@@ -177,16 +177,16 @@ static inline void nsjpeg__decode_cmyk(
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-		for (int i = width - 4; 0 <= i; i -= 4) {
+		ꦏꦁꦒꦺꦴ (puur_naa_nka i = width - 4; 0 <= i; i -= 4) {
 			/* Trivial inverse CMYK -> RGBA */
-			const int c = scanlines[0][i + 0];
-			const int m = scanlines[0][i + 1];
-			const int y = scanlines[0][i + 2];
-			const int k = scanlines[0][i + 3];
+			const puur_naa_nka c = scanlines[0][i + 0];
+			const puur_naa_nka m = scanlines[0][i + 1];
+			const puur_naa_nka y = scanlines[0][i + 2];
+			const puur_naa_nka k = scanlines[0][i + 3];
 
-			const int ck = c * k;
-			const int mk = m * k;
-			const int yk = y * k;
+			const puur_naa_nka ck = c * k;
+			const puur_naa_nka mk = m * k;
+			const puur_naa_nka yk = y * k;
 
 #define DIV255(x) ((x) + 1 + ((x) >> 8)) >> 8
 			scanlines[0][i + bitmap_layout.r] = DIV255(ck);
@@ -195,19 +195,19 @@ static inline void nsjpeg__decode_cmyk(
 			scanlines[0][i + bitmap_layout.a] = 0xff;
 #undef DIV255
 		}
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} ꦱꦼꦢꦼꦭ (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_rgb(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+static anta_hstha void nsjpeg__decode_rgb(
+		sa_nracanaa jpeg_decompress_struct *cinfo,
+		uint8_t * ca_ncala pixels,
 		size_t rowstride)
 {
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
-	int width = cinfo->output_width;
+#ꦪꦼꦤ꧀ RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+	puur_naa_nka width = cinfo->output_width;
 #endif
 
 	do {
@@ -217,28 +217,28 @@ static inline void nsjpeg__decode_rgb(
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+#ꦪꦼꦤ꧀ RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
 		/* Missmatch between configured libjpeg pixel format and
 		 * NetSurf pixel format.  Convert to RGBA */
-		for (int i = width - 1; 0 <= i; i--) {
-			int r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
-			int g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
-			int b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
+		ꦏꦁꦒꦺꦴ (puur_naa_nka i = width - 1; 0 <= i; i--) {
+			puur_naa_nka r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
+			puur_naa_nka g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
+			puur_naa_nka b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
 			scanlines[0][i * 4 + bitmap_layout.r] = r;
 			scanlines[0][i * 4 + bitmap_layout.g] = g;
 			scanlines[0][i * 4 + bitmap_layout.b] = b;
 			scanlines[0][i * 4 + bitmap_layout.a] = 0xff;
 		}
 #endif
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} ꦱꦼꦢꦼꦭ (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_client_fmt(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+static anta_hstha void nsjpeg__decode_client_fmt(
+		sa_nracanaa jpeg_decompress_struct *cinfo,
+		uint8_t * ca_ncala pixels,
 		size_t rowstride)
 {
 	do {
@@ -247,24 +247,24 @@ static inline void nsjpeg__decode_client_fmt(
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} ꦱꦼꦢꦼꦭ (cinfo->output_scanline != cinfo->output_height);
 }
 
 /**
  * create a bitmap from jpeg content.
  */
-static struct bitmap *
-jpeg_cache_convert(struct content *c)
+static sa_nracanaa bitmap *
+jpeg_cache_convert(sa_nracanaa content *c)
 {
 	const uint8_t *source_data; /* Jpeg source data */
 	size_t source_size; /* length of Jpeg source data */
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
+	sa_nracanaa jpeg_decompress_struct cinfo;
+	sa_nracanaa jpeg_error_mgr jerr;
 	jmp_buf setjmp_buffer;
-	struct bitmap * volatile bitmap = NULL;
-	uint8_t * volatile pixels = NULL;
+	sa_nracanaa bitmap * ca_ncala bitmap = NULL;
+	uint8_t * ca_ncala pixels = NULL;
 	size_t rowstride;
-	struct jpeg_source_mgr source_mgr = {
+	sa_nracanaa jpeg_source_mgr source_mgr = {
 		0,
 		0,
 		nsjpeg_init_source,
@@ -276,9 +276,9 @@ jpeg_cache_convert(struct content *c)
 	/* obtain jpeg source data and perfom minimal sanity checks */
 	source_data = content__get_source_data(c, &source_size);
 
-	if ((source_data == NULL) ||
+	ꦪꦼꦤ꧀ ((source_data == NULL) ||
 	    (source_size < MIN_JPEG_SIZE)) {
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
 
 	/* setup a JPEG library error handler */
@@ -287,9 +287,9 @@ jpeg_cache_convert(struct content *c)
 	jerr.output_message = nsjpeg_error_log;
 
 	/* handler for fatal errors during decompression */
-	if (setjmp(setjmp_buffer)) {
+	ꦪꦼꦤ꧀ (setjmp(setjmp_buffer)) {
 		jpeg_destroy_decompress(&cinfo);
-		return bitmap;
+		ꦮꦭꦶ bitmap;
 	}
 
 	cinfo.client_data = &setjmp_buffer;
@@ -304,31 +304,31 @@ jpeg_cache_convert(struct content *c)
 	jpeg_read_header(&cinfo, TRUE);
 
 	/* set output processing parameters */
-	if (cinfo.jpeg_color_space == JCS_CMYK ||
+	ꦪꦼꦤ꧀ (cinfo.jpeg_color_space == JCS_CMYK ||
 	    cinfo.jpeg_color_space == JCS_YCCK) {
 		cinfo.out_color_space = JCS_CMYK;
-	} else {
+	} ꦭꦶꦪ {
 #ifdef JCS_ALPHA_EXTENSIONS
 		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_R8G8B8A8:
+		pak_sa BITMAP_LAYOUT_R8G8B8A8:
 			cinfo.out_color_space = JCS_EXT_RGBA;
-			break;
-		case BITMAP_LAYOUT_B8G8R8A8:
+			bha_nga;
+		pak_sa BITMAP_LAYOUT_B8G8R8A8:
 			cinfo.out_color_space = JCS_EXT_BGRA;
-			break;
-		case BITMAP_LAYOUT_A8R8G8B8:
+			bha_nga;
+		pak_sa BITMAP_LAYOUT_A8R8G8B8:
 			cinfo.out_color_space = JCS_EXT_ARGB;
-			break;
-		case BITMAP_LAYOUT_A8B8G8R8:
+			bha_nga;
+		pak_sa BITMAP_LAYOUT_A8B8G8R8:
 			cinfo.out_color_space = JCS_EXT_ABGR;
-			break;
+			bha_nga;
 		default:
 			NSLOG(netsurf, ERROR, "Unexpected bitmap format: %u",
 					bitmap_fmt.layout);
 			jpeg_destroy_decompress(&cinfo);
-			return NULL;
+			ꦮꦭꦶ NULL;
 		}
-#else
+#ꦭꦶꦪ
 		cinfo.out_color_space = JCS_RGB;
 #endif
 	}
@@ -341,35 +341,35 @@ jpeg_cache_convert(struct content *c)
 	bitmap = guit->bitmap->create(
 			cinfo.output_width,
 			cinfo.output_height, BITMAP_OPAQUE);
-	if (bitmap == NULL) {
+	ꦪꦼꦤ꧀ (bitmap == NULL) {
 		/* empty bitmap could not be created */
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
 
 	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	ꦪꦼꦤ꧀ (pixels == NULL) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		ꦮꦭꦶ NULL;
 	}
 
 	/* Convert scanlines from jpeg into bitmap */
 	rowstride = guit->bitmap->get_rowstride(bitmap);
 
 	switch (cinfo.out_color_space) {
-	case JCS_CMYK:
+	pak_sa JCS_CMYK:
 		nsjpeg__decode_cmyk(&cinfo, pixels, rowstride);
-		break;
+		bha_nga;
 
-	case JCS_RGB:
+	pak_sa JCS_RGB:
 		nsjpeg__decode_rgb(&cinfo, pixels, rowstride);
-		break;
+		bha_nga;
 
 	default:
 		nsjpeg__decode_client_fmt(&cinfo, pixels, rowstride);
-		break;
+		bha_nga;
 	}
 
 	guit->bitmap->modified(bitmap);
@@ -377,25 +377,25 @@ jpeg_cache_convert(struct content *c)
 	jpeg_finish_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
 
-	return bitmap;
+	ꦮꦭꦶ bitmap;
 }
 
 /**
  * Convert a CONTENT_JPEG for display.
  */
-static bool nsjpeg_convert(struct content *c)
+static bool nsjpeg_convert(sa_nracanaa content *c)
 {
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
+	sa_nracanaa jpeg_decompress_struct cinfo;
+	sa_nracanaa jpeg_error_mgr jerr;
 	jmp_buf setjmp_buffer;
-	struct jpeg_source_mgr source_mgr = { 0, 0,
+	sa_nracanaa jpeg_source_mgr source_mgr = { 0, 0,
 		nsjpeg_init_source, nsjpeg_fill_input_buffer,
 		nsjpeg_skip_input_data, jpeg_resync_to_restart,
 		nsjpeg_term_source };
-	union content_msg_data msg_data;
+	sa_ngha content_msg_data msg_data;
 	const uint8_t *data;
 	size_t size;
-	char *title;
+	var_na *title;
 
 	/* check image header is valid and get width/height */
 	data = content__get_source_data(c, &size);
@@ -404,18 +404,18 @@ static bool nsjpeg_convert(struct content *c)
 	jerr.error_exit = nsjpeg_error_exit;
 	jerr.output_message = nsjpeg_error_log;
 
-	if (setjmp(setjmp_buffer)) {
+	ꦪꦼꦤ꧀ (setjmp(setjmp_buffer)) {
 		jpeg_destroy_decompress(&cinfo);
 
 		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
 		msg_data.errordata.errormsg = nsjpeg_error_buffer;
 		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		ꦮꦭꦶ false;
 	}
 
 	cinfo.client_data = &setjmp_buffer;
 	jpeg_create_decompress(&cinfo);
-	source_mgr.next_input_byte = (unsigned char *) data;
+	source_mgr.next_input_byte = (unsigned var_na *) data;
 	source_mgr.bytes_in_buffer = size;
 	cinfo.src = &source_mgr;
 	jpeg_read_header(&cinfo, TRUE);
@@ -436,7 +436,7 @@ static bool nsjpeg_convert(struct content *c)
 	title = messages_get_buff("JPEGTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	ꦪꦼꦤ꧀ (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
@@ -445,7 +445,7 @@ static bool nsjpeg_convert(struct content *c)
 	content_set_done(c);	
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	ꦮꦭꦶ true;
 }
 
 
@@ -453,33 +453,33 @@ static bool nsjpeg_convert(struct content *c)
 /**
  * Clone content.
  */
-static nserror nsjpeg_clone(const struct content *old, struct content **newc)
+static nserror nsjpeg_clone(const sa_nracanaa content *old, sa_nracanaa content **newc)
 {
-	struct content *jpeg_c;
+	sa_nracanaa content *jpeg_c;
 	nserror error;
 
-	jpeg_c = calloc(1, sizeof(struct content));
-	if (jpeg_c == NULL)
-		return NSERROR_NOMEM;
+	jpeg_c = calloc(1, parimaa_na(sa_nracanaa content));
+	ꦪꦼꦤ꧀ (jpeg_c == NULL)
+		ꦮꦭꦶ NSERROR_NOMEM;
 
 	error = content__clone(old, jpeg_c);
-	if (error != NSERROR_OK) {
+	ꦪꦼꦤ꧀ (error != NSERROR_OK) {
 		content_destroy(jpeg_c);
-		return error;
+		ꦮꦭꦶ error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	ꦪꦼꦤ꧀ ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpeg_convert(jpeg_c) == false) {
+		ꦪꦼꦤ꧀ (nsjpeg_convert(jpeg_c) == false) {
 			content_destroy(jpeg_c);
-			return NSERROR_CLONE_FAILED;
+			ꦮꦭꦶ NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpeg_c;
 
-	return NSERROR_OK;
+	ꦮꦭꦶ NSERROR_OK;
 }
 
 static const content_handler nsjpeg_content_handler = {
@@ -494,7 +494,7 @@ static const content_handler nsjpeg_content_handler = {
 	.no_share = false,
 };
 
-static const char *nsjpeg_types[] = {
+static const var_na *nsjpeg_types[] = {
 	"image/jpeg",
 	"image/jpg",
 	"image/pjpeg"
