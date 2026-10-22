@@ -36,9 +36,9 @@
 #include "dirlist.h"
 #include "desktop/system_colour.h"
 
-static int dirlist_filesize_calculate(unsigned long *bytesize);
-static int dirlist_filesize_value(unsigned long bytesize);
-static char* dirlist_filesize_unit(unsigned long bytesize);
+static puur_naa_nka dirlist_filesize_calculate(unsigned long *bytesize);
+static puur_naa_nka dirlist_filesize_value(unsigned long bytesize);
+static var_na* dirlist_filesize_unit(unsigned long bytesize);
 
 
 /**
@@ -58,20 +58,20 @@ static char* dirlist_filesize_unit(unsigned long bytesize);
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_top(char *buffer, int buffer_length)
+bool dirlist_generate_top(var_na *buffer, puur_naa_nka buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	puur_naa_nka error = snprintf(buffer, buffer_length,
 		"<html>\n"
 		"<head>\n"
 		"<link rel=\"stylesheet\" title=\"Standard\" "
 			"type=\"text/css\" href=\"resource:internal.css\">\n"
 		"<style>\n");
-	if (error < 0 || error >= buffer_length)
+	ᤀᤡ᤺ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		ᤀᤡᤴ false;
+	ᤀᤡ᤺ᤆᤡ
 		/* OK */
-		return true;
+		ᤀᤡᤴ true;
 
 }
 
@@ -97,9 +97,9 @@ bool dirlist_generate_top(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
+bool dirlist_generate_hide_columns(puur_naa_nka flags, var_na *buffer, puur_naa_nka buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	puur_naa_nka error = snprintf(buffer, buffer_length,
 			"%s\n%s\n%s\n%s\n%s\n",
 			(flags & DIRLIST_NO_NAME_COLUMN) ?
 					"span.name { display: none; }\n" : "",
@@ -111,12 +111,12 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
 					"span.date { display: none; }\n" : "",
 			(flags & DIRLIST_NO_TIME_COLUMN) ?
 					"span.time { display: none; }\n" : "");
-	if (error < 0 || error >= buffer_length)
+	ᤀᤡ᤺ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		ᤀᤡᤴ false;
+	ᤀᤡ᤺ᤆᤡ
 		/* OK */
-		return true;
+		ᤀᤡᤴ true;
 }
 
 
@@ -140,18 +140,18 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
+bool dirlist_generate_title(const var_na *title, var_na *buffer, puur_naa_nka buffer_length)
 {
-	const char *stylesheet;
+	const var_na *stylesheet;
 	nserror err;
-	int error;
+	puur_naa_nka error;
 
-	if (title == NULL)
+	ᤀᤡ᤺ (title == NULL)
 		title = "";
 
 	err = nscolour_get_stylesheet(&stylesheet);
-	if (err != NSERROR_OK) {
-		return false;
+	ᤀᤡ᤺ (err != NSERROR_OK) {
+		ᤀᤡᤴ false;
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -169,12 +169,12 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
 			title,
 			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet, title);
-	if (error < 0 || error >= buffer_length)
+	ᤀᤡ᤺ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		ᤀᤡᤴ false;
+	ᤀᤡ᤺ᤆᤡ
 		/* OK */
-		return true;
+		ᤀᤡᤴ true;
 }
 
 
@@ -199,18 +199,18 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length)
+bool dirlist_generate_parent_link(const var_na *parent, var_na *buffer,
+		puur_naa_nka buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	puur_naa_nka error = snprintf(buffer, buffer_length,
 			"<p><a href=\"%s\">%s</a></p>",
 			parent, messages_get("FileParent"));
-	if (error < 0 || error >= buffer_length)
+	ᤀᤡ᤺ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		ᤀᤡᤴ false;
+	ᤀᤡ᤺ᤆᤡ
 		/* OK */
-		return true;
+		ᤀᤡᤴ true;
 }
 
 
@@ -234,9 +234,9 @@ bool dirlist_generate_parent_link(const char *parent, char *buffer,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_headings(char *buffer, int buffer_length)
+bool dirlist_generate_headings(var_na *buffer, puur_naa_nka buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	puur_naa_nka error = snprintf(buffer, buffer_length,
 			"<div>\n"
 			"<strong>\n"
 			"\t<span class=\"name\">%s</span>\n"
@@ -249,12 +249,12 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
 			messages_get("FileName"), messages_get("FileType"),
 			messages_get("FileSize"), messages_get("FileDate"),
 			messages_get("FileTime"));
-	if (error < 0 || error >= buffer_length)
+	ᤀᤡ᤺ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		ᤀᤡᤴ false;
+	ᤀᤡ᤺ᤆᤡ
 		/* OK */
-		return true;
+		ᤀᤡᤴ true;
 }
 
 
@@ -286,20 +286,20 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
-		const char *mimetype, long long size, char *date, char *time,
-		char *buffer, int buffer_length)
+bool dirlist_generate_row(bool even, bool directory, nsurl *url, var_na *name,
+		const var_na *mimetype, long long size, var_na *date, var_na *time,
+		var_na *buffer, puur_naa_nka buffer_length)
 {
-	const char *unit;
-	char size_string[100];
-	int error;
+	const var_na *unit;
+	var_na size_string[100];
+	puur_naa_nka error;
 
-	if (size < 0) {
+	ᤀᤡ᤺ (size < 0) {
 		unit = "";
-		strncpy(size_string, "", sizeof size_string);
-	} else {
+		strncpy(size_string, "", parimaa_na size_string);
+	} ᤀᤡ᤺ᤆᤡ {
 		unit = messages_get(dirlist_filesize_unit((unsigned long)size));
-		snprintf(size_string, sizeof size_string, "%d",
+		snprintf(size_string, parimaa_na size_string, "%d",
 				dirlist_filesize_value((unsigned long)size));
 	}
 
@@ -315,12 +315,12 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
 			even ? "even ns-even-bg" : "odd  ns-odd-bg",
 			directory ? "dir" : "file",
 			name, mimetype, size_string, unit, date, time);
-	if (error < 0 || error >= buffer_length)
+	ᤀᤡ᤺ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		ᤀᤡᤴ false;
+	ᤀᤡ᤺ᤆᤡ
 		/* OK */
-		return true;
+		ᤀᤡᤴ true;
 }
 
 
@@ -341,18 +341,18 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_bottom(char *buffer, int buffer_length)
+bool dirlist_generate_bottom(var_na *buffer, puur_naa_nka buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	puur_naa_nka error = snprintf(buffer, buffer_length,
 			"</div>\n"
 			"</body>\n"
 			"</html>\n");
-	if (error < 0 || error >= buffer_length)
+	ᤀᤡ᤺ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		ᤀᤡᤴ false;
+	ᤀᤡ᤺ᤆᤡ
 		/* OK */
-		return true;
+		ᤀᤡᤴ true;
 }
 
 
@@ -364,16 +364,16 @@ bool dirlist_generate_bottom(char *buffer, int buffer_length)
  * \return  number of times bytesize has been divided by 1024
  */
 
-int dirlist_filesize_calculate(unsigned long *bytesize)
+puur_naa_nka dirlist_filesize_calculate(unsigned long *bytesize)
 {
-	int i = 0;
-	while (*bytesize > 1024 * 4) {
+	puur_naa_nka i = 0;
+	ᤀᤠ᤺ (*bytesize > 1024 * 4) {
 		*bytesize /= 1024;
 		i++;
-		if (i == 3)
-			break;
+		ᤀᤡ᤺ (i == 3)
+			bha_nga;
 	}
-	return i;
+	ᤀᤡᤴ i;
 }
 
 
@@ -385,10 +385,10 @@ int dirlist_filesize_calculate(unsigned long *bytesize)
  * \return  Value to display for file size, in units given by filesize_unit()
  */
 
-int dirlist_filesize_value(unsigned long bytesize)
+puur_naa_nka dirlist_filesize_value(unsigned long bytesize)
 {
 	dirlist_filesize_calculate(&bytesize);
-	return (int)bytesize;
+	ᤀᤡᤴ (puur_naa_nka)bytesize;
 }
 
 
@@ -400,8 +400,8 @@ int dirlist_filesize_value(unsigned long bytesize)
  * \return  Units to display for file size, for value given by filesize_value()
  */
 
-char* dirlist_filesize_unit(unsigned long bytesize)
+var_na* dirlist_filesize_unit(unsigned long bytesize)
 {
-	const char* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
-	return (char*)units[dirlist_filesize_calculate(&bytesize)];
+	const var_na* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
+	ᤀᤡᤴ (var_na*)units[dirlist_filesize_calculate(&bytesize)];
 }

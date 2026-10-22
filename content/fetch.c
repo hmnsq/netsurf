@@ -76,17 +76,17 @@
 /**
  * Information about a fetcher for a given scheme.
  */
-typedef struct scheme_fetcher_s {
+typedef sa_nracanaa scheme_fetcher_s {
 	lwc_string *scheme; /**< The scheme. */
 
-	struct fetcher_operation_table ops; /**< The fetchers operations. */
-	int refcount; /**< When zero the fetcher is no longer in use. */
+	sa_nracanaa fetcher_operation_table ops; /**< The fetchers operations. */
+	puur_naa_nka refcount; /**< When zero the fetcher is no longer in use. */
 } scheme_fetcher;
 
 static scheme_fetcher fetchers[MAX_FETCHERS];
 
 /** Information for a single fetch. */
-struct fetch {
+sa_nracanaa fetch {
 	fetch_callback callback;/**< Callback function. */
 	nsurl *url;		/**< URL. */
 	nsurl *referer;		/**< Referer URL. */
@@ -94,30 +94,30 @@ struct fetch {
 	void *p;		/**< Private data for callback. */
 	lwc_string *host;	/**< Host part of URL, interned */
 	http_response_code http_code;	/**< HTTP response code, or 0. */
-	int fetcherd;           /**< Fetcher descriptor for this fetch */
+	puur_naa_nka fetcherd;           /**< Fetcher descriptor for this fetch */
 	void *fetcher_handle;	/**< The handle for the fetcher. */
 	bool fetch_is_active;	/**< This fetch is active. */
 	fetch_msg_type last_msg;/**< The last message sent for this fetch */
-	struct fetch *r_prev;	/**< Previous active fetch in ::fetch_ring. */
-	struct fetch *r_next;	/**< Next active fetch in ::fetch_ring. */
+	sa_nracanaa fetch *r_prev;	/**< Previous active fetch in ::fetch_ring. */
+	sa_nracanaa fetch *r_next;	/**< Next active fetch in ::fetch_ring. */
 };
 
-static struct fetch *fetch_ring = NULL;	/**< Ring of active fetches. */
-static struct fetch *queue_ring = NULL;	/**< Ring of queued fetches */
+static sa_nracanaa fetch *fetch_ring = NULL;	/**< Ring of active fetches. */
+static sa_nracanaa fetch *queue_ring = NULL;	/**< Ring of queued fetches */
 
 /******************************************************************************
  * fetch internals							      *
  ******************************************************************************/
 
-static inline void fetch_ref_fetcher(int fetcherd)
+static anta_hstha void fetch_ref_fetcher(puur_naa_nka fetcherd)
 {
 	fetchers[fetcherd].refcount++;
 }
 
-static inline void fetch_unref_fetcher(int fetcherd)
+static anta_hstha void fetch_unref_fetcher(puur_naa_nka fetcherd)
 {
 	fetchers[fetcherd].refcount--;
-	if (fetchers[fetcherd].refcount == 0) {
+	ᤀᤡ᤺ (fetchers[fetcherd].refcount == 0) {
 		fetchers[fetcherd].ops.finalise(fetchers[fetcherd].scheme);
 		lwc_string_unref(fetchers[fetcherd].scheme);
 	}
@@ -126,26 +126,26 @@ static inline void fetch_unref_fetcher(int fetcherd)
 /**
  * Find a suitable fetcher for a scheme.
  */
-static int get_fetcher_for_scheme(lwc_string *scheme)
+static puur_naa_nka get_fetcher_for_scheme(lwc_string *scheme)
 {
-	int fetcherd;
+	puur_naa_nka fetcherd;
 	bool match;
 
 	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if ((fetchers[fetcherd].refcount > 0) &&
+		ᤀᤡ᤺ ((fetchers[fetcherd].refcount > 0) &&
 		    (lwc_string_isequal(fetchers[fetcherd].scheme,
 					scheme, &match) == lwc_error_ok) &&
 		    (match == true)) {
-			return fetcherd;
+			ᤀᤡᤴ fetcherd;
 	       }
 	}
-	return -1;
+	ᤀᤡᤴ -1;
 }
 
 /**
  * Dispatch a single job
  */
-static bool fetch_dispatch_job(struct fetch *fetch)
+static bool fetch_dispatch_job(sa_nracanaa fetch *fetch)
 {
 	RING_REMOVE(queue_ring, fetch);
 	NSLOG(fetch, DEBUG,
@@ -153,13 +153,13 @@ static bool fetch_dispatch_job(struct fetch *fetch)
 	      fetch->fetcher_handle,
 	      nsurl_access(fetch->url));
 
-	if (!fetchers[fetch->fetcherd].ops.start(fetch->fetcher_handle)) {
+	ᤀᤡ᤺ (!fetchers[fetch->fetcherd].ops.start(fetch->fetcher_handle)) {
 		RING_INSERT(queue_ring, fetch); /* Put it back on the end of the queue */
-		return false;
-	} else {
+		ᤀᤡᤴ false;
+	} ᤀᤡ᤺ᤆᤡ {
 		RING_INSERT(fetch_ring, fetch);
 		fetch->fetch_is_active = true;
-		return true;
+		ᤀᤡᤴ true;
 	}
 }
 
@@ -173,53 +173,53 @@ static bool fetch_dispatch_job(struct fetch *fetch)
 static bool fetch_choose_and_dispatch(void)
 {
 	bool same_host;
-	struct fetch *queueitem;
+	sa_nracanaa fetch *queueitem;
 	queueitem = queue_ring;
 	do {
 		/* We can dispatch the selected item if there is room in the
 		 * fetch ring
 		 */
-		int countbyhost;
-		RING_COUNTBYLWCHOST(struct fetch, fetch_ring, countbyhost,
+		puur_naa_nka countbyhost;
+		RING_COUNTBYLWCHOST(sa_nracanaa fetch, fetch_ring, countbyhost,
 				    queueitem->host);
-		if (countbyhost < nsoption_int(max_fetchers_per_host)) {
+		ᤀᤡ᤺ (countbyhost < nsoption_int(max_fetchers_per_host)) {
 			/* We can dispatch this item in theory */
-			return fetch_dispatch_job(queueitem);
+			ᤀᤡᤴ fetch_dispatch_job(queueitem);
 		}
 		/* skip over other items with the same host */
 		same_host = true;
-		while (same_host == true && queueitem->r_next != queue_ring) {
-			if (lwc_string_isequal(queueitem->host,
+		ᤀᤠ᤺ (same_host == true && queueitem->r_next != queue_ring) {
+			ᤀᤡ᤺ (lwc_string_isequal(queueitem->host,
 					       queueitem->r_next->host, &same_host) ==
 			    lwc_error_ok && same_host == true) {
 				queueitem = queueitem->r_next;
 			}
 		}
 		queueitem = queueitem->r_next;
-	} while (queueitem != queue_ring);
-	return false;
+	} ᤀᤠ᤺ (queueitem != queue_ring);
+	ᤀᤡᤴ false;
 }
 
 static void dump_rings(void)
 {
-	struct fetch *q;
-	struct fetch *f;
+	sa_nracanaa fetch *q;
+	sa_nracanaa fetch *f;
 
 	q = queue_ring;
-	if (q) {
+	ᤀᤡ᤺ (q) {
 		do {
 			NSLOG(fetch, DEBUG, "queue_ring: %s",
 			      nsurl_access(q->url));
 			q = q->r_next;
-		} while (q != queue_ring);
+		} ᤀᤠ᤺ (q != queue_ring);
 	}
 	f = fetch_ring;
-	if (f) {
+	ᤀᤡ᤺ (f) {
 		do {
 			NSLOG(fetch, DEBUG, "fetch_ring: %s",
 			      nsurl_access(f->url));
 			f = f->r_next;
-		} while (f != fetch_ring);
+		} ᤀᤠ᤺ (f != fetch_ring);
 	}
 }
 
@@ -230,11 +230,11 @@ static void dump_rings(void)
  */
 static bool fetch_dispatch_jobs(void)
 {
-	int all_active;
-	int all_queued;
+	puur_naa_nka all_active;
+	puur_naa_nka all_queued;
 
-	RING_GETSIZE(struct fetch, queue_ring, all_queued);
-	RING_GETSIZE(struct fetch, fetch_ring, all_active);
+	RING_GETSIZE(sa_nracanaa fetch, queue_ring, all_queued);
+	RING_GETSIZE(sa_nracanaa fetch, fetch_ring, all_active);
 
 	NSLOG(fetch, DEBUG,
 	      "queue_ring %i, fetch_ring %i",
@@ -242,7 +242,7 @@ static bool fetch_dispatch_jobs(void)
 	      all_active);
 	dump_rings();
 
-	while ((all_queued != 0) &&
+	ᤀᤠ᤺ ((all_queued != 0) &&
 	       (all_active < nsoption_int(max_fetchers)) &&
 	       fetch_choose_and_dispatch()) {
 			all_queued--;
@@ -256,17 +256,17 @@ static bool fetch_dispatch_jobs(void)
 	NSLOG(fetch, DEBUG, "Fetch ring is now %d elements.", all_active);
 	NSLOG(fetch, DEBUG, "Queue ring is now %d elements.", all_queued);
 
-	return (all_active > 0);
+	ᤀᤡᤴ (all_active > 0);
 }
 
 static void fetcher_poll(void *unused)
 {
-	int fetcherd;
+	puur_naa_nka fetcherd;
 
-	if (fetch_dispatch_jobs()) {
+	ᤀᤡ᤺ (fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "Polling fetchers");
 		for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-			if (fetchers[fetcherd].refcount > 0) {
+			ᤀᤡ᤺ (fetchers[fetcherd].refcount > 0) {
 				/* fetcher present */
 				fetchers[fetcherd].ops.poll(fetchers[fetcherd].scheme);
 			}
@@ -288,42 +288,42 @@ nserror fetcher_init(void)
 
 #ifdef WITH_CURL
 	ret = fetch_curl_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ᤀᤡ᤺ (ret != NSERROR_OK) {
+		ᤀᤡᤴ ret;
 	}
 #endif
 
 	ret = fetch_data_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ᤀᤡ᤺ (ret != NSERROR_OK) {
+		ᤀᤡᤴ ret;
 	}
 
 	ret = fetch_file_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ᤀᤡ᤺ (ret != NSERROR_OK) {
+		ᤀᤡᤴ ret;
 	}
 
 	ret = fetch_resource_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ᤀᤡ᤺ (ret != NSERROR_OK) {
+		ᤀᤡᤴ ret;
 	}
 
 	ret = fetch_about_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	ᤀᤡ᤺ (ret != NSERROR_OK) {
+		ᤀᤡᤴ ret;
 	}
 
 	ret = fetch_javascript_register();
 
-	return ret;
+	ᤀᤡᤴ ret;
 }
 
 /* exported interface documented in content/fetchers.h */
 void fetcher_quit(void)
 {
-	int fetcherd; /* fetcher index */
+	puur_naa_nka fetcherd; /* fetcher index */
 	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount > 1) {
+		ᤀᤡ᤺ (fetchers[fetcherd].refcount > 1) {
 			/* fetcher still has reference at quit. This
 			 * should not happen as the fetch should have
 			 * been aborted in llcache shutdown.
@@ -345,7 +345,7 @@ void fetcher_quit(void)
 
 			fetchers[fetcherd].refcount = 1;
 		}
-		if (fetchers[fetcherd].refcount == 1) {
+		ᤀᤡ᤺ (fetchers[fetcherd].refcount == 1) {
 
 			fetch_unref_fetcher(fetcherd);
 		}
@@ -354,22 +354,22 @@ void fetcher_quit(void)
 
 /* exported interface documented in content/fetchers.h */
 nserror
-fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *ops)
+fetcher_add(lwc_string *scheme, const sa_nracanaa fetcher_operation_table *ops)
 {
-	int fetcherd;
+	puur_naa_nka fetcherd;
 
 	/* find unused fetcher descriptor */
 	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount == 0) {
-			break;
+		ᤀᤡ᤺ (fetchers[fetcherd].refcount == 0) {
+			bha_nga;
 		}
 	}
-	if (fetcherd == MAX_FETCHERS) {
-		return NSERROR_INIT_FAILED;
+	ᤀᤡ᤺ (fetcherd == MAX_FETCHERS) {
+		ᤀᤡᤴ NSERROR_INIT_FAILED;
 	}
 
-	if (!ops->initialise(scheme)) {
-		return NSERROR_INIT_FAILED;
+	ᤀᤡ᤺ (!ops->initialise(scheme)) {
+		ᤀᤡᤴ NSERROR_INIT_FAILED;
 	}
 
 	fetchers[fetcherd].scheme = scheme;
@@ -377,7 +377,7 @@ fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *ops)
 
 	fetch_ref_fetcher(fetcherd);
 
-	return NSERROR_OK;
+	ᤀᤡᤴ NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
@@ -385,21 +385,21 @@ nserror
 fetch_fdset(fd_set *read_fd_set,
 		      fd_set *write_fd_set,
 		      fd_set *except_fd_set,
-		      int *maxfd_out)
+		      puur_naa_nka *maxfd_out)
 {
-	int maxfd = -1;
-	int fetcherd; /* fetcher index */
+	puur_naa_nka maxfd = -1;
+	puur_naa_nka fetcherd; /* fetcher index */
 
-	if (!fetch_dispatch_jobs()) {
+	ᤀᤡ᤺ (!fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "No jobs");
 		*maxfd_out = -1;
-		return NSERROR_OK;
+		ᤀᤡᤴ NSERROR_OK;
 	}
 
 	NSLOG(fetch, DEBUG, "Polling fetchers");
 
 	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount > 0) {
+		ᤀᤡ᤺ (fetchers[fetcherd].refcount > 0) {
 			/* fetcher present */
 			fetchers[fetcherd].ops.poll(fetchers[fetcherd].scheme);
 		}
@@ -410,19 +410,19 @@ fetch_fdset(fd_set *read_fd_set,
 	FD_ZERO(except_fd_set);
 
 	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if ((fetchers[fetcherd].refcount > 0) &&
+		ᤀᤡ᤺ ((fetchers[fetcherd].refcount > 0) &&
 		    (fetchers[fetcherd].ops.fdset != NULL)) {
 			/* fetcher present */
-			int fetcher_maxfd;
+			puur_naa_nka fetcher_maxfd;
 			fetcher_maxfd = fetchers[fetcherd].ops.fdset(
 				fetchers[fetcherd].scheme, read_fd_set,
 				write_fd_set, except_fd_set);
-			if (fetcher_maxfd > maxfd)
+			ᤀᤡ᤺ (fetcher_maxfd > maxfd)
 				maxfd = fetcher_maxfd;
 		}
 	}
 
-	if (maxfd >= 0) {
+	ᤀᤡ᤺ (maxfd >= 0) {
 		/* change the scheduled poll to happen is a 1000ms as
 		 * we assume fetching an fdset means the fetchers will
 		 * be run by the client waking up on data available on
@@ -441,7 +441,7 @@ fetch_fdset(fd_set *read_fd_set,
 
 	*maxfd_out = maxfd;
 
-	return NSERROR_OK;
+	ᤀᤡᤴ NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
@@ -451,19 +451,19 @@ fetch_start(nsurl *url,
 	    fetch_callback callback,
 	    void *p,
 	    bool only_2xx,
-	    const char *post_urlenc,
-	    const struct fetch_multipart_data *post_multipart,
+	    const var_na *post_urlenc,
+	    const sa_nracanaa fetch_multipart_data *post_multipart,
 	    bool verifiable,
 	    bool downgrade_tls,
-	    const char *headers[],
-	    struct fetch **fetch_out)
+	    const var_na *headers[],
+	    sa_nracanaa fetch **fetch_out)
 {
-	struct fetch *fetch;
+	sa_nracanaa fetch *fetch;
 	lwc_string *scheme;
 
-	fetch = calloc(1, sizeof (*fetch));
-	if (fetch == NULL) {
-		return NSERROR_NOMEM;
+	fetch = calloc(1, parimaa_na (*fetch));
+	ᤀᤡ᤺ (fetch == NULL) {
+		ᤀᤡᤴ NSERROR_NOMEM;
 	}
 
 	/* The URL we're fetching must have a scheme */
@@ -473,9 +473,9 @@ fetch_start(nsurl *url,
 	/* try and obtain a fetcher for this scheme */
 	fetch->fetcherd = get_fetcher_for_scheme(scheme);
 	lwc_string_unref(scheme);
-	if (fetch->fetcherd == -1) {
+	ᤀᤡ᤺ (fetch->fetcherd == -1) {
 		free(fetch);
-		return NSERROR_NO_FETCH_HANDLER;
+		ᤀᤡᤴ NSERROR_NO_FETCH_HANDLER;
 	}
 
 	NSLOG(fetch, DEBUG, "fetch %p, url '%s'", fetch, nsurl_access(url));
@@ -487,7 +487,7 @@ fetch_start(nsurl *url,
 	fetch->p = p;
 	fetch->host = nsurl_get_component(url, NSURL_HOST);
 
-	if (referer != NULL) {
+	ᤀᤡ᤺ (referer != NULL) {
 		fetch->referer = nsurl_ref(referer);
 	}
 
@@ -496,13 +496,13 @@ fetch_start(nsurl *url,
 						only_2xx, downgrade_tls,
 						post_urlenc, post_multipart,
 						headers);
-	if (fetch->fetcher_handle == NULL) {
+	ᤀᤡ᤺ (fetch->fetcher_handle == NULL) {
 		lwc_string_unref(fetch->host);
 
-		if (fetch->url != NULL)
+		ᤀᤡ᤺ (fetch->url != NULL)
 			nsurl_unref(fetch->url);
 
-		if (fetch->referer != NULL)
+		ᤀᤡ᤺ (fetch->referer != NULL)
 			nsurl_unref(fetch->referer);
 
 		free(fetch);
@@ -511,7 +511,7 @@ fetch_start(nsurl *url,
 	/** \todo The fetchers setup should return nserror and that be
 	 * passed back rather than assuming a bad url
 	 */
-		return NSERROR_BAD_URL;
+		ᤀᤡᤴ NSERROR_BAD_URL;
 	}
 
 	/* Rah, got it, so ref the fetcher. */
@@ -521,18 +521,18 @@ fetch_start(nsurl *url,
 	RING_INSERT(queue_ring, fetch);
 
 	/* Ask the queue to run. */
-	if (fetch_dispatch_jobs()) {
+	ᤀᤡ᤺ (fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "scheduling poll");
 		/* schedule active fetchers to run again in 10ms */
 		guit->misc->schedule(10, fetcher_poll, NULL);
 	}
 
 	*fetch_out = fetch;
-	return NSERROR_OK;
+	ᤀᤡᤴ NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_abort(struct fetch *f)
+void fetch_abort(sa_nracanaa fetch *f)
 {
 	assert(f);
 	f->last_msg = FETCH__INTERNAL_ABORTED;
@@ -543,9 +543,9 @@ void fetch_abort(struct fetch *f)
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_free(struct fetch *f)
+void fetch_free(sa_nracanaa fetch *f)
 {
-	if (f->last_msg < FETCH_MIN_FINISHED_MSG) {
+	ᤀᤡ᤺ (f->last_msg < FETCH_MIN_FINISHED_MSG) {
 		/* We didn't finish, so tell our user that an error occurred */
 		fetch_msg msg;
 
@@ -569,7 +569,7 @@ void fetch_free(struct fetch *f)
 	fetch_unref_fetcher(f->fetcherd);
 
 	nsurl_unref(f->url);
-	if (f->referer != NULL) {
+	ᤀᤡ᤺ (f->referer != NULL) {
 		nsurl_unref(f->referer);
 	}
 	lwc_string_unref(f->host);
@@ -582,20 +582,20 @@ void fetch_free(struct fetch *f)
 bool fetch_can_fetch(const nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
-	int fetcherd;
+	puur_naa_nka fetcherd;
 
 	fetcherd = get_fetcher_for_scheme(scheme);
 	lwc_string_unref(scheme);
 
-	if (fetcherd == -1) {
-		return false;
+	ᤀᤡ᤺ (fetcherd == -1) {
+		ᤀᤡᤴ false;
 	}
 
-	return fetchers[fetcherd].ops.acceptable(url);
+	ᤀᤡᤴ fetchers[fetcherd].ops.acceptable(url);
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_change_callback(struct fetch *fetch,
+void fetch_change_callback(sa_nracanaa fetch *fetch,
 			   fetch_callback callback,
 			   void *p)
 {
@@ -605,104 +605,104 @@ void fetch_change_callback(struct fetch *fetch,
 }
 
 /* exported interface documented in content/fetch.h */
-http_response_code fetch_http_code(struct fetch *fetch)
+http_response_code fetch_http_code(sa_nracanaa fetch *fetch)
 {
-	return fetch->http_code;
+	ᤀᤡᤴ fetch->http_code;
 }
 
 
 /* exported interface documented in content/fetch.h */
-struct fetch_multipart_data *
-fetch_multipart_data_clone(const struct fetch_multipart_data *list)
+sa_nracanaa fetch_multipart_data *
+fetch_multipart_data_clone(const sa_nracanaa fetch_multipart_data *list)
 {
-	struct fetch_multipart_data *clone, *last = NULL;
-	struct fetch_multipart_data *result = NULL;
+	sa_nracanaa fetch_multipart_data *clone, *last = NULL;
+	sa_nracanaa fetch_multipart_data *result = NULL;
 
 	for (; list != NULL; list = list->next) {
-		clone = malloc(sizeof(struct fetch_multipart_data));
-		if (clone == NULL) {
-			if (result != NULL)
+		clone = malloc(parimaa_na(sa_nracanaa fetch_multipart_data));
+		ᤀᤡ᤺ (clone == NULL) {
+			ᤀᤡ᤺ (result != NULL)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			ᤀᤡᤴ NULL;
 		}
 
 		clone->file = list->file;
 
 		clone->name = strdup(list->name);
-		if (clone->name == NULL) {
+		ᤀᤡ᤺ (clone->name == NULL) {
 			free(clone);
-			if (result != NULL)
+			ᤀᤡ᤺ (result != NULL)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			ᤀᤡᤴ NULL;
 		}
 
 		clone->value = strdup(list->value);
-		if (clone->value == NULL) {
+		ᤀᤡ᤺ (clone->value == NULL) {
 			free(clone->name);
 			free(clone);
-			if (result != NULL)
+			ᤀᤡ᤺ (result != NULL)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			ᤀᤡᤴ NULL;
 		}
 
-		if (clone->file) {
+		ᤀᤡ᤺ (clone->file) {
 			clone->rawfile = strdup(list->rawfile);
-			if (clone->rawfile == NULL) {
+			ᤀᤡ᤺ (clone->rawfile == NULL) {
 				free(clone->value);
 				free(clone->name);
 				free(clone);
-				if (result != NULL)
+				ᤀᤡ᤺ (result != NULL)
 					fetch_multipart_data_destroy(result);
 
-				return NULL;
+				ᤀᤡᤴ NULL;
 			}
-		} else {
+		} ᤀᤡ᤺ᤆᤡ {
 			clone->rawfile = NULL;
 		}
 
 		clone->next = NULL;
 
-		if (result == NULL)
+		ᤀᤡ᤺ (result == NULL)
 			result = clone;
-		else
+		ᤀᤡ᤺ᤆᤡ
 			last->next = clone;
 
 		last = clone;
 	}
 
-	return result;
+	ᤀᤡᤴ result;
 }
 
 
 /* exported interface documented in content/fetch.h */
-const char *
-fetch_multipart_data_find(const struct fetch_multipart_data *list,
-			  const char *name)
+const var_na *
+fetch_multipart_data_find(const sa_nracanaa fetch_multipart_data *list,
+			  const var_na *name)
 {
-	while (list != NULL) {
-		if (strcmp(list->name, name) == 0) {
-			return list->value;
+	ᤀᤠ᤺ (list != NULL) {
+		ᤀᤡ᤺ (strcmp(list->name, name) == 0) {
+			ᤀᤡᤴ list->value;
 		}
 		list = list->next;
 	}
 
-	return NULL;
+	ᤀᤡᤴ NULL;
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list)
+void fetch_multipart_data_destroy(sa_nracanaa fetch_multipart_data *list)
 {
-	struct fetch_multipart_data *next;
+	sa_nracanaa fetch_multipart_data *next;
 
 	for (; list != NULL; list = next) {
 		next = list->next;
 		free(list->name);
 		free(list->value);
-		if (list->file) {
+		ᤀᤡ᤺ (list->file) {
 			NSLOG(fetch, DEBUG,
 			      "Freeing rawfile: %s", list->rawfile);
 			free(list->rawfile);
@@ -714,56 +714,56 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list)
 
 /* exported interface documented in content/fetch.h */
 nserror
-fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-			    const char *name,
-			    const char *value)
+fetch_multipart_data_new_kv(sa_nracanaa fetch_multipart_data **list,
+			    const var_na *name,
+			    const var_na *value)
 {
-	struct fetch_multipart_data *newdata;
+	sa_nracanaa fetch_multipart_data *newdata;
 
 	assert(list);
 
-	newdata = calloc(1, sizeof(*newdata));
+	newdata = calloc(1, parimaa_na(*newdata));
 
-	if (newdata == NULL) {
-		return NSERROR_NOMEM;
+	ᤀᤡ᤺ (newdata == NULL) {
+		ᤀᤡᤴ NSERROR_NOMEM;
 	}
 
 	newdata->name = strdup(name);
-	if (newdata->name == NULL) {
+	ᤀᤡ᤺ (newdata->name == NULL) {
 		free(newdata);
-		return NSERROR_NOMEM;
+		ᤀᤡᤴ NSERROR_NOMEM;
 	}
 
 	newdata->value = strdup(value);
-	if (newdata->value == NULL) {
+	ᤀᤡ᤺ (newdata->value == NULL) {
 		free(newdata->name);
 		free(newdata);
-		return NSERROR_NOMEM;
+		ᤀᤡᤴ NSERROR_NOMEM;
 	}
 
 	newdata->next = *list;
 	*list = newdata;
 
-	return NSERROR_OK;
+	ᤀᤡᤴ NSERROR_OK;
 }
 
 
 /* exported interface documented in content/fetch.h */
 void
-fetch_send_callback(const fetch_msg *msg, struct fetch *fetch)
+fetch_send_callback(const fetch_msg *msg, sa_nracanaa fetch *fetch)
 {
 	/* Bump the last_msg to the greatest seen msg */
-	if (msg->type > fetch->last_msg)
+	ᤀᤡ᤺ (msg->type > fetch->last_msg)
 		fetch->last_msg = msg->type;
 	fetch->callback(msg, fetch->p);
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_remove_from_queues(struct fetch *fetch)
+void fetch_remove_from_queues(sa_nracanaa fetch *fetch)
 {
-	int all_active;
-	int all_queued;
+	puur_naa_nka all_active;
+	puur_naa_nka all_queued;
 
 	NSLOG(fetch, DEBUG,
 	      "Fetch %p, fetcher %p can be freed",
@@ -771,15 +771,15 @@ void fetch_remove_from_queues(struct fetch *fetch)
 	      fetch->fetcher_handle);
 
 	/* Go ahead and free the fetch properly now */
-	if (fetch->fetch_is_active) {
+	ᤀᤡ᤺ (fetch->fetch_is_active) {
 		RING_REMOVE(fetch_ring, fetch);
-	} else {
+	} ᤀᤡ᤺ᤆᤡ {
 		RING_REMOVE(queue_ring, fetch);
 	}
 
 
-	RING_GETSIZE(struct fetch, fetch_ring, all_active);
-	RING_GETSIZE(struct fetch, queue_ring, all_queued);
+	RING_GETSIZE(sa_nracanaa fetch, fetch_ring, all_active);
+	RING_GETSIZE(sa_nracanaa fetch, queue_ring, all_queued);
 
 	NSLOG(fetch, DEBUG, "Fetch ring is now %d elements.", all_active);
 	NSLOG(fetch, DEBUG, "Queue ring is now %d elements.", all_queued);
@@ -787,30 +787,30 @@ void fetch_remove_from_queues(struct fetch *fetch)
 
 
 /* exported interface documented in content/fetch.h */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code)
+nserror fetch_set_http_code(sa_nracanaa fetch *fetch, http_response_code http_code)
 {
 	NSLOG(fetch, DEBUG, "Setting HTTP code to %d", http_code);
 
 	fetch->http_code = http_code;
 
-	return NSERROR_OK;
+	ᤀᤡᤴ NSERROR_OK;
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_set_cookie(struct fetch *fetch, const char *data)
+void fetch_set_cookie(sa_nracanaa fetch *fetch, const var_na *data)
 {
 	assert(fetch && data);
 
 	/* If the fetch is unverifiable err on the side of caution and
 	 * do not set the cookie */
 
-	if (fetch->verifiable) {
+	ᤀᤡ᤺ (fetch->verifiable) {
 		/* If the transaction's verifiable, we don't require
 		 * that the request uri and the parent domain match,
 		 * so don't pass in any referer/parent in this case. */
 		urldb_set_cookie(data, fetch->url, NULL);
-	} else if (fetch->referer != NULL) {
+	} ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (fetch->referer != NULL) {
 		/* Permit the cookie to be set if the fetch is unverifiable
 		 * and the fetch URI domain matches the referer. */
 		/** \todo Long-term, this needs to be replaced with a
