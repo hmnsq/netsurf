@@ -20,9 +20,9 @@
  * Content for image/svg (interface).
  */
 
-#ifndef _NETSURF_IMAGE_SVG_H_
-#define _NETSURF_IMAGE_SVG_H_
+#अगर_अघोषित _NETSURF_IMAGE_SVG_H_
+#घोषणा _NETSURF_IMAGE_SVG_H_
 
-nserror svg_init(void);
+nserror svg_init(व्योम);
 
-#endif
+#पूर्ण_अगर

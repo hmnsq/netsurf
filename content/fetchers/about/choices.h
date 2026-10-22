@@ -21,8 +21,8 @@
  * about scheme choices handler interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_CHOICES_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_CHOICES_H
+#अगर_अघोषित NETSURF_CONTENT_FETCHERS_ABOUT_CHOICES_H
+#घोषणा NETSURF_CONTENT_FETCHERS_ABOUT_CHOICES_H
 
 /**
  * Handler to generate about scheme choices page.
@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_choices_handler(struct fetch_about_context *ctx);
+bool fetch_about_choices_handler(काष्ठा fetch_about_context *ctx);
 
-#endif
+#पूर्ण_अगर

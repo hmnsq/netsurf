@@ -21,20 +21,20 @@
  * content generator for the about scheme query privacy page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
+#समावेश <stdbool.h>
+#समावेश <stddef.h>
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <stdint.h>
+#समावेश <stdlib.h>
 
-#include "netsurf/plot_style.h"
+#समावेश "netsurf/plot_style.h"
 
-#include "utils/errors.h"
-#include "utils/nscolour.h"
+#समावेश "utils/errors.h"
+#समावेश "utils/nscolour.h"
 
-#include "private.h"
-#include "nscolours.h"
+#समावेश "private.h"
+#समावेश "nscolours.h"
 
 /**
  * Handler to generate the nscolours stylesheet
@@ -42,22 +42,22 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_nscolours_handler(struct fetch_about_context *ctx)
+bool fetch_about_nscolours_handler(काष्ठा fetch_about_context *ctx)
 {
 	nserror res;
-	const char *stylesheet;
+	स्थिर अक्षर *stylesheet;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/css; charset=utf-8")) {
-		goto aborted;
+	अगर (fetch_about_send_header(ctx, "Content-Type: text/css; charset=utf-8")) {
+		जाओ aborted;
 	}
 
 	res = nscolour_get_stylesheet(&stylesheet);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	अगर (res != NSERROR_OK) {
+		जाओ aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -67,15 +67,15 @@ bool fetch_about_nscolours_handler(struct fetch_about_context *ctx)
 			"%s",
 			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	अगर (res != NSERROR_OK) {
+		जाओ aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	वापस true;
 
 aborted:
 
-	return false;
+	वापस false;
 }

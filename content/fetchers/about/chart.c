@@ -26,86 +26,86 @@
  *
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <stdio.h>
+#समावेश <stdbool.h>
+#समावेश <stddef.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <math.h>
+#समावेश <stdio.h>
 
-#include "utils/config.h"
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/errors.h"
-#include "utils/nsurl.h"
+#समावेश "utils/config.h"
+#समावेश "netsurf/inttypes.h"
+#समावेश "utils/config.h"
+#समावेश "utils/utils.h"
+#समावेश "utils/errors.h"
+#समावेश "utils/nsurl.h"
 
-#include "private.h"
-#include "chart.h"
+#समावेश "private.h"
+#समावेश "chart.h"
 
 /** minimum figure dimension */
-#define FIGURE_MIN_WIDTH 150
-#define FIGURE_MIN_HEIGHT 100
+#घोषणा FIGURE_MIN_WIDTH 150
+#घोषणा FIGURE_MIN_HEIGHT 100
 
-enum chart_type {
+क्रमागत chart_type {
 		 CHART_TYPE_UNKNOWN,
 		 CHART_TYPE_PIE,
 };
 
 /* type of chart key */
-enum key_type {
-	       CHART_KEY_UNSET,
-	       CHART_KEY_NONE,
-	       CHART_KEY_LEFT,
-	       CHART_KEY_RIGHT,
-	       CHART_KEY_TOP,
-	       CHART_KEY_BOT,
-	       CHART_KEY_END
+क्रमागत कुंजी_type {
+	       CHART_कुंजी_UNSET,
+	       CHART_कुंजी_NONE,
+	       CHART_कुंजी_बायाँ,
+	       CHART_कुंजी_दायाँ,
+	       CHART_कुंजी_शीर्ष,
+	       CHART_कुंजी_BOT,
+	       CHART_कुंजी_END
 };
 
 
-struct chart_label {
-	char *title; /* label title */
-	unsigned int colour; /* colour */
+काष्ठा chart_label {
+	अक्षर *title; /* label title */
+	अचिन्हित पूर्णांक colour; /* colour */
 };
 
-struct chart_series {
-	unsigned int len; /* number of values in the series */
-	float *value; /* array of values */
+काष्ठा chart_series {
+	अचिन्हित पूर्णांक len; /* number of values in the series */
+	भग्न *मूल्य; /* array of values */
 };
 
-#define MAX_SERIES 4
+#घोषणा MAX_SERIES 4
 
-struct chart_data {
-	unsigned int series_len;
-	struct chart_series series[MAX_SERIES];
+काष्ठा chart_तथ्य {
+	अचिन्हित पूर्णांक series_len;
+	काष्ठा chart_series series[MAX_SERIES];
 
-	unsigned int label_len; /* number of labels */
-	struct chart_label *label;
+	अचिन्हित पूर्णांक label_len; /* number of labels */
+	काष्ठा chart_label *label;
 
 };
 
 /**
  * parameters for a chart figure
  */
-struct chart_param {
-	enum chart_type type;
-	enum key_type key; /* what type of key to use */
-	unsigned int width; /* width of figure */
-	unsigned int height; /* height of figure */
-	char *title; /* title */
-	struct {
-		unsigned int x;
-		unsigned int y;
-		unsigned int width;
-		unsigned int height;
+काष्ठा chart_param {
+	क्रमागत chart_type type;
+	क्रमागत कुंजी_type कुंजी; /* what type of key to use */
+	अचिन्हित पूर्णांक width; /* width of figure */
+	अचिन्हित पूर्णांक height; /* height of figure */
+	अक्षर *title; /* title */
+	काष्ठा {
+		अचिन्हित पूर्णांक x;
+		अचिन्हित पूर्णांक y;
+		अचिन्हित पूर्णांक width;
+		अचिन्हित पूर्णांक height;
 	} area; /* chart area within figure */
-	struct chart_data data;
+	काष्ठा chart_तथ्य तथ्य;
 };
 
-#define DEF_COLOUR_NUM 8
+#घोषणा DEF_COLOUR_अंक 8
 /** default colour series */
-static unsigned int colour_series[DEF_COLOUR_NUM] =
+अटल अचिन्हित पूर्णांक colour_series[DEF_COLOUR_अंक] =
 	{
 	 0x00ff00, /* green */
 	 0x0000ff, /* blue */
@@ -119,376 +119,376 @@ static unsigned int colour_series[DEF_COLOUR_NUM] =
 
 
 /* ensures there are labels present for every value */
-static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
+अटल nserror ensure_label_गिनती(काष्ठा chart_param *chart, अचिन्हित पूर्णांक गिनती)
 {
-	unsigned int lidx;
-	int deltac;
-	struct chart_label *nlabels;
+	अचिन्हित पूर्णांक lidx;
+	पूर्णांक deltac;
+	काष्ठा chart_label *nlabels;
 
-	deltac = count - chart->data.label_len;
-	if (deltac <= 0) {
+	deltac = गिनती - chart->तथ्य.label_len;
+	अगर (deltac <= 0) {
 		/* there are enough labels */
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
-	nlabels = realloc(chart->data.label,
-			  count * sizeof(struct chart_label));
-	if (nlabels == NULL) {
-		return NSERROR_NOMEM;
+	nlabels = पुनः_स्मृति(chart->तथ्य.label,
+			  गिनती * माप(काष्ठा chart_label));
+	अगर (nlabels == शून्य) {
+		वापस NSERROR_NOMEM;
 	}
-	chart->data.label = nlabels;
+	chart->तथ्य.label = nlabels;
 
-	for (lidx = chart->data.label_len; lidx < count; lidx++) {
-		chart->data.label[lidx].title = calloc(1, 20);
-		snprintf(chart->data.label[lidx].title, 19, "item %d", lidx + 1);
-		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_NUM];
+	क्रम (lidx = chart->तथ्य.label_len; lidx < गिनती; lidx++) {
+		chart->तथ्य.label[lidx].title = सुस्मृति(1, 20);
+		snprintf(chart->तथ्य.label[lidx].title, 19, "item %d", lidx + 1);
+		chart->तथ्य.label[lidx].colour = colour_series[lidx % DEF_COLOUR_अंक];
 	}
 
-	chart->data.label_len = count;
+	chart->तथ्य.label_len = गिनती;
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
 /**
  * extract values for a series
  */
-static nserror
-extract_series_values(struct chart_param *chart,
-		      unsigned int series_num,
-		      const char *valstr,
-		      size_t valstrlen)
+अटल nserror
+extract_series_मूल्यावली(काष्ठा chart_param *chart,
+		      अचिन्हित पूर्णांक series_अंक,
+		      स्थिर अक्षर *valstr,
+		      माप_प्रकार valstrlen)
 {
 	nserror res;
-	unsigned int valcur;
-	size_t valstart;/* value start in valstr */
-	size_t vallen; /* value end in valstr */
-	struct chart_series *series;
+	अचिन्हित पूर्णांक valcur;
+	माप_प्रकार valstart;/* value start in valstr */
+	माप_प्रकार vallen; /* value end in valstr */
+	काष्ठा chart_series *series;
 
-	series = chart->data.series + series_num;
+	series = chart->तथ्य.series + series_अंक;
 
 	/* ensure we do not leak any data in this series */
-	if (series->value != NULL) {
-		free(series->value);
+	अगर (series->मूल्य != शून्य) {
+		मुक्त(series->मूल्य);
 	}
 
 	/* count how many values present */
-	for (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	क्रम (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
+		अगर (valstr[valstart] == ',') {
 			series->len++;
 		}
 	}
 
 	/* allocate storage for values */
-	series->value = calloc(series->len, sizeof(float));
-	if (series->value == NULL) {
-		return NSERROR_NOMEM;
+	series->मूल्य = सुस्मृति(series->len, माप(भग्न));
+	अगर (series->मूल्य == शून्य) {
+		वापस NSERROR_NOMEM;
 	}
 
 	/* extract values from query string */
-	for (valcur = 0, vallen = 0, valstart = 0;
+	क्रम (valcur = 0, vallen = 0, valstart = 0;
 	     (valstart < valstrlen) && (valcur < series->len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		जबतक (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		series->value[valcur] = strtof(valstr + valstart, NULL);
+		series->मूल्य[valcur] = strtof(valstr + valstart, शून्य);
 		vallen++; /* account for , separator */
 	}
 
-	res = ensure_label_count(chart, series->len);
+	res = ensure_label_गिनती(chart, series->len);
 
-	return res;
+	वापस res;
 }
 
 
 /**
  * extract values for next series
  */
-static nserror
-extract_next_series_values(struct chart_param *chart,
-		      const char *valstr,
-		      size_t valstrlen)
+अटल nserror
+extract_अग्र_series_मूल्यावली(काष्ठा chart_param *chart,
+		      स्थिर अक्षर *valstr,
+		      माप_प्रकार valstrlen)
 {
 	nserror res;
 
-	if (chart->data.series_len >= MAX_SERIES) {
-		return NSERROR_NOSPACE;
+	अगर (chart->तथ्य.series_len >= MAX_SERIES) {
+		वापस NSERROR_NOSPACE;
 	}
 
-	res = extract_series_values(chart,
-				    chart->data.series_len,
+	res = extract_series_मूल्यावली(chart,
+				    chart->तथ्य.series_len,
 				    valstr,
 				    valstrlen);
-	if (res == NSERROR_OK) {
-		chart->data.series_len++;
+	अगर (res == NSERROR_OK) {
+		chart->तथ्य.series_len++;
 	}
 
-	return res;
+	वापस res;
 }
 
 
 /**
  * extract label title
  */
-static nserror
-extract_series_labels(struct chart_param *chart,
-		      const char *valstr,
-		      size_t valstrlen)
+अटल nserror
+extract_series_labels(काष्ठा chart_param *chart,
+		      स्थिर अक्षर *valstr,
+		      माप_प्रकार valstrlen)
 {
 	nserror res;
-	unsigned int valcount; /* count of values in valstr */
-	unsigned int valcur;
-	size_t valstart;/* value start in valstr */
-	size_t vallen; /* value end in valstr */
+	अचिन्हित पूर्णांक valcount; /* count of values in valstr */
+	अचिन्हित पूर्णांक valcur;
+	माप_प्रकार valstart;/* value start in valstr */
+	माप_प्रकार vallen; /* value end in valstr */
 
-	for (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	क्रम (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
+		अगर (valstr[valstart] == ',') {
 			valcount++;
 		}
 	}
 
-	res = ensure_label_count(chart, valcount);
-	if (res != NSERROR_OK) {
-		return res;
+	res = ensure_label_गिनती(chart, valcount);
+	अगर (res != NSERROR_OK) {
+		वापस res;
 	}
 
 
-	for (valcur = 0, vallen = 0, valstart = 0;
-	     (valstart < valstrlen) && (valcur < chart->data.label_len);
+	क्रम (valcur = 0, vallen = 0, valstart = 0;
+	     (valstart < valstrlen) && (valcur < chart->तथ्य.label_len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		जबतक (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		chart->data.label[valcur].title = strndup(valstr + valstart, vallen);
+		chart->तथ्य.label[valcur].title = strndup(valstr + valstart, vallen);
 		vallen++; /* account for , separator */
 	}
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
 
 /**
  * extract labels colour
  */
-static nserror
-extract_series_colours(struct chart_param *chart,
-		      const char *valstr,
-		      size_t valstrlen)
+अटल nserror
+extract_series_colours(काष्ठा chart_param *chart,
+		      स्थिर अक्षर *valstr,
+		      माप_प्रकार valstrlen)
 {
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
 /**
  * process a part of a query
  */
-static nserror
-process_query_section(const char *str, size_t len, struct chart_param *chart)
+अटल nserror
+process_query_section(स्थिर अक्षर *str, माप_प्रकार len, काष्ठा chart_param *chart)
 {
 	nserror res = NSERROR_OK;
 
-	if ((len > 6) &&
-	    (strncmp(str, "width=", 6) == 0)) {
+	अगर ((len > 6) &&
+	    (म_भेदन(str, "width=", 6) == 0)) {
 		/* figure width */
-		chart->width = strtoul(str + 6, NULL, 10);
-	} else if ((len > 7) &&
-	    (strncmp(str, "height=", 7) == 0)) {
+		chart->width = म_से_अदीर्घ(str + 6, शून्य, 10);
+	} अन्यथा अगर ((len > 7) &&
+	    (म_भेदन(str, "height=", 7) == 0)) {
 		/* figure height */
-		chart->height = strtoul(str + 7, NULL, 10);
-	} else if ((len > 8) &&
-	    (strncmp(str, "cawidth=", 8) == 0)) {
+		chart->height = म_से_अदीर्घ(str + 7, शून्य, 10);
+	} अन्यथा अगर ((len > 8) &&
+	    (म_भेदन(str, "cawidth=", 8) == 0)) {
 		/* chart area width */
-		chart->area.width = strtoul(str + 8, NULL, 10);
-	} else if ((len > 9) &&
-	    (strncmp(str, "caheight=", 9) == 0)) {
+		chart->area.width = म_से_अदीर्घ(str + 8, शून्य, 10);
+	} अन्यथा अगर ((len > 9) &&
+	    (म_भेदन(str, "caheight=", 9) == 0)) {
 		/* chart area height */
-		chart->area.height = strtoul(str + 9, NULL, 10);
-	} else if ((len > 4) &&
-	    (strncmp(str, "key=", 4) == 0)) {
+		chart->area.height = म_से_अदीर्घ(str + 9, शून्य, 10);
+	} अन्यथा अगर ((len > 4) &&
+	    (म_भेदन(str, "key=", 4) == 0)) {
 		/* figure has key */
-		chart->key = strtoul(str + 4, NULL, 10);
-	} else if ((len > 6) &&
-	    (strncmp(str, "title=", 6) == 0)) {
+		chart->कुंजी = म_से_अदीर्घ(str + 4, शून्य, 10);
+	} अन्यथा अगर ((len > 6) &&
+	    (म_भेदन(str, "title=", 6) == 0)) {
 		chart->title = strndup(str + 6, len - 6);
-	} else if ((len > 5) &&
-	    (strncmp(str, "type=", 5) == 0)) {
-		if (strncmp(str + 5, "pie", len - 5) == 0) {
+	} अन्यथा अगर ((len > 5) &&
+	    (म_भेदन(str, "type=", 5) == 0)) {
+		अगर (म_भेदन(str + 5, "pie", len - 5) == 0) {
 			chart->type = CHART_TYPE_PIE;
-		} else {
+		} अन्यथा {
 			chart->type = CHART_TYPE_UNKNOWN;
 		}
-	} else if ((len > 7) &&
-	    (strncmp(str, "values=", 7) == 0)) {
-		res = extract_next_series_values(chart, str + 7, len - 7);
-	} else if ((len > 7) &&
-	    (strncmp(str, "labels=", 7) == 0)) {
+	} अन्यथा अगर ((len > 7) &&
+	    (म_भेदन(str, "values=", 7) == 0)) {
+		res = extract_अग्र_series_मूल्यावली(chart, str + 7, len - 7);
+	} अन्यथा अगर ((len > 7) &&
+	    (म_भेदन(str, "labels=", 7) == 0)) {
 		res = extract_series_labels(chart, str + 7, len - 7);
-	} else if ((len > 8) &&
-	    (strncmp(str, "colours=", 8) == 0)) {
+	} अन्यथा अगर ((len > 8) &&
+	    (म_भेदन(str, "colours=", 8) == 0)) {
 		res = extract_series_colours(chart, str + 8, len - 8);
 	}
 
-	return res;
+	वापस res;
 }
 
 
 
-static nserror
-chart_from_query(struct nsurl *url, struct chart_param *chart)
+अटल nserror
+chart_from_query(काष्ठा nsurl *url, काष्ठा chart_param *chart)
 {
 	nserror res;
-	char *querystr;
-	size_t querylen;
-	size_t kvstart;/* key value start */
-	size_t kvlen; /* key value end */
+	अक्षर *querystr;
+	माप_प्रकार querylen;
+	माप_प्रकार kvstart;/* key value start */
+	माप_प्रकार kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	अगर (res != NSERROR_OK) {
+		वापस res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	क्रम (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		जबतक (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, chart);
-		if (res != NSERROR_OK) {
-			break;
+		अगर (res != NSERROR_OK) {
+			अवरोध;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	मुक्त(querystr);
 
 	/* sanity check dimensions */
-	if (chart->width < FIGURE_MIN_WIDTH) {
+	अगर (chart->width < FIGURE_MIN_WIDTH) {
 		/* bad width - check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		अगर (chart->height < FIGURE_MIN_HEIGHT) {
 			/* both bad set to defaults */
 			chart->width = FIGURE_MIN_WIDTH;
 			chart->height = FIGURE_MIN_HEIGHT;
-		} else {
+		} अन्यथा {
 			/* base width on valid height */
 			chart->width = (chart->height * 3) / 2;
 		}
-	} else {
+	} अन्यथा {
 		/* good width check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		अगर (chart->height < FIGURE_MIN_HEIGHT) {
 			/* base height on valid width */
 			chart->height = (chart->width * 2) / 3;
 		}
 	}
 
 	/* ensure legend type correct */
-	if ((chart->key == CHART_KEY_UNSET) ||
-	    (chart->key >= CHART_KEY_END )) {
+	अगर ((chart->कुंजी == CHART_कुंजी_UNSET) ||
+	    (chart->कुंजी >= CHART_कुंजी_END )) {
 		/* default to putting key on right */
-		chart->key = CHART_KEY_RIGHT;
+		chart->कुंजी = CHART_कुंजी_दायाँ;
 	}
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
 
-static nserror
-output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
+अटल nserror
+output_pie_legend(काष्ठा fetch_about_context *ctx, काष्ठा chart_param *chart)
 {
 	nserror res;
-	unsigned int lblidx;
-	unsigned int legend_width;
-	unsigned int legend_height;
-	unsigned int vertical_spacing;
+	अचिन्हित पूर्णांक lblidx;
+	अचिन्हित पूर्णांक legend_width;
+	अचिन्हित पूर्णांक legend_height;
+	अचिन्हित पूर्णांक vertical_spacing;
 
-	switch (chart->key) {
+	चयन (chart->कुंजी) {
 
-	case CHART_KEY_NONE:
-		break;
-	case CHART_KEY_RIGHT:
+	हाल CHART_कुंजी_NONE:
+		अवरोध;
+	हाल CHART_कुंजी_दायाँ:
 		legend_width = chart->width - chart->area.width - chart->area.x;
 		legend_width -= 10; /* margin */
 		legend_height = chart->height;
-		vertical_spacing = legend_height / (chart->data.label_len + 1);
+		vertical_spacing = legend_height / (chart->तथ्य.label_len + 1);
 
-		for(lblidx = 0; lblidx < chart->data.label_len ; lblidx++) {
+		क्रम(lblidx = 0; lblidx < chart->तथ्य.label_len ; lblidx++) {
 			res = fetch_about_ssenddataf(ctx,
 				"<rect  x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#%06x\" />",
 				chart->width - legend_width,
 				(vertical_spacing * lblidx) + (vertical_spacing/2),
 				vertical_spacing * 2 / 3,
 				vertical_spacing * 2 / 3,
-				chart->data.label[lblidx].colour);
-			if (res != NSERROR_OK) {
-				return res;
+				chart->तथ्य.label[lblidx].colour);
+			अगर (res != NSERROR_OK) {
+				वापस res;
 			}
 			res = fetch_about_ssenddataf(ctx,
 				"<text x=\"%d\" y=\"%d\" fill=\"#%06x\" >%s</text>",
 				chart->width - legend_width + vertical_spacing,
 				vertical_spacing * (lblidx+1),
-			     chart->data.label[lblidx].colour,
-				chart->data.label[lblidx].title);
-			if (res != NSERROR_OK) {
-				return res;
+			     chart->तथ्य.label[lblidx].colour,
+				chart->तथ्य.label[lblidx].title);
+			अगर (res != NSERROR_OK) {
+				वापस res;
 			}
 		}
-		break;
-	default:
-		break;
+		अवरोध;
+	शेष:
+		अवरोध;
 	}
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
-static float
-compute_series_total(struct chart_param *chart, unsigned int series)
+अटल भग्न
+compute_series_योग(काष्ठा chart_param *chart, अचिन्हित पूर्णांक series)
 {
-	float total;
-	unsigned int curdata;
+	भग्न योग;
+	अचिन्हित पूर्णांक curdata;
 
-	for (total = 0, curdata = 0;
-	     curdata < chart->data.series[series].len;
+	क्रम (योग = 0, curdata = 0;
+	     curdata < chart->तथ्य.series[series].len;
 	     curdata++) {
-		total += chart->data.series[series].value[curdata];
+		योग += chart->तथ्य.series[series].मूल्य[curdata];
 	}
-	return total;
+	वापस योग;
 }
 
 /**
  * render the data as a pie chart svg
  */
-static bool
-pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
+अटल bool
+pie_chart(काष्ठा fetch_about_context *ctx, काष्ठा chart_param *chart)
 {
 	nserror res;
-	float ra; /* pie a radius */
-	float rb; /* pie b radius */
-	float series_total;
-	unsigned int curdata; /* current data point index */
-	float last_x, last_y;
-	float end_x, end_y;
-	float start;
-	float extent;
+	भग्न ra; /* pie a radius */
+	भग्न rb; /* pie b radius */
+	भग्न series_योग;
+	अचिन्हित पूर्णांक curdata; /* current data point index */
+	भग्न last_x, last_y;
+	भग्न end_x, end_y;
+	भग्न start;
+	भग्न extent;
 	bool large;
-	float circle_centre_x, circle_centre_y;
+	भग्न circle_centre_x, circle_centre_y;
 
 	/* ensure there is data to render */
-	if ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
-		return NSERROR_BAD_PARAMETER;
+	अगर ((chart->तथ्य.series_len < 1) || (chart->तथ्य.series[0].len < 2)) {
+		वापस NSERROR_BAD_PARAMETER;
 	}
 
 	/* get the first series total value */
-	series_total = compute_series_total(chart, 0);
-	if (series_total == 0) {
+	series_योग = compute_series_योग(chart, 0);
+	अगर (series_योग == 0) {
 		/* dividing by zero is embarasing */
-		return NSERROR_BAD_PARAMETER;
+		वापस NSERROR_BAD_PARAMETER;
 	}
 
 	/*
@@ -497,14 +497,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	 * this is left to each chart type as different charts
 	 *  have differnt requirements
 	 */
-	if ((chart->area.width == 0) || (chart->area.height == 0)) {
+	अगर ((chart->area.width == 0) || (chart->area.height == 0)) {
 		/*
 		 * pie chart defaults to square of smaller of figure
 		 *  width and height
 		 */
-		if (chart->width > chart->height) {
+		अगर (chart->width > chart->height) {
 			chart->area.width = chart->area.height = (chart->height - chart->area.x);
-		} else {
+		} अन्यथा {
 			chart->area.width = chart->area.height = (chart->width - chart->area.y);
 		}
 	}
@@ -513,9 +513,9 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	अगर (fetch_about_send_header(ctx,
 			"Content-Type: image/svg; charset=utf-8")) {
-		goto aborted;
+		जाओ aborted;
 	}
 
 	/* get the pie charts elipse radii */
@@ -532,14 +532,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			"<svg width=\"%u\" height=\"%u\" "
 			"xmlns=\"http://www.w3.org/2000/svg\">\n",
 			chart->width, chart->height);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	अगर (res != NSERROR_OK) {
+		जाओ aborted;
 	}
 
 	/* generate the legend */
 	res = output_pie_legend(ctx, chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	अगर (res != NSERROR_OK) {
+		जाओ aborted;
 	}
 
 	/* plot the arcs */
@@ -548,14 +548,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	last_y = (rb * sin(start));
 
 	/* iterate over each data point creating a slice o pie */
-	for (curdata=0; curdata < chart->data.series[0].len; curdata++) {
-		extent = ((chart->data.series[0].value[curdata] / series_total) * 2 * M_PI);
+	क्रम (curdata=0; curdata < chart->तथ्य.series[0].len; curdata++) {
+		extent = ((chart->तथ्य.series[0].मूल्य[curdata] / series_योग) * 2 * M_PI);
 		end_x = (ra * cos(start + extent));
 		end_y = (rb * sin(start + extent));
 
-		if (extent > M_PI) {
+		अगर (extent > M_PI) {
 			large = true;
-		} else {
+		} अन्यथा {
 			large = false;
 		}
 
@@ -571,9 +571,9 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			circle_centre_y + end_y,
 			circle_centre_x,
 			circle_centre_y,
-			chart->data.label[curdata].colour);
-		if (res != NSERROR_OK) {
-			goto aborted;
+			chart->तथ्य.label[curdata].colour);
+		अगर (res != NSERROR_OK) {
+			जाओ aborted;
 		}
 		last_x = end_x;
 		last_y = end_y;
@@ -581,17 +581,17 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</svg>\n");
-	if (res != NSERROR_OK) {
-		goto aborted;
+	अगर (res != NSERROR_OK) {
+		जाओ aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	वापस true;
 
  aborted:
 
-	return false;
+	वापस false;
 
 }
 
@@ -603,28 +603,28 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_chart_handler(struct fetch_about_context *ctx)
+bool fetch_about_chart_handler(काष्ठा fetch_about_context *ctx)
 {
 	nserror res;
-	struct chart_param chart;
-	memset(&chart, 0, sizeof(struct chart_param));
+	काष्ठा chart_param chart;
+	स_रखो(&chart, 0, माप(काष्ठा chart_param));
 
 	res = chart_from_query(fetch_about_get_url(ctx), &chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	अगर (res != NSERROR_OK) {
+		जाओ aborted;
 	}
 
-	switch (chart.type) {
-	case CHART_TYPE_PIE:
-		return pie_chart(ctx, &chart);
+	चयन (chart.type) {
+	हाल CHART_TYPE_PIE:
+		वापस pie_chart(ctx, &chart);
 
 
-	default:
-		break;
+	शेष:
+		अवरोध;
 	}
 
 aborted:
 
-	return false;
+	वापस false;
 
 }

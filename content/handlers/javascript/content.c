@@ -21,98 +21,98 @@
  * javascript content implementation
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#समावेश <assert.h>
+#समावेश <string.h>
+#समावेश <stdbool.h>
+#समावेश <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/config.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "javascript/content.h"
+#समावेश "utils/errors.h"
+#समावेश "utils/config.h"
+#समावेश "content/content_protected.h"
+#समावेश "content/content_factory.h"
+#समावेश "content/hlcache.h"
+#समावेश "utils/log.h"
+#समावेश "utils/messages.h"
+#समावेश "utils/utils.h"
+#समावेश "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+प्रकार काष्ठा javascript_content {
+	काष्ठा content base;
 } javascript_content;
 
-static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+अटल nserror javascript_create(स्थिर content_handler *handler,
+		lwc_string *imime_type, स्थिर काष्ठा http_parameter *params,
+		llcache_handle *llcache, स्थिर अक्षर *fallback_charset,
+		bool quirks, काष्ठा content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = सुस्मृति(1, माप(javascript_content));
+	अगर (script == शून्य)
+		वापस NSERROR_NOMEM;
 
 	error = content__init(&script->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(script);
-		return error;
+	अगर (error != NSERROR_OK) {
+		मुक्त(script);
+		वापस error;
 	}
 
-	*c = (struct content *) script;
+	*c = (काष्ठा content *) script;
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+अटल bool javascript_convert(काष्ठा content *c)
 {
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	वापस true;
 }
 
-static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+अटल nserror 
+javascript_clone(स्थिर काष्ठा content *old, काष्ठा content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = सुस्मृति(1, माप(javascript_content));
+	अगर (script == शून्य)
+		वापस NSERROR_NOMEM;
 
 	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
+	अगर (error != NSERROR_OK) {
 		content_destroy(&script->base);
-		return error;
+		वापस error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (काष्ठा content *) script;
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+अटल व्योम javascript_destroy(काष्ठा content *c)
 {
 }
 
-static content_type javascript_content_type(void)
+अटल content_type javascript_content_type(व्योम)
 {
-	return CONTENT_JS;
+	वापस CONTENT_JS;
 }
 
 
-static const content_handler javascript_content_handler = {
+अटल स्थिर content_handler javascript_content_handler = {
 	.create = javascript_create,
-	.data_complete = javascript_convert,
+	.तथ्य_complete = javascript_convert,
 	.destroy = javascript_destroy,
 	.clone = javascript_clone,
 	.type = javascript_content_type,
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+अटल स्थिर अक्षर *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */

@@ -22,35 +22,35 @@
  * HTML fetcher for CSS objects
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dom/dom.h>
-#include <libwapcaplet/libwapcaplet.h>
+#समावेश <assert.h>
+#समावेश <stdbool.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <dom/dom.h>
+#समावेश <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/ring.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#समावेश "netsurf/inttypes.h"
+#समावेश "utils/config.h"
+#समावेश "utils/corestrings.h"
+#समावेश "utils/log.h"
+#समावेश "utils/ring.h"
+#समावेश "utils/nsurl.h"
+#समावेश "utils/utils.h"
+#समावेश "content/fetch.h"
+#समावेश "content/fetchers.h"
 
-#include "html/private.h"
+#समावेश "html/private.h"
 
-typedef struct html_css_fetcher_item {
-	uint32_t key;
-	dom_string *data;
+प्रकार काष्ठा html_css_fetcher_item {
+	uint32_t कुंजी;
+	dom_string *तथ्य;
 	nsurl *base_url;
 
-	struct html_css_fetcher_item *r_next, *r_prev;
+	काष्ठा html_css_fetcher_item *r_अग्र, *r_पूर्व;
 } html_css_fetcher_item;
 
-typedef struct html_css_fetcher_context {
-	struct fetch *parent_fetch;
+प्रकार काष्ठा html_css_fetcher_context {
+	काष्ठा fetch *parent_fetch;
 
 	nsurl *url;
 	html_css_fetcher_item *item;
@@ -58,40 +58,40 @@ typedef struct html_css_fetcher_context {
 	bool aborted;
 	bool locked;
 
-	struct html_css_fetcher_context *r_next, *r_prev;
+	काष्ठा html_css_fetcher_context *r_अग्र, *r_पूर्व;
 } html_css_fetcher_context;
 
-static uint32_t current_key = 0;
-static html_css_fetcher_item *items = NULL;
-static html_css_fetcher_context *ring = NULL;
+अटल uint32_t current_कुंजी = 0;
+अटल html_css_fetcher_item *वस्तुएँ = शून्य;
+अटल html_css_fetcher_context *ring = शून्य;
 
-static bool html_css_fetcher_initialise(lwc_string *scheme)
+अटल bool html_css_fetcher_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_initialise called for %s",
-	      lwc_string_data(scheme));
-	return true;
+	      lwc_string_तथ्य(scheme));
+	वापस true;
 }
 
-static void html_css_fetcher_finalise(lwc_string *scheme)
+अटल व्योम html_css_fetcher_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_finalise called for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_तथ्य(scheme));
 }
 
-static bool html_css_fetcher_can_fetch(const nsurl *url)
+अटल bool html_css_fetcher_can_fetch(स्थिर nsurl *url)
 {
-	return true;
+	वापस true;
 }
 
-static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+अटल व्योम *html_css_fetcher_setup(काष्ठा fetch *parent_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, स्थिर अक्षर *post_urlenc,
+		 स्थिर काष्ठा fetch_multipart_तथ्य *post_multipart,
+		 स्थिर अक्षर **headers)
 {
 	html_css_fetcher_context *ctx;
 	lwc_string *path;
-	uint32_t key;
-	html_css_fetcher_item *item, *found = NULL;
+	uint32_t कुंजी;
+	html_css_fetcher_item *item, *found = शून्य;
 
 	/* format of a x-ns-css URL is:
 	 *   x-ns-url:<key>
@@ -100,68 +100,68 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 
 	path = nsurl_get_component(url, NSURL_PATH);
 	/* The path must exist */
-	if (path == NULL) {
-		return NULL;
+	अगर (path == शून्य) {
+		वापस शून्य;
 	}
 
-	key = strtoul(lwc_string_data(path), NULL, 10);
+	कुंजी = म_से_अदीर्घ(lwc_string_तथ्य(path), शून्य, 10);
 
 	lwc_string_unref(path);
 
 	/* There must be at least one item */
-	if (items == NULL) {
-		return NULL;
+	अगर (वस्तुएँ == शून्य) {
+		वापस शून्य;
 	}
 
-	item = items;
-	do {
-		if (item->key == key) {
+	item = वस्तुएँ;
+	करो {
+		अगर (item->कुंजी == कुंजी) {
 			found = item;
-			break;
+			अवरोध;
 		}
 
-		item = item->r_next;
-	} while (item != items);
+		item = item->r_अग्र;
+	} जबतक (item != वस्तुएँ);
 
 	/* We must have found the item */
-	if (found == NULL) {
-		return NULL;
+	अगर (found == शून्य) {
+		वापस शून्य;
 	}
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = सुस्मृति(1, माप(*ctx));
+	अगर (ctx == शून्य)
+		वापस शून्य;
 
 	ctx->parent_fetch = parent_fetch;
 	ctx->url = nsurl_ref(url);
 	ctx->item = found;
 
-	RING_INSERT(ring, ctx);
+	RING_जोड़ो(ring, ctx);
 
-	return ctx;
+	वापस ctx;
 }
 
-static bool html_css_fetcher_start(void *ctx)
+अटल bool html_css_fetcher_start(व्योम *ctx)
 {
-	return true;
+	वापस true;
 }
 
-static void html_css_fetcher_free(void *ctx)
+अटल व्योम html_css_fetcher_free(व्योम *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
 	nsurl_unref(c->url);
-	if (c->item != NULL) {
+	अगर (c->item != शून्य) {
 		nsurl_unref(c->item->base_url);
-		dom_string_unref(c->item->data);
-		RING_REMOVE(items, c->item);
-		free(c->item);
+		dom_string_unref(c->item->तथ्य);
+		RING_REMOVE(वस्तुएँ, c->item);
+		मुक्त(c->item);
 	}
 	RING_REMOVE(ring, c);
-	free(ctx);
+	मुक्त(ctx);
 }
 
-static void html_css_fetcher_abort(void *ctx)
+अटल व्योम html_css_fetcher_abort(व्योम *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
@@ -172,41 +172,41 @@ static void html_css_fetcher_abort(void *ctx)
 	c->aborted = true;
 }
 
-static void html_css_fetcher_send_callback(const fetch_msg *msg,
+अटल व्योम html_css_fetcher_send_callback(स्थिर fetch_संदेश *संदेश,
 		html_css_fetcher_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(संदेश, c->parent_fetch);
 	c->locked = false;
 }
 
-static void html_css_fetcher_poll(lwc_string *scheme)
+अटल व्योम html_css_fetcher_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	html_css_fetcher_context *c, *next;
+	fetch_संदेश संदेश;
+	html_css_fetcher_context *c, *अग्र;
 
-	if (ring == NULL) return;
+	अगर (ring == शून्य) वापस;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
-	do {
+	करो {
 		/* Ignore fetches that have been flagged as locked.
 		 * This allows safe re-entrant calls to this function.
 		 * Re-entrancy can occur if, as a result of a callback,
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			next = c->r_next;
-			continue;
+		अगर (c->locked == true) {
+			अग्र = c->r_अग्र;
+			जारी;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted) {
+		अगर (c->aborted) {
 			/* Nothing to do */
-			assert(c->locked == false);
-		} else if (c->item != NULL) {
-			char header[4096];
+			निश्चित(c->locked == false);
+		} अन्यथा अगर (c->item != शून्य) {
+			अक्षर header[4096];
 
 			fetch_set_http_code(c->parent_fetch, 200);
 
@@ -214,64 +214,64 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 			 * Therefore, we _must_ check for this after _every_
 			 * call to html_css_fetcher_send_callback().
 			 */
-			snprintf(header, sizeof header,
+			snprintf(header, माप header,
 				"Content-Type: text/css; charset=utf-8");
-			msg.type = FETCH_HEADER;
-			msg.data.header_or_data.buf = (const uint8_t *) header;
-			msg.data.header_or_data.len = strlen(header);
-			html_css_fetcher_send_callback(&msg, c);
+			संदेश.type = FETCH_HEADER;
+			संदेश.तथ्य.header_or_तथ्य.buf = (स्थिर uint8_t *) header;
+			संदेश.तथ्य.header_or_तथ्य.len = म_माप(header);
+			html_css_fetcher_send_callback(&संदेश, c);
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			अगर (c->aborted == false) {
+				snprintf(header, माप header,
 					"Content-Length: %"PRIsizet,
-					dom_string_byte_length(c->item->data));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					dom_string_byte_लंबाई(c->item->तथ्य));
+				संदेश.type = FETCH_HEADER;
+				संदेश.तथ्य.header_or_तथ्य.buf =
+						(स्थिर uint8_t *) header;
+				संदेश.तथ्य.header_or_तथ्य.len = म_माप(header);
+				html_css_fetcher_send_callback(&संदेश, c);
 			}
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			अगर (c->aborted == false) {
+				snprintf(header, माप header,
 					"X-NS-Base: %.*s",
-					(int) nsurl_length(c->item->base_url),
+					(पूर्णांक) nsurl_लंबाई(c->item->base_url),
 					nsurl_access(c->item->base_url));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+				संदेश.type = FETCH_HEADER;
+				संदेश.तथ्य.header_or_तथ्य.buf =
+						(स्थिर uint8_t *) header;
+				संदेश.तथ्य.header_or_तथ्य.len = म_माप(header);
+				html_css_fetcher_send_callback(&संदेश, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf =
-						(const uint8_t *)
-						dom_string_data(c->item->data);
-				msg.data.header_or_data.len =
-					dom_string_byte_length(c->item->data);
-				html_css_fetcher_send_callback(&msg, c);
+			अगर (c->aborted == false) {
+				संदेश.type = FETCH_तथ्य;
+				संदेश.तथ्य.header_or_तथ्य.buf =
+						(स्थिर uint8_t *)
+						dom_string_तथ्य(c->item->तथ्य);
+				संदेश.तथ्य.header_or_तथ्य.len =
+					dom_string_byte_लंबाई(c->item->तथ्य);
+				html_css_fetcher_send_callback(&संदेश, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				html_css_fetcher_send_callback(&msg, c);
+			अगर (c->aborted == false) {
+				संदेश.type = FETCH_FINISHED;
+				html_css_fetcher_send_callback(&संदेश, c);
 			}
-		} else {
+		} अन्यथा {
 			NSLOG(netsurf, INFO, "Processing of %s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't,
 			 * then html_css_fetcher_process() is broken.
 			 */
-			assert(c->locked == false);
+			निश्चित(c->locked == false);
 		}
 
 		/* Compute next fetch item at the last possible moment as
 		 * processing this item may have added to the ring.
 		 */
-		next = c->r_next;
+		अग्र = c->r_अग्र;
 
 		fetch_remove_from_queues(c->parent_fetch);
 		fetch_free(c->parent_fetch);
@@ -279,42 +279,42 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} जबतक ( (c = अग्र) != ring && ring != शून्य);
 }
 
 /* exported interface documented in html_internal.h */
-nserror html_css_fetcher_register(void)
+nserror html_css_fetcher_register(व्योम)
 {
-	const struct fetcher_operation_table html_css_fetcher_ops = {
+	स्थिर काष्ठा fetcher_operation_table html_css_fetcher_ops = {
 		.initialise = html_css_fetcher_initialise,
 		.acceptable = html_css_fetcher_can_fetch,
 		.setup = html_css_fetcher_setup,
 		.start = html_css_fetcher_start,
-		.abort = html_css_fetcher_abort,
-		.free = html_css_fetcher_free,
+		.पात = html_css_fetcher_abort,
+		.मुक्त = html_css_fetcher_free,
 		.poll = html_css_fetcher_poll,
 		.finalise = html_css_fetcher_finalise
 	};
 
-	return fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
+	वापस fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
 			&html_css_fetcher_ops);
 }
 
 /* exported interface documented in html_internal.h */
 nserror
-html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
+html_css_fetcher_add_item(dom_string *तथ्य, nsurl *base_url, uint32_t *कुंजी)
 {
-	html_css_fetcher_item *item = malloc(sizeof(*item));
+	html_css_fetcher_item *item = दो_स्मृति(माप(*item));
 
-	if (item == NULL) {
-		return NSERROR_NOMEM;
+	अगर (item == शून्य) {
+		वापस NSERROR_NOMEM;
 	}
 
-	*key = item->key = current_key++;
-	item->data = dom_string_ref(data);
+	*कुंजी = item->कुंजी = current_कुंजी++;
+	item->तथ्य = dom_string_ref(तथ्य);
 	item->base_url = nsurl_ref(base_url);
 
-	RING_INSERT(items, item);
+	RING_जोड़ो(वस्तुएँ, item);
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }

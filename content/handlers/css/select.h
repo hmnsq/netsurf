@@ -16,47 +16,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_SELECT_H_
-#define NETSURF_CSS_SELECT_H_
+#अगर_अघोषित NETSURF_CSS_SELECT_H_
+#घोषणा NETSURF_CSS_SELECT_H_
 
-#include <stdint.h>
+#समावेश <stdint.h>
 
-#include <dom/dom.h>
+#समावेश <dom/dom.h>
 
-#include <libcss/libcss.h>
+#समावेश <libcss/libcss.h>
 
-struct content;
-struct nsurl;
+काष्ठा content;
+काष्ठा nsurl;
 
 /**
  * Selection context
  */
-typedef struct nscss_select_ctx
+प्रकार काष्ठा nscss_select_ctx
 {
 	css_select_ctx *ctx;
 	bool quirks;
-	struct nsurl *base_url;
+	काष्ठा nsurl *base_url;
 	lwc_string *universal;
-	const css_computed_style *root_style;
-	const css_computed_style *parent_style;
+	स्थिर css_computed_style *मूल_style;
+	स्थिर css_computed_style *parent_style;
 } nscss_select_ctx;
 
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks);
+css_stylesheet *nscss_create_inline_style(स्थिर uint8_t *तथ्य, माप_प्रकार len,
+		स्थिर अक्षर *charset, स्थिर अक्षर *url, bool allow_quirks);
 
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style);
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_गाँठ *n,
+		स्थिर css_media *media,
+		स्थिर css_unit_ctx *unit_len_ctx,
+		स्थिर css_stylesheet *inline_style);
 
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent);
+		स्थिर css_unit_ctx *unit_len_ctx,
+		स्थिर css_computed_style *parent);
 
 
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor);
+css_error named_ancestor_गाँठ(व्योम *pw, व्योम *गाँठ,
+		स्थिर css_qname *qname, व्योम **ancestor);
 
-css_error node_is_visited(void *pw, void *node, bool *match);
+css_error गाँठ_is_visited(व्योम *pw, व्योम *गाँठ, bool *match);
 
-#endif
+#पूर्ण_अगर

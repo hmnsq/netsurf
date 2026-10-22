@@ -21,22 +21,22 @@
  * Interface to HTML imagemap
  */
 
-#ifndef NETSURF_HTML_IMAGEMAP_H
-#define NETSURF_HTML_IMAGEMAP_H
+#अगर_अघोषित NETSURF_HTML_IMAGEMAP_H
+#घोषणा NETSURF_HTML_IMAGEMAP_H
 
-#include <dom/dom.h>
+#समावेश <dom/dom.h>
 
-struct html_content;
-struct hlcache_handle;
-struct nsurl;
+काष्ठा html_content;
+काष्ठा hlcache_handle;
+काष्ठा nsurl;
 
-void imagemap_destroy(struct html_content *c);
-void imagemap_dump(struct html_content *c);
-nserror imagemap_extract(struct html_content *c);
+व्योम imagemap_destroy(काष्ठा html_content *c);
+व्योम imagemap_dump(काष्ठा html_content *c);
+nserror imagemap_extract(काष्ठा html_content *c);
 
-struct nsurl *imagemap_get(struct html_content *c, const char *key,
-		unsigned long x, unsigned long y,
-		unsigned long click_x, unsigned long click_y,
-		const char **target);
+काष्ठा nsurl *imagemap_get(काष्ठा html_content *c, स्थिर अक्षर *कुंजी,
+		अचिन्हित दीर्घ x, अचिन्हित दीर्घ y,
+		अचिन्हित दीर्घ click_x, अचिन्हित दीर्घ click_y,
+		स्थिर अक्षर **target);
 
-#endif
+#पूर्ण_अगर

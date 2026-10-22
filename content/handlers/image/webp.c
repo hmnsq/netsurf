@@ -24,46 +24,46 @@
  * Image cache handling is performed by the generic NetSurf handler.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
+#समावेश <stdbool.h>
+#समावेश <stdlib.h>
+#समावेश <setjmp.h>
 
-#include <webp/decode.h>
+#समावेश <webp/decode.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#समावेश "utils/utils.h"
+#समावेश "utils/log.h"
+#समावेश "utils/messages.h"
+#समावेश "netsurf/bitmap.h"
+#समावेश "content/llcache.h"
+#समावेश "content/content_protected.h"
+#समावेश "content/content_factory.h"
+#समावेश "desktop/gui_internal.h"
+#समावेश "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#समावेश "image/image_cache.h"
 
-#include "webp.h"
+#समावेश "webp.h"
 
 /**
  * Content create entry point.
  *
  * create a content object for the webp
  */
-static nserror
-webp_create(const content_handler *handler,
+अटल nserror
+webp_create(स्थिर content_handler *handler,
 	      lwc_string *imime_type,
-	      const struct http_parameter *params,
+	      स्थिर काष्ठा http_parameter *params,
 	      llcache_handle *llcache,
-	      const char *fallback_charset,
+	      स्थिर अक्षर *fallback_charset,
 	      bool quirks,
-	      struct content **c)
+	      काष्ठा content **c)
 {
-	struct content *webp_c; /* webp content object */
+	काष्ठा content *webp_c; /* webp content object */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = सुस्मृति(1, माप(काष्ठा content));
+	अगर (webp_c == शून्य) {
+		वापस NSERROR_NOMEM;
 	}
 
 	res = content__init(webp_c,
@@ -73,50 +73,50 @@ webp_create(const content_handler *handler,
 			    llcache,
 			    fallback_charset,
 			    quirks);
-	if (res != NSERROR_OK) {
-		free(webp_c);
-		return res;
+	अगर (res != NSERROR_OK) {
+		मुक्त(webp_c);
+		वापस res;
 	}
 
 	*c = webp_c;
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
 /**
  * create a bitmap from webp content.
  */
-static struct bitmap *
-webp_cache_convert(struct content *c)
+अटल काष्ठा bitmap *
+webp_cache_convert(काष्ठा content *c)
 {
-	const uint8_t *source_data; /* webp source data */
-	size_t source_size; /* length of webp source data */
+	स्थिर uint8_t *source_तथ्य; /* webp source data */
+	माप_प्रकार source_आकार; /* length of webp source data */
 	VP8StatusCode webpres;
 	WebPBitstreamFeatures webpfeatures;
-	unsigned int bmap_flags;
-	uint8_t *pixels = NULL;
+	अचिन्हित पूर्णांक bmap_flags;
+	uint8_t *pixels = शून्य;
 	uint8_t *decoded;
-	size_t rowstride;
-	struct bitmap *bitmap = NULL;
+	माप_प्रकार rowstride;
+	काष्ठा bitmap *bitmap = शून्य;
 	bitmap_fmt_t webp_fmt = {
 		.layout = bitmap_fmt.layout,
 	};
 
-	source_data = content__get_source_data(c, &source_size);
+	source_तथ्य = content_get_source_तथ्य_2(c, &source_आकार);
 
-	webpres = WebPGetFeatures(source_data, source_size, &webpfeatures);
+	webpres = WebPGetFeatures(source_तथ्य, source_आकार, &webpfeatures);
 
-	if (webpres != VP8_STATUS_OK) {
-		return NULL;
+	अगर (webpres != VP8_STATUS_OK) {
+		वापस शून्य;
 	}
 
-	if (webpfeatures.has_alpha == 0) {
+	अगर (webpfeatures.has_alpha == 0) {
 		bmap_flags = BITMAP_OPAQUE;
 		/* Image has no alpha. Premultiplied alpha makes no difference.
 		 * Optimisation: Avoid unnecessary conversion by copying format.
 		 */
 		webp_fmt.pma = bitmap_fmt.pma;
-	} else {
+	} अन्यथा {
 		bmap_flags = BITMAP_NONE;
 	}
 
@@ -124,50 +124,50 @@ webp_cache_convert(struct content *c)
 	bitmap = guit->bitmap->create(webpfeatures.width,
 				      webpfeatures.height,
 				      bmap_flags);
-	if (bitmap == NULL) {
+	अगर (bitmap == शून्य) {
 		/* empty bitmap could not be created */
-		return NULL;
+		वापस शून्य;
 	}
 
-	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	pixels = guit->bitmap->get_बफर(bitmap);
+	अगर (pixels == शून्य) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		वापस शून्य;
 	}
 
 	rowstride = guit->bitmap->get_rowstride(bitmap);
 
-	switch (webp_fmt.layout) {
-	default:
+	चयन (webp_fmt.layout) {
+	शेष:
 		/* WebP has no ABGR function, fall back to default. */
 		webp_fmt.layout = BITMAP_LAYOUT_R8G8B8A8;
 		fallthrough;
-	case BITMAP_LAYOUT_R8G8B8A8:
-		decoded = WebPDecodeRGBAInto(source_data, source_size, pixels,
+	हाल BITMAP_LAYOUT_R8G8B8A8:
+		decoded = WebPDecodeRGBAInto(source_तथ्य, source_आकार, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		अवरोध;
 
-	case BITMAP_LAYOUT_B8G8R8A8:
-		decoded = WebPDecodeBGRAInto(source_data, source_size, pixels,
+	हाल BITMAP_LAYOUT_B8G8R8A8:
+		decoded = WebPDecodeBGRAInto(source_तथ्य, source_आकार, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		अवरोध;
 
-	case BITMAP_LAYOUT_A8R8G8B8:
-		decoded = WebPDecodeARGBInto(source_data, source_size, pixels,
+	हाल BITMAP_LAYOUT_A8R8G8B8:
+		decoded = WebPDecodeARGBInto(source_तथ्य, source_आकार, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		अवरोध;
 	}
-	if (decoded == NULL) {
+	अगर (decoded == शून्य) {
 		/* decode failed */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		वापस शून्य;
 	}
 
 	bitmap_format_to_client(bitmap, &webp_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	वापस bitmap;
 }
 
 /**
@@ -180,70 +180,70 @@ webp_cache_convert(struct content *c)
  * \param c The webp content object
  * \return true on successful processing of teh webp content else false
  */
-static bool webp_convert(struct content *c)
+अटल bool webp_convert(काष्ठा content *c)
 {
-	int res;
-	const uint8_t* data;
-	size_t data_size;
-	int width;
-	int height;
+	पूर्णांक res;
+	स्थिर uint8_t* तथ्य;
+	माप_प्रकार तथ्य_आकार;
+	पूर्णांक width;
+	पूर्णांक height;
 
-	data = content__get_source_data(c, &data_size);
+	तथ्य = content_get_source_तथ्य_2(c, &तथ्य_आकार);
 
-	res = WebPGetInfo(data, data_size, &width, &height);
-	if (res == 0) {
+	res = WebPGetInfo(तथ्य, तथ्य_आकार, &width, &height);
+	अगर (res == 0) {
 		NSLOG(netsurf, INFO, "WebPGetInfo failed:%p", c);
-		return false;
+		वापस false;
 	}
 
 	c->width = width;
 	c->height = height;
-	c->size = c->width * c->height * 4;
+	c->आकार = c->width * c->height * 4;
 
-	image_cache_add(c, NULL, webp_cache_convert);
+	image_cache_add(c, शून्य, webp_cache_convert);
 
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	वापस true;
 }
 
 /**
  * Clone content.
  */
-static nserror webp_clone(const struct content *old, struct content **new_c)
+अटल nserror webp_clone(स्थिर काष्ठा content *old, काष्ठा content **new_c)
 {
-	struct content *webp_c; /* cloned webp content */
+	काष्ठा content *webp_c; /* cloned webp content */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = सुस्मृति(1, माप(काष्ठा content));
+	अगर (webp_c == शून्य) {
+		वापस NSERROR_NOMEM;
 	}
 
 	res = content__clone(old, webp_c);
-	if (res != NSERROR_OK) {
+	अगर (res != NSERROR_OK) {
 		content_destroy(webp_c);
-		return res;
+		वापस res;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	अगर ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (webp_convert(webp_c) == false) {
+		अगर (webp_convert(webp_c) == false) {
 			content_destroy(webp_c);
-			return NSERROR_CLONE_FAILED;
+			वापस NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*new_c = webp_c;
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
-static const content_handler webp_content_handler = {
+अटल स्थिर content_handler webp_content_handler = {
 	.create = webp_create,
-	.data_complete = webp_convert,
+	.तथ्य_complete = webp_convert,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
 	.clone = webp_clone,
@@ -253,7 +253,7 @@ static const content_handler webp_content_handler = {
 	.no_share = false,
 };
 
-static const char *webp_types[] = {
+अटल स्थिर अक्षर *webp_types[] = {
 	"image/webp"
 };
 

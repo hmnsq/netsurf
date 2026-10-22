@@ -16,22 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef netsurf_css_css_h_
-#define netsurf_css_css_h_
+#अगर_अघोषित netsurf_css_css_h_
+#घोषणा netsurf_css_css_h_
 
-#include <stdint.h>
+#समावेश <stdint.h>
 
-#include <libcss/libcss.h>
+#समावेश <libcss/libcss.h>
 
-#include "utils/errors.h"
+#समावेश "utils/errors.h"
 
-struct hlcache_handle;
+काष्ठा hlcache_handle;
 
 /**
  * Imported stylesheet record
  */
-struct nscss_import {
-	struct hlcache_handle *c;	/**< Content containing sheet */
+काष्ठा nscss_import {
+	काष्ठा hlcache_handle *c;	/**< Content containing sheet */
 };
 
 /**
@@ -39,7 +39,7 @@ struct nscss_import {
  *
  * \return NSERROR_OK on success or error code on faliure
  */
-nserror nscss_init(void);
+nserror nscss_init(व्योम);
 
 /**
  * Retrieve the stylesheet object associated with a CSS content
@@ -47,7 +47,7 @@ nserror nscss_init(void);
  * \param h Stylesheet content
  * \return Pointer to stylesheet object
  */
-css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h);
+css_stylesheet *nscss_get_stylesheet(काष्ठा hlcache_handle *h);
 
 /**
  * Retrieve imported stylesheets
@@ -56,6 +56,6 @@ css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h);
  * \param n  Pointer to location to receive number of imports
  * \return Pointer to array of imported stylesheets
  */
-struct nscss_import *nscss_get_imports(struct hlcache_handle *h, uint32_t *n);
+काष्ठा nscss_import *nscss_get_imports(काष्ठा hlcache_handle *h, uint32_t *n);
 
-#endif
+#पूर्ण_अगर

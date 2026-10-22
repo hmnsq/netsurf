@@ -23,28 +23,28 @@
  * These functions should in general be called via the content interface.
  */
 
-#ifndef NETSURF_CONTENT_DIRLIST_H_
-#define NETSURF_CONTENT_DIRLIST_H_
+#अगर_अघोषित NETSURF_CONTENT_DIRLIST_H_
+#घोषणा NETSURF_CONTENT_DIRLIST_H_
 
-#include <stdbool.h>
+#समावेश <stdbool.h>
 
-#define DIRLIST_NO_NAME_COLUMN 1
-#define DIRLIST_NO_TYPE_COLUMN 1 << 1
-#define DIRLIST_NO_SIZE_COLUMN 1 << 2
-#define DIRLIST_NO_DATE_COLUMN 1 << 3
-#define DIRLIST_NO_TIME_COLUMN 1 << 4
+#घोषणा DIRLIST_NO_NAME_COLUMN 1
+#घोषणा DIRLIST_NO_TYPE_COLUMN 1 << 1
+#घोषणा DIRLIST_NO_आकार_COLUMN 1 << 2
+#घोषणा DIRLIST_NO_DATE_COLUMN 1 << 3
+#घोषणा DIRLIST_NO_TIME_COLUMN 1 << 4
 
-struct nsurl;
+काष्ठा nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length);
-bool dirlist_generate_headings(char *buffer, int buffer_length);
-bool dirlist_generate_row(bool even, bool directory, struct nsurl *url,
-		char *name, const char *mimetype, long long size, char *date,
-		char *time, char *buffer, int buffer_length);
-bool dirlist_generate_bottom(char *buffer, int buffer_length);
+bool dirlist_generate_शीर्ष(अक्षर *बफर, पूर्णांक बफर_लंबाई);
+bool dirlist_generate_hide_columns(पूर्णांक flags, अक्षर *बफर, पूर्णांक बफर_लंबाई);
+bool dirlist_generate_title(स्थिर अक्षर *title, अक्षर *बफर, पूर्णांक बफर_लंबाई);
+bool dirlist_generate_parent_link(स्थिर अक्षर *parent, अक्षर *बफर,
+		पूर्णांक बफर_लंबाई);
+bool dirlist_generate_headings(अक्षर *बफर, पूर्णांक बफर_लंबाई);
+bool dirlist_generate_row(bool even, bool directory, काष्ठा nsurl *url,
+		अक्षर *name, स्थिर अक्षर *mimetype, दीर्घ दीर्घ आकार, अक्षर *date,
+		अक्षर *समय, अक्षर *बफर, पूर्णांक बफर_लंबाई);
+bool dirlist_generate_bottom(अक्षर *बफर, पूर्णांक बफर_लंबाई);
 
-#endif
+#पूर्ण_अगर

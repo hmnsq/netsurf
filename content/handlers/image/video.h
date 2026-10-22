@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_IMAGE_VIDEO_H_
-#define NETSURF_IMAGE_VIDEO_H_
+#अगर_अघोषित NETSURF_IMAGE_VIDEO_H_
+#घोषणा NETSURF_IMAGE_VIDEO_H_
 
-#include "utils/errors.h"
+#समावेश "utils/errors.h"
 
-nserror nsvideo_init(void);
+nserror nsvideo_init(व्योम);
 
-#endif
+#पूर्ण_अगर

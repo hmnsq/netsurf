@@ -23,45 +23,45 @@
  * Spec version: 2011-11-27
  */
 
-#include <string.h>
-#include <strings.h>
+#समावेश <string.h>
+#समावेश <strings.h>
 
-#include "utils/http.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
+#समावेश "utils/http.h"
+#समावेश "utils/utils.h"
+#समावेश "utils/corestrings.h"
 
-#include "content/content_factory.h"
-#include "content/mimesniff.h"
+#समावेश "content/content_factory.h"
+#समावेश "content/mimesniff.h"
 
-struct map_s {
-	const uint8_t *sig;
-	size_t len;
+काष्ठा map_s {
+	स्थिर uint8_t *sig;
+	माप_प्रकार len;
 	bool safe;
 	lwc_string **type;
 };
 
-static bool mimesniff__has_binary_octets(const uint8_t *data, size_t len)
+अटल bool mimesniff_has_द्विआधारी_octets(स्थिर uint8_t *तथ्य, माप_प्रकार len)
 {
-	const uint8_t *end = data + len;
+	स्थिर uint8_t *end = तथ्य + len;
 
-	while (data != end) {
-		const uint8_t c = *data;
+	जबतक (तथ्य != end) {
+		स्थिर uint8_t c = *तथ्य;
 
 		/* Binary iff in C0 and not ESC, CR, FF, LF, HT */
-		if (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
+		अगर (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
 				c != '\n' && c != '\t')
-			break;
+			अवरोध;
 
-		data++;
+		तथ्य++;
 	}
 
-	return data != end;
+	वापस तथ्य != end;
 }
 
-static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
+अटल nserror mimesniff__match_mp4(स्थिर uint8_t *तथ्य, माप_प्रकार len,
 		lwc_string **effective_type)
 {
-	uint32_t box_size, i;
+	uint32_t box_आकार, i;
 
 	/* ISO/IEC 14496-12:2008 $4.3 says (effectively):
 	 *
@@ -87,50 +87,50 @@ static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
 	/* 12 reflects the minimum number of octets needed to sniff useful
 	 * information out of an 'ftyp' box (i.e. the size, type,
 	 * and major_brand words). */
-	if (len < 12)
-		return NSERROR_NOT_FOUND;
+	अगर (len < 12)
+		वापस NSERROR_NOT_FOUND;
 
 	/* Box size is big-endian */
-	box_size = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+	box_आकार = (तथ्य[0] << 24) | (तथ्य[1] << 16) | (तथ्य[2] << 8) | तथ्य[3];
 
 	/* Require that we can read the entire box, and reject bad box sizes */
-	if (len < box_size || box_size % 4 != 0)
-		return NSERROR_NOT_FOUND;
+	अगर (len < box_आकार || box_आकार % 4 != 0)
+		वापस NSERROR_NOT_FOUND;
 
 	/* Ensure this is an 'ftyp' box */
-	if (data[4] != 'f' || data[5] != 't' ||
-			data[6] != 'y' || data[7] != 'p')
-		return NSERROR_NOT_FOUND;
+	अगर (तथ्य[4] != 'f' || तथ्य[5] != 't' ||
+			तथ्य[6] != 'y' || तथ्य[7] != 'p')
+		वापस NSERROR_NOT_FOUND;
 
 	/* Check if major brand begins with 'mp4' */
-	if (data[8] == 'm' && data[9] == 'p' && data[10] == '4') {
+	अगर (तथ्य[8] == 'm' && तथ्य[9] == 'p' && तथ्य[10] == '4') {
 		*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
 	/* Search each compatible brand in the box for "mp4" */
-	for (i = 16; i <= box_size - 4; i += 4) {
-		if (data[i] == 'm' &&
-		    data[i+1] == 'p' &&
-		    data[i+2] == '4') {
+	क्रम (i = 16; i <= box_आकार - 4; i += 4) {
+		अगर (तथ्य[i] == 'm' &&
+		    तथ्य[i+1] == 'p' &&
+		    तथ्य[i+2] == '4') {
 			*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-			return NSERROR_OK;
+			वापस NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	वापस NSERROR_NOT_FOUND;
 }
 
-static nserror mimesniff__match_unknown_ws(const uint8_t *data, size_t len,
+अटल nserror mimesniff__match_unknown_ws(स्थिर uint8_t *तथ्य, माप_प्रकार len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s ws_exact_match_types[] = {
+#घोषणा SIG(t, s, x) { (स्थिर uint8_t *) s, SLEN(s), x, t }
+	अटल स्थिर काष्ठा map_s ws_exact_match_types[] = {
 		SIG(&corestring_lwc_text_xml, "<?xml", false),
-		{ NULL, 0, false, NULL }
+		{ शून्य, 0, false, शून्य }
 	};
 
-	static const struct map_s ws_inexact_match_types[] = {
+	अटल स्थिर काष्ठा map_s ws_inexact_match_types[] = {
 		SIG(&corestring_lwc_text_html, "<!DOCTYPE HTML", false),
 		SIG(&corestring_lwc_text_html, "<HTML",          false),
 		SIG(&corestring_lwc_text_html, "<HEAD",          false),
@@ -148,105 +148,105 @@ static nserror mimesniff__match_unknown_ws(const uint8_t *data, size_t len,
 		SIG(&corestring_lwc_text_html, "<BR",            false),
 		SIG(&corestring_lwc_text_html, "<P",             false),
 		SIG(&corestring_lwc_text_html, "<!--",           false),
-		{ NULL, 0, false, NULL }
+		{ शून्य, 0, false, शून्य }
 	};
-#undef SIG
-	const uint8_t *end = data + len;
-	const struct map_s *it;
+#अघोषित SIG
+	स्थिर uint8_t *end = तथ्य + len;
+	स्थिर काष्ठा map_s *it;
 
 	/* Skip leading whitespace */
-	while (data != end) {
-		const uint8_t c = *data;
+	जबतक (तथ्य != end) {
+		स्थिर uint8_t c = *तथ्य;
 
-		if (c != '\t' && c != '\n' && c != '\f' &&
+		अगर (c != '\t' && c != '\n' && c != '\f' &&
 				c != '\r' && c != ' ')
-			break;
+			अवरोध;
 
-		data++;
+		तथ्य++;
 	}
 
-	if (data == end)
-		return NSERROR_NOT_FOUND;
+	अगर (तथ्य == end)
+		वापस NSERROR_NOT_FOUND;
 
-	len = end - data;
+	len = end - तथ्य;
 
-	for (it = ws_exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	क्रम (it = ws_exact_match_types; it->sig != शून्य; it++) {
+		अगर (it->len <= len && स_भेद(तथ्य, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			वापस NSERROR_OK;
 		}
 	}
 
-	for (it = ws_inexact_match_types; it->sig != NULL; it++) {
+	क्रम (it = ws_inexact_match_types; it->sig != शून्य; it++) {
 		/* +1 for trailing space or > */
-		if (len < it->len + 1)
-			continue;
+		अगर (len < it->len + 1)
+			जारी;
 
-		if (strncasecmp((const char *) data,
-				(const char *) it->sig, it->len) == 0 &&
-				(data[it->len] == ' ' ||
-				data[it->len] == '>')) {
+		अगर (strncasecmp((स्थिर अक्षर *) तथ्य,
+				(स्थिर अक्षर *) it->sig, it->len) == 0 &&
+				(तथ्य[it->len] == ' ' ||
+				तथ्य[it->len] == '>')) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			वापस NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	वापस NSERROR_NOT_FOUND;
 }
 
-static nserror mimesniff__match_unknown_bom(const uint8_t *data, size_t len,
+अटल nserror mimesniff__match_unknown_bom(स्थिर uint8_t *तथ्य, माप_प्रकार len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s bom_match_types[] = {
+#घोषणा SIG(t, s, x) { (स्थिर uint8_t *) s, SLEN(s), x, t }
+	अटल स्थिर काष्ठा map_s bom_match_types[] = {
 		SIG(&corestring_lwc_text_plain, "\xfe\xff",     false),
 		SIG(&corestring_lwc_text_plain, "\xff\xfe",     false),
 		SIG(&corestring_lwc_text_plain, "\xef\xbb\xbf", false),
-		{ NULL, 0, false, NULL }
+		{ शून्य, 0, false, शून्य }
 	};
-#undef SIG
-	const struct map_s *it;
+#अघोषित SIG
+	स्थिर काष्ठा map_s *it;
 
-	for (it = bom_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	क्रम (it = bom_match_types; it->sig != शून्य; it++) {
+		अगर (it->len <= len && स_भेद(तथ्य, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			वापस NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	वापस NSERROR_NOT_FOUND;
 }
 
-static nserror mimesniff__match_unknown_riff(const uint8_t *data, size_t len,
+अटल nserror mimesniff__match_unknown_riff(स्थिर uint8_t *तथ्य, माप_प्रकार len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s riff_match_types[] = {
+#घोषणा SIG(t, s, x) { (स्थिर uint8_t *) s, SLEN(s), x, t }
+	अटल स्थिर काष्ठा map_s riff_match_types[] = {
 		SIG(&corestring_lwc_image_webp, "WEBPVP", true),
 		SIG(&corestring_lwc_audio_wave, "WAVE",   true),
-		{ NULL, 0, false, NULL }
+		{ शून्य, 0, false, शून्य }
 	};
-#undef SIG
-	const struct map_s *it;
+#अघोषित SIG
+	स्थिर काष्ठा map_s *it;
 
-	for (it = riff_match_types; it->sig != NULL; it++) {
-		if (it->len + SLEN("RIFF????") <= len &&
-				memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
-				memcmp(data + SLEN("RIFF????"),
+	क्रम (it = riff_match_types; it->sig != शून्य; it++) {
+		अगर (it->len + SLEN("RIFF????") <= len &&
+				स_भेद(तथ्य, "RIFF", SLEN("RIFF")) == 0 &&
+				स_भेद(तथ्य + SLEN("RIFF????"),
 						it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			वापस NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	वापस NSERROR_NOT_FOUND;
 }
 
-static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
+अटल nserror mimesniff__match_unknown_exact(स्थिर uint8_t *तथ्य, माप_प्रकार len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s exact_match_types[] = {
+#घोषणा SIG(t, s, x) { (स्थिर uint8_t *) s, SLEN(s), x, t }
+	अटल स्थिर काष्ठा map_s exact_match_types[] = {
 		SIG(&corestring_lwc_image_gif, "GIF87a", true),
 		SIG(&corestring_lwc_image_gif, "GIF89a", true),
 		SIG(&corestring_lwc_image_png, "\x89PNG\r\n\x1a\n", true),
@@ -262,119 +262,119 @@ static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
 		SIG(&corestring_lwc_application_pdf, "%PDF-", false),
 		SIG(&corestring_lwc_image_jxl, "\xFF\x0A", true), /* containerless jpeg xl*/
 		{
-			(const uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
+			(स्थिर uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
 			12,
 			true,
 			&corestring_lwc_image_jxl
 		}, /* containered jpeg xl*/
-		{ NULL, 0, false, NULL }
+		{ शून्य, 0, false, शून्य }
 	};
-#undef SIG
-	const struct map_s *it;
+#अघोषित SIG
+	स्थिर काष्ठा map_s *it;
 
-	for (it = exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0 &&
+	क्रम (it = exact_match_types; it->sig != शून्य; it++) {
+		अगर (it->len <= len && स_भेद(तथ्य, it->sig, it->len) == 0 &&
 				(allow_unsafe || it->safe)) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			वापस NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	वापस NSERROR_NOT_FOUND;
 }
 
-static nserror mimesniff__match_unknown(const uint8_t *data, size_t len,
+अटल nserror mimesniff__match_unknown(स्थिर uint8_t *तथ्य, माप_प्रकार len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-	if (mimesniff__match_unknown_exact(data, len, allow_unsafe,
+	अगर (mimesniff__match_unknown_exact(तथ्य, len, allow_unsafe,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 
-	if (mimesniff__match_unknown_riff(data, len,
+	अगर (mimesniff__match_unknown_riff(तथ्य, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 
-	if (allow_unsafe == false)
-		return NSERROR_NOT_FOUND;
+	अगर (allow_unsafe == false)
+		वापस NSERROR_NOT_FOUND;
 
-	if (mimesniff__match_unknown_bom(data, len,
+	अगर (mimesniff__match_unknown_bom(तथ्य, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 
-	if (mimesniff__match_unknown_ws(data, len,
+	अगर (mimesniff__match_unknown_ws(तथ्य, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 
-	if (mimesniff__match_mp4(data, len, effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+	अगर (mimesniff__match_mp4(तथ्य, len, effective_type) == NSERROR_OK)
+		वापस NSERROR_OK;
 
-	return NSERROR_NOT_FOUND;
+	वापस NSERROR_NOT_FOUND;
 }
 
-static nserror mimesniff__compute_unknown(const uint8_t *data, size_t len,
+अटल nserror mimesniff__compute_unknown(स्थिर uint8_t *तथ्य, माप_प्रकार len,
 		lwc_string **effective_type)
 {
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	अगर (तथ्य == शून्य)
+		वापस NSERROR_NEED_तथ्य;
 
 	len = min(len, 512);
 
-	if (mimesniff__match_unknown(data, len, true,
+	अगर (mimesniff__match_unknown(तथ्य, len, true,
 				     effective_type) == NSERROR_OK) {
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	अगर (mimesniff_has_द्विआधारी_octets(तथ्य, len) == false) {
 		/* No binary octets => text/plain */
 		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
 	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
-static nserror mimesniff__compute_text_or_binary(const uint8_t *data,
-		size_t len, lwc_string **effective_type)
+अटल nserror mimesniff_compute_text_or_द्विआधारी(स्थिर uint8_t *तथ्य,
+		माप_प्रकार len, lwc_string **effective_type)
 {
-	if (data == NULL) {
-		return NSERROR_NEED_DATA;
+	अगर (तथ्य == शून्य) {
+		वापस NSERROR_NEED_तथ्य;
 	}
 
 	len = min(len, 512);
 
-	if (len >= 3 && ((data[0] == 0xfe && data[1] == 0xff) ||
-			(data[0] == 0xff && data[1] == 0xfe) ||
-			(data[0] == 0xef && data[1] == 0xbb &&
-				data[2] == 0xbf))) {
+	अगर (len >= 3 && ((तथ्य[0] == 0xfe && तथ्य[1] == 0xff) ||
+			(तथ्य[0] == 0xff && तथ्य[1] == 0xfe) ||
+			(तथ्य[0] == 0xef && तथ्य[1] == 0xbb &&
+				तथ्य[2] == 0xbf))) {
 		/* Found a BOM => text/plain */
 		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	अगर (mimesniff_has_द्विआधारी_octets(तथ्य, len) == false) {
 		/* No binary octets => text/plain */
 		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
-	if (mimesniff__match_unknown(data, len, false,
+	अगर (mimesniff__match_unknown(तथ्य, len, false,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 
 	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
-static nserror mimesniff__compute_image(lwc_string *official_type,
-		const uint8_t *data, size_t len, lwc_string **effective_type)
+अटल nserror mimesniff__compute_image(lwc_string *official_type,
+		स्थिर uint8_t *तथ्य, माप_प्रकार len, lwc_string **effective_type)
 {
-#define SIG(t, s) { (const uint8_t *) s, SLEN(s), t }
-	static const struct it_s {
-		const uint8_t *sig;
-		size_t len;
+#घोषणा SIG(t, s) { (स्थिर uint8_t *) s, SLEN(s), t }
+	अटल स्थिर काष्ठा it_s {
+		स्थिर uint8_t *sig;
+		माप_प्रकार len;
 		lwc_string **type;
 	} image_types[] = {
 		SIG(&corestring_lwc_image_gif, "GIF87a"),
@@ -385,51 +385,51 @@ static nserror mimesniff__compute_image(lwc_string *official_type,
 		SIG(&corestring_lwc_image_vnd_microsoft_icon, "\x00\x00\x01\x00"),
 		SIG(&corestring_lwc_image_jxl, "\xFF\x0A"), /* containerless jpeg xl*/
 		{
-			(const uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
+			(स्थिर uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
 			12,
 			&corestring_lwc_image_jxl
 		}, /* containered jpeg xl*/
-		{ NULL, 0, NULL }
+		{ शून्य, 0, शून्य }
 	};
-#undef SIG
+#अघोषित SIG
 
-	const struct it_s *it;
+	स्थिर काष्ठा it_s *it;
 
-	if (data == NULL) {
+	अगर (तथ्य == शून्य) {
 		lwc_string_unref(official_type);
-		return NSERROR_NEED_DATA;
+		वापस NSERROR_NEED_तथ्य;
 	}
 
-	for (it = image_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	क्रम (it = image_types; it->sig != शून्य; it++) {
+		अगर (it->len <= len && स_भेद(तथ्य, it->sig, it->len) == 0) {
 			lwc_string_unref(official_type);
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			वापस NSERROR_OK;
 		}
 	}
 
 	/* WebP has a signature that doesn't fit into the above table */
-	if (SLEN("RIFF????WEBPVP") <= len &&
-			memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
-			memcmp(data + SLEN("RIFF????"),
+	अगर (SLEN("RIFF????WEBPVP") <= len &&
+			स_भेद(तथ्य, "RIFF", SLEN("RIFF")) == 0 &&
+			स_भेद(तथ्य + SLEN("RIFF????"),
 					"WEBPVP", SLEN("WEBPVP")) == 0 ) {
 		lwc_string_unref(official_type);
 		*effective_type = lwc_string_ref(corestring_lwc_image_webp);
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
 	*effective_type = official_type;
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
-static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
-		size_t len, lwc_string **effective_type)
+अटल nserror mimesniff__compute_feed_or_html(स्थिर uint8_t *तथ्य,
+		माप_प्रकार len, lwc_string **effective_type)
 {
-#define RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-#define RSS_NS "http://purl.org/rss/1.0"
+#घोषणा RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#घोषणा RSS_NS "http://purl.org/rss/1.0"
 
-	enum state_e {
+	क्रमागत state_e {
 		BEFORE_BOM,
 		BEFORE_MARKUP,
 		MARKUP_START,
@@ -442,207 +442,207 @@ static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
 	} state = BEFORE_BOM;
 
 	bool rdf = false, rss = false;
-	const uint8_t *end;
+	स्थिर uint8_t *end;
 
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	अगर (तथ्य == शून्य)
+		वापस NSERROR_NEED_तथ्य;
 
-	end = data + min(len, 512);
+	end = तथ्य + min(len, 512);
 
-	while (data < end) {
-		const uint8_t c = *data;
+	जबतक (तथ्य < end) {
+		स्थिर uint8_t c = *तथ्य;
 
-#define MATCH(s) SLEN(s) <= (size_t) (end - data) && \
-			memcmp(data, s, SLEN(s)) == 0
+#घोषणा MATCH(s) SLEN(s) <= (माप_प्रकार) (end - तथ्य) && \
+			स_भेद(तथ्य, s, SLEN(s)) == 0
 
-		switch (state) {
-		case BEFORE_BOM:
-			if (3 <= end - data && c == 0xef && data[1] == 0xbb &&
-					data[2] == 0xbf) {
-				data += 3;
+		चयन (state) {
+		हाल BEFORE_BOM:
+			अगर (3 <= end - तथ्य && c == 0xef && तथ्य[1] == 0xbb &&
+					तथ्य[2] == 0xbf) {
+				तथ्य += 3;
 			}
 
 			state = BEFORE_MARKUP;
-			break;
-		case BEFORE_MARKUP:
-			if (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
-				data++;
-			else if (c != '<')
-				data = end;
-			else {
+			अवरोध;
+		हाल BEFORE_MARKUP:
+			अगर (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
+				तथ्य++;
+			अन्यथा अगर (c != '<')
+				तथ्य = end;
+			अन्यथा {
 				state = MARKUP_START;
-				data++;
+				तथ्य++;
 			}
-			break;
-		case MARKUP_START:
-			if (c == '!') {
+			अवरोध;
+		हाल MARKUP_START:
+			अगर (c == '!') {
 				state = COMMENT_OR_DOCTYPE;
-				data++;
-			} else if (c == '?') {
+				तथ्य++;
+			} अन्यथा अगर (c == '?') {
 				state = IN_PI;
-				data++;
-			} else {
+				तथ्य++;
+			} अन्यथा {
 				/* Reconsume input */
 				state = IN_TAG;
 			}
-			break;
-		case COMMENT_OR_DOCTYPE:
-			if (2 <= end - data && c == '-' && data[1] == '-') {
+			अवरोध;
+		हाल COMMENT_OR_DOCTYPE:
+			अगर (2 <= end - तथ्य && c == '-' && तथ्य[1] == '-') {
 				state = IN_COMMENT;
-				data += 2;
-			} else {
+				तथ्य += 2;
+			} अन्यथा {
 				/* Reconsume input */
 				state = IN_DOCTYPE;
 			}
-			break;
-		case IN_COMMENT:
-			if (3 <= end - data && c == '-' && data[1] == '-' &&
-					data[2] == '>') {
+			अवरोध;
+		हाल IN_COMMENT:
+			अगर (3 <= end - तथ्य && c == '-' && तथ्य[1] == '-' &&
+					तथ्य[2] == '>') {
 				state = BEFORE_MARKUP;
-				data += 3;
-			} else
-				data++;
-			break;
-		case IN_DOCTYPE:
-			if (c == '>')
+				तथ्य += 3;
+			} अन्यथा
+				तथ्य++;
+			अवरोध;
+		हाल IN_DOCTYPE:
+			अगर (c == '>')
 				state = BEFORE_MARKUP;
-			data++;
-			break;
-		case IN_PI:
-			if (2 <= end - data && c == '?' && data[1] == '>') {
+			तथ्य++;
+			अवरोध;
+		हाल IN_PI:
+			अगर (2 <= end - तथ्य && c == '?' && तथ्य[1] == '>') {
 				state = BEFORE_MARKUP;
-				data += 2;
-			} else
-				data++;
-			break;
-		case IN_TAG:
-			if (MATCH("rss")) {
+				तथ्य += 2;
+			} अन्यथा
+				तथ्य++;
+			अवरोध;
+		हाल IN_TAG:
+			अगर (MATCH("rss")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
-			} else if (MATCH("feed")) {
+				वापस NSERROR_OK;
+			} अन्यथा अगर (MATCH("feed")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_atom_xml);
-				return NSERROR_OK;
-			} else if (MATCH("rdf:RDF")) {
+				वापस NSERROR_OK;
+			} अन्यथा अगर (MATCH("rdf:RDF")) {
 				state = IN_RDF;
-				data += SLEN("rdf:RDF");
-			} else
-				data = end;
-			break;
-		case IN_RDF:
-			if (MATCH(RSS_NS)) {
+				तथ्य += SLEN("rdf:RDF");
+			} अन्यथा
+				तथ्य = end;
+			अवरोध;
+		हाल IN_RDF:
+			अगर (MATCH(RSS_NS)) {
 				rss = true;
-				data += SLEN(RSS_NS);
-			} else if (MATCH(RDF_NS)) {
+				तथ्य += SLEN(RSS_NS);
+			} अन्यथा अगर (MATCH(RDF_NS)) {
 				rdf = true;
-				data += SLEN(RDF_NS);
-			} else
-				data++;
+				तथ्य += SLEN(RDF_NS);
+			} अन्यथा
+				तथ्य++;
 
-			if (rdf && rss) {
+			अगर (rdf && rss) {
 				*effective_type = lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
+				वापस NSERROR_OK;
 			}
 
-			break;
+			अवरोध;
 		}
-#undef MATCH
+#अघोषित MATCH
 	}
 
 	*effective_type = lwc_string_ref(corestring_lwc_text_html);
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 
-#undef RSS_NS
-#undef RDF_NS
+#अघोषित RSS_NS
+#अघोषित RDF_NS
 }
 
 /* See mimesniff.h for documentation */
 nserror
-mimesniff_compute_effective_type(const char *content_type_header,
-				 const uint8_t *data,
-				 size_t len,
+mimesniff_compute_effective_type(स्थिर अक्षर *content_type_header,
+				 स्थिर uint8_t *तथ्य,
+				 माप_प्रकार len,
 				 bool sniff_allowed,
 				 bool image_only,
 				 lwc_string **effective_type)
 {
-#define S(s) { s, SLEN(s) }
-	static const struct tt_s {
-		const char *data;
-		size_t len;
+#घोषणा S(s) { s, SLEN(s) }
+	अटल स्थिर काष्ठा tt_s {
+		स्थिर अक्षर *तथ्य;
+		माप_प्रकार len;
 	} text_types[] = {
 		S("text/plain"),
 		S("text/plain; charset=ISO-8859-1"),
 		S("text/plain; charset=iso-8859-1"),
 		S("text/plain; charset=UTF-8"),
-		{ NULL, 0 }
+		{ शून्य, 0 }
 	};
-#undef S
+#अघोषित S
 
-	size_t content_type_header_len;
+	माप_प्रकार content_type_header_len;
 	http_content_type *ct;
-	const struct tt_s *tt;
+	स्थिर काष्ठा tt_s *tt;
 	bool match;
 	nserror error;
 
-	if (content_type_header == NULL) {
-		if (sniff_allowed == false) {
-			return NSERROR_NOT_FOUND;
+	अगर (content_type_header == शून्य) {
+		अगर (sniff_allowed == false) {
+			वापस NSERROR_NOT_FOUND;
 		}
 
 		/* No official type => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		वापस mimesniff__compute_unknown(तथ्य, len, effective_type);
 	}
 
 	error = http_parse_content_type(content_type_header, &ct);
-	if (error != NSERROR_OK) {
-		if (sniff_allowed == false)
-			return NSERROR_NOT_FOUND;
+	अगर (error != NSERROR_OK) {
+		अगर (sniff_allowed == false)
+			वापस NSERROR_NOT_FOUND;
 
 		/* Unparseable => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		वापस mimesniff__compute_unknown(तथ्य, len, effective_type);
 	}
 
-	if (sniff_allowed == false) {
+	अगर (sniff_allowed == false) {
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
-	if (image_only) {
+	अगर (image_only) {
 		lwc_string *official_type;
 
-		if (lwc_string_caseless_isequal(ct->media_type,
+		अगर (lwc_string_caseless_isequal(ct->media_type,
 						corestring_lwc_image_svg,
 						&match) == lwc_error_ok && match) {
 			*effective_type = lwc_string_ref(corestring_lwc_image_svg);
 			http_content_type_destroy(ct);
-			return NSERROR_OK;
+			वापस NSERROR_OK;
 		}
 
 		official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
-				data, len, effective_type);
+		वापस mimesniff__compute_image(official_type,
+				तथ्य, len, effective_type);
 	}
 
-	content_type_header_len = strlen(content_type_header);
+	content_type_header_len = म_माप(content_type_header);
 
 	/* Look for text types */
-	for (tt = text_types; tt->data != NULL; tt++) {
-		if (tt->len == content_type_header_len &&
-		    memcmp(tt->data,
+	क्रम (tt = text_types; tt->तथ्य != शून्य; tt++) {
+		अगर (tt->len == content_type_header_len &&
+		    स_भेद(tt->तथ्य,
 			   content_type_header,
 			   content_type_header_len) == 0) {
 			http_content_type_destroy(ct);
-			return mimesniff__compute_text_or_binary(data, len,
+			वापस mimesniff_compute_text_or_द्विआधारी(तथ्य, len,
 					effective_type);
 		}
 	}
 
 	/* unknown/unknown, application/unknown, * / * */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	अगर ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_unknown_unknown,
 					 &match) == lwc_error_ok && match) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
@@ -652,23 +652,23 @@ mimesniff_compute_effective_type(const char *content_type_header,
 					 corestring_lwc_any,
 					 &match) == lwc_error_ok && match)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_unknown(data, len, effective_type);
+		वापस mimesniff__compute_unknown(तथ्य, len, effective_type);
 	}
 
 	/* +xml */
-	if (lwc_string_length(ct->media_type) > SLEN("+xml") &&
-			strncasecmp(lwc_string_data(ct->media_type) +
-				lwc_string_length(ct->media_type) -
+	अगर (lwc_string_लंबाई(ct->media_type) > SLEN("+xml") &&
+			strncasecmp(lwc_string_तथ्य(ct->media_type) +
+				lwc_string_लंबाई(ct->media_type) -
 				SLEN("+xml"),
 				"+xml", SLEN("+xml")) == 0) {
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
 	/* text/xml, application/xml */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	अगर ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_text_xml,
 					 &match) == lwc_error_ok && match) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
@@ -677,24 +677,24 @@ mimesniff_compute_effective_type(const char *content_type_header,
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		वापस NSERROR_OK;
 	}
 
 	/* Image types */
-	if (content_factory_type_from_mime_type(ct->media_type) ==
+	अगर (content_factory_type_from_mime_type(ct->media_type) ==
 			CONTENT_IMAGE) {
 		lwc_string *official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
-				data, len, effective_type);
+		वापस mimesniff__compute_image(official_type,
+				तथ्य, len, effective_type);
 	}
 
 	/* text/html */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	अगर ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_text_html,
 					 &match) == lwc_error_ok && match)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_feed_or_html(data, len,
+		वापस mimesniff__compute_feed_or_html(तथ्य, len,
 						       effective_type);
 	}
 
@@ -703,5 +703,5 @@ mimesniff_compute_effective_type(const char *content_type_header,
 
 	http_content_type_destroy(ct);
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }

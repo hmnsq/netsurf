@@ -22,11 +22,11 @@
  * HTML internal font handling implementation.
  */
 
-#include "utils/nsoption.h"
-#include "netsurf/plot_style.h"
-#include "css/utils.h"
+#समावेश "utils/nsoption.h"
+#समावेश "netsurf/plot_style.h"
+#समावेश "css/utils.h"
 
-#include "html/font.h"
+#समावेश "html/font.h"
 
 /**
  * Map a generic CSS font family to a generic plot font family
@@ -34,31 +34,31 @@
  * \param css Generic CSS font family
  * \return Plot font family
  */
-static plot_font_generic_family_t
-plot_font_generic_family(enum css_font_family_e css)
+अटल plot_font_generic_family_t
+plot_font_generic_family(क्रमागत css_font_family_e css)
 {
 	plot_font_generic_family_t plot;
 
-	switch (css) {
-	case CSS_FONT_FAMILY_SERIF:
+	चयन (css) {
+	हाल CSS_FONT_FAMILY_SERIF:
 		plot = PLOT_FONT_FAMILY_SERIF;
-		break;
-	case CSS_FONT_FAMILY_MONOSPACE:
+		अवरोध;
+	हाल CSS_FONT_FAMILY_MONOSPACE:
 		plot = PLOT_FONT_FAMILY_MONOSPACE;
-		break;
-	case CSS_FONT_FAMILY_CURSIVE:
+		अवरोध;
+	हाल CSS_FONT_FAMILY_CURSIVE:
 		plot = PLOT_FONT_FAMILY_CURSIVE;
-		break;
-	case CSS_FONT_FAMILY_FANTASY:
+		अवरोध;
+	हाल CSS_FONT_FAMILY_FANTASY:
 		plot = PLOT_FONT_FAMILY_FANTASY;
-		break;
-	case CSS_FONT_FAMILY_SANS_SERIF:
-	default:
+		अवरोध;
+	हाल CSS_FONT_FAMILY_SANS_SERIF:
+	शेष:
 		plot = PLOT_FONT_FAMILY_SANS_SERIF;
-		break;
+		अवरोध;
 	}
 
-	return plot;
+	वापस plot;
 }
 
 /**
@@ -67,44 +67,44 @@ plot_font_generic_family(enum css_font_family_e css)
  * \param css  CSS font weight
  * \return Plot weight
  */
-static int plot_font_weight(enum css_font_weight_e css)
+अटल पूर्णांक plot_font_weight(क्रमागत css_font_weight_e css)
 {
-	int weight;
+	पूर्णांक weight;
 
-	switch (css) {
-	case CSS_FONT_WEIGHT_100:
+	चयन (css) {
+	हाल CSS_FONT_WEIGHT_100:
 		weight = 100;
-		break;
-	case CSS_FONT_WEIGHT_200:
+		अवरोध;
+	हाल CSS_FONT_WEIGHT_200:
 		weight = 200;
-		break;
-	case CSS_FONT_WEIGHT_300:
+		अवरोध;
+	हाल CSS_FONT_WEIGHT_300:
 		weight = 300;
-		break;
-	case CSS_FONT_WEIGHT_400:
-	case CSS_FONT_WEIGHT_NORMAL:
-	default:
+		अवरोध;
+	हाल CSS_FONT_WEIGHT_400:
+	हाल CSS_FONT_WEIGHT_NORMAL:
+	शेष:
 		weight = 400;
-		break;
-	case CSS_FONT_WEIGHT_500:
+		अवरोध;
+	हाल CSS_FONT_WEIGHT_500:
 		weight = 500;
-		break;
-	case CSS_FONT_WEIGHT_600:
+		अवरोध;
+	हाल CSS_FONT_WEIGHT_600:
 		weight = 600;
-		break;
-	case CSS_FONT_WEIGHT_700:
-	case CSS_FONT_WEIGHT_BOLD:
+		अवरोध;
+	हाल CSS_FONT_WEIGHT_700:
+	हाल CSS_FONT_WEIGHT_BOLD:
 		weight = 700;
-		break;
-	case CSS_FONT_WEIGHT_800:
+		अवरोध;
+	हाल CSS_FONT_WEIGHT_800:
 		weight = 800;
-		break;
-	case CSS_FONT_WEIGHT_900:
+		अवरोध;
+	हाल CSS_FONT_WEIGHT_900:
 		weight = 900;
-		break;
+		अवरोध;
 	}
 
-	return weight;
+	वापस weight;
 }
 
 /**
@@ -114,31 +114,31 @@ static int plot_font_weight(enum css_font_weight_e css)
  * \param variant  CSS font variant
  * \return Computed plot flags
  */
-static plot_font_flags_t plot_font_flags(enum css_font_style_e style,
-		enum css_font_variant_e variant)
+अटल plot_font_flags_t plot_font_flags(क्रमागत css_font_style_e style,
+		क्रमागत css_font_variant_e variant)
 {
 	plot_font_flags_t flags = FONTF_NONE;
 
-	if (style == CSS_FONT_STYLE_ITALIC)
+	अगर (style == CSS_FONT_STYLE_ITALIC)
 		flags |= FONTF_ITALIC;
-	else if (style == CSS_FONT_STYLE_OBLIQUE)
+	अन्यथा अगर (style == CSS_FONT_STYLE_OBLIQUE)
 		flags |= FONTF_OBLIQUE;
 
-	if (variant == CSS_FONT_VARIANT_SMALL_CAPS)
+	अगर (variant == CSS_FONT_VARIANT_SMALL_CAPS)
 		flags |= FONTF_SMALLCAPS;
 
-	return flags;
+	वापस flags;
 }
 
 
 /* exported function documented in html/font.h */
-void font_plot_style_from_css(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *css,
+व्योम font_plot_style_from_css(
+		स्थिर css_unit_ctx *unit_len_ctx,
+		स्थिर css_computed_style *css,
 		plot_font_style_t *fstyle)
 {
 	lwc_string **families;
-	css_fixed length = 0;
+	css_fixed लंबाई = 0;
 	css_unit unit = CSS_UNIT_PX;
 	css_color col;
 
@@ -146,14 +146,14 @@ void font_plot_style_from_css(
 			css_computed_font_family(css, &families));
 	fstyle->families = families;
 
-	css_computed_font_size(css, &length, &unit);
-	fstyle->size = FIXTOINT(FMUL(css_unit_font_size_len2pt(css,
-				      unit_len_ctx, length, unit),
+	css_computed_font_आकार(css, &लंबाई, &unit);
+	fstyle->आकार = FIXTOINT(FMUL(css_unit_font_आकार_len2pt(css,
+				      unit_len_ctx, लंबाई, unit),
 				      INTTOFIX(PLOT_STYLE_SCALE)));
 
 	/* Clamp font size to configured minimum */
-	if (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
-		fstyle->size = (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10;
+	अगर (fstyle->आकार < (nsoption_int(font_min_आकार) * PLOT_STYLE_SCALE) / 10)
+		fstyle->आकार = (nsoption_int(font_min_आकार) * PLOT_STYLE_SCALE) / 10;
 
 	fstyle->weight = plot_font_weight(css_computed_font_weight(css));
 	fstyle->flags = plot_font_flags(css_computed_font_style(css),

@@ -21,15 +21,15 @@
  * HTML text selection handling
  */
 
-#ifndef NETSURF_HTML_TEXTSELECTION_H
-#define NETSURF_HTML_TEXTSELECTION_H
+#अगर_अघोषित NETSURF_HTML_TEXTSELECTION_H
+#घोषणा NETSURF_HTML_TEXTSELECTION_H
 
-struct content;
-struct selection;
+काष्ठा content;
+काष्ठा selection;
 
-nserror html_textselection_redraw(struct content *c, unsigned start_idx, unsigned end_idx);
+nserror html_textselection_redraw(काष्ठा content *c, अचिन्हित start_idx, अचिन्हित end_idx);
 
-nserror html_textselection_copy(struct content *c, unsigned start_idx, unsigned end_idx, struct selection_string *selstr);
+nserror html_textselection_copy(काष्ठा content *c, अचिन्हित start_idx, अचिन्हित end_idx, काष्ठा selection_string *selstr);
 
 /**
  * get maximum index of text section.
@@ -38,6 +38,6 @@ nserror html_textselection_copy(struct content *c, unsigned start_idx, unsigned 
  * \param[out] end_idx pointer to value to recive result
  * \return NSERROR_OK and \a end_idx updated else error code
  */
-nserror html_textselection_get_end(struct content *c, unsigned *end_idx);
+nserror html_textselection_get_end(काष्ठा content *c, अचिन्हित *end_idx);
 
-#endif
+#पूर्ण_अगर

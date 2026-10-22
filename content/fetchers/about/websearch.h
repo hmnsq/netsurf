@@ -21,8 +21,8 @@
  * about scheme web search handler interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_WEBSEARCH_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_WEBSEARCH_H
+#अगर_अघोषित NETSURF_CONTENT_FETCHERS_ABOUT_WEBSEARCH_H
+#घोषणा NETSURF_CONTENT_FETCHERS_ABOUT_WEBSEARCH_H
 
 /**
  * Handler for about scheme websearch.
@@ -32,6 +32,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_websearch_handler(struct fetch_about_context *ctx);
+bool fetch_about_websearch_handler(काष्ठा fetch_about_context *ctx);
 
-#endif
+#पूर्ण_अगर

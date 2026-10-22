@@ -31,38 +31,38 @@
  * layout_minmax_X() and layout_X().
  */
 
-#include <string.h>
+#समावेश <string.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
+#समावेश "utils/log.h"
+#समावेश "utils/utils.h"
 
-#include "html/box.h"
-#include "html/html.h"
-#include "html/private.h"
-#include "html/box_inspect.h"
-#include "html/layout_internal.h"
+#समावेश "html/box.h"
+#समावेश "html/html.h"
+#समावेश "html/private.h"
+#समावेश "html/box_inspect.h"
+#समावेश "html/layout_internal.h"
 
 /**
  * Flex item data
  */
-struct flex_item_data {
-	enum css_flex_basis_e basis;
-	css_fixed basis_length;
+काष्ठा flex_item_तथ्य {
+	क्रमागत css_flex_basis_e basis;
+	css_fixed basis_लंबाई;
 	css_unit basis_unit;
-	struct box *box;
+	काष्ठा box *box;
 
 	css_fixed shrink;
 	css_fixed grow;
 
-	int min_main;
-	int max_main;
-	int min_cross;
-	int max_cross;
+	पूर्णांक min_main;
+	पूर्णांक max_main;
+	पूर्णांक min_cross;
+	पूर्णांक max_cross;
 
-	int target_main_size;
-	int base_size;
-	int main_size;
-	size_t line;
+	पूर्णांक target_main_आकार;
+	पूर्णांक base_आकार;
+	पूर्णांक main_आकार;
+	माप_प्रकार पंक्ति;
 
 	bool freeze;
 	bool min_violation;
@@ -72,48 +72,48 @@ struct flex_item_data {
 /**
  * Flex line data
  */
-struct flex_line_data {
-	int main_size;
-	int cross_size;
+काष्ठा flex_पंक्ति_तथ्य {
+	पूर्णांक main_आकार;
+	पूर्णांक cross_आकार;
 
-	int used_main_size;
-	int main_auto_margin_count;
+	पूर्णांक used_main_आकार;
+	पूर्णांक main_auto_margin_गिनती;
 
-	int pos;
+	पूर्णांक pos;
 
-	size_t first;
-	size_t count;
-	size_t frozen;
+	माप_प्रकार first;
+	माप_प्रकार गिनती;
+	माप_प्रकार frozen;
 };
 
 /**
  * Flex layout context
  */
-struct flex_ctx {
+काष्ठा flex_ctx {
 	html_content *content;
-	const struct box *flex;
-	const css_unit_ctx *unit_len_ctx;
+	स्थिर काष्ठा box *flex;
+	स्थिर css_unit_ctx *unit_len_ctx;
 
-	int main_size;
-	int cross_size;
+	पूर्णांक main_आकार;
+	पूर्णांक cross_आकार;
 
-	int available_main;
-	int available_cross;
+	पूर्णांक available_main;
+	पूर्णांक available_cross;
 
 	bool horizontal;
 	bool main_reversed;
-	enum css_flex_wrap_e wrap;
+	क्रमागत css_flex_wrap_e wrap;
 
-	struct flex_items {
-		size_t count;
-		struct flex_item_data *data;
+	काष्ठा flex_वस्तुएँ {
+		माप_प्रकार गिनती;
+		काष्ठा flex_item_तथ्य *तथ्य;
 	} item;
 
-	struct flex_lines {
-		size_t count;
-		size_t alloc;
-		struct flex_line_data *data;
-	} line;
+	काष्ठा flex_पंक्तियाँ {
+		माप_प्रकार गिनती;
+		माप_प्रकार alloc;
+		काष्ठा flex_पंक्ति_तथ्य *तथ्य;
+	} पंक्ति;
 };
 
 /**
@@ -121,12 +121,12 @@ struct flex_ctx {
  *
  * \param[in] ctx  Flex layout context
  */
-static void layout_flex_ctx__destroy(struct flex_ctx *ctx)
+अटल व्योम layout_flex_ctx__destroy(काष्ठा flex_ctx *ctx)
 {
-	if (ctx != NULL) {
-		free(ctx->item.data);
-		free(ctx->line.data);
-		free(ctx);
+	अगर (ctx != शून्य) {
+		मुक्त(ctx->item.तथ्य);
+		मुक्त(ctx->पंक्ति.तथ्य);
+		मुक्त(ctx);
 	}
 }
 
@@ -137,30 +137,30 @@ static void layout_flex_ctx__destroy(struct flex_ctx *ctx)
  * \param[in] flex     Box to create layout context for
  * \return flex layout context or NULL on error
  */
-static struct flex_ctx *layout_flex_ctx__create(
+अटल काष्ठा flex_ctx *layout_flex_ctx__create(
 		html_content *content,
-		const struct box *flex)
+		स्थिर काष्ठा box *flex)
 {
-	struct flex_ctx *ctx;
+	काष्ठा flex_ctx *ctx;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL) {
-		return NULL;
+	ctx = सुस्मृति(1, माप(*ctx));
+	अगर (ctx == शून्य) {
+		वापस शून्य;
 	}
-	ctx->line.alloc = 1;
+	ctx->पंक्ति.alloc = 1;
 
-	ctx->item.count = box_count_children(flex);
-	ctx->item.data = calloc(ctx->item.count, sizeof(*ctx->item.data));
-	if (ctx->item.data == NULL) {
+	ctx->item.गिनती = box_गिनती_children(flex);
+	ctx->item.तथ्य = सुस्मृति(ctx->item.गिनती, माप(*ctx->item.तथ्य));
+	अगर (ctx->item.तथ्य == शून्य) {
 		layout_flex_ctx__destroy(ctx);
-		return NULL;
+		वापस शून्य;
 	}
 
-	ctx->line.alloc = 1;
-	ctx->line.data = calloc(ctx->line.alloc, sizeof(*ctx->line.data));
-	if (ctx->line.data == NULL) {
+	ctx->पंक्ति.alloc = 1;
+	ctx->पंक्ति.तथ्य = सुस्मृति(ctx->पंक्ति.alloc, माप(*ctx->पंक्ति.तथ्य));
+	अगर (ctx->पंक्ति.तथ्य == शून्य) {
 		layout_flex_ctx__destroy(ctx);
-		return NULL;
+		वापस शून्य;
 	}
 
 	ctx->flex = flex;
@@ -171,7 +171,7 @@ static struct flex_ctx *layout_flex_ctx__create(
 	ctx->horizontal = lh__flex_main_is_horizontal(flex);
 	ctx->main_reversed = lh__flex_direction_reversed(flex);
 
-	return ctx;
+	वापस ctx;
 }
 
 /**
@@ -180,13 +180,13 @@ static struct flex_ctx *layout_flex_ctx__create(
  * \param[in] ctx   Flex layout context.
  * \return the start side.
  */
-static enum box_side layout_flex__main_start_side(
-		const struct flex_ctx *ctx)
+अटल क्रमागत box_side layout_flex__main_start_side(
+		स्थिर काष्ठा flex_ctx *ctx)
 {
-	if (ctx->horizontal) {
-		return (ctx->main_reversed) ? RIGHT : LEFT;
-	} else {
-		return (ctx->main_reversed) ? BOTTOM : TOP;
+	अगर (ctx->horizontal) {
+		वापस (ctx->main_reversed) ? दायाँ_2 : बायाँ_2;
+	} अन्यथा {
+		वापस (ctx->main_reversed) ? BOTTOM : शीर्ष_2;
 	}
 }
 
@@ -196,13 +196,13 @@ static enum box_side layout_flex__main_start_side(
  * \param[in] ctx   Flex layout context.
  * \return the end side.
  */
-static enum box_side layout_flex__main_end_side(
-		const struct flex_ctx *ctx)
+अटल क्रमागत box_side layout_flex__main_end_side(
+		स्थिर काष्ठा flex_ctx *ctx)
 {
-	if (ctx->horizontal) {
-		return (ctx->main_reversed) ? LEFT : RIGHT;
-	} else {
-		return (ctx->main_reversed) ? TOP : BOTTOM;
+	अगर (ctx->horizontal) {
+		वापस (ctx->main_reversed) ? बायाँ_2 : दायाँ_2;
+	} अन्यथा {
+		वापस (ctx->main_reversed) ? शीर्ष_2 : BOTTOM;
 	}
 }
 
@@ -214,39 +214,39 @@ static enum box_side layout_flex__main_end_side(
  * \param[in] available_width  Available width for item in pixels
  * \return true on success false on failure
  */
-static bool layout_flex_item(
-		const struct flex_ctx *ctx,
-		const struct flex_item_data *item,
-		int available_width)
+अटल bool layout_flex_item(
+		स्थिर काष्ठा flex_ctx *ctx,
+		स्थिर काष्ठा flex_item_तथ्य *item,
+		पूर्णांक available_width)
 {
 	bool success;
-	struct box *b = item->box;
+	काष्ठा box *b = item->box;
 
-	switch (b->type) {
-	case BOX_BLOCK:
+	चयन (b->type) {
+	हाल BOX_BLOCK:
 		success = layout_block_context(b, -1, ctx->content);
-		break;
-	case BOX_TABLE:
+		अवरोध;
+	हाल BOX_TABLE:
 		b->float_container = b->parent;
 		success = layout_table(b, available_width, ctx->content);
-		b->float_container = NULL;
-		break;
-	case BOX_FLEX:
+		b->float_container = शून्य;
+		अवरोध;
+	हाल BOX_FLEX:
 		b->float_container = b->parent;
 		success = layout_flex(b, available_width, ctx->content);
-		b->float_container = NULL;
-		break;
-	default:
-		assert(0 && "Bad flex item back type");
+		b->float_container = शून्य;
+		अवरोध;
+	शेष:
+		निश्चित(0 && "Bad flex item back type");
 		success = false;
-		break;
+		अवरोध;
 	}
 
-	if (!success) {
+	अगर (!success) {
 		NSLOG(flex, ERROR, "box %p: layout failed", b);
 	}
 
-	return success;
+	वापस success;
 }
 
 /**
@@ -257,80 +257,80 @@ static bool layout_flex_item(
  * \param[in] available_width  Available width in pixels
  * \return true on success false on failure
  */
-static inline bool layout_flex__base_and_main_sizes(
-		const struct flex_ctx *ctx,
-		struct flex_item_data *item,
-		int available_width)
+अटल अंतरभूत bool layout_flex__base_and_main_sizes(
+		स्थिर काष्ठा flex_ctx *ctx,
+		काष्ठा flex_item_तथ्य *item,
+		पूर्णांक available_width)
 {
-	struct box *b = item->box;
-	int content_min_width = b->min_width;
-	int content_max_width = b->max_width;
-	int delta_outer_main = lh__delta_outer_main(ctx->flex, b);
+	काष्ठा box *b = item->box;
+	पूर्णांक content_min_width = b->min_width;
+	पूर्णांक content_max_width = b->max_width;
+	पूर्णांक delta_outer_main = lh__delta_outer_main(ctx->flex, b);
 
 	NSLOG(flex, DEEPDEBUG, "box %p: delta_outer_main: %i",
 			b, delta_outer_main);
 
-	if (item->basis == CSS_FLEX_BASIS_SET) {
-		if (item->basis_unit == CSS_UNIT_PCT) {
-			item->base_size = FPCT_OF_INT_TOINT(
-					item->basis_length,
+	अगर (item->basis == CSS_FLEX_BASIS_SET) {
+		अगर (item->basis_unit == CSS_UNIT_PCT) {
+			item->base_आकार = FPCT_OF_INT_TOINT(
+					item->basis_लंबाई,
 					available_width);
-		} else {
-			item->base_size = FIXTOINT(css_unit_len2device_px(
+		} अन्यथा {
+			item->base_आकार = FIXTOINT(css_unit_len2device_px(
 					b->style, ctx->unit_len_ctx,
-					item->basis_length,
+					item->basis_लंबाई,
 					item->basis_unit));
 		}
 
-	} else if (item->basis == CSS_FLEX_BASIS_AUTO) {
-		item->base_size = ctx->horizontal ? b->width : b->height;
-	} else {
-		item->base_size = AUTO;
+	} अन्यथा अगर (item->basis == CSS_FLEX_BASIS_AUTO) {
+		item->base_आकार = ctx->horizontal ? b->width : b->height;
+	} अन्यथा {
+		item->base_आकार = AUTO;
 	}
 
-	if (ctx->horizontal == false) {
-		if (b->width == AUTO) {
+	अगर (ctx->horizontal == false) {
+		अगर (b->width == AUTO) {
 			b->width = min(max(content_min_width, available_width),
 					content_max_width);
 			b->width -= lh__delta_outer_width(b);
 		}
 
-		if (!layout_flex_item(ctx, item, b->width)) {
-			return false;
+		अगर (!layout_flex_item(ctx, item, b->width)) {
+			वापस false;
 		}
 	}
 
-	if (item->base_size == AUTO) {
-		if (ctx->horizontal == false) {
-			item->base_size = b->height;
-		} else {
-			item->base_size = content_max_width - delta_outer_main;
+	अगर (item->base_आकार == AUTO) {
+		अगर (ctx->horizontal == false) {
+			item->base_आकार = b->height;
+		} अन्यथा {
+			item->base_आकार = content_max_width - delta_outer_main;
 		}
 	}
 
-	item->base_size += delta_outer_main;
+	item->base_आकार += delta_outer_main;
 
-	if (ctx->horizontal) {
-		item->base_size = min(item->base_size, available_width);
-		item->base_size = max(item->base_size, content_min_width);
+	अगर (ctx->horizontal) {
+		item->base_आकार = min(item->base_आकार, available_width);
+		item->base_आकार = max(item->base_आकार, content_min_width);
 	}
 
-	item->target_main_size = item->base_size;
-	item->main_size = item->base_size;
+	item->target_main_आकार = item->base_आकार;
+	item->main_आकार = item->base_आकार;
 
-	if (item->max_main > 0 &&
-	    item->main_size > item->max_main + delta_outer_main) {
-		item->main_size = item->max_main + delta_outer_main;
+	अगर (item->max_main > 0 &&
+	    item->main_आकार > item->max_main + delta_outer_main) {
+		item->main_आकार = item->max_main + delta_outer_main;
 	}
 
-	if (item->main_size < item->min_main + delta_outer_main) {
-		item->main_size = item->min_main + delta_outer_main;
+	अगर (item->main_आकार < item->min_main + delta_outer_main) {
+		item->main_आकार = item->min_main + delta_outer_main;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "flex-item box: %p: base_size: %i, main_size %i",
-			b, item->base_size, item->main_size);
+			b, item->base_आकार, item->main_आकार);
 
-	return true;
+	वापस true;
 }
 
 /**
@@ -340,16 +340,16 @@ static inline bool layout_flex__base_and_main_sizes(
  * \param[in] flex             Flex box
  * \param[in] available_width  Available width in pixels
  */
-static void layout_flex_ctx__populate_item_data(
-		const struct flex_ctx *ctx,
-		const struct box *flex,
-		int available_width)
+अटल व्योम layout_flex_ctx_populate_item_तथ्य(
+		स्थिर काष्ठा flex_ctx *ctx,
+		स्थिर काष्ठा box *flex,
+		पूर्णांक available_width)
 {
-	size_t i = 0;
+	माप_प्रकार i = 0;
 	bool horizontal = ctx->horizontal;
 
-	for (struct box *b = flex->children; b != NULL; b = b->next) {
-		struct flex_item_data *item = &ctx->item.data[i++];
+	क्रम (काष्ठा box *b = flex->children; b != शून्य; b = b->अग्र) {
+		काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i++];
 
 		b->float_container = b->parent;
 		layout_find_dimensions(ctx->unit_len_ctx, available_width, -1,
@@ -359,14 +359,14 @@ static void layout_flex_ctx__populate_item_data(
 				horizontal ? &item->max_cross : &item->max_main,
 				horizontal ? &item->min_cross : &item->min_main,
 				b->margin, b->padding, b->border);
-		b->float_container = NULL;
+		b->float_container = शून्य;
 
 		NSLOG(flex, DEEPDEBUG, "flex-item box: %p: width: %i",
 				b, b->width);
 
 		item->box = b;
 		item->basis = css_computed_flex_basis(b->style,
-				&item->basis_length, &item->basis_unit);
+				&item->basis_लंबाई, &item->basis_unit);
 
 		css_computed_flex_shrink(b->style, &item->shrink);
 		css_computed_flex_grow(b->style, &item->grow);
@@ -381,26 +381,26 @@ static void layout_flex_ctx__populate_item_data(
  * \param[in] ctx  Flex layout context
  * \return true on success false on out of memory
  */
-static bool layout_flex_ctx__ensure_line(struct flex_ctx *ctx)
+अटल bool layout_flex_ctx_ensure_पंक्ति(काष्ठा flex_ctx *ctx)
 {
-	struct flex_line_data *temp;
-	size_t line_alloc = ctx->line.alloc * 2;
+	काष्ठा flex_पंक्ति_तथ्य *अस्थायी;
+	माप_प्रकार पंक्ति_alloc = ctx->पंक्ति.alloc * 2;
 
-	if (ctx->line.alloc > ctx->line.count) {
-		return true;
+	अगर (ctx->पंक्ति.alloc > ctx->पंक्ति.गिनती) {
+		वापस true;
 	}
 
-	temp = realloc(ctx->line.data, sizeof(*ctx->line.data) * line_alloc);
-	if (temp == NULL) {
-		return false;
+	अस्थायी = पुनः_स्मृति(ctx->पंक्ति.तथ्य, माप(*ctx->पंक्ति.तथ्य) * पंक्ति_alloc);
+	अगर (अस्थायी == शून्य) {
+		वापस false;
 	}
-	ctx->line.data = temp;
+	ctx->पंक्ति.तथ्य = अस्थायी;
 
-	memset(ctx->line.data + ctx->line.alloc, 0,
-	       sizeof(*ctx->line.data) * (line_alloc - ctx->line.alloc));
-	ctx->line.alloc = line_alloc;
+	स_रखो(ctx->पंक्ति.तथ्य + ctx->पंक्ति.alloc, 0,
+	       माप(*ctx->पंक्ति.तथ्य) * (पंक्ति_alloc - ctx->पंक्ति.alloc));
+	ctx->पंक्ति.alloc = पंक्ति_alloc;
 
-	return true;
+	वापस true;
 }
 
 /**
@@ -410,65 +410,65 @@ static bool layout_flex_ctx__ensure_line(struct flex_ctx *ctx)
  * \param[in] item_index  Index to first item to assign to this line
  * \return Pointer to the new line, or NULL on error.
  */
-static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
-		size_t item_index)
+अटल काष्ठा flex_पंक्ति_तथ्य *layout_flex_build_पंक्ति(काष्ठा flex_ctx *ctx,
+		माप_प्रकार item_सूचकांक)
 {
-	enum box_side start_side = layout_flex__main_start_side(ctx);
-	enum box_side end_side = layout_flex__main_end_side(ctx);
-	struct flex_line_data *line;
-	int used_main = 0;
+	क्रमागत box_side start_side = layout_flex__main_start_side(ctx);
+	क्रमागत box_side end_side = layout_flex__main_end_side(ctx);
+	काष्ठा flex_पंक्ति_तथ्य *पंक्ति;
+	पूर्णांक used_main = 0;
 
-	if (!layout_flex_ctx__ensure_line(ctx)) {
-		return NULL;
+	अगर (!layout_flex_ctx_ensure_पंक्ति(ctx)) {
+		वापस शून्य;
 	}
 
-	line = &ctx->line.data[ctx->line.count];
-	line->first = item_index;
+	पंक्ति = &ctx->पंक्ति.तथ्य[ctx->पंक्ति.गिनती];
+	पंक्ति->first = item_सूचकांक;
 
 	NSLOG(flex, DEEPDEBUG, "flex container %p: available main: %i",
 			ctx->flex, ctx->available_main);
 
-	while (item_index < ctx->item.count) {
-		struct flex_item_data *item = &ctx->item.data[item_index];
-		struct box *b = item->box;
-		int pos_main;
+	जबतक (item_सूचकांक < ctx->item.गिनती) {
+		काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[item_सूचकांक];
+		काष्ठा box *b = item->box;
+		पूर्णांक pos_main;
 
 		pos_main = ctx->horizontal ?
-				item->main_size :
+				item->main_आकार :
 				b->height + lh__delta_outer_main(ctx->flex, b);
 
-		if (ctx->wrap == CSS_FLEX_WRAP_NOWRAP ||
+		अगर (ctx->wrap == CSS_FLEX_WRAP_NOWRAP ||
 		    pos_main + used_main <= ctx->available_main ||
 		    lh__box_is_absolute(item->box) ||
 		    ctx->available_main == AUTO ||
-		    line->count == 0 ||
+		    पंक्ति->गिनती == 0 ||
 		    pos_main == 0) {
-			if (lh__box_is_absolute(item->box) == false) {
-				line->main_size += item->main_size;
+			अगर (lh__box_is_absolute(item->box) == false) {
+				पंक्ति->main_आकार += item->main_आकार;
 				used_main += pos_main;
 
-				if (b->margin[start_side] == AUTO) {
-					line->main_auto_margin_count++;
+				अगर (b->margin[start_side] == AUTO) {
+					पंक्ति->main_auto_margin_गिनती++;
 				}
-				if (b->margin[end_side] == AUTO) {
-					line->main_auto_margin_count++;
+				अगर (b->margin[end_side] == AUTO) {
+					पंक्ति->main_auto_margin_गिनती++;
 				}
 			}
-			item->line = ctx->line.count;
-			line->count++;
-			item_index++;
-		} else {
-			break;
+			item->पंक्ति = ctx->पंक्ति.गिनती;
+			पंक्ति->गिनती++;
+			item_सूचकांक++;
+		} अन्यथा {
+			अवरोध;
 		}
 	}
 
-	if (line->count > 0) {
-		ctx->line.count++;
-	} else {
+	अगर (पंक्ति->गिनती > 0) {
+		ctx->पंक्ति.गिनती++;
+	} अन्यथा {
 		NSLOG(layout, ERROR, "Failed to fit any flex items");
 	}
 
-	return line;
+	वापस पंक्ति;
 }
 
 /**
@@ -477,20 +477,20 @@ static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
  * \param[in] line  Line to containing item
  * \param[in] item  Item to freeze
  */
-static inline void layout_flex__item_freeze(
-		struct flex_line_data *line,
-		struct flex_item_data *item)
+अटल अंतरभूत व्योम layout_flex__item_freeze(
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति,
+		काष्ठा flex_item_तथ्य *item)
 {
 	item->freeze = true;
-	line->frozen++;
+	पंक्ति->frozen++;
 
-	if (!lh__box_is_absolute(item->box)){
-		line->used_main_size += item->target_main_size;
+	अगर (!lh__box_is_absolute(item->box)){
+		पंक्ति->used_main_आकार += item->target_main_आकार;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "flex-item box: %p: "
 			"Frozen at target_main_size: %i",
-			item->box, item->target_main_size);
+			item->box, item->target_main_आकार);
 }
 
 /**
@@ -504,37 +504,37 @@ static inline void layout_flex__item_freeze(
  * \param[in]  grow                 Whether to grow or shrink
  * return remaining free space on line
  */
-static inline int layout_flex__remaining_free_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line,
-		css_fixed *unfrozen_factor_sum,
-		int initial_free_main,
-		int available_main,
+अटल अंतरभूत पूर्णांक layout_flex__remaining_free_main(
+		काष्ठा flex_ctx *ctx,
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति,
+		css_fixed *unfrozen_factor_योग,
+		पूर्णांक initial_free_main,
+		पूर्णांक available_main,
 		bool grow)
 {
-	int remaining_free_main = available_main;
-	size_t item_count = line->first + line->count;
+	पूर्णांक remaining_free_main = available_main;
+	माप_प्रकार item_गिनती = पंक्ति->first + पंक्ति->गिनती;
 
-	*unfrozen_factor_sum = 0;
+	*unfrozen_factor_योग = 0;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
+	क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+		काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
 
-		if (item->freeze) {
-			remaining_free_main -= item->target_main_size;
-		} else {
-			remaining_free_main -= item->base_size;
+		अगर (item->freeze) {
+			remaining_free_main -= item->target_main_आकार;
+		} अन्यथा {
+			remaining_free_main -= item->base_आकार;
 
-			*unfrozen_factor_sum += grow ?
+			*unfrozen_factor_योग += grow ?
 					item->grow : item->shrink;
 		}
 	}
 
-	if (*unfrozen_factor_sum < F_1) {
-		int free_space = FIXTOINT(FMUL(INTTOFIX(initial_free_main),
-				*unfrozen_factor_sum));
+	अगर (*unfrozen_factor_योग < F_1) {
+		पूर्णांक free_space = FIXTOINT(FMUL(INTTOFIX(initial_free_main),
+				*unfrozen_factor_योग));
 
-		if (free_space < remaining_free_main) {
+		अगर (free_space < remaining_free_main) {
 			remaining_free_main = free_space;
 		}
 	}
@@ -542,7 +542,7 @@ static inline int layout_flex__remaining_free_main(
 	NSLOG(flex, DEEPDEBUG, "Remaining free space: %i",
 			remaining_free_main);
 
-	return remaining_free_main;
+	वापस remaining_free_main;
 }
 
 /**
@@ -552,60 +552,60 @@ static inline int layout_flex__remaining_free_main(
  * \param[in] line  Line to align items on
  * return total violation in pixels
  */
-static inline int layout_flex__get_min_max_violations(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+अटल अंतरभूत पूर्णांक layout_flex__get_min_max_violations(
+		काष्ठा flex_ctx *ctx,
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति)
 {
 
-	int total_violation = 0;
-	size_t item_count = line->first + line->count;
+	पूर्णांक योग_violation = 0;
+	माप_प्रकार item_गिनती = पंक्ति->first + पंक्ति->गिनती;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
-		int target_main_size = item->target_main_size;
+	क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+		काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
+		पूर्णांक target_main_आकार = item->target_main_आकार;
 
 		NSLOG(flex, DEEPDEBUG, "item %p: target_main_size: %i",
-					item->box, target_main_size);
+					item->box, target_main_आकार);
 
-		if (item->freeze) {
-			continue;
+		अगर (item->freeze) {
+			जारी;
 		}
 
-		if (item->max_main > 0 &&
-		    target_main_size > item->max_main) {
-			target_main_size = item->max_main;
+		अगर (item->max_main > 0 &&
+		    target_main_आकार > item->max_main) {
+			target_main_आकार = item->max_main;
 			item->max_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: max_main: %i",
 					item->max_main);
 		}
 
-		if (target_main_size < item->min_main) {
-			target_main_size = item->min_main;
+		अगर (target_main_आकार < item->min_main) {
+			target_main_आकार = item->min_main;
 			item->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: min_main: %i",
 					item->min_main);
 		}
 
-		if (target_main_size < item->box->min_width) {
-			target_main_size = item->box->min_width;
+		अगर (target_main_आकार < item->box->min_width) {
+			target_main_आकार = item->box->min_width;
 			item->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: box min_width: %i",
 					item->box->min_width);
 		}
 
-		if (target_main_size < 0) {
-			target_main_size = 0;
+		अगर (target_main_आकार < 0) {
+			target_main_आकार = 0;
 			item->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: less than 0");
 		}
 
-		total_violation += target_main_size - item->target_main_size;
-		item->target_main_size = target_main_size;
+		योग_violation += target_main_आकार - item->target_main_आकार;
+		item->target_main_आकार = target_main_आकार;
 	}
 
-	NSLOG(flex, DEEPDEBUG, "Total violation: %i", total_violation);
+	NSLOG(flex, DEEPDEBUG, "Total violation: %i", योग_violation);
 
-	return total_violation;
+	वापस योग_violation;
 }
 
 /**
@@ -619,77 +619,77 @@ static inline int layout_flex__get_min_max_violations(
  * \param[in] remaining_free_main  Remaining free space in main direction
  * \param[in] grow                 Whether to grow or shrink
  */
-static inline void layout_flex__distribute_free_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line,
-		css_fixed unfrozen_factor_sum,
-		int remaining_free_main,
+अटल अंतरभूत व्योम layout_flex__distribute_free_main(
+		काष्ठा flex_ctx *ctx,
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति,
+		css_fixed unfrozen_factor_योग,
+		पूर्णांक remaining_free_main,
 		bool grow)
 {
-	size_t item_count = line->first + line->count;
+	माप_प्रकार item_गिनती = पंक्ति->first + पंक्ति->गिनती;
 
-	if (grow) {
+	अगर (grow) {
 		css_fixed remainder = 0;
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
-			css_fixed result;
+		क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+			काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
+			css_fixed परिणाम;
 			css_fixed ratio;
 
-			if (item->freeze) {
-				continue;
+			अगर (item->freeze) {
+				जारी;
 			}
 
-			ratio = FDIV(item->grow, unfrozen_factor_sum);
-			result = FMUL(INTTOFIX(remaining_free_main), ratio) +
+			ratio = FDIV(item->grow, unfrozen_factor_योग);
+			परिणाम = FMUL(INTTOFIX(remaining_free_main), ratio) +
 					remainder;
 
-			item->target_main_size = item->base_size +
-					FIXTOINT(result);
-			remainder = FIXFRAC(result);
+			item->target_main_आकार = item->base_आकार +
+					FIXTOINT(परिणाम);
+			remainder = FIXFRAC(परिणाम);
 		}
-	} else {
-		css_fixed scaled_shrink_factor_sum = 0;
+	} अन्यथा {
+		css_fixed scaled_shrink_factor_योग = 0;
 		css_fixed remainder = 0;
 
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
+		क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+			काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
 			css_fixed scaled_shrink_factor;
 
-			if (item->freeze) {
-				continue;
+			अगर (item->freeze) {
+				जारी;
 			}
 
 			scaled_shrink_factor = FMUL(
 					item->shrink,
-					INTTOFIX(item->base_size));
-			scaled_shrink_factor_sum += scaled_shrink_factor;
+					INTTOFIX(item->base_आकार));
+			scaled_shrink_factor_योग += scaled_shrink_factor;
 		}
 
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
+		क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+			काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
 			css_fixed scaled_shrink_factor;
-			css_fixed result;
+			css_fixed परिणाम;
 			css_fixed ratio;
 
-			if (item->freeze) {
-				continue;
-			} else if (scaled_shrink_factor_sum == 0) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
-				continue;
+			अगर (item->freeze) {
+				जारी;
+			} अन्यथा अगर (scaled_shrink_factor_योग == 0) {
+				item->target_main_आकार = item->main_आकार;
+				layout_flex__item_freeze(पंक्ति, item);
+				जारी;
 			}
 
 			scaled_shrink_factor = FMUL(
 					item->shrink,
-					INTTOFIX(item->base_size));
+					INTTOFIX(item->base_आकार));
 			ratio = FDIV(scaled_shrink_factor,
-			             scaled_shrink_factor_sum);
-			result = FMUL(INTTOFIX(abs(remaining_free_main)),
+			             scaled_shrink_factor_योग);
+			परिणाम = FMUL(INTTOFIX(असल(remaining_free_main)),
 			              ratio) + remainder;
 
-			item->target_main_size = item->base_size -
-					FIXTOINT(result);
-			remainder = FIXFRAC(result);
+			item->target_main_आकार = item->base_आकार -
+					FIXTOINT(परिणाम);
+			remainder = FIXFRAC(परिणाम);
 		}
 	}
 }
@@ -703,96 +703,96 @@ static inline void layout_flex__distribute_free_main(
  * \param[in] line  Line to resolve
  * \return true on success, false on failure.
  */
-static bool layout_flex__resolve_line(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+अटल bool layout_flex_resolve_पंक्ति(
+		काष्ठा flex_ctx *ctx,
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति)
 {
-	size_t item_count = line->first + line->count;
-	int available_main = ctx->available_main;
-	int initial_free_main;
+	माप_प्रकार item_गिनती = पंक्ति->first + पंक्ति->गिनती;
+	पूर्णांक available_main = ctx->available_main;
+	पूर्णांक initial_free_main;
 	bool grow;
 
-	if (available_main == AUTO) {
-		available_main = INT_MAX;
+	अगर (available_main == AUTO) {
+		available_main = पूर्णांक_उच्च;
 	}
 
-	grow = (line->main_size < available_main);
+	grow = (पंक्ति->main_आकार < available_main);
 	initial_free_main = available_main;
 
 	NSLOG(flex, DEEPDEBUG, "box %p: line %zu: first: %zu, count: %zu",
-			ctx->flex, line - ctx->line.data,
-			line->first, line->count);
+			ctx->flex, पंक्ति - ctx->पंक्ति.तथ्य,
+			पंक्ति->first, पंक्ति->गिनती);
 	NSLOG(flex, DEEPDEBUG, "Line main_size: %i, available_main: %i",
-			line->main_size, available_main);
+			पंक्ति->main_आकार, available_main);
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
+	क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+		काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
 
 		/* 3. Size inflexible items */
-		if (grow) {
-			if (item->grow == 0 ||
-			    item->base_size > item->main_size) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+		अगर (grow) {
+			अगर (item->grow == 0 ||
+			    item->base_आकार > item->main_आकार) {
+				item->target_main_आकार = item->main_आकार;
+				layout_flex__item_freeze(पंक्ति, item);
 			}
-		} else {
-			if (item->shrink == 0 ||
-			    item->base_size < item->main_size) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+		} अन्यथा {
+			अगर (item->shrink == 0 ||
+			    item->base_आकार < item->main_आकार) {
+				item->target_main_आकार = item->main_आकार;
+				layout_flex__item_freeze(पंक्ति, item);
 			}
 		}
 
 		/* 4. Calculate initial free space */
-		if (item->freeze) {
-			initial_free_main -= item->target_main_size;
-		} else {
-			initial_free_main -= item->base_size;
+		अगर (item->freeze) {
+			initial_free_main -= item->target_main_आकार;
+		} अन्यथा {
+			initial_free_main -= item->base_आकार;
 		}
 	}
 
 	/* 5. Loop */
-	while (line->frozen < line->count) {
-		css_fixed unfrozen_factor_sum;
-		int remaining_free_main;
-		int total_violation;
+	जबतक (पंक्ति->frozen < पंक्ति->गिनती) {
+		css_fixed unfrozen_factor_योग;
+		पूर्णांक remaining_free_main;
+		पूर्णांक योग_violation;
 
 		NSLOG(flex, DEEPDEBUG, "flex-container: %p: Resolver pass",
 				ctx->flex);
 
 		/* b */
 		remaining_free_main = layout_flex__remaining_free_main(ctx,
-				line, &unfrozen_factor_sum, initial_free_main,
+				पंक्ति, &unfrozen_factor_योग, initial_free_main,
 				available_main, grow);
 
 		/* c */
-		if (remaining_free_main != 0) {
+		अगर (remaining_free_main != 0) {
 			layout_flex__distribute_free_main(ctx,
-					line, unfrozen_factor_sum,
+					पंक्ति, unfrozen_factor_योग,
 					remaining_free_main, grow);
 		}
 
 		/* d */
-		total_violation = layout_flex__get_min_max_violations(
-				ctx, line);
+		योग_violation = layout_flex__get_min_max_violations(
+				ctx, पंक्ति);
 
 		/* e */
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
+		क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+			काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
 
-			if (item->freeze) {
-				continue;
+			अगर (item->freeze) {
+				जारी;
 			}
 
-			if (total_violation == 0 ||
-			    (total_violation > 0 && item->min_violation) ||
-			    (total_violation < 0 && item->max_violation)) {
-				layout_flex__item_freeze(line, item);
+			अगर (योग_violation == 0 ||
+			    (योग_violation > 0 && item->min_violation) ||
+			    (योग_violation < 0 && item->max_violation)) {
+				layout_flex__item_freeze(पंक्ति, item);
 			}
 		}
 	}
 
-	return true;
+	वापस true;
 }
 
 /**
@@ -802,91 +802,91 @@ static bool layout_flex__resolve_line(
  * \param[in] line  Line to resolve
  * \return true on success, false on failure.
  */
-static bool layout_flex__place_line_items_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+अटल bool layout_flex_place_पंक्ति_वस्तुएँ_main(
+		काष्ठा flex_ctx *ctx,
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति)
 {
-	int main_pos = ctx->flex->padding[layout_flex__main_start_side(ctx)];
-	int post_multiplier = ctx->main_reversed ? 0 : 1;
-	int pre_multiplier = ctx->main_reversed ? -1 : 0;
-	size_t item_count = line->first + line->count;
-	int extra_remainder = 0;
-	int extra = 0;
+	पूर्णांक main_pos = ctx->flex->padding[layout_flex__main_start_side(ctx)];
+	पूर्णांक post_multiplier = ctx->main_reversed ? 0 : 1;
+	पूर्णांक pre_multiplier = ctx->main_reversed ? -1 : 0;
+	माप_प्रकार item_गिनती = पंक्ति->first + पंक्ति->गिनती;
+	पूर्णांक extra_remainder = 0;
+	पूर्णांक extra = 0;
 
-	if (ctx->main_reversed) {
-		main_pos = lh__box_size_main(ctx->horizontal, ctx->flex) -
+	अगर (ctx->main_reversed) {
+		main_pos = lh_box_आकार_main(ctx->horizontal, ctx->flex) -
 				main_pos;
 	}
 
-	if (ctx->available_main != AUTO &&
+	अगर (ctx->available_main != AUTO &&
 	    ctx->available_main != UNKNOWN_WIDTH &&
-	    ctx->available_main > line->used_main_size) {
-		if (line->main_auto_margin_count > 0) {
-			extra = ctx->available_main - line->used_main_size;
+	    ctx->available_main > पंक्ति->used_main_आकार) {
+		अगर (पंक्ति->main_auto_margin_गिनती > 0) {
+			extra = ctx->available_main - पंक्ति->used_main_आकार;
 
-			extra_remainder = extra % line->main_auto_margin_count;
-			extra /= line->main_auto_margin_count;
+			extra_remainder = extra % पंक्ति->main_auto_margin_गिनती;
+			extra /= पंक्ति->main_auto_margin_गिनती;
 		}
 	}
 
-	for (size_t i = line->first; i < item_count; i++) {
-		enum box_side main_end = ctx->horizontal ? RIGHT : BOTTOM;
-		enum box_side main_start = ctx->horizontal ? LEFT : TOP;
-		struct flex_item_data *item = &ctx->item.data[i];
-		struct box *b = item->box;
-		int extra_total = 0;
-		int extra_post = 0;
-		int extra_pre = 0;
-		int box_size_main;
-		int *box_pos_main;
+	क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+		क्रमागत box_side main_end = ctx->horizontal ? दायाँ_2 : BOTTOM;
+		क्रमागत box_side main_start = ctx->horizontal ? बायाँ_2 : शीर्ष_2;
+		काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
+		काष्ठा box *b = item->box;
+		पूर्णांक extra_योग = 0;
+		पूर्णांक extra_post = 0;
+		पूर्णांक extra_pre = 0;
+		पूर्णांक box_आकार_main;
+		पूर्णांक *box_pos_main;
 
-		if (ctx->horizontal) {
-			b->width = item->target_main_size -
+		अगर (ctx->horizontal) {
+			b->width = item->target_main_आकार -
 					lh__delta_outer_width(b);
 
-			if (!layout_flex_item(ctx, item, b->width)) {
-				return false;
+			अगर (!layout_flex_item(ctx, item, b->width)) {
+				वापस false;
 			}
 		}
 
-		box_size_main = lh__box_size_main(ctx->horizontal, b);
+		box_आकार_main = lh_box_आकार_main(ctx->horizontal, b);
 		box_pos_main = ctx->horizontal ? &b->x : &b->y;
 
-		if (!lh__box_is_absolute(b)) {
-			if (b->margin[main_start] == AUTO) {
+		अगर (!lh__box_is_absolute(b)) {
+			अगर (b->margin[main_start] == AUTO) {
 				extra_pre = extra + extra_remainder;
 			}
-			if (b->margin[main_end] == AUTO) {
+			अगर (b->margin[main_end] == AUTO) {
 				extra_post = extra + extra_remainder;
 			}
-			extra_total = extra_pre + extra_post;
+			extra_योग = extra_pre + extra_post;
 
 			main_pos += pre_multiplier *
-					(extra_total + box_size_main +
+					(extra_योग + box_आकार_main +
 					 lh__delta_outer_main(ctx->flex, b));
 		}
 
 		*box_pos_main = main_pos + lh__non_auto_margin(b, main_start) +
 				extra_pre + b->border[main_start].width;
 
-		if (!lh__box_is_absolute(b)) {
-			int cross_size;
-			int box_size_cross = lh__box_size_cross(
+		अगर (!lh__box_is_absolute(b)) {
+			पूर्णांक cross_आकार;
+			पूर्णांक box_आकार_cross = lh_box_आकार_cross(
 					ctx->horizontal, b);
 
 			main_pos += post_multiplier *
-					(extra_total + box_size_main +
+					(extra_योग + box_आकार_main +
 					 lh__delta_outer_main(ctx->flex, b));
 
-			cross_size = box_size_cross + lh__delta_outer_cross(
+			cross_आकार = box_आकार_cross + lh__delta_outer_cross(
 					ctx->flex, b);
-			if (line->cross_size < cross_size) {
-				line->cross_size = cross_size;
+			अगर (पंक्ति->cross_आकार < cross_आकार) {
+				पंक्ति->cross_आकार = cross_आकार;
 			}
 		}
 	}
 
-	return true;
+	वापस true;
 }
 
 /**
@@ -895,41 +895,41 @@ static bool layout_flex__place_line_items_main(
  * \param[in] ctx   Flex layout context
  * \return true on success, false on failure.
  */
-static bool layout_flex__collect_items_into_lines(
-		struct flex_ctx *ctx)
+अटल bool layout_flex_collect_वस्तुएँ_into_पंक्तियाँ(
+		काष्ठा flex_ctx *ctx)
 {
-	size_t pos = 0;
+	माप_प्रकार pos = 0;
 
-	while (pos < ctx->item.count) {
-		struct flex_line_data *line;
+	जबतक (pos < ctx->item.गिनती) {
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति;
 
-		line = layout_flex__build_line(ctx, pos);
-		if (line == NULL) {
-			return false;
+		पंक्ति = layout_flex_build_पंक्ति(ctx, pos);
+		अगर (पंक्ति == शून्य) {
+			वापस false;
 		}
 
-		pos += line->count;
+		pos += पंक्ति->गिनती;
 
 		NSLOG(flex, DEEPDEBUG, "flex-container: %p: "
 				"fitted: %zu (total: %zu/%zu)",
-				ctx->flex, line->count,
-				pos, ctx->item.count);
+				ctx->flex, पंक्ति->गिनती,
+				pos, ctx->item.गिनती);
 
-		if (!layout_flex__resolve_line(ctx, line)) {
-			return false;
+		अगर (!layout_flex_resolve_पंक्ति(ctx, पंक्ति)) {
+			वापस false;
 		}
 
-		if (!layout_flex__place_line_items_main(ctx, line)) {
-			return false;
+		अगर (!layout_flex_place_पंक्ति_वस्तुएँ_main(ctx, पंक्ति)) {
+			वापस false;
 		}
 
-		ctx->cross_size += line->cross_size;
-		if (ctx->main_size < line->main_size) {
-			ctx->main_size = line->main_size;
+		ctx->cross_आकार += पंक्ति->cross_आकार;
+		अगर (ctx->main_आकार < पंक्ति->main_आकार) {
+			ctx->main_आकार = पंक्ति->main_आकार;
 		}
 	}
 
-	return true;
+	वापस true;
 }
 
 /**
@@ -939,58 +939,58 @@ static bool layout_flex__collect_items_into_lines(
  * \param[in] line   Line to align items on
  * \param[in] extra  Extra line width in pixels
  */
-static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
-		struct flex_line_data *line, int extra)
+अटल व्योम layout_flex_place_पंक्ति_वस्तुएँ_cross(काष्ठा flex_ctx *ctx,
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति, पूर्णांक extra)
 {
-	enum box_side cross_start = ctx->horizontal ? TOP : LEFT;
-	size_t item_count = line->first + line->count;
+	क्रमागत box_side cross_start = ctx->horizontal ? शीर्ष_2 : बायाँ_2;
+	माप_प्रकार item_गिनती = पंक्ति->first + पंक्ति->गिनती;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
-		struct box *b = item->box;
-		int cross_free_space;
-		int *box_size_cross;
-		int *box_pos_cross;
+	क्रम (माप_प्रकार i = पंक्ति->first; i < item_गिनती; i++) {
+		काष्ठा flex_item_तथ्य *item = &ctx->item.तथ्य[i];
+		काष्ठा box *b = item->box;
+		पूर्णांक cross_free_space;
+		पूर्णांक *box_आकार_cross;
+		पूर्णांक *box_pos_cross;
 
 		box_pos_cross = ctx->horizontal ? &b->y : &b->x;
-		box_size_cross = lh__box_size_cross_ptr(ctx->horizontal, b);
+		box_आकार_cross = lh_box_आकार_cross_ptr(ctx->horizontal, b);
 
-		cross_free_space = line->cross_size + extra - *box_size_cross -
+		cross_free_space = पंक्ति->cross_आकार + extra - *box_आकार_cross -
 				lh__delta_outer_cross(ctx->flex, b);
 
-		switch (lh__box_align_self(ctx->flex, b)) {
-		default:
-		case CSS_ALIGN_SELF_STRETCH:
-			if (lh__box_size_cross_is_auto(ctx->horizontal, b)) {
-				*box_size_cross += cross_free_space;
+		चयन (lh__box_align_self(ctx->flex, b)) {
+		शेष:
+		हाल CSS_ALIGN_SELF_STRETCH:
+			अगर (lh_box_आकार_cross_is_auto(ctx->horizontal, b)) {
+				*box_आकार_cross += cross_free_space;
 
 				/* Relayout children for stretch. */
-				if (!layout_flex_item(ctx, item, b->width)) {
-					return;
+				अगर (!layout_flex_item(ctx, item, b->width)) {
+					वापस;
 				}
 			}
 			fallthrough;
-		case CSS_ALIGN_SELF_FLEX_START:
+		हाल CSS_ALIGN_SELF_FLEX_START:
 			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos +
+					पंक्ति->pos +
 					lh__non_auto_margin(b, cross_start) +
 					b->border[cross_start].width;
-			break;
+			अवरोध;
 
-		case CSS_ALIGN_SELF_FLEX_END:
+		हाल CSS_ALIGN_SELF_FLEX_END:
 			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos + cross_free_space +
+					पंक्ति->pos + cross_free_space +
 					lh__non_auto_margin(b, cross_start) +
 					b->border[cross_start].width;
-			break;
+			अवरोध;
 
-		case CSS_ALIGN_SELF_BASELINE:
-		case CSS_ALIGN_SELF_CENTER:
+		हाल CSS_ALIGN_SELF_BASELINE:
+		हाल CSS_ALIGN_SELF_CENTER:
 			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos + cross_free_space / 2 +
+					पंक्ति->pos + cross_free_space / 2 +
 					lh__non_auto_margin(b, cross_start) +
 					b->border[cross_start].width;
-			break;
+			अवरोध;
 		}
 	}
 }
@@ -1000,36 +1000,36 @@ static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
  *
  * \param[in] ctx  Flex layout context
  */
-static void layout_flex__place_lines(struct flex_ctx *ctx)
+अटल व्योम layout_flex_place_पंक्तियाँ(काष्ठा flex_ctx *ctx)
 {
 	bool reversed = ctx->wrap == CSS_FLEX_WRAP_WRAP_REVERSE;
-	int line_pos = reversed ? ctx->cross_size : 0;
-	int post_multiplier = reversed ? 0 : 1;
-	int pre_multiplier = reversed ? -1 : 0;
-	int extra_remainder = 0;
-	int extra = 0;
+	पूर्णांक पंक्ति_pos = reversed ? ctx->cross_आकार : 0;
+	पूर्णांक post_multiplier = reversed ? 0 : 1;
+	पूर्णांक pre_multiplier = reversed ? -1 : 0;
+	पूर्णांक extra_remainder = 0;
+	पूर्णांक extra = 0;
 
-	if (ctx->available_cross != AUTO &&
-	    ctx->available_cross > ctx->cross_size &&
-	    ctx->line.count > 0) {
-		extra = ctx->available_cross - ctx->cross_size;
+	अगर (ctx->available_cross != AUTO &&
+	    ctx->available_cross > ctx->cross_आकार &&
+	    ctx->पंक्ति.गिनती > 0) {
+		extra = ctx->available_cross - ctx->cross_आकार;
 
-		extra_remainder = extra % ctx->line.count;
-		extra /= ctx->line.count;
+		extra_remainder = extra % ctx->पंक्ति.गिनती;
+		extra /= ctx->पंक्ति.गिनती;
 	}
 
-	for (size_t i = 0; i < ctx->line.count; i++) {
-		struct flex_line_data *line = &ctx->line.data[i];
+	क्रम (माप_प्रकार i = 0; i < ctx->पंक्ति.गिनती; i++) {
+		काष्ठा flex_पंक्ति_तथ्य *पंक्ति = &ctx->पंक्ति.तथ्य[i];
 
-		line_pos += pre_multiplier * line->cross_size;
-		line->pos = line_pos;
-		line_pos += post_multiplier * line->cross_size +
+		पंक्ति_pos += pre_multiplier * पंक्ति->cross_आकार;
+		पंक्ति->pos = पंक्ति_pos;
+		पंक्ति_pos += post_multiplier * पंक्ति->cross_आकार +
 				extra + extra_remainder;
 
-		layout_flex__place_line_items_cross(ctx, line,
+		layout_flex_place_पंक्ति_वस्तुएँ_cross(ctx, पंक्ति,
 				extra + extra_remainder);
 
-		if (extra_remainder > 0) {
+		अगर (extra_remainder > 0) {
 			extra_remainder--;
 		}
 	}
@@ -1043,16 +1043,16 @@ static void layout_flex__place_lines(struct flex_ctx *ctx)
  * \param[in] content          memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-bool layout_flex(struct box *flex, int available_width,
+bool layout_flex(काष्ठा box *flex, पूर्णांक available_width,
 		html_content *content)
 {
-	int max_height, min_height;
-	struct flex_ctx *ctx;
+	पूर्णांक max_height, min_height;
+	काष्ठा flex_ctx *ctx;
 	bool success = false;
 
 	ctx = layout_flex_ctx__create(content, flex);
-	if (ctx == NULL) {
-		return false;
+	अगर (ctx == शून्य) {
+		वापस false;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "box %p: %s, available_width %i, width: %i",
@@ -1061,16 +1061,16 @@ bool layout_flex(struct box *flex, int available_width,
 
 	layout_find_dimensions(
 			ctx->unit_len_ctx, available_width, -1,
-			flex, flex->style, NULL, &flex->height,
-			NULL, NULL, &max_height, &min_height,
+			flex, flex->style, शून्य, &flex->height,
+			शून्य, शून्य, &max_height, &min_height,
 			flex->margin, flex->padding, flex->border);
 
 	available_width = min(available_width, flex->width);
 
-	if (ctx->horizontal) {
+	अगर (ctx->horizontal) {
 		ctx->available_main = available_width;
 		ctx->available_cross = ctx->flex->height;
-	} else {
+	} अन्यथा {
 		ctx->available_main = ctx->flex->height;
 		ctx->available_cross = available_width;
 	}
@@ -1080,27 +1080,27 @@ bool layout_flex(struct box *flex, int available_width,
 	NSLOG(flex, DEEPDEBUG, "box %p: available_cross: %i",
 			flex, ctx->available_cross);
 
-	layout_flex_ctx__populate_item_data(ctx, flex, available_width);
+	layout_flex_ctx_populate_item_तथ्य(ctx, flex, available_width);
 
 	/* Place items onto lines. */
-	success = layout_flex__collect_items_into_lines(ctx);
-	if (!success) {
-		goto cleanup;
+	success = layout_flex_collect_वस्तुएँ_into_पंक्तियाँ(ctx);
+	अगर (!success) {
+		जाओ cleanup;
 	}
 
-	layout_flex__place_lines(ctx);
+	layout_flex_place_पंक्तियाँ(ctx);
 
-	if (flex->height == AUTO) {
+	अगर (flex->height == AUTO) {
 		flex->height = ctx->horizontal ?
-				ctx->cross_size :
-				ctx->main_size;
+				ctx->cross_आकार :
+				ctx->main_आकार;
 	}
 
-	if (flex->height != AUTO) {
-		if (max_height >= 0 && flex->height > max_height) {
+	अगर (flex->height != AUTO) {
+		अगर (max_height >= 0 && flex->height > max_height) {
 			flex->height = max_height;
 		}
-		if (min_height >  0 && flex->height < min_height) {
+		अगर (min_height >  0 && flex->height < min_height) {
 			flex->height = min_height;
 		}
 	}
@@ -1113,5 +1113,5 @@ cleanup:
 	NSLOG(flex, DEEPDEBUG, "box %p: %s: w: %i, h: %i", flex,
 			success ? "success" : "failure",
 			flex->width, flex->height);
-	return success;
+	वापस success;
 }

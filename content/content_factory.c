@@ -21,50 +21,50 @@
  * Content factory implementation
  */
 
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#समावेश <assert.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
 
-#include "utils/http.h"
+#समावेश "utils/http.h"
 
-#include "content/content.h"
-#include "content/content_factory.h"
-#include "content/content_protected.h"
-#include "content/llcache.h"
+#समावेश "content/content.h"
+#समावेश "content/content_factory.h"
+#समावेश "content/content_protected.h"
+#समावेश "content/llcache.h"
 
 /**
  * Entry in list of content handlers
  */
-typedef struct content_handler_entry {
+प्रकार काष्ठा content_handler_entry {
 	/** Next entry */
-	struct content_handler_entry *next;
+	काष्ठा content_handler_entry *अग्र;
 
 	/** MIME type handled by handler */
 	lwc_string *mime_type;
 	/** Content handler object */
-	const content_handler *handler;
+	स्थिर content_handler *handler;
 } content_handler_entry;
 
-static content_handler_entry *content_handlers;
+अटल content_handler_entry *content_handlers;
 
 /**
  * Clean up after the content factory
  */
-void content_factory_fini(void)
+व्योम content_factory_fini(व्योम)
 {
 	content_handler_entry *victim;
 
-	while (content_handlers != NULL) {
+	जबतक (content_handlers != शून्य) {
 		victim = content_handlers;
 
-		content_handlers = content_handlers->next;
+		content_handlers = content_handlers->अग्र;
 
-		if (victim->handler->fini != NULL)
+		अगर (victim->handler->fini != शून्य)
 			victim->handler->fini();
 
 		lwc_string_unref(victim->mime_type);
 
-		free(victim);
+		मुक्त(victim);
 	}
 }
 
@@ -77,40 +77,40 @@ void content_factory_fini(void)
  *
  * \note Latest registration for a MIME type wins
  */
-nserror content_factory_register_handler(const char *mime_type,
-		const content_handler *handler)
+nserror content_factory_register_handler(स्थिर अक्षर *mime_type,
+		स्थिर content_handler *handler)
 {
 	lwc_string *imime_type;
 	lwc_error lerror;
 	content_handler_entry *entry;
 	bool match;
 
-	lerror = lwc_intern_string(mime_type, strlen(mime_type), &imime_type);
-	if (lerror != lwc_error_ok)
-		return NSERROR_NOMEM;
+	lerror = lwc_intern_string(mime_type, म_माप(mime_type), &imime_type);
+	अगर (lerror != lwc_error_ok)
+		वापस NSERROR_NOMEM;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(imime_type, entry->mime_type,
+	क्रम (entry = content_handlers; entry != शून्य; entry = entry->अग्र) {
+		अगर (lwc_string_caseless_isequal(imime_type, entry->mime_type,
 				&match) == lwc_error_ok && match)
-			break;
+			अवरोध;
 	}
 
-	if (entry == NULL) {
-		entry = malloc(sizeof(content_handler_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+	अगर (entry == शून्य) {
+		entry = दो_स्मृति(माप(content_handler_entry));
+		अगर (entry == शून्य)
+			वापस NSERROR_NOMEM;
 
-		entry->next = content_handlers;
+		entry->अग्र = content_handlers;
 		content_handlers = entry;
 
 		entry->mime_type = imime_type;
-	} else {
+	} अन्यथा {
 		lwc_string_unref(imime_type);
 	}
 
 	entry->handler = handler;
 
-	return NSERROR_OK;
+	वापस NSERROR_OK;
 }
 
 /**
@@ -119,23 +119,23 @@ nserror content_factory_register_handler(const char *mime_type,
  * \param mime_type  MIME type to search for
  * \return Associated handler, or NULL if none
  */
-static const content_handler *content_lookup(lwc_string *mime_type)
+अटल स्थिर content_handler *content_lookup(lwc_string *mime_type)
 {
 	content_handler_entry *entry;
 	bool match;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(mime_type, entry->mime_type,
+	क्रम (entry = content_handlers; entry != शून्य; entry = entry->अग्र) {
+		अगर (lwc_string_caseless_isequal(mime_type, entry->mime_type,
 					&match) == lwc_error_ok && match) {
-			break;
+			अवरोध;
 		}
 	}
 
-	if (entry != NULL) {
-		return entry->handler;
+	अगर (entry != शून्य) {
+		वापस entry->handler;
 	}
 
-	return NULL;
+	वापस शून्य;
 }
 
 /**
@@ -146,15 +146,15 @@ static const content_handler *content_lookup(lwc_string *mime_type)
  */
 content_type content_factory_type_from_mime_type(lwc_string *mime_type)
 {
-	const content_handler *handler;
+	स्थिर content_handler *handler;
 	content_type type = CONTENT_NONE;
 
 	handler = content_lookup(mime_type);
-	if (handler != NULL) {
+	अगर (handler != शून्य) {
 		type = handler->type();
 	}
 
-	return type;
+	वापस type;
 }
 
 /**
@@ -166,41 +166,41 @@ content_type content_factory_type_from_mime_type(lwc_string *mime_type)
  * \param effective_type    Effective MIME type of content
  * \return Pointer to content object, or NULL on failure
  */
-struct content *content_factory_create_content(llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
+काष्ठा content *content_factory_create_content(llcache_handle *llcache,
+		स्थिर अक्षर *fallback_charset, bool quirks,
 		lwc_string *effective_type)
 {
-	struct content *c;
-	const char *content_type_header;
-	const content_handler *handler;
-	http_content_type *ct = NULL;
+	काष्ठा content *c;
+	स्थिर अक्षर *content_type_header;
+	स्थिर content_handler *handler;
+	http_content_type *ct = शून्य;
 	nserror error;
 
 	handler = content_lookup(effective_type);
-	if (handler == NULL)
-		return NULL;
+	अगर (handler == शून्य)
+		वापस शून्य;
 
-	assert(handler->create != NULL);
+	निश्चित(handler->create != शून्य);
 
 	/* Use the parameters from the declared Content-Type header */
 	content_type_header = 
 			llcache_handle_get_header(llcache, "Content-Type");
-	if (content_type_header != NULL) {
+	अगर (content_type_header != शून्य) {
 		/* We don't care if this fails */
 		http_parse_content_type(content_type_header, &ct);
 	}
 
 	error = handler->create(handler, effective_type, 
-			ct != NULL ? ct->parameters : NULL, 
+			ct != शून्य ? ct->parameters : शून्य, 
 			llcache, fallback_charset, quirks, 
 			&c);
 
-	if (ct != NULL)
+	अगर (ct != शून्य)
 		http_content_type_destroy(ct);
 
-	if (error != NSERROR_OK)
-		return NULL;
+	अगर (error != NSERROR_OK)
+		वापस शून्य;
 
-	return c;
+	वापस c;
 }
 

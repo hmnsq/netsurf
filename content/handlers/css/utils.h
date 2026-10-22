@@ -16,91 +16,91 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_UTILS_H_
-#define NETSURF_CSS_UTILS_H_
+#अगर_अघोषित NETSURF_CSS_UTILS_H_
+#घोषणा NETSURF_CSS_UTILS_H_
 
-#include <libcss/libcss.h>
+#समावेश <libcss/libcss.h>
 
-#include "netsurf/css.h"
+#समावेश "netsurf/css.h"
 
 /** DPI of the screen, in fixed point units */
-extern css_fixed nscss_screen_dpi;
+बाह्य css_fixed nscss_screen_dpi;
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display(
-		const css_computed_style *style, bool root)
+अटल अंतरभूत uint8_t ns_computed_display(
+		स्थिर css_computed_style *style, bool मूल)
 {
-	uint8_t value = css_computed_display(style, root);
+	uint8_t मूल्य = css_computed_display(style, मूल);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	चयन (मूल्य) {
+	हाल CSS_DISPLAY_GRID:
+		वापस CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	हाल CSS_DISPLAY_INLINE_GRID:
+		वापस CSS_DISPLAY_INLINE_BLOCK;
 
-	default:
-		break;
+	शेष:
+		अवरोध;
 	}
 
-	return value;
+	वापस मूल्य;
 }
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display_static(
-		const css_computed_style *style)
+अटल अंतरभूत uint8_t ns_computed_display_static(
+		स्थिर css_computed_style *style)
 {
-	uint8_t value = css_computed_display_static(style);
+	uint8_t मूल्य = css_computed_display_static(style);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	चयन (मूल्य) {
+	हाल CSS_DISPLAY_GRID:
+		वापस CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	हाल CSS_DISPLAY_INLINE_GRID:
+		वापस CSS_DISPLAY_INLINE_BLOCK;
 
-	default:
-		break;
+	शेष:
+		अवरोध;
 	}
 
-	return value;
+	वापस मूल्य;
 }
 
-static inline uint8_t ns_computed_min_height(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+अटल अंतरभूत uint8_t ns_computed_min_height(
+		स्थिर css_computed_style *style,
+		css_fixed *लंबाई, css_unit *unit)
 {
-	uint8_t value = css_computed_min_height(style, length, unit);
+	uint8_t मूल्य = css_computed_min_height(style, लंबाई, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
-		value = CSS_MIN_HEIGHT_SET;
-		*length = 0;
+	अगर (मूल्य == CSS_MIN_HEIGHT_AUTO) {
+		मूल्य = CSS_MIN_HEIGHT_SET;
+		*लंबाई = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	वापस मूल्य;
 }
 
 
-static inline uint8_t ns_computed_min_width(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+अटल अंतरभूत uint8_t ns_computed_min_width(
+		स्थिर css_computed_style *style,
+		css_fixed *लंबाई, css_unit *unit)
 {
-	uint8_t value = css_computed_min_width(style, length, unit);
+	uint8_t मूल्य = css_computed_min_width(style, लंबाई, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
-		value = CSS_MIN_WIDTH_SET;
-		*length = 0;
+	अगर (मूल्य == CSS_MIN_WIDTH_AUTO) {
+		मूल्य = CSS_MIN_WIDTH_SET;
+		*लंबाई = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	वापस मूल्य;
 }
 
-#endif
+#पूर्ण_अगर

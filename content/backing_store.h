@@ -21,13 +21,13 @@
  * Low-level source data cache backing store interface.
  */
 
-#ifndef NETSURF_CONTENT_LLCACHE_PRIVATE_H_
-#define NETSURF_CONTENT_LLCACHE_PRIVATE_H_
+#अगर_अघोषित NETSURF_CONTENT_LLCACHE_PRIVATE_H_
+#घोषणा NETSURF_CONTENT_LLCACHE_PRIVATE_H_
 
-#include "content/llcache.h"
+#समावेश "content/llcache.h"
 
 /** storage control flags */
-enum backing_store_flags {
+क्रमागत backing_store_flags {
 	/** no special processing */
 	BACKING_STORE_NONE = 0,
 	/** data is metadata */
@@ -41,21 +41,21 @@ enum backing_store_flags {
  * objects and their metadata (headers etc) persistent by writing to a
  * backing store using these operations.
  */
-struct gui_llcache_table {
+काष्ठा gui_llcache_table {
 	/**
 	 * Initialise the backing store.
 	 *
 	 * @param parameters to configure backing store.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*initialise)(const struct llcache_store_parameters *parameters);
+	nserror (*initialise)(स्थिर काष्ठा llcache_store_parameters *parameters);
 
 	/**
 	 * Finalise the backing store.
 	 *
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*finalise)(void);
+	nserror (*finalise)(व्योम);
 
 	/**
 	 * Place an object in the backing store.
@@ -77,8 +77,8 @@ struct gui_llcache_table {
 	 * @param[in] datalen The length of the \a data.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*store)(struct nsurl *url, enum backing_store_flags flags,
-			 uint8_t *data, const size_t datalen);
+	nserror (*store)(काष्ठा nsurl *url, क्रमागत backing_store_flags flags,
+			 uint8_t *तथ्य, स्थिर माप_प्रकार datalen);
 
 	/**
 	 * Retrieve an object from the backing store.
@@ -96,8 +96,8 @@ struct gui_llcache_table {
 	 * @param[out] datalen The length of the \a data retrieved.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*fetch)(struct nsurl *url, enum backing_store_flags flags,
-			 uint8_t **data, size_t *datalen);
+	nserror (*fetch)(काष्ठा nsurl *url, क्रमागत backing_store_flags flags,
+			 uint8_t **तथ्य, माप_प्रकार *datalen);
 
 	/**
 	 * release a previously fetched or stored memory object.
@@ -106,7 +106,7 @@ struct gui_llcache_table {
 	 * @param[in] flags The flags to control how the object data is released.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*release)(struct nsurl *url, enum backing_store_flags flags);
+	nserror (*release)(काष्ठा nsurl *url, क्रमागत backing_store_flags flags);
 
 	/**
 	 * Invalidate a source object from the backing store.
@@ -119,11 +119,11 @@ struct gui_llcache_table {
 	 * @param url The url is used as the unique primary key to invalidate.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*invalidate)(struct nsurl *url);
+	nserror (*invalidate)(काष्ठा nsurl *url);
 
 };
 
-extern struct gui_llcache_table* null_llcache_table;
-extern struct gui_llcache_table* filesystem_llcache_table;
+बाह्य काष्ठा gui_llcache_table* null_llcache_table;
+बाह्य काष्ठा gui_llcache_table* filesystem_llcache_table;
 
-#endif
+#पूर्ण_अगर
