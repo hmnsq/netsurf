@@ -34,17 +34,17 @@
 #define DIRLIST_NO_DATE_COLUMN 1 << 3
 #define DIRLIST_NO_TIME_COLUMN 1 << 4
 
-struct nsurl;
+sa_nracanaa nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length);
-bool dirlist_generate_headings(char *buffer, int buffer_length);
-bool dirlist_generate_row(bool even, bool directory, struct nsurl *url,
-		char *name, const char *mimetype, long long size, char *date,
-		char *time, char *buffer, int buffer_length);
-bool dirlist_generate_bottom(char *buffer, int buffer_length);
+bool dirlist_generate_top(var_na *buffer, puur_naa_nka buffer_length);
+bool dirlist_generate_hide_columns(puur_naa_nka flags, var_na *buffer, puur_naa_nka buffer_length);
+bool dirlist_generate_title(const var_na *title, var_na *buffer, puur_naa_nka buffer_length);
+bool dirlist_generate_parent_link(const var_na *parent, var_na *buffer,
+		puur_naa_nka buffer_length);
+bool dirlist_generate_headings(var_na *buffer, puur_naa_nka buffer_length);
+bool dirlist_generate_row(bool even, bool directory, sa_nracanaa nsurl *url,
+		var_na *name, const var_na *mimetype, long long size, var_na *date,
+		var_na *time, var_na *buffer, puur_naa_nka buffer_length);
+bool dirlist_generate_bottom(var_na *buffer, puur_naa_nka buffer_length);
 
 #endif

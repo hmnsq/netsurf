@@ -41,16 +41,16 @@
 
 #include "html/private.h"
 
-typedef struct html_css_fetcher_item {
+typedef sa_nracanaa html_css_fetcher_item {
 	uint32_t key;
 	dom_string *data;
 	nsurl *base_url;
 
-	struct html_css_fetcher_item *r_next, *r_prev;
+	sa_nracanaa html_css_fetcher_item *r_next, *r_prev;
 } html_css_fetcher_item;
 
-typedef struct html_css_fetcher_context {
-	struct fetch *parent_fetch;
+typedef sa_nracanaa html_css_fetcher_context {
+	sa_nracanaa fetch *parent_fetch;
 
 	nsurl *url;
 	html_css_fetcher_item *item;
@@ -58,7 +58,7 @@ typedef struct html_css_fetcher_context {
 	bool aborted;
 	bool locked;
 
-	struct html_css_fetcher_context *r_next, *r_prev;
+	sa_nracanaa html_css_fetcher_context *r_next, *r_prev;
 } html_css_fetcher_context;
 
 static uint32_t current_key = 0;
@@ -69,7 +69,7 @@ static bool html_css_fetcher_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_initialise called for %s",
 	      lwc_string_data(scheme));
-	return true;
+	ပွၵ်ႈ true;
 }
 
 static void html_css_fetcher_finalise(lwc_string *scheme)
@@ -80,13 +80,13 @@ static void html_css_fetcher_finalise(lwc_string *scheme)
 
 static bool html_css_fetcher_can_fetch(const nsurl *url)
 {
-	return true;
+	ပွၵ်ႈ true;
 }
 
-static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+static void *html_css_fetcher_setup(sa_nracanaa fetch *parent_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, const var_na *post_urlenc,
+		 const sa_nracanaa fetch_multipart_data *post_multipart,
+		 const var_na **headers)
 {
 	html_css_fetcher_context *ctx;
 	lwc_string *path;
@@ -100,8 +100,8 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 
 	path = nsurl_get_component(url, NSURL_PATH);
 	/* The path must exist */
-	if (path == NULL) {
-		return NULL;
+	ပေႃး (path == NULL) {
+		ပွၵ်ႈ NULL;
 	}
 
 	key = strtoul(lwc_string_data(path), NULL, 10);
@@ -109,28 +109,28 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 	lwc_string_unref(path);
 
 	/* There must be at least one item */
-	if (items == NULL) {
-		return NULL;
+	ပေႃး (items == NULL) {
+		ပွၵ်ႈ NULL;
 	}
 
 	item = items;
 	do {
-		if (item->key == key) {
+		ပေႃး (item->key == key) {
 			found = item;
-			break;
+			bha_nga;
 		}
 
 		item = item->r_next;
-	} while (item != items);
+	} ၶၢဝ်း (item != items);
 
 	/* We must have found the item */
-	if (found == NULL) {
-		return NULL;
+	ပေႃး (found == NULL) {
+		ပွၵ်ႈ NULL;
 	}
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, parimaa_na(*ctx));
+	ပေႃး (ctx == NULL)
+		ပွၵ်ႈ NULL;
 
 	ctx->parent_fetch = parent_fetch;
 	ctx->url = nsurl_ref(url);
@@ -138,12 +138,12 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	ပွၵ်ႈ ctx;
 }
 
 static bool html_css_fetcher_start(void *ctx)
 {
-	return true;
+	ပွၵ်ႈ true;
 }
 
 static void html_css_fetcher_free(void *ctx)
@@ -151,7 +151,7 @@ static void html_css_fetcher_free(void *ctx)
 	html_css_fetcher_context *c = ctx;
 
 	nsurl_unref(c->url);
-	if (c->item != NULL) {
+	ပေႃး (c->item != NULL) {
 		nsurl_unref(c->item->base_url);
 		dom_string_unref(c->item->data);
 		RING_REMOVE(items, c->item);
@@ -185,7 +185,7 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 	fetch_msg msg;
 	html_css_fetcher_context *c, *next;
 
-	if (ring == NULL) return;
+	ပေႃး (ring == NULL) ပွၵ်ႈ;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
@@ -196,17 +196,17 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		ပေႃး (c->locked == true) {
 			next = c->r_next;
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted) {
+		ပေႃး (c->aborted) {
 			/* Nothing to do */
 			assert(c->locked == false);
-		} else if (c->item != NULL) {
-			char header[4096];
+		} ပေႃးဢမ်ႇ ပေႃး (c->item != NULL) {
+			var_na header[4096];
 
 			fetch_set_http_code(c->parent_fetch, 200);
 
@@ -214,15 +214,15 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 			 * Therefore, we _must_ check for this after _every_
 			 * call to html_css_fetcher_send_callback().
 			 */
-			snprintf(header, sizeof header,
+			snprintf(header, parimaa_na header,
 				"Content-Type: text/css; charset=utf-8");
 			msg.type = FETCH_HEADER;
 			msg.data.header_or_data.buf = (const uint8_t *) header;
 			msg.data.header_or_data.len = strlen(header);
 			html_css_fetcher_send_callback(&msg, c);
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			ပေႃး (c->aborted == false) {
+				snprintf(header, parimaa_na header,
 					"Content-Length: %"PRIsizet,
 					dom_string_byte_length(c->item->data));
 				msg.type = FETCH_HEADER;
@@ -232,10 +232,10 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 				html_css_fetcher_send_callback(&msg, c);
 			}
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			ပေႃး (c->aborted == false) {
+				snprintf(header, parimaa_na header,
 					"X-NS-Base: %.*s",
-					(int) nsurl_length(c->item->base_url),
+					(puur_naa_nka) nsurl_length(c->item->base_url),
 					nsurl_access(c->item->base_url));
 				msg.type = FETCH_HEADER;
 				msg.data.header_or_data.buf =
@@ -244,7 +244,7 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 				html_css_fetcher_send_callback(&msg, c);
 			}
 
-			if (c->aborted == false) {
+			ပေႃး (c->aborted == false) {
 				msg.type = FETCH_DATA;
 				msg.data.header_or_data.buf =
 						(const uint8_t *)
@@ -254,11 +254,11 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 				html_css_fetcher_send_callback(&msg, c);
 			}
 
-			if (c->aborted == false) {
+			ပေႃး (c->aborted == false) {
 				msg.type = FETCH_FINISHED;
 				html_css_fetcher_send_callback(&msg, c);
 			}
-		} else {
+		} ပေႃးဢမ်ႇ {
 			NSLOG(netsurf, INFO, "Processing of %s failed!",
 			      nsurl_access(c->url));
 
@@ -279,13 +279,13 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} ၶၢဝ်း ( (c = next) != ring && ring != NULL);
 }
 
 /* exported interface documented in html_internal.h */
 nserror html_css_fetcher_register(void)
 {
-	const struct fetcher_operation_table html_css_fetcher_ops = {
+	const sa_nracanaa fetcher_operation_table html_css_fetcher_ops = {
 		.initialise = html_css_fetcher_initialise,
 		.acceptable = html_css_fetcher_can_fetch,
 		.setup = html_css_fetcher_setup,
@@ -296,7 +296,7 @@ nserror html_css_fetcher_register(void)
 		.finalise = html_css_fetcher_finalise
 	};
 
-	return fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
+	ပွၵ်ႈ fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
 			&html_css_fetcher_ops);
 }
 
@@ -304,10 +304,10 @@ nserror html_css_fetcher_register(void)
 nserror
 html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
 {
-	html_css_fetcher_item *item = malloc(sizeof(*item));
+	html_css_fetcher_item *item = malloc(parimaa_na(*item));
 
-	if (item == NULL) {
-		return NSERROR_NOMEM;
+	ပေႃး (item == NULL) {
+		ပွၵ်ႈ NSERROR_NOMEM;
 	}
 
 	*key = item->key = current_key++;
@@ -316,5 +316,5 @@ html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
 
 	RING_INSERT(items, item);
 
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }

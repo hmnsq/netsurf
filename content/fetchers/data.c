@@ -40,28 +40,28 @@
 #include "content/fetchers.h"
 #include "content/fetchers/data.h"
 
-struct fetch_data_context {
-	struct fetch *parent_fetch;
+sa_nracanaa fetch_data_context {
+	sa_nracanaa fetch *parent_fetch;
 	nsurl *url;
-	char *mimetype;
-	char *data;
+	var_na *mimetype;
+	var_na *data;
 	size_t datalen;
 	bool base64;
 
 	bool aborted;
 	bool locked;
 	
-	struct fetch_data_context *r_next, *r_prev;
+	sa_nracanaa fetch_data_context *r_next, *r_prev;
 };
 
-static struct fetch_data_context *ring = NULL;
+static sa_nracanaa fetch_data_context *ring = NULL;
 
 static bool fetch_data_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_initialise called for %s",
 	      lwc_string_data(scheme));
 
-	return true;
+	ပွၵ်ႈ true;
 }
 
 static void fetch_data_finalise(lwc_string *scheme)
@@ -72,31 +72,31 @@ static void fetch_data_finalise(lwc_string *scheme)
 
 static bool fetch_data_can_fetch(const nsurl *url)
 {
-	return true;
+	ပွၵ်ႈ true;
 }
 
 static void fetch_data_send_callback(const fetch_msg *msg,
-		struct fetch_data_context *c)
+		sa_nracanaa fetch_data_context *c)
 {
 	c->locked = true;
 	fetch_send_callback(msg, c->parent_fetch);
 	c->locked = false;
 }
 
-static void fetch_data_send_header(struct fetch_data_context *ctx,
-		const char *fmt, ...)
+static void fetch_data_send_header(sa_nracanaa fetch_data_context *ctx,
+		const var_na *fmt, ...)
 {
-	char header[64];
+	var_na header[64];
 	fetch_msg msg;
 	va_list ap;
-	int len;
+	puur_naa_nka len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof(header), fmt, ap);
+	len = vsnprintf(header, parimaa_na(header), fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return;
+	ပေႃး (len >= (puur_naa_nka)parimaa_na(header) || len < 0) {
+		ပွၵ်ႈ;
 	}
 
 	msg.type = FETCH_HEADER;
@@ -105,32 +105,32 @@ static void fetch_data_send_header(struct fetch_data_context *ctx,
 	fetch_data_send_callback(&msg, ctx);
 }
 
-static void *fetch_data_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+static void *fetch_data_setup(sa_nracanaa fetch *parent_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, const var_na *post_urlenc,
+		 const sa_nracanaa fetch_multipart_data *post_multipart,
+		 const var_na **headers)
 {
-	struct fetch_data_context *ctx = calloc(1, sizeof(*ctx));
+	sa_nracanaa fetch_data_context *ctx = calloc(1, parimaa_na(*ctx));
 	
-	if (ctx == NULL)
-		return NULL;
+	ပေႃး (ctx == NULL)
+		ပွၵ်ႈ NULL;
 		
 	ctx->parent_fetch = parent_fetch;
 	ctx->url = nsurl_ref(url);
 
 	RING_INSERT(ring, ctx);
 	
-	return ctx;
+	ပွၵ်ႈ ctx;
 }
 
 static bool fetch_data_start(void *ctx)
 {
-	return true;
+	ပွၵ်ႈ true;
 }
 
 static void fetch_data_free(void *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	sa_nracanaa fetch_data_context *c = ctx;
 
 	nsurl_unref(c->url);
 	free(c->data);
@@ -140,7 +140,7 @@ static void fetch_data_free(void *ctx)
 
 static void fetch_data_abort(void *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	sa_nracanaa fetch_data_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here. 
@@ -149,13 +149,13 @@ static void fetch_data_abort(void *ctx)
 	c->aborted = true;
 }
 
-static bool fetch_data_process(struct fetch_data_context *c)
+static bool fetch_data_process(sa_nracanaa fetch_data_context *c)
 {
 	nserror res;
 	fetch_msg msg;
-	const char *params;
-	const char *comma;
-	char *unescaped;
+	const var_na *params;
+	const var_na *comma;
+	var_na *unescaped;
 	size_t unescaped_len;
 	
 	/* format of a data: URL is:
@@ -166,45 +166,45 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	
 	NSLOG(netsurf, DEEPDEBUG, "url: %.140s", nsurl_access(c->url));
 	
-	if (nsurl_length(c->url) < 6) {
+	ပေႃး (nsurl_length(c->url) < 6) {
 		/* 6 is the minimum possible length (data:,) */
 		msg.type = FETCH_ERROR;
 		msg.data.error = "Malformed data: URL";
 		fetch_data_send_callback(&msg, c);
-		return false;
+		ပွၵ်ႈ false;
 	}
 	
 	/* skip the data: part */
 	params = nsurl_access(c->url) + SLEN("data:");
 	
 	/* find the comma */
-	if ( (comma = strchr(params, ',')) == NULL) {
+	ပေႃး ( (comma = strchr(params, ',')) == NULL) {
 		msg.type = FETCH_ERROR;
 		msg.data.error = "Malformed data: URL";
 		fetch_data_send_callback(&msg, c);
-		return false;
+		ပွၵ်ႈ false;
 	}
 	
-	if (params[0] == ',') {
+	ပေႃး (params[0] == ',') {
 		/* there is no mimetype here, assume text/plain */
 		c->mimetype = strdup("text/plain;charset=US-ASCII");
-	} else {	
+	} ပေႃးဢမ်ႇ {	
 		/* make a copy of everything between data: and the comma */
 		c->mimetype = strndup(params, comma - params);
 	}
 	
-	if (c->mimetype == NULL) {
+	ပေႃး (c->mimetype == NULL) {
 		msg.type = FETCH_ERROR;
 		msg.data.error = 
 			"Unable to allocate memory for mimetype in data: URL";
 		fetch_data_send_callback(&msg, c);
-		return false;
+		ပွၵ်ႈ false;
 	}
 	
-	if (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
+	ပေႃး (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
 		c->base64 = true;
 		c->mimetype[strlen(c->mimetype) - 7] = '\0';
-	} else {
+	} ပေႃးဢမ်ႇ {
 		c->base64 = false;
 	}
 	
@@ -212,15 +212,15 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	 * decides to nest URL and base64 encoding.  Like, say, Acid2.
 	 */
 	res = url_unescape(comma + 1, 0, &unescaped_len, &unescaped);
-	if (res != NSERROR_OK) {
+	ပေႃး (res != NSERROR_OK) {
 		msg.type = FETCH_ERROR;
 		msg.data.error = "Unable to URL decode data: URL";
 		fetch_data_send_callback(&msg, c);
-		return false;
+		ပွၵ်ႈ false;
 	}
 	
-	if (c->base64) {
-		if ((nsu_base64_decode_alloc((uint8_t *)unescaped,
+	ပေႃး (c->base64) {
+		ပေႃး ((nsu_base64_decode_alloc((uint8_t *)unescaped,
 					     unescaped_len,
 					     (uint8_t **)&c->data,
 					     &c->datalen) != NSUERROR_OK) ||
@@ -229,25 +229,25 @@ static bool fetch_data_process(struct fetch_data_context *c)
 			msg.data.error = "Unable to Base64 decode data: URL";
 			fetch_data_send_callback(&msg, c);
 			free(unescaped);
-			return false;
+			ပွၵ်ႈ false;
 		}
 		free(unescaped);
-	} else {
+	} ပေႃးဢမ်ႇ {
 		c->datalen = unescaped_len;
 		c->data = unescaped;
 	}
 	
 	
-	return true;
+	ပွၵ်ႈ true;
 }
 
 static void fetch_data_poll(lwc_string *scheme)
 {
 	fetch_msg msg;
-	struct fetch_data_context *c, *save_ring = NULL;
+	sa_nracanaa fetch_data_context *c, *save_ring = NULL;
 	
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	ၶၢဝ်း (ring != NULL) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -258,13 +258,13 @@ static void fetch_data_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called 
 		 * again.
 		 */
-		if (c->locked == true) {
+		ပေႃး (c->locked == true) {
 			RING_INSERT(save_ring, c);
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false && fetch_data_process(c) == true) {
+		ပေႃး (c->aborted == false && fetch_data_process(c) == true) {
 			fetch_set_http_code(c->parent_fetch, 200);
 			NSLOG(netsurf, INFO,
 			      "setting data: MIME type to %s, length to %"PRIsizet,
@@ -277,18 +277,18 @@ static void fetch_data_poll(lwc_string *scheme)
 			fetch_data_send_header(c, "Content-Type: %s",
 					c->mimetype);
 
-			if (c->aborted == false) {
+			ပေႃး (c->aborted == false) {
 				fetch_data_send_header(c, "Content-Length: %"
 						PRIsizet, c->datalen);
 			}
 
-			if (c->aborted == false) {
+			ပေႃး (c->aborted == false) {
 				/* Set max-age to 1 year. */
 				fetch_data_send_header(c, "Cache-Control: "
 						"max-age=31536000");
 			}
 
-			if (c->aborted == false) {
+			ပေႃး (c->aborted == false) {
 				msg.type = FETCH_DATA;
 				msg.data.header_or_data.buf = 
 						(const uint8_t *) c->data;
@@ -296,11 +296,11 @@ static void fetch_data_poll(lwc_string *scheme)
 				fetch_data_send_callback(&msg, c);
 			}
 
-			if (c->aborted == false) {
+			ပေႃး (c->aborted == false) {
 				msg.type = FETCH_FINISHED;
 				fetch_data_send_callback(&msg, c);
 			}
-		} else {
+		} ပေႃးဢမ်ႇ {
 			NSLOG(netsurf, INFO, "Processing of %.140s failed!",
 			      nsurl_access(c->url));
 
@@ -324,7 +324,7 @@ static void fetch_data_poll(lwc_string *scheme)
 nserror fetch_data_register(void)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_data);
-	const struct fetcher_operation_table fetcher_ops = {
+	const sa_nracanaa fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_data_initialise,
 		.acceptable = fetch_data_can_fetch,
 		.setup = fetch_data_setup,
@@ -335,5 +335,5 @@ nserror fetch_data_register(void)
 		.finalise = fetch_data_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ပွၵ်ႈ fetcher_add(scheme, &fetcher_ops);
 }

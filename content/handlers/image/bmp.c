@@ -40,12 +40,12 @@
 #include "image/bmp.h"
 
 /** bmp context. */
-typedef struct nsbmp_content {
-	struct content base;
+typedef sa_nracanaa nsbmp_content {
+	sa_nracanaa content base;
 
 	bmp_image *bmp;	/** BMP image data */
 
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	sa_nracanaa bitmap *bitmap;	/**< Created NetSurf bitmap */
 } nsbmp_content;
 
 /**
@@ -56,9 +56,9 @@ typedef struct nsbmp_content {
  * \param bmp_state A flag word indicating the initial state
  * \return An opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsbmp_bitmap_create(int width, int height, unsigned int bmp_state)
+static void *nsbmp_bitmap_create(puur_naa_nka width, puur_naa_nka height, unsigned puur_naa_nka bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	unsigned puur_naa_nka bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
@@ -66,7 +66,7 @@ static void *nsbmp_bitmap_create(int width, int height, unsigned int bmp_state)
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	ပွၵ်ႈ guit->bitmap->create(width, height, bitmap_state);
 }
 
 static nserror nsbmp_create_bmp_data(nsbmp_content *bmp)
@@ -77,88 +77,88 @@ static nserror nsbmp_create_bmp_data(nsbmp_content *bmp)
 		.bitmap_get_buffer = guit->bitmap->get_buffer,
 	};
 
-	bmp->bmp = calloc(1, sizeof(struct bmp_image));
-	if (bmp->bmp == NULL) {
+	bmp->bmp = calloc(1, parimaa_na(sa_nracanaa bmp_image));
+	ပေႃး (bmp->bmp == NULL) {
 		content_broadcast_error(&bmp->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		ပွၵ်ႈ NSERROR_NOMEM;
 	}
 
 	bmp_create(bmp->bmp, &bmp_bitmap_callbacks);
 
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }
 
 static nserror
-nsbmp_create(const struct content_handler *handler,
+nsbmp_create(const sa_nracanaa content_handler *handler,
 	     lwc_string *imime_type,
-	     const struct http_parameter *params,
+	     const sa_nracanaa http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     const var_na *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     sa_nracanaa content **c)
 {
 	nsbmp_content *bmp;
 	nserror error;
 
-	bmp = calloc(1, sizeof(nsbmp_content));
-	if (bmp == NULL)
-		return NSERROR_NOMEM;
+	bmp = calloc(1, parimaa_na(nsbmp_content));
+	ပေႃး (bmp == NULL)
+		ပွၵ်ႈ NSERROR_NOMEM;
 
 	error = content__init(&bmp->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	ပေႃး (error != NSERROR_OK) {
 		free(bmp);
-		return error;
+		ပွၵ်ႈ error;
 	}
 
 	error = nsbmp_create_bmp_data(bmp);
-	if (error != NSERROR_OK) {
+	ပေႃး (error != NSERROR_OK) {
 		free(bmp);
-		return error;
+		ပွၵ်ႈ error;
 	}
 
-	*c = (struct content *) bmp;
+	*c = (sa_nracanaa content *) bmp;
 
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }
 
-static bool nsbmp_convert(struct content *c)
+static bool nsbmp_convert(sa_nracanaa content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 	bmp_result res;
 	uint32_t swidth;
 	const uint8_t *data;
 	size_t size;
-	char *title;
+	var_na *title;
 
 	/* set the bmp data */
 	data = content__get_source_data(c, &size);
 
 	/* analyse the BMP */
-	res = bmp_analyse(bmp->bmp, size, (unsigned char *) data);
+	res = bmp_analyse(bmp->bmp, size, (unsigned var_na *) data);
 	switch (res) {
-		case BMP_OK:
-			break;
-		case BMP_INSUFFICIENT_MEMORY:
+		pak_sa BMP_OK:
+			bha_nga;
+		pak_sa BMP_INSUFFICIENT_MEMORY:
 			content_broadcast_error(c, NSERROR_NOMEM, NULL);
-			return false;
-		case BMP_INSUFFICIENT_DATA:
-		case BMP_DATA_ERROR:
+			ပွၵ်ႈ false;
+		pak_sa BMP_INSUFFICIENT_DATA:
+		pak_sa BMP_DATA_ERROR:
 			content_broadcast_error(c, NSERROR_BMP_ERROR, NULL);
-			return false;
+			ပွၵ်ႈ false;
 	}
 
 	/* Store our content width and description */
 	c->width = bmp->bmp->width;
 	c->height = bmp->bmp->height;
-	swidth = sizeof(uint32_t) * bmp->bmp->width;
+	swidth = parimaa_na(uint32_t) * bmp->bmp->width;
 	c->size += (swidth * bmp->bmp->height) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("BMPTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	ပေႃး (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
@@ -171,23 +171,23 @@ static bool nsbmp_convert(struct content *c)
 
 	/* Done: update status bar */
 	content_set_status(c, "");
-	return true;
+	ပွၵ်ႈ true;
 }
 
-static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+static bool nsbmp_redraw(sa_nracanaa content *c, sa_nracanaa content_redraw_data *data,
+		const sa_nracanaa rect *clip, const sa_nracanaa redraw_context *ctx)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (bmp->bmp->decoded == false) {
+	ပေႃး (bmp->bmp->decoded == false) {
 		bmp_result res;
 		res = bmp_decode(bmp->bmp);
 		/* allow short or incomplete image data giving a partial image*/
-		if ((res != BMP_OK) &&
+		ပေႃး ((res != BMP_OK) &&
 		    (res != BMP_INSUFFICIENT_DATA) &&
 		    (res != BMP_DATA_ERROR)) {
-			return false;
+			ပွၵ်ႈ false;
 		}
 
 		bitmap_format_to_client(bmp->bitmap, &(bitmap_fmt_t) {
@@ -196,12 +196,12 @@ static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
 		guit->bitmap->modified(bmp->bitmap);
 	}
 
-	if (data->repeat_x)
+	ပေႃး (data->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	ပေႃး (data->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	ပွၵ်ႈ (ctx->plot->bitmap(ctx,
 				  bmp->bitmap,
 				  data->x, data->y,
 				  data->width, data->height,
@@ -210,7 +210,7 @@ static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
 }
 
 
-static void nsbmp_destroy(struct content *c)
+static void nsbmp_destroy(sa_nracanaa content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 
@@ -219,62 +219,62 @@ static void nsbmp_destroy(struct content *c)
 }
 
 
-static nserror nsbmp_clone(const struct content *old, struct content **newc)
+static nserror nsbmp_clone(const sa_nracanaa content *old, sa_nracanaa content **newc)
 {
 	nsbmp_content *new_bmp;
 	nserror error;
 
-	new_bmp = calloc(1, sizeof(nsbmp_content));
-	if (new_bmp == NULL)
-		return NSERROR_NOMEM;
+	new_bmp = calloc(1, parimaa_na(nsbmp_content));
+	ပေႃး (new_bmp == NULL)
+		ပွၵ်ႈ NSERROR_NOMEM;
 
 	error = content__clone(old, &new_bmp->base);
-	if (error != NSERROR_OK) {
+	ပေႃး (error != NSERROR_OK) {
 		content_destroy(&new_bmp->base);
-		return error;
+		ပွၵ်ႈ error;
 	}
 
 	/* We "clone" the old content by replaying creation and conversion */
 	error = nsbmp_create_bmp_data(new_bmp);
-	if (error != NSERROR_OK) {
+	ပေႃး (error != NSERROR_OK) {
 		content_destroy(&new_bmp->base);
-		return error;
+		ပွၵ်ႈ error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY || 
+	ပေႃး (old->status == CONTENT_STATUS_READY || 
 			old->status == CONTENT_STATUS_DONE) {
-		if (nsbmp_convert(&new_bmp->base) == false) {
+		ပေႃး (nsbmp_convert(&new_bmp->base) == false) {
 			content_destroy(&new_bmp->base);
-			return NSERROR_CLONE_FAILED;
+			ပွၵ်ႈ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_bmp;
+	*newc = (sa_nracanaa content *) new_bmp;
 
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }
 
-static void *nsbmp_get_internal(const struct content *c, void *context)
+static void *nsbmp_get_internal(const sa_nracanaa content *c, void *context)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	return bmp->bitmap;
+	ပွၵ်ႈ bmp->bitmap;
 }
 
 static content_type nsbmp_content_type(void)
 {
-	return CONTENT_IMAGE;
+	ပွၵ်ႈ CONTENT_IMAGE;
 }
 
-static bool nsbmp_content_is_opaque(struct content *c)
+static bool nsbmp_content_is_opaque(sa_nracanaa content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	if (bmp->bitmap != NULL) {
-		return guit->bitmap->get_opaque(bmp->bitmap);
+	ပေႃး (bmp->bitmap != NULL) {
+		ပွၵ်ႈ guit->bitmap->get_opaque(bmp->bitmap);
 	}
 
-	return false;
+	ပွၵ်ႈ false;
 }
 
 static const content_handler nsbmp_content_handler = {
@@ -289,7 +289,7 @@ static const content_handler nsbmp_content_handler = {
 	.no_share = false,
 };
 
-static const char *nsbmp_types[] = {
+static const var_na *nsbmp_types[] = {
 	"application/bmp",
 	"application/preview",
 	"application/x-bmp",

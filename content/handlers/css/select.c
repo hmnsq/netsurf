@@ -146,7 +146,7 @@ static css_select_handler selection_handler = {
  * \return Pointer to stylesheet, or NULL on failure.
  */
 css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks)
+		const var_na *charset, const var_na *url, bool allow_quirks)
 {
 	css_stylesheet_params params;
 	css_stylesheet *sheet;
@@ -169,69 +169,69 @@ css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
 	params.font_pw = NULL;
 
 	error = css_stylesheet_create(&params, &sheet);
-	if (error != CSS_OK) {
+	ပေႃး (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "Failed creating sheet: %d", error);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
 
 	error = css_stylesheet_append_data(sheet, data, len);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	ပေႃး (error != CSS_OK && error != CSS_NEEDDATA) {
 		NSLOG(netsurf, INFO, "failed appending data: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
 
 	error = css_stylesheet_data_done(sheet);
-	if (error != CSS_OK) {
+	ပေႃး (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "failed completing parse: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
 
-	return sheet;
+	ပွၵ်ႈ sheet;
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
 static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+		dom_string *key, void *data, sa_nracanaa dom_node *src,
+		sa_nracanaa dom_node *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
+	ပေႃး (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
 			key) == false || data == NULL) {
-		return;
+		ပွၵ်ႈ;
 	}
 
 	switch (operation) {
-	case DOM_NODE_CLONED:
+	pak_sa DOM_NODE_CLONED:
 		error = css_libcss_node_data_handler(&selection_handler,
 				CSS_NODE_CLONED,
 				NULL, src, dst, data);
-		if (error != CSS_OK)
+		ပေႃး (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
-		break;
+		bha_nga;
 
-	case DOM_NODE_RENAMED:
+	pak_sa DOM_NODE_RENAMED:
 		error = css_libcss_node_data_handler(&selection_handler,
 				CSS_NODE_MODIFIED,
 				NULL, src, NULL, data);
-		if (error != CSS_OK)
+		ပေႃး (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
-		break;
+		bha_nga;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
+	pak_sa DOM_NODE_IMPORTED:
+	pak_sa DOM_NODE_ADOPTED:
+	pak_sa DOM_NODE_DELETED:
 		error = css_libcss_node_data_handler(&selection_handler,
 				CSS_NODE_DELETED,
 				NULL, src, NULL, data);
-		if (error != CSS_OK)
+		ပေႃး (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to delete libcss_node_data.");
-		break;
+		bha_nga;
 
 	default:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
@@ -257,29 +257,29 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 {
 	css_computed_style *composed;
 	css_select_results *styles;
-	int pseudo_element;
+	puur_naa_nka pseudo_element;
 	css_error error;
 
 	/* Select style for node */
 	error = css_select_style(ctx->ctx, n, unit_len_ctx, media, inline_style,
 			&selection_handler, ctx, &styles);
 
-	if (error != CSS_OK || styles == NULL) {
+	ပေႃး (error != CSS_OK || styles == NULL) {
 		/* Failed selecting partial style -- bail out */
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
 
 	/* If there's a parent style, compose with partial to obtain
 	 * complete computed style for element */
-	if (ctx->parent_style != NULL) {
+	ပေႃး (ctx->parent_style != NULL) {
 		/* Complete the computed style, by composing with the parent
 		 * element's style */
 		error = css_computed_style_compose(ctx->parent_style,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		ပေႃး (error != CSS_OK) {
 			css_select_results_destroy(styles);
-			return NULL;
+			ပွၵ်ႈ NULL;
 		}
 
 		/* Replace select_results style with composed style */
@@ -292,13 +292,13 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
 			pseudo_element++) {
 
-		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
+		ပေႃး (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
 				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
 			continue;
 
-		if (styles->styles[pseudo_element] == NULL)
+		ပေႃး (styles->styles[pseudo_element] == NULL)
 			/* There were no rules concerning this pseudo element */
 			continue;
 
@@ -308,11 +308,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				styles->styles[pseudo_element],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		ပေႃး (error != CSS_OK) {
 			/* TODO: perhaps this shouldn't be quite so
 			 * catastrophic? */
 			css_select_results_destroy(styles);
-			return NULL;
+			ပွၵ်ႈ NULL;
 		}
 
 		/* Replace select_results style with composed style */
@@ -320,7 +320,7 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[pseudo_element] = composed;
 	}
 
-	return styles;
+	ပွၵ်ႈ styles;
 }
 
 /**
@@ -340,8 +340,8 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
 
 	error = css_select_default_style(ctx->ctx,
 			&selection_handler, ctx, &partial);
-	if (error != CSS_OK) {
-		return NULL;
+	ပေႃး (error != CSS_OK) {
+		ပွၵ်ႈ NULL;
 	}
 
 	/* TODO: Do we really need to compose?  Initial style shouldn't
@@ -349,12 +349,12 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
 	error = css_computed_style_compose(parent, partial,
 			unit_len_ctx, &composed);
 	css_computed_style_destroy(partial);
-	if (error != CSS_OK) {
+	ပေႃး (error != CSS_OK) {
 		css_computed_style_destroy(composed);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
 
-	return composed;
+	ပွၵ်ႈ composed;
 }
 
 /******************************************************************************
@@ -377,20 +377,20 @@ css_error node_name(void *pw, void *node, css_qname *qname)
 	dom_exception err;
 
 	err = dom_node_get_node_name(n, &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
 	qname->ns = NULL;
 
 	err = dom_string_intern(name, &qname->name);
-	if (err != DOM_NO_ERR) {
+	ပေႃး (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_NOMEM;
+		ပွၵ်ႈ CSS_NOMEM;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -417,10 +417,10 @@ css_error node_classes(void *pw, void *node,
 	*n_classes = 0;
 
 	err = dom_element_get_classes(n, classes, n_classes);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -442,19 +442,19 @@ css_error node_id(void *pw, void *node, lwc_string **id)
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
-	if (attr != NULL) {
+	ပေႃး (attr != NULL) {
 		err = dom_string_intern(attr, id);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_string_unref(attr);
-			return CSS_NOMEM;
+			ပွၵ်ႈ CSS_NOMEM;
 		}
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -472,10 +472,10 @@ css_error named_ancestor_node(void *pw, void *node,
 		const css_qname *qname, void **ancestor)
 {
 	dom_element_named_ancestor_node(node, qname->name,
-			(struct dom_element **)ancestor);
+			(sa_nracanaa dom_element **)ancestor);
 	dom_node_unref(*ancestor);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -493,10 +493,10 @@ css_error named_parent_node(void *pw, void *node,
 		const css_qname *qname, void **parent)
 {
 	dom_element_named_parent_node(node, qname->name,
-			(struct dom_element **)parent);
+			(sa_nracanaa dom_element **)parent);
 	dom_node_unref(*parent);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -521,50 +521,50 @@ css_error named_sibling_node(void *pw, void *node,
 
 	/* Find sibling element */
 	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_OK;
 
-	while (n != NULL) {
+	ၶၢဝ်း (n != NULL) {
 		dom_node_type type;
 
 		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_OK;
+			ပွၵ်ႈ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		ပေႃး (type == DOM_ELEMENT_NODE)
+			bha_nga;
 
 		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_OK;
+			ပွၵ်ႈ CSS_OK;
 		}
 
 		dom_node_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	ပေႃး (n != NULL) {
 		dom_string *name;
 
 		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_OK;
+			ပွၵ်ႈ CSS_OK;
 		}
 
 		dom_node_unref(n);
 
-		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
+		ပေႃး (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
 		}
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -588,47 +588,47 @@ css_error named_generic_sibling_node(void *pw, void *node,
 	*sibling = NULL;
 
 	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_OK;
 
-	while (n != NULL) {
+	ၶၢဝ်း (n != NULL) {
 		dom_node_type type;
 		dom_string *name;
 
 		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_OK;
+			ပွၵ်ႈ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
+		ပေႃး (type == DOM_ELEMENT_NODE) {
 			err = dom_node_get_node_name(n, &name);
-			if (err != DOM_NO_ERR) {
+			ပေႃး (err != DOM_NO_ERR) {
 				dom_node_unref(n);
-				return CSS_OK;
+				ပွၵ်ႈ CSS_OK;
 			}
 
-			if (dom_string_caseless_lwc_isequal(name,
+			ပေႃး (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
 				dom_node_unref(n);
 				*sibling = n;
-				break;
+				bha_nga;
 			}
 			dom_string_unref(name);
 		}
 
 		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_OK;
+			ပွၵ်ႈ CSS_OK;
 		}
 
 		dom_node_unref(n);
 		n = prev;
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -643,10 +643,10 @@ css_error named_generic_sibling_node(void *pw, void *node,
  */
 css_error parent_node(void *pw, void *node, void **parent)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
+	dom_element_parent_node(node, (sa_nracanaa dom_element **)parent);
 	dom_node_unref(*parent);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -669,39 +669,39 @@ css_error sibling_node(void *pw, void *node, void **sibling)
 
 	/* Find sibling element */
 	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_OK;
 
-	while (n != NULL) {
+	ၶၢဝ်း (n != NULL) {
 		dom_node_type type;
 
 		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_OK;
+			ပွၵ်ႈ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		ပေႃး (type == DOM_ELEMENT_NODE)
+			bha_nga;
 
 		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_OK;
+			ပွၵ်ႈ CSS_OK;
 		}
 
 		dom_node_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	ပေႃး (n != NULL) {
 		/** \todo Sort out reference counting */
 		dom_node_unref(n);
 
 		*sibling = n;
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -721,14 +721,14 @@ css_error node_has_name(void *pw, void *node,
 	nscss_select_ctx *ctx = pw;
 	dom_node *n = node;
 
-	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
+	ပေႃး (lwc_string_isequal(qname->name, ctx->universal, match) ==
 			lwc_error_ok && *match == false) {
 		dom_string *name;
 		dom_exception err;
 
 		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR)
-			return CSS_OK;
+		ပေႃး (err != DOM_NO_ERR)
+			ပွၵ်ႈ CSS_OK;
 
 		/* Element names are case insensitive in HTML */
 		*match = dom_string_caseless_lwc_isequal(name, qname->name);
@@ -736,7 +736,7 @@ css_error node_has_name(void *pw, void *node,
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -762,7 +762,7 @@ css_error node_has_class(void *pw, void *node,
 
 	assert(err == DOM_NO_ERR);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -787,16 +787,16 @@ css_error node_has_id(void *pw, void *node,
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_OK;
 
-	if (attr != NULL) {
+	ပေႃး (attr != NULL) {
 		*match = dom_string_lwc_isequal(attr, name);
 
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -821,18 +821,18 @@ css_error node_has_attribute(void *pw, void *node,
 	err = dom_string_create_interned(
 			(const uint8_t *) lwc_string_data(qname->name),
 			lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
 	err = dom_element_has_attribute(n, name, match);
-	if (err != DOM_NO_ERR) {
+	ပေႃး (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -859,22 +859,22 @@ css_error node_has_attribute_equal(void *pw, void *node,
 
 	size_t vlen = lwc_string_length(value);
 
-	if (vlen == 0) {
+	ပေႃး (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
 		(const uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ပေႃး ((err != DOM_NO_ERR) || (atr_val == NULL)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	dom_string_unref(name);
@@ -883,7 +883,7 @@ css_error node_has_attribute_equal(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -911,22 +911,22 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
 
 	size_t vlen = lwc_string_length(value);
 
-	if (vlen == 0) {
+	ပေႃး (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
 		(const uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ပေႃး ((err != DOM_NO_ERR) || (atr_val == NULL)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	dom_string_unref(name);
@@ -935,12 +935,12 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
 	*match = dom_string_caseless_lwc_isequal(atr_val, value);
 
 	/* check for dashmatch */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *data = (const char *) dom_string_data(atr_val);
+	ပေႃး (*match == false) {
+		const var_na *vdata = lwc_string_data(value);
+		const var_na *data = (const var_na *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		if (len > vlen && data[vlen] == '-' &&
+		ပေႃး (len > vlen && data[vlen] == '-' &&
 		    strncasecmp(data, vdata, vlen) == 0) {
 				*match = true;
 		}
@@ -948,7 +948,7 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -974,43 +974,43 @@ css_error node_has_attribute_includes(void *pw, void *node,
 	dom_string *atr_val;
 	dom_exception err;
 	size_t vlen = lwc_string_length(value);
-	const char *p;
-	const char *start;
-	const char *end;
+	const var_na *p;
+	const var_na *start;
+	const var_na *end;
 
 	*match = false;
 
-	if (vlen == 0) {
-		return CSS_OK;
+	ပေႃး (vlen == 0) {
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
 		(const uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ပေႃး ((err != DOM_NO_ERR) || (atr_val == NULL)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for match */
-	start = (const char *) dom_string_data(atr_val);
+	start = (const var_na *) dom_string_data(atr_val);
 	end = start + dom_string_byte_length(atr_val);
 
 	for (p = start; p <= end; p++) {
-		if (*p == ' ' || *p == '\0') {
-			if ((size_t) (p - start) == vlen &&
+		ပေႃး (*p == ' ' || *p == '\0') {
+			ပေႃး ((size_t) (p - start) == vlen &&
 			    strncasecmp(start,
 					lwc_string_data(value),
 					vlen) == 0) {
 				*match = true;
-				break;
+				bha_nga;
 			}
 
 			start = p + 1;
@@ -1019,7 +1019,7 @@ css_error node_has_attribute_includes(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1047,22 +1047,22 @@ css_error node_has_attribute_prefix(void *pw, void *node,
 
 	size_t vlen = lwc_string_length(value);
 
-	if (vlen == 0) {
+	ပေႃး (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
 		(const uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ပေႃး ((err != DOM_NO_ERR) || (atr_val == NULL)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	dom_string_unref(name);
@@ -1071,11 +1071,11 @@ css_error node_has_attribute_prefix(void *pw, void *node,
 	*match = dom_string_caseless_lwc_isequal(atr_val, value);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
+	ပေႃး (*match == false) {
+		const var_na *data = (const var_na *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		if ((len >= vlen) &&
+		ပေႃး ((len >= vlen) &&
 		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
 			*match = true;
 		}
@@ -1083,7 +1083,7 @@ css_error node_has_attribute_prefix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1111,22 +1111,22 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	size_t vlen = lwc_string_length(value);
 
-	if (vlen == 0) {
+	ပေႃး (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
 		(const uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ပေႃး ((err != DOM_NO_ERR) || (atr_val == NULL)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	dom_string_unref(name);
@@ -1135,13 +1135,13 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 	*match = dom_string_caseless_lwc_isequal(atr_val, value);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
+	ပေႃး (*match == false) {
+		const var_na *data = (const var_na *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		const char *start = (char *) data + len - vlen;
+		const var_na *start = (var_na *) data + len - vlen;
 
-		if ((len >= vlen) &&
+		ပေႃး ((len >= vlen) &&
 		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
 			*match = true;
 		}
@@ -1151,7 +1151,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1179,22 +1179,22 @@ css_error node_has_attribute_substring(void *pw, void *node,
 
 	size_t vlen = lwc_string_length(value);
 
-	if (vlen == 0) {
+	ပေႃး (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
 		(const uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR)
+		ပွၵ်ႈ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ပေႃး ((err != DOM_NO_ERR) || (atr_val == NULL)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	dom_string_unref(name);
@@ -1203,18 +1203,18 @@ css_error node_has_attribute_substring(void *pw, void *node,
 	*match = dom_string_caseless_lwc_isequal(atr_val, value);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *start = (const char *) dom_string_data(atr_val);
+	ပေႃး (*match == false) {
+		const var_na *vdata = lwc_string_data(value);
+		const var_na *start = (const var_na *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
-		const char *last_start = start + len - vlen;
+		const var_na *last_start = start + len - vlen;
 
-		if (len >= vlen) {
-			while (start <= last_start) {
-				if (strncasecmp(start, vdata,
+		ပေႃး (len >= vlen) {
+			ၶၢဝ်း (start <= last_start) {
+				ပေႃး (strncasecmp(start, vdata,
 						vlen) == 0) {
 					*match = true;
-					break;
+					bha_nga;
 				}
 
 				start++;
@@ -1224,7 +1224,7 @@ css_error node_has_attribute_substring(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1245,63 +1245,63 @@ css_error node_is_root(void *pw, void *node, bool *match)
 	dom_exception err;
 
 	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR) {
+		ပွၵ်ႈ CSS_NOMEM;
 	}
 
-	if (parent != NULL) {
+	ပေႃး (parent != NULL) {
 		err = dom_node_get_node_type(parent, &type);
 
 		dom_node_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return CSS_NOMEM;
+		ပေႃး (err != DOM_NO_ERR)
+			ပွၵ်ႈ CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
+		ပေႃး (type != DOM_DOCUMENT_NODE) {
 			*match = false;
-			return CSS_OK;
+			ပွၵ်ႈ CSS_OK;
 		}
 	}
 
 	*match = true;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
-static int
+static puur_naa_nka
 node_count_siblings_check(dom_node *node,
 			  bool check_name,
 			  dom_string *name)
 {
 	dom_node_type type;
-	int ret = 0;
+	puur_naa_nka ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
-		return 0;
+	ပေႃး (node == NULL)
+		ပွၵ်ႈ 0;
 
 	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
-		return 0;
+	ပေႃး ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
+		ပွၵ်ႈ 0;
 	}
 
-	if (check_name) {
+	ပေႃး (check_name) {
 		dom_string *node_name = NULL;
 		exc = dom_node_get_node_name(node, &node_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		ပေႃး ((exc == DOM_NO_ERR) && (node_name != NULL)) {
 
-			if (dom_string_caseless_isequal(name,
+			ပေႃး (dom_string_caseless_isequal(name,
 							node_name)) {
 				ret = 1;
 			}
 			dom_string_unref(node_name);
 		}
-	} else {
+	} ပေႃးဢမ်ႇ {
 		ret = 1;
 	}
 
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
 /**
@@ -1323,51 +1323,51 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
 	dom_exception exc;
 	dom_string *node_name = NULL;
 
-	if (same_name) {
+	ပေႃး (same_name) {
 		dom_node *node = n;
 		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-			return CSS_NOMEM;
+		ပေႃး ((exc != DOM_NO_ERR) || (node_name == NULL)) {
+			ပွၵ်ႈ CSS_NOMEM;
 		}
 	}
 
-	if (after) {
+	ပေႃး (after) {
 		dom_node *node = dom_node_ref(n);
 		dom_node *next;
 
 		do {
 			exc = dom_node_get_next_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+			ပေႃး ((exc != DOM_NO_ERR))
+				bha_nga;
 
 			dom_node_unref(node);
 			node = next;
 
 			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
-	} else {
+		} ၶၢဝ်း (node != NULL);
+	} ပေႃးဢမ်ႇ {
 		dom_node *node = dom_node_ref(n);
 		dom_node *next;
 
 		do {
 			exc = dom_node_get_previous_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+			ပေႃး ((exc != DOM_NO_ERR))
+				bha_nga;
 
 			dom_node_unref(node);
 			node = next;
 
 			cnt += node_count_siblings_check(node, same_name, node_name);
 
-		} while (node != NULL);
+		} ၶၢဝ်း (node != NULL);
 	}
 
-	if (node_name != NULL) {
+	ပေႃး (node_name != NULL) {
 		dom_string_unref(node_name);
 	}
 
 	*count = cnt;
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1388,35 +1388,35 @@ css_error node_is_empty(void *pw, void *node, bool *match)
 	*match = true;
 
 	err = dom_node_get_first_child(n, &n);
-	if (err != DOM_NO_ERR) {
-		return CSS_BADPARM;
+	ပေႃး (err != DOM_NO_ERR) {
+		ပွၵ်ႈ CSS_BADPARM;
 	}
 
-	while (n != NULL) {
+	ၶၢဝ်း (n != NULL) {
 		dom_node_type ntype;
 		err = dom_node_get_node_type(n, &ntype);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_BADPARM;
+			ပွၵ်ႈ CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
+		ပေႃး (ntype == DOM_ELEMENT_NODE ||
 		    ntype == DOM_TEXT_NODE) {
 			*match = false;
 			dom_node_unref(n);
-			break;
+			bha_nga;
 		}
 
 		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
+		ပေႃး (err != DOM_NO_ERR) {
 			dom_node_unref(n);
-			return CSS_BADPARM;
+			ပွၵ်ႈ CSS_BADPARM;
 		}
 		dom_node_unref(n);
 		n = next;
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1436,25 +1436,25 @@ css_error node_is_link(void *pw, void *n, bool *match)
 	dom_string *node_name = NULL;
 
 	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-		return CSS_NOMEM;
+	ပေႃး ((exc != DOM_NO_ERR) || (node_name == NULL)) {
+		ပွၵ်ႈ CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	ပေႃး (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
 		bool has_href;
 		exc = dom_element_has_attribute(node, corestring_dom_href,
 				&has_href);
-		if ((exc == DOM_NO_ERR) && (has_href)) {
+		ပေႃး ((exc == DOM_NO_ERR) && (has_href)) {
 			*match = true;
-		} else {
+		} ပေႃးဢမ်ႇ {
 			*match = false;
 		}
-	} else {
+	} ပေႃးဢမ်ႇ {
 		*match = false;
 	}
 	dom_string_unref(node_name);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1473,7 +1473,7 @@ css_error node_is_visited(void *pw, void *node, bool *match)
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
 	nserror error;
-	const struct url_data *data;
+	const sa_nracanaa url_data *data;
 
 	dom_exception exc;
 	dom_node *n = node;
@@ -1482,14 +1482,14 @@ css_error node_is_visited(void *pw, void *node, bool *match)
 	*match = false;
 
 	exc = dom_node_get_node_name(n, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
-		return CSS_NOMEM;
+	ပေႃး ((exc != DOM_NO_ERR) || (s == NULL)) {
+		ပွၵ်ႈ CSS_NOMEM;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
+	ပေႃး (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
 		/* Can't be visited; not ancher element */
 		dom_string_unref(s);
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	/* Finished with node name string */
@@ -1497,9 +1497,9 @@ css_error node_is_visited(void *pw, void *node, bool *match)
 	s = NULL;
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
+	ပေႃး ((exc != DOM_NO_ERR) || (s == NULL)) {
 		/* Can't be visited; not got a URL */
-		return CSS_OK;
+		ပွၵ်ႈ CSS_OK;
 	}
 
 	/* Make href absolute */
@@ -1510,21 +1510,21 @@ css_error node_is_visited(void *pw, void *node, bool *match)
 	/* Finished with href string */
 	dom_string_unref(s);
 
-	if (error != NSERROR_OK) {
+	ပေႃး (error != NSERROR_OK) {
 		/* Couldn't make nsurl object */
-		return CSS_NOMEM;
+		ပွၵ်ႈ CSS_NOMEM;
 	}
 
 	data = urldb_get_url_data(url);
 
 	/* Visited if in the db and has
 	 * non-zero visit count */
-	if (data != NULL && data->visits > 0)
+	ပေႃး (data != NULL && data->visits > 0)
 		*match = true;
 
 	nsurl_unref(url);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1543,7 +1543,7 @@ css_error node_is_hover(void *pw, void *node, bool *match)
 
 	*match = false;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1562,7 +1562,7 @@ css_error node_is_active(void *pw, void *node, bool *match)
 
 	*match = false;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1581,7 +1581,7 @@ css_error node_is_focus(void *pw, void *node, bool *match)
 
 	*match = false;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1600,7 +1600,7 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
 
 	*match = false;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1619,7 +1619,7 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
 
 	*match = false;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1638,7 +1638,7 @@ css_error node_is_checked(void *pw, void *node, bool *match)
 
 	*match = false;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1657,7 +1657,7 @@ css_error node_is_target(void *pw, void *node, bool *match)
 
 	*match = false;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1678,7 +1678,7 @@ css_error node_is_lang(void *pw, void *node,
 
 	*match = false;
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 /**
@@ -1692,41 +1692,41 @@ css_error node_is_lang(void *pw, void *node,
  */
 css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
 {
-	if (property == CSS_PROP_COLOR) {
+	ပေႃး (property == CSS_PROP_COLOR) {
 		hint->data.color = 0xff000000;
 		hint->status = CSS_COLOR_COLOR;
-	} else if (property == CSS_PROP_FONT_FAMILY) {
+	} ပေႃးဢမ်ႇ ပေႃး (property == CSS_PROP_FONT_FAMILY) {
 		hint->data.strings = NULL;
 		switch (nsoption_int(font_default)) {
-		case PLOT_FONT_FAMILY_SANS_SERIF:
+		pak_sa PLOT_FONT_FAMILY_SANS_SERIF:
 			hint->status = CSS_FONT_FAMILY_SANS_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_SERIF:
+			bha_nga;
+		pak_sa PLOT_FONT_FAMILY_SERIF:
 			hint->status = CSS_FONT_FAMILY_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_MONOSPACE:
+			bha_nga;
+		pak_sa PLOT_FONT_FAMILY_MONOSPACE:
 			hint->status = CSS_FONT_FAMILY_MONOSPACE;
-			break;
-		case PLOT_FONT_FAMILY_CURSIVE:
+			bha_nga;
+		pak_sa PLOT_FONT_FAMILY_CURSIVE:
 			hint->status = CSS_FONT_FAMILY_CURSIVE;
-			break;
-		case PLOT_FONT_FAMILY_FANTASY:
+			bha_nga;
+		pak_sa PLOT_FONT_FAMILY_FANTASY:
 			hint->status = CSS_FONT_FAMILY_FANTASY;
-			break;
+			bha_nga;
 		}
-	} else if (property == CSS_PROP_QUOTES) {
+	} ပေႃးဢမ်ႇ ပေႃး (property == CSS_PROP_QUOTES) {
 		/** \todo Not exactly useful :) */
 		hint->data.strings = NULL;
 		hint->status = CSS_QUOTES_NONE;
-	} else if (property == CSS_PROP_VOICE_FAMILY) {
+	} ပေႃးဢမ်ႇ ပေႃး (property == CSS_PROP_VOICE_FAMILY) {
 		/** \todo Fix this when we have voice-family done */
 		hint->data.strings = NULL;
 		hint->status = 0;
-	} else {
-		return CSS_INVALID;
+	} ပေႃးဢမ်ႇ {
+		ပွၵ်ႈ CSS_INVALID;
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
@@ -1740,13 +1740,13 @@ css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
 			corestring_dom___ns_key_libcss_node_data,
 			libcss_node_data, nscss_dom_user_data_handler,
 			(void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR) {
+		ပွၵ်ႈ CSS_NOMEM;
 	}
 
 	assert(old_node_data == NULL);
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }
 
 css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
@@ -1758,9 +1758,9 @@ css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
 	err = dom_node_get_user_data(n,
 			corestring_dom___ns_key_libcss_node_data,
 			libcss_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	ပေႃး (err != DOM_NO_ERR) {
+		ပွၵ်ႈ CSS_NOMEM;
 	}
 
-	return CSS_OK;
+	ပွၵ်ႈ CSS_OK;
 }

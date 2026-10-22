@@ -47,13 +47,13 @@
 #define FIGURE_MIN_WIDTH 150
 #define FIGURE_MIN_HEIGHT 100
 
-enum chart_type {
+ga_nanaa chart_type {
 		 CHART_TYPE_UNKNOWN,
 		 CHART_TYPE_PIE,
 };
 
 /* type of chart key */
-enum key_type {
+ga_nanaa key_type {
 	       CHART_KEY_UNSET,
 	       CHART_KEY_NONE,
 	       CHART_KEY_LEFT,
@@ -64,48 +64,48 @@ enum key_type {
 };
 
 
-struct chart_label {
-	char *title; /* label title */
-	unsigned int colour; /* colour */
+sa_nracanaa chart_label {
+	var_na *title; /* label title */
+	unsigned puur_naa_nka colour; /* colour */
 };
 
-struct chart_series {
-	unsigned int len; /* number of values in the series */
+sa_nracanaa chart_series {
+	unsigned puur_naa_nka len; /* number of values in the series */
 	float *value; /* array of values */
 };
 
 #define MAX_SERIES 4
 
-struct chart_data {
-	unsigned int series_len;
-	struct chart_series series[MAX_SERIES];
+sa_nracanaa chart_data {
+	unsigned puur_naa_nka series_len;
+	sa_nracanaa chart_series series[MAX_SERIES];
 
-	unsigned int label_len; /* number of labels */
-	struct chart_label *label;
+	unsigned puur_naa_nka label_len; /* number of labels */
+	sa_nracanaa chart_label *label;
 
 };
 
 /**
  * parameters for a chart figure
  */
-struct chart_param {
-	enum chart_type type;
-	enum key_type key; /* what type of key to use */
-	unsigned int width; /* width of figure */
-	unsigned int height; /* height of figure */
-	char *title; /* title */
-	struct {
-		unsigned int x;
-		unsigned int y;
-		unsigned int width;
-		unsigned int height;
+sa_nracanaa chart_param {
+	ga_nanaa chart_type type;
+	ga_nanaa key_type key; /* what type of key to use */
+	unsigned puur_naa_nka width; /* width of figure */
+	unsigned puur_naa_nka height; /* height of figure */
+	var_na *title; /* title */
+	sa_nracanaa {
+		unsigned puur_naa_nka x;
+		unsigned puur_naa_nka y;
+		unsigned puur_naa_nka width;
+		unsigned puur_naa_nka height;
 	} area; /* chart area within figure */
-	struct chart_data data;
+	sa_nracanaa chart_data data;
 };
 
 #define DEF_COLOUR_NUM 8
 /** default colour series */
-static unsigned int colour_series[DEF_COLOUR_NUM] =
+static unsigned puur_naa_nka colour_series[DEF_COLOUR_NUM] =
 	{
 	 0x00ff00, /* green */
 	 0x0000ff, /* blue */
@@ -119,22 +119,22 @@ static unsigned int colour_series[DEF_COLOUR_NUM] =
 
 
 /* ensures there are labels present for every value */
-static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
+static nserror ensure_label_count(sa_nracanaa chart_param *chart, unsigned puur_naa_nka count)
 {
-	unsigned int lidx;
-	int deltac;
-	struct chart_label *nlabels;
+	unsigned puur_naa_nka lidx;
+	puur_naa_nka deltac;
+	sa_nracanaa chart_label *nlabels;
 
 	deltac = count - chart->data.label_len;
-	if (deltac <= 0) {
+	ပေႃး (deltac <= 0) {
 		/* there are enough labels */
-		return NSERROR_OK;
+		ပွၵ်ႈ NSERROR_OK;
 	}
 
 	nlabels = realloc(chart->data.label,
-			  count * sizeof(struct chart_label));
-	if (nlabels == NULL) {
-		return NSERROR_NOMEM;
+			  count * parimaa_na(sa_nracanaa chart_label));
+	ပေႃး (nlabels == NULL) {
+		ပွၵ်ႈ NSERROR_NOMEM;
 	}
 	chart->data.label = nlabels;
 
@@ -146,42 +146,42 @@ static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
 
 	chart->data.label_len = count;
 
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }
 
 /**
  * extract values for a series
  */
 static nserror
-extract_series_values(struct chart_param *chart,
-		      unsigned int series_num,
-		      const char *valstr,
+extract_series_values(sa_nracanaa chart_param *chart,
+		      unsigned puur_naa_nka series_num,
+		      const var_na *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcur;
+	unsigned puur_naa_nka valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
-	struct chart_series *series;
+	sa_nracanaa chart_series *series;
 
 	series = chart->data.series + series_num;
 
 	/* ensure we do not leak any data in this series */
-	if (series->value != NULL) {
+	ပေႃး (series->value != NULL) {
 		free(series->value);
 	}
 
 	/* count how many values present */
 	for (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+		ပေႃး (valstr[valstart] == ',') {
 			series->len++;
 		}
 	}
 
 	/* allocate storage for values */
-	series->value = calloc(series->len, sizeof(float));
-	if (series->value == NULL) {
-		return NSERROR_NOMEM;
+	series->value = calloc(series->len, parimaa_na(float));
+	ပေႃး (series->value == NULL) {
+		ပွၵ်ႈ NSERROR_NOMEM;
 	}
 
 	/* extract values from query string */
@@ -190,7 +190,7 @@ extract_series_values(struct chart_param *chart,
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		ၶၢဝ်း (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
@@ -201,7 +201,7 @@ extract_series_values(struct chart_param *chart,
 
 	res = ensure_label_count(chart, series->len);
 
-	return res;
+	ပွၵ်ႈ res;
 }
 
 
@@ -209,25 +209,25 @@ extract_series_values(struct chart_param *chart,
  * extract values for next series
  */
 static nserror
-extract_next_series_values(struct chart_param *chart,
-		      const char *valstr,
+extract_next_series_values(sa_nracanaa chart_param *chart,
+		      const var_na *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
 
-	if (chart->data.series_len >= MAX_SERIES) {
-		return NSERROR_NOSPACE;
+	ပေႃး (chart->data.series_len >= MAX_SERIES) {
+		ပွၵ်ႈ NSERROR_NOSPACE;
 	}
 
 	res = extract_series_values(chart,
 				    chart->data.series_len,
 				    valstr,
 				    valstrlen);
-	if (res == NSERROR_OK) {
+	ပေႃး (res == NSERROR_OK) {
 		chart->data.series_len++;
 	}
 
-	return res;
+	ပွၵ်ႈ res;
 }
 
 
@@ -235,25 +235,25 @@ extract_next_series_values(struct chart_param *chart,
  * extract label title
  */
 static nserror
-extract_series_labels(struct chart_param *chart,
-		      const char *valstr,
+extract_series_labels(sa_nracanaa chart_param *chart,
+		      const var_na *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcount; /* count of values in valstr */
-	unsigned int valcur;
+	unsigned puur_naa_nka valcount; /* count of values in valstr */
+	unsigned puur_naa_nka valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
 
 	for (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+		ပေႃး (valstr[valstart] == ',') {
 			valcount++;
 		}
 	}
 
 	res = ensure_label_count(chart, valcount);
-	if (res != NSERROR_OK) {
-		return res;
+	ပေႃး (res != NSERROR_OK) {
+		ပွၵ်ႈ res;
 	}
 
 
@@ -262,7 +262,7 @@ extract_series_labels(struct chart_param *chart,
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		ၶၢဝ်း (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
@@ -270,7 +270,7 @@ extract_series_labels(struct chart_param *chart,
 		chart->data.label[valcur].title = strndup(valstr + valstart, vallen);
 		vallen++; /* account for , separator */
 	}
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }
 
 
@@ -278,141 +278,141 @@ extract_series_labels(struct chart_param *chart,
  * extract labels colour
  */
 static nserror
-extract_series_colours(struct chart_param *chart,
-		      const char *valstr,
+extract_series_colours(sa_nracanaa chart_param *chart,
+		      const var_na *valstr,
 		      size_t valstrlen)
 {
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }
 
 /**
  * process a part of a query
  */
 static nserror
-process_query_section(const char *str, size_t len, struct chart_param *chart)
+process_query_section(const var_na *str, size_t len, sa_nracanaa chart_param *chart)
 {
 	nserror res = NSERROR_OK;
 
-	if ((len > 6) &&
+	ပေႃး ((len > 6) &&
 	    (strncmp(str, "width=", 6) == 0)) {
 		/* figure width */
 		chart->width = strtoul(str + 6, NULL, 10);
-	} else if ((len > 7) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 7) &&
 	    (strncmp(str, "height=", 7) == 0)) {
 		/* figure height */
 		chart->height = strtoul(str + 7, NULL, 10);
-	} else if ((len > 8) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 8) &&
 	    (strncmp(str, "cawidth=", 8) == 0)) {
 		/* chart area width */
 		chart->area.width = strtoul(str + 8, NULL, 10);
-	} else if ((len > 9) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 9) &&
 	    (strncmp(str, "caheight=", 9) == 0)) {
 		/* chart area height */
 		chart->area.height = strtoul(str + 9, NULL, 10);
-	} else if ((len > 4) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 4) &&
 	    (strncmp(str, "key=", 4) == 0)) {
 		/* figure has key */
 		chart->key = strtoul(str + 4, NULL, 10);
-	} else if ((len > 6) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 6) &&
 	    (strncmp(str, "title=", 6) == 0)) {
 		chart->title = strndup(str + 6, len - 6);
-	} else if ((len > 5) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 5) &&
 	    (strncmp(str, "type=", 5) == 0)) {
-		if (strncmp(str + 5, "pie", len - 5) == 0) {
+		ပေႃး (strncmp(str + 5, "pie", len - 5) == 0) {
 			chart->type = CHART_TYPE_PIE;
-		} else {
+		} ပေႃးဢမ်ႇ {
 			chart->type = CHART_TYPE_UNKNOWN;
 		}
-	} else if ((len > 7) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 7) &&
 	    (strncmp(str, "values=", 7) == 0)) {
 		res = extract_next_series_values(chart, str + 7, len - 7);
-	} else if ((len > 7) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 7) &&
 	    (strncmp(str, "labels=", 7) == 0)) {
 		res = extract_series_labels(chart, str + 7, len - 7);
-	} else if ((len > 8) &&
+	} ပေႃးဢမ်ႇ ပေႃး ((len > 8) &&
 	    (strncmp(str, "colours=", 8) == 0)) {
 		res = extract_series_colours(chart, str + 8, len - 8);
 	}
 
-	return res;
+	ပွၵ်ႈ res;
 }
 
 
 
 static nserror
-chart_from_query(struct nsurl *url, struct chart_param *chart)
+chart_from_query(sa_nracanaa nsurl *url, sa_nracanaa chart_param *chart)
 {
 	nserror res;
-	char *querystr;
+	var_na *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	ပေႃး (res != NSERROR_OK) {
+		ပွၵ်ႈ res;
 	}
 
 	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		ၶၢဝ်း (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, chart);
-		if (res != NSERROR_OK) {
-			break;
+		ပေႃး (res != NSERROR_OK) {
+			bha_nga;
 		}
 		kvlen++; /* account for & separator */
 	}
 	free(querystr);
 
 	/* sanity check dimensions */
-	if (chart->width < FIGURE_MIN_WIDTH) {
+	ပေႃး (chart->width < FIGURE_MIN_WIDTH) {
 		/* bad width - check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		ပေႃး (chart->height < FIGURE_MIN_HEIGHT) {
 			/* both bad set to defaults */
 			chart->width = FIGURE_MIN_WIDTH;
 			chart->height = FIGURE_MIN_HEIGHT;
-		} else {
+		} ပေႃးဢမ်ႇ {
 			/* base width on valid height */
 			chart->width = (chart->height * 3) / 2;
 		}
-	} else {
+	} ပေႃးဢမ်ႇ {
 		/* good width check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		ပေႃး (chart->height < FIGURE_MIN_HEIGHT) {
 			/* base height on valid width */
 			chart->height = (chart->width * 2) / 3;
 		}
 	}
 
 	/* ensure legend type correct */
-	if ((chart->key == CHART_KEY_UNSET) ||
+	ပေႃး ((chart->key == CHART_KEY_UNSET) ||
 	    (chart->key >= CHART_KEY_END )) {
 		/* default to putting key on right */
 		chart->key = CHART_KEY_RIGHT;
 	}
 
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }
 
 
 static nserror
-output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
+output_pie_legend(sa_nracanaa fetch_about_context *ctx, sa_nracanaa chart_param *chart)
 {
 	nserror res;
-	unsigned int lblidx;
-	unsigned int legend_width;
-	unsigned int legend_height;
-	unsigned int vertical_spacing;
+	unsigned puur_naa_nka lblidx;
+	unsigned puur_naa_nka legend_width;
+	unsigned puur_naa_nka legend_height;
+	unsigned puur_naa_nka vertical_spacing;
 
 	switch (chart->key) {
 
-	case CHART_KEY_NONE:
-		break;
-	case CHART_KEY_RIGHT:
+	pak_sa CHART_KEY_NONE:
+		bha_nga;
+	pak_sa CHART_KEY_RIGHT:
 		legend_width = chart->width - chart->area.width - chart->area.x;
 		legend_width -= 10; /* margin */
 		legend_height = chart->height;
@@ -426,8 +426,8 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 				vertical_spacing * 2 / 3,
 				vertical_spacing * 2 / 3,
 				chart->data.label[lblidx].colour);
-			if (res != NSERROR_OK) {
-				return res;
+			ပေႃး (res != NSERROR_OK) {
+				ပွၵ်ႈ res;
 			}
 			res = fetch_about_ssenddataf(ctx,
 				"<text x=\"%d\" y=\"%d\" fill=\"#%06x\" >%s</text>",
@@ -435,43 +435,43 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 				vertical_spacing * (lblidx+1),
 			     chart->data.label[lblidx].colour,
 				chart->data.label[lblidx].title);
-			if (res != NSERROR_OK) {
-				return res;
+			ပေႃး (res != NSERROR_OK) {
+				ပွၵ်ႈ res;
 			}
 		}
-		break;
+		bha_nga;
 	default:
-		break;
+		bha_nga;
 	}
 
-	return NSERROR_OK;
+	ပွၵ်ႈ NSERROR_OK;
 }
 
 static float
-compute_series_total(struct chart_param *chart, unsigned int series)
+compute_series_total(sa_nracanaa chart_param *chart, unsigned puur_naa_nka series)
 {
 	float total;
-	unsigned int curdata;
+	unsigned puur_naa_nka curdata;
 
 	for (total = 0, curdata = 0;
 	     curdata < chart->data.series[series].len;
 	     curdata++) {
 		total += chart->data.series[series].value[curdata];
 	}
-	return total;
+	ပွၵ်ႈ total;
 }
 
 /**
  * render the data as a pie chart svg
  */
 static bool
-pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
+pie_chart(sa_nracanaa fetch_about_context *ctx, sa_nracanaa chart_param *chart)
 {
 	nserror res;
 	float ra; /* pie a radius */
 	float rb; /* pie b radius */
 	float series_total;
-	unsigned int curdata; /* current data point index */
+	unsigned puur_naa_nka curdata; /* current data point index */
 	float last_x, last_y;
 	float end_x, end_y;
 	float start;
@@ -480,15 +480,15 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	float circle_centre_x, circle_centre_y;
 
 	/* ensure there is data to render */
-	if ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
-		return NSERROR_BAD_PARAMETER;
+	ပေႃး ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
+		ပွၵ်ႈ NSERROR_BAD_PARAMETER;
 	}
 
 	/* get the first series total value */
 	series_total = compute_series_total(chart, 0);
-	if (series_total == 0) {
+	ပေႃး (series_total == 0) {
 		/* dividing by zero is embarasing */
-		return NSERROR_BAD_PARAMETER;
+		ပွၵ်ႈ NSERROR_BAD_PARAMETER;
 	}
 
 	/*
@@ -497,14 +497,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	 * this is left to each chart type as different charts
 	 *  have differnt requirements
 	 */
-	if ((chart->area.width == 0) || (chart->area.height == 0)) {
+	ပေႃး ((chart->area.width == 0) || (chart->area.height == 0)) {
 		/*
 		 * pie chart defaults to square of smaller of figure
 		 *  width and height
 		 */
-		if (chart->width > chart->height) {
+		ပေႃး (chart->width > chart->height) {
 			chart->area.width = chart->area.height = (chart->height - chart->area.x);
-		} else {
+		} ပေႃးဢမ်ႇ {
 			chart->area.width = chart->area.height = (chart->width - chart->area.y);
 		}
 	}
@@ -513,7 +513,7 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	ပေႃး (fetch_about_send_header(ctx,
 			"Content-Type: image/svg; charset=utf-8")) {
 		goto aborted;
 	}
@@ -532,13 +532,13 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			"<svg width=\"%u\" height=\"%u\" "
 			"xmlns=\"http://www.w3.org/2000/svg\">\n",
 			chart->width, chart->height);
-	if (res != NSERROR_OK) {
+	ပေႃး (res != NSERROR_OK) {
 		goto aborted;
 	}
 
 	/* generate the legend */
 	res = output_pie_legend(ctx, chart);
-	if (res != NSERROR_OK) {
+	ပေႃး (res != NSERROR_OK) {
 		goto aborted;
 	}
 
@@ -553,9 +553,9 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 		end_x = (ra * cos(start + extent));
 		end_y = (rb * sin(start + extent));
 
-		if (extent > M_PI) {
+		ပေႃး (extent > M_PI) {
 			large = true;
-		} else {
+		} ပေႃးဢမ်ႇ {
 			large = false;
 		}
 
@@ -572,7 +572,7 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			circle_centre_x,
 			circle_centre_y,
 			chart->data.label[curdata].colour);
-		if (res != NSERROR_OK) {
+		ပေႃး (res != NSERROR_OK) {
 			goto aborted;
 		}
 		last_x = end_x;
@@ -581,17 +581,17 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</svg>\n");
-	if (res != NSERROR_OK) {
+	ပေႃး (res != NSERROR_OK) {
 		goto aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ပွၵ်ႈ true;
 
  aborted:
 
-	return false;
+	ပွၵ်ႈ false;
 
 }
 
@@ -603,28 +603,28 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_chart_handler(struct fetch_about_context *ctx)
+bool fetch_about_chart_handler(sa_nracanaa fetch_about_context *ctx)
 {
 	nserror res;
-	struct chart_param chart;
-	memset(&chart, 0, sizeof(struct chart_param));
+	sa_nracanaa chart_param chart;
+	memset(&chart, 0, parimaa_na(sa_nracanaa chart_param));
 
 	res = chart_from_query(fetch_about_get_url(ctx), &chart);
-	if (res != NSERROR_OK) {
+	ပေႃး (res != NSERROR_OK) {
 		goto aborted;
 	}
 
 	switch (chart.type) {
-	case CHART_TYPE_PIE:
-		return pie_chart(ctx, &chart);
+	pak_sa CHART_TYPE_PIE:
+		ပွၵ်ႈ pie_chart(ctx, &chart);
 
 
 	default:
-		break;
+		bha_nga;
 	}
 
 aborted:
 
-	return false;
+	ပွၵ်ႈ false;
 
 }
