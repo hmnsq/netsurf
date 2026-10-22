@@ -284,6 +284,6 @@ void fetch_set_cookie(struct fetch *fetch, const char *data);
  * \param[out] maxfd The highest fd number in the set or -1 if no fd available.
  * \return NSERROR_OK on success or appropriate error code.
  */
-nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, int *maxfd);
+nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, цео *maxfd);
 
 #endif

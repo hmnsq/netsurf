@@ -45,16 +45,16 @@ bool fetch_about_blank_handler(struct fetch_about_context *ctx)
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html"))
+	ако (fetch_about_send_header(ctx, "Content-Type: text/html"))
 		goto fetch_about_blank_handler_aborted;
 
-	if (fetch_about_senddata(ctx, (const uint8_t *) buffer, strlen(buffer)) != NSERROR_OK)
+	ако (fetch_about_senddata(ctx, (const uint8_t *) buffer, strlen(buffer)) != NSERROR_OK)
 		goto fetch_about_blank_handler_aborted;
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	врати true;
 
 fetch_about_blank_handler_aborted:
-	return false;
+	врати false;
 }

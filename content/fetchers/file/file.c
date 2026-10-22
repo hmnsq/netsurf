@@ -90,7 +90,7 @@ static inline bool fetch_file_send_callback(const fetch_msg *msg,
 	fetch_send_callback(msg, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	врати ctx->aborted;
 }
 
 static bool fetch_file_send_header(struct fetch_file_context *ctx,
@@ -99,27 +99,27 @@ static bool fetch_file_send_header(struct fetch_file_context *ctx,
 	fetch_msg msg;
 	char header[64];
 	va_list ap;
-	int len;
+	цео len;
 
 	va_start(ap, fmt);
 	len = vsnprintf(header, sizeof header, fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return false;
+	ако (len >= (цео)sizeof(header) || len < 0) {
+		врати false;
 	}
 
 	msg.type = FETCH_HEADER;
 	msg.data.header_or_data.buf = (const uint8_t *) header;
 	msg.data.header_or_data.len = len;
 
-	return fetch_file_send_callback(&msg, ctx);
+	врати fetch_file_send_callback(&msg, ctx);
 }
 
 /** callback to initialise the file fetcher. */
 static bool fetch_file_initialise(lwc_string *scheme)
 {
-	return true;
+	врати true;
 }
 
 /** callback to initialise the file fetcher. */
@@ -129,7 +129,7 @@ static void fetch_file_finalise(lwc_string *scheme)
 
 static bool fetch_file_can_fetch(const nsurl *url)
 {
-	return true;
+	врати true;
 }
 
 /** callback to set up a file fetch context. */
@@ -143,24 +143,24 @@ fetch_file_setup(struct fetch *fetchh,
 		 const char **headers)
 {
 	struct fetch_file_context *ctx;
-	int i;
+	цео i;
 	nserror ret;
 
 	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ако (ctx == NULL)
+		врати NULL;
 
 	ret = guit->file->nsurl_to_path(url, &ctx->path);
-	if (ret != NSERROR_OK) {
+	ако (ret != NSERROR_OK) {
 		free(ctx);
-		return NULL;
+		врати NULL;
 	}
 
 	ctx->url = nsurl_ref(url);
 
 	/* Scan request headers looking for If-None-Match */
-	for (i = 0; headers[i] != NULL; i++) {
-		if (strncasecmp(headers[i], "If-None-Match:",
+	за (i = 0; headers[i] != NULL; i++) {
+		ако (strncasecmp(headers[i], "If-None-Match:",
 				SLEN("If-None-Match:")) != 0) {
 			continue;
 		}
@@ -169,13 +169,13 @@ fetch_file_setup(struct fetch *fetchh,
 		const char *d = headers[i] + SLEN("If-None-Match:");
 
 		/* Scan to first digit, if any */
-		while (*d != '\0' && (*d < '0' || '9' < *d))
+		док (*d != '\0' && (*d < '0' || '9' < *d))
 			d++;
 
 		/* Convert to time_t */
-		if (*d != '\0') {
+		ако (*d != '\0') {
 			ret = nsc_snptimet(d, strlen(d), &ctx->file_etag);
-			if (ret != NSERROR_OK) {
+			ако (ret != NSERROR_OK) {
 				NSLOG(fetch, WARNING,
 						"Bad If-None-Match value");
 			}
@@ -186,7 +186,7 @@ fetch_file_setup(struct fetch *fetchh,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	врати ctx;
 }
 
 /** callback to free a file fetch */
@@ -201,7 +201,7 @@ static void fetch_file_free(void *ctx)
 /** callback to start a file fetch */
 static bool fetch_file_start(void *ctx)
 {
-	return true;
+	врати true;
 }
 
 /** callback to abort a file fetch */
@@ -216,23 +216,23 @@ static void fetch_file_abort(void *ctx)
 	c->aborted = true;
 }
 
-static int fetch_file_errno_to_http_code(int error_no)
+static цео fetch_file_errno_to_http_code(цео error_no)
 {
 	switch (error_no) {
 	case ENAMETOOLONG:
-		return 400;
+		врати 400;
 	case EACCES:
-		return 403;
+		врати 403;
 	case ENOENT:
-		return 404;
+		врати 404;
 	default:
 		break;
 	}
 
-	return 500;
+	врати 500;
 }
 
-static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
+static void fetch_file_process_error(struct fetch_file_context *ctx, цео code)
 {
 	fetch_msg msg;
 	char buffer[1024];
@@ -243,7 +243,7 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 	fetch_set_http_code(ctx->fetchh, code);
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+	ако (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_file_process_error_aborted;
 
 	snprintf(key, sizeof key, "HTTP%03d", code);
@@ -267,14 +267,14 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 	msg.type = FETCH_DATA;
 	msg.data.header_or_data.buf = (const uint8_t *) buffer;
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	ако (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_error_aborted;
 
 	msg.type = FETCH_FINISHED;
 	fetch_file_send_callback(&msg, ctx);
 
 fetch_file_process_error_aborted:
-	return;
+	врати;
 }
 
 
@@ -287,36 +287,36 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	char *buf = NULL;
 	size_t buf_size;
 
-	int fd; /**< The file descriptor of the object */
+	цео fd; /**< The file descriptor of the object */
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+	ако (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
 		msg.type = FETCH_NOTMODIFIED;
 		fetch_file_send_callback(&msg, ctx);
-		return;
+		врати;
 	}
 
 	fd = open(ctx->path, O_RDONLY);
-	if (fd < 0) {
+	ако (fd < 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		врати;
 	}
 
 	/* set buffer size */
 	buf_size = fdstat->st_size;
 
 	/* allocate the buffer storage */
-	if (buf_size > 0) {
+	ако (buf_size > 0) {
 		buf = mmap(NULL, buf_size, PROT_READ, MAP_SHARED, fd, 0);
-		if (buf == MAP_FAILED) {
+		ако (buf == MAP_FAILED) {
 			msg.type = FETCH_ERROR;
 			msg.data.error = "Unable to map memory for file data buffer";
 			fetch_file_send_callback(&msg, ctx);
 			close(fd);
-			return;
+			врати;
 		}
 	}
 
@@ -329,19 +329,19 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
+	ако (fetch_file_send_header(ctx, "Content-Type: %s", 
 				   guit->fetch->filetype(ctx->path))) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	ако (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
+	ако (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
 				   (int64_t) fdstat->st_mtime)) {
 		goto fetch_file_process_aborted;
 	}
@@ -351,17 +351,17 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	msg.data.header_or_data.len = buf_size;
 	fetch_file_send_callback(&msg, ctx);
 
-	if (ctx->aborted == false) {
+	ако (ctx->aborted == false) {
 		msg.type = FETCH_FINISHED;
 		fetch_file_send_callback(&msg, ctx);
 	}
 
 fetch_file_process_aborted:
 
-	if (buf != NULL)
+	ако (buf != NULL)
 		munmap(buf, buf_size);
 	close(fd);
-#else
+#инако
 	fetch_msg msg;
 	char *buf;
 	size_t buf_size;
@@ -372,35 +372,35 @@ fetch_file_process_aborted:
 	FILE *infile;
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+	ако (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
 		msg.type = FETCH_NOTMODIFIED;
 		fetch_file_send_callback(&msg, ctx);
-		return;
+		врати;
 	}
 
 	infile = fopen(ctx->path, "rb");
-	if (infile == NULL) {
+	ако (infile == NULL) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		врати;
 	}
 
 	/* set buffer size */
 	buf_size = fdstat->st_size;
-	if (buf_size > FETCH_FILE_MAX_BUF_SIZE)
+	ако (buf_size > FETCH_FILE_MAX_BUF_SIZE)
 		buf_size = FETCH_FILE_MAX_BUF_SIZE;
 
 	/* allocate the buffer storage */
 	buf = malloc(buf_size);
-	if (buf == NULL) {
+	ако (buf == NULL) {
 		msg.type = FETCH_ERROR;
 		msg.data.error =
 			"Unable to allocate memory for file data buffer";
 		fetch_file_send_callback(&msg, ctx);
 		fclose(infile);
-		return;
+		врати;
 	}
 
 	/* fetch is going to be successful */
@@ -412,33 +412,33 @@ fetch_file_process_aborted:
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
+	ако (fetch_file_send_header(ctx, "Content-Type: %s", 
 				   guit->fetch->filetype(ctx->path))) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	ако (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
+	ако (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
 				   (int64_t) fdstat->st_mtime)) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* main data loop */
-	while (tot_read < fdstat->st_size) {
+	док (tot_read < fdstat->st_size) {
 		res = fread(buf, 1, buf_size, infile);
-		if (res == 0) {
-			if (feof(infile)) {
+		ако (res == 0) {
+			ако (feof(infile)) {
 				msg.type = FETCH_ERROR;
 				msg.data.error = "Unexpected EOF reading file";
 				fetch_file_send_callback(&msg, ctx);
 				goto fetch_file_process_aborted;
-			} else {
+			} инако {
 				msg.type = FETCH_ERROR;
 				msg.data.error = "Error reading file";
 				fetch_file_send_callback(&msg, ctx);
@@ -450,11 +450,11 @@ fetch_file_process_aborted:
 		msg.type = FETCH_DATA;
 		msg.data.header_or_data.buf = (const uint8_t *) buf;
 		msg.data.header_or_data.len = res;
-		if (fetch_file_send_callback(&msg, ctx))
+		ако (fetch_file_send_callback(&msg, ctx))
 			break;
 	}
 
-	if (ctx->aborted == false) {
+	ако (ctx->aborted == false) {
 		msg.type = FETCH_FINISHED;
 		fetch_file_send_callback(&msg, ctx);
 	}
@@ -464,40 +464,40 @@ fetch_file_process_aborted:
 	fclose(infile);
 	free(buf);
 #endif
-	return;
+	врати;
 }
 
 static char *gen_nice_title(char *path)
 {
 	char *nice_path, *cnv, *tmp;
 	char *title;
-	int title_length;
+	цео title_length;
 
 	/* Convert path for display */
 	nice_path = malloc(strlen(path) * SLEN("&amp;") + 1);
-	if (nice_path == NULL) {
-		return NULL;
+	ако (nice_path == NULL) {
+		врати NULL;
 	}
 
 	/* Escape special HTML characters */
-	for (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
-		if (*tmp == '<') {
+	за (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
+		ако (*tmp == '<') {
 			*cnv++ = '&';
 			*cnv++ = 'l';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '>') {
+		} инако ако (*tmp == '>') {
 			*cnv++ = '&';
 			*cnv++ = 'g';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '&') {
+		} инако ако (*tmp == '&') {
 			*cnv++ = '&';
 			*cnv++ = 'a';
 			*cnv++ = 'm';
 			*cnv++ = 'p';
 			*cnv++ = ';';
-		} else {
+		} инако {
 			*cnv++ = *tmp;
 		}
 	}
@@ -507,9 +507,9 @@ static char *gen_nice_title(char *path)
 	title_length = (cnv - nice_path) + strlen(messages_get("FileIndex"));
 	title = malloc(title_length + 1);
 
-	if (title == NULL) {
+	ако (title == NULL) {
 		free(nice_path);
-		return NULL;
+		врати NULL;
 	}
 
 	/* Set title to localised "Index of <nice_path>" */
@@ -517,7 +517,7 @@ static char *gen_nice_title(char *path)
 
 	free(nice_path);
 
-	return title;
+	врати title;
 }
 
 /**
@@ -545,31 +545,31 @@ process_dir_ent(struct fetch_file_context *ctx,
 	nsurl *url;
 
 	/* skip hidden files */
-	if (ent->d_name[0] == '.') {
-		return NSERROR_BAD_PARAMETER;
+	ако (ent->d_name[0] == '.') {
+		врати NSERROR_BAD_PARAMETER;
 	}
 
 	ret = netsurf_mkpath(&urlpath, NULL, 2, ctx->path, ent->d_name);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ако (ret != NSERROR_OK) {
+		врати ret;
 	}
 
-	if (stat(urlpath, &ent_stat) != 0) {
+	ако (stat(urlpath, &ent_stat) != 0) {
 		ent_stat.st_mode = 0;
 		datebuf[0] = 0;
 		timebuf[0] = 0;
-	} else {
+	} инако {
 		/* Get date in output format. a (day of week) and b
 		 * (month) are both affected by the locale
 		 */
-		if (strftime((char *)&datebuf, sizeof datebuf, "%a %d %b %Y",
+		ако (strftime((char *)&datebuf, sizeof datebuf, "%a %d %b %Y",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			datebuf[0] = '-';
 			datebuf[1] = 0;
 		}
 
 		/* Get time in output format */
-		if (strftime((char *)&timebuf, sizeof timebuf, "%H:%M",
+		ако (strftime((char *)&timebuf, sizeof timebuf, "%H:%M",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			timebuf[0] = '-';
 			timebuf[1] = 0;
@@ -577,12 +577,12 @@ process_dir_ent(struct fetch_file_context *ctx,
 	}
 
 	ret = guit->file->path_to_nsurl(urlpath, &url);
-	if (ret != NSERROR_OK) {
+	ако (ret != NSERROR_OK) {
 		free(urlpath);
-		return ret;
+		врати ret;
 	}
 
-	if (S_ISREG(ent_stat.st_mode)) {
+	ако (S_ISREG(ent_stat.st_mode)) {
 		/* regular file */
 		dirlist_generate_row(even,
 				     false,
@@ -592,7 +592,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 				     ent_stat.st_size,
 				     datebuf, timebuf,
 				     buffer, buffer_len);
-	} else if (S_ISDIR(ent_stat.st_mode)) {
+	} инако ако (S_ISDIR(ent_stat.st_mode)) {
 		/* directory */
 		dirlist_generate_row(even,
 				     true,
@@ -602,7 +602,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 				     -1,
 				     datebuf, timebuf,
 				     buffer, buffer_len);
-	} else {
+	} инако {
 		/* something else */
 		dirlist_generate_row(even,
 				     false,
@@ -617,7 +617,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 	nsurl_unref(url);
 	free(urlpath);
 
-	return NSERROR_OK;
+	врати NSERROR_OK;
 }
 
 /**
@@ -629,37 +629,37 @@ process_dir_ent(struct fetch_file_context *ctx,
  * \param d1 first directory entry
  * \param d2 second directory entry
  */
-static int dir_sort_alpha(const struct dirent **d1, const struct dirent **d2)
+static цео dir_sort_alpha(const struct dirent **d1, const struct dirent **d2)
 {
 	const char *s1 = (*d1)->d_name;
 	const char *s2 = (*d2)->d_name;
 
-	while (*s1 != '\0' && *s2 != '\0') {
-		if ((*s1 >= '0' && *s1 <= '9') &&
+	док (*s1 != '\0' && *s2 != '\0') {
+		ако ((*s1 >= '0' && *s1 <= '9') &&
 				(*s2 >= '0' && *s2 <= '9')) {
-			int n1 = 0,  n2 = 0;
-			while (*s1 >= '0' && *s1 <= '9') {
+			цео n1 = 0,  n2 = 0;
+			док (*s1 >= '0' && *s1 <= '9') {
 				n1 = n1 * 10 + (*s1) - '0';
 				s1++;
 			}
-			while (*s2 >= '0' && *s2 <= '9') {
+			док (*s2 >= '0' && *s2 <= '9') {
 				n2 = n2 * 10 + (*s2) - '0';
 				s2++;
 			}
-			if (n1 != n2) {
-				return n1 - n2;
+			ако (n1 != n2) {
+				врати n1 - n2;
 			}
-			if (*s1 == '\0' || *s2 == '\0')
+			ако (*s1 == '\0' || *s2 == '\0')
 				break;
 		}
-		if (tolower(*s1) != tolower(*s2))
+		ако (tolower(*s1) != tolower(*s2))
 			break;
 
 		s1++;
 		s2++;
 	}
 
-	return tolower(*s1) - tolower(*s2);
+	врати tolower(*s1) - tolower(*s2);
 }
 
 static void fetch_file_process_dir(struct fetch_file_context *ctx,
@@ -673,25 +673,25 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 	nsurl *up; /* url of parent */
 
 	struct dirent **listing = NULL; /* directory entry listing */
-	int i; /* directory entry index */
-	int n; /* number of directory entries */
+	цео i; /* directory entry index */
+	цео n; /* number of directory entries */
 
 	n = scandir(ctx->path, &listing, 0, dir_sort_alpha);
-	if (n < 0) {
+	ако (n < 0) {
 		fetch_file_process_error(ctx,
 			fetch_file_errno_to_http_code(errno));
-		return;
+		врати;
 	}
 
 	/* fetch is going to be successful */
 	fetch_set_http_code(ctx->fetchh, 200);
 
 	/* force no-cache */
-	if (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
+	ако (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
 		goto fetch_file_process_dir_aborted;
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+	ако (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_file_process_dir_aborted;
 
 	msg.type = FETCH_DATA;
@@ -700,7 +700,7 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 	/* directory listing top */
 	dirlist_generate_top(buffer, sizeof buffer);
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	ако (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	/* directory listing title */
@@ -708,13 +708,13 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 	dirlist_generate_title(title, buffer, sizeof buffer);
 	free(title);
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	ако (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	/* Print parent directory link */
 	err = nsurl_parent(ctx->url, &up);
-	if (err == NSERROR_OK) {
-		if (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
+	ако (err == NSERROR_OK) {
+		ако (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
 			/* different URL; have parent */
 			dirlist_generate_parent_link(nsurl_access(up),
 					buffer, sizeof buffer);
@@ -724,7 +724,7 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 		}
 		nsurl_unref(up);
 
-		if (ctx->aborted)
+		ако (ctx->aborted)
 			goto fetch_file_process_dir_aborted;
 
 	}
@@ -732,17 +732,17 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 	/* directory list headings */
 	dirlist_generate_headings(buffer, sizeof buffer);
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	ако (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_dir_aborted;
 
-	for (i = 0; i < n; i++) {
+	за (i = 0; i < n; i++) {
 
 		err = process_dir_ent(ctx, listing[i], even, buffer,
 				       sizeof(buffer));
 
-		if (err == NSERROR_OK) {
+		ако (err == NSERROR_OK) {
 			msg.data.header_or_data.len = strlen(buffer);
-			if (fetch_file_send_callback(&msg, ctx))
+			ако (fetch_file_send_callback(&msg, ctx))
 				goto fetch_file_process_dir_aborted;
 
 			even = !even;
@@ -752,7 +752,7 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 	/* directory listing bottom */
 	dirlist_generate_bottom(buffer, sizeof buffer);
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	ако (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	msg.type = FETCH_FINISHED;
@@ -760,8 +760,8 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 
 fetch_file_process_dir_aborted:
 
-	if (listing != NULL) {
-		for (i = 0; i < n; i++) {
+	ако (listing != NULL) {
+		за (i = 0; i < n; i++) {
 			free(listing[i]);
 		}
 		free(listing);
@@ -774,27 +774,27 @@ static void fetch_file_process(struct fetch_file_context *ctx)
 {
 	struct stat fdstat; /**< The objects stat */
 
-	if (stat(ctx->path, &fdstat) != 0) {
+	ако (stat(ctx->path, &fdstat) != 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		врати;
 	}
 
-	if (S_ISDIR(fdstat.st_mode)) {
+	ако (S_ISDIR(fdstat.st_mode)) {
 		/* directory listing */
 		fetch_file_process_dir(ctx, &fdstat);
-		return;
-	} else if (S_ISREG(fdstat.st_mode)) {
+		врати;
+	} инако ако (S_ISREG(fdstat.st_mode)) {
 		/* regular file */
 		fetch_file_process_plain(ctx, &fdstat);
-		return;
-	} else {
+		врати;
+	} инако {
 		/* unhandled type of file */
 		fetch_file_process_error(ctx, 501);
 	}
 
-	return;
+	врати;
 }
 
 /** callback to poll for additional file fetch contents */
@@ -802,7 +802,7 @@ static void fetch_file_poll(lwc_string *scheme)
 {
 	struct fetch_file_context *c, *save_ring = NULL;
 
-	while (ring != NULL) {
+	док (ring != NULL) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -813,13 +813,13 @@ static void fetch_file_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		ако (c->locked == true) {
 			RING_INSERT(save_ring, c);
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		ако (c->aborted == false) {
 			/* file fetches can be processed in one go */
 			fetch_file_process(c);
 		}
@@ -850,5 +850,5 @@ nserror fetch_file_register(void)
 		.finalise = fetch_file_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	врати fetcher_add(scheme, &fetcher_ops);
 }

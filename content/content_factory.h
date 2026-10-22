@@ -33,15 +33,15 @@ nserror HNAME##_init(void)						\
 	uint32_t i;							\
 	nserror error = NSERROR_OK;					\
 									\
-	for (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
+	за (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
 		error = content_factory_register_handler(		\
 			HTYPELIST[i],					\
 			&HHANDLER);					\
-		if (error != NSERROR_OK)				\
+		ако (error != NSERROR_OK)				\
 			break;						\
 	}								\
 									\
-	return error;							\
+	врати error;							\
 }
 
 struct content;

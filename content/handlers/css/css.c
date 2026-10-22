@@ -96,7 +96,7 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 		const char *url, const char *charset, bool quirks,
 		nscss_done_callback done, void *pw);
 static css_error nscss_process_css_data(struct content_css_data *c, const char *data,
-		unsigned int size);
+		unsigned цео size);
 static css_error nscss_convert_css_data(struct content_css_data *c);
 static void nscss_destroy_css_data(struct content_css_data *c);
 
@@ -143,48 +143,48 @@ nscss_create(const content_handler *handler,
 	nserror error;
 
 	result = calloc(1, sizeof(nscss_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	ако (result == NULL)
+		врати NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type,
 			params, llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	ако (error != NSERROR_OK) {
 		free(result);
-		return error;
+		врати error;
 	}
 
 	/* Find charset specified on HTTP layer, if any */
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
 			&charset_value);
-	if (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
+	ако (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
 		/* No charset specified, use fallback, if any */
 		/** \todo libcss will take this as gospel, which is wrong */
 		charset = fallback_charset;
-	} else {
+	} инако {
 		charset = lwc_string_data(charset_value);
 	}
 
 	/* Compute base URL for stylesheet */
 	xnsbase = llcache_handle_get_header(llcache, "X-NS-Base");
-	if (xnsbase == NULL) {
+	ако (xnsbase == NULL) {
 		xnsbase = nsurl_access(content_get_url(&result->base));
 	}
 
 	error = nscss_create_css_data(&result->data,
 			xnsbase, charset, result->base.quirks,
 			nscss_content_done, result);
-	if (error != NSERROR_OK) {
+	ако (error != NSERROR_OK) {
 		content_broadcast_error(&result->base, NSERROR_NOMEM, NULL);
 		lwc_string_unref(charset_value);
 		free(result);
-		return error;
+		врати error;
 	}
 
 	lwc_string_unref(charset_value);
 
 	*c = (struct content *) result;
 
-	return NSERROR_OK;
+	врати NSERROR_OK;
 }
 
 /**
@@ -210,9 +210,9 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	c->next_to_register = (uint32_t) -1;
 	c->import_count = 0;
 	c->imports = NULL;
-	if (charset != NULL)
+	ако (charset != NULL)
 		c->charset = strdup(charset);
-	else
+	инако
 		c->charset = NULL;
 
 	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
@@ -232,11 +232,11 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	params.font_pw = NULL;
 
 	error = css_stylesheet_create(&params, &c->sheet);
-	if (error != CSS_OK) {
-		return NSERROR_NOMEM;
+	ако (error != CSS_OK) {
+		врати NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	врати NSERROR_OK;
 }
 
 /**
@@ -248,17 +248,17 @@ static nserror nscss_create_css_data(struct content_css_data *c,
  * \return true on success, false on failure
  */
 static bool
-nscss_process_data(struct content *c, const char *data, unsigned int size)
+nscss_process_data(struct content *c, const char *data, unsigned цео size)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
 	error = nscss_process_css_data(&css->data, data, size);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	ако (error != CSS_OK && error != CSS_NEEDDATA) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
 	}
 
-	return (error == CSS_OK || error == CSS_NEEDDATA);
+	врати (error == CSS_OK || error == CSS_NEEDDATA);
 }
 
 /**
@@ -270,9 +270,9 @@ nscss_process_data(struct content *c, const char *data, unsigned int size)
  * \return CSS_OK on success, appropriate error otherwise
  */
 static css_error nscss_process_css_data(struct content_css_data *c,
-		const char *data, unsigned int size)
+		const char *data, unsigned цео size)
 {
-	return css_stylesheet_append_data(c->sheet,
+	врати css_stylesheet_append_data(c->sheet,
 			(const uint8_t *) data, size);
 }
 
@@ -288,12 +288,12 @@ bool nscss_convert(struct content *c)
 	css_error error;
 
 	error = nscss_convert_css_data(&css->data);
-	if (error != CSS_OK) {
+	ако (error != CSS_OK) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
-		return false;
+		врати false;
 	}
 
-	return true;
+	врати true;
 }
 
 /**
@@ -309,7 +309,7 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
 	error = css_stylesheet_data_done(c->sheet);
 
 	/* Process pending imports */
-	if (error == CSS_IMPORTS_PENDING) {
+	ако (error == CSS_IMPORTS_PENDING) {
 		/* We must not have registered any imports yet */
 		assert(c->next_to_register == (uint32_t) -1);
 
@@ -317,22 +317,22 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
 		 * hasn't finished fetching */
 		c->next_to_register = 0;
 		error = nscss_register_imports(c);
-	} else if (error == CSS_OK) {
+	} инако ако (error == CSS_OK) {
 		/* No imports, and no errors, so complete conversion */
 		c->done(c, c->pw);
-	} else {
+	} инако {
 		const char *url;
 
-		if (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
+		ако (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
 			NSLOG(netsurf, INFO, "Failed converting %p %s (%d)",
 			      c, url, error);
-		} else {
+		} инако {
 			NSLOG(netsurf, INFO, "Failed converting %p (%d)", c,
 			      error);
 		}
 	}
 
-	return error;
+	врати error;
 }
 
 /**
@@ -356,8 +356,8 @@ static void nscss_destroy_css_data(struct content_css_data *c)
 {
 	uint32_t i;
 
-	for (i = 0; i < c->import_count; i++) {
-		if (c->imports[i].c != NULL) {
+	за (i = 0; i < c->import_count; i++) {
+		ако (c->imports[i].c != NULL) {
 			hlcache_handle_release(c->imports[i].c);
 		}
 		c->imports[i].c = NULL;
@@ -365,7 +365,7 @@ static void nscss_destroy_css_data(struct content_css_data *c)
 
 	free(c->imports);
 
-	if (c->sheet != NULL) {
+	ако (c->sheet != NULL) {
 		css_stylesheet_destroy(c->sheet);
 		c->sheet = NULL;
 	}
@@ -382,14 +382,14 @@ nserror nscss_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	new_css = calloc(1, sizeof(nscss_content));
-	if (new_css == NULL)
-		return NSERROR_NOMEM;
+	ако (new_css == NULL)
+		врати NSERROR_NOMEM;
 
 	/* Clone content */
 	error = content__clone(old, &new_css->base);
-	if (error != NSERROR_OK) {
+	ако (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		врати error;
 	}
 
 	/* Simply replay create/process/convert */
@@ -398,37 +398,37 @@ nserror nscss_clone(const struct content *old, struct content **newc)
 			old_css->data.charset,
 			new_css->base.quirks,
 			nscss_content_done, new_css);
-	if (error != NSERROR_OK) {
+	ако (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		врати error;
 	}
 
 	data = content__get_source_data(&new_css->base, &size);
-	if (size > 0) {
-		if (nscss_process_data(&new_css->base,
+	ако (size > 0) {
+		ако (nscss_process_data(&new_css->base,
 				       (char *)data,
-				       (unsigned int)size) == false) {
+				       (unsigned цео)size) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			врати NSERROR_CLONE_FAILED;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	ако (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nscss_convert(&new_css->base) == false) {
+		ако (nscss_convert(&new_css->base) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			врати NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = (struct content *) new_css;
 
-	return NSERROR_OK;
+	врати NSERROR_OK;
 }
 
 bool nscss_matches_quirks(const struct content *c, bool quirks)
 {
-	return c->quirks == quirks;
+	врати c->quirks == quirks;
 }
 
 /* exported interface documented in netsurf/css.h */
@@ -438,7 +438,7 @@ css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h)
 
 	assert(c != NULL);
 
-	return c->data.sheet;
+	врати c->data.sheet;
 }
 
 /* exported interface documented in netsurf/css.h */
@@ -451,7 +451,7 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
 
 	*n = c->data.import_count;
 
-	return c->data.imports;
+	врати c->data.imports;
 }
 
 /**
@@ -461,7 +461,7 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
  */
 content_type nscss_content_type(void)
 {
-	return CONTENT_CSS;
+	врати CONTENT_CSS;
 }
 
 /*****************************************************************************
@@ -483,20 +483,20 @@ void nscss_content_done(struct content_css_data *css, void *pw)
 
 	/* Retrieve the size of this sheet */
 	error = css_stylesheet_size(css->sheet, &size);
-	if (error != CSS_OK) {
+	ако (error != CSS_OK) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
 		content_set_error(c);
-		return;
+		врати;
 	}
 	c->size += size;
 
 	/* Add on the size of the imported sheets */
-	for (i = 0; i < css->import_count; i++) {
-		if (css->imports[i].c != NULL) {
+	за (i = 0; i < css->import_count; i++) {
+		ако (css->imports[i].c != NULL) {
 			struct content *import = hlcache_handle_get_content(
 					css->imports[i].c);
 
-			if (import != NULL) {
+			ако (import != NULL) {
 				c->size += import->size;
 			}
 		}
@@ -537,13 +537,13 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 	assert(parent == c->sheet);
 
 	error = css_stylesheet_get_url(c->sheet, &referer);
-	if (error != CSS_OK) {
-		return error;
+	ако (error != CSS_OK) {
+		врати error;
 	}
 
 	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL)
-		return CSS_NOMEM;
+	ако (ctx == NULL)
+		врати CSS_NOMEM;
 
 	ctx->css = c;
 	ctx->index = c->import_count;
@@ -551,51 +551,51 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 	/* Increase space in table */
 	imports = realloc(c->imports, (c->import_count + 1) *
 			sizeof(struct nscss_import));
-	if (imports == NULL) {
+	ако (imports == NULL) {
 		free(ctx);
-		return CSS_NOMEM;
+		врати CSS_NOMEM;
 	}
 	c->imports = imports;
 
 	/** \todo fallback charset */
 	child.charset = NULL;
 	error = css_stylesheet_quirks_allowed(c->sheet, &child.quirks);
-	if (error != CSS_OK) {
+	ако (error != CSS_OK) {
 		free(ctx);
-		return error;
+		врати error;
 	}
 
 	/* Create content */
 
 	/** \todo Why aren't we getting a relative url part, to join? */
 	nerror = nsurl_create(lwc_string_data(url), &ns_url);
-	if (nerror != NSERROR_OK) {
+	ако (nerror != NSERROR_OK) {
 		free(ctx);
-		return CSS_NOMEM;
+		врати CSS_NOMEM;
 	}
 
 	/** \todo Constructing nsurl for referer here is silly, avoid */
 	nerror = nsurl_create(referer, &ns_ref);
-	if (nerror != NSERROR_OK) {
+	ако (nerror != NSERROR_OK) {
 		nsurl_unref(ns_url);
 		free(ctx);
-		return CSS_NOMEM;
+		врати CSS_NOMEM;
 	}
 
 	/* Avoid importing ourself */
-	if (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
+	ако (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
 		c->imports[c->import_count].c = NULL;
 		/* No longer require context as we're not fetching anything */
 		free(ctx);
 		ctx = NULL;
-	} else {
+	} инако {
 		nerror = hlcache_handle_retrieve(ns_url,
 				0, ns_ref, NULL, nscss_import, ctx,
 				&child, accept,
 				&c->imports[c->import_count].c);
-		if (nerror != NSERROR_OK) {
+		ако (nerror != NSERROR_OK) {
 			free(ctx);
-			return CSS_NOMEM;
+			врати CSS_NOMEM;
 		}
 	}
 
@@ -610,7 +610,7 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 
 	c->import_count++;
 
-	return CSS_OK;
+	врати CSS_OK;
 }
 
 /**
@@ -650,7 +650,7 @@ nserror nscss_import(hlcache_handle *handle,
 	}
 
 	/* Preserve out-of-memory. Anything else is OK */
-	return error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
+	врати error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
 }
 
 /**
@@ -664,7 +664,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	css_error error = CSS_OK;
 
 	/* If this import is the next to be registered, do so */
-	if (ctx->css->next_to_register == ctx->index)
+	ако (ctx->css->next_to_register == ctx->index)
 		error = nscss_register_imports(ctx->css);
 
 #ifdef NSCSS_IMPORT_TRACE
@@ -675,7 +675,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	/* No longer need import context */
 	free(ctx);
 
-	return error;
+	врати error;
 }
 
 /*****************************************************************************
@@ -697,31 +697,31 @@ css_error nscss_register_imports(struct content_css_data *c)
 	assert(c->next_to_register < c->import_count);
 
 	/* Register imported sheets */
-	for (index = c->next_to_register; index < c->import_count; index++) {
+	за (index = c->next_to_register; index < c->import_count; index++) {
 		/* Stop registering if we encounter one whose fetch hasn't
 		 * completed yet. We'll resume at this point when it has
 		 * completed.
 		 */
-		if (c->imports[index].c != NULL &&
+		ако (c->imports[index].c != NULL &&
 			content_get_status(c->imports[index].c) !=
 				CONTENT_STATUS_DONE) {
 			break;
 		}
 
 		error = nscss_register_import(c, c->imports[index].c);
-		if (error != CSS_OK)
-			return error;
+		ако (error != CSS_OK)
+			врати error;
 	}
 
 	/* Record identity of the next import to register */
 	c->next_to_register = (uint32_t) index;
 
-	if (c->next_to_register == c->import_count) {
+	ако (c->next_to_register == c->import_count) {
 		/* No more imports: notify parent that we're DONE */
 		c->done(c, c->pw);
 	}
 
-	return CSS_OK;
+	врати CSS_OK;
 }
 
 
@@ -738,13 +738,13 @@ css_error nscss_register_import(struct content_css_data *c,
 	css_stylesheet *sheet;
 	css_error error;
 
-	if (import != NULL) {
+	ако (import != NULL) {
 		nscss_content *s =
 			(nscss_content *) hlcache_handle_get_content(import);
 		sheet = s->data.sheet;
-	} else {
+	} инако {
 		/* Create a blank sheet if needed. */
-		if (blank_import == NULL) {
+		ако (blank_import == NULL) {
 			css_stylesheet_params params;
 
 			params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
@@ -764,14 +764,14 @@ css_error nscss_register_import(struct content_css_data *c,
 			params.font_pw = NULL;
 
 			error = css_stylesheet_create(&params, &blank_import);
-			if (error != CSS_OK) {
-				return error;
+			ако (error != CSS_OK) {
+				врати error;
 			}
 
 			error = css_stylesheet_data_done(blank_import);
-			if (error != CSS_OK) {
+			ако (error != CSS_OK) {
 				css_stylesheet_destroy(blank_import);
-				return error;
+				врати error;
 			}
 		}
 
@@ -779,11 +779,11 @@ css_error nscss_register_import(struct content_css_data *c,
 	}
 
 	error = css_stylesheet_register_import(c->sheet, sheet);
-	if (error != CSS_OK) {
-		return error;
+	ако (error != CSS_OK) {
+		врати error;
 	}
 
-	return error;
+	врати error;
 }
 
 /**
@@ -791,7 +791,7 @@ css_error nscss_register_import(struct content_css_data *c,
  */
 static void nscss_fini(void)
 {
-	if (blank_import != NULL) {
+	ако (blank_import != NULL) {
 		css_stylesheet_destroy(blank_import);
 		blank_import = NULL;
 	}
@@ -817,17 +817,17 @@ nserror nscss_init(void)
 
 	error = content_factory_register_handler("text/css",
 			&css_content_handler);
-	if (error != NSERROR_OK)
+	ако (error != NSERROR_OK)
 		goto error;
 
 	error = css_hint_init();
-	if (error != NSERROR_OK)
+	ако (error != NSERROR_OK)
 		goto error;
 
-	return NSERROR_OK;
+	врати NSERROR_OK;
 
 error:
 	nscss_fini();
 
-	return error;
+	врати error;
 }

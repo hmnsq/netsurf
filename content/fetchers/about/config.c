@@ -41,9 +41,9 @@
 bool fetch_about_config_handler(struct fetch_about_context *ctx)
 {
 	char buffer[1024];
-	int slen = 0;
-	unsigned int opt_loop = 0;
-	int elen = 0; /* entry length */
+	цео slen = 0;
+	unsigned цео opt_loop = 0;
+	цео elen = 0; /* entry length */
 	nserror res;
 	bool even = false;
 
@@ -51,7 +51,7 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html")) {
+	ако (fetch_about_send_header(ctx, "Content-Type: text/html")) {
 		goto fetch_about_config_handler_aborted;
 	}
 
@@ -71,13 +71,13 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 			"<th>Type</th>"
 			"<th>Provenance</th>"
 			"<th>Setting</th></tr>\n");
-	if (res != NSERROR_OK) {
+	ако (res != NSERROR_OK) {
 		goto fetch_about_config_handler_aborted;
 	}
 
 
 	do {
-		if (even) {
+		ако (even) {
 			elen = nsoption_snoptionf(buffer + slen,
 					sizeof buffer - slen,
 					opt_loop,
@@ -87,7 +87,7 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 						"<td class=\"ns-border\">%p</td>"
 						"<td class=\"ns-border\">%V</td>"
 					"</tr>\n");
-		} else {
+		} инако {
 			elen = nsoption_snoptionf(buffer + slen,
 					sizeof buffer - slen,
 					opt_loop,
@@ -98,36 +98,36 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 						"<td class=\"ns-border\">%V</td>"
 					"</tr>\n");
 		}
-		if (elen <= 0)
+		ако (elen <= 0)
 			break; /* last option */
 
-		if (elen >= (int) (sizeof buffer - slen)) {
+		ако (elen >= (цео) (sizeof buffer - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
 			res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-			if (res != NSERROR_OK) {
+			ако (res != NSERROR_OK) {
 				goto fetch_about_config_handler_aborted;
 			}
 			slen = 0;
-		} else {
+		} инако {
 			/* normal addition */
 			slen += elen;
 			opt_loop++;
 			even = !even;
 		}
-	} while (elen > 0);
+	} док (elen > 0);
 
 	slen += snprintf(buffer + slen, sizeof buffer - slen,
 			 "</table>\n</body>\n</html>\n");
 
 	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
+	ако (res != NSERROR_OK) {
 		goto fetch_about_config_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	врати true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	врати false;
 }

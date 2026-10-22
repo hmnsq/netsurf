@@ -36,10 +36,10 @@ void js_finalise(void)
 {
 }
 
-nserror js_newheap(int timeout, jsheap **heap)
+nserror js_newheap(цео timeout, jsheap **heap)
 {
 	*heap = NULL;
-	return NSERROR_OK;
+	врати NSERROR_OK;
 }
 
 void js_destroyheap(jsheap *heap)
@@ -49,12 +49,12 @@ void js_destroyheap(jsheap *heap)
 nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
 {
 	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	врати NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	врати NSERROR_OK;
 }
 
 void js_destroythread(jsthread *thread)
@@ -63,12 +63,12 @@ void js_destroythread(jsthread *thread)
 
 bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
 {
-	return true;
+	врати true;
 }
 
 bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
 {
-	return true;
+	врати true;
 }
 
 void js_handle_new_element(jsthread *thread, struct dom_element *node)
