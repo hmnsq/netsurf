@@ -19,12 +19,12 @@
 #ifndef NETSURF_CSS_HINTS_H_
 #define NETSURF_CSS_HINTS_H_
 
-#include <stdint.h>
+#ضمن <stdint.h>
 
-#include <libcss/libcss.h>
+#ضمن <libcss/libcss.h>
 
-nserror css_hint_init(void);
-void css_hint_fini(void);
+nserror css_hint_init(فراغ);
+فراغ css_hint_fini(فراغ);
 
 /**
  * Callback to retrieve presentational hints for a node
@@ -38,8 +38,8 @@ void css_hint_fini(void);
  *         CSS_NOMEM            on memory exhaustion.
  */
 css_error node_presentational_hint(
-		void *pw,
-		void *node,
+		فراغ *pw,
+		فراغ *node,
 		uint32_t *nhints,
 		css_hint **hints);
 
@@ -50,6 +50,6 @@ css_error node_presentational_hint(
  * \param result  Pointer to location to receive resulting css_color
  * \return true on success, false on invalid input
  */
-bool nscss_parse_colour(const char *data, css_color *result);
+bool nscss_parse_colour(ثابت حرف *data, css_color *result);
 
 #endif

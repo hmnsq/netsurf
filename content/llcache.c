@@ -31,34 +31,34 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <nsutils/time.h>
-#include <nsutils/base64.h>
+#ضمن <stdlib.h>
+#ضمن <stdint.h>
+#ضمن <string.h>
+#ضمن <strings.h>
+#ضمن <nsutils/time.h>
+#ضمن <nsutils/base64.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "utils/time.h"
-#include "utils/http.h"
-#include "utils/nsoption.h"
-#include "netsurf/misc.h"
-#include "desktop/gui_internal.h"
+#ضمن "netsurf/inttypes.h"
+#ضمن "utils/config.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/nsurl.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/time.h"
+#ضمن "utils/http.h"
+#ضمن "utils/nsoption.h"
+#ضمن "netsurf/misc.h"
+#ضمن "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/backing_store.h"
-#include "content/urldb.h"
+#ضمن "content/fetch.h"
+#ضمن "content/backing_store.h"
+#ضمن "content/urldb.h"
 
 /**
  * State of a low-level cache object fetch.
  */
-typedef enum {
+تعريفنوع تعداد {
 	LLCACHE_FETCH_INIT,		/**< Initial state, before fetch */
 	LLCACHE_FETCH_HEADERS,		/**< Fetching headers */
 	LLCACHE_FETCH_DATA,		/**< Fetching object data */
@@ -68,16 +68,16 @@ typedef enum {
 /**
  * Type of low-level cache object.
  */
-typedef struct llcache_object llcache_object;
+تعريفنوع بنية llcache_object llcache_object;
 
 /**
  * Handle to low-level cache object.
  */
-struct llcache_handle {
+بنية llcache_handle {
 	llcache_object *object;		/**< Pointer to associated object */
 
 	llcache_handle_callback cb;	/**< Client callback */
-	void *pw;			/**< Client data */
+	فراغ *pw;			/**< Client data */
 
 	llcache_fetch_state state;	/**< Last known state of object fetch */
 	size_t bytes;			/**< Last reported byte count */
@@ -86,25 +86,25 @@ struct llcache_handle {
 /**
  * Low-level cache object user record.
  */
-typedef struct llcache_object_user {
+تعريفنوع بنية llcache_object_user {
 	llcache_handle *handle;		/**< Handle data for client */
 
 	bool iterator_target;		/**< This is the iterator target */
 	bool queued_for_delete;		/**< This user is queued for deletion */
 
-	struct llcache_object_user *prev;	/**< Previous in list */
-	struct llcache_object_user *next;	/**< Next in list */
+	بنية llcache_object_user *prev;	/**< Previous in list */
+	بنية llcache_object_user *next;	/**< Next in list */
 } llcache_object_user;
 
 /**
  * Low-level cache object fetch context.
  */
-typedef struct {
+تعريفنوع بنية {
 	uint32_t flags;			/**< Fetch flags */
 	nsurl *referer;			/**< Referring URL, or NULL if none */
 	llcache_post_data *post;	/**< POST data, or NULL for GET */
 
-	struct fetch *fetch;		/**< Fetch handle for this object */
+	بنية fetch *fetch;		/**< Fetch handle for this object */
 
 	llcache_fetch_state state;	/**< Current state of object fetch */
 
@@ -124,7 +124,7 @@ typedef struct {
 /**
  * Validation control.
  */
-typedef enum {
+تعريفنوع تعداد {
 	LLCACHE_VALIDATE_FRESH,		/**< Only revalidate if not fresh */
 	LLCACHE_VALIDATE_ALWAYS,	/**< Always revalidate */
 	LLCACHE_VALIDATE_ONCE		/**< Revalidate once only */
@@ -136,27 +136,27 @@ typedef enum {
 #define INVALID_AGE -1
 
 /** Cache control data */
-typedef struct {
+تعريفنوع بنية {
 	time_t req_time;	/**< Time of request */
 	time_t res_time;	/**< Time of response */
 	time_t fin_time;	/**< Time of request completion */
 	time_t date;		/**< Date: response header */
 	time_t expires;		/**< Expires: response header */
-	int age;		/**< Age: response header */
-	int max_age;		/**< Max-Age Cache-control parameter */
+	صحيح age;		/**< Age: response header */
+	صحيح max_age;		/**< Max-Age Cache-control parameter */
 	llcache_validate no_cache;	/**< No-Cache Cache-control parameter */
-	char *etag;		/**< Etag: response header */
+	حرف *etag;		/**< Etag: response header */
 	time_t last_modified;	/**< Last-Modified: response header */
 } llcache_cache_control;
 
 /** Representation of a fetch header */
-typedef struct {
-	char *name;		/**< Header name */
-	char *value;		/**< Header value */
+تعريفنوع بنية {
+	حرف *name;		/**< Header name */
+	حرف *value;		/**< Header value */
 } llcache_header;
 
 /** Current status of an object's data */
-typedef enum {
+تعريفنوع تعداد {
 	LLCACHE_STATE_RAM = 0, /**< source data is stored in RAM only */
 	LLCACHE_STATE_DISC, /**< source data is stored on disc */
 } llcache_store_state;
@@ -166,7 +166,7 @@ typedef enum {
  *
  * \todo Consider whether a list is a sane container.
  */
-struct llcache_object {
+بنية llcache_object {
 	llcache_object *prev;	     /**< Previous in list */
 	llcache_object *next;	     /**< Next in list */
 
@@ -177,7 +177,7 @@ struct llcache_object {
 	size_t source_len;	     /**< Byte length of source data */
 	size_t source_alloc;	     /**< Allocated size of source buffer */
 
-	struct cert_chain *chain;    /**< Certificate chain from the fetch */
+	بنية cert_chain *chain;    /**< Certificate chain from the fetch */
 
 	llcache_store_state store_state; /**< where the data for the object is stored */
 
@@ -207,7 +207,7 @@ struct llcache_object {
 /**
  * Core llcache control context.
  */
-struct llcache_s {
+بنية llcache_s {
 	/** Head of the low-level cached object list */
 	llcache_object *cached_objects;
 
@@ -231,7 +231,7 @@ struct llcache_s {
 	 * The minimum lifetime to consider sending objects to backing
 	 * store.
 	 */
-	int minimum_lifetime;
+	صحيح minimum_lifetime;
 
 	/**
 	 * The time over which to apply the bandwidth calculations in ms
@@ -264,13 +264,13 @@ struct llcache_s {
 };
 
 /** low level cache state */
-static struct llcache_s *llcache = NULL;
+ساكن بنية llcache_s *llcache = عدم;
 
 /* forward referenced callback function */
-static void llcache_fetch_callback(const fetch_msg *msg, void *p);
+ساكن فراغ llcache_fetch_callback(ثابت fetch_msg *msg, فراغ *p);
 
 /* forward referenced catch up function */
-static void llcache_users_not_caught_up(void);
+ساكن فراغ llcache_users_not_caught_up(فراغ);
 
 
 /******************************************************************************
@@ -285,21 +285,21 @@ static void llcache_users_not_caught_up(void);
  * \param user Pointer to location to receive result.
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_user_new(llcache_handle_callback cb, void *pw,
+ساكن nserror llcache_object_user_new(llcache_handle_callback cb, فراغ *pw,
 		llcache_object_user **user)
 {
 	llcache_handle *h;
 	llcache_object_user *u;
 
-	h = calloc(1, sizeof(llcache_handle));
-	if (h == NULL) {
-		return NSERROR_NOMEM;
+	h = calloc(1, حجم(llcache_handle));
+	אם (h == عدم) {
+		החזר NSERROR_NOMEM;
 	}
 
-	u = calloc(1, sizeof(llcache_object_user));
-	if (u == NULL) {
-		free(h);
-		return NSERROR_NOMEM;
+	u = calloc(1, حجم(llcache_object_user));
+	אם (u == عدم) {
+		حرر(h);
+		החזר NSERROR_NOMEM;
 	}
 
 	h->cb = cb;
@@ -308,11 +308,11 @@ static nserror llcache_object_user_new(llcache_handle_callback cb, void *pw,
 	u->handle = h;
 
 	NSLOG(llcache, DEBUG,
-	      "Created user %p (%p, %p, %p)", u, h, (void *) cb, pw);
+	      "Created user %p (%p, %p, %p)", u, h, (فراغ *) cb, pw);
 
 	*user = u;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -323,19 +323,19 @@ static nserror llcache_object_user_new(llcache_handle_callback cb, void *pw,
  *
  * \pre User is not attached to an object
  */
-static nserror llcache_object_user_destroy(llcache_object_user *user)
+ساكن nserror llcache_object_user_destroy(llcache_object_user *user)
 {
 	NSLOG(llcache, DEBUG, "Destroyed user %p", user);
 
-	assert(user->next == NULL);
-	assert(user->prev == NULL);
+	أكد(user->next == عدم);
+	أكد(user->prev == عدم);
 
-	if (user->handle != NULL)
-		free(user->handle);
+	אם (user->handle != عدم)
+		حرر(user->handle);
 
-	free(user);
+	حرر(user);
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -345,33 +345,33 @@ static nserror llcache_object_user_destroy(llcache_object_user *user)
  * \param user	  User to remove
  * \return NSERROR_OK.
  */
-static nserror llcache_object_remove_user(llcache_object *object,
+ساكن nserror llcache_object_remove_user(llcache_object *object,
 		llcache_object_user *user)
 {
-	assert(user != NULL);
-	assert(object != NULL);
-	assert(object->users != NULL);
-	assert(user->handle == NULL || user->handle->object == object);
-	assert((user->prev != NULL) || (object->users == user));
+	أكد(user != عدم);
+	أكد(object != عدم);
+	أكد(object->users != عدم);
+	أكد(user->handle == عدم || user->handle->object == object);
+	أكد((user->prev != عدم) || (object->users == user));
 
-	if (user == object->users)
+	אם (user == object->users)
 		object->users = user->next;
-	else
+	אחרת
 		user->prev->next = user->next;
 
-	if (user->next != NULL)
+	אם (user->next != عدم)
 		user->next->prev = user->prev;
 
-	user->next = user->prev = NULL;
+	user->next = user->prev = عدم;
 
 	/* record the time the last user was removed from the object */
-	if (object->users == NULL) {
-		object->last_used = time(NULL);
+	אם (object->users == عدم) {
+		object->last_used = time(عدم);
 	}
 
 	NSLOG(llcache, DEBUG, "Removing user %p from %p", user, object);
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -381,14 +381,14 @@ static nserror llcache_object_remove_user(llcache_object *object,
  * \param event		The event to pass to the callback.
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-static nserror llcache_send_event_to_users(llcache_object *object,
+ساكن nserror llcache_send_event_to_users(llcache_object *object,
 					   llcache_event *event)
 {
 	nserror error = NSERROR_OK;
 	llcache_object_user *user, *next_user;
 
 	user = object->users;
-	while (user != NULL) {
+	כלעוד (user != عدم) {
 		bool was_target = user->iterator_target;
 		user->iterator_target = true;
 
@@ -399,18 +399,18 @@ static nserror llcache_send_event_to_users(llcache_object *object,
 
 		user->iterator_target = was_target;
 
-		if (user->queued_for_delete && !was_target) {
+		אם (user->queued_for_delete && !was_target) {
 			llcache_object_remove_user(object, user);
 			llcache_object_user_destroy(user);
 		}
 
-		if (error != NSERROR_OK)
-			break;
+		אם (error != NSERROR_OK)
+			اكسر;
 
 		user = next_user;
 	}
 
-	return error;
+	החזר error;
 }
 
 /**
@@ -420,11 +420,11 @@ static nserror llcache_send_event_to_users(llcache_object *object,
  * \param result  Pointer to location to receive result
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_new(nsurl *url, llcache_object **result)
+ساكن nserror llcache_object_new(nsurl *url, llcache_object **result)
 {
-	llcache_object *obj = calloc(1, sizeof(llcache_object));
-	if (obj == NULL)
-		return NSERROR_NOMEM;
+	llcache_object *obj = calloc(1, حجم(llcache_object));
+	אם (obj == عدم)
+		החזר NSERROR_NOMEM;
 
 	NSLOG(llcache, DEBUG, "Created object %p (%s)", obj, nsurl_access(url));
 
@@ -432,7 +432,7 @@ static nserror llcache_object_new(nsurl *url, llcache_object **result)
 
 	*result = obj;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -442,38 +442,38 @@ static nserror llcache_object_new(nsurl *url, llcache_object **result)
  * \param clone	 Pointer to location to receive clone
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_post_data_clone(const llcache_post_data *orig,
+ساكن nserror llcache_post_data_clone(ثابت llcache_post_data *orig,
 		llcache_post_data **clone)
 {
 	llcache_post_data *post_clone;
 
-	post_clone = calloc(1, sizeof(llcache_post_data));
-	if (post_clone == NULL)
-		return NSERROR_NOMEM;
+	post_clone = calloc(1, حجم(llcache_post_data));
+	אם (post_clone == عدم)
+		החזר NSERROR_NOMEM;
 
 	post_clone->type = orig->type;
 
 	/* Deep-copy the type-specific data */
-	if (orig->type == LLCACHE_POST_URL_ENCODED) {
+	אם (orig->type == LLCACHE_POST_URL_ENCODED) {
 		post_clone->data.urlenc = strdup(orig->data.urlenc);
-		if (post_clone->data.urlenc == NULL) {
-			free(post_clone);
+		אם (post_clone->data.urlenc == عدم) {
+			حرر(post_clone);
 
-			return NSERROR_NOMEM;
+			החזר NSERROR_NOMEM;
 		}
-	} else {
+	} אחרת {
 		post_clone->data.multipart = fetch_multipart_data_clone(
 				orig->data.multipart);
-		if (post_clone->data.multipart == NULL) {
-			free(post_clone);
+		אם (post_clone->data.multipart == عدم) {
+			حرر(post_clone);
 
-			return NSERROR_NOMEM;
+			החזר NSERROR_NOMEM;
 		}
 	}
 
 	*clone = post_clone;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -493,82 +493,82 @@ static nserror llcache_post_data_clone(const llcache_post_data *orig,
  * \param value	 Pointer to location to receive header value
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
-		char **name, char **value)
+ساكن nserror llcache_fetch_split_header(ثابت uint8_t *data, size_t len,
+		حرف **name, حرف **value)
 {
-	char *n, *v;
-	const uint8_t *colon;
+	حرف *n, *v;
+	ثابت uint8_t *colon;
 
 	/* Strip leading whitespace from name */
-	while (data[0] == ' ' || data[0] == '\t' ||
+	כלעוד (data[0] == ' ' || data[0] == '\t' ||
 	       data[0] == '\r' || data[0] == '\n') {
 		data++;
 	}
 
 	/* Find colon */
-	colon = (const uint8_t *) strchr((const char *) data, ':');
-	if (colon == NULL) {
+	colon = (ثابت uint8_t *) strchr((ثابت حرف *) data, ':');
+	אם (colon == عدم) {
 		/* Failed, assume a key with no value */
-		colon = data + strlen((const char *)data);
+		colon = data + strlen((ثابت حرف *)data);
 
 		/* Strip trailing whitespace from name */
-		while ((colon > data) &&
+		כלעוד ((colon > data) &&
 		       (colon[-1] == ' ' || colon[-1] == '\t' ||
 			colon[-1] == '\r' || colon[-1] == '\n')) {
 			colon--;
 		}
-		n = strndup((const char *) data, colon - data);
-		if (n == NULL)
-			return NSERROR_NOMEM;
+		n = strndup((ثابت حرف *) data, colon - data);
+		אם (n == عدم)
+			החזר NSERROR_NOMEM;
 
 		v = strdup("");
-		if (v == NULL) {
-			free(n);
-			return NSERROR_NOMEM;
+		אם (v == عدم) {
+			حرر(n);
+			החזר NSERROR_NOMEM;
 		}
-	} else {
+	} אחרת {
 		/* Split header into name & value */
 
 		/* Strip trailing whitespace from name */
-		while (colon > data && (colon[-1] == ' ' ||
+		כלעוד (colon > data && (colon[-1] == ' ' ||
 				colon[-1] == '\t' || colon[-1] == '\r' ||
 				colon[-1] == '\n'))
 			colon--;
 
-		n = strndup((const char *) data, colon - data);
-		if (n == NULL)
-			return NSERROR_NOMEM;
+		n = strndup((ثابت حرف *) data, colon - data);
+		אם (n == عدم)
+			החזר NSERROR_NOMEM;
 
 		/* Find colon again */
-		while (*colon != ':') {
+		כלעוד (*colon != ':') {
 			colon++;
 		}
 
 		/* Skip over colon and any subsequent whitespace */
-		do {
+		עשה {
 			colon++;
-		} while (*colon == ' ' || *colon == '\t' ||
+		} כלעוד (*colon == ' ' || *colon == '\t' ||
 				*colon == '\r' || *colon == '\n');
 
 		/* Strip trailing whitespace from value */
-		while (len > 0 && (data[len - 1] == ' ' ||
+		כלעוד (len > 0 && (data[len - 1] == ' ' ||
 				data[len - 1] == '\t' ||
 				data[len - 1] == '\r' ||
 				data[len - 1] == '\n')) {
 			len--;
 		}
 
-		v = strndup((const char *) colon, len - (colon - data));
-		if (v == NULL) {
-			free(n);
-			return NSERROR_NOMEM;
+		v = strndup((ثابت حرف *) colon, len - (colon - data));
+		אם (v == عدم) {
+			حرر(n);
+			החזר NSERROR_NOMEM;
 		}
 	}
 
 	*name = n;
 	*value = v;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -578,19 +578,19 @@ static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
  * \param value header value
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
-llcache_fetch_parse_cache_control(llcache_object *object, char *value)
+ساكن nserror
+llcache_fetch_parse_cache_control(llcache_object *object, حرف *value)
 {
 	http_cache_control *cc;
 	nserror error;
 
 	error = http_parse_cache_control(value, &cc);
-	if (error != NSERROR_OK) {
+	אם (error != NSERROR_OK) {
 		/* Ignore parse errors */
-		return NSERROR_OK;
+		החזר NSERROR_OK;
 	}
 
-	if (http_cache_control_no_cache(cc) ||
+	אם (http_cache_control_no_cache(cc) ||
 			http_cache_control_no_store(cc)) {
 		/**
 		 * \todo When we get a disk cache we should
@@ -599,13 +599,13 @@ llcache_fetch_parse_cache_control(llcache_object *object, char *value)
 		object->cache.no_cache = LLCACHE_VALIDATE_ALWAYS;
 	}
 
-	if (http_cache_control_has_max_age(cc)) {
+	אם (http_cache_control_has_max_age(cc)) {
 		object->cache.max_age = http_cache_control_max_age(cc);
 	}
 
 	http_cache_control_destroy(cc);
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -616,10 +616,10 @@ llcache_fetch_parse_cache_control(llcache_object *object, char *value)
  * \param value header value
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+ساكن nserror
 llcache_fetch_header_cache_control(llcache_object *object,
-				   char *name,
-				   char *value)
+				   حرف *name,
+				   حرف *value)
 {
 	nserror res;
 	size_t name_len;
@@ -627,69 +627,69 @@ llcache_fetch_header_cache_control(llcache_object *object,
 	/* Parse cache headers to populate cache control data */
 	name_len = strlen(name);
 
-	switch (name_len) {
-	case 3:
-		if (strcasecmp(name, "Age") == 0) {
+	بدل (name_len) {
+	حالة 3:
+		אם (strcasecmp(name, "Age") == 0) {
 			/* extract Age header */
-			if ('0' <= *value && *value <= '9') {
+			אם ('0' <= *value && *value <= '9') {
 				object->cache.age = atoi(value);
 			}
 
 		}
-		break;
+		اكسر;
 
-	case 4:
-		if (strcasecmp(name, "Date") == 0) {
+	حالة 4:
+		אם (strcasecmp(name, "Date") == 0) {
 			/* extract Date header */
 			res = nsc_strntimet(value,
 					    strlen(value),
 					    &object->cache.date);
-			if (res != NSERROR_OK) {
+			אם (res != NSERROR_OK) {
 				NSLOG(llcache, INFO,
 				      "Processing Date header value \"%s\" returned %d",
 				      value, res);
 			}
-		} else if (strcasecmp(name, "ETag") == 0) {
+		} אחרת אם (strcasecmp(name, "ETag") == 0) {
 			/* extract ETag header */
-			free(object->cache.etag);
+			حرر(object->cache.etag);
 			object->cache.etag = strdup(value);
-			if (object->cache.etag == NULL) {
+			אם (object->cache.etag == عدم) {
 				NSLOG(llcache, INFO,
 				      "No memory to duplicate ETag");
-				return NSERROR_NOMEM;
+				החזר NSERROR_NOMEM;
 			}
 		}
-		break;
+		اكسر;
 
-	case 7:
-		if (strcasecmp(name, "Expires") == 0) {
+	حالة 7:
+		אם (strcasecmp(name, "Expires") == 0) {
 			/* process Expires header value */
 			res = nsc_strntimet(value,
 					    strlen(value),
 					    &object->cache.expires);
-			if (res != NSERROR_OK) {
+			אם (res != NSERROR_OK) {
 				NSLOG(llcache, INFO,
 				      "Processing Expires header value \"%s\" returned %d",
 				      value, res);
 				object->cache.expires = (time_t)0x7fffffff;
 			}
 		}
-		break;
+		اكسر;
 
-	case 13:
-		if (strcasecmp(name, "Cache-Control") == 0) {
+	حالة 13:
+		אם (strcasecmp(name, "Cache-Control") == 0) {
 			/* parse Cache-Control header value */
 			llcache_fetch_parse_cache_control(object,value);
-		} else if (strcasecmp(name, "Last-Modified") == 0) {
+		} אחרת אם (strcasecmp(name, "Last-Modified") == 0) {
 			/* parse Last-Modified header value */
 			nsc_strntimet(value,
 				      strlen(value),
 				      &object->cache.last_modified);
 		}
-		break;
+		اكسر;
 	}
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -697,16 +697,16 @@ llcache_fetch_header_cache_control(llcache_object *object,
  *
  * \param object The object to destroy headers within.
  */
-static inline void llcache_destroy_headers(llcache_object *object)
+ساكن مضمن فراغ llcache_destroy_headers(llcache_object *object)
 {
-	while (object->num_headers > 0) {
+	כלעוד (object->num_headers > 0) {
 		object->num_headers--;
 
-		free(object->headers[object->num_headers].name);
-		free(object->headers[object->num_headers].value);
+		حرر(object->headers[object->num_headers].name);
+		حرر(object->headers[object->num_headers].value);
 	}
-	free(object->headers);
-	object->headers = NULL;
+	حرر(object->headers);
+	object->headers = عدم;
 }
 
 /**
@@ -714,10 +714,10 @@ static inline void llcache_destroy_headers(llcache_object *object)
  *
  * \param object The object to invalidate cache control for.
  */
-static inline void llcache_invalidate_cache_control_data(llcache_object *object)
+ساكن مضمن فراغ llcache_invalidate_cache_control_data(llcache_object *object)
 {
-	free(object->cache.etag);
-	memset(&(object->cache), 0, sizeof(llcache_cache_control));
+	حرر(object->cache.etag);
+	memset(&(object->cache), 0, حجم(llcache_cache_control));
 
 	object->cache.age = INVALID_AGE;
 	object->cache.max_age = INVALID_AGE;
@@ -731,11 +731,11 @@ static inline void llcache_invalidate_cache_control_data(llcache_object *object)
  * \param len	  Byte length of header
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_process_header(llcache_object *object,
-		const uint8_t *data, size_t len)
+ساكن nserror llcache_fetch_process_header(llcache_object *object,
+		ثابت uint8_t *data, size_t len)
 {
 	nserror res;
-	char *name, *value;
+	حرف *name, *value;
 	llcache_header *temp;
 
 	/**
@@ -751,7 +751,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 	 * that we might have computed, and start again.
 	 */
 	/** \todo Properly parse the response line */
-	if (strncmp((const char *) data, "HTTP/", SLEN("HTTP/")) == 0) {
+	אם (strncmp((ثابت حرف *) data, "HTTP/", SLEN("HTTP/")) == 0) {
 		time_t req_time = object->cache.req_time;
 
 		llcache_invalidate_cache_control_data(object);
@@ -763,38 +763,38 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 	}
 
 	/* Set fetch response time if not already set */
-	if (object->cache.res_time == 0) {
-		object->cache.res_time = time(NULL);
+	אם (object->cache.res_time == 0) {
+		object->cache.res_time = time(عدم);
 	}
 
 	/* Parse header into name-value pair */
 	res = llcache_fetch_split_header(data, len, &name, &value);
-	if (res != NSERROR_OK) {
-		return res;
+	אם (res != NSERROR_OK) {
+		החזר res;
 	}
 
 	/* deal with empty header */
-	if (name[0] == 0) {
-		free(name);
-		free(value);
-		return NSERROR_OK;
+	אם (name[0] == 0) {
+		حرر(name);
+		حرر(value);
+		החזר NSERROR_OK;
 	}
 
 	/* update cache control data from header */
 	res = llcache_fetch_header_cache_control(object, name, value);
-	if (res != NSERROR_OK) {
-		free(name);
-		free(value);
-		return res;
+	אם (res != NSERROR_OK) {
+		حرر(name);
+		حرر(value);
+		החזר res;
 	}
 
 	/* Append header data to the object's headers array */
 	temp = realloc(object->headers,
-		       (object->num_headers + 1) * sizeof(llcache_header));
-	if (temp == NULL) {
-		free(name);
-		free(value);
-		return NSERROR_NOMEM;
+		       (object->num_headers + 1) * حجم(llcache_header));
+	אם (temp == عدم) {
+		حرر(name);
+		حرر(value);
+		החזר NSERROR_NOMEM;
 	}
 
 	object->headers = temp;
@@ -804,7 +804,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 
 	object->num_headers++;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -816,7 +816,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
  *                    be freed by the caller.
  * \return NSERROR_OK and \a header_out updated on success else error code
  */
-static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
+ساكن nserror get_referer_header(nsurl *url, nsurl *referer, حرف **header_out)
 {
 	nserror res = NSERROR_INVALID;
 	lwc_string *ref_scheme;
@@ -824,23 +824,23 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	bool match;
 	bool match1;
 	bool match2;
-	char *header;
+	حرف *header;
 
 	/* Determine whether to send the Referer header */
-	if (!nsoption_bool(send_referer)) {
-		return NSERROR_INVALID;
+	אם (!nsoption_bool(send_referer)) {
+		החזר NSERROR_INVALID;
 	}
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
-		return NSERROR_BAD_URL;
+	אם (scheme == عدم) {
+		החזר NSERROR_BAD_URL;
 	}
 
 	ref_scheme = nsurl_get_component(referer, NSURL_SCHEME);
-	if (ref_scheme == NULL) {
+	אם (ref_scheme == عدم) {
 		/* referer has no scheme so no header */
 		lwc_string_unref(scheme);
-		return NSERROR_INVALID;
+		החזר NSERROR_INVALID;
 	}
 
 	/* User permits us to send the header
@@ -853,26 +853,26 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	 * request from a page served over http. The inverse
 	 * (https -> http) should not send the referer (15.1.3)
 	 */
-	if (lwc_string_isequal(scheme, ref_scheme,
+	אם (lwc_string_isequal(scheme, ref_scheme,
 			       &match) != lwc_error_ok) {
 		match = false;
 	}
-	if (lwc_string_isequal(scheme, corestring_lwc_https,
+	אם (lwc_string_isequal(scheme, corestring_lwc_https,
 			       &match1) != lwc_error_ok) {
 		match1 = false;
 	}
-	if (lwc_string_isequal(ref_scheme, corestring_lwc_http,
+	אם (lwc_string_isequal(ref_scheme, corestring_lwc_http,
 			       &match2) != lwc_error_ok) {
 		match2 = false;
 	}
-	if (match == true || (match1 == true && match2 == true)) {
-		const size_t len = SLEN("Referer: ") +
+	אם (match == true || (match1 == true && match2 == true)) {
+		ثابت size_t len = SLEN("Referer: ") +
 			nsurl_length(referer) + 1;
 
 		header = malloc(len);
-		if (header == NULL) {
+		אם (header == عدم) {
 			res = NSERROR_NOMEM;
-		} else {
+		} אחרת {
 			snprintf(header, len, "Referer: %s",
 				 nsurl_access(referer));
 
@@ -885,7 +885,7 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	lwc_string_unref(scheme);
 	lwc_string_unref(ref_scheme);
 
-	return res;
+	החזר res;
 }
 
 /**
@@ -900,37 +900,37 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
  * \param object Object to refetch
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_refetch(llcache_object *object)
+ساكن nserror llcache_object_refetch(llcache_object *object)
 {
-	const char *urlenc = NULL;
-	struct fetch_multipart_data *multipart = NULL;
-	char **headers = NULL;
-	int header_idx = 0;
+	ثابت حرف *urlenc = عدم;
+	بنية fetch_multipart_data *multipart = عدم;
+	حرف **headers = عدم;
+	صحيح header_idx = 0;
 	nserror res;
 
-	if (object->fetch.post != NULL) {
-		if (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
+	אם (object->fetch.post != عدم) {
+		אם (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
 			urlenc = object->fetch.post->data.urlenc;
-		} else {
+		} אחרת {
 			multipart = object->fetch.post->data.multipart;
 		}
 	}
 
 	/* Generate headers */
-	headers = malloc(4 * sizeof(char *));
-	if (headers == NULL) {
-		return NSERROR_NOMEM;
+	headers = malloc(4 * حجم(حرف *));
+	אם (headers == عدم) {
+		החזר NSERROR_NOMEM;
 	}
 
 	/* cache-control header for etag */
-	if (object->cache.etag != NULL) {
-		const size_t len = SLEN("If-None-Match: ") +
+	אם (object->cache.etag != عدم) {
+		ثابت size_t len = SLEN("If-None-Match: ") +
 				strlen(object->cache.etag) + 1;
 
 		headers[header_idx] = malloc(len);
-		if (headers[header_idx] == NULL) {
-			free(headers);
-			return NSERROR_NOMEM;
+		אם (headers[header_idx] == عدم) {
+			حرر(headers);
+			החזר NSERROR_NOMEM;
 		}
 
 		snprintf(headers[header_idx], len, "If-None-Match: %s",
@@ -940,16 +940,16 @@ static nserror llcache_object_refetch(llcache_object *object)
 	}
 
 	/* cache-control header for modification time */
-	if (object->cache.last_modified != 0) {
+	אם (object->cache.last_modified != 0) {
 		/* Maximum length of an RFC 1123 date is 29 bytes */
-		const size_t len = SLEN("If-Modified-Since: ") + 29 + 1;
+		ثابت size_t len = SLEN("If-Modified-Since: ") + 29 + 1;
 
 		headers[header_idx] = malloc(len);
-		if (headers[header_idx] == NULL) {
-			while (--header_idx >= 0)
-				free(headers[header_idx]);
-			free(headers);
-			return NSERROR_NOMEM;
+		אם (headers[header_idx] == عدم) {
+			כלעוד (--header_idx >= 0)
+				حرر(headers[header_idx]);
+			حرر(headers);
+			החזר NSERROR_NOMEM;
 		}
 
 		snprintf(headers[header_idx], len, "If-Modified-Since: %s",
@@ -959,18 +959,18 @@ static nserror llcache_object_refetch(llcache_object *object)
 	}
 
 	/* Referer header */
-	if (object->fetch.referer != NULL) {
-		if (get_referer_header(object->url,
+	אם (object->fetch.referer != عدم) {
+		אם (get_referer_header(object->url,
 				       object->fetch.referer,
 				       &headers[header_idx]) == NSERROR_OK) {
 			header_idx++;
 		}
 	}
-	headers[header_idx] = NULL;
+	headers[header_idx] = عدم;
 
 	/* Reset cache control data */
 	llcache_invalidate_cache_control_data(object);
-	object->cache.req_time = time(NULL);
+	object->cache.req_time = time(عدم);
 	object->cache.fin_time = object->cache.req_time;
 
 	/* Reset fetch state */
@@ -988,16 +988,16 @@ static nserror llcache_object_refetch(llcache_object *object)
 			  multipart,
 			  object->fetch.flags & LLCACHE_RETRIEVE_VERIFIABLE,
 			  object->fetch.tried_with_tls_downgrade,
-			  (const char **)headers,
+			  (ثابت حرف **)headers,
 			  &object->fetch.fetch);
 
 	/* Clean up cache-control headers */
-	while (--header_idx >= 0) {
-		free(headers[header_idx]);
+	כלעוד (--header_idx >= 0) {
+		حرر(headers[header_idx]);
 	}
-	free(headers);
+	حرر(headers);
 
-	return res;
+	החזר res;
 }
 
 /**
@@ -1016,23 +1016,23 @@ static nserror llcache_object_refetch(llcache_object *object)
  * \param hsts_in_use     Whether HSTS applies to this fetch
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
-		nsurl *referer, const llcache_post_data *post,
+ساكن nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
+		nsurl *referer, ثابت llcache_post_data *post,
 		uint32_t redirect_count, bool hsts_in_use)
 {
 	nserror error;
-	nsurl *referer_clone = NULL;
-	llcache_post_data *post_clone = NULL;
+	nsurl *referer_clone = عدم;
+	llcache_post_data *post_clone = عدم;
 
 	NSLOG(llcache, DEBUG, "Starting fetch for %p", object);
 
-	if (post != NULL) {
+	אם (post != عدم) {
 		error = llcache_post_data_clone(post, &post_clone);
-		if (error != NSERROR_OK)
-			return error;
+		אם (error != NSERROR_OK)
+			החזר error;
 	}
 
-	if (referer != NULL)
+	אם (referer != عدم)
 		referer_clone = nsurl_ref(referer);
 
 	object->fetch.flags = flags;
@@ -1042,7 +1042,7 @@ static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
 	object->fetch.retries_remaining = llcache->fetch_attempts;
 	object->fetch.hsts_in_use = hsts_in_use;
 
-	return llcache_object_refetch(object);
+	החזר llcache_object_refetch(object);
 }
 
 /**
@@ -1055,7 +1055,7 @@ static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
  * \param object  Object to destroy
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_destroy(llcache_object *object)
+ساكن nserror llcache_object_destroy(llcache_object *object)
 {
 	size_t i;
 
@@ -1064,46 +1064,46 @@ static nserror llcache_object_destroy(llcache_object *object)
 
 	cert_chain_free(object->chain);
 
-	if (object->source_data != NULL) {
-		if (object->store_state == LLCACHE_STATE_DISC) {
+	אם (object->source_data != عدم) {
+		אם (object->store_state == LLCACHE_STATE_DISC) {
 			guit->llcache->release(object->url, BACKING_STORE_NONE);
-		} else {
-			free(object->source_data);
+		} אחרת {
+			حرر(object->source_data);
 		}
 	}
 
 	nsurl_unref(object->url);
 
-	if (object->fetch.fetch != NULL) {
+	אם (object->fetch.fetch != عدم) {
 		fetch_abort(object->fetch.fetch);
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = عدم;
 	}
 
-	if (object->fetch.referer != NULL)
+	אם (object->fetch.referer != عدم)
 		nsurl_unref(object->fetch.referer);
 
-	if (object->fetch.post != NULL) {
-		if (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
-			free(object->fetch.post->data.urlenc);
-		} else {
+	אם (object->fetch.post != عدم) {
+		אם (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
+			حرر(object->fetch.post->data.urlenc);
+		} אחרת {
 			fetch_multipart_data_destroy(
 					object->fetch.post->data.multipart);
 		}
 
-		free(object->fetch.post);
+		حرر(object->fetch.post);
 	}
 
-	free(object->cache.etag);
+	حرر(object->cache.etag);
 
-	for (i = 0; i < object->num_headers; i++) {
-		free(object->headers[i].name);
-		free(object->headers[i].value);
+	עבור (i = 0; i < object->num_headers; i++) {
+		حرر(object->headers[i].name);
+		حرر(object->headers[i].value);
 	}
-	free(object->headers);
+	حرر(object->headers);
 
-	free(object);
+	حرر(object);
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -1113,17 +1113,17 @@ static nserror llcache_object_destroy(llcache_object *object)
  * \param list	  List to add to
  * \return NSERROR_OK
  */
-static nserror llcache_object_add_to_list(llcache_object *object,
+ساكن nserror llcache_object_add_to_list(llcache_object *object,
 		llcache_object **list)
 {
-	object->prev = NULL;
+	object->prev = عدم;
 	object->next = *list;
 
-	if (*list != NULL)
+	אם (*list != عدم)
 		(*list)->prev = object;
 	*list = object;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -1132,11 +1132,11 @@ static nserror llcache_object_add_to_list(llcache_object *object,
  * \param cd cache control data.
  * \return The length of time remaining for the object or 0 if expired.
  */
-static int
-llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
+ساكن صحيح
+llcache_object_rfc2616_remaining_lifetime(ثابت llcache_cache_control *cd)
 {
-	int current_age, freshness_lifetime;
-	time_t now = time(NULL);
+	صحيح current_age, freshness_lifetime;
+	time_t now = time(عدم);
 
 	/* Calculate staleness of cached object as per RFC 2616 13.2.3/13.2.4 */
 	current_age = max(0, (cd->res_time - cd->date));
@@ -1144,19 +1144,19 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
 	current_age += cd->res_time - cd->req_time + now - cd->res_time;
 
 	/* Determine freshness lifetime of this object */
-	if (cd->max_age != INVALID_AGE) {
+	אם (cd->max_age != INVALID_AGE) {
 		freshness_lifetime = cd->max_age;
-	} else if (cd->expires != 0) {
+	} אחרת אם (cd->expires != 0) {
 		freshness_lifetime = cd->expires - cd->date;
-	} else if (cd->last_modified != 0) {
+	} אחרת אם (cd->last_modified != 0) {
 		freshness_lifetime = (now - cd->last_modified) / 10;
-	} else {
+	} אחרת {
 		freshness_lifetime = 0;
 	}
 
 	NSLOG(llcache, DEBUG, "%d:%d", freshness_lifetime, current_age);
 
-	if ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
+	אם ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
 	    (freshness_lifetime > current_age)) {
 		/* object was not forbidden from being returned from
 		 * the cache unvalidated (i.e. the response contained
@@ -1164,10 +1164,10 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
 		 *
 		 * The object current age is within the freshness lifetime.
 		 */
-		return freshness_lifetime - current_age;
+		החזר freshness_lifetime - current_age;
 	}
 
-	return 0; /* object has no remaining lifetime */
+	החזר 0; /* object has no remaining lifetime */
 }
 
 /**
@@ -1176,10 +1176,10 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
  * \param object  Object to consider
  * \return True if object is still fresh, false otherwise
  */
-static bool llcache_object_is_fresh(const llcache_object *object)
+ساكن bool llcache_object_is_fresh(ثابت llcache_object *object)
 {
-	int remaining_lifetime;
-	const llcache_cache_control *cd = &object->cache;
+	صحيح remaining_lifetime;
+	ثابت llcache_cache_control *cd = &object->cache;
 
 	remaining_lifetime = llcache_object_rfc2616_remaining_lifetime(cd);
 
@@ -1193,7 +1193,7 @@ static bool llcache_object_is_fresh(const llcache_object *object)
 	 *
 	 * - it has remaining lifetime or still being fetched.
 	 */
-	return ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
+	החזר ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
 		((remaining_lifetime > 0) ||
 		 (object->fetch.state != LLCACHE_FETCH_COMPLETE)));
 }
@@ -1208,25 +1208,25 @@ static bool llcache_object_is_fresh(const llcache_object *object)
  * \param deep	       Whether to deep-copy the data or not
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_clone_cache_data(llcache_object *source,
+ساكن nserror llcache_object_clone_cache_data(llcache_object *source,
 		llcache_object *destination, bool deep)
 {
 	/* ETag must be first, as it can fail when deep cloning */
-	if (source->cache.etag != NULL) {
-		char *etag = source->cache.etag;
+	אם (source->cache.etag != عدم) {
+		حرف *etag = source->cache.etag;
 
-		if (deep) {
+		אם (deep) {
 			/* Copy the etag */
 			etag = strdup(source->cache.etag);
-			if (etag == NULL)
-				return NSERROR_NOMEM;
-		} else {
+			אם (etag == عدم)
+				החזר NSERROR_NOMEM;
+		} אחרת {
 			/* Destination takes ownership */
-			source->cache.etag = NULL;
+			source->cache.etag = عدم;
 		}
 
-		if (destination->cache.etag != NULL)
-			free(destination->cache.etag);
+		אם (destination->cache.etag != عدم)
+			حرر(destination->cache.etag);
 
 		destination->cache.etag = etag;
 	}
@@ -1235,25 +1235,25 @@ static nserror llcache_object_clone_cache_data(llcache_object *source,
 	destination->cache.res_time = source->cache.res_time;
 	destination->cache.fin_time = source->cache.fin_time;
 
-	if (source->cache.date != 0)
+	אם (source->cache.date != 0)
 		destination->cache.date = source->cache.date;
 
-	if (source->cache.expires != 0)
+	אם (source->cache.expires != 0)
 		destination->cache.expires = source->cache.expires;
 
-	if (source->cache.age != INVALID_AGE)
+	אם (source->cache.age != INVALID_AGE)
 		destination->cache.age = source->cache.age;
 
-	if (source->cache.max_age != INVALID_AGE)
+	אם (source->cache.max_age != INVALID_AGE)
 		destination->cache.max_age = source->cache.max_age;
 
-	if (source->cache.no_cache != LLCACHE_VALIDATE_FRESH)
+	אם (source->cache.no_cache != LLCACHE_VALIDATE_FRESH)
 		destination->cache.no_cache = source->cache.no_cache;
 
-	if (source->cache.last_modified != 0)
+	אם (source->cache.last_modified != 0)
 		destination->cache.last_modified = source->cache.last_modified;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -1263,18 +1263,18 @@ static nserror llcache_object_clone_cache_data(llcache_object *source,
  * \param list	  List to remove from
  * \return NSERROR_OK
  */
-static nserror
+ساكن nserror
 llcache_object_remove_from_list(llcache_object *object, llcache_object **list)
 {
-	if (object == *list)
+	אם (object == *list)
 		*list = object->next;
-	else
+	אחרת
 		object->prev->next = object->next;
 
-	if (object->next != NULL)
+	אם (object->next != عدم)
 		object->next->prev = object->prev;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -1287,19 +1287,19 @@ llcache_object_remove_from_list(llcache_object *object, llcache_object **list)
  * \param object the object to operate on.
  * \return appropriate error code.
  */
-static nserror llcache_retrieve_persisted_data(llcache_object *object)
+ساكن nserror llcache_retrieve_persisted_data(llcache_object *object)
 {
 	/* ensure the source data is present if necessary */
-	if ((object->source_data != NULL) ||
+	אם ((object->source_data != عدم) ||
 	    (object->store_state != LLCACHE_STATE_DISC)) {
 		/* source data does not require retrieving from
 		 * persistent store.
 		 */
-		return NSERROR_OK;
+		החזר NSERROR_OK;
 	}
 
 	/* Source data for the object may be in the persistent store */
-	return guit->llcache->fetch(object->url,
+	החזר guit->llcache->fetch(object->url,
 				    BACKING_STORE_NONE,
 				    &object->source_data,
 				    &object->source_len);
@@ -1318,22 +1318,22 @@ static nserror llcache_retrieve_persisted_data(llcache_object *object)
  *         NSERROR_INVALID if there was an error serialising the
  *         stream.
  */
-static nserror
+ساكن nserror
 llcache_serialise_metadata(llcache_object *object,
 			   uint8_t **data_out,
 			   size_t *datasize_out)
 {
 	size_t allocsize;
-	int datasize;
+	صحيح datasize;
 	uint8_t *data;
-	char *op;
-	unsigned int hloop;
-	int use;
+	حرف *op;
+	unsigned صحيح hloop;
+	صحيح use;
 	size_t cert_chain_depth;
 
-	if (object->chain != NULL) {
+	אם (object->chain != عدم) {
 		cert_chain_depth = object->chain->depth;
-	} else {
+	} אחרת {
 		cert_chain_depth = 0;
 	}
 
@@ -1347,7 +1347,7 @@ llcache_serialise_metadata(llcache_object *object,
 
 	allocsize += 10 + 1; /* space for number of header entries */
 
-	for (hloop = 0 ; hloop < object->num_headers ; hloop++) {
+	עבור (hloop = 0 ; hloop < object->num_headers ; hloop++) {
 		allocsize += strlen(object->headers[hloop].name) + 1;
 		allocsize += strlen(object->headers[hloop].value) + 1;
 	}
@@ -1357,138 +1357,138 @@ llcache_serialise_metadata(llcache_object *object,
 	/* space for number of DER formatted certificates */
 	allocsize += 10 + 1;
 
-	for (hloop = 0; hloop < cert_chain_depth; hloop++) {
+	עבור (hloop = 0; hloop < cert_chain_depth; hloop++) {
 		allocsize += 10 + 1; /* error status */
 		allocsize += 4 * ((object->chain->certs[hloop].der_length + 2) / 3);
 	}
 
 	data = malloc(allocsize);
-	if (data == NULL) {
-		return NSERROR_NOMEM;
+	אם (data == عدم) {
+		החזר NSERROR_NOMEM;
 	}
 
-	op = (char *)data;
+	op = (حرف *)data;
 	datasize = allocsize;
 
 	/* the url, used for checking for collisions */
 	use = snprintf(op, datasize, "%s", nsurl_access(object->url));
-	if (use < 0) {
-		goto operror;
+	אם (use < 0) {
+		اذهب operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize) {
-		goto overflow;
+	אם (use > datasize) {
+		اذهب overflow;
 	}
 	op += use;
 	datasize -= use;
 
 	/* object size */
 	use = snprintf(op, datasize, "%" PRIsizet, object->source_len);
-	if (use < 0) {
-		goto operror;
+	אם (use < 0) {
+		اذهب operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
-		goto overflow;
+	אם (use > datasize)
+		اذهب overflow;
 	op += use;
 	datasize -= use;
 
 	/* Time of request */
 	use = nsc_sntimet(op, datasize, &object->cache.req_time);
-	if (use == 0)
-		goto overflow;
+	אם (use == 0)
+		اذهب overflow;
 	use++; /* does not count the null */
 	op += use;
 	datasize -= use;
 
 	/* Time of response */
 	use = nsc_sntimet(op, datasize, &object->cache.res_time);
-	if (use == 0)
-		goto overflow;
+	אם (use == 0)
+		اذهب overflow;
 	use++; /* does not count the null */
 	op += use;
 	datasize -= use;
 
 	/* Time of completion */
 	use = nsc_sntimet(op, datasize, &object->cache.fin_time);
-	if (use == 0)
-		goto overflow;
+	אם (use == 0)
+		اذهب overflow;
 	use++; /* does not count the null */
 	op += use;
 	datasize -= use;
 
 	/* number of headers */
 	use = snprintf(op, datasize, "%" PRIsizet, object->num_headers);
-	if (use < 0) {
-		goto operror;
+	אם (use < 0) {
+		اذهب operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
-		goto overflow;
+	אם (use > datasize)
+		اذهب overflow;
 	op += use;
 	datasize -= use;
 
 	/* headers */
-	for (hloop = 0 ; hloop < object->num_headers ; hloop++) {
+	עבור (hloop = 0 ; hloop < object->num_headers ; hloop++) {
 		use = snprintf(op, datasize,
 			       "%s:%s",
 			       object->headers[hloop].name,
 			       object->headers[hloop].value);
-		if (use < 0) {
-			goto operror;
+		אם (use < 0) {
+			اذهب operror;
 		}
 		use++; /* does not count the null */
-		if (use > datasize)
-			goto overflow;
+		אם (use > datasize)
+			اذهب overflow;
 		op += use;
 		datasize -= use;
 	}
 
 	/* number of DER formatted ssl certificates */
 	use = snprintf(op, datasize, "%" PRIsizet, cert_chain_depth);
-	if (use < 0) {
-		goto operror;
+	אם (use < 0) {
+		اذهب operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
-		goto overflow;
+	אם (use > datasize)
+		اذهب overflow;
 	op += use;
 	datasize -= use;
 
 	/* SSL certificates */
-	for (hloop = 0; hloop < cert_chain_depth; hloop++) {
+	עבור (hloop = 0; hloop < cert_chain_depth; hloop++) {
 		nsuerror res;
 
 		/* Certificate error code */
 		use = snprintf(op, datasize, "%d",
-			       (int)(object->chain->certs[hloop].err));
-		if (use < 0) {
-			goto operror;
+			       (صحيح)(object->chain->certs[hloop].err));
+		אם (use < 0) {
+			اذهب operror;
 		}
 		use++; /* does not count the null */
-		if (use > datasize)
-			goto overflow;
+		אם (use > datasize)
+			اذهب overflow;
 		op += use;
 		datasize -= use;
 
 		/* DER certificate data in base64 encoding */
-		if (object->chain->certs[hloop].der != NULL) {
+		אם (object->chain->certs[hloop].der != عدم) {
 			size_t output_length = datasize;
 			res = nsu_base64_encode(
 				object->chain->certs[hloop].der,
 				object->chain->certs[hloop].der_length,
 				(uint8_t *)op,
 				&output_length);
-			if (res != NSUERROR_OK) {
-				goto operror;
+			אם (res != NSUERROR_OK) {
+				اذهب operror;
 			}
 			use = output_length;
-		} else {
+		} אחרת {
 			use = 0;
 		}
 		use++; /* allow for null */
-		if (use > datasize)
-			goto overflow;
+		אם (use > datasize)
+			اذهب overflow;
 		op += use;
 		*(op - 1) = 0;
 		datasize -= use;
@@ -1499,19 +1499,19 @@ llcache_serialise_metadata(llcache_object *object,
 	*data_out = data;
 	*datasize_out = allocsize - datasize;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 
 overflow:
 	/* somehow we overflowed the buffer - hth? */
 	NSLOG(llcache, INFO, "Overflowed metadata buffer");
-	free(data);
-	return NSERROR_INVALID;
+	حرر(data);
+	החזר NSERROR_INVALID;
 
 operror:
 	/* output error */
 	NSLOG(llcache, INFO, "Output error");
-	free(data);
-	return NSERROR_INVALID;
+	حرر(data);
+	החזר NSERROR_INVALID;
 }
 
 /**
@@ -1528,17 +1528,17 @@ operror:
  *         or error code if URL is not in persistent storage or in
  *         event of deserialisation error.
  */
-static nserror
+ساكن nserror
 llcache_process_metadata(llcache_object *object)
 {
 	nserror res;
-	uint8_t *metadata = NULL;
+	uint8_t *metadata = عدم;
 	size_t metadatalen = 0;
 	size_t remaining = 0;
 	nsurl *metadataurl;
-	unsigned int line;
-	char *ln;
-	int lnsize;
+	unsigned صحيح line;
+	حرف *ln;
+	صحيح lnsize;
 
 	size_t source_length;
 	time_t request_time;
@@ -1547,7 +1547,7 @@ llcache_process_metadata(llcache_object *object)
 	size_t num_headers;
 	size_t hloop;
 	size_t ssl_cert_count = 0;
-	struct cert_chain *chain = NULL;
+	بنية cert_chain *chain = عدم;
 
 	NSLOG(llcache, INFO, "Retrieving metadata");
 
@@ -1556,8 +1556,8 @@ llcache_process_metadata(llcache_object *object)
 				   BACKING_STORE_META,
 				   &metadata,
 				   &metadatalen);
-	if (res != NSERROR_OK) {
-		return res;
+	אם (res != NSERROR_OK) {
+		החזר res;
 	}
 
 	NSLOG(llcache, INFO, "Processing retrieved data");
@@ -1573,20 +1573,20 @@ llcache_process_metadata(llcache_object *object)
 
 	/* metadata line 1 is the url the metadata referrs to */
 	line = 1;
-	ln = (char *)metadata;
+	ln = (حرف *)metadata;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if (lnsize < 7) {
+	אם (lnsize < 7) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		اذهب format_error;
 	}
 
 	res = nsurl_create(ln, &metadataurl);
-	if (res != NSERROR_OK)
-		goto format_error;
+	אם (res != NSERROR_OK)
+		اذهب format_error;
 
-	if (nsurl_compare(object->url, metadataurl, NSURL_COMPLETE) != true) {
+	אם (nsurl_compare(object->url, metadataurl, NSURL_COMPLETE) != true) {
 		/* backing store returned the wrong object for the
 		 * request. This may occur if the backing store had
 		 * a collision in its storage method. We cope with this
@@ -1600,7 +1600,7 @@ llcache_process_metadata(llcache_object *object)
 
 		guit->llcache->release(object->url, BACKING_STORE_META);
 
-		return NSERROR_BAD_URL;
+		החזר NSERROR_BAD_URL;
 	}
 	nsurl_unref(metadataurl);
 
@@ -1611,9 +1611,9 @@ llcache_process_metadata(llcache_object *object)
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &source_length) != 1)) {
+	אם ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &source_length) != 1)) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		اذهب format_error;
 	}
 
 
@@ -1624,8 +1624,8 @@ llcache_process_metadata(llcache_object *object)
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &request_time);
-	if (res != NSERROR_OK)
-		goto format_error;
+	אם (res != NSERROR_OK)
+		اذهب format_error;
 
 
 	/* metadata line 4 is the time of response */
@@ -1635,8 +1635,8 @@ llcache_process_metadata(llcache_object *object)
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &response_time);
-	if (res != NSERROR_OK)
-		goto format_error;
+	אם (res != NSERROR_OK)
+		اذهب format_error;
 
 
 	/* metadata line 5 is the time of request completion */
@@ -1646,8 +1646,8 @@ llcache_process_metadata(llcache_object *object)
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &completion_time);
-	if (res != NSERROR_OK)
-		goto format_error;
+	אם (res != NSERROR_OK)
+		اذهب format_error;
 
 
 	/* metadata line 6 is the number of headers */
@@ -1656,13 +1656,13 @@ llcache_process_metadata(llcache_object *object)
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &num_headers) != 1)) {
+	אם ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &num_headers) != 1)) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		اذهب format_error;
 	}
 
 	/* read headers */
-	for (hloop = 0 ; hloop < num_headers; hloop++) {
+	עבור (hloop = 0 ; hloop < num_headers; hloop++) {
 		line++;
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
@@ -1671,12 +1671,12 @@ llcache_process_metadata(llcache_object *object)
 		res = llcache_fetch_process_header(object,
 						   (uint8_t *)ln,
 						   lnsize);
-		if (res != NSERROR_OK)
-			goto format_error;
+		אם (res != NSERROR_OK)
+			اذهب format_error;
 	}
 
-	if (remaining == 0) {
-		goto skip_ssl_certificates;
+	אם (remaining == 0) {
+		اذهب skip_ssl_certificates;
 	}
 
 	/* Next line is the number of DER base64 encoded certificates */
@@ -1685,27 +1685,27 @@ llcache_process_metadata(llcache_object *object)
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &ssl_cert_count) != 1)) {
+	אם ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &ssl_cert_count) != 1)) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		اذهب format_error;
 	}
 
-	if (ssl_cert_count == 0) {
-		goto skip_ssl_certificates;
+	אם (ssl_cert_count == 0) {
+		اذهب skip_ssl_certificates;
 	}
 
-	if (ssl_cert_count > MAX_CERT_DEPTH) {
+	אם (ssl_cert_count > MAX_CERT_DEPTH) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		اذهب format_error;
 	}
 
 	res = cert_chain_alloc(ssl_cert_count, &chain);
-	if (res != NSERROR_OK) {
-		goto format_error;
+	אם (res != NSERROR_OK) {
+		اذهب format_error;
 	}
 
-	for (hloop = 0; hloop < ssl_cert_count; hloop++) {
-		int errcode;
+	עבור (hloop = 0; hloop < ssl_cert_count; hloop++) {
+		صحيح errcode;
 		nsuerror nsures;
 
 		/* Certificate error code */
@@ -1713,15 +1713,15 @@ llcache_process_metadata(llcache_object *object)
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
-		if ((lnsize < 1) || (sscanf(ln, "%d", &errcode) != 1)) {
+		אם ((lnsize < 1) || (sscanf(ln, "%d", &errcode) != 1)) {
 			res = NSERROR_INVALID;
-			goto format_error;
+			اذهب format_error;
 		}
-		if (errcode < SSL_CERT_ERR_OK ||
+		אם (errcode < SSL_CERT_ERR_OK ||
 		    errcode > SSL_CERT_ERR_MAX_KNOWN) {
 			/* Error with the cert code, assume UNKNOWN */
 			chain->certs[hloop].err = SSL_CERT_ERR_UNKNOWN;
-		} else {
+		} אחרת {
 			chain->certs[hloop].err = (ssl_cert_err)errcode;
 		}
 
@@ -1730,14 +1730,14 @@ llcache_process_metadata(llcache_object *object)
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
-		if (lnsize > 0) {
-			nsures = nsu_base64_decode_alloc((const uint8_t *)ln,
+		אם (lnsize > 0) {
+			nsures = nsu_base64_decode_alloc((ثابت uint8_t *)ln,
 					lnsize,
 					&chain->certs[hloop].der,
 					&chain->certs[hloop].der_length);
-			if (nsures != NSUERROR_OK) {
+			אם (nsures != NSUERROR_OK) {
 				res = NSERROR_NOMEM;
-				goto format_error;
+				اذهب format_error;
 			}
 		}
 	}
@@ -1760,7 +1760,7 @@ skip_ssl_certificates:
 	/* object stored in backing store */
 	object->store_state = LLCACHE_STATE_DISC;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 
 format_error:
 	NSLOG(llcache, INFO,
@@ -1770,7 +1770,7 @@ format_error:
 
 	cert_chain_free(chain);
 
-	return res;
+	החזר res;
 }
 
 /**
@@ -1779,7 +1779,7 @@ format_error:
  * \param url  URL to check.
  * \return true iff url has a persistable scheme.
  */
-static inline bool llcache__scheme_is_persistable(const nsurl *url)
+ساكن مضمن bool llcache__scheme_is_persistable(ثابت nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
 	bool persistable = false;
@@ -1787,7 +1787,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
 
 	/* nsurl ensures lower case schemes, and corestrings are lower
 	 * case, so it's safe to use case-sensitive comparison. */
-	if ((lwc_string_isequal(scheme, corestring_lwc_http,
+	אם ((lwc_string_isequal(scheme, corestring_lwc_http,
 			&match) == lwc_error_ok &&
 			(match == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_https,
@@ -1798,7 +1798,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
 
 	lwc_string_unref(scheme);
 
-	return persistable;
+	החזר persistable;
 }
 
 /**
@@ -1807,7 +1807,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
  * \param url  URL to check.
  * \return true iff url has a cachable scheme.
  */
-static inline bool llcache__scheme_is_cachable(const nsurl *url)
+ساكن مضمن bool llcache__scheme_is_cachable(ثابت nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
 	bool cachable = false;
@@ -1815,7 +1815,7 @@ static inline bool llcache__scheme_is_cachable(const nsurl *url)
 
 	/* nsurl ensures lower case schemes, and corestrings are lower
 	 * case, so it's safe to use case-sensitive comparison. */
-	if ((lwc_string_isequal(scheme, corestring_lwc_http,
+	אם ((lwc_string_isequal(scheme, corestring_lwc_http,
 			&match) == lwc_error_ok &&
 			(match == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_https,
@@ -1835,7 +1835,7 @@ static inline bool llcache__scheme_is_cachable(const nsurl *url)
 
 	lwc_string_unref(scheme);
 
-	return cachable;
+	החזר cachable;
 }
 
 /**
@@ -1849,40 +1849,40 @@ static inline bool llcache__scheme_is_cachable(const nsurl *url)
  * \return NSERROR_OK if the object was successfully retrieved from the
  *         cache else appropriate error code.
  */
-static nserror
+ساكن nserror
 llcache_object_fetch_persistent(llcache_object *object,
 				uint32_t flags,
 				nsurl *referer,
-				const llcache_post_data *post,
+				ثابت llcache_post_data *post,
 				uint32_t redirect_count)
 {
 	nserror error;
-	nsurl *referer_clone = NULL;
-	llcache_post_data *post_clone = NULL;
+	nsurl *referer_clone = عدم;
+	llcache_post_data *post_clone = عدم;
 
-	if (!llcache__scheme_is_persistable(object->url)) {
+	אם (!llcache__scheme_is_persistable(object->url)) {
 		/* Don't bother looking up non-http(s) stuff; we don't
 		 * persist it. */
-		return NSERROR_NOT_FOUND;
+		החזר NSERROR_NOT_FOUND;
 	}
 
-	object->cache.req_time = time(NULL);
+	object->cache.req_time = time(عدم);
 	object->cache.fin_time = object->cache.req_time;
 
 	/* retrieve and process metadata */
 	error = llcache_process_metadata(object);
-	if (error != NSERROR_OK) {
-		return error;
+	אם (error != NSERROR_OK) {
+		החזר error;
 	}
 
 	/* entry came out of cache - need to setup object state */
-	if (post != NULL) {
+	אם (post != عدم) {
 		error = llcache_post_data_clone(post, &post_clone);
-		if (error != NSERROR_OK)
-			return error;
+		אם (error != NSERROR_OK)
+			החזר error;
 	}
 
-	if (referer != NULL) {
+	אם (referer != عدم) {
 		referer_clone = nsurl_ref(referer);
 	}
 
@@ -1893,9 +1893,9 @@ llcache_object_fetch_persistent(llcache_object *object,
 
 	/* fetch is "finished" */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = عدم;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -1910,28 +1910,28 @@ llcache_object_fetch_persistent(llcache_object *object,
  * \param result	  Pointer to location to receive retrieved object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+ساكن nserror
 llcache_object_retrieve_from_cache(nsurl *url,
 				   uint32_t flags,
 				   nsurl *referer,
-				   const llcache_post_data *post,
+				   ثابت llcache_post_data *post,
 				   uint32_t redirect_count,
 				   bool hsts_in_use,
 				   llcache_object **result)
 {
 	nserror error;
-	llcache_object *obj, *newest = NULL;
+	llcache_object *obj, *newest = عدم;
 
 	NSLOG(llcache, DEBUG,
 	      "Searching cache for %s flags:%"PRIx32" referer:%s post:%p",
 	      nsurl_access(url), flags,
-	      referer==NULL?"":nsurl_access(referer),
+	      referer==عدم?"":nsurl_access(referer),
 	      post);
 
 	/* Search for the most recently fetched matching object */
-	for (obj = llcache->cached_objects; obj != NULL; obj = obj->next) {
+	עבור (obj = llcache->cached_objects; obj != عدم; obj = obj->next) {
 
-		if ((newest == NULL ||
+		אם ((newest == عدم ||
 		     obj->cache.req_time > newest->cache.req_time) &&
 		    nsurl_compare(obj->url, url,
 				  NSURL_COMPLETE) == true) {
@@ -1942,16 +1942,16 @@ llcache_object_retrieve_from_cache(nsurl *url,
 	/* No viable object found in cache create one and attempt to
 	 * pull from persistent store.
 	 */
-	if (newest == NULL) {
+	אם (newest == عدم) {
 		NSLOG(llcache, DEBUG, "No viable object found in llcache");
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK)
-			return error;
+		אם (error != NSERROR_OK)
+			החזר error;
 
 		/* attempt to retrieve object from persistent store */
 		error = llcache_object_fetch_persistent(obj, flags, referer, post, redirect_count);
-		if (error == NSERROR_OK) {
+		אם (error == NSERROR_OK) {
 			NSLOG(llcache, DEBUG, "retrieved object from persistent store");
 
 			/* set newest object from persistent store which
@@ -1968,7 +1968,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		 */
 	}
 
-	if ((newest != NULL) && (llcache_object_is_fresh(newest))) {
+	אם ((newest != عدم) && (llcache_object_is_fresh(newest))) {
 		/* Found a suitable object, and it's still fresh */
 		NSLOG(llcache, DEBUG, "Found fresh %p", newest);
 
@@ -1978,13 +1978,13 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 		/* ensure the source data is present */
 		error = llcache_retrieve_persisted_data(newest);
-		if (error == NSERROR_OK) {
+		אם (error == NSERROR_OK) {
 			/* source data was successfully retrieved from
 			 * persistent store
 			 */
 			*result = newest;
 
-			return NSERROR_OK;
+			החזר NSERROR_OK;
 		}
 
 		/* retrieval of source data from persistent store
@@ -1997,28 +1997,28 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		llcache_object_destroy(newest);
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK) {
-			return error;
+		אם (error != NSERROR_OK) {
+			החזר error;
 		}
-	} else if (newest != NULL) {
+	} אחרת אם (newest != عدم) {
 		/* Found a candidate object but it needs freshness validation */
 
 		/* ensure the source data is present */
 		error = llcache_retrieve_persisted_data(newest);
-		if (error == NSERROR_OK) {
+		אם (error == NSERROR_OK) {
 
 			/* Create a new object */
 			error = llcache_object_new(url, &obj);
-			if (error != NSERROR_OK)
-				return error;
+			אם (error != NSERROR_OK)
+				החזר error;
 
 			NSLOG(llcache, DEBUG, "Found candidate %p (%p)", obj, newest);
 
 			/* Clone candidate's cache data */
 			error = llcache_object_clone_cache_data(newest, obj, true);
-			if (error != NSERROR_OK) {
+			אם (error != NSERROR_OK) {
 				llcache_object_destroy(obj);
-				return error;
+				החזר error;
 			}
 
 			/* Record candidate, so we can fall back if it is still fresh */
@@ -2028,10 +2028,10 @@ llcache_object_retrieve_from_cache(nsurl *url,
 			/* Attempt to kick-off fetch */
 			error = llcache_object_fetch(obj, flags, referer, post,
 						     redirect_count, hsts_in_use);
-			if (error != NSERROR_OK) {
+			אם (error != NSERROR_OK) {
 				newest->candidate_count--;
 				llcache_object_destroy(obj);
-				return error;
+				החזר error;
 			}
 
 			/* Add new object to cache */
@@ -2039,7 +2039,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 			*result = obj;
 
-			return NSERROR_OK;
+			החזר NSERROR_OK;
 		}
 
 		NSLOG(llcache, DEBUG, "Persistent retrieval failed for %p", newest);
@@ -2053,17 +2053,17 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		llcache_object_destroy(newest);
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK) {
-			return error;
+		אם (error != NSERROR_OK) {
+			החזר error;
 		}
 	}
 
 	/* Attempt to kick-off fetch */
 	error = llcache_object_fetch(obj, flags, referer, post,
 			redirect_count, hsts_in_use);
-	if (error != NSERROR_OK) {
+	אם (error != NSERROR_OK) {
 		llcache_object_destroy(obj);
-		return error;
+		החזר error;
 	}
 
 	/* Add new object to cache */
@@ -2071,7 +2071,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 	*result = obj;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -2086,11 +2086,11 @@ llcache_object_retrieve_from_cache(nsurl *url,
  * \param result	  Pointer to location to receive retrieved object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+ساكن nserror
 llcache_object_retrieve(nsurl *url,
 			uint32_t flags,
 			nsurl *referer,
-			const llcache_post_data *post,
+			ثابت llcache_post_data *post,
 			uint32_t redirect_count,
 			bool hsts_in_use,
 			llcache_object **result)
@@ -2101,51 +2101,51 @@ llcache_object_retrieve(nsurl *url,
 	bool uncachable = false;
 
 	NSLOG(llcache, DEBUG, "Retrieve %s (%"PRIx32", %s, %p)", nsurl_access(url), flags,
-		     referer==NULL?"":nsurl_access(referer), post);
+		     referer==عدم?"":nsurl_access(referer), post);
 
 
 	/* Get rid of any url fragment */
 	error = nsurl_defragment(url, &defragmented_url);
-	if (error != NSERROR_OK)
-		return error;
+	אם (error != NSERROR_OK)
+		החזר error;
 
 	/* determine if content is cachable */
-	if ((flags & LLCACHE_RETRIEVE_FORCE_FETCH) != 0) {
+	אם ((flags & LLCACHE_RETRIEVE_FORCE_FETCH) != 0) {
 		/* Forced fetches are never cached */
 		uncachable = true;
-	} else if (post != NULL) {
+	} אחרת אם (post != عدم) {
 		/* POST requests are never cached */
 		uncachable = true;
-	} else {
+	} אחרת {
 		uncachable = !llcache__scheme_is_cachable(defragmented_url);
 	}
 
-	if (uncachable) {
+	אם (uncachable) {
 		/* Create new object */
 		error = llcache_object_new(defragmented_url, &obj);
-		if (error != NSERROR_OK) {
+		אם (error != NSERROR_OK) {
 			nsurl_unref(defragmented_url);
-			return error;
+			החזר error;
 		}
 
 		/* Attempt to kick-off fetch */
 		error = llcache_object_fetch(obj, flags, referer, post,
 				redirect_count, hsts_in_use);
-		if (error != NSERROR_OK) {
+		אם (error != NSERROR_OK) {
 			llcache_object_destroy(obj);
 			nsurl_unref(defragmented_url);
-			return error;
+			החזר error;
 		}
 
 		/* Add new object to uncached list */
 		llcache_object_add_to_list(obj, &llcache->uncached_objects);
-	} else {
+	} אחרת {
 		error = llcache_object_retrieve_from_cache(defragmented_url,
 				flags, referer, post, redirect_count,
 				hsts_in_use, &obj);
-		if (error != NSERROR_OK) {
+		אם (error != NSERROR_OK) {
 			nsurl_unref(defragmented_url);
-			return error;
+			החזר error;
 		}
 
 		/* Returned object is already in the cached list */
@@ -2157,7 +2157,7 @@ llcache_object_retrieve(nsurl *url,
 
 	nsurl_unref(defragmented_url);
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 
@@ -2168,25 +2168,25 @@ llcache_object_retrieve(nsurl *url,
  * \param user User to add
  * \return NSERROR_OK.
  */
-static nserror llcache_object_add_user(llcache_object *object,
+ساكن nserror llcache_object_add_user(llcache_object *object,
 		llcache_object_user *user)
 {
-	assert(user->next == NULL);
-	assert(user->prev == NULL);
-	assert(user->handle != NULL);
+	أكد(user->next == عدم);
+	أكد(user->prev == عدم);
+	أكد(user->handle != عدم);
 
 	user->handle->object = object;
 
-	user->prev = NULL;
+	user->prev = عدم;
 	user->next = object->users;
 
-	if (object->users != NULL)
+	אם (object->users != عدم)
 		object->users->prev = user;
 	object->users = user;
 
 	NSLOG(llcache, DEBUG, "Adding user %p to %p", user, object);
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -2197,44 +2197,44 @@ static nserror llcache_object_add_user(llcache_object *object,
  * \param hsts_in_use Pointer to location to receive HSTS in-use flag
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_hsts_transform_url(nsurl *url, nsurl **result,
+ساكن nserror llcache_hsts_transform_url(nsurl *url, nsurl **result,
 		bool *hsts_in_use)
 {
-	lwc_string *scheme = NULL;
+	lwc_string *scheme = عدم;
 	bool match;
 	nserror error = NSERROR_OK;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (lwc_string_caseless_isequal(scheme, corestring_lwc_http,
+	אם (lwc_string_caseless_isequal(scheme, corestring_lwc_http,
 			&match) != lwc_error_ok || match == false) {
 		/* Non-HTTP fetch: no transform required */
-		if (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
+		אם (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
 				&match) == lwc_error_ok && match) {
 			/* HTTPS: ask urldb if HSTS is enabled */
 			*hsts_in_use = urldb_get_hsts_enabled(url);
-		} else {
+		} אחרת {
 			/* Anything else: no HSTS */
 			*hsts_in_use = false;
 		}
 		lwc_string_unref(scheme);
 		*result = nsurl_ref(url);
-		return error;
+		החזר error;
 	}
 	lwc_string_unref(scheme);
 
-	if (urldb_get_hsts_enabled(url)) {
+	אם (urldb_get_hsts_enabled(url)) {
 		/* Only need to force HTTPS. If original port was explicitly
 		 * specified as 80, nsurl_create/join will remove it (as
 		 * it's redundant) */
 		error = nsurl_replace_scheme(url, corestring_lwc_https,
 				result);
 		*hsts_in_use = (error == NSERROR_OK);
-	} else {
+	} אחרת {
 		*result = nsurl_ref(url);
 		*hsts_in_use = false;
 	}
 
-	return error;
+	החזר error;
 }
 
 /**
@@ -2243,37 +2243,37 @@ static nserror llcache_hsts_transform_url(nsurl *url, nsurl **result,
  * \param object Newly-fetched cache object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_hsts_update_policy(llcache_object *object)
+ساكن nserror llcache_hsts_update_policy(llcache_object *object)
 {
 	size_t i;
-	lwc_string *scheme = NULL;
+	lwc_string *scheme = عدم;
 	bool match = false;
 
 	scheme = nsurl_get_component(object->url, NSURL_SCHEME);
-	if (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
+	אם (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
 			&match) != lwc_error_ok || match == false) {
 		/* Non-HTTPS fetch: ignore */
 		lwc_string_unref(scheme);
-		return NSERROR_OK;
+		החזר NSERROR_OK;
 	}
 	lwc_string_unref(scheme);
 
-	if (object->fetch.tainted_tls) {
+	אם (object->fetch.tainted_tls) {
 		/* Transport is tainted: ignore */
-		return NSERROR_OK;
+		החזר NSERROR_OK;
 	}
 
-	for (i = 0; i < object->num_headers; i++) {
-		if (strcasecmp("Strict-Transport-Security",
+	עבור (i = 0; i < object->num_headers; i++) {
+		אם (strcasecmp("Strict-Transport-Security",
 				object->headers[i].name) == 0) {
 			urldb_set_hsts_policy(object->url,
 					object->headers[i].value);
 			/* Only process the first one we find */
-			break;
+			اكسر;
 		}
 	}
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -2287,7 +2287,7 @@ static nserror llcache_hsts_update_policy(llcache_object *object)
  * \param dst_url destination URL of redirect
  * \return NSERROR_OK if safe else error code
  */
-static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
+ساكن nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 {
 	lwc_string *scheme;
 	lwc_string *object_scheme;
@@ -2297,12 +2297,12 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 	scheme = nsurl_get_component(dst_url, NSURL_SCHEME);
 
 	/* resource: and about: are allowed to redirect anywhere */
-	if ((lwc_string_isequal(object_scheme, corestring_lwc_resource,
+	אם ((lwc_string_isequal(object_scheme, corestring_lwc_resource,
 			&match) == lwc_error_ok && match == false) &&
 	    (lwc_string_isequal(object_scheme, corestring_lwc_about,
 			&match) == lwc_error_ok && match == false)) {
 		/* file, about and resource are not valid redirect targets */
-		if ((lwc_string_isequal(scheme, corestring_lwc_file,
+		אם ((lwc_string_isequal(scheme, corestring_lwc_file,
 				&match) == lwc_error_ok && match == true) ||
 		    (lwc_string_isequal(scheme, corestring_lwc_about,
 				&match) == lwc_error_ok && match == true) ||
@@ -2311,7 +2311,7 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 			lwc_string_unref(object_scheme);
 			lwc_string_unref(scheme);
 
-			return NSERROR_UNSAFE_REDIRECT;
+			החזר NSERROR_UNSAFE_REDIRECT;
 		}
 	}
 
@@ -2319,11 +2319,11 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 	lwc_string_unref(object_scheme);
 
 	/* Bail out if we've no way of handling this URL */
-	if (fetch_can_fetch(dst_url) == false) {
-		return NSERROR_UNSAFE_REDIRECT;
+	אם (fetch_can_fetch(dst_url) == false) {
+		החזר NSERROR_UNSAFE_REDIRECT;
 	}
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -2334,13 +2334,13 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
  * \param replacement  Pointer to location to receive replacement object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_redirect(llcache_object *object,
-		const char *target, llcache_object **replacement)
+ساكن nserror llcache_fetch_redirect(llcache_object *object,
+		ثابت حرف *target, llcache_object **replacement)
 {
 	nserror res;
 	llcache_object *dest;
 	llcache_object_user *user, *next;
-	const llcache_post_data *post = object->fetch.post;
+	ثابت llcache_post_data *post = object->fetch.post;
 	nsurl *url, *hsts_url;
 	bool hsts_in_use;
 	http_response_code http_code;
@@ -2351,7 +2351,7 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 
 	/* Abort fetch for this object */
 	fetch_abort(object->fetch.fetch);
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = عدم;
 
 	/* Invalidate the cache control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2359,58 +2359,58 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	/* And mark it complete */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
 
-	(void) llcache_hsts_update_policy(object);
+	(فراغ) llcache_hsts_update_policy(object);
 
 	/* Forcibly stop redirecting if we've followed too many redirects */
-	if (object->fetch.redirect_count > nsoption_uint(fetch_redirect_limit)) {
+	אם (object->fetch.redirect_count > nsoption_uint(fetch_redirect_limit)) {
 		NSLOG(llcache, INFO, "Too many nested redirects");
-		return NSERROR_CYCLIC_REDIRECT;
+		החזר NSERROR_CYCLIC_REDIRECT;
 	}
 
 	/* Make target absolute */
 	res = nsurl_join(object->url, target, &url);
-	if (res != NSERROR_OK) {
-		return res;
+	אם (res != NSERROR_OK) {
+		החזר res;
 	}
 
 	/* Perform HSTS transform */
 	res = llcache_hsts_transform_url(url, &hsts_url, &hsts_in_use);
 	nsurl_unref(url);
-	if (res != NSERROR_OK) {
+	אם (res != NSERROR_OK) {
 		NSLOG(llcache, INFO, "hsts transform failed");
-		return res;
+		החזר res;
 	}
 
 	/* check redirect allowed before informing users */
 	res = check_redirect_safety(object->url, hsts_url);
-	if (res != NSERROR_OK) {
+	אם (res != NSERROR_OK) {
 		NSLOG(llcache, INFO, "unsafe redirect");
 		nsurl_unref(hsts_url);
-		return res;
+		החזר res;
 	}
 
 	/* alter behaviour based on specific redirect code */
-	switch (http_code) {
-	case HTTP_RESPONSE_MOVED_PERMANENTLY:
-	case HTTP_RESPONSE_FOUND:
-	case HTTP_RESPONSE_SEE_OTHER:
+	بدل (http_code) {
+	حالة HTTP_RESPONSE_MOVED_PERMANENTLY:
+	حالة HTTP_RESPONSE_FOUND:
+	حالة HTTP_RESPONSE_SEE_OTHER:
 		/* 301, 302, 303 redirects change method to GET */
-		post = NULL;
-		break;
+		post = عدم;
+		اكسر;
 
-	case HTTP_RESPONSE_TEMPORARY_REDIRECT:
-	case HTTP_RESPONSE_PERMANENT_REDIRECT:
+	حالة HTTP_RESPONSE_TEMPORARY_REDIRECT:
+	حالة HTTP_RESPONSE_PERMANENT_REDIRECT:
 		/* 307 and 308 keep method unchanged */
-		break;
+		اكسر;
 
-	default:
+	افتراضي:
 		/** \todo implement codes
 		 * HTTP_RESPONSE_MULTIPLE_CHOICES (300),
 		 * HTTP_RESPONSE_USE_PROXY (305)
 		 */
 		NSLOG(llcache, INFO, "unsupported redirect %d", http_code);
 		nsurl_unref(hsts_url);
-		return NSERROR_BAD_REDIRECT;
+		החזר NSERROR_BAD_REDIRECT;
 	}
 
 	/* Inform users of redirect */
@@ -2419,9 +2419,9 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	event.data.redirect.to = hsts_url;
 
 	res = llcache_send_event_to_users(object, &event);
-	if (res != NSERROR_OK) {
+	אם (res != NSERROR_OK) {
 		nsurl_unref(hsts_url);
-		return res;
+		החזר res;
 	}
 
 	/* Attempt to fetch target URL */
@@ -2436,11 +2436,11 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	/* No longer require url */
 	nsurl_unref(hsts_url);
 
-	if (res == NSERROR_OK) {
+	אם (res == NSERROR_OK) {
 		/* successfully started redirected fetch */
 
 		/* Move user(s) to replacement object */
-		for (user = object->users; user != NULL; user = next) {
+		עבור (user = object->users; user != عدم; user = next) {
 			next = user->next;
 
 			llcache_object_remove_user(object, user);
@@ -2451,7 +2451,7 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 		*replacement = dest;
 	}
 
-	return res;
+	החזר res;
 }
 
 /**
@@ -2460,12 +2460,12 @@ static nserror llcache_fetch_redirect(llcache_object *object,
  * \param object  Object to update cache for
  * \return NSERROR_OK.
  */
-static nserror llcache_object_cache_update(llcache_object *object)
+ساكن nserror llcache_object_cache_update(llcache_object *object)
 {
-	if (object->cache.date == 0)
-		object->cache.date = time(NULL);
+	אם (object->cache.date == 0)
+		object->cache.date = time(عدم);
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -2475,7 +2475,7 @@ static nserror llcache_object_cache_update(llcache_object *object)
  * \param replacement  Pointer to location to receive replacement object
  * \return NSERROR_OK.
  */
-static nserror llcache_fetch_notmodified(llcache_object *object,
+ساكن nserror llcache_fetch_notmodified(llcache_object *object,
 		llcache_object **replacement)
 {
 	/* There may be no candidate if the server erroneously responded
@@ -2483,11 +2483,11 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 	 * In this case, we simply retain the initial object, having
 	 * invalidated it and marked it as complete.
 	 */
-	if (object->candidate != NULL) {
+	אם (object->candidate != عدم) {
 		llcache_object_user *user, *next;
 
 		/* Move user(s) to candidate content */
-		for (user = object->users; user != NULL; user = next) {
+		עבור (user = object->users; user != عدم; user = next) {
 			next = user->next;
 
 			llcache_object_remove_user(object, user);
@@ -2503,7 +2503,7 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 		/* Bring candidate's cache data up to date */
 		llcache_object_cache_update(object->candidate);
 		/* Revert no-cache to normal, if required */
-		if (object->candidate->cache.no_cache ==
+		אם (object->candidate->cache.no_cache ==
 				LLCACHE_VALIDATE_ONCE) {
 			object->candidate->cache.no_cache =
 				LLCACHE_VALIDATE_FRESH;
@@ -2511,15 +2511,15 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 
 		/* Candidate is now our object */
 		*replacement = object->candidate;
-		object->candidate = NULL;
-	} else {
+		object->candidate = عدم;
+	} אחרת {
 		/* There was no candidate: retain object */
 		*replacement = object;
 	}
 
 	/* Ensure fetch has stopped */
 	fetch_abort(object->fetch.fetch);
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = عدم;
 
 	/* Invalidate our cache-control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2527,11 +2527,11 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 	/* Mark it complete */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
 
-	(void) llcache_hsts_update_policy(object);
+	(فراغ) llcache_hsts_update_policy(object);
 
 	/* Old object will be flushed from the cache on the next poll */
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -2542,12 +2542,12 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
  * \param len	  Byte length of data
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-static nserror
+ساكن nserror
 llcache_fetch_process_data(llcache_object *object,
-			   const uint8_t *data,
+			   ثابت uint8_t *data,
 			   size_t len)
 {
-	if (object->fetch.state != LLCACHE_FETCH_DATA) {
+	אם (object->fetch.state != LLCACHE_FETCH_DATA) {
 		/**
 		 * \note
 		 * On entry into this state, check if we need to
@@ -2564,7 +2564,7 @@ llcache_fetch_process_data(llcache_object *object,
 		 */
 		long http_code = fetch_http_code(object->fetch.fetch);
 
-		if ((http_code != 200 && http_code != 203) ||
+		אם ((http_code != 200 && http_code != 203) ||
 		    (nsurl_has_component(object->url, NSURL_QUERY) &&
 		     (object->cache.max_age == INVALID_AGE &&
 		      object->cache.expires == 0))) {
@@ -2573,20 +2573,20 @@ llcache_fetch_process_data(llcache_object *object,
 		}
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		אם (object->candidate != عدم) {
 			object->candidate->candidate_count--;
-			object->candidate = NULL;
+			object->candidate = عدم;
 		}
 
 		object->fetch.state = LLCACHE_FETCH_DATA;
 	}
 
 	/* Resize source buffer if it's too small */
-	if (object->source_len + len >= object->source_alloc) {
-		const size_t new_len = object->source_len + len + 64 * 1024;
+	אם (object->source_len + len >= object->source_alloc) {
+		ثابت size_t new_len = object->source_len + len + 64 * 1024;
 		uint8_t *temp = realloc(object->source_data, new_len);
-		if (temp == NULL)
-			return NSERROR_NOMEM;
+		אם (temp == عدم)
+			החזר NSERROR_NOMEM;
 
 		object->source_data = temp;
 		object->source_alloc = new_len;
@@ -2596,7 +2596,7 @@ llcache_fetch_process_data(llcache_object *object,
 	memcpy(object->source_data + object->source_len, data, len);
 	object->source_len += len;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 
@@ -2607,14 +2607,14 @@ llcache_fetch_process_data(llcache_object *object,
  * \param realm	  Authentication realm
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
+ساكن nserror llcache_fetch_auth(llcache_object *object, ثابت حرف *realm)
 {
-	const char *auth;
+	ثابت حرف *auth;
 	nserror error = NSERROR_OK;
 
 	/* Abort fetch for this object */
 	fetch_abort(object->fetch.fetch);
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = عدم;
 
 	/* Invalidate cache-control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2624,12 +2624,12 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
 
 	/* If there was no realm, then default to the URL */
 	/** \todo If there was no WWW-Authenticate header, use response body */
-	if (realm == NULL)
+	אם (realm == عدم)
 		realm = nsurl_access(object->url);
 
 	auth = urldb_get_auth_details(object->url, realm);
 
-	if (auth == NULL || object->fetch.tried_with_auth == true) {
+	אם (auth == عدم || object->fetch.tried_with_auth == true) {
 		llcache_event event;
 		/* No authentication details, or tried what we had, so ask */
 		object->fetch.tried_with_auth = false;
@@ -2644,14 +2644,14 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
 		event.data.error.msg = realm;
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} אחרת {
 		/* Flag that we've tried to refetch with credentials, so
 		 * that if the fetch fails again, we ask the user again */
 		object->fetch.tried_with_auth = true;
 		error = llcache_object_refetch(object);
 	}
 
-	return error;
+	החזר error;
 }
 
 /**
@@ -2660,12 +2660,12 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
  * \param object  Object being fetched
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_cert_error(llcache_object *object)
+ساكن nserror llcache_fetch_cert_error(llcache_object *object)
 {
 	nserror error = NSERROR_OK;
 
 	/* Fetch has been stopped, and destroyed. Invalidate object's pointer */
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = عدم;
 
 	/* Invalidate cache-control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2674,7 +2674,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 	object->fetch.tainted_tls = true;
 
 	/* Only give the user a chance if HSTS isn't in use for this fetch */
-	if (object->fetch.hsts_in_use == false) {
+	אם (object->fetch.hsts_in_use == false) {
 		llcache_event event;
 
 		/* Mark object complete */
@@ -2687,7 +2687,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 		event.data.error.msg = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} אחרת {
 		llcache_event event;
 
 		/* Mark object complete */
@@ -2702,7 +2702,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 		error = llcache_send_event_to_users(object, &event);
 	}
 
-	return error;
+	החזר error;
 }
 
 
@@ -2712,12 +2712,12 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
  * \param object  Object being fetched
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_ssl_error(llcache_object *object)
+ساكن nserror llcache_fetch_ssl_error(llcache_object *object)
 {
 	nserror error = NSERROR_OK;
 
 	/* Fetch has been stopped, and destroyed. Invalidate object's pointer */
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = عدم;
 
 	/* Invalidate cache-control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2727,7 +2727,7 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
 
 	/* Make no attempt to downgrade if HSTS is in use
 	 * (i.e. assume server does TLS properly) */
-	if (object->fetch.hsts_in_use ||
+	אם (object->fetch.hsts_in_use ||
 	    object->fetch.tried_with_tls_downgrade) {
 		/* Have already tried to downgrade, so give up */
 		llcache_event event;
@@ -2742,14 +2742,14 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
 		event.data.error.msg = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} אחרת {
 		/* Flag that we've tried to downgrade, so that if the
 		 * fetch fails again, we give up */
 		object->fetch.tried_with_tls_downgrade = true;
 		error = llcache_object_refetch(object);
 	}
 
-	return error;
+	החזר error;
 }
 
 
@@ -2759,26 +2759,26 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
  * \param object Object being fetched
  * \return NSERROR_OK on success otherwise error code
  */
-static nserror llcache_fetch_timeout(llcache_object *object)
+ساكن nserror llcache_fetch_timeout(llcache_object *object)
 {
 	llcache_event event;
 
 	/* The fetch has already been cleaned up by the fetcher but
 	 * we would like to retry if we can.
 	 */
-	if (object->fetch.retries_remaining > 1) {
+	אם (object->fetch.retries_remaining > 1) {
 		object->fetch.retries_remaining--;
-		return llcache_object_refetch(object);
+		החזר llcache_object_refetch(object);
 	}
 
 	/* The fetch has has already been cleaned up by the fetcher */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = عدم;
 
 	/* Release candidate, if any */
-	if (object->candidate != NULL) {
+	אם (object->candidate != عدم) {
 		object->candidate->candidate_count--;
-		object->candidate = NULL;
+		object->candidate = عدم;
 	}
 
 	/* Invalidate cache control data */
@@ -2786,9 +2786,9 @@ static nserror llcache_fetch_timeout(llcache_object *object)
 
 	event.type = LLCACHE_EVENT_ERROR;
 	event.data.error.code = NSERROR_TIMEOUT;
-	event.data.error.msg = NULL;
+	event.data.error.msg = عدم;
 
-	return llcache_send_event_to_users(object, &event);
+	החזר llcache_send_event_to_users(object, &event);
 }
 
 
@@ -2807,27 +2807,27 @@ static nserror llcache_fetch_timeout(llcache_object *object)
  * \return NSERROR_OK with \a lst_out and \a lst_len_out updated or
  *         error code.
  */
-static nserror
-build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
+ساكن nserror
+build_candidate_list(بنية llcache_object ***lst_out, صحيح *lst_len_out)
 {
 	llcache_object *object, *next;
-	struct llcache_object **lst;
-	int lst_len = 0;
-	int remaining_lifetime;
+	بنية llcache_object **lst;
+	صحيح lst_len = 0;
+	صحيح remaining_lifetime;
 
 #define MAX_PERSIST_PER_RUN 128
 
-	lst = calloc(MAX_PERSIST_PER_RUN, sizeof(struct llcache_object *));
-	if (lst == NULL) {
-		return NSERROR_NOMEM;
+	lst = calloc(MAX_PERSIST_PER_RUN, حجم(بنية llcache_object *));
+	אם (lst == عدم) {
+		החזר NSERROR_NOMEM;
 	}
 
-	for (object = llcache->cached_objects; object != NULL; object = next) {
+	עבור (object = llcache->cached_objects; object != عدم; object = next) {
 		next = object->next;
 
 		/* Only consider http(s) for the disc cache. */
-		if (!llcache__scheme_is_persistable(object->url)) {
-			continue;
+		אם (!llcache__scheme_is_persistable(object->url)) {
+			استمر;
 		}
 
 		remaining_lifetime = llcache_object_rfc2616_remaining_lifetime(
@@ -2837,20 +2837,20 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
 		 * already on disc and with sufficient lifetime to
 		 * make disc cache worthwhile
 		 */
-		if ((object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		אם ((object->candidate_count == 0) &&
+		    (object->fetch.fetch == عدم) &&
 		    (object->store_state == LLCACHE_STATE_RAM) &&
 		    (remaining_lifetime > llcache->minimum_lifetime)) {
 			lst[lst_len] = object;
 			lst_len++;
-			if (lst_len == MAX_PERSIST_PER_RUN)
-				break;
+			אם (lst_len == MAX_PERSIST_PER_RUN)
+				اكسر;
 		}
 	}
 
-	if (lst_len == 0) {
-		free(lst);
-		return NSERROR_NOT_FOUND;
+	אם (lst_len == 0) {
+		حرر(lst);
+		החזר NSERROR_NOT_FOUND;
 	}
 
 	/** \todo sort list here */
@@ -2860,7 +2860,7 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
 
 #undef MAX_PERSIST_PER_RUN
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -2871,8 +2871,8 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
  * \param elapsed The time in ms it took to complete the write to backing store.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-write_backing_store(struct llcache_object *object,
+ساكن nserror
+write_backing_store(بنية llcache_object *object,
 		    size_t *written_out,
 		    unsigned long *elapsed)
 {
@@ -2889,18 +2889,18 @@ write_backing_store(struct llcache_object *object,
 				   BACKING_STORE_NONE,
 				   object->source_data,
 				   object->source_len);
-	if (ret != NSERROR_OK) {
+	אם (ret != NSERROR_OK) {
 		/* unable to put source data in backing store */
-		return ret;
+		החזר ret;
 	}
 
 	ret = llcache_serialise_metadata(object, &metadata, &metadatasize);
-	if (ret != NSERROR_OK) {
+	אם (ret != NSERROR_OK) {
 		/* There has been a metadata serialisation error. Ensure the
 		 * already written data object is invalidated.
 		 */
 		guit->llcache->invalidate(object->url);
-		return ret;
+		החזר ret;
 	}
 
 	ret = guit->llcache->store(object->url,
@@ -2908,12 +2908,12 @@ write_backing_store(struct llcache_object *object,
 				   metadata,
 				   metadatasize);
 	guit->llcache->release(object->url, BACKING_STORE_META);
-	if (ret != NSERROR_OK) {
+	אם (ret != NSERROR_OK) {
 		/* There has been an error putting the metadata in the
 		 * backing store. Ensure the data object is invalidated.
 		 */
 		guit->llcache->invalidate(object->url);
-		return ret;
+		החזר ret;
 	}
 	nsu_getmonotonic_ms(&endms);
 
@@ -2929,11 +2929,11 @@ write_backing_store(struct llcache_object *object,
 	/* ensure the writeout is reported to have taken at least the
 	 * minimal amount of time
 	 */
-	if (*elapsed == 0) {
+	אם (*elapsed == 0) {
 		*elapsed = 1;
 	}
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -2948,15 +2948,15 @@ write_backing_store(struct llcache_object *object,
  *
  * \param p The context pointer passed to the callback.
  */
-static void llcache_persist_slowcheck(void *p)
+ساكن فراغ llcache_persist_slowcheck(فراغ *p)
 {
 	uint64_t total_bandwidth; /* total bandwidth */
 
-	if (llcache->total_written > (2 * llcache->minimum_bandwidth)) {
+	אם (llcache->total_written > (2 * llcache->minimum_bandwidth)) {
 
 		total_bandwidth = (llcache->total_written * 1000) / llcache->total_elapsed;
 
-		if (total_bandwidth < llcache->minimum_bandwidth) {
+		אם (total_bandwidth < llcache->minimum_bandwidth) {
 			NSLOG(llcache, INFO,
 			      "Current bandwidth %"PRIu64" less than minimum %"PRIsizet,
 			      total_bandwidth,
@@ -2971,13 +2971,13 @@ static void llcache_persist_slowcheck(void *p)
  *
  * \param p The context pointer passed to the callback.
  */
-static void llcache_persist(void *p)
+ساكن فراغ llcache_persist(فراغ *p)
 {
 	nserror ret;
-	struct llcache_object **lst; /* candidate object list */
-	int lst_count; /* number of candidates in list */
-	int idx; /* current candidate object index in list */
-	int next = -1; /* when the next run should be scheduled for */
+	بنية llcache_object **lst; /* candidate object list */
+	صحيح lst_count; /* number of candidates in list */
+	صحيح idx; /* current candidate object index in list */
+	صحيح next = -1; /* when the next run should be scheduled for */
 
 	unsigned long write_limit; /* max number of bytes to write in this run*/
 
@@ -2989,18 +2989,18 @@ static void llcache_persist(void *p)
 	unsigned long total_bandwidth = 0; /* total bandwidth */
 
 	ret = build_candidate_list(&lst, &lst_count);
-	if (ret != NSERROR_OK) {
+	אם (ret != NSERROR_OK) {
 		NSLOG(llcache, DEBUG, "Unable to construct candidate list for persistent writeout");
-		return;
+		החזר;
 	}
 
 	write_limit = (llcache->maximum_bandwidth * llcache->time_quantum) / 1000;
 
 	/* obtained a candidate list, make each object persistent in turn */
-	for (idx = 0; idx < lst_count; idx++) {
+	עבור (idx = 0; idx < lst_count; idx++) {
 		ret = write_backing_store(lst[idx], &written, &elapsed);
-		if (ret != NSERROR_OK) {
-			continue;
+		אם (ret != NSERROR_OK) {
+			استمر;
 		}
 
 		/* successfully wrote object to backing store */
@@ -3016,13 +3016,13 @@ static void llcache_persist(void *p)
 		/* check to for the time quantum or the size
 		 * (bandwidth) for this run being exceeded.
 		 */
-		if (total_elapsed > llcache->time_quantum) {
+		אם (total_elapsed > llcache->time_quantum) {
 			NSLOG(llcache, INFO, "Overran timeslot");
 			/* writeout has exhausted the available time.
 			 * Either the writeout is slow or the last
 			 * object was very large.
 			 */
-			if (total_bandwidth < llcache->minimum_bandwidth) {
+			אם (total_bandwidth < llcache->minimum_bandwidth) {
 				/* Writeout was slow in this time quantum.
 				 *  Schedule a check in the future to see if
 				 *  overall performance is too slow to be useful.
@@ -3030,45 +3030,45 @@ static void llcache_persist(void *p)
 				guit->misc->schedule(
 						llcache->time_quantum * 100,
 						llcache_persist_slowcheck,
-						NULL);
-				break;
-			} else {
-				if (total_bandwidth > llcache->maximum_bandwidth) {
+						عدم);
+				اكسر;
+			} אחרת {
+				אם (total_bandwidth > llcache->maximum_bandwidth) {
 					/* fast writeout of large file
 					 * so calculate delay as if
 					 * write happened only at max
 					 * limit
 					 */
 					next = ((total_written * llcache->time_quantum) / write_limit) - total_elapsed;
-				} else {
+				} אחרת {
 					next = llcache->time_quantum;
 				}
-				break;
+				اكسر;
 			}
-		} else if (total_written > write_limit) {
+		} אחרת אם (total_written > write_limit) {
 			/* The bandwidth limit has been reached. */
 
-			if (total_bandwidth > llcache->maximum_bandwidth) {
+			אם (total_bandwidth > llcache->maximum_bandwidth) {
 				/* fast writeout of large file so
 				 * calculate delay as if write
 				 * happened only at max limit
 				 */
 				next = ((total_written * llcache->time_quantum) / write_limit) - total_elapsed;
-			} else {
+			} אחרת {
 				next = llcache->time_quantum - total_elapsed;
 			}
-			break;
+			اكسر;
 		}
 
 	}
-	free(lst);
+	حرر(lst);
 
 	/* Completed list without running out of allowed bytes or time */
-	if (idx == lst_count) {
+	אם (idx == lst_count) {
 		/* only reschedule if writing is making any progress at all */
-		if (total_written > 0) {
+		אם (total_written > 0) {
 			next = llcache->time_quantum - total_elapsed;
-		} else {
+		} אחרת {
 			next = -1;
 		}
 	}
@@ -3081,7 +3081,7 @@ static void llcache_persist(void *p)
 	      total_written, total_elapsed, total_bandwidth);
 
 	NSLOG(llcache, DEBUG, "Rescheduling writeout in %dms", next);
-	guit->misc->schedule(next, llcache_persist, NULL);
+	guit->misc->schedule(next, llcache_persist, عدم);
 }
 
 
@@ -3091,77 +3091,77 @@ static void llcache_persist(void *p)
  * \param msg  Fetch event
  * \param p    Our private data
  */
-static void llcache_fetch_callback(const fetch_msg *msg, void *p)
+ساكن فراغ llcache_fetch_callback(ثابت fetch_msg *msg, فراغ *p)
 {
 	nserror error = NSERROR_OK;
 	llcache_object *object = p;
 	llcache_event event;
 
-	if (llcache == NULL) {
+	אם (llcache == عدم) {
 		NSLOG(llcache, CRITICAL, "Callback happened after llcache finalisation");
-		assert(false);
+		أكد(false);
 		/* In case assertions are off, return here */
-		return;
+		החזר;
 	}
 
 	NSLOG(llcache, DEBUG, "Fetch event %d for %p", msg->type, object);
 
-	switch (msg->type) {
-	case FETCH_HEADER:
+	بدل (msg->type) {
+	حالة FETCH_HEADER:
 		/* Received a fetch header */
 		object->fetch.state = LLCACHE_FETCH_HEADERS;
 
 		error = llcache_fetch_process_header(object,
 				msg->data.header_or_data.buf,
 				msg->data.header_or_data.len);
-		break;
+		اكسر;
 
 	/* 3xx responses */
-	case FETCH_REDIRECT:
+	حالة FETCH_REDIRECT:
 		/* Request resulted in a redirect */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		אם (object->candidate != عدم) {
 			object->candidate->candidate_count--;
-			object->candidate = NULL;
+			object->candidate = عدم;
 		}
 
 		error = llcache_fetch_redirect(object,
 				msg->data.redirect, &object);
-		if (error != NSERROR_OK) {
+		אם (error != NSERROR_OK) {
 			event.type = LLCACHE_EVENT_ERROR;
 			event.data.error.code = error;
-			event.data.error.msg = NULL;
+			event.data.error.msg = عدم;
 			error = llcache_send_event_to_users(object, &event);
 		}
-		break;
+		اكسر;
 
-	case FETCH_NOTMODIFIED:
+	حالة FETCH_NOTMODIFIED:
 		/* Conditional request determined that cached object is fresh */
 		error = llcache_fetch_notmodified(object, &object);
-		break;
+		اكسر;
 
 	/* Normal 2xx state machine */
-	case FETCH_DATA:
+	حالة FETCH_DATA:
 		/* Received some data */
 		error = llcache_fetch_process_data(object,
 				msg->data.header_or_data.buf,
 				msg->data.header_or_data.len);
-		break;
+		اكسر;
 
-	case FETCH_FINISHED:
+	حالة FETCH_FINISHED:
 		/* Finished fetching */
 	{
 		uint8_t *temp;
 
 		object->fetch.state = LLCACHE_FETCH_COMPLETE;
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = عدم;
 
 		/* Shrink source buffer to required size */
 		temp = realloc(object->source_data,
 				object->source_len);
 		/* If source_len is 0, then temp may be NULL */
-		if (temp != NULL || object->source_len == 0) {
+		אם (temp != عدم || object->source_len == 0) {
 			object->source_data = temp;
 			object->source_alloc = object->source_len;
 		}
@@ -3169,30 +3169,30 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 		llcache_object_cache_update(object);
 
 		/* record when the fetch finished */
-		object->cache.fin_time = time(NULL);
+		object->cache.fin_time = time(عدم);
 
-		(void) llcache_hsts_update_policy(object);
+		(فراغ) llcache_hsts_update_policy(object);
 
-		guit->misc->schedule(5000, llcache_persist, NULL);
+		guit->misc->schedule(5000, llcache_persist, عدم);
 	}
-		break;
+		اكسر;
 
 	/* Out-of-band information */
-	case FETCH_TIMEDOUT:
+	حالة FETCH_TIMEDOUT:
 		/* Timed out while trying to fetch. */
 		error = llcache_fetch_timeout(object);
-		break;
+		اكسر;
 
-	case FETCH_ERROR:
+	حالة FETCH_ERROR:
 		/* An error occurred while fetching */
 		/* The fetch has has already been cleaned up by the fetcher */
 		object->fetch.state = LLCACHE_FETCH_COMPLETE;
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = عدم;
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		אם (object->candidate != عدم) {
 			object->candidate->candidate_count--;
-			object->candidate = NULL;
+			object->candidate = عدم;
 		}
 
 		/* Invalidate cache control data */
@@ -3206,28 +3206,28 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		اكسر;
 
-	case FETCH_PROGRESS:
+	حالة FETCH_PROGRESS:
 		/* Progress update */
 		event.type = LLCACHE_EVENT_PROGRESS;
 		event.data.progress_msg = msg->data.progress;
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		اكسر;
 
-	case FETCH_CERTS:
+	حالة FETCH_CERTS:
 		/* Certificate information from the fetch */
 
-		if (object->chain != NULL) {
+		אם (object->chain != عدم) {
 			cert_chain_free(object->chain);
-			object->chain = NULL;
+			object->chain = عدم;
 		}
 
 		/* Persist the chain onto our object */
 		error = cert_chain_dup(msg->data.chain, &object->chain);
-		if (error != NSERROR_OK) {
+		אם (error != NSERROR_OK) {
 			NSLOG(llcache, ERROR,
 			      "Unable to duplicate cert chain into cache: %s",
 			      messages_get_errorcode(error));
@@ -3239,49 +3239,49 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		اكسر;
 
 	/* Events requiring action */
-	case FETCH_AUTH:
+	حالة FETCH_AUTH:
 		/* Need Authentication */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		אם (object->candidate != عدم) {
 			object->candidate->candidate_count--;
-			object->candidate = NULL;
+			object->candidate = عدم;
 		}
 
 		error = llcache_fetch_auth(object, msg->data.auth.realm);
-		break;
+		اكسر;
 
-	case FETCH_CERT_ERR:
+	حالة FETCH_CERT_ERR:
 		/* Something went wrong when validating TLS certificates */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		אם (object->candidate != عدم) {
 			object->candidate->candidate_count--;
-			object->candidate = NULL;
+			object->candidate = عدم;
 		}
 
 		error = llcache_fetch_cert_error(object);
-		break;
+		اكسر;
 
-	case FETCH_SSL_ERR:
+	حالة FETCH_SSL_ERR:
 		/* TLS connection setup failed */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		אם (object->candidate != عدم) {
 			object->candidate->candidate_count--;
-			object->candidate = NULL;
+			object->candidate = عدم;
 		}
 
 		error = llcache_fetch_ssl_error(object);
-		break;
+		اكسر;
 	}
 
 	/* Deal with any errors reported by event handlers */
-	if (error != NSERROR_OK) {
-		if (error == NSERROR_NOMEM) {
+	אם (error != NSERROR_OK) {
+		אם (error == NSERROR_NOMEM) {
 			/* attempt to purge the cache to free some
 			 * memory. will not help this fetch, but may
 			 * allow the UI to report errors etc.
@@ -3289,9 +3289,9 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 			llcache_clean(true);
 		}
 
-		if (object->fetch.fetch != NULL) {
+		אם (object->fetch.fetch != عدم) {
 			fetch_abort(object->fetch.fetch);
-			object->fetch.fetch = NULL;
+			object->fetch.fetch = عدم;
 
 			/* Invalidate cache control data */
 			llcache_invalidate_cache_control_data(object);
@@ -3310,19 +3310,19 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
  * \param handle  External cache handle to search for
  * \return Pointer to corresponding user, or NULL if not found
  */
-static llcache_object_user *llcache_object_find_user(
-		const llcache_handle *handle)
+ساكن llcache_object_user *llcache_object_find_user(
+		ثابت llcache_handle *handle)
 {
 	llcache_object_user *user;
 
-	assert(handle->object != NULL);
+	أكد(handle->object != عدم);
 
-	for (user = handle->object->users; user != NULL; user = user->next) {
-		if (user->handle == handle)
-			break;
+	עבור (user = handle->object->users; user != عدم; user = user->next) {
+		אם (user->handle == handle)
+			اكسر;
 	}
 
-	return user;
+	החזר user;
 }
 
 
@@ -3333,17 +3333,17 @@ static llcache_object_user *llcache_object_find_user(
  * \param list	  List to search in
  * \return True if object resides in list, false otherwise
  */
-static bool llcache_object_in_list(const llcache_object *object,
-		const llcache_object *list)
+ساكن bool llcache_object_in_list(ثابت llcache_object *object,
+		ثابت llcache_object *list)
 {
-	while (list != NULL) {
-		if (list == object)
-			break;
+	כלעוד (list != عدم) {
+		אם (list == object)
+			اكسر;
 
 		list = list->next;
 	}
 
-	return list != NULL;
+	החזר list != عدم;
 }
 
 /**
@@ -3352,7 +3352,7 @@ static bool llcache_object_in_list(const llcache_object *object,
  * \param object  Object to notify users about
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_notify_users(llcache_object *object)
+ساكن nserror llcache_object_notify_users(llcache_object *object)
 {
 	nserror error;
 	llcache_object_user *user, *next_user;
@@ -3382,10 +3382,10 @@ static nserror llcache_object_notify_users(llcache_object *object)
 	 * DONE	      : on transition from DATA -> COMPLETE state
 	 */
 
-	for (user = object->users; user != NULL; user = next_user) {
+	עבור (user = object->users; user != عدم; user = next_user) {
 		/* Emit necessary events to bring the user up-to-date */
 		llcache_handle *handle = user->handle;
-		const llcache_fetch_state objstate = object->fetch.state;
+		ثابت llcache_fetch_state objstate = object->fetch.state;
 
 		/* Flag that this user is the current iteration target
 		 * in case the client attempts to destroy it underneath us */
@@ -3418,8 +3418,8 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		 * continue is used)
 		 */
 
-		if (handle->state != objstate) {
-			if (emitted_notify == false) {
+		אם (handle->state != objstate) {
+			אם (emitted_notify == false) {
 				NSLOG(llcache, DEBUG,
 				      "Notifying users of %p",
 				      object);
@@ -3434,29 +3434,29 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		}
 
 		/* User: INIT, Obj: HEADERS, DATA, COMPLETE => User->HEADERS */
-		if (handle->state == LLCACHE_FETCH_INIT &&
+		אם (handle->state == LLCACHE_FETCH_INIT &&
 				objstate > LLCACHE_FETCH_INIT) {
 			handle->state = LLCACHE_FETCH_HEADERS;
 
 			/* Emit any certificate data we hold */
-			if (object->chain != NULL) {
+			אם (object->chain != عدم) {
 				event.type = LLCACHE_EVENT_GOT_CERTS;
 				event.data.chain = object->chain;
 				error = handle->cb(handle, &event, handle->pw);
-			} else {
+			} אחרת {
 				error = NSERROR_OK;
 			}
 
-			if (user->queued_for_delete) {
+			אם (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				אם (error != NSERROR_OK)
+					החזר error;
 
-				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+				استمر;
+			} אחרת אם (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_HEADERS;
 
@@ -3465,15 +3465,15 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				user->iterator_target = false;
 				next_user = user->next;
 				llcache_users_not_caught_up();
-				continue;
-			} else if (error != NSERROR_OK) {
+				استمر;
+			} אחרת אם (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				החזר error;
 			}
 		}
 
 		/* User: HEADERS, Obj: DATA, COMPLETE => User->DATA */
-		if (handle->state == LLCACHE_FETCH_HEADERS &&
+		אם (handle->state == LLCACHE_FETCH_HEADERS &&
 				objstate > LLCACHE_FETCH_HEADERS) {
 			handle->state = LLCACHE_FETCH_DATA;
 
@@ -3482,16 +3482,16 @@ static nserror llcache_object_notify_users(llcache_object *object)
 
 			error = handle->cb(handle, &event, handle->pw);
 
-			if (user->queued_for_delete) {
+			אם (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				אם (error != NSERROR_OK)
+					החזר error;
 
-				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+				استمر;
+			} אחרת אם (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_HEADERS;
 
@@ -3500,15 +3500,15 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				user->iterator_target = false;
 				next_user = user->next;
 				llcache_users_not_caught_up();
-				continue;
-			} else if (error != NSERROR_OK) {
+				استمر;
+			} אחרת אם (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				החזר error;
 			}
 		}
 
 		/* User: DATA, Obj: DATA, COMPLETE, more source available */
-		if (handle->state == LLCACHE_FETCH_DATA &&
+		אם (handle->state == LLCACHE_FETCH_DATA &&
 				objstate >= LLCACHE_FETCH_DATA &&
 				object->source_len > handle->bytes) {
 			size_t orig_handle_read;
@@ -3521,7 +3521,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
 					object->source_len - handle->bytes;
 
 			/* Update record of last byte emitted */
-			if (object->fetch.flags &
+			אם (object->fetch.flags &
 					LLCACHE_RETRIEVE_STREAM_DATA) {
 				/* Streaming, so reset to zero to
 				 * minimise amount of cached source data.
@@ -3529,23 +3529,23 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				 * when streaming. */
 				orig_handle_read = 0;
 				handle->bytes = object->source_len = 0;
-			} else {
+			} אחרת {
 				orig_handle_read = handle->bytes;
 				handle->bytes = object->source_len;
 			}
 
 			/* Emit event */
 			error = handle->cb(handle, &event, handle->pw);
-			if (user->queued_for_delete) {
+			אם (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				אם (error != NSERROR_OK)
+					החזר error;
 
-				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+				استمر;
+			} אחרת אם (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->bytes = orig_handle_read;
 
@@ -3554,15 +3554,15 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				user->iterator_target = false;
 				next_user = user->next;
 				llcache_users_not_caught_up();
-				continue;
-			} else if (error != NSERROR_OK) {
+				استمر;
+			} אחרת אם (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				החזר error;
 			}
 		}
 
 		/* User: DATA, Obj: COMPLETE => User->COMPLETE */
-		if (handle->state == LLCACHE_FETCH_DATA &&
+		אם (handle->state == LLCACHE_FETCH_DATA &&
 				objstate > LLCACHE_FETCH_DATA) {
 			handle->state = LLCACHE_FETCH_COMPLETE;
 
@@ -3570,16 +3570,16 @@ static nserror llcache_object_notify_users(llcache_object *object)
 			event.type = LLCACHE_EVENT_DONE;
 
 			error = handle->cb(handle, &event, handle->pw);
-			if (user->queued_for_delete) {
+			אם (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				אם (error != NSERROR_OK)
+					החזר error;
 
-				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+				استمر;
+			} אחרת אם (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_DATA;
 
@@ -3588,10 +3588,10 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				user->iterator_target = false;
 				next_user = user->next;
 				llcache_users_not_caught_up();
-				continue;
-			} else if (error != NSERROR_OK) {
+				استمر;
+			} אחרת אם (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				החזר error;
 			}
 		}
 
@@ -3601,7 +3601,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		next_user = user->next;
 	}
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -3618,7 +3618,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
  * \param snapshot  Pointer to receive snapshot of \a object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+ساكن nserror
 llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 {
 	llcache_object *newobj;
@@ -3626,29 +3626,29 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 
 	error = llcache_object_new(object->url, &newobj);
 
-	if (error != NSERROR_OK)
-		return error;
+	אם (error != NSERROR_OK)
+		החזר error;
 
 	newobj->source_alloc = newobj->source_len = object->source_len;
 
-	if (object->source_len > 0) {
+	אם (object->source_len > 0) {
 		newobj->source_data = malloc(newobj->source_alloc);
-		if (newobj->source_data == NULL) {
+		אם (newobj->source_data == عدم) {
 			llcache_object_destroy(newobj);
-			return NSERROR_NOMEM;
+			החזר NSERROR_NOMEM;
 		}
 		memcpy(newobj->source_data, object->source_data,
 				newobj->source_len);
 	}
 
-	if (object->num_headers > 0) {
+	אם (object->num_headers > 0) {
 		newobj->headers = calloc(object->num_headers,
-				sizeof(llcache_header));
-		if (newobj->headers == NULL) {
+				حجم(llcache_header));
+		אם (newobj->headers == عدم) {
 			llcache_object_destroy(newobj);
-			return NSERROR_NOMEM;
+			החזר NSERROR_NOMEM;
 		}
-		while (newobj->num_headers < object->num_headers) {
+		כלעוד (newobj->num_headers < object->num_headers) {
 			llcache_header *nh =
 					&(newobj->headers[newobj->num_headers]);
 			llcache_header *oh =
@@ -3656,18 +3656,18 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 			newobj->num_headers += 1;
 			nh->name = strdup(oh->name);
 			nh->value = strdup(oh->value);
-			if (nh->name == NULL || nh->value == NULL) {
+			אם (nh->name == عدم || nh->value == عدم) {
 				llcache_object_destroy(newobj);
-				return NSERROR_NOMEM;
+				החזר NSERROR_NOMEM;
 			}
 		}
 	}
 
-	if (object->chain != NULL) {
+	אם (object->chain != عدم) {
 		error = cert_chain_dup(object->chain, &newobj->chain);
-		if (error != NSERROR_OK) {
+		אם (error != NSERROR_OK) {
 			llcache_object_destroy(newobj);
-			return error;
+			החזר error;
 		}
 	}
 
@@ -3675,7 +3675,7 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 
 	*snapshot = newobj;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /**
@@ -3684,33 +3684,33 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
  * \param object The object to calculate the total RAM usage of.
  * \return The total RAM usage in bytes.
  */
-static inline uint32_t
+ساكن مضمن uint32_t
 total_object_size(llcache_object *object)
 {
 	uint32_t tot;
 	size_t hdrc;
 
-	tot = sizeof(*object);
+	tot = حجم(*object);
 	tot += nsurl_length(object->url);
 
-	if (object->source_data != NULL) {
+	אם (object->source_data != عدم) {
 		tot += object->source_len;
 	}
 
-	tot += sizeof(llcache_header) * object->num_headers;
+	tot += حجم(llcache_header) * object->num_headers;
 
-	for (hdrc = 0; hdrc < object->num_headers; hdrc++) {
-		if (object->headers[hdrc].name != NULL) {
+	עבור (hdrc = 0; hdrc < object->num_headers; hdrc++) {
+		אם (object->headers[hdrc].name != عدم) {
 			tot += strlen(object->headers[hdrc].name);
 		}
-		if (object->headers[hdrc].value != NULL) {
+		אם (object->headers[hdrc].value != عدم) {
 			tot += strlen(object->headers[hdrc].value);
 		}
 	}
 
 	tot += cert_chain_size(object->chain);
 
-	return tot;
+	החזר tot;
 }
 
 /**
@@ -3718,7 +3718,7 @@ total_object_size(llcache_object *object)
  *
  * \param ignored We ignore this because all our state comes from llcache.
  */
-static void llcache_catch_up_all_users(void *ignored)
+ساكن فراغ llcache_catch_up_all_users(فراغ *ignored)
 {
 	llcache_object *object;
 
@@ -3729,12 +3729,12 @@ static void llcache_catch_up_all_users(void *ignored)
 	llcache->all_caught_up = true;
 
 	/* Catch new users up with state of objects */
-	for (object = llcache->cached_objects; object != NULL;
+	עבור (object = llcache->cached_objects; object != عدم;
 			object = object->next) {
 		llcache_object_notify_users(object);
 	}
 
-	for (object = llcache->uncached_objects; object != NULL;
+	עבור (object = llcache->uncached_objects; object != عدم;
 			object = object->next) {
 		llcache_object_notify_users(object);
 	}
@@ -3744,11 +3744,11 @@ static void llcache_catch_up_all_users(void *ignored)
  * Ask for ::llcache_catch_up_all_users to be scheduled ASAP to pump the
  * user state machines.
  */
-static void llcache_users_not_caught_up(void)
+ساكن فراغ llcache_users_not_caught_up(فراغ)
 {
-	if (llcache->all_caught_up) {
+	אם (llcache->all_caught_up) {
 		llcache->all_caught_up = false;
-		guit->misc->schedule(0, llcache_catch_up_all_users, NULL);
+		guit->misc->schedule(0, llcache_catch_up_all_users, عدم);
 	}
 }
 
@@ -3764,56 +3764,56 @@ static void llcache_users_not_caught_up(void)
  *
  * Exported interface documented in llcache.h
  */
-void llcache_clean(bool purge)
+فراغ llcache_clean(bool purge)
 {
 	llcache_object *object, *next;
 	uint32_t llcache_size = 0;
-	int remaining_lifetime;
+	صحيح remaining_lifetime;
 	uint32_t limit;
 
 	NSLOG(llcache, DEBUG, "Attempting cache clean");
 
 	/* If the cache is being purged set the size limit to zero. */
-	if (purge) {
+	אם (purge) {
 		limit = 0;
-	} else {
+	} אחרת {
 		limit = llcache->limit;
 	}
 
 	/* Uncacheable objects with no users or fetches */
-	for (object = llcache->uncached_objects;
-	     object != NULL;
+	עבור (object = llcache->uncached_objects;
+	     object != عدم;
 	     object = next) {
 		next = object->next;
 
 		/* The candidate count of uncacheable objects is always 0 */
-		if ((object->users == NULL) &&
+		אם ((object->users == عدم) &&
 		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL)) {
+		    (object->fetch.fetch == عدم)) {
 			NSLOG(llcache, DEBUG, "Discarding uncachable object with no users (%p) %s",
 				    object, nsurl_access(object->url));
 
 			llcache_object_remove_from_list(object,
 					&llcache->uncached_objects);
 			llcache_object_destroy(object);
-		} else {
+		} אחרת {
 			llcache_size += total_object_size(object);
 		}
 	}
 
 
 	/* Stale cacheable objects with no users or pending fetches */
-	for (object = llcache->cached_objects;
-	     object != NULL;
+	עבור (object = llcache->cached_objects;
+	     object != عدم;
 	     object = next) {
 		next = object->next;
 
 		remaining_lifetime = llcache_object_rfc2616_remaining_lifetime(
 				&object->cache);
 
-		if ((object->users == NULL) &&
+		אם ((object->users == عدم) &&
 		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		    (object->fetch.fetch == عدم) &&
 		    (remaining_lifetime <= 0)) {
 			/* object is stale */
 			NSLOG(llcache, DEBUG, "discarding stale cacheable object with no "
@@ -3823,13 +3823,13 @@ void llcache_clean(bool purge)
 				llcache_object_remove_from_list(object,
 						&llcache->cached_objects);
 
-				if (object->store_state == LLCACHE_STATE_DISC) {
+				אם (object->store_state == LLCACHE_STATE_DISC) {
 					guit->llcache->invalidate(object->url);
 				}
 
 				llcache_object_destroy(object);
 
-		} else {
+		} אחרת {
 			/* object has users so account for the storage */
 			llcache_size += total_object_size(object);
 		}
@@ -3839,25 +3839,25 @@ void llcache_clean(bool purge)
 	 * persistent so their RAM can be reclaimed in the next
 	 * step
 	 */
-	if (limit < llcache_size) {
-		llcache_persist(NULL);
+	אם (limit < llcache_size) {
+		llcache_persist(عدم);
 	}
 
 	/* Source data of fresh cacheable objects with no users, no
 	 * pending fetches and pushed to persistent store while the
 	 * cache exceeds the configured size.
 	 */
-	for (object = llcache->cached_objects;
-	     ((limit < llcache_size) && (object != NULL));
+	עבור (object = llcache->cached_objects;
+	     ((limit < llcache_size) && (object != عدم));
 	     object = next) {
 		next = object->next;
-		if ((object->users == NULL) &&
+		אם ((object->users == عدم) &&
 		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		    (object->fetch.fetch == عدم) &&
 		    (object->store_state == LLCACHE_STATE_DISC)) {
 			guit->llcache->release(object->url, BACKING_STORE_NONE);
 
-			object->source_data = NULL;
+			object->source_data = عدم;
 
 			llcache_size -=	object->source_len;
 
@@ -3871,19 +3871,19 @@ void llcache_clean(bool purge)
 	 * and pushed to persistent store while the cache exceeds
 	 * the configured size. Effectively just the llcache object metadata.
 	 */
-	for (object = llcache->cached_objects;
-	     ((limit < llcache_size) && (object != NULL));
+	עבור (object = llcache->cached_objects;
+	     ((limit < llcache_size) && (object != عدم));
 	     object = next) {
 		next = object->next;
-		if ((object->users == NULL) &&
+		אם ((object->users == عدم) &&
 		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		    (object->fetch.fetch == عدم) &&
 		    (object->store_state == LLCACHE_STATE_DISC) &&
-		    (object->source_data == NULL)) {
+		    (object->source_data == عدم)) {
 			NSLOG(llcache, DEBUG,
 			     "discarding backed object len:%"PRIsizet" age:%ld (%p) %s",
 			      object->source_len,
-			      (long)(time(NULL) - object->last_used),
+			      (long)(time(عدم) - object->last_used),
 			      object,
 			      nsurl_access(object->url));
 
@@ -3901,23 +3901,23 @@ void llcache_clean(bool purge)
 	 * most valuable objects as replacing them is a full network
 	 * fetch
 	 */
-	for (object = llcache->cached_objects;
-	     ((limit < llcache_size) && (object != NULL));
+	עבור (object = llcache->cached_objects;
+	     ((limit < llcache_size) && (object != عدم));
 	     object = next) {
 		next = object->next;
 
-		if ((object->users == NULL) &&
+		אם ((object->users == عدم) &&
 		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		    (object->fetch.fetch == عدم) &&
 		    (object->store_state == LLCACHE_STATE_RAM)) {
 			NSLOG(llcache, DEBUG,
 			      "discarding fresh object len:%"PRIsizet" age:%ld (%p) %s",
 			      object->source_len,
-			      (long)(time(NULL) - object->last_used),
+			      (long)(time(عدم) - object->last_used),
 			      object,
 			      nsurl_access(object->url));
 
-			llcache_size -=	object->source_len + sizeof(*object);
+			llcache_size -=	object->source_len + حجم(*object);
 
 			llcache_object_remove_from_list(object,
 						&llcache->cached_objects);
@@ -3930,11 +3930,11 @@ void llcache_clean(bool purge)
 
 /* Exported interface documented in content/llcache.h */
 nserror
-llcache_initialise(const struct llcache_parameters *prm)
+llcache_initialise(ثابت بنية llcache_parameters *prm)
 {
-	llcache = calloc(1, sizeof(struct llcache_s));
-	if (llcache == NULL) {
-		return NSERROR_NOMEM;
+	llcache = calloc(1, حجم(بنية llcache_s));
+	אם (llcache == عدم) {
+		החזר NSERROR_NOMEM;
 	}
 
 	llcache->limit = prm->limit;
@@ -3950,59 +3950,59 @@ llcache_initialise(const struct llcache_parameters *prm)
 	      llcache->limit);
 
 	/* backing store initialisation */
-	return guit->llcache->initialise(&prm->store);
+	החזר guit->llcache->initialise(&prm->store);
 }
 
 
 /* Exported interface documented in content/llcache.h */
-void llcache_finalise(void)
+فراغ llcache_finalise(فراغ)
 {
 	llcache_object *object, *next;
 	uint64_t total_bandwidth = 0; /* total bandwidth */
 
 	/* Attempt to persist anything we have left lying around */
-	llcache_persist(NULL);
+	llcache_persist(عدم);
 	/* Now clear the persistence callback */
-	guit->misc->schedule(-1, llcache_persist, NULL);
+	guit->misc->schedule(-1, llcache_persist, عدم);
 
 	/* Clean uncached objects */
-	for (object = llcache->uncached_objects; object != NULL; object = next) {
+	עבור (object = llcache->uncached_objects; object != عدم; object = next) {
 		llcache_object_user *user, *next_user;
 
 		next = object->next;
 
-		for (user = object->users; user != NULL; user = next_user) {
+		עבור (user = object->users; user != عدم; user = next_user) {
 			next_user = user->next;
 
-			if (user->handle != NULL)
-				free(user->handle);
+			אם (user->handle != عدم)
+				حرر(user->handle);
 
-			free(user);
+			حرر(user);
 		}
 
 		/* Fetch system has already been destroyed */
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = عدم;
 
 		llcache_object_destroy(object);
 	}
 
 	/* Clean cached objects */
-	for (object = llcache->cached_objects; object != NULL; object = next) {
+	עבור (object = llcache->cached_objects; object != عدم; object = next) {
 		llcache_object_user *user, *next_user;
 
 		next = object->next;
 
-		for (user = object->users; user != NULL; user = next_user) {
+		עבור (user = object->users; user != عدم; user = next_user) {
 			next_user = user->next;
 
-			if (user->handle != NULL)
-			       free(user->handle);
+			אם (user->handle != عدم)
+			       حرر(user->handle);
 
-			free(user);
+			حرر(user);
 		}
 
 		/* Fetch system has already been destroyed */
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = عدم;
 
 		llcache_object_destroy(object);
 	}
@@ -4010,7 +4010,7 @@ void llcache_finalise(void)
 	/* backing store finalisation */
 	guit->llcache->finalise();
 
-	if (llcache->total_elapsed > 0) {
+	אם (llcache->total_elapsed > 0) {
 		total_bandwidth = (llcache->total_written * 1000) /
 			llcache->total_elapsed;
 	}
@@ -4021,8 +4021,8 @@ void llcache_finalise(void)
 	      llcache->total_elapsed,
 	      total_bandwidth);
 
-	free(llcache);
-	llcache = NULL;
+	حرر(llcache);
+	llcache = عدم;
 }
 
 
@@ -4032,8 +4032,8 @@ nserror
 llcache_handle_retrieve(nsurl *url,
 			uint32_t flags,
 			nsurl *referer,
-			const llcache_post_data *post,
-			llcache_handle_callback cb, void *pw,
+			ثابت llcache_post_data *post,
+			llcache_handle_callback cb, فراغ *pw,
 			llcache_handle **result)
 {
 	nserror error;
@@ -4044,31 +4044,31 @@ llcache_handle_retrieve(nsurl *url,
 
 	/* Perform HSTS transform */
 	error = llcache_hsts_transform_url(url, &hsts_url, &hsts_in_use);
-	if (error != NSERROR_OK) {
-		return error;
+	אם (error != NSERROR_OK) {
+		החזר error;
 	}
 
 	/* Can we fetch this URL at all? */
-	if (fetch_can_fetch(hsts_url) == false) {
+	אם (fetch_can_fetch(hsts_url) == false) {
 		nsurl_unref(hsts_url);
-		return NSERROR_NO_FETCH_HANDLER;
+		החזר NSERROR_NO_FETCH_HANDLER;
 	}
 
 	/* Create a new object user */
 	error = llcache_object_user_new(cb, pw, &user);
-	if (error != NSERROR_OK) {
+	אם (error != NSERROR_OK) {
 		nsurl_unref(hsts_url);
-		return error;
+		החזר error;
 	}
 
 	/* Retrieve a suitable object from the cache,
 	 * creating a new one if needed. */
 	error = llcache_object_retrieve(hsts_url, flags, referer, post, 0,
 			hsts_in_use, &object);
-	if (error != NSERROR_OK) {
+	אם (error != NSERROR_OK) {
 		llcache_object_user_destroy(user);
 		nsurl_unref(hsts_url);
-		return error;
+		החזר error;
 	}
 
 	/* Add user to object */
@@ -4081,18 +4081,18 @@ llcache_handle_retrieve(nsurl *url,
 
 	nsurl_unref(hsts_url);
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 
 /* Exported interface documented in content/llcache.h */
 nserror llcache_handle_change_callback(llcache_handle *handle,
-		llcache_handle_callback cb, void *pw)
+		llcache_handle_callback cb, فراغ *pw)
 {
 	handle->cb = cb;
 	handle->pw = pw;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 
@@ -4103,21 +4103,21 @@ nserror llcache_handle_release(llcache_handle *handle)
 	llcache_object *object = handle->object;
 	llcache_object_user *user = llcache_object_find_user(handle);
 
-	assert(user != NULL);
+	أكد(user != عدم);
 
-	if (user->iterator_target) {
+	אם (user->iterator_target) {
 		/* Can't remove / delete user object if it's
 		 * the target of an iterator */
 		user->queued_for_delete = true;
-	} else {
+	} אחרת {
 		/* Remove the user from the object and destroy it */
 		error = llcache_object_remove_user(object, user);
-		if (error == NSERROR_OK) {
+		אם (error == NSERROR_OK) {
 			error = llcache_object_user_destroy(user);
 		}
 	}
 
-	return error;
+	החזר error;
 }
 
 /* Exported interface documented in content/llcache.h */
@@ -4127,13 +4127,13 @@ nserror llcache_handle_clone(llcache_handle *handle, llcache_handle **result)
 	llcache_object_user *newuser;
 
 	error = llcache_object_user_new(handle->cb, handle->pw, &newuser);
-	if (error == NSERROR_OK) {
+	אם (error == NSERROR_OK) {
 		llcache_object_add_user(handle->object, newuser);
 		newuser->handle->state = handle->state;
 		*result = newuser->handle;
 	}
 
-	return error;
+	החזר error;
 }
 
 /* See llcache.h for documentation */
@@ -4145,36 +4145,36 @@ nserror llcache_handle_abort(llcache_handle *handle)
 	bool all_alone = true;
 
 	/* Determine if we are the only user */
-	if (user->prev != NULL)
+	אם (user->prev != عدم)
 		all_alone = false;
-	if (user->next != NULL)
+	אם (user->next != عدم)
 		all_alone = false;
 
-	if (all_alone == false) {
+	אם (all_alone == false) {
 		/* We must snapshot this object */
 		error = llcache_object_snapshot(object, &newobject);
-		if (error != NSERROR_OK)
-			return error;
+		אם (error != NSERROR_OK)
+			החזר error;
 
 		/* Move across to the new object */
-		if (user->iterator_target) {
+		אם (user->iterator_target) {
 			/* User is current iterator target, clone it */
 			llcache_object_user *newuser =
-					calloc(1, sizeof(llcache_object_user));
-			if (newuser == NULL) {
+					calloc(1, حجم(llcache_object_user));
+			אם (newuser == عدم) {
 				llcache_object_destroy(newobject);
-				return NSERROR_NOMEM;
+				החזר NSERROR_NOMEM;
 			}
 
 			/* Move handle across to clone */
 			newuser->handle = user->handle;
-			user->handle = NULL;
+			user->handle = عدم;
 
 			/* Mark user as needing deletion */
 			user->queued_for_delete = true;
 
 			llcache_object_add_user(newobject, newuser);
-		} else {
+		} אחרת {
 			llcache_object_remove_user(object, user);
 			llcache_object_add_user(newobject, user);
 		}
@@ -4182,11 +4182,11 @@ nserror llcache_handle_abort(llcache_handle *handle)
 		/* Add new object to uncached list */
 		llcache_object_add_to_list(newobject,
 				&llcache->uncached_objects);
-	} else {
+	} אחרת {
 		/* We're the only user, so abort any fetch in progress */
-		if (object->fetch.fetch != NULL) {
+		אם (object->fetch.fetch != عدم) {
 			fetch_abort(object->fetch.fetch);
-			object->fetch.fetch = NULL;
+			object->fetch.fetch = عدم;
 		}
 
 		object->fetch.state = LLCACHE_FETCH_COMPLETE;
@@ -4195,7 +4195,7 @@ nserror llcache_handle_abort(llcache_handle *handle)
 		llcache_invalidate_cache_control_data(object);
 	}
 
-	return error;
+	החזר error;
 }
 
 /* See llcache.h for documentation */
@@ -4205,11 +4205,11 @@ nserror llcache_handle_force_stream(llcache_handle *handle)
 	llcache_object *object = handle->object;
 
 	/* Cannot stream if there are multiple users */
-	if (user->prev != NULL || user->next != NULL)
-		return NSERROR_OK;
+	אם (user->prev != عدم || user->next != عدم)
+		החזר NSERROR_OK;
 
 	/* Forcibly uncache this object */
-	if (llcache_object_in_list(object, llcache->cached_objects)) {
+	אם (llcache_object_in_list(object, llcache->cached_objects)) {
 		llcache_object_remove_from_list(object,
 				&llcache->cached_objects);
 		llcache_object_add_to_list(object, &llcache->uncached_objects);
@@ -4217,59 +4217,59 @@ nserror llcache_handle_force_stream(llcache_handle *handle)
 
 	object->fetch.flags |= LLCACHE_RETRIEVE_STREAM_DATA;
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /* See llcache.h for documentation */
 nserror llcache_handle_invalidate_cache_data(llcache_handle *handle)
 {
-	if ((handle->object != NULL) &&
-	    (handle->object->fetch.fetch == NULL) &&
+	אם ((handle->object != عدم) &&
+	    (handle->object->fetch.fetch == عدم) &&
 	    (handle->object->cache.no_cache == LLCACHE_VALIDATE_FRESH)) {
 		/* mark the cached object as requiring validation */
 		handle->object->cache.no_cache = LLCACHE_VALIDATE_ONCE;
 	}
 
-	return NSERROR_OK;
+	החזר NSERROR_OK;
 }
 
 /* See llcache.h for documentation */
-nsurl *llcache_handle_get_url(const llcache_handle *handle)
+nsurl *llcache_handle_get_url(ثابت llcache_handle *handle)
 {
-	return handle->object != NULL ? handle->object->url : NULL;
+	החזר handle->object != عدم ? handle->object->url : عدم;
 }
 
 /* See llcache.h for documentation */
-const uint8_t *llcache_handle_get_source_data(const llcache_handle *handle,
+ثابت uint8_t *llcache_handle_get_source_data(ثابت llcache_handle *handle,
 		size_t *size)
 {
-	*size = handle->object != NULL ? handle->object->source_len : 0;
+	*size = handle->object != عدم ? handle->object->source_len : 0;
 
-	return handle->object != NULL ? handle->object->source_data : NULL;
+	החזר handle->object != عدم ? handle->object->source_data : عدم;
 }
 
 /* See llcache.h for documentation */
-const char *llcache_handle_get_header(const llcache_handle *handle,
-		const char *key)
+ثابت حرف *llcache_handle_get_header(ثابت llcache_handle *handle,
+		ثابت حرف *key)
 {
-	const llcache_object *object = handle->object;
+	ثابت llcache_object *object = handle->object;
 	size_t i;
 
-	if (object == NULL)
-		return NULL;
+	אם (object == عدم)
+		החזר عدم;
 
 	/* About as trivial as possible */
-	for (i = 0; i < object->num_headers; i++) {
-		if (strcasecmp(key, object->headers[i].name) == 0)
-			return object->headers[i].value;
+	עבור (i = 0; i < object->num_headers; i++) {
+		אם (strcasecmp(key, object->headers[i].name) == 0)
+			החזר object->headers[i].value;
 	}
 
-	return NULL;
+	החזר عدم;
 }
 
 /* See llcache.h for documentation */
-bool llcache_handle_references_same_object(const llcache_handle *a,
-		const llcache_handle *b)
+bool llcache_handle_references_same_object(ثابت llcache_handle *a,
+		ثابت llcache_handle *b)
 {
-	return a->object == b->object;
+	החזר a->object == b->object;
 }
