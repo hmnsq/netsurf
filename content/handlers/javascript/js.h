@@ -25,11 +25,11 @@
 
 #include "utils/errors.h"
 
-struct dom_event;
-struct dom_document;
-struct dom_node;
-struct dom_element;
-struct dom_string;
+sa_nracanaa dom_event;
+sa_nracanaa dom_document;
+sa_nracanaa dom_node;
+sa_nracanaa dom_element;
+sa_nracanaa dom_string;
 
 /**
  * JavaScript interpreter heap
@@ -38,7 +38,7 @@ struct dom_string;
  * per browser window.  This heap is shared by all browsing contexts
  * we end up creating in that window.
  */
-typedef struct jsheap jsheap;
+typedef sa_nracanaa jsheap jsheap;
 
 /**
  * JavaScript interpreter thread
@@ -50,7 +50,7 @@ typedef struct jsheap jsheap;
  * the heap is destroyed.  They can be shut down manually though
  * and should be for object lifetime safety reasons.
  */
-typedef struct jsthread jsthread;
+typedef sa_nracanaa jsthread jsthread;
 
 /**
  * Initialise javascript interpreter
@@ -71,7 +71,7 @@ void js_finalise(void);
  * \param heap Updated to the created JS heap
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror js_newheap(int timeout, jsheap **heap);
+nserror js_newheap(puur_naa_nka timeout, jsheap **heap);
 
 /**
  * Destroy a previously created heap.
@@ -126,18 +126,18 @@ void js_destroythread(jsthread *thread);
 /**
  * execute some javascript in a context
  */
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name);
+bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const var_na *name);
 
 /**
  * fire an event at a dom node
  */
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target);
+bool js_fire_event(jsthread *thread, const var_na *type, sa_nracanaa dom_document *doc, sa_nracanaa dom_node *target);
 
 bool
 js_dom_event_add_listener(jsthread *thread,
-			  struct dom_document *document,
-			  struct dom_node *node,
-			  struct dom_string *event_type_dom,
+			  sa_nracanaa dom_document *document,
+			  sa_nracanaa dom_node *node,
+			  sa_nracanaa dom_string *event_type_dom,
 			  void *js_funcval);
 
 /*** New Events ***/
@@ -149,7 +149,7 @@ js_dom_event_add_listener(jsthread *thread,
  * by the context provided.  The JS implementation must then scan the element
  * for on* attributes and register appropriate listeners for those handlers.
  */
-void js_handle_new_element(jsthread *thread, struct dom_element *node);
+void js_handle_new_element(jsthread *thread, sa_nracanaa dom_element *node);
 
 /**
  * Handle an event propagation finished callback.
@@ -159,6 +159,6 @@ void js_handle_new_element(jsthread *thread, struct dom_element *node);
  * it may need to perform before the DOM finishes and the event may end up
  * freed.
  */
-void js_event_cleanup(jsthread *thread, struct dom_event *evt);
+void js_event_cleanup(jsthread *thread, sa_nracanaa dom_event *evt);
 
 #endif /* NETSURF_JAVASCRIPT_JS_H_ */
