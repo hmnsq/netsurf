@@ -19,42 +19,42 @@
 #ifndef NETSURF_CONTENT_CONTENT_FACTORY_H_
 #define NETSURF_CONTENT_CONTENT_FACTORY_H_
 
-#include <stdbool.h>
+#અન્તર્ભાવ <stdbool.h>
 
-#include <libwapcaplet/libwapcaplet.h>
+#અન્તર્ભાવ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/content_type.h"
-#include "utils/errors.h"
+#અન્તર્ભાવ "netsurf/content_type.h"
+#અન્તર્ભાવ "utils/errors.h"
 
 #define CONTENT_FACTORY_REGISTER_TYPES(HNAME, HTYPELIST, HHANDLER)	\
 									\
-nserror HNAME##_init(void)						\
+nserror HNAME##_init(શૂન્ય)						\
 {									\
 	uint32_t i;							\
 	nserror error = NSERROR_OK;					\
 									\
-	for (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
+	માટે (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
 		error = content_factory_register_handler(		\
 			HTYPELIST[i],					\
 			&HHANDLER);					\
-		if (error != NSERROR_OK)				\
-			break;						\
+		જો (error != NSERROR_OK)				\
+			તોડો;						\
 	}								\
 									\
-	return error;							\
+	પાછા error;							\
 }
 
-struct content;
-struct llcache_handle;
-struct content_handler;
+સંરચના content;
+સંરચના llcache_handle;
+સંરચના content_handler;
 
-void content_factory_fini(void);
+શૂન્ય content_factory_fini(શૂન્ય);
 
-nserror content_factory_register_handler(const char *mime_type,
-		const struct content_handler *handler);
+nserror content_factory_register_handler(અચલ અક્ષર *mime_type,
+		અચલ સંરચના content_handler *handler);
 
-struct content *content_factory_create_content(struct llcache_handle *llcache, 
-		const char *fallback_charset, bool quirks,
+સંરચના content *content_factory_create_content(સંરચના llcache_handle *llcache, 
+		અચલ અક્ષર *fallback_charset, bool quirks,
 		lwc_string *effective_type);
 
 content_type content_factory_type_from_mime_type(lwc_string *mime_type);

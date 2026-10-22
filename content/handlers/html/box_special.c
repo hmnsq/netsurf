@@ -26,35 +26,35 @@
  * Implementation of special element handling conversion.
  */
 
-#include <string.h>
-#include <stdbool.h>
-#include <dom/dom.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <dom/dom.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/talloc.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "css/hints.h"
-#include "desktop/frame_types.h"
-#include "content/content_factory.h"
+#અન્તર્ભાવ "utils/nsoption.h"
+#અન્તર્ભાવ "utils/corestrings.h"
+#અન્તર્ભાવ "utils/log.h"
+#અન્તર્ભાવ "utils/messages.h"
+#અન્તર્ભાવ "utils/talloc.h"
+#અન્તર્ભાવ "utils/string.h"
+#અન્તર્ભાવ "utils/ascii.h"
+#અન્તર્ભાવ "utils/nsurl.h"
+#અન્તર્ભાવ "netsurf/plot_style.h"
+#અન્તર્ભાવ "css/hints.h"
+#અન્તર્ભાવ "desktop/frame_types.h"
+#અન્તર્ભાવ "content/content_factory.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/object.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_construct.h"
-#include "html/box_special.h"
-#include "html/box_textarea.h"
-#include "html/form_internal.h"
+#અન્તર્ભાવ "html/html.h"
+#અન્તર્ભાવ "html/private.h"
+#અન્તર્ભાવ "html/object.h"
+#અન્તર્ભાવ "html/box.h"
+#અન્તર્ભાવ "html/box_manipulate.h"
+#અન્તર્ભાવ "html/box_construct.h"
+#અન્તર્ભાવ "html/box_special.h"
+#અન્તર્ભાવ "html/box_textarea.h"
+#અન્તર્ભાવ "html/form_internal.h"
 
 
-static const content_type image_types = CONTENT_IMAGE;
+સ્થિર અચલ content_type image_types = CONTENT_IMAGE;
 
 
 /**
@@ -63,29 +63,29 @@ static const content_type image_types = CONTENT_IMAGE;
  * \param n node to check
  * \return true if node is root else false.
  */
-static inline bool box_is_root(dom_node *n)
+સ્થિર અંતઃરેખ bool box_is_મૂળ(dom_ગાંઠ *n)
 {
-	dom_node *parent;
-	dom_node_type type;
+	dom_ગાંઠ *parent;
+	dom_ગાંઠ_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_ગાંઠ_get_parent_ગાંઠ(n, &parent);
+	જો (err != DOM_NO_ERR)
+		પાછા false;
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	જો (parent != ખાલી) {
+		err = dom_ગાંઠ_get_ગાંઠ_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_ગાંઠ_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return false;
+		જો (err != DOM_NO_ERR)
+			પાછા false;
 
-		if (type != DOM_DOCUMENT_NODE)
-			return false;
+		જો (type != DOM_DOCUMENT_ગાંઠ)
+			પાછા false;
 	}
 
-	return true;
+	પાછા true;
 }
 
 
@@ -95,16 +95,16 @@ static inline bool box_is_root(dom_node *n)
  * \param o  The object params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_object_talloc_destructor(struct object_params *o)
+સ્થિર પૂર્ણાંક box_object_talloc_destructor(સંરચના object_params *o)
 {
-	if (o->codebase != NULL)
+	જો (o->codebase != ખાલી)
 		nsurl_unref(o->codebase);
-	if (o->classid != NULL)
+	જો (o->classid != ખાલી)
 		nsurl_unref(o->classid);
-	if (o->data != NULL)
+	જો (o->data != ખાલી)
 		nsurl_unref(o->data);
 
-	return 0;
+	પાછા 0;
 }
 
 
@@ -115,54 +115,54 @@ static int box_object_talloc_destructor(struct object_params *o)
  * \param count updated to number of entries
  * \return array of struct box_multi_length, or 0 on memory exhaustion
  */
-static struct frame_dimension *
-box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
+સ્થિર સંરચના frame_dimension *
+box_parse_multi_lengths(અચલ dom_string *ds, unsigned પૂર્ણાંક *ગણતરી)
 {
-	char *end;
-	unsigned int i, n;
-	struct frame_dimension *length;
-	const char *s;
+	અક્ષર *end;
+	unsigned પૂર્ણાંક i, n;
+	સંરચના frame_dimension *length;
+	અચલ અક્ષર *s;
 
 	s = dom_string_data(ds);
 
-	for (i = 0, n = 1; s[i]; i++)
-		if (s[i] == ',')
+	માટે (i = 0, n = 1; s[i]; i++)
+		જો (s[i] == ',')
 			n++;
 
-	length = calloc(n, sizeof(struct frame_dimension));
-	if (!length)
-		return NULL;
+	length = calloc(n, કદ(સંરચના frame_dimension));
+	જો (!length)
+		પાછા ખાલી;
 
-	for (i = 0; i != n; i++) {
-		while (ascii_is_space(*s)) {
+	માટે (i = 0; i != n; i++) {
+		જ્યારે (ascii_is_space(*s)) {
 			s++;
 		}
-		length[i].value = strtof(s, &end);
-		if (length[i].value <= 0) {
-			length[i].value = 1;
+		length[i].કિંમત = strtof(s, &end);
+		જો (length[i].કિંમત <= 0) {
+			length[i].કિંમત = 1;
 		}
 		s = end;
-		switch (*s) {
-			case '%':
+		પસંદગી (*s) {
+			સ્થિતિ '%':
 				length[i].unit = FRAME_DIMENSION_PERCENT;
-				break;
-			case '*':
+				તોડો;
+			સ્થિતિ '*':
 				length[i].unit = FRAME_DIMENSION_RELATIVE;
-				break;
-			default:
+				તોડો;
+			મૂળભૂત:
 				length[i].unit = FRAME_DIMENSION_PIXELS;
-				break;
+				તોડો;
 		}
-		while (*s && *s != ',') {
+		જ્યારે (*s && *s != ',') {
 			s++;
 		}
-		if (*s == ',') {
+		જો (*s == ',') {
 			s++;
 		}
 	}
 
-	*count = n;
-	return length;
+	*ગણતરી = n;
+	પાછા length;
 }
 
 
@@ -172,73 +172,73 @@ box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
  * \param f  The frame params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_frames_talloc_destructor(struct content_html_frames *f)
+સ્થિર પૂર્ણાંક box_frames_talloc_destructor(સંરચના content_html_frames *f)
 {
-	if (f->url != NULL) {
+	જો (f->url != ખાલી) {
 		nsurl_unref(f->url);
-		f->url = NULL;
+		f->url = ખાલી;
 	}
 
-	return 0;
+	પાછા 0;
 }
 
 
 /**
  * create a frameset box tree
  */
-static bool
-box_create_frameset(struct content_html_frames *f,
-		    dom_node *n,
+સ્થિર bool
+box_create_frameset(સંરચના content_html_frames *f,
+		    dom_ગાંઠ *n,
 		    html_content *content)
 {
-	unsigned int row, col, index, i;
-	unsigned int rows = 1, cols = 1;
+	unsigned પૂર્ણાંક row, col, index, i;
+	unsigned પૂર્ણાંક rows = 1, cols = 1;
 	dom_string *s;
 	dom_exception err;
 	nsurl *url;
-	struct frame_dimension *row_height = 0, *col_width = 0;
-	dom_node *c, *next;
-	struct content_html_frames *frame;
+	સંરચના frame_dimension *row_height = 0, *col_width = 0;
+	dom_ગાંઠ *c, *next;
+	સંરચના content_html_frames *frame;
 	bool default_border = true;
 	colour default_border_colour = 0x000000;
 
 	/* parse rows and columns */
 	err = dom_element_get_attribute(n, corestring_dom_rows, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		row_height = box_parse_multi_lengths(s, &rows);
 		dom_string_unref(s);
-		if (row_height == NULL)
-			return false;
-	} else {
-		row_height = calloc(1, sizeof(struct frame_dimension));
-		if (row_height == NULL)
-			return false;
-		row_height->value = 100;
+		જો (row_height == ખાલી)
+			પાછા false;
+	} નહીંતર {
+		row_height = calloc(1, કદ(સંરચના frame_dimension));
+		જો (row_height == ખાલી)
+			પાછા false;
+		row_height->કિંમત = 100;
 		row_height->unit = FRAME_DIMENSION_PERCENT;
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_cols, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		col_width = box_parse_multi_lengths(s, &cols);
 		dom_string_unref(s);
-		if (col_width == NULL) {
-			free(row_height);
-			return false;
+		જો (col_width == ખાલી) {
+			મુક્ત(row_height);
+			પાછા false;
 		}
-	} else {
-		col_width = calloc(1, sizeof(struct frame_dimension));
-		if (col_width == NULL) {
-			free(row_height);
-			return false;
+	} નહીંતર {
+		col_width = calloc(1, કદ(સંરચના frame_dimension));
+		જો (col_width == ખાલી) {
+			મુક્ત(row_height);
+			પાછા false;
 		}
-		col_width->value = 100;
+		col_width->કિંમત = 100;
 		col_width->unit = FRAME_DIMENSION_PERCENT;
 	}
 
 	/* common extension: border="0|1" to control all children */
 	err = dom_element_get_attribute(n, corestring_dom_border, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if ((dom_string_data(s)[0] == '0') &&
+	જો (err == DOM_NO_ERR && s != ખાલી) {
+		જો ((dom_string_data(s)[0] == '0') &&
 				(dom_string_data(s)[1] == '\0'))
 			default_border = false;
 		dom_string_unref(s);
@@ -246,8 +246,8 @@ box_create_frameset(struct content_html_frames *f,
 
 	/* common extension: frameborder="yes|no" to control all children */
 	err = dom_element_get_attribute(n, corestring_dom_frameborder, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	જો (err == DOM_NO_ERR && s != ખાલી) {
+		જો (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_no) == 0)
 			default_border = false;
 		dom_string_unref(s);
@@ -256,10 +256,10 @@ box_create_frameset(struct content_html_frames *f,
 	/* common extension: bordercolor="#RRGGBB|<named colour>" to control
 	 *all children */
 	err = dom_element_get_attribute(n, corestring_dom_bordercolor, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		css_color color;
 
-		if (nscss_parse_colour(dom_string_data(s), &color))
+		જો (nscss_parse_colour(dom_string_data(s), &color))
 			default_border_colour = nscss_color_to_ns(color);
 
 		dom_string_unref(s);
@@ -269,13 +269,13 @@ box_create_frameset(struct content_html_frames *f,
 	f->cols = cols;
 	f->rows = rows;
 	f->scrolling = BW_SCROLLING_NO;
-	f->children = talloc_array(content->bctx, struct content_html_frames,
+	f->children = talloc_array(content->bctx, સંરચના content_html_frames,
 								(rows * cols));
 
 	talloc_set_destructor(f->children, box_frames_talloc_destructor);
 
-	for (row = 0; row < rows; row++) {
-		for (col = 0; col < cols; col++) {
+	માટે (row = 0; row < rows; row++) {
+		માટે (col = 0; col < cols; col++) {
 			index = (row * cols) + col;
 			frame = &f->children[index];
 			frame->cols = 0;
@@ -284,42 +284,42 @@ box_create_frameset(struct content_html_frames *f,
 			frame->height = row_height[row];
 			frame->margin_width = 0;
 			frame->margin_height = 0;
-			frame->name = NULL;
-			frame->url = NULL;
+			frame->name = ખાલી;
+			frame->url = ખાલી;
 			frame->no_resize = false;
 			frame->scrolling = BW_SCROLLING_AUTO;
 			frame->border = default_border;
 			frame->border_colour = default_border_colour;
-			frame->children = NULL;
+			frame->children = ખાલી;
 		}
 	}
-	free(col_width);
-	free(row_height);
+	મુક્ત(col_width);
+	મુક્ત(row_height);
 
 	/* create the frameset windows */
-	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_ગાંઠ_get_first_child(n, &c);
+	જો (err != DOM_NO_ERR)
+		પાછા false;
 
-	for (row = 0; c != NULL && row < rows; row++) {
-		for (col = 0; c != NULL && col < cols; col++) {
-			while (c != NULL) {
-				dom_node_type type;
+	માટે (row = 0; c != ખાલી && row < rows; row++) {
+		માટે (col = 0; c != ખાલી && col < cols; col++) {
+			જ્યારે (c != ખાલી) {
+				dom_ગાંઠ_type type;
 				dom_string *name;
 
-				err = dom_node_get_node_type(c, &type);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
-					return false;
+				err = dom_ગાંઠ_get_ગાંઠ_type(c, &type);
+				જો (err != DOM_NO_ERR) {
+					dom_ગાંઠ_unref(c);
+					પાછા false;
 				}
 
-				err = dom_node_get_node_name(c, &name);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
-					return false;
+				err = dom_ગાંઠ_get_ગાંઠ_name(c, &name);
+				જો (err != DOM_NO_ERR) {
+					dom_ગાંઠ_unref(c);
+					પાછા false;
 				}
 
-				if (type != DOM_ELEMENT_NODE ||
+				જો (type != DOM_ELEMENT_ગાંઠ ||
 					(!dom_string_caseless_lwc_isequal(
 							name,
 							corestring_lwc_frame) &&
@@ -327,88 +327,88 @@ box_create_frameset(struct content_html_frames *f,
 							name,
 							corestring_lwc_frameset
 							))) {
-					err = dom_node_get_next_sibling(c,
+					err = dom_ગાંઠ_get_next_sibling(c,
 							&next);
-					if (err != DOM_NO_ERR) {
+					જો (err != DOM_NO_ERR) {
 						dom_string_unref(name);
-						dom_node_unref(c);
-						return false;
+						dom_ગાંઠ_unref(c);
+						પાછા false;
 					}
 
 					dom_string_unref(name);
-					dom_node_unref(c);
+					dom_ગાંઠ_unref(c);
 					c = next;
-				} else {
+				} નહીંતર {
 					/* Got a FRAME or FRAMESET element */
 					dom_string_unref(name);
-					break;
+					તોડો;
 				}
 			}
 
-			if (c == NULL)
-				break;
+			જો (c == ખાલી)
+				તોડો;
 
 			/* get current frame */
 			index = (row * cols) + col;
 			frame = &f->children[index];
 
 			/* nest framesets */
-			err = dom_node_get_node_name(c, &s);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
-				return false;
+			err = dom_ગાંઠ_get_ગાંઠ_name(c, &s);
+			જો (err != DOM_NO_ERR) {
+				dom_ગાંઠ_unref(c);
+				પાછા false;
 			}
 
-			if (dom_string_caseless_lwc_isequal(s,
+			જો (dom_string_caseless_lwc_isequal(s,
 					corestring_lwc_frameset)) {
 				dom_string_unref(s);
 				frame->border = 0;
-				if (box_create_frameset(frame, c,
+				જો (box_create_frameset(frame, c,
 						content) == false) {
-					dom_node_unref(c);
-					return false;
+					dom_ગાંઠ_unref(c);
+					પાછા false;
 				}
 
-				err = dom_node_get_next_sibling(c, &next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
-					return false;
+				err = dom_ગાંઠ_get_next_sibling(c, &next);
+				જો (err != DOM_NO_ERR) {
+					dom_ગાંઠ_unref(c);
+					પાછા false;
 				}
 
-				dom_node_unref(c);
+				dom_ગાંઠ_unref(c);
 				c = next;
-				continue;
+				ચાલુ;
 			}
 
 			dom_string_unref(s);
 
 			/* get frame URL (not required) */
-			url = NULL;
+			url = ખાલી;
 			err = dom_element_get_attribute(c, corestring_dom_src, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			જો (err == DOM_NO_ERR && s != ખાલી) {
 				box_extract_link(content, s, content->base_url,
 						 &url);
 				dom_string_unref(s);
 			}
 
 			/* copy url */
-			if (url != NULL) {
+			જો (url != ખાલી) {
 				/* no self-references */
-				if (nsurl_compare(content->base_url, url,
+				જો (nsurl_compare(content->base_url, url,
 						NSURL_COMPLETE) == false)
 					frame->url = url;
-				url = NULL;
+				url = ખાલી;
 			}
 
 			/* fill in specified values */
 			err = dom_element_get_attribute(c, corestring_dom_name, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			જો (err == DOM_NO_ERR && s != ખાલી) {
 				frame->name = talloc_strdup(content->bctx,
 						dom_string_data(s));
 				dom_string_unref(s);
 			}
 
-			if (dom_element_has_attribute(c, corestring_dom_noresize,
+			જો (dom_element_has_attribute(c, corestring_dom_noresize,
 						      &frame->no_resize) != DOM_NO_ERR) {
 				/* If we can't read the attribute for some reason,
 				 * assume we didn't have it.
@@ -418,18 +418,18 @@ box_create_frameset(struct content_html_frames *f,
 
 			err = dom_element_get_attribute(c, corestring_dom_frameborder,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			જો (err == DOM_NO_ERR && s != ખાલી) {
 				i = atoi(dom_string_data(s));
 				frame->border = (i != 0);
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_scrolling, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				if (dom_string_caseless_lwc_isequal(s,
+			જો (err == DOM_NO_ERR && s != ખાલી) {
+				જો (dom_string_caseless_lwc_isequal(s,
 						corestring_lwc_yes))
 					frame->scrolling = BW_SCROLLING_YES;
-				else if (dom_string_caseless_lwc_isequal(s,
+				નહીંતર જો (dom_string_caseless_lwc_isequal(s,
 						corestring_lwc_no))
 					frame->scrolling = BW_SCROLLING_NO;
 				dom_string_unref(s);
@@ -437,24 +437,24 @@ box_create_frameset(struct content_html_frames *f,
 
 			err = dom_element_get_attribute(c, corestring_dom_marginwidth,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			જો (err == DOM_NO_ERR && s != ખાલી) {
 				frame->margin_width = atoi(dom_string_data(s));
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_marginheight,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			જો (err == DOM_NO_ERR && s != ખાલી) {
 				frame->margin_height = atoi(dom_string_data(s));
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_bordercolor,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			જો (err == DOM_NO_ERR && s != ખાલી) {
 				css_color color;
 
-				if (nscss_parse_colour(dom_string_data(s),
+				જો (nscss_parse_colour(dom_string_data(s),
 						&color))
 					frame->border_colour =
 						nscss_color_to_ns(color);
@@ -463,23 +463,23 @@ box_create_frameset(struct content_html_frames *f,
 			}
 
 			/* advance */
-			err = dom_node_get_next_sibling(c, &next);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
-				return false;
+			err = dom_ગાંઠ_get_next_sibling(c, &next);
+			જો (err != DOM_NO_ERR) {
+				dom_ગાંઠ_unref(c);
+				પાછા false;
 			}
 
-			dom_node_unref(c);
+			dom_ગાંઠ_unref(c);
 			c = next;
 		}
 	}
 
 	/* If the last child wasn't a frame, we still need to unref it */
-	if (c != NULL) {
-		dom_node_unref(c);
+	જો (c != ખાલી) {
+		dom_ગાંઠ_unref(c);
 	}
 
-	return true;
+	પાછા true;
 }
 
 
@@ -489,14 +489,14 @@ box_create_frameset(struct content_html_frames *f,
  * \param f The iframe params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_iframes_talloc_destructor(struct content_html_iframe *f)
+સ્થિર પૂર્ણાંક box_iframes_talloc_destructor(સંરચના content_html_iframe *f)
 {
-	if (f->url != NULL) {
+	જો (f->url != ખાલી) {
 		nsurl_unref(f->url);
-		f->url = NULL;
+		f->url = ખાલી;
 	}
 
-	return 0;
+	પાછા 0;
 }
 
 
@@ -512,41 +512,41 @@ static int box_iframes_talloc_destructor(struct content_html_iframe *f)
  * \note returning true does not imply that the attribute was found. If the
  * attribute was not found, *value will be unchanged.
  */
-static bool
-box_get_attribute(dom_node *n,
-		  const char *attribute,
-		  void *context,
-		  char **value)
+સ્થિર bool
+box_get_attribute(dom_ગાંઠ *n,
+		  અચલ અક્ષર *attribute,
+		  શૂન્ય *context,
+		  અક્ષર **કિંમત)
 {
-	char *result;
+	અક્ષર *result;
 	dom_string *attr, *attr_name;
 	dom_exception err;
 
-	err = dom_string_create_interned((const uint8_t *) attribute,
+	err = dom_string_create_interned((અચલ uint8_t *) attribute,
 			strlen(attribute), &attr_name);
-	if (err != DOM_NO_ERR)
-		return false;
+	જો (err != DOM_NO_ERR)
+		પાછા false;
 
 	err = dom_element_get_attribute(n, attr_name, &attr);
-	if (err != DOM_NO_ERR) {
+	જો (err != DOM_NO_ERR) {
 		dom_string_unref(attr_name);
-		return false;
+		પાછા false;
 	}
 
 	dom_string_unref(attr_name);
 
-	if (attr != NULL) {
+	જો (attr != ખાલી) {
 		result = talloc_strdup(context, dom_string_data(attr));
 
 		dom_string_unref(attr);
 
-		if (result == NULL)
-			return false;
+		જો (result == ખાલી)
+			પાછા false;
 
-		*value = result;
+		*કિંમત = result;
 	}
 
-	return true;
+	પાછા true;
 }
 
 
@@ -556,38 +556,38 @@ box_get_attribute(dom_node *n,
  * This is a load of hacks to ensure boxes replaced with textareas
  * can be handled by the layout code.
  */
-static bool
-box_input_text(html_content *html, struct box *box, struct dom_node *node)
+સ્થિર bool
+box_આગત_text(html_content *html, સંરચના box *box, સંરચના dom_ગાંઠ *ગાંઠ)
 {
-	struct box *inline_container, *inline_box;
+	સંરચના box *inline_container, *inline_box;
 	uint8_t display = css_computed_display_static(box->style);
 
-	switch (display) {
-	case CSS_DISPLAY_GRID:
-	case CSS_DISPLAY_FLEX:
-	case CSS_DISPLAY_BLOCK:
+	પસંદગી (display) {
+	સ્થિતિ CSS_DISPLAY_GRID:
+	સ્થિતિ CSS_DISPLAY_FLEX:
+	સ્થિતિ CSS_DISPLAY_BLOCK:
 		box->type = BOX_BLOCK;
-		break;
-	default:
+		તોડો;
+	મૂળભૂત:
 		box->type = BOX_INLINE_BLOCK;
-		break;
+		તોડો;
 	}
 
-	inline_container = box_create(NULL, 0, false, 0, 0, 0, 0, html->bctx);
-	if (!inline_container)
-		return false;
+	inline_container = box_create(ખાલી, 0, false, 0, 0, 0, 0, html->bctx);
+	જો (!inline_container)
+		પાછા false;
 	inline_container->type = BOX_INLINE_CONTAINER;
-	inline_box = box_create(NULL, box->style, false, 0, 0, box->title, 0,
+	inline_box = box_create(ખાલી, box->style, false, 0, 0, box->title, 0,
 			html->bctx);
-	if (!inline_box)
-		return false;
+	જો (!inline_box)
+		પાછા false;
 	inline_box->type = BOX_TEXT;
 	inline_box->text = talloc_strdup(html->bctx, "");
 
 	box_add_child(inline_container, inline_box);
 	box_add_child(box, inline_container);
 
-	return box_textarea_create_textarea(html, box, node);
+	પાછા box_textarea_create_textarea(html, box, ગાંઠ);
 }
 
 
@@ -598,62 +598,62 @@ box_input_text(html_content *html, struct box *box, struct dom_node *node)
  * \param  n	    xml element node for &lt;option&gt;
  * \return  true on success, false on memory exhaustion
  */
-static bool box_select_add_option(struct form_control *control, dom_node *n)
+સ્થિર bool box_select_add_option(સંરચના form_control *control, dom_ગાંઠ *n)
 {
-	char *value = NULL;
-	char *text = NULL;
-	char *text_nowrap = NULL;
+	અક્ષર *કિંમત = ખાલી;
+	અક્ષર *text = ખાલી;
+	અક્ષર *text_nowrap = ખાલી;
 	bool selected;
 	dom_string *content, *s;
 	dom_exception err;
 
-	err = dom_node_get_text_content(n, &content);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_ગાંઠ_get_text_content(n, &content);
+	જો (err != DOM_NO_ERR)
+		પાછા false;
 
-	if (content != NULL) {
+	જો (content != ખાલી) {
 		text = squash_whitespace(dom_string_data(content));
 		dom_string_unref(content);
-	} else {
+	} નહીંતર {
 		text = strdup("");
 	}
 
-	if (text == NULL)
-		goto no_memory;
+	જો (text == ખાલી)
+		જાઓ no_memory;
 
-	err = dom_element_get_attribute(n, corestring_dom_value, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		value = strdup(dom_string_data(s));
+	err = dom_element_get_attribute(n, corestring_dom_કિંમત, &s);
+	જો (err == DOM_NO_ERR && s != ખાલી) {
+		કિંમત = strdup(dom_string_data(s));
 		dom_string_unref(s);
-	} else {
-		value = strdup(text);
+	} નહીંતર {
+		કિંમત = strdup(text);
 	}
 
-	if (value == NULL)
-		goto no_memory;
+	જો (કિંમત == ખાલી)
+		જાઓ no_memory;
 
-	if (dom_element_has_attribute(n, corestring_dom_selected, &selected) != DOM_NO_ERR) {
+	જો (dom_element_has_attribute(n, corestring_dom_selected, &selected) != DOM_NO_ERR) {
 		/* Assume not selected if we can't read the attribute presence */
 		selected = false;
 	}
 
 	/* replace spaces/TABs with hard spaces to prevent line wrapping */
 	text_nowrap = cnv_space2nbsp(text);
-	if (text_nowrap == NULL)
-		goto no_memory;
+	જો (text_nowrap == ખાલી)
+		જાઓ no_memory;
 
-	if (form_add_option(control, value, text_nowrap, selected, n) == false)
-		goto no_memory;
+	જો (form_add_option(control, કિંમત, text_nowrap, selected, n) == false)
+		જાઓ no_memory;
 
-	free(text);
+	મુક્ત(text);
 
-	return true;
+	પાછા true;
 
 no_memory:
-	free(value);
-	free(text);
-	free(text_nowrap);
-	return false;
+	મુક્ત(કિંમત);
+	મુક્ત(text);
+	મુક્ત(text_nowrap);
+	પાછા false;
 }
 
 
@@ -679,10 +679,10 @@ no_memory:
 /**
  * special element handler for Anchor [12.2].
  */
-static bool
-box_a(dom_node *n,
+સ્થિર bool
+box_a(dom_ગાંઠ *n,
       html_content *content,
-      struct box *box,
+      સંરચના box *box,
       bool *convert_children)
 {
 	bool ok;
@@ -691,13 +691,13 @@ box_a(dom_node *n,
 	dom_exception err;
 
 	err = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		ok = box_extract_link(content, s, content->base_url, &url);
 		dom_string_unref(s);
-		if (!ok)
-			return false;
-		if (url) {
-			if (box->href != NULL)
+		જો (!ok)
+			પાછા false;
+		જો (url) {
+			જો (box->href != ખાલી)
 				nsurl_unref(box->href);
 			box->href = url;
 		}
@@ -705,14 +705,14 @@ box_a(dom_node *n,
 
 	/* name and id share the same namespace */
 	err = dom_element_get_attribute(n, corestring_dom_name, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		lwc_string *lwc_name;
 
 		err = dom_string_intern(s, &lwc_name);
 
 		dom_string_unref(s);
 
-		if (err == DOM_NO_ERR) {
+		જો (err == DOM_NO_ERR) {
 			/* name replaces existing id
 			 * TODO: really? */
 			lwc_string_unref(box->id);
@@ -722,88 +722,88 @@ box_a(dom_node *n,
 
 	/* target frame [16.3] */
 	err = dom_element_get_attribute(n, corestring_dom_target, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	જો (err == DOM_NO_ERR && s != ખાલી) {
+		જો (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__blank))
 			box->target = "_blank";
-		else if (dom_string_caseless_lwc_isequal(s,
-				corestring_lwc__top))
+		નહીંતર જો (dom_string_caseless_lwc_isequal(s,
+				corestring_lwc_ટોચ_2))
 			box->target = "_top";
-		else if (dom_string_caseless_lwc_isequal(s,
+		નહીંતર જો (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__parent))
 			box->target = "_parent";
-		else if (dom_string_caseless_lwc_isequal(s,
+		નહીંતર જો (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__self))
 			/* the default may have been overridden by a
 			 * <base target=...>, so this is different to 0 */
 			box->target = "_self";
-		else {
+		નહીંતર {
 			/* 6.16 says that frame names must begin with [a-zA-Z]
 			 * This doesn't match reality, so just take anything */
 			box->target = talloc_strdup(content->bctx,
 					dom_string_data(s));
-			if (!box->target) {
+			જો (!box->target) {
 				dom_string_unref(s);
-				return false;
+				પાછા false;
 			}
 		}
 		dom_string_unref(s);
 	}
 
-	return true;
+	પાછા true;
 }
 
 
 /**
  * Document body special element handler [7.5.1].
  */
-static bool
-box_body(dom_node *n,
+સ્થિર bool
+box_body(dom_ગાંઠ *n,
 	 html_content *content,
-	 struct box *box,
+	 સંરચના box *box,
 	 bool *convert_children)
 {
 	css_color color;
 
 	css_computed_background_color(box->style, &color);
-	if (nscss_color_is_transparent(color)) {
+	જો (nscss_color_is_transparent(color)) {
 		content->background_colour = NS_TRANSPARENT;
-	} else {
+	} નહીંતર {
 		content->background_colour = nscss_color_to_ns(color);
 	}
 
-	return true;
+	પાછા true;
 }
 
 
 /**
  * special element handler for forced line break [9.3.2].
  */
-static bool
-box_br(dom_node *n,
+સ્થિર bool
+box_br(dom_ગાંઠ *n,
        html_content *content,
-       struct box *box,
+       સંરચના box *box,
        bool *convert_children)
 {
 	box->type = BOX_BR;
-	return true;
+	પાછા true;
 }
 
 
 /**
  * special element handler for Push button [17.5].
  */
-static bool
-box_button(dom_node *n,
+સ્થિર bool
+box_button(dom_ગાંઠ *n,
 	   html_content *content,
-	   struct box *box,
+	   સંરચના box *box,
 	   bool *convert_children)
 {
-	struct form_control *gadget;
+	સંરચના form_control *gadget;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (!gadget)
-		return false;
+	gadget = html_forms_get_control_for_ગાંઠ(content->forms, n);
+	જો (!gadget)
+		પાછા false;
 
 	gadget->html = content;
 	box->gadget = gadget;
@@ -814,33 +814,33 @@ box_button(dom_node *n,
 
 	/* Just render the contents */
 
-	return true;
+	પાછા true;
 }
 
 
 /**
  * Canvas element
  */
-static bool
-box_canvas(dom_node *n,
+સ્થિર bool
+box_canvas(dom_ગાંઠ *n,
 	     html_content *content,
-	     struct box *box,
+	     સંરચના box *box,
 	     bool *convert_children)
 {
 	/* If scripting is not enabled display the contents of canvas */
-	if (!content->enable_scripting) {
-		return true;
+	જો (!content->enable_scripting) {
+		પાછા true;
 	}
 	*convert_children = false;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	જો (box->style && ns_computed_display(box->style,
+			box_is_મૂળ(n)) == CSS_DISPLAY_NONE)
+		પાછા true;
 
 	/* This is replaced content */
 	box->flags |= IS_REPLACED | REPLACE_DIM;
 
-	return true;
+	પાછા true;
 }
 
 
@@ -848,121 +848,121 @@ box_canvas(dom_node *n,
  * Embedded object (not in any HTML specification:
  * see http://wp.netscape.com/assist/net_sites/new_html3_prop.html )
  */
-static bool
-box_embed(dom_node *n,
+સ્થિર bool
+box_embed(dom_ગાંઠ *n,
 	  html_content *content,
-	  struct box *box,
+	  સંરચના box *box,
 	  bool *convert_children)
 {
-	struct object_params *params;
-	struct object_param *param;
+	સંરચના object_params *params;
+	સંરચના object_param *param;
 	dom_namednodemap *attrs;
 	unsigned long idx;
-	uint32_t num_attrs;
+	uint32_t અંક_attrs;
 	dom_string *src;
 	dom_exception err;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	જો (box->style && ns_computed_display(box->style,
+			box_is_મૂળ(n)) == CSS_DISPLAY_NONE)
+		પાછા true;
 
-	params = talloc(content->bctx, struct object_params);
-	if (params == NULL)
-		return false;
+	params = talloc(content->bctx, સંરચના object_params);
+	જો (params == ખાલી)
+		પાછા false;
 
 	talloc_set_destructor(params, box_object_talloc_destructor);
 
-	params->data = NULL;
-	params->type = NULL;
-	params->codetype = NULL;
-	params->codebase = NULL;
-	params->classid = NULL;
-	params->params = NULL;
+	params->data = ખાલી;
+	params->type = ખાલી;
+	params->codetype = ખાલી;
+	params->codebase = ખાલી;
+	params->classid = ખાલી;
+	params->params = ખાલી;
 
 	/* src is a URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &src);
-	if (err != DOM_NO_ERR || src == NULL)
-		return true;
-	if (box_extract_link(content, src, content->base_url,
+	જો (err != DOM_NO_ERR || src == ખાલી)
+		પાછા true;
+	જો (box_extract_link(content, src, content->base_url,
 			     &params->data) == false) {
 		dom_string_unref(src);
-		return false;
+		પાછા false;
 	}
 
 	dom_string_unref(src);
 
-	if (params->data == NULL)
-		return true;
+	જો (params->data == ખાલી)
+		પાછા true;
 
 	/* Don't include ourself */
-	if (nsurl_compare(content->base_url, params->data, NSURL_COMPLETE))
-		return true;
+	જો (nsurl_compare(content->base_url, params->data, NSURL_COMPLETE))
+		પાછા true;
 
 	/* add attributes as parameters to linked list */
-	err = dom_node_get_attributes(n, &attrs);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_ગાંઠ_get_attributes(n, &attrs);
+	જો (err != DOM_NO_ERR)
+		પાછા false;
 
-	err = dom_namednodemap_get_length(attrs, &num_attrs);
-	if (err != DOM_NO_ERR) {
+	err = dom_namednodemap_get_length(attrs, &અંક_attrs);
+	જો (err != DOM_NO_ERR) {
 		dom_namednodemap_unref(attrs);
-		return false;
+		પાછા false;
 	}
 
-	for (idx = 0; idx < num_attrs; idx++) {
+	માટે (idx = 0; idx < અંક_attrs; idx++) {
 		dom_attr *attr;
-		dom_string *name, *value;
+		dom_string *name, *કિંમત;
 
-		err = dom_namednodemap_item(attrs, idx, (void *) &attr);
-		if (err != DOM_NO_ERR) {
+		err = dom_namednodemap_item(attrs, idx, (શૂન્ય *) &attr);
+		જો (err != DOM_NO_ERR) {
 			dom_namednodemap_unref(attrs);
-			return false;
+			પાછા false;
 		}
 
 		err = dom_attr_get_name(attr, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(attr);
+		જો (err != DOM_NO_ERR) {
+			dom_ગાંઠ_unref(attr);
 			dom_namednodemap_unref(attrs);
-			return false;
+			પાછા false;
 		}
 
-		if (dom_string_caseless_lwc_isequal(name, corestring_lwc_src)) {
-			dom_node_unref(attr);
+		જો (dom_string_caseless_lwc_isequal(name, corestring_lwc_src)) {
+			dom_ગાંઠ_unref(attr);
 			dom_string_unref(name);
-			continue;
+			ચાલુ;
 		}
 
-		err = dom_attr_get_value(attr, &value);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(attr);
+		err = dom_attr_get_કિંમત(attr, &કિંમત);
+		જો (err != DOM_NO_ERR) {
+			dom_ગાંઠ_unref(attr);
 			dom_string_unref(name);
 			dom_namednodemap_unref(attrs);
-			return false;
+			પાછા false;
 		}
 
-		param = talloc(content->bctx, struct object_param);
-		if (param == NULL) {
-			dom_node_unref(attr);
-			dom_string_unref(value);
+		param = talloc(content->bctx, સંરચના object_param);
+		જો (param == ખાલી) {
+			dom_ગાંઠ_unref(attr);
+			dom_string_unref(કિંમત);
 			dom_string_unref(name);
 			dom_namednodemap_unref(attrs);
-			return false;
+			પાછા false;
 		}
 
 		param->name = talloc_strdup(content->bctx, dom_string_data(name));
-		param->value = talloc_strdup(content->bctx, dom_string_data(value));
-		param->type = NULL;
+		param->કિંમત = talloc_strdup(content->bctx, dom_string_data(કિંમત));
+		param->type = ખાલી;
 		param->valuetype = talloc_strdup(content->bctx, "data");
-		param->next = NULL;
+		param->next = ખાલી;
 
-		dom_string_unref(value);
+		dom_string_unref(કિંમત);
 		dom_string_unref(name);
-		dom_node_unref(attr);
+		dom_ગાંઠ_unref(attr);
 
-		if (param->name == NULL || param->value == NULL ||
-				param->valuetype == NULL) {
+		જો (param->name == ખાલી || param->કિંમત == ખાલી ||
+				param->valuetype == ખાલી) {
 			dom_namednodemap_unref(attrs);
-			return false;
+			પાછા false;
 		}
 
 		param->next = params->params;
@@ -975,99 +975,99 @@ box_embed(dom_node *n,
 
 	/* start fetch */
 	box->flags |= IS_REPLACED;
-	return html_fetch_object(content, params->data, box, CONTENT_ANY, false);
+	પાછા html_fetch_object(content, params->data, box, CONTENT_ANY, false);
 }
 
 
 /**
  * Window subdivision [16.2.1].
  */
-static bool
-box_frameset(dom_node *n,
+સ્થિર bool
+box_frameset(dom_ગાંઠ *n,
 	     html_content *content,
-	     struct box *box,
+	     સંરચના box *box,
 	     bool *convert_children)
 {
 	bool ok;
 
-	if (content->frameset) {
+	જો (content->frameset) {
 		NSLOG(netsurf, INFO, "Error: multiple framesets in document.");
 		/* Don't convert children */
-		if (convert_children)
+		જો (convert_children)
 			*convert_children = false;
 		/* And ignore this spurious frameset */
 		box->type = BOX_NONE;
-		return true;
+		પાછા true;
 	}
 
 	content->frameset = talloc_zero(content->bctx,
-					struct content_html_frames);
-	if (!content->frameset) {
-		return false;
+					સંરચના content_html_frames);
+	જો (!content->frameset) {
+		પાછા false;
 	}
 
 	ok = box_create_frameset(content->frameset, n, content);
-	if (ok) {
+	જો (ok) {
 		box->type = BOX_NONE;
 	}
 
-	if (convert_children) {
+	જો (convert_children) {
 		*convert_children = false;
 	}
-	return ok;
+	પાછા ok;
 }
 
 
 /**
  * Inline subwindow [16.5].
  */
-static bool
-box_iframe(dom_node *n,
+સ્થિર bool
+box_iframe(dom_ગાંઠ *n,
 	   html_content *content,
-	   struct box *box,
+	   સંરચના box *box,
 	   bool *convert_children)
 {
 	nsurl *url;
 	dom_string *s;
 	dom_exception err;
-	struct content_html_iframe *iframe;
-	int i;
+	સંરચના content_html_iframe *iframe;
+	પૂર્ણાંક i;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	જો (box->style && ns_computed_display(box->style,
+			box_is_મૂળ(n)) == CSS_DISPLAY_NONE)
+		પાછા true;
 
-	if (box->style &&
+	જો (box->style &&
 	    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
 		/* Don't create iframe discriptors for invisible iframes
 		 * TODO: handle hidden iframes at browser_window generation
 		 * time instead? */
-		return true;
+		પાછા true;
 	}
 
 	/* get frame URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &s);
-	if (err != DOM_NO_ERR || s == NULL)
-		return true;
-	if (box_extract_link(content, s, content->base_url, &url) == false) {
+	જો (err != DOM_NO_ERR || s == ખાલી)
+		પાછા true;
+	જો (box_extract_link(content, s, content->base_url, &url) == false) {
 		dom_string_unref(s);
-		return false;
+		પાછા false;
 	}
 	dom_string_unref(s);
-	if (url == NULL)
-		return true;
+	જો (url == ખાલી)
+		પાછા true;
 
 	/* don't include ourself */
-	if (nsurl_compare(content->base_url, url, NSURL_COMPLETE)) {
+	જો (nsurl_compare(content->base_url, url, NSURL_COMPLETE)) {
 		nsurl_unref(url);
-		return true;
+		પાછા true;
 	}
 
 	/* create a new iframe */
-	iframe = talloc(content->bctx, struct content_html_iframe);
-	if (iframe == NULL) {
+	iframe = talloc(content->bctx, સંરચના content_html_iframe);
+	જો (iframe == ખાલી) {
 		nsurl_unref(url);
-		return false;
+		પાછા false;
 	}
 
 	talloc_set_destructor(iframe, box_iframes_talloc_destructor);
@@ -1075,7 +1075,7 @@ box_iframe(dom_node *n,
 	iframe->box = box;
 	iframe->margin_width = 0;
 	iframe->margin_height = 0;
-	iframe->name = NULL;
+	iframe->name = ખાલી;
 	iframe->url = url;
 	iframe->scrolling = BW_SCROLLING_AUTO;
 	iframe->border = true;
@@ -1086,134 +1086,134 @@ box_iframe(dom_node *n,
 
 	/* fill in specified values */
 	err = dom_element_get_attribute(n, corestring_dom_name, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		iframe->name = talloc_strdup(content->bctx, dom_string_data(s));
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_frameborder, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		i = atoi(dom_string_data(s));
 		iframe->border = (i != 0);
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_bordercolor, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		css_color color;
 
-		if (nscss_parse_colour(dom_string_data(s), &color))
+		જો (nscss_parse_colour(dom_string_data(s), &color))
 			iframe->border_colour = nscss_color_to_ns(color);
 
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_scrolling, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	જો (err == DOM_NO_ERR && s != ખાલી) {
+		જો (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_yes))
 			iframe->scrolling = BW_SCROLLING_YES;
-		else if (dom_string_caseless_lwc_isequal(s,
+		નહીંતર જો (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_no))
 			iframe->scrolling = BW_SCROLLING_NO;
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_marginwidth, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		iframe->margin_width = atoi(dom_string_data(s));
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_marginheight, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	જો (err == DOM_NO_ERR && s != ખાલી) {
 		iframe->margin_height = atoi(dom_string_data(s));
 		dom_string_unref(s);
 	}
 
 	/* box */
-	assert(box->style);
+	પ્રતિજ્ઞા(box->style);
 	box->flags |= IFRAME;
 	box->flags |= IS_REPLACED;
 
 	/* Showing iframe, so don't show alternate content */
-	if (convert_children)
+	જો (convert_children)
 		*convert_children = false;
-	return true;
+	પાછા true;
 }
 
 
 /**
  * Embedded image [13.2].
  */
-static bool
-box_image(dom_node *n,
+સ્થિર bool
+box_image(dom_ગાંઠ *n,
 	  html_content *content,
-	  struct box *box,
+	  સંરચના box *box,
 	  bool *convert_children)
 {
 	bool ok;
 	dom_string *s;
 	dom_exception err;
 	nsurl *url;
-	enum css_width_e wtype;
-	enum css_height_e htype;
-	css_fixed value = 0;
+	ગણના css_width_e wtype;
+	ગણના css_height_e htype;
+	css_fixed કિંમત = 0;
 	css_unit wunit = CSS_UNIT_PX;
 	css_unit hunit = CSS_UNIT_PX;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	જો (box->style && ns_computed_display(box->style,
+			box_is_મૂળ(n)) == CSS_DISPLAY_NONE)
+		પાછા true;
 
 	/* handle alt text */
 	err = dom_element_get_attribute(n, corestring_dom_alt, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		char *alt = squash_whitespace(dom_string_data(s));
+	જો (err == DOM_NO_ERR && s != ખાલી) {
+		અક્ષર *alt = squash_whitespace(dom_string_data(s));
 		dom_string_unref(s);
-		if (alt == NULL)
-			return false;
+		જો (alt == ખાલી)
+			પાછા false;
 		box->text = talloc_strdup(content->bctx, alt);
-		free(alt);
-		if (box->text == NULL)
-			return false;
+		મુક્ત(alt);
+		જો (box->text == ખાલી)
+			પાછા false;
 		box->length = strlen(box->text);
 	}
 
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	જો (nsoption_bool(foreground_images) == false) {
+		પાછા true;
 	}
 
 	/* imagemap associated with this image */
-	if (!box_get_attribute(n, "usemap", content->bctx, &box->usemap))
-		return false;
-	if (box->usemap && box->usemap[0] == '#')
+	જો (!box_get_attribute(n, "usemap", content->bctx, &box->usemap))
+		પાછા false;
+	જો (box->usemap && box->usemap[0] == '#')
 		box->usemap++;
 
 	/* get image URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &s);
-	if (err != DOM_NO_ERR || s == NULL)
-		return true;
+	જો (err != DOM_NO_ERR || s == ખાલી)
+		પાછા true;
 
-	if (box_extract_link(content, s, content->base_url, &url) == false) {
+	જો (box_extract_link(content, s, content->base_url, &url) == false) {
 		dom_string_unref(s);
-		return false;
+		પાછા false;
 	}
 
 	dom_string_unref(s);
 
-	if (url == NULL)
-		return true;
+	જો (url == ખાલી)
+		પાછા true;
 
 	/* start fetch */
 	box->flags |= IS_REPLACED;
 	ok = html_fetch_object(content, url, box, image_types, false);
 	nsurl_unref(url);
 
-	wtype = css_computed_width(box->style, &value, &wunit);
-	htype = css_computed_height(box->style, &value, &hunit);
+	wtype = css_computed_width(box->style, &કિંમત, &wunit);
+	htype = css_computed_height(box->style, &કિંમત, &hunit);
 
-	if (wtype == CSS_WIDTH_SET &&
+	જો (wtype == CSS_WIDTH_SET &&
 	    wunit != CSS_UNIT_PCT &&
 	    htype == CSS_HEIGHT_SET &&
 	    hunit != CSS_UNIT_PCT) {
@@ -1222,28 +1222,28 @@ box_image(dom_node *n,
 		box->flags |= REPLACE_DIM;
 	}
 
-	return ok;
+	પાછા ok;
 }
 
 
 /**
  * Form control [17.4].
  */
-static bool
-box_input(dom_node *n,
+સ્થિર bool
+box_આગત(dom_ગાંઠ *n,
 	  html_content *content,
-	  struct box *box,
+	  સંરચના box *box,
 	  bool *convert_children)
 {
-	struct form_control *gadget;
-	dom_string *type = NULL;
+	સંરચના form_control *gadget;
+	dom_string *type = ખાલી;
 	dom_exception err;
 	nsurl *url;
 	nserror error;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (gadget == NULL) {
-		return false;
+	gadget = html_forms_get_control_for_ગાંઠ(content->forms, n);
+	જો (gadget == ખાલી) {
+		પાછા false;
 	}
 
 	box->gadget = gadget;
@@ -1253,72 +1253,72 @@ box_input(dom_node *n,
 
 	/* get entry type */
 	err = dom_element_get_attribute(n, corestring_dom_type, &type);
-	if ((err != DOM_NO_ERR) || (type == NULL)) {
+	જો ((err != DOM_NO_ERR) || (type == ખાલી)) {
 		/* no type so "text" is assumed */
-		if (box_input_text(content, box, n) == false) {
-			return false;
+		જો (box_આગત_text(content, box, n) == false) {
+			પાછા false;
 		}
 		*convert_children = false;
-		return true;
+		પાછા true;
 	}
 
-	if (dom_string_caseless_lwc_isequal(type, corestring_lwc_password)) {
-		if (box_input_text(content, box, n) == false)
-			goto no_memory;
+	જો (dom_string_caseless_lwc_isequal(type, corestring_lwc_password)) {
+		જો (box_આગત_text(content, box, n) == false)
+			જાઓ no_memory;
 
-	} else if (dom_string_caseless_lwc_isequal(type, corestring_lwc_file)) {
+	} નહીંતર જો (dom_string_caseless_lwc_isequal(type, corestring_lwc_file)) {
 		box->type = BOX_INLINE_BLOCK;
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} નહીંતર જો (dom_string_caseless_lwc_isequal(type,
 			corestring_lwc_hidden)) {
 		/* no box for hidden inputs */
 		box->type = BOX_NONE;
 
-	} else if ((dom_string_caseless_lwc_isequal(type,
+	} નહીંતર જો ((dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_checkbox) ||
 			dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_radio))) {
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} નહીંતર જો (dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_submit) ||
 			dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_reset) ||
 			dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_button)) {
-		struct box *inline_container, *inline_box;
+		સંરચના box *inline_container, *inline_box;
 
-		if (box_button(n, content, box, 0) == false)
-			goto no_memory;
+		જો (box_button(n, content, box, 0) == false)
+			જાઓ no_memory;
 
-		inline_container = box_create(NULL, 0, false, 0, 0, 0, 0,
+		inline_container = box_create(ખાલી, 0, false, 0, 0, 0, 0,
 				content->bctx);
-		if (inline_container == NULL)
-			goto no_memory;
+		જો (inline_container == ખાલી)
+			જાઓ no_memory;
 
 		inline_container->type = BOX_INLINE_CONTAINER;
 
-		inline_box = box_create(NULL, box->style, false, 0, 0,
+		inline_box = box_create(ખાલી, box->style, false, 0, 0,
 				box->title, 0, content->bctx);
-		if (inline_box == NULL)
-			goto no_memory;
+		જો (inline_box == ખાલી)
+			જાઓ no_memory;
 
 		inline_box->type = BOX_TEXT;
 
-		if (box->gadget->value != NULL)
+		જો (box->gadget->કિંમત != ખાલી)
 			inline_box->text = talloc_strdup(content->bctx,
-					box->gadget->value);
-		else if (box->gadget->type == GADGET_SUBMIT)
+					box->gadget->કિંમત);
+		નહીંતર જો (box->gadget->type == GADGET_SUBMIT)
 			inline_box->text = talloc_strdup(content->bctx,
 					messages_get("Form_Submit"));
-		else if (box->gadget->type == GADGET_RESET)
+		નહીંતર જો (box->gadget->type == GADGET_RESET)
 			inline_box->text = talloc_strdup(content->bctx,
 					messages_get("Form_Reset"));
-		else
+		નહીંતર
 			inline_box->text = talloc_strdup(content->bctx,
 							 "Button");
 
-		if (inline_box->text == NULL)
-			goto no_memory;
+		જો (inline_box->text == ખાલી)
+			જાઓ no_memory;
 
 		inline_box->length = strlen(inline_box->text);
 
@@ -1326,287 +1326,287 @@ box_input(dom_node *n,
 
 		box_add_child(box, inline_container);
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} નહીંતર જો (dom_string_caseless_lwc_isequal(type,
 						   corestring_lwc_image)) {
 		gadget->type = GADGET_IMAGE;
 
-		if (box->style && ns_computed_display(box->style,
-				box_is_root(n)) != CSS_DISPLAY_NONE &&
+		જો (box->style && ns_computed_display(box->style,
+				box_is_મૂળ(n)) != CSS_DISPLAY_NONE &&
 				nsoption_bool(foreground_images) == true) {
 			dom_string *s;
 
 			err = dom_element_get_attribute(n, corestring_dom_src, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			જો (err == DOM_NO_ERR && s != ખાલી) {
 				error = nsurl_join(content->base_url,
 						dom_string_data(s), &url);
 				dom_string_unref(s);
-				if (error != NSERROR_OK)
-					goto no_memory;
+				જો (error != NSERROR_OK)
+					જાઓ no_memory;
 
 				/* if url is equivalent to the parent's url,
 				 * we've got infinite inclusion. stop it here
 				 */
-				if (nsurl_compare(url, content->base_url,
+				જો (nsurl_compare(url, content->base_url,
 						NSURL_COMPLETE) == false) {
-					if (!html_fetch_object(content,
+					જો (!html_fetch_object(content,
 							       url,
 							       box,
 							       image_types,
 							       false)) {
 						nsurl_unref(url);
-						goto no_memory;
+						જાઓ no_memory;
 					}
 				}
 				nsurl_unref(url);
 			}
 		}
-	} else {
+	} નહીંતર {
 		/* unhandled type the default is "text" */
-		if (box_input_text(content, box, n) == false)
-			goto no_memory;
+		જો (box_આગત_text(content, box, n) == false)
+			જાઓ no_memory;
 	}
 
 	dom_string_unref(type);
 
 	*convert_children = false;
 
-	return true;
+	પાછા true;
 
 no_memory:
 	dom_string_unref(type);
 
-	return false;
+	પાછા false;
 }
 
 
 /**
  * Noscript element
  */
-static bool
-box_noscript(dom_node *n,
+સ્થિર bool
+box_noscript(dom_ગાંઠ *n,
 	     html_content *content,
-	     struct box *box,
+	     સંરચના box *box,
 	     bool *convert_children)
 {
 	/* If scripting is enabled, do not display the contents of noscript */
-	if (content->enable_scripting) {
+	જો (content->enable_scripting) {
 		*convert_children = false;
 	}
 
-	return true;
+	પાછા true;
 }
 
 
 /**
  * Generic embedded object [13.3].
  */
-static bool
-box_object(dom_node *n,
+સ્થિર bool
+box_object(dom_ગાંઠ *n,
 	   html_content *content,
-	   struct box *box,
+	   સંરચના box *box,
 	   bool *convert_children)
 {
-	struct object_params *params;
-	struct object_param *param;
+	સંરચના object_params *params;
+	સંરચના object_param *param;
 	dom_string *codebase, *classid, *data;
-	dom_node *c;
+	dom_ગાંઠ *c;
 	dom_exception err;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	જો (box->style && ns_computed_display(box->style,
+			box_is_મૂળ(n)) == CSS_DISPLAY_NONE)
+		પાછા true;
 
-	if (box_get_attribute(n, "usemap", content->bctx, &box->usemap) ==
+	જો (box_get_attribute(n, "usemap", content->bctx, &box->usemap) ==
 			false)
-		return false;
-	if (box->usemap && box->usemap[0] == '#')
+		પાછા false;
+	જો (box->usemap && box->usemap[0] == '#')
 		box->usemap++;
 
-	params = talloc(content->bctx, struct object_params);
-	if (params == NULL)
-		return false;
+	params = talloc(content->bctx, સંરચના object_params);
+	જો (params == ખાલી)
+		પાછા false;
 
 	talloc_set_destructor(params, box_object_talloc_destructor);
 
-	params->data = NULL;
-	params->type = NULL;
-	params->codetype = NULL;
-	params->codebase = NULL;
-	params->classid = NULL;
-	params->params = NULL;
+	params->data = ખાલી;
+	params->type = ખાલી;
+	params->codetype = ખાલી;
+	params->codebase = ખાલી;
+	params->classid = ખાલી;
+	params->params = ખાલી;
 
 	/* codebase, classid, and data are URLs
 	 * (codebase is the base for the other two) */
 	err = dom_element_get_attribute(n, corestring_dom_codebase, &codebase);
-	if (err == DOM_NO_ERR && codebase != NULL) {
-		if (box_extract_link(content, codebase,	content->base_url,
+	જો (err == DOM_NO_ERR && codebase != ખાલી) {
+		જો (box_extract_link(content, codebase,	content->base_url,
 				&params->codebase) == false) {
 			dom_string_unref(codebase);
-			return false;
+			પાછા false;
 		}
 		dom_string_unref(codebase);
 	}
-	if (params->codebase == NULL)
+	જો (params->codebase == ખાલી)
 		params->codebase = nsurl_ref(content->base_url);
 
 	err = dom_element_get_attribute(n, corestring_dom_classid, &classid);
-	if (err == DOM_NO_ERR && classid != NULL) {
-		if (box_extract_link(content, classid,
+	જો (err == DOM_NO_ERR && classid != ખાલી) {
+		જો (box_extract_link(content, classid,
 				params->codebase, &params->classid) == false) {
 			dom_string_unref(classid);
-			return false;
+			પાછા false;
 		}
 		dom_string_unref(classid);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_data, &data);
-	if (err == DOM_NO_ERR && data != NULL) {
-		if (box_extract_link(content, data,
+	જો (err == DOM_NO_ERR && data != ખાલી) {
+		જો (box_extract_link(content, data,
 				params->codebase, &params->data) == false) {
 			dom_string_unref(data);
-			return false;
+			પાછા false;
 		}
 		dom_string_unref(data);
 	}
 
-	if (params->classid == NULL && params->data == NULL)
+	જો (params->classid == ખાલી && params->data == ખાલી)
 		/* nothing to embed; ignore */
-		return true;
+		પાછા true;
 
 	/* Don't include ourself */
-	if (params->classid != NULL && nsurl_compare(content->base_url,
+	જો (params->classid != ખાલી && nsurl_compare(content->base_url,
 			params->classid, NSURL_COMPLETE))
-		return true;
+		પાછા true;
 
-	if (params->data != NULL && nsurl_compare(content->base_url,
+	જો (params->data != ખાલી && nsurl_compare(content->base_url,
 			params->data, NSURL_COMPLETE))
-		return true;
+		પાછા true;
 
 	/* codetype and type are MIME types */
-	if (box_get_attribute(n, "codetype", params,
+	જો (box_get_attribute(n, "codetype", params,
 			&params->codetype) == false)
-		return false;
-	if (box_get_attribute(n, "type", params, &params->type) == false)
-		return false;
+		પાછા false;
+	જો (box_get_attribute(n, "type", params, &params->type) == false)
+		પાછા false;
 
 	/* classid && !data => classid is used (consult codetype)
 	 * (classid || !classid) && data => data is used (consult type)
 	 * !classid && !data => invalid; ignored */
 
-	if (params->classid != NULL && params->data == NULL &&
-			params->codetype != NULL) {
+	જો (params->classid != ખાલી && params->data == ખાલી &&
+			params->codetype != ખાલી) {
 		lwc_string *icodetype;
 		lwc_error lerror;
 
 		lerror = lwc_intern_string(params->codetype,
 				strlen(params->codetype), &icodetype);
-		if (lerror != lwc_error_ok)
-			return false;
+		જો (lerror != lwc_error_ok)
+			પાછા false;
 
-		if (content_factory_type_from_mime_type(icodetype) ==
+		જો (content_factory_type_from_mime_type(icodetype) ==
 				CONTENT_NONE) {
 			/* can't handle this MIME type */
 			lwc_string_unref(icodetype);
-			return true;
+			પાછા true;
 		}
 
 		lwc_string_unref(icodetype);
 	}
 
-	if (params->data != NULL && params->type != NULL) {
+	જો (params->data != ખાલી && params->type != ખાલી) {
 		lwc_string *itype;
 		lwc_error lerror;
 
 		lerror = lwc_intern_string(params->type, strlen(params->type),
 				&itype);
-		if (lerror != lwc_error_ok)
-			return false;
+		જો (lerror != lwc_error_ok)
+			પાછા false;
 
-		if (content_factory_type_from_mime_type(itype) ==
+		જો (content_factory_type_from_mime_type(itype) ==
 				CONTENT_NONE) {
 			/* can't handle this MIME type */
 			lwc_string_unref(itype);
-			return true;
+			પાછા true;
 		}
 
 		lwc_string_unref(itype);
 	}
 
 	/* add parameters to linked list */
-	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_ગાંઠ_get_first_child(n, &c);
+	જો (err != DOM_NO_ERR)
+		પાછા false;
 
-	while (c != NULL) {
-		dom_node *next;
-		dom_node_type type;
+	જ્યારે (c != ખાલી) {
+		dom_ગાંઠ *next;
+		dom_ગાંઠ_type type;
 
-		err = dom_node_get_node_type(c, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
-			return false;
+		err = dom_ગાંઠ_get_ગાંઠ_type(c, &type);
+		જો (err != DOM_NO_ERR) {
+			dom_ગાંઠ_unref(c);
+			પાછા false;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
+		જો (type == DOM_ELEMENT_ગાંઠ) {
 			dom_string *name;
 
-			err = dom_node_get_node_name(c, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
-				return false;
+			err = dom_ગાંઠ_get_ગાંઠ_name(c, &name);
+			જો (err != DOM_NO_ERR) {
+				dom_ગાંઠ_unref(c);
+				પાછા false;
 			}
 
-			if (!dom_string_caseless_lwc_isequal(name,
+			જો (!dom_string_caseless_lwc_isequal(name,
 					corestring_lwc_param)) {
 				/* The first non-param child is the start of
 				 * the alt html. Therefore, we should break
 				 * out of this loop. */
 				dom_string_unref(name);
-				dom_node_unref(c);
-				break;
+				dom_ગાંઠ_unref(c);
+				તોડો;
 			}
 			dom_string_unref(name);
 
-			param = talloc(params, struct object_param);
-			if (param == NULL) {
-				dom_node_unref(c);
-				return false;
+			param = talloc(params, સંરચના object_param);
+			જો (param == ખાલી) {
+				dom_ગાંઠ_unref(c);
+				પાછા false;
 			}
-			param->name = NULL;
-			param->value = NULL;
-			param->type = NULL;
-			param->valuetype = NULL;
-			param->next = NULL;
+			param->name = ખાલી;
+			param->કિંમત = ખાલી;
+			param->type = ખાલી;
+			param->valuetype = ખાલી;
+			param->next = ખાલી;
 
-			if (box_get_attribute(c, "name", param,
+			જો (box_get_attribute(c, "name", param,
 					&param->name) == false) {
-				dom_node_unref(c);
-				return false;
+				dom_ગાંઠ_unref(c);
+				પાછા false;
 			}
 
-			if (box_get_attribute(c, "value", param,
-					&param->value) == false) {
-				dom_node_unref(c);
-				return false;
+			જો (box_get_attribute(c, "value", param,
+					&param->કિંમત) == false) {
+				dom_ગાંઠ_unref(c);
+				પાછા false;
 			}
 
-			if (box_get_attribute(c, "type", param,
+			જો (box_get_attribute(c, "type", param,
 					&param->type) == false) {
-				dom_node_unref(c);
-				return false;
+				dom_ગાંઠ_unref(c);
+				પાછા false;
 			}
 
-			if (box_get_attribute(c, "valuetype", param,
+			જો (box_get_attribute(c, "valuetype", param,
 					&param->valuetype) == false) {
-				dom_node_unref(c);
-				return false;
+				dom_ગાંઠ_unref(c);
+				પાછા false;
 			}
 
-			if (param->valuetype == NULL) {
+			જો (param->valuetype == ખાલી) {
 				param->valuetype = talloc_strdup(param, "data");
-				if (param->valuetype == NULL) {
-					dom_node_unref(c);
-					return false;
+				જો (param->valuetype == ખાલી) {
+					dom_ગાંઠ_unref(c);
+					પાછા false;
 				}
 			}
 
@@ -1614,13 +1614,13 @@ box_object(dom_node *n,
 			params->params = param;
 		}
 
-		err = dom_node_get_next_sibling(c, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
-			return false;
+		err = dom_ગાંઠ_get_next_sibling(c, &next);
+		જો (err != DOM_NO_ERR) {
+			dom_ગાંઠ_unref(c);
+			પાછા false;
 		}
 
-		dom_node_unref(c);
+		dom_ગાંઠ_unref(c);
 		c = next;
 	}
 
@@ -1628,145 +1628,145 @@ box_object(dom_node *n,
 
 	/* start fetch (MIME type is ok or not specified) */
 	box->flags |= IS_REPLACED;
-	if (!html_fetch_object(content,
+	જો (!html_fetch_object(content,
 			       params->data ? params->data : params->classid,
 			       box,
 			       CONTENT_ANY,
 			       false))
-		return false;
+		પાછા false;
 
 	*convert_children = false;
-	return true;
+	પાછા true;
 }
 
 
 /**
  * Preformatted text [9.3.4].
  */
-static bool
-box_pre(dom_node *n,
+સ્થિર bool
+box_pre(dom_ગાંઠ *n,
 	html_content *content,
-	struct box *box,
+	સંરચના box *box,
 	bool *convert_children)
 {
 	box->flags |= PRE_STRIP;
-	return true;
+	પાછા true;
 }
 
 
 /**
  * Option selector [17.6].
  */
-static bool
-box_select(dom_node *n,
+સ્થિર bool
+box_select(dom_ગાંઠ *n,
 	   html_content *content,
-	   struct box *box,
+	   સંરચના box *box,
 	   bool *convert_children)
 {
-	struct box *inline_container;
-	struct box *inline_box;
-	struct form_control *gadget;
-	dom_node *c, *c2;
-	dom_node *next, *next2;
+	સંરચના box *inline_container;
+	સંરચના box *inline_box;
+	સંરચના form_control *gadget;
+	dom_ગાંઠ *c, *c2;
+	dom_ગાંઠ *next, *next2;
 	dom_exception err;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (gadget == NULL)
-		return false;
+	gadget = html_forms_get_control_for_ગાંઠ(content->forms, n);
+	જો (gadget == ખાલી)
+		પાછા false;
 
 	gadget->html = content;
-	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR) {
+	err = dom_ગાંઠ_get_first_child(n, &c);
+	જો (err != DOM_NO_ERR) {
 		form_free_control(gadget);
-		return false;
+		પાછા false;
 	}
 
-	while (c != NULL) {
+	જ્યારે (c != ખાલી) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(c, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
+		err = dom_ગાંઠ_get_ગાંઠ_name(c, &name);
+		જો (err != DOM_NO_ERR) {
+			dom_ગાંઠ_unref(c);
 			form_free_control(gadget);
-			return false;
+			પાછા false;
 		}
 
-		if (dom_string_caseless_lwc_isequal(name,
+		જો (dom_string_caseless_lwc_isequal(name,
 				corestring_lwc_option)) {
 			dom_string_unref(name);
 
-			if (box_select_add_option(gadget, c) == false) {
-				dom_node_unref(c);
+			જો (box_select_add_option(gadget, c) == false) {
+				dom_ગાંઠ_unref(c);
 				form_free_control(gadget);
-				return false;
+				પાછા false;
 			}
-		} else if (dom_string_caseless_lwc_isequal(name,
+		} નહીંતર જો (dom_string_caseless_lwc_isequal(name,
 				corestring_lwc_optgroup)) {
 			dom_string_unref(name);
 
-			err = dom_node_get_first_child(c, &c2);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
+			err = dom_ગાંઠ_get_first_child(c, &c2);
+			જો (err != DOM_NO_ERR) {
+				dom_ગાંઠ_unref(c);
 				form_free_control(gadget);
-				return false;
+				પાછા false;
 			}
 
-			while (c2 != NULL) {
+			જ્યારે (c2 != ખાલી) {
 				dom_string *c2_name;
 
-				err = dom_node_get_node_name(c2, &c2_name);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c2);
-					dom_node_unref(c);
+				err = dom_ગાંઠ_get_ગાંઠ_name(c2, &c2_name);
+				જો (err != DOM_NO_ERR) {
+					dom_ગાંઠ_unref(c2);
+					dom_ગાંઠ_unref(c);
 					form_free_control(gadget);
-					return false;
+					પાછા false;
 				}
 
-				if (dom_string_caseless_lwc_isequal(c2_name,
+				જો (dom_string_caseless_lwc_isequal(c2_name,
 						corestring_lwc_option)) {
 					dom_string_unref(c2_name);
 
-					if (box_select_add_option(gadget,
+					જો (box_select_add_option(gadget,
 							c2) == false) {
-						dom_node_unref(c2);
-						dom_node_unref(c);
+						dom_ગાંઠ_unref(c2);
+						dom_ગાંઠ_unref(c);
 						form_free_control(gadget);
-						return false;
+						પાછા false;
 					}
-				} else {
+				} નહીંતર {
 					dom_string_unref(c2_name);
 				}
 
-				err = dom_node_get_next_sibling(c2, &next2);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c2);
-					dom_node_unref(c);
+				err = dom_ગાંઠ_get_next_sibling(c2, &next2);
+				જો (err != DOM_NO_ERR) {
+					dom_ગાંઠ_unref(c2);
+					dom_ગાંઠ_unref(c);
 					form_free_control(gadget);
-					return false;
+					પાછા false;
 				}
 
-				dom_node_unref(c2);
+				dom_ગાંઠ_unref(c2);
 				c2 = next2;
 			}
-		} else {
+		} નહીંતર {
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_next_sibling(c, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
+		err = dom_ગાંઠ_get_next_sibling(c, &next);
+		જો (err != DOM_NO_ERR) {
+			dom_ગાંઠ_unref(c);
 			form_free_control(gadget);
-			return false;
+			પાછા false;
 		}
 
-		dom_node_unref(c);
+		dom_ગાંઠ_unref(c);
 		c = next;
 	}
 
-	if (gadget->data.select.num_items == 0) {
+	જો (gadget->data.select.અંક_વસ્તુઓ == 0) {
 		/* no options: ignore entire select */
 		form_free_control(gadget);
-		return true;
+		પાછા true;
 	}
 
 	box->type = BOX_INLINE_BLOCK;
@@ -1774,72 +1774,72 @@ box_select(dom_node *n,
 	box->flags |= IS_REPLACED;
 	gadget->box = box;
 
-	inline_container = box_create(NULL, 0, false, 0, 0, 0, 0, content->bctx);
-	if (inline_container == NULL)
-		goto no_memory;
+	inline_container = box_create(ખાલી, 0, false, 0, 0, 0, 0, content->bctx);
+	જો (inline_container == ખાલી)
+		જાઓ no_memory;
 	inline_container->type = BOX_INLINE_CONTAINER;
-	inline_box = box_create(NULL, box->style, false, 0, 0, box->title, 0,
+	inline_box = box_create(ખાલી, box->style, false, 0, 0, box->title, 0,
 			content->bctx);
-	if (inline_box == NULL)
-		goto no_memory;
+	જો (inline_box == ખાલી)
+		જાઓ no_memory;
 	inline_box->type = BOX_TEXT;
 	box_add_child(inline_container, inline_box);
 	box_add_child(box, inline_container);
 
-	if (gadget->data.select.multiple == false &&
-			gadget->data.select.num_selected == 0) {
-		gadget->data.select.current = gadget->data.select.items;
+	જો (gadget->data.select.multiple == false &&
+			gadget->data.select.અંક_selected == 0) {
+		gadget->data.select.current = gadget->data.select.વસ્તુઓ;
 		gadget->data.select.current->initial_selected =
 			gadget->data.select.current->selected = true;
-		gadget->data.select.num_selected = 1;
+		gadget->data.select.અંક_selected = 1;
 		dom_html_option_element_set_selected(
-				gadget->data.select.current->node, true);
+				gadget->data.select.current->ગાંઠ, true);
 	}
 
-	if (gadget->data.select.num_selected == 0)
+	જો (gadget->data.select.અંક_selected == 0)
 		inline_box->text = talloc_strdup(content->bctx,
 				messages_get("Form_None"));
-	else if (gadget->data.select.num_selected == 1)
+	નહીંતર જો (gadget->data.select.અંક_selected == 1)
 		inline_box->text = talloc_strdup(content->bctx,
 				gadget->data.select.current->text);
-	else
+	નહીંતર
 		inline_box->text = talloc_strdup(content->bctx,
 				messages_get("Form_Many"));
-	if (inline_box->text == NULL)
-		goto no_memory;
+	જો (inline_box->text == ખાલી)
+		જાઓ no_memory;
 
 	inline_box->length = strlen(inline_box->text);
 
 	*convert_children = false;
-	return true;
+	પાછા true;
 
 no_memory:
-	return false;
+	પાછા false;
 }
 
 
 /**
  * Multi-line text field [17.7].
  */
-static bool box_textarea(dom_node *n,
+સ્થિર bool box_textarea(dom_ગાંઠ *n,
 			html_content *content,
-			struct box *box,
+			સંરચના box *box,
 			bool *convert_children)
 {
 	/* Get the form_control for the DOM node */
-	box->gadget = html_forms_get_control_for_node(content->forms, n);
-	if (box->gadget == NULL)
-		return false;
+	box->gadget = html_forms_get_control_for_ગાંઠ(content->forms, n);
+	જો (box->gadget == ખાલી)
+		પાછા false;
 
 	box->flags |= IS_REPLACED;
 	box->gadget->html = content;
 	box->gadget->box = box;
 
-	if (!box_input_text(content, box, n))
-		return false;
+	જો (!box_આગત_text(content, box, n))
+		પાછા false;
 
 	*convert_children = false;
-	return true;
+	પાછા true;
 }
 
 
@@ -1850,84 +1850,84 @@ static bool box_textarea(dom_node *n,
 
 /* exported interface documented in html/box_special.h */
 bool
-convert_special_elements(dom_node *node,
+convert_special_elements(dom_ગાંઠ *ગાંઠ,
 			 html_content *content,
-			 struct box *box,
+			 સંરચના box *box,
 			 bool *convert_children)
 {
 	dom_exception exc;
 	dom_html_element_type tag_type;
 	bool res;
 
-	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_html_element_get_tag_type(ગાંઠ, &tag_type);
+	જો (exc != DOM_NO_ERR) {
 		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	switch (tag_type) {
-	case DOM_HTML_ELEMENT_TYPE_A:
-		res =  box_a(node, content, box, convert_children);
-		break;
+	પસંદગી (tag_type) {
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_A:
+		res =  box_a(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_BODY:
-		res = box_body(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_BODY:
+		res = box_body(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_BR:
-		res = box_br(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_BR:
+		res = box_br(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_BUTTON:
-		res = box_button(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_BUTTON:
+		res = box_button(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_CANVAS:
-		res = box_canvas(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_CANVAS:
+		res = box_canvas(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_EMBED:
-		res = box_embed(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_EMBED:
+		res = box_embed(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_FRAMESET:
-		res = box_frameset(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_FRAMESET:
+		res = box_frameset(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_IFRAME:
-		res = box_iframe(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_IFRAME:
+		res = box_iframe(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_IMG:
-		res = box_image(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_IMG:
+		res = box_image(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
-		res = box_input(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_આગત:
+		res = box_આગત(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_NOSCRIPT:
-		res = box_noscript(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_NOSCRIPT:
+		res = box_noscript(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_OBJECT:
-		res = box_object(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_OBJECT:
+		res = box_object(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_PRE:
-		res = box_pre(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_PRE:
+		res = box_pre(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_SELECT:
-		res = box_select(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_SELECT:
+		res = box_select(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-		res = box_textarea(node, content, box, convert_children);
-		break;
+	સ્થિતિ DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+		res = box_textarea(ગાંઠ, content, box, convert_children);
+		તોડો;
 
-	default:
+	મૂળભૂત:
 		res = true;
 	}
 
-	return res;
+	પાછા res;
 }

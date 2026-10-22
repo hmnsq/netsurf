@@ -21,15 +21,15 @@
  * content generator for the about scheme blank page
  */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
 
-#include "netsurf/types.h"
-#include "utils/errors.h"
+#અન્તર્ભાવ "netsurf/types.h"
+#અન્તર્ભાવ "utils/errors.h"
 
-#include "private.h"
-#include "blank.h"
+#અન્તર્ભાવ "private.h"
+#અન્તર્ભાવ "blank.h"
 
 /**
  * Handler to generate about scheme cache page.
@@ -37,24 +37,24 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_blank_handler(struct fetch_about_context *ctx)
+bool fetch_about_blank_handler(સંરચના fetch_about_context *ctx)
 {
-	const char buffer[2] = { ' ', '\0' };
+	અચલ અક્ષર buffer[2] = { ' ', '\0' };
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html"))
-		goto fetch_about_blank_handler_aborted;
+	જો (fetch_about_send_header(ctx, "Content-Type: text/html"))
+		જાઓ fetch_about_blank_handler_aborted;
 
-	if (fetch_about_senddata(ctx, (const uint8_t *) buffer, strlen(buffer)) != NSERROR_OK)
-		goto fetch_about_blank_handler_aborted;
+	જો (fetch_about_senddata(ctx, (અચલ uint8_t *) buffer, strlen(buffer)) != NSERROR_OK)
+		જાઓ fetch_about_blank_handler_aborted;
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	પાછા true;
 
 fetch_about_blank_handler_aborted:
-	return false;
+	પાછા false;
 }

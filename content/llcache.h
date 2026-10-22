@@ -23,33 +23,33 @@
 #ifndef NETSURF_CONTENT_LLCACHE_H_
 #define NETSURF_CONTENT_LLCACHE_H_
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <stddef.h>
+#અન્તર્ભાવ <stdint.h>
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
+#અન્તર્ભાવ "utils/errors.h"
+#અન્તર્ભાવ "utils/nsurl.h"
 
-struct cert_chain;
-struct fetch_multipart_data;
+સંરચના cert_chain;
+સંરચના fetch_multipart_data;
 
 /** Handle for low-level cache object */
-typedef struct llcache_handle llcache_handle;
+પ્રકારવ્યાખ્યા સંરચના llcache_handle llcache_handle;
 
 /** POST data object for low-level cache requests */
-typedef struct llcache_post_data {
-	enum {
+પ્રકારવ્યાખ્યા સંરચના llcache_post_data {
+	ગણના {
 		LLCACHE_POST_URL_ENCODED,
 		LLCACHE_POST_MULTIPART
 	} type;				/**< Type of POST data */
-	union {
-		char *urlenc;		/**< URL encoded data */
-		struct fetch_multipart_data *multipart; /**< Multipart data */
+	સંઘ {
+		અક્ષર *urlenc;		/**< URL encoded data */
+		સંરચના fetch_multipart_data *multipart; /**< Multipart data */
 	} data;				/**< POST data content */
 } llcache_post_data;
 
 /** Flags for low-level cache object retrieval */
-enum llcache_retrieve_flag {
+ગણના llcache_retrieve_flag {
 	/* Note: We're permitted a maximum of 16 flags which must reside in the
 	 * bottom 16 bits of the flags word. See hlcache.h for further details.
 	 */
@@ -64,7 +64,7 @@ enum llcache_retrieve_flag {
 };
 
 /** Low-level cache event types */
-typedef enum {
+પ્રકારવ્યાખ્યા ગણના {
 	LLCACHE_EVENT_GOT_CERTS,        /**< SSL certificates arrived */
 	LLCACHE_EVENT_HAD_HEADERS,	/**< Received all headers */
 	LLCACHE_EVENT_HAD_DATA,		/**< Received some data */
@@ -82,23 +82,23 @@ typedef enum {
  * Lifetime of contained information is only for the duration of the event
  * and must be copied if it is desirable to retain.
  */
-typedef struct {
+પ્રકારવ્યાખ્યા સંરચના {
 	llcache_event_type type;            /**< Type of event */
-	union {
-		struct {
-			const uint8_t *buf; /**< Buffer of data */
+	સંઘ {
+		સંરચના {
+			અચલ uint8_t *buf; /**< Buffer of data */
 			size_t len;	    /**< Byte length of buffer */
 		} data;                     /**< Received data */
-		struct {
+		સંરચના {
 			nserror code;       /**< The error code */
-			const char *msg;    /**< Error message */
+			અચલ અક્ષર *સંદેશ;    /**< Error message */
 		} error;
-		const char *progress_msg;   /**< Progress message */
-		struct {
+		અચલ અક્ષર *progress_સંદેશ;   /**< Progress message */
+		સંરચના {
 			nsurl *from;	    /**< Redirect origin */
 			nsurl *to;	    /**< Redirect target */
 		} redirect;                 /**< Fetch URL redirect occured */
-		const struct cert_chain *chain;    /**< Certificate chain */
+		અચલ સંરચના cert_chain *chain;    /**< Certificate chain */
 	} data;				    /**< Event data */
 } llcache_event;
 
@@ -110,14 +110,14 @@ typedef struct {
  * \param pw      Pointer to client-specific data
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-typedef nserror (*llcache_handle_callback)(llcache_handle *handle,
-		const llcache_event *event, void *pw);
+પ્રકારવ્યાખ્યા nserror (*llcache_handle_callback)(llcache_handle *handle,
+		અચલ llcache_event *event, શૂન્ય *pw);
 
 /**
  * Parameters to configure the low level cache backing store.
  */
-struct llcache_store_parameters {
-	const char *path; /**< The path to the backing store */
+સંરચના llcache_store_parameters {
+	અચલ અક્ષર *path; /**< The path to the backing store */
 
 	size_t limit; /**< The backing store upper bound target size */
 	size_t hysteresis; /**< The hysteresis around the target size */
@@ -126,12 +126,12 @@ struct llcache_store_parameters {
 /**
  * Parameters to configure the low level cache.
  */
-struct llcache_parameters {
+સંરચના llcache_parameters {
 	size_t limit; /**< The target upper bound for the RAM cache size */
 	size_t hysteresis; /**< The hysteresis around the target size */
 
 	/** The minimum lifetime to consider sending objects to backing store.*/
-	int minimum_lifetime;
+	પૂર્ણાંક minimum_lifetime;
 
 	/** The minimum bandwidth to allow the backing store to
 	 * use in bytes/second
@@ -150,7 +150,7 @@ struct llcache_parameters {
 	/** The number of fetches to attempt when timing out */
 	uint32_t fetch_attempts;
 
-	struct llcache_store_parameters store;
+	સંરચના llcache_store_parameters store;
 };
 
 /**
@@ -159,12 +159,12 @@ struct llcache_parameters {
  * \param parameters cache configuration parameters.
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror llcache_initialise(const struct llcache_parameters *parameters);
+nserror llcache_initialise(અચલ સંરચના llcache_parameters *parameters);
 
 /**
  * Finalise the low-level cache
  */
-void llcache_finalise(void);
+શૂન્ય llcache_finalise(શૂન્ય);
 
 /**
  * Cause the low-level cache to attempt to perform cleanup.
@@ -175,7 +175,7 @@ void llcache_finalise(void);
  * \param purge Any objects held in the cache that are safely removable will
  *              be freed regardless of the configured size limits.
  */
-void llcache_clean(bool purge);
+શૂન્ય llcache_clean(bool purge);
 
 /**
  * Retrieve a handle for a low-level cache object
@@ -190,8 +190,8 @@ void llcache_clean(bool purge);
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 nserror llcache_handle_retrieve(nsurl *url, uint32_t flags,
-		nsurl *referer, const llcache_post_data *post,
-		llcache_handle_callback cb, void *pw,
+		nsurl *referer, અચલ llcache_post_data *post,
+		llcache_handle_callback cb, શૂન્ય *pw,
 		llcache_handle **result);
 
 /**
@@ -203,7 +203,7 @@ nserror llcache_handle_retrieve(nsurl *url, uint32_t flags,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 nserror llcache_handle_change_callback(llcache_handle *handle,
-		llcache_handle_callback cb, void *pw);
+		llcache_handle_callback cb, શૂન્ય *pw);
 
 /**
  * Release a low-level cache handle
@@ -253,7 +253,7 @@ nserror llcache_handle_invalidate_cache_data(llcache_handle *handle);
  * \param handle  Handle to retrieve URL from
  * \return Post-redirect URL of cache object or NULL if no object
  */
-nsurl *llcache_handle_get_url(const llcache_handle *handle);
+nsurl *llcache_handle_get_url(અચલ llcache_handle *handle);
 
 /**
  * Retrieve source data of a low-level cache object
@@ -262,7 +262,7 @@ nsurl *llcache_handle_get_url(const llcache_handle *handle);
  * \param size    Pointer to location to receive byte length of data
  * \return Pointer to source data
  */
-const uint8_t *llcache_handle_get_source_data(const llcache_handle *handle,
+અચલ uint8_t *llcache_handle_get_source_data(અચલ llcache_handle *handle,
 		size_t *size);
 
 /**
@@ -278,8 +278,8 @@ const uint8_t *llcache_handle_get_source_data(const llcache_handle *handle,
  *       key-value pairs for any additional parameters.
  * \todo Deal with multiple headers of the same key (e.g. Set-Cookie)
  */
-const char *llcache_handle_get_header(const llcache_handle *handle,
-		const char *key);
+અચલ અક્ષર *llcache_handle_get_header(અચલ llcache_handle *handle,
+		અચલ અક્ષર *ચાવી);
 
 /**
  * Determine if the same underlying object is referenced by the given handles
@@ -288,7 +288,7 @@ const char *llcache_handle_get_header(const llcache_handle *handle,
  * \param b  Second handle
  * \return True if handles reference the same object, false otherwise
  */
-bool llcache_handle_references_same_object(const llcache_handle *a,
-		const llcache_handle *b);
+bool llcache_handle_references_same_object(અચલ llcache_handle *a,
+		અચલ llcache_handle *b);
 
 #endif

@@ -32,6 +32,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_imagecache_handler(struct fetch_about_context *ctx);
+bool fetch_about_imagecache_handler(સંરચના fetch_about_context *ctx);
 
 #endif

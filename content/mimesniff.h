@@ -24,12 +24,12 @@
 #ifndef NETSURF_CONTENT_MIMESNIFF_H_
 #define NETSURF_CONTENT_MIMESNIFF_H_
 
-#include <stdbool.h>
+#અન્તર્ભાવ <stdbool.h>
 
-#include <libwapcaplet/libwapcaplet.h>
-#include "utils/errors.h"
+#અન્તર્ભાવ <libwapcaplet/libwapcaplet.h>
+#અન્તર્ભાવ "utils/errors.h"
 
-struct llcache_handle;
+સંરચના llcache_handle;
 
 /**
  * Compute the effective MIME type for an object
@@ -48,8 +48,8 @@ struct llcache_handle;
  *         NSERROR_NOT_FOUND if sniffing is prohibited and no 
  *                           Content-Type header was found
  */
-nserror mimesniff_compute_effective_type(const char *content_type_header,
-		const uint8_t *data, size_t len, bool sniff_allowed,
+nserror mimesniff_compute_effective_type(અચલ અક્ષર *content_type_header,
+		અચલ uint8_t *data, size_t len, bool sniff_allowed,
 		bool image_only, lwc_string **effective_type);
 
 #endif

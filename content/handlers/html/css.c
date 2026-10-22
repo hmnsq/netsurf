@@ -21,132 +21,132 @@
  * Processing for html content css operations.
  */
 
-#include "utils/config.h"
+#અન્તર્ભાવ "utils/config.h"
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
+#અન્તર્ભાવ <assert.h>
+#અન્તર્ભાવ <ctype.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <strings.h>
+#અન્તર્ભાવ <stdlib.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/misc.h"
-#include "netsurf/content.h"
-#include "content/hlcache.h"
-#include "css/css.h"
-#include "desktop/gui_internal.h"
+#અન્તર્ભાવ "utils/nsoption.h"
+#અન્તર્ભાવ "utils/corestrings.h"
+#અન્તર્ભાવ "utils/log.h"
+#અન્તર્ભાવ "netsurf/inttypes.h"
+#અન્તર્ભાવ "netsurf/misc.h"
+#અન્તર્ભાવ "netsurf/content.h"
+#અન્તર્ભાવ "content/hlcache.h"
+#અન્તર્ભાવ "css/css.h"
+#અન્તર્ભાવ "desktop/gui_internal.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/css.h"
+#અન્તર્ભાવ "html/html.h"
+#અન્તર્ભાવ "html/private.h"
+#અન્તર્ભાવ "html/css.h"
 
-static nsurl *html_default_stylesheet_url;
-static nsurl *html_adblock_stylesheet_url;
-static nsurl *html_quirks_stylesheet_url;
-static nsurl *html_user_stylesheet_url;
+સ્થિર nsurl *html_default_stylesheet_url;
+સ્થિર nsurl *html_adblock_stylesheet_url;
+સ્થિર nsurl *html_quirks_stylesheet_url;
+સ્થિર nsurl *html_user_stylesheet_url;
 
 /**
  * Convert css error to netsurf error.
  */
-static nserror css_error_to_nserror(css_error error)
+સ્થિર nserror css_error_to_nserror(css_error error)
 {
-	switch (error) {
-	case CSS_OK:
-		return NSERROR_OK;
+	પસંદગી (error) {
+	સ્થિતિ CSS_OK:
+		પાછા NSERROR_OK;
 
-	case CSS_NOMEM:
-		return NSERROR_NOMEM;
+	સ્થિતિ CSS_NOMEM:
+		પાછા NSERROR_NOMEM;
 
-	case CSS_BADPARM:
-		return NSERROR_BAD_PARAMETER;
+	સ્થિતિ CSS_BADPARM:
+		પાછા NSERROR_BAD_PARAMETER;
 
-	case CSS_INVALID:
-		return NSERROR_INVALID;
+	સ્થિતિ CSS_INVALID:
+		પાછા NSERROR_INVALID;
 
-	case CSS_FILENOTFOUND:
-		return NSERROR_NOT_FOUND;
+	સ્થિતિ CSS_FILENOTFOUND:
+		પાછા NSERROR_NOT_FOUND;
 
-	case CSS_NEEDDATA:
-		return NSERROR_NEED_DATA;
+	સ્થિતિ CSS_NEEDDATA:
+		પાછા NSERROR_NEED_DATA;
 
-	case CSS_BADCHARSET:
-		return NSERROR_BAD_ENCODING;
+	સ્થિતિ CSS_BADCHARSET:
+		પાછા NSERROR_BAD_ENCODING;
 
-	case CSS_EOF:
-	case CSS_IMPORTS_PENDING:
-	case CSS_PROPERTY_NOT_SET:
-	default:
-		break;
+	સ્થિતિ CSS_EOF:
+	સ્થિતિ CSS_IMPORTS_PENDING:
+	સ્થિતિ CSS_PROPERTY_NOT_SET:
+	મૂળભૂત:
+		તોડો;
 	}
-	return NSERROR_CSS;
+	પાછા NSERROR_CSS;
 }
 
 
 /**
  * Callback for fetchcache() for stylesheets.
  */
-static nserror
+સ્થિર nserror
 html_convert_css_callback(hlcache_handle *css,
-			  const hlcache_event *event,
-			  void *pw)
+			  અચલ hlcache_event *event,
+			  શૂન્ય *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_stylesheet *s;
+	unsigned પૂર્ણાંક i;
+	સંરચના html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = parent->stylesheets;
-	     i != parent->stylesheet_count;
+	માટે (i = 0, s = parent->stylesheets;
+	     i != parent->stylesheet_ગણતરી;
 	     i++, s++) {
-		if (s->sheet == css)
-			break;
+		જો (s->sheet == css)
+			તોડો;
 	}
 
-	assert(i != parent->stylesheet_count);
+	પ્રતિજ્ઞા(i != parent->stylesheet_ગણતરી);
 
-	switch (event->type) {
+	પસંદગી (event->type) {
 
-	case CONTENT_MSG_DONE:
+	સ્થિતિ CONTENT_સંદેશ_DONE:
 		NSLOG(netsurf, INFO, "done stylesheet slot %d '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(css)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
-		break;
+		તોડો;
 
-	case CONTENT_MSG_ERROR:
+	સ્થિતિ CONTENT_સંદેશ_ERROR:
 		NSLOG(netsurf, INFO, "stylesheet %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(css)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(css);
-		s->sheet = NULL;
+		s->sheet = ખાલી;
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
-		break;
+		તોડો;
 
-	case CONTENT_MSG_POINTER:
+	સ્થિતિ CONTENT_સંદેશ_POINTER:
 		/* Really don't want this to continue after the switch */
-		return NSERROR_OK;
+		પાછા NSERROR_OK;
 
-	default:
-		break;
+	મૂળભૂત:
+		તોડો;
 	}
 
-	if (html_can_begin_conversion(parent)) {
+	જો (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 
-static nserror
+સ્થિર nserror
 html_stylesheet_from_domnode(html_content *c,
-			     dom_node *node,
+			     dom_ગાંઠ *ગાંઠ,
 			     hlcache_handle **sheet)
 {
 	hlcache_child_context child;
@@ -154,40 +154,40 @@ html_stylesheet_from_domnode(html_content *c,
 	nsurl *url;
 	dom_exception exc;
 	nserror error;
-	uint32_t key;
-	char urlbuf[64];
+	uint32_t ચાવી;
+	અક્ષર urlbuf[64];
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	exc = dom_node_get_text_content(node, &style);
-	if ((exc != DOM_NO_ERR) || (style == NULL)) {
+	exc = dom_ગાંઠ_get_text_content(ગાંઠ, &style);
+	જો ((exc != DOM_NO_ERR) || (style == ખાલી)) {
 		NSLOG(netsurf, INFO, "No text content");
-		return NSERROR_OK;
+		પાછા NSERROR_OK;
 	}
 
-	error = html_css_fetcher_add_item(style, c->base_url, &key);
-	if (error != NSERROR_OK) {
+	error = html_css_fetcher_add_item(style, c->base_url, &ચાવી);
+	જો (error != NSERROR_OK) {
 		dom_string_unref(style);
-		return error;
+		પાછા error;
 	}
 
 	dom_string_unref(style);
 
-	snprintf(urlbuf, sizeof(urlbuf), "x-ns-css:%"PRIu32"", key);
+	snprintf(urlbuf, કદ(urlbuf), "x-ns-css:%"PRIu32"", ચાવી);
 
 	error = nsurl_create(urlbuf, &url);
-	if (error != NSERROR_OK) {
-		return error;
+	જો (error != NSERROR_OK) {
+		પાછા error;
 	}
 
 	error = hlcache_handle_retrieve(url, 0,
-			content_get_url(&c->base), NULL,
+			content_get_url(&c->base), ખાલી,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			sheet);
-	if (error != NSERROR_OK) {
+	જો (error != NSERROR_OK) {
 		nsurl_unref(url);
-		return error;
+		પાછા error;
 	}
 
 	nsurl_unref(url);
@@ -195,7 +195,7 @@ html_stylesheet_from_domnode(html_content *c,
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 
@@ -206,80 +206,80 @@ html_stylesheet_from_domnode(html_content *c,
  * \param  style  xml node of style element
  * \return  true on success, false if an error occurred
  */
-static struct html_stylesheet *
-html_create_style_element(html_content *c, dom_node *style)
+સ્થિર સંરચના html_stylesheet *
+html_create_style_element(html_content *c, dom_ગાંઠ *style)
 {
 	dom_string *val;
 	dom_exception exc;
-	struct html_stylesheet *stylesheets;
+	સંરચના html_stylesheet *stylesheets;
 
 	/* type='text/css', or not present (invalid but common) */
 	exc = dom_element_get_attribute(style, corestring_dom_type, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (!dom_string_caseless_lwc_isequal(val,
+	જો (exc == DOM_NO_ERR && val != ખાલી) {
+		જો (!dom_string_caseless_lwc_isequal(val,
 				corestring_lwc_text_css)) {
 			dom_string_unref(val);
-			return NULL;
+			પાછા ખાલી;
 		}
 		dom_string_unref(val);
 	}
 
 	/* media contains 'screen' or 'all' or not present */
 	exc = dom_element_get_attribute(style, corestring_dom_media, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (strcasestr(dom_string_data(val), "screen") == NULL &&
+	જો (exc == DOM_NO_ERR && val != ખાલી) {
+		જો (strcasestr(dom_string_data(val), "screen") == ખાલી &&
 				strcasestr(dom_string_data(val),
-						"all") == NULL) {
+						"all") == ખાલી) {
 			dom_string_unref(val);
-			return NULL;
+			પાછા ખાલી;
 		}
 		dom_string_unref(val);
 	}
 
 	/* Extend array */
 	stylesheets = realloc(c->stylesheets,
-			      sizeof(struct html_stylesheet) *
-			      (c->stylesheet_count + 1));
-	if (stylesheets == NULL) {
+			      કદ(સંરચના html_stylesheet) *
+			      (c->stylesheet_ગણતરી + 1));
+	જો (stylesheets == ખાલી) {
 
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return false;
+		content_broadcast_error(&c->base, NSERROR_NOMEM, ખાલી);
+		પાછા false;
 
 	}
 	c->stylesheets = stylesheets;
 
-	c->stylesheets[c->stylesheet_count].node = dom_node_ref(style);
-	c->stylesheets[c->stylesheet_count].sheet = NULL;
-	c->stylesheets[c->stylesheet_count].modified = false;
-	c->stylesheets[c->stylesheet_count].unused = false;
-	c->stylesheet_count++;
+	c->stylesheets[c->stylesheet_ગણતરી].ગાંઠ = dom_ગાંઠ_ref(style);
+	c->stylesheets[c->stylesheet_ગણતરી].sheet = ખાલી;
+	c->stylesheets[c->stylesheet_ગણતરી].modified = false;
+	c->stylesheets[c->stylesheet_ગણતરી].unused = false;
+	c->stylesheet_ગણતરી++;
 
-	return c->stylesheets + (c->stylesheet_count - 1);
+	પાછા c->stylesheets + (c->stylesheet_ગણતરી - 1);
 }
 
 
-static bool
-html_css_process_modified_style(html_content *c, struct html_stylesheet *s)
+સ્થિર bool
+html_css_process_modified_style(html_content *c, સંરચના html_stylesheet *s)
 {
-	hlcache_handle *sheet = NULL;
+	hlcache_handle *sheet = ખાલી;
 	nserror error;
 
-	error = html_stylesheet_from_domnode(c, s->node, &sheet);
-	if (error != NSERROR_OK) {
+	error = html_stylesheet_from_domnode(c, s->ગાંઠ, &sheet);
+	જો (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "Failed to update sheet");
-		content_broadcast_error(&c->base, error, NULL);
-		return false;
+		content_broadcast_error(&c->base, error, ખાલી);
+		પાછા false;
 	}
 
-	if (sheet != NULL) {
+	જો (sheet != ખાલી) {
 		NSLOG(netsurf, INFO, "Updating sheet %p with %p", s->sheet,
 		      sheet);
 
-		if (s->sheet != NULL) {
-			switch (content_get_status(s->sheet)) {
-			case CONTENT_STATUS_DONE:
-				break;
-			default:
+		જો (s->sheet != ખાલી) {
+			પસંદગી (content_get_status(s->sheet)) {
+			સ્થિતિ CONTENT_STATUS_DONE:
+				તોડો;
+			મૂળભૂત:
 				hlcache_handle_abort(s->sheet);
 				c->base.active--;
 				NSLOG(netsurf, INFO, "%d fetches active",
@@ -292,179 +292,179 @@ html_css_process_modified_style(html_content *c, struct html_stylesheet *s)
 
 	s->modified = false;
 
-	return true;
+	પાછા true;
 }
 
 
 /**
  * process a stylesheet that has been modified.
  */
-static void html_css_process_modified_styles(void *pw)
+સ્થિર શૂન્ય html_css_process_modified_styles(શૂન્ય *pw)
 {
 	html_content *c = pw;
-	struct html_stylesheet *s;
-	unsigned int i;
+	સંરચના html_stylesheet *s;
+	unsigned પૂર્ણાંક i;
 	bool all_done = true;
 
-	for (i = 0, s = c->stylesheets; i != c->stylesheet_count; i++, s++) {
-		if (c->stylesheets[i].modified) {
+	માટે (i = 0, s = c->stylesheets; i != c->stylesheet_ગણતરી; i++, s++) {
+		જો (c->stylesheets[i].modified) {
 			all_done &= html_css_process_modified_style(c, s);
 		}
 	}
 
 	/* If we failed to process any sheet, schedule a retry */
-	if (all_done == false) {
+	જો (all_done == false) {
 		guit->misc->schedule(1000, html_css_process_modified_styles, c);
 	}
 }
 
 
 /* exported function documented in html/css.h */
-bool html_css_update_style(html_content *c, dom_node *style)
+bool html_css_update_style(html_content *c, dom_ગાંઠ *style)
 {
-	unsigned int i;
-	struct html_stylesheet *s;
+	unsigned પૂર્ણાંક i;
+	સંરચના html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
-		if (s->node == style)
-			break;
+	માટે (i = 0, s = c->stylesheets;	i != c->stylesheet_ગણતરી; i++, s++) {
+		જો (s->ગાંઠ == style)
+			તોડો;
 	}
-	if (i == c->stylesheet_count) {
+	જો (i == c->stylesheet_ગણતરી) {
 		s = html_create_style_element(c, style);
 	}
-	if (s == NULL) {
+	જો (s == ખાલી) {
 		NSLOG(netsurf, INFO,
 		      "Could not find or create inline stylesheet for %p",
 		      style);
-		return false;
+		પાછા false;
 	}
 
 	s->modified = true;
 
 	guit->misc->schedule(0, html_css_process_modified_styles, c);
 
-	return true;
+	પાછા true;
 }
 
 
 /* exported function documented in html/css.h */
-bool html_css_process_style(html_content *c, dom_node *node)
+bool html_css_process_style(html_content *c, dom_ગાંઠ *ગાંઠ)
 {
-	unsigned int i;
+	unsigned પૂર્ણાંક i;
 	dom_string *val;
 	dom_exception exc;
-	struct html_stylesheet *s;
+	સંરચના html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
-		if (s->node == node)
-			break;
+	માટે (i = 0, s = c->stylesheets;	i != c->stylesheet_ગણતરી; i++, s++) {
+		જો (s->ગાંઠ == ગાંઠ)
+			તોડો;
 	}
 
 		/* Should already exist */
-	if (i == c->stylesheet_count) {
-		return false;
+	જો (i == c->stylesheet_ગણતરી) {
+		પાછા false;
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_media, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (strcasestr(dom_string_data(val), "screen") == NULL &&
+	exc = dom_element_get_attribute(ગાંઠ, corestring_dom_media, &val);
+	જો (exc == DOM_NO_ERR && val != ખાલી) {
+		જો (strcasestr(dom_string_data(val), "screen") == ખાલી &&
 				strcasestr(dom_string_data(val),
-						"all") == NULL) {
+						"all") == ખાલી) {
 			s->unused = true;
 		}
 		dom_string_unref(val);
 	}
 
-	return true;
+	પાછા true;
 }
 
 
 /* exported function documented in html/css.h */
-bool html_css_process_link(html_content *htmlc, dom_node *node)
+bool html_css_process_link(html_content *htmlc, dom_ગાંઠ *ગાંઠ)
 {
 	dom_string *rel, *type_attr, *media, *href;
-	struct html_stylesheet *stylesheets;
+	સંરચના html_stylesheet *stylesheets;
 	nsurl *joined;
 	dom_exception exc;
 	nserror ns_error;
 	hlcache_child_context child;
 
 	/* rel=<space separated list, including 'stylesheet'> */
-	exc = dom_element_get_attribute(node, corestring_dom_rel, &rel);
-	if (exc != DOM_NO_ERR || rel == NULL)
-		return true;
+	exc = dom_element_get_attribute(ગાંઠ, corestring_dom_rel, &rel);
+	જો (exc != DOM_NO_ERR || rel == ખાલી)
+		પાછા true;
 
-	if (strcasestr(dom_string_data(rel), "stylesheet") == NULL) {
+	જો (strcasestr(dom_string_data(rel), "stylesheet") == ખાલી) {
 		dom_string_unref(rel);
-		return true;
-	} else if (strcasestr(dom_string_data(rel), "alternate") != NULL) {
+		પાછા true;
+	} નહીંતર જો (strcasestr(dom_string_data(rel), "alternate") != ખાલી) {
 		/* Ignore alternate stylesheets */
 		dom_string_unref(rel);
-		return true;
+		પાછા true;
 	}
 	dom_string_unref(rel);
 
-	if (nsoption_bool(author_level_css) == false) {
-		return true;
+	જો (nsoption_bool(author_level_css) == false) {
+		પાછા true;
 	}
 
 	/* type='text/css' or not present */
-	exc = dom_element_get_attribute(node, corestring_dom_type, &type_attr);
-	if (exc == DOM_NO_ERR && type_attr != NULL) {
-		if (!dom_string_caseless_lwc_isequal(type_attr,
+	exc = dom_element_get_attribute(ગાંઠ, corestring_dom_type, &type_attr);
+	જો (exc == DOM_NO_ERR && type_attr != ખાલી) {
+		જો (!dom_string_caseless_lwc_isequal(type_attr,
 				corestring_lwc_text_css)) {
 			dom_string_unref(type_attr);
-			return true;
+			પાછા true;
 		}
 		dom_string_unref(type_attr);
 	}
 
 	/* media contains 'screen' or 'all' or not present */
-	exc = dom_element_get_attribute(node, corestring_dom_media, &media);
-	if (exc == DOM_NO_ERR && media != NULL) {
-		if (strcasestr(dom_string_data(media), "screen") == NULL &&
-		    strcasestr(dom_string_data(media), "all") == NULL) {
+	exc = dom_element_get_attribute(ગાંઠ, corestring_dom_media, &media);
+	જો (exc == DOM_NO_ERR && media != ખાલી) {
+		જો (strcasestr(dom_string_data(media), "screen") == ખાલી &&
+		    strcasestr(dom_string_data(media), "all") == ખાલી) {
 			dom_string_unref(media);
-			return true;
+			પાછા true;
 		}
 		dom_string_unref(media);
 	}
 
 	/* href='...' */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL)
-		return true;
+	exc = dom_element_get_attribute(ગાંઠ, corestring_dom_href, &href);
+	જો (exc != DOM_NO_ERR || href == ખાલી)
+		પાછા true;
 
 	/* TODO: only the first preferred stylesheets (ie.
 	 * those with a title attribute) should be loaded
 	 * (see HTML4 14.3) */
 
 	ns_error = nsurl_join(htmlc->base_url, dom_string_data(href), &joined);
-	if (ns_error != NSERROR_OK) {
+	જો (ns_error != NSERROR_OK) {
 		dom_string_unref(href);
-		goto no_memory;
+		જાઓ no_memory;
 	}
 	dom_string_unref(href);
 
 	NSLOG(netsurf, INFO, "linked stylesheet %i '%s'",
-	      htmlc->stylesheet_count, nsurl_access(joined));
+	      htmlc->stylesheet_ગણતરી, nsurl_access(joined));
 
 	/* extend stylesheets array to allow for new sheet */
 	stylesheets = realloc(htmlc->stylesheets,
-			      sizeof(struct html_stylesheet) *
-			      (htmlc->stylesheet_count + 1));
-	if (stylesheets == NULL) {
+			      કદ(સંરચના html_stylesheet) *
+			      (htmlc->stylesheet_ગણતરી + 1));
+	જો (stylesheets == ખાલી) {
 		nsurl_unref(joined);
 		ns_error = NSERROR_NOMEM;
-		goto no_memory;
+		જાઓ no_memory;
 	}
 
 	htmlc->stylesheets = stylesheets;
-	htmlc->stylesheets[htmlc->stylesheet_count].node = NULL;
-	htmlc->stylesheets[htmlc->stylesheet_count].modified = false;
-	htmlc->stylesheets[htmlc->stylesheet_count].unused = false;
+	htmlc->stylesheets[htmlc->stylesheet_ગણતરી].ગાંઠ = ખાલી;
+	htmlc->stylesheets[htmlc->stylesheet_ગણતરી].modified = false;
+	htmlc->stylesheets[htmlc->stylesheet_ગણતરી].unused = false;
 
 	/* start fetch */
 	child.charset = htmlc->encoding;
@@ -472,79 +472,79 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 
 	ns_error = hlcache_handle_retrieve(joined, 0,
 			content_get_url(&htmlc->base),
-			NULL, html_convert_css_callback,
+			ખાલી, html_convert_css_callback,
 			htmlc, &child, CONTENT_CSS,
-			&htmlc->stylesheets[htmlc->stylesheet_count].sheet);
+			&htmlc->stylesheets[htmlc->stylesheet_ગણતરી].sheet);
 
 	nsurl_unref(joined);
 
-	if (ns_error != NSERROR_OK)
-		goto no_memory;
+	જો (ns_error != NSERROR_OK)
+		જાઓ no_memory;
 
-	htmlc->stylesheet_count++;
+	htmlc->stylesheet_ગણતરી++;
 
 	htmlc->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", htmlc->base.active);
 
-	return true;
+	પાછા true;
 
 no_memory:
-	content_broadcast_error(&htmlc->base, ns_error, NULL);
-	return false;
+	content_broadcast_error(&htmlc->base, ns_error, ખાલી);
+	પાછા false;
 }
 
 
 /* exported interface documented in html/html.h */
-struct html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned int *n)
+સંરચના html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned પૂર્ણાંક *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	પ્રતિજ્ઞા(c != ખાલી);
+	પ્રતિજ્ઞા(n != ખાલી);
 
-	*n = c->stylesheet_count;
+	*n = c->stylesheet_ગણતરી;
 
-	return c->stylesheets;
+	પાછા c->stylesheets;
 }
 
 
 /* exported function documented in html/css.h */
 bool html_css_saw_insecure_stylesheets(html_content *html)
 {
-	struct html_stylesheet *s;
-	unsigned int i;
+	સંરચના html_stylesheet *s;
+	unsigned પૂર્ણાંક i;
 
-	for (i = 0, s = html->stylesheets; i < html->stylesheet_count;
+	માટે (i = 0, s = html->stylesheets; i < html->stylesheet_ગણતરી;
 	     i++, s++) {
-		if (s->sheet != NULL) {
-			if (content_saw_insecure_objects(s->sheet)) {
-				return true;
+		જો (s->sheet != ખાલી) {
+			જો (content_saw_insecure_objects(s->sheet)) {
+				પાછા true;
 			}
 		}
 	}
 
-	return false;
+	પાછા false;
 }
 
 
 /* exported function documented in html/css.h */
 nserror html_css_free_stylesheets(html_content *html)
 {
-	unsigned int i;
+	unsigned પૂર્ણાંક i;
 
 	guit->misc->schedule(-1, html_css_process_modified_styles, html);
 
-	for (i = 0; i != html->stylesheet_count; i++) {
-		if (html->stylesheets[i].sheet != NULL) {
+	માટે (i = 0; i != html->stylesheet_ગણતરી; i++) {
+		જો (html->stylesheets[i].sheet != ખાલી) {
 			hlcache_handle_release(html->stylesheets[i].sheet);
 		}
-		if (html->stylesheets[i].node != NULL) {
-			dom_node_unref(html->stylesheets[i].node);
+		જો (html->stylesheets[i].ગાંઠ != ખાલી) {
+			dom_ગાંઠ_unref(html->stylesheets[i].ગાંઠ);
 		}
 	}
-	free(html->stylesheets);
+	મુક્ત(html->stylesheets);
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 
@@ -554,26 +554,26 @@ nserror html_css_quirks_stylesheets(html_content *c)
 	nserror ns_error = NSERROR_OK;
 	hlcache_child_context child;
 
-	assert(c->stylesheets != NULL);
+	પ્રતિજ્ઞા(c->stylesheets != ખાલી);
 
-	if (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL) {
+	જો (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL) {
 		child.charset = c->encoding;
 		child.quirks = c->base.quirks;
 
 		ns_error = hlcache_handle_retrieve(html_quirks_stylesheet_url,
-				0, content_get_url(&c->base), NULL,
+				0, content_get_url(&c->base), ખાલી,
 				html_convert_css_callback, c, &child,
 				CONTENT_CSS,
 				&c->stylesheets[STYLESHEET_QUIRKS].sheet);
-		if (ns_error != NSERROR_OK) {
-			return ns_error;
+		જો (ns_error != NSERROR_OK) {
+			પાછા ns_error;
 		}
 
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 	}
 
-	return ns_error;
+	પાછા ns_error;
 }
 
 
@@ -583,8 +583,8 @@ nserror html_css_new_stylesheets(html_content *c)
 	nserror ns_error;
 	hlcache_child_context child;
 
-	if (c->stylesheets != NULL) {
-		return NSERROR_OK; /* already initialised */
+	જો (c->stylesheets != ખાલી) {
+		પાછા NSERROR_OK; /* already initialised */
 	}
 
 	/* stylesheet 0 is the base style sheet,
@@ -592,40 +592,40 @@ nserror html_css_new_stylesheets(html_content *c)
 	 * stylesheet 2 is the adblocking stylesheet,
 	 * stylesheet 3 is the user stylesheet */
 	c->stylesheets = calloc(STYLESHEET_START,
-			sizeof(struct html_stylesheet));
-	if (c->stylesheets == NULL) {
-		return NSERROR_NOMEM;
+			કદ(સંરચના html_stylesheet));
+	જો (c->stylesheets == ખાલી) {
+		પાછા NSERROR_NOMEM;
 	}
 
-	c->stylesheets[STYLESHEET_BASE].sheet = NULL;
-	c->stylesheets[STYLESHEET_QUIRKS].sheet = NULL;
-	c->stylesheets[STYLESHEET_ADBLOCK].sheet = NULL;
-	c->stylesheets[STYLESHEET_USER].sheet = NULL;
-	c->stylesheet_count = STYLESHEET_START;
+	c->stylesheets[STYLESHEET_BASE].sheet = ખાલી;
+	c->stylesheets[STYLESHEET_QUIRKS].sheet = ખાલી;
+	c->stylesheets[STYLESHEET_ADBLOCK].sheet = ખાલી;
+	c->stylesheets[STYLESHEET_USER].sheet = ખાલી;
+	c->stylesheet_ગણતરી = STYLESHEET_START;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
 	ns_error = hlcache_handle_retrieve(html_default_stylesheet_url, 0,
-			content_get_url(&c->base), NULL,
+			content_get_url(&c->base), ખાલી,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			&c->stylesheets[STYLESHEET_BASE].sheet);
-	if (ns_error != NSERROR_OK) {
-		return ns_error;
+	જો (ns_error != NSERROR_OK) {
+		પાછા ns_error;
 	}
 
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 
-	if (nsoption_bool(block_advertisements)) {
+	જો (nsoption_bool(block_advertisements)) {
 		ns_error = hlcache_handle_retrieve(html_adblock_stylesheet_url,
-				0, content_get_url(&c->base), NULL,
+				0, content_get_url(&c->base), ખાલી,
 				html_convert_css_callback,
 				c, &child, CONTENT_CSS,
 				&c->stylesheets[STYLESHEET_ADBLOCK].sheet);
-		if (ns_error != NSERROR_OK) {
-			return ns_error;
+		જો (ns_error != NSERROR_OK) {
+			પાછા ns_error;
 		}
 
 		c->base.active++;
@@ -634,17 +634,17 @@ nserror html_css_new_stylesheets(html_content *c)
 	}
 
 	ns_error = hlcache_handle_retrieve(html_user_stylesheet_url, 0,
-			content_get_url(&c->base), NULL,
+			content_get_url(&c->base), ખાલી,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			&c->stylesheets[STYLESHEET_USER].sheet);
-	if (ns_error != NSERROR_OK) {
-		return ns_error;
+	જો (ns_error != NSERROR_OK) {
+		પાછા ns_error;
 	}
 
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-	return ns_error;
+	પાછા ns_error;
 }
 
 
@@ -657,41 +657,41 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 	css_select_ctx *select_ctx;
 
 	/* check that the base stylesheet loaded; layout fails without it */
-	if (c->stylesheets[STYLESHEET_BASE].sheet == NULL) {
-		return NSERROR_CSS_BASE;
+	જો (c->stylesheets[STYLESHEET_BASE].sheet == ખાલી) {
+		પાછા NSERROR_CSS_BASE;
 	}
 
 	/* Create selection context */
 	css_ret = css_select_ctx_create(&select_ctx);
-	if (css_ret != CSS_OK) {
-		return css_error_to_nserror(css_ret);
+	જો (css_ret != CSS_OK) {
+		પાછા css_error_to_nserror(css_ret);
 	}
 
 	/* Add sheets to it */
-	for (i = STYLESHEET_BASE; i != c->stylesheet_count; i++) {
-		const struct html_stylesheet *hsheet = &c->stylesheets[i];
-		css_stylesheet *sheet = NULL;
+	માટે (i = STYLESHEET_BASE; i != c->stylesheet_ગણતરી; i++) {
+		અચલ સંરચના html_stylesheet *hsheet = &c->stylesheets[i];
+		css_stylesheet *sheet = ખાલી;
 		css_origin origin = CSS_ORIGIN_AUTHOR;
 
 		/* Filter out stylesheets for non-screen media. */
 		/* TODO: We should probably pass the sheet in anyway, and let
 		 *       libcss handle the filtering.
 		 */
-		if (hsheet->unused) {
-			continue;
+		જો (hsheet->unused) {
+			ચાલુ;
 		}
 
-		if (i < STYLESHEET_USER) {
+		જો (i < STYLESHEET_USER) {
 			origin = CSS_ORIGIN_UA;
-		} else if (i < STYLESHEET_START) {
+		} નહીંતર જો (i < STYLESHEET_START) {
 			origin = CSS_ORIGIN_USER;
 		}
 
-		if (hsheet->sheet != NULL) {
+		જો (hsheet->sheet != ખાલી) {
 			sheet = nscss_get_stylesheet(hsheet->sheet);
 		}
 
-		if (sheet != NULL) {
+		જો (sheet != ખાલી) {
 			/* TODO: Pass the sheet's full media query, instead of
 			 *       "screen".
 			 */
@@ -699,70 +699,70 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 							      sheet,
 							      origin,
 							      "screen");
-			if (css_ret != CSS_OK) {
+			જો (css_ret != CSS_OK) {
 				css_select_ctx_destroy(select_ctx);
-				return css_error_to_nserror(css_ret);
+				પાછા css_error_to_nserror(css_ret);
 			}
 		}
 	}
 
 	/* return new selection context to caller */
 	*ret_select_ctx = select_ctx;
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 
 /* exported function documented in html/css.h */
-nserror html_css_init(void)
+nserror html_css_init(શૂન્ય)
 {
 	nserror error;
 
 	error = html_css_fetcher_register();
-	if (error != NSERROR_OK)
-		return error;
+	જો (error != NSERROR_OK)
+		પાછા error;
 
 	error = nsurl_create("resource:default.css",
 			&html_default_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	જો (error != NSERROR_OK)
+		પાછા error;
 
 	error = nsurl_create("resource:adblock.css",
 			&html_adblock_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	જો (error != NSERROR_OK)
+		પાછા error;
 
 	error = nsurl_create("resource:quirks.css",
 			&html_quirks_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	જો (error != NSERROR_OK)
+		પાછા error;
 
 	error = nsurl_create("resource:user.css",
 			&html_user_stylesheet_url);
 
-	return error;
+	પાછા error;
 }
 
 
 /* exported function documented in html/css.h */
-void html_css_fini(void)
+શૂન્ય html_css_fini(શૂન્ય)
 {
-	if (html_user_stylesheet_url != NULL) {
+	જો (html_user_stylesheet_url != ખાલી) {
 		nsurl_unref(html_user_stylesheet_url);
-		html_user_stylesheet_url = NULL;
+		html_user_stylesheet_url = ખાલી;
 	}
 
-	if (html_quirks_stylesheet_url != NULL) {
+	જો (html_quirks_stylesheet_url != ખાલી) {
 		nsurl_unref(html_quirks_stylesheet_url);
-		html_quirks_stylesheet_url = NULL;
+		html_quirks_stylesheet_url = ખાલી;
 	}
 
-	if (html_adblock_stylesheet_url != NULL) {
+	જો (html_adblock_stylesheet_url != ખાલી) {
 		nsurl_unref(html_adblock_stylesheet_url);
-		html_adblock_stylesheet_url = NULL;
+		html_adblock_stylesheet_url = ખાલી;
 	}
 
-	if (html_default_stylesheet_url != NULL) {
+	જો (html_default_stylesheet_url != ખાલી) {
 		nsurl_unref(html_default_stylesheet_url);
-		html_default_stylesheet_url = NULL;
+		html_default_stylesheet_url = ખાલી;
 	}
 }

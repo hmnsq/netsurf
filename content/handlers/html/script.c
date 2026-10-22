@@ -21,78 +21,78 @@
  * implementation of content handling for text/html scripts.
  */
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
+#અન્તર્ભાવ <assert.h>
+#અન્તર્ભાવ <ctype.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <strings.h>
+#અન્તર્ભાવ <stdlib.h>
 
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/content.h"
-#include "javascript/js.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
+#અન્તર્ભાવ "utils/config.h"
+#અન્તર્ભાવ "utils/corestrings.h"
+#અન્તર્ભાવ "utils/log.h"
+#અન્તર્ભાવ "utils/messages.h"
+#અન્તર્ભાવ "netsurf/content.h"
+#અન્તર્ભાવ "javascript/js.h"
+#અન્તર્ભાવ "content/content_protected.h"
+#અન્તર્ભાવ "content/content_factory.h"
+#અન્તર્ભાવ "content/fetch.h"
+#અન્તર્ભાવ "content/hlcache.h"
 
-#include "html/html.h"
-#include "html/private.h"
+#અન્તર્ભાવ "html/html.h"
+#અન્તર્ભાવ "html/private.h"
 
-typedef bool (script_handler_t)(struct jsthread *jsthread, const uint8_t *data, size_t size, const char *name);
+પ્રકારવ્યાખ્યા bool (script_handler_t)(સંરચના jsthread *jsthread, અચલ uint8_t *data, size_t size, અચલ અક્ષર *name);
 
 
-static script_handler_t *select_script_handler(content_type ctype)
+સ્થિર script_handler_t *select_script_handler(content_type ctype)
 {
-	if (ctype == CONTENT_JS) {
-		return js_exec;
+	જો (ctype == CONTENT_JS) {
+		પાછા js_exec;
 	}
-	return NULL;
+	પાછા ખાલી;
 }
 
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_exec(html_content *c, bool allow_defer)
 {
-	unsigned int i;
-	struct html_script *s;
+	unsigned પૂર્ણાંક i;
+	સંરચના html_script *s;
 	script_handler_t *script_handler;
 	bool have_run_something = false;
 
-	if (c->jsthread == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	જો (c->jsthread == ખાલી) {
+		પાછા NSERROR_BAD_PARAMETER;
 	}
 
-	for (i = 0, s = c->scripts; i != c->scripts_count; i++, s++) {
-		if (s->already_started) {
-			continue;
+	માટે (i = 0, s = c->scripts; i != c->scripts_ગણતરી; i++, s++) {
+		જો (s->already_started) {
+			ચાલુ;
 		}
 
-		if ((s->type == HTML_SCRIPT_ASYNC) ||
+		જો ((s->type == HTML_SCRIPT_ASYNC) ||
 		    (allow_defer && (s->type == HTML_SCRIPT_DEFER))) {
 			/* ensure script content is present */
-			if (s->data.handle == NULL)
-				continue;
+			જો (s->data.handle == ખાલી)
+				ચાલુ;
 
 			/* ensure script content fetch status is not an error */
-			if (content_get_status(s->data.handle) ==
+			જો (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_ERROR)
-				continue;
+				ચાલુ;
 
 			/* ensure script handler for content type */
 			script_handler = select_script_handler(
 					content_get_type(s->data.handle));
-			if (script_handler == NULL)
-				continue; /* unsupported type */
+			જો (script_handler == ખાલી)
+				ચાલુ; /* unsupported type */
 
-			if (content_get_status(s->data.handle) ==
+			જો (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_DONE) {
 				/* external script is now available */
-				const uint8_t *data;
+				અચલ uint8_t *data;
 				size_t size;
 				data = content_get_source_data(
 						s->data.handle, &size );
@@ -111,32 +111,32 @@ nserror html_script_exec(html_content *c, bool allow_defer)
 		}
 	}
 
-	if (have_run_something) {
-		return html_proceed_to_done(c);
+	જો (have_run_something) {
+		પાછા html_proceed_to_done(c);
 	}
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 /* create new html script entry */
-static struct html_script *
+સ્થિર સંરચના html_script *
 html_process_new_script(html_content *c,
 			dom_string *mimetype,
-			enum html_script_type type)
+			ગણના html_script_type type)
 {
-	struct html_script *nscript;
+	સંરચના html_script *nscript;
 	/* add space for new script entry */
 	nscript = realloc(c->scripts,
-			  sizeof(struct html_script) * (c->scripts_count + 1));
-	if (nscript == NULL) {
-		return NULL;
+			  કદ(સંરચના html_script) * (c->scripts_ગણતરી + 1));
+	જો (nscript == ખાલી) {
+		પાછા ખાલી;
 	}
 
 	c->scripts = nscript;
 
 	/* increment script entry count */
-	nscript = &c->scripts[c->scripts_count];
-	c->scripts_count++;
+	nscript = &c->scripts[c->scripts_ગણતરી];
+	c->scripts_ગણતરી++;
 
 	nscript->already_started = false;
 	nscript->parser_inserted = false;
@@ -149,166 +149,166 @@ html_process_new_script(html_content *c,
 
 	nscript->mimetype = dom_string_ref(mimetype); /* reference mimetype */
 
-	return nscript;
+	પાછા nscript;
 }
 
 /**
  * Callback for asyncronous scripts
  */
-static nserror
+સ્થિર nserror
 convert_script_async_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  અચલ hlcache_event *event,
+			  શૂન્ય *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned પૂર્ણાંક i;
+	સંરચના html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
-			break;
+	માટે (i = 0, s = parent->scripts; i != parent->scripts_ગણતરી; i++, s++) {
+		જો (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
+			તોડો;
 	}
 
-	assert(i != parent->scripts_count);
+	પ્રતિજ્ઞા(i != parent->scripts_ગણતરી);
 
-	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		break;
+	પસંદગી (event->type) {
+	સ્થિતિ CONTENT_સંદેશ_LOADING:
+		તોડો;
 
-	case CONTENT_MSG_READY:
-		break;
+	સ્થિતિ CONTENT_સંદેશ_READY:
+		તોડો;
 
-	case CONTENT_MSG_DONE:
+	સ્થિતિ CONTENT_સંદેશ_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		તોડો;
 
-	case CONTENT_MSG_ERROR:
+	સ્થિતિ CONTENT_સંદેશ_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = ખાલી;
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		તોડો;
 
-	default:
-		break;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	જો (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
 	/* if we have already started converting though, then we can handle the
 	 * scripts as they come in.
 	 */
-	else if (parent->conversion_begun) {
-		return html_script_exec(parent, false);
+	નહીંતર જો (parent->conversion_begun) {
+		પાછા html_script_exec(parent, false);
 	}
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 /**
  * Callback for defer scripts
  */
-static nserror
+સ્થિર nserror
 convert_script_defer_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  અચલ hlcache_event *event,
+			  શૂન્ય *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned પૂર્ણાંક i;
+	સંરચના html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
-			break;
+	માટે (i = 0, s = parent->scripts; i != parent->scripts_ગણતરી; i++, s++) {
+		જો (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
+			તોડો;
 	}
 
-	assert(i != parent->scripts_count);
+	પ્રતિજ્ઞા(i != parent->scripts_ગણતરી);
 
-	switch (event->type) {
+	પસંદગી (event->type) {
 
-	case CONTENT_MSG_DONE:
+	સ્થિતિ CONTENT_સંદેશ_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		તોડો;
 
-	case CONTENT_MSG_ERROR:
+	સ્થિતિ CONTENT_સંદેશ_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = ખાલી;
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		તોડો;
 
-	default:
-		break;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	જો (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 /**
  * Callback for syncronous scripts
  */
-static nserror
+સ્થિર nserror
 convert_script_sync_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  અચલ hlcache_event *event,
+			  શૂન્ય *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned પૂર્ણાંક i;
+	સંરચના html_script *s;
 	script_handler_t *script_handler;
 	dom_hubbub_error err;
-	unsigned int active_sync_scripts = 0;
+	unsigned પૂર્ણાંક active_sync_scripts = 0;
 
 	/* Count sync scripts which have yet to complete (other than us) */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC &&
+	માટે (i = 0, s = parent->scripts; i != parent->scripts_ગણતરી; i++, s++) {
+		જો (s->type == HTML_SCRIPT_SYNC &&
 		    s->data.handle != script && s->already_started == false) {
 			active_sync_scripts++;
 		}
 	}
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
-			break;
+	માટે (i = 0, s = parent->scripts; i != parent->scripts_ગણતરી; i++, s++) {
+		જો (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
+			તોડો;
 	}
 
-	assert(i != parent->scripts_count);
+	પ્રતિજ્ઞા(i != parent->scripts_ગણતરી);
 
-	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	પસંદગી (event->type) {
+	સ્થિતિ CONTENT_સંદેશ_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
@@ -318,9 +318,9 @@ convert_script_sync_cb(hlcache_handle *script,
 
 		/* attempt to execute script */
 		script_handler = select_script_handler(content_get_type(s->data.handle));
-		if (script_handler != NULL && parent->jsthread != NULL) {
+		જો (script_handler != ખાલી && parent->jsthread != ખાલી) {
 			/* script has a handler */
-			const uint8_t *data;
+			અચલ uint8_t *data;
 			size_t size;
 			data = content_get_source_data(s->data.handle, &size );
 			script_handler(parent->jsthread, data, size,
@@ -328,22 +328,22 @@ convert_script_sync_cb(hlcache_handle *script,
 		}
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		જો (parent->parser != ખાલી && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			જો (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
 
-		break;
+		તોડો;
 
-	case CONTENT_MSG_ERROR:
+	સ્થિતિ CONTENT_સંદેશ_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = ખાલી;
 		parent->base.active--;
 
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
@@ -351,57 +351,57 @@ convert_script_sync_cb(hlcache_handle *script,
 		s->already_started = true;
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		જો (parent->parser != ખાલી && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			જો (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
 
-		break;
+		તોડો;
 
-	default:
-		break;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	જો (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 /**
  * process a script with a src tag
  */
-static dom_hubbub_error
+સ્થિર dom_hubbub_error
 exec_src_script(html_content *c,
-		dom_node *node,
+		dom_ગાંઠ *ગાંઠ,
 		dom_string *mimetype,
 		dom_string *src)
 {
 	nserror ns_error;
 	nsurl *joined;
 	hlcache_child_context child;
-	struct html_script *nscript;
+	સંરચના html_script *nscript;
 	bool async;
 	bool defer;
-	enum html_script_type script_type;
+	ગણના html_script_type script_type;
 	hlcache_handle_callback script_cb;
 	dom_hubbub_error ret = DOM_HUBBUB_OK;
 	dom_exception exc; /* returned by libdom functions */
 
 	/* src url */
 	ns_error = nsurl_join(c->base_url, dom_string_data(src), &joined);
-	if (ns_error != NSERROR_OK) {
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+	જો (ns_error != NSERROR_OK) {
+		content_broadcast_error(&c->base, NSERROR_NOMEM, ખાલી);
+		પાછા DOM_HUBBUB_NOMEM;
 	}
 
-	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_count,
+	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_ગણતરી,
 	      nsurl_access(joined));
 
 	/* there are three ways to process the script tag at this point:
@@ -422,34 +422,34 @@ exec_src_script(html_content *c,
 	 * compatible approach is to be liberal and accept any
 	 * value. Note setting the values to "false" still makes them true!
 	 */
-	exc = dom_element_has_attribute(node, corestring_dom_async, &async);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_OK; /* dom error */
+	exc = dom_element_has_attribute(ગાંઠ, corestring_dom_async, &async);
+	જો (exc != DOM_NO_ERR) {
+		પાછા DOM_HUBBUB_OK; /* dom error */
 	}
 
-	if (c->parse_completed) {
+	જો (c->parse_completed) {
 		/* After parse completed, all scripts are essentially async */
 		async = true;
 		defer = false;
 	}
 
-	if (async) {
+	જો (async) {
 		/* asyncronous script */
 		script_type = HTML_SCRIPT_ASYNC;
 		script_cb = convert_script_async_cb;
 
-	} else {
-		exc = dom_element_has_attribute(node,
+	} નહીંતર {
+		exc = dom_element_has_attribute(ગાંઠ,
 						corestring_dom_defer, &defer);
-		if (exc != DOM_NO_ERR) {
-			return DOM_HUBBUB_OK; /* dom error */
+		જો (exc != DOM_NO_ERR) {
+			પાછા DOM_HUBBUB_OK; /* dom error */
 		}
 
-		if (defer) {
+		જો (defer) {
 			/* defered script */
 			script_type = HTML_SCRIPT_DEFER;
 			script_cb = convert_script_defer_cb;
-		} else {
+		} નહીંતર {
 			/* syncronous script */
 			script_type = HTML_SCRIPT_SYNC;
 			script_cb = convert_script_sync_cb;
@@ -457,10 +457,10 @@ exec_src_script(html_content *c,
 	}
 
 	nscript = html_process_new_script(c, mimetype, script_type);
-	if (nscript == NULL) {
+	જો (nscript == ખાલી) {
 		nsurl_unref(joined);
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		content_broadcast_error(&c->base, NSERROR_NOMEM, ખાલી);
+		પાછા DOM_HUBBUB_NOMEM;
 	}
 
 	/* set up child fetch encoding and quirks */
@@ -470,7 +470,7 @@ exec_src_script(html_content *c,
 	ns_error = hlcache_handle_retrieve(joined,
 					   0,
 					   content_get_url(&c->base),
-					   NULL,
+					   ખાલી,
 					   script_cb,
 					   c,
 					   &child,
@@ -480,58 +480,58 @@ exec_src_script(html_content *c,
 
 	nsurl_unref(joined);
 
-	if (ns_error != NSERROR_OK) {
+	જો (ns_error != NSERROR_OK) {
 		/* @todo Deal with fetch error better. currently assume
 		 * fetch never became active
 		 */
 		/* mark duff script fetch as already started */
 		nscript->already_started = true;
 		NSLOG(netsurf, INFO, "Fetch failed with error %d", ns_error);
-	} else {
+	} નહીંતર {
 		/* update base content active fetch count */
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-		switch (script_type) {
-		case HTML_SCRIPT_SYNC:
+		પસંદગી (script_type) {
+		સ્થિતિ HTML_SCRIPT_SYNC:
 			ret =  DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED;
-			break;
+			તોડો;
 
-		case HTML_SCRIPT_ASYNC:
-			break;
+		સ્થિતિ HTML_SCRIPT_ASYNC:
+			તોડો;
 
-		case HTML_SCRIPT_DEFER:
-			break;
+		સ્થિતિ HTML_SCRIPT_DEFER:
+			તોડો;
 
-		default:
-			assert(0);
+		મૂળભૂત:
+			પ્રતિજ્ઞા(0);
 		}
 	}
 
-	return ret;
+	પાછા ret;
 }
 
-static dom_hubbub_error
-exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
+સ્થિર dom_hubbub_error
+exec_inline_script(html_content *c, dom_ગાંઠ *ગાંઠ, dom_string *mimetype)
 {
 	dom_string *script;
 	dom_exception exc; /* returned by libdom functions */
-	struct lwc_string_s *lwcmimetype;
+	સંરચના lwc_string_s *lwcmimetype;
 	script_handler_t *script_handler;
-	struct html_script *nscript;
+	સંરચના html_script *nscript;
 
 	/* does not appear to be a src so script is inline content */
-	exc = dom_node_get_text_content(node, &script);
-	if ((exc != DOM_NO_ERR) || (script == NULL)) {
-		return DOM_HUBBUB_OK; /* no contents, skip */
+	exc = dom_ગાંઠ_get_text_content(ગાંઠ, &script);
+	જો ((exc != DOM_NO_ERR) || (script == ખાલી)) {
+		પાછા DOM_HUBBUB_OK; /* no contents, skip */
 	}
 
 	nscript = html_process_new_script(c, mimetype, HTML_SCRIPT_INLINE);
-	if (nscript == NULL) {
+	જો (nscript == ખાલી) {
 		dom_string_unref(script);
 
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		content_broadcast_error(&c->base, NSERROR_NOMEM, ખાલી);
+		પાછા DOM_HUBBUB_NOMEM;
 
 	}
 
@@ -540,20 +540,20 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
 
 	/* ensure script handler for content type */
 	exc = dom_string_intern(mimetype, &lwcmimetype);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_DOM;
+	જો (exc != DOM_NO_ERR) {
+		પાછા DOM_HUBBUB_DOM;
 	}
 
 	script_handler = select_script_handler(content_factory_type_from_mime_type(lwcmimetype));
 	lwc_string_unref(lwcmimetype);
 
-	if (script_handler != NULL) {
+	જો (script_handler != ખાલી) {
 		script_handler(c->jsthread,
-			       (const uint8_t *)dom_string_data(script),
+			       (અચલ uint8_t *)dom_string_data(script),
 			       dom_string_byte_length(script),
 			       "?inline script?");
 	}
-	return DOM_HUBBUB_OK;
+	પાછા DOM_HUBBUB_OK;
 }
 
 
@@ -563,7 +563,7 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
  *
  */
 dom_hubbub_error
-html_process_script(void *ctx, dom_node *node)
+html_process_script(શૂન્ય *ctx, dom_ગાંઠ *ગાંઠ)
 {
 	html_content *c = (html_content *)ctx;
 	dom_exception exc; /* returned by libdom functions */
@@ -574,92 +574,92 @@ html_process_script(void *ctx, dom_node *node)
 	/* We should only ever be here if scripting was enabled for this
 	 * content so it's correct to make a javascript context if there
 	 * isn't one already. */
-	if (c->jsthread == NULL) {
-		union content_msg_data msg_data;
+	જો (c->jsthread == ખાલી) {
+		સંઘ content_સંદેશ_data સંદેશ_data;
 
-		msg_data.jsthread = &c->jsthread;
-		content_broadcast(&c->base, CONTENT_MSG_GETTHREAD, &msg_data);
+		સંદેશ_data.jsthread = &c->jsthread;
+		content_broadcast(&c->base, CONTENT_સંદેશ_GETTHREAD, &સંદેશ_data);
 		NSLOG(netsurf, INFO, "javascript context %p ", c->jsthread);
-		if (c->jsthread == NULL) {
+		જો (c->jsthread == ખાલી) {
 			/* no context and it could not be created, abort */
-			return DOM_HUBBUB_OK;
+			પાછા DOM_HUBBUB_OK;
 		}
 	}
 
 	NSLOG(netsurf, INFO, "content %p parser %p node %p", c, c->parser,
-	      node);
+	      ગાંઠ);
 
-	exc = dom_element_get_attribute(node, corestring_dom_type, &mimetype);
-	if (exc != DOM_NO_ERR || mimetype == NULL) {
+	exc = dom_element_get_attribute(ગાંઠ, corestring_dom_type, &mimetype);
+	જો (exc != DOM_NO_ERR || mimetype == ખાલી) {
 		mimetype = dom_string_ref(corestring_dom_text_javascript);
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		err = exec_inline_script(c, node, mimetype);
-	} else {
-		err = exec_src_script(c, node, mimetype, src);
+	exc = dom_element_get_attribute(ગાંઠ, corestring_dom_src, &src);
+	જો (exc != DOM_NO_ERR || src == ખાલી) {
+		err = exec_inline_script(c, ગાંઠ, mimetype);
+	} નહીંતર {
+		err = exec_src_script(c, ગાંઠ, mimetype, src);
 		dom_string_unref(src);
 	}
 
 	dom_string_unref(mimetype);
 
-	return err;
+	પાછા err;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 bool html_saw_insecure_scripts(html_content *htmlc)
 {
-	struct html_script *s;
-	unsigned int i;
+	સંરચના html_script *s;
+	unsigned પૂર્ણાંક i;
 
-	for (i = 0, s = htmlc->scripts; i != htmlc->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_INLINE) {
+	માટે (i = 0, s = htmlc->scripts; i != htmlc->scripts_ગણતરી; i++, s++) {
+		જો (s->type == HTML_SCRIPT_INLINE) {
 			/* Inline scripts are no less secure than their
 			 * containing HTML content
 			 */
-			continue;
+			ચાલુ;
 		}
-		if (s->data.handle == NULL) {
+		જો (s->data.handle == ખાલી) {
 			/* We've not begun loading this? */
-			continue;
+			ચાલુ;
 		}
-		if (content_saw_insecure_objects(s->data.handle)) {
-			return true;
+		જો (content_saw_insecure_objects(s->data.handle)) {
+			પાછા true;
 		}
 	}
 
-	return false;
+	પાછા false;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_free(html_content *html)
 {
-	unsigned int i;
+	unsigned પૂર્ણાંક i;
 
-	for (i = 0; i != html->scripts_count; i++) {
-		if (html->scripts[i].mimetype != NULL) {
+	માટે (i = 0; i != html->scripts_ગણતરી; i++) {
+		જો (html->scripts[i].mimetype != ખાલી) {
 			dom_string_unref(html->scripts[i].mimetype);
 		}
 
-		switch (html->scripts[i].type) {
-		case HTML_SCRIPT_INLINE:
-			if (html->scripts[i].data.string != NULL) {
+		પસંદગી (html->scripts[i].type) {
+		સ્થિતિ HTML_SCRIPT_INLINE:
+			જો (html->scripts[i].data.string != ખાલી) {
 				dom_string_unref(html->scripts[i].data.string);
 			}
-			break;
-		case HTML_SCRIPT_SYNC:
+			તોડો;
+		સ્થિતિ HTML_SCRIPT_SYNC:
 			/* fallthrough */
-		case HTML_SCRIPT_ASYNC:
+		સ્થિતિ HTML_SCRIPT_ASYNC:
 			/* fallthrough */
-		case HTML_SCRIPT_DEFER:
-			if (html->scripts[i].data.handle != NULL) {
+		સ્થિતિ HTML_SCRIPT_DEFER:
+			જો (html->scripts[i].data.handle != ખાલી) {
 				hlcache_handle_release(html->scripts[i].data.handle);
 			}
-			break;
+			તોડો;
 		}
 	}
-	free(html->scripts);
+	મુક્ત(html->scripts);
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }

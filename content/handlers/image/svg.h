@@ -23,6 +23,6 @@
 #ifndef _NETSURF_IMAGE_SVG_H_
 #define _NETSURF_IMAGE_SVG_H_
 
-nserror svg_init(void);
+nserror svg_init(શૂન્ય);
 
 #endif

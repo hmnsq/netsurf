@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <libcss/libcss.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <libcss/libcss.h>
 
-#include "netsurf/inttypes.h"
+#અન્તર્ભાવ "netsurf/inttypes.h"
 
-#include "css/dump.h"
-#include "css/utils.h"
+#અન્તર્ભાવ "css/dump.h"
+#અન્તર્ભાવ "css/utils.h"
 
 /**
  * Dump a fixed point value to the stream in a textual form.
@@ -30,7 +30,7 @@
  * \param stream  Stream to write to
  * \param f       Value to write
  */
-static void dump_css_fixed(FILE *stream, css_fixed f)
+સ્થિર શૂન્ય dump_css_fixed(FILE *stream, css_fixed f)
 {
 #define NSCSS_ABS(x) (uint32_t)((x) < 0 ? -(x) : (x))
 	uint32_t uintpart = FIXTOINT(NSCSS_ABS(f));
@@ -47,11 +47,11 @@ static void dump_css_fixed(FILE *stream, css_fixed f)
  * \param stream  Stream to write to
  * \param val     Value to write
  */
-static void dump_css_number(FILE *stream, css_fixed val)
+સ્થિર શૂન્ય dump_css_સંખ્યા(FILE *stream, css_fixed val)
 {
-	if (INTTOFIX(FIXTOINT(val)) == val)
+	જો (INTTOFIX(FIXTOINT(val)) == val)
 		fprintf(stream, "%"PRId32, FIXTOINT(val));
-	else
+	નહીંતર
 		dump_css_fixed(stream, val);
 }
 
@@ -62,150 +62,150 @@ static void dump_css_number(FILE *stream, css_fixed val)
  * \param val     Value to write
  * \param unit    Unit to write
  */
-static void dump_css_unit(FILE *stream, css_fixed val, css_unit unit)
+સ્થિર શૂન્ય dump_css_unit(FILE *stream, css_fixed val, css_unit unit)
 {
-	dump_css_number(stream, val);
+	dump_css_સંખ્યા(stream, val);
 
-	switch (unit) {
-	case CSS_UNIT_PX:
+	પસંદગી (unit) {
+	સ્થિતિ CSS_UNIT_PX:
 		fprintf(stream, "px");
-		break;
-	case CSS_UNIT_EX:
+		તોડો;
+	સ્થિતિ CSS_UNIT_EX:
 		fprintf(stream, "ex");
-		break;
-	case CSS_UNIT_EM:
+		તોડો;
+	સ્થિતિ CSS_UNIT_EM:
 		fprintf(stream, "em");
-		break;
-	case CSS_UNIT_IN:
+		તોડો;
+	સ્થિતિ CSS_UNIT_IN:
 		fprintf(stream, "in");
-		break;
-	case CSS_UNIT_CM:
+		તોડો;
+	સ્થિતિ CSS_UNIT_CM:
 		fprintf(stream, "cm");
-		break;
-	case CSS_UNIT_MM:
+		તોડો;
+	સ્થિતિ CSS_UNIT_MM:
 		fprintf(stream, "mm");
-		break;
-	case CSS_UNIT_PT:
+		તોડો;
+	સ્થિતિ CSS_UNIT_PT:
 		fprintf(stream, "pt");
-		break;
-	case CSS_UNIT_PC:
+		તોડો;
+	સ્થિતિ CSS_UNIT_PC:
 		fprintf(stream, "pc");
-		break;
-	case CSS_UNIT_PCT:
+		તોડો;
+	સ્થિતિ CSS_UNIT_PCT:
 		fprintf(stream, "%%");
-		break;
-	case CSS_UNIT_DEG:
+		તોડો;
+	સ્થિતિ CSS_UNIT_DEG:
 		fprintf(stream, "deg");
-		break;
-	case CSS_UNIT_GRAD:
+		તોડો;
+	સ્થિતિ CSS_UNIT_GRAD:
 		fprintf(stream, "grad");
-		break;
-	case CSS_UNIT_RAD:
+		તોડો;
+	સ્થિતિ CSS_UNIT_RAD:
 		fprintf(stream, "rad");
-		break;
-	case CSS_UNIT_MS:
+		તોડો;
+	સ્થિતિ CSS_UNIT_MS:
 		fprintf(stream, "ms");
-		break;
-	case CSS_UNIT_S:
+		તોડો;
+	સ્થિતિ CSS_UNIT_S:
 		fprintf(stream, "s");
-		break;
-	case CSS_UNIT_HZ:
+		તોડો;
+	સ્થિતિ CSS_UNIT_HZ:
 		fprintf(stream, "Hz");
-		break;
-	case CSS_UNIT_KHZ:
+		તોડો;
+	સ્થિતિ CSS_UNIT_KHZ:
 		fprintf(stream, "kHz");
-		break;
-	case CSS_UNIT_CH:
+		તોડો;
+	સ્થિતિ CSS_UNIT_CH:
 		fprintf(stream, "ch");
-		break;
-	case CSS_UNIT_REM:
+		તોડો;
+	સ્થિતિ CSS_UNIT_REM:
 		fprintf(stream, "rem");
-		break;
-	case CSS_UNIT_LH:
+		તોડો;
+	સ્થિતિ CSS_UNIT_LH:
 		fprintf(stream, "lh");
-		break;
-	case CSS_UNIT_VH:
+		તોડો;
+	સ્થિતિ CSS_UNIT_VH:
 		fprintf(stream, "vh");
-		break;
-	case CSS_UNIT_VW:
+		તોડો;
+	સ્થિતિ CSS_UNIT_VW:
 		fprintf(stream, "vw");
-		break;
-	case CSS_UNIT_VI:
+		તોડો;
+	સ્થિતિ CSS_UNIT_VI:
 		fprintf(stream, "vi");
-		break;
-	case CSS_UNIT_VB:
+		તોડો;
+	સ્થિતિ CSS_UNIT_VB:
 		fprintf(stream, "vb");
-		break;
-	case CSS_UNIT_VMIN:
+		તોડો;
+	સ્થિતિ CSS_UNIT_VMIN:
 		fprintf(stream, "vmin");
-		break;
-	case CSS_UNIT_VMAX:
+		તોડો;
+	સ્થિતિ CSS_UNIT_VMAX:
 		fprintf(stream, "vmax");
-		break;
-	case CSS_UNIT_Q:
+		તોડો;
+	સ્થિતિ CSS_UNIT_Q:
 		fprintf(stream, "q");
-		break;
-	case CSS_UNIT_CALC:
+		તોડો;
+	સ્થિતિ CSS_UNIT_CALC:
 		fprintf(stream, "calc()");
-		break;
+		તોડો;
 	}
 }
 
 /* exported interface documented in content/handlers/css/dump.h */
-void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
+શૂન્ય nscss_dump_computed_style(FILE *stream, અચલ css_computed_style *style)
 {
 	uint8_t val;
 	css_color color = 0;
-	lwc_string *url = NULL;
+	lwc_string *url = ખાલી;
 	css_fixed len1 = 0, len2 = 0;
 	css_unit unit1 = CSS_UNIT_PX, unit2 = CSS_UNIT_PX;
 	css_computed_clip_rect rect = { 0, 0, 0, 0, CSS_UNIT_PX, CSS_UNIT_PX,
 					CSS_UNIT_PX, CSS_UNIT_PX, true, true,
 					true, true };
-	const css_computed_content_item *content = NULL;
-	const css_computed_counter *counter = NULL;
-	lwc_string **string_list = NULL;
+	અચલ css_computed_content_item *content = ખાલી;
+	અચલ css_computed_counter *counter = ખાલી;
+	lwc_string **string_list = ખાલી;
 	int32_t zindex = 0;
 
 	fprintf(stream, "{ ");
 
 	/* background-attachment */
 	val = css_computed_background_attachment(style);
-	switch (val) {
-	case CSS_BACKGROUND_ATTACHMENT_FIXED:
+	પસંદગી (val) {
+	સ્થિતિ CSS_BACKGROUND_ATTACHMENT_FIXED:
 		fprintf(stream, "background-attachment: fixed ");
-		break;
-	case CSS_BACKGROUND_ATTACHMENT_SCROLL:
+		તોડો;
+	સ્થિતિ CSS_BACKGROUND_ATTACHMENT_SCROLL:
 		fprintf(stream, "background-attachment: scroll ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* background-color */
 	val = css_computed_background_color(style, &color);
-	switch (val) {
-	case CSS_BACKGROUND_COLOR_COLOR:
+	પસંદગી (val) {
+	સ્થિતિ CSS_BACKGROUND_COLOR_COLOR:
 		fprintf(stream, "background-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* background-image */
 	val = css_computed_background_image(style, &url);
-	if (val == CSS_BACKGROUND_IMAGE_IMAGE && url != NULL) {
+	જો (val == CSS_BACKGROUND_IMAGE_IMAGE && url != ખાલી) {
 		fprintf(stream, "background-image: url('%.*s') ",
-				(int) lwc_string_length(url),
+				(પૂર્ણાંક) lwc_string_length(url),
 				lwc_string_data(url));
-	} else if (val == CSS_BACKGROUND_IMAGE_NONE) {
+	} નહીંતર જો (val == CSS_BACKGROUND_IMAGE_NONE) {
 		fprintf(stream, "background-image: none ");
 	}
 
 	/* background-position */
 	val = css_computed_background_position(style, &len1, &unit1,
 			&len2, &unit2);
-	if (val == CSS_BACKGROUND_POSITION_SET) {
+	જો (val == CSS_BACKGROUND_POSITION_SET) {
 		fprintf(stream, "background-position: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
@@ -215,40 +215,40 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* background-repeat */
 	val = css_computed_background_repeat(style);
-	switch (val) {
-	case CSS_BACKGROUND_REPEAT_REPEAT_X:
+	પસંદગી (val) {
+	સ્થિતિ CSS_BACKGROUND_REPEAT_REPEAT_X:
 		fprintf(stream, "background-repeat: repeat-x ");
-		break;
-	case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+		તોડો;
+	સ્થિતિ CSS_BACKGROUND_REPEAT_REPEAT_Y:
 		fprintf(stream, "background-repeat: repeat-y ");
-		break;
-	case CSS_BACKGROUND_REPEAT_REPEAT:
+		તોડો;
+	સ્થિતિ CSS_BACKGROUND_REPEAT_REPEAT:
 		fprintf(stream, "background-repeat: repeat ");
-		break;
-	case CSS_BACKGROUND_REPEAT_NO_REPEAT:
+		તોડો;
+	સ્થિતિ CSS_BACKGROUND_REPEAT_NO_REPEAT:
 		fprintf(stream, "background-repeat: no-repeat ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-collapse */
 	val = css_computed_border_collapse(style);
-	switch (val) {
-	case CSS_BORDER_COLLAPSE_SEPARATE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_COLLAPSE_SEPARATE:
 		fprintf(stream, "border-collapse: separate ");
-		break;
-	case CSS_BORDER_COLLAPSE_COLLAPSE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_COLLAPSE_COLLAPSE:
 		fprintf(stream, "border-collapse: collapse ");
-		break;
-	default:
+		તોડો;
+	મૂળભૂત:
 
-		break;
+		તોડો;
 	}
 
 	/* border-spacing */
 	val = css_computed_border_spacing(style, &len1, &unit1, &len2, &unit2);
-	if (val == CSS_BORDER_SPACING_SET) {
+	જો (val == CSS_BORDER_SPACING_SET) {
 		fprintf(stream, "border-spacing: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
@@ -257,458 +257,458 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-top-color */
-	val = css_computed_border_top_color(style, &color);
-	switch (val) {
-	case CSS_BORDER_COLOR_COLOR:
+	val = css_computed_border_ટોચ_color(style, &color);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-top-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-right-color */
-	val = css_computed_border_right_color(style, &color);
-	switch (val) {
-	case CSS_BORDER_COLOR_COLOR:
+	val = css_computed_border_જમણું_color(style, &color);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-right-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-bottom-color */
 	val = css_computed_border_bottom_color(style, &color);
-	switch (val) {
-	case CSS_BORDER_COLOR_COLOR:
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-bottom-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-left-color */
-	val = css_computed_border_left_color(style, &color);
-	switch (val) {
-	case CSS_BORDER_COLOR_COLOR:
+	val = css_computed_border_ડાબું_color(style, &color);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-left-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-top-style */
-	val = css_computed_border_top_style(style);
-	switch (val) {
-	case CSS_BORDER_STYLE_NONE:
+	val = css_computed_border_ટોચ_style(style);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-top-style: none ");
-		break;
-	case CSS_BORDER_STYLE_HIDDEN:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_HIDDEN:
 		fprintf(stream, "border-top-style: hidden ");
-		break;
-	case CSS_BORDER_STYLE_DOTTED:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DOTTED:
 		fprintf(stream, "border-top-style: dotted ");
-		break;
-	case CSS_BORDER_STYLE_DASHED:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DASHED:
 		fprintf(stream, "border-top-style: dashed ");
-		break;
-	case CSS_BORDER_STYLE_SOLID:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_SOLID:
 		fprintf(stream, "border-top-style: solid ");
-		break;
-	case CSS_BORDER_STYLE_DOUBLE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DOUBLE:
 		fprintf(stream, "border-top-style: double ");
-		break;
-	case CSS_BORDER_STYLE_GROOVE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_GROOVE:
 		fprintf(stream, "border-top-style: groove ");
-		break;
-	case CSS_BORDER_STYLE_RIDGE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_RIDGE:
 		fprintf(stream, "border-top-style: ridge ");
-		break;
-	case CSS_BORDER_STYLE_INSET:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_INSET:
 		fprintf(stream, "border-top-style: inset ");
-		break;
-	case CSS_BORDER_STYLE_OUTSET:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_OUTSET:
 		fprintf(stream, "border-top-style: outset ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-right-style */
-	val = css_computed_border_right_style(style);
-	switch (val) {
-	case CSS_BORDER_STYLE_NONE:
+	val = css_computed_border_જમણું_style(style);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-right-style: none ");
-		break;
-	case CSS_BORDER_STYLE_HIDDEN:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_HIDDEN:
 		fprintf(stream, "border-right-style: hidden ");
-		break;
-	case CSS_BORDER_STYLE_DOTTED:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DOTTED:
 		fprintf(stream, "border-right-style: dotted ");
-		break;
-	case CSS_BORDER_STYLE_DASHED:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DASHED:
 		fprintf(stream, "border-right-style: dashed ");
-		break;
-	case CSS_BORDER_STYLE_SOLID:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_SOLID:
 		fprintf(stream, "border-right-style: solid ");
-		break;
-	case CSS_BORDER_STYLE_DOUBLE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DOUBLE:
 		fprintf(stream, "border-right-style: double ");
-		break;
-	case CSS_BORDER_STYLE_GROOVE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_GROOVE:
 		fprintf(stream, "border-right-style: groove ");
-		break;
-	case CSS_BORDER_STYLE_RIDGE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_RIDGE:
 		fprintf(stream, "border-right-style: ridge ");
-		break;
-	case CSS_BORDER_STYLE_INSET:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_INSET:
 		fprintf(stream, "border-right-style: inset ");
-		break;
-	case CSS_BORDER_STYLE_OUTSET:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_OUTSET:
 		fprintf(stream, "border-right-style: outset ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-bottom-style */
 	val = css_computed_border_bottom_style(style);
-	switch (val) {
-	case CSS_BORDER_STYLE_NONE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-bottom-style: none ");
-		break;
-	case CSS_BORDER_STYLE_HIDDEN:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_HIDDEN:
 		fprintf(stream, "border-bottom-style: hidden ");
-		break;
-	case CSS_BORDER_STYLE_DOTTED:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DOTTED:
 		fprintf(stream, "border-bottom-style: dotted ");
-		break;
-	case CSS_BORDER_STYLE_DASHED:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DASHED:
 		fprintf(stream, "border-bottom-style: dashed ");
-		break;
-	case CSS_BORDER_STYLE_SOLID:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_SOLID:
 		fprintf(stream, "border-bottom-style: solid ");
-		break;
-	case CSS_BORDER_STYLE_DOUBLE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DOUBLE:
 		fprintf(stream, "border-bottom-style: double ");
-		break;
-	case CSS_BORDER_STYLE_GROOVE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_GROOVE:
 		fprintf(stream, "border-bottom-style: groove ");
-		break;
-	case CSS_BORDER_STYLE_RIDGE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_RIDGE:
 		fprintf(stream, "border-bottom-style: ridge ");
-		break;
-	case CSS_BORDER_STYLE_INSET:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_INSET:
 		fprintf(stream, "border-bottom-style: inset ");
-		break;
-	case CSS_BORDER_STYLE_OUTSET:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_OUTSET:
 		fprintf(stream, "border-bottom-style: outset ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-left-style */
-	val = css_computed_border_left_style(style);
-	switch (val) {
-	case CSS_BORDER_STYLE_NONE:
+	val = css_computed_border_ડાબું_style(style);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-left-style: none ");
-		break;
-	case CSS_BORDER_STYLE_HIDDEN:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_HIDDEN:
 		fprintf(stream, "border-left-style: hidden ");
-		break;
-	case CSS_BORDER_STYLE_DOTTED:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DOTTED:
 		fprintf(stream, "border-left-style: dotted ");
-		break;
-	case CSS_BORDER_STYLE_DASHED:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DASHED:
 		fprintf(stream, "border-left-style: dashed ");
-		break;
-	case CSS_BORDER_STYLE_SOLID:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_SOLID:
 		fprintf(stream, "border-left-style: solid ");
-		break;
-	case CSS_BORDER_STYLE_DOUBLE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_DOUBLE:
 		fprintf(stream, "border-left-style: double ");
-		break;
-	case CSS_BORDER_STYLE_GROOVE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_GROOVE:
 		fprintf(stream, "border-left-style: groove ");
-		break;
-	case CSS_BORDER_STYLE_RIDGE:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_RIDGE:
 		fprintf(stream, "border-left-style: ridge ");
-		break;
-	case CSS_BORDER_STYLE_INSET:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_INSET:
 		fprintf(stream, "border-left-style: inset ");
-		break;
-	case CSS_BORDER_STYLE_OUTSET:
+		તોડો;
+	સ્થિતિ CSS_BORDER_STYLE_OUTSET:
 		fprintf(stream, "border-left-style: outset ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-top-width */
-	val = css_computed_border_top_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BORDER_WIDTH_THIN:
+	val = css_computed_border_ટોચ_width(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-top-width: thin ");
-		break;
-	case CSS_BORDER_WIDTH_MEDIUM:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_MEDIUM:
 		fprintf(stream, "border-top-width: medium ");
-		break;
-	case CSS_BORDER_WIDTH_THICK:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_THICK:
 		fprintf(stream, "border-top-width: thick ");
-		break;
-	case CSS_BORDER_WIDTH_WIDTH:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_WIDTH:
 		fprintf(stream, "border-top-width: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-right-width */
-	val = css_computed_border_right_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BORDER_WIDTH_THIN:
+	val = css_computed_border_જમણું_width(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-right-width: thin ");
-		break;
-	case CSS_BORDER_WIDTH_MEDIUM:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_MEDIUM:
 		fprintf(stream, "border-right-width: medium ");
-		break;
-	case CSS_BORDER_WIDTH_THICK:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_THICK:
 		fprintf(stream, "border-right-width: thick ");
-		break;
-	case CSS_BORDER_WIDTH_WIDTH:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_WIDTH:
 		fprintf(stream, "border-right-width: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-bottom-width */
 	val = css_computed_border_bottom_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BORDER_WIDTH_THIN:
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-bottom-width: thin ");
-		break;
-	case CSS_BORDER_WIDTH_MEDIUM:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_MEDIUM:
 		fprintf(stream, "border-bottom-width: medium ");
-		break;
-	case CSS_BORDER_WIDTH_THICK:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_THICK:
 		fprintf(stream, "border-bottom-width: thick ");
-		break;
-	case CSS_BORDER_WIDTH_WIDTH:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_WIDTH:
 		fprintf(stream, "border-bottom-width: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* border-left-width */
-	val = css_computed_border_left_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BORDER_WIDTH_THIN:
+	val = css_computed_border_ડાબું_width(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-left-width: thin ");
-		break;
-	case CSS_BORDER_WIDTH_MEDIUM:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_MEDIUM:
 		fprintf(stream, "border-left-width: medium ");
-		break;
-	case CSS_BORDER_WIDTH_THICK:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_THICK:
 		fprintf(stream, "border-left-width: thick ");
-		break;
-	case CSS_BORDER_WIDTH_WIDTH:
+		તોડો;
+	સ્થિતિ CSS_BORDER_WIDTH_WIDTH:
 		fprintf(stream, "border-left-width: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* bottom */
 	val = css_computed_bottom(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BOTTOM_AUTO:
+	પસંદગી (val) {
+	સ્થિતિ CSS_BOTTOM_AUTO:
 		fprintf(stream, "bottom: auto ");
-		break;
-	case CSS_BOTTOM_SET:
+		તોડો;
+	સ્થિતિ CSS_BOTTOM_SET:
 		fprintf(stream, "bottom: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* caption-side */
 	val = css_computed_caption_side(style);
-	switch (val) {
-	case CSS_CAPTION_SIDE_TOP:
+	પસંદગી (val) {
+	સ્થિતિ CSS_CAPTION_SIDE_ટોચ:
 		fprintf(stream, "caption_side: top ");
-		break;
-	case CSS_CAPTION_SIDE_BOTTOM:
+		તોડો;
+	સ્થિતિ CSS_CAPTION_SIDE_BOTTOM:
 		fprintf(stream, "caption_side: bottom ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* clear */
 	val = css_computed_clear(style);
-	switch (val) {
-	case CSS_CLEAR_NONE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_CLEAR_NONE:
 		fprintf(stream, "clear: none ");
-		break;
-	case CSS_CLEAR_LEFT:
+		તોડો;
+	સ્થિતિ CSS_CLEAR_ડાબું:
 		fprintf(stream, "clear: left ");
-		break;
-	case CSS_CLEAR_RIGHT:
+		તોડો;
+	સ્થિતિ CSS_CLEAR_જમણું:
 		fprintf(stream, "clear: right ");
-		break;
-	case CSS_CLEAR_BOTH:
+		તોડો;
+	સ્થિતિ CSS_CLEAR_BOTH:
 		fprintf(stream, "clear: both ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* clip */
 	val = css_computed_clip(style, &rect);
-	switch (val) {
-	case CSS_CLIP_AUTO:
+	પસંદગી (val) {
+	સ્થિતિ CSS_CLIP_AUTO:
 		fprintf(stream, "clip: auto ");
-		break;
-	case CSS_CLIP_RECT:
+		તોડો;
+	સ્થિતિ CSS_CLIP_RECT:
 		fprintf(stream, "clip: rect( ");
 
-		if (rect.top_auto)
+		જો (rect.ટોચ_auto)
 			fprintf(stream, "auto");
-		else
-			dump_css_unit(stream, rect.top, rect.tunit);
+		નહીંતર
+			dump_css_unit(stream, rect.ટોચ, rect.tunit);
 		fprintf(stream, ", ");
 
-		if (rect.right_auto)
+		જો (rect.જમણું_auto)
 			fprintf(stream, "auto");
-		else
-			dump_css_unit(stream, rect.right, rect.runit);
+		નહીંતર
+			dump_css_unit(stream, rect.જમણું, rect.runit);
 		fprintf(stream, ", ");
 
-		if (rect.bottom_auto)
+		જો (rect.bottom_auto)
 			fprintf(stream, "auto");
-		else
+		નહીંતર
 			dump_css_unit(stream, rect.bottom, rect.bunit);
 		fprintf(stream, ", ");
 
-		if (rect.left_auto)
+		જો (rect.ડાબું_auto)
 			fprintf(stream, "auto");
-		else
-			dump_css_unit(stream, rect.left, rect.lunit);
+		નહીંતર
+			dump_css_unit(stream, rect.ડાબું, rect.lunit);
 		fprintf(stream, ") ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* color */
 	val = css_computed_color(style, &color);
-	if (val == CSS_COLOR_COLOR) {
+	જો (val == CSS_COLOR_COLOR) {
 		fprintf(stream, "color: #%08"PRIx32" ", color);
 	}
 
 	/* content */
 	val = css_computed_content(style, &content);
-	switch (val) {
-	case CSS_CONTENT_NONE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_CONTENT_NONE:
 		fprintf(stream, "content: none ");
-		break;
-	case CSS_CONTENT_NORMAL:
+		તોડો;
+	સ્થિતિ CSS_CONTENT_NORMAL:
 		fprintf(stream, "content: normal ");
-		break;
-	case CSS_CONTENT_SET:
+		તોડો;
+	સ્થિતિ CSS_CONTENT_SET:
 		fprintf(stream, "content:");
 
-		while (content->type != CSS_COMPUTED_CONTENT_NONE) {
+		જ્યારે (content->type != CSS_COMPUTED_CONTENT_NONE) {
 			fprintf(stream, " ");
 
-			switch (content->type) {
-			case CSS_COMPUTED_CONTENT_STRING:
+			પસંદગી (content->type) {
+			સ્થિતિ CSS_COMPUTED_CONTENT_STRING:
 				fprintf(stream,	"\"%.*s\"",
-						(int) lwc_string_length(
+						(પૂર્ણાંક) lwc_string_length(
 						content->data.string),
 						lwc_string_data(
 						content->data.string));
-				break;
-			case CSS_COMPUTED_CONTENT_URI:
+				તોડો;
+			સ્થિતિ CSS_COMPUTED_CONTENT_URI:
 				fprintf(stream,	"uri(\"%.*s\")",
-						(int) lwc_string_length(
+						(પૂર્ણાંક) lwc_string_length(
 						content->data.uri),
 						lwc_string_data(
 						content->data.uri));
-				break;
-			case CSS_COMPUTED_CONTENT_COUNTER:
+				તોડો;
+			સ્થિતિ CSS_COMPUTED_CONTENT_COUNTER:
 				fprintf(stream, "counter(%.*s)",
-						(int) lwc_string_length(
+						(પૂર્ણાંક) lwc_string_length(
 						content->data.counter.name),
 						lwc_string_data(
 						content->data.counter.name));
-				break;
-			case CSS_COMPUTED_CONTENT_COUNTERS:
+				તોડો;
+			સ્થિતિ CSS_COMPUTED_CONTENT_COUNTERS:
 				fprintf(stream, "counters(%.*s, \"%.*s\")",
-						(int) lwc_string_length(
+						(પૂર્ણાંક) lwc_string_length(
 						content->data.counters.name),
 						lwc_string_data(
 						content->data.counters.name),
-						(int) lwc_string_length(
+						(પૂર્ણાંક) lwc_string_length(
 						content->data.counters.sep),
 						lwc_string_data(
 						content->data.counters.sep));
-				break;
-			case CSS_COMPUTED_CONTENT_ATTR:
+				તોડો;
+			સ્થિતિ CSS_COMPUTED_CONTENT_ATTR:
 				fprintf(stream, "attr(%.*s)",
-						(int) lwc_string_length(
+						(પૂર્ણાંક) lwc_string_length(
 						content->data.attr),
 						lwc_string_data(
 						content->data.attr));
-				break;
-			case CSS_COMPUTED_CONTENT_OPEN_QUOTE:
+				તોડો;
+			સ્થિતિ CSS_COMPUTED_CONTENT_OPEN_QUOTE:
 				fprintf(stream, "open-quote");
-				break;
-			case CSS_COMPUTED_CONTENT_CLOSE_QUOTE:
+				તોડો;
+			સ્થિતિ CSS_COMPUTED_CONTENT_CLOSE_QUOTE:
 				fprintf(stream, "close-quote");
-				break;
-			case CSS_COMPUTED_CONTENT_NO_OPEN_QUOTE:
+				તોડો;
+			સ્થિતિ CSS_COMPUTED_CONTENT_NO_OPEN_QUOTE:
 				fprintf(stream, "no-open-quote");
-				break;
-			case CSS_COMPUTED_CONTENT_NO_CLOSE_QUOTE:
+				તોડો;
+			સ્થિતિ CSS_COMPUTED_CONTENT_NO_CLOSE_QUOTE:
 				fprintf(stream, "no-close-quote");
-				break;
+				તોડો;
 			}
 
 			content++;
 		}
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* counter-increment */
 	val = css_computed_counter_increment(style, &counter);
-	if ((val == CSS_COUNTER_INCREMENT_NONE) || (counter == NULL)) {
+	જો ((val == CSS_COUNTER_INCREMENT_NONE) || (counter == ખાલી)) {
 		fprintf(stream, "counter-increment: none ");
-	} else {
+	} નહીંતર {
 		fprintf(stream, "counter-increment:");
 
-		while (counter->name != NULL) {
+		જ્યારે (counter->name != ખાલી) {
 			fprintf(stream, " %.*s ",
-					(int) lwc_string_length(counter->name),
+					(પૂર્ણાંક) lwc_string_length(counter->name),
 					lwc_string_data(counter->name));
 
-			dump_css_fixed(stream, counter->value);
+			dump_css_fixed(stream, counter->કિંમત);
 
 			counter++;
 		}
@@ -718,17 +718,17 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* counter-reset */
 	val = css_computed_counter_reset(style, &counter);
-	if ((val == CSS_COUNTER_RESET_NONE) || (counter == NULL)) {
+	જો ((val == CSS_COUNTER_RESET_NONE) || (counter == ખાલી)) {
 		fprintf(stream, "counter-reset: none ");
-	} else {
+	} નહીંતર {
 		fprintf(stream, "counter-reset:");
 
-		while (counter->name != NULL) {
+		જ્યારે (counter->name != ખાલી) {
 			fprintf(stream, " %.*s ",
-					(int) lwc_string_length(counter->name),
+					(પૂર્ણાંક) lwc_string_length(counter->name),
 					lwc_string_data(counter->name));
 
-			dump_css_fixed(stream, counter->value);
+			dump_css_fixed(stream, counter->કિંમત);
 
 			counter++;
 		}
@@ -740,902 +740,902 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	val = css_computed_cursor(style, &string_list);
 	fprintf(stream, "cursor:");
 
-	if (string_list != NULL) {
-		while (*string_list != NULL) {
+	જો (string_list != ખાલી) {
+		જ્યારે (*string_list != ખાલી) {
 			fprintf(stream, " url\"%.*s\")",
-					(int) lwc_string_length(*string_list),
+					(પૂર્ણાંક) lwc_string_length(*string_list),
 					lwc_string_data(*string_list));
 
 			string_list++;
 		}
 	}
-	switch (val) {
-	case CSS_CURSOR_AUTO:
+	પસંદગી (val) {
+	સ્થિતિ CSS_CURSOR_AUTO:
 		fprintf(stream, " auto ");
-		break;
-	case CSS_CURSOR_CROSSHAIR:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_CROSSHAIR:
 		fprintf(stream, " crosshair ");
-		break;
-	case CSS_CURSOR_DEFAULT:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_DEFAULT:
 		fprintf(stream, " default ");
-		break;
-	case CSS_CURSOR_POINTER:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_POINTER:
 		fprintf(stream, " pointer ");
-		break;
-	case CSS_CURSOR_MOVE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_MOVE:
 		fprintf(stream, " move ");
-		break;
-	case CSS_CURSOR_E_RESIZE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_E_RESIZE:
 		fprintf(stream, " e-resize ");
-		break;
-	case CSS_CURSOR_NE_RESIZE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_NE_RESIZE:
 		fprintf(stream, " ne-resize ");
-		break;
-	case CSS_CURSOR_NW_RESIZE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_NW_RESIZE:
 		fprintf(stream, " nw-resize ");
-		break;
-	case CSS_CURSOR_N_RESIZE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_N_RESIZE:
 		fprintf(stream, " n-resize ");
-		break;
-	case CSS_CURSOR_SE_RESIZE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_SE_RESIZE:
 		fprintf(stream, " se-resize ");
-		break;
-	case CSS_CURSOR_SW_RESIZE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_SW_RESIZE:
 		fprintf(stream, " sw-resize ");
-		break;
-	case CSS_CURSOR_S_RESIZE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_S_RESIZE:
 		fprintf(stream, " s-resize ");
-		break;
-	case CSS_CURSOR_W_RESIZE:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_W_RESIZE:
 		fprintf(stream, " w-resize ");
-		break;
-	case CSS_CURSOR_TEXT:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_TEXT:
 		fprintf(stream, " text ");
-		break;
-	case CSS_CURSOR_WAIT:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_WAIT:
 		fprintf(stream, " wait ");
-		break;
-	case CSS_CURSOR_HELP:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_HELP:
 		fprintf(stream, " help ");
-		break;
-	case CSS_CURSOR_PROGRESS:
+		તોડો;
+	સ્થિતિ CSS_CURSOR_PROGRESS:
 		fprintf(stream, " progress ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* direction */
 	val = css_computed_direction(style);
-	switch (val) {
-	case CSS_DIRECTION_LTR:
+	પસંદગી (val) {
+	સ્થિતિ CSS_DIRECTION_LTR:
 		fprintf(stream, "direction: ltr ");
-		break;
-	case CSS_DIRECTION_RTL:
+		તોડો;
+	સ્થિતિ CSS_DIRECTION_RTL:
 		fprintf(stream, "direction: rtl ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* display */
 	val = ns_computed_display_static(style);
-	switch (val) {
-	case CSS_DISPLAY_INLINE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_DISPLAY_INLINE:
 		fprintf(stream, "display: inline ");
-		break;
-	case CSS_DISPLAY_BLOCK:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_BLOCK:
 		fprintf(stream, "display: block ");
-		break;
-	case CSS_DISPLAY_LIST_ITEM:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_LIST_ITEM:
 		fprintf(stream, "display: list-item ");
-		break;
-	case CSS_DISPLAY_RUN_IN:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_RUN_IN:
 		fprintf(stream, "display: run-in ");
-		break;
-	case CSS_DISPLAY_INLINE_BLOCK:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_INLINE_BLOCK:
 		fprintf(stream, "display: inline-block ");
-		break;
-	case CSS_DISPLAY_TABLE:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE:
 		fprintf(stream, "display: table ");
-		break;
-	case CSS_DISPLAY_INLINE_TABLE:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_INLINE_TABLE:
 		fprintf(stream, "display: inline-table ");
-		break;
-	case CSS_DISPLAY_TABLE_ROW_GROUP:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE_ROW_GROUP:
 		fprintf(stream, "display: table-row-group ");
-		break;
-	case CSS_DISPLAY_TABLE_HEADER_GROUP:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE_HEADER_GROUP:
 		fprintf(stream, "display: table-header-group ");
-		break;
-	case CSS_DISPLAY_TABLE_FOOTER_GROUP:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE_FOOTER_GROUP:
 		fprintf(stream, "display: table-footer-group ");
-		break;
-	case CSS_DISPLAY_TABLE_ROW:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE_ROW:
 		fprintf(stream, "display: table-row ");
-		break;
-	case CSS_DISPLAY_TABLE_COLUMN_GROUP:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE_COLUMN_GROUP:
 		fprintf(stream, "display: table-column-group ");
-		break;
-	case CSS_DISPLAY_TABLE_COLUMN:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE_COLUMN:
 		fprintf(stream, "display: table-column ");
-		break;
-	case CSS_DISPLAY_TABLE_CELL:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE_CELL:
 		fprintf(stream, "display: table-cell ");
-		break;
-	case CSS_DISPLAY_TABLE_CAPTION:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_TABLE_CAPTION:
 		fprintf(stream, "display: table-caption ");
-		break;
-	case CSS_DISPLAY_NONE:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_NONE:
 		fprintf(stream, "display: none ");
-		break;
-	case CSS_DISPLAY_FLEX:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_FLEX:
 		fprintf(stream, "display: flex ");
-		break;
-	case CSS_DISPLAY_INLINE_FLEX:
+		તોડો;
+	સ્થિતિ CSS_DISPLAY_INLINE_FLEX:
 		fprintf(stream, "display: inline-flex ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* empty-cells */
 	val = css_computed_empty_cells(style);
-	switch (val) {
-	case CSS_EMPTY_CELLS_SHOW:
+	પસંદગી (val) {
+	સ્થિતિ CSS_EMPTY_CELLS_SHOW:
 		fprintf(stream, "empty-cells: show ");
-		break;
-	case CSS_EMPTY_CELLS_HIDE:
+		તોડો;
+	સ્થિતિ CSS_EMPTY_CELLS_HIDE:
 		fprintf(stream, "empty-cells: hide ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* float */
 	val = css_computed_float(style);
-	switch (val) {
-	case CSS_FLOAT_LEFT:
+	પસંદગી (val) {
+	સ્થિતિ CSS_FLOAT_ડાબું:
 		fprintf(stream, "float: left ");
-		break;
-	case CSS_FLOAT_RIGHT:
+		તોડો;
+	સ્થિતિ CSS_FLOAT_જમણું:
 		fprintf(stream, "float: right ");
-		break;
-	case CSS_FLOAT_NONE:
+		તોડો;
+	સ્થિતિ CSS_FLOAT_NONE:
 		fprintf(stream, "float: none ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* font-family */
 	val = css_computed_font_family(style, &string_list);
-	if (val != CSS_FONT_FAMILY_INHERIT) {
+	જો (val != CSS_FONT_FAMILY_INHERIT) {
 		fprintf(stream, "font-family:");
 
-		if (string_list != NULL) {
-			while (*string_list != NULL) {
+		જો (string_list != ખાલી) {
+			જ્યારે (*string_list != ખાલી) {
 				fprintf(stream, " \"%.*s\"",
-					(int) lwc_string_length(*string_list),
+					(પૂર્ણાંક) lwc_string_length(*string_list),
 					lwc_string_data(*string_list));
 
 				string_list++;
 			}
 		}
-		switch (val) {
-		case CSS_FONT_FAMILY_SERIF:
+		પસંદગી (val) {
+		સ્થિતિ CSS_FONT_FAMILY_SERIF:
 			fprintf(stream, " serif ");
-			break;
-		case CSS_FONT_FAMILY_SANS_SERIF:
+			તોડો;
+		સ્થિતિ CSS_FONT_FAMILY_SANS_SERIF:
 			fprintf(stream, " sans-serif ");
-			break;
-		case CSS_FONT_FAMILY_CURSIVE:
+			તોડો;
+		સ્થિતિ CSS_FONT_FAMILY_CURSIVE:
 			fprintf(stream, " cursive ");
-			break;
-		case CSS_FONT_FAMILY_FANTASY:
+			તોડો;
+		સ્થિતિ CSS_FONT_FAMILY_FANTASY:
 			fprintf(stream, " fantasy ");
-			break;
-		case CSS_FONT_FAMILY_MONOSPACE:
+			તોડો;
+		સ્થિતિ CSS_FONT_FAMILY_MONOSPACE:
 			fprintf(stream, " monospace ");
-			break;
+			તોડો;
 		}
 	}
 
 	/* font-size */
 	val = css_computed_font_size(style, &len1, &unit1);
-	switch (val) {
-	case CSS_FONT_SIZE_XX_SMALL:
+	પસંદગી (val) {
+	સ્થિતિ CSS_FONT_SIZE_XX_SMALL:
 		fprintf(stream, "font-size: xx-small ");
-		break;
-	case CSS_FONT_SIZE_X_SMALL:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_X_SMALL:
 		fprintf(stream, "font-size: x-small ");
-		break;
-	case CSS_FONT_SIZE_SMALL:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_SMALL:
 		fprintf(stream, "font-size: small ");
-		break;
-	case CSS_FONT_SIZE_MEDIUM:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_MEDIUM:
 		fprintf(stream, "font-size: medium ");
-		break;
-	case CSS_FONT_SIZE_LARGE:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_LARGE:
 		fprintf(stream, "font-size: large ");
-		break;
-	case CSS_FONT_SIZE_X_LARGE:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_X_LARGE:
 		fprintf(stream, "font-size: x-large ");
-		break;
-	case CSS_FONT_SIZE_XX_LARGE:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_XX_LARGE:
 		fprintf(stream, "font-size: xx-large ");
-		break;
-	case CSS_FONT_SIZE_LARGER:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_LARGER:
 		fprintf(stream, "font-size: larger ");
-		break;
-	case CSS_FONT_SIZE_SMALLER:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_SMALLER:
 		fprintf(stream, "font-size: smaller ");
-		break;
-	case CSS_FONT_SIZE_DIMENSION:
+		તોડો;
+	સ્થિતિ CSS_FONT_SIZE_DIMENSION:
 		fprintf(stream, "font-size: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* font-style */
 	val = css_computed_font_style(style);
-	switch (val) {
-	case CSS_FONT_STYLE_NORMAL:
+	પસંદગી (val) {
+	સ્થિતિ CSS_FONT_STYLE_NORMAL:
 		fprintf(stream, "font-style: normal ");
-		break;
-	case CSS_FONT_STYLE_ITALIC:
+		તોડો;
+	સ્થિતિ CSS_FONT_STYLE_ITALIC:
 		fprintf(stream, "font-style: italic ");
-		break;
-	case CSS_FONT_STYLE_OBLIQUE:
+		તોડો;
+	સ્થિતિ CSS_FONT_STYLE_OBLIQUE:
 		fprintf(stream, "font-style: oblique ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* font-variant */
 	val = css_computed_font_variant(style);
-	switch (val) {
-	case CSS_FONT_VARIANT_NORMAL:
+	પસંદગી (val) {
+	સ્થિતિ CSS_FONT_VARIANT_NORMAL:
 		fprintf(stream, "font-variant: normal ");
-		break;
-	case CSS_FONT_VARIANT_SMALL_CAPS:
+		તોડો;
+	સ્થિતિ CSS_FONT_VARIANT_SMALL_CAPS:
 		fprintf(stream, "font-variant: small-caps ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* font-weight */
 	val = css_computed_font_weight(style);
-	switch (val) {
-	case CSS_FONT_WEIGHT_NORMAL:
+	પસંદગી (val) {
+	સ્થિતિ CSS_FONT_WEIGHT_NORMAL:
 		fprintf(stream, "font-weight: normal ");
-		break;
-	case CSS_FONT_WEIGHT_BOLD:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_BOLD:
 		fprintf(stream, "font-weight: bold ");
-		break;
-	case CSS_FONT_WEIGHT_BOLDER:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_BOLDER:
 		fprintf(stream, "font-weight: bolder ");
-		break;
-	case CSS_FONT_WEIGHT_LIGHTER:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_LIGHTER:
 		fprintf(stream, "font-weight: lighter ");
-		break;
-	case CSS_FONT_WEIGHT_100:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_100:
 		fprintf(stream, "font-weight: 100 ");
-		break;
-	case CSS_FONT_WEIGHT_200:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_200:
 		fprintf(stream, "font-weight: 200 ");
-		break;
-	case CSS_FONT_WEIGHT_300:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_300:
 		fprintf(stream, "font-weight: 300 ");
-		break;
-	case CSS_FONT_WEIGHT_400:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_400:
 		fprintf(stream, "font-weight: 400 ");
-		break;
-	case CSS_FONT_WEIGHT_500:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_500:
 		fprintf(stream, "font-weight: 500 ");
-		break;
-	case CSS_FONT_WEIGHT_600:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_600:
 		fprintf(stream, "font-weight: 600 ");
-		break;
-	case CSS_FONT_WEIGHT_700:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_700:
 		fprintf(stream, "font-weight: 700 ");
-		break;
-	case CSS_FONT_WEIGHT_800:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_800:
 		fprintf(stream, "font-weight: 800 ");
-		break;
-	case CSS_FONT_WEIGHT_900:
+		તોડો;
+	સ્થિતિ CSS_FONT_WEIGHT_900:
 		fprintf(stream, "font-weight: 900 ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* height */
 	val = css_computed_height(style, &len1, &unit1);
-	switch (val) {
-	case CSS_HEIGHT_AUTO:
+	પસંદગી (val) {
+	સ્થિતિ CSS_HEIGHT_AUTO:
 		fprintf(stream, "height: auto ");
-		break;
-	case CSS_HEIGHT_SET:
+		તોડો;
+	સ્થિતિ CSS_HEIGHT_SET:
 		fprintf(stream, "height: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
-	/* left */
-	val = css_computed_left(style, &len1, &unit1);
-	switch (val) {
-	case CSS_LEFT_AUTO:
+	/*ડાબું*/
+	val = css_computed_ડાબું(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_ડાબું_AUTO:
 		fprintf(stream, "left: auto ");
-		break;
-	case CSS_LEFT_SET:
+		તોડો;
+	સ્થિતિ CSS_ડાબું_SET:
 		fprintf(stream, "left: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* letter-spacing */
 	val = css_computed_letter_spacing(style, &len1, &unit1);
-	switch (val) {
-	case CSS_LETTER_SPACING_NORMAL:
+	પસંદગી (val) {
+	સ્થિતિ CSS_LETTER_SPACING_NORMAL:
 		fprintf(stream, "letter-spacing: normal ");
-		break;
-	case CSS_LETTER_SPACING_SET:
+		તોડો;
+	સ્થિતિ CSS_LETTER_SPACING_SET:
 		fprintf(stream, "letter-spacing: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* line-height */
-	val = css_computed_line_height(style, &len1, &unit1);
-	switch (val) {
-	case CSS_LINE_HEIGHT_NORMAL:
+	val = css_computed_લીટી_height(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_લીટી_HEIGHT_NORMAL:
 		fprintf(stream, "line-height: normal ");
-		break;
-	case CSS_LINE_HEIGHT_NUMBER:
+		તોડો;
+	સ્થિતિ CSS_લીટી_HEIGHT_સંખ્યા:
 		fprintf(stream, "line-height: ");
 
 		dump_css_fixed(stream, len1);
 
 		fprintf(stream, " ");
-		break;
-	case CSS_LINE_HEIGHT_DIMENSION:
+		તોડો;
+	સ્થિતિ CSS_લીટી_HEIGHT_DIMENSION:
 		fprintf(stream, "line-height: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* list-style-image */
 	val = css_computed_list_style_image(style, &url);
-	if (url != NULL) {
+	જો (url != ખાલી) {
 		fprintf(stream, "list-style-image: url('%.*s') ",
-				(int) lwc_string_length(url),
+				(પૂર્ણાંક) lwc_string_length(url),
 				lwc_string_data(url));
-	} else if (val == CSS_LIST_STYLE_IMAGE_NONE) {
+	} નહીંતર જો (val == CSS_LIST_STYLE_IMAGE_NONE) {
 		fprintf(stream, "list-style-image: none ");
 	}
 
 	/* list-style-position */
 	val = css_computed_list_style_position(style);
-	switch (val) {
-	case CSS_LIST_STYLE_POSITION_INSIDE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_LIST_STYLE_POSITION_INSIDE:
 		fprintf(stream, "list-style-position: inside ");
-		break;
-	case CSS_LIST_STYLE_POSITION_OUTSIDE:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_POSITION_OUTSIDE:
 		fprintf(stream, "list-style-position: outside ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* list-style-type */
 	val = css_computed_list_style_type(style);
-	switch (val) {
-	case CSS_LIST_STYLE_TYPE_DISC:
+	પસંદગી (val) {
+	સ્થિતિ CSS_LIST_STYLE_TYPE_DISC:
 		fprintf(stream, "list-style-type: disc ");
-		break;
-	case CSS_LIST_STYLE_TYPE_CIRCLE:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_CIRCLE:
 		fprintf(stream, "list-style-type: circle ");
-		break;
-	case CSS_LIST_STYLE_TYPE_SQUARE:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_SQUARE:
 		fprintf(stream, "list-style-type: square ");
-		break;
-	case CSS_LIST_STYLE_TYPE_DECIMAL:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_DECIMAL:
 		fprintf(stream, "list-style-type: decimal ");
-		break;
-	case CSS_LIST_STYLE_TYPE_DECIMAL_LEADING_ZERO:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_DECIMAL_LEADING_ZERO:
 		fprintf(stream, "list-style-type: decimal-leading-zero ");
-		break;
-	case CSS_LIST_STYLE_TYPE_LOWER_ROMAN:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_LOWER_ROMAN:
 		fprintf(stream, "list-style-type: lower-roman ");
-		break;
-	case CSS_LIST_STYLE_TYPE_UPPER_ROMAN:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_UPPER_ROMAN:
 		fprintf(stream, "list-style-type: upper-roman ");
-		break;
-	case CSS_LIST_STYLE_TYPE_LOWER_GREEK:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_LOWER_GREEK:
 		fprintf(stream, "list-style-type: lower-greek ");
-		break;
-	case CSS_LIST_STYLE_TYPE_LOWER_LATIN:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_LOWER_LATIN:
 		fprintf(stream, "list-style-type: lower-latin ");
-		break;
-	case CSS_LIST_STYLE_TYPE_UPPER_LATIN:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_UPPER_LATIN:
 		fprintf(stream, "list-style-type: upper-latin ");
-		break;
-	case CSS_LIST_STYLE_TYPE_ARMENIAN:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_ARMENIAN:
 		fprintf(stream, "list-style-type: armenian ");
-		break;
-	case CSS_LIST_STYLE_TYPE_GEORGIAN:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_GEORGIAN:
 		fprintf(stream, "list-style-type: georgian ");
-		break;
-	case CSS_LIST_STYLE_TYPE_LOWER_ALPHA:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_LOWER_ALPHA:
 		fprintf(stream, "list-style-type: lower-alpha ");
-		break;
-	case CSS_LIST_STYLE_TYPE_UPPER_ALPHA:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_UPPER_ALPHA:
 		fprintf(stream, "list-style-type: upper-alpha ");
-		break;
-	case CSS_LIST_STYLE_TYPE_NONE:
+		તોડો;
+	સ્થિતિ CSS_LIST_STYLE_TYPE_NONE:
 		fprintf(stream, "list-style-type: none ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* margin-top */
-	val = css_computed_margin_top(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MARGIN_AUTO:
+	val = css_computed_margin_ટોચ(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-top: auto ");
-		break;
-	case CSS_MARGIN_SET:
+		તોડો;
+	સ્થિતિ CSS_MARGIN_SET:
 		fprintf(stream, "margin-top: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* margin-right */
-	val = css_computed_margin_right(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MARGIN_AUTO:
+	val = css_computed_margin_જમણું(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-right: auto ");
-		break;
-	case CSS_MARGIN_SET:
+		તોડો;
+	સ્થિતિ CSS_MARGIN_SET:
 		fprintf(stream, "margin-right: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* margin-bottom */
 	val = css_computed_margin_bottom(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MARGIN_AUTO:
+	પસંદગી (val) {
+	સ્થિતિ CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-bottom: auto ");
-		break;
-	case CSS_MARGIN_SET:
+		તોડો;
+	સ્થિતિ CSS_MARGIN_SET:
 		fprintf(stream, "margin-bottom: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* margin-left */
-	val = css_computed_margin_left(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MARGIN_AUTO:
+	val = css_computed_margin_ડાબું(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-left: auto ");
-		break;
-	case CSS_MARGIN_SET:
+		તોડો;
+	સ્થિતિ CSS_MARGIN_SET:
 		fprintf(stream, "margin-left: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* max-height */
 	val = css_computed_max_height(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MAX_HEIGHT_NONE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_MAX_HEIGHT_NONE:
 		fprintf(stream, "max-height: none ");
-		break;
-	case CSS_MAX_HEIGHT_SET:
+		તોડો;
+	સ્થિતિ CSS_MAX_HEIGHT_SET:
 		fprintf(stream, "max-height: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* max-width */
 	val = css_computed_max_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MAX_WIDTH_NONE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_MAX_WIDTH_NONE:
 		fprintf(stream, "max-width: none ");
-		break;
-	case CSS_MAX_WIDTH_SET:
+		તોડો;
+	સ્થિતિ CSS_MAX_WIDTH_SET:
 		fprintf(stream, "max-width: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* min-height */
 	val = ns_computed_min_height(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MIN_HEIGHT_SET:
+	પસંદગી (val) {
+	સ્થિતિ CSS_MIN_HEIGHT_SET:
 		fprintf(stream, "min-height: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* min-width */
 	val = ns_computed_min_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MIN_WIDTH_SET:
+	પસંદગી (val) {
+	સ્થિતિ CSS_MIN_WIDTH_SET:
 		fprintf(stream, "min-width: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* opacity */
 	val = css_computed_opacity(style, &len1);
-	switch (val) {
-	case CSS_OPACITY_SET:
+	પસંદગી (val) {
+	સ્થિતિ CSS_OPACITY_SET:
 		fprintf(stream, "opacity: ");
 
 		dump_css_fixed(stream, len1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* outline-color */
 	val = css_computed_outline_color(style, &color);
-	switch (val) {
-	case CSS_OUTLINE_COLOR_INVERT:
+	પસંદગી (val) {
+	સ્થિતિ CSS_OUTLINE_COLOR_INVERT:
 		fprintf(stream, "outline-color: invert ");
-		break;
-	case CSS_OUTLINE_COLOR_COLOR:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_COLOR_COLOR:
 		fprintf(stream, "outline-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* outline-style */
 	val = css_computed_outline_style(style);
-	switch (val) {
-	case CSS_OUTLINE_STYLE_NONE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_OUTLINE_STYLE_NONE:
 		fprintf(stream, "outline-style: none ");
-		break;
-	case CSS_OUTLINE_STYLE_DOTTED:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_STYLE_DOTTED:
 		fprintf(stream, "outline-style: dotted ");
-		break;
-	case CSS_OUTLINE_STYLE_DASHED:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_STYLE_DASHED:
 		fprintf(stream, "outline-style: dashed ");
-		break;
-	case CSS_OUTLINE_STYLE_SOLID:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_STYLE_SOLID:
 		fprintf(stream, "outline-style: solid ");
-		break;
-	case CSS_OUTLINE_STYLE_DOUBLE:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_STYLE_DOUBLE:
 		fprintf(stream, "outline-style: double ");
-		break;
-	case CSS_OUTLINE_STYLE_GROOVE:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_STYLE_GROOVE:
 		fprintf(stream, "outline-style: groove ");
-		break;
-	case CSS_OUTLINE_STYLE_RIDGE:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_STYLE_RIDGE:
 		fprintf(stream, "outline-style: ridge ");
-		break;
-	case CSS_OUTLINE_STYLE_INSET:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_STYLE_INSET:
 		fprintf(stream, "outline-style: inset ");
-		break;
-	case CSS_OUTLINE_STYLE_OUTSET:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_STYLE_OUTSET:
 		fprintf(stream, "outline-style: outset ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* outline-width */
 	val = css_computed_outline_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_OUTLINE_WIDTH_THIN:
+	પસંદગી (val) {
+	સ્થિતિ CSS_OUTLINE_WIDTH_THIN:
 		fprintf(stream, "outline-width: thin ");
-		break;
-	case CSS_OUTLINE_WIDTH_MEDIUM:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_WIDTH_MEDIUM:
 		fprintf(stream, "outline-width: medium ");
-		break;
-	case CSS_OUTLINE_WIDTH_THICK:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_WIDTH_THICK:
 		fprintf(stream, "outline-width: thick ");
-		break;
-	case CSS_OUTLINE_WIDTH_WIDTH:
+		તોડો;
+	સ્થિતિ CSS_OUTLINE_WIDTH_WIDTH:
 		fprintf(stream, "outline-width: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* overflow */
 	val = css_computed_overflow_x(style);
-	switch (val) {
-	case CSS_OVERFLOW_VISIBLE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_OVERFLOW_VISIBLE:
 		fprintf(stream, "overflow-x: visible ");
-		break;
-	case CSS_OVERFLOW_HIDDEN:
+		તોડો;
+	સ્થિતિ CSS_OVERFLOW_HIDDEN:
 		fprintf(stream, "overflow-x: hidden ");
-		break;
-	case CSS_OVERFLOW_SCROLL:
+		તોડો;
+	સ્થિતિ CSS_OVERFLOW_SCROLL:
 		fprintf(stream, "overflow-x: scroll ");
-		break;
-	case CSS_OVERFLOW_AUTO:
+		તોડો;
+	સ્થિતિ CSS_OVERFLOW_AUTO:
 		fprintf(stream, "overflow-x auto ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* overflow */
 	val = css_computed_overflow_y(style);
-	switch (val) {
-	case CSS_OVERFLOW_VISIBLE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_OVERFLOW_VISIBLE:
 		fprintf(stream, "overflow-y: visible ");
-		break;
-	case CSS_OVERFLOW_HIDDEN:
+		તોડો;
+	સ્થિતિ CSS_OVERFLOW_HIDDEN:
 		fprintf(stream, "overflow-y: hidden ");
-		break;
-	case CSS_OVERFLOW_SCROLL:
+		તોડો;
+	સ્થિતિ CSS_OVERFLOW_SCROLL:
 		fprintf(stream, "overflow-y: scroll ");
-		break;
-	case CSS_OVERFLOW_AUTO:
+		તોડો;
+	સ્થિતિ CSS_OVERFLOW_AUTO:
 		fprintf(stream, "overflow-y: auto ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* padding-top */
-	val = css_computed_padding_top(style, &len1, &unit1);
-	switch (val) {
-	case CSS_PADDING_SET:
+	val = css_computed_padding_ટોચ(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_PADDING_SET:
 		fprintf(stream, "padding-top: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* padding-right */
-	val = css_computed_padding_right(style, &len1, &unit1);
-	switch (val) {
-	case CSS_PADDING_SET:
+	val = css_computed_padding_જમણું(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_PADDING_SET:
 		fprintf(stream, "padding-right: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* padding-bottom */
 	val = css_computed_padding_bottom(style, &len1, &unit1);
-	switch (val) {
-	case CSS_PADDING_SET:
+	પસંદગી (val) {
+	સ્થિતિ CSS_PADDING_SET:
 		fprintf(stream, "padding-bottom: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* padding-left */
-	val = css_computed_padding_left(style, &len1, &unit1);
-	switch (val) {
-	case CSS_PADDING_SET:
+	val = css_computed_padding_ડાબું(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_PADDING_SET:
 		fprintf(stream, "padding-left: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* position */
 	val = css_computed_position(style);
-	switch (val) {
-	case CSS_POSITION_STATIC:
+	પસંદગી (val) {
+	સ્થિતિ CSS_POSITION_STATIC:
 		fprintf(stream, "position: static ");
-		break;
-	case CSS_POSITION_RELATIVE:
+		તોડો;
+	સ્થિતિ CSS_POSITION_RELATIVE:
 		fprintf(stream, "position: relative ");
-		break;
-	case CSS_POSITION_ABSOLUTE:
+		તોડો;
+	સ્થિતિ CSS_POSITION_ABSOLUTE:
 		fprintf(stream, "position: absolute ");
-		break;
-	case CSS_POSITION_FIXED:
+		તોડો;
+	સ્થિતિ CSS_POSITION_FIXED:
 		fprintf(stream, "position: fixed ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* quotes */
 	val = css_computed_quotes(style, &string_list);
-	if (val == CSS_QUOTES_STRING && string_list != NULL) {
+	જો (val == CSS_QUOTES_STRING && string_list != ખાલી) {
 		fprintf(stream, "quotes:");
 
-		while (*string_list != NULL) {
+		જ્યારે (*string_list != ખાલી) {
 			fprintf(stream, " \"%.*s\"",
-				(int) lwc_string_length(*string_list),
+				(પૂર્ણાંક) lwc_string_length(*string_list),
 				lwc_string_data(*string_list));
 
 			string_list++;
 		}
 
 		fprintf(stream, " ");
-	} else {
-		switch (val) {
-		case CSS_QUOTES_NONE:
+	} નહીંતર {
+		પસંદગી (val) {
+		સ્થિતિ CSS_QUOTES_NONE:
 			fprintf(stream, "quotes: none ");
-			break;
-		default:
-			break;
+			તોડો;
+		મૂળભૂત:
+			તોડો;
 		}
 	}
 
-	/* right */
-	val = css_computed_right(style, &len1, &unit1);
-	switch (val) {
-	case CSS_RIGHT_AUTO:
+	/*જમણું*/
+	val = css_computed_જમણું(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_જમણું_AUTO:
 		fprintf(stream, "right: auto ");
-		break;
-	case CSS_RIGHT_SET:
+		તોડો;
+	સ્થિતિ CSS_જમણું_SET:
 		fprintf(stream, "right: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* table-layout */
 	val = css_computed_table_layout(style);
-	switch (val) {
-	case CSS_TABLE_LAYOUT_AUTO:
+	પસંદગી (val) {
+	સ્થિતિ CSS_TABLE_LAYOUT_AUTO:
 		fprintf(stream, "table-layout: auto ");
-		break;
-	case CSS_TABLE_LAYOUT_FIXED:
+		તોડો;
+	સ્થિતિ CSS_TABLE_LAYOUT_FIXED:
 		fprintf(stream, "table-layout: fixed ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* text-align */
 	val = css_computed_text_align(style);
-	switch (val) {
-	case CSS_TEXT_ALIGN_LEFT:
+	પસંદગી (val) {
+	સ્થિતિ CSS_TEXT_ALIGN_ડાબું:
 		fprintf(stream, "text-align: left ");
-		break;
-	case CSS_TEXT_ALIGN_RIGHT:
+		તોડો;
+	સ્થિતિ CSS_TEXT_ALIGN_જમણું:
 		fprintf(stream, "text-align: right ");
-		break;
-	case CSS_TEXT_ALIGN_CENTER:
+		તોડો;
+	સ્થિતિ CSS_TEXT_ALIGN_CENTER:
 		fprintf(stream, "text-align: center ");
-		break;
-	case CSS_TEXT_ALIGN_JUSTIFY:
+		તોડો;
+	સ્થિતિ CSS_TEXT_ALIGN_JUSTIFY:
 		fprintf(stream, "text-align: justify ");
-		break;
-	case CSS_TEXT_ALIGN_DEFAULT:
+		તોડો;
+	સ્થિતિ CSS_TEXT_ALIGN_DEFAULT:
 		fprintf(stream, "text-align: default ");
-		break;
-	case CSS_TEXT_ALIGN_LIBCSS_LEFT:
+		તોડો;
+	સ્થિતિ CSS_TEXT_ALIGN_LIBCSS_ડાબું:
 		fprintf(stream, "text-align: -libcss-left ");
-		break;
-	case CSS_TEXT_ALIGN_LIBCSS_CENTER:
+		તોડો;
+	સ્થિતિ CSS_TEXT_ALIGN_LIBCSS_CENTER:
 		fprintf(stream, "text-align: -libcss-center ");
-		break;
-	case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
+		તોડો;
+	સ્થિતિ CSS_TEXT_ALIGN_LIBCSS_જમણું:
 		fprintf(stream, "text-align: -libcss-right ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* text-decoration */
 	val = css_computed_text_decoration(style);
-	if (val == CSS_TEXT_DECORATION_NONE) {
+	જો (val == CSS_TEXT_DECORATION_NONE) {
 		fprintf(stream, "text-decoration: none ");
-	} else {
+	} નહીંતર {
 		fprintf(stream, "text-decoration:");
 
-		if (val & CSS_TEXT_DECORATION_BLINK) {
+		જો (val & CSS_TEXT_DECORATION_BLINK) {
 			fprintf(stream, " blink");
 		}
-		if (val & CSS_TEXT_DECORATION_LINE_THROUGH) {
+		જો (val & CSS_TEXT_DECORATION_લીટી_THROUGH) {
 			fprintf(stream, " line-through");
 		}
-		if (val & CSS_TEXT_DECORATION_OVERLINE) {
+		જો (val & CSS_TEXT_DECORATION_OVERLINE) {
 			fprintf(stream, " overline");
 		}
-		if (val & CSS_TEXT_DECORATION_UNDERLINE) {
+		જો (val & CSS_TEXT_DECORATION_UNDERLINE) {
 			fprintf(stream, " underline");
 		}
 
@@ -1644,191 +1644,191 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* text-indent */
 	val = css_computed_text_indent(style, &len1, &unit1);
-	switch (val) {
-	case CSS_TEXT_INDENT_SET:
+	પસંદગી (val) {
+	સ્થિતિ CSS_TEXT_INDENT_SET:
 		fprintf(stream, "text-indent: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* text-transform */
 	val = css_computed_text_transform(style);
-	switch (val) {
-	case CSS_TEXT_TRANSFORM_CAPITALIZE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_TEXT_TRANSFORM_CAPITALIZE:
 		fprintf(stream, "text-transform: capitalize ");
-		break;
-	case CSS_TEXT_TRANSFORM_UPPERCASE:
+		તોડો;
+	સ્થિતિ CSS_TEXT_TRANSFORM_UPPERCASE:
 		fprintf(stream, "text-transform: uppercase ");
-		break;
-	case CSS_TEXT_TRANSFORM_LOWERCASE:
+		તોડો;
+	સ્થિતિ CSS_TEXT_TRANSFORM_LOWERCASE:
 		fprintf(stream, "text-transform: lowercase ");
-		break;
-	case CSS_TEXT_TRANSFORM_NONE:
+		તોડો;
+	સ્થિતિ CSS_TEXT_TRANSFORM_NONE:
 		fprintf(stream, "text-transform: none ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
-	/* top */
-	val = css_computed_top(style, &len1, &unit1);
-	switch (val) {
-	case CSS_TOP_AUTO:
+	/*ટોચ*/
+	val = css_computed_ટોચ(style, &len1, &unit1);
+	પસંદગી (val) {
+	સ્થિતિ CSS_ટોચ_AUTO:
 		fprintf(stream, "top: auto ");
-		break;
-	case CSS_TOP_SET:
+		તોડો;
+	સ્થિતિ CSS_ટોચ_SET:
 		fprintf(stream, "top: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* unicode-bidi */
 	val = css_computed_unicode_bidi(style);
-	switch (val) {
-	case CSS_UNICODE_BIDI_NORMAL:
+	પસંદગી (val) {
+	સ્થિતિ CSS_UNICODE_BIDI_NORMAL:
 		fprintf(stream, "unicode-bidi: normal ");
-		break;
-	case CSS_UNICODE_BIDI_EMBED:
+		તોડો;
+	સ્થિતિ CSS_UNICODE_BIDI_EMBED:
 		fprintf(stream, "unicode-bidi: embed ");
-		break;
-	case CSS_UNICODE_BIDI_BIDI_OVERRIDE:
+		તોડો;
+	સ્થિતિ CSS_UNICODE_BIDI_BIDI_OVERRIDE:
 		fprintf(stream, "unicode-bidi: bidi-override ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* vertical-align */
 	val = css_computed_vertical_align(style, &len1, &unit1);
-	switch (val) {
-	case CSS_VERTICAL_ALIGN_BASELINE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_VERTICAL_ALIGN_BASELINE:
 		fprintf(stream, "vertical-align: baseline ");
-		break;
-	case CSS_VERTICAL_ALIGN_SUB:
+		તોડો;
+	સ્થિતિ CSS_VERTICAL_ALIGN_SUB:
 		fprintf(stream, "vertical-align: sub ");
-		break;
-	case CSS_VERTICAL_ALIGN_SUPER:
+		તોડો;
+	સ્થિતિ CSS_VERTICAL_ALIGN_SUPER:
 		fprintf(stream, "vertical-align: super ");
-		break;
-	case CSS_VERTICAL_ALIGN_TOP:
+		તોડો;
+	સ્થિતિ CSS_VERTICAL_ALIGN_ટોચ:
 		fprintf(stream, "vertical-align: top ");
-		break;
-	case CSS_VERTICAL_ALIGN_TEXT_TOP:
+		તોડો;
+	સ્થિતિ CSS_VERTICAL_ALIGN_TEXT_ટોચ:
 		fprintf(stream, "vertical-align: text-top ");
-		break;
-	case CSS_VERTICAL_ALIGN_MIDDLE:
+		તોડો;
+	સ્થિતિ CSS_VERTICAL_ALIGN_મધ્ય:
 		fprintf(stream, "vertical-align: middle ");
-		break;
-	case CSS_VERTICAL_ALIGN_BOTTOM:
+		તોડો;
+	સ્થિતિ CSS_VERTICAL_ALIGN_BOTTOM:
 		fprintf(stream, "vertical-align: bottom ");
-		break;
-	case CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
+		તોડો;
+	સ્થિતિ CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
 		fprintf(stream, "vertical-align: text-bottom ");
-		break;
-	case CSS_VERTICAL_ALIGN_SET:
+		તોડો;
+	સ્થિતિ CSS_VERTICAL_ALIGN_SET:
 		fprintf(stream, "vertical-align: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* visibility */
 	val = css_computed_visibility(style);
-	switch (val) {
-	case CSS_VISIBILITY_VISIBLE:
+	પસંદગી (val) {
+	સ્થિતિ CSS_VISIBILITY_VISIBLE:
 		fprintf(stream, "visibility: visible ");
-		break;
-	case CSS_VISIBILITY_HIDDEN:
+		તોડો;
+	સ્થિતિ CSS_VISIBILITY_HIDDEN:
 		fprintf(stream, "visibility: hidden ");
-		break;
-	case CSS_VISIBILITY_COLLAPSE:
+		તોડો;
+	સ્થિતિ CSS_VISIBILITY_COLLAPSE:
 		fprintf(stream, "visibility: collapse ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* white-space */
 	val = css_computed_white_space(style);
-	switch (val) {
-	case CSS_WHITE_SPACE_NORMAL:
+	પસંદગી (val) {
+	સ્થિતિ CSS_WHITE_SPACE_NORMAL:
 		fprintf(stream, "white-space: normal ");
-		break;
-	case CSS_WHITE_SPACE_PRE:
+		તોડો;
+	સ્થિતિ CSS_WHITE_SPACE_PRE:
 		fprintf(stream, "white-space: pre ");
-		break;
-	case CSS_WHITE_SPACE_NOWRAP:
+		તોડો;
+	સ્થિતિ CSS_WHITE_SPACE_NOWRAP:
 		fprintf(stream, "white-space: nowrap ");
-		break;
-	case CSS_WHITE_SPACE_PRE_WRAP:
+		તોડો;
+	સ્થિતિ CSS_WHITE_SPACE_PRE_WRAP:
 		fprintf(stream, "white-space: pre-wrap ");
-		break;
-	case CSS_WHITE_SPACE_PRE_LINE:
+		તોડો;
+	સ્થિતિ CSS_WHITE_SPACE_PRE_લીટી:
 		fprintf(stream, "white-space: pre-line ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* width */
 	val = css_computed_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_WIDTH_AUTO:
+	પસંદગી (val) {
+	સ્થિતિ CSS_WIDTH_AUTO:
 		fprintf(stream, "width: auto ");
-		break;
-	case CSS_WIDTH_SET:
+		તોડો;
+	સ્થિતિ CSS_WIDTH_SET:
 		fprintf(stream, "width: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* word-spacing */
 	val = css_computed_word_spacing(style, &len1, &unit1);
-	switch (val) {
-	case CSS_WORD_SPACING_NORMAL:
+	પસંદગી (val) {
+	સ્થિતિ CSS_WORD_SPACING_NORMAL:
 		fprintf(stream, "word-spacing: normal ");
-		break;
-	case CSS_WORD_SPACING_SET:
+		તોડો;
+	સ્થિતિ CSS_WORD_SPACING_SET:
 		fprintf(stream, "word-spacing: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	/* z-index */
 	val = css_computed_z_index(style, &zindex);
-	switch (val) {
-	case CSS_Z_INDEX_AUTO:
+	પસંદગી (val) {
+	સ્થિતિ CSS_Z_INDEX_AUTO:
 		fprintf(stream, "z-index: auto ");
-		break;
-	case CSS_Z_INDEX_SET:
+		તોડો;
+	સ્થિતિ CSS_Z_INDEX_SET:
 		fprintf(stream, "z-index: %"PRId32" ", zindex);
-		break;
-	default:
-		break;
+		તોડો;
+	મૂળભૂત:
+		તોડો;
 	}
 
 	fprintf(stream, "}");

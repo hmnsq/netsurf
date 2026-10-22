@@ -20,25 +20,25 @@
  * Generate HTML content for displaying directory listings (implementation).
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdlib.h>
 
-#include "utils/nsurl.h"
-#include "utils/messages.h"
-#include "utils/nscolour.h"
+#અન્તર્ભાવ "utils/nsurl.h"
+#અન્તર્ભાવ "utils/messages.h"
+#અન્તર્ભાવ "utils/nscolour.h"
 
-#include "netsurf/inttypes.h"
-#include "netsurf/types.h"
-#include "netsurf/plot_style.h"
+#અન્તર્ભાવ "netsurf/inttypes.h"
+#અન્તર્ભાવ "netsurf/types.h"
+#અન્તર્ભાવ "netsurf/plot_style.h"
 
-#include "dirlist.h"
-#include "desktop/system_colour.h"
+#અન્તર્ભાવ "dirlist.h"
+#અન્તર્ભાવ "desktop/system_colour.h"
 
-static int dirlist_filesize_calculate(unsigned long *bytesize);
-static int dirlist_filesize_value(unsigned long bytesize);
-static char* dirlist_filesize_unit(unsigned long bytesize);
+સ્થિર પૂર્ણાંક dirlist_filesize_calculate(unsigned long *bytesize);
+સ્થિર પૂર્ણાંક dirlist_filesize_કિંમત(unsigned long bytesize);
+સ્થિર અક્ષર* dirlist_filesize_unit(unsigned long bytesize);
 
 
 /**
@@ -58,20 +58,20 @@ static char* dirlist_filesize_unit(unsigned long bytesize);
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_top(char *buffer, int buffer_length)
+bool dirlist_generate_ટોચ(અક્ષર *buffer, પૂર્ણાંક buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	પૂર્ણાંક error = snprintf(buffer, buffer_length,
 		"<html>\n"
 		"<head>\n"
 		"<link rel=\"stylesheet\" title=\"Standard\" "
 			"type=\"text/css\" href=\"resource:internal.css\">\n"
 		"<style>\n");
-	if (error < 0 || error >= buffer_length)
+	જો (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		પાછા false;
+	નહીંતર
 		/* OK */
-		return true;
+		પાછા true;
 
 }
 
@@ -97,9 +97,9 @@ bool dirlist_generate_top(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
+bool dirlist_generate_hide_columns(પૂર્ણાંક flags, અક્ષર *buffer, પૂર્ણાંક buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	પૂર્ણાંક error = snprintf(buffer, buffer_length,
 			"%s\n%s\n%s\n%s\n%s\n",
 			(flags & DIRLIST_NO_NAME_COLUMN) ?
 					"span.name { display: none; }\n" : "",
@@ -111,12 +111,12 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
 					"span.date { display: none; }\n" : "",
 			(flags & DIRLIST_NO_TIME_COLUMN) ?
 					"span.time { display: none; }\n" : "");
-	if (error < 0 || error >= buffer_length)
+	જો (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		પાછા false;
+	નહીંતર
 		/* OK */
-		return true;
+		પાછા true;
 }
 
 
@@ -140,18 +140,18 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
+bool dirlist_generate_title(અચલ અક્ષર *title, અક્ષર *buffer, પૂર્ણાંક buffer_length)
 {
-	const char *stylesheet;
+	અચલ અક્ષર *stylesheet;
 	nserror err;
-	int error;
+	પૂર્ણાંક error;
 
-	if (title == NULL)
+	જો (title == ખાલી)
 		title = "";
 
 	err = nscolour_get_stylesheet(&stylesheet);
-	if (err != NSERROR_OK) {
-		return false;
+	જો (err != NSERROR_OK) {
+		પાછા false;
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -169,12 +169,12 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
 			title,
 			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet, title);
-	if (error < 0 || error >= buffer_length)
+	જો (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		પાછા false;
+	નહીંતર
 		/* OK */
-		return true;
+		પાછા true;
 }
 
 
@@ -199,18 +199,18 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length)
+bool dirlist_generate_parent_link(અચલ અક્ષર *parent, અક્ષર *buffer,
+		પૂર્ણાંક buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	પૂર્ણાંક error = snprintf(buffer, buffer_length,
 			"<p><a href=\"%s\">%s</a></p>",
 			parent, messages_get("FileParent"));
-	if (error < 0 || error >= buffer_length)
+	જો (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		પાછા false;
+	નહીંતર
 		/* OK */
-		return true;
+		પાછા true;
 }
 
 
@@ -234,9 +234,9 @@ bool dirlist_generate_parent_link(const char *parent, char *buffer,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_headings(char *buffer, int buffer_length)
+bool dirlist_generate_headings(અક્ષર *buffer, પૂર્ણાંક buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	પૂર્ણાંક error = snprintf(buffer, buffer_length,
 			"<div>\n"
 			"<strong>\n"
 			"\t<span class=\"name\">%s</span>\n"
@@ -249,12 +249,12 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
 			messages_get("FileName"), messages_get("FileType"),
 			messages_get("FileSize"), messages_get("FileDate"),
 			messages_get("FileTime"));
-	if (error < 0 || error >= buffer_length)
+	જો (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		પાછા false;
+	નહીંતર
 		/* OK */
-		return true;
+		પાછા true;
 }
 
 
@@ -286,21 +286,21 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
-		const char *mimetype, long long size, char *date, char *time,
-		char *buffer, int buffer_length)
+bool dirlist_generate_row(bool even, bool directory, nsurl *url, અક્ષર *name,
+		અચલ અક્ષર *mimetype, long long size, અક્ષર *date, અક્ષર *time,
+		અક્ષર *buffer, પૂર્ણાંક buffer_length)
 {
-	const char *unit;
-	char size_string[100];
-	int error;
+	અચલ અક્ષર *unit;
+	અક્ષર size_string[100];
+	પૂર્ણાંક error;
 
-	if (size < 0) {
+	જો (size < 0) {
 		unit = "";
-		strncpy(size_string, "", sizeof size_string);
-	} else {
+		strncpy(size_string, "", કદ size_string);
+	} નહીંતર {
 		unit = messages_get(dirlist_filesize_unit((unsigned long)size));
-		snprintf(size_string, sizeof size_string, "%d",
-				dirlist_filesize_value((unsigned long)size));
+		snprintf(size_string, કદ size_string, "%d",
+				dirlist_filesize_કિંમત((unsigned long)size));
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -315,12 +315,12 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
 			even ? "even ns-even-bg" : "odd  ns-odd-bg",
 			directory ? "dir" : "file",
 			name, mimetype, size_string, unit, date, time);
-	if (error < 0 || error >= buffer_length)
+	જો (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		પાછા false;
+	નહીંતર
 		/* OK */
-		return true;
+		પાછા true;
 }
 
 
@@ -341,18 +341,18 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_bottom(char *buffer, int buffer_length)
+bool dirlist_generate_bottom(અક્ષર *buffer, પૂર્ણાંક buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	પૂર્ણાંક error = snprintf(buffer, buffer_length,
 			"</div>\n"
 			"</body>\n"
 			"</html>\n");
-	if (error < 0 || error >= buffer_length)
+	જો (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		પાછા false;
+	નહીંતર
 		/* OK */
-		return true;
+		પાછા true;
 }
 
 
@@ -364,16 +364,16 @@ bool dirlist_generate_bottom(char *buffer, int buffer_length)
  * \return  number of times bytesize has been divided by 1024
  */
 
-int dirlist_filesize_calculate(unsigned long *bytesize)
+પૂર્ણાંક dirlist_filesize_calculate(unsigned long *bytesize)
 {
-	int i = 0;
-	while (*bytesize > 1024 * 4) {
+	પૂર્ણાંક i = 0;
+	જ્યારે (*bytesize > 1024 * 4) {
 		*bytesize /= 1024;
 		i++;
-		if (i == 3)
-			break;
+		જો (i == 3)
+			તોડો;
 	}
-	return i;
+	પાછા i;
 }
 
 
@@ -385,10 +385,10 @@ int dirlist_filesize_calculate(unsigned long *bytesize)
  * \return  Value to display for file size, in units given by filesize_unit()
  */
 
-int dirlist_filesize_value(unsigned long bytesize)
+પૂર્ણાંક dirlist_filesize_કિંમત(unsigned long bytesize)
 {
 	dirlist_filesize_calculate(&bytesize);
-	return (int)bytesize;
+	પાછા (પૂર્ણાંક)bytesize;
 }
 
 
@@ -400,8 +400,8 @@ int dirlist_filesize_value(unsigned long bytesize)
  * \return  Units to display for file size, for value given by filesize_value()
  */
 
-char* dirlist_filesize_unit(unsigned long bytesize)
+અક્ષર* dirlist_filesize_unit(unsigned long bytesize)
 {
-	const char* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
-	return (char*)units[dirlist_filesize_calculate(&bytesize)];
+	અચલ અક્ષર* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
+	પાછા (અક્ષર*)units[dirlist_filesize_calculate(&bytesize)];
 }

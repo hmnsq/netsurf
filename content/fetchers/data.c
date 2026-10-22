@@ -21,126 +21,126 @@
  * data scheme handling.  See http://tools.ietf.org/html/rfc2397
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <libwapcaplet/libwapcaplet.h>
-#include <nsutils/base64.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <libwapcaplet/libwapcaplet.h>
+#અન્તર્ભાવ <nsutils/base64.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/url.h"
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
+#અન્તર્ભાવ "netsurf/inttypes.h"
+#અન્તર્ભાવ "utils/url.h"
+#અન્તર્ભાવ "utils/nsurl.h"
+#અન્તર્ભાવ "utils/corestrings.h"
+#અન્તર્ભાવ "utils/log.h"
+#અન્તર્ભાવ "utils/utils.h"
+#અન્તર્ભાવ "utils/ring.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/data.h"
+#અન્તર્ભાવ "content/fetch.h"
+#અન્તર્ભાવ "content/fetchers.h"
+#અન્તર્ભાવ "content/fetchers/data.h"
 
-struct fetch_data_context {
-	struct fetch *parent_fetch;
+સંરચના fetch_data_context {
+	સંરચના fetch *parent_fetch;
 	nsurl *url;
-	char *mimetype;
-	char *data;
+	અક્ષર *mimetype;
+	અક્ષર *data;
 	size_t datalen;
 	bool base64;
 
 	bool aborted;
 	bool locked;
 	
-	struct fetch_data_context *r_next, *r_prev;
+	સંરચના fetch_data_context *r_next, *r_prev;
 };
 
-static struct fetch_data_context *ring = NULL;
+સ્થિર સંરચના fetch_data_context *ring = ખાલી;
 
-static bool fetch_data_initialise(lwc_string *scheme)
+સ્થિર bool fetch_data_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_initialise called for %s",
 	      lwc_string_data(scheme));
 
-	return true;
+	પાછા true;
 }
 
-static void fetch_data_finalise(lwc_string *scheme)
+સ્થિર શૂન્ય fetch_data_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_finalise called for %s",
 	      lwc_string_data(scheme));
 }
 
-static bool fetch_data_can_fetch(const nsurl *url)
+સ્થિર bool fetch_data_can_fetch(અચલ nsurl *url)
 {
-	return true;
+	પાછા true;
 }
 
-static void fetch_data_send_callback(const fetch_msg *msg,
-		struct fetch_data_context *c)
+સ્થિર શૂન્ય fetch_data_send_callback(અચલ fetch_સંદેશ *સંદેશ,
+		સંરચના fetch_data_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(સંદેશ, c->parent_fetch);
 	c->locked = false;
 }
 
-static void fetch_data_send_header(struct fetch_data_context *ctx,
-		const char *fmt, ...)
+સ્થિર શૂન્ય fetch_data_send_header(સંરચના fetch_data_context *ctx,
+		અચલ અક્ષર *fmt, ...)
 {
-	char header[64];
-	fetch_msg msg;
+	અક્ષર header[64];
+	fetch_સંદેશ સંદેશ;
 	va_list ap;
-	int len;
+	પૂર્ણાંક len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof(header), fmt, ap);
+	len = vsnprintf(header, કદ(header), fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return;
+	જો (len >= (પૂર્ણાંક)કદ(header) || len < 0) {
+		પાછા;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.len = len;
-	msg.data.header_or_data.buf = (const uint8_t *)header;
-	fetch_data_send_callback(&msg, ctx);
+	સંદેશ.type = FETCH_HEADER;
+	સંદેશ.data.header_or_data.len = len;
+	સંદેશ.data.header_or_data.buf = (અચલ uint8_t *)header;
+	fetch_data_send_callback(&સંદેશ, ctx);
 }
 
-static void *fetch_data_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+સ્થિર શૂન્ય *fetch_data_setup(સંરચના fetch *parent_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, અચલ અક્ષર *post_urlenc,
+		 અચલ સંરચના fetch_multipart_data *post_multipart,
+		 અચલ અક્ષર **headers)
 {
-	struct fetch_data_context *ctx = calloc(1, sizeof(*ctx));
+	સંરચના fetch_data_context *ctx = calloc(1, કદ(*ctx));
 	
-	if (ctx == NULL)
-		return NULL;
+	જો (ctx == ખાલી)
+		પાછા ખાલી;
 		
 	ctx->parent_fetch = parent_fetch;
 	ctx->url = nsurl_ref(url);
 
-	RING_INSERT(ring, ctx);
+	RING_ઉમેરો(ring, ctx);
 	
-	return ctx;
+	પાછા ctx;
 }
 
-static bool fetch_data_start(void *ctx)
+સ્થિર bool fetch_data_start(શૂન્ય *ctx)
 {
-	return true;
+	પાછા true;
 }
 
-static void fetch_data_free(void *ctx)
+સ્થિર શૂન્ય fetch_data_free(શૂન્ય *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	સંરચના fetch_data_context *c = ctx;
 
 	nsurl_unref(c->url);
-	free(c->data);
-	free(c->mimetype);
-	free(ctx);
+	મુક્ત(c->data);
+	મુક્ત(c->mimetype);
+	મુક્ત(ctx);
 }
 
-static void fetch_data_abort(void *ctx)
+સ્થિર શૂન્ય fetch_data_abort(શૂન્ય *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	સંરચના fetch_data_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here. 
@@ -149,13 +149,13 @@ static void fetch_data_abort(void *ctx)
 	c->aborted = true;
 }
 
-static bool fetch_data_process(struct fetch_data_context *c)
+સ્થિર bool fetch_data_process(સંરચના fetch_data_context *c)
 {
 	nserror res;
-	fetch_msg msg;
-	const char *params;
-	const char *comma;
-	char *unescaped;
+	fetch_સંદેશ સંદેશ;
+	અચલ અક્ષર *params;
+	અચલ અક્ષર *comma;
+	અક્ષર *unescaped;
 	size_t unescaped_len;
 	
 	/* format of a data: URL is:
@@ -166,45 +166,45 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	
 	NSLOG(netsurf, DEEPDEBUG, "url: %.140s", nsurl_access(c->url));
 	
-	if (nsurl_length(c->url) < 6) {
+	જો (nsurl_length(c->url) < 6) {
 		/* 6 is the minimum possible length (data:,) */
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+		સંદેશ.type = FETCH_ERROR;
+		સંદેશ.data.error = "Malformed data: URL";
+		fetch_data_send_callback(&સંદેશ, c);
+		પાછા false;
 	}
 	
 	/* skip the data: part */
 	params = nsurl_access(c->url) + SLEN("data:");
 	
 	/* find the comma */
-	if ( (comma = strchr(params, ',')) == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+	જો ( (comma = strchr(params, ',')) == ખાલી) {
+		સંદેશ.type = FETCH_ERROR;
+		સંદેશ.data.error = "Malformed data: URL";
+		fetch_data_send_callback(&સંદેશ, c);
+		પાછા false;
 	}
 	
-	if (params[0] == ',') {
+	જો (params[0] == ',') {
 		/* there is no mimetype here, assume text/plain */
 		c->mimetype = strdup("text/plain;charset=US-ASCII");
-	} else {	
+	} નહીંતર {	
 		/* make a copy of everything between data: and the comma */
 		c->mimetype = strndup(params, comma - params);
 	}
 	
-	if (c->mimetype == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = 
+	જો (c->mimetype == ખાલી) {
+		સંદેશ.type = FETCH_ERROR;
+		સંદેશ.data.error = 
 			"Unable to allocate memory for mimetype in data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+		fetch_data_send_callback(&સંદેશ, c);
+		પાછા false;
 	}
 	
-	if (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
+	જો (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
 		c->base64 = true;
 		c->mimetype[strlen(c->mimetype) - 7] = '\0';
-	} else {
+	} નહીંતર {
 		c->base64 = false;
 	}
 	
@@ -212,42 +212,42 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	 * decides to nest URL and base64 encoding.  Like, say, Acid2.
 	 */
 	res = url_unescape(comma + 1, 0, &unescaped_len, &unescaped);
-	if (res != NSERROR_OK) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Unable to URL decode data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+	જો (res != NSERROR_OK) {
+		સંદેશ.type = FETCH_ERROR;
+		સંદેશ.data.error = "Unable to URL decode data: URL";
+		fetch_data_send_callback(&સંદેશ, c);
+		પાછા false;
 	}
 	
-	if (c->base64) {
-		if ((nsu_base64_decode_alloc((uint8_t *)unescaped,
+	જો (c->base64) {
+		જો ((nsu_base64_decode_alloc((uint8_t *)unescaped,
 					     unescaped_len,
 					     (uint8_t **)&c->data,
 					     &c->datalen) != NSUERROR_OK) ||
-		    (c->data == NULL)) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to Base64 decode data: URL";
-			fetch_data_send_callback(&msg, c);
-			free(unescaped);
-			return false;
+		    (c->data == ખાલી)) {
+			સંદેશ.type = FETCH_ERROR;
+			સંદેશ.data.error = "Unable to Base64 decode data: URL";
+			fetch_data_send_callback(&સંદેશ, c);
+			મુક્ત(unescaped);
+			પાછા false;
 		}
-		free(unescaped);
-	} else {
+		મુક્ત(unescaped);
+	} નહીંતર {
 		c->datalen = unescaped_len;
 		c->data = unescaped;
 	}
 	
 	
-	return true;
+	પાછા true;
 }
 
-static void fetch_data_poll(lwc_string *scheme)
+સ્થિર શૂન્ય fetch_data_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	struct fetch_data_context *c, *save_ring = NULL;
+	fetch_સંદેશ સંદેશ;
+	સંરચના fetch_data_context *c, *save_ring = ખાલી;
 	
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	જ્યારે (ring != ખાલી) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -258,13 +258,13 @@ static void fetch_data_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called 
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		જો (c->locked == true) {
+			RING_ઉમેરો(save_ring, c);
+			ચાલુ;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false && fetch_data_process(c) == true) {
+		જો (c->aborted == false && fetch_data_process(c) == true) {
 			fetch_set_http_code(c->parent_fetch, 200);
 			NSLOG(netsurf, INFO,
 			      "setting data: MIME type to %s, length to %"PRIsizet,
@@ -277,37 +277,37 @@ static void fetch_data_poll(lwc_string *scheme)
 			fetch_data_send_header(c, "Content-Type: %s",
 					c->mimetype);
 
-			if (c->aborted == false) {
+			જો (c->aborted == false) {
 				fetch_data_send_header(c, "Content-Length: %"
 						PRIsizet, c->datalen);
 			}
 
-			if (c->aborted == false) {
+			જો (c->aborted == false) {
 				/* Set max-age to 1 year. */
 				fetch_data_send_header(c, "Cache-Control: "
 						"max-age=31536000");
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf = 
-						(const uint8_t *) c->data;
-				msg.data.header_or_data.len = c->datalen;
-				fetch_data_send_callback(&msg, c);
+			જો (c->aborted == false) {
+				સંદેશ.type = FETCH_DATA;
+				સંદેશ.data.header_or_data.buf = 
+						(અચલ uint8_t *) c->data;
+				સંદેશ.data.header_or_data.len = c->datalen;
+				fetch_data_send_callback(&સંદેશ, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				fetch_data_send_callback(&msg, c);
+			જો (c->aborted == false) {
+				સંદેશ.type = FETCH_FINISHED;
+				fetch_data_send_callback(&સંદેશ, c);
 			}
-		} else {
+		} નહીંતર {
 			NSLOG(netsurf, INFO, "Processing of %.140s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't, 
 			 * then fetch_data_process() is broken.
 			 */
-			assert(c->locked == false);
+			પ્રતિજ્ઞા(c->locked == false);
 		}
 
 		/* And now finish */
@@ -321,19 +321,19 @@ static void fetch_data_poll(lwc_string *scheme)
 	ring = save_ring;
 }
 
-nserror fetch_data_register(void)
+nserror fetch_data_register(શૂન્ય)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_data);
-	const struct fetcher_operation_table fetcher_ops = {
+	અચલ સંરચના fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_data_initialise,
 		.acceptable = fetch_data_can_fetch,
 		.setup = fetch_data_setup,
 		.start = fetch_data_start,
 		.abort = fetch_data_abort,
-		.free = fetch_data_free,
+		.મુક્ત = fetch_data_free,
 		.poll = fetch_data_poll,
 		.finalise = fetch_data_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	પાછા fetcher_add(scheme, &fetcher_ops);
 }

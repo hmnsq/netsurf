@@ -28,121 +28,121 @@
  * function to render it for redraw requests.
  */
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <string.h>
-#include <sys/types.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <assert.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <sys/types.h>
 
-#include <librsvg/rsvg.h>
+#અન્તર્ભાવ <librsvg/rsvg.h>
 #ifndef RSVG_CAIRO_H
-#include <librsvg/rsvg-cairo.h>
+#અન્તર્ભાવ <librsvg/rsvg-cairo.h>
 #endif
 
-#include <nsutils/endian.h>
+#અન્તર્ભાવ <nsutils/endian.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#અન્તર્ભાવ "utils/log.h"
+#અન્તર્ભાવ "utils/utils.h"
+#અન્તર્ભાવ "utils/messages.h"
+#અન્તર્ભાવ "netsurf/plotters.h"
+#અન્તર્ભાવ "netsurf/bitmap.h"
+#અન્તર્ભાવ "netsurf/content.h"
+#અન્તર્ભાવ "content/llcache.h"
+#અન્તર્ભાવ "content/content_protected.h"
+#અન્તર્ભાવ "content/content_factory.h"
+#અન્તર્ભાવ "desktop/gui_internal.h"
+#અન્તર્ભાવ "desktop/bitmap.h"
 
-#include "image/rsvg.h"
+#અન્તર્ભાવ "image/rsvg.h"
 
-typedef struct rsvg_content {
-	struct content base;
+પ્રકારવ્યાખ્યા સંરચના rsvg_content {
+	સંરચના content base;
 
 	RsvgHandle *rsvgh;	/**< Context handle for RSVG renderer */
 	cairo_surface_t *cs;	/**< The surface built inside a nsbitmap */
 	cairo_t *ct;		/**< Cairo drawing context */
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	સંરચના bitmap *bitmap;	/**< Created NetSurf bitmap */
 } rsvg_content;
 
-static nserror rsvg_create_svg_data(rsvg_content *c)
+સ્થિર nserror rsvg_create_svg_data(rsvg_content *c)
 {
-	c->rsvgh = NULL;
-	c->cs = NULL;
-	c->ct = NULL;
-	c->bitmap = NULL;
+	c->rsvgh = ખાલી;
+	c->cs = ખાલી;
+	c->ct = ખાલી;
+	c->bitmap = ખાલી;
 
-	if ((c->rsvgh = rsvg_handle_new()) == NULL) {
+	જો ((c->rsvgh = rsvg_handle_new()) == ખાલી) {
 		NSLOG(netsurf, INFO, "rsvg_handle_new() returned NULL.");
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		content_broadcast_error(&c->base, NSERROR_NOMEM, ખાલી);
+		પાછા NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 
-static nserror rsvg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+સ્થિર nserror rsvg_create(અચલ content_handler *handler,
+		lwc_string *imime_type, અચલ સંરચના http_parameter *params,
+		llcache_handle *llcache, અચલ અક્ષર *fallback_charset,
+		bool quirks, સંરચના content **c)
 {
 	rsvg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, કદ(rsvg_content));
+	જો (svg == ખાલી)
+		પાછા NSERROR_NOMEM;
 
 	error = content__init(&svg->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	જો (error != NSERROR_OK) {
+		મુક્ત(svg);
+		પાછા error;
 	}
 
 	error = rsvg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	જો (error != NSERROR_OK) {
+		મુક્ત(svg);
+		પાછા error;
 	}
 
-	*c = (struct content *) svg;
+	*c = (સંરચના content *) svg;
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
 
-static bool rsvg_process_data(struct content *c, const char *data,
-			unsigned int size)
+સ્થિર bool rsvg_process_data(સંરચના content *c, અચલ અક્ષર *data,
+			unsigned પૂર્ણાંક size)
 {
 	rsvg_content *d = (rsvg_content *) c;
-	GError *err = NULL;
+	GError *err = ખાલી;
 
-	if (rsvg_handle_write(d->rsvgh, (const guchar *)data, (gsize)size,
+	જો (rsvg_handle_write(d->rsvgh, (અચલ guchar *)data, (gsize)size,
 				&err) == FALSE) {
 		NSLOG(netsurf, INFO,
 		      "rsvg_handle_write returned an error: %s", err->message);
-		content_broadcast_error(c, NSERROR_SVG_ERROR, NULL);
-		return false;
+		content_broadcast_error(c, NSERROR_SVG_ERROR, ખાલી);
+		પાછા false;
 	}
 
-	return true;
+	પાછા true;
 }
 
-static bool rsvg_convert(struct content *c)
+સ્થિર bool rsvg_convert(સંરચના content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 	RsvgDimensionData rsvgsize;
-	GError *err = NULL;
+	GError *err = ખાલી;
 
-	if (rsvg_handle_close(d->rsvgh, &err) == FALSE) {
+	જો (rsvg_handle_close(d->rsvgh, &err) == FALSE) {
 		NSLOG(netsurf, INFO,
 		      "rsvg_handle_close returned an error: %s", err->message);
-		content_broadcast_error(c, NSERROR_SVG_ERROR, NULL);
-		return false;
+		content_broadcast_error(c, NSERROR_SVG_ERROR, ખાલી);
+		પાછા false;
 	}
 
-	assert(err == NULL);
+	પ્રતિજ્ઞા(err == ખાલી);
 
 	/* we should now be able to query librsvg for the natural size of the
 	 * graphic, so we can create our bitmap.
@@ -152,30 +152,30 @@ static bool rsvg_convert(struct content *c)
 	c->width = rsvgsize.width;
 	c->height = rsvgsize.height;
 
-	if ((d->bitmap = guit->bitmap->create(c->width, c->height,
-			BITMAP_NONE)) == NULL) {
+	જો ((d->bitmap = guit->bitmap->create(c->width, c->height,
+			BITMAP_NONE)) == ખાલી) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create bitmap for rsvg render.");
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		content_broadcast_error(c, NSERROR_NOMEM, ખાલી);
+		પાછા false;
 	}
 
-	if ((d->cs = cairo_image_surface_create_for_data(
-			(unsigned char *)guit->bitmap->get_buffer(d->bitmap),
+	જો ((d->cs = cairo_image_surface_create_for_data(
+			(unsigned અક્ષર *)guit->bitmap->get_buffer(d->bitmap),
 			CAIRO_FORMAT_ARGB32,
 			c->width, c->height,
-			guit->bitmap->get_rowstride(d->bitmap))) == NULL) {
+			guit->bitmap->get_rowstride(d->bitmap))) == ખાલી) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo image surface for rsvg render.");
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		content_broadcast_error(c, NSERROR_NOMEM, ખાલી);
+		પાછા false;
 	}
 
-	if ((d->ct = cairo_create(d->cs)) == NULL) {
+	જો ((d->ct = cairo_create(d->cs)) == ખાલી) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo drawing context for rsvg render.");
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		content_broadcast_error(c, NSERROR_NOMEM, ખાલી);
+		પાછા false;
 	}
 
 	rsvg_handle_render_cairo(d->rsvgh, d->ct);
@@ -189,23 +189,23 @@ static bool rsvg_convert(struct content *c)
 	/* Done: update status bar */
 	content_set_status(c, "");
 
-	return true;
+	પાછા true;
 }
 
-static bool rsvg_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+સ્થિર bool rsvg_redraw(સંરચના content *c, સંરચના content_redraw_data *data,
+		અચલ સંરચના rect *clip, અચલ સંરચના redraw_context *ctx)
 {
 	rsvg_content *rsvgcontent = (rsvg_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	assert(rsvgcontent->bitmap != NULL);
+	પ્રતિજ્ઞા(rsvgcontent->bitmap != ખાલી);
 
-	if (data->repeat_x)
+	જો (data->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	જો (data->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	પાછા (ctx->plot->bitmap(ctx,
 				  rsvgcontent->bitmap,
 				  data->x, data->y,
 				  data->width, data->height,
@@ -213,89 +213,89 @@ static bool rsvg_redraw(struct content *c, struct content_redraw_data *data,
 				  flags) == NSERROR_OK);
 }
 
-static void rsvg_destroy(struct content *c)
+સ્થિર શૂન્ય rsvg_destroy(સંરચના content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->bitmap != NULL) guit->bitmap->destroy(d->bitmap);
-	if (d->rsvgh != NULL) g_object_unref(d->rsvgh);
-	if (d->ct != NULL) cairo_destroy(d->ct);
-	if (d->cs != NULL) cairo_surface_destroy(d->cs);
+	જો (d->bitmap != ખાલી) guit->bitmap->destroy(d->bitmap);
+	જો (d->rsvgh != ખાલી) g_object_unref(d->rsvgh);
+	જો (d->ct != ખાલી) cairo_destroy(d->ct);
+	જો (d->cs != ખાલી) cairo_surface_destroy(d->cs);
 
-	return;
+	પાછા;
 }
 
-static nserror rsvg_clone(const struct content *old, struct content **newc)
+સ્થિર nserror rsvg_clone(અચલ સંરચના content *old, સંરચના content **newc)
 {
 	rsvg_content *svg;
 	nserror error;
-	const uint8_t *data;
+	અચલ uint8_t *data;
 	size_t size;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, કદ(rsvg_content));
+	જો (svg == ખાલી)
+		પાછા NSERROR_NOMEM;
 
 	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
+	જો (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		પાછા error;
 	}
 
 	/* Simply replay create/process/convert */
 	error = rsvg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
+	જો (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		પાછા error;
 	}
 
 	data = content__get_source_data(&svg->base, &size);
-	if (size > 0) {
-		if (rsvg_process_data(&svg->base, (const char *)data, size) == false) {
+	જો (size > 0) {
+		જો (rsvg_process_data(&svg->base, (અચલ અક્ષર *)data, size) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_NOMEM;
+			પાછા NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	જો (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (rsvg_convert(&svg->base) == false) {
+		જો (rsvg_convert(&svg->base) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+			પાછા NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) svg;
+	*newc = (સંરચના content *) svg;
 
-	return NSERROR_OK;
+	પાછા NSERROR_OK;
 }
 
-static void *rsvg_get_internal(const struct content *c, void *context)
+સ્થિર શૂન્ય *rsvg_get_internal(અચલ સંરચના content *c, શૂન્ય *context)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	return d->bitmap;
+	પાછા d->bitmap;
 }
 
-static content_type rsvg_content_type(void)
+સ્થિર content_type rsvg_content_type(શૂન્ય)
 {
-	return CONTENT_IMAGE;
+	પાછા CONTENT_IMAGE;
 }
 
 
-static bool rsvg_content_is_opaque(struct content *c)
+સ્થિર bool rsvg_content_is_opaque(સંરચના content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->bitmap != NULL) {
-		return guit->bitmap->get_opaque(d->bitmap);
+	જો (d->bitmap != ખાલી) {
+		પાછા guit->bitmap->get_opaque(d->bitmap);
 	}
 
-	return false;
+	પાછા false;
 }
 
 
-static const content_handler rsvg_content_handler = {
+સ્થિર અચલ content_handler rsvg_content_handler = {
 	.create = rsvg_create,
 	.process_data = rsvg_process_data,
 	.data_complete = rsvg_convert,
@@ -308,7 +308,7 @@ static const content_handler rsvg_content_handler = {
 	.no_share = false,
 };
 
-static const char *rsvg_types[] = {
+સ્થિર અચલ અક્ષર *rsvg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };

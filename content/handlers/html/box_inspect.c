@@ -22,27 +22,27 @@
  * implementation of box tree inspection.
  */
 
-#include <stdio.h>
-#include <dom/dom.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <dom/dom.h>
 
-#include "utils/utils.h"
-#include "utils/nsurl.h"
-#include "utils/errors.h"
-#include "netsurf/types.h"
-#include "netsurf/content.h"
-#include "netsurf/mouse.h"
-#include "css/utils.h"
-#include "css/dump.h"
-#include "desktop/scrollbar.h"
+#અન્તર્ભાવ "utils/utils.h"
+#અન્તર્ભાવ "utils/nsurl.h"
+#અન્તર્ભાવ "utils/errors.h"
+#અન્તર્ભાવ "netsurf/types.h"
+#અન્તર્ભાવ "netsurf/content.h"
+#અન્તર્ભાવ "netsurf/mouse.h"
+#અન્તર્ભાવ "css/utils.h"
+#અન્તર્ભાવ "css/dump.h"
+#અન્તર્ભાવ "desktop/scrollbar.h"
 
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
+#અન્તર્ભાવ "html/private.h"
+#અન્તર્ભાવ "html/box.h"
+#અન્તર્ભાવ "html/box_inspect.h"
 
 /**
  * Direction to move in a box-tree walk
  */
-enum box_walk_dir {
+ગણના box_walk_dir {
 		   BOX_WALK_CHILDREN,
 		   BOX_WALK_PARENT,
 		   BOX_WALK_NEXT_SIBLING,
@@ -51,8 +51,8 @@ enum box_walk_dir {
 		   BOX_WALK_FLOAT_CONTAINER
 };
 
-#define box_is_float(box) (box->type == BOX_FLOAT_LEFT ||	\
-			   box->type == BOX_FLOAT_RIGHT)
+#define box_is_float(box) (box->type == BOX_FLOAT_ડાબું ||	\
+			   box->type == BOX_FLOAT_જમણું)
 
 /**
  * Determine if a point lies within a box.
@@ -71,60 +71,60 @@ enum box_walk_dir {
  *
  * This is a helper function for box_at_point().
  */
-static bool
-box_contains_point(const css_unit_ctx *unit_len_ctx,
-		   const struct box *box,
-		   int x,
-		   int y,
+સ્થિર bool
+box_contains_point(અચલ css_unit_ctx *unit_len_ctx,
+		   અચલ સંરચના box *box,
+		   પૂર્ણાંક x,
+		   પૂર્ણાંક y,
 		   bool *physically)
 {
 	css_computed_clip_rect css_rect;
 
-	if (box->style != NULL &&
+	જો (box->style != ખાલી &&
 	    css_computed_position(box->style) == CSS_POSITION_ABSOLUTE &&
 	    css_computed_clip(box->style, &css_rect) == CSS_CLIP_RECT) {
 		/* We have an absolutly positioned box with a clip rect */
-		struct rect r = {
-				 .x0 = box->border[LEFT].width,
-				 .y0 = box->border[TOP].width,
-				 .x1 = box->padding[LEFT] + box->width +
-				 box->border[RIGHT].width +
-				 box->padding[RIGHT],
-				 .y1 = box->padding[TOP] + box->height +
+		સંરચના rect r = {
+				 .x0 = box->border[ડાબું_2].width,
+				 .y0 = box->border[ટોચ_2].width,
+				 .x1 = box->padding[ડાબું_2] + box->width +
+				 box->border[જમણું_2].width +
+				 box->padding[જમણું_2],
+				 .y1 = box->padding[ટોચ_2] + box->height +
 				 box->border[BOTTOM].width +
 				 box->padding[BOTTOM]
 		};
-		if (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
+		જો (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
 			*physically = true;
-		} else {
+		} નહીંતર {
 			*physically = false;
 		}
 
 		/* Adjust rect to css clip region */
-		if (css_rect.left_auto == false) {
+		જો (css_rect.ડાબું_auto == false) {
 			r.x0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.left,
+						css_rect.ડાબું,
 						css_rect.lunit));
 		}
-		if (css_rect.top_auto == false) {
+		જો (css_rect.ટોચ_auto == false) {
 			r.y0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.top,
+						css_rect.ટોચ,
 						css_rect.tunit));
 		}
-		if (css_rect.right_auto == false) {
-			r.x1 = box->border[LEFT].width +
+		જો (css_rect.જમણું_auto == false) {
+			r.x1 = box->border[ડાબું_2].width +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.right,
+						css_rect.જમણું,
 						css_rect.runit));
 		}
-		if (css_rect.bottom_auto == false) {
-			r.y1 = box->border[TOP].width +
+		જો (css_rect.bottom_auto == false) {
+			r.y1 = box->border[ટોચ_2].width +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
@@ -133,57 +133,57 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 		}
 
 		/* Test if point is in clipped box */
-		if (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
+		જો (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
 			/* inside clip area */
-			return true;
+			પાછા true;
 		}
 
 		/* Not inside clip area */
-		return false;
+		પાછા false;
 	}
-	if (x >= -box->border[LEFT].width &&
-	    x < box->padding[LEFT] + box->width +
-	    box->padding[RIGHT] + box->border[RIGHT].width &&
-	    y >= -box->border[TOP].width &&
-	    y < box->padding[TOP] + box->height +
+	જો (x >= -box->border[ડાબું_2].width &&
+	    x < box->padding[ડાબું_2] + box->width +
+	    box->padding[જમણું_2] + box->border[જમણું_2].width &&
+	    y >= -box->border[ટોચ_2].width &&
+	    y < box->padding[ટોચ_2] + box->height +
 	    box->padding[BOTTOM] + box->border[BOTTOM].width) {
 		*physically = true;
-		return true;
+		પાછા true;
 	}
-	if (box->list_marker && box->list_marker->x - box->x <= x +
-	    box->list_marker->border[LEFT].width &&
+	જો (box->list_marker && box->list_marker->x - box->x <= x +
+	    box->list_marker->border[ડાબું_2].width &&
 	    x < box->list_marker->x - box->x +
-	    box->list_marker->padding[LEFT] +
+	    box->list_marker->padding[ડાબું_2] +
 	    box->list_marker->width +
-	    box->list_marker->border[RIGHT].width +
-	    box->list_marker->padding[RIGHT] &&
+	    box->list_marker->border[જમણું_2].width +
+	    box->list_marker->padding[જમણું_2] &&
 	    box->list_marker->y - box->y <= y +
-	    box->list_marker->border[TOP].width &&
+	    box->list_marker->border[ટોચ_2].width &&
 	    y < box->list_marker->y - box->y +
-	    box->list_marker->padding[TOP] +
+	    box->list_marker->padding[ટોચ_2] +
 	    box->list_marker->height +
 	    box->list_marker->border[BOTTOM].width +
 	    box->list_marker->padding[BOTTOM]) {
 		*physically = true;
-		return true;
+		પાછા true;
 	}
-	if ((box->style && css_computed_overflow_x(box->style) ==
+	જો ((box->style && css_computed_overflow_x(box->style) ==
 	     CSS_OVERFLOW_VISIBLE) || !box->style) {
-		if (box->descendant_x0 <= x &&
+		જો (box->descendant_x0 <= x &&
 		    x < box->descendant_x1) {
 			*physically = false;
-			return true;
+			પાછા true;
 		}
 	}
-	if ((box->style && css_computed_overflow_y(box->style) ==
+	જો ((box->style && css_computed_overflow_y(box->style) ==
 	     CSS_OVERFLOW_VISIBLE) || !box->style) {
-		if (box->descendant_y0 <= y &&
+		જો (box->descendant_y0 <= y &&
 		    y < box->descendant_y1) {
 			*physically = false;
-			return true;
+			પાછા true;
 		}
 	}
-	return false;
+	પાછા false;
 }
 
 
@@ -197,74 +197,74 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
  *
  * If no box can be found in given direction, NULL is returned.
  */
-static inline struct box *
-box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
+સ્થિર અંતઃરેખ સંરચના box *
+box_move_xy(સંરચના box *b, ગણના box_walk_dir dir, પૂર્ણાંક *x, પૂર્ણાંક *y)
 {
-	struct box *rb = NULL;
+	સંરચના box *rb = ખાલી;
 
-	switch (dir) {
-	case BOX_WALK_CHILDREN:
+	પસંદગી (dir) {
+	સ્થિતિ BOX_WALK_CHILDREN:
 		b = b->children;
-		if (b == NULL)
-			break;
+		જો (b == ખાલી)
+			તોડો;
 		*x += b->x;
 		*y += b->y;
-		if (!box_is_float(b)) {
+		જો (!box_is_float(b)) {
 			rb = b;
-			break;
+			તોડો;
 		}
 		fallthrough;
 
-	case BOX_WALK_NEXT_SIBLING:
-		do {
+	સ્થિતિ BOX_WALK_NEXT_SIBLING:
+		કરો {
 			*x -= b->x;
 			*y -= b->y;
 			b = b->next;
-			if (b == NULL)
-				break;
+			જો (b == ખાલી)
+				તોડો;
 			*x += b->x;
 			*y += b->y;
-		} while (box_is_float(b));
+		} જ્યારે (box_is_float(b));
 		rb = b;
-		break;
+		તોડો;
 
-	case BOX_WALK_PARENT:
+	સ્થિતિ BOX_WALK_PARENT:
 		*x -= b->x;
 		*y -= b->y;
 		rb = b->parent;
-		break;
+		તોડો;
 
-	case BOX_WALK_FLOAT_CHILDREN:
+	સ્થિતિ BOX_WALK_FLOAT_CHILDREN:
 		b = b->float_children;
-		if (b == NULL)
-			break;
+		જો (b == ખાલી)
+			તોડો;
 		*x += b->x;
 		*y += b->y;
 		rb = b;
-		break;
+		તોડો;
 
-	case BOX_WALK_NEXT_FLOAT_SIBLING:
+	સ્થિતિ BOX_WALK_NEXT_FLOAT_SIBLING:
 		*x -= b->x;
 		*y -= b->y;
 		b = b->next_float;
-		if (b == NULL)
-			break;
+		જો (b == ખાલી)
+			તોડો;
 		*x += b->x;
 		*y += b->y;
 		rb = b;
-		break;
+		તોડો;
 
-	case BOX_WALK_FLOAT_CONTAINER:
+	સ્થિતિ BOX_WALK_FLOAT_CONTAINER:
 		*x -= b->x;
 		*y -= b->y;
 		rb = b->float_container;
-		break;
+		તોડો;
 
-	default:
-		assert(0 && "Bad box walk type.");
+	મૂળભૂત:
+		પ્રતિજ્ઞા(0 && "Bad box walk type.");
 	}
 
-	return rb;
+	પાછા rb;
 }
 
 
@@ -279,94 +279,94 @@ box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
  * This walks to a boxes float children before its children.  When walking
  * children, floating boxes are skipped.
  */
-static inline struct box *
-box_next_xy(struct box *b, int *x, int *y, bool skip_children)
+સ્થિર અંતઃરેખ સંરચના box *
+box_next_xy(સંરચના box *b, પૂર્ણાંક *x, પૂર્ણાંક *y, bool skip_children)
 {
-	struct box *n;
-	int tx, ty;
+	સંરચના box *n;
+	પૂર્ણાંક tx, ty;
 
-	assert(b != NULL);
+	પ્રતિજ્ઞા(b != ખાલી);
 
-	if (skip_children) {
+	જો (skip_children) {
 		/* Caller is not interested in any kind of children */
-		goto skip_children;
+		જાઓ skip_children;
 	}
 
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_FLOAT_CHILDREN, &tx, &ty);
-	if (n) {
+	જો (n) {
 		/* Next node is float child */
 		*x = tx;
 		*y = ty;
-		return n;
+		પાછા n;
 	}
  done_float_children:
 
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_CHILDREN, &tx, &ty);
-	if (n) {
+	જો (n) {
 		/* Next node is child */
 		*x = tx;
 		*y = ty;
-		return n;
+		પાછા n;
 	}
 
  skip_children:
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_NEXT_FLOAT_SIBLING, &tx, &ty);
-	if (n) {
+	જો (n) {
 		/* Go to next float sibling */
 		*x = tx;
 		*y = ty;
-		return n;
+		પાછા n;
 	}
 
-	if (box_is_float(b)) {
+	જો (box_is_float(b)) {
 		/* Done floats, but the float container may have children,
 		 * or siblings, or ansestors with siblings.  Change to
 		 * float container and move past handling its float children.
 		 */
 		b = box_move_xy(b, BOX_WALK_FLOAT_CONTAINER, x, y);
-		goto done_float_children;
+		જાઓ done_float_children;
 	}
 
 	/* Go to next sibling, or nearest ancestor with next sibling. */
-	while (b) {
-		while (!b->next && b->parent) {
+	જ્યારે (b) {
+		જ્યારે (!b->next && b->parent) {
 			b = box_move_xy(b, BOX_WALK_PARENT, x, y);
-			if (box_is_float(b)) {
+			જો (box_is_float(b)) {
 				/* Go on to next float, if there is one */
-				goto skip_children;
+				જાઓ skip_children;
 			}
 		}
-		if (!b->next) {
+		જો (!b->next) {
 			/* No more boxes */
-			return NULL;
+			પાછા ખાલી;
 		}
 
 		tx = *x; ty = *y;
 		n = box_move_xy(b, BOX_WALK_NEXT_SIBLING, &tx, &ty);
-		if (n) {
+		જો (n) {
 			/* Go to non-float (ancestor) sibling */
 			*x = tx;
 			*y = ty;
-			return n;
+			પાછા n;
 
-		} else if (b->parent) {
+		} નહીંતર જો (b->parent) {
 			b = box_move_xy(b, BOX_WALK_PARENT, x, y);
-			if (box_is_float(b)) {
+			જો (box_is_float(b)) {
 				/* Go on to next float, if there is one */
-				goto skip_children;
+				જાઓ skip_children;
 			}
 
-		} else {
+		} નહીંતર {
 			/* No more boxes */
-			return NULL;
+			પાછા ખાલી;
 		}
 	}
 
-	assert(b != NULL);
-	return NULL;
+	પ્રતિજ્ઞા(b != ખાલી);
+	પાછા ખાલી;
 }
 
 
@@ -392,46 +392,46 @@ box_next_xy(struct box *b, int *x, int *y, bool skip_children)
  *		    updated if box is nearer than existing nearest
  * \return true if mouse point is inside box
  */
-static bool
-box_nearer_text_box(struct box *box,
-		    int bx, int by,
-		    int x, int y,
-		    int dir,
-		    struct box **nearest,
-		    int *tx, int *ty,
-		    int *nr_xd, int *nr_yd)
+સ્થિર bool
+box_nearer_text_box(સંરચના box *box,
+		    પૂર્ણાંક bx, પૂર્ણાંક by,
+		    પૂર્ણાંક x, પૂર્ણાંક y,
+		    પૂર્ણાંક dir,
+		    સંરચના box **nearest,
+		    પૂર્ણાંક *tx, પૂર્ણાંક *ty,
+		    પૂર્ણાંક *nr_xd, પૂર્ણાંક *nr_yd)
 {
-	int w = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	int h = box->padding[TOP] + box->height + box->padding[BOTTOM];
-	int y1 = by + h;
-	int x1 = bx + w;
-	int yd = INT_MAX;
-	int xd = INT_MAX;
+	પૂર્ણાંક w = box->padding[ડાબું_2] + box->width + box->padding[જમણું_2];
+	પૂર્ણાંક h = box->padding[ટોચ_2] + box->height + box->padding[BOTTOM];
+	પૂર્ણાંક y1 = by + h;
+	પૂર્ણાંક x1 = bx + w;
+	પૂર્ણાંક yd = INT_MAX;
+	પૂર્ણાંક xd = INT_MAX;
 
-	if (x >= bx && x1 > x && y >= by && y1 > y) {
+	જો (x >= bx && x1 > x && y >= by && y1 > y) {
 		*nearest = box;
 		*tx = bx;
 		*ty = by;
-		return true;
+		પાછા true;
 	}
 
-	if (box->parent->list_marker != box) {
-		if (dir < 0) {
+	જો (box->parent->list_marker != box) {
+		જો (dir < 0) {
 			/* consider only those children (partly) above-left */
-			if (by <= y && bx < x) {
+			જો (by <= y && bx < x) {
 				yd = y <= y1 ? 0 : y - y1;
 				xd = x <= x1 ? 0 : x - x1;
 			}
-		} else {
+		} નહીંતર {
 			/* consider only those children (partly) below-right */
-			if (y1 > y && x1 > x) {
+			જો (y1 > y && x1 > x) {
 				yd = y > by ? 0 : by - y;
 				xd = x > bx ? 0 : bx - x;
 			}
 		}
 
 		/* give y displacement precedence over x */
-		if (yd < *nr_yd || (yd == *nr_yd && xd <= *nr_xd)) {
+		જો (yd < *nr_yd || (yd == *nr_yd && xd <= *nr_xd)) {
 			*nr_yd = yd;
 			*nr_xd = xd;
 			*nearest = box;
@@ -439,7 +439,7 @@ box_nearer_text_box(struct box *box,
 			*ty = by;
 		}
 	}
-	return false;
+	પાછા false;
 }
 
 
@@ -468,93 +468,93 @@ box_nearer_text_box(struct box *box,
  *		    updated if a descendant of box is nearer than old nearest
  * \return true if mouse point is inside text_box
  */
-static bool
-box_nearest_text_box(struct box *box,
-		     int bx, int by,
-		     int fx, int fy,
-		     int x, int y,
-		     int dir,
-		     struct box **nearest,
-		     int *tx, int *ty,
-		     int *nr_xd, int *nr_yd)
+સ્થિર bool
+box_nearest_text_box(સંરચના box *box,
+		     પૂર્ણાંક bx, પૂર્ણાંક by,
+		     પૂર્ણાંક fx, પૂર્ણાંક fy,
+		     પૂર્ણાંક x, પૂર્ણાંક y,
+		     પૂર્ણાંક dir,
+		     સંરચના box **nearest,
+		     પૂર્ણાંક *tx, પૂર્ણાંક *ty,
+		     પૂર્ણાંક *nr_xd, પૂર્ણાંક *nr_yd)
 {
-	struct box *child = box->children;
-	int c_bx, c_by;
-	int c_fx, c_fy;
+	સંરચના box *child = box->children;
+	પૂર્ણાંક c_bx, c_by;
+	પૂર્ણાંક c_fx, c_fy;
 	bool in_box = false;
 
-	if (*nearest == NULL) {
+	જો (*nearest == ખાલી) {
 		*nr_xd = INT_MAX / 2; /* displacement of 'nearest so far' */
 		*nr_yd = INT_MAX / 2;
 	}
-	if (box->type == BOX_INLINE_CONTAINER) {
-		int bw = box->padding[LEFT] + box->width + box->padding[RIGHT];
-		int bh = box->padding[TOP] + box->height + box->padding[BOTTOM];
-		int b_y1 = by + bh;
-		int b_x1 = bx + bw;
-		if (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
+	જો (box->type == BOX_INLINE_CONTAINER) {
+		પૂર્ણાંક bw = box->padding[ડાબું_2] + box->width + box->padding[જમણું_2];
+		પૂર્ણાંક bh = box->padding[ટોચ_2] + box->height + box->padding[BOTTOM];
+		પૂર્ણાંક b_y1 = by + bh;
+		પૂર્ણાંક b_x1 = bx + bw;
+		જો (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
 			in_box = true;
 		}
 	}
 
-	while (child) {
-		if (child->type == BOX_FLOAT_LEFT ||
-		    child->type == BOX_FLOAT_RIGHT) {
+	જ્યારે (child) {
+		જો (child->type == BOX_FLOAT_ડાબું ||
+		    child->type == BOX_FLOAT_જમણું) {
 			c_bx = fx + child->x -
 				scrollbar_get_offset(child->scroll_x);
 			c_by = fy + child->y -
 				scrollbar_get_offset(child->scroll_y);
-		} else {
+		} નહીંતર {
 			c_bx = bx + child->x -
 				scrollbar_get_offset(child->scroll_x);
 			c_by = by + child->y -
 				scrollbar_get_offset(child->scroll_y);
 		}
-		if (child->float_children) {
+		જો (child->float_children) {
 			c_fx = c_bx;
 			c_fy = c_by;
-		} else {
+		} નહીંતર {
 			c_fx = fx;
 			c_fy = fy;
 		}
-		if (in_box && child->text && !child->object) {
-			if (box_nearer_text_box(child,
+		જો (in_box && child->text && !child->object) {
+			જો (box_nearer_text_box(child,
 						c_bx, c_by, x, y, dir, nearest,
 						tx, ty, nr_xd, nr_yd))
-				return true;
-		} else {
-			if (child->list_marker) {
-				if (box_nearer_text_box(
+				પાછા true;
+		} નહીંતર {
+			જો (child->list_marker) {
+				જો (box_nearer_text_box(
 						child->list_marker,
 						c_bx + child->list_marker->x,
 						c_by + child->list_marker->y,
 						x, y, dir, nearest,
 						tx, ty, nr_xd, nr_yd))
-					return true;
+					પાછા true;
 			}
-			if (box_nearest_text_box(child, c_bx, c_by,
+			જો (box_nearest_text_box(child, c_bx, c_by,
 						 c_fx, c_fy,
 						 x, y, dir, nearest, tx, ty,
 						 nr_xd, nr_yd))
-				return true;
+				પાછા true;
 		}
 		child = child->next;
 	}
 
-	return false;
+	પાછા false;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_coords(struct box *box, int *x, int *y)
+શૂન્ય box_coords(સંરચના box *box, પૂર્ણાંક *x, પૂર્ણાંક *y)
 {
 	*x = box->x;
 	*y = box->y;
-	while (box->parent) {
-		if (box_is_float(box)) {
-			assert(box->float_container);
+	જ્યારે (box->parent) {
+		જો (box_is_float(box)) {
+			પ્રતિજ્ઞા(box->float_container);
 			box = box->float_container;
-		} else {
+		} નહીંતર {
 			box = box->parent;
 		}
 		*x += box->x - scrollbar_get_offset(box->scroll_x);
@@ -564,14 +564,14 @@ void box_coords(struct box *box, int *x, int *y)
 
 
 /* Exported function documented in html/box.h */
-void box_bounds(struct box *box, struct rect *r)
+શૂન્ય box_bounds(સંરચના box *box, સંરચના rect *r)
 {
-	int width, height;
+	પૂર્ણાંક width, height;
 
 	box_coords(box, &r->x0, &r->y0);
 
-	width = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	height = box->padding[TOP] + box->height + box->padding[BOTTOM];
+	width = box->padding[ડાબું_2] + box->width + box->padding[જમણું_2];
+	height = box->padding[ટોચ_2] + box->height + box->padding[BOTTOM];
 
 	r->x1 = r->x0 + width;
 	r->y1 = r->y0 + height;
@@ -579,86 +579,86 @@ void box_bounds(struct box *box, struct rect *r)
 
 
 /* Exported function documented in html/box.h */
-struct box *
-box_at_point(const css_unit_ctx *unit_len_ctx,
-	     struct box *box,
-	     const int x, const int y,
-	     int *box_x, int *box_y)
+સંરચના box *
+box_at_point(અચલ css_unit_ctx *unit_len_ctx,
+	     સંરચના box *box,
+	     અચલ પૂર્ણાંક x, અચલ પૂર્ણાંક y,
+	     પૂર્ણાંક *box_x, પૂર્ણાંક *box_y)
 {
 	bool skip_children;
 	bool physically;
 
-	assert(box);
+	પ્રતિજ્ઞા(box);
 
 	skip_children = false;
-	while ((box = box_next_xy(box, box_x, box_y, skip_children))) {
-		if (box_contains_point(unit_len_ctx, box, x - *box_x, y - *box_y,
+	જ્યારે ((box = box_next_xy(box, box_x, box_y, skip_children))) {
+		જો (box_contains_point(unit_len_ctx, box, x - *box_x, y - *box_y,
 				       &physically)) {
 			*box_x -= scrollbar_get_offset(box->scroll_x);
 			*box_y -= scrollbar_get_offset(box->scroll_y);
 
-			if (physically)
-				return box;
+			જો (physically)
+				પાછા box;
 
 			skip_children = false;
-		} else {
+		} નહીંતર {
 			skip_children = true;
 		}
 	}
 
-	return NULL;
+	પાછા ખાલી;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *box_find_by_id(struct box *box, lwc_string *id)
+સંરચના box *box_find_by_id(સંરચના box *box, lwc_string *id)
 {
-	struct box *a, *b;
+	સંરચના box *a, *b;
 	bool m;
 
-	if (box->id != NULL &&
+	જો (box->id != ખાલી &&
 	    lwc_string_isequal(id, box->id, &m) == lwc_error_ok &&
 	    m == true) {
-		return box;
+		પાછા box;
 	}
 
-	for (a = box->children; a; a = a->next) {
-		if ((b = box_find_by_id(a, id)) != NULL) {
-			return b;
+	માટે (a = box->children; a; a = a->next) {
+		જો ((b = box_find_by_id(a, id)) != ખાલી) {
+			પાછા b;
 		}
 	}
 
-	return NULL;
+	પાછા ખાલી;
 }
 
 
 /* Exported function documented in html/box.h */
-bool box_visible(struct box *box)
+bool box_visible(સંરચના box *box)
 {
 	/* visibility: hidden */
-	if (box->style &&
+	જો (box->style &&
 	    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
-		return false;
+		પાછા false;
 	}
 
-	return true;
+	પાછા true;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
+શૂન્ય box_dump(FILE *stream, સંરચના box *box, unsigned પૂર્ણાંક depth, bool style)
 {
-	unsigned int i;
-	struct box *c, *prev;
+	unsigned પૂર્ણાંક i;
+	સંરચના box *c, *prev;
 
-	for (i = 0; i != depth; i++) {
+	માટે (i = 0; i != depth; i++) {
 		fprintf(stream, "  ");
 	}
 
 	fprintf(stream, "%p ", box);
 	fprintf(stream, "x%i y%i w%i h%i ",
 		box->x, box->y, box->width, box->height);
-	if (box->max_width != UNKNOWN_MAX_WIDTH) {
+	જો (box->max_width != UNKNOWN_MAX_WIDTH) {
 		fprintf(stream, "min%i max%i ", box->min_width, box->max_width);
 	}
 	fprintf(stream, "desc(%i %i %i %i) ",
@@ -666,114 +666,114 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 		box->descendant_x1, box->descendant_y1);
 
 	fprintf(stream, "m(%i %i %i %i) ",
-		box->margin[TOP], box->margin[LEFT],
-		box->margin[BOTTOM], box->margin[RIGHT]);
+		box->margin[ટોચ_2], box->margin[ડાબું_2],
+		box->margin[BOTTOM], box->margin[જમણું_2]);
 
-	switch (box->type) {
-	case BOX_BLOCK:
+	પસંદગી (box->type) {
+	સ્થિતિ BOX_BLOCK:
 		fprintf(stream, "BLOCK ");
-		break;
+		તોડો;
 
-	case BOX_INLINE_CONTAINER:
+	સ્થિતિ BOX_INLINE_CONTAINER:
 		fprintf(stream, "INLINE_CONTAINER ");
-		break;
+		તોડો;
 
-	case BOX_INLINE:
+	સ્થિતિ BOX_INLINE:
 		fprintf(stream, "INLINE ");
-		break;
+		તોડો;
 
-	case BOX_INLINE_END:
+	સ્થિતિ BOX_INLINE_END:
 		fprintf(stream, "INLINE_END ");
-		break;
+		તોડો;
 
-	case BOX_INLINE_BLOCK:
+	સ્થિતિ BOX_INLINE_BLOCK:
 		fprintf(stream, "INLINE_BLOCK ");
-		break;
+		તોડો;
 
-	case BOX_TABLE:
+	સ્થિતિ BOX_TABLE:
 		fprintf(stream, "TABLE [columns %i] ", box->columns);
-		break;
+		તોડો;
 
-	case BOX_TABLE_ROW:
+	સ્થિતિ BOX_TABLE_ROW:
 		fprintf(stream, "TABLE_ROW ");
-		break;
+		તોડો;
 
-	case BOX_TABLE_CELL:
+	સ્થિતિ BOX_TABLE_CELL:
 		fprintf(stream, "TABLE_CELL [columns %i, start %i, rows %i] ",
 			box->columns,
 			box->start_column,
 			box->rows);
-		break;
+		તોડો;
 
-	case BOX_TABLE_ROW_GROUP:
+	સ્થિતિ BOX_TABLE_ROW_GROUP:
 		fprintf(stream, "TABLE_ROW_GROUP ");
-		break;
+		તોડો;
 
-	case BOX_FLOAT_LEFT:
+	સ્થિતિ BOX_FLOAT_ડાબું:
 		fprintf(stream, "FLOAT_LEFT ");
-		break;
+		તોડો;
 
-	case BOX_FLOAT_RIGHT:
+	સ્થિતિ BOX_FLOAT_જમણું:
 		fprintf(stream, "FLOAT_RIGHT ");
-		break;
+		તોડો;
 
-	case BOX_BR:
+	સ્થિતિ BOX_BR:
 		fprintf(stream, "BR ");
-		break;
+		તોડો;
 
-	case BOX_TEXT:
+	સ્થિતિ BOX_TEXT:
 		fprintf(stream, "TEXT ");
-		break;
+		તોડો;
 
-	case BOX_FLEX:
+	સ્થિતિ BOX_FLEX:
 		fprintf(stream, "FLEX ");
-		break;
+		તોડો;
 
-	case BOX_INLINE_FLEX:
+	સ્થિતિ BOX_INLINE_FLEX:
 		fprintf(stream, "INLINE_FLEX ");
-		break;
+		તોડો;
 
-	default:
+	મૂળભૂત:
 		fprintf(stream, "Unknown box type ");
 	}
 
-	if (box->text)
+	જો (box->text)
 		fprintf(stream, "%li '%.*s' ", (unsigned long) box->byte_offset,
-			(int) box->length, box->text);
-	if (box->space)
+			(પૂર્ણાંક) box->length, box->text);
+	જો (box->space)
 		fprintf(stream, "space ");
-	if (box->object) {
+	જો (box->object) {
 		fprintf(stream, "(object '%s') ",
 			nsurl_access(hlcache_handle_get_url(box->object)));
 	}
-	if (box->iframe) {
+	જો (box->iframe) {
 		fprintf(stream, "(iframe) ");
 	}
-	if (box->gadget)
+	જો (box->gadget)
 		fprintf(stream, "(gadget) ");
-	if (style && box->style)
+	જો (style && box->style)
 		nscss_dump_computed_style(stream, box->style);
-	if (box->href)
+	જો (box->href)
 		fprintf(stream, " -> '%s'", nsurl_access(box->href));
-	if (box->target)
+	જો (box->target)
 		fprintf(stream, " |%s|", box->target);
-	if (box->title)
+	જો (box->title)
 		fprintf(stream, " [%s]", box->title);
-	if (box->id)
+	જો (box->id)
 		fprintf(stream, " ID:%s", lwc_string_data(box->id));
-	if (box->type == BOX_INLINE || box->type == BOX_INLINE_END)
+	જો (box->type == BOX_INLINE || box->type == BOX_INLINE_END)
 		fprintf(stream, " inline_end %p", box->inline_end);
-	if (box->float_children)
+	જો (box->float_children)
 		fprintf(stream, " float_children %p", box->float_children);
-	if (box->next_float)
+	જો (box->next_float)
 		fprintf(stream, " next_float %p", box->next_float);
-	if (box->float_container)
+	જો (box->float_container)
 		fprintf(stream, " float_container %p", box->float_container);
-	if (box->col) {
+	જો (box->col) {
 		fprintf(stream, " (columns");
-		for (i = 0; i != box->columns; i++) {
+		માટે (i = 0; i != box->columns; i++) {
 			fprintf(stream, " (%s %s %i %i %i)",
-				((const char *[]) {
+				((અચલ અક્ષર *[]) {
 					"UNKNOWN",
 					"FIXED",
 					"AUTO",
@@ -781,7 +781,7 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 					"RELATIVE"
 						})
 				[box->col[i].type],
-				((const char *[]) {
+				((અચલ અક્ષર *[]) {
 					"normal",
 					"positioned"})
 				[box->col[i].positioned],
@@ -790,33 +790,33 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 		}
 		fprintf(stream, ")");
 	}
-	if (box->node != NULL) {
+	જો (box->ગાંઠ != ખાલી) {
 		dom_string *name;
-		if (dom_node_get_node_name(box->node, &name) == DOM_NO_ERR) {
+		જો (dom_ગાંઠ_get_ગાંઠ_name(box->ગાંઠ, &name) == DOM_NO_ERR) {
 			fprintf(stream, " <%s>", dom_string_data(name));
 			dom_string_unref(name);
 		}
 	}
 	fprintf(stream, "\n");
 
-	if (box->list_marker) {
-		for (i = 0; i != depth; i++)
+	જો (box->list_marker) {
+		માટે (i = 0; i != depth; i++)
 			fprintf(stream, "  ");
 		fprintf(stream, "list_marker:\n");
 		box_dump(stream, box->list_marker, depth + 1, style);
 	}
 
-	for (c = box->children; c && c->next; c = c->next)
+	માટે (c = box->children; c && c->next; c = c->next)
 		;
-	if (box->last != c)
+	જો (box->last != c)
 		fprintf(stream, "warning: box->last %p (should be %p) "
 			"(box %p)\n", box->last, c, box);
-	for (prev = 0, c = box->children; c; prev = c, c = c->next) {
-		if (c->parent != box)
+	માટે (prev = 0, c = box->children; c; prev = c, c = c->next) {
+		જો (c->parent != box)
 			fprintf(stream, "warning: box->parent %p (should be "
 				"%p) (box on next line)\n",
 				c->parent, box);
-		if (c->prev != prev)
+		જો (c->prev != prev)
 			fprintf(stream, "warning: box->prev %p (should be "
 				"%p) (box on next line)\n",
 				c->prev, prev);
@@ -826,9 +826,9 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 
 
 /* exported interface documented in html/box.h */
-bool box_vscrollbar_present(const struct box * const box)
+bool box_vscrollbar_present(અચલ સંરચના box * અચલ box)
 {
-	return box->padding[TOP] +
+	પાછા box->padding[ટોચ_2] +
 		box->height +
 		box->padding[BOTTOM] +
 		box->border[BOTTOM].width < box->descendant_y1;
@@ -836,57 +836,57 @@ bool box_vscrollbar_present(const struct box * const box)
 
 
 /* exported interface documented in html/box.h */
-bool box_hscrollbar_present(const struct box * const box)
+bool box_hscrollbar_present(અચલ સંરચના box * અચલ box)
 {
-	return box->padding[LEFT] +
+	પાછા box->padding[ડાબું_2] +
 		box->width +
-		box->padding[RIGHT] +
-		box->border[RIGHT].width < box->descendant_x1;
+		box->padding[જમણું_2] +
+		box->border[જમણું_2].width < box->descendant_x1;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
-box_pick_text_box(struct html_content *html,
-		  int x, int y,
-		  int dir,
-		  int *dx, int *dy)
+સંરચના box *
+box_pick_text_box(સંરચના html_content *html,
+		  પૂર્ણાંક x, પૂર્ણાંક y,
+		  પૂર્ણાંક dir,
+		  પૂર્ણાંક *dx, પૂર્ણાંક *dy)
 {
-	struct box *text_box = NULL;
-	struct box *box;
-	int nr_xd, nr_yd;
-	int bx, by;
-	int fx, fy;
-	int tx, ty;
+	સંરચના box *text_box = ખાલી;
+	સંરચના box *box;
+	પૂર્ણાંક nr_xd, nr_yd;
+	પૂર્ણાંક bx, by;
+	પૂર્ણાંક fx, fy;
+	પૂર્ણાંક tx, ty;
 
-	if (html == NULL)
-		return NULL;
+	જો (html == ખાલી)
+		પાછા ખાલી;
 
 	box = html->layout;
-	bx = box->margin[LEFT];
-	by = box->margin[TOP];
+	bx = box->margin[ડાબું_2];
+	by = box->margin[ટોચ_2];
 	fx = bx;
 	fy = by;
 
-	if (!box_nearest_text_box(box, bx, by, fx, fy, x, y,
+	જો (!box_nearest_text_box(box, bx, by, fx, fy, x, y,
 				  dir, &text_box, &tx, &ty, &nr_xd, &nr_yd)) {
-		if (text_box && text_box->text && !text_box->object) {
-			int w = (text_box->padding[LEFT] +
+		જો (text_box && text_box->text && !text_box->object) {
+			પૂર્ણાંક w = (text_box->padding[ડાબું_2] +
 				 text_box->width +
-				 text_box->padding[RIGHT]);
-			int h = (text_box->padding[TOP] +
+				 text_box->padding[જમણું_2]);
+			પૂર્ણાંક h = (text_box->padding[ટોચ_2] +
 				 text_box->height +
 				 text_box->padding[BOTTOM]);
-			int x1, y1;
+			પૂર્ણાંક x1, y1;
 
 			y1 = ty + h;
 			x1 = tx + w;
 
 			/* ensure point lies within the text box */
-			if (x < tx) x = tx;
-			if (y < ty) y = ty;
-			if (y > y1) y = y1;
-			if (x > x1) x = x1;
+			જો (x < tx) x = tx;
+			જો (y < ty) y = ty;
+			જો (y > y1) y = y1;
+			જો (x > x1) x = x1;
 		}
 	}
 
@@ -894,5 +894,5 @@ box_pick_text_box(struct html_content *html,
 	*dx = x - tx;
 	*dy = y - ty;
 
-	return text_box;
+	પાછા text_box;
 }
