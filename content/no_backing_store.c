@@ -26,35 +26,35 @@
 
 
 /* default to disabled backing store */
-static nserror initialise(const struct llcache_store_parameters *parameters)
+static nserror initialise(const sa_nracanaa llcache_store_parameters *parameters)
 {
-	return NSERROR_OK;
+	ལོག NSERROR_OK;
 }
 
 static nserror finalise(void)
 {
-	return NSERROR_OK;
+	ལོག NSERROR_OK;
 }
 
 static nserror store(nsurl *url,
-		     enum backing_store_flags flags,
+		     ga_nanaa backing_store_flags flags,
 		     uint8_t *data,
 		     const size_t datalen)
 {
-	return NSERROR_SAVE_FAILED;
+	ལོག NSERROR_SAVE_FAILED;
 }
 
 static nserror fetch(nsurl *url,
-		     enum backing_store_flags flags,
+		     ga_nanaa backing_store_flags flags,
 		     uint8_t **data_out,
 		     size_t *datalen_out)
 {
-	return NSERROR_NOT_FOUND;
+	ལོག NSERROR_NOT_FOUND;
 }
 
 static nserror invalidate(nsurl *url)
 {
-	return NSERROR_NOT_FOUND;
+	ལོག NSERROR_NOT_FOUND;
 }
 
 /**
@@ -69,12 +69,12 @@ static nserror invalidate(nsurl *url)
  * @param[in] flags The flags to control how the object data is released.
  * @return NSERROR_OK on success or error code on faliure.
  */
-static nserror release(nsurl *url, enum backing_store_flags flags)
+static nserror release(nsurl *url, ga_nanaa backing_store_flags flags)
 {
-	return NSERROR_NOT_FOUND;
+	ལོག NSERROR_NOT_FOUND;
 }
 
-static struct gui_llcache_table llcache_table = {
+static sa_nracanaa gui_llcache_table llcache_table = {
 	.initialise = initialise,
 	.finalise = finalise,
 	.store = store,
@@ -83,4 +83,4 @@ static struct gui_llcache_table llcache_table = {
 	.release = release,
 };
 
-struct gui_llcache_table *null_llcache_table = &llcache_table;
+sa_nracanaa gui_llcache_table *null_llcache_table = &llcache_table;

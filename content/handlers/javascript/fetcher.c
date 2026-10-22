@@ -35,10 +35,10 @@
 #include "javascript/fetcher.h"
 
 /** Context for an resource fetch */
-struct fetch_javascript_context {
-	struct fetch_javascript_context *r_next, *r_prev;
+sa_nracanaa fetch_javascript_context {
+	sa_nracanaa fetch_javascript_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	sa_nracanaa fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
@@ -46,18 +46,18 @@ struct fetch_javascript_context {
 	nsurl *url; /**< The URL being fetched */
 };
 
-static struct fetch_javascript_context *ring = NULL;
+static sa_nracanaa fetch_javascript_context *ring = NULL;
 
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
-		struct fetch_javascript_context *ctx)
+static anta_hstha bool fetch_javascript_send_callback(const fetch_msg *msg,
+		sa_nracanaa fetch_javascript_context *ctx)
 {
 	ctx->locked = true;
 	fetch_send_callback(msg, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	ལོག ctx->aborted;
 }
 
 
@@ -66,10 +66,10 @@ static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
  *
  * \todo This is currently completely unimplemented and just returns 204
  */
-static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
+static bool fetch_javascript_handler(sa_nracanaa fetch_javascript_context *ctx)
 {
 	fetch_msg msg;
-	int code = 204;
+	ཧྲིལ code = 204;
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
@@ -77,7 +77,7 @@ static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
 	msg.type = FETCH_FINISHED;
 	fetch_javascript_send_callback(&msg, ctx);
 
-	return true;
+	ལོག true;
 }
 
 
@@ -85,7 +85,7 @@ static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
 /** callback to initialise the resource fetcher. */
 static bool fetch_javascript_initialise(lwc_string *scheme)
 {
-	return true;
+	ལོག true;
 }
 
 /** callback to finalise the resource fetcher. */
@@ -95,24 +95,24 @@ static void fetch_javascript_finalise(lwc_string *scheme)
 
 static bool fetch_javascript_can_fetch(const nsurl *url)
 {
-	return true;
+	ལོག true;
 }
 
 /** callback to set up a resource fetch context. */
 static void *
-fetch_javascript_setup(struct fetch *fetchh,
+fetch_javascript_setup(sa_nracanaa fetch *fetchh,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 const var_na *post_urlenc,
+		 const sa_nracanaa fetch_multipart_data *post_multipart,
+		 const var_na **headers)
 {
-	struct fetch_javascript_context *ctx;
+	sa_nracanaa fetch_javascript_context *ctx;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, parimaa_na(*ctx));
+	གལ་སྲིད (ctx == NULL)
+		ལོག NULL;
 
 	ctx->url = nsurl_ref(url);
 
@@ -120,14 +120,14 @@ fetch_javascript_setup(struct fetch *fetchh,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	ལོག ctx;
 }
 
 /** callback to free a resource fetch */
 static void fetch_javascript_free(void *ctx)
 {
-	struct fetch_javascript_context *c = ctx;
-	if (c->url != NULL) {
+	sa_nracanaa fetch_javascript_context *c = ctx;
+	གལ་སྲིད (c->url != NULL) {
 		nsurl_unref(c->url);
 	}
 	RING_REMOVE(ring, c);
@@ -137,13 +137,13 @@ static void fetch_javascript_free(void *ctx)
 /** callback to start a resource fetch */
 static bool fetch_javascript_start(void *ctx)
 {
-	return true;
+	ལོག true;
 }
 
 /** callback to abort a resource fetch */
 static void fetch_javascript_abort(void *ctx)
 {
-	struct fetch_javascript_context *c = ctx;
+	sa_nracanaa fetch_javascript_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -156,9 +156,9 @@ static void fetch_javascript_abort(void *ctx)
 /** callback to poll for additional resource fetch contents */
 static void fetch_javascript_poll(lwc_string *scheme)
 {
-	struct fetch_javascript_context *c, *next;
+	sa_nracanaa fetch_javascript_context *c, *next;
 
-	if (ring == NULL) return;
+	གལ་སྲིད (ring == NULL) ལོག;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
@@ -169,13 +169,13 @@ static void fetch_javascript_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		གལ་སྲིད (c->locked == true) {
 			next = c->r_next;
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		གལ་སྲིད (c->aborted == false) {
 			/* resource fetches can be processed in one go */
 			fetch_javascript_handler(c);
 		}
@@ -191,7 +191,7 @@ static void fetch_javascript_poll(lwc_string *scheme)
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} སྐབས ( (c = next) != ring && ring != NULL);
 }
 
 /**
@@ -202,7 +202,7 @@ static void fetch_javascript_poll(lwc_string *scheme)
 nserror fetch_javascript_register(void)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_javascript);
-	const struct fetcher_operation_table fetcher_ops = {
+	const sa_nracanaa fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_javascript_initialise,
 		.acceptable = fetch_javascript_can_fetch,
 		.setup = fetch_javascript_setup,
@@ -213,5 +213,5 @@ nserror fetch_javascript_register(void)
 		.finalise = fetch_javascript_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ལོག fetcher_add(scheme, &fetcher_ops);
 }
