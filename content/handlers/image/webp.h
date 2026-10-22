@@ -24,6 +24,6 @@
 #ifndef _NETSURF_IMAGE_WEBP_H_
 #define _NETSURF_IMAGE_WEBP_H_
 
-nserror nswebp_init(void);
+nserror nswebp_init(فراغ);
 
 #endif
