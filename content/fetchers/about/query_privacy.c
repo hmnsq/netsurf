@@ -21,20 +21,20 @@
  * content generator for the about scheme query privacy page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <stdbool.h>
+#ଅନ୍ତର୍ଭାଵ <stddef.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/messages.h"
-#include "content/fetch.h"
+#ଅନ୍ତର୍ଭାଵ "utils/errors.h"
+#ଅନ୍ତର୍ଭାଵ "utils/messages.h"
+#ଅନ୍ତର୍ଭାଵ "content/fetch.h"
 
-#include "private.h"
-#include "query.h"
-#include "query_privacy.h"
+#ଅନ୍ତର୍ଭାଵ "private.h"
+#ଅନ୍ତର୍ଭାଵ "query.h"
+#ଅନ୍ତର୍ଭାଵ "query_privacy.h"
 
 /**
  * Handler to generate about scheme privacy query page
@@ -42,44 +42,44 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_query_privacy_handler(struct fetch_about_context *ctx)
+bool fetch_about_query_privacy_handler(ସଂରଚନା fetch_about_context *ctx)
 {
 	nserror res;
-	char *url_s;
+	ଅକ୍ଷର *url_s;
 	size_t url_l;
-	const char *reason = "";
-	const char *title;
-	struct nsurl *siteurl = NULL;
-	char *description = NULL;
-	const char *chainurl = NULL;
-	const struct fetch_multipart_data *curmd; /* mutipart data iterator */
+	ଅଚଳ ଅକ୍ଷର *reason = "";
+	ଅଚଳ ଅକ୍ଷର *title;
+	ସଂରଚନା nsurl *siteurl = ଖାଲି;
+	ଅକ୍ଷର *description = ଖାଲି;
+	ଅଚଳ ଅକ୍ଷର *chainurl = ଖାଲି;
+	ଅଚଳ ସଂରଚନା fetch_multipart_data *curmd; /* mutipart data iterator */
 
 	/* extract parameters from multipart post data */
 	curmd = fetch_about_get_multipart(ctx);
-	while (curmd != NULL) {
-		if (strcmp(curmd->name, "siteurl") == 0) {
-			res = nsurl_create(curmd->value, &siteurl);
-			if (res != NSERROR_OK) {
-				return fetch_about_srverror(ctx);
+	ଯେତେବେଳେ (curmd != ଖାଲି) {
+		ଯଦି (strcmp(curmd->name, "siteurl") == 0) {
+			res = nsurl_create(curmd->ମୂଲ୍ୟ, &siteurl);
+			ଯଦି (res != NSERROR_OK) {
+				ଫେରନ୍ତୁ fetch_about_srverror(ctx);
 			}
-		} else if (strcmp(curmd->name, "reason") == 0) {
-			reason = curmd->value;
-		} else if (strcmp(curmd->name, "chainurl") == 0) {
-			chainurl = curmd->value;
+		} ଅନ୍ୟଥା ଯଦି (strcmp(curmd->name, "reason") == 0) {
+			reason = curmd->ମୂଲ୍ୟ;
+		} ଅନ୍ୟଥା ଯଦି (strcmp(curmd->name, "chainurl") == 0) {
+			chainurl = curmd->ମୂଲ୍ୟ;
 		}
 		curmd = curmd->next;
 	}
 
-	if (siteurl == NULL) {
-		return fetch_about_srverror(ctx);
+	ଯଦି (siteurl == ଖାଲି) {
+		ଫେରନ୍ତୁ fetch_about_srverror(ctx);
 	}
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
-		goto fetch_about_query_ssl_handler_aborted;
+	ଯଦି (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
+		ଯାଅ fetch_about_query_ssl_handler_aborted;
 	}
 
 	title = messages_get("PrivacyTitle");
@@ -92,35 +92,35 @@ bool fetch_about_query_privacy_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\" id =\"privacy\">\n"
 			"<h1 class=\"ns-border ns-odd-fg-bad\">%s</h1>\n",
 			title, title);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_ssl_handler_aborted;
+	ଯଦି (res != NSERROR_OK) {
+		ଯାଅ fetch_about_query_ssl_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<form method=\"post\""
 			 " enctype=\"multipart/form-data\">");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_ssl_handler_aborted;
+	ଯଦି (res != NSERROR_OK) {
+		ଯାଅ fetch_about_query_ssl_handler_aborted;
 	}
 
 	res = get_query_description(siteurl,
 				    "PrivacyDescription",
 				    &description);
-	if (res == NSERROR_OK) {
+	ଯଦି (res == NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<div><p>%s</p></div>", description);
-		free(description);
-		if (res != NSERROR_OK) {
-			goto fetch_about_query_ssl_handler_aborted;
+		ମୁକ୍ତ(description);
+		ଯଦି (res != NSERROR_OK) {
+			ଯାଅ fetch_about_query_ssl_handler_aborted;
 		}
 	}
 
-	if (chainurl == NULL) {
+	ଯଦି (chainurl == ଖାଲି) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<div><p>%s</p></div>"
 				 "<div><p>%s</p></div>",
 				 reason,
 				 messages_get("ViewCertificatesNotPossible"));
-	} else {
+	} ଅନ୍ୟଥା {
 		res = fetch_about_ssenddataf(ctx,
 				 "<div><p>%s</p></div>"
 				 "<div><p><a href=\"%s\" target=\"_blank\">%s</a></p></div>",
@@ -128,8 +128,8 @@ bool fetch_about_query_privacy_handler(struct fetch_about_context *ctx)
 				 chainurl,
 				 messages_get("ViewCertificates"));
 	}
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_ssl_handler_aborted;
+	ଯଦି (res != NSERROR_OK) {
+		ଯାଅ fetch_about_query_ssl_handler_aborted;
 	}
 	res = fetch_about_ssenddataf(ctx,
 			 "<div id=\"buttons\">"
@@ -140,35 +140,35 @@ bool fetch_about_query_privacy_handler(struct fetch_about_context *ctx)
 			 "</div>",
 			 messages_get("Backtosafety"),
 			 messages_get("Proceed"));
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_ssl_handler_aborted;
+	ଯଦି (res != NSERROR_OK) {
+		ଯାଅ fetch_about_query_ssl_handler_aborted;
 	}
 
 	res = nsurl_get(siteurl, NSURL_COMPLETE, &url_s, &url_l);
-	if (res != NSERROR_OK) {
+	ଯଦି (res != NSERROR_OK) {
 		url_s = strdup("");
 	}
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"siteurl\" value=\"%s\">",
 			 url_s);
-	free(url_s);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_ssl_handler_aborted;
+	ମୁକ୍ତ(url_s);
+	ଯଦି (res != NSERROR_OK) {
+		ଯାଅ fetch_about_query_ssl_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</form></body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_ssl_handler_aborted;
+	ଯଦି (res != NSERROR_OK) {
+		ଯାଅ fetch_about_query_ssl_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
 	nsurl_unref(siteurl);
 
-	return true;
+	ଫେରନ୍ତୁ true;
 
 fetch_about_query_ssl_handler_aborted:
 	nsurl_unref(siteurl);
 
-	return false;
+	ଫେରନ୍ତୁ false;
 }

@@ -31,7 +31,7 @@
  * \param  x    updated to x coordinate
  * \param  y    updated to y coordinate
  */
-void box_coords(struct box *box, int *x, int *y);
+ଶୂନ୍ୟ box_coords(ସଂରଚନା box *box, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *y);
 
 
 /**
@@ -40,7 +40,7 @@ void box_coords(struct box *box, int *x, int *y);
  * \param  box  the box to calculate bounds of
  * \param  r    receives bounds
  */
-void box_bounds(struct box *box, struct rect *r);
+ଶୂନ୍ୟ box_bounds(ସଂରଚନା box *box, ସଂରଚନା rect *r);
 
 
 /**
@@ -67,7 +67,7 @@ void box_bounds(struct box *box, struct rect *r);
  *	}
  * \endcode
  */
-struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, const int x, const int y, int *box_x, int *box_y);
+ସଂରଚନା box *box_at_point(ଅଚଳ css_unit_ctx *unit_len_ctx, ସଂରଚନା box *box, ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା y, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *box_x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *box_y);
 
 
 /**
@@ -77,7 +77,7 @@ struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, cons
  * \param  id   id to look for
  * \return  the box or 0 if not found
  */
-struct box *box_find_by_id(struct box *box, lwc_string *id);
+ସଂରଚନା box *box_find_by_id(ସଂରଚନା box *box, lwc_string *id);
 
 
 /**
@@ -86,13 +86,13 @@ struct box *box_find_by_id(struct box *box, lwc_string *id);
  * \param  box  box to check
  * \return  true iff the box is rendered
  */
-bool box_visible(struct box *box);
+bool box_visible(ସଂରଚନା box *box);
 
 
 /**
  * Print a box tree to a file.
  */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
+ଶୂନ୍ୟ box_dump(FILE *stream, ସଂରଚନା box *box, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା depth, bool style);
 
 
 /**
@@ -101,7 +101,7 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
  * \param  box  scrolling box
  * \return the box has a vertical scrollbar
  */
-bool box_vscrollbar_present(const struct box *box);
+bool box_vscrollbar_present(ଅଚଳ ସଂରଚନା box *box);
 
 
 /**
@@ -110,7 +110,7 @@ bool box_vscrollbar_present(const struct box *box);
  * \param  box  scrolling box
  * \return the box has a horizontal scrollbar
  */
-bool box_hscrollbar_present(const struct box *box);
+bool box_hscrollbar_present(ଅଚଳ ସଂରଚନା box *box);
 
 
 /**
@@ -125,7 +125,7 @@ bool box_hscrollbar_present(const struct box *box);
  * \param dx	receives x ordinate of mouse relative to text box
  * \param dy	receives y ordinate of mouse relative to text box
  */
-struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, int *dx, int *dy);
+ସଂରଚନା box *box_pick_text_box(ସଂରଚନା html_content *html, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y, ପୂର୍ଣ୍ଣସଂଖ୍ୟା dir, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *dx, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *dy);
 
 
 /**
@@ -134,22 +134,22 @@ struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, 
  * \param[in] b  Box to check.
  * \return true iff box is first child.
  */
-static inline bool box_is_first_child(struct box *b)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ bool box_is_first_child(ସଂରଚନା box *b)
 {
-	return (b->parent == NULL || b == b->parent->children);
+	ଫେରନ୍ତୁ (b->parent == ଖାଲି || b == b->parent->children);
 }
 
-static inline unsigned box_count_children(const struct box *b)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ unsigned box_ଗଣନା_children(ଅଚଳ ସଂରଚନା box *b)
 {
-	const struct box *c = b->children;
-	unsigned count = 0;
+	ଅଚଳ ସଂରଚନା box *c = b->children;
+	unsigned ଗଣନା_2 = 0;
 
-	while (c != NULL) {
-		count++;
+	ଯେତେବେଳେ (c != ଖାଲି) {
+		ଗଣନା_2++;
 		c = c->next;
 	}
 
-	return count;
+	ଫେରନ୍ତୁ ଗଣନା_2;
 }
 
 #endif

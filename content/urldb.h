@@ -24,15 +24,15 @@
 #ifndef NETSURF_CONTENT_URLDB_H
 #define NETSURF_CONTENT_URLDB_H
 
-#include <libwapcaplet/libwapcaplet.h>
+#ଅନ୍ତର୍ଭାଵ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/url_db.h"
-#include "netsurf/cookie_db.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/url_db.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/cookie_db.h"
 
 /**
  * Destroy urldb
  */
-void urldb_destroy(void);
+ଶୂନ୍ୟ urldb_destroy(ଶୂନ୍ୟ);
 
 
 /**
@@ -42,7 +42,7 @@ void urldb_destroy(void);
  * \param persist True to persist, false otherwise
  * \return NSERROR_OK on success or NSERROR_NOT_FOUND if url not in database
  */
-nserror urldb_set_url_persistence(struct nsurl *url, bool persist);
+nserror urldb_set_url_persistence(ସଂରଚନା nsurl *url, bool persist);
 
 
 /**
@@ -51,7 +51,7 @@ nserror urldb_set_url_persistence(struct nsurl *url, bool persist);
  * \param url Absolute URL to insert
  * \return true on success, false otherwise
  */
-bool urldb_add_url(struct nsurl *url);
+bool urldb_add_url(ସଂରଚନା nsurl *url);
 
 
 /**
@@ -61,7 +61,7 @@ bool urldb_add_url(struct nsurl *url);
  * \param title The title string to use (copied)
  * \return NSERROR_OK on success otherwise appropriate error code
  */
-nserror urldb_set_url_title(struct nsurl *url, const char *title);
+nserror urldb_set_url_title(ସଂରଚନା nsurl *url, ଅଚଳ ଅକ୍ଷର *title);
 
 
 /**
@@ -71,7 +71,7 @@ nserror urldb_set_url_title(struct nsurl *url, const char *title);
  * \param type The type to set
  * \return NSERROR_OK on success or NSERROR_NOT_FOUND if url not in database
  */
-nserror urldb_set_url_content_type(struct nsurl *url, content_type type);
+nserror urldb_set_url_content_type(ସଂରଚନା nsurl *url, content_type type);
 
 
 /**
@@ -81,7 +81,7 @@ nserror urldb_set_url_content_type(struct nsurl *url, content_type type);
  * \param realm The authentication realm
  * \param auth The authentication details (in form username:password)
  */
-void urldb_set_auth_details(struct nsurl *url, const char *realm, const char *auth);
+ଶୂନ୍ୟ urldb_set_auth_details(ସଂରଚନା nsurl *url, ଅଚଳ ଅକ୍ଷର *realm, ଅଚଳ ଅକ୍ଷର *auth);
 
 
 /**
@@ -92,7 +92,7 @@ void urldb_set_auth_details(struct nsurl *url, const char *realm, const char *au
  *        the protection space when that's not been done before for given URL.
  * \return Pointer to authentication details, or NULL if not found
  */
-const char *urldb_get_auth_details(struct nsurl *url, const char *realm);
+ଅଚଳ ଅକ୍ଷର *urldb_get_auth_details(ସଂରଚନା nsurl *url, ଅଚଳ ଅକ୍ଷର *realm);
 
 
 /**
@@ -101,7 +101,7 @@ const char *urldb_get_auth_details(struct nsurl *url, const char *realm);
  * \param url The URL to update
  * \return NSERROR_OK on success or NSERROR_NOT_FOUND if url not in database
  */
-nserror urldb_update_url_visit_data(struct nsurl *url);
+nserror urldb_update_url_visit_data(ସଂରଚନା nsurl *url);
 
 
 /**
@@ -109,7 +109,7 @@ nserror urldb_update_url_visit_data(struct nsurl *url);
  *
  * \param url The URL to reset
  */
-void urldb_reset_url_visit_data(struct nsurl *url);
+ଶୂନ୍ୟ urldb_reset_url_visit_data(ସଂରଚନା nsurl *url);
 
 
 /**
@@ -118,7 +118,7 @@ void urldb_reset_url_visit_data(struct nsurl *url);
  * \param url URL to extract
  * \return Pointer to database's copy of URL or NULL if not found
  */
-struct nsurl *urldb_get_url(struct nsurl *url);
+ସଂରଚନା nsurl *urldb_get_url(ସଂରଚନା nsurl *url);
 
 
 /**
@@ -128,7 +128,7 @@ struct nsurl *urldb_get_url(struct nsurl *url);
  * \return true to permit connections to hosts with invalid certificates,
  * false otherwise.
  */
-bool urldb_get_cert_permissions(struct nsurl *url);
+bool urldb_get_cert_permissions(ସଂରଚନା nsurl *url);
 
 
 /**
@@ -139,7 +139,7 @@ bool urldb_get_cert_permissions(struct nsurl *url);
  * \param referrer Referring resource, or 0 for verifiable transaction
  * \return true on success, false otherwise
  */
-bool urldb_set_cookie(const char *header, struct nsurl *url, struct nsurl *referrer);
+bool urldb_set_cookie(ଅଚଳ ଅକ୍ଷର *header, ସଂରଚନା nsurl *url, ସଂରଚନା nsurl *referrer);
 
 
 /**
@@ -149,7 +149,7 @@ bool urldb_set_cookie(const char *header, struct nsurl *url, struct nsurl *refer
  * \param include_http_only Whether to include HTTP(S) only cookies.
  * \return Cookies string for libcurl (on heap), or NULL on error/no cookies
  */
-char *urldb_get_cookie(struct nsurl *url, bool include_http_only);
+ଅକ୍ଷର *urldb_get_cookie(ସଂରଚନା nsurl *url, bool include_http_only);
 
 
 /**
@@ -159,7 +159,7 @@ char *urldb_get_cookie(struct nsurl *url, bool include_http_only);
  * \param header Strict-Transport-Security header value
  * \return true on success, false otherwise
  */
-bool urldb_set_hsts_policy(struct nsurl *url, const char *header);
+bool urldb_set_hsts_policy(ସଂରଚନା nsurl *url, ଅଚଳ ଅକ୍ଷର *header);
 
 
 /**
@@ -168,6 +168,6 @@ bool urldb_set_hsts_policy(struct nsurl *url, const char *header);
  * \param url URL being fetched
  * \return true if HSTS policy is enabled, false otherwise
  */
-bool urldb_get_hsts_enabled(struct nsurl *url);
+bool urldb_get_hsts_enabled(ସଂରଚନା nsurl *url);
 
 #endif

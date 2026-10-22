@@ -22,23 +22,23 @@
  * This fetcher implements http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#javascript-protocol
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libwapcaplet/libwapcaplet.h>
+#ଅନ୍ତର୍ଭାଵ <stdbool.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <libwapcaplet/libwapcaplet.h>
 
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/ring.h"
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#ଅନ୍ତର୍ଭାଵ "utils/nsurl.h"
+#ଅନ୍ତର୍ଭାଵ "utils/corestrings.h"
+#ଅନ୍ତର୍ଭାଵ "utils/ring.h"
+#ଅନ୍ତର୍ଭାଵ "content/fetch.h"
+#ଅନ୍ତର୍ଭାଵ "content/fetchers.h"
 
-#include "javascript/fetcher.h"
+#ଅନ୍ତର୍ଭାଵ "javascript/fetcher.h"
 
 /** Context for an resource fetch */
-struct fetch_javascript_context {
-	struct fetch_javascript_context *r_next, *r_prev;
+ସଂରଚନା fetch_javascript_context {
+	ସଂରଚନା fetch_javascript_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	ସଂରଚନା fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
@@ -46,18 +46,18 @@ struct fetch_javascript_context {
 	nsurl *url; /**< The URL being fetched */
 };
 
-static struct fetch_javascript_context *ring = NULL;
+ସ୍ଥିର ସଂରଚନା fetch_javascript_context *ring = ଖାଲି;
 
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
-		struct fetch_javascript_context *ctx)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ bool fetch_javascript_send_callback(ଅଚଳ fetch_ସନ୍ଦେଶ *ସନ୍ଦେଶ,
+		ସଂରଚନା fetch_javascript_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(ସନ୍ଦେଶ, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	ଫେରନ୍ତୁ ctx->aborted;
 }
 
 
@@ -66,84 +66,84 @@ static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
  *
  * \todo This is currently completely unimplemented and just returns 204
  */
-static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
+ସ୍ଥିର bool fetch_javascript_handler(ସଂରଚନା fetch_javascript_context *ctx)
 {
-	fetch_msg msg;
-	int code = 204;
+	fetch_ସନ୍ଦେଶ ସନ୍ଦେଶ;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା code = 204;
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
 
-	msg.type = FETCH_FINISHED;
-	fetch_javascript_send_callback(&msg, ctx);
+	ସନ୍ଦେଶ.type = FETCH_FINISHED;
+	fetch_javascript_send_callback(&ସନ୍ଦେଶ, ctx);
 
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
 
 
 /** callback to initialise the resource fetcher. */
-static bool fetch_javascript_initialise(lwc_string *scheme)
+ସ୍ଥିର bool fetch_javascript_initialise(lwc_string *scheme)
 {
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
 /** callback to finalise the resource fetcher. */
-static void fetch_javascript_finalise(lwc_string *scheme)
+ସ୍ଥିର ଶୂନ୍ୟ fetch_javascript_finalise(lwc_string *scheme)
 {
 }
 
-static bool fetch_javascript_can_fetch(const nsurl *url)
+ସ୍ଥିର bool fetch_javascript_can_fetch(ଅଚଳ nsurl *url)
 {
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
 /** callback to set up a resource fetch context. */
-static void *
-fetch_javascript_setup(struct fetch *fetchh,
+ସ୍ଥିର ଶୂନ୍ୟ *
+fetch_javascript_setup(ସଂରଚନା fetch *fetchh,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 ଅଚଳ ଅକ୍ଷର *post_urlenc,
+		 ଅଚଳ ସଂରଚନା fetch_multipart_data *post_multipart,
+		 ଅଚଳ ଅକ୍ଷର **headers)
 {
-	struct fetch_javascript_context *ctx;
+	ସଂରଚନା fetch_javascript_context *ctx;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, ଆକାର(*ctx));
+	ଯଦି (ctx == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
 	ctx->url = nsurl_ref(url);
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_ଭର୍ତ୍ତି(ring, ctx);
 
-	return ctx;
+	ଫେରନ୍ତୁ ctx;
 }
 
 /** callback to free a resource fetch */
-static void fetch_javascript_free(void *ctx)
+ସ୍ଥିର ଶୂନ୍ୟ fetch_javascript_free(ଶୂନ୍ୟ *ctx)
 {
-	struct fetch_javascript_context *c = ctx;
-	if (c->url != NULL) {
+	ସଂରଚନା fetch_javascript_context *c = ctx;
+	ଯଦି (c->url != ଖାଲି) {
 		nsurl_unref(c->url);
 	}
 	RING_REMOVE(ring, c);
-	free(ctx);
+	ମୁକ୍ତ(ctx);
 }
 
 /** callback to start a resource fetch */
-static bool fetch_javascript_start(void *ctx)
+ସ୍ଥିର bool fetch_javascript_start(ଶୂନ୍ୟ *ctx)
 {
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
 /** callback to abort a resource fetch */
-static void fetch_javascript_abort(void *ctx)
+ସ୍ଥିର ଶୂନ୍ୟ fetch_javascript_abort(ଶୂନ୍ୟ *ctx)
 {
-	struct fetch_javascript_context *c = ctx;
+	ସଂରଚନା fetch_javascript_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -154,28 +154,28 @@ static void fetch_javascript_abort(void *ctx)
 
 
 /** callback to poll for additional resource fetch contents */
-static void fetch_javascript_poll(lwc_string *scheme)
+ସ୍ଥିର ଶୂନ୍ୟ fetch_javascript_poll(lwc_string *scheme)
 {
-	struct fetch_javascript_context *c, *next;
+	ସଂରଚନା fetch_javascript_context *c, *next;
 
-	if (ring == NULL) return;
+	ଯଦି (ring == ଖାଲି) ଫେରନ୍ତୁ;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
-	do {
+	କର {
 		/* Ignore fetches that have been flagged as locked.
 		 * This allows safe re-entrant calls to this function.
 		 * Re-entrancy can occur if, as a result of a callback,
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		ଯଦି (c->locked == true) {
 			next = c->r_next;
-			continue;
+			ଜାରି;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		ଯଦି (c->aborted == false) {
 			/* resource fetches can be processed in one go */
 			fetch_javascript_handler(c);
 		}
@@ -191,7 +191,7 @@ static void fetch_javascript_poll(lwc_string *scheme)
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} ଯେତେବେଳେ ( (c = next) != ring && ring != ଖାଲି);
 }
 
 /**
@@ -199,19 +199,19 @@ static void fetch_javascript_poll(lwc_string *scheme)
  *
  * \return NSERROR_OK on success or appropriate error code on faliure.
 */
-nserror fetch_javascript_register(void)
+nserror fetch_javascript_register(ଶୂନ୍ୟ)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_javascript);
-	const struct fetcher_operation_table fetcher_ops = {
+	ଅଚଳ ସଂରଚନା fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_javascript_initialise,
 		.acceptable = fetch_javascript_can_fetch,
 		.setup = fetch_javascript_setup,
 		.start = fetch_javascript_start,
 		.abort = fetch_javascript_abort,
-		.free = fetch_javascript_free,
+		.ମୁକ୍ତ = fetch_javascript_free,
 		.poll = fetch_javascript_poll,
 		.finalise = fetch_javascript_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ଫେରନ୍ତୁ fetcher_add(scheme, &fetcher_ops);
 }

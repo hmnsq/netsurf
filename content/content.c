@@ -21,29 +21,29 @@
  * Content handling implementation.
  */
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <nsutils/time.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <nsutils/time.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/corestrings.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "desktop/knockout.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/inttypes.h"
+#ଅନ୍ତର୍ଭାଵ "utils/log.h"
+#ଅନ୍ତର୍ଭାଵ "utils/messages.h"
+#ଅନ୍ତର୍ଭାଵ "utils/corestrings.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/browser_window.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/bitmap.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/content.h"
+#ଅନ୍ତର୍ଭାଵ "desktop/knockout.h"
 
-#include "content/content_protected.h"
-#include "content/textsearch.h"
-#include "content/content_debug.h"
-#include "content/hlcache.h"
-#include "content/urldb.h"
+#ଅନ୍ତର୍ଭାଵ "content/content_protected.h"
+#ଅନ୍ତର୍ଭାଵ "content/textsearch.h"
+#ଅନ୍ତର୍ଭାଵ "content/content_debug.h"
+#ଅନ୍ତର୍ଭାଵ "content/hlcache.h"
+#ଅନ୍ତର୍ଭାଵ "content/urldb.h"
 
 #define URL_FMT_SPC "%.140s"
 
-const char * const content_status_name[] = {
+ଅଚଳ ଅକ୍ଷର * ଅଚଳ content_status_name[] = {
 	"LOADING",
 	"READY",
 	"DONE",
@@ -64,28 +64,28 @@ const char * const content_status_name[] = {
  * - If the conversion fails, CONTENT_MSG_ERROR is sent. The content will soon
  *   be destroyed and must no longer be used.
  */
-static void content_convert(struct content *c)
+ସ୍ଥିର ଶୂନ୍ୟ content_convert(ସଂରଚନା content *c)
 {
-	assert(c);
-	assert(c->status == CONTENT_STATUS_LOADING ||
+	ପ୍ରତିଜ୍ଞା(c);
+	ପ୍ରତିଜ୍ଞା(c->status == CONTENT_STATUS_LOADING ||
 	       c->status == CONTENT_STATUS_ERROR);
 
-	if (c->status != CONTENT_STATUS_LOADING)
-		return;
+	ଯଦି (c->status != CONTENT_STATUS_LOADING)
+		ଫେରନ୍ତୁ;
 
-	if (c->locked == true)
-		return;
+	ଯଦି (c->locked == true)
+		ଫେରନ୍ତୁ;
 
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p)",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)), c);
 
-	if (c->handler->data_complete != NULL) {
+	ଯଦି (c->handler->data_complete != ଖାଲି) {
 		c->locked = true;
-		if (c->handler->data_complete(c) == false) {
+		ଯଦି (c->handler->data_complete(c) == false) {
 			content_set_error(c);
 		}
 		/* Conversion to the READY state will unlock the content */
-	} else {
+	} ଅନ୍ୟଥା {
 		content_set_ready(c);
 		content_set_done(c);
 	}
@@ -100,25 +100,25 @@ static void content_convert(struct content *c)
  * \param pw	   Pointer to our context
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+ସ୍ଥିର nserror
 content_llcache_callback(llcache_handle *llcache,
-			 const llcache_event *event, void *pw)
+			 ଅଚଳ llcache_event *event, ଶୂନ୍ୟ *pw)
 {
-	struct content *c = pw;
-	union content_msg_data msg_data;
+	ସଂରଚନା content *c = pw;
+	ସଂଘ content_ସନ୍ଦେଶ_data ସନ୍ଦେଶ_data;
 	nserror error = NSERROR_OK;
 
-	switch (event->type) {
-	case LLCACHE_EVENT_GOT_CERTS:
+	ବାଛ (event->type) {
+	ସ୍ଥିତି LLCACHE_EVENT_GOT_CERTS:
 		/* Will never happen: handled in hlcache */
-		break;
-	case LLCACHE_EVENT_HAD_HEADERS:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି LLCACHE_EVENT_HAD_HEADERS:
 		/* Will never happen: handled in hlcache */
-		break;
-	case LLCACHE_EVENT_HAD_DATA:
-		if (c->handler->process_data != NULL) {
-			if (c->handler->process_data(c,
-						     (const char *) event->data.data.buf,
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି LLCACHE_EVENT_HAD_DATA:
+		ଯଦି (c->handler->process_data != ଖାଲି) {
+			ଯଦି (c->handler->process_data(c,
+						     (ଅଚଳ ଅକ୍ଷର *) event->data.data.buf,
 						     event->data.data.len) == false) {
 				llcache_handle_abort(c->llcache);
 				c->status = CONTENT_STATUS_ERROR;
@@ -126,40 +126,40 @@ content_llcache_callback(llcache_handle *llcache,
 				error = NSERROR_NOMEM;
 			}
 		}
-		break;
-	case LLCACHE_EVENT_DONE:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି LLCACHE_EVENT_DONE:
 		{
 			size_t source_size;
 
-			(void) llcache_handle_get_source_data(llcache, &source_size);
+			(ଶୂନ୍ୟ) llcache_handle_get_source_data(llcache, &source_size);
 
 			content_set_status(c, messages_get("Processing"));
-			msg_data.explicit_status_text = NULL;
-			content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+			ସନ୍ଦେଶ_data.explicit_status_text = ଖାଲି;
+			content_broadcast(c, CONTENT_ସନ୍ଦେଶ_STATUS, &ସନ୍ଦେଶ_data);
 
 			content_convert(c);
 		}
-		break;
-	case LLCACHE_EVENT_ERROR:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି LLCACHE_EVENT_ERROR:
 		/** \todo Error page? */
 		c->status = CONTENT_STATUS_ERROR;
-		msg_data.errordata.errorcode = event->data.error.code;
-		msg_data.errordata.errormsg = event->data.error.msg;
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		break;
-	case LLCACHE_EVENT_PROGRESS:
-		content_set_status(c, event->data.progress_msg);
-		msg_data.explicit_status_text = NULL;
-		content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
-		break;
-	case LLCACHE_EVENT_REDIRECT:
-		msg_data.redirect.from = event->data.redirect.from;
-		msg_data.redirect.to = event->data.redirect.to;
-		content_broadcast(c, CONTENT_MSG_REDIRECT, &msg_data);
-		break;
+		ସନ୍ଦେଶ_data.errordata.errorcode = event->data.error.code;
+		ସନ୍ଦେଶ_data.errordata.errormsg = event->data.error.ସନ୍ଦେଶ;
+		content_broadcast(c, CONTENT_ସନ୍ଦେଶ_ERROR, &ସନ୍ଦେଶ_data);
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି LLCACHE_EVENT_PROGRESS:
+		content_set_status(c, event->data.progress_ସନ୍ଦେଶ);
+		ସନ୍ଦେଶ_data.explicit_status_text = ଖାଲି;
+		content_broadcast(c, CONTENT_ସନ୍ଦେଶ_STATUS, &ସନ୍ଦେଶ_data);
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି LLCACHE_EVENT_REDIRECT:
+		ସନ୍ଦେଶ_data.redirect.from = event->data.redirect.from;
+		ସନ୍ଦେଶ_data.redirect.to = event->data.redirect.to;
+		content_broadcast(c, CONTENT_ସନ୍ଦେଶ_REDIRECT, &ସନ୍ଦେଶ_data);
+		ଭାଙ୍ଗ;
 	}
 
-	return error;
+	ଫେରନ୍ତୁ error;
 }
 
 
@@ -168,49 +168,49 @@ content_llcache_callback(llcache_handle *llcache,
  *
  * \param c the content to update.
  */
-static void content_update_status(struct content *c)
+ସ୍ଥିର ଶୂନ୍ୟ content_update_status(ସଂରଚନା content *c)
 {
-	if (c->status == CONTENT_STATUS_LOADING ||
+	ଯଦି (c->status == CONTENT_STATUS_LOADING ||
 	    c->status == CONTENT_STATUS_READY) {
 		/* Not done yet */
-		snprintf(c->status_message, sizeof (c->status_message),
+		snprintf(c->status_message, ଆକାର (c->status_message),
 			 "%s%s%s", messages_get("Fetching"),
 			 c->sub_status[0] != '\0' ? ", " : " ",
 			 c->sub_status);
-	} else {
-		snprintf(c->status_message, sizeof (c->status_message),
+	} ଅନ୍ୟଥା {
+		snprintf(c->status_message, ଆକାର (c->status_message),
 			 "%s (%.1fs)", messages_get("Done"),
-			 (float) c->time / 1000);
+			 (ଦଶମିକ) c->time / 1000);
 	}
 }
 
 
 /* exported interface documented in content/protected.h */
 nserror
-content__init(struct content *c,
-	      const content_handler *handler,
+content__init(ସଂରଚନା content *c,
+	      ଅଚଳ content_handler *handler,
 	      lwc_string *imime_type,
-	      const struct http_parameter *params,
+	      ଅଚଳ ସଂରଚନା http_parameter *params,
 	      llcache_handle *llcache,
-	      const char *fallback_charset,
+	      ଅଚଳ ଅକ୍ଷର *fallback_charset,
 	      bool quirks)
 {
-	struct content_user *user_sentinel;
+	ସଂରଚନା content_user *user_sentinel;
 	nserror error;
 
 	NSLOG(netsurf, INFO, "url "URL_FMT_SPC" -> %p",
 	      nsurl_access_log(llcache_handle_get_url(llcache)), c);
 
-	user_sentinel = calloc(1, sizeof(struct content_user));
-	if (user_sentinel == NULL) {
-		return NSERROR_NOMEM;
+	user_sentinel = calloc(1, ଆକାର(ସଂରଚନା content_user));
+	ଯଦି (user_sentinel == ଖାଲି) {
+		ଫେରନ୍ତୁ NSERROR_NOMEM;
 	}
 
-	if (fallback_charset != NULL) {
+	ଯଦି (fallback_charset != ଖାଲି) {
 		c->fallback_charset = strdup(fallback_charset);
-		if (c->fallback_charset == NULL) {
-			free(user_sentinel);
-			return NSERROR_NOMEM;
+		ଯଦି (c->fallback_charset == ଖାଲି) {
+			ମୁକ୍ତ(user_sentinel);
+			ଫେରନ୍ତୁ NSERROR_NOMEM;
 		}
 	}
 
@@ -226,53 +226,53 @@ content__init(struct content *c,
 	c->refresh = 0;
 	nsu_getmonotonic_ms(&c->time);
 	c->size = 0;
-	c->title = NULL;
+	c->title = ଖାଲି;
 	c->active = 0;
-	user_sentinel->callback = NULL;
-	user_sentinel->pw = NULL;
-	user_sentinel->next = NULL;
+	user_sentinel->callback = ଖାଲି;
+	user_sentinel->pw = ଖାଲି;
+	user_sentinel->next = ଖାଲି;
 	c->user_list = user_sentinel;
 	c->sub_status[0] = 0;
 	c->locked = false;
 	c->total_size = 0;
 	c->http_code = 0;
 
-	c->textsearch.string = NULL;
-	c->textsearch.context = NULL;
+	c->textsearch.string = ଖାଲି;
+	c->textsearch.context = ଖାଲି;
 
 	content_set_status(c, messages_get("Loading"));
 
 	/* Finally, claim low-level cache events */
 	error = llcache_handle_change_callback(llcache,
 					       content_llcache_callback, c);
-	if (error != NSERROR_OK) {
+	ଯଦି (error != NSERROR_OK) {
 		lwc_string_unref(c->mime_type);
-		return error;
+		ଫେରନ୍ତୁ error;
 	}
 
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_can_reformat(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return false;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ false;
 
-	return (c->handler->reformat != NULL);
+	ଫେରନ୍ତୁ (c->handler->reformat != ଖାଲି);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_status(struct content *c, const char *status_message)
+ଶୂନ୍ୟ content_set_status(ସଂରଚନା content *c, ଅଚଳ ଅକ୍ଷର *status_message)
 {
 	size_t len = strlen(status_message);
 
-	if (len >= sizeof(c->sub_status)) {
-		len = sizeof(c->sub_status) - 1;
+	ଯଦି (len >= ଆକାର(c->sub_status)) {
+		len = ଆକାର(c->sub_status) - 1;
 	}
 	memcpy(c->sub_status, status_message, len);
 	c->sub_status[len] = '\0';
@@ -282,21 +282,21 @@ void content_set_status(struct content *c, const char *status_message)
 
 
 /* exported interface documented in content/protected.h */
-void content_set_ready(struct content *c)
+ଶୂନ୍ୟ content_set_ready(ସଂରଚନା content *c)
 {
 	/* The content must be locked at this point, as it can only
 	 * become READY after conversion. */
-	assert(c->locked);
+	ପ୍ରତିଜ୍ଞା(c->locked);
 	c->locked = false;
 
 	c->status = CONTENT_STATUS_READY;
 	content_update_status(c);
-	content_broadcast(c, CONTENT_MSG_READY, NULL);
+	content_broadcast(c, CONTENT_ସନ୍ଦେଶ_READY, ଖାଲି);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_done(struct content *c)
+ଶୂନ୍ୟ content_set_done(ସଂରଚନା content *c)
 {
 	uint64_t now_ms;
 
@@ -305,12 +305,12 @@ void content_set_done(struct content *c)
 	c->status = CONTENT_STATUS_DONE;
 	c->time = now_ms - c->time;
 	content_update_status(c);
-	content_broadcast(c, CONTENT_MSG_DONE, NULL);
+	content_broadcast(c, CONTENT_ସନ୍ଦେଶ_DONE, ଖାଲି);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_error(struct content *c)
+ଶୂନ୍ୟ content_set_error(ସଂରଚନା content *c)
 {
 	c->locked = false;
 	c->status = CONTENT_STATUS_ERROR;
@@ -318,8 +318,8 @@ void content_set_error(struct content *c)
 
 
 /* exported interface documented in content/content.h */
-void content_reformat(hlcache_handle *h, bool background,
-		      int width, int height)
+ଶୂନ୍ୟ content_reformat(hlcache_handle *h, bool background,
+		      ପୂର୍ଣ୍ଣସଂଖ୍ୟା width, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height)
 {
 	content__reformat(hlcache_handle_get_content(h), background,
 			  width, height);
@@ -327,128 +327,128 @@ void content_reformat(hlcache_handle *h, bool background,
 
 
 /* exported interface documented in content/protected.h */
-void
-content__reformat(struct content *c, bool background, int width, int height)
+ଶୂନ୍ୟ
+content__reformat(ସଂରଚନା content *c, bool background, ପୂର୍ଣ୍ଣସଂଖ୍ୟା width, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height)
 {
-	union content_msg_data data;
-	assert(c != 0);
-	assert(c->status == CONTENT_STATUS_READY ||
+	ସଂଘ content_ସନ୍ଦେଶ_data data;
+	ପ୍ରତିଜ୍ଞା(c != 0);
+	ପ୍ରତିଜ୍ଞା(c->status == CONTENT_STATUS_READY ||
 	       c->status == CONTENT_STATUS_DONE);
-	assert(c->locked == false);
+	ପ୍ରତିଜ୍ଞା(c->locked == false);
 
 	c->available_width = width;
 	c->available_height = height;
-	if (c->handler->reformat != NULL) {
+	ଯଦି (c->handler->reformat != ଖାଲି) {
 
 		c->locked = true;
 		c->handler->reformat(c, width, height);
 		c->locked = false;
 
 		data.background = background;
-		content_broadcast(c, CONTENT_MSG_REFORMAT, &data);
+		content_broadcast(c, CONTENT_ସନ୍ଦେଶ_REFORMAT, &data);
 	}
 }
 
 
 /* exported interface documented in content/content.h */
-void content_destroy(struct content *c)
+ଶୂନ୍ୟ content_destroy(ସଂରଚନା content *c)
 {
-	struct content_rfc5988_link *link;
+	ସଂରଚନା content_rfc5988_link *link;
 
-	assert(c);
+	ପ୍ରତିଜ୍ଞା(c);
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
-	assert(c->locked == false);
+	ପ୍ରତିଜ୍ଞା(c->locked == false);
 
-	if (c->handler->destroy != NULL)
+	ଯଦି (c->handler->destroy != ଖାଲି)
 		c->handler->destroy(c);
 
 	llcache_handle_release(c->llcache);
-	c->llcache = NULL;
+	c->llcache = ଖାଲି;
 
 	lwc_string_unref(c->mime_type);
 
 	/* release metadata links */
 	link = c->links;
-	while (link != NULL) {
+	ଯେତେବେଳେ (link != ଖାଲି) {
 		link = content__free_rfc5988_link(link);
 	}
 
 	/* free the user list */
-	if (c->user_list != NULL) {
-		free(c->user_list);
+	ଯଦି (c->user_list != ଖାଲି) {
+		ମୁକ୍ତ(c->user_list);
 	}
 
 	/* free the title */
-	if (c->title != NULL) {
-		free(c->title);
+	ଯଦି (c->title != ଖାଲି) {
+		ମୁକ୍ତ(c->title);
 	}
 
 	/* free the fallback characterset */
-	if (c->fallback_charset != NULL) {
-		free(c->fallback_charset);
+	ଯଦି (c->fallback_charset != ଖାଲି) {
+		ମୁକ୍ତ(c->fallback_charset);
 	}
 
-	free(c);
+	ମୁକ୍ତ(c);
 }
 
 
 /* exported interface documented in content/content.h */
-void
+ଶୂନ୍ୟ
 content_mouse_track(hlcache_handle *h,
-		    struct browser_window *bw,
+		    ସଂରଚନା browser_window *bw,
 		    browser_mouse_state mouse,
-		    int x, int y)
+		    ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != ଖାଲି);
 
-	if (c->handler->mouse_track != NULL) {
+	ଯଦି (c->handler->mouse_track != ଖାଲି) {
 		c->handler->mouse_track(c, bw, mouse, x, y);
-	} else {
-		union content_msg_data msg_data;
-		msg_data.pointer = BROWSER_POINTER_AUTO;
-		content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	} ଅନ୍ୟଥା {
+		ସଂଘ content_ସନ୍ଦେଶ_data ସନ୍ଦେଶ_data;
+		ସନ୍ଦେଶ_data.pointer = BROWSER_POINTER_AUTO;
+		content_broadcast(c, CONTENT_ସନ୍ଦେଶ_POINTER, &ସନ୍ଦେଶ_data);
 	}
 
 
-	return;
+	ଫେରନ୍ତୁ;
 }
 
 
 /* exported interface documented in content/content.h */
-void
+ଶୂନ୍ୟ
 content_mouse_action(hlcache_handle *h,
-		     struct browser_window *bw,
+		     ସଂରଚନା browser_window *bw,
 		     browser_mouse_state mouse,
-		     int x, int y)
+		     ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != ଖାଲି);
 
-	if (c->handler->mouse_action != NULL)
+	ଯଦି (c->handler->mouse_action != ଖାଲି)
 		c->handler->mouse_action(c, bw, mouse, x, y);
 
-	return;
+	ଫେରନ୍ତୁ;
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_keypress(struct hlcache_handle *h, uint32_t key)
+bool content_keypress(ସଂରଚନା hlcache_handle *h, uint32_t ଚାବି)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != ଖାଲି);
 
-	if (c->handler->keypress != NULL)
-		return c->handler->keypress(c, key);
+	ଯଦି (c->handler->keypress != ଖାଲି)
+		ଫେରନ୍ତୁ c->handler->keypress(c, ଚାବି);
 
-	return false;
+	ଫେରନ୍ତୁ false;
 }
 
 
 /* exported interface documented in content/content.h */
-void content_request_redraw(struct hlcache_handle *h,
-			    int x, int y, int width, int height)
+ଶୂନ୍ୟ content_request_redraw(ସଂରଚନା hlcache_handle *h,
+			    ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y, ପୂର୍ଣ୍ଣସଂଖ୍ୟା width, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height)
 {
 	content__request_redraw(hlcache_handle_get_content(h),
 				x, y, width, height);
@@ -456,56 +456,56 @@ void content_request_redraw(struct hlcache_handle *h,
 
 
 /* exported interface, documented in content/protected.h */
-void content__request_redraw(struct content *c,
-			     int x, int y, int width, int height)
+ଶୂନ୍ୟ content__request_redraw(ସଂରଚନା content *c,
+			     ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y, ପୂର୍ଣ୍ଣସଂଖ୍ୟା width, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height)
 {
-	union content_msg_data data;
+	ସଂଘ content_ସନ୍ଦେଶ_data data;
 
-	if (c == NULL)
-		return;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ;
 
 	data.redraw.x = x;
 	data.redraw.y = y;
 	data.redraw.width = width;
 	data.redraw.height = height;
 
-	content_broadcast(c, CONTENT_MSG_REDRAW, &data);
+	content_broadcast(c, CONTENT_ସନ୍ଦେଶ_REDRAW, &data);
 }
 
 
 /* exported interface, documented in content/content.h */
-bool content_exec(struct hlcache_handle *h, const char *src, size_t srclen)
+bool content_exec(ସଂରଚନା hlcache_handle *h, ଅଚଳ ଅକ୍ଷର *src, size_t srclen)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ପ୍ରତିଜ୍ଞା(c != ଖାଲି);
 
-	if (c->locked) {
+	ଯଦି (c->locked) {
 		/* Not safe to do stuff */
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, content locked");
-		return false;
+		ଫେରନ୍ତୁ false;
 	}
 
-	if (c->handler->exec == NULL) {
+	ଯଦି (c->handler->exec == ଖାଲି) {
 		/* Can't exec something on this content */
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no exec function");
-		return false;
+		ଫେରନ୍ତୁ false;
 	}
 
-	return c->handler->exec(c, src, srclen);
+	ଫେରନ୍ତୁ c->handler->exec(c, src, srclen);
 }
 
 
 /* exported interface, documented in content/content.h */
-bool content_saw_insecure_objects(struct hlcache_handle *h)
+bool content_saw_insecure_objects(ସଂରଚନା hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct nsurl *url = hlcache_handle_get_url(h);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା nsurl *url = hlcache_handle_get_url(h);
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
 	bool match;
 
 	/* Is this an internal scheme? If so, we trust here and stop */
-	if ((lwc_string_isequal(scheme, corestring_lwc_about,
+	ଯଦି ((lwc_string_isequal(scheme, corestring_lwc_about,
 				&match) == lwc_error_ok &&
 	     (match == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_data,
@@ -524,87 +524,87 @@ bool content_saw_insecure_objects(struct hlcache_handle *h)
 	     (match == true))) {
 		/* No insecurity to find */
 		lwc_string_unref(scheme);
-		return false;
+		ଫେରନ୍ତୁ false;
 	}
 
 	/* Okay, not internal, am *I* secure? */
-	if ((lwc_string_isequal(scheme, corestring_lwc_https,
+	ଯଦି ((lwc_string_isequal(scheme, corestring_lwc_https,
 				&match) == lwc_error_ok)
 	    && (match == false)) {
 		/* I did see something insecure -- ME! */
 		lwc_string_unref(scheme);
-		return true;
+		ଫେରନ୍ତୁ true;
 	}
 
 	lwc_string_unref(scheme);
 	/* I am supposed to be secure, but was I overridden */
-	if (urldb_get_cert_permissions(url)) {
+	ଯଦି (urldb_get_cert_permissions(url)) {
 		/* I was https:// but I was overridden, that's no good */
-		return true;
+		ଫେରନ୍ତୁ true;
 	}
 
 	/* Otherwise try and chain through the handler */
-	if (c != NULL && c->handler->saw_insecure_objects != NULL) {
-		return c->handler->saw_insecure_objects(c);
+	ଯଦି (c != ଖାଲି && c->handler->saw_insecure_objects != ଖାଲି) {
+		ଫେରନ୍ତୁ c->handler->saw_insecure_objects(c);
 	}
 
 	/* If we can't see insecure objects, we can't see them */
-	return false;
+	ଫେରନ୍ତୁ false;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
 content_redraw(hlcache_handle *h,
-	       struct content_redraw_data *data,
-	       const struct rect *clip,
-	       const struct redraw_context *ctx)
+	       ସଂରଚନା content_redraw_data *data,
+	       ଅଚଳ ସଂରଚନା rect *clip,
+	       ଅଚଳ ସଂରଚନା redraw_context *ctx)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ପ୍ରତିଜ୍ଞା(c != ଖାଲି);
 
-	if (c->locked) {
+	ଯଦି (c->locked) {
 		/* not safe to attempt redraw */
-		return true;
+		ଫେରନ୍ତୁ true;
 	}
 
 	/* ensure we have a redrawable content */
-	if (c->handler->redraw == NULL) {
-		return true;
+	ଯଦି (c->handler->redraw == ଖାଲି) {
+		ଫେରନ୍ତୁ true;
 	}
 
-	return c->handler->redraw(c, data, clip, ctx);
+	ଫେରନ୍ତୁ c->handler->redraw(c, data, clip, ctx);
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_scaled_redraw(struct hlcache_handle *h,
-		      int width, int height,
-		      const struct redraw_context *ctx)
+content_scaled_redraw(ସଂରଚନା hlcache_handle *h,
+		      ପୂର୍ଣ୍ଣସଂଖ୍ୟା width, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height,
+		      ଅଚଳ ସଂରଚନା redraw_context *ctx)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct redraw_context new_ctx = *ctx;
-	struct rect clip;
-	struct content_redraw_data data;
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା redraw_context new_ctx = *ctx;
+	ସଂରଚନା rect clip;
+	ସଂରଚନା content_redraw_data data;
 	bool plot_ok = true;
 
-	assert(c != NULL);
+	ପ୍ରତିଜ୍ଞା(c != ଖାଲି);
 
 	/* ensure it is safe to attempt redraw */
-	if (c->locked) {
-		return true;
+	ଯଦି (c->locked) {
+		ଫେରନ୍ତୁ true;
 	}
 
 	/* ensure we have a redrawable content */
-	if (c->handler->redraw == NULL) {
-		return true;
+	ଯଦି (c->handler->redraw == ଖାଲି) {
+		ଫେରନ୍ତୁ true;
 	}
 
 	NSLOG(netsurf, INFO, "Content %p %dx%d ctx:%p", c, width, height, ctx);
 
-	if (ctx->plot->option_knockout) {
+	ଯଦି (ctx->plot->option_knockout) {
 		knockout_plot_start(ctx, &new_ctx);
 	}
 
@@ -632,154 +632,154 @@ content_scaled_redraw(struct hlcache_handle *h,
 	data.repeat_y = false;
 
 	/* Find the scale factor to use if the content has a width */
-	if (c->width) {
-		data.scale = (float)width / (float)c->width;
-	} else {
+	ଯଦି (c->width) {
+		data.scale = (ଦଶମିକ)width / (ଦଶମିକ)c->width;
+	} ଅନ୍ୟଥା {
 		data.scale = 1.0;
 	}
 
 	/* Render the content */
 	plot_ok &= c->handler->redraw(c, &data, &clip, &new_ctx);
 
-	if (ctx->plot->option_knockout) {
+	ଯଦି (ctx->plot->option_knockout) {
 		knockout_plot_end(ctx);
 	}
 
-	return plot_ok;
+	ଫେରନ୍ତୁ plot_ok;
 }
 
 
 /* exported interface documented in content/content.h */
 bool
-content_add_user(struct content *c,
-		 void (*callback)(
-				  struct content *c,
-				  content_msg msg,
-				  const union content_msg_data *data,
-				  void *pw),
-		 void *pw)
+content_add_user(ସଂରଚନା content *c,
+		 ଶୂନ୍ୟ (*callback)(
+				  ସଂରଚନା content *c,
+				  content_ସନ୍ଦେଶ ସନ୍ଦେଶ,
+				  ଅଚଳ ସଂଘ content_ସନ୍ଦେଶ_data *data,
+				  ଶୂନ୍ୟ *pw),
+		 ଶୂନ୍ୟ *pw)
 {
-	struct content_user *user;
+	ସଂରଚନା content_user *user;
 
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p), user %p %p",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)),
 	      c, callback, pw);
-	user = malloc(sizeof(struct content_user));
-	if (!user)
-		return false;
+	user = malloc(ଆକାର(ସଂରଚନା content_user));
+	ଯଦି (!user)
+		ଫେରନ୍ତୁ false;
 	user->callback = callback;
 	user->pw = pw;
 	user->next = c->user_list->next;
 	c->user_list->next = user;
 
-	if (c->handler->add_user != NULL)
+	ଯଦି (c->handler->add_user != ଖାଲି)
 		c->handler->add_user(c);
 
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
 
 /* exported interface documented in content/content.h */
-void
-content_remove_user(struct content *c,
-		    void (*callback)(
-				     struct content *c,
-				     content_msg msg,
-				     const union content_msg_data *data,
-				     void *pw),
-		    void *pw)
+ଶୂନ୍ୟ
+content_remove_user(ସଂରଚନା content *c,
+		    ଶୂନ୍ୟ (*callback)(
+				     ସଂରଚନା content *c,
+				     content_ସନ୍ଦେଶ ସନ୍ଦେଶ,
+				     ଅଚଳ ସଂଘ content_ସନ୍ଦେଶ_data *data,
+				     ଶୂନ୍ୟ *pw),
+		    ଶୂନ୍ୟ *pw)
 {
-	struct content_user *user, *next;
+	ସଂରଚନା content_user *user, *next;
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p), user %p %p",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)),
 	      c, callback, pw);
 
 	/* user_list starts with a sentinel */
-	for (user = c->user_list; user->next != 0 &&
+	ପାଇଁ (user = c->user_list; user->next != 0 &&
 		     !(user->next->callback == callback &&
 		       user->next->pw == pw); user = user->next)
 		;
-	if (user->next == 0) {
+	ଯଦି (user->next == 0) {
 		NSLOG(netsurf, INFO, "user not found in list");
-		assert(0);
-		return;
+		ପ୍ରତିଜ୍ଞା(0);
+		ଫେରନ୍ତୁ;
 	}
 
-	if (c->handler->remove_user != NULL)
+	ଯଦି (c->handler->remove_user != ଖାଲି)
 		c->handler->remove_user(c);
 
 	next = user->next;
 	user->next = next->next;
-	free(next);
+	ମୁକ୍ତ(next);
 }
 
 
 /* exported interface documented in content/content.h */
-uint32_t content_count_users(struct content *c)
+uint32_t content_ଗଣନା_users(ସଂରଚନା content *c)
 {
-	struct content_user *user;
+	ସଂରଚନା content_user *user;
 	uint32_t counter = 0;
 
-	assert(c != NULL);
+	ପ୍ରତିଜ୍ଞା(c != ଖାଲି);
 
-	for (user = c->user_list; user != NULL; user = user->next)
+	ପାଇଁ (user = c->user_list; user != ଖାଲି; user = user->next)
 		counter += 1;
 
-	assert(counter > 0);
+	ପ୍ରତିଜ୍ଞା(counter > 0);
 
-	return counter - 1; /* Subtract 1 for the sentinel */
+	ଫେରନ୍ତୁ counter - 1; /* Subtract 1 for the sentinel */
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_matches_quirks(struct content *c, bool quirks)
+bool content_matches_quirks(ସଂରଚନା content *c, bool quirks)
 {
-	if (c->handler->matches_quirks == NULL)
-		return true;
+	ଯଦି (c->handler->matches_quirks == ଖାଲି)
+		ଫେରନ୍ତୁ true;
 
-	return c->handler->matches_quirks(c, quirks);
+	ଫେରନ୍ତୁ c->handler->matches_quirks(c, quirks);
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_is_shareable(struct content *c)
+bool content_is_shareable(ସଂରଚନା content *c)
 {
-	return c->handler->no_share == false;
+	ଫେରନ୍ତୁ c->handler->no_share == false;
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_broadcast(struct content *c, content_msg msg,
-		       const union content_msg_data *data)
+ଶୂନ୍ୟ content_broadcast(ସଂରଚନା content *c, content_ସନ୍ଦେଶ ସନ୍ଦେଶ,
+		       ଅଚଳ ସଂଘ content_ସନ୍ଦେଶ_data *data)
 {
-	struct content_user *user, *next;
-	assert(c);
+	ସଂରଚନା content_user *user, *next;
+	ପ୍ରତିଜ୍ଞା(c);
 
-	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, msg);
-	for (user = c->user_list->next; user != 0; user = next) {
+	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, ସନ୍ଦେଶ);
+	ପାଇଁ (user = c->user_list->next; user != 0; user = next) {
 		next = user->next;  /* user may be destroyed during callback */
-		if (user->callback != 0)
-			user->callback(c, msg, data, user->pw);
+		ଯଦି (user->callback != 0)
+			user->callback(c, ସନ୍ଦେଶ, data, user->pw);
 	}
 }
 
 
 /* exported interface documented in content_protected.h */
-void
-content_broadcast_error(struct content *c, nserror errorcode, const char *msg)
+ଶୂନ୍ୟ
+content_broadcast_error(ସଂରଚନା content *c, nserror errorcode, ଅଚଳ ଅକ୍ଷର *ସନ୍ଦେଶ)
 {
-	struct content_user *user, *next;
-	union content_msg_data data;
+	ସଂରଚନା content_user *user, *next;
+	ସଂଘ content_ସନ୍ଦେଶ_data data;
 
-	assert(c);
+	ପ୍ରତିଜ୍ଞା(c);
 
 	data.errordata.errorcode = errorcode;
-	data.errordata.errormsg = msg;
+	data.errordata.errormsg = ସନ୍ଦେଶ;
 
-	for (user = c->user_list->next; user != 0; user = next) {
+	ପାଇଁ (user = c->user_list->next; user != 0; user = next) {
 		next = user->next;  /* user may be destroyed during callback */
-		if (user->callback != 0) {
-			user->callback(c, CONTENT_MSG_ERROR,
+		ଯଦି (user->callback != 0) {
+			user->callback(c, CONTENT_ସନ୍ଦେଶ_ERROR,
 				       &data, user->pw);
 		}
 	}
@@ -789,190 +789,190 @@ content_broadcast_error(struct content *c, nserror errorcode, const char *msg)
 /* exported interface, documented in content/content.h */
 nserror
 content_open(hlcache_handle *h,
-	     struct browser_window *bw,
-	     struct content *page,
-	     struct object_params *params)
+	     ସଂରଚନା browser_window *bw,
+	     ସଂରଚନା content *page,
+	     ସଂରଚନା object_params *params)
 {
-	struct content *c;
+	ସଂରଚନା content *c;
 	nserror res;
 
 	c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ପ୍ରତିଜ୍ଞା(c != 0);
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
-	if (c->handler->open != NULL) {
+	ଯଦି (c->handler->open != ଖାଲି) {
 		res = c->handler->open(c, bw, page, params);
-	} else {
+	} ଅନ୍ୟଥା {
 		res = NSERROR_OK;
 	}
-	return res;
+	ଫେରନ୍ତୁ res;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror content_close(hlcache_handle *h)
 {
-	struct content *c;
+	ସଂରଚନା content *c;
 	nserror res;
 
 	c = hlcache_handle_get_content(h);
-	if (c == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	ଯଦି (c == ଖାଲି) {
+		ଫେରନ୍ତୁ NSERROR_BAD_PARAMETER;
 	}
 
-	if ((c->status != CONTENT_STATUS_READY) &&
+	ଯଦି ((c->status != CONTENT_STATUS_READY) &&
 	    (c->status != CONTENT_STATUS_DONE)) {
 		/* status is not read or done so nothing to do */
-		return NSERROR_INVALID;
+		ଫେରନ୍ତୁ NSERROR_INVALID;
 	}
 
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
 
-	if (c->textsearch.context != NULL) {
+	ଯଦି (c->textsearch.context != ଖାଲି) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = ଖାଲି;
 	}
 
-	if (c->handler->close != NULL) {
+	ଯଦି (c->handler->close != ଖାଲି) {
 		res = c->handler->close(c);
-	} else {
+	} ଅନ୍ୟଥା {
 		res = NSERROR_OK;
 	}
-	return res;
+	ଫେରନ୍ତୁ res;
 }
 
 
 /* exported interface, documented in content/content.h */
-void content_clear_selection(hlcache_handle *h)
+ଶୂନ୍ୟ content_clear_selection(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != 0);
 
-	if (c->handler->get_selection != NULL)
+	ଯଦି (c->handler->get_selection != ଖାଲି)
 		c->handler->clear_selection(c);
 }
 
 
 /* exported interface, documented in content/content.h */
-char * content_get_selection(hlcache_handle *h)
+ଅକ୍ଷର * content_get_selection(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != 0);
 
-	if (c->handler->get_selection != NULL)
-		return c->handler->get_selection(c);
-	else
-		return NULL;
+	ଯଦି (c->handler->get_selection != ଖାଲି)
+		ଫେରନ୍ତୁ c->handler->get_selection(c);
+	ଅନ୍ୟଥା
+		ଫେରନ୍ତୁ ଖାଲି;
 }
 
 
 /* exported interface documented in content/content.h */
 nserror
-content_get_contextual_content(struct hlcache_handle *h,
-			       int x, int y,
-			       struct browser_window_features *data)
+content_get_contextual_content(ସଂରଚନା hlcache_handle *h,
+			       ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y,
+			       ସଂରଚନା browser_window_features *data)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != 0);
 
-	if (c->handler->get_contextual_content != NULL) {
-		return c->handler->get_contextual_content(c, x, y, data);
+	ଯଦି (c->handler->get_contextual_content != ଖାଲି) {
+		ଫେରନ୍ତୁ c->handler->get_contextual_content(c, x, y, data);
 	}
 
 	data->object = h;
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_scroll_at_point(struct hlcache_handle *h,
-			int x, int y,
-			int scrx, int scry)
+content_scroll_at_point(ସଂରଚନା hlcache_handle *h,
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y,
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା scrx, ପୂର୍ଣ୍ଣସଂଖ୍ୟା scry)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != 0);
 
-	if (c->handler->scroll_at_point != NULL)
-		return c->handler->scroll_at_point(c, x, y, scrx, scry);
+	ଯଦି (c->handler->scroll_at_point != ଖାଲି)
+		ଫେରନ୍ତୁ c->handler->scroll_at_point(c, x, y, scrx, scry);
 
-	return false;
+	ଫେରନ୍ତୁ false;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_drop_file_at_point(struct hlcache_handle *h,
-			   int x, int y,
-			   char *file)
+content_drop_file_at_point(ସଂରଚନା hlcache_handle *h,
+			   ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y,
+			   ଅକ୍ଷର *file)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != 0);
 
-	if (c->handler->drop_file_at_point != NULL)
-		return c->handler->drop_file_at_point(c, x, y, file);
+	ଯଦି (c->handler->drop_file_at_point != ଖାଲି)
+		ଫେରନ୍ତୁ c->handler->drop_file_at_point(c, x, y, file);
 
-	return false;
+	ଫେରନ୍ତୁ false;
 }
 
 
 /* exported interface documented in content/content.h */
 nserror
-content_debug_dump(struct hlcache_handle *h, FILE *f, enum content_debug op)
+content_debug_dump(ସଂରଚନା hlcache_handle *h, FILE *f, ଗଣନା content_debug op)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ପ୍ରତିଜ୍ଞା(c != 0);
 
-	if (c->handler->debug_dump == NULL) {
-		return NSERROR_NOT_IMPLEMENTED;
+	ଯଦି (c->handler->debug_dump == ଖାଲି) {
+		ଫେରନ୍ତୁ NSERROR_NOT_IMPLEMENTED;
 	}
 
-	return c->handler->debug_dump(c, f, op);
+	ଫେରନ୍ତୁ c->handler->debug_dump(c, f, op);
 }
 
 
 /* exported interface documented in content/content.h */
-nserror content_debug(struct hlcache_handle *h, enum content_debug op)
+nserror content_debug(ସଂରଚନା hlcache_handle *h, ଗଣନା content_debug op)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	ଯଦି (c == ଖାଲି) {
+		ଫେରନ୍ତୁ NSERROR_BAD_PARAMETER;
 	}
 
-	if (c->handler->debug == NULL) {
-		return NSERROR_NOT_IMPLEMENTED;
+	ଯଦି (c->handler->debug == ଖାଲି) {
+		ଫେରନ୍ତୁ NSERROR_NOT_IMPLEMENTED;
 	}
 
-	return c->handler->debug(c, op);
+	ଫେରନ୍ତୁ c->handler->debug(c, op);
 }
 
 
 /* exported interface documented in content/content.h */
-struct content_rfc5988_link *
+ସଂରଚନା content_rfc5988_link *
 content_find_rfc5988_link(hlcache_handle *h, lwc_string *rel)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct content_rfc5988_link *link = c->links;
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା content_rfc5988_link *link = c->links;
 	bool rel_match = false;
 
-	while (link != NULL) {
-		if (lwc_string_caseless_isequal(link->rel, rel,
+	ଯେତେବେଳେ (link != ଖାଲି) {
+		ଯଦି (lwc_string_caseless_isequal(link->rel, rel,
 						&rel_match) == lwc_error_ok && rel_match) {
-			break;
+			ଭାଙ୍ଗ;
 		}
 		link = link->next;
 	}
-	return link;
+	ଫେରନ୍ତୁ link;
 }
 
 
 /* exported interface documented in content/protected.h */
-struct content_rfc5988_link *
-content__free_rfc5988_link(struct content_rfc5988_link *link)
+ସଂରଚନା content_rfc5988_link *
+content__free_rfc5988_link(ସଂରଚନା content_rfc5988_link *link)
 {
-	struct content_rfc5988_link *next;
+	ସଂରଚନା content_rfc5988_link *next;
 
 	next = link->next;
 
@@ -982,48 +982,48 @@ content__free_rfc5988_link(struct content_rfc5988_link *link)
 	lwc_string_unref(link->type);
 	lwc_string_unref(link->media);
 	lwc_string_unref(link->sizes);
-	free(link);
+	ମୁକ୍ତ(link);
 
-	return next;
+	ଫେରନ୍ତୁ next;
 }
 
 
 /* exported interface documented in content/protected.h */
 bool
-content__add_rfc5988_link(struct content *c,
-			  const struct content_rfc5988_link *link)
+content__add_rfc5988_link(ସଂରଚନା content *c,
+			  ଅଚଳ ସଂରଚନା content_rfc5988_link *link)
 {
-	struct content_rfc5988_link *newlink;
-	union content_msg_data msg_data;
+	ସଂରଚନା content_rfc5988_link *newlink;
+	ସଂଘ content_ସନ୍ଦେଶ_data ସନ୍ଦେଶ_data;
 
 	/* a link relation must be present for it to be a link */
-	if (link->rel == NULL) {
-		return false;
+	ଯଦି (link->rel == ଖାଲି) {
+		ଫେରନ୍ତୁ false;
 	}
 
 	/* a link href must be present for it to be a link */
-	if (link->href == NULL) {
-		return false;
+	ଯଦି (link->href == ଖାଲି) {
+		ଫେରନ୍ତୁ false;
 	}
 
-	newlink = calloc(1, sizeof(struct content_rfc5988_link));
-	if (newlink == NULL) {
-		return false;
+	newlink = calloc(1, ଆକାର(ସଂରଚନା content_rfc5988_link));
+	ଯଦି (newlink == ଖାଲି) {
+		ଫେରନ୍ତୁ false;
 	}
 
 	/* copy values */
 	newlink->rel = lwc_string_ref(link->rel);
 	newlink->href = nsurl_ref(link->href);
-	if (link->hreflang != NULL) {
+	ଯଦି (link->hreflang != ଖାଲି) {
 		newlink->hreflang = lwc_string_ref(link->hreflang);
 	}
-	if (link->type != NULL) {
+	ଯଦି (link->type != ଖାଲି) {
 		newlink->type = lwc_string_ref(link->type);
 	}
-	if (link->media != NULL) {
+	ଯଦି (link->media != ଖାଲି) {
 		newlink->media = lwc_string_ref(link->media);
 	}
-	if (link->sizes != NULL) {
+	ଯଦି (link->sizes != ଖାଲି) {
 		newlink->sizes = lwc_string_ref(link->sizes);
 	}
 
@@ -1032,82 +1032,82 @@ content__add_rfc5988_link(struct content *c,
 	c->links = newlink;
 
 	/* broadcast the data */
-	msg_data.rfc5988_link = newlink;
-	content_broadcast(c, CONTENT_MSG_LINK, &msg_data);
+	ସନ୍ଦେଶ_data.rfc5988_link = newlink;
+	content_broadcast(c, CONTENT_ସନ୍ଦେଶ_LINK, &ସନ୍ଦେଶ_data);
 
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
 
 /* exported interface documented in content/content.h */
-nsurl *content_get_url(struct content *c)
+nsurl *content_get_url(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	return llcache_handle_get_url(c->llcache);
+	ଫେରନ୍ତୁ llcache_handle_get_url(c->llcache);
 }
 
 
 /* exported interface documented in content/content.h */
 content_type content_get_type(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return CONTENT_NONE;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ CONTENT_NONE;
 
-	return c->handler->type();
+	ଫେରନ୍ତୁ c->handler->type();
 }
 
 
 /* exported interface documented in content/content.h */
 lwc_string *content_get_mime_type(hlcache_handle *h)
 {
-	return content__get_mime_type(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_mime_type(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-lwc_string *content__get_mime_type(struct content *c)
+lwc_string *content__get_mime_type(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	return lwc_string_ref(c->mime_type);
+	ଫେରନ୍ତୁ lwc_string_ref(c->mime_type);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__set_title(struct content *c, const char *title)
+bool content__set_title(ସଂରଚନା content *c, ଅଚଳ ଅକ୍ଷର *title)
 {
-	char *new_title = strdup(title);
-	if (new_title == NULL)
-		return false;
+	ଅକ୍ଷର *new_title = strdup(title);
+	ଯଦି (new_title == ଖାଲି)
+		ଫେରନ୍ତୁ false;
 
-	if (c->title != NULL)
-		free(c->title);
+	ଯଦି (c->title != ଖାଲି)
+		ମୁକ୍ତ(c->title);
 
 	c->title = new_title;
 
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *content_get_title(hlcache_handle *h)
+ଅଚଳ ଅକ୍ଷର *content_get_title(hlcache_handle *h)
 {
-	return content__get_title(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_title(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *content__get_title(struct content *c)
+ଅଚଳ ଅକ୍ଷର *content__get_title(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	return c->title != NULL ? c->title :
+	ଫେରନ୍ତୁ c->title != ଖାଲି ? c->title :
 		nsurl_access(llcache_handle_get_url(c->llcache));
 }
 
@@ -1115,120 +1115,120 @@ const char *content__get_title(struct content *c)
 /* exported interface documented in content/content.h */
 content_status content_get_status(hlcache_handle *h)
 {
-	return content__get_status(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_status(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-content_status content__get_status(struct content *c)
+content_status content__get_status(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return CONTENT_STATUS_ERROR;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ CONTENT_STATUS_ERROR;
 
-	return c->status;
+	ଫେରନ୍ତୁ c->status;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *content_get_status_message(hlcache_handle *h)
+ଅଚଳ ଅକ୍ଷର *content_get_status_message(hlcache_handle *h)
 {
-	return content__get_status_message(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_status_message(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *content__get_status_message(struct content *c)
+ଅଚଳ ଅକ୍ଷର *content__get_status_message(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	return c->status_message;
+	ଫେରନ୍ତୁ c->status_message;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_width(hlcache_handle *h)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content_get_width(hlcache_handle *h)
 {
-	return content__get_width(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_width(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_width(struct content *c)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content__get_width(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return 0;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ 0;
 
-	return c->width;
+	ଫେରନ୍ତୁ c->width;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_height(hlcache_handle *h)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content_get_height(hlcache_handle *h)
 {
-	return content__get_height(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_height(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_height(struct content *c)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content__get_height(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return 0;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ 0;
 
-	return c->height;
+	ଫେରନ୍ତୁ c->height;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_available_width(hlcache_handle *h)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content_get_available_width(hlcache_handle *h)
 {
-	return content__get_available_width(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_available_width(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_available_width(struct content *c)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content__get_available_width(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return 0;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ 0;
 
-	return c->available_width;
+	ଫେରନ୍ତୁ c->available_width;
 }
 
 
 /* exported interface documented in content/content.h */
-const uint8_t *content_get_source_data(hlcache_handle *h, size_t *size)
+ଅଚଳ uint8_t *content_get_source_data(hlcache_handle *h, size_t *size)
 {
-	return content__get_source_data(hlcache_handle_get_content(h), size);
+	ଫେରନ୍ତୁ content__get_source_data(hlcache_handle_get_content(h), size);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const uint8_t *content__get_source_data(struct content *c, size_t *size)
+ଅଚଳ uint8_t *content__get_source_data(ସଂରଚନା content *c, size_t *size)
 {
-	assert(size != NULL);
+	ପ୍ରତିଜ୍ଞା(size != ଖାଲି);
 
 	/** \todo check if the content check should be an assert */
-	if (c == NULL)
-		return NULL;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	return llcache_handle_get_source_data(c->llcache, size);
+	ଫେରନ୍ତୁ llcache_handle_get_source_data(c->llcache, size);
 }
 
 
 /* exported interface documented in content/content.h */
-void content_invalidate_reuse_data(hlcache_handle *h)
+ଶୂନ୍ୟ content_invalidate_reuse_data(hlcache_handle *h)
 {
 	content__invalidate_reuse_data(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-void content__invalidate_reuse_data(struct content *c)
+ଶୂନ୍ୟ content__invalidate_reuse_data(ସଂରଚନା content *c)
 {
-	if (c == NULL || c->llcache == NULL)
-		return;
+	ଯଦି (c == ଖାଲି || c->llcache == ଖାଲି)
+		ଫେରନ୍ତୁ;
 
 	/* Invalidate low-level cache data */
 	llcache_handle_invalidate_cache_data(c->llcache);
@@ -1238,146 +1238,146 @@ void content__invalidate_reuse_data(struct content *c)
 /* exported interface documented in content/content.h */
 nsurl *content_get_refresh_url(hlcache_handle *h)
 {
-	return content__get_refresh_url(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_refresh_url(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-nsurl *content__get_refresh_url(struct content *c)
+nsurl *content__get_refresh_url(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	return c->refresh;
+	ଫେରନ୍ତୁ c->refresh;
 }
 
 
 /* exported interface documented in content/content.h */
-struct bitmap *content_get_bitmap(hlcache_handle *h)
+ସଂରଚନା bitmap *content_get_bitmap(hlcache_handle *h)
 {
-	return content__get_bitmap(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_bitmap(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-struct bitmap *content__get_bitmap(struct content *c)
+ସଂରଚନା bitmap *content__get_bitmap(ସଂରଚନା content *c)
 {
-	struct bitmap *bitmap = NULL;
+	ସଂରଚନା bitmap *bitmap = ଖାଲି;
 
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->type != NULL) &&
+	ଯଦି ((c != ଖାଲି) &&
+	    (c->handler != ଖାଲି) &&
+	    (c->handler->type != ଖାଲି) &&
 	    (c->handler->type() == CONTENT_IMAGE) &&
-	    (c->handler->get_internal != NULL) ) {
-		bitmap = c->handler->get_internal(c, NULL);
+	    (c->handler->get_internal != ଖାଲି) ) {
+		bitmap = c->handler->get_internal(c, ଖାଲି);
 	}
 
-	return bitmap;
+	ଫେରନ୍ତୁ bitmap;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_get_opaque(hlcache_handle *h)
 {
-	return content__get_opaque(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__get_opaque(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__get_opaque(struct content *c)
+bool content__get_opaque(ସଂରଚନା content *c)
 {
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->is_opaque != NULL)) {
-		return c->handler->is_opaque(c);
+	ଯଦି ((c != ଖାଲି) &&
+	    (c->handler != ଖାଲି) &&
+	    (c->handler->is_opaque != ଖାଲି)) {
+		ଫେରନ୍ତୁ c->handler->is_opaque(c);
 	}
 
-	return false;
+	ଫେରନ୍ତୁ false;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_get_quirks(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ସଂରଚନା content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return false;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ false;
 
-	return c->quirks;
+	ଫେରନ୍ତୁ c->quirks;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *
-content_get_encoding(hlcache_handle *h, enum content_encoding_type op)
+ଅଚଳ ଅକ୍ଷର *
+content_get_encoding(hlcache_handle *h, ଗଣନା content_encoding_type op)
 {
-	return content__get_encoding(hlcache_handle_get_content(h), op);
+	ଫେରନ୍ତୁ content__get_encoding(hlcache_handle_get_content(h), op);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *
-content__get_encoding(struct content *c, enum content_encoding_type op)
+ଅଚଳ ଅକ୍ଷର *
+content__get_encoding(ସଂରଚନା content *c, ଗଣନା content_encoding_type op)
 {
-	const char *encoding = NULL;
+	ଅଚଳ ଅକ୍ଷର *encoding = ଖାଲି;
 
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->get_encoding != NULL) ) {
+	ଯଦି ((c != ଖାଲି) &&
+	    (c->handler != ଖାଲି) &&
+	    (c->handler->get_encoding != ଖାଲି) ) {
 		encoding = c->handler->get_encoding(c, op);
 	}
 
-	return encoding;
+	ଫେରନ୍ତୁ encoding;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_is_locked(hlcache_handle *h)
 {
-	return content__is_locked(hlcache_handle_get_content(h));
+	ଫେରନ୍ତୁ content__is_locked(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__is_locked(struct content *c)
+bool content__is_locked(ସଂରଚନା content *c)
 {
-	return c->locked;
+	ଫେରନ୍ତୁ c->locked;
 }
 
 
 /* exported interface documented in content/content.h */
-const llcache_handle *content_get_llcache_handle(struct content *c)
+ଅଚଳ llcache_handle *content_get_llcache_handle(ସଂରଚନା content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ଯଦି (c == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	return c->llcache;
+	ଫେରନ୍ତୁ c->llcache;
 }
 
 
 /* exported interface documented in content/protected.h */
-struct content *content_clone(struct content *c)
+ସଂରଚନା content *content_clone(ସଂରଚନା content *c)
 {
-	struct content *nc;
+	ସଂରଚନା content *nc;
 	nserror error;
 
 	error = c->handler->clone(c, &nc);
-	if (error != NSERROR_OK)
-		return NULL;
+	ଯଦି (error != NSERROR_OK)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	return nc;
+	ଫେରନ୍ତୁ nc;
 };
 
 
 /* exported interface documented in content/protected.h */
-nserror content__clone(const struct content *c, struct content *nc)
+nserror content__clone(ଅଚଳ ସଂରଚନା content *c, ସଂରଚନା content *nc)
 {
 	nserror error;
 
 	error = llcache_handle_clone(c->llcache, &(nc->llcache));
-	if (error != NSERROR_OK) {
-		return error;
+	ଯଦି (error != NSERROR_OK) {
+		ଫେରନ୍ତୁ error;
 	}
 
 	llcache_handle_change_callback(nc->llcache,
@@ -1393,17 +1393,17 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nc->available_width = c->available_width;
 	nc->quirks = c->quirks;
 
-	if (c->fallback_charset != NULL) {
+	ଯଦି (c->fallback_charset != ଖାଲି) {
 		nc->fallback_charset = strdup(c->fallback_charset);
-		if (nc->fallback_charset == NULL) {
-			return NSERROR_NOMEM;
+		ଯଦି (nc->fallback_charset == ଖାଲି) {
+			ଫେରନ୍ତୁ NSERROR_NOMEM;
 		}
 	}
 
-	if (c->refresh != NULL) {
+	ଯଦି (c->refresh != ଖାଲି) {
 		nc->refresh = nsurl_ref(c->refresh);
-		if (nc->refresh == NULL) {
-			return NSERROR_NOMEM;
+		ଯଦି (nc->refresh == ଖାଲି) {
+			ଫେରନ୍ତୁ NSERROR_NOMEM;
 		}
 	}
 
@@ -1411,18 +1411,18 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nc->reformat_time = c->reformat_time;
 	nc->size = c->size;
 
-	if (c->title != NULL) {
+	ଯଦି (c->title != ଖାଲି) {
 		nc->title = strdup(c->title);
-		if (nc->title == NULL) {
-			return NSERROR_NOMEM;
+		ଯଦି (nc->title == ଖାଲି) {
+			ଫେରନ୍ତୁ NSERROR_NOMEM;
 		}
 	}
 
 	nc->active = c->active;
 
-	nc->user_list = calloc(1, sizeof(struct content_user));
-	if (nc->user_list == NULL) {
-		return NSERROR_NOMEM;
+	nc->user_list = calloc(1, ଆକାର(ସଂରଚନା content_user));
+	ଯଦି (nc->user_list == ଖାଲି) {
+		ଫେରନ୍ତୁ NSERROR_NOMEM;
 	}
 
 	memcpy(&(nc->status_message), &(c->status_message), 120);
@@ -1432,18 +1432,18 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nc->total_size = c->total_size;
 	nc->http_code = c->http_code;
 
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
 /* exported interface documented in content/content.h */
-nserror content_abort(struct content *c)
+nserror content_abort(ସଂରଚନା content *c)
 {
 	NSLOG(netsurf, INFO, "Aborting %p", c);
 
-	if (c->handler->stop != NULL)
+	ଯଦି (c->handler->stop != ଖାଲି)
 		c->handler->stop(c);
 
 	/* And for now, abort our llcache object */
-	return llcache_handle_abort(c->llcache);
+	ଫେରନ୍ତୁ llcache_handle_abort(c->llcache);
 }

@@ -37,18 +37,18 @@
 #ifndef NETSURF_IMAGE_IMAGE_CACHE_H_
 #define NETSURF_IMAGE_IMAGE_CACHE_H_
 
-#include "utils/errors.h"
-#include "netsurf/content_type.h"
+#ଅନ୍ତର୍ଭାଵ "utils/errors.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/content_type.h"
 
-struct content;
-struct content_redraw_data;
-struct redraw_context;
+ସଂରଚନା content;
+ସଂରଚନା content_redraw_data;
+ସଂରଚନା redraw_context;
 
-typedef struct bitmap * (image_cache_convert_fn) (struct content *content);
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା bitmap * (image_cache_convert_fn) (ସଂରଚନା content *content);
 
-struct image_cache_parameters {
+ସଂରଚନା image_cache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା bg_clean_time;
 
 	/** The target upper bound for the image cache size */
 	size_t limit;
@@ -64,8 +64,8 @@ struct image_cache_parameters {
  *
  * @param image_cache_parameters The control parameters for the image cache
  */
-nserror image_cache_init(const struct image_cache_parameters *image_cache_parameters);
-nserror image_cache_fini(void);
+nserror image_cache_init(ଅଚଳ ସଂରଚନା image_cache_parameters *image_cache_parameters);
+nserror image_cache_fini(ଶୂନ୍ୟ);
 
 /** adds an image content to be cached. 
  * 
@@ -74,18 +74,18 @@ nserror image_cache_fini(void);
  * @param convert A function pointer to convert the content into a bitmap or NULL.
  * @return A netsurf error code.
  */
-nserror image_cache_add(struct content *content, 
-			struct bitmap *bitmap, 
+nserror image_cache_add(ସଂରଚନା content *content, 
+			ସଂରଚନା bitmap *bitmap, 
 			image_cache_convert_fn *convert);
 
-nserror image_cache_remove(struct content *content);
+nserror image_cache_remove(ସଂରଚନା content *content);
 
 
 /** Obtain a bitmap from a content converting from source if neccessary. */
-struct bitmap *image_cache_get_bitmap(const struct content *c);
+ସଂରଚନା bitmap *image_cache_get_bitmap(ଅଚଳ ସଂରଚନା content *c);
 
 /** Obtain a bitmap from a content with no conversion */
-struct bitmap *image_cache_find_bitmap(struct content *c);
+ସଂରଚନା bitmap *image_cache_find_bitmap(ସଂରଚନା content *c);
 
 /** Decide if a content should be speculatively converted.
  *
@@ -97,7 +97,7 @@ struct bitmap *image_cache_find_bitmap(struct content *c);
  * @param c The content to be considered.
  * @return true if a speculative conversion is desired false otherwise.
  */
-bool image_cache_speculate(struct content *c);
+bool image_cache_speculate(ସଂରଚନା content *c);
 
 /**
  * Fill a buffer with information about a cache entry using a format.
@@ -116,8 +116,8 @@ bool image_cache_speculate(struct content *c);
  * \param fmt     The format string.
  * \return The number of bytes written to \a string or -1 on error
  */
-int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
-			 const char *fmt);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା image_cache_snentryf(ଅକ୍ଷର *string, size_t size, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା entryn,
+			 ଅଚଳ ଅକ୍ଷର *fmt);
 
 /**
  * Fill a buffer with information about the image cache using a format.
@@ -167,7 +167,7 @@ int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
  * \return The number of bytes written to \a string or -1 on error
  */
 
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା image_cache_snsummaryf(ଅକ୍ଷର *string, size_t size, ଅଚଳ ଅକ୍ଷର *fmt);
 
 /********* Image content handler generic cache callbacks ************/
 
@@ -178,17 +178,17 @@ int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
  * callback. Performs all neccissary cache lookups and conversions and
  * calls the bitmap plot function in the redraw context.
  */
-bool image_cache_redraw(struct content *c, 
-			struct content_redraw_data *data,
-			const struct rect *clip, 
-			const struct redraw_context *ctx);
+bool image_cache_redraw(ସଂରଚନା content *c, 
+			ସଂରଚନା content_redraw_data *data,
+			ଅଚଳ ସଂରଚନା rect *clip, 
+			ଅଚଳ ସଂରଚନା redraw_context *ctx);
 
-void image_cache_destroy(struct content *c);
+ଶୂନ୍ୟ image_cache_destroy(ସଂରଚନା content *c);
 
-void *image_cache_get_internal(const struct content *c, void *context);
+ଶୂନ୍ୟ *image_cache_get_internal(ଅଚଳ ସଂରଚନା content *c, ଶୂନ୍ୟ *context);
 
-bool image_cache_is_opaque(struct content *c);
+bool image_cache_is_opaque(ସଂରଚନା content *c);
 
-content_type image_cache_content_type(void);
+content_type image_cache_content_type(ଶୂନ୍ୟ);
 
 #endif

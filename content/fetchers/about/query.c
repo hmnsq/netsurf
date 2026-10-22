@@ -21,40 +21,40 @@
  * content generator for the about scheme query privacy page
  */
 
-#include <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/messages.h"
+#ଅନ୍ତର୍ଭାଵ "utils/errors.h"
+#ଅନ୍ତର୍ଭାଵ "utils/nsurl.h"
+#ଅନ୍ତର୍ଭାଵ "utils/messages.h"
 
-#include "query.h"
+#ଅନ୍ତର୍ଭାଵ "query.h"
 
 /* exported interface documented in about/query.h */
 nserror
-get_query_description(struct nsurl *url,
-		      const char *key,
-		      char **out_str)
+get_query_description(ସଂରଚନା nsurl *url,
+		      ଅଚଳ ଅକ୍ଷର *ଚାବି,
+		      ଅକ୍ଷର **out_str)
 {
 	nserror res;
-	char *url_s;
+	ଅକ୍ଷର *url_s;
 	size_t url_l;
-	char *str = NULL;
+	ଅକ୍ଷର *str = ଖାଲି;
 
 	/* get the host in question */
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	ଯଦି (res != NSERROR_OK) {
+		ଫେରନ୍ତୁ res;
 	}
 
 	/* obtain the description with the url substituted */
-	str = messages_get_buff(key, url_s);
-	if (str == NULL) {
+	str = messages_get_buff(ଚାବି, url_s);
+	ଯଦି (str == ଖାଲି) {
 		res = NSERROR_NOMEM;
-	} else {
+	} ଅନ୍ୟଥା {
 		*out_str = str;
 	}
 
-	free(url_s);
+	ମୁକ୍ତ(url_s);
 
-	return res;
+	ଫେରନ୍ତୁ res;
 }

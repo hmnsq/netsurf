@@ -26,18 +26,18 @@
  */
 
 
-#include "utils/errors.h"
-#include "utils/talloc.h"
-#include "utils/nsurl.h"
-#include "netsurf/types.h"
-#include "netsurf/mouse.h"
-#include "desktop/scrollbar.h"
+#ଅନ୍ତର୍ଭାଵ "utils/errors.h"
+#ଅନ୍ତର୍ଭାଵ "utils/talloc.h"
+#ଅନ୍ତର୍ଭାଵ "utils/nsurl.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/types.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/mouse.h"
+#ଅନ୍ତର୍ଭାଵ "desktop/scrollbar.h"
 
-#include "html/private.h"
-#include "html/form_internal.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
+#ଅନ୍ତର୍ଭାଵ "html/private.h"
+#ଅନ୍ତର୍ଭାଵ "html/form_internal.h"
+#ଅନ୍ତର୍ଭାଵ "html/interaction.h"
+#ଅନ୍ତର୍ଭାଵ "html/box.h"
+#ଅନ୍ତର୍ଭାଵ "html/box_manipulate.h"
 
 
 /**
@@ -46,62 +46,62 @@
  * \param b The box being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_talloc_destructor(struct box *b)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା box_talloc_destructor(ସଂରଚନା box *b)
 {
-	struct html_scrollbar_data *data;
+	ସଂରଚନା html_scrollbar_data *data;
 
-	if ((b->flags & STYLE_OWNED) && b->style != NULL) {
+	ଯଦି ((b->flags & STYLE_OWNED) && b->style != ଖାଲି) {
 		css_computed_style_destroy(b->style);
-		b->style = NULL;
+		b->style = ଖାଲି;
 	}
 
-	if (b->styles != NULL) {
+	ଯଦି (b->styles != ଖାଲି) {
 		css_select_results_destroy(b->styles);
-		b->styles = NULL;
+		b->styles = ଖାଲି;
 	}
 
-	if (b->href != NULL)
+	ଯଦି (b->href != ଖାଲି)
 		nsurl_unref(b->href);
 
 	lwc_string_unref(b->id);
 
-	if (b->node != NULL) {
-		dom_node_unref(b->node);
+	ଯଦି (b->ଗଣ୍ଠି != ଖାଲି) {
+		dom_ଗଣ୍ଠି_unref(b->ଗଣ୍ଠି);
 	}
 
-	if (b->scroll_x != NULL) {
+	ଯଦି (b->scroll_x != ଖାଲି) {
 		data = scrollbar_get_data(b->scroll_x);
 		scrollbar_destroy(b->scroll_x);
-		free(data);
+		ମୁକ୍ତ(data);
 	}
 
-	if (b->scroll_y != NULL) {
+	ଯଦି (b->scroll_y != ଖାଲି) {
 		data = scrollbar_get_data(b->scroll_y);
 		scrollbar_destroy(b->scroll_y);
-		free(data);
+		ମୁକ୍ତ(data);
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
+ସଂରଚନା box *
 box_create(css_select_results *styles,
 	   css_computed_style *style,
 	   bool style_owned,
 	   nsurl *href,
-	   const char *target,
-	   const char *title,
+	   ଅଚଳ ଅକ୍ଷର *target,
+	   ଅଚଳ ଅକ୍ଷର *title,
 	   lwc_string *id,
-	   void *context)
+	   ଶୂନ୍ୟ *context)
 {
-	unsigned int i;
-	struct box *box;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
+	ସଂରଚନା box *box;
 
-	box = talloc(context, struct box);
-	if (!box) {
-		return 0;
+	box = talloc(context, ସଂରଚନା box);
+	ଯଦି (!box) {
+		ଫେରନ୍ତୁ 0;
 	}
 
 	talloc_set_destructor(box, box_talloc_destructor);
@@ -116,57 +116,57 @@ box_create(css_select_results *styles,
 	box->height = 0;
 	box->descendant_x0 = box->descendant_y0 = 0;
 	box->descendant_x1 = box->descendant_y1 = 0;
-	for (i = 0; i != 4; i++)
+	ପାଇଁ (i = 0; i != 4; i++)
 		box->margin[i] = box->padding[i] = box->border[i].width = 0;
-	box->scroll_x = box->scroll_y = NULL;
+	box->scroll_x = box->scroll_y = ଖାଲି;
 	box->min_width = 0;
 	box->max_width = UNKNOWN_MAX_WIDTH;
 	box->byte_offset = 0;
-	box->text = NULL;
+	box->text = ଖାଲି;
 	box->length = 0;
 	box->space = 0;
-	box->href = (href == NULL) ? NULL : nsurl_ref(href);
+	box->href = (href == ଖାଲି) ? ଖାଲି : nsurl_ref(href);
 	box->target = target;
 	box->title = title;
 	box->columns = 1;
 	box->rows = 1;
 	box->start_column = 0;
-	box->next = NULL;
-	box->prev = NULL;
-	box->children = NULL;
-	box->last = NULL;
-	box->parent = NULL;
-	box->inline_end = NULL;
-	box->float_children = NULL;
-	box->float_container = NULL;
-	box->next_float = NULL;
+	box->next = ଖାଲି;
+	box->prev = ଖାଲି;
+	box->children = ଖାଲି;
+	box->last = ଖାଲି;
+	box->parent = ଖାଲି;
+	box->inline_end = ଖାଲି;
+	box->float_children = ଖାଲି;
+	box->float_container = ଖାଲି;
+	box->next_float = ଖାଲି;
 	box->cached_place_below_level = 0;
-	box->list_value = 1;
-	box->list_marker = NULL;
-	box->col = NULL;
-	box->gadget = NULL;
-	box->usemap = NULL;
+	box->list_ମୂଲ୍ୟ = 1;
+	box->list_marker = ଖାଲି;
+	box->col = ଖାଲି;
+	box->gadget = ଖାଲି;
+	box->usemap = ଖାଲି;
 	box->id = id;
-	box->background = NULL;
-	box->object = NULL;
-	box->object_params = NULL;
-	box->iframe = NULL;
-	box->node = NULL;
+	box->background = ଖାଲି;
+	box->object = ଖାଲି;
+	box->object_params = ଖାଲି;
+	box->iframe = ଖାଲି;
+	box->ଗଣ୍ଠି = ଖାଲି;
 
-	return box;
+	ଫେରନ୍ତୁ box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_add_child(struct box *parent, struct box *child)
+ଶୂନ୍ୟ box_add_child(ସଂରଚନା box *parent, ସଂରଚନା box *child)
 {
-	assert(parent);
-	assert(child);
+	ପ୍ରତିଜ୍ଞା(parent);
+	ପ୍ରତିଜ୍ଞା(child);
 
-	if (parent->children != 0) {	/* has children already */
+	ଯଦି (parent->children != 0) {	/* has children already */
 		parent->last->next = child;
 		child->prev = parent->last;
-	} else {			/* this is the first child */
+	} ଅନ୍ୟଥା {			/* this is the first child */
 		parent->children = child;
 		child->prev = 0;
 	}
@@ -177,36 +177,36 @@ void box_add_child(struct box *parent, struct box *child)
 
 
 /* Exported function documented in html/box.h */
-void box_insert_sibling(struct box *box, struct box *new_box)
+ଶୂନ୍ୟ box_ଭର୍ତ୍ତି_sibling(ସଂରଚନା box *box, ସଂରଚନା box *new_box)
 {
 	new_box->parent = box->parent;
 	new_box->prev = box;
 	new_box->next = box->next;
 	box->next = new_box;
-	if (new_box->next)
+	ଯଦି (new_box->next)
 		new_box->next->prev = new_box;
-	else if (new_box->parent)
+	ଅନ୍ୟଥା ଯଦି (new_box->parent)
 		new_box->parent->last = new_box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_unlink_and_free(struct box *box)
+ଶୂନ୍ୟ box_unlink_and_free(ସଂରଚନା box *box)
 {
-	struct box *parent = box->parent;
-	struct box *next = box->next;
-	struct box *prev = box->prev;
+	ସଂରଚନା box *parent = box->parent;
+	ସଂରଚନା box *next = box->next;
+	ସଂରଚନା box *prev = box->prev;
 
-	if (parent) {
-		if (parent->children == box)
+	ଯଦି (parent) {
+		ଯଦି (parent->children == box)
 			parent->children = next;
-		if (parent->last == box)
+		ଯଦି (parent->last == box)
 			parent->last = next ? next : prev;
 	}
 
-	if (prev)
+	ଯଦି (prev)
 		prev->next = next;
-	if (next)
+	ଯଦି (next)
 		next->prev = prev;
 
 	box_free(box);
@@ -214,12 +214,12 @@ void box_unlink_and_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free(struct box *box)
+ଶୂନ୍ୟ box_free(ସଂରଚନା box *box)
 {
-	struct box *child, *next;
+	ସଂରଚନା box *child, *next;
 
 	/* free children first */
-	for (child = box->children; child; child = next) {
+	ପାଇଁ (child = box->children; child; child = next) {
 		next = child->next;
 		box_free(child);
 	}
@@ -230,16 +230,16 @@ void box_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free_box(struct box *box)
+ଶୂନ୍ୟ box_free_box(ସଂରଚନା box *box)
 {
-	if (!(box->flags & CLONE)) {
-		if (box->gadget)
+	ଯଦି (!(box->flags & CLONE)) {
+		ଯଦି (box->gadget)
 			form_free_control(box->gadget);
-		if (box->scroll_x != NULL)
+		ଯଦି (box->scroll_x != ଖାଲି)
 			scrollbar_destroy(box->scroll_x);
-		if (box->scroll_y != NULL)
+		ଯଦି (box->scroll_y != ଖାଲି)
 			scrollbar_destroy(box->scroll_y);
-		if (box->styles != NULL)
+		ଯଦି (box->styles != ଖାଲି)
 			css_select_results_destroy(box->styles);
 	}
 
@@ -249,51 +249,51 @@ void box_free_box(struct box *box)
 
 /* exported interface documented in html/box.h */
 nserror
-box_handle_scrollbars(struct content *c,
-		      struct box *box,
+box_handle_scrollbars(ସଂରଚନା content *c,
+		      ସଂରଚନା box *box,
 		      bool bottom,
-		      bool right)
+		      bool ଡାହାଣ)
 {
-	struct html_scrollbar_data *data;
-	int visible_width, visible_height;
-	int full_width, full_height;
+	ସଂରଚନା html_scrollbar_data *data;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା visible_width, visible_height;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା full_width, full_height;
 	nserror res;
 
-	if (!bottom && box->scroll_x != NULL) {
+	ଯଦି (!bottom && box->scroll_x != ଖାଲି) {
 		data = scrollbar_get_data(box->scroll_x);
 		scrollbar_destroy(box->scroll_x);
-		free(data);
-		box->scroll_x = NULL;
+		ମୁକ୍ତ(data);
+		box->scroll_x = ଖାଲି;
 	}
 
-	if (!right && box->scroll_y != NULL) {
+	ଯଦି (!ଡାହାଣ && box->scroll_y != ଖାଲି) {
 		data = scrollbar_get_data(box->scroll_y);
 		scrollbar_destroy(box->scroll_y);
-		free(data);
-		box->scroll_y = NULL;
+		ମୁକ୍ତ(data);
+		box->scroll_y = ଖାଲି;
 	}
 
-	if (!bottom && !right) {
-		return NSERROR_OK;
+	ଯଦି (!bottom && !ଡାହାଣ) {
+		ଫେରନ୍ତୁ NSERROR_OK;
 	}
 
-	visible_width = box->width + box->padding[RIGHT] + box->padding[LEFT];
-	visible_height = box->height + box->padding[TOP] + box->padding[BOTTOM];
+	visible_width = box->width + box->padding[ଡାହାଣ_2] + box->padding[ବାମ_2];
+	visible_height = box->height + box->padding[ଶୀର୍ଷ_2] + box->padding[BOTTOM];
 
-	full_width = ((box->descendant_x1 - box->border[RIGHT].width) >
+	full_width = ((box->descendant_x1 - box->border[ଡାହାଣ_2].width) >
 			visible_width) ?
-			box->descendant_x1 + box->padding[RIGHT] :
+			box->descendant_x1 + box->padding[ଡାହାଣ_2] :
 			visible_width;
 	full_height = ((box->descendant_y1 - box->border[BOTTOM].width) >
 			visible_height) ?
 			box->descendant_y1 + box->padding[BOTTOM] :
 			visible_height;
 
-	if (right) {
-		if (box->scroll_y == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_NOMEM;
+	ଯଦି (ଡାହାଣ) {
+		ଯଦି (box->scroll_y == ଖାଲି) {
+			data = malloc(ଆକାର(ସଂରଚନା html_scrollbar_data));
+			ଯଦି (data == ଖାଲି) {
+				ଫେରନ୍ତୁ NSERROR_NOMEM;
 			}
 			data->c = c;
 			data->box = box;
@@ -304,47 +304,47 @@ box_handle_scrollbars(struct content *c,
 					       data,
 					       html_overflow_scroll_callback,
 					       &(box->scroll_y));
-			if (res != NSERROR_OK) {
-				return res;
+			ଯଦି (res != NSERROR_OK) {
+				ଫେରନ୍ତୁ res;
 			}
-		} else  {
+		} ଅନ୍ୟଥା  {
 			scrollbar_set_extents(box->scroll_y,
 					      visible_height,
 					      visible_height,
 					      full_height);
 		}
 	}
-	if (bottom) {
-		if (box->scroll_x == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_OK;
+	ଯଦି (bottom) {
+		ଯଦି (box->scroll_x == ଖାଲି) {
+			data = malloc(ଆକାର(ସଂରଚନା html_scrollbar_data));
+			ଯଦି (data == ଖାଲି) {
+				ଫେରନ୍ତୁ NSERROR_OK;
 			}
 			data->c = c;
 			data->box = box;
 			res = scrollbar_create(true,
-					       visible_width - (right ? SCROLLBAR_WIDTH : 0),
+					       visible_width - (ଡାହାଣ ? SCROLLBAR_WIDTH : 0),
 					       full_width,
 					       visible_width,
 					       data,
 					       html_overflow_scroll_callback,
 					       &box->scroll_x);
-			if (res != NSERROR_OK) {
-				return res;
+			ଯଦି (res != NSERROR_OK) {
+				ଫେରନ୍ତୁ res;
 			}
-		} else {
+		} ଅନ୍ୟଥା {
 			scrollbar_set_extents(box->scroll_x,
 					visible_width -
-					(right ? SCROLLBAR_WIDTH : 0),
+					(ଡାହାଣ ? SCROLLBAR_WIDTH : 0),
 					visible_width, full_width);
 		}
 	}
 
-	if (right && bottom) {
+	ଯଦି (ଡାହାଣ && bottom) {
 		scrollbar_make_pair(box->scroll_x, box->scroll_y);
 	}
 
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 

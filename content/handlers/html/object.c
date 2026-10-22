@@ -21,34 +21,34 @@
  * Processing for html content object operations.
  */
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
-#include <nsutils/time.h>
+#ଅନ୍ତର୍ଭାଵ <assert.h>
+#ଅନ୍ତର୍ଭାଵ <ctype.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <strings.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <nsutils/time.h>
 
-#include "utils/corestrings.h"
-#include "utils/config.h"
-#include "utils/log.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/misc.h"
-#include "content/hlcache.h"
-#include "css/utils.h"
-#include "desktop/scrollbar.h"
-#include "desktop/gui_internal.h"
+#ଅନ୍ତର୍ଭାଵ "utils/corestrings.h"
+#ଅନ୍ତର୍ଭାଵ "utils/config.h"
+#ଅନ୍ତର୍ଭାଵ "utils/log.h"
+#ଅନ୍ତର୍ଭାଵ "utils/nsoption.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/content.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/misc.h"
+#ଅନ୍ତର୍ଭାଵ "content/hlcache.h"
+#ଅନ୍ତର୍ଭାଵ "css/utils.h"
+#ଅନ୍ତର୍ଭାଵ "desktop/scrollbar.h"
+#ଅନ୍ତର୍ଭାଵ "desktop/gui_internal.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/object.h"
+#ଅନ୍ତର୍ଭାଵ "html/html.h"
+#ଅନ୍ତର୍ଭାଵ "html/private.h"
+#ଅନ୍ତର୍ଭାଵ "html/interaction.h"
+#ଅନ୍ତର୍ଭାଵ "html/box.h"
+#ଅନ୍ତର୍ଭାଵ "html/box_inspect.h"
+#ଅନ୍ତର୍ଭାଵ "html/object.h"
 
 /* break reference loop */
-static void html_object_refresh(void *p);
+ସ୍ଥିର ଶୂନ୍ୟ html_object_refresh(ଶୂନ୍ୟ *p);
 
 /**
  * Retrieve objects used by HTML document
@@ -57,16 +57,16 @@ static void html_object_refresh(void *p);
  * \param n  Pointer to location to receive number of objects
  * \return Pointer to list of objects
  */
-struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
+ସଂରଚନା content_html_object *html_get_objects(hlcache_handle *h, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	ପ୍ରତିଜ୍ଞା(c != ଖାଲି);
+	ପ୍ରତିଜ୍ଞା(n != ଖାଲି);
 
-	*n = c->num_objects;
+	*n = c->ଅଙ୍କ_objects;
 
-	return c->object_list;
+	ଫେରନ୍ତୁ c->object_list;
 }
 
 /**
@@ -77,48 +77,48 @@ struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
  * \param  background  the object was the background image for the box
  */
 
-static void
-html_object_failed(struct box *box, html_content *content, bool background)
+ସ୍ଥିର ଶୂନ୍ୟ
+html_object_failed(ସଂରଚନା box *box, html_content *content, bool background)
 {
 	/* Nothing to do */
-	return;
+	ଫେରନ୍ତୁ;
 }
 
 /**
  * Update a box whose content has completed rendering.
  */
 
-static void
-html_object_done(struct box *box,
+ସ୍ଥିର ଶୂନ୍ୟ
+html_object_done(ସଂରଚନା box *box,
 		 hlcache_handle *object,
 		 bool background)
 {
-	struct box *b;
+	ସଂରଚନା box *b;
 
-	if (background) {
+	ଯଦି (background) {
 		box->background = object;
-		return;
+		ଫେରନ୍ତୁ;
 	}
 
 	box->object = object;
 
 	/* Normalise the box type, now it has been replaced. */
-	switch (box->type) {
-	case BOX_TABLE:
+	ବାଛ (box->type) {
+	ସ୍ଥିତି BOX_TABLE:
 		box->type = BOX_BLOCK;
-		break;
-	default:
+		ଭାଙ୍ଗ;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 		/* TODO: Any other box types need mapping? */
-		break;
+		ଭାଙ୍ଗ;
 	}
 
-	if (!(box->flags & REPLACE_DIM)) {
+	ଯଦି (!(box->flags & REPLACE_DIM)) {
 		/* invalidate parent min, max widths */
-		for (b = box; b; b = b->parent)
+		ପାଇଁ (b = box; b; b = b->parent)
 			b->max_width = UNKNOWN_MAX_WIDTH;
 
 		/* delete any clones of this box */
-		while (box->next && (box->next->flags & CLONE)) {
+		ଯେତେବେଳେ (box->next && (box->next->flags & CLONE)) {
 			/* box_free_box(box->next); */
 			box->next = box->next->next;
 		}
@@ -129,53 +129,53 @@ html_object_done(struct box *box,
 /**
  * Callback for hlcache_handle_retrieve() for objects with no box.
  */
-static nserror
+ସ୍ଥିର nserror
 html_object_nobox_callback(hlcache_handle *object,
-			   const hlcache_event *event,
-			   void *pw)
+			   ଅଚଳ hlcache_event *event,
+			   ଶୂନ୍ୟ *pw)
 {
-	struct content_html_object *chobject = pw;
+	ସଂରଚନା content_html_object *chobject = pw;
 
-	switch (event->type) {
-	case CONTENT_MSG_ERROR:
+	ବାଛ (event->type) {
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_ERROR:
 		hlcache_handle_release(object);
 
-		chobject->content = NULL;
-		break;
+		chobject->content = ଖାଲି;
+		ଭାଙ୍ଗ;
 
-	default:
-		break;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ଭାଙ୍ଗ;
 	}
 
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
 /**
  * Callback for hlcache_handle_retrieve() for objects with a box.
  */
-static nserror
+ସ୍ଥିର nserror
 html_object_callback(hlcache_handle *object,
-		     const hlcache_event *event,
-		     void *pw)
+		     ଅଚଳ hlcache_event *event,
+		     ଶୂନ୍ୟ *pw)
 {
-	struct content_html_object *o = pw;
+	ସଂରଚନା content_html_object *o = pw;
 	html_content *c = (html_content *) o->parent;
-	int x, y;
-	struct box *box;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, y;
+	ସଂରଚନା box *box;
 
 	box = o->box;
 
-	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		if (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
+	ବାଛ (event->type) {
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_LOADING:
+		ଯଦି (c->base.status != CONTENT_STATUS_LOADING && c->bw != ଖାଲି)
 			content_open(object,
 					c->bw, &c->base,
 					box->object_params);
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_READY:
-		if (content_can_reformat(object)) {
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_READY:
+		ଯଦି (content_can_reformat(object)) {
 			/* TODO: avoid knowledge of box internals here */
 			content_reformat(object, false,
 					box->max_width != UNKNOWN_MAX_WIDTH ?
@@ -185,86 +185,86 @@ html_object_callback(hlcache_handle *object,
 
 			/* Adjust parent content for new object size */
 			html_object_done(box, object, o->background);
-			if (c->base.status == CONTENT_STATUS_READY ||
+			ଯଦି (c->base.status == CONTENT_STATUS_READY ||
 					c->base.status == CONTENT_STATUS_DONE)
 				content__reformat(&c->base, false,
 						c->base.available_width,
 						c->base.available_height);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_DONE:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_DONE:
 		c->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		html_object_done(box, object, o->background);
 
-		if (c->base.status != CONTENT_STATUS_LOADING &&
+		ଯଦି (c->base.status != CONTENT_STATUS_LOADING &&
 				box->flags & REPLACE_DIM) {
-			union content_msg_data data;
+			ସଂଘ content_ସନ୍ଦେଶ_data data;
 
-			if (c->had_initial_layout == false) {
-				break;
+			ଯଦି (c->had_initial_layout == false) {
+				ଭାଙ୍ଗ;
 			}
 
-			if (!box_visible(box))
-				break;
+			ଯଦି (!box_visible(box))
+				ଭାଙ୍ଗ;
 
 			box_coords(box, &x, &y);
 
-			data.redraw.x = x + box->padding[LEFT];
-			data.redraw.y = y + box->padding[TOP];
+			data.redraw.x = x + box->padding[ବାମ_2];
+			data.redraw.y = y + box->padding[ଶୀର୍ଷ_2];
 			data.redraw.width = box->width;
 			data.redraw.height = box->height;
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_broadcast(&c->base, CONTENT_ସନ୍ଦେଶ_REDRAW, &data);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_ERROR:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_ERROR:
 		hlcache_handle_release(object);
 
-		o->content = NULL;
+		o->content = ଖାଲି;
 
 		c->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		html_object_failed(box, c, o->background);
 
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_REDRAW:
-		if (c->base.status != CONTENT_STATUS_LOADING) {
-			union content_msg_data data = event->data;
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_REDRAW:
+		ଯଦି (c->base.status != CONTENT_STATUS_LOADING) {
+			ସଂଘ content_ସନ୍ଦେଶ_data data = event->data;
 
-			if (c->had_initial_layout == false) {
-				break;
+			ଯଦି (c->had_initial_layout == false) {
+				ଭାଙ୍ଗ;
 			}
 
-			if (!box_visible(box))
-				break;
+			ଯଦି (!box_visible(box))
+				ଭାଙ୍ଗ;
 
 			box_coords(box, &x, &y);
 
-			if (object == box->background) {
+			ଯଦି (object == box->background) {
 				/* Redraw request is for background */
 				css_fixed hpos = 0, vpos = 0;
 				css_unit hunit = CSS_UNIT_PX;
 				css_unit vunit = CSS_UNIT_PX;
-				int width = box->padding[LEFT] + box->width +
-						box->padding[RIGHT];
-				int height = box->padding[TOP] + box->height +
+				ପୂର୍ଣ୍ଣସଂଖ୍ୟା width = box->padding[ବାମ_2] + box->width +
+						box->padding[ଡାହାଣ_2];
+				ପୂର୍ଣ୍ଣସଂଖ୍ୟା height = box->padding[ଶୀର୍ଷ_2] + box->height +
 						box->padding[BOTTOM];
-				int t, h, l, w;
+				ପୂର୍ଣ୍ଣସଂଖ୍ୟା t, h, l, w;
 
 				/* Need to know background-position */
 				css_computed_background_position(box->style,
 						&hpos, &hunit, &vpos, &vunit);
 
 				w = content_get_width(box->background);
-				if (hunit == CSS_UNIT_PCT) {
+				ଯଦି (hunit == CSS_UNIT_PCT) {
 					l = (width - w) * hpos / INTTOFIX(100);
-				} else {
+				} ଅନ୍ୟଥା {
 					l = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -272,9 +272,9 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				h = content_get_height(box->background);
-				if (vunit == CSS_UNIT_PCT) {
+				ଯଦି (vunit == CSS_UNIT_PCT) {
 					t = (height - h) * vpos / INTTOFIX(100);
-				} else {
+				} ଅନ୍ୟଥା {
 					t = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -282,46 +282,46 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				/* Redraw area depends on background-repeat */
-				switch (css_computed_background_repeat(
+				ବାଛ (css_computed_background_repeat(
 						box->style)) {
-				case CSS_BACKGROUND_REPEAT_REPEAT:
+				ସ୍ଥିତି CSS_BACKGROUND_REPEAT_REPEAT:
 					data.redraw.x = 0;
 					data.redraw.y = 0;
 					data.redraw.width = box->width;
 					data.redraw.height = box->height;
-					break;
+					ଭାଙ୍ଗ;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_X:
+				ସ୍ଥିତି CSS_BACKGROUND_REPEAT_REPEAT_X:
 					data.redraw.x = 0;
 					data.redraw.y += t;
 					data.redraw.width = box->width;
-					break;
+					ଭାଙ୍ଗ;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+				ସ୍ଥିତି CSS_BACKGROUND_REPEAT_REPEAT_Y:
 					data.redraw.x += l;
 					data.redraw.y = 0;
 					data.redraw.height = box->height;
-					break;
+					ଭାଙ୍ଗ;
 
-				case CSS_BACKGROUND_REPEAT_NO_REPEAT:
+				ସ୍ଥିତି CSS_BACKGROUND_REPEAT_NO_REPEAT:
 					data.redraw.x += l;
 					data.redraw.y += t;
-					break;
+					ଭାଙ୍ଗ;
 
-				default:
-					break;
+				ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+					ଭାଙ୍ଗ;
 				}
 
 				/* Add offset to box */
 				data.redraw.x += x;
 				data.redraw.y += y;
 
-			} else {
+			} ଅନ୍ୟଥା {
 				/* Non-background case */
-				int w = content_get_width(object);
-				int h = content_get_height(object);
+				ପୂର୍ଣ୍ଣସଂଖ୍ୟା w = content_get_width(object);
+				ପୂର୍ଣ୍ଣସଂଖ୍ୟା h = content_get_height(object);
 
-				if (w != 0 && box->width != w) {
+				ଯଦି (w != 0 && box->width != w) {
 					/* Not showing image at intrinsic
 					 * width; need to scale the redraw
 					 * request area. */
@@ -332,7 +332,7 @@ html_object_callback(hlcache_handle *object,
 							box->width / w;
 				}
 
-				if (h != 0 && box->height != w) {
+				ଯଦି (h != 0 && box->height != w) {
 					/* Not showing image at intrinsic
 					 * height; need to scale the redraw
 					 * request area. */
@@ -343,148 +343,148 @@ html_object_callback(hlcache_handle *object,
 							box->height / h;
 				}
 
-				data.redraw.x += x + box->padding[LEFT];
-				data.redraw.y += y + box->padding[TOP];
+				data.redraw.x += x + box->padding[ବାମ_2];
+				data.redraw.y += y + box->padding[ଶୀର୍ଷ_2];
 			}
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_broadcast(&c->base, CONTENT_ସନ୍ଦେଶ_REDRAW, &data);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_REFRESH:
-		if (content_get_type(object) == CONTENT_HTML) {
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_REFRESH:
+		ଯଦି (content_get_type(object) == CONTENT_HTML) {
 			/* only for HTML objects */
 			guit->misc->schedule(event->data.delay * 1000,
 					html_object_refresh, o);
 		}
 
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_LINK:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_LINK:
 		/* Don't care about favicons that aren't on top level content */
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_GETTHREAD:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_GETTHREAD:
 		/* Objects don't have JS threads */
-		*(event->data.jsthread) = NULL;
-		break;
+		*(event->data.jsthread) = ଖାଲି;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_GETDIMS:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_GETDIMS:
 		*(event->data.getdims.viewport_width) =
 				content__get_width(&c->base);
 		*(event->data.getdims.viewport_height) =
 				content__get_height(&c->base);
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_SCROLL:
-		if (box->scroll_x != NULL)
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_SCROLL:
+		ଯଦି (box->scroll_x != ଖାଲି)
 			scrollbar_set(box->scroll_x, event->data.scroll.x0,
 					false);
-		if (box->scroll_y != NULL)
+		ଯଦି (box->scroll_y != ଖାଲି)
 			scrollbar_set(box->scroll_y, event->data.scroll.y0,
 					false);
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_DRAGSAVE:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_DRAGSAVE:
 	{
-		union content_msg_data msg_data;
-		if (event->data.dragsave.content == NULL)
-			msg_data.dragsave.content = object;
-		else
-			msg_data.dragsave.content =
+		ସଂଘ content_ସନ୍ଦେଶ_data ସନ୍ଦେଶ_data;
+		ଯଦି (event->data.dragsave.content == ଖାଲି)
+			ସନ୍ଦେଶ_data.dragsave.content = object;
+		ଅନ୍ୟଥା
+			ସନ୍ଦେଶ_data.dragsave.content =
 					event->data.dragsave.content;
 
-		content_broadcast(&c->base, CONTENT_MSG_DRAGSAVE, &msg_data);
+		content_broadcast(&c->base, CONTENT_ସନ୍ଦେଶ_DRAGSAVE, &ସନ୍ଦେଶ_data);
 	}
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_SAVELINK:
-	case CONTENT_MSG_POINTER:
-	case CONTENT_MSG_SELECTMENU:
-	case CONTENT_MSG_GADGETCLICK:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_SAVELINK:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_POINTER:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_SELECTMENU:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_GADGETCLICK:
 		/* These messages are for browser window layer.
 		 * we're not interested, so pass them on. */
 		content_broadcast(&c->base, event->type, &event->data);
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_CARET:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_CARET:
 	{
-		union html_focus_owner focus_owner;
+		ସଂଘ html_focus_owner focus_owner;
 		focus_owner.content = box;
 
-		switch (event->data.caret.type) {
-		case CONTENT_CARET_REMOVE:
-		case CONTENT_CARET_HIDE:
+		ବାଛ (event->data.caret.type) {
+		ସ୍ଥିତି CONTENT_CARET_REMOVE:
+		ସ୍ଥିତି CONTENT_CARET_HIDE:
 			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
-					true, 0, 0, 0, NULL);
-			break;
-		case CONTENT_CARET_SET_POS:
+					true, 0, 0, 0, ଖାଲି);
+			ଭାଙ୍ଗ;
+		ସ୍ଥିତି CONTENT_CARET_SET_POS:
 			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
 					false, event->data.caret.pos.x,
 					event->data.caret.pos.y,
 					event->data.caret.pos.height,
 					event->data.caret.pos.clip);
-			break;
+			ଭାଙ୍ଗ;
 		}
 	}
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_DRAG:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_DRAG:
 	{
 		html_drag_type drag_type = HTML_DRAG_NONE;
-		union html_drag_owner drag_owner;
+		ସଂଘ html_drag_owner drag_owner;
 		drag_owner.content = box;
 
-		switch (event->data.drag.type) {
-		case CONTENT_DRAG_NONE:
+		ବାଛ (event->data.drag.type) {
+		ସ୍ଥିତି CONTENT_DRAG_NONE:
 			drag_type = HTML_DRAG_NONE;
 			drag_owner.no_owner = true;
-			break;
-		case CONTENT_DRAG_SCROLL:
+			ଭାଙ୍ଗ;
+		ସ୍ଥିତି CONTENT_DRAG_SCROLL:
 			drag_type = HTML_DRAG_CONTENT_SCROLL;
-			break;
-		case CONTENT_DRAG_SELECTION:
+			ଭାଙ୍ଗ;
+		ସ୍ଥିତି CONTENT_DRAG_SELECTION:
 			drag_type = HTML_DRAG_CONTENT_SELECTION;
-			break;
+			ଭାଙ୍ଗ;
 		}
 		html_set_drag_type(c, drag_type, drag_owner,
 				event->data.drag.rect);
 	}
-		break;
+		ଭାଙ୍ଗ;
 
-	case CONTENT_MSG_SELECTION:
+	ସ୍ଥିତି CONTENT_ସନ୍ଦେଶ_SELECTION:
 	{
 		html_selection_type sel_type;
-		union html_selection_owner sel_owner;
+		ସଂଘ html_selection_owner sel_owner;
 
-		if (event->data.selection.selection) {
+		ଯଦି (event->data.selection.selection) {
 			sel_type = HTML_SELECTION_CONTENT;
 			sel_owner.content = box;
-		} else {
+		} ଅନ୍ୟଥା {
 			sel_type = HTML_SELECTION_NONE;
 			sel_owner.none = true;
 		}
 		html_set_selection(c, sel_type, sel_owner,
 				event->data.selection.read_only);
 	}
-		break;
+		ଭାଙ୍ଗ;
 
-	default:
-		break;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ଭାଙ୍ଗ;
 	}
 
-	if (c->base.status == CONTENT_STATUS_READY &&
+	ଯଦି (c->base.status == CONTENT_STATUS_READY &&
 	    c->base.active == 0 &&
-	    (event->type == CONTENT_MSG_LOADING ||
-	     event->type == CONTENT_MSG_DONE ||
-	     event->type == CONTENT_MSG_ERROR)) {
+	    (event->type == CONTENT_ସନ୍ଦେଶ_LOADING ||
+	     event->type == CONTENT_ସନ୍ଦେଶ_DONE ||
+	     event->type == CONTENT_ସନ୍ଦେଶ_ERROR)) {
 		/* all objects have arrived */
 		content__reformat(&c->base, false, c->base.available_width,
 				c->base.available_height);
 		content_set_done(&c->base);
-	} else if (nsoption_bool(incremental_reflow) &&
-		   event->type == CONTENT_MSG_DONE &&
-		   box != NULL &&
+	} ଅନ୍ୟଥା ଯଦି (nsoption_bool(incremental_reflow) &&
+		   event->type == CONTENT_ସନ୍ଦେଶ_DONE &&
+		   box != ଖାଲି &&
 		   !(box->flags & REPLACE_DIM) &&
 		   (c->base.status == CONTENT_STATUS_READY ||
 		    c->base.status == CONTENT_STATUS_DONE)) {
@@ -496,7 +496,7 @@ html_object_callback(hlcache_handle *object,
 		 */
 		uint64_t ms_now;
 		nsu_getmonotonic_ms(&ms_now);
-		if (ms_now > c->base.reformat_time) {
+		ଯଦି (ms_now > c->base.reformat_time) {
 			/* The time since the previous reformat is
 			 *  more than the configured minimum time
 			 *  between reformats so reformat the page to
@@ -509,7 +509,7 @@ html_object_callback(hlcache_handle *object,
 		}
 	}
 
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
@@ -520,188 +520,188 @@ html_object_callback(hlcache_handle *object,
  * \param  url             URL of object to fetch (copied)
  * \return  true on success, false on memory exhaustion
  */
-static bool html_replace_object(struct content_html_object *object, nsurl *url)
+ସ୍ଥିର bool html_replace_object(ସଂରଚନା content_html_object *object, nsurl *url)
 {
 	html_content *c;
 	hlcache_child_context child;
 	html_content *page;
 	nserror error;
 
-	assert(object != NULL);
-	assert(object->box != NULL);
+	ପ୍ରତିଜ୍ଞା(object != ଖାଲି);
+	ପ୍ରତିଜ୍ଞା(object->box != ଖାଲି);
 
 	c = (html_content *) object->parent;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	if (object->content != NULL) {
+	ଯଦି (object->content != ଖାଲି) {
 		/* remove existing object */
-		if (content_get_status(object->content) != CONTENT_STATUS_DONE) {
+		ଯଦି (content_get_status(object->content) != CONTENT_STATUS_DONE) {
 			c->base.active--;
 			NSLOG(netsurf, INFO, "%d fetches active",
 			      c->base.active);
 		}
 
 		hlcache_handle_release(object->content);
-		object->content = NULL;
+		object->content = ଖାଲି;
 
-		object->box->object = NULL;
+		object->box->object = ଖାଲି;
 	}
 
 	/* initialise fetch */
 	error = hlcache_handle_retrieve(url, HLCACHE_RETRIEVE_SNIFF_TYPE,
-			content_get_url(&c->base), NULL,
+			content_get_url(&c->base), ଖାଲି,
 			html_object_callback, object, &child,
 			object->permitted_types,
 			&object->content);
 
-	if (error != NSERROR_OK)
-		return false;
+	ଯଦି (error != NSERROR_OK)
+		ଫେରନ୍ତୁ false;
 
-	for (page = c; page != NULL; page = page->page) {
+	ପାଇଁ (page = c; page != ଖାଲି; page = page->page) {
 		page->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		page->base.status = CONTENT_STATUS_READY;
 	}
 
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
 /**
  * schedule callback for object refresh
  */
-static void html_object_refresh(void *p)
+ସ୍ଥିର ଶୂନ୍ୟ html_object_refresh(ଶୂନ୍ୟ *p)
 {
-	struct content_html_object *object = p;
+	ସଂରଚନା content_html_object *object = p;
 	nsurl *refresh_url;
 
-	assert(content_get_type(object->content) == CONTENT_HTML);
+	ପ୍ରତିଜ୍ଞା(content_get_type(object->content) == CONTENT_HTML);
 
 	refresh_url = content_get_refresh_url(object->content);
 
 	/* Ignore if refresh URL has gone
 	 * (may happen if fetch errored) */
-	if (refresh_url == NULL)
-		return;
+	ଯଦି (refresh_url == ଖାଲି)
+		ଫେରନ୍ତୁ;
 
 	content_invalidate_reuse_data(object->content);
 
-	if (!html_replace_object(object, refresh_url)) {
+	ଯଦି (!html_replace_object(object, refresh_url)) {
 		/** \todo handle memory exhaustion */
 	}
 }
 
 
 /* exported interface documented in html/object.h */
-nserror html_object_open_objects(html_content *html, struct browser_window *bw)
+nserror html_object_open_objects(html_content *html, ସଂରଚନା browser_window *bw)
 {
-	struct content_html_object *object, *next;
+	ସଂରଚନା content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	ପାଇଁ (object = html->object_list; object != ଖାଲି; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
-			continue;
+		ଯଦି (object->content == ଖାଲି || object->box == ଖାଲି)
+			ଜାରି;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
-			continue;
+		ଯଦି (content_get_type(object->content) == CONTENT_NONE)
+			ଜାରି;
 
 		content_open(object->content,
 			     bw,
 			     &html->base,
 			     object->box->object_params);
 	}
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_abort_objects(html_content *htmlc)
 {
-	struct content_html_object *object;
+	ସଂରଚନା content_html_object *object;
 
-	for (object = htmlc->object_list;
-	     object != NULL;
+	ପାଇଁ (object = htmlc->object_list;
+	     object != ଖାଲି;
 	     object = object->next) {
-		if (object->content == NULL)
-			continue;
+		ଯଦି (object->content == ଖାଲି)
+			ଜାରି;
 
-		switch (content_get_status(object->content)) {
-		case CONTENT_STATUS_DONE:
+		ବାଛ (content_get_status(object->content)) {
+		ସ୍ଥିତି CONTENT_STATUS_DONE:
 			/* already loaded: do nothing */
-			break;
+			ଭାଙ୍ଗ;
 
-		case CONTENT_STATUS_READY:
+		ସ୍ଥିତି CONTENT_STATUS_READY:
 			hlcache_handle_abort(object->content);
 			/* Active count will be updated when
 			 * html_object_callback receives
 			 * CONTENT_MSG_DONE from this object
 			 */
-			break;
+			ଭାଙ୍ଗ;
 
-		default:
+		ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 			hlcache_handle_abort(object->content);
 			hlcache_handle_release(object->content);
-			object->content = NULL;
-			if (object->box != NULL) {
+			object->content = ଖାଲି;
+			ଯଦି (object->box != ଖାଲି) {
 				htmlc->base.active--;
 				NSLOG(netsurf, INFO, "%d fetches active",
 				      htmlc->base.active);
 			}
-			break;
+			ଭାଙ୍ଗ;
 
 		}
 	}
 
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_close_objects(html_content *html)
 {
-	struct content_html_object *object, *next;
+	ସଂରଚନା content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	ପାଇଁ (object = html->object_list; object != ଖାଲି; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
-			continue;
+		ଯଦି (object->content == ଖାଲି || object->box == ଖାଲି)
+			ଜାରି;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
-			continue;
+		ଯଦି (content_get_type(object->content) == CONTENT_NONE)
+			ଜାରି;
 
-		if (content_get_type(object->content) == CONTENT_HTML) {
+		ଯଦି (content_get_type(object->content) == CONTENT_HTML) {
 			guit->misc->schedule(-1, html_object_refresh, object);
 		}
 
 		content_close(object->content);
 	}
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_free_objects(html_content *html)
 {
-	while (html->object_list != NULL) {
-		struct content_html_object *victim = html->object_list;
+	ଯେତେବେଳେ (html->object_list != ଖାଲି) {
+		ସଂରଚନା content_html_object *victim = html->object_list;
 
-		if (victim->content != NULL) {
+		ଯଦି (victim->content != ଖାଲି) {
 			NSLOG(netsurf, INFO, "object %p", victim->content);
 
-			if (content_get_type(victim->content) == CONTENT_HTML) {
+			ଯଦି (content_get_type(victim->content) == CONTENT_HTML) {
 				guit->misc->schedule(-1, html_object_refresh, victim);
 			}
 			hlcache_handle_release(victim->content);
 		}
 
 		html->object_list = victim->next;
-		free(victim);
+		ମୁକ୍ତ(victim);
 	}
-	return NSERROR_OK;
+	ଫେରନ୍ତୁ NSERROR_OK;
 }
 
 
@@ -709,36 +709,36 @@ nserror html_object_free_objects(html_content *html)
 bool
 html_fetch_object(html_content *c,
 		  nsurl *url,
-		  struct box *box,
+		  ସଂରଚନା box *box,
 		  content_type permitted_types,
 		  bool background)
 {
-	struct content_html_object *object;
+	ସଂରଚନା content_html_object *object;
 	hlcache_handle_callback object_callback;
 	hlcache_child_context child;
 	nserror error;
 
 	/* If we've already been aborted, don't bother attempting the fetch */
-	if (c->aborted)
-		return true;
+	ଯଦି (c->aborted)
+		ଫେରନ୍ତୁ true;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	object = calloc(1, sizeof(struct content_html_object));
-	if (object == NULL) {
-		return false;
+	object = calloc(1, ଆକାର(ସଂରଚନା content_html_object));
+	ଯଦି (object == ଖାଲି) {
+		ଫେରନ୍ତୁ false;
 	}
 
-	if (box == NULL) {
+	ଯଦି (box == ଖାଲି) {
 		object_callback = html_object_nobox_callback;
-	} else {
+	} ଅନ୍ୟଥା {
 		object_callback = html_object_callback;
 	}
 
-	object->parent = (struct content *) c;
-	object->next = NULL;
-	object->content = NULL;
+	object->parent = (ସଂରଚନା content *) c;
+	object->next = ଖାଲି;
+	object->content = ଖାଲି;
 	object->box = box;
 	object->permitted_types = permitted_types;
 	object->background = background;
@@ -746,26 +746,26 @@ html_fetch_object(html_content *c,
 	error = hlcache_handle_retrieve(url,
 					HLCACHE_RETRIEVE_SNIFF_TYPE,
 					content_get_url(&c->base),
-					NULL,
+					ଖାଲି,
 					object_callback,
 					object,
 					&child,
 					object->permitted_types,
 					&object->content);
-	if (error != NSERROR_OK) {
-		free(object);
-		return error != NSERROR_NOMEM;
+	ଯଦି (error != NSERROR_OK) {
+		ମୁକ୍ତ(object);
+		ଫେରନ୍ତୁ error != NSERROR_NOMEM;
 	}
 
 	/* add to content object list */
 	object->next = c->object_list;
 	c->object_list = object;
 
-	c->num_objects++;
-	if (box != NULL) {
+	c->ଅଙ୍କ_objects++;
+	ଯଦି (box != ଖାଲି) {
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 	}
 
-	return true;
+	ଫେରନ୍ତୁ true;
 }

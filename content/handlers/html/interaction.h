@@ -24,14 +24,14 @@
 #ifndef NETSURF_HTML_INTERACTION_H
 #define NETSURF_HTML_INTERACTION_H
 
-#include "desktop/search.h" /* search flags enum */
+#ଅନ୍ତର୍ଭାଵ "desktop/search.h" /* search flags enum */
 
 /**
  * Context for scrollbar
  */
-struct html_scrollbar_data {
-	struct content *c;
-	struct box *box;
+ସଂରଚନା html_scrollbar_data {
+	ସଂରଚନା content *c;
+	ସଂରଚନା box *box;
 };
 
 /**
@@ -43,8 +43,8 @@ struct html_scrollbar_data {
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-nserror html_mouse_track(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+nserror html_mouse_track(ସଂରଚନା content *c, ସଂରଚନା browser_window *bw,
+			browser_mouse_state mouse, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y);
 
 
 /**
@@ -63,22 +63,22 @@ nserror html_mouse_track(struct content *c, struct browser_window *bw,
  * \param y y coordinate of mouse
  * \return NSERROR_OK or appropriate error code.
  */
-nserror html_mouse_action(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+nserror html_mouse_action(ସଂରଚନା content *c, ସଂରଚନା browser_window *bw,
+			browser_mouse_state mouse, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y);
 
 
-bool html_keypress(struct content *c, uint32_t key);
+bool html_keypress(ସଂରଚନା content *c, uint32_t ଚାବି);
 
 
-void html_overflow_scroll_callback(void *client_data,
-		struct scrollbar_msg_data *scrollbar_data);
+ଶୂନ୍ୟ html_overflow_scroll_callback(ଶୂନ୍ୟ *client_data,
+		ସଂରଚନା scrollbar_ସନ୍ଦେଶ_data *scrollbar_data);
 
 
-void html_search(struct content *c, void *context,
-		search_flags_t flags, const char *string);
+ଶୂନ୍ୟ html_ସନ୍ଧାନ(ସଂରଚନା content *c, ଶୂନ୍ୟ *context,
+		ସନ୍ଧାନ_flags_t flags, ଅଚଳ ଅକ୍ଷର *string);
 
 
-void html_search_clear(struct content *c);
+ଶୂନ୍ୟ html_ସନ୍ଧାନ_clear(ସଂରଚନା content *c);
 
 
 /**
@@ -89,8 +89,8 @@ void html_search_clear(struct content *c);
  * \param drag_owner	What owns the drag
  * \param rect		Pointer movement bounds
  */
-void html_set_drag_type(html_content *html, html_drag_type drag_type,
-		union html_drag_owner drag_owner, const struct rect *rect);
+ଶୂନ୍ୟ html_set_drag_type(html_content *html, html_drag_type drag_type,
+		ସଂଘ html_drag_owner drag_owner, ଅଚଳ ସଂରଚନା rect *rect);
 
 
 /**
@@ -101,8 +101,8 @@ void html_set_drag_type(html_content *html, html_drag_type drag_type,
  * \param selection_owner	What owns the selection
  * \param read_only		True iff selection is read only
  */
-void html_set_selection(html_content *html, html_selection_type selection_type,
-		union html_selection_owner selection_owner, bool read_only);
+ଶୂନ୍ୟ html_set_selection(html_content *html, html_selection_type selection_type,
+		ସଂଘ html_selection_owner selection_owner, bool read_only);
 
 
 /**
@@ -117,9 +117,9 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
  * \param height		Carret height
  * \param clip			Carret clip rect
  */
-void html_set_focus(html_content *html, html_focus_type focus_type,
-		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip);
+ଶୂନ୍ୟ html_set_focus(html_content *html, html_focus_type focus_type,
+		ସଂଘ html_focus_owner focus_owner, bool hide_caret,
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height, ଅଚଳ ସଂରଚନା rect *clip);
 
 
 #endif

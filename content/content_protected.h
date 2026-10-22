@@ -27,90 +27,90 @@
 #ifndef NETSURF_CONTENT_CONTENT_PROTECTED_H_
 #define NETSURF_CONTENT_CONTENT_PROTECTED_H_
 
-#include <stdio.h>
-#include <libwapcaplet/libwapcaplet.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/content_type.h"
-#include "netsurf/mouse.h" /* mouse state enums */
+#ଅନ୍ତର୍ଭାଵ "netsurf/content_type.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/mouse.h" /* mouse state enums */
 
-struct nsurl;
-struct content_redraw_data;
-union content_msg_data;
-struct http_parameter;
-struct llcache_handle;
-struct object_params;
-struct content;
-struct redraw_context;
-struct rect;
-struct browser_window;
-struct browser_window_features;
-struct textsearch_context;
-struct box;
-struct selection;
-struct selection_string;
+ସଂରଚନା nsurl;
+ସଂରଚନା content_redraw_data;
+ସଂଘ content_ସନ୍ଦେଶ_data;
+ସଂରଚନା http_parameter;
+ସଂରଚନା llcache_handle;
+ସଂରଚନା object_params;
+ସଂରଚନା content;
+ସଂରଚନା redraw_context;
+ସଂରଚନା rect;
+ସଂରଚନା browser_window;
+ସଂରଚନା browser_window_features;
+ସଂରଚନା textsearch_context;
+ସଂରଚନା box;
+ସଂରଚନା selection;
+ସଂରଚନା selection_string;
 
-typedef struct content_handler content_handler;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା content_handler content_handler;
 
 /**
  * Content operation function table
  *
  * function table implementing a content type.
  */
-struct content_handler {
-	void (*fini)(void);
+ସଂରଚନା content_handler {
+	ଶୂନ୍ୟ (*fini)(ଶୂନ୍ୟ);
 
-	nserror (*create)(const struct content_handler *handler,
+	nserror (*create)(ଅଚଳ ସଂରଚନା content_handler *handler,
                           lwc_string *imime_type,
-                          const struct http_parameter *params,
-                          struct llcache_handle *llcache,
-                          const char *fallback_charset, bool quirks,
-                          struct content **c);
+                          ଅଚଳ ସଂରଚନା http_parameter *params,
+                          ସଂରଚନା llcache_handle *llcache,
+                          ଅଚଳ ଅକ୍ଷର *fallback_charset, bool quirks,
+                          ସଂରଚନା content **c);
 
-	bool (*process_data)(struct content *c,
-			const char *data, unsigned int size);
-	bool (*data_complete)(struct content *c);
-	void (*reformat)(struct content *c, int width, int height);
-	void (*destroy)(struct content *c);
-	void (*stop)(struct content *c);
-	nserror (*mouse_track)(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
-	nserror (*mouse_action)(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
-	bool (*keypress)(struct content *c, uint32_t key);
-	bool (*redraw)(struct content *c, struct content_redraw_data *data,
-			const struct rect *clip,
-			const struct redraw_context *ctx);
-	nserror (*open)(struct content *c, struct browser_window *bw,
-			struct content *page, struct object_params *params);
-	nserror (*close)(struct content *c);
-	void (*clear_selection)(struct content *c);
-	char * (*get_selection)(struct content *c);
-	nserror (*get_contextual_content)(struct content *c, int x, int y,
-			struct browser_window_features *data);
-	bool (*scroll_at_point)(struct content *c, int x, int y,
-			int scrx, int scry);
-	bool (*drop_file_at_point)(struct content *c, int x, int y,
-			char *file);
-	nserror (*debug_dump)(struct content *c, FILE *f, enum content_debug op);
-	nserror (*debug)(struct content *c, enum content_debug op);
-	nserror (*clone)(const struct content *old, struct content **newc);
-	bool (*matches_quirks)(const struct content *c, bool quirks);
-	const char *(*get_encoding)(const struct content *c, enum content_encoding_type op);
-	content_type (*type)(void);
-	void (*add_user)(struct content *c);
-	void (*remove_user)(struct content *c);
-	bool (*exec)(struct content *c, const char *src, size_t srclen);
-	bool (*saw_insecure_objects)(struct content *c);
+	bool (*process_data)(ସଂରଚନା content *c,
+			ଅଚଳ ଅକ୍ଷର *data, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା size);
+	bool (*data_complete)(ସଂରଚନା content *c);
+	ଶୂନ୍ୟ (*reformat)(ସଂରଚନା content *c, ପୂର୍ଣ୍ଣସଂଖ୍ୟା width, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height);
+	ଶୂନ୍ୟ (*destroy)(ସଂରଚନା content *c);
+	ଶୂନ୍ୟ (*stop)(ସଂରଚନା content *c);
+	nserror (*mouse_track)(ସଂରଚନା content *c, ସଂରଚନା browser_window *bw,
+			browser_mouse_state mouse, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y);
+	nserror (*mouse_action)(ସଂରଚନା content *c, ସଂରଚନା browser_window *bw,
+			browser_mouse_state mouse, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y);
+	bool (*keypress)(ସଂରଚନା content *c, uint32_t ଚାବି);
+	bool (*redraw)(ସଂରଚନା content *c, ସଂରଚନା content_redraw_data *data,
+			ଅଚଳ ସଂରଚନା rect *clip,
+			ଅଚଳ ସଂରଚନା redraw_context *ctx);
+	nserror (*open)(ସଂରଚନା content *c, ସଂରଚନା browser_window *bw,
+			ସଂରଚନା content *page, ସଂରଚନା object_params *params);
+	nserror (*close)(ସଂରଚନା content *c);
+	ଶୂନ୍ୟ (*clear_selection)(ସଂରଚନା content *c);
+	ଅକ୍ଷର * (*get_selection)(ସଂରଚନା content *c);
+	nserror (*get_contextual_content)(ସଂରଚନା content *c, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y,
+			ସଂରଚନା browser_window_features *data);
+	bool (*scroll_at_point)(ସଂରଚନା content *c, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y,
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା scrx, ପୂର୍ଣ୍ଣସଂଖ୍ୟା scry);
+	bool (*drop_file_at_point)(ସଂରଚନା content *c, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y,
+			ଅକ୍ଷର *file);
+	nserror (*debug_dump)(ସଂରଚନା content *c, FILE *f, ଗଣନା content_debug op);
+	nserror (*debug)(ସଂରଚନା content *c, ଗଣନା content_debug op);
+	nserror (*clone)(ଅଚଳ ସଂରଚନା content *old, ସଂରଚନା content **newc);
+	bool (*matches_quirks)(ଅଚଳ ସଂରଚନା content *c, bool quirks);
+	ଅଚଳ ଅକ୍ଷର *(*get_encoding)(ଅଚଳ ସଂରଚନା content *c, ଗଣନା content_encoding_type op);
+	content_type (*type)(ଶୂନ୍ୟ);
+	ଶୂନ୍ୟ (*add_user)(ସଂରଚନା content *c);
+	ଶୂନ୍ୟ (*remove_user)(ସଂରଚନା content *c);
+	bool (*exec)(ସଂରଚନା content *c, ଅଚଳ ଅକ୍ଷର *src, size_t srclen);
+	bool (*saw_insecure_objects)(ସଂରଚନା content *c);
 
 	/**
 	 * content specific free text search find
 	 */
-	nserror (*textsearch_find)(struct content *c, struct textsearch_context *context, const char *pattern, int p_len, bool case_sens);
+	nserror (*textsearch_find)(ସଂରଚନା content *c, ସଂରଚନା textsearch_context *context, ଅଚଳ ଅକ୍ଷର *pattern, ପୂର୍ଣ୍ଣସଂଖ୍ୟା p_len, bool case_sens);
 
 	/**
 	 * get bounds of free text search match
 	 */
-	nserror (*textsearch_bounds)(struct content *c, unsigned start_idx, unsigned end_idx, struct box *start_ptr, struct box *end_ptr, struct rect *bounds_out);
+	nserror (*textsearch_bounds)(ସଂରଚନା content *c, unsigned start_idx, unsigned end_idx, ସଂରଚନା box *start_ptr, ସଂରଚନା box *end_ptr, ସଂରଚନା rect *bounds_out);
 
 	/**
 	 * redraw an area of selected text
@@ -123,12 +123,12 @@ struct content_handler {
 	 * \param end_idx The end index of teh text region to be redrawn
 	 * \return NSERROR_OK on success else error code
 	 */
-	nserror (*textselection_redraw)(struct content *c, unsigned start_idx, unsigned end_idx);
+	nserror (*textselection_redraw)(ସଂରଚନା content *c, unsigned start_idx, unsigned end_idx);
 
 	/**
 	 * copy selected text into selection string possibly with formatting
 	 */
-	nserror (*textselection_copy)(struct content *c, unsigned start_idx, unsigned end_idx, struct selection_string *selstr);
+	nserror (*textselection_copy)(ସଂରଚନା content *c, unsigned start_idx, unsigned end_idx, ସଂରଚନା selection_string *selstr);
 
 	/**
 	 * get maximum index of text section.
@@ -137,12 +137,12 @@ struct content_handler {
 	 * \param[out] end_idx pointer to value to recive result
 	 * \return NSERROR_OK and \a end_idx updated else error code
 	 */
-	nserror (*textselection_get_end)(struct content *c, unsigned *end_idx);
+	nserror (*textselection_get_end)(ସଂରଚନା content *c, unsigned *end_idx);
 
         /**
 	 * handler dependant content sensitive internal data interface.
 	 */
-	void *(*get_internal)(const struct content *c, void *context);
+	ଶୂନ୍ୟ *(*get_internal)(ଅଚଳ ସଂରଚନା content *c, ଶୂନ୍ୟ *context);
 
 	/**
 	 * are the content contents opaque.
@@ -151,7 +151,7 @@ struct content_handler {
 	 *
 	 * \param c The content to check
 	 */
-	bool (*is_opaque)(struct content *c);
+	bool (*is_opaque)(ସଂରଚନା content *c);
 
 	/**
 	 * There must be one content per user for this type.
@@ -162,26 +162,26 @@ struct content_handler {
 /**
  * Linked list of users of a content.
  */
-struct content_user
+ସଂରଚନା content_user
 {
-	void (*callback)(
-			struct content *c,
-			content_msg msg,
-			const union content_msg_data *data,
-			void *pw);
-	void *pw;
+	ଶୂନ୍ୟ (*callback)(
+			ସଂରଚନା content *c,
+			content_ସନ୍ଦେଶ ସନ୍ଦେଶ,
+			ଅଚଳ ସଂଘ content_ସନ୍ଦେଶ_data *data,
+			ଶୂନ୍ୟ *pw);
+	ଶୂନ୍ୟ *pw;
 
-	struct content_user *next;
+	ସଂରଚନା content_user *next;
 };
 
 /**
  * Content which corresponds to a single URL.
  */
-struct content {
+ସଂରଚନା content {
 	/**
 	 * Low-level cache object
 	 */
-	struct llcache_handle *llcache;
+	ସଂରଚନା llcache_handle *llcache;
 
 	/**
 	 * Original MIME type of data
@@ -191,7 +191,7 @@ struct content {
 	/**
 	 * Handler for content
 	 */
-	const struct content_handler *handler;
+	ଅଚଳ ସଂରଚନା content_handler *handler;
 
 	/**
 	 * Current status.
@@ -201,19 +201,19 @@ struct content {
 	/**
 	 * Width dimension, if applicable.
 	 */
-	int width;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା width;
 	/**
 	 * Height dimension, if applicable.
 	 */
-	int height;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା height;
 	/**
 	 * Viewport width.
 	 */
-	int available_width;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା available_width;
 	/**
 	 * Viewport height.
 	 */
-	int available_height;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା available_height;
 
 	/**
 	 * Content is in quirks mode
@@ -222,17 +222,17 @@ struct content {
 	/**
 	 * Fallback charset, or NULL
 	 */
-	char *fallback_charset;
+	ଅକ୍ଷର *fallback_charset;
 
 	/**
 	 * URL for refresh request
 	 */
-	struct nsurl *refresh;
+	ସଂରଚନା nsurl *refresh;
 
 	/**
 	 * list of metadata links
 	 */
-	struct content_rfc5988_link *links;
+	ସଂରଚନା content_rfc5988_link *links;
 
 	/**
 	 * Creation timestamp when LOADING or READY.  Total time in ms
@@ -249,27 +249,27 @@ struct content {
 	/**
 	 * Estimated size of all data associated with this content
 	 */
-	unsigned int size;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା size;
 	/**
 	 * Title for browser window.
 	 */
-	char *title;
+	ଅକ୍ଷର *title;
 	/**
 	 * Number of child fetches or conversions currently in progress.
 	 */
-	unsigned int active;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା active;
 	/**
 	 * List of users.
 	 */
-	struct content_user *user_list;
+	ସଂରଚନା content_user *user_list;
 	/**
 	 * Full text for status bar.
 	 */
-	char status_message[120];
+	ଅକ୍ଷର status_message[120];
 	/**
 	 * Status of content.
 	 */
-	char sub_status[80];
+	ଅକ୍ଷର sub_status[80];
 	/**
 	 * Content is being processed: data structures may be
 	 * inconsistent and content must not be redrawn or modified.
@@ -288,14 +288,14 @@ struct content {
 	/**
 	 * Free text search state
 	 */
-	struct {
-		char *string;
-		struct textsearch_context *context;
+	ସଂରଚନା {
+		ଅକ୍ଷର *string;
+		ସଂରଚନା textsearch_context *context;
 	} textsearch;
 };
 
-extern const char * const content_type_name[];
-extern const char * const content_status_name[];
+ବାହ୍ୟ ଅଚଳ ଅକ୍ଷର * ଅଚଳ content_type_name[];
+ବାହ୍ୟ ଅଚଳ ଅକ୍ଷର * ଅଚଳ content_status_name[];
 
 
 /**
@@ -310,9 +310,9 @@ extern const char * const content_status_name[];
  * \param quirks            Quirkiness of content
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-nserror content__init(struct content *c, const struct content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		struct llcache_handle *llcache, const char *fallback_charset,
+nserror content__init(ସଂରଚନା content *c, ଅଚଳ ସଂରଚନା content_handler *handler,
+		lwc_string *imime_type, ଅଚଳ ସଂରଚନା http_parameter *params,
+		ସଂରଚନା llcache_handle *llcache, ଅଚଳ ଅକ୍ଷର *fallback_charset,
 		bool quirks);
 
 /**
@@ -322,24 +322,24 @@ nserror content__init(struct content *c, const struct content_handler *handler,
  * \param nc  Content to populate
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-nserror content__clone(const struct content *c, struct content *nc);
+nserror content__clone(ଅଚଳ ସଂରଚନା content *c, ସଂରଚନା content *nc);
 
 /**
  * Put a content in status CONTENT_STATUS_READY and unlock the content.
  */
-void content_set_ready(struct content *c);
+ଶୂନ୍ୟ content_set_ready(ସଂରଚନା content *c);
 
 /**
  * Put a content in status CONTENT_STATUS_DONE.
  */
-void content_set_done(struct content *c);
+ଶୂନ୍ୟ content_set_done(ସଂରଚନା content *c);
 
 /**
  * Put a content in status CONTENT_STATUS_ERROR and unlock the content.
  *
  * \note We expect the caller to broadcast an error report if needed.
  */
-void content_set_error(struct content *c);
+ଶୂନ୍ୟ content_set_error(ସଂରଚନା content *c);
 
 /**
  * Updates content with new status.
@@ -349,12 +349,12 @@ void content_set_error(struct content *c);
  * \param c The content to set status in.
  * \param status_message new textual status
  */
-void content_set_status(struct content *c, const char *status_message);
+ଶୂନ୍ୟ content_set_status(ସଂରଚନା content *c, ଅଚଳ ଅକ୍ଷର *status_message);
 
 /**
  * Send a message to all users.
  */
-void content_broadcast(struct content *c, content_msg msg, const union content_msg_data *data);
+ଶୂନ୍ୟ content_broadcast(ସଂରଚନା content *c, content_ସନ୍ଦେଶ ସନ୍ଦେଶ, ଅଚଳ ସଂଘ content_ସନ୍ଦେଶ_data *data);
 
 /**
  * Send an error message to all users.
@@ -363,7 +363,7 @@ void content_broadcast(struct content *c, content_msg msg, const union content_m
  * \param errorcode The nserror code to send
  * \param msg The error message to send alongside
  */
-void content_broadcast_error(struct content *c, nserror errorcode, const char *msg);
+ଶୂନ୍ୟ content_broadcast_error(ସଂରଚନା content *c, nserror errorcode, ଅଚଳ ଅକ୍ଷର *ସନ୍ଦେଶ);
 
 /**
  * associate a metadata link with a content.
@@ -371,7 +371,7 @@ void content_broadcast_error(struct content *c, nserror errorcode, const char *m
  * \param c content to add link to
  * \param link The rfc5988 link to add
  */
-bool content__add_rfc5988_link(struct content *c, const struct content_rfc5988_link *link);
+bool content__add_rfc5988_link(ସଂରଚନା content *c, ଅଚଳ ସଂରଚନା content_rfc5988_link *link);
 
 /**
  * free a rfc5988 link
@@ -379,7 +379,7 @@ bool content__add_rfc5988_link(struct content *c, const struct content_rfc5988_l
  * \param link The link to free
  * \return The next link in the chain
  */
-struct content_rfc5988_link *content__free_rfc5988_link(struct content_rfc5988_link *link);
+ସଂରଚନା content_rfc5988_link *content__free_rfc5988_link(ସଂରଚନା content_rfc5988_link *link);
 
 /**
  * cause a content to be reformatted.
@@ -389,7 +389,7 @@ struct content_rfc5988_link *content__free_rfc5988_link(struct content_rfc5988_l
  * \param width The available width to reformat content in
  * \param height The available height to reformat content in
  */
-void content__reformat(struct content *c, bool background, int width, int height);
+ଶୂନ୍ୟ content__reformat(ସଂରଚନା content *c, bool background, ପୂର୍ଣ୍ଣସଂଖ୍ୟା width, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height);
 
 /**
  * Request a redraw of an area of a content
@@ -400,7 +400,7 @@ void content__reformat(struct content *c, bool background, int width, int height
  * \param width	  Width of rectangle
  * \param height  Height of rectangle
  */
-void content__request_redraw(struct content *c, int x, int y, int width, int height);
+ଶୂନ୍ୟ content__request_redraw(ସଂରଚନା content *c, ପୂର୍ଣ୍ଣସଂଖ୍ୟା x, ପୂର୍ଣ୍ଣସଂଖ୍ୟା y, ପୂର୍ଣ୍ଣସଂଖ୍ୟା width, ପୂର୍ଣ୍ଣସଂଖ୍ୟା height);
 
 /**
  * Retrieve mime-type of content
@@ -408,7 +408,7 @@ void content__request_redraw(struct content *c, int x, int y, int width, int hei
  * \param c Content to retrieve mime-type of
  * \return Pointer to referenced mime-type, or NULL if not found.
  */
-lwc_string *content__get_mime_type(struct content *c);
+lwc_string *content__get_mime_type(ସଂରଚନା content *c);
 
 /**
  * Set title associated with content
@@ -417,7 +417,7 @@ lwc_string *content__get_mime_type(struct content *c);
  * \param title The new title to set.
  * \return true on sucess else false.
  */
-bool content__set_title(struct content *c, const char *title);
+bool content__set_title(ସଂରଚନା content *c, ଅଚଳ ଅକ୍ଷର *title);
 
 /**
  * Retrieve title associated with content
@@ -425,7 +425,7 @@ bool content__set_title(struct content *c, const char *title);
  * \param c Content to retrieve title from
  * \return Pointer to title, or NULL if not found.
  */
-const char *content__get_title(struct content *c);
+ଅଚଳ ଅକ୍ଷର *content__get_title(ସଂରଚନା content *c);
 
 /**
  * Retrieve status message associated with content
@@ -433,7 +433,7 @@ const char *content__get_title(struct content *c);
  * \param c Content to retrieve status message from
  * \return Pointer to status message, or NULL if not found.
  */
-const char *content__get_status_message(struct content *c);
+ଅଚଳ ଅକ୍ଷର *content__get_status_message(ସଂରଚନା content *c);
 
 /**
  * Retrieve width of content
@@ -441,7 +441,7 @@ const char *content__get_status_message(struct content *c);
  * \param c Content to retrieve width of
  * \return Content width
  */
-int content__get_width(struct content *c);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content__get_width(ସଂରଚନା content *c);
 
 /**
  * Retrieve height of content
@@ -449,7 +449,7 @@ int content__get_width(struct content *c);
  * \param c Content to retrieve height of
  * \return Content height
  */
-int content__get_height(struct content *c);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content__get_height(ସଂରଚନା content *c);
 
 /**
  * Retrieve available width of content
@@ -457,7 +457,7 @@ int content__get_height(struct content *c);
  * \param c content to get available width of.
  * \return Available width of content.
  */
-int content__get_available_width(struct content *c);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା content__get_available_width(ସଂରଚନା content *c);
 
 /**
  * Retrieve source of content.
@@ -466,7 +466,7 @@ int content__get_available_width(struct content *c);
  * \param size Pointer to location to receive byte size of source.
  * \return Pointer to source data.
  */
-const uint8_t *content__get_source_data(struct content *c, size_t *size);
+ଅଚଳ uint8_t *content__get_source_data(ସଂରଚନା content *c, size_t *size);
 
 /**
  * Invalidate content reuse data.
@@ -477,7 +477,7 @@ const uint8_t *content__get_source_data(struct content *c, size_t *size);
  *
  * \param c Content to invalidate.
  */
-void content__invalidate_reuse_data(struct content *c);
+ଶୂନ୍ୟ content__invalidate_reuse_data(ସଂରଚନା content *c);
 
 /**
  * Retrieve the refresh URL for a content
@@ -485,7 +485,7 @@ void content__invalidate_reuse_data(struct content *c);
  * \param c Content to retrieve refresh URL from
  * \return Pointer to URL or NULL if none
  */
-struct nsurl *content__get_refresh_url(struct content *c);
+ସଂରଚନା nsurl *content__get_refresh_url(ସଂରଚନା content *c);
 
 /**
  * Retrieve the bitmap contained in an image content
@@ -493,7 +493,7 @@ struct nsurl *content__get_refresh_url(struct content *c);
  * \param c Content to retrieve opacity from
  * \return Pointer to bitmap or NULL if none.
  */
-struct bitmap *content__get_bitmap(struct content *c);
+ସଂରଚନା bitmap *content__get_bitmap(ସଂରଚନା content *c);
 
 /**
  * Determine if a content is opaque
@@ -502,7 +502,7 @@ struct bitmap *content__get_bitmap(struct content *c);
  * \return false if the content is not opaque or information is not
  *         known else true.
  */
-bool content__get_opaque(struct content *c);
+bool content__get_opaque(ସଂରଚନା content *c);
 
 /**
  * Retrieve the encoding of a content
@@ -511,7 +511,7 @@ bool content__get_opaque(struct content *c);
  * \param op encoding operation.
  * \return Pointer to content info or NULL if none.
  */
-const char *content__get_encoding(struct content *c, enum content_encoding_type op);
+ଅଚଳ ଅକ୍ଷର *content__get_encoding(ସଂରଚନା content *c, ଗଣନା content_encoding_type op);
 
 /**
  * Return whether a content is currently locked
@@ -519,14 +519,14 @@ const char *content__get_encoding(struct content *c, enum content_encoding_type 
  * \param c Content to test
  * \return true iff locked, else false
  */
-bool content__is_locked(struct content *c);
+bool content__is_locked(ସଂରଚନା content *c);
 
 /**
  * Destroy and free a content.
  *
  * Calls the destroy function for the content, and frees the structure.
  */
-void content_destroy(struct content *c);
+ଶୂନ୍ୟ content_destroy(ସଂରଚନା content *c);
 
 /**
  * Register a user for callbacks.
@@ -539,13 +539,13 @@ void content_destroy(struct content *c);
  * The callback will be called when content_broadcast() is
  * called with the content.
  */
-bool content_add_user(struct content *h,
-		      void (*callback)(
-				       struct content *c,
-				       content_msg msg,
-				       const union content_msg_data *data,
-				       void *pw),
-		      void *pw);
+bool content_add_user(ସଂରଚନା content *h,
+		      ଶୂନ୍ୟ (*callback)(
+				       ସଂରଚନା content *c,
+				       content_ସନ୍ଦେଶ ସନ୍ଦେଶ,
+				       ଅଚଳ ସଂଘ content_ସନ୍ଦେଶ_data *data,
+				       ଶୂନ୍ୟ *pw),
+		      ଶୂନ୍ୟ *pw);
 
 /**
  * Remove a callback user.
@@ -557,13 +557,13 @@ bool content_add_user(struct content *h,
  * \param callback passed when added
  * \param ctx Context passed when added
  */
-void content_remove_user(struct content *c,
-			 void (*callback)(
-					  struct content *c,
-					  content_msg msg,
-					  const union content_msg_data *data,
-					  void *pw),
-			 void *ctx);
+ଶୂନ୍ୟ content_remove_user(ସଂରଚନା content *c,
+			 ଶୂନ୍ୟ (*callback)(
+					  ସଂରଚନା content *c,
+					  content_ସନ୍ଦେଶ ସନ୍ଦେଶ,
+					  ଅଚଳ ସଂଘ content_ସନ୍ଦେଶ_data *data,
+					  ଶୂନ୍ୟ *pw),
+			 ଶୂନ୍ୟ *ctx);
 
 
 /**
@@ -571,7 +571,7 @@ void content_remove_user(struct content *c,
  *
  * \param c Content to consider
  */
-uint32_t content_count_users(struct content *c);
+uint32_t content_ଗଣନା_users(ସଂରଚନା content *c);
 
 
 /**
@@ -581,7 +581,7 @@ uint32_t content_count_users(struct content *c);
  * \param quirks  Quirks mode to match
  * \return True if quirks match, false otherwise
  */
-bool content_matches_quirks(struct content *c, bool quirks);
+bool content_matches_quirks(ସଂରଚନା content *c, bool quirks);
 
 /**
  * Determine if a content is shareable
@@ -589,7 +589,7 @@ bool content_matches_quirks(struct content *c, bool quirks);
  * \param c  Content to consider
  * \return True if content is shareable, false otherwise
  */
-bool content_is_shareable(struct content *c);
+bool content_is_shareable(ସଂରଚନା content *c);
 
 /**
  * Retrieve the low-level cache handle for a content
@@ -599,7 +599,7 @@ bool content_is_shareable(struct content *c);
  * \param c Content to retrieve from
  * \return Low-level cache handle
  */
-const struct llcache_handle *content_get_llcache_handle(struct content *c);
+ଅଚଳ ସଂରଚନା llcache_handle *content_get_llcache_handle(ସଂରଚନା content *c);
 
 /**
  * Retrieve URL associated with content
@@ -607,7 +607,7 @@ const struct llcache_handle *content_get_llcache_handle(struct content *c);
  * \param c  Content to retrieve URL from
  * \return Pointer to URL, or NULL if not found.
  */
-struct nsurl *content_get_url(struct content *c);
+ସଂରଚନା nsurl *content_get_url(ସଂରଚନା content *c);
 
 /**
  * Clone a content object in its current state.
@@ -615,7 +615,7 @@ struct nsurl *content_get_url(struct content *c);
  * \param c  Content to clone
  * \return Clone of \a c
  */
-struct content *content_clone(struct content *c);
+ସଂରଚନା content *content_clone(ସଂରଚନା content *c);
 
 /**
  * Abort a content object
@@ -623,6 +623,6 @@ struct content *content_clone(struct content *c);
  * \param c The content object to abort
  * \return NSERROR_OK on success, otherwise appropriate error
  */
-nserror content_abort(struct content *c);
+nserror content_abort(ସଂରଚନା content *c);
 
 #endif

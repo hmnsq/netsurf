@@ -20,7 +20,7 @@
  * Custom configuration for duktape
  */
 
-#include "utils/config.h"
+#ଅନ୍ତର୍ଭାଵ "utils/config.h"
 
 #ifndef HAVE_STRPTIME
 #undef DUK_USE_DATE_PRS_STRPTIME
@@ -34,7 +34,7 @@
 /* Required for execution timeout checking */
 #define DUK_USE_INTERRUPT_COUNTER
 
-extern duk_bool_t dukky_check_timeout(void *udata);
+ବାହ୍ୟ duk_bool_t dukky_check_timeout(ଶୂନ୍ୟ *udata);
 #define DUK_USE_EXEC_TIMEOUT_CHECK dukky_check_timeout
 
-#include "netsurf/inttypes.h"
+#ଅନ୍ତର୍ଭାଵ "netsurf/inttypes.h"
