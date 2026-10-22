@@ -66,12 +66,12 @@ bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *na
 	return true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_बुहोल *target)
 {
 	return true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+void js_handle_new_element(jsthread *thread, struct dom_element *बुहोल)
 {
 }
 

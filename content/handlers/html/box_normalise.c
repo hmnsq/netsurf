@@ -60,11 +60,11 @@ struct columns {
 	/** Current column index */
 	unsigned int current_column;
 	/** Number of columns in main part of table 1..max columns */
-	unsigned int num_columns;
+	unsigned int नुमेरो_columns;
 	/** Information about columns in main table, array [0, num_columns) */
 	struct span_info *spans;
 	/** Number of rows in table */
-	unsigned int num_rows;
+	unsigned int नुमेरो_rows;
 };
 
 
@@ -110,7 +110,7 @@ calculate_table_row(struct columns *col_info,
 
 	cell_end_col = cell_start_col + col_span;
 
-	if (col_info->num_columns < cell_end_col) {
+	if (col_info->नुमेरो_columns < cell_end_col) {
 		/* It appears that this row has more columns than
 		 * the maximum recorded for the table so far.
 		 * Allocate more span records. */
@@ -120,7 +120,7 @@ calculate_table_row(struct columns *col_info,
 			return false;
 
 		col_info->spans = spans;
-		col_info->num_columns = cell_end_col;
+		col_info->नुमेरो_columns = cell_end_col;
 
 		/* Mark new final column as sentinel */
 		col_info->spans[cell_end_col].row_span = 0;
@@ -147,7 +147,7 @@ calculate_table_row(struct columns *col_info,
 
 static bool
 box_normalise_table_row(struct box *row,
-			const struct box *root,
+			const struct box *उगात,
 			struct columns *col_info,
 			html_content * c)
 {
@@ -161,7 +161,7 @@ box_normalise_table_row(struct box *row,
 	assert(row != NULL);
 	assert(row->type == BOX_TABLE_ROW);
 
-	ctx.root_style = root->style;
+	ctx.उगात_style = उगात->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row %p", row);
@@ -173,7 +173,7 @@ box_normalise_table_row(struct box *row,
 		switch (child->type) {
 		case BOX_TABLE_CELL:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
+			if (box_normalise_block(child, उगात, c) == false)
 				return false;
 			cell = child;
 			break;
@@ -235,15 +235,15 @@ box_normalise_table_row(struct box *row,
 				row->last = cell;
 			cell->parent = row;
 
-			if (box_normalise_block(cell, root, c) == false)
+			if (box_normalise_block(cell, उगात, c) == false)
 				return false;
 			break;
 		case BOX_INLINE:
 		case BOX_INLINE_END:
 		case BOX_INLINE_FLEX:
 		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+		case BOX_FLOAT_कालिवा:
+		case BOX_FLOAT_कानान:
 		case BOX_BR:
 		case BOX_TEXT:
 			/* should have been wrapped in inline
@@ -261,7 +261,7 @@ box_normalise_table_row(struct box *row,
 
 
 	/* Update row spanning details for all columns */
-	for (i = 0; i < col_info->num_columns; i++) {
+	for (i = 0; i < col_info->नुमेरो_columns; i++) {
 		if (col_info->spans[i].row_span != 0 &&
 				col_info->spans[i].auto_row == false) {
 			/* This cell spans rows, and is not an auto row.
@@ -274,7 +274,7 @@ box_normalise_table_row(struct box *row,
 	col_info->current_column = 0;
 
 	/* Increment row counter */
-	col_info->num_rows++;
+	col_info->नुमेरो_rows++;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row %p done", row);
@@ -286,7 +286,7 @@ box_normalise_table_row(struct box *row,
 
 static bool
 box_normalise_table_row_group(struct box *row_group,
-			      const struct box *root,
+			      const struct box *उगात,
 			      struct columns *col_info,
 			      html_content * c)
 {
@@ -295,12 +295,12 @@ box_normalise_table_row_group(struct box *row_group,
 	struct box *row;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
-	unsigned int group_row_count = 0;
+	unsigned int group_row_बिलांग = 0;
 
 	assert(row_group != 0);
 	assert(row_group->type == BOX_TABLE_ROW_GROUP);
 
-	ctx.root_style = root->style;
+	ctx.उगात_style = उगात->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row_group %p", row_group);
@@ -312,8 +312,8 @@ box_normalise_table_row_group(struct box *row_group,
 		switch (child->type) {
 		case BOX_TABLE_ROW:
 			/* ok */
-			group_row_count++;
-			if (box_normalise_table_row(child, root, col_info,
+			group_row_बिलांग++;
+			if (box_normalise_table_row(child, उगात, col_info,
 					c) == false)
 				return false;
 			break;
@@ -375,8 +375,8 @@ box_normalise_table_row_group(struct box *row_group,
 				row_group->last = row;
 			row->parent = row_group;
 
-			group_row_count++;
-			if (box_normalise_table_row(row, root, col_info,
+			group_row_बिलांग++;
+			if (box_normalise_table_row(row, उगात, col_info,
 					c) == false)
 				return false;
 			break;
@@ -384,8 +384,8 @@ box_normalise_table_row_group(struct box *row_group,
 		case BOX_INLINE_END:
 		case BOX_INLINE_FLEX:
 		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+		case BOX_FLOAT_कालिवा:
+		case BOX_FLOAT_कानान:
 		case BOX_BR:
 		case BOX_TEXT:
 			/* should have been wrapped in inline
@@ -427,13 +427,13 @@ box_normalise_table_row_group(struct box *row_group,
 		row->parent = row_group;
 		row_group->children = row_group->last = row;
 
-		group_row_count = 1;
+		group_row_बिलांग = 1;
 
 		/* Keep table's row count in sync */
-		col_info->num_rows++;
+		col_info->नुमेरो_rows++;
 	}
 
-	row_group->rows = group_row_count;
+	row_group->rows = group_row_बिलांग;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row_group %p done", row_group);
@@ -455,19 +455,19 @@ box_normalise_table_row_group(struct box *row_group,
  */
 static bool
 box_normalise_table_spans(struct box *table,
-			  const struct box *root,
+			  const struct box *उगात,
 			  struct span_info *spans,
 			  html_content *c)
 {
 	struct box *table_row_group;
 	struct box *table_row;
 	struct box *table_cell;
-	unsigned int rows_left = table->rows;
-	unsigned int group_rows_left;
+	unsigned int rows_कालिवा = table->rows;
+	unsigned int group_rows_कालिवा;
 	unsigned int col;
 	nscss_select_ctx ctx;
 
-	ctx.root_style = root->style;
+	ctx.उगात_style = उगात->style;
 
 	/* Clear span data */
 	memset(spans, 0, table->columns * sizeof(struct span_info));
@@ -478,7 +478,7 @@ box_normalise_table_spans(struct box *table,
 	     table_row_group != NULL;
 	     table_row_group = table_row_group->next) {
 
-		group_rows_left = table_row_group->rows;
+		group_rows_कालिवा = table_row_group->rows;
 
 		for (table_row = table_row_group->children;
 		     table_row != NULL;
@@ -498,12 +498,12 @@ box_normalise_table_spans(struct box *table,
 				 * group
 				 */
 				if (table_cell->rows == 0) {
-					table_cell->rows = group_rows_left;
+					table_cell->rows = group_rows_कालिवा;
 				}
 
 				/* limit rowspans within group */
-				if (table_cell->rows > group_rows_left) {
-					table_cell->rows = group_rows_left;
+				if (table_cell->rows > group_rows_कालिवा) {
+					table_cell->rows = group_rows_कालिवा;
 				}
 
 				/* Record span information */
@@ -601,12 +601,12 @@ box_normalise_table_spans(struct box *table,
 				}
 			}
 
-			assert(rows_left > 0);
+			assert(rows_कालिवा > 0);
 
-			rows_left--;
+			rows_कालिवा--;
 		}
 
-		group_rows_left--;
+		group_rows_कालिवा--;
 	}
 
 	return true;
@@ -614,7 +614,7 @@ box_normalise_table_spans(struct box *table,
 
 
 static bool
-box_normalise_table(struct box *table, const struct box *root, html_content * c)
+box_normalise_table(struct box *table, const struct box *उगात, html_content * c)
 {
 	struct box *child;
 	struct box *next_child;
@@ -626,13 +626,13 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 	assert(table != NULL);
 	assert(table->type == BOX_TABLE);
 
-	ctx.root_style = root->style;
+	ctx.उगात_style = उगात->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "table %p", table);
 #endif
 
-	col_info.num_columns = 1;
+	col_info.नुमेरो_columns = 1;
 	col_info.current_column = 0;
 	col_info.spans = malloc(2 * sizeof *col_info.spans);
 	if (col_info.spans == NULL)
@@ -641,14 +641,14 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 	col_info.spans[0].row_span = col_info.spans[1].row_span = 0;
 	col_info.spans[0].auto_row = false;
 	col_info.spans[1].auto_row = false;
-	col_info.num_rows = 0;
+	col_info.नुमेरो_rows = 0;
 
 	for (child = table->children; child != NULL; child = next_child) {
 		next_child = child->next;
 		switch (child->type) {
 		case BOX_TABLE_ROW_GROUP:
 			/* ok */
-			if (box_normalise_table_row_group(child, root,
+			if (box_normalise_table_row_group(child, उगात,
 					&col_info, c) == false) {
 				free(col_info.spans);
 				return false;
@@ -716,7 +716,7 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 				table->last = row_group;
 			row_group->parent = table;
 
-			if (box_normalise_table_row_group(row_group, root,
+			if (box_normalise_table_row_group(row_group, उगात,
 					&col_info, c) == false) {
 				free(col_info.spans);
 				return false;
@@ -726,8 +726,8 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 		case BOX_INLINE_END:
 		case BOX_INLINE_FLEX:
 		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+		case BOX_FLOAT_कालिवा:
+		case BOX_FLOAT_कानान:
 		case BOX_BR:
 		case BOX_TEXT:
 			/* should have been wrapped in inline
@@ -740,8 +740,8 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 		}
 	}
 
-	table->columns = col_info.num_columns;
-	table->rows = col_info.num_rows;
+	table->columns = col_info.नुमेरो_columns;
+	table->rows = col_info.नुमेरो_rows;
 
 	if (table->children == NULL) {
 		struct box *row;
@@ -801,7 +801,7 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 		table->rows = 1;
 	}
 
-	if (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
+	if (box_normalise_table_spans(table, उगात, col_info.spans, c) == false) {
 		free(col_info.spans);
 		return false;
 	}
@@ -817,7 +817,7 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 static bool box_normalise_flex(
 		struct box *flex_container,
-		const struct box *root,
+		const struct box *उगात,
 		html_content *c)
 {
 	struct box *child;
@@ -827,9 +827,9 @@ static bool box_normalise_flex(
 	nscss_select_ctx ctx;
 
 	assert(flex_container != NULL);
-	assert(root != NULL);
+	assert(उगात != NULL);
 
-	ctx.root_style = root->style;
+	ctx.उगात_style = उगात->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "flex_container %p, flex_container->type %u",
@@ -850,12 +850,12 @@ static bool box_normalise_flex(
 		switch (child->type) {
 		case BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
+			if (box_normalise_flex(child, उगात, c) == false)
 				return false;
 			break;
 		case BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
+			if (box_normalise_block(child, उगात, c) == false)
 				return false;
 			break;
 		case BOX_INLINE_CONTAINER:
@@ -907,20 +907,20 @@ static bool box_normalise_flex(
 			implied_flex_item->parent = flex_container;
 
 			if (box_normalise_block(implied_flex_item,
-					root, c) == false)
+					उगात, c) == false)
 				return false;
 			break;
 
 		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
+			if (box_normalise_table(child, उगात, c) == false)
 				return false;
 			break;
 		case BOX_INLINE:
 		case BOX_INLINE_END:
 		case BOX_INLINE_FLEX:
 		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+		case BOX_FLOAT_कालिवा:
+		case BOX_FLOAT_कानान:
 		case BOX_BR:
 		case BOX_TEXT:
 			/* should have been wrapped in inline
@@ -980,7 +980,7 @@ static bool box_normalise_flex(
 			implied_flex_item->parent = flex_container;
 
 			if (box_normalise_table(implied_flex_item,
-					root, c) == false)
+					उगात, c) == false)
 				return false;
 			break;
 		default:
@@ -993,7 +993,7 @@ static bool box_normalise_flex(
 
 static bool
 box_normalise_inline_container(struct box *cont,
-			       const struct box *root,
+			       const struct box *उगात,
 			       html_content * c)
 {
 	struct box *child;
@@ -1017,32 +1017,32 @@ box_normalise_inline_container(struct box *cont,
 			break;
 		case BOX_INLINE_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
+			if (box_normalise_block(child, उगात, c) == false)
 				return false;
 			break;
 		case BOX_INLINE_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
+			if (box_normalise_flex(child, उगात, c) == false)
 				return false;
 			break;
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+		case BOX_FLOAT_कालिवा:
+		case BOX_FLOAT_कानान:
 			/* ok */
 			assert(child->children != NULL);
 
 			switch (child->children->type) {
 			case BOX_BLOCK:
-				if (box_normalise_block(child->children, root,
+				if (box_normalise_block(child->children, उगात,
 						c) == false)
 					return false;
 				break;
 			case BOX_TABLE:
-				if (box_normalise_table(child->children, root,
+				if (box_normalise_table(child->children, उगात,
 						c) == false)
 					return false;
 				break;
 			case BOX_FLEX:
-				if (box_normalise_flex(child->children, root,
+				if (box_normalise_flex(child->children, उगात,
 						c) == false)
 					return false;
 				break;
@@ -1085,7 +1085,7 @@ box_normalise_inline_container(struct box *cont,
 
 /* Exported function documented in html/box_normalise.h */
 bool
-box_normalise_block(struct box *block, const struct box *root, html_content *c)
+box_normalise_block(struct box *block, const struct box *उगात, html_content *c)
 {
 	struct box *child;
 	struct box *next_child;
@@ -1094,9 +1094,9 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 	nscss_select_ctx ctx;
 
 	assert(block != NULL);
-	assert(root != NULL);
+	assert(उगात != NULL);
 
-	ctx.root_style = root->style;
+	ctx.उगात_style = उगात->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "block %p, block->type %u", block, block->type);
@@ -1116,28 +1116,28 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 		switch (child->type) {
 		case BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
+			if (box_normalise_flex(child, उगात, c) == false)
 				return false;
 			break;
 		case BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
+			if (box_normalise_block(child, उगात, c) == false)
 				return false;
 			break;
 		case BOX_INLINE_CONTAINER:
-			if (box_normalise_inline_container(child, root, c) == false)
+			if (box_normalise_inline_container(child, उगात, c) == false)
 				return false;
 			break;
 		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
+			if (box_normalise_table(child, उगात, c) == false)
 				return false;
 			break;
 		case BOX_INLINE:
 		case BOX_INLINE_END:
 		case BOX_INLINE_FLEX:
 		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+		case BOX_FLOAT_कालिवा:
+		case BOX_FLOAT_कानान:
 		case BOX_BR:
 		case BOX_TEXT:
 			/* should have been wrapped in inline
@@ -1194,7 +1194,7 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 				block->last = table;
 			table->parent = block;
 
-			if (box_normalise_table(table, root, c) == false)
+			if (box_normalise_table(table, उगात, c) == false)
 				return false;
 			break;
 		default:

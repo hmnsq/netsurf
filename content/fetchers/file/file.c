@@ -83,11 +83,11 @@ struct fetch_file_context {
 static struct fetch_file_context *ring = NULL;
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_file_send_callback(const fetch_msg *msg,
+static inline bool fetch_file_send_callback(const fetch_मेनसाहे *मेनसाहे,
 		struct fetch_file_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(मेनसाहे, ctx->fetchh);
 	ctx->locked = false;
 
 	return ctx->aborted;
@@ -96,7 +96,7 @@ static inline bool fetch_file_send_callback(const fetch_msg *msg,
 static bool fetch_file_send_header(struct fetch_file_context *ctx,
 		const char *fmt, ...)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	char header[64];
 	va_list ap;
 	int len;
@@ -109,11 +109,11 @@ static bool fetch_file_send_header(struct fetch_file_context *ctx,
 		return false;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = len;
+	मेनसाहे.type = FETCH_HEADER;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) header;
+	मेनसाहे.data.header_or_data.len = len;
 
-	return fetch_file_send_callback(&msg, ctx);
+	return fetch_file_send_callback(&मेनसाहे, ctx);
 }
 
 /** callback to initialise the file fetcher. */
@@ -184,7 +184,7 @@ fetch_file_setup(struct fetch *fetchh,
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_इसिंगित(ring, ctx);
 
 	return ctx;
 }
@@ -234,10 +234,10 @@ static int fetch_file_errno_to_http_code(int error_no)
 
 static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	char buffer[1024];
 	const char *title;
-	char key[8];
+	char सुसि[8];
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
@@ -246,8 +246,8 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_file_process_error_aborted;
 
-	snprintf(key, sizeof key, "HTTP%03d", code);
-	title = messages_get(key);
+	snprintf(सुसि, sizeof सुसि, "HTTP%03d", code);
+	title = messages_get(सुसि);
 
 	snprintf(buffer, sizeof buffer,
 		 "<html><head>"
@@ -264,14 +264,14 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 		 messages_get("FetchErrorCode"), code,
 		 messages_get("FetchFile"), nsurl_access(ctx->url));
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	मेनसाहे.type = FETCH_DATA;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) buffer;
+	मेनसाहे.data.header_or_data.len = strlen(buffer);
+	if (fetch_file_send_callback(&मेनसाहे, ctx))
 		goto fetch_file_process_error_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	मेनसाहे.type = FETCH_FINISHED;
+	fetch_file_send_callback(&मेनसाहे, ctx);
 
 fetch_file_process_error_aborted:
 	return;
@@ -283,7 +283,7 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 				     struct stat *fdstat)
 {
 #ifdef HAVE_MMAP
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	char *buf = NULL;
 	size_t buf_size;
 
@@ -292,8 +292,8 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	/* Check if we can just return not modified */
 	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
+		मेनसाहे.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&मेनसाहे, ctx);
 		return;
 	}
 
@@ -312,9 +312,9 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	if (buf_size > 0) {
 		buf = mmap(NULL, buf_size, PROT_READ, MAP_SHARED, fd, 0);
 		if (buf == MAP_FAILED) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to map memory for file data buffer";
-			fetch_file_send_callback(&msg, ctx);
+			मेनसाहे.type = FETCH_ERROR;
+			मेनसाहे.data.error = "Unable to map memory for file data buffer";
+			fetch_file_send_callback(&मेनसाहे, ctx);
 			close(fd);
 			return;
 		}
@@ -346,14 +346,14 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 		goto fetch_file_process_aborted;
 	}
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buf;
-	msg.data.header_or_data.len = buf_size;
-	fetch_file_send_callback(&msg, ctx);
+	मेनसाहे.type = FETCH_DATA;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) buf;
+	मेनसाहे.data.header_or_data.len = buf_size;
+	fetch_file_send_callback(&मेनसाहे, ctx);
 
 	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+		मेनसाहे.type = FETCH_FINISHED;
+		fetch_file_send_callback(&मेनसाहे, ctx);
 	}
 
 fetch_file_process_aborted:
@@ -362,7 +362,7 @@ fetch_file_process_aborted:
 		munmap(buf, buf_size);
 	close(fd);
 #else
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	char *buf;
 	size_t buf_size;
 
@@ -374,8 +374,8 @@ fetch_file_process_aborted:
 	/* Check if we can just return not modified */
 	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
+		मेनसाहे.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&मेनसाहे, ctx);
 		return;
 	}
 
@@ -395,10 +395,10 @@ fetch_file_process_aborted:
 	/* allocate the buffer storage */
 	buf = malloc(buf_size);
 	if (buf == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error =
+		मेनसाहे.type = FETCH_ERROR;
+		मेनसाहे.data.error =
 			"Unable to allocate memory for file data buffer";
-		fetch_file_send_callback(&msg, ctx);
+		fetch_file_send_callback(&मेनसाहे, ctx);
 		fclose(infile);
 		return;
 	}
@@ -434,29 +434,29 @@ fetch_file_process_aborted:
 		res = fread(buf, 1, buf_size, infile);
 		if (res == 0) {
 			if (feof(infile)) {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Unexpected EOF reading file";
-				fetch_file_send_callback(&msg, ctx);
+				मेनसाहे.type = FETCH_ERROR;
+				मेनसाहे.data.error = "Unexpected EOF reading file";
+				fetch_file_send_callback(&मेनसाहे, ctx);
 				goto fetch_file_process_aborted;
 			} else {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Error reading file";
-				fetch_file_send_callback(&msg, ctx);
+				मेनसाहे.type = FETCH_ERROR;
+				मेनसाहे.data.error = "Error reading file";
+				fetch_file_send_callback(&मेनसाहे, ctx);
 				goto fetch_file_process_aborted;
 			}
 		}
 		tot_read += res;
 
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buf;
-		msg.data.header_or_data.len = res;
-		if (fetch_file_send_callback(&msg, ctx))
+		मेनसाहे.type = FETCH_DATA;
+		मेनसाहे.data.header_or_data.buf = (const uint8_t *) buf;
+		मेनसाहे.data.header_or_data.len = res;
+		if (fetch_file_send_callback(&मेनसाहे, ctx))
 			break;
 	}
 
 	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+		मेनसाहे.type = FETCH_FINISHED;
+		fetch_file_send_callback(&मेनसाहे, ctx);
 	}
 
 fetch_file_process_aborted:
@@ -665,7 +665,7 @@ static int dir_sort_alpha(const struct dirent **d1, const struct dirent **d2)
 static void fetch_file_process_dir(struct fetch_file_context *ctx,
 				   struct stat *fdstat)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	char buffer[1024]; /* Output buffer */
 	bool even = false; /* formatting flag */
 	char *title; /* pretty printed title */
@@ -694,21 +694,21 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
+	मेनसाहे.type = FETCH_DATA;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) buffer;
 
 	/* directory listing top */
-	dirlist_generate_top(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	dirlist_generate_इताअस(buffer, sizeof buffer);
+	मेनसाहे.data.header_or_data.len = strlen(buffer);
+	if (fetch_file_send_callback(&मेनसाहे, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	/* directory listing title */
 	title = gen_nice_title(ctx->path);
 	dirlist_generate_title(title, buffer, sizeof buffer);
 	free(title);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	मेनसाहे.data.header_or_data.len = strlen(buffer);
+	if (fetch_file_send_callback(&मेनसाहे, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	/* Print parent directory link */
@@ -719,8 +719,8 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 			dirlist_generate_parent_link(nsurl_access(up),
 					buffer, sizeof buffer);
 
-			msg.data.header_or_data.len = strlen(buffer);
-			fetch_file_send_callback(&msg, ctx);
+			मेनसाहे.data.header_or_data.len = strlen(buffer);
+			fetch_file_send_callback(&मेनसाहे, ctx);
 		}
 		nsurl_unref(up);
 
@@ -731,8 +731,8 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 
 	/* directory list headings */
 	dirlist_generate_headings(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	मेनसाहे.data.header_or_data.len = strlen(buffer);
+	if (fetch_file_send_callback(&मेनसाहे, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	for (i = 0; i < n; i++) {
@@ -741,8 +741,8 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 				       sizeof(buffer));
 
 		if (err == NSERROR_OK) {
-			msg.data.header_or_data.len = strlen(buffer);
-			if (fetch_file_send_callback(&msg, ctx))
+			मेनसाहे.data.header_or_data.len = strlen(buffer);
+			if (fetch_file_send_callback(&मेनसाहे, ctx))
 				goto fetch_file_process_dir_aborted;
 
 			even = !even;
@@ -751,12 +751,12 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 
 	/* directory listing bottom */
 	dirlist_generate_bottom(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	मेनसाहे.data.header_or_data.len = strlen(buffer);
+	if (fetch_file_send_callback(&मेनसाहे, ctx))
 		goto fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	मेनसाहे.type = FETCH_FINISHED;
+	fetch_file_send_callback(&मेनसाहे, ctx);
 
 fetch_file_process_dir_aborted:
 
@@ -814,7 +814,7 @@ static void fetch_file_poll(lwc_string *scheme)
 		 * again.
 		 */
 		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
+			RING_इसिंगित(save_ring, c);
 			continue;
 		}
 

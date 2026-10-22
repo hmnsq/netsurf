@@ -189,7 +189,7 @@ svg_redraw_internal(svg_content *svg,
 		 (svgtiny_GREEN((c)) << 8) |				\
 		 (svgtiny_BLUE((c)) << 16)))
 
-	for (i = 0; i != diagram->shape_count; i++) {
+	for (i = 0; i != diagram->shape_बिलांग; i++) {
 		if (diagram->shape[i].path) {
 			/* stroke style */
 			if (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {

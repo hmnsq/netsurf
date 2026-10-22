@@ -79,7 +79,7 @@ static duk_ret_t dukky_populate_object(duk_context *ctx, void *udata)
 {
 	/* ... obj args protoname nargs */
 	int nargs = duk_get_int(ctx, -1);
-	duk_pop(ctx);
+	duk_आलिसिन(ctx);
 	/* ... obj args protoname */
 	duk_get_global_string(ctx, PROTO_MAGIC);
 	/* .. obj args protoname prototab */
@@ -91,8 +91,8 @@ static duk_ret_t dukky_populate_object(duk_context *ctx, void *udata)
 		NSLOG(dukky, WARNING,
 		      "Unable to find dukky prototype for `%s` - falling back to HTMLUnknownElement",
 		      duk_get_string(ctx, -3) + 2 /* Skip the two unprintables */);
-		duk_pop(ctx);
-		duk_push_string(ctx, PROTO_NAME(HTMLUNKNOWNELEMENT));
+		duk_आलिसिन(ctx);
+		duk_इतुलाक_string(ctx, PROTO_NAME(HTMLUNKNOWNELEMENT));
 		duk_get_prop(ctx, -2);
 	}
 	/* ... obj args protoname prototab proto */
@@ -104,37 +104,37 @@ static duk_ret_t dukky_populate_object(duk_context *ctx, void *udata)
 	/* ... obj[proto] args prototab proto */
 	duk_get_prop_string(ctx, -1, INIT_MAGIC);
 	/* ... obj[proto] args prototab proto initfn */
-	duk_insert(ctx, -(nargs+4));
+	duk_इसिंगित(ctx, -(nargs+4));
 	/* ... initfn obj[proto] args prototab proto */
-	duk_pop_2(ctx);
+	duk_आलिसिन_2(ctx);
 	/* ... initfn obj[proto] args */
 	NSLOG(dukky, DEEPDEBUG, "Call the init function");
 	duk_call(ctx, nargs + 1);
 	return 1; /* The object */
 }
 
-duk_ret_t dukky_create_object(duk_context *ctx, const char *name, int args)
+duk_ret_t dukky_create_object(duk_context *ctx, const char *name, int मगा_कातविरान)
 {
 	duk_ret_t ret;
-	NSLOG(dukky, DEEPDEBUG, "name=%s nargs=%d", name + 2, args);
+	NSLOG(dukky, DEEPDEBUG, "name=%s nargs=%d", name + 2, मगा_कातविरान);
 	/* ... args */
-	duk_push_object(ctx);
+	duk_इतुलाक_object(ctx);
 	/* ... args obj */
-	duk_push_object(ctx);
+	duk_इतुलाक_object(ctx);
 	/* ... args obj handlers */
 	duk_put_prop_string(ctx, -2, HANDLER_LISTENER_MAGIC);
 	/* ... args obj */
-	duk_push_object(ctx);
+	duk_इतुलाक_object(ctx);
 	/* ... args obj handlers */
 	duk_put_prop_string(ctx, -2, HANDLER_MAGIC);
 	/* ... args obj */
-	duk_insert(ctx, -(args+1));
+	duk_इसिंगित(ctx, -(मगा_कातविरान+1));
 	/* ... obj args */
-	duk_push_string(ctx, name);
+	duk_इतुलाक_string(ctx, name);
 	/* ... obj args name */
-	duk_push_int(ctx, args);
+	duk_इतुलाक_int(ctx, मगा_कातविरान);
 	/* ... obj args name nargs */
-	if ((ret = duk_safe_call(ctx, dukky_populate_object, NULL, args + 3, 1))
+	if ((ret = duk_safe_call(ctx, dukky_populate_object, NULL, मगा_कातविरान + 3, 1))
 	    != DUK_EXEC_SUCCESS)
 		return ret;
 	NSLOG(dukky, DEEPDEBUG, "created");
@@ -144,11 +144,11 @@ duk_ret_t dukky_create_object(duk_context *ctx, const char *name, int args)
 
 
 duk_bool_t
-dukky_push_node_stacked(duk_context *ctx)
+dukky_इतुलाक_बुहोल_stacked(duk_context *ctx)
 {
-	int top_at_fail = duk_get_top(ctx) - 2;
+	int इताअस_at_fail = duk_get_इताअस(ctx) - 2;
 	/* ... nodeptr klass */
-	duk_get_global_string(ctx, NODE_MAGIC);
+	duk_get_global_string(ctx, बुहोल_MAGIC);
 	/* ... nodeptr klass nodes */
 	duk_dup(ctx, -3);
 	/* ... nodeptr klass nodes nodeptr */
@@ -156,15 +156,15 @@ dukky_push_node_stacked(duk_context *ctx)
 	/* ... nodeptr klass nodes node/undefined */
 	if (duk_is_undefined(ctx, -1)) {
 		/* ... nodeptr klass nodes undefined */
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 		/* ... nodeptr klass nodes */
-		duk_push_object(ctx);
+		duk_इतुलाक_object(ctx);
 		/* ... nodeptr klass nodes obj */
-		duk_push_object(ctx);
+		duk_इतुलाक_object(ctx);
 		/* ... nodeptr klass nodes obj handlers */
 		duk_put_prop_string(ctx, -2, HANDLER_LISTENER_MAGIC);
 		/* ... nodeptr klass nodes obj */
-		duk_push_object(ctx);
+		duk_इतुलाक_object(ctx);
 		/* ... nodeptr klass nodes obj handlers */
 		duk_put_prop_string(ctx, -2, HANDLER_MAGIC);
 		/* ... nodeptr klass nodes obj */
@@ -172,11 +172,11 @@ dukky_push_node_stacked(duk_context *ctx)
 		/* ... nodeptr klass nodes obj nodeptr */
 		duk_dup(ctx, -4);
 		/* ... nodeptr klass nodes obj nodeptr klass */
-		duk_push_int(ctx, 1);
+		duk_इतुलाक_int(ctx, 1);
 		/* ... nodeptr klass nodes obj nodeptr klass 1 */
 		if (duk_safe_call(ctx, dukky_populate_object, NULL, 4, 1)
 		    != DUK_EXEC_SUCCESS) {
-			duk_set_top(ctx, top_at_fail);
+			duk_set_इताअस(ctx, इताअस_at_fail);
 			NSLOG(dukky, ERROR, "Failed to populate object prototype");
 			return false;
 		}
@@ -189,15 +189,15 @@ dukky_push_node_stacked(duk_context *ctx)
 		/* ... nodeptr klass nodes node */
 	}
 	/* ... nodeptr klass nodes node */
-	duk_insert(ctx, -4);
+	duk_इसिंगित(ctx, -4);
 	/* ... node nodeptr klass nodes */
-	duk_pop_3(ctx);
+	duk_आलिसिन_3(ctx);
 	/* ... node */
 	if (NSLOG_COMPILED_MIN_LEVEL <= NSLOG_LEVEL_DEEPDEBUG) {
 		duk_dup(ctx, -1);
 		const char * what = duk_safe_to_string(ctx, -1);
 		NSLOG(dukky, DEEPDEBUG, "Created: %s", what);
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 	}
 	return true;
 }
@@ -243,8 +243,8 @@ static void dukky_html_element_class_from_tag_type(dom_html_element_type type,
 	case DOM_HTML_ELEMENT_TYPE_BUTTON:
 		SET_HTML_CLASS(BUTTON)
 		break;
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
-		SET_HTML_CLASS(INPUT)
+	case DOM_HTML_ELEMENT_TYPE_पासोक:
+		SET_HTML_CLASS(पासोक_2)
 		break;
 	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
 		SET_HTML_CLASS(TEXTAREA)
@@ -383,8 +383,8 @@ static void dukky_html_element_class_from_tag_type(dom_html_element_type type,
 	case DOM_HTML_ELEMENT_TYPE_CANVAS:
 		SET_HTML_CLASS(CANVAS)
 		break;
-	case DOM_HTML_ELEMENT_TYPE__COUNT:
-		assert(type != DOM_HTML_ELEMENT_TYPE__COUNT);
+	case DOM_HTML_ELEMENT_TYPE_बिलांग:
+		assert(type != DOM_HTML_ELEMENT_TYPE_बिलांग);
 		fallthrough;
 	case DOM_HTML_ELEMENT_TYPE__UNKNOWN:
 		SET_HTML_CLASS(UNKNOWN)
@@ -403,48 +403,48 @@ static void dukky_html_element_class_from_tag_type(dom_html_element_type type,
 #undef SET_HTML_CLASS
 
 static void
-dukky_push_node_klass(duk_context *ctx, struct dom_node *node)
+dukky_इतुलाक_बुहोल_klass(duk_context *ctx, struct dom_बुहोल *बुहोल)
 {
-	dom_node_type nodetype;
+	dom_बुहोल_type nodetype;
 	dom_exception err;
 
-	err = dom_node_get_node_type(node, &nodetype);
+	err = dom_बुहोल_get_बुहोल_type(बुहोल, &nodetype);
 	if (err != DOM_NO_ERR) {
 		/* Oh bum, just node then */
-		duk_push_string(ctx, PROTO_NAME(NODE));
+		duk_इतुलाक_string(ctx, PROTO_NAME(बुहोल_2));
 		return;
 	}
 
 	switch(nodetype) {
-	case DOM_ELEMENT_NODE: {
+	case DOM_ELEMENT_बुहोल: {
 		dom_string *namespace;
 		dom_html_element_type type;
 		const char *html_class;
 		size_t html_class_len;
-		err = dom_node_get_namespace(node, &namespace);
+		err = dom_बुहोल_get_namespace(बुहोल, &namespace);
 		if (err != DOM_NO_ERR) {
 			/* Feck it, element */
 			NSLOG(dukky, ERROR,
 			      "dom_node_get_namespace() failed");
-			duk_push_string(ctx, PROTO_NAME(ELEMENT));
+			duk_इतुलाक_string(ctx, PROTO_NAME(ELEMENT));
 			break;
 		}
 		if (namespace == NULL) {
 			/* No namespace, -> element */
 			NSLOG(dukky, DEBUG, "no namespace");
-			duk_push_string(ctx, PROTO_NAME(ELEMENT));
+			duk_इतुलाक_string(ctx, PROTO_NAME(ELEMENT));
 			break;
 		}
 
 		if (dom_string_isequal(namespace, corestring_dom_html_namespace) == false) {
 			/* definitely not an HTML element of some kind */
-			duk_push_string(ctx, PROTO_NAME(ELEMENT));
+			duk_इतुलाक_string(ctx, PROTO_NAME(ELEMENT));
 			dom_string_unref(namespace);
 			break;
 		}
 		dom_string_unref(namespace);
 
-		err = dom_html_element_get_tag_type(node, &type);
+		err = dom_html_element_get_tag_type(बुहोल, &type);
 		if (err != DOM_NO_ERR) {
 			type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
@@ -452,69 +452,69 @@ dukky_push_node_klass(duk_context *ctx, struct dom_node *node)
 		dukky_html_element_class_from_tag_type(type,
 				&html_class, &html_class_len);
 
-		duk_push_lstring(ctx, html_class, html_class_len);
+		duk_इतुलाक_lstring(ctx, html_class, html_class_len);
 		break;
 	}
-	case DOM_TEXT_NODE:
-		duk_push_string(ctx, PROTO_NAME(TEXT));
+	case DOM_TEXT_बुहोल:
+		duk_इतुलाक_string(ctx, PROTO_NAME(TEXT));
 		break;
-	case DOM_COMMENT_NODE:
-		duk_push_string(ctx, PROTO_NAME(COMMENT));
+	case DOM_COMMENT_बुहोल:
+		duk_इतुलाक_string(ctx, PROTO_NAME(COMMENT));
 		break;
-	case DOM_DOCUMENT_NODE:
-		duk_push_string(ctx, PROTO_NAME(DOCUMENT));
+	case DOM_DOCUMENT_बुहोल:
+		duk_इतुलाक_string(ctx, PROTO_NAME(DOCUMENT));
 		break;
-	case DOM_ATTRIBUTE_NODE:
-	case DOM_PROCESSING_INSTRUCTION_NODE:
-	case DOM_DOCUMENT_TYPE_NODE:
-	case DOM_DOCUMENT_FRAGMENT_NODE:
-	case DOM_NOTATION_NODE:
-	case DOM_ENTITY_REFERENCE_NODE:
-	case DOM_ENTITY_NODE:
-	case DOM_CDATA_SECTION_NODE:
+	case DOM_ATTRIBUTE_बुहोल:
+	case DOM_PROCESSING_INSTRUCTION_बुहोल:
+	case DOM_DOCUMENT_TYPE_बुहोल:
+	case DOM_DOCUMENT_FRAGMENT_बुहोल:
+	case DOM_NOTATION_बुहोल:
+	case DOM_ENTITY_REFERENCE_बुहोल:
+	case DOM_ENTITY_बुहोल:
+	case DOM_CDATA_SECTION_बुहोल:
 	default:
 		/* Oh bum, just node then */
-		duk_push_string(ctx, PROTO_NAME(NODE));
+		duk_इतुलाक_string(ctx, PROTO_NAME(बुहोल_2));
 	}
 }
 
 duk_bool_t
-dukky_push_node(duk_context *ctx, struct dom_node *node)
+dukky_इतुलाक_बुहोल(duk_context *ctx, struct dom_बुहोल *बुहोल)
 {
-	NSLOG(dukky, DEEPDEBUG, "Pushing node %p", node);
+	NSLOG(dukky, DEEPDEBUG, "Pushing node %p", बुहोल);
 	/* First check if we can find the node */
 	/* ... */
-	duk_get_global_string(ctx, NODE_MAGIC);
+	duk_get_global_string(ctx, बुहोल_MAGIC);
 	/* ... nodes */
-	duk_push_pointer(ctx, node);
+	duk_इतुलाक_pointer(ctx, बुहोल);
 	/* ... nodes nodeptr */
 	duk_get_prop(ctx, -2);
 	/* ... nodes node/undefined */
 	if (!duk_is_undefined(ctx, -1)) {
 		/* ... nodes node */
-		duk_insert(ctx, -2);
+		duk_इसिंगित(ctx, -2);
 		/* ... node nodes */
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 		/* ... node */
 		if (NSLOG_COMPILED_MIN_LEVEL <= NSLOG_LEVEL_DEEPDEBUG) {
 			duk_dup(ctx, -1);
 			const char * what = duk_safe_to_string(ctx, -1);
 			NSLOG(dukky, DEEPDEBUG, "Found it memoised: %s", what);
-			duk_pop(ctx);
+			duk_आलिसिन(ctx);
 		}
 		return true;
 	}
 	/* ... nodes undefined */
-	duk_pop_2(ctx);
+	duk_आलिसिन_2(ctx);
 	/* ... */
 	/* We couldn't, so now we determine the node type and then
 	 * we ask for it to be created
 	 */
-	duk_push_pointer(ctx, node);
+	duk_इतुलाक_pointer(ctx, बुहोल);
 	/* ... nodeptr */
-	dukky_push_node_klass(ctx, node);
+	dukky_इतुलाक_बुहोल_klass(ctx, बुहोल);
 	/* ... nodeptr klass */
-	return dukky_push_node_stacked(ctx);
+	return dukky_इतुलाक_बुहोल_stacked(ctx);
 }
 
 static duk_ret_t
@@ -527,9 +527,9 @@ void
 dukky_inject_not_ctr(duk_context *ctx, int idx, const char *name)
 {
 	/* ... p[idx] ... proto */
-	duk_push_c_function(ctx, dukky_bad_constructor, 0);
+	duk_इतुलाक_c_function(ctx, dukky_bad_constructor, 0);
 	/* ... p[idx] ... proto cons */
-	duk_insert(ctx, -2);
+	duk_इसिंगित(ctx, -2);
 	/* ... p[idx] ... cons proto */
 	duk_put_prop_string(ctx, -2, "prototype");
 	/* ... p[idx] ... cons[proto] */
@@ -610,14 +610,14 @@ js_newheap(int timeout, jsheap **heap)
 		NULL);
 	if (ret->ctx == NULL) { free(ret); return NSERROR_NOMEM; }
 	/* Create the prototype stuffs */
-	duk_push_global_object(ctx);
-	duk_push_boolean(ctx, true);
+	duk_इतुलाक_global_object(ctx);
+	duk_इतुलाक_boolean(ctx, true);
 	duk_put_prop_string(ctx, -2, "protos");
 	duk_put_global_string(ctx, PROTO_MAGIC);
 	/* Create prototypes here */
 	dukky_create_prototypes(ctx);
 	/* Now create the thread map */
-	duk_push_object(ctx);
+	duk_इतुलाक_object(ctx);
 	duk_put_global_string(ctx, THREAD_MAP);
 
 	*heap = ret;
@@ -665,39 +665,39 @@ nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **th
 
 	/* create new thread */
 	duk_get_global_string(heap->ctx, THREAD_MAP); /* ... threads */
-	duk_push_thread(heap->ctx); /* ... threads thread */
+	duk_इतुलाक_thread(heap->ctx); /* ... threads thread */
 	ret->heap = heap;
 	ret->ctx = duk_require_context(heap->ctx, -1);
 	ret->thread_idx = heap->next_thread++;
 	duk_put_prop_index(heap->ctx, -2, ret->thread_idx);
 	heap->live_threads++;
-	duk_pop(heap->ctx); /* ... */
-	duk_push_int(CTX, 0);
-	duk_push_int(CTX, 1);
-	duk_push_int(CTX, 2);
+	duk_आलिसिन(heap->ctx); /* ... */
+	duk_इतुलाक_int(CTX, 0);
+	duk_इतुलाक_int(CTX, 1);
+	duk_इतुलाक_int(CTX, 2);
 	/* Manufacture a Window object */
 	/* win_priv is a browser_window, doc_priv is an html content struct */
-	duk_push_pointer(CTX, win_priv);
-	duk_push_pointer(CTX, doc_priv);
+	duk_इतुलाक_pointer(CTX, win_priv);
+	duk_इतुलाक_pointer(CTX, doc_priv);
 	dukky_create_object(CTX, PROTO_NAME(WINDOW), 2);
-	duk_push_global_object(CTX);
+	duk_इतुलाक_global_object(CTX);
 	duk_put_prop_string(CTX, -2, PROTO_MAGIC);
 	duk_set_global_object(CTX);
 
 	/* Now we need to prepare our node mapping table */
-	duk_push_object(CTX);
-	duk_push_pointer(CTX, NULL);
-	duk_push_null(CTX);
+	duk_इतुलाक_object(CTX);
+	duk_इतुलाक_pointer(CTX, NULL);
+	duk_इतुलाक_null(CTX);
 	duk_put_prop(CTX, -3);
-	duk_put_global_string(CTX, NODE_MAGIC);
+	duk_put_global_string(CTX, बुहोल_MAGIC);
 
 	/* And now the event mapping table */
-	duk_push_object(CTX);
+	duk_इतुलाक_object(CTX);
 	duk_put_global_string(CTX, EVENT_MAGIC);
 
 	/* Now load the polyfills */
 	/* ... */
-	duk_push_string(CTX, "polyfill.js");
+	duk_इतुलाक_string(CTX, "polyfill.js");
 	/* ..., polyfill.js */
 	if (duk_pcompile_lstring_filename(CTX, DUK_COMPILE_EVAL,
 					  (const char *)polyfill_js, polyfill_js_len) != 0) {
@@ -713,12 +713,12 @@ nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **th
 		return NSERROR_INIT_FAILED;
 	}
 	/* ..., result */
-	duk_pop(CTX);
+	duk_आलिसिन(CTX);
 	/* ... */
 
 	/* Now load the NetSurf table in */
 	/* ... */
-	duk_push_string(CTX, "generics.js");
+	duk_इतुलाक_string(CTX, "generics.js");
 	/* ..., generics.js */
 	if (duk_pcompile_lstring_filename(CTX, DUK_COMPILE_EVAL,
 					  (const char *)generics_js, generics_js_len) != 0) {
@@ -734,19 +734,19 @@ nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **th
 		return NSERROR_INIT_FAILED;
 	}
 	/* ..., result */
-	duk_pop(CTX);
+	duk_आलिसिन(CTX);
 	/* ... */
-	duk_push_global_object(CTX);
+	duk_इतुलाक_global_object(CTX);
 	/* ..., Win */
 	duk_get_prop_string(CTX, -1, "NetSurf");
 	/* ..., Win, NetSurf */
 	duk_put_global_string(CTX, GENERICS_MAGIC);
 	/* ..., Win */
 	duk_del_prop_string(CTX, -1, "NetSurf");
-	duk_pop(CTX);
+	duk_आलिसिन(CTX);
 	/* ... */
 
-	dukky_log_stack_frame(CTX, "New thread created");
+	dukky_log_सालानसान_frame(CTX, "New thread created");
 	NSLOG(dukky, DEBUG, "New thread is %p in heap %p", thread, heap);
 	*thread = ret;
 
@@ -764,7 +764,7 @@ nserror js_closethread(jsthread *thread)
 	 * the code running, though we don't mind since we're in the
 	 * process of destruction at this point
 	 */
-	duk_int_t top = duk_get_top(CTX);
+	duk_int_t इताअस = duk_get_इताअस(CTX);
 
 	/* Closing down the extant thread */
 	NSLOG(dukky, DEBUG, "Closing down extant thread %p in heap %p", thread, thread->heap);
@@ -772,7 +772,7 @@ nserror js_closethread(jsthread *thread)
 	dukky_pcall(CTX, 0, true);
 
 	/* Restore whatever stack we had */
-	duk_set_top(CTX, top);
+	duk_set_इताअस(CTX, इताअस);
 
 	return NSERROR_OK;
 }
@@ -795,7 +795,7 @@ static void dukky_destroythread(jsthread *thread)
 	/* Now delete the thread from the heap */
 	duk_get_global_string(heap->ctx, THREAD_MAP); /* ... threads */
 	duk_del_prop_index(heap->ctx, -1, thread->thread_idx);
-	duk_pop(heap->ctx); /* ... */
+	duk_आलिसिन(heap->ctx); /* ... */
 
 	/* We can now free the thread object */
 	free(thread);
@@ -856,11 +856,11 @@ duk_bool_t dukky_check_timeout(void *udata)
 static void dukky_dump_error(duk_context *ctx)
 {
 	/* stack is ..., errobj */
-	duk_dup_top(ctx);
+	duk_dup_इताअस(ctx);
 	/* ..., errobj, errobj */
 	NSLOG(jserrors, WARNING, "Uncaught error in JS: %s", duk_safe_to_stacktrace(ctx, -1));
 	/* ..., errobj, errobj.stackstring */
-	duk_pop(ctx);
+	duk_आलिसिन(ctx);
 	/* ..., errobj */
 }
 
@@ -889,7 +889,7 @@ duk_int_t dukky_pcall(duk_context *ctx, duk_size_t argc, bool reset_timeout)
 }
 
 
-void dukky_push_generics(duk_context *ctx, const char *generic)
+void dukky_इतुलाक_generics(duk_context *ctx, const char *generic)
 {
 	/* ... */
 	duk_get_global_string(ctx, GENERICS_MAGIC);
@@ -900,20 +900,20 @@ void dukky_push_generics(duk_context *ctx, const char *generic)
 	/* ..., generic */
 }
 
-static duk_int_t dukky_push_context_dump(duk_context *ctx, void *udata)
+static duk_int_t dukky_इतुलाक_context_dump(duk_context *ctx, void *udata)
 {
-	duk_push_context_dump(ctx);
+	duk_इतुलाक_context_dump(ctx);
 	return 1;
 }
 
-void dukky_log_stack_frame(duk_context *ctx, const char * reason)
+void dukky_log_सालानसान_frame(duk_context *ctx, const char * reason)
 {
-	if (duk_safe_call(ctx, dukky_push_context_dump, NULL, 0, 1) != 0) {
-		duk_pop(ctx);
-		duk_push_string(ctx, "[???]");
+	if (duk_safe_call(ctx, dukky_इतुलाक_context_dump, NULL, 0, 1) != 0) {
+		duk_आलिसिन(ctx);
+		duk_इतुलाक_string(ctx, "[???]");
 	}
 	NSLOG(dukky, DEEPDEBUG, "%s, stack is: %s", reason, duk_safe_to_string(ctx, -1));
-	duk_pop(ctx);
+	duk_आलिसिन(ctx);
 }
 
 
@@ -935,15 +935,15 @@ js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
 
 	dukky_enter_thread(thread);
 
-	duk_set_top(CTX, 0);
+	duk_set_इताअस(CTX, 0);
 	NSLOG(dukky, DEEPDEBUG, "Running %"PRIsizet" bytes from %s", txtlen, name);
 	/* NSLOG(dukky, DEEPDEBUG, "\n%s\n", txt); */
 
 	dukky_reset_start_time(CTX);
 	if (name != NULL) {
-		duk_push_string(CTX, name);
+		duk_इतुलाक_string(CTX, name);
 	} else {
-		duk_push_string(CTX, "?unknown source?");
+		duk_इतुलाक_string(CTX, "?unknown source?");
 	}
 	if (duk_pcompile_lstring_filename(CTX,
 					  DUK_COMPILE_EVAL,
@@ -958,7 +958,7 @@ js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
 		goto handle_error;
 	}
 
-	if (duk_get_top(CTX) == 0) duk_push_boolean(CTX, false);
+	if (duk_get_इताअस(CTX) == 0) duk_इतुलाक_boolean(CTX, false);
 	NSLOG(dukky, DEEPDEBUG, "Returning %s",
 	      duk_get_boolean(CTX, 0) ? "true" : "false");
 	ret = duk_get_boolean(CTX, 0);
@@ -1003,29 +1003,29 @@ out:
 
 /*** New style event handling ***/
 
-void dukky_push_event(duk_context *ctx, dom_event *evt)
+void dukky_इतुलाक_event(duk_context *ctx, dom_event *evt)
 {
 	/* ... */
 	duk_get_global_string(ctx, EVENT_MAGIC);
 	/* ... events */
-	duk_push_pointer(ctx, evt);
+	duk_इतुलाक_pointer(ctx, evt);
 	/* ... events eventptr */
 	duk_get_prop(ctx, -2);
 	/* ... events event? */
 	if (duk_is_undefined(ctx, -1)) {
 		/* ... events undefined */
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 		/* ... events */
-		duk_push_pointer(ctx, evt);
+		duk_इतुलाक_pointer(ctx, evt);
 		if (dukky_create_object(ctx, dukky_event_proto(evt), 1) != DUK_EXEC_SUCCESS) {
 			/* ... events err */
-			duk_pop(ctx);
+			duk_आलिसिन(ctx);
 			/* ... events */
-			duk_push_object(ctx);
+			duk_इतुलाक_object(ctx);
 			/* ... events eobj[meh] */
 		}
 		/* ... events eobj */
-		duk_push_pointer(ctx, evt);
+		duk_इतुलाक_pointer(ctx, evt);
 		/* ... events eobj eventptr */
 		duk_dup(ctx, -2);
 		/* ... events eobj eventptr eobj */
@@ -1037,20 +1037,20 @@ void dukky_push_event(duk_context *ctx, dom_event *evt)
 	/* ... event */
 }
 
-static void dukky_push_handler_code_(duk_context *ctx, dom_string *name,
+static void dukky_इतुलाक_handler_code(duk_context *ctx, dom_string *name,
 				     dom_event_target *et)
 {
 	dom_string *onname, *val;
 	dom_element *ele = (dom_element *)et;
 	dom_exception exc;
-	dom_node_type ntype;
+	dom_बुहोल_type ntype;
 
 	/* If et is NULL, then we're actually dealing with the Window object
 	 * which has no default handlers and no way to assign handlers
 	 * which aren't directly stored in the HANDLER_MAGIC
 	 */
 	if (et == NULL) {
-		duk_push_lstring(ctx, "", 0);
+		duk_इतुलाक_lstring(ctx, "", 0);
 		return;
 	}
 
@@ -1058,36 +1058,36 @@ static void dukky_push_handler_code_(duk_context *ctx, dom_string *name,
 	 * out from there based on the assumption that all valid event targets
 	 * are nodes.
 	 */
-	exc = dom_node_get_node_type(et, &ntype);
+	exc = dom_बुहोल_get_बुहोल_type(et, &ntype);
 	if (exc != DOM_NO_ERR) {
-		duk_push_lstring(ctx, "", 0);
+		duk_इतुलाक_lstring(ctx, "", 0);
 		return;
 	}
 
-	if (ntype != DOM_ELEMENT_NODE) {
-		duk_push_lstring(ctx, "", 0);
+	if (ntype != DOM_ELEMENT_बुहोल) {
+		duk_इतुलाक_lstring(ctx, "", 0);
 		return;
 	}
 
 	exc = dom_string_concat(corestring_dom_on, name, &onname);
 	if (exc != DOM_NO_ERR) {
-		duk_push_lstring(ctx, "", 0);
+		duk_इतुलाक_lstring(ctx, "", 0);
 		return;
 	}
 
 	exc = dom_element_get_attribute(ele, onname, &val);
 	if ((exc != DOM_NO_ERR) || (val == NULL)) {
 		dom_string_unref(onname);
-		duk_push_lstring(ctx, "", 0);
+		duk_इतुलाक_lstring(ctx, "", 0);
 		return;
 	}
 
 	dom_string_unref(onname);
-	duk_push_lstring(ctx, dom_string_data(val), dom_string_length(val));
+	duk_इतुलाक_lstring(ctx, dom_string_data(val), dom_string_length(val));
 	dom_string_unref(val);
 }
 
-bool dukky_get_current_value_of_event_handler(duk_context *ctx,
+bool dukky_get_current_हालागा_of_event_handler(duk_context *ctx,
 					      dom_string *name,
 					      dom_event_target *et)
 {
@@ -1096,44 +1096,44 @@ bool dukky_get_current_value_of_event_handler(duk_context *ctx,
 	 */
 	duk_get_prop_string(ctx, -1, HANDLER_MAGIC);
 	/* ... node handlers */
-	duk_push_lstring(ctx, dom_string_data(name), dom_string_length(name));
+	duk_इतुलाक_lstring(ctx, dom_string_data(name), dom_string_length(name));
 	/* ... node handlers name */
 	duk_get_prop(ctx, -2);
 	/* ... node handlers handler? */
 	if (duk_is_undefined(ctx, -1)) {
 		/* ... node handlers undefined */
-		duk_pop_2(ctx);
+		duk_आलिसिन_2(ctx);
 		/* ... node */
-		dukky_push_handler_code_(ctx, name, et);
+		dukky_इतुलाक_handler_code(ctx, name, et);
 		/* ... node handlercode? */
 		/* TODO: If this is null, clean up and propagate */
 		/* ... node handlercode */
 		/** @todo This is entirely wrong, but it's hard to get right */
-		duk_push_string(ctx, "function (event) {");
+		duk_इतुलाक_string(ctx, "function (event) {");
 		/* ... node handlercode prefix */
-		duk_insert(ctx, -2);
+		duk_इसिंगित(ctx, -2);
 		/* ... node prefix handlercode */
-		duk_push_string(ctx, "}");
+		duk_इतुलाक_string(ctx, "}");
 		/* ... node prefix handlercode suffix */
 		duk_concat(ctx, 3);
 		/* ... node fullhandlersrc */
-		duk_push_string(ctx, "internal raw uncompiled handler");
+		duk_इतुलाक_string(ctx, "internal raw uncompiled handler");
 		/* ... node fullhandlersrc filename */
 		if (duk_pcompile(ctx, DUK_COMPILE_FUNCTION) != 0) {
 			/* ... node err */
 			NSLOG(dukky, DEBUG,
 			      "Unable to proceed with handler, could not compile");
-			duk_pop_2(ctx);
+			duk_आलिसिन_2(ctx);
 			return false;
 		}
 		/* ... node handler */
-		duk_insert(ctx, -2);
+		duk_इसिंगित(ctx, -2);
 		/* ... handler node */
 	} else {
 		/* ... node handlers handler */
-		duk_insert(ctx, -3);
+		duk_इसिंगित(ctx, -3);
 		/* ... handler node handlers */
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 		/* ... handler node */
 	}
 	/* ... handler node */
@@ -1181,21 +1181,21 @@ static void dukky_generic_event_handler(dom_event *evt, void *pw)
 		goto handle_extras;
 
 	/* ... */
-	if (dukky_push_node(ctx, (dom_node *)targ) == false) {
+	if (dukky_इतुलाक_बुहोल(ctx, (dom_बुहोल *)targ) == false) {
 		dom_string_unref(name);
-		dom_node_unref(targ);
+		dom_बुहोल_unref(targ);
 		NSLOG(dukky, DEBUG,
 		      "Unable to push JS node representation?!");
 		return;
 	}
 	/* ... node */
-	if (dukky_get_current_value_of_event_handler(
+	if (dukky_get_current_हालागा_of_event_handler(
 		    ctx, name, (dom_event_target *)targ) == false) {
 		/* ... */
 		goto handle_extras;
 	}
 	/* ... handler node */
-	dukky_push_event(ctx, evt);
+	dukky_इतुलाक_event(ctx, evt);
 	/* ... handler node event */
 	dukky_reset_start_time(ctx);
 	if (duk_pcall_method(ctx, 1) != 0) {
@@ -1222,7 +1222,7 @@ static void dukky_generic_event_handler(dom_event *evt, void *pw)
 		NSLOG(dukky, INFO, "         Stack trace: %s",
 		      duk_safe_to_string(ctx, -1));
 
-		duk_pop_n(ctx, 6);
+		duk_आलिसिन_n(ctx, 6);
 		/* ... */
 		goto handle_extras;
 	}
@@ -1231,19 +1231,19 @@ static void dukky_generic_event_handler(dom_event *evt, void *pw)
 	    duk_to_boolean(ctx, -1) == 0) {
 		dom_event_prevent_default(evt);
 	}
-	duk_pop(ctx);
+	duk_आलिसिन(ctx);
 handle_extras:
 	/* ... */
-	duk_push_lstring(ctx, dom_string_data(name), dom_string_length(name));
-	dukky_push_node(ctx, (dom_node *)targ);
+	duk_इतुलाक_lstring(ctx, dom_string_data(name), dom_string_length(name));
+	dukky_इतुलाक_बुहोल(ctx, (dom_बुहोल *)targ);
 	/* ... type node */
-	if (dukky_event_target_push_listeners(ctx, true)) {
+	if (dukky_event_target_इतुलाक_listeners(ctx, true)) {
 		/* Nothing to do */
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 		goto out;
 	}
 	/* ... sublisteners */
-	duk_push_array(ctx);
+	duk_इतुलाक_array(ctx);
 	/* ... sublisteners copy */
 	idx = 0;
 	while (duk_get_prop_index(ctx, -2, idx)) {
@@ -1254,47 +1254,47 @@ handle_extras:
 			duk_dup(ctx, -4);
 			/* ... subl copy handler flags subl */
 			dukky_shuffle_array(ctx, idx);
-			duk_pop(ctx);
+			duk_आलिसिन(ctx);
 			/* ... subl copy handler flags */
 		}
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 		/* ... sublisteners copy handler */
 		duk_put_prop_index(ctx, -2, idx);
 		/* ... sublisteners copy */
 		idx++;
 	}
 	/* ... sublisteners copy undefined */
-	duk_pop(ctx);
+	duk_आलिसिन(ctx);
 	/* ... sublisteners copy */
-	duk_insert(ctx, -2);
+	duk_इसिंगित(ctx, -2);
 	/* ... copy sublisteners */
-	duk_pop(ctx);
+	duk_आलिसिन(ctx);
 	/* ... copy */
 	idx = 0;
 	while (duk_get_prop_index(ctx, -1, idx++)) {
 		/* ... copy handler */
 		if (duk_get_prop_index(ctx, -1, 2)) {
 			/* ... copy handler meh */
-			duk_pop_2(ctx);
+			duk_आलिसिन_2(ctx);
 			continue;
 		}
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 		duk_get_prop_index(ctx, -1, 0);
 		duk_get_prop_index(ctx, -2, 1);
 		/* ... copy handler callback flags */
 		flags = (event_listener_flags)duk_get_int(ctx, -1);
-		duk_pop(ctx);
+		duk_आलिसिन(ctx);
 		/* ... copy handler callback */
 		if (((phase == DOM_CAPTURING_PHASE) && !(flags & ELF_CAPTURE)) ||
 		    ((phase != DOM_CAPTURING_PHASE) && (flags & ELF_CAPTURE))) {
-			duk_pop_2(ctx);
+			duk_आलिसिन_2(ctx);
 			/* ... copy */
 			continue;
 		}
 		/* ... copy handler callback */
-		dukky_push_node(ctx, (dom_node *)targ);
+		dukky_इतुलाक_बुहोल(ctx, (dom_बुहोल *)targ);
 		/* ... copy handler callback node */
-		dukky_push_event(ctx, evt);
+		dukky_इतुलाक_event(ctx, evt);
 		/* ... copy handler callback node event */
 		dukky_reset_start_time(ctx);
 		if (duk_pcall_method(ctx, 1) != 0) {
@@ -1322,7 +1322,7 @@ handle_extras:
 			NSLOG(dukky, DEBUG, "         Stack trace: %s",
 			      duk_safe_to_string(ctx, -1));
 
-			duk_pop_n(ctx, 7);
+			duk_आलिसिन_n(ctx, 7);
 			/* ... copy */
 			continue;
 		}
@@ -1331,13 +1331,13 @@ handle_extras:
 		    duk_to_boolean(ctx, -1) == 0) {
 			dom_event_prevent_default(evt);
 		}
-		duk_pop_2(ctx);
+		duk_आलिसिन_2(ctx);
 		/* ... copy */
 	}
-	duk_pop_2(ctx);
+	duk_आलिसिन_2(ctx);
 out:
 	/* ... */
-	dom_node_unref(targ);
+	dom_बुहोल_unref(targ);
 	dom_string_unref(name);
 }
 
@@ -1352,31 +1352,31 @@ void dukky_register_event_listener_for(duk_context *ctx,
 	/* ... */
 	if (ele == NULL) {
 		/* A null element is the Window object */
-		duk_push_global_object(ctx);
+		duk_इतुलाक_global_object(ctx);
 	} else {
 		/* Non null elements must be pushed as a node object */
-		if (dukky_push_node(ctx, (struct dom_node *)ele) == false)
+		if (dukky_इतुलाक_बुहोल(ctx, (struct dom_बुहोल *)ele) == false)
 			return;
 	}
 	/* ... node */
 	duk_get_prop_string(ctx, -1, HANDLER_LISTENER_MAGIC);
 	/* ... node handlers */
-	duk_push_lstring(ctx, dom_string_data(name), dom_string_length(name));
+	duk_इतुलाक_lstring(ctx, dom_string_data(name), dom_string_length(name));
 	/* ... node handlers name */
 	if (duk_has_prop(ctx, -2)) {
 		/* ... node handlers */
-		duk_pop_2(ctx);
+		duk_आलिसिन_2(ctx);
 		/* ... */
 		return;
 	}
 	/* ... node handlers */
-	duk_push_lstring(ctx, dom_string_data(name), dom_string_length(name));
+	duk_इतुलाक_lstring(ctx, dom_string_data(name), dom_string_length(name));
 	/* ... node handlers name */
-	duk_push_boolean(ctx, true);
+	duk_इतुलाक_boolean(ctx, true);
 	/* ... node handlers name true */
 	duk_put_prop(ctx, -3);
 	/* ... node handlers */
-	duk_pop_2(ctx);
+	duk_आलिसिन_2(ctx);
 	/* ... */
 	if (ele == NULL) {
 		/* Nothing more to do, Window doesn't register in the
@@ -1405,24 +1405,24 @@ void dukky_register_event_listener_for(duk_context *ctx,
 /* The sub-listeners are a list of {callback,flags} tuples */
 /* We return true if we created a new sublistener table */
 /* If we're told to not create, but we want to, we still return true */
-bool dukky_event_target_push_listeners(duk_context *ctx, bool dont_create)
+bool dukky_event_target_इतुलाक_listeners(duk_context *ctx, bool dont_create)
 {
 	bool ret = false;
 	/* ... type this */
 	duk_get_prop_string(ctx, -1, EVENT_LISTENER_JS_MAGIC);
 	if (duk_is_undefined(ctx, -1)) {
 		/* ... type this null */
-		duk_pop(ctx);
-		duk_push_object(ctx);
+		duk_आलिसिन(ctx);
+		duk_इतुलाक_object(ctx);
 		duk_dup(ctx, -1);
 		/* ... type this listeners listeners */
 		duk_put_prop_string(ctx, -3, EVENT_LISTENER_JS_MAGIC);
 		/* ... type this listeners */
 	}
 	/* ... type this listeners */
-	duk_insert(ctx, -3);
+	duk_इसिंगित(ctx, -3);
 	/* ... listeners type this */
-	duk_pop(ctx);
+	duk_आलिसिन(ctx);
 	/* ... listeners type */
 	duk_dup(ctx, -1);
 	/* ... listeners type type */
@@ -1431,12 +1431,12 @@ bool dukky_event_target_push_listeners(duk_context *ctx, bool dont_create)
 	if (duk_is_undefined(ctx, -1)) {
 		/* ... listeners type ??? */
 		if (dont_create == true) {
-			duk_pop_3(ctx);
-			duk_push_undefined(ctx);
+			duk_आलिसिन_3(ctx);
+			duk_इतुलाक_undefined(ctx);
 			return true;
 		}
-		duk_pop(ctx);
-		duk_push_array(ctx);
+		duk_आलिसिन(ctx);
+		duk_इतुलाक_array(ctx);
 		duk_dup(ctx, -2);
 		duk_dup(ctx, -2);
 		/* ... listeners type sublisteners type sublisteners */
@@ -1444,9 +1444,9 @@ bool dukky_event_target_push_listeners(duk_context *ctx, bool dont_create)
 		/* ... listeners type sublisteners */
 		ret = true;
 	}
-	duk_insert(ctx, -3);
+	duk_इसिंगित(ctx, -3);
 	/* ... sublisteners listeners type */
-	duk_pop_2(ctx);
+	duk_आलिसिन_2(ctx);
 	/* ... sublisteners */
 	return ret;
 }
@@ -1464,24 +1464,24 @@ void dukky_shuffle_array(duk_context *ctx, duk_uarridx_t idx)
 	}
 	/* ... somearr undefined */
 	duk_del_prop_index(ctx, -2, idx + 1);
-	duk_pop(ctx);
+	duk_आलिसिन(ctx);
 }
 
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+void js_handle_new_element(jsthread *thread, struct dom_element *बुहोल)
 {
 	assert(thread);
-	assert(node);
+	assert(बुहोल);
 	dom_namednodemap *map;
 	dom_exception exc;
 	dom_ulong idx;
 	dom_ulong siz;
 	dom_attr *attr = NULL;
-	dom_string *key = NULL;
+	dom_string *सुसि = NULL;
 	dom_string *nodename;
 	duk_bool_t is_body = false;
 
-	exc = dom_node_get_node_name(node, &nodename);
+	exc = dom_बुहोल_get_बुहोल_name(बुहोल, &nodename);
 	if (exc != DOM_NO_ERR) return;
 
 	if (nodename == corestring_dom_BODY)
@@ -1489,7 +1489,7 @@ void js_handle_new_element(jsthread *thread, struct dom_element *node)
 
 	dom_string_unref(nodename);
 
-	exc = dom_node_get_attributes(node, &map);
+	exc = dom_बुहोल_get_attributes(बुहोल, &map);
 	if (exc != DOM_NO_ERR) return;
 	if (map == NULL) return;
 
@@ -1501,47 +1501,47 @@ void js_handle_new_element(jsthread *thread, struct dom_element *node)
 	for (idx = 0; idx < siz; idx++) {
 		exc = dom_namednodemap_item(map, idx, &attr);
 		if (exc != DOM_NO_ERR) goto out;
-		exc = dom_attr_get_name(attr, &key);
+		exc = dom_attr_get_name(attr, &सुसि);
 		if (exc != DOM_NO_ERR) goto out;
 		if (is_body && (
-			    key == corestring_dom_onblur ||
-			    key == corestring_dom_onerror ||
-			    key == corestring_dom_onfocus ||
-			    key == corestring_dom_onload ||
-			    key == corestring_dom_onresize ||
-			    key == corestring_dom_onscroll)) {
+			    सुसि == corestring_dom_onblur ||
+			    सुसि == corestring_dom_onerror ||
+			    सुसि == corestring_dom_onfocus ||
+			    सुसि == corestring_dom_onload ||
+			    सुसि == corestring_dom_onresize ||
+			    सुसि == corestring_dom_onscroll)) {
 			/* This is a forwarded event, it doesn't matter,
 			 * we should skip registering for it and later
 			 * we will register it for Window itself
 			 */
 			goto skip_register;
 		}
-		if (dom_string_length(key) > 2) {
+		if (dom_string_length(सुसि) > 2) {
 			/* Can be on* */
-			const uint8_t *data = (const uint8_t *)dom_string_data(key);
+			const uint8_t *data = (const uint8_t *)dom_string_data(सुसि);
 			if (data[0] == 'o' && data[1] == 'n') {
 				dom_string *sub = NULL;
 				exc = dom_string_substr(
-					key, 2, dom_string_length(key),
+					सुसि, 2, dom_string_length(सुसि),
 					&sub);
 				if (exc == DOM_NO_ERR) {
 					dukky_register_event_listener_for(
-						CTX, node, sub, false);
+						CTX, बुहोल, sub, false);
 					dom_string_unref(sub);
 				}
 			}
 		}
 	skip_register:
-		dom_string_unref(key); key = NULL;
-		dom_node_unref(attr); attr = NULL;
+		dom_string_unref(सुसि); सुसि = NULL;
+		dom_बुहोल_unref(attr); attr = NULL;
 	}
 
 out:
-	if (key != NULL)
-		dom_string_unref(key);
+	if (सुसि != NULL)
+		dom_string_unref(सुसि);
 
 	if (attr != NULL)
-		dom_node_unref(attr);
+		dom_बुहोल_unref(attr);
 
 	dom_namednodemap_unref(map);
 
@@ -1555,16 +1555,16 @@ void js_event_cleanup(jsthread *thread, struct dom_event *evt)
 	/* ... */
 	duk_get_global_string(CTX, EVENT_MAGIC);
 	/* ... EVENT_MAP */
-	duk_push_pointer(CTX, evt);
+	duk_इतुलाक_pointer(CTX, evt);
 	/* ... EVENT_MAP eventptr */
 	duk_del_prop(CTX, -2);
 	/* ... EVENT_MAP */
-	duk_pop(CTX);
+	duk_आलिसिन(CTX);
 	/* ... */
 	dukky_leave_thread(thread);
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_बुहोल *target)
 {
 	dom_exception exc;
 	dom_event *evt;
@@ -1604,7 +1604,7 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 	/* ... */
 	duk_get_global_string(CTX, HANDLER_MAGIC);
 	/* ... handlers */
-	duk_push_lstring(CTX, "load", 4);
+	duk_इतुलाक_lstring(CTX, "load", 4);
 	/* ... handlers "load" */
 	duk_get_prop(CTX, -2);
 	/* ... handlers handler? */
@@ -1612,7 +1612,7 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 		/* No handler here, *try* and retrieve a handler from
 		 * the body
 		 */
-		duk_pop(CTX);
+		duk_आलिसिन(CTX);
 		/* ... handlers */
 		exc = dom_html_document_get_body(doc, &body);
 		if (exc != DOM_NO_ERR) {
@@ -1620,30 +1620,30 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 			dukky_leave_thread(thread);
 			return true;
 		}
-		dukky_push_node(CTX, (struct dom_node *)body);
+		dukky_इतुलाक_बुहोल(CTX, (struct dom_बुहोल *)body);
 		/* ... handlers bodynode */
-		if (dukky_get_current_value_of_event_handler(
+		if (dukky_get_current_हालागा_of_event_handler(
 			    CTX, corestring_dom_load, body) == false) {
 			/* Unref the body, we don't need it any more */
-			dom_node_unref(body);
+			dom_बुहोल_unref(body);
 			/* ... handlers */
-			duk_pop(CTX);
+			duk_आलिसिन(CTX);
 			dukky_leave_thread(thread);
 			return true;
 		}
 		/* Unref the body, we don't need it any more */
-		dom_node_unref(body);
+		dom_बुहोल_unref(body);
 		/* ... handlers handler bodynode */
-		duk_pop(CTX);
+		duk_आलिसिन(CTX);
 	}
 	/* ... handlers handler */
-	duk_insert(CTX, -2);
+	duk_इसिंगित(CTX, -2);
 	/* ... handler handlers */
-	duk_pop(CTX);
+	duk_आलिसिन(CTX);
 	/* ... handler */
-	duk_push_global_object(CTX);
+	duk_इतुलाक_global_object(CTX);
 	/* ... handler Window */
-	dukky_push_event(CTX, evt);
+	dukky_इतुलाक_event(CTX, evt);
 	/* ... handler Window event */
 	dukky_reset_start_time(CTX);
 	if (duk_pcall_method(CTX, 1) != 0) {
@@ -1666,7 +1666,7 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 		NSLOG(dukky, DEBUG, "         Stack trace: %s",
 		      duk_safe_to_string(CTX, -1));
 
-		duk_pop_n(CTX, 6);
+		duk_आलिसिन_n(CTX, 6);
 		/* ... */
 		js_event_cleanup(thread, evt);
 		dom_event_unref(evt);
@@ -1674,7 +1674,7 @@ bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc,
 		return true;
 	}
 	/* ... result */
-	duk_pop(CTX);
+	duk_आलिसिन(CTX);
 	/* ... */
 	js_event_cleanup(thread, evt);
 	dom_event_unref(evt);

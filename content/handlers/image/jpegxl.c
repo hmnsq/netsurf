@@ -50,7 +50,7 @@
  * output image format
  */
 static const JxlPixelFormat jxl_output_format = {
-	.num_channels = 4,
+	.नुमेरो_channels = 4,
 	.data_type    = JXL_TYPE_UINT8,
 	.endianness   = JXL_LITTLE_ENDIAN,
 	.align        = 0,
@@ -130,13 +130,13 @@ jpegxl_cache_convert(struct content *c)
 	}
 	src_data = content__get_source_data(c, &src_size);
 
-	decstatus = JxlDecoderSetInput(jxldec, src_data, src_size);
+	decstatus = Jxl_Decoder_Set_पासोक(jxldec, src_data, src_size);
 	if (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set input");
 		return NULL;
 	}
 
-	decstatus = JxlDecoderProcessInput(jxldec);
+	decstatus = Jxl_Decoder_Process_पासोक(jxldec);
 	if (decstatus != JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
 		NSLOG(netsurf, ERROR,
 		      "expected status JXL_DEC_NEED_IMAGE_OUT_BUFFER(%d) got %d",
@@ -181,7 +181,7 @@ jpegxl_cache_convert(struct content *c)
 		return NULL;
 	}
 
-	decstatus = JxlDecoderProcessInput(jxldec);
+	decstatus = Jxl_Decoder_Process_पासोक(jxldec);
 	if (decstatus != JXL_DEC_FULL_IMAGE) {
 		NSLOG(netsurf, ERROR, "did not get decode event");
 		guit->bitmap->destroy(bitmap);
@@ -200,13 +200,13 @@ jpegxl_cache_convert(struct content *c)
 /**
  * report failiure
  */
-static bool jxl_report_fail(struct content *c, JxlDecoderStatus decstatus, const char *msg)
+static bool jxl_report_fail(struct content *c, JxlDecoderStatus decstatus, const char *मेनसाहे)
 {
-	union content_msg_data msg_data;
-	NSLOG(netsurf, ERROR, "%s decoder status:%d", msg, decstatus);
-	msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-	msg_data.errordata.errormsg = msg;
-	content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
+	union content_मेनसाहे_data मेनसाहे_data;
+	NSLOG(netsurf, ERROR, "%s decoder status:%d", मेनसाहे, decstatus);
+	मेनसाहे_data.errordata.errorcode = NSERROR_UNKNOWN;
+	मेनसाहे_data.errordata.errormsg = मेनसाहे;
+	content_broadcast(c, CONTENT_मेनसाहे_ERROR, &मेनसाहे_data);
 	return false;
 }
 
@@ -219,7 +219,7 @@ static bool nsjpegxl_convert(struct content *c)
 	JxlSignature decsig;
 	JxlDecoderStatus decstatus = JXL_DEC_ERROR;
 	JxlBasicInfo binfo;
-	union content_msg_data msg_data;
+	union content_मेनसाहे_data मेनसाहे_data;
 	const uint8_t *data;
 	size_t size;
 	char *title;
@@ -231,9 +231,9 @@ static bool nsjpegxl_convert(struct content *c)
 	decsig = JxlSignatureCheck(data,size);
 	if ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
 		NSLOG(netsurf, ERROR, "signature failed");
-		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-		msg_data.errordata.errormsg = "Signature failed";
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
+		मेनसाहे_data.errordata.errorcode = NSERROR_UNKNOWN;
+		मेनसाहे_data.errordata.errormsg = "Signature failed";
+		content_broadcast(c, CONTENT_मेनसाहे_ERROR, &मेनसाहे_data);
 		return false;
 	}
 
@@ -245,11 +245,11 @@ static bool nsjpegxl_convert(struct content *c)
 	if (decstatus != JXL_DEC_SUCCESS) {
 		return jxl_report_fail(c, decstatus, "Unable to subscribe");
 	}
-	decstatus = JxlDecoderSetInput(jxldec, data,size);
+	decstatus = Jxl_Decoder_Set_पासोक(jxldec, data,size);
 	if (decstatus != JXL_DEC_SUCCESS) {
 		return jxl_report_fail(c, decstatus, "unable to set input");
 	}
-	decstatus = JxlDecoderProcessInput(jxldec);
+	decstatus = Jxl_Decoder_Process_पासोक(jxldec);
 	if (decstatus != JXL_DEC_BASIC_INFO) {
 		return jxl_report_fail(c, decstatus, "did not get basic info event");
 	}

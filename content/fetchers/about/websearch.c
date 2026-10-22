@@ -93,7 +93,7 @@ bool fetch_about_websearch_handler(struct fetch_about_context *ctx)
 		return false;
 	}
 
-	res = search_web_omni(term, SEARCH_WEB_OMNI_SEARCHONLY, &url);
+	res = हानाप_web_omni(term, हानाप_WEB_OMNI_SEARCHONLY, &url);
 	free(term);
 	if (res != NSERROR_OK) {
 		return false;

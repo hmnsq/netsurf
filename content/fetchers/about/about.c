@@ -101,10 +101,10 @@ struct about_handlers {
  * issue fetch callbacks with locking
  */
 static bool
-fetch_about_send_callback(const fetch_msg *msg, struct fetch_about_context *ctx)
+fetch_about_send_callback(const fetch_मेनसाहे *मेनसाहे, struct fetch_about_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(मेनसाहे, ctx->fetchh);
 	ctx->locked = false;
 
 	return ctx->aborted;
@@ -114,9 +114,9 @@ fetch_about_send_callback(const fetch_msg *msg, struct fetch_about_context *ctx)
 bool
 fetch_about_send_finished(struct fetch_about_context *ctx)
 {
-	fetch_msg msg;
-	msg.type = FETCH_FINISHED;
-	return fetch_about_send_callback(&msg, ctx);
+	fetch_मेनसाहे मेनसाहे;
+	मेनसाहे.type = FETCH_FINISHED;
+	return fetch_about_send_callback(&मेनसाहे, ctx);
 }
 
 /* exported interface documented in about/private.h */
@@ -132,7 +132,7 @@ bool
 fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
 {
 	char header[64];
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	va_list ap;
 
 	va_start(ap, fmt);
@@ -141,24 +141,24 @@ fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
 
 	va_end(ap);
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = strlen(header);
+	मेनसाहे.type = FETCH_HEADER;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) header;
+	मेनसाहे.data.header_or_data.len = strlen(header);
 
-	return fetch_about_send_callback(&msg, ctx);
+	return fetch_about_send_callback(&मेनसाहे, ctx);
 }
 
 /* exported interface documented in about/private.h */
 nserror
 fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = data;
-	msg.data.header_or_data.len = data_len;
+	मेनसाहे.type = FETCH_DATA;
+	मेनसाहे.data.header_or_data.buf = data;
+	मेनसाहे.data.header_or_data.len = data_len;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
+	if (fetch_about_send_callback(&मेनसाहे, ctx)) {
 		return NSERROR_INVALID;
 	}
 
@@ -171,7 +171,7 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 {
 	char buffer[1024];
 	char *dbuff;
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	va_list ap;
 	int slen;
 
@@ -182,11 +182,11 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 	va_end(ap);
 
 	if (slen < (int)sizeof(buffer)) {
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buffer;
-		msg.data.header_or_data.len = slen;
+		मेनसाहे.type = FETCH_DATA;
+		मेनसाहे.data.header_or_data.buf = (const uint8_t *) buffer;
+		मेनसाहे.data.header_or_data.len = slen;
 
-		if (fetch_about_send_callback(&msg, ctx)) {
+		if (fetch_about_send_callback(&मेनसाहे, ctx)) {
 			return NSERROR_INVALID;
 		}
 
@@ -204,11 +204,11 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 
 	va_end(ap);
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *)dbuff;
-	msg.data.header_or_data.len = slen;
+	मेनसाहे.type = FETCH_DATA;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *)dbuff;
+	मेनसाहे.data.header_or_data.len = slen;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
+	if (fetch_about_send_callback(&मेनसाहे, ctx)) {
 		free(dbuff);
 		return NSERROR_INVALID;
 	}
@@ -260,15 +260,15 @@ bool fetch_about_srverror(struct fetch_about_context *ctx)
 /* exported interface documented in about/private.h */
 bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 
 	/* content is going to return redirect */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_FOUND);
 
-	msg.type = FETCH_REDIRECT;
-	msg.data.redirect = target;
+	मेनसाहे.type = FETCH_REDIRECT;
+	मेनसाहे.data.redirect = target;
 
-	return fetch_about_send_callback(&msg, ctx);
+	return fetch_about_send_callback(&मेनसाहे, ctx);
 }
 
 /**
@@ -652,7 +652,7 @@ fetch_about_setup(struct fetch *fetchh,
 	ctx->url = nsurl_ref(url);
 	ctx->multipart = post_multipart;
 
-	RING_INSERT(ring, ctx);
+	RING_इसिंगित(ring, ctx);
 
 	return ctx;
 }
@@ -713,7 +713,7 @@ static void fetch_about_poll(lwc_string *scheme)
 		 * again.
 		 */
 		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
+			RING_इसिंगित(save_ring, c);
 			continue;
 		}
 

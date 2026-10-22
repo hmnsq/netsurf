@@ -97,7 +97,7 @@ struct fetch {
 	int fetcherd;           /**< Fetcher descriptor for this fetch */
 	void *fetcher_handle;	/**< The handle for the fetcher. */
 	bool fetch_is_active;	/**< This fetch is active. */
-	fetch_msg_type last_msg;/**< The last message sent for this fetch */
+	fetch_मेनसाहे_type last_मेनसाहे;/**< The last message sent for this fetch */
 	struct fetch *r_prev;	/**< Previous active fetch in ::fetch_ring. */
 	struct fetch *r_next;	/**< Next active fetch in ::fetch_ring. */
 };
@@ -154,10 +154,10 @@ static bool fetch_dispatch_job(struct fetch *fetch)
 	      nsurl_access(fetch->url));
 
 	if (!fetchers[fetch->fetcherd].ops.start(fetch->fetcher_handle)) {
-		RING_INSERT(queue_ring, fetch); /* Put it back on the end of the queue */
+		RING_इसिंगित(queue_ring, fetch); /* Put it back on the end of the queue */
 		return false;
 	} else {
-		RING_INSERT(fetch_ring, fetch);
+		RING_इसिंगित(fetch_ring, fetch);
 		fetch->fetch_is_active = true;
 		return true;
 	}
@@ -518,7 +518,7 @@ fetch_start(nsurl *url,
 	fetch_ref_fetcher(fetch->fetcherd);
 
 	/* Dump new fetch in the queue. */
-	RING_INSERT(queue_ring, fetch);
+	RING_इसिंगित(queue_ring, fetch);
 
 	/* Ask the queue to run. */
 	if (fetch_dispatch_jobs()) {
@@ -535,7 +535,7 @@ fetch_start(nsurl *url,
 void fetch_abort(struct fetch *f)
 {
 	assert(f);
-	f->last_msg = FETCH__INTERNAL_ABORTED;
+	f->last_मेनसाहे = FETCH__INTERNAL_ABORTED;
 	NSLOG(fetch, DEBUG,
 	      "fetch %p, fetcher %p, url '%s'", f, f->fetcher_handle,
 	     nsurl_access(f->url));
@@ -545,18 +545,18 @@ void fetch_abort(struct fetch *f)
 /* exported interface documented in content/fetch.h */
 void fetch_free(struct fetch *f)
 {
-	if (f->last_msg < FETCH_MIN_FINISHED_MSG) {
+	if (f->last_मेनसाहे < FETCH_MIN_FINISHED_मेनसाहे) {
 		/* We didn't finish, so tell our user that an error occurred */
-		fetch_msg msg;
+		fetch_मेनसाहे मेनसाहे;
 
-		msg.type = FETCH_ERROR;
-		msg.data.error = "FetchFailedToFinish";
+		मेनसाहे.type = FETCH_ERROR;
+		मेनसाहे.data.error = "FetchFailedToFinish";
 
 		NSLOG(fetch, CRITICAL,
 		      "During the fetch of %s, the fetcher did not finish.",
 		      nsurl_access(f->url));
 
-		fetch_send_callback(&msg, f);
+		fetch_send_callback(&मेनसाहे, f);
 	}
 
 	NSLOG(fetch, DEBUG,
@@ -638,8 +638,8 @@ fetch_multipart_data_clone(const struct fetch_multipart_data *list)
 			return NULL;
 		}
 
-		clone->value = strdup(list->value);
-		if (clone->value == NULL) {
+		clone->हालागा = strdup(list->हालागा);
+		if (clone->हालागा == NULL) {
 			free(clone->name);
 			free(clone);
 			if (result != NULL)
@@ -651,7 +651,7 @@ fetch_multipart_data_clone(const struct fetch_multipart_data *list)
 		if (clone->file) {
 			clone->rawfile = strdup(list->rawfile);
 			if (clone->rawfile == NULL) {
-				free(clone->value);
+				free(clone->हालागा);
 				free(clone->name);
 				free(clone);
 				if (result != NULL)
@@ -684,7 +684,7 @@ fetch_multipart_data_find(const struct fetch_multipart_data *list,
 {
 	while (list != NULL) {
 		if (strcmp(list->name, name) == 0) {
-			return list->value;
+			return list->हालागा;
 		}
 		list = list->next;
 	}
@@ -701,7 +701,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list)
 	for (; list != NULL; list = next) {
 		next = list->next;
 		free(list->name);
-		free(list->value);
+		free(list->हालागा);
 		if (list->file) {
 			NSLOG(fetch, DEBUG,
 			      "Freeing rawfile: %s", list->rawfile);
@@ -716,7 +716,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list)
 nserror
 fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
 			    const char *name,
-			    const char *value)
+			    const char *हालागा)
 {
 	struct fetch_multipart_data *newdata;
 
@@ -734,8 +734,8 @@ fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
 		return NSERROR_NOMEM;
 	}
 
-	newdata->value = strdup(value);
-	if (newdata->value == NULL) {
+	newdata->हालागा = strdup(हालागा);
+	if (newdata->हालागा == NULL) {
 		free(newdata->name);
 		free(newdata);
 		return NSERROR_NOMEM;
@@ -750,12 +750,12 @@ fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
 
 /* exported interface documented in content/fetch.h */
 void
-fetch_send_callback(const fetch_msg *msg, struct fetch *fetch)
+fetch_send_callback(const fetch_मेनसाहे *मेनसाहे, struct fetch *fetch)
 {
 	/* Bump the last_msg to the greatest seen msg */
-	if (msg->type > fetch->last_msg)
-		fetch->last_msg = msg->type;
-	fetch->callback(msg, fetch->p);
+	if (मेनसाहे->type > fetch->last_मेनसाहे)
+		fetch->last_मेनसाहे = मेनसाहे->type;
+	fetch->callback(मेनसाहे, fetch->p);
 }
 
 

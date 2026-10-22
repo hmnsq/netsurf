@@ -36,7 +36,7 @@ dom_document *html_get_document(struct hlcache_handle *h);
 /**
  * get the render box tree of a html content from a handle
  */
-struct box *html_get_box_tree(struct hlcache_handle *h);
+struct box *html_get_box_पुनो(struct hlcache_handle *h);
 
 /**
  * get the base url of an html content from a handle

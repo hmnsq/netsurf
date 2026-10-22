@@ -191,7 +191,7 @@ static bool rsvg_convert(struct content *c)
 
 	data = content__get_source_data(c, &size);
 
-	istream = g_memory_input_stream_new_from_data(data, size, NULL);
+	istream = g_memory_पासोक_stream_new_from_data(data, size, NULL);
 	svgc->rsvgh = rsvg_handle_new_from_stream_sync(istream,
 						       NULL,
 						       RSVG_HANDLE_FLAGS_NONE,

@@ -121,12 +121,12 @@ textsearch_broadcast(struct textsearch_context *textsearch,
 		     bool state,
 		     const char *string)
 {
-	union content_msg_data msg_data;
-	msg_data.textsearch.type = type;
-	msg_data.textsearch.ctx = textsearch->gui_p;
-	msg_data.textsearch.state = state;
-	msg_data.textsearch.string = string;
-	content_broadcast(textsearch->c, CONTENT_MSG_TEXTSEARCH, &msg_data);
+	union content_मेनसाहे_data मेनसाहे_data;
+	मेनसाहे_data.textsearch.type = type;
+	मेनसाहे_data.textsearch.ctx = textsearch->gui_p;
+	मेनसाहे_data.textsearch.state = state;
+	मेनसाहे_data.textsearch.string = string;
+	content_broadcast(textsearch->c, CONTENT_मेनसाहे_TEXTSEARCH, &मेनसाहे_data);
 }
 
 
@@ -164,7 +164,7 @@ static void free_matches(struct textsearch_context *textsearch)
  * Specifies whether all matches or just the current match should
  * be highlighted in the search text.
  */
-static void search_show_all(bool all, struct textsearch_context *context)
+static void हानाप_show_all(bool all, struct textsearch_context *context)
 {
 	struct list_entry *a;
 
@@ -201,20 +201,20 @@ static void search_show_all(bool all, struct textsearch_context *context)
  * \param flags flags to control the search.
  */
 static nserror
-search_text(struct textsearch_context *context,
+हानाप_text(struct textsearch_context *context,
 	    const char *string,
 	    int string_len,
-	    search_flags_t flags)
+	    हानाप_flags_t flags)
 {
 	struct rect bounds;
-	union content_msg_data msg_data;
+	union content_मेनसाहे_data मेनसाहे_data;
 	bool case_sensitive, forwards, showall;
 	nserror res = NSERROR_OK;
 
-	case_sensitive = ((flags & SEARCH_FLAG_CASE_SENSITIVE) != 0) ?
+	case_sensitive = ((flags & हानाप_FLAG_CASE_SENSITIVE) != 0) ?
 			true : false;
-	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
-	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
+	forwards = ((flags & हानाप_FLAG_FORWARDS) != 0) ? true : false;
+	showall = ((flags & हानाप_FLAG_SHOWALL) != 0) ? true : false;
 
 	if (context->c == NULL) {
 		return res;
@@ -279,7 +279,7 @@ search_text(struct textsearch_context *context,
 			     (context->current != NULL),
 			     NULL);
 
-	search_show_all(showall, context);
+	हानाप_show_all(showall, context);
 
 	/* update back state */
 	textsearch_broadcast(context,
@@ -309,12 +309,12 @@ search_text(struct textsearch_context *context,
 					context->current->end_box,
 					&bounds);
 	if (res == NSERROR_OK) {
-		msg_data.scroll.area = true;
-		msg_data.scroll.x0 = bounds.x0;
-		msg_data.scroll.y0 = bounds.y0;
-		msg_data.scroll.x1 = bounds.x1;
-		msg_data.scroll.y1 = bounds.y1;
-		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
+		मेनसाहे_data.scroll.area = true;
+		मेनसाहे_data.scroll.x0 = bounds.x0;
+		मेनसाहे_data.scroll.y0 = bounds.y0;
+		मेनसाहे_data.scroll.x1 = bounds.x1;
+		मेनसाहे_data.scroll.y1 = bounds.y1;
+		content_broadcast(context->c, CONTENT_मेनसाहे_SCROLL, &मेनसाहे_data);
 	}
 
 	return res;
@@ -332,7 +332,7 @@ search_text(struct textsearch_context *context,
  */
 static nserror
 content_textsearch_step(struct textsearch_context *textsearch,
-			search_flags_t flags,
+			हानाप_flags_t flags,
 			const char *string)
 {
 	int string_len;
@@ -354,9 +354,9 @@ content_textsearch_step(struct textsearch_context *textsearch,
 	}
 
 	if (i < string_len) {
-		res = search_text(textsearch, string, string_len, flags);
+		res = हानाप_text(textsearch, string, string_len, flags);
 	} else {
-		union content_msg_data msg_data;
+		union content_मेनसाहे_data मेनसाहे_data;
 
 		free_matches(textsearch);
 
@@ -379,12 +379,12 @@ content_textsearch_step(struct textsearch_context *textsearch,
 				     NULL);
 
 		/* clear scroll */
-		msg_data.scroll.area = false;
-		msg_data.scroll.x0 = 0;
-		msg_data.scroll.y0 = 0;
+		मेनसाहे_data.scroll.area = false;
+		मेनसाहे_data.scroll.x0 = 0;
+		मेनसाहे_data.scroll.y0 = 0;
 		content_broadcast(textsearch->c,
-				  CONTENT_MSG_SCROLL,
-				  &msg_data);
+				  CONTENT_मेनसाहे_SCROLL,
+				  &मेनसाहे_data);
 	}
 
 	return res;
@@ -423,7 +423,7 @@ content_textsearch_create(struct content *c,
 			  struct textsearch_context **textsearch_out)
 {
 	struct textsearch_context *context;
-	struct list_entry *search_head;
+	struct list_entry *हानाप_head;
 	content_type type;
 
 	if ((c->handler->textsearch_find == NULL) ||
@@ -442,21 +442,21 @@ content_textsearch_create(struct content *c,
 		return NSERROR_NOMEM;
 	}
 
-	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
+	हानाप_head = malloc(sizeof(struct list_entry));
+	if (हानाप_head == NULL) {
 		free(context);
 		return NSERROR_NOMEM;
 	}
 
-	search_head->start_idx = 0;
-	search_head->end_idx = 0;
-	search_head->start_box = NULL;
-	search_head->end_box = NULL;
-	search_head->sel = NULL;
-	search_head->prev = NULL;
-	search_head->next = NULL;
+	हानाप_head->start_idx = 0;
+	हानाप_head->end_idx = 0;
+	हानाप_head->start_box = NULL;
+	हानाप_head->end_box = NULL;
+	हानाप_head->sel = NULL;
+	हानाप_head->prev = NULL;
+	हानाप_head->next = NULL;
 
-	context->found = search_head;
+	context->found = हानाप_head;
 	context->current = NULL;
 	context->string = NULL;
 	context->prev_case_sens = false;
@@ -486,7 +486,7 @@ content_textsearch_find_pattern(const char *string,
 	const char *ss = string;
 	const char *s = string;
 	bool first = true;
-	int top = 0;
+	int इताअस = 0;
 
 	while (p < ep) {
 		bool matches;
@@ -522,13 +522,13 @@ content_textsearch_find_pattern(const char *string,
 			if (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
-					context[top].ss = ss;
-					context[top].s  = s + 1;
-					context[top].p  = p - 1;
+				if (इताअस < (int)NOF_ELEMENTS(context)) {
+					context[इताअस].ss = ss;
+					context[इताअस].s  = s + 1;
+					context[इताअस].p  = p - 1;
 					/* ptr to last asterisk */
-					context[top].first = first;
-					top++;
+					context[इताअस].first = first;
+					इताअस++;
 				}
 
 				if (first) {
@@ -565,13 +565,13 @@ content_textsearch_find_pattern(const char *string,
 		} else {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
+			if (--इताअस < 0)
 				return NULL;  /* no match, give up */
 
-			ss = context[top].ss;
-			s  = context[top].s;
-			p  = context[top].p;
-			first = context[top].first;
+			ss = context[इताअस].ss;
+			s  = context[इताअस].s;
+			p  = context[इताअस].p;
+			first = context[इताअस].first;
 		}
 	}
 
@@ -681,7 +681,7 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch)
 nserror
 content_textsearch(struct hlcache_handle *h,
 		   void *context,
-		   search_flags_t flags,
+		   हानाप_flags_t flags,
 		   const char *string)
 {
 	struct content *c = hlcache_handle_get_content(h);

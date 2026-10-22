@@ -31,11 +31,11 @@ extern css_fixed nscss_screen_dpi;
  * we don't support all values of display.
  */
 static inline uint8_t ns_computed_display(
-		const css_computed_style *style, bool root)
+		const css_computed_style *style, bool उगात)
 {
-	uint8_t value = css_computed_display(style, root);
+	uint8_t हालागा = css_computed_display(style, उगात);
 
-	switch (value) {
+	switch (हालागा) {
 	case CSS_DISPLAY_GRID:
 		return CSS_DISPLAY_BLOCK;
 
@@ -46,7 +46,7 @@ static inline uint8_t ns_computed_display(
 		break;
 	}
 
-	return value;
+	return हालागा;
 }
 
 /**
@@ -56,9 +56,9 @@ static inline uint8_t ns_computed_display(
 static inline uint8_t ns_computed_display_static(
 		const css_computed_style *style)
 {
-	uint8_t value = css_computed_display_static(style);
+	uint8_t हालागा = css_computed_display_static(style);
 
-	switch (value) {
+	switch (हालागा) {
 	case CSS_DISPLAY_GRID:
 		return CSS_DISPLAY_BLOCK;
 
@@ -69,22 +69,22 @@ static inline uint8_t ns_computed_display_static(
 		break;
 	}
 
-	return value;
+	return हालागा;
 }
 
 static inline uint8_t ns_computed_min_height(
 		const css_computed_style *style,
 		css_fixed *length, css_unit *unit)
 {
-	uint8_t value = css_computed_min_height(style, length, unit);
+	uint8_t हालागा = css_computed_min_height(style, length, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
-		value = CSS_MIN_HEIGHT_SET;
+	if (हालागा == CSS_MIN_HEIGHT_AUTO) {
+		हालागा = CSS_MIN_HEIGHT_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	return हालागा;
 }
 
 
@@ -92,15 +92,15 @@ static inline uint8_t ns_computed_min_width(
 		const css_computed_style *style,
 		css_fixed *length, css_unit *unit)
 {
-	uint8_t value = css_computed_min_width(style, length, unit);
+	uint8_t हालागा = css_computed_min_width(style, length, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
-		value = CSS_MIN_WIDTH_SET;
+	if (हालागा == CSS_MIN_WIDTH_AUTO) {
+		हालागा = CSS_MIN_WIDTH_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	return हालागा;
 }
 
 #endif

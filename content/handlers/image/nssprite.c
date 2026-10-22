@@ -115,7 +115,7 @@ static bool nssprite_convert(struct content *c)
 	rosprite_destroy_mem_context(ctx);
 	nssprite->sprite_area = sprite_area;
 
-	assert(sprite_area->sprite_count > 0);
+	assert(sprite_area->sprite_बिलांग > 0);
 
 	struct rosprite* sprite = sprite_area->sprites[0];
 

@@ -296,7 +296,7 @@
 #elif (__riscv_xlen == 64)
 #define DUK_F_RISCV64
 #else
-#error __riscv_xlen has unsupported value (not 32 or 64)
+#error __riscv_xlen has unsupported हालागा (not 32 or 64)
 #endif
 #else
 #error __riscv defined without __riscv_xlen
@@ -2753,8 +2753,8 @@ typedef struct duk_hthread duk_context;
 #if !defined(DUK_FILE_MACRO)
 #define DUK_FILE_MACRO  __FILE__
 #endif
-#if !defined(DUK_LINE_MACRO)
-#define DUK_LINE_MACRO  __LINE__
+#if !defined(DUK_लिन्या_MACRO)
+#define DUK_लिन्या_MACRO  __LINE__
 #endif
 #if !defined(DUK_FUNC_MACRO)
 #if defined(DUK_F_C99) || defined(DUK_F_CPP11)
@@ -2992,9 +2992,9 @@ typedef struct duk_hthread duk_context;
 #define DUK_USE_HOBJECT_ARRAY_ABANDON_MINSIZE 257
 #define DUK_USE_HOBJECT_ARRAY_FAST_RESIZE_LIMIT 9
 #define DUK_USE_HOBJECT_ARRAY_MINGROW_ADD 16
-#define DUK_USE_HOBJECT_ARRAY_MINGROW_DIVISOR 8
+#define DUK_USE_HOBJECT_ARRAY_MINGROW_पांगहाति 8
 #define DUK_USE_HOBJECT_ENTRY_MINGROW_ADD 16
-#define DUK_USE_HOBJECT_ENTRY_MINGROW_DIVISOR 8
+#define DUK_USE_HOBJECT_ENTRY_MINGROW_पांगहाति 8
 #define DUK_USE_HOBJECT_HASH_PART
 #define DUK_USE_HOBJECT_HASH_PROP_LIMIT 8
 #define DUK_USE_HSTRING_ARRIDX
@@ -3023,20 +3023,20 @@ typedef struct duk_hthread duk_context;
 #define DUK_USE_MARK_AND_SWEEP_RECLIMIT 256
 #define DUK_USE_MATH_BUILTIN
 #define DUK_USE_NATIVE_CALL_RECLIMIT 1000
-#undef DUK_USE_NATIVE_STACK_CHECK
+#undef DUK_USE_NATIVE_सालानसान_CHECK
 #define DUK_USE_NONSTD_ARRAY_SPLICE_DELCOUNT
 #undef DUK_USE_NONSTD_FUNC_CALLER_PROPERTY
 #undef DUK_USE_NONSTD_FUNC_SOURCE_PROPERTY
 #define DUK_USE_NONSTD_FUNC_STMT
-#define DUK_USE_NONSTD_GETTER_KEY_ARGUMENT
+#define DUK_USE_NONSTD_GETTER_सुसि_ARGUMENT
 #define DUK_USE_NONSTD_JSON_ESC_U2028_U2029
-#define DUK_USE_NONSTD_SETTER_KEY_ARGUMENT
+#define DUK_USE_NONSTD_SETTER_सुसि_ARGUMENT
 #define DUK_USE_NONSTD_STRING_FROMCHARCODE_32BIT
-#define DUK_USE_NUMBER_BUILTIN
+#define DUK_USE_नुमेरो_BUILTIN
 #define DUK_USE_OBJECT_BUILTIN
 #undef DUK_USE_OBJSIZES16
 #undef DUK_USE_PARANOID_ERRORS
-#define DUK_USE_PC2LINE
+#define DUK_USE_PC2_लिन्या
 #define DUK_USE_PERFORMANCE_BUILTIN
 #undef DUK_USE_PREFER_SIZE
 #undef DUK_USE_PROMISE_BUILTIN
@@ -3074,7 +3074,7 @@ typedef struct duk_hthread duk_context;
 #define DUK_USE_STRTAB_RESIZE_CHECK_MASK 255
 #define DUK_USE_STRTAB_SHRINK_LIMIT 6
 #undef DUK_USE_STRTAB_TORTURE
-#define DUK_USE_SYMBOL_BUILTIN
+#define DUK_USE_सिम्बोलो_BUILTIN
 #define DUK_USE_TAILCALL
 #define DUK_USE_TARGET_INFO "unknown"
 #define DUK_USE_TRACEBACKS

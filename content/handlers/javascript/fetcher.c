@@ -50,11 +50,11 @@ static struct fetch_javascript_context *ring = NULL;
 
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
+static inline bool fetch_javascript_send_callback(const fetch_मेनसाहे *मेनसाहे,
 		struct fetch_javascript_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(मेनसाहे, ctx->fetchh);
 	ctx->locked = false;
 
 	return ctx->aborted;
@@ -68,14 +68,14 @@ static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
  */
 static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	int code = 204;
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
 
-	msg.type = FETCH_FINISHED;
-	fetch_javascript_send_callback(&msg, ctx);
+	मेनसाहे.type = FETCH_FINISHED;
+	fetch_javascript_send_callback(&मेनसाहे, ctx);
 
 	return true;
 }
@@ -118,7 +118,7 @@ fetch_javascript_setup(struct fetch *fetchh,
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_इसिंगित(ring, ctx);
 
 	return ctx;
 }

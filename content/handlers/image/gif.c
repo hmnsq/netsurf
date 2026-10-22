@@ -193,7 +193,7 @@ static nserror gif__animate(gif_content *gif, bool redraw)
 	}
 
 	if (redraw) {
-		union content_msg_data data;
+		union content_मेनसाहे_data data;
 
 		/* area within gif to redraw */
 		data.redraw.x = rect.x0;
@@ -201,7 +201,7 @@ static nserror gif__animate(gif_content *gif, bool redraw)
 		data.redraw.width  = rect.x1 - rect.x0;
 		data.redraw.height = rect.y1 - rect.y0;
 
-		content_broadcast(&gif->base, CONTENT_MSG_REDRAW, &data);
+		content_broadcast(&gif->base, CONTENT_मेनसाहे_REDRAW, &data);
 	}
 
 	return NSERROR_OK;
@@ -240,7 +240,7 @@ static bool gif_convert(struct content *c)
 	assert(gif_info != NULL);
 
 	/* Abort on bad GIFs */
-	if (gif_info->frame_count == 0) {
+	if (gif_info->frame_बिलांग == 0) {
 		err = gif__nsgif_error_to_ns(gif_err);
 		content_broadcast_error(c, err, "GIF with no frames.");
 		return false;
@@ -361,7 +361,7 @@ static void gif_add_user(struct content *c)
 	 * If it hasn't, the animation will start at the conversion phase instead. */
 	if (gif->gif == NULL) return;
 
-	if (content_count_users(c) == 1) {
+	if (content_बिलांग_users(c) == 1) {
 		/* First user, and content already converted, so start the animation. */
 		if (nsgif_reset(gif->gif) == NSGIF_OK) {
 			gif__animate(gif, true);
@@ -371,7 +371,7 @@ static void gif_add_user(struct content *c)
 
 static void gif_remove_user(struct content *c)
 {
-	if (content_count_users(c) == 1) {
+	if (content_बिलांग_users(c) == 1) {
 		/* Last user is about to be removed from this content, so stop the animation. */
 		guit->misc->schedule(-1, gif_animate_cb, c);
 	}

@@ -94,7 +94,7 @@ bool fetch_about_testament_handler(struct fetch_about_context *ctx)
 		goto fetch_about_testament_handler_aborted;
 	}
 
-	res = fetch_about_ssenddataf(ctx, "Built on %s in %s\n\n", WT_HOSTNAME, WT_ROOT);
+	res = fetch_about_ssenddataf(ctx, "Built on %s in %s\n\n", WT_HOSTNAME, WT_उगात);
 	if (res != NSERROR_OK) {
 		goto fetch_about_testament_handler_aborted;
 	}

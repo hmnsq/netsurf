@@ -51,7 +51,7 @@ get_authentication_description(struct nsurl *url,
 	char *url_s;
 	size_t url_l;
 	char *str = NULL;
-	const char *key;
+	const char *सुसि;
 
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
 	if (res != NSERROR_OK) {
@@ -59,16 +59,16 @@ get_authentication_description(struct nsurl *url,
 	}
 
 	if ((*username == 0) && (*password == 0)) {
-		key = "LoginDescription";
+		सुसि = "LoginDescription";
 	} else {
-		key = "LoginAgain";
+		सुसि = "LoginAgain";
 	}
 
-	str = messages_get_buff(key, url_s, realm);
+	str = messages_get_buff(सुसि, url_s, realm);
 	if (str != NULL) {
 		NSLOG(netsurf, INFO,
 		      "key:%s url:%s realm:%s str:%s",
-		      key, url_s, realm, str);
+		      सुसि, url_s, realm, str);
 		*out_str = str;
 	} else {
 		res = NSERROR_NOMEM;
@@ -103,16 +103,16 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 	curmd = fetch_about_get_multipart(ctx);
 	while (curmd != NULL) {
 		if (strcmp(curmd->name, "siteurl") == 0) {
-			res = nsurl_create(curmd->value, &siteurl);
+			res = nsurl_create(curmd->हालागा, &siteurl);
 			if (res != NSERROR_OK) {
 				return fetch_about_srverror(ctx);
 			}
 		} else if (strcmp(curmd->name, "realm") == 0) {
-			realm = curmd->value;
+			realm = curmd->हालागा;
 		} else if (strcmp(curmd->name, "username") == 0) {
-			username = curmd->value;
+			username = curmd->हालागा;
 		} else if (strcmp(curmd->name, "password") == 0) {
-			password = curmd->value;
+			password = curmd->हालागा;
 		}
 		curmd = curmd->next;
 	}

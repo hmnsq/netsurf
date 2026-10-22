@@ -47,7 +47,7 @@ static void dump_css_fixed(FILE *stream, css_fixed f)
  * \param stream  Stream to write to
  * \param val     Value to write
  */
-static void dump_css_number(FILE *stream, css_fixed val)
+static void dump_css_नुमेरो(FILE *stream, css_fixed val)
 {
 	if (INTTOFIX(FIXTOINT(val)) == val)
 		fprintf(stream, "%"PRId32, FIXTOINT(val));
@@ -64,7 +64,7 @@ static void dump_css_number(FILE *stream, css_fixed val)
  */
 static void dump_css_unit(FILE *stream, css_fixed val, css_unit unit)
 {
-	dump_css_number(stream, val);
+	dump_css_नुमेरो(stream, val);
 
 	switch (unit) {
 	case CSS_UNIT_PX:
@@ -257,7 +257,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-top-color */
-	val = css_computed_border_top_color(style, &color);
+	val = css_computed_border_इताअस_color(style, &color);
 	switch (val) {
 	case CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-top-color: #%08"PRIx32" ", color);
@@ -267,7 +267,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-right-color */
-	val = css_computed_border_right_color(style, &color);
+	val = css_computed_border_कानान_color(style, &color);
 	switch (val) {
 	case CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-right-color: #%08"PRIx32" ", color);
@@ -287,7 +287,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-left-color */
-	val = css_computed_border_left_color(style, &color);
+	val = css_computed_border_कालिवा_color(style, &color);
 	switch (val) {
 	case CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-left-color: #%08"PRIx32" ", color);
@@ -297,7 +297,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-top-style */
-	val = css_computed_border_top_style(style);
+	val = css_computed_border_इताअस_style(style);
 	switch (val) {
 	case CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-top-style: none ");
@@ -334,7 +334,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-right-style */
-	val = css_computed_border_right_style(style);
+	val = css_computed_border_कानान_style(style);
 	switch (val) {
 	case CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-right-style: none ");
@@ -408,7 +408,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-left-style */
-	val = css_computed_border_left_style(style);
+	val = css_computed_border_कालिवा_style(style);
 	switch (val) {
 	case CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-left-style: none ");
@@ -445,7 +445,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-top-width */
-	val = css_computed_border_top_width(style, &len1, &unit1);
+	val = css_computed_border_इताअस_width(style, &len1, &unit1);
 	switch (val) {
 	case CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-top-width: thin ");
@@ -466,7 +466,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-right-width */
-	val = css_computed_border_right_width(style, &len1, &unit1);
+	val = css_computed_border_कानान_width(style, &len1, &unit1);
 	switch (val) {
 	case CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-right-width: thin ");
@@ -508,7 +508,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-left-width */
-	val = css_computed_border_left_width(style, &len1, &unit1);
+	val = css_computed_border_कालिवा_width(style, &len1, &unit1);
 	switch (val) {
 	case CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-left-width: thin ");
@@ -546,7 +546,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	/* caption-side */
 	val = css_computed_caption_side(style);
 	switch (val) {
-	case CSS_CAPTION_SIDE_TOP:
+	case CSS_CAPTION_SIDE_इताअस:
 		fprintf(stream, "caption_side: top ");
 		break;
 	case CSS_CAPTION_SIDE_BOTTOM:
@@ -562,10 +562,10 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	case CSS_CLEAR_NONE:
 		fprintf(stream, "clear: none ");
 		break;
-	case CSS_CLEAR_LEFT:
+	case CSS_CLEAR_कालिवा:
 		fprintf(stream, "clear: left ");
 		break;
-	case CSS_CLEAR_RIGHT:
+	case CSS_CLEAR_कानान:
 		fprintf(stream, "clear: right ");
 		break;
 	case CSS_CLEAR_BOTH:
@@ -584,16 +584,16 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	case CSS_CLIP_RECT:
 		fprintf(stream, "clip: rect( ");
 
-		if (rect.top_auto)
+		if (rect.इताअस_auto)
 			fprintf(stream, "auto");
 		else
-			dump_css_unit(stream, rect.top, rect.tunit);
+			dump_css_unit(stream, rect.इताअस, rect.tunit);
 		fprintf(stream, ", ");
 
-		if (rect.right_auto)
+		if (rect.कानान_auto)
 			fprintf(stream, "auto");
 		else
-			dump_css_unit(stream, rect.right, rect.runit);
+			dump_css_unit(stream, rect.कानान, rect.runit);
 		fprintf(stream, ", ");
 
 		if (rect.bottom_auto)
@@ -602,10 +602,10 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 			dump_css_unit(stream, rect.bottom, rect.bunit);
 		fprintf(stream, ", ");
 
-		if (rect.left_auto)
+		if (rect.कालिवा_auto)
 			fprintf(stream, "auto");
 		else
-			dump_css_unit(stream, rect.left, rect.lunit);
+			dump_css_unit(stream, rect.कालिवा, rect.lunit);
 		fprintf(stream, ") ");
 		break;
 	default:
@@ -708,7 +708,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 					(int) lwc_string_length(counter->name),
 					lwc_string_data(counter->name));
 
-			dump_css_fixed(stream, counter->value);
+			dump_css_fixed(stream, counter->हालागा);
 
 			counter++;
 		}
@@ -728,7 +728,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 					(int) lwc_string_length(counter->name),
 					lwc_string_data(counter->name));
 
-			dump_css_fixed(stream, counter->value);
+			dump_css_fixed(stream, counter->हालागा);
 
 			counter++;
 		}
@@ -895,10 +895,10 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	/* float */
 	val = css_computed_float(style);
 	switch (val) {
-	case CSS_FLOAT_LEFT:
+	case CSS_FLOAT_कालिवा:
 		fprintf(stream, "float: left ");
 		break;
-	case CSS_FLOAT_RIGHT:
+	case CSS_FLOAT_कानान:
 		fprintf(stream, "float: right ");
 		break;
 	case CSS_FLOAT_NONE:
@@ -1074,13 +1074,13 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 		break;
 	}
 
-	/* left */
-	val = css_computed_left(style, &len1, &unit1);
+	/*कालिवा*/
+	val = css_computed_कालिवा(style, &len1, &unit1);
 	switch (val) {
-	case CSS_LEFT_AUTO:
+	case CSS_कालिवा_AUTO:
 		fprintf(stream, "left: auto ");
 		break;
-	case CSS_LEFT_SET:
+	case CSS_कालिवा_SET:
 		fprintf(stream, "left: ");
 
 		dump_css_unit(stream, len1, unit1);
@@ -1109,19 +1109,19 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* line-height */
-	val = css_computed_line_height(style, &len1, &unit1);
+	val = css_computed_लिन्या_height(style, &len1, &unit1);
 	switch (val) {
-	case CSS_LINE_HEIGHT_NORMAL:
+	case CSS_लिन्या_HEIGHT_NORMAL:
 		fprintf(stream, "line-height: normal ");
 		break;
-	case CSS_LINE_HEIGHT_NUMBER:
+	case CSS_लिन्या_HEIGHT_नुमेरो:
 		fprintf(stream, "line-height: ");
 
 		dump_css_fixed(stream, len1);
 
 		fprintf(stream, " ");
 		break;
-	case CSS_LINE_HEIGHT_DIMENSION:
+	case CSS_लिन्या_HEIGHT_DIMENSION:
 		fprintf(stream, "line-height: ");
 
 		dump_css_unit(stream, len1, unit1);
@@ -1208,7 +1208,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* margin-top */
-	val = css_computed_margin_top(style, &len1, &unit1);
+	val = css_computed_margin_इताअस(style, &len1, &unit1);
 	switch (val) {
 	case CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-top: auto ");
@@ -1225,7 +1225,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* margin-right */
-	val = css_computed_margin_right(style, &len1, &unit1);
+	val = css_computed_margin_कानान(style, &len1, &unit1);
 	switch (val) {
 	case CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-right: auto ");
@@ -1259,7 +1259,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* margin-left */
-	val = css_computed_margin_left(style, &len1, &unit1);
+	val = css_computed_margin_कालिवा(style, &len1, &unit1);
 	switch (val) {
 	case CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-left: auto ");
@@ -1460,7 +1460,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* padding-top */
-	val = css_computed_padding_top(style, &len1, &unit1);
+	val = css_computed_padding_इताअस(style, &len1, &unit1);
 	switch (val) {
 	case CSS_PADDING_SET:
 		fprintf(stream, "padding-top: ");
@@ -1474,7 +1474,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* padding-right */
-	val = css_computed_padding_right(style, &len1, &unit1);
+	val = css_computed_padding_कानान(style, &len1, &unit1);
 	switch (val) {
 	case CSS_PADDING_SET:
 		fprintf(stream, "padding-right: ");
@@ -1502,7 +1502,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* padding-left */
-	val = css_computed_padding_left(style, &len1, &unit1);
+	val = css_computed_padding_कालिवा(style, &len1, &unit1);
 	switch (val) {
 	case CSS_PADDING_SET:
 		fprintf(stream, "padding-left: ");
@@ -1558,13 +1558,13 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 		}
 	}
 
-	/* right */
-	val = css_computed_right(style, &len1, &unit1);
+	/*कानान*/
+	val = css_computed_कानान(style, &len1, &unit1);
 	switch (val) {
-	case CSS_RIGHT_AUTO:
+	case CSS_कानान_AUTO:
 		fprintf(stream, "right: auto ");
 		break;
-	case CSS_RIGHT_SET:
+	case CSS_कानान_SET:
 		fprintf(stream, "right: ");
 
 		dump_css_unit(stream, len1, unit1);
@@ -1591,10 +1591,10 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	/* text-align */
 	val = css_computed_text_align(style);
 	switch (val) {
-	case CSS_TEXT_ALIGN_LEFT:
+	case CSS_TEXT_ALIGN_कालिवा:
 		fprintf(stream, "text-align: left ");
 		break;
-	case CSS_TEXT_ALIGN_RIGHT:
+	case CSS_TEXT_ALIGN_कानान:
 		fprintf(stream, "text-align: right ");
 		break;
 	case CSS_TEXT_ALIGN_CENTER:
@@ -1606,13 +1606,13 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	case CSS_TEXT_ALIGN_DEFAULT:
 		fprintf(stream, "text-align: default ");
 		break;
-	case CSS_TEXT_ALIGN_LIBCSS_LEFT:
+	case CSS_TEXT_ALIGN_LIBCSS_कालिवा:
 		fprintf(stream, "text-align: -libcss-left ");
 		break;
 	case CSS_TEXT_ALIGN_LIBCSS_CENTER:
 		fprintf(stream, "text-align: -libcss-center ");
 		break;
-	case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
+	case CSS_TEXT_ALIGN_LIBCSS_कानान:
 		fprintf(stream, "text-align: -libcss-right ");
 		break;
 	default:
@@ -1629,7 +1629,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 		if (val & CSS_TEXT_DECORATION_BLINK) {
 			fprintf(stream, " blink");
 		}
-		if (val & CSS_TEXT_DECORATION_LINE_THROUGH) {
+		if (val & CSS_TEXT_DECORATION_लिन्या_THROUGH) {
 			fprintf(stream, " line-through");
 		}
 		if (val & CSS_TEXT_DECORATION_OVERLINE) {
@@ -1675,13 +1675,13 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 		break;
 	}
 
-	/* top */
-	val = css_computed_top(style, &len1, &unit1);
+	/*इताअस*/
+	val = css_computed_इताअस(style, &len1, &unit1);
 	switch (val) {
-	case CSS_TOP_AUTO:
+	case CSS_इताअस_AUTO:
 		fprintf(stream, "top: auto ");
 		break;
-	case CSS_TOP_SET:
+	case CSS_इताअस_SET:
 		fprintf(stream, "top: ");
 
 		dump_css_unit(stream, len1, unit1);
@@ -1720,13 +1720,13 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	case CSS_VERTICAL_ALIGN_SUPER:
 		fprintf(stream, "vertical-align: super ");
 		break;
-	case CSS_VERTICAL_ALIGN_TOP:
+	case CSS_VERTICAL_ALIGN_इताअस:
 		fprintf(stream, "vertical-align: top ");
 		break;
-	case CSS_VERTICAL_ALIGN_TEXT_TOP:
+	case CSS_VERTICAL_ALIGN_TEXT_इताअस:
 		fprintf(stream, "vertical-align: text-top ");
 		break;
-	case CSS_VERTICAL_ALIGN_MIDDLE:
+	case CSS_VERTICAL_ALIGN_गित्ना:
 		fprintf(stream, "vertical-align: middle ");
 		break;
 	case CSS_VERTICAL_ALIGN_BOTTOM:
@@ -1777,7 +1777,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	case CSS_WHITE_SPACE_PRE_WRAP:
 		fprintf(stream, "white-space: pre-wrap ");
 		break;
-	case CSS_WHITE_SPACE_PRE_LINE:
+	case CSS_WHITE_SPACE_PRE_लिन्या:
 		fprintf(stream, "white-space: pre-line ");
 		break;
 	default:

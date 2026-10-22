@@ -51,8 +51,8 @@ enum box_walk_dir {
 		   BOX_WALK_FLOAT_CONTAINER
 };
 
-#define box_is_float(box) (box->type == BOX_FLOAT_LEFT ||	\
-			   box->type == BOX_FLOAT_RIGHT)
+#define box_is_float(box) (box->type == BOX_FLOAT_कालिवा ||	\
+			   box->type == BOX_FLOAT_कानान)
 
 /**
  * Determine if a point lies within a box.
@@ -85,12 +85,12 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 	    css_computed_clip(box->style, &css_rect) == CSS_CLIP_RECT) {
 		/* We have an absolutly positioned box with a clip rect */
 		struct rect r = {
-				 .x0 = box->border[LEFT].width,
-				 .y0 = box->border[TOP].width,
-				 .x1 = box->padding[LEFT] + box->width +
-				 box->border[RIGHT].width +
-				 box->padding[RIGHT],
-				 .y1 = box->padding[TOP] + box->height +
+				 .x0 = box->border[कालिवा_2].width,
+				 .y0 = box->border[इताअस_2].width,
+				 .x1 = box->padding[कालिवा_2] + box->width +
+				 box->border[कानान_2].width +
+				 box->padding[कानान_2],
+				 .y1 = box->padding[इताअस_2] + box->height +
 				 box->border[BOTTOM].width +
 				 box->padding[BOTTOM]
 		};
@@ -101,30 +101,30 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 		}
 
 		/* Adjust rect to css clip region */
-		if (css_rect.left_auto == false) {
+		if (css_rect.कालिवा_auto == false) {
 			r.x0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.left,
+						css_rect.कालिवा,
 						css_rect.lunit));
 		}
-		if (css_rect.top_auto == false) {
+		if (css_rect.इताअस_auto == false) {
 			r.y0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.top,
+						css_rect.इताअस,
 						css_rect.tunit));
 		}
-		if (css_rect.right_auto == false) {
-			r.x1 = box->border[LEFT].width +
+		if (css_rect.कानान_auto == false) {
+			r.x1 = box->border[कालिवा_2].width +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.right,
+						css_rect.कानान,
 						css_rect.runit));
 		}
 		if (css_rect.bottom_auto == false) {
-			r.y1 = box->border[TOP].width +
+			r.y1 = box->border[इताअस_2].width +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
@@ -141,26 +141,26 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 		/* Not inside clip area */
 		return false;
 	}
-	if (x >= -box->border[LEFT].width &&
-	    x < box->padding[LEFT] + box->width +
-	    box->padding[RIGHT] + box->border[RIGHT].width &&
-	    y >= -box->border[TOP].width &&
-	    y < box->padding[TOP] + box->height +
+	if (x >= -box->border[कालिवा_2].width &&
+	    x < box->padding[कालिवा_2] + box->width +
+	    box->padding[कानान_2] + box->border[कानान_2].width &&
+	    y >= -box->border[इताअस_2].width &&
+	    y < box->padding[इताअस_2] + box->height +
 	    box->padding[BOTTOM] + box->border[BOTTOM].width) {
 		*physically = true;
 		return true;
 	}
 	if (box->list_marker && box->list_marker->x - box->x <= x +
-	    box->list_marker->border[LEFT].width &&
+	    box->list_marker->border[कालिवा_2].width &&
 	    x < box->list_marker->x - box->x +
-	    box->list_marker->padding[LEFT] +
+	    box->list_marker->padding[कालिवा_2] +
 	    box->list_marker->width +
-	    box->list_marker->border[RIGHT].width +
-	    box->list_marker->padding[RIGHT] &&
+	    box->list_marker->border[कानान_2].width +
+	    box->list_marker->padding[कानान_2] &&
 	    box->list_marker->y - box->y <= y +
-	    box->list_marker->border[TOP].width &&
+	    box->list_marker->border[इताअस_2].width &&
 	    y < box->list_marker->y - box->y +
-	    box->list_marker->padding[TOP] +
+	    box->list_marker->padding[इताअस_2] +
 	    box->list_marker->height +
 	    box->list_marker->border[BOTTOM].width +
 	    box->list_marker->padding[BOTTOM]) {
@@ -401,8 +401,8 @@ box_nearer_text_box(struct box *box,
 		    int *tx, int *ty,
 		    int *nr_xd, int *nr_yd)
 {
-	int w = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	int h = box->padding[TOP] + box->height + box->padding[BOTTOM];
+	int w = box->padding[कालिवा_2] + box->width + box->padding[कानान_2];
+	int h = box->padding[इताअस_2] + box->height + box->padding[BOTTOM];
 	int y1 = by + h;
 	int x1 = bx + w;
 	int yd = INT_MAX;
@@ -488,8 +488,8 @@ box_nearest_text_box(struct box *box,
 		*nr_yd = INT_MAX / 2;
 	}
 	if (box->type == BOX_INLINE_CONTAINER) {
-		int bw = box->padding[LEFT] + box->width + box->padding[RIGHT];
-		int bh = box->padding[TOP] + box->height + box->padding[BOTTOM];
+		int bw = box->padding[कालिवा_2] + box->width + box->padding[कानान_2];
+		int bh = box->padding[इताअस_2] + box->height + box->padding[BOTTOM];
 		int b_y1 = by + bh;
 		int b_x1 = bx + bw;
 		if (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
@@ -498,8 +498,8 @@ box_nearest_text_box(struct box *box,
 	}
 
 	while (child) {
-		if (child->type == BOX_FLOAT_LEFT ||
-		    child->type == BOX_FLOAT_RIGHT) {
+		if (child->type == BOX_FLOAT_कालिवा ||
+		    child->type == BOX_FLOAT_कानान) {
 			c_bx = fx + child->x -
 				scrollbar_get_offset(child->scroll_x);
 			c_by = fy + child->y -
@@ -570,8 +570,8 @@ void box_bounds(struct box *box, struct rect *r)
 
 	box_coords(box, &r->x0, &r->y0);
 
-	width = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	height = box->padding[TOP] + box->height + box->padding[BOTTOM];
+	width = box->padding[कालिवा_2] + box->width + box->padding[कानान_2];
+	height = box->padding[इताअस_2] + box->height + box->padding[BOTTOM];
 
 	r->x1 = r->x0 + width;
 	r->y1 = r->y0 + height;
@@ -666,8 +666,8 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 		box->descendant_x1, box->descendant_y1);
 
 	fprintf(stream, "m(%i %i %i %i) ",
-		box->margin[TOP], box->margin[LEFT],
-		box->margin[BOTTOM], box->margin[RIGHT]);
+		box->margin[इताअस_2], box->margin[कालिवा_2],
+		box->margin[BOTTOM], box->margin[कानान_2]);
 
 	switch (box->type) {
 	case BOX_BLOCK:
@@ -709,11 +709,11 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 		fprintf(stream, "TABLE_ROW_GROUP ");
 		break;
 
-	case BOX_FLOAT_LEFT:
+	case BOX_FLOAT_कालिवा:
 		fprintf(stream, "FLOAT_LEFT ");
 		break;
 
-	case BOX_FLOAT_RIGHT:
+	case BOX_FLOAT_कानान:
 		fprintf(stream, "FLOAT_RIGHT ");
 		break;
 
@@ -790,9 +790,9 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 		}
 		fprintf(stream, ")");
 	}
-	if (box->node != NULL) {
+	if (box->बुहोल != NULL) {
 		dom_string *name;
-		if (dom_node_get_node_name(box->node, &name) == DOM_NO_ERR) {
+		if (dom_बुहोल_get_बुहोल_name(box->बुहोल, &name) == DOM_NO_ERR) {
 			fprintf(stream, " <%s>", dom_string_data(name));
 			dom_string_unref(name);
 		}
@@ -828,7 +828,7 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 /* exported interface documented in html/box.h */
 bool box_vscrollbar_present(const struct box * const box)
 {
-	return box->padding[TOP] +
+	return box->padding[इताअस_2] +
 		box->height +
 		box->padding[BOTTOM] +
 		box->border[BOTTOM].width < box->descendant_y1;
@@ -838,10 +838,10 @@ bool box_vscrollbar_present(const struct box * const box)
 /* exported interface documented in html/box.h */
 bool box_hscrollbar_present(const struct box * const box)
 {
-	return box->padding[LEFT] +
+	return box->padding[कालिवा_2] +
 		box->width +
-		box->padding[RIGHT] +
-		box->border[RIGHT].width < box->descendant_x1;
+		box->padding[कानान_2] +
+		box->border[कानान_2].width < box->descendant_x1;
 }
 
 
@@ -863,18 +863,18 @@ box_pick_text_box(struct html_content *html,
 		return NULL;
 
 	box = html->layout;
-	bx = box->margin[LEFT];
-	by = box->margin[TOP];
+	bx = box->margin[कालिवा_2];
+	by = box->margin[इताअस_2];
 	fx = bx;
 	fy = by;
 
 	if (!box_nearest_text_box(box, bx, by, fx, fy, x, y,
 				  dir, &text_box, &tx, &ty, &nr_xd, &nr_yd)) {
 		if (text_box && text_box->text && !text_box->object) {
-			int w = (text_box->padding[LEFT] +
+			int w = (text_box->padding[कालिवा_2] +
 				 text_box->width +
-				 text_box->padding[RIGHT]);
-			int h = (text_box->padding[TOP] +
+				 text_box->padding[कानान_2]);
+			int h = (text_box->padding[इताअस_2] +
 				 text_box->height +
 				 text_box->padding[BOTTOM]);
 			int x1, y1;

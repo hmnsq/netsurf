@@ -63,25 +63,25 @@ static const content_type image_types = CONTENT_IMAGE;
  * \param n node to check
  * \return true if node is root else false.
  */
-static inline bool box_is_root(dom_node *n)
+static inline bool box_is_उगात(dom_बुहोल *n)
 {
-	dom_node *parent;
-	dom_node_type type;
+	dom_बुहोल *parent;
+	dom_बुहोल_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
+	err = dom_बुहोल_get_parent_बुहोल(n, &parent);
 	if (err != DOM_NO_ERR)
 		return false;
 
 	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+		err = dom_बुहोल_get_बुहोल_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_बुहोल_unref(parent);
 
 		if (err != DOM_NO_ERR)
 			return false;
 
-		if (type != DOM_DOCUMENT_NODE)
+		if (type != DOM_DOCUMENT_बुहोल)
 			return false;
 	}
 
@@ -116,7 +116,7 @@ static int box_object_talloc_destructor(struct object_params *o)
  * \return array of struct box_multi_length, or 0 on memory exhaustion
  */
 static struct frame_dimension *
-box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
+box_parse_multi_lengths(const dom_string *ds, unsigned int *बिलांग)
 {
 	char *end;
 	unsigned int i, n;
@@ -137,9 +137,9 @@ box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
 		while (ascii_is_space(*s)) {
 			s++;
 		}
-		length[i].value = strtof(s, &end);
-		if (length[i].value <= 0) {
-			length[i].value = 1;
+		length[i].हालागा = strtof(s, &end);
+		if (length[i].हालागा <= 0) {
+			length[i].हालागा = 1;
 		}
 		s = end;
 		switch (*s) {
@@ -161,7 +161,7 @@ box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
 		}
 	}
 
-	*count = n;
+	*बिलांग = n;
 	return length;
 }
 
@@ -188,7 +188,7 @@ static int box_frames_talloc_destructor(struct content_html_frames *f)
  */
 static bool
 box_create_frameset(struct content_html_frames *f,
-		    dom_node *n,
+		    dom_बुहोल *n,
 		    html_content *content)
 {
 	unsigned int row, col, index, i;
@@ -197,7 +197,7 @@ box_create_frameset(struct content_html_frames *f,
 	dom_exception err;
 	nsurl *url;
 	struct frame_dimension *row_height = 0, *col_width = 0;
-	dom_node *c, *next;
+	dom_बुहोल *c, *next;
 	struct content_html_frames *frame;
 	bool default_border = true;
 	colour default_border_colour = 0x000000;
@@ -213,7 +213,7 @@ box_create_frameset(struct content_html_frames *f,
 		row_height = calloc(1, sizeof(struct frame_dimension));
 		if (row_height == NULL)
 			return false;
-		row_height->value = 100;
+		row_height->हालागा = 100;
 		row_height->unit = FRAME_DIMENSION_PERCENT;
 	}
 
@@ -231,7 +231,7 @@ box_create_frameset(struct content_html_frames *f,
 			free(row_height);
 			return false;
 		}
-		col_width->value = 100;
+		col_width->हालागा = 100;
 		col_width->unit = FRAME_DIMENSION_PERCENT;
 	}
 
@@ -297,29 +297,29 @@ box_create_frameset(struct content_html_frames *f,
 	free(row_height);
 
 	/* create the frameset windows */
-	err = dom_node_get_first_child(n, &c);
+	err = dom_बुहोल_get_first_child(n, &c);
 	if (err != DOM_NO_ERR)
 		return false;
 
 	for (row = 0; c != NULL && row < rows; row++) {
 		for (col = 0; c != NULL && col < cols; col++) {
 			while (c != NULL) {
-				dom_node_type type;
+				dom_बुहोल_type type;
 				dom_string *name;
 
-				err = dom_node_get_node_type(c, &type);
+				err = dom_बुहोल_get_बुहोल_type(c, &type);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
+					dom_बुहोल_unref(c);
 					return false;
 				}
 
-				err = dom_node_get_node_name(c, &name);
+				err = dom_बुहोल_get_बुहोल_name(c, &name);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
+					dom_बुहोल_unref(c);
 					return false;
 				}
 
-				if (type != DOM_ELEMENT_NODE ||
+				if (type != DOM_ELEMENT_बुहोल ||
 					(!dom_string_caseless_lwc_isequal(
 							name,
 							corestring_lwc_frame) &&
@@ -327,16 +327,16 @@ box_create_frameset(struct content_html_frames *f,
 							name,
 							corestring_lwc_frameset
 							))) {
-					err = dom_node_get_next_sibling(c,
+					err = dom_बुहोल_get_next_sibling(c,
 							&next);
 					if (err != DOM_NO_ERR) {
 						dom_string_unref(name);
-						dom_node_unref(c);
+						dom_बुहोल_unref(c);
 						return false;
 					}
 
 					dom_string_unref(name);
-					dom_node_unref(c);
+					dom_बुहोल_unref(c);
 					c = next;
 				} else {
 					/* Got a FRAME or FRAMESET element */
@@ -353,9 +353,9 @@ box_create_frameset(struct content_html_frames *f,
 			frame = &f->children[index];
 
 			/* nest framesets */
-			err = dom_node_get_node_name(c, &s);
+			err = dom_बुहोल_get_बुहोल_name(c, &s);
 			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				return false;
 			}
 
@@ -365,17 +365,17 @@ box_create_frameset(struct content_html_frames *f,
 				frame->border = 0;
 				if (box_create_frameset(frame, c,
 						content) == false) {
-					dom_node_unref(c);
+					dom_बुहोल_unref(c);
 					return false;
 				}
 
-				err = dom_node_get_next_sibling(c, &next);
+				err = dom_बुहोल_get_next_sibling(c, &next);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
+					dom_बुहोल_unref(c);
 					return false;
 				}
 
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				c = next;
 				continue;
 			}
@@ -463,20 +463,20 @@ box_create_frameset(struct content_html_frames *f,
 			}
 
 			/* advance */
-			err = dom_node_get_next_sibling(c, &next);
+			err = dom_बुहोल_get_next_sibling(c, &next);
 			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				return false;
 			}
 
-			dom_node_unref(c);
+			dom_बुहोल_unref(c);
 			c = next;
 		}
 	}
 
 	/* If the last child wasn't a frame, we still need to unref it */
 	if (c != NULL) {
-		dom_node_unref(c);
+		dom_बुहोल_unref(c);
 	}
 
 	return true;
@@ -513,10 +513,10 @@ static int box_iframes_talloc_destructor(struct content_html_iframe *f)
  * attribute was not found, *value will be unchanged.
  */
 static bool
-box_get_attribute(dom_node *n,
+box_get_attribute(dom_बुहोल *n,
 		  const char *attribute,
 		  void *context,
-		  char **value)
+		  char **हालागा)
 {
 	char *result;
 	dom_string *attr, *attr_name;
@@ -543,7 +543,7 @@ box_get_attribute(dom_node *n,
 		if (result == NULL)
 			return false;
 
-		*value = result;
+		*हालागा = result;
 	}
 
 	return true;
@@ -557,7 +557,7 @@ box_get_attribute(dom_node *n,
  * can be handled by the layout code.
  */
 static bool
-box_input_text(html_content *html, struct box *box, struct dom_node *node)
+box_पासोक_text(html_content *html, struct box *box, struct dom_बुहोल *बुहोल)
 {
 	struct box *inline_container, *inline_box;
 	uint8_t display = css_computed_display_static(box->style);
@@ -587,7 +587,7 @@ box_input_text(html_content *html, struct box *box, struct dom_node *node)
 	box_add_child(inline_container, inline_box);
 	box_add_child(box, inline_container);
 
-	return box_textarea_create_textarea(html, box, node);
+	return box_textarea_create_textarea(html, box, बुहोल);
 }
 
 
@@ -598,16 +598,16 @@ box_input_text(html_content *html, struct box *box, struct dom_node *node)
  * \param  n	    xml element node for &lt;option&gt;
  * \return  true on success, false on memory exhaustion
  */
-static bool box_select_add_option(struct form_control *control, dom_node *n)
+static bool box_select_add_option(struct form_control *control, dom_बुहोल *n)
 {
-	char *value = NULL;
+	char *हालागा = NULL;
 	char *text = NULL;
 	char *text_nowrap = NULL;
 	bool selected;
 	dom_string *content, *s;
 	dom_exception err;
 
-	err = dom_node_get_text_content(n, &content);
+	err = dom_बुहोल_get_text_content(n, &content);
 	if (err != DOM_NO_ERR)
 		return false;
 
@@ -621,15 +621,15 @@ static bool box_select_add_option(struct form_control *control, dom_node *n)
 	if (text == NULL)
 		goto no_memory;
 
-	err = dom_element_get_attribute(n, corestring_dom_value, &s);
+	err = dom_element_get_attribute(n, corestring_dom_हालागा, &s);
 	if (err == DOM_NO_ERR && s != NULL) {
-		value = strdup(dom_string_data(s));
+		हालागा = strdup(dom_string_data(s));
 		dom_string_unref(s);
 	} else {
-		value = strdup(text);
+		हालागा = strdup(text);
 	}
 
-	if (value == NULL)
+	if (हालागा == NULL)
 		goto no_memory;
 
 	if (dom_element_has_attribute(n, corestring_dom_selected, &selected) != DOM_NO_ERR) {
@@ -642,7 +642,7 @@ static bool box_select_add_option(struct form_control *control, dom_node *n)
 	if (text_nowrap == NULL)
 		goto no_memory;
 
-	if (form_add_option(control, value, text_nowrap, selected, n) == false)
+	if (form_add_option(control, हालागा, text_nowrap, selected, n) == false)
 		goto no_memory;
 
 	free(text);
@@ -650,7 +650,7 @@ static bool box_select_add_option(struct form_control *control, dom_node *n)
 	return true;
 
 no_memory:
-	free(value);
+	free(हालागा);
 	free(text);
 	free(text_nowrap);
 	return false;
@@ -680,7 +680,7 @@ no_memory:
  * special element handler for Anchor [12.2].
  */
 static bool
-box_a(dom_node *n,
+box_a(dom_बुहोल *n,
       html_content *content,
       struct box *box,
       bool *convert_children)
@@ -727,7 +727,7 @@ box_a(dom_node *n,
 				corestring_lwc__blank))
 			box->target = "_blank";
 		else if (dom_string_caseless_lwc_isequal(s,
-				corestring_lwc__top))
+				corestring_lwc_इताअस_2))
 			box->target = "_top";
 		else if (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__parent))
@@ -758,7 +758,7 @@ box_a(dom_node *n,
  * Document body special element handler [7.5.1].
  */
 static bool
-box_body(dom_node *n,
+box_body(dom_बुहोल *n,
 	 html_content *content,
 	 struct box *box,
 	 bool *convert_children)
@@ -780,7 +780,7 @@ box_body(dom_node *n,
  * special element handler for forced line break [9.3.2].
  */
 static bool
-box_br(dom_node *n,
+box_br(dom_बुहोल *n,
        html_content *content,
        struct box *box,
        bool *convert_children)
@@ -794,14 +794,14 @@ box_br(dom_node *n,
  * special element handler for Push button [17.5].
  */
 static bool
-box_button(dom_node *n,
+box_button(dom_बुहोल *n,
 	   html_content *content,
 	   struct box *box,
 	   bool *convert_children)
 {
 	struct form_control *gadget;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
+	gadget = html_forms_get_control_for_बुहोल(content->forms, n);
 	if (!gadget)
 		return false;
 
@@ -822,7 +822,7 @@ box_button(dom_node *n,
  * Canvas element
  */
 static bool
-box_canvas(dom_node *n,
+box_canvas(dom_बुहोल *n,
 	     html_content *content,
 	     struct box *box,
 	     bool *convert_children)
@@ -834,7 +834,7 @@ box_canvas(dom_node *n,
 	*convert_children = false;
 
 	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
+			box_is_उगात(n)) == CSS_DISPLAY_NONE)
 		return true;
 
 	/* This is replaced content */
@@ -849,7 +849,7 @@ box_canvas(dom_node *n,
  * see http://wp.netscape.com/assist/net_sites/new_html3_prop.html )
  */
 static bool
-box_embed(dom_node *n,
+box_embed(dom_बुहोल *n,
 	  html_content *content,
 	  struct box *box,
 	  bool *convert_children)
@@ -858,12 +858,12 @@ box_embed(dom_node *n,
 	struct object_param *param;
 	dom_namednodemap *attrs;
 	unsigned long idx;
-	uint32_t num_attrs;
+	uint32_t नुमेरो_attrs;
 	dom_string *src;
 	dom_exception err;
 
 	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
+			box_is_उगात(n)) == CSS_DISPLAY_NONE)
 		return true;
 
 	params = talloc(content->bctx, struct object_params);
@@ -899,19 +899,19 @@ box_embed(dom_node *n,
 		return true;
 
 	/* add attributes as parameters to linked list */
-	err = dom_node_get_attributes(n, &attrs);
+	err = dom_बुहोल_get_attributes(n, &attrs);
 	if (err != DOM_NO_ERR)
 		return false;
 
-	err = dom_namednodemap_get_length(attrs, &num_attrs);
+	err = dom_namednodemap_get_length(attrs, &नुमेरो_attrs);
 	if (err != DOM_NO_ERR) {
 		dom_namednodemap_unref(attrs);
 		return false;
 	}
 
-	for (idx = 0; idx < num_attrs; idx++) {
+	for (idx = 0; idx < नुमेरो_attrs; idx++) {
 		dom_attr *attr;
-		dom_string *name, *value;
+		dom_string *name, *हालागा;
 
 		err = dom_namednodemap_item(attrs, idx, (void *) &attr);
 		if (err != DOM_NO_ERR) {
@@ -921,20 +921,20 @@ box_embed(dom_node *n,
 
 		err = dom_attr_get_name(attr, &name);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(attr);
+			dom_बुहोल_unref(attr);
 			dom_namednodemap_unref(attrs);
 			return false;
 		}
 
 		if (dom_string_caseless_lwc_isequal(name, corestring_lwc_src)) {
-			dom_node_unref(attr);
+			dom_बुहोल_unref(attr);
 			dom_string_unref(name);
 			continue;
 		}
 
-		err = dom_attr_get_value(attr, &value);
+		err = dom_attr_get_हालागा(attr, &हालागा);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(attr);
+			dom_बुहोल_unref(attr);
 			dom_string_unref(name);
 			dom_namednodemap_unref(attrs);
 			return false;
@@ -942,24 +942,24 @@ box_embed(dom_node *n,
 
 		param = talloc(content->bctx, struct object_param);
 		if (param == NULL) {
-			dom_node_unref(attr);
-			dom_string_unref(value);
+			dom_बुहोल_unref(attr);
+			dom_string_unref(हालागा);
 			dom_string_unref(name);
 			dom_namednodemap_unref(attrs);
 			return false;
 		}
 
 		param->name = talloc_strdup(content->bctx, dom_string_data(name));
-		param->value = talloc_strdup(content->bctx, dom_string_data(value));
+		param->हालागा = talloc_strdup(content->bctx, dom_string_data(हालागा));
 		param->type = NULL;
 		param->valuetype = talloc_strdup(content->bctx, "data");
 		param->next = NULL;
 
-		dom_string_unref(value);
+		dom_string_unref(हालागा);
 		dom_string_unref(name);
-		dom_node_unref(attr);
+		dom_बुहोल_unref(attr);
 
-		if (param->name == NULL || param->value == NULL ||
+		if (param->name == NULL || param->हालागा == NULL ||
 				param->valuetype == NULL) {
 			dom_namednodemap_unref(attrs);
 			return false;
@@ -983,7 +983,7 @@ box_embed(dom_node *n,
  * Window subdivision [16.2.1].
  */
 static bool
-box_frameset(dom_node *n,
+box_frameset(dom_बुहोल *n,
 	     html_content *content,
 	     struct box *box,
 	     bool *convert_children)
@@ -1022,7 +1022,7 @@ box_frameset(dom_node *n,
  * Inline subwindow [16.5].
  */
 static bool
-box_iframe(dom_node *n,
+box_iframe(dom_बुहोल *n,
 	   html_content *content,
 	   struct box *box,
 	   bool *convert_children)
@@ -1034,7 +1034,7 @@ box_iframe(dom_node *n,
 	int i;
 
 	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
+			box_is_उगात(n)) == CSS_DISPLAY_NONE)
 		return true;
 
 	if (box->style &&
@@ -1147,7 +1147,7 @@ box_iframe(dom_node *n,
  * Embedded image [13.2].
  */
 static bool
-box_image(dom_node *n,
+box_image(dom_बुहोल *n,
 	  html_content *content,
 	  struct box *box,
 	  bool *convert_children)
@@ -1158,12 +1158,12 @@ box_image(dom_node *n,
 	nsurl *url;
 	enum css_width_e wtype;
 	enum css_height_e htype;
-	css_fixed value = 0;
+	css_fixed हालागा = 0;
 	css_unit wunit = CSS_UNIT_PX;
 	css_unit hunit = CSS_UNIT_PX;
 
 	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
+			box_is_उगात(n)) == CSS_DISPLAY_NONE)
 		return true;
 
 	/* handle alt text */
@@ -1210,8 +1210,8 @@ box_image(dom_node *n,
 	ok = html_fetch_object(content, url, box, image_types, false);
 	nsurl_unref(url);
 
-	wtype = css_computed_width(box->style, &value, &wunit);
-	htype = css_computed_height(box->style, &value, &hunit);
+	wtype = css_computed_width(box->style, &हालागा, &wunit);
+	htype = css_computed_height(box->style, &हालागा, &hunit);
 
 	if (wtype == CSS_WIDTH_SET &&
 	    wunit != CSS_UNIT_PCT &&
@@ -1230,7 +1230,7 @@ box_image(dom_node *n,
  * Form control [17.4].
  */
 static bool
-box_input(dom_node *n,
+box_पासोक(dom_बुहोल *n,
 	  html_content *content,
 	  struct box *box,
 	  bool *convert_children)
@@ -1241,7 +1241,7 @@ box_input(dom_node *n,
 	nsurl *url;
 	nserror error;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
+	gadget = html_forms_get_control_for_बुहोल(content->forms, n);
 	if (gadget == NULL) {
 		return false;
 	}
@@ -1255,7 +1255,7 @@ box_input(dom_node *n,
 	err = dom_element_get_attribute(n, corestring_dom_type, &type);
 	if ((err != DOM_NO_ERR) || (type == NULL)) {
 		/* no type so "text" is assumed */
-		if (box_input_text(content, box, n) == false) {
+		if (box_पासोक_text(content, box, n) == false) {
 			return false;
 		}
 		*convert_children = false;
@@ -1263,7 +1263,7 @@ box_input(dom_node *n,
 	}
 
 	if (dom_string_caseless_lwc_isequal(type, corestring_lwc_password)) {
-		if (box_input_text(content, box, n) == false)
+		if (box_पासोक_text(content, box, n) == false)
 			goto no_memory;
 
 	} else if (dom_string_caseless_lwc_isequal(type, corestring_lwc_file)) {
@@ -1304,9 +1304,9 @@ box_input(dom_node *n,
 
 		inline_box->type = BOX_TEXT;
 
-		if (box->gadget->value != NULL)
+		if (box->gadget->हालागा != NULL)
 			inline_box->text = talloc_strdup(content->bctx,
-					box->gadget->value);
+					box->gadget->हालागा);
 		else if (box->gadget->type == GADGET_SUBMIT)
 			inline_box->text = talloc_strdup(content->bctx,
 					messages_get("Form_Submit"));
@@ -1331,7 +1331,7 @@ box_input(dom_node *n,
 		gadget->type = GADGET_IMAGE;
 
 		if (box->style && ns_computed_display(box->style,
-				box_is_root(n)) != CSS_DISPLAY_NONE &&
+				box_is_उगात(n)) != CSS_DISPLAY_NONE &&
 				nsoption_bool(foreground_images) == true) {
 			dom_string *s;
 
@@ -1362,7 +1362,7 @@ box_input(dom_node *n,
 		}
 	} else {
 		/* unhandled type the default is "text" */
-		if (box_input_text(content, box, n) == false)
+		if (box_पासोक_text(content, box, n) == false)
 			goto no_memory;
 	}
 
@@ -1383,7 +1383,7 @@ no_memory:
  * Noscript element
  */
 static bool
-box_noscript(dom_node *n,
+box_noscript(dom_बुहोल *n,
 	     html_content *content,
 	     struct box *box,
 	     bool *convert_children)
@@ -1401,7 +1401,7 @@ box_noscript(dom_node *n,
  * Generic embedded object [13.3].
  */
 static bool
-box_object(dom_node *n,
+box_object(dom_बुहोल *n,
 	   html_content *content,
 	   struct box *box,
 	   bool *convert_children)
@@ -1409,11 +1409,11 @@ box_object(dom_node *n,
 	struct object_params *params;
 	struct object_param *param;
 	dom_string *codebase, *classid, *data;
-	dom_node *c;
+	dom_बुहोल *c;
 	dom_exception err;
 
 	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
+			box_is_उगात(n)) == CSS_DISPLAY_NONE)
 		return true;
 
 	if (box_get_attribute(n, "usemap", content->bctx, &box->usemap) ==
@@ -1533,26 +1533,26 @@ box_object(dom_node *n,
 	}
 
 	/* add parameters to linked list */
-	err = dom_node_get_first_child(n, &c);
+	err = dom_बुहोल_get_first_child(n, &c);
 	if (err != DOM_NO_ERR)
 		return false;
 
 	while (c != NULL) {
-		dom_node *next;
-		dom_node_type type;
+		dom_बुहोल *next;
+		dom_बुहोल_type type;
 
-		err = dom_node_get_node_type(c, &type);
+		err = dom_बुहोल_get_बुहोल_type(c, &type);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
+			dom_बुहोल_unref(c);
 			return false;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
+		if (type == DOM_ELEMENT_बुहोल) {
 			dom_string *name;
 
-			err = dom_node_get_node_name(c, &name);
+			err = dom_बुहोल_get_बुहोल_name(c, &name);
 			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				return false;
 			}
 
@@ -1562,50 +1562,50 @@ box_object(dom_node *n,
 				 * the alt html. Therefore, we should break
 				 * out of this loop. */
 				dom_string_unref(name);
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				break;
 			}
 			dom_string_unref(name);
 
 			param = talloc(params, struct object_param);
 			if (param == NULL) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				return false;
 			}
 			param->name = NULL;
-			param->value = NULL;
+			param->हालागा = NULL;
 			param->type = NULL;
 			param->valuetype = NULL;
 			param->next = NULL;
 
 			if (box_get_attribute(c, "name", param,
 					&param->name) == false) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				return false;
 			}
 
 			if (box_get_attribute(c, "value", param,
-					&param->value) == false) {
-				dom_node_unref(c);
+					&param->हालागा) == false) {
+				dom_बुहोल_unref(c);
 				return false;
 			}
 
 			if (box_get_attribute(c, "type", param,
 					&param->type) == false) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				return false;
 			}
 
 			if (box_get_attribute(c, "valuetype", param,
 					&param->valuetype) == false) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				return false;
 			}
 
 			if (param->valuetype == NULL) {
 				param->valuetype = talloc_strdup(param, "data");
 				if (param->valuetype == NULL) {
-					dom_node_unref(c);
+					dom_बुहोल_unref(c);
 					return false;
 				}
 			}
@@ -1614,13 +1614,13 @@ box_object(dom_node *n,
 			params->params = param;
 		}
 
-		err = dom_node_get_next_sibling(c, &next);
+		err = dom_बुहोल_get_next_sibling(c, &next);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
+			dom_बुहोल_unref(c);
 			return false;
 		}
 
-		dom_node_unref(c);
+		dom_बुहोल_unref(c);
 		c = next;
 	}
 
@@ -1644,7 +1644,7 @@ box_object(dom_node *n,
  * Preformatted text [9.3.4].
  */
 static bool
-box_pre(dom_node *n,
+box_pre(dom_बुहोल *n,
 	html_content *content,
 	struct box *box,
 	bool *convert_children)
@@ -1658,7 +1658,7 @@ box_pre(dom_node *n,
  * Option selector [17.6].
  */
 static bool
-box_select(dom_node *n,
+box_select(dom_बुहोल *n,
 	   html_content *content,
 	   struct box *box,
 	   bool *convert_children)
@@ -1666,16 +1666,16 @@ box_select(dom_node *n,
 	struct box *inline_container;
 	struct box *inline_box;
 	struct form_control *gadget;
-	dom_node *c, *c2;
-	dom_node *next, *next2;
+	dom_बुहोल *c, *c2;
+	dom_बुहोल *next, *next2;
 	dom_exception err;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
+	gadget = html_forms_get_control_for_बुहोल(content->forms, n);
 	if (gadget == NULL)
 		return false;
 
 	gadget->html = content;
-	err = dom_node_get_first_child(n, &c);
+	err = dom_बुहोल_get_first_child(n, &c);
 	if (err != DOM_NO_ERR) {
 		form_free_control(gadget);
 		return false;
@@ -1684,9 +1684,9 @@ box_select(dom_node *n,
 	while (c != NULL) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(c, &name);
+		err = dom_बुहोल_get_बुहोल_name(c, &name);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
+			dom_बुहोल_unref(c);
 			form_free_control(gadget);
 			return false;
 		}
@@ -1696,7 +1696,7 @@ box_select(dom_node *n,
 			dom_string_unref(name);
 
 			if (box_select_add_option(gadget, c) == false) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				form_free_control(gadget);
 				return false;
 			}
@@ -1704,9 +1704,9 @@ box_select(dom_node *n,
 				corestring_lwc_optgroup)) {
 			dom_string_unref(name);
 
-			err = dom_node_get_first_child(c, &c2);
+			err = dom_बुहोल_get_first_child(c, &c2);
 			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
+				dom_बुहोल_unref(c);
 				form_free_control(gadget);
 				return false;
 			}
@@ -1714,10 +1714,10 @@ box_select(dom_node *n,
 			while (c2 != NULL) {
 				dom_string *c2_name;
 
-				err = dom_node_get_node_name(c2, &c2_name);
+				err = dom_बुहोल_get_बुहोल_name(c2, &c2_name);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(c2);
-					dom_node_unref(c);
+					dom_बुहोल_unref(c2);
+					dom_बुहोल_unref(c);
 					form_free_control(gadget);
 					return false;
 				}
@@ -1728,8 +1728,8 @@ box_select(dom_node *n,
 
 					if (box_select_add_option(gadget,
 							c2) == false) {
-						dom_node_unref(c2);
-						dom_node_unref(c);
+						dom_बुहोल_unref(c2);
+						dom_बुहोल_unref(c);
 						form_free_control(gadget);
 						return false;
 					}
@@ -1737,33 +1737,33 @@ box_select(dom_node *n,
 					dom_string_unref(c2_name);
 				}
 
-				err = dom_node_get_next_sibling(c2, &next2);
+				err = dom_बुहोल_get_next_sibling(c2, &next2);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(c2);
-					dom_node_unref(c);
+					dom_बुहोल_unref(c2);
+					dom_बुहोल_unref(c);
 					form_free_control(gadget);
 					return false;
 				}
 
-				dom_node_unref(c2);
+				dom_बुहोल_unref(c2);
 				c2 = next2;
 			}
 		} else {
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_next_sibling(c, &next);
+		err = dom_बुहोल_get_next_sibling(c, &next);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
+			dom_बुहोल_unref(c);
 			form_free_control(gadget);
 			return false;
 		}
 
-		dom_node_unref(c);
+		dom_बुहोल_unref(c);
 		c = next;
 	}
 
-	if (gadget->data.select.num_items == 0) {
+	if (gadget->data.select.नुमेरो_मगा_बागाय == 0) {
 		/* no options: ignore entire select */
 		form_free_control(gadget);
 		return true;
@@ -1787,19 +1787,19 @@ box_select(dom_node *n,
 	box_add_child(box, inline_container);
 
 	if (gadget->data.select.multiple == false &&
-			gadget->data.select.num_selected == 0) {
-		gadget->data.select.current = gadget->data.select.items;
+			gadget->data.select.नुमेरो_selected == 0) {
+		gadget->data.select.current = gadget->data.select.मगा_बागाय;
 		gadget->data.select.current->initial_selected =
 			gadget->data.select.current->selected = true;
-		gadget->data.select.num_selected = 1;
+		gadget->data.select.नुमेरो_selected = 1;
 		dom_html_option_element_set_selected(
-				gadget->data.select.current->node, true);
+				gadget->data.select.current->बुहोल, true);
 	}
 
-	if (gadget->data.select.num_selected == 0)
+	if (gadget->data.select.नुमेरो_selected == 0)
 		inline_box->text = talloc_strdup(content->bctx,
 				messages_get("Form_None"));
-	else if (gadget->data.select.num_selected == 1)
+	else if (gadget->data.select.नुमेरो_selected == 1)
 		inline_box->text = talloc_strdup(content->bctx,
 				gadget->data.select.current->text);
 	else
@@ -1821,13 +1821,13 @@ no_memory:
 /**
  * Multi-line text field [17.7].
  */
-static bool box_textarea(dom_node *n,
+static bool box_textarea(dom_बुहोल *n,
 			html_content *content,
 			struct box *box,
 			bool *convert_children)
 {
 	/* Get the form_control for the DOM node */
-	box->gadget = html_forms_get_control_for_node(content->forms, n);
+	box->gadget = html_forms_get_control_for_बुहोल(content->forms, n);
 	if (box->gadget == NULL)
 		return false;
 
@@ -1835,7 +1835,7 @@ static bool box_textarea(dom_node *n,
 	box->gadget->html = content;
 	box->gadget->box = box;
 
-	if (!box_input_text(content, box, n))
+	if (!box_पासोक_text(content, box, n))
 		return false;
 
 	*convert_children = false;
@@ -1850,7 +1850,7 @@ static bool box_textarea(dom_node *n,
 
 /* exported interface documented in html/box_special.h */
 bool
-convert_special_elements(dom_node *node,
+convert_special_elements(dom_बुहोल *बुहोल,
 			 html_content *content,
 			 struct box *box,
 			 bool *convert_children)
@@ -1859,70 +1859,70 @@ convert_special_elements(dom_node *node,
 	dom_html_element_type tag_type;
 	bool res;
 
-	exc = dom_html_element_get_tag_type(node, &tag_type);
+	exc = dom_html_element_get_tag_type(बुहोल, &tag_type);
 	if (exc != DOM_NO_ERR) {
 		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
 	switch (tag_type) {
 	case DOM_HTML_ELEMENT_TYPE_A:
-		res =  box_a(node, content, box, convert_children);
+		res =  box_a(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_BODY:
-		res = box_body(node, content, box, convert_children);
+		res = box_body(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_BR:
-		res = box_br(node, content, box, convert_children);
+		res = box_br(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_BUTTON:
-		res = box_button(node, content, box, convert_children);
+		res = box_button(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_CANVAS:
-		res = box_canvas(node, content, box, convert_children);
+		res = box_canvas(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_EMBED:
-		res = box_embed(node, content, box, convert_children);
+		res = box_embed(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_FRAMESET:
-		res = box_frameset(node, content, box, convert_children);
+		res = box_frameset(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_IFRAME:
-		res = box_iframe(node, content, box, convert_children);
+		res = box_iframe(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_IMG:
-		res = box_image(node, content, box, convert_children);
+		res = box_image(बुहोल, content, box, convert_children);
 		break;
 
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
-		res = box_input(node, content, box, convert_children);
+	case DOM_HTML_ELEMENT_TYPE_पासोक:
+		res = box_पासोक(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_NOSCRIPT:
-		res = box_noscript(node, content, box, convert_children);
+		res = box_noscript(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_OBJECT:
-		res = box_object(node, content, box, convert_children);
+		res = box_object(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_PRE:
-		res = box_pre(node, content, box, convert_children);
+		res = box_pre(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_SELECT:
-		res = box_select(node, content, box, convert_children);
+		res = box_select(बुहोल, content, box, convert_children);
 		break;
 
 	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-		res = box_textarea(node, content, box, convert_children);
+		res = box_textarea(बुहोल, content, box, convert_children);
 		break;
 
 	default:

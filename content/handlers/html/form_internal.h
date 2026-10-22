@@ -64,15 +64,15 @@ struct form_textarea_data {
 	struct form_control *gadget;
 };
 
-struct image_input_coords {
+struct image_पासोक_coords {
 	int x;
 	int y;
 };
 
 /** Form control. */
 struct form_control {
-	void *node;			/**< Corresponding DOM node */
-	struct dom_string *node_value;  /**< The last value sync'd with the DOM */
+	void *बुहोल;			/**< Corresponding DOM node */
+	struct dom_string *बुहोल_हालागा;  /**< The last value sync'd with the DOM */
 	bool syncing;                   /**< Set if a DOM sync is in-progress */
 	struct html_content *html;	/**< HTML content containing control */
 
@@ -81,9 +81,9 @@ struct form_control {
 	struct form *form;		/**< Containing form */
 
 	char *name;			/**< Control name */
-	char *value;			/**< Current value of control */
-	char *initial_value;		/**< Initial value of control */
-	char *last_synced_value;        /**< The last value sync'd to the DOM */
+	char *हालागा;			/**< Current value of control */
+	char *initial_हालागा;		/**< Initial value of control */
+	char *last_synced_हालागा;        /**< The last value sync'd to the DOM */
 	bool disabled;			/**< Whether control is disabled */
 
 	struct box *box;		/**< Box for control */
@@ -98,10 +98,10 @@ struct form_control {
 			int mx, my;
 		} image;
 		struct {
-			int num_items;
-			struct form_option *items, *last_item;
+			int नुमेरो_मगा_बागाय;
+			struct form_option *मगा_बागाय, *last_item;
 			bool multiple;
-			int num_selected;
+			int नुमेरो_selected;
 			/** Currently selected item, if num_selected == 1. */
 			struct form_option *current;
 			struct form_select_menu *menu;
@@ -126,7 +126,7 @@ typedef enum {
 
 /** HTML form. */
 struct form {
-	void *node;			/**< Corresponding DOM node */
+	void *बुहोल;			/**< Corresponding DOM node */
 
 	char *action;			/**< Absolute URL to submit to. */
 	char *target;			/**< Target to submit to. */
@@ -163,7 +163,7 @@ typedef void(*select_menu_redraw_callback)(void *client_data,
  * \param doc_charset  encoding of containing document, or NULL
  * \return A new form or NULL on memory exhaustion
  */
-struct form *form_new(void *node, const char *action, const char *target,
+struct form *form_new(void *बुहोल, const char *action, const char *target,
 		form_method method, const char *charset,
 		const char *doc_charset);
 
@@ -188,7 +188,7 @@ void form_free(struct form *form);
  * \param  type  control type
  * \return  a new structure, or NULL on memory exhaustion
  */
-struct form_control *form_new_control(void *node, form_control_type type);
+struct form_control *form_new_control(void *बुहोल, form_control_type type);
 
 
 /**
@@ -218,8 +218,8 @@ void form_free_control(struct form_control *control);
  * \param  node      the DOM node this option is associated with
  * \return  true on success, false on memory exhaustion
  */
-bool form_add_option(struct form_control *control, char *value, char *text,
-		     bool selected, void *node);
+bool form_add_option(struct form_control *control, char *हालागा, char *text,
+		     bool selected, void *बुहोल);
 
 
 /**
@@ -340,7 +340,7 @@ nserror form_submit(struct nsurl *page_url, struct browser_window *target,
 /**
  * Update gadget value.
  */
-void form_gadget_update_value(struct form_control *control, char *value);
+void form_gadget_update_हालागा(struct form_control *control, char *हालागा);
 
 
 /**

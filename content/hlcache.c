@@ -92,8 +92,8 @@ struct hlcache_s {
 	hlcache_retrieval_ctx *retrieval_ctx_ring;
 
 	/* statistics */
-	unsigned int hit_count;
-	unsigned int miss_count;
+	unsigned int hit_बिलांग;
+	unsigned int miss_बिलांग;
 };
 
 /** high level cache state */
@@ -119,7 +119,7 @@ static void hlcache_clean(void *force_clean_flag)
 		if (entry->content == NULL)
 			continue;
 
-		if (content_count_users(entry->content) != 0)
+		if (content_बिलांग_users(entry->content) != 0)
 			continue;
 
 		if (content__get_status(entry->content) == CONTENT_STATUS_LOADING) {
@@ -188,13 +188,13 @@ static bool hlcache_type_is_acceptable(lwc_string *mime_type,
  * \param data	Data for message
  * \param pw	Pointer to private data (hlcache_handle)
  */
-static void hlcache_content_callback(struct content *c, content_msg msg,
-		const union content_msg_data *data, void *pw)
+static void hlcache_content_callback(struct content *c, content_मेनसाहे मेनसाहे,
+		const union content_मेनसाहे_data *data, void *pw)
 {
 	hlcache_handle *handle = pw;
 	nserror error = NSERROR_OK;
 	hlcache_event event = {
-		.type = msg,
+		.type = मेनसाहे,
 	};
 
 	if (data != NULL) {
@@ -284,11 +284,11 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		/* Signal to caller that we created a content */
 		error = NSERROR_NEED_DATA;
 
-		hlcache->miss_count++;
+		hlcache->miss_बिलांग++;
 	} else {
 		/* Found a suitable content: no longer need low-level handle */
 		llcache_handle_release(ctx->llcache);
-		hlcache->hit_count++;
+		hlcache->hit_बिलांग++;
 	}
 
 	/* Associate handle with content */
@@ -304,29 +304,29 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
 		content_status status = content_get_status(ctx->handle);
 
 		if (status == CONTENT_STATUS_LOADING) {
-			event.type = CONTENT_MSG_LOADING;
+			event.type = CONTENT_मेनसाहे_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 		} else if (status == CONTENT_STATUS_READY) {
-			event.type = CONTENT_MSG_LOADING;
+			event.type = CONTENT_मेनसाहे_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
 			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_READY;
+				event.type = CONTENT_मेनसाहे_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
 		} else if (status == CONTENT_STATUS_DONE) {
-			event.type = CONTENT_MSG_LOADING;
+			event.type = CONTENT_मेनसाहे_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
 			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_READY;
+				event.type = CONTENT_मेनसाहे_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
 
 			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_DONE;
+				event.type = CONTENT_मेनसाहे_DONE;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
@@ -362,7 +362,7 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 			if (ctx->handle->cb != NULL) {
 				hlcache_event hlevent;
 
-				hlevent.type = CONTENT_MSG_ERROR;
+				hlevent.type = CONTENT_मेनसाहे_ERROR;
 				hlevent.data.errordata.errorcode = NSERROR_UNKNOWN;
 				hlevent.data.errordata.errormsg = messages_get("MiscError");
 
@@ -381,7 +381,7 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 		if (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_DOWNLOAD;
+			hlevent.type = CONTENT_मेनसाहे_DOWNLOAD;
 			hlevent.data.download = ctx->llcache;
 
 			ctx->handle->cb(ctx->handle, &hlevent,
@@ -395,7 +395,7 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 		if (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
+			hlevent.type = CONTENT_मेनसाहे_ERROR;
 			hlevent.data.errordata.errorcode = NSERROR_UNKNOWN;
 			hlevent.data.errordata.errormsg = messages_get("UnacceptableType");
 
@@ -442,7 +442,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 		if (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_SSL_CERTS;
+			hlevent.type = CONTENT_मेनसाहे_SSL_CERTS;
 			hlevent.data.chain = event->data.chain;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
@@ -502,7 +502,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 		if (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
+			hlevent.type = CONTENT_मेनसाहे_ERROR;
 			hlevent.data.errordata.errorcode = error;
 			hlevent.data.errordata.errormsg = NULL;
 
@@ -513,9 +513,9 @@ hlcache_llcache_callback(llcache_handle *handle,
 		if (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
+			hlevent.type = CONTENT_मेनसाहे_ERROR;
 			hlevent.data.errordata.errorcode = event->data.error.code;
-			hlevent.data.errordata.errormsg = event->data.error.msg;
+			hlevent.data.errordata.errormsg = event->data.error.मेनसाहे;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
@@ -526,7 +526,7 @@ hlcache_llcache_callback(llcache_handle *handle,
 		if (ctx->handle->cb != NULL) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_REDIRECT;
+			hlevent.type = CONTENT_मेनसाहे_REDIRECT;
 			hlevent.data.redirect.from = event->data.redirect.from;
 			hlevent.data.redirect.to = event->data.redirect.to;
 
@@ -579,47 +579,47 @@ void hlcache_stop(void)
 /* See hlcache.h for documentation */
 void hlcache_finalise(void)
 {
-	uint32_t num_contents, prev_contents;
+	uint32_t नुमेरो_contents, prev_contents;
 	hlcache_entry *entry;
 	hlcache_retrieval_ctx *ctx, *next;
 
 	/* Obtain initial count of contents remaining */
-	for (num_contents = 0, entry = hlcache->content_list;
+	for (नुमेरो_contents = 0, entry = hlcache->content_list;
 			entry != NULL; entry = entry->next) {
-		num_contents++;
+		नुमेरो_contents++;
 	}
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remain before cache drain",
-	      num_contents);
+	      नुमेरो_contents);
 
 	/* Drain cache */
 	do {
-		prev_contents = num_contents;
+		prev_contents = नुमेरो_contents;
 
 		hlcache_clean(NULL);
 
-		for (num_contents = 0, entry = hlcache->content_list;
+		for (नुमेरो_contents = 0, entry = hlcache->content_list;
 				entry != NULL; entry = entry->next) {
-			num_contents++;
+			नुमेरो_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} while (नुमेरो_contents > 0 && नुमेरो_contents != prev_contents);
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining after being polite",
-			num_contents);
+			नुमेरो_contents);
 
 	/* Drain cache again, forcing the matter */
 	do {
-		prev_contents = num_contents;
+		prev_contents = नुमेरो_contents;
 
 		hlcache_clean(&entry); // Any non-NULL pointer will do
 
-		for (num_contents = 0, entry = hlcache->content_list;
+		for (नुमेरो_contents = 0, entry = hlcache->content_list;
 				entry != NULL; entry = entry->next) {
-			num_contents++;
+			नुमेरो_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} while (नुमेरो_contents > 0 && नुमेरो_contents != prev_contents);
 
-	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining:", num_contents);
+	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining:", नुमेरो_contents);
 	for (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
 		hlcache_handle entry_handle = { entry, NULL, NULL };
 
@@ -627,7 +627,7 @@ void hlcache_finalise(void)
 			NSLOG(netsurf, INFO, "	%p : %s (%"PRIu32" users)",
 			      entry,
 			      nsurl_access(hlcache_handle_get_url(&entry_handle)),
-			      content_count_users(entry->content));
+			      content_बिलांग_users(entry->content));
 		} else {
 			NSLOG(netsurf, INFO, "	%p", entry);
 		}
@@ -657,8 +657,8 @@ void hlcache_finalise(void)
 		hlcache->retrieval_ctx_ring = NULL;
 	}
 
-	NSLOG(netsurf, INFO, "hit/miss %d/%d", hlcache->hit_count,
-	      hlcache->miss_count);
+	NSLOG(netsurf, INFO, "hit/miss %d/%d", hlcache->hit_बिलांग,
+	      hlcache->miss_बिलांग);
 
 	/* De-schedule ourselves */
 	guit->misc->schedule(-1, hlcache_clean, NULL);
@@ -725,7 +725,7 @@ hlcache_handle_retrieve(nsurl *url,
 		free(ctx);
 	} else {
 		/* successfully started fetch so add new context to list */
-		RING_INSERT(hlcache->retrieval_ctx_ring, ctx);
+		RING_इसिंगित(hlcache->retrieval_ctx_ring, ctx);
 
 		*result = ctx->handle;
 	}
@@ -815,7 +815,7 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 
 	c = entry->content;
 
-	if (content_count_users(c) > 1) {
+	if (content_बिलांग_users(c) > 1) {
 		/* We are not the only user of 'c' so clone it. */
 		struct content *clone = content_clone(c);
 

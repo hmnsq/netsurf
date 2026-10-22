@@ -75,11 +75,11 @@ static bool fetch_data_can_fetch(const nsurl *url)
 	return true;
 }
 
-static void fetch_data_send_callback(const fetch_msg *msg,
+static void fetch_data_send_callback(const fetch_मेनसाहे *मेनसाहे,
 		struct fetch_data_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(मेनसाहे, c->parent_fetch);
 	c->locked = false;
 }
 
@@ -87,7 +87,7 @@ static void fetch_data_send_header(struct fetch_data_context *ctx,
 		const char *fmt, ...)
 {
 	char header[64];
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	va_list ap;
 	int len;
 
@@ -99,10 +99,10 @@ static void fetch_data_send_header(struct fetch_data_context *ctx,
 		return;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.len = len;
-	msg.data.header_or_data.buf = (const uint8_t *)header;
-	fetch_data_send_callback(&msg, ctx);
+	मेनसाहे.type = FETCH_HEADER;
+	मेनसाहे.data.header_or_data.len = len;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *)header;
+	fetch_data_send_callback(&मेनसाहे, ctx);
 }
 
 static void *fetch_data_setup(struct fetch *parent_fetch, nsurl *url,
@@ -118,7 +118,7 @@ static void *fetch_data_setup(struct fetch *parent_fetch, nsurl *url,
 	ctx->parent_fetch = parent_fetch;
 	ctx->url = nsurl_ref(url);
 
-	RING_INSERT(ring, ctx);
+	RING_इसिंगित(ring, ctx);
 	
 	return ctx;
 }
@@ -152,7 +152,7 @@ static void fetch_data_abort(void *ctx)
 static bool fetch_data_process(struct fetch_data_context *c)
 {
 	nserror res;
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	const char *params;
 	const char *comma;
 	char *unescaped;
@@ -168,9 +168,9 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	
 	if (nsurl_length(c->url) < 6) {
 		/* 6 is the minimum possible length (data:,) */
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
+		मेनसाहे.type = FETCH_ERROR;
+		मेनसाहे.data.error = "Malformed data: URL";
+		fetch_data_send_callback(&मेनसाहे, c);
 		return false;
 	}
 	
@@ -179,9 +179,9 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	
 	/* find the comma */
 	if ( (comma = strchr(params, ',')) == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
+		मेनसाहे.type = FETCH_ERROR;
+		मेनसाहे.data.error = "Malformed data: URL";
+		fetch_data_send_callback(&मेनसाहे, c);
 		return false;
 	}
 	
@@ -194,10 +194,10 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	}
 	
 	if (c->mimetype == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = 
+		मेनसाहे.type = FETCH_ERROR;
+		मेनसाहे.data.error = 
 			"Unable to allocate memory for mimetype in data: URL";
-		fetch_data_send_callback(&msg, c);
+		fetch_data_send_callback(&मेनसाहे, c);
 		return false;
 	}
 	
@@ -213,9 +213,9 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	 */
 	res = url_unescape(comma + 1, 0, &unescaped_len, &unescaped);
 	if (res != NSERROR_OK) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Unable to URL decode data: URL";
-		fetch_data_send_callback(&msg, c);
+		मेनसाहे.type = FETCH_ERROR;
+		मेनसाहे.data.error = "Unable to URL decode data: URL";
+		fetch_data_send_callback(&मेनसाहे, c);
 		return false;
 	}
 	
@@ -225,9 +225,9 @@ static bool fetch_data_process(struct fetch_data_context *c)
 					     (uint8_t **)&c->data,
 					     &c->datalen) != NSUERROR_OK) ||
 		    (c->data == NULL)) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to Base64 decode data: URL";
-			fetch_data_send_callback(&msg, c);
+			मेनसाहे.type = FETCH_ERROR;
+			मेनसाहे.data.error = "Unable to Base64 decode data: URL";
+			fetch_data_send_callback(&मेनसाहे, c);
 			free(unescaped);
 			return false;
 		}
@@ -243,7 +243,7 @@ static bool fetch_data_process(struct fetch_data_context *c)
 
 static void fetch_data_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	struct fetch_data_context *c, *save_ring = NULL;
 	
 	/* Iterate over ring, processing each pending fetch */
@@ -259,7 +259,7 @@ static void fetch_data_poll(lwc_string *scheme)
 		 * again.
 		 */
 		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
+			RING_इसिंगित(save_ring, c);
 			continue;
 		}
 
@@ -289,16 +289,16 @@ static void fetch_data_poll(lwc_string *scheme)
 			}
 
 			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf = 
+				मेनसाहे.type = FETCH_DATA;
+				मेनसाहे.data.header_or_data.buf = 
 						(const uint8_t *) c->data;
-				msg.data.header_or_data.len = c->datalen;
-				fetch_data_send_callback(&msg, c);
+				मेनसाहे.data.header_or_data.len = c->datalen;
+				fetch_data_send_callback(&मेनसाहे, c);
 			}
 
 			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				fetch_data_send_callback(&msg, c);
+				मेनसाहे.type = FETCH_FINISHED;
+				fetch_data_send_callback(&मेनसाहे, c);
 			}
 		} else {
 			NSLOG(netsurf, INFO, "Processing of %.140s failed!",

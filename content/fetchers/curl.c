@@ -121,9 +121,9 @@ static void X509_free(X509 *cert)
 
 /* We're only interested in the hostname and port */
 static uint32_t
-curl_fetch_ssl_key_hash(void *key)
+curl_fetch_ssl_सुसि_hash(void *सुसि)
 {
-	nsurl *url = key;
+	nsurl *url = सुसि;
 	lwc_string *hostname = nsurl_get_component(url, NSURL_HOST);
 	lwc_string *port = nsurl_get_component(url, NSURL_PORT);
 	uint32_t hash;
@@ -131,7 +131,7 @@ curl_fetch_ssl_key_hash(void *key)
 	if (port == NULL)
 		port = lwc_string_ref(corestring_lwc_443);
 
-	hash = lwc_string_hash_value(hostname) ^ lwc_string_hash_value(port);
+	hash = lwc_string_hash_हालागा(hostname) ^ lwc_string_hash_हालागा(port);
 
 	lwc_string_unref(hostname);
 	lwc_string_unref(port);
@@ -141,7 +141,7 @@ curl_fetch_ssl_key_hash(void *key)
 
 /* We only compare the hostname and port */
 static bool
-curl_fetch_ssl_key_eq(void *key1, void *key2)
+curl_fetch_ssl_सुसि_eq(void *key1, void *key2)
 {
 	nsurl *url1 = key1;
 	nsurl *url2 = key2;
@@ -174,7 +174,7 @@ out:
 }
 
 static void *
-curl_fetch_ssl_value_alloc(void *key)
+curl_fetch_ssl_हालागा_alloc(void *सुसि)
 {
 	struct cert_chain *out;
 
@@ -186,21 +186,21 @@ curl_fetch_ssl_value_alloc(void *key)
 }
 
 static void
-curl_fetch_ssl_value_destroy(void *value)
+curl_fetch_ssl_हालागा_destroy(void *हालागा)
 {
-	struct cert_chain *chain = value;
+	struct cert_chain *chain = हालागा;
 	if (cert_chain_free(chain) != NSERROR_OK) {
 		NSLOG(netsurf, WARNING, "Problem freeing SSL certificate chain");
 	}
 }
 
 static hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_eq = curl_fetch_ssl_key_eq,
-	.key_hash = curl_fetch_ssl_key_hash,
-	.value_alloc = curl_fetch_ssl_value_alloc,
-	.value_destroy = curl_fetch_ssl_value_destroy,
+	.सुसि_clone = (hashmap_सुसि_clone_t)nsurl_ref,
+	.सुसि_destroy = (hashmap_सुसि_destroy_t)nsurl_unref,
+	.सुसि_eq = curl_fetch_ssl_सुसि_eq,
+	.सुसि_hash = curl_fetch_ssl_सुसि_hash,
+	.हालागा_alloc = curl_fetch_ssl_हालागा_alloc,
+	.हालागा_destroy = curl_fetch_ssl_हालागा_destroy,
 };
 
 static hashmap_t *curl_fetch_ssl_hashmap = NULL;
@@ -211,7 +211,7 @@ struct cert_info {
 	long err;		/**< OpenSSL error code */
 };
 
-#if LIBCURL_VERSION_NUM >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
+#if LIBCURL_VERSION_नुमेरो >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
 #define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_XFERINFOFUNCTION
 #define NSCURLOPT_PROGRESS_DATA CURLOPT_XFERINFODATA
 #define NSCURL_PROGRESS_T curl_off_t
@@ -221,7 +221,7 @@ struct cert_info {
 #define NSCURL_PROGRESS_T double
 #endif
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#if LIBCURL_VERSION_नुमेरो >= 0x073800 /* 7.56.0 depricated curl_formadd */
 #define NSCURL_POSTDATA_T curl_mime
 #define NSCURL_POSTDATA_CURLOPT CURLOPT_MIMEPOST
 #define NSCURL_POSTDATA_FREE(x) curl_mime_free(x)
@@ -502,8 +502,8 @@ fetch_curl_setup(struct fetch *parent_fetch,
 		goto failed;
 	}
 
-#define APPEND(list, value) \
-	slist = curl_slist_append(list, value);		\
+#define APPEND(list, हालागा) \
+	slist = curl_slist_append(list, हालागा);		\
 	if (slist == NULL)				\
 		goto failed;				\
 	list = slist;
@@ -568,7 +568,7 @@ fetch_curl_get_cached_chain(struct curl_fetch_info *f)
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
 	if (chain == NULL) {
-		chain = hashmap_insert(curl_fetch_ssl_hashmap, f->url);
+		chain = hashmap_इसिंगित(curl_fetch_ssl_hashmap, f->url);
 	}
 
 	return chain;
@@ -606,7 +606,7 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
 
 		case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
+		case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_सुसि:
 			chain.certs[depth].err = SSL_CERT_ERR_BAD_ISSUER;
 			break;
 
@@ -845,22 +845,22 @@ fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
 static void
 fetch_curl_report_certs_upstream(struct curl_fetch_info *f)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	struct cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
 
 	if (chain != NULL) {
-		msg.type = FETCH_CERTS;
-		msg.data.chain = chain;
+		मेनसाहे.type = FETCH_CERTS;
+		मेनसाहे.data.chain = chain;
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 	}
 
 	f->sent_ssl_chain = true;
 }
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#if LIBCURL_VERSION_नुमेरो >= 0x073800 /* 7.56.0 depricated curl_formadd */
 
 /**
  * curl mime data context
@@ -926,7 +926,7 @@ fetch_curl_postdata_convert(CURL *chandle,
 	curl_mime *cmime;
 	curl_mimepart *part;
 	CURLcode code = CURLE_OK;
-	size_t value_len;
+	size_t हालागा_len;
 
 	cmime = curl_mime_init(chandle);
 	if (cmime == NULL) {
@@ -946,11 +946,11 @@ fetch_curl_postdata_convert(CURL *chandle,
 			goto convert_failed;
 		}
 
-		value_len = strlen(multipart->value);
+		हालागा_len = strlen(multipart->हालागा);
 
-		if (multipart->file && value_len==0) {
+		if (multipart->file && हालागा_len==0) {
 			/* file entries with no filename require special handling */
-			code=curl_mime_data(part, multipart->value, value_len);
+			code=curl_mime_data(part, multipart->हालागा, हालागा_len);
 			if (code != CURLE_OK) {
 				goto convert_failed;
 			}
@@ -976,7 +976,7 @@ fetch_curl_postdata_convert(CURL *chandle,
 				goto convert_failed;
 			}
 
-			ret = guit->file->basename(multipart->value, &leafname, NULL);
+			ret = guit->file->basename(multipart->हालागा, &leafname, NULL);
 			if (ret != NSERROR_OK) {
 				goto convert_failed;
 			}
@@ -986,7 +986,7 @@ fetch_curl_postdata_convert(CURL *chandle,
 				goto convert_failed;
 			}
 
-			mimetype = guit->fetch->mimetype(multipart->value);
+			mimetype = guit->fetch->mimetype(multipart->हालागा);
 			if (mimetype == NULL) {
 				mimetype=strdup("text/plain");
 			}
@@ -1008,11 +1008,11 @@ fetch_curl_postdata_convert(CURL *chandle,
 			if (cb_ctx == NULL) {
 				goto convert_failed;
 			}
-			cb_ctx->buffer = multipart->value;
-			cb_ctx->size = value_len;
+			cb_ctx->buffer = multipart->हालागा;
+			cb_ctx->size = हालागा_len;
 			cb_ctx->position = 0;
 			code = curl_mime_data_cb(part,
-						 value_len,
+						 हालागा_len,
 						 mime_data_read_callback,
 						 mime_data_seek_callback,
 						 mime_data_free_callback,
@@ -1049,7 +1049,7 @@ fetch_curl_postdata_convert(CURL *chandle,
 	for (; control; control = control->next) {
 		if (control->file) {
 			char *leafname = NULL;
-			ret = guit->file->basename(control->value, &leafname, NULL);
+			ret = guit->file->basename(control->हालागा, &leafname, NULL);
 			if (ret != NSERROR_OK) {
 				continue;
 			}
@@ -1058,7 +1058,7 @@ fetch_curl_postdata_convert(CURL *chandle,
 			 * a) actually attempts the fetch and
 			 * b) doesn't attempt to open the file ""
 			 */
-			if (control->value[0] == '\0') {
+			if (control->हालागा[0] == '\0') {
 				/* dummy buffer - needs to be static so
 				 * pointer's still valid when we go out
 				 * of scope (not that libcurl should be
@@ -1068,7 +1068,7 @@ fetch_curl_postdata_convert(CURL *chandle,
 
 				code = curl_formadd(&post, &last,
 						    CURLFORM_COPYNAME, control->name,
-						    CURLFORM_BUFFER, control->value,
+						    CURLFORM_BUFFER, control->हालागा,
 						    /* needed, as basename("") == "." */
 						    CURLFORM_FILENAME, "",
 						    CURLFORM_BUFFERPTR, &buf,
@@ -1081,7 +1081,7 @@ fetch_curl_postdata_convert(CURL *chandle,
 					      "curl_formadd: %d (%s)", code,
 					      control->name);
 			} else {
-				char *mimetype = guit->fetch->mimetype(control->value);
+				char *mimetype = guit->fetch->mimetype(control->हालागा);
 				code = curl_formadd(&post, &last,
 						    CURLFORM_COPYNAME, control->name,
 						    CURLFORM_FILE, control->rawfile,
@@ -1094,19 +1094,19 @@ fetch_curl_postdata_convert(CURL *chandle,
 					      "curl_formadd: %d (%s=%s)",
 					      code,
 					      control->name,
-					      control->value);
+					      control->हालागा);
 				free(mimetype);
 			}
 			free(leafname);
 		} else {
 			code = curl_formadd(&post, &last,
 					    CURLFORM_COPYNAME, control->name,
-					    CURLFORM_COPYCONTENTS, control->value,
+					    CURLFORM_COPYCONTENTS, control->हालागा,
 					    CURLFORM_END);
 			if (code != CURL_FORMADD_OK)
 				NSLOG(netsurf, INFO,
 				      "curl_formadd: %d (%s=%s)", code,
-				      control->name, control->value);
+				      control->name, control->हालागा);
 		}
 	}
 
@@ -1123,8 +1123,8 @@ static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
 	CURLcode code = CURLE_OK;
 
 #undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
+#define SETOPT(option, हालागा) { \
+	code = curl_easy_setopt(f->curl_handle, option, हालागा);	\
 	if (code != CURLE_OK)					\
 		return code;					\
 	}
@@ -1168,8 +1168,8 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
 	const char *auth;
 
 #undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
+#define SETOPT(option, हालागा) { \
+	code = curl_easy_setopt(f->curl_handle, option, हालागा);	\
 	if (code != CURLE_OK)					\
 		return code;					\
 	}
@@ -1206,7 +1206,7 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
 		SETOPT(CURLOPT_PROXY, nsoption_charp(http_proxy_host));
 		SETOPT(CURLOPT_PROXYPORT, (long) nsoption_int(http_proxy_port));
 
-#if LIBCURL_VERSION_NUM >= 0x071304
+#if LIBCURL_VERSION_नुमेरो >= 0x071304
 		/* Added in 7.19.4 */
 		/* setup the omission list */
 		SETOPT(CURLOPT_NOPROXY, nsoption_charp(http_proxy_noproxy));
@@ -1333,7 +1333,7 @@ static bool fetch_curl_start(void *vfetch)
  */
 static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 {
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#if LIBCURL_VERSION_नुमेरो >= 0x071e00
 	/* 7.30.0 or later has its own connection caching; suppress ours */
 	curl_easy_cleanup(handle);
 	return;
@@ -1374,7 +1374,7 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 	h = (struct cache_handle*)malloc(sizeof(struct cache_handle));
 	h->handle = handle;
 	h->host = lwc_string_ref(host);
-	RING_INSERT(curl_handle_ring, h);
+	RING_इसिंगित(curl_handle_ring, h);
 #endif
 }
 
@@ -1471,7 +1471,7 @@ static bool fetch_curl_process_headers(struct curl_fetch_info *f)
 {
 	long http_code;
 	CURLcode code;
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 
 	f->had_headers = true;
 
@@ -1487,25 +1487,25 @@ static bool fetch_curl_process_headers(struct curl_fetch_info *f)
 	if ((http_code == HTTP_RESPONSE_NOT_MODIFIED) &&
 	    (f->postdata->type==FETCH_POSTDATA_NONE)) {
 		/* Not Modified && GET request */
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_send_callback(&msg, f->fetch_handle);
+		मेनसाहे.type = FETCH_NOTMODIFIED;
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 		return true;
 	}
 
 	/* handle HTTP redirects (3xx response codes) */
 	if (HTTP_RESPONSE_IS_3XX(http_code) && (f->location != 0)) {
 		NSLOG(netsurf, INFO, "FETCH_REDIRECT, '%s'", f->location);
-		msg.type = FETCH_REDIRECT;
-		msg.data.redirect = f->location;
-		fetch_send_callback(&msg, f->fetch_handle);
+		मेनसाहे.type = FETCH_REDIRECT;
+		मेनसाहे.data.redirect = f->location;
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 		return true;
 	}
 
 	/* handle HTTP 401 (Authentication errors) */
 	if (http_code == HTTP_RESPONSE_UNAUTHORIZED) {
-		msg.type = FETCH_AUTH;
-		msg.data.auth.realm = f->realm;
-		fetch_send_callback(&msg, f->fetch_handle);
+		मेनसाहे.type = FETCH_AUTH;
+		मेनसाहे.data.auth.realm = f->realm;
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 		return true;
 	}
 
@@ -1513,9 +1513,9 @@ static bool fetch_curl_process_headers(struct curl_fetch_info *f)
 	if (f->only_2xx &&
 	    strncmp(nsurl_access(f->url), "http", 4) == 0 &&
 	    (HTTP_RESPONSE_IS_2XX(http_code) == false)) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = messages_get("Not2xx");
-		fetch_send_callback(&msg, f->fetch_handle);
+		मेनसाहे.type = FETCH_ERROR;
+		मेनसाहे.data.error = messages_get("Not2xx");
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 		return true;
 	}
 
@@ -1604,32 +1604,32 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
 	if (abort_fetch) {
 		; /* fetch was aborted: no callback */
 	} else if (finished) {
-		fetch_msg msg;
-		msg.type = FETCH_FINISHED;
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_मेनसाहे मेनसाहे;
+		मेनसाहे.type = FETCH_FINISHED;
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 	} else if (cert) {
 		/* user needs to validate certificate with issue */
-		fetch_msg msg;
-		msg.type = FETCH_CERT_ERR;
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_मेनसाहे मेनसाहे;
+		मेनसाहे.type = FETCH_CERT_ERR;
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 	} else if (error) {
-		fetch_msg msg;
+		fetch_मेनसाहे मेनसाहे;
 		switch (result) {
 		case CURLE_SSL_CONNECT_ERROR:
-			msg.type = FETCH_SSL_ERR;
+			मेनसाहे.type = FETCH_SSL_ERR;
 			break;
 
 		case CURLE_OPERATION_TIMEDOUT:
-			msg.type = FETCH_TIMEDOUT;
-			msg.data.error = curl_easy_strerror(result);
+			मेनसाहे.type = FETCH_TIMEDOUT;
+			मेनसाहे.data.error = curl_easy_strerror(result);
 			break;
 
 		default:
-			msg.type = FETCH_ERROR;
-			msg.data.error = curl_easy_strerror(result);
+			मेनसाहे.type = FETCH_ERROR;
+			मेनसाहे.data.error = curl_easy_strerror(result);
 		}
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 	}
 
 	fetch_free(f->fetch_handle);
@@ -1645,7 +1645,7 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 {
 	int running, queue;
 	CURLMcode codem;
-	CURLMsg *curl_msg;
+	CURLMsg *curl_मेनसाहे;
 
 	if (nsoption_bool(suppress_curl_debug) == false) {
 		fd_set read_fd_set, write_fd_set, exc_fd_set;
@@ -1699,17 +1699,17 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 	} while (codem == CURLM_CALL_MULTI_PERFORM);
 
 	/* process curl results */
-	curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
-	while (curl_msg) {
-		switch (curl_msg->msg) {
+	curl_मेनसाहे = curl_multi_info_read(fetch_curl_multi, &queue);
+	while (curl_मेनसाहे) {
+		switch (curl_मेनसाहे->मेनसाहे) {
 			case CURLMSG_DONE:
-				fetch_curl_done(curl_msg->easy_handle,
-						curl_msg->data.result);
+				fetch_curl_done(curl_मेनसाहे->easy_handle,
+						curl_मेनसाहे->data.result);
 				break;
 			default:
 				break;
 		}
-		curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
+		curl_मेनसाहे = curl_multi_info_read(fetch_curl_multi, &queue);
 	}
 	inside_curl = false;
 }
@@ -1730,14 +1730,14 @@ fetch_curl_progress(void *clientp,
 	static char fetch_progress_buffer[256]; /**< Progress buffer for cURL */
 	struct curl_fetch_info *f = (struct curl_fetch_info *) clientp;
 	uint64_t time_now_ms;
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 
 	if (f->abort) {
 		return 0;
         }
 
-	msg.type = FETCH_PROGRESS;
-	msg.data.progress = fetch_progress_buffer;
+	मेनसाहे.type = FETCH_PROGRESS;
+	मेनसाहे.data.progress = fetch_progress_buffer;
 
 	/* Rate limit each fetch's progress notifications */
         nsu_getmonotonic_ms(&time_now_ms);
@@ -1753,12 +1753,12 @@ fetch_curl_progress(void *clientp,
 				messages_get("Progress"),
 				human_friendly_bytesize(dlnow),
 				human_friendly_bytesize(dltotal));
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 	} else {
 		snprintf(fetch_progress_buffer, 255,
 				messages_get("ProgressU"),
 				human_friendly_bytesize(dlnow));
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&मेनसाहे, f->fetch_handle);
 	}
 
 	return 0;
@@ -1817,7 +1817,7 @@ static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
 {
 	struct curl_fetch_info *f = _f;
 	CURLcode code;
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 
 	/* ensure we only have to get this information once */
 	if (!f->http_code) {
@@ -1841,10 +1841,10 @@ static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
 	}
 
 	/* send data to the caller */
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size * nmemb;
-	fetch_send_callback(&msg, f->fetch_handle);
+	मेनसाहे.type = FETCH_DATA;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) data;
+	मेनसाहे.data.header_or_data.len = size * nmemb;
+	fetch_send_callback(&मेनसाहे, f->fetch_handle);
 
 	if (f->abort) {
 		f->stopped = true;
@@ -1865,7 +1865,7 @@ fetch_curl_header(char *data, size_t size, size_t nmemb, void *_f)
 {
 	struct curl_fetch_info *f = _f;
 	int i;
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	size *= nmemb;
 
 	if (f->abort) {
@@ -1877,10 +1877,10 @@ fetch_curl_header(char *data, size_t size, size_t nmemb, void *_f)
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size;
-	fetch_send_callback(&msg, f->fetch_handle);
+	मेनसाहे.type = FETCH_HEADER;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) data;
+	मेनसाहे.data.header_or_data.len = size;
+	fetch_send_callback(&मेनसाहे, f->fetch_handle);
 
 #define SKIP_ST(o) for (i = (o); i < (int) size && (data[i] == ' ' || data[i] == '\t'); i++)
 
@@ -1980,7 +1980,7 @@ nserror fetch_curl_register(void)
 		.finalise = fetch_curl_finalise
 	};
 
-#if LIBCURL_VERSION_NUM >= 0x073800
+#if LIBCURL_VERSION_नुमेरो >= 0x073800
 	/* version 7.56.0 can select which SSL backend to use */
 	CURLsslset setres;
 
@@ -2006,7 +2006,7 @@ nserror fetch_curl_register(void)
 		return NSERROR_INIT_FAILED;
 	}
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#if LIBCURL_VERSION_नुमेरो >= 0x071e00
 	/* built against 7.30.0 or later: configure caching */
 	{
 		CURLMcode mcode;
@@ -2014,8 +2014,8 @@ nserror fetch_curl_register(void)
 				nsoption_int(max_cached_fetch_handles);
 
 #undef SETOPT
-#define SETOPT(option, value) \
-	mcode = curl_multi_setopt(fetch_curl_multi, option, value);	\
+#define SETOPT(option, हालागा) \
+	mcode = curl_multi_setopt(fetch_curl_multi, option, हालागा);	\
 	if (mcode != CURLM_OK) {					\
 		NSLOG(netsurf, ERROR, "attempting curl_multi_setopt(%s, ...)", #option); \
 		goto curl_multi_setopt_failed;				\
@@ -2037,8 +2037,8 @@ nserror fetch_curl_register(void)
 	}
 
 #undef SETOPT
-#define SETOPT(option, value) \
-	code = curl_easy_setopt(fetch_blank_curl, option, value);	\
+#define SETOPT(option, हालागा) \
+	code = curl_easy_setopt(fetch_blank_curl, option, हालागा);	\
 	if (code != CURLE_OK) {						\
 		NSLOG(netsurf, ERROR, "attempting curl_easy_setopt(%s, ...)", #option); \
 		goto curl_easy_setopt_failed;				\
@@ -2061,8 +2061,8 @@ nserror fetch_curl_register(void)
 	SETOPT(CURLOPT_NOPROGRESS, 0L);
 	SETOPT(CURLOPT_USERAGENT, user_agent_string());
 	SETOPT(CURLOPT_ENCODING, "gzip");
-	SETOPT(CURLOPT_LOW_SPEED_LIMIT, 1L);
-	SETOPT(CURLOPT_LOW_SPEED_TIME, 180L);
+	SETOPT(CURLOPT_माबाबा_SPEED_LIMIT, 1L);
+	SETOPT(CURLOPT_माबाबा_SPEED_TIME, 180L);
 	SETOPT(CURLOPT_NOSIGNAL, 1L);
 	SETOPT(CURLOPT_CONNECTTIMEOUT, (long)nsoption_uint(curl_fetch_timeout));
 	SETOPT(CURLOPT_OPENSOCKETFUNCTION, fetch_curl_socket_open);
@@ -2079,7 +2079,7 @@ nserror fetch_curl_register(void)
 		SETOPT(CURLOPT_CAPATH, nsoption_charp(ca_path));
 	}
 
-#if LIBCURL_VERSION_NUM < 0x073800
+#if LIBCURL_VERSION_नुमेरो < 0x073800
 	/*
 	 * before 7.56.0 Detect openssl from whether the SSL CTX
 	 *  function API works
@@ -2096,7 +2096,7 @@ nserror fetch_curl_register(void)
 		/* only set the cipher list with openssl otherwise the
 		 *  fetch fails with "Unknown cipher in list"
 		 */
-#if LIBCURL_VERSION_NUM >= 0x073d00
+#if LIBCURL_VERSION_नुमेरो >= 0x073d00
 		/* Need libcurl 7.61.0 or later built against OpenSSL with
 		 * TLS1.3 support */
 		code = curl_easy_setopt(fetch_blank_curl,
@@ -2145,7 +2145,7 @@ curl_easy_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_easy_setopt failed.");
 	return NSERROR_INIT_FAILED;
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#if LIBCURL_VERSION_नुमेरो >= 0x071e00
 curl_multi_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_multi_setopt failed.");
 	return NSERROR_INIT_FAILED;

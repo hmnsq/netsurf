@@ -53,14 +53,14 @@ enum chart_type {
 };
 
 /* type of chart key */
-enum key_type {
-	       CHART_KEY_UNSET,
-	       CHART_KEY_NONE,
-	       CHART_KEY_LEFT,
-	       CHART_KEY_RIGHT,
-	       CHART_KEY_TOP,
-	       CHART_KEY_BOT,
-	       CHART_KEY_END
+enum सुसि_type {
+	       CHART_सुसि_UNSET,
+	       CHART_सुसि_NONE,
+	       CHART_सुसि_कालिवा,
+	       CHART_सुसि_कानान,
+	       CHART_सुसि_इताअस,
+	       CHART_सुसि_BOT,
+	       CHART_सुसि_END
 };
 
 
@@ -71,7 +71,7 @@ struct chart_label {
 
 struct chart_series {
 	unsigned int len; /* number of values in the series */
-	float *value; /* array of values */
+	float *हालागा; /* array of values */
 };
 
 #define MAX_SERIES 4
@@ -90,7 +90,7 @@ struct chart_data {
  */
 struct chart_param {
 	enum chart_type type;
-	enum key_type key; /* what type of key to use */
+	enum सुसि_type सुसि; /* what type of key to use */
 	unsigned int width; /* width of figure */
 	unsigned int height; /* height of figure */
 	char *title; /* title */
@@ -103,9 +103,9 @@ struct chart_param {
 	struct chart_data data;
 };
 
-#define DEF_COLOUR_NUM 8
+#define DEF_COLOUR_नुमेरो 8
 /** default colour series */
-static unsigned int colour_series[DEF_COLOUR_NUM] =
+static unsigned int colour_series[DEF_COLOUR_नुमेरो] =
 	{
 	 0x00ff00, /* green */
 	 0x0000ff, /* blue */
@@ -119,32 +119,32 @@ static unsigned int colour_series[DEF_COLOUR_NUM] =
 
 
 /* ensures there are labels present for every value */
-static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
+static nserror ensure_label_बिलांग(struct chart_param *chart, unsigned int बिलांग)
 {
 	unsigned int lidx;
 	int deltac;
 	struct chart_label *nlabels;
 
-	deltac = count - chart->data.label_len;
+	deltac = बिलांग - chart->data.label_len;
 	if (deltac <= 0) {
 		/* there are enough labels */
 		return NSERROR_OK;
 	}
 
 	nlabels = realloc(chart->data.label,
-			  count * sizeof(struct chart_label));
+			  बिलांग * sizeof(struct chart_label));
 	if (nlabels == NULL) {
 		return NSERROR_NOMEM;
 	}
 	chart->data.label = nlabels;
 
-	for (lidx = chart->data.label_len; lidx < count; lidx++) {
+	for (lidx = chart->data.label_len; lidx < बिलांग; lidx++) {
 		chart->data.label[lidx].title = calloc(1, 20);
 		snprintf(chart->data.label[lidx].title, 19, "item %d", lidx + 1);
-		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_NUM];
+		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_नुमेरो];
 	}
 
-	chart->data.label_len = count;
+	chart->data.label_len = बिलांग;
 
 	return NSERROR_OK;
 }
@@ -153,8 +153,8 @@ static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
  * extract values for a series
  */
 static nserror
-extract_series_values(struct chart_param *chart,
-		      unsigned int series_num,
+extract_series_मगा_हालागा(struct chart_param *chart,
+		      unsigned int series_नुमेरो,
 		      const char *valstr,
 		      size_t valstrlen)
 {
@@ -164,11 +164,11 @@ extract_series_values(struct chart_param *chart,
 	size_t vallen; /* value end in valstr */
 	struct chart_series *series;
 
-	series = chart->data.series + series_num;
+	series = chart->data.series + series_नुमेरो;
 
 	/* ensure we do not leak any data in this series */
-	if (series->value != NULL) {
-		free(series->value);
+	if (series->हालागा != NULL) {
+		free(series->हालागा);
 	}
 
 	/* count how many values present */
@@ -179,8 +179,8 @@ extract_series_values(struct chart_param *chart,
 	}
 
 	/* allocate storage for values */
-	series->value = calloc(series->len, sizeof(float));
-	if (series->value == NULL) {
+	series->हालागा = calloc(series->len, sizeof(float));
+	if (series->हालागा == NULL) {
 		return NSERROR_NOMEM;
 	}
 
@@ -195,11 +195,11 @@ extract_series_values(struct chart_param *chart,
 			vallen++;
 		}
 
-		series->value[valcur] = strtof(valstr + valstart, NULL);
+		series->हालागा[valcur] = strtof(valstr + valstart, NULL);
 		vallen++; /* account for , separator */
 	}
 
-	res = ensure_label_count(chart, series->len);
+	res = ensure_label_बिलांग(chart, series->len);
 
 	return res;
 }
@@ -209,7 +209,7 @@ extract_series_values(struct chart_param *chart,
  * extract values for next series
  */
 static nserror
-extract_next_series_values(struct chart_param *chart,
+extract_next_series_मगा_हालागा(struct chart_param *chart,
 		      const char *valstr,
 		      size_t valstrlen)
 {
@@ -219,7 +219,7 @@ extract_next_series_values(struct chart_param *chart,
 		return NSERROR_NOSPACE;
 	}
 
-	res = extract_series_values(chart,
+	res = extract_series_मगा_हालागा(chart,
 				    chart->data.series_len,
 				    valstr,
 				    valstrlen);
@@ -251,7 +251,7 @@ extract_series_labels(struct chart_param *chart,
 		}
 	}
 
-	res = ensure_label_count(chart, valcount);
+	res = ensure_label_बिलांग(chart, valcount);
 	if (res != NSERROR_OK) {
 		return res;
 	}
@@ -312,7 +312,7 @@ process_query_section(const char *str, size_t len, struct chart_param *chart)
 	} else if ((len > 4) &&
 	    (strncmp(str, "key=", 4) == 0)) {
 		/* figure has key */
-		chart->key = strtoul(str + 4, NULL, 10);
+		chart->सुसि = strtoul(str + 4, NULL, 10);
 	} else if ((len > 6) &&
 	    (strncmp(str, "title=", 6) == 0)) {
 		chart->title = strndup(str + 6, len - 6);
@@ -325,7 +325,7 @@ process_query_section(const char *str, size_t len, struct chart_param *chart)
 		}
 	} else if ((len > 7) &&
 	    (strncmp(str, "values=", 7) == 0)) {
-		res = extract_next_series_values(chart, str + 7, len - 7);
+		res = extract_next_series_मगा_हालागा(chart, str + 7, len - 7);
 	} else if ((len > 7) &&
 	    (strncmp(str, "labels=", 7) == 0)) {
 		res = extract_series_labels(chart, str + 7, len - 7);
@@ -389,10 +389,10 @@ chart_from_query(struct nsurl *url, struct chart_param *chart)
 	}
 
 	/* ensure legend type correct */
-	if ((chart->key == CHART_KEY_UNSET) ||
-	    (chart->key >= CHART_KEY_END )) {
+	if ((chart->सुसि == CHART_सुसि_UNSET) ||
+	    (chart->सुसि >= CHART_सुसि_END )) {
 		/* default to putting key on right */
-		chart->key = CHART_KEY_RIGHT;
+		chart->सुसि = CHART_सुसि_कानान;
 	}
 
 	return NSERROR_OK;
@@ -408,11 +408,11 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 	unsigned int legend_height;
 	unsigned int vertical_spacing;
 
-	switch (chart->key) {
+	switch (chart->सुसि) {
 
-	case CHART_KEY_NONE:
+	case CHART_सुसि_NONE:
 		break;
-	case CHART_KEY_RIGHT:
+	case CHART_सुसि_कानान:
 		legend_width = chart->width - chart->area.width - chart->area.x;
 		legend_width -= 10; /* margin */
 		legend_height = chart->height;
@@ -456,7 +456,7 @@ compute_series_total(struct chart_param *chart, unsigned int series)
 	for (total = 0, curdata = 0;
 	     curdata < chart->data.series[series].len;
 	     curdata++) {
-		total += chart->data.series[series].value[curdata];
+		total += chart->data.series[series].हालागा[curdata];
 	}
 	return total;
 }
@@ -549,7 +549,7 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 
 	/* iterate over each data point creating a slice o pie */
 	for (curdata=0; curdata < chart->data.series[0].len; curdata++) {
-		extent = ((chart->data.series[0].value[curdata] / series_total) * 2 * M_PI);
+		extent = ((chart->data.series[0].हालागा[curdata] / series_total) * 2 * M_PI);
 		end_x = (ra * cos(start + extent));
 		end_y = (rb * sin(start + extent));
 

@@ -37,7 +37,7 @@
 #include "desktop/system_colour.h"
 
 static int dirlist_filesize_calculate(unsigned long *bytesize);
-static int dirlist_filesize_value(unsigned long bytesize);
+static int dirlist_filesize_हालागा(unsigned long bytesize);
 static char* dirlist_filesize_unit(unsigned long bytesize);
 
 
@@ -58,7 +58,7 @@ static char* dirlist_filesize_unit(unsigned long bytesize);
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_top(char *buffer, int buffer_length)
+bool dirlist_generate_इताअस(char *buffer, int buffer_length)
 {
 	int error = snprintf(buffer, buffer_length,
 		"<html>\n"
@@ -300,7 +300,7 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
 	} else {
 		unit = messages_get(dirlist_filesize_unit((unsigned long)size));
 		snprintf(size_string, sizeof size_string, "%d",
-				dirlist_filesize_value((unsigned long)size));
+				dirlist_filesize_हालागा((unsigned long)size));
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -385,7 +385,7 @@ int dirlist_filesize_calculate(unsigned long *bytesize)
  * \return  Value to display for file size, in units given by filesize_unit()
  */
 
-int dirlist_filesize_value(unsigned long bytesize)
+int dirlist_filesize_हालागा(unsigned long bytesize)
 {
 	dirlist_filesize_calculate(&bytesize);
 	return (int)bytesize;

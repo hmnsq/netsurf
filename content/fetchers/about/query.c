@@ -32,7 +32,7 @@
 /* exported interface documented in about/query.h */
 nserror
 get_query_description(struct nsurl *url,
-		      const char *key,
+		      const char *सुसि,
 		      char **out_str)
 {
 	nserror res;
@@ -47,7 +47,7 @@ get_query_description(struct nsurl *url,
 	}
 
 	/* obtain the description with the url substituted */
-	str = messages_get_buff(key, url_s);
+	str = messages_get_buff(सुसि, url_s);
 	if (str == NULL) {
 		res = NSERROR_NOMEM;
 	} else {

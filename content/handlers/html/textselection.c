@@ -153,8 +153,8 @@ coords_from_range(struct box *box,
 	child = box->children;
 
 	if ((box->type != BOX_BR) &&
-	    !((box->type == BOX_FLOAT_LEFT ||
-	       box->type == BOX_FLOAT_RIGHT) &&
+	    !((box->type == BOX_FLOAT_कालिवा ||
+	       box->type == BOX_FLOAT_कानान) &&
 	      !box->text)) {
 		unsigned start_off;
 		unsigned end_off;
@@ -169,8 +169,8 @@ coords_from_range(struct box *box,
 			 */
 			box_coords(box, &x, &y);
 
-			width = box->padding[LEFT] + box->width + box->padding[RIGHT];
-			height = box->padding[TOP] + box->height + box->padding[BOTTOM];
+			width = box->padding[कालिवा_2] + box->width + box->padding[कानान_2];
+			height = box->padding[इताअस_2] + box->height + box->padding[BOTTOM];
 
 			if ((box->type == BOX_TEXT) &&
 			    (box->space != 0)) {
@@ -373,8 +373,8 @@ selection_copy(struct box *box,
 	}
 
 	if ((box->type != BOX_BR) &&
-	    !((box->type == BOX_FLOAT_LEFT ||
-	       box->type == BOX_FLOAT_RIGHT) &&
+	    !((box->type == BOX_FLOAT_कालिवा ||
+	       box->type == BOX_FLOAT_कानान) &&
 	      !box->text)) {
 		unsigned start_off;
 		unsigned end_off;
@@ -533,15 +533,15 @@ nserror
 html_textselection_get_end(struct content *c, unsigned *end_idx)
 {
 	html_content *html = (html_content *)c;
-	unsigned root_idx;
+	unsigned उगात_idx;
 
 	if (html->layout == NULL) {
 		return NSERROR_INVALID;
 	}
 
-	root_idx = 0;
+	उगात_idx = 0;
 
-	*end_idx = selection_label_subtree(html->layout, root_idx);
+	*end_idx = selection_label_subtree(html->layout, उगात_idx);
 
 	return NSERROR_OK;
 }

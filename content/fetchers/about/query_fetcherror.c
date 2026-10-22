@@ -57,12 +57,12 @@ bool fetch_about_query_fetcherror_handler(struct fetch_about_context *ctx)
 	curmd = fetch_about_get_multipart(ctx);
 	while (curmd != NULL) {
 		if (strcmp(curmd->name, "siteurl") == 0) {
-			res = nsurl_create(curmd->value, &siteurl);
+			res = nsurl_create(curmd->हालागा, &siteurl);
 			if (res != NSERROR_OK) {
 				return fetch_about_srverror(ctx);
 			}
 		} else if (strcmp(curmd->name, "reason") == 0) {
-			reason = curmd->value;
+			reason = curmd->हालागा;
 		}
 		curmd = curmd->next;
 	}

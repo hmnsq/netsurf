@@ -41,8 +41,8 @@ typedef struct hlcache_child_context {
 
 /** High-level cache event */
 typedef struct hlcache_event {
-	content_msg type;		/**< Event type */
-	union content_msg_data data;	/**< Event data */
+	content_मेनसाहे type;		/**< Event type */
+	union content_मेनसाहे_data data;	/**< Event data */
 } hlcache_event;
 
 struct hlcache_parameters {

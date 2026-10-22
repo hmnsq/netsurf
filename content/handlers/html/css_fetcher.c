@@ -42,7 +42,7 @@
 #include "html/private.h"
 
 typedef struct html_css_fetcher_item {
-	uint32_t key;
+	uint32_t सुसि;
 	dom_string *data;
 	nsurl *base_url;
 
@@ -61,8 +61,8 @@ typedef struct html_css_fetcher_context {
 	struct html_css_fetcher_context *r_next, *r_prev;
 } html_css_fetcher_context;
 
-static uint32_t current_key = 0;
-static html_css_fetcher_item *items = NULL;
+static uint32_t current_सुसि = 0;
+static html_css_fetcher_item *मगा_बागाय = NULL;
 static html_css_fetcher_context *ring = NULL;
 
 static bool html_css_fetcher_initialise(lwc_string *scheme)
@@ -90,7 +90,7 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 {
 	html_css_fetcher_context *ctx;
 	lwc_string *path;
-	uint32_t key;
+	uint32_t सुसि;
 	html_css_fetcher_item *item, *found = NULL;
 
 	/* format of a x-ns-css URL is:
@@ -104,24 +104,24 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 		return NULL;
 	}
 
-	key = strtoul(lwc_string_data(path), NULL, 10);
+	सुसि = strtoul(lwc_string_data(path), NULL, 10);
 
 	lwc_string_unref(path);
 
 	/* There must be at least one item */
-	if (items == NULL) {
+	if (मगा_बागाय == NULL) {
 		return NULL;
 	}
 
-	item = items;
+	item = मगा_बागाय;
 	do {
-		if (item->key == key) {
+		if (item->सुसि == सुसि) {
 			found = item;
 			break;
 		}
 
 		item = item->r_next;
-	} while (item != items);
+	} while (item != मगा_बागाय);
 
 	/* We must have found the item */
 	if (found == NULL) {
@@ -136,7 +136,7 @@ static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
 	ctx->url = nsurl_ref(url);
 	ctx->item = found;
 
-	RING_INSERT(ring, ctx);
+	RING_इसिंगित(ring, ctx);
 
 	return ctx;
 }
@@ -154,7 +154,7 @@ static void html_css_fetcher_free(void *ctx)
 	if (c->item != NULL) {
 		nsurl_unref(c->item->base_url);
 		dom_string_unref(c->item->data);
-		RING_REMOVE(items, c->item);
+		RING_REMOVE(मगा_बागाय, c->item);
 		free(c->item);
 	}
 	RING_REMOVE(ring, c);
@@ -172,17 +172,17 @@ static void html_css_fetcher_abort(void *ctx)
 	c->aborted = true;
 }
 
-static void html_css_fetcher_send_callback(const fetch_msg *msg,
+static void html_css_fetcher_send_callback(const fetch_मेनसाहे *मेनसाहे,
 		html_css_fetcher_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(मेनसाहे, c->parent_fetch);
 	c->locked = false;
 }
 
 static void html_css_fetcher_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	html_css_fetcher_context *c, *next;
 
 	if (ring == NULL) return;
@@ -216,20 +216,20 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 			 */
 			snprintf(header, sizeof header,
 				"Content-Type: text/css; charset=utf-8");
-			msg.type = FETCH_HEADER;
-			msg.data.header_or_data.buf = (const uint8_t *) header;
-			msg.data.header_or_data.len = strlen(header);
-			html_css_fetcher_send_callback(&msg, c);
+			मेनसाहे.type = FETCH_HEADER;
+			मेनसाहे.data.header_or_data.buf = (const uint8_t *) header;
+			मेनसाहे.data.header_or_data.len = strlen(header);
+			html_css_fetcher_send_callback(&मेनसाहे, c);
 
 			if (c->aborted == false) {
 				snprintf(header, sizeof header,
 					"Content-Length: %"PRIsizet,
 					dom_string_byte_length(c->item->data));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
+				मेनसाहे.type = FETCH_HEADER;
+				मेनसाहे.data.header_or_data.buf =
 						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+				मेनसाहे.data.header_or_data.len = strlen(header);
+				html_css_fetcher_send_callback(&मेनसाहे, c);
 			}
 
 			if (c->aborted == false) {
@@ -237,26 +237,26 @@ static void html_css_fetcher_poll(lwc_string *scheme)
 					"X-NS-Base: %.*s",
 					(int) nsurl_length(c->item->base_url),
 					nsurl_access(c->item->base_url));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
+				मेनसाहे.type = FETCH_HEADER;
+				मेनसाहे.data.header_or_data.buf =
 						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+				मेनसाहे.data.header_or_data.len = strlen(header);
+				html_css_fetcher_send_callback(&मेनसाहे, c);
 			}
 
 			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf =
+				मेनसाहे.type = FETCH_DATA;
+				मेनसाहे.data.header_or_data.buf =
 						(const uint8_t *)
 						dom_string_data(c->item->data);
-				msg.data.header_or_data.len =
+				मेनसाहे.data.header_or_data.len =
 					dom_string_byte_length(c->item->data);
-				html_css_fetcher_send_callback(&msg, c);
+				html_css_fetcher_send_callback(&मेनसाहे, c);
 			}
 
 			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				html_css_fetcher_send_callback(&msg, c);
+				मेनसाहे.type = FETCH_FINISHED;
+				html_css_fetcher_send_callback(&मेनसाहे, c);
 			}
 		} else {
 			NSLOG(netsurf, INFO, "Processing of %s failed!",
@@ -302,7 +302,7 @@ nserror html_css_fetcher_register(void)
 
 /* exported interface documented in html_internal.h */
 nserror
-html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
+html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *सुसि)
 {
 	html_css_fetcher_item *item = malloc(sizeof(*item));
 
@@ -310,11 +310,11 @@ html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
 		return NSERROR_NOMEM;
 	}
 
-	*key = item->key = current_key++;
+	*सुसि = item->सुसि = current_सुसि++;
 	item->data = dom_string_ref(data);
 	item->base_url = nsurl_ref(base_url);
 
-	RING_INSERT(items, item);
+	RING_इसिंगित(मगा_बागाय, item);
 
 	return NSERROR_OK;
 }

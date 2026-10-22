@@ -62,7 +62,7 @@ struct flex_item_data {
 	int target_main_size;
 	int base_size;
 	int main_size;
-	size_t line;
+	size_t लिन्या;
 
 	bool freeze;
 	bool min_violation;
@@ -72,17 +72,17 @@ struct flex_item_data {
 /**
  * Flex line data
  */
-struct flex_line_data {
+struct flex_लिन्या_data {
 	int main_size;
 	int cross_size;
 
 	int used_main_size;
-	int main_auto_margin_count;
+	int main_auto_margin_बिलांग;
 
 	int pos;
 
 	size_t first;
-	size_t count;
+	size_t बिलांग;
 	size_t frozen;
 };
 
@@ -104,16 +104,16 @@ struct flex_ctx {
 	bool main_reversed;
 	enum css_flex_wrap_e wrap;
 
-	struct flex_items {
-		size_t count;
+	struct flex_मगा_बागाय {
+		size_t बिलांग;
 		struct flex_item_data *data;
 	} item;
 
-	struct flex_lines {
-		size_t count;
+	struct flex_मगा_लिन्या {
+		size_t बिलांग;
 		size_t alloc;
-		struct flex_line_data *data;
-	} line;
+		struct flex_लिन्या_data *data;
+	} लिन्या;
 };
 
 /**
@@ -125,7 +125,7 @@ static void layout_flex_ctx__destroy(struct flex_ctx *ctx)
 {
 	if (ctx != NULL) {
 		free(ctx->item.data);
-		free(ctx->line.data);
+		free(ctx->लिन्या.data);
 		free(ctx);
 	}
 }
@@ -147,18 +147,18 @@ static struct flex_ctx *layout_flex_ctx__create(
 	if (ctx == NULL) {
 		return NULL;
 	}
-	ctx->line.alloc = 1;
+	ctx->लिन्या.alloc = 1;
 
-	ctx->item.count = box_count_children(flex);
-	ctx->item.data = calloc(ctx->item.count, sizeof(*ctx->item.data));
+	ctx->item.बिलांग = box_बिलांग_children(flex);
+	ctx->item.data = calloc(ctx->item.बिलांग, sizeof(*ctx->item.data));
 	if (ctx->item.data == NULL) {
 		layout_flex_ctx__destroy(ctx);
 		return NULL;
 	}
 
-	ctx->line.alloc = 1;
-	ctx->line.data = calloc(ctx->line.alloc, sizeof(*ctx->line.data));
-	if (ctx->line.data == NULL) {
+	ctx->लिन्या.alloc = 1;
+	ctx->लिन्या.data = calloc(ctx->लिन्या.alloc, sizeof(*ctx->लिन्या.data));
+	if (ctx->लिन्या.data == NULL) {
 		layout_flex_ctx__destroy(ctx);
 		return NULL;
 	}
@@ -184,9 +184,9 @@ static enum box_side layout_flex__main_start_side(
 		const struct flex_ctx *ctx)
 {
 	if (ctx->horizontal) {
-		return (ctx->main_reversed) ? RIGHT : LEFT;
+		return (ctx->main_reversed) ? कानान_2 : कालिवा_2;
 	} else {
-		return (ctx->main_reversed) ? BOTTOM : TOP;
+		return (ctx->main_reversed) ? BOTTOM : इताअस_2;
 	}
 }
 
@@ -200,9 +200,9 @@ static enum box_side layout_flex__main_end_side(
 		const struct flex_ctx *ctx)
 {
 	if (ctx->horizontal) {
-		return (ctx->main_reversed) ? LEFT : RIGHT;
+		return (ctx->main_reversed) ? कालिवा_2 : कानान_2;
 	} else {
-		return (ctx->main_reversed) ? TOP : BOTTOM;
+		return (ctx->main_reversed) ? इताअस_2 : BOTTOM;
 	}
 }
 
@@ -381,24 +381,24 @@ static void layout_flex_ctx__populate_item_data(
  * \param[in] ctx  Flex layout context
  * \return true on success false on out of memory
  */
-static bool layout_flex_ctx__ensure_line(struct flex_ctx *ctx)
+static bool layout_flex_ctx_ensure_लिन्या(struct flex_ctx *ctx)
 {
-	struct flex_line_data *temp;
-	size_t line_alloc = ctx->line.alloc * 2;
+	struct flex_लिन्या_data *temp;
+	size_t लिन्या_alloc = ctx->लिन्या.alloc * 2;
 
-	if (ctx->line.alloc > ctx->line.count) {
+	if (ctx->लिन्या.alloc > ctx->लिन्या.बिलांग) {
 		return true;
 	}
 
-	temp = realloc(ctx->line.data, sizeof(*ctx->line.data) * line_alloc);
+	temp = realloc(ctx->लिन्या.data, sizeof(*ctx->लिन्या.data) * लिन्या_alloc);
 	if (temp == NULL) {
 		return false;
 	}
-	ctx->line.data = temp;
+	ctx->लिन्या.data = temp;
 
-	memset(ctx->line.data + ctx->line.alloc, 0,
-	       sizeof(*ctx->line.data) * (line_alloc - ctx->line.alloc));
-	ctx->line.alloc = line_alloc;
+	memset(ctx->लिन्या.data + ctx->लिन्या.alloc, 0,
+	       sizeof(*ctx->लिन्या.data) * (लिन्या_alloc - ctx->लिन्या.alloc));
+	ctx->लिन्या.alloc = लिन्या_alloc;
 
 	return true;
 }
@@ -410,25 +410,25 @@ static bool layout_flex_ctx__ensure_line(struct flex_ctx *ctx)
  * \param[in] item_index  Index to first item to assign to this line
  * \return Pointer to the new line, or NULL on error.
  */
-static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
+static struct flex_लिन्या_data *layout_flex_build_लिन्या(struct flex_ctx *ctx,
 		size_t item_index)
 {
 	enum box_side start_side = layout_flex__main_start_side(ctx);
 	enum box_side end_side = layout_flex__main_end_side(ctx);
-	struct flex_line_data *line;
+	struct flex_लिन्या_data *लिन्या;
 	int used_main = 0;
 
-	if (!layout_flex_ctx__ensure_line(ctx)) {
+	if (!layout_flex_ctx_ensure_लिन्या(ctx)) {
 		return NULL;
 	}
 
-	line = &ctx->line.data[ctx->line.count];
-	line->first = item_index;
+	लिन्या = &ctx->लिन्या.data[ctx->लिन्या.बिलांग];
+	लिन्या->first = item_index;
 
 	NSLOG(flex, DEEPDEBUG, "flex container %p: available main: %i",
 			ctx->flex, ctx->available_main);
 
-	while (item_index < ctx->item.count) {
+	while (item_index < ctx->item.बिलांग) {
 		struct flex_item_data *item = &ctx->item.data[item_index];
 		struct box *b = item->box;
 		int pos_main;
@@ -441,34 +441,34 @@ static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
 		    pos_main + used_main <= ctx->available_main ||
 		    lh__box_is_absolute(item->box) ||
 		    ctx->available_main == AUTO ||
-		    line->count == 0 ||
+		    लिन्या->बिलांग == 0 ||
 		    pos_main == 0) {
 			if (lh__box_is_absolute(item->box) == false) {
-				line->main_size += item->main_size;
+				लिन्या->main_size += item->main_size;
 				used_main += pos_main;
 
 				if (b->margin[start_side] == AUTO) {
-					line->main_auto_margin_count++;
+					लिन्या->main_auto_margin_बिलांग++;
 				}
 				if (b->margin[end_side] == AUTO) {
-					line->main_auto_margin_count++;
+					लिन्या->main_auto_margin_बिलांग++;
 				}
 			}
-			item->line = ctx->line.count;
-			line->count++;
+			item->लिन्या = ctx->लिन्या.बिलांग;
+			लिन्या->बिलांग++;
 			item_index++;
 		} else {
 			break;
 		}
 	}
 
-	if (line->count > 0) {
-		ctx->line.count++;
+	if (लिन्या->बिलांग > 0) {
+		ctx->लिन्या.बिलांग++;
 	} else {
 		NSLOG(layout, ERROR, "Failed to fit any flex items");
 	}
 
-	return line;
+	return लिन्या;
 }
 
 /**
@@ -478,14 +478,14 @@ static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
  * \param[in] item  Item to freeze
  */
 static inline void layout_flex__item_freeze(
-		struct flex_line_data *line,
+		struct flex_लिन्या_data *लिन्या,
 		struct flex_item_data *item)
 {
 	item->freeze = true;
-	line->frozen++;
+	लिन्या->frozen++;
 
 	if (!lh__box_is_absolute(item->box)){
-		line->used_main_size += item->target_main_size;
+		लिन्या->used_main_size += item->target_main_size;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "flex-item box: %p: "
@@ -506,18 +506,18 @@ static inline void layout_flex__item_freeze(
  */
 static inline int layout_flex__remaining_free_main(
 		struct flex_ctx *ctx,
-		struct flex_line_data *line,
+		struct flex_लिन्या_data *लिन्या,
 		css_fixed *unfrozen_factor_sum,
 		int initial_free_main,
 		int available_main,
 		bool grow)
 {
 	int remaining_free_main = available_main;
-	size_t item_count = line->first + line->count;
+	size_t item_बिलांग = लिन्या->first + लिन्या->बिलांग;
 
 	*unfrozen_factor_sum = 0;
 
-	for (size_t i = line->first; i < item_count; i++) {
+	for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
 		struct flex_item_data *item = &ctx->item.data[i];
 
 		if (item->freeze) {
@@ -554,13 +554,13 @@ static inline int layout_flex__remaining_free_main(
  */
 static inline int layout_flex__get_min_max_violations(
 		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+		struct flex_लिन्या_data *लिन्या)
 {
 
 	int total_violation = 0;
-	size_t item_count = line->first + line->count;
+	size_t item_बिलांग = लिन्या->first + लिन्या->बिलांग;
 
-	for (size_t i = line->first; i < item_count; i++) {
+	for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
 		struct flex_item_data *item = &ctx->item.data[i];
 		int target_main_size = item->target_main_size;
 
@@ -621,16 +621,16 @@ static inline int layout_flex__get_min_max_violations(
  */
 static inline void layout_flex__distribute_free_main(
 		struct flex_ctx *ctx,
-		struct flex_line_data *line,
+		struct flex_लिन्या_data *लिन्या,
 		css_fixed unfrozen_factor_sum,
 		int remaining_free_main,
 		bool grow)
 {
-	size_t item_count = line->first + line->count;
+	size_t item_बिलांग = लिन्या->first + लिन्या->बिलांग;
 
 	if (grow) {
 		css_fixed remainder = 0;
-		for (size_t i = line->first; i < item_count; i++) {
+		for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
 			struct flex_item_data *item = &ctx->item.data[i];
 			css_fixed result;
 			css_fixed ratio;
@@ -651,7 +651,7 @@ static inline void layout_flex__distribute_free_main(
 		css_fixed scaled_shrink_factor_sum = 0;
 		css_fixed remainder = 0;
 
-		for (size_t i = line->first; i < item_count; i++) {
+		for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
 			struct flex_item_data *item = &ctx->item.data[i];
 			css_fixed scaled_shrink_factor;
 
@@ -665,7 +665,7 @@ static inline void layout_flex__distribute_free_main(
 			scaled_shrink_factor_sum += scaled_shrink_factor;
 		}
 
-		for (size_t i = line->first; i < item_count; i++) {
+		for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
 			struct flex_item_data *item = &ctx->item.data[i];
 			css_fixed scaled_shrink_factor;
 			css_fixed result;
@@ -675,7 +675,7 @@ static inline void layout_flex__distribute_free_main(
 				continue;
 			} else if (scaled_shrink_factor_sum == 0) {
 				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+				layout_flex__item_freeze(लिन्या, item);
 				continue;
 			}
 
@@ -703,11 +703,11 @@ static inline void layout_flex__distribute_free_main(
  * \param[in] line  Line to resolve
  * \return true on success, false on failure.
  */
-static bool layout_flex__resolve_line(
+static bool layout_flex_resolve_लिन्या(
 		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+		struct flex_लिन्या_data *लिन्या)
 {
-	size_t item_count = line->first + line->count;
+	size_t item_बिलांग = लिन्या->first + लिन्या->बिलांग;
 	int available_main = ctx->available_main;
 	int initial_free_main;
 	bool grow;
@@ -716,16 +716,16 @@ static bool layout_flex__resolve_line(
 		available_main = INT_MAX;
 	}
 
-	grow = (line->main_size < available_main);
+	grow = (लिन्या->main_size < available_main);
 	initial_free_main = available_main;
 
 	NSLOG(flex, DEEPDEBUG, "box %p: line %zu: first: %zu, count: %zu",
-			ctx->flex, line - ctx->line.data,
-			line->first, line->count);
+			ctx->flex, लिन्या - ctx->लिन्या.data,
+			लिन्या->first, लिन्या->बिलांग);
 	NSLOG(flex, DEEPDEBUG, "Line main_size: %i, available_main: %i",
-			line->main_size, available_main);
+			लिन्या->main_size, available_main);
 
-	for (size_t i = line->first; i < item_count; i++) {
+	for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
 		struct flex_item_data *item = &ctx->item.data[i];
 
 		/* 3. Size inflexible items */
@@ -733,13 +733,13 @@ static bool layout_flex__resolve_line(
 			if (item->grow == 0 ||
 			    item->base_size > item->main_size) {
 				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+				layout_flex__item_freeze(लिन्या, item);
 			}
 		} else {
 			if (item->shrink == 0 ||
 			    item->base_size < item->main_size) {
 				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+				layout_flex__item_freeze(लिन्या, item);
 			}
 		}
 
@@ -752,7 +752,7 @@ static bool layout_flex__resolve_line(
 	}
 
 	/* 5. Loop */
-	while (line->frozen < line->count) {
+	while (लिन्या->frozen < लिन्या->बिलांग) {
 		css_fixed unfrozen_factor_sum;
 		int remaining_free_main;
 		int total_violation;
@@ -762,22 +762,22 @@ static bool layout_flex__resolve_line(
 
 		/* b */
 		remaining_free_main = layout_flex__remaining_free_main(ctx,
-				line, &unfrozen_factor_sum, initial_free_main,
+				लिन्या, &unfrozen_factor_sum, initial_free_main,
 				available_main, grow);
 
 		/* c */
 		if (remaining_free_main != 0) {
 			layout_flex__distribute_free_main(ctx,
-					line, unfrozen_factor_sum,
+					लिन्या, unfrozen_factor_sum,
 					remaining_free_main, grow);
 		}
 
 		/* d */
 		total_violation = layout_flex__get_min_max_violations(
-				ctx, line);
+				ctx, लिन्या);
 
 		/* e */
-		for (size_t i = line->first; i < item_count; i++) {
+		for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
 			struct flex_item_data *item = &ctx->item.data[i];
 
 			if (item->freeze) {
@@ -787,7 +787,7 @@ static bool layout_flex__resolve_line(
 			if (total_violation == 0 ||
 			    (total_violation > 0 && item->min_violation) ||
 			    (total_violation < 0 && item->max_violation)) {
-				layout_flex__item_freeze(line, item);
+				layout_flex__item_freeze(लिन्या, item);
 			}
 		}
 	}
@@ -802,14 +802,14 @@ static bool layout_flex__resolve_line(
  * \param[in] line  Line to resolve
  * \return true on success, false on failure.
  */
-static bool layout_flex__place_line_items_main(
+static bool layout_flex_place_लिन्या_मगा_बागाय_main(
 		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+		struct flex_लिन्या_data *लिन्या)
 {
 	int main_pos = ctx->flex->padding[layout_flex__main_start_side(ctx)];
 	int post_multiplier = ctx->main_reversed ? 0 : 1;
 	int pre_multiplier = ctx->main_reversed ? -1 : 0;
-	size_t item_count = line->first + line->count;
+	size_t item_बिलांग = लिन्या->first + लिन्या->बिलांग;
 	int extra_remainder = 0;
 	int extra = 0;
 
@@ -820,18 +820,18 @@ static bool layout_flex__place_line_items_main(
 
 	if (ctx->available_main != AUTO &&
 	    ctx->available_main != UNKNOWN_WIDTH &&
-	    ctx->available_main > line->used_main_size) {
-		if (line->main_auto_margin_count > 0) {
-			extra = ctx->available_main - line->used_main_size;
+	    ctx->available_main > लिन्या->used_main_size) {
+		if (लिन्या->main_auto_margin_बिलांग > 0) {
+			extra = ctx->available_main - लिन्या->used_main_size;
 
-			extra_remainder = extra % line->main_auto_margin_count;
-			extra /= line->main_auto_margin_count;
+			extra_remainder = extra % लिन्या->main_auto_margin_बिलांग;
+			extra /= लिन्या->main_auto_margin_बिलांग;
 		}
 	}
 
-	for (size_t i = line->first; i < item_count; i++) {
-		enum box_side main_end = ctx->horizontal ? RIGHT : BOTTOM;
-		enum box_side main_start = ctx->horizontal ? LEFT : TOP;
+	for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
+		enum box_side main_end = ctx->horizontal ? कानान_2 : BOTTOM;
+		enum box_side main_start = ctx->horizontal ? कालिवा_2 : इताअस_2;
 		struct flex_item_data *item = &ctx->item.data[i];
 		struct box *b = item->box;
 		int extra_total = 0;
@@ -880,8 +880,8 @@ static bool layout_flex__place_line_items_main(
 
 			cross_size = box_size_cross + lh__delta_outer_cross(
 					ctx->flex, b);
-			if (line->cross_size < cross_size) {
-				line->cross_size = cross_size;
+			if (लिन्या->cross_size < cross_size) {
+				लिन्या->cross_size = cross_size;
 			}
 		}
 	}
@@ -895,37 +895,37 @@ static bool layout_flex__place_line_items_main(
  * \param[in] ctx   Flex layout context
  * \return true on success, false on failure.
  */
-static bool layout_flex__collect_items_into_lines(
+static bool layout_flex_collect_मगा_बागाय_into_मगा_लिन्या(
 		struct flex_ctx *ctx)
 {
 	size_t pos = 0;
 
-	while (pos < ctx->item.count) {
-		struct flex_line_data *line;
+	while (pos < ctx->item.बिलांग) {
+		struct flex_लिन्या_data *लिन्या;
 
-		line = layout_flex__build_line(ctx, pos);
-		if (line == NULL) {
+		लिन्या = layout_flex_build_लिन्या(ctx, pos);
+		if (लिन्या == NULL) {
 			return false;
 		}
 
-		pos += line->count;
+		pos += लिन्या->बिलांग;
 
 		NSLOG(flex, DEEPDEBUG, "flex-container: %p: "
 				"fitted: %zu (total: %zu/%zu)",
-				ctx->flex, line->count,
-				pos, ctx->item.count);
+				ctx->flex, लिन्या->बिलांग,
+				pos, ctx->item.बिलांग);
 
-		if (!layout_flex__resolve_line(ctx, line)) {
+		if (!layout_flex_resolve_लिन्या(ctx, लिन्या)) {
 			return false;
 		}
 
-		if (!layout_flex__place_line_items_main(ctx, line)) {
+		if (!layout_flex_place_लिन्या_मगा_बागाय_main(ctx, लिन्या)) {
 			return false;
 		}
 
-		ctx->cross_size += line->cross_size;
-		if (ctx->main_size < line->main_size) {
-			ctx->main_size = line->main_size;
+		ctx->cross_size += लिन्या->cross_size;
+		if (ctx->main_size < लिन्या->main_size) {
+			ctx->main_size = लिन्या->main_size;
 		}
 	}
 
@@ -939,13 +939,13 @@ static bool layout_flex__collect_items_into_lines(
  * \param[in] line   Line to align items on
  * \param[in] extra  Extra line width in pixels
  */
-static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
-		struct flex_line_data *line, int extra)
+static void layout_flex_place_लिन्या_मगा_बागाय_cross(struct flex_ctx *ctx,
+		struct flex_लिन्या_data *लिन्या, int extra)
 {
-	enum box_side cross_start = ctx->horizontal ? TOP : LEFT;
-	size_t item_count = line->first + line->count;
+	enum box_side cross_start = ctx->horizontal ? इताअस_2 : कालिवा_2;
+	size_t item_बिलांग = लिन्या->first + लिन्या->बिलांग;
 
-	for (size_t i = line->first; i < item_count; i++) {
+	for (size_t i = लिन्या->first; i < item_बिलांग; i++) {
 		struct flex_item_data *item = &ctx->item.data[i];
 		struct box *b = item->box;
 		int cross_free_space;
@@ -955,7 +955,7 @@ static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
 		box_pos_cross = ctx->horizontal ? &b->y : &b->x;
 		box_size_cross = lh__box_size_cross_ptr(ctx->horizontal, b);
 
-		cross_free_space = line->cross_size + extra - *box_size_cross -
+		cross_free_space = लिन्या->cross_size + extra - *box_size_cross -
 				lh__delta_outer_cross(ctx->flex, b);
 
 		switch (lh__box_align_self(ctx->flex, b)) {
@@ -972,14 +972,14 @@ static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
 			fallthrough;
 		case CSS_ALIGN_SELF_FLEX_START:
 			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos +
+					लिन्या->pos +
 					lh__non_auto_margin(b, cross_start) +
 					b->border[cross_start].width;
 			break;
 
 		case CSS_ALIGN_SELF_FLEX_END:
 			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos + cross_free_space +
+					लिन्या->pos + cross_free_space +
 					lh__non_auto_margin(b, cross_start) +
 					b->border[cross_start].width;
 			break;
@@ -987,7 +987,7 @@ static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
 		case CSS_ALIGN_SELF_BASELINE:
 		case CSS_ALIGN_SELF_CENTER:
 			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos + cross_free_space / 2 +
+					लिन्या->pos + cross_free_space / 2 +
 					lh__non_auto_margin(b, cross_start) +
 					b->border[cross_start].width;
 			break;
@@ -1000,10 +1000,10 @@ static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
  *
  * \param[in] ctx  Flex layout context
  */
-static void layout_flex__place_lines(struct flex_ctx *ctx)
+static void layout_flex_place_मगा_लिन्या(struct flex_ctx *ctx)
 {
 	bool reversed = ctx->wrap == CSS_FLEX_WRAP_WRAP_REVERSE;
-	int line_pos = reversed ? ctx->cross_size : 0;
+	int लिन्या_pos = reversed ? ctx->cross_size : 0;
 	int post_multiplier = reversed ? 0 : 1;
 	int pre_multiplier = reversed ? -1 : 0;
 	int extra_remainder = 0;
@@ -1011,22 +1011,22 @@ static void layout_flex__place_lines(struct flex_ctx *ctx)
 
 	if (ctx->available_cross != AUTO &&
 	    ctx->available_cross > ctx->cross_size &&
-	    ctx->line.count > 0) {
+	    ctx->लिन्या.बिलांग > 0) {
 		extra = ctx->available_cross - ctx->cross_size;
 
-		extra_remainder = extra % ctx->line.count;
-		extra /= ctx->line.count;
+		extra_remainder = extra % ctx->लिन्या.बिलांग;
+		extra /= ctx->लिन्या.बिलांग;
 	}
 
-	for (size_t i = 0; i < ctx->line.count; i++) {
-		struct flex_line_data *line = &ctx->line.data[i];
+	for (size_t i = 0; i < ctx->लिन्या.बिलांग; i++) {
+		struct flex_लिन्या_data *लिन्या = &ctx->लिन्या.data[i];
 
-		line_pos += pre_multiplier * line->cross_size;
-		line->pos = line_pos;
-		line_pos += post_multiplier * line->cross_size +
+		लिन्या_pos += pre_multiplier * लिन्या->cross_size;
+		लिन्या->pos = लिन्या_pos;
+		लिन्या_pos += post_multiplier * लिन्या->cross_size +
 				extra + extra_remainder;
 
-		layout_flex__place_line_items_cross(ctx, line,
+		layout_flex_place_लिन्या_मगा_बागाय_cross(ctx, लिन्या,
 				extra + extra_remainder);
 
 		if (extra_remainder > 0) {
@@ -1083,12 +1083,12 @@ bool layout_flex(struct box *flex, int available_width,
 	layout_flex_ctx__populate_item_data(ctx, flex, available_width);
 
 	/* Place items onto lines. */
-	success = layout_flex__collect_items_into_lines(ctx);
+	success = layout_flex_collect_मगा_बागाय_into_मगा_लिन्या(ctx);
 	if (!success) {
 		goto cleanup;
 	}
 
-	layout_flex__place_lines(ctx);
+	layout_flex_place_मगा_लिन्या(ctx);
 
 	if (flex->height == AUTO) {
 		flex->height = ctx->horizontal ?

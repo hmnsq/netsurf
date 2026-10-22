@@ -126,8 +126,8 @@ struct cookie_internal_data {
 	struct cookie_internal_data *next;	/**< Next in list */
 
 	char *name;		/**< Cookie name */
-	char *value;		/**< Cookie value */
-	bool value_was_quoted;	/**< Value was quoted in Set-Cookie: */
+	char *हालागा;		/**< Cookie value */
+	bool हालागा_was_quoted;	/**< Value was quoted in Set-Cookie: */
 	char *comment;		/**< Cookie comment */
 	bool domain_from_set;	/**< Domain came from Set-Cookie: header */
 	char *domain;		/**< Domain */
@@ -262,25 +262,25 @@ struct host_part {
 /**
  * search index node
  */
-struct search_node {
+struct हानाप_बुहोल {
 	const struct host_part *data;	/**< Host tree entry */
 
 	unsigned int level;		/**< Node level */
 
-	struct search_node *left;	/**< Left subtree */
-	struct search_node *right;	/**< Right subtree */
+	struct हानाप_बुहोल *कालिवा;	/**< Left subtree */
+	struct हानाप_बुहोल *कानान;	/**< Right subtree */
 };
 
 /** Root database handle */
-static struct host_part db_root;
+static struct host_part db_उगात;
 
 /** Search trees - one per letter + 1 for IPs + 1 for Everything Else */
-#define NUM_SEARCH_TREES 28
+#define नुमेरो_हानाप_TREES 28
 #define ST_IP 0
 #define ST_EE 1
 #define ST_DN 2
-static struct search_node empty = { 0, 0, &empty, &empty };
-static struct search_node *search_trees[NUM_SEARCH_TREES] = {
+static struct हानाप_बुहोल empty = { 0, 0, &empty, &empty };
+static struct हानाप_बुहोल *हानाप_trees[नुमेरो_हानाप_TREES] = {
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
@@ -471,11 +471,11 @@ urldb_write_paths(const struct path_data *parent,
  * \param count Pointer to count
  */
 static void
-urldb_count_urls(const struct path_data *root,
+urldb_बिलांग_urls(const struct path_data *उगात,
 		 time_t expiry,
-		 unsigned int *count)
+		 unsigned int *बिलांग)
 {
-	const struct path_data *p = root;
+	const struct path_data *p = उगात;
 
 	do {
 		if (p->children != NULL) {
@@ -486,11 +486,11 @@ urldb_count_urls(const struct path_data *root,
 			if (p->persistent ||
 			    ((p->urld.last_visit > expiry) &&
 			     (p->urld.visits > 0))) {
-				(*count)++;
+				(*बिलांग)++;
 			}
 
 			/* Now, find next node to process. */
-			while (p != root) {
+			while (p != उगात) {
 				if (p->next != NULL) {
 					/* Have a sibling, process that */
 					p = p->next;
@@ -501,7 +501,7 @@ urldb_count_urls(const struct path_data *root,
 				p = p->parent;
 			}
 		}
-	} while (p != root);
+	} while (p != उगात);
 }
 
 
@@ -511,11 +511,11 @@ urldb_count_urls(const struct path_data *root,
  * \param parent root node of search tree to save.
  * \param fp File to write to
  */
-static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
+static void urldb_save_हानाप_पुनो(struct हानाप_बुहोल *parent, FILE *fp)
 {
 	char host[256];
 	const struct host_part *h;
-	unsigned int path_count = 0;
+	unsigned int path_बिलांग = 0;
 	char *path, *p, *end;
 	int path_alloc = 64, path_used = 1;
 	time_t expiry, hsts_expiry = 0;
@@ -526,7 +526,7 @@ static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
 	if (parent == &empty)
 		return;
 
-	urldb_save_search_tree(parent->left, fp);
+	urldb_save_हानाप_पुनो(parent->कालिवा, fp);
 
 	path = malloc(path_alloc);
 	if (!path)
@@ -535,7 +535,7 @@ static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
 	path[0] = '\0';
 
 	for (h = parent->data, p = host, end = host + sizeof host;
-	     h && h != &db_root && p < end; h = h->parent) {
+	     h && h != &db_उगात && p < end; h = h->parent) {
 		int written = snprintf(p, end - p, "%s%s", h->part,
 				       (h->parent && h->parent->parent) ? "." : "");
 		if (written < 0) {
@@ -551,12 +551,12 @@ static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
 		hsts_include_subdomains = h->hsts.include_sub_domains;
 	}
 
-	urldb_count_urls(&parent->data->paths, expiry, &path_count);
+	urldb_बिलांग_urls(&parent->data->paths, expiry, &path_बिलांग);
 
-	if (path_count > 0) {
+	if (path_बिलांग > 0) {
 		fprintf(fp, "%s %i ", host, hsts_include_subdomains);
 		urldb_write_timet(fp, hsts_expiry);
-		fprintf(fp, "%i\n", path_count);
+		fprintf(fp, "%i\n", path_बिलांग);
 
 		urldb_write_paths(&parent->data->paths, host, fp,
 				  &path, &path_alloc, &path_used, expiry);
@@ -568,7 +568,7 @@ static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
 
 	free(path);
 
-	urldb_save_search_tree(parent->right, fp);
+	urldb_save_हानाप_पुनो(parent->कानान, fp);
 }
 
 
@@ -694,15 +694,15 @@ static bool urldb__host_is_ip_address(const char *host)
 		 * and "a.b.c.d" as valid IPv4 address strings where we only
 		 * support the full, dotted-quad, form.
 		 */
-		int num_dots = 0;
+		int नुमेरो_dots = 0;
 		size_t index;
 
 		for (index = 0; index < host_len; index++) {
 			if (sane_host[index] == '.')
-				num_dots++;
+				नुमेरो_dots++;
 		}
 
-		if (num_dots == 3)
+		if (नुमेरो_dots == 3)
 			goto out_true;
 		else
 			goto out_false;
@@ -743,12 +743,12 @@ out_true:
  * \param b prefix
  * \return 0 if match, non-zero, otherwise
  */
-static int urldb_search_match_prefix(const struct host_part *a, const char *b)
+static int urldb_हानाप_match_prefix(const struct host_part *a, const char *b)
 {
 	const char *end, *dot;
 	int plen, ret;
 
-	assert(a && a != &db_root && b);
+	assert(a && a != &db_उगात && b);
 
 	if (urldb__host_is_ip_address(b)) {
 		/* IP address */
@@ -757,7 +757,7 @@ static int urldb_search_match_prefix(const struct host_part *a, const char *b)
 
 	end = b + strlen(b) + 1;
 
-	while (b < end && a && a != &db_root) {
+	while (b < end && a && a != &db_उगात) {
 		dot = strchr(b, '.');
 		if (!dot) {
 			/* last segment */
@@ -791,10 +791,10 @@ static int urldb_search_match_prefix(const struct host_part *a, const char *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && b >= end) {
+	if (a && a != &db_उगात && b >= end) {
 		/* len(a) > len(b) => prefix matches */
 		return 0;
-	} else if ((!a || a == &db_root) && b < end) {
+	} else if ((!a || a == &db_उगात) && b < end) {
 		/* len(a) < len(b) => prefix does not match */
 		return -1;
 	}
@@ -813,47 +813,47 @@ static int urldb_search_match_prefix(const struct host_part *a, const char *b)
  * \return true to continue, false otherwise
  */
 static bool
-urldb_iterate_partial_host(struct search_node *root,
+urldb_iterate_partial_host(struct हानाप_बुहोल *उगात,
 		const char *prefix,
 		bool (*callback)(nsurl *url, const struct url_data *data))
 {
 	int c;
 
-	assert(root && prefix && callback);
+	assert(उगात && prefix && callback);
 
-	if (root == &empty)
+	if (उगात == &empty)
 		return true;
 
-	c = urldb_search_match_prefix(root->data, prefix);
+	c = urldb_हानाप_match_prefix(उगात->data, prefix);
 
 	if (c > 0) {
 		/* No match => look in left subtree */
-		return urldb_iterate_partial_host(root->left,
+		return urldb_iterate_partial_host(उगात->कालिवा,
 						  prefix,
 						  callback);
 	} else if (c < 0) {
 		/* No match => look in right subtree */
-		return urldb_iterate_partial_host(root->right,
+		return urldb_iterate_partial_host(उगात->कानान,
 						  prefix,
 						  callback);
 	} else {
 		/* Match => iterate over l/r subtrees & process this node */
-		if (!urldb_iterate_partial_host(root->left,
+		if (!urldb_iterate_partial_host(उगात->कालिवा,
 						prefix,
 						callback)) {
 			return false;
 		}
 
-		if (root->data->paths.children) {
+		if (उगात->data->paths.children) {
 			/* and extract all paths attached to this host */
-			if (!urldb_iterate_entries_path(&root->data->paths,
+			if (!urldb_iterate_entries_path(&उगात->data->paths,
 							callback,
 							NULL)) {
 				return false;
 			}
 		}
 
-		if (!urldb_iterate_partial_host(root->right,
+		if (!urldb_iterate_partial_host(उगात->कानान,
 						prefix,
 						callback)) {
 			return false;
@@ -960,7 +960,7 @@ urldb_iterate_partial_path(const struct path_data *parent,
  * \return true to continue, false otherwise
  */
 static bool
-urldb_iterate_entries_host(struct search_node *parent,
+urldb_iterate_entries_host(struct हानाप_बुहोल *parent,
 		bool (*url_callback)(nsurl *url, const struct url_data *data),
 		bool (*cookie_callback)(const struct cookie_data *data))
 {
@@ -968,7 +968,7 @@ urldb_iterate_entries_host(struct search_node *parent,
 		return true;
 	}
 
-	if (!urldb_iterate_entries_host(parent->left,
+	if (!urldb_iterate_entries_host(parent->कालिवा,
 					url_callback,
 					cookie_callback)) {
 		return false;
@@ -985,7 +985,7 @@ urldb_iterate_entries_host(struct search_node *parent,
 		}
 	}
 
-	if (!urldb_iterate_entries_host(parent->right,
+	if (!urldb_iterate_entries_host(parent->कानान,
 					url_callback,
 					cookie_callback)) {
 		return false;
@@ -1003,7 +1003,7 @@ urldb_iterate_entries_host(struct search_node *parent,
  * \return Pointer to added node, or NULL on memory exhaustion
  */
 static struct host_part *
-urldb_add_host_node(const char *part, struct host_part *parent)
+urldb_add_host_बुहोल(const char *part, struct host_part *parent)
 {
 	struct host_part *d;
 
@@ -1101,7 +1101,7 @@ urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
  * \return Pointer to added node, or NULL on memory exhaustion
  */
 static struct path_data *
-urldb_add_path_node(lwc_string *scheme,
+urldb_add_path_बुहोल(lwc_string *scheme,
 		    unsigned int port,
 		    const char *segment,
 		    lwc_string *fragment,
@@ -1169,16 +1169,16 @@ urldb_add_path_node(lwc_string *scheme,
  * \param host the host to lookup
  * \return the corresponding search tree
  */
-static struct search_node **urldb_get_search_tree_direct(const char *host)
+static struct हानाप_बुहोल **urldb_get_हानाप_पुनो_direct(const char *host)
 {
 	assert(host);
 
 	if (urldb__host_is_ip_address(host)) {
-		return &search_trees[ST_IP];
+		return &हानाप_trees[ST_IP];
 	} else if (ascii_is_alpha(*host)) {
-		return &search_trees[ST_DN + ascii_to_lower(*host) - 'a'];
+		return &हानाप_trees[ST_DN + ascii_to_lower(*host) - 'a'];
 	}
-	return &search_trees[ST_EE];
+	return &हानाप_trees[ST_EE];
 }
 
 
@@ -1188,9 +1188,9 @@ static struct search_node **urldb_get_search_tree_direct(const char *host)
  * \param host the host to lookup
  * \return the corresponding search tree
  */
-static struct search_node *urldb_get_search_tree(const char *host)
+static struct हानाप_बुहोल *urldb_get_हानाप_पुनो(const char *host)
 {
-	return *urldb_get_search_tree_direct(host);
+	return *urldb_get_हानाप_पुनो_direct(host);
 }
 
 
@@ -1201,12 +1201,12 @@ static struct search_node *urldb_get_search_tree(const char *host)
  * \param b string to compare
  * \return 0 if match, non-zero, otherwise
  */
-static int urldb_search_match_string(const struct host_part *a, const char *b)
+static int urldb_हानाप_match_string(const struct host_part *a, const char *b)
 {
 	const char *end, *dot;
 	int plen, ret;
 
-	assert(a && a != &db_root && b);
+	assert(a && a != &db_उगात && b);
 
 	if (urldb__host_is_ip_address(b)) {
 		/* IP address */
@@ -1215,7 +1215,7 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
 
 	end = b + strlen(b) + 1;
 
-	while (b < end && a && a != &db_root) {
+	while (b < end && a && a != &db_उगात) {
 		dot = strchr(b, '.');
 		if (!dot) {
 			/* last segment */
@@ -1246,10 +1246,10 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && b >= end) {
+	if (a && a != &db_उगात && b >= end) {
 		/* len(a) > len(b) */
 		return 1;
-	} else if ((!a || a == &db_root) && b < end) {
+	} else if ((!a || a == &db_उगात) && b < end) {
 		/* len(a) < len(b) */
 		return -1;
 	}
@@ -1267,25 +1267,25 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
  * \return Pointer to host tree node, or NULL if not found
  */
 static const struct host_part *
-urldb_search_find(struct search_node *root, const char *host)
+urldb_हानाप_find(struct हानाप_बुहोल *उगात, const char *host)
 {
 	int c;
 
-	assert(root && host);
+	assert(उगात && host);
 
-	if (root == &empty) {
+	if (उगात == &empty) {
 		return NULL;
 	}
 
-	c = urldb_search_match_string(root->data, host);
+	c = urldb_हानाप_match_string(उगात->data, host);
 
 	if (c > 0) {
-		return urldb_search_find(root->left, host);
+		return urldb_हानाप_find(उगात->कालिवा, host);
 	} else if (c < 0) {
-		return urldb_search_find(root->right, host);
+		return urldb_हानाप_find(उगात->कानान, host);
 	}
 
-	return root->data;
+	return उगात->data;
 }
 
 
@@ -1359,7 +1359,7 @@ static struct path_data *urldb_find_url(nsurl *url)
 {
 	const struct host_part *h;
 	struct path_data *p;
-	struct search_node *tree;
+	struct हानाप_बुहोल *पुनो;
 	char *plq;
 	const char *host_str;
 	lwc_string *scheme, *host, *port;
@@ -1370,7 +1370,7 @@ static struct path_data *urldb_find_url(nsurl *url)
 	assert(url);
 
 	if (url_bloom != NULL) {
-		if (bloom_search_hash(url_bloom, nsurl_hash(url)) == false) {
+		if (bloom_हानाप_hash(url_bloom, nsurl_hash(url)) == false) {
 			return NULL;
 		}
 	}
@@ -1399,8 +1399,8 @@ static struct path_data *urldb_find_url(nsurl *url)
 		return NULL;
 	}
 
-	tree = urldb_get_search_tree(host_str);
-	h = urldb_search_find(tree, host_str);
+	पुनो = urldb_get_हानाप_पुनो(host_str);
+	h = urldb_हानाप_find(पुनो, host_str);
 	if (!h) {
 		lwc_string_unref(scheme);
 		return NULL;
@@ -1501,7 +1501,7 @@ static void urldb_dump_hosts(struct host_part *parent)
  * \param parent Parent node of tree to dump
  * \param depth Tree depth
  */
-static void urldb_dump_search(struct search_node *parent, int depth)
+static void urldb_dump_हानाप(struct हानाप_बुहोल *parent, int depth)
 {
 	const struct host_part *h;
 	int i; /* index into string */
@@ -1512,7 +1512,7 @@ static void urldb_dump_search(struct search_node *parent, int depth)
 	if (parent == &empty)
 		return;
 
-	urldb_dump_search(parent->left, depth + 1);
+	urldb_dump_हानाप(parent->कालिवा, depth + 1);
 
 	for (i = 0; i != depth; i++) {
 		s[i] = ' ';
@@ -1539,7 +1539,7 @@ static void urldb_dump_search(struct search_node *parent, int depth)
 
 	NSLOG(netsurf, INFO, "%s", s);
 
-	urldb_dump_search(parent->right, depth + 1);
+	urldb_dump_हानाप(parent->कानान, depth + 1);
 }
 
 
@@ -1551,14 +1551,14 @@ static void urldb_dump_search(struct search_node *parent, int depth)
  * \return 0 if match, non-zero, otherwise
  */
 static int
-urldb_search_match_host(const struct host_part *a, const struct host_part *b)
+urldb_हानाप_match_host(const struct host_part *a, const struct host_part *b)
 {
 	int ret;
 
 	assert(a && b);
 
 	/* traverse up tree to root, comparing parts as we go. */
-	for (; a && a != &db_root && b && b != &db_root;
+	for (; a && a != &db_उगात && b && b != &db_उगात;
 	     a = a->parent, b = b->parent) {
 		if ((ret = strcasecmp(a->part, b->part)) != 0) {
 			/* They differ => return the difference here */
@@ -1570,10 +1570,10 @@ urldb_search_match_host(const struct host_part *a, const struct host_part *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && (!b || b == &db_root)) {
+	if (a && a != &db_उगात && (!b || b == &db_उगात)) {
 		/* len(a) > len(b) */
 		return 1;
-	} else if ((!a || a == &db_root) && b && b != &db_root) {
+	} else if ((!a || a == &db_उगात) && b && b != &db_उगात) {
 		/* len(a) < len(b) */
 		return -1;
 	}
@@ -1589,20 +1589,20 @@ urldb_search_match_host(const struct host_part *a, const struct host_part *b)
  * \param root Root of subtree to rotate
  * \return new root of subtree
  */
-static struct search_node *urldb_search_skew(struct search_node *root)
+static struct हानाप_बुहोल *urldb_हानाप_skew(struct हानाप_बुहोल *उगात)
 {
-	assert(root);
+	assert(उगात);
 
-	if (root->left->level == root->level) {
-		struct search_node *temp;
+	if (उगात->कालिवा->level == उगात->level) {
+		struct हानाप_बुहोल *temp;
 
-		temp = root->left;
-		root->left = temp->right;
-		temp->right = root;
-		root = temp;
+		temp = उगात->कालिवा;
+		उगात->कालिवा = temp->कानान;
+		temp->कानान = उगात;
+		उगात = temp;
 	}
 
-	return root;
+	return उगात;
 }
 
 
@@ -1612,22 +1612,22 @@ static struct search_node *urldb_search_skew(struct search_node *root)
  * \param root Root of subtree to rotate
  * \return New root of subtree
  */
-static struct search_node *urldb_search_split(struct search_node *root)
+static struct हानाप_बुहोल *urldb_हानाप_split(struct हानाप_बुहोल *उगात)
 {
-	assert(root);
+	assert(उगात);
 
-	if (root->right->right->level == root->level) {
-		struct search_node *temp;
+	if (उगात->कानान->कानान->level == उगात->level) {
+		struct हानाप_बुहोल *temp;
 
-		temp = root->right;
-		root->right = temp->left;
-		temp->left = root;
-		root = temp;
+		temp = उगात->कानान;
+		उगात->कानान = temp->कालिवा;
+		temp->कालिवा = उगात;
+		उगात = temp;
 
-		root->level++;
+		उगात->level++;
 	}
 
-	return root;
+	return उगात;
 }
 
 
@@ -1638,33 +1638,33 @@ static struct search_node *urldb_search_split(struct search_node *root)
  * \param n Node to insert
  * \return Pointer to updated root
  */
-static struct search_node *
-urldb_search_insert_internal(struct search_node *root, struct search_node *n)
+static struct हानाप_बुहोल *
+urldb_हानाप_इसिंगित_internal(struct हानाप_बुहोल *उगात, struct हानाप_बुहोल *n)
 {
-	assert(root && n);
+	assert(उगात && n);
 
-	if (root == &empty) {
-		root = n;
+	if (उगात == &empty) {
+		उगात = n;
 	} else {
-		int c = urldb_search_match_host(root->data, n->data);
+		int c = urldb_हानाप_match_host(उगात->data, n->data);
 
 		if (c > 0) {
-			root->left = urldb_search_insert_internal(
-				root->left, n);
+			उगात->कालिवा = urldb_हानाप_इसिंगित_internal(
+				उगात->कालिवा, n);
 		} else if (c < 0) {
-			root->right = urldb_search_insert_internal(
-				root->right, n);
+			उगात->कानान = urldb_हानाप_इसिंगित_internal(
+				उगात->कानान, n);
 		} else {
 			/* exact match */
 			free(n);
-			return root;
+			return उगात;
 		}
 
-		root = urldb_search_skew(root);
-		root = urldb_search_split(root);
+		उगात = urldb_हानाप_skew(उगात);
+		उगात = urldb_हानाप_split(उगात);
 	}
 
-	return root;
+	return उगात;
 }
 
 
@@ -1675,24 +1675,24 @@ urldb_search_insert_internal(struct search_node *root, struct search_node *n)
  * \param data User data to insert
  * \return Pointer to updated root, or NULL if failed
  */
-static struct search_node *
-urldb_search_insert(struct search_node *root, const struct host_part *data)
+static struct हानाप_बुहोल *
+urldb_हानाप_इसिंगित(struct हानाप_बुहोल *उगात, const struct host_part *data)
 {
-	struct search_node *n;
+	struct हानाप_बुहोल *n;
 
-	assert(root && data);
+	assert(उगात && data);
 
-	n = malloc(sizeof(struct search_node));
+	n = malloc(sizeof(struct हानाप_बुहोल));
 	if (!n)
 		return NULL;
 
 	n->level = 1;
 	n->data = data;
-	n->left = n->right = &empty;
+	n->कालिवा = n->कानान = &empty;
 
-	root = urldb_search_insert_internal(root, n);
+	उगात = urldb_हानाप_इसिंगित_internal(उगात, n);
 
-	return root;
+	return उगात;
 }
 
 
@@ -1798,9 +1798,9 @@ urldb_parse_avpair(struct cookie_internal_data *c,
 		c->http_only = true;
 	} else if (!c->name) {
 		c->name = strdup(n);
-		c->value = strdup(v);
-		c->value_was_quoted = was_quoted;
-		if (!c->name || !c->value) {
+		c->हालागा = strdup(v);
+		c->हालागा_was_quoted = was_quoted;
+		if (!c->name || !c->हालागा) {
 			return false;
 		}
 	}
@@ -1822,7 +1822,7 @@ static void urldb_free_cookie(struct cookie_internal_data *c)
 	free(c->domain);
 	free(c->path);
 	free(c->name);
-	free(c->value);
+	free(c->हालागा);
 	free(c);
 }
 
@@ -1839,11 +1839,11 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 {
 	struct cookie_internal_data *c;
 	const char *cur;
-	char name[1024], value[4096];
-	char *n = name, *v = value;
-	bool in_value = false;
-	bool had_value_data = false;
-	bool value_verbatim = false;
+	char name[1024], हालागा[4096];
+	char *n = name, *v = हालागा;
+	bool in_हालागा = false;
+	bool had_हालागा_data = false;
+	bool हालागा_verbatim = false;
 	bool quoted = false;
 	bool was_quoted = false;
 
@@ -1856,7 +1856,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	c->expires = -1;
 
 	name[0] = '\0';
-	value[0] = '\0';
+	हालागा[0] = '\0';
 
 	for (cur = *cookie; *cur; cur++) {
 		if (*cur == '\r' && *(cur + 1) == '\n') {
@@ -1865,7 +1865,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 				/* Unmatched quote encountered */
 
 				/* Match Firefox 2.0.0.11 */
-				value[0] = '\0';
+				हालागा[0] = '\0';
 
 			}
 
@@ -1878,22 +1878,22 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 			continue;
 		}
 
-		if (in_value && !had_value_data) {
+		if (in_हालागा && !had_हालागा_data) {
 			if (*cur == ' ' || *cur == '\t') {
 				/* Strip leading whitespace from value */
 				continue;
 			} else {
-				had_value_data = true;
+				had_हालागा_data = true;
 
 				/* Value is taken verbatim if first non-space
 				 * character is not a " */
 				if (*cur != '"') {
-					value_verbatim = true;
+					हालागा_verbatim = true;
 				}
 			}
 		}
 
-		if (in_value && !value_verbatim && (*cur == '"')) {
+		if (in_हालागा && !हालागा_verbatim && (*cur == '"')) {
 			/* Only non-verbatim values may be quoted */
 			if (cur == *cookie || *(cur - 1) != '\\') {
 				/* Only unescaped quotes count */
@@ -1904,9 +1904,9 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 			}
 		}
 
-		if (!quoted && !in_value && *cur == '=') {
+		if (!quoted && !in_हालागा && *cur == '=') {
 			/* First equals => attr-value separator */
-			in_value = true;
+			in_हालागा = true;
 			continue;
 		}
 
@@ -1918,7 +1918,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 			*n = '\0';
 			*v = '\0';
 
-			if (!urldb_parse_avpair(c, name, value, was_quoted)) {
+			if (!urldb_parse_avpair(c, name, हालागा, was_quoted)) {
 				/* Memory exhausted */
 				urldb_free_cookie(c);
 				return NULL;
@@ -1926,10 +1926,10 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 
 			/* And reset to start */
 			n = name;
-			v = value;
-			in_value = false;
-			had_value_data = false;
-			value_verbatim = false;
+			v = हालागा;
+			in_हालागा = false;
+			had_हालागा_data = false;
+			हालागा_verbatim = false;
 			was_quoted = false;
 
 			/* Now, if the current input is anything other than a
@@ -1994,11 +1994,11 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 
 		/* Accumulate into buffers, always leaving space for a NUL */
 		/** \todo is silently truncating overlong names/values wise? */
-		if (!in_value) {
+		if (!in_हालागा) {
 			if (n < name + (sizeof(name) - 1))
 				*n++ = *cur;
 		} else {
-			if (v < value + (sizeof(value) - 1))
+			if (v < हालागा + (sizeof(हालागा) - 1))
 				*v++ = *cur;
 		}
 	}
@@ -2007,7 +2007,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	*n = '\0';
 	*v = '\0';
 
-	if (!urldb_parse_avpair(c, name, value, was_quoted)) {
+	if (!urldb_parse_avpair(c, name, हालागा, was_quoted)) {
 		/* Memory exhausted */
 		urldb_free_cookie(c);
 		return NULL;
@@ -2120,7 +2120,7 @@ urldb_add_path(lwc_string *scheme,
 					break;
 
 			d = e ? urldb_add_path_fragment(e, fragment) :
-				urldb_add_path_node(scheme, port,
+				urldb_add_path_बुहोल(scheme, port,
 						    segment, fragment, d);
 			break;
 		}
@@ -2136,7 +2136,7 @@ urldb_add_path(lwc_string *scheme,
 			    e->port == port)
 				break;
 
-		d = e ? e : urldb_add_path_node(scheme, port, segment, NULL, d);
+		d = e ? e : urldb_add_path_बुहोल(scheme, port, segment, NULL, d);
 		if (!d)
 			break;
 
@@ -2163,8 +2163,8 @@ urldb_add_path(lwc_string *scheme,
  */
 static struct host_part *urldb_add_host(const char *host)
 {
-	struct host_part *d = (struct host_part *) &db_root, *e;
-	struct search_node *s;
+	struct host_part *d = (struct host_part *) &db_उगात, *e;
+	struct हानाप_बुहोल *s;
 	char buf[256]; /* 256 bytes is sufficient - domain names are
 			* limited to 255 chars. */
 	char *part;
@@ -2180,14 +2180,14 @@ static struct host_part *urldb_add_host(const char *host)
 				/* found => return it */
 				return e;
 
-		d = urldb_add_host_node(host, d);
+		d = urldb_add_host_बुहोल(host, d);
 
-		s = urldb_search_insert(search_trees[ST_IP], d);
+		s = urldb_हानाप_इसिंगित(हानाप_trees[ST_IP], d);
 		if (!s) {
 			/* failed */
 			d = NULL;
 		} else {
-			search_trees[ST_IP] = s;
+			हानाप_trees[ST_IP] = s;
 		}
 
 		return d;
@@ -2210,15 +2210,15 @@ static struct host_part *urldb_add_host(const char *host)
 			if (e) {
 				d = e;
 			} else {
-				d = urldb_add_host_node(buf, d);
+				d = urldb_add_host_बुहोल(buf, d);
 			}
 
 			/* And insert into search tree */
 			if (d) {
-				struct search_node **r;
+				struct हानाप_बुहोल **r;
 
-				r = urldb_get_search_tree_direct(buf);
-				s = urldb_search_insert(*r, d);
+				r = urldb_get_हानाप_पुनो_direct(buf);
+				s = urldb_हानाप_इसिंगित(*r, d);
 				if (!s) {
 					/* failed */
 					d = NULL;
@@ -2234,7 +2234,7 @@ static struct host_part *urldb_add_host(const char *host)
 			if (strcasecmp(part + 1, e->part) == 0)
 				break;
 
-		d = e ? e : urldb_add_host_node(part + 1, d);
+		d = e ? e : urldb_add_host_बुहोल(part + 1, d);
 		if (!d)
 			break;
 
@@ -2254,7 +2254,7 @@ static struct host_part *urldb_add_host(const char *host)
  * \return true on success, false on memory exhaustion (c will be freed)
  */
 static bool
-urldb_insert_cookie(struct cookie_internal_data *c,
+urldb_इसिंगित_cookie(struct cookie_internal_data *c,
 		    lwc_string *scheme,
 		    nsurl *url)
 {
@@ -2266,8 +2266,8 @@ urldb_insert_cookie(struct cookie_internal_data *c,
 	assert(c);
 
 	if (c->domain[0] == '.') {
-		h = urldb_search_find(
-			urldb_get_search_tree(&(c->domain[1])),
+		h = urldb_हानाप_find(
+			urldb_get_हानाप_पुनो(&(c->domain[1])),
 			c->domain + 1);
 		if (!h) {
 			h = urldb_add_host(c->domain + 1);
@@ -2283,8 +2283,8 @@ urldb_insert_cookie(struct cookie_internal_data *c,
 		assert(url != NULL);
 		assert(scheme != NULL);
 
-		h = urldb_search_find(
-			urldb_get_search_tree(c->domain),
+		h = urldb_हानाप_find(
+			urldb_get_हानाप_पुनो(c->domain),
 			c->domain);
 
 		if (!h) {
@@ -2441,7 +2441,7 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	 */
 	max_len = *used + 2 +
 		strlen(c->name) + 1 +
-		strlen(c->value) + 2 +
+		strlen(c->हालागा) + 2 +
 		(c->path_from_set ? 8 + strlen(c->path) + 2 : 0) +
 		(c->domain_from_set ? 10 + strlen(c->domain) + 2 : 0);
 	if (max_len >= *alloc) {
@@ -2466,10 +2466,10 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	 *
 	 * However, other browsers preserve quoting, so we should, too
 	 */
-	if (c->value_was_quoted) {
+	if (c->हालागा_was_quoted) {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"\"%s\"", c->value);
+				"\"%s\"", c->हालागा);
 		if (outl >= (*alloc - *used)) {
 			/* output truncated */
 			return false;
@@ -2478,7 +2478,7 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	} else {
 		/** \todo should we %XX-encode [;HT,SP] ? */
 		/** \todo Should we strip escaping backslashes? */
-		outl = snprintf(*buf + *used - 1,*alloc - *used, "%s", c->value);
+		outl = snprintf(*buf + *used - 1,*alloc - *used, "%s", c->हालागा);
 		if (outl >= (*alloc - *used)) {
 			/* output truncated */
 			return false;
@@ -2531,7 +2531,7 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 	 */
 	max_len = *used + 2 +
 		strlen(c->name) + 1 +
-		strlen(c->value) + 2 +
+		strlen(c->हालागा) + 2 +
 		(c->path_from_set ?
 		 8 + strlen(c->path) + 2 : 0) +
 		(c->domain_from_set ?
@@ -2558,16 +2558,16 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 
 	/* Value needs quoting if it contains any separator or if
 	 * it needs preserving from the Set-Cookie header */
-	if (c->value_was_quoted ||
-	    strpbrk(c->value, separators) != NULL) {
+	if (c->हालागा_was_quoted ||
+	    strpbrk(c->हालागा, separators) != NULL) {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"\"%s\"", c->value);
+				"\"%s\"", c->हालागा);
 
 	} else {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"%s", c->value);
+				"%s", c->हालागा);
 	}
 	if (outl >= (*alloc - *used)) {
 		/* output truncated */
@@ -2621,7 +2621,7 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
  * build output cookie string in netscape format
  */
 static char *
-get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
+get_netscape_cookie(struct cookie_internal_data **matched_cookies, int बिलांग)
 {
 	int ret_alloc = 4096, ret_used = 1;
 	char *ret;
@@ -2633,7 +2633,7 @@ get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
 	}
 	ret[0] = '\0';
 
-	for (midx = 0; midx < count; midx++) {
+	for (midx = 0; midx < बिलांग; midx++) {
 		if (!concat_netscape_cookie(matched_cookies[midx],
 					    &ret_used, &ret_alloc, &ret)) {
 			free(ret);
@@ -2665,7 +2665,7 @@ get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
  */
 static char *
 get_rfc2965_cookie(struct cookie_internal_data **matched_cookies,
-		   int count,
+		   int बिलांग,
 		   int version)
 {
 	int ret_alloc = 4096; /* return string allocation */
@@ -2688,7 +2688,7 @@ get_rfc2965_cookie(struct cookie_internal_data **matched_cookies,
 	}
 	ret_used += outl;
 
-	for (midx = 0; midx < count; midx++) {
+	for (midx = 0; midx < बिलांग; midx++) {
 		if (!concat_rfc2965_cookie(matched_cookies[midx],
 					   &ret_used, &ret_alloc, &ret)) {
 			free(ret);
@@ -2820,8 +2820,8 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 					c->path_from_set, c->secure,
 					c->http_only,
 					(int)c->expires, (int)c->last_used,
-					c->no_destroy, c->name, c->value,
-					c->value_was_quoted,
+					c->no_destroy, c->name, c->हालागा,
+					c->हालागा_was_quoted,
 					p->scheme ? lwc_string_data(p->scheme) :
 					"unused",
 					p->url ? nsurl_access(p->url) :
@@ -2872,7 +2872,7 @@ static void urldb_save_cookie_hosts(FILE *fp, struct host_part *parent)
 static void urldb_destroy_cookie(struct cookie_internal_data *c)
 {
 	free(c->name);
-	free(c->value);
+	free(c->हालागा);
 	free(c->comment);
 	free(c->domain);
 	free(c->path);
@@ -2886,25 +2886,25 @@ static void urldb_destroy_cookie(struct cookie_internal_data *c)
  *
  * \param node Node to destroy contents of (does not destroy node)
  */
-static void urldb_destroy_path_node_content(struct path_data *node)
+static void urldb_destroy_path_बुहोल_content(struct path_data *बुहोल)
 {
 	struct cookie_internal_data *a, *b;
 	unsigned int i;
 
-	if (node->url != NULL) {
-		nsurl_unref(node->url);
+	if (बुहोल->url != NULL) {
+		nsurl_unref(बुहोल->url);
 	}
 
-	lwc_string_unref(node->scheme);
+	lwc_string_unref(बुहोल->scheme);
 
-	free(node->segment);
-	for (i = 0; i < node->frag_cnt; i++)
-		free(node->fragment[i]);
-	free(node->fragment);
+	free(बुहोल->segment);
+	for (i = 0; i < बुहोल->frag_cnt; i++)
+		free(बुहोल->fragment[i]);
+	free(बुहोल->fragment);
 
-	free(node->urld.title);
+	free(बुहोल->urld.title);
 
-	for (a = node->cookies; a; a = b) {
+	for (a = बुहोल->cookies; a; a = b) {
 		b = a->next;
 		urldb_destroy_cookie(a);
 	}
@@ -2931,9 +2931,9 @@ static void urldb_destroy_prot_space(struct prot_space_data *space)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_path_tree(struct path_data *root)
+static void urldb_destroy_path_पुनो(struct path_data *उगात)
 {
-	struct path_data *p = root;
+	struct path_data *p = उगात;
 
 	do {
 		if (p->children != NULL) {
@@ -2941,7 +2941,7 @@ static void urldb_destroy_path_tree(struct path_data *root)
 		} else {
 			struct path_data *q = p;
 
-			while (p != root) {
+			while (p != उगात) {
 				if (p->next != NULL) {
 					p = p->next;
 					break;
@@ -2949,16 +2949,16 @@ static void urldb_destroy_path_tree(struct path_data *root)
 
 				p = p->parent;
 
-				urldb_destroy_path_node_content(q);
+				urldb_destroy_path_बुहोल_content(q);
 				free(q);
 
 				q = p;
 			}
 
-			urldb_destroy_path_node_content(q);
+			urldb_destroy_path_बुहोल_content(q);
 			free(q);
 		}
-	} while (p != root);
+	} while (p != उगात);
 }
 
 
@@ -2967,36 +2967,36 @@ static void urldb_destroy_path_tree(struct path_data *root)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_host_tree(struct host_part *root)
+static void urldb_destroy_host_पुनो(struct host_part *उगात)
 {
 	struct host_part *a, *b;
 	struct path_data *p, *q;
 	struct prot_space_data *s, *t;
 
 	/* Destroy children */
-	for (a = root->children; a; a = b) {
+	for (a = उगात->children; a; a = b) {
 		b = a->next;
-		urldb_destroy_host_tree(a);
+		urldb_destroy_host_पुनो(a);
 	}
 
 	/* Now clean up paths */
-	for (p = root->paths.children; p; p = q) {
+	for (p = उगात->paths.children; p; p = q) {
 		q = p->next;
-		urldb_destroy_path_tree(p);
+		urldb_destroy_path_पुनो(p);
 	}
 
 	/* Root path */
-	urldb_destroy_path_node_content(&root->paths);
+	urldb_destroy_path_बुहोल_content(&उगात->paths);
 
 	/* Proctection space data */
-	for (s = root->prot_space; s; s = t) {
+	for (s = उगात->prot_space; s; s = t) {
 		t = s->next;
 		urldb_destroy_prot_space(s);
 	}
 
 	/* And ourselves */
-	free(root->part);
-	free(root);
+	free(उगात->part);
+	free(उगात);
 }
 
 
@@ -3005,16 +3005,16 @@ static void urldb_destroy_host_tree(struct host_part *root)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_search_tree(struct search_node *root)
+static void urldb_destroy_हानाप_पुनो(struct हानाप_बुहोल *उगात)
 {
 	/* Destroy children */
-	if (root->left != &empty)
-		urldb_destroy_search_tree(root->left);
-	if (root->right != &empty)
-		urldb_destroy_search_tree(root->right);
+	if (उगात->कालिवा != &empty)
+		urldb_destroy_हानाप_पुनो(उगात->कालिवा);
+	if (उगात->कानान != &empty)
+		urldb_destroy_हानाप_पुनो(उगात->कानान);
 
 	/* And destroy ourselves */
-	free(root);
+	free(उगात);
 }
 
 
@@ -3028,19 +3028,19 @@ void urldb_destroy(void)
 	int i;
 
 	/* Clean up search trees */
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (search_trees[i] != &empty) {
-			urldb_destroy_search_tree(search_trees[i]);
-			search_trees[i] = &empty;
+	for (i = 0; i < नुमेरो_हानाप_TREES; i++) {
+		if (हानाप_trees[i] != &empty) {
+			urldb_destroy_हानाप_पुनो(हानाप_trees[i]);
+			हानाप_trees[i] = &empty;
 		}
 	}
 
 	/* And database */
-	for (a = db_root.children; a; a = b) {
+	for (a = db_उगात.children; a; a = b) {
 		b = a->next;
-		urldb_destroy_host_tree(a);
+		urldb_destroy_host_पुनो(a);
 	}
-	memset(&db_root, 0, sizeof(db_root));
+	memset(&db_उगात, 0, sizeof(db_उगात));
 
 	/* And the bloom filter */
 	if (url_bloom != NULL) {
@@ -3199,7 +3199,7 @@ nserror urldb_load(const char *filename)
 
 			if (url_bloom != NULL) {
 				uint32_t hash = nsurl_hash(nsurl);
-				bloom_insert_hash(url_bloom, hash);
+				bloom_इसिंगित_hash(url_bloom, hash);
 			}
 
 			/* Copy and merge path/query strings */
@@ -3285,8 +3285,8 @@ nserror urldb_save(const char *filename)
 	/* file format version number */
 	fprintf(fp, "%d\n", URL_FILE_VERSION);
 
-	for (i = 0; i != NUM_SEARCH_TREES; i++) {
-		urldb_save_search_tree(search_trees[i], fp);
+	for (i = 0; i != नुमेरो_हानाप_TREES; i++) {
+		urldb_save_हानाप_पुनो(हानाप_trees[i], fp);
 	}
 
 	fclose(fp);
@@ -3335,7 +3335,7 @@ bool urldb_add_url(nsurl *url)
 
 	if (url_bloom != NULL) {
 		uint32_t hash = nsurl_hash(url);
-		bloom_insert_hash(url_bloom, hash);
+		bloom_इसिंगित_hash(url_bloom, hash);
 	}
 
 	/* Copy and merge path/query strings */
@@ -3580,7 +3580,7 @@ void urldb_set_auth_details(nsurl *url, const char *realm, const char *auth)
 /* exported interface documented in netsurf/url_db.h */
 const char *urldb_get_auth_details(nsurl *url, const char *realm)
 {
-	struct path_data *p, *p_cur, *p_top;
+	struct path_data *p, *p_cur, *p_इताअस;
 
 	assert(url);
 
@@ -3594,7 +3594,7 @@ const char *urldb_get_auth_details(nsurl *url, const char *realm)
 	/* Check for any auth details attached to the path_data node or any of
 	 * its parents.
 	 */
-	for (p_cur = p; p_cur != NULL; p_top = p_cur, p_cur = p_cur->parent) {
+	for (p_cur = p; p_cur != NULL; p_इताअस = p_cur, p_cur = p_cur->parent) {
 		if (p_cur->prot_space) {
 			return p_cur->prot_space->auth;
 		}
@@ -3604,7 +3604,7 @@ const char *urldb_get_auth_details(nsurl *url, const char *realm)
 	 * uniquely locate the protection space.
 	 */
 	if (realm != NULL) {
-		const struct host_part *h = (const struct host_part *)p_top;
+		const struct host_part *h = (const struct host_part *)p_इताअस;
 		const struct prot_space_data *space;
 		bool match;
 
@@ -3795,7 +3795,7 @@ bool urldb_get_hsts_enabled(struct nsurl *url)
 	}
 
 	/* Consult parent domains */
-	for (h = h->parent; h && h != &db_root; h = h->parent) {
+	for (h = h->parent; h && h != &db_उगात; h = h->parent) {
 		if (h->hsts.expires > now && h->hsts.include_sub_domains) {
 			/* Not expired and subdomains included */
 			return true;
@@ -3814,7 +3814,7 @@ urldb_iterate_partial(const char *prefix,
 	char host[256];
 	char buf[260]; /* max domain + "www." */
 	const char *slash, *scheme_sep;
-	struct search_node *tree;
+	struct हानाप_बुहोल *पुनो;
 	const struct host_part *h;
 
 	assert(prefix && callback);
@@ -3825,7 +3825,7 @@ urldb_iterate_partial(const char *prefix,
 		prefix = scheme_sep + 3;
 
 	slash = strchr(prefix, '/');
-	tree = urldb_get_search_tree(prefix);
+	पुनो = urldb_get_हानाप_पुनो(prefix);
 
 	if (slash) {
 		/* if there's a slash in the input, then we can
@@ -3833,14 +3833,14 @@ urldb_iterate_partial(const char *prefix,
 		snprintf(host, sizeof host, "%.*s",
 			 (int) (slash - prefix), prefix);
 
-		h = urldb_search_find(tree, host);
+		h = urldb_हानाप_find(पुनो, host);
 		if (!h) {
 			int len = slash - prefix;
 
 			if (len <= 3 || strncasecmp(host, "www.", 4) != 0) {
 				snprintf(buf, sizeof buf, "www.%s", host);
-				h = urldb_search_find(
-					search_trees[ST_DN + 'w' - 'a'],
+				h = urldb_हानाप_find(
+					हानाप_trees[ST_DN + 'w' - 'a'],
 					buf);
 				if (!h)
 					return;
@@ -3858,14 +3858,14 @@ urldb_iterate_partial(const char *prefix,
 		int len = strlen(prefix);
 
 		/* looking for hosts */
-		if (!urldb_iterate_partial_host(tree, prefix, callback))
+		if (!urldb_iterate_partial_host(पुनो, prefix, callback))
 			return;
 
 		if (len <= 3 || strncasecmp(prefix, "www.", 4) != 0) {
 			/* now look for www.prefix */
 			snprintf(buf, sizeof buf, "www.%s", prefix);
 			if(!urldb_iterate_partial_host(
-				   search_trees[ST_DN + 'w' - 'a'],
+				   हानाप_trees[ST_DN + 'w' - 'a'],
 				   buf, callback))
 				return;
 		}
@@ -3881,8 +3881,8 @@ urldb_iterate_entries(bool (*callback)(nsurl *url, const struct url_data *data))
 
 	assert(callback);
 
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (!urldb_iterate_entries_host(search_trees[i],
+	for (i = 0; i < नुमेरो_हानाप_TREES; i++) {
+		if (!urldb_iterate_entries_host(हानाप_trees[i],
 						callback,
 						NULL)) {
 			break;
@@ -3898,8 +3898,8 @@ void urldb_iterate_cookies(bool (*callback)(const struct cookie_data *data))
 
 	assert(callback);
 
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (!urldb_iterate_entries_host(search_trees[i],
+	for (i = 0; i < नुमेरो_हानाप_TREES; i++) {
+		if (!urldb_iterate_entries_host(हानाप_trees[i],
 						NULL, callback))
 			break;
 	}
@@ -4039,7 +4039,7 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 		/* validate cookie */
 
 		/* 4.2.2:i Cookie must have NAME and VALUE */
-		if (!c->name || !c->value) {
+		if (!c->name || !c->हालागा) {
 			urldb_free_cookie(c);
 			goto error;
 		}
@@ -4148,7 +4148,7 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 		}
 
 		/* Now insert into database */
-		if (!urldb_insert_cookie(c, scheme, urlt))
+		if (!urldb_इसिंगित_cookie(c, scheme, urlt))
 			goto error;
 	} while (cur < end);
 
@@ -4176,7 +4176,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	const struct host_part *h;
 	lwc_string *path_lwc;
 	struct cookie_internal_data *c;
-	int count = 0, version = COOKIE_RFC2965;
+	int बिलांग = 0, version = COOKIE_RFC2965;
 	struct cookie_internal_data **matched_cookies;
 	int matched_cookies_size = 20;
 	const char *path;
@@ -4205,7 +4205,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 
 #define GROW_MATCHED_COOKIES						\
 	do {								\
-		if (count == matched_cookies_size) {			\
+		if (बिलांग == matched_cookies_size) {			\
 			struct cookie_internal_data **temp;		\
 			temp = realloc(matched_cookies,			\
 				       (matched_cookies_size + 20) *	\
@@ -4258,7 +4258,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 					/* Ignore HttpOnly */
 					continue;
 
-				matched_cookies[count++] = c;
+				matched_cookies[बिलांग++] = c;
 
 				GROW_MATCHED_COOKIES;
 
@@ -4294,7 +4294,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 					 * => ignore */
 					continue;
 
-				matched_cookies[count++] = c;
+				matched_cookies[बिलांग++] = c;
 
 				GROW_MATCHED_COOKIES;
 
@@ -4338,7 +4338,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 				 * => ignore */
 				continue;
 
-			matched_cookies[count++] = c;
+			matched_cookies[बिलांग++] = c;
 
 			GROW_MATCHED_COOKIES;
 
@@ -4353,7 +4353,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	}
 
 	/* Finally consider domain cookies for hosts which domain match ours */
-	for (h = (const struct host_part *)p; h && h != &db_root;
+	for (h = (const struct host_part *)p; h && h != &db_उगात;
 	     h = h->parent) {
 		for (c = h->paths.cookies; c; c = c->next) {
 			if (c->expires != -1 && c->expires < now)
@@ -4372,7 +4372,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 				/* secure cookie for insecure host. ignore */
 				continue;
 
-			matched_cookies[count++] = c;
+			matched_cookies[बिलांग++] = c;
 
 			GROW_MATCHED_COOKIES;
 
@@ -4386,16 +4386,16 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	}
 #undef GROW_MATCHED_COOKIES
 
-	if (count == 0) {
+	if (बिलांग == 0) {
 		/* No cookies found */
 		free(matched_cookies);
 		return NULL;
 	}
 
 	if (version == COOKIE_NETSCAPE) {
-		ret = get_netscape_cookie(matched_cookies, count);
+		ret = get_netscape_cookie(matched_cookies, बिलांग);
 	} else {
-		ret = get_rfc2965_cookie(matched_cookies, count, version);
+		ret = get_rfc2965_cookie(matched_cookies, बिलांग, version);
 	}
 	free(matched_cookies);
 
@@ -4407,7 +4407,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 void urldb_delete_cookie(const char *domain, const char *path,
 			 const char *name)
 {
-	urldb_delete_cookie_hosts(domain, path, name, &db_root);
+	urldb_delete_cookie_hosts(domain, path, name, &db_उगात);
 }
 
 
@@ -4444,10 +4444,10 @@ nserror urldb_load_cookies(const char *filename)
 
 	while (fgets(s, sizeof s, fp)) {
 		char *p = s, *end = 0,
-			*domain, *path, *name, *value, *scheme, *url,
+			*domain, *path, *name, *हालागा, *scheme, *url,
 			*comment;
 		int version, domain_specified, path_specified,
-			secure, http_only, no_destroy, value_quoted;
+			secure, http_only, no_destroy, हालागा_quoted;
 		time_t expires, last_used;
 		struct cookie_internal_data *c;
 
@@ -4496,12 +4496,12 @@ nserror urldb_load_cookies(const char *filename)
 		SKIP_T; last_used = (time_t)atoi(p); FIND_T;
 		SKIP_T; no_destroy = atoi(p); FIND_T;
 		SKIP_T; name = p; FIND_T;
-		SKIP_T; value = p; FIND_T;
+		SKIP_T; हालागा = p; FIND_T;
 		if (loaded_cookie_file_version > 100) {
 			/* Introduced in version 1.01 */
-			SKIP_T;	value_quoted = atoi(p); FIND_T;
+			SKIP_T;	हालागा_quoted = atoi(p); FIND_T;
 		} else {
-			value_quoted = 0;
+			हालागा_quoted = 0;
 		}
 		SKIP_T; scheme = p; FIND_T;
 		SKIP_T; url = p; FIND_T;
@@ -4520,8 +4520,8 @@ nserror urldb_load_cookies(const char *filename)
 			break;
 
 		c->name = strdup(name);
-		c->value = strdup(value);
-		c->value_was_quoted = value_quoted;
+		c->हालागा = strdup(हालागा);
+		c->हालागा_was_quoted = हालागा_quoted;
 		c->comment = strdup(comment);
 		c->domain_from_set = domain_specified;
 		c->domain = strdup(domain);
@@ -4534,7 +4534,7 @@ nserror urldb_load_cookies(const char *filename)
 		c->version = version;
 		c->no_destroy = no_destroy;
 
-		if (!(c->name && c->value && c->comment &&
+		if (!(c->name && c->हालागा && c->comment &&
 		      c->domain && c->path)) {
 			urldb_free_cookie(c);
 			break;
@@ -4554,7 +4554,7 @@ nserror urldb_load_cookies(const char *filename)
 							 NSURL_SCHEME);
 
 			/* And insert it into database */
-			if (!urldb_insert_cookie(c, scheme_lwc, url_nsurl)) {
+			if (!urldb_इसिंगित_cookie(c, scheme_lwc, url_nsurl)) {
 				/* Cookie freed for us */
 				nsurl_unref(url_nsurl);
 				lwc_string_unref(scheme_lwc);
@@ -4564,7 +4564,7 @@ nserror urldb_load_cookies(const char *filename)
 			lwc_string_unref(scheme_lwc);
 
 		} else {
-			if (!urldb_insert_cookie(c, NULL, NULL)) {
+			if (!urldb_इसिंगित_cookie(c, NULL, NULL)) {
 				/* Cookie freed for us */
 				break;
 			}
@@ -4607,7 +4607,7 @@ nserror urldb_save_cookies(const char *filename)
 		cookie_file_version);
 	fprintf(fp, "Version:\t%d\n", cookie_file_version);
 
-	urldb_save_cookie_hosts(fp, &db_root);
+	urldb_save_cookie_hosts(fp, &db_उगात);
 
 	fclose(fp);
 
@@ -4620,9 +4620,9 @@ void urldb_dump(void)
 {
 	int i;
 
-	urldb_dump_hosts(&db_root);
+	urldb_dump_hosts(&db_उगात);
 
-	for (i = 0; i != NUM_SEARCH_TREES; i++) {
-		urldb_dump_search(search_trees[i], 0);
+	for (i = 0; i != नुमेरो_हानाप_TREES; i++) {
+		urldb_dump_हानाप(हानाप_trees[i], 0);
 	}
 }

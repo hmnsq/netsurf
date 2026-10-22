@@ -55,9 +55,9 @@
 struct box_construct_ctx {
 	html_content *content;		/**< Content we're constructing for */
 
-	dom_node *n;			/**< Current node to process */
+	dom_बुहोल *n;			/**< Current node to process */
 
-	struct box *root_box;		/**< Root box in the tree */
+	struct box *उगात_box;		/**< Root box in the tree */
 
 	box_construct_complete_cb cb;	/**< Callback to invoke on completion */
 
@@ -82,7 +82,7 @@ struct box_construct_props {
 	 * \note If non-NULL, will be the last child of containing_block */
 	struct box *inline_container;
 	/** Whether the current node is the root of the DOM tree */
-	bool node_is_root;
+	bool बुहोल_is_उगात;
 };
 
 static const content_type image_types = CONTENT_IMAGE;
@@ -120,25 +120,25 @@ static const box_type box_map[] = {
  * \param n node to check
  * \return true if node is root else false.
  */
-static inline bool box_is_root(dom_node *n)
+static inline bool box_is_उगात(dom_बुहोल *n)
 {
-	dom_node *parent;
-	dom_node_type type;
+	dom_बुहोल *parent;
+	dom_बुहोल_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
+	err = dom_बुहोल_get_parent_बुहोल(n, &parent);
 	if (err != DOM_NO_ERR)
 		return false;
 
 	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+		err = dom_बुहोल_get_बुहोल_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_बुहोल_unref(parent);
 
 		if (err != DOM_NO_ERR)
 			return false;
 
-		if (type != DOM_DOCUMENT_NODE)
+		if (type != DOM_DOCUMENT_बुहोल)
 			return false;
 	}
 
@@ -152,27 +152,27 @@ static inline bool box_is_root(dom_node *n)
  * \param props  Property object to populate
  */
 static void
-box_extract_properties(dom_node *n, struct box_construct_props *props)
+box_extract_properties(dom_बुहोल *n, struct box_construct_props *props)
 {
 	memset(props, 0, sizeof(*props));
 
-	props->node_is_root = box_is_root(n);
+	props->बुहोल_is_उगात = box_is_उगात(n);
 
 	/* Extract properties from containing DOM node */
-	if (props->node_is_root == false) {
-		dom_node *current_node = n;
-		dom_node *parent_node = NULL;
+	if (props->बुहोल_is_उगात == false) {
+		dom_बुहोल *current_बुहोल = n;
+		dom_बुहोल *parent_बुहोल = NULL;
 		struct box *parent_box;
 		dom_exception err;
 
 		/* Find ancestor node containing parent box */
 		while (true) {
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL)
+			err = dom_बुहोल_get_parent_बुहोल(current_बुहोल,
+					&parent_बुहोल);
+			if (err != DOM_NO_ERR || parent_बुहोल == NULL)
 				break;
 
-			parent_box = box_for_node(parent_node);
+			parent_box = box_for_बुहोल(parent_बुहोल);
 
 			if (parent_box != NULL) {
 				props->parent_style = parent_box->style;
@@ -180,13 +180,13 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
 				props->target = parent_box->target;
 				props->title = parent_box->title;
 
-				dom_node_unref(parent_node);
+				dom_बुहोल_unref(parent_बुहोल);
 				break;
 			} else {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				current_node = parent_node;
-				parent_node = NULL;
+				if (current_बुहोल != n)
+					dom_बुहोल_unref(current_बुहोल);
+				current_बुहोल = parent_बुहोल;
+				parent_बुहोल = NULL;
 			}
 		}
 
@@ -194,18 +194,18 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
 		while (true) {
 			struct box *b;
 
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL) {
-				if (current_node != n)
-					dom_node_unref(current_node);
+			err = dom_बुहोल_get_parent_बुहोल(current_बुहोल,
+					&parent_बुहोल);
+			if (err != DOM_NO_ERR || parent_बुहोल == NULL) {
+				if (current_बुहोल != n)
+					dom_बुहोल_unref(current_बुहोल);
 				break;
 			}
 
-			if (current_node != n)
-				dom_node_unref(current_node);
+			if (current_बुहोल != n)
+				dom_बुहोल_unref(current_बुहोल);
 
-			b = box_for_node(parent_node);
+			b = box_for_बुहोल(parent_बुहोल);
 
 			/* Children of nodes that created an inline box
 			 * will generate boxes which are attached as
@@ -217,11 +217,11 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
 					b->type != BOX_BR) {
 				props->containing_block = b;
 
-				dom_node_unref(parent_node);
+				dom_बुहोल_unref(parent_बुहोल);
 				break;
 			} else {
-				current_node = parent_node;
-				parent_node = NULL;
+				current_बुहोल = parent_बुहोल;
+				parent_बुहोल = NULL;
 			}
 		}
 	}
@@ -247,8 +247,8 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
 static css_select_results *
 box_get_style(html_content *c,
 	      const css_computed_style *parent_style,
-	      const css_computed_style *root_style,
-	      dom_node *n)
+	      const css_computed_style *उगात_style,
+	      dom_बुहोल *n)
 {
 	dom_string *s = NULL;
 	css_stylesheet *inline_style = NULL;
@@ -283,7 +283,7 @@ box_get_style(html_content *c,
 	ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
 	ctx.base_url = c->base_url;
 	ctx.universal = c->universal;
-	ctx.root_style = root_style;
+	ctx.उगात_style = उगात_style;
 	ctx.parent_style = parent_style;
 
 	/* Select style for element */
@@ -310,7 +310,7 @@ box_get_style(html_content *c,
  * the clearfix hack. (http://www.positioniseverything.net/easyclearing.html )
  */
 static void
-box_construct_generate(dom_node *n,
+box_construct_generate(dom_बुहोल *n,
 		       html_content *content,
 		       struct box *box,
 		       const css_computed_style *style)
@@ -334,7 +334,7 @@ box_construct_generate(dom_node *n,
 	}
 
 	/* create box for this element */
-	computed_display = ns_computed_display(style, box_is_root(n));
+	computed_display = ns_computed_display(style, box_is_उगात(n));
 	if (computed_display == CSS_DISPLAY_BLOCK ||
 			computed_display == CSS_DISPLAY_TABLE) {
 		/* currently only support block level boxes */
@@ -348,7 +348,7 @@ box_construct_generate(dom_node *n,
 
 		/* set box type from computed display */
 		gen->type = box_map[ns_computed_display(
-				style, box_is_root(n))];
+				style, box_is_उगात(n))];
 
 		box_add_child(box, gen);
 	}
@@ -445,8 +445,8 @@ box_construct_marker(struct box *box,
 
 static inline bool box__style_is_float(const struct box *box)
 {
-	return css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-	       css_computed_float(box->style) == CSS_FLOAT_RIGHT;
+	return css_computed_float(box->style) == CSS_FLOAT_कालिवा ||
+	       css_computed_float(box->style) == CSS_FLOAT_कानान;
 }
 
 static inline bool box__is_flex(const struct box *box)
@@ -479,7 +479,7 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	lwc_string *bgimage_uri;
 	dom_exception err;
 	struct box_construct_props props;
-	const css_computed_style *root_style = NULL;
+	const css_computed_style *उगात_style = NULL;
 
 	assert(ctx->n != NULL);
 
@@ -492,11 +492,11 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		props.containing_block->flags &= ~PRE_STRIP;
 	}
 
-	if (props.node_is_root == false) {
-		root_style = ctx->root_box->style;
+	if (props.बुहोल_is_उगात == false) {
+		उगात_style = ctx->उगात_box->style;
 	}
 
-	styles = box_get_style(ctx->content, props.parent_style, root_style,
+	styles = box_get_style(ctx->content, props.parent_style, उगात_style,
 			ctx->n);
 	if (styles == NULL)
 		return false;
@@ -542,8 +542,8 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		return false;
 
 	/* If this is the root box, add it to the context */
-	if (props.node_is_root)
-		ctx->root_box = box;
+	if (props.बुहोल_is_उगात)
+		ctx->उगात_box = box;
 
 	/* Deal with colspan/rowspan */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_colspan, &s);
@@ -588,14 +588,14 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		 * inline container as if they were not absolutely positioned.
 		 * Layout expects and handles this. */
 		box->type = box_map[CSS_DISPLAY_INLINE_BLOCK];
-	} else if (props.node_is_root) {
+	} else if (props.बुहोल_is_उगात) {
 		/* Special case for root element: force it to BLOCK, or the
 		 * rest of the layout will break. */
 		box->type = BOX_BLOCK;
 	} else {
 		/* Normal mapping */
 		box->type = box_map[ns_computed_display(box->style,
-				props.node_is_root)];
+				props.बुहोल_is_उगात)];
 
 		if (props.containing_block->type == BOX_FLEX ||
 		    props.containing_block->type == BOX_INLINE_FLEX) {
@@ -627,8 +627,8 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	}
 
 	if (box->type == BOX_NONE || (ns_computed_display(box->style,
-			props.node_is_root) == CSS_DISPLAY_NONE &&
-			props.node_is_root == false)) {
+			props.बुहोल_is_उगात) == CSS_DISPLAY_NONE &&
+			props.बुहोल_is_उगात == false)) {
 		css_select_results_destroy(styles);
 		box->styles = NULL;
 		box->style = NULL;
@@ -650,14 +650,14 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	}
 
 	/* Attach DOM node to box */
-	err = dom_node_set_user_data(ctx->n,
-			corestring_dom___ns_key_box_node_data, box, NULL,
+	err = dom_बुहोल_set_user_data(ctx->n,
+			corestring_dom_ns_सुसि_box_बुहोल_data, box, NULL,
 			(void *) &old_box);
 	if (err != DOM_NO_ERR)
 		return false;
 
 	/* Attach box to DOM node */
-	box->node = dom_node_ref(ctx->n);
+	box->बुहोल = dom_बुहोल_ref(ctx->n);
 
 	if (props.inline_container == NULL &&
 			(box->type == BOX_INLINE ||
@@ -666,7 +666,7 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 			 box->type == BOX_INLINE_FLEX ||
 			 (box__style_is_float(box) &&
 			  !box__containing_block_is_flex(&props))) &&
-			props.node_is_root == false) {
+			props.बुहोल_is_उगात == false) {
 		/* Found an inline child of a block without a current container
 		 * (i.e. this box is the first child of its parent, or was
 		 * preceded by block-level siblings) */
@@ -721,7 +721,7 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 
 		box_add_child(props.inline_container, box);
 	} else {
-		if (ns_computed_display(box->style, props.node_is_root) ==
+		if (ns_computed_display(box->style, props.बुहोल_is_उगात) ==
 				CSS_DISPLAY_LIST_ITEM) {
 			/* List item: compute marker */
 			if (box_construct_marker(box, props.title, ctx,
@@ -729,12 +729,12 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 				return false;
 		}
 
-		if (props.node_is_root == false &&
+		if (props.बुहोल_is_उगात == false &&
 				box__containing_block_is_flex(&props) == false &&
 				(css_computed_float(box->style) ==
-				CSS_FLOAT_LEFT ||
+				CSS_FLOAT_कालिवा ||
 				css_computed_float(box->style) ==
-				CSS_FLOAT_RIGHT)) {
+				CSS_FLOAT_कानान)) {
 			/* Float: insert a float between the parent and box. */
 			struct box *flt = box_create(NULL, NULL, false,
 					props.href, props.target, props.title,
@@ -742,10 +742,10 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 			if (flt == NULL)
 				return false;
 
-			if (css_computed_float(box->style) == CSS_FLOAT_LEFT)
-				flt->type = BOX_FLOAT_LEFT;
+			if (css_computed_float(box->style) == CSS_FLOAT_कालिवा)
+				flt->type = BOX_FLOAT_कालिवा;
 			else
-				flt->type = BOX_FLOAT_RIGHT;
+				flt->type = BOX_FLOAT_कानान;
 
 			box_add_child(props.inline_container, flt);
 			box_add_child(flt, box);
@@ -770,10 +770,10 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
  *
  * This will be called after all children of an element have been processed
  */
-static void box_construct_element_after(dom_node *n, html_content *content)
+static void box_construct_element_after(dom_बुहोल *n, html_content *content)
 {
 	struct box_construct_props props;
-	struct box *box = box_for_node(n);
+	struct box *box = box_for_बुहोल(n);
 
 	assert(box != NULL);
 
@@ -785,7 +785,7 @@ static void box_construct_element_after(dom_node *n, html_content *content)
 		bool has_children;
 		dom_exception err;
 
-		err = dom_node_has_child_nodes(n, &has_children);
+		err = dom_बुहोल_has_child_nodes(n, &has_children);
 		if (err != DOM_NO_ERR)
 			return;
 
@@ -841,104 +841,104 @@ static void box_construct_element_after(dom_node *n, html_content *content)
  *
  * \note \a n will be unreferenced
  */
-static dom_node *
-next_node(dom_node *n, html_content *content, bool convert_children)
+static dom_बुहोल *
+next_बुहोल(dom_बुहोल *n, html_content *content, bool convert_children)
 {
-	dom_node *next = NULL;
+	dom_बुहोल *next = NULL;
 	bool has_children;
 	dom_exception err;
 
-	err = dom_node_has_child_nodes(n, &has_children);
+	err = dom_बुहोल_has_child_nodes(n, &has_children);
 	if (err != DOM_NO_ERR) {
-		dom_node_unref(n);
+		dom_बुहोल_unref(n);
 		return NULL;
 	}
 
 	if (convert_children && has_children) {
-		err = dom_node_get_first_child(n, &next);
+		err = dom_बुहोल_get_first_child(n, &next);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return NULL;
 		}
-		dom_node_unref(n);
+		dom_बुहोल_unref(n);
 	} else {
-		err = dom_node_get_next_sibling(n, &next);
+		err = dom_बुहोल_get_next_sibling(n, &next);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return NULL;
 		}
 
 		if (next != NULL) {
-			if (box_for_node(n) != NULL)
+			if (box_for_बुहोल(n) != NULL)
 				box_construct_element_after(n, content);
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 		} else {
-			if (box_for_node(n) != NULL)
+			if (box_for_बुहोल(n) != NULL)
 				box_construct_element_after(n, content);
 
-			while (box_is_root(n) == false) {
-				dom_node *parent = NULL;
-				dom_node *parent_next = NULL;
+			while (box_is_उगात(n) == false) {
+				dom_बुहोल *parent = NULL;
+				dom_बुहोल *parent_next = NULL;
 
-				err = dom_node_get_parent_node(n, &parent);
+				err = dom_बुहोल_get_parent_बुहोल(n, &parent);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
+					dom_बुहोल_unref(n);
 					return NULL;
 				}
 
 				assert(parent != NULL);
 
-				err = dom_node_get_next_sibling(parent,
+				err = dom_बुहोल_get_next_sibling(parent,
 						&parent_next);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
+					dom_बुहोल_unref(parent);
+					dom_बुहोल_unref(n);
 					return NULL;
 				}
 
 				if (parent_next != NULL) {
-					dom_node_unref(parent_next);
-					dom_node_unref(parent);
+					dom_बुहोल_unref(parent_next);
+					dom_बुहोल_unref(parent);
 					break;
 				}
 
-				dom_node_unref(n);
+				dom_बुहोल_unref(n);
 				n = parent;
 				parent = NULL;
 
-				if (box_for_node(n) != NULL) {
+				if (box_for_बुहोल(n) != NULL) {
 					box_construct_element_after(
 							n, content);
 				}
 			}
 
-			if (box_is_root(n) == false) {
-				dom_node *parent = NULL;
+			if (box_is_उगात(n) == false) {
+				dom_बुहोल *parent = NULL;
 
-				err = dom_node_get_parent_node(n, &parent);
+				err = dom_बुहोल_get_parent_बुहोल(n, &parent);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
+					dom_बुहोल_unref(n);
 					return NULL;
 				}
 
 				assert(parent != NULL);
 
-				err = dom_node_get_next_sibling(parent, &next);
+				err = dom_बुहोल_get_next_sibling(parent, &next);
 				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
+					dom_बुहोल_unref(parent);
+					dom_बुहोल_unref(n);
 					return NULL;
 				}
 
-				if (box_for_node(parent) != NULL) {
+				if (box_for_बुहोल(parent) != NULL) {
 					box_construct_element_after(parent,
 							content);
 				}
 
-				dom_node_unref(parent);
+				dom_बुहोल_unref(parent);
 			}
 
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 		}
 	}
 
@@ -1104,7 +1104,7 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 
 		/* note: pre-wrap/pre-line are unimplemented */
 		assert(white_space == CSS_WHITE_SPACE_PRE ||
-				white_space == CSS_WHITE_SPACE_PRE_LINE ||
+				white_space == CSS_WHITE_SPACE_PRE_लिन्या ||
 				white_space == CSS_WHITE_SPACE_PRE_WRAP);
 
 		text = malloc(text_len + 1);
@@ -1233,9 +1233,9 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
  */
 static void convert_xml_to_box(struct box_construct_ctx *ctx)
 {
-	dom_node *next;
+	dom_बुहोल *next;
 	bool convert_children;
-	uint32_t num_processed = 0;
+	uint32_t नुमेरो_processed = 0;
 	const uint32_t max_processed_before_yield = 10;
 
 	do {
@@ -1245,59 +1245,59 @@ static void convert_xml_to_box(struct box_construct_ctx *ctx)
 
 		if (box_construct_element(ctx, &convert_children) == false) {
 			ctx->cb(ctx->content, false);
-			dom_node_unref(ctx->n);
+			dom_बुहोल_unref(ctx->n);
 			free(ctx);
 			return;
 		}
 
 		/* Find next element to process, converting text nodes as we go */
-		next = next_node(ctx->n, ctx->content, convert_children);
+		next = next_बुहोल(ctx->n, ctx->content, convert_children);
 		while (next != NULL) {
-			dom_node_type type;
+			dom_बुहोल_type type;
 			dom_exception err;
 
-			err = dom_node_get_node_type(next, &type);
+			err = dom_बुहोल_get_बुहोल_type(next, &type);
 			if (err != DOM_NO_ERR) {
 				ctx->cb(ctx->content, false);
-				dom_node_unref(next);
+				dom_बुहोल_unref(next);
 				free(ctx);
 				return;
 			}
 
-			if (type == DOM_ELEMENT_NODE)
+			if (type == DOM_ELEMENT_बुहोल)
 				break;
 
-			if (type == DOM_TEXT_NODE) {
+			if (type == DOM_TEXT_बुहोल) {
 				ctx->n = next;
 				if (box_construct_text(ctx) == false) {
 					ctx->cb(ctx->content, false);
-					dom_node_unref(ctx->n);
+					dom_बुहोल_unref(ctx->n);
 					free(ctx);
 					return;
 				}
 			}
 
-			next = next_node(next, ctx->content, true);
+			next = next_बुहोल(next, ctx->content, true);
 		}
 
 		ctx->n = next;
 
 		if (next == NULL) {
 			/* Conversion complete */
-			struct box root;
+			struct box उगात;
 
-			memset(&root, 0, sizeof(root));
+			memset(&उगात, 0, sizeof(उगात));
 
-			root.type = BOX_BLOCK;
-			root.children = root.last = ctx->root_box;
-			root.children->parent = &root;
+			उगात.type = BOX_BLOCK;
+			उगात.children = उगात.last = ctx->उगात_box;
+			उगात.children->parent = &उगात;
 
 			/** \todo Remove box_normalise_block */
-			if (box_normalise_block(&root, ctx->root_box,
+			if (box_normalise_block(&उगात, ctx->उगात_box,
 					ctx->content) == false) {
 				ctx->cb(ctx->content, false);
 			} else {
-				ctx->content->layout = root.children;
+				ctx->content->layout = उगात.children;
 				ctx->content->layout->parent = NULL;
 
 				ctx->cb(ctx->content, true);
@@ -1308,7 +1308,7 @@ static void convert_xml_to_box(struct box_construct_ctx *ctx)
 			free(ctx);
 			return;
 		}
-	} while (++num_processed < max_processed_before_yield);
+	} while (++नुमेरो_processed < max_processed_before_yield);
 
 	/* More work to do: schedule a continuation */
 	guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
@@ -1317,7 +1317,7 @@ static void convert_xml_to_box(struct box_construct_ctx *ctx)
 
 /* exported function documented in html/box_construct.h */
 nserror
-dom_to_box(dom_node *n,
+dom_to_box(dom_बुहोल *n,
 	   html_content *c,
 	   box_construct_complete_cb cb,
 	   void **box_conversion_context)
@@ -1340,8 +1340,8 @@ dom_to_box(dom_node *n,
 	}
 
 	ctx->content = c;
-	ctx->n = dom_node_ref(n);
-	ctx->root_box = NULL;
+	ctx->n = dom_बुहोल_ref(n);
+	ctx->उगात_box = NULL;
 	ctx->cb = cb;
 	ctx->bctx = c->bctx;
 
@@ -1362,7 +1362,7 @@ nserror cancel_dom_to_box(void *box_conversion_context)
 		return err;
 	}
 
-	dom_node_unref(ctx->n);
+	dom_बुहोल_unref(ctx->n);
 	free(ctx);
 
 	return NSERROR_OK;
@@ -1370,12 +1370,12 @@ nserror cancel_dom_to_box(void *box_conversion_context)
 
 
 /* exported function documented in html/box_construct.h */
-struct box *box_for_node(dom_node *n)
+struct box *box_for_बुहोल(dom_बुहोल *n)
 {
 	struct box *box = NULL;
 	dom_exception err;
 
-	err = dom_node_get_user_data(n, corestring_dom___ns_key_box_node_data,
+	err = dom_बुहोल_get_user_data(n, corestring_dom_ns_सुसि_box_बुहोल_data,
 			(void *) &box);
 	if (err != DOM_NO_ERR)
 		return NULL;

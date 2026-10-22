@@ -84,7 +84,7 @@ bool html_css_saw_insecure_stylesheets(struct html_content *htmlc);
  * \param node the DOM link node to process. 
  * \return true on success else false.
  */
-bool html_css_process_link(struct html_content *htmlc, dom_node *node);
+bool html_css_process_link(struct html_content *htmlc, dom_बुहोल *बुहोल);
 
 /**
  * process a css style dom node 
@@ -93,7 +93,7 @@ bool html_css_process_link(struct html_content *htmlc, dom_node *node);
  * \param node the DOM node to process. 
  * \return true on success else false.
  */
-bool html_css_process_style(struct html_content *htmlc, dom_node *node);
+bool html_css_process_style(struct html_content *htmlc, dom_बुहोल *बुहोल);
 
 /**
  * process a css style dom node update 
@@ -102,7 +102,7 @@ bool html_css_process_style(struct html_content *htmlc, dom_node *node);
  * \param node the DOM node to process. 
  * \return true on success else false.
  */
-bool html_css_update_style(struct html_content *htmlc, dom_node *node);
+bool html_css_update_style(struct html_content *htmlc, dom_बुहोल *बुहोल);
 
 
 

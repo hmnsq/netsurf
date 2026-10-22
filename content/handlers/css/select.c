@@ -32,64 +32,64 @@
 #include "css/hints.h"
 #include "css/select.h"
 
-static css_error node_name(void *pw, void *node, css_qname *qname);
-static css_error node_classes(void *pw, void *node,
+static css_error बुहोल_name(void *pw, void *बुहोल, css_qname *qname);
+static css_error बुहोल_classes(void *pw, void *बुहोल,
 		lwc_string ***classes, uint32_t *n_classes);
-static css_error node_id(void *pw, void *node, lwc_string **id);
-static css_error named_parent_node(void *pw, void *node,
+static css_error बुहोल_id(void *pw, void *बुहोल, lwc_string **id);
+static css_error named_parent_बुहोल(void *pw, void *बुहोल,
 		const css_qname *qname, void **parent);
-static css_error named_sibling_node(void *pw, void *node,
+static css_error named_sibling_बुहोल(void *pw, void *बुहोल,
 		const css_qname *qname, void **sibling);
-static css_error named_generic_sibling_node(void *pw, void *node,
+static css_error named_generic_sibling_बुहोल(void *pw, void *बुहोल,
 		const css_qname *qname, void **sibling);
-static css_error parent_node(void *pw, void *node, void **parent);
-static css_error sibling_node(void *pw, void *node, void **sibling);
-static css_error node_has_name(void *pw, void *node,
+static css_error parent_बुहोल(void *pw, void *बुहोल, void **parent);
+static css_error sibling_बुहोल(void *pw, void *बुहोल, void **sibling);
+static css_error बुहोल_has_name(void *pw, void *बुहोल,
 		const css_qname *qname, bool *match);
-static css_error node_has_class(void *pw, void *node,
+static css_error बुहोल_has_class(void *pw, void *बुहोल,
 		lwc_string *name, bool *match);
-static css_error node_has_id(void *pw, void *node,
+static css_error बुहोल_has_id(void *pw, void *बुहोल,
 		lwc_string *name, bool *match);
-static css_error node_has_attribute(void *pw, void *node,
+static css_error बुहोल_has_attribute(void *pw, void *बुहोल,
 		const css_qname *qname, bool *match);
-static css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+static css_error बुहोल_has_attribute_equal(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match);
-static css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+static css_error बुहोल_has_attribute_dashmatch(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match);
-static css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+static css_error बुहोल_has_attribute_includes(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match);
-static css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+static css_error बुहोल_has_attribute_prefix(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match);
-static css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+static css_error बुहोल_has_attribute_suffix(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match);
-static css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+static css_error बुहोल_has_attribute_substring(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match);
-static css_error node_is_root(void *pw, void *node, bool *match);
-static css_error node_count_siblings(void *pw, void *node,
-		bool same_name, bool after, int32_t *count);
-static css_error node_is_empty(void *pw, void *node, bool *match);
-static css_error node_is_link(void *pw, void *node, bool *match);
-static css_error node_is_hover(void *pw, void *node, bool *match);
-static css_error node_is_active(void *pw, void *node, bool *match);
-static css_error node_is_focus(void *pw, void *node, bool *match);
-static css_error node_is_enabled(void *pw, void *node, bool *match);
-static css_error node_is_disabled(void *pw, void *node, bool *match);
-static css_error node_is_checked(void *pw, void *node, bool *match);
-static css_error node_is_target(void *pw, void *node, bool *match);
-static css_error node_is_lang(void *pw, void *node,
+static css_error बुहोल_is_उगात(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_बिलांग_siblings(void *pw, void *बुहोल,
+		bool same_name, bool after, int32_t *बिलांग);
+static css_error बुहोल_is_empty(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_link(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_hover(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_active(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_focus(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_enabled(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_disabled(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_checked(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_target(void *pw, void *बुहोल, bool *match);
+static css_error बुहोल_is_lang(void *pw, void *बुहोल,
 		lwc_string *lang, bool *match);
 static css_error ua_default_for_property(void *pw, uint32_t property,
 		css_hint *hint);
-static css_error set_libcss_node_data(void *pw, void *node,
-		void *libcss_node_data);
-static css_error get_libcss_node_data(void *pw, void *node,
-		void **libcss_node_data);
+static css_error set_libcss_बुहोल_data(void *pw, void *बुहोल,
+		void *libcss_बुहोल_data);
+static css_error get_libcss_बुहोल_data(void *pw, void *बुहोल,
+		void **libcss_बुहोल_data);
 
 /**
  * Selection callback table for libcss
@@ -97,42 +97,42 @@ static css_error get_libcss_node_data(void *pw, void *node,
 static css_select_handler selection_handler = {
 	CSS_SELECT_HANDLER_VERSION_1,
 
-	node_name,
-	node_classes,
-	node_id,
-	named_ancestor_node,
-	named_parent_node,
-	named_sibling_node,
-	named_generic_sibling_node,
-	parent_node,
-	sibling_node,
-	node_has_name,
-	node_has_class,
-	node_has_id,
-	node_has_attribute,
-	node_has_attribute_equal,
-	node_has_attribute_dashmatch,
-	node_has_attribute_includes,
-	node_has_attribute_prefix,
-	node_has_attribute_suffix,
-	node_has_attribute_substring,
-	node_is_root,
-	node_count_siblings,
-	node_is_empty,
-	node_is_link,
-	node_is_visited,
-	node_is_hover,
-	node_is_active,
-	node_is_focus,
-	node_is_enabled,
-	node_is_disabled,
-	node_is_checked,
-	node_is_target,
-	node_is_lang,
-	node_presentational_hint,
+	बुहोल_name,
+	बुहोल_classes,
+	बुहोल_id,
+	named_ancestor_बुहोल,
+	named_parent_बुहोल,
+	named_sibling_बुहोल,
+	named_generic_sibling_बुहोल,
+	parent_बुहोल,
+	sibling_बुहोल,
+	बुहोल_has_name,
+	बुहोल_has_class,
+	बुहोल_has_id,
+	बुहोल_has_attribute,
+	बुहोल_has_attribute_equal,
+	बुहोल_has_attribute_dashmatch,
+	बुहोल_has_attribute_includes,
+	बुहोल_has_attribute_prefix,
+	बुहोल_has_attribute_suffix,
+	बुहोल_has_attribute_substring,
+	बुहोल_is_उगात,
+	बुहोल_बिलांग_siblings,
+	बुहोल_is_empty,
+	बुहोल_is_link,
+	बुहोल_is_visited,
+	बुहोल_is_hover,
+	बुहोल_is_active,
+	बुहोल_is_focus,
+	बुहोल_is_enabled,
+	बुहोल_is_disabled,
+	बुहोल_is_checked,
+	बुहोल_is_target,
+	बुहोल_is_lang,
+	बुहोल_presentational_hint,
 	ua_default_for_property,
-	set_libcss_node_data,
-	get_libcss_node_data,
+	set_libcss_बुहोल_data,
+	get_libcss_बुहोल_data,
 };
 
 /**
@@ -192,41 +192,41 @@ css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
-static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+static void nscss_dom_user_data_handler(dom_बुहोल_operation operation,
+		dom_string *सुसि, void *data, struct dom_बुहोल *src,
+		struct dom_बुहोल *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
-			key) == false || data == NULL) {
+	if (dom_string_isequal(corestring_dom_ns_सुसि_libcss_बुहोल_data,
+			सुसि) == false || data == NULL) {
 		return;
 	}
 
 	switch (operation) {
-	case DOM_NODE_CLONED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_CLONED,
+	case DOM_बुहोल_CLONED:
+		error = css_libcss_बुहोल_data_handler(&selection_handler,
+				CSS_बुहोल_CLONED,
 				NULL, src, dst, data);
 		if (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
 		break;
 
-	case DOM_NODE_RENAMED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_MODIFIED,
+	case DOM_बुहोल_RENAMED:
+		error = css_libcss_बुहोल_data_handler(&selection_handler,
+				CSS_बुहोल_MODIFIED,
 				NULL, src, NULL, data);
 		if (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
 		break;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_DELETED,
+	case DOM_बुहोल_IMPORTED:
+	case DOM_बुहोल_ADOPTED:
+	case DOM_बुहोल_DELETED:
+		error = css_libcss_बुहोल_data_handler(&selection_handler,
+				CSS_बुहोल_DELETED,
 				NULL, src, NULL, data);
 		if (error != CSS_OK)
 			NSLOG(netsurf, INFO,
@@ -250,7 +250,7 @@ static void nscss_dom_user_data_handler(dom_node_operation operation,
  * \return Pointer to selection results (containing computed styles),
  *         or NULL on failure
  */
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_बुहोल *n,
 		const css_media *media,
 		const css_unit_ctx *unit_len_ctx,
 		const css_stylesheet *inline_style)
@@ -289,11 +289,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 	}
 
 	for (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
-			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
+			pseudo_element < CSS_PSEUDO_ELEMENT_बिलांग;
 			pseudo_element++) {
 
 		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
-				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
+				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_लिन्या)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
 			continue;
@@ -370,13 +370,13 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_name(void *pw, void *node, css_qname *qname)
+css_error बुहोल_name(void *pw, void *बुहोल, css_qname *qname)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *name;
 	dom_exception err;
 
-	err = dom_node_get_node_name(n, &name);
+	err = dom_बुहोल_get_बुहोल_name(n, &name);
 	if (err != DOM_NO_ERR)
 		return CSS_NOMEM;
 
@@ -407,10 +407,10 @@ css_error node_name(void *pw, void *node, css_qname *qname)
  *       be allocated using the same allocator as used by libcss during style
  *       selection.
  */
-css_error node_classes(void *pw, void *node,
+css_error बुहोल_classes(void *pw, void *बुहोल,
 		lwc_string ***classes, uint32_t *n_classes)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_exception err;
 
 	*classes = NULL;
@@ -432,9 +432,9 @@ css_error node_classes(void *pw, void *node,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_id(void *pw, void *node, lwc_string **id)
+css_error बुहोल_id(void *pw, void *बुहोल, lwc_string **id)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *attr;
 	dom_exception err;
 
@@ -468,12 +468,12 @@ css_error node_id(void *pw, void *node, lwc_string **id)
  *
  * \post \a ancestor will contain the result, or NULL if there is no match
  */
-css_error named_ancestor_node(void *pw, void *node,
+css_error named_ancestor_बुहोल(void *pw, void *बुहोल,
 		const css_qname *qname, void **ancestor)
 {
-	dom_element_named_ancestor_node(node, qname->name,
+	dom_element_named_ancestor_बुहोल(बुहोल, qname->name,
 			(struct dom_element **)ancestor);
-	dom_node_unref(*ancestor);
+	dom_बुहोल_unref(*ancestor);
 
 	return CSS_OK;
 }
@@ -489,12 +489,12 @@ css_error named_ancestor_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error named_parent_node(void *pw, void *node,
+css_error named_parent_बुहोल(void *pw, void *बुहोल,
 		const css_qname *qname, void **parent)
 {
-	dom_element_named_parent_node(node, qname->name,
+	dom_element_named_parent_बुहोल(बुहोल, qname->name,
 			(struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_बुहोल_unref(*parent);
 
 	return CSS_OK;
 }
@@ -510,52 +510,52 @@ css_error named_parent_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_sibling_node(void *pw, void *node,
+css_error named_sibling_बुहोल(void *pw, void *बुहोल,
 		const css_qname *qname, void **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_बुहोल *n = बुहोल;
+	dom_बुहोल *prev;
 	dom_exception err;
 
 	*sibling = NULL;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
+	err = dom_बुहोल_get_previous_sibling(n, &n);
 	if (err != DOM_NO_ERR)
 		return CSS_OK;
 
 	while (n != NULL) {
-		dom_node_type type;
+		dom_बुहोल_type type;
 
-		err = dom_node_get_node_type(n, &type);
+		err = dom_बुहोल_get_बुहोल_type(n, &type);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
+		if (type == DOM_ELEMENT_बुहोल)
 			break;
 
-		err = dom_node_get_previous_sibling(n, &prev);
+		err = dom_बुहोल_get_previous_sibling(n, &prev);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_बुहोल_unref(n);
 		n = prev;
 	}
 
 	if (n != NULL) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(n, &name);
+		err = dom_बुहोल_get_बुहोल_name(n, &name);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_बुहोल_unref(n);
 
 		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
@@ -578,53 +578,53 @@ css_error named_sibling_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_generic_sibling_node(void *pw, void *node,
+css_error named_generic_sibling_बुहोल(void *pw, void *बुहोल,
 		const css_qname *qname, void **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_बुहोल *n = बुहोल;
+	dom_बुहोल *prev;
 	dom_exception err;
 
 	*sibling = NULL;
 
-	err = dom_node_get_previous_sibling(n, &n);
+	err = dom_बुहोल_get_previous_sibling(n, &n);
 	if (err != DOM_NO_ERR)
 		return CSS_OK;
 
 	while (n != NULL) {
-		dom_node_type type;
+		dom_बुहोल_type type;
 		dom_string *name;
 
-		err = dom_node_get_node_type(n, &type);
+		err = dom_बुहोल_get_बुहोल_type(n, &type);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
-			err = dom_node_get_node_name(n, &name);
+		if (type == DOM_ELEMENT_बुहोल) {
+			err = dom_बुहोल_get_बुहोल_name(n, &name);
 			if (err != DOM_NO_ERR) {
-				dom_node_unref(n);
+				dom_बुहोल_unref(n);
 				return CSS_OK;
 			}
 
 			if (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
-				dom_node_unref(n);
+				dom_बुहोल_unref(n);
 				*sibling = n;
 				break;
 			}
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_previous_sibling(n, &prev);
+		err = dom_बुहोल_get_previous_sibling(n, &prev);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_बुहोल_unref(n);
 		n = prev;
 	}
 
@@ -641,10 +641,10 @@ css_error named_generic_sibling_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error parent_node(void *pw, void *node, void **parent)
+css_error parent_बुहोल(void *pw, void *बुहोल, void **parent)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_parent_बुहोल(बुहोल, (struct dom_element **)parent);
+	dom_बुहोल_unref(*parent);
 
 	return CSS_OK;
 }
@@ -659,44 +659,44 @@ css_error parent_node(void *pw, void *node, void **parent)
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error sibling_node(void *pw, void *node, void **sibling)
+css_error sibling_बुहोल(void *pw, void *बुहोल, void **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_बुहोल *n = बुहोल;
+	dom_बुहोल *prev;
 	dom_exception err;
 
 	*sibling = NULL;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
+	err = dom_बुहोल_get_previous_sibling(n, &n);
 	if (err != DOM_NO_ERR)
 		return CSS_OK;
 
 	while (n != NULL) {
-		dom_node_type type;
+		dom_बुहोल_type type;
 
-		err = dom_node_get_node_type(n, &type);
+		err = dom_बुहोल_get_बुहोल_type(n, &type);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
+		if (type == DOM_ELEMENT_बुहोल)
 			break;
 
-		err = dom_node_get_previous_sibling(n, &prev);
+		err = dom_बुहोल_get_previous_sibling(n, &prev);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_बुहोल_unref(n);
 		n = prev;
 	}
 
 	if (n != NULL) {
 		/** \todo Sort out reference counting */
-		dom_node_unref(n);
+		dom_बुहोल_unref(n);
 
 		*sibling = n;
 	}
@@ -715,18 +715,18 @@ css_error sibling_node(void *pw, void *node, void **sibling)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_name(void *pw, void *node,
+css_error बुहोल_has_name(void *pw, void *बुहोल,
 		const css_qname *qname, bool *match)
 {
 	nscss_select_ctx *ctx = pw;
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 
 	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
 			lwc_error_ok && *match == false) {
 		dom_string *name;
 		dom_exception err;
 
-		err = dom_node_get_node_name(n, &name);
+		err = dom_बुहोल_get_बुहोल_name(n, &name);
 		if (err != DOM_NO_ERR)
 			return CSS_OK;
 
@@ -750,10 +750,10 @@ css_error node_has_name(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_class(void *pw, void *node,
+css_error बुहोल_has_class(void *pw, void *बुहोल,
 		lwc_string *name, bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_exception err;
 
 	/** \todo: Ensure that libdom performs case-insensitive
@@ -776,10 +776,10 @@ css_error node_has_class(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_id(void *pw, void *node,
+css_error बुहोल_has_id(void *pw, void *बुहोल,
 		lwc_string *name, bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *attr;
 	dom_exception err;
 
@@ -811,10 +811,10 @@ css_error node_has_id(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute(void *pw, void *node,
+css_error बुहोल_has_attribute(void *pw, void *बुहोल,
 		const css_qname *qname, bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *name;
 	dom_exception err;
 
@@ -848,16 +848,16 @@ css_error node_has_attribute(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error बुहोल_has_attribute_equal(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(हालागा);
 
 	if (vlen == 0) {
 		*match = false;
@@ -879,7 +879,7 @@ css_error node_has_attribute_equal(void *pw, void *node,
 
 	dom_string_unref(name);
 
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, हालागा);
 
 	dom_string_unref(atr_val);
 
@@ -900,16 +900,16 @@ css_error node_has_attribute_equal(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error बुहोल_has_attribute_dashmatch(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(हालागा);
 
 	if (vlen == 0) {
 		*match = false;
@@ -932,11 +932,11 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, हालागा);
 
 	/* check for dashmatch */
 	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
+		const char *vdata = lwc_string_data(हालागा);
 		const char *data = (const char *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
@@ -965,15 +965,15 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error बुहोल_has_attribute_includes(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(हालागा);
 	const char *p;
 	const char *start;
 	const char *end;
@@ -1007,7 +1007,7 @@ css_error node_has_attribute_includes(void *pw, void *node,
 		if (*p == ' ' || *p == '\0') {
 			if ((size_t) (p - start) == vlen &&
 			    strncasecmp(start,
-					lwc_string_data(value),
+					lwc_string_data(हालागा),
 					vlen) == 0) {
 				*match = true;
 				break;
@@ -1036,16 +1036,16 @@ css_error node_has_attribute_includes(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error बुहोल_has_attribute_prefix(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(हालागा);
 
 	if (vlen == 0) {
 		*match = false;
@@ -1068,7 +1068,7 @@ css_error node_has_attribute_prefix(void *pw, void *node,
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, हालागा);
 
 	/* check for prefix match */
 	if (*match == false) {
@@ -1076,7 +1076,7 @@ css_error node_has_attribute_prefix(void *pw, void *node,
 		size_t len = dom_string_byte_length(atr_val);
 
 		if ((len >= vlen) &&
-		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
+		    (strncasecmp(data, lwc_string_data(हालागा), vlen) == 0)) {
 			*match = true;
 		}
 	}
@@ -1100,16 +1100,16 @@ css_error node_has_attribute_prefix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error बुहोल_has_attribute_suffix(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(हालागा);
 
 	if (vlen == 0) {
 		*match = false;
@@ -1132,7 +1132,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, हालागा);
 
 	/* check for prefix match */
 	if (*match == false) {
@@ -1142,7 +1142,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 		const char *start = (char *) data + len - vlen;
 
 		if ((len >= vlen) &&
-		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
+		    (strncasecmp(start, lwc_string_data(हालागा), vlen) == 0)) {
 			*match = true;
 		}
 
@@ -1168,16 +1168,16 @@ css_error node_has_attribute_suffix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error बुहोल_has_attribute_substring(void *pw, void *बुहोल,
+		const css_qname *qname, lwc_string *हालागा,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(हालागा);
 
 	if (vlen == 0) {
 		*match = false;
@@ -1200,11 +1200,11 @@ css_error node_has_attribute_substring(void *pw, void *node,
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, हालागा);
 
 	/* check for prefix match */
 	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
+		const char *vdata = lwc_string_data(हालागा);
 		const char *start = (const char *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 		const char *last_start = start + len - vlen;
@@ -1237,27 +1237,27 @@ css_error node_has_attribute_substring(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_root(void *pw, void *node, bool *match)
+css_error बुहोल_is_उगात(void *pw, void *बुहोल, bool *match)
 {
-	dom_node *n = node;
-	dom_node *parent;
-	dom_node_type type;
+	dom_बुहोल *n = बुहोल;
+	dom_बुहोल *parent;
+	dom_बुहोल_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
+	err = dom_बुहोल_get_parent_बुहोल(n, &parent);
 	if (err != DOM_NO_ERR) {
 		return CSS_NOMEM;
 	}
 
 	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+		err = dom_बुहोल_get_बुहोल_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_बुहोल_unref(parent);
 
 		if (err != DOM_NO_ERR)
 			return CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
+		if (type != DOM_DOCUMENT_बुहोल) {
 			*match = false;
 			return CSS_OK;
 		}
@@ -1269,33 +1269,33 @@ css_error node_is_root(void *pw, void *node, bool *match)
 }
 
 static int
-node_count_siblings_check(dom_node *node,
+बुहोल_बिलांग_siblings_check(dom_बुहोल *बुहोल,
 			  bool check_name,
 			  dom_string *name)
 {
-	dom_node_type type;
+	dom_बुहोल_type type;
 	int ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
+	if (बुहोल == NULL)
 		return 0;
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
+	exc = dom_बुहोल_get_बुहोल_type(बुहोल, &type);
+	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_बुहोल)) {
 		return 0;
 	}
 
 	if (check_name) {
-		dom_string *node_name = NULL;
-		exc = dom_node_get_node_name(node, &node_name);
+		dom_string *बुहोल_name = NULL;
+		exc = dom_बुहोल_get_बुहोल_name(बुहोल, &बुहोल_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		if ((exc == DOM_NO_ERR) && (बुहोल_name != NULL)) {
 
 			if (dom_string_caseless_isequal(name,
-							node_name)) {
+							बुहोल_name)) {
 				ret = 1;
 			}
-			dom_string_unref(node_name);
+			dom_string_unref(बुहोल_name);
 		}
 	} else {
 		ret = 1;
@@ -1316,57 +1316,57 @@ node_count_siblings_check(dom_node *node,
  *
  * \post \a count will contain the number of siblings
  */
-css_error node_count_siblings(void *pw, void *n, bool same_name,
-		bool after, int32_t *count)
+css_error बुहोल_बिलांग_siblings(void *pw, void *n, bool same_name,
+		bool after, int32_t *बिलांग)
 {
 	int32_t cnt = 0;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *बुहोल_name = NULL;
 
 	if (same_name) {
-		dom_node *node = n;
-		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
+		dom_बुहोल *बुहोल = n;
+		exc = dom_बुहोल_get_बुहोल_name(बुहोल, &बुहोल_name);
+		if ((exc != DOM_NO_ERR) || (बुहोल_name == NULL)) {
 			return CSS_NOMEM;
 		}
 	}
 
 	if (after) {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+		dom_बुहोल *बुहोल = dom_बुहोल_ref(n);
+		dom_बुहोल *next;
 
 		do {
-			exc = dom_node_get_next_sibling(node, &next);
+			exc = dom_बुहोल_get_next_sibling(बुहोल, &next);
 			if ((exc != DOM_NO_ERR))
 				break;
 
-			dom_node_unref(node);
-			node = next;
+			dom_बुहोल_unref(बुहोल);
+			बुहोल = next;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
+			cnt += बुहोल_बिलांग_siblings_check(बुहोल, same_name, बुहोल_name);
+		} while (बुहोल != NULL);
 	} else {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+		dom_बुहोल *बुहोल = dom_बुहोल_ref(n);
+		dom_बुहोल *next;
 
 		do {
-			exc = dom_node_get_previous_sibling(node, &next);
+			exc = dom_बुहोल_get_previous_sibling(बुहोल, &next);
 			if ((exc != DOM_NO_ERR))
 				break;
 
-			dom_node_unref(node);
-			node = next;
+			dom_बुहोल_unref(बुहोल);
+			बुहोल = next;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
+			cnt += बुहोल_बिलांग_siblings_check(बुहोल, same_name, बुहोल_name);
 
-		} while (node != NULL);
+		} while (बुहोल != NULL);
 	}
 
-	if (node_name != NULL) {
-		dom_string_unref(node_name);
+	if (बुहोल_name != NULL) {
+		dom_string_unref(बुहोल_name);
 	}
 
-	*count = cnt;
+	*बिलांग = cnt;
 	return CSS_OK;
 }
 
@@ -1380,39 +1380,39 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
  *
  * \post \a match will contain true if the node is empty and false otherwise.
  */
-css_error node_is_empty(void *pw, void *node, bool *match)
+css_error बुहोल_is_empty(void *pw, void *बुहोल, bool *match)
 {
-	dom_node *n = node, *next;
+	dom_बुहोल *n = बुहोल, *next;
 	dom_exception err;
 
 	*match = true;
 
-	err = dom_node_get_first_child(n, &n);
+	err = dom_बुहोल_get_first_child(n, &n);
 	if (err != DOM_NO_ERR) {
 		return CSS_BADPARM;
 	}
 
 	while (n != NULL) {
-		dom_node_type ntype;
-		err = dom_node_get_node_type(n, &ntype);
+		dom_बुहोल_type ntype;
+		err = dom_बुहोल_get_बुहोल_type(n, &ntype);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
-		    ntype == DOM_TEXT_NODE) {
+		if (ntype == DOM_ELEMENT_बुहोल ||
+		    ntype == DOM_TEXT_बुहोल) {
 			*match = false;
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			break;
 		}
 
-		err = dom_node_get_next_sibling(n, &next);
+		err = dom_बुहोल_get_next_sibling(n, &next);
 		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
+			dom_बुहोल_unref(n);
 			return CSS_BADPARM;
 		}
-		dom_node_unref(n);
+		dom_बुहोल_unref(n);
 		n = next;
 	}
 
@@ -1429,20 +1429,20 @@ css_error node_is_empty(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_link(void *pw, void *n, bool *match)
+css_error बुहोल_is_link(void *pw, void *n, bool *match)
 {
-	dom_node *node = n;
+	dom_बुहोल *बुहोल = n;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *बुहोल_name = NULL;
 
-	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
+	exc = dom_बुहोल_get_बुहोल_name(बुहोल, &बुहोल_name);
+	if ((exc != DOM_NO_ERR) || (बुहोल_name == NULL)) {
 		return CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	if (dom_string_caseless_lwc_isequal(बुहोल_name, corestring_lwc_a)) {
 		bool has_href;
-		exc = dom_element_has_attribute(node, corestring_dom_href,
+		exc = dom_element_has_attribute(बुहोल, corestring_dom_href,
 				&has_href);
 		if ((exc == DOM_NO_ERR) && (has_href)) {
 			*match = true;
@@ -1452,7 +1452,7 @@ css_error node_is_link(void *pw, void *n, bool *match)
 	} else {
 		*match = false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(बुहोल_name);
 
 	return CSS_OK;
 }
@@ -1468,7 +1468,7 @@ css_error node_is_link(void *pw, void *n, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_visited(void *pw, void *node, bool *match)
+css_error बुहोल_is_visited(void *pw, void *बुहोल, bool *match)
 {
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
@@ -1476,12 +1476,12 @@ css_error node_is_visited(void *pw, void *node, bool *match)
 	const struct url_data *data;
 
 	dom_exception exc;
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_string *s = NULL;
 
 	*match = false;
 
-	exc = dom_node_get_node_name(n, &s);
+	exc = dom_बुहोल_get_बुहोल_name(n, &s);
 	if ((exc != DOM_NO_ERR) || (s == NULL)) {
 		return CSS_NOMEM;
 	}
@@ -1537,7 +1537,7 @@ css_error node_is_visited(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_hover(void *pw, void *node, bool *match)
+css_error बुहोल_is_hover(void *pw, void *बुहोल, bool *match)
 {
 	/** \todo Support hovering */
 
@@ -1556,7 +1556,7 @@ css_error node_is_hover(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_active(void *pw, void *node, bool *match)
+css_error बुहोल_is_active(void *pw, void *बुहोल, bool *match)
 {
 	/** \todo Support active nodes */
 
@@ -1575,7 +1575,7 @@ css_error node_is_active(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_focus(void *pw, void *node, bool *match)
+css_error बुहोल_is_focus(void *pw, void *बुहोल, bool *match)
 {
 	/** \todo Support focussed nodes */
 
@@ -1594,7 +1594,7 @@ css_error node_is_focus(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is enabled and false otherwise.
  */
-css_error node_is_enabled(void *pw, void *node, bool *match)
+css_error बुहोल_is_enabled(void *pw, void *बुहोल, bool *match)
 {
 	/** \todo Support enabled nodes */
 
@@ -1613,7 +1613,7 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is disabled and false otherwise.
  */
-css_error node_is_disabled(void *pw, void *node, bool *match)
+css_error बुहोल_is_disabled(void *pw, void *बुहोल, bool *match)
 {
 	/** \todo Support disabled nodes */
 
@@ -1632,7 +1632,7 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is checked and false otherwise.
  */
-css_error node_is_checked(void *pw, void *node, bool *match)
+css_error बुहोल_is_checked(void *pw, void *बुहोल, bool *match)
 {
 	/** \todo Support checked nodes */
 
@@ -1651,7 +1651,7 @@ css_error node_is_checked(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node matches and false otherwise.
  */
-css_error node_is_target(void *pw, void *node, bool *match)
+css_error बुहोल_is_target(void *pw, void *बुहोल, bool *match)
 {
 	/** \todo Support target */
 
@@ -1671,7 +1671,7 @@ css_error node_is_target(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_lang(void *pw, void *node,
+css_error बुहोल_is_lang(void *pw, void *बुहोल,
 		lwc_string *lang, bool *match)
 {
 	/** \todo Support languages */
@@ -1729,35 +1729,35 @@ css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
 	return CSS_OK;
 }
 
-css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
+css_error set_libcss_बुहोल_data(void *pw, void *बुहोल, void *libcss_बुहोल_data)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_exception err;
-	void *old_node_data;
+	void *old_बुहोल_data;
 
 	/* Set this node's node data */
-	err = dom_node_set_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data, nscss_dom_user_data_handler,
-			(void *) &old_node_data);
+	err = dom_बुहोल_set_user_data(n,
+			corestring_dom_ns_सुसि_libcss_बुहोल_data,
+			libcss_बुहोल_data, nscss_dom_user_data_handler,
+			(void *) &old_बुहोल_data);
 	if (err != DOM_NO_ERR) {
 		return CSS_NOMEM;
 	}
 
-	assert(old_node_data == NULL);
+	assert(old_बुहोल_data == NULL);
 
 	return CSS_OK;
 }
 
-css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
+css_error get_libcss_बुहोल_data(void *pw, void *बुहोल, void **libcss_बुहोल_data)
 {
-	dom_node *n = node;
+	dom_बुहोल *n = बुहोल;
 	dom_exception err;
 
 	/* Get this node's node data */
-	err = dom_node_get_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data);
+	err = dom_बुहोल_get_user_data(n,
+			corestring_dom_ns_सुसि_libcss_बुहोल_data,
+			libcss_बुहोल_data);
 	if (err != DOM_NO_ERR) {
 		return CSS_NOMEM;
 	}

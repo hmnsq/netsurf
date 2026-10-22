@@ -53,14 +53,14 @@ typedef enum {
 	FETCH_AUTH,
 	FETCH_CERT_ERR,
 	FETCH_SSL_ERR
-} fetch_msg_type;
+} fetch_मेनसाहे_type;
 
 /** Minimum finished message type.
  *
  * If a fetch does not progress this far, it's an error and the fetch machinery
  * will send FETCH_ERROR to the llcache on fetch_free()
  */
-#define FETCH_MIN_FINISHED_MSG FETCH_FINISHED
+#define FETCH_MIN_FINISHED_मेनसाहे FETCH_FINISHED
 
 /**
  * This message is actually an internal message used to indicate
@@ -71,8 +71,8 @@ typedef enum {
 /**
  * Fetcher message data
  */
-typedef struct fetch_msg {
-	fetch_msg_type type;
+typedef struct fetch_मेनसाहे {
+	fetch_मेनसाहे_type type;
 
 	union {
 		const char *progress;
@@ -93,7 +93,7 @@ typedef struct fetch_msg {
 
 		const struct cert_chain *chain;
 	} data;
-} fetch_msg;
+} fetch_मेनसाहे;
 
 /**
  * Fetcher post data types
@@ -112,7 +112,7 @@ struct fetch_multipart_data {
 	struct fetch_multipart_data *next; /**< Next in linked list */
 
 	char *name; /**< Name of item */
-	char *value; /**< Item value */
+	char *हालागा; /**< Item value */
 
 	char *rawfile; /**< Raw filename if file is true */
 	bool file; /**< Item is a file */
@@ -132,7 +132,7 @@ struct fetch_postdata {
 };
 
 
-typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
+typedef void (*fetch_callback)(const fetch_मेनसाहे *मेनसाहे, void *p);
 
 /**
  * Start fetching data for the given URL.
@@ -233,12 +233,12 @@ const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
  */
 nserror fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
 				    const char *name,
-				    const char *value);
+				    const char *हालागा);
 
 /**
  * send message to fetch
  */
-void fetch_send_callback(const fetch_msg *msg, struct fetch *fetch);
+void fetch_send_callback(const fetch_मेनसाहे *मेनसाहे, struct fetch *fetch);
 
 /**
  * remove a queued fetch

@@ -63,12 +63,12 @@ struct image_cache_entry_s {
 
 	/* Statistics for replacement algorithm */
 
-	unsigned int redraw_count; /**< number of times object has been drawn */
+	unsigned int redraw_बिलांग; /**< number of times object has been drawn */
 	cache_age redraw_age; /**< Age of last redraw */
 	size_t bitmap_size; /**< size if storage occupied by bitmap */
 	cache_age bitmap_age; /**< Age of last conversion to a bitmap by cache*/
 
-	int conversion_count; /**< Number of times image has been converted */
+	int conversion_बिलांग; /**< Number of times image has been converted */
 };
 
 /**
@@ -96,39 +96,39 @@ struct image_cache_s {
 	size_t total_bitmap_size;
 
 	/** Total count of bitmaps currently allocated */
-	int bitmap_count;
+	int bitmap_बिलांग;
 
 	/** Maximum size of bitmaps allocated at any one time */
 	size_t max_bitmap_size;
 	/** The number of objects when maximum bitmap usage occurred */
-	int max_bitmap_size_count;
+	int max_bitmap_size_बिलांग;
 
 	/** Maximum count of bitmaps allocated at any one time */
-	int max_bitmap_count;
+	int max_bitmap_बिलांग;
 	/** The size of the bitmaps when the max count occurred */
-	size_t max_bitmap_count_size;
+	size_t max_bitmap_बिलांग_size;
 
 	/** Bitmap was not available at plot time required conversion */
-	int miss_count;
+	int miss_बिलांग;
 	uint64_t miss_size;
 	/** Bitmap was available at plot time required no conversion */
-	int hit_count;
+	int hit_बिलांग;
 	uint64_t hit_size;
 	/** Bitmap was not available at plot time and required
 	 * conversion which failed.
 	 */
-	int fail_count;
+	int fail_बिलांग;
 	uint64_t fail_size;
 
 	/* Cache entry freed without ever being redrawn */
 	int total_unrendered;
 	/** Bitmap was available but never required - wasted conversions */
-	int specultive_miss_count;
+	int specultive_miss_बिलांग;
 
 	/** Total number of additional (after the first) conversions */
 	int total_extra_conversions;
 	/** counts total number of images with more than one conversion */
-	int total_extra_conversions_count;
+	int total_extra_conversions_बिलांग;
 
 	/** Bitmap with most conversions was converted this many times */
 	int peak_conversions;
@@ -184,34 +184,34 @@ static struct image_cache_entry_s *image_cache__find(const struct content *c)
 static void image_cache_stats_bitmap_add(struct image_cache_entry_s *centry)
 {
 	centry->bitmap_age = image_cache->current_age;
-	centry->conversion_count++;
+	centry->conversion_बिलांग++;
 
 	image_cache->total_bitmap_size += centry->bitmap_size;
-	image_cache->bitmap_count++;
+	image_cache->bitmap_बिलांग++;
 
 	if (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
 		image_cache->max_bitmap_size = image_cache->total_bitmap_size;
-		image_cache->max_bitmap_size_count = image_cache->bitmap_count;
+		image_cache->max_bitmap_size_बिलांग = image_cache->bitmap_बिलांग;
 
 	}
 
-	if (image_cache->bitmap_count > image_cache->max_bitmap_count) {
-		image_cache->max_bitmap_count = image_cache->bitmap_count;
-		image_cache->max_bitmap_count_size = image_cache->total_bitmap_size;
+	if (image_cache->bitmap_बिलांग > image_cache->max_bitmap_बिलांग) {
+		image_cache->max_bitmap_बिलांग = image_cache->bitmap_बिलांग;
+		image_cache->max_bitmap_बिलांग_size = image_cache->total_bitmap_size;
 	}
 
-	if (centry->conversion_count == 2) {
-		image_cache->total_extra_conversions_count++;
+	if (centry->conversion_बिलांग == 2) {
+		image_cache->total_extra_conversions_बिलांग++;
 	}
 
-	if (centry->conversion_count > 1) {
+	if (centry->conversion_बिलांग > 1) {
 		image_cache->total_extra_conversions++;
 	}
 
-	if ((centry->conversion_count > image_cache->peak_conversions) ||
-	    (centry->conversion_count == image_cache->peak_conversions &&
+	if ((centry->conversion_बिलांग > image_cache->peak_conversions) ||
+	    (centry->conversion_बिलांग == image_cache->peak_conversions &&
 	     centry->bitmap_size > image_cache->peak_conversions_size)) {
-		image_cache->peak_conversions = centry->conversion_count;
+		image_cache->peak_conversions = centry->conversion_बिलांग;
 		image_cache->peak_conversions_size = centry->bitmap_size;
 	}
 }
@@ -261,14 +261,14 @@ static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
 		      centry->bitmap,
 		      centry->bitmap_size,
 		      image_cache->current_age - centry->bitmap_age,
-		      centry->redraw_count);
+		      centry->redraw_बिलांग);
 #endif
 		guit->bitmap->destroy(centry->bitmap);
 		centry->bitmap = NULL;
 		image_cache->total_bitmap_size -= centry->bitmap_size;
-		image_cache->bitmap_count--;
-		if (centry->redraw_count == 0) {
-			image_cache->specultive_miss_count++;
+		image_cache->bitmap_बिलांग--;
+		if (centry->redraw_बिलांग == 0) {
+			image_cache->specultive_miss_बिलांग++;
 		}
 	}
 
@@ -285,7 +285,7 @@ static void image_cache__free_entry(struct image_cache_entry_s *centry)
 	NSLOG(netsurf, INFO, "freeing %p ", centry);
 #endif
 
-	if (centry->redraw_count == 0) {
+	if (centry->redraw_बिलांग == 0) {
 		image_cache->total_unrendered++;
 	}
 
@@ -359,14 +359,14 @@ struct bitmap *image_cache_get_bitmap(const struct content *c)
 
 		if (centry->bitmap != NULL) {
 			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
+			image_cache->miss_बिलांग++;
 			image_cache->miss_size += centry->bitmap_size;
 		} else {
-			image_cache->fail_count++;
+			image_cache->fail_बिलांग++;
 			image_cache->fail_size += centry->bitmap_size;
 		}
 	} else {
-		image_cache->hit_count++;
+		image_cache->hit_बिलांग++;
 		image_cache->hit_size += centry->bitmap_size;
 	}
 
@@ -437,21 +437,21 @@ image_cache_init(const struct image_cache_parameters *image_cache_parameters)
 /* exported interface documented in image_cache.h */
 nserror image_cache_fini(void)
 {
-	unsigned int op_count;
+	unsigned int op_बिलांग;
 	uint64_t op_size;
 
 	guit->misc->schedule(-1, image_cache__background_update, image_cache);
 
 	NSLOG(netsurf, INFO, "Size at finish %"PRIsizet" (in %d)",
-	      image_cache->total_bitmap_size, image_cache->bitmap_count);
+	      image_cache->total_bitmap_size, image_cache->bitmap_बिलांग);
 
 	while (image_cache->entries != NULL) {
 		image_cache__free_entry(image_cache->entries);
 	}
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_बिलांग = image_cache->hit_बिलांग +
+		image_cache->miss_बिलांग +
+		image_cache->fail_बिलांग;
 
 	op_size = image_cache->hit_size +
 		image_cache->miss_size +
@@ -460,22 +460,22 @@ nserror image_cache_fini(void)
 	NSLOG(netsurf, INFO, "Age %ds", image_cache->current_age / 1000);
 	NSLOG(netsurf, INFO, "Peak size %"PRIsizet" (in %d)",
 	      image_cache->max_bitmap_size,
-	      image_cache->max_bitmap_size_count);
+	      image_cache->max_bitmap_size_बिलांग);
 	NSLOG(netsurf, INFO, "Peak image count %d (size %"PRIsizet")",
-	      image_cache->max_bitmap_count,
-	      image_cache->max_bitmap_count_size);
+	      image_cache->max_bitmap_बिलांग,
+	      image_cache->max_bitmap_बिलांग_size);
 
-	if ((op_count > 0) && (op_size >0)) {
+	if ((op_बिलांग > 0) && (op_size >0)) {
 
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (counts) %d/%d/%d/%d (100%%/%d%%/%d%%/%d%%)",
-		      op_count,
-		      image_cache->hit_count,
-		      image_cache->miss_count,
-		      image_cache->fail_count,
-		      (image_cache->hit_count * 100) / op_count,
-		      (image_cache->miss_count * 100) / op_count,
-		      (image_cache->fail_count * 100) / op_count);
+		      op_बिलांग,
+		      image_cache->hit_बिलांग,
+		      image_cache->miss_बिलांग,
+		      image_cache->fail_बिलांग,
+		      (image_cache->hit_बिलांग * 100) / op_बिलांग,
+		      (image_cache->miss_बिलांग * 100) / op_बिलांग,
+		      (image_cache->fail_बिलांग * 100) / op_बिलांग);
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (size) %"PRIu64"/%"PRIu64"/%"PRIu64"/%"PRIu64" (100%%/%"PRId64"%%/%"PRId64"%%/%"PRId64"%%)",
 		      op_size,
@@ -490,12 +490,12 @@ nserror image_cache_fini(void)
 	NSLOG(netsurf, INFO,
 	      "Total images never rendered: %d (includes %d that were converted)",
 	      image_cache->total_unrendered,
-	      image_cache->specultive_miss_count);
+	      image_cache->specultive_miss_बिलांग);
 
 	NSLOG(netsurf, INFO,
 	      "Total number of excessive conversions: %d (from %d images converted more than once)",
 	      image_cache->total_extra_conversions,
-	      image_cache->total_extra_conversions_count);
+	      image_cache->total_extra_conversions_बिलांग);
 
 	NSLOG(netsurf, INFO, "Bitmap of size %d had most (%d) conversions",
 	      image_cache->peak_conversions_size,
@@ -553,7 +553,7 @@ nserror image_cache_add(struct content *content,
 			if (centry->bitmap != NULL) {
 				image_cache_stats_bitmap_add(centry);
 			} else {
-				image_cache->fail_count++;
+				image_cache->fail_बिलांग++;
 			}
 		}
 	}
@@ -587,12 +587,12 @@ int image_cache_snsummaryf(char *string, size_t size, const char *fmt)
 	size_t slen = 0; /* current output string length */
 	int fmtc = 0; /* current index into format string */
 	bool pct;
-	unsigned int op_count;
+	unsigned int op_बिलांग;
 	uint64_t op_size;
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_बिलांग = image_cache->hit_बिलांग +
+		image_cache->miss_बिलांग +
+		image_cache->fail_बिलांग;
 
 	op_size = image_cache->hit_size +
 		image_cache->miss_size +
@@ -635,22 +635,22 @@ case chr :					\
 			FMTCHR('a', PRIsizet, params.limit);
 			FMTCHR('b', PRIsizet, params.hysteresis);
 			FMTCHR('c', PRIsizet, total_bitmap_size);
-			FMTCHR('d', "d", bitmap_count);
+			FMTCHR('d', "d", bitmap_बिलांग);
 			FMTCHR('e', "u", current_age / 1000);
 			FMTCHR('f', PRIsizet, max_bitmap_size);
-			FMTCHR('g', "d", max_bitmap_size_count);
-			FMTCHR('h', "d", max_bitmap_count);
-			FMTCHR('i', PRIsizet, max_bitmap_count_size);
+			FMTCHR('g', "d", max_bitmap_size_बिलांग);
+			FMTCHR('h', "d", max_bitmap_बिलांग);
+			FMTCHR('i', PRIsizet, max_bitmap_बिलांग_size);
 
 
 			case 'j':
 				slen += snprintf(string + slen, size - slen,
-						 "%u", pct?100:op_count);
+						 "%u", pct?100:op_बिलांग);
 				break;
 
-			FMTPCHR('k', "d", hit_count, op_count);
-			FMTPCHR('l', "d", miss_count, op_count);
-			FMTPCHR('m', "d", fail_count, op_count);
+			FMTPCHR('k', "d", hit_बिलांग, op_बिलांग);
+			FMTPCHR('l', "d", miss_बिलांग, op_बिलांग);
+			FMTPCHR('m', "d", fail_बिलांग, op_बिलांग);
 
 			case 'n':
 				slen += snprintf(string + slen, size - slen,
@@ -662,9 +662,9 @@ case chr :					\
 			FMTPCHR('r', PRId64, fail_size, op_size);
 
 			FMTCHR('s', "d", total_unrendered);
-			FMTCHR('t', "d", specultive_miss_count);
+			FMTCHR('t', "d", specultive_miss_बिलांग);
 			FMTCHR('u', "d", total_extra_conversions);
-			FMTCHR('v', "d", total_extra_conversions_count);
+			FMTCHR('v', "d", total_extra_conversions_बिलांग);
 			FMTCHR('w', "u", peak_conversions_size);
 			FMTCHR('x', "d", peak_conversions);
 
@@ -714,7 +714,7 @@ image_cache_snentryf(char *string,
 
 			case 'r':
 				slen += snprintf(string + slen, size - slen,
-						"%u", centry->redraw_count);
+						"%u", centry->redraw_बिलांग);
 				break;
 
 			case 'a':
@@ -725,7 +725,7 @@ image_cache_snentryf(char *string,
 
 			case 'c':
 				slen += snprintf(string + slen, size - slen,
-						"%d", centry->conversion_count);
+						"%d", centry->conversion_बिलांग);
 				break;
 
 			case 'g':
@@ -817,21 +817,21 @@ bool image_cache_redraw(struct content *c,
 
 		if (centry->bitmap != NULL) {
 			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
+			image_cache->miss_बिलांग++;
 			image_cache->miss_size += centry->bitmap_size;
 		} else {
-			image_cache->fail_count++;
+			image_cache->fail_बिलांग++;
 			image_cache->fail_size += centry->bitmap_size;
 			return false;
 		}
 	} else {
-		image_cache->hit_count++;
+		image_cache->hit_बिलांग++;
 		image_cache->hit_size += centry->bitmap_size;
 	}
 
 
 	/* update statistics */
-	centry->redraw_count++;
+	centry->redraw_बिलांग++;
 	centry->redraw_age = image_cache->current_age;
 
 	return image_bitmap_plot(centry->bitmap, data, clip, ctx);

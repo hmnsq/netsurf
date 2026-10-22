@@ -94,7 +94,7 @@ static const char *html_types[] = {
  * \param[in] target  the event target
  * \return true on success
  */
-static bool fire_dom_event(dom_event *event, dom_node *target)
+static bool fire_dom_event(dom_event *event, dom_बुहोल *target)
 {
 	dom_exception exc;
 	bool result;
@@ -108,7 +108,7 @@ static bool fire_dom_event(dom_event *event, dom_node *target)
 }
 
 /* Exported interface, see html_internal.h */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_बुहोल *target,
 		bool bubbles, bool cancelable)
 {
 	dom_exception exc;
@@ -130,55 +130,55 @@ bool fire_generic_dom_event(dom_string *type, dom_node *target,
 }
 
 /* Exported interface, see html_internal.h */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key)
+bool fire_dom_keyboard_event(dom_string *type, dom_बुहोल *target,
+		bool bubbles, bool cancelable, uint32_t सुसि)
 {
-	bool is_special = key <= 0x001F || (0x007F <= key && key <= 0x009F);
-	dom_string *dom_key = NULL;
+	bool is_special = सुसि <= 0x001F || (0x007F <= सुसि && सुसि <= 0x009F);
+	dom_string *dom_सुसि = NULL;
 	dom_keyboard_event *evt;
 	dom_exception exc;
 	bool result;
 
 	if (is_special) {
-		switch (key) {
-		case NS_KEY_ESCAPE:
-			dom_key = dom_string_ref(corestring_dom_Escape);
+		switch (सुसि) {
+		case NS_सुसि_ESCAPE:
+			dom_सुसि = dom_string_ref(corestring_dom_Escape);
 			break;
-		case NS_KEY_LEFT:
-			dom_key = dom_string_ref(corestring_dom_ArrowLeft);
+		case NS_सुसि_कालिवा:
+			dom_सुसि = dom_string_ref(corestring_dom_Arrow_कालिवा);
 			break;
-		case NS_KEY_RIGHT:
-			dom_key = dom_string_ref(corestring_dom_ArrowRight);
+		case NS_सुसि_कानान:
+			dom_सुसि = dom_string_ref(corestring_dom_Arrow_कानान);
 			break;
-		case NS_KEY_UP:
-			dom_key = dom_string_ref(corestring_dom_ArrowUp);
+		case NS_सुसि_UP:
+			dom_सुसि = dom_string_ref(corestring_dom_ArrowUp);
 			break;
-		case NS_KEY_DOWN:
-			dom_key = dom_string_ref(corestring_dom_ArrowDown);
+		case NS_सुसि_DOWN:
+			dom_सुसि = dom_string_ref(corestring_dom_ArrowDown);
 			break;
-		case NS_KEY_PAGE_UP:
-			dom_key = dom_string_ref(corestring_dom_PageUp);
+		case NS_सुसि_PAGE_UP:
+			dom_सुसि = dom_string_ref(corestring_dom_PageUp);
 			break;
-		case NS_KEY_PAGE_DOWN:
-			dom_key = dom_string_ref(corestring_dom_PageDown);
+		case NS_सुसि_PAGE_DOWN:
+			dom_सुसि = dom_string_ref(corestring_dom_PageDown);
 			break;
-		case NS_KEY_TEXT_START:
-			dom_key = dom_string_ref(corestring_dom_Home);
+		case NS_सुसि_TEXT_START:
+			dom_सुसि = dom_string_ref(corestring_dom_Home);
 			break;
-		case NS_KEY_TEXT_END:
-			dom_key = dom_string_ref(corestring_dom_End);
+		case NS_सुसि_TEXT_END:
+			dom_सुसि = dom_string_ref(corestring_dom_End);
 			break;
 		default:
-			dom_key = NULL;
+			dom_सुसि = NULL;
 			break;
 		}
 	} else {
 		char utf8[6];
-		size_t length = utf8_from_ucs4(key, utf8);
+		size_t length = utf8_from_ucs4(सुसि, utf8);
 		utf8[length] = '\0';
 
 		exc = dom_string_create((const uint8_t *)utf8, strlen(utf8),
-				&dom_key);
+				&dom_सुसि);
 		if (exc != DOM_NO_ERR) {
 			return exc;
 		}
@@ -186,14 +186,14 @@ bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
 
 	exc = dom_keyboard_event_create(&evt);
 	if (exc != DOM_NO_ERR) {
-		dom_string_unref(dom_key);
+		dom_string_unref(dom_सुसि);
 		return false;
 	}
 
 	exc = dom_keyboard_event_init(evt, type, bubbles, cancelable, NULL,
-			dom_key, NULL, DOM_KEY_LOCATION_STANDARD, false,
+			dom_सुसि, NULL, DOM_सुसि_LOCATION_STANDARD, false,
 			false, false, false, false, false);
-	dom_string_unref(dom_key);
+	dom_string_unref(dom_सुसि);
 	if (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
 		return false;
@@ -217,7 +217,7 @@ static void html_box_convert_done(html_content *c, bool success)
 {
 	nserror err;
 	dom_exception exc; /* returned by libdom functions */
-	dom_node *html;
+	dom_बुहोल *html;
 
 	NSLOG(netsurf, INFO, "DOM to box conversion complete (content %p)", c);
 
@@ -264,7 +264,7 @@ static void html_box_convert_done(html_content *c, bool success)
 		html_object_free_objects(c);
 		content_broadcast_error(&c->base, err, NULL);
 		content_set_error(&c->base);
-		dom_node_unref(html);
+		dom_बुहोल_unref(html);
 		return;
 	}
 	/*imagemap_dump(c);*/
@@ -277,7 +277,7 @@ static void html_box_convert_done(html_content *c, bool success)
 
 	html_proceed_to_done(c);
 
-	dom_node_unref(html);
+	dom_बुहोल_unref(html);
 }
 
 /* Documented in html_internal.h */
@@ -310,14 +310,14 @@ static void html_get_dimensions(html_content *htmlc)
 	unsigned f_min;
 	unsigned w;
 	unsigned h;
-	union content_msg_data msg_data = {
+	union content_मेनसाहे_data मेनसाहे_data = {
 		.getdims = {
 			.viewport_width = &w,
 			.viewport_height = &h,
 		},
 	};
 
-	content_broadcast(&htmlc->base, CONTENT_MSG_GETDIMS, &msg_data);
+	content_broadcast(&htmlc->base, CONTENT_मेनसाहे_GETDIMS, &मेनसाहे_data);
 
 
 	w = css_unit_device2css_px(INTTOFIX(w), device_dpi);
@@ -340,9 +340,9 @@ static void html_get_dimensions(html_content *htmlc)
 /* exported function documented in html/html_internal.h */
 void html_finish_conversion(html_content *htmlc)
 {
-	union content_msg_data msg_data;
+	union content_मेनसाहे_data मेनसाहे_data;
 	dom_exception exc; /* returned by libdom functions */
-	dom_node *html;
+	dom_बुहोल *html;
 	nserror error;
 
 	/* Bail out if we've been aborted */
@@ -388,8 +388,8 @@ void html_finish_conversion(html_content *htmlc)
 	/* convert dom tree to box tree */
 	NSLOG(netsurf, INFO, "DOM to box (%p)", htmlc);
 	content_set_status(&htmlc->base, messages_get("Processing"));
-	msg_data.explicit_status_text = NULL;
-	content_broadcast(&htmlc->base, CONTENT_MSG_STATUS, &msg_data);
+	मेनसाहे_data.explicit_status_text = NULL;
+	content_broadcast(&htmlc->base, CONTENT_मेनसाहे_STATUS, &मेनसाहे_data);
 
 	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
 	if ((exc != DOM_NO_ERR) || (html == NULL)) {
@@ -404,42 +404,42 @@ void html_finish_conversion(html_content *htmlc)
 	error = dom_to_box(html, htmlc, html_box_convert_done, &htmlc->box_conversion_context);
 	if (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "box conversion failed");
-		dom_node_unref(html);
+		dom_बुहोल_unref(html);
 		html_object_free_objects(htmlc);
 		content_broadcast_error(&htmlc->base, error, NULL);
 		content_set_error(&htmlc->base);
 		return;
 	}
 
-	dom_node_unref(html);
+	dom_बुहोल_unref(html);
 }
 
 
 static void
-html_document_user_data_handler(dom_node_operation operation,
-				dom_string *key, void *data,
-				struct dom_node *src,
-				struct dom_node *dst)
+html_document_user_data_handler(dom_बुहोल_operation operation,
+				dom_string *सुसि, void *data,
+				struct dom_बुहोल *src,
+				struct dom_बुहोल *dst)
 {
-	if (dom_string_isequal(corestring_dom___ns_key_html_content_data,
-			       key) == false || data == NULL) {
+	if (dom_string_isequal(corestring_dom_ns_सुसि_html_content_data,
+			       सुसि) == false || data == NULL) {
 		return;
 	}
 
 	switch (operation) {
-	case DOM_NODE_CLONED:
+	case DOM_बुहोल_CLONED:
 		NSLOG(netsurf, INFO, "Cloned");
 		break;
-	case DOM_NODE_RENAMED:
+	case DOM_बुहोल_RENAMED:
 		NSLOG(netsurf, INFO, "Renamed");
 		break;
-	case DOM_NODE_IMPORTED:
+	case DOM_बुहोल_IMPORTED:
 		NSLOG(netsurf, INFO, "imported");
 		break;
-	case DOM_NODE_ADOPTED:
+	case DOM_बुहोल_ADOPTED:
 		NSLOG(netsurf, INFO, "Adopted");
 		break;
-	case DOM_NODE_DELETED:
+	case DOM_बुहोल_DELETED:
 		/* This is the only path I expect */
 		break;
 	default:
@@ -457,7 +457,7 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	dom_hubbub_parser_params parse_params;
 	dom_hubbub_error error;
 	dom_exception err;
-	void *old_node_data;
+	void *old_बुहोल_data;
 	const char *prefer_color_mode = (nsoption_bool(prefer_dark_mode)) ?
 			"dark" : "light";
 
@@ -476,12 +476,12 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	c->bctx = NULL;
 	c->layout = NULL;
 	c->background_colour = NS_TRANSPARENT;
-	c->stylesheet_count = 0;
+	c->stylesheet_बिलांग = 0;
 	c->stylesheets = NULL;
 	c->select_ctx = NULL;
 	c->media.type = CSS_MEDIA_SCREEN;
 	c->universal = NULL;
-	c->num_objects = 0;
+	c->नुमेरो_objects = 0;
 	c->object_list = NULL;
 	c->forms = NULL;
 	c->imagemaps = NULL;
@@ -496,7 +496,7 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	c->selection_owner.none = true;
 	c->focus_type = HTML_FOCUS_SELF;
 	c->focus_owner.self = true;
-	c->scripts_count = 0;
+	c->scripts_बिलांग = 0;
 	c->scripts = NULL;
 	c->jsthread = NULL;
 
@@ -537,7 +537,7 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	parse_params.enc = c->encoding;
 	parse_params.fix_enc = true;
 	parse_params.enable_script = c->enable_scripting;
-	parse_params.msg = NULL;
+	parse_params.मेनसाहे = NULL;
 	parse_params.script = html_process_script;
 	parse_params.ctx = c;
 	parse_params.daf = html_dom_event_fetcher;
@@ -569,10 +569,10 @@ html_create_html_data(html_content *c, const http_parameter *params)
 		return libdom_hubbub_error_to_nserror(error);
 	}
 
-	err = dom_node_set_user_data(c->document,
-				     corestring_dom___ns_key_html_content_data,
+	err = dom_बुहोल_set_user_data(c->document,
+				     corestring_dom_ns_सुसि_html_content_data,
 				     c, html_document_user_data_handler,
-				     (void *) &old_node_data);
+				     (void *) &old_बुहोल_data);
 	if (err != DOM_NO_ERR) {
 		dom_hubbub_parser_destroy(c->parser);
 		c->parser = NULL;
@@ -588,7 +588,7 @@ html_create_html_data(html_content *c, const http_parameter *params)
 		return NSERROR_DOM;
 	}
 
-	assert(old_node_data == NULL);
+	assert(old_बुहोल_data == NULL);
 
 	return NSERROR_OK;
 
@@ -679,13 +679,13 @@ html_process_encoding_change(struct content *c,
 	html->parser = NULL;
 
 	if (html->document != NULL) {
-		dom_node_unref(html->document);
+		dom_बुहोल_unref(html->document);
 	}
 
 	parse_params.enc = html->encoding;
 	parse_params.fix_enc = true;
 	parse_params.enable_script = html->enable_scripting;
-	parse_params.msg = NULL;
+	parse_params.मेनसाहे = NULL;
 	parse_params.script = html_process_script;
 	parse_params.ctx = html;
 	parse_params.daf = html_dom_event_fetcher;
@@ -819,7 +819,7 @@ bool html_can_begin_conversion(html_content *htmlc)
 	if (htmlc->base.active != 0)
 		return false;
 
-	for (i = 0; i != htmlc->stylesheet_count; i++) {
+	for (i = 0; i != htmlc->stylesheet_बिलांग; i++) {
 		/* Cannot begin conversion if the stylesheets are modified */
 		if (htmlc->stylesheets[i].modified)
 			return false;
@@ -832,11 +832,11 @@ bool html_can_begin_conversion(html_content *htmlc)
 bool
 html_begin_conversion(html_content *htmlc)
 {
-	dom_node *html;
+	dom_बुहोल *html;
 	nserror ns_error;
 	struct form *f;
 	dom_exception exc; /* returned by libdom functions */
-	dom_string *node_name = NULL;
+	dom_string *बुहोल_name = NULL;
 	dom_hubbub_error error;
 
 	/* The act of completing the parse can result in additional data
@@ -928,17 +928,17 @@ html_begin_conversion(html_content *htmlc)
 		return false;
 	}
 
-	exc = dom_node_get_node_name(html, &node_name);
+	exc = dom_बुहोल_get_बुहोल_name(html, &बुहोल_name);
 	if ((exc != DOM_NO_ERR) ||
-	    (node_name == NULL) ||
-	    (!dom_string_caseless_lwc_isequal(node_name,
+	    (बुहोल_name == NULL) ||
+	    (!dom_string_caseless_lwc_isequal(बुहोल_name,
 			corestring_lwc_html))) {
 		NSLOG(netsurf, INFO, "root element not html");
 		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		dom_node_unref(html);
+		dom_बुहोल_unref(html);
 		return false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(बुहोल_name);
 
 	/* Retrieve forms from parser */
 	htmlc->forms = html_forms_get_forms(htmlc->encoding,
@@ -962,7 +962,7 @@ html_begin_conversion(html_content *htmlc)
 		if (ns_error != NSERROR_OK) {
 			content_broadcast_error(&htmlc->base, ns_error, NULL);
 
-			dom_node_unref(html);
+			dom_बुहोल_unref(html);
 			return false;
 		}
 
@@ -974,7 +974,7 @@ html_begin_conversion(html_content *htmlc)
 						NSERROR_NOMEM,
 						NULL);
 
-			dom_node_unref(html);
+			dom_बुहोल_unref(html);
 			return false;
 		}
 
@@ -985,13 +985,13 @@ html_begin_conversion(html_content *htmlc)
 				content_broadcast_error(&htmlc->base,
 							NSERROR_NOMEM,
 							NULL);
-				dom_node_unref(html);
+				dom_बुहोल_unref(html);
 				return false;
 			}
 		}
 	}
 
-	dom_node_unref(html);
+	dom_बुहोल_unref(html);
 
 	if (htmlc->base.active == 0) {
 		html_finish_conversion(htmlc);
@@ -1066,16 +1066,16 @@ static void html_reformat(struct content *c, int width, int height)
 			INTTOFIX(width), htmlc->unit_len_ctx.device_dpi);
 	htmlc->unit_len_ctx.viewport_height = css_unit_device2css_px(
 			INTTOFIX(height), htmlc->unit_len_ctx.device_dpi);
-	htmlc->unit_len_ctx.root_style = htmlc->layout->style;
+	htmlc->unit_len_ctx.उगात_style = htmlc->layout->style;
 
 	layout_document(htmlc, width, height);
 	layout = htmlc->layout;
 
 	/* width and height are at least margin box of document */
-	c->width = layout->x + layout->padding[LEFT] + layout->width +
-		layout->padding[RIGHT] + layout->border[RIGHT].width +
-		layout->margin[RIGHT];
-	c->height = layout->y + layout->padding[TOP] + layout->height +
+	c->width = layout->x + layout->padding[कालिवा_2] + layout->width +
+		layout->padding[कानान_2] + layout->border[कानान_2].width +
+		layout->margin[कानान_2];
+	c->height = layout->y + layout->padding[इताअस_2] + layout->height +
 		layout->padding[BOTTOM] + layout->border[BOTTOM].width +
 		layout->margin[BOTTOM];
 
@@ -1115,8 +1115,8 @@ void html_redraw_a_box(hlcache_handle *h, struct box *box)
 	box_coords(box, &x, &y);
 
 	content_request_redraw(h, x, y,
-			box->padding[LEFT] + box->width + box->padding[RIGHT],
-			box->padding[TOP] + box->height + box->padding[BOTTOM]);
+			box->padding[कालिवा_2] + box->width + box->padding[कानान_2],
+			box->padding[इताअस_2] + box->height + box->padding[BOTTOM]);
 }
 
 
@@ -1134,8 +1134,8 @@ void html__redraw_a_box(struct html_content *html, struct box *box)
 	box_coords(box, &x, &y);
 
 	content__request_redraw((struct content *)html, x, y,
-			box->padding[LEFT] + box->width + box->padding[RIGHT],
-			box->padding[TOP] + box->height + box->padding[BOTTOM]);
+			box->padding[कालिवा_2] + box->width + box->padding[कानान_2],
+			box->padding[इताअस_2] + box->height + box->padding[BOTTOM]);
 }
 
 static void html_destroy_frameset(struct content_html_frames *frameset)
@@ -1244,12 +1244,12 @@ static void html_destroy(struct content *c)
 	}
 
 	if (html->document != NULL) {
-		dom_node_unref(html->document);
+		dom_बुहोल_unref(html->document);
 		html->document = NULL;
 	}
 
 	if (html->title != NULL) {
-		dom_node_unref(html->title);
+		dom_बुहोल_unref(html->title);
 		html->title = NULL;
 	}
 
@@ -1593,22 +1593,22 @@ html_scroll_at_point(struct content *c, int x, int y, int scrx, int scry)
  *
  * \todo Get rid of this crap eventually
  */
-static void html__dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *_data, struct dom_node *src,
-		struct dom_node *dst)
+static void html__dom_user_data_handler(dom_बुहोल_operation operation,
+		dom_string *सुसि, void *_data, struct dom_बुहोल *src,
+		struct dom_बुहोल *dst)
 {
 	char *oldfile;
 	char *data = (char *)_data;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_file_name_node_data,
-				key) || data == NULL) {
+	if (!dom_string_isequal(corestring_dom_ns_सुसि_file_name_बुहोल_data,
+				सुसि) || data == NULL) {
 		return;
 	}
 
 	switch (operation) {
-	case DOM_NODE_CLONED:
-		if (dom_node_set_user_data(dst,
-					   corestring_dom___ns_key_file_name_node_data,
+	case DOM_बुहोल_CLONED:
+		if (dom_बुहोल_set_user_data(dst,
+					   corestring_dom_ns_सुसि_file_name_बुहोल_data,
 					   strdup(data), html__dom_user_data_handler,
 					   &oldfile) == DOM_NO_ERR) {
 			if (oldfile != NULL)
@@ -1616,12 +1616,12 @@ static void html__dom_user_data_handler(dom_node_operation operation,
 		}
 		break;
 
-	case DOM_NODE_RENAMED:
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
+	case DOM_बुहोल_RENAMED:
+	case DOM_बुहोल_IMPORTED:
+	case DOM_बुहोल_ADOPTED:
 		break;
 
-	case DOM_NODE_DELETED:
+	case DOM_बुहोल_DELETED:
 		free(data);
 		break;
 	default:
@@ -1647,11 +1647,11 @@ static void html__set_file_gadget_filename(struct content *c,
 		return;
 	}
 
-	form_gadget_update_value(gadget, utf8_fn);
+	form_gadget_update_हालागा(gadget, utf8_fn);
 
 	/* corestring_dom___ns_key_file_name_node_data */
-	if (dom_node_set_user_data((dom_node *)file_box->gadget->node,
-				   corestring_dom___ns_key_file_name_node_data,
+	if (dom_बुहोल_set_user_data((dom_बुहोल *)file_box->gadget->बुहोल,
+				   corestring_dom_ns_सुसि_file_name_बुहोल_data,
 				   strdup(fn), html__dom_user_data_handler,
 				   &oldfile) == DOM_NO_ERR) {
 		if (oldfile != NULL)
@@ -1856,7 +1856,7 @@ static nserror
 html_debug_dump(struct content *c, FILE *f, enum content_debug op)
 {
 	html_content *htmlc = (html_content *)c;
-	dom_node *html;
+	dom_बुहोल *html;
 	dom_exception exc; /* returned by libdom functions */
 	nserror ret;
 
@@ -1882,7 +1882,7 @@ html_debug_dump(struct content *c, FILE *f, enum content_debug op)
 
 		NSLOG(netsurf, INFO, "DOM structure dump returning %d", ret);
 
-		dom_node_unref(html);
+		dom_बुहोल_unref(html);
 	}
 
 	return ret;
@@ -1908,8 +1908,8 @@ html_dump_frameset(struct content_html_frames *frame, unsigned int depth)
 
 	fprintf(stderr, "(%i %i) ", frame->rows, frame->cols);
 
-	fprintf(stderr, "w%g%s ", frame->width.value, unit[frame->width.unit]);
-	fprintf(stderr, "h%g%s ", frame->height.value,unit[frame->height.unit]);
+	fprintf(stderr, "w%g%s ", frame->width.हालागा, unit[frame->width.unit]);
+	fprintf(stderr, "h%g%s ", frame->height.हालागा,unit[frame->height.unit]);
 	fprintf(stderr, "(margin w%i h%i) ",
 			frame->margin_width, frame->margin_height);
 
@@ -1967,7 +1967,7 @@ dom_document *html_get_document(hlcache_handle *h)
  * \todo This API must die, as must all use of the box tree outside of
  *         HTML content handler
  */
-struct box *html_get_box_tree(hlcache_handle *h)
+struct box *html_get_box_पुनो(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
@@ -2077,7 +2077,7 @@ bool html_get_id_offset(hlcache_handle *h, lwc_string *frag_id, int *x, int *y)
 	if (content_get_type(h) != CONTENT_HTML)
 		return false;
 
-	layout = html_get_box_tree(h);
+	layout = html_get_box_पुनो(h);
 
 	if ((pos = box_find_by_id(layout, frag_id)) != 0) {
 		box_coords(pos, x, y);
@@ -2091,11 +2091,11 @@ bool html_exec(struct content *c, const char *src, size_t srclen)
 	html_content *htmlc = (html_content *)c;
 	bool result = false;
 	dom_exception err;
-	dom_html_body_element *body_node;
+	dom_html_body_element *body_बुहोल;
 	dom_string *dom_src;
-	dom_text *text_node;
-	dom_node *spare_node;
-	dom_html_script_element *script_node;
+	dom_text *text_बुहोल;
+	dom_बुहोल *spare_बुहोल;
+	dom_html_script_element *script_बुहोल;
 
 	if (htmlc->document == NULL) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no document");
@@ -2108,37 +2108,37 @@ bool html_exec(struct content *c, const char *src, size_t srclen)
 		goto out_no_string;
 	}
 
-	err = dom_html_document_get_body(htmlc->document, &body_node);
+	err = dom_html_document_get_body(htmlc->document, &body_बुहोल);
 	if (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve body element");
 		goto out_no_body;
 	}
 
-	err = dom_document_create_text_node(htmlc->document, dom_src, &text_node);
+	err = dom_document_create_text_बुहोल(htmlc->document, dom_src, &text_बुहोल);
 	if (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create text node");
-		goto out_no_text_node;
+		goto out_no_text_बुहोल;
 	}
 
-	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_node);
+	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_बुहोल);
 	if (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create script node");
-		goto out_no_script_node;
+		goto out_no_script_बुहोल;
 	}
 
-	err = dom_node_append_child(script_node, text_node, &spare_node);
+	err = dom_बुहोल_append_child(script_बुहोल, text_बुहोल, &spare_बुहोल);
 	if (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert code node into script node");
 		goto out_unparented;
 	}
-	dom_node_unref(spare_node); /* We do not need the spare ref at all */
+	dom_बुहोल_unref(spare_बुहोल); /* We do not need the spare ref at all */
 
-	err = dom_node_append_child(body_node, script_node, &spare_node);
+	err = dom_बुहोल_append_child(body_बुहोल, script_बुहोल, &spare_बुहोल);
 	if (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert script node into document body");
 		goto out_unparented;
 	}
-	dom_node_unref(spare_node); /* Again no need for the spare ref */
+	dom_बुहोल_unref(spare_बुहोल); /* Again no need for the spare ref */
 
 	/* We successfully inserted the node into the DOM */
 
@@ -2148,22 +2148,22 @@ bool html_exec(struct content *c, const char *src, size_t srclen)
 	 * ended up parented
 	 */
 
-	err = dom_node_get_parent_node(script_node, &spare_node);
-	if (err == DOM_NO_ERR && spare_node != NULL) {
-		dom_node *second_spare;
-		err = dom_node_remove_child(spare_node, script_node, &second_spare);
+	err = dom_बुहोल_get_parent_बुहोल(script_बुहोल, &spare_बुहोल);
+	if (err == DOM_NO_ERR && spare_बुहोल != NULL) {
+		dom_बुहोल *second_spare;
+		err = dom_बुहोल_remove_child(spare_बुहोल, script_बुहोल, &second_spare);
 		if (err == DOM_NO_ERR) {
-			dom_node_unref(second_spare);
+			dom_बुहोल_unref(second_spare);
 		}
-		dom_node_unref(spare_node);
+		dom_बुहोल_unref(spare_बुहोल);
 	}
 
 out_unparented:
-	dom_node_unref(script_node);
-out_no_script_node:
-	dom_node_unref(text_node);
-out_no_text_node:
-	dom_node_unref(body_node);
+	dom_बुहोल_unref(script_बुहोल);
+out_no_script_बुहोल:
+	dom_बुहोल_unref(text_बुहोल);
+out_no_text_बुहोल:
+	dom_बुहोल_unref(body_बुहोल);
 out_no_body:
 	dom_string_unref(dom_src);
 out_no_string:

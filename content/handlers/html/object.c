@@ -64,7 +64,7 @@ struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
 	assert(c != NULL);
 	assert(n != NULL);
 
-	*n = c->num_objects;
+	*n = c->नुमेरो_objects;
 
 	return c->object_list;
 }
@@ -137,7 +137,7 @@ html_object_nobox_callback(hlcache_handle *object,
 	struct content_html_object *chobject = pw;
 
 	switch (event->type) {
-	case CONTENT_MSG_ERROR:
+	case CONTENT_मेनसाहे_ERROR:
 		hlcache_handle_release(object);
 
 		chobject->content = NULL;
@@ -167,14 +167,14 @@ html_object_callback(hlcache_handle *object,
 	box = o->box;
 
 	switch (event->type) {
-	case CONTENT_MSG_LOADING:
+	case CONTENT_मेनसाहे_LOADING:
 		if (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
 			content_open(object,
 					c->bw, &c->base,
 					box->object_params);
 		break;
 
-	case CONTENT_MSG_READY:
+	case CONTENT_मेनसाहे_READY:
 		if (content_can_reformat(object)) {
 			/* TODO: avoid knowledge of box internals here */
 			content_reformat(object, false,
@@ -193,7 +193,7 @@ html_object_callback(hlcache_handle *object,
 		}
 		break;
 
-	case CONTENT_MSG_DONE:
+	case CONTENT_मेनसाहे_DONE:
 		c->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
@@ -201,7 +201,7 @@ html_object_callback(hlcache_handle *object,
 
 		if (c->base.status != CONTENT_STATUS_LOADING &&
 				box->flags & REPLACE_DIM) {
-			union content_msg_data data;
+			union content_मेनसाहे_data data;
 
 			if (c->had_initial_layout == false) {
 				break;
@@ -212,16 +212,16 @@ html_object_callback(hlcache_handle *object,
 
 			box_coords(box, &x, &y);
 
-			data.redraw.x = x + box->padding[LEFT];
-			data.redraw.y = y + box->padding[TOP];
+			data.redraw.x = x + box->padding[कालिवा_2];
+			data.redraw.y = y + box->padding[इताअस_2];
 			data.redraw.width = box->width;
 			data.redraw.height = box->height;
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_broadcast(&c->base, CONTENT_मेनसाहे_REDRAW, &data);
 		}
 		break;
 
-	case CONTENT_MSG_ERROR:
+	case CONTENT_मेनसाहे_ERROR:
 		hlcache_handle_release(object);
 
 		o->content = NULL;
@@ -233,9 +233,9 @@ html_object_callback(hlcache_handle *object,
 
 		break;
 
-	case CONTENT_MSG_REDRAW:
+	case CONTENT_मेनसाहे_REDRAW:
 		if (c->base.status != CONTENT_STATUS_LOADING) {
-			union content_msg_data data = event->data;
+			union content_मेनसाहे_data data = event->data;
 
 			if (c->had_initial_layout == false) {
 				break;
@@ -251,9 +251,9 @@ html_object_callback(hlcache_handle *object,
 				css_fixed hpos = 0, vpos = 0;
 				css_unit hunit = CSS_UNIT_PX;
 				css_unit vunit = CSS_UNIT_PX;
-				int width = box->padding[LEFT] + box->width +
-						box->padding[RIGHT];
-				int height = box->padding[TOP] + box->height +
+				int width = box->padding[कालिवा_2] + box->width +
+						box->padding[कानान_2];
+				int height = box->padding[इताअस_2] + box->height +
 						box->padding[BOTTOM];
 				int t, h, l, w;
 
@@ -343,15 +343,15 @@ html_object_callback(hlcache_handle *object,
 							box->height / h;
 				}
 
-				data.redraw.x += x + box->padding[LEFT];
-				data.redraw.y += y + box->padding[TOP];
+				data.redraw.x += x + box->padding[कालिवा_2];
+				data.redraw.y += y + box->padding[इताअस_2];
 			}
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_broadcast(&c->base, CONTENT_मेनसाहे_REDRAW, &data);
 		}
 		break;
 
-	case CONTENT_MSG_REFRESH:
+	case CONTENT_मेनसाहे_REFRESH:
 		if (content_get_type(object) == CONTENT_HTML) {
 			/* only for HTML objects */
 			guit->misc->schedule(event->data.delay * 1000,
@@ -360,23 +360,23 @@ html_object_callback(hlcache_handle *object,
 
 		break;
 
-	case CONTENT_MSG_LINK:
+	case CONTENT_मेनसाहे_LINK:
 		/* Don't care about favicons that aren't on top level content */
 		break;
 
-	case CONTENT_MSG_GETTHREAD:
+	case CONTENT_मेनसाहे_GETTHREAD:
 		/* Objects don't have JS threads */
 		*(event->data.jsthread) = NULL;
 		break;
 
-	case CONTENT_MSG_GETDIMS:
+	case CONTENT_मेनसाहे_GETDIMS:
 		*(event->data.getdims.viewport_width) =
 				content__get_width(&c->base);
 		*(event->data.getdims.viewport_height) =
 				content__get_height(&c->base);
 		break;
 
-	case CONTENT_MSG_SCROLL:
+	case CONTENT_मेनसाहे_SCROLL:
 		if (box->scroll_x != NULL)
 			scrollbar_set(box->scroll_x, event->data.scroll.x0,
 					false);
@@ -385,29 +385,29 @@ html_object_callback(hlcache_handle *object,
 					false);
 		break;
 
-	case CONTENT_MSG_DRAGSAVE:
+	case CONTENT_मेनसाहे_DRAGSAVE:
 	{
-		union content_msg_data msg_data;
+		union content_मेनसाहे_data मेनसाहे_data;
 		if (event->data.dragsave.content == NULL)
-			msg_data.dragsave.content = object;
+			मेनसाहे_data.dragsave.content = object;
 		else
-			msg_data.dragsave.content =
+			मेनसाहे_data.dragsave.content =
 					event->data.dragsave.content;
 
-		content_broadcast(&c->base, CONTENT_MSG_DRAGSAVE, &msg_data);
+		content_broadcast(&c->base, CONTENT_मेनसाहे_DRAGSAVE, &मेनसाहे_data);
 	}
 		break;
 
-	case CONTENT_MSG_SAVELINK:
-	case CONTENT_MSG_POINTER:
-	case CONTENT_MSG_SELECTMENU:
-	case CONTENT_MSG_GADGETCLICK:
+	case CONTENT_मेनसाहे_SAVELINK:
+	case CONTENT_मेनसाहे_POINTER:
+	case CONTENT_मेनसाहे_SELECTMENU:
+	case CONTENT_मेनसाहे_GADGETCLICK:
 		/* These messages are for browser window layer.
 		 * we're not interested, so pass them on. */
 		content_broadcast(&c->base, event->type, &event->data);
 		break;
 
-	case CONTENT_MSG_CARET:
+	case CONTENT_मेनसाहे_CARET:
 	{
 		union html_focus_owner focus_owner;
 		focus_owner.content = box;
@@ -429,7 +429,7 @@ html_object_callback(hlcache_handle *object,
 	}
 		break;
 
-	case CONTENT_MSG_DRAG:
+	case CONTENT_मेनसाहे_DRAG:
 	{
 		html_drag_type drag_type = HTML_DRAG_NONE;
 		union html_drag_owner drag_owner;
@@ -452,7 +452,7 @@ html_object_callback(hlcache_handle *object,
 	}
 		break;
 
-	case CONTENT_MSG_SELECTION:
+	case CONTENT_मेनसाहे_SELECTION:
 	{
 		html_selection_type sel_type;
 		union html_selection_owner sel_owner;
@@ -475,15 +475,15 @@ html_object_callback(hlcache_handle *object,
 
 	if (c->base.status == CONTENT_STATUS_READY &&
 	    c->base.active == 0 &&
-	    (event->type == CONTENT_MSG_LOADING ||
-	     event->type == CONTENT_MSG_DONE ||
-	     event->type == CONTENT_MSG_ERROR)) {
+	    (event->type == CONTENT_मेनसाहे_LOADING ||
+	     event->type == CONTENT_मेनसाहे_DONE ||
+	     event->type == CONTENT_मेनसाहे_ERROR)) {
 		/* all objects have arrived */
 		content__reformat(&c->base, false, c->base.available_width,
 				c->base.available_height);
 		content_set_done(&c->base);
 	} else if (nsoption_bool(incremental_reflow) &&
-		   event->type == CONTENT_MSG_DONE &&
+		   event->type == CONTENT_मेनसाहे_DONE &&
 		   box != NULL &&
 		   !(box->flags & REPLACE_DIM) &&
 		   (c->base.status == CONTENT_STATUS_READY ||
@@ -761,7 +761,7 @@ html_fetch_object(html_content *c,
 	object->next = c->object_list;
 	c->object_list = object;
 
-	c->num_objects++;
+	c->नुमेरो_objects++;
 	if (box != NULL) {
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);

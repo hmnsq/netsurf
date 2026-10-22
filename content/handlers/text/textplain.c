@@ -49,7 +49,7 @@
 
 #include "text/textplain.h"
 
-struct textplain_line {
+struct textplain_लिन्या {
 	size_t	start;
 	size_t	length;
 };
@@ -65,8 +65,8 @@ typedef struct textplain_content {
 	char *utf8_data;
 	size_t utf8_data_size;
 	size_t utf8_data_allocated;
-	unsigned long physical_line_count;
-	struct textplain_line *physical_line;
+	unsigned long physical_लिन्या_बिलांग;
+	struct textplain_लिन्या *physical_लिन्या;
 	int formatted_width;
 	struct browser_window *bw;
 
@@ -163,8 +163,8 @@ textplain_create_internal(textplain_content *c, lwc_string *encoding)
 	c->utf8_data = utf8_data;
 	c->utf8_data_size = 0;
 	c->utf8_data_allocated = CHUNK;
-	c->physical_line = 0;
-	c->physical_line_count = 0;
+	c->physical_लिन्या = 0;
+	c->physical_लिन्या_बिलांग = 0;
 	c->formatted_width = 0;
 	c->bw = NULL;
 	c->sel = selection_create((struct content *)c);
@@ -258,7 +258,7 @@ textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
  * drain input
  */
 static bool
-textplain_drain_input(textplain_content *c,
+textplain_drain_पासोक(textplain_content *c,
 		      parserutils_inputstream *stream,
 		      parserutils_error terminator)
 {
@@ -341,7 +341,7 @@ textplain_process_data(struct content *c, const char *data, unsigned int size)
 		goto no_memory;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_NEEDDATA) == false)
+	if (textplain_drain_पासोक(text, stream, PARSERUTILS_NEEDDATA) == false)
 		goto no_memory;
 
 	return true;
@@ -366,7 +366,7 @@ static bool textplain_convert(struct content *c)
 		return false;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_EOF) == false)
+	if (textplain_drain_पासोक(text, stream, PARSERUTILS_EOF) == false)
 		return false;
 
 	parserutils_inputstream_destroy(stream);
@@ -385,7 +385,7 @@ static bool textplain_convert(struct content *c)
  *
  * \return Line height, in pixels
  */
-static float textplain_line_height(void)
+static float textplain_लिन्या_height(void)
 {
 	/* Size is in points, so convert to pixels.
 	 * Then use a constant line height of 1.2 x font size.
@@ -402,13 +402,13 @@ static void textplain_reformat(struct content *c, int width, int height)
 	textplain_content *text = (textplain_content *) c;
 	char *utf8_data = text->utf8_data;
 	size_t utf8_data_size = text->utf8_data_size;
-	unsigned long line_count = 0;
-	struct textplain_line *line = text->physical_line;
-	struct textplain_line *line1;
+	unsigned long लिन्या_बिलांग = 0;
+	struct textplain_लिन्या *लिन्या = text->physical_लिन्या;
+	struct textplain_लिन्या *line1;
 	size_t i, space, col;
 	size_t columns = 80;
 	int character_width;
-	size_t line_start;
+	size_t लिन्या_start;
 	nserror res;
 
 	NSLOG(netsurf, INFO, "content %p w:%d h:%d", c, width, height);
@@ -428,16 +428,16 @@ static void textplain_reformat(struct content *c, int width, int height)
 
 	text->formatted_width = width;
 
-	text->physical_line_count = 0;
+	text->physical_लिन्या_बिलांग = 0;
 
-	if (!line) {
-		text->physical_line = line =
-			malloc(sizeof(struct textplain_line) * (1024 + 3));
-		if (!line)
+	if (!लिन्या) {
+		text->physical_लिन्या = लिन्या =
+			malloc(sizeof(struct textplain_लिन्या) * (1024 + 3));
+		if (!लिन्या)
 			goto no_memory;
 	}
 
-	line[line_count++].start = line_start = 0;
+	लिन्या[लिन्या_बिलांग++].start = लिन्या_start = 0;
 	space = 0;
 	i = 0;
 	col = 0;
@@ -462,17 +462,17 @@ static void textplain_reformat(struct content *c, int width, int height)
 		}
 
 		if (term || next_col >= columns) {
-			if (line_count % 1024 == 0) {
-				line1 = realloc(line,
-						sizeof(struct textplain_line) *
-						(line_count + 1024 + 3));
+			if (लिन्या_बिलांग % 1024 == 0) {
+				line1 = realloc(लिन्या,
+						sizeof(struct textplain_लिन्या) *
+						(लिन्या_बिलांग + 1024 + 3));
 				if (!line1)
 					goto no_memory;
-				text->physical_line = line = line1;
+				text->physical_लिन्या = लिन्या = line1;
 			}
 
 			if (term) {
-				line[line_count-1].length = i - line_start;
+				लिन्या[लिन्या_बिलांग-1].length = i - लिन्या_start;
 
 				/* skip second char of CR/LF or LF/CR pair */
 				if (i + 1 < utf8_data_size &&
@@ -485,12 +485,12 @@ static void textplain_reformat(struct content *c, int width, int height)
 				if (space) {
 					/* break at last space in line */
 					i = space;
-					line[line_count-1].length = (i + 1) - line_start;
+					लिन्या[लिन्या_बिलांग-1].length = (i + 1) - लिन्या_start;
 				} else
-					line[line_count-1].length = i - line_start;
+					लिन्या[लिन्या_बिलांग-1].length = i - लिन्या_start;
 			}
 
-			line[line_count++].start = line_start = i + 1;
+			लिन्या[लिन्या_बिलांग++].start = लिन्या_start = i + 1;
 			col = 0;
 			space = 0;
 		} else {
@@ -500,17 +500,17 @@ static void textplain_reformat(struct content *c, int width, int height)
 		}
 		i += csize;
 	}
-	line[line_count-1].length = i - line[line_count-1].start;
-	line[line_count].start = utf8_data_size;
+	लिन्या[लिन्या_बिलांग-1].length = i - लिन्या[लिन्या_बिलांग-1].start;
+	लिन्या[लिन्या_बिलांग].start = utf8_data_size;
 
-	text->physical_line_count = line_count;
+	text->physical_लिन्या_बिलांग = लिन्या_बिलांग;
 	c->width = width;
-	c->height = line_count * textplain_line_height() + MARGIN + MARGIN;
+	c->height = लिन्या_बिलांग * textplain_लिन्या_height() + MARGIN + MARGIN;
 
 	return;
 
 no_memory:
-	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", line_count);
+	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", लिन्या_बिलांग);
 	return;
 }
 
@@ -529,8 +529,8 @@ static void textplain_destroy(struct content *c)
 		parserutils_inputstream_destroy(text->inputstream);
 	}
 
-	if (text->physical_line != NULL) {
-		free(text->physical_line);
+	if (text->physical_लिन्या != NULL) {
+		free(text->physical_लिन्या);
 	}
 
 	if (text->utf8_data != NULL) {
@@ -613,8 +613,8 @@ static size_t
 textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 {
 	textplain_content *textc = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	struct textplain_line *line;
+	float लिन्या_height = textplain_लिन्या_height();
+	struct textplain_लिन्या *लिन्या;
 	const char *text;
 	unsigned nlines;
 	size_t length;
@@ -622,10 +622,10 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 
 	assert(c != NULL);
 
-	y = (int)((float)(y - MARGIN) / line_height);
+	y = (int)((float)(y - MARGIN) / लिन्या_height);
 	x -= MARGIN;
 
-	nlines = textc->physical_line_count;
+	nlines = textc->physical_लिन्या_बिलांग;
 	if (!nlines)
 		return 0;
 
@@ -633,9 +633,9 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 	else if ((unsigned)y >= nlines)
 		y = nlines - 1;
 
-	line = &textc->physical_line[y];
-	text = textc->utf8_data + line->start;
-	length = line->length;
+	लिन्या = &textc->physical_लिन्या[y];
+	text = textc->utf8_data + लिन्या->start;
+	length = लिन्या->length;
 	idx = 0;
 
 	while (x > 0) {
@@ -680,7 +680,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 		idx++;
 	}
 
-	return line->start + idx;
+	return लिन्या->start + idx;
 }
 
 
@@ -701,7 +701,7 @@ textplain_mouse_action(struct content *c,
 {
 	textplain_content *text = (textplain_content *) c;
 	browser_pointer_shape pointer = BROWSER_POINTER_DEFAULT;
-	union content_msg_data msg_data;
+	union content_मेनसाहे_data मेनसाहे_data;
 	const char *status = 0;
 	size_t idx;
 	int dir = 0;
@@ -724,11 +724,11 @@ textplain_mouse_action(struct content *c,
 		}
 	}
 
-	msg_data.explicit_status_text = status;
-	content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+	मेनसाहे_data.explicit_status_text = status;
+	content_broadcast(c, CONTENT_मेनसाहे_STATUS, &मेनसाहे_data);
 
-	msg_data.pointer = pointer;
-	content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	मेनसाहे_data.pointer = pointer;
+	content_broadcast(c, CONTENT_मेनसाहे_POINTER, &मेनसाहे_data);
 
 	return NSERROR_OK;
 }
@@ -793,25 +793,25 @@ textplain_mouse_track(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-static bool textplain_keypress(struct content *c, uint32_t key)
+static bool textplain_keypress(struct content *c, uint32_t सुसि)
 {
 	textplain_content *text = (textplain_content *) c;
 	struct selection *sel = text->sel;
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
+	switch (सुसि) {
+	case NS_सुसि_COPY_SELECTION:
 		selection_copy_to_clipboard(sel);
 		return true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	case NS_सुसि_CLEAR_SELECTION:
 		selection_clear(sel, true);
 		return true;
 
-	case NS_KEY_SELECT_ALL:
+	case NS_सुसि_SELECT_ALL:
 		selection_select_all(sel);
 		return true;
 
-	case NS_KEY_ESCAPE:
+	case NS_सुसि_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
 		return selection_clear(sel, true);
 	}
@@ -1057,12 +1057,12 @@ textplain_redraw(struct content *c,
 	long lineno;
 	int x = data->x;
 	int y = data->y;
-	unsigned long line_count = text->physical_line_count;
-	float line_height = textplain_line_height();
-	float scaled_line_height = line_height * data->scale;
-	long line0 = (clip->y0 - y * data->scale) / scaled_line_height - 1;
-	long line1 = (clip->y1 - y * data->scale) / scaled_line_height + 1;
-	struct textplain_line *line = text->physical_line;
+	unsigned long लिन्या_बिलांग = text->physical_लिन्या_बिलांग;
+	float लिन्या_height = textplain_लिन्या_height();
+	float scaled_लिन्या_height = लिन्या_height * data->scale;
+	long line0 = (clip->y0 - y * data->scale) / scaled_लिन्या_height - 1;
+	long line1 = (clip->y1 - y * data->scale) / scaled_लिन्या_height + 1;
+	struct textplain_लिन्या *लिन्या = text->physical_लिन्या;
 	size_t length;
 	plot_style_t *plot_style_highlight;
 	nserror res;
@@ -1071,10 +1071,10 @@ textplain_redraw(struct content *c,
 		line0 = 0;
 	if (line1 < 0)
 		line1 = 0;
-	if (line_count < (unsigned long) line0)
-		line0 = line_count;
-	if (line_count < (unsigned long) line1)
-		line1 = line_count;
+	if (लिन्या_बिलांग < (unsigned long) line0)
+		line0 = लिन्या_बिलांग;
+	if (लिन्या_बिलांग < (unsigned long) line1)
+		line1 = लिन्या_बिलांग;
 	if (line1 < line0)
 		line1 = line0;
 
@@ -1083,7 +1083,7 @@ textplain_redraw(struct content *c,
 		return false;
 	}
 
-	if (!line)
+	if (!लिन्या)
 		return true;
 
 	/* choose a suitable background colour for any highlighted text */
@@ -1098,14 +1098,14 @@ textplain_redraw(struct content *c,
 	x = (x + MARGIN) * data->scale;
 	y = (y + MARGIN) * data->scale;
 	for (lineno = line0; lineno != line1; lineno++) {
-		const char *text_d = utf8_data + line[lineno].start;
+		const char *text_d = utf8_data + लिन्या[lineno].start;
 		int tab_width = textplain_tab_width * data->scale;
 		size_t offset = 0;
 		int tx = x;
 
 		if (!tab_width) tab_width = 1;
 
-		length = line[lineno].length;
+		length = लिन्या[lineno].length;
 		if (!length)
 			continue;
 
@@ -1124,11 +1124,11 @@ textplain_redraw(struct content *c,
 
 			if (!text_draw(text_d + offset,
 				       next_offset - offset,
-				       line[lineno].start + offset,
+				       लिन्या[lineno].start + offset,
 				       tx,
-				       y + (lineno * scaled_line_height),
+				       y + (lineno * scaled_लिन्या_height),
 				       clip,
-				       line_height,
+				       लिन्या_height,
 				       data->scale,
 				       text,
 				       text->sel,
@@ -1157,7 +1157,7 @@ textplain_redraw(struct content *c,
 			 */
 
 			if (bw) {
-				unsigned tab_ofst = line[lineno].start + next_offset;
+				unsigned tab_ofst = लिन्या[lineno].start + next_offset;
 				struct selection *sel = text->sel;
 				bool highlighted = false;
 
@@ -1187,9 +1187,9 @@ textplain_redraw(struct content *c,
 				if (highlighted) {
 					struct rect rect;
 					rect.x0 = tx;
-					rect.y0 = y + (lineno * scaled_line_height);
+					rect.y0 = y + (lineno * scaled_लिन्या_height);
 					rect.x1 = ntx;
-					rect.y1 = rect.y0 + scaled_line_height;
+					rect.y1 = rect.y0 + scaled_लिन्या_height;
 					res = ctx->plot->rectangle(ctx,
 								   plot_style_highlight,
 								   &rect);
@@ -1302,13 +1302,13 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
  * \param[in] c Content to retrieve line count from
  * \return Number of lines
  */
-static unsigned long textplain_line_count(struct content *c)
+static unsigned long textplain_लिन्या_बिलांग(struct content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
 	assert(c != NULL);
 
-	return text->physical_line_count;
+	return text->physical_लिन्या_बिलांग;
 }
 
 
@@ -1322,23 +1322,23 @@ static unsigned long textplain_line_count(struct content *c)
  * \return pointer to text, or NULL if invalid line number
  */
 static char *
-textplain_get_line(struct content *c,
+textplain_get_लिन्या(struct content *c,
 		   unsigned lineno,
 		   size_t *poffset,
 		   size_t *plen)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
+	struct textplain_लिन्या *लिन्या;
 
 	assert(c != NULL);
 
-	if (lineno >= text->physical_line_count)
+	if (lineno >= text->physical_लिन्या_बिलांग)
 		return NULL;
-	line = &text->physical_line[lineno];
+	लिन्या = &text->physical_लिन्या[lineno];
 
-	*poffset = line->start;
-	*plen = line->length;
-	return text->utf8_data + line->start;
+	*poffset = लिन्या->start;
+	*plen = लिन्या->length;
+	return text->utf8_data + लिन्या->start;
 }
 
 
@@ -1352,27 +1352,27 @@ textplain_get_line(struct content *c,
  * \param[in] offset  byte offset within textual representation
  * \return line number, or -1 if offset invalid (larger than size)
  */
-static int textplain_find_line(struct content *c, unsigned offset)
+static int textplain_find_लिन्या(struct content *c, unsigned offset)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
+	struct textplain_लिन्या *लिन्या;
 	int nlines;
 	int lineno = 0;
 
 	assert(c != NULL);
 
-	line = text->physical_line;
-	nlines = text->physical_line_count;
+	लिन्या = text->physical_लिन्या;
+	nlines = text->physical_लिन्या_बिलांग;
 
 	if (offset > text->utf8_data_size) {
 		return -1;
 	}
 
 /* \todo - implement binary search here */
-	while (lineno < nlines && line[lineno].start < offset) {
+	while (lineno < nlines && लिन्या[lineno].start < offset) {
 		lineno++;
 	}
-	if (line[lineno].start > offset) {
+	if (लिन्या[lineno].start > offset) {
 		lineno--;
 	}
 
@@ -1397,15 +1397,15 @@ textplain_textsearch_find(struct content *c,
 			  int p_len,
 			  bool case_sens)
 {
-	int nlines = textplain_line_count(c);
-	int line;
+	int nlines = textplain_लिन्या_बिलांग(c);
+	int लिन्या;
 	nserror res = NSERROR_OK;
 
-	for(line = 0; line < nlines; line++) {
+	for(लिन्या = 0; लिन्या < nlines; लिन्या++) {
 		size_t offset, length;
 		const char *text;
 
-		text = textplain_get_line(c, line, &offset, &length);
+		text = textplain_get_लिन्या(c, लिन्या, &offset, &length);
 		if (text) {
 			while (length > 0) {
 				unsigned match_length;
@@ -1462,9 +1462,9 @@ textplain_coords_from_range(struct content *c,
 			    struct rect *r)
 {
 	textplain_content *text = (textplain_content *) c;
-	float line_height = textplain_line_height();
+	float लिन्या_height = textplain_लिन्या_height();
 	char *utf8_data;
-	struct textplain_line *line;
+	struct textplain_लिन्या *लिन्या;
 	unsigned lineno = 0;
 	unsigned nlines;
 
@@ -1473,38 +1473,38 @@ textplain_coords_from_range(struct content *c,
 	assert(end <= text->utf8_data_size);
 
 	utf8_data = text->utf8_data;
-	nlines = text->physical_line_count;
-	line = text->physical_line;
+	nlines = text->physical_लिन्या_बिलांग;
+	लिन्या = text->physical_लिन्या;
 
 	/* find start */
-	lineno = textplain_find_line(c, start);
+	lineno = textplain_find_लिन्या(c, start);
 
-	r->y0 = (int)(MARGIN + lineno * line_height);
+	r->y0 = (int)(MARGIN + lineno * लिन्या_height);
 
-	if (lineno + 1 <= nlines || line[lineno + 1].start >= end) {
+	if (lineno + 1 <= nlines || लिन्या[lineno + 1].start >= end) {
 		/* \todo - it may actually be more efficient just to
 		 *   run forwards most of the time
 		 */
 
 		/* find end */
-		lineno = textplain_find_line(c, end);
+		lineno = textplain_find_लिन्या(c, end);
 
 		r->x0 = 0;
 		r->x1 = text->formatted_width;
 	} else {
 		/* single line */
-		const char *text = utf8_data + line[lineno].start;
+		const char *text = utf8_data + लिन्या[lineno].start;
 
 		r->x0 = textplain_coord_from_offset(text,
-						    start - line[lineno].start,
-						    line[lineno].length);
+						    start - लिन्या[lineno].start,
+						    लिन्या[lineno].length);
 
 		r->x1 = textplain_coord_from_offset(text,
-						    end - line[lineno].start,
-						    line[lineno].length);
+						    end - लिन्या[lineno].start,
+						    लिन्या[lineno].length);
 	}
 
-	r->y1 = (int)(MARGIN + (lineno + 1) * line_height);
+	r->y1 = (int)(MARGIN + (lineno + 1) * लिन्या_height);
 }
 
 

@@ -30,10 +30,10 @@ typedef struct nsvideo_content {
 	GstElement *appsrc;
 } nsvideo_content;
 
-static gboolean nsvideo_bus_call(GstBus *bus, GstMessage *msg, 
+static gboolean nsvideo_bus_call(GstBus *bus, GstMessage *मेनसाहे, 
 		nsvideo_content *video)
 {
-	switch (GST_MESSAGE_TYPE(msg)) {
+	switch (GST_MESSAGE_TYPE(मेनसाहे)) {
 	case GST_MESSAGE_ERROR:
 		break;
 	case GST_MESSAGE_EOS:

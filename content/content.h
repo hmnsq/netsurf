@@ -57,7 +57,7 @@ struct content_rfc5988_link {
 };
 
 /** Extra data for some content_msg messages. */
-union content_msg_data {
+union content_मेनसाहे_data {
 	/**
 	 * CONTENT_MSG_LOG - Information for logging
 	 */
@@ -65,7 +65,7 @@ union content_msg_data {
 		/** The source of the logging */
 		browser_window_console_source src;
 		/** The message to log */
-		const char *msg;
+		const char *मेनसाहे;
 		/** The length of that message */
 		size_t msglen;
 		/** The flags of the logging */
@@ -353,7 +353,7 @@ void content_mouse_action(struct hlcache_handle *h, struct browser_window *bw,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-bool content_keypress(struct hlcache_handle *h, uint32_t key);
+bool content_keypress(struct hlcache_handle *h, uint32_t सुसि);
 
 
 /**

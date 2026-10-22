@@ -38,7 +38,7 @@ struct box;
 struct browser_window;
 struct html_content;
 struct nsurl;
-struct dom_node;
+struct dom_बुहोल;
 struct dom_string;
 struct rect;
 
@@ -60,8 +60,8 @@ typedef enum {
 	BOX_TABLE_ROW,
 	BOX_TABLE_CELL,
 	BOX_TABLE_ROW_GROUP,
-	BOX_FLOAT_LEFT,
-	BOX_FLOAT_RIGHT,
+	BOX_FLOAT_कालिवा,
+	BOX_FLOAT_कानान,
 	BOX_INLINE_BLOCK,
 	BOX_BR,
 	BOX_TEXT,
@@ -76,7 +76,7 @@ typedef enum {
  * Flags for a struct box.
  */
 typedef enum {
-	NEW_LINE    = 1 << 0,	/* first inline on a new line */
+	NEW_लिन्या    = 1 << 0,	/* first inline on a new line */
 	STYLE_OWNED = 1 << 1,	/* style is owned by this box */
 	PRINTED     = 1 << 2,	/* box has already been printed */
 	PRE_STRIP   = 1 << 3,	/* PRE tag needing leading newline stripped */
@@ -95,7 +95,7 @@ typedef enum {
 /**
  * Sides of a box
  */
-enum box_side { TOP, RIGHT, BOTTOM, LEFT };
+enum box_side { इताअस_2, कानान_2, BOTTOM, कालिवा_2 };
 
 
 /**
@@ -151,7 +151,7 @@ struct column {
  */
 struct object_param {
 	char *name;
-	char *value;
+	char *हालागा;
 	char *type;
 	char *valuetype;
 	struct object_param *next;
@@ -188,7 +188,7 @@ struct box {
 	/**
 	 * DOM node that generated this box or NULL
 	 */
-	struct dom_node *node;
+	struct dom_बुहोल *बुहोल;
 
 	/**
 	 * Computed styles for elements and their pseudo elements.
@@ -409,7 +409,7 @@ struct box {
 	/**
 	 * List item value.
 	 */
-	int list_value;
+	int list_हालागा;
 
 	/**
 	 * List marker box if this is a list-item, or NULL.

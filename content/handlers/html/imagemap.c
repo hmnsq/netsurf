@@ -66,7 +66,7 @@ struct mapentry {
 			int y1;		/**< bottom edge */
 		} rect;
 		struct {
-			int num;	/**< number of points */
+			int नुमेरो;	/**< number of points */
 			float *xcoords;	/**< x coordinates */
 			float *ycoords;	/**< y coordinates */
 		} poly;
@@ -75,7 +75,7 @@ struct mapentry {
 };
 
 struct imagemap {
-	char *key;		/**< key for this entry */
+	char *सुसि;		/**< key for this entry */
 	struct mapentry *list;	/**< pointer to linked list of entries */
 	struct imagemap *next;	/**< next entry in this hash chain */
 };
@@ -106,14 +106,14 @@ static bool imagemap_create(html_content *c)
  * \param key The key to hash.
  * \return The hashed value.
  */
-static unsigned int imagemap_hash(const char *key)
+static unsigned int imagemap_hash(const char *सुसि)
 {
 	unsigned int z = 0;
 
-	if (key == 0) return 0;
+	if (सुसि == 0) return 0;
 
-	for (; *key != 0; key++) {
-		z += *key & 0x1f;
+	for (; *सुसि != 0; सुसि++) {
+		z += *सुसि & 0x1f;
 	}
 
 	return (z % (HASH_SIZE - 1)) + 1;
@@ -128,13 +128,13 @@ static unsigned int imagemap_hash(const char *key)
  * \return true on succes, false otherwise
  */
 static bool
-imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
+imagemap_add(html_content *c, dom_string *सुसि, struct mapentry *list)
 {
 	struct imagemap *map;
 	unsigned int slot;
 
 	assert(c != NULL);
-	assert(key != NULL);
+	assert(सुसि != NULL);
 	assert(list != NULL);
 
 	if (imagemap_create(c) == false)
@@ -145,15 +145,15 @@ imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
 		return false;
 
 	/* \todo Stop relying on NULL termination of dom_string */
-	map->key = strdup(dom_string_data(key));
-	if (map->key == NULL) {
+	map->सुसि = strdup(dom_string_data(सुसि));
+	if (map->सुसि == NULL) {
 		free(map);
 		return false;
 	}
 
 	map->list = list;
 
-	slot = imagemap_hash(map->key);
+	slot = imagemap_hash(map->सुसि);
 
 	map->next = c->imagemaps[slot];
 	c->imagemaps[slot] = map;
@@ -214,7 +214,7 @@ void imagemap_destroy(html_content *c)
 		while (map != NULL) {
 			next = map->next;
 			imagemap_freelist(map->list);
-			free(map->key);
+			free(map->सुसि);
 			free(map);
 			map = next;
 		}
@@ -245,7 +245,7 @@ void imagemap_dump(html_content *c)
 
 		map = c->imagemaps[i];
 		while (map != NULL) {
-			NSLOG(netsurf, INFO, "Imagemap: %s", map->key);
+			NSLOG(netsurf, INFO, "Imagemap: %s", map->सुसि);
 
 			for (entry = map->list; entry; entry = entry->next) {
 				switch (entry->type) {
@@ -274,7 +274,7 @@ void imagemap_dump(html_content *c)
 					NSLOG(netsurf, INFO,
 					      "\tPolygon: %s:",
 					      nsurl_access(entry->url));
-					for (j = 0; j != entry->bounds.poly.num;
+					for (j = 0; j != entry->bounds.poly.नुमेरो;
 							j++) {
 						fprintf(stderr, "(%d,%d) ",
 							(int)entry->bounds.poly.xcoords[j],
@@ -301,7 +301,7 @@ void imagemap_dump(html_content *c)
  */
 static bool
 imagemap_addtolist(const struct html_content *c,
-		   dom_node *n,
+		   dom_बुहोल *n,
 		   nsurl *base_url,
 		   struct mapentry **entry,
 		   dom_string *tagtype)
@@ -394,13 +394,13 @@ imagemap_addtolist(const struct html_content *c,
 		float *xcoords, *ycoords;
 		/* coordinates are a comma-separated list of values */
 		char *val = strtok((char *)dom_string_data(coords), ",");
-		int num = 1;
+		int नुमेरो = 1;
 
 		switch (new_map->type) {
 		case IMAGEMAP_RECT:
 			/* (left, top, right, bottom) */
-			while (val != NULL && num <= 4) {
-				switch (num) {
+			while (val != NULL && नुमेरो <= 4) {
+				switch (नुमेरो) {
 				case 1:
 					new_map->bounds.rect.x0 = atoi(val);
 					break;
@@ -415,14 +415,14 @@ imagemap_addtolist(const struct html_content *c,
 					break;
 				}
 
-				num++;
+				नुमेरो++;
 				val = strtok(NULL, ",");
 			}
 			break;
 		case IMAGEMAP_CIRCLE:
 			/* (x, y, radius ) */
-			while (val != NULL && num <= 3) {
-				switch (num) {
+			while (val != NULL && नुमेरो <= 3) {
+				switch (नुमेरो) {
 				case 1:
 					new_map->bounds.circle.x = atoi(val);
 					break;
@@ -434,7 +434,7 @@ imagemap_addtolist(const struct html_content *c,
 					break;
 				}
 
-				num++;
+				नुमेरो++;
 				val = strtok(NULL, ",");
 			}
 			break;
@@ -452,27 +452,27 @@ imagemap_addtolist(const struct html_content *c,
 				y = atoi(val);
 
 				xcoords = realloc(new_map->bounds.poly.xcoords,
-						num * sizeof(float));
+						नुमेरो * sizeof(float));
 				if (xcoords == NULL) {
 					goto bad_out;
 				}
 				new_map->bounds.poly.xcoords = xcoords;
 
 				ycoords = realloc(new_map->bounds.poly.ycoords,
-					num * sizeof(float));
+					नुमेरो * sizeof(float));
 				if (ycoords == NULL) {
 					goto bad_out;
 				}
 				new_map->bounds.poly.ycoords = ycoords;
 
-				new_map->bounds.poly.xcoords[num - 1] = x;
-				new_map->bounds.poly.ycoords[num - 1] = y;
+				new_map->bounds.poly.xcoords[नुमेरो - 1] = x;
+				new_map->bounds.poly.ycoords[नुमेरो - 1] = y;
 
-				num++;
+				नुमेरो++;
 				val = strtok(NULL, ",");
 			}
 
-			new_map->bounds.poly.num = num - 1;
+			new_map->bounds.poly.नुमेरो = नुमेरो - 1;
 
 			break;
 		default:
@@ -534,27 +534,27 @@ ok_out:
  * \return false on memory exhaustion, true otherwise
  */
 static bool
-imagemap_extract_map_entries(dom_node *node, html_content *c,
+imagemap_extract_map_entries(dom_बुहोल *बुहोल, html_content *c,
 			     struct mapentry **entry, dom_string *tname)
 {
 	dom_nodelist *nlist;
 	dom_exception exc;
 	unsigned long ent;
-	uint32_t tag_count;
+	uint32_t tag_बिलांग;
 
-	exc = dom_element_get_elements_by_tag_name(node, tname, &nlist);
+	exc = dom_element_get_elements_by_tag_name(बुहोल, tname, &nlist);
 	if (exc != DOM_NO_ERR) {
 		return false;
 	}
 
-	exc = dom_nodelist_get_length(nlist, &tag_count);
+	exc = dom_nodelist_get_length(nlist, &tag_बिलांग);
 	if (exc != DOM_NO_ERR) {
 		dom_nodelist_unref(nlist);
 		return false;
 	}
 
-	for (ent = 0; ent < tag_count; ++ent) {
-		dom_node *subnode;
+	for (ent = 0; ent < tag_बिलांग; ++ent) {
+		dom_बुहोल *subnode;
 
 		exc = dom_nodelist_item(nlist, ent, &subnode);
 		if (exc != DOM_NO_ERR) {
@@ -563,11 +563,11 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
 		}
 		if (imagemap_addtolist(c, subnode, c->base_url,
 				       entry, tname) == false) {
-			dom_node_unref(subnode);
+			dom_बुहोल_unref(subnode);
 			dom_nodelist_unref(nlist);
 			return false;
 		}
-		dom_node_unref(subnode);
+		dom_बुहोल_unref(subnode);
 	}
 
 	dom_nodelist_unref(nlist);
@@ -583,13 +583,13 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
  * \param entry List of map entries
  * \return false on memory exhaustion, true otherwise
  */
-static bool imagemap_extract_map(dom_node *node, html_content *c,
+static bool imagemap_extract_map(dom_बुहोल *बुहोल, html_content *c,
 		struct mapentry **entry)
 {
-	if (imagemap_extract_map_entries(node, c, entry,
+	if (imagemap_extract_map_entries(बुहोल, c, entry,
 			corestring_dom_area) == false)
 		return false;
-	return imagemap_extract_map_entries(node, c, entry,
+	return imagemap_extract_map_entries(बुहोल, c, entry,
 			corestring_dom_a);
 }
 
@@ -622,28 +622,28 @@ imagemap_extract(html_content *c)
 	}
 
 	for (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
-		dom_node *node;
+		dom_बुहोल *बुहोल;
 		dom_string *name;
-		exc = dom_nodelist_item(nlist, mapnr, &node);
+		exc = dom_nodelist_item(nlist, mapnr, &बुहोल);
 		if (exc != DOM_NO_ERR) {
 			ret = NSERROR_DOM;
 			goto out_nlist;
 		}
 
-		exc = dom_element_get_attribute(node, corestring_dom_id,
+		exc = dom_element_get_attribute(बुहोल, corestring_dom_id,
 						&name);
 		if (exc != DOM_NO_ERR) {
-			dom_node_unref(node);
+			dom_बुहोल_unref(बुहोल);
 			ret = NSERROR_DOM;
 			goto out_nlist;
 		}
 
 		if (name == NULL) {
-			exc = dom_element_get_attribute(node,
+			exc = dom_element_get_attribute(बुहोल,
 							corestring_dom_name,
 							&name);
 			if (exc != DOM_NO_ERR) {
-				dom_node_unref(node);
+				dom_बुहोल_unref(बुहोल);
 				ret = NSERROR_DOM;
 				goto out_nlist;
 			}
@@ -651,13 +651,13 @@ imagemap_extract(html_content *c)
 
 		if (name != NULL) {
 			struct mapentry *entry = NULL;
-			if (imagemap_extract_map(node, c, &entry) == false) {
+			if (imagemap_extract_map(बुहोल, c, &entry) == false) {
 				if (entry != NULL) {
 					imagemap_freelist(entry);
 				}
 
 				dom_string_unref(name);
-				dom_node_unref(node);
+				dom_बुहोल_unref(बुहोल);
 				ret = NSERROR_NOMEM; /** @todo check this */
 				goto out_nlist;
 			}
@@ -672,14 +672,14 @@ imagemap_extract(html_content *c)
 				imagemap_freelist(entry);
 
 				dom_string_unref(name);
-				dom_node_unref(node);
+				dom_बुहोल_unref(बुहोल);
 				ret = NSERROR_NOMEM; /** @todo check this */
 				goto out_nlist;
 			}
 		}
 
 		dom_string_unref(name);
-		dom_node_unref(node);
+		dom_बुहोल_unref(बुहोल);
 	}
 
 out_nlist:
@@ -703,7 +703,7 @@ out_nlist:
  * \return 1 if point is in polygon, 0 if outside. 0 or 1 if on boundary
  */
 static int
-imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
+imagemap_point_in_poly(int नुमेरो, float *xpt, float *ypt, unsigned long x,
 		unsigned long y, unsigned long click_x,	unsigned long click_y)
 {
 	int i, j, c = 0;
@@ -711,7 +711,7 @@ imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
 	assert(xpt != NULL);
 	assert(ypt != NULL);
 
-	for (i = 0, j = num - 1; i < num; j = i++) {
+	for (i = 0, j = नुमेरो - 1; i < नुमेरो; j = i++) {
 		if ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
 		     ((ypt[j] + y <= click_y) && (click_y < ypt[i] + y))) &&
 		     (click_x < (xpt[j] - xpt[i]) *
@@ -734,7 +734,7 @@ imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
  * \param target   Pointer to location to receive target pointer (if any)
  * \return The url associated with this area, or NULL if not found
  */
-nsurl *imagemap_get(struct html_content *c, const char *key,
+nsurl *imagemap_get(struct html_content *c, const char *सुसि,
 		unsigned long x, unsigned long y,
 		unsigned long click_x, unsigned long click_y,
 		const char **target)
@@ -746,16 +746,16 @@ nsurl *imagemap_get(struct html_content *c, const char *key,
 
 	assert(c != NULL);
 
-	if (key == NULL)
+	if (सुसि == NULL)
 		return NULL;
 
 	if (c->imagemaps == NULL)
 		return NULL;
 
-	slot = imagemap_hash(key);
+	slot = imagemap_hash(सुसि);
 
 	for (map = c->imagemaps[slot]; map != NULL; map = map->next) {
-		if (map->key != NULL && strcasecmp(map->key, key) == 0)
+		if (map->सुसि != NULL && strcasecmp(map->सुसि, सुसि) == 0)
 			break;
 	}
 
@@ -792,7 +792,7 @@ nsurl *imagemap_get(struct html_content *c, const char *key,
 			}
 			break;
 		case IMAGEMAP_POLY:
-			if (imagemap_point_in_poly(entry->bounds.poly.num,
+			if (imagemap_point_in_poly(entry->bounds.poly.नुमेरो,
 					entry->bounds.poly.xcoords,
 					entry->bounds.poly.ycoords, x, y,
 					click_x, click_y)) {

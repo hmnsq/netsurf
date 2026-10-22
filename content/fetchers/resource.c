@@ -44,7 +44,7 @@
 #include "content/fetchers.h"
 #include "content/fetchers/resource.h"
 
-#define DIRECT_ETAG_VALUE 123456
+#define DIRECT_ETAG_हालागा 123456
 
 /** Valid resource paths */
 static const char *fetch_resource_paths[] = {
@@ -102,14 +102,14 @@ struct fetch_resource_context {
 
 static struct fetch_resource_context *ring = NULL;
 
-static uint32_t fetch_resource_path_count;
+static uint32_t fetch_resource_path_बिलांग;
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_resource_send_callback(const fetch_msg *msg,
+static inline bool fetch_resource_send_callback(const fetch_मेनसाहे *मेनसाहे,
 		struct fetch_resource_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(मेनसाहे, ctx->fetchh);
 	ctx->locked = false;
 
 	return ctx->aborted;
@@ -118,7 +118,7 @@ static inline bool fetch_resource_send_callback(const fetch_msg *msg,
 static bool fetch_resource_send_header(struct fetch_resource_context *ctx,
 		const char *fmt, ...)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	char header[64];
 	va_list ap;
 	int len;
@@ -131,11 +131,11 @@ static bool fetch_resource_send_header(struct fetch_resource_context *ctx,
 		return false;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = len;
+	मेनसाहे.type = FETCH_HEADER;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) header;
+	मेनसाहे.data.header_or_data.len = len;
 
-	return fetch_resource_send_callback(&msg, ctx);
+	return fetch_resource_send_callback(&मेनसाहे, ctx);
 }
 
 
@@ -145,14 +145,14 @@ static bool fetch_resource_send_header(struct fetch_resource_context *ctx,
  */
 static bool fetch_resource_redirect_handler(struct fetch_resource_context *ctx)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 
 	/* content is going to return redirect */
 	fetch_set_http_code(ctx->fetchh, 302);
 
-	msg.type = FETCH_REDIRECT;
-	msg.data.redirect = nsurl_access(ctx->entry->redirect_url);
-	fetch_resource_send_callback(&msg, ctx);
+	मेनसाहे.type = FETCH_REDIRECT;
+	मेनसाहे.data.redirect = nsurl_access(ctx->entry->redirect_url);
+	fetch_resource_send_callback(&मेनसाहे, ctx);
 
 	return true;
 }
@@ -160,13 +160,13 @@ static bool fetch_resource_redirect_handler(struct fetch_resource_context *ctx)
 /* resource handler that returns data directly */
 static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 
 	/* Check if we can just return not modified */
-	if (ctx->etag != 0 && ctx->etag == DIRECT_ETAG_VALUE) {
+	if (ctx->etag != 0 && ctx->etag == DIRECT_ETAG_हालागा) {
 		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_resource_send_callback(&msg, ctx);
+		मेनसाहे.type = FETCH_NOTMODIFIED;
+		fetch_resource_send_callback(&मेनसाहे, ctx);
 		return true;
 	}
 
@@ -192,7 +192,7 @@ static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
 
 	/* create etag */
 	if (fetch_resource_send_header(ctx, "ETag: \"%10" PRId64 "\"",
-				       (int64_t) DIRECT_ETAG_VALUE)) {
+				       (int64_t) DIRECT_ETAG_हालागा)) {
 		goto fetch_resource_data_aborted;
 	}
 
@@ -202,14 +202,14 @@ static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
 		goto fetch_resource_data_aborted;
 	}
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) ctx->entry->data;
-	msg.data.header_or_data.len = ctx->entry->data_len;
-	fetch_resource_send_callback(&msg, ctx);
+	मेनसाहे.type = FETCH_DATA;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) ctx->entry->data;
+	मेनसाहे.data.header_or_data.len = ctx->entry->data_len;
+	fetch_resource_send_callback(&मेनसाहे, ctx);
 
 	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_resource_send_callback(&msg, ctx);
+		मेनसाहे.type = FETCH_FINISHED;
+		fetch_resource_send_callback(&मेनसाहे, ctx);
 	}
 
 fetch_resource_data_aborted:
@@ -219,11 +219,11 @@ fetch_resource_data_aborted:
 
 static bool fetch_resource_notfound_handler(struct fetch_resource_context *ctx)
 {
-	fetch_msg msg;
+	fetch_मेनसाहे मेनसाहे;
 	int code = 404;
 	char buffer[1024];
 	const char *title;
-	char key[8];
+	char सुसि[8];
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
@@ -232,8 +232,8 @@ static bool fetch_resource_notfound_handler(struct fetch_resource_context *ctx)
 	if (fetch_resource_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_resource_notfound_handler_aborted;
 
-	snprintf(key, sizeof key, "HTTP%03d", code);
-	title = messages_get(key);
+	snprintf(सुसि, sizeof सुसि, "HTTP%03d", code);
+	title = messages_get(सुसि);
 
 	snprintf(buffer, sizeof buffer,
 		 "<html><head>"
@@ -250,14 +250,14 @@ static bool fetch_resource_notfound_handler(struct fetch_resource_context *ctx)
 		 messages_get("FetchErrorCode"), code,
 		 messages_get("FetchFile"), nsurl_access(ctx->url));
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_resource_send_callback(&msg, ctx))
+	मेनसाहे.type = FETCH_DATA;
+	मेनसाहे.data.header_or_data.buf = (const uint8_t *) buffer;
+	मेनसाहे.data.header_or_data.len = strlen(buffer);
+	if (fetch_resource_send_callback(&मेनसाहे, ctx))
 		goto fetch_resource_notfound_handler_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_resource_send_callback(&msg, ctx);
+	मेनसाहे.type = FETCH_FINISHED;
+	fetch_resource_send_callback(&मेनसाहे, ctx);
 
 fetch_resource_notfound_handler_aborted:
 	return false;
@@ -272,10 +272,10 @@ static bool fetch_resource_initialise(lwc_string *scheme)
 	uint32_t i;
 	nserror res;
 
-	fetch_resource_path_count = 0;
+	fetch_resource_path_बिलांग = 0;
 
 	for (i = 0; i < NOF_ELEMENTS(fetch_resource_paths); i++) {
-		e = &fetch_resource_map[fetch_resource_path_count];
+		e = &fetch_resource_map[fetch_resource_path_बिलांग];
 
 		if (lwc_intern_string(fetch_resource_paths[i],
 				strlen(fetch_resource_paths[i]),
@@ -295,7 +295,7 @@ static bool fetch_resource_initialise(lwc_string *scheme)
 		if (res == NSERROR_OK) {
 			NSLOG(netsurf, INFO, "direct data for %s",
 			      fetch_resource_paths[i]);
-			fetch_resource_path_count++;
+			fetch_resource_path_बिलांग++;
 		} else {
 			e->redirect_url = guit->fetch->get_resource_url(fetch_resource_paths[i]);
 			if (e->redirect_url == NULL) {
@@ -303,7 +303,7 @@ static bool fetch_resource_initialise(lwc_string *scheme)
 			} else {
 				NSLOG(netsurf, INFO, "redirect url for %s",
 				      fetch_resource_paths[i]);
-				fetch_resource_path_count++;
+				fetch_resource_path_बिलांग++;
 			}
 		}
 	}
@@ -316,7 +316,7 @@ static void fetch_resource_finalise(lwc_string *scheme)
 {
 	uint32_t i;
 
-	for (i = 0; i < fetch_resource_path_count; i++) {
+	for (i = 0; i < fetch_resource_path_बिलांग; i++) {
 		lwc_string_unref(fetch_resource_map[i].path);
 		if (fetch_resource_map[i].data != NULL) {
 			guit->fetch->release_resource_data(fetch_resource_map[i].data);
@@ -359,7 +359,7 @@ fetch_resource_setup(struct fetch *fetchh,
 		bool match;
 
 		/* Ensure requested path is valid */
-		for (i = 0; i < fetch_resource_path_count; i++) {
+		for (i = 0; i < fetch_resource_path_बिलांग; i++) {
 			if (lwc_string_isequal(path,
 					fetch_resource_map[i].path,
 					&match) == lwc_error_ok && match) {
@@ -405,7 +405,7 @@ fetch_resource_setup(struct fetch *fetchh,
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_इसिंगित(ring, ctx);
 
 	return ctx;
 }
@@ -455,7 +455,7 @@ static void fetch_resource_poll(lwc_string *scheme)
 		 * again.
 		 */
 		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
+			RING_इसिंगित(save_ring, c);
 			continue;
 		}
 

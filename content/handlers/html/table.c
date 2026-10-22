@@ -170,7 +170,7 @@ table_border_is_more_eyecatching(const css_unit_ctx *unit_len_ctx,
  * \post \a a_src will be updated also
  */
 static void
-table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
+table_cell_इताअस_process_table(const css_unit_ctx *unit_len_ctx,
 			     struct box *table,
 			     struct border *a,
 			     box_type *a_src)
@@ -179,9 +179,9 @@ table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
 	box_type b_src;
 
 	/* Top border of table */
-	b.style = css_computed_border_top_style(table->style);
-	b.color = css_computed_border_top_color(table->style, &b.c);
-	css_computed_border_top_width(table->style, &b.width, &b.unit);
+	b.style = css_computed_border_इताअस_style(table->style);
+	b.color = css_computed_border_इताअस_color(table->style, &b.c);
+	css_computed_border_इताअस_width(table->style, &b.width, &b.unit);
 	b.width = css_unit_len2device_px(table->style, unit_len_ctx,
 			b.width, b.unit);
 	b.unit = CSS_UNIT_PX;
@@ -208,7 +208,7 @@ table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
  * \post \a a_src will be updated also
  */
 static bool
-table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
+table_cell_इताअस_process_row(const css_unit_ctx *unit_len_ctx,
 			   struct box *cell,
 			   struct box *row,
 			   struct border *a,
@@ -233,9 +233,9 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
 
 	if (row->children == NULL) {
 		/* Row is empty, so consider its top border */
-		b.style = css_computed_border_top_style(row->style);
-		b.color = css_computed_border_top_color(row->style, &b.c);
-		css_computed_border_top_width(row->style, &b.width, &b.unit);
+		b.style = css_computed_border_इताअस_style(row->style);
+		b.color = css_computed_border_इताअस_color(row->style, &b.c);
+		css_computed_border_इताअस_width(row->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(row->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
@@ -319,7 +319,7 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
  * \post \a a_src will be updated also
  */
 static bool
-table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
+table_cell_इताअस_process_group(const css_unit_ctx *unit_len_ctx,
 			     struct box *cell,
 			     struct box *group,
 			     struct border *a,
@@ -346,7 +346,7 @@ table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
 		/* Process rows in group, starting with last */
 		struct box *row = group->last;
 
-		while (table_cell_top_process_row(unit_len_ctx, cell, row,
+		while (table_cell_इताअस_process_row(unit_len_ctx, cell, row,
 						  a, a_src) == false) {
 			if (row->prev == NULL) {
 				return false;
@@ -356,9 +356,9 @@ table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
 		}
 	} else {
 		/* Group is empty, so consider its top border */
-		b.style = css_computed_border_top_style(group->style);
-		b.color = css_computed_border_top_color(group->style, &b.c);
-		css_computed_border_top_width(group->style, &b.width, &b.unit);
+		b.style = css_computed_border_इताअस_style(group->style);
+		b.color = css_computed_border_इताअस_color(group->style, &b.c);
+		css_computed_border_इताअस_width(group->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
@@ -384,7 +384,7 @@ table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
  * \param cell     Table cell to consider
  */
 static void
-table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+table_used_कालिवा_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
 {
 	struct border a, b;
 	box_type a_src, b_src;
@@ -392,9 +392,9 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 	/** \todo Need column and column_group, too */
 
 	/* Initialise to computed left border for cell */
-	a.style = css_computed_border_left_style(cell->style);
-	a.color = css_computed_border_left_color(cell->style, &a.c);
-	css_computed_border_left_width(cell->style, &a.width, &a.unit);
+	a.style = css_computed_border_कालिवा_style(cell->style);
+	a.color = css_computed_border_कालिवा_color(cell->style, &a.c);
+	css_computed_border_कालिवा_width(cell->style, &a.width, &a.unit);
 	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
 			a.width, a.unit);
 	a.unit = CSS_UNIT_PX;
@@ -426,9 +426,9 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 			prev = cell->prev;
 		}
 
-		b.style = css_computed_border_right_style(prev->style);
-		b.color = css_computed_border_right_color(prev->style, &b.c);
-		css_computed_border_right_width(prev->style, &b.width, &b.unit);
+		b.style = css_computed_border_कानान_style(prev->style);
+		b.color = css_computed_border_कानान_color(prev->style, &b.c);
+		css_computed_border_कानान_width(prev->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(prev->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
@@ -448,10 +448,10 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 
 		while (rows-- > 0 && row != NULL) {
 			/* Spanned rows -- consider their left border */
-			b.style = css_computed_border_left_style(row->style);
-			b.color = css_computed_border_left_color(
+			b.style = css_computed_border_कालिवा_style(row->style);
+			b.color = css_computed_border_कालिवा_color(
 								 row->style, &b.c);
-			css_computed_border_left_width(
+			css_computed_border_कालिवा_width(
 						       row->style, &b.width, &b.unit);
 			b.width = css_unit_len2device_px(
 					row->style, unit_len_ctx,
@@ -471,9 +471,9 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 		/** \todo can cells span row groups? */
 
 		/* Row group -- consider its left border */
-		b.style = css_computed_border_left_style(group->style);
-		b.color = css_computed_border_left_color(group->style, &b.c);
-		css_computed_border_left_width(group->style, &b.width, &b.unit);
+		b.style = css_computed_border_कालिवा_style(group->style);
+		b.color = css_computed_border_कालिवा_color(group->style, &b.c);
+		css_computed_border_कालिवा_width(group->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
@@ -486,9 +486,9 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 		}
 
 		/* The table itself -- consider its left border */
-		b.style = css_computed_border_left_style(table->style);
-		b.color = css_computed_border_left_color(table->style, &b.c);
-		css_computed_border_left_width(table->style, &b.width, &b.unit);
+		b.style = css_computed_border_कालिवा_style(table->style);
+		b.color = css_computed_border_कालिवा_color(table->style, &b.c);
+		css_computed_border_कालिवा_width(table->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
@@ -502,9 +502,9 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 	}
 
 	/* a now contains the used left border for the cell */
-	cell->border[LEFT].style = a.style;
-	cell->border[LEFT].c = a.c;
-	cell->border[LEFT].width = FIXTOINT(css_unit_len2device_px(
+	cell->border[कालिवा_2].style = a.style;
+	cell->border[कालिवा_2].c = a.c;
+	cell->border[कालिवा_2].width = FIXTOINT(css_unit_len2device_px(
 			cell->style, unit_len_ctx, a.width, a.unit));
 }
 
@@ -516,7 +516,7 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
  * \param cell     Table cell to consider
  */
 static void
-table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+table_used_इताअस_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
 {
 	struct border a, b;
 	box_type a_src, b_src;
@@ -524,18 +524,18 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
 	bool process_group = false;
 
 	/* Initialise to computed top border for cell */
-	a.style = css_computed_border_top_style(cell->style);
-	css_computed_border_top_color(cell->style, &a.c);
-	css_computed_border_top_width(cell->style, &a.width, &a.unit);
+	a.style = css_computed_border_इताअस_style(cell->style);
+	css_computed_border_इताअस_color(cell->style, &a.c);
+	css_computed_border_इताअस_width(cell->style, &a.width, &a.unit);
 	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
 			a.width, a.unit);
 	a.unit = CSS_UNIT_PX;
 	a_src = BOX_TABLE_CELL;
 
 	/* Top border of row */
-	b.style = css_computed_border_top_style(row->style);
-	css_computed_border_top_color(row->style, &b.c);
-	css_computed_border_top_width(row->style, &b.width, &b.unit);
+	b.style = css_computed_border_इताअस_style(row->style);
+	css_computed_border_इताअस_color(row->style, &b.c);
+	css_computed_border_इताअस_width(row->style, &b.width, &b.unit);
 	b.width = css_unit_len2device_px(row->style, unit_len_ctx,
 			b.width, b.unit);
 	b.unit = CSS_UNIT_PX;
@@ -548,7 +548,7 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
 
 	if (row->prev != NULL) {
 		/* Consider row(s) above */
-		while (table_cell_top_process_row(unit_len_ctx, cell, row->prev,
+		while (table_cell_इताअस_process_row(unit_len_ctx, cell, row->prev,
 						  &a, &a_src) == false) {
 			if (row->prev->prev == NULL) {
 				/* Consider row group */
@@ -566,9 +566,9 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
 		struct box *group = row->parent;
 
 		/* Top border of row group */
-		b.style = css_computed_border_top_style(group->style);
-		b.color = css_computed_border_top_color(group->style, &b.c);
-		css_computed_border_top_width(group->style, &b.width, &b.unit);
+		b.style = css_computed_border_इताअस_style(group->style);
+		b.color = css_computed_border_इताअस_color(group->style, &b.c);
+		css_computed_border_इताअस_width(group->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
@@ -582,16 +582,16 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
 
 		if (group->prev == NULL) {
 			/* Top border of table */
-			table_cell_top_process_table(unit_len_ctx,
+			table_cell_इताअस_process_table(unit_len_ctx,
 						     group->parent, &a, &a_src);
 		} else {
 			/* Process previous group(s) */
-			while (table_cell_top_process_group(unit_len_ctx,
+			while (table_cell_इताअस_process_group(unit_len_ctx,
 							    cell, group->prev,
 							    &a, &a_src) == false) {
 				if (group->prev->prev == NULL) {
 					/* Top border of table */
-					table_cell_top_process_table(unit_len_ctx,
+					table_cell_इताअस_process_table(unit_len_ctx,
 								     group->parent,
 								     &a, &a_src);
 					break;
@@ -603,9 +603,9 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
 	}
 
 	/* a now contains the used top border for the cell */
-	cell->border[TOP].style = a.style;
-	cell->border[TOP].c = a.c;
-	cell->border[TOP].width = FIXTOINT(css_unit_len2device_px(
+	cell->border[इताअस_2].style = a.style;
+	cell->border[इताअस_2].c = a.c;
+	cell->border[इताअस_2].width = FIXTOINT(css_unit_len2device_px(
 			cell->style, unit_len_ctx, a.width, a.unit));
 }
 
@@ -616,7 +616,7 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
  * \param cell     Table cell to consider
  */
 static void
-table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+table_used_कानान_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
 {
 	struct border a, b;
 	box_type a_src, b_src;
@@ -624,9 +624,9 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 	/** \todo Need column and column_group, too */
 
 	/* Initialise to computed right border for cell */
-	a.style = css_computed_border_right_style(cell->style);
-	css_computed_border_right_color(cell->style, &a.c);
-	css_computed_border_right_width(cell->style, &a.width, &a.unit);
+	a.style = css_computed_border_कानान_style(cell->style);
+	css_computed_border_कानान_color(cell->style, &a.c);
+	css_computed_border_कानान_width(cell->style, &a.width, &a.unit);
 	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
 			a.width, a.unit);
 	a.unit = CSS_UNIT_PX;
@@ -647,10 +647,10 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 
 		while (rows-- > 0 && row != NULL) {
 			/* Spanned rows -- consider their right border */
-			b.style = css_computed_border_right_style(row->style);
-			b.color = css_computed_border_right_color(row->style,
+			b.style = css_computed_border_कानान_style(row->style);
+			b.color = css_computed_border_कानान_color(row->style,
 								  &b.c);
-			css_computed_border_right_width(row->style,
+			css_computed_border_कानान_width(row->style,
 							&b.width,
 							&b.unit);
 			b.width = css_unit_len2device_px(
@@ -672,9 +672,9 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 		/** \todo can cells span row groups? */
 
 		/* Row group -- consider its right border */
-		b.style = css_computed_border_right_style(group->style);
-		b.color = css_computed_border_right_color(group->style, &b.c);
-		css_computed_border_right_width(group->style,
+		b.style = css_computed_border_कानान_style(group->style);
+		b.color = css_computed_border_कानान_color(group->style, &b.c);
+		css_computed_border_कानान_width(group->style,
 						&b.width, &b.unit);
 		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
 				b.width, b.unit);
@@ -688,9 +688,9 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 		}
 
 		/* The table itself -- consider its right border */
-		b.style = css_computed_border_right_style(table->style);
-		b.color = css_computed_border_right_color(table->style, &b.c);
-		css_computed_border_right_width(table->style,
+		b.style = css_computed_border_कानान_style(table->style);
+		b.color = css_computed_border_कानान_color(table->style, &b.c);
+		css_computed_border_कानान_width(table->style,
 						&b.width, &b.unit);
 		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
 				b.width, b.unit);
@@ -706,9 +706,9 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 	}
 
 	/* a now contains the used right border for the cell */
-	cell->border[RIGHT].style = a.style;
-	cell->border[RIGHT].c = a.c;
-	cell->border[RIGHT].width = FIXTOINT(css_unit_len2device_px(
+	cell->border[कानान_2].style = a.style;
+	cell->border[कानान_2].c = a.c;
+	cell->border[कानान_2].width = FIXTOINT(css_unit_len2device_px(
 			cell->style, unit_len_ctx, a.width, a.unit));
 }
 
@@ -835,7 +835,7 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 		for (row = row_group->children; row; row = row->next)
 			for (cell = row->children; cell; cell = cell->next) {
 				enum css_width_e type;
-				css_fixed value = 0;
+				css_fixed हालागा = 0;
 				css_unit unit = CSS_UNIT_PX;
 
 				assert(cell->type == BOX_TABLE_CELL);
@@ -852,7 +852,7 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 					col[i].positioned = false;
 				}
 
-				type = css_computed_width(cell->style, &value, &unit);
+				type = css_computed_width(cell->style, &हालागा, &unit);
 
 				/* fixed width takes priority over any other width type */
 				if (col[i].type != COLUMN_WIDTH_FIXED &&
@@ -861,7 +861,7 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 					col[i].width = FIXTOINT(css_unit_len2device_px(
 							cell->style,
 							unit_len_ctx,
-							value, unit));
+							हालागा, unit));
 					if (col[i].width < 0)
 						col[i].width = 0;
 					continue;
@@ -872,7 +872,7 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 
 				if (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT) {
 					col[i].type = COLUMN_WIDTH_PERCENT;
-					col[i].width = FIXTOINT(value);
+					col[i].width = FIXTOINT(हालागा);
 					if (col[i].width < 0)
 						col[i].width = 0;
 				} else if (type == CSS_WIDTH_AUTO) {
@@ -890,7 +890,7 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 					unknown_columns = 0;
 				int fixed_width = 0, percent_width = 0;
 				enum css_width_e type;
-				css_fixed value = 0;
+				css_fixed हालागा = 0;
 				css_unit unit = CSS_UNIT_PX;
 
 				if (cell->columns == 1)
@@ -919,7 +919,7 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 				if (!unknown_columns)
 					continue;
 
-				type = css_computed_width(cell->style, &value, &unit);
+				type = css_computed_width(cell->style, &हालागा, &unit);
 
 				/* if cell is fixed width, and all spanned columns are fixed
 				 * or unknown width, split extra width among unknown columns */
@@ -929,7 +929,7 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 					int width = (FIXTOFLT(css_unit_len2device_px(
 							cell->style,
 							unit_len_ctx,
-							value, unit)) -
+							हालागा, unit)) -
 						fixed_width) / unknown_columns;
 					if (width < 0)
 						width = 0;
@@ -945,7 +945,7 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 				if (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT &&
 				    percent_columns + unknown_columns ==
 				    cell->columns) {
-					int width = (FIXTOFLT(value) -
+					int width = (FIXTOFLT(हालागा) -
 						     percent_width) / unknown_columns;
 					if (width < 0)
 						width = 0;
@@ -997,34 +997,34 @@ void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 		css_unit unit = CSS_UNIT_PX;
 
 		/* Left border */
-		cell->border[LEFT].style =
-			css_computed_border_left_style(cell->style);
-		css_computed_border_left_color(cell->style,
-					       &cell->border[LEFT].c);
-		css_computed_border_left_width(cell->style, &width, &unit);
-		cell->border[LEFT].width =
+		cell->border[कालिवा_2].style =
+			css_computed_border_कालिवा_style(cell->style);
+		css_computed_border_कालिवा_color(cell->style,
+					       &cell->border[कालिवा_2].c);
+		css_computed_border_कालिवा_width(cell->style, &width, &unit);
+		cell->border[कालिवा_2].width =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
 					width, unit));
 
 		/* Top border */
-		cell->border[TOP].style =
-			css_computed_border_top_style(cell->style);
-		css_computed_border_top_color(cell->style,
-					      &cell->border[TOP].c);
-		css_computed_border_top_width(cell->style, &width, &unit);
-		cell->border[TOP].width =
+		cell->border[इताअस_2].style =
+			css_computed_border_इताअस_style(cell->style);
+		css_computed_border_इताअस_color(cell->style,
+					      &cell->border[इताअस_2].c);
+		css_computed_border_इताअस_width(cell->style, &width, &unit);
+		cell->border[इताअस_2].width =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
 					width, unit));
 
 		/* Right border */
-		cell->border[RIGHT].style =
-			css_computed_border_right_style(cell->style);
-		css_computed_border_right_color(cell->style,
-						&cell->border[RIGHT].c);
-		css_computed_border_right_width(cell->style, &width, &unit);
-		cell->border[RIGHT].width =
+		cell->border[कानान_2].style =
+			css_computed_border_कानान_style(cell->style);
+		css_computed_border_कानान_color(cell->style,
+						&cell->border[कानान_2].c);
+		css_computed_border_कानान_width(cell->style, &width, &unit);
+		cell->border[कानान_2].width =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
 					width, unit));
@@ -1041,13 +1041,13 @@ void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 					width, unit));
 	} else {
 		/* Left border */
-		table_used_left_border_for_cell(unit_len_ctx, cell);
+		table_used_कालिवा_border_for_cell(unit_len_ctx, cell);
 
 		/* Top border */
-		table_used_top_border_for_cell(unit_len_ctx, cell);
+		table_used_इताअस_border_for_cell(unit_len_ctx, cell);
 
 		/* Right border */
-		table_used_right_border_for_cell(unit_len_ctx, cell);
+		table_used_कानान_border_for_cell(unit_len_ctx, cell);
 
 		/* Bottom border */
 		table_used_bottom_border_for_cell(unit_len_ctx, cell);

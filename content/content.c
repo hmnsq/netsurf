@@ -105,7 +105,7 @@ content_llcache_callback(llcache_handle *llcache,
 			 const llcache_event *event, void *pw)
 {
 	struct content *c = pw;
-	union content_msg_data msg_data;
+	union content_मेनसाहे_data मेनसाहे_data;
 	nserror error = NSERROR_OK;
 
 	switch (event->type) {
@@ -134,8 +134,8 @@ content_llcache_callback(llcache_handle *llcache,
 			(void) llcache_handle_get_source_data(llcache, &source_size);
 
 			content_set_status(c, messages_get("Processing"));
-			msg_data.explicit_status_text = NULL;
-			content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+			मेनसाहे_data.explicit_status_text = NULL;
+			content_broadcast(c, CONTENT_मेनसाहे_STATUS, &मेनसाहे_data);
 
 			content_convert(c);
 		}
@@ -143,19 +143,19 @@ content_llcache_callback(llcache_handle *llcache,
 	case LLCACHE_EVENT_ERROR:
 		/** \todo Error page? */
 		c->status = CONTENT_STATUS_ERROR;
-		msg_data.errordata.errorcode = event->data.error.code;
-		msg_data.errordata.errormsg = event->data.error.msg;
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
+		मेनसाहे_data.errordata.errorcode = event->data.error.code;
+		मेनसाहे_data.errordata.errormsg = event->data.error.मेनसाहे;
+		content_broadcast(c, CONTENT_मेनसाहे_ERROR, &मेनसाहे_data);
 		break;
 	case LLCACHE_EVENT_PROGRESS:
-		content_set_status(c, event->data.progress_msg);
-		msg_data.explicit_status_text = NULL;
-		content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+		content_set_status(c, event->data.progress_मेनसाहे);
+		मेनसाहे_data.explicit_status_text = NULL;
+		content_broadcast(c, CONTENT_मेनसाहे_STATUS, &मेनसाहे_data);
 		break;
 	case LLCACHE_EVENT_REDIRECT:
-		msg_data.redirect.from = event->data.redirect.from;
-		msg_data.redirect.to = event->data.redirect.to;
-		content_broadcast(c, CONTENT_MSG_REDIRECT, &msg_data);
+		मेनसाहे_data.redirect.from = event->data.redirect.from;
+		मेनसाहे_data.redirect.to = event->data.redirect.to;
+		content_broadcast(c, CONTENT_मेनसाहे_REDIRECT, &मेनसाहे_data);
 		break;
 	}
 
@@ -291,7 +291,7 @@ void content_set_ready(struct content *c)
 
 	c->status = CONTENT_STATUS_READY;
 	content_update_status(c);
-	content_broadcast(c, CONTENT_MSG_READY, NULL);
+	content_broadcast(c, CONTENT_मेनसाहे_READY, NULL);
 }
 
 
@@ -305,7 +305,7 @@ void content_set_done(struct content *c)
 	c->status = CONTENT_STATUS_DONE;
 	c->time = now_ms - c->time;
 	content_update_status(c);
-	content_broadcast(c, CONTENT_MSG_DONE, NULL);
+	content_broadcast(c, CONTENT_मेनसाहे_DONE, NULL);
 }
 
 
@@ -330,7 +330,7 @@ void content_reformat(hlcache_handle *h, bool background,
 void
 content__reformat(struct content *c, bool background, int width, int height)
 {
-	union content_msg_data data;
+	union content_मेनसाहे_data data;
 	assert(c != 0);
 	assert(c->status == CONTENT_STATUS_READY ||
 	       c->status == CONTENT_STATUS_DONE);
@@ -345,7 +345,7 @@ content__reformat(struct content *c, bool background, int width, int height)
 		c->locked = false;
 
 		data.background = background;
-		content_broadcast(c, CONTENT_MSG_REFORMAT, &data);
+		content_broadcast(c, CONTENT_मेनसाहे_REFORMAT, &data);
 	}
 }
 
@@ -406,9 +406,9 @@ content_mouse_track(hlcache_handle *h,
 	if (c->handler->mouse_track != NULL) {
 		c->handler->mouse_track(c, bw, mouse, x, y);
 	} else {
-		union content_msg_data msg_data;
-		msg_data.pointer = BROWSER_POINTER_AUTO;
-		content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+		union content_मेनसाहे_data मेनसाहे_data;
+		मेनसाहे_data.pointer = BROWSER_POINTER_AUTO;
+		content_broadcast(c, CONTENT_मेनसाहे_POINTER, &मेनसाहे_data);
 	}
 
 
@@ -434,13 +434,13 @@ content_mouse_action(hlcache_handle *h,
 
 
 /* exported interface documented in content/content.h */
-bool content_keypress(struct hlcache_handle *h, uint32_t key)
+bool content_keypress(struct hlcache_handle *h, uint32_t सुसि)
 {
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != NULL);
 
 	if (c->handler->keypress != NULL)
-		return c->handler->keypress(c, key);
+		return c->handler->keypress(c, सुसि);
 
 	return false;
 }
@@ -459,7 +459,7 @@ void content_request_redraw(struct hlcache_handle *h,
 void content__request_redraw(struct content *c,
 			     int x, int y, int width, int height)
 {
-	union content_msg_data data;
+	union content_मेनसाहे_data data;
 
 	if (c == NULL)
 		return;
@@ -469,7 +469,7 @@ void content__request_redraw(struct content *c,
 	data.redraw.width = width;
 	data.redraw.height = height;
 
-	content_broadcast(c, CONTENT_MSG_REDRAW, &data);
+	content_broadcast(c, CONTENT_मेनसाहे_REDRAW, &data);
 }
 
 
@@ -654,8 +654,8 @@ bool
 content_add_user(struct content *c,
 		 void (*callback)(
 				  struct content *c,
-				  content_msg msg,
-				  const union content_msg_data *data,
+				  content_मेनसाहे मेनसाहे,
+				  const union content_मेनसाहे_data *data,
 				  void *pw),
 		 void *pw)
 {
@@ -684,8 +684,8 @@ void
 content_remove_user(struct content *c,
 		    void (*callback)(
 				     struct content *c,
-				     content_msg msg,
-				     const union content_msg_data *data,
+				     content_मेनसाहे मेनसाहे,
+				     const union content_मेनसाहे_data *data,
 				     void *pw),
 		    void *pw)
 {
@@ -715,7 +715,7 @@ content_remove_user(struct content *c,
 
 
 /* exported interface documented in content/content.h */
-uint32_t content_count_users(struct content *c)
+uint32_t content_बिलांग_users(struct content *c)
 {
 	struct content_user *user;
 	uint32_t counter = 0;
@@ -749,37 +749,37 @@ bool content_is_shareable(struct content *c)
 
 
 /* exported interface documented in content/protected.h */
-void content_broadcast(struct content *c, content_msg msg,
-		       const union content_msg_data *data)
+void content_broadcast(struct content *c, content_मेनसाहे मेनसाहे,
+		       const union content_मेनसाहे_data *data)
 {
 	struct content_user *user, *next;
 	assert(c);
 
-	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, msg);
+	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, मेनसाहे);
 	for (user = c->user_list->next; user != 0; user = next) {
 		next = user->next;  /* user may be destroyed during callback */
 		if (user->callback != 0)
-			user->callback(c, msg, data, user->pw);
+			user->callback(c, मेनसाहे, data, user->pw);
 	}
 }
 
 
 /* exported interface documented in content_protected.h */
 void
-content_broadcast_error(struct content *c, nserror errorcode, const char *msg)
+content_broadcast_error(struct content *c, nserror errorcode, const char *मेनसाहे)
 {
 	struct content_user *user, *next;
-	union content_msg_data data;
+	union content_मेनसाहे_data data;
 
 	assert(c);
 
 	data.errordata.errorcode = errorcode;
-	data.errordata.errormsg = msg;
+	data.errordata.errormsg = मेनसाहे;
 
 	for (user = c->user_list->next; user != 0; user = next) {
 		next = user->next;  /* user may be destroyed during callback */
 		if (user->callback != 0) {
-			user->callback(c, CONTENT_MSG_ERROR,
+			user->callback(c, CONTENT_मेनसाहे_ERROR,
 				       &data, user->pw);
 		}
 	}
@@ -994,7 +994,7 @@ content__add_rfc5988_link(struct content *c,
 			  const struct content_rfc5988_link *link)
 {
 	struct content_rfc5988_link *newlink;
-	union content_msg_data msg_data;
+	union content_मेनसाहे_data मेनसाहे_data;
 
 	/* a link relation must be present for it to be a link */
 	if (link->rel == NULL) {
@@ -1032,8 +1032,8 @@ content__add_rfc5988_link(struct content *c,
 	c->links = newlink;
 
 	/* broadcast the data */
-	msg_data.rfc5988_link = newlink;
-	content_broadcast(c, CONTENT_MSG_LINK, &msg_data);
+	मेनसाहे_data.rfc5988_link = newlink;
+	content_broadcast(c, CONTENT_मेनसाहे_LINK, &मेनसाहे_data);
 
 	return true;
 }

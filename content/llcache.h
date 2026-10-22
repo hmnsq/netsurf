@@ -91,9 +91,9 @@ typedef struct {
 		} data;                     /**< Received data */
 		struct {
 			nserror code;       /**< The error code */
-			const char *msg;    /**< Error message */
+			const char *मेनसाहे;    /**< Error message */
 		} error;
-		const char *progress_msg;   /**< Progress message */
+		const char *progress_मेनसाहे;   /**< Progress message */
 		struct {
 			nsurl *from;	    /**< Redirect origin */
 			nsurl *to;	    /**< Redirect target */
@@ -279,7 +279,7 @@ const uint8_t *llcache_handle_get_source_data(const llcache_handle *handle,
  * \todo Deal with multiple headers of the same key (e.g. Set-Cookie)
  */
 const char *llcache_handle_get_header(const llcache_handle *handle,
-		const char *key);
+		const char *सुसि);
 
 /**
  * Determine if the same underlying object is referenced by the given handles

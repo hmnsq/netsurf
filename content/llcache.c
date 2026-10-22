@@ -108,7 +108,7 @@ typedef struct {
 
 	llcache_fetch_state state;	/**< Current state of object fetch */
 
-	uint32_t redirect_count;	/**< Count of redirects followed */
+	uint32_t redirect_बिलांग;	/**< Count of redirects followed */
 
 	uint32_t retries_remaining;     /**< Number of times to retry on timeout */
 
@@ -152,7 +152,7 @@ typedef struct {
 /** Representation of a fetch header */
 typedef struct {
 	char *name;		/**< Header name */
-	char *value;		/**< Header value */
+	char *हालागा;		/**< Header value */
 } llcache_header;
 
 /** Current status of an object's data */
@@ -189,12 +189,12 @@ struct llcache_object {
 	llcache_object *candidate;   /**< Object to use, if fetch determines
 				      * that it is still fresh
 				      */
-	uint32_t candidate_count;    /**< Count of objects this is a
+	uint32_t candidate_बिलांग;    /**< Count of objects this is a
 				      * candidate for
 				      */
 
 	llcache_header *headers;     /**< Fetch headers */
-	size_t num_headers;	     /**< Number of fetch headers */
+	size_t नुमेरो_headers;	     /**< Number of fetch headers */
 
 	/* Instrumentation. These elements are strictly for information
 	 * to improve the cache performance and to provide performance
@@ -267,7 +267,7 @@ struct llcache_s {
 static struct llcache_s *llcache = NULL;
 
 /* forward referenced callback function */
-static void llcache_fetch_callback(const fetch_msg *msg, void *p);
+static void llcache_fetch_callback(const fetch_मेनसाहे *मेनसाहे, void *p);
 
 /* forward referenced catch up function */
 static void llcache_users_not_caught_up(void);
@@ -494,7 +494,7 @@ static nserror llcache_post_data_clone(const llcache_post_data *orig,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
-		char **name, char **value)
+		char **name, char **हालागा)
 {
 	char *n, *v;
 	const uint8_t *colon;
@@ -566,7 +566,7 @@ static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
 	}
 
 	*name = n;
-	*value = v;
+	*हालागा = v;
 
 	return NSERROR_OK;
 }
@@ -579,12 +579,12 @@ static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 static nserror
-llcache_fetch_parse_cache_control(llcache_object *object, char *value)
+llcache_fetch_parse_cache_control(llcache_object *object, char *हालागा)
 {
 	http_cache_control *cc;
 	nserror error;
 
-	error = http_parse_cache_control(value, &cc);
+	error = http_parse_cache_control(हालागा, &cc);
 	if (error != NSERROR_OK) {
 		/* Ignore parse errors */
 		return NSERROR_OK;
@@ -619,7 +619,7 @@ llcache_fetch_parse_cache_control(llcache_object *object, char *value)
 static nserror
 llcache_fetch_header_cache_control(llcache_object *object,
 				   char *name,
-				   char *value)
+				   char *हालागा)
 {
 	nserror res;
 	size_t name_len;
@@ -631,8 +631,8 @@ llcache_fetch_header_cache_control(llcache_object *object,
 	case 3:
 		if (strcasecmp(name, "Age") == 0) {
 			/* extract Age header */
-			if ('0' <= *value && *value <= '9') {
-				object->cache.age = atoi(value);
+			if ('0' <= *हालागा && *हालागा <= '9') {
+				object->cache.age = atoi(हालागा);
 			}
 
 		}
@@ -641,18 +641,18 @@ llcache_fetch_header_cache_control(llcache_object *object,
 	case 4:
 		if (strcasecmp(name, "Date") == 0) {
 			/* extract Date header */
-			res = nsc_strntimet(value,
-					    strlen(value),
+			res = nsc_strntimet(हालागा,
+					    strlen(हालागा),
 					    &object->cache.date);
 			if (res != NSERROR_OK) {
 				NSLOG(llcache, INFO,
 				      "Processing Date header value \"%s\" returned %d",
-				      value, res);
+				      हालागा, res);
 			}
 		} else if (strcasecmp(name, "ETag") == 0) {
 			/* extract ETag header */
 			free(object->cache.etag);
-			object->cache.etag = strdup(value);
+			object->cache.etag = strdup(हालागा);
 			if (object->cache.etag == NULL) {
 				NSLOG(llcache, INFO,
 				      "No memory to duplicate ETag");
@@ -664,13 +664,13 @@ llcache_fetch_header_cache_control(llcache_object *object,
 	case 7:
 		if (strcasecmp(name, "Expires") == 0) {
 			/* process Expires header value */
-			res = nsc_strntimet(value,
-					    strlen(value),
+			res = nsc_strntimet(हालागा,
+					    strlen(हालागा),
 					    &object->cache.expires);
 			if (res != NSERROR_OK) {
 				NSLOG(llcache, INFO,
 				      "Processing Expires header value \"%s\" returned %d",
-				      value, res);
+				      हालागा, res);
 				object->cache.expires = (time_t)0x7fffffff;
 			}
 		}
@@ -679,11 +679,11 @@ llcache_fetch_header_cache_control(llcache_object *object,
 	case 13:
 		if (strcasecmp(name, "Cache-Control") == 0) {
 			/* parse Cache-Control header value */
-			llcache_fetch_parse_cache_control(object,value);
+			llcache_fetch_parse_cache_control(object,हालागा);
 		} else if (strcasecmp(name, "Last-Modified") == 0) {
 			/* parse Last-Modified header value */
-			nsc_strntimet(value,
-				      strlen(value),
+			nsc_strntimet(हालागा,
+				      strlen(हालागा),
 				      &object->cache.last_modified);
 		}
 		break;
@@ -699,11 +699,11 @@ llcache_fetch_header_cache_control(llcache_object *object,
  */
 static inline void llcache_destroy_headers(llcache_object *object)
 {
-	while (object->num_headers > 0) {
-		object->num_headers--;
+	while (object->नुमेरो_headers > 0) {
+		object->नुमेरो_headers--;
 
-		free(object->headers[object->num_headers].name);
-		free(object->headers[object->num_headers].value);
+		free(object->headers[object->नुमेरो_headers].name);
+		free(object->headers[object->नुमेरो_headers].हालागा);
 	}
 	free(object->headers);
 	object->headers = NULL;
@@ -735,7 +735,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 		const uint8_t *data, size_t len)
 {
 	nserror res;
-	char *name, *value;
+	char *name, *हालागा;
 	llcache_header *temp;
 
 	/**
@@ -768,7 +768,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 	}
 
 	/* Parse header into name-value pair */
-	res = llcache_fetch_split_header(data, len, &name, &value);
+	res = llcache_fetch_split_header(data, len, &name, &हालागा);
 	if (res != NSERROR_OK) {
 		return res;
 	}
@@ -776,33 +776,33 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 	/* deal with empty header */
 	if (name[0] == 0) {
 		free(name);
-		free(value);
+		free(हालागा);
 		return NSERROR_OK;
 	}
 
 	/* update cache control data from header */
-	res = llcache_fetch_header_cache_control(object, name, value);
+	res = llcache_fetch_header_cache_control(object, name, हालागा);
 	if (res != NSERROR_OK) {
 		free(name);
-		free(value);
+		free(हालागा);
 		return res;
 	}
 
 	/* Append header data to the object's headers array */
 	temp = realloc(object->headers,
-		       (object->num_headers + 1) * sizeof(llcache_header));
+		       (object->नुमेरो_headers + 1) * sizeof(llcache_header));
 	if (temp == NULL) {
 		free(name);
-		free(value);
+		free(हालागा);
 		return NSERROR_NOMEM;
 	}
 
 	object->headers = temp;
 
-	object->headers[object->num_headers].name = name;
-	object->headers[object->num_headers].value = value;
+	object->headers[object->नुमेरो_headers].name = name;
+	object->headers[object->नुमेरो_headers].हालागा = हालागा;
 
-	object->num_headers++;
+	object->नुमेरो_headers++;
 
 	return NSERROR_OK;
 }
@@ -1018,7 +1018,7 @@ static nserror llcache_object_refetch(llcache_object *object)
  */
 static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
 		nsurl *referer, const llcache_post_data *post,
-		uint32_t redirect_count, bool hsts_in_use)
+		uint32_t redirect_बिलांग, bool hsts_in_use)
 {
 	nserror error;
 	nsurl *referer_clone = NULL;
@@ -1038,7 +1038,7 @@ static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
 	object->fetch.flags = flags;
 	object->fetch.referer = referer_clone;
 	object->fetch.post = post_clone;
-	object->fetch.redirect_count = redirect_count;
+	object->fetch.redirect_बिलांग = redirect_बिलांग;
 	object->fetch.retries_remaining = llcache->fetch_attempts;
 	object->fetch.hsts_in_use = hsts_in_use;
 
@@ -1095,9 +1095,9 @@ static nserror llcache_object_destroy(llcache_object *object)
 
 	free(object->cache.etag);
 
-	for (i = 0; i < object->num_headers; i++) {
+	for (i = 0; i < object->नुमेरो_headers; i++) {
 		free(object->headers[i].name);
-		free(object->headers[i].value);
+		free(object->headers[i].हालागा);
 	}
 	free(object->headers);
 
@@ -1347,9 +1347,9 @@ llcache_serialise_metadata(llcache_object *object,
 
 	allocsize += 10 + 1; /* space for number of header entries */
 
-	for (hloop = 0 ; hloop < object->num_headers ; hloop++) {
+	for (hloop = 0 ; hloop < object->नुमेरो_headers ; hloop++) {
 		allocsize += strlen(object->headers[hloop].name) + 1;
-		allocsize += strlen(object->headers[hloop].value) + 1;
+		allocsize += strlen(object->headers[hloop].हालागा) + 1;
 	}
 
 	allocsize += nsurl_length(object->url) + 1;
@@ -1418,7 +1418,7 @@ llcache_serialise_metadata(llcache_object *object,
 	datasize -= use;
 
 	/* number of headers */
-	use = snprintf(op, datasize, "%" PRIsizet, object->num_headers);
+	use = snprintf(op, datasize, "%" PRIsizet, object->नुमेरो_headers);
 	if (use < 0) {
 		goto operror;
 	}
@@ -1429,11 +1429,11 @@ llcache_serialise_metadata(llcache_object *object,
 	datasize -= use;
 
 	/* headers */
-	for (hloop = 0 ; hloop < object->num_headers ; hloop++) {
+	for (hloop = 0 ; hloop < object->नुमेरो_headers ; hloop++) {
 		use = snprintf(op, datasize,
 			       "%s:%s",
 			       object->headers[hloop].name,
-			       object->headers[hloop].value);
+			       object->headers[hloop].हालागा);
 		if (use < 0) {
 			goto operror;
 		}
@@ -1536,7 +1536,7 @@ llcache_process_metadata(llcache_object *object)
 	size_t metadatalen = 0;
 	size_t remaining = 0;
 	nsurl *metadataurl;
-	unsigned int line;
+	unsigned int लिन्या;
 	char *ln;
 	int lnsize;
 
@@ -1544,9 +1544,9 @@ llcache_process_metadata(llcache_object *object)
 	time_t request_time;
 	time_t response_time;
 	time_t completion_time;
-	size_t num_headers;
+	size_t नुमेरो_headers;
 	size_t hloop;
-	size_t ssl_cert_count = 0;
+	size_t ssl_cert_बिलांग = 0;
 	struct cert_chain *chain = NULL;
 
 	NSLOG(llcache, INFO, "Retrieving metadata");
@@ -1572,7 +1572,7 @@ llcache_process_metadata(llcache_object *object)
 	remaining = metadatalen;
 
 	/* metadata line 1 is the url the metadata referrs to */
-	line = 1;
+	लिन्या = 1;
 	ln = (char *)metadata;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
@@ -1606,7 +1606,7 @@ llcache_process_metadata(llcache_object *object)
 
 
 	/* metadata line 2 is the object's length */
-	line = 2;
+	लिन्या = 2;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
@@ -1618,7 +1618,7 @@ llcache_process_metadata(llcache_object *object)
 
 
 	/* metadata line 3 is the time of request */
-	line = 3;
+	लिन्या = 3;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
@@ -1629,7 +1629,7 @@ llcache_process_metadata(llcache_object *object)
 
 
 	/* metadata line 4 is the time of response */
-	line = 4;
+	लिन्या = 4;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
@@ -1640,7 +1640,7 @@ llcache_process_metadata(llcache_object *object)
 
 
 	/* metadata line 5 is the time of request completion */
-	line = 5;
+	लिन्या = 5;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
@@ -1651,19 +1651,19 @@ llcache_process_metadata(llcache_object *object)
 
 
 	/* metadata line 6 is the number of headers */
-	line = 6;
+	लिन्या = 6;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &num_headers) != 1)) {
+	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &नुमेरो_headers) != 1)) {
 		res = NSERROR_INVALID;
 		goto format_error;
 	}
 
 	/* read headers */
-	for (hloop = 0 ; hloop < num_headers; hloop++) {
-		line++;
+	for (hloop = 0 ; hloop < नुमेरो_headers; hloop++) {
+		लिन्या++;
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
@@ -1680,36 +1680,36 @@ llcache_process_metadata(llcache_object *object)
 	}
 
 	/* Next line is the number of DER base64 encoded certificates */
-	line++;
+	लिन्या++;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &ssl_cert_count) != 1)) {
+	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &ssl_cert_बिलांग) != 1)) {
 		res = NSERROR_INVALID;
 		goto format_error;
 	}
 
-	if (ssl_cert_count == 0) {
+	if (ssl_cert_बिलांग == 0) {
 		goto skip_ssl_certificates;
 	}
 
-	if (ssl_cert_count > MAX_CERT_DEPTH) {
+	if (ssl_cert_बिलांग > MAX_CERT_DEPTH) {
 		res = NSERROR_INVALID;
 		goto format_error;
 	}
 
-	res = cert_chain_alloc(ssl_cert_count, &chain);
+	res = cert_chain_alloc(ssl_cert_बिलांग, &chain);
 	if (res != NSERROR_OK) {
 		goto format_error;
 	}
 
-	for (hloop = 0; hloop < ssl_cert_count; hloop++) {
+	for (hloop = 0; hloop < ssl_cert_बिलांग; hloop++) {
 		int errcode;
 		nsuerror nsures;
 
 		/* Certificate error code */
-		line++;
+		लिन्या++;
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
@@ -1726,7 +1726,7 @@ llcache_process_metadata(llcache_object *object)
 		}
 
 		/* base64 encoded DER certificate data */
-		line++;
+		लिन्या++;
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
@@ -1765,7 +1765,7 @@ skip_ssl_certificates:
 format_error:
 	NSLOG(llcache, INFO,
 	      "metadata error on line %d error code %d\n",
-	      line, res);
+	      लिन्या, res);
 	guit->llcache->release(object->url, BACKING_STORE_META);
 
 	cert_chain_free(chain);
@@ -1854,7 +1854,7 @@ llcache_object_fetch_persistent(llcache_object *object,
 				uint32_t flags,
 				nsurl *referer,
 				const llcache_post_data *post,
-				uint32_t redirect_count)
+				uint32_t redirect_बिलांग)
 {
 	nserror error;
 	nsurl *referer_clone = NULL;
@@ -1889,7 +1889,7 @@ llcache_object_fetch_persistent(llcache_object *object,
 	object->fetch.flags = flags;
 	object->fetch.referer = referer_clone;
 	object->fetch.post = post_clone;
-	object->fetch.redirect_count = redirect_count;
+	object->fetch.redirect_बिलांग = redirect_बिलांग;
 
 	/* fetch is "finished" */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
@@ -1915,7 +1915,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 				   uint32_t flags,
 				   nsurl *referer,
 				   const llcache_post_data *post,
-				   uint32_t redirect_count,
+				   uint32_t redirect_बिलांग,
 				   bool hsts_in_use,
 				   llcache_object **result)
 {
@@ -1950,7 +1950,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 			return error;
 
 		/* attempt to retrieve object from persistent store */
-		error = llcache_object_fetch_persistent(obj, flags, referer, post, redirect_count);
+		error = llcache_object_fetch_persistent(obj, flags, referer, post, redirect_बिलांग);
 		if (error == NSERROR_OK) {
 			NSLOG(llcache, DEBUG, "retrieved object from persistent store");
 
@@ -2022,14 +2022,14 @@ llcache_object_retrieve_from_cache(nsurl *url,
 			}
 
 			/* Record candidate, so we can fall back if it is still fresh */
-			newest->candidate_count++;
+			newest->candidate_बिलांग++;
 			obj->candidate = newest;
 
 			/* Attempt to kick-off fetch */
 			error = llcache_object_fetch(obj, flags, referer, post,
-						     redirect_count, hsts_in_use);
+						     redirect_बिलांग, hsts_in_use);
 			if (error != NSERROR_OK) {
-				newest->candidate_count--;
+				newest->candidate_बिलांग--;
 				llcache_object_destroy(obj);
 				return error;
 			}
@@ -2060,7 +2060,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 	/* Attempt to kick-off fetch */
 	error = llcache_object_fetch(obj, flags, referer, post,
-			redirect_count, hsts_in_use);
+			redirect_बिलांग, hsts_in_use);
 	if (error != NSERROR_OK) {
 		llcache_object_destroy(obj);
 		return error;
@@ -2091,7 +2091,7 @@ llcache_object_retrieve(nsurl *url,
 			uint32_t flags,
 			nsurl *referer,
 			const llcache_post_data *post,
-			uint32_t redirect_count,
+			uint32_t redirect_बिलांग,
 			bool hsts_in_use,
 			llcache_object **result)
 {
@@ -2130,7 +2130,7 @@ llcache_object_retrieve(nsurl *url,
 
 		/* Attempt to kick-off fetch */
 		error = llcache_object_fetch(obj, flags, referer, post,
-				redirect_count, hsts_in_use);
+				redirect_बिलांग, hsts_in_use);
 		if (error != NSERROR_OK) {
 			llcache_object_destroy(obj);
 			nsurl_unref(defragmented_url);
@@ -2141,7 +2141,7 @@ llcache_object_retrieve(nsurl *url,
 		llcache_object_add_to_list(obj, &llcache->uncached_objects);
 	} else {
 		error = llcache_object_retrieve_from_cache(defragmented_url,
-				flags, referer, post, redirect_count,
+				flags, referer, post, redirect_बिलांग,
 				hsts_in_use, &obj);
 		if (error != NSERROR_OK) {
 			nsurl_unref(defragmented_url);
@@ -2263,11 +2263,11 @@ static nserror llcache_hsts_update_policy(llcache_object *object)
 		return NSERROR_OK;
 	}
 
-	for (i = 0; i < object->num_headers; i++) {
+	for (i = 0; i < object->नुमेरो_headers; i++) {
 		if (strcasecmp("Strict-Transport-Security",
 				object->headers[i].name) == 0) {
 			urldb_set_hsts_policy(object->url,
-					object->headers[i].value);
+					object->headers[i].हालागा);
 			/* Only process the first one we find */
 			break;
 		}
@@ -2362,7 +2362,7 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	(void) llcache_hsts_update_policy(object);
 
 	/* Forcibly stop redirecting if we've followed too many redirects */
-	if (object->fetch.redirect_count > nsoption_uint(fetch_redirect_limit)) {
+	if (object->fetch.redirect_बिलांग > nsoption_uint(fetch_redirect_limit)) {
 		NSLOG(llcache, INFO, "Too many nested redirects");
 		return NSERROR_CYCLIC_REDIRECT;
 	}
@@ -2429,7 +2429,7 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 					object->fetch.flags,
 					object->fetch.referer,
 					post,
-					object->fetch.redirect_count + 1,
+					object->fetch.redirect_बिलांग + 1,
 					hsts_in_use,
 					&dest);
 
@@ -2495,7 +2495,7 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 		}
 
 		/* Candidate is no longer a candidate for us */
-		object->candidate->candidate_count--;
+		object->candidate->candidate_बिलांग--;
 
 		/* Clone our cache control data into the candidate */
 		llcache_object_clone_cache_data(object, object->candidate,
@@ -2574,7 +2574,7 @@ llcache_fetch_process_data(llcache_object *object,
 
 		/* Release candidate, if any */
 		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
+			object->candidate->candidate_बिलांग--;
 			object->candidate = NULL;
 		}
 
@@ -2641,7 +2641,7 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
 		event.type = LLCACHE_EVENT_ERROR;
 		/** \todo More appropriate error message */
 		event.data.error.code = NSERROR_BAD_AUTH;
-		event.data.error.msg = realm;
+		event.data.error.मेनसाहे = realm;
 
 		error = llcache_send_event_to_users(object, &event);
 	} else {
@@ -2684,7 +2684,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 		event.type = LLCACHE_EVENT_ERROR;
 		/** \todo More appropriate error message */
 		event.data.error.code = NSERROR_BAD_CERTS;
-		event.data.error.msg = messages_get("FetchFailed");
+		event.data.error.मेनसाहे = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
 	} else {
@@ -2697,7 +2697,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 		event.type = LLCACHE_EVENT_ERROR;
 		/** \todo More appropriate error message */
 		event.data.error.code = NSERROR_UNKNOWN;
-		event.data.error.msg = messages_get("FetchFailed");
+		event.data.error.मेनसाहे = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
 	}
@@ -2739,7 +2739,7 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
 		event.type = LLCACHE_EVENT_ERROR;
 		/** \todo More appropriate error message */
 		event.data.error.code = NSERROR_UNKNOWN;
-		event.data.error.msg = messages_get("FetchFailed");
+		event.data.error.मेनसाहे = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
 	} else {
@@ -2777,7 +2777,7 @@ static nserror llcache_fetch_timeout(llcache_object *object)
 
 	/* Release candidate, if any */
 	if (object->candidate != NULL) {
-		object->candidate->candidate_count--;
+		object->candidate->candidate_बिलांग--;
 		object->candidate = NULL;
 	}
 
@@ -2786,7 +2786,7 @@ static nserror llcache_fetch_timeout(llcache_object *object)
 
 	event.type = LLCACHE_EVENT_ERROR;
 	event.data.error.code = NSERROR_TIMEOUT;
-	event.data.error.msg = NULL;
+	event.data.error.मेनसाहे = NULL;
 
 	return llcache_send_event_to_users(object, &event);
 }
@@ -2837,7 +2837,7 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
 		 * already on disc and with sufficient lifetime to
 		 * make disc cache worthwhile
 		 */
-		if ((object->candidate_count == 0) &&
+		if ((object->candidate_बिलांग == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (object->store_state == LLCACHE_STATE_RAM) &&
 		    (remaining_lifetime > llcache->minimum_lifetime)) {
@@ -2975,7 +2975,7 @@ static void llcache_persist(void *p)
 {
 	nserror ret;
 	struct llcache_object **lst; /* candidate object list */
-	int lst_count; /* number of candidates in list */
+	int lst_बिलांग; /* number of candidates in list */
 	int idx; /* current candidate object index in list */
 	int next = -1; /* when the next run should be scheduled for */
 
@@ -2988,7 +2988,7 @@ static void llcache_persist(void *p)
 	unsigned long total_elapsed = 1; /* total ms used to write bytes */
 	unsigned long total_bandwidth = 0; /* total bandwidth */
 
-	ret = build_candidate_list(&lst, &lst_count);
+	ret = build_candidate_list(&lst, &lst_बिलांग);
 	if (ret != NSERROR_OK) {
 		NSLOG(llcache, DEBUG, "Unable to construct candidate list for persistent writeout");
 		return;
@@ -2997,7 +2997,7 @@ static void llcache_persist(void *p)
 	write_limit = (llcache->maximum_bandwidth * llcache->time_quantum) / 1000;
 
 	/* obtained a candidate list, make each object persistent in turn */
-	for (idx = 0; idx < lst_count; idx++) {
+	for (idx = 0; idx < lst_बिलांग; idx++) {
 		ret = write_backing_store(lst[idx], &written, &elapsed);
 		if (ret != NSERROR_OK) {
 			continue;
@@ -3064,7 +3064,7 @@ static void llcache_persist(void *p)
 	free(lst);
 
 	/* Completed list without running out of allowed bytes or time */
-	if (idx == lst_count) {
+	if (idx == lst_बिलांग) {
 		/* only reschedule if writing is making any progress at all */
 		if (total_written > 0) {
 			next = llcache->time_quantum - total_elapsed;
@@ -3091,7 +3091,7 @@ static void llcache_persist(void *p)
  * \param msg  Fetch event
  * \param p    Our private data
  */
-static void llcache_fetch_callback(const fetch_msg *msg, void *p)
+static void llcache_fetch_callback(const fetch_मेनसाहे *मेनसाहे, void *p)
 {
 	nserror error = NSERROR_OK;
 	llcache_object *object = p;
@@ -3104,16 +3104,16 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 		return;
 	}
 
-	NSLOG(llcache, DEBUG, "Fetch event %d for %p", msg->type, object);
+	NSLOG(llcache, DEBUG, "Fetch event %d for %p", मेनसाहे->type, object);
 
-	switch (msg->type) {
+	switch (मेनसाहे->type) {
 	case FETCH_HEADER:
 		/* Received a fetch header */
 		object->fetch.state = LLCACHE_FETCH_HEADERS;
 
 		error = llcache_fetch_process_header(object,
-				msg->data.header_or_data.buf,
-				msg->data.header_or_data.len);
+				मेनसाहे->data.header_or_data.buf,
+				मेनसाहे->data.header_or_data.len);
 		break;
 
 	/* 3xx responses */
@@ -3122,16 +3122,16 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		/* Release candidate, if any */
 		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
+			object->candidate->candidate_बिलांग--;
 			object->candidate = NULL;
 		}
 
 		error = llcache_fetch_redirect(object,
-				msg->data.redirect, &object);
+				मेनसाहे->data.redirect, &object);
 		if (error != NSERROR_OK) {
 			event.type = LLCACHE_EVENT_ERROR;
 			event.data.error.code = error;
-			event.data.error.msg = NULL;
+			event.data.error.मेनसाहे = NULL;
 			error = llcache_send_event_to_users(object, &event);
 		}
 		break;
@@ -3145,8 +3145,8 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 	case FETCH_DATA:
 		/* Received some data */
 		error = llcache_fetch_process_data(object,
-				msg->data.header_or_data.buf,
-				msg->data.header_or_data.len);
+				मेनसाहे->data.header_or_data.buf,
+				मेनसाहे->data.header_or_data.len);
 		break;
 
 	case FETCH_FINISHED:
@@ -3191,7 +3191,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		/* Release candidate, if any */
 		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
+			object->candidate->candidate_बिलांग--;
 			object->candidate = NULL;
 		}
 
@@ -3202,7 +3202,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		event.type = LLCACHE_EVENT_ERROR;
 		event.data.error.code = NSERROR_UNKNOWN;
-		event.data.error.msg = msg->data.error;
+		event.data.error.मेनसाहे = मेनसाहे->data.error;
 
 		error = llcache_send_event_to_users(object, &event);
 
@@ -3211,7 +3211,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 	case FETCH_PROGRESS:
 		/* Progress update */
 		event.type = LLCACHE_EVENT_PROGRESS;
-		event.data.progress_msg = msg->data.progress;
+		event.data.progress_मेनसाहे = मेनसाहे->data.progress;
 
 		error = llcache_send_event_to_users(object, &event);
 
@@ -3226,7 +3226,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 		}
 
 		/* Persist the chain onto our object */
-		error = cert_chain_dup(msg->data.chain, &object->chain);
+		error = cert_chain_dup(मेनसाहे->data.chain, &object->chain);
 		if (error != NSERROR_OK) {
 			NSLOG(llcache, ERROR,
 			      "Unable to duplicate cert chain into cache: %s",
@@ -3235,7 +3235,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		/* Now pass on the event */
 		event.type = LLCACHE_EVENT_GOT_CERTS;
-		event.data.chain = msg->data.chain;
+		event.data.chain = मेनसाहे->data.chain;
 
 		error = llcache_send_event_to_users(object, &event);
 
@@ -3247,11 +3247,11 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		/* Release candidate, if any */
 		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
+			object->candidate->candidate_बिलांग--;
 			object->candidate = NULL;
 		}
 
-		error = llcache_fetch_auth(object, msg->data.auth.realm);
+		error = llcache_fetch_auth(object, मेनसाहे->data.auth.realm);
 		break;
 
 	case FETCH_CERT_ERR:
@@ -3259,7 +3259,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		/* Release candidate, if any */
 		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
+			object->candidate->candidate_बिलांग--;
 			object->candidate = NULL;
 		}
 
@@ -3271,7 +3271,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		/* Release candidate, if any */
 		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
+			object->candidate->candidate_बिलांग--;
 			object->candidate = NULL;
 		}
 
@@ -3641,22 +3641,22 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 				newobj->source_len);
 	}
 
-	if (object->num_headers > 0) {
-		newobj->headers = calloc(object->num_headers,
+	if (object->नुमेरो_headers > 0) {
+		newobj->headers = calloc(object->नुमेरो_headers,
 				sizeof(llcache_header));
 		if (newobj->headers == NULL) {
 			llcache_object_destroy(newobj);
 			return NSERROR_NOMEM;
 		}
-		while (newobj->num_headers < object->num_headers) {
+		while (newobj->नुमेरो_headers < object->नुमेरो_headers) {
 			llcache_header *nh =
-					&(newobj->headers[newobj->num_headers]);
+					&(newobj->headers[newobj->नुमेरो_headers]);
 			llcache_header *oh =
-					&(object->headers[newobj->num_headers]);
-			newobj->num_headers += 1;
+					&(object->headers[newobj->नुमेरो_headers]);
+			newobj->नुमेरो_headers += 1;
 			nh->name = strdup(oh->name);
-			nh->value = strdup(oh->value);
-			if (nh->name == NULL || nh->value == NULL) {
+			nh->हालागा = strdup(oh->हालागा);
+			if (nh->name == NULL || nh->हालागा == NULL) {
 				llcache_object_destroy(newobj);
 				return NSERROR_NOMEM;
 			}
@@ -3697,14 +3697,14 @@ total_object_size(llcache_object *object)
 		tot += object->source_len;
 	}
 
-	tot += sizeof(llcache_header) * object->num_headers;
+	tot += sizeof(llcache_header) * object->नुमेरो_headers;
 
-	for (hdrc = 0; hdrc < object->num_headers; hdrc++) {
+	for (hdrc = 0; hdrc < object->नुमेरो_headers; hdrc++) {
 		if (object->headers[hdrc].name != NULL) {
 			tot += strlen(object->headers[hdrc].name);
 		}
-		if (object->headers[hdrc].value != NULL) {
-			tot += strlen(object->headers[hdrc].value);
+		if (object->headers[hdrc].हालागा != NULL) {
+			tot += strlen(object->headers[hdrc].हालागा);
 		}
 	}
 
@@ -3788,7 +3788,7 @@ void llcache_clean(bool purge)
 
 		/* The candidate count of uncacheable objects is always 0 */
 		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
+		    (object->candidate_बिलांग == 0) &&
 		    (object->fetch.fetch == NULL)) {
 			NSLOG(llcache, DEBUG, "Discarding uncachable object with no users (%p) %s",
 				    object, nsurl_access(object->url));
@@ -3812,7 +3812,7 @@ void llcache_clean(bool purge)
 				&object->cache);
 
 		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
+		    (object->candidate_बिलांग == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (remaining_lifetime <= 0)) {
 			/* object is stale */
@@ -3852,7 +3852,7 @@ void llcache_clean(bool purge)
 	     object = next) {
 		next = object->next;
 		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
+		    (object->candidate_बिलांग == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (object->store_state == LLCACHE_STATE_DISC)) {
 			guit->llcache->release(object->url, BACKING_STORE_NONE);
@@ -3876,7 +3876,7 @@ void llcache_clean(bool purge)
 	     object = next) {
 		next = object->next;
 		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
+		    (object->candidate_बिलांग == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (object->store_state == LLCACHE_STATE_DISC) &&
 		    (object->source_data == NULL)) {
@@ -3907,7 +3907,7 @@ void llcache_clean(bool purge)
 		next = object->next;
 
 		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
+		    (object->candidate_बिलांग == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (object->store_state == LLCACHE_STATE_RAM)) {
 			NSLOG(llcache, DEBUG,
@@ -4250,7 +4250,7 @@ const uint8_t *llcache_handle_get_source_data(const llcache_handle *handle,
 
 /* See llcache.h for documentation */
 const char *llcache_handle_get_header(const llcache_handle *handle,
-		const char *key)
+		const char *सुसि)
 {
 	const llcache_object *object = handle->object;
 	size_t i;
@@ -4259,9 +4259,9 @@ const char *llcache_handle_get_header(const llcache_handle *handle,
 		return NULL;
 
 	/* About as trivial as possible */
-	for (i = 0; i < object->num_headers; i++) {
-		if (strcasecmp(key, object->headers[i].name) == 0)
-			return object->headers[i].value;
+	for (i = 0; i < object->नुमेरो_headers; i++) {
+		if (strcasecmp(सुसि, object->headers[i].name) == 0)
+			return object->headers[i].हालागा;
 	}
 
 	return NULL;

@@ -46,8 +46,8 @@ struct object_params;
 struct plotters;
 struct textarea;
 struct scrollbar;
-struct scrollbar_msg_data;
-struct search_context;
+struct scrollbar_मेनसाहे_data;
+struct हानाप_context;
 struct selection;
 struct nsurl;
 struct plot_font_style;
@@ -56,7 +56,7 @@ struct plot_font_style;
  * Container for stylesheets used by an HTML document
  */
 struct html_stylesheet {
-	struct dom_node *node; /**< dom node associated with sheet */
+	struct dom_बुहोल *बुहोल; /**< dom node associated with sheet */
 	struct hlcache_handle *sheet;
 	bool modified;
 	bool unused;

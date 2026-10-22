@@ -95,8 +95,8 @@ extern const css_border_color_func border_color_funcs[4];
 /** Layout helper: Check whether box is a float. */
 static inline bool lh__box_is_float_box(const struct box *b)
 {
-	return b->type == BOX_FLOAT_LEFT ||
-	       b->type == BOX_FLOAT_RIGHT;
+	return b->type == BOX_FLOAT_कालिवा ||
+	       b->type == BOX_FLOAT_कानान;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
@@ -201,22 +201,22 @@ static inline int lh__non_auto_margin(const struct box *b, enum box_side side)
 
 static inline int lh__delta_outer_height(const struct box *b)
 {
-	return b->padding[TOP] +
+	return b->padding[इताअस_2] +
 	       b->padding[BOTTOM] +
-	       b->border[TOP].width +
+	       b->border[इताअस_2].width +
 	       b->border[BOTTOM].width +
-	       lh__non_auto_margin(b, TOP) +
+	       lh__non_auto_margin(b, इताअस_2) +
 	       lh__non_auto_margin(b, BOTTOM);
 }
 
 static inline int lh__delta_outer_width(const struct box *b)
 {
-	return b->padding[LEFT] +
-	       b->padding[RIGHT] +
-	       b->border[LEFT].width +
-	       b->border[RIGHT].width +
-	       lh__non_auto_margin(b, LEFT) +
-	       lh__non_auto_margin(b, RIGHT);
+	return b->padding[कालिवा_2] +
+	       b->padding[कानान_2] +
+	       b->border[कालिवा_2].width +
+	       b->border[कानान_2].width +
+	       lh__non_auto_margin(b, कालिवा_2) +
+	       lh__non_auto_margin(b, कानान_2);
 }
 
 static inline int lh__delta_outer_main(
@@ -292,7 +292,7 @@ static inline enum css_align_self_e lh__box_align_self(
 	enum css_align_self_e align_self = css_computed_align_self(item->style);
 
 	if (align_self == CSS_ALIGN_SELF_AUTO) {
-		align_self = css_computed_align_items(flex->style);
+		align_self = css_computed_align_मगा_बागाय(flex->style);
 	}
 
 	return align_self;
@@ -320,7 +320,7 @@ static inline void calculate_mbp_width(
 		int *fixed,
 		float *frac)
 {
-	css_fixed value = 0;
+	css_fixed हालागा = 0;
 	css_unit unit = CSS_UNIT_PX;
 
 	assert(style);
@@ -329,14 +329,14 @@ static inline void calculate_mbp_width(
 	if (margin) {
 		enum css_margin_e type;
 
-		type = margin_funcs[side](style, &value, &unit);
+		type = margin_funcs[side](style, &हालागा, &unit);
 		if (type == CSS_MARGIN_SET) {
 			if (unit == CSS_UNIT_PCT) {
-				*frac += FIXTOFLT(FDIV(value, F_100));
+				*frac += FIXTOFLT(FDIV(हालागा, F_100));
 			} else {
 				*fixed += FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						हालागा, unit));
 			}
 		}
 	}
@@ -344,23 +344,23 @@ static inline void calculate_mbp_width(
 	/* border */
 	if (border) {
 		if (lh__have_border(side, style)) {
-			border_width_funcs[side](style, &value, &unit);
+			border_width_funcs[side](style, &हालागा, &unit);
 
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					हालागा, unit));
 		}
 	}
 
 	/* padding */
 	if (padding) {
-		padding_funcs[side](style, &value, &unit);
+		padding_funcs[side](style, &हालागा, &unit);
 		if (unit == CSS_UNIT_PCT) {
-			*frac += FIXTOFLT(FDIV(value, F_100));
+			*frac += FIXTOFLT(FDIV(हालागा, F_100));
 		} else {
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					हालागा, unit));
 		}
 	}
 }
@@ -398,10 +398,10 @@ static inline void layout_handle_box_sizing(
 		float frac = 0;
 
 		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? LEFT : TOP,
+				setwidth ? कालिवा_2 : इताअस_2,
 				false, true, true, &fixed, &frac);
 		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? RIGHT : BOTTOM,
+				setwidth ? कानान_2 : BOTTOM,
 				false, true, true, &fixed, &frac);
 		orig -= frac * available_width + fixed;
 		*dimension = orig > 0 ? orig : 0;
@@ -458,10 +458,10 @@ static inline void layout_find_dimensions(
 
 	if (height) {
 		enum css_height_e htype;
-		css_fixed value = 0;
+		css_fixed हालागा = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		htype = css_computed_height(style, &value, &unit);
+		htype = css_computed_height(style, &हालागा, &unit);
 
 		if (htype == CSS_HEIGHT_SET) {
 			if (unit == CSS_UNIT_PCT) {
@@ -477,9 +477,9 @@ static inline void layout_find_dimensions(
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 					(css_computed_float(box->style) ==
-						CSS_FLOAT_LEFT ||
+						CSS_FLOAT_कालिवा ||
 					 css_computed_float(box->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_कानान)) {
 					/* Box is a float */
 					assert(box->parent &&
 						box->parent->parent &&
@@ -516,14 +516,14 @@ static inline void layout_find_dimensions(
 					 * containing block has a valid
 					 * specified height.
 					 * (CSS 2.1 Section 10.5) */
-					*height = FPCT_OF_INT_TOINT(value,
+					*height = FPCT_OF_INT_TOINT(हालागा,
 						containing_block->height);
 				} else if ((!box->parent ||
 						!box->parent->parent) &&
 						viewport_height >= 0) {
 					/* If root element or it's child
 					 * (HTML or BODY) */
-					*height = FPCT_OF_INT_TOINT(value,
+					*height = FPCT_OF_INT_TOINT(हालागा,
 							viewport_height);
 				} else {
 					/* precentage height not permissible
@@ -533,7 +533,7 @@ static inline void layout_find_dimensions(
 			} else {
 				*height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						हालागा, unit));
 			}
 		} else {
 			*height = AUTO;
@@ -547,19 +547,19 @@ static inline void layout_find_dimensions(
 
 	if (max_width) {
 		enum css_max_width_e type;
-		css_fixed value = 0;
+		css_fixed हालागा = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_width(style, &value, &unit);
+		type = css_computed_max_width(style, &हालागा, &unit);
 
 		if (type == CSS_MAX_WIDTH_SET) {
 			if (unit == CSS_UNIT_PCT) {
-				*max_width = FPCT_OF_INT_TOINT(value,
+				*max_width = FPCT_OF_INT_TOINT(हालागा,
 						available_width);
 			} else {
 				*max_width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						हालागा, unit));
 			}
 		} else {
 			/* Inadmissible */
@@ -574,19 +574,19 @@ static inline void layout_find_dimensions(
 
 	if (min_width) {
 		enum css_min_width_e type;
-		css_fixed value = 0;
+		css_fixed हालागा = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_width(style, &value, &unit);
+		type = ns_computed_min_width(style, &हालागा, &unit);
 
 		if (type == CSS_MIN_WIDTH_SET) {
 			if (unit == CSS_UNIT_PCT) {
-				*min_width = FPCT_OF_INT_TOINT(value,
+				*min_width = FPCT_OF_INT_TOINT(हालागा,
 						available_width);
 			} else {
 				*min_width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						हालागा, unit));
 			}
 		} else {
 			/* Inadmissible */
@@ -601,10 +601,10 @@ static inline void layout_find_dimensions(
 
 	if (max_height) {
 		enum css_max_height_e type;
-		css_fixed value = 0;
+		css_fixed हालागा = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_height(style, &value, &unit);
+		type = css_computed_max_height(style, &हालागा, &unit);
 
 		if (type == CSS_MAX_HEIGHT_SET) {
 			if (unit == CSS_UNIT_PCT) {
@@ -613,7 +613,7 @@ static inline void layout_find_dimensions(
 			} else {
 				*max_height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						हालागा, unit));
 			}
 		} else {
 			/* Inadmissible */
@@ -623,10 +623,10 @@ static inline void layout_find_dimensions(
 
 	if (min_height) {
 		enum css_min_height_e type;
-		css_fixed value = 0;
+		css_fixed हालागा = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_height(style, &value, &unit);
+		type = ns_computed_min_height(style, &हालागा, &unit);
 
 		if (type == CSS_MIN_HEIGHT_SET) {
 			if (unit == CSS_UNIT_PCT) {
@@ -635,7 +635,7 @@ static inline void layout_find_dimensions(
 			} else {
 				*min_height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						हालागा, unit));
 			}
 		} else {
 			/* Inadmissible */
@@ -646,19 +646,19 @@ static inline void layout_find_dimensions(
 	for (i = 0; i != 4; i++) {
 		if (margin) {
 			enum css_margin_e type = CSS_MARGIN_AUTO;
-			css_fixed value = 0;
+			css_fixed हालागा = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			type = margin_funcs[i](style, &value, &unit);
+			type = margin_funcs[i](style, &हालागा, &unit);
 
 			if (type == CSS_MARGIN_SET) {
 				if (unit == CSS_UNIT_PCT) {
-					margin[i] = FPCT_OF_INT_TOINT(value,
+					margin[i] = FPCT_OF_INT_TOINT(हालागा,
 							available_width);
 				} else {
 					margin[i] = FIXTOINT(css_unit_len2device_px(
 							style, unit_len_ctx,
-							value, unit));
+							हालागा, unit));
 				}
 			} else {
 				margin[i] = AUTO;
@@ -666,18 +666,18 @@ static inline void layout_find_dimensions(
 		}
 
 		if (padding) {
-			css_fixed value = 0;
+			css_fixed हालागा = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			padding_funcs[i](style, &value, &unit);
+			padding_funcs[i](style, &हालागा, &unit);
 
 			if (unit == CSS_UNIT_PCT) {
-				padding[i] = FPCT_OF_INT_TOINT(value,
+				padding[i] = FPCT_OF_INT_TOINT(हालागा,
 						available_width);
 			} else {
 				padding[i] = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						हालागा, unit));
 			}
 		}
 
@@ -685,10 +685,10 @@ static inline void layout_find_dimensions(
 		if (border && box->type != BOX_TABLE_CELL) {
 			enum css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
 			css_color color = 0;
-			css_fixed value = 0;
+			css_fixed हालागा = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			border_width_funcs[i](style, &value, &unit);
+			border_width_funcs[i](style, &हालागा, &unit);
 			bstyle = border_style_funcs[i](style);
 			border_color_funcs[i](style, &color);
 
@@ -702,7 +702,7 @@ static inline void layout_find_dimensions(
 			else
 				border[i].width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						हालागा, unit));
 
 			/* Special case for border-collapse: make all borders
 			 * on table/table-row-group/table-row zero width. */

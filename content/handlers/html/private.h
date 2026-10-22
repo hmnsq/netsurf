@@ -32,7 +32,7 @@
 
 
 struct gui_layout_table;
-struct scrollbar_msg_data;
+struct scrollbar_मेनसाहे_data;
 struct content_redraw_data;
 struct selection;
 
@@ -128,7 +128,7 @@ typedef struct html_content {
 	bool enable_scripting;
 
 	/* Title element node */
-	dom_node *title;
+	dom_बुहोल *title;
 
 	/** A talloc context purely for the render box tree */
 	int *bctx;
@@ -145,14 +145,14 @@ typedef struct html_content {
 	const struct gui_layout_table *font_func;
 
 	/** Number of entries in scripts */
-	unsigned int scripts_count;
+	unsigned int scripts_बिलांग;
 	/** Scripts */
 	struct html_script *scripts;
 	/** javascript thread in use */
 	struct jsthread *jsthread;
 
 	/** Number of entries in stylesheet_content. */
-	unsigned int stylesheet_count;
+	unsigned int stylesheet_बिलांग;
 	/** Stylesheets. Each may be NULL. */
 	struct html_stylesheet *stylesheets;
 	/**< Style selection context */
@@ -165,7 +165,7 @@ typedef struct html_content {
 	lwc_string *universal;
 
 	/** Number of entries in object_list. */
-	unsigned int num_objects;
+	unsigned int नुमेरो_objects;
 	/** List of objects. */
 	struct content_html_object *object_list;
 	/** Forms, in reverse order to document. */
@@ -311,13 +311,13 @@ bool html_redraw_inline_borders(struct box *box, struct rect b,
 
 
 /* in html/script.c */
-dom_hubbub_error html_process_script(void *ctx, dom_node *node);
+dom_hubbub_error html_process_script(void *ctx, dom_बुहोल *बुहोल);
 
 
 /* in html/forms.c */
 struct form *html_forms_get_forms(const char *docenc, dom_html_document *doc);
-struct form_control *html_forms_get_control_for_node(struct form *forms,
-		dom_node *node);
+struct form_control *html_forms_get_control_for_बुहोल(struct form *forms,
+		dom_बुहोल *बुहोल);
 
 
 /* in html/css_fetcher.c */
@@ -328,7 +328,7 @@ struct form_control *html_forms_get_control_for_node(struct form *forms,
  */
 nserror html_css_fetcher_register(void);
 nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
-		uint32_t *key);
+		uint32_t *सुसि);
 
 
 /* Events */
@@ -336,14 +336,14 @@ nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
  * Construct an event and fire it at the DOM
  *
  */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_बुहोल *target,
 		    bool bubbles, bool cancelable);
 
 /**
  * Construct a keyboard event and fire it at the DOM
  */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key);
+bool fire_dom_keyboard_event(dom_string *type, dom_बुहोल *target,
+		bool bubbles, bool cancelable, uint32_t सुसि);
 
 /* Useful dom_string pointers */
 struct dom_string;

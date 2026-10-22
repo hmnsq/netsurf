@@ -128,7 +128,7 @@ html_redraw_border_plot(const int side,
 		rect.y0 = (p[1] + p[3]) / 2;
 		rect.x1 = (p[4] + p[6]) / 2;
 		rect.y1 = (p[5] + p[7]) / 2;
-		res = ctx->plot->line(ctx, &plot_style_bdr, &rect);
+		res = ctx->plot->लिन्या(ctx, &plot_style_bdr, &rect);
 		break;
 
 	case CSS_BORDER_STYLE_SOLID:
@@ -136,10 +136,10 @@ html_redraw_border_plot(const int side,
 	default:
 		if (rectangular || thickness == 1) {
 
-			if (side == TOP || side == RIGHT) {
+			if (side == इताअस_2 || side == कानान_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
-				if ((side == TOP) &&
+				if ((side == इताअस_2) &&
 				    (p[4] - p[6] != 0)) {
 					rect.x1 = p[4];
 				} else {
@@ -150,7 +150,7 @@ html_redraw_border_plot(const int side,
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
-				if ((side == LEFT) &&
+				if ((side == कालिवा_2) &&
 				    (p[1] - p[3] != 0)) {
 					rect.y1 = p[1];
 				} else {
@@ -209,7 +209,7 @@ html_redraw_border_plot(const int side,
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			if (side == इताअस_2 || side == कानान_2) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
@@ -229,7 +229,7 @@ html_redraw_border_plot(const int side,
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			if (side == इताअस_2 || side == कानान_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
@@ -249,12 +249,12 @@ html_redraw_border_plot(const int side,
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			if (side == इताअस_2 || side == कानान_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-				rect.x1 = ((side == TOP) && (p[4] - p[6] != 0)) ?
+				rect.x1 = ((side == इताअस_2) && (p[4] - p[6] != 0)) ?
 					rect.x1 + p[4] - p[6] : rect.x1;
 
 				res = plot_clipped_rectangle(ctx,
@@ -266,7 +266,7 @@ html_redraw_border_plot(const int side,
 				rect.y0 = p[7];
 				rect.x1 = p[2];
 				rect.y1 = p[3];
-				rect.y1 = ((side == LEFT) && (p[1] - p[3] != 0)) ?
+				rect.y1 = ((side == कालिवा_2) && (p[1] - p[3] != 0)) ?
 					rect.y1 + p[1] - p[3] : rect.y1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_out,
@@ -334,7 +334,7 @@ html_redraw_border_plot(const int side,
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			if (side == इताअस_2 || side == कानान_2) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
@@ -354,7 +354,7 @@ html_redraw_border_plot(const int side,
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			if (side == इताअस_2 || side == कानान_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
@@ -374,12 +374,12 @@ html_redraw_border_plot(const int side,
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			if (side == इताअस_2 || side == कानान_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-				rect.x1 = ((side == TOP) && (p[4] - p[6] != 0)) ?
+				rect.x1 = ((side == इताअस_2) && (p[4] - p[6] != 0)) ?
 					rect.x1 + p[4] - p[6] : rect.x1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_in,
@@ -390,7 +390,7 @@ html_redraw_border_plot(const int side,
 				rect.y0 = p[7];
 				rect.x1 = p[2];
 				rect.y1 = p[3];
-				rect.y1 = ((side == LEFT) && (p[1] - p[3] != 0)) ?
+				rect.y1 = ((side == कालिवा_2) && (p[1] - p[3] != 0)) ?
 					rect.y1 + p[1] - p[3] : rect.y1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_out,
@@ -450,11 +450,11 @@ html_redraw_borders(struct box *box,
 		    float scale,
 		    const struct redraw_context *ctx)
 {
-	unsigned int sides[] = { LEFT, RIGHT, TOP, BOTTOM };
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
+	unsigned int sides[] = { कालिवा_2, कानान_2, इताअस_2, BOTTOM };
+	int इताअस = box->border[इताअस_2].width;
+	int कानान = box->border[कानान_2].width;
 	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
+	int कालिवा = box->border[कालिवा_2].width;
 	int x, y;
 	unsigned int i, side;
 	int p[8]; /* Box border vertices */
@@ -467,10 +467,10 @@ html_redraw_borders(struct box *box,
 	y = y_parent + box->y;
 
 	if (scale != 1.0) {
-		top *= scale;
-		right *= scale;
+		इताअस *= scale;
+		कानान *= scale;
 		bottom *= scale;
-		left *= scale;
+		कालिवा *= scale;
 		x *= scale;
 		y *= scale;
 	}
@@ -487,10 +487,10 @@ html_redraw_borders(struct box *box,
 	 *    | /                  \ |
 	 *    +----------------------D
 	 */
-	p[0] = x - left;		p[1] = y - top;			/* A */
+	p[0] = x - कालिवा;		p[1] = y - इताअस;			/* A */
 	p[2] = x;			p[3] = y;			/* B */
 	p[4] = x + p_width;		p[5] = y + p_height;		/* C */
-	p[6] = x + p_width + right;	p[7] = y + p_height + bottom;	/* D */
+	p[6] = x + p_width + कानान;	p[7] = y + p_height + bottom;	/* D */
 
 	for (i = 0; i != 4; i++) {
 		colour col = 0;
@@ -502,8 +502,8 @@ html_redraw_borders(struct box *box,
 		}
 
 		switch (side) {
-		case LEFT:
-			square_end_1 = (top == 0);
+		case कालिवा_2:
+			square_end_1 = (इताअस == 0);
 			square_end_2 = (bottom == 0);
 
 			z[0] = p[0];	z[1] = p[7];
@@ -511,12 +511,12 @@ html_redraw_borders(struct box *box,
 			z[4] = p[2];	z[5] = p[3];
 			z[6] = p[0];	z[7] = p[1];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+			if (nscss_color_is_transparent(box->border[इताअस_2].c) == false &&
+			    box->border[इताअस_2].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
 				 */
-				z[5] -= top;
+				z[5] -= इताअस;
 				square_end_1 = true;
 			}
 			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
@@ -543,8 +543,8 @@ html_redraw_borders(struct box *box,
 			}
 			break;
 
-		case RIGHT:
-			square_end_1 = (top == 0);
+		case कानान_2:
+			square_end_1 = (इताअस == 0);
 			square_end_2 = (bottom == 0);
 
 			z[0] = p[6];	z[1] = p[1];
@@ -552,12 +552,12 @@ html_redraw_borders(struct box *box,
 			z[4] = p[4];	z[5] = p[5];
 			z[6] = p[6];	z[7] = p[7];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+			if (nscss_color_is_transparent(box->border[इताअस_2].c) == false &&
+			    box->border[इताअस_2].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
 				 */
-				z[3] -= top;
+				z[3] -= इताअस;
 				square_end_1 = true;
 			}
 			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
@@ -584,7 +584,7 @@ html_redraw_borders(struct box *box,
 			}
 			break;
 
-		case TOP:
+		case इताअस_2:
 			if (clip->y0 > p[3]) {
 				/* clip rectangle is below border; nothing to
 				 * plot
@@ -592,28 +592,28 @@ html_redraw_borders(struct box *box,
 				continue;
 			}
 
-			square_end_1 = (left == 0);
-			square_end_2 = (right == 0);
+			square_end_1 = (कालिवा == 0);
+			square_end_2 = (कानान == 0);
 
 			z[0] = p[2];	z[1] = p[3];
 			z[2] = p[0];	z[3] = p[1];
 			z[4] = p[6];	z[5] = p[1];
 			z[6] = p[4];	z[7] = p[3];
 
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[TOP].c == box->border[LEFT].c) {
+			if (box->border[इताअस_2].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[इताअस_2].c == box->border[कालिवा_2].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
 				 */
-				z[2] += left;
+				z[2] += कालिवा;
 				square_end_1 = true;
 			}
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[TOP].c == box->border[RIGHT].c) {
+			if (box->border[इताअस_2].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[इताअस_2].c == box->border[कानान_2].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
 				 */
-				z[4] -= right;
+				z[4] -= कानान;
 				square_end_2 = true;
 			}
 
@@ -640,8 +640,8 @@ html_redraw_borders(struct box *box,
 				continue;
 			}
 
-			square_end_1 = (left == 0);
-			square_end_2 = (right == 0);
+			square_end_1 = (कालिवा == 0);
+			square_end_2 = (कानान == 0);
 
 			z[0] = p[4];	z[1] = p[5];
 			z[2] = p[6];	z[3] = p[7];
@@ -649,19 +649,19 @@ html_redraw_borders(struct box *box,
 			z[6] = p[2];	z[7] = p[5];
 
 			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[BOTTOM].c == box->border[LEFT].c) {
+			    box->border[BOTTOM].c == box->border[कालिवा_2].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
 				 */
-				z[4] += left;
+				z[4] += कालिवा;
 				square_end_1 = true;
 			}
 			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[BOTTOM].c == box->border[RIGHT].c) {
+			    box->border[BOTTOM].c == box->border[कानान_2].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
 				 */
-				z[2] -= right;
+				z[2] -= कानान;
 				square_end_2 = true;
 			}
 
@@ -681,8 +681,8 @@ html_redraw_borders(struct box *box,
 			break;
 
 		default:
-			assert(side == TOP || side == BOTTOM ||
-			       side == LEFT || side == RIGHT);
+			assert(side == इताअस_2 || side == BOTTOM ||
+			       side == कालिवा_2 || side == कानान_2);
 			break;
 		}
 	}
@@ -712,10 +712,10 @@ html_redraw_inline_borders(struct box *box,
 			   bool last,
 			   const struct redraw_context *ctx)
 {
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
+	int इताअस = box->border[इताअस_2].width;
+	int कानान = box->border[कानान_2].width;
 	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
+	int कालिवा = box->border[कालिवा_2].width;
 	colour col;
 	int p[8]; /* Box border vertices */
 	int z[8]; /* Border vertices */
@@ -724,10 +724,10 @@ html_redraw_inline_borders(struct box *box,
 	nserror res;
 
 	if (scale != 1.0) {
-		top *= scale;
-		right *= scale;
+		इताअस *= scale;
+		कानान *= scale;
 		bottom *= scale;
-		left *= scale;
+		कालिवा *= scale;
 	}
 
 	/* Calculate border vertices
@@ -741,31 +741,31 @@ html_redraw_inline_borders(struct box *box,
 	 *    +----------------------D
 	 */
 	p[0] = b.x0;				p[1] = b.y0;		/* A */
-	p[2] = first ? b.x0 + left : b.x0;	p[3] = b.y0 + top;	/* B */
-	p[4] = last ? b.x1 - right : b.x1;	p[5] = b.y1 - bottom;	/* C */
+	p[2] = first ? b.x0 + कालिवा : b.x0;	p[3] = b.y0 + इताअस;	/* B */
+	p[4] = last ? b.x1 - कानान : b.x1;	p[5] = b.y1 - bottom;	/* C */
 	p[6] = b.x1;				p[7] = b.y1;		/* D */
 
 	assert(box->style);
 
 	/* Left */
-	square_end_1 = (top == 0);
+	square_end_1 = (इताअस == 0);
 	square_end_2 = (bottom == 0);
-	if (left != 0 &&
+	if (कालिवा != 0 &&
 	    first &&
-	    nscss_color_is_transparent(box->border[LEFT].c) == false) {
-		col = nscss_color_to_ns(box->border[LEFT].c);
+	    nscss_color_is_transparent(box->border[कालिवा_2].c) == false) {
+		col = nscss_color_to_ns(box->border[कालिवा_2].c);
 
 		z[0] = p[0];	z[1] = p[7];
 		z[2] = p[2];	z[3] = p[5];
 		z[4] = p[2];	z[5] = p[3];
 		z[6] = p[0];	z[7] = p[1];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+		if (nscss_color_is_transparent(box->border[इताअस_2].c) == false &&
+		    box->border[इताअस_2].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
 			 */
-			z[5] -= top;
+			z[5] -= इताअस;
 			square_end_1 = true;
 		}
 
@@ -778,11 +778,11 @@ html_redraw_inline_borders(struct box *box,
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(LEFT,
+		res = html_redraw_border_plot(कालिवा_2,
 					      z,
 					      col,
-					      box->border[LEFT].style,
-					      left,
+					      box->border[कालिवा_2].style,
+					      कालिवा,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
@@ -792,24 +792,24 @@ html_redraw_inline_borders(struct box *box,
 	}
 
 	/* Right */
-	square_end_1 = (top == 0);
+	square_end_1 = (इताअस == 0);
 	square_end_2 = (bottom == 0);
-	if (right != 0 &&
+	if (कानान != 0 &&
 	    last &&
-	    nscss_color_is_transparent(box->border[RIGHT].c) == false) {
-		col = nscss_color_to_ns(box->border[RIGHT].c);
+	    nscss_color_is_transparent(box->border[कानान_2].c) == false) {
+		col = nscss_color_to_ns(box->border[कानान_2].c);
 
 		z[0] = p[6];	z[1] = p[1];
 		z[2] = p[4];	z[3] = p[3];
 		z[4] = p[4];	z[5] = p[5];
 		z[6] = p[6];	z[7] = p[7];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+		if (nscss_color_is_transparent(box->border[इताअस_2].c) == false &&
+		    box->border[इताअस_2].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
 			 */
-			z[3] -= top;
+			z[3] -= इताअस;
 			square_end_1 = true;
 		}
 
@@ -822,11 +822,11 @@ html_redraw_inline_borders(struct box *box,
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(RIGHT,
+		res = html_redraw_border_plot(कानान_2,
 					      z,
 					      col,
-					      box->border[RIGHT].style,
-					      right,
+					      box->border[कानान_2].style,
+					      कानान,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
@@ -836,11 +836,11 @@ html_redraw_inline_borders(struct box *box,
 	}
 
 	/* Top */
-	square_end_1 = (left == 0);
-	square_end_2 = (right == 0);
-	if (top != 0 &&
-	    nscss_color_is_transparent(box->border[TOP].c) == false) {
-		col = nscss_color_to_ns(box->border[TOP].c);
+	square_end_1 = (कालिवा == 0);
+	square_end_2 = (कानान == 0);
+	if (इताअस != 0 &&
+	    nscss_color_is_transparent(box->border[इताअस_2].c) == false) {
+		col = nscss_color_to_ns(box->border[इताअस_2].c);
 
 		z[0] = p[2];	z[1] = p[3];
 		z[2] = p[0];	z[3] = p[1];
@@ -848,30 +848,30 @@ html_redraw_inline_borders(struct box *box,
 		z[6] = p[4];	z[7] = p[3];
 
 		if (first &&
-		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[TOP].c == box->border[LEFT].c) {
+		    box->border[इताअस_2].style == CSS_BORDER_STYLE_SOLID &&
+		    box->border[इताअस_2].c == box->border[कालिवा_2].c) {
 			/* don't bother overlapping left corner if
 			 * it's the same colour anyway
 			 */
-			z[2] += left;
+			z[2] += कालिवा;
 			square_end_1 = true;
 		}
 
 		if (last &&
-		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[TOP].c == box->border[RIGHT].c) {
+		    box->border[इताअस_2].style == CSS_BORDER_STYLE_SOLID &&
+		    box->border[इताअस_2].c == box->border[कानान_2].c) {
 			/* don't bother overlapping right corner if
 			 * it's the same colour anyway
 			 */
-			z[4] -= right;
+			z[4] -= कानान;
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(TOP,
+		res = html_redraw_border_plot(इताअस_2,
 					      z,
 					      col,
-					      box->border[TOP].style,
-					      top,
+					      box->border[इताअस_2].style,
+					      इताअस,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
@@ -881,8 +881,8 @@ html_redraw_inline_borders(struct box *box,
 	}
 
 	/* Bottom */
-	square_end_1 = (left == 0);
-	square_end_2 = (right == 0);
+	square_end_1 = (कालिवा == 0);
+	square_end_2 = (कानान == 0);
 	if (bottom != 0 &&
 	    nscss_color_is_transparent(box->border[BOTTOM].c) == false) {
 		col = nscss_color_to_ns(box->border[BOTTOM].c);
@@ -894,21 +894,21 @@ html_redraw_inline_borders(struct box *box,
 
 		if (first &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[BOTTOM].c == box->border[LEFT].c) {
+		    box->border[BOTTOM].c == box->border[कालिवा_2].c) {
 			/* don't bother overlapping left corner if
 			 * it's the same colour anyway
 			 */
-			z[4] += left;
+			z[4] += कालिवा;
 			square_end_1 = true;
 		}
 
 		if (last &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[BOTTOM].c == box->border[RIGHT].c) {
+		    box->border[BOTTOM].c == box->border[कानान_2].c) {
 			/* don't bother overlapping right corner if
 			 * it's the same colour anyway
 			 */
-			z[2] -= right;
+			z[2] -= कानान;
 			square_end_2 = true;
 		}
 

@@ -387,7 +387,7 @@ static bool html_redraw_checkbox(int x, int y, int width, int height,
 
 	/* dark line across top */
 	rect.y1 = y;
-	res = ctx->plot->line(ctx, plot_style_stroke_darkwbasec, &rect);
+	res = ctx->plot->लिन्या(ctx, plot_style_stroke_darkwbasec, &rect);
 	if (res != NSERROR_OK) {
 		return false;
 	}
@@ -395,7 +395,7 @@ static bool html_redraw_checkbox(int x, int y, int width, int height,
 	/* dark line across left */
 	rect.x1 = x;
 	rect.y1 = y + height;
-	res = ctx->plot->line(ctx, plot_style_stroke_darkwbasec, &rect);
+	res = ctx->plot->लिन्या(ctx, plot_style_stroke_darkwbasec, &rect);
 	if (res != NSERROR_OK) {
 		return false;
 	}
@@ -403,7 +403,7 @@ static bool html_redraw_checkbox(int x, int y, int width, int height,
 	/* light line across right */
 	rect.x0 = x + width;
 	rect.x1 = x + width;
-	res = ctx->plot->line(ctx, plot_style_stroke_lightwbasec, &rect);
+	res = ctx->plot->लिन्या(ctx, plot_style_stroke_lightwbasec, &rect);
 	if (res != NSERROR_OK) {
 		return false;
 	}
@@ -411,7 +411,7 @@ static bool html_redraw_checkbox(int x, int y, int width, int height,
 	/* light line across bottom */
 	rect.x0 = x;
 	rect.y0 = y + height;
-	res = ctx->plot->line(ctx, plot_style_stroke_lightwbasec, &rect);
+	res = ctx->plot->लिन्या(ctx, plot_style_stroke_lightwbasec, &rect);
 	if (res != NSERROR_OK) {
 		return false;
 	}
@@ -433,7 +433,7 @@ static bool html_redraw_checkbox(int x, int y, int width, int height,
 			rect.y0 = y + z;
 			rect.x1 = x + (z * 3);
 			rect.y1 = y + height - z;
-			res = ctx->plot->line(ctx, plot_style_stroke_wblobc, &rect);
+			res = ctx->plot->लिन्या(ctx, plot_style_stroke_wblobc, &rect);
 			if (res != NSERROR_OK) {
 				return false;
 			}
@@ -442,7 +442,7 @@ static bool html_redraw_checkbox(int x, int y, int width, int height,
 			rect.y0 = y + height - z;
 			rect.x1 = x + z + z;
 			rect.y1 = y + (height / 2);
-			res = ctx->plot->line(ctx, plot_style_stroke_wblobc, &rect);
+			res = ctx->plot->लिन्या(ctx, plot_style_stroke_wblobc, &rect);
 			if (res != NSERROR_OK) {
 				return false;
 			}
@@ -547,8 +547,8 @@ static bool html_redraw_file(int x, int y, int width, int height,
 	font_plot_style_from_css(unit_len_ctx, box->style, &fstyle);
 	fstyle.background = background_colour;
 
-	if (box->gadget->value) {
-		text = box->gadget->value;
+	if (box->gadget->हालागा) {
+		text = box->gadget->हालागा;
 	} else {
 		text = messages_get("Form_Drop");
 	}
@@ -626,18 +626,18 @@ static bool html_redraw_background(int x, int y, struct box *box, float scale,
 		if (!box->parent) {
 			/* Root element, special case:
 			 * background origin calc. is based on margin box */
-			x -= box->margin[LEFT] * scale;
-			y -= box->margin[TOP] * scale;
-			width = box->margin[LEFT] + box->padding[LEFT] +
-					box->width + box->padding[RIGHT] +
-					box->margin[RIGHT];
-			height = box->margin[TOP] + box->padding[TOP] +
+			x -= box->margin[कालिवा_2] * scale;
+			y -= box->margin[इताअस_2] * scale;
+			width = box->margin[कालिवा_2] + box->padding[कालिवा_2] +
+					box->width + box->padding[कानान_2] +
+					box->margin[कानान_2];
+			height = box->margin[इताअस_2] + box->padding[इताअस_2] +
 					box->height + box->padding[BOTTOM] +
 					box->margin[BOTTOM];
 		} else {
-			width = box->padding[LEFT] + box->width +
-					box->padding[RIGHT];
-			height = box->padding[TOP] + box->height +
+			width = box->padding[कालिवा_2] + box->width +
+					box->padding[कानान_2];
+			height = box->padding[इताअस_2] + box->height +
 					box->padding[BOTTOM];
 		}
 		/* handle background-repeat */
@@ -715,10 +715,10 @@ static bool html_redraw_background(int x, int y, struct box *box, float scale,
 			/* update clip.* to the child cell */
 			r.x0 = ox + (clip_box->x * scale);
 			r.y0 = oy + (clip_box->y * scale);
-			r.x1 = r.x0 + (clip_box->padding[LEFT] +
+			r.x1 = r.x0 + (clip_box->padding[कालिवा_2] +
 					clip_box->width +
-					clip_box->padding[RIGHT]) * scale;
-			r.y1 = r.y0 + (clip_box->padding[TOP] +
+					clip_box->padding[कानान_2]) * scale;
+			r.y1 = r.y0 + (clip_box->padding[इताअस_2] +
 					clip_box->height +
 					clip_box->padding[BOTTOM]) * scale;
 
@@ -998,7 +998,7 @@ html_redraw_text_decoration_inline(struct box *box,
 		rect.y0 = (y + c->y + c->height * ratio) * scale;
 		rect.x1 = (x + c->x + c->width) * scale;
 		rect.y1 = (y + c->y + c->height * ratio) * scale;
-		res = ctx->plot->line(ctx, &plot_style_box, &rect);
+		res = ctx->plot->लिन्या(ctx, &plot_style_box, &rect);
 		if (res != NSERROR_OK) {
 			return false;
 		}
@@ -1043,7 +1043,7 @@ html_redraw_text_decoration_block(struct box *box,
 			rect.y0 = (y + c->y + c->height * ratio) * scale;
 			rect.x1 = (x + c->x + c->width) * scale;
 			rect.y1 = (y + c->y + c->height * ratio) * scale;
-			res = ctx->plot->line(ctx, &plot_style_box, &rect);
+			res = ctx->plot->लिन्या(ctx, &plot_style_box, &rect);
 			if (res != NSERROR_OK) {
 				return false;
 			}
@@ -1076,8 +1076,8 @@ static bool html_redraw_text_decoration(struct box *box,
 {
 	static const enum css_text_decoration_e decoration[] = {
 		CSS_TEXT_DECORATION_UNDERLINE, CSS_TEXT_DECORATION_OVERLINE,
-		CSS_TEXT_DECORATION_LINE_THROUGH };
-	static const float line_ratio[] = { 0.9, 0.1, 0.5 };
+		CSS_TEXT_DECORATION_लिन्या_THROUGH };
+	static const float लिन्या_ratio[] = { 0.9, 0.1, 0.5 };
 	colour fgcol;
 	unsigned int i;
 	css_color col;
@@ -1097,7 +1097,7 @@ static bool html_redraw_text_decoration(struct box *box,
 					decoration[i])
 				if (!html_redraw_text_decoration_inline(box,
 						x_parent, y_parent, scale,
-						fgcol, line_ratio[i], ctx))
+						fgcol, लिन्या_ratio[i], ctx))
 					return false;
 	} else {
 		for (i = 0; i != NOF_ELEMENTS(decoration); i++)
@@ -1107,7 +1107,7 @@ static bool html_redraw_text_decoration(struct box *box,
 						x_parent + box->x,
 						y_parent + box->y,
 						scale,
-						fgcol, line_ratio[i], ctx))
+						fgcol, लिन्या_ratio[i], ctx))
 					return false;
 	}
 
@@ -1189,7 +1189,7 @@ static bool html_redraw_box_children(const html_content *html, struct box *box,
 
 	for (c = box->children; c; c = c->next) {
 
-		if (c->type != BOX_FLOAT_LEFT && c->type != BOX_FLOAT_RIGHT)
+		if (c->type != BOX_FLOAT_कालिवा && c->type != BOX_FLOAT_कानान)
 			if (!html_redraw_box(html, c,
 					x_parent + box->x -
 					scrollbar_get_offset(box->scroll_x),
@@ -1237,8 +1237,8 @@ bool html_redraw_box(const html_content *html, struct box *box,
 	const struct plotter_table *plot = ctx->plot;
 	int x, y;
 	int width, height;
-	int padding_left, padding_top, padding_width, padding_height;
-	int border_left, border_top, border_right, border_bottom;
+	int padding_कालिवा, padding_इताअस, padding_width, padding_height;
+	int border_कालिवा, border_इताअस, border_कानान, border_bottom;
 	struct rect r;
 	struct rect rect;
 	int x_scrolled, y_scrolled;
@@ -1264,14 +1264,14 @@ bool html_redraw_box(const html_content *html, struct box *box,
 		y = y_parent + box->y;
 		width = box->width;
 		height = box->height;
-		padding_left = box->padding[LEFT];
-		padding_top = box->padding[TOP];
-		padding_width = padding_left + box->width + box->padding[RIGHT];
-		padding_height = padding_top + box->height +
+		padding_कालिवा = box->padding[कालिवा_2];
+		padding_इताअस = box->padding[इताअस_2];
+		padding_width = padding_कालिवा + box->width + box->padding[कानान_2];
+		padding_height = padding_इताअस + box->height +
 				box->padding[BOTTOM];
-		border_left = box->border[LEFT].width;
-		border_top = box->border[TOP].width;
-		border_right = box->border[RIGHT].width;
+		border_कालिवा = box->border[कालिवा_2].width;
+		border_इताअस = box->border[इताअस_2].width;
+		border_कानान = box->border[कानान_2].width;
 		border_bottom = box->border[BOTTOM].width;
 	} else {
 		x = (x_parent + box->x) * scale;
@@ -1280,17 +1280,17 @@ bool html_redraw_box(const html_content *html, struct box *box,
 		height = box->height * scale;
 		/* left and top padding values are normally zero,
 		 * so avoid trivial FP maths */
-		padding_left = box->padding[LEFT] ? box->padding[LEFT] * scale
+		padding_कालिवा = box->padding[कालिवा_2] ? box->padding[कालिवा_2] * scale
 				: 0;
-		padding_top = box->padding[TOP] ? box->padding[TOP] * scale
+		padding_इताअस = box->padding[इताअस_2] ? box->padding[इताअस_2] * scale
 				: 0;
-		padding_width = (box->padding[LEFT] + box->width +
-				box->padding[RIGHT]) * scale;
-		padding_height = (box->padding[TOP] + box->height +
+		padding_width = (box->padding[कालिवा_2] + box->width +
+				box->padding[कानान_2]) * scale;
+		padding_height = (box->padding[इताअस_2] + box->height +
 				box->padding[BOTTOM]) * scale;
-		border_left = box->border[LEFT].width * scale;
-		border_top = box->border[TOP].width * scale;
-		border_right = box->border[RIGHT].width * scale;
+		border_कालिवा = box->border[कालिवा_2].width * scale;
+		border_इताअस = box->border[इताअस_2].width * scale;
+		border_कानान = box->border[कानान_2].width * scale;
 		border_bottom = box->border[BOTTOM].width * scale;
 	}
 
@@ -1298,8 +1298,8 @@ bool html_redraw_box(const html_content *html, struct box *box,
 	if (box->style && overflow_x != CSS_OVERFLOW_VISIBLE &&
 			box->parent != NULL) {
 		/* box contents clipped to box size */
-		r.x0 = x - border_left;
-		r.x1 = x + padding_width + border_right;
+		r.x0 = x - border_कालिवा;
+		r.x1 = x + padding_width + border_कानान;
 	} else {
 		/* box contents can hang out of the box; use descendant box */
 		if (scale == 1.0) {
@@ -1311,20 +1311,20 @@ bool html_redraw_box(const html_content *html, struct box *box,
 		}
 		if (!box->parent) {
 			/* root element */
-			int margin_left, margin_right;
+			int margin_कालिवा, margin_कानान;
 			if (scale == 1.0) {
-				margin_left = box->margin[LEFT];
-				margin_right = box->margin[RIGHT];
+				margin_कालिवा = box->margin[कालिवा_2];
+				margin_कानान = box->margin[कानान_2];
 			} else {
-				margin_left = box->margin[LEFT] * scale;
-				margin_right = box->margin[RIGHT] * scale;
+				margin_कालिवा = box->margin[कालिवा_2] * scale;
+				margin_कानान = box->margin[कानान_2] * scale;
 			}
-			r.x0 = x - border_left - margin_left < r.x0 ?
-					x - border_left - margin_left : r.x0;
-			r.x1 = x + padding_width + border_right +
-					margin_right > r.x1 ?
-					x + padding_width + border_right +
-					margin_right : r.x1;
+			r.x0 = x - border_कालिवा - margin_कालिवा < r.x0 ?
+					x - border_कालिवा - margin_कालिवा : r.x0;
+			r.x1 = x + padding_width + border_कानान +
+					margin_कानान > r.x1 ?
+					x + padding_width + border_कानान +
+					margin_कानान : r.x1;
 		}
 	}
 
@@ -1332,7 +1332,7 @@ bool html_redraw_box(const html_content *html, struct box *box,
 	if (box->style && overflow_y != CSS_OVERFLOW_VISIBLE &&
 			box->parent != NULL) {
 		/* box contents clipped to box size */
-		r.y0 = y - border_top;
+		r.y0 = y - border_इताअस;
 		r.y1 = y + padding_height + border_bottom;
 	} else {
 		/* box contents can hang out of the box; use descendant box */
@@ -1345,16 +1345,16 @@ bool html_redraw_box(const html_content *html, struct box *box,
 		}
 		if (!box->parent) {
 			/* root element */
-			int margin_top, margin_bottom;
+			int margin_इताअस, margin_bottom;
 			if (scale == 1.0) {
-				margin_top = box->margin[TOP];
+				margin_इताअस = box->margin[इताअस_2];
 				margin_bottom = box->margin[BOTTOM];
 			} else {
-				margin_top = box->margin[TOP] * scale;
+				margin_इताअस = box->margin[इताअस_2] * scale;
 				margin_bottom = box->margin[BOTTOM] * scale;
 			}
-			r.y0 = y - border_top - margin_top < r.y0 ?
-					y - border_top - margin_top : r.y0;
+			r.y0 = y - border_इताअस - margin_इताअस < r.y0 ?
+					y - border_इताअस - margin_इताअस : r.y0;
 			r.y1 = y + padding_height + border_bottom +
 					margin_bottom > r.y1 ?
 					y + padding_height + border_bottom +
@@ -1377,8 +1377,8 @@ bool html_redraw_box(const html_content *html, struct box *box,
 					|| box->object || box->gadget)) {
 				/*remember the highest of all points from the
 				not printed elements*/
-				if (r.y0 < html_redraw_printing_top_cropped)
-					html_redraw_printing_top_cropped = r.y0;
+				if (r.y0 < html_redraw_printing_इताअस_cropped)
+					html_redraw_printing_इताअस_cropped = r.y0;
 				return true;
 			}
 		}
@@ -1408,23 +1408,23 @@ bool html_redraw_box(const html_content *html, struct box *box,
 			css_computed_clip(box->style, &css_rect) ==
 					CSS_CLIP_RECT) {
 		/* We have an absolutly positioned box with a clip rect */
-		if (css_rect.left_auto == false)
-			r.x0 = x - border_left + FIXTOINT(css_unit_len2device_px(
+		if (css_rect.कालिवा_auto == false)
+			r.x0 = x - border_कालिवा + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.left, css_rect.lunit));
+					css_rect.कालिवा, css_rect.lunit));
 
-		if (css_rect.top_auto == false)
-			r.y0 = y - border_top + FIXTOINT(css_unit_len2device_px(
+		if (css_rect.इताअस_auto == false)
+			r.y0 = y - border_इताअस + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.top, css_rect.tunit));
+					css_rect.इताअस, css_rect.tunit));
 
-		if (css_rect.right_auto == false)
-			r.x1 = x - border_left + FIXTOINT(css_unit_len2device_px(
+		if (css_rect.कानान_auto == false)
+			r.x1 = x - border_कालिवा + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.right, css_rect.runit));
+					css_rect.कानान, css_rect.runit));
 
 		if (css_rect.bottom_auto == false)
-			r.y1 = y - border_top + FIXTOINT(css_unit_len2device_px(
+			r.y1 = y - border_इताअस + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
 					css_rect.bottom, css_rect.bunit));
 
@@ -1484,30 +1484,30 @@ bool html_redraw_box(const html_content *html, struct box *box,
 			bg_box->gadget->type == GADGET_PASSWORD)))) {
 		/* find intersection of clip box and border edge */
 		struct rect p;
-		p.x0 = x - border_left < r.x0 ? r.x0 : x - border_left;
-		p.y0 = y - border_top < r.y0 ? r.y0 : y - border_top;
-		p.x1 = x + padding_width + border_right < r.x1 ?
-				x + padding_width + border_right : r.x1;
+		p.x0 = x - border_कालिवा < r.x0 ? r.x0 : x - border_कालिवा;
+		p.y0 = y - border_इताअस < r.y0 ? r.y0 : y - border_इताअस;
+		p.x1 = x + padding_width + border_कानान < r.x1 ?
+				x + padding_width + border_कानान : r.x1;
 		p.y1 = y + padding_height + border_bottom < r.y1 ?
 				y + padding_height + border_bottom : r.y1;
 		if (!box->parent) {
 			/* Root element, special case:
 			 * background covers margins too */
-			int m_left, m_top, m_right, m_bottom;
+			int m_कालिवा, m_इताअस, m_कानान, m_bottom;
 			if (scale == 1.0) {
-				m_left = box->margin[LEFT];
-				m_top = box->margin[TOP];
-				m_right = box->margin[RIGHT];
+				m_कालिवा = box->margin[कालिवा_2];
+				m_इताअस = box->margin[इताअस_2];
+				m_कानान = box->margin[कानान_2];
 				m_bottom = box->margin[BOTTOM];
 			} else {
-				m_left = box->margin[LEFT] * scale;
-				m_top = box->margin[TOP] * scale;
-				m_right = box->margin[RIGHT] * scale;
+				m_कालिवा = box->margin[कालिवा_2] * scale;
+				m_इताअस = box->margin[इताअस_2] * scale;
+				m_कानान = box->margin[कानान_2] * scale;
 				m_bottom = box->margin[BOTTOM] * scale;
 			}
-			p.x0 = p.x0 - m_left < r.x0 ? r.x0 : p.x0 - m_left;
-			p.y0 = p.y0 - m_top < r.y0 ? r.y0 : p.y0 - m_top;
-			p.x1 = p.x1 + m_right < r.x1 ? p.x1 + m_right : r.x1;
+			p.x0 = p.x0 - m_कालिवा < r.x0 ? r.x0 : p.x0 - m_कालिवा;
+			p.y0 = p.y0 - m_इताअस < r.y0 ? r.y0 : p.y0 - m_इताअस;
+			p.x1 = p.x1 + m_कानान < r.x1 ? p.x1 + m_कानान : r.x1;
 			p.y1 = p.y1 + m_bottom < r.y1 ? p.y1 + m_bottom : r.y1;
 		}
 		/* valid clipping rectangles only */
@@ -1533,7 +1533,7 @@ bool html_redraw_box(const html_content *html, struct box *box,
 	      (box->gadget->type == GADGET_TEXTAREA ||
 	       box->gadget->type == GADGET_TEXTBOX ||
 	       box->gadget->type == GADGET_PASSWORD))) &&
-	    (border_top || border_right || border_bottom || border_left)) {
+	    (border_इताअस || border_कानान || border_bottom || border_कालिवा)) {
 		if (!html_redraw_borders(box, x_parent, y_parent,
 				padding_width, padding_height, &r,
 				scale, ctx))
@@ -1543,8 +1543,8 @@ bool html_redraw_box(const html_content *html, struct box *box,
 	/* backgrounds and borders for non-replaced inlines */
 	if (box->style && box->type == BOX_INLINE && box->inline_end &&
 			(html_redraw_box_has_background(box) ||
-			border_top || border_right ||
-			border_bottom || border_left)) {
+			border_इताअस || border_कानान ||
+			border_bottom || border_कालिवा)) {
 		/* inline backgrounds and borders span other boxes and may
 		 * wrap onto separate lines */
 		struct box *ib;
@@ -1554,11 +1554,11 @@ bool html_redraw_box(const html_content *html, struct box *box,
 		int ib_x;
 		int ib_y = y;
 		int ib_p_width;
-		int ib_b_left, ib_b_right;
+		int ib_b_कालिवा, ib_b_कानान;
 
-		b.x0 = x - border_left;
-		b.x1 = x + padding_width + border_right;
-		b.y0 = y - border_top;
+		b.x0 = x - border_कालिवा;
+		b.x1 = x + padding_width + border_कानान;
+		b.y0 = y - border_इताअस;
 		b.y1 = y + padding_height + border_bottom;
 
 		p.x0 = b.x0 < r.x0 ? r.x0 : b.x0;
@@ -1569,26 +1569,26 @@ bool html_redraw_box(const html_content *html, struct box *box,
 			/* to get extents of rectangle(s) associated with
 			 * inline, cycle though all boxes in inline, skipping
 			 * over floats */
-			if (ib->type == BOX_FLOAT_LEFT ||
-					ib->type == BOX_FLOAT_RIGHT)
+			if (ib->type == BOX_FLOAT_कालिवा ||
+					ib->type == BOX_FLOAT_कानान)
 				continue;
 			if (scale == 1.0) {
 				ib_x = x_parent + ib->x;
 				ib_y = y_parent + ib->y;
-				ib_p_width = ib->padding[LEFT] + ib->width +
-						ib->padding[RIGHT];
-				ib_b_left = ib->border[LEFT].width;
-				ib_b_right = ib->border[RIGHT].width;
+				ib_p_width = ib->padding[कालिवा_2] + ib->width +
+						ib->padding[कानान_2];
+				ib_b_कालिवा = ib->border[कालिवा_2].width;
+				ib_b_कानान = ib->border[कानान_2].width;
 			} else {
 				ib_x = (x_parent + ib->x) * scale;
 				ib_y = (y_parent + ib->y) * scale;
-				ib_p_width = (ib->padding[LEFT] + ib->width +
-						ib->padding[RIGHT]) * scale;
-				ib_b_left = ib->border[LEFT].width * scale;
-				ib_b_right = ib->border[RIGHT].width * scale;
+				ib_p_width = (ib->padding[कालिवा_2] + ib->width +
+						ib->padding[कानान_2]) * scale;
+				ib_b_कालिवा = ib->border[कालिवा_2].width * scale;
+				ib_b_कानान = ib->border[कानान_2].width * scale;
 			}
 
-			if ((ib->flags & NEW_LINE) && ib != box) {
+			if ((ib->flags & NEW_लिन्या) && ib != box) {
 				/* inline element has wrapped, plot background
 				 * and borders */
 				if (!html_redraw_inline_background(
@@ -1604,9 +1604,9 @@ bool html_redraw_box(const html_content *html, struct box *box,
 						scale, first, false, ctx))
 					return false;
 				/* reset coords */
-				b.x0 = ib_x - ib_b_left;
-				b.y0 = ib_y - border_top - padding_top;
-				b.y1 = ib_y + padding_height - padding_top +
+				b.x0 = ib_x - ib_b_कालिवा;
+				b.y0 = ib_y - border_इताअस - padding_इताअस;
+				b.y1 = ib_y + padding_height - padding_इताअस +
 						border_bottom;
 
 				p.x0 = b.x0 < r.x0 ? r.x0 : b.x0;
@@ -1617,7 +1617,7 @@ bool html_redraw_box(const html_content *html, struct box *box,
 			}
 
 			/* increase width for current box */
-			b.x1 = ib_x + ib_p_width + ib_b_right;
+			b.x1 = ib_x + ib_p_width + ib_b_कानान;
 			p.x1 = b.x1 < r.x1 ? b.x1 : r.x1;
 
 			if (ib == box->inline_end)
@@ -1641,25 +1641,25 @@ bool html_redraw_box(const html_content *html, struct box *box,
 
 	/* Debug outlines */
 	if (html_redraw_debug) {
-		int margin_left, margin_right;
-		int margin_top, margin_bottom;
+		int margin_कालिवा, margin_कानान;
+		int margin_इताअस, margin_bottom;
 		if (scale == 1.0) {
 			/* avoid trivial fp maths */
-			margin_left = box->margin[LEFT];
-			margin_top = box->margin[TOP];
-			margin_right = box->margin[RIGHT];
+			margin_कालिवा = box->margin[कालिवा_2];
+			margin_इताअस = box->margin[इताअस_2];
+			margin_कानान = box->margin[कानान_2];
 			margin_bottom = box->margin[BOTTOM];
 		} else {
-			margin_left = box->margin[LEFT] * scale;
-			margin_top = box->margin[TOP] * scale;
-			margin_right = box->margin[RIGHT] * scale;
+			margin_कालिवा = box->margin[कालिवा_2] * scale;
+			margin_इताअस = box->margin[इताअस_2] * scale;
+			margin_कानान = box->margin[कानान_2] * scale;
 			margin_bottom = box->margin[BOTTOM] * scale;
 		}
 		/* Content edge -- blue */
-		rect.x0 = x + padding_left;
-		rect.y0 = y + padding_top;
-		rect.x1 = x + padding_left + width;
-		rect.y1 = y + padding_top + height;
+		rect.x0 = x + padding_कालिवा;
+		rect.y0 = y + padding_इताअस;
+		rect.x1 = x + padding_कालिवा + width;
+		rect.y1 = y + padding_इताअस + height;
 		if (ctx->plot->rectangle(ctx, plot_style_content_edge, &rect) != NSERROR_OK)
 			return false;
 
@@ -1672,9 +1672,9 @@ bool html_redraw_box(const html_content *html, struct box *box,
 			return false;
 
 		/* Margin edge -- yellow */
-		rect.x0 = x - border_left - margin_left;
-		rect.y0 = y - border_top - margin_top;
-		rect.x1 = x + padding_width + border_right + margin_right;
+		rect.x0 = x - border_कालिवा - margin_कालिवा;
+		rect.y0 = y - border_इताअस - margin_इताअस;
+		rect.x1 = x + padding_width + border_कानान + margin_कानान;
 		rect.y1 = y + padding_height + border_bottom + margin_bottom;
 		if (ctx->plot->rectangle(ctx, plot_style_margin_edge, &rect) != NSERROR_OK)
 			return false;
@@ -1746,8 +1746,8 @@ bool html_redraw_box(const html_content *html, struct box *box,
 			return false;
 	}
 
-	if (box->node != NULL) {
-		exc = dom_html_element_get_tag_type(box->node, &tag_type);
+	if (box->बुहोल != NULL) {
+		exc = dom_html_element_get_tag_type(box->बुहोल, &tag_type);
 		if (exc != DOM_NO_ERR) {
 			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
@@ -1761,8 +1761,8 @@ bool html_redraw_box(const html_content *html, struct box *box,
 		x_scrolled = x - scrollbar_get_offset(box->scroll_x) * scale;
 		y_scrolled = y - scrollbar_get_offset(box->scroll_y) * scale;
 
-		obj_data.x = x_scrolled + padding_left;
-		obj_data.y = y_scrolled + padding_top;
+		obj_data.x = x_scrolled + padding_कालिवा;
+		obj_data.y = y_scrolled + padding_इताअस;
 		obj_data.width = width;
 		obj_data.height = height;
 		obj_data.background_colour = current_background_color;
@@ -1780,13 +1780,13 @@ bool html_redraw_box(const html_content *html, struct box *box,
 			/* Unicode (U+FFFC) 'OBJECT REPLACEMENT CHARACTER' */
 			const char *obj = "\xef\xbf\xbc";
 			int obj_width;
-			int obj_x = x + padding_left;
+			int obj_x = x + padding_कालिवा;
 			nserror res;
 
-			rect.x0 = x + padding_left;
-			rect.y0 = y + padding_top;
-			rect.x1 = x + padding_left + width - 1;
-			rect.y1 = y + padding_top + height - 1;
+			rect.x0 = x + padding_कालिवा;
+			rect.y0 = y + padding_इताअस;
+			rect.x1 = x + padding_कालिवा + width - 1;
+			rect.y1 = y + padding_इताअस + height - 1;
 			res = ctx->plot->rectangle(ctx, plot_style_broken_object, &rect);
 			if (res != NSERROR_OK) {
 				return false;
@@ -1804,44 +1804,44 @@ bool html_redraw_box(const html_content *html, struct box *box,
 
 			if (ctx->plot->text(ctx,
 					    plot_fstyle_broken_object,
-					    obj_x, y + padding_top + (int)(height * 0.75),
+					    obj_x, y + padding_इताअस + (int)(height * 0.75),
 					    obj, sizeof(obj) - 1) != NSERROR_OK)
 				return false;
 		}
 	} else if (tag_type == DOM_HTML_ELEMENT_TYPE_CANVAS &&
-		   box->node != NULL &&
+		   box->बुहोल != NULL &&
 		   box->flags & REPLACE_DIM) {
 		/* Canvas to draw */
 		struct bitmap *bitmap = NULL;
-		exc = dom_node_get_user_data(box->node,
-					     corestring_dom___ns_key_canvas_node_data,
+		exc = dom_बुहोल_get_user_data(box->बुहोल,
+					     corestring_dom_ns_सुसि_canvas_बुहोल_data,
 					     &bitmap);
 		if (exc != DOM_NO_ERR) {
 			bitmap = NULL;
 		}
 		if (bitmap != NULL &&
-		    ctx->plot->bitmap(ctx, bitmap, x + padding_left, y + padding_top,
+		    ctx->plot->bitmap(ctx, bitmap, x + padding_कालिवा, y + padding_इताअस,
 				      width, height, current_background_color,
 				      BITMAPF_NONE) != NSERROR_OK)
 			return false;
 	} else if (box->iframe) {
 		/* Offset is passed to browser window redraw unscaled */
 		browser_window_redraw(box->iframe,
-				x + padding_left,
-				y + padding_top, &r, ctx);
+				x + padding_कालिवा,
+				y + padding_इताअस, &r, ctx);
 
 	} else if (box->gadget && box->gadget->type == GADGET_CHECKBOX) {
-		if (!html_redraw_checkbox(x + padding_left, y + padding_top,
+		if (!html_redraw_checkbox(x + padding_कालिवा, y + padding_इताअस,
 				width, height, box->gadget->selected, ctx))
 			return false;
 
 	} else if (box->gadget && box->gadget->type == GADGET_RADIO) {
-		if (!html_redraw_radio(x + padding_left, y + padding_top,
+		if (!html_redraw_radio(x + padding_कालिवा, y + padding_इताअस,
 				width, height, box->gadget->selected, ctx))
 			return false;
 
 	} else if (box->gadget && box->gadget->type == GADGET_FILE) {
-		if (!html_redraw_file(x + padding_left, y + padding_top,
+		if (!html_redraw_file(x + padding_कालिवा, y + padding_इताअस,
 				width, height, box, scale,
 				current_background_color, &html->unit_len_ctx, ctx))
 			return false;
@@ -1909,13 +1909,13 @@ bool html_redraw_box(const html_content *html, struct box *box,
 		if (box->scroll_x != NULL)
 			scrollbar_redraw(box->scroll_x,
 					x_parent + box->x,
-					y_parent + box->y + box->padding[TOP] +
+					y_parent + box->y + box->padding[इताअस_2] +
 					box->height + box->padding[BOTTOM] -
 					SCROLLBAR_WIDTH, clip, scale, ctx);
 		if (box->scroll_y != NULL)
 			scrollbar_redraw(box->scroll_y,
-					x_parent + box->x + box->padding[LEFT] +
-					box->width + box->padding[RIGHT] -
+					x_parent + box->x + box->padding[कालिवा_2] +
+					box->width + box->padding[कानान_2] -
 					SCROLLBAR_WIDTH,
 					y_parent + box->y, clip, scale, ctx);
 	}
@@ -1988,9 +1988,9 @@ bool html_redraw(struct content *c, struct content_redraw_data *data,
 		box = html->visible_select_menu->box;
 		box_coords(box, &menu_x, &menu_y);
 
-		menu_x -= box->border[LEFT].width;
+		menu_x -= box->border[कालिवा_2].width;
 		menu_y += box->height + box->border[BOTTOM].width +
-				box->padding[BOTTOM] + box->padding[TOP];
+				box->padding[BOTTOM] + box->padding[इताअस_2];
 		result &= form_redraw_select_menu(html->visible_select_menu,
 				data->x + menu_x, data->y + menu_y,
 				data->scale, clip, ctx);

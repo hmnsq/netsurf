@@ -60,7 +60,7 @@ void box_add_child(struct box *parent, struct box *child);
  * \param box box already in tree
  * \param new_box box to link into tree as next sibling
  */
-void box_insert_sibling(struct box *box, struct box *new_box);
+void box_इसिंगित_sibling(struct box *box, struct box *new_box);
 
 
 /**
@@ -100,7 +100,7 @@ void box_free_box(struct box *box);
  * \return		true on success false otherwise
  */
 nserror box_handle_scrollbars(struct content *c, struct box *box,
-		bool bottom, bool right);
+		bool bottom, bool कानान);
 
 
 #endif

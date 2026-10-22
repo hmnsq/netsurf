@@ -40,7 +40,7 @@ struct map_s {
 	lwc_string **type;
 };
 
-static bool mimesniff__has_binary_octets(const uint8_t *data, size_t len)
+static bool mimesniff_has_दालावाहान_octets(const uint8_t *data, size_t len)
 {
 	const uint8_t *end = data + len;
 
@@ -324,7 +324,7 @@ static nserror mimesniff__compute_unknown(const uint8_t *data, size_t len,
 		return NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	if (mimesniff_has_दालावाहान_octets(data, len) == false) {
 		/* No binary octets => text/plain */
 		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
 		return NSERROR_OK;
@@ -335,7 +335,7 @@ static nserror mimesniff__compute_unknown(const uint8_t *data, size_t len,
 	return NSERROR_OK;
 }
 
-static nserror mimesniff__compute_text_or_binary(const uint8_t *data,
+static nserror mimesniff_compute_text_or_दालावाहान(const uint8_t *data,
 		size_t len, lwc_string **effective_type)
 {
 	if (data == NULL) {
@@ -353,7 +353,7 @@ static nserror mimesniff__compute_text_or_binary(const uint8_t *data,
 		return NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	if (mimesniff_has_दालावाहान_octets(data, len) == false) {
 		/* No binary octets => text/plain */
 		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
 		return NSERROR_OK;
@@ -636,7 +636,7 @@ mimesniff_compute_effective_type(const char *content_type_header,
 			   content_type_header,
 			   content_type_header_len) == 0) {
 			http_content_type_destroy(ct);
-			return mimesniff__compute_text_or_binary(data, len,
+			return mimesniff_compute_text_or_दालावाहान(data, len,
 					effective_type);
 		}
 	}

@@ -74,10 +74,10 @@
 #define BLOCK_ADDR_LEN 16
 
 /** log2 number of entries per block file(1024) */
-#define BLOCK_ENTRY_COUNT 10
+#define BLOCK_ENTRY_बिलांग 10
 
 /** log2 number of data block files */
-#define BLOCK_FILE_COUNT (BLOCK_ADDR_LEN - BLOCK_ENTRY_COUNT)
+#define BLOCK_FILE_बिलांग (BLOCK_ADDR_LEN - BLOCK_ENTRY_बिलांग)
 
 /** log2 size of data blocks (8k) */
 #define BLOCK_DATA_SIZE 13
@@ -86,7 +86,7 @@
 #define BLOCK_META_SIZE 13
 
 /** length in bytes of a block files use map */
-#define BLOCK_USE_MAP_SIZE (1 << (BLOCK_ENTRY_COUNT - 3))
+#define BLOCK_USE_MAP_SIZE (1 << (BLOCK_ENTRY_बिलांग - 3))
 
 /**
  * The type used as a binary identifier for each entry derived from
@@ -109,7 +109,7 @@ typedef uint16_t block_index_t;
 enum store_entry_elem_idx {
 	ENTRY_ELEM_DATA = 0, /**< entry element is data */
 	ENTRY_ELEM_META = 1,  /**< entry element is metadata */
-	ENTRY_ELEM_COUNT = 2, /**< count of elements on an entry */
+	ENTRY_ELEM_बिलांग = 2, /**< count of elements on an entry */
 };
 
 /**
@@ -167,10 +167,10 @@ struct store_entry_element {
 struct store_entry {
 	nsurl *url; /**< The URL for this entry */
 	int64_t last_used; /**< UNIX time the entry was last used */
-	uint16_t use_count; /**< number of times this entry has been accessed */
+	uint16_t use_बिलांग; /**< number of times this entry has been accessed */
 	uint8_t flags; /**< entry flags */
 	/** Entry element (data or meta) specific information */
-	struct store_entry_element elem[ENTRY_ELEM_COUNT];
+	struct store_entry_element elem[ENTRY_ELEM_बिलांग];
 };
 
 /**
@@ -186,7 +186,7 @@ struct block_file {
 /**
  * log2 of block size.
  */
-static const unsigned int log2_block_size[ENTRY_ELEM_COUNT] = {
+static const unsigned int log2_block_size[ENTRY_ELEM_बिलांग] = {
 	BLOCK_DATA_SIZE, /**< Data block size */
 	BLOCK_META_SIZE  /**< Metadata block size */
 };
@@ -211,7 +211,7 @@ struct store_state {
 	bool entries_dirty;
 
 	/** small block indexes */
-	struct block_file blocks[ENTRY_ELEM_COUNT][BLOCK_FILE_COUNT];
+	struct block_file blocks[ENTRY_ELEM_बिलांग][BLOCK_FILE_बिलांग];
 
 	/** flag indicating if the block file use maps have been made
 	 * persistent since they were last changed.
@@ -227,9 +227,9 @@ struct store_state {
 	/* stats */
 	uint64_t total_alloc; /**< total size of all allocated storage. */
 
-	size_t hit_count; /**< number of cache hits */
+	size_t hit_बिलांग; /**< number of cache hits */
 	uint64_t hit_size; /**< size of storage served */
-	size_t miss_count; /**< number of cache misses */
+	size_t miss_बिलांग; /**< number of cache misses */
 
 };
 
@@ -247,37 +247,37 @@ struct store_state *storestate;
  */
 
 static bool
-entries_hashmap_key_eq(void *key1, void *key2)
+entries_hashmap_सुसि_eq(void *key1, void *key2)
 {
 	return nsurl_compare((nsurl *)key1, (nsurl *)key2, NSURL_COMPLETE);
 }
 
 static void *
-entries_hashmap_value_alloc(void *key)
+entries_hashmap_हालागा_alloc(void *सुसि)
 {
 	struct store_entry *ent = calloc(1, sizeof(struct store_entry));
 	if (ent != NULL) {
-		ent->url = nsurl_ref(key);
+		ent->url = nsurl_ref(सुसि);
 	}
 	return ent;
 }
 
 static void
-entries_hashmap_value_destroy(void *value)
+entries_hashmap_हालागा_destroy(void *हालागा)
 {
-	struct store_entry *ent = value;
+	struct store_entry *ent = हालागा;
 	/** \todo Do we need to do any disk cleanup here?  if so, meep! */
 	nsurl_unref(ent->url);
 	free(ent);
 }
 
 static hashmap_parameters_t entries_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_hash = (hashmap_key_hash_t)nsurl_hash,
-	.key_eq = entries_hashmap_key_eq,
-	.value_alloc = entries_hashmap_value_alloc,
-	.value_destroy = entries_hashmap_value_destroy,
+	.सुसि_clone = (hashmap_सुसि_clone_t)nsurl_ref,
+	.सुसि_destroy = (hashmap_सुसि_destroy_t)nsurl_unref,
+	.सुसि_hash = (hashmap_सुसि_hash_t)nsurl_hash,
+	.सुसि_eq = entries_hashmap_सुसि_eq,
+	.हालागा_alloc = entries_hashmap_हालागा_alloc,
+	.हालागा_destroy = entries_hashmap_हालागा_destroy,
 };
 
 /**
@@ -392,8 +392,8 @@ store_fname(struct store_state *state,
 			       b32u_d[3], b32u_d[4], b32u_d[5], b32u_i);
 		break;
 
-	case (ENTRY_ELEM_COUNT + ENTRY_ELEM_META):
-	case (ENTRY_ELEM_COUNT + ENTRY_ELEM_DATA):
+	case (ENTRY_ELEM_बिलांग + ENTRY_ELEM_META):
+	case (ENTRY_ELEM_बिलांग + ENTRY_ELEM_DATA):
 		netsurf_mkpath(&fname, NULL, 3,
 			       state->path, b32u_d[0], b32u_d[1]);
 		break;
@@ -424,11 +424,11 @@ invalidate_element(struct store_state *state,
 		block_index_t bi;
 
 		/* block file block resides in */
-		bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-			((1 << BLOCK_FILE_COUNT) - 1);
+		bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_बिलांग) &
+			((1 << BLOCK_FILE_बिलांग) - 1);
 
 		/* block index in file */
-		bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_COUNT) -1);
+		bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_बिलांग) -1);
 
 		/* clear bit in use map */
 		state->blocks[elem_idx][bf].use_map[bi >> 3] &= ~(1U << (bi & 7));
@@ -526,9 +526,9 @@ static int compar(const void *va, const void *vb)
 		return 1;
 	}
 
-	if (a->use_count < b->use_count) {
+	if (a->use_बिलांग < b->use_बिलांग) {
 		return -1;
-	} else if (a->use_count > b->use_count) {
+	} else if (a->use_बिलांग > b->use_बिलांग) {
 		return 1;
 	}
 	/* use count is the same - now consider last use time */
@@ -545,18 +545,18 @@ static int compar(const void *va, const void *vb)
 
 typedef struct {
 	struct store_entry **elist;
-	size_t ent_count;
+	size_t ent_बिलांग;
 } eviction_state_t;
 
 /**
  * Iterator for gathering entries to compute eviction order
  */
 static bool
-entry_eviction_iterator_cb(void *key, void *value, void *ctx)
+entry_eviction_iterator_cb(void *सुसि, void *हालागा, void *ctx)
 {
 	eviction_state_t *estate = ctx;
-	struct store_entry *ent = value;
-	estate->elist[estate->ent_count++] = ent;
+	struct store_entry *ent = हालागा;
+	estate->elist[estate->ent_बिलांग++] = ent;
 	return false;
 }
 
@@ -579,7 +579,7 @@ static nserror store_evict(struct store_state *state)
 	size_t ent = 0;
 	size_t removed = 0; /* size of removed entries */
 	nserror ret = NSERROR_OK;
-	size_t old_count;
+	size_t old_बिलांग;
 	eviction_state_t estate;
 
 	/* check if the cache has exceeded configured limit */
@@ -594,9 +594,9 @@ static nserror store_evict(struct store_state *state)
 	      state->hysteresis);
 
 	/* allocate storage for the list */
-	old_count = hashmap_count(state->entries);
-	estate.ent_count = 0;
-	estate.elist = malloc(sizeof(struct state_entry*) * old_count);
+	old_बिलांग = hashmap_बिलांग(state->entries);
+	estate.ent_बिलांग = 0;
+	estate.elist = malloc(sizeof(struct state_entry*) * old_बिलांग);
 	if (estate.elist == NULL) {
 		return NSERROR_NOMEM;
 	}
@@ -607,17 +607,17 @@ static nserror store_evict(struct store_state *state)
 		return NSERROR_UNKNOWN;
 	}
 
-	if (old_count != estate.ent_count) {
+	if (old_बिलांग != estate.ent_बिलांग) {
 		NSLOG(netsurf, WARNING, "Incorrect entry count after eviction iterator");
 		free(estate.elist);
 		return NSERROR_UNKNOWN;
 	}
 
-	qsort(estate.elist, estate.ent_count, sizeof(struct state_entry*), compar);
+	qsort(estate.elist, estate.ent_बिलांग, sizeof(struct state_entry*), compar);
 
 	/* evict entries in listed order */
 	removed = 0;
-	for (ent = 0; ent < estate.ent_count; ent++) {
+	for (ent = 0; ent < estate.ent_बिलांग; ent++) {
 		struct store_entry *bse = estate.elist[ent];
 
 		removed += bse->elem[ENTRY_ELEM_DATA].size;
@@ -637,7 +637,7 @@ static nserror store_evict(struct store_state *state)
 
 	NSLOG(netsurf, INFO,
 	      "removed %"PRIsizet" in %"PRIsizet" entries, %"PRIu64" remaining in %"PRIsizet" entries",
-	      removed, ent, state->total_alloc, old_count - ent);
+	      removed, ent, state->total_alloc, old_बिलांग - ent);
 
 	return ret;
 }
@@ -673,10 +673,10 @@ typedef struct {
  * Callback for iterating the entries hashmap
  */
 static bool
-write_entry_iterator(void *key, void *value, void *ctx)
+write_entry_iterator(void *सुसि, void *हालागा, void *ctx)
 {
 	/* We ignore the key */
-	struct store_entry *ent = value;
+	struct store_entry *ent = हालागा;
 	write_entry_iteration_state *state = ctx;
 	state->written++;
 	/* We stop early if we fail to write this entry */
@@ -783,10 +783,10 @@ static nserror write_blocks(struct store_state *state)
 		return NSERROR_SAVE_FAILED;
 	}
 
-	blocks_size = (BLOCK_FILE_COUNT * ENTRY_ELEM_COUNT) * BLOCK_USE_MAP_SIZE;
+	blocks_size = (BLOCK_FILE_बिलांग * ENTRY_ELEM_बिलांग) * BLOCK_USE_MAP_SIZE;
 
-	for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-		for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
+	for (elem_idx = 0; elem_idx < ENTRY_ELEM_बिलांग; elem_idx++) {
+		for (bfidx = 0; bfidx < BLOCK_FILE_बिलांग; bfidx++) {
 			wr = write(fd,
 				   &state->blocks[elem_idx][bfidx].use_map[0],
 				   BLOCK_USE_MAP_SIZE);
@@ -851,11 +851,11 @@ static nserror set_block_extents(struct store_state *state)
 	}
 
 	NSLOG(netsurf, DEBUG, "Starting");
-	for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-		for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
+	for (elem_idx = 0; elem_idx < ENTRY_ELEM_बिलांग; elem_idx++) {
+		for (bfidx = 0; bfidx < BLOCK_FILE_बिलांग; bfidx++) {
 			if (state->blocks[elem_idx][bfidx].fd != -1) {
 				/* ensure block file is correct extent */
-				ftr = ftruncate(state->blocks[elem_idx][bfidx].fd, 1U << (log2_block_size[elem_idx] + BLOCK_ENTRY_COUNT));
+				ftr = ftruncate(state->blocks[elem_idx][bfidx].fd, 1U << (log2_block_size[elem_idx] + BLOCK_ENTRY_बिलांग));
 				if (ftr == -1) {
 					NSLOG(netsurf, ERROR,
 					      "Truncate failed errno:%d",
@@ -917,7 +917,7 @@ get_store_entry(struct store_state *state, nsurl *url, struct store_entry **bse)
 	*bse = ent;
 
 	ent->last_used = time(NULL);
-	ent->use_count++;
+	ent->use_बिलांग++;
 
 	state->entries_dirty = true;
 
@@ -936,7 +936,7 @@ static block_index_t alloc_block(struct store_state *state, int elem_idx)
 	int bit;
 	uint8_t *map;
 
-	for (bf = 0; bf < BLOCK_FILE_COUNT; bf++) {
+	for (bf = 0; bf < BLOCK_FILE_बिलांग; bf++) {
 		map = &state->blocks[elem_idx][bf].use_map[0];
 
 		for (idx = 0; idx < BLOCK_USE_MAP_SIZE; idx++) {
@@ -995,7 +995,7 @@ set_store_entry(struct store_state *state,
 
 	se = hashmap_lookup(state->entries, url);
 	if (se == NULL) {
-		se = hashmap_insert(state->entries, url);
+		se = hashmap_इसिंगित(state->entries, url);
 	}
 	if (se == NULL) {
 		return NSERROR_NOMEM;
@@ -1015,7 +1015,7 @@ set_store_entry(struct store_state *state,
 	}
 
 	/* set the common entry data */
-	se->use_count = 1;
+	se->use_बिलांग = 1;
 	se->last_used = time(NULL);
 
 	/* store the data in the element */
@@ -1168,7 +1168,7 @@ read_entries(struct store_state *state)
 			}
 			free(url);
 			/* We have to be careful here about nsurl refs */
-			ent = hashmap_insert(state->entries, nsurl);
+			ent = hashmap_इसिंगित(state->entries, nsurl);
 			if (ent == NULL) {
 				nsurl_unref(nsurl);
 				close(fd);
@@ -1233,8 +1233,8 @@ read_blocks(struct store_state *state)
 	free(fname);
 	if (fd != -1) {
 		/* initialise block file use array */
-		for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-			for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
+		for (elem_idx = 0; elem_idx < ENTRY_ELEM_बिलांग; elem_idx++) {
+			for (bfidx = 0; bfidx < BLOCK_FILE_बिलांग; bfidx++) {
 				rd = read(fd,
 					  &state->blocks[elem_idx][bfidx].use_map[0],
 					  BLOCK_USE_MAP_SIZE);
@@ -1258,7 +1258,7 @@ read_blocks(struct store_state *state)
 	}
 
 	/* initialise block file file descriptors */
-	for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
+	for (bfidx = 0; bfidx < BLOCK_FILE_बिलांग; bfidx++) {
 		state->blocks[ENTRY_ELEM_DATA][bfidx].fd = -1;
 		state->blocks[ENTRY_ELEM_META][bfidx].fd = -1;
 	}
@@ -1526,7 +1526,7 @@ static nserror
 finalise(void)
 {
 	int bf; /* block file index */
-	unsigned int op_count;
+	unsigned int op_बिलांग;
 
 	if (storestate != NULL) {
 		guit->misc->schedule(-1, control_maintenance, storestate);
@@ -1534,7 +1534,7 @@ finalise(void)
 		write_blocks(storestate);
 
 		/* ensure all block files are closed */
-		for (bf = 0; bf < BLOCK_FILE_COUNT; bf++) {
+		for (bf = 0; bf < BLOCK_FILE_बिलांग; bf++) {
 			if (storestate->blocks[ENTRY_ELEM_DATA][bf].fd != -1) {
 				close(storestate->blocks[ENTRY_ELEM_DATA][bf].fd);
 			}
@@ -1543,18 +1543,18 @@ finalise(void)
 			}
 		}
 
-		op_count = storestate->hit_count + storestate->miss_count;
+		op_बिलांग = storestate->hit_बिलांग + storestate->miss_बिलांग;
 
 		/* avoid division by zero */
-		if (op_count > 0) {
+		if (op_बिलांग > 0) {
 			NSLOG(netsurf, INFO,
 			      "Cache total/hit/miss/fail (counts) %d/%"PRIsizet"/%"PRIsizet"/%d (100%%/%"PRIsizet"%%/%"PRIsizet"%%/%d%%)",
-			      op_count,
-			      storestate->hit_count,
-			      storestate->miss_count,
+			      op_बिलांग,
+			      storestate->hit_बिलांग,
+			      storestate->miss_बिलांग,
 			      0,
-			      (storestate->hit_count * 100) / op_count,
-			      (storestate->miss_count * 100) / op_count,
+			      (storestate->hit_बिलांग * 100) / op_बिलांग,
+			      (storestate->miss_बिलांग * 100) / op_बिलांग,
 			      0);
 		}
 
@@ -1579,16 +1579,16 @@ static nserror store_write_block(struct store_state *state,
 			 struct store_entry *bse,
 			 int elem_idx)
 {
-	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-		((1 << BLOCK_FILE_COUNT) - 1); /* block file block resides in */
-	block_index_t bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_COUNT) -1); /* block index in file */
+	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_बिलांग) &
+		((1 << BLOCK_FILE_बिलांग) - 1); /* block file block resides in */
+	block_index_t bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_बिलांग) -1); /* block index in file */
 	ssize_t wr;
 	off_t offst;
 
 	/* ensure the block file fd is good */
 	if (state->blocks[elem_idx][bf].fd == -1) {
 		state->blocks[elem_idx][bf].fd = store_open(state, bf,
-				elem_idx + ENTRY_ELEM_COUNT, O_CREAT | O_RDWR);
+				elem_idx + ENTRY_ELEM_बिलांग, O_CREAT | O_RDWR);
 		if (state->blocks[elem_idx][bf].fd == -1) {
 			NSLOG(netsurf, ERROR, "Open failed errno %d", errno);
 			return NSERROR_SAVE_FAILED;
@@ -1749,16 +1749,16 @@ static nserror store_read_block(struct store_state *state,
 			 struct store_entry *bse,
 			 int elem_idx)
 {
-	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-		((1 << BLOCK_FILE_COUNT) - 1); /* block file block resides in */
-	block_index_t bi = bse->elem[elem_idx].block & ((1 << BLOCK_ENTRY_COUNT) -1); /* block index in file */
+	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_बिलांग) &
+		((1 << BLOCK_FILE_बिलांग) - 1); /* block file block resides in */
+	block_index_t bi = bse->elem[elem_idx].block & ((1 << BLOCK_ENTRY_बिलांग) -1); /* block index in file */
 	ssize_t rd;
 	off_t offst;
 
 	/* ensure the block file fd is good */
 	if (state->blocks[elem_idx][bf].fd == -1) {
 		state->blocks[elem_idx][bf].fd = store_open(state, bf,
-				elem_idx + ENTRY_ELEM_COUNT, O_CREAT | O_RDWR);
+				elem_idx + ENTRY_ELEM_बिलांग, O_CREAT | O_RDWR);
 		if (state->blocks[elem_idx][bf].fd == -1) {
 			NSLOG(netsurf, ERROR, "Open failed errno %d", errno);
 			return NSERROR_SAVE_FAILED;
@@ -1871,10 +1871,10 @@ fetch(nsurl *url,
 	ret = get_store_entry(storestate, url, &bse);
 	if (ret != NSERROR_OK) {
 		NSLOG(netsurf, DEBUG, "Entry for %s not found", nsurl_access(url));
-		storestate->miss_count++;
+		storestate->miss_बिलांग++;
 		return ret;
 	}
-	storestate->hit_count++;
+	storestate->hit_बिलांग++;
 
 	NSLOG(netsurf, DEBUG, "retrieving cache data for url:%s",
 	      nsurl_access(url));

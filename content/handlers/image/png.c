@@ -212,7 +212,7 @@ static void info_callback(png_structp png_s, png_infop info)
 }
 
 static void row_callback(png_structp png_s, png_bytep new_row,
-			 png_uint_32 row_num, int pass)
+			 png_uint_32 row_नुमेरो, int pass)
 {
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
 	unsigned long rowbytes = png_c->rowbytes;
@@ -234,7 +234,7 @@ static void row_callback(png_structp png_s, png_bytep new_row,
 	}
 
 	/* Calculate address of row start */
-	row = buffer + (png_c->rowstride * row_num);
+	row = buffer + (png_c->rowstride * row_नुमेरो);
 
 	/* Handle interlaced sprites using the Adam7 algorithm */
 	if (png_c->interlace) {
@@ -244,12 +244,12 @@ static void row_callback(png_structp png_s, png_bytep new_row,
 
 		start = interlace_start[pass];
 		step = interlace_step[pass];
-		row_num = interlace_row_start[pass] +
-			interlace_row_step[pass] * row_num;
+		row_नुमेरो = interlace_row_start[pass] +
+			interlace_row_step[pass] * row_नुमेरो;
 
 		/* Copy the data to our current row taking interlacing
 		 * into consideration */
-		row = buffer + (png_c->rowstride * row_num);
+		row = buffer + (png_c->rowstride * row_नुमेरो);
 
 		for (dst_off = start; dst_off < rowbytes; dst_off += step) {
 			row[dst_off++] = new_row[src_off++];

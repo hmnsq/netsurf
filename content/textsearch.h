@@ -21,8 +21,8 @@
  * Interface to HTML searching.
  */
 
-#ifndef NETSURF_CONTENT_SEARCH_H
-#define NETSURF_CONTENT_SEARCH_H
+#ifndef NETSURF_CONTENT_हानाप_H
+#define NETSURF_CONTENT_हानाप_H
 
 #include "desktop/search.h"
 
@@ -40,7 +40,7 @@ struct box;
  * \param[in] The string being searched for.
  * \retun NSERROR_OK on success else error code on faliure
  */
-nserror content_textsearch(struct hlcache_handle *h, void *context, search_flags_t flags, const char *string);
+nserror content_textsearch(struct hlcache_handle *h, void *context, हानाप_flags_t flags, const char *string);
 
 /**
  * Clear a search

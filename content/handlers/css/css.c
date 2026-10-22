@@ -61,7 +61,7 @@ struct content_css_data
 	css_stylesheet *sheet;		/**< Stylesheet object */
 	char *charset;			/**< Character set of stylesheet */
 	struct nscss_import *imports;	/**< Array of imported sheets */
-	uint32_t import_count;		/**< Number of sheets imported */
+	uint32_t import_बिलांग;		/**< Number of sheets imported */
 	uint32_t next_to_register;	/**< Index of next import to register */
 	nscss_done_callback done;	/**< Completion callback */
 	void *pw;			/**< Client data */
@@ -139,7 +139,7 @@ nscss_create(const content_handler *handler,
 	nscss_content *result;
 	const char *charset = NULL;
 	const char *xnsbase = NULL;
-	lwc_string *charset_value = NULL;
+	lwc_string *charset_हालागा = NULL;
 	nserror error;
 
 	result = calloc(1, sizeof(nscss_content));
@@ -155,13 +155,13 @@ nscss_create(const content_handler *handler,
 
 	/* Find charset specified on HTTP layer, if any */
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
-			&charset_value);
-	if (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
+			&charset_हालागा);
+	if (error != NSERROR_OK || lwc_string_length(charset_हालागा) == 0) {
 		/* No charset specified, use fallback, if any */
 		/** \todo libcss will take this as gospel, which is wrong */
 		charset = fallback_charset;
 	} else {
-		charset = lwc_string_data(charset_value);
+		charset = lwc_string_data(charset_हालागा);
 	}
 
 	/* Compute base URL for stylesheet */
@@ -175,12 +175,12 @@ nscss_create(const content_handler *handler,
 			nscss_content_done, result);
 	if (error != NSERROR_OK) {
 		content_broadcast_error(&result->base, NSERROR_NOMEM, NULL);
-		lwc_string_unref(charset_value);
+		lwc_string_unref(charset_हालागा);
 		free(result);
 		return error;
 	}
 
-	lwc_string_unref(charset_value);
+	lwc_string_unref(charset_हालागा);
 
 	*c = (struct content *) result;
 
@@ -208,7 +208,7 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	c->pw = pw;
 	c->done = done;
 	c->next_to_register = (uint32_t) -1;
-	c->import_count = 0;
+	c->import_बिलांग = 0;
 	c->imports = NULL;
 	if (charset != NULL)
 		c->charset = strdup(charset);
@@ -356,7 +356,7 @@ static void nscss_destroy_css_data(struct content_css_data *c)
 {
 	uint32_t i;
 
-	for (i = 0; i < c->import_count; i++) {
+	for (i = 0; i < c->import_बिलांग; i++) {
 		if (c->imports[i].c != NULL) {
 			hlcache_handle_release(c->imports[i].c);
 		}
@@ -449,7 +449,7 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
 	assert(c != NULL);
 	assert(n != NULL);
 
-	*n = c->data.import_count;
+	*n = c->data.import_बिलांग;
 
 	return c->data.imports;
 }
@@ -491,7 +491,7 @@ void nscss_content_done(struct content_css_data *css, void *pw)
 	c->size += size;
 
 	/* Add on the size of the imported sheets */
-	for (i = 0; i < css->import_count; i++) {
+	for (i = 0; i < css->import_बिलांग; i++) {
 		if (css->imports[i].c != NULL) {
 			struct content *import = hlcache_handle_get_content(
 					css->imports[i].c);
@@ -546,10 +546,10 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 		return CSS_NOMEM;
 
 	ctx->css = c;
-	ctx->index = c->import_count;
+	ctx->index = c->import_बिलांग;
 
 	/* Increase space in table */
-	imports = realloc(c->imports, (c->import_count + 1) *
+	imports = realloc(c->imports, (c->import_बिलांग + 1) *
 			sizeof(struct nscss_import));
 	if (imports == NULL) {
 		free(ctx);
@@ -584,7 +584,7 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 
 	/* Avoid importing ourself */
 	if (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
-		c->imports[c->import_count].c = NULL;
+		c->imports[c->import_बिलांग].c = NULL;
 		/* No longer require context as we're not fetching anything */
 		free(ctx);
 		ctx = NULL;
@@ -592,7 +592,7 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 		nerror = hlcache_handle_retrieve(ns_url,
 				0, ns_ref, NULL, nscss_import, ctx,
 				&child, accept,
-				&c->imports[c->import_count].c);
+				&c->imports[c->import_बिलांग].c);
 		if (nerror != NSERROR_OK) {
 			free(ctx);
 			return CSS_NOMEM;
@@ -604,11 +604,11 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 
 #ifdef NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Import %d '%s' -> (handle: %p ctx: %p)",
-	      c->import_count, lwc_string_data(url),
-	      c->imports[c->import_count].c, ctx);
+	      c->import_बिलांग, lwc_string_data(url),
+	      c->imports[c->import_बिलांग].c, ctx);
 #endif
 
-	c->import_count++;
+	c->import_बिलांग++;
 
 	return CSS_OK;
 }
@@ -634,11 +634,11 @@ nserror nscss_import(hlcache_handle *handle,
 	assert(ctx->css->imports[ctx->index].c == handle);
 
 	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	case CONTENT_मेनसाहे_DONE:
 		error = nscss_import_complete(ctx);
 		break;
 
-	case CONTENT_MSG_ERROR:
+	case CONTENT_मेनसाहे_ERROR:
 		hlcache_handle_release(handle);
 		ctx->css->imports[ctx->index].c = NULL;
 
@@ -694,10 +694,10 @@ css_error nscss_register_imports(struct content_css_data *c)
 	css_error error;
 
 	assert(c->next_to_register != (uint32_t) -1);
-	assert(c->next_to_register < c->import_count);
+	assert(c->next_to_register < c->import_बिलांग);
 
 	/* Register imported sheets */
-	for (index = c->next_to_register; index < c->import_count; index++) {
+	for (index = c->next_to_register; index < c->import_बिलांग; index++) {
 		/* Stop registering if we encounter one whose fetch hasn't
 		 * completed yet. We'll resume at this point when it has
 		 * completed.
@@ -716,7 +716,7 @@ css_error nscss_register_imports(struct content_css_data *c)
 	/* Record identity of the next import to register */
 	c->next_to_register = (uint32_t) index;
 
-	if (c->next_to_register == c->import_count) {
+	if (c->next_to_register == c->import_बिलांग) {
 		/* No more imports: notify parent that we're DONE */
 		c->done(c, c->pw);
 	}

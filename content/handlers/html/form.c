@@ -61,12 +61,12 @@
 #include "html/form_internal.h"
 
 #define MAX_SELECT_HEIGHT 210
-#define SELECT_LINE_SPACING 0.2
+#define SELECT_लिन्या_SPACING 0.2
 #define SELECT_BORDER_WIDTH 1
 #define SELECT_SELECTED_COLOUR 0xDB9370
 
 struct form_select_menu {
-	int line_height;
+	int लिन्या_height;
 	int width, height;
 	struct scrollbar *scrollbar;
 	int f_size;
@@ -162,7 +162,7 @@ form_encode_item(const char *item,
 /**
  * string allocation size for numeric values in multipart data
  */
-#define FETCH_DATA_INT_VALUE_SIZE 20
+#define FETCH_DATA_INT_हालागा_SIZE 20
 
 
 /**
@@ -176,7 +176,7 @@ form_encode_item(const char *item,
 static nserror
 fetch_data_list_add_sname(const char *name,
 			  const char *ksfx,
-			  int value,
+			  int हालागा,
 			  struct fetch_multipart_data ***fetch_data_next_ptr)
 {
 	struct fetch_multipart_data *fetch_data;
@@ -199,15 +199,15 @@ fetch_data_list_add_sname(const char *name,
 	}
 	snprintf(fetch_data->name, keysize + 1, "%s%s", name, ksfx);
 
-	/* value */
-	fetch_data->value = malloc(FETCH_DATA_INT_VALUE_SIZE);
-	if (fetch_data->value == NULL) {
+	/*हालागा*/
+	fetch_data->हालागा = malloc(FETCH_DATA_INT_हालागा_SIZE);
+	if (fetch_data->हालागा == NULL) {
 		free(fetch_data->name);
 		free(fetch_data);
 		NSLOG(netsurf, INFO, "value allocation failure");
 		return NSERROR_NOMEM;
 	}
-	snprintf(fetch_data->value, FETCH_DATA_INT_VALUE_SIZE, "%d", value);
+	snprintf(fetch_data->हालागा, FETCH_DATA_INT_हालागा_SIZE, "%d", हालागा);
 
 	/* link into list */
 	**fetch_data_next_ptr = fetch_data;
@@ -230,7 +230,7 @@ fetch_data_list_add_sname(const char *name,
  */
 static nserror
 fetch_data_list_add(dom_string *name,
-		    dom_string *value,
+		    dom_string *हालागा,
 		    const char *rawfile,
 		    const char *form_charset,
 		    const char *docu_charset,
@@ -256,15 +256,15 @@ fetch_data_list_add(dom_string *name,
 		return NSERROR_NOMEM;
 	}
 
-	if (value == NULL) {
-		fetch_data->value = strdup("");
+	if (हालागा == NULL) {
+		fetch_data->हालागा = strdup("");
 	} else {
-		fetch_data->value = form_encode_item(dom_string_data(value),
-						     dom_string_byte_length(value),
+		fetch_data->हालागा = form_encode_item(dom_string_data(हालागा),
+						     dom_string_byte_length(हालागा),
 						     form_charset,
 						     docu_charset);
 	}
-	if (fetch_data->value == NULL) {
+	if (fetch_data->हालागा == NULL) {
 		NSLOG(netsurf, INFO, "Could not encode value for fetch data");
 		free(fetch_data->name);
 		free(fetch_data);
@@ -278,7 +278,7 @@ fetch_data_list_add(dom_string *name,
 		if (fetch_data->rawfile == NULL) {
 			NSLOG(netsurf, INFO,
 			      "Could not encode rawfile value for fetch data");
-			free(fetch_data->value);
+			free(fetch_data->हालागा);
 			free(fetch_data->name);
 			free(fetch_data);
 			return NSERROR_NOMEM;
@@ -343,7 +343,7 @@ form_dom_to_data_textarea(dom_html_text_area_element *text_area_element,
 	}
 
 	/* obtain text area value */
-	exp = dom_html_text_area_element_get_value(text_area_element,
+	exp = dom_html_text_area_element_get_हालागा(text_area_element,
 						   &inputvalue);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
@@ -376,7 +376,7 @@ form_dom_to_data_select_option(dom_html_option_element *option_element,
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
-	dom_string *value;
+	dom_string *हालागा;
 	bool selected;
 
 	exp = dom_html_option_element_get_selected(option_element, &selected);
@@ -390,7 +390,7 @@ form_dom_to_data_select_option(dom_html_option_element *option_element,
 		return NSERROR_OK;
 	}
 
-	exp = dom_html_option_element_get_value(option_element, &value);
+	exp = dom_html_option_element_get_हालागा(option_element, &हालागा);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get option value");
 		return NSERROR_DOM;
@@ -398,13 +398,13 @@ form_dom_to_data_select_option(dom_html_option_element *option_element,
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(keyname,
-				  value,
+				  हालागा,
 				  NULL,
 				  form_charset,
 				  docu_charset,
 				  fetch_data_next_ptr);
 
-	dom_string_unref(value);
+	dom_string_unref(हालागा);
 
 	return res;
 }
@@ -430,9 +430,9 @@ form_dom_to_data_select(dom_html_select_element *select_element,
 	bool element_disabled;
 	dom_string *inputname;
 	dom_html_options_collection *options = NULL;
-	uint32_t options_count;
+	uint32_t options_बिलांग;
 	uint32_t option_index;
-	dom_node *option_element = NULL;
+	dom_बुहोल *option_element = NULL;
 
 	/* check if element is disabled */
 	exp = dom_html_select_element_get_disabled(select_element,
@@ -471,7 +471,7 @@ form_dom_to_data_select(dom_html_select_element *select_element,
 	}
 
 	/* get options collection length */
-	exp = dom_html_options_collection_get_length(options, &options_count);
+	exp = dom_html_options_collection_get_length(options, &options_बिलांग);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select options collection length");
@@ -481,7 +481,7 @@ form_dom_to_data_select(dom_html_select_element *select_element,
 	}
 
 	/* iterate over options collection */
-	for (option_index = 0; option_index < options_count; ++option_index) {
+	for (option_index = 0; option_index < options_बिलांग; ++option_index) {
 		exp = dom_html_options_collection_item(options,
 						       option_index,
 						       &option_element);
@@ -497,7 +497,7 @@ form_dom_to_data_select(dom_html_select_element *select_element,
 				doc_charset,
 				fetch_data_next_ptr);
 
-			dom_node_unref(option_element);
+			dom_बुहोल_unref(option_element);
 		}
 
 		if (res != NSERROR_OK) {
@@ -513,7 +513,7 @@ form_dom_to_data_select(dom_html_select_element *select_element,
 
 
 static nserror
-form_dom_to_data_input_submit(dom_html_input_element *input_element,
+form_dom_to_data_पासोक_submit(dom_html_पासोक_element *पासोक_element,
 			      dom_string *inputname,
 			      const char *charset,
 			      const char *document_charset,
@@ -526,13 +526,13 @@ form_dom_to_data_input_submit(dom_html_input_element *input_element,
 
 	if (*submit_button == NULL) {
 		/* caller specified no button so use this one */
-		*submit_button = (dom_html_element *)input_element;
-	} else if (*submit_button != (dom_html_element *)input_element) {
+		*submit_button = (dom_html_element *)पासोक_element;
+	} else if (*submit_button != (dom_html_element *)पासोक_element) {
 		return NSERROR_OK;
 	}
 
 	/* matched button used to submit form */
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
+	exp = dom_html_पासोक_element_get_हालागा(पासोक_element, &inputvalue);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get submit button value");
 		return NSERROR_DOM;
@@ -553,7 +553,7 @@ form_dom_to_data_input_submit(dom_html_input_element *input_element,
 
 
 static nserror
-form_dom_to_data_input_image(dom_html_input_element *input_element,
+form_dom_to_data_पासोक_image(dom_html_पासोक_element *पासोक_element,
 			     dom_string *inputname,
 			     const char *charset,
 			     const char *document_charset,
@@ -562,16 +562,16 @@ form_dom_to_data_input_image(dom_html_input_element *input_element,
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
-	struct image_input_coords *coords;
+	struct image_पासोक_coords *coords;
 	char *basename;
 
 	/* Only use an image input if it was the thing which activated us */
-	if (*submit_button != (dom_html_element *)input_element) {
+	if (*submit_button != (dom_html_element *)पासोक_element) {
 		return NSERROR_OK;
 	}
 
-	exp = dom_node_get_user_data((dom_node *)input_element,
-				     corestring_dom___ns_key_image_coords_node_data,
+	exp = dom_बुहोल_get_user_data((dom_बुहोल *)पासोक_element,
+				     corestring_dom_ns_सुसि_image_coords_बुहोल_data,
 				     &coords);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get image XY data");
@@ -610,7 +610,7 @@ form_dom_to_data_input_image(dom_html_input_element *input_element,
 
 
 static nserror
-form_dom_to_data_input_checkbox(dom_html_input_element *input_element,
+form_dom_to_data_पासोक_checkbox(dom_html_पासोक_element *पासोक_element,
 				dom_string *inputname,
 				const char *charset,
 				const char *document_charset,
@@ -621,7 +621,7 @@ form_dom_to_data_input_checkbox(dom_html_input_element *input_element,
 	bool checked;
 	dom_string *inputvalue;
 
-	exp = dom_html_input_element_get_checked(input_element, &checked);
+	exp = dom_html_पासोक_element_get_checked(पासोक_element, &checked);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input element checked");
@@ -633,7 +633,7 @@ form_dom_to_data_input_checkbox(dom_html_input_element *input_element,
 		return NSERROR_OK;
 	}
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
+	exp = dom_html_पासोक_element_get_हालागा(पासोक_element, &inputvalue);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input element value");
@@ -660,7 +660,7 @@ form_dom_to_data_input_checkbox(dom_html_input_element *input_element,
 
 
 static nserror
-form_dom_to_data_input_file(dom_html_input_element *input_element,
+form_dom_to_data_पासोक_file(dom_html_पासोक_element *पासोक_element,
 			    dom_string *inputname,
 			    const char *charset,
 			    const char *document_charset,
@@ -671,14 +671,14 @@ form_dom_to_data_input_file(dom_html_input_element *input_element,
 	dom_string *inputvalue;
 	const char *rawfile = NULL;
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
+	exp = dom_html_पासोक_element_get_हालागा(पासोक_element, &inputvalue);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get file value");
 		return NSERROR_DOM;
 	}
 
-	exp = dom_node_get_user_data((dom_node *)input_element,
-				     corestring_dom___ns_key_file_name_node_data,
+	exp = dom_बुहोल_get_user_data((dom_बुहोल *)पासोक_element,
+				     corestring_dom_ns_सुसि_file_name_बुहोल_data,
 				     &rawfile);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get file rawname");
@@ -704,7 +704,7 @@ form_dom_to_data_input_file(dom_html_input_element *input_element,
 
 
 static nserror
-form_dom_to_data_input_text(dom_html_input_element *input_element,
+form_dom_to_data_पासोक_text(dom_html_पासोक_element *पासोक_element,
 			    dom_string *inputname,
 			    const char *charset,
 			    const char *document_charset,
@@ -714,7 +714,7 @@ form_dom_to_data_input_text(dom_html_input_element *input_element,
 	dom_exception exp; /* the result from DOM operations */
 	dom_string *inputvalue;
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
+	exp = dom_html_पासोक_element_get_हालागा(पासोक_element, &inputvalue);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get input value");
 		return NSERROR_DOM;
@@ -747,7 +747,7 @@ form_dom_to_data_input_text(dom_html_input_element *input_element,
  * \return NSERROR_OK on success or appropriate error code.
  */
 static nserror
-form_dom_to_data_input(dom_html_input_element *input_element,
+form_dom_to_data_पासोक(dom_html_पासोक_element *पासोक_element,
 		       const char *charset,
 		       const char *document_charset,
 		       dom_html_element **submit_button,
@@ -760,7 +760,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	nserror res;
 
 	/* check if element is disabled */
-	exp = dom_html_input_element_get_disabled(input_element,
+	exp = dom_html_पासोक_element_get_disabled(पासोक_element,
 						  &element_disabled);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
@@ -774,7 +774,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	}
 
 	/* obtain name property */
-	exp = dom_html_input_element_get_name(input_element, &inputname);
+	exp = dom_html_पासोक_element_get_name(पासोक_element, &inputname);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input name property. exp %d", exp);
@@ -787,7 +787,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	}
 
 	/* get input type */
-	exp = dom_html_input_element_get_type(input_element, &inputtype);
+	exp = dom_html_पासोक_element_get_type(पासोक_element, &inputtype);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get input element type");
 		dom_string_unref(inputname);
@@ -797,7 +797,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	/* process according to input element type */
 	if (dom_string_caseless_isequal(inputtype, corestring_dom_submit)) {
 
-		res = form_dom_to_data_input_submit(input_element,
+		res = form_dom_to_data_पासोक_submit(पासोक_element,
 						    inputname,
 						    charset,
 						    document_charset,
@@ -807,7 +807,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	} else if (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_image)) {
 
-		res = form_dom_to_data_input_image(input_element,
+		res = form_dom_to_data_पासोक_image(पासोक_element,
 						   inputname,
 						   charset,
 						   document_charset,
@@ -819,7 +819,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 		   dom_string_caseless_isequal(inputtype,
 					       corestring_dom_checkbox)) {
 
-		res = form_dom_to_data_input_checkbox(input_element,
+		res = form_dom_to_data_पासोक_checkbox(पासोक_element,
 						      inputname,
 						      charset,
 						      document_charset,
@@ -828,7 +828,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	} else if (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_file)) {
 
-		res = form_dom_to_data_input_file(input_element,
+		res = form_dom_to_data_पासोक_file(पासोक_element,
 						  inputname,
 						  charset,
 						  document_charset,
@@ -844,7 +844,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 
 	} else {
 		/* Everything else is treated as text values */
-		res = form_dom_to_data_input_text(input_element,
+		res = form_dom_to_data_पासोक_text(पासोक_element,
 						  inputname,
 						  charset,
 						  document_charset,
@@ -946,7 +946,7 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 	}
 
 	/* get button value and add to fetch data list */
-	exp = dom_html_button_element_get_value(button_element, &inputvalue);
+	exp = dom_html_button_element_get_हालागा(button_element, &inputvalue);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get submit button value");
 		res = NSERROR_DOM;
@@ -1059,9 +1059,9 @@ form_dom_to_data(struct form *form,
 	char *charset; /* form characterset */
 	dom_exception exp; /* the result from DOM operations */
 	dom_html_collection *elements = NULL; /* the dom form elements */
-	uint32_t element_count; /* the number of elements in the DOM form */
+	uint32_t element_बिलांग; /* the number of elements in the DOM form */
 	uint32_t element_idx; /* the index of thr enumerated element */
-	dom_node *element = NULL; /* the DOM form element */
+	dom_बुहोल *element = NULL; /* the DOM form element */
 	dom_string *nodename = NULL; /* the DOM node name of the element */
 	struct fetch_multipart_data *fetch_data = NULL; /* fetch data list */
 	struct fetch_multipart_data **fetch_data_next = &fetch_data;
@@ -1069,7 +1069,7 @@ form_dom_to_data(struct form *form,
 
 	/* obtain the submit_button DOM node from the control */
 	if (submit_control != NULL) {
-		submit_button = submit_control->node;
+		submit_button = submit_control->बुहोल;
 	} else {
 		submit_button = NULL;
 	}
@@ -1082,21 +1082,21 @@ form_dom_to_data(struct form *form,
 	}
 
 	/* obtain the form elements and count */
-	exp = dom_html_form_element_get_elements(form->node, &elements);
+	exp = dom_html_form_element_get_elements(form->बुहोल, &elements);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get form elements");
 		free(charset);
 		return NSERROR_DOM;
 	}
 
-	exp = dom_html_collection_get_length(elements, &element_count);
+	exp = dom_html_collection_get_length(elements, &element_बिलांग);
 	if (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get form element count");
 		res = NSERROR_DOM;
 		goto form_dom_to_data_error;
 	}
 
-	for (element_idx = 0; element_idx < element_count; element_idx++) {
+	for (element_idx = 0; element_idx < element_बिलांग; element_idx++) {
 		/* obtain a form element */
 		exp = dom_html_collection_item(elements, element_idx, &element);
 		if (exp != DOM_NO_ERR) {
@@ -1108,12 +1108,12 @@ form_dom_to_data(struct form *form,
 		}
 
 		/* node name from element */
-		exp = dom_node_get_node_name(element, &nodename);
+		exp = dom_बुहोल_get_बुहोल_name(element, &nodename);
 		if (exp != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "getting element node name %"PRIu32" failed with %d",
 			      element_idx, exp);
-			dom_node_unref(element);
+			dom_बुहोल_unref(element);
 			res = NSERROR_DOM;
 			goto form_dom_to_data_error;
 		}
@@ -1134,10 +1134,10 @@ form_dom_to_data(struct form *form,
 				form->document_charset,
 				&fetch_data_next);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_INPUT)) {
+		} else if (dom_string_isequal(nodename, corestring_dom_पासोक)) {
 			/* Form element is HTMLInputElement */
-			res = form_dom_to_data_input(
-				(dom_html_input_element *)element,
+			res = form_dom_to_data_पासोक(
+				(dom_html_पासोक_element *)element,
 				charset,
 				form->document_charset,
 				&submit_button,
@@ -1163,7 +1163,7 @@ form_dom_to_data(struct form *form,
 		}
 
 		dom_string_unref(nodename);
-		dom_node_unref(element);
+		dom_बुहोल_unref(element);
 
 		/* abort form element enumeration on error */
 		if (res != NSERROR_OK) {
@@ -1198,7 +1198,7 @@ form_url_encode(struct form *form,
 		struct fetch_multipart_data *control,
 		char **encoded_out)
 {
-	char *name, *value;
+	char *name, *हालागा;
 	char *s, *s2;
 	unsigned int len, len1, len_init;
 	nserror res;
@@ -1219,7 +1219,7 @@ form_url_encode(struct form *form,
 			return res;
 		}
 
-		res = url_escape(control->value, true, NULL, &value);
+		res = url_escape(control->हालागा, true, NULL, &हालागा);
 		if (res != NSERROR_OK) {
 			free(name);
 			free(s);
@@ -1229,20 +1229,20 @@ form_url_encode(struct form *form,
 		/* resize string to allow for new key/value pair,
 		 *  equals, amphersand and terminator
 		 */
-		len1 = len + strlen(name) + strlen(value) + 2;
+		len1 = len + strlen(name) + strlen(हालागा) + 2;
 		s2 = realloc(s, len1 + 1);
 		if (s2 == NULL) {
-			free(value);
+			free(हालागा);
 			free(name);
 			free(s);
 			return NSERROR_NOMEM;
 		}
 		s = s2;
 
-		snprintf(s + len, (len1 + 1) - len, "%s=%s&", name, value);
+		snprintf(s + len, (len1 + 1) - len, "%s=%s&", name, हालागा);
 		len = len1;
 		free(name);
-		free(value);
+		free(हालागा);
 	}
 
 	if (len > len_init) {
@@ -1261,20 +1261,20 @@ form_url_encode(struct form *form,
  */
 static void
 form_select_menu_scroll_callback(void *client_data,
-				 struct scrollbar_msg_data *scrollbar_data)
+				 struct scrollbar_मेनसाहे_data *scrollbar_data)
 {
 	struct form_control *control = client_data;
 	struct form_select_menu *menu = control->data.select.menu;
 	html_content *html = (html_content *)menu->c;
 
-	switch (scrollbar_data->msg) {
-		case SCROLLBAR_MSG_MOVED:
+	switch (scrollbar_data->मेनसाहे) {
+		case SCROLLBAR_मेनसाहे_MOVED:
 			menu->callback(menu->client_data,
 					0, 0,
 					menu->width,
 					menu->height);
 			break;
-		case SCROLLBAR_MSG_SCROLL_START:
+		case SCROLLBAR_मेनसाहे_SCROLL_START:
 		{
 			struct rect rect = {
 				.x0 = scrollbar_data->x0,
@@ -1289,7 +1289,7 @@ form_select_menu_scroll_callback(void *client_data,
 			menu->scroll_capture = true;
 		}
 			break;
-		case SCROLLBAR_MSG_SCROLL_FINISHED:
+		case SCROLLBAR_मेनसाहे_SCROLL_FINISHED:
 			menu->scroll_capture = false;
 
 			browser_window_set_drag_type(html->bw,
@@ -1316,7 +1316,7 @@ form__select_process_selection(html_content *html,
 {
 	struct box *inline_box;
 	struct form_option *o;
-	int count;
+	int बिलांग;
 	nserror ret = NSERROR_OK;
 
 	assert(control != NULL);
@@ -1329,30 +1329,30 @@ form__select_process_selection(html_content *html,
 
 	inline_box = control->box->children->children;
 
-	for (count = 0, o = control->data.select.items;
+	for (बिलांग = 0, o = control->data.select.मगा_बागाय;
 			o != NULL;
-			count++, o = o->next) {
+			बिलांग++, o = o->next) {
 		if (!control->data.select.multiple && o->selected) {
 			o->selected = false;
-			dom_html_option_element_set_selected(o->node, false);
+			dom_html_option_element_set_selected(o->बुहोल, false);
 		}
 
-		if (count == item) {
+		if (बिलांग == item) {
 			if (control->data.select.multiple) {
 				if (o->selected) {
 					o->selected = false;
 					dom_html_option_element_set_selected(
-							o->node, false);
-					control->data.select.num_selected--;
+							o->बुहोल, false);
+					control->data.select.नुमेरो_selected--;
 				} else {
 					o->selected = true;
 					dom_html_option_element_set_selected(
-							o->node, true);
-					control->data.select.num_selected++;
+							o->बुहोल, true);
+					control->data.select.नुमेरो_selected++;
 				}
 			} else {
 				dom_html_option_element_set_selected(
-						o->node, true);
+						o->बुहोल, true);
 				o->selected = true;
 			}
 		}
@@ -1365,10 +1365,10 @@ form__select_process_selection(html_content *html,
 	talloc_free(inline_box->text);
 	inline_box->text = 0;
 
-	if (control->data.select.num_selected == 0) {
+	if (control->data.select.नुमेरो_selected == 0) {
 		inline_box->text = talloc_strdup(html->bctx,
 				messages_get("Form_None"));
-	} else if (control->data.select.num_selected == 1) {
+	} else if (control->data.select.नुमेरो_selected == 1) {
 		inline_box->text = talloc_strdup(html->bctx,
 				control->data.select.current->text);
 	} else {
@@ -1402,21 +1402,21 @@ static void form_select_menu_clicked(struct form_control *control, int x, int y)
 	struct form_select_menu *menu = control->data.select.menu;
 	struct form_option *option;
 	html_content *html = (html_content *)menu->c;
-	int line_height, line_height_with_spacing;
+	int लिन्या_height, लिन्या_height_with_spacing;
 	int item_bottom_y;
 	int scroll, i;
 
 	scroll = scrollbar_get_offset(menu->scrollbar);
 
-	line_height = menu->line_height;
-	line_height_with_spacing = line_height +
-			line_height * SELECT_LINE_SPACING;
+	लिन्या_height = menu->लिन्या_height;
+	लिन्या_height_with_spacing = लिन्या_height +
+			लिन्या_height * SELECT_लिन्या_SPACING;
 
-	option = control->data.select.items;
-	item_bottom_y = line_height_with_spacing;
+	option = control->data.select.मगा_बागाय;
+	item_bottom_y = लिन्या_height_with_spacing;
 	i = 0;
 	while (option && item_bottom_y < scroll + y) {
-		item_bottom_y += line_height_with_spacing;
+		item_bottom_y += लिन्या_height_with_spacing;
 		option = option->next;
 		i++;
 	}
@@ -1458,25 +1458,25 @@ void form_free_control(struct form_control *control)
 	assert(control != NULL);
 
 	NSLOG(netsurf, INFO, "Control:%p name:%p value:%p initial:%p",
-	      control, control->name, control->value, control->initial_value);
+	      control, control->name, control->हालागा, control->initial_हालागा);
 	free(control->name);
-	free(control->value);
-	free(control->initial_value);
-	if (control->last_synced_value != NULL) {
-		free(control->last_synced_value);
+	free(control->हालागा);
+	free(control->initial_हालागा);
+	if (control->last_synced_हालागा != NULL) {
+		free(control->last_synced_हालागा);
 	}
 
 	if (control->type == GADGET_SELECT) {
 		struct form_option *option, *next;
 
-		for (option = control->data.select.items; option;
+		for (option = control->data.select.मगा_बागाय; option;
 				option = next) {
 			next = option->next;
 			NSLOG(netsurf, INFO,
 			      "select option:%p text:%p value:%p", option,
-			      option->text, option->value);
+			      option->text, option->हालागा);
 			free(option->text);
-			free(option->value);
+			free(option->हालागा);
 			free(option);
 		}
 		if (control->data.select.menu != NULL) {
@@ -1517,8 +1517,8 @@ void form_free_control(struct form_control *control)
 		}
 	}
 
-	if (control->node_value != NULL) {
-		dom_string_unref(control->node_value);
+	if (control->बुहोल_हालागा != NULL) {
+		dom_string_unref(control->बुहोल_हालागा);
 	}
 
 	free(control);
@@ -1526,8 +1526,8 @@ void form_free_control(struct form_control *control)
 
 
 /* exported interface documented in html/form_internal.h */
-bool form_add_option(struct form_control *control, char *value, char *text,
-		     bool selected, void *node)
+bool form_add_option(struct form_control *control, char *हालागा, char *text,
+		     bool selected, void *बुहोल)
 {
 	struct form_option *option;
 
@@ -1538,27 +1538,27 @@ bool form_add_option(struct form_control *control, char *value, char *text,
 	if (!option)
 		return false;
 
-	option->value = value;
+	option->हालागा = हालागा;
 	option->text = text;
 
 	/* add to linked list */
-	if (control->data.select.items == 0)
-		control->data.select.items = option;
+	if (control->data.select.मगा_बागाय == 0)
+		control->data.select.मगा_बागाय = option;
 	else
 		control->data.select.last_item->next = option;
 	control->data.select.last_item = option;
 
 	/* set selected */
-	if (selected && (control->data.select.num_selected == 0 ||
+	if (selected && (control->data.select.नुमेरो_selected == 0 ||
 			control->data.select.multiple)) {
 		option->selected = option->initial_selected = true;
-		control->data.select.num_selected++;
+		control->data.select.नुमेरो_selected++;
 		control->data.select.current = option;
 	}
 
-	control->data.select.num_items++;
+	control->data.select.नुमेरो_मगा_बागाय++;
 
-	option->node = node;
+	option->बुहोल = बुहोल;
 
 	return true;
 }
@@ -1571,7 +1571,7 @@ form_open_select_menu(void *client_data,
 		      select_menu_redraw_callback callback,
 		      struct content *c)
 {
-	int line_height_with_spacing;
+	int लिन्या_height_with_spacing;
 	struct box *box;
 	plot_font_style_t fstyle;
 	int total_height;
@@ -1592,24 +1592,24 @@ form_open_select_menu(void *client_data,
 		box = control->box;
 
 		menu->width = box->width +
-			box->border[RIGHT].width + box->padding[RIGHT] +
-			box->border[LEFT].width + box->padding[LEFT];
+			box->border[कानान_2].width + box->padding[कानान_2] +
+			box->border[कालिवा_2].width + box->padding[कालिवा_2];
 
 		font_plot_style_from_css(&html->unit_len_ctx,
 				control->box->style, &fstyle);
 		menu->f_size = fstyle.size;
 
-		menu->line_height = FIXTOINT(FDIV((FMUL(FLTTOFIX(1.2),
+		menu->लिन्या_height = FIXTOINT(FDIV((FMUL(FLTTOFIX(1.2),
 				FMUL(html->unit_len_ctx.device_dpi,
 				INTTOFIX(fstyle.size / PLOT_STYLE_SCALE)))),
 				F_72));
 
-		line_height_with_spacing = menu->line_height +
-				menu->line_height *
-				SELECT_LINE_SPACING;
+		लिन्या_height_with_spacing = menu->लिन्या_height +
+				menu->लिन्या_height *
+				SELECT_लिन्या_SPACING;
 
-		total_height = control->data.select.num_items *
-				line_height_with_spacing;
+		total_height = control->data.select.नुमेरो_मगा_बागाय *
+				लिन्या_height_with_spacing;
 		menu->height = total_height;
 
 		if (menu->height > MAX_SELECT_HEIGHT) {
@@ -1662,7 +1662,7 @@ form_redraw_select_menu(struct form_control *control,
 	struct box *box;
 	struct form_select_menu *menu = control->data.select.menu;
 	struct form_option *option;
-	int line_height, line_height_with_spacing;
+	int लिन्या_height, लिन्या_height_with_spacing;
 	int width, height;
 	int x0, y0, x1, scrollbar_x, y1, y2, y3;
 	int item_y;
@@ -1681,10 +1681,10 @@ form_redraw_select_menu(struct form_control *control,
 	y_cp = y;
 	width = menu->width;
 	height = menu->height;
-	line_height = menu->line_height;
+	लिन्या_height = menu->लिन्या_height;
 
-	line_height_with_spacing = line_height +
-			line_height * SELECT_LINE_SPACING;
+	लिन्या_height_with_spacing = लिन्या_height +
+			लिन्या_height * SELECT_लिन्या_SPACING;
 	scroll = scrollbar_get_offset(menu->scrollbar);
 
 	if (scale != 1.0) {
@@ -1694,12 +1694,12 @@ form_redraw_select_menu(struct form_control *control,
 		height *= scale;
 		scrollbar_width *= scale;
 
-		i = scroll / line_height_with_spacing;
-		scroll -= i * line_height_with_spacing;
-		line_height *= scale;
-		line_height_with_spacing *= scale;
+		i = scroll / लिन्या_height_with_spacing;
+		scroll -= i * लिन्या_height_with_spacing;
+		लिन्या_height *= scale;
+		लिन्या_height_with_spacing *= scale;
 		scroll *= scale;
-		scroll += i * line_height_with_spacing;
+		scroll += i * लिन्या_height_with_spacing;
 	}
 
 
@@ -1747,17 +1747,17 @@ form_redraw_select_menu(struct form_control *control,
 		return false;
 	}
 
-	option = control->data.select.items;
-	item_y = line_height_with_spacing;
+	option = control->data.select.मगा_बागाय;
+	item_y = लिन्या_height_with_spacing;
 
 	while (item_y < scroll) {
 		option = option->next;
-		item_y += line_height_with_spacing;
+		item_y += लिन्या_height_with_spacing;
 	}
-	item_y -= line_height_with_spacing;
+	item_y -= लिन्या_height_with_spacing;
 	text_pos_offset = y - scroll +
-			(int) (line_height * (0.75 + SELECT_LINE_SPACING));
-	text_x = x + (box->border[LEFT].width + box->padding[LEFT]) * scale;
+			(int) (लिन्या_height * (0.75 + SELECT_लिन्या_SPACING));
+	text_x = x + (box->border[कालिवा_2].width + box->padding[कालिवा_2]) * scale;
 
 	plot_fstyle_entry.size = menu->f_size;
 
@@ -1765,7 +1765,7 @@ form_redraw_select_menu(struct form_control *control,
 
 		if (option->selected) {
 			y2 = y + item_y - scroll;
-			y3 = y + item_y + line_height_with_spacing - scroll;
+			y3 = y + item_y + लिन्या_height_with_spacing - scroll;
 
 			rect.x0 = x0;
 			rect.y0 = y0 > y2 ? y0 : y2;
@@ -1786,7 +1786,7 @@ form_redraw_select_menu(struct form_control *control,
 			return false;
 		}
 
-		item_y += line_height_with_spacing;
+		item_y += लिन्या_height_with_spacing;
 		option = option->next;
 	}
 
@@ -1845,7 +1845,7 @@ form_select_get_option(struct form_control *control, int item)
 {
 	struct form_option *opt;
 
-	opt = control->data.select.items;
+	opt = control->data.select.मगा_बागाय;
 	while ((opt != NULL) && (item > 0)) {
 		opt = opt->next;
 		item--;
@@ -1934,9 +1934,9 @@ form_select_mouse_drag_end(struct form_control *control,
 
 	/* Get global coords of scrollbar */
 	box_coords(box, &box_x, &box_y);
-	box_x -= box->border[LEFT].width;
+	box_x -= box->border[कालिवा_2].width;
 	box_y += box->height + box->border[BOTTOM].width +
-			box->padding[BOTTOM] + box->padding[TOP];
+			box->padding[BOTTOM] + box->padding[इताअस_2];
 
 	/* Get drag end coords relative to scrollbar */
 	x = x - box_x;
@@ -1981,10 +1981,10 @@ void form_select_menu_callback(void *client_data,
 	box = html->visible_select_menu->box;
 	box_coords(box, &menu_x, &menu_y);
 
-	menu_x -= box->border[LEFT].width;
+	menu_x -= box->border[कालिवा_2].width;
 	menu_y += box->height + box->border[BOTTOM].width +
 			box->padding[BOTTOM] +
-			box->padding[TOP];
+			box->padding[इताअस_2];
 	content__request_redraw((struct content *)html, menu_x + x, menu_y + y,
 			width, height);
 }
@@ -2031,13 +2031,13 @@ void form_radio_set(struct form_control *radio)
 		 * selected state */
 		if (control->selected) {
 			control->selected = false;
-			dom_html_input_element_set_checked(control->node, false);
+			dom_html_पासोक_element_set_checked(control->बुहोल, false);
 			html__redraw_a_box(radio->html, control->box);
 		}
 	}
 
 	radio->selected = true;
-	dom_html_input_element_set_checked(radio->node, true);
+	dom_html_पासोक_element_set_checked(radio->बुहोल, true);
 	html__redraw_a_box(radio->html, radio->box);
 }
 
@@ -2125,7 +2125,7 @@ form_submit(nsurl *page_url,
 
 
 /* exported interface documented in html/form_internal.h */
-void form_gadget_update_value(struct form_control *control, char *value)
+void form_gadget_update_हालागा(struct form_control *control, char *हालागा)
 {
 	switch (control->type) {
 	case GADGET_HIDDEN:
@@ -2133,23 +2133,23 @@ void form_gadget_update_value(struct form_control *control, char *value)
 	case GADGET_TEXTAREA:
 	case GADGET_PASSWORD:
 	case GADGET_FILE:
-		if (control->value != NULL) {
-			free(control->value);
+		if (control->हालागा != NULL) {
+			free(control->हालागा);
 		}
-		control->value = value;
-		if (control->node != NULL) {
+		control->हालागा = हालागा;
+		if (control->बुहोल != NULL) {
 			dom_exception err;
 			dom_string *str;
-			err = dom_string_create((uint8_t *)value,
-						strlen(value), &str);
+			err = dom_string_create((uint8_t *)हालागा,
+						strlen(हालागा), &str);
 			if (err == DOM_NO_ERR) {
 				if (control->type == GADGET_TEXTAREA)
-					err = dom_html_text_area_element_set_value(
-						(dom_html_text_area_element *)(control->node),
+					err = dom_html_text_area_element_set_हालागा(
+						(dom_html_text_area_element *)(control->बुहोल),
 						str);
 				else
-					err = dom_html_input_element_set_value(
-						(dom_html_input_element *)(control->node),
+					err = dom_html_पासोक_element_set_हालागा(
+						(dom_html_पासोक_element *)(control->बुहोल),
 						str);
 				dom_string_unref(str);
 			}
@@ -2170,7 +2170,7 @@ void
 form_gadget_sync_with_dom(struct form_control *control)
 {
 	dom_exception exc;
-	dom_string *value = NULL;
+	dom_string *हालागा = NULL;
 	bool changed_dom = false;
 
 	if (control->syncing ||
@@ -2187,34 +2187,34 @@ form_gadget_sync_with_dom(struct form_control *control)
 	control->syncing = true;
 
 	/* If we've changed value, sync that toward the DOM */
-	if ((control->last_synced_value == NULL &&
-	     control->value != NULL &&
-	     control->value[0] != '\0') ||
-	    (control->last_synced_value != NULL &&
-	     control->value != NULL &&
-	     strcmp(control->value, control->last_synced_value) != 0)) {
-		char *dup = strdup(control->value);
+	if ((control->last_synced_हालागा == NULL &&
+	     control->हालागा != NULL &&
+	     control->हालागा[0] != '\0') ||
+	    (control->last_synced_हालागा != NULL &&
+	     control->हालागा != NULL &&
+	     strcmp(control->हालागा, control->last_synced_हालागा) != 0)) {
+		char *dup = strdup(control->हालागा);
 		if (dup == NULL) {
 			goto out;
 		}
-		if (control->last_synced_value != NULL) {
-			free(control->last_synced_value);
+		if (control->last_synced_हालागा != NULL) {
+			free(control->last_synced_हालागा);
 		}
-		control->last_synced_value = dup;
-		exc = dom_string_create((uint8_t *)(control->value),
-					strlen(control->value), &value);
+		control->last_synced_हालागा = dup;
+		exc = dom_string_create((uint8_t *)(control->हालागा),
+					strlen(control->हालागा), &हालागा);
 		if (exc != DOM_NO_ERR) {
 			goto out;
 		}
-		if (control->node_value != NULL) {
-			dom_string_unref(control->node_value);
+		if (control->बुहोल_हालागा != NULL) {
+			dom_string_unref(control->बुहोल_हालागा);
 		}
-		control->node_value = value;
-		value = NULL;
+		control->बुहोल_हालागा = हालागा;
+		हालागा = NULL;
 		if (control->type == GADGET_TEXTAREA) {
-			exc = dom_html_text_area_element_set_value(control->node, control->node_value);
+			exc = dom_html_text_area_element_set_हालागा(control->बुहोल, control->बुहोल_हालागा);
 		} else {
-			exc = dom_html_input_element_set_value(control->node, control->node_value);
+			exc = dom_html_पासोक_element_set_हालागा(control->बुहोल, control->बुहोल_हालागा);
 		}
 		if (exc != DOM_NO_ERR) {
 			goto out;
@@ -2224,9 +2224,9 @@ form_gadget_sync_with_dom(struct form_control *control)
 
 	/* Now check if the DOM has changed since our last go */
 	if (control->type == GADGET_TEXTAREA) {
-		exc = dom_html_text_area_element_get_value(control->node, &value);
+		exc = dom_html_text_area_element_get_हालागा(control->बुहोल, &हालागा);
 	} else {
-		exc = dom_html_input_element_get_value(control->node, &value);
+		exc = dom_html_पासोक_element_get_हालागा(control->बुहोल, &हालागा);
 	}
 
 	if (exc != DOM_NO_ERR) {
@@ -2234,46 +2234,46 @@ form_gadget_sync_with_dom(struct form_control *control)
 		goto out;
 	}
 
-	if (!dom_string_isequal(control->node_value, value)) {
+	if (!dom_string_isequal(control->बुहोल_हालागा, हालागा)) {
 		/* The DOM has changed */
 		if (!changed_dom) {
 			/* And it wasn't us */
-			char *value_s = strndup(
-				dom_string_data(value),
-				dom_string_byte_length(value));
+			char *हालागा_s = strndup(
+				dom_string_data(हालागा),
+				dom_string_byte_length(हालागा));
 			char *dup = NULL;
-			if (value_s == NULL) {
+			if (हालागा_s == NULL) {
 				goto out;
 			}
-			dup = strdup(value_s);
+			dup = strdup(हालागा_s);
 			if (dup == NULL) {
-				free(value_s);
+				free(हालागा_s);
 				goto out;
 			}
-			free(control->value);
-			control->value = value_s;
-			free(control->last_synced_value);
-			control->last_synced_value = dup;
+			free(control->हालागा);
+			control->हालागा = हालागा_s;
+			free(control->last_synced_हालागा);
+			control->last_synced_हालागा = dup;
 			if (control->type != GADGET_HIDDEN &&
 			    control->data.text.ta != NULL) {
 				textarea_set_text(control->data.text.ta,
-						  value_s);
+						  हालागा_s);
 			}
 		}
-		control->node_value = value;
-		value = NULL;
+		control->बुहोल_हालागा = हालागा;
+		हालागा = NULL;
 	}
 
 out:
-	if (value != NULL)
-		dom_string_unref(value);
+	if (हालागा != NULL)
+		dom_string_unref(हालागा);
 	control->syncing = false;
 }
 
 
 /* exported interface documented in html/form_internal.h */
 struct form *
-form_new(void *node,
+form_new(void *बुहोल,
 	 const char *action,
 	 const char *target,
 	 form_method method,
@@ -2319,7 +2319,7 @@ form_new(void *node,
 		return NULL;
 	}
 
-	form->node = node;
+	form->बुहोल = बुहोल;
 
 	return form;
 }
@@ -2346,7 +2346,7 @@ void form_free(struct form *form)
 
 
 /* exported interface documented in html/form_internal.h */
-struct form_control *form_new_control(void *node, form_control_type type)
+struct form_control *form_new_control(void *बुहोल, form_control_type type)
 {
 	struct form_control *control;
 
@@ -2354,7 +2354,7 @@ struct form_control *form_new_control(void *node, form_control_type type)
 	if (control == NULL)
 		return NULL;
 
-	control->node = node;
+	control->बुहोल = बुहोल;
 	control->type = type;
 
 	return control;

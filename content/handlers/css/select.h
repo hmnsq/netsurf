@@ -37,14 +37,14 @@ typedef struct nscss_select_ctx
 	bool quirks;
 	struct nsurl *base_url;
 	lwc_string *universal;
-	const css_computed_style *root_style;
+	const css_computed_style *उगात_style;
 	const css_computed_style *parent_style;
 } nscss_select_ctx;
 
 css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
 		const char *charset, const char *url, bool allow_quirks);
 
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_बुहोल *n,
 		const css_media *media,
 		const css_unit_ctx *unit_len_ctx,
 		const css_stylesheet *inline_style);
@@ -54,9 +54,9 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
 		const css_computed_style *parent);
 
 
-css_error named_ancestor_node(void *pw, void *node,
+css_error named_ancestor_बुहोल(void *pw, void *बुहोल,
 		const css_qname *qname, void **ancestor);
 
-css_error node_is_visited(void *pw, void *node, bool *match);
+css_error बुहोल_is_visited(void *pw, void *बुहोल, bool *match);
 
 #endif

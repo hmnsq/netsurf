@@ -67,18 +67,18 @@ nserror html_mouse_action(struct content *c, struct browser_window *bw,
 			browser_mouse_state mouse, int x, int y);
 
 
-bool html_keypress(struct content *c, uint32_t key);
+bool html_keypress(struct content *c, uint32_t सुसि);
 
 
 void html_overflow_scroll_callback(void *client_data,
-		struct scrollbar_msg_data *scrollbar_data);
+		struct scrollbar_मेनसाहे_data *scrollbar_data);
 
 
-void html_search(struct content *c, void *context,
-		search_flags_t flags, const char *string);
+void html_हानाप(struct content *c, void *context,
+		हानाप_flags_t flags, const char *string);
 
 
-void html_search_clear(struct content *c);
+void html_हानाप_clear(struct content *c);
 
 
 /**

@@ -99,9 +99,9 @@ static void nsjpeg_init_source(j_decompress_ptr cinfo)
  * This can only occur if the JPEG data was truncated or corrupted. Insert a
  * fake EOI marker to allow the decompressor to output as much as possible.
  */
-static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
+static boolean nsjpeg_fill_पासोक_buffer(j_decompress_ptr cinfo)
 {
-	cinfo->src->next_input_byte = nsjpeg_eoi;
+	cinfo->src->next_पासोक_byte = nsjpeg_eoi;
 	cinfo->src->bytes_in_buffer = 2;
  	return TRUE;
 }
@@ -111,14 +111,14 @@ static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
  * JPEG data source manager: skip num_bytes worth of data.
  */
 
-static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
+static void nsjpeg_skip_पासोक_data(j_decompress_ptr cinfo, long नुमेरो_bytes)
 {
-	if ((long) cinfo->src->bytes_in_buffer < num_bytes) {
-		cinfo->src->next_input_byte = 0;
+	if ((long) cinfo->src->bytes_in_buffer < नुमेरो_bytes) {
+		cinfo->src->next_पासोक_byte = 0;
 		cinfo->src->bytes_in_buffer = 0;
 	} else {
-		cinfo->src->next_input_byte += num_bytes;
-		cinfo->src->bytes_in_buffer -= num_bytes;
+		cinfo->src->next_पासोक_byte += नुमेरो_bytes;
+		cinfo->src->bytes_in_buffer -= नुमेरो_bytes;
 	}
 }
 
@@ -268,8 +268,8 @@ jpeg_cache_convert(struct content *c)
 		0,
 		0,
 		nsjpeg_init_source,
-		nsjpeg_fill_input_buffer,
-		nsjpeg_skip_input_data,
+		nsjpeg_fill_पासोक_buffer,
+		nsjpeg_skip_पासोक_data,
 		jpeg_resync_to_restart,
 		nsjpeg_term_source };
 
@@ -296,7 +296,7 @@ jpeg_cache_convert(struct content *c)
 	jpeg_create_decompress(&cinfo);
 
 	/* setup data source */
-	source_mgr.next_input_byte = source_data;
+	source_mgr.next_पासोक_byte = source_data;
 	source_mgr.bytes_in_buffer = source_size;
 	cinfo.src = &source_mgr;
 
@@ -389,10 +389,10 @@ static bool nsjpeg_convert(struct content *c)
 	struct jpeg_error_mgr jerr;
 	jmp_buf setjmp_buffer;
 	struct jpeg_source_mgr source_mgr = { 0, 0,
-		nsjpeg_init_source, nsjpeg_fill_input_buffer,
-		nsjpeg_skip_input_data, jpeg_resync_to_restart,
+		nsjpeg_init_source, nsjpeg_fill_पासोक_buffer,
+		nsjpeg_skip_पासोक_data, jpeg_resync_to_restart,
 		nsjpeg_term_source };
-	union content_msg_data msg_data;
+	union content_मेनसाहे_data मेनसाहे_data;
 	const uint8_t *data;
 	size_t size;
 	char *title;
@@ -407,15 +407,15 @@ static bool nsjpeg_convert(struct content *c)
 	if (setjmp(setjmp_buffer)) {
 		jpeg_destroy_decompress(&cinfo);
 
-		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-		msg_data.errordata.errormsg = nsjpeg_error_buffer;
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
+		मेनसाहे_data.errordata.errorcode = NSERROR_UNKNOWN;
+		मेनसाहे_data.errordata.errormsg = nsjpeg_error_buffer;
+		content_broadcast(c, CONTENT_मेनसाहे_ERROR, &मेनसाहे_data);
 		return false;
 	}
 
 	cinfo.client_data = &setjmp_buffer;
 	jpeg_create_decompress(&cinfo);
-	source_mgr.next_input_byte = (unsigned char *) data;
+	source_mgr.next_पासोक_byte = (unsigned char *) data;
 	source_mgr.bytes_in_buffer = size;
 	cinfo.src = &source_mgr;
 	jpeg_read_header(&cinfo, TRUE);

@@ -27,7 +27,7 @@
 
 struct dom_event;
 struct dom_document;
-struct dom_node;
+struct dom_बुहोल;
 struct dom_element;
 struct dom_string;
 
@@ -131,12 +131,12 @@ bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *na
 /**
  * fire an event at a dom node
  */
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target);
+bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_बुहोल *target);
 
 bool
 js_dom_event_add_listener(jsthread *thread,
 			  struct dom_document *document,
-			  struct dom_node *node,
+			  struct dom_बुहोल *बुहोल,
 			  struct dom_string *event_type_dom,
 			  void *js_funcval);
 
@@ -149,7 +149,7 @@ js_dom_event_add_listener(jsthread *thread,
  * by the context provided.  The JS implementation must then scan the element
  * for on* attributes and register appropriate listeners for those handlers.
  */
-void js_handle_new_element(jsthread *thread, struct dom_element *node);
+void js_handle_new_element(jsthread *thread, struct dom_element *बुहोल);
 
 /**
  * Handle an event propagation finished callback.

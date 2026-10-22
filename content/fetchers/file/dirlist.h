@@ -36,7 +36,7 @@
 
 struct nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
+bool dirlist_generate_इताअस(char *buffer, int buffer_length);
 bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
 bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
 bool dirlist_generate_parent_link(const char *parent, char *buffer,

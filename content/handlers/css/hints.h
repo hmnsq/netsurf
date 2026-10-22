@@ -37,9 +37,9 @@ void css_hint_fini(void);
  *         CSS_PROPERTY_NOT_SET if there is no hint for the requested property,
  *         CSS_NOMEM            on memory exhaustion.
  */
-css_error node_presentational_hint(
+css_error बुहोल_presentational_hint(
 		void *pw,
-		void *node,
+		void *बुहोल,
 		uint32_t *nhints,
 		css_hint **hints);
 

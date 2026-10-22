@@ -67,7 +67,7 @@ nserror html_script_exec(html_content *c, bool allow_defer)
 		return NSERROR_BAD_PARAMETER;
 	}
 
-	for (i = 0, s = c->scripts; i != c->scripts_count; i++, s++) {
+	for (i = 0, s = c->scripts; i != c->scripts_बिलांग; i++, s++) {
 		if (s->already_started) {
 			continue;
 		}
@@ -127,7 +127,7 @@ html_process_new_script(html_content *c,
 	struct html_script *nscript;
 	/* add space for new script entry */
 	nscript = realloc(c->scripts,
-			  sizeof(struct html_script) * (c->scripts_count + 1));
+			  sizeof(struct html_script) * (c->scripts_बिलांग + 1));
 	if (nscript == NULL) {
 		return NULL;
 	}
@@ -135,8 +135,8 @@ html_process_new_script(html_content *c,
 	c->scripts = nscript;
 
 	/* increment script entry count */
-	nscript = &c->scripts[c->scripts_count];
-	c->scripts_count++;
+	nscript = &c->scripts[c->scripts_बिलांग];
+	c->scripts_बिलांग++;
 
 	nscript->already_started = false;
 	nscript->parser_inserted = false;
@@ -165,21 +165,21 @@ convert_script_async_cb(hlcache_handle *script,
 	struct html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+	for (i = 0, s = parent->scripts; i != parent->scripts_बिलांग; i++, s++) {
 		if (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
 			break;
 	}
 
-	assert(i != parent->scripts_count);
+	assert(i != parent->scripts_बिलांग);
 
 	switch (event->type) {
-	case CONTENT_MSG_LOADING:
+	case CONTENT_मेनसाहे_LOADING:
 		break;
 
-	case CONTENT_MSG_READY:
+	case CONTENT_मेनसाहे_READY:
 		break;
 
-	case CONTENT_MSG_DONE:
+	case CONTENT_मेनसाहे_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
@@ -187,7 +187,7 @@ convert_script_async_cb(hlcache_handle *script,
 
 		break;
 
-	case CONTENT_MSG_ERROR:
+	case CONTENT_मेनसाहे_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
@@ -233,16 +233,16 @@ convert_script_defer_cb(hlcache_handle *script,
 	struct html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+	for (i = 0, s = parent->scripts; i != parent->scripts_बिलांग; i++, s++) {
 		if (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
 			break;
 	}
 
-	assert(i != parent->scripts_count);
+	assert(i != parent->scripts_बिलांग);
 
 	switch (event->type) {
 
-	case CONTENT_MSG_DONE:
+	case CONTENT_मेनसाहे_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
@@ -250,7 +250,7 @@ convert_script_defer_cb(hlcache_handle *script,
 
 		break;
 
-	case CONTENT_MSG_ERROR:
+	case CONTENT_मेनसाहे_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
@@ -292,7 +292,7 @@ convert_script_sync_cb(hlcache_handle *script,
 	unsigned int active_sync_scripts = 0;
 
 	/* Count sync scripts which have yet to complete (other than us) */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+	for (i = 0, s = parent->scripts; i != parent->scripts_बिलांग; i++, s++) {
 		if (s->type == HTML_SCRIPT_SYNC &&
 		    s->data.handle != script && s->already_started == false) {
 			active_sync_scripts++;
@@ -300,15 +300,15 @@ convert_script_sync_cb(hlcache_handle *script,
 	}
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+	for (i = 0, s = parent->scripts; i != parent->scripts_बिलांग; i++, s++) {
 		if (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
 			break;
 	}
 
-	assert(i != parent->scripts_count);
+	assert(i != parent->scripts_बिलांग);
 
 	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	case CONTENT_मेनसाहे_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
@@ -337,7 +337,7 @@ convert_script_sync_cb(hlcache_handle *script,
 
 		break;
 
-	case CONTENT_MSG_ERROR:
+	case CONTENT_मेनसाहे_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
@@ -379,7 +379,7 @@ convert_script_sync_cb(hlcache_handle *script,
  */
 static dom_hubbub_error
 exec_src_script(html_content *c,
-		dom_node *node,
+		dom_बुहोल *बुहोल,
 		dom_string *mimetype,
 		dom_string *src)
 {
@@ -401,7 +401,7 @@ exec_src_script(html_content *c,
 		return DOM_HUBBUB_NOMEM;
 	}
 
-	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_count,
+	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_बिलांग,
 	      nsurl_access(joined));
 
 	/* there are three ways to process the script tag at this point:
@@ -422,7 +422,7 @@ exec_src_script(html_content *c,
 	 * compatible approach is to be liberal and accept any
 	 * value. Note setting the values to "false" still makes them true!
 	 */
-	exc = dom_element_has_attribute(node, corestring_dom_async, &async);
+	exc = dom_element_has_attribute(बुहोल, corestring_dom_async, &async);
 	if (exc != DOM_NO_ERR) {
 		return DOM_HUBBUB_OK; /* dom error */
 	}
@@ -439,7 +439,7 @@ exec_src_script(html_content *c,
 		script_cb = convert_script_async_cb;
 
 	} else {
-		exc = dom_element_has_attribute(node,
+		exc = dom_element_has_attribute(बुहोल,
 						corestring_dom_defer, &defer);
 		if (exc != DOM_NO_ERR) {
 			return DOM_HUBBUB_OK; /* dom error */
@@ -512,7 +512,7 @@ exec_src_script(html_content *c,
 }
 
 static dom_hubbub_error
-exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
+exec_inline_script(html_content *c, dom_बुहोल *बुहोल, dom_string *mimetype)
 {
 	dom_string *script;
 	dom_exception exc; /* returned by libdom functions */
@@ -521,7 +521,7 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
 	struct html_script *nscript;
 
 	/* does not appear to be a src so script is inline content */
-	exc = dom_node_get_text_content(node, &script);
+	exc = dom_बुहोल_get_text_content(बुहोल, &script);
 	if ((exc != DOM_NO_ERR) || (script == NULL)) {
 		return DOM_HUBBUB_OK; /* no contents, skip */
 	}
@@ -563,7 +563,7 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
  *
  */
 dom_hubbub_error
-html_process_script(void *ctx, dom_node *node)
+html_process_script(void *ctx, dom_बुहोल *बुहोल)
 {
 	html_content *c = (html_content *)ctx;
 	dom_exception exc; /* returned by libdom functions */
@@ -575,10 +575,10 @@ html_process_script(void *ctx, dom_node *node)
 	 * content so it's correct to make a javascript context if there
 	 * isn't one already. */
 	if (c->jsthread == NULL) {
-		union content_msg_data msg_data;
+		union content_मेनसाहे_data मेनसाहे_data;
 
-		msg_data.jsthread = &c->jsthread;
-		content_broadcast(&c->base, CONTENT_MSG_GETTHREAD, &msg_data);
+		मेनसाहे_data.jsthread = &c->jsthread;
+		content_broadcast(&c->base, CONTENT_मेनसाहे_GETTHREAD, &मेनसाहे_data);
 		NSLOG(netsurf, INFO, "javascript context %p ", c->jsthread);
 		if (c->jsthread == NULL) {
 			/* no context and it could not be created, abort */
@@ -587,18 +587,18 @@ html_process_script(void *ctx, dom_node *node)
 	}
 
 	NSLOG(netsurf, INFO, "content %p parser %p node %p", c, c->parser,
-	      node);
+	      बुहोल);
 
-	exc = dom_element_get_attribute(node, corestring_dom_type, &mimetype);
+	exc = dom_element_get_attribute(बुहोल, corestring_dom_type, &mimetype);
 	if (exc != DOM_NO_ERR || mimetype == NULL) {
 		mimetype = dom_string_ref(corestring_dom_text_javascript);
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
+	exc = dom_element_get_attribute(बुहोल, corestring_dom_src, &src);
 	if (exc != DOM_NO_ERR || src == NULL) {
-		err = exec_inline_script(c, node, mimetype);
+		err = exec_inline_script(c, बुहोल, mimetype);
 	} else {
-		err = exec_src_script(c, node, mimetype, src);
+		err = exec_src_script(c, बुहोल, mimetype, src);
 		dom_string_unref(src);
 	}
 
@@ -613,7 +613,7 @@ bool html_saw_insecure_scripts(html_content *htmlc)
 	struct html_script *s;
 	unsigned int i;
 
-	for (i = 0, s = htmlc->scripts; i != htmlc->scripts_count; i++, s++) {
+	for (i = 0, s = htmlc->scripts; i != htmlc->scripts_बिलांग; i++, s++) {
 		if (s->type == HTML_SCRIPT_INLINE) {
 			/* Inline scripts are no less secure than their
 			 * containing HTML content
@@ -637,7 +637,7 @@ nserror html_script_free(html_content *html)
 {
 	unsigned int i;
 
-	for (i = 0; i != html->scripts_count; i++) {
+	for (i = 0; i != html->scripts_बिलांग; i++) {
 		if (html->scripts[i].mimetype != NULL) {
 			dom_string_unref(html->scripts[i].mimetype);
 		}

@@ -35,7 +35,7 @@
 
 struct nsurl;
 struct content_redraw_data;
-union content_msg_data;
+union content_मेनसाहे_data;
 struct http_parameter;
 struct llcache_handle;
 struct object_params;
@@ -76,7 +76,7 @@ struct content_handler {
 			browser_mouse_state mouse, int x, int y);
 	nserror (*mouse_action)(struct content *c, struct browser_window *bw,
 			browser_mouse_state mouse, int x, int y);
-	bool (*keypress)(struct content *c, uint32_t key);
+	bool (*keypress)(struct content *c, uint32_t सुसि);
 	bool (*redraw)(struct content *c, struct content_redraw_data *data,
 			const struct rect *clip,
 			const struct redraw_context *ctx);
@@ -166,8 +166,8 @@ struct content_user
 {
 	void (*callback)(
 			struct content *c,
-			content_msg msg,
-			const union content_msg_data *data,
+			content_मेनसाहे मेनसाहे,
+			const union content_मेनसाहे_data *data,
 			void *pw);
 	void *pw;
 
@@ -354,7 +354,7 @@ void content_set_status(struct content *c, const char *status_message);
 /**
  * Send a message to all users.
  */
-void content_broadcast(struct content *c, content_msg msg, const union content_msg_data *data);
+void content_broadcast(struct content *c, content_मेनसाहे मेनसाहे, const union content_मेनसाहे_data *data);
 
 /**
  * Send an error message to all users.
@@ -363,7 +363,7 @@ void content_broadcast(struct content *c, content_msg msg, const union content_m
  * \param errorcode The nserror code to send
  * \param msg The error message to send alongside
  */
-void content_broadcast_error(struct content *c, nserror errorcode, const char *msg);
+void content_broadcast_error(struct content *c, nserror errorcode, const char *मेनसाहे);
 
 /**
  * associate a metadata link with a content.
@@ -542,8 +542,8 @@ void content_destroy(struct content *c);
 bool content_add_user(struct content *h,
 		      void (*callback)(
 				       struct content *c,
-				       content_msg msg,
-				       const union content_msg_data *data,
+				       content_मेनसाहे मेनसाहे,
+				       const union content_मेनसाहे_data *data,
 				       void *pw),
 		      void *pw);
 
@@ -560,8 +560,8 @@ bool content_add_user(struct content *h,
 void content_remove_user(struct content *c,
 			 void (*callback)(
 					  struct content *c,
-					  content_msg msg,
-					  const union content_msg_data *data,
+					  content_मेनसाहे मेनसाहे,
+					  const union content_मेनसाहे_data *data,
 					  void *pw),
 			 void *ctx);
 
@@ -571,7 +571,7 @@ void content_remove_user(struct content *c,
  *
  * \param c Content to consider
  */
-uint32_t content_count_users(struct content *c);
+uint32_t content_बिलांग_users(struct content *c);
 
 
 /**

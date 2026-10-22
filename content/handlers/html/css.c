@@ -100,24 +100,24 @@ html_convert_css_callback(hlcache_handle *css,
 
 	/* Find sheet */
 	for (i = 0, s = parent->stylesheets;
-	     i != parent->stylesheet_count;
+	     i != parent->stylesheet_बिलांग;
 	     i++, s++) {
 		if (s->sheet == css)
 			break;
 	}
 
-	assert(i != parent->stylesheet_count);
+	assert(i != parent->stylesheet_बिलांग);
 
 	switch (event->type) {
 
-	case CONTENT_MSG_DONE:
+	case CONTENT_मेनसाहे_DONE:
 		NSLOG(netsurf, INFO, "done stylesheet slot %d '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(css)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 		break;
 
-	case CONTENT_MSG_ERROR:
+	case CONTENT_मेनसाहे_ERROR:
 		NSLOG(netsurf, INFO, "stylesheet %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(css)),
 		      event->data.errordata.errormsg);
@@ -128,7 +128,7 @@ html_convert_css_callback(hlcache_handle *css,
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 		break;
 
-	case CONTENT_MSG_POINTER:
+	case CONTENT_मेनसाहे_POINTER:
 		/* Really don't want this to continue after the switch */
 		return NSERROR_OK;
 
@@ -146,7 +146,7 @@ html_convert_css_callback(hlcache_handle *css,
 
 static nserror
 html_stylesheet_from_domnode(html_content *c,
-			     dom_node *node,
+			     dom_बुहोल *बुहोल,
 			     hlcache_handle **sheet)
 {
 	hlcache_child_context child;
@@ -154,19 +154,19 @@ html_stylesheet_from_domnode(html_content *c,
 	nsurl *url;
 	dom_exception exc;
 	nserror error;
-	uint32_t key;
+	uint32_t सुसि;
 	char urlbuf[64];
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	exc = dom_node_get_text_content(node, &style);
+	exc = dom_बुहोल_get_text_content(बुहोल, &style);
 	if ((exc != DOM_NO_ERR) || (style == NULL)) {
 		NSLOG(netsurf, INFO, "No text content");
 		return NSERROR_OK;
 	}
 
-	error = html_css_fetcher_add_item(style, c->base_url, &key);
+	error = html_css_fetcher_add_item(style, c->base_url, &सुसि);
 	if (error != NSERROR_OK) {
 		dom_string_unref(style);
 		return error;
@@ -174,7 +174,7 @@ html_stylesheet_from_domnode(html_content *c,
 
 	dom_string_unref(style);
 
-	snprintf(urlbuf, sizeof(urlbuf), "x-ns-css:%"PRIu32"", key);
+	snprintf(urlbuf, sizeof(urlbuf), "x-ns-css:%"PRIu32"", सुसि);
 
 	error = nsurl_create(urlbuf, &url);
 	if (error != NSERROR_OK) {
@@ -207,7 +207,7 @@ html_stylesheet_from_domnode(html_content *c,
  * \return  true on success, false if an error occurred
  */
 static struct html_stylesheet *
-html_create_style_element(html_content *c, dom_node *style)
+html_create_style_element(html_content *c, dom_बुहोल *style)
 {
 	dom_string *val;
 	dom_exception exc;
@@ -239,7 +239,7 @@ html_create_style_element(html_content *c, dom_node *style)
 	/* Extend array */
 	stylesheets = realloc(c->stylesheets,
 			      sizeof(struct html_stylesheet) *
-			      (c->stylesheet_count + 1));
+			      (c->stylesheet_बिलांग + 1));
 	if (stylesheets == NULL) {
 
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
@@ -248,13 +248,13 @@ html_create_style_element(html_content *c, dom_node *style)
 	}
 	c->stylesheets = stylesheets;
 
-	c->stylesheets[c->stylesheet_count].node = dom_node_ref(style);
-	c->stylesheets[c->stylesheet_count].sheet = NULL;
-	c->stylesheets[c->stylesheet_count].modified = false;
-	c->stylesheets[c->stylesheet_count].unused = false;
-	c->stylesheet_count++;
+	c->stylesheets[c->stylesheet_बिलांग].बुहोल = dom_बुहोल_ref(style);
+	c->stylesheets[c->stylesheet_बिलांग].sheet = NULL;
+	c->stylesheets[c->stylesheet_बिलांग].modified = false;
+	c->stylesheets[c->stylesheet_बिलांग].unused = false;
+	c->stylesheet_बिलांग++;
 
-	return c->stylesheets + (c->stylesheet_count - 1);
+	return c->stylesheets + (c->stylesheet_बिलांग - 1);
 }
 
 
@@ -264,7 +264,7 @@ html_css_process_modified_style(html_content *c, struct html_stylesheet *s)
 	hlcache_handle *sheet = NULL;
 	nserror error;
 
-	error = html_stylesheet_from_domnode(c, s->node, &sheet);
+	error = html_stylesheet_from_domnode(c, s->बुहोल, &sheet);
 	if (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "Failed to update sheet");
 		content_broadcast_error(&c->base, error, NULL);
@@ -306,7 +306,7 @@ static void html_css_process_modified_styles(void *pw)
 	unsigned int i;
 	bool all_done = true;
 
-	for (i = 0, s = c->stylesheets; i != c->stylesheet_count; i++, s++) {
+	for (i = 0, s = c->stylesheets; i != c->stylesheet_बिलांग; i++, s++) {
 		if (c->stylesheets[i].modified) {
 			all_done &= html_css_process_modified_style(c, s);
 		}
@@ -320,17 +320,17 @@ static void html_css_process_modified_styles(void *pw)
 
 
 /* exported function documented in html/css.h */
-bool html_css_update_style(html_content *c, dom_node *style)
+bool html_css_update_style(html_content *c, dom_बुहोल *style)
 {
 	unsigned int i;
 	struct html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
-		if (s->node == style)
+	for (i = 0, s = c->stylesheets;	i != c->stylesheet_बिलांग; i++, s++) {
+		if (s->बुहोल == style)
 			break;
 	}
-	if (i == c->stylesheet_count) {
+	if (i == c->stylesheet_बिलांग) {
 		s = html_create_style_element(c, style);
 	}
 	if (s == NULL) {
@@ -349,7 +349,7 @@ bool html_css_update_style(html_content *c, dom_node *style)
 
 
 /* exported function documented in html/css.h */
-bool html_css_process_style(html_content *c, dom_node *node)
+bool html_css_process_style(html_content *c, dom_बुहोल *बुहोल)
 {
 	unsigned int i;
 	dom_string *val;
@@ -357,17 +357,17 @@ bool html_css_process_style(html_content *c, dom_node *node)
 	struct html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
-		if (s->node == node)
+	for (i = 0, s = c->stylesheets;	i != c->stylesheet_बिलांग; i++, s++) {
+		if (s->बुहोल == बुहोल)
 			break;
 	}
 
 		/* Should already exist */
-	if (i == c->stylesheet_count) {
+	if (i == c->stylesheet_बिलांग) {
 		return false;
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_media, &val);
+	exc = dom_element_get_attribute(बुहोल, corestring_dom_media, &val);
 	if (exc == DOM_NO_ERR && val != NULL) {
 		if (strcasestr(dom_string_data(val), "screen") == NULL &&
 				strcasestr(dom_string_data(val),
@@ -382,7 +382,7 @@ bool html_css_process_style(html_content *c, dom_node *node)
 
 
 /* exported function documented in html/css.h */
-bool html_css_process_link(html_content *htmlc, dom_node *node)
+bool html_css_process_link(html_content *htmlc, dom_बुहोल *बुहोल)
 {
 	dom_string *rel, *type_attr, *media, *href;
 	struct html_stylesheet *stylesheets;
@@ -392,7 +392,7 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	hlcache_child_context child;
 
 	/* rel=<space separated list, including 'stylesheet'> */
-	exc = dom_element_get_attribute(node, corestring_dom_rel, &rel);
+	exc = dom_element_get_attribute(बुहोल, corestring_dom_rel, &rel);
 	if (exc != DOM_NO_ERR || rel == NULL)
 		return true;
 
@@ -411,7 +411,7 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	}
 
 	/* type='text/css' or not present */
-	exc = dom_element_get_attribute(node, corestring_dom_type, &type_attr);
+	exc = dom_element_get_attribute(बुहोल, corestring_dom_type, &type_attr);
 	if (exc == DOM_NO_ERR && type_attr != NULL) {
 		if (!dom_string_caseless_lwc_isequal(type_attr,
 				corestring_lwc_text_css)) {
@@ -422,7 +422,7 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	}
 
 	/* media contains 'screen' or 'all' or not present */
-	exc = dom_element_get_attribute(node, corestring_dom_media, &media);
+	exc = dom_element_get_attribute(बुहोल, corestring_dom_media, &media);
 	if (exc == DOM_NO_ERR && media != NULL) {
 		if (strcasestr(dom_string_data(media), "screen") == NULL &&
 		    strcasestr(dom_string_data(media), "all") == NULL) {
@@ -433,7 +433,7 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	}
 
 	/* href='...' */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &href);
+	exc = dom_element_get_attribute(बुहोल, corestring_dom_href, &href);
 	if (exc != DOM_NO_ERR || href == NULL)
 		return true;
 
@@ -449,12 +449,12 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	dom_string_unref(href);
 
 	NSLOG(netsurf, INFO, "linked stylesheet %i '%s'",
-	      htmlc->stylesheet_count, nsurl_access(joined));
+	      htmlc->stylesheet_बिलांग, nsurl_access(joined));
 
 	/* extend stylesheets array to allow for new sheet */
 	stylesheets = realloc(htmlc->stylesheets,
 			      sizeof(struct html_stylesheet) *
-			      (htmlc->stylesheet_count + 1));
+			      (htmlc->stylesheet_बिलांग + 1));
 	if (stylesheets == NULL) {
 		nsurl_unref(joined);
 		ns_error = NSERROR_NOMEM;
@@ -462,9 +462,9 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	}
 
 	htmlc->stylesheets = stylesheets;
-	htmlc->stylesheets[htmlc->stylesheet_count].node = NULL;
-	htmlc->stylesheets[htmlc->stylesheet_count].modified = false;
-	htmlc->stylesheets[htmlc->stylesheet_count].unused = false;
+	htmlc->stylesheets[htmlc->stylesheet_बिलांग].बुहोल = NULL;
+	htmlc->stylesheets[htmlc->stylesheet_बिलांग].modified = false;
+	htmlc->stylesheets[htmlc->stylesheet_बिलांग].unused = false;
 
 	/* start fetch */
 	child.charset = htmlc->encoding;
@@ -474,14 +474,14 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 			content_get_url(&htmlc->base),
 			NULL, html_convert_css_callback,
 			htmlc, &child, CONTENT_CSS,
-			&htmlc->stylesheets[htmlc->stylesheet_count].sheet);
+			&htmlc->stylesheets[htmlc->stylesheet_बिलांग].sheet);
 
 	nsurl_unref(joined);
 
 	if (ns_error != NSERROR_OK)
 		goto no_memory;
 
-	htmlc->stylesheet_count++;
+	htmlc->stylesheet_बिलांग++;
 
 	htmlc->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", htmlc->base.active);
@@ -502,7 +502,7 @@ struct html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned int *n)
 	assert(c != NULL);
 	assert(n != NULL);
 
-	*n = c->stylesheet_count;
+	*n = c->stylesheet_बिलांग;
 
 	return c->stylesheets;
 }
@@ -514,7 +514,7 @@ bool html_css_saw_insecure_stylesheets(html_content *html)
 	struct html_stylesheet *s;
 	unsigned int i;
 
-	for (i = 0, s = html->stylesheets; i < html->stylesheet_count;
+	for (i = 0, s = html->stylesheets; i < html->stylesheet_बिलांग;
 	     i++, s++) {
 		if (s->sheet != NULL) {
 			if (content_saw_insecure_objects(s->sheet)) {
@@ -534,12 +534,12 @@ nserror html_css_free_stylesheets(html_content *html)
 
 	guit->misc->schedule(-1, html_css_process_modified_styles, html);
 
-	for (i = 0; i != html->stylesheet_count; i++) {
+	for (i = 0; i != html->stylesheet_बिलांग; i++) {
 		if (html->stylesheets[i].sheet != NULL) {
 			hlcache_handle_release(html->stylesheets[i].sheet);
 		}
-		if (html->stylesheets[i].node != NULL) {
-			dom_node_unref(html->stylesheets[i].node);
+		if (html->stylesheets[i].बुहोल != NULL) {
+			dom_बुहोल_unref(html->stylesheets[i].बुहोल);
 		}
 	}
 	free(html->stylesheets);
@@ -601,7 +601,7 @@ nserror html_css_new_stylesheets(html_content *c)
 	c->stylesheets[STYLESHEET_QUIRKS].sheet = NULL;
 	c->stylesheets[STYLESHEET_ADBLOCK].sheet = NULL;
 	c->stylesheets[STYLESHEET_USER].sheet = NULL;
-	c->stylesheet_count = STYLESHEET_START;
+	c->stylesheet_बिलांग = STYLESHEET_START;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
@@ -668,7 +668,7 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 	}
 
 	/* Add sheets to it */
-	for (i = STYLESHEET_BASE; i != c->stylesheet_count; i++) {
+	for (i = STYLESHEET_BASE; i != c->stylesheet_बिलांग; i++) {
 		const struct html_stylesheet *hsheet = &c->stylesheets[i];
 		css_stylesheet *sheet = NULL;
 		css_origin origin = CSS_ORIGIN_AUTHOR;
