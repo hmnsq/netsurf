@@ -20,61 +20,61 @@
  * Dummy implementation of javascript engine functions.
  */
 
-#include "utils/errors.h"
-#include "content/content.h"
-#include "utils/nsoption.h"
+#अन्तर्भाव "utils/errors.h"
+#अन्तर्भाव "content/content.h"
+#अन्तर्भाव "utils/nsoption.h"
 
-#include "javascript/js.h"
-#include "utils/log.h"
+#अन्तर्भाव "javascript/js.h"
+#अन्तर्भाव "utils/log.h"
 
-void js_initialise(void)
+शून्य js_initialise(शून्य)
 {
 	nsoption_set_bool(enable_javascript, false);
 }
 
-void js_finalise(void)
+शून्य js_finalise(शून्य)
 {
 }
 
-nserror js_newheap(int timeout, jsheap **heap)
+nserror js_newheap(पूर्णाङ्क timeout, jsheap **heap)
 {
-	*heap = NULL;
-	return NSERROR_OK;
+	*heap = रिक्त;
+	प्रत्यागम NSERROR_OK;
 }
 
-void js_destroyheap(jsheap *heap)
+शून्य js_destroyheap(jsheap *heap)
 {
 }
 
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
+nserror js_newthread(jsheap *heap, शून्य *win_priv, शून्य *doc_priv, jsthread **thread)
 {
-	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	*thread = रिक्त;
+	प्रत्यागम NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-void js_destroythread(jsthread *thread)
+शून्य js_destroythread(jsthread *thread)
 {
 }
 
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+bool js_exec(jsthread *thread, ध्रुव uint8_t *txt, size_t txtlen, ध्रुव वर्ण *name)
 {
-	return true;
+	प्रत्यागम true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, ध्रुव वर्ण *type, संरचना dom_document *doc, संरचना dom_गाठ *target)
 {
-	return true;
+	प्रत्यागम true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+शून्य js_handle_new_element(jsthread *thread, संरचना dom_element *गाठ)
 {
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+शून्य js_event_cleanup(jsthread *thread, संरचना dom_event *evt)
 {
 }

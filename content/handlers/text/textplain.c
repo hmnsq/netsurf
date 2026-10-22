@@ -23,33 +23,33 @@
  * plain text content handling implementation.
  */
 
-#include <string.h>
-#include <parserutils/input/inputstream.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <parserutils/input/inputstream.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/utf8.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/keypress.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/plotters.h"
-#include "netsurf/layout.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
-#include "content/handlers/css/utils.h"
-#include "desktop/selection.h"
-#include "desktop/gui_internal.h"
+#अन्तर्भाव "utils/errors.h"
+#अन्तर्भाव "utils/corestrings.h"
+#अन्तर्भाव "utils/http.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/messages.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/utf8.h"
+#अन्तर्भाव "utils/nsoption.h"
+#अन्तर्भाव "netsurf/content.h"
+#अन्तर्भाव "netsurf/keypress.h"
+#अन्तर्भाव "netsurf/browser_window.h"
+#अन्तर्भाव "netsurf/plotters.h"
+#अन्तर्भाव "netsurf/layout.h"
+#अन्तर्भाव "content/content_protected.h"
+#अन्तर्भाव "content/content_factory.h"
+#अन्तर्भाव "content/hlcache.h"
+#अन्तर्भाव "content/textsearch.h"
+#अन्तर्भाव "content/handlers/css/utils.h"
+#अन्तर्भाव "desktop/selection.h"
+#अन्तर्भाव "desktop/gui_internal.h"
 
-#include "text/textplain.h"
+#अन्तर्भाव "text/textplain.h"
 
-struct textplain_line {
+संरचना textplain_ओळ {
 	size_t	start;
 	size_t	length;
 };
@@ -57,20 +57,20 @@ struct textplain_line {
 /**
  * plain text content
  */
-typedef struct textplain_content {
-	struct content base;
+प्रकारनिर्देश संरचना textplain_content {
+	संरचना content base;
 
 	lwc_string *encoding;
-	void *inputstream;
-	char *utf8_data;
+	शून्य *inputstream;
+	वर्ण *utf8_data;
 	size_t utf8_data_size;
 	size_t utf8_data_allocated;
-	unsigned long physical_line_count;
-	struct textplain_line *physical_line;
-	int formatted_width;
-	struct browser_window *bw;
+	unsigned long physical_ओळ_मोजणी;
+	संरचना textplain_ओळ *physical_ओळ;
+	पूर्णाङ्क formatted_width;
+	संरचना browser_window *bw;
 
-	struct selection *sel; /** Selection state */
+	संरचना selection *sel; /** Selection state */
 
 } textplain_content;
 
@@ -81,7 +81,7 @@ typedef struct textplain_content {
 #define TAB_WIDTH 8  /* must be power of 2 currently */
 #define TEXT_SIZE 10 * PLOT_STYLE_SCALE  /* Unscaled text size in pt */
 
-static plot_font_style_t textplain_style = {
+स्थिर plot_font_style_t textplain_style = {
 	.family = PLOT_FONT_FAMILY_MONOSPACE,
 	.size = TEXT_SIZE,
 	.weight = 400,
@@ -90,18 +90,18 @@ static plot_font_style_t textplain_style = {
 	.foreground = 0x000000,
 };
 
-static int textplain_tab_width = 256;  /* try for a sensible default */
+स्थिर पूर्णाङ्क textplain_tab_width = 256;  /* try for a sensible default */
 
-static lwc_string *textplain_default_charset;
+स्थिर lwc_string *textplain_default_charset;
 
 
 /**
  * Clean up after the text content handler
  */
-static void textplain_fini(void)
+स्थिर शून्य textplain_fini(शून्य)
 {
 	lwc_string_unref(textplain_default_charset);
-	textplain_default_charset = NULL;
+	textplain_default_charset = रिक्त;
 }
 
 
@@ -116,13 +116,13 @@ static void textplain_fini(void)
  * thus preserving whatever charset information we decided on in
  * textplain_create.
  */
-static parserutils_error
-textplain_charset_hack(const uint8_t *data,
+स्थिर parserutils_error
+textplain_charset_hack(ध्रुव uint8_t *data,
 		       size_t len,
 		       uint16_t *mibenum,
 		       uint32_t *source)
 {
-	return PARSERUTILS_OK;
+	प्रत्यागम PARSERUTILS_OK;
 }
 
 
@@ -133,29 +133,29 @@ textplain_charset_hack(const uint8_t *data,
  * \param[in] encoding the encoding of the content.
  * \return NSERROR_OK else appropriate error code.
  */
-static nserror
+स्थिर nserror
 textplain_create_internal(textplain_content *c, lwc_string *encoding)
 {
-	char *utf8_data;
+	वर्ण *utf8_data;
 	parserutils_inputstream *stream;
 	parserutils_error error;
 
 	textplain_style.size = (nsoption_int(font_size) * PLOT_STYLE_SCALE) / 10;
 
 	utf8_data = malloc(CHUNK);
-	if (utf8_data == NULL)
-		goto no_memory;
+	यदि (utf8_data == रिक्त)
+		गच्छ no_memory;
 
 	error = parserutils_inputstream_create(lwc_string_data(encoding), 0,
 					       textplain_charset_hack, &stream);
-	if (error == PARSERUTILS_BADENCODING) {
+	यदि (error == PARSERUTILS_BADENCODING) {
 		/* Fall back to Windows-1252 */
 		error = parserutils_inputstream_create("Windows-1252", 0,
 					textplain_charset_hack, &stream);
 	}
-	if (error != PARSERUTILS_OK) {
-		free(utf8_data);
-		goto no_memory;
+	यदि (error != PARSERUTILS_OK) {
+		मुक्त(utf8_data);
+		गच्छ no_memory;
 	}
 
 	c->encoding = lwc_string_ref(encoding);
@@ -163,85 +163,85 @@ textplain_create_internal(textplain_content *c, lwc_string *encoding)
 	c->utf8_data = utf8_data;
 	c->utf8_data_size = 0;
 	c->utf8_data_allocated = CHUNK;
-	c->physical_line = 0;
-	c->physical_line_count = 0;
+	c->physical_ओळ = 0;
+	c->physical_ओळ_मोजणी = 0;
 	c->formatted_width = 0;
-	c->bw = NULL;
-	c->sel = selection_create((struct content *)c);
+	c->bw = रिक्त;
+	c->sel = selection_create((संरचना content *)c);
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 
 no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
+	content_broadcast_error(&c->base, NSERROR_NOMEM, रिक्त);
 
-	return NSERROR_NOMEM;
+	प्रत्यागम NSERROR_NOMEM;
 }
 
 
 /**
  * Create a CONTENT_TEXTPLAIN.
  */
-static nserror
-textplain_create(const content_handler *handler,
+स्थिर nserror
+textplain_create(ध्रुव content_handler *handler,
 		 lwc_string *imime_type,
-		 const struct http_parameter *params,
+		 ध्रुव संरचना http_parameter *params,
 		 llcache_handle *llcache,
-		 const char *fallback_charset,
+		 ध्रुव वर्ण *fallback_charset,
 		 bool quirks,
-		 struct content **c)
+		 संरचना content **c)
 {
 	textplain_content *text;
 	nserror error;
 	lwc_string *encoding;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL) {
-		return NSERROR_NOMEM;
+	text = calloc(1, परिमाण(textplain_content));
+	यदि (text == रिक्त) {
+		प्रत्यागम NSERROR_NOMEM;
 	}
 
 	error = content__init(&text->base, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(text);
-		return error;
+	यदि (error != NSERROR_OK) {
+		मुक्त(text);
+		प्रत्यागम error;
 	}
 
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
 					      &encoding);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		encoding = lwc_string_ref(textplain_default_charset);
 	}
 
 	error = textplain_create_internal(text, encoding);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		lwc_string_unref(encoding);
-		free(text);
-		return error;
+		मुक्त(text);
+		प्रत्यागम error;
 	}
 
 	lwc_string_unref(encoding);
 
-	*c = (struct content *) text;
+	*c = (संरचना content *) text;
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
 /**
  * copy utf8 encoded data
  */
-static bool
-textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
+स्थिर bool
+textplain_copy_utf8_data(textplain_content *c, ध्रुव uint8_t *buf, size_t len)
 {
-	if (c->utf8_data_size + len >= c->utf8_data_allocated) {
+	यदि (c->utf8_data_size + len >= c->utf8_data_allocated) {
 		/* Compute next multiple of chunk above the required space */
 		size_t allocated;
-		char *utf8_data;
+		वर्ण *utf8_data;
 
 		allocated = (c->utf8_data_size + len + CHUNK - 1) & ~(CHUNK - 1);
 		utf8_data = realloc(c->utf8_data, allocated);
-		if (utf8_data == NULL)
-			return false;
+		यदि (utf8_data == रिक्त)
+			प्रत्यागम false;
 
 		c->utf8_data = utf8_data;
 		c->utf8_data_allocated = allocated;
@@ -250,57 +250,57 @@ textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
 	memcpy(c->utf8_data + c->utf8_data_size, buf, len);
 	c->utf8_data_size += len;
 
-	return true;
+	प्रत्यागम true;
 }
 
 
 /**
  * drain input
  */
-static bool
-textplain_drain_input(textplain_content *c,
+स्थिर bool
+textplain_drain_आदान(textplain_content *c,
 		      parserutils_inputstream *stream,
 		      parserutils_error terminator)
 {
-	static const uint8_t *u_fffd = (const uint8_t *) "\xef\xbf\xbd";
-	const uint8_t *ch;
+	स्थिर ध्रुव uint8_t *u_fffd = (ध्रुव uint8_t *) "\xef\xbf\xbd";
+	ध्रुव uint8_t *ch;
 	size_t chlen, offset = 0;
 
-	while (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
+	यावत् (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
 	       terminator) {
 		/* Replace all instances of NUL with U+FFFD */
-		if (chlen == 1 && *ch == 0) {
-			if (offset > 0) {
+		यदि (chlen == 1 && *ch == 0) {
+			यदि (offset > 0) {
 				/* Obtain pointer to start of input data */
 				parserutils_inputstream_peek(stream, 0,
 							     &ch, &chlen);
 				/* Copy from it up to the start of the NUL */
-				if (textplain_copy_utf8_data(c, ch,
+				यदि (textplain_copy_utf8_data(c, ch,
 							     offset) == false)
-					return false;
+					प्रत्यागम false;
 			}
 
 			/* Emit U+FFFD */
-			if (textplain_copy_utf8_data(c, u_fffd, 3) == false)
-				return false;
+			यदि (textplain_copy_utf8_data(c, u_fffd, 3) == false)
+				प्रत्यागम false;
 
 			/* Advance inputstream past the NUL we just read */
 			parserutils_inputstream_advance(stream, offset + 1);
 			/* Reset the read offset */
 			offset = 0;
-		} else {
+		} अन्यथा {
 			/* Accumulate input */
 			offset += chlen;
 
-			if (offset > CHUNK) {
+			यदि (offset > CHUNK) {
 				/* Obtain pointer to start of input data */
 				parserutils_inputstream_peek(stream, 0,
 							     &ch, &chlen);
 
 				/* Emit the data we've read */
-				if (textplain_copy_utf8_data(c, ch,
+				यदि (textplain_copy_utf8_data(c, ch,
 							     offset) == false)
-					return false;
+					प्रत्यागम false;
 
 				/* Advance the inputstream */
 				parserutils_inputstream_advance(stream, offset);
@@ -310,73 +310,73 @@ textplain_drain_input(textplain_content *c,
 		}
 	}
 
-	if (offset > 0) {
+	यदि (offset > 0) {
 		/* Obtain pointer to start of input data */
 		parserutils_inputstream_peek(stream, 0, &ch, &chlen);
 		/* Emit any data remaining */
-		if (textplain_copy_utf8_data(c, ch, offset) == false)
-			return false;
+		यदि (textplain_copy_utf8_data(c, ch, offset) == false)
+			प्रत्यागम false;
 
 		/* Advance the inputstream past the data we've read */
 		parserutils_inputstream_advance(stream, offset);
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
 
 /**
  * Process data for CONTENT_TEXTPLAIN.
  */
-static bool
-textplain_process_data(struct content *c, const char *data, unsigned int size)
+स्थिर bool
+textplain_process_data(संरचना content *c, ध्रुव वर्ण *data, unsigned पूर्णाङ्क size)
 {
 	textplain_content *text = (textplain_content *) c;
 	parserutils_inputstream *stream = text->inputstream;
 	parserutils_error error;
 
 	error = parserutils_inputstream_append(stream,
-					       (const uint8_t *) data, size);
-	if (error != PARSERUTILS_OK) {
-		goto no_memory;
+					       (ध्रुव uint8_t *) data, size);
+	यदि (error != PARSERUTILS_OK) {
+		गच्छ no_memory;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_NEEDDATA) == false)
-		goto no_memory;
+	यदि (textplain_drain_आदान(text, stream, PARSERUTILS_NEEDDATA) == false)
+		गच्छ no_memory;
 
-	return true;
+	प्रत्यागम true;
 
 no_memory:
-	content_broadcast_error(c, NSERROR_NOMEM, NULL);
-	return false;
+	content_broadcast_error(c, NSERROR_NOMEM, रिक्त);
+	प्रत्यागम false;
 }
 
 
 /**
  * Convert a CONTENT_TEXTPLAIN for display.
  */
-static bool textplain_convert(struct content *c)
+स्थिर bool textplain_convert(संरचना content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 	parserutils_inputstream *stream = text->inputstream;
 	parserutils_error error;
 
-	error = parserutils_inputstream_append(stream, NULL, 0);
-	if (error != PARSERUTILS_OK) {
-		return false;
+	error = parserutils_inputstream_append(stream, रिक्त, 0);
+	यदि (error != PARSERUTILS_OK) {
+		प्रत्यागम false;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_EOF) == false)
-		return false;
+	यदि (textplain_drain_आदान(text, stream, PARSERUTILS_EOF) == false)
+		प्रत्यागम false;
 
 	parserutils_inputstream_destroy(stream);
-	text->inputstream = NULL;
+	text->inputstream = रिक्त;
 
 	content_set_ready(c);
 	content_set_done(c);
 	content_set_status(c, messages_get("Done"));
 
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -385,30 +385,30 @@ static bool textplain_convert(struct content *c)
  *
  * \return Line height, in pixels
  */
-static float textplain_line_height(void)
+स्थिर भिन्न textplain_ओळ_height(शून्य)
 {
 	/* Size is in points, so convert to pixels.
 	 * Then use a constant line height of 1.2 x font size.
 	 */
-	return FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
+	प्रत्यागम FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
 }
 
 
 /**
  * Reformat a CONTENT_TEXTPLAIN to a new width.
  */
-static void textplain_reformat(struct content *c, int width, int height)
+स्थिर शून्य textplain_reformat(संरचना content *c, पूर्णाङ्क width, पूर्णाङ्क height)
 {
 	textplain_content *text = (textplain_content *) c;
-	char *utf8_data = text->utf8_data;
+	वर्ण *utf8_data = text->utf8_data;
 	size_t utf8_data_size = text->utf8_data_size;
-	unsigned long line_count = 0;
-	struct textplain_line *line = text->physical_line;
-	struct textplain_line *line1;
+	unsigned long ओळ_मोजणी = 0;
+	संरचना textplain_ओळ *ओळ = text->physical_ओळ;
+	संरचना textplain_ओळ *line1;
 	size_t i, space, col;
 	size_t columns = 80;
-	int character_width;
-	size_t line_start;
+	पूर्णाङ्क character_width;
+	size_t ओळ_start;
 	nserror res;
 
 	NSLOG(netsurf, INFO, "content %p w:%d h:%d", c, width, height);
@@ -419,8 +419,8 @@ static void textplain_reformat(struct content *c, int width, int height)
 	res = guit->layout->width(&textplain_style,
 				  "ABCDEFGH", 8,
 				  &character_width);
-	if (res != NSERROR_OK) {
-		return;
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम;
 	}
 
 	columns = (width - MARGIN - MARGIN) * 8 / character_width;
@@ -428,28 +428,28 @@ static void textplain_reformat(struct content *c, int width, int height)
 
 	text->formatted_width = width;
 
-	text->physical_line_count = 0;
+	text->physical_ओळ_मोजणी = 0;
 
-	if (!line) {
-		text->physical_line = line =
-			malloc(sizeof(struct textplain_line) * (1024 + 3));
-		if (!line)
-			goto no_memory;
+	यदि (!ओळ) {
+		text->physical_ओळ = ओळ =
+			malloc(परिमाण(संरचना textplain_ओळ) * (1024 + 3));
+		यदि (!ओळ)
+			गच्छ no_memory;
 	}
 
-	line[line_count++].start = line_start = 0;
+	ओळ[ओळ_मोजणी++].start = ओळ_start = 0;
 	space = 0;
 	i = 0;
 	col = 0;
-	while (i < utf8_data_size) {
+	यावत् (i < utf8_data_size) {
 		size_t csize; /* number of bytes in character */
 		uint32_t chr;
 		bool term;
 		size_t next_col;
 		parserutils_error perror;
 
-		perror = parserutils_charset_utf8_to_ucs4((const uint8_t *)utf8_data + i, utf8_data_size - i, &chr, &csize);
-		if (perror != PARSERUTILS_OK) {
+		perror = parserutils_charset_utf8_to_ucs4((ध्रुव uint8_t *)utf8_data + i, utf8_data_size - i, &chr, &csize);
+		यदि (perror != PARSERUTILS_OK) {
 			chr = 0xfffd;
 		}
 
@@ -457,61 +457,61 @@ static void textplain_reformat(struct content *c, int width, int height)
 
 		next_col = col + 1;
 
-		if (chr == '\t') {
+		यदि (chr == '\t') {
 			next_col = (next_col + TAB_WIDTH - 1) & ~(TAB_WIDTH - 1);
 		}
 
-		if (term || next_col >= columns) {
-			if (line_count % 1024 == 0) {
-				line1 = realloc(line,
-						sizeof(struct textplain_line) *
-						(line_count + 1024 + 3));
-				if (!line1)
-					goto no_memory;
-				text->physical_line = line = line1;
+		यदि (term || next_col >= columns) {
+			यदि (ओळ_मोजणी % 1024 == 0) {
+				line1 = realloc(ओळ,
+						परिमाण(संरचना textplain_ओळ) *
+						(ओळ_मोजणी + 1024 + 3));
+				यदि (!line1)
+					गच्छ no_memory;
+				text->physical_ओळ = ओळ = line1;
 			}
 
-			if (term) {
-				line[line_count-1].length = i - line_start;
+			यदि (term) {
+				ओळ[ओळ_मोजणी-1].length = i - ओळ_start;
 
 				/* skip second char of CR/LF or LF/CR pair */
-				if (i + 1 < utf8_data_size &&
+				यदि (i + 1 < utf8_data_size &&
 				    utf8_data[i+1] != utf8_data[i] &&
 				    (utf8_data[i+1] == '\n' ||
 				     utf8_data[i+1] == '\r')) {
 					i++;
 				}
-			} else {
-				if (space) {
+			} अन्यथा {
+				यदि (space) {
 					/* break at last space in line */
 					i = space;
-					line[line_count-1].length = (i + 1) - line_start;
-				} else
-					line[line_count-1].length = i - line_start;
+					ओळ[ओळ_मोजणी-1].length = (i + 1) - ओळ_start;
+				} अन्यथा
+					ओळ[ओळ_मोजणी-1].length = i - ओळ_start;
 			}
 
-			line[line_count++].start = line_start = i + 1;
+			ओळ[ओळ_मोजणी++].start = ओळ_start = i + 1;
 			col = 0;
 			space = 0;
-		} else {
+		} अन्यथा {
 			col++;
-			if (chr == ' ')
+			यदि (chr == ' ')
 				space = i;
 		}
 		i += csize;
 	}
-	line[line_count-1].length = i - line[line_count-1].start;
-	line[line_count].start = utf8_data_size;
+	ओळ[ओळ_मोजणी-1].length = i - ओळ[ओळ_मोजणी-1].start;
+	ओळ[ओळ_मोजणी].start = utf8_data_size;
 
-	text->physical_line_count = line_count;
+	text->physical_ओळ_मोजणी = ओळ_मोजणी;
 	c->width = width;
-	c->height = line_count * textplain_line_height() + MARGIN + MARGIN;
+	c->height = ओळ_मोजणी * textplain_ओळ_height() + MARGIN + MARGIN;
 
-	return;
+	प्रत्यागम;
 
 no_memory:
-	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", line_count);
-	return;
+	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", ओळ_मोजणी);
+	प्रत्यागम;
 }
 
 
@@ -519,80 +519,80 @@ no_memory:
  * Destroy a CONTENT_TEXTPLAIN and free all resources it owns.
  */
 
-static void textplain_destroy(struct content *c)
+स्थिर शून्य textplain_destroy(संरचना content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
 	lwc_string_unref(text->encoding);
 
-	if (text->inputstream != NULL) {
+	यदि (text->inputstream != रिक्त) {
 		parserutils_inputstream_destroy(text->inputstream);
 	}
 
-	if (text->physical_line != NULL) {
-		free(text->physical_line);
+	यदि (text->physical_ओळ != रिक्त) {
+		मुक्त(text->physical_ओळ);
 	}
 
-	if (text->utf8_data != NULL) {
-		free(text->utf8_data);
+	यदि (text->utf8_data != रिक्त) {
+		मुक्त(text->utf8_data);
 	}
 
-	if (text->sel != NULL) {
+	यदि (text->sel != रिक्त) {
 		selection_destroy(text->sel);
 	}
 }
 
 
-static nserror textplain_clone(const struct content *old, struct content **newc)
+स्थिर nserror textplain_clone(ध्रुव संरचना content *old, संरचना content **newc)
 {
-	const textplain_content *old_text = (textplain_content *) old;
+	ध्रुव textplain_content *old_text = (textplain_content *) old;
 	textplain_content *text;
 	nserror error;
-	const uint8_t *data;
+	ध्रुव uint8_t *data;
 	size_t size;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL)
-		return NSERROR_NOMEM;
+	text = calloc(1, परिमाण(textplain_content));
+	यदि (text == रिक्त)
+		प्रत्यागम NSERROR_NOMEM;
 
 	error = content__clone(old, &text->base);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		content_destroy(&text->base);
-		return error;
+		प्रत्यागम error;
 	}
 
 	/* Simply replay create/process/convert */
 	error = textplain_create_internal(text, old_text->encoding);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		content_destroy(&text->base);
-		return error;
+		प्रत्यागम error;
 	}
 
 	data = content__get_source_data(&text->base, &size);
-	if (size > 0) {
-		if (textplain_process_data(&text->base,
-					   (const char *)data,
+	यदि (size > 0) {
+		यदि (textplain_process_data(&text->base,
+					   (ध्रुव वर्ण *)data,
 					   size) == false) {
 			content_destroy(&text->base);
-			return NSERROR_NOMEM;
+			प्रत्यागम NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	यदि (old->status == CONTENT_STATUS_READY ||
 	    old->status == CONTENT_STATUS_DONE) {
-		if (textplain_convert(&text->base) == false) {
+		यदि (textplain_convert(&text->base) == false) {
 			content_destroy(&text->base);
-			return NSERROR_CLONE_FAILED;
+			प्रत्यागम NSERROR_CLONE_FAILED;
 		}
 	}
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
-static content_type textplain_content_type(void)
+स्थिर content_type textplain_content_type(शून्य)
 {
-	return CONTENT_TEXTPLAIN;
+	प्रत्यागम CONTENT_TEXTPLAIN;
 }
 
 
@@ -609,52 +609,52 @@ static content_type textplain_content_type(void)
  * \param[in] dir direction of search if not within line
  * \return byte offset of character containing (or nearest to) point
  */
-static size_t
-textplain_offset_from_coords(struct content *c, int x, int y, int dir)
+स्थिर size_t
+textplain_offset_from_coords(संरचना content *c, पूर्णाङ्क x, पूर्णाङ्क y, पूर्णाङ्क dir)
 {
 	textplain_content *textc = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	struct textplain_line *line;
-	const char *text;
+	भिन्न ओळ_height = textplain_ओळ_height();
+	संरचना textplain_ओळ *ओळ;
+	ध्रुव वर्ण *text;
 	unsigned nlines;
 	size_t length;
-	int idx;
+	पूर्णाङ्क idx;
 
-	assert(c != NULL);
+	प्रतिज्ञा(c != रिक्त);
 
-	y = (int)((float)(y - MARGIN) / line_height);
+	y = (पूर्णाङ्क)((भिन्न)(y - MARGIN) / ओळ_height);
 	x -= MARGIN;
 
-	nlines = textc->physical_line_count;
-	if (!nlines)
-		return 0;
+	nlines = textc->physical_ओळ_मोजणी;
+	यदि (!nlines)
+		प्रत्यागम 0;
 
-	if (y <= 0) y = 0;
-	else if ((unsigned)y >= nlines)
+	यदि (y <= 0) y = 0;
+	अन्यथा यदि ((unsigned)y >= nlines)
 		y = nlines - 1;
 
-	line = &textc->physical_line[y];
-	text = textc->utf8_data + line->start;
-	length = line->length;
+	ओळ = &textc->physical_ओळ[y];
+	text = textc->utf8_data + ओळ->start;
+	length = ओळ->length;
 	idx = 0;
 
-	while (x > 0) {
+	यावत् (x > 0) {
 		size_t next_offset = 0;
-		int width = INT_MAX;
+		पूर्णाङ्क width = INT_MAX;
 
-		while (next_offset < length && text[next_offset] != '\t') {
+		यावत् (next_offset < length && text[next_offset] != '\t') {
 			next_offset = utf8_next(text, length, next_offset);
 		}
 
-		if (next_offset < length) {
+		यदि (next_offset < length) {
 			guit->layout->width(&textplain_style,
 					    text,
 					    next_offset,
 					    &width);
 		}
 
-		if (x <= width) {
-			int pixel_offset;
+		यदि (x <= width) {
+			पूर्णाङ्क pixel_offset;
 			size_t char_offset;
 
 			guit->layout->position(&textplain_style,
@@ -662,7 +662,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 					       &char_offset, &pixel_offset);
 
 			idx += char_offset;
-			break;
+			भङ्ग;
 		}
 
 		x -= width;
@@ -672,7 +672,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 
 		/* check if it's within the tab */
 		width = textplain_tab_width - (width % textplain_tab_width);
-		if (x <= width) break;
+		यदि (x <= width) भङ्ग;
 
 		x -= width;
 		length--;
@@ -680,7 +680,7 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
 		idx++;
 	}
 
-	return line->start + idx;
+	प्रत्यागम ओळ->start + idx;
 }
 
 
@@ -693,44 +693,44 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
  * \param x	  coordinate of mouse
  * \param y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_action(struct content *c,
-		       struct browser_window *bw,
+स्थिर nserror
+textplain_mouse_action(संरचना content *c,
+		       संरचना browser_window *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       पूर्णाङ्क x, पूर्णाङ्क y)
 {
 	textplain_content *text = (textplain_content *) c;
 	browser_pointer_shape pointer = BROWSER_POINTER_DEFAULT;
-	union content_msg_data msg_data;
-	const char *status = 0;
+	सङ्घ content_संदेश_data संदेश_data;
+	ध्रुव वर्ण *status = 0;
 	size_t idx;
-	int dir = 0;
+	पूर्णाङ्क dir = 0;
 
-	browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+	browser_window_set_drag_type(bw, DRAGGING_NONE, रिक्त);
 
 	idx = textplain_offset_from_coords(c, x, y, dir);
-	if (selection_click(text->sel, text->bw, mouse, idx)) {
+	यदि (selection_click(text->sel, text->bw, mouse, idx)) {
 
-		if (selection_dragging(text->sel)) {
+		यदि (selection_dragging(text->sel)) {
 			browser_window_set_drag_type(bw,
-						     DRAGGING_SELECTION, NULL);
+						     DRAGGING_SELECTION, रिक्त);
 			status = messages_get("Selecting");
 		}
 
-	} else {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+	} अन्यथा {
+		यदि (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
 			browser_window_page_drag_start(bw, x, y);
 			pointer = BROWSER_POINTER_MOVE;
 		}
 	}
 
-	msg_data.explicit_status_text = status;
-	content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+	संदेश_data.explicit_status_text = status;
+	content_broadcast(c, CONTENT_संदेश_STATUS, &संदेश_data);
 
-	msg_data.pointer = pointer;
-	content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	संदेश_data.pointer = pointer;
+	content_broadcast(c, CONTENT_संदेश_POINTER, &संदेश_data);
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
@@ -743,46 +743,46 @@ textplain_mouse_action(struct content *c,
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_track(struct content *c,
-		      struct browser_window *bw,
+स्थिर nserror
+textplain_mouse_track(संरचना content *c,
+		      संरचना browser_window *bw,
 		      browser_mouse_state mouse,
-		      int x, int y)
+		      पूर्णाङ्क x, पूर्णाङ्क y)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	if (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
-		int dir = -1;
+	यदि (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
+		पूर्णाङ्क dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel))
+		यदि (selection_dragging_start(text->sel))
 			dir = 1;
 
 		idx = textplain_offset_from_coords(c, x, y, dir);
 		selection_track(text->sel, mouse, idx);
 
-		browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+		browser_window_set_drag_type(bw, DRAGGING_NONE, रिक्त);
 	}
 
-	switch (browser_window_get_drag_type(bw)) {
+	विकल्प (browser_window_get_drag_type(bw)) {
 
-	case DRAGGING_SELECTION: {
-		int dir = -1;
+	पक्ष DRAGGING_SELECTION: {
+		पूर्णाङ्क dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel)) dir = 1;
+		यदि (selection_dragging_start(text->sel)) dir = 1;
 
 		idx = textplain_offset_from_coords(c, x, y, dir);
 		selection_track(text->sel, mouse, idx);
 	}
-		break;
+		भङ्ग;
 
-	default:
+	स्वभाव:
 		textplain_mouse_action(c, bw, mouse, x, y);
-		break;
+		भङ्ग;
 	}
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
@@ -793,30 +793,30 @@ textplain_mouse_track(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-static bool textplain_keypress(struct content *c, uint32_t key)
+स्थिर bool textplain_keypress(संरचना content *c, uint32_t किल्ली)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct selection *sel = text->sel;
+	संरचना selection *sel = text->sel;
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
+	विकल्प (किल्ली) {
+	पक्ष NS_किल्ली_COPY_SELECTION:
 		selection_copy_to_clipboard(sel);
-		return true;
+		प्रत्यागम true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	पक्ष NS_किल्ली_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		प्रत्यागम true;
 
-	case NS_KEY_SELECT_ALL:
+	पक्ष NS_किल्ली_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		प्रत्यागम true;
 
-	case NS_KEY_ESCAPE:
+	पक्ष NS_किल्ली_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		प्रत्यागम selection_clear(sel, true);
 	}
 
-	return false;
+	प्रत्यागम false;
 }
 
 
@@ -838,18 +838,18 @@ static bool textplain_keypress(struct content *c, uint32_t key)
  * \param ctx	    current redraw context
  * \return true iff successful and redraw should proceed
  */
-static bool
-text_draw(const char *utf8_text,
+स्थिर bool
+text_draw(ध्रुव वर्ण *utf8_text,
 	    size_t utf8_len,
 	    size_t offset,
-	    int x,
-	    int y,
-	    const struct rect *clip,
-	    int height,
-	    float scale,
+	    पूर्णाङ्क x,
+	    पूर्णाङ्क y,
+	    ध्रुव संरचना rect *clip,
+	    पूर्णाङ्क height,
+	    भिन्न scale,
 	    textplain_content *text,
-	    const struct selection *sel,
-	    const struct redraw_context *ctx)
+	    ध्रुव संरचना selection *sel,
+	    ध्रुव संरचना redraw_context *ctx)
 {
 	bool highlighted = false;
 	plot_font_style_t plot_fstyle;
@@ -860,13 +860,13 @@ text_draw(const char *utf8_text,
 	plot_fstyle.size *= scale;
 
 	/* is this box part of a selection? */
-	if (ctx->interactive == true) {
+	यदि (ctx->interactive == true) {
 		unsigned len = utf8_len;
 		unsigned start_idx;
 		unsigned end_idx;
 
 		/* first try the browser window's current selection */
-		if (selection_highlighted(sel,
+		यदि (selection_highlighted(sel,
 					  offset,
 					  offset + len,
 					  &start_idx,
@@ -875,8 +875,8 @@ text_draw(const char *utf8_text,
 		}
 
 		/* what about the current search operation, if any? */
-		if (!highlighted &&
-		    (text->base.textsearch.context != NULL) &&
+		यदि (!highlighted &&
+		    (text->base.textsearch.context != रिक्त) &&
 		    content_textsearch_ishighlighted(text->base.textsearch.context,
 						     offset,
 						     offset + len,
@@ -886,20 +886,20 @@ text_draw(const char *utf8_text,
 		}
 
 		/* \todo make search terms visible within selected text */
-		if (highlighted) {
-			struct rect r;
+		यदि (highlighted) {
+			संरचना rect r;
 			unsigned endtxt_idx = end_idx;
 			bool clip_changed = false;
 			bool text_visible = true;
-			int startx, endx;
+			पूर्णाङ्क startx, endx;
 			plot_style_t pstyle_fill_hback = *plot_style_fill_white;
 			plot_font_style_t fstyle_hback = plot_fstyle;
 
-			if (end_idx > utf8_len) {
+			यदि (end_idx > utf8_len) {
 				/* adjust for trailing space, not present in
 				 * utf8_text
 				 */
-				assert(end_idx == utf8_len + 1);
+				प्रतिज्ञा(end_idx == utf8_len + 1);
 				endtxt_idx = utf8_len;
 			}
 
@@ -907,7 +907,7 @@ text_draw(const char *utf8_text,
 						  utf8_text,
 						  start_idx,
 						  &startx);
-			if (res != NSERROR_OK) {
+			यदि (res != NSERROR_OK) {
 				startx = 0;
 			}
 
@@ -915,25 +915,25 @@ text_draw(const char *utf8_text,
 						  utf8_text,
 						  endtxt_idx,
 						  &endx);
-			if (res != NSERROR_OK) {
+			यदि (res != NSERROR_OK) {
 				endx = 0;
 			}
 
-			if (scale != 1.0) {
+			यदि (scale != 1.0) {
 				startx *= scale;
 				endx *= scale;
 			}
 
 			/* draw any text preceding highlighted portion */
-			if (start_idx > 0) {
+			यदि (start_idx > 0) {
 				res = ctx->plot->text(ctx,
 					      &plot_fstyle,
 					      x,
-					      y + (int)(height * 0.75 * scale),
+					      y + (पूर्णाङ्क)(height * 0.75 * scale),
 					      utf8_text,
 					      start_idx);
-				if (res != NSERROR_OK) {
-					return false;
+				यदि (res != NSERROR_OK) {
+					प्रत्यागम false;
 				}
 			}
 
@@ -945,26 +945,26 @@ text_draw(const char *utf8_text,
 			r.x1 = x + endx;
 			r.y1 = y + height * scale;
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_hback, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			यदि (res != NSERROR_OK) {
+				प्रत्यागम false;
 			}
 
-			if (start_idx > 0) {
-				int px0 = max(x + startx, clip->x0);
-				int px1 = min(x + endx, clip->x1);
+			यदि (start_idx > 0) {
+				पूर्णाङ्क px0 = max(x + startx, clip->x0);
+				पूर्णाङ्क px1 = min(x + endx, clip->x1);
 
-				if (px0 < px1) {
+				यदि (px0 < px1) {
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = px1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					यदि (res != NSERROR_OK) {
+						प्रत्यागम false;
 					}
 
 					clip_changed = true;
-				} else {
+				} अन्यथा {
 					text_visible = false;
 				}
 			}
@@ -974,28 +974,28 @@ text_draw(const char *utf8_text,
 			fstyle_hback.foreground = colour_to_bw_furthest(
 				pstyle_fill_hback.fill_colour);
 
-			if (text_visible &&
+			यदि (text_visible &&
 			    (ctx->plot->text(ctx,
 					     &fstyle_hback,
 					     x,
-					     y + (int)(height * 0.75 * scale),
+					     y + (पूर्णाङ्क)(height * 0.75 * scale),
 					     utf8_text,
 					     endtxt_idx) != NSERROR_OK)) {
-				return false;
+				प्रत्यागम false;
 			}
 
 			/* draw any text succeeding highlighted portion */
-			if (endtxt_idx < utf8_len) {
-				int px0 = max(x + endx, clip->x0);
-				if (px0 < clip->x1) {
+			यदि (endtxt_idx < utf8_len) {
+				पूर्णाङ्क px0 = max(x + endx, clip->x0);
+				यदि (px0 < clip->x1) {
 
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = clip->x1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					यदि (res != NSERROR_OK) {
+						प्रत्यागम false;
 					}
 
 					clip_changed = true;
@@ -1003,34 +1003,34 @@ text_draw(const char *utf8_text,
 					res = ctx->plot->text(ctx,
 							      &plot_fstyle,
 							      x,
-							      y + (int)(height * 0.75 * scale),
+							      y + (पूर्णाङ्क)(height * 0.75 * scale),
 							      utf8_text,
 							      utf8_len);
-					if (res != NSERROR_OK) {
-						return false;
+					यदि (res != NSERROR_OK) {
+						प्रत्यागम false;
 					}
 				}
 			}
 
-			if (clip_changed &&
+			यदि (clip_changed &&
 			    (ctx->plot->clip(ctx, clip) != NSERROR_OK)) {
-				return false;
+				प्रत्यागम false;
 			}
 		}
 	}
 
-	if (!highlighted) {
+	यदि (!highlighted) {
 		res = ctx->plot->text(ctx,
 				      &plot_fstyle,
 				      x,
-				      y + (int) (height * 0.75 * scale),
+				      y + (पूर्णाङ्क) (height * 0.75 * scale),
 				      utf8_text,
 				      utf8_len);
-		if (res != NSERROR_OK) {
-			return false;
+		यदि (res != NSERROR_OK) {
+			प्रत्यागम false;
 		}
 	}
-	return true;
+	प्रत्यागम true;
 }
 
 
@@ -1045,51 +1045,51 @@ text_draw(const char *utf8_text,
  * \param  ctx	 current redraw context
  * \return true if successful, false otherwise
  */
-static bool
-textplain_redraw(struct content *c,
-		 struct content_redraw_data *data,
-		 const struct rect *clip,
-		 const struct redraw_context *ctx)
+स्थिर bool
+textplain_redraw(संरचना content *c,
+		 संरचना content_redraw_data *data,
+		 ध्रुव संरचना rect *clip,
+		 ध्रुव संरचना redraw_context *ctx)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct browser_window *bw = text->bw;
-	char *utf8_data = text->utf8_data;
+	संरचना browser_window *bw = text->bw;
+	वर्ण *utf8_data = text->utf8_data;
 	long lineno;
-	int x = data->x;
-	int y = data->y;
-	unsigned long line_count = text->physical_line_count;
-	float line_height = textplain_line_height();
-	float scaled_line_height = line_height * data->scale;
-	long line0 = (clip->y0 - y * data->scale) / scaled_line_height - 1;
-	long line1 = (clip->y1 - y * data->scale) / scaled_line_height + 1;
-	struct textplain_line *line = text->physical_line;
+	पूर्णाङ्क x = data->x;
+	पूर्णाङ्क y = data->y;
+	unsigned long ओळ_मोजणी = text->physical_ओळ_मोजणी;
+	भिन्न ओळ_height = textplain_ओळ_height();
+	भिन्न scaled_ओळ_height = ओळ_height * data->scale;
+	long line0 = (clip->y0 - y * data->scale) / scaled_ओळ_height - 1;
+	long line1 = (clip->y1 - y * data->scale) / scaled_ओळ_height + 1;
+	संरचना textplain_ओळ *ओळ = text->physical_ओळ;
 	size_t length;
 	plot_style_t *plot_style_highlight;
 	nserror res;
 
-	if (line0 < 0)
+	यदि (line0 < 0)
 		line0 = 0;
-	if (line1 < 0)
+	यदि (line1 < 0)
 		line1 = 0;
-	if (line_count < (unsigned long) line0)
-		line0 = line_count;
-	if (line_count < (unsigned long) line1)
-		line1 = line_count;
-	if (line1 < line0)
+	यदि (ओळ_मोजणी < (unsigned long) line0)
+		line0 = ओळ_मोजणी;
+	यदि (ओळ_मोजणी < (unsigned long) line1)
+		line1 = ओळ_मोजणी;
+	यदि (line1 < line0)
 		line1 = line0;
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_white, clip);
-	if (res != NSERROR_OK) {
-		return false;
+	यदि (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
-	if (!line)
-		return true;
+	यदि (!ओळ)
+		प्रत्यागम true;
 
 	/* choose a suitable background colour for any highlighted text */
-	if ((data->background_colour & 0x808080) == 0x808080)
+	यदि ((data->background_colour & 0x808080) == 0x808080)
 		plot_style_highlight = plot_style_fill_black;
-	else
+	अन्यथा
 		plot_style_highlight = plot_style_fill_white;
 
 	/* Set up font plot style */
@@ -1097,55 +1097,55 @@ textplain_redraw(struct content *c,
 
 	x = (x + MARGIN) * data->scale;
 	y = (y + MARGIN) * data->scale;
-	for (lineno = line0; lineno != line1; lineno++) {
-		const char *text_d = utf8_data + line[lineno].start;
-		int tab_width = textplain_tab_width * data->scale;
+	प्रति (lineno = line0; lineno != line1; lineno++) {
+		ध्रुव वर्ण *text_d = utf8_data + ओळ[lineno].start;
+		पूर्णाङ्क tab_width = textplain_tab_width * data->scale;
 		size_t offset = 0;
-		int tx = x;
+		पूर्णाङ्क tx = x;
 
-		if (!tab_width) tab_width = 1;
+		यदि (!tab_width) tab_width = 1;
 
-		length = line[lineno].length;
-		if (!length)
-			continue;
+		length = ओळ[lineno].length;
+		यदि (!length)
+			अनुवर्त;
 
-		while (offset < length) {
+		यावत् (offset < length) {
 			size_t next_offset = offset;
-			int width;
-			int ntx;
+			पूर्णाङ्क width;
+			पूर्णाङ्क ntx;
 			nserror res;
 
-			while ((next_offset < length) &&
+			यावत् ((next_offset < length) &&
 			       (text_d[next_offset] != '\t')) {
 				next_offset = utf8_next(text_d,
 							length,
 							next_offset);
 			}
 
-			if (!text_draw(text_d + offset,
+			यदि (!text_draw(text_d + offset,
 				       next_offset - offset,
-				       line[lineno].start + offset,
+				       ओळ[lineno].start + offset,
 				       tx,
-				       y + (lineno * scaled_line_height),
+				       y + (lineno * scaled_ओळ_height),
 				       clip,
-				       line_height,
+				       ओळ_height,
 				       data->scale,
 				       text,
 				       text->sel,
 				       ctx)) {
-				return false;
+				प्रत्यागम false;
 			}
 
-			if (next_offset >= length)
-				break;
+			यदि (next_offset >= length)
+				भङ्ग;
 
 			res = guit->layout->width(&textplain_style,
 						  &text_d[offset],
 						  next_offset - offset,
 						  &width);
 			/* locate end of string and align to next tab position */
-			if (res == NSERROR_OK) {
-				tx += (int)(width * data->scale);
+			यदि (res == NSERROR_OK) {
+				tx += (पूर्णाङ्क)(width * data->scale);
 			}
 
 			ntx = x + ((1 + (tx - x) / tab_width) * tab_width);
@@ -1156,13 +1156,13 @@ textplain_redraw(struct content *c,
 			 *  with background of the selected text
 			 */
 
-			if (bw) {
-				unsigned tab_ofst = line[lineno].start + next_offset;
-				struct selection *sel = text->sel;
+			यदि (bw) {
+				unsigned tab_ofst = ओळ[lineno].start + next_offset;
+				संरचना selection *sel = text->sel;
 				bool highlighted = false;
 
 				unsigned start_idx, end_idx;
-				if (selection_highlighted(sel,
+				यदि (selection_highlighted(sel,
 							  tab_ofst,
 							  tab_ofst + 1,
 							  &start_idx,
@@ -1171,10 +1171,10 @@ textplain_redraw(struct content *c,
 				}
 
 
-				if (!highlighted &&
-				    (c->textsearch.context != NULL)) {
+				यदि (!highlighted &&
+				    (c->textsearch.context != रिक्त)) {
 					unsigned start_idx, end_idx;
-					if (content_textsearch_ishighlighted(
+					यदि (content_textsearch_ishighlighted(
 						    c->textsearch.context,
 						    tab_ofst,
 						    tab_ofst + 1,
@@ -1184,17 +1184,17 @@ textplain_redraw(struct content *c,
 					}
 				}
 
-				if (highlighted) {
-					struct rect rect;
+				यदि (highlighted) {
+					संरचना rect rect;
 					rect.x0 = tx;
-					rect.y0 = y + (lineno * scaled_line_height);
+					rect.y0 = y + (lineno * scaled_ओळ_height);
 					rect.x1 = ntx;
-					rect.y1 = rect.y0 + scaled_line_height;
+					rect.y1 = rect.y0 + scaled_ओळ_height;
 					res = ctx->plot->rectangle(ctx,
 								   plot_style_highlight,
 								   &rect);
-					if (res != NSERROR_OK) {
-						return false;
+					यदि (res != NSERROR_OK) {
+						प्रत्यागम false;
 					}
 				}
 			}
@@ -1204,18 +1204,18 @@ textplain_redraw(struct content *c,
 		}
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being opened.
  */
-static nserror
-textplain_open(struct content *c,
-	       struct browser_window *bw,
-	       struct content *page,
-	       struct object_params *params)
+स्थिर nserror
+textplain_open(संरचना content *c,
+	       संरचना browser_window *bw,
+	       संरचना content *page,
+	       संरचना object_params *params)
 {
 	textplain_content *text = (textplain_content *) c;
 
@@ -1224,31 +1224,31 @@ textplain_open(struct content *c,
 	/* text selection */
 	selection_init(text->sel);
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being closed.
  */
-static nserror textplain_close(struct content *c)
+स्थिर nserror textplain_close(संरचना content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	text->bw = NULL;
+	text->bw = रिक्त;
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
 /**
  * Return an textplain content's selection context
  */
-static char *textplain_get_selection(struct content *c)
+स्थिर वर्ण *textplain_get_selection(संरचना content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	return selection_get_copy(text->sel);
+	प्रत्यागम selection_get_copy(text->sel);
 }
 
 
@@ -1264,16 +1264,16 @@ static char *textplain_get_selection(struct content *c)
  * \param  length  line length
  * \return x ordinate
  */
-static int
-textplain_coord_from_offset(const char *text, size_t offset, size_t length)
+स्थिर पूर्णाङ्क
+textplain_coord_from_offset(ध्रुव वर्ण *text, size_t offset, size_t length)
 {
-	int x = 0;
+	पूर्णाङ्क x = 0;
 
-	while (offset > 0) {
+	यावत् (offset > 0) {
 		size_t next_offset = 0;
-		int tx;
+		पूर्णाङ्क tx;
 
-		while (next_offset < offset && text[next_offset] != '\t') {
+		यावत् (next_offset < offset && text[next_offset] != '\t') {
 			next_offset = utf8_next(text, length, next_offset);
 		}
 
@@ -1281,8 +1281,8 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
 
 		x += tx;
 
-		if (next_offset >= offset)
-			break;
+		यदि (next_offset >= offset)
+			भङ्ग;
 
 		/* align to next tab boundary */
 		next_offset++;
@@ -1292,7 +1292,7 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
 		length -= next_offset;
 	}
 
-	return x;
+	प्रत्यागम x;
 }
 
 
@@ -1302,13 +1302,13 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
  * \param[in] c Content to retrieve line count from
  * \return Number of lines
  */
-static unsigned long textplain_line_count(struct content *c)
+स्थिर unsigned long textplain_ओळ_मोजणी(संरचना content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	assert(c != NULL);
+	प्रतिज्ञा(c != रिक्त);
 
-	return text->physical_line_count;
+	प्रत्यागम text->physical_ओळ_मोजणी;
 }
 
 
@@ -1321,24 +1321,24 @@ static unsigned long textplain_line_count(struct content *c)
  * \param[out] plen    receives length of returned line
  * \return pointer to text, or NULL if invalid line number
  */
-static char *
-textplain_get_line(struct content *c,
+स्थिर वर्ण *
+textplain_get_ओळ(संरचना content *c,
 		   unsigned lineno,
 		   size_t *poffset,
 		   size_t *plen)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
+	संरचना textplain_ओळ *ओळ;
 
-	assert(c != NULL);
+	प्रतिज्ञा(c != रिक्त);
 
-	if (lineno >= text->physical_line_count)
-		return NULL;
-	line = &text->physical_line[lineno];
+	यदि (lineno >= text->physical_ओळ_मोजणी)
+		प्रत्यागम रिक्त;
+	ओळ = &text->physical_ओळ[lineno];
 
-	*poffset = line->start;
-	*plen = line->length;
-	return text->utf8_data + line->start;
+	*poffset = ओळ->start;
+	*plen = ओळ->length;
+	प्रत्यागम text->utf8_data + ओळ->start;
 }
 
 
@@ -1352,31 +1352,31 @@ textplain_get_line(struct content *c,
  * \param[in] offset  byte offset within textual representation
  * \return line number, or -1 if offset invalid (larger than size)
  */
-static int textplain_find_line(struct content *c, unsigned offset)
+स्थिर पूर्णाङ्क textplain_find_ओळ(संरचना content *c, unsigned offset)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
-	int nlines;
-	int lineno = 0;
+	संरचना textplain_ओळ *ओळ;
+	पूर्णाङ्क nlines;
+	पूर्णाङ्क lineno = 0;
 
-	assert(c != NULL);
+	प्रतिज्ञा(c != रिक्त);
 
-	line = text->physical_line;
-	nlines = text->physical_line_count;
+	ओळ = text->physical_ओळ;
+	nlines = text->physical_ओळ_मोजणी;
 
-	if (offset > text->utf8_data_size) {
-		return -1;
+	यदि (offset > text->utf8_data_size) {
+		प्रत्यागम -1;
 	}
 
 /* \todo - implement binary search here */
-	while (lineno < nlines && line[lineno].start < offset) {
+	यावत् (lineno < nlines && ओळ[lineno].start < offset) {
 		lineno++;
 	}
-	if (line[lineno].start > offset) {
+	यदि (ओळ[lineno].start > offset) {
 		lineno--;
 	}
 
-	return lineno;
+	प्रत्यागम lineno;
 }
 
 
@@ -1390,28 +1390,28 @@ static int textplain_find_line(struct content *c, unsigned offset)
  * \param case_sens whether to perform a case sensitive search
  * \return NSERROR_OK on success else error code on faliure
  */
-static nserror
-textplain_textsearch_find(struct content *c,
-			  struct textsearch_context *context,
-			  const char *pattern,
-			  int p_len,
+स्थिर nserror
+textplain_textsearch_find(संरचना content *c,
+			  संरचना textsearch_context *context,
+			  ध्रुव वर्ण *pattern,
+			  पूर्णाङ्क p_len,
 			  bool case_sens)
 {
-	int nlines = textplain_line_count(c);
-	int line;
+	पूर्णाङ्क nlines = textplain_ओळ_मोजणी(c);
+	पूर्णाङ्क ओळ;
 	nserror res = NSERROR_OK;
 
-	for(line = 0; line < nlines; line++) {
+	प्रति(ओळ = 0; ओळ < nlines; ओळ++) {
 		size_t offset, length;
-		const char *text;
+		ध्रुव वर्ण *text;
 
-		text = textplain_get_line(c, line, &offset, &length);
-		if (text) {
-			while (length > 0) {
+		text = textplain_get_ओळ(c, ओळ, &offset, &length);
+		यदि (text) {
+			यावत् (length > 0) {
 				unsigned match_length;
 				size_t start_idx;
-				const char *new_text;
-				const char *pos;
+				ध्रुव वर्ण *new_text;
+				ध्रुव वर्ण *pos;
 
 				pos = content_textsearch_find_pattern(
 						text,
@@ -1420,18 +1420,18 @@ textplain_textsearch_find(struct content *c,
 						p_len,
 						case_sens,
 						&match_length);
-				if (!pos)
-					break;
+				यदि (!pos)
+					भङ्ग;
 
 				/* found string in line => add to list */
 				start_idx = offset + (pos - text);
 				res = content_textsearch_add_match(context,
 						start_idx,
 						start_idx + match_length,
-						NULL,
-						NULL);
-				if (res != NSERROR_OK) {
-					return res;
+						रिक्त,
+						रिक्त);
+				यदि (res != NSERROR_OK) {
+					प्रत्यागम res;
 				}
 
 				new_text = pos + match_length;
@@ -1442,7 +1442,7 @@ textplain_textsearch_find(struct content *c,
 		}
 	}
 
-	return res;
+	प्रत्यागम res;
 }
 
 
@@ -1455,56 +1455,56 @@ textplain_textsearch_find(struct content *c,
  * \param[in] end   byte offset of end
  * \param[out] r    rectangle to be completed
  */
-static void
-textplain_coords_from_range(struct content *c,
+स्थिर शून्य
+textplain_coords_from_range(संरचना content *c,
 			    unsigned start,
 			    unsigned end,
-			    struct rect *r)
+			    संरचना rect *r)
 {
 	textplain_content *text = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	char *utf8_data;
-	struct textplain_line *line;
+	भिन्न ओळ_height = textplain_ओळ_height();
+	वर्ण *utf8_data;
+	संरचना textplain_ओळ *ओळ;
 	unsigned lineno = 0;
 	unsigned nlines;
 
-	assert(c != NULL);
-	assert(start <= end);
-	assert(end <= text->utf8_data_size);
+	प्रतिज्ञा(c != रिक्त);
+	प्रतिज्ञा(start <= end);
+	प्रतिज्ञा(end <= text->utf8_data_size);
 
 	utf8_data = text->utf8_data;
-	nlines = text->physical_line_count;
-	line = text->physical_line;
+	nlines = text->physical_ओळ_मोजणी;
+	ओळ = text->physical_ओळ;
 
 	/* find start */
-	lineno = textplain_find_line(c, start);
+	lineno = textplain_find_ओळ(c, start);
 
-	r->y0 = (int)(MARGIN + lineno * line_height);
+	r->y0 = (पूर्णाङ्क)(MARGIN + lineno * ओळ_height);
 
-	if (lineno + 1 <= nlines || line[lineno + 1].start >= end) {
+	यदि (lineno + 1 <= nlines || ओळ[lineno + 1].start >= end) {
 		/* \todo - it may actually be more efficient just to
 		 *   run forwards most of the time
 		 */
 
 		/* find end */
-		lineno = textplain_find_line(c, end);
+		lineno = textplain_find_ओळ(c, end);
 
 		r->x0 = 0;
 		r->x1 = text->formatted_width;
-	} else {
+	} अन्यथा {
 		/* single line */
-		const char *text = utf8_data + line[lineno].start;
+		ध्रुव वर्ण *text = utf8_data + ओळ[lineno].start;
 
 		r->x0 = textplain_coord_from_offset(text,
-						    start - line[lineno].start,
-						    line[lineno].length);
+						    start - ओळ[lineno].start,
+						    ओळ[lineno].length);
 
 		r->x1 = textplain_coord_from_offset(text,
-						    end - line[lineno].start,
-						    line[lineno].length);
+						    end - ओळ[lineno].start,
+						    ओळ[lineno].length);
 	}
 
-	r->y1 = (int)(MARGIN + (lineno + 1) * line_height);
+	r->y1 = (पूर्णाङ्क)(MARGIN + (lineno + 1) * ओळ_height);
 }
 
 
@@ -1519,8 +1519,8 @@ textplain_coords_from_range(struct content *c,
  * \param[out] plen receives validated length
  * \return pointer to text, or NULL if no text
  */
-static char *
-textplain_get_raw_data(struct content *c,
+स्थिर वर्ण *
+textplain_get_raw_data(संरचना content *c,
 		       unsigned start,
 		       unsigned end,
 		       size_t *plen)
@@ -1528,79 +1528,79 @@ textplain_get_raw_data(struct content *c,
 	textplain_content *text = (textplain_content *) c;
 	size_t utf8_size;
 
-	assert(c != NULL);
+	प्रतिज्ञा(c != रिक्त);
 
 	utf8_size = text->utf8_data_size;
 
 	/* any text at all? */
-	if (!utf8_size) return NULL;
+	यदि (!utf8_size) प्रत्यागम रिक्त;
 
 	/* clamp to valid offset range */
-	if (start >= utf8_size) start = utf8_size;
-	if (end >= utf8_size) end = utf8_size;
+	यदि (start >= utf8_size) start = utf8_size;
+	यदि (end >= utf8_size) end = utf8_size;
 
 	*plen = end - start;
 
-	return text->utf8_data + start;
+	प्रत्यागम text->utf8_data + start;
 }
 
 
 /**
  * get bounds of a free text search match
  */
-static nserror
-textplain_textsearch_bounds(struct content *c,
+स्थिर nserror
+textplain_textsearch_bounds(संरचना content *c,
 			    unsigned start_idx,
 			    unsigned end_idx,
-			    struct box *start_box,
-			    struct box *end_box,
-			    struct rect *bounds)
+			    संरचना box *start_box,
+			    संरचना box *end_box,
+			    संरचना rect *bounds)
 {
 	textplain_coords_from_range(c, start_idx, end_idx, bounds);
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
 /**
  * invalidate a region based on offsets into the text cauing a redraw
  */
-static nserror
-textplain_textselection_redraw(struct content *c,
+स्थिर nserror
+textplain_textselection_redraw(संरचना content *c,
 			       unsigned start_idx,
 			       unsigned end_idx)
 {
-	struct rect r;
+	संरचना rect r;
 
-	if (end_idx <= start_idx) {
-		return NSERROR_BAD_PARAMETER;
+	यदि (end_idx <= start_idx) {
+		प्रत्यागम NSERROR_BAD_PARAMETER;
 	}
 
 	textplain_coords_from_range(c, start_idx, end_idx, &r);
 
 	content__request_redraw(c, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0);
 
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
-static nserror
-textplain_textselection_copy(struct content *c,
+स्थिर nserror
+textplain_textselection_copy(संरचना content *c,
 			     unsigned start_idx,
 			     unsigned end_idx,
-			     struct selection_string *selstr)
+			     संरचना selection_string *selstr)
 {
-	const char *text;
+	ध्रुव वर्ण *text;
 	size_t length;
 	bool res = false;
 
 	text = textplain_get_raw_data(c, start_idx, end_idx, &length);
-	if (text != NULL) {
-		res = selection_string_append(text, length, false, NULL, selstr);
+	यदि (text != रिक्त) {
+		res = selection_string_append(text, length, false, रिक्त, selstr);
 	}
-	if (res == false) {
-		return NSERROR_NOMEM;
+	यदि (res == false) {
+		प्रत्यागम NSERROR_NOMEM;
 	}
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
@@ -1610,20 +1610,20 @@ textplain_textselection_copy(struct content *c,
  * \param[in] c Content to retrieve size of
  * \return Size, in bytes, of data
  */
-static nserror
-textplain_textselection_get_end(struct content *c, unsigned *end_idx)
+स्थिर nserror
+textplain_textselection_get_end(संरचना content *c, unsigned *end_idx)
 {
 	textplain_content *text = (textplain_content *)c;
 
 	*end_idx = text->utf8_data_size;
-	return NSERROR_OK;
+	प्रत्यागम NSERROR_OK;
 }
 
 
 /**
  * plain text content handler table
  */
-static const content_handler textplain_content_handler = {
+स्थिर ध्रुव content_handler textplain_content_handler = {
 	.fini = textplain_fini,
 	.create = textplain_create,
 	.process_data = textplain_process_data,
@@ -1649,7 +1649,7 @@ static const content_handler textplain_content_handler = {
 
 
 /* exported interface documented in html/textplain.h */
-nserror textplain_init(void)
+nserror textplain_init(शून्य)
 {
 	lwc_error lerror;
 	nserror error;
@@ -1657,23 +1657,23 @@ nserror textplain_init(void)
 	lerror = lwc_intern_string("Windows-1252",
 				   SLEN("Windows-1252"),
 				   &textplain_default_charset);
-	if (lerror != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	यदि (lerror != lwc_error_ok) {
+		प्रत्यागम NSERROR_NOMEM;
 	}
 
 	error = content_factory_register_handler("text/plain",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
 	error = content_factory_register_handler("application/json",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
-	return error;
+	प्रत्यागम error;
 }
 
 
