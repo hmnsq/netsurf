@@ -21,9 +21,9 @@
  * Content for image/gif (interface).
  */
 
-#ifndef _NETSURF_IMAGE_GIF_H_
-#define _NETSURF_IMAGE_GIF_H_
+#جے_بنا_تعریف _NETSURF_IMAGE_GIF_H_
+#تعریف_کرو _NETSURF_IMAGE_GIF_H_
 
-nserror nsgif_init(void);
+nserror nsgif_init(فراغ);
 
-#endif
+#جے_انت

@@ -23,15 +23,15 @@
  * Interface to content handler for plain text.
  */
 
-#ifndef NETSURF_HTML_TEXTPLAIN_H
-#define NETSURF_HTML_TEXTPLAIN_H
+#جے_بنا_تعریف NETSURF_HTML_TEXTPLAIN_H
+#تعریف_کرو NETSURF_HTML_TEXTPLAIN_H
 
 /**
  * Initialise the text content handler
  *
  * \return NSERROR_OK on success else appropriate error code.
  */
-nserror textplain_init(void);
+nserror textplain_init(فراغ);
 
 
-#endif
+#جے_انت

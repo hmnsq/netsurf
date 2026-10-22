@@ -23,35 +23,35 @@
  * This implementation uses the JXL library.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
-#include <string.h>
+#ضمن <stdbool.h>
+#ضمن <stdlib.h>
+#ضمن <setjmp.h>
+#ضمن <string.h>
 
-#include <jxl/decode.h>
+#ضمن <jxl/decode.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "netsurf/bitmap.h"
+#ضمن "content/llcache.h"
+#ضمن "content/content.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "desktop/gui_internal.h"
+#ضمن "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#ضمن "image/image_cache.h"
 
-#include "image/jpegxl.h"
+#ضمن "image/jpegxl.h"
 
 
 /**
  * output image format
  */
-static const JxlPixelFormat jxl_output_format = {
-	.num_channels = 4,
-	.data_type    = JXL_TYPE_UINT8,
+ساكن ثابت JxlPixelFormat jxl_output_format = {
+	.عدد_channels = 4,
+	.انکڑے_type    = JXL_TYPE_UINT8,
 	.endianness   = JXL_LITTLE_ENDIAN,
 	.align        = 0,
 };
@@ -59,43 +59,43 @@ static const JxlPixelFormat jxl_output_format = {
 /**
  * Content create entry point.
  */
-static nserror
-nsjpegxl_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ساكن nserror
+nsjpegxl_create(ثابت content_handler *handler,
+		lwc_string *imime_type, ثابت بنية http_parameter *params,
+		llcache_handle *llcache, ثابت حرف *fallback_charset,
+		bool quirks, بنية content **c)
 {
-	struct content *jpeg;
+	بنية content *jpeg;
 	nserror error;
 
-	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	jpeg = صفر_حافظہ_دیو(1, حجم(بنية content));
+	إذا (jpeg == عدم)
+		أرجع NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(jpeg);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(jpeg);
+		أرجع error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
  * create a bitmap from jpeg xl content.
  */
-static struct bitmap *
-jpegxl_cache_convert(struct content *c)
+ساكن بنية bitmap *
+jpegxl_cache_convert(بنية content *c)
 {
-	struct bitmap * bitmap = NULL;
+	بنية bitmap * bitmap = عدم;
 	JxlDecoder *jxldec;
-	JxlDecoderStatus decstatus;
+	Jxl_Decoder_حالت decstatus;
 	JxlBasicInfo binfo;
-	const uint8_t *src_data;
-	size_t src_size;
+	ثابت uint8_t *src_انکڑے;
+	size_t src_ناپ;
 	uint8_t * output;
 	bitmap_fmt_t jxl_fmt = {
 		/** TODO: At the moment we have to set the layout to the only
@@ -109,232 +109,232 @@ jpegxl_cache_convert(struct content *c)
 		.pma    = bitmap_fmt.pma,
 	};
 
-	jxldec = JxlDecoderCreate(NULL);
-	if (jxldec == NULL) {
+	jxldec = JxlDecoderCreate(عدم);
+	إذا (jxldec == عدم) {
 		NSLOG(netsurf, ERROR, "Unable to allocate decoder");
-		return NULL;
+		أرجع عدم;
 	}
 
-	decstatus = JxlDecoderSetUnpremultiplyAlpha(jxldec, !bitmap_fmt.pma);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus = Jxl_Decoder_سیٹ_Unpremultiply_Alpha(jxldec, !bitmap_fmt.pma);
+	إذا (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set premultiplied alpha status: %d",
 				decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		أرجع عدم;
 	}
 
-	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_FULL_IMAGE);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_بھریا_IMAGE);
+	إذا (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "Unable to subscribe");
-		return NULL;
+		أرجع عدم;
 	}
-	src_data = content__get_source_data(c, &src_size);
+	src_انکڑے = content_get_سروت_انکڑے_2(c, &src_ناپ);
 
-	decstatus = JxlDecoderSetInput(jxldec, src_data, src_size);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus = Jxl_Decoder_سیٹ_داخلہ(jxldec, src_انکڑے, src_ناپ);
+	إذا (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set input");
-		return NULL;
+		أرجع عدم;
 	}
 
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
+	decstatus = Jxl_Decoder_Process_داخلہ(jxldec);
+	إذا (decstatus != JXL_DEC_NEED_IMAGE_باہرلا_بفر) {
 		NSLOG(netsurf, ERROR,
 		      "expected status JXL_DEC_NEED_IMAGE_OUT_BUFFER(%d) got %d",
-		      JXL_DEC_NEED_IMAGE_OUT_BUFFER,
+		      JXL_DEC_NEED_IMAGE_باہرلا_بفر,
 		      decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		أرجع عدم;
 	}
 
 	decstatus = JxlDecoderGetBasicInfo(jxldec, &binfo);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	إذا (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to get basic info status:%d",decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		أرجع عدم;
 	}
 
 	/* create bitmap with appropriate opacity */
-	if (binfo.alpha_bits > 0) {
-		bitmap = guit->bitmap->create(c->width, c->height, BITMAP_OPAQUE);
-	} else {
-		bitmap = guit->bitmap->create(c->width, c->height, BITMAP_NONE);
+	إذا (binfo.alpha_بٹ > 0) {
+		bitmap = guit->bitmap->create(c->چوڑائی, c->اچائی, BITMAP_OPAQUE);
+	} وإلا {
+		bitmap = guit->bitmap->create(c->چوڑائی, c->اچائی, BITMAP_NONE);
 	}
-	if (bitmap == NULL) {
+	إذا (bitmap == عدم) {
 		/* empty bitmap could not be created */
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		أرجع عدم;
 	}
 
 	/* ensure buffer was allocated */
-	output = guit->bitmap->get_buffer(bitmap);
-	if (output == NULL) {
+	output = guit->bitmap->get_بفر(bitmap);
+	إذا (output == عدم) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		أرجع عدم;
 	}
-	decstatus = JxlDecoderSetImageOutBuffer(jxldec, &jxl_output_format, output, c->size);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus = Jxl_Decoder_سیٹ_Image_باہرلا_بفر(jxldec, &jxl_output_format, output, c->ناپ);
+	إذا (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set output buffer callback status:%d",decstatus);
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		أرجع عدم;
 	}
 
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_FULL_IMAGE) {
+	decstatus = Jxl_Decoder_Process_داخلہ(jxldec);
+	إذا (decstatus != JXL_DEC_بھریا_IMAGE) {
 		NSLOG(netsurf, ERROR, "did not get decode event");
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		أرجع عدم;
 	}
 	
 	JxlDecoderDestroy(jxldec);
 
-	bitmap_format_to_client(bitmap, &jxl_fmt);
+	bitmap_format_منزل_client(bitmap, &jxl_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	أرجع bitmap;
 }
 
 /**
  * report failiure
  */
-static bool jxl_report_fail(struct content *c, JxlDecoderStatus decstatus, const char *msg)
+ساكن bool jxl_report_fail(بنية content *c, Jxl_Decoder_حالت decstatus, ثابت حرف *پیغام)
 {
-	union content_msg_data msg_data;
-	NSLOG(netsurf, ERROR, "%s decoder status:%d", msg, decstatus);
-	msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-	msg_data.errordata.errormsg = msg;
-	content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-	return false;
+	اتحاد content_پیغام_انکڑے پیغام_انکڑے;
+	NSLOG(netsurf, ERROR, "%s decoder status:%d", پیغام, decstatus);
+	پیغام_انکڑے.errordata.errorcode = NSERROR_UNKNOWN;
+	پیغام_انکڑے.errordata.errormsg = پیغام;
+	content_نشر(c, CONTENT_پیغام_ERROR, &پیغام_انکڑے);
+	أرجع false;
 }
 
 /**
  * Convert a CONTENT_JPEGXL for display.
  */
-static bool nsjpegxl_convert(struct content *c)
+ساكن bool nsjpegxl_convert(بنية content *c)
 {
 	JxlDecoder *jxldec;
 	JxlSignature decsig;
-	JxlDecoderStatus decstatus = JXL_DEC_ERROR;
+	Jxl_Decoder_حالت decstatus = JXL_DEC_ERROR;
 	JxlBasicInfo binfo;
-	union content_msg_data msg_data;
-	const uint8_t *data;
-	size_t size;
-	char *title;
-	size_t image_size;
+	اتحاد content_پیغام_انکڑے پیغام_انکڑے;
+	ثابت uint8_t *انکڑے;
+	size_t ناپ;
+	حرف *title;
+	size_t image_ناپ;
 
 	/* check image header is valid and get width/height */
-	data = content__get_source_data(c, &size);
+	انکڑے = content_get_سروت_انکڑے_2(c, &ناپ);
 
-	decsig = JxlSignatureCheck(data,size);
-	if ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
+	decsig = JxlSignatureCheck(انکڑے,ناپ);
+	إذا ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
 		NSLOG(netsurf, ERROR, "signature failed");
-		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-		msg_data.errordata.errormsg = "Signature failed";
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		پیغام_انکڑے.errordata.errorcode = NSERROR_UNKNOWN;
+		پیغام_انکڑے.errordata.errormsg = "Signature failed";
+		content_نشر(c, CONTENT_پیغام_ERROR, &پیغام_انکڑے);
+		أرجع false;
 	}
 
-	jxldec = JxlDecoderCreate(NULL);
-	if (jxldec == NULL) {
-		return jxl_report_fail(c, decstatus, "Unable to allocate decoder");
+	jxldec = JxlDecoderCreate(عدم);
+	إذا (jxldec == عدم) {
+		أرجع jxl_report_fail(c, decstatus, "Unable to allocate decoder");
 	}
 	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_BASIC_INFO);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "Unable to subscribe");
+	إذا (decstatus != JXL_DEC_SUCCESS) {
+		أرجع jxl_report_fail(c, decstatus, "Unable to subscribe");
 	}
-	decstatus = JxlDecoderSetInput(jxldec, data,size);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable to set input");
+	decstatus = Jxl_Decoder_سیٹ_داخلہ(jxldec, انکڑے,ناپ);
+	إذا (decstatus != JXL_DEC_SUCCESS) {
+		أرجع jxl_report_fail(c, decstatus, "unable to set input");
 	}
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_BASIC_INFO) {
-		return jxl_report_fail(c, decstatus, "did not get basic info event");
+	decstatus = Jxl_Decoder_Process_داخلہ(jxldec);
+	إذا (decstatus != JXL_DEC_BASIC_INFO) {
+		أرجع jxl_report_fail(c, decstatus, "did not get basic info event");
 	}
 	decstatus = JxlDecoderGetBasicInfo(jxldec, &binfo);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable to get basic info");
+	إذا (decstatus != JXL_DEC_SUCCESS) {
+		أرجع jxl_report_fail(c, decstatus, "unable to get basic info");
 	}
-	decstatus = JxlDecoderImageOutBufferSize(jxldec, &jxl_output_format, &image_size);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable get image size");
+	decstatus = Jxl_Decoder_Image_باہرلا_بفر_ناپ(jxldec, &jxl_output_format, &image_ناپ);
+	إذا (decstatus != JXL_DEC_SUCCESS) {
+		أرجع jxl_report_fail(c, decstatus, "unable get image size");
 	}
 	
 	JxlDecoderDestroy(jxldec);
 
-	NSLOG(netsurf, INFO, "got basic info size:%ld x:%d y:%d", image_size, binfo.xsize, binfo.ysize);
+	NSLOG(netsurf, INFO, "got basic info size:%ld x:%d y:%d", image_ناپ, binfo.xsize, binfo.ysize);
 
-	c->width = binfo.xsize;
-	c->height = binfo.ysize;
-	c->size = image_size;
+	c->چوڑائی = binfo.xsize;
+	c->اچائی = binfo.ysize;
+	c->ناپ = image_ناپ;
 
-	image_cache_add(c, NULL, jpegxl_cache_convert);
+	image_cache_جوڑو(c, عدم, jpegxl_cache_convert);
 
 	/* set title text */
 	title = messages_get_buff("JPEGXLTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_پتی(llcache_handle_get_url(c->llcache)),
+			c->چوڑائی, c->اچائی);
+	إذا (title != عدم) {
+		content_سیٹ_title(c, title);
+		حرر(title);
 	}
 
-	content_set_ready(c);
-	content_set_done(c);	
-	content_set_status(c, ""); /* Done: update status bar */
+	content_سیٹ_ready(c);
+	content_سیٹ_پورا(c);	
+	content_سیٹ_حالت(c, ""); /* Done: update status bar */
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Clone content.
  */
-static nserror nsjpegxl_clone(const struct content *old, struct content **newc)
+ساكن nserror nsjpegxl_clone(ثابت بنية content *old, بنية content **newc)
 {
-	struct content *jpegxl_c;
+	بنية content *jpegxl_c;
 	nserror error;
 
-	jpegxl_c = calloc(1, sizeof(struct content));
-	if (jpegxl_c == NULL)
-		return NSERROR_NOMEM;
+	jpegxl_c = صفر_حافظہ_دیو(1, حجم(بنية content));
+	إذا (jpegxl_c == عدم)
+		أرجع NSERROR_NOMEM;
 
 	error = content__clone(old, jpegxl_c);
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		content_destroy(jpegxl_c);
-		return error;
+		أرجع error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
-	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpegxl_convert(jpegxl_c) == false) {
+	إذا ((old->حالت == CONTENT_حالت_READY) ||
+	    (old->حالت == CONTENT_حالت_پورا)) {
+		إذا (nsjpegxl_convert(jpegxl_c) == false) {
 			content_destroy(jpegxl_c);
-			return NSERROR_CLONE_FAILED;
+			أرجع NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpegxl_c;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static const content_handler nsjpegxl_content_handler = {
+ساكن ثابت content_handler nsjpegxl_content_handler = {
 	.create = nsjpegxl_create,
-	.data_complete = nsjpegxl_convert,
+	.انکڑے_complete = nsjpegxl_convert,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
 	.clone = nsjpegxl_clone,
-	.get_internal = image_cache_get_internal,
+	.get_اندرونی = image_cache_get_اندرونی,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsjpegxl_types[] = {
+ساكن ثابت حرف *nsjpegxl_types[] = {
 	"image/jxl",
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsjpegxl, nsjpegxl_types, nsjpegxl_content_handler);
+CONTENT_FACTORY_رجسٹر_TYPES(nsjpegxl, nsjpegxl_types, nsjpegxl_content_handler);

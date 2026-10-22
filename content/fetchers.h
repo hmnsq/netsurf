@@ -22,15 +22,15 @@
  * Interface for fetchers factory.
  */
 
-#ifndef _NETSURF_DESKTOP_FETCHERS_H_
-#define _NETSURF_DESKTOP_FETCHERS_H_
+#جے_بنا_تعریف _NETSURF_DESKTOP_FETCHERS_H_
+#تعریف_کرو _NETSURF_DESKTOP_FETCHERS_H_
 
-#include "utils/inet.h" /* this is necessary for the fd_set definition */
-#include <libwapcaplet/libwapcaplet.h>
+#ضمن "utils/inet.h" /* this is necessary for the fd_set definition */
+#ضمن <libwapcaplet/libwapcaplet.h>
 
-struct nsurl;
-struct fetch_multipart_data;
-struct fetch;
+بنية nsurl;
+بنية fetch_multipart_انکڑے;
+بنية fetch;
 
 /**
  * Fetcher operations API
@@ -46,7 +46,7 @@ struct fetch;
  *   after completion or abort it is freed
  *
  */
-struct fetcher_operation_table {
+بنية fetcher_operation_جدول {
 	/**
 	 * The initialiser for the fetcher.
 	 *
@@ -60,46 +60,46 @@ struct fetcher_operation_table {
 	 * \param url the URL to check
 	 * \return true if the fetcher can handle the url else false.
 	 */
-	bool (*acceptable)(const struct nsurl *url);
+	bool (*acceptable)(ثابت بنية nsurl *url);
 
 	/**
 	 * Setup a fetch
 	 */
-	void *(*setup)(struct fetch *parent_fetch, struct nsurl *url,
-		bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		const struct fetch_multipart_data *post_multipart,
-		const char **headers);
+	فراغ *(*تیاری)(بنية fetch *ماپا_fetch, بنية nsurl *url,
+		bool only_2xx, bool downgrade_tls, ثابت حرف *post_urlenc,
+		ثابت بنية fetch_multipart_انکڑے *post_multipart,
+		ثابت حرف **سرخیاں);
 
 	/**
 	 * start a fetch.
 	 */
-	bool (*start)(void *fetch);
+	bool (*شروع)(فراغ *fetch);
 
 	/**
 	 * abort a fetch.
 	 */
-	void (*abort)(void *fetch);
+	فراغ (*abort)(فراغ *fetch);
 
 	/**
 	 * free a fetch allocated through the setup method.
 	 */
-	void (*free)(void *fetch);
+	فراغ (*حرر)(فراغ *fetch);
 
 	/**
 	 * poll a fetcher to let it make progress.
 	 */
-	void (*poll)(lwc_string *scheme);
+	فراغ (*poll)(lwc_string *scheme);
 
 	/**
 	 * update an fdset with the FDs needed to poll cleanly
 	 */
-	int (*fdset)(lwc_string *scheme, fd_set *read_set, fd_set *write_set,
-		     fd_set *error_set);
+	صحيح (*fdset)(lwc_string *scheme, fd_set *read_سیٹ, fd_set *write_سیٹ,
+		     fd_set *error_سیٹ);
 
 	/**
 	 * Finalise the fetcher.
 	 */
-	void (*finalise)(lwc_string *scheme);
+	فراغ (*finalise)(lwc_string *scheme);
 };
 
 
@@ -110,7 +110,7 @@ struct fetcher_operation_table {
  * \param ops The operations for the fetcher.
  * \return NSERROR_OK or appropriate error code.
  */
-nserror fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *ops);
+nserror fetcher_جوڑو(lwc_string *scheme, ثابت بنية fetcher_operation_جدول *ops);
 
 
 /**
@@ -118,7 +118,7 @@ nserror fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *op
  *
  * \return NSERROR_OK or error code
  */
-nserror fetcher_init(void);
+nserror fetcher_init(فراغ);
 
 
 /**
@@ -126,7 +126,7 @@ nserror fetcher_init(void);
  *
  * Must be called before exiting.
  */
-void fetcher_quit(void);
+فراغ fetcher_quit(فراغ);
 
 
-#endif
+#جے_انت

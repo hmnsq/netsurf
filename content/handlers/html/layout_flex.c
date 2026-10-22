@@ -31,38 +31,38 @@
  * layout_minmax_X() and layout_X().
  */
 
-#include <string.h>
+#ضمن <string.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
+#ضمن "utils/log.h"
+#ضمن "utils/utils.h"
 
-#include "html/box.h"
-#include "html/html.h"
-#include "html/private.h"
-#include "html/box_inspect.h"
-#include "html/layout_internal.h"
+#ضمن "html/box.h"
+#ضمن "html/html.h"
+#ضمن "html/private.h"
+#ضمن "html/box_inspect.h"
+#ضمن "html/layout_internal.h"
 
 /**
  * Flex item data
  */
-struct flex_item_data {
-	enum css_flex_basis_e basis;
-	css_fixed basis_length;
+بنية flex_شے_انکڑے {
+	تعداد css_flex_basis_e basis;
+	css_fixed basis_لمائی;
 	css_unit basis_unit;
-	struct box *box;
+	بنية box *box;
 
 	css_fixed shrink;
 	css_fixed grow;
 
-	int min_main;
-	int max_main;
-	int min_cross;
-	int max_cross;
+	صحيح min_main;
+	صحيح max_main;
+	صحيح min_cross;
+	صحيح max_cross;
 
-	int target_main_size;
-	int base_size;
-	int main_size;
-	size_t line;
+	صحيح نشانہ_main_ناپ;
+	صحيح ادھار_ناپ;
+	صحيح main_ناپ;
+	size_t سطر;
 
 	bool freeze;
 	bool min_violation;
@@ -72,48 +72,48 @@ struct flex_item_data {
 /**
  * Flex line data
  */
-struct flex_line_data {
-	int main_size;
-	int cross_size;
+بنية flex_سطر_انکڑے {
+	صحيح main_ناپ;
+	صحيح cross_ناپ;
 
-	int used_main_size;
-	int main_auto_margin_count;
+	صحيح ورتیا_main_ناپ;
+	صحيح main_auto_margin_گنتی;
 
-	int pos;
+	صحيح pos;
 
-	size_t first;
-	size_t count;
+	size_t پہلا;
+	size_t گنتی;
 	size_t frozen;
 };
 
 /**
  * Flex layout context
  */
-struct flex_ctx {
+بنية flex_ctx {
 	html_content *content;
-	const struct box *flex;
-	const css_unit_ctx *unit_len_ctx;
+	ثابت بنية box *flex;
+	ثابت css_unit_ctx *unit_len_ctx;
 
-	int main_size;
-	int cross_size;
+	صحيح main_ناپ;
+	صحيح cross_ناپ;
 
-	int available_main;
-	int available_cross;
+	صحيح دستیاب_main;
+	صحيح دستیاب_cross;
 
 	bool horizontal;
 	bool main_reversed;
-	enum css_flex_wrap_e wrap;
+	تعداد css_flex_wrap_e wrap;
 
-	struct flex_items {
-		size_t count;
-		struct flex_item_data *data;
-	} item;
+	بنية flex_اشیاء {
+		size_t گنتی;
+		بنية flex_شے_انکڑے *انکڑے;
+	} شے;
 
-	struct flex_lines {
-		size_t count;
+	بنية flex_سطریں {
+		size_t گنتی;
 		size_t alloc;
-		struct flex_line_data *data;
-	} line;
+		بنية flex_سطر_انکڑے *انکڑے;
+	} سطر;
 };
 
 /**
@@ -121,12 +121,12 @@ struct flex_ctx {
  *
  * \param[in] ctx  Flex layout context
  */
-static void layout_flex_ctx__destroy(struct flex_ctx *ctx)
+ساكن فراغ layout_flex_ctx__destroy(بنية flex_ctx *ctx)
 {
-	if (ctx != NULL) {
-		free(ctx->item.data);
-		free(ctx->line.data);
-		free(ctx);
+	إذا (ctx != عدم) {
+		حرر(ctx->شے.انکڑے);
+		حرر(ctx->سطر.انکڑے);
+		حرر(ctx);
 	}
 }
 
@@ -137,30 +137,30 @@ static void layout_flex_ctx__destroy(struct flex_ctx *ctx)
  * \param[in] flex     Box to create layout context for
  * \return flex layout context or NULL on error
  */
-static struct flex_ctx *layout_flex_ctx__create(
+ساكن بنية flex_ctx *layout_flex_ctx__create(
 		html_content *content,
-		const struct box *flex)
+		ثابت بنية box *flex)
 {
-	struct flex_ctx *ctx;
+	بنية flex_ctx *ctx;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL) {
-		return NULL;
+	ctx = صفر_حافظہ_دیو(1, حجم(*ctx));
+	إذا (ctx == عدم) {
+		أرجع عدم;
 	}
-	ctx->line.alloc = 1;
+	ctx->سطر.alloc = 1;
 
-	ctx->item.count = box_count_children(flex);
-	ctx->item.data = calloc(ctx->item.count, sizeof(*ctx->item.data));
-	if (ctx->item.data == NULL) {
+	ctx->شے.گنتی = box_گنتی_children(flex);
+	ctx->شے.انکڑے = صفر_حافظہ_دیو(ctx->شے.گنتی, حجم(*ctx->شے.انکڑے));
+	إذا (ctx->شے.انکڑے == عدم) {
 		layout_flex_ctx__destroy(ctx);
-		return NULL;
+		أرجع عدم;
 	}
 
-	ctx->line.alloc = 1;
-	ctx->line.data = calloc(ctx->line.alloc, sizeof(*ctx->line.data));
-	if (ctx->line.data == NULL) {
+	ctx->سطر.alloc = 1;
+	ctx->سطر.انکڑے = صفر_حافظہ_دیو(ctx->سطر.alloc, حجم(*ctx->سطر.انکڑے));
+	إذا (ctx->سطر.انکڑے == عدم) {
 		layout_flex_ctx__destroy(ctx);
-		return NULL;
+		أرجع عدم;
 	}
 
 	ctx->flex = flex;
@@ -171,7 +171,7 @@ static struct flex_ctx *layout_flex_ctx__create(
 	ctx->horizontal = lh__flex_main_is_horizontal(flex);
 	ctx->main_reversed = lh__flex_direction_reversed(flex);
 
-	return ctx;
+	أرجع ctx;
 }
 
 /**
@@ -180,13 +180,13 @@ static struct flex_ctx *layout_flex_ctx__create(
  * \param[in] ctx   Flex layout context.
  * \return the start side.
  */
-static enum box_side layout_flex__main_start_side(
-		const struct flex_ctx *ctx)
+ساكن تعداد box_side layout_flex_main_شروع_side(
+		ثابت بنية flex_ctx *ctx)
 {
-	if (ctx->horizontal) {
-		return (ctx->main_reversed) ? RIGHT : LEFT;
-	} else {
-		return (ctx->main_reversed) ? BOTTOM : TOP;
+	إذا (ctx->horizontal) {
+		أرجع (ctx->main_reversed) ? دایاں_2 : بایاں_2;
+	} وإلا {
+		أرجع (ctx->main_reversed) ? BOTTOM : چوٹی_2;
 	}
 }
 
@@ -196,13 +196,13 @@ static enum box_side layout_flex__main_start_side(
  * \param[in] ctx   Flex layout context.
  * \return the end side.
  */
-static enum box_side layout_flex__main_end_side(
-		const struct flex_ctx *ctx)
+ساكن تعداد box_side layout_flex_main_سرا_side(
+		ثابت بنية flex_ctx *ctx)
 {
-	if (ctx->horizontal) {
-		return (ctx->main_reversed) ? LEFT : RIGHT;
-	} else {
-		return (ctx->main_reversed) ? TOP : BOTTOM;
+	إذا (ctx->horizontal) {
+		أرجع (ctx->main_reversed) ? بایاں_2 : دایاں_2;
+	} وإلا {
+		أرجع (ctx->main_reversed) ? چوٹی_2 : BOTTOM;
 	}
 }
 
@@ -214,39 +214,39 @@ static enum box_side layout_flex__main_end_side(
  * \param[in] available_width  Available width for item in pixels
  * \return true on success false on failure
  */
-static bool layout_flex_item(
-		const struct flex_ctx *ctx,
-		const struct flex_item_data *item,
-		int available_width)
+ساكن bool layout_flex_شے(
+		ثابت بنية flex_ctx *ctx,
+		ثابت بنية flex_شے_انکڑے *شے,
+		صحيح دستیاب_چوڑائی)
 {
 	bool success;
-	struct box *b = item->box;
+	بنية box *b = شے->box;
 
-	switch (b->type) {
-	case BOX_BLOCK:
-		success = layout_block_context(b, -1, ctx->content);
-		break;
-	case BOX_TABLE:
-		b->float_container = b->parent;
-		success = layout_table(b, available_width, ctx->content);
-		b->float_container = NULL;
-		break;
-	case BOX_FLEX:
-		b->float_container = b->parent;
-		success = layout_flex(b, available_width, ctx->content);
-		b->float_container = NULL;
-		break;
-	default:
-		assert(0 && "Bad flex item back type");
+	بدل (b->type) {
+	حالة BOX_بلاک:
+		success = layout_بلاک_context(b, -1, ctx->content);
+		اكسر;
+	حالة BOX_جدول:
+		b->float_container = b->ماپا;
+		success = layout_جدول(b, دستیاب_چوڑائی, ctx->content);
+		b->float_container = عدم;
+		اكسر;
+	حالة BOX_FLEX:
+		b->float_container = b->ماپا;
+		success = layout_flex(b, دستیاب_چوڑائی, ctx->content);
+		b->float_container = عدم;
+		اكسر;
+	افتراضي:
+		أكد(0 && "Bad flex item back type");
 		success = false;
-		break;
+		اكسر;
 	}
 
-	if (!success) {
+	إذا (!success) {
 		NSLOG(flex, ERROR, "box %p: layout failed", b);
 	}
 
-	return success;
+	أرجع success;
 }
 
 /**
@@ -257,80 +257,80 @@ static bool layout_flex_item(
  * \param[in] available_width  Available width in pixels
  * \return true on success false on failure
  */
-static inline bool layout_flex__base_and_main_sizes(
-		const struct flex_ctx *ctx,
-		struct flex_item_data *item,
-		int available_width)
+ساكن مضمن bool layout_flex_ادھار_and_main_sizes(
+		ثابت بنية flex_ctx *ctx,
+		بنية flex_شے_انکڑے *شے,
+		صحيح دستیاب_چوڑائی)
 {
-	struct box *b = item->box;
-	int content_min_width = b->min_width;
-	int content_max_width = b->max_width;
-	int delta_outer_main = lh__delta_outer_main(ctx->flex, b);
+	بنية box *b = شے->box;
+	صحيح content_min_چوڑائی = b->min_چوڑائی;
+	صحيح content_max_چوڑائی = b->max_چوڑائی;
+	صحيح delta_outer_main = lh__delta_outer_main(ctx->flex, b);
 
 	NSLOG(flex, DEEPDEBUG, "box %p: delta_outer_main: %i",
 			b, delta_outer_main);
 
-	if (item->basis == CSS_FLEX_BASIS_SET) {
-		if (item->basis_unit == CSS_UNIT_PCT) {
-			item->base_size = FPCT_OF_INT_TOINT(
-					item->basis_length,
-					available_width);
-		} else {
-			item->base_size = FIXTOINT(css_unit_len2device_px(
+	إذا (شے->basis == CSS_FLEX_BASIS_سیٹ) {
+		إذا (شے->basis_unit == CSS_UNIT_PCT) {
+			شے->ادھار_ناپ = FPCT_دا_INT_TOINT(
+					شے->basis_لمائی,
+					دستیاب_چوڑائی);
+		} وإلا {
+			شے->ادھار_ناپ = FIXTOINT(css_unit_len2device_px(
 					b->style, ctx->unit_len_ctx,
-					item->basis_length,
-					item->basis_unit));
+					شے->basis_لمائی,
+					شے->basis_unit));
 		}
 
-	} else if (item->basis == CSS_FLEX_BASIS_AUTO) {
-		item->base_size = ctx->horizontal ? b->width : b->height;
-	} else {
-		item->base_size = AUTO;
+	} وإلا إذا (شے->basis == CSS_FLEX_BASIS_AUTO) {
+		شے->ادھار_ناپ = ctx->horizontal ? b->چوڑائی : b->اچائی;
+	} وإلا {
+		شے->ادھار_ناپ = AUTO;
 	}
 
-	if (ctx->horizontal == false) {
-		if (b->width == AUTO) {
-			b->width = min(max(content_min_width, available_width),
-					content_max_width);
-			b->width -= lh__delta_outer_width(b);
+	إذا (ctx->horizontal == false) {
+		إذا (b->چوڑائی == AUTO) {
+			b->چوڑائی = min(max(content_min_چوڑائی, دستیاب_چوڑائی),
+					content_max_چوڑائی);
+			b->چوڑائی -= lh_delta_outer_چوڑائی(b);
 		}
 
-		if (!layout_flex_item(ctx, item, b->width)) {
-			return false;
-		}
-	}
-
-	if (item->base_size == AUTO) {
-		if (ctx->horizontal == false) {
-			item->base_size = b->height;
-		} else {
-			item->base_size = content_max_width - delta_outer_main;
+		إذا (!layout_flex_شے(ctx, شے, b->چوڑائی)) {
+			أرجع false;
 		}
 	}
 
-	item->base_size += delta_outer_main;
-
-	if (ctx->horizontal) {
-		item->base_size = min(item->base_size, available_width);
-		item->base_size = max(item->base_size, content_min_width);
+	إذا (شے->ادھار_ناپ == AUTO) {
+		إذا (ctx->horizontal == false) {
+			شے->ادھار_ناپ = b->اچائی;
+		} وإلا {
+			شے->ادھار_ناپ = content_max_چوڑائی - delta_outer_main;
+		}
 	}
 
-	item->target_main_size = item->base_size;
-	item->main_size = item->base_size;
+	شے->ادھار_ناپ += delta_outer_main;
 
-	if (item->max_main > 0 &&
-	    item->main_size > item->max_main + delta_outer_main) {
-		item->main_size = item->max_main + delta_outer_main;
+	إذا (ctx->horizontal) {
+		شے->ادھار_ناپ = min(شے->ادھار_ناپ, دستیاب_چوڑائی);
+		شے->ادھار_ناپ = max(شے->ادھار_ناپ, content_min_چوڑائی);
 	}
 
-	if (item->main_size < item->min_main + delta_outer_main) {
-		item->main_size = item->min_main + delta_outer_main;
+	شے->نشانہ_main_ناپ = شے->ادھار_ناپ;
+	شے->main_ناپ = شے->ادھار_ناپ;
+
+	إذا (شے->max_main > 0 &&
+	    شے->main_ناپ > شے->max_main + delta_outer_main) {
+		شے->main_ناپ = شے->max_main + delta_outer_main;
+	}
+
+	إذا (شے->main_ناپ < شے->min_main + delta_outer_main) {
+		شے->main_ناپ = شے->min_main + delta_outer_main;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "flex-item box: %p: base_size: %i, main_size %i",
-			b, item->base_size, item->main_size);
+			b, شے->ادھار_ناپ, شے->main_ناپ);
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -340,38 +340,38 @@ static inline bool layout_flex__base_and_main_sizes(
  * \param[in] flex             Flex box
  * \param[in] available_width  Available width in pixels
  */
-static void layout_flex_ctx__populate_item_data(
-		const struct flex_ctx *ctx,
-		const struct box *flex,
-		int available_width)
+ساكن فراغ layout_flex_ctx_populate_شے_انکڑے(
+		ثابت بنية flex_ctx *ctx,
+		ثابت بنية box *flex,
+		صحيح دستیاب_چوڑائی)
 {
 	size_t i = 0;
 	bool horizontal = ctx->horizontal;
 
-	for (struct box *b = flex->children; b != NULL; b = b->next) {
-		struct flex_item_data *item = &ctx->item.data[i++];
+	لكل (بنية box *b = flex->children; b != عدم; b = b->اگلا) {
+		بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i++];
 
-		b->float_container = b->parent;
-		layout_find_dimensions(ctx->unit_len_ctx, available_width, -1,
-				b, b->style, &b->width, &b->height,
-				horizontal ? &item->max_main : &item->max_cross,
-				horizontal ? &item->min_main : &item->min_cross,
-				horizontal ? &item->max_cross : &item->max_main,
-				horizontal ? &item->min_cross : &item->min_main,
+		b->float_container = b->ماپا;
+		layout_لبھو_dimensions(ctx->unit_len_ctx, دستیاب_چوڑائی, -1,
+				b, b->style, &b->چوڑائی, &b->اچائی,
+				horizontal ? &شے->max_main : &شے->max_cross,
+				horizontal ? &شے->min_main : &شے->min_cross,
+				horizontal ? &شے->max_cross : &شے->max_main,
+				horizontal ? &شے->min_cross : &شے->min_main,
 				b->margin, b->padding, b->border);
-		b->float_container = NULL;
+		b->float_container = عدم;
 
 		NSLOG(flex, DEEPDEBUG, "flex-item box: %p: width: %i",
-				b, b->width);
+				b, b->چوڑائی);
 
-		item->box = b;
-		item->basis = css_computed_flex_basis(b->style,
-				&item->basis_length, &item->basis_unit);
+		شے->box = b;
+		شے->basis = css_computed_flex_basis(b->style,
+				&شے->basis_لمائی, &شے->basis_unit);
 
-		css_computed_flex_shrink(b->style, &item->shrink);
-		css_computed_flex_grow(b->style, &item->grow);
+		css_computed_flex_shrink(b->style, &شے->shrink);
+		css_computed_flex_grow(b->style, &شے->grow);
 
-		layout_flex__base_and_main_sizes(ctx, item, available_width);
+		layout_flex_ادھار_and_main_sizes(ctx, شے, دستیاب_چوڑائی);
 	}
 }
 
@@ -381,26 +381,26 @@ static void layout_flex_ctx__populate_item_data(
  * \param[in] ctx  Flex layout context
  * \return true on success false on out of memory
  */
-static bool layout_flex_ctx__ensure_line(struct flex_ctx *ctx)
+ساكن bool layout_flex_ctx_ensure_سطر(بنية flex_ctx *ctx)
 {
-	struct flex_line_data *temp;
-	size_t line_alloc = ctx->line.alloc * 2;
+	بنية flex_سطر_انکڑے *عارضی;
+	size_t سطر_alloc = ctx->سطر.alloc * 2;
 
-	if (ctx->line.alloc > ctx->line.count) {
-		return true;
+	إذا (ctx->سطر.alloc > ctx->سطر.گنتی) {
+		أرجع true;
 	}
 
-	temp = realloc(ctx->line.data, sizeof(*ctx->line.data) * line_alloc);
-	if (temp == NULL) {
-		return false;
+	عارضی = realloc(ctx->سطر.انکڑے, حجم(*ctx->سطر.انکڑے) * سطر_alloc);
+	إذا (عارضی == عدم) {
+		أرجع false;
 	}
-	ctx->line.data = temp;
+	ctx->سطر.انکڑے = عارضی;
 
-	memset(ctx->line.data + ctx->line.alloc, 0,
-	       sizeof(*ctx->line.data) * (line_alloc - ctx->line.alloc));
-	ctx->line.alloc = line_alloc;
+	memset(ctx->سطر.انکڑے + ctx->سطر.alloc, 0,
+	       حجم(*ctx->سطر.انکڑے) * (سطر_alloc - ctx->سطر.alloc));
+	ctx->سطر.alloc = سطر_alloc;
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -410,65 +410,65 @@ static bool layout_flex_ctx__ensure_line(struct flex_ctx *ctx)
  * \param[in] item_index  Index to first item to assign to this line
  * \return Pointer to the new line, or NULL on error.
  */
-static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
-		size_t item_index)
+ساكن بنية flex_سطر_انکڑے *layout_flex_build_سطر(بنية flex_ctx *ctx,
+		size_t شے_اشاریہ)
 {
-	enum box_side start_side = layout_flex__main_start_side(ctx);
-	enum box_side end_side = layout_flex__main_end_side(ctx);
-	struct flex_line_data *line;
-	int used_main = 0;
+	تعداد box_side شروع_side = layout_flex_main_شروع_side(ctx);
+	تعداد box_side سرا_side = layout_flex_main_سرا_side(ctx);
+	بنية flex_سطر_انکڑے *سطر;
+	صحيح ورتیا_main = 0;
 
-	if (!layout_flex_ctx__ensure_line(ctx)) {
-		return NULL;
+	إذا (!layout_flex_ctx_ensure_سطر(ctx)) {
+		أرجع عدم;
 	}
 
-	line = &ctx->line.data[ctx->line.count];
-	line->first = item_index;
+	سطر = &ctx->سطر.انکڑے[ctx->سطر.گنتی];
+	سطر->پہلا = شے_اشاریہ;
 
 	NSLOG(flex, DEEPDEBUG, "flex container %p: available main: %i",
-			ctx->flex, ctx->available_main);
+			ctx->flex, ctx->دستیاب_main);
 
-	while (item_index < ctx->item.count) {
-		struct flex_item_data *item = &ctx->item.data[item_index];
-		struct box *b = item->box;
-		int pos_main;
+	طالما (شے_اشاریہ < ctx->شے.گنتی) {
+		بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[شے_اشاریہ];
+		بنية box *b = شے->box;
+		صحيح pos_main;
 
 		pos_main = ctx->horizontal ?
-				item->main_size :
-				b->height + lh__delta_outer_main(ctx->flex, b);
+				شے->main_ناپ :
+				b->اچائی + lh__delta_outer_main(ctx->flex, b);
 
-		if (ctx->wrap == CSS_FLEX_WRAP_NOWRAP ||
-		    pos_main + used_main <= ctx->available_main ||
-		    lh__box_is_absolute(item->box) ||
-		    ctx->available_main == AUTO ||
-		    line->count == 0 ||
+		إذا (ctx->wrap == CSS_FLEX_WRAP_NOWRAP ||
+		    pos_main + ورتیا_main <= ctx->دستیاب_main ||
+		    lh__box_is_absolute(شے->box) ||
+		    ctx->دستیاب_main == AUTO ||
+		    سطر->گنتی == 0 ||
 		    pos_main == 0) {
-			if (lh__box_is_absolute(item->box) == false) {
-				line->main_size += item->main_size;
-				used_main += pos_main;
+			إذا (lh__box_is_absolute(شے->box) == false) {
+				سطر->main_ناپ += شے->main_ناپ;
+				ورتیا_main += pos_main;
 
-				if (b->margin[start_side] == AUTO) {
-					line->main_auto_margin_count++;
+				إذا (b->margin[شروع_side] == AUTO) {
+					سطر->main_auto_margin_گنتی++;
 				}
-				if (b->margin[end_side] == AUTO) {
-					line->main_auto_margin_count++;
+				إذا (b->margin[سرا_side] == AUTO) {
+					سطر->main_auto_margin_گنتی++;
 				}
 			}
-			item->line = ctx->line.count;
-			line->count++;
-			item_index++;
-		} else {
-			break;
+			شے->سطر = ctx->سطر.گنتی;
+			سطر->گنتی++;
+			شے_اشاریہ++;
+		} وإلا {
+			اكسر;
 		}
 	}
 
-	if (line->count > 0) {
-		ctx->line.count++;
-	} else {
+	إذا (سطر->گنتی > 0) {
+		ctx->سطر.گنتی++;
+	} وإلا {
 		NSLOG(layout, ERROR, "Failed to fit any flex items");
 	}
 
-	return line;
+	أرجع سطر;
 }
 
 /**
@@ -477,20 +477,20 @@ static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
  * \param[in] line  Line to containing item
  * \param[in] item  Item to freeze
  */
-static inline void layout_flex__item_freeze(
-		struct flex_line_data *line,
-		struct flex_item_data *item)
+ساكن مضمن فراغ layout_flex_شے_freeze(
+		بنية flex_سطر_انکڑے *سطر,
+		بنية flex_شے_انکڑے *شے)
 {
-	item->freeze = true;
-	line->frozen++;
+	شے->freeze = true;
+	سطر->frozen++;
 
-	if (!lh__box_is_absolute(item->box)){
-		line->used_main_size += item->target_main_size;
+	إذا (!lh__box_is_absolute(شے->box)){
+		سطر->ورتیا_main_ناپ += شے->نشانہ_main_ناپ;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "flex-item box: %p: "
 			"Frozen at target_main_size: %i",
-			item->box, item->target_main_size);
+			شے->box, شے->نشانہ_main_ناپ);
 }
 
 /**
@@ -504,45 +504,45 @@ static inline void layout_flex__item_freeze(
  * \param[in]  grow                 Whether to grow or shrink
  * return remaining free space on line
  */
-static inline int layout_flex__remaining_free_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line,
-		css_fixed *unfrozen_factor_sum,
-		int initial_free_main,
-		int available_main,
+ساكن مضمن صحيح layout_flex_بچیا_free_main(
+		بنية flex_ctx *ctx,
+		بنية flex_سطر_انکڑے *سطر,
+		css_fixed *unfrozen_ضارب_جوڑ,
+		صحيح initial_free_main,
+		صحيح دستیاب_main,
 		bool grow)
 {
-	int remaining_free_main = available_main;
-	size_t item_count = line->first + line->count;
+	صحيح بچیا_free_main = دستیاب_main;
+	size_t شے_گنتی = سطر->پہلا + سطر->گنتی;
 
-	*unfrozen_factor_sum = 0;
+	*unfrozen_ضارب_جوڑ = 0;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
+	لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+		بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
 
-		if (item->freeze) {
-			remaining_free_main -= item->target_main_size;
-		} else {
-			remaining_free_main -= item->base_size;
+		إذا (شے->freeze) {
+			بچیا_free_main -= شے->نشانہ_main_ناپ;
+		} وإلا {
+			بچیا_free_main -= شے->ادھار_ناپ;
 
-			*unfrozen_factor_sum += grow ?
-					item->grow : item->shrink;
+			*unfrozen_ضارب_جوڑ += grow ?
+					شے->grow : شے->shrink;
 		}
 	}
 
-	if (*unfrozen_factor_sum < F_1) {
-		int free_space = FIXTOINT(FMUL(INTTOFIX(initial_free_main),
-				*unfrozen_factor_sum));
+	إذا (*unfrozen_ضارب_جوڑ < F_1) {
+		صحيح free_space = FIXTOINT(FMUL(INTTOFIX(initial_free_main),
+				*unfrozen_ضارب_جوڑ));
 
-		if (free_space < remaining_free_main) {
-			remaining_free_main = free_space;
+		إذا (free_space < بچیا_free_main) {
+			بچیا_free_main = free_space;
 		}
 	}
 
 	NSLOG(flex, DEEPDEBUG, "Remaining free space: %i",
-			remaining_free_main);
+			بچیا_free_main);
 
-	return remaining_free_main;
+	أرجع بچیا_free_main;
 }
 
 /**
@@ -552,60 +552,60 @@ static inline int layout_flex__remaining_free_main(
  * \param[in] line  Line to align items on
  * return total violation in pixels
  */
-static inline int layout_flex__get_min_max_violations(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+ساكن مضمن صحيح layout_flex__get_min_max_violations(
+		بنية flex_ctx *ctx,
+		بنية flex_سطر_انکڑے *سطر)
 {
 
-	int total_violation = 0;
-	size_t item_count = line->first + line->count;
+	صحيح کل_violation = 0;
+	size_t شے_گنتی = سطر->پہلا + سطر->گنتی;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
-		int target_main_size = item->target_main_size;
+	لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+		بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
+		صحيح نشانہ_main_ناپ = شے->نشانہ_main_ناپ;
 
 		NSLOG(flex, DEEPDEBUG, "item %p: target_main_size: %i",
-					item->box, target_main_size);
+					شے->box, نشانہ_main_ناپ);
 
-		if (item->freeze) {
-			continue;
+		إذا (شے->freeze) {
+			استمر;
 		}
 
-		if (item->max_main > 0 &&
-		    target_main_size > item->max_main) {
-			target_main_size = item->max_main;
-			item->max_violation = true;
+		إذا (شے->max_main > 0 &&
+		    نشانہ_main_ناپ > شے->max_main) {
+			نشانہ_main_ناپ = شے->max_main;
+			شے->max_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: max_main: %i",
-					item->max_main);
+					شے->max_main);
 		}
 
-		if (target_main_size < item->min_main) {
-			target_main_size = item->min_main;
-			item->min_violation = true;
+		إذا (نشانہ_main_ناپ < شے->min_main) {
+			نشانہ_main_ناپ = شے->min_main;
+			شے->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: min_main: %i",
-					item->min_main);
+					شے->min_main);
 		}
 
-		if (target_main_size < item->box->min_width) {
-			target_main_size = item->box->min_width;
-			item->min_violation = true;
+		إذا (نشانہ_main_ناپ < شے->box->min_چوڑائی) {
+			نشانہ_main_ناپ = شے->box->min_چوڑائی;
+			شے->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: box min_width: %i",
-					item->box->min_width);
+					شے->box->min_چوڑائی);
 		}
 
-		if (target_main_size < 0) {
-			target_main_size = 0;
-			item->min_violation = true;
+		إذا (نشانہ_main_ناپ < 0) {
+			نشانہ_main_ناپ = 0;
+			شے->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: less than 0");
 		}
 
-		total_violation += target_main_size - item->target_main_size;
-		item->target_main_size = target_main_size;
+		کل_violation += نشانہ_main_ناپ - شے->نشانہ_main_ناپ;
+		شے->نشانہ_main_ناپ = نشانہ_main_ناپ;
 	}
 
-	NSLOG(flex, DEEPDEBUG, "Total violation: %i", total_violation);
+	NSLOG(flex, DEEPDEBUG, "Total violation: %i", کل_violation);
 
-	return total_violation;
+	أرجع کل_violation;
 }
 
 /**
@@ -619,77 +619,77 @@ static inline int layout_flex__get_min_max_violations(
  * \param[in] remaining_free_main  Remaining free space in main direction
  * \param[in] grow                 Whether to grow or shrink
  */
-static inline void layout_flex__distribute_free_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line,
-		css_fixed unfrozen_factor_sum,
-		int remaining_free_main,
+ساكن مضمن فراغ layout_flex__distribute_free_main(
+		بنية flex_ctx *ctx,
+		بنية flex_سطر_انکڑے *سطر,
+		css_fixed unfrozen_ضارب_جوڑ,
+		صحيح بچیا_free_main,
 		bool grow)
 {
-	size_t item_count = line->first + line->count;
+	size_t شے_گنتی = سطر->پہلا + سطر->گنتی;
 
-	if (grow) {
+	إذا (grow) {
 		css_fixed remainder = 0;
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
-			css_fixed result;
-			css_fixed ratio;
+		لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+			بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
+			css_fixed نتیجہ;
+			css_fixed تناسب;
 
-			if (item->freeze) {
-				continue;
+			إذا (شے->freeze) {
+				استمر;
 			}
 
-			ratio = FDIV(item->grow, unfrozen_factor_sum);
-			result = FMUL(INTTOFIX(remaining_free_main), ratio) +
+			تناسب = FDIV(شے->grow, unfrozen_ضارب_جوڑ);
+			نتیجہ = FMUL(INTTOFIX(بچیا_free_main), تناسب) +
 					remainder;
 
-			item->target_main_size = item->base_size +
-					FIXTOINT(result);
-			remainder = FIXFRAC(result);
+			شے->نشانہ_main_ناپ = شے->ادھار_ناپ +
+					FIXTOINT(نتیجہ);
+			remainder = FIXFRAC(نتیجہ);
 		}
-	} else {
-		css_fixed scaled_shrink_factor_sum = 0;
+	} وإلا {
+		css_fixed scaled_shrink_ضارب_جوڑ = 0;
 		css_fixed remainder = 0;
 
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
-			css_fixed scaled_shrink_factor;
+		لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+			بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
+			css_fixed scaled_shrink_ضارب;
 
-			if (item->freeze) {
-				continue;
+			إذا (شے->freeze) {
+				استمر;
 			}
 
-			scaled_shrink_factor = FMUL(
-					item->shrink,
-					INTTOFIX(item->base_size));
-			scaled_shrink_factor_sum += scaled_shrink_factor;
+			scaled_shrink_ضارب = FMUL(
+					شے->shrink,
+					INTTOFIX(شے->ادھار_ناپ));
+			scaled_shrink_ضارب_جوڑ += scaled_shrink_ضارب;
 		}
 
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
-			css_fixed scaled_shrink_factor;
-			css_fixed result;
-			css_fixed ratio;
+		لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+			بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
+			css_fixed scaled_shrink_ضارب;
+			css_fixed نتیجہ;
+			css_fixed تناسب;
 
-			if (item->freeze) {
-				continue;
-			} else if (scaled_shrink_factor_sum == 0) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
-				continue;
+			إذا (شے->freeze) {
+				استمر;
+			} وإلا إذا (scaled_shrink_ضارب_جوڑ == 0) {
+				شے->نشانہ_main_ناپ = شے->main_ناپ;
+				layout_flex_شے_freeze(سطر, شے);
+				استمر;
 			}
 
-			scaled_shrink_factor = FMUL(
-					item->shrink,
-					INTTOFIX(item->base_size));
-			ratio = FDIV(scaled_shrink_factor,
-			             scaled_shrink_factor_sum);
-			result = FMUL(INTTOFIX(abs(remaining_free_main)),
-			              ratio) + remainder;
+			scaled_shrink_ضارب = FMUL(
+					شے->shrink,
+					INTTOFIX(شے->ادھار_ناپ));
+			تناسب = FDIV(scaled_shrink_ضارب,
+			             scaled_shrink_ضارب_جوڑ);
+			نتیجہ = FMUL(INTTOFIX(مطلق_قدر(بچیا_free_main)),
+			              تناسب) + remainder;
 
-			item->target_main_size = item->base_size -
-					FIXTOINT(result);
-			remainder = FIXFRAC(result);
+			شے->نشانہ_main_ناپ = شے->ادھار_ناپ -
+					FIXTOINT(نتیجہ);
+			remainder = FIXFRAC(نتیجہ);
 		}
 	}
 }
@@ -703,96 +703,96 @@ static inline void layout_flex__distribute_free_main(
  * \param[in] line  Line to resolve
  * \return true on success, false on failure.
  */
-static bool layout_flex__resolve_line(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+ساكن bool layout_flex_resolve_سطر(
+		بنية flex_ctx *ctx,
+		بنية flex_سطر_انکڑے *سطر)
 {
-	size_t item_count = line->first + line->count;
-	int available_main = ctx->available_main;
-	int initial_free_main;
+	size_t شے_گنتی = سطر->پہلا + سطر->گنتی;
+	صحيح دستیاب_main = ctx->دستیاب_main;
+	صحيح initial_free_main;
 	bool grow;
 
-	if (available_main == AUTO) {
-		available_main = INT_MAX;
+	إذا (دستیاب_main == AUTO) {
+		دستیاب_main = ودھ_توں_ودھ_عدد;
 	}
 
-	grow = (line->main_size < available_main);
-	initial_free_main = available_main;
+	grow = (سطر->main_ناپ < دستیاب_main);
+	initial_free_main = دستیاب_main;
 
 	NSLOG(flex, DEEPDEBUG, "box %p: line %zu: first: %zu, count: %zu",
-			ctx->flex, line - ctx->line.data,
-			line->first, line->count);
+			ctx->flex, سطر - ctx->سطر.انکڑے,
+			سطر->پہلا, سطر->گنتی);
 	NSLOG(flex, DEEPDEBUG, "Line main_size: %i, available_main: %i",
-			line->main_size, available_main);
+			سطر->main_ناپ, دستیاب_main);
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
+	لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+		بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
 
 		/* 3. Size inflexible items */
-		if (grow) {
-			if (item->grow == 0 ||
-			    item->base_size > item->main_size) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+		إذا (grow) {
+			إذا (شے->grow == 0 ||
+			    شے->ادھار_ناپ > شے->main_ناپ) {
+				شے->نشانہ_main_ناپ = شے->main_ناپ;
+				layout_flex_شے_freeze(سطر, شے);
 			}
-		} else {
-			if (item->shrink == 0 ||
-			    item->base_size < item->main_size) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+		} وإلا {
+			إذا (شے->shrink == 0 ||
+			    شے->ادھار_ناپ < شے->main_ناپ) {
+				شے->نشانہ_main_ناپ = شے->main_ناپ;
+				layout_flex_شے_freeze(سطر, شے);
 			}
 		}
 
 		/* 4. Calculate initial free space */
-		if (item->freeze) {
-			initial_free_main -= item->target_main_size;
-		} else {
-			initial_free_main -= item->base_size;
+		إذا (شے->freeze) {
+			initial_free_main -= شے->نشانہ_main_ناپ;
+		} وإلا {
+			initial_free_main -= شے->ادھار_ناپ;
 		}
 	}
 
 	/* 5. Loop */
-	while (line->frozen < line->count) {
-		css_fixed unfrozen_factor_sum;
-		int remaining_free_main;
-		int total_violation;
+	طالما (سطر->frozen < سطر->گنتی) {
+		css_fixed unfrozen_ضارب_جوڑ;
+		صحيح بچیا_free_main;
+		صحيح کل_violation;
 
 		NSLOG(flex, DEEPDEBUG, "flex-container: %p: Resolver pass",
 				ctx->flex);
 
 		/* b */
-		remaining_free_main = layout_flex__remaining_free_main(ctx,
-				line, &unfrozen_factor_sum, initial_free_main,
-				available_main, grow);
+		بچیا_free_main = layout_flex_بچیا_free_main(ctx,
+				سطر, &unfrozen_ضارب_جوڑ, initial_free_main,
+				دستیاب_main, grow);
 
 		/* c */
-		if (remaining_free_main != 0) {
+		إذا (بچیا_free_main != 0) {
 			layout_flex__distribute_free_main(ctx,
-					line, unfrozen_factor_sum,
-					remaining_free_main, grow);
+					سطر, unfrozen_ضارب_جوڑ,
+					بچیا_free_main, grow);
 		}
 
 		/* d */
-		total_violation = layout_flex__get_min_max_violations(
-				ctx, line);
+		کل_violation = layout_flex__get_min_max_violations(
+				ctx, سطر);
 
 		/* e */
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
+		لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+			بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
 
-			if (item->freeze) {
-				continue;
+			إذا (شے->freeze) {
+				استمر;
 			}
 
-			if (total_violation == 0 ||
-			    (total_violation > 0 && item->min_violation) ||
-			    (total_violation < 0 && item->max_violation)) {
-				layout_flex__item_freeze(line, item);
+			إذا (کل_violation == 0 ||
+			    (کل_violation > 0 && شے->min_violation) ||
+			    (کل_violation < 0 && شے->max_violation)) {
+				layout_flex_شے_freeze(سطر, شے);
 			}
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -802,91 +802,91 @@ static bool layout_flex__resolve_line(
  * \param[in] line  Line to resolve
  * \return true on success, false on failure.
  */
-static bool layout_flex__place_line_items_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+ساكن bool layout_flex_رکھو_سطر_اشیاء_main(
+		بنية flex_ctx *ctx,
+		بنية flex_سطر_انکڑے *سطر)
 {
-	int main_pos = ctx->flex->padding[layout_flex__main_start_side(ctx)];
-	int post_multiplier = ctx->main_reversed ? 0 : 1;
-	int pre_multiplier = ctx->main_reversed ? -1 : 0;
-	size_t item_count = line->first + line->count;
-	int extra_remainder = 0;
-	int extra = 0;
+	صحيح main_pos = ctx->flex->padding[layout_flex_main_شروع_side(ctx)];
+	صحيح post_multiplier = ctx->main_reversed ? 0 : 1;
+	صحيح pre_multiplier = ctx->main_reversed ? -1 : 0;
+	size_t شے_گنتی = سطر->پہلا + سطر->گنتی;
+	صحيح extra_remainder = 0;
+	صحيح extra = 0;
 
-	if (ctx->main_reversed) {
-		main_pos = lh__box_size_main(ctx->horizontal, ctx->flex) -
+	إذا (ctx->main_reversed) {
+		main_pos = lh_box_ناپ_main(ctx->horizontal, ctx->flex) -
 				main_pos;
 	}
 
-	if (ctx->available_main != AUTO &&
-	    ctx->available_main != UNKNOWN_WIDTH &&
-	    ctx->available_main > line->used_main_size) {
-		if (line->main_auto_margin_count > 0) {
-			extra = ctx->available_main - line->used_main_size;
+	إذا (ctx->دستیاب_main != AUTO &&
+	    ctx->دستیاب_main != UNKNOWN_چوڑائی &&
+	    ctx->دستیاب_main > سطر->ورتیا_main_ناپ) {
+		إذا (سطر->main_auto_margin_گنتی > 0) {
+			extra = ctx->دستیاب_main - سطر->ورتیا_main_ناپ;
 
-			extra_remainder = extra % line->main_auto_margin_count;
-			extra /= line->main_auto_margin_count;
+			extra_remainder = extra % سطر->main_auto_margin_گنتی;
+			extra /= سطر->main_auto_margin_گنتی;
 		}
 	}
 
-	for (size_t i = line->first; i < item_count; i++) {
-		enum box_side main_end = ctx->horizontal ? RIGHT : BOTTOM;
-		enum box_side main_start = ctx->horizontal ? LEFT : TOP;
-		struct flex_item_data *item = &ctx->item.data[i];
-		struct box *b = item->box;
-		int extra_total = 0;
-		int extra_post = 0;
-		int extra_pre = 0;
-		int box_size_main;
-		int *box_pos_main;
+	لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+		تعداد box_side main_سرا = ctx->horizontal ? دایاں_2 : BOTTOM;
+		تعداد box_side main_شروع = ctx->horizontal ? بایاں_2 : چوٹی_2;
+		بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
+		بنية box *b = شے->box;
+		صحيح extra_کل = 0;
+		صحيح extra_post = 0;
+		صحيح extra_pre = 0;
+		صحيح box_ناپ_main;
+		صحيح *box_pos_main;
 
-		if (ctx->horizontal) {
-			b->width = item->target_main_size -
-					lh__delta_outer_width(b);
+		إذا (ctx->horizontal) {
+			b->چوڑائی = شے->نشانہ_main_ناپ -
+					lh_delta_outer_چوڑائی(b);
 
-			if (!layout_flex_item(ctx, item, b->width)) {
-				return false;
+			إذا (!layout_flex_شے(ctx, شے, b->چوڑائی)) {
+				أرجع false;
 			}
 		}
 
-		box_size_main = lh__box_size_main(ctx->horizontal, b);
+		box_ناپ_main = lh_box_ناپ_main(ctx->horizontal, b);
 		box_pos_main = ctx->horizontal ? &b->x : &b->y;
 
-		if (!lh__box_is_absolute(b)) {
-			if (b->margin[main_start] == AUTO) {
+		إذا (!lh__box_is_absolute(b)) {
+			إذا (b->margin[main_شروع] == AUTO) {
 				extra_pre = extra + extra_remainder;
 			}
-			if (b->margin[main_end] == AUTO) {
+			إذا (b->margin[main_سرا] == AUTO) {
 				extra_post = extra + extra_remainder;
 			}
-			extra_total = extra_pre + extra_post;
+			extra_کل = extra_pre + extra_post;
 
 			main_pos += pre_multiplier *
-					(extra_total + box_size_main +
+					(extra_کل + box_ناپ_main +
 					 lh__delta_outer_main(ctx->flex, b));
 		}
 
-		*box_pos_main = main_pos + lh__non_auto_margin(b, main_start) +
-				extra_pre + b->border[main_start].width;
+		*box_pos_main = main_pos + lh__non_auto_margin(b, main_شروع) +
+				extra_pre + b->border[main_شروع].چوڑائی;
 
-		if (!lh__box_is_absolute(b)) {
-			int cross_size;
-			int box_size_cross = lh__box_size_cross(
+		إذا (!lh__box_is_absolute(b)) {
+			صحيح cross_ناپ;
+			صحيح box_ناپ_cross = lh_box_ناپ_cross(
 					ctx->horizontal, b);
 
 			main_pos += post_multiplier *
-					(extra_total + box_size_main +
+					(extra_کل + box_ناپ_main +
 					 lh__delta_outer_main(ctx->flex, b));
 
-			cross_size = box_size_cross + lh__delta_outer_cross(
+			cross_ناپ = box_ناپ_cross + lh__delta_outer_cross(
 					ctx->flex, b);
-			if (line->cross_size < cross_size) {
-				line->cross_size = cross_size;
+			إذا (سطر->cross_ناپ < cross_ناپ) {
+				سطر->cross_ناپ = cross_ناپ;
 			}
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -895,41 +895,41 @@ static bool layout_flex__place_line_items_main(
  * \param[in] ctx   Flex layout context
  * \return true on success, false on failure.
  */
-static bool layout_flex__collect_items_into_lines(
-		struct flex_ctx *ctx)
+ساكن bool layout_flex_collect_اشیاء_into_سطریں(
+		بنية flex_ctx *ctx)
 {
 	size_t pos = 0;
 
-	while (pos < ctx->item.count) {
-		struct flex_line_data *line;
+	طالما (pos < ctx->شے.گنتی) {
+		بنية flex_سطر_انکڑے *سطر;
 
-		line = layout_flex__build_line(ctx, pos);
-		if (line == NULL) {
-			return false;
+		سطر = layout_flex_build_سطر(ctx, pos);
+		إذا (سطر == عدم) {
+			أرجع false;
 		}
 
-		pos += line->count;
+		pos += سطر->گنتی;
 
 		NSLOG(flex, DEEPDEBUG, "flex-container: %p: "
 				"fitted: %zu (total: %zu/%zu)",
-				ctx->flex, line->count,
-				pos, ctx->item.count);
+				ctx->flex, سطر->گنتی,
+				pos, ctx->شے.گنتی);
 
-		if (!layout_flex__resolve_line(ctx, line)) {
-			return false;
+		إذا (!layout_flex_resolve_سطر(ctx, سطر)) {
+			أرجع false;
 		}
 
-		if (!layout_flex__place_line_items_main(ctx, line)) {
-			return false;
+		إذا (!layout_flex_رکھو_سطر_اشیاء_main(ctx, سطر)) {
+			أرجع false;
 		}
 
-		ctx->cross_size += line->cross_size;
-		if (ctx->main_size < line->main_size) {
-			ctx->main_size = line->main_size;
+		ctx->cross_ناپ += سطر->cross_ناپ;
+		إذا (ctx->main_ناپ < سطر->main_ناپ) {
+			ctx->main_ناپ = سطر->main_ناپ;
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
 /**
@@ -939,58 +939,58 @@ static bool layout_flex__collect_items_into_lines(
  * \param[in] line   Line to align items on
  * \param[in] extra  Extra line width in pixels
  */
-static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
-		struct flex_line_data *line, int extra)
+ساكن فراغ layout_flex_رکھو_سطر_اشیاء_cross(بنية flex_ctx *ctx,
+		بنية flex_سطر_انکڑے *سطر, صحيح extra)
 {
-	enum box_side cross_start = ctx->horizontal ? TOP : LEFT;
-	size_t item_count = line->first + line->count;
+	تعداد box_side cross_شروع = ctx->horizontal ? چوٹی_2 : بایاں_2;
+	size_t شے_گنتی = سطر->پہلا + سطر->گنتی;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
-		struct box *b = item->box;
-		int cross_free_space;
-		int *box_size_cross;
-		int *box_pos_cross;
+	لكل (size_t i = سطر->پہلا; i < شے_گنتی; i++) {
+		بنية flex_شے_انکڑے *شے = &ctx->شے.انکڑے[i];
+		بنية box *b = شے->box;
+		صحيح cross_free_space;
+		صحيح *box_ناپ_cross;
+		صحيح *box_pos_cross;
 
 		box_pos_cross = ctx->horizontal ? &b->y : &b->x;
-		box_size_cross = lh__box_size_cross_ptr(ctx->horizontal, b);
+		box_ناپ_cross = lh_box_ناپ_cross_ptr(ctx->horizontal, b);
 
-		cross_free_space = line->cross_size + extra - *box_size_cross -
+		cross_free_space = سطر->cross_ناپ + extra - *box_ناپ_cross -
 				lh__delta_outer_cross(ctx->flex, b);
 
-		switch (lh__box_align_self(ctx->flex, b)) {
-		default:
-		case CSS_ALIGN_SELF_STRETCH:
-			if (lh__box_size_cross_is_auto(ctx->horizontal, b)) {
-				*box_size_cross += cross_free_space;
+		بدل (lh__box_align_self(ctx->flex, b)) {
+		افتراضي:
+		حالة CSS_ALIGN_SELF_STRETCH:
+			إذا (lh_box_ناپ_cross_is_auto(ctx->horizontal, b)) {
+				*box_ناپ_cross += cross_free_space;
 
 				/* Relayout children for stretch. */
-				if (!layout_flex_item(ctx, item, b->width)) {
-					return;
+				إذا (!layout_flex_شے(ctx, شے, b->چوڑائی)) {
+					أرجع;
 				}
 			}
 			fallthrough;
-		case CSS_ALIGN_SELF_FLEX_START:
-			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos +
-					lh__non_auto_margin(b, cross_start) +
-					b->border[cross_start].width;
-			break;
+		حالة CSS_ALIGN_SELF_FLEX_شروع:
+			*box_pos_cross = ctx->flex->padding[cross_شروع] +
+					سطر->pos +
+					lh__non_auto_margin(b, cross_شروع) +
+					b->border[cross_شروع].چوڑائی;
+			اكسر;
 
-		case CSS_ALIGN_SELF_FLEX_END:
-			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos + cross_free_space +
-					lh__non_auto_margin(b, cross_start) +
-					b->border[cross_start].width;
-			break;
+		حالة CSS_ALIGN_SELF_FLEX_سرا:
+			*box_pos_cross = ctx->flex->padding[cross_شروع] +
+					سطر->pos + cross_free_space +
+					lh__non_auto_margin(b, cross_شروع) +
+					b->border[cross_شروع].چوڑائی;
+			اكسر;
 
-		case CSS_ALIGN_SELF_BASELINE:
-		case CSS_ALIGN_SELF_CENTER:
-			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos + cross_free_space / 2 +
-					lh__non_auto_margin(b, cross_start) +
-					b->border[cross_start].width;
-			break;
+		حالة CSS_ALIGN_SELF_BASELINE:
+		حالة CSS_ALIGN_SELF_CENTER:
+			*box_pos_cross = ctx->flex->padding[cross_شروع] +
+					سطر->pos + cross_free_space / 2 +
+					lh__non_auto_margin(b, cross_شروع) +
+					b->border[cross_شروع].چوڑائی;
+			اكسر;
 		}
 	}
 }
@@ -1000,36 +1000,36 @@ static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
  *
  * \param[in] ctx  Flex layout context
  */
-static void layout_flex__place_lines(struct flex_ctx *ctx)
+ساكن فراغ layout_flex_رکھو_سطریں(بنية flex_ctx *ctx)
 {
-	bool reversed = ctx->wrap == CSS_FLEX_WRAP_WRAP_REVERSE;
-	int line_pos = reversed ? ctx->cross_size : 0;
-	int post_multiplier = reversed ? 0 : 1;
-	int pre_multiplier = reversed ? -1 : 0;
-	int extra_remainder = 0;
-	int extra = 0;
+	bool reversed = ctx->wrap == CSS_FLEX_WRAP_WRAP_الٹ;
+	صحيح سطر_pos = reversed ? ctx->cross_ناپ : 0;
+	صحيح post_multiplier = reversed ? 0 : 1;
+	صحيح pre_multiplier = reversed ? -1 : 0;
+	صحيح extra_remainder = 0;
+	صحيح extra = 0;
 
-	if (ctx->available_cross != AUTO &&
-	    ctx->available_cross > ctx->cross_size &&
-	    ctx->line.count > 0) {
-		extra = ctx->available_cross - ctx->cross_size;
+	إذا (ctx->دستیاب_cross != AUTO &&
+	    ctx->دستیاب_cross > ctx->cross_ناپ &&
+	    ctx->سطر.گنتی > 0) {
+		extra = ctx->دستیاب_cross - ctx->cross_ناپ;
 
-		extra_remainder = extra % ctx->line.count;
-		extra /= ctx->line.count;
+		extra_remainder = extra % ctx->سطر.گنتی;
+		extra /= ctx->سطر.گنتی;
 	}
 
-	for (size_t i = 0; i < ctx->line.count; i++) {
-		struct flex_line_data *line = &ctx->line.data[i];
+	لكل (size_t i = 0; i < ctx->سطر.گنتی; i++) {
+		بنية flex_سطر_انکڑے *سطر = &ctx->سطر.انکڑے[i];
 
-		line_pos += pre_multiplier * line->cross_size;
-		line->pos = line_pos;
-		line_pos += post_multiplier * line->cross_size +
+		سطر_pos += pre_multiplier * سطر->cross_ناپ;
+		سطر->pos = سطر_pos;
+		سطر_pos += post_multiplier * سطر->cross_ناپ +
 				extra + extra_remainder;
 
-		layout_flex__place_line_items_cross(ctx, line,
+		layout_flex_رکھو_سطر_اشیاء_cross(ctx, سطر,
 				extra + extra_remainder);
 
-		if (extra_remainder > 0) {
+		إذا (extra_remainder > 0) {
 			extra_remainder--;
 		}
 	}
@@ -1043,65 +1043,65 @@ static void layout_flex__place_lines(struct flex_ctx *ctx)
  * \param[in] content          memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-bool layout_flex(struct box *flex, int available_width,
+bool layout_flex(بنية box *flex, صحيح دستیاب_چوڑائی,
 		html_content *content)
 {
-	int max_height, min_height;
-	struct flex_ctx *ctx;
+	صحيح max_اچائی, min_اچائی;
+	بنية flex_ctx *ctx;
 	bool success = false;
 
 	ctx = layout_flex_ctx__create(content, flex);
-	if (ctx == NULL) {
-		return false;
+	إذا (ctx == عدم) {
+		أرجع false;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "box %p: %s, available_width %i, width: %i",
 			flex, ctx->horizontal ? "horizontal" : "vertical",
-			available_width, flex->width);
+			دستیاب_چوڑائی, flex->چوڑائی);
 
-	layout_find_dimensions(
-			ctx->unit_len_ctx, available_width, -1,
-			flex, flex->style, NULL, &flex->height,
-			NULL, NULL, &max_height, &min_height,
+	layout_لبھو_dimensions(
+			ctx->unit_len_ctx, دستیاب_چوڑائی, -1,
+			flex, flex->style, عدم, &flex->اچائی,
+			عدم, عدم, &max_اچائی, &min_اچائی,
 			flex->margin, flex->padding, flex->border);
 
-	available_width = min(available_width, flex->width);
+	دستیاب_چوڑائی = min(دستیاب_چوڑائی, flex->چوڑائی);
 
-	if (ctx->horizontal) {
-		ctx->available_main = available_width;
-		ctx->available_cross = ctx->flex->height;
-	} else {
-		ctx->available_main = ctx->flex->height;
-		ctx->available_cross = available_width;
+	إذا (ctx->horizontal) {
+		ctx->دستیاب_main = دستیاب_چوڑائی;
+		ctx->دستیاب_cross = ctx->flex->اچائی;
+	} وإلا {
+		ctx->دستیاب_main = ctx->flex->اچائی;
+		ctx->دستیاب_cross = دستیاب_چوڑائی;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "box %p: available_main: %i",
-			flex, ctx->available_main);
+			flex, ctx->دستیاب_main);
 	NSLOG(flex, DEEPDEBUG, "box %p: available_cross: %i",
-			flex, ctx->available_cross);
+			flex, ctx->دستیاب_cross);
 
-	layout_flex_ctx__populate_item_data(ctx, flex, available_width);
+	layout_flex_ctx_populate_شے_انکڑے(ctx, flex, دستیاب_چوڑائی);
 
 	/* Place items onto lines. */
-	success = layout_flex__collect_items_into_lines(ctx);
-	if (!success) {
-		goto cleanup;
+	success = layout_flex_collect_اشیاء_into_سطریں(ctx);
+	إذا (!success) {
+		اذهب cleanup;
 	}
 
-	layout_flex__place_lines(ctx);
+	layout_flex_رکھو_سطریں(ctx);
 
-	if (flex->height == AUTO) {
-		flex->height = ctx->horizontal ?
-				ctx->cross_size :
-				ctx->main_size;
+	إذا (flex->اچائی == AUTO) {
+		flex->اچائی = ctx->horizontal ?
+				ctx->cross_ناپ :
+				ctx->main_ناپ;
 	}
 
-	if (flex->height != AUTO) {
-		if (max_height >= 0 && flex->height > max_height) {
-			flex->height = max_height;
+	إذا (flex->اچائی != AUTO) {
+		إذا (max_اچائی >= 0 && flex->اچائی > max_اچائی) {
+			flex->اچائی = max_اچائی;
 		}
-		if (min_height >  0 && flex->height < min_height) {
-			flex->height = min_height;
+		إذا (min_اچائی >  0 && flex->اچائی < min_اچائی) {
+			flex->اچائی = min_اچائی;
 		}
 	}
 
@@ -1112,6 +1112,6 @@ cleanup:
 
 	NSLOG(flex, DEEPDEBUG, "box %p: %s: w: %i, h: %i", flex,
 			success ? "success" : "failure",
-			flex->width, flex->height);
-	return success;
+			flex->چوڑائی, flex->اچائی);
+	أرجع success;
 }

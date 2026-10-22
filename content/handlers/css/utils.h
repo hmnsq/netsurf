@@ -16,91 +16,91 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_UTILS_H_
-#define NETSURF_CSS_UTILS_H_
+#جے_بنا_تعریف NETSURF_CSS_UTILS_H_
+#تعریف_کرو NETSURF_CSS_UTILS_H_
 
-#include <libcss/libcss.h>
+#ضمن <libcss/libcss.h>
 
-#include "netsurf/css.h"
+#ضمن "netsurf/css.h"
 
 /** DPI of the screen, in fixed point units */
-extern css_fixed nscss_screen_dpi;
+خارجي css_fixed nscss_screen_dpi;
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display(
-		const css_computed_style *style, bool root)
+ساكن مضمن uint8_t ns_computed_display(
+		ثابت css_computed_style *style, bool جڑ)
 {
-	uint8_t value = css_computed_display(style, root);
+	uint8_t قدر = css_computed_display(style, جڑ);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	بدل (قدر) {
+	حالة CSS_DISPLAY_GRID:
+		أرجع CSS_DISPLAY_بلاک;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	حالة CSS_DISPLAY_INLINE_GRID:
+		أرجع CSS_DISPLAY_INLINE_بلاک;
 
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
 
-	return value;
+	أرجع قدر;
 }
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display_static(
-		const css_computed_style *style)
+ساكن مضمن uint8_t ns_computed_display_static(
+		ثابت css_computed_style *style)
 {
-	uint8_t value = css_computed_display_static(style);
+	uint8_t قدر = css_computed_display_static(style);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	بدل (قدر) {
+	حالة CSS_DISPLAY_GRID:
+		أرجع CSS_DISPLAY_بلاک;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	حالة CSS_DISPLAY_INLINE_GRID:
+		أرجع CSS_DISPLAY_INLINE_بلاک;
 
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
 
-	return value;
+	أرجع قدر;
 }
 
-static inline uint8_t ns_computed_min_height(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+ساكن مضمن uint8_t ns_computed_min_اچائی(
+		ثابت css_computed_style *style,
+		css_fixed *لمائی, css_unit *unit)
 {
-	uint8_t value = css_computed_min_height(style, length, unit);
+	uint8_t قدر = css_computed_min_اچائی(style, لمائی, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
-		value = CSS_MIN_HEIGHT_SET;
-		*length = 0;
+	إذا (قدر == CSS_MIN_اچائی_AUTO) {
+		قدر = CSS_MIN_اچائی_سیٹ;
+		*لمائی = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	أرجع قدر;
 }
 
 
-static inline uint8_t ns_computed_min_width(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+ساكن مضمن uint8_t ns_computed_min_چوڑائی(
+		ثابت css_computed_style *style,
+		css_fixed *لمائی, css_unit *unit)
 {
-	uint8_t value = css_computed_min_width(style, length, unit);
+	uint8_t قدر = css_computed_min_چوڑائی(style, لمائی, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
-		value = CSS_MIN_WIDTH_SET;
-		*length = 0;
+	إذا (قدر == CSS_MIN_چوڑائی_AUTO) {
+		قدر = CSS_MIN_چوڑائی_سیٹ;
+		*لمائی = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	أرجع قدر;
 }
 
-#endif
+#جے_انت

@@ -22,30 +22,30 @@
  * implementation of content handler for BMP images.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libnsbmp.h>
+#ضمن <stdbool.h>
+#ضمن <stdlib.h>
+#ضمن <libnsbmp.h>
 
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/messages.h"
+#ضمن "netsurf/plotters.h"
+#ضمن "netsurf/bitmap.h"
+#ضمن "netsurf/content.h"
+#ضمن "content/llcache.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "desktop/gui_internal.h"
+#ضمن "desktop/bitmap.h"
 
-#include "image/bmp.h"
+#ضمن "image/bmp.h"
 
 /** bmp context. */
-typedef struct nsbmp_content {
-	struct content base;
+تعريفنوع بنية nsbmp_content {
+	بنية content ادھار;
 
 	bmp_image *bmp;	/** BMP image data */
 
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	بنية bitmap *bitmap;	/**< Created NetSurf bitmap */
 } nsbmp_content;
 
 /**
@@ -56,240 +56,240 @@ typedef struct nsbmp_content {
  * \param bmp_state A flag word indicating the initial state
  * \return An opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsbmp_bitmap_create(int width, int height, unsigned int bmp_state)
+ساكن فراغ *nsbmp_bitmap_create(صحيح چوڑائی, صحيح اچائی, بنانشانی صحيح bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	بنانشانی صحيح bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
-	bitmap_state |= (bmp_state & BMP_CLEAR_MEMORY) ?
+	bitmap_state |= (bmp_state & BMP_CLEAR_حافظہ) ?
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	أرجع guit->bitmap->create(چوڑائی, اچائی, bitmap_state);
 }
 
-static nserror nsbmp_create_bmp_data(nsbmp_content *bmp)
+ساكن nserror nsbmp_create_bmp_انکڑے(nsbmp_content *bmp)
 {
 	bmp_bitmap_callback_vt bmp_bitmap_callbacks = {
 		.bitmap_create = nsbmp_bitmap_create,
 		.bitmap_destroy = guit->bitmap->destroy,
-		.bitmap_get_buffer = guit->bitmap->get_buffer,
+		.bitmap_get_بفر = guit->bitmap->get_بفر,
 	};
 
-	bmp->bmp = calloc(1, sizeof(struct bmp_image));
-	if (bmp->bmp == NULL) {
-		content_broadcast_error(&bmp->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	bmp->bmp = صفر_حافظہ_دیو(1, حجم(بنية bmp_image));
+	إذا (bmp->bmp == عدم) {
+		content_نشر_error(&bmp->ادھار, NSERROR_NOMEM, عدم);
+		أرجع NSERROR_NOMEM;
 	}
 
 	bmp_create(bmp->bmp, &bmp_bitmap_callbacks);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static nserror
-nsbmp_create(const struct content_handler *handler,
+ساكن nserror
+nsbmp_create(ثابت بنية content_handler *handler,
 	     lwc_string *imime_type,
-	     const struct http_parameter *params,
+	     ثابت بنية http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     ثابت حرف *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     بنية content **c)
 {
 	nsbmp_content *bmp;
 	nserror error;
 
-	bmp = calloc(1, sizeof(nsbmp_content));
-	if (bmp == NULL)
-		return NSERROR_NOMEM;
+	bmp = صفر_حافظہ_دیو(1, حجم(nsbmp_content));
+	إذا (bmp == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__init(&bmp->base, handler, imime_type, params,
+	error = content__init(&bmp->ادھار, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(bmp);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(bmp);
+		أرجع error;
 	}
 
-	error = nsbmp_create_bmp_data(bmp);
-	if (error != NSERROR_OK) {
-		free(bmp);
-		return error;
+	error = nsbmp_create_bmp_انکڑے(bmp);
+	إذا (error != NSERROR_OK) {
+		حرر(bmp);
+		أرجع error;
 	}
 
-	*c = (struct content *) bmp;
+	*c = (بنية content *) bmp;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static bool nsbmp_convert(struct content *c)
+ساكن bool nsbmp_convert(بنية content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
-	bmp_result res;
+	bmp_نتیجہ res;
 	uint32_t swidth;
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	ثابت uint8_t *انکڑے;
+	size_t ناپ;
+	حرف *title;
 
 	/* set the bmp data */
-	data = content__get_source_data(c, &size);
+	انکڑے = content_get_سروت_انکڑے_2(c, &ناپ);
 
 	/* analyse the BMP */
-	res = bmp_analyse(bmp->bmp, size, (unsigned char *) data);
-	switch (res) {
-		case BMP_OK:
-			break;
-		case BMP_INSUFFICIENT_MEMORY:
-			content_broadcast_error(c, NSERROR_NOMEM, NULL);
-			return false;
-		case BMP_INSUFFICIENT_DATA:
-		case BMP_DATA_ERROR:
-			content_broadcast_error(c, NSERROR_BMP_ERROR, NULL);
-			return false;
+	res = bmp_analyse(bmp->bmp, ناپ, (بنانشانی حرف *) انکڑے);
+	بدل (res) {
+		حالة BMP_OK:
+			اكسر;
+		حالة BMP_INSUFFICIENT_حافظہ:
+			content_نشر_error(c, NSERROR_NOMEM, عدم);
+			أرجع false;
+		حالة BMP_INSUFFICIENT_انکڑے:
+		حالة BMP_انکڑے_ERROR:
+			content_نشر_error(c, NSERROR_BMP_ERROR, عدم);
+			أرجع false;
 	}
 
 	/* Store our content width and description */
-	c->width = bmp->bmp->width;
-	c->height = bmp->bmp->height;
-	swidth = sizeof(uint32_t) * bmp->bmp->width;
-	c->size += (swidth * bmp->bmp->height) + 16 + 44;
+	c->چوڑائی = bmp->bmp->چوڑائی;
+	c->اچائی = bmp->bmp->اچائی;
+	swidth = حجم(uint32_t) * bmp->bmp->چوڑائی;
+	c->ناپ += (swidth * bmp->bmp->اچائی) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("BMPTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_پتی(llcache_handle_get_url(c->llcache)),
+			c->چوڑائی, c->اچائی);
+	إذا (title != عدم) {
+		content_سیٹ_title(c, title);
+		حرر(title);
 	}
 
 	/* exit as a success */
 	bmp->bitmap = bmp->bmp->bitmap;
 
-	content_set_ready(c);
-	content_set_done(c);
+	content_سیٹ_ready(c);
+	content_سیٹ_پورا(c);
 
 	/* Done: update status bar */
-	content_set_status(c, "");
-	return true;
+	content_سیٹ_حالت(c, "");
+	أرجع true;
 }
 
-static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ساكن bool nsbmp_redraw(بنية content *c, بنية content_redraw_انکڑے *انکڑے,
+		ثابت بنية rect *clip, ثابت بنية redraw_context *ctx)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (bmp->bmp->decoded == false) {
-		bmp_result res;
+	إذا (bmp->bmp->decoded == false) {
+		bmp_نتیجہ res;
 		res = bmp_decode(bmp->bmp);
 		/* allow short or incomplete image data giving a partial image*/
-		if ((res != BMP_OK) &&
-		    (res != BMP_INSUFFICIENT_DATA) &&
-		    (res != BMP_DATA_ERROR)) {
-			return false;
+		إذا ((res != BMP_OK) &&
+		    (res != BMP_INSUFFICIENT_انکڑے) &&
+		    (res != BMP_انکڑے_ERROR)) {
+			أرجع false;
 		}
 
-		bitmap_format_to_client(bmp->bitmap, &(bitmap_fmt_t) {
+		bitmap_format_منزل_client(bmp->bitmap, &(bitmap_fmt_t) {
 			.layout = BITMAP_LAYOUT_R8G8B8A8,
 		});
 		guit->bitmap->modified(bmp->bitmap);
 	}
 
-	if (data->repeat_x)
+	إذا (انکڑے->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	إذا (انکڑے->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	أرجع (ctx->plot->bitmap(ctx,
 				  bmp->bitmap,
-				  data->x, data->y,
-				  data->width, data->height,
-				  data->background_colour,
+				  انکڑے->x, انکڑے->y,
+				  انکڑے->چوڑائی, انکڑے->اچائی,
+				  انکڑے->background_رنگ,
 				  flags) == NSERROR_OK);
 }
 
 
-static void nsbmp_destroy(struct content *c)
+ساكن فراغ nsbmp_destroy(بنية content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 
 	bmp_finalise(bmp->bmp);
-	free(bmp->bmp);
+	حرر(bmp->bmp);
 }
 
 
-static nserror nsbmp_clone(const struct content *old, struct content **newc)
+ساكن nserror nsbmp_clone(ثابت بنية content *old, بنية content **newc)
 {
 	nsbmp_content *new_bmp;
 	nserror error;
 
-	new_bmp = calloc(1, sizeof(nsbmp_content));
-	if (new_bmp == NULL)
-		return NSERROR_NOMEM;
+	new_bmp = صفر_حافظہ_دیو(1, حجم(nsbmp_content));
+	إذا (new_bmp == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__clone(old, &new_bmp->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_bmp->base);
-		return error;
+	error = content__clone(old, &new_bmp->ادھار);
+	إذا (error != NSERROR_OK) {
+		content_destroy(&new_bmp->ادھار);
+		أرجع error;
 	}
 
 	/* We "clone" the old content by replaying creation and conversion */
-	error = nsbmp_create_bmp_data(new_bmp);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_bmp->base);
-		return error;
+	error = nsbmp_create_bmp_انکڑے(new_bmp);
+	إذا (error != NSERROR_OK) {
+		content_destroy(&new_bmp->ادھار);
+		أرجع error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY || 
-			old->status == CONTENT_STATUS_DONE) {
-		if (nsbmp_convert(&new_bmp->base) == false) {
-			content_destroy(&new_bmp->base);
-			return NSERROR_CLONE_FAILED;
+	إذا (old->حالت == CONTENT_حالت_READY || 
+			old->حالت == CONTENT_حالت_پورا) {
+		إذا (nsbmp_convert(&new_bmp->ادھار) == false) {
+			content_destroy(&new_bmp->ادھار);
+			أرجع NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_bmp;
+	*newc = (بنية content *) new_bmp;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static void *nsbmp_get_internal(const struct content *c, void *context)
+ساكن فراغ *nsbmp_get_اندرونی(ثابت بنية content *c, فراغ *context)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	return bmp->bitmap;
+	أرجع bmp->bitmap;
 }
 
-static content_type nsbmp_content_type(void)
+ساكن content_type nsbmp_content_type(فراغ)
 {
-	return CONTENT_IMAGE;
+	أرجع CONTENT_IMAGE;
 }
 
-static bool nsbmp_content_is_opaque(struct content *c)
+ساكن bool nsbmp_content_is_opaque(بنية content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	if (bmp->bitmap != NULL) {
-		return guit->bitmap->get_opaque(bmp->bitmap);
+	إذا (bmp->bitmap != عدم) {
+		أرجع guit->bitmap->get_opaque(bmp->bitmap);
 	}
 
-	return false;
+	أرجع false;
 }
 
-static const content_handler nsbmp_content_handler = {
+ساكن ثابت content_handler nsbmp_content_handler = {
 	.create = nsbmp_create,
-	.data_complete = nsbmp_convert,
+	.انکڑے_complete = nsbmp_convert,
 	.destroy = nsbmp_destroy,
 	.redraw = nsbmp_redraw,
 	.clone = nsbmp_clone,
-	.get_internal = nsbmp_get_internal,
+	.get_اندرونی = nsbmp_get_اندرونی,
 	.type = nsbmp_content_type,
 	.is_opaque = nsbmp_content_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsbmp_types[] = {
+ساكن ثابت حرف *nsbmp_types[] = {
 	"application/bmp",
 	"application/preview",
 	"application/x-bmp",
@@ -304,4 +304,4 @@ static const char *nsbmp_types[] = {
 	"image/x-xbitmap"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsbmp, nsbmp_types, nsbmp_content_handler);
+CONTENT_FACTORY_رجسٹر_TYPES(nsbmp, nsbmp_types, nsbmp_content_handler);

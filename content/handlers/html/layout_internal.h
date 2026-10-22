@@ -21,10 +21,10 @@
  * HTML layout private interface.
  */
 
-#ifndef NETSURF_HTML_LAYOUT_INTERNAL_H
-#define NETSURF_HTML_LAYOUT_INTERNAL_H
+#جے_بنا_تعریف NETSURF_HTML_LAYOUT_اندرونی_H
+#تعریف_کرو NETSURF_HTML_LAYOUT_اندرونی_H
 
-#define AUTO INT_MIN
+#تعریف_کرو AUTO INT_MIN
 
 /**
  * Layout a block formatting context.
@@ -37,9 +37,9 @@
  * This function carries out layout of a block and its children, as described
  * in CSS 2.1 9.4.1.
  */
-bool layout_block_context(
-		struct box *block,
-		int viewport_height,
+bool layout_بلاک_context(
+		بنية box *بلاک,
+		صحيح viewport_اچائی,
 		html_content *content);
 
 /**
@@ -50,9 +50,9 @@ bool layout_block_context(
  * \param  content          memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-bool layout_table(
-		struct box *table,
-		int available_width,
+bool layout_جدول(
+		بنية box *جدول,
+		صحيح دستیاب_چوڑائی,
 		html_content *content);
 
 /**
@@ -64,238 +64,238 @@ bool layout_table(
  * \return  true on success, false on memory exhaustion
  */
 bool layout_flex(
-		struct box *flex,
-		int available_width,
+		بنية box *flex,
+		صحيح دستیاب_چوڑائی,
 		html_content *content);
 
-typedef uint8_t (*css_len_func)(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit);
-typedef uint8_t (*css_border_style_func)(
-		const css_computed_style *style);
-typedef uint8_t (*css_border_color_func)(
-		const css_computed_style *style,
+تعريفنوع uint8_t (*css_len_func)(
+		ثابت css_computed_style *style,
+		css_fixed *لمائی, css_unit *unit);
+تعريفنوع uint8_t (*css_border_style_func)(
+		ثابت css_computed_style *style);
+تعريفنوع uint8_t (*css_border_color_func)(
+		ثابت css_computed_style *style,
 		css_color *color);
 
 /** Array of per-side access functions for computed style margins. */
-extern const css_len_func margin_funcs[4];
+خارجي ثابت css_len_func margin_funcs[4];
 
 /** Array of per-side access functions for computed style paddings. */
-extern const css_len_func padding_funcs[4];
+خارجي ثابت css_len_func padding_funcs[4];
 
 /** Array of per-side access functions for computed style border_widths. */
-extern const css_len_func border_width_funcs[4];
+خارجي ثابت css_len_func border_چوڑائی_funcs[4];
 
 /** Array of per-side access functions for computed style border styles. */
-extern const css_border_style_func border_style_funcs[4];
+خارجي ثابت css_border_style_func border_style_funcs[4];
 
 /** Array of per-side access functions for computed style border colors. */
-extern const css_border_color_func border_color_funcs[4];
+خارجي ثابت css_border_color_func border_color_funcs[4];
 
 /** Layout helper: Check whether box is a float. */
-static inline bool lh__box_is_float_box(const struct box *b)
+ساكن مضمن bool lh__box_is_float_box(ثابت بنية box *b)
 {
-	return b->type == BOX_FLOAT_LEFT ||
-	       b->type == BOX_FLOAT_RIGHT;
+	أرجع b->type == BOX_FLOAT_بایاں ||
+	       b->type == BOX_FLOAT_دایاں;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_inline_flow(const struct box *b)
+ساكن مضمن bool lh__box_is_inline_flow(ثابت بنية box *b)
 {
-	return b->type == BOX_INLINE ||
+	أرجع b->type == BOX_INLINE ||
 	       b->type == BOX_INLINE_FLEX ||
-	       b->type == BOX_INLINE_BLOCK ||
-	       b->type == BOX_TEXT ||
-	       b->type == BOX_INLINE_END;
+	       b->type == BOX_INLINE_بلاک ||
+	       b->type == BOX_متن ||
+	       b->type == BOX_INLINE_سرا;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_flex_container(const struct box *b)
+ساكن مضمن bool lh__box_is_flex_container(ثابت بنية box *b)
 {
-	return b->type == BOX_FLEX ||
+	أرجع b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_flex_item(const struct box *b)
+ساكن مضمن bool lh_box_is_flex_شے(ثابت بنية box *b)
 {
-	return (b->parent != NULL) && lh__box_is_flex_container(b->parent);
+	أرجع (b->ماپا != عدم) && lh__box_is_flex_container(b->ماپا);
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR.) */
-static inline bool lh__box_is_inline_level(const struct box *b)
+ساكن مضمن bool lh__box_is_inline_level(ثابت بنية box *b)
 {
-	return lh__box_is_inline_flow(b) ||
+	أرجع lh__box_is_inline_flow(b) ||
 	       b->type == BOX_BR;
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR, floats.) */
-static inline bool lh__box_is_inline_content(const struct box *b)
+ساكن مضمن bool lh__box_is_inline_content(ثابت بنية box *b)
 {
-	return lh__box_is_float_box(b) ||
+	أرجع lh__box_is_float_box(b) ||
 	       lh__box_is_inline_level(b);
 }
 
 /** Layout helper: Check whether box is an object. */
-static inline bool lh__box_is_object(const struct box *b)
+ساكن مضمن bool lh__box_is_object(ثابت بنية box *b)
 {
-	return b->object ||
+	أرجع b->object ||
 	       (b->flags & (IFRAME | REPLACE_DIM));
 }
 
 /** Layout helper: Check whether box is replaced. */
-static inline bool lh__box_is_replace(const struct box *b)
+ساكن مضمن bool lh__box_is_replace(ثابت بنية box *b)
 {
-	return b->gadget ||
+	أرجع b->gadget ||
 	       lh__box_is_object(b);
 }
 
 /** Layout helper: Check for CSS border on given side. */
-static inline bool lh__have_border(
-		enum box_side side,
-		const css_computed_style *style)
+ساكن مضمن bool lh__have_border(
+		تعداد box_side side,
+		ثابت css_computed_style *style)
 {
-	return border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
+	أرجع border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
 }
 
-static inline bool lh__box_is_absolute(const struct box *b)
+ساكن مضمن bool lh__box_is_absolute(ثابت بنية box *b)
 {
-	return css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
+	أرجع css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
 	       css_computed_position(b->style) == CSS_POSITION_FIXED;
 }
 
-static inline bool lh__flex_main_is_horizontal(const struct box *flex)
+ساكن مضمن bool lh__flex_main_is_horizontal(ثابت بنية box *flex)
 {
-	const css_computed_style *style = flex->style;
+	ثابت css_computed_style *style = flex->style;
 
-	assert(style != NULL);
+	أكد(style != عدم);
 
-	switch (css_computed_flex_direction(style)) {
-	default:                        /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW:    /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW_REVERSE:
-		return true;
-	case CSS_FLEX_DIRECTION_COLUMN: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return false;
+	بدل (css_computed_flex_direction(style)) {
+	افتراضي:                        /* Fallthrough. */
+	حالة CSS_FLEX_DIRECTION_صف:    /* Fallthrough. */
+	حالة CSS_FLEX_DIRECTION_صف_الٹ:
+		أرجع true;
+	حالة CSS_FLEX_DIRECTION_کالم: /* Fallthrough. */
+	حالة CSS_FLEX_DIRECTION_کالم_الٹ:
+		أرجع false;
 	}
 }
 
-static inline bool lh__flex_direction_reversed(const struct box *flex)
+ساكن مضمن bool lh__flex_direction_reversed(ثابت بنية box *flex)
 {
-	switch (css_computed_flex_direction(flex->style)) {
-	default:                             /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW_REVERSE: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return true;
-	case CSS_FLEX_DIRECTION_ROW: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN:
-		return false;
+	بدل (css_computed_flex_direction(flex->style)) {
+	افتراضي:                             /* Fallthrough. */
+	حالة CSS_FLEX_DIRECTION_صف_الٹ: /* Fallthrough. */
+	حالة CSS_FLEX_DIRECTION_کالم_الٹ:
+		أرجع true;
+	حالة CSS_FLEX_DIRECTION_صف: /* Fallthrough. */
+	حالة CSS_FLEX_DIRECTION_کالم:
+		أرجع false;
 	}
 }
 
-static inline int lh__non_auto_margin(const struct box *b, enum box_side side)
+ساكن مضمن صحيح lh__non_auto_margin(ثابت بنية box *b, تعداد box_side side)
 {
-	return (b->margin[side] == AUTO) ? 0 : b->margin[side];
+	أرجع (b->margin[side] == AUTO) ? 0 : b->margin[side];
 }
 
-static inline int lh__delta_outer_height(const struct box *b)
+ساكن مضمن صحيح lh_delta_outer_اچائی(ثابت بنية box *b)
 {
-	return b->padding[TOP] +
+	أرجع b->padding[چوٹی_2] +
 	       b->padding[BOTTOM] +
-	       b->border[TOP].width +
-	       b->border[BOTTOM].width +
-	       lh__non_auto_margin(b, TOP) +
+	       b->border[چوٹی_2].چوڑائی +
+	       b->border[BOTTOM].چوڑائی +
+	       lh__non_auto_margin(b, چوٹی_2) +
 	       lh__non_auto_margin(b, BOTTOM);
 }
 
-static inline int lh__delta_outer_width(const struct box *b)
+ساكن مضمن صحيح lh_delta_outer_چوڑائی(ثابت بنية box *b)
 {
-	return b->padding[LEFT] +
-	       b->padding[RIGHT] +
-	       b->border[LEFT].width +
-	       b->border[RIGHT].width +
-	       lh__non_auto_margin(b, LEFT) +
-	       lh__non_auto_margin(b, RIGHT);
+	أرجع b->padding[بایاں_2] +
+	       b->padding[دایاں_2] +
+	       b->border[بایاں_2].چوڑائی +
+	       b->border[دایاں_2].چوڑائی +
+	       lh__non_auto_margin(b, بایاں_2) +
+	       lh__non_auto_margin(b, دایاں_2);
 }
 
-static inline int lh__delta_outer_main(
-		const struct box *flex,
-		const struct box *b)
+ساكن مضمن صحيح lh__delta_outer_main(
+		ثابت بنية box *flex,
+		ثابت بنية box *b)
 {
-	if (lh__flex_main_is_horizontal(flex)) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	إذا (lh__flex_main_is_horizontal(flex)) {
+		أرجع lh_delta_outer_چوڑائی(b);
+	} وإلا {
+		أرجع lh_delta_outer_اچائی(b);
 	}
 }
 
-static inline int lh__delta_outer_cross(
-		const struct box *flex,
-		const struct box *b)
+ساكن مضمن صحيح lh__delta_outer_cross(
+		ثابت بنية box *flex,
+		ثابت بنية box *b)
 {
-	if (lh__flex_main_is_horizontal(flex) == false) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	إذا (lh__flex_main_is_horizontal(flex) == false) {
+		أرجع lh_delta_outer_چوڑائی(b);
+	} وإلا {
+		أرجع lh_delta_outer_اچائی(b);
 	}
 }
 
-static inline int *lh__box_size_main_ptr(
+ساكن مضمن صحيح *lh_box_ناپ_main_ptr(
 		bool horizontal,
-		struct box *b)
+		بنية box *b)
 {
-	return horizontal ? &b->width : &b->height;
+	أرجع horizontal ? &b->چوڑائی : &b->اچائی;
 }
 
-static inline int *lh__box_size_cross_ptr(
+ساكن مضمن صحيح *lh_box_ناپ_cross_ptr(
 		bool horizontal,
-		struct box *b)
+		بنية box *b)
 {
-	return horizontal ? &b->height : &b->width;
+	أرجع horizontal ? &b->اچائی : &b->چوڑائی;
 }
 
-static inline int lh__box_size_main(
+ساكن مضمن صحيح lh_box_ناپ_main(
 		bool horizontal,
-		const struct box *b)
+		ثابت بنية box *b)
 {
-	return horizontal ? b->width : b->height;
+	أرجع horizontal ? b->چوڑائی : b->اچائی;
 }
 
-static inline int lh__box_size_cross(
+ساكن مضمن صحيح lh_box_ناپ_cross(
 		bool horizontal,
-		const struct box *b)
+		ثابت بنية box *b)
 {
-	return horizontal ? b->height : b->width;
+	أرجع horizontal ? b->اچائی : b->چوڑائی;
 }
 
-static inline bool lh__box_size_cross_is_auto(
+ساكن مضمن bool lh_box_ناپ_cross_is_auto(
 		bool horizontal,
-		struct box *b)
+		بنية box *b)
 {
-	css_fixed length;
+	css_fixed لمائی;
 	css_unit unit;
 
-	if (horizontal) {
-		return css_computed_height(b->style,
-				&length, &unit) == CSS_HEIGHT_AUTO;
-	} else {
-		return css_computed_width(b->style,
-				&length, &unit) == CSS_WIDTH_AUTO;
+	إذا (horizontal) {
+		أرجع css_computed_اچائی(b->style,
+				&لمائی, &unit) == CSS_اچائی_AUTO;
+	} وإلا {
+		أرجع css_computed_چوڑائی(b->style,
+				&لمائی, &unit) == CSS_چوڑائی_AUTO;
 	}
 }
 
-static inline enum css_align_self_e lh__box_align_self(
-		const struct box *flex,
-		const struct box *item)
+ساكن مضمن تعداد css_align_self_e lh__box_align_self(
+		ثابت بنية box *flex,
+		ثابت بنية box *شے)
 {
-	enum css_align_self_e align_self = css_computed_align_self(item->style);
+	تعداد css_align_self_e align_self = css_computed_align_self(شے->style);
 
-	if (align_self == CSS_ALIGN_SELF_AUTO) {
-		align_self = css_computed_align_items(flex->style);
+	إذا (align_self == CSS_ALIGN_SELF_AUTO) {
+		align_self = css_computed_align_اشیاء(flex->style);
 	}
 
-	return align_self;
+	أرجع align_self;
 }
 
 /**
@@ -310,57 +310,57 @@ static inline enum css_align_self_e lh__box_align_self(
  * \param fixed    increased by sum of fixed margin, border, and padding
  * \param frac     increased by sum of fractional margin and padding
  */
-static inline void calculate_mbp_width(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style,
-		unsigned int side,
+ساكن مضمن فراغ calculate_mbp_چوڑائی(
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت css_computed_style *style,
+		بنانشانی صحيح side,
 		bool margin,
 		bool border,
 		bool padding,
-		int *fixed,
-		float *frac)
+		صحيح *fixed,
+		عائم *frac)
 {
-	css_fixed value = 0;
+	css_fixed قدر = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(style);
+	أكد(style);
 
 	/* margin */
-	if (margin) {
-		enum css_margin_e type;
+	إذا (margin) {
+		تعداد css_margin_e type;
 
-		type = margin_funcs[side](style, &value, &unit);
-		if (type == CSS_MARGIN_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*frac += FIXTOFLT(FDIV(value, F_100));
-			} else {
+		type = margin_funcs[side](style, &قدر, &unit);
+		إذا (type == CSS_MARGIN_سیٹ) {
+			إذا (unit == CSS_UNIT_PCT) {
+				*frac += FIXTOFLT(FDIV(قدر, F_100));
+			} وإلا {
 				*fixed += FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						قدر, unit));
 			}
 		}
 	}
 
 	/* border */
-	if (border) {
-		if (lh__have_border(side, style)) {
-			border_width_funcs[side](style, &value, &unit);
+	إذا (border) {
+		إذا (lh__have_border(side, style)) {
+			border_چوڑائی_funcs[side](style, &قدر, &unit);
 
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					قدر, unit));
 		}
 	}
 
 	/* padding */
-	if (padding) {
-		padding_funcs[side](style, &value, &unit);
-		if (unit == CSS_UNIT_PCT) {
-			*frac += FIXTOFLT(FDIV(value, F_100));
-		} else {
+	إذا (padding) {
+		padding_funcs[side](style, &قدر, &unit);
+		إذا (unit == CSS_UNIT_PCT) {
+			*frac += FIXTOFLT(FDIV(قدر, F_100));
+		} وإلا {
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					قدر, unit));
 		}
 	}
 }
@@ -379,31 +379,31 @@ static inline void calculate_mbp_width(
  *				updated to new value after consideration of
  *				gadget properties.
  */
-static inline void layout_handle_box_sizing(
-		const css_unit_ctx *unit_len_ctx,
-		const struct box *box,
-		int available_width,
+ساكن مضمن فراغ layout_handle_box_sizing(
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت بنية box *box,
+		صحيح دستیاب_چوڑائی,
 		bool setwidth,
-		int *dimension)
+		صحيح *dimension)
 {
-	enum css_box_sizing_e bs;
+	تعداد css_box_sizing_e bs;
 
-	assert(box && box->style);
+	أكد(box && box->style);
 
 	bs = css_computed_box_sizing(box->style);
 
-	if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-		int orig = *dimension;
-		int fixed = 0;
-		float frac = 0;
+	إذا (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		صحيح orig = *dimension;
+		صحيح fixed = 0;
+		عائم frac = 0;
 
-		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? LEFT : TOP,
+		calculate_mbp_چوڑائی(unit_len_ctx, box->style,
+				setwidth ? بایاں_2 : چوٹی_2,
 				false, true, true, &fixed, &frac);
-		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? RIGHT : BOTTOM,
+		calculate_mbp_چوڑائی(unit_len_ctx, box->style,
+				setwidth ? دایاں_2 : BOTTOM,
 				false, true, true, &fixed, &frac);
-		orig -= frac * available_width + fixed;
+		orig -= frac * دستیاب_چوڑائی + fixed;
 		*dimension = orig > 0 ? orig : 0;
 	}
 }
@@ -427,293 +427,293 @@ static inline void layout_handle_box_sizing(
  * \param  padding          filled with paddings, may be NULL
  * \param  border           filled with border widths, may be NULL
  */
-static inline void layout_find_dimensions(
-		const css_unit_ctx *unit_len_ctx,
-		int available_width,
-		int viewport_height,
-		const struct box *box,
-		const css_computed_style *style,
-		int *width,
-		int *height,
-		int *max_width,
-		int *min_width,
-		int *max_height,
-		int *min_height,
-		int margin[4],
-		int padding[4],
-		struct box_border border[4])
+ساكن مضمن فراغ layout_لبھو_dimensions(
+		ثابت css_unit_ctx *unit_len_ctx,
+		صحيح دستیاب_چوڑائی,
+		صحيح viewport_اچائی,
+		ثابت بنية box *box,
+		ثابت css_computed_style *style,
+		صحيح *چوڑائی,
+		صحيح *اچائی,
+		صحيح *max_چوڑائی,
+		صحيح *min_چوڑائی,
+		صحيح *max_اچائی,
+		صحيح *min_اچائی,
+		صحيح margin[4],
+		صحيح padding[4],
+		بنية box_border border[4])
 {
-	struct box *containing_block = NULL;
-	unsigned int i;
+	بنية box *containing_بلاک = عدم;
+	بنانشانی صحيح i;
 
-	if (width) {
-		if (css_computed_width_px(style, unit_len_ctx,
-				available_width, width) == CSS_WIDTH_SET) {
+	إذا (چوڑائی) {
+		إذا (css_computed_چوڑائی_px(style, unit_len_ctx,
+				دستیاب_چوڑائی, چوڑائی) == CSS_چوڑائی_سیٹ) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, width);
-		} else {
-			*width = AUTO;
+					دستیاب_چوڑائی, true, چوڑائی);
+		} وإلا {
+			*چوڑائی = AUTO;
 		}
 	}
 
-	if (height) {
-		enum css_height_e htype;
-		css_fixed value = 0;
+	إذا (اچائی) {
+		تعداد css_اچائی_e htype;
+		css_fixed قدر = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		htype = css_computed_height(style, &value, &unit);
+		htype = css_computed_اچائی(style, &قدر, &unit);
 
-		if (htype == CSS_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				enum css_height_e cbhtype;
+		إذا (htype == CSS_اچائی_سیٹ) {
+			إذا (unit == CSS_UNIT_PCT) {
+				تعداد css_اچائی_e cbhtype;
 
-				if (css_computed_position(box->style) ==
+				إذا (css_computed_position(box->style) ==
 						CSS_POSITION_ABSOLUTE &&
-						box->parent) {
+						box->ماپا) {
 					/* Box is absolutely positioned */
-					assert(box->float_container);
-					containing_block = box->float_container;
-				} else if (box->float_container &&
+					أكد(box->float_container);
+					containing_بلاک = box->float_container;
+				} وإلا إذا (box->float_container &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 					(css_computed_float(box->style) ==
-						CSS_FLOAT_LEFT ||
+						CSS_FLOAT_بایاں ||
 					 css_computed_float(box->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_دایاں)) {
 					/* Box is a float */
-					assert(box->parent &&
-						box->parent->parent &&
-						box->parent->parent->parent);
+					أكد(box->ماپا &&
+						box->ماپا->ماپا &&
+						box->ماپا->ماپا->ماپا);
 
-					containing_block =
-						box->parent->parent->parent;
-				} else if (box->parent && box->parent->type !=
+					containing_بلاک =
+						box->ماپا->ماپا->ماپا;
+				} وإلا إذا (box->ماپا && box->ماپا->type !=
 						BOX_INLINE_CONTAINER) {
 					/* Box is a block level element */
-					containing_block = box->parent;
-				} else if (box->parent && box->parent->type ==
+					containing_بلاک = box->ماپا;
+				} وإلا إذا (box->ماپا && box->ماپا->type ==
 						BOX_INLINE_CONTAINER) {
 					/* Box is an inline block */
-					assert(box->parent->parent);
-					containing_block = box->parent->parent;
+					أكد(box->ماپا->ماپا);
+					containing_بلاک = box->ماپا->ماپا;
 				}
 
-				if (containing_block) {
+				إذا (containing_بلاک) {
 					css_fixed f = 0;
 					css_unit u = CSS_UNIT_PX;
 
-					cbhtype = css_computed_height(
-							containing_block->style,
+					cbhtype = css_computed_اچائی(
+							containing_بلاک->style,
 							&f, &u);
 				}
 
-				if (containing_block &&
-					containing_block->height != AUTO &&
+				إذا (containing_بلاک &&
+					containing_بلاک->اچائی != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
-						cbhtype == CSS_HEIGHT_SET)) {
+						cbhtype == CSS_اچائی_سیٹ)) {
 					/* Box is absolutely positioned or its
 					 * containing block has a valid
 					 * specified height.
 					 * (CSS 2.1 Section 10.5) */
-					*height = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
-				} else if ((!box->parent ||
-						!box->parent->parent) &&
-						viewport_height >= 0) {
+					*اچائی = FPCT_دا_INT_TOINT(قدر,
+						containing_بلاک->اچائی);
+				} وإلا إذا ((!box->ماپا ||
+						!box->ماپا->ماپا) &&
+						viewport_اچائی >= 0) {
 					/* If root element or it's child
 					 * (HTML or BODY) */
-					*height = FPCT_OF_INT_TOINT(value,
-							viewport_height);
-				} else {
+					*اچائی = FPCT_دا_INT_TOINT(قدر,
+							viewport_اچائی);
+				} وإلا {
 					/* precentage height not permissible
 					 * treat height as auto */
-					*height = AUTO;
+					*اچائی = AUTO;
 				}
-			} else {
-				*height = FIXTOINT(css_unit_len2device_px(
+			} وإلا {
+				*اچائی = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						قدر, unit));
 			}
-		} else {
-			*height = AUTO;
+		} وإلا {
+			*اچائی = AUTO;
 		}
 
-		if (*height != AUTO) {
+		إذا (*اچائی != AUTO) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, false, height);
+					دستیاب_چوڑائی, false, اچائی);
 		}
 	}
 
-	if (max_width) {
-		enum css_max_width_e type;
-		css_fixed value = 0;
+	إذا (max_چوڑائی) {
+		تعداد css_max_چوڑائی_e type;
+		css_fixed قدر = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_width(style, &value, &unit);
+		type = css_computed_max_چوڑائی(style, &قدر, &unit);
 
-		if (type == CSS_MAX_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*max_width = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
-				*max_width = FIXTOINT(css_unit_len2device_px(
+		إذا (type == CSS_MAX_چوڑائی_سیٹ) {
+			إذا (unit == CSS_UNIT_PCT) {
+				*max_چوڑائی = FPCT_دا_INT_TOINT(قدر,
+						دستیاب_چوڑائی);
+			} وإلا {
+				*max_چوڑائی = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						قدر, unit));
 			}
-		} else {
+		} وإلا {
 			/* Inadmissible */
-			*max_width = -1;
+			*max_چوڑائی = -1;
 		}
 
-		if (*max_width != -1) {
+		إذا (*max_چوڑائی != -1) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, max_width);
+					دستیاب_چوڑائی, true, max_چوڑائی);
 		}
 	}
 
-	if (min_width) {
-		enum css_min_width_e type;
-		css_fixed value = 0;
+	إذا (min_چوڑائی) {
+		تعداد css_min_چوڑائی_e type;
+		css_fixed قدر = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_width(style, &value, &unit);
+		type = ns_computed_min_چوڑائی(style, &قدر, &unit);
 
-		if (type == CSS_MIN_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*min_width = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
-				*min_width = FIXTOINT(css_unit_len2device_px(
+		إذا (type == CSS_MIN_چوڑائی_سیٹ) {
+			إذا (unit == CSS_UNIT_PCT) {
+				*min_چوڑائی = FPCT_دا_INT_TOINT(قدر,
+						دستیاب_چوڑائی);
+			} وإلا {
+				*min_چوڑائی = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						قدر, unit));
 			}
-		} else {
+		} وإلا {
 			/* Inadmissible */
-			*min_width = 0;
+			*min_چوڑائی = 0;
 		}
 
-		if (*min_width != 0) {
+		إذا (*min_چوڑائی != 0) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, min_width);
+					دستیاب_چوڑائی, true, min_چوڑائی);
 		}
 	}
 
-	if (max_height) {
-		enum css_max_height_e type;
-		css_fixed value = 0;
+	إذا (max_اچائی) {
+		تعداد css_max_اچائی_e type;
+		css_fixed قدر = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_height(style, &value, &unit);
+		type = css_computed_max_اچائی(style, &قدر, &unit);
 
-		if (type == CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		إذا (type == CSS_MAX_اچائی_سیٹ) {
+			إذا (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
-				*max_height = -1;
-			} else {
-				*max_height = FIXTOINT(css_unit_len2device_px(
+				*max_اچائی = -1;
+			} وإلا {
+				*max_اچائی = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						قدر, unit));
 			}
-		} else {
+		} وإلا {
 			/* Inadmissible */
-			*max_height = -1;
+			*max_اچائی = -1;
 		}
 	}
 
-	if (min_height) {
-		enum css_min_height_e type;
-		css_fixed value = 0;
+	إذا (min_اچائی) {
+		تعداد css_min_اچائی_e type;
+		css_fixed قدر = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_height(style, &value, &unit);
+		type = ns_computed_min_اچائی(style, &قدر, &unit);
 
-		if (type == CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		إذا (type == CSS_MIN_اچائی_سیٹ) {
+			إذا (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
-				*min_height = 0;
-			} else {
-				*min_height = FIXTOINT(css_unit_len2device_px(
+				*min_اچائی = 0;
+			} وإلا {
+				*min_اچائی = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						قدر, unit));
 			}
-		} else {
+		} وإلا {
 			/* Inadmissible */
-			*min_height = 0;
+			*min_اچائی = 0;
 		}
 	}
 
-	for (i = 0; i != 4; i++) {
-		if (margin) {
-			enum css_margin_e type = CSS_MARGIN_AUTO;
-			css_fixed value = 0;
+	لكل (i = 0; i != 4; i++) {
+		إذا (margin) {
+			تعداد css_margin_e type = CSS_MARGIN_AUTO;
+			css_fixed قدر = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			type = margin_funcs[i](style, &value, &unit);
+			type = margin_funcs[i](style, &قدر, &unit);
 
-			if (type == CSS_MARGIN_SET) {
-				if (unit == CSS_UNIT_PCT) {
-					margin[i] = FPCT_OF_INT_TOINT(value,
-							available_width);
-				} else {
+			إذا (type == CSS_MARGIN_سیٹ) {
+				إذا (unit == CSS_UNIT_PCT) {
+					margin[i] = FPCT_دا_INT_TOINT(قدر,
+							دستیاب_چوڑائی);
+				} وإلا {
 					margin[i] = FIXTOINT(css_unit_len2device_px(
 							style, unit_len_ctx,
-							value, unit));
+							قدر, unit));
 				}
-			} else {
+			} وإلا {
 				margin[i] = AUTO;
 			}
 		}
 
-		if (padding) {
-			css_fixed value = 0;
+		إذا (padding) {
+			css_fixed قدر = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			padding_funcs[i](style, &value, &unit);
+			padding_funcs[i](style, &قدر, &unit);
 
-			if (unit == CSS_UNIT_PCT) {
-				padding[i] = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
+			إذا (unit == CSS_UNIT_PCT) {
+				padding[i] = FPCT_دا_INT_TOINT(قدر,
+						دستیاب_چوڑائی);
+			} وإلا {
 				padding[i] = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						قدر, unit));
 			}
 		}
 
 		/* Table cell borders are populated in table.c */
-		if (border && box->type != BOX_TABLE_CELL) {
-			enum css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
+		إذا (border && box->type != BOX_جدول_CELL) {
+			تعداد css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
 			css_color color = 0;
-			css_fixed value = 0;
+			css_fixed قدر = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			border_width_funcs[i](style, &value, &unit);
+			border_چوڑائی_funcs[i](style, &قدر, &unit);
 			bstyle = border_style_funcs[i](style);
 			border_color_funcs[i](style, &color);
 
 			border[i].style = bstyle;
 			border[i].c = color;
 
-			if (bstyle == CSS_BORDER_STYLE_HIDDEN ||
+			إذا (bstyle == CSS_BORDER_STYLE_HIDDEN ||
 					bstyle == CSS_BORDER_STYLE_NONE)
 				/* spec unclear: following Mozilla */
-				border[i].width = 0;
-			else
-				border[i].width = FIXTOINT(css_unit_len2device_px(
+				border[i].چوڑائی = 0;
+			وإلا
+				border[i].چوڑائی = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						قدر, unit));
 
 			/* Special case for border-collapse: make all borders
 			 * on table/table-row-group/table-row zero width. */
-			if (css_computed_border_collapse(style) ==
+			إذا (css_computed_border_collapse(style) ==
 					CSS_BORDER_COLLAPSE_COLLAPSE &&
-					(box->type == BOX_TABLE ||
-					 box->type == BOX_TABLE_ROW_GROUP ||
-					 box->type == BOX_TABLE_ROW))
-				border[i].width = 0;
+					(box->type == BOX_جدول ||
+					 box->type == BOX_جدول_صف_گروہ ||
+					 box->type == BOX_جدول_صف))
+				border[i].چوڑائی = 0;
 		}
 	}
 }
 
-#endif
+#جے_انت

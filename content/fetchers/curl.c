@@ -28,48 +28,48 @@
  */
 
 /* must come first to ensure winsock2.h vs windows.h ordering issues */
-#include "utils/inet.h"
+#ضمن "utils/inet.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <sys/stat.h>
+#ضمن <assert.h>
+#ضمن <errno.h>
+#ضمن <inttypes.h>
+#ضمن <stdbool.h>
+#ضمن <string.h>
+#ضمن <strings.h>
+#ضمن <time.h>
+#ضمن <sys/stat.h>
 
-#include <libwapcaplet/libwapcaplet.h>
-#include <nsutils/time.h>
+#ضمن <libwapcaplet/libwapcaplet.h>
+#ضمن <nsutils/time.h>
 
-#include "utils/corestrings.h"
-#include "utils/hashmap.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
-#include "utils/useragent.h"
-#include "utils/file.h"
-#include "utils/string.h"
-#include "netsurf/fetch.h"
-#include "netsurf/misc.h"
-#include "desktop/gui_internal.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/hashmap.h"
+#ضمن "utils/nsoption.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/ring.h"
+#ضمن "utils/useragent.h"
+#ضمن "utils/file.h"
+#ضمن "utils/string.h"
+#ضمن "netsurf/fetch.h"
+#ضمن "netsurf/misc.h"
+#ضمن "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/curl.h"
-#include "content/urldb.h"
+#ضمن "content/fetch.h"
+#ضمن "content/fetchers.h"
+#ضمن "content/fetchers/curl.h"
+#ضمن "content/urldb.h"
 
 /**
  * maximum number of progress notifications per second
  */
-#define UPDATES_PER_SECOND 2
+#تعریف_کرو UPDATES_فی_دوجا 2
 
 /**
  * The ciphersuites the browser is prepared to use for TLS1.3
  */
-#define CIPHER_SUITES						\
+#تعریف_کرو CIPHER_SUITES						\
 	"TLS_AES_256_GCM_SHA384:"				\
 	"TLS_CHACHA20_POLY1305_SHA256:"				\
 	"TLS_AES_128_GCM_SHA256"
@@ -77,7 +77,7 @@
 /**
  * The ciphersuites the browser is prepared to use for TLS<1.3
  */
-#define CIPHER_LIST						\
+#تعریف_کرو CIPHER_LIST						\
 	/* disable everything */				\
 	"-ALL:"							\
 	/* enable TLSv1.2 ECDHE AES GCM suites */		\
@@ -92,7 +92,7 @@
 /**
  * The legacy cipher suites the browser is prepared to use for TLS<1.3
  */
-#define CIPHER_LIST_LEGACY					\
+#تعریف_کرو CIPHER_LIST_LEGACY					\
 	/* as above */						\
 	CIPHER_LIST":"						\
 	/* enable (non-PFS) RSA AES GCM suites */		\
@@ -101,206 +101,206 @@
 	"RSA+AES+SHA1"
 
 /* Open SSL compatability for certificate handling */
-#ifdef WITH_OPENSSL
+#جے_تعریف_شدہ WITH_OPENSSL
 
-#include <openssl/ssl.h>
-#include <openssl/x509v3.h>
+#ضمن <openssl/ssl.h>
+#ضمن <openssl/x509v3.h>
 
-#else /* WITH_OPENSSL */
+#وإلا /* WITH_OPENSSL */
 
-typedef char X509;
+تعريفنوع حرف X509;
 
-static void X509_free(X509 *cert)
+ساكن فراغ X509_free(X509 *cert)
 {
-	free(cert);
+	حرر(cert);
 }
 
-#endif /* WITH_OPENSSL */
+#جے_انت /* WITH_OPENSSL */
 
 /* SSL certificate chain cache */
 
 /* We're only interested in the hostname and port */
-static uint32_t
-curl_fetch_ssl_key_hash(void *key)
+ساكن uint32_t
+curl_fetch_ssl_کلید_hash(فراغ *کلید)
 {
-	nsurl *url = key;
+	nsurl *url = کلید;
 	lwc_string *hostname = nsurl_get_component(url, NSURL_HOST);
-	lwc_string *port = nsurl_get_component(url, NSURL_PORT);
+	lwc_string *پورٹ = nsurl_get_component(url, NSURL_پورٹ);
 	uint32_t hash;
 
-	if (port == NULL)
-		port = lwc_string_ref(corestring_lwc_443);
+	إذا (پورٹ == عدم)
+		پورٹ = lwc_string_ref(corestring_lwc_443);
 
-	hash = lwc_string_hash_value(hostname) ^ lwc_string_hash_value(port);
+	hash = lwc_string_hash_قدر(hostname) ^ lwc_string_hash_قدر(پورٹ);
 
 	lwc_string_unref(hostname);
-	lwc_string_unref(port);
+	lwc_string_unref(پورٹ);
 
-	return hash;
+	أرجع hash;
 }
 
 /* We only compare the hostname and port */
-static bool
-curl_fetch_ssl_key_eq(void *key1, void *key2)
+ساكن bool
+curl_fetch_ssl_کلید_eq(فراغ *key1, فراغ *key2)
 {
 	nsurl *url1 = key1;
 	nsurl *url2 = key2;
 	lwc_string *hostname1 = nsurl_get_component(url1, NSURL_HOST);
 	lwc_string *hostname2 = nsurl_get_component(url2, NSURL_HOST);
-	lwc_string *port1 = nsurl_get_component(url1, NSURL_PORT);
-	lwc_string *port2 = nsurl_get_component(url2, NSURL_PORT);
+	lwc_string *port1 = nsurl_get_component(url1, NSURL_پورٹ);
+	lwc_string *port2 = nsurl_get_component(url2, NSURL_پورٹ);
 	bool iseq = false;
 
-	if (port1 == NULL)
+	إذا (port1 == عدم)
 		port1 = lwc_string_ref(corestring_lwc_443);
-	if (port2 == NULL)
+	إذا (port2 == عدم)
 		port2 = lwc_string_ref(corestring_lwc_443);
 
-	if (lwc_string_isequal(hostname1, hostname2, &iseq) != lwc_error_ok ||
+	إذا (lwc_string_isequal(hostname1, hostname2, &iseq) != lwc_error_ok ||
 			iseq == false)
-		goto out;
+		اذهب باہرلا;
 
 	iseq = false;
-	if (lwc_string_isequal(port1, port2, &iseq) != lwc_error_ok)
-		goto out;
+	إذا (lwc_string_isequal(port1, port2, &iseq) != lwc_error_ok)
+		اذهب باہرلا;
 
-out:
+باہرلا:
 	lwc_string_unref(hostname1);
 	lwc_string_unref(hostname2);
 	lwc_string_unref(port1);
 	lwc_string_unref(port2);
 
-	return iseq;
+	أرجع iseq;
 }
 
-static void *
-curl_fetch_ssl_value_alloc(void *key)
+ساكن فراغ *
+curl_fetch_ssl_قدر_alloc(فراغ *کلید)
 {
-	struct cert_chain *out;
+	بنية cert_chain *باہرلا;
 
-	if (cert_chain_alloc(0, &out) != NSERROR_OK) {
-		return NULL;
+	إذا (cert_chain_alloc(0, &باہرلا) != NSERROR_OK) {
+		أرجع عدم;
 	}
 
-	return out;
+	أرجع باہرلا;
 }
 
-static void
-curl_fetch_ssl_value_destroy(void *value)
+ساكن فراغ
+curl_fetch_ssl_قدر_destroy(فراغ *قدر)
 {
-	struct cert_chain *chain = value;
-	if (cert_chain_free(chain) != NSERROR_OK) {
+	بنية cert_chain *chain = قدر;
+	إذا (cert_chain_free(chain) != NSERROR_OK) {
 		NSLOG(netsurf, WARNING, "Problem freeing SSL certificate chain");
 	}
 }
 
-static hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_eq = curl_fetch_ssl_key_eq,
-	.key_hash = curl_fetch_ssl_key_hash,
-	.value_alloc = curl_fetch_ssl_value_alloc,
-	.value_destroy = curl_fetch_ssl_value_destroy,
+ساكن hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
+	.کلید_clone = (hashmap_کلید_clone_t)nsurl_ref,
+	.کلید_destroy = (hashmap_کلید_destroy_t)nsurl_unref,
+	.کلید_eq = curl_fetch_ssl_کلید_eq,
+	.کلید_hash = curl_fetch_ssl_کلید_hash,
+	.قدر_alloc = curl_fetch_ssl_قدر_alloc,
+	.قدر_destroy = curl_fetch_ssl_قدر_destroy,
 };
 
-static hashmap_t *curl_fetch_ssl_hashmap = NULL;
+ساكن hashmap_t *curl_fetch_ssl_hashmap = عدم;
 
 /** SSL certificate info */
-struct cert_info {
+بنية cert_info {
 	X509 *cert;		/**< Pointer to certificate */
-	long err;		/**< OpenSSL error code */
+	لما err;		/**< OpenSSL error code */
 };
 
-#if LIBCURL_VERSION_NUM >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
-#define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_XFERINFOFUNCTION
-#define NSCURLOPT_PROGRESS_DATA CURLOPT_XFERINFODATA
-#define NSCURL_PROGRESS_T curl_off_t
-#else
-#define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_PROGRESSFUNCTION
-#define NSCURLOPT_PROGRESS_DATA CURLOPT_PROGRESSDATA
-#define NSCURL_PROGRESS_T double
-#endif
+#إذا LIBCURL_نسخہ_عدد >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
+#تعریف_کرو NSCURLOPT_ترقی_FUNCTION CURLOPT_XFERINFOFUNCTION
+#تعریف_کرو NSCURLOPT_ترقی_انکڑے CURLOPT_XFERINFODATA
+#تعریف_کرو NSCURL_ترقی_T curl_off_t
+#وإلا
+#تعریف_کرو NSCURLOPT_ترقی_FUNCTION CURLOPT_PROGRESSFUNCTION
+#تعریف_کرو NSCURLOPT_ترقی_انکڑے CURLOPT_PROGRESSDATA
+#تعریف_کرو NSCURL_ترقی_T مزدوج
+#جے_انت
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
-#define NSCURL_POSTDATA_T curl_mime
-#define NSCURL_POSTDATA_CURLOPT CURLOPT_MIMEPOST
-#define NSCURL_POSTDATA_FREE(x) curl_mime_free(x)
-#else
-#define NSCURL_POSTDATA_T struct curl_httppost
-#define NSCURL_POSTDATA_CURLOPT CURLOPT_HTTPPOST
-#define NSCURL_POSTDATA_FREE(x) curl_formfree(x)
-#endif
+#إذا LIBCURL_نسخہ_عدد >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#تعریف_کرو NSCURL_POSTDATA_T curl_mime
+#تعریف_کرو NSCURL_POSTDATA_CURLOPT CURLOPT_MIMEPOST
+#تعریف_کرو NSCURL_POSTDATA_FREE(x) curl_mime_free(x)
+#وإلا
+#تعریف_کرو NSCURL_POSTDATA_T بنية curl_httppost
+#تعریف_کرو NSCURL_POSTDATA_CURLOPT CURLOPT_HTTPPOST
+#تعریف_کرو NSCURL_POSTDATA_FREE(x) curl_formfree(x)
+#جے_انت
 
 /** Information for a single fetch. */
-struct curl_fetch_info {
-	struct fetch *fetch_handle; /**< The fetch handle we're parented by. */
+بنية curl_fetch_info {
+	بنية fetch *fetch_handle; /**< The fetch handle we're parented by. */
 	CURL * curl_handle;	/**< cURL handle if being fetched, or 0. */
-	bool sent_ssl_chain;	/**< Have we tried to send the SSL chain */
-	bool had_headers;	/**< Headers have been processed. */
+	bool گھلیا_ssl_chain;	/**< Have we tried to send the SSL chain */
+	bool had_سرخیاں;	/**< Headers have been processed. */
 	bool abort;		/**< Abort requested. */
 	bool stopped;		/**< Download stopped on purpose. */
 	bool only_2xx;		/**< Only HTTP 2xx responses acceptable. */
 	bool downgrade_tls;	/**< Downgrade to TLS 1.2 */
 	nsurl *url;		/**< URL of this fetch. */
 	lwc_string *host;	/**< The hostname of this fetch. */
-	struct curl_slist *headers;	/**< List of request headers. */
-	char *location;		/**< Response Location header, or 0. */
-	unsigned long content_length;	/**< Response Content-Length, or 0. */
-	char *cookie_string;	/**< Cookie string for this fetch */
-	char *realm;		/**< HTTP Auth Realm */
-	struct fetch_postdata *postdata; /**< POST data */
+	بنية curl_slist *سرخیاں;	/**< List of request headers. */
+	حرف *location;		/**< Response Location header, or 0. */
+	بنانشانی لما content_لمائی;	/**< Response Content-Length, or 0. */
+	حرف *cookie_string;	/**< Cookie string for this fetch */
+	حرف *realm;		/**< HTTP Auth Realm */
+	بنية fetch_postdata *postdata; /**< POST data */
 	NSCURL_POSTDATA_T *curl_postdata; /**< POST data in curl representation */
 
-	long http_code; /**< HTTP result code from cURL. */
+	لما http_کوڈ; /**< HTTP result code from cURL. */
 
-	uint64_t last_progress_update;	/**< Time of last progress update */
-	int cert_depth; /**< deepest certificate in use */
-	struct cert_info cert_data[MAX_CERT_DEPTH]; /**< HTTPS certificate data */
+	uint64_t آخری_ترقی_update;	/**< Time of last progress update */
+	صحيح cert_ڈونگھائی; /**< deepest certificate in use */
+	بنية cert_info cert_انکڑے[MAX_CERT_ڈونگھائی]; /**< HTTPS certificate data */
 };
 
 /** curl handle cache entry */
-struct cache_handle {
+بنية cache_handle {
 	CURL *handle; /**< The cached cURL handle */
 	lwc_string *host; /**< The host for which this handle is cached */
 
-	struct cache_handle *r_prev; /**< Previous cached handle in ring. */
-	struct cache_handle *r_next; /**< Next cached handle in ring. */
+	بنية cache_handle *r_prev; /**< Previous cached handle in ring. */
+	بنية cache_handle *r_اگلا; /**< Next cached handle in ring. */
 };
 
 /** Global cURL multi handle. */
 CURLM *fetch_curl_multi;
 
 /** Curl handle with default options set; not used for transfers. */
-static CURL *fetch_blank_curl;
+ساكن CURL *fetch_blank_curl;
 
 /** Ring of cached handles */
-static struct cache_handle *curl_handle_ring = 0;
+ساكن بنية cache_handle *curl_handle_ring = 0;
 
 /** Count of how many schemes the curl fetcher is handling */
-static int curl_fetchers_registered = 0;
+ساكن صحيح curl_fetchers_registered = 0;
 
 /** Flag for runtime detection of openssl usage */
-static bool curl_with_openssl;
+ساكن bool curl_with_openssl;
 
 /** Error buffer for cURL. */
-static char fetch_error_buffer[CURL_ERROR_SIZE];
+ساكن حرف fetch_error_بفر[CURL_ERROR_ناپ];
 
 /** Proxy authentication details. */
-static char fetch_proxy_userpwd[100];
+ساكن حرف fetch_proxy_userpwd[100];
 
 /** Interlock to prevent initiation during callbacks */
-static bool inside_curl = false;
+ساكن bool inside_curl = false;
 
 
 /**
  * Initialise a cURL fetcher.
  */
-static bool fetch_curl_initialise(lwc_string *scheme)
+ساكن bool fetch_curl_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "Initialise cURL fetcher for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_انکڑے(scheme));
 	curl_fetchers_registered++;
-	return true; /* Always succeeds */
+	أرجع true; /* Always succeeds */
 }
 
 
@@ -309,14 +309,14 @@ static bool fetch_curl_initialise(lwc_string *scheme)
  *
  * \param scheme The scheme to finalise.
  */
-static void fetch_curl_finalise(lwc_string *scheme)
+ساكن فراغ fetch_curl_finalise(lwc_string *scheme)
 {
-	struct cache_handle *h;
+	بنية cache_handle *h;
 
 	curl_fetchers_registered--;
 	NSLOG(netsurf, INFO, "Finalise cURL fetcher %s",
-	      lwc_string_data(scheme));
-	if (curl_fetchers_registered == 0) {
+	      lwc_string_انکڑے(scheme));
+	إذا (curl_fetchers_registered == 0) {
 		CURLMcode codem;
 		/* All the fetchers have been finalised. */
 		NSLOG(netsurf, INFO,
@@ -325,7 +325,7 @@ static void fetch_curl_finalise(lwc_string *scheme)
 		curl_easy_cleanup(fetch_blank_curl);
 
 		codem = curl_multi_cleanup(fetch_curl_multi);
-		if (codem != CURLM_OK)
+		إذا (codem != CURLM_OK)
 			NSLOG(netsurf, INFO,
 			      "curl_multi_cleanup failed: ignoring");
 
@@ -333,16 +333,16 @@ static void fetch_curl_finalise(lwc_string *scheme)
 
 		NSLOG(netsurf, DEBUG, "Cleaning up SSL cert chain hashmap");
 		hashmap_destroy(curl_fetch_ssl_hashmap);
-		curl_fetch_ssl_hashmap = NULL;
+		curl_fetch_ssl_hashmap = عدم;
 	}
 
 	/* Free anything remaining in the cached curl handle ring */
-	while (curl_handle_ring != NULL) {
+	طالما (curl_handle_ring != عدم) {
 		h = curl_handle_ring;
 		RING_REMOVE(curl_handle_ring, h);
 		lwc_string_unref(h->host);
 		curl_easy_cleanup(h->handle);
-		free(h);
+		حرر(h);
 	}
 }
 
@@ -353,9 +353,9 @@ static void fetch_curl_finalise(lwc_string *scheme)
  * \param url The url to check.
  * \return true if the fetcher supports the url else false.
  */
-static bool fetch_curl_can_fetch(const nsurl *url)
+ساكن bool fetch_curl_can_fetch(ثابت nsurl *url)
 {
-	return nsurl_has_component(url, NSURL_HOST);
+	أرجع nsurl_has_component(url, NSURL_HOST);
 }
 
 
@@ -363,90 +363,90 @@ static bool fetch_curl_can_fetch(const nsurl *url)
 /**
  * allocate postdata
  */
-static struct fetch_postdata *
-fetch_curl_alloc_postdata(const char *post_urlenc,
-			  const struct fetch_multipart_data *post_multipart)
+ساكن بنية fetch_postdata *
+fetch_curl_alloc_postdata(ثابت حرف *post_urlenc,
+			  ثابت بنية fetch_multipart_انکڑے *post_multipart)
 {
-	struct fetch_postdata *postdata;
-	postdata = calloc(1, sizeof(struct fetch_postdata));
-	if (postdata != NULL) {
+	بنية fetch_postdata *postdata;
+	postdata = صفر_حافظہ_دیو(1, حجم(بنية fetch_postdata));
+	إذا (postdata != عدم) {
 
-		if (post_urlenc) {
+		إذا (post_urlenc) {
 			postdata->type = FETCH_POSTDATA_URLENC;
-			postdata->data.urlenc = strdup(post_urlenc);
-			if (postdata->data.urlenc == NULL) {
-				free(postdata);
-				postdata = NULL;
+			postdata->انکڑے.urlenc = strdup(post_urlenc);
+			إذا (postdata->انکڑے.urlenc == عدم) {
+				حرر(postdata);
+				postdata = عدم;
 			}
-		} else if (post_multipart) {
+		} وإلا إذا (post_multipart) {
 			postdata->type = FETCH_POSTDATA_MULTIPART;
-			postdata->data.multipart = fetch_multipart_data_clone(post_multipart);
-			if (postdata->data.multipart == NULL) {
-				free(postdata);
-				postdata = NULL;
+			postdata->انکڑے.multipart = fetch_multipart_انکڑے_clone(post_multipart);
+			إذا (postdata->انکڑے.multipart == عدم) {
+				حرر(postdata);
+				postdata = عدم;
 			}
-		} else {
+		} وإلا {
 			postdata->type = FETCH_POSTDATA_NONE;
 		}
 	}
-	return postdata;
+	أرجع postdata;
 }
 
 /**
  * free postdata
  */
-static void fetch_curl_free_postdata(struct fetch_postdata *postdata)
+ساكن فراغ fetch_curl_free_postdata(بنية fetch_postdata *postdata)
 {
-	if (postdata != NULL) {
-		switch (postdata->type) {
-		case FETCH_POSTDATA_NONE:
-			break;
-		case FETCH_POSTDATA_URLENC:
-			free(postdata->data.urlenc);
-			break;
-		case FETCH_POSTDATA_MULTIPART:
-			fetch_multipart_data_destroy(postdata->data.multipart);
-			break;
+	إذا (postdata != عدم) {
+		بدل (postdata->type) {
+		حالة FETCH_POSTDATA_NONE:
+			اكسر;
+		حالة FETCH_POSTDATA_URLENC:
+			حرر(postdata->انکڑے.urlenc);
+			اكسر;
+		حالة FETCH_POSTDATA_MULTIPART:
+			fetch_multipart_انکڑے_destroy(postdata->انکڑے.multipart);
+			اكسر;
 		}
 
-		free(postdata);
+		حرر(postdata);
 	}
 }
 
 /**
  *construct a new fetch structure
  */
-static struct curl_fetch_info *fetch_alloc(void)
+ساكن بنية curl_fetch_info *fetch_alloc(فراغ)
 {
-	struct curl_fetch_info *fetch;
-	fetch = malloc(sizeof (*fetch));
-	if (fetch == NULL)
-		return NULL;
+	بنية curl_fetch_info *fetch;
+	fetch = حافظہ_دیو(حجم (*fetch));
+	إذا (fetch == عدم)
+		أرجع عدم;
 
-	fetch->curl_handle = NULL;
-	fetch->sent_ssl_chain = false;
-	fetch->had_headers = false;
+	fetch->curl_handle = عدم;
+	fetch->گھلیا_ssl_chain = false;
+	fetch->had_سرخیاں = false;
 	fetch->abort = false;
 	fetch->stopped = false;
 	fetch->only_2xx = false;
 	fetch->downgrade_tls = false;
-	fetch->headers = NULL;
-	fetch->url = NULL;
-	fetch->host = NULL;
-	fetch->location = NULL;
-	fetch->content_length = 0;
-	fetch->http_code = 0;
-	fetch->cookie_string = NULL;
-	fetch->realm = NULL;
-	fetch->last_progress_update = 0;
-	fetch->postdata = NULL;
-	fetch->curl_postdata = NULL;
+	fetch->سرخیاں = عدم;
+	fetch->url = عدم;
+	fetch->host = عدم;
+	fetch->location = عدم;
+	fetch->content_لمائی = 0;
+	fetch->http_کوڈ = 0;
+	fetch->cookie_string = عدم;
+	fetch->realm = عدم;
+	fetch->آخری_ترقی_update = 0;
+	fetch->postdata = عدم;
+	fetch->curl_postdata = عدم;
 
 	/* Clear certificate chain data */
-	memset(fetch->cert_data, 0, sizeof(fetch->cert_data));
-	fetch->cert_depth = -1;
+	memset(fetch->cert_انکڑے, 0, حجم(fetch->cert_انکڑے));
+	fetch->cert_ڈونگھائی = -1;
 
-	return fetch;
+	أرجع fetch;
 }
 
 /**
@@ -470,216 +470,216 @@ static struct curl_fetch_info *fetch_alloc(void)
  * Some private data can be passed as the last parameter to fetch_start, and
  * callbacks will contain this.
  */
-static void *
-fetch_curl_setup(struct fetch *parent_fetch,
+ساكن فراغ *
+fetch_curl_تیاری(بنية fetch *ماپا_fetch,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 ثابت حرف *post_urlenc,
+		 ثابت بنية fetch_multipart_انکڑے *post_multipart,
+		 ثابت حرف **سرخیاں)
 {
-	struct curl_fetch_info *fetch;
-	struct curl_slist *slist;
-	int i;
+	بنية curl_fetch_info *fetch;
+	بنية curl_slist *slist;
+	صحيح i;
 
 	fetch = fetch_alloc();
-	if (fetch == NULL)
-		return NULL;
+	إذا (fetch == عدم)
+		أرجع عدم;
 
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", fetch, nsurl_access(url));
 
 	fetch->only_2xx = only_2xx;
 	fetch->downgrade_tls = downgrade_tls;
-	fetch->fetch_handle = parent_fetch;
+	fetch->fetch_handle = ماپا_fetch;
 	fetch->url = nsurl_ref(url);
 	fetch->host = nsurl_get_component(url, NSURL_HOST);
-	if (fetch->host == NULL) {
-		goto failed;
+	إذا (fetch->host == عدم) {
+		اذهب failed;
 	}
 	fetch->postdata = fetch_curl_alloc_postdata(post_urlenc, post_multipart);
-	if (fetch->postdata == NULL) {
-		goto failed;
+	إذا (fetch->postdata == عدم) {
+		اذهب failed;
 	}
 
-#define APPEND(list, value) \
-	slist = curl_slist_append(list, value);		\
-	if (slist == NULL)				\
-		goto failed;				\
+#تعریف_کرو APPEND(list, قدر) \
+	slist = curl_slist_append(list, قدر);		\
+	إذا (slist == عدم)				\
+		اذهب failed;				\
 	list = slist;
 
 	/* remove curl default headers */
-	APPEND(fetch->headers, "Pragma:");
+	APPEND(fetch->سرخیاں, "Pragma:");
 
 	/* when doing a POST libcurl sends Expect: 100-continue" by default
 	 * which fails with lighttpd, so disable it (see bug 1429054) */
-	APPEND(fetch->headers, "Expect:");
+	APPEND(fetch->سرخیاں, "Expect:");
 
-	if ((nsoption_charp(accept_language) != NULL) &&
+	إذا ((nsoption_charp(accept_language) != عدم) &&
 	    (nsoption_charp(accept_language)[0] != '\0')) {
-		char s[80];
-		snprintf(s, sizeof s, "Accept-Language: %s, *;q=0.1",
+		حرف s[80];
+		snprintf(s, حجم s, "Accept-Language: %s, *;q=0.1",
 			 nsoption_charp(accept_language));
-		s[sizeof s - 1] = 0;
-		APPEND(fetch->headers, s);
+		s[حجم s - 1] = 0;
+		APPEND(fetch->سرخیاں, s);
 	}
 
-	if (nsoption_charp(accept_charset) != NULL &&
+	إذا (nsoption_charp(accept_charset) != عدم &&
 	    nsoption_charp(accept_charset)[0] != '\0') {
-		char s[80];
-		snprintf(s, sizeof s, "Accept-Charset: %s, *;q=0.1",
+		حرف s[80];
+		snprintf(s, حجم s, "Accept-Charset: %s, *;q=0.1",
 			 nsoption_charp(accept_charset));
-		s[sizeof s - 1] = 0;
-		APPEND(fetch->headers, s);
+		s[حجم s - 1] = 0;
+		APPEND(fetch->سرخیاں, s);
 	}
 
-	if (nsoption_bool(do_not_track) == true) {
-		APPEND(fetch->headers, "DNT: 1");
+	إذا (nsoption_bool(do_not_track) == true) {
+		APPEND(fetch->سرخیاں, "DNT: 1");
 	}
 
 	/* And add any headers specified by the caller */
-	for (i = 0; headers[i] != NULL; i++) {
-		APPEND(fetch->headers, headers[i]);
+	لكل (i = 0; سرخیاں[i] != عدم; i++) {
+		APPEND(fetch->سرخیاں, سرخیاں[i]);
 	}
 
-	return fetch;
+	أرجع fetch;
 
-#undef APPEND
+#تعریف_رد APPEND
 
 failed:
 	lwc_string_unref(fetch->host);
 	nsurl_unref(fetch->url);
 	fetch_curl_free_postdata(fetch->postdata);
-	curl_slist_free_all(fetch->headers);
-	free(fetch);
-	return NULL;
+	curl_slist_free_all(fetch->سرخیاں);
+	حرر(fetch);
+	أرجع عدم;
 }
 
 
-#ifdef WITH_OPENSSL
+#جے_تعریف_شدہ WITH_OPENSSL
 
 /**
  * Retrieve the ssl cert chain for the fetch, creating a blank one if needed
  */
-static struct cert_chain *
-fetch_curl_get_cached_chain(struct curl_fetch_info *f)
+ساكن بنية cert_chain *
+fetch_curl_get_cached_chain(بنية curl_fetch_info *f)
 {
-	struct cert_chain *chain;
+	بنية cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
-	if (chain == NULL) {
-		chain = hashmap_insert(curl_fetch_ssl_hashmap, f->url);
+	إذا (chain == عدم) {
+		chain = hashmap_داخل_کرو(curl_fetch_ssl_hashmap, f->url);
 	}
 
-	return chain;
+	أرجع chain;
 }
 
 /**
  * Report the certificate information in the fetch to the users
  */
-static void
-fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
+ساكن فراغ
+fetch_curl_store_certs_وچ_cache(بنية curl_fetch_info *f)
 {
-	size_t depth;
+	size_t ڈونگھائی;
 	BIO *mem;
-	BUF_MEM *buf[MAX_CERT_DEPTH];
-	struct cert_chain chain, *cached_chain;
-	struct cert_info *certs;
+	BUF_MEM *buf[MAX_CERT_ڈونگھائی];
+	بنية cert_chain chain, *cached_chain;
+	بنية cert_info *certs;
 
-	memset(&chain, 0, sizeof(chain));
+	memset(&chain, 0, حجم(chain));
 
-	certs = f->cert_data;
-	chain.depth = f->cert_depth + 1; /* 0 indexed certificate depth */
+	certs = f->cert_انکڑے;
+	chain.ڈونگھائی = f->cert_ڈونگھائی + 1; /* 0 indexed certificate depth */
 
-	for (depth = 0; depth < chain.depth; depth++) {
-		if (certs[depth].cert == NULL) {
+	لكل (ڈونگھائی = 0; ڈونگھائی < chain.ڈونگھائی; ڈونگھائی++) {
+		إذا (certs[ڈونگھائی].cert == عدم) {
 			/* This certificate is missing, skip it */
-			chain.certs[depth].err = SSL_CERT_ERR_CERT_MISSING;
-			continue;
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_CERT_MISSING;
+			استمر;
 		}
 
 		/* error code (if any) */
-		switch (certs[depth].err) {
-		case X509_V_OK:
-			chain.certs[depth].err = SSL_CERT_ERR_OK;
-			break;
+		بدل (certs[ڈونگھائی].err) {
+		حالة X509_V_OK:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_OK;
+			اكسر;
 
-		case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+		حالة X509_V_ERR_UNABLE_منزل_GET_ISSUER_CERT:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
-			chain.certs[depth].err = SSL_CERT_ERR_BAD_ISSUER;
-			break;
+		حالة X509_V_ERR_UNABLE_منزل_DECODE_ISSUER_عوامی_کلید:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_BAD_ISSUER;
+			اكسر;
 
-		case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
+		حالة X509_V_ERR_UNABLE_منزل_DECRYPT_CERT_SIGNATURE:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
+		حالة X509_V_ERR_UNABLE_منزل_DECRYPT_CRL_SIGNATURE:
 			/* fallthrough */
-		case X509_V_ERR_CERT_SIGNATURE_FAILURE:
+		حالة X509_V_ERR_CERT_SIGNATURE_FAILURE:
 			/* fallthrough */
-		case X509_V_ERR_CRL_SIGNATURE_FAILURE:
-			chain.certs[depth].err = SSL_CERT_ERR_BAD_SIG;
-			break;
+		حالة X509_V_ERR_CRL_SIGNATURE_FAILURE:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_BAD_SIG;
+			اكسر;
 
-		case X509_V_ERR_CERT_NOT_YET_VALID:
+		حالة X509_V_ERR_CERT_NOT_YET_VALID:
 			/* fallthrough */
-		case X509_V_ERR_CRL_NOT_YET_VALID:
-			chain.certs[depth].err = SSL_CERT_ERR_TOO_YOUNG;
-			break;
+		حالة X509_V_ERR_CRL_NOT_YET_VALID:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_TOO_YOUNG;
+			اكسر;
 
-		case X509_V_ERR_CERT_HAS_EXPIRED:
+		حالة X509_V_ERR_CERT_HAS_EXPIRED:
 			/* fallthrough */
-		case X509_V_ERR_CRL_HAS_EXPIRED:
-			chain.certs[depth].err = SSL_CERT_ERR_TOO_OLD;
-			break;
+		حالة X509_V_ERR_CRL_HAS_EXPIRED:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_TOO_OLD;
+			اكسر;
 
-		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-			chain.certs[depth].err = SSL_CERT_ERR_SELF_SIGNED;
-			break;
+		حالة X509_V_ERR_ڈونگھائی_ZERO_SELF_SIGNED_CERT:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_SELF_SIGNED;
+			اكسر;
 
-		case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
-			chain.certs[depth].err = SSL_CERT_ERR_CHAIN_SELF_SIGNED;
-			break;
+		حالة X509_V_ERR_SELF_SIGNED_CERT_وچ_CHAIN:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_CHAIN_SELF_SIGNED;
+			اكسر;
 
-		case X509_V_ERR_CERT_REVOKED:
-			chain.certs[depth].err = SSL_CERT_ERR_REVOKED;
-			break;
+		حالة X509_V_ERR_CERT_REVOKED:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_REVOKED;
+			اكسر;
 
-		case X509_V_ERR_HOSTNAME_MISMATCH:
-			chain.certs[depth].err = SSL_CERT_ERR_HOSTNAME_MISMATCH;
-			break;
+		حالة X509_V_ERR_HOSTNAME_MISMATCH:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_HOSTNAME_MISMATCH;
+			اكسر;
 
-		default:
-			chain.certs[depth].err = SSL_CERT_ERR_UNKNOWN;
-			break;
+		افتراضي:
+			chain.certs[ڈونگھائی].err = SSL_CERT_ERR_UNKNOWN;
+			اكسر;
 		}
 
 		/*
 		 * get certificate in Distinguished Encoding Rules (DER) format.
 		 */
 		mem = BIO_new(BIO_s_mem());
-		i2d_X509_bio(mem, certs[depth].cert);
-		BIO_get_mem_ptr(mem, &buf[depth]);
-		(void) BIO_set_close(mem, BIO_NOCLOSE);
+		i2d_X509_bio(mem, certs[ڈونگھائی].cert);
+		BIO_get_mem_ptr(mem, &buf[ڈونگھائی]);
+		(فراغ) BIO_سیٹ_close(mem, BIO_NOCLOSE);
 		BIO_free(mem);
 
-		chain.certs[depth].der = (uint8_t *)buf[depth]->data;
-		chain.certs[depth].der_length = buf[depth]->length;
+		chain.certs[ڈونگھائی].der = (uint8_t *)buf[ڈونگھائی]->انکڑے;
+		chain.certs[ڈونگھائی].der_لمائی = buf[ڈونگھائی]->لمائی;
 	}
 
 	/* Now dup that chain into the cache */
 	cached_chain = fetch_curl_get_cached_chain(f);
-	if (cert_chain_dup_into(&chain, cached_chain) != NSERROR_OK) {
+	إذا (cert_chain_dup_into(&chain, cached_chain) != NSERROR_OK) {
 		/* Something went wrong storing the chain, give up */
 		hashmap_remove(curl_fetch_ssl_hashmap, f->url);
 	}
 
 	/* release the openssl memory buffer */
-	for (depth = 0; depth < chain.depth; depth++) {
-		if (chain.certs[depth].err == SSL_CERT_ERR_CERT_MISSING) {
-			continue;
+	لكل (ڈونگھائی = 0; ڈونگھائی < chain.ڈونگھائی; ڈونگھائی++) {
+		إذا (chain.certs[ڈونگھائی].err == SSL_CERT_ERR_CERT_MISSING) {
+			استمر;
 		}
-		if (buf[depth] != NULL) {
-			BUF_MEM_free(buf[depth]);
+		إذا (buf[ڈونگھائی] != عدم) {
+			BUF_MEM_free(buf[ڈونگھائی]);
 		}
 	}
 }
@@ -703,51 +703,51 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
  * \return 1 to indicate verification should continue and 0 to indicate
  *          verification should stop.
  */
-static int
-fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
+ساكن صحيح
+fetch_curl_verify_callback(صحيح verify_ok, X509_STORE_CTX *x509_ctx)
 {
-	int depth;
-	struct curl_fetch_info *fetch;
+	صحيح ڈونگھائی;
+	بنية curl_fetch_info *fetch;
 
-	depth = X509_STORE_CTX_get_error_depth(x509_ctx);
-	fetch = X509_STORE_CTX_get_app_data(x509_ctx);
+	ڈونگھائی = X509_STORE_CTX_get_error_ڈونگھائی(x509_ctx);
+	fetch = X509_STORE_CTX_get_app_انکڑے(x509_ctx);
 
 	/* certificate chain is excessively deep so fail verification */
-	if (depth >= MAX_CERT_DEPTH) {
-		X509_STORE_CTX_set_error(x509_ctx,
+	إذا (ڈونگھائی >= MAX_CERT_ڈونگھائی) {
+		X509_STORE_CTX_سیٹ_error(x509_ctx,
 					 X509_V_ERR_CERT_CHAIN_TOO_LONG);
-		return 0;
+		أرجع 0;
 	}
 
 	/* record the max depth */
-	if (depth > fetch->cert_depth) {
-		fetch->cert_depth = depth;
+	إذا (ڈونگھائی > fetch->cert_ڈونگھائی) {
+		fetch->cert_ڈونگھائی = ڈونگھائی;
 	}
 
 	/* save the certificate by incrementing the reference count and
 	 * keeping a pointer.
 	 */
-	if (!fetch->cert_data[depth].cert) {
-		fetch->cert_data[depth].cert = X509_STORE_CTX_get_current_cert(x509_ctx);
-		X509_up_ref(fetch->cert_data[depth].cert);
-		fetch->cert_data[depth].err = X509_STORE_CTX_get_error(x509_ctx);
+	إذا (!fetch->cert_انکڑے[ڈونگھائی].cert) {
+		fetch->cert_انکڑے[ڈونگھائی].cert = X509_STORE_CTX_get_current_cert(x509_ctx);
+		X509_اتے_ref(fetch->cert_انکڑے[ڈونگھائی].cert);
+		fetch->cert_انکڑے[ڈونگھائی].err = X509_STORE_CTX_get_error(x509_ctx);
 	}
 
 	/* allow certificate chain to be completed */
-	if (depth > 0) {
+	إذا (ڈونگھائی > 0) {
 		verify_ok = 1;
-	} else {
+	} وإلا {
 		/* search for deeper certificates in the chain with errors */
-		for (depth = fetch->cert_depth; depth > 0; depth--) {
-			if (fetch->cert_data[depth].err != 0) {
+		لكل (ڈونگھائی = fetch->cert_ڈونگھائی; ڈونگھائی > 0; ڈونگھائی--) {
+			إذا (fetch->cert_انکڑے[ڈونگھائی].err != 0) {
 				/* error in previous certificate so fail verification */
 				verify_ok = 0;
-				X509_STORE_CTX_set_error(x509_ctx, fetch->cert_data[depth].err);
+				X509_STORE_CTX_سیٹ_error(x509_ctx, fetch->cert_انکڑے[ڈونگھائی].err);
 			}
 		}
 	}
 
-	return verify_ok;
+	أرجع verify_ok;
 }
 
 
@@ -761,33 +761,33 @@ fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
  * \param parm The fetch context.
  * \return 1 to indicate verification success and 0 to indicate verification failure.
  */
-static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
+ساكن صحيح fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, فراغ *parm)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *) parm;
-	int ok;
+	بنية curl_fetch_info *f = (بنية curl_fetch_info *) parm;
+	صحيح ok;
 	X509_VERIFY_PARAM *vparam;
 
 	/* Configure the verification parameters to include hostname */
 	vparam = X509_STORE_CTX_get0_param(x509_ctx);
-	X509_VERIFY_PARAM_set_hostflags(vparam, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
+	X509_VERIFY_PARAM_سیٹ_hostflags(vparam, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
 
 	ok = X509_VERIFY_PARAM_set1_host(vparam,
-					 lwc_string_data(f->host),
-					 lwc_string_length(f->host));
+					 lwc_string_انکڑے(f->host),
+					 lwc_string_لمائی(f->host));
 
 	/* Store fetch struct in context for verify callback */
-	if (ok) {
-		ok = X509_STORE_CTX_set_app_data(x509_ctx, parm);
+	إذا (ok) {
+		ok = X509_STORE_CTX_سیٹ_app_انکڑے(x509_ctx, parm);
 	}
 
 	/* verify the certificate chain using standard call */
-	if (ok) {
+	إذا (ok) {
 		ok = X509_verify_cert(x509_ctx);
 	}
 
-	fetch_curl_store_certs_in_cache(f);
+	fetch_curl_store_certs_وچ_cache(f);
 
-	return ok;
+	أرجع ok;
 }
 
 
@@ -799,118 +799,118 @@ static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
  * \param parm The callback context.
  * \return A curl result code.
  */
-static CURLcode
-fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
+ساكن CURLcode
+fetch_curl_sslctxfun(CURL *curl_handle, فراغ *_sslctx, فراغ *parm)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *) parm;
+	بنية curl_fetch_info *f = (بنية curl_fetch_info *) parm;
 	SSL_CTX *sslctx = _sslctx;
-	long options = SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 |
+	لما options = SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 |
 			SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1;
 
 	/* set verify callback for each certificate in chain */
-	SSL_CTX_set_verify(sslctx, SSL_VERIFY_PEER, fetch_curl_verify_callback);
+	SSL_CTX_سیٹ_verify(sslctx, SSL_VERIFY_PEER, fetch_curl_verify_callback);
 
 	/* set callback used to verify certificate chain */
-	SSL_CTX_set_cert_verify_callback(sslctx,
+	SSL_CTX_سیٹ_cert_verify_callback(sslctx,
 					 fetch_curl_cert_verify_callback,
 					 parm);
 
-	if (f->downgrade_tls) {
+	إذا (f->downgrade_tls) {
 		/* Disable TLS 1.3 if the server can't cope with it */
-#ifdef SSL_OP_NO_TLSv1_3
+#جے_تعریف_شدہ SSL_OP_NO_TLSv1_3
 		options |= SSL_OP_NO_TLSv1_3;
-#endif
-#ifdef SSL_MODE_SEND_FALLBACK_SCSV
+#جے_انت
+#جے_تعریف_شدہ SSL_منوال_SEND_FALLBACK_SCSV
 		/* Ensure server rejects the connection if downgraded too far */
-		SSL_CTX_set_mode(sslctx, SSL_MODE_SEND_FALLBACK_SCSV);
-#endif
+		SSL_CTX_سیٹ_منوال(sslctx, SSL_منوال_SEND_FALLBACK_SCSV);
+#جے_انت
 	}
 
-	SSL_CTX_set_options(sslctx, options);
+	SSL_CTX_سیٹ_options(sslctx, options);
 
-#ifdef SSL_OP_NO_TICKET
+#جے_تعریف_شدہ SSL_OP_NO_TICKET
 	SSL_CTX_clear_options(sslctx, SSL_OP_NO_TICKET);
-#endif
+#جے_انت
 
-	return CURLE_OK;
+	أرجع CURLE_OK;
 }
 
 
-#endif /* WITH_OPENSSL */
+#جے_انت /* WITH_OPENSSL */
 
 
 /**
  * Report the certificate information in the fetch to the users
  */
-static void
-fetch_curl_report_certs_upstream(struct curl_fetch_info *f)
+ساكن فراغ
+fetch_curl_report_certs_upstream(بنية curl_fetch_info *f)
 {
-	fetch_msg msg;
-	struct cert_chain *chain;
+	fetch_پیغام پیغام;
+	بنية cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
 
-	if (chain != NULL) {
-		msg.type = FETCH_CERTS;
-		msg.data.chain = chain;
+	إذا (chain != عدم) {
+		پیغام.type = FETCH_CERTS;
+		پیغام.انکڑے.chain = chain;
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&پیغام, f->fetch_handle);
 	}
 
-	f->sent_ssl_chain = true;
+	f->گھلیا_ssl_chain = true;
 }
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#إذا LIBCURL_نسخہ_عدد >= 0x073800 /* 7.56.0 depricated curl_formadd */
 
 /**
  * curl mime data context
  */
-struct curl_mime_ctx {
-	char *buffer;
-	curl_off_t size;
+بنية curl_mime_ctx {
+	حرف *بفر;
+	curl_off_t ناپ;
 	curl_off_t position;
 };
 
-static size_t mime_data_read_callback(char *buffer, size_t size, size_t nitems, void *arg)
+ساكن size_t mime_انکڑے_read_callback(حرف *بفر, size_t ناپ, size_t nitems, فراغ *arg)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
-	curl_off_t sz = mctx->size - mctx->position;
+	بنية curl_mime_ctx *mctx = (بنية curl_mime_ctx *) arg;
+	curl_off_t sz = mctx->ناپ - mctx->position;
 
-	nitems *= size;
-	if(sz > (curl_off_t)nitems) {
+	nitems *= ناپ;
+	إذا(sz > (curl_off_t)nitems) {
 		sz = nitems;
 	}
-	if(sz) {
-		memcpy(buffer, mctx->buffer + mctx->position, sz);
+	إذا(sz) {
+		حافظہ_نقل(بفر, mctx->بفر + mctx->position, sz);
 	}
 	mctx->position += sz;
-	return sz;
+	أرجع sz;
 }
 
-static int mime_data_seek_callback(void *arg, curl_off_t offset, int origin)
+ساكن صحيح mime_انکڑے_seek_callback(فراغ *arg, curl_off_t وتھ, صحيح origin)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
+	بنية curl_mime_ctx *mctx = (بنية curl_mime_ctx *) arg;
 
-	switch(origin) {
-	case SEEK_END:
-		offset += mctx->size;
-		break;
-	case SEEK_CUR:
-		offset += mctx->position;
-		break;
+	بدل(origin) {
+	حالة SEEK_END:
+		وتھ += mctx->ناپ;
+		اكسر;
+	حالة SEEK_CUR:
+		وتھ += mctx->position;
+		اكسر;
 	}
 
-	if(offset < 0) {
-		return CURL_SEEKFUNC_FAIL;
+	إذا(وتھ < 0) {
+		أرجع CURL_SEEKFUNC_FAIL;
 	}
-	mctx->position = offset;
-	return CURL_SEEKFUNC_OK;
+	mctx->position = وتھ;
+	أرجع CURL_SEEKFUNC_OK;
 }
 
-static void mime_data_free_callback(void *arg)
+ساكن فراغ mime_انکڑے_free_callback(فراغ *arg)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
-	free(mctx);
+	بنية curl_mime_ctx *mctx = (بنية curl_mime_ctx *) arg;
+	حرر(mctx);
 }
 
 /**
@@ -919,241 +919,241 @@ static void mime_data_free_callback(void *arg)
  * \param chandle curl fetch handle.
  * \param multipart limked list of struct ::fetch_multipart forming post data.
  */
-static curl_mime *
+ساكن curl_mime *
 fetch_curl_postdata_convert(CURL *chandle,
-			    const struct fetch_multipart_data *multipart)
+			    ثابت بنية fetch_multipart_انکڑے *multipart)
 {
 	curl_mime *cmime;
 	curl_mimepart *part;
-	CURLcode code = CURLE_OK;
-	size_t value_len;
+	CURLcode کوڈ = CURLE_OK;
+	size_t قدر_len;
 
 	cmime = curl_mime_init(chandle);
-	if (cmime == NULL) {
+	إذا (cmime == عدم) {
 		NSLOG(netsurf, WARNING, "postdata conversion failed to curl mime context");
-		return NULL;
+		أرجع عدم;
 	}
 
 	/* iterate post data */
-	for (; multipart != NULL; multipart = multipart->next) {
+	لكل (; multipart != عدم; multipart = multipart->اگلا) {
 		part = curl_mime_addpart(cmime);
-		if (part == NULL) {
-			goto convert_failed;
+		إذا (part == عدم) {
+			اذهب convert_failed;
 		}
 
-		code = curl_mime_name(part, multipart->name);
-		if (code != CURLE_OK) {
-			goto convert_failed;
+		کوڈ = curl_mime_name(part, multipart->name);
+		إذا (کوڈ != CURLE_OK) {
+			اذهب convert_failed;
 		}
 
-		value_len = strlen(multipart->value);
+		قدر_len = لڑی_لمبائی(multipart->قدر);
 
-		if (multipart->file && value_len==0) {
+		إذا (multipart->file && قدر_len==0) {
 			/* file entries with no filename require special handling */
-			code=curl_mime_data(part, multipart->value, value_len);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			کوڈ=curl_mime_انکڑے(part, multipart->قدر, قدر_len);
+			إذا (کوڈ != CURLE_OK) {
+				اذهب convert_failed;
 			}
 
-			code = curl_mime_filename(part, "");
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			کوڈ = curl_mime_filename(part, "");
+			إذا (کوڈ != CURLE_OK) {
+				اذهب convert_failed;
 			}
 
-			code = curl_mime_type(part, "application/octet-stream");
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			کوڈ = curl_mime_type(part, "application/octet-stream");
+			إذا (کوڈ != CURLE_OK) {
+				اذهب convert_failed;
 			}
 
-		} else if(multipart->file) {
+		} وإلا إذا(multipart->file) {
 			/* file entry */
 			nserror ret;
-			char *leafname = NULL;
-			char *mimetype = NULL;
+			حرف *leafname = عدم;
+			حرف *mimetype = عدم;
 
-			code = curl_mime_filedata(part, multipart->rawfile);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			کوڈ = curl_mime_filedata(part, multipart->rawfile);
+			إذا (کوڈ != CURLE_OK) {
+				اذهب convert_failed;
 			}
 
-			ret = guit->file->basename(multipart->value, &leafname, NULL);
-			if (ret != NSERROR_OK) {
-				goto convert_failed;
+			ret = guit->file->basename(multipart->قدر, &leafname, عدم);
+			إذا (ret != NSERROR_OK) {
+				اذهب convert_failed;
 			}
-			code = curl_mime_filename(part, leafname);
-			free(leafname);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			کوڈ = curl_mime_filename(part, leafname);
+			حرر(leafname);
+			إذا (کوڈ != CURLE_OK) {
+				اذهب convert_failed;
 			}
 
-			mimetype = guit->fetch->mimetype(multipart->value);
-			if (mimetype == NULL) {
+			mimetype = guit->fetch->mimetype(multipart->قدر);
+			إذا (mimetype == عدم) {
 				mimetype=strdup("text/plain");
 			}
-			if (mimetype == NULL) {
-				goto convert_failed;
+			إذا (mimetype == عدم) {
+				اذهب convert_failed;
 			}
-			code = curl_mime_type(part, mimetype);
-			free(mimetype);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			کوڈ = curl_mime_type(part, mimetype);
+			حرر(mimetype);
+			إذا (کوڈ != CURLE_OK) {
+				اذهب convert_failed;
 			}
 
-		} else {
+		} وإلا {
 			/* make the curl mime reference the existing multipart
 			 * data which requires use of a callback and context.
 			 */
-			struct curl_mime_ctx *cb_ctx;
-			cb_ctx = malloc(sizeof(struct curl_mime_ctx));
-			if (cb_ctx == NULL) {
-				goto convert_failed;
+			بنية curl_mime_ctx *cb_ctx;
+			cb_ctx = حافظہ_دیو(حجم(بنية curl_mime_ctx));
+			إذا (cb_ctx == عدم) {
+				اذهب convert_failed;
 			}
-			cb_ctx->buffer = multipart->value;
-			cb_ctx->size = value_len;
+			cb_ctx->بفر = multipart->قدر;
+			cb_ctx->ناپ = قدر_len;
 			cb_ctx->position = 0;
-			code = curl_mime_data_cb(part,
-						 value_len,
-						 mime_data_read_callback,
-						 mime_data_seek_callback,
-						 mime_data_free_callback,
+			کوڈ = curl_mime_انکڑے_cb(part,
+						 قدر_len,
+						 mime_انکڑے_read_callback,
+						 mime_انکڑے_seek_callback,
+						 mime_انکڑے_free_callback,
 						 cb_ctx);
-			if (code != CURLE_OK) {
-				free(cb_ctx);
-				goto convert_failed;
+			إذا (کوڈ != CURLE_OK) {
+				حرر(cb_ctx);
+				اذهب convert_failed;
 			}
 		}
 	}
 
-	return cmime;
+	أرجع cmime;
 
 convert_failed:
-	NSLOG(netsurf, WARNING, "postdata conversion failed with curl code: %d", code);
+	NSLOG(netsurf, WARNING, "postdata conversion failed with curl code: %d", کوڈ);
 	curl_mime_free(cmime);
-	return NULL;
+	أرجع عدم;
 }
 
-#else /* LIBCURL_VERSION_NUM >= 0x073800 */
+#وإلا /* LIBCURL_VERSION_NUM >= 0x073800 */
 
 /**
  * Convert a list of struct ::fetch_multipart_data to a list of
  * struct curl_httppost for libcurl.
  */
-static struct curl_httppost *
+ساكن بنية curl_httppost *
 fetch_curl_postdata_convert(CURL *chandle,
-			    const struct fetch_multipart_data *control)
+			    ثابت بنية fetch_multipart_انکڑے *control)
 {
-	struct curl_httppost *post = NULL, *last = NULL;
-	CURLFORMcode code;
+	بنية curl_httppost *post = عدم, *آخری = عدم;
+	CURLFORMcode کوڈ;
 	nserror ret;
 
-	for (; control; control = control->next) {
-		if (control->file) {
-			char *leafname = NULL;
-			ret = guit->file->basename(control->value, &leafname, NULL);
-			if (ret != NSERROR_OK) {
-				continue;
+	لكل (; control; control = control->اگلا) {
+		إذا (control->file) {
+			حرف *leafname = عدم;
+			ret = guit->file->basename(control->قدر, &leafname, عدم);
+			إذا (ret != NSERROR_OK) {
+				استمر;
 			}
 
 			/* We have to special case filenames of "", so curl
 			 * a) actually attempts the fetch and
 			 * b) doesn't attempt to open the file ""
 			 */
-			if (control->value[0] == '\0') {
+			إذا (control->قدر[0] == '\0') {
 				/* dummy buffer - needs to be static so
 				 * pointer's still valid when we go out
 				 * of scope (not that libcurl should be
 				 * attempting to access it, of course).
 				 */
-				static char buf;
+				ساكن حرف buf;
 
-				code = curl_formadd(&post, &last,
+				کوڈ = curl_formadd(&post, &آخری,
 						    CURLFORM_COPYNAME, control->name,
-						    CURLFORM_BUFFER, control->value,
+						    CURLFORM_بفر, control->قدر,
 						    /* needed, as basename("") == "." */
 						    CURLFORM_FILENAME, "",
 						    CURLFORM_BUFFERPTR, &buf,
 						    CURLFORM_BUFFERLENGTH, 0,
 						    CURLFORM_CONTENTTYPE,
 						    "application/octet-stream",
-						    CURLFORM_END);
-				if (code != CURL_FORMADD_OK)
+						    CURLFORM_سرا);
+				إذا (کوڈ != CURL_FORMADD_OK)
 					NSLOG(netsurf, INFO,
-					      "curl_formadd: %d (%s)", code,
+					      "curl_formadd: %d (%s)", کوڈ,
 					      control->name);
-			} else {
-				char *mimetype = guit->fetch->mimetype(control->value);
-				code = curl_formadd(&post, &last,
+			} وإلا {
+				حرف *mimetype = guit->fetch->mimetype(control->قدر);
+				کوڈ = curl_formadd(&post, &آخری,
 						    CURLFORM_COPYNAME, control->name,
 						    CURLFORM_FILE, control->rawfile,
 						    CURLFORM_FILENAME, leafname,
 						    CURLFORM_CONTENTTYPE,
 						    (mimetype != 0 ? mimetype : "text/plain"),
-						    CURLFORM_END);
-				if (code != CURL_FORMADD_OK)
+						    CURLFORM_سرا);
+				إذا (کوڈ != CURL_FORMADD_OK)
 					NSLOG(netsurf, INFO,
 					      "curl_formadd: %d (%s=%s)",
-					      code,
+					      کوڈ,
 					      control->name,
-					      control->value);
-				free(mimetype);
+					      control->قدر);
+				حرر(mimetype);
 			}
-			free(leafname);
-		} else {
-			code = curl_formadd(&post, &last,
+			حرر(leafname);
+		} وإلا {
+			کوڈ = curl_formadd(&post, &آخری,
 					    CURLFORM_COPYNAME, control->name,
-					    CURLFORM_COPYCONTENTS, control->value,
-					    CURLFORM_END);
-			if (code != CURL_FORMADD_OK)
+					    CURLFORM_COPYCONTENTS, control->قدر,
+					    CURLFORM_سرا);
+			إذا (کوڈ != CURL_FORMADD_OK)
 				NSLOG(netsurf, INFO,
-				      "curl_formadd: %d (%s=%s)", code,
-				      control->name, control->value);
+				      "curl_formadd: %d (%s=%s)", کوڈ,
+				      control->name, control->قدر);
 		}
 	}
 
-	return post;
+	أرجع post;
 }
 
-#endif  /* LIBCURL_VERSION_NUM >= 0x073800 */
+#جے_انت  /* LIBCURL_VERSION_NUM >= 0x073800 */
 
 /**
  * Setup multipart post data
  */
-static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
+ساكن CURLcode fetch_curl_سیٹ_postdata(بنية curl_fetch_info *f)
 {
-	CURLcode code = CURLE_OK;
+	CURLcode کوڈ = CURLE_OK;
 
-#undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
-	if (code != CURLE_OK)					\
-		return code;					\
+#تعریف_رد SETOPT
+#تعریف_کرو SETOPT(option, قدر) { \
+	کوڈ = curl_easy_setopt(f->curl_handle, option, قدر);	\
+	إذا (کوڈ != CURLE_OK)					\
+		أرجع کوڈ;					\
 	}
 
-	switch (f->postdata->type) {
-	case FETCH_POSTDATA_NONE:
-		SETOPT(CURLOPT_POSTFIELDS, NULL);
-		SETOPT(NSCURL_POSTDATA_CURLOPT, NULL);
+	بدل (f->postdata->type) {
+	حالة FETCH_POSTDATA_NONE:
+		SETOPT(CURLOPT_POSTFIELDS, عدم);
+		SETOPT(NSCURL_POSTDATA_CURLOPT, عدم);
 		SETOPT(CURLOPT_HTTPGET, 1L);
-		break;
+		اكسر;
 
-	case FETCH_POSTDATA_URLENC:
-		SETOPT(NSCURL_POSTDATA_CURLOPT, NULL);
+	حالة FETCH_POSTDATA_URLENC:
+		SETOPT(NSCURL_POSTDATA_CURLOPT, عدم);
 		SETOPT(CURLOPT_HTTPGET, 0L);
-		SETOPT(CURLOPT_POSTFIELDS, f->postdata->data.urlenc);
-		break;
+		SETOPT(CURLOPT_POSTFIELDS, f->postdata->انکڑے.urlenc);
+		اكسر;
 
-	case FETCH_POSTDATA_MULTIPART:
-		SETOPT(CURLOPT_POSTFIELDS, NULL);
+	حالة FETCH_POSTDATA_MULTIPART:
+		SETOPT(CURLOPT_POSTFIELDS, عدم);
 		SETOPT(CURLOPT_HTTPGET, 0L);
-		if (f->curl_postdata == NULL) {
+		إذا (f->curl_postdata == عدم) {
 			f->curl_postdata =
 				fetch_curl_postdata_convert(f->curl_handle,
-							    f->postdata->data.multipart);
+							    f->postdata->انکڑے.multipart);
 		}
 		SETOPT(NSCURL_POSTDATA_CURLOPT, f->curl_postdata);
-		break;
+		اكسر;
 	}
-	return code;
+	أرجع کوڈ;
 }
 
 /**
@@ -1162,75 +1162,75 @@ static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
  * \param f The fetch to set options on.
  * \return A curl result code.
  */
-static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
+ساكن CURLcode fetch_curl_سیٹ_options(بنية curl_fetch_info *f)
 {
-	CURLcode code;
-	const char *auth;
+	CURLcode کوڈ;
+	ثابت حرف *auth;
 
-#undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
-	if (code != CURLE_OK)					\
-		return code;					\
+#تعریف_رد SETOPT
+#تعریف_کرو SETOPT(option, قدر) { \
+	کوڈ = curl_easy_setopt(f->curl_handle, option, قدر);	\
+	إذا (کوڈ != CURLE_OK)					\
+		أرجع کوڈ;					\
 	}
 
 	SETOPT(CURLOPT_URL, nsurl_access(f->url));
-	SETOPT(CURLOPT_PRIVATE, f);
+	SETOPT(CURLOPT_نجی, f);
 	SETOPT(CURLOPT_WRITEDATA, f);
 	SETOPT(CURLOPT_WRITEHEADER, f);
-	SETOPT(NSCURLOPT_PROGRESS_DATA, f);
-	SETOPT(CURLOPT_HTTPHEADER, f->headers);
-	code = fetch_curl_set_postdata(f);
-	if (code != CURLE_OK) {
-		return code;
+	SETOPT(NSCURLOPT_ترقی_انکڑے, f);
+	SETOPT(CURLOPT_HTTPHEADER, f->سرخیاں);
+	کوڈ = fetch_curl_سیٹ_postdata(f);
+	إذا (کوڈ != CURLE_OK) {
+		أرجع کوڈ;
 	}
 
 	f->cookie_string = urldb_get_cookie(f->url, true);
-	if (f->cookie_string) {
+	إذا (f->cookie_string) {
 		SETOPT(CURLOPT_COOKIE, f->cookie_string);
-	} else {
-		SETOPT(CURLOPT_COOKIE, NULL);
+	} وإلا {
+		SETOPT(CURLOPT_COOKIE, عدم);
 	}
 
-	if ((auth = urldb_get_auth_details(f->url, NULL)) != NULL) {
+	إذا ((auth = urldb_get_auth_details(f->url, عدم)) != عدم) {
 		SETOPT(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		SETOPT(CURLOPT_USERPWD, auth);
-	} else {
-		SETOPT(CURLOPT_USERPWD, NULL);
+	} وإلا {
+		SETOPT(CURLOPT_USERPWD, عدم);
 	}
 
 	/* set up proxy options */
-	if (nsoption_bool(http_proxy) &&
-	    (nsoption_charp(http_proxy_host) != NULL) &&
-	    (strncmp(nsurl_access(f->url), "file:", 5) != 0)) {
+	إذا (nsoption_bool(http_proxy) &&
+	    (nsoption_charp(http_proxy_host) != عدم) &&
+	    (لڑی_مقابلہ(nsurl_access(f->url), "file:", 5) != 0)) {
 		SETOPT(CURLOPT_PROXY, nsoption_charp(http_proxy_host));
-		SETOPT(CURLOPT_PROXYPORT, (long) nsoption_int(http_proxy_port));
+		SETOPT(CURLOPT_PROXYPORT, (لما) nsoption_int(http_proxy_پورٹ));
 
-#if LIBCURL_VERSION_NUM >= 0x071304
+#إذا LIBCURL_نسخہ_عدد >= 0x071304
 		/* Added in 7.19.4 */
 		/* setup the omission list */
 		SETOPT(CURLOPT_NOPROXY, nsoption_charp(http_proxy_noproxy));
-#endif
+#جے_انت
 
-		if (nsoption_int(http_proxy_auth) != OPTION_HTTP_PROXY_AUTH_NONE) {
+		إذا (nsoption_int(http_proxy_auth) != OPTION_HTTP_PROXY_AUTH_NONE) {
 			SETOPT(CURLOPT_PROXYAUTH,
 			       nsoption_int(http_proxy_auth) ==
 					OPTION_HTTP_PROXY_AUTH_BASIC ?
-					(long) CURLAUTH_BASIC :
-					(long) CURLAUTH_NTLM);
+					(لما) CURLAUTH_BASIC :
+					(لما) CURLAUTH_NTLM);
 			snprintf(fetch_proxy_userpwd,
-					sizeof fetch_proxy_userpwd,
+					حجم fetch_proxy_userpwd,
 					"%s:%s",
 				 nsoption_charp(http_proxy_auth_user),
 				 nsoption_charp(http_proxy_auth_pass));
 			SETOPT(CURLOPT_PROXYUSERPWD, fetch_proxy_userpwd);
 		}
-	} else {
-		SETOPT(CURLOPT_PROXY, NULL);
+	} وإلا {
+		SETOPT(CURLOPT_PROXY, عدم);
 	}
 
 
-	if (curl_with_openssl) {
+	إذا (curl_with_openssl) {
 		SETOPT(CURLOPT_SSL_CIPHER_LIST,
 			f->downgrade_tls ? CIPHER_LIST_LEGACY : CIPHER_LIST);
 	}
@@ -1238,27 +1238,27 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
 	/* Force-enable SSL session ID caching, as some distros are odd. */
 	SETOPT(CURLOPT_SSL_SESSIONID_CACHE, 1L);
 
-	if (urldb_get_cert_permissions(f->url)) {
+	إذا (urldb_get_cert_permissions(f->url)) {
 		/* Disable certificate verification */
 		SETOPT(CURLOPT_SSL_VERIFYPEER, 0L);
 		SETOPT(CURLOPT_SSL_VERIFYHOST, 0L);
-		if (curl_with_openssl) {
-			SETOPT(CURLOPT_SSL_CTX_FUNCTION, NULL);
-			SETOPT(CURLOPT_SSL_CTX_DATA, NULL);
+		إذا (curl_with_openssl) {
+			SETOPT(CURLOPT_SSL_CTX_FUNCTION, عدم);
+			SETOPT(CURLOPT_SSL_CTX_انکڑے, عدم);
 		}
-	} else {
+	} وإلا {
 		/* do verification */
 		SETOPT(CURLOPT_SSL_VERIFYPEER, 1L);
 		SETOPT(CURLOPT_SSL_VERIFYHOST, 2L);
-#ifdef WITH_OPENSSL
-		if (curl_with_openssl) {
+#جے_تعریف_شدہ WITH_OPENSSL
+		إذا (curl_with_openssl) {
 			SETOPT(CURLOPT_SSL_CTX_FUNCTION, fetch_curl_sslctxfun);
-			SETOPT(CURLOPT_SSL_CTX_DATA, f);
+			SETOPT(CURLOPT_SSL_CTX_انکڑے, f);
 		}
-#endif
+#جے_انت
 	}
 
-	return CURLE_OK;
+	أرجع CURLE_OK;
 }
 
 /**
@@ -1268,87 +1268,87 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
  * \param handle CURL handle to be used to fetch the content.
  * \return true if the fetch was successfully initiated else false.
  */
-static bool
-fetch_curl_initiate_fetch(struct curl_fetch_info *fetch, CURL *handle)
+ساكن bool
+fetch_curl_initiate_fetch(بنية curl_fetch_info *fetch, CURL *handle)
 {
-	CURLcode code;
+	CURLcode کوڈ;
 	CURLMcode codem;
 
 	fetch->curl_handle = handle;
 
 	/* Initialise the handle */
-	code = fetch_curl_set_options(fetch);
-	if (code != CURLE_OK) {
+	کوڈ = fetch_curl_سیٹ_options(fetch);
+	إذا (کوڈ != CURLE_OK) {
 		fetch->curl_handle = 0;
 		/* The handle maybe went bad, eat it */
 		NSLOG(netsurf, WARNING, "cURL handle maybe went bad, retry later");
 		curl_easy_cleanup(handle);
-		return false;
+		أرجع false;
 	}
 
 	/* add to the global curl multi handle */
-	codem = curl_multi_add_handle(fetch_curl_multi, fetch->curl_handle);
-	assert(codem == CURLM_OK || codem == CURLM_CALL_MULTI_PERFORM);
+	codem = curl_multi_جوڑو_handle(fetch_curl_multi, fetch->curl_handle);
+	أكد(codem == CURLM_OK || codem == CURLM_CALL_MULTI_PERFORM);
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Find a CURL handle to use to dispatch a job
  */
-static CURL *fetch_curl_get_handle(lwc_string *host)
+ساكن CURL *fetch_curl_get_handle(lwc_string *host)
 {
-	struct cache_handle *h;
+	بنية cache_handle *h;
 	CURL *ret;
 	RING_FINDBYLWCHOST(curl_handle_ring, h, host);
-	if (h) {
+	إذا (h) {
 		ret = h->handle;
 		lwc_string_unref(h->host);
 		RING_REMOVE(curl_handle_ring, h);
-		free(h);
-	} else {
+		حرر(h);
+	} وإلا {
 		ret = curl_easy_duphandle(fetch_blank_curl);
 	}
-	return ret;
+	أرجع ret;
 }
 
 
 /**
  * Dispatch a single job
  */
-static bool fetch_curl_start(void *vfetch)
+ساكن bool fetch_curl_شروع(فراغ *vfetch)
 {
-	struct curl_fetch_info *fetch = (struct curl_fetch_info*)vfetch;
-	if (inside_curl) {
+	بنية curl_fetch_info *fetch = (بنية curl_fetch_info*)vfetch;
+	إذا (inside_curl) {
 		NSLOG(netsurf, DEBUG, "Deferring fetch because we're inside cURL");
-		return false;
+		أرجع false;
 	}
-	return fetch_curl_initiate_fetch(fetch,
+	أرجع fetch_curl_initiate_fetch(fetch,
 			fetch_curl_get_handle(fetch->host));
 }
 
 /**
  * Cache a CURL handle for the provided host (if wanted)
  */
-static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
+ساكن فراغ fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 {
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#إذا LIBCURL_نسخہ_عدد >= 0x071e00
 	/* 7.30.0 or later has its own connection caching; suppress ours */
 	curl_easy_cleanup(handle);
-	return;
-#else
-	struct cache_handle *h = 0;
-	int c;
+	أرجع;
+#وإلا
+	بنية cache_handle *h = 0;
+	صحيح c;
 	RING_FINDBYLWCHOST(curl_handle_ring, h, host);
-	if (h) {
+	إذا (h) {
 		/* Already have a handle cached for this hostname */
 		curl_easy_cleanup(handle);
-		return;
+		أرجع;
 	}
 	/* We do not have a handle cached, first up determine if the cache is full */
-	RING_GETSIZE(struct cache_handle, curl_handle_ring, c);
-	if (c >= nsoption_int(max_cached_fetch_handles)) {
+	RING_GETSIZE(بنية cache_handle, curl_handle_ring, c);
+	إذا (c >= nsoption_int(max_cached_fetch_handles)) {
 		/* Cache is full, so, we rotate the ring by one and
 		 * replace the oldest handle with this one. We do this
 		 * without freeing/allocating memory (except the
@@ -1356,26 +1356,26 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 		 * ring and then re-inserting it, in order to be as
 		 * efficient as we can.
 		 */
-		if (curl_handle_ring != NULL) {
+		إذا (curl_handle_ring != عدم) {
 			h = curl_handle_ring;
-			curl_handle_ring = h->r_next;
+			curl_handle_ring = h->r_اگلا;
 			curl_easy_cleanup(h->handle);
 			h->handle = handle;
 			lwc_string_unref(h->host);
 			h->host = lwc_string_ref(host);
-		} else {
+		} وإلا {
 			/* Actually, we don't want to cache any handles */
 			curl_easy_cleanup(handle);
 		}
 
-		return;
+		أرجع;
 	}
 	/* The table isn't full yet, so make a shiny new handle to add to the ring */
-	h = (struct cache_handle*)malloc(sizeof(struct cache_handle));
+	h = (بنية cache_handle*)حافظہ_دیو(حجم(بنية cache_handle));
 	h->handle = handle;
 	h->host = lwc_string_ref(host);
-	RING_INSERT(curl_handle_ring, h);
-#endif
+	RING_داخل_کرو(curl_handle_ring, h);
+#جے_انت
 }
 
 
@@ -1384,18 +1384,18 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
  *
  * Will prod the queue afterwards to allow pending requests to be initiated.
  */
-static void fetch_curl_stop(struct curl_fetch_info *f)
+ساكن فراغ fetch_curl_stop(بنية curl_fetch_info *f)
 {
 	CURLMcode codem;
 
-	assert(f);
+	أكد(f);
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", f, nsurl_access(f->url));
 
-	if (f->curl_handle) {
+	إذا (f->curl_handle) {
 		/* remove from curl multi handle */
 		codem = curl_multi_remove_handle(fetch_curl_multi,
 				f->curl_handle);
-		assert(codem == CURLM_OK);
+		أكد(codem == CURLM_OK);
 		/* Put this curl handle into the cache if wanted. */
 		fetch_curl_cache_handle(f->curl_handle, f->host);
 		f->curl_handle = 0;
@@ -1408,21 +1408,21 @@ static void fetch_curl_stop(struct curl_fetch_info *f)
 /**
  * Abort a fetch.
  */
-static void fetch_curl_abort(void *vf)
+ساكن فراغ fetch_curl_abort(فراغ *vf)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *)vf;
-	assert(f);
+	بنية curl_fetch_info *f = (بنية curl_fetch_info *)vf;
+	أكد(f);
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", f, nsurl_access(f->url));
-	if (f->curl_handle) {
-		if (inside_curl) {
+	إذا (f->curl_handle) {
+		إذا (inside_curl) {
 			NSLOG(netsurf, DEBUG, "Deferring cleanup");
 			f->abort = true;
-		} else {
+		} وإلا {
 			NSLOG(netsurf, DEBUG, "Immediate abort");
 			fetch_curl_stop(f);
 			fetch_free(f->fetch_handle);
 		}
-	} else {
+	} وإلا {
 		fetch_remove_from_queues(f->fetch_handle);
 		fetch_free(f->fetch_handle);
 	}
@@ -1432,33 +1432,33 @@ static void fetch_curl_abort(void *vf)
 /**
  * Free a fetch structure and associated resources.
  */
-static void fetch_curl_free(void *vf)
+ساكن فراغ fetch_curl_free(فراغ *vf)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *)vf;
-	int i;
+	بنية curl_fetch_info *f = (بنية curl_fetch_info *)vf;
+	صحيح i;
 
-	if (f->curl_handle) {
+	إذا (f->curl_handle) {
 		curl_easy_cleanup(f->curl_handle);
 	}
 	nsurl_unref(f->url);
 	lwc_string_unref(f->host);
-	free(f->location);
-	free(f->cookie_string);
-	free(f->realm);
-	if (f->headers) {
-		curl_slist_free_all(f->headers);
+	حرر(f->location);
+	حرر(f->cookie_string);
+	حرر(f->realm);
+	إذا (f->سرخیاں) {
+		curl_slist_free_all(f->سرخیاں);
 	}
 	fetch_curl_free_postdata(f->postdata);
 	NSCURL_POSTDATA_FREE(f->curl_postdata);
 
 	/* free certificate data */
-	for (i = 0; i < MAX_CERT_DEPTH; i++) {
-		if (f->cert_data[i].cert != NULL) {
-			X509_free(f->cert_data[i].cert);
+	لكل (i = 0; i < MAX_CERT_ڈونگھائی; i++) {
+		إذا (f->cert_انکڑے[i].cert != عدم) {
+			X509_free(f->cert_انکڑے[i].cert);
 		}
 	}
 
-	free(f);
+	حرر(f);
 }
 
 
@@ -1467,62 +1467,62 @@ static void fetch_curl_free(void *vf)
  *
  * Return true if the fetch is being aborted.
  */
-static bool fetch_curl_process_headers(struct curl_fetch_info *f)
+ساكن bool fetch_curl_process_سرخیاں(بنية curl_fetch_info *f)
 {
-	long http_code;
-	CURLcode code;
-	fetch_msg msg;
+	لما http_کوڈ;
+	CURLcode کوڈ;
+	fetch_پیغام پیغام;
 
-	f->had_headers = true;
+	f->had_سرخیاں = true;
 
-	if (!f->http_code) {
-		code = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_CODE,
-					 &f->http_code);
-		assert(code == CURLE_OK);
-		fetch_set_http_code(f->fetch_handle, f->http_code);
+	إذا (!f->http_کوڈ) {
+		کوڈ = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_کوڈ,
+					 &f->http_کوڈ);
+		أكد(کوڈ == CURLE_OK);
+		fetch_سیٹ_http_کوڈ(f->fetch_handle, f->http_کوڈ);
 	}
-	http_code = f->http_code;
-	NSLOG(netsurf, INFO, "HTTP status code %li", http_code);
+	http_کوڈ = f->http_کوڈ;
+	NSLOG(netsurf, INFO, "HTTP status code %li", http_کوڈ);
 
-	if ((http_code == HTTP_RESPONSE_NOT_MODIFIED) &&
+	إذا ((http_کوڈ == HTTP_RESPONSE_NOT_MODIFIED) &&
 	    (f->postdata->type==FETCH_POSTDATA_NONE)) {
 		/* Not Modified && GET request */
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		پیغام.type = FETCH_NOTMODIFIED;
+		fetch_send_callback(&پیغام, f->fetch_handle);
+		أرجع true;
 	}
 
 	/* handle HTTP redirects (3xx response codes) */
-	if (HTTP_RESPONSE_IS_3XX(http_code) && (f->location != 0)) {
+	إذا (HTTP_RESPONSE_IS_3XX(http_کوڈ) && (f->location != 0)) {
 		NSLOG(netsurf, INFO, "FETCH_REDIRECT, '%s'", f->location);
-		msg.type = FETCH_REDIRECT;
-		msg.data.redirect = f->location;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		پیغام.type = FETCH_REDIRECT;
+		پیغام.انکڑے.redirect = f->location;
+		fetch_send_callback(&پیغام, f->fetch_handle);
+		أرجع true;
 	}
 
 	/* handle HTTP 401 (Authentication errors) */
-	if (http_code == HTTP_RESPONSE_UNAUTHORIZED) {
-		msg.type = FETCH_AUTH;
-		msg.data.auth.realm = f->realm;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+	إذا (http_کوڈ == HTTP_RESPONSE_UNAUTHORIZED) {
+		پیغام.type = FETCH_AUTH;
+		پیغام.انکڑے.auth.realm = f->realm;
+		fetch_send_callback(&پیغام, f->fetch_handle);
+		أرجع true;
 	}
 
 	/* handle HTTP errors (non 2xx response codes) */
-	if (f->only_2xx &&
-	    strncmp(nsurl_access(f->url), "http", 4) == 0 &&
-	    (HTTP_RESPONSE_IS_2XX(http_code) == false)) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = messages_get("Not2xx");
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+	إذا (f->only_2xx &&
+	    لڑی_مقابلہ(nsurl_access(f->url), "http", 4) == 0 &&
+	    (HTTP_RESPONSE_IS_2XX(http_کوڈ) == false)) {
+		پیغام.type = FETCH_ERROR;
+		پیغام.انکڑے.error = messages_get("Not2xx");
+		fetch_send_callback(&پیغام, f->fetch_handle);
+		أرجع true;
 	}
 
-	if (f->abort)
-		return true;
+	إذا (f->abort)
+		أرجع true;
 
-	return false;
+	أرجع false;
 }
 
 
@@ -1532,27 +1532,27 @@ static bool fetch_curl_process_headers(struct curl_fetch_info *f)
  * \param curl_handle curl easy handle of fetch
  * \param result The result code of the completed fetch.
  */
-static void fetch_curl_done(CURL *curl_handle, CURLcode result)
+ساكن فراغ fetch_curl_پورا(CURL *curl_handle, CURLcode نتیجہ)
 {
-	bool finished = false;
+	bool مکمل = false;
 	bool error = false;
 	bool cert = false;
 	bool abort_fetch;
-	struct curl_fetch_info *f;
-	char **_hideous_hack = (char **) (void *) &f;
-	CURLcode code;
+	بنية curl_fetch_info *f;
+	حرف **_hideous_hack = (حرف **) (فراغ *) &f;
+	CURLcode کوڈ;
 
 	/* find the structure associated with this fetch */
 	/* For some reason, cURL thinks CURLINFO_PRIVATE should be a string?! */
-	code = curl_easy_getinfo(curl_handle, CURLINFO_PRIVATE, _hideous_hack);
-	assert(code == CURLE_OK);
+	کوڈ = curl_easy_getinfo(curl_handle, CURLINFO_نجی, _hideous_hack);
+	أكد(کوڈ == CURLE_OK);
 
 	abort_fetch = f->abort;
 	NSLOG(netsurf, INFO, "done %s", nsurl_access(f->url));
 
-	if ((abort_fetch == false) &&
-	    (result == CURLE_OK ||
-	     ((result == CURLE_WRITE_ERROR) && (f->stopped == false)))) {
+	إذا ((abort_fetch == false) &&
+	    (نتیجہ == CURLE_OK ||
+	     ((نتیجہ == CURLE_WRITE_ERROR) && (f->stopped == false)))) {
 		/* fetch completed normally or the server fed us a junk gzip
 		 * stream (usually in the form of garbage at the end of the
 		 * stream). Curl will have fed us all but the last chunk of
@@ -1562,74 +1562,74 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
 		 * object will be truncated in this case and leave it to
 		 * the content handlers to cope.
 		 */
-		if (f->stopped ||
-		    (!f->had_headers &&	fetch_curl_process_headers(f))) {
+		إذا (f->stopped ||
+		    (!f->had_سرخیاں &&	fetch_curl_process_سرخیاں(f))) {
 			; /* redirect with no body or similar */
-		} else {
-			finished = true;
+		} وإلا {
+			مکمل = true;
 		}
-	} else if (result == CURLE_PARTIAL_FILE) {
+	} وإلا إذا (نتیجہ == CURLE_PARTIAL_FILE) {
 		/* CURLE_PARTIAL_FILE occurs if the received body of a
 		 * response is smaller than that specified in the
 		 * Content-Length header.
 		 */
-		if (!f->had_headers && fetch_curl_process_headers(f))
+		إذا (!f->had_سرخیاں && fetch_curl_process_سرخیاں(f))
 			; /* redirect with partial body, or similar */
-		else {
-			finished = true;
+		وإلا {
+			مکمل = true;
 		}
-	} else if (result == CURLE_WRITE_ERROR && f->stopped) {
+	} وإلا إذا (نتیجہ == CURLE_WRITE_ERROR && f->stopped) {
 		/* CURLE_WRITE_ERROR occurs when fetch_curl_data
 		 * returns 0, which we use to abort intentionally
 		 */
 		;
-	} else if (result == CURLE_SSL_PEER_CERTIFICATE ||
-		   result == CURLE_SSL_CACERT) {
+	} وإلا إذا (نتیجہ == CURLE_SSL_PEER_CERTIFICATE ||
+		   نتیجہ == CURLE_SSL_CACERT) {
 		/* Some kind of failure has occurred.  If we don't know
 		 * what happened, we'll have reported unknown errors up
 		 * to the user already via the certificate chain error fields.
 		 */
 		cert = true;
-	} else {
-		NSLOG(netsurf, INFO, "Unknown cURL response code %d", result);
+	} وإلا {
+		NSLOG(netsurf, INFO, "Unknown cURL response code %d", نتیجہ);
 		error = true;
 	}
 
 	fetch_curl_stop(f);
 
-	if (f->sent_ssl_chain == false) {
+	إذا (f->گھلیا_ssl_chain == false) {
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	if (abort_fetch) {
+	إذا (abort_fetch) {
 		; /* fetch was aborted: no callback */
-	} else if (finished) {
-		fetch_msg msg;
-		msg.type = FETCH_FINISHED;
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else if (cert) {
+	} وإلا إذا (مکمل) {
+		fetch_پیغام پیغام;
+		پیغام.type = FETCH_مکمل;
+		fetch_send_callback(&پیغام, f->fetch_handle);
+	} وإلا إذا (cert) {
 		/* user needs to validate certificate with issue */
-		fetch_msg msg;
-		msg.type = FETCH_CERT_ERR;
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else if (error) {
-		fetch_msg msg;
-		switch (result) {
-		case CURLE_SSL_CONNECT_ERROR:
-			msg.type = FETCH_SSL_ERR;
-			break;
+		fetch_پیغام پیغام;
+		پیغام.type = FETCH_CERT_ERR;
+		fetch_send_callback(&پیغام, f->fetch_handle);
+	} وإلا إذا (error) {
+		fetch_پیغام پیغام;
+		بدل (نتیجہ) {
+		حالة CURLE_SSL_CONNECT_ERROR:
+			پیغام.type = FETCH_SSL_ERR;
+			اكسر;
 
-		case CURLE_OPERATION_TIMEDOUT:
-			msg.type = FETCH_TIMEDOUT;
-			msg.data.error = curl_easy_strerror(result);
-			break;
+		حالة CURLE_OPERATION_TIMEDOUT:
+			پیغام.type = FETCH_TIMEDOUT;
+			پیغام.انکڑے.error = curl_easy_strerror(نتیجہ);
+			اكسر;
 
-		default:
-			msg.type = FETCH_ERROR;
-			msg.data.error = curl_easy_strerror(result);
+		افتراضي:
+			پیغام.type = FETCH_ERROR;
+			پیغام.انکڑے.error = curl_easy_strerror(نتیجہ);
 		}
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&پیغام, f->fetch_handle);
 	}
 
 	fetch_free(f->fetch_handle);
@@ -1641,46 +1641,46 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
  *
  * Must be called regularly to make progress on fetches.
  */
-static void fetch_curl_poll(lwc_string *scheme_ignored)
+ساكن فراغ fetch_curl_poll(lwc_string *scheme_ignored)
 {
-	int running, queue;
+	صحيح running, قطار;
 	CURLMcode codem;
-	CURLMsg *curl_msg;
+	CURLMsg *curl_پیغام;
 
-	if (nsoption_bool(suppress_curl_debug) == false) {
-		fd_set read_fd_set, write_fd_set, exc_fd_set;
-		int max_fd = -1;
-		int i;
+	إذا (nsoption_bool(suppress_curl_debug) == false) {
+		fd_set read_fd_سیٹ, write_fd_سیٹ, exc_fd_سیٹ;
+		صحيح max_fd = -1;
+		صحيح i;
 
-		FD_ZERO(&read_fd_set);
-		FD_ZERO(&write_fd_set);
-		FD_ZERO(&exc_fd_set);
+		FD_ZERO(&read_fd_سیٹ);
+		FD_ZERO(&write_fd_سیٹ);
+		FD_ZERO(&exc_fd_سیٹ);
 
 		codem = curl_multi_fdset(fetch_curl_multi,
-				&read_fd_set, &write_fd_set,
-				&exc_fd_set, &max_fd);
-		assert(codem == CURLM_OK);
+				&read_fd_سیٹ, &write_fd_سیٹ,
+				&exc_fd_سیٹ, &max_fd);
+		أكد(codem == CURLM_OK);
 
 		NSLOG(netsurf, DEEPDEBUG,
 		      "Curl file descriptor states (maxfd=%i):", max_fd);
-		for (i = 0; i <= max_fd; i++) {
-			bool read = false;
-			bool write = false;
+		لكل (i = 0; i <= max_fd; i++) {
+			bool اقرأ = false;
+			bool اكتب = false;
 			bool error = false;
 
-			if (FD_ISSET(i, &read_fd_set)) {
-				read = true;
+			إذا (FD_ISSET(i, &read_fd_سیٹ)) {
+				اقرأ = true;
 			}
-			if (FD_ISSET(i, &write_fd_set)) {
-				write = true;
+			إذا (FD_ISSET(i, &write_fd_سیٹ)) {
+				اكتب = true;
 			}
-			if (FD_ISSET(i, &exc_fd_set)) {
+			إذا (FD_ISSET(i, &exc_fd_سیٹ)) {
 				error = true;
 			}
-			if (read || write || error) {
+			إذا (اقرأ || اكتب || error) {
 				NSLOG(netsurf, DEEPDEBUG, "  fd %i: %s %s %s", i,
-				      read ? "read" : "    ",
-				      write ? "write" : "     ",
+				      اقرأ ? "read" : "    ",
+				      اكتب ? "write" : "     ",
 				      error ? "error" : "     ");
 			}
 		}
@@ -1688,28 +1688,28 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 
 	/* do any possible work on the current fetches */
 	inside_curl = true;
-	do {
+	افعل {
 		codem = curl_multi_perform(fetch_curl_multi, &running);
-		if (codem != CURLM_OK && codem != CURLM_CALL_MULTI_PERFORM) {
+		إذا (codem != CURLM_OK && codem != CURLM_CALL_MULTI_PERFORM) {
 			NSLOG(netsurf, WARNING,
 			      "curl_multi_perform: %i %s",
 			      codem, curl_multi_strerror(codem));
-			return;
+			أرجع;
 		}
-	} while (codem == CURLM_CALL_MULTI_PERFORM);
+	} طالما (codem == CURLM_CALL_MULTI_PERFORM);
 
 	/* process curl results */
-	curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
-	while (curl_msg) {
-		switch (curl_msg->msg) {
-			case CURLMSG_DONE:
-				fetch_curl_done(curl_msg->easy_handle,
-						curl_msg->data.result);
-				break;
-			default:
-				break;
+	curl_پیغام = curl_multi_info_read(fetch_curl_multi, &قطار);
+	طالما (curl_پیغام) {
+		بدل (curl_پیغام->پیغام) {
+			حالة CURLMSG_پورا:
+				fetch_curl_پورا(curl_پیغام->easy_handle,
+						curl_پیغام->انکڑے.نتیجہ);
+				اكسر;
+			افتراضي:
+				اكسر;
 		}
-		curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
+		curl_پیغام = curl_multi_info_read(fetch_curl_multi, &قطار);
 	}
 	inside_curl = false;
 }
@@ -1720,138 +1720,138 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 /**
  * Callback function for fetch progress.
  */
-static int
-fetch_curl_progress(void *clientp,
-		    NSCURL_PROGRESS_T dltotal,
-		    NSCURL_PROGRESS_T dlnow,
-		    NSCURL_PROGRESS_T ultotal,
-		    NSCURL_PROGRESS_T ulnow)
+ساكن صحيح
+fetch_curl_ترقی(فراغ *clientp,
+		    NSCURL_ترقی_T dltotal,
+		    NSCURL_ترقی_T dlnow,
+		    NSCURL_ترقی_T ultotal,
+		    NSCURL_ترقی_T ulnow)
 {
-	static char fetch_progress_buffer[256]; /**< Progress buffer for cURL */
-	struct curl_fetch_info *f = (struct curl_fetch_info *) clientp;
-	uint64_t time_now_ms;
-	fetch_msg msg;
+	ساكن حرف fetch_ترقی_بفر[256]; /**< Progress buffer for cURL */
+	بنية curl_fetch_info *f = (بنية curl_fetch_info *) clientp;
+	uint64_t ویلا_now_ms;
+	fetch_پیغام پیغام;
 
-	if (f->abort) {
-		return 0;
+	إذا (f->abort) {
+		أرجع 0;
         }
 
-	msg.type = FETCH_PROGRESS;
-	msg.data.progress = fetch_progress_buffer;
+	پیغام.type = FETCH_ترقی;
+	پیغام.انکڑے.ترقی = fetch_ترقی_بفر;
 
 	/* Rate limit each fetch's progress notifications */
-        nsu_getmonotonic_ms(&time_now_ms);
-#define UPDATE_DELAY_MS (1000 / UPDATES_PER_SECOND)
-	if (time_now_ms - f->last_progress_update < UPDATE_DELAY_MS) {
-		return 0;
+        nsu_getmonotonic_ms(&ویلا_now_ms);
+#تعریف_کرو UPDATE_DELAY_MS (1000 / UPDATES_فی_دوجا)
+	إذا (ویلا_now_ms - f->آخری_ترقی_update < UPDATE_DELAY_MS) {
+		أرجع 0;
         }
-#undef UPDATE_DELAY_MS
-	f->last_progress_update = time_now_ms;
+#تعریف_رد UPDATE_DELAY_MS
+	f->آخری_ترقی_update = ویلا_now_ms;
 
-	if (dltotal > 0) {
-		snprintf(fetch_progress_buffer, 255,
+	إذا (dltotal > 0) {
+		snprintf(fetch_ترقی_بفر, 255,
 				messages_get("Progress"),
 				human_friendly_bytesize(dlnow),
 				human_friendly_bytesize(dltotal));
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else {
-		snprintf(fetch_progress_buffer, 255,
+		fetch_send_callback(&پیغام, f->fetch_handle);
+	} وإلا {
+		snprintf(fetch_ترقی_بفر, 255,
 				messages_get("ProgressU"),
 				human_friendly_bytesize(dlnow));
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&پیغام, f->fetch_handle);
 	}
 
-	return 0;
+	أرجع 0;
 }
 
 
 /**
  * Format curl debug for nslog
  */
-static int
+ساكن صحيح
 fetch_curl_debug(CURL *handle,
 		 curl_infotype type,
-		 char *data,
-		 size_t size,
-		 void *userptr)
+		 حرف *انکڑے,
+		 size_t ناپ,
+		 فراغ *userptr)
 {
-	static const char s_infotype[CURLINFO_END][3] = {
+	ساكن ثابت حرف s_infotype[CURLINFO_سرا][3] = {
 		"* ", "< ", "> ", "{ ", "} ", "{ ", "} "
 	};
-	switch(type) {
-	case CURLINFO_TEXT:
-	case CURLINFO_HEADER_OUT:
-	case CURLINFO_HEADER_IN:
-		NSLOG(fetch, DEBUG, "%s%.*s", s_infotype[type], (int)size - 1, data);
-		break;
+	بدل(type) {
+	حالة CURLINFO_متن:
+	حالة CURLINFO_سرخی_باہرلا:
+	حالة CURLINFO_سرخی_وچ:
+		NSLOG(fetch, DEBUG, "%s%.*s", s_infotype[type], (صحيح)ناپ - 1, انکڑے);
+		اكسر;
 
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
-	return 0;
+	أرجع 0;
 }
 
 
-static curl_socket_t fetch_curl_socket_open(void *clientp,
-		curlsocktype purpose, struct curl_sockaddr *address)
+ساكن curl_socket_t fetch_curl_socket_open(فراغ *clientp,
+		curlsocktype purpose, بنية curl_sockaddr *پتہ)
 {
-	(void) clientp;
-	(void) purpose;
+	(فراغ) clientp;
+	(فراغ) purpose;
 
-	return (curl_socket_t) guit->fetch->socket_open(
-			address->family, address->socktype,
-			address->protocol);
+	أرجع (curl_socket_t) guit->fetch->socket_open(
+			پتہ->family, پتہ->socktype,
+			پتہ->protocol);
 }
 
-static int fetch_curl_socket_close(void *clientp, curl_socket_t item)
+ساكن صحيح fetch_curl_socket_close(فراغ *clientp, curl_socket_t شے)
 {
-	(void) clientp;
+	(فراغ) clientp;
 
-	return guit->fetch->socket_close((int) item);
+	أرجع guit->fetch->socket_close((صحيح) شے);
 }
 
 /**
  * Callback function for cURL.
  */
-static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
+ساكن size_t fetch_curl_انکڑے(حرف *انکڑے, size_t ناپ, size_t nmemb, فراغ *_f)
 {
-	struct curl_fetch_info *f = _f;
-	CURLcode code;
-	fetch_msg msg;
+	بنية curl_fetch_info *f = _f;
+	CURLcode کوڈ;
+	fetch_پیغام پیغام;
 
 	/* ensure we only have to get this information once */
-	if (!f->http_code) {
-		code = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_CODE,
-					 &f->http_code);
-		assert(code == CURLE_OK);
-		fetch_set_http_code(f->fetch_handle, f->http_code);
+	إذا (!f->http_کوڈ) {
+		کوڈ = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_کوڈ,
+					 &f->http_کوڈ);
+		أكد(کوڈ == CURLE_OK);
+		fetch_سیٹ_http_کوڈ(f->fetch_handle, f->http_کوڈ);
 	}
 
 	/* ignore body if this is a 401 reply by skipping it and reset
 	 * the HTTP response code to enable follow up fetches.
 	 */
-	if (f->http_code == HTTP_RESPONSE_UNAUTHORIZED) {
-		f->http_code = 0;
-		return size * nmemb;
+	إذا (f->http_کوڈ == HTTP_RESPONSE_UNAUTHORIZED) {
+		f->http_کوڈ = 0;
+		أرجع ناپ * nmemb;
 	}
 
-	if (f->abort || (!f->had_headers && fetch_curl_process_headers(f))) {
+	إذا (f->abort || (!f->had_سرخیاں && fetch_curl_process_سرخیاں(f))) {
 		f->stopped = true;
-		return 0;
+		أرجع 0;
 	}
 
 	/* send data to the caller */
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size * nmemb;
-	fetch_send_callback(&msg, f->fetch_handle);
+	پیغام.type = FETCH_انکڑے;
+	پیغام.انکڑے.سرخی_or_انکڑے.buf = (ثابت uint8_t *) انکڑے;
+	پیغام.انکڑے.سرخی_or_انکڑے.len = ناپ * nmemb;
+	fetch_send_callback(&پیغام, f->fetch_handle);
 
-	if (f->abort) {
+	إذا (f->abort) {
 		f->stopped = true;
-		return 0;
+		أرجع 0;
 	}
 
-	return size * nmemb;
+	أرجع ناپ * nmemb;
 }
 
 
@@ -1860,250 +1860,250 @@ static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
  *
  * See RFC 2616 4.2.
  */
-static size_t
-fetch_curl_header(char *data, size_t size, size_t nmemb, void *_f)
+ساكن size_t
+fetch_curl_سرخی(حرف *انکڑے, size_t ناپ, size_t nmemb, فراغ *_f)
 {
-	struct curl_fetch_info *f = _f;
-	int i;
-	fetch_msg msg;
-	size *= nmemb;
+	بنية curl_fetch_info *f = _f;
+	صحيح i;
+	fetch_پیغام پیغام;
+	ناپ *= nmemb;
 
-	if (f->abort) {
+	إذا (f->abort) {
 		f->stopped = true;
-		return 0;
+		أرجع 0;
 	}
 
-	if (f->sent_ssl_chain == false) {
+	إذا (f->گھلیا_ssl_chain == false) {
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size;
-	fetch_send_callback(&msg, f->fetch_handle);
+	پیغام.type = FETCH_سرخی;
+	پیغام.انکڑے.سرخی_or_انکڑے.buf = (ثابت uint8_t *) انکڑے;
+	پیغام.انکڑے.سرخی_or_انکڑے.len = ناپ;
+	fetch_send_callback(&پیغام, f->fetch_handle);
 
-#define SKIP_ST(o) for (i = (o); i < (int) size && (data[i] == ' ' || data[i] == '\t'); i++)
+#تعریف_کرو SKIP_ST(o) لكل (i = (o); i < (صحيح) ناپ && (انکڑے[i] == ' ' || انکڑے[i] == '\t'); i++)
 
-	if (12 < size && strncasecmp(data, "Location:", 9) == 0) {
+	إذا (12 < ناپ && strncasecmp(انکڑے, "Location:", 9) == 0) {
 		/* extract Location header */
-		free(f->location);
-		f->location = malloc(size);
-		if (!f->location) {
+		حرر(f->location);
+		f->location = حافظہ_دیو(ناپ);
+		إذا (!f->location) {
 			NSLOG(netsurf, INFO, "malloc failed");
-			return size;
+			أرجع ناپ;
 		}
 		SKIP_ST(9);
-		strncpy(f->location, data + i, size - i);
-		f->location[size - i] = '\0';
-		for (i = size - i - 1; i >= 0 &&
+		strncpy(f->location, انکڑے + i, ناپ - i);
+		f->location[ناپ - i] = '\0';
+		لكل (i = ناپ - i - 1; i >= 0 &&
 				(f->location[i] == ' ' ||
 				f->location[i] == '\t' ||
 				f->location[i] == '\r' ||
 				f->location[i] == '\n'); i--)
 			f->location[i] = '\0';
-	} else if (15 < size && strncasecmp(data, "Content-Length:", 15) == 0) {
+	} وإلا إذا (15 < ناپ && strncasecmp(انکڑے, "Content-Length:", 15) == 0) {
 		/* extract Content-Length header */
 		SKIP_ST(15);
-		if (i < (int)size && '0' <= data[i] && data[i] <= '9')
-			f->content_length = atol(data + i);
-	} else if (17 < size && strncasecmp(data, "WWW-Authenticate:", 17) == 0) {
+		إذا (i < (صحيح)ناپ && '0' <= انکڑے[i] && انکڑے[i] <= '9')
+			f->content_لمائی = atol(انکڑے + i);
+	} وإلا إذا (17 < ناپ && strncasecmp(انکڑے, "WWW-Authenticate:", 17) == 0) {
 		/* extract the first Realm from WWW-Authenticate header */
 		SKIP_ST(17);
 
-		while (i < (int) size - 5 &&
-				strncasecmp(data + i, "realm", 5))
+		طالما (i < (صحيح) ناپ - 5 &&
+				strncasecmp(انکڑے + i, "realm", 5))
 			i++;
-		while (i < (int) size - 1 && data[++i] != '"')
+		طالما (i < (صحيح) ناپ - 1 && انکڑے[++i] != '"')
 			/* */;
 		i++;
 
-		if (i < (int) size) {
-			size_t end = i;
+		إذا (i < (صحيح) ناپ) {
+			size_t سرا = i;
 
-			while (end < size && data[end] != '"')
-				++end;
+			طالما (سرا < ناپ && انکڑے[سرا] != '"')
+				++سرا;
 
-			if (end < size) {
-				free(f->realm);
-				f->realm = malloc(end - i + 1);
-				if (f->realm != NULL) {
-					strncpy(f->realm, data + i, end - i);
-					f->realm[end - i] = '\0';
+			إذا (سرا < ناپ) {
+				حرر(f->realm);
+				f->realm = حافظہ_دیو(سرا - i + 1);
+				إذا (f->realm != عدم) {
+					strncpy(f->realm, انکڑے + i, سرا - i);
+					f->realm[سرا - i] = '\0';
 				}
 			}
 		}
-	} else if (11 < size && strncasecmp(data, "Set-Cookie:", 11) == 0) {
+	} وإلا إذا (11 < ناپ && strncasecmp(انکڑے, "Set-Cookie:", 11) == 0) {
 		/* extract Set-Cookie header */
 		SKIP_ST(11);
 
-		fetch_set_cookie(f->fetch_handle, &data[i]);
+		fetch_سیٹ_cookie(f->fetch_handle, &انکڑے[i]);
 	}
 
-	return size;
-#undef SKIP_ST
+	أرجع ناپ;
+#تعریف_رد SKIP_ST
 }
 
-static int fetch_curl_fdset(lwc_string *scheme, fd_set *read_set,
-			    fd_set *write_set, fd_set *error_set)
+ساكن صحيح fetch_curl_fdset(lwc_string *scheme, fd_set *read_سیٹ,
+			    fd_set *write_سیٹ, fd_set *error_سیٹ)
 {
-	CURLMcode code;
-	int maxfd = -1;
+	CURLMcode کوڈ;
+	صحيح maxfd = -1;
 
-	code = curl_multi_fdset(fetch_curl_multi,
-				read_set,
-				write_set,
-				error_set,
+	کوڈ = curl_multi_fdset(fetch_curl_multi,
+				read_سیٹ,
+				write_سیٹ,
+				error_سیٹ,
 				&maxfd);
-	assert(code == CURLM_OK);
+	أكد(کوڈ == CURLM_OK);
 
-	return maxfd;
+	أرجع maxfd;
 }
 
 
 
 /* exported function documented in content/fetchers/curl.h */
-nserror fetch_curl_register(void)
+nserror fetch_curl_رجسٹر(فراغ)
 {
-	CURLcode code;
-	curl_version_info_data *data;
-	int i;
+	CURLcode کوڈ;
+	curl_نسخہ_info_انکڑے *انکڑے;
+	صحيح i;
 	lwc_string *scheme;
-	const struct fetcher_operation_table fetcher_ops = {
+	ثابت بنية fetcher_operation_جدول fetcher_ops = {
 		.initialise = fetch_curl_initialise,
 		.acceptable = fetch_curl_can_fetch,
-		.setup = fetch_curl_setup,
-		.start = fetch_curl_start,
+		.تیاری = fetch_curl_تیاری,
+		.شروع = fetch_curl_شروع,
 		.abort = fetch_curl_abort,
-		.free = fetch_curl_free,
+		.حرر = fetch_curl_free,
 		.poll = fetch_curl_poll,
 		.fdset = fetch_curl_fdset,
 		.finalise = fetch_curl_finalise
 	};
 
-#if LIBCURL_VERSION_NUM >= 0x073800
+#إذا LIBCURL_نسخہ_عدد >= 0x073800
 	/* version 7.56.0 can select which SSL backend to use */
 	CURLsslset setres;
 
-	setres = curl_global_sslset(CURLSSLBACKEND_OPENSSL, NULL, NULL);
-	if (setres == CURLSSLSET_OK) {
+	setres = curl_global_sslset(CURLSSLBACKEND_OPENSSL, عدم, عدم);
+	إذا (setres == CURLSSLSET_OK) {
 		curl_with_openssl = true;
-	} else {
+	} وإلا {
 		curl_with_openssl = false;
 	}
-#endif
+#جے_انت
 
-	NSLOG(netsurf, INFO, "curl_version %s", curl_version());
+	NSLOG(netsurf, INFO, "curl_version %s", curl_نسخہ());
 
-	code = curl_global_init(CURL_GLOBAL_ALL);
-	if (code != CURLE_OK) {
+	کوڈ = curl_global_init(CURL_GLOBAL_ALL);
+	إذا (کوڈ != CURLE_OK) {
 		NSLOG(netsurf, INFO, "curl_global_init failed.");
-		return NSERROR_INIT_FAILED;
+		أرجع NSERROR_INIT_FAILED;
 	}
 
 	fetch_curl_multi = curl_multi_init();
-	if (!fetch_curl_multi) {
+	إذا (!fetch_curl_multi) {
 		NSLOG(netsurf, INFO, "curl_multi_init failed.");
-		return NSERROR_INIT_FAILED;
+		أرجع NSERROR_INIT_FAILED;
 	}
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#إذا LIBCURL_نسخہ_عدد >= 0x071e00
 	/* built against 7.30.0 or later: configure caching */
 	{
 		CURLMcode mcode;
-		int maxconnects = nsoption_int(max_fetchers) +
+		صحيح maxconnects = nsoption_int(max_fetchers) +
 				nsoption_int(max_cached_fetch_handles);
 
-#undef SETOPT
-#define SETOPT(option, value) \
-	mcode = curl_multi_setopt(fetch_curl_multi, option, value);	\
-	if (mcode != CURLM_OK) {					\
+#تعریف_رد SETOPT
+#تعریف_کرو SETOPT(option, قدر) \
+	mcode = curl_multi_setopt(fetch_curl_multi, option, قدر);	\
+	إذا (mcode != CURLM_OK) {					\
 		NSLOG(netsurf, ERROR, "attempting curl_multi_setopt(%s, ...)", #option); \
-		goto curl_multi_setopt_failed;				\
+		اذهب curl_multi_setopt_failed;				\
 	}
 
-		SETOPT(CURLMOPT_MAXCONNECTS, (long)maxconnects);
-		SETOPT(CURLMOPT_MAX_TOTAL_CONNECTIONS, (long)maxconnects);
-		SETOPT(CURLMOPT_MAX_HOST_CONNECTIONS, (long)nsoption_int(max_fetchers_per_host));
+		SETOPT(CURLMOPT_MAXCONNECTS, (لما)maxconnects);
+		SETOPT(CURLMOPT_MAX_کل_CONNECTIONS, (لما)maxconnects);
+		SETOPT(CURLMOPT_MAX_HOST_CONNECTIONS, (لما)nsoption_int(max_fetchers_فی_host));
 	}
-#endif
+#جے_انت
 
 	/* Create a curl easy handle with the options that are common to all
 	 *  fetches.
 	 */
 	fetch_blank_curl = curl_easy_init();
-	if (!fetch_blank_curl) {
+	إذا (!fetch_blank_curl) {
 		NSLOG(netsurf, INFO, "curl_easy_init failed");
-		return NSERROR_INIT_FAILED;
+		أرجع NSERROR_INIT_FAILED;
 	}
 
-#undef SETOPT
-#define SETOPT(option, value) \
-	code = curl_easy_setopt(fetch_blank_curl, option, value);	\
-	if (code != CURLE_OK) {						\
+#تعریف_رد SETOPT
+#تعریف_کرو SETOPT(option, قدر) \
+	کوڈ = curl_easy_setopt(fetch_blank_curl, option, قدر);	\
+	إذا (کوڈ != CURLE_OK) {						\
 		NSLOG(netsurf, ERROR, "attempting curl_easy_setopt(%s, ...)", #option); \
-		goto curl_easy_setopt_failed;				\
+		اذهب curl_easy_setopt_failed;				\
 	}
 
-	SETOPT(CURLOPT_ERRORBUFFER, fetch_error_buffer);
+	SETOPT(CURLOPT_ERRORBUFFER, fetch_error_بفر);
 	SETOPT(CURLOPT_DEBUGFUNCTION, fetch_curl_debug);
-	if (nsoption_bool(suppress_curl_debug)) {
+	إذا (nsoption_bool(suppress_curl_debug)) {
 		SETOPT(CURLOPT_VERBOSE, 0);
-	} else {
+	} وإلا {
 		SETOPT(CURLOPT_VERBOSE, 1);
 	}
 
 	/* Currently we explode if curl uses HTTP2, so force 1.1. */
-	SETOPT(CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+	SETOPT(CURLOPT_HTTP_نسخہ, CURL_HTTP_نسخہ_1_1);
 
-	SETOPT(CURLOPT_WRITEFUNCTION, fetch_curl_data);
-	SETOPT(CURLOPT_HEADERFUNCTION, fetch_curl_header);
-	SETOPT(NSCURLOPT_PROGRESS_FUNCTION, fetch_curl_progress);
+	SETOPT(CURLOPT_WRITEFUNCTION, fetch_curl_انکڑے);
+	SETOPT(CURLOPT_HEADERFUNCTION, fetch_curl_سرخی);
+	SETOPT(NSCURLOPT_ترقی_FUNCTION, fetch_curl_ترقی);
 	SETOPT(CURLOPT_NOPROGRESS, 0L);
 	SETOPT(CURLOPT_USERAGENT, user_agent_string());
 	SETOPT(CURLOPT_ENCODING, "gzip");
-	SETOPT(CURLOPT_LOW_SPEED_LIMIT, 1L);
-	SETOPT(CURLOPT_LOW_SPEED_TIME, 180L);
+	SETOPT(CURLOPT_کم_رفتار_حد_بندی, 1L);
+	SETOPT(CURLOPT_کم_رفتار_ویلا, 180L);
 	SETOPT(CURLOPT_NOSIGNAL, 1L);
-	SETOPT(CURLOPT_CONNECTTIMEOUT, (long)nsoption_uint(curl_fetch_timeout));
+	SETOPT(CURLOPT_CONNECTTIMEOUT, (لما)nsoption_uint(curl_fetch_timeout));
 	SETOPT(CURLOPT_OPENSOCKETFUNCTION, fetch_curl_socket_open);
 	SETOPT(CURLOPT_CLOSESOCKETFUNCTION, fetch_curl_socket_close);
 
-	if (nsoption_charp(ca_bundle) &&
+	إذا (nsoption_charp(ca_bundle) &&
 	    strcmp(nsoption_charp(ca_bundle), "")) {
 		NSLOG(netsurf, INFO, "ca_bundle: '%s'",
 		      nsoption_charp(ca_bundle));
 		SETOPT(CURLOPT_CAINFO, nsoption_charp(ca_bundle));
 	}
-	if (nsoption_charp(ca_path) && strcmp(nsoption_charp(ca_path), "")) {
-		NSLOG(netsurf, INFO, "ca_path: '%s'", nsoption_charp(ca_path));
-		SETOPT(CURLOPT_CAPATH, nsoption_charp(ca_path));
+	إذا (nsoption_charp(ca_رستہ) && strcmp(nsoption_charp(ca_رستہ), "")) {
+		NSLOG(netsurf, INFO, "ca_path: '%s'", nsoption_charp(ca_رستہ));
+		SETOPT(CURLOPT_CAPATH, nsoption_charp(ca_رستہ));
 	}
 
-#if LIBCURL_VERSION_NUM < 0x073800
+#إذا LIBCURL_نسخہ_عدد < 0x073800
 	/*
 	 * before 7.56.0 Detect openssl from whether the SSL CTX
 	 *  function API works
 	 */
-	code = curl_easy_setopt(fetch_blank_curl, CURLOPT_SSL_CTX_FUNCTION, NULL);
-	if (code != CURLE_OK) {
+	کوڈ = curl_easy_setopt(fetch_blank_curl, CURLOPT_SSL_CTX_FUNCTION, عدم);
+	إذا (کوڈ != CURLE_OK) {
 		curl_with_openssl = false;
-	} else {
+	} وإلا {
 		curl_with_openssl = true;
 	}
-#endif
+#جے_انت
 
-	if (curl_with_openssl) {
+	إذا (curl_with_openssl) {
 		/* only set the cipher list with openssl otherwise the
 		 *  fetch fails with "Unknown cipher in list"
 		 */
-#if LIBCURL_VERSION_NUM >= 0x073d00
+#إذا LIBCURL_نسخہ_عدد >= 0x073d00
 		/* Need libcurl 7.61.0 or later built against OpenSSL with
 		 * TLS1.3 support */
-		code = curl_easy_setopt(fetch_blank_curl,
+		کوڈ = curl_easy_setopt(fetch_blank_curl,
 				CURLOPT_TLS13_CIPHERS, CIPHER_SUITES);
-		if (code != CURLE_OK && code != CURLE_NOT_BUILT_IN)
-			goto curl_easy_setopt_failed;
-#endif
+		إذا (کوڈ != CURLE_OK && کوڈ != CURLE_NOT_BUILT_وچ)
+			اذهب curl_easy_setopt_failed;
+#جے_انت
 		SETOPT(CURLOPT_SSL_CIPHER_LIST, CIPHER_LIST);
 	}
 
@@ -2112,42 +2112,42 @@ nserror fetch_curl_register(void)
 
 	/* cURL initialised okay, register the fetchers */
 
-	data = curl_version_info(CURLVERSION_NOW);
+	انکڑے = curl_نسخہ_info(CURLVERSION_NOW);
 
 	curl_fetch_ssl_hashmap = hashmap_create(&curl_fetch_ssl_hashmap_parameters);
-	if (curl_fetch_ssl_hashmap == NULL) {
+	إذا (curl_fetch_ssl_hashmap == عدم) {
 		NSLOG(netsurf, CRITICAL, "Unable to initialise SSL certificate hashmap");
-		return NSERROR_NOMEM;
+		أرجع NSERROR_NOMEM;
 	}
 
-	for (i = 0; data->protocols[i]; i++) {
-		if (strcmp(data->protocols[i], "http") == 0) {
+	لكل (i = 0; انکڑے->protocols[i]; i++) {
+		إذا (strcmp(انکڑے->protocols[i], "http") == 0) {
 			scheme = lwc_string_ref(corestring_lwc_http);
 
-		} else if (strcmp(data->protocols[i], "https") == 0) {
+		} وإلا إذا (strcmp(انکڑے->protocols[i], "https") == 0) {
 			scheme = lwc_string_ref(corestring_lwc_https);
 
-		} else {
+		} وإلا {
 			/* Ignore non-http(s) protocols */
-			continue;
+			استمر;
 		}
 
-		if (fetcher_add(scheme, &fetcher_ops) != NSERROR_OK) {
+		إذا (fetcher_جوڑو(scheme, &fetcher_ops) != NSERROR_OK) {
 			NSLOG(netsurf, INFO,
 			      "Unable to register cURL fetcher for %s",
-			      data->protocols[i]);
+			      انکڑے->protocols[i]);
 		}
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 
 curl_easy_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_easy_setopt failed.");
-	return NSERROR_INIT_FAILED;
+	أرجع NSERROR_INIT_FAILED;
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#إذا LIBCURL_نسخہ_عدد >= 0x071e00
 curl_multi_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_multi_setopt failed.");
-	return NSERROR_INIT_FAILED;
-#endif
+	أرجع NSERROR_INIT_FAILED;
+#جے_انت
 }

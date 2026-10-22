@@ -21,8 +21,8 @@
  * about scheme query auth handler interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_AUTH_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_AUTH_H
+#جے_بنا_تعریف NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_AUTH_H
+#تعریف_کرو NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_AUTH_H
 
 /**
  * Handler to generate about scheme query auth page.
@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_query_auth_handler(struct fetch_about_context *ctx);
+bool fetch_about_query_auth_handler(بنية fetch_about_context *ctx);
 
-#endif
+#جے_انت

@@ -33,106 +33,106 @@
  *
  */
 
-#include <unistd.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <time.h>
-#include <stdlib.h>
-#include <nsutils/unistd.h>
+#ضمن <unistd.h>
+#ضمن <string.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/types.h>
+#ضمن <fcntl.h>
+#ضمن <errno.h>
+#ضمن <time.h>
+#ضمن <stdlib.h>
+#ضمن <nsutils/unistd.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/filepath.h"
-#include "utils/file.h"
-#include "utils/nsurl.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/hashmap.h"
-#include "desktop/gui_internal.h"
-#include "netsurf/misc.h"
+#ضمن "netsurf/inttypes.h"
+#ضمن "utils/filepath.h"
+#ضمن "utils/file.h"
+#ضمن "utils/nsurl.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/hashmap.h"
+#ضمن "desktop/gui_internal.h"
+#ضمن "netsurf/misc.h"
 
-#include "content/backing_store.h"
+#ضمن "content/backing_store.h"
 
 /** Backing store file format version */
-#define CONTROL_VERSION 202
+#تعریف_کرو CONTROL_نسخہ 202
 
 /**
  * Number of milliseconds after a update before control data
  * maintenance is performed
  */
-#define CONTROL_MAINT_TIME 10000
+#تعریف_کرو CONTROL_MAINT_ویلا 10000
 
 /** Filename of serialised entries */
-#define ENTRIES_FNAME "entries"
+#تعریف_کرو ENTRIES_FNAME "entries"
 
 /** Filename of block file index */
-#define BLOCKS_FNAME "blocks"
+#تعریف_کرو بلاکاں_FNAME "blocks"
 
 /** log2 block data address length (64k) */
-#define BLOCK_ADDR_LEN 16
+#تعریف_کرو بلاک_ADDR_LEN 16
 
 /** log2 number of entries per block file(1024) */
-#define BLOCK_ENTRY_COUNT 10
+#تعریف_کرو بلاک_اندراج_گنتی 10
 
 /** log2 number of data block files */
-#define BLOCK_FILE_COUNT (BLOCK_ADDR_LEN - BLOCK_ENTRY_COUNT)
+#تعریف_کرو بلاک_FILE_گنتی (بلاک_ADDR_LEN - بلاک_اندراج_گنتی)
 
 /** log2 size of data blocks (8k) */
-#define BLOCK_DATA_SIZE 13
+#تعریف_کرو بلاک_انکڑے_ناپ 13
 
 /** log2 size of metadata blocks (8k) */
-#define BLOCK_META_SIZE 13
+#تعریف_کرو بلاک_META_ناپ 13
 
 /** length in bytes of a block files use map */
-#define BLOCK_USE_MAP_SIZE (1 << (BLOCK_ENTRY_COUNT - 3))
+#تعریف_کرو بلاک_USE_MAP_ناپ (1 << (بلاک_اندراج_گنتی - 3))
 
 /**
  * The type used as a binary identifier for each entry derived from
  * the URL. A larger identifier will have fewer collisions but
  * requires proportionately more storage.
  */
-typedef uint32_t entry_ident_t;
+تعريفنوع uint32_t اندراج_ident_t;
 
 /**
  * The type used to store block file index values. If this is changed
  * it will affect the entry storage/alignment and BLOCK_ADDR_LEN must
  * also be updated.
  */
-typedef uint16_t block_index_t;
+تعريفنوع uint16_t بلاک_اشاریہ_t;
 
 
 /**
  * Entry element index values.
  */
-enum store_entry_elem_idx {
-	ENTRY_ELEM_DATA = 0, /**< entry element is data */
-	ENTRY_ELEM_META = 1,  /**< entry element is metadata */
-	ENTRY_ELEM_COUNT = 2, /**< count of elements on an entry */
+تعداد store_اندراج_elem_idx {
+	اندراج_ELEM_انکڑے = 0, /**< entry element is data */
+	اندراج_ELEM_META = 1,  /**< entry element is metadata */
+	اندراج_ELEM_گنتی = 2, /**< count of elements on an entry */
 };
 
 /**
  * flags that indicate what additional information is contained within
  * an entry element.
  */
-enum store_entry_elem_flags {
+تعداد store_اندراج_elem_flags {
 	/** store not managing any allocation on entry */
-	ENTRY_ELEM_FLAG_NONE = 0,
+	اندراج_ELEM_FLAG_NONE = 0,
 	/** entry data allocation is on heap */
-	ENTRY_ELEM_FLAG_HEAP = 0x1,
+	اندراج_ELEM_FLAG_ڈھیر = 0x1,
 	/** entry data allocation is mmaped */
-	ENTRY_ELEM_FLAG_MMAP = 0x2,
+	اندراج_ELEM_FLAG_MMAP = 0x2,
 	/** entry data allocation is in small object pool */
-	ENTRY_ELEM_FLAG_SMALL = 0x4,
+	اندراج_ELEM_FLAG_SMALL = 0x4,
 };
 
 
-enum store_entry_flags {
+تعداد store_اندراج_flags {
 	/** entry is normal */
-	ENTRY_FLAGS_NONE = 0,
+	اندراج_FLAGS_NONE = 0,
 	/** entry has been invalidated but something still holding a reference */
-	ENTRY_FLAGS_INVALID = 1,
+	اندراج_FLAGS_INVALID = 1,
 };
 
 /**
@@ -146,10 +146,10 @@ enum store_entry_flags {
  *
  * @note Order is important to avoid excessive structure packing overhead.
  */
-struct store_entry_element {
-	uint8_t* data; /**< data allocated */
-	uint32_t size; /**< size of entry element on disc */
-	block_index_t block; /**< small object data block */
+بنية store_اندراج_element {
+	uint8_t* انکڑے; /**< data allocated */
+	uint32_t ناپ; /**< size of entry element on disc */
+	بلاک_اشاریہ_t بلاک; /**< small object data block */
 	uint8_t ref; /**< element data reference count */
 	uint8_t flags; /**< entry flags */
 };
@@ -164,40 +164,40 @@ struct store_entry_element {
  *
  * @note Order is important to avoid excessive structure packing overhead.
  */
-struct store_entry {
+بنية store_اندراج {
 	nsurl *url; /**< The URL for this entry */
-	int64_t last_used; /**< UNIX time the entry was last used */
-	uint16_t use_count; /**< number of times this entry has been accessed */
+	int64_t آخری_ورتیا; /**< UNIX time the entry was last used */
+	uint16_t use_گنتی; /**< number of times this entry has been accessed */
 	uint8_t flags; /**< entry flags */
 	/** Entry element (data or meta) specific information */
-	struct store_entry_element elem[ENTRY_ELEM_COUNT];
+	بنية store_اندراج_element elem[اندراج_ELEM_گنتی];
 };
 
 /**
  * Small block file.
  */
-struct block_file {
+بنية بلاک_file {
 	/** file descriptor of the block file */
-	int fd;
+	صحيح fd;
 	/** map of used and unused entries within the block file */
-	uint8_t use_map[BLOCK_USE_MAP_SIZE];
+	uint8_t use_map[بلاک_USE_MAP_ناپ];
 };
 
 /**
  * log2 of block size.
  */
-static const unsigned int log2_block_size[ENTRY_ELEM_COUNT] = {
-	BLOCK_DATA_SIZE, /**< Data block size */
-	BLOCK_META_SIZE  /**< Metadata block size */
+ساكن ثابت بنانشانی صحيح log2_بلاک_ناپ[اندراج_ELEM_گنتی] = {
+	بلاک_انکڑے_ناپ, /**< Data block size */
+	بلاک_META_ناپ  /**< Metadata block size */
 };
 
 /**
  * Parameters controlling the backing store.
  */
-struct store_state {
+بنية store_state {
 	/* store config */
-	char *path; /**< The path to the backing store */
-	size_t limit; /**< The backing store upper bound target size */
+	حرف *رستہ; /**< The path to the backing store */
+	size_t حد_بندی; /**< The backing store upper bound target size */
 	size_t hysteresis; /**< The hysteresis around the target size */
 
 	/**
@@ -211,25 +211,25 @@ struct store_state {
 	bool entries_dirty;
 
 	/** small block indexes */
-	struct block_file blocks[ENTRY_ELEM_COUNT][BLOCK_FILE_COUNT];
+	بنية بلاک_file بلاکاں[اندراج_ELEM_گنتی][بلاک_FILE_گنتی];
 
 	/** flag indicating if the block file use maps have been made
 	 * persistent since they were last changed.
 	 */
-	bool blocks_dirty;
+	bool بلاکاں_dirty;
 
 	/** flag indicating if a block file has been opened for update
 	 * since maintenance was previously done.
 	 */
-	bool blocks_opened;
+	bool بلاکاں_opened;
 
 
 	/* stats */
-	uint64_t total_alloc; /**< total size of all allocated storage. */
+	uint64_t کل_alloc; /**< total size of all allocated storage. */
 
-	size_t hit_count; /**< number of cache hits */
-	uint64_t hit_size; /**< size of storage served */
-	size_t miss_count; /**< number of cache misses */
+	size_t کامیابی_گنتی; /**< number of cache hits */
+	uint64_t کامیابی_ناپ; /**< size of storage served */
+	size_t کھنج_گنتی; /**< number of cache misses */
 
 };
 
@@ -239,45 +239,45 @@ struct store_state {
  * @todo Investigate if there is a way to have a context rather than
  * use a global.
  */
-struct store_state *storestate;
+بنية store_state *storestate;
 
 /* Entries hashmap parameters
  *
  * Our hashmap has nsurl keys and store_entry values
  */
 
-static bool
-entries_hashmap_key_eq(void *key1, void *key2)
+ساكن bool
+entries_hashmap_کلید_eq(فراغ *key1, فراغ *key2)
 {
-	return nsurl_compare((nsurl *)key1, (nsurl *)key2, NSURL_COMPLETE);
+	أرجع nsurl_compare((nsurl *)key1, (nsurl *)key2, NSURL_COMPLETE);
 }
 
-static void *
-entries_hashmap_value_alloc(void *key)
+ساكن فراغ *
+entries_hashmap_قدر_alloc(فراغ *کلید)
 {
-	struct store_entry *ent = calloc(1, sizeof(struct store_entry));
-	if (ent != NULL) {
-		ent->url = nsurl_ref(key);
+	بنية store_اندراج *ent = صفر_حافظہ_دیو(1, حجم(بنية store_اندراج));
+	إذا (ent != عدم) {
+		ent->url = nsurl_ref(کلید);
 	}
-	return ent;
+	أرجع ent;
 }
 
-static void
-entries_hashmap_value_destroy(void *value)
+ساكن فراغ
+entries_hashmap_قدر_destroy(فراغ *قدر)
 {
-	struct store_entry *ent = value;
+	بنية store_اندراج *ent = قدر;
 	/** \todo Do we need to do any disk cleanup here?  if so, meep! */
 	nsurl_unref(ent->url);
-	free(ent);
+	حرر(ent);
 }
 
-static hashmap_parameters_t entries_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_hash = (hashmap_key_hash_t)nsurl_hash,
-	.key_eq = entries_hashmap_key_eq,
-	.value_alloc = entries_hashmap_value_alloc,
-	.value_destroy = entries_hashmap_value_destroy,
+ساكن hashmap_parameters_t entries_hashmap_parameters = {
+	.کلید_clone = (hashmap_کلید_clone_t)nsurl_ref,
+	.کلید_destroy = (hashmap_کلید_destroy_t)nsurl_unref,
+	.کلید_hash = (hashmap_کلید_hash_t)nsurl_hash,
+	.کلید_eq = entries_hashmap_کلید_eq,
+	.قدر_alloc = entries_hashmap_قدر_alloc,
+	.قدر_destroy = entries_hashmap_قدر_destroy,
 };
 
 /**
@@ -316,22 +316,22 @@ static hashmap_parameters_t entries_hashmap_parameters = {
  * @param elem_idx The element index.
  * @return The filename string or NULL on allocation error.
  */
-static char *
-store_fname(struct store_state *state,
-	    entry_ident_t ident,
-	    int elem_idx)
+ساكن حرف *
+store_fname(بنية store_state *state,
+	    اندراج_ident_t ident,
+	    صحيح elem_idx)
 {
-	char *fname = NULL;
+	حرف *fname = عدم;
 	uint8_t b32u_i[8]; /* base32 encoded ident */
-	const uint8_t *b32u_d[6]; /* base32 ident as separate components */
+	ثابت uint8_t *b32u_d[6]; /* base32 ident as separate components */
 
 	/* directories used to separate elements */
-	const char *base_dir_table[] = {
+	ثابت حرف *ادھار_dir_جدول[] = {
 		"d", "m", "dblk", "mblk"
 	};
 
 	/* RFC4648 base32 encoding table (six bits) */
-	const uint8_t encoding_table[64][3] = {
+	ثابت uint8_t encoding_جدول[64][3] = {
 		{ 'A',   0, 0 }, { 'B',   0, 0 }, /*  0 */
 		{ 'C',   0, 0 }, { 'D',   0, 0 }, /*  2 */
 		{ 'E',   0, 0 }, { 'F',   0, 0 }, /*  4 */
@@ -367,43 +367,43 @@ store_fname(struct store_state *state,
 	};
 
 	/* base32 encode ident */
-	b32u_i[0] = encoding_table[(ident      ) & 0x1f][0];
-	b32u_i[1] = encoding_table[(ident >>  5) & 0x1f][0];
-	b32u_i[2] = encoding_table[(ident >> 10) & 0x1f][0];
-	b32u_i[3] = encoding_table[(ident >> 15) & 0x1f][0];
-	b32u_i[4] = encoding_table[(ident >> 20) & 0x1f][0];
-	b32u_i[5] = encoding_table[(ident >> 25) & 0x1f][0];
-	b32u_i[6] = encoding_table[(ident >> 30) & 0x1f][0];
+	b32u_i[0] = encoding_جدول[(ident      ) & 0x1f][0];
+	b32u_i[1] = encoding_جدول[(ident >>  5) & 0x1f][0];
+	b32u_i[2] = encoding_جدول[(ident >> 10) & 0x1f][0];
+	b32u_i[3] = encoding_جدول[(ident >> 15) & 0x1f][0];
+	b32u_i[4] = encoding_جدول[(ident >> 20) & 0x1f][0];
+	b32u_i[5] = encoding_جدول[(ident >> 25) & 0x1f][0];
+	b32u_i[6] = encoding_جدول[(ident >> 30) & 0x1f][0];
 	b32u_i[7] = 0; /* null terminate ident string */
 
 	/* base32 encode directory separators */
-	b32u_d[0] = (uint8_t*)base_dir_table[elem_idx];
-	b32u_d[1] = &encoding_table[(ident      ) & 0x3f][0];
-	b32u_d[2] = &encoding_table[(ident >>  6) & 0x3f][0];
-	b32u_d[3] = &encoding_table[(ident >> 12) & 0x3f][0];
-	b32u_d[4] = &encoding_table[(ident >> 18) & 0x3f][0];
-	b32u_d[5] = &encoding_table[(ident >> 24) & 0x3f][0];
+	b32u_d[0] = (uint8_t*)ادھار_dir_جدول[elem_idx];
+	b32u_d[1] = &encoding_جدول[(ident      ) & 0x3f][0];
+	b32u_d[2] = &encoding_جدول[(ident >>  6) & 0x3f][0];
+	b32u_d[3] = &encoding_جدول[(ident >> 12) & 0x3f][0];
+	b32u_d[4] = &encoding_جدول[(ident >> 18) & 0x3f][0];
+	b32u_d[5] = &encoding_جدول[(ident >> 24) & 0x3f][0];
 
-	switch (elem_idx) {
-	case ENTRY_ELEM_DATA:
-	case ENTRY_ELEM_META:
-		netsurf_mkpath(&fname, NULL, 8,
-			       state->path, b32u_d[0], b32u_d[1], b32u_d[2],
+	بدل (elem_idx) {
+	حالة اندراج_ELEM_انکڑے:
+	حالة اندراج_ELEM_META:
+		netsurf_mkpath(&fname, عدم, 8,
+			       state->رستہ, b32u_d[0], b32u_d[1], b32u_d[2],
 			       b32u_d[3], b32u_d[4], b32u_d[5], b32u_i);
-		break;
+		اكسر;
 
-	case (ENTRY_ELEM_COUNT + ENTRY_ELEM_META):
-	case (ENTRY_ELEM_COUNT + ENTRY_ELEM_DATA):
-		netsurf_mkpath(&fname, NULL, 3,
-			       state->path, b32u_d[0], b32u_d[1]);
-		break;
+	حالة (اندراج_ELEM_گنتی + اندراج_ELEM_META):
+	حالة (اندراج_ELEM_گنتی + اندراج_ELEM_انکڑے):
+		netsurf_mkpath(&fname, عدم, 3,
+			       state->رستہ, b32u_d[0], b32u_d[1]);
+		اكسر;
 
-	default:
-		assert("bad element index" == NULL);
-		break;
+	افتراضي:
+		أكد("bad element index" == عدم);
+		اكسر;
 	}
 
-	return fname;
+	أرجع fname;
 }
 
 /**
@@ -414,39 +414,39 @@ store_fname(struct store_state *state,
  * @param elem_idx The element index to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-invalidate_element(struct store_state *state,
-		   struct store_entry *bse,
-		   int elem_idx)
+ساكن nserror
+invalidate_element(بنية store_state *state,
+		   بنية store_اندراج *bse,
+		   صحيح elem_idx)
 {
-	if (bse->elem[elem_idx].block != 0) {
-		block_index_t bf;
-		block_index_t bi;
+	إذا (bse->elem[elem_idx].بلاک != 0) {
+		بلاک_اشاریہ_t bf;
+		بلاک_اشاریہ_t bi;
 
 		/* block file block resides in */
-		bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-			((1 << BLOCK_FILE_COUNT) - 1);
+		bf = (bse->elem[elem_idx].بلاک >> بلاک_اندراج_گنتی) &
+			((1 << بلاک_FILE_گنتی) - 1);
 
 		/* block index in file */
-		bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_COUNT) -1);
+		bi = bse->elem[elem_idx].بلاک & ((1U << بلاک_اندراج_گنتی) -1);
 
 		/* clear bit in use map */
-		state->blocks[elem_idx][bf].use_map[bi >> 3] &= ~(1U << (bi & 7));
-	} else {
-		char *fname;
+		state->بلاکاں[elem_idx][bf].use_map[bi >> 3] &= ~(1U << (bi & 7));
+	} وإلا {
+		حرف *fname;
 
 		/* unlink the file from disc */
 		fname = store_fname(state, nsurl_hash(bse->url), elem_idx);
-		if (fname == NULL) {
-			return NSERROR_NOMEM;
+		إذا (fname == عدم) {
+			أرجع NSERROR_NOMEM;
 		}
 		unlink(fname);
-		free(fname);
+		حرر(fname);
 	}
 
-	state->total_alloc -= bse->elem[elem_idx].size;
+	state->کل_alloc -= bse->elem[elem_idx].ناپ;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -456,37 +456,37 @@ invalidate_element(struct store_state *state,
  * @param bse The entry to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-invalidate_entry(struct store_state *state, struct store_entry *bse)
+ساكن nserror
+invalidate_اندراج(بنية store_state *state, بنية store_اندراج *bse)
 {
 	nserror ret;
 
 	/* mark entry as invalid */
-	bse->flags |= ENTRY_FLAGS_INVALID;
+	bse->flags |= اندراج_FLAGS_INVALID;
 
 	/* check if the entry has storage already allocated */
-	if (((bse->elem[ENTRY_ELEM_DATA].flags &
-	     (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0) ||
-	    ((bse->elem[ENTRY_ELEM_META].flags &
-	      (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0)) {
+	إذا (((bse->elem[اندراج_ELEM_انکڑے].flags &
+	     (اندراج_ELEM_FLAG_ڈھیر | اندراج_ELEM_FLAG_MMAP)) != 0) ||
+	    ((bse->elem[اندراج_ELEM_META].flags &
+	      (اندراج_ELEM_FLAG_ڈھیر | اندراج_ELEM_FLAG_MMAP)) != 0)) {
 		/*
 		 * This entry cannot be immediately removed as it has
 		 * associated allocation so wait for allocation release.
 		 */
 		NSLOG(netsurf, DEBUG,
 		      "invalidating entry with referenced allocation");
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	NSLOG(netsurf, VERBOSE, "Removing entry for %s", nsurl_access(bse->url));
 
-	ret = invalidate_element(state, bse, ENTRY_ELEM_META);
-	if (ret != NSERROR_OK) {
+	ret = invalidate_element(state, bse, اندراج_ELEM_META);
+	إذا (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "Error invalidating metadata element");
 	}
 
-	ret = invalidate_element(state, bse, ENTRY_ELEM_DATA);
-	if (ret != NSERROR_OK) {
+	ret = invalidate_element(state, bse, اندراج_ELEM_انکڑے);
+	إذا (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "Error invalidating data element");
 	}
 
@@ -494,70 +494,70 @@ invalidate_entry(struct store_state *state, struct store_entry *bse)
 	hashmap_remove(state->entries, bse->url);
 	/* From now, bse is invalid memory */
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * Quick sort comparison.
  */
-static int compar(const void *va, const void *vb)
+ساكن صحيح compar(ثابت فراغ *va, ثابت فراغ *vb)
 {
-	const struct store_entry *a = *(const struct store_entry **)va;
-	const struct store_entry *b = *(const struct store_entry **)vb;
+	ثابت بنية store_اندراج *a = *(ثابت بنية store_اندراج **)va;
+	ثابت بنية store_اندراج *b = *(ثابت بنية store_اندراج **)vb;
 
 	/* consider the allocation flags - if an entry has an
 	 * allocation it is considered more valuable as it cannot be
 	 * freed.
 	 */
-	if ((a->elem[ENTRY_ELEM_DATA].flags == ENTRY_ELEM_FLAG_NONE) &&
-	    (b->elem[ENTRY_ELEM_DATA].flags != ENTRY_ELEM_FLAG_NONE)) {
-		return -1;
-	} else if ((a->elem[ENTRY_ELEM_DATA].flags != ENTRY_ELEM_FLAG_NONE) &&
-		   (b->elem[ENTRY_ELEM_DATA].flags == ENTRY_ELEM_FLAG_NONE)) {
-		return 1;
+	إذا ((a->elem[اندراج_ELEM_انکڑے].flags == اندراج_ELEM_FLAG_NONE) &&
+	    (b->elem[اندراج_ELEM_انکڑے].flags != اندراج_ELEM_FLAG_NONE)) {
+		أرجع -1;
+	} وإلا إذا ((a->elem[اندراج_ELEM_انکڑے].flags != اندراج_ELEM_FLAG_NONE) &&
+		   (b->elem[اندراج_ELEM_انکڑے].flags == اندراج_ELEM_FLAG_NONE)) {
+		أرجع 1;
 	}
 
-	if ((a->elem[ENTRY_ELEM_META].flags == ENTRY_ELEM_FLAG_NONE) &&
-	    (b->elem[ENTRY_ELEM_META].flags != ENTRY_ELEM_FLAG_NONE)) {
-		return -1;
-	} else if ((a->elem[ENTRY_ELEM_META].flags != ENTRY_ELEM_FLAG_NONE) &&
-		   (b->elem[ENTRY_ELEM_META].flags == ENTRY_ELEM_FLAG_NONE)) {
-		return 1;
+	إذا ((a->elem[اندراج_ELEM_META].flags == اندراج_ELEM_FLAG_NONE) &&
+	    (b->elem[اندراج_ELEM_META].flags != اندراج_ELEM_FLAG_NONE)) {
+		أرجع -1;
+	} وإلا إذا ((a->elem[اندراج_ELEM_META].flags != اندراج_ELEM_FLAG_NONE) &&
+		   (b->elem[اندراج_ELEM_META].flags == اندراج_ELEM_FLAG_NONE)) {
+		أرجع 1;
 	}
 
-	if (a->use_count < b->use_count) {
-		return -1;
-	} else if (a->use_count > b->use_count) {
-		return 1;
+	إذا (a->use_گنتی < b->use_گنتی) {
+		أرجع -1;
+	} وإلا إذا (a->use_گنتی > b->use_گنتی) {
+		أرجع 1;
 	}
 	/* use count is the same - now consider last use time */
 
-	if (a->last_used < b->last_used) {
-		return -1;
-	} else if (a->last_used > b->last_used) {
-		return 1;
+	إذا (a->آخری_ورتیا < b->آخری_ورتیا) {
+		أرجع -1;
+	} وإلا إذا (a->آخری_ورتیا > b->آخری_ورتیا) {
+		أرجع 1;
 	}
 
 	/* they are the same */
-	return 0;
+	أرجع 0;
 }
 
-typedef struct {
-	struct store_entry **elist;
-	size_t ent_count;
+تعريفنوع بنية {
+	بنية store_اندراج **elist;
+	size_t ent_گنتی;
 } eviction_state_t;
 
 /**
  * Iterator for gathering entries to compute eviction order
  */
-static bool
-entry_eviction_iterator_cb(void *key, void *value, void *ctx)
+ساكن bool
+اندراج_eviction_iterator_cb(فراغ *کلید, فراغ *قدر, فراغ *ctx)
 {
 	eviction_state_t *estate = ctx;
-	struct store_entry *ent = value;
-	estate->elist[estate->ent_count++] = ent;
-	return false;
+	بنية store_اندراج *ent = قدر;
+	estate->elist[estate->ent_گنتی++] = ent;
+	أرجع false;
 }
 
 /**
@@ -574,72 +574,72 @@ entry_eviction_iterator_cb(void *key, void *value, void *ctx)
  * @param state The store state to use.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror store_evict(struct store_state *state)
+ساكن nserror store_evict(بنية store_state *state)
 {
 	size_t ent = 0;
 	size_t removed = 0; /* size of removed entries */
 	nserror ret = NSERROR_OK;
-	size_t old_count;
+	size_t old_گنتی;
 	eviction_state_t estate;
 
 	/* check if the cache has exceeded configured limit */
-	if (state->total_alloc < state->limit) {
+	إذا (state->کل_alloc < state->حد_بندی) {
 		/* cache within limits */
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	NSLOG(netsurf, INFO,
 	      "Evicting entries to reduce %"PRIu64" by %"PRIsizet,
-	      state->total_alloc,
+	      state->کل_alloc,
 	      state->hysteresis);
 
 	/* allocate storage for the list */
-	old_count = hashmap_count(state->entries);
-	estate.ent_count = 0;
-	estate.elist = malloc(sizeof(struct state_entry*) * old_count);
-	if (estate.elist == NULL) {
-		return NSERROR_NOMEM;
+	old_گنتی = hashmap_گنتی(state->entries);
+	estate.ent_گنتی = 0;
+	estate.elist = حافظہ_دیو(حجم(بنية state_اندراج*) * old_گنتی);
+	إذا (estate.elist == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
 
-	if (hashmap_iterate(state->entries, entry_eviction_iterator_cb, &estate)) {
+	إذا (hashmap_iterate(state->entries, اندراج_eviction_iterator_cb, &estate)) {
 		NSLOG(netsurf, WARNING, "Unexpected termination of eviction iterator");
-		free(estate.elist);
-		return NSERROR_UNKNOWN;
+		حرر(estate.elist);
+		أرجع NSERROR_UNKNOWN;
 	}
 
-	if (old_count != estate.ent_count) {
+	إذا (old_گنتی != estate.ent_گنتی) {
 		NSLOG(netsurf, WARNING, "Incorrect entry count after eviction iterator");
-		free(estate.elist);
-		return NSERROR_UNKNOWN;
+		حرر(estate.elist);
+		أرجع NSERROR_UNKNOWN;
 	}
 
-	qsort(estate.elist, estate.ent_count, sizeof(struct state_entry*), compar);
+	qsort(estate.elist, estate.ent_گنتی, حجم(بنية state_اندراج*), compar);
 
 	/* evict entries in listed order */
 	removed = 0;
-	for (ent = 0; ent < estate.ent_count; ent++) {
-		struct store_entry *bse = estate.elist[ent];
+	لكل (ent = 0; ent < estate.ent_گنتی; ent++) {
+		بنية store_اندراج *bse = estate.elist[ent];
 
-		removed += bse->elem[ENTRY_ELEM_DATA].size;
-		removed += bse->elem[ENTRY_ELEM_META].size;
+		removed += bse->elem[اندراج_ELEM_انکڑے].ناپ;
+		removed += bse->elem[اندراج_ELEM_META].ناپ;
 
-		ret = invalidate_entry(state, bse);
-		if (ret != NSERROR_OK) {
-			break;
+		ret = invalidate_اندراج(state, bse);
+		إذا (ret != NSERROR_OK) {
+			اكسر;
 		}
 
-		if (removed > state->hysteresis) {
-			break;
+		إذا (removed > state->hysteresis) {
+			اكسر;
 		}
 	}
 
-	free(estate.elist);
+	حرر(estate.elist);
 
 	NSLOG(netsurf, INFO,
 	      "removed %"PRIsizet" in %"PRIsizet" entries, %"PRIu64" remaining in %"PRIsizet" entries",
-	      removed, ent, state->total_alloc, old_count - ent);
+	      removed, ent, state->کل_alloc, old_گنتی - ent);
 
-	return ret;
+	أرجع ret;
 }
 
 /**
@@ -650,37 +650,37 @@ static nserror store_evict(struct store_state *state)
  * Then we write out the full store entry struct as-is, which includes
  * a useless nsurl pointer.
  */
-static nserror
-write_entry(struct store_entry *ent, int fd)
+ساكن nserror
+write_اندراج(بنية store_اندراج *ent, صحيح fd)
 {
-	uint32_t len = strlen(nsurl_access(ent->url));
-	if (write(fd, &len, sizeof(len)) != sizeof(len))
-		return NSERROR_SAVE_FAILED;
-	if (write(fd, nsurl_access(ent->url), len) != (ssize_t)len)
-		return NSERROR_SAVE_FAILED;
-	if (write(fd, ent, sizeof(*ent)) != sizeof(*ent))
-		return NSERROR_SAVE_FAILED;
+	uint32_t len = لڑی_لمبائی(nsurl_access(ent->url));
+	إذا (اكتب(fd, &len, حجم(len)) != حجم(len))
+		أرجع NSERROR_SAVE_FAILED;
+	إذا (اكتب(fd, nsurl_access(ent->url), len) != (ssize_t)len)
+		أرجع NSERROR_SAVE_FAILED;
+	إذا (اكتب(fd, ent, حجم(*ent)) != حجم(*ent))
+		أرجع NSERROR_SAVE_FAILED;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-typedef struct {
-	int fd;
+تعريفنوع بنية {
+	صحيح fd;
 	size_t written;
-} write_entry_iteration_state;
+} write_اندراج_iteration_state;
 
 /**
  * Callback for iterating the entries hashmap
  */
-static bool
-write_entry_iterator(void *key, void *value, void *ctx)
+ساكن bool
+write_اندراج_iterator(فراغ *کلید, فراغ *قدر, فراغ *ctx)
 {
 	/* We ignore the key */
-	struct store_entry *ent = value;
-	write_entry_iteration_state *state = ctx;
+	بنية store_اندراج *ent = قدر;
+	write_اندراج_iteration_state *state = ctx;
 	state->written++;
 	/* We stop early if we fail to write this entry */
-	return write_entry(ent, state->fd) != NSERROR_OK;
+	أرجع write_اندراج(ent, state->fd) != NSERROR_OK;
 }
 
 /**
@@ -691,60 +691,60 @@ write_entry_iterator(void *key, void *value, void *ctx)
  * @param state The backing store state to serialise.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror write_entries(struct store_state *state)
+ساكن nserror write_entries(بنية store_state *state)
 {
-	char *tname = NULL; /* temporary file name for atomic replace */
-	char *fname = NULL; /* target filename */
-	write_entry_iteration_state weistate;
+	حرف *tname = عدم; /* temporary file name for atomic replace */
+	حرف *fname = عدم; /* target filename */
+	write_اندراج_iteration_state weistate;
 	nserror ret;
 
-	memset(&weistate, 0, sizeof(weistate));
+	memset(&weistate, 0, حجم(weistate));
 
-	if (state->entries_dirty == false) {
+	إذا (state->entries_dirty == false) {
 		/* entries have not been updated since last write */
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
-	ret = netsurf_mkpath(&tname, NULL, 2, state->path, "t"ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&tname, عدم, 2, state->رستہ, "t"ENTRIES_FNAME);
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	weistate.fd = open(tname, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-	if (weistate.fd == -1) {
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+	إذا (weistate.fd == -1) {
+		حرر(tname);
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
-	if (hashmap_iterate(state->entries, write_entry_iterator, &weistate)) {
+	إذا (hashmap_iterate(state->entries, write_اندراج_iterator, &weistate)) {
 		/* The iteration ended early, so we failed */
 		close(weistate.fd);
 		unlink(tname);
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+		حرر(tname);
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
 	close(weistate.fd);
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
+	ret = netsurf_mkpath(&fname, عدم, 2, state->رستہ, ENTRIES_FNAME);
+	إذا (ret != NSERROR_OK) {
 		unlink(tname);
-		free(tname);
-		return ret;
+		حرر(tname);
+		أرجع ret;
 	}
 
 	/* remove() call is to handle non-POSIX rename() implementations */
-	(void)remove(fname);
-	if (rename(tname, fname) != 0) {
+	(فراغ)remove(fname);
+	إذا (rename(tname, fname) != 0) {
 		unlink(tname);
-		free(tname);
-		free(fname);
-		return NSERROR_SAVE_FAILED;
+		حرر(tname);
+		حرر(fname);
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, INFO, "Wrote out %"PRIsizet" entries", weistate.written);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -755,47 +755,47 @@ static nserror write_entries(struct store_state *state)
  * \param state The backing store state to serialise.
  * \return NSERROR_OK on success or error code on failure.
  */
-static nserror write_blocks(struct store_state *state)
+ساكن nserror write_بلاکاں(بنية store_state *state)
 {
-	int fd;
-	char *tname = NULL; /* temporary file name for atomic replace */
-	char *fname = NULL; /* target filename */
-	size_t blocks_size;
+	صحيح fd;
+	حرف *tname = عدم; /* temporary file name for atomic replace */
+	حرف *fname = عدم; /* target filename */
+	size_t بلاکاں_ناپ;
 	size_t written = 0;
 	size_t wr;
 	nserror ret;
-	int bfidx; /* block file index */
-	int elem_idx;
+	صحيح bfidx; /* block file index */
+	صحيح elem_idx;
 
-	if (state->blocks_dirty == false) {
+	إذا (state->بلاکاں_dirty == false) {
 		/* blocks use maps have not been updated since last write */
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
-	ret = netsurf_mkpath(&tname, NULL, 2, state->path, "t"BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&tname, عدم, 2, state->رستہ, "t"بلاکاں_FNAME);
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	fd = open(tname, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-	if (fd == -1) {
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+	إذا (fd == -1) {
+		حرر(tname);
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
-	blocks_size = (BLOCK_FILE_COUNT * ENTRY_ELEM_COUNT) * BLOCK_USE_MAP_SIZE;
+	بلاکاں_ناپ = (بلاک_FILE_گنتی * اندراج_ELEM_گنتی) * بلاک_USE_MAP_ناپ;
 
-	for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-		for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-			wr = write(fd,
-				   &state->blocks[elem_idx][bfidx].use_map[0],
-				   BLOCK_USE_MAP_SIZE);
-			if (wr != BLOCK_USE_MAP_SIZE) {
+	لكل (elem_idx = 0; elem_idx < اندراج_ELEM_گنتی; elem_idx++) {
+		لكل (bfidx = 0; bfidx < بلاک_FILE_گنتی; bfidx++) {
+			wr = اكتب(fd,
+				   &state->بلاکاں[elem_idx][bfidx].use_map[0],
+				   بلاک_USE_MAP_ناپ);
+			إذا (wr != بلاک_USE_MAP_ناپ) {
 				NSLOG(netsurf, DEBUG,
 				      "writing block file %d use index on file number %d failed",
 				      elem_idx,
 				      bfidx);
-				goto wr_err;
+				اذهب wr_err;
 			}
 			written += wr;
 		}
@@ -804,29 +804,29 @@ wr_err:
 	close(fd);
 
 	/* check all data was written */
-	if (written != blocks_size) {
+	إذا (written != بلاکاں_ناپ) {
 		unlink(tname);
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+		حرر(tname);
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
+	ret = netsurf_mkpath(&fname, عدم, 2, state->رستہ, بلاکاں_FNAME);
+	إذا (ret != NSERROR_OK) {
 		unlink(tname);
-		free(tname);
-		return ret;
+		حرر(tname);
+		أرجع ret;
 	}
 
 	/* remove() call is to handle non-POSIX rename() implementations */
-	(void)remove(fname);
-	if (rename(tname, fname) != 0) {
+	(فراغ)remove(fname);
+	إذا (rename(tname, fname) != 0) {
 		unlink(tname);
-		free(tname);
-		free(fname);
-		return NSERROR_SAVE_FAILED;
+		حرر(tname);
+		حرر(fname);
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -839,24 +839,24 @@ wr_err:
  * \param state The backing store state to set block extent for.
  * \return NSERROR_OK on success or error code on failure.
  */
-static nserror set_block_extents(struct store_state *state)
+ساكن nserror سیٹ_بلاک_extents(بنية store_state *state)
 {
-	int bfidx; /* block file index */
-	int elem_idx;
-	int ftr;
+	صحيح bfidx; /* block file index */
+	صحيح elem_idx;
+	صحيح ftr;
 
-	if (state->blocks_opened == false) {
+	إذا (state->بلاکاں_opened == false) {
 		/* no blocks have been opened since last write */
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	NSLOG(netsurf, DEBUG, "Starting");
-	for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-		for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-			if (state->blocks[elem_idx][bfidx].fd != -1) {
+	لكل (elem_idx = 0; elem_idx < اندراج_ELEM_گنتی; elem_idx++) {
+		لكل (bfidx = 0; bfidx < بلاک_FILE_گنتی; bfidx++) {
+			إذا (state->بلاکاں[elem_idx][bfidx].fd != -1) {
 				/* ensure block file is correct extent */
-				ftr = ftruncate(state->blocks[elem_idx][bfidx].fd, 1U << (log2_block_size[elem_idx] + BLOCK_ENTRY_COUNT));
-				if (ftr == -1) {
+				ftr = ftruncate(state->بلاکاں[elem_idx][bfidx].fd, 1U << (log2_بلاک_ناپ[elem_idx] + بلاک_اندراج_گنتی));
+				إذا (ftr == -1) {
 					NSLOG(netsurf, ERROR,
 					      "Truncate failed errno:%d",
 					      errno);
@@ -866,9 +866,9 @@ static nserror set_block_extents(struct store_state *state)
 	}
 	NSLOG(netsurf, DEBUG, "Complete");
 
-	state->blocks_opened = false;
+	state->بلاکاں_opened = false;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -880,13 +880,13 @@ static nserror set_block_extents(struct store_state *state)
  *
  * \param s store state to maintain.
  */
-static void control_maintenance(void *s)
+ساكن فراغ control_maintenance(فراغ *s)
 {
-	struct store_state *state = s;
+	بنية store_state *state = s;
 
 	write_entries(state);
-	write_blocks(state);
-	set_block_extents(state);
+	write_بلاکاں(state);
+	سیٹ_بلاک_extents(state);
 }
 
 
@@ -903,58 +903,58 @@ static void control_maintenance(void *s)
  * @return NSERROR_OK and bse updated on success or NSERROR_NOT_FOUND
  *         if no entry corresponds to the url.
  */
-static nserror
-get_store_entry(struct store_state *state, nsurl *url, struct store_entry **bse)
+ساكن nserror
+get_store_اندراج(بنية store_state *state, nsurl *url, بنية store_اندراج **bse)
 {
-	struct store_entry *ent;
+	بنية store_اندراج *ent;
 
 	ent = hashmap_lookup(state->entries, url);
 
-	if (ent == NULL) {
-		return NSERROR_NOT_FOUND;
+	إذا (ent == عدم) {
+		أرجع NSERROR_NOT_لبھیا;
 	}
 
 	*bse = ent;
 
-	ent->last_used = time(NULL);
-	ent->use_count++;
+	ent->آخری_ورتیا = time(عدم);
+	ent->use_گنتی++;
 
 	state->entries_dirty = true;
 
-	guit->misc->schedule(CONTROL_MAINT_TIME, control_maintenance, state);
+	guit->misc->ویلا_سارنی(CONTROL_MAINT_ویلا, control_maintenance, state);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
  * Find next available small block.
  */
-static block_index_t alloc_block(struct store_state *state, int elem_idx)
+ساكن بلاک_اشاریہ_t alloc_بلاک(بنية store_state *state, صحيح elem_idx)
 {
-	int bf;
-	int idx;
-	int bit;
+	صحيح bf;
+	صحيح idx;
+	صحيح ثنائی_ہندسہ;
 	uint8_t *map;
 
-	for (bf = 0; bf < BLOCK_FILE_COUNT; bf++) {
-		map = &state->blocks[elem_idx][bf].use_map[0];
+	لكل (bf = 0; bf < بلاک_FILE_گنتی; bf++) {
+		map = &state->بلاکاں[elem_idx][bf].use_map[0];
 
-		for (idx = 0; idx < BLOCK_USE_MAP_SIZE; idx++) {
-			if (*(map + idx) != 0xff) {
+		لكل (idx = 0; idx < بلاک_USE_MAP_ناپ; idx++) {
+			إذا (*(map + idx) != 0xff) {
 				/* located an unused block */
-				for (bit = 0; bit < 8;bit++) {
-					if (((*(map + idx)) & (1U << bit)) == 0) {
+				لكل (ثنائی_ہندسہ = 0; ثنائی_ہندسہ < 8;ثنائی_ہندسہ++) {
+					إذا (((*(map + idx)) & (1U << ثنائی_ہندسہ)) == 0) {
 						/* mark block as used */
-						*(map + idx) |= 1U << bit;
-						state->blocks_dirty = true;
-						return (((bf * BLOCK_USE_MAP_SIZE) + idx) * 8) + bit;
+						*(map + idx) |= 1U << ثنائی_ہندسہ;
+						state->بلاکاں_dirty = true;
+						أرجع (((bf * بلاک_USE_MAP_ناپ) + idx) * 8) + ثنائی_ہندسہ;
 					}
 				}
 			}
 		}
 	}
 
-	return 0;
+	أرجع 0;
 }
 
 /**
@@ -971,17 +971,17 @@ static block_index_t alloc_block(struct store_state *state, int elem_idx)
  * @return NSERROR_OK and \a bse updated on success or NSERROR_NOT_FOUND
  *         if no entry corresponds to the url.
  */
-static nserror
-set_store_entry(struct store_state *state,
+ساكن nserror
+سیٹ_store_اندراج(بنية store_state *state,
 		nsurl *url,
-		int elem_idx,
-		uint8_t *data,
-		const size_t datalen,
-		struct store_entry **bse)
+		صحيح elem_idx,
+		uint8_t *انکڑے,
+		ثابت size_t datalen,
+		بنية store_اندراج **bse)
 {
-	struct store_entry *se;
+	بنية store_اندراج *se;
 	nserror ret;
-	struct store_entry_element *elem;
+	بنية store_اندراج_element *elem;
 
 	NSLOG(netsurf, DEBUG, "url:%s", nsurl_access(url));
 
@@ -989,57 +989,57 @@ set_store_entry(struct store_state *state,
 	 * new entry available.
 	 */
 	ret = store_evict(state);
-	if (ret != NSERROR_OK) {
-		return ret;
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	se = hashmap_lookup(state->entries, url);
-	if (se == NULL) {
-		se = hashmap_insert(state->entries, url);
+	إذا (se == عدم) {
+		se = hashmap_داخل_کرو(state->entries, url);
 	}
-	if (se == NULL) {
-		return NSERROR_NOMEM;
+	إذا (se == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
 
 	/* the entry element */
 	elem = &se->elem[elem_idx];
 
 	/* check if the element has storage already allocated */
-	if ((elem->flags & (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0) {
+	إذا ((elem->flags & (اندراج_ELEM_FLAG_ڈھیر | اندراج_ELEM_FLAG_MMAP)) != 0) {
 		/* this entry cannot be removed as it has associated
 		 * allocation.
 		 */
 		NSLOG(netsurf, ERROR,
 		      "attempt to overwrite entry with in use data");
-		return NSERROR_PERMISSION;
+		أرجع NSERROR_PERMISSION;
 	}
 
 	/* set the common entry data */
-	se->use_count = 1;
-	se->last_used = time(NULL);
+	se->use_گنتی = 1;
+	se->آخری_ورتیا = time(عدم);
 
 	/* store the data in the element */
-	elem->flags |= ENTRY_ELEM_FLAG_HEAP;
-	elem->data = data;
+	elem->flags |= اندراج_ELEM_FLAG_ڈھیر;
+	elem->انکڑے = انکڑے;
 	elem->ref = 1;
 
 	/* account for size of entry element */
-	state->total_alloc -= elem->size;
-	elem->size = datalen;
-	state->total_alloc += elem->size;
+	state->کل_alloc -= elem->ناپ;
+	elem->ناپ = datalen;
+	state->کل_alloc += elem->ناپ;
 
 	/* if the element will fit in a small block attempt to allocate one */
-	if (elem->size <= (1U << log2_block_size[elem_idx])) {
-		elem->block = alloc_block(state, elem_idx);
+	إذا (elem->ناپ <= (1U << log2_بلاک_ناپ[elem_idx])) {
+		elem->بلاک = alloc_بلاک(state, elem_idx);
 	}
 
 	/* ensure control maintenance scheduled. */
 	state->entries_dirty = true;
-	guit->misc->schedule(CONTROL_MAINT_TIME, control_maintenance, state);
+	guit->misc->ویلا_سارنی(CONTROL_MAINT_ویلا, control_maintenance, state);
 
 	*bse = se;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -1056,39 +1056,39 @@ set_store_entry(struct store_state *state,
  * @param openflags The flags used with the open call.
  * @return An fd from the open call or -1 on error.
  */
-static int
-store_open(struct store_state *state,
-	   entry_ident_t ident,
-	   int elem_idx,
-	   int openflags)
+ساكن صحيح
+store_open(بنية store_state *state,
+	   اندراج_ident_t ident,
+	   صحيح elem_idx,
+	   صحيح openflags)
 {
-	char *fname;
+	حرف *fname;
 	nserror ret;
-	int fd;
+	صحيح fd;
 
 	fname = store_fname(state, ident, elem_idx);
-	if (fname == NULL) {
+	إذا (fname == عدم) {
 		NSLOG(netsurf, ERROR, "filename error");
-		return -1;
+		أرجع -1;
 	}
 
 	/* ensure all path elements to file exist if creating file */
-	if (openflags & O_CREAT) {
+	إذا (openflags & O_CREAT) {
 		ret = netsurf_mkdir_all(fname);
-		if (ret != NSERROR_OK) {
+		إذا (ret != NSERROR_OK) {
 			NSLOG(netsurf, WARNING,
 			      "file path \"%s\" could not be created", fname);
-			free(fname);
-			return -1;
+			حرر(fname);
+			أرجع -1;
 		}
 	}
 
 	NSLOG(netsurf, DEBUG, "opening %s", fname);
 	fd = open(fname, openflags, S_IRUSR | S_IWUSR);
 
-	free(fname);
+	حرر(fname);
 
-	return fd;
+	أرجع fd;
 }
 
 
@@ -1098,21 +1098,21 @@ store_open(struct store_state *state,
  * @param state The backing store state.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-unlink_entries(struct store_state *state)
+ساكن nserror
+unlink_entries(بنية store_state *state)
 {
-	char *fname = NULL;
+	حرف *fname = عدم;
 	nserror ret;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, عدم, 2, state->رستہ, ENTRIES_FNAME);
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	unlink(fname);
 
-	free(fname);
-	return NSERROR_OK;
+	حرر(fname);
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -1121,79 +1121,79 @@ unlink_entries(struct store_state *state)
  * @param state The backing store state to put the loaded entries in.
  * @return NSERROR_OK on success or error code on faliure.
  */
-static nserror
-read_entries(struct store_state *state)
+ساكن nserror
+read_entries(بنية store_state *state)
 {
-	char *fname = NULL;
-	char *url;
+	حرف *fname = عدم;
+	حرف *url;
 	nsurl *nsurl;
 	nserror ret;
 	size_t read_entries = 0;
-	struct store_entry *ent;
-	int fd;
+	بنية store_اندراج *ent;
+	صحيح fd;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, عدم, 2, state->رستہ, ENTRIES_FNAME);
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	state->entries = hashmap_create(&entries_hashmap_parameters);
-	if (state->entries == NULL) {
-		free(fname);
-		return NSERROR_NOMEM;
+	إذا (state->entries == عدم) {
+		حرر(fname);
+		أرجع NSERROR_NOMEM;
 	}
 
 	fd = open(fname, O_RDWR);
-	if (fd != -1) {
+	إذا (fd != -1) {
 		uint32_t urllen;
-		while (read(fd, &urllen, sizeof(urllen)) == sizeof(urllen)) {
-			url = calloc(1, urllen+1);
-			if (url == NULL) {
+		طالما (اقرأ(fd, &urllen, حجم(urllen)) == حجم(urllen)) {
+			url = صفر_حافظہ_دیو(1, urllen+1);
+			إذا (url == عدم) {
 				close(fd);
-				free(fname);
-				return NSERROR_NOMEM;
+				حرر(fname);
+				أرجع NSERROR_NOMEM;
 			}
-			if (read(fd, url, urllen) != (ssize_t)urllen) {
-				free(url);
+			إذا (اقرأ(fd, url, urllen) != (ssize_t)urllen) {
+				حرر(url);
 				close(fd);
-				free(fname);
-				return NSERROR_INIT_FAILED;
+				حرر(fname);
+				أرجع NSERROR_INIT_FAILED;
 			}
 			ret = nsurl_create(url, &nsurl);
-			if (ret != NSERROR_OK) {
-				free(url);
+			إذا (ret != NSERROR_OK) {
+				حرر(url);
 				close(fd);
-				free(fname);
-				return ret;
+				حرر(fname);
+				أرجع ret;
 			}
-			free(url);
+			حرر(url);
 			/* We have to be careful here about nsurl refs */
-			ent = hashmap_insert(state->entries, nsurl);
-			if (ent == NULL) {
+			ent = hashmap_داخل_کرو(state->entries, nsurl);
+			إذا (ent == عدم) {
 				nsurl_unref(nsurl);
 				close(fd);
-				free(fname);
-				return NSERROR_NOMEM;
+				حرر(fname);
+				أرجع NSERROR_NOMEM;
 			}
 			/* At this point, ent actually owns a ref of nsurl */
-			if (read(fd, ent, sizeof(*ent)) != sizeof(*ent)) {
+			إذا (اقرأ(fd, ent, حجم(*ent)) != حجم(*ent)) {
 				/* The read failed, so reset the ptr */
 				ent->url = nsurl; /* It already had a ref */
 				nsurl_unref(nsurl);
 				close(fd);
-				free(fname);
-				return NSERROR_INIT_FAILED;
+				حرر(fname);
+				أرجع NSERROR_INIT_FAILED;
 			}
 			ent->url = nsurl; /* It already owns a ref */
 			nsurl_unref(nsurl);
 			NSLOG(netsurf, DEBUG, "Successfully read entry for %s", nsurl_access(ent->url));
 			read_entries++;
 			/* Note the size allocation */
-			state->total_alloc += ent->elem[ENTRY_ELEM_DATA].size;
-			state->total_alloc += ent->elem[ENTRY_ELEM_META].size;
+			state->کل_alloc += ent->elem[اندراج_ELEM_انکڑے].ناپ;
+			state->کل_alloc += ent->elem[اندراج_ELEM_META].ناپ;
 			/* And ensure we don't pretend to have this in memory yet */
-			ent->elem[ENTRY_ELEM_DATA].flags &= ~(ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP);
-			ent->elem[ENTRY_ELEM_META].flags &= ~(ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP);
+			ent->elem[اندراج_ELEM_انکڑے].flags &= ~(اندراج_ELEM_FLAG_ڈھیر | اندراج_ELEM_FLAG_MMAP);
+			ent->elem[اندراج_ELEM_META].flags &= ~(اندراج_ELEM_FLAG_ڈھیر | اندراج_ELEM_FLAG_MMAP);
 
 		}
 		close(fd);
@@ -1201,8 +1201,8 @@ read_entries(struct store_state *state)
 
 	NSLOG(netsurf, INFO, "Read %"PRIsizet" entries from cache", read_entries);
 
-	free(fname);
-	return NSERROR_OK;
+	حرر(fname);
+	أرجع NSERROR_OK;
 }
 
 
@@ -1212,58 +1212,58 @@ read_entries(struct store_state *state)
  * @param state The backing store state to put the loaded entries in.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-read_blocks(struct store_state *state)
+ساكن nserror
+read_بلاکاں(بنية store_state *state)
 {
-	int bfidx; /* block file index */
-	int elem_idx;
-	int fd;
+	صحيح bfidx; /* block file index */
+	صحيح elem_idx;
+	صحيح fd;
 	ssize_t rd;
-	char *fname = NULL;
+	حرف *fname = عدم;
 	nserror ret;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, عدم, 2, state->رستہ, بلاکاں_FNAME);
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	NSLOG(netsurf, INFO, "Initialising block use map from %s", fname);
 
 	fd = open(fname, O_RDWR);
-	free(fname);
-	if (fd != -1) {
+	حرر(fname);
+	إذا (fd != -1) {
 		/* initialise block file use array */
-		for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-			for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-				rd = read(fd,
-					  &state->blocks[elem_idx][bfidx].use_map[0],
-					  BLOCK_USE_MAP_SIZE);
-				if (rd <= 0) {
+		لكل (elem_idx = 0; elem_idx < اندراج_ELEM_گنتی; elem_idx++) {
+			لكل (bfidx = 0; bfidx < بلاک_FILE_گنتی; bfidx++) {
+				rd = اقرأ(fd,
+					  &state->بلاکاں[elem_idx][bfidx].use_map[0],
+					  بلاک_USE_MAP_ناپ);
+				إذا (rd <= 0) {
 					NSLOG(netsurf, ERROR,
 					      "reading block file %d use index on file number %d failed",
 					      elem_idx,
 					      bfidx);
-					goto rd_err;
+					اذهب rd_err;
 				}
 			}
 		}
 	rd_err:
 		close(fd);
 
-	} else {
+	} وإلا {
 		NSLOG(netsurf, INFO, "Initialising block use map to defaults");
 		/* ensure block 0 (invalid sentinel) is skipped */
-		state->blocks[ENTRY_ELEM_DATA][0].use_map[0] = 1;
-		state->blocks[ENTRY_ELEM_META][0].use_map[0] = 1;
+		state->بلاکاں[اندراج_ELEM_انکڑے][0].use_map[0] = 1;
+		state->بلاکاں[اندراج_ELEM_META][0].use_map[0] = 1;
 	}
 
 	/* initialise block file file descriptors */
-	for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-		state->blocks[ENTRY_ELEM_DATA][bfidx].fd = -1;
-		state->blocks[ENTRY_ELEM_META][bfidx].fd = -1;
+	لكل (bfidx = 0; bfidx < بلاک_FILE_گنتی; bfidx++) {
+		state->بلاکاں[اندراج_ELEM_انکڑے][bfidx].fd = -1;
+		state->بلاکاں[اندراج_ELEM_META][bfidx].fd = -1;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -1272,24 +1272,24 @@ read_blocks(struct store_state *state)
  * @param state The cache state.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-write_cache_tag(struct store_state *state)
+ساكن nserror
+write_cache_ٹیگ(بنية store_state *state)
 {
 	FILE *fcachetag;
 	nserror ret;
-	char *fname = NULL;
+	حرف *fname = عدم;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "CACHEDIR.TAG");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, عدم, 2, state->رستہ, "CACHEDIR.TAG");
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	fcachetag = fopen(fname, "wb");
 
-	free(fname);
+	حرر(fname);
 
-	if (fcachetag == NULL) {
-		return NSERROR_NOT_FOUND;
+	إذا (fcachetag == عدم) {
+		أرجع NSERROR_NOT_لبھیا;
 	}
 
 	fprintf(fcachetag,
@@ -1300,7 +1300,7 @@ write_cache_tag(struct store_state *state)
 
 	fclose(fcachetag);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -1309,39 +1309,39 @@ write_cache_tag(struct store_state *state)
  * @param state The state to write to the control file.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-write_control(struct store_state *state)
+ساكن nserror
+write_control(بنية store_state *state)
 {
 	FILE *fcontrol;
 	nserror ret;
-	char *fname = NULL;
+	حرف *fname = عدم;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "control");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, عدم, 2, state->رستہ, "control");
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	NSLOG(netsurf, INFO, "writing control file \"%s\"", fname);
 
 	ret = netsurf_mkdir_all(fname);
-	if (ret != NSERROR_OK) {
-		free(fname);
-		return ret;
+	إذا (ret != NSERROR_OK) {
+		حرر(fname);
+		أرجع ret;
 	}
 
 	fcontrol = fopen(fname, "wb");
 
-	free(fname);
+	حرر(fname);
 
-	if (fcontrol == NULL) {
-		return NSERROR_NOT_FOUND;
+	إذا (fcontrol == عدم) {
+		أرجع NSERROR_NOT_لبھیا;
 	}
 
-	fprintf(fcontrol, "%u%c", CONTROL_VERSION, 0);
+	fprintf(fcontrol, "%u%c", CONTROL_نسخہ, 0);
 
 	fclose(fcontrol);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -1351,58 +1351,58 @@ write_control(struct store_state *state)
  * @param state The state to read from the control file.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-read_control(struct store_state *state)
+ساكن nserror
+read_control(بنية store_state *state)
 {
 	nserror ret;
 	FILE *fcontrol;
-	unsigned int ctrlversion;
-	char *fname = NULL;
+	بنانشانی صحيح ctrlversion;
+	حرف *fname = عدم;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "control");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, عدم, 2, state->رستہ, "control");
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
 	NSLOG(netsurf, INFO, "opening control file \"%s\"", fname);
 
 	fcontrol = fopen(fname, "rb");
 
-	free(fname);
+	حرر(fname);
 
-	if (fcontrol == NULL) {
+	إذا (fcontrol == عدم) {
 		/* unable to open control file */
-		if (errno == ENOENT) {
-			return NSERROR_NOT_FOUND;
-		} else {
-			return NSERROR_INIT_FAILED;
+		إذا (errno == ENOENT) {
+			أرجع NSERROR_NOT_لبھیا;
+		} وإلا {
+			أرجع NSERROR_INIT_FAILED;
 		}
 	}
 
 	/* read control and setup new state */
 
 	/* first line is version */
-	if (fscanf(fcontrol, "%u", &ctrlversion) != 1) {
-		goto control_error;
+	إذا (fscanf(fcontrol, "%u", &ctrlversion) != 1) {
+		اذهب control_error;
 	}
 
-	if (ctrlversion != CONTROL_VERSION) {
-		goto control_error;
+	إذا (ctrlversion != CONTROL_نسخہ) {
+		اذهب control_error;
 	}
 
-	if (fgetc(fcontrol) != 0) {
-		goto control_error;
+	إذا (fgetc(fcontrol) != 0) {
+		اذهب control_error;
 	}
 
 	fclose(fcontrol);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 
 control_error: /* problem with the control file */
 
 	fclose(fcontrol);
 
-	return NSERROR_INIT_FAILED;
+	أرجع NSERROR_INIT_FAILED;
 }
 
 
@@ -1416,86 +1416,86 @@ control_error: /* problem with the control file */
  * @param parameters to configure backing store.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-initialise(const struct llcache_store_parameters *parameters)
+ساكن nserror
+initialise(ثابت بنية llcache_store_parameters *parameters)
 {
-	struct store_state *newstate;
+	بنية store_state *newstate;
 	nserror ret;
 
 	/* check backing store is not already initialised */
-	if (storestate != NULL) {
-		return NSERROR_INIT_FAILED;
+	إذا (storestate != عدم) {
+		أرجع NSERROR_INIT_FAILED;
 	}
 
 	/* if we are not allowed any space simply give up on init */
-	if (parameters->limit == 0) {
-		return NSERROR_OK;
+	إذا (parameters->حد_بندی == 0) {
+		أرجع NSERROR_OK;
 	}
 
 	/* if the path to the cache directory is not set do not init */
-	if (parameters->path == NULL) {
-		return NSERROR_OK;
+	إذا (parameters->رستہ == عدم) {
+		أرجع NSERROR_OK;
 	}
 
 	/* allocate new store state and set defaults */
-	newstate = calloc(1, sizeof(struct store_state));
-	if (newstate == NULL) {
-		return NSERROR_NOMEM;
+	newstate = صفر_حافظہ_دیو(1, حجم(بنية store_state));
+	إذا (newstate == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
 
-	newstate->path = strdup(parameters->path);
-	newstate->limit = parameters->limit;
+	newstate->رستہ = strdup(parameters->رستہ);
+	newstate->حد_بندی = parameters->حد_بندی;
 	newstate->hysteresis = parameters->hysteresis;
 
 	/* read store control and create new if required */
 	ret = read_control(newstate);
-	if (ret != NSERROR_OK) {
-		if (ret == NSERROR_NOT_FOUND) {
+	إذا (ret != NSERROR_OK) {
+		إذا (ret == NSERROR_NOT_لبھیا) {
 			NSLOG(netsurf, INFO, "cache control file not found, making fresh");
-		} else {
+		} وإلا {
 			NSLOG(netsurf, ERROR, "read control failed %s",
 			      messages_get_errorcode(ret));
-			ret = netsurf_recursive_rm(newstate->path);
-			if (ret != NSERROR_OK) {
+			ret = netsurf_recursive_rm(newstate->رستہ);
+			إذا (ret != NSERROR_OK) {
 				NSLOG(netsurf, WARNING, "Error `%s` while removing `%s`",
-				      messages_get_errorcode(ret), newstate->path);
+				      messages_get_errorcode(ret), newstate->رستہ);
 				NSLOG(netsurf, WARNING, "Unable to clean up partial cache state.");
 				NSLOG(netsurf, WARNING, "Funky behaviour may ensue.");
-			} else {
+			} وإلا {
 				NSLOG(netsurf, INFO, "Successfully removed old cache from `%s`",
-				      newstate->path);
+				      newstate->رستہ);
 			}
 		}
 		ret = write_control(newstate);
-		if (ret == NSERROR_OK) {
+		إذا (ret == NSERROR_OK) {
 			unlink_entries(newstate);
-			write_cache_tag(newstate);
+			write_cache_ٹیگ(newstate);
 		}
 	}
-	if (ret != NSERROR_OK) {
+	إذا (ret != NSERROR_OK) {
 		/* that went well obviously */
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		حرر(newstate->رستہ);
+		حرر(newstate);
+		أرجع ret;
 	}
 
 	/* read filesystem entries */
 	ret = read_entries(newstate);
-	if (ret != NSERROR_OK) {
+	إذا (ret != NSERROR_OK) {
 		/* that went well obviously */
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		حرر(newstate->رستہ);
+		حرر(newstate);
+		أرجع ret;
 	}
 
 	/* read blocks */
-	ret = read_blocks(newstate);
-	if (ret != NSERROR_OK) {
+	ret = read_بلاکاں(newstate);
+	إذا (ret != NSERROR_OK) {
 		/* oh dear */
 		hashmap_destroy(newstate->entries);
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		حرر(newstate->رستہ);
+		حرر(newstate);
+		أرجع ret;
 	}
 
 	storestate = newstate;
@@ -1504,13 +1504,13 @@ initialise(const struct llcache_store_parameters *parameters)
 
 	NSLOG(netsurf, INFO,
 	      "path:%s limit:%"PRIsizet" hyst:%"PRIsizet,
-	      newstate->path,
-	      newstate->limit,
+	      newstate->رستہ,
+	      newstate->حد_بندی,
 	      newstate->hysteresis);
 	NSLOG(netsurf, INFO, "Using %"PRIu64"/%"PRIsizet,
-	      newstate->total_alloc, newstate->limit);
+	      newstate->کل_alloc, newstate->حد_بندی);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -1522,48 +1522,48 @@ initialise(const struct llcache_store_parameters *parameters)
  *
  * @return NSERROR_OK on success.
  */
-static nserror
-finalise(void)
+ساكن nserror
+finalise(فراغ)
 {
-	int bf; /* block file index */
-	unsigned int op_count;
+	صحيح bf; /* block file index */
+	بنانشانی صحيح op_گنتی;
 
-	if (storestate != NULL) {
-		guit->misc->schedule(-1, control_maintenance, storestate);
+	إذا (storestate != عدم) {
+		guit->misc->ویلا_سارنی(-1, control_maintenance, storestate);
 		write_entries(storestate);
-		write_blocks(storestate);
+		write_بلاکاں(storestate);
 
 		/* ensure all block files are closed */
-		for (bf = 0; bf < BLOCK_FILE_COUNT; bf++) {
-			if (storestate->blocks[ENTRY_ELEM_DATA][bf].fd != -1) {
-				close(storestate->blocks[ENTRY_ELEM_DATA][bf].fd);
+		لكل (bf = 0; bf < بلاک_FILE_گنتی; bf++) {
+			إذا (storestate->بلاکاں[اندراج_ELEM_انکڑے][bf].fd != -1) {
+				close(storestate->بلاکاں[اندراج_ELEM_انکڑے][bf].fd);
 			}
-			if (storestate->blocks[ENTRY_ELEM_META][bf].fd != -1) {
-				close(storestate->blocks[ENTRY_ELEM_META][bf].fd);
+			إذا (storestate->بلاکاں[اندراج_ELEM_META][bf].fd != -1) {
+				close(storestate->بلاکاں[اندراج_ELEM_META][bf].fd);
 			}
 		}
 
-		op_count = storestate->hit_count + storestate->miss_count;
+		op_گنتی = storestate->کامیابی_گنتی + storestate->کھنج_گنتی;
 
 		/* avoid division by zero */
-		if (op_count > 0) {
+		إذا (op_گنتی > 0) {
 			NSLOG(netsurf, INFO,
 			      "Cache total/hit/miss/fail (counts) %d/%"PRIsizet"/%"PRIsizet"/%d (100%%/%"PRIsizet"%%/%"PRIsizet"%%/%d%%)",
-			      op_count,
-			      storestate->hit_count,
-			      storestate->miss_count,
+			      op_گنتی,
+			      storestate->کامیابی_گنتی,
+			      storestate->کھنج_گنتی,
 			      0,
-			      (storestate->hit_count * 100) / op_count,
-			      (storestate->miss_count * 100) / op_count,
+			      (storestate->کامیابی_گنتی * 100) / op_گنتی,
+			      (storestate->کھنج_گنتی * 100) / op_گنتی,
 			      0);
 		}
 
 		hashmap_destroy(storestate->entries);
-		free(storestate->path);
-		free(storestate);
-		storestate = NULL;
+		حرر(storestate->رستہ);
+		حرر(storestate);
+		storestate = عدم;
 	}
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -1575,53 +1575,53 @@ finalise(void)
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_write_block(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+ساكن nserror store_write_بلاک(بنية store_state *state,
+			 بنية store_اندراج *bse,
+			 صحيح elem_idx)
 {
-	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-		((1 << BLOCK_FILE_COUNT) - 1); /* block file block resides in */
-	block_index_t bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_COUNT) -1); /* block index in file */
+	بلاک_اشاریہ_t bf = (bse->elem[elem_idx].بلاک >> بلاک_اندراج_گنتی) &
+		((1 << بلاک_FILE_گنتی) - 1); /* block file block resides in */
+	بلاک_اشاریہ_t bi = bse->elem[elem_idx].بلاک & ((1U << بلاک_اندراج_گنتی) -1); /* block index in file */
 	ssize_t wr;
 	off_t offst;
 
 	/* ensure the block file fd is good */
-	if (state->blocks[elem_idx][bf].fd == -1) {
-		state->blocks[elem_idx][bf].fd = store_open(state, bf,
-				elem_idx + ENTRY_ELEM_COUNT, O_CREAT | O_RDWR);
-		if (state->blocks[elem_idx][bf].fd == -1) {
+	إذا (state->بلاکاں[elem_idx][bf].fd == -1) {
+		state->بلاکاں[elem_idx][bf].fd = store_open(state, bf,
+				elem_idx + اندراج_ELEM_گنتی, O_CREAT | O_RDWR);
+		إذا (state->بلاکاں[elem_idx][bf].fd == -1) {
 			NSLOG(netsurf, ERROR, "Open failed errno %d", errno);
-			return NSERROR_SAVE_FAILED;
+			أرجع NSERROR_SAVE_FAILED;
 		}
 
 		/* flag that a block file has been opened */
-		state->blocks_opened = true;
+		state->بلاکاں_opened = true;
 	}
 
-	offst = (unsigned int)bi << log2_block_size[elem_idx];
+	offst = (بنانشانی صحيح)bi << log2_بلاک_ناپ[elem_idx];
 
-	wr = nsu_pwrite(state->blocks[elem_idx][bf].fd,
-			bse->elem[elem_idx].data,
-			bse->elem[elem_idx].size,
+	wr = nsu_pwrite(state->بلاکاں[elem_idx][bf].fd,
+			bse->elem[elem_idx].انکڑے,
+			bse->elem[elem_idx].ناپ,
 			offst);
-	if (wr != (ssize_t)bse->elem[elem_idx].size) {
+	إذا (wr != (ssize_t)bse->elem[elem_idx].ناپ) {
 		NSLOG(netsurf, ERROR,
 		      "Write failed %"PRIssizet" of %"PRId32" bytes from %p at %"PRIsizet" block %"PRIu16" errno %d",
 		      wr,
-		      bse->elem[elem_idx].size,
-		      bse->elem[elem_idx].data,
+		      bse->elem[elem_idx].ناپ,
+		      bse->elem[elem_idx].انکڑے,
 		      (size_t)offst,
-		      bse->elem[elem_idx].block,
+		      bse->elem[elem_idx].بلاک,
 		      errno);
-		return NSERROR_SAVE_FAILED;
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, INFO,
 	      "Wrote %"PRIssizet" bytes from %p at %"PRIsizet" block %d", wr,
-	      bse->elem[elem_idx].data, (size_t)offst,
-	      bse->elem[elem_idx].block);
+	      bse->elem[elem_idx].انکڑے, (size_t)offst,
+	      bse->elem[elem_idx].بلاک);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -1632,41 +1632,41 @@ static nserror store_write_block(struct store_state *state,
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_write_file(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+ساكن nserror store_write_file(بنية store_state *state,
+			 بنية store_اندراج *bse,
+			 صحيح elem_idx)
 {
 	ssize_t wr;
-	int fd;
-	int err;
+	صحيح fd;
+	صحيح err;
 
 	fd = store_open(state, nsurl_hash(bse->url), elem_idx, O_CREAT | O_WRONLY);
-	if (fd < 0) {
+	إذا (fd < 0) {
 		perror("");
 		NSLOG(netsurf, ERROR, "Open failed %d errno %d", fd, errno);
-		return NSERROR_SAVE_FAILED;
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
-	wr = write(fd, bse->elem[elem_idx].data, bse->elem[elem_idx].size);
+	wr = اكتب(fd, bse->elem[elem_idx].انکڑے, bse->elem[elem_idx].ناپ);
 	err = errno; /* close can change errno */
 
 	close(fd);
-	if (wr != (ssize_t)bse->elem[elem_idx].size) {
+	إذا (wr != (ssize_t)bse->elem[elem_idx].ناپ) {
 		NSLOG(netsurf, ERROR,
 		      "Write failed %"PRIssizet" of %"PRId32" bytes from %p errno %d",
 		      wr,
-		      bse->elem[elem_idx].size,
-		      bse->elem[elem_idx].data,
+		      bse->elem[elem_idx].ناپ,
+		      bse->elem[elem_idx].انکڑے,
 		      err);
 
 		/** @todo Delete the file? */
-		return NSERROR_SAVE_FAILED;
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, VERBOSE, "Wrote %"PRIssizet" bytes from %p", wr,
-	      bse->elem[elem_idx].data);
+	      bse->elem[elem_idx].انکڑے);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -1680,60 +1680,60 @@ static nserror store_write_file(struct store_state *state,
  * @param datalen The length of the \a data.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+ساكن nserror
 store(nsurl *url,
-      enum backing_store_flags bsflags,
-      uint8_t *data,
-      const size_t datalen)
+      تعداد backing_store_flags bsflags,
+      uint8_t *انکڑے,
+      ثابت size_t datalen)
 {
 	nserror ret;
-	struct store_entry *bse;
-	int elem_idx;
+	بنية store_اندراج *bse;
+	صحيح elem_idx;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	إذا (storestate == عدم) {
+		أرجع NSERROR_INIT_FAILED;
 	}
 
 	/* calculate the entry element index */
-	if ((bsflags & BACKING_STORE_META) != 0) {
-		elem_idx = ENTRY_ELEM_META;
-	} else {
-		elem_idx = ENTRY_ELEM_DATA;
+	إذا ((bsflags & BACKING_STORE_META) != 0) {
+		elem_idx = اندراج_ELEM_META;
+	} وإلا {
+		elem_idx = اندراج_ELEM_انکڑے;
 	}
 
 	/* set the store entry up */
-	ret = set_store_entry(storestate, url, elem_idx, data, datalen, &bse);
-	if (ret != NSERROR_OK) {
+	ret = سیٹ_store_اندراج(storestate, url, elem_idx, انکڑے, datalen, &bse);
+	إذا (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "store entry setting failed");
-		return ret;
+		أرجع ret;
 	}
 
-	if (bse->elem[elem_idx].block != 0) {
+	إذا (bse->elem[elem_idx].بلاک != 0) {
 		/* small block storage */
-		ret = store_write_block(storestate, bse, elem_idx);
-	} else {
+		ret = store_write_بلاک(storestate, bse, elem_idx);
+	} وإلا {
 		/* separate file in backing store */
 		ret = store_write_file(storestate, bse, elem_idx);
 	}
 
-	return ret;
+	أرجع ret;
 }
 
 /**
  * release any allocation for an entry
  */
-static nserror entry_release_alloc(struct store_entry_element *elem)
+ساكن nserror اندراج_release_alloc(بنية store_اندراج_element *elem)
 {
-	if ((elem->flags & ENTRY_ELEM_FLAG_HEAP) != 0) {
+	إذا ((elem->flags & اندراج_ELEM_FLAG_ڈھیر) != 0) {
 		elem->ref--;
-		if (elem->ref == 0) {
-			NSLOG(netsurf, DEEPDEBUG, "freeing %p", elem->data);
-			free(elem->data);
-			elem->flags &= ~ENTRY_ELEM_FLAG_HEAP;
+		إذا (elem->ref == 0) {
+			NSLOG(netsurf, DEEPDEBUG, "freeing %p", elem->انکڑے);
+			حرر(elem->انکڑے);
+			elem->flags &= ~اندراج_ELEM_FLAG_ڈھیر;
 		}
 	}
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -1745,53 +1745,53 @@ static nserror entry_release_alloc(struct store_entry_element *elem)
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_read_block(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+ساكن nserror store_read_بلاک(بنية store_state *state,
+			 بنية store_اندراج *bse,
+			 صحيح elem_idx)
 {
-	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-		((1 << BLOCK_FILE_COUNT) - 1); /* block file block resides in */
-	block_index_t bi = bse->elem[elem_idx].block & ((1 << BLOCK_ENTRY_COUNT) -1); /* block index in file */
+	بلاک_اشاریہ_t bf = (bse->elem[elem_idx].بلاک >> بلاک_اندراج_گنتی) &
+		((1 << بلاک_FILE_گنتی) - 1); /* block file block resides in */
+	بلاک_اشاریہ_t bi = bse->elem[elem_idx].بلاک & ((1 << بلاک_اندراج_گنتی) -1); /* block index in file */
 	ssize_t rd;
 	off_t offst;
 
 	/* ensure the block file fd is good */
-	if (state->blocks[elem_idx][bf].fd == -1) {
-		state->blocks[elem_idx][bf].fd = store_open(state, bf,
-				elem_idx + ENTRY_ELEM_COUNT, O_CREAT | O_RDWR);
-		if (state->blocks[elem_idx][bf].fd == -1) {
+	إذا (state->بلاکاں[elem_idx][bf].fd == -1) {
+		state->بلاکاں[elem_idx][bf].fd = store_open(state, bf,
+				elem_idx + اندراج_ELEM_گنتی, O_CREAT | O_RDWR);
+		إذا (state->بلاکاں[elem_idx][bf].fd == -1) {
 			NSLOG(netsurf, ERROR, "Open failed errno %d", errno);
-			return NSERROR_SAVE_FAILED;
+			أرجع NSERROR_SAVE_FAILED;
 		}
 
 		/* flag that a block file has been opened */
-		state->blocks_opened = true;
+		state->بلاکاں_opened = true;
 	}
 
-	offst = (unsigned int)bi << log2_block_size[elem_idx];
+	offst = (بنانشانی صحيح)bi << log2_بلاک_ناپ[elem_idx];
 
-	rd = nsu_pread(state->blocks[elem_idx][bf].fd,
-		       bse->elem[elem_idx].data,
-		       bse->elem[elem_idx].size,
+	rd = nsu_pread(state->بلاکاں[elem_idx][bf].fd,
+		       bse->elem[elem_idx].انکڑے,
+		       bse->elem[elem_idx].ناپ,
 		       offst);
-	if (rd != (ssize_t)bse->elem[elem_idx].size) {
+	إذا (rd != (ssize_t)bse->elem[elem_idx].ناپ) {
 		NSLOG(netsurf, ERROR,
 		      "Failed reading %"PRIssizet" of %"PRId32" bytes into %p from %"PRIsizet" block %"PRIu16" errno %d",
 		      rd,
-		      bse->elem[elem_idx].size,
-		      bse->elem[elem_idx].data,
+		      bse->elem[elem_idx].ناپ,
+		      bse->elem[elem_idx].انکڑے,
 		      (size_t)offst,
-		      bse->elem[elem_idx].block,
+		      bse->elem[elem_idx].بلاک,
 		      errno);
-		return NSERROR_SAVE_FAILED;
+		أرجع NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG,
 	      "Read %"PRIssizet" bytes into %p from %"PRIsizet" block %d", rd,
-	      bse->elem[elem_idx].data, (size_t)offst,
-	      bse->elem[elem_idx].block);
+	      bse->elem[elem_idx].انکڑے, (size_t)offst,
+	      bse->elem[elem_idx].بلاک);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -1802,34 +1802,34 @@ static nserror store_read_block(struct store_state *state,
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_read_file(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+ساكن nserror store_read_file(بنية store_state *state,
+			 بنية store_اندراج *bse,
+			 صحيح elem_idx)
 {
-	int fd;
+	صحيح fd;
 	ssize_t rd; /* return from read */
-	int ret = NSERROR_OK;
+	صحيح ret = NSERROR_OK;
 	size_t tot = 0; /* total size */
 
 	/* separate file in backing store */
 	fd = store_open(storestate, nsurl_hash(bse->url), elem_idx, O_RDONLY);
-	if (fd < 0) {
+	إذا (fd < 0) {
 		NSLOG(netsurf, ERROR, "Open failed %d errno %d", fd, errno);
 		/** @todo should this invalidate the entry? */
-		return NSERROR_NOT_FOUND;
+		أرجع NSERROR_NOT_لبھیا;
 	}
 
-	while (tot < bse->elem[elem_idx].size) {
-		rd = read(fd,
-			  bse->elem[elem_idx].data + tot,
-			  bse->elem[elem_idx].size - tot);
-		if (rd <= 0) {
+	طالما (tot < bse->elem[elem_idx].ناپ) {
+		rd = اقرأ(fd,
+			  bse->elem[elem_idx].انکڑے + tot,
+			  bse->elem[elem_idx].ناپ - tot);
+		إذا (rd <= 0) {
 			NSLOG(netsurf, ERROR,
 			      "read error returned %"PRIssizet" errno %d",
 			      rd,
 			      errno);
-			ret = NSERROR_NOT_FOUND;
-			break;
+			ret = NSERROR_NOT_لبھیا;
+			اكسر;
 		}
 		tot += rd;
 	}
@@ -1837,9 +1837,9 @@ static nserror store_read_file(struct store_state *state,
 	close(fd);
 
 	NSLOG(netsurf, DEEPDEBUG, "Read %"PRIsizet" bytes into %p", tot,
-	      bse->elem[elem_idx].data);
+	      bse->elem[elem_idx].انکڑے);
 
-	return ret;
+	أرجع ret;
 }
 
 /**
@@ -1851,86 +1851,86 @@ static nserror store_read_file(struct store_state *state,
  * @param[out] datalen_out The length of the \a data retrieved.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+ساكن nserror
 fetch(nsurl *url,
-      enum backing_store_flags bsflags,
-      uint8_t **data_out,
-      size_t *datalen_out)
+      تعداد backing_store_flags bsflags,
+      uint8_t **انکڑے_باہرلا,
+      size_t *datalen_باہرلا)
 {
 	nserror ret;
-	struct store_entry *bse;
-	struct store_entry_element *elem;
-	int elem_idx;
+	بنية store_اندراج *bse;
+	بنية store_اندراج_element *elem;
+	صحيح elem_idx;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	إذا (storestate == عدم) {
+		أرجع NSERROR_INIT_FAILED;
 	}
 
 	/* fetch store entry */
-	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
+	ret = get_store_اندراج(storestate, url, &bse);
+	إذا (ret != NSERROR_OK) {
 		NSLOG(netsurf, DEBUG, "Entry for %s not found", nsurl_access(url));
-		storestate->miss_count++;
-		return ret;
+		storestate->کھنج_گنتی++;
+		أرجع ret;
 	}
-	storestate->hit_count++;
+	storestate->کامیابی_گنتی++;
 
 	NSLOG(netsurf, DEBUG, "retrieving cache data for url:%s",
 	      nsurl_access(url));
 
 	/* calculate the entry element index */
-	if ((bsflags & BACKING_STORE_META) != 0) {
-		elem_idx = ENTRY_ELEM_META;
-	} else {
-		elem_idx = ENTRY_ELEM_DATA;
+	إذا ((bsflags & BACKING_STORE_META) != 0) {
+		elem_idx = اندراج_ELEM_META;
+	} وإلا {
+		elem_idx = اندراج_ELEM_انکڑے;
 	}
 	elem = &bse->elem[elem_idx];
 
 	/* if an allocation already exists return it */
-	if ((elem->flags & ENTRY_ELEM_FLAG_HEAP) != 0) {
+	إذا ((elem->flags & اندراج_ELEM_FLAG_ڈھیر) != 0) {
 		/* use the existing allocation and bump the ref count. */
 		elem->ref++;
 
 		NSLOG(netsurf, DEEPDEBUG,
 		      "Using existing entry (%p) allocation %p refs:%d", bse,
-		      elem->data, elem->ref);
+		      elem->انکڑے, elem->ref);
 
-	} else {
+	} وإلا {
 		/* allocate from the heap */
-		elem->data = malloc(elem->size);
-		if (elem->data == NULL) {
+		elem->انکڑے = حافظہ_دیو(elem->ناپ);
+		إذا (elem->انکڑے == عدم) {
 			NSLOG(netsurf, ERROR,
 			      "Failed to create new heap allocation");
-			return NSERROR_NOMEM;
+			أرجع NSERROR_NOMEM;
 		}
 		NSLOG(netsurf, DEEPDEBUG, "Created new heap allocation %p",
-		      elem->data);
+		      elem->انکڑے);
 
 		/* mark the entry as having a valid heap allocation */
-		elem->flags |= ENTRY_ELEM_FLAG_HEAP;
+		elem->flags |= اندراج_ELEM_FLAG_ڈھیر;
 		elem->ref = 1;
 
 		/* fill the new block */
-		if (elem->block != 0) {
-			ret = store_read_block(storestate, bse, elem_idx);
-		} else {
+		إذا (elem->بلاک != 0) {
+			ret = store_read_بلاک(storestate, bse, elem_idx);
+		} وإلا {
 			ret = store_read_file(storestate, bse, elem_idx);
 		}
 	}
 
 	/* free the allocation if there is a read error */
-	if (ret != NSERROR_OK) {
-		entry_release_alloc(elem);
-	} else {
+	إذا (ret != NSERROR_OK) {
+		اندراج_release_alloc(elem);
+	} وإلا {
 		/* update stats and setup return pointers */
-		storestate->hit_size += elem->size;
+		storestate->کامیابی_ناپ += elem->ناپ;
 
-		*data_out = elem->data;
-		*datalen_out = elem->size;
+		*انکڑے_باہرلا = elem->انکڑے;
+		*datalen_باہرلا = elem->ناپ;
 	}
 
-	return ret;
+	أرجع ret;
 }
 
 
@@ -1941,42 +1941,42 @@ fetch(nsurl *url,
  * @param[in] bsflags The flags to control how the object data is released.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror release(nsurl *url, enum backing_store_flags bsflags)
+ساكن nserror release(nsurl *url, تعداد backing_store_flags bsflags)
 {
 	nserror ret;
-	struct store_entry *bse;
-	struct store_entry_element *elem;
+	بنية store_اندراج *bse;
+	بنية store_اندراج_element *elem;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	إذا (storestate == عدم) {
+		أرجع NSERROR_INIT_FAILED;
 	}
 
-	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
+	ret = get_store_اندراج(storestate, url, &bse);
+	إذا (ret != NSERROR_OK) {
 		NSLOG(netsurf, WARNING, "entry not found");
-		return ret;
+		أرجع ret;
 	}
 
 	/* the entry element */
-	if ((bsflags & BACKING_STORE_META) != 0) {
-		elem = &bse->elem[ENTRY_ELEM_META];
-	} else {
-		elem = &bse->elem[ENTRY_ELEM_DATA];
+	إذا ((bsflags & BACKING_STORE_META) != 0) {
+		elem = &bse->elem[اندراج_ELEM_META];
+	} وإلا {
+		elem = &bse->elem[اندراج_ELEM_انکڑے];
 	}
 
-	ret = entry_release_alloc(elem);
+	ret = اندراج_release_alloc(elem);
 
 	/* if the entry has previously been invalidated but had
 	 * allocation it must be invalidated fully now the allocation
 	 * has been released.
 	 */
-	if ((ret == NSERROR_OK) &&
-	    ((bse->flags & ENTRY_FLAGS_INVALID) != 0)) {
-		ret = invalidate_entry(storestate, bse);
+	إذا ((ret == NSERROR_OK) &&
+	    ((bse->flags & اندراج_FLAGS_INVALID) != 0)) {
+		ret = invalidate_اندراج(storestate, bse);
 	}
 
-	return ret;
+	أرجع ret;
 }
 
 
@@ -1989,27 +1989,27 @@ static nserror release(nsurl *url, enum backing_store_flags bsflags)
  * @param url The url is used as the unique primary key to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+ساكن nserror
 invalidate(nsurl *url)
 {
 	nserror ret;
-	struct store_entry *bse;
+	بنية store_اندراج *bse;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	إذا (storestate == عدم) {
+		أرجع NSERROR_INIT_FAILED;
 	}
 
-	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = get_store_اندراج(storestate, url, &bse);
+	إذا (ret != NSERROR_OK) {
+		أرجع ret;
 	}
 
-	return invalidate_entry(storestate, bse);
+	أرجع invalidate_اندراج(storestate, bse);
 }
 
 
-static struct gui_llcache_table llcache_table = {
+ساكن بنية gui_llcache_جدول llcache_جدول = {
 	.initialise = initialise,
 	.finalise = finalise,
 	.store = store,
@@ -2018,4 +2018,4 @@ static struct gui_llcache_table llcache_table = {
 	.release = release,
 };
 
-struct gui_llcache_table *filesystem_llcache_table = &llcache_table;
+بنية gui_llcache_جدول *filesystem_llcache_جدول = &llcache_جدول;
