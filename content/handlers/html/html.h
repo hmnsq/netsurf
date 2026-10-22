@@ -26,38 +26,38 @@
 #ifndef NETSURF_HTML_HTML_H
 #define NETSURF_HTML_HTML_H
 
-#include <stdbool.h>
+#অন্তর্ভাব <stdbool.h>
 
-#include "netsurf/types.h"
-#include "netsurf/content_type.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/mouse.h"
-#include "desktop/frame_types.h"
+#অন্তর্ভাব "netsurf/types.h"
+#অন্তর্ভাব "netsurf/content_type.h"
+#অন্তর্ভাব "netsurf/browser_window.h"
+#অন্তর্ভাব "netsurf/mouse.h"
+#অন্তর্ভাব "desktop/frame_types.h"
 
-struct fetch_multipart_data;
-struct box;
-struct rect;
-struct browser_window;
-struct content;
-struct hlcache_handle;
-struct http_parameter;
-struct imagemap;
-struct object_params;
-struct plotters;
-struct textarea;
-struct scrollbar;
-struct scrollbar_msg_data;
-struct search_context;
-struct selection;
-struct nsurl;
-struct plot_font_style;
+কাঠামো fetch_multipart_তথ্য;
+কাঠামো box;
+কাঠামো rect;
+কাঠামো browser_window;
+কাঠামো content;
+কাঠামো hlcache_handle;
+কাঠামো http_parameter;
+কাঠামো imagemap;
+কাঠামো object_params;
+কাঠামো plotters;
+কাঠামো textarea;
+কাঠামো scrollbar;
+কাঠামো scrollbar_বার্তা_তথ্য;
+কাঠামো অনুসন্ধান_context;
+কাঠামো selection;
+কাঠামো nsurl;
+কাঠামো plot_font_style;
 
 /**
  * Container for stylesheets used by an HTML document
  */
-struct html_stylesheet {
-	struct dom_node *node; /**< dom node associated with sheet */
-	struct hlcache_handle *sheet;
+কাঠামো html_stylesheet {
+	কাঠামো dom_গ্রন্থি *গ্রন্থি; /**< dom node associated with sheet */
+	কাঠামো hlcache_handle *sheet;
 	bool modified;
 	bool unused;
 };
@@ -66,18 +66,18 @@ struct html_stylesheet {
 /**
  * Container for scripts used by an HTML document
  */
-struct html_script {
+কাঠামো html_script {
 	/** Type of script */
-	enum html_script_type { HTML_SCRIPT_INLINE,
+	গণনা html_script_type { HTML_SCRIPT_INLINE,
 				HTML_SCRIPT_SYNC,
 				HTML_SCRIPT_DEFER,
 				HTML_SCRIPT_ASYNC } type;
-	union {
-		struct hlcache_handle *handle;
-		struct dom_string *string;
-	} data;	/**< Script data */
-	struct dom_string *mimetype;
-	struct dom_string *encoding;
+	সংঘ {
+		কাঠামো hlcache_handle *handle;
+		কাঠামো dom_string *string;
+	} তথ্য;	/**< Script data */
+	কাঠামো dom_string *mimetype;
+	কাঠামো dom_string *encoding;
 	bool already_started;
 	bool parser_inserted;
 	bool force_async;
@@ -90,12 +90,12 @@ struct html_script {
 /**
  * An object (img, object, etc. tag) in a CONTENT_HTML document.
  */
-struct content_html_object {
-	struct content *parent;		/**< Parent document */
-	struct content_html_object *next; /**< Next in chain */
+কাঠামো content_html_object {
+	কাঠামো content *parent;		/**< Parent document */
+	কাঠামো content_html_object *পরবর্তী; /**< Next in chain */
 
-	struct hlcache_handle *content;  /**< Content, or 0. */
-	struct box *box;  /**< Node in box tree containing it. */
+	কাঠামো hlcache_handle *content;  /**< Content, or 0. */
+	কাঠামো box *box;  /**< Node in box tree containing it. */
 	/** Bitmap of acceptable content types */
 	content_type permitted_types;
 	bool background;  /**< This object is a background image. */
@@ -105,43 +105,43 @@ struct content_html_object {
 /**
  * Frame tree (frameset or frame tag)
  */
-struct content_html_frames {
-	int cols;	/** number of columns in frameset */
-	int rows;	/** number of rows in frameset */
+কাঠামো content_html_frames {
+	পূর্ণসংখ্যা cols;	/** number of columns in frameset */
+	পূর্ণসংখ্যা rows;	/** number of rows in frameset */
 
-	struct frame_dimension width;	/** frame width */
-	struct frame_dimension height;	/** frame width */
-	int margin_width;	/** frame margin width */
-	int margin_height;	/** frame margin height */
+	কাঠামো frame_dimension width;	/** frame width */
+	কাঠামো frame_dimension height;	/** frame width */
+	পূর্ণসংখ্যা margin_width;	/** frame margin width */
+	পূর্ণসংখ্যা margin_height;	/** frame margin height */
 
-	char *name;	/** frame name (for targetting) */
-	struct nsurl *url;	/** frame url */
+	অক্ষর *name;	/** frame name (for targetting) */
+	কাঠামো nsurl *url;	/** frame url */
 
 	bool no_resize;	/** frame is not resizable */
 	browser_scrolling scrolling;	/** scrolling characteristics */
 	bool border;	/** frame has a border */
 	colour border_colour;	/** frame border colour */
 
-	struct content_html_frames *children; /** [cols * rows] children */
+	কাঠামো content_html_frames *children; /** [cols * rows] children */
 };
 
 /**
  * Inline frame list (iframe tag)
  */
-struct content_html_iframe {
-	struct box *box;
+কাঠামো content_html_iframe {
+	কাঠামো box *box;
 
-	int margin_width;	/** frame margin width */
-	int margin_height;	/** frame margin height */
+	পূর্ণসংখ্যা margin_width;	/** frame margin width */
+	পূর্ণসংখ্যা margin_height;	/** frame margin height */
 
-	char *name;	/** frame name (for targetting) */
-	struct nsurl *url;	/** frame url */
+	অক্ষর *name;	/** frame name (for targetting) */
+	কাঠামো nsurl *url;	/** frame url */
 
 	browser_scrolling scrolling;	/** scrolling characteristics */
 	bool border;	/** frame has a border */
 	colour border_colour;	/** frame border colour */
 
-	struct content_html_iframe *next;
+	কাঠামো content_html_iframe *পরবর্তী;
 };
 
 /* entries in stylesheet_content */
@@ -156,43 +156,43 @@ struct content_html_iframe {
  *
  * \return NSERROR_OK on success otherwise appropriate error code
  */
-nserror html_init(void);
+nserror html_init(শূন্য);
 
 /**
  * redraw a specific box
  *
  * used by core browser
  */
-void html_redraw_a_box(struct hlcache_handle *h, struct box *box);
+শূন্য html_redraw_a_box(কাঠামো hlcache_handle *h, কাঠামো box *box);
 
 /**
  * obtain html frame content from handle
  *
  * used by core browser
  */
-struct content_html_frames *html_get_frameset(struct hlcache_handle *h);
+কাঠামো content_html_frames *html_get_frameset(কাঠামো hlcache_handle *h);
 
 /**
  * obtain html iframe content from handle
  *
  * used by core browser
  */
-struct content_html_iframe *html_get_iframe(struct hlcache_handle *h);
+কাঠামো content_html_iframe *html_get_iframe(কাঠামো hlcache_handle *h);
 
 /**
  * obtain html base target from handle
  *
  * used by core browser
  */
-const char *html_get_base_target(struct hlcache_handle *h);
+ধ্রুবক অক্ষর *html_get_base_target(কাঠামো hlcache_handle *h);
 
 /**
  * set filename on a file gadget
  *
  * used by core browser
  */
-void html_set_file_gadget_filename(struct hlcache_handle *hl,
-	struct form_control *gadget, const char *fn);
+শূন্য html_set_file_gadget_filename(কাঠামো hlcache_handle *hl,
+	কাঠামো form_control *gadget, ধ্রুবক অক্ষর *fn);
 
 /**
  * Retrieve stylesheets used by HTML document
@@ -201,8 +201,8 @@ void html_set_file_gadget_filename(struct hlcache_handle *hl,
  * \param n Pointer to location to receive number of sheets
  * \return Pointer to array of stylesheets
  */
-struct html_stylesheet *html_get_stylesheets(struct hlcache_handle *h,
-		unsigned int *n);
+কাঠামো html_stylesheet *html_get_stylesheets(কাঠামো hlcache_handle *h,
+		unsigned পূর্ণসংখ্যা *n);
 
 /**
  * Retrieve objects used by HTML document
@@ -211,13 +211,13 @@ struct html_stylesheet *html_get_stylesheets(struct hlcache_handle *h,
  * \param n Pointer to location to receive number of objects
  * \return Pointer to array of objects
  */
-struct content_html_object *html_get_objects(struct hlcache_handle *h,
-		unsigned int *n);
+কাঠামো content_html_object *html_get_objects(কাঠামো hlcache_handle *h,
+		unsigned পূর্ণসংখ্যা *n);
 
 /**
  * get the offset within the docuemnt of a fragment id
  */
-bool html_get_id_offset(struct hlcache_handle *h, lwc_string *frag_id,
-		int *x, int *y);
+bool html_get_id_offset(কাঠামো hlcache_handle *h, lwc_string *frag_id,
+		পূর্ণসংখ্যা *x, পূর্ণসংখ্যা *y);
 
 #endif

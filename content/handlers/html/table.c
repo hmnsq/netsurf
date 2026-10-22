@@ -22,16 +22,16 @@
  * implementation of HTML table processing and layout.
  */
 
-#include <assert.h>
-#include <dom/dom.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/talloc.h"
-#include "css/utils.h"
+#অন্তর্ভাব "utils/log.h"
+#অন্তর্ভাব "utils/utils.h"
+#অন্তর্ভাব "utils/talloc.h"
+#অন্তর্ভাব "css/utils.h"
 
-#include "html/box.h"
-#include "html/table.h"
+#অন্তর্ভাব "html/box.h"
+#অন্তর্ভাব "html/table.h"
 
 /* Define to enable verbose table debug */
 #undef TABLE_DEBUG
@@ -39,9 +39,9 @@
 /**
  * Container for border values during table border calculations
  */
-struct border {
-	enum css_border_style_e style;	/**< border-style */
-	enum css_border_color_e color;	/**< border-color type */
+কাঠামো border {
+	গণনা css_border_style_e style;	/**< border-style */
+	গণনা css_border_color_e color;	/**< border-color type */
 	css_color c;			/**< border-color value */
 	css_fixed width;		/**< border-width length */
 	css_unit unit;			/**< border-width units */
@@ -58,103 +58,103 @@ struct border {
  * \param b_src    Source of \a b
  * \return True if \a b is more eyecatching than \a a
  */
-static bool
-table_border_is_more_eyecatching(const css_unit_ctx *unit_len_ctx,
-				 const struct border *a,
+স্থির bool
+table_border_is_more_eyecatching(ধ্রুবক css_unit_ctx *unit_len_ctx,
+				 ধ্রুবক কাঠামো border *a,
 				 box_type a_src,
-				 const struct border *b,
+				 ধ্রুবক কাঠামো border *b,
 				 box_type b_src)
 {
 	css_fixed awidth, bwidth;
-	int impact = 0;
+	পূর্ণসংখ্যা impact = 0;
 
 	/* See CSS 2.1 $17.6.2.1 */
 
 	/* 1 + 2 -- hidden beats everything, none beats nothing */
-	if (a->style == CSS_BORDER_STYLE_HIDDEN ||
+	যদি (a->style == CSS_BORDER_STYLE_HIDDEN ||
 	    b->style == CSS_BORDER_STYLE_NONE)
-		return false;
+		ফেরত false;
 
-	if (b->style == CSS_BORDER_STYLE_HIDDEN ||
+	যদি (b->style == CSS_BORDER_STYLE_HIDDEN ||
 	    a->style == CSS_BORDER_STYLE_NONE)
-		return true;
+		ফেরত true;
 
 	/* 3a -- wider borders beat narrow ones */
 	/* The widths must be absolute, which will be the case
 	 * if they've come from a computed style. */
-	assert(a->unit != CSS_UNIT_EM && a->unit != CSS_UNIT_EX);
-	assert(b->unit != CSS_UNIT_EM && b->unit != CSS_UNIT_EX);
-	awidth = css_unit_len2device_px(NULL, unit_len_ctx, a->width, a->unit);
-	bwidth = css_unit_len2device_px(NULL, unit_len_ctx, b->width, b->unit);
+	প্রতিজ্ঞা(a->unit != CSS_UNIT_EM && a->unit != CSS_UNIT_EX);
+	প্রতিজ্ঞা(b->unit != CSS_UNIT_EM && b->unit != CSS_UNIT_EX);
+	awidth = css_unit_len2device_px(ফাঁকা, unit_len_ctx, a->width, a->unit);
+	bwidth = css_unit_len2device_px(ফাঁকা, unit_len_ctx, b->width, b->unit);
 
-	if (awidth < bwidth)
-		return true;
-	else if (bwidth < awidth)
-		return false;
+	যদি (awidth < bwidth)
+		ফেরত true;
+	অন্যথা যদি (bwidth < awidth)
+		ফেরত false;
 
 	/* 3b -- sort by style */
-	switch (a->style) {
-	case CSS_BORDER_STYLE_DOUBLE: impact++; fallthrough;
-	case CSS_BORDER_STYLE_SOLID:  impact++; fallthrough;
-	case CSS_BORDER_STYLE_DASHED: impact++; fallthrough;
-	case CSS_BORDER_STYLE_DOTTED: impact++; fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:  impact++; fallthrough;
-	case CSS_BORDER_STYLE_OUTSET: impact++; fallthrough;
-	case CSS_BORDER_STYLE_GROOVE: impact++; fallthrough;
-	case CSS_BORDER_STYLE_INSET:  impact++; fallthrough;
-	default:
-		break;
+	নির্বাচন (a->style) {
+	ক্ষেত্র CSS_BORDER_STYLE_DOUBLE: impact++; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_SOLID:  impact++; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_DASHED: impact++; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_DOTTED: impact++; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_RIDGE:  impact++; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_OUTSET: impact++; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_GROOVE: impact++; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_INSET:  impact++; fallthrough;
+	পূর্বনির্ধারিত:
+		বিরতি;
 	}
 
-	switch (b->style) {
-	case CSS_BORDER_STYLE_DOUBLE: impact--; fallthrough;
-	case CSS_BORDER_STYLE_SOLID:  impact--; fallthrough;
-	case CSS_BORDER_STYLE_DASHED: impact--; fallthrough;
-	case CSS_BORDER_STYLE_DOTTED: impact--; fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:  impact--; fallthrough;
-	case CSS_BORDER_STYLE_OUTSET: impact--; fallthrough;
-	case CSS_BORDER_STYLE_GROOVE: impact--; fallthrough;
-	case CSS_BORDER_STYLE_INSET:  impact--; fallthrough;
-	default:
-		break;
+	নির্বাচন (b->style) {
+	ক্ষেত্র CSS_BORDER_STYLE_DOUBLE: impact--; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_SOLID:  impact--; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_DASHED: impact--; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_DOTTED: impact--; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_RIDGE:  impact--; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_OUTSET: impact--; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_GROOVE: impact--; fallthrough;
+	ক্ষেত্র CSS_BORDER_STYLE_INSET:  impact--; fallthrough;
+	পূর্বনির্ধারিত:
+		বিরতি;
 	}
 
-	if (impact < 0)
-		return true;
-	else if (impact > 0)
-		return false;
+	যদি (impact < 0)
+		ফেরত true;
+	অন্যথা যদি (impact > 0)
+		ফেরত false;
 
 	/* 4a -- sort by origin */
 	impact = 0;
 
 	/** \todo COL/COL_GROUP */
-	switch (a_src) {
-	case BOX_TABLE_CELL:       impact++; fallthrough;
-	case BOX_TABLE_ROW:        impact++; fallthrough;
-	case BOX_TABLE_ROW_GROUP:  impact++; fallthrough;
-	case BOX_TABLE:            impact++; fallthrough;
-	default:
-		break;
+	নির্বাচন (a_src) {
+	ক্ষেত্র BOX_TABLE_CELL:       impact++; fallthrough;
+	ক্ষেত্র BOX_TABLE_ROW:        impact++; fallthrough;
+	ক্ষেত্র BOX_TABLE_ROW_GROUP:  impact++; fallthrough;
+	ক্ষেত্র BOX_TABLE:            impact++; fallthrough;
+	পূর্বনির্ধারিত:
+		বিরতি;
 	}
 
 	/** \todo COL/COL_GROUP */
-	switch (b_src) {
-	case BOX_TABLE_CELL:       impact--; fallthrough;
-	case BOX_TABLE_ROW:        impact--; fallthrough;
-	case BOX_TABLE_ROW_GROUP:  impact--; fallthrough;
-	case BOX_TABLE:            impact--; fallthrough;
-	default:
-		break;
+	নির্বাচন (b_src) {
+	ক্ষেত্র BOX_TABLE_CELL:       impact--; fallthrough;
+	ক্ষেত্র BOX_TABLE_ROW:        impact--; fallthrough;
+	ক্ষেত্র BOX_TABLE_ROW_GROUP:  impact--; fallthrough;
+	ক্ষেত্র BOX_TABLE:            impact--; fallthrough;
+	পূর্বনির্ধারিত:
+		বিরতি;
 	}
 
-	if (impact < 0)
-		return true;
-	else if (impact > 0)
-		return false;
+	যদি (impact < 0)
+		ফেরত true;
+	অন্যথা যদি (impact > 0)
+		ফেরত false;
 
 	/* 4b -- furthest left (if direction: ltr) and towards top wins */
 	/** \todo Currently assumes b satisifies this */
-	return true;
+	ফেরত true;
 }
 
 
@@ -169,25 +169,25 @@ table_border_is_more_eyecatching(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static void
-table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
-			     struct box *table,
-			     struct border *a,
+স্থির শূন্য
+table_cell_শীর্ষ_process_table(ধ্রুবক css_unit_ctx *unit_len_ctx,
+			     কাঠামো box *table,
+			     কাঠামো border *a,
 			     box_type *a_src)
 {
-	struct border b;
+	কাঠামো border b;
 	box_type b_src;
 
 	/* Top border of table */
-	b.style = css_computed_border_top_style(table->style);
-	b.color = css_computed_border_top_color(table->style, &b.c);
-	css_computed_border_top_width(table->style, &b.width, &b.unit);
+	b.style = css_computed_border_শীর্ষ_style(table->style);
+	b.color = css_computed_border_শীর্ষ_color(table->style, &b.c);
+	css_computed_border_শীর্ষ_width(table->style, &b.width, &b.unit);
 	b.width = css_unit_len2device_px(table->style, unit_len_ctx,
 			b.width, b.unit);
 	b.unit = CSS_UNIT_PX;
 	b_src = BOX_TABLE;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	যদি (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
@@ -207,14 +207,14 @@ table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static bool
-table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
-			   struct box *cell,
-			   struct box *row,
-			   struct border *a,
+স্থির bool
+table_cell_শীর্ষ_process_row(ধ্রুবক css_unit_ctx *unit_len_ctx,
+			   কাঠামো box *cell,
+			   কাঠামো box *row,
+			   কাঠামো border *a,
 			   box_type *a_src)
 {
-	struct border b;
+	কাঠামো border b;
 	box_type b_src;
 
 	/* Bottom border of row */
@@ -226,45 +226,45 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
 	b.unit = CSS_UNIT_PX;
 	b_src = BOX_TABLE_ROW;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	যদি (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
 
-	if (row->children == NULL) {
+	যদি (row->children == ফাঁকা) {
 		/* Row is empty, so consider its top border */
-		b.style = css_computed_border_top_style(row->style);
-		b.color = css_computed_border_top_color(row->style, &b.c);
-		css_computed_border_top_width(row->style, &b.width, &b.unit);
+		b.style = css_computed_border_শীর্ষ_style(row->style);
+		b.color = css_computed_border_শীর্ষ_color(row->style, &b.c);
+		css_computed_border_শীর্ষ_width(row->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(row->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE_ROW;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     a, *a_src, &b, b_src)) {
 			*a = b;
 			*a_src = b_src;
 		}
 
-		return false;
-	} else {
+		ফেরত false;
+	} অন্যথা {
 		/* Process cells that are directly above the cell being
 		 * considered. They may not be in this row, but in one of the
 		 * rows above it in the case where rowspan > 1. */
-		struct box *c;
+		কাঠামো box *c;
 		bool processed = false;
 
-		while (processed == false) {
-			for (c = row->children; c != NULL; c = c->next) {
+		যখন (processed == false) {
+			জন্য (c = row->children; c != ফাঁকা; c = c->পরবর্তী) {
 				/* Ignore cells to the left */
-				if (c->start_column + c->columns - 1 <
+				যদি (c->start_column + c->columns - 1 <
 				    cell->start_column)
-					continue;
+					চালু;
 				/* Ignore cells to the right */
-				if (c->start_column > cell->start_column +
+				যদি (c->start_column > cell->start_column +
 				    cell->columns - 1)
-					continue;
+					চালু;
 
 				/* Flag that we've processed a cell */
 				processed = true;
@@ -282,7 +282,7 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
 				b.unit = CSS_UNIT_PX;
 				b_src = BOX_TABLE_CELL;
 
-				if (table_border_is_more_eyecatching(unit_len_ctx,
+				যদি (table_border_is_more_eyecatching(unit_len_ctx,
 								     a,
 								     *a_src,
 								     &b,
@@ -292,16 +292,16 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
 				}
 			}
 
-			if (processed == false) {
+			যদি (processed == false) {
 				/* There must be a preceding row */
-				assert(row->prev != NULL);
+				প্রতিজ্ঞা(row->পূর্ব != ফাঁকা);
 
-				row = row->prev;
+				row = row->পূর্ব;
 			}
 		}
 	}
 
-	return true;
+	ফেরত true;
 }
 
 
@@ -318,14 +318,14 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static bool
-table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
-			     struct box *cell,
-			     struct box *group,
-			     struct border *a,
+স্থির bool
+table_cell_শীর্ষ_process_group(ধ্রুবক css_unit_ctx *unit_len_ctx,
+			     কাঠামো box *cell,
+			     কাঠামো box *group,
+			     কাঠামো border *a,
 			     box_type *a_src)
 {
-	struct border b;
+	কাঠামো border b;
 	box_type b_src;
 
 	/* Bottom border of group */
@@ -337,43 +337,43 @@ table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
 	b.unit = CSS_UNIT_PX;
 	b_src = BOX_TABLE_ROW_GROUP;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	যদি (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
 
-	if (group->last != NULL) {
+	যদি (group->last != ফাঁকা) {
 		/* Process rows in group, starting with last */
-		struct box *row = group->last;
+		কাঠামো box *row = group->last;
 
-		while (table_cell_top_process_row(unit_len_ctx, cell, row,
+		যখন (table_cell_শীর্ষ_process_row(unit_len_ctx, cell, row,
 						  a, a_src) == false) {
-			if (row->prev == NULL) {
-				return false;
-			} else {
-				row = row->prev;
+			যদি (row->পূর্ব == ফাঁকা) {
+				ফেরত false;
+			} অন্যথা {
+				row = row->পূর্ব;
 			}
 		}
-	} else {
+	} অন্যথা {
 		/* Group is empty, so consider its top border */
-		b.style = css_computed_border_top_style(group->style);
-		b.color = css_computed_border_top_color(group->style, &b.c);
-		css_computed_border_top_width(group->style, &b.width, &b.unit);
+		b.style = css_computed_border_শীর্ষ_style(group->style);
+		b.color = css_computed_border_শীর্ষ_color(group->style, &b.c);
+		css_computed_border_শীর্ষ_width(group->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE_ROW_GROUP;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     a, *a_src, &b, b_src)) {
 			*a = b;
 			*a_src = b_src;
 		}
 
-		return false;
+		ফেরত false;
 	}
 
-	return true;
+	ফেরত true;
 }
 
 
@@ -383,75 +383,75 @@ table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+স্থির শূন্য
+table_used_বাম_border_for_cell(ধ্রুবক css_unit_ctx *unit_len_ctx, কাঠামো box *cell)
 {
-	struct border a, b;
+	কাঠামো border a, b;
 	box_type a_src, b_src;
 
 	/** \todo Need column and column_group, too */
 
 	/* Initialise to computed left border for cell */
-	a.style = css_computed_border_left_style(cell->style);
-	a.color = css_computed_border_left_color(cell->style, &a.c);
-	css_computed_border_left_width(cell->style, &a.width, &a.unit);
+	a.style = css_computed_border_বাম_style(cell->style);
+	a.color = css_computed_border_বাম_color(cell->style, &a.c);
+	css_computed_border_বাম_width(cell->style, &a.width, &a.unit);
 	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
 			a.width, a.unit);
 	a.unit = CSS_UNIT_PX;
 	a_src = BOX_TABLE_CELL;
 
-	if (cell->prev != NULL || cell->start_column != 0) {
+	যদি (cell->পূর্ব != ফাঁকা || cell->start_column != 0) {
 		/* Cell to the left -- consider its right border */
-		struct box *prev = NULL;
+		কাঠামো box *পূর্ব = ফাঁকা;
 
-		if (cell->prev == NULL) {
-			struct box *row;
+		যদি (cell->পূর্ব == ফাঁকা) {
+			কাঠামো box *row;
 
 			/* Spanned from a previous row in current row group */
-			for (row = cell->parent; row != NULL; row = row->prev) {
-				for (prev = row->children; prev != NULL;
-				     prev = prev->next) {
-					if (prev->start_column +
-					    prev->columns ==
+			জন্য (row = cell->parent; row != ফাঁকা; row = row->পূর্ব) {
+				জন্য (পূর্ব = row->children; পূর্ব != ফাঁকা;
+				     পূর্ব = পূর্ব->পরবর্তী) {
+					যদি (পূর্ব->start_column +
+					    পূর্ব->columns ==
 					    cell->start_column)
-						break;
+						বিরতি;
 				}
 
-				if (prev != NULL)
-					break;
+				যদি (পূর্ব != ফাঁকা)
+					বিরতি;
 			}
 
-			assert(prev != NULL);
-		} else {
-			prev = cell->prev;
+			প্রতিজ্ঞা(পূর্ব != ফাঁকা);
+		} অন্যথা {
+			পূর্ব = cell->পূর্ব;
 		}
 
-		b.style = css_computed_border_right_style(prev->style);
-		b.color = css_computed_border_right_color(prev->style, &b.c);
-		css_computed_border_right_width(prev->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(prev->style, unit_len_ctx,
+		b.style = css_computed_border_ডান_style(পূর্ব->style);
+		b.color = css_computed_border_ডান_color(পূর্ব->style, &b.c);
+		css_computed_border_ডান_width(পূর্ব->style, &b.width, &b.unit);
+		b.width = css_unit_len2device_px(পূর্ব->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE_CELL;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
-	} else {
+	} অন্যথা {
 		/* First cell in row, so consider rows and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
-		unsigned int rows = cell->rows;
+		কাঠামো box *row = cell->parent;
+		কাঠামো box *group = row->parent;
+		কাঠামো box *table = group->parent;
+		unsigned পূর্ণসংখ্যা rows = cell->rows;
 
-		while (rows-- > 0 && row != NULL) {
+		যখন (rows-- > 0 && row != ফাঁকা) {
 			/* Spanned rows -- consider their left border */
-			b.style = css_computed_border_left_style(row->style);
-			b.color = css_computed_border_left_color(
+			b.style = css_computed_border_বাম_style(row->style);
+			b.color = css_computed_border_বাম_color(
 								 row->style, &b.c);
-			css_computed_border_left_width(
+			css_computed_border_বাম_width(
 						       row->style, &b.width, &b.unit);
 			b.width = css_unit_len2device_px(
 					row->style, unit_len_ctx,
@@ -459,42 +459,42 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 			b.unit = CSS_UNIT_PX;
 			b_src = BOX_TABLE_ROW;
 
-			if (table_border_is_more_eyecatching(unit_len_ctx,
+			যদি (table_border_is_more_eyecatching(unit_len_ctx,
 							     &a, a_src, &b, b_src)) {
 				a = b;
 				a_src = b_src;
 			}
 
-			row = row->next;
+			row = row->পরবর্তী;
 		}
 
 		/** \todo can cells span row groups? */
 
 		/* Row group -- consider its left border */
-		b.style = css_computed_border_left_style(group->style);
-		b.color = css_computed_border_left_color(group->style, &b.c);
-		css_computed_border_left_width(group->style, &b.width, &b.unit);
+		b.style = css_computed_border_বাম_style(group->style);
+		b.color = css_computed_border_বাম_color(group->style, &b.c);
+		css_computed_border_বাম_width(group->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE_ROW_GROUP;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* The table itself -- consider its left border */
-		b.style = css_computed_border_left_style(table->style);
-		b.color = css_computed_border_left_color(table->style, &b.c);
-		css_computed_border_left_width(table->style, &b.width, &b.unit);
+		b.style = css_computed_border_বাম_style(table->style);
+		b.color = css_computed_border_বাম_color(table->style, &b.c);
+		css_computed_border_বাম_width(table->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
@@ -502,9 +502,9 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 	}
 
 	/* a now contains the used left border for the cell */
-	cell->border[LEFT].style = a.style;
-	cell->border[LEFT].c = a.c;
-	cell->border[LEFT].width = FIXTOINT(css_unit_len2device_px(
+	cell->border[বাম_2].style = a.style;
+	cell->border[বাম_2].c = a.c;
+	cell->border[বাম_2].width = FIXTOINT(css_unit_len2device_px(
 			cell->style, unit_len_ctx, a.width, a.unit));
 }
 
@@ -515,97 +515,97 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+স্থির শূন্য
+table_used_শীর্ষ_border_for_cell(ধ্রুবক css_unit_ctx *unit_len_ctx, কাঠামো box *cell)
 {
-	struct border a, b;
+	কাঠামো border a, b;
 	box_type a_src, b_src;
-	struct box *row = cell->parent;
+	কাঠামো box *row = cell->parent;
 	bool process_group = false;
 
 	/* Initialise to computed top border for cell */
-	a.style = css_computed_border_top_style(cell->style);
-	css_computed_border_top_color(cell->style, &a.c);
-	css_computed_border_top_width(cell->style, &a.width, &a.unit);
+	a.style = css_computed_border_শীর্ষ_style(cell->style);
+	css_computed_border_শীর্ষ_color(cell->style, &a.c);
+	css_computed_border_শীর্ষ_width(cell->style, &a.width, &a.unit);
 	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
 			a.width, a.unit);
 	a.unit = CSS_UNIT_PX;
 	a_src = BOX_TABLE_CELL;
 
 	/* Top border of row */
-	b.style = css_computed_border_top_style(row->style);
-	css_computed_border_top_color(row->style, &b.c);
-	css_computed_border_top_width(row->style, &b.width, &b.unit);
+	b.style = css_computed_border_শীর্ষ_style(row->style);
+	css_computed_border_শীর্ষ_color(row->style, &b.c);
+	css_computed_border_শীর্ষ_width(row->style, &b.width, &b.unit);
 	b.width = css_unit_len2device_px(row->style, unit_len_ctx,
 			b.width, b.unit);
 	b.unit = CSS_UNIT_PX;
 	b_src = BOX_TABLE_ROW;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, &a, a_src, &b, b_src)) {
+	যদি (table_border_is_more_eyecatching(unit_len_ctx, &a, a_src, &b, b_src)) {
 		a = b;
 		a_src = b_src;
 	}
 
-	if (row->prev != NULL) {
+	যদি (row->পূর্ব != ফাঁকা) {
 		/* Consider row(s) above */
-		while (table_cell_top_process_row(unit_len_ctx, cell, row->prev,
+		যখন (table_cell_শীর্ষ_process_row(unit_len_ctx, cell, row->পূর্ব,
 						  &a, &a_src) == false) {
-			if (row->prev->prev == NULL) {
+			যদি (row->পূর্ব->পূর্ব == ফাঁকা) {
 				/* Consider row group */
 				process_group = true;
-				break;
-			} else {
-				row = row->prev;
+				বিরতি;
+			} অন্যথা {
+				row = row->পূর্ব;
 			}
 		}
-	} else {
+	} অন্যথা {
 		process_group = true;
 	}
 
-	if (process_group) {
-		struct box *group = row->parent;
+	যদি (process_group) {
+		কাঠামো box *group = row->parent;
 
 		/* Top border of row group */
-		b.style = css_computed_border_top_style(group->style);
-		b.color = css_computed_border_top_color(group->style, &b.c);
-		css_computed_border_top_width(group->style, &b.width, &b.unit);
+		b.style = css_computed_border_শীর্ষ_style(group->style);
+		b.color = css_computed_border_শীর্ষ_color(group->style, &b.c);
+		css_computed_border_শীর্ষ_width(group->style, &b.width, &b.unit);
 		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE_ROW_GROUP;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
-		if (group->prev == NULL) {
+		যদি (group->পূর্ব == ফাঁকা) {
 			/* Top border of table */
-			table_cell_top_process_table(unit_len_ctx,
+			table_cell_শীর্ষ_process_table(unit_len_ctx,
 						     group->parent, &a, &a_src);
-		} else {
+		} অন্যথা {
 			/* Process previous group(s) */
-			while (table_cell_top_process_group(unit_len_ctx,
-							    cell, group->prev,
+			যখন (table_cell_শীর্ষ_process_group(unit_len_ctx,
+							    cell, group->পূর্ব,
 							    &a, &a_src) == false) {
-				if (group->prev->prev == NULL) {
+				যদি (group->পূর্ব->পূর্ব == ফাঁকা) {
 					/* Top border of table */
-					table_cell_top_process_table(unit_len_ctx,
+					table_cell_শীর্ষ_process_table(unit_len_ctx,
 								     group->parent,
 								     &a, &a_src);
-					break;
-				} else {
-					group = group->prev;
+					বিরতি;
+				} অন্যথা {
+					group = group->পূর্ব;
 				}
 			}
 		}
 	}
 
 	/* a now contains the used top border for the cell */
-	cell->border[TOP].style = a.style;
-	cell->border[TOP].c = a.c;
-	cell->border[TOP].width = FIXTOINT(css_unit_len2device_px(
+	cell->border[শীর্ষ_2].style = a.style;
+	cell->border[শীর্ষ_2].c = a.c;
+	cell->border[শীর্ষ_2].width = FIXTOINT(css_unit_len2device_px(
 			cell->style, unit_len_ctx, a.width, a.unit));
 }
 
@@ -615,42 +615,42 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+স্থির শূন্য
+table_used_ডান_border_for_cell(ধ্রুবক css_unit_ctx *unit_len_ctx, কাঠামো box *cell)
 {
-	struct border a, b;
+	কাঠামো border a, b;
 	box_type a_src, b_src;
 
 	/** \todo Need column and column_group, too */
 
 	/* Initialise to computed right border for cell */
-	a.style = css_computed_border_right_style(cell->style);
-	css_computed_border_right_color(cell->style, &a.c);
-	css_computed_border_right_width(cell->style, &a.width, &a.unit);
+	a.style = css_computed_border_ডান_style(cell->style);
+	css_computed_border_ডান_color(cell->style, &a.c);
+	css_computed_border_ডান_width(cell->style, &a.width, &a.unit);
 	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
 			a.width, a.unit);
 	a.unit = CSS_UNIT_PX;
 	a_src = BOX_TABLE_CELL;
 
-	if (cell->next != NULL || cell->start_column + cell->columns !=
+	যদি (cell->পরবর্তী != ফাঁকা || cell->start_column + cell->columns !=
 	    cell->parent->parent->parent->columns) {
 		/* Cell is not at right edge of table -- no right border */
 		a.style = CSS_BORDER_STYLE_NONE;
 		a.width = 0;
 		a.unit = CSS_UNIT_PX;
-	} else {
+	} অন্যথা {
 		/* Last cell in row, so consider rows and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
-		unsigned int rows = cell->rows;
+		কাঠামো box *row = cell->parent;
+		কাঠামো box *group = row->parent;
+		কাঠামো box *table = group->parent;
+		unsigned পূর্ণসংখ্যা rows = cell->rows;
 
-		while (rows-- > 0 && row != NULL) {
+		যখন (rows-- > 0 && row != ফাঁকা) {
 			/* Spanned rows -- consider their right border */
-			b.style = css_computed_border_right_style(row->style);
-			b.color = css_computed_border_right_color(row->style,
+			b.style = css_computed_border_ডান_style(row->style);
+			b.color = css_computed_border_ডান_color(row->style,
 								  &b.c);
-			css_computed_border_right_width(row->style,
+			css_computed_border_ডান_width(row->style,
 							&b.width,
 							&b.unit);
 			b.width = css_unit_len2device_px(
@@ -659,45 +659,45 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 			b.unit = CSS_UNIT_PX;
 			b_src = BOX_TABLE_ROW;
 
-			if (table_border_is_more_eyecatching(unit_len_ctx,
+			যদি (table_border_is_more_eyecatching(unit_len_ctx,
 							     &a, a_src,
 							     &b, b_src)) {
 				a = b;
 				a_src = b_src;
 			}
 
-			row = row->next;
+			row = row->পরবর্তী;
 		}
 
 		/** \todo can cells span row groups? */
 
 		/* Row group -- consider its right border */
-		b.style = css_computed_border_right_style(group->style);
-		b.color = css_computed_border_right_color(group->style, &b.c);
-		css_computed_border_right_width(group->style,
+		b.style = css_computed_border_ডান_style(group->style);
+		b.color = css_computed_border_ডান_color(group->style, &b.c);
+		css_computed_border_ডান_width(group->style,
 						&b.width, &b.unit);
 		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE_ROW_GROUP;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* The table itself -- consider its right border */
-		b.style = css_computed_border_right_style(table->style);
-		b.color = css_computed_border_right_color(table->style, &b.c);
-		css_computed_border_right_width(table->style,
+		b.style = css_computed_border_ডান_style(table->style);
+		b.color = css_computed_border_ডান_color(table->style, &b.c);
+		css_computed_border_ডান_width(table->style,
 						&b.width, &b.unit);
 		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
 				b.width, b.unit);
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src,
 						     &b, b_src)) {
 			a = b;
@@ -706,9 +706,9 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 	}
 
 	/* a now contains the used right border for the cell */
-	cell->border[RIGHT].style = a.style;
-	cell->border[RIGHT].c = a.c;
-	cell->border[RIGHT].width = FIXTOINT(css_unit_len2device_px(
+	cell->border[ডান_2].style = a.style;
+	cell->border[ডান_2].c = a.c;
+	cell->border[ডান_2].width = FIXTOINT(css_unit_len2device_px(
 			cell->style, unit_len_ctx, a.width, a.unit));
 }
 
@@ -719,14 +719,14 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
-				  struct box *cell)
+স্থির শূন্য
+table_used_bottom_border_for_cell(ধ্রুবক css_unit_ctx *unit_len_ctx,
+				  কাঠামো box *cell)
 {
-	struct border a, b;
+	কাঠামো border a, b;
 	box_type a_src, b_src;
-	struct box *row = cell->parent;
-	unsigned int rows = cell->rows;
+	কাঠামো box *row = cell->parent;
+	unsigned পূর্ণসংখ্যা rows = cell->rows;
 
 	/* Initialise to computed bottom border for cell */
 	a.style = css_computed_border_bottom_style(cell->style);
@@ -737,21 +737,21 @@ table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
 	a.unit = CSS_UNIT_PX;
 	a_src = BOX_TABLE_CELL;
 
-	while (rows-- > 0 && row != NULL)
-		row = row->next;
+	যখন (rows-- > 0 && row != ফাঁকা)
+		row = row->পরবর্তী;
 
 	/** \todo Can cells span row groups? */
 
-	if (row != NULL) {
+	যদি (row != ফাঁকা) {
 		/* Cell is not at bottom edge of table -- no bottom border */
 		a.style = CSS_BORDER_STYLE_NONE;
 		a.width = 0;
 		a.unit = CSS_UNIT_PX;
-	} else {
+	} অন্যথা {
 		/* Cell at bottom of table, so consider row and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
+		কাঠামো box *row = cell->parent;
+		কাঠামো box *group = row->parent;
+		কাঠামো box *table = group->parent;
 
 		/* Bottom border of row */
 		b.style = css_computed_border_bottom_style(row->style);
@@ -762,7 +762,7 @@ table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE_ROW;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
@@ -778,7 +778,7 @@ table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE_ROW_GROUP;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
@@ -794,7 +794,7 @@ table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
 		b.unit = CSS_UNIT_PX;
 		b_src = BOX_TABLE;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		যদি (table_border_is_more_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 		}
@@ -810,131 +810,131 @@ table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
 
 /* exported interface documented in html/table.h */
 bool
-table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table)
+table_calculate_column_types(ধ্রুবক css_unit_ctx *unit_len_ctx, কাঠামো box *table)
 {
-	unsigned int i, j;
-	struct column *col;
-	struct box *row_group, *row, *cell;
+	unsigned পূর্ণসংখ্যা i, j;
+	কাঠামো column *col;
+	কাঠামো box *row_group, *row, *cell;
 
-	if (table->col)
+	যদি (table->col)
 		/* table->col already constructed, for example frameset table */
-		return true;
+		ফেরত true;
 
-	table->col = col = talloc_array(table, struct column, table->columns);
-	if (!col)
-		return false;
+	table->col = col = talloc_array(table, কাঠামো column, table->columns);
+	যদি (!col)
+		ফেরত false;
 
-	for (i = 0; i != table->columns; i++) {
+	জন্য (i = 0; i != table->columns; i++) {
 		col[i].type = COLUMN_WIDTH_UNKNOWN;
 		col[i].width = 0;
 		col[i].positioned = true;
 	}
 
 	/* 1st pass: cells with colspan 1 only */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-		for (row = row_group->children; row; row = row->next)
-			for (cell = row->children; cell; cell = cell->next) {
-				enum css_width_e type;
-				css_fixed value = 0;
+	জন্য (row_group = table->children; row_group; row_group =row_group->পরবর্তী)
+		জন্য (row = row_group->children; row; row = row->পরবর্তী)
+			জন্য (cell = row->children; cell; cell = cell->পরবর্তী) {
+				গণনা css_width_e type;
+				css_fixed মান = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				assert(cell->type == BOX_TABLE_CELL);
-				assert(cell->style);
+				প্রতিজ্ঞা(cell->type == BOX_TABLE_CELL);
+				প্রতিজ্ঞা(cell->style);
 
-				if (cell->columns != 1)
-					continue;
+				যদি (cell->columns != 1)
+					চালু;
 				i = cell->start_column;
 
-				if (css_computed_position(cell->style) !=
+				যদি (css_computed_position(cell->style) !=
 				    CSS_POSITION_ABSOLUTE &&
 				    css_computed_position(cell->style) !=
 				    CSS_POSITION_FIXED) {
 					col[i].positioned = false;
 				}
 
-				type = css_computed_width(cell->style, &value, &unit);
+				type = css_computed_width(cell->style, &মান, &unit);
 
 				/* fixed width takes priority over any other width type */
-				if (col[i].type != COLUMN_WIDTH_FIXED &&
+				যদি (col[i].type != COLUMN_WIDTH_FIXED &&
 				    type == CSS_WIDTH_SET && unit != CSS_UNIT_PCT) {
 					col[i].type = COLUMN_WIDTH_FIXED;
 					col[i].width = FIXTOINT(css_unit_len2device_px(
 							cell->style,
 							unit_len_ctx,
-							value, unit));
-					if (col[i].width < 0)
+							মান, unit));
+					যদি (col[i].width < 0)
 						col[i].width = 0;
-					continue;
+					চালু;
 				}
 
-				if (col[i].type != COLUMN_WIDTH_UNKNOWN)
-					continue;
+				যদি (col[i].type != COLUMN_WIDTH_UNKNOWN)
+					চালু;
 
-				if (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT) {
+				যদি (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT) {
 					col[i].type = COLUMN_WIDTH_PERCENT;
-					col[i].width = FIXTOINT(value);
-					if (col[i].width < 0)
+					col[i].width = FIXTOINT(মান);
+					যদি (col[i].width < 0)
 						col[i].width = 0;
-				} else if (type == CSS_WIDTH_AUTO) {
+				} অন্যথা যদি (type == CSS_WIDTH_AUTO) {
 					col[i].type = COLUMN_WIDTH_AUTO;
 				}
 			}
 
 	/* 2nd pass: cells which span multiple columns */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-		for (row = row_group->children; row; row = row->next)
-			for (cell = row->children; cell; cell = cell->next) {
-				unsigned int fixed_columns = 0,
+	জন্য (row_group = table->children; row_group; row_group =row_group->পরবর্তী)
+		জন্য (row = row_group->children; row; row = row->পরবর্তী)
+			জন্য (cell = row->children; cell; cell = cell->পরবর্তী) {
+				unsigned পূর্ণসংখ্যা fixed_columns = 0,
 					percent_columns = 0,
 					auto_columns = 0,
 					unknown_columns = 0;
-				int fixed_width = 0, percent_width = 0;
-				enum css_width_e type;
-				css_fixed value = 0;
+				পূর্ণসংখ্যা fixed_width = 0, percent_width = 0;
+				গণনা css_width_e type;
+				css_fixed মান = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				if (cell->columns == 1)
-					continue;
+				যদি (cell->columns == 1)
+					চালু;
 				i = cell->start_column;
 
-				for (j = i; j < i + cell->columns; j++) {
+				জন্য (j = i; j < i + cell->columns; j++) {
 					col[j].positioned = false;
 				}
 
 				/* count column types in spanned cells */
-				for (j = 0; j != cell->columns; j++) {
-					if (col[i + j].type == COLUMN_WIDTH_FIXED) {
+				জন্য (j = 0; j != cell->columns; j++) {
+					যদি (col[i + j].type == COLUMN_WIDTH_FIXED) {
 						fixed_width += col[i + j].width;
 						fixed_columns++;
-					} else if (col[i + j].type == COLUMN_WIDTH_PERCENT) {
+					} অন্যথা যদি (col[i + j].type == COLUMN_WIDTH_PERCENT) {
 						percent_width += col[i + j].width;
 						percent_columns++;
-					} else if (col[i + j].type == COLUMN_WIDTH_AUTO) {
+					} অন্যথা যদি (col[i + j].type == COLUMN_WIDTH_AUTO) {
 						auto_columns++;
-					} else {
+					} অন্যথা {
 						unknown_columns++;
 					}
 				}
 
-				if (!unknown_columns)
-					continue;
+				যদি (!unknown_columns)
+					চালু;
 
-				type = css_computed_width(cell->style, &value, &unit);
+				type = css_computed_width(cell->style, &মান, &unit);
 
 				/* if cell is fixed width, and all spanned columns are fixed
 				 * or unknown width, split extra width among unknown columns */
-				if (type == CSS_WIDTH_SET && unit != CSS_UNIT_PCT &&
+				যদি (type == CSS_WIDTH_SET && unit != CSS_UNIT_PCT &&
 				    fixed_columns + unknown_columns ==
 				    cell->columns) {
-					int width = (FIXTOFLT(css_unit_len2device_px(
+					পূর্ণসংখ্যা width = (FIXTOFLT(css_unit_len2device_px(
 							cell->style,
 							unit_len_ctx,
-							value, unit)) -
+							মান, unit)) -
 						fixed_width) / unknown_columns;
-					if (width < 0)
+					যদি (width < 0)
 						width = 0;
-					for (j = 0; j != cell->columns; j++) {
-						if (col[i + j].type == COLUMN_WIDTH_UNKNOWN) {
+					জন্য (j = 0; j != cell->columns; j++) {
+						যদি (col[i + j].type == COLUMN_WIDTH_UNKNOWN) {
 							col[i + j].type = COLUMN_WIDTH_FIXED;
 							col[i + j].width = width;
 						}
@@ -942,15 +942,15 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 				}
 
 				/* as above for percentage width */
-				if (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT &&
+				যদি (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT &&
 				    percent_columns + unknown_columns ==
 				    cell->columns) {
-					int width = (FIXTOFLT(value) -
+					পূর্ণসংখ্যা width = (FIXTOFLT(মান) -
 						     percent_width) / unknown_columns;
-					if (width < 0)
+					যদি (width < 0)
 						width = 0;
-					for (j = 0; j != cell->columns; j++) {
-						if (col[i + j].type == COLUMN_WIDTH_UNKNOWN) {
+					জন্য (j = 0; j != cell->columns; j++) {
+						যদি (col[i + j].type == COLUMN_WIDTH_UNKNOWN) {
 							col[i + j].type = COLUMN_WIDTH_PERCENT;
 							col[i + j].width = width;
 						}
@@ -959,18 +959,18 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 			}
 
 	/* use AUTO if no width type was specified */
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_UNKNOWN)
+	জন্য (i = 0; i != table->columns; i++) {
+		যদি (col[i].type == COLUMN_WIDTH_UNKNOWN)
 			col[i].type = COLUMN_WIDTH_AUTO;
 	}
 
 #ifdef TABLE_DEBUG
-	for (i = 0; i != table->columns; i++)
+	জন্য (i = 0; i != table->columns; i++)
 		NSLOG(netsurf, INFO,
 		      "table %p, column %u: type %s, width %i",
 		      table,
 		      i,
-		      ((const char *[]){
+		      ((ধ্রুবক অক্ষর *[]){
 					"UNKNOWN",
 					"FIXED",
 					"AUTO",
@@ -980,51 +980,51 @@ table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table
 		      col[i].width);
 #endif
 
-	return true;
+	ফেরত true;
 }
 
 
 /* exported interface documented in html/table.h */
-void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+শূন্য table_used_border_for_cell(ধ্রুবক css_unit_ctx *unit_len_ctx, কাঠামো box *cell)
 {
-	int side;
+	পূর্ণসংখ্যা side;
 
-	assert(cell->type == BOX_TABLE_CELL);
+	প্রতিজ্ঞা(cell->type == BOX_TABLE_CELL);
 
-	if (css_computed_border_collapse(cell->style) ==
+	যদি (css_computed_border_collapse(cell->style) ==
 	    CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed width = 0;
 		css_unit unit = CSS_UNIT_PX;
 
 		/* Left border */
-		cell->border[LEFT].style =
-			css_computed_border_left_style(cell->style);
-		css_computed_border_left_color(cell->style,
-					       &cell->border[LEFT].c);
-		css_computed_border_left_width(cell->style, &width, &unit);
-		cell->border[LEFT].width =
+		cell->border[বাম_2].style =
+			css_computed_border_বাম_style(cell->style);
+		css_computed_border_বাম_color(cell->style,
+					       &cell->border[বাম_2].c);
+		css_computed_border_বাম_width(cell->style, &width, &unit);
+		cell->border[বাম_2].width =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
 					width, unit));
 
 		/* Top border */
-		cell->border[TOP].style =
-			css_computed_border_top_style(cell->style);
-		css_computed_border_top_color(cell->style,
-					      &cell->border[TOP].c);
-		css_computed_border_top_width(cell->style, &width, &unit);
-		cell->border[TOP].width =
+		cell->border[শীর্ষ_2].style =
+			css_computed_border_শীর্ষ_style(cell->style);
+		css_computed_border_শীর্ষ_color(cell->style,
+					      &cell->border[শীর্ষ_2].c);
+		css_computed_border_শীর্ষ_width(cell->style, &width, &unit);
+		cell->border[শীর্ষ_2].width =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
 					width, unit));
 
 		/* Right border */
-		cell->border[RIGHT].style =
-			css_computed_border_right_style(cell->style);
-		css_computed_border_right_color(cell->style,
-						&cell->border[RIGHT].c);
-		css_computed_border_right_width(cell->style, &width, &unit);
-		cell->border[RIGHT].width =
+		cell->border[ডান_2].style =
+			css_computed_border_ডান_style(cell->style);
+		css_computed_border_ডান_color(cell->style,
+						&cell->border[ডান_2].c);
+		css_computed_border_ডান_width(cell->style, &width, &unit);
+		cell->border[ডান_2].width =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
 					width, unit));
@@ -1039,15 +1039,15 @@ void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
 					width, unit));
-	} else {
+	} অন্যথা {
 		/* Left border */
-		table_used_left_border_for_cell(unit_len_ctx, cell);
+		table_used_বাম_border_for_cell(unit_len_ctx, cell);
 
 		/* Top border */
-		table_used_top_border_for_cell(unit_len_ctx, cell);
+		table_used_শীর্ষ_border_for_cell(unit_len_ctx, cell);
 
 		/* Right border */
-		table_used_right_border_for_cell(unit_len_ctx, cell);
+		table_used_ডান_border_for_cell(unit_len_ctx, cell);
 
 		/* Bottom border */
 		table_used_bottom_border_for_cell(unit_len_ctx, cell);
@@ -1055,8 +1055,8 @@ void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 
 	/* Finally, ensure that any borders configured as
 	 * hidden or none have zero width. (c.f. layout_find_dimensions) */
-	for (side = 0; side != 4; side++) {
-		if (cell->border[side].style == CSS_BORDER_STYLE_HIDDEN ||
+	জন্য (side = 0; side != 4; side++) {
+		যদি (cell->border[side].style == CSS_BORDER_STYLE_HIDDEN ||
 		    cell->border[side].style ==
 		    CSS_BORDER_STYLE_NONE)
 			cell->border[side].width = 0;

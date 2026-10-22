@@ -24,19 +24,19 @@
 #ifndef NETSURF_HTML_PRIVATE_H
 #define NETSURF_HTML_PRIVATE_H
 
-#include <dom/bindings/hubbub/parser.h>
+#অন্তর্ভাব <dom/bindings/hubbub/parser.h>
 
-#include "netsurf/types.h"
-#include "content/content_protected.h"
-#include "content/handlers/css/utils.h"
+#অন্তর্ভাব "netsurf/types.h"
+#অন্তর্ভাব "content/content_protected.h"
+#অন্তর্ভাব "content/handlers/css/utils.h"
 
 
-struct gui_layout_table;
-struct scrollbar_msg_data;
-struct content_redraw_data;
-struct selection;
+কাঠামো gui_layout_table;
+কাঠামো scrollbar_বার্তা_তথ্য;
+কাঠামো content_redraw_তথ্য;
+কাঠামো selection;
 
-typedef enum {
+প্রকারলেখ গণনা {
 	HTML_DRAG_NONE,			/** No drag */
 	HTML_DRAG_SELECTION,		/** Own; Text selection */
 	HTML_DRAG_SCROLLBAR,		/** Not own; drag in scrollbar widget */
@@ -49,14 +49,14 @@ typedef enum {
 /**
  * For drags we don't own
  */
-union html_drag_owner {
+সংঘ html_drag_owner {
 	bool no_owner;
-	struct box *content;
-	struct scrollbar *scrollbar;
-	struct box *textarea;
+	কাঠামো box *content;
+	কাঠামো scrollbar *scrollbar;
+	কাঠামো box *textarea;
 };
 
-typedef enum {
+প্রকারলেখ গণনা {
 	HTML_SELECTION_NONE,		/** No selection */
 	HTML_SELECTION_TEXTAREA,	/** Selection in one of our textareas */
 	HTML_SELECTION_SELF,		/** Selection in this html content */
@@ -66,13 +66,13 @@ typedef enum {
 /**
  * For getting at selections in this content or things in this content
  */
-union html_selection_owner {
+সংঘ html_selection_owner {
 	bool none;
-	struct box *textarea;
-	struct box *content;
+	কাঠামো box *textarea;
+	কাঠামো box *content;
 };
 
-typedef enum {
+প্রকারলেখ গণনা {
 	HTML_FOCUS_SELF,		/**< Focus is our own */
 	HTML_FOCUS_CONTENT,		/**< Focus belongs to child content */
 	HTML_FOCUS_TEXTAREA		/**< Focus belongs to textarea */
@@ -81,17 +81,17 @@ typedef enum {
 /**
  * For directing input
  */
-union html_focus_owner {
+সংঘ html_focus_owner {
 	bool self;
-	struct box *textarea;
-	struct box *content;
+	কাঠামো box *textarea;
+	কাঠামো box *content;
 };
 
 /**
  * Data specific to CONTENT_HTML.
  */
-typedef struct html_content {
-	struct content base;
+প্রকারলেখ কাঠামো html_content {
+	কাঠামো content base;
 
 	dom_hubbub_parser *parser; /**< Parser object handle */
 	bool parse_completed; /**< Whether the parse has been completed */
@@ -103,14 +103,14 @@ typedef struct html_content {
 	dom_document_quirks_mode quirks;
 
 	/** Encoding of source, NULL if unknown. */
-	char *encoding;
+	অক্ষর *encoding;
 	/** Source of encoding information. */
 	dom_hubbub_encoding_source encoding_source;
 
 	/** Base URL (may be a copy of content->url). */
-	struct nsurl *base_url;
+	কাঠামো nsurl *base_url;
 	/** Base target */
-	char *base_target;
+	অক্ষর *base_target;
 
 	/** Content has been aborted in the LOADING state */
 	bool aborted;
@@ -128,33 +128,33 @@ typedef struct html_content {
 	bool enable_scripting;
 
 	/* Title element node */
-	dom_node *title;
+	dom_গ্রন্থি *title;
 
 	/** A talloc context purely for the render box tree */
-	int *bctx;
+	পূর্ণসংখ্যা *bctx;
 	/** A context pointer for the box conversion, NULL if no conversion
 	 * is in progress.
 	 */
-	void *box_conversion_context;
+	শূন্য *box_conversion_context;
 	/** Box tree, or NULL. */
-	struct box *layout;
+	কাঠামো box *layout;
 	/** Document background colour. */
 	colour background_colour;
 
 	/** Font callback table */
-	const struct gui_layout_table *font_func;
+	ধ্রুবক কাঠামো gui_layout_table *font_func;
 
 	/** Number of entries in scripts */
-	unsigned int scripts_count;
+	unsigned পূর্ণসংখ্যা scripts_গুনতি;
 	/** Scripts */
-	struct html_script *scripts;
+	কাঠামো html_script *scripts;
 	/** javascript thread in use */
-	struct jsthread *jsthread;
+	কাঠামো jsthread *jsthread;
 
 	/** Number of entries in stylesheet_content. */
-	unsigned int stylesheet_count;
+	unsigned পূর্ণসংখ্যা stylesheet_গুনতি;
 	/** Stylesheets. Each may be NULL. */
-	struct html_stylesheet *stylesheets;
+	কাঠামো html_stylesheet *stylesheets;
 	/**< Style selection context */
 	css_select_ctx *select_ctx;
 	/**< Style selection media specification */
@@ -165,57 +165,57 @@ typedef struct html_content {
 	lwc_string *universal;
 
 	/** Number of entries in object_list. */
-	unsigned int num_objects;
+	unsigned পূর্ণসংখ্যা অঙ্ক_objects;
 	/** List of objects. */
-	struct content_html_object *object_list;
+	কাঠামো content_html_object *object_list;
 	/** Forms, in reverse order to document. */
-	struct form *forms;
+	কাঠামো form *forms;
 	/** Hash table of imagemaps. */
-	struct imagemap **imagemaps;
+	কাঠামো imagemap **imagemaps;
 
 	/** Browser window containing this document, or NULL if not open. */
-	struct browser_window *bw;
+	কাঠামো browser_window *bw;
 
 	/** Frameset information */
-	struct content_html_frames *frameset;
+	কাঠামো content_html_frames *frameset;
 
 	/** Inline frame information */
-	struct content_html_iframe *iframe;
+	কাঠামো content_html_iframe *iframe;
 
 	/** Content of type CONTENT_HTML containing this, or NULL if not an
 	 * object within a page. */
-	struct html_content *page;
+	কাঠামো html_content *page;
 
 	/** Current drag type */
 	html_drag_type drag_type;
 	/** Widget capturing all mouse events */
-	union html_drag_owner drag_owner;
+	সংঘ html_drag_owner drag_owner;
 
 	/** Current selection state */
 	html_selection_type selection_type;
 	/** Current selection owner */
-	union html_selection_owner selection_owner;
+	সংঘ html_selection_owner selection_owner;
 
 	/** Current input focus target type */
 	html_focus_type focus_type;
 	/** Current input focus target */
-	union html_focus_owner focus_owner;
+	সংঘ html_focus_owner focus_owner;
 
 	/** HTML content's own text selection object */
-	struct selection *sel;
+	কাঠামো selection *sel;
 
 	/**
 	 * Open core-handled form SELECT menu, or NULL if none
 	 *  currently open.
 	 */
-	struct form_control *visible_select_menu;
+	কাঠামো form_control *visible_select_menu;
 
 } html_content;
 
 /**
  * Render padding and margin box outlines in html_redraw().
  */
-extern bool html_redraw_debug;
+বাহ্যিক bool html_redraw_debug;
 
 
 /* in html/html.c */
@@ -226,7 +226,7 @@ extern bool html_redraw_debug;
  * \param htmlc HTML content
  * \param box The box to redraw.
  */
-void html__redraw_a_box(html_content *htmlc, struct box *box);
+শূন্য html__redraw_a_box(html_content *htmlc, কাঠামো box *box);
 
 
 /**
@@ -234,7 +234,7 @@ void html__redraw_a_box(html_content *htmlc, struct box *box);
  *
  * \param htmlc Content to convert
  */
-void html_finish_conversion(html_content *htmlc);
+শূন্য html_finish_conversion(html_content *htmlc);
 
 
 /**
@@ -257,7 +257,7 @@ bool html_begin_conversion(html_content *htmlc);
 /**
  * execute some text as a script element
  */
-bool html_exec(struct content *c, const char *src, size_t srclen);
+bool html_exec(কাঠামো content *c, ধ্রুবক অক্ষর *src, size_t srclen);
 
 
 /**
@@ -295,29 +295,29 @@ nserror html_proceed_to_done(html_content *html);
 
 
 /* in html/redraw.c */
-bool html_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx);
+bool html_redraw(কাঠামো content *c, কাঠামো content_redraw_তথ্য *তথ্য,
+		ধ্রুবক কাঠামো rect *clip, ধ্রুবক কাঠামো redraw_context *ctx);
 
 
 /* in html/redraw_border.c */
-bool html_redraw_borders(struct box *box, int x_parent, int y_parent,
-		int p_width, int p_height, const struct rect *clip, float scale,
-		const struct redraw_context *ctx);
+bool html_redraw_borders(কাঠামো box *box, পূর্ণসংখ্যা x_parent, পূর্ণসংখ্যা y_parent,
+		পূর্ণসংখ্যা p_width, পূর্ণসংখ্যা p_height, ধ্রুবক কাঠামো rect *clip, দশমিক scale,
+		ধ্রুবক কাঠামো redraw_context *ctx);
 
 
-bool html_redraw_inline_borders(struct box *box, struct rect b,
-		const struct rect *clip, float scale, bool first, bool last,
-		const struct redraw_context *ctx);
+bool html_redraw_inline_borders(কাঠামো box *box, কাঠামো rect b,
+		ধ্রুবক কাঠামো rect *clip, দশমিক scale, bool first, bool last,
+		ধ্রুবক কাঠামো redraw_context *ctx);
 
 
 /* in html/script.c */
-dom_hubbub_error html_process_script(void *ctx, dom_node *node);
+dom_hubbub_error html_process_script(শূন্য *ctx, dom_গ্রন্থি *গ্রন্থি);
 
 
 /* in html/forms.c */
-struct form *html_forms_get_forms(const char *docenc, dom_html_document *doc);
-struct form_control *html_forms_get_control_for_node(struct form *forms,
-		dom_node *node);
+কাঠামো form *html_forms_get_forms(ধ্রুবক অক্ষর *docenc, dom_html_document *doc);
+কাঠামো form_control *html_forms_get_control_for_গ্রন্থি(কাঠামো form *forms,
+		dom_গ্রন্থি *গ্রন্থি);
 
 
 /* in html/css_fetcher.c */
@@ -326,9 +326,9 @@ struct form_control *html_forms_get_control_for_node(struct form *forms,
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror html_css_fetcher_register(void);
-nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
-		uint32_t *key);
+nserror html_css_fetcher_register(শূন্য);
+nserror html_css_fetcher_add_item(dom_string *তথ্য, কাঠামো nsurl *base_url,
+		uint32_t *চাবি);
 
 
 /* Events */
@@ -336,36 +336,36 @@ nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
  * Construct an event and fire it at the DOM
  *
  */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_গ্রন্থি *target,
 		    bool bubbles, bool cancelable);
 
 /**
  * Construct a keyboard event and fire it at the DOM
  */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key);
+bool fire_dom_keyboard_event(dom_string *type, dom_গ্রন্থি *target,
+		bool bubbles, bool cancelable, uint32_t চাবি);
 
 /* Useful dom_string pointers */
-struct dom_string;
+কাঠামো dom_string;
 
-extern struct dom_string *html_dom_string_map;
-extern struct dom_string *html_dom_string_id;
-extern struct dom_string *html_dom_string_name;
-extern struct dom_string *html_dom_string_area;
-extern struct dom_string *html_dom_string_a;
-extern struct dom_string *html_dom_string_nohref;
-extern struct dom_string *html_dom_string_href;
-extern struct dom_string *html_dom_string_target;
-extern struct dom_string *html_dom_string_shape;
-extern struct dom_string *html_dom_string_default;
-extern struct dom_string *html_dom_string_rect;
-extern struct dom_string *html_dom_string_rectangle;
-extern struct dom_string *html_dom_string_coords;
-extern struct dom_string *html_dom_string_circle;
-extern struct dom_string *html_dom_string_poly;
-extern struct dom_string *html_dom_string_polygon;
-extern struct dom_string *html_dom_string_text_javascript;
-extern struct dom_string *html_dom_string_type;
-extern struct dom_string *html_dom_string_src;
+বাহ্যিক কাঠামো dom_string *html_dom_string_map;
+বাহ্যিক কাঠামো dom_string *html_dom_string_id;
+বাহ্যিক কাঠামো dom_string *html_dom_string_name;
+বাহ্যিক কাঠামো dom_string *html_dom_string_area;
+বাহ্যিক কাঠামো dom_string *html_dom_string_a;
+বাহ্যিক কাঠামো dom_string *html_dom_string_nohref;
+বাহ্যিক কাঠামো dom_string *html_dom_string_href;
+বাহ্যিক কাঠামো dom_string *html_dom_string_target;
+বাহ্যিক কাঠামো dom_string *html_dom_string_shape;
+বাহ্যিক কাঠামো dom_string *html_dom_string_default;
+বাহ্যিক কাঠামো dom_string *html_dom_string_rect;
+বাহ্যিক কাঠামো dom_string *html_dom_string_rectangle;
+বাহ্যিক কাঠামো dom_string *html_dom_string_coords;
+বাহ্যিক কাঠামো dom_string *html_dom_string_circle;
+বাহ্যিক কাঠামো dom_string *html_dom_string_poly;
+বাহ্যিক কাঠামো dom_string *html_dom_string_polygon;
+বাহ্যিক কাঠামো dom_string *html_dom_string_text_javascript;
+বাহ্যিক কাঠামো dom_string *html_dom_string_type;
+বাহ্যিক কাঠামো dom_string *html_dom_string_src;
 
 #endif

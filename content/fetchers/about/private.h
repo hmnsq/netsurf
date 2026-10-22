@@ -24,13 +24,13 @@
 #ifndef NETSURF_CONTENT_FETCHERS_ABOUT_PRIVATE_H
 #define NETSURF_CONTENT_FETCHERS_ABOUT_PRIVATE_H
 
-struct fetch_about_context;
-struct fetch_multipart_data;
+কাঠামো fetch_about_context;
+কাঠামো fetch_multipart_তথ্য;
 
 /**
  * set http response code on about response
  */
-bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code);
+bool fetch_about_set_http_code(কাঠামো fetch_about_context *ctx, long code);
 
 /**
  * Send a header on the about response
@@ -39,22 +39,22 @@ bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code);
  * \param fmt The format specifier of the header
  * \return true if the fetch has been aborted else false
  */
-bool fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...);
+bool fetch_about_send_header(কাঠামো fetch_about_context *ctx, ধ্রুবক অক্ষর *fmt, ...);
 
 /**
  * send data on the about response
  */
-nserror fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len);
+nserror fetch_about_senddata(কাঠামো fetch_about_context *ctx, ধ্রুবক uint8_t *তথ্য, size_t তথ্য_len);
 
 /**
  * send formatted data on the about response
  */
-nserror fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...);
+nserror fetch_about_ssenddataf(কাঠামো fetch_about_context *ctx, ধ্রুবক অক্ষর *fmt, ...);
 
 /**
  * complete the about fetch response
  */
-bool fetch_about_send_finished(struct fetch_about_context *ctx);
+bool fetch_about_send_finished(কাঠামো fetch_about_context *ctx);
 
 /**
  * Generate a 500 server error respnse
@@ -62,22 +62,22 @@ bool fetch_about_send_finished(struct fetch_about_context *ctx);
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_srverror(struct fetch_about_context *ctx);
+bool fetch_about_srverror(কাঠামো fetch_about_context *ctx);
 
 /**
  * get the fetch url
  */
-struct nsurl *fetch_about_get_url(struct fetch_about_context *ctx);
+কাঠামো nsurl *fetch_about_get_url(কাঠামো fetch_about_context *ctx);
 
 /**
  * get multipart fetch data
  */
-const struct fetch_multipart_data *fetch_about_get_multipart(struct fetch_about_context *ctx);
+ধ্রুবক কাঠামো fetch_multipart_তথ্য *fetch_about_get_multipart(কাঠামো fetch_about_context *ctx);
 
 
 /**
  * cause a 302 redirect to target
  */
-bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target);
+bool fetch_about_redirect(কাঠামো fetch_about_context *ctx, ধ্রুবক অক্ষর *target);
 
 #endif

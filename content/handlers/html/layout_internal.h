@@ -38,8 +38,8 @@
  * in CSS 2.1 9.4.1.
  */
 bool layout_block_context(
-		struct box *block,
-		int viewport_height,
+		কাঠামো box *block,
+		পূর্ণসংখ্যা viewport_height,
 		html_content *content);
 
 /**
@@ -51,8 +51,8 @@ bool layout_block_context(
  * \return  true on success, false on memory exhaustion
  */
 bool layout_table(
-		struct box *table,
-		int available_width,
+		কাঠামো box *table,
+		পূর্ণসংখ্যা available_width,
 		html_content *content);
 
 /**
@@ -64,45 +64,45 @@ bool layout_table(
  * \return  true on success, false on memory exhaustion
  */
 bool layout_flex(
-		struct box *flex,
-		int available_width,
+		কাঠামো box *flex,
+		পূর্ণসংখ্যা available_width,
 		html_content *content);
 
-typedef uint8_t (*css_len_func)(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit);
-typedef uint8_t (*css_border_style_func)(
-		const css_computed_style *style);
-typedef uint8_t (*css_border_color_func)(
-		const css_computed_style *style,
+প্রকারলেখ uint8_t (*css_len_func)(
+		ধ্রুবক css_computed_style *style,
+		css_fixed *দৈর্ঘ্য, css_unit *unit);
+প্রকারলেখ uint8_t (*css_border_style_func)(
+		ধ্রুবক css_computed_style *style);
+প্রকারলেখ uint8_t (*css_border_color_func)(
+		ধ্রুবক css_computed_style *style,
 		css_color *color);
 
 /** Array of per-side access functions for computed style margins. */
-extern const css_len_func margin_funcs[4];
+বাহ্যিক ধ্রুবক css_len_func margin_funcs[4];
 
 /** Array of per-side access functions for computed style paddings. */
-extern const css_len_func padding_funcs[4];
+বাহ্যিক ধ্রুবক css_len_func padding_funcs[4];
 
 /** Array of per-side access functions for computed style border_widths. */
-extern const css_len_func border_width_funcs[4];
+বাহ্যিক ধ্রুবক css_len_func border_width_funcs[4];
 
 /** Array of per-side access functions for computed style border styles. */
-extern const css_border_style_func border_style_funcs[4];
+বাহ্যিক ধ্রুবক css_border_style_func border_style_funcs[4];
 
 /** Array of per-side access functions for computed style border colors. */
-extern const css_border_color_func border_color_funcs[4];
+বাহ্যিক ধ্রুবক css_border_color_func border_color_funcs[4];
 
 /** Layout helper: Check whether box is a float. */
-static inline bool lh__box_is_float_box(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_float_box(ধ্রুবক কাঠামো box *b)
 {
-	return b->type == BOX_FLOAT_LEFT ||
-	       b->type == BOX_FLOAT_RIGHT;
+	ফেরত b->type == BOX_FLOAT_বাম ||
+	       b->type == BOX_FLOAT_ডান;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_inline_flow(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_inline_flow(ধ্রুবক কাঠামো box *b)
 {
-	return b->type == BOX_INLINE ||
+	ফেরত b->type == BOX_INLINE ||
 	       b->type == BOX_INLINE_FLEX ||
 	       b->type == BOX_INLINE_BLOCK ||
 	       b->type == BOX_TEXT ||
@@ -110,192 +110,192 @@ static inline bool lh__box_is_inline_flow(const struct box *b)
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_flex_container(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_flex_container(ধ্রুবক কাঠামো box *b)
 {
-	return b->type == BOX_FLEX ||
+	ফেরত b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_flex_item(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_flex_item(ধ্রুবক কাঠামো box *b)
 {
-	return (b->parent != NULL) && lh__box_is_flex_container(b->parent);
+	ফেরত (b->parent != ফাঁকা) && lh__box_is_flex_container(b->parent);
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR.) */
-static inline bool lh__box_is_inline_level(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_inline_level(ধ্রুবক কাঠামো box *b)
 {
-	return lh__box_is_inline_flow(b) ||
+	ফেরত lh__box_is_inline_flow(b) ||
 	       b->type == BOX_BR;
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR, floats.) */
-static inline bool lh__box_is_inline_content(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_inline_content(ধ্রুবক কাঠামো box *b)
 {
-	return lh__box_is_float_box(b) ||
+	ফেরত lh__box_is_float_box(b) ||
 	       lh__box_is_inline_level(b);
 }
 
 /** Layout helper: Check whether box is an object. */
-static inline bool lh__box_is_object(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_object(ধ্রুবক কাঠামো box *b)
 {
-	return b->object ||
+	ফেরত b->object ||
 	       (b->flags & (IFRAME | REPLACE_DIM));
 }
 
 /** Layout helper: Check whether box is replaced. */
-static inline bool lh__box_is_replace(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_replace(ধ্রুবক কাঠামো box *b)
 {
-	return b->gadget ||
+	ফেরত b->gadget ||
 	       lh__box_is_object(b);
 }
 
 /** Layout helper: Check for CSS border on given side. */
-static inline bool lh__have_border(
-		enum box_side side,
-		const css_computed_style *style)
+স্থির অন্তঃরেখ bool lh__have_border(
+		গণনা box_side side,
+		ধ্রুবক css_computed_style *style)
 {
-	return border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
+	ফেরত border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
 }
 
-static inline bool lh__box_is_absolute(const struct box *b)
+স্থির অন্তঃরেখ bool lh__box_is_absolute(ধ্রুবক কাঠামো box *b)
 {
-	return css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
+	ফেরত css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
 	       css_computed_position(b->style) == CSS_POSITION_FIXED;
 }
 
-static inline bool lh__flex_main_is_horizontal(const struct box *flex)
+স্থির অন্তঃরেখ bool lh__flex_main_is_horizontal(ধ্রুবক কাঠামো box *flex)
 {
-	const css_computed_style *style = flex->style;
+	ধ্রুবক css_computed_style *style = flex->style;
 
-	assert(style != NULL);
+	প্রতিজ্ঞা(style != ফাঁকা);
 
-	switch (css_computed_flex_direction(style)) {
-	default:                        /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW:    /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW_REVERSE:
-		return true;
-	case CSS_FLEX_DIRECTION_COLUMN: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return false;
+	নির্বাচন (css_computed_flex_direction(style)) {
+	পূর্বনির্ধারিত:                        /* Fallthrough. */
+	ক্ষেত্র CSS_FLEX_DIRECTION_ROW:    /* Fallthrough. */
+	ক্ষেত্র CSS_FLEX_DIRECTION_ROW_REVERSE:
+		ফেরত true;
+	ক্ষেত্র CSS_FLEX_DIRECTION_COLUMN: /* Fallthrough. */
+	ক্ষেত্র CSS_FLEX_DIRECTION_COLUMN_REVERSE:
+		ফেরত false;
 	}
 }
 
-static inline bool lh__flex_direction_reversed(const struct box *flex)
+স্থির অন্তঃরেখ bool lh__flex_direction_reversed(ধ্রুবক কাঠামো box *flex)
 {
-	switch (css_computed_flex_direction(flex->style)) {
-	default:                             /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW_REVERSE: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return true;
-	case CSS_FLEX_DIRECTION_ROW: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN:
-		return false;
+	নির্বাচন (css_computed_flex_direction(flex->style)) {
+	পূর্বনির্ধারিত:                             /* Fallthrough. */
+	ক্ষেত্র CSS_FLEX_DIRECTION_ROW_REVERSE: /* Fallthrough. */
+	ক্ষেত্র CSS_FLEX_DIRECTION_COLUMN_REVERSE:
+		ফেরত true;
+	ক্ষেত্র CSS_FLEX_DIRECTION_ROW: /* Fallthrough. */
+	ক্ষেত্র CSS_FLEX_DIRECTION_COLUMN:
+		ফেরত false;
 	}
 }
 
-static inline int lh__non_auto_margin(const struct box *b, enum box_side side)
+স্থির অন্তঃরেখ পূর্ণসংখ্যা lh__non_auto_margin(ধ্রুবক কাঠামো box *b, গণনা box_side side)
 {
-	return (b->margin[side] == AUTO) ? 0 : b->margin[side];
+	ফেরত (b->margin[side] == AUTO) ? 0 : b->margin[side];
 }
 
-static inline int lh__delta_outer_height(const struct box *b)
+স্থির অন্তঃরেখ পূর্ণসংখ্যা lh__delta_outer_height(ধ্রুবক কাঠামো box *b)
 {
-	return b->padding[TOP] +
+	ফেরত b->padding[শীর্ষ_2] +
 	       b->padding[BOTTOM] +
-	       b->border[TOP].width +
+	       b->border[শীর্ষ_2].width +
 	       b->border[BOTTOM].width +
-	       lh__non_auto_margin(b, TOP) +
+	       lh__non_auto_margin(b, শীর্ষ_2) +
 	       lh__non_auto_margin(b, BOTTOM);
 }
 
-static inline int lh__delta_outer_width(const struct box *b)
+স্থির অন্তঃরেখ পূর্ণসংখ্যা lh__delta_outer_width(ধ্রুবক কাঠামো box *b)
 {
-	return b->padding[LEFT] +
-	       b->padding[RIGHT] +
-	       b->border[LEFT].width +
-	       b->border[RIGHT].width +
-	       lh__non_auto_margin(b, LEFT) +
-	       lh__non_auto_margin(b, RIGHT);
+	ফেরত b->padding[বাম_2] +
+	       b->padding[ডান_2] +
+	       b->border[বাম_2].width +
+	       b->border[ডান_2].width +
+	       lh__non_auto_margin(b, বাম_2) +
+	       lh__non_auto_margin(b, ডান_2);
 }
 
-static inline int lh__delta_outer_main(
-		const struct box *flex,
-		const struct box *b)
+স্থির অন্তঃরেখ পূর্ণসংখ্যা lh__delta_outer_main(
+		ধ্রুবক কাঠামো box *flex,
+		ধ্রুবক কাঠামো box *b)
 {
-	if (lh__flex_main_is_horizontal(flex)) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	যদি (lh__flex_main_is_horizontal(flex)) {
+		ফেরত lh__delta_outer_width(b);
+	} অন্যথা {
+		ফেরত lh__delta_outer_height(b);
 	}
 }
 
-static inline int lh__delta_outer_cross(
-		const struct box *flex,
-		const struct box *b)
+স্থির অন্তঃরেখ পূর্ণসংখ্যা lh__delta_outer_cross(
+		ধ্রুবক কাঠামো box *flex,
+		ধ্রুবক কাঠামো box *b)
 {
-	if (lh__flex_main_is_horizontal(flex) == false) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	যদি (lh__flex_main_is_horizontal(flex) == false) {
+		ফেরত lh__delta_outer_width(b);
+	} অন্যথা {
+		ফেরত lh__delta_outer_height(b);
 	}
 }
 
-static inline int *lh__box_size_main_ptr(
+স্থির অন্তঃরেখ পূর্ণসংখ্যা *lh_box_আকার_main_ptr(
 		bool horizontal,
-		struct box *b)
+		কাঠামো box *b)
 {
-	return horizontal ? &b->width : &b->height;
+	ফেরত horizontal ? &b->width : &b->height;
 }
 
-static inline int *lh__box_size_cross_ptr(
+স্থির অন্তঃরেখ পূর্ণসংখ্যা *lh_box_আকার_cross_ptr(
 		bool horizontal,
-		struct box *b)
+		কাঠামো box *b)
 {
-	return horizontal ? &b->height : &b->width;
+	ফেরত horizontal ? &b->height : &b->width;
 }
 
-static inline int lh__box_size_main(
+স্থির অন্তঃরেখ পূর্ণসংখ্যা lh_box_আকার_main(
 		bool horizontal,
-		const struct box *b)
+		ধ্রুবক কাঠামো box *b)
 {
-	return horizontal ? b->width : b->height;
+	ফেরত horizontal ? b->width : b->height;
 }
 
-static inline int lh__box_size_cross(
+স্থির অন্তঃরেখ পূর্ণসংখ্যা lh_box_আকার_cross(
 		bool horizontal,
-		const struct box *b)
+		ধ্রুবক কাঠামো box *b)
 {
-	return horizontal ? b->height : b->width;
+	ফেরত horizontal ? b->height : b->width;
 }
 
-static inline bool lh__box_size_cross_is_auto(
+স্থির অন্তঃরেখ bool lh_box_আকার_cross_is_auto(
 		bool horizontal,
-		struct box *b)
+		কাঠামো box *b)
 {
-	css_fixed length;
+	css_fixed দৈর্ঘ্য;
 	css_unit unit;
 
-	if (horizontal) {
-		return css_computed_height(b->style,
-				&length, &unit) == CSS_HEIGHT_AUTO;
-	} else {
-		return css_computed_width(b->style,
-				&length, &unit) == CSS_WIDTH_AUTO;
+	যদি (horizontal) {
+		ফেরত css_computed_height(b->style,
+				&দৈর্ঘ্য, &unit) == CSS_HEIGHT_AUTO;
+	} অন্যথা {
+		ফেরত css_computed_width(b->style,
+				&দৈর্ঘ্য, &unit) == CSS_WIDTH_AUTO;
 	}
 }
 
-static inline enum css_align_self_e lh__box_align_self(
-		const struct box *flex,
-		const struct box *item)
+স্থির অন্তঃরেখ গণনা css_align_self_e lh__box_align_self(
+		ধ্রুবক কাঠামো box *flex,
+		ধ্রুবক কাঠামো box *item)
 {
-	enum css_align_self_e align_self = css_computed_align_self(item->style);
+	গণনা css_align_self_e align_self = css_computed_align_self(item->style);
 
-	if (align_self == CSS_ALIGN_SELF_AUTO) {
-		align_self = css_computed_align_items(flex->style);
+	যদি (align_self == CSS_ALIGN_SELF_AUTO) {
+		align_self = css_computed_align_বস্তুসমূহ(flex->style);
 	}
 
-	return align_self;
+	ফেরত align_self;
 }
 
 /**
@@ -310,57 +310,57 @@ static inline enum css_align_self_e lh__box_align_self(
  * \param fixed    increased by sum of fixed margin, border, and padding
  * \param frac     increased by sum of fractional margin and padding
  */
-static inline void calculate_mbp_width(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style,
-		unsigned int side,
+স্থির অন্তঃরেখ শূন্য calculate_mbp_width(
+		ধ্রুবক css_unit_ctx *unit_len_ctx,
+		ধ্রুবক css_computed_style *style,
+		unsigned পূর্ণসংখ্যা side,
 		bool margin,
 		bool border,
 		bool padding,
-		int *fixed,
-		float *frac)
+		পূর্ণসংখ্যা *fixed,
+		দশমিক *frac)
 {
-	css_fixed value = 0;
+	css_fixed মান = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(style);
+	প্রতিজ্ঞা(style);
 
 	/* margin */
-	if (margin) {
-		enum css_margin_e type;
+	যদি (margin) {
+		গণনা css_margin_e type;
 
-		type = margin_funcs[side](style, &value, &unit);
-		if (type == CSS_MARGIN_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*frac += FIXTOFLT(FDIV(value, F_100));
-			} else {
+		type = margin_funcs[side](style, &মান, &unit);
+		যদি (type == CSS_MARGIN_SET) {
+			যদি (unit == CSS_UNIT_PCT) {
+				*frac += FIXTOFLT(FDIV(মান, F_100));
+			} অন্যথা {
 				*fixed += FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						মান, unit));
 			}
 		}
 	}
 
 	/* border */
-	if (border) {
-		if (lh__have_border(side, style)) {
-			border_width_funcs[side](style, &value, &unit);
+	যদি (border) {
+		যদি (lh__have_border(side, style)) {
+			border_width_funcs[side](style, &মান, &unit);
 
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					মান, unit));
 		}
 	}
 
 	/* padding */
-	if (padding) {
-		padding_funcs[side](style, &value, &unit);
-		if (unit == CSS_UNIT_PCT) {
-			*frac += FIXTOFLT(FDIV(value, F_100));
-		} else {
+	যদি (padding) {
+		padding_funcs[side](style, &মান, &unit);
+		যদি (unit == CSS_UNIT_PCT) {
+			*frac += FIXTOFLT(FDIV(মান, F_100));
+		} অন্যথা {
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					মান, unit));
 		}
 	}
 }
@@ -379,29 +379,29 @@ static inline void calculate_mbp_width(
  *				updated to new value after consideration of
  *				gadget properties.
  */
-static inline void layout_handle_box_sizing(
-		const css_unit_ctx *unit_len_ctx,
-		const struct box *box,
-		int available_width,
+স্থির অন্তঃরেখ শূন্য layout_handle_box_sizing(
+		ধ্রুবক css_unit_ctx *unit_len_ctx,
+		ধ্রুবক কাঠামো box *box,
+		পূর্ণসংখ্যা available_width,
 		bool setwidth,
-		int *dimension)
+		পূর্ণসংখ্যা *dimension)
 {
-	enum css_box_sizing_e bs;
+	গণনা css_box_sizing_e bs;
 
-	assert(box && box->style);
+	প্রতিজ্ঞা(box && box->style);
 
 	bs = css_computed_box_sizing(box->style);
 
-	if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-		int orig = *dimension;
-		int fixed = 0;
-		float frac = 0;
+	যদি (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		পূর্ণসংখ্যা orig = *dimension;
+		পূর্ণসংখ্যা fixed = 0;
+		দশমিক frac = 0;
 
 		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? LEFT : TOP,
+				setwidth ? বাম_2 : শীর্ষ_2,
 				false, true, true, &fixed, &frac);
 		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? RIGHT : BOTTOM,
+				setwidth ? ডান_2 : BOTTOM,
 				false, true, true, &fixed, &frac);
 		orig -= frac * available_width + fixed;
 		*dimension = orig > 0 ? orig : 0;
@@ -427,78 +427,78 @@ static inline void layout_handle_box_sizing(
  * \param  padding          filled with paddings, may be NULL
  * \param  border           filled with border widths, may be NULL
  */
-static inline void layout_find_dimensions(
-		const css_unit_ctx *unit_len_ctx,
-		int available_width,
-		int viewport_height,
-		const struct box *box,
-		const css_computed_style *style,
-		int *width,
-		int *height,
-		int *max_width,
-		int *min_width,
-		int *max_height,
-		int *min_height,
-		int margin[4],
-		int padding[4],
-		struct box_border border[4])
+স্থির অন্তঃরেখ শূন্য layout_find_dimensions(
+		ধ্রুবক css_unit_ctx *unit_len_ctx,
+		পূর্ণসংখ্যা available_width,
+		পূর্ণসংখ্যা viewport_height,
+		ধ্রুবক কাঠামো box *box,
+		ধ্রুবক css_computed_style *style,
+		পূর্ণসংখ্যা *width,
+		পূর্ণসংখ্যা *height,
+		পূর্ণসংখ্যা *max_width,
+		পূর্ণসংখ্যা *min_width,
+		পূর্ণসংখ্যা *max_height,
+		পূর্ণসংখ্যা *min_height,
+		পূর্ণসংখ্যা margin[4],
+		পূর্ণসংখ্যা padding[4],
+		কাঠামো box_border border[4])
 {
-	struct box *containing_block = NULL;
-	unsigned int i;
+	কাঠামো box *containing_block = ফাঁকা;
+	unsigned পূর্ণসংখ্যা i;
 
-	if (width) {
-		if (css_computed_width_px(style, unit_len_ctx,
+	যদি (width) {
+		যদি (css_computed_width_px(style, unit_len_ctx,
 				available_width, width) == CSS_WIDTH_SET) {
 			layout_handle_box_sizing(unit_len_ctx, box,
 					available_width, true, width);
-		} else {
+		} অন্যথা {
 			*width = AUTO;
 		}
 	}
 
-	if (height) {
-		enum css_height_e htype;
-		css_fixed value = 0;
+	যদি (height) {
+		গণনা css_height_e htype;
+		css_fixed মান = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		htype = css_computed_height(style, &value, &unit);
+		htype = css_computed_height(style, &মান, &unit);
 
-		if (htype == CSS_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				enum css_height_e cbhtype;
+		যদি (htype == CSS_HEIGHT_SET) {
+			যদি (unit == CSS_UNIT_PCT) {
+				গণনা css_height_e cbhtype;
 
-				if (css_computed_position(box->style) ==
+				যদি (css_computed_position(box->style) ==
 						CSS_POSITION_ABSOLUTE &&
 						box->parent) {
 					/* Box is absolutely positioned */
-					assert(box->float_container);
+					প্রতিজ্ঞা(box->float_container);
 					containing_block = box->float_container;
-				} else if (box->float_container &&
+				} অন্যথা যদি (box->float_container &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 					(css_computed_float(box->style) ==
-						CSS_FLOAT_LEFT ||
+						CSS_FLOAT_বাম ||
 					 css_computed_float(box->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_ডান)) {
 					/* Box is a float */
-					assert(box->parent &&
+					প্রতিজ্ঞা(box->parent &&
 						box->parent->parent &&
 						box->parent->parent->parent);
 
 					containing_block =
 						box->parent->parent->parent;
-				} else if (box->parent && box->parent->type !=
+				} অন্যথা যদি (box->parent && box->parent->type !=
 						BOX_INLINE_CONTAINER) {
 					/* Box is a block level element */
 					containing_block = box->parent;
-				} else if (box->parent && box->parent->type ==
+				} অন্যথা যদি (box->parent && box->parent->type ==
 						BOX_INLINE_CONTAINER) {
 					/* Box is an inline block */
-					assert(box->parent->parent);
+					প্রতিজ্ঞা(box->parent->parent);
 					containing_block = box->parent->parent;
 				}
 
-				if (containing_block) {
+				যদি (containing_block) {
 					css_fixed f = 0;
 					css_unit u = CSS_UNIT_PX;
 
@@ -507,7 +507,7 @@ static inline void layout_find_dimensions(
 							&f, &u);
 				}
 
-				if (containing_block &&
+				যদি (containing_block &&
 					containing_block->height != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
@@ -516,197 +516,197 @@ static inline void layout_find_dimensions(
 					 * containing block has a valid
 					 * specified height.
 					 * (CSS 2.1 Section 10.5) */
-					*height = FPCT_OF_INT_TOINT(value,
+					*height = FPCT_OF_INT_TOINT(মান,
 						containing_block->height);
-				} else if ((!box->parent ||
+				} অন্যথা যদি ((!box->parent ||
 						!box->parent->parent) &&
 						viewport_height >= 0) {
 					/* If root element or it's child
 					 * (HTML or BODY) */
-					*height = FPCT_OF_INT_TOINT(value,
+					*height = FPCT_OF_INT_TOINT(মান,
 							viewport_height);
-				} else {
+				} অন্যথা {
 					/* precentage height not permissible
 					 * treat height as auto */
 					*height = AUTO;
 				}
-			} else {
+			} অন্যথা {
 				*height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						মান, unit));
 			}
-		} else {
+		} অন্যথা {
 			*height = AUTO;
 		}
 
-		if (*height != AUTO) {
+		যদি (*height != AUTO) {
 			layout_handle_box_sizing(unit_len_ctx, box,
 					available_width, false, height);
 		}
 	}
 
-	if (max_width) {
-		enum css_max_width_e type;
-		css_fixed value = 0;
+	যদি (max_width) {
+		গণনা css_max_width_e type;
+		css_fixed মান = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_width(style, &value, &unit);
+		type = css_computed_max_width(style, &মান, &unit);
 
-		if (type == CSS_MAX_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*max_width = FPCT_OF_INT_TOINT(value,
+		যদি (type == CSS_MAX_WIDTH_SET) {
+			যদি (unit == CSS_UNIT_PCT) {
+				*max_width = FPCT_OF_INT_TOINT(মান,
 						available_width);
-			} else {
+			} অন্যথা {
 				*max_width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						মান, unit));
 			}
-		} else {
+		} অন্যথা {
 			/* Inadmissible */
 			*max_width = -1;
 		}
 
-		if (*max_width != -1) {
+		যদি (*max_width != -1) {
 			layout_handle_box_sizing(unit_len_ctx, box,
 					available_width, true, max_width);
 		}
 	}
 
-	if (min_width) {
-		enum css_min_width_e type;
-		css_fixed value = 0;
+	যদি (min_width) {
+		গণনা css_min_width_e type;
+		css_fixed মান = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_width(style, &value, &unit);
+		type = ns_computed_min_width(style, &মান, &unit);
 
-		if (type == CSS_MIN_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*min_width = FPCT_OF_INT_TOINT(value,
+		যদি (type == CSS_MIN_WIDTH_SET) {
+			যদি (unit == CSS_UNIT_PCT) {
+				*min_width = FPCT_OF_INT_TOINT(মান,
 						available_width);
-			} else {
+			} অন্যথা {
 				*min_width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						মান, unit));
 			}
-		} else {
+		} অন্যথা {
 			/* Inadmissible */
 			*min_width = 0;
 		}
 
-		if (*min_width != 0) {
+		যদি (*min_width != 0) {
 			layout_handle_box_sizing(unit_len_ctx, box,
 					available_width, true, min_width);
 		}
 	}
 
-	if (max_height) {
-		enum css_max_height_e type;
-		css_fixed value = 0;
+	যদি (max_height) {
+		গণনা css_max_height_e type;
+		css_fixed মান = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_height(style, &value, &unit);
+		type = css_computed_max_height(style, &মান, &unit);
 
-		if (type == CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		যদি (type == CSS_MAX_HEIGHT_SET) {
+			যদি (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
 				*max_height = -1;
-			} else {
+			} অন্যথা {
 				*max_height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						মান, unit));
 			}
-		} else {
+		} অন্যথা {
 			/* Inadmissible */
 			*max_height = -1;
 		}
 	}
 
-	if (min_height) {
-		enum css_min_height_e type;
-		css_fixed value = 0;
+	যদি (min_height) {
+		গণনা css_min_height_e type;
+		css_fixed মান = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_height(style, &value, &unit);
+		type = ns_computed_min_height(style, &মান, &unit);
 
-		if (type == CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		যদি (type == CSS_MIN_HEIGHT_SET) {
+			যদি (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
 				*min_height = 0;
-			} else {
+			} অন্যথা {
 				*min_height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						মান, unit));
 			}
-		} else {
+		} অন্যথা {
 			/* Inadmissible */
 			*min_height = 0;
 		}
 	}
 
-	for (i = 0; i != 4; i++) {
-		if (margin) {
-			enum css_margin_e type = CSS_MARGIN_AUTO;
-			css_fixed value = 0;
+	জন্য (i = 0; i != 4; i++) {
+		যদি (margin) {
+			গণনা css_margin_e type = CSS_MARGIN_AUTO;
+			css_fixed মান = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			type = margin_funcs[i](style, &value, &unit);
+			type = margin_funcs[i](style, &মান, &unit);
 
-			if (type == CSS_MARGIN_SET) {
-				if (unit == CSS_UNIT_PCT) {
-					margin[i] = FPCT_OF_INT_TOINT(value,
+			যদি (type == CSS_MARGIN_SET) {
+				যদি (unit == CSS_UNIT_PCT) {
+					margin[i] = FPCT_OF_INT_TOINT(মান,
 							available_width);
-				} else {
+				} অন্যথা {
 					margin[i] = FIXTOINT(css_unit_len2device_px(
 							style, unit_len_ctx,
-							value, unit));
+							মান, unit));
 				}
-			} else {
+			} অন্যথা {
 				margin[i] = AUTO;
 			}
 		}
 
-		if (padding) {
-			css_fixed value = 0;
+		যদি (padding) {
+			css_fixed মান = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			padding_funcs[i](style, &value, &unit);
+			padding_funcs[i](style, &মান, &unit);
 
-			if (unit == CSS_UNIT_PCT) {
-				padding[i] = FPCT_OF_INT_TOINT(value,
+			যদি (unit == CSS_UNIT_PCT) {
+				padding[i] = FPCT_OF_INT_TOINT(মান,
 						available_width);
-			} else {
+			} অন্যথা {
 				padding[i] = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						মান, unit));
 			}
 		}
 
 		/* Table cell borders are populated in table.c */
-		if (border && box->type != BOX_TABLE_CELL) {
-			enum css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
+		যদি (border && box->type != BOX_TABLE_CELL) {
+			গণনা css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
 			css_color color = 0;
-			css_fixed value = 0;
+			css_fixed মান = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			border_width_funcs[i](style, &value, &unit);
+			border_width_funcs[i](style, &মান, &unit);
 			bstyle = border_style_funcs[i](style);
 			border_color_funcs[i](style, &color);
 
 			border[i].style = bstyle;
 			border[i].c = color;
 
-			if (bstyle == CSS_BORDER_STYLE_HIDDEN ||
+			যদি (bstyle == CSS_BORDER_STYLE_HIDDEN ||
 					bstyle == CSS_BORDER_STYLE_NONE)
 				/* spec unclear: following Mozilla */
 				border[i].width = 0;
-			else
+			অন্যথা
 				border[i].width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						মান, unit));
 
 			/* Special case for border-collapse: make all borders
 			 * on table/table-row-group/table-row zero width. */
-			if (css_computed_border_collapse(style) ==
+			যদি (css_computed_border_collapse(style) ==
 					CSS_BORDER_COLLAPSE_COLLAPSE &&
 					(box->type == BOX_TABLE ||
 					 box->type == BOX_TABLE_ROW_GROUP ||

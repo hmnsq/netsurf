@@ -22,11 +22,11 @@
  * HTML internal font handling implementation.
  */
 
-#include "utils/nsoption.h"
-#include "netsurf/plot_style.h"
-#include "css/utils.h"
+#অন্তর্ভাব "utils/nsoption.h"
+#অন্তর্ভাব "netsurf/plot_style.h"
+#অন্তর্ভাব "css/utils.h"
 
-#include "html/font.h"
+#অন্তর্ভাব "html/font.h"
 
 /**
  * Map a generic CSS font family to a generic plot font family
@@ -34,31 +34,31 @@
  * \param css Generic CSS font family
  * \return Plot font family
  */
-static plot_font_generic_family_t
-plot_font_generic_family(enum css_font_family_e css)
+স্থির plot_font_generic_family_t
+plot_font_generic_family(গণনা css_font_family_e css)
 {
 	plot_font_generic_family_t plot;
 
-	switch (css) {
-	case CSS_FONT_FAMILY_SERIF:
+	নির্বাচন (css) {
+	ক্ষেত্র CSS_FONT_FAMILY_SERIF:
 		plot = PLOT_FONT_FAMILY_SERIF;
-		break;
-	case CSS_FONT_FAMILY_MONOSPACE:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_FAMILY_MONOSPACE:
 		plot = PLOT_FONT_FAMILY_MONOSPACE;
-		break;
-	case CSS_FONT_FAMILY_CURSIVE:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_FAMILY_CURSIVE:
 		plot = PLOT_FONT_FAMILY_CURSIVE;
-		break;
-	case CSS_FONT_FAMILY_FANTASY:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_FAMILY_FANTASY:
 		plot = PLOT_FONT_FAMILY_FANTASY;
-		break;
-	case CSS_FONT_FAMILY_SANS_SERIF:
-	default:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_FAMILY_SANS_SERIF:
+	পূর্বনির্ধারিত:
 		plot = PLOT_FONT_FAMILY_SANS_SERIF;
-		break;
+		বিরতি;
 	}
 
-	return plot;
+	ফেরত plot;
 }
 
 /**
@@ -67,44 +67,44 @@ plot_font_generic_family(enum css_font_family_e css)
  * \param css  CSS font weight
  * \return Plot weight
  */
-static int plot_font_weight(enum css_font_weight_e css)
+স্থির পূর্ণসংখ্যা plot_font_weight(গণনা css_font_weight_e css)
 {
-	int weight;
+	পূর্ণসংখ্যা weight;
 
-	switch (css) {
-	case CSS_FONT_WEIGHT_100:
+	নির্বাচন (css) {
+	ক্ষেত্র CSS_FONT_WEIGHT_100:
 		weight = 100;
-		break;
-	case CSS_FONT_WEIGHT_200:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_WEIGHT_200:
 		weight = 200;
-		break;
-	case CSS_FONT_WEIGHT_300:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_WEIGHT_300:
 		weight = 300;
-		break;
-	case CSS_FONT_WEIGHT_400:
-	case CSS_FONT_WEIGHT_NORMAL:
-	default:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_WEIGHT_400:
+	ক্ষেত্র CSS_FONT_WEIGHT_NORMAL:
+	পূর্বনির্ধারিত:
 		weight = 400;
-		break;
-	case CSS_FONT_WEIGHT_500:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_WEIGHT_500:
 		weight = 500;
-		break;
-	case CSS_FONT_WEIGHT_600:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_WEIGHT_600:
 		weight = 600;
-		break;
-	case CSS_FONT_WEIGHT_700:
-	case CSS_FONT_WEIGHT_BOLD:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_WEIGHT_700:
+	ক্ষেত্র CSS_FONT_WEIGHT_BOLD:
 		weight = 700;
-		break;
-	case CSS_FONT_WEIGHT_800:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_WEIGHT_800:
 		weight = 800;
-		break;
-	case CSS_FONT_WEIGHT_900:
+		বিরতি;
+	ক্ষেত্র CSS_FONT_WEIGHT_900:
 		weight = 900;
-		break;
+		বিরতি;
 	}
 
-	return weight;
+	ফেরত weight;
 }
 
 /**
@@ -114,31 +114,31 @@ static int plot_font_weight(enum css_font_weight_e css)
  * \param variant  CSS font variant
  * \return Computed plot flags
  */
-static plot_font_flags_t plot_font_flags(enum css_font_style_e style,
-		enum css_font_variant_e variant)
+স্থির plot_font_flags_t plot_font_flags(গণনা css_font_style_e style,
+		গণনা css_font_variant_e variant)
 {
 	plot_font_flags_t flags = FONTF_NONE;
 
-	if (style == CSS_FONT_STYLE_ITALIC)
+	যদি (style == CSS_FONT_STYLE_ITALIC)
 		flags |= FONTF_ITALIC;
-	else if (style == CSS_FONT_STYLE_OBLIQUE)
+	অন্যথা যদি (style == CSS_FONT_STYLE_OBLIQUE)
 		flags |= FONTF_OBLIQUE;
 
-	if (variant == CSS_FONT_VARIANT_SMALL_CAPS)
+	যদি (variant == CSS_FONT_VARIANT_SMALL_CAPS)
 		flags |= FONTF_SMALLCAPS;
 
-	return flags;
+	ফেরত flags;
 }
 
 
 /* exported function documented in html/font.h */
-void font_plot_style_from_css(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *css,
+শূন্য font_plot_style_from_css(
+		ধ্রুবক css_unit_ctx *unit_len_ctx,
+		ধ্রুবক css_computed_style *css,
 		plot_font_style_t *fstyle)
 {
 	lwc_string **families;
-	css_fixed length = 0;
+	css_fixed দৈর্ঘ্য = 0;
 	css_unit unit = CSS_UNIT_PX;
 	css_color col;
 
@@ -146,14 +146,14 @@ void font_plot_style_from_css(
 			css_computed_font_family(css, &families));
 	fstyle->families = families;
 
-	css_computed_font_size(css, &length, &unit);
-	fstyle->size = FIXTOINT(FMUL(css_unit_font_size_len2pt(css,
-				      unit_len_ctx, length, unit),
+	css_computed_font_আকার(css, &দৈর্ঘ্য, &unit);
+	fstyle->আকার_2 = FIXTOINT(FMUL(css_unit_font_আকার_len2pt(css,
+				      unit_len_ctx, দৈর্ঘ্য, unit),
 				      INTTOFIX(PLOT_STYLE_SCALE)));
 
 	/* Clamp font size to configured minimum */
-	if (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
-		fstyle->size = (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10;
+	যদি (fstyle->আকার_2 < (nsoption_int(font_min_আকার) * PLOT_STYLE_SCALE) / 10)
+		fstyle->আকার_2 = (nsoption_int(font_min_আকার) * PLOT_STYLE_SCALE) / 10;
 
 	fstyle->weight = plot_font_weight(css_computed_font_weight(css));
 	fstyle->flags = plot_font_flags(css_computed_font_style(css),

@@ -26,70 +26,70 @@
  * information from the browser from a known, fixed URL.
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdlib.h>
 
-#include "netsurf/inttypes.h"
+#অন্তর্ভাব "netsurf/inttypes.h"
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
-#include "utils/messages.h"
+#অন্তর্ভাব "utils/errors.h"
+#অন্তর্ভাব "utils/nsurl.h"
+#অন্তর্ভাব "utils/corestrings.h"
+#অন্তর্ভাব "utils/utils.h"
+#অন্তর্ভাব "utils/ring.h"
+#অন্তর্ভাব "utils/messages.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#অন্তর্ভাব "content/fetch.h"
+#অন্তর্ভাব "content/fetchers.h"
 
-#include "private.h"
-#include "about.h"
-#include "blank.h"
-#include "certificate.h"
-#include "config.h"
-#include "chart.h"
-#include "choices.h"
-#include "imagecache.h"
-#include "nscolours.h"
-#include "query.h"
-#include "query_auth.h"
-#include "query_fetcherror.h"
-#include "query_privacy.h"
-#include "query_timeout.h"
-#include "atestament.h"
-#include "websearch.h"
+#অন্তর্ভাব "private.h"
+#অন্তর্ভাব "about.h"
+#অন্তর্ভাব "blank.h"
+#অন্তর্ভাব "certificate.h"
+#অন্তর্ভাব "config.h"
+#অন্তর্ভাব "chart.h"
+#অন্তর্ভাব "choices.h"
+#অন্তর্ভাব "imagecache.h"
+#অন্তর্ভাব "nscolours.h"
+#অন্তর্ভাব "query.h"
+#অন্তর্ভাব "query_auth.h"
+#অন্তর্ভাব "query_fetcherror.h"
+#অন্তর্ভাব "query_privacy.h"
+#অন্তর্ভাব "query_timeout.h"
+#অন্তর্ভাব "atestament.h"
+#অন্তর্ভাব "websearch.h"
 
-typedef bool (*fetch_about_handler)(struct fetch_about_context *);
+প্রকারলেখ bool (*fetch_about_handler)(কাঠামো fetch_about_context *);
 
 /**
  * Context for an about fetch
  */
-struct fetch_about_context {
-	struct fetch_about_context *r_next, *r_prev;
+কাঠামো fetch_about_context {
+	কাঠামো fetch_about_context *r_পরবর্তী, *r_পূর্ব;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	কাঠামো fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
 
-	const struct fetch_multipart_data *multipart; /**< post data */
+	ধ্রুবক কাঠামো fetch_multipart_তথ্য *multipart; /**< post data */
 
 	fetch_about_handler handler;
 };
 
-static struct fetch_about_context *ring = NULL;
+স্থির কাঠামো fetch_about_context *ring = ফাঁকা;
 
 /**
  * handler info for about scheme
  */
-struct about_handlers {
-	const char *name; /**< name to match in url */
-	int name_len;
+কাঠামো about_handlers {
+	ধ্রুবক অক্ষর *name; /**< name to match in url */
+	পূর্ণসংখ্যা name_len;
 	lwc_string *lname; /**< Interned name */
 	fetch_about_handler handler; /**< handler for the url */
 	bool hidden; /**< If entry should be hidden in listing */
@@ -100,102 +100,102 @@ struct about_handlers {
 /**
  * issue fetch callbacks with locking
  */
-static bool
-fetch_about_send_callback(const fetch_msg *msg, struct fetch_about_context *ctx)
+স্থির bool
+fetch_about_send_callback(ধ্রুবক fetch_বার্তা *বার্তা, কাঠামো fetch_about_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(বার্তা, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	ফেরত ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_finished(struct fetch_about_context *ctx)
+fetch_about_send_finished(কাঠামো fetch_about_context *ctx)
 {
-	fetch_msg msg;
-	msg.type = FETCH_FINISHED;
-	return fetch_about_send_callback(&msg, ctx);
+	fetch_বার্তা বার্তা;
+	বার্তা.type = FETCH_FINISHED;
+	ফেরত fetch_about_send_callback(&বার্তা, ctx);
 }
 
 /* exported interface documented in about/private.h */
-bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code)
+bool fetch_about_set_http_code(কাঠামো fetch_about_context *ctx, long code)
 {
 	fetch_set_http_code(ctx->fetchh, code);
 
-	return ctx->aborted;
+	ফেরত ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_send_header(কাঠামো fetch_about_context *ctx, ধ্রুবক অক্ষর *fmt, ...)
 {
-	char header[64];
-	fetch_msg msg;
+	অক্ষর header[64];
+	fetch_বার্তা বার্তা;
 	va_list ap;
 
 	va_start(ap, fmt);
 
-	vsnprintf(header, sizeof header, fmt, ap);
+	vsnprintf(header, আকার header, fmt, ap);
 
 	va_end(ap);
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = strlen(header);
+	বার্তা.type = FETCH_HEADER;
+	বার্তা.তথ্য.header_or_তথ্য.buf = (ধ্রুবক uint8_t *) header;
+	বার্তা.তথ্য.header_or_তথ্য.len = strlen(header);
 
-	return fetch_about_send_callback(&msg, ctx);
+	ফেরত fetch_about_send_callback(&বার্তা, ctx);
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len)
+fetch_about_senddata(কাঠামো fetch_about_context *ctx, ধ্রুবক uint8_t *তথ্য, size_t তথ্য_len)
 {
-	fetch_msg msg;
+	fetch_বার্তা বার্তা;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = data;
-	msg.data.header_or_data.len = data_len;
+	বার্তা.type = FETCH_তথ্য;
+	বার্তা.তথ্য.header_or_তথ্য.buf = তথ্য;
+	বার্তা.তথ্য.header_or_তথ্য.len = তথ্য_len;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		return NSERROR_INVALID;
+	যদি (fetch_about_send_callback(&বার্তা, ctx)) {
+		ফেরত NSERROR_INVALID;
 	}
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_ssenddataf(কাঠামো fetch_about_context *ctx, ধ্রুবক অক্ষর *fmt, ...)
 {
-	char buffer[1024];
-	char *dbuff;
-	fetch_msg msg;
+	অক্ষর বাফার[1024];
+	অক্ষর *dbuff;
+	fetch_বার্তা বার্তা;
 	va_list ap;
-	int slen;
+	পূর্ণসংখ্যা slen;
 
 	va_start(ap, fmt);
 
-	slen = vsnprintf(buffer, sizeof(buffer), fmt, ap);
+	slen = vsnprintf(বাফার, আকার(বাফার), fmt, ap);
 
 	va_end(ap);
 
-	if (slen < (int)sizeof(buffer)) {
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buffer;
-		msg.data.header_or_data.len = slen;
+	যদি (slen < (পূর্ণসংখ্যা)আকার(বাফার)) {
+		বার্তা.type = FETCH_তথ্য;
+		বার্তা.তথ্য.header_or_তথ্য.buf = (ধ্রুবক uint8_t *) বাফার;
+		বার্তা.তথ্য.header_or_তথ্য.len = slen;
 
-		if (fetch_about_send_callback(&msg, ctx)) {
-			return NSERROR_INVALID;
+		যদি (fetch_about_send_callback(&বার্তা, ctx)) {
+			ফেরত NSERROR_INVALID;
 		}
 
-		return NSERROR_OK;
+		ফেরত NSERROR_OK;
 	}
 
 	dbuff = malloc(slen + 1);
-	if (dbuff == NULL) {
-		return NSERROR_NOSPACE;
+	যদি (dbuff == ফাঁকা) {
+		ফেরত NSERROR_NOSPACE;
 	}
 
 	va_start(ap, fmt);
@@ -204,71 +204,71 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 
 	va_end(ap);
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *)dbuff;
-	msg.data.header_or_data.len = slen;
+	বার্তা.type = FETCH_তথ্য;
+	বার্তা.তথ্য.header_or_তথ্য.buf = (ধ্রুবক uint8_t *)dbuff;
+	বার্তা.তথ্য.header_or_তথ্য.len = slen;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		free(dbuff);
-		return NSERROR_INVALID;
+	যদি (fetch_about_send_callback(&বার্তা, ctx)) {
+		মুক্ত(dbuff);
+		ফেরত NSERROR_INVALID;
 	}
 
-	free(dbuff);
-	return NSERROR_OK;
+	মুক্ত(dbuff);
+	ফেরত NSERROR_OK;
 }
 
 
 /* exported interface documented in about/private.h */
-nsurl *fetch_about_get_url(struct fetch_about_context *ctx)
+nsurl *fetch_about_get_url(কাঠামো fetch_about_context *ctx)
 {
-	return ctx->url;
+	ফেরত ctx->url;
 }
 
 
 /* exported interface documented in about/private.h */
-const struct fetch_multipart_data *
-fetch_about_get_multipart(struct fetch_about_context *ctx)
+ধ্রুবক কাঠামো fetch_multipart_তথ্য *
+fetch_about_get_multipart(কাঠামো fetch_about_context *ctx)
 {
-	return ctx->multipart;
+	ফেরত ctx->multipart;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_srverror(struct fetch_about_context *ctx)
+bool fetch_about_srverror(কাঠামো fetch_about_context *ctx)
 {
 	nserror res;
 
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_INTERNAL_SERVER_ERROR);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		return false;
+	যদি (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+		ফেরত false;
 
 	res = fetch_about_ssenddataf(ctx, "%s 500 %s",
 				     messages_get("FetchErrorCode"),
 				     messages_get("HTTP500"));
-	if (res != NSERROR_OK) {
-		return false;
+	যদি (res != NSERROR_OK) {
+		ফেরত false;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ফেরত true;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
+bool fetch_about_redirect(কাঠামো fetch_about_context *ctx, ধ্রুবক অক্ষর *target)
 {
-	fetch_msg msg;
+	fetch_বার্তা বার্তা;
 
 	/* content is going to return redirect */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_FOUND);
 
-	msg.type = FETCH_REDIRECT;
-	msg.data.redirect = target;
+	বার্তা.type = FETCH_REDIRECT;
+	বার্তা.তথ্য.redirect = target;
 
-	return fetch_about_send_callback(&msg, ctx);
+	ফেরত fetch_about_send_callback(&বার্তা, ctx);
 }
 
 /**
@@ -277,9 +277,9 @@ bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
+স্থির bool fetch_about_credits_handler(কাঠামো fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:credits.html");
+	ফেরত fetch_about_redirect(ctx, "resource:credits.html");
 }
 
 
@@ -289,9 +289,9 @@ static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
+স্থির bool fetch_about_licence_handler(কাঠামো fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:licence.html");
+	ফেরত fetch_about_redirect(ctx, "resource:licence.html");
 }
 
 
@@ -301,9 +301,9 @@ static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
+স্থির bool fetch_about_logo_handler(কাঠামো fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:netsurf.png");
+	ফেরত fetch_about_redirect(ctx, "resource:netsurf.png");
 }
 
 
@@ -313,86 +313,86 @@ static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_welcome_handler(struct fetch_about_context *ctx)
+স্থির bool fetch_about_welcome_handler(কাঠামো fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:welcome.html");
+	ফেরত fetch_about_redirect(ctx, "resource:welcome.html");
 }
 
 
 /* Forward declaration because this handler requires the handler table. */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx);
+স্থির bool fetch_about_about_handler(কাঠামো fetch_about_context *ctx);
 
 /**
  * List of about paths and their handlers
  */
-struct about_handlers about_handler_list[] = {
+কাঠামো about_handlers about_handler_list[] = {
 	{
 		"credits",
 		SLEN("credits"),
-		NULL,
+		ফাঁকা,
 		fetch_about_credits_handler,
 		false
 	},
 	{
 		"licence",
 		SLEN("licence"),
-		NULL,
+		ফাঁকা,
 		fetch_about_licence_handler,
 		false
 	},
 	{
 		"license",
 		SLEN("license"),
-		NULL,
+		ফাঁকা,
 		fetch_about_licence_handler,
 		true
 	},
 	{
 		"welcome",
 		SLEN("welcome"),
-		NULL,
+		ফাঁকা,
 		fetch_about_welcome_handler,
 		false
 	},
 	{
 		"config",
 		SLEN("config"),
-		NULL,
+		ফাঁকা,
 		fetch_about_config_handler,
 		false
 	},
 	{
 		"Choices",
 		SLEN("Choices"),
-		NULL,
+		ফাঁকা,
 		fetch_about_choices_handler,
 		false
 	},
 	{
 		"testament",
 		SLEN("testament"),
-		NULL,
+		ফাঁকা,
 		fetch_about_testament_handler,
 		false
 	},
 	{
 		"about",
 		SLEN("about"),
-		NULL,
+		ফাঁকা,
 		fetch_about_about_handler,
 		true
 	},
 	{
 		"nscolours.css",
 		SLEN("nscolours.css"),
-		NULL,
+		ফাঁকা,
 		fetch_about_nscolours_handler,
 		true
 	},
 	{
 		"logo",
 		SLEN("logo"),
-		NULL,
+		ফাঁকা,
 		fetch_about_logo_handler,
 		true
 	},
@@ -400,7 +400,7 @@ struct about_handlers about_handler_list[] = {
 		/* details about the image cache */
 		"imagecache",
 		SLEN("imagecache"),
-		NULL,
+		ফাঁকা,
 		fetch_about_imagecache_handler,
 		true
 	},
@@ -408,7 +408,7 @@ struct about_handlers about_handler_list[] = {
 		/* The default blank page */
 		"blank",
 		SLEN("blank"),
-		NULL,
+		ফাঁকা,
 		fetch_about_blank_handler,
 		true
 	},
@@ -416,7 +416,7 @@ struct about_handlers about_handler_list[] = {
 		/* details about a certificate */
 		"certificate",
 		SLEN("certificate"),
-		NULL,
+		ফাঁকা,
 		fetch_about_certificate_handler,
 		true
 	},
@@ -424,35 +424,35 @@ struct about_handlers about_handler_list[] = {
 		/* chart generator */
 		"chart",
 		SLEN("chart"),
-		NULL,
+		ফাঁকা,
 		fetch_about_chart_handler,
 		true
 	},
 	{
 		"query/auth",
 		SLEN("query/auth"),
-		NULL,
+		ফাঁকা,
 		fetch_about_query_auth_handler,
 		true
 	},
 	{
 		"query/ssl",
 		SLEN("query/ssl"),
-		NULL,
+		ফাঁকা,
 		fetch_about_query_privacy_handler,
 		true
 	},
 	{
 		"query/timeout",
 		SLEN("query/timeout"),
-		NULL,
+		ফাঁকা,
 		fetch_about_query_timeout_handler,
 		true
 	},
 	{
 		"query/fetcherror",
 		SLEN("query/fetcherror"),
-		NULL,
+		ফাঁকা,
 		fetch_about_query_fetcherror_handler,
 		true
 	},
@@ -460,14 +460,14 @@ struct about_handlers about_handler_list[] = {
 		/* web search using the configured provider */
 		"websearch",
 		SLEN("websearch"),
-		NULL,
+		ফাঁকা,
 		fetch_about_websearch_handler,
 		true
 	}
 };
 
 #define about_handler_list_len \
-	(sizeof(about_handler_list) / sizeof(struct about_handlers))
+	(আকার(about_handler_list) / আকার(কাঠামো about_handlers))
 
 /**
  * List all the valid about: paths available
@@ -475,17 +475,17 @@ struct about_handlers about_handler_list[] = {
  * \param ctx The fetch context.
  * \return true for sucess or false to generate an error.
  */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx)
+স্থির bool fetch_about_about_handler(কাঠামো fetch_about_context *ctx)
 {
 	nserror res;
-	unsigned int abt_loop = 0;
+	unsigned পূর্ণসংখ্যা abt_loop = 0;
 
 	/* content is going to return ok */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_OK);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_about_config_handler_aborted;
+	যদি (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+		যাও fetch_about_config_handler_aborted;
 
 	res = fetch_about_ssenddataf(ctx,
 			"<html>\n<head>\n"
@@ -496,51 +496,51 @@ static bool fetch_about_about_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class =\"ns-border\">List of NetSurf pages</h1>\n"
 			"<ul>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	যদি (res != NSERROR_OK) {
+		যাও fetch_about_config_handler_aborted;
 	}
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	জন্য (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 
 		/* Skip over hidden entries */
-		if (about_handler_list[abt_loop].hidden)
-			continue;
+		যদি (about_handler_list[abt_loop].hidden)
+			চালু;
 
 		res = fetch_about_ssenddataf(ctx,
 			       "<li><a href=\"about:%s\">about:%s</a></li>\n",
 			       about_handler_list[abt_loop].name,
 			       about_handler_list[abt_loop].name);
-		if (res != NSERROR_OK) {
-			goto fetch_about_config_handler_aborted;
+		যদি (res != NSERROR_OK) {
+			যাও fetch_about_config_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</ul>\n</body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	যদি (res != NSERROR_OK) {
+		যাও fetch_about_config_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ফেরত true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	ফেরত false;
 }
 
-static bool
-fetch_about_404_handler(struct fetch_about_context *ctx)
+স্থির bool
+fetch_about_404_handler(কাঠামো fetch_about_context *ctx)
 {
 	nserror res;
-	const char *title;
+	ধ্রুবক অক্ষর *title;
 
 	/* content is going to return 404 */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_NOT_FOUND);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	যদি (fetch_about_send_header(ctx,
 			"Content-Type: text/html; charset=utf-8")) {
-		return false;
+		ফেরত false;
 	}
 
 	title = messages_get("HTTP404");
@@ -556,54 +556,54 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
 		"</body>\n</html>\n",
 		title, title, messages_get("FetchErrorCode"), 404,
 		messages_get("FetchFile"),nsurl_access(ctx->url));
-	if (res != NSERROR_OK) {
-		return false;
+	যদি (res != NSERROR_OK) {
+		ফেরত false;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ফেরত true;
 }
 
 /**
  * callback to initialise the about scheme fetcher.
  */
-static bool fetch_about_initialise(lwc_string *scheme)
+স্থির bool fetch_about_initialise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
+	unsigned পূর্ণসংখ্যা abt_loop = 0;
 	lwc_error error;
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	জন্য (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		error = lwc_intern_string(about_handler_list[abt_loop].name,
 					about_handler_list[abt_loop].name_len,
 					&about_handler_list[abt_loop].lname);
-		if (error != lwc_error_ok) {
-			while (abt_loop-- != 0) {
+		যদি (error != lwc_error_ok) {
+			যখন (abt_loop-- != 0) {
 				lwc_string_unref(about_handler_list[abt_loop].lname);
 			}
-			return false;
+			ফেরত false;
 		}
 	}
 
-	return true;
+	ফেরত true;
 }
 
 
 /**
  * callback to finalise the about scheme fetcher.
  */
-static void fetch_about_finalise(lwc_string *scheme)
+স্থির শূন্য fetch_about_finalise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	unsigned পূর্ণসংখ্যা abt_loop = 0;
+	জন্য (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		lwc_string_unref(about_handler_list[abt_loop].lname);
 	}
 }
 
 
-static bool fetch_about_can_fetch(const nsurl *url)
+স্থির bool fetch_about_can_fetch(ধ্রুবক nsurl *url)
 {
-	return true;
+	ফেরত true;
 }
 
 
@@ -615,34 +615,34 @@ static bool fetch_about_can_fetch(const nsurl *url)
  * \param post_multipart post data in multipart format, owned by the llcache
  *                        object hence valid the entire lifetime of the fetch.
  */
-static void *
-fetch_about_setup(struct fetch *fetchh,
+স্থির শূন্য *
+fetch_about_setup(কাঠামো fetch *fetchh,
 		  nsurl *url,
 		  bool only_2xx,
 		  bool downgrade_tls,
-		  const char *post_urlenc,
-		  const struct fetch_multipart_data *post_multipart,
-		  const char **headers)
+		  ধ্রুবক অক্ষর *post_urlenc,
+		  ধ্রুবক কাঠামো fetch_multipart_তথ্য *post_multipart,
+		  ধ্রুবক অক্ষর **headers)
 {
-	struct fetch_about_context *ctx;
-	unsigned int handler_loop;
+	কাঠামো fetch_about_context *ctx;
+	unsigned পূর্ণসংখ্যা handler_loop;
 	lwc_string *path;
 	bool match;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, আকার(*ctx));
+	যদি (ctx == ফাঁকা)
+		ফেরত ফাঁকা;
 
 	path = nsurl_get_component(url, NSURL_PATH);
 
-	for (handler_loop = 0;
+	জন্য (handler_loop = 0;
 	     handler_loop < about_handler_list_len;
 	     handler_loop++) {
-		if (lwc_string_isequal(path,
+		যদি (lwc_string_isequal(path,
 				       about_handler_list[handler_loop].lname,
 				       &match) == lwc_error_ok && match) {
 			ctx->handler = about_handler_list[handler_loop].handler;
-			break;
+			বিরতি;
 		}
 	}
 
@@ -652,38 +652,38 @@ fetch_about_setup(struct fetch *fetchh,
 	ctx->url = nsurl_ref(url);
 	ctx->multipart = post_multipart;
 
-	RING_INSERT(ring, ctx);
+	RING_ঢোকাও(ring, ctx);
 
-	return ctx;
+	ফেরত ctx;
 }
 
 
 /**
  * callback to free a about scheme fetch
  */
-static void fetch_about_free(void *ctx)
+স্থির শূন্য fetch_about_free(শূন্য *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	কাঠামো fetch_about_context *c = ctx;
 	nsurl_unref(c->url);
-	free(ctx);
+	মুক্ত(ctx);
 }
 
 
 /**
  * callback to start an about scheme fetch
  */
-static bool fetch_about_start(void *ctx)
+স্থির bool fetch_about_start(শূন্য *ctx)
 {
-	return true;
+	ফেরত true;
 }
 
 
 /**
  * callback to abort a about fetch
  */
-static void fetch_about_abort(void *ctx)
+স্থির শূন্য fetch_about_abort(শূন্য *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	কাঠামো fetch_about_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -696,12 +696,12 @@ static void fetch_about_abort(void *ctx)
 /**
  * callback to poll for additional about fetch contents
  */
-static void fetch_about_poll(lwc_string *scheme)
+স্থির শূন্য fetch_about_poll(lwc_string *scheme)
 {
-	struct fetch_about_context *c, *save_ring = NULL;
+	কাঠামো fetch_about_context *c, *save_ring = ফাঁকা;
 
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	যখন (ring != ফাঁকা) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -712,17 +712,17 @@ static void fetch_about_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		যদি (c->locked == true) {
+			RING_ঢোকাও(save_ring, c);
+			চালু;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		যদি (c->aborted == false) {
 			/* about fetches can be processed in one go */
-			if (c->handler == NULL) {
+			যদি (c->handler == ফাঁকা) {
 				fetch_about_404_handler(c);
-			} else {
+			} অন্যথা {
 				c->handler(c);
 			}
 		}
@@ -739,19 +739,19 @@ static void fetch_about_poll(lwc_string *scheme)
 }
 
 
-nserror fetch_about_register(void)
+nserror fetch_about_register(শূন্য)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_about);
-	const struct fetcher_operation_table fetcher_ops = {
+	ধ্রুবক কাঠামো fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_about_initialise,
 		.acceptable = fetch_about_can_fetch,
 		.setup = fetch_about_setup,
 		.start = fetch_about_start,
 		.abort = fetch_about_abort,
-		.free = fetch_about_free,
+		.মুক্ত = fetch_about_free,
 		.poll = fetch_about_poll,
 		.finalise = fetch_about_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ফেরত fetcher_add(scheme, &fetcher_ops);
 }

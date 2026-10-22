@@ -31,7 +31,7 @@
  *
  * \return NSERROR_OK on success else appropriate error code.
  */
-nserror textplain_init(void);
+nserror textplain_init(শূন্য);
 
 
 #endif

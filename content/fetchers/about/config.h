@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_config_handler(struct fetch_about_context *ctx);
+bool fetch_about_config_handler(কাঠামো fetch_about_context *ctx);
 
 #endif

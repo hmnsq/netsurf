@@ -19,88 +19,88 @@
 #ifndef NETSURF_CSS_UTILS_H_
 #define NETSURF_CSS_UTILS_H_
 
-#include <libcss/libcss.h>
+#অন্তর্ভাব <libcss/libcss.h>
 
-#include "netsurf/css.h"
+#অন্তর্ভাব "netsurf/css.h"
 
 /** DPI of the screen, in fixed point units */
-extern css_fixed nscss_screen_dpi;
+বাহ্যিক css_fixed nscss_screen_dpi;
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display(
-		const css_computed_style *style, bool root)
+স্থির অন্তঃরেখ uint8_t ns_computed_display(
+		ধ্রুবক css_computed_style *style, bool মূল)
 {
-	uint8_t value = css_computed_display(style, root);
+	uint8_t মান = css_computed_display(style, মূল);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	নির্বাচন (মান) {
+	ক্ষেত্র CSS_DISPLAY_GRID:
+		ফেরত CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	ক্ষেত্র CSS_DISPLAY_INLINE_GRID:
+		ফেরত CSS_DISPLAY_INLINE_BLOCK;
 
-	default:
-		break;
+	পূর্বনির্ধারিত:
+		বিরতি;
 	}
 
-	return value;
+	ফেরত মান;
 }
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display_static(
-		const css_computed_style *style)
+স্থির অন্তঃরেখ uint8_t ns_computed_display_static(
+		ধ্রুবক css_computed_style *style)
 {
-	uint8_t value = css_computed_display_static(style);
+	uint8_t মান = css_computed_display_static(style);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	নির্বাচন (মান) {
+	ক্ষেত্র CSS_DISPLAY_GRID:
+		ফেরত CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	ক্ষেত্র CSS_DISPLAY_INLINE_GRID:
+		ফেরত CSS_DISPLAY_INLINE_BLOCK;
 
-	default:
-		break;
+	পূর্বনির্ধারিত:
+		বিরতি;
 	}
 
-	return value;
+	ফেরত মান;
 }
 
-static inline uint8_t ns_computed_min_height(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+স্থির অন্তঃরেখ uint8_t ns_computed_min_height(
+		ধ্রুবক css_computed_style *style,
+		css_fixed *দৈর্ঘ্য, css_unit *unit)
 {
-	uint8_t value = css_computed_min_height(style, length, unit);
+	uint8_t মান = css_computed_min_height(style, দৈর্ঘ্য, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
-		value = CSS_MIN_HEIGHT_SET;
-		*length = 0;
+	যদি (মান == CSS_MIN_HEIGHT_AUTO) {
+		মান = CSS_MIN_HEIGHT_SET;
+		*দৈর্ঘ্য = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	ফেরত মান;
 }
 
 
-static inline uint8_t ns_computed_min_width(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+স্থির অন্তঃরেখ uint8_t ns_computed_min_width(
+		ধ্রুবক css_computed_style *style,
+		css_fixed *দৈর্ঘ্য, css_unit *unit)
 {
-	uint8_t value = css_computed_min_width(style, length, unit);
+	uint8_t মান = css_computed_min_width(style, দৈর্ঘ্য, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
-		value = CSS_MIN_WIDTH_SET;
-		*length = 0;
+	যদি (মান == CSS_MIN_WIDTH_AUTO) {
+		মান = CSS_MIN_WIDTH_SET;
+		*দৈর্ঘ্য = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	ফেরত মান;
 }
 
 #endif

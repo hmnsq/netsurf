@@ -23,54 +23,54 @@
  * plain text content handling implementation.
  */
 
-#include <string.h>
-#include <parserutils/input/inputstream.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <parserutils/input/inputstream.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/utf8.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/keypress.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/plotters.h"
-#include "netsurf/layout.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
-#include "content/handlers/css/utils.h"
-#include "desktop/selection.h"
-#include "desktop/gui_internal.h"
+#অন্তর্ভাব "utils/errors.h"
+#অন্তর্ভাব "utils/corestrings.h"
+#অন্তর্ভাব "utils/http.h"
+#অন্তর্ভাব "utils/log.h"
+#অন্তর্ভাব "utils/messages.h"
+#অন্তর্ভাব "utils/utils.h"
+#অন্তর্ভাব "utils/utf8.h"
+#অন্তর্ভাব "utils/nsoption.h"
+#অন্তর্ভাব "netsurf/content.h"
+#অন্তর্ভাব "netsurf/keypress.h"
+#অন্তর্ভাব "netsurf/browser_window.h"
+#অন্তর্ভাব "netsurf/plotters.h"
+#অন্তর্ভাব "netsurf/layout.h"
+#অন্তর্ভাব "content/content_protected.h"
+#অন্তর্ভাব "content/content_factory.h"
+#অন্তর্ভাব "content/hlcache.h"
+#অন্তর্ভাব "content/textsearch.h"
+#অন্তর্ভাব "content/handlers/css/utils.h"
+#অন্তর্ভাব "desktop/selection.h"
+#অন্তর্ভাব "desktop/gui_internal.h"
 
-#include "text/textplain.h"
+#অন্তর্ভাব "text/textplain.h"
 
-struct textplain_line {
+কাঠামো textplain_সারি {
 	size_t	start;
-	size_t	length;
+	size_t	দৈর্ঘ্য;
 };
 
 /**
  * plain text content
  */
-typedef struct textplain_content {
-	struct content base;
+প্রকারলেখ কাঠামো textplain_content {
+	কাঠামো content base;
 
 	lwc_string *encoding;
-	void *inputstream;
-	char *utf8_data;
-	size_t utf8_data_size;
-	size_t utf8_data_allocated;
-	unsigned long physical_line_count;
-	struct textplain_line *physical_line;
-	int formatted_width;
-	struct browser_window *bw;
+	শূন্য *inputstream;
+	অক্ষর *utf8_তথ্য;
+	size_t utf8_তথ্য_আকার;
+	size_t utf8_তথ্য_allocated;
+	unsigned long physical_সারি_গুনতি;
+	কাঠামো textplain_সারি *physical_সারি;
+	পূর্ণসংখ্যা formatted_width;
+	কাঠামো browser_window *bw;
 
-	struct selection *sel; /** Selection state */
+	কাঠামো selection *sel; /** Selection state */
 
 } textplain_content;
 
@@ -79,29 +79,29 @@ typedef struct textplain_content {
 #define MARGIN 4
 
 #define TAB_WIDTH 8  /* must be power of 2 currently */
-#define TEXT_SIZE 10 * PLOT_STYLE_SCALE  /* Unscaled text size in pt */
+#define TEXT_আকার 10 * PLOT_STYLE_SCALE  /* Unscaled text size in pt */
 
-static plot_font_style_t textplain_style = {
+স্থির plot_font_style_t textplain_style = {
 	.family = PLOT_FONT_FAMILY_MONOSPACE,
-	.size = TEXT_SIZE,
+	.আকার_2 = TEXT_আকার,
 	.weight = 400,
 	.flags = FONTF_NONE,
 	.background = 0xffffff,
 	.foreground = 0x000000,
 };
 
-static int textplain_tab_width = 256;  /* try for a sensible default */
+স্থির পূর্ণসংখ্যা textplain_tab_width = 256;  /* try for a sensible default */
 
-static lwc_string *textplain_default_charset;
+স্থির lwc_string *textplain_default_charset;
 
 
 /**
  * Clean up after the text content handler
  */
-static void textplain_fini(void)
+স্থির শূন্য textplain_fini(শূন্য)
 {
 	lwc_string_unref(textplain_default_charset);
-	textplain_default_charset = NULL;
+	textplain_default_charset = ফাঁকা;
 }
 
 
@@ -116,13 +116,13 @@ static void textplain_fini(void)
  * thus preserving whatever charset information we decided on in
  * textplain_create.
  */
-static parserutils_error
-textplain_charset_hack(const uint8_t *data,
+স্থির parserutils_error
+textplain_charset_hack(ধ্রুবক uint8_t *তথ্য,
 		       size_t len,
 		       uint16_t *mibenum,
 		       uint32_t *source)
 {
-	return PARSERUTILS_OK;
+	ফেরত PARSERUTILS_OK;
 }
 
 
@@ -133,174 +133,174 @@ textplain_charset_hack(const uint8_t *data,
  * \param[in] encoding the encoding of the content.
  * \return NSERROR_OK else appropriate error code.
  */
-static nserror
+স্থির nserror
 textplain_create_internal(textplain_content *c, lwc_string *encoding)
 {
-	char *utf8_data;
+	অক্ষর *utf8_তথ্য;
 	parserutils_inputstream *stream;
 	parserutils_error error;
 
-	textplain_style.size = (nsoption_int(font_size) * PLOT_STYLE_SCALE) / 10;
+	textplain_style.আকার_2 = (nsoption_int(font_আকার) * PLOT_STYLE_SCALE) / 10;
 
-	utf8_data = malloc(CHUNK);
-	if (utf8_data == NULL)
-		goto no_memory;
+	utf8_তথ্য = malloc(CHUNK);
+	যদি (utf8_তথ্য == ফাঁকা)
+		যাও no_memory;
 
-	error = parserutils_inputstream_create(lwc_string_data(encoding), 0,
+	error = parserutils_inputstream_create(lwc_string_তথ্য(encoding), 0,
 					       textplain_charset_hack, &stream);
-	if (error == PARSERUTILS_BADENCODING) {
+	যদি (error == PARSERUTILS_BADENCODING) {
 		/* Fall back to Windows-1252 */
 		error = parserutils_inputstream_create("Windows-1252", 0,
 					textplain_charset_hack, &stream);
 	}
-	if (error != PARSERUTILS_OK) {
-		free(utf8_data);
-		goto no_memory;
+	যদি (error != PARSERUTILS_OK) {
+		মুক্ত(utf8_তথ্য);
+		যাও no_memory;
 	}
 
 	c->encoding = lwc_string_ref(encoding);
 	c->inputstream = stream;
-	c->utf8_data = utf8_data;
-	c->utf8_data_size = 0;
-	c->utf8_data_allocated = CHUNK;
-	c->physical_line = 0;
-	c->physical_line_count = 0;
+	c->utf8_তথ্য = utf8_তথ্য;
+	c->utf8_তথ্য_আকার = 0;
+	c->utf8_তথ্য_allocated = CHUNK;
+	c->physical_সারি = 0;
+	c->physical_সারি_গুনতি = 0;
 	c->formatted_width = 0;
-	c->bw = NULL;
-	c->sel = selection_create((struct content *)c);
+	c->bw = ফাঁকা;
+	c->sel = selection_create((কাঠামো content *)c);
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 
 no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
+	content_broadcast_error(&c->base, NSERROR_NOMEM, ফাঁকা);
 
-	return NSERROR_NOMEM;
+	ফেরত NSERROR_NOMEM;
 }
 
 
 /**
  * Create a CONTENT_TEXTPLAIN.
  */
-static nserror
-textplain_create(const content_handler *handler,
+স্থির nserror
+textplain_create(ধ্রুবক content_handler *handler,
 		 lwc_string *imime_type,
-		 const struct http_parameter *params,
+		 ধ্রুবক কাঠামো http_parameter *params,
 		 llcache_handle *llcache,
-		 const char *fallback_charset,
+		 ধ্রুবক অক্ষর *fallback_charset,
 		 bool quirks,
-		 struct content **c)
+		 কাঠামো content **c)
 {
 	textplain_content *text;
 	nserror error;
 	lwc_string *encoding;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL) {
-		return NSERROR_NOMEM;
+	text = calloc(1, আকার(textplain_content));
+	যদি (text == ফাঁকা) {
+		ফেরত NSERROR_NOMEM;
 	}
 
 	error = content__init(&text->base, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(text);
-		return error;
+	যদি (error != NSERROR_OK) {
+		মুক্ত(text);
+		ফেরত error;
 	}
 
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
 					      &encoding);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		encoding = lwc_string_ref(textplain_default_charset);
 	}
 
 	error = textplain_create_internal(text, encoding);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		lwc_string_unref(encoding);
-		free(text);
-		return error;
+		মুক্ত(text);
+		ফেরত error;
 	}
 
 	lwc_string_unref(encoding);
 
-	*c = (struct content *) text;
+	*c = (কাঠামো content *) text;
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
 /**
  * copy utf8 encoded data
  */
-static bool
-textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
+স্থির bool
+textplain_copy_utf8_তথ্য(textplain_content *c, ধ্রুবক uint8_t *buf, size_t len)
 {
-	if (c->utf8_data_size + len >= c->utf8_data_allocated) {
+	যদি (c->utf8_তথ্য_আকার + len >= c->utf8_তথ্য_allocated) {
 		/* Compute next multiple of chunk above the required space */
 		size_t allocated;
-		char *utf8_data;
+		অক্ষর *utf8_তথ্য;
 
-		allocated = (c->utf8_data_size + len + CHUNK - 1) & ~(CHUNK - 1);
-		utf8_data = realloc(c->utf8_data, allocated);
-		if (utf8_data == NULL)
-			return false;
+		allocated = (c->utf8_তথ্য_আকার + len + CHUNK - 1) & ~(CHUNK - 1);
+		utf8_তথ্য = realloc(c->utf8_তথ্য, allocated);
+		যদি (utf8_তথ্য == ফাঁকা)
+			ফেরত false;
 
-		c->utf8_data = utf8_data;
-		c->utf8_data_allocated = allocated;
+		c->utf8_তথ্য = utf8_তথ্য;
+		c->utf8_তথ্য_allocated = allocated;
 	}
 
-	memcpy(c->utf8_data + c->utf8_data_size, buf, len);
-	c->utf8_data_size += len;
+	memcpy(c->utf8_তথ্য + c->utf8_তথ্য_আকার, buf, len);
+	c->utf8_তথ্য_আকার += len;
 
-	return true;
+	ফেরত true;
 }
 
 
 /**
  * drain input
  */
-static bool
-textplain_drain_input(textplain_content *c,
+স্থির bool
+textplain_drain_প্রবেশ(textplain_content *c,
 		      parserutils_inputstream *stream,
 		      parserutils_error terminator)
 {
-	static const uint8_t *u_fffd = (const uint8_t *) "\xef\xbf\xbd";
-	const uint8_t *ch;
+	স্থির ধ্রুবক uint8_t *u_fffd = (ধ্রুবক uint8_t *) "\xef\xbf\xbd";
+	ধ্রুবক uint8_t *ch;
 	size_t chlen, offset = 0;
 
-	while (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
+	যখন (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
 	       terminator) {
 		/* Replace all instances of NUL with U+FFFD */
-		if (chlen == 1 && *ch == 0) {
-			if (offset > 0) {
+		যদি (chlen == 1 && *ch == 0) {
+			যদি (offset > 0) {
 				/* Obtain pointer to start of input data */
 				parserutils_inputstream_peek(stream, 0,
 							     &ch, &chlen);
 				/* Copy from it up to the start of the NUL */
-				if (textplain_copy_utf8_data(c, ch,
+				যদি (textplain_copy_utf8_তথ্য(c, ch,
 							     offset) == false)
-					return false;
+					ফেরত false;
 			}
 
 			/* Emit U+FFFD */
-			if (textplain_copy_utf8_data(c, u_fffd, 3) == false)
-				return false;
+			যদি (textplain_copy_utf8_তথ্য(c, u_fffd, 3) == false)
+				ফেরত false;
 
 			/* Advance inputstream past the NUL we just read */
 			parserutils_inputstream_advance(stream, offset + 1);
 			/* Reset the read offset */
 			offset = 0;
-		} else {
+		} অন্যথা {
 			/* Accumulate input */
 			offset += chlen;
 
-			if (offset > CHUNK) {
+			যদি (offset > CHUNK) {
 				/* Obtain pointer to start of input data */
 				parserutils_inputstream_peek(stream, 0,
 							     &ch, &chlen);
 
 				/* Emit the data we've read */
-				if (textplain_copy_utf8_data(c, ch,
+				যদি (textplain_copy_utf8_তথ্য(c, ch,
 							     offset) == false)
-					return false;
+					ফেরত false;
 
 				/* Advance the inputstream */
 				parserutils_inputstream_advance(stream, offset);
@@ -310,73 +310,73 @@ textplain_drain_input(textplain_content *c,
 		}
 	}
 
-	if (offset > 0) {
+	যদি (offset > 0) {
 		/* Obtain pointer to start of input data */
 		parserutils_inputstream_peek(stream, 0, &ch, &chlen);
 		/* Emit any data remaining */
-		if (textplain_copy_utf8_data(c, ch, offset) == false)
-			return false;
+		যদি (textplain_copy_utf8_তথ্য(c, ch, offset) == false)
+			ফেরত false;
 
 		/* Advance the inputstream past the data we've read */
 		parserutils_inputstream_advance(stream, offset);
 	}
 
-	return true;
+	ফেরত true;
 }
 
 
 /**
  * Process data for CONTENT_TEXTPLAIN.
  */
-static bool
-textplain_process_data(struct content *c, const char *data, unsigned int size)
+স্থির bool
+textplain_process_তথ্য(কাঠামো content *c, ধ্রুবক অক্ষর *তথ্য, unsigned পূর্ণসংখ্যা আকার_2)
 {
 	textplain_content *text = (textplain_content *) c;
 	parserutils_inputstream *stream = text->inputstream;
 	parserutils_error error;
 
 	error = parserutils_inputstream_append(stream,
-					       (const uint8_t *) data, size);
-	if (error != PARSERUTILS_OK) {
-		goto no_memory;
+					       (ধ্রুবক uint8_t *) তথ্য, আকার_2);
+	যদি (error != PARSERUTILS_OK) {
+		যাও no_memory;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_NEEDDATA) == false)
-		goto no_memory;
+	যদি (textplain_drain_প্রবেশ(text, stream, PARSERUTILS_NEEDDATA) == false)
+		যাও no_memory;
 
-	return true;
+	ফেরত true;
 
 no_memory:
-	content_broadcast_error(c, NSERROR_NOMEM, NULL);
-	return false;
+	content_broadcast_error(c, NSERROR_NOMEM, ফাঁকা);
+	ফেরত false;
 }
 
 
 /**
  * Convert a CONTENT_TEXTPLAIN for display.
  */
-static bool textplain_convert(struct content *c)
+স্থির bool textplain_convert(কাঠামো content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 	parserutils_inputstream *stream = text->inputstream;
 	parserutils_error error;
 
-	error = parserutils_inputstream_append(stream, NULL, 0);
-	if (error != PARSERUTILS_OK) {
-		return false;
+	error = parserutils_inputstream_append(stream, ফাঁকা, 0);
+	যদি (error != PARSERUTILS_OK) {
+		ফেরত false;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_EOF) == false)
-		return false;
+	যদি (textplain_drain_প্রবেশ(text, stream, PARSERUTILS_EOF) == false)
+		ফেরত false;
 
 	parserutils_inputstream_destroy(stream);
-	text->inputstream = NULL;
+	text->inputstream = ফাঁকা;
 
 	content_set_ready(c);
 	content_set_done(c);
 	content_set_status(c, messages_get("Done"));
 
-	return true;
+	ফেরত true;
 }
 
 
@@ -385,30 +385,30 @@ static bool textplain_convert(struct content *c)
  *
  * \return Line height, in pixels
  */
-static float textplain_line_height(void)
+স্থির দশমিক textplain_সারি_height(শূন্য)
 {
 	/* Size is in points, so convert to pixels.
 	 * Then use a constant line height of 1.2 x font size.
 	 */
-	return FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
+	ফেরত FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.আকার_2 / PLOT_STYLE_SCALE))))), F_72));
 }
 
 
 /**
  * Reformat a CONTENT_TEXTPLAIN to a new width.
  */
-static void textplain_reformat(struct content *c, int width, int height)
+স্থির শূন্য textplain_reformat(কাঠামো content *c, পূর্ণসংখ্যা width, পূর্ণসংখ্যা height)
 {
 	textplain_content *text = (textplain_content *) c;
-	char *utf8_data = text->utf8_data;
-	size_t utf8_data_size = text->utf8_data_size;
-	unsigned long line_count = 0;
-	struct textplain_line *line = text->physical_line;
-	struct textplain_line *line1;
+	অক্ষর *utf8_তথ্য = text->utf8_তথ্য;
+	size_t utf8_তথ্য_আকার = text->utf8_তথ্য_আকার;
+	unsigned long সারি_গুনতি = 0;
+	কাঠামো textplain_সারি *সারি = text->physical_সারি;
+	কাঠামো textplain_সারি *line1;
 	size_t i, space, col;
 	size_t columns = 80;
-	int character_width;
-	size_t line_start;
+	পূর্ণসংখ্যা character_width;
+	size_t সারি_start;
 	nserror res;
 
 	NSLOG(netsurf, INFO, "content %p w:%d h:%d", c, width, height);
@@ -419,8 +419,8 @@ static void textplain_reformat(struct content *c, int width, int height)
 	res = guit->layout->width(&textplain_style,
 				  "ABCDEFGH", 8,
 				  &character_width);
-	if (res != NSERROR_OK) {
-		return;
+	যদি (res != NSERROR_OK) {
+		ফেরত;
 	}
 
 	columns = (width - MARGIN - MARGIN) * 8 / character_width;
@@ -428,90 +428,90 @@ static void textplain_reformat(struct content *c, int width, int height)
 
 	text->formatted_width = width;
 
-	text->physical_line_count = 0;
+	text->physical_সারি_গুনতি = 0;
 
-	if (!line) {
-		text->physical_line = line =
-			malloc(sizeof(struct textplain_line) * (1024 + 3));
-		if (!line)
-			goto no_memory;
+	যদি (!সারি) {
+		text->physical_সারি = সারি =
+			malloc(আকার(কাঠামো textplain_সারি) * (1024 + 3));
+		যদি (!সারি)
+			যাও no_memory;
 	}
 
-	line[line_count++].start = line_start = 0;
+	সারি[সারি_গুনতি++].start = সারি_start = 0;
 	space = 0;
 	i = 0;
 	col = 0;
-	while (i < utf8_data_size) {
+	যখন (i < utf8_তথ্য_আকার) {
 		size_t csize; /* number of bytes in character */
 		uint32_t chr;
 		bool term;
-		size_t next_col;
+		size_t পরবর্তী_col;
 		parserutils_error perror;
 
-		perror = parserutils_charset_utf8_to_ucs4((const uint8_t *)utf8_data + i, utf8_data_size - i, &chr, &csize);
-		if (perror != PARSERUTILS_OK) {
+		perror = parserutils_charset_utf8_to_ucs4((ধ্রুবক uint8_t *)utf8_তথ্য + i, utf8_তথ্য_আকার - i, &chr, &csize);
+		যদি (perror != PARSERUTILS_OK) {
 			chr = 0xfffd;
 		}
 
 		term = (chr == '\n' || chr == '\r');
 
-		next_col = col + 1;
+		পরবর্তী_col = col + 1;
 
-		if (chr == '\t') {
-			next_col = (next_col + TAB_WIDTH - 1) & ~(TAB_WIDTH - 1);
+		যদি (chr == '\t') {
+			পরবর্তী_col = (পরবর্তী_col + TAB_WIDTH - 1) & ~(TAB_WIDTH - 1);
 		}
 
-		if (term || next_col >= columns) {
-			if (line_count % 1024 == 0) {
-				line1 = realloc(line,
-						sizeof(struct textplain_line) *
-						(line_count + 1024 + 3));
-				if (!line1)
-					goto no_memory;
-				text->physical_line = line = line1;
+		যদি (term || পরবর্তী_col >= columns) {
+			যদি (সারি_গুনতি % 1024 == 0) {
+				line1 = realloc(সারি,
+						আকার(কাঠামো textplain_সারি) *
+						(সারি_গুনতি + 1024 + 3));
+				যদি (!line1)
+					যাও no_memory;
+				text->physical_সারি = সারি = line1;
 			}
 
-			if (term) {
-				line[line_count-1].length = i - line_start;
+			যদি (term) {
+				সারি[সারি_গুনতি-1].দৈর্ঘ্য = i - সারি_start;
 
 				/* skip second char of CR/LF or LF/CR pair */
-				if (i + 1 < utf8_data_size &&
-				    utf8_data[i+1] != utf8_data[i] &&
-				    (utf8_data[i+1] == '\n' ||
-				     utf8_data[i+1] == '\r')) {
+				যদি (i + 1 < utf8_তথ্য_আকার &&
+				    utf8_তথ্য[i+1] != utf8_তথ্য[i] &&
+				    (utf8_তথ্য[i+1] == '\n' ||
+				     utf8_তথ্য[i+1] == '\r')) {
 					i++;
 				}
-			} else {
-				if (space) {
+			} অন্যথা {
+				যদি (space) {
 					/* break at last space in line */
 					i = space;
-					line[line_count-1].length = (i + 1) - line_start;
-				} else
-					line[line_count-1].length = i - line_start;
+					সারি[সারি_গুনতি-1].দৈর্ঘ্য = (i + 1) - সারি_start;
+				} অন্যথা
+					সারি[সারি_গুনতি-1].দৈর্ঘ্য = i - সারি_start;
 			}
 
-			line[line_count++].start = line_start = i + 1;
+			সারি[সারি_গুনতি++].start = সারি_start = i + 1;
 			col = 0;
 			space = 0;
-		} else {
+		} অন্যথা {
 			col++;
-			if (chr == ' ')
+			যদি (chr == ' ')
 				space = i;
 		}
 		i += csize;
 	}
-	line[line_count-1].length = i - line[line_count-1].start;
-	line[line_count].start = utf8_data_size;
+	সারি[সারি_গুনতি-1].দৈর্ঘ্য = i - সারি[সারি_গুনতি-1].start;
+	সারি[সারি_গুনতি].start = utf8_তথ্য_আকার;
 
-	text->physical_line_count = line_count;
+	text->physical_সারি_গুনতি = সারি_গুনতি;
 	c->width = width;
-	c->height = line_count * textplain_line_height() + MARGIN + MARGIN;
+	c->height = সারি_গুনতি * textplain_সারি_height() + MARGIN + MARGIN;
 
-	return;
+	ফেরত;
 
 no_memory:
-	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", line_count);
-	return;
+	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", সারি_গুনতি);
+	ফেরত;
 }
 
 
@@ -519,80 +519,80 @@ no_memory:
  * Destroy a CONTENT_TEXTPLAIN and free all resources it owns.
  */
 
-static void textplain_destroy(struct content *c)
+স্থির শূন্য textplain_destroy(কাঠামো content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
 	lwc_string_unref(text->encoding);
 
-	if (text->inputstream != NULL) {
+	যদি (text->inputstream != ফাঁকা) {
 		parserutils_inputstream_destroy(text->inputstream);
 	}
 
-	if (text->physical_line != NULL) {
-		free(text->physical_line);
+	যদি (text->physical_সারি != ফাঁকা) {
+		মুক্ত(text->physical_সারি);
 	}
 
-	if (text->utf8_data != NULL) {
-		free(text->utf8_data);
+	যদি (text->utf8_তথ্য != ফাঁকা) {
+		মুক্ত(text->utf8_তথ্য);
 	}
 
-	if (text->sel != NULL) {
+	যদি (text->sel != ফাঁকা) {
 		selection_destroy(text->sel);
 	}
 }
 
 
-static nserror textplain_clone(const struct content *old, struct content **newc)
+স্থির nserror textplain_clone(ধ্রুবক কাঠামো content *old, কাঠামো content **newc)
 {
-	const textplain_content *old_text = (textplain_content *) old;
+	ধ্রুবক textplain_content *old_text = (textplain_content *) old;
 	textplain_content *text;
 	nserror error;
-	const uint8_t *data;
-	size_t size;
+	ধ্রুবক uint8_t *তথ্য;
+	size_t আকার_2;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL)
-		return NSERROR_NOMEM;
+	text = calloc(1, আকার(textplain_content));
+	যদি (text == ফাঁকা)
+		ফেরত NSERROR_NOMEM;
 
 	error = content__clone(old, &text->base);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		content_destroy(&text->base);
-		return error;
+		ফেরত error;
 	}
 
 	/* Simply replay create/process/convert */
 	error = textplain_create_internal(text, old_text->encoding);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		content_destroy(&text->base);
-		return error;
+		ফেরত error;
 	}
 
-	data = content__get_source_data(&text->base, &size);
-	if (size > 0) {
-		if (textplain_process_data(&text->base,
-					   (const char *)data,
-					   size) == false) {
+	তথ্য = content_get_source_তথ্য_2(&text->base, &আকার_2);
+	যদি (আকার_2 > 0) {
+		যদি (textplain_process_তথ্য(&text->base,
+					   (ধ্রুবক অক্ষর *)তথ্য,
+					   আকার_2) == false) {
 			content_destroy(&text->base);
-			return NSERROR_NOMEM;
+			ফেরত NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	যদি (old->status == CONTENT_STATUS_READY ||
 	    old->status == CONTENT_STATUS_DONE) {
-		if (textplain_convert(&text->base) == false) {
+		যদি (textplain_convert(&text->base) == false) {
 			content_destroy(&text->base);
-			return NSERROR_CLONE_FAILED;
+			ফেরত NSERROR_CLONE_FAILED;
 		}
 	}
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
-static content_type textplain_content_type(void)
+স্থির content_type textplain_content_type(শূন্য)
 {
-	return CONTENT_TEXTPLAIN;
+	ফেরত CONTENT_TEXTPLAIN;
 }
 
 
@@ -609,78 +609,78 @@ static content_type textplain_content_type(void)
  * \param[in] dir direction of search if not within line
  * \return byte offset of character containing (or nearest to) point
  */
-static size_t
-textplain_offset_from_coords(struct content *c, int x, int y, int dir)
+স্থির size_t
+textplain_offset_from_coords(কাঠামো content *c, পূর্ণসংখ্যা x, পূর্ণসংখ্যা y, পূর্ণসংখ্যা dir)
 {
 	textplain_content *textc = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	struct textplain_line *line;
-	const char *text;
+	দশমিক সারি_height = textplain_সারি_height();
+	কাঠামো textplain_সারি *সারি;
+	ধ্রুবক অক্ষর *text;
 	unsigned nlines;
-	size_t length;
-	int idx;
+	size_t দৈর্ঘ্য;
+	পূর্ণসংখ্যা idx;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != ফাঁকা);
 
-	y = (int)((float)(y - MARGIN) / line_height);
+	y = (পূর্ণসংখ্যা)((দশমিক)(y - MARGIN) / সারি_height);
 	x -= MARGIN;
 
-	nlines = textc->physical_line_count;
-	if (!nlines)
-		return 0;
+	nlines = textc->physical_সারি_গুনতি;
+	যদি (!nlines)
+		ফেরত 0;
 
-	if (y <= 0) y = 0;
-	else if ((unsigned)y >= nlines)
+	যদি (y <= 0) y = 0;
+	অন্যথা যদি ((unsigned)y >= nlines)
 		y = nlines - 1;
 
-	line = &textc->physical_line[y];
-	text = textc->utf8_data + line->start;
-	length = line->length;
+	সারি = &textc->physical_সারি[y];
+	text = textc->utf8_তথ্য + সারি->start;
+	দৈর্ঘ্য = সারি->দৈর্ঘ্য;
 	idx = 0;
 
-	while (x > 0) {
-		size_t next_offset = 0;
-		int width = INT_MAX;
+	যখন (x > 0) {
+		size_t পরবর্তী_offset = 0;
+		পূর্ণসংখ্যা width = INT_MAX;
 
-		while (next_offset < length && text[next_offset] != '\t') {
-			next_offset = utf8_next(text, length, next_offset);
+		যখন (পরবর্তী_offset < দৈর্ঘ্য && text[পরবর্তী_offset] != '\t') {
+			পরবর্তী_offset = utf8_পরবর্তী(text, দৈর্ঘ্য, পরবর্তী_offset);
 		}
 
-		if (next_offset < length) {
+		যদি (পরবর্তী_offset < দৈর্ঘ্য) {
 			guit->layout->width(&textplain_style,
 					    text,
-					    next_offset,
+					    পরবর্তী_offset,
 					    &width);
 		}
 
-		if (x <= width) {
-			int pixel_offset;
+		যদি (x <= width) {
+			পূর্ণসংখ্যা pixel_offset;
 			size_t char_offset;
 
 			guit->layout->position(&textplain_style,
-					       text, next_offset, x,
+					       text, পরবর্তী_offset, x,
 					       &char_offset, &pixel_offset);
 
 			idx += char_offset;
-			break;
+			বিরতি;
 		}
 
 		x -= width;
-		length -= next_offset;
-		text += next_offset;
-		idx += next_offset;
+		দৈর্ঘ্য -= পরবর্তী_offset;
+		text += পরবর্তী_offset;
+		idx += পরবর্তী_offset;
 
 		/* check if it's within the tab */
 		width = textplain_tab_width - (width % textplain_tab_width);
-		if (x <= width) break;
+		যদি (x <= width) বিরতি;
 
 		x -= width;
-		length--;
+		দৈর্ঘ্য--;
 		text++;
 		idx++;
 	}
 
-	return line->start + idx;
+	ফেরত সারি->start + idx;
 }
 
 
@@ -693,44 +693,44 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
  * \param x	  coordinate of mouse
  * \param y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_action(struct content *c,
-		       struct browser_window *bw,
+স্থির nserror
+textplain_mouse_action(কাঠামো content *c,
+		       কাঠামো browser_window *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       পূর্ণসংখ্যা x, পূর্ণসংখ্যা y)
 {
 	textplain_content *text = (textplain_content *) c;
 	browser_pointer_shape pointer = BROWSER_POINTER_DEFAULT;
-	union content_msg_data msg_data;
-	const char *status = 0;
+	সংঘ content_বার্তা_তথ্য বার্তা_তথ্য;
+	ধ্রুবক অক্ষর *status = 0;
 	size_t idx;
-	int dir = 0;
+	পূর্ণসংখ্যা dir = 0;
 
-	browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+	browser_window_set_drag_type(bw, DRAGGING_NONE, ফাঁকা);
 
 	idx = textplain_offset_from_coords(c, x, y, dir);
-	if (selection_click(text->sel, text->bw, mouse, idx)) {
+	যদি (selection_click(text->sel, text->bw, mouse, idx)) {
 
-		if (selection_dragging(text->sel)) {
+		যদি (selection_dragging(text->sel)) {
 			browser_window_set_drag_type(bw,
-						     DRAGGING_SELECTION, NULL);
+						     DRAGGING_SELECTION, ফাঁকা);
 			status = messages_get("Selecting");
 		}
 
-	} else {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+	} অন্যথা {
+		যদি (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
 			browser_window_page_drag_start(bw, x, y);
 			pointer = BROWSER_POINTER_MOVE;
 		}
 	}
 
-	msg_data.explicit_status_text = status;
-	content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+	বার্তা_তথ্য.explicit_status_text = status;
+	content_broadcast(c, CONTENT_বার্তা_STATUS, &বার্তা_তথ্য);
 
-	msg_data.pointer = pointer;
-	content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	বার্তা_তথ্য.pointer = pointer;
+	content_broadcast(c, CONTENT_বার্তা_POINTER, &বার্তা_তথ্য);
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
@@ -743,46 +743,46 @@ textplain_mouse_action(struct content *c,
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_track(struct content *c,
-		      struct browser_window *bw,
+স্থির nserror
+textplain_mouse_track(কাঠামো content *c,
+		      কাঠামো browser_window *bw,
 		      browser_mouse_state mouse,
-		      int x, int y)
+		      পূর্ণসংখ্যা x, পূর্ণসংখ্যা y)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	if (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
-		int dir = -1;
+	যদি (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
+		পূর্ণসংখ্যা dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel))
+		যদি (selection_dragging_start(text->sel))
 			dir = 1;
 
 		idx = textplain_offset_from_coords(c, x, y, dir);
 		selection_track(text->sel, mouse, idx);
 
-		browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+		browser_window_set_drag_type(bw, DRAGGING_NONE, ফাঁকা);
 	}
 
-	switch (browser_window_get_drag_type(bw)) {
+	নির্বাচন (browser_window_get_drag_type(bw)) {
 
-	case DRAGGING_SELECTION: {
-		int dir = -1;
+	ক্ষেত্র DRAGGING_SELECTION: {
+		পূর্ণসংখ্যা dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel)) dir = 1;
+		যদি (selection_dragging_start(text->sel)) dir = 1;
 
 		idx = textplain_offset_from_coords(c, x, y, dir);
 		selection_track(text->sel, mouse, idx);
 	}
-		break;
+		বিরতি;
 
-	default:
+	পূর্বনির্ধারিত:
 		textplain_mouse_action(c, bw, mouse, x, y);
-		break;
+		বিরতি;
 	}
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
@@ -793,30 +793,30 @@ textplain_mouse_track(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-static bool textplain_keypress(struct content *c, uint32_t key)
+স্থির bool textplain_keypress(কাঠামো content *c, uint32_t চাবি)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct selection *sel = text->sel;
+	কাঠামো selection *sel = text->sel;
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
+	নির্বাচন (চাবি) {
+	ক্ষেত্র NS_চাবি_COPY_SELECTION:
 		selection_copy_to_clipboard(sel);
-		return true;
+		ফেরত true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	ক্ষেত্র NS_চাবি_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		ফেরত true;
 
-	case NS_KEY_SELECT_ALL:
+	ক্ষেত্র NS_চাবি_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		ফেরত true;
 
-	case NS_KEY_ESCAPE:
+	ক্ষেত্র NS_চাবি_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		ফেরত selection_clear(sel, true);
 	}
 
-	return false;
+	ফেরত false;
 }
 
 
@@ -838,18 +838,18 @@ static bool textplain_keypress(struct content *c, uint32_t key)
  * \param ctx	    current redraw context
  * \return true iff successful and redraw should proceed
  */
-static bool
-text_draw(const char *utf8_text,
+স্থির bool
+text_draw(ধ্রুবক অক্ষর *utf8_text,
 	    size_t utf8_len,
 	    size_t offset,
-	    int x,
-	    int y,
-	    const struct rect *clip,
-	    int height,
-	    float scale,
+	    পূর্ণসংখ্যা x,
+	    পূর্ণসংখ্যা y,
+	    ধ্রুবক কাঠামো rect *clip,
+	    পূর্ণসংখ্যা height,
+	    দশমিক scale,
 	    textplain_content *text,
-	    const struct selection *sel,
-	    const struct redraw_context *ctx)
+	    ধ্রুবক কাঠামো selection *sel,
+	    ধ্রুবক কাঠামো redraw_context *ctx)
 {
 	bool highlighted = false;
 	plot_font_style_t plot_fstyle;
@@ -857,16 +857,16 @@ text_draw(const char *utf8_text,
 
 	/* Need scaled text size to pass to plotters */
 	plot_fstyle = textplain_style;
-	plot_fstyle.size *= scale;
+	plot_fstyle.আকার_2 *= scale;
 
 	/* is this box part of a selection? */
-	if (ctx->interactive == true) {
+	যদি (ctx->interactive == true) {
 		unsigned len = utf8_len;
 		unsigned start_idx;
 		unsigned end_idx;
 
 		/* first try the browser window's current selection */
-		if (selection_highlighted(sel,
+		যদি (selection_highlighted(sel,
 					  offset,
 					  offset + len,
 					  &start_idx,
@@ -875,8 +875,8 @@ text_draw(const char *utf8_text,
 		}
 
 		/* what about the current search operation, if any? */
-		if (!highlighted &&
-		    (text->base.textsearch.context != NULL) &&
+		যদি (!highlighted &&
+		    (text->base.textsearch.context != ফাঁকা) &&
 		    content_textsearch_ishighlighted(text->base.textsearch.context,
 						     offset,
 						     offset + len,
@@ -886,20 +886,20 @@ text_draw(const char *utf8_text,
 		}
 
 		/* \todo make search terms visible within selected text */
-		if (highlighted) {
-			struct rect r;
+		যদি (highlighted) {
+			কাঠামো rect r;
 			unsigned endtxt_idx = end_idx;
 			bool clip_changed = false;
 			bool text_visible = true;
-			int startx, endx;
+			পূর্ণসংখ্যা startx, endx;
 			plot_style_t pstyle_fill_hback = *plot_style_fill_white;
 			plot_font_style_t fstyle_hback = plot_fstyle;
 
-			if (end_idx > utf8_len) {
+			যদি (end_idx > utf8_len) {
 				/* adjust for trailing space, not present in
 				 * utf8_text
 				 */
-				assert(end_idx == utf8_len + 1);
+				প্রতিজ্ঞা(end_idx == utf8_len + 1);
 				endtxt_idx = utf8_len;
 			}
 
@@ -907,7 +907,7 @@ text_draw(const char *utf8_text,
 						  utf8_text,
 						  start_idx,
 						  &startx);
-			if (res != NSERROR_OK) {
+			যদি (res != NSERROR_OK) {
 				startx = 0;
 			}
 
@@ -915,25 +915,25 @@ text_draw(const char *utf8_text,
 						  utf8_text,
 						  endtxt_idx,
 						  &endx);
-			if (res != NSERROR_OK) {
+			যদি (res != NSERROR_OK) {
 				endx = 0;
 			}
 
-			if (scale != 1.0) {
+			যদি (scale != 1.0) {
 				startx *= scale;
 				endx *= scale;
 			}
 
 			/* draw any text preceding highlighted portion */
-			if (start_idx > 0) {
+			যদি (start_idx > 0) {
 				res = ctx->plot->text(ctx,
 					      &plot_fstyle,
 					      x,
-					      y + (int)(height * 0.75 * scale),
+					      y + (পূর্ণসংখ্যা)(height * 0.75 * scale),
 					      utf8_text,
 					      start_idx);
-				if (res != NSERROR_OK) {
-					return false;
+				যদি (res != NSERROR_OK) {
+					ফেরত false;
 				}
 			}
 
@@ -945,26 +945,26 @@ text_draw(const char *utf8_text,
 			r.x1 = x + endx;
 			r.y1 = y + height * scale;
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_hback, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			যদি (res != NSERROR_OK) {
+				ফেরত false;
 			}
 
-			if (start_idx > 0) {
-				int px0 = max(x + startx, clip->x0);
-				int px1 = min(x + endx, clip->x1);
+			যদি (start_idx > 0) {
+				পূর্ণসংখ্যা px0 = max(x + startx, clip->x0);
+				পূর্ণসংখ্যা px1 = min(x + endx, clip->x1);
 
-				if (px0 < px1) {
+				যদি (px0 < px1) {
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = px1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					যদি (res != NSERROR_OK) {
+						ফেরত false;
 					}
 
 					clip_changed = true;
-				} else {
+				} অন্যথা {
 					text_visible = false;
 				}
 			}
@@ -974,28 +974,28 @@ text_draw(const char *utf8_text,
 			fstyle_hback.foreground = colour_to_bw_furthest(
 				pstyle_fill_hback.fill_colour);
 
-			if (text_visible &&
+			যদি (text_visible &&
 			    (ctx->plot->text(ctx,
 					     &fstyle_hback,
 					     x,
-					     y + (int)(height * 0.75 * scale),
+					     y + (পূর্ণসংখ্যা)(height * 0.75 * scale),
 					     utf8_text,
 					     endtxt_idx) != NSERROR_OK)) {
-				return false;
+				ফেরত false;
 			}
 
 			/* draw any text succeeding highlighted portion */
-			if (endtxt_idx < utf8_len) {
-				int px0 = max(x + endx, clip->x0);
-				if (px0 < clip->x1) {
+			যদি (endtxt_idx < utf8_len) {
+				পূর্ণসংখ্যা px0 = max(x + endx, clip->x0);
+				যদি (px0 < clip->x1) {
 
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = clip->x1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					যদি (res != NSERROR_OK) {
+						ফেরত false;
 					}
 
 					clip_changed = true;
@@ -1003,34 +1003,34 @@ text_draw(const char *utf8_text,
 					res = ctx->plot->text(ctx,
 							      &plot_fstyle,
 							      x,
-							      y + (int)(height * 0.75 * scale),
+							      y + (পূর্ণসংখ্যা)(height * 0.75 * scale),
 							      utf8_text,
 							      utf8_len);
-					if (res != NSERROR_OK) {
-						return false;
+					যদি (res != NSERROR_OK) {
+						ফেরত false;
 					}
 				}
 			}
 
-			if (clip_changed &&
+			যদি (clip_changed &&
 			    (ctx->plot->clip(ctx, clip) != NSERROR_OK)) {
-				return false;
+				ফেরত false;
 			}
 		}
 	}
 
-	if (!highlighted) {
+	যদি (!highlighted) {
 		res = ctx->plot->text(ctx,
 				      &plot_fstyle,
 				      x,
-				      y + (int) (height * 0.75 * scale),
+				      y + (পূর্ণসংখ্যা) (height * 0.75 * scale),
 				      utf8_text,
 				      utf8_len);
-		if (res != NSERROR_OK) {
-			return false;
+		যদি (res != NSERROR_OK) {
+			ফেরত false;
 		}
 	}
-	return true;
+	ফেরত true;
 }
 
 
@@ -1045,107 +1045,107 @@ text_draw(const char *utf8_text,
  * \param  ctx	 current redraw context
  * \return true if successful, false otherwise
  */
-static bool
-textplain_redraw(struct content *c,
-		 struct content_redraw_data *data,
-		 const struct rect *clip,
-		 const struct redraw_context *ctx)
+স্থির bool
+textplain_redraw(কাঠামো content *c,
+		 কাঠামো content_redraw_তথ্য *তথ্য,
+		 ধ্রুবক কাঠামো rect *clip,
+		 ধ্রুবক কাঠামো redraw_context *ctx)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct browser_window *bw = text->bw;
-	char *utf8_data = text->utf8_data;
+	কাঠামো browser_window *bw = text->bw;
+	অক্ষর *utf8_তথ্য = text->utf8_তথ্য;
 	long lineno;
-	int x = data->x;
-	int y = data->y;
-	unsigned long line_count = text->physical_line_count;
-	float line_height = textplain_line_height();
-	float scaled_line_height = line_height * data->scale;
-	long line0 = (clip->y0 - y * data->scale) / scaled_line_height - 1;
-	long line1 = (clip->y1 - y * data->scale) / scaled_line_height + 1;
-	struct textplain_line *line = text->physical_line;
-	size_t length;
+	পূর্ণসংখ্যা x = তথ্য->x;
+	পূর্ণসংখ্যা y = তথ্য->y;
+	unsigned long সারি_গুনতি = text->physical_সারি_গুনতি;
+	দশমিক সারি_height = textplain_সারি_height();
+	দশমিক scaled_সারি_height = সারি_height * তথ্য->scale;
+	long line0 = (clip->y0 - y * তথ্য->scale) / scaled_সারি_height - 1;
+	long line1 = (clip->y1 - y * তথ্য->scale) / scaled_সারি_height + 1;
+	কাঠামো textplain_সারি *সারি = text->physical_সারি;
+	size_t দৈর্ঘ্য;
 	plot_style_t *plot_style_highlight;
 	nserror res;
 
-	if (line0 < 0)
+	যদি (line0 < 0)
 		line0 = 0;
-	if (line1 < 0)
+	যদি (line1 < 0)
 		line1 = 0;
-	if (line_count < (unsigned long) line0)
-		line0 = line_count;
-	if (line_count < (unsigned long) line1)
-		line1 = line_count;
-	if (line1 < line0)
+	যদি (সারি_গুনতি < (unsigned long) line0)
+		line0 = সারি_গুনতি;
+	যদি (সারি_গুনতি < (unsigned long) line1)
+		line1 = সারি_গুনতি;
+	যদি (line1 < line0)
 		line1 = line0;
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_white, clip);
-	if (res != NSERROR_OK) {
-		return false;
+	যদি (res != NSERROR_OK) {
+		ফেরত false;
 	}
 
-	if (!line)
-		return true;
+	যদি (!সারি)
+		ফেরত true;
 
 	/* choose a suitable background colour for any highlighted text */
-	if ((data->background_colour & 0x808080) == 0x808080)
+	যদি ((তথ্য->background_colour & 0x808080) == 0x808080)
 		plot_style_highlight = plot_style_fill_black;
-	else
+	অন্যথা
 		plot_style_highlight = plot_style_fill_white;
 
 	/* Set up font plot style */
-	textplain_style.background = data->background_colour;
+	textplain_style.background = তথ্য->background_colour;
 
-	x = (x + MARGIN) * data->scale;
-	y = (y + MARGIN) * data->scale;
-	for (lineno = line0; lineno != line1; lineno++) {
-		const char *text_d = utf8_data + line[lineno].start;
-		int tab_width = textplain_tab_width * data->scale;
+	x = (x + MARGIN) * তথ্য->scale;
+	y = (y + MARGIN) * তথ্য->scale;
+	জন্য (lineno = line0; lineno != line1; lineno++) {
+		ধ্রুবক অক্ষর *text_d = utf8_তথ্য + সারি[lineno].start;
+		পূর্ণসংখ্যা tab_width = textplain_tab_width * তথ্য->scale;
 		size_t offset = 0;
-		int tx = x;
+		পূর্ণসংখ্যা tx = x;
 
-		if (!tab_width) tab_width = 1;
+		যদি (!tab_width) tab_width = 1;
 
-		length = line[lineno].length;
-		if (!length)
-			continue;
+		দৈর্ঘ্য = সারি[lineno].দৈর্ঘ্য;
+		যদি (!দৈর্ঘ্য)
+			চালু;
 
-		while (offset < length) {
-			size_t next_offset = offset;
-			int width;
-			int ntx;
+		যখন (offset < দৈর্ঘ্য) {
+			size_t পরবর্তী_offset = offset;
+			পূর্ণসংখ্যা width;
+			পূর্ণসংখ্যা ntx;
 			nserror res;
 
-			while ((next_offset < length) &&
-			       (text_d[next_offset] != '\t')) {
-				next_offset = utf8_next(text_d,
-							length,
-							next_offset);
+			যখন ((পরবর্তী_offset < দৈর্ঘ্য) &&
+			       (text_d[পরবর্তী_offset] != '\t')) {
+				পরবর্তী_offset = utf8_পরবর্তী(text_d,
+							দৈর্ঘ্য,
+							পরবর্তী_offset);
 			}
 
-			if (!text_draw(text_d + offset,
-				       next_offset - offset,
-				       line[lineno].start + offset,
+			যদি (!text_draw(text_d + offset,
+				       পরবর্তী_offset - offset,
+				       সারি[lineno].start + offset,
 				       tx,
-				       y + (lineno * scaled_line_height),
+				       y + (lineno * scaled_সারি_height),
 				       clip,
-				       line_height,
-				       data->scale,
+				       সারি_height,
+				       তথ্য->scale,
 				       text,
 				       text->sel,
 				       ctx)) {
-				return false;
+				ফেরত false;
 			}
 
-			if (next_offset >= length)
-				break;
+			যদি (পরবর্তী_offset >= দৈর্ঘ্য)
+				বিরতি;
 
 			res = guit->layout->width(&textplain_style,
 						  &text_d[offset],
-						  next_offset - offset,
+						  পরবর্তী_offset - offset,
 						  &width);
 			/* locate end of string and align to next tab position */
-			if (res == NSERROR_OK) {
-				tx += (int)(width * data->scale);
+			যদি (res == NSERROR_OK) {
+				tx += (পূর্ণসংখ্যা)(width * তথ্য->scale);
 			}
 
 			ntx = x + ((1 + (tx - x) / tab_width) * tab_width);
@@ -1156,13 +1156,13 @@ textplain_redraw(struct content *c,
 			 *  with background of the selected text
 			 */
 
-			if (bw) {
-				unsigned tab_ofst = line[lineno].start + next_offset;
-				struct selection *sel = text->sel;
+			যদি (bw) {
+				unsigned tab_ofst = সারি[lineno].start + পরবর্তী_offset;
+				কাঠামো selection *sel = text->sel;
 				bool highlighted = false;
 
 				unsigned start_idx, end_idx;
-				if (selection_highlighted(sel,
+				যদি (selection_highlighted(sel,
 							  tab_ofst,
 							  tab_ofst + 1,
 							  &start_idx,
@@ -1171,10 +1171,10 @@ textplain_redraw(struct content *c,
 				}
 
 
-				if (!highlighted &&
-				    (c->textsearch.context != NULL)) {
+				যদি (!highlighted &&
+				    (c->textsearch.context != ফাঁকা)) {
 					unsigned start_idx, end_idx;
-					if (content_textsearch_ishighlighted(
+					যদি (content_textsearch_ishighlighted(
 						    c->textsearch.context,
 						    tab_ofst,
 						    tab_ofst + 1,
@@ -1184,38 +1184,38 @@ textplain_redraw(struct content *c,
 					}
 				}
 
-				if (highlighted) {
-					struct rect rect;
+				যদি (highlighted) {
+					কাঠামো rect rect;
 					rect.x0 = tx;
-					rect.y0 = y + (lineno * scaled_line_height);
+					rect.y0 = y + (lineno * scaled_সারি_height);
 					rect.x1 = ntx;
-					rect.y1 = rect.y0 + scaled_line_height;
+					rect.y1 = rect.y0 + scaled_সারি_height;
 					res = ctx->plot->rectangle(ctx,
 								   plot_style_highlight,
 								   &rect);
-					if (res != NSERROR_OK) {
-						return false;
+					যদি (res != NSERROR_OK) {
+						ফেরত false;
 					}
 				}
 			}
 
-			offset = next_offset + 1;
+			offset = পরবর্তী_offset + 1;
 			tx = ntx;
 		}
 	}
 
-	return true;
+	ফেরত true;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being opened.
  */
-static nserror
-textplain_open(struct content *c,
-	       struct browser_window *bw,
-	       struct content *page,
-	       struct object_params *params)
+স্থির nserror
+textplain_open(কাঠামো content *c,
+	       কাঠামো browser_window *bw,
+	       কাঠামো content *page,
+	       কাঠামো object_params *params)
 {
 	textplain_content *text = (textplain_content *) c;
 
@@ -1224,31 +1224,31 @@ textplain_open(struct content *c,
 	/* text selection */
 	selection_init(text->sel);
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being closed.
  */
-static nserror textplain_close(struct content *c)
+স্থির nserror textplain_close(কাঠামো content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	text->bw = NULL;
+	text->bw = ফাঁকা;
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
 /**
  * Return an textplain content's selection context
  */
-static char *textplain_get_selection(struct content *c)
+স্থির অক্ষর *textplain_get_selection(কাঠামো content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	return selection_get_copy(text->sel);
+	ফেরত selection_get_copy(text->sel);
 }
 
 
@@ -1264,35 +1264,35 @@ static char *textplain_get_selection(struct content *c)
  * \param  length  line length
  * \return x ordinate
  */
-static int
-textplain_coord_from_offset(const char *text, size_t offset, size_t length)
+স্থির পূর্ণসংখ্যা
+textplain_coord_from_offset(ধ্রুবক অক্ষর *text, size_t offset, size_t দৈর্ঘ্য)
 {
-	int x = 0;
+	পূর্ণসংখ্যা x = 0;
 
-	while (offset > 0) {
-		size_t next_offset = 0;
-		int tx;
+	যখন (offset > 0) {
+		size_t পরবর্তী_offset = 0;
+		পূর্ণসংখ্যা tx;
 
-		while (next_offset < offset && text[next_offset] != '\t') {
-			next_offset = utf8_next(text, length, next_offset);
+		যখন (পরবর্তী_offset < offset && text[পরবর্তী_offset] != '\t') {
+			পরবর্তী_offset = utf8_পরবর্তী(text, দৈর্ঘ্য, পরবর্তী_offset);
 		}
 
-		guit->layout->width(&textplain_style, text, next_offset, &tx);
+		guit->layout->width(&textplain_style, text, পরবর্তী_offset, &tx);
 
 		x += tx;
 
-		if (next_offset >= offset)
-			break;
+		যদি (পরবর্তী_offset >= offset)
+			বিরতি;
 
 		/* align to next tab boundary */
-		next_offset++;
+		পরবর্তী_offset++;
 		x = (1 + (x / textplain_tab_width)) * textplain_tab_width;
-		offset -= next_offset;
-		text += next_offset;
-		length -= next_offset;
+		offset -= পরবর্তী_offset;
+		text += পরবর্তী_offset;
+		দৈর্ঘ্য -= পরবর্তী_offset;
 	}
 
-	return x;
+	ফেরত x;
 }
 
 
@@ -1302,13 +1302,13 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
  * \param[in] c Content to retrieve line count from
  * \return Number of lines
  */
-static unsigned long textplain_line_count(struct content *c)
+স্থির unsigned long textplain_সারি_গুনতি(কাঠামো content *c)
 {
 	textplain_content *text = (textplain_content *) c;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != ফাঁকা);
 
-	return text->physical_line_count;
+	ফেরত text->physical_সারি_গুনতি;
 }
 
 
@@ -1321,24 +1321,24 @@ static unsigned long textplain_line_count(struct content *c)
  * \param[out] plen    receives length of returned line
  * \return pointer to text, or NULL if invalid line number
  */
-static char *
-textplain_get_line(struct content *c,
+স্থির অক্ষর *
+textplain_get_সারি(কাঠামো content *c,
 		   unsigned lineno,
 		   size_t *poffset,
 		   size_t *plen)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
+	কাঠামো textplain_সারি *সারি;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != ফাঁকা);
 
-	if (lineno >= text->physical_line_count)
-		return NULL;
-	line = &text->physical_line[lineno];
+	যদি (lineno >= text->physical_সারি_গুনতি)
+		ফেরত ফাঁকা;
+	সারি = &text->physical_সারি[lineno];
 
-	*poffset = line->start;
-	*plen = line->length;
-	return text->utf8_data + line->start;
+	*poffset = সারি->start;
+	*plen = সারি->দৈর্ঘ্য;
+	ফেরত text->utf8_তথ্য + সারি->start;
 }
 
 
@@ -1352,31 +1352,31 @@ textplain_get_line(struct content *c,
  * \param[in] offset  byte offset within textual representation
  * \return line number, or -1 if offset invalid (larger than size)
  */
-static int textplain_find_line(struct content *c, unsigned offset)
+স্থির পূর্ণসংখ্যা textplain_find_সারি(কাঠামো content *c, unsigned offset)
 {
 	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
-	int nlines;
-	int lineno = 0;
+	কাঠামো textplain_সারি *সারি;
+	পূর্ণসংখ্যা nlines;
+	পূর্ণসংখ্যা lineno = 0;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != ফাঁকা);
 
-	line = text->physical_line;
-	nlines = text->physical_line_count;
+	সারি = text->physical_সারি;
+	nlines = text->physical_সারি_গুনতি;
 
-	if (offset > text->utf8_data_size) {
-		return -1;
+	যদি (offset > text->utf8_তথ্য_আকার) {
+		ফেরত -1;
 	}
 
 /* \todo - implement binary search here */
-	while (lineno < nlines && line[lineno].start < offset) {
+	যখন (lineno < nlines && সারি[lineno].start < offset) {
 		lineno++;
 	}
-	if (line[lineno].start > offset) {
+	যদি (সারি[lineno].start > offset) {
 		lineno--;
 	}
 
-	return lineno;
+	ফেরত lineno;
 }
 
 
@@ -1390,59 +1390,59 @@ static int textplain_find_line(struct content *c, unsigned offset)
  * \param case_sens whether to perform a case sensitive search
  * \return NSERROR_OK on success else error code on faliure
  */
-static nserror
-textplain_textsearch_find(struct content *c,
-			  struct textsearch_context *context,
-			  const char *pattern,
-			  int p_len,
+স্থির nserror
+textplain_textsearch_find(কাঠামো content *c,
+			  কাঠামো textsearch_context *context,
+			  ধ্রুবক অক্ষর *pattern,
+			  পূর্ণসংখ্যা p_len,
 			  bool case_sens)
 {
-	int nlines = textplain_line_count(c);
-	int line;
+	পূর্ণসংখ্যা nlines = textplain_সারি_গুনতি(c);
+	পূর্ণসংখ্যা সারি;
 	nserror res = NSERROR_OK;
 
-	for(line = 0; line < nlines; line++) {
-		size_t offset, length;
-		const char *text;
+	জন্য(সারি = 0; সারি < nlines; সারি++) {
+		size_t offset, দৈর্ঘ্য;
+		ধ্রুবক অক্ষর *text;
 
-		text = textplain_get_line(c, line, &offset, &length);
-		if (text) {
-			while (length > 0) {
-				unsigned match_length;
+		text = textplain_get_সারি(c, সারি, &offset, &দৈর্ঘ্য);
+		যদি (text) {
+			যখন (দৈর্ঘ্য > 0) {
+				unsigned match_দৈর্ঘ্য;
 				size_t start_idx;
-				const char *new_text;
-				const char *pos;
+				ধ্রুবক অক্ষর *new_text;
+				ধ্রুবক অক্ষর *pos;
 
 				pos = content_textsearch_find_pattern(
 						text,
-						length,
+						দৈর্ঘ্য,
 						pattern,
 						p_len,
 						case_sens,
-						&match_length);
-				if (!pos)
-					break;
+						&match_দৈর্ঘ্য);
+				যদি (!pos)
+					বিরতি;
 
 				/* found string in line => add to list */
 				start_idx = offset + (pos - text);
 				res = content_textsearch_add_match(context,
 						start_idx,
-						start_idx + match_length,
-						NULL,
-						NULL);
-				if (res != NSERROR_OK) {
-					return res;
+						start_idx + match_দৈর্ঘ্য,
+						ফাঁকা,
+						ফাঁকা);
+				যদি (res != NSERROR_OK) {
+					ফেরত res;
 				}
 
-				new_text = pos + match_length;
+				new_text = pos + match_দৈর্ঘ্য;
 				offset += (new_text - text);
-				length -= (new_text - text);
+				দৈর্ঘ্য -= (new_text - text);
 				text = new_text;
 			}
 		}
 	}
 
-	return res;
+	ফেরত res;
 }
 
 
@@ -1455,56 +1455,56 @@ textplain_textsearch_find(struct content *c,
  * \param[in] end   byte offset of end
  * \param[out] r    rectangle to be completed
  */
-static void
-textplain_coords_from_range(struct content *c,
+স্থির শূন্য
+textplain_coords_from_range(কাঠামো content *c,
 			    unsigned start,
 			    unsigned end,
-			    struct rect *r)
+			    কাঠামো rect *r)
 {
 	textplain_content *text = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	char *utf8_data;
-	struct textplain_line *line;
+	দশমিক সারি_height = textplain_সারি_height();
+	অক্ষর *utf8_তথ্য;
+	কাঠামো textplain_সারি *সারি;
 	unsigned lineno = 0;
 	unsigned nlines;
 
-	assert(c != NULL);
-	assert(start <= end);
-	assert(end <= text->utf8_data_size);
+	প্রতিজ্ঞা(c != ফাঁকা);
+	প্রতিজ্ঞা(start <= end);
+	প্রতিজ্ঞা(end <= text->utf8_তথ্য_আকার);
 
-	utf8_data = text->utf8_data;
-	nlines = text->physical_line_count;
-	line = text->physical_line;
+	utf8_তথ্য = text->utf8_তথ্য;
+	nlines = text->physical_সারি_গুনতি;
+	সারি = text->physical_সারি;
 
 	/* find start */
-	lineno = textplain_find_line(c, start);
+	lineno = textplain_find_সারি(c, start);
 
-	r->y0 = (int)(MARGIN + lineno * line_height);
+	r->y0 = (পূর্ণসংখ্যা)(MARGIN + lineno * সারি_height);
 
-	if (lineno + 1 <= nlines || line[lineno + 1].start >= end) {
+	যদি (lineno + 1 <= nlines || সারি[lineno + 1].start >= end) {
 		/* \todo - it may actually be more efficient just to
 		 *   run forwards most of the time
 		 */
 
 		/* find end */
-		lineno = textplain_find_line(c, end);
+		lineno = textplain_find_সারি(c, end);
 
 		r->x0 = 0;
 		r->x1 = text->formatted_width;
-	} else {
+	} অন্যথা {
 		/* single line */
-		const char *text = utf8_data + line[lineno].start;
+		ধ্রুবক অক্ষর *text = utf8_তথ্য + সারি[lineno].start;
 
 		r->x0 = textplain_coord_from_offset(text,
-						    start - line[lineno].start,
-						    line[lineno].length);
+						    start - সারি[lineno].start,
+						    সারি[lineno].দৈর্ঘ্য);
 
 		r->x1 = textplain_coord_from_offset(text,
-						    end - line[lineno].start,
-						    line[lineno].length);
+						    end - সারি[lineno].start,
+						    সারি[lineno].দৈর্ঘ্য);
 	}
 
-	r->y1 = (int)(MARGIN + (lineno + 1) * line_height);
+	r->y1 = (পূর্ণসংখ্যা)(MARGIN + (lineno + 1) * সারি_height);
 }
 
 
@@ -1519,88 +1519,88 @@ textplain_coords_from_range(struct content *c,
  * \param[out] plen receives validated length
  * \return pointer to text, or NULL if no text
  */
-static char *
-textplain_get_raw_data(struct content *c,
+স্থির অক্ষর *
+textplain_get_raw_তথ্য(কাঠামো content *c,
 		       unsigned start,
 		       unsigned end,
 		       size_t *plen)
 {
 	textplain_content *text = (textplain_content *) c;
-	size_t utf8_size;
+	size_t utf8_আকার;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != ফাঁকা);
 
-	utf8_size = text->utf8_data_size;
+	utf8_আকার = text->utf8_তথ্য_আকার;
 
 	/* any text at all? */
-	if (!utf8_size) return NULL;
+	যদি (!utf8_আকার) ফেরত ফাঁকা;
 
 	/* clamp to valid offset range */
-	if (start >= utf8_size) start = utf8_size;
-	if (end >= utf8_size) end = utf8_size;
+	যদি (start >= utf8_আকার) start = utf8_আকার;
+	যদি (end >= utf8_আকার) end = utf8_আকার;
 
 	*plen = end - start;
 
-	return text->utf8_data + start;
+	ফেরত text->utf8_তথ্য + start;
 }
 
 
 /**
  * get bounds of a free text search match
  */
-static nserror
-textplain_textsearch_bounds(struct content *c,
+স্থির nserror
+textplain_textsearch_bounds(কাঠামো content *c,
 			    unsigned start_idx,
 			    unsigned end_idx,
-			    struct box *start_box,
-			    struct box *end_box,
-			    struct rect *bounds)
+			    কাঠামো box *start_box,
+			    কাঠামো box *end_box,
+			    কাঠামো rect *bounds)
 {
 	textplain_coords_from_range(c, start_idx, end_idx, bounds);
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
 /**
  * invalidate a region based on offsets into the text cauing a redraw
  */
-static nserror
-textplain_textselection_redraw(struct content *c,
+স্থির nserror
+textplain_textselection_redraw(কাঠামো content *c,
 			       unsigned start_idx,
 			       unsigned end_idx)
 {
-	struct rect r;
+	কাঠামো rect r;
 
-	if (end_idx <= start_idx) {
-		return NSERROR_BAD_PARAMETER;
+	যদি (end_idx <= start_idx) {
+		ফেরত NSERROR_BAD_PARAMETER;
 	}
 
 	textplain_coords_from_range(c, start_idx, end_idx, &r);
 
 	content__request_redraw(c, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0);
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
-static nserror
-textplain_textselection_copy(struct content *c,
+স্থির nserror
+textplain_textselection_copy(কাঠামো content *c,
 			     unsigned start_idx,
 			     unsigned end_idx,
-			     struct selection_string *selstr)
+			     কাঠামো selection_string *selstr)
 {
-	const char *text;
-	size_t length;
+	ধ্রুবক অক্ষর *text;
+	size_t দৈর্ঘ্য;
 	bool res = false;
 
-	text = textplain_get_raw_data(c, start_idx, end_idx, &length);
-	if (text != NULL) {
-		res = selection_string_append(text, length, false, NULL, selstr);
+	text = textplain_get_raw_তথ্য(c, start_idx, end_idx, &দৈর্ঘ্য);
+	যদি (text != ফাঁকা) {
+		res = selection_string_append(text, দৈর্ঘ্য, false, ফাঁকা, selstr);
 	}
-	if (res == false) {
-		return NSERROR_NOMEM;
+	যদি (res == false) {
+		ফেরত NSERROR_NOMEM;
 	}
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
@@ -1610,24 +1610,24 @@ textplain_textselection_copy(struct content *c,
  * \param[in] c Content to retrieve size of
  * \return Size, in bytes, of data
  */
-static nserror
-textplain_textselection_get_end(struct content *c, unsigned *end_idx)
+স্থির nserror
+textplain_textselection_get_end(কাঠামো content *c, unsigned *end_idx)
 {
 	textplain_content *text = (textplain_content *)c;
 
-	*end_idx = text->utf8_data_size;
-	return NSERROR_OK;
+	*end_idx = text->utf8_তথ্য_আকার;
+	ফেরত NSERROR_OK;
 }
 
 
 /**
  * plain text content handler table
  */
-static const content_handler textplain_content_handler = {
+স্থির ধ্রুবক content_handler textplain_content_handler = {
 	.fini = textplain_fini,
 	.create = textplain_create,
-	.process_data = textplain_process_data,
-	.data_complete = textplain_convert,
+	.process_তথ্য = textplain_process_তথ্য,
+	.তথ্য_complete = textplain_convert,
 	.reformat = textplain_reformat,
 	.destroy = textplain_destroy,
 	.mouse_track = textplain_mouse_track,
@@ -1649,7 +1649,7 @@ static const content_handler textplain_content_handler = {
 
 
 /* exported interface documented in html/textplain.h */
-nserror textplain_init(void)
+nserror textplain_init(শূন্য)
 {
 	lwc_error lerror;
 	nserror error;
@@ -1657,23 +1657,23 @@ nserror textplain_init(void)
 	lerror = lwc_intern_string("Windows-1252",
 				   SLEN("Windows-1252"),
 				   &textplain_default_charset);
-	if (lerror != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	যদি (lerror != lwc_error_ok) {
+		ফেরত NSERROR_NOMEM;
 	}
 
 	error = content_factory_register_handler("text/plain",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
 	error = content_factory_register_handler("application/json",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
-	return error;
+	ফেরত error;
 }
 
 

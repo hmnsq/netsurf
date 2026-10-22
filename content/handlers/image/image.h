@@ -23,13 +23,13 @@
 #ifndef NETSURF_IMAGE_IMAGE_H_
 #define NETSURF_IMAGE_IMAGE_H_
 
-#include "utils/errors.h"
+#অন্তর্ভাব "utils/errors.h"
 
-struct content_redraw_data;
+কাঠামো content_redraw_তথ্য;
 
 /** Initialise the content handlers for image types.
  */
-nserror image_init(void);
+nserror image_init(শূন্য);
 
 /** Common image content handler bitmap plot call.
  *
@@ -37,9 +37,9 @@ nserror image_init(void);
  * and specific content redraw data. It is a helper specifically
  * provided for image content handlers redraw callback.
  */
-bool image_bitmap_plot(struct bitmap *bitmap,
-		       struct content_redraw_data *data, 
-		       const struct rect *clip,
-		       const struct redraw_context *ctx);
+bool image_bitmap_plot(কাঠামো bitmap *bitmap,
+		       কাঠামো content_redraw_তথ্য *তথ্য, 
+		       ধ্রুবক কাঠামো rect *clip,
+		       ধ্রুবক কাঠামো redraw_context *ctx);
 
 #endif

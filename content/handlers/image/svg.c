@@ -21,48 +21,48 @@
  * implementation of content for image/svg using libsvgtiny.
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdlib.h>
 
-#include <svgtiny.h>
+#অন্তর্ভাব <svgtiny.h>
 
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/nsurl.h"
-#include "netsurf/plotters.h"
-#include "netsurf/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
+#অন্তর্ভাব "utils/messages.h"
+#অন্তর্ভাব "utils/utils.h"
+#অন্তর্ভাব "utils/nsurl.h"
+#অন্তর্ভাব "netsurf/plotters.h"
+#অন্তর্ভাব "netsurf/content.h"
+#অন্তর্ভাব "content/content_protected.h"
+#অন্তর্ভাব "content/content_factory.h"
 
-#include "image/svg.h"
+#অন্তর্ভাব "image/svg.h"
 
-typedef struct svg_content {
-	struct content base;
+প্রকারলেখ কাঠামো svg_content {
+	কাঠামো content base;
 
-	struct svgtiny_diagram *diagram;
+	কাঠামো svgtiny_diagram *diagram;
 
-	int current_width;
-	int current_height;
+	পূর্ণসংখ্যা current_width;
+	পূর্ণসংখ্যা current_height;
 } svg_content;
 
 
 
-static nserror svg_create_svg_data(svg_content *c)
+স্থির nserror svg_create_svg_তথ্য(svg_content *c)
 {
 	c->diagram = svgtiny_create();
-	if (c->diagram == NULL)
-		goto no_memory;
+	যদি (c->diagram == ফাঁকা)
+		যাও no_memory;
 
 	c->current_width = INT_MAX;
 	c->current_height = INT_MAX;
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 
 no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-	return NSERROR_NOMEM;
+	content_broadcast_error(&c->base, NSERROR_NOMEM, ফাঁকা);
+	ফেরত NSERROR_NOMEM;
 }
 
 
@@ -70,34 +70,34 @@ no_memory:
  * Create a CONTENT_SVG.
  */
 
-static nserror svg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		struct llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+স্থির nserror svg_create(ধ্রুবক content_handler *handler,
+		lwc_string *imime_type, ধ্রুবক কাঠামো http_parameter *params,
+		কাঠামো llcache_handle *llcache, ধ্রুবক অক্ষর *fallback_charset,
+		bool quirks, কাঠামো content **c)
 {
 	svg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(svg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, আকার(svg_content));
+	যদি (svg == ফাঁকা)
+		ফেরত NSERROR_NOMEM;
 
 	error = content__init(&svg->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	যদি (error != NSERROR_OK) {
+		মুক্ত(svg);
+		ফেরত error;
 	}
 
-	error = svg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	error = svg_create_svg_তথ্য(svg);
+	যদি (error != NSERROR_OK) {
+		মুক্ত(svg);
+		ফেরত error;
 	}
 
-	*c = (struct content *) svg;
+	*c = (কাঠামো content *) svg;
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
 
@@ -106,7 +106,7 @@ static nserror svg_create(const content_handler *handler,
  * Convert a CONTENT_SVG for display.
  */
 
-static bool svg_convert(struct content *c)
+স্থির bool svg_convert(কাঠামো content *c)
 {
 	/*c->title = malloc(100);
 	if (c->title)
@@ -118,28 +118,28 @@ static bool svg_convert(struct content *c)
 	/* Done: update status bar */
 	content_set_status(c, "");
 
-	return true;
+	ফেরত true;
 }
 
 /**
  * Reformat a CONTENT_SVG.
  */
 
-static void svg_reformat(struct content *c, int width, int height)
+স্থির শূন্য svg_reformat(কাঠামো content *c, পূর্ণসংখ্যা width, পূর্ণসংখ্যা height)
 {
 	svg_content *svg = (svg_content *) c;
-	const uint8_t *source_data;
-	size_t source_size;
+	ধ্রুবক uint8_t *source_তথ্য;
+	size_t source_আকার;
 
-	assert(svg->diagram);
+	প্রতিজ্ঞা(svg->diagram);
 
 	/* Avoid reformats to same width/height as we already reformatted to */
-	if (width != svg->current_width || height != svg->current_height) {
-		source_data = content__get_source_data(c, &source_size);
+	যদি (width != svg->current_width || height != svg->current_height) {
+		source_তথ্য = content_get_source_তথ্য_2(c, &source_আকার);
 
 		svgtiny_parse(svg->diagram,
-			      (const char *)source_data,
-			      source_size,
+			      (ধ্রুবক অক্ষর *)source_তথ্য,
+			      source_আকার,
 			      nsurl_access(content_get_url(c)),
 			      width,
 			      height);
@@ -157,31 +157,31 @@ static void svg_reformat(struct content *c, int width, int height)
  * Redraw a CONTENT_SVG.
  */
 
-static bool
+স্থির bool
 svg_redraw_internal(svg_content *svg,
-		    int x,
-		    int y,
-		    int width,
-		    int height,
-		    const struct rect *clip,
-		    const struct redraw_context *ctx,
-		    float scale,
+		    পূর্ণসংখ্যা x,
+		    পূর্ণসংখ্যা y,
+		    পূর্ণসংখ্যা width,
+		    পূর্ণসংখ্যা height,
+		    ধ্রুবক কাঠামো rect *clip,
+		    ধ্রুবক কাঠামো redraw_context *ctx,
+		    দশমিক scale,
 		    colour background_colour)
 {
-	float transform[6];
-	struct svgtiny_diagram *diagram = svg->diagram;
-	int px, py;
-	unsigned int i;
+	দশমিক transform[6];
+	কাঠামো svgtiny_diagram *diagram = svg->diagram;
+	পূর্ণসংখ্যা px, py;
+	unsigned পূর্ণসংখ্যা i;
 	plot_font_style_t fstyle = *plot_style_font;
 	plot_style_t pstyle;
 	nserror res;
 
-	assert(diagram);
+	প্রতিজ্ঞা(diagram);
 
-	transform[0] = (float) width / (float) svg->base.width;
+	transform[0] = (দশমিক) width / (দশমিক) svg->base.width;
 	transform[1] = 0;
 	transform[2] = 0;
-	transform[3] = (float) height / (float) svg->base.height;
+	transform[3] = (দশমিক) height / (দশমিক) svg->base.height;
 	transform[4] = x;
 	transform[5] = y;
 
@@ -189,13 +189,13 @@ svg_redraw_internal(svg_content *svg,
 		 (svgtiny_GREEN((c)) << 8) |				\
 		 (svgtiny_BLUE((c)) << 16)))
 
-	for (i = 0; i != diagram->shape_count; i++) {
-		if (diagram->shape[i].path) {
+	জন্য (i = 0; i != diagram->shape_গুনতি; i++) {
+		যদি (diagram->shape[i].path) {
 			/* stroke style */
-			if (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {
+			যদি (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {
 				pstyle.stroke_type = PLOT_OP_TYPE_NONE;
 				pstyle.stroke_colour = NS_TRANSPARENT;
-			} else {
+			} অন্যথা {
 				pstyle.stroke_type = PLOT_OP_TYPE_SOLID;
 				pstyle.stroke_colour = BGR(diagram->shape[i].stroke);
 			}
@@ -203,10 +203,10 @@ svg_redraw_internal(svg_content *svg,
 					diagram->shape[i].stroke_width);
 
 			/* fill style */
-			if (diagram->shape[i].fill == svgtiny_TRANSPARENT) {
+			যদি (diagram->shape[i].fill == svgtiny_TRANSPARENT) {
 				pstyle.fill_type = PLOT_OP_TYPE_NONE;
 				pstyle.fill_colour = NS_TRANSPARENT;
-			} else {
+			} অন্যথা {
 				pstyle.fill_type = PLOT_OP_TYPE_SOLID;
 				pstyle.fill_colour = BGR(diagram->shape[i].fill);
 			}
@@ -215,13 +215,13 @@ svg_redraw_internal(svg_content *svg,
 			res = ctx->plot->path(ctx,
 					&pstyle,
 					diagram->shape[i].path,
-					diagram->shape[i].path_length,
+					diagram->shape[i].path_দৈর্ঘ্য,
 					transform);
-			if (res != NSERROR_OK) {
-				return false;
+			যদি (res != NSERROR_OK) {
+				ফেরত false;
 			}
 
-		} else if (diagram->shape[i].text) {
+		} অন্যথা যদি (diagram->shape[i].text) {
 			px = transform[0] * diagram->shape[i].text_x +
 				transform[2] * diagram->shape[i].text_y +
 				transform[4];
@@ -231,94 +231,94 @@ svg_redraw_internal(svg_content *svg,
 
 			fstyle.background = 0xffffff;
 			fstyle.foreground = 0x000000;
-			fstyle.size = (8 * PLOT_STYLE_SCALE) * scale;
+			fstyle.আকার_2 = (8 * PLOT_STYLE_SCALE) * scale;
 
 			res = ctx->plot->text(ctx,
 					      &fstyle,
 					      px, py,
 					      diagram->shape[i].text,
 					      strlen(diagram->shape[i].text));
-			if (res != NSERROR_OK) {
-				return false;
+			যদি (res != NSERROR_OK) {
+				ফেরত false;
 			}
 		}
 	}
 
 #undef BGR
 
-	return true;
+	ফেরত true;
 }
 
 
-static bool
+স্থির bool
 svg_redraw_tiled_internal(svg_content *svg,
-			  struct content_redraw_data *data,
-			  const struct rect *clip,
-			  const struct redraw_context *ctx)
+			  কাঠামো content_redraw_তথ্য *তথ্য,
+			  ধ্রুবক কাঠামো rect *clip,
+			  ধ্রুবক কাঠামো redraw_context *ctx)
 {
 	/* Tiled redraw required.  SVG repeats to extents of clip
 	 * rectangle, in x, y or both directions */
-	int x, y, x0, y0, x1, y1;
+	পূর্ণসংখ্যা x, y, x0, y0, x1, y1;
 
-	x = x0 = data->x;
-	y = y0 = data->y;
+	x = x0 = তথ্য->x;
+	y = y0 = তথ্য->y;
 
 	/* Find the redraw boundaries to loop within */
-	if (data->repeat_x) {
-		for (; x0 > clip->x0; x0 -= data->width);
+	যদি (তথ্য->repeat_x) {
+		জন্য (; x0 > clip->x0; x0 -= তথ্য->width);
 		x1 = clip->x1;
-	} else {
+	} অন্যথা {
 		x1 = x + 1;
 	}
-	if (data->repeat_y) {
-		for (; y0 > clip->y0; y0 -= data->height);
+	যদি (তথ্য->repeat_y) {
+		জন্য (; y0 > clip->y0; y0 -= তথ্য->height);
 		y1 = clip->y1;
-	} else {
+	} অন্যথা {
 		y1 = y + 1;
 	}
 
 	/* Repeatedly plot the SVG across the area */
-	for (y = y0; y < y1; y += data->height) {
-		for (x = x0; x < x1; x += data->width) {
-			if (!svg_redraw_internal(svg, x, y,
-						 data->width, data->height,
-						 clip, ctx, data->scale,
-						 data->background_colour)) {
-				return false;
+	জন্য (y = y0; y < y1; y += তথ্য->height) {
+		জন্য (x = x0; x < x1; x += তথ্য->width) {
+			যদি (!svg_redraw_internal(svg, x, y,
+						 তথ্য->width, তথ্য->height,
+						 clip, ctx, তথ্য->scale,
+						 তথ্য->background_colour)) {
+				ফেরত false;
 			}
 		}
 	}
 
-	return true;
+	ফেরত true;
 }
 
 
 /**
  * Redraw a CONTENT_SVG.
  */
-static bool
-svg_redraw(struct content *c,
-	   struct content_redraw_data *data,
-	   const struct rect *clip,
-	   const struct redraw_context *ctx)
+স্থির bool
+svg_redraw(কাঠামো content *c,
+	   কাঠামো content_redraw_তথ্য *তথ্য,
+	   ধ্রুবক কাঠামো rect *clip,
+	   ধ্রুবক কাঠামো redraw_context *ctx)
 {
 	svg_content *svg = (svg_content *)c;
 
-	if ((data->width <= 0) && (data->height <= 0)) {
+	যদি ((তথ্য->width <= 0) && (তথ্য->height <= 0)) {
 		/* No point trying to plot SVG if it does not occupy a valid
 		 * area */
-		return true;
+		ফেরত true;
 	}
 
-	if ((data->repeat_x == false) && (data->repeat_y == false)) {
+	যদি ((তথ্য->repeat_x == false) && (তথ্য->repeat_y == false)) {
 		/* Simple case: SVG is not tiled */
-		return svg_redraw_internal(svg, data->x, data->y,
-				data->width, data->height,
-				clip, ctx, data->scale,
-				data->background_colour);
+		ফেরত svg_redraw_internal(svg, তথ্য->x, তথ্য->y,
+				তথ্য->width, তথ্য->height,
+				clip, ctx, তথ্য->scale,
+				তথ্য->background_colour);
 	}
 
-	return svg_redraw_tiled_internal(svg, data, clip, ctx);
+	ফেরত svg_redraw_tiled_internal(svg, তথ্য, clip, ctx);
 }
 
 
@@ -326,58 +326,58 @@ svg_redraw(struct content *c,
  * Destroy a CONTENT_SVG and free all resources it owns.
  */
 
-static void svg_destroy(struct content *c)
+স্থির শূন্য svg_destroy(কাঠামো content *c)
 {
 	svg_content *svg = (svg_content *) c;
 
-	if (svg->diagram != NULL)
+	যদি (svg->diagram != ফাঁকা)
 		svgtiny_free(svg->diagram);
 }
 
 
-static nserror svg_clone(const struct content *old, struct content **newc)
+স্থির nserror svg_clone(ধ্রুবক কাঠামো content *old, কাঠামো content **newc)
 {
 	svg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(svg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, আকার(svg_content));
+	যদি (svg == ফাঁকা)
+		ফেরত NSERROR_NOMEM;
 
 	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		ফেরত error;
 	}
 
 	/* Simply replay create/convert */
-	error = svg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
+	error = svg_create_svg_তথ্য(svg);
+	যদি (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		ফেরত error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	যদি (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (svg_convert(&svg->base) == false) {
+		যদি (svg_convert(&svg->base) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+			ফেরত NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) svg;
+	*newc = (কাঠামো content *) svg;
 
-	return NSERROR_OK;
+	ফেরত NSERROR_OK;
 }
 
-static content_type svg_content_type(void)
+স্থির content_type svg_content_type(শূন্য)
 {
-	return CONTENT_IMAGE;
+	ফেরত CONTENT_IMAGE;
 }
 
-static const content_handler svg_content_handler = {
+স্থির ধ্রুবক content_handler svg_content_handler = {
 	.create = svg_create,
-	.data_complete = svg_convert,
+	.তথ্য_complete = svg_convert,
 	.reformat = svg_reformat,
 	.destroy = svg_destroy,
 	.redraw = svg_redraw,
@@ -386,7 +386,7 @@ static const content_handler svg_content_handler = {
 	.no_share = true
 };
 
-static const char *svg_types[] = {
+স্থির ধ্রুবক অক্ষর *svg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };
