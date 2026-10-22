@@ -61,6 +61,6 @@
  * FLOAT_(LEFT|RIGHT)   exactly 1 BLOCK, TABLE or FLEX
  * \endcode
  */
-bool box_normalise_block(struct box *block, const struct box *root, struct html_content *c);
+bool box_normalise_block(கட்டமைப்பு box *block, மாறிலி கட்டமைப்பு box *வேர், கட்டமைப்பு html_content *c);
 
 #endif

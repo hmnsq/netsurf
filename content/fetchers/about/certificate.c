@@ -21,160 +21,160 @@
  * content generator for the about scheme certificate page
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
 
-#include "utils/errors.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/ssl_certs.h"
+#அந்தர்பாவ "utils/errors.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "netsurf/inttypes.h"
+#அந்தர்பாவ "netsurf/ssl_certs.h"
 
-#include "private.h"
-#include "certificate.h"
+#அந்தர்பாவ "private.h"
+#அந்தர்பாவ "certificate.h"
 
 /**
  * certificate name parameters
  */
-struct ns_cert_name {
-	char *common_name;
-	char *organisation;
-	char *organisation_unit;
-	char *locality;
-	char *province;
-	char *country;
+கட்டமைப்பு ns_cert_name {
+	எழுத்து *common_name;
+	எழுத்து *organisation;
+	எழுத்து *organisation_unit;
+	எழுத்து *locality;
+	எழுத்து *province;
+	எழுத்து *country;
 };
 
 /**
  * Certificate public key parameters
  */
-struct ns_cert_pkey {
-	char *algor;
-	int size;
-	char *modulus;
-	char *exponent;
-	char *curve;
-	char *public;
+கட்டமைப்பு ns_cert_pkey {
+	எழுத்து *algor;
+	முழு size;
+	எழுத்து *modulus;
+	எழுத்து *exponent;
+	எழுத்து *curve;
+	எழுத்து *பொது;
 };
 
 /**
  * Certificate subject alternative name
  */
-struct ns_cert_san {
-	struct ns_cert_san *next;
-	char *name;
+கட்டமைப்பு ns_cert_san {
+	கட்டமைப்பு ns_cert_san *next;
+	எழுத்து *name;
 };
 
 /**
  * certificate information for certificate chain
  */
-struct ns_cert_info {
-	struct ns_cert_name subject_name; /**< Subject details */
-	struct ns_cert_name issuer_name; /**< Issuer details */
-	struct ns_cert_pkey public_key; /**< public key details */
+கட்டமைப்பு ns_cert_info {
+	கட்டமைப்பு ns_cert_name subject_name; /**< Subject details */
+	கட்டமைப்பு ns_cert_name issuer_name; /**< Issuer details */
+	கட்டமைப்பு ns_cert_pkey public_சாவி; /**< public key details */
 	long version;		/**< Certificate version */
-	char *not_before;	/**< Valid from date */
-	char *not_after;	/**< Valid to date */
-	int sig_type;		/**< Signature type */
-	char *sig_algor;        /**< Signature Algorithm */
-	char *serialnum;	/**< Serial number */
-	char *sha1fingerprint; /**< fingerprint shar1 encoded */
-	char *sha256fingerprint; /**< fingerprint shar256 encoded */
-	struct ns_cert_san *san; /**< subject alternative names */
+	எழுத்து *not_before;	/**< Valid from date */
+	எழுத்து *not_after;	/**< Valid to date */
+	முழு sig_type;		/**< Signature type */
+	எழுத்து *sig_algor;        /**< Signature Algorithm */
+	எழுத்து *serialnum;	/**< Serial number */
+	எழுத்து *sha1fingerprint; /**< fingerprint shar1 encoded */
+	எழுத்து *sha256fingerprint; /**< fingerprint shar256 encoded */
+	கட்டமைப்பு ns_cert_san *san; /**< subject alternative names */
 	ssl_cert_err err;       /**< Whatever is wrong with this certificate */
 };
 
 /**
  * free all resources associated with a certificate information structure
  */
-static nserror free_ns_cert_info(struct ns_cert_info *cinfo)
+நிலையான nserror free_ns_cert_info(கட்டமைப்பு ns_cert_info *cinfo)
 {
-	struct ns_cert_san *san;
+	கட்டமைப்பு ns_cert_san *san;
 
-	free(cinfo->subject_name.common_name);
-	free(cinfo->subject_name.organisation);
-	free(cinfo->subject_name.organisation_unit);
-	free(cinfo->subject_name.locality);
-	free(cinfo->subject_name.province);
-	free(cinfo->subject_name.country);
-	free(cinfo->issuer_name.common_name);
-	free(cinfo->issuer_name.organisation);
-	free(cinfo->issuer_name.organisation_unit);
-	free(cinfo->issuer_name.locality);
-	free(cinfo->issuer_name.province);
-	free(cinfo->issuer_name.country);
-	free(cinfo->public_key.algor);
-	free(cinfo->public_key.modulus);
-	free(cinfo->public_key.exponent);
-	free(cinfo->public_key.curve);
-	free(cinfo->public_key.public);
-	free(cinfo->not_before);
-	free(cinfo->not_after);
-	free(cinfo->sig_algor);
-	free(cinfo->serialnum);
+	விடுவி(cinfo->subject_name.common_name);
+	விடுவி(cinfo->subject_name.organisation);
+	விடுவி(cinfo->subject_name.organisation_unit);
+	விடுவி(cinfo->subject_name.locality);
+	விடுவி(cinfo->subject_name.province);
+	விடுவி(cinfo->subject_name.country);
+	விடுவி(cinfo->issuer_name.common_name);
+	விடுவி(cinfo->issuer_name.organisation);
+	விடுவி(cinfo->issuer_name.organisation_unit);
+	விடுவி(cinfo->issuer_name.locality);
+	விடுவி(cinfo->issuer_name.province);
+	விடுவி(cinfo->issuer_name.country);
+	விடுவி(cinfo->public_சாவி.algor);
+	விடுவி(cinfo->public_சாவி.modulus);
+	விடுவி(cinfo->public_சாவி.exponent);
+	விடுவி(cinfo->public_சாவி.curve);
+	விடுவி(cinfo->public_சாவி.பொது);
+	விடுவி(cinfo->not_before);
+	விடுவி(cinfo->not_after);
+	விடுவி(cinfo->sig_algor);
+	விடுவி(cinfo->serialnum);
 
 	/* free san list avoiding use after free */
 	san = cinfo->san;
-	while (san != NULL) {
-		struct ns_cert_san *next;
+	போது (san != வெற்று) {
+		கட்டமைப்பு ns_cert_san *next;
 		next = san->next;
-		free(san);
+		விடுவி(san);
 		san = next;
 	}
 
-	free(cinfo);
+	விடுவி(cinfo);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 #ifdef WITH_OPENSSL
 
-#include <openssl/ssl.h>
-#include <openssl/x509v3.h>
+#அந்தர்பாவ <openssl/ssl.h>
+#அந்தர்பாவ <openssl/x509v3.h>
 
-#if (OPENSSL_VERSION_NUMBER < 0x30000000L)
+#எனில் (OPENSSL_VERSION_எண் < 0x30000000L)
 /* OpenSSL 1.1.1 or LibreSSL */
 
-# if defined(LIBRESSL_VERSION_NUMBER)
+# எனில் defined(LIBRESSL_VERSION_எண்)
   /* LibreSSL */
-#  if (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
+#  எனில் (LIBRESSL_VERSION_எண் < 0x3050000fL)
    /* LibreSSL <3.5.0 */
 
-#   if (LIBRESSL_VERSION_NUMBER < 0x2070000fL)
+#   எனில் (LIBRESSL_VERSION_எண் < 0x2070000fL)
     /* LibreSSL <2.7.0 */
-static int ns_X509_get_signature_nid(X509 *cert)
+நிலையான முழு ns_X509_get_signature_nid(X509 *cert)
 {
-	return OBJ_obj2nid(cert->cert_info->key->algor->algorithm);
+	திரும்பு OBJ_obj2nid(cert->cert_info->சாவி->algor->algorithm);
 }
 
-static const unsigned char *ns_ASN1_STRING_get0_data(ASN1_STRING *asn1str)
+நிலையான மாறிலி unsigned எழுத்து *ns_ASN1_STRING_get0_data(ASN1_STRING *asn1str)
 {
-	return (const unsigned char *)ASN1_STRING_data(asn1str);
+	திரும்பு (மாறிலி unsigned எழுத்து *)ASN1_STRING_data(asn1str);
 }
-#   else
+#   இல்லையெனில்
 #    define ns_X509_get_signature_nid X509_get_signature_nid
 #    define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
 #   endif
 
-static const BIGNUM *ns_RSA_get0_n(const RSA *d)
+நிலையான மாறிலி BIGNUM *ns_RSA_get0_n(மாறிலி RSA *d)
 {
-	return d->n;
+	திரும்பு d->n;
 }
 
-static const BIGNUM *ns_RSA_get0_e(const RSA *d)
+நிலையான மாறிலி BIGNUM *ns_RSA_get0_e(மாறிலி RSA *d)
 {
-	return d->e;
+	திரும்பு d->e;
 }
-#  else
+#  இல்லையெனில்
    /* LibreSSL >= 3.5.0 */
 #   define ns_X509_get_signature_nid X509_get_signature_nid
 #   define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
 #   define ns_RSA_get0_n RSA_get0_n
 #   define ns_RSA_get0_e RSA_get0_e
 #  endif
-# else
+# இல்லையெனில்
   /* OpenSSL 1.1.1 */
 #  define ns_X509_get_signature_nid X509_get_signature_nid
 #  define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
@@ -182,30 +182,30 @@ static const BIGNUM *ns_RSA_get0_e(const RSA *d)
 #  define ns_RSA_get0_e RSA_get0_e
 # endif
 
-static int ns_EVP_PKEY_get_bn_param(const EVP_PKEY *pkey,
-		const char *key_name, BIGNUM **bn) {
+நிலையான முழு ns_EVP_PKEY_get_bn_param(மாறிலி EVP_PKEY *pkey,
+		மாறிலி எழுத்து *சாவி_name, BIGNUM **bn) {
 	RSA *rsa;
-	BIGNUM *result = NULL;
+	BIGNUM *result = வெற்று;
 
 	/* Check parameters: only support allocation-form *bn */
-	if (pkey == NULL || key_name == NULL || bn == NULL || *bn != NULL)
-		return 0;
+	எனில் (pkey == வெற்று || சாவி_name == வெற்று || bn == வெற்று || *bn != வெற்று)
+		திரும்பு 0;
 
 	/* Only support RSA keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_RSA)
-		return 0;
+	எனில் (EVP_PKEY_base_id(pkey) != EVP_PKEY_RSA)
+		திரும்பு 0;
 
 	rsa = EVP_PKEY_get1_RSA((EVP_PKEY *) pkey);
-	if (rsa == NULL)
-		return 0;
+	எனில் (rsa == வெற்று)
+		திரும்பு 0;
 
-	if (strcmp(key_name, "n") == 0) {
-		const BIGNUM *n = ns_RSA_get0_n(rsa);
-		if (n != NULL)
+	எனில் (strcmp(சாவி_name, "n") == 0) {
+		மாறிலி BIGNUM *n = ns_RSA_get0_n(rsa);
+		எனில் (n != வெற்று)
 			result = BN_dup(n);
-	} else if (strcmp(key_name, "e") == 0) {
-		const BIGNUM *e = ns_RSA_get0_e(rsa);
-		if (e != NULL)
+	} இல்லையெனில் எனில் (strcmp(சாவி_name, "e") == 0) {
+		மாறிலி BIGNUM *e = ns_RSA_get0_e(rsa);
+		எனில் (e != வெற்று)
 			result = BN_dup(e);
 	}
 
@@ -213,91 +213,91 @@ static int ns_EVP_PKEY_get_bn_param(const EVP_PKEY *pkey,
 
 	*bn = result;
 
-	return (result != NULL) ? 1 : 0;
+	திரும்பு (result != வெற்று) ? 1 : 0;
 }
 
-static int ns_EVP_PKEY_get_utf8_string_param(const EVP_PKEY *pkey,
-		const char *key_name, char *str, size_t max_len,
+நிலையான முழு ns_EVP_PKEY_get_utf8_string_param(மாறிலி EVP_PKEY *pkey,
+		மாறிலி எழுத்து *சாவி_name, எழுத்து *str, size_t max_len,
 		size_t *out_len)
 {
-	const EC_GROUP *ecgroup;
-	const char *group = "";
+	மாறிலி EC_GROUP *ecgroup;
+	மாறிலி எழுத்து *group = "";
 	size_t group_len = 0;
-	EC_KEY *ec;
-	int ret = 0;
+	EC_சாவி *ec;
+	முழு ret = 0;
 
-	if (pkey == NULL || key_name == NULL)
-		return 0;
+	எனில் (pkey == வெற்று || சாவி_name == வெற்று)
+		திரும்பு 0;
 
 	/* Only support EC keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
-		return 0;
+	எனில் (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
+		திரும்பு 0;
 
 	/* Only support fetching the group */
-	if (strcmp(key_name, "group") != 0)
-		return 0;
+	எனில் (strcmp(சாவி_name, "group") != 0)
+		திரும்பு 0;
 
-	ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY *) pkey);
+	ec = EVP_PKEY_get1_EC_சாவி((EVP_PKEY *) pkey);
 
-	ecgroup = EC_KEY_get0_group(ec);
-	if (ecgroup != NULL) {
+	ecgroup = EC_சாவி_get0_group(ec);
+	எனில் (ecgroup != வெற்று) {
 		group = OBJ_nid2ln(EC_GROUP_get_curve_name(ecgroup));
 		group_len = strlen(group);
 	}
 
-	if (str != NULL && max_len > group_len) {
+	எனில் (str != வெற்று && max_len > group_len) {
 		memcpy(str, group, group_len);
 		str[group_len] = '\0';
 		ret = 1;
 	}
 
-	if (out_len != NULL) {
+	எனில் (out_len != வெற்று) {
 		*out_len = group_len;
 	}
 
-	EC_KEY_free(ec);
+	EC_சாவி_free(ec);
 
-	return ret;
+	திரும்பு ret;
 }
 
-static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
-		const char *key_name, unsigned char *buf, size_t max_len,
+நிலையான முழு ns_EVP_PKEY_get_octet_string_param(மாறிலி EVP_PKEY *pkey,
+		மாறிலி எழுத்து *சாவி_name, unsigned எழுத்து *buf, size_t max_len,
 		size_t *out_len)
 {
-	const EC_GROUP *ecgroup;
-	const EC_POINT *ecpoint;
+	மாறிலி EC_GROUP *ecgroup;
+	மாறிலி EC_POINT *ecpoint;
 	size_t len;
 	BN_CTX *bnctx;
-	EC_KEY *ec;
-	int ret = 0;
+	EC_சாவி *ec;
+	முழு ret = 0;
 
-	if (pkey == NULL || key_name == NULL)
-		return 0;
+	எனில் (pkey == வெற்று || சாவி_name == வெற்று)
+		திரும்பு 0;
 
 	/* Only support EC keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
-		return 0;
+	எனில் (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
+		திரும்பு 0;
 
-	if (strcmp(key_name, "encoded-pub-key") != 0)
-		return 0;
+	எனில் (strcmp(சாவி_name, "encoded-pub-key") != 0)
+		திரும்பு 0;
 
-	ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY *) pkey);
-	if (ec == NULL)
-		return 0;
+	ec = EVP_PKEY_get1_EC_சாவி((EVP_PKEY *) pkey);
+	எனில் (ec == வெற்று)
+		திரும்பு 0;
 
-	ecgroup = EC_KEY_get0_group(ec);
-	if (ecgroup != NULL) {
-		ecpoint = EC_KEY_get0_public_key(ec);
-		if (ecpoint != NULL) {
+	ecgroup = EC_சாவி_get0_group(ec);
+	எனில் (ecgroup != வெற்று) {
+		ecpoint = EC_சாவி_get0_public_சாவி(ec);
+		எனில் (ecpoint != வெற்று) {
 			bnctx = BN_CTX_new();
 			len = EC_POINT_point2oct(ecgroup,
 						 ecpoint,
 						 POINT_CONVERSION_UNCOMPRESSED,
-						 NULL,
+						 வெற்று,
 						 0,
 						 bnctx);
-			if (len != 0 && len <= max_len) {
-				if (EC_POINT_point2oct(ecgroup,
+			எனில் (len != 0 && len <= max_len) {
+				எனில் (EC_POINT_point2oct(ecgroup,
 						       ecpoint,
 						       POINT_CONVERSION_UNCOMPRESSED,
 						       buf,
@@ -305,17 +305,17 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
 						       bnctx) == len)
 					ret = 1;
 			}
-			if (out_len != NULL)
+			எனில் (out_len != வெற்று)
 				*out_len = len;
 			BN_CTX_free(bnctx);
 		}
 	}
 
-	EC_KEY_free(ec);
+	EC_சாவி_free(ec);
 
-	return ret;
+	திரும்பு ret;
 }
-#else
+#இல்லையெனில்
 /* OpenSSL 3.x and later */
 #define ns_X509_get_signature_nid X509_get_signature_nid
 #define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
@@ -333,54 +333,54 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
  * \param iname The info structure to recive the extracted parameters.
  * \return NSERROR_OK on success else error code
  */
-static nserror
-xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
+நிலையான nserror
+xname_to_info(X509_NAME *xname, கட்டமைப்பு ns_cert_name *iname)
 {
-	int entryidx;
-	int entrycnt;
+	முழு entryidx;
+	முழு entrycnt;
 	X509_NAME_ENTRY *entry; /* current name entry */
-	ASN1_STRING *value;
-	const unsigned char *value_str;
+	ASN1_STRING *மதிப்பு;
+	மாறிலி unsigned எழுத்து *மதிப்பு_str;
 	ASN1_OBJECT *name;
-	int name_nid;
-	char **field;
+	முழு name_nid;
+	எழுத்து **field;
 
-	entrycnt = X509_NAME_entry_count(xname);
+	entrycnt = X509_NAME_entry_மொத்தம்(xname);
 
-	for (entryidx = 0; entryidx < entrycnt; entryidx++) {
+	க்கு (entryidx = 0; entryidx < entrycnt; entryidx++) {
 		entry = X509_NAME_get_entry(xname, entryidx);
 		name = X509_NAME_ENTRY_get_object(entry);
 		name_nid = OBJ_obj2nid(name);
-		value = X509_NAME_ENTRY_get_data(entry);
-		value_str = ns_ASN1_STRING_get0_data(value);
-		switch (name_nid) {
-		case NID_commonName:
+		மதிப்பு = X509_NAME_ENTRY_get_data(entry);
+		மதிப்பு_str = ns_ASN1_STRING_get0_data(மதிப்பு);
+		தேர்வு (name_nid) {
+		நிலை NID_commonName:
 			field = &iname->common_name;
-			break;
-		case NID_countryName:
+			நிறுத்து;
+		நிலை NID_countryName:
 			field = &iname->country;
-			break;
-		case NID_localityName:
+			நிறுத்து;
+		நிலை NID_localityName:
 			field = &iname->locality;
-			break;
-		case NID_stateOrProvinceName:
+			நிறுத்து;
+		நிலை NID_stateOrProvinceName:
 			field = &iname->province;
-			break;
-		case NID_organizationName:
+			நிறுத்து;
+		நிலை NID_organizationName:
 			field = &iname->organisation;
-			break;
-		case NID_organizationalUnitName:
+			நிறுத்து;
+		நிலை NID_organizationalUnitName:
 			field = &iname->organisation_unit;
-			break;
-		default :
-			field = NULL;
-			break;
+			நிறுத்து;
+		இயல்பு :
+			field = வெற்று;
+			நிறுத்து;
 		}
-		if (field != NULL) {
-			*field = strdup((const char *)value_str);
+		எனில் (field != வெற்று) {
+			*field = strdup((மாறிலி எழுத்து *)மதிப்பு_str);
 			NSLOG(netsurf, DEEPDEBUG,
 			      "NID:%d value: %s", name_nid, *field);
-		} else {
+		} இல்லையெனில் {
 			NSLOG(netsurf, DEEPDEBUG, "NID:%d", name_nid);
 		}
 	}
@@ -390,11 +390,11 @@ xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
 	 *  missing means the certificate is broken but this should be
 	 *  robust in the face of bad data
 	 */
-	if (iname->common_name == NULL) {
+	எனில் (iname->common_name == வெற்று) {
 		iname->common_name = strdup("Unknown");
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -404,20 +404,20 @@ xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
  * \todo only uses html entity as separator because netsurfs line breaking
  *       fails otherwise.
  */
-static char *hexdup(const char *hex)
+நிலையான எழுத்து *hexdup(மாறிலி எழுத்து *hex)
 {
-	int hexlen;
-	char *dst;
-	char *out;
-	int cn = 0;
+	முழு hexlen;
+	எழுத்து *dst;
+	எழுத்து *out;
+	முழு cn = 0;
 
 	hexlen = strlen(hex);
 	/* allow space fox XXYY to XX&#58;YY&#58; */
 	dst = malloc(((hexlen * 7) + 6) / 2);
 
-	if (dst != NULL) {
-		for (out = dst; *hex != 0; hex++) {
-			if (cn == 2) {
+	எனில் (dst != வெற்று) {
+		க்கு (out = dst; *hex != 0; hex++) {
+			எனில் (cn == 2) {
 				cn = 0;
 				*out++ = '&';
 				*out++ = '#';
@@ -430,7 +430,7 @@ static char *hexdup(const char *hex)
 		}
 		*out = 0;
 	}
-	return dst;
+	திரும்பு dst;
 }
 
 
@@ -440,20 +440,20 @@ static char *hexdup(const char *hex)
  * \todo only uses html entity as separator because netsurfs line breaking
  *       fails otherwise.
  */
-static char *bindup(unsigned char *bin, unsigned int binlen)
+நிலையான எழுத்து *bindup(unsigned எழுத்து *bin, unsigned முழு binlen)
 {
-	char *dst;
-	char *out;
-	unsigned int idx;
-	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
+	எழுத்து *dst;
+	எழுத்து *out;
+	unsigned முழு idx;
+	மாறிலி எழுத்து hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
 			     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	/* allow space fox XY to expand to XX&#58;YY&#58; */
 	dst = malloc(binlen * 7);
 
-	if (dst != NULL) {
+	எனில் (dst != வெற்று) {
 		out = dst;
-		for (idx = 0; idx < binlen; idx++) {
+		க்கு (idx = 0; idx < binlen; idx++) {
 			*out++ = hex[(bin[idx] & 0xf0) >> 4];
 			*out++ = hex[bin[idx] & 0xf];
 
@@ -466,7 +466,7 @@ static char *bindup(unsigned char *bin, unsigned int binlen)
 		out -= 5;
 		*out = 0;
 	}
-	return dst;
+	திரும்பு dst;
 }
 
 
@@ -477,19 +477,19 @@ static char *bindup(unsigned char *bin, unsigned int binlen)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+நிலையான nserror
+rsa_to_info(EVP_PKEY *pkey, கட்டமைப்பு ns_cert_pkey *ikey)
 {
-	BIGNUM *n = NULL, *e = NULL;
-	char *tmp;
+	BIGNUM *n = வெற்று, *e = வெற்று;
+	எழுத்து *tmp;
 
-	if (ns_EVP_PKEY_get_bn_param(pkey, "n", &n) != 1) {
-		return NSERROR_BAD_PARAMETER;
+	எனில் (ns_EVP_PKEY_get_bn_param(pkey, "n", &n) != 1) {
+		திரும்பு NSERROR_BAD_PARAMETER;
 	}
 
-	if (ns_EVP_PKEY_get_bn_param(pkey, "e", &e) != 1) {
+	எனில் (ns_EVP_PKEY_get_bn_param(pkey, "e", &e) != 1) {
 		BN_free(n);
-		return NSERROR_BAD_PARAMETER;
+		திரும்பு NSERROR_BAD_PARAMETER;
 	}
 
 	ikey->algor = strdup("RSA");
@@ -497,13 +497,13 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	ikey->size = EVP_PKEY_bits(pkey);
 
 	tmp = BN_bn2hex(n);
-	if (tmp != NULL) {
+	எனில் (tmp != வெற்று) {
 		ikey->modulus = hexdup(tmp);
 		OPENSSL_free(tmp);
 	}
 
 	tmp = BN_bn2dec(e);
-	if (tmp != NULL) {
+	எனில் (tmp != வெற்று) {
 		ikey->exponent = strdup(tmp);
 		OPENSSL_free(tmp);
 	}
@@ -511,7 +511,7 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	BN_free(e);
 	BN_free(n);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -522,14 +522,14 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-dsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+நிலையான nserror
+dsa_to_info(EVP_PKEY *pkey, கட்டமைப்பு ns_cert_pkey *ikey)
 {
 	ikey->algor = strdup("DSA");
 
 	ikey->size = EVP_PKEY_bits(pkey);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -540,14 +540,14 @@ dsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-dh_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+நிலையான nserror
+dh_to_info(EVP_PKEY *pkey, கட்டமைப்பு ns_cert_pkey *ikey)
 {
 	ikey->algor = strdup("Diffie Hellman");
 
 	ikey->size = EVP_PKEY_bits(pkey);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -558,8 +558,8 @@ dh_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+நிலையான nserror
+ec_to_info(EVP_PKEY *pkey, கட்டமைப்பு ns_cert_pkey *ikey)
 {
 	size_t len;
 
@@ -568,34 +568,34 @@ ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	ikey->size = EVP_PKEY_bits(pkey);
 
 	len = 0;
-	ns_EVP_PKEY_get_utf8_string_param(pkey, "group", NULL, 0, &len);
-	if (len != 0) {
+	ns_EVP_PKEY_get_utf8_string_param(pkey, "group", வெற்று, 0, &len);
+	எனில் (len != 0) {
 		ikey->curve = malloc(len + 1);
-		if (ikey->curve != NULL) {
-			if (ns_EVP_PKEY_get_utf8_string_param(pkey, "group",
-					ikey->curve, len + 1, NULL) == 0) {
-				free(ikey->curve);
-				ikey->curve = NULL;
+		எனில் (ikey->curve != வெற்று) {
+			எனில் (ns_EVP_PKEY_get_utf8_string_param(pkey, "group",
+					ikey->curve, len + 1, வெற்று) == 0) {
+				விடுவி(ikey->curve);
+				ikey->curve = வெற்று;
 			}
 		}
 	}
 
 	len = 0;
 	ns_EVP_PKEY_get_octet_string_param(pkey, "encoded-pub-key",
-			NULL, 0, &len);
-	if (len != 0) {
-		unsigned char *point = malloc(len);
-		if (point != NULL) {
-			if (ns_EVP_PKEY_get_octet_string_param(pkey,
+			வெற்று, 0, &len);
+	எனில் (len != 0) {
+		unsigned எழுத்து *point = malloc(len);
+		எனில் (point != வெற்று) {
+			எனில் (ns_EVP_PKEY_get_octet_string_param(pkey,
 					"encoded-pub-key", point, len,
-					NULL) == 1) {
-				ikey->public = bindup(point, len);
+					வெற்று) == 1) {
+				ikey->பொது = bindup(point, len);
 			}
-			free(point);
+			விடுவி(point);
 		}
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -605,71 +605,71 @@ ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-pkey_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+நிலையான nserror
+pkey_to_info(EVP_PKEY *pkey, கட்டமைப்பு ns_cert_pkey *ikey)
 {
 	nserror res;
 
-	if (pkey == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	எனில் (pkey == வெற்று) {
+		திரும்பு NSERROR_BAD_PARAMETER;
 	}
 
-	switch (EVP_PKEY_base_id(pkey)) {
-	case EVP_PKEY_RSA:
+	தேர்வு (EVP_PKEY_base_id(pkey)) {
+	நிலை EVP_PKEY_RSA:
 		res = rsa_to_info(pkey, ikey);
-		break;
+		நிறுத்து;
 
-	case EVP_PKEY_DSA:
+	நிலை EVP_PKEY_DSA:
 		res = dsa_to_info(pkey, ikey);
-		break;
+		நிறுத்து;
 
-	case EVP_PKEY_DH:
+	நிலை EVP_PKEY_DH:
 		res = dh_to_info(pkey, ikey);
-		break;
+		நிறுத்து;
 
-	case EVP_PKEY_EC:
+	நிலை EVP_PKEY_EC:
 		res = ec_to_info(pkey, ikey);
-		break;
+		நிறுத்து;
 
-	default:
+	இயல்பு:
 		res = NSERROR_NOT_IMPLEMENTED;
-		break;
+		நிறுத்து;
 	}
 
 	EVP_PKEY_free(pkey);
 
-	return res;
+	திரும்பு res;
 }
 
-static nserror san_to_info(X509 *cert, struct ns_cert_san **prev_next)
+நிலையான nserror san_to_info(X509 *cert, கட்டமைப்பு ns_cert_san **prev_next)
 {
-	int idx;
-	int san_names_nb = -1;
-	const GENERAL_NAME *current_name;
-	const unsigned char *dns_name;
-	struct ns_cert_san *isan;
+	முழு idx;
+	முழு san_names_nb = -1;
+	மாறிலி GENERAL_NAME *current_name;
+	மாறிலி unsigned எழுத்து *dns_name;
+	கட்டமைப்பு ns_cert_san *isan;
 
-	STACK_OF(GENERAL_NAME) *san_names = NULL;
+	அடுக்கு_OF(GENERAL_NAME) *san_names = வெற்று;
 
-	san_names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
-	if (san_names == NULL) {
-		return NSERROR_OK;
+	san_names = X509_get_ext_d2i(cert, NID_subject_alt_name, வெற்று, வெற்று);
+	எனில் (san_names == வெற்று) {
+		திரும்பு NSERROR_OK;
 	}
 
-	san_names_nb = sk_GENERAL_NAME_num(san_names);
+	san_names_nb = sk_GENERAL_NAME_இலக்கம்(san_names);
 
 	/* Check each name within the extension */
-	for (idx = 0; idx < san_names_nb; idx++) {
-		current_name = sk_GENERAL_NAME_value(san_names, idx);
+	க்கு (idx = 0; idx < san_names_nb; idx++) {
+		current_name = sk_GENERAL_NAME_மதிப்பு(san_names, idx);
 
-		if (current_name->type == GEN_DNS) {
+		எனில் (current_name->type == GEN_DNS) {
 			/* extract DNS name into info structure */
 			dns_name = ns_ASN1_STRING_get0_data(current_name->d.dNSName);
 
-			isan = malloc(sizeof(struct ns_cert_san));
-			if (isan != NULL) {
-				isan->name = strdup((const char *)dns_name);
-				isan->next = NULL;
+			isan = malloc(அளவு(கட்டமைப்பு ns_cert_san));
+			எனில் (isan != வெற்று) {
+				isan->name = strdup((மாறிலி எழுத்து *)dns_name);
+				isan->next = வெற்று;
 				*prev_next = isan;
 				prev_next = &isan->next;
 			}
@@ -681,33 +681,33 @@ static nserror san_to_info(X509 *cert, struct ns_cert_san **prev_next)
 	 * sk_GENERAL_NAME_pop_free(san_names, GENERAL_NAME_free);
 	 * So instead we do this open-coded loop which does the same:
 	 */
-	for (idx = 0; idx < san_names_nb; idx++) {
-		GENERAL_NAME *entry = sk_GENERAL_NAME_pop(san_names);
+	க்கு (idx = 0; idx < san_names_nb; idx++) {
+		GENERAL_NAME *entry = sk_GENERAL_NAME_எடு(san_names);
 		GENERAL_NAME_free(entry);
 	}
 	sk_GENERAL_NAME_free(san_names);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
-static nserror
-der_to_certinfo(const uint8_t *der,
+நிலையான nserror
+der_to_certinfo(மாறிலி uint8_t *der,
 		size_t der_length,
-		struct ns_cert_info *info)
+		கட்டமைப்பு ns_cert_info *info)
 {
 	BIO *mem;
 	BUF_MEM *buf;
-	const ASN1_INTEGER *asn1_num;
+	மாறிலி ASN1_INTEGER *asn1_இலக்கம்;
 	BIGNUM *bignum;
 	X509 *cert;		/**< Pointer to certificate */
 
-	if (der == NULL) {
-		return NSERROR_OK;
+	எனில் (der == வெற்று) {
+		திரும்பு NSERROR_OK;
 	}
 
-	cert = d2i_X509(NULL, &der, der_length);
-	if (cert == NULL) {
-		return NSERROR_INVALID;
+	cert = d2i_X509(வெற்று, &der, der_length);
+	எனில் (cert == வெற்று) {
+		திரும்பு NSERROR_INVALID;
 	}
 
 	/*
@@ -722,10 +722,10 @@ der_to_certinfo(const uint8_t *der,
 	mem = BIO_new(BIO_s_mem());
 	ASN1_TIME_print(mem, X509_get_notBefore(cert));
 	BIO_get_mem_ptr(mem, &buf);
-	(void) BIO_set_close(mem, BIO_NOCLOSE);
+	(வெறுமை) BIO_set_close(mem, BIO_NOCLOSE);
 	BIO_free(mem);
 	info->not_before = calloc(1, buf->length + 1);
-	if (info->not_before != NULL) {
+	எனில் (info->not_before != வெற்று) {
 		memcpy(info->not_before, buf->data, (unsigned)buf->length);
 	}
 	BUF_MEM_free(buf);
@@ -735,10 +735,10 @@ der_to_certinfo(const uint8_t *der,
 	ASN1_TIME_print(mem,
 			X509_get_notAfter(cert));
 	BIO_get_mem_ptr(mem, &buf);
-	(void) BIO_set_close(mem, BIO_NOCLOSE);
+	(வெறுமை) BIO_set_close(mem, BIO_NOCLOSE);
 	BIO_free(mem);
 	info->not_after = calloc(1, buf->length + 1);
-	if (info->not_after != NULL) {
+	எனில் (info->not_after != வெற்று) {
 		memcpy(info->not_after, buf->data, (unsigned)buf->length);
 	}
 	BUF_MEM_free(buf);
@@ -747,53 +747,53 @@ der_to_certinfo(const uint8_t *der,
 	info->sig_type = X509_get_signature_type(cert);
 
 	/* signature algorithm */
-	int pkey_nid = ns_X509_get_signature_nid(cert);
-	if (pkey_nid != NID_undef) {
-		const char* sslbuf = OBJ_nid2ln(pkey_nid);
-		if (sslbuf != NULL) {
+	முழு pkey_nid = ns_X509_get_signature_nid(cert);
+	எனில் (pkey_nid != NID_undef) {
+		மாறிலி எழுத்து* sslbuf = OBJ_nid2ln(pkey_nid);
+		எனில் (sslbuf != வெற்று) {
 			info->sig_algor = strdup(sslbuf);
 		}
 	}
 
 	/* serial number */
-	asn1_num = X509_get_serialNumber(cert);
-	if (asn1_num != NULL) {
-		bignum = ASN1_INTEGER_to_BN(asn1_num, NULL);
-		if (bignum != NULL) {
-			char *tmp = BN_bn2hex(bignum);
-			if (tmp != NULL) {
+	asn1_இலக்கம் = X509_get_serial_எண்(cert);
+	எனில் (asn1_இலக்கம் != வெற்று) {
+		bignum = ASN1_INTEGER_to_BN(asn1_இலக்கம், வெற்று);
+		எனில் (bignum != வெற்று) {
+			எழுத்து *tmp = BN_bn2hex(bignum);
+			எனில் (tmp != வெற்று) {
 				info->serialnum = hexdup(tmp);
 				OPENSSL_free(tmp);
 			}
 			BN_free(bignum);
-			bignum = NULL;
+			bignum = வெற்று;
 		}
 	}
 
 	/* fingerprints */
-	const EVP_MD *digest;
-	unsigned int dig_len;
-	unsigned char *buff;
-	int rc;
+	மாறிலி EVP_MD *digest;
+	unsigned முழு dig_len;
+	unsigned எழுத்து *buff;
+	முழு rc;
 
 	digest = EVP_sha1();
 	buff = malloc(EVP_MD_size(digest));
-	if (buff != NULL) {
+	எனில் (buff != வெற்று) {
 		rc = X509_digest(cert, digest, buff, &dig_len);
-		if ((rc == 1) && (dig_len == (unsigned int)EVP_MD_size(digest))) {
+		எனில் ((rc == 1) && (dig_len == (unsigned முழு)EVP_MD_size(digest))) {
 			info->sha1fingerprint = bindup(buff, dig_len);
 		}
-		free(buff);
+		விடுவி(buff);
 	}
 
 	digest = EVP_sha256();
 	buff = malloc(EVP_MD_size(digest));
-	if (buff != NULL) {
+	எனில் (buff != வெற்று) {
 		rc = X509_digest(cert, digest, buff, &dig_len);
-		if ((rc == 1) && (dig_len == (unsigned int)EVP_MD_size(digest))) {
+		எனில் ((rc == 1) && (dig_len == (unsigned முழு)EVP_MD_size(digest))) {
 			info->sha256fingerprint = bindup(buff, dig_len);
 		}
-		free(buff);
+		விடுவி(buff);
 	}
 
 	/* subject alternative names */
@@ -806,138 +806,138 @@ der_to_certinfo(const uint8_t *der,
 	xname_to_info(X509_get_subject_name(cert), &info->subject_name);
 
 	/* public key */
-	pkey_to_info(X509_get_pubkey(cert), &info->public_key);
+	pkey_to_info(X509_get_pubkey(cert), &info->public_சாவி);
 
 	X509_free(cert);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* copy certificate data */
-static nserror
-convert_chain_to_cert_info(const struct cert_chain *chain,
-			   struct ns_cert_info **cert_info_out)
+நிலையான nserror
+convert_chain_to_cert_info(மாறிலி கட்டமைப்பு cert_chain *chain,
+			   கட்டமைப்பு ns_cert_info **cert_info_out)
 {
-	struct ns_cert_info *certs;
+	கட்டமைப்பு ns_cert_info *certs;
 	size_t depth;
 	nserror res;
 
-	certs = calloc(chain->depth, sizeof(struct ns_cert_info));
-	if (certs == NULL) {
-		return NSERROR_NOMEM;
+	certs = calloc(chain->depth, அளவு(கட்டமைப்பு ns_cert_info));
+	எனில் (certs == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
-	for (depth = 0; depth < chain->depth;depth++) {
+	க்கு (depth = 0; depth < chain->depth;depth++) {
 		res = der_to_certinfo(chain->certs[depth].der,
 				      chain->certs[depth].der_length,
 				      certs + depth);
-		if (res != NSERROR_OK) {
-			free(certs);
-			return res;
+		எனில் (res != NSERROR_OK) {
+			விடுவி(certs);
+			திரும்பு res;
 		}
 		certs[depth].err = chain->certs[depth].err;
 	}
 
 	*cert_info_out = certs;
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
-#else
-static nserror
-convert_chain_to_cert_info(const struct cert_chain *chain,
-			   struct ns_cert_info **cert_info_out)
+#இல்லையெனில்
+நிலையான nserror
+convert_chain_to_cert_info(மாறிலி கட்டமைப்பு cert_chain *chain,
+			   கட்டமைப்பு ns_cert_info **cert_info_out)
 {
-	return NSERROR_NOT_IMPLEMENTED;
+	திரும்பு NSERROR_NOT_IMPLEMENTED;
 }
 #endif
 
 
-static nserror
-format_certificate_name(struct fetch_about_context *ctx,
-			struct ns_cert_name *cert_name)
+நிலையான nserror
+format_certificate_name(கட்டமைப்பு fetch_about_context *ctx,
+			கட்டமைப்பு ns_cert_name *cert_name)
 {
 	nserror res;
 	res = fetch_about_ssenddataf(ctx,
 			 "<tr><th>Common Name</th><td>%s</td></tr>\n",
 			 cert_name->common_name);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
-	if (cert_name->organisation != NULL) {
+	எனில் (cert_name->organisation != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Organisation</th><td>%s</td></tr>\n",
 				 cert_name->organisation);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (cert_name->organisation_unit != NULL) {
+	எனில் (cert_name->organisation_unit != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Organisation Unit</th><td>%s</td></tr>\n",
 				 cert_name->organisation_unit);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (cert_name->locality != NULL) {
+	எனில் (cert_name->locality != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Locality</th><td>%s</td></tr>\n",
 				 cert_name->locality);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (cert_name->province != NULL) {
+	எனில் (cert_name->province != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Province</th><td>%s</td></tr>\n",
 				 cert_name->province);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (cert_name->country != NULL) {
+	எனில் (cert_name->country != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Country</th><td>%s</td></tr>\n",
 				 cert_name->country);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	return res;
+	திரும்பு res;
 }
 
 /**
  * output formatted certificate subject alternate names
  */
-static nserror
-format_certificate_san(struct fetch_about_context *ctx,
-			      struct ns_cert_san *san)
+நிலையான nserror
+format_certificate_san(கட்டமைப்பு fetch_about_context *ctx,
+			      கட்டமைப்பு ns_cert_san *san)
 {
 	nserror res;
 
-	if (san == NULL) {
-		return NSERROR_OK;
+	எனில் (san == வெற்று) {
+		திரும்பு NSERROR_OK;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Alternative Names</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
-	while (san != NULL) {
+	போது (san != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>DNS Name</th><td>%s</td></tr>\n",
 				 san->name);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 
 		san = san->next;
@@ -945,20 +945,20 @@ format_certificate_san(struct fetch_about_context *ctx,
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	திரும்பு res;
 
 }
 
 
-static nserror
-format_certificate_public_key(struct fetch_about_context *ctx,
-			      struct ns_cert_pkey *public_key)
+நிலையான nserror
+format_certificate_public_சாவி(கட்டமைப்பு fetch_about_context *ctx,
+			      கட்டமைப்பு ns_cert_pkey *public_சாவி)
 {
 	nserror res;
 
-	if (public_key->algor == NULL) {
+	எனில் (public_சாவி->algor == வெற்று) {
 		/* skip the table if no algorithm name */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -966,100 +966,100 @@ format_certificate_public_key(struct fetch_about_context *ctx,
 			 "<tr><th>Public Key</th><td><hr></td></tr>\n"
 			 "<tr><th>Algorithm</th><td>%s</td></tr>\n"
 			 "<tr><th>Key Size</th><td>%d</td></tr>\n",
-			 public_key->algor,
-			 public_key->size);
-	if (res != NSERROR_OK) {
-		return res;
+			 public_சாவி->algor,
+			 public_சாவி->size);
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 
-	if (public_key->exponent != NULL) {
+	எனில் (public_சாவி->exponent != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Exponent</th><td>%s</td></tr>\n",
-				 public_key->exponent);
-		if (res != NSERROR_OK) {
-			return res;
+				 public_சாவி->exponent);
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (public_key->modulus != NULL) {
+	எனில் (public_சாவி->modulus != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Modulus</th><td class=\"data\">%s</td></tr>\n",
-				 public_key->modulus);
-		if (res != NSERROR_OK) {
-			return res;
+				 public_சாவி->modulus);
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (public_key->curve != NULL) {
+	எனில் (public_சாவி->curve != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Curve</th><td>%s</td></tr>\n",
-				 public_key->curve);
-		if (res != NSERROR_OK) {
-			return res;
+				 public_சாவி->curve);
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (public_key->public != NULL) {
+	எனில் (public_சாவி->பொது != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Public Value</th><td>%s</td></tr>\n",
-				 public_key->public);
-		if (res != NSERROR_OK) {
-			return res;
+				 public_சாவி->பொது);
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	திரும்பு res;
 }
 
-static nserror
-format_certificate_fingerprint(struct fetch_about_context *ctx,
-			      struct ns_cert_info *cert_info)
+நிலையான nserror
+format_certificate_fingerprint(கட்டமைப்பு fetch_about_context *ctx,
+			      கட்டமைப்பு ns_cert_info *cert_info)
 {
 	nserror res;
 
-	if ((cert_info->sha1fingerprint == NULL) &&
-	    (cert_info->sha256fingerprint == NULL))  {
+	எனில் ((cert_info->sha1fingerprint == வெற்று) &&
+	    (cert_info->sha256fingerprint == வெற்று))  {
 		/* skip the table if no fingerprints */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Fingerprints</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
-	if (cert_info->sha256fingerprint != NULL) {
+	எனில் (cert_info->sha256fingerprint != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>SHA-256</th><td class=\"data\">%s</td></tr>\n",
 				 cert_info->sha256fingerprint);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (cert_info->sha1fingerprint != NULL) {
+	எனில் (cert_info->sha1fingerprint != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>SHA-1</th><td class=\"data\">%s</td></tr>\n",
 				 cert_info->sha1fingerprint);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	திரும்பு res;
 }
 
-static nserror
-format_certificate(struct fetch_about_context *ctx,
-		   struct ns_cert_info *cert_info,
+நிலையான nserror
+format_certificate(கட்டமைப்பு fetch_about_context *ctx,
+		   கட்டமைப்பு ns_cert_info *cert_info,
 		   size_t depth)
 {
 	nserror res;
@@ -1067,11 +1067,11 @@ format_certificate(struct fetch_about_context *ctx,
 	res = fetch_about_ssenddataf(ctx,
 			 "<h2 id=\"%"PRIsizet"\" class=\"ns-border\">%s</h2>\n",
 			 depth, cert_info->subject_name.common_name);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
-	if (cert_info->err != SSL_CERT_ERR_OK) {
+	எனில் (cert_info->err != SSL_CERT_ERR_OK) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<table class=\"info\">\n"
 				 "<tr class=\"ns-even-fg-bad\">"
@@ -1080,45 +1080,45 @@ format_certificate(struct fetch_about_context *ctx,
 				 "</tr>"
 				 "</table>\n",
 				 messages_get_sslcode(cert_info->err));
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Issued To</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = format_certificate_name(ctx, &cert_info->subject_name);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "</table>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Issued By</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = format_certificate_name(ctx, &cert_info->issuer_name);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "</table>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -1129,43 +1129,43 @@ format_certificate(struct fetch_about_context *ctx,
 			 "</table>\n",
 			 cert_info->not_before,
 			 cert_info->not_after);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = format_certificate_san(ctx, cert_info->san);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
-	res = format_certificate_public_key(ctx, &cert_info->public_key);
-	if (res != NSERROR_OK) {
-		return res;
+	res = format_certificate_public_சாவி(ctx, &cert_info->public_சாவி);
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Miscellaneous</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
-	if (cert_info->serialnum != NULL) {
+	எனில் (cert_info->serialnum != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Serial Number</th><td>%s</td></tr>\n",
 				 cert_info->serialnum);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
-	if (cert_info->sig_algor != NULL) {
+	எனில் (cert_info->sig_algor != வெற்று) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Signature Algorithm</th>"
 				 "<td>%s</td></tr>\n",
 				 cert_info->sig_algor);
-		if (res != NSERROR_OK) {
-			return res;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு res;
 		}
 	}
 
@@ -1173,16 +1173,16 @@ format_certificate(struct fetch_about_context *ctx,
 			 "<tr><th>Version</th><td>%ld</td></tr>\n"
 			 "</table>\n",
 			 cert_info->version);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	res = format_certificate_fingerprint(ctx, cert_info);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
-	return res;
+	திரும்பு res;
 }
 
 /**
@@ -1193,18 +1193,18 @@ format_certificate(struct fetch_about_context *ctx,
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
+bool fetch_about_certificate_handler(கட்டமைப்பு fetch_about_context *ctx)
 {
-	int code = 200;
+	முழு code = 200;
 	nserror res;
-	struct cert_chain *chain = NULL;
+	கட்டமைப்பு cert_chain *chain = வெற்று;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html"))
-		goto fetch_about_certificate_handler_aborted;
+	எனில் (fetch_about_send_header(ctx, "Content-Type: text/html"))
+		செல் fetch_about_certificate_handler_aborted;
 
 	/* page head */
 	res = fetch_about_ssenddataf(ctx,
@@ -1215,61 +1215,61 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 			"</head>\n"
 			"<body id=\"certificate\" class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class=\"ns-border\">Certificate</h1>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_certificate_handler_aborted;
+	எனில் (res != NSERROR_OK) {
+		செல் fetch_about_certificate_handler_aborted;
 	}
 
 	res = cert_chain_from_query(fetch_about_get_url(ctx), &chain);
-	if (res != NSERROR_OK) {
+	எனில் (res != NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<p>Could not process that</p>\n");
-		if (res != NSERROR_OK) {
-			goto fetch_about_certificate_handler_aborted;
+		எனில் (res != NSERROR_OK) {
+			செல் fetch_about_certificate_handler_aborted;
 		}
-	} else {
-		struct ns_cert_info *cert_info;
+	} இல்லையெனில் {
+		கட்டமைப்பு ns_cert_info *cert_info;
 		res = convert_chain_to_cert_info(chain, &cert_info);
-		if (res == NSERROR_OK) {
+		எனில் (res == NSERROR_OK) {
 			size_t depth;
 			res = fetch_about_ssenddataf(ctx, "<ul>\n");
-			if (res != NSERROR_OK) {
+			எனில் (res != NSERROR_OK) {
 				free_ns_cert_info(cert_info);
-				goto fetch_about_certificate_handler_aborted;
+				செல் fetch_about_certificate_handler_aborted;
 			}
 
-			for (depth = 0; depth < chain->depth; depth++) {
+			க்கு (depth = 0; depth < chain->depth; depth++) {
 				res = fetch_about_ssenddataf(ctx, "<li><a href=\"#%"PRIsizet"\">%s</a></li>\n",
 						depth, (cert_info + depth)
 							->subject_name
 								.common_name);
-				if (res != NSERROR_OK) {
+				எனில் (res != NSERROR_OK) {
 					free_ns_cert_info(cert_info);
-					goto fetch_about_certificate_handler_aborted;
+					செல் fetch_about_certificate_handler_aborted;
 				}
 
 			}
 
 			res = fetch_about_ssenddataf(ctx, "</ul>\n");
-			if (res != NSERROR_OK) {
+			எனில் (res != NSERROR_OK) {
 				free_ns_cert_info(cert_info);
-				goto fetch_about_certificate_handler_aborted;
+				செல் fetch_about_certificate_handler_aborted;
 			}
 
-			for (depth = 0; depth < chain->depth; depth++) {
+			க்கு (depth = 0; depth < chain->depth; depth++) {
 				res = format_certificate(ctx, cert_info + depth,
 						depth);
-				if (res != NSERROR_OK) {
+				எனில் (res != NSERROR_OK) {
 					free_ns_cert_info(cert_info);
-					goto fetch_about_certificate_handler_aborted;
+					செல் fetch_about_certificate_handler_aborted;
 				}
 
 			}
 			free_ns_cert_info(cert_info);
 
-		} else {
+		} இல்லையெனில் {
 			res = fetch_about_ssenddataf(ctx,
 					 "<p>Invalid certificate data</p>\n");
-			if (res != NSERROR_OK) {
-				goto fetch_about_certificate_handler_aborted;
+			எனில் (res != NSERROR_OK) {
+				செல் fetch_about_certificate_handler_aborted;
 			}
 		}
 	}
@@ -1277,17 +1277,17 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 
 	/* page footer */
 	res = fetch_about_ssenddataf(ctx, "</body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_certificate_handler_aborted;
+	எனில் (res != NSERROR_OK) {
+		செல் fetch_about_certificate_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
 	cert_chain_free(chain);
 
-	return true;
+	திரும்பு true;
 
 fetch_about_certificate_handler_aborted:
 	cert_chain_free(chain);
-	return false;
+	திரும்பு false;
 }

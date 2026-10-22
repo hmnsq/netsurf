@@ -27,7 +27,7 @@
 #ifndef NETSURF_HTML_FONT_H
 #define NETSURF_HTML_FONT_H
 
-struct plot_font_style;
+கட்டமைப்பு plot_font_style;
 
 /**
  * Populate a font style using data from a computed CSS style
@@ -36,8 +36,8 @@ struct plot_font_style;
  * \param css      Computed style to consider
  * \param fstyle   Font style to populate
  */
-void font_plot_style_from_css(const css_unit_ctx *unit_len_ctx,
-			      const css_computed_style *css,
-			      struct plot_font_style *fstyle);
+வெறுமை font_plot_style_from_css(மாறிலி css_unit_ctx *unit_len_ctx,
+			      மாறிலி css_computed_style *css,
+			      கட்டமைப்பு plot_font_style *fstyle);
 
 #endif

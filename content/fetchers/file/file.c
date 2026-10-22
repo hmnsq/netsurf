@@ -24,158 +24,158 @@
  * output dates and directory ordering are affected by the current locale
  */
 
-#include "utils/config.h"
+#அந்தர்பாவ "utils/config.h"
 
-#include <stdlib.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdarg.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <strings.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdarg.h>
 #ifdef HAVE_MMAP
-#include <sys/mman.h>
+#அந்தர்பாவ <sys/mman.h>
 #endif
-#include <libwapcaplet/libwapcaplet.h>
+#அந்தர்பாவ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/nsurl.h"
-#include "utils/dirent.h"
-#include "utils/corestrings.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/time.h"
-#include "utils/ring.h"
-#include "utils/file.h"
-#include "netsurf/fetch.h"
-#include "desktop/gui_internal.h"
+#அந்தர்பாவ "netsurf/inttypes.h"
+#அந்தர்பாவ "utils/nsurl.h"
+#அந்தர்பாவ "utils/dirent.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/time.h"
+#அந்தர்பாவ "utils/ring.h"
+#அந்தர்பாவ "utils/file.h"
+#அந்தர்பாவ "netsurf/fetch.h"
+#அந்தர்பாவ "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "dirlist.h"
-#include "file.h"
+#அந்தர்பாவ "content/fetch.h"
+#அந்தர்பாவ "content/fetchers.h"
+#அந்தர்பாவ "dirlist.h"
+#அந்தர்பாவ "file.h"
 
 /* Maximum size of read buffer */
 #define FETCH_FILE_MAX_BUF_SIZE (1024 * 1024)
 
 /** Context for a fetch */
-struct fetch_file_context {
-	struct fetch_file_context *r_next, *r_prev;
+கட்டமைப்பு fetch_file_context {
+	கட்டமைப்பு fetch_file_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	கட்டமைப்பு fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
-	char *path; /**< The actual path to be used with open() */
+	எழுத்து *path; /**< The actual path to be used with open() */
 
 	time_t file_etag; /**< Request etag for file (previous st.m_time) */
 };
 
-static struct fetch_file_context *ring = NULL;
+நிலையான கட்டமைப்பு fetch_file_context *ring = வெற்று;
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_file_send_callback(const fetch_msg *msg,
-		struct fetch_file_context *ctx)
+நிலையான உள்வரி bool fetch_file_send_callback(மாறிலி fetch_செய்தி *செய்தி,
+		கட்டமைப்பு fetch_file_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(செய்தி, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	திரும்பு ctx->aborted;
 }
 
-static bool fetch_file_send_header(struct fetch_file_context *ctx,
-		const char *fmt, ...)
+நிலையான bool fetch_file_send_header(கட்டமைப்பு fetch_file_context *ctx,
+		மாறிலி எழுத்து *fmt, ...)
 {
-	fetch_msg msg;
-	char header[64];
+	fetch_செய்தி செய்தி;
+	எழுத்து header[64];
 	va_list ap;
-	int len;
+	முழு len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof header, fmt, ap);
+	len = vsnprintf(header, அளவு header, fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return false;
+	எனில் (len >= (முழு)அளவு(header) || len < 0) {
+		திரும்பு false;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = len;
+	செய்தி.type = FETCH_HEADER;
+	செய்தி.data.header_or_data.buf = (மாறிலி uint8_t *) header;
+	செய்தி.data.header_or_data.len = len;
 
-	return fetch_file_send_callback(&msg, ctx);
+	திரும்பு fetch_file_send_callback(&செய்தி, ctx);
 }
 
 /** callback to initialise the file fetcher. */
-static bool fetch_file_initialise(lwc_string *scheme)
+நிலையான bool fetch_file_initialise(lwc_string *scheme)
 {
-	return true;
+	திரும்பு true;
 }
 
 /** callback to initialise the file fetcher. */
-static void fetch_file_finalise(lwc_string *scheme)
+நிலையான வெறுமை fetch_file_finalise(lwc_string *scheme)
 {
 }
 
-static bool fetch_file_can_fetch(const nsurl *url)
+நிலையான bool fetch_file_can_fetch(மாறிலி nsurl *url)
 {
-	return true;
+	திரும்பு true;
 }
 
 /** callback to set up a file fetch context. */
-static void *
-fetch_file_setup(struct fetch *fetchh,
+நிலையான வெறுமை *
+fetch_file_setup(கட்டமைப்பு fetch *fetchh,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 மாறிலி எழுத்து *post_urlenc,
+		 மாறிலி கட்டமைப்பு fetch_multipart_data *post_multipart,
+		 மாறிலி எழுத்து **headers)
 {
-	struct fetch_file_context *ctx;
-	int i;
+	கட்டமைப்பு fetch_file_context *ctx;
+	முழு i;
 	nserror ret;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, அளவு(*ctx));
+	எனில் (ctx == வெற்று)
+		திரும்பு வெற்று;
 
 	ret = guit->file->nsurl_to_path(url, &ctx->path);
-	if (ret != NSERROR_OK) {
-		free(ctx);
-		return NULL;
+	எனில் (ret != NSERROR_OK) {
+		விடுவி(ctx);
+		திரும்பு வெற்று;
 	}
 
 	ctx->url = nsurl_ref(url);
 
 	/* Scan request headers looking for If-None-Match */
-	for (i = 0; headers[i] != NULL; i++) {
-		if (strncasecmp(headers[i], "If-None-Match:",
+	க்கு (i = 0; headers[i] != வெற்று; i++) {
+		எனில் (strncasecmp(headers[i], "If-None-Match:",
 				SLEN("If-None-Match:")) != 0) {
-			continue;
+			தொடர்;
 		}
 
 		/* If-None-Match: "12345678" */
-		const char *d = headers[i] + SLEN("If-None-Match:");
+		மாறிலி எழுத்து *d = headers[i] + SLEN("If-None-Match:");
 
 		/* Scan to first digit, if any */
-		while (*d != '\0' && (*d < '0' || '9' < *d))
+		போது (*d != '\0' && (*d < '0' || '9' < *d))
 			d++;
 
 		/* Convert to time_t */
-		if (*d != '\0') {
+		எனில் (*d != '\0') {
 			ret = nsc_snptimet(d, strlen(d), &ctx->file_etag);
-			if (ret != NSERROR_OK) {
+			எனில் (ret != NSERROR_OK) {
 				NSLOG(fetch, WARNING,
 						"Bad If-None-Match value");
 			}
@@ -184,30 +184,30 @@ fetch_file_setup(struct fetch *fetchh,
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_செருகு(ring, ctx);
 
-	return ctx;
+	திரும்பு ctx;
 }
 
 /** callback to free a file fetch */
-static void fetch_file_free(void *ctx)
+நிலையான வெறுமை fetch_file_free(வெறுமை *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	கட்டமைப்பு fetch_file_context *c = ctx;
 	nsurl_unref(c->url);
-	free(c->path);
-	free(ctx);
+	விடுவி(c->path);
+	விடுவி(ctx);
 }
 
 /** callback to start a file fetch */
-static bool fetch_file_start(void *ctx)
+நிலையான bool fetch_file_start(வெறுமை *ctx)
 {
-	return true;
+	திரும்பு true;
 }
 
 /** callback to abort a file fetch */
-static void fetch_file_abort(void *ctx)
+நிலையான வெறுமை fetch_file_abort(வெறுமை *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	கட்டமைப்பு fetch_file_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -216,40 +216,40 @@ static void fetch_file_abort(void *ctx)
 	c->aborted = true;
 }
 
-static int fetch_file_errno_to_http_code(int error_no)
+நிலையான முழு fetch_file_errno_to_http_code(முழு error_no)
 {
-	switch (error_no) {
-	case ENAMETOOLONG:
-		return 400;
-	case EACCES:
-		return 403;
-	case ENOENT:
-		return 404;
-	default:
-		break;
+	தேர்வு (error_no) {
+	நிலை ENAMETOOLONG:
+		திரும்பு 400;
+	நிலை EACCES:
+		திரும்பு 403;
+	நிலை ENOENT:
+		திரும்பு 404;
+	இயல்பு:
+		நிறுத்து;
 	}
 
-	return 500;
+	திரும்பு 500;
 }
 
-static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
+நிலையான வெறுமை fetch_file_process_error(கட்டமைப்பு fetch_file_context *ctx, முழு code)
 {
-	fetch_msg msg;
-	char buffer[1024];
-	const char *title;
-	char key[8];
+	fetch_செய்தி செய்தி;
+	எழுத்து buffer[1024];
+	மாறிலி எழுத்து *title;
+	எழுத்து சாவி[8];
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_file_process_error_aborted;
+	எனில் (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+		செல் fetch_file_process_error_aborted;
 
-	snprintf(key, sizeof key, "HTTP%03d", code);
-	title = messages_get(key);
+	snprintf(சாவி, அளவு சாவி, "HTTP%03d", code);
+	title = messages_get(சாவி);
 
-	snprintf(buffer, sizeof buffer,
+	snprintf(buffer, அளவு buffer,
 		 "<html><head>"
 		 "<title>%s</title>"
 		 "<link rel=\"stylesheet\" type=\"text/css\" "
@@ -264,59 +264,59 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 		 messages_get("FetchErrorCode"), code,
 		 messages_get("FetchFile"), nsurl_access(ctx->url));
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_error_aborted;
+	செய்தி.type = FETCH_DATA;
+	செய்தி.data.header_or_data.buf = (மாறிலி uint8_t *) buffer;
+	செய்தி.data.header_or_data.len = strlen(buffer);
+	எனில் (fetch_file_send_callback(&செய்தி, ctx))
+		செல் fetch_file_process_error_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	செய்தி.type = FETCH_FINISHED;
+	fetch_file_send_callback(&செய்தி, ctx);
 
 fetch_file_process_error_aborted:
-	return;
+	திரும்பு;
 }
 
 
 /** Process object as a regular file */
-static void fetch_file_process_plain(struct fetch_file_context *ctx,
-				     struct stat *fdstat)
+நிலையான வெறுமை fetch_file_process_plain(கட்டமைப்பு fetch_file_context *ctx,
+				     கட்டமைப்பு stat *fdstat)
 {
 #ifdef HAVE_MMAP
-	fetch_msg msg;
-	char *buf = NULL;
+	fetch_செய்தி செய்தி;
+	எழுத்து *buf = வெற்று;
 	size_t buf_size;
 
-	int fd; /**< The file descriptor of the object */
+	முழு fd; /**< The file descriptor of the object */
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+	எனில் (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
-		return;
+		செய்தி.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&செய்தி, ctx);
+		திரும்பு;
 	}
 
 	fd = open(ctx->path, O_RDONLY);
-	if (fd < 0) {
+	எனில் (fd < 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		திரும்பு;
 	}
 
 	/* set buffer size */
 	buf_size = fdstat->st_size;
 
 	/* allocate the buffer storage */
-	if (buf_size > 0) {
-		buf = mmap(NULL, buf_size, PROT_READ, MAP_SHARED, fd, 0);
-		if (buf == MAP_FAILED) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to map memory for file data buffer";
-			fetch_file_send_callback(&msg, ctx);
+	எனில் (buf_size > 0) {
+		buf = mmap(வெற்று, buf_size, PROT_READ, MAP_SHARED, fd, 0);
+		எனில் (buf == MAP_FAILED) {
+			செய்தி.type = FETCH_ERROR;
+			செய்தி.data.error = "Unable to map memory for file data buffer";
+			fetch_file_send_callback(&செய்தி, ctx);
 			close(fd);
-			return;
+			திரும்பு;
 		}
 	}
 
@@ -329,41 +329,41 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
+	எனில் (fetch_file_send_header(ctx, "Content-Type: %s", 
 				   guit->fetch->filetype(ctx->path))) {
-		goto fetch_file_process_aborted;
+		செல் fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	எனில் (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
-		goto fetch_file_process_aborted;
+		செல் fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
+	எனில் (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
 				   (int64_t) fdstat->st_mtime)) {
-		goto fetch_file_process_aborted;
+		செல் fetch_file_process_aborted;
 	}
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buf;
-	msg.data.header_or_data.len = buf_size;
-	fetch_file_send_callback(&msg, ctx);
+	செய்தி.type = FETCH_DATA;
+	செய்தி.data.header_or_data.buf = (மாறிலி uint8_t *) buf;
+	செய்தி.data.header_or_data.len = buf_size;
+	fetch_file_send_callback(&செய்தி, ctx);
 
-	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+	எனில் (ctx->aborted == false) {
+		செய்தி.type = FETCH_FINISHED;
+		fetch_file_send_callback(&செய்தி, ctx);
 	}
 
 fetch_file_process_aborted:
 
-	if (buf != NULL)
+	எனில் (buf != வெற்று)
 		munmap(buf, buf_size);
 	close(fd);
-#else
-	fetch_msg msg;
-	char *buf;
+#இல்லையெனில்
+	fetch_செய்தி செய்தி;
+	எழுத்து *buf;
 	size_t buf_size;
 
 	ssize_t tot_read = 0;
@@ -372,35 +372,35 @@ fetch_file_process_aborted:
 	FILE *infile;
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+	எனில் (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
-		return;
+		செய்தி.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&செய்தி, ctx);
+		திரும்பு;
 	}
 
 	infile = fopen(ctx->path, "rb");
-	if (infile == NULL) {
+	எனில் (infile == வெற்று) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		திரும்பு;
 	}
 
 	/* set buffer size */
 	buf_size = fdstat->st_size;
-	if (buf_size > FETCH_FILE_MAX_BUF_SIZE)
+	எனில் (buf_size > FETCH_FILE_MAX_BUF_SIZE)
 		buf_size = FETCH_FILE_MAX_BUF_SIZE;
 
 	/* allocate the buffer storage */
 	buf = malloc(buf_size);
-	if (buf == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error =
+	எனில் (buf == வெற்று) {
+		செய்தி.type = FETCH_ERROR;
+		செய்தி.data.error =
 			"Unable to allocate memory for file data buffer";
-		fetch_file_send_callback(&msg, ctx);
+		fetch_file_send_callback(&செய்தி, ctx);
 		fclose(infile);
-		return;
+		திரும்பு;
 	}
 
 	/* fetch is going to be successful */
@@ -412,92 +412,92 @@ fetch_file_process_aborted:
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
+	எனில் (fetch_file_send_header(ctx, "Content-Type: %s", 
 				   guit->fetch->filetype(ctx->path))) {
-		goto fetch_file_process_aborted;
+		செல் fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	எனில் (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
-		goto fetch_file_process_aborted;
+		செல் fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
+	எனில் (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
 				   (int64_t) fdstat->st_mtime)) {
-		goto fetch_file_process_aborted;
+		செல் fetch_file_process_aborted;
 	}
 
 	/* main data loop */
-	while (tot_read < fdstat->st_size) {
+	போது (tot_read < fdstat->st_size) {
 		res = fread(buf, 1, buf_size, infile);
-		if (res == 0) {
-			if (feof(infile)) {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Unexpected EOF reading file";
-				fetch_file_send_callback(&msg, ctx);
-				goto fetch_file_process_aborted;
-			} else {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Error reading file";
-				fetch_file_send_callback(&msg, ctx);
-				goto fetch_file_process_aborted;
+		எனில் (res == 0) {
+			எனில் (feof(infile)) {
+				செய்தி.type = FETCH_ERROR;
+				செய்தி.data.error = "Unexpected EOF reading file";
+				fetch_file_send_callback(&செய்தி, ctx);
+				செல் fetch_file_process_aborted;
+			} இல்லையெனில் {
+				செய்தி.type = FETCH_ERROR;
+				செய்தி.data.error = "Error reading file";
+				fetch_file_send_callback(&செய்தி, ctx);
+				செல் fetch_file_process_aborted;
 			}
 		}
 		tot_read += res;
 
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buf;
-		msg.data.header_or_data.len = res;
-		if (fetch_file_send_callback(&msg, ctx))
-			break;
+		செய்தி.type = FETCH_DATA;
+		செய்தி.data.header_or_data.buf = (மாறிலி uint8_t *) buf;
+		செய்தி.data.header_or_data.len = res;
+		எனில் (fetch_file_send_callback(&செய்தி, ctx))
+			நிறுத்து;
 	}
 
-	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+	எனில் (ctx->aborted == false) {
+		செய்தி.type = FETCH_FINISHED;
+		fetch_file_send_callback(&செய்தி, ctx);
 	}
 
 fetch_file_process_aborted:
 
 	fclose(infile);
-	free(buf);
+	விடுவி(buf);
 #endif
-	return;
+	திரும்பு;
 }
 
-static char *gen_nice_title(char *path)
+நிலையான எழுத்து *gen_nice_title(எழுத்து *path)
 {
-	char *nice_path, *cnv, *tmp;
-	char *title;
-	int title_length;
+	எழுத்து *nice_path, *cnv, *tmp;
+	எழுத்து *title;
+	முழு title_length;
 
 	/* Convert path for display */
 	nice_path = malloc(strlen(path) * SLEN("&amp;") + 1);
-	if (nice_path == NULL) {
-		return NULL;
+	எனில் (nice_path == வெற்று) {
+		திரும்பு வெற்று;
 	}
 
 	/* Escape special HTML characters */
-	for (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
-		if (*tmp == '<') {
+	க்கு (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
+		எனில் (*tmp == '<') {
 			*cnv++ = '&';
 			*cnv++ = 'l';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '>') {
+		} இல்லையெனில் எனில் (*tmp == '>') {
 			*cnv++ = '&';
 			*cnv++ = 'g';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '&') {
+		} இல்லையெனில் எனில் (*tmp == '&') {
 			*cnv++ = '&';
 			*cnv++ = 'a';
 			*cnv++ = 'm';
 			*cnv++ = 'p';
 			*cnv++ = ';';
-		} else {
+		} இல்லையெனில் {
 			*cnv++ = *tmp;
 		}
 	}
@@ -507,17 +507,17 @@ static char *gen_nice_title(char *path)
 	title_length = (cnv - nice_path) + strlen(messages_get("FileIndex"));
 	title = malloc(title_length + 1);
 
-	if (title == NULL) {
-		free(nice_path);
-		return NULL;
+	எனில் (title == வெற்று) {
+		விடுவி(nice_path);
+		திரும்பு வெற்று;
 	}
 
 	/* Set title to localised "Index of <nice_path>" */
 	snprintf(title, title_length, messages_get("FileIndex"), nice_path);
 
-	free(nice_path);
+	விடுவி(nice_path);
 
-	return title;
+	திரும்பு title;
 }
 
 /**
@@ -530,46 +530,46 @@ static char *gen_nice_title(char *path)
  * \param buffer_len The space available in the output buffer.
  * \return NSERROR_OK or error code on faliure.
  */
-static nserror
-process_dir_ent(struct fetch_file_context *ctx,
-		 struct dirent *ent,
+நிலையான nserror
+process_dir_ent(கட்டமைப்பு fetch_file_context *ctx,
+		 கட்டமைப்பு dirent *ent,
 		 bool even,
-		 char *buffer,
+		 எழுத்து *buffer,
 		 size_t buffer_len)
 {
 	nserror ret;
-	char *urlpath = NULL; /* buffer for leaf entry path */
-	struct stat ent_stat; /* stat result of leaf entry */
-	char datebuf[64]; /* buffer for date text */
-	char timebuf[64]; /* buffer for time text */
+	எழுத்து *urlpath = வெற்று; /* buffer for leaf entry path */
+	கட்டமைப்பு stat ent_stat; /* stat result of leaf entry */
+	எழுத்து datebuf[64]; /* buffer for date text */
+	எழுத்து timebuf[64]; /* buffer for time text */
 	nsurl *url;
 
 	/* skip hidden files */
-	if (ent->d_name[0] == '.') {
-		return NSERROR_BAD_PARAMETER;
+	எனில் (ent->d_name[0] == '.') {
+		திரும்பு NSERROR_BAD_PARAMETER;
 	}
 
-	ret = netsurf_mkpath(&urlpath, NULL, 2, ctx->path, ent->d_name);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&urlpath, வெற்று, 2, ctx->path, ent->d_name);
+	எனில் (ret != NSERROR_OK) {
+		திரும்பு ret;
 	}
 
-	if (stat(urlpath, &ent_stat) != 0) {
+	எனில் (stat(urlpath, &ent_stat) != 0) {
 		ent_stat.st_mode = 0;
 		datebuf[0] = 0;
 		timebuf[0] = 0;
-	} else {
+	} இல்லையெனில் {
 		/* Get date in output format. a (day of week) and b
 		 * (month) are both affected by the locale
 		 */
-		if (strftime((char *)&datebuf, sizeof datebuf, "%a %d %b %Y",
+		எனில் (strftime((எழுத்து *)&datebuf, அளவு datebuf, "%a %d %b %Y",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			datebuf[0] = '-';
 			datebuf[1] = 0;
 		}
 
 		/* Get time in output format */
-		if (strftime((char *)&timebuf, sizeof timebuf, "%H:%M",
+		எனில் (strftime((எழுத்து *)&timebuf, அளவு timebuf, "%H:%M",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			timebuf[0] = '-';
 			timebuf[1] = 0;
@@ -577,12 +577,12 @@ process_dir_ent(struct fetch_file_context *ctx,
 	}
 
 	ret = guit->file->path_to_nsurl(urlpath, &url);
-	if (ret != NSERROR_OK) {
-		free(urlpath);
-		return ret;
+	எனில் (ret != NSERROR_OK) {
+		விடுவி(urlpath);
+		திரும்பு ret;
 	}
 
-	if (S_ISREG(ent_stat.st_mode)) {
+	எனில் (S_ISREG(ent_stat.st_mode)) {
 		/* regular file */
 		dirlist_generate_row(even,
 				     false,
@@ -592,7 +592,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 				     ent_stat.st_size,
 				     datebuf, timebuf,
 				     buffer, buffer_len);
-	} else if (S_ISDIR(ent_stat.st_mode)) {
+	} இல்லையெனில் எனில் (S_ISDIR(ent_stat.st_mode)) {
 		/* directory */
 		dirlist_generate_row(even,
 				     true,
@@ -602,7 +602,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 				     -1,
 				     datebuf, timebuf,
 				     buffer, buffer_len);
-	} else {
+	} இல்லையெனில் {
 		/* something else */
 		dirlist_generate_row(even,
 				     false,
@@ -615,9 +615,9 @@ process_dir_ent(struct fetch_file_context *ctx,
 	}
 
 	nsurl_unref(url);
-	free(urlpath);
+	விடுவி(urlpath);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -629,180 +629,180 @@ process_dir_ent(struct fetch_file_context *ctx,
  * \param d1 first directory entry
  * \param d2 second directory entry
  */
-static int dir_sort_alpha(const struct dirent **d1, const struct dirent **d2)
+நிலையான முழு dir_sort_alpha(மாறிலி கட்டமைப்பு dirent **d1, மாறிலி கட்டமைப்பு dirent **d2)
 {
-	const char *s1 = (*d1)->d_name;
-	const char *s2 = (*d2)->d_name;
+	மாறிலி எழுத்து *s1 = (*d1)->d_name;
+	மாறிலி எழுத்து *s2 = (*d2)->d_name;
 
-	while (*s1 != '\0' && *s2 != '\0') {
-		if ((*s1 >= '0' && *s1 <= '9') &&
+	போது (*s1 != '\0' && *s2 != '\0') {
+		எனில் ((*s1 >= '0' && *s1 <= '9') &&
 				(*s2 >= '0' && *s2 <= '9')) {
-			int n1 = 0,  n2 = 0;
-			while (*s1 >= '0' && *s1 <= '9') {
+			முழு n1 = 0,  n2 = 0;
+			போது (*s1 >= '0' && *s1 <= '9') {
 				n1 = n1 * 10 + (*s1) - '0';
 				s1++;
 			}
-			while (*s2 >= '0' && *s2 <= '9') {
+			போது (*s2 >= '0' && *s2 <= '9') {
 				n2 = n2 * 10 + (*s2) - '0';
 				s2++;
 			}
-			if (n1 != n2) {
-				return n1 - n2;
+			எனில் (n1 != n2) {
+				திரும்பு n1 - n2;
 			}
-			if (*s1 == '\0' || *s2 == '\0')
-				break;
+			எனில் (*s1 == '\0' || *s2 == '\0')
+				நிறுத்து;
 		}
-		if (tolower(*s1) != tolower(*s2))
-			break;
+		எனில் (tolower(*s1) != tolower(*s2))
+			நிறுத்து;
 
 		s1++;
 		s2++;
 	}
 
-	return tolower(*s1) - tolower(*s2);
+	திரும்பு tolower(*s1) - tolower(*s2);
 }
 
-static void fetch_file_process_dir(struct fetch_file_context *ctx,
-				   struct stat *fdstat)
+நிலையான வெறுமை fetch_file_process_dir(கட்டமைப்பு fetch_file_context *ctx,
+				   கட்டமைப்பு stat *fdstat)
 {
-	fetch_msg msg;
-	char buffer[1024]; /* Output buffer */
+	fetch_செய்தி செய்தி;
+	எழுத்து buffer[1024]; /* Output buffer */
 	bool even = false; /* formatting flag */
-	char *title; /* pretty printed title */
+	எழுத்து *title; /* pretty printed title */
 	nserror err; /* result from url routines */
 	nsurl *up; /* url of parent */
 
-	struct dirent **listing = NULL; /* directory entry listing */
-	int i; /* directory entry index */
-	int n; /* number of directory entries */
+	கட்டமைப்பு dirent **listing = வெற்று; /* directory entry listing */
+	முழு i; /* directory entry index */
+	முழு n; /* number of directory entries */
 
 	n = scandir(ctx->path, &listing, 0, dir_sort_alpha);
-	if (n < 0) {
+	எனில் (n < 0) {
 		fetch_file_process_error(ctx,
 			fetch_file_errno_to_http_code(errno));
-		return;
+		திரும்பு;
 	}
 
 	/* fetch is going to be successful */
 	fetch_set_http_code(ctx->fetchh, 200);
 
 	/* force no-cache */
-	if (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
-		goto fetch_file_process_dir_aborted;
+	எனில் (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
+		செல் fetch_file_process_dir_aborted;
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_file_process_dir_aborted;
+	எனில் (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+		செல் fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
+	செய்தி.type = FETCH_DATA;
+	செய்தி.data.header_or_data.buf = (மாறிலி uint8_t *) buffer;
 
 	/* directory listing top */
-	dirlist_generate_top(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_உச்சி(buffer, அளவு buffer);
+	செய்தி.data.header_or_data.len = strlen(buffer);
+	எனில் (fetch_file_send_callback(&செய்தி, ctx))
+		செல் fetch_file_process_dir_aborted;
 
 	/* directory listing title */
 	title = gen_nice_title(ctx->path);
-	dirlist_generate_title(title, buffer, sizeof buffer);
-	free(title);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_title(title, buffer, அளவு buffer);
+	விடுவி(title);
+	செய்தி.data.header_or_data.len = strlen(buffer);
+	எனில் (fetch_file_send_callback(&செய்தி, ctx))
+		செல் fetch_file_process_dir_aborted;
 
 	/* Print parent directory link */
 	err = nsurl_parent(ctx->url, &up);
-	if (err == NSERROR_OK) {
-		if (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
+	எனில் (err == NSERROR_OK) {
+		எனில் (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
 			/* different URL; have parent */
 			dirlist_generate_parent_link(nsurl_access(up),
-					buffer, sizeof buffer);
+					buffer, அளவு buffer);
 
-			msg.data.header_or_data.len = strlen(buffer);
-			fetch_file_send_callback(&msg, ctx);
+			செய்தி.data.header_or_data.len = strlen(buffer);
+			fetch_file_send_callback(&செய்தி, ctx);
 		}
 		nsurl_unref(up);
 
-		if (ctx->aborted)
-			goto fetch_file_process_dir_aborted;
+		எனில் (ctx->aborted)
+			செல் fetch_file_process_dir_aborted;
 
 	}
 
 	/* directory list headings */
-	dirlist_generate_headings(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_headings(buffer, அளவு buffer);
+	செய்தி.data.header_or_data.len = strlen(buffer);
+	எனில் (fetch_file_send_callback(&செய்தி, ctx))
+		செல் fetch_file_process_dir_aborted;
 
-	for (i = 0; i < n; i++) {
+	க்கு (i = 0; i < n; i++) {
 
 		err = process_dir_ent(ctx, listing[i], even, buffer,
-				       sizeof(buffer));
+				       அளவு(buffer));
 
-		if (err == NSERROR_OK) {
-			msg.data.header_or_data.len = strlen(buffer);
-			if (fetch_file_send_callback(&msg, ctx))
-				goto fetch_file_process_dir_aborted;
+		எனில் (err == NSERROR_OK) {
+			செய்தி.data.header_or_data.len = strlen(buffer);
+			எனில் (fetch_file_send_callback(&செய்தி, ctx))
+				செல் fetch_file_process_dir_aborted;
 
 			even = !even;
 		}
 	}
 
 	/* directory listing bottom */
-	dirlist_generate_bottom(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_bottom(buffer, அளவு buffer);
+	செய்தி.data.header_or_data.len = strlen(buffer);
+	எனில் (fetch_file_send_callback(&செய்தி, ctx))
+		செல் fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	செய்தி.type = FETCH_FINISHED;
+	fetch_file_send_callback(&செய்தி, ctx);
 
 fetch_file_process_dir_aborted:
 
-	if (listing != NULL) {
-		for (i = 0; i < n; i++) {
-			free(listing[i]);
+	எனில் (listing != வெற்று) {
+		க்கு (i = 0; i < n; i++) {
+			விடுவி(listing[i]);
 		}
-		free(listing);
+		விடுவி(listing);
 	}
 }
 
 
 /* process a file fetch */
-static void fetch_file_process(struct fetch_file_context *ctx)
+நிலையான வெறுமை fetch_file_process(கட்டமைப்பு fetch_file_context *ctx)
 {
-	struct stat fdstat; /**< The objects stat */
+	கட்டமைப்பு stat fdstat; /**< The objects stat */
 
-	if (stat(ctx->path, &fdstat) != 0) {
+	எனில் (stat(ctx->path, &fdstat) != 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		திரும்பு;
 	}
 
-	if (S_ISDIR(fdstat.st_mode)) {
+	எனில் (S_ISDIR(fdstat.st_mode)) {
 		/* directory listing */
 		fetch_file_process_dir(ctx, &fdstat);
-		return;
-	} else if (S_ISREG(fdstat.st_mode)) {
+		திரும்பு;
+	} இல்லையெனில் எனில் (S_ISREG(fdstat.st_mode)) {
 		/* regular file */
 		fetch_file_process_plain(ctx, &fdstat);
-		return;
-	} else {
+		திரும்பு;
+	} இல்லையெனில் {
 		/* unhandled type of file */
 		fetch_file_process_error(ctx, 501);
 	}
 
-	return;
+	திரும்பு;
 }
 
 /** callback to poll for additional file fetch contents */
-static void fetch_file_poll(lwc_string *scheme)
+நிலையான வெறுமை fetch_file_poll(lwc_string *scheme)
 {
-	struct fetch_file_context *c, *save_ring = NULL;
+	கட்டமைப்பு fetch_file_context *c, *save_ring = வெற்று;
 
-	while (ring != NULL) {
+	போது (ring != வெற்று) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -813,13 +813,13 @@ static void fetch_file_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		எனில் (c->locked == true) {
+			RING_செருகு(save_ring, c);
+			தொடர்;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		எனில் (c->aborted == false) {
 			/* file fetches can be processed in one go */
 			fetch_file_process(c);
 		}
@@ -836,19 +836,19 @@ static void fetch_file_poll(lwc_string *scheme)
 	ring = save_ring;
 }
 
-nserror fetch_file_register(void)
+nserror fetch_file_register(வெறுமை)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_file);
-	const struct fetcher_operation_table fetcher_ops = {
+	மாறிலி கட்டமைப்பு fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_file_initialise,
 		.acceptable = fetch_file_can_fetch,
 		.setup = fetch_file_setup,
 		.start = fetch_file_start,
 		.abort = fetch_file_abort,
-		.free = fetch_file_free,
+		.விடுவி = fetch_file_free,
 		.poll = fetch_file_poll,
 		.finalise = fetch_file_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	திரும்பு fetcher_add(scheme, &fetcher_ops);
 }

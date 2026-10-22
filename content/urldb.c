@@ -87,33 +87,33 @@
  * potential crashes.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <strings.h>
+#அந்தர்பாவ <time.h>
 #ifdef WITH_NSPSL
-#include <nspsl.h>
+#அந்தர்பாவ <nspsl.h>
 #endif
 
-#include "utils/inet.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/corestrings.h"
-#include "utils/url.h"
-#include "utils/utils.h"
-#include "utils/bloom.h"
-#include "utils/time.h"
-#include "utils/nsurl.h"
-#include "utils/ascii.h"
-#include "utils/http.h"
-#include "netsurf/bitmap.h"
-#include "desktop/cookie_manager.h"
+#அந்தர்பாவ "utils/inet.h"
+#அந்தர்பாவ "utils/nsoption.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/url.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "utils/bloom.h"
+#அந்தர்பாவ "utils/time.h"
+#அந்தர்பாவ "utils/nsurl.h"
+#அந்தர்பாவ "utils/ascii.h"
+#அந்தர்பாவ "utils/http.h"
+#அந்தர்பாவ "netsurf/bitmap.h"
+#அந்தர்பாவ "desktop/cookie_manager.h"
 
-#include "content/content.h"
-#include "content/urldb.h"
+#அந்தர்பாவ "content/content.h"
+#அந்தர்பாவ "content/urldb.h"
 
 /**
  * cookie entry.
@@ -121,23 +121,23 @@
  * \warning This *must* be kept in sync with the public interface in
  *   netsurf/cookie_db.h
  */
-struct cookie_internal_data {
-	struct cookie_internal_data *prev;	/**< Previous in list */
-	struct cookie_internal_data *next;	/**< Next in list */
+கட்டமைப்பு cookie_internal_data {
+	கட்டமைப்பு cookie_internal_data *prev;	/**< Previous in list */
+	கட்டமைப்பு cookie_internal_data *next;	/**< Next in list */
 
-	char *name;		/**< Cookie name */
-	char *value;		/**< Cookie value */
-	bool value_was_quoted;	/**< Value was quoted in Set-Cookie: */
-	char *comment;		/**< Cookie comment */
+	எழுத்து *name;		/**< Cookie name */
+	எழுத்து *மதிப்பு;		/**< Cookie value */
+	bool மதிப்பு_was_quoted;	/**< Value was quoted in Set-Cookie: */
+	எழுத்து *comment;		/**< Cookie comment */
 	bool domain_from_set;	/**< Domain came from Set-Cookie: header */
-	char *domain;		/**< Domain */
+	எழுத்து *domain;		/**< Domain */
 	bool path_from_set;	/**< Path came from Set-Cookie: header */
-	char *path;		/**< Path */
+	எழுத்து *path;		/**< Path */
 	time_t expires;		/**< Expiry timestamp, or -1 for session */
 	time_t last_used;	/**< Last used time */
 	bool secure;		/**< Only send for HTTPS requests */
 	bool http_only;		/**< Only expose to HTTP(S) requests */
-	enum cookie_version version;	/**< Specification compliance */
+	எண்ணிக்கை cookie_version version;	/**< Specification compliance */
 	bool no_destroy;	/**< Never destroy this cookie,
 				 * unless it's expired */
 
@@ -151,7 +151,7 @@ struct cookie_internal_data {
  * structure lives as linked list element in a leaf host_part struct
  * so we need additional scheme and port to have a canonical_root_url.
  */
-struct prot_space_data {
+கட்டமைப்பு prot_space_data {
 	/**
 	 * URL scheme of canonical hostname of this protection space.
 	 */
@@ -161,17 +161,17 @@ struct prot_space_data {
 	 * space. When 0, it means the default port for given scheme,
 	 * i.e. 80 (http), 443 (https).
 	 */
-	unsigned int port;
+	unsigned முழு port;
 	/** Protection realm */
-	char *realm;
+	எழுத்து *realm;
 
 	/**
 	 * Authentication details for this protection space in form
 	 * username:password
 	 */
-	char *auth;
+	எழுத்து *auth;
 	/** Next sibling */
-	struct prot_space_data *next;
+	கட்டமைப்பு prot_space_data *next;
 };
 
 
@@ -180,9 +180,9 @@ struct prot_space_data {
  *
  * \warning must be kept in sync with url_data structure in netsurf/url_db.h
  */
-struct url_internal_data {
-	char *title;		/**< Resource title */
-	unsigned int visits;	/**< Visit count */
+கட்டமைப்பு url_internal_data {
+	எழுத்து *title;		/**< Resource title */
+	unsigned முழு visits;	/**< Visit count */
 	time_t last_visit;	/**< Last visit time */
 	content_type type;	/**< Type of resource */
 };
@@ -191,96 +191,96 @@ struct url_internal_data {
 /**
  * data entry for url
  */
-struct path_data {
+கட்டமைப்பு path_data {
 	nsurl *url;		/**< Full URL */
 	lwc_string *scheme;	/**< URL scheme for data */
-	unsigned int port;	/**< Port number for data. When 0, it means
+	unsigned முழு port;	/**< Port number for data. When 0, it means
 				 * the default port for given scheme, i.e.
 				 * 80 (http), 443 (https). */
-	char *segment;		/**< Path segment for this node */
-	unsigned int frag_cnt;	/**< Number of entries in path_data::fragment */
-	char **fragment;	/**< Array of fragments */
+	எழுத்து *segment;		/**< Path segment for this node */
+	unsigned முழு frag_cnt;	/**< Number of entries in path_data::fragment */
+	எழுத்து **fragment;	/**< Array of fragments */
 	bool persistent;	/**< This entry should persist */
 
-	struct url_internal_data urld;	/**< URL data for resource */
+	கட்டமைப்பு url_internal_data urld;	/**< URL data for resource */
 
 	/**
 	 * Protection space to which this resource belongs too. Can be
 	 * NULL when it does not belong to a protection space or when
 	 * it is not known. No ownership (is with struct host_part::prot_space).
 	 */
-	const struct prot_space_data *prot_space;
+	மாறிலி கட்டமைப்பு prot_space_data *prot_space;
 	/** Cookies associated with resource */
-	struct cookie_internal_data *cookies;
+	கட்டமைப்பு cookie_internal_data *cookies;
 	/** Last cookie in list */
-	struct cookie_internal_data *cookies_end;
+	கட்டமைப்பு cookie_internal_data *cookies_end;
 
-	struct path_data *next;	/**< Next sibling */
-	struct path_data *prev;	/**< Previous sibling */
-	struct path_data *parent; /**< Parent path segment */
-	struct path_data *children; /**< Child path segments */
-	struct path_data *last; /**< Last child */
+	கட்டமைப்பு path_data *next;	/**< Next sibling */
+	கட்டமைப்பு path_data *prev;	/**< Previous sibling */
+	கட்டமைப்பு path_data *parent; /**< Parent path segment */
+	கட்டமைப்பு path_data *children; /**< Child path segments */
+	கட்டமைப்பு path_data *last; /**< Last child */
 };
 
-struct hsts_data {
+கட்டமைப்பு hsts_data {
 	time_t expires; /**< Expiry time */
 	bool include_sub_domains; /**< Whether to include subdomains */
 };
 
-struct host_part {
+கட்டமைப்பு host_part {
 	/**
 	 * Known paths on this host. This _must_ be first so that
 	 * struct host_part *h = (struct host_part *)mypath; works
 	 */
-	struct path_data paths;
+	கட்டமைப்பு path_data paths;
 	/**
 	 * Allow access to SSL protected resources on this host
 	 * without verifying certificate authenticity
 	 */
 	bool permit_invalid_certs;
 	/* HSTS data */
-	struct hsts_data hsts;
+	கட்டமைப்பு hsts_data hsts;
 
 	/**
 	 * Part of host string
 	 */
-	char *part;
+	எழுத்து *part;
 
 	/**
 	 * Linked list of all known proctection spaces known for this
 	 * host and all its schems and ports.
 	 */
-	struct prot_space_data *prot_space;
+	கட்டமைப்பு prot_space_data *prot_space;
 
-	struct host_part *next;	/**< Next sibling */
-	struct host_part *prev;	/**< Previous sibling */
-	struct host_part *parent; /**< Parent host part */
-	struct host_part *children; /**< Child host parts */
+	கட்டமைப்பு host_part *next;	/**< Next sibling */
+	கட்டமைப்பு host_part *prev;	/**< Previous sibling */
+	கட்டமைப்பு host_part *parent; /**< Parent host part */
+	கட்டமைப்பு host_part *children; /**< Child host parts */
 };
 
 
 /**
  * search index node
  */
-struct search_node {
-	const struct host_part *data;	/**< Host tree entry */
+கட்டமைப்பு தேடல்_முனை {
+	மாறிலி கட்டமைப்பு host_part *data;	/**< Host tree entry */
 
-	unsigned int level;		/**< Node level */
+	unsigned முழு level;		/**< Node level */
 
-	struct search_node *left;	/**< Left subtree */
-	struct search_node *right;	/**< Right subtree */
+	கட்டமைப்பு தேடல்_முனை *இடது;	/**< Left subtree */
+	கட்டமைப்பு தேடல்_முனை *வலது;	/**< Right subtree */
 };
 
 /** Root database handle */
-static struct host_part db_root;
+நிலையான கட்டமைப்பு host_part db_வேர்;
 
 /** Search trees - one per letter + 1 for IPs + 1 for Everything Else */
-#define NUM_SEARCH_TREES 28
+#define இலக்கம்_தேடல்_TREES 28
 #define ST_IP 0
 #define ST_EE 1
 #define ST_DN 2
-static struct search_node empty = { 0, 0, &empty, &empty };
-static struct search_node *search_trees[NUM_SEARCH_TREES] = {
+நிலையான கட்டமைப்பு தேடல்_முனை empty = { 0, 0, &empty, &empty };
+நிலையான கட்டமைப்பு தேடல்_முனை *தேடல்_trees[இலக்கம்_தேடல்_TREES] = {
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
@@ -292,7 +292,7 @@ static struct search_node *search_trees[NUM_SEARCH_TREES] = {
 /** Current cookie database file version */
 #define COOKIE_FILE_VERSION 102
 /** loaded cookie file version */
-static int loaded_cookie_file_version;
+நிலையான முழு loaded_cookie_file_version;
 
 /** Minimum URL database file version */
 #define MIN_URL_FILE_VERSION 106
@@ -310,7 +310,7 @@ static int loaded_cookie_file_version;
  * enough for all but the largest databases, while not being
  * shockingly wasteful on memory.
  */
-static struct bloom_filter *url_bloom;
+நிலையான கட்டமைப்பு bloom_filter *url_bloom;
 /**
  * Size of url filter
  */
@@ -324,18 +324,18 @@ static struct bloom_filter *url_bloom;
  * \param val the unix time value to output
  * \return NSERROR_OK on success
  */
-static nserror urldb_write_timet(FILE *fp, time_t val)
+நிலையான nserror urldb_write_timet(FILE *fp, time_t val)
 {
-	int use;
-	char op[32];
+	முழு use;
+	எழுத்து op[32];
 
 	use = nsc_sntimet(op, 32, &val);
-	if (use == 0) {
-		fprintf(fp, "%i\n", (int)val);
-	} else {
+	எனில் (use == 0) {
+		fprintf(fp, "%i\n", (முழு)val);
+	} இல்லையெனில் {
 		fprintf(fp, "%.*s\n", use, op);
 	}
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -349,60 +349,60 @@ static nserror urldb_write_timet(FILE *fp, time_t val)
  * \param path_used Used size of path
  * \param expiry Expiry time of URLs
  */
-static void
-urldb_write_paths(const struct path_data *parent,
-		  const char *host,
+நிலையான வெறுமை
+urldb_write_paths(மாறிலி கட்டமைப்பு path_data *parent,
+		  மாறிலி எழுத்து *host,
 		  FILE *fp,
-		  char **path,
-		  int *path_alloc,
-		  int *path_used,
+		  எழுத்து **path,
+		  முழு *path_alloc,
+		  முழு *path_used,
 		  time_t expiry)
 {
-	const struct path_data *p = parent;
-	int i;
+	மாறிலி கட்டமைப்பு path_data *p = parent;
+	முழு i;
 
-	do {
-		int seglen = p->segment != NULL ? strlen(p->segment) : 0;
-		int len = *path_used + seglen + 1;
+	செய் {
+		முழு seglen = p->segment != வெற்று ? strlen(p->segment) : 0;
+		முழு len = *path_used + seglen + 1;
 
-		if (*path_alloc < len) {
-			char *temp;
+		எனில் (*path_alloc < len) {
+			எழுத்து *temp;
 			temp = realloc(*path,
 				       (len > 64) ? len : *path_alloc + 64);
-			if (!temp) {
-				return;
+			எனில் (!temp) {
+				திரும்பு;
 			}
 			*path = temp;
 			*path_alloc = (len > 64) ? len : *path_alloc + 64;
 		}
 
-		if (p->segment != NULL) {
+		எனில் (p->segment != வெற்று) {
 			memcpy(*path + *path_used - 1, p->segment, seglen);
 		}
 
-		if (p->children != NULL) {
+		எனில் (p->children != வெற்று) {
 			(*path)[*path_used + seglen - 1] = '/';
 			(*path)[*path_used + seglen] = '\0';
-		} else {
+		} இல்லையெனில் {
 			(*path)[*path_used + seglen - 1] = '\0';
 			len -= 1;
 		}
 
 		*path_used = len;
 
-		if (p->children != NULL) {
+		எனில் (p->children != வெற்று) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} இல்லையெனில் {
 			/* leaf node */
-			if (p->persistent ||
+			எனில் (p->persistent ||
 			    ((p->urld.last_visit > expiry) &&
 			     (p->urld.visits > 0))) {
 				fprintf(fp, "%s\n", lwc_string_data(p->scheme));
 
-				if (p->port) {
+				எனில் (p->port) {
 					fprintf(fp,"%d\n", p->port);
-				} else {
+				} இல்லையெனில் {
 					fprintf(fp, "\n");
 				}
 
@@ -417,38 +417,38 @@ urldb_write_paths(const struct path_data *parent,
 				urldb_write_timet(fp, p->urld.last_visit);
 
 				/* entry type */
-				fprintf(fp, "%i\n", (int)p->urld.type);
+				fprintf(fp, "%i\n", (முழு)p->urld.type);
 
 				fprintf(fp, "\n");
 
-				if (p->urld.title) {
+				எனில் (p->urld.title) {
 					uint8_t *s = (uint8_t *) p->urld.title;
 
-					for (i = 0; s[i] != '\0'; i++)
-						if (s[i] < 32)
+					க்கு (i = 0; s[i] != '\0'; i++)
+						எனில் (s[i] < 32)
 							s[i] = ' ';
-					for (--i; ((i > 0) && (s[i] == ' '));
+					க்கு (--i; ((i > 0) && (s[i] == ' '));
 					     i--)
 						s[i] = '\0';
 					fprintf(fp, "%s\n", p->urld.title);
-				} else {
+				} இல்லையெனில் {
 					fprintf(fp, "\n");
 				}
 			}
 
 			/* Now, find next node to process. */
-			while (p != parent) {
-				int seglen = p->segment != NULL
+			போது (p != parent) {
+				முழு seglen = p->segment != வெற்று
 					? strlen(p->segment) : 0;
 
 				/* Remove our segment from the path */
 				*path_used -= seglen;
 				(*path)[*path_used - 1] = '\0';
 
-				if (p->next != NULL) {
+				எனில் (p->next != வெற்று) {
 					/* Have a sibling, process that */
 					p = p->next;
-					break;
+					நிறுத்து;
 				}
 
 				/* Going up, so remove '/' */
@@ -459,7 +459,7 @@ urldb_write_paths(const struct path_data *parent,
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} போது (p != parent);
 }
 
 
@@ -470,38 +470,38 @@ urldb_write_paths(const struct path_data *parent,
  * \param expiry Expiry time for URLs
  * \param count Pointer to count
  */
-static void
-urldb_count_urls(const struct path_data *root,
+நிலையான வெறுமை
+urldb_மொத்தம்_urls(மாறிலி கட்டமைப்பு path_data *வேர்,
 		 time_t expiry,
-		 unsigned int *count)
+		 unsigned முழு *மொத்தம்)
 {
-	const struct path_data *p = root;
+	மாறிலி கட்டமைப்பு path_data *p = வேர்;
 
-	do {
-		if (p->children != NULL) {
+	செய் {
+		எனில் (p->children != வெற்று) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} இல்லையெனில் {
 			/* No more children, increment count if required */
-			if (p->persistent ||
+			எனில் (p->persistent ||
 			    ((p->urld.last_visit > expiry) &&
 			     (p->urld.visits > 0))) {
-				(*count)++;
+				(*மொத்தம்)++;
 			}
 
 			/* Now, find next node to process. */
-			while (p != root) {
-				if (p->next != NULL) {
+			போது (p != வேர்) {
+				எனில் (p->next != வெற்று) {
 					/* Have a sibling, process that */
 					p = p->next;
-					break;
+					நிறுத்து;
 				}
 
 				/* Ascend tree */
 				p = p->parent;
 			}
 		}
-	} while (p != root);
+	} போது (p != வேர்);
 }
 
 
@@ -511,64 +511,64 @@ urldb_count_urls(const struct path_data *root,
  * \param parent root node of search tree to save.
  * \param fp File to write to
  */
-static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
+நிலையான வெறுமை urldb_save_தேடல்_மரம்(கட்டமைப்பு தேடல்_முனை *parent, FILE *fp)
 {
-	char host[256];
-	const struct host_part *h;
-	unsigned int path_count = 0;
-	char *path, *p, *end;
-	int path_alloc = 64, path_used = 1;
+	எழுத்து host[256];
+	மாறிலி கட்டமைப்பு host_part *h;
+	unsigned முழு path_மொத்தம் = 0;
+	எழுத்து *path, *p, *end;
+	முழு path_alloc = 64, path_used = 1;
 	time_t expiry, hsts_expiry = 0;
-	int hsts_include_subdomains = 0;
+	முழு hsts_include_subdomains = 0;
 
-	expiry = time(NULL) - ((60 * 60 * 24) * nsoption_int(expire_url));
+	expiry = time(வெற்று) - ((60 * 60 * 24) * nsoption_int(expire_url));
 
-	if (parent == &empty)
-		return;
+	எனில் (parent == &empty)
+		திரும்பு;
 
-	urldb_save_search_tree(parent->left, fp);
+	urldb_save_தேடல்_மரம்(parent->இடது, fp);
 
 	path = malloc(path_alloc);
-	if (!path)
-		return;
+	எனில் (!path)
+		திரும்பு;
 
 	path[0] = '\0';
 
-	for (h = parent->data, p = host, end = host + sizeof host;
-	     h && h != &db_root && p < end; h = h->parent) {
-		int written = snprintf(p, end - p, "%s%s", h->part,
+	க்கு (h = parent->data, p = host, end = host + அளவு host;
+	     h && h != &db_வேர் && p < end; h = h->parent) {
+		முழு written = snprintf(p, end - p, "%s%s", h->part,
 				       (h->parent && h->parent->parent) ? "." : "");
-		if (written < 0) {
-			free(path);
-			return;
+		எனில் (written < 0) {
+			விடுவி(path);
+			திரும்பு;
 		}
 		p += written;
 	}
 
 	h = parent->data;
-	if (h && h->hsts.expires > expiry) {
+	எனில் (h && h->hsts.expires > expiry) {
 		hsts_expiry = h->hsts.expires;
 		hsts_include_subdomains = h->hsts.include_sub_domains;
 	}
 
-	urldb_count_urls(&parent->data->paths, expiry, &path_count);
+	urldb_மொத்தம்_urls(&parent->data->paths, expiry, &path_மொத்தம்);
 
-	if (path_count > 0) {
+	எனில் (path_மொத்தம் > 0) {
 		fprintf(fp, "%s %i ", host, hsts_include_subdomains);
 		urldb_write_timet(fp, hsts_expiry);
-		fprintf(fp, "%i\n", path_count);
+		fprintf(fp, "%i\n", path_மொத்தம்);
 
 		urldb_write_paths(&parent->data->paths, host, fp,
 				  &path, &path_alloc, &path_used, expiry);
-	} else if (hsts_expiry) {
+	} இல்லையெனில் எனில் (hsts_expiry) {
 		fprintf(fp, "%s %i ", host, hsts_include_subdomains);
 		urldb_write_timet(fp, hsts_expiry);
 		fprintf(fp, "0\n");
 	}
 
-	free(path);
+	விடுவி(path);
 
-	urldb_save_search_tree(parent->right, fp);
+	urldb_save_தேடல்_மரம்(parent->வலது, fp);
 }
 
 
@@ -580,57 +580,57 @@ static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
  * \param cookie_callback Callback function
  * \return true to continue, false otherwise
  */
-static bool
-urldb_iterate_entries_path(const struct path_data *parent,
-		bool (*url_callback)(nsurl *url, const struct url_data *data),
-		bool (*cookie_callback)(const struct cookie_data *data))
+நிலையான bool
+urldb_iterate_entries_path(மாறிலி கட்டமைப்பு path_data *parent,
+		bool (*url_callback)(nsurl *url, மாறிலி கட்டமைப்பு url_data *data),
+		bool (*cookie_callback)(மாறிலி கட்டமைப்பு cookie_data *data))
 {
-	const struct path_data *p = parent;
-	const struct cookie_data *c;
+	மாறிலி கட்டமைப்பு path_data *p = parent;
+	மாறிலி கட்டமைப்பு cookie_data *c;
 
-	do {
-		if (p->children != NULL) {
+	செய் {
+		எனில் (p->children != வெற்று) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} இல்லையெனில் {
 			/* All leaf nodes in the path tree should have an URL or
 			 * cookies attached to them. If this is not the case, it
 			 * indicates that there's a bug in the file loader/URL
 			 * insertion code. Therefore, assert this here. */
-			assert(url_callback || cookie_callback);
+			ப்ரதிஜ்ஞா(url_callback || cookie_callback);
 
 			/** \todo handle fragments? */
-			if (url_callback) {
-				const struct url_internal_data *u = &p->urld;
+			எனில் (url_callback) {
+				மாறிலி கட்டமைப்பு url_internal_data *u = &p->urld;
 
-				assert(p->url);
+				ப்ரதிஜ்ஞா(p->url);
 
-				if (!url_callback(p->url,
-						  (const struct url_data *) u))
-					return false;
-			} else {
-				c = (const struct cookie_data *)p->cookies;
-				for (; c != NULL; c = c->next) {
-					if (!cookie_callback(c))
-						return false;
+				எனில் (!url_callback(p->url,
+						  (மாறிலி கட்டமைப்பு url_data *) u))
+					திரும்பு false;
+			} இல்லையெனில் {
+				c = (மாறிலி கட்டமைப்பு cookie_data *)p->cookies;
+				க்கு (; c != வெற்று; c = c->next) {
+					எனில் (!cookie_callback(c))
+						திரும்பு false;
 				}
 			}
 
 			/* Now, find next node to process. */
-			while (p != parent) {
-				if (p->next != NULL) {
+			போது (p != parent) {
+				எனில் (p->next != வெற்று) {
 					/* Have a sibling, process that */
 					p = p->next;
-					break;
+					நிறுத்து;
 				}
 
 				/* Ascend tree */
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} போது (p != parent);
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -644,16 +644,16 @@ urldb_iterate_entries_path(const struct path_data *parent,
  * \param host a hostname terminated by '\0'
  * \return true if the hostname is an IP address, false otherwise
  */
-static bool urldb__host_is_ip_address(const char *host)
+நிலையான bool urldb__host_is_ip_address(மாறிலி எழுத்து *host)
 {
-	struct in_addr ipv4;
+	கட்டமைப்பு in_addr ipv4;
 	size_t host_len = strlen(host);
-	const char *sane_host;
-	const char *slash;
+	மாறிலி எழுத்து *sane_host;
+	மாறிலி எழுத்து *slash;
 #ifndef NO_IPV6
-	struct in6_addr ipv6;
-	char ipv6_addr[64];
-	unsigned int ipv6_addr_len;
+	கட்டமைப்பு in6_addr ipv6;
+	எழுத்து ipv6_addr[64];
+	unsigned முழு ipv6_addr_len;
 #endif
 	/**
 	 * @todo FIXME Some parts of urldb.c make confusions between hosts
@@ -674,10 +674,10 @@ static bool urldb__host_is_ip_address(const char *host)
 	 */
 
 	slash = strchr(host, '/');
-	if (slash == NULL) {
+	எனில் (slash == வெற்று) {
 		sane_host = host;
-	} else {
-		char *c = strdup(host);
+	} இல்லையெனில் {
+		எழுத்து *c = strdup(host);
 		c[slash - host] = '\0';
 		sane_host = c;
 		host_len = slash - host;
@@ -685,54 +685,54 @@ static bool urldb__host_is_ip_address(const char *host)
 		      host);
 	}
 
-	if (strspn(sane_host, "0123456789abcdefABCDEF[].:") < host_len)
-		goto out_false;
+	எனில் (strspn(sane_host, "0123456789abcdefABCDEF[].:") < host_len)
+		செல் out_false;
 
-	if (inet_aton(sane_host, &ipv4) != 0) {
+	எனில் (inet_aton(sane_host, &ipv4) != 0) {
 		/* This can only be a sane IPv4 address if it contains 3 dots.
 		 * Helpfully, inet_aton is happy to treat "a", "a.b", "a.b.c",
 		 * and "a.b.c.d" as valid IPv4 address strings where we only
 		 * support the full, dotted-quad, form.
 		 */
-		int num_dots = 0;
+		முழு இலக்கம்_dots = 0;
 		size_t index;
 
-		for (index = 0; index < host_len; index++) {
-			if (sane_host[index] == '.')
-				num_dots++;
+		க்கு (index = 0; index < host_len; index++) {
+			எனில் (sane_host[index] == '.')
+				இலக்கம்_dots++;
 		}
 
-		if (num_dots == 3)
-			goto out_true;
-		else
-			goto out_false;
+		எனில் (இலக்கம்_dots == 3)
+			செல் out_true;
+		இல்லையெனில்
+			செல் out_false;
 	}
 
 #ifndef NO_IPV6
-	if ((host_len < 6) ||
+	எனில் ((host_len < 6) ||
 	    (sane_host[0] != '[') ||
 	    (sane_host[host_len - 1] != ']')) {
-		goto out_false;
+		செல் out_false;
 	}
 
 	ipv6_addr_len = host_len - 2;
-	if (ipv6_addr_len >= sizeof(ipv6_addr)) {
-		ipv6_addr_len = sizeof(ipv6_addr) - 1;
+	எனில் (ipv6_addr_len >= அளவு(ipv6_addr)) {
+		ipv6_addr_len = அளவு(ipv6_addr) - 1;
 	}
 	strncpy(ipv6_addr, sane_host + 1, ipv6_addr_len);
 	ipv6_addr[ipv6_addr_len] = '\0';
 
-	if (inet_pton(AF_INET6, ipv6_addr, &ipv6) == 1)
-		goto out_true;
+	எனில் (inet_pton(AF_INET6, ipv6_addr, &ipv6) == 1)
+		செல் out_true;
 #endif
 
 out_false:
-	if (slash != NULL) free((void *)sane_host);
-	return false;
+	எனில் (slash != வெற்று) விடுவி((வெறுமை *)sane_host);
+	திரும்பு false;
 
 out_true:
-	if (slash != NULL) free((void *)sane_host);
-	return true;
+	எனில் (slash != வெற்று) விடுவி((வெறுமை *)sane_host);
+	திரும்பு true;
 }
 
 
@@ -743,43 +743,43 @@ out_true:
  * \param b prefix
  * \return 0 if match, non-zero, otherwise
  */
-static int urldb_search_match_prefix(const struct host_part *a, const char *b)
+நிலையான முழு urldb_தேடல்_match_prefix(மாறிலி கட்டமைப்பு host_part *a, மாறிலி எழுத்து *b)
 {
-	const char *end, *dot;
-	int plen, ret;
+	மாறிலி எழுத்து *end, *dot;
+	முழு plen, ret;
 
-	assert(a && a != &db_root && b);
+	ப்ரதிஜ்ஞா(a && a != &db_வேர் && b);
 
-	if (urldb__host_is_ip_address(b)) {
+	எனில் (urldb__host_is_ip_address(b)) {
 		/* IP address */
-		return strncasecmp(a->part, b, strlen(b));
+		திரும்பு strncasecmp(a->part, b, strlen(b));
 	}
 
 	end = b + strlen(b) + 1;
 
-	while (b < end && a && a != &db_root) {
+	போது (b < end && a && a != &db_வேர்) {
 		dot = strchr(b, '.');
-		if (!dot) {
+		எனில் (!dot) {
 			/* last segment */
 			dot = end - 1;
 		}
 
 		/* Compare strings (length limited) */
-		if ((ret = strncasecmp(a->part, b, dot - b)) != 0)
+		எனில் ((ret = strncasecmp(a->part, b, dot - b)) != 0)
 			/* didn't match => return difference */
-			return ret;
+			திரும்பு ret;
 
 		/* The strings matched */
-		if (dot < end - 1) {
+		எனில் (dot < end - 1) {
 			/* Consider segment lengths only in the case
 			 * where the prefix contains segments */
 			plen = strlen(a->part);
-			if (plen > dot - b) {
+			எனில் (plen > dot - b) {
 				/* len(a) > len(b) */
-				return 1;
-			} else if (plen < dot - b) {
+				திரும்பு 1;
+			} இல்லையெனில் எனில் (plen < dot - b) {
 				/* len(a) < len(b) */
-				return -1;
+				திரும்பு -1;
 			}
 		}
 
@@ -791,16 +791,16 @@ static int urldb_search_match_prefix(const struct host_part *a, const char *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && b >= end) {
+	எனில் (a && a != &db_வேர் && b >= end) {
 		/* len(a) > len(b) => prefix matches */
-		return 0;
-	} else if ((!a || a == &db_root) && b < end) {
+		திரும்பு 0;
+	} இல்லையெனில் எனில் ((!a || a == &db_வேர்) && b < end) {
 		/* len(a) < len(b) => prefix does not match */
-		return -1;
+		திரும்பு -1;
 	}
 
 	/* Identical */
-	return 0;
+	திரும்பு 0;
 }
 
 
@@ -812,55 +812,55 @@ static int urldb_search_match_prefix(const struct host_part *a, const char *b)
  * \param callback Callback function
  * \return true to continue, false otherwise
  */
-static bool
-urldb_iterate_partial_host(struct search_node *root,
-		const char *prefix,
-		bool (*callback)(nsurl *url, const struct url_data *data))
+நிலையான bool
+urldb_iterate_partial_host(கட்டமைப்பு தேடல்_முனை *வேர்,
+		மாறிலி எழுத்து *prefix,
+		bool (*callback)(nsurl *url, மாறிலி கட்டமைப்பு url_data *data))
 {
-	int c;
+	முழு c;
 
-	assert(root && prefix && callback);
+	ப்ரதிஜ்ஞா(வேர் && prefix && callback);
 
-	if (root == &empty)
-		return true;
+	எனில் (வேர் == &empty)
+		திரும்பு true;
 
-	c = urldb_search_match_prefix(root->data, prefix);
+	c = urldb_தேடல்_match_prefix(வேர்->data, prefix);
 
-	if (c > 0) {
+	எனில் (c > 0) {
 		/* No match => look in left subtree */
-		return urldb_iterate_partial_host(root->left,
+		திரும்பு urldb_iterate_partial_host(வேர்->இடது,
 						  prefix,
 						  callback);
-	} else if (c < 0) {
+	} இல்லையெனில் எனில் (c < 0) {
 		/* No match => look in right subtree */
-		return urldb_iterate_partial_host(root->right,
+		திரும்பு urldb_iterate_partial_host(வேர்->வலது,
 						  prefix,
 						  callback);
-	} else {
+	} இல்லையெனில் {
 		/* Match => iterate over l/r subtrees & process this node */
-		if (!urldb_iterate_partial_host(root->left,
+		எனில் (!urldb_iterate_partial_host(வேர்->இடது,
 						prefix,
 						callback)) {
-			return false;
+			திரும்பு false;
 		}
 
-		if (root->data->paths.children) {
+		எனில் (வேர்->data->paths.children) {
 			/* and extract all paths attached to this host */
-			if (!urldb_iterate_entries_path(&root->data->paths,
+			எனில் (!urldb_iterate_entries_path(&வேர்->data->paths,
 							callback,
-							NULL)) {
-				return false;
+							வெற்று)) {
+				திரும்பு false;
 			}
 		}
 
-		if (!urldb_iterate_partial_host(root->right,
+		எனில் (!urldb_iterate_partial_host(வேர்->வலது,
 						prefix,
 						callback)) {
-			return false;
+			திரும்பு false;
 		}
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -902,52 +902,52 @@ urldb_iterate_partial_host(struct search_node *root,
  * \param callback Callback function
  * \return true to continue, false otherwise
  */
-static bool
-urldb_iterate_partial_path(const struct path_data *parent,
-		const char *prefix,
-		bool (*callback)(nsurl *url, const struct url_data *data))
+நிலையான bool
+urldb_iterate_partial_path(மாறிலி கட்டமைப்பு path_data *parent,
+		மாறிலி எழுத்து *prefix,
+		bool (*callback)(nsurl *url, மாறிலி கட்டமைப்பு url_data *data))
 {
-	const struct path_data *p = parent->children;
-	const char *slash, *end = prefix + strlen(prefix);
+	மாறிலி கட்டமைப்பு path_data *p = parent->children;
+	மாறிலி எழுத்து *slash, *end = prefix + strlen(prefix);
 
-	do {
+	செய் {
 		slash = strchr(prefix, '/');
-		if (!slash) {
+		எனில் (!slash) {
 			slash = end;
 		}
 
-		if (slash == prefix && *prefix == '/') {
+		எனில் (slash == prefix && *prefix == '/') {
 			/* Ignore "//" */
 			prefix++;
-			continue;
+			தொடர்;
 		}
 
-		if (strncasecmp(p->segment, prefix, slash - prefix) == 0) {
+		எனில் (strncasecmp(p->segment, prefix, slash - prefix) == 0) {
 			/* prefix matches so far */
-			if (slash == end) {
+			எனில் (slash == end) {
 				/* we've run out of prefix, so all
 				 * paths below this one match */
-				if (!urldb_iterate_entries_path(p,
+				எனில் (!urldb_iterate_entries_path(p,
 								callback,
-								NULL)) {
-					return false;
+								வெற்று)) {
+					திரும்பு false;
 				}
 
 				/* Progress to next sibling */
 				p = p->next;
-			} else {
+			} இல்லையெனில் {
 				/* Skip over this segment */
 				prefix = slash + 1;
 
 				p = p->children;
 			}
-		} else {
+		} இல்லையெனில் {
 			/* Doesn't match this segment, try next sibling */
 			p = p->next;
 		}
-	} while (p != NULL);
+	} போது (p != வெற்று);
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -959,39 +959,39 @@ urldb_iterate_partial_path(const struct path_data *parent,
  * \param cookie_callback Callback function
  * \return true to continue, false otherwise
  */
-static bool
-urldb_iterate_entries_host(struct search_node *parent,
-		bool (*url_callback)(nsurl *url, const struct url_data *data),
-		bool (*cookie_callback)(const struct cookie_data *data))
+நிலையான bool
+urldb_iterate_entries_host(கட்டமைப்பு தேடல்_முனை *parent,
+		bool (*url_callback)(nsurl *url, மாறிலி கட்டமைப்பு url_data *data),
+		bool (*cookie_callback)(மாறிலி கட்டமைப்பு cookie_data *data))
 {
-	if (parent == &empty) {
-		return true;
+	எனில் (parent == &empty) {
+		திரும்பு true;
 	}
 
-	if (!urldb_iterate_entries_host(parent->left,
+	எனில் (!urldb_iterate_entries_host(parent->இடது,
 					url_callback,
 					cookie_callback)) {
-		return false;
+		திரும்பு false;
 	}
 
-	if ((parent->data->paths.children) ||
+	எனில் ((parent->data->paths.children) ||
 	    ((cookie_callback) &&
 	     (parent->data->paths.cookies))) {
 		/* We have paths (or domain cookies), so iterate them */
-		if (!urldb_iterate_entries_path(&parent->data->paths,
+		எனில் (!urldb_iterate_entries_path(&parent->data->paths,
 						url_callback,
 						cookie_callback)) {
-			return false;
+			திரும்பு false;
 		}
 	}
 
-	if (!urldb_iterate_entries_host(parent->right,
+	எனில் (!urldb_iterate_entries_host(parent->வலது,
 					url_callback,
 					cookie_callback)) {
-		return false;
+		திரும்பு false;
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -1002,32 +1002,32 @@ urldb_iterate_entries_host(struct search_node *parent,
  * \param parent Parent node to add to
  * \return Pointer to added node, or NULL on memory exhaustion
  */
-static struct host_part *
-urldb_add_host_node(const char *part, struct host_part *parent)
+நிலையான கட்டமைப்பு host_part *
+urldb_add_host_முனை(மாறிலி எழுத்து *part, கட்டமைப்பு host_part *parent)
 {
-	struct host_part *d;
+	கட்டமைப்பு host_part *d;
 
-	assert(part && parent);
+	ப்ரதிஜ்ஞா(part && parent);
 
-	d = calloc(1, sizeof(struct host_part));
-	if (!d) {
-		return NULL;
+	d = calloc(1, அளவு(கட்டமைப்பு host_part));
+	எனில் (!d) {
+		திரும்பு வெற்று;
 	}
 
 	d->part = strdup(part);
-	if (!d->part) {
-		free(d);
-		return NULL;
+	எனில் (!d->part) {
+		விடுவி(d);
+		திரும்பு வெற்று;
 	}
 
 	d->next = parent->children;
-	if (parent->children) {
+	எனில் (parent->children) {
 		parent->children->prev = d;
 	}
 	d->parent = parent;
 	parent->children = d;
 
-	return d;
+	திரும்பு d;
 }
 
 
@@ -1038,9 +1038,9 @@ urldb_add_host_node(const char *part, struct host_part *parent)
  * \param b second value
  * \return 0 for equal else positive or negative value on comparison
  */
-static int urldb_add_path_fragment_cmp(const void *a, const void *b)
+நிலையான முழு urldb_add_path_fragment_cmp(மாறிலி வெறுமை *a, மாறிலி வெறுமை *b)
 {
-	return strcasecmp(*((const char **) a), *((const char **) b));
+	திரும்பு strcasecmp(*((மாறிலி எழுத்து **) a), *((மாறிலி எழுத்து **) b));
 }
 
 
@@ -1051,30 +1051,30 @@ static int urldb_add_path_fragment_cmp(const void *a, const void *b)
  * \param fragment Fragment to add (copied), or NULL
  * \return segment or NULL on memory exhaustion
  */
-static struct path_data *
-urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
+நிலையான கட்டமைப்பு path_data *
+urldb_add_path_fragment(கட்டமைப்பு path_data *segment, lwc_string *fragment)
 {
-	char **temp;
+	எழுத்து **temp;
 
-	assert(segment);
+	ப்ரதிஜ்ஞா(segment);
 
 	/* If no fragment, this function is a NOP
 	 * This may seem strange, but it makes the rest
 	 * of the code cleaner */
-	if (!fragment)
-		return segment;
+	எனில் (!fragment)
+		திரும்பு segment;
 
 	temp = realloc(segment->fragment,
-		       (segment->frag_cnt + 1) * sizeof(char *));
-	if (!temp)
-		return NULL;
+		       (segment->frag_cnt + 1) * அளவு(எழுத்து *));
+	எனில் (!temp)
+		திரும்பு வெற்று;
 
 	segment->fragment = temp;
 	segment->fragment[segment->frag_cnt] =
 		strdup(lwc_string_data(fragment));
-	if (!segment->fragment[segment->frag_cnt]) {
+	எனில் (!segment->fragment[segment->frag_cnt]) {
 		/* Don't free temp - it's now our buffer */
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	segment->frag_cnt++;
@@ -1083,10 +1083,10 @@ urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
 	 * It may prove better to insert in alphabetical order instead */
 	qsort(segment->fragment,
 	      segment->frag_cnt,
-	      sizeof (char *),
+	      அளவு (எழுத்து *),
 	      urldb_add_path_fragment_cmp);
 
-	return segment;
+	திரும்பு segment;
 }
 
 
@@ -1100,66 +1100,66 @@ urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
  * \param parent Parent node to add to
  * \return Pointer to added node, or NULL on memory exhaustion
  */
-static struct path_data *
-urldb_add_path_node(lwc_string *scheme,
-		    unsigned int port,
-		    const char *segment,
+நிலையான கட்டமைப்பு path_data *
+urldb_add_path_முனை(lwc_string *scheme,
+		    unsigned முழு port,
+		    மாறிலி எழுத்து *segment,
 		    lwc_string *fragment,
-		    struct path_data *parent)
+		    கட்டமைப்பு path_data *parent)
 {
-	struct path_data *d, *e;
+	கட்டமைப்பு path_data *d, *e;
 
-	assert(scheme && segment && parent);
+	ப்ரதிஜ்ஞா(scheme && segment && parent);
 
-	d = calloc(1, sizeof(struct path_data));
-	if (!d)
-		return NULL;
+	d = calloc(1, அளவு(கட்டமைப்பு path_data));
+	எனில் (!d)
+		திரும்பு வெற்று;
 
 	d->scheme = lwc_string_ref(scheme);
 
 	d->port = port;
 
 	d->segment = strdup(segment);
-	if (!d->segment) {
+	எனில் (!d->segment) {
 		lwc_string_unref(d->scheme);
-		free(d);
-		return NULL;
+		விடுவி(d);
+		திரும்பு வெற்று;
 	}
 
-	if (fragment) {
-		if (!urldb_add_path_fragment(d, fragment)) {
-			free(d->segment);
+	எனில் (fragment) {
+		எனில் (!urldb_add_path_fragment(d, fragment)) {
+			விடுவி(d->segment);
 			lwc_string_unref(d->scheme);
-			free(d);
-			return NULL;
+			விடுவி(d);
+			திரும்பு வெற்று;
 		}
 	}
 
-	for (e = parent->children; e; e = e->next) {
-		if (strcmp(e->segment, d->segment) > 0)
-			break;
+	க்கு (e = parent->children; e; e = e->next) {
+		எனில் (strcmp(e->segment, d->segment) > 0)
+			நிறுத்து;
 	}
 
-	if (e) {
+	எனில் (e) {
 		d->prev = e->prev;
 		d->next = e;
-		if (e->prev)
+		எனில் (e->prev)
 			e->prev->next = d;
-		else
+		இல்லையெனில்
 			parent->children = d;
 		e->prev = d;
-	} else if (!parent->children) {
-		d->prev = d->next = NULL;
+	} இல்லையெனில் எனில் (!parent->children) {
+		d->prev = d->next = வெற்று;
 		parent->children = parent->last = d;
-	} else {
-		d->next = NULL;
+	} இல்லையெனில் {
+		d->next = வெற்று;
 		d->prev = parent->last;
 		parent->last->next = d;
 		parent->last = d;
 	}
 	d->parent = parent;
 
-	return d;
+	திரும்பு d;
 }
 
 
@@ -1169,16 +1169,16 @@ urldb_add_path_node(lwc_string *scheme,
  * \param host the host to lookup
  * \return the corresponding search tree
  */
-static struct search_node **urldb_get_search_tree_direct(const char *host)
+நிலையான கட்டமைப்பு தேடல்_முனை **urldb_get_தேடல்_மரம்_direct(மாறிலி எழுத்து *host)
 {
-	assert(host);
+	ப்ரதிஜ்ஞா(host);
 
-	if (urldb__host_is_ip_address(host)) {
-		return &search_trees[ST_IP];
-	} else if (ascii_is_alpha(*host)) {
-		return &search_trees[ST_DN + ascii_to_lower(*host) - 'a'];
+	எனில் (urldb__host_is_ip_address(host)) {
+		திரும்பு &தேடல்_trees[ST_IP];
+	} இல்லையெனில் எனில் (ascii_is_alpha(*host)) {
+		திரும்பு &தேடல்_trees[ST_DN + ascii_to_lower(*host) - 'a'];
 	}
-	return &search_trees[ST_EE];
+	திரும்பு &தேடல்_trees[ST_EE];
 }
 
 
@@ -1188,9 +1188,9 @@ static struct search_node **urldb_get_search_tree_direct(const char *host)
  * \param host the host to lookup
  * \return the corresponding search tree
  */
-static struct search_node *urldb_get_search_tree(const char *host)
+நிலையான கட்டமைப்பு தேடல்_முனை *urldb_get_தேடல்_மரம்(மாறிலி எழுத்து *host)
 {
-	return *urldb_get_search_tree_direct(host);
+	திரும்பு *urldb_get_தேடல்_மரம்_direct(host);
 }
 
 
@@ -1201,41 +1201,41 @@ static struct search_node *urldb_get_search_tree(const char *host)
  * \param b string to compare
  * \return 0 if match, non-zero, otherwise
  */
-static int urldb_search_match_string(const struct host_part *a, const char *b)
+நிலையான முழு urldb_தேடல்_match_string(மாறிலி கட்டமைப்பு host_part *a, மாறிலி எழுத்து *b)
 {
-	const char *end, *dot;
-	int plen, ret;
+	மாறிலி எழுத்து *end, *dot;
+	முழு plen, ret;
 
-	assert(a && a != &db_root && b);
+	ப்ரதிஜ்ஞா(a && a != &db_வேர் && b);
 
-	if (urldb__host_is_ip_address(b)) {
+	எனில் (urldb__host_is_ip_address(b)) {
 		/* IP address */
-		return strcasecmp(a->part, b);
+		திரும்பு strcasecmp(a->part, b);
 	}
 
 	end = b + strlen(b) + 1;
 
-	while (b < end && a && a != &db_root) {
+	போது (b < end && a && a != &db_வேர்) {
 		dot = strchr(b, '.');
-		if (!dot) {
+		எனில் (!dot) {
 			/* last segment */
 			dot = end - 1;
 		}
 
 		/* Compare strings (length limited) */
-		if ((ret = strncasecmp(a->part, b, dot - b)) != 0)
+		எனில் ((ret = strncasecmp(a->part, b, dot - b)) != 0)
 			/* didn't match => return difference */
-			return ret;
+			திரும்பு ret;
 
 		/* The strings matched, now check that the lengths do, too */
 		plen = strlen(a->part);
 
-		if (plen > dot - b) {
+		எனில் (plen > dot - b) {
 			/* len(a) > len(b) */
-			return 1;
-		} else if (plen < dot - b) {
+			திரும்பு 1;
+		} இல்லையெனில் எனில் (plen < dot - b) {
 			/* len(a) < len(b) */
-			return -1;
+			திரும்பு -1;
 		}
 
 		b = dot + 1;
@@ -1246,16 +1246,16 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && b >= end) {
+	எனில் (a && a != &db_வேர் && b >= end) {
 		/* len(a) > len(b) */
-		return 1;
-	} else if ((!a || a == &db_root) && b < end) {
+		திரும்பு 1;
+	} இல்லையெனில் எனில் ((!a || a == &db_வேர்) && b < end) {
 		/* len(a) < len(b) */
-		return -1;
+		திரும்பு -1;
 	}
 
 	/* Identical */
-	return 0;
+	திரும்பு 0;
 }
 
 
@@ -1266,26 +1266,26 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
  * \param host Host to find
  * \return Pointer to host tree node, or NULL if not found
  */
-static const struct host_part *
-urldb_search_find(struct search_node *root, const char *host)
+நிலையான மாறிலி கட்டமைப்பு host_part *
+urldb_தேடல்_find(கட்டமைப்பு தேடல்_முனை *வேர், மாறிலி எழுத்து *host)
 {
-	int c;
+	முழு c;
 
-	assert(root && host);
+	ப்ரதிஜ்ஞா(வேர் && host);
 
-	if (root == &empty) {
-		return NULL;
+	எனில் (வேர் == &empty) {
+		திரும்பு வெற்று;
 	}
 
-	c = urldb_search_match_string(root->data, host);
+	c = urldb_தேடல்_match_string(வேர்->data, host);
 
-	if (c > 0) {
-		return urldb_search_find(root->left, host);
-	} else if (c < 0) {
-		return urldb_search_find(root->right, host);
+	எனில் (c > 0) {
+		திரும்பு urldb_தேடல்_find(வேர்->இடது, host);
+	} இல்லையெனில் எனில் (c < 0) {
+		திரும்பு urldb_தேடல்_find(வேர்->வலது, host);
 	}
 
-	return root->data;
+	திரும்பு வேர்->data;
 }
 
 
@@ -1298,54 +1298,54 @@ urldb_search_find(struct search_node *root, const char *host)
  * \param port The port associated with the path
  * \return Pointer to path data or NULL if not found.
  */
-static struct path_data *
-urldb_match_path(const struct path_data *parent,
-		 const char *path,
+நிலையான கட்டமைப்பு path_data *
+urldb_match_path(மாறிலி கட்டமைப்பு path_data *parent,
+		 மாறிலி எழுத்து *path,
 		 lwc_string *scheme,
 		 unsigned short port)
 {
-	const struct path_data *p;
-	const char *slash;
+	மாறிலி கட்டமைப்பு path_data *p;
+	மாறிலி எழுத்து *slash;
 	bool match;
 
-	assert(parent != NULL);
-	assert(parent->segment == NULL);
+	ப்ரதிஜ்ஞா(parent != வெற்று);
+	ப்ரதிஜ்ஞா(parent->segment == வெற்று);
 
-	if (path[0] != '/') {
+	எனில் (path[0] != '/') {
 		NSLOG(netsurf, INFO, "path is %s", path);
 	}
 
-	assert(path[0] == '/');
+	ப்ரதிஜ்ஞா(path[0] == '/');
 
 	/* Start with children, as parent has no segment */
 	p = parent->children;
 
-	while (p != NULL) {
+	போது (p != வெற்று) {
 		slash = strchr(path + 1, '/');
-		if (!slash) {
+		எனில் (!slash) {
 			slash = path + strlen(path);
 		}
 
-		if (strncmp(p->segment, path + 1, slash - path - 1) == 0 &&
+		எனில் (strncmp(p->segment, path + 1, slash - path - 1) == 0 &&
 		    lwc_string_isequal(p->scheme, scheme, &match) == lwc_error_ok &&
 		    match == true &&
 		    p->port == port) {
-			if (*slash == '\0') {
+			எனில் (*slash == '\0') {
 				/* Complete match */
-				return (struct path_data *) p;
+				திரும்பு (கட்டமைப்பு path_data *) p;
 			}
 
 			/* Match so far, go down tree */
 			p = p->children;
 
 			path = slash;
-		} else {
+		} இல்லையெனில் {
 			/* No match, try next sibling */
 			p = p->next;
 		}
 	}
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 
@@ -1355,78 +1355,78 @@ urldb_match_path(const struct path_data *parent,
  * \param url Absolute URL to find
  * \return Pointer to path data, or NULL if not found
  */
-static struct path_data *urldb_find_url(nsurl *url)
+நிலையான கட்டமைப்பு path_data *urldb_find_url(nsurl *url)
 {
-	const struct host_part *h;
-	struct path_data *p;
-	struct search_node *tree;
-	char *plq;
-	const char *host_str;
+	மாறிலி கட்டமைப்பு host_part *h;
+	கட்டமைப்பு path_data *p;
+	கட்டமைப்பு தேடல்_முனை *மரம்;
+	எழுத்து *plq;
+	மாறிலி எழுத்து *host_str;
 	lwc_string *scheme, *host, *port;
 	size_t len = 0;
-	unsigned int port_int;
+	unsigned முழு port_int;
 	bool match;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
-	if (url_bloom != NULL) {
-		if (bloom_search_hash(url_bloom, nsurl_hash(url)) == false) {
-			return NULL;
+	எனில் (url_bloom != வெற்று) {
+		எனில் (bloom_தேடல்_hash(url_bloom, nsurl_hash(url)) == false) {
+			திரும்பு வெற்று;
 		}
 	}
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL)
-		return NULL;
+	எனில் (scheme == வெற்று)
+		திரும்பு வெற்று;
 
-	if (lwc_string_isequal(scheme, corestring_lwc_mailto, &match) ==
+	எனில் (lwc_string_isequal(scheme, corestring_lwc_mailto, &match) ==
 	    lwc_error_ok && match == true) {
 		lwc_string_unref(scheme);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
+	எனில் (host != வெற்று) {
 		host_str = lwc_string_data(host);
 		lwc_string_unref(host);
 
-	} else if (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
+	} இல்லையெனில் எனில் (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
 		   lwc_error_ok && match == true) {
 		host_str = "localhost";
 
-	} else {
+	} இல்லையெனில் {
 		lwc_string_unref(scheme);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	tree = urldb_get_search_tree(host_str);
-	h = urldb_search_find(tree, host_str);
-	if (!h) {
+	மரம் = urldb_get_தேடல்_மரம்(host_str);
+	h = urldb_தேடல்_find(மரம், host_str);
+	எனில் (!h) {
 		lwc_string_unref(scheme);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	/* generate plq (path, leaf, query) */
-	if (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &plq, &len) != NSERROR_OK) {
+	எனில் (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &plq, &len) != NSERROR_OK) {
 		lwc_string_unref(scheme);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	/* Get port */
 	port = nsurl_get_component(url, NSURL_PORT);
-	if (port != NULL) {
+	எனில் (port != வெற்று) {
 		port_int = atoi(lwc_string_data(port));
 		lwc_string_unref(port);
-	} else {
+	} இல்லையெனில் {
 		port_int = 0;
 	}
 
 	p = urldb_match_path(&h->paths, plq, scheme, port_int);
 
-	free(plq);
+	விடுவி(plq);
 	lwc_string_unref(scheme);
 
-	return p;
+	திரும்பு p;
 }
 
 
@@ -1435,37 +1435,37 @@ static struct path_data *urldb_find_url(nsurl *url)
  *
  * \param parent Parent node of tree to dump
  */
-static void urldb_dump_paths(struct path_data *parent)
+நிலையான வெறுமை urldb_dump_paths(கட்டமைப்பு path_data *parent)
 {
-	const struct path_data *p = parent;
-	unsigned int i;
+	மாறிலி கட்டமைப்பு path_data *p = parent;
+	unsigned முழு i;
 
-	do {
-		if (p->segment != NULL) {
+	செய் {
+		எனில் (p->segment != வெற்று) {
 			NSLOG(netsurf, INFO, "\t%s : %u",
 			      lwc_string_data(p->scheme), p->port);
 
 			NSLOG(netsurf, INFO, "\t\t'%s'", p->segment);
 
-			for (i = 0; i != p->frag_cnt; i++) {
+			க்கு (i = 0; i != p->frag_cnt; i++) {
 				NSLOG(netsurf, INFO, "\t\t\t#%s",
 				      p->fragment[i]);
 			}
 		}
 
-		if (p->children != NULL) {
+		எனில் (p->children != வெற்று) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} இல்லையெனில் {
+			போது (p != parent) {
+				எனில் (p->next != வெற்று) {
 					p = p->next;
-					break;
+					நிறுத்து;
 				}
 
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} போது (p != parent);
 }
 
 
@@ -1474,11 +1474,11 @@ static void urldb_dump_paths(struct path_data *parent)
  *
  * \param parent Parent node of tree to dump
  */
-static void urldb_dump_hosts(struct host_part *parent)
+நிலையான வெறுமை urldb_dump_hosts(கட்டமைப்பு host_part *parent)
 {
-	struct host_part *h;
+	கட்டமைப்பு host_part *h;
 
-	if (parent->part) {
+	எனில் (parent->part) {
 		NSLOG(netsurf, INFO, "%s", parent->part);
 
 		NSLOG(netsurf, INFO, "\t%s invalid SSL certs",
@@ -1489,7 +1489,7 @@ static void urldb_dump_hosts(struct host_part *parent)
 	urldb_dump_paths(&parent->paths);
 
 	/* and recurse */
-	for (h = parent->children; h; h = h->next) {
+	க்கு (h = parent->children; h; h = h->next) {
 		urldb_dump_hosts(h);
 	}
 }
@@ -1501,36 +1501,36 @@ static void urldb_dump_hosts(struct host_part *parent)
  * \param parent Parent node of tree to dump
  * \param depth Tree depth
  */
-static void urldb_dump_search(struct search_node *parent, int depth)
+நிலையான வெறுமை urldb_dump_தேடல்(கட்டமைப்பு தேடல்_முனை *parent, முழு depth)
 {
-	const struct host_part *h;
-	int i; /* index into string */
-	char s[1024];
-	int r;
-	int sl = sizeof(s) - 2;
+	மாறிலி கட்டமைப்பு host_part *h;
+	முழு i; /* index into string */
+	எழுத்து s[1024];
+	முழு r;
+	முழு sl = அளவு(s) - 2;
 
-	if (parent == &empty)
-		return;
+	எனில் (parent == &empty)
+		திரும்பு;
 
-	urldb_dump_search(parent->left, depth + 1);
+	urldb_dump_தேடல்(parent->இடது, depth + 1);
 
-	for (i = 0; i != depth; i++) {
+	க்கு (i = 0; i != depth; i++) {
 		s[i] = ' ';
 	}
 
-	for (h = parent->data; h; h = h->parent) {
-		if (h->part) {
+	க்கு (h = parent->data; h; h = h->parent) {
+		எனில் (h->part) {
 			r = snprintf(&s[i], sl - i, "%s", h->part);
-			if (r < 0) {
-				break;
+			எனில் (r < 0) {
+				நிறுத்து;
 			}
-			if ((i + r) >= sl) {
-				break;
+			எனில் ((i + r) >= sl) {
+				நிறுத்து;
 			}
 			i += r;
 		}
 
-		if (h->parent && h->parent->parent) {
+		எனில் (h->parent && h->parent->parent) {
 			s[i]='.';
 			i++;
 		}
@@ -1539,7 +1539,7 @@ static void urldb_dump_search(struct search_node *parent, int depth)
 
 	NSLOG(netsurf, INFO, "%s", s);
 
-	urldb_dump_search(parent->right, depth + 1);
+	urldb_dump_தேடல்(parent->வலது, depth + 1);
 }
 
 
@@ -1550,19 +1550,19 @@ static void urldb_dump_search(struct search_node *parent, int depth)
  * \param b second host part
  * \return 0 if match, non-zero, otherwise
  */
-static int
-urldb_search_match_host(const struct host_part *a, const struct host_part *b)
+நிலையான முழு
+urldb_தேடல்_match_host(மாறிலி கட்டமைப்பு host_part *a, மாறிலி கட்டமைப்பு host_part *b)
 {
-	int ret;
+	முழு ret;
 
-	assert(a && b);
+	ப்ரதிஜ்ஞா(a && b);
 
 	/* traverse up tree to root, comparing parts as we go. */
-	for (; a && a != &db_root && b && b != &db_root;
+	க்கு (; a && a != &db_வேர் && b && b != &db_வேர்;
 	     a = a->parent, b = b->parent) {
-		if ((ret = strcasecmp(a->part, b->part)) != 0) {
+		எனில் ((ret = strcasecmp(a->part, b->part)) != 0) {
 			/* They differ => return the difference here */
-			return ret;
+			திரும்பு ret;
 		}
 	}
 
@@ -1570,16 +1570,16 @@ urldb_search_match_host(const struct host_part *a, const struct host_part *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && (!b || b == &db_root)) {
+	எனில் (a && a != &db_வேர் && (!b || b == &db_வேர்)) {
 		/* len(a) > len(b) */
-		return 1;
-	} else if ((!a || a == &db_root) && b && b != &db_root) {
+		திரும்பு 1;
+	} இல்லையெனில் எனில் ((!a || a == &db_வேர்) && b && b != &db_வேர்) {
 		/* len(a) < len(b) */
-		return -1;
+		திரும்பு -1;
 	}
 
 	/* identical */
-	return 0;
+	திரும்பு 0;
 }
 
 
@@ -1589,20 +1589,20 @@ urldb_search_match_host(const struct host_part *a, const struct host_part *b)
  * \param root Root of subtree to rotate
  * \return new root of subtree
  */
-static struct search_node *urldb_search_skew(struct search_node *root)
+நிலையான கட்டமைப்பு தேடல்_முனை *urldb_தேடல்_skew(கட்டமைப்பு தேடல்_முனை *வேர்)
 {
-	assert(root);
+	ப்ரதிஜ்ஞா(வேர்);
 
-	if (root->left->level == root->level) {
-		struct search_node *temp;
+	எனில் (வேர்->இடது->level == வேர்->level) {
+		கட்டமைப்பு தேடல்_முனை *temp;
 
-		temp = root->left;
-		root->left = temp->right;
-		temp->right = root;
-		root = temp;
+		temp = வேர்->இடது;
+		வேர்->இடது = temp->வலது;
+		temp->வலது = வேர்;
+		வேர் = temp;
 	}
 
-	return root;
+	திரும்பு வேர்;
 }
 
 
@@ -1612,22 +1612,22 @@ static struct search_node *urldb_search_skew(struct search_node *root)
  * \param root Root of subtree to rotate
  * \return New root of subtree
  */
-static struct search_node *urldb_search_split(struct search_node *root)
+நிலையான கட்டமைப்பு தேடல்_முனை *urldb_தேடல்_split(கட்டமைப்பு தேடல்_முனை *வேர்)
 {
-	assert(root);
+	ப்ரதிஜ்ஞா(வேர்);
 
-	if (root->right->right->level == root->level) {
-		struct search_node *temp;
+	எனில் (வேர்->வலது->வலது->level == வேர்->level) {
+		கட்டமைப்பு தேடல்_முனை *temp;
 
-		temp = root->right;
-		root->right = temp->left;
-		temp->left = root;
-		root = temp;
+		temp = வேர்->வலது;
+		வேர்->வலது = temp->இடது;
+		temp->இடது = வேர்;
+		வேர் = temp;
 
-		root->level++;
+		வேர்->level++;
 	}
 
-	return root;
+	திரும்பு வேர்;
 }
 
 
@@ -1638,33 +1638,33 @@ static struct search_node *urldb_search_split(struct search_node *root)
  * \param n Node to insert
  * \return Pointer to updated root
  */
-static struct search_node *
-urldb_search_insert_internal(struct search_node *root, struct search_node *n)
+நிலையான கட்டமைப்பு தேடல்_முனை *
+urldb_தேடல்_செருகு_internal(கட்டமைப்பு தேடல்_முனை *வேர், கட்டமைப்பு தேடல்_முனை *n)
 {
-	assert(root && n);
+	ப்ரதிஜ்ஞா(வேர் && n);
 
-	if (root == &empty) {
-		root = n;
-	} else {
-		int c = urldb_search_match_host(root->data, n->data);
+	எனில் (வேர் == &empty) {
+		வேர் = n;
+	} இல்லையெனில் {
+		முழு c = urldb_தேடல்_match_host(வேர்->data, n->data);
 
-		if (c > 0) {
-			root->left = urldb_search_insert_internal(
-				root->left, n);
-		} else if (c < 0) {
-			root->right = urldb_search_insert_internal(
-				root->right, n);
-		} else {
+		எனில் (c > 0) {
+			வேர்->இடது = urldb_தேடல்_செருகு_internal(
+				வேர்->இடது, n);
+		} இல்லையெனில் எனில் (c < 0) {
+			வேர்->வலது = urldb_தேடல்_செருகு_internal(
+				வேர்->வலது, n);
+		} இல்லையெனில் {
 			/* exact match */
-			free(n);
-			return root;
+			விடுவி(n);
+			திரும்பு வேர்;
 		}
 
-		root = urldb_search_skew(root);
-		root = urldb_search_split(root);
+		வேர் = urldb_தேடல்_skew(வேர்);
+		வேர் = urldb_தேடல்_split(வேர்);
 	}
 
-	return root;
+	திரும்பு வேர்;
 }
 
 
@@ -1675,24 +1675,24 @@ urldb_search_insert_internal(struct search_node *root, struct search_node *n)
  * \param data User data to insert
  * \return Pointer to updated root, or NULL if failed
  */
-static struct search_node *
-urldb_search_insert(struct search_node *root, const struct host_part *data)
+நிலையான கட்டமைப்பு தேடல்_முனை *
+urldb_தேடல்_செருகு(கட்டமைப்பு தேடல்_முனை *வேர், மாறிலி கட்டமைப்பு host_part *data)
 {
-	struct search_node *n;
+	கட்டமைப்பு தேடல்_முனை *n;
 
-	assert(root && data);
+	ப்ரதிஜ்ஞா(வேர் && data);
 
-	n = malloc(sizeof(struct search_node));
-	if (!n)
-		return NULL;
+	n = malloc(அளவு(கட்டமைப்பு தேடல்_முனை));
+	எனில் (!n)
+		திரும்பு வெற்று;
 
 	n->level = 1;
 	n->data = data;
-	n->left = n->right = &empty;
+	n->இடது = n->வலது = &empty;
 
-	root = urldb_search_insert_internal(root, n);
+	வேர் = urldb_தேடல்_செருகு_internal(வேர், n);
 
-	return root;
+	திரும்பு வேர்;
 }
 
 
@@ -1705,86 +1705,86 @@ urldb_search_insert(struct search_node *root, const struct host_part *data)
  * \param was_quoted Whether \a v was quoted in the input
  * \return true on success, false on memory exhaustion
  */
-static bool
-urldb_parse_avpair(struct cookie_internal_data *c,
-		   char *n,
-		   char *v,
+நிலையான bool
+urldb_parse_avpair(கட்டமைப்பு cookie_internal_data *c,
+		   எழுத்து *n,
+		   எழுத்து *v,
 		   bool was_quoted)
 {
-	int vlen;
+	முழு vlen;
 
-	assert(c && n && v);
+	ப்ரதிஜ்ஞா(c && n && v);
 
 	/* Strip whitespace from start of name */
-	for (; *n; n++) {
-		if (*n != ' ' && *n != '\t')
-			break;
+	க்கு (; *n; n++) {
+		எனில் (*n != ' ' && *n != '\t')
+			நிறுத்து;
 	}
 
 	/* Strip whitespace from end of name */
-	for (vlen = strlen(n); vlen; vlen--) {
-		if (n[vlen] == ' ' || n[vlen] == '\t')
+	க்கு (vlen = strlen(n); vlen; vlen--) {
+		எனில் (n[vlen] == ' ' || n[vlen] == '\t')
 			n[vlen] = '\0';
-		else
-			break;
+		இல்லையெனில்
+			நிறுத்து;
 	}
 
 	/* Strip whitespace from start of value */
-	for (; *v; v++) {
-		if (*v != ' ' && *v != '\t')
-			break;
+	க்கு (; *v; v++) {
+		எனில் (*v != ' ' && *v != '\t')
+			நிறுத்து;
 	}
 
 	/* Strip whitespace from end of value */
-	for (vlen = strlen(v); vlen; vlen--) {
-		if (v[vlen] == ' ' || v[vlen] == '\t')
+	க்கு (vlen = strlen(v); vlen; vlen--) {
+		எனில் (v[vlen] == ' ' || v[vlen] == '\t')
 			v[vlen] = '\0';
-		else
-			break;
+		இல்லையெனில்
+			நிறுத்து;
 	}
 
-	if (!c->comment && strcasecmp(n, "Comment") == 0) {
+	எனில் (!c->comment && strcasecmp(n, "Comment") == 0) {
 		c->comment = strdup(v);
-		if (!c->comment)
-			return false;
-	} else if (!c->domain && strcasecmp(n, "Domain") == 0) {
-		if (v[0] == '.') {
+		எனில் (!c->comment)
+			திரும்பு false;
+	} இல்லையெனில் எனில் (!c->domain && strcasecmp(n, "Domain") == 0) {
+		எனில் (v[0] == '.') {
 			/* Domain must start with a dot */
 			c->domain_from_set = true;
 			c->domain = strdup(v);
-			if (!c->domain)
-				return false;
+			எனில் (!c->domain)
+				திரும்பு false;
 		}
-	} else if (strcasecmp(n, "Max-Age") == 0) {
-		int temp = atoi(v);
-		if (temp == 0)
+	} இல்லையெனில் எனில் (strcasecmp(n, "Max-Age") == 0) {
+		முழு temp = atoi(v);
+		எனில் (temp == 0)
 			/* Special case - 0 means delete */
 			c->expires = 0;
-		else
-			c->expires = time(NULL) + temp;
-	} else if (!c->path && strcasecmp(n, "Path") == 0) {
+		இல்லையெனில்
+			c->expires = time(வெற்று) + temp;
+	} இல்லையெனில் எனில் (!c->path && strcasecmp(n, "Path") == 0) {
 		c->path_from_set = true;
 		c->path = strdup(v);
-		if (!c->path)
-			return false;
-	} else if (strcasecmp(n, "Version") == 0) {
+		எனில் (!c->path)
+			திரும்பு false;
+	} இல்லையெனில் எனில் (strcasecmp(n, "Version") == 0) {
 		c->version = atoi(v);
-	} else if (strcasecmp(n, "Expires") == 0) {
-		char *datenoday;
+	} இல்லையெனில் எனில் (strcasecmp(n, "Expires") == 0) {
+		எழுத்து *datenoday;
 		time_t expires;
 		nserror res;
 
 		/* Strip dayname from date (these are hugely variable
 		 * and liable to break the parser.  They also serve no
 		 * useful purpose) */
-		for (datenoday = v;
+		க்கு (datenoday = v;
 		     *datenoday && !ascii_is_digit(*datenoday);
 		     datenoday++) {
 			/* do nothing */
 		}
 
 		res = nsc_strntimet(datenoday, strlen(datenoday), &expires);
-		if (res != NSERROR_OK) {
+		எனில் (res != NSERROR_OK) {
 			/* assume we have an unrepresentable date =>
 			 * force it to the maximum possible value of a
 			 * 32bit time_t (this may break in 2038. We'll
@@ -1792,20 +1792,20 @@ urldb_parse_avpair(struct cookie_internal_data *c,
 			expires = (time_t)0x7fffffff;
 		}
 		c->expires = expires;
-	} else if (strcasecmp(n, "Secure") == 0) {
+	} இல்லையெனில் எனில் (strcasecmp(n, "Secure") == 0) {
 		c->secure = true;
-	} else if (strcasecmp(n, "HttpOnly") == 0) {
+	} இல்லையெனில் எனில் (strcasecmp(n, "HttpOnly") == 0) {
 		c->http_only = true;
-	} else if (!c->name) {
+	} இல்லையெனில் எனில் (!c->name) {
 		c->name = strdup(n);
-		c->value = strdup(v);
-		c->value_was_quoted = was_quoted;
-		if (!c->name || !c->value) {
-			return false;
+		c->மதிப்பு = strdup(v);
+		c->மதிப்பு_was_quoted = was_quoted;
+		எனில் (!c->name || !c->மதிப்பு) {
+			திரும்பு false;
 		}
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -1814,16 +1814,16 @@ urldb_parse_avpair(struct cookie_internal_data *c,
  *
  * \param c The cookie to free
  */
-static void urldb_free_cookie(struct cookie_internal_data *c)
+நிலையான வெறுமை urldb_free_cookie(கட்டமைப்பு cookie_internal_data *c)
 {
-	assert(c);
+	ப்ரதிஜ்ஞா(c);
 
-	free(c->comment);
-	free(c->domain);
-	free(c->path);
-	free(c->name);
-	free(c->value);
-	free(c);
+	விடுவி(c->comment);
+	விடுவி(c->domain);
+	விடுவி(c->path);
+	விடுவி(c->name);
+	விடுவி(c->மதிப்பு);
+	விடுவி(c);
 }
 
 
@@ -1834,83 +1834,83 @@ static void urldb_free_cookie(struct cookie_internal_data *c)
  * \param cookie Pointer to cookie string (updated on exit)
  * \return Pointer to cookie structure (on heap, caller frees) or NULL
  */
-static struct cookie_internal_data *
-urldb_parse_cookie(nsurl *url, const char **cookie)
+நிலையான கட்டமைப்பு cookie_internal_data *
+urldb_parse_cookie(nsurl *url, மாறிலி எழுத்து **cookie)
 {
-	struct cookie_internal_data *c;
-	const char *cur;
-	char name[1024], value[4096];
-	char *n = name, *v = value;
-	bool in_value = false;
-	bool had_value_data = false;
-	bool value_verbatim = false;
+	கட்டமைப்பு cookie_internal_data *c;
+	மாறிலி எழுத்து *cur;
+	எழுத்து name[1024], மதிப்பு[4096];
+	எழுத்து *n = name, *v = மதிப்பு;
+	bool in_மதிப்பு = false;
+	bool had_மதிப்பு_data = false;
+	bool மதிப்பு_verbatim = false;
 	bool quoted = false;
 	bool was_quoted = false;
 
-	assert(url && cookie && *cookie);
+	ப்ரதிஜ்ஞா(url && cookie && *cookie);
 
-	c = calloc(1, sizeof(struct cookie_internal_data));
-	if (c == NULL)
-		return NULL;
+	c = calloc(1, அளவு(கட்டமைப்பு cookie_internal_data));
+	எனில் (c == வெற்று)
+		திரும்பு வெற்று;
 
 	c->expires = -1;
 
 	name[0] = '\0';
-	value[0] = '\0';
+	மதிப்பு[0] = '\0';
 
-	for (cur = *cookie; *cur; cur++) {
-		if (*cur == '\r' && *(cur + 1) == '\n') {
+	க்கு (cur = *cookie; *cur; cur++) {
+		எனில் (*cur == '\r' && *(cur + 1) == '\n') {
 			/* End of header */
-			if (quoted) {
+			எனில் (quoted) {
 				/* Unmatched quote encountered */
 
 				/* Match Firefox 2.0.0.11 */
-				value[0] = '\0';
+				மதிப்பு[0] = '\0';
 
 			}
 
-			break;
-		} else if (*cur == '\r') {
+			நிறுத்து;
+		} இல்லையெனில் எனில் (*cur == '\r') {
 			/* Spurious linefeed */
-			continue;
-		} else if (*cur == '\n') {
+			தொடர்;
+		} இல்லையெனில் எனில் (*cur == '\n') {
 			/* Spurious newline */
-			continue;
+			தொடர்;
 		}
 
-		if (in_value && !had_value_data) {
-			if (*cur == ' ' || *cur == '\t') {
+		எனில் (in_மதிப்பு && !had_மதிப்பு_data) {
+			எனில் (*cur == ' ' || *cur == '\t') {
 				/* Strip leading whitespace from value */
-				continue;
-			} else {
-				had_value_data = true;
+				தொடர்;
+			} இல்லையெனில் {
+				had_மதிப்பு_data = true;
 
 				/* Value is taken verbatim if first non-space
 				 * character is not a " */
-				if (*cur != '"') {
-					value_verbatim = true;
+				எனில் (*cur != '"') {
+					மதிப்பு_verbatim = true;
 				}
 			}
 		}
 
-		if (in_value && !value_verbatim && (*cur == '"')) {
+		எனில் (in_மதிப்பு && !மதிப்பு_verbatim && (*cur == '"')) {
 			/* Only non-verbatim values may be quoted */
-			if (cur == *cookie || *(cur - 1) != '\\') {
+			எனில் (cur == *cookie || *(cur - 1) != '\\') {
 				/* Only unescaped quotes count */
 				was_quoted = quoted;
 				quoted = !quoted;
 
-				continue;
+				தொடர்;
 			}
 		}
 
-		if (!quoted && !in_value && *cur == '=') {
+		எனில் (!quoted && !in_மதிப்பு && *cur == '=') {
 			/* First equals => attr-value separator */
-			in_value = true;
-			continue;
+			in_மதிப்பு = true;
+			தொடர்;
 		}
 
-		if (!quoted && (was_quoted || *cur == ';')) {
+		எனில் (!quoted && (was_quoted || *cur == ';')) {
 			/* Semicolon or after quoted value
 			 * => end of current avpair */
 
@@ -1918,27 +1918,27 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 			*n = '\0';
 			*v = '\0';
 
-			if (!urldb_parse_avpair(c, name, value, was_quoted)) {
+			எனில் (!urldb_parse_avpair(c, name, மதிப்பு, was_quoted)) {
 				/* Memory exhausted */
 				urldb_free_cookie(c);
-				return NULL;
+				திரும்பு வெற்று;
 			}
 
 			/* And reset to start */
 			n = name;
-			v = value;
-			in_value = false;
-			had_value_data = false;
-			value_verbatim = false;
+			v = மதிப்பு;
+			in_மதிப்பு = false;
+			had_மதிப்பு_data = false;
+			மதிப்பு_verbatim = false;
 			was_quoted = false;
 
 			/* Now, if the current input is anything other than a
 			 * semicolon, we must be sure to reprocess it */
-			if (*cur != ';') {
+			எனில் (*cur != ';') {
 				cur--;
 			}
 
-			continue;
+			தொடர்;
 		}
 
 		/* And now handle commas. These are a pain as they may mean
@@ -1970,35 +1970,35 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 		 * of these is particularly likely and if they do occur, the
 		 * website is more broken than we can be bothered to handle.
 		 */
-		if (!quoted && *cur == ',') {
+		எனில் (!quoted && *cur == ',') {
 			/* Find semi-colon, if any */
-			const char *p;
-			const char *semi = strchr(cur + 1, ';');
-			if (!semi)
+			மாறிலி எழுத்து *p;
+			மாறிலி எழுத்து *semi = strchr(cur + 1, ';');
+			எனில் (!semi)
 				semi = cur + strlen(cur) - 2 /* CRLF */;
 
 			/* Look for equals sign between comma and semi */
-			for (p = cur + 1; p < semi; p++)
-				if (*p == '=')
-					break;
+			க்கு (p = cur + 1; p < semi; p++)
+				எனில் (*p == '=')
+					நிறுத்து;
 
-			if (p == semi) {
+			எனில் (p == semi) {
 				/* none found => comma internal to value */
 				/* do nothing */
-			} else {
+			} இல்லையெனில் {
 				/* found one => comma marks end of cookie */
 				cur++;
-				break;
+				நிறுத்து;
 			}
 		}
 
 		/* Accumulate into buffers, always leaving space for a NUL */
 		/** \todo is silently truncating overlong names/values wise? */
-		if (!in_value) {
-			if (n < name + (sizeof(name) - 1))
+		எனில் (!in_மதிப்பு) {
+			எனில் (n < name + (அளவு(name) - 1))
 				*n++ = *cur;
-		} else {
-			if (v < value + (sizeof(value) - 1))
+		} இல்லையெனில் {
+			எனில் (v < மதிப்பு + (அளவு(மதிப்பு) - 1))
 				*v++ = *cur;
 		}
 	}
@@ -2007,57 +2007,57 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	*n = '\0';
 	*v = '\0';
 
-	if (!urldb_parse_avpair(c, name, value, was_quoted)) {
+	எனில் (!urldb_parse_avpair(c, name, மதிப்பு, was_quoted)) {
 		/* Memory exhausted */
 		urldb_free_cookie(c);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	/* Now fix-up default values */
-	if (c->domain == NULL) {
+	எனில் (c->domain == வெற்று) {
 		lwc_string *host = nsurl_get_component(url, NSURL_HOST);
-		if (host == NULL) {
+		எனில் (host == வெற்று) {
 			urldb_free_cookie(c);
-			return NULL;
+			திரும்பு வெற்று;
 		}
 		c->domain = strdup(lwc_string_data(host));
 		lwc_string_unref(host);
 	}
 
-	if (c->path == NULL) {
-		const char *path_data;
-		char *path, *slash;
+	எனில் (c->path == வெற்று) {
+		மாறிலி எழுத்து *path_data;
+		எழுத்து *path, *slash;
 		lwc_string *path_lwc;
 
 		path_lwc = nsurl_get_component(url, NSURL_PATH);
-		if (path_lwc == NULL) {
+		எனில் (path_lwc == வெற்று) {
 			urldb_free_cookie(c);
-			return NULL;
+			திரும்பு வெற்று;
 		}
 		path_data = lwc_string_data(path_lwc);
 
 		/* Strip leafname and trailing slash (4.3.1) */
 		slash = strrchr(path_data, '/');
-		if (slash != NULL) {
+		எனில் (slash != வெற்று) {
 			/* Special case: retain first slash in path */
-			if (slash == path_data)
+			எனில் (slash == path_data)
 				slash++;
 
 			slash = strndup(path_data, slash - path_data);
-			if (slash == NULL) {
+			எனில் (slash == வெற்று) {
 				lwc_string_unref(path_lwc);
 				urldb_free_cookie(c);
-				return NULL;
+				திரும்பு வெற்று;
 			}
 
 			path = slash;
 			lwc_string_unref(path_lwc);
-		} else {
+		} இல்லையெனில் {
 			path = strdup(lwc_string_data(path_lwc));
 			lwc_string_unref(path_lwc);
-			if (path == NULL) {
+			எனில் (path == வெற்று) {
 				urldb_free_cookie(c);
-				return NULL;
+				திரும்பு வெற்று;
 			}
 		}
 
@@ -2067,7 +2067,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	/* Write back current position */
 	*cookie = cur;
 
-	return c;
+	திரும்பு c;
 }
 
 
@@ -2082,76 +2082,76 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
  * \param url URL (fragment ignored)
  * \return Pointer to leaf node, or NULL on memory exhaustion
  */
-static struct path_data *
+நிலையான கட்டமைப்பு path_data *
 urldb_add_path(lwc_string *scheme,
-	       unsigned int port,
-	       const struct host_part *host,
-	       char *path_query,
+	       unsigned முழு port,
+	       மாறிலி கட்டமைப்பு host_part *host,
+	       எழுத்து *path_query,
 	       lwc_string *fragment,
 	       nsurl *url)
 {
-	struct path_data *d, *e;
-	char *buf = path_query;
-	char *segment, *slash;
+	கட்டமைப்பு path_data *d, *e;
+	எழுத்து *buf = path_query;
+	எழுத்து *segment, *slash;
 	bool match;
 
-	assert(scheme && host && url);
+	ப்ரதிஜ்ஞா(scheme && host && url);
 
-	d = (struct path_data *) &host->paths;
+	d = (கட்டமைப்பு path_data *) &host->paths;
 
 	/* skip leading '/' */
 	segment = buf;
-	if (*segment == '/')
+	எனில் (*segment == '/')
 		segment++;
 
 	/* Process path segments */
-	do {
+	செய் {
 		slash = strchr(segment, '/');
-		if (!slash) {
+		எனில் (!slash) {
 			/* last segment */
 			/* look for existing entry */
-			for (e = d->children; e; e = e->next)
-				if (strcmp(segment, e->segment) == 0 &&
+			க்கு (e = d->children; e; e = e->next)
+				எனில் (strcmp(segment, e->segment) == 0 &&
 				    lwc_string_isequal(scheme,
 						       e->scheme, &match) ==
 				    lwc_error_ok &&
 				    match == true &&
 				    e->port == port)
-					break;
+					நிறுத்து;
 
 			d = e ? urldb_add_path_fragment(e, fragment) :
-				urldb_add_path_node(scheme, port,
+				urldb_add_path_முனை(scheme, port,
 						    segment, fragment, d);
-			break;
+			நிறுத்து;
 		}
 
 		*slash = '\0';
 
 		/* look for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcmp(segment, e->segment) == 0 &&
+		க்கு (e = d->children; e; e = e->next)
+			எனில் (strcmp(segment, e->segment) == 0 &&
 			    lwc_string_isequal(scheme, e->scheme,
 					       &match) == lwc_error_ok &&
 			    match == true &&
 			    e->port == port)
-				break;
+				நிறுத்து;
 
-		d = e ? e : urldb_add_path_node(scheme, port, segment, NULL, d);
-		if (!d)
-			break;
+		d = e ? e : urldb_add_path_முனை(scheme, port, segment, வெற்று, d);
+		எனில் (!d)
+			நிறுத்து;
 
 		segment = slash + 1;
-	} while (1);
+	} போது (1);
 
-	free(path_query);
+	விடுவி(path_query);
 
-	if (d && !d->url) {
+	எனில் (d && !d->url) {
 		/* Insert defragmented URL */
-		if (nsurl_defragment(url, &d->url) != NSERROR_OK)
-			return NULL;
+		எனில் (nsurl_defragment(url, &d->url) != NSERROR_OK)
+			திரும்பு வெற்று;
 	}
 
-	return d;
+	திரும்பு d;
 }
 
 
@@ -2161,87 +2161,87 @@ urldb_add_path(lwc_string *scheme,
  * \param host Hostname to add
  * \return Pointer to leaf node, or NULL on memory exhaustion
  */
-static struct host_part *urldb_add_host(const char *host)
+நிலையான கட்டமைப்பு host_part *urldb_add_host(மாறிலி எழுத்து *host)
 {
-	struct host_part *d = (struct host_part *) &db_root, *e;
-	struct search_node *s;
-	char buf[256]; /* 256 bytes is sufficient - domain names are
+	கட்டமைப்பு host_part *d = (கட்டமைப்பு host_part *) &db_வேர், *e;
+	கட்டமைப்பு தேடல்_முனை *s;
+	எழுத்து buf[256]; /* 256 bytes is sufficient - domain names are
 			* limited to 255 chars. */
-	char *part;
+	எழுத்து *part;
 
-	assert(host);
+	ப்ரதிஜ்ஞா(host);
 
-	if (urldb__host_is_ip_address(host)) {
+	எனில் (urldb__host_is_ip_address(host)) {
 		/* Host is an IP, so simply add as TLD */
 
 		/* Check for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcasecmp(host, e->part) == 0)
+		க்கு (e = d->children; e; e = e->next)
+			எனில் (strcasecmp(host, e->part) == 0)
 				/* found => return it */
-				return e;
+				திரும்பு e;
 
-		d = urldb_add_host_node(host, d);
+		d = urldb_add_host_முனை(host, d);
 
-		s = urldb_search_insert(search_trees[ST_IP], d);
-		if (!s) {
+		s = urldb_தேடல்_செருகு(தேடல்_trees[ST_IP], d);
+		எனில் (!s) {
 			/* failed */
-			d = NULL;
-		} else {
-			search_trees[ST_IP] = s;
+			d = வெற்று;
+		} இல்லையெனில் {
+			தேடல்_trees[ST_IP] = s;
 		}
 
-		return d;
+		திரும்பு d;
 	}
 
 	/* Copy host string, so we can corrupt it */
-	strncpy(buf, host, sizeof buf);
-	buf[sizeof buf - 1] = '\0';
+	strncpy(buf, host, அளவு buf);
+	buf[அளவு buf - 1] = '\0';
 
 	/* Process FQDN segments backwards */
-	do {
+	செய் {
 		part = strrchr(buf, '.');
-		if (!part) {
+		எனில் (!part) {
 			/* last segment */
 			/* Check for existing entry */
-			for (e = d->children; e; e = e->next)
-				if (strcasecmp(buf, e->part) == 0)
-					break;
+			க்கு (e = d->children; e; e = e->next)
+				எனில் (strcasecmp(buf, e->part) == 0)
+					நிறுத்து;
 
-			if (e) {
+			எனில் (e) {
 				d = e;
-			} else {
-				d = urldb_add_host_node(buf, d);
+			} இல்லையெனில் {
+				d = urldb_add_host_முனை(buf, d);
 			}
 
 			/* And insert into search tree */
-			if (d) {
-				struct search_node **r;
+			எனில் (d) {
+				கட்டமைப்பு தேடல்_முனை **r;
 
-				r = urldb_get_search_tree_direct(buf);
-				s = urldb_search_insert(*r, d);
-				if (!s) {
+				r = urldb_get_தேடல்_மரம்_direct(buf);
+				s = urldb_தேடல்_செருகு(*r, d);
+				எனில் (!s) {
 					/* failed */
-					d = NULL;
-				} else {
+					d = வெற்று;
+				} இல்லையெனில் {
 					*r = s;
 				}
 			}
-			break;
+			நிறுத்து;
 		}
 
 		/* Check for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcasecmp(part + 1, e->part) == 0)
-				break;
+		க்கு (e = d->children; e; e = e->next)
+			எனில் (strcasecmp(part + 1, e->part) == 0)
+				நிறுத்து;
 
-		d = e ? e : urldb_add_host_node(part + 1, d);
-		if (!d)
-			break;
+		d = e ? e : urldb_add_host_முனை(part + 1, d);
+		எனில் (!d)
+			நிறுத்து;
 
 		*part = '\0';
-	} while (1);
+	} போது (1);
 
-	return d;
+	திரும்பு d;
 }
 
 
@@ -2253,112 +2253,112 @@ static struct host_part *urldb_add_host(const char *host)
  * \param url URL (sans fragment) associated with cookie
  * \return true on success, false on memory exhaustion (c will be freed)
  */
-static bool
-urldb_insert_cookie(struct cookie_internal_data *c,
+நிலையான bool
+urldb_செருகு_cookie(கட்டமைப்பு cookie_internal_data *c,
 		    lwc_string *scheme,
 		    nsurl *url)
 {
-	struct cookie_internal_data *d;
-	const struct host_part *h;
-	struct path_data *p;
-	time_t now = time(NULL);
+	கட்டமைப்பு cookie_internal_data *d;
+	மாறிலி கட்டமைப்பு host_part *h;
+	கட்டமைப்பு path_data *p;
+	time_t now = time(வெற்று);
 
-	assert(c);
+	ப்ரதிஜ்ஞா(c);
 
-	if (c->domain[0] == '.') {
-		h = urldb_search_find(
-			urldb_get_search_tree(&(c->domain[1])),
+	எனில் (c->domain[0] == '.') {
+		h = urldb_தேடல்_find(
+			urldb_get_தேடல்_மரம்(&(c->domain[1])),
 			c->domain + 1);
-		if (!h) {
+		எனில் (!h) {
 			h = urldb_add_host(c->domain + 1);
-			if (!h) {
+			எனில் (!h) {
 				urldb_free_cookie(c);
-				return false;
+				திரும்பு false;
 			}
 		}
 
-		p = (struct path_data *) &h->paths;
-	} else {
+		p = (கட்டமைப்பு path_data *) &h->paths;
+	} இல்லையெனில் {
 		/* Need to have a URL and scheme, if it's not a domain cookie */
-		assert(url != NULL);
-		assert(scheme != NULL);
+		ப்ரதிஜ்ஞா(url != வெற்று);
+		ப்ரதிஜ்ஞா(scheme != வெற்று);
 
-		h = urldb_search_find(
-			urldb_get_search_tree(c->domain),
+		h = urldb_தேடல்_find(
+			urldb_get_தேடல்_மரம்(c->domain),
 			c->domain);
 
-		if (!h) {
+		எனில் (!h) {
 			h = urldb_add_host(c->domain);
-			if (!h) {
+			எனில் (!h) {
 				urldb_free_cookie(c);
-				return false;
+				திரும்பு false;
 			}
 		}
 
 		/* find path */
 		p = urldb_add_path(scheme, 0, h,
-				   strdup(c->path), NULL, url);
-		if (!p) {
+				   strdup(c->path), வெற்று, url);
+		எனில் (!p) {
 			urldb_free_cookie(c);
-			return false;
+			திரும்பு false;
 		}
 	}
 
 	/* add cookie */
-	for (d = p->cookies; d; d = d->next) {
-		if (!strcmp(d->domain, c->domain) &&
+	க்கு (d = p->cookies; d; d = d->next) {
+		எனில் (!strcmp(d->domain, c->domain) &&
 		    !strcmp(d->path, c->path) &&
 		    !strcmp(d->name, c->name))
-			break;
+			நிறுத்து;
 	}
 
-	if (d) {
-		if (c->expires != -1 && c->expires < now) {
+	எனில் (d) {
+		எனில் (c->expires != -1 && c->expires < now) {
 			/* remove cookie */
-			if (d->next)
+			எனில் (d->next)
 				d->next->prev = d->prev;
-			else
+			இல்லையெனில்
 				p->cookies_end = d->prev;
-			if (d->prev)
+			எனில் (d->prev)
 				d->prev->next = d->next;
-			else
+			இல்லையெனில்
 				p->cookies = d->next;
 
-			cookie_manager_remove((struct cookie_data *)d);
+			cookie_manager_remove((கட்டமைப்பு cookie_data *)d);
 
 			urldb_free_cookie(d);
 			urldb_free_cookie(c);
-		} else {
+		} இல்லையெனில் {
 			/* replace d with c */
 			c->prev = d->prev;
 			c->next = d->next;
-			if (c->next)
+			எனில் (c->next)
 				c->next->prev = c;
-			else
+			இல்லையெனில்
 				p->cookies_end = c;
-			if (c->prev)
+			எனில் (c->prev)
 				c->prev->next = c;
-			else
+			இல்லையெனில்
 				p->cookies = c;
 
-			cookie_manager_remove((struct cookie_data *)d);
+			cookie_manager_remove((கட்டமைப்பு cookie_data *)d);
 			urldb_free_cookie(d);
 
-			cookie_manager_add((struct cookie_data *)c);
+			cookie_manager_add((கட்டமைப்பு cookie_data *)c);
 		}
-	} else {
+	} இல்லையெனில் {
 		c->prev = p->cookies_end;
-		c->next = NULL;
-		if (p->cookies_end)
+		c->next = வெற்று;
+		எனில் (p->cookies_end)
 			p->cookies_end->next = c;
-		else
+		இல்லையெனில்
 			p->cookies = c;
 		p->cookies_end = c;
 
-		cookie_manager_add((struct cookie_data *)c);
+		cookie_manager_add((கட்டமைப்பு cookie_data *)c);
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 /* Combined (A)BNF for the Cookie: request header:
@@ -2413,11 +2413,11 @@ urldb_insert_cookie(struct cookie_internal_data *c,
  * \param buf Pointer to Pointer to buffer (updated)
  * \return true on success, false on memory exhaustion
  */
-static bool
-concat_netscape_cookie(struct cookie_internal_data *c,
-		    int *used,
-		    int *alloc,
-		    char **buf)
+நிலையான bool
+concat_netscape_cookie(கட்டமைப்பு cookie_internal_data *c,
+		    முழு *used,
+		    முழு *alloc,
+		    எழுத்து **buf)
 {
 	/*
 	 * A note on quoted-string handling:
@@ -2431,23 +2431,23 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	 *   We use semicolons for all separators, including between
 	 *   cookie-values. This simplifies things and is backwards compatible.
 	 */
-	int max_len;
-	int outl; /* output length */
+	முழு max_len;
+	முழு outl; /* output length */
 
-	assert(c && used && alloc && buf && *buf);
+	ப்ரதிஜ்ஞா(c && used && alloc && buf && *buf);
 
 	/* "; " cookie-value
 	 * We allow for the possibility that values are quoted
 	 */
 	max_len = *used + 2 +
 		strlen(c->name) + 1 +
-		strlen(c->value) + 2 +
+		strlen(c->மதிப்பு) + 2 +
 		(c->path_from_set ? 8 + strlen(c->path) + 2 : 0) +
 		(c->domain_from_set ? 10 + strlen(c->domain) + 2 : 0);
-	if (max_len >= *alloc) {
-		char *temp = realloc(*buf, max_len);
-		if (!temp) {
-			return false;
+	எனில் (max_len >= *alloc) {
+		எழுத்து *temp = realloc(*buf, max_len);
+		எனில் (!temp) {
+			திரும்பு false;
 		}
 		*buf = temp;
 		*alloc = max_len;
@@ -2455,9 +2455,9 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 
 	/* Original Netscape cookie */
 	outl = snprintf(*buf + *used - 1, *alloc - *used, "; %s=", c->name);
-	if (outl >= (*alloc - *used)) {
+	எனில் (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		திரும்பு false;
 	}
 	*used += outl;
 
@@ -2466,22 +2466,22 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	 *
 	 * However, other browsers preserve quoting, so we should, too
 	 */
-	if (c->value_was_quoted) {
+	எனில் (c->மதிப்பு_was_quoted) {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"\"%s\"", c->value);
-		if (outl >= (*alloc - *used)) {
+				"\"%s\"", c->மதிப்பு);
+		எனில் (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			திரும்பு false;
 		}
 		*used += outl;
-	} else {
+	} இல்லையெனில் {
 		/** \todo should we %XX-encode [;HT,SP] ? */
 		/** \todo Should we strip escaping backslashes? */
-		outl = snprintf(*buf + *used - 1,*alloc - *used, "%s", c->value);
-		if (outl >= (*alloc - *used)) {
+		outl = snprintf(*buf + *used - 1,*alloc - *used, "%s", c->மதிப்பு);
+		எனில் (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			திரும்பு false;
 		}
 		*used += outl;
 	}
@@ -2489,7 +2489,7 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	/* We don't send path/domain information -- that's what the
 	 * Netscape spec suggests we should do, anyway. */
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -2502,11 +2502,11 @@ concat_netscape_cookie(struct cookie_internal_data *c,
  * \param buf Pointer to Pointer to buffer (updated)
  * \return true on success, false on memory exhaustion
  */
-static bool
-concat_rfc2965_cookie(struct cookie_internal_data *c,
-		      int *used,
-		      int *alloc,
-		      char **buf)
+நிலையான bool
+concat_rfc2965_cookie(கட்டமைப்பு cookie_internal_data *c,
+		      முழு *used,
+		      முழு *alloc,
+		      எழுத்து **buf)
 {
 	/*
 	 * A note on quoted-string handling:
@@ -2520,27 +2520,27 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 	 *   We use semicolons for all separators, including between
 	 *   cookie-values. This simplifies things and is backwards compatible.
 	 */
-	const char * const separators = "()<>@,;:\\\"/[]?={} \t";
-	int max_len;
-	int outl; /* output length */
+	மாறிலி எழுத்து * மாறிலி separators = "()<>@,;:\\\"/[]?={} \t";
+	முழு max_len;
+	முழு outl; /* output length */
 
-	assert(c && used && alloc && buf && *buf);
+	ப்ரதிஜ்ஞா(c && used && alloc && buf && *buf);
 
 	/* "; " cookie-value
 	 * We allow for the possibility that values are quoted
 	 */
 	max_len = *used + 2 +
 		strlen(c->name) + 1 +
-		strlen(c->value) + 2 +
+		strlen(c->மதிப்பு) + 2 +
 		(c->path_from_set ?
 		 8 + strlen(c->path) + 2 : 0) +
 		(c->domain_from_set ?
 		 10 + strlen(c->domain) + 2 : 0);
 
-	if (max_len >= *alloc) {
-		char *temp = realloc(*buf, max_len);
-		if (!temp) {
-			return false;
+	எனில் (max_len >= *alloc) {
+		எழுத்து *temp = realloc(*buf, max_len);
+		எனில் (!temp) {
+			திரும்பு false;
 		}
 		*buf = temp;
 		*alloc = max_len;
@@ -2550,100 +2550,100 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 	outl = snprintf(*buf + *used - 1,
 			*alloc - *used,
 			"; %s=", c->name);
-	if (outl >= (*alloc - *used)) {
+	எனில் (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		திரும்பு false;
 	}
 	*used += outl;
 
 	/* Value needs quoting if it contains any separator or if
 	 * it needs preserving from the Set-Cookie header */
-	if (c->value_was_quoted ||
-	    strpbrk(c->value, separators) != NULL) {
+	எனில் (c->மதிப்பு_was_quoted ||
+	    strpbrk(c->மதிப்பு, separators) != வெற்று) {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"\"%s\"", c->value);
+				"\"%s\"", c->மதிப்பு);
 
-	} else {
+	} இல்லையெனில் {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"%s", c->value);
+				"%s", c->மதிப்பு);
 	}
-	if (outl >= (*alloc - *used)) {
+	எனில் (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		திரும்பு false;
 	}
 	*used += outl;
 
-	if (c->path_from_set) {
+	எனில் (c->path_from_set) {
 		/* Path, quoted if necessary */
 
-		if (strpbrk(c->path, separators) != NULL) {
+		எனில் (strpbrk(c->path, separators) != வெற்று) {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Path=\"%s\"", c->path);
 
-		} else {
+		} இல்லையெனில் {
 			outl = snprintf(*buf + *used - 1,
 				       *alloc - *used,
 				       "; $Path=%s", c->path);
 		}
-		if (outl >= (*alloc - *used)) {
+		எனில் (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			திரும்பு false;
 		}
 		*used += outl;
 	}
 
-	if (c->domain_from_set) {
+	எனில் (c->domain_from_set) {
 		/* Domain, quoted if necessary */
-		if (strpbrk(c->domain, separators) != NULL) {
+		எனில் (strpbrk(c->domain, separators) != வெற்று) {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Domain=\"%s\"", c->domain);
-		} else {
+		} இல்லையெனில் {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Domain=%s", c->domain);
 		}
-		if (outl >= (*alloc - *used)) {
+		எனில் (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			திரும்பு false;
 		}
 		*used += outl;
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 
 /**
  * build output cookie string in netscape format
  */
-static char *
-get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
+நிலையான எழுத்து *
+get_netscape_cookie(கட்டமைப்பு cookie_internal_data **matched_cookies, முழு மொத்தம்)
 {
-	int ret_alloc = 4096, ret_used = 1;
-	char *ret;
-	int midx; /* index into matched cookies */
+	முழு ret_alloc = 4096, ret_used = 1;
+	எழுத்து *ret;
+	முழு midx; /* index into matched cookies */
 
 	ret = malloc(ret_alloc);
-	if (ret == NULL) {
-		return NULL;
+	எனில் (ret == வெற்று) {
+		திரும்பு வெற்று;
 	}
 	ret[0] = '\0';
 
-	for (midx = 0; midx < count; midx++) {
-		if (!concat_netscape_cookie(matched_cookies[midx],
+	க்கு (midx = 0; midx < மொத்தம்; midx++) {
+		எனில் (!concat_netscape_cookie(matched_cookies[midx],
 					    &ret_used, &ret_alloc, &ret)) {
-			free(ret);
-			return NULL;
+			விடுவி(ret);
+			திரும்பு வெற்று;
 		}
 	}
 
-	if (ret_used <= 2) {
-		free(ret);
-		return NULL;
+	எனில் (ret_used <= 2) {
+		விடுவி(ret);
+		திரும்பு வெற்று;
 	}
 
 	/* Old-style cookies => no version & skip "; " */
@@ -2651,58 +2651,58 @@ get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
 	ret_used -= 2;
 
 	/* shrink the output buffer to the required size */
-	char *temp = realloc(ret, ret_used);
-	if (temp != NULL) {
+	எழுத்து *temp = realloc(ret, ret_used);
+	எனில் (temp != வெற்று) {
 		ret = temp;
 	}
 
-	return ret;
+	திரும்பு ret;
 }
 
 
 /**
  * build output cookie string in RFC2965 format
  */
-static char *
-get_rfc2965_cookie(struct cookie_internal_data **matched_cookies,
-		   int count,
-		   int version)
+நிலையான எழுத்து *
+get_rfc2965_cookie(கட்டமைப்பு cookie_internal_data **matched_cookies,
+		   முழு மொத்தம்,
+		   முழு version)
 {
-	int ret_alloc = 4096; /* return string allocation */
-	int ret_used = 1; /* return sting buffer used */
-	char *ret; /* return string buffer */
-	int midx; /* index into matched cookies */
-	int outl;
+	முழு ret_alloc = 4096; /* return string allocation */
+	முழு ret_used = 1; /* return sting buffer used */
+	எழுத்து *ret; /* return string buffer */
+	முழு midx; /* index into matched cookies */
+	முழு outl;
 
 	ret = malloc(ret_alloc);
-	if (ret == NULL) {
-		return NULL;
+	எனில் (ret == வெற்று) {
+		திரும்பு வெற்று;
 	}
 	ret[0] = '\0';
 
 	outl = snprintf(ret,ret_alloc - ret_used, "$Version=%d", version);
-	if (outl >= ret_alloc - ret_used) {
+	எனில் (outl >= ret_alloc - ret_used) {
 		/* overflow */
-		free(ret);
-		return NULL;
+		விடுவி(ret);
+		திரும்பு வெற்று;
 	}
 	ret_used += outl;
 
-	for (midx = 0; midx < count; midx++) {
-		if (!concat_rfc2965_cookie(matched_cookies[midx],
+	க்கு (midx = 0; midx < மொத்தம்; midx++) {
+		எனில் (!concat_rfc2965_cookie(matched_cookies[midx],
 					   &ret_used, &ret_alloc, &ret)) {
-			free(ret);
-			return NULL;
+			விடுவி(ret);
+			திரும்பு வெற்று;
 		}
 	}
 
 	/* shrink the output buffer to the required size */
-	char *temp = realloc(ret, ret_used);
-	if (temp != NULL) {
+	எழுத்து *temp = realloc(ret, ret_used);
+	எனில் (temp != வெற்று) {
 		ret = temp;
 	}
 
-	return ret;
+	திரும்பு ret;
 }
 
 
@@ -2714,53 +2714,53 @@ get_rfc2965_cookie(struct cookie_internal_data **matched_cookies,
  * \param name The cookie name
  * \param parent The url data of the cookie
  */
-static void
-urldb_delete_cookie_paths(const char *domain,
-			  const char *path,
-			  const char *name,
-			  struct path_data *parent)
+நிலையான வெறுமை
+urldb_delete_cookie_paths(மாறிலி எழுத்து *domain,
+			  மாறிலி எழுத்து *path,
+			  மாறிலி எழுத்து *name,
+			  கட்டமைப்பு path_data *parent)
 {
-	struct cookie_internal_data *c;
-	struct path_data *p = parent;
+	கட்டமைப்பு cookie_internal_data *c;
+	கட்டமைப்பு path_data *p = parent;
 
-	assert(parent);
+	ப்ரதிஜ்ஞா(parent);
 
-	do {
-		for (c = p->cookies; c; c = c->next) {
-			if (strcmp(c->domain, domain) == 0 &&
+	செய் {
+		க்கு (c = p->cookies; c; c = c->next) {
+			எனில் (strcmp(c->domain, domain) == 0 &&
 			    strcmp(c->path, path) == 0 &&
 			    strcmp(c->name, name) == 0) {
-				if (c->prev) {
+				எனில் (c->prev) {
 					c->prev->next = c->next;
-				} else {
+				} இல்லையெனில் {
 					p->cookies = c->next;
 				}
 
-				if (c->next) {
+				எனில் (c->next) {
 					c->next->prev = c->prev;
-				} else {
+				} இல்லையெனில் {
 					p->cookies_end = c->prev;
 				}
 
 				urldb_free_cookie(c);
 
-				return;
+				திரும்பு;
 			}
 		}
 
-		if (p->children) {
+		எனில் (p->children) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} இல்லையெனில் {
+			போது (p != parent) {
+				எனில் (p->next != வெற்று) {
 					p = p->next;
-					break;
+					நிறுத்து;
 				}
 
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} போது (p != parent);
 }
 
 
@@ -2772,18 +2772,18 @@ urldb_delete_cookie_paths(const char *domain,
  * \param name The cookie name
  * \param parent The url data of the cookie
  */
-static void
-urldb_delete_cookie_hosts(const char *domain,
-			  const char *path,
-			  const char *name,
-			  struct host_part *parent)
+நிலையான வெறுமை
+urldb_delete_cookie_hosts(மாறிலி எழுத்து *domain,
+			  மாறிலி எழுத்து *path,
+			  மாறிலி எழுத்து *name,
+			  கட்டமைப்பு host_part *parent)
 {
-	struct host_part *h;
-	assert(parent);
+	கட்டமைப்பு host_part *h;
+	ப்ரதிஜ்ஞா(parent);
 
 	urldb_delete_cookie_paths(domain, path, name, &parent->paths);
 
-	for (h = parent->children; h; h = h->next) {
+	க்கு (h = parent->children; h; h = h->next) {
 		urldb_delete_cookie_hosts(domain, path, name, h);
 	}
 }
@@ -2795,21 +2795,21 @@ urldb_delete_cookie_hosts(const char *domain,
  * \param fp File pointer to write to
  * \param parent Parent path
  */
-static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
+நிலையான வெறுமை urldb_save_cookie_paths(FILE *fp, கட்டமைப்பு path_data *parent)
 {
-	struct path_data *p = parent;
-	time_t now = time(NULL);
+	கட்டமைப்பு path_data *p = parent;
+	time_t now = time(வெற்று);
 
-	assert(fp && parent);
+	ப்ரதிஜ்ஞா(fp && parent);
 
-	do {
-		if (p->cookies != NULL) {
-			struct cookie_internal_data *c;
+	செய் {
+		எனில் (p->cookies != வெற்று) {
+			கட்டமைப்பு cookie_internal_data *c;
 
-			for (c = p->cookies; c != NULL; c = c->next) {
-				if (c->expires == -1 || c->expires < now) {
+			க்கு (c = p->cookies; c != வெற்று; c = c->next) {
+				எனில் (c->expires == -1 || c->expires < now) {
 					/* Skip expired & session cookies */
-					continue;
+					தொடர்;
 				}
 
 				fprintf(fp,
@@ -2819,9 +2819,9 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 					c->domain_from_set, c->path,
 					c->path_from_set, c->secure,
 					c->http_only,
-					(int)c->expires, (int)c->last_used,
-					c->no_destroy, c->name, c->value,
-					c->value_was_quoted,
+					(முழு)c->expires, (முழு)c->last_used,
+					c->no_destroy, c->name, c->மதிப்பு,
+					c->மதிப்பு_was_quoted,
 					p->scheme ? lwc_string_data(p->scheme) :
 					"unused",
 					p->url ? nsurl_access(p->url) :
@@ -2830,19 +2830,19 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 			}
 		}
 
-		if (p->children != NULL) {
+		எனில் (p->children != வெற்று) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} இல்லையெனில் {
+			போது (p != parent) {
+				எனில் (p->next != வெற்று) {
 					p = p->next;
-					break;
+					நிறுத்து;
 				}
 
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} போது (p != parent);
 }
 
 
@@ -2852,14 +2852,14 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
  * \param fp File pointer to write to
  * \param parent Parent host
  */
-static void urldb_save_cookie_hosts(FILE *fp, struct host_part *parent)
+நிலையான வெறுமை urldb_save_cookie_hosts(FILE *fp, கட்டமைப்பு host_part *parent)
 {
-	struct host_part *h;
-	assert(fp && parent);
+	கட்டமைப்பு host_part *h;
+	ப்ரதிஜ்ஞா(fp && parent);
 
 	urldb_save_cookie_paths(fp, &parent->paths);
 
-	for (h = parent->children; h; h = h->next)
+	க்கு (h = parent->children; h; h = h->next)
 		urldb_save_cookie_hosts(fp, h);
 }
 
@@ -2869,15 +2869,15 @@ static void urldb_save_cookie_hosts(FILE *fp, struct host_part *parent)
  *
  * \param c Cookie to destroy
  */
-static void urldb_destroy_cookie(struct cookie_internal_data *c)
+நிலையான வெறுமை urldb_destroy_cookie(கட்டமைப்பு cookie_internal_data *c)
 {
-	free(c->name);
-	free(c->value);
-	free(c->comment);
-	free(c->domain);
-	free(c->path);
+	விடுவி(c->name);
+	விடுவி(c->மதிப்பு);
+	விடுவி(c->comment);
+	விடுவி(c->domain);
+	விடுவி(c->path);
 
-	free(c);
+	விடுவி(c);
 }
 
 
@@ -2886,25 +2886,25 @@ static void urldb_destroy_cookie(struct cookie_internal_data *c)
  *
  * \param node Node to destroy contents of (does not destroy node)
  */
-static void urldb_destroy_path_node_content(struct path_data *node)
+நிலையான வெறுமை urldb_destroy_path_முனை_content(கட்டமைப்பு path_data *முனை)
 {
-	struct cookie_internal_data *a, *b;
-	unsigned int i;
+	கட்டமைப்பு cookie_internal_data *a, *b;
+	unsigned முழு i;
 
-	if (node->url != NULL) {
-		nsurl_unref(node->url);
+	எனில் (முனை->url != வெற்று) {
+		nsurl_unref(முனை->url);
 	}
 
-	lwc_string_unref(node->scheme);
+	lwc_string_unref(முனை->scheme);
 
-	free(node->segment);
-	for (i = 0; i < node->frag_cnt; i++)
-		free(node->fragment[i]);
-	free(node->fragment);
+	விடுவி(முனை->segment);
+	க்கு (i = 0; i < முனை->frag_cnt; i++)
+		விடுவி(முனை->fragment[i]);
+	விடுவி(முனை->fragment);
 
-	free(node->urld.title);
+	விடுவி(முனை->urld.title);
 
-	for (a = node->cookies; a; a = b) {
+	க்கு (a = முனை->cookies; a; a = b) {
 		b = a->next;
 		urldb_destroy_cookie(a);
 	}
@@ -2916,13 +2916,13 @@ static void urldb_destroy_path_node_content(struct path_data *node)
  *
  * \param space Protection space to destroy
  */
-static void urldb_destroy_prot_space(struct prot_space_data *space)
+நிலையான வெறுமை urldb_destroy_prot_space(கட்டமைப்பு prot_space_data *space)
 {
 	lwc_string_unref(space->scheme);
-	free(space->realm);
-	free(space->auth);
+	விடுவி(space->realm);
+	விடுவி(space->auth);
 
-	free(space);
+	விடுவி(space);
 }
 
 
@@ -2931,34 +2931,34 @@ static void urldb_destroy_prot_space(struct prot_space_data *space)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_path_tree(struct path_data *root)
+நிலையான வெறுமை urldb_destroy_path_மரம்(கட்டமைப்பு path_data *வேர்)
 {
-	struct path_data *p = root;
+	கட்டமைப்பு path_data *p = வேர்;
 
-	do {
-		if (p->children != NULL) {
+	செய் {
+		எனில் (p->children != வெற்று) {
 			p = p->children;
-		} else {
-			struct path_data *q = p;
+		} இல்லையெனில் {
+			கட்டமைப்பு path_data *q = p;
 
-			while (p != root) {
-				if (p->next != NULL) {
+			போது (p != வேர்) {
+				எனில் (p->next != வெற்று) {
 					p = p->next;
-					break;
+					நிறுத்து;
 				}
 
 				p = p->parent;
 
-				urldb_destroy_path_node_content(q);
-				free(q);
+				urldb_destroy_path_முனை_content(q);
+				விடுவி(q);
 
 				q = p;
 			}
 
-			urldb_destroy_path_node_content(q);
-			free(q);
+			urldb_destroy_path_முனை_content(q);
+			விடுவி(q);
 		}
-	} while (p != root);
+	} போது (p != வேர்);
 }
 
 
@@ -2967,36 +2967,36 @@ static void urldb_destroy_path_tree(struct path_data *root)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_host_tree(struct host_part *root)
+நிலையான வெறுமை urldb_destroy_host_மரம்(கட்டமைப்பு host_part *வேர்)
 {
-	struct host_part *a, *b;
-	struct path_data *p, *q;
-	struct prot_space_data *s, *t;
+	கட்டமைப்பு host_part *a, *b;
+	கட்டமைப்பு path_data *p, *q;
+	கட்டமைப்பு prot_space_data *s, *t;
 
 	/* Destroy children */
-	for (a = root->children; a; a = b) {
+	க்கு (a = வேர்->children; a; a = b) {
 		b = a->next;
-		urldb_destroy_host_tree(a);
+		urldb_destroy_host_மரம்(a);
 	}
 
 	/* Now clean up paths */
-	for (p = root->paths.children; p; p = q) {
+	க்கு (p = வேர்->paths.children; p; p = q) {
 		q = p->next;
-		urldb_destroy_path_tree(p);
+		urldb_destroy_path_மரம்(p);
 	}
 
 	/* Root path */
-	urldb_destroy_path_node_content(&root->paths);
+	urldb_destroy_path_முனை_content(&வேர்->paths);
 
 	/* Proctection space data */
-	for (s = root->prot_space; s; s = t) {
+	க்கு (s = வேர்->prot_space; s; s = t) {
 		t = s->next;
 		urldb_destroy_prot_space(s);
 	}
 
 	/* And ourselves */
-	free(root->part);
-	free(root);
+	விடுவி(வேர்->part);
+	விடுவி(வேர்);
 }
 
 
@@ -3005,16 +3005,16 @@ static void urldb_destroy_host_tree(struct host_part *root)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_search_tree(struct search_node *root)
+நிலையான வெறுமை urldb_destroy_தேடல்_மரம்(கட்டமைப்பு தேடல்_முனை *வேர்)
 {
 	/* Destroy children */
-	if (root->left != &empty)
-		urldb_destroy_search_tree(root->left);
-	if (root->right != &empty)
-		urldb_destroy_search_tree(root->right);
+	எனில் (வேர்->இடது != &empty)
+		urldb_destroy_தேடல்_மரம்(வேர்->இடது);
+	எனில் (வேர்->வலது != &empty)
+		urldb_destroy_தேடல்_மரம்(வேர்->வலது);
 
 	/* And destroy ourselves */
-	free(root);
+	விடுவி(வேர்);
 }
 
 
@@ -3022,162 +3022,162 @@ static void urldb_destroy_search_tree(struct search_node *root)
 
 
 /* exported interface documented in content/urldb.h */
-void urldb_destroy(void)
+வெறுமை urldb_destroy(வெறுமை)
 {
-	struct host_part *a, *b;
-	int i;
+	கட்டமைப்பு host_part *a, *b;
+	முழு i;
 
 	/* Clean up search trees */
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (search_trees[i] != &empty) {
-			urldb_destroy_search_tree(search_trees[i]);
-			search_trees[i] = &empty;
+	க்கு (i = 0; i < இலக்கம்_தேடல்_TREES; i++) {
+		எனில் (தேடல்_trees[i] != &empty) {
+			urldb_destroy_தேடல்_மரம்(தேடல்_trees[i]);
+			தேடல்_trees[i] = &empty;
 		}
 	}
 
 	/* And database */
-	for (a = db_root.children; a; a = b) {
+	க்கு (a = db_வேர்.children; a; a = b) {
 		b = a->next;
-		urldb_destroy_host_tree(a);
+		urldb_destroy_host_மரம்(a);
 	}
-	memset(&db_root, 0, sizeof(db_root));
+	memset(&db_வேர், 0, அளவு(db_வேர்));
 
 	/* And the bloom filter */
-	if (url_bloom != NULL) {
+	எனில் (url_bloom != வெற்று) {
 		bloom_destroy(url_bloom);
-		url_bloom = NULL;
+		url_bloom = வெற்று;
 	}
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-nserror urldb_load(const char *filename)
+nserror urldb_load(மாறிலி எழுத்து *filename)
 {
 #define MAXIMUM_URL_LENGTH 4096
-	char s[MAXIMUM_URL_LENGTH];
-	char host[256];
-	struct host_part *h;
-	int urls;
-	int i;
-	int version;
-	int length;
+	எழுத்து s[MAXIMUM_URL_LENGTH];
+	எழுத்து host[256];
+	கட்டமைப்பு host_part *h;
+	முழு urls;
+	முழு i;
+	முழு version;
+	முழு length;
 	FILE *fp;
 
-	assert(filename);
+	ப்ரதிஜ்ஞா(filename);
 
 	NSLOG(netsurf, INFO, "Loading URL file %s", filename);
 
-	if (url_bloom == NULL)
+	எனில் (url_bloom == வெற்று)
 		url_bloom = bloom_create(BLOOM_SIZE);
 
 	fp = fopen(filename, "r");
-	if (!fp) {
+	எனில் (!fp) {
 		NSLOG(netsurf, INFO, "Failed to open file '%s' for reading",
 		      filename);
-		return NSERROR_NOT_FOUND;
+		திரும்பு NSERROR_NOT_FOUND;
 	}
 
-	if (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
+	எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
 		fclose(fp);
-		return NSERROR_NEED_DATA;
+		திரும்பு NSERROR_NEED_DATA;
 	}
 
 	version = atoi(s);
-	if (version < MIN_URL_FILE_VERSION) {
+	எனில் (version < MIN_URL_FILE_VERSION) {
 		NSLOG(netsurf, INFO, "Unsupported URL file version.");
 		fclose(fp);
-		return NSERROR_INVALID;
+		திரும்பு NSERROR_INVALID;
 	}
-	if (version > URL_FILE_VERSION) {
+	எனில் (version > URL_FILE_VERSION) {
 		NSLOG(netsurf, INFO, "Unknown URL file version.");
 		fclose(fp);
-		return NSERROR_INVALID;
+		திரும்பு NSERROR_INVALID;
 	}
 
-	while (fgets(host, sizeof host, fp)) {
+	போது (fgets(host, அளவு host, fp)) {
 		time_t hsts_expiry = 0;
-		int hsts_include_sub_domains = 0;
+		முழு hsts_include_sub_domains = 0;
 
 		/* get the hostname */
 		length = strlen(host) - 1;
 		host[length] = '\0';
 
 		/* skip data that has ended up with a host of '' */
-		if (length == 0) {
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
+		எனில் (length == 0) {
+			எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				நிறுத்து;
 			urls = atoi(s);
 			/* Eight fields/url */
-			for (i = 0; i < (8 * urls); i++) {
-				if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-					break;
+			க்கு (i = 0; i < (8 * urls); i++) {
+				எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+					நிறுத்து;
 			}
-			continue;
+			தொடர்;
 		}
 
-		if (version >= 107) {
-			char *p = host;
-			while (*p && *p != ' ') p++;
-			while (*p && *p == ' ') { *p = '\0'; p++; }
+		எனில் (version >= 107) {
+			எழுத்து *p = host;
+			போது (*p && *p != ' ') p++;
+			போது (*p && *p == ' ') { *p = '\0'; p++; }
 			hsts_include_sub_domains = (*p == '1');
-			while (*p && *p != ' ') p++;
-			while (*p && *p == ' ') p++;
+			போது (*p && *p != ' ') p++;
+			போது (*p && *p == ' ') p++;
 			nsc_snptimet(p, strlen(p), &hsts_expiry);
 		}
 
 		h = urldb_add_host(host);
-		if (!h) {
+		எனில் (!h) {
 			NSLOG(netsurf, INFO, "Failed adding host: '%s'", host);
 			fclose(fp);
-			return NSERROR_NOMEM;
+			திரும்பு NSERROR_NOMEM;
 		}
 		h->hsts.expires = hsts_expiry;
 		h->hsts.include_sub_domains = hsts_include_sub_domains;
 
 		/* read number of URLs */
-		if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-			break;
+		எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+			நிறுத்து;
 		urls = atoi(s);
 
 		/* no URLs => try next host */
-		if (urls == 0) {
+		எனில் (urls == 0) {
 			NSLOG(netsurf, INFO, "No URLs for '%s'", host);
-			continue;
+			தொடர்;
 		}
 
 		/* load the non-corrupt data */
-		for (i = 0; i < urls; i++) {
-			struct path_data *p = NULL;
-			char scheme[64], ports[10];
-			char url[64 + 3 + 256 + 6 + 4096 + 1 + 1];
-			unsigned int port;
+		க்கு (i = 0; i < urls; i++) {
+			கட்டமைப்பு path_data *p = வெற்று;
+			எழுத்து scheme[64], ports[10];
+			எழுத்து url[64 + 3 + 256 + 6 + 4096 + 1 + 1];
+			unsigned முழு port;
 			bool is_file = false;
 			nsurl *nsurl;
 			lwc_string *scheme_lwc, *fragment_lwc;
-			char *path_query;
+			எழுத்து *path_query;
 			size_t len;
 
-			if (!fgets(scheme, sizeof scheme, fp))
-				break;
+			எனில் (!fgets(scheme, அளவு scheme, fp))
+				நிறுத்து;
 			length = strlen(scheme) - 1;
 			scheme[length] = '\0';
 
-			if (!fgets(ports, sizeof ports, fp))
-				break;
+			எனில் (!fgets(ports, அளவு ports, fp))
+				நிறுத்து;
 			length = strlen(ports) - 1;
 			ports[length] = '\0';
 			port = atoi(ports);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
+			எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				நிறுத்து;
 			length = strlen(s) - 1;
 			s[length] = '\0';
 
-			if (!strcasecmp(host, "localhost") &&
+			எனில் (!strcasecmp(host, "localhost") &&
 			    !strcasecmp(scheme, "file"))
 				is_file = true;
 
-			snprintf(url, sizeof url, "%s://%s%s%s%s",
+			snprintf(url, அளவு url, "%s://%s%s%s%s",
 				 scheme,
 				 /* file URLs have no host */
 				 (is_file ? "" : host),
@@ -3190,25 +3190,25 @@ nserror urldb_load(const char *filename)
 			 *       swiftly.
 			 *       Need a nsurl_save too.
 			 */
-			if (nsurl_create(url, &nsurl) != NSERROR_OK) {
+			எனில் (nsurl_create(url, &nsurl) != NSERROR_OK) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				திரும்பு NSERROR_NOMEM;
 			}
 
-			if (url_bloom != NULL) {
+			எனில் (url_bloom != வெற்று) {
 				uint32_t hash = nsurl_hash(nsurl);
-				bloom_insert_hash(url_bloom, hash);
+				bloom_செருகு_hash(url_bloom, hash);
 			}
 
 			/* Copy and merge path/query strings */
-			if (nsurl_get(nsurl, NSURL_PATH | NSURL_QUERY,
+			எனில் (nsurl_get(nsurl, NSURL_PATH | NSURL_QUERY,
 				      &path_query, &len) != NSERROR_OK) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				திரும்பு NSERROR_NOMEM;
 			}
 
 			scheme_lwc = nsurl_get_component(nsurl, NSURL_SCHEME);
@@ -3216,45 +3216,45 @@ nserror urldb_load(const char *filename)
 							   NSURL_FRAGMENT);
 			p = urldb_add_path(scheme_lwc, port, h, path_query,
 					   fragment_lwc, nsurl);
-			if (!p) {
+			எனில் (!p) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				திரும்பு NSERROR_NOMEM;
 			}
 			nsurl_unref(nsurl);
 			lwc_string_unref(scheme_lwc);
 			lwc_string_unref(fragment_lwc);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
-			if (p)
-				p->urld.visits = (unsigned int)atoi(s);
+			எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				நிறுத்து;
+			எனில் (p)
+				p->urld.visits = (unsigned முழு)atoi(s);
 
 			/* entry last use time */
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
-				break;
+			எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
+				நிறுத்து;
 			}
-			if (p) {
+			எனில் (p) {
 				nsc_snptimet(s, strlen(s) - 1, &p->urld.last_visit);
 			}
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
-			if (p)
+			எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				நிறுத்து;
+			எனில் (p)
 				p->urld.type = (content_type)atoi(s);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
+			எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				நிறுத்து;
 
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
+			எனில் (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				நிறுத்து;
 			length = strlen(s) - 1;
-			if (p && length > 0) {
+			எனில் (p && length > 0) {
 				s[length] = '\0';
 				p->urld.title = malloc(length + 1);
-				if (p->urld.title)
+				எனில் (p->urld.title)
 					memcpy(p->urld.title, s, length + 1);
 			}
 		}
@@ -3264,115 +3264,115 @@ nserror urldb_load(const char *filename)
 	NSLOG(netsurf, INFO, "Successfully loaded URL file");
 #undef MAXIMUM_URL_LENGTH
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* exported interface documented in netsurf/url_db.h */
-nserror urldb_save(const char *filename)
+nserror urldb_save(மாறிலி எழுத்து *filename)
 {
 	FILE *fp;
-	int i;
+	முழு i;
 
-	assert(filename);
+	ப்ரதிஜ்ஞா(filename);
 
 	fp = fopen(filename, "w");
-	if (!fp) {
+	எனில் (!fp) {
 		NSLOG(netsurf, INFO, "Failed to open file '%s' for writing",
 		      filename);
-		return NSERROR_SAVE_FAILED;
+		திரும்பு NSERROR_SAVE_FAILED;
 	}
 
 	/* file format version number */
 	fprintf(fp, "%d\n", URL_FILE_VERSION);
 
-	for (i = 0; i != NUM_SEARCH_TREES; i++) {
-		urldb_save_search_tree(search_trees[i], fp);
+	க்கு (i = 0; i != இலக்கம்_தேடல்_TREES; i++) {
+		urldb_save_தேடல்_மரம்(தேடல்_trees[i], fp);
 	}
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
 nserror urldb_set_url_persistence(nsurl *url, bool persist)
 {
-	struct path_data *p;
+	கட்டமைப்பு path_data *p;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	எனில் (!p) {
+		திரும்பு NSERROR_NOT_FOUND;
 	}
 
 	p->persistent = persist;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
 bool urldb_add_url(nsurl *url)
 {
-	struct host_part *h;
-	struct path_data *p;
+	கட்டமைப்பு host_part *h;
+	கட்டமைப்பு path_data *p;
 	lwc_string *scheme;
 	lwc_string *port;
 	lwc_string *host;
 	lwc_string *fragment;
-	const char *host_str;
-	char *path_query = NULL;
+	மாறிலி எழுத்து *host_str;
+	எழுத்து *path_query = வெற்று;
 	size_t len;
 	bool match;
-	unsigned int port_int;
+	unsigned முழு port_int;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
-	if (url_bloom == NULL)
+	எனில் (url_bloom == வெற்று)
 		url_bloom = bloom_create(BLOOM_SIZE);
 
-	if (url_bloom != NULL) {
+	எனில் (url_bloom != வெற்று) {
 		uint32_t hash = nsurl_hash(url);
-		bloom_insert_hash(url_bloom, hash);
+		bloom_செருகு_hash(url_bloom, hash);
 	}
 
 	/* Copy and merge path/query strings */
-	if (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &path_query, &len) !=
+	எனில் (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &path_query, &len) !=
 	    NSERROR_OK) {
-		return false;
+		திரும்பு false;
 	}
-	assert(path_query != NULL);
+	ப்ரதிஜ்ஞா(path_query != வெற்று);
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
-		free(path_query);
-		return false;
+	எனில் (scheme == வெற்று) {
+		விடுவி(path_query);
+		திரும்பு false;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
+	எனில் (host != வெற்று) {
 		host_str = lwc_string_data(host);
 		lwc_string_unref(host);
 
-	} else if (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
+	} இல்லையெனில் எனில் (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
 		   lwc_error_ok && match == true) {
 		host_str = "localhost";
 
-	} else {
+	} இல்லையெனில் {
 		lwc_string_unref(scheme);
-		free(path_query);
-		return false;
+		விடுவி(path_query);
+		திரும்பு false;
 	}
 
 	fragment = nsurl_get_component(url, NSURL_FRAGMENT);
 
 	port = nsurl_get_component(url, NSURL_PORT);
-	if (port != NULL) {
+	எனில் (port != வெற்று) {
 		port_int = atoi(lwc_string_data(port));
 		lwc_string_unref(port);
-	} else {
+	} இல்லையெனில் {
 		port_int = 0;
 	}
 
@@ -3380,101 +3380,101 @@ bool urldb_add_url(nsurl *url)
 	h = urldb_add_host(host_str);
 
 	/* Get path entry */
-	if (h != NULL) {
+	எனில் (h != வெற்று) {
 		p = urldb_add_path(scheme,
 				   port_int,
 				   h,
 				   path_query,
 				   fragment,
 				   url);
-	} else {
-		p = NULL;
+	} இல்லையெனில் {
+		p = வெற்று;
 	}
 
 	lwc_string_unref(scheme);
 	lwc_string_unref(fragment);
 
-	return (p != NULL);
+	திரும்பு (p != வெற்று);
 }
 
 
 /* exported interface documented in content/urldb.h */
-nserror urldb_set_url_title(nsurl *url, const char *title)
+nserror urldb_set_url_title(nsurl *url, மாறிலி எழுத்து *title)
 {
-	struct path_data *p;
-	char *temp;
+	கட்டமைப்பு path_data *p;
+	எழுத்து *temp;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	p = urldb_find_url(url);
-	if (p == NULL) {
-		return NSERROR_NOT_FOUND;
+	எனில் (p == வெற்று) {
+		திரும்பு NSERROR_NOT_FOUND;
 	}
 
 	/* copy the parameter if necessary */
-	if (title != NULL) {
+	எனில் (title != வெற்று) {
 		temp = strdup(title);
-		if (temp == NULL) {
-			return NSERROR_NOMEM;
+		எனில் (temp == வெற்று) {
+			திரும்பு NSERROR_NOMEM;
 		}
-	} else {
-		temp = NULL;
+	} இல்லையெனில் {
+		temp = வெற்று;
 	}
 
-	free(p->urld.title);
+	விடுவி(p->urld.title);
 	p->urld.title = temp;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
 nserror urldb_set_url_content_type(nsurl *url, content_type type)
 {
-	struct path_data *p;
+	கட்டமைப்பு path_data *p;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	எனில் (!p) {
+		திரும்பு NSERROR_NOT_FOUND;
 	}
 
 	p->urld.type = type;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
 nserror urldb_update_url_visit_data(nsurl *url)
 {
-	struct path_data *p;
+	கட்டமைப்பு path_data *p;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	எனில் (!p) {
+		திரும்பு NSERROR_NOT_FOUND;
 	}
 
-	p->urld.last_visit = time(NULL);
+	p->urld.last_visit = time(வெற்று);
 	p->urld.visits++;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
-void urldb_reset_url_visit_data(nsurl *url)
+வெறுமை urldb_reset_url_visit_data(nsurl *url)
 {
-	struct path_data *p;
+	கட்டமைப்பு path_data *p;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return;
+	எனில் (!p)
+		திரும்பு;
 
 	p->urld.last_visit = (time_t)0;
 	p->urld.visits = 0;
@@ -3482,87 +3482,87 @@ void urldb_reset_url_visit_data(nsurl *url)
 
 
 /* exported interface documented in netsurf/url_db.h */
-const struct url_data *urldb_get_url_data(nsurl *url)
+மாறிலி கட்டமைப்பு url_data *urldb_get_url_data(nsurl *url)
 {
-	struct path_data *p;
-	struct url_internal_data *u;
+	கட்டமைப்பு path_data *p;
+	கட்டமைப்பு url_internal_data *u;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	எனில் (!p)
+		திரும்பு வெற்று;
 
 	u = &p->urld;
 
-	return (const struct url_data *) u;
+	திரும்பு (மாறிலி கட்டமைப்பு url_data *) u;
 }
 
 
 /* exported interface documented in content/urldb.h */
 nsurl *urldb_get_url(nsurl *url)
 {
-	struct path_data *p;
+	கட்டமைப்பு path_data *p;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	எனில் (!p)
+		திரும்பு வெற்று;
 
-	return p->url;
+	திரும்பு p->url;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void urldb_set_auth_details(nsurl *url, const char *realm, const char *auth)
+வெறுமை urldb_set_auth_details(nsurl *url, மாறிலி எழுத்து *realm, மாறிலி எழுத்து *auth)
 {
-	struct path_data *p, *pi;
-	struct host_part *h;
-	struct prot_space_data *space, *space_alloc;
-	char *realm_alloc, *auth_alloc;
+	கட்டமைப்பு path_data *p, *pi;
+	கட்டமைப்பு host_part *h;
+	கட்டமைப்பு prot_space_data *space, *space_alloc;
+	எழுத்து *realm_alloc, *auth_alloc;
 	bool match;
 
-	assert(url && realm && auth);
+	ப்ரதிஜ்ஞா(url && realm && auth);
 
 	/* add url, in case it's missing */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
 
-	if (!p)
-		return;
+	எனில் (!p)
+		திரும்பு;
 
 	/* Search for host_part */
-	for (pi = p; pi->parent != NULL; pi = pi->parent)
+	க்கு (pi = p; pi->parent != வெற்று; pi = pi->parent)
 		;
-	h = (struct host_part *)pi;
+	h = (கட்டமைப்பு host_part *)pi;
 
 	/* Search if given URL belongs to a protection space we already know of. */
-	for (space = h->prot_space; space; space = space->next) {
-		if (!strcmp(space->realm, realm) &&
+	க்கு (space = h->prot_space; space; space = space->next) {
+		எனில் (!strcmp(space->realm, realm) &&
 		    lwc_string_isequal(space->scheme, p->scheme,
 				       &match) == lwc_error_ok &&
 		    match == true &&
 		    space->port == p->port)
-			break;
+			நிறுத்து;
 	}
 
-	if (space != NULL) {
+	எனில் (space != வெற்று) {
 		/* Overrule existing auth. */
-		free(space->auth);
+		விடுவி(space->auth);
 		space->auth = strdup(auth);
-	} else {
+	} இல்லையெனில் {
 		/* Create a new protection space. */
-		space = space_alloc = malloc(sizeof(struct prot_space_data));
+		space = space_alloc = malloc(அளவு(கட்டமைப்பு prot_space_data));
 		realm_alloc = strdup(realm);
 		auth_alloc = strdup(auth);
 
-		if (!space_alloc || !realm_alloc || !auth_alloc) {
-			free(space_alloc);
-			free(realm_alloc);
-			free(auth_alloc);
-			return;
+		எனில் (!space_alloc || !realm_alloc || !auth_alloc) {
+			விடுவி(space_alloc);
+			விடுவி(realm_alloc);
+			விடுவி(auth_alloc);
+			திரும்பு;
 		}
 
 		space->scheme = lwc_string_ref(p->scheme);
@@ -3578,75 +3578,75 @@ void urldb_set_auth_details(nsurl *url, const char *realm, const char *auth)
 
 
 /* exported interface documented in netsurf/url_db.h */
-const char *urldb_get_auth_details(nsurl *url, const char *realm)
+மாறிலி எழுத்து *urldb_get_auth_details(nsurl *url, மாறிலி எழுத்து *realm)
 {
-	struct path_data *p, *p_cur, *p_top;
+	கட்டமைப்பு path_data *p, *p_cur, *p_உச்சி;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	/* add to the db, so our lookup will work */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	எனில் (!p)
+		திரும்பு வெற்று;
 
 	/* Check for any auth details attached to the path_data node or any of
 	 * its parents.
 	 */
-	for (p_cur = p; p_cur != NULL; p_top = p_cur, p_cur = p_cur->parent) {
-		if (p_cur->prot_space) {
-			return p_cur->prot_space->auth;
+	க்கு (p_cur = p; p_cur != வெற்று; p_உச்சி = p_cur, p_cur = p_cur->parent) {
+		எனில் (p_cur->prot_space) {
+			திரும்பு p_cur->prot_space->auth;
 		}
 	}
 
 	/* Only when we have a realm (and canonical root of given URL), we can
 	 * uniquely locate the protection space.
 	 */
-	if (realm != NULL) {
-		const struct host_part *h = (const struct host_part *)p_top;
-		const struct prot_space_data *space;
+	எனில் (realm != வெற்று) {
+		மாறிலி கட்டமைப்பு host_part *h = (மாறிலி கட்டமைப்பு host_part *)p_உச்சி;
+		மாறிலி கட்டமைப்பு prot_space_data *space;
 		bool match;
 
 		/* Search for a possible matching protection space. */
-		for (space = h->prot_space; space != NULL;
+		க்கு (space = h->prot_space; space != வெற்று;
 		     space = space->next) {
-			if (!strcmp(space->realm, realm) &&
+			எனில் (!strcmp(space->realm, realm) &&
 			    lwc_string_isequal(space->scheme,
 					       p->scheme, &match) ==
 			    lwc_error_ok &&
 			    match == true &&
 			    space->port == p->port) {
 				p->prot_space = space;
-				return p->prot_space->auth;
+				திரும்பு p->prot_space->auth;
 			}
 		}
 	}
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void urldb_set_cert_permissions(nsurl *url, bool permit)
+வெறுமை urldb_set_cert_permissions(nsurl *url, bool permit)
 {
-	struct path_data *p;
-	struct host_part *h;
+	கட்டமைப்பு path_data *p;
+	கட்டமைப்பு host_part *h;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	/* add url, in case it's missing */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return;
+	எனில் (!p)
+		திரும்பு;
 
-	for (; p && p->parent; p = p->parent)
+	க்கு (; p && p->parent; p = p->parent)
 		/* do nothing */;
-	assert(p);
+	ப்ரதிஜ்ஞா(p);
 
-	h = (struct host_part *)p;
+	h = (கட்டமைப்பு host_part *)p;
 
 	h->permit_invalid_certs = permit;
 }
@@ -3655,122 +3655,122 @@ void urldb_set_cert_permissions(nsurl *url, bool permit)
 /* exported interface documented in content/urldb.h */
 bool urldb_get_cert_permissions(nsurl *url)
 {
-	struct path_data *p;
-	const struct host_part *h;
+	கட்டமைப்பு path_data *p;
+	மாறிலி கட்டமைப்பு host_part *h;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	எனில் (!p)
+		திரும்பு false;
 
-	for (; p && p->parent; p = p->parent)
+	க்கு (; p && p->parent; p = p->parent)
 		/* do nothing */;
-	assert(p);
+	ப்ரதிஜ்ஞா(p);
 
-	h = (const struct host_part *)p;
+	h = (மாறிலி கட்டமைப்பு host_part *)p;
 
-	return h->permit_invalid_certs;
+	திரும்பு h->permit_invalid_certs;
 }
 
 
 /* exported interface documented in content/urldb.h */
-bool urldb_set_hsts_policy(struct nsurl *url, const char *header)
+bool urldb_set_hsts_policy(கட்டமைப்பு nsurl *url, மாறிலி எழுத்து *header)
 {
-	struct path_data *p;
-	struct host_part *h;
+	கட்டமைப்பு path_data *p;
+	கட்டமைப்பு host_part *h;
 	lwc_string *host;
-	time_t now = time(NULL);
+	time_t now = time(வெற்று);
 	http_strict_transport_security *sts;
 	uint32_t max_age = 0;
 	nserror error;
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
-		if (urldb__host_is_ip_address(lwc_string_data(host))) {
+	எனில் (host != வெற்று) {
+		எனில் (urldb__host_is_ip_address(lwc_string_data(host))) {
 			/* Host is IP: ignore */
 			lwc_string_unref(host);
-			return true;
-		} else if (lwc_string_length(host) == 0) {
+			திரும்பு true;
+		} இல்லையெனில் எனில் (lwc_string_length(host) == 0) {
 			/* Host is blank: ignore */
 			lwc_string_unref(host);
-			return true;
+			திரும்பு true;
 		}
 
 		lwc_string_unref(host);
-	} else {
+	} இல்லையெனில் {
 		/* No host part: ignore */
-		return true;
+		திரும்பு true;
 	}
 
 	/* add url, in case it's missing */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	எனில் (!p)
+		திரும்பு false;
 
-	for (; p && p->parent; p = p->parent)
+	க்கு (; p && p->parent; p = p->parent)
 		/* do nothing */;
-	assert(p);
+	ப்ரதிஜ்ஞா(p);
 
-	h = (struct host_part *)p;
-	if (h->permit_invalid_certs) {
+	h = (கட்டமைப்பு host_part *)p;
+	எனில் (h->permit_invalid_certs) {
 		/* Transport is tainted: ignore */
-		return true;
+		திரும்பு true;
 	}
 
 	error = http_parse_strict_transport_security(header, &sts);
-	if (error != NSERROR_OK) {
+	எனில் (error != NSERROR_OK) {
 		/* Parse failed: ignore */
-		return true;
+		திரும்பு true;
 	}
 
 	h->hsts.include_sub_domains =
 		http_strict_transport_security_include_subdomains(sts);
 
 	max_age = http_strict_transport_security_max_age(sts);
-	if (max_age == 0) {
+	எனில் (max_age == 0) {
 		h->hsts.expires = 0;
 		h->hsts.include_sub_domains = false;
-	} else if ((time_t) (now + max_age) > h->hsts.expires) {
+	} இல்லையெனில் எனில் ((time_t) (now + max_age) > h->hsts.expires) {
 		h->hsts.expires = now + max_age;
 	}
 
 	http_strict_transport_security_destroy(sts);
 
-	return true;
+	திரும்பு true;
 }
 
 
 /* exported interface documented in content/urldb.h */
-bool urldb_get_hsts_enabled(struct nsurl *url)
+bool urldb_get_hsts_enabled(கட்டமைப்பு nsurl *url)
 {
-	struct path_data *p;
-	const struct host_part *h;
+	கட்டமைப்பு path_data *p;
+	மாறிலி கட்டமைப்பு host_part *h;
 	lwc_string *host;
-	time_t now = time(NULL);
+	time_t now = time(வெற்று);
 
-	assert(url);
+	ப்ரதிஜ்ஞா(url);
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
-		if (urldb__host_is_ip_address(lwc_string_data(host))) {
+	எனில் (host != வெற்று) {
+		எனில் (urldb__host_is_ip_address(lwc_string_data(host))) {
 			/* Host is IP: not enabled */
 			lwc_string_unref(host);
-			return false;
-		} else if (lwc_string_length(host) == 0) {
+			திரும்பு false;
+		} இல்லையெனில் எனில் (lwc_string_length(host) == 0) {
 			/* Host is blank: not enabled */
 			lwc_string_unref(host);
-			return false;
+			திரும்பு false;
 		}
 
 		lwc_string_unref(host);
-	} else {
+	} இல்லையெனில் {
 		/* No host part: not enabled */
-		return false;
+		திரும்பு false;
 	}
 
 	/* The URL must exist in the db in order to find HSTS policy, since
@@ -3779,193 +3779,193 @@ bool urldb_get_hsts_enabled(struct nsurl *url)
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	எனில் (!p)
+		திரும்பு false;
 
-	for (; p && p->parent; p = p->parent)
+	க்கு (; p && p->parent; p = p->parent)
 		/* do nothing */;
-	assert(p);
+	ப்ரதிஜ்ஞா(p);
 
-	h = (const struct host_part *)p;
+	h = (மாறிலி கட்டமைப்பு host_part *)p;
 
 	/* Consult record for this host */
-	if (h->hsts.expires > now) {
+	எனில் (h->hsts.expires > now) {
 		/* Not expired */
-		return true;
+		திரும்பு true;
 	}
 
 	/* Consult parent domains */
-	for (h = h->parent; h && h != &db_root; h = h->parent) {
-		if (h->hsts.expires > now && h->hsts.include_sub_domains) {
+	க்கு (h = h->parent; h && h != &db_வேர்; h = h->parent) {
+		எனில் (h->hsts.expires > now && h->hsts.include_sub_domains) {
 			/* Not expired and subdomains included */
-			return true;
+			திரும்பு true;
 		}
 	}
 
-	return false;
+	திரும்பு false;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void
-urldb_iterate_partial(const char *prefix,
-		      bool (*callback)(nsurl *url, const struct url_data *data))
+வெறுமை
+urldb_iterate_partial(மாறிலி எழுத்து *prefix,
+		      bool (*callback)(nsurl *url, மாறிலி கட்டமைப்பு url_data *data))
 {
-	char host[256];
-	char buf[260]; /* max domain + "www." */
-	const char *slash, *scheme_sep;
-	struct search_node *tree;
-	const struct host_part *h;
+	எழுத்து host[256];
+	எழுத்து buf[260]; /* max domain + "www." */
+	மாறிலி எழுத்து *slash, *scheme_sep;
+	கட்டமைப்பு தேடல்_முனை *மரம்;
+	மாறிலி கட்டமைப்பு host_part *h;
 
-	assert(prefix && callback);
+	ப்ரதிஜ்ஞா(prefix && callback);
 
 	/* strip scheme */
 	scheme_sep = strstr(prefix, "://");
-	if (scheme_sep)
+	எனில் (scheme_sep)
 		prefix = scheme_sep + 3;
 
 	slash = strchr(prefix, '/');
-	tree = urldb_get_search_tree(prefix);
+	மரம் = urldb_get_தேடல்_மரம்(prefix);
 
-	if (slash) {
+	எனில் (slash) {
 		/* if there's a slash in the input, then we can
 		 * assume that we're looking for a path */
-		snprintf(host, sizeof host, "%.*s",
-			 (int) (slash - prefix), prefix);
+		snprintf(host, அளவு host, "%.*s",
+			 (முழு) (slash - prefix), prefix);
 
-		h = urldb_search_find(tree, host);
-		if (!h) {
-			int len = slash - prefix;
+		h = urldb_தேடல்_find(மரம், host);
+		எனில் (!h) {
+			முழு len = slash - prefix;
 
-			if (len <= 3 || strncasecmp(host, "www.", 4) != 0) {
-				snprintf(buf, sizeof buf, "www.%s", host);
-				h = urldb_search_find(
-					search_trees[ST_DN + 'w' - 'a'],
+			எனில் (len <= 3 || strncasecmp(host, "www.", 4) != 0) {
+				snprintf(buf, அளவு buf, "www.%s", host);
+				h = urldb_தேடல்_find(
+					தேடல்_trees[ST_DN + 'w' - 'a'],
 					buf);
-				if (!h)
-					return;
-			} else
-				return;
+				எனில் (!h)
+					திரும்பு;
+			} இல்லையெனில்
+				திரும்பு;
 		}
 
-		if (h->paths.children) {
+		எனில் (h->paths.children) {
 			/* Have paths, iterate them */
 			urldb_iterate_partial_path(&h->paths, slash + 1,
 						   callback);
 		}
 
-	} else {
-		int len = strlen(prefix);
+	} இல்லையெனில் {
+		முழு len = strlen(prefix);
 
 		/* looking for hosts */
-		if (!urldb_iterate_partial_host(tree, prefix, callback))
-			return;
+		எனில் (!urldb_iterate_partial_host(மரம், prefix, callback))
+			திரும்பு;
 
-		if (len <= 3 || strncasecmp(prefix, "www.", 4) != 0) {
+		எனில் (len <= 3 || strncasecmp(prefix, "www.", 4) != 0) {
 			/* now look for www.prefix */
-			snprintf(buf, sizeof buf, "www.%s", prefix);
-			if(!urldb_iterate_partial_host(
-				   search_trees[ST_DN + 'w' - 'a'],
+			snprintf(buf, அளவு buf, "www.%s", prefix);
+			எனில்(!urldb_iterate_partial_host(
+				   தேடல்_trees[ST_DN + 'w' - 'a'],
 				   buf, callback))
-				return;
+				திரும்பு;
 		}
 	}
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void
-urldb_iterate_entries(bool (*callback)(nsurl *url, const struct url_data *data))
+வெறுமை
+urldb_iterate_entries(bool (*callback)(nsurl *url, மாறிலி கட்டமைப்பு url_data *data))
 {
-	int i;
+	முழு i;
 
-	assert(callback);
+	ப்ரதிஜ்ஞா(callback);
 
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (!urldb_iterate_entries_host(search_trees[i],
+	க்கு (i = 0; i < இலக்கம்_தேடல்_TREES; i++) {
+		எனில் (!urldb_iterate_entries_host(தேடல்_trees[i],
 						callback,
-						NULL)) {
-			break;
+						வெற்று)) {
+			நிறுத்து;
 		}
 	}
 }
 
 
 /* exported interface documented in content/urldb.h */
-void urldb_iterate_cookies(bool (*callback)(const struct cookie_data *data))
+வெறுமை urldb_iterate_cookies(bool (*callback)(மாறிலி கட்டமைப்பு cookie_data *data))
 {
-	int i;
+	முழு i;
 
-	assert(callback);
+	ப்ரதிஜ்ஞா(callback);
 
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (!urldb_iterate_entries_host(search_trees[i],
-						NULL, callback))
-			break;
+	க்கு (i = 0; i < இலக்கம்_தேடல்_TREES; i++) {
+		எனில் (!urldb_iterate_entries_host(தேடல்_trees[i],
+						வெற்று, callback))
+			நிறுத்து;
 	}
 }
 
 
 /* exported interface documented in content/urldb.h */
-bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
+bool urldb_set_cookie(மாறிலி எழுத்து *header, nsurl *url, nsurl *referer)
 {
-	const char *cur = header, *end;
+	மாறிலி எழுத்து *cur = header, *end;
 	lwc_string *path, *host, *scheme;
 	nsurl *urlt;
 	bool match;
 
-	assert(url && header);
+	ப்ரதிஜ்ஞா(url && header);
 
 	/* Get defragmented URL, as 'urlt' */
-	if (nsurl_defragment(url, &urlt) != NSERROR_OK)
-		return NULL;
+	எனில் (nsurl_defragment(url, &urlt) != NSERROR_OK)
+		திரும்பு வெற்று;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
+	எனில் (scheme == வெற்று) {
 		nsurl_unref(urlt);
-		return false;
+		திரும்பு false;
 	}
 
 	path = nsurl_get_component(url, NSURL_PATH);
-	if (path == NULL) {
+	எனில் (path == வெற்று) {
 		lwc_string_unref(scheme);
 		nsurl_unref(urlt);
-		return false;
+		திரும்பு false;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host == NULL) {
+	எனில் (host == வெற்று) {
 		lwc_string_unref(path);
 		lwc_string_unref(scheme);
 		nsurl_unref(urlt);
-		return false;
+		திரும்பு false;
 	}
 
-	if (referer) {
+	எனில் (referer) {
 		lwc_string *rhost;
 
 		/* Ensure that url's host name domain matches
 		 * referer's (4.3.5) */
 		rhost = nsurl_get_component(referer, NSURL_HOST);
-		if (rhost == NULL) {
-			goto error;
+		எனில் (rhost == வெற்று) {
+			செல் error;
 		}
 
 		/* Domain match host names */
-		if (lwc_string_isequal(host, rhost, &match) == lwc_error_ok &&
+		எனில் (lwc_string_isequal(host, rhost, &match) == lwc_error_ok &&
 		    match == false) {
-			const char *hptr;
-			const char *rptr;
-			const char *dot;
-			const char *host_data = lwc_string_data(host);
-			const char *rhost_data = lwc_string_data(rhost);
+			மாறிலி எழுத்து *hptr;
+			மாறிலி எழுத்து *rptr;
+			மாறிலி எழுத்து *dot;
+			மாறிலி எழுத்து *host_data = lwc_string_data(host);
+			மாறிலி எழுத்து *rhost_data = lwc_string_data(rhost);
 
 			/* Ensure neither host nor rhost are IP addresses */
-			if (urldb__host_is_ip_address(host_data) ||
+			எனில் (urldb__host_is_ip_address(host_data) ||
 			    urldb__host_is_ip_address(rhost_data)) {
 				/* IP address, so no partial match */
 				lwc_string_unref(rhost);
-				goto error;
+				செல் error;
 			}
 
 			/* Not exact match, so try the following:
@@ -3993,9 +3993,9 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			rptr = rhost_data + lwc_string_length(rhost) - 1;
 
 			/* 1 */
-			while (hptr >= host_data && rptr >= rhost_data) {
-				if (*hptr != *rptr)
-					break;
+			போது (hptr >= host_data && rptr >= rhost_data) {
+				எனில் (*hptr != *rptr)
+					நிறுத்து;
 				hptr--;
 				rptr--;
 			}
@@ -4005,15 +4005,15 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			hptr++;
 
 			/* 2 */
-			while (*hptr != '\0' && *hptr != '.')
+			போது (*hptr != '\0' && *hptr != '.')
 				hptr++;
 
 			/* 3 */
-			if (*hptr == '\0' ||
-			    (dot = strchr(hptr + 1, '.')) == NULL ||
+			எனில் (*hptr == '\0' ||
+			    (dot = strchr(hptr + 1, '.')) == வெற்று ||
 			    *(dot + 1) == '\0') {
 				lwc_string_unref(rhost);
-				goto error;
+				செல் error;
 			}
 		}
 
@@ -4022,64 +4022,64 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 
 	end = cur + strlen(cur) - 2 /* Trailing CRLF */;
 
-	do {
-		struct cookie_internal_data *c;
-		char *dot;
+	செய் {
+		கட்டமைப்பு cookie_internal_data *c;
+		எழுத்து *dot;
 		size_t len;
 #ifdef WITH_NSPSL
-		const char *suffix;
+		மாறிலி எழுத்து *suffix;
 #endif
 
 		c = urldb_parse_cookie(url, &cur);
-		if (!c) {
+		எனில் (!c) {
 			/* failed => stop parsing */
-			goto error;
+			செல் error;
 		}
 
 		/* validate cookie */
 
 		/* 4.2.2:i Cookie must have NAME and VALUE */
-		if (!c->name || !c->value) {
+		எனில் (!c->name || !c->மதிப்பு) {
 			urldb_free_cookie(c);
-			goto error;
+			செல் error;
 		}
 
 		/* 4.3.2:i Cookie path must be a prefix of URL path */
 		len = strlen(c->path);
-		if (len > lwc_string_length(path) ||
+		எனில் (len > lwc_string_length(path) ||
 		    strncmp(c->path, lwc_string_data(path),
 			    len) != 0) {
 			urldb_free_cookie(c);
-			goto error;
+			செல் error;
 		}
 
 #ifdef WITH_NSPSL
 		/* check domain is not a public suffix */
 		dot = c->domain;
-		if (*dot == '.') {
+		எனில் (*dot == '.') {
 			dot++;
 		}
 		suffix = nspsl_getpublicsuffix(dot);
-		if (suffix == NULL) {
+		எனில் (suffix == வெற்று) {
 			NSLOG(netsurf, INFO,
 			      "domain %s was a public suffix domain", dot);
 			urldb_free_cookie(c);
-			goto error;
+			செல் error;
 		}
-#else
+#இல்லையெனில்
 		/* 4.3.2:ii Cookie domain must contain embedded dots */
 		dot = strchr(c->domain + 1, '.');
-		if (!dot || *(dot + 1) == '\0') {
+		எனில் (!dot || *(dot + 1) == '\0') {
 			/* no embedded dots */
 			urldb_free_cookie(c);
-			goto error;
+			செல் error;
 		}
 #endif
 
 		/* Domain match fetch host with cookie domain */
-		if (strcasecmp(lwc_string_data(host), c->domain) != 0) {
-			int hlen, dlen;
-			char *domain = c->domain;
+		எனில் (strcasecmp(lwc_string_data(host), c->domain) != 0) {
+			முழு hlen, dlen;
+			எழுத்து *domain = c->domain;
 
 			/* c->domain must be a domain cookie here because:
 			 * c->domain is either:
@@ -4093,35 +4093,35 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			 * The latter will pass the strcasecmp above, which
 			 * leaves the former (i.e. a domain cookie)
 			 */
-			assert(c->domain[0] == '.');
+			ப்ரதிஜ்ஞா(c->domain[0] == '.');
 
 			/* 4.3.2:iii */
-			if (urldb__host_is_ip_address(lwc_string_data(host))) {
+			எனில் (urldb__host_is_ip_address(lwc_string_data(host))) {
 				/* IP address, so no partial match */
 				urldb_free_cookie(c);
-				goto error;
+				செல் error;
 			}
 
 			hlen = lwc_string_length(host);
 			dlen = strlen(c->domain);
 
-			if (hlen <= dlen && hlen != dlen - 1) {
+			எனில் (hlen <= dlen && hlen != dlen - 1) {
 				/* Partial match not possible */
 				urldb_free_cookie(c);
-				goto error;
+				செல் error;
 			}
 
-			if (hlen == dlen - 1) {
+			எனில் (hlen == dlen - 1) {
 				/* Relax matching to allow
 				 * host a.com to match .a.com */
 				domain++;
 				dlen--;
 			}
 
-			if (strcasecmp(lwc_string_data(host) + (hlen - dlen),
+			எனில் (strcasecmp(lwc_string_data(host) + (hlen - dlen),
 				       domain)) {
 				urldb_free_cookie(c);
-				goto error;
+				செல் error;
 			}
 
 			/* 4.3.2:iv Ensure H contains no dots
@@ -4148,16 +4148,16 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 		}
 
 		/* Now insert into database */
-		if (!urldb_insert_cookie(c, scheme, urlt))
-			goto error;
-	} while (cur < end);
+		எனில் (!urldb_செருகு_cookie(c, scheme, urlt))
+			செல் error;
+	} போது (cur < end);
 
 	lwc_string_unref(host);
 	lwc_string_unref(path);
 	lwc_string_unref(scheme);
 	nsurl_unref(urlt);
 
-	return true;
+	திரும்பு true;
 
 error:
 	lwc_string_unref(host);
@@ -4165,27 +4165,27 @@ error:
 	lwc_string_unref(scheme);
 	nsurl_unref(urlt);
 
-	return false;
+	திரும்பு false;
 }
 
 
 /* exported interface documented in content/urldb.h */
-char *urldb_get_cookie(nsurl *url, bool include_http_only)
+எழுத்து *urldb_get_cookie(nsurl *url, bool include_http_only)
 {
-	const struct path_data *p, *q;
-	const struct host_part *h;
+	மாறிலி கட்டமைப்பு path_data *p, *q;
+	மாறிலி கட்டமைப்பு host_part *h;
 	lwc_string *path_lwc;
-	struct cookie_internal_data *c;
-	int count = 0, version = COOKIE_RFC2965;
-	struct cookie_internal_data **matched_cookies;
-	int matched_cookies_size = 20;
-	const char *path;
-	char *ret;
+	கட்டமைப்பு cookie_internal_data *c;
+	முழு மொத்தம் = 0, version = COOKIE_RFC2965;
+	கட்டமைப்பு cookie_internal_data **matched_cookies;
+	முழு matched_cookies_size = 20;
+	மாறிலி எழுத்து *path;
+	எழுத்து *ret;
 	lwc_string *scheme;
 	time_t now;
 	bool match;
 
-	assert(url != NULL);
+	ப்ரதிஜ்ஞா(url != வெற்று);
 
 	/* The URL must exist in the db in order to find relevant cookies, since
 	 * we search up the tree from the URL node, and cookies from further
@@ -4193,121 +4193,121 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	எனில் (!p)
+		திரும்பு வெற்று;
 
 	scheme = p->scheme;
 
 	matched_cookies = malloc(matched_cookies_size *
-				 sizeof(struct cookie_internal_data *));
-	if (!matched_cookies)
-		return NULL;
+				 அளவு(கட்டமைப்பு cookie_internal_data *));
+	எனில் (!matched_cookies)
+		திரும்பு வெற்று;
 
 #define GROW_MATCHED_COOKIES						\
-	do {								\
-		if (count == matched_cookies_size) {			\
-			struct cookie_internal_data **temp;		\
+	செய் {								\
+		எனில் (மொத்தம் == matched_cookies_size) {			\
+			கட்டமைப்பு cookie_internal_data **temp;		\
 			temp = realloc(matched_cookies,			\
 				       (matched_cookies_size + 20) *	\
-				       sizeof(struct cookie_internal_data *)); \
+				       அளவு(கட்டமைப்பு cookie_internal_data *)); \
 									\
-			if (temp == NULL) {				\
-				free(matched_cookies);			\
-				return NULL;				\
+			எனில் (temp == வெற்று) {				\
+				விடுவி(matched_cookies);			\
+				திரும்பு வெற்று;				\
 			}						\
 									\
 			matched_cookies = temp;				\
 			matched_cookies_size += 20;			\
 		}							\
-	} while(0)
+	} போது(0)
 
 	path_lwc = nsurl_get_component(url, NSURL_PATH);
-	if (path_lwc == NULL) {
-		free(matched_cookies);
-		return NULL;
+	எனில் (path_lwc == வெற்று) {
+		விடுவி(matched_cookies);
+		திரும்பு வெற்று;
 	}
 	path = lwc_string_data(path_lwc);
 	lwc_string_unref(path_lwc);
 
-	now = time(NULL);
+	now = time(வெற்று);
 
-	if (*(p->segment) != '\0') {
+	எனில் (*(p->segment) != '\0') {
 		/* Match exact path, unless directory, when prefix matching
 		 * will handle this case for us. */
-		for (q = p->parent->children; q; q = q->next) {
-			if (strcmp(q->segment, p->segment))
-				continue;
+		க்கு (q = p->parent->children; q; q = q->next) {
+			எனில் (strcmp(q->segment, p->segment))
+				தொடர்;
 
 			/* Consider all cookies associated with
 			 * this exact path */
-			for (c = q->cookies; c; c = c->next) {
-				if (c->expires != -1 && c->expires < now)
+			க்கு (c = q->cookies; c; c = c->next) {
+				எனில் (c->expires != -1 && c->expires < now)
 					/* cookie has expired => ignore */
-					continue;
+					தொடர்;
 
-				if (c->secure && lwc_string_isequal(
+				எனில் (c->secure && lwc_string_isequal(
 					    q->scheme,
 					    corestring_lwc_https,
 					    &match) &&
 				    match == false)
 					/* secure cookie for insecure host.
 					 * ignore */
-					continue;
+					தொடர்;
 
-				if (c->http_only && !include_http_only)
+				எனில் (c->http_only && !include_http_only)
 					/* Ignore HttpOnly */
-					continue;
+					தொடர்;
 
-				matched_cookies[count++] = c;
+				matched_cookies[மொத்தம்++] = c;
 
 				GROW_MATCHED_COOKIES;
 
-				if (c->version < (unsigned int)version)
+				எனில் (c->version < (unsigned முழு)version)
 					version = c->version;
 
 				c->last_used = now;
 
-				cookie_manager_add((struct cookie_data *)c);
+				cookie_manager_add((கட்டமைப்பு cookie_data *)c);
 			}
 		}
 	}
 
 	/* Now consider cookies whose paths prefix-match ours */
-	for (p = p->parent; p; p = p->parent) {
+	க்கு (p = p->parent; p; p = p->parent) {
 		/* Find directory's path entry(ies) */
 		/* There are potentially multiple due to differing schemes */
-		for (q = p->children; q; q = q->next) {
-			if (*(q->segment) != '\0')
-				continue;
+		க்கு (q = p->children; q; q = q->next) {
+			எனில் (*(q->segment) != '\0')
+				தொடர்;
 
-			for (c = q->cookies; c; c = c->next) {
-				if (c->expires != -1 && c->expires < now)
+			க்கு (c = q->cookies; c; c = c->next) {
+				எனில் (c->expires != -1 && c->expires < now)
 					/* cookie has expired => ignore */
-					continue;
+					தொடர்;
 
-				if (c->secure && lwc_string_isequal(
+				எனில் (c->secure && lwc_string_isequal(
 					    q->scheme,
 					    corestring_lwc_https,
 					    &match) &&
 				    match == false)
 					/* Secure cookie for insecure server
 					 * => ignore */
-					continue;
+					தொடர்;
 
-				matched_cookies[count++] = c;
+				matched_cookies[மொத்தம்++] = c;
 
 				GROW_MATCHED_COOKIES;
 
-				if (c->version < (unsigned int) version)
+				எனில் (c->version < (unsigned முழு) version)
 					version = c->version;
 
 				c->last_used = now;
 
-				cookie_manager_add((struct cookie_data *)c);
+				cookie_manager_add((கட்டமைப்பு cookie_data *)c);
 			}
 		}
 
-		if (!p->parent) {
+		எனில் (!p->parent) {
 			/* No parent, so bail here. This can't go in
 			 * the loop exit condition as we also want to
 			 * process the top-level node.
@@ -4316,144 +4316,144 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 			 * the domain cookies and thus we don't even
 			 * try matching against them.
 			 */
-			break;
+			நிறுத்து;
 		}
 
 		/* Consider p itself - may be the result of Path=/foo */
-		for (c = p->cookies; c; c = c->next) {
-			if (c->expires != -1 && c->expires < now)
+		க்கு (c = p->cookies; c; c = c->next) {
+			எனில் (c->expires != -1 && c->expires < now)
 				/* cookie has expired => ignore */
-				continue;
+				தொடர்;
 
 			/* Ensure cookie path is a prefix of the resource */
-			if (strncmp(c->path, path, strlen(c->path)) != 0)
+			எனில் (strncmp(c->path, path, strlen(c->path)) != 0)
 				/* paths don't match => ignore */
-				continue;
+				தொடர்;
 
-			if (c->secure && lwc_string_isequal(p->scheme,
+			எனில் (c->secure && lwc_string_isequal(p->scheme,
 							    corestring_lwc_https,
 							    &match) &&
 			    match == false)
 				/* Secure cookie for insecure server
 				 * => ignore */
-				continue;
+				தொடர்;
 
-			matched_cookies[count++] = c;
+			matched_cookies[மொத்தம்++] = c;
 
 			GROW_MATCHED_COOKIES;
 
-			if (c->version < (unsigned int) version)
+			எனில் (c->version < (unsigned முழு) version)
 				version = c->version;
 
 			c->last_used = now;
 
-			cookie_manager_add((struct cookie_data *)c);
+			cookie_manager_add((கட்டமைப்பு cookie_data *)c);
 		}
 
 	}
 
 	/* Finally consider domain cookies for hosts which domain match ours */
-	for (h = (const struct host_part *)p; h && h != &db_root;
+	க்கு (h = (மாறிலி கட்டமைப்பு host_part *)p; h && h != &db_வேர்;
 	     h = h->parent) {
-		for (c = h->paths.cookies; c; c = c->next) {
-			if (c->expires != -1 && c->expires < now)
+		க்கு (c = h->paths.cookies; c; c = c->next) {
+			எனில் (c->expires != -1 && c->expires < now)
 				/* cookie has expired => ignore */
-				continue;
+				தொடர்;
 
 			/* Ensure cookie path is a prefix of the resource */
-			if (strncmp(c->path, path, strlen(c->path)) != 0)
+			எனில் (strncmp(c->path, path, strlen(c->path)) != 0)
 				/* paths don't match => ignore */
-				continue;
+				தொடர்;
 
-			if (c->secure && lwc_string_isequal(scheme,
+			எனில் (c->secure && lwc_string_isequal(scheme,
 							    corestring_lwc_https,
 							    &match) &&
 			    match == false)
 				/* secure cookie for insecure host. ignore */
-				continue;
+				தொடர்;
 
-			matched_cookies[count++] = c;
+			matched_cookies[மொத்தம்++] = c;
 
 			GROW_MATCHED_COOKIES;
 
-			if (c->version < (unsigned int)version)
+			எனில் (c->version < (unsigned முழு)version)
 				version = c->version;
 
 			c->last_used = now;
 
-			cookie_manager_add((struct cookie_data *)c);
+			cookie_manager_add((கட்டமைப்பு cookie_data *)c);
 		}
 	}
 #undef GROW_MATCHED_COOKIES
 
-	if (count == 0) {
+	எனில் (மொத்தம் == 0) {
 		/* No cookies found */
-		free(matched_cookies);
-		return NULL;
+		விடுவி(matched_cookies);
+		திரும்பு வெற்று;
 	}
 
-	if (version == COOKIE_NETSCAPE) {
-		ret = get_netscape_cookie(matched_cookies, count);
-	} else {
-		ret = get_rfc2965_cookie(matched_cookies, count, version);
+	எனில் (version == COOKIE_NETSCAPE) {
+		ret = get_netscape_cookie(matched_cookies, மொத்தம்);
+	} இல்லையெனில் {
+		ret = get_rfc2965_cookie(matched_cookies, மொத்தம், version);
 	}
-	free(matched_cookies);
+	விடுவி(matched_cookies);
 
-	return ret;
+	திரும்பு ret;
 }
 
 
 /* exported interface documented in content/urldb.h */
-void urldb_delete_cookie(const char *domain, const char *path,
-			 const char *name)
+வெறுமை urldb_delete_cookie(மாறிலி எழுத்து *domain, மாறிலி எழுத்து *path,
+			 மாறிலி எழுத்து *name)
 {
-	urldb_delete_cookie_hosts(domain, path, name, &db_root);
+	urldb_delete_cookie_hosts(domain, path, name, &db_வேர்);
 }
 
 
 /* exported interface documented in netsurf/cookie_db.h */
-nserror urldb_load_cookies(const char *filename)
+nserror urldb_load_cookies(மாறிலி எழுத்து *filename)
 {
 	FILE *fp;
-	char s[16*1024];
+	எழுத்து s[16*1024];
 
-	assert(filename);
+	ப்ரதிஜ்ஞா(filename);
 
 	fp = fopen(filename, "r");
-	if (!fp)
-		return NSERROR_NOT_FOUND;
+	எனில் (!fp)
+		திரும்பு NSERROR_NOT_FOUND;
 
 #define FIND_T {				\
-		for (; *p && *p != '\t'; p++)	\
+		க்கு (; *p && *p != '\t'; p++)	\
 			; /* do nothing */	\
-		if (p >= end) {			\
+		எனில் (p >= end) {			\
 			NSLOG(netsurf, INFO, "Overran input");	\
-			continue;		\
+			தொடர்;		\
 		}				\
 		*p++ = '\0';			\
 	}
 
 #define SKIP_T {				\
-		for (; *p && *p == '\t'; p++)	\
+		க்கு (; *p && *p == '\t'; p++)	\
 			; /* do nothing */	\
-		if (p >= end) {			\
+		எனில் (p >= end) {			\
 			NSLOG(netsurf, INFO, "Overran input");	\
-			continue;		\
+			தொடர்;		\
 		}				\
 	}
 
-	while (fgets(s, sizeof s, fp)) {
-		char *p = s, *end = 0,
-			*domain, *path, *name, *value, *scheme, *url,
+	போது (fgets(s, அளவு s, fp)) {
+		எழுத்து *p = s, *end = 0,
+			*domain, *path, *name, *மதிப்பு, *scheme, *url,
 			*comment;
-		int version, domain_specified, path_specified,
-			secure, http_only, no_destroy, value_quoted;
+		முழு version, domain_specified, path_specified,
+			secure, http_only, no_destroy, மதிப்பு_quoted;
 		time_t expires, last_used;
-		struct cookie_internal_data *c;
+		கட்டமைப்பு cookie_internal_data *c;
 
-		if(s[0] == 0 || s[0] == '#')
+		எனில்(s[0] == 0 || s[0] == '#')
 			/* Skip blank lines or comments */
-			continue;
+			தொடர்;
 
 		s[strlen(s) - 1] = '\0'; /* lose terminating newline */
 		end = s + strlen(s);
@@ -4461,20 +4461,20 @@ nserror urldb_load_cookies(const char *filename)
 		/* Look for file version first
 		 * (all input is ignored until this is read)
 		 */
-		if (strncasecmp(s, "Version:", 8) == 0) {
+		எனில் (strncasecmp(s, "Version:", 8) == 0) {
 			FIND_T; SKIP_T; loaded_cookie_file_version = atoi(p);
 
-			if (loaded_cookie_file_version <
+			எனில் (loaded_cookie_file_version <
 			    MIN_COOKIE_FILE_VERSION) {
 				NSLOG(netsurf, INFO,
 				      "Unsupported Cookie file version");
-				break;
+				நிறுத்து;
 			}
 
-			continue;
-		} else if (loaded_cookie_file_version == 0) {
+			தொடர்;
+		} இல்லையெனில் எனில் (loaded_cookie_file_version == 0) {
 			/* Haven't yet seen version; skip this input */
-			continue;
+			தொடர்;
 		}
 
 		/* One cookie/line */
@@ -4486,42 +4486,42 @@ nserror urldb_load_cookies(const char *filename)
 		SKIP_T; path = p; FIND_T;
 		SKIP_T; path_specified = atoi(p); FIND_T;
 		SKIP_T; secure = atoi(p); FIND_T;
-		if (loaded_cookie_file_version > 101) {
+		எனில் (loaded_cookie_file_version > 101) {
 			/* Introduced in version 1.02 */
 			SKIP_T; http_only = atoi(p); FIND_T;
-		} else {
+		} இல்லையெனில் {
 			http_only = 0;
 		}
 		SKIP_T; expires = (time_t)atoi(p); FIND_T;
 		SKIP_T; last_used = (time_t)atoi(p); FIND_T;
 		SKIP_T; no_destroy = atoi(p); FIND_T;
 		SKIP_T; name = p; FIND_T;
-		SKIP_T; value = p; FIND_T;
-		if (loaded_cookie_file_version > 100) {
+		SKIP_T; மதிப்பு = p; FIND_T;
+		எனில் (loaded_cookie_file_version > 100) {
 			/* Introduced in version 1.01 */
-			SKIP_T;	value_quoted = atoi(p); FIND_T;
-		} else {
-			value_quoted = 0;
+			SKIP_T;	மதிப்பு_quoted = atoi(p); FIND_T;
+		} இல்லையெனில் {
+			மதிப்பு_quoted = 0;
 		}
 		SKIP_T; scheme = p; FIND_T;
 		SKIP_T; url = p; FIND_T;
 
 		/* Comment may have no content, so don't
 		 * use macros as they'll break */
-		for (; *p && *p == '\t'; p++)
+		க்கு (; *p && *p == '\t'; p++)
 			; /* do nothing */
 		comment = p;
 
-		assert(p <= end);
+		ப்ரதிஜ்ஞா(p <= end);
 
 		/* Now create cookie */
-		c = malloc(sizeof(struct cookie_internal_data));
-		if (!c)
-			break;
+		c = malloc(அளவு(கட்டமைப்பு cookie_internal_data));
+		எனில் (!c)
+			நிறுத்து;
 
 		c->name = strdup(name);
-		c->value = strdup(value);
-		c->value_was_quoted = value_quoted;
+		c->மதிப்பு = strdup(மதிப்பு);
+		c->மதிப்பு_was_quoted = மதிப்பு_quoted;
 		c->comment = strdup(comment);
 		c->domain_from_set = domain_specified;
 		c->domain = strdup(domain);
@@ -4534,39 +4534,39 @@ nserror urldb_load_cookies(const char *filename)
 		c->version = version;
 		c->no_destroy = no_destroy;
 
-		if (!(c->name && c->value && c->comment &&
+		எனில் (!(c->name && c->மதிப்பு && c->comment &&
 		      c->domain && c->path)) {
 			urldb_free_cookie(c);
-			break;
+			நிறுத்து;
 		}
 
-		if (c->domain[0] != '.') {
-			lwc_string *scheme_lwc = NULL;
-			nsurl *url_nsurl = NULL;
+		எனில் (c->domain[0] != '.') {
+			lwc_string *scheme_lwc = வெற்று;
+			nsurl *url_nsurl = வெற்று;
 
-			assert(scheme[0] != 'u');
+			ப்ரதிஜ்ஞா(scheme[0] != 'u');
 
-			if (nsurl_create(url, &url_nsurl) != NSERROR_OK) {
+			எனில் (nsurl_create(url, &url_nsurl) != NSERROR_OK) {
 				urldb_free_cookie(c);
-				break;
+				நிறுத்து;
 			}
 			scheme_lwc = nsurl_get_component(url_nsurl,
 							 NSURL_SCHEME);
 
 			/* And insert it into database */
-			if (!urldb_insert_cookie(c, scheme_lwc, url_nsurl)) {
+			எனில் (!urldb_செருகு_cookie(c, scheme_lwc, url_nsurl)) {
 				/* Cookie freed for us */
 				nsurl_unref(url_nsurl);
 				lwc_string_unref(scheme_lwc);
-				break;
+				நிறுத்து;
 			}
 			nsurl_unref(url_nsurl);
 			lwc_string_unref(scheme_lwc);
 
-		} else {
-			if (!urldb_insert_cookie(c, NULL, NULL)) {
+		} இல்லையெனில் {
+			எனில் (!urldb_செருகு_cookie(c, வெற்று, வெற்று)) {
 				/* Cookie freed for us */
-				break;
+				நிறுத்து;
 			}
 		}
 	}
@@ -4576,22 +4576,22 @@ nserror urldb_load_cookies(const char *filename)
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported interface documented in netsurf/cookie_db.h */
-nserror urldb_save_cookies(const char *filename)
+nserror urldb_save_cookies(மாறிலி எழுத்து *filename)
 {
 	FILE *fp;
-	int cookie_file_version = max(loaded_cookie_file_version,
+	முழு cookie_file_version = max(loaded_cookie_file_version,
 				      COOKIE_FILE_VERSION);
 
-	assert(filename);
+	ப்ரதிஜ்ஞா(filename);
 
 	fp = fopen(filename, "w");
-	if (!fp)
-		return NSERROR_NOT_FOUND;
+	எனில் (!fp)
+		திரும்பு NSERROR_NOT_FOUND;
 
 	fprintf(fp, "# NetSurf cookies file.\n"
 		"#\n"
@@ -4607,22 +4607,22 @@ nserror urldb_save_cookies(const char *filename)
 		cookie_file_version);
 	fprintf(fp, "Version:\t%d\n", cookie_file_version);
 
-	urldb_save_cookie_hosts(fp, &db_root);
+	urldb_save_cookie_hosts(fp, &db_வேர்);
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void urldb_dump(void)
+வெறுமை urldb_dump(வெறுமை)
 {
-	int i;
+	முழு i;
 
-	urldb_dump_hosts(&db_root);
+	urldb_dump_hosts(&db_வேர்);
 
-	for (i = 0; i != NUM_SEARCH_TREES; i++) {
-		urldb_dump_search(search_trees[i], 0);
+	க்கு (i = 0; i != இலக்கம்_தேடல்_TREES; i++) {
+		urldb_dump_தேடல்(தேடல்_trees[i], 0);
 	}
 }

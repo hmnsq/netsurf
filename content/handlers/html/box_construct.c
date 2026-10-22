@@ -25,71 +25,71 @@
  * Implementation of conversion from DOM tree to box tree.
  */
 
-#include <string.h>
-#include <dom/dom.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <dom/dom.h>
 
-#include "utils/errors.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/talloc.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "netsurf/misc.h"
-#include "css/select.h"
-#include "desktop/gui_internal.h"
+#அந்தர்பாவ "utils/errors.h"
+#அந்தர்பாவ "utils/nsoption.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/talloc.h"
+#அந்தர்பாவ "utils/string.h"
+#அந்தர்பாவ "utils/ascii.h"
+#அந்தர்பாவ "utils/nsurl.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "netsurf/misc.h"
+#அந்தர்பாவ "css/select.h"
+#அந்தர்பாவ "desktop/gui_internal.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_construct.h"
-#include "html/box_special.h"
-#include "html/box_normalise.h"
-#include "html/form_internal.h"
+#அந்தர்பாவ "html/private.h"
+#அந்தர்பாவ "html/object.h"
+#அந்தர்பாவ "html/box.h"
+#அந்தர்பாவ "html/box_manipulate.h"
+#அந்தர்பாவ "html/box_construct.h"
+#அந்தர்பாவ "html/box_special.h"
+#அந்தர்பாவ "html/box_normalise.h"
+#அந்தர்பாவ "html/form_internal.h"
 
 /**
  * Context for box tree construction
  */
-struct box_construct_ctx {
+கட்டமைப்பு box_construct_ctx {
 	html_content *content;		/**< Content we're constructing for */
 
-	dom_node *n;			/**< Current node to process */
+	dom_முனை *n;			/**< Current node to process */
 
-	struct box *root_box;		/**< Root box in the tree */
+	கட்டமைப்பு box *வேர்_box;		/**< Root box in the tree */
 
 	box_construct_complete_cb cb;	/**< Callback to invoke on completion */
 
-	int *bctx;			/**< talloc context */
+	முழு *bctx;			/**< talloc context */
 };
 
 /**
  * Transient properties for construction of current node
  */
-struct box_construct_props {
+கட்டமைப்பு box_construct_props {
 	/** Style from which to inherit, or NULL if none */
-	const css_computed_style *parent_style;
+	மாறிலி css_computed_style *parent_style;
 	/** Current link target, or NULL if none */
-	struct nsurl *href;
+	கட்டமைப்பு nsurl *href;
 	/** Current frame target, or NULL if none */
-	const char *target;
+	மாறிலி எழுத்து *target;
 	/** Current title attribute, or NULL if none */
-	const char *title;
+	மாறிலி எழுத்து *title;
 	/** Identity of the current block-level container */
-	struct box *containing_block;
+	கட்டமைப்பு box *containing_block;
 	/** Current container for inlines, or NULL if none
 	 * \note If non-NULL, will be the last child of containing_block */
-	struct box *inline_container;
+	கட்டமைப்பு box *inline_container;
 	/** Whether the current node is the root of the DOM tree */
-	bool node_is_root;
+	bool முனை_is_வேர்;
 };
 
-static const content_type image_types = CONTENT_IMAGE;
+நிலையான மாறிலி content_type image_types = CONTENT_IMAGE;
 
 /* mapping from CSS display to box type
  * this table must be in sync with libcss' css_display enum */
-static const box_type box_map[] = {
+நிலையான மாறிலி box_type box_map[] = {
 	BOX_BLOCK,           /* CSS_DISPLAY_INHERIT */
 	BOX_INLINE,          /* CSS_DISPLAY_INLINE */
 	BOX_BLOCK,           /* CSS_DISPLAY_BLOCK */
@@ -120,29 +120,29 @@ static const box_type box_map[] = {
  * \param n node to check
  * \return true if node is root else false.
  */
-static inline bool box_is_root(dom_node *n)
+நிலையான உள்வரி bool box_is_வேர்(dom_முனை *n)
 {
-	dom_node *parent;
-	dom_node_type type;
+	dom_முனை *parent;
+	dom_முனை_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_முனை_get_parent_முனை(n, &parent);
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு false;
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	எனில் (parent != வெற்று) {
+		err = dom_முனை_get_முனை_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_முனை_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return false;
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு false;
 
-		if (type != DOM_DOCUMENT_NODE)
-			return false;
+		எனில் (type != DOM_DOCUMENT_முனை)
+			திரும்பு false;
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 /**
@@ -151,61 +151,61 @@ static inline bool box_is_root(dom_node *n)
  * \param n      Current DOM node to convert
  * \param props  Property object to populate
  */
-static void
-box_extract_properties(dom_node *n, struct box_construct_props *props)
+நிலையான வெறுமை
+box_extract_properties(dom_முனை *n, கட்டமைப்பு box_construct_props *props)
 {
-	memset(props, 0, sizeof(*props));
+	memset(props, 0, அளவு(*props));
 
-	props->node_is_root = box_is_root(n);
+	props->முனை_is_வேர் = box_is_வேர்(n);
 
 	/* Extract properties from containing DOM node */
-	if (props->node_is_root == false) {
-		dom_node *current_node = n;
-		dom_node *parent_node = NULL;
-		struct box *parent_box;
+	எனில் (props->முனை_is_வேர் == false) {
+		dom_முனை *current_முனை = n;
+		dom_முனை *parent_முனை = வெற்று;
+		கட்டமைப்பு box *parent_box;
 		dom_exception err;
 
 		/* Find ancestor node containing parent box */
-		while (true) {
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL)
-				break;
+		போது (true) {
+			err = dom_முனை_get_parent_முனை(current_முனை,
+					&parent_முனை);
+			எனில் (err != DOM_NO_ERR || parent_முனை == வெற்று)
+				நிறுத்து;
 
-			parent_box = box_for_node(parent_node);
+			parent_box = box_for_முனை(parent_முனை);
 
-			if (parent_box != NULL) {
+			எனில் (parent_box != வெற்று) {
 				props->parent_style = parent_box->style;
 				props->href = parent_box->href;
 				props->target = parent_box->target;
 				props->title = parent_box->title;
 
-				dom_node_unref(parent_node);
-				break;
-			} else {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				current_node = parent_node;
-				parent_node = NULL;
+				dom_முனை_unref(parent_முனை);
+				நிறுத்து;
+			} இல்லையெனில் {
+				எனில் (current_முனை != n)
+					dom_முனை_unref(current_முனை);
+				current_முனை = parent_முனை;
+				parent_முனை = வெற்று;
 			}
 		}
 
 		/* Find containing block (may be parent) */
-		while (true) {
-			struct box *b;
+		போது (true) {
+			கட்டமைப்பு box *b;
 
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL) {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				break;
+			err = dom_முனை_get_parent_முனை(current_முனை,
+					&parent_முனை);
+			எனில் (err != DOM_NO_ERR || parent_முனை == வெற்று) {
+				எனில் (current_முனை != n)
+					dom_முனை_unref(current_முனை);
+				நிறுத்து;
 			}
 
-			if (current_node != n)
-				dom_node_unref(current_node);
+			எனில் (current_முனை != n)
+				dom_முனை_unref(current_முனை);
 
-			b = box_for_node(parent_node);
+			b = box_for_முனை(parent_முனை);
 
 			/* Children of nodes that created an inline box
 			 * will generate boxes which are attached as
@@ -213,22 +213,22 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
 			 * parent node. Note, however, that we'll still
 			 * use the parent node's styling as the parent
 			 * style, above. */
-			if (b != NULL && b->type != BOX_INLINE &&
+			எனில் (b != வெற்று && b->type != BOX_INLINE &&
 					b->type != BOX_BR) {
 				props->containing_block = b;
 
-				dom_node_unref(parent_node);
-				break;
-			} else {
-				current_node = parent_node;
-				parent_node = NULL;
+				dom_முனை_unref(parent_முனை);
+				நிறுத்து;
+			} இல்லையெனில் {
+				current_முனை = parent_முனை;
+				parent_முனை = வெற்று;
 			}
 		}
 	}
 
 	/* Compute current inline container, if any */
-	if (props->containing_block != NULL &&
-			props->containing_block->last != NULL &&
+	எனில் (props->containing_block != வெற்று &&
+			props->containing_block->last != வெற்று &&
 			props->containing_block->last->type ==
 				BOX_INLINE_CONTAINER)
 		props->inline_container = props->containing_block->last;
@@ -244,29 +244,29 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
  * \param  n               node in xml tree
  * \return  the new style, or NULL on memory exhaustion
  */
-static css_select_results *
+நிலையான css_select_results *
 box_get_style(html_content *c,
-	      const css_computed_style *parent_style,
-	      const css_computed_style *root_style,
-	      dom_node *n)
+	      மாறிலி css_computed_style *parent_style,
+	      மாறிலி css_computed_style *வேர்_style,
+	      dom_முனை *n)
 {
-	dom_string *s = NULL;
-	css_stylesheet *inline_style = NULL;
+	dom_string *s = வெற்று;
+	css_stylesheet *inline_style = வெற்று;
 	css_select_results *styles;
 	nscss_select_ctx ctx;
 
 	/* Firstly, construct inline stylesheet, if any */
-	if (nsoption_bool(author_level_css)) {
+	எனில் (nsoption_bool(author_level_css)) {
 		dom_exception err;
 		err = dom_element_get_attribute(n, corestring_dom_style, &s);
-		if (err != DOM_NO_ERR) {
-			return NULL;
+		எனில் (err != DOM_NO_ERR) {
+			திரும்பு வெற்று;
 		}
 	}
 
-	if (s != NULL) {
+	எனில் (s != வெற்று) {
 		inline_style = nscss_create_inline_style(
-				(const uint8_t *) dom_string_data(s),
+				(மாறிலி uint8_t *) dom_string_data(s),
 				dom_string_byte_length(s),
 				c->encoding,
 				nsurl_access(c->base_url),
@@ -274,8 +274,8 @@ box_get_style(html_content *c,
 
 		dom_string_unref(s);
 
-		if (inline_style == NULL)
-			return NULL;
+		எனில் (inline_style == வெற்று)
+			திரும்பு வெற்று;
 	}
 
 	/* Populate selection context */
@@ -283,7 +283,7 @@ box_get_style(html_content *c,
 	ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
 	ctx.base_url = c->base_url;
 	ctx.universal = c->universal;
-	ctx.root_style = root_style;
+	ctx.வேர்_style = வேர்_style;
 	ctx.parent_style = parent_style;
 
 	/* Select style for element */
@@ -291,10 +291,10 @@ box_get_style(html_content *c,
 			inline_style);
 
 	/* No longer need inline style */
-	if (inline_style != NULL)
+	எனில் (inline_style != வெற்று)
 		css_stylesheet_destroy(inline_style);
 
-	return styles;
+	திரும்பு styles;
 }
 
 
@@ -309,46 +309,46 @@ box_get_style(html_content *c,
  * \todo This is currently incomplete. It just does enough to support
  * the clearfix hack. (http://www.positioniseverything.net/easyclearing.html )
  */
-static void
-box_construct_generate(dom_node *n,
+நிலையான வெறுமை
+box_construct_generate(dom_முனை *n,
 		       html_content *content,
-		       struct box *box,
-		       const css_computed_style *style)
+		       கட்டமைப்பு box *box,
+		       மாறிலி css_computed_style *style)
 {
-	struct box *gen = NULL;
-	enum css_display_e computed_display;
-	const css_computed_content_item *c_item;
+	கட்டமைப்பு box *gen = வெற்று;
+	எண்ணிக்கை css_display_e computed_display;
+	மாறிலி css_computed_content_item *c_item;
 
 	/* Nothing to generate if the parent box is not a block */
-	if (box->type != BOX_BLOCK)
-		return;
+	எனில் (box->type != BOX_BLOCK)
+		திரும்பு;
 
 	/* To determine if an element has a pseudo element, we select
 	 * for it and test to see if the returned style's content
 	 * property is set to normal. */
-	if (style == NULL ||
+	எனில் (style == வெற்று ||
 			css_computed_content(style, &c_item) ==
 			CSS_CONTENT_NORMAL) {
 		/* No pseudo element */
-		return;
+		திரும்பு;
 	}
 
 	/* create box for this element */
-	computed_display = ns_computed_display(style, box_is_root(n));
-	if (computed_display == CSS_DISPLAY_BLOCK ||
+	computed_display = ns_computed_display(style, box_is_வேர்(n));
+	எனில் (computed_display == CSS_DISPLAY_BLOCK ||
 			computed_display == CSS_DISPLAY_TABLE) {
 		/* currently only support block level boxes */
 
 		/** \todo Not wise to drop const from the computed style */
-		gen = box_create(NULL, (css_computed_style *) style,
-				false, NULL, NULL, NULL, NULL, content->bctx);
-		if (gen == NULL) {
-			return;
+		gen = box_create(வெற்று, (css_computed_style *) style,
+				false, வெற்று, வெற்று, வெற்று, வெற்று, content->bctx);
+		எனில் (gen == வெற்று) {
+			திரும்பு;
 		}
 
 		/* set box type from computed display */
 		gen->type = box_map[ns_computed_display(
-				style, box_is_root(n))];
+				style, box_is_வேர்(n))];
 
 		box_add_child(box, gen);
 	}
@@ -364,56 +364,56 @@ box_construct_generate(dom_node *n,
  * \param parent   Current block-level container
  * \return true on success, false on memory exhaustion
  */
-static bool
-box_construct_marker(struct box *box,
-		     const char *title,
-		     struct box_construct_ctx *ctx,
-		     struct box *parent)
+நிலையான bool
+box_construct_marker(கட்டமைப்பு box *box,
+		     மாறிலி எழுத்து *title,
+		     கட்டமைப்பு box_construct_ctx *ctx,
+		     கட்டமைப்பு box *parent)
 {
 	lwc_string *image_uri;
-	struct box *marker;
-	enum css_list_style_type_e list_style_type;
+	கட்டமைப்பு box *marker;
+	எண்ணிக்கை css_list_style_type_e list_style_type;
 
-	marker = box_create(NULL, box->style, false, NULL, NULL, title,
-			NULL, ctx->bctx);
-	if (marker == false)
-		return false;
+	marker = box_create(வெற்று, box->style, false, வெற்று, வெற்று, title,
+			வெற்று, ctx->bctx);
+	எனில் (marker == false)
+		திரும்பு false;
 
 	marker->type = BOX_BLOCK;
 
 	list_style_type = css_computed_list_style_type(box->style);
 
 	/** \todo marker content (list-style-type) */
-	switch (list_style_type) {
-	case CSS_LIST_STYLE_TYPE_DISC:
+	தேர்வு (list_style_type) {
+	நிலை CSS_LIST_STYLE_TYPE_DISC:
 		/* 2022 BULLET */
-		marker->text = (char *) "\342\200\242";
+		marker->text = (எழுத்து *) "\342\200\242";
 		marker->length = 3;
-		break;
+		நிறுத்து;
 
-	case CSS_LIST_STYLE_TYPE_CIRCLE:
+	நிலை CSS_LIST_STYLE_TYPE_CIRCLE:
 		/* 25CB WHITE CIRCLE */
-		marker->text = (char *) "\342\227\213";
+		marker->text = (எழுத்து *) "\342\227\213";
 		marker->length = 3;
-		break;
+		நிறுத்து;
 
-	case CSS_LIST_STYLE_TYPE_SQUARE:
+	நிலை CSS_LIST_STYLE_TYPE_SQUARE:
 		/* 25AA BLACK SMALL SQUARE */
-		marker->text = (char *) "\342\226\252";
+		marker->text = (எழுத்து *) "\342\226\252";
 		marker->length = 3;
-		break;
+		நிறுத்து;
 
-	default:
+	இயல்பு:
 		/* Numerical list counters get handled in layout. */
 		/* Fall through. */
-	case CSS_LIST_STYLE_TYPE_NONE:
-		marker->text = NULL;
+	நிலை CSS_LIST_STYLE_TYPE_NONE:
+		marker->text = வெற்று;
 		marker->length = 0;
-		break;
+		நிறுத்து;
 	}
 
-	if (css_computed_list_style_image(box->style, &image_uri) == CSS_LIST_STYLE_IMAGE_URI &&
-	    (image_uri != NULL) &&
+	எனில் (css_computed_list_style_image(box->style, &image_uri) == CSS_LIST_STYLE_IMAGE_URI &&
+	    (image_uri != வெற்று) &&
 	    (nsoption_bool(foreground_images) == true)) {
 		nsurl *url;
 		nserror error;
@@ -423,16 +423,16 @@ box_construct_marker(struct box *box,
 		 *       nsurl_joined it.  Can this be improved?
 		 *       For now, just making another nsurl. */
 		error = nsurl_create(lwc_string_data(image_uri), &url);
-		if (error != NSERROR_OK)
-			return false;
+		எனில் (error != NSERROR_OK)
+			திரும்பு false;
 
-		if (html_fetch_object(ctx->content,
+		எனில் (html_fetch_object(ctx->content,
 				      url,
 				      marker,
 				      image_types,
 				      false) ==	false) {
 			nsurl_unref(url);
-			return false;
+			திரும்பு false;
 		}
 		nsurl_unref(url);
 	}
@@ -440,24 +440,24 @@ box_construct_marker(struct box *box,
 	box->list_marker = marker;
 	marker->parent = box;
 
-	return true;
+	திரும்பு true;
 }
 
-static inline bool box__style_is_float(const struct box *box)
+நிலையான உள்வரி bool box__style_is_float(மாறிலி கட்டமைப்பு box *box)
 {
-	return css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-	       css_computed_float(box->style) == CSS_FLOAT_RIGHT;
+	திரும்பு css_computed_float(box->style) == CSS_FLOAT_இடது ||
+	       css_computed_float(box->style) == CSS_FLOAT_வலது;
 }
 
-static inline bool box__is_flex(const struct box *box)
+நிலையான உள்வரி bool box__is_flex(மாறிலி கட்டமைப்பு box *box)
 {
-	return box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX;
+	திரும்பு box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX;
 }
 
-static inline bool box__containing_block_is_flex(
-		const struct box_construct_props *props)
+நிலையான உள்வரி bool box__containing_block_is_flex(
+		மாறிலி கட்டமைப்பு box_construct_props *props)
 {
-	return props->containing_block != NULL &&
+	திரும்பு props->containing_block != வெற்று &&
 	       box__is_flex(props->containing_block);
 }
 
@@ -468,69 +468,69 @@ static inline bool box__containing_block_is_flex(
  * \param convert_children  Whether to convert children
  * \return  true on success, false on memory exhaustion
  */
-static bool
-box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
+நிலையான bool
+box_construct_element(கட்டமைப்பு box_construct_ctx *ctx, bool *convert_children)
 {
 	dom_string *title0, *s;
-	lwc_string *id = NULL;
-	enum css_display_e css_display;
-	struct box *box = NULL, *old_box;
-	css_select_results *styles = NULL;
+	lwc_string *id = வெற்று;
+	எண்ணிக்கை css_display_e css_display;
+	கட்டமைப்பு box *box = வெற்று, *old_box;
+	css_select_results *styles = வெற்று;
 	lwc_string *bgimage_uri;
 	dom_exception err;
-	struct box_construct_props props;
-	const css_computed_style *root_style = NULL;
+	கட்டமைப்பு box_construct_props props;
+	மாறிலி css_computed_style *வேர்_style = வெற்று;
 
-	assert(ctx->n != NULL);
+	ப்ரதிஜ்ஞா(ctx->n != வெற்று);
 
 	box_extract_properties(ctx->n, &props);
 
-	if (props.containing_block != NULL) {
+	எனில் (props.containing_block != வெற்று) {
 		/* In case the containing block is a pre block, we clear
 		 * the PRE_STRIP flag since it is not used if we follow
 		 * the pre with a tag */
 		props.containing_block->flags &= ~PRE_STRIP;
 	}
 
-	if (props.node_is_root == false) {
-		root_style = ctx->root_box->style;
+	எனில் (props.முனை_is_வேர் == false) {
+		வேர்_style = ctx->வேர்_box->style;
 	}
 
-	styles = box_get_style(ctx->content, props.parent_style, root_style,
+	styles = box_get_style(ctx->content, props.parent_style, வேர்_style,
 			ctx->n);
-	if (styles == NULL)
-		return false;
+	எனில் (styles == வெற்று)
+		திரும்பு false;
 
 	/* Extract title attribute, if present */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_title, &title0);
-	if (err != DOM_NO_ERR)
-		return false;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு false;
 
-	if (title0 != NULL) {
-		char *t = squash_whitespace(dom_string_data(title0));
+	எனில் (title0 != வெற்று) {
+		எழுத்து *t = squash_whitespace(dom_string_data(title0));
 
 		dom_string_unref(title0);
 
-		if (t == NULL)
-			return false;
+		எனில் (t == வெற்று)
+			திரும்பு false;
 
 		props.title = talloc_strdup(ctx->bctx, t);
 
-		free(t);
+		விடுவி(t);
 
-		if (props.title == NULL)
-			return false;
+		எனில் (props.title == வெற்று)
+			திரும்பு false;
 	}
 
 	/* Extract id attribute, if present */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_id, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு false;
 
-	if (s != NULL) {
+	எனில் (s != வெற்று) {
 		err = dom_string_intern(s, &id);
-		if (err != DOM_NO_ERR)
-			id = NULL;
+		எனில் (err != DOM_NO_ERR)
+			id = வெற்று;
 
 		dom_string_unref(s);
 	}
@@ -538,38 +538,38 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	box = box_create(styles, styles->styles[CSS_PSEUDO_ELEMENT_NONE], false,
 			props.href, props.target, props.title, id,
 			ctx->bctx);
-	if (box == NULL)
-		return false;
+	எனில் (box == வெற்று)
+		திரும்பு false;
 
 	/* If this is the root box, add it to the context */
-	if (props.node_is_root)
-		ctx->root_box = box;
+	எனில் (props.முனை_is_வேர்)
+		ctx->வேர்_box = box;
 
 	/* Deal with colspan/rowspan */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_colspan, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு false;
 
-	if (s != NULL) {
-		const char *val = dom_string_data(s);
+	எனில் (s != வெற்று) {
+		மாறிலி எழுத்து *val = dom_string_data(s);
 
 		/* Convert to a number, clamping to [1,1000] according to 4.9.11 */
-		if ('0' <= val[0] && val[0] <= '9')
-			box->columns = clamp(strtol(val, NULL, 10), 1, 1000);
+		எனில் ('0' <= val[0] && val[0] <= '9')
+			box->columns = clamp(strtol(val, வெற்று, 10), 1, 1000);
 
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(ctx->n, corestring_dom_rowspan, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு false;
 
-	if (s != NULL) {
-		const char *val = dom_string_data(s);
+	எனில் (s != வெற்று) {
+		மாறிலி எழுத்து *val = dom_string_data(s);
 
 		/* Convert to a number, clamping to [0,65534] according to 4.9.11 */
-		if ('0' <= val[0] && val[0] <= '9')
-			box->rows = clamp(strtol(val, NULL, 10), 0, 65534);
+		எனில் ('0' <= val[0] && val[0] <= '9')
+			box->rows = clamp(strtol(val, வெற்று, 10), 0, 65534);
 
 		dom_string_unref(s);
 	}
@@ -577,7 +577,7 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	css_display = ns_computed_display_static(box->style);
 
 	/* Set box type from computed display */
-	if ((css_computed_position(box->style) == CSS_POSITION_ABSOLUTE ||
+	எனில் ((css_computed_position(box->style) == CSS_POSITION_ABSOLUTE ||
 	     css_computed_position(box->style) == CSS_POSITION_FIXED) &&
 			(css_display == CSS_DISPLAY_INLINE ||
 			 css_display == CSS_DISPLAY_INLINE_BLOCK ||
@@ -588,55 +588,55 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		 * inline container as if they were not absolutely positioned.
 		 * Layout expects and handles this. */
 		box->type = box_map[CSS_DISPLAY_INLINE_BLOCK];
-	} else if (props.node_is_root) {
+	} இல்லையெனில் எனில் (props.முனை_is_வேர்) {
 		/* Special case for root element: force it to BLOCK, or the
 		 * rest of the layout will break. */
 		box->type = BOX_BLOCK;
-	} else {
+	} இல்லையெனில் {
 		/* Normal mapping */
 		box->type = box_map[ns_computed_display(box->style,
-				props.node_is_root)];
+				props.முனை_is_வேர்)];
 
-		if (props.containing_block->type == BOX_FLEX ||
+		எனில் (props.containing_block->type == BOX_FLEX ||
 		    props.containing_block->type == BOX_INLINE_FLEX) {
 			/* Blockification */
-			switch (box->type) {
-			case BOX_INLINE_FLEX:
+			தேர்வு (box->type) {
+			நிலை BOX_INLINE_FLEX:
 				box->type = BOX_FLEX;
-				break;
-			case BOX_INLINE_BLOCK:
+				நிறுத்து;
+			நிலை BOX_INLINE_BLOCK:
 				box->type = BOX_BLOCK;
-				break;
-			default:
-				break;
+				நிறுத்து;
+			இயல்பு:
+				நிறுத்து;
 			}
 		}
 	}
 
-	if (convert_special_elements(ctx->n,
+	எனில் (convert_special_elements(ctx->n,
 				     ctx->content,
 				     box,
 				     convert_children) == false) {
-		return false;
+		திரும்பு false;
 	}
 
 	/* Handle the :before pseudo element */
-	if (!(box->flags & IS_REPLACED)) {
+	எனில் (!(box->flags & IS_REPLACED)) {
 		box_construct_generate(ctx->n, ctx->content, box,
 				box->styles->styles[CSS_PSEUDO_ELEMENT_BEFORE]);
 	}
 
-	if (box->type == BOX_NONE || (ns_computed_display(box->style,
-			props.node_is_root) == CSS_DISPLAY_NONE &&
-			props.node_is_root == false)) {
+	எனில் (box->type == BOX_NONE || (ns_computed_display(box->style,
+			props.முனை_is_வேர்) == CSS_DISPLAY_NONE &&
+			props.முனை_is_வேர் == false)) {
 		css_select_results_destroy(styles);
-		box->styles = NULL;
-		box->style = NULL;
+		box->styles = வெற்று;
+		box->style = வெற்று;
 
 		/* Invalidate associated gadget, if any */
-		if (box->gadget != NULL) {
-			box->gadget->box = NULL;
-			box->gadget = NULL;
+		எனில் (box->gadget != வெற்று) {
+			box->gadget->box = வெற்று;
+			box->gadget = வெற்று;
 		}
 
 		/* Can't do this, because the lifetimes of boxes and gadgets
@@ -646,37 +646,37 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 
 		*convert_children = false;
 
-		return true;
+		திரும்பு true;
 	}
 
 	/* Attach DOM node to box */
-	err = dom_node_set_user_data(ctx->n,
-			corestring_dom___ns_key_box_node_data, box, NULL,
-			(void *) &old_box);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_முனை_set_user_data(ctx->n,
+			corestring_dom_ns_சாவி_box_முனை_data, box, வெற்று,
+			(வெறுமை *) &old_box);
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு false;
 
 	/* Attach box to DOM node */
-	box->node = dom_node_ref(ctx->n);
+	box->முனை = dom_முனை_ref(ctx->n);
 
-	if (props.inline_container == NULL &&
+	எனில் (props.inline_container == வெற்று &&
 			(box->type == BOX_INLINE ||
 			 box->type == BOX_BR ||
 			 box->type == BOX_INLINE_BLOCK ||
 			 box->type == BOX_INLINE_FLEX ||
 			 (box__style_is_float(box) &&
 			  !box__containing_block_is_flex(&props))) &&
-			props.node_is_root == false) {
+			props.முனை_is_வேர் == false) {
 		/* Found an inline child of a block without a current container
 		 * (i.e. this box is the first child of its parent, or was
 		 * preceded by block-level siblings) */
-		assert(props.containing_block != NULL &&
+		ப்ரதிஜ்ஞா(props.containing_block != வெற்று &&
 				"Box must have containing block.");
 
-		props.inline_container = box_create(NULL, NULL, false, NULL,
-				NULL, NULL, NULL, ctx->bctx);
-		if (props.inline_container == NULL)
-			return false;
+		props.inline_container = box_create(வெற்று, வெற்று, false, வெற்று,
+				வெற்று, வெற்று, வெற்று, ctx->bctx);
+		எனில் (props.inline_container == வெற்று)
+			திரும்பு false;
 
 		props.inline_container->type = BOX_INLINE_CONTAINER;
 
@@ -684,8 +684,8 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	}
 
 	/* Kick off fetch for any background image */
-	if (css_computed_background_image(box->style, &bgimage_uri) ==
-			CSS_BACKGROUND_IMAGE_IMAGE && bgimage_uri != NULL &&
+	எனில் (css_computed_background_image(box->style, &bgimage_uri) ==
+			CSS_BACKGROUND_IMAGE_IMAGE && bgimage_uri != வெற்று &&
 			nsoption_bool(background_images) == true) {
 		nsurl *url;
 		nserror error;
@@ -695,70 +695,70 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		 *       nsurl_joined it.  Can this be improved?
 		 *       For now, just making another nsurl. */
 		error = nsurl_create(lwc_string_data(bgimage_uri), &url);
-		if (error == NSERROR_OK) {
+		எனில் (error == NSERROR_OK) {
 			/* Fetch image if we got a valid URL */
-			if (html_fetch_object(ctx->content,
+			எனில் (html_fetch_object(ctx->content,
 					      url,
 					      box,
 					      image_types,
 					      true) == false) {
 				nsurl_unref(url);
-				return false;
+				திரும்பு false;
 			}
 			nsurl_unref(url);
 		}
 	}
 
-	if (*convert_children)
+	எனில் (*convert_children)
 		box->flags |= CONVERT_CHILDREN;
 
-	if (box->type == BOX_INLINE || box->type == BOX_BR ||
+	எனில் (box->type == BOX_INLINE || box->type == BOX_BR ||
 			box->type == BOX_INLINE_FLEX ||
 			box->type == BOX_INLINE_BLOCK) {
 		/* Inline container must exist, as we'll have
 		 * created it above if it didn't */
-		assert(props.inline_container != NULL);
+		ப்ரதிஜ்ஞா(props.inline_container != வெற்று);
 
 		box_add_child(props.inline_container, box);
-	} else {
-		if (ns_computed_display(box->style, props.node_is_root) ==
+	} இல்லையெனில் {
+		எனில் (ns_computed_display(box->style, props.முனை_is_வேர்) ==
 				CSS_DISPLAY_LIST_ITEM) {
 			/* List item: compute marker */
-			if (box_construct_marker(box, props.title, ctx,
+			எனில் (box_construct_marker(box, props.title, ctx,
 					props.containing_block) == false)
-				return false;
+				திரும்பு false;
 		}
 
-		if (props.node_is_root == false &&
+		எனில் (props.முனை_is_வேர் == false &&
 				box__containing_block_is_flex(&props) == false &&
 				(css_computed_float(box->style) ==
-				CSS_FLOAT_LEFT ||
+				CSS_FLOAT_இடது ||
 				css_computed_float(box->style) ==
-				CSS_FLOAT_RIGHT)) {
+				CSS_FLOAT_வலது)) {
 			/* Float: insert a float between the parent and box. */
-			struct box *flt = box_create(NULL, NULL, false,
+			கட்டமைப்பு box *flt = box_create(வெற்று, வெற்று, false,
 					props.href, props.target, props.title,
-					NULL, ctx->bctx);
-			if (flt == NULL)
-				return false;
+					வெற்று, ctx->bctx);
+			எனில் (flt == வெற்று)
+				திரும்பு false;
 
-			if (css_computed_float(box->style) == CSS_FLOAT_LEFT)
-				flt->type = BOX_FLOAT_LEFT;
-			else
-				flt->type = BOX_FLOAT_RIGHT;
+			எனில் (css_computed_float(box->style) == CSS_FLOAT_இடது)
+				flt->type = BOX_FLOAT_இடது;
+			இல்லையெனில்
+				flt->type = BOX_FLOAT_வலது;
 
 			box_add_child(props.inline_container, flt);
 			box_add_child(flt, box);
-		} else {
+		} இல்லையெனில் {
 			/* Non-floated block-level box: add to containing block
 			 * if there is one. If we're the root box, then there
 			 * won't be. */
-			if (props.containing_block != NULL)
+			எனில் (props.containing_block != வெற்று)
 				box_add_child(props.containing_block, box);
 		}
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -770,37 +770,37 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
  *
  * This will be called after all children of an element have been processed
  */
-static void box_construct_element_after(dom_node *n, html_content *content)
+நிலையான வெறுமை box_construct_element_after(dom_முனை *n, html_content *content)
 {
-	struct box_construct_props props;
-	struct box *box = box_for_node(n);
+	கட்டமைப்பு box_construct_props props;
+	கட்டமைப்பு box *box = box_for_முனை(n);
 
-	assert(box != NULL);
+	ப்ரதிஜ்ஞா(box != வெற்று);
 
 	box_extract_properties(n, &props);
 
-	if (box->type == BOX_INLINE || box->type == BOX_BR) {
+	எனில் (box->type == BOX_INLINE || box->type == BOX_BR) {
 		/* Insert INLINE_END into containing block */
-		struct box *inline_end;
+		கட்டமைப்பு box *inline_end;
 		bool has_children;
 		dom_exception err;
 
-		err = dom_node_has_child_nodes(n, &has_children);
-		if (err != DOM_NO_ERR)
-			return;
+		err = dom_முனை_has_child_nodes(n, &has_children);
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு;
 
-		if (has_children == false ||
+		எனில் (has_children == false ||
 				(box->flags & CONVERT_CHILDREN) == 0) {
 			/* No children, or didn't want children converted */
-			return;
+			திரும்பு;
 		}
 
-		if (props.inline_container == NULL) {
+		எனில் (props.inline_container == வெற்று) {
 			/* Create inline container if we don't have one */
-			props.inline_container = box_create(NULL, NULL, false,
-					NULL, NULL, NULL, NULL, content->bctx);
-			if (props.inline_container == NULL)
-				return;
+			props.inline_container = box_create(வெற்று, வெற்று, false,
+					வெற்று, வெற்று, வெற்று, வெற்று, content->bctx);
+			எனில் (props.inline_container == வெற்று)
+				திரும்பு;
 
 			props.inline_container->type = BOX_INLINE_CONTAINER;
 
@@ -808,21 +808,21 @@ static void box_construct_element_after(dom_node *n, html_content *content)
 					props.inline_container);
 		}
 
-		inline_end = box_create(NULL, box->style, false,
+		inline_end = box_create(வெற்று, box->style, false,
 				box->href, box->target, box->title,
-				box->id == NULL ? NULL :
+				box->id == வெற்று ? வெற்று :
 				lwc_string_ref(box->id), content->bctx);
-		if (inline_end != NULL) {
+		எனில் (inline_end != வெற்று) {
 			inline_end->type = BOX_INLINE_END;
 
-			assert(props.inline_container != NULL);
+			ப்ரதிஜ்ஞா(props.inline_container != வெற்று);
 
 			box_add_child(props.inline_container, inline_end);
 
 			box->inline_end = inline_end;
 			inline_end->inline_end = box;
 		}
-	} else if (!(box->flags & IS_REPLACED)) {
+	} இல்லையெனில் எனில் (!(box->flags & IS_REPLACED)) {
 		/* Handle the :after pseudo element */
 		box_construct_generate(n, content, box,
 				box->styles->styles[CSS_PSEUDO_ELEMENT_AFTER]);
@@ -841,108 +841,108 @@ static void box_construct_element_after(dom_node *n, html_content *content)
  *
  * \note \a n will be unreferenced
  */
-static dom_node *
-next_node(dom_node *n, html_content *content, bool convert_children)
+நிலையான dom_முனை *
+next_முனை(dom_முனை *n, html_content *content, bool convert_children)
 {
-	dom_node *next = NULL;
+	dom_முனை *next = வெற்று;
 	bool has_children;
 	dom_exception err;
 
-	err = dom_node_has_child_nodes(n, &has_children);
-	if (err != DOM_NO_ERR) {
-		dom_node_unref(n);
-		return NULL;
+	err = dom_முனை_has_child_nodes(n, &has_children);
+	எனில் (err != DOM_NO_ERR) {
+		dom_முனை_unref(n);
+		திரும்பு வெற்று;
 	}
 
-	if (convert_children && has_children) {
-		err = dom_node_get_first_child(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return NULL;
+	எனில் (convert_children && has_children) {
+		err = dom_முனை_get_first_child(n, &next);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு வெற்று;
 		}
-		dom_node_unref(n);
-	} else {
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return NULL;
+		dom_முனை_unref(n);
+	} இல்லையெனில் {
+		err = dom_முனை_get_next_sibling(n, &next);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு வெற்று;
 		}
 
-		if (next != NULL) {
-			if (box_for_node(n) != NULL)
+		எனில் (next != வெற்று) {
+			எனில் (box_for_முனை(n) != வெற்று)
 				box_construct_element_after(n, content);
-			dom_node_unref(n);
-		} else {
-			if (box_for_node(n) != NULL)
+			dom_முனை_unref(n);
+		} இல்லையெனில் {
+			எனில் (box_for_முனை(n) != வெற்று)
 				box_construct_element_after(n, content);
 
-			while (box_is_root(n) == false) {
-				dom_node *parent = NULL;
-				dom_node *parent_next = NULL;
+			போது (box_is_வேர்(n) == false) {
+				dom_முனை *parent = வெற்று;
+				dom_முனை *parent_next = வெற்று;
 
-				err = dom_node_get_parent_node(n, &parent);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
-					return NULL;
+				err = dom_முனை_get_parent_முனை(n, &parent);
+				எனில் (err != DOM_NO_ERR) {
+					dom_முனை_unref(n);
+					திரும்பு வெற்று;
 				}
 
-				assert(parent != NULL);
+				ப்ரதிஜ்ஞா(parent != வெற்று);
 
-				err = dom_node_get_next_sibling(parent,
+				err = dom_முனை_get_next_sibling(parent,
 						&parent_next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
-					return NULL;
+				எனில் (err != DOM_NO_ERR) {
+					dom_முனை_unref(parent);
+					dom_முனை_unref(n);
+					திரும்பு வெற்று;
 				}
 
-				if (parent_next != NULL) {
-					dom_node_unref(parent_next);
-					dom_node_unref(parent);
-					break;
+				எனில் (parent_next != வெற்று) {
+					dom_முனை_unref(parent_next);
+					dom_முனை_unref(parent);
+					நிறுத்து;
 				}
 
-				dom_node_unref(n);
+				dom_முனை_unref(n);
 				n = parent;
-				parent = NULL;
+				parent = வெற்று;
 
-				if (box_for_node(n) != NULL) {
+				எனில் (box_for_முனை(n) != வெற்று) {
 					box_construct_element_after(
 							n, content);
 				}
 			}
 
-			if (box_is_root(n) == false) {
-				dom_node *parent = NULL;
+			எனில் (box_is_வேர்(n) == false) {
+				dom_முனை *parent = வெற்று;
 
-				err = dom_node_get_parent_node(n, &parent);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
-					return NULL;
+				err = dom_முனை_get_parent_முனை(n, &parent);
+				எனில் (err != DOM_NO_ERR) {
+					dom_முனை_unref(n);
+					திரும்பு வெற்று;
 				}
 
-				assert(parent != NULL);
+				ப்ரதிஜ்ஞா(parent != வெற்று);
 
-				err = dom_node_get_next_sibling(parent, &next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
-					return NULL;
+				err = dom_முனை_get_next_sibling(parent, &next);
+				எனில் (err != DOM_NO_ERR) {
+					dom_முனை_unref(parent);
+					dom_முனை_unref(n);
+					திரும்பு வெற்று;
 				}
 
-				if (box_for_node(parent) != NULL) {
+				எனில் (box_for_முனை(parent) != வெற்று) {
 					box_construct_element_after(parent,
 							content);
 				}
 
-				dom_node_unref(parent);
+				dom_முனை_unref(parent);
 			}
 
-			dom_node_unref(n);
+			dom_முனை_unref(n);
 		}
 	}
 
-	return next;
+	திரும்பு next;
 }
 
 
@@ -953,33 +953,33 @@ next_node(dom_node *n, html_content *content, bool convert_children)
  * \param  len  length of s
  * \param  tt	transform type
  */
-static void
-box_text_transform(char *s, unsigned int len, enum css_text_transform_e tt)
+நிலையான வெறுமை
+box_text_transform(எழுத்து *s, unsigned முழு len, எண்ணிக்கை css_text_transform_e tt)
 {
-	unsigned int i;
-	if (len == 0)
-		return;
-	switch (tt) {
-		case CSS_TEXT_TRANSFORM_UPPERCASE:
-			for (i = 0; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80)
+	unsigned முழு i;
+	எனில் (len == 0)
+		திரும்பு;
+	தேர்வு (tt) {
+		நிலை CSS_TEXT_TRANSFORM_UPPERCASE:
+			க்கு (i = 0; i < len; ++i)
+				எனில் ((unsigned எழுத்து) s[i] < 0x80)
 					s[i] = ascii_to_upper(s[i]);
-			break;
-		case CSS_TEXT_TRANSFORM_LOWERCASE:
-			for (i = 0; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80)
+			நிறுத்து;
+		நிலை CSS_TEXT_TRANSFORM_LOWERCASE:
+			க்கு (i = 0; i < len; ++i)
+				எனில் ((unsigned எழுத்து) s[i] < 0x80)
 					s[i] = ascii_to_lower(s[i]);
-			break;
-		case CSS_TEXT_TRANSFORM_CAPITALIZE:
-			if ((unsigned char) s[0] < 0x80)
+			நிறுத்து;
+		நிலை CSS_TEXT_TRANSFORM_CAPITALIZE:
+			எனில் ((unsigned எழுத்து) s[0] < 0x80)
 				s[0] = ascii_to_upper(s[0]);
-			for (i = 1; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80 &&
+			க்கு (i = 1; i < len; ++i)
+				எனில் ((unsigned எழுத்து) s[i] < 0x80 &&
 						ascii_is_space(s[i - 1]))
 					s[i] = ascii_to_upper(s[i]);
-			break;
-		default:
-			break;
+			நிறுத்து;
+		இயல்பு:
+			நிறுத்து;
 	}
 }
 
@@ -990,60 +990,60 @@ box_text_transform(char *s, unsigned int len, enum css_text_transform_e tt)
  * \param  ctx  Tree construction context
  * \return  true on success, false on memory exhaustion
  */
-static bool box_construct_text(struct box_construct_ctx *ctx)
+நிலையான bool box_construct_text(கட்டமைப்பு box_construct_ctx *ctx)
 {
-	struct box_construct_props props;
-	struct box *box = NULL;
+	கட்டமைப்பு box_construct_props props;
+	கட்டமைப்பு box *box = வெற்று;
 	dom_string *content;
 	dom_exception err;
 
-	assert(ctx->n != NULL);
+	ப்ரதிஜ்ஞா(ctx->n != வெற்று);
 
 	box_extract_properties(ctx->n, &props);
 
-	assert(props.containing_block != NULL);
+	ப்ரதிஜ்ஞா(props.containing_block != வெற்று);
 
 	err = dom_characterdata_get_data(ctx->n, &content);
-	if (err != DOM_NO_ERR || content == NULL)
-		return false;
+	எனில் (err != DOM_NO_ERR || content == வெற்று)
+		திரும்பு false;
 
-	if (css_computed_white_space(props.parent_style) ==
+	எனில் (css_computed_white_space(props.parent_style) ==
 			CSS_WHITE_SPACE_NORMAL ||
 			css_computed_white_space(props.parent_style) ==
 			CSS_WHITE_SPACE_NOWRAP) {
-		char *text;
+		எழுத்து *text;
 
 		text = squash_whitespace(dom_string_data(content));
 
 		dom_string_unref(content);
 
-		if (text == NULL)
-			return false;
+		எனில் (text == வெற்று)
+			திரும்பு false;
 
 		/* if the text is just a space, combine it with the preceding
 		 * text node, if any */
-		if (text[0] == ' ' && text[1] == 0) {
-			if (props.inline_container != NULL) {
-				assert(props.inline_container->last != NULL);
+		எனில் (text[0] == ' ' && text[1] == 0) {
+			எனில் (props.inline_container != வெற்று) {
+				ப்ரதிஜ்ஞா(props.inline_container->last != வெற்று);
 
 				props.inline_container->last->space =
 						UNKNOWN_WIDTH;
 			}
 
-			free(text);
+			விடுவி(text);
 
-			return true;
+			திரும்பு true;
 		}
 
-		if (props.inline_container == NULL) {
+		எனில் (props.inline_container == வெற்று) {
 			/* Child of a block without a current container
 			 * (i.e. this box is the first child of its parent, or
 			 * was preceded by block-level siblings) */
-			props.inline_container = box_create(NULL, NULL, false,
-					NULL, NULL, NULL, NULL, ctx->bctx);
-			if (props.inline_container == NULL) {
-				free(text);
-				return false;
+			props.inline_container = box_create(வெற்று, வெற்று, false,
+					வெற்று, வெற்று, வெற்று, வெற்று, ctx->bctx);
+			எனில் (props.inline_container == வெற்று) {
+				விடுவி(text);
+				திரும்பு false;
 			}
 
 			props.inline_container->type = BOX_INLINE_CONTAINER;
@@ -1053,31 +1053,31 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 		}
 
 		/** \todo Dropping const here is not clever */
-		box = box_create(NULL,
+		box = box_create(வெற்று,
 				(css_computed_style *) props.parent_style,
 				false, props.href, props.target, props.title,
-				NULL, ctx->bctx);
-		if (box == NULL) {
-			free(text);
-			return false;
+				வெற்று, ctx->bctx);
+		எனில் (box == வெற்று) {
+			விடுவி(text);
+			திரும்பு false;
 		}
 
 		box->type = BOX_TEXT;
 
 		box->text = talloc_strdup(ctx->bctx, text);
-		free(text);
-		if (box->text == NULL)
-			return false;
+		விடுவி(text);
+		எனில் (box->text == வெற்று)
+			திரும்பு false;
 
 		box->length = strlen(box->text);
 
 		/* strip ending space char off */
-		if (box->length > 1 && box->text[box->length - 1] == ' ') {
+		எனில் (box->length > 1 && box->text[box->length - 1] == ' ') {
 			box->space = UNKNOWN_WIDTH;
 			box->length--;
 		}
 
-		if (css_computed_text_transform(props.parent_style) !=
+		எனில் (css_computed_text_transform(props.parent_style) !=
 				CSS_TEXT_TRANSFORM_NONE)
 			box_text_transform(box->text, box->length,
 				css_computed_text_transform(
@@ -1085,43 +1085,43 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 
 		box_add_child(props.inline_container, box);
 
-		if (box->text[0] == ' ') {
+		எனில் (box->text[0] == ' ') {
 			box->length--;
 
 			memmove(box->text, &box->text[1], box->length);
 
-			if (box->prev != NULL)
+			எனில் (box->prev != வெற்று)
 				box->prev->space = UNKNOWN_WIDTH;
 		}
-	} else {
+	} இல்லையெனில் {
 		/* white-space: pre */
-		char *text;
+		எழுத்து *text;
 		size_t text_len = dom_string_byte_length(content);
 		size_t i;
-		char *current;
-		enum css_white_space_e white_space =
+		எழுத்து *current;
+		எண்ணிக்கை css_white_space_e white_space =
 				css_computed_white_space(props.parent_style);
 
 		/* note: pre-wrap/pre-line are unimplemented */
-		assert(white_space == CSS_WHITE_SPACE_PRE ||
-				white_space == CSS_WHITE_SPACE_PRE_LINE ||
+		ப்ரதிஜ்ஞா(white_space == CSS_WHITE_SPACE_PRE ||
+				white_space == CSS_WHITE_SPACE_PRE_வரி ||
 				white_space == CSS_WHITE_SPACE_PRE_WRAP);
 
 		text = malloc(text_len + 1);
 		dom_string_unref(content);
 
-		if (text == NULL)
-			return false;
+		எனில் (text == வெற்று)
+			திரும்பு false;
 
 		memcpy(text, dom_string_data(content), text_len);
 		text[text_len] = '\0';
 
 		/* TODO: Handle tabs properly */
-		for (i = 0; i < text_len; i++)
-			if (text[i] == '\t')
+		க்கு (i = 0; i < text_len; i++)
+			எனில் (text[i] == '\t')
 				text[i] = ' ';
 
-		if (css_computed_text_transform(props.parent_style) !=
+		எனில் (css_computed_text_transform(props.parent_style) !=
 				CSS_TEXT_TRANSFORM_NONE)
 			box_text_transform(text, strlen(text),
 				css_computed_text_transform(
@@ -1130,38 +1130,38 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 		current = text;
 
 		/* swallow a single leading new line */
-		if (props.containing_block->flags & PRE_STRIP) {
-			switch (*current) {
-			case '\n':
+		எனில் (props.containing_block->flags & PRE_STRIP) {
+			தேர்வு (*current) {
+			நிலை '\n':
 				current++;
-				break;
-			case '\r':
+				நிறுத்து;
+			நிலை '\r':
 				current++;
-				if (*current == '\n')
+				எனில் (*current == '\n')
 					current++;
-				break;
+				நிறுத்து;
 			}
 			props.containing_block->flags &= ~PRE_STRIP;
 		}
 
-		do {
+		செய் {
 			size_t len = strcspn(current, "\r\n");
 
-			char old = current[len];
+			எழுத்து old = current[len];
 
 			current[len] = 0;
 
-			if (props.inline_container == NULL) {
+			எனில் (props.inline_container == வெற்று) {
 				/* Child of a block without a current container
 				 * (i.e. this box is the first child of its
 				 * parent, or was preceded by block-level
 				 * siblings) */
-				props.inline_container = box_create(NULL, NULL,
-						false, NULL, NULL, NULL, NULL,
+				props.inline_container = box_create(வெற்று, வெற்று,
+						false, வெற்று, வெற்று, வெற்று, வெற்று,
 						ctx->bctx);
-				if (props.inline_container == NULL) {
-					free(text);
-					return false;
+				எனில் (props.inline_container == வெற்று) {
+					விடுவி(text);
+					திரும்பு false;
 				}
 
 				props.inline_container->type =
@@ -1172,21 +1172,21 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 			}
 
 			/** \todo Dropping const isn't clever */
-			box = box_create(NULL,
+			box = box_create(வெற்று,
 				(css_computed_style *) props.parent_style,
 				false, props.href, props.target, props.title,
-				NULL, ctx->bctx);
-			if (box == NULL) {
-				free(text);
-				return false;
+				வெற்று, ctx->bctx);
+			எனில் (box == வெற்று) {
+				விடுவி(text);
+				திரும்பு false;
 			}
 
 			box->type = BOX_TEXT;
 
 			box->text = talloc_strdup(ctx->bctx, current);
-			if (box->text == NULL) {
-				free(text);
-				return false;
+			எனில் (box->text == வெற்று) {
+				விடுவி(text);
+				திரும்பு false;
 			}
 
 			box->length = strlen(box->text);
@@ -1197,14 +1197,14 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 
 			current += len;
 
-			if (current[0] != '\0') {
+			எனில் (current[0] != '\0') {
 				/* Linebreak: create new inline container */
-				props.inline_container = box_create(NULL, NULL,
-						false, NULL, NULL, NULL, NULL,
+				props.inline_container = box_create(வெற்று, வெற்று,
+						false, வெற்று, வெற்று, வெற்று, வெற்று,
 						ctx->bctx);
-				if (props.inline_container == NULL) {
-					free(text);
-					return false;
+				எனில் (props.inline_container == வெற்று) {
+					விடுவி(text);
+					திரும்பு false;
 				}
 
 				props.inline_container->type =
@@ -1213,17 +1213,17 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 				box_add_child(props.containing_block,
 						props.inline_container);
 
-				if (current[0] == '\r' && current[1] == '\n')
+				எனில் (current[0] == '\r' && current[1] == '\n')
 					current += 2;
-				else
+				இல்லையெனில்
 					current++;
 			}
-		} while (*current);
+		} போது (*current);
 
-		free(text);
+		விடுவி(text);
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -1231,210 +1231,210 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
  * Convert an ELEMENT node to a box tree fragment,
  * then schedule conversion of the next ELEMENT node
  */
-static void convert_xml_to_box(struct box_construct_ctx *ctx)
+நிலையான வெறுமை convert_xml_to_box(கட்டமைப்பு box_construct_ctx *ctx)
 {
-	dom_node *next;
+	dom_முனை *next;
 	bool convert_children;
-	uint32_t num_processed = 0;
-	const uint32_t max_processed_before_yield = 10;
+	uint32_t இலக்கம்_processed = 0;
+	மாறிலி uint32_t max_processed_before_yield = 10;
 
-	do {
+	செய் {
 		convert_children = true;
 
-		assert(ctx->n != NULL);
+		ப்ரதிஜ்ஞா(ctx->n != வெற்று);
 
-		if (box_construct_element(ctx, &convert_children) == false) {
+		எனில் (box_construct_element(ctx, &convert_children) == false) {
 			ctx->cb(ctx->content, false);
-			dom_node_unref(ctx->n);
-			free(ctx);
-			return;
+			dom_முனை_unref(ctx->n);
+			விடுவி(ctx);
+			திரும்பு;
 		}
 
 		/* Find next element to process, converting text nodes as we go */
-		next = next_node(ctx->n, ctx->content, convert_children);
-		while (next != NULL) {
-			dom_node_type type;
+		next = next_முனை(ctx->n, ctx->content, convert_children);
+		போது (next != வெற்று) {
+			dom_முனை_type type;
 			dom_exception err;
 
-			err = dom_node_get_node_type(next, &type);
-			if (err != DOM_NO_ERR) {
+			err = dom_முனை_get_முனை_type(next, &type);
+			எனில் (err != DOM_NO_ERR) {
 				ctx->cb(ctx->content, false);
-				dom_node_unref(next);
-				free(ctx);
-				return;
+				dom_முனை_unref(next);
+				விடுவி(ctx);
+				திரும்பு;
 			}
 
-			if (type == DOM_ELEMENT_NODE)
-				break;
+			எனில் (type == DOM_ELEMENT_முனை)
+				நிறுத்து;
 
-			if (type == DOM_TEXT_NODE) {
+			எனில் (type == DOM_TEXT_முனை) {
 				ctx->n = next;
-				if (box_construct_text(ctx) == false) {
+				எனில் (box_construct_text(ctx) == false) {
 					ctx->cb(ctx->content, false);
-					dom_node_unref(ctx->n);
-					free(ctx);
-					return;
+					dom_முனை_unref(ctx->n);
+					விடுவி(ctx);
+					திரும்பு;
 				}
 			}
 
-			next = next_node(next, ctx->content, true);
+			next = next_முனை(next, ctx->content, true);
 		}
 
 		ctx->n = next;
 
-		if (next == NULL) {
+		எனில் (next == வெற்று) {
 			/* Conversion complete */
-			struct box root;
+			கட்டமைப்பு box வேர்;
 
-			memset(&root, 0, sizeof(root));
+			memset(&வேர், 0, அளவு(வேர்));
 
-			root.type = BOX_BLOCK;
-			root.children = root.last = ctx->root_box;
-			root.children->parent = &root;
+			வேர்.type = BOX_BLOCK;
+			வேர்.children = வேர்.last = ctx->வேர்_box;
+			வேர்.children->parent = &வேர்;
 
 			/** \todo Remove box_normalise_block */
-			if (box_normalise_block(&root, ctx->root_box,
+			எனில் (box_normalise_block(&வேர், ctx->வேர்_box,
 					ctx->content) == false) {
 				ctx->cb(ctx->content, false);
-			} else {
-				ctx->content->layout = root.children;
-				ctx->content->layout->parent = NULL;
+			} இல்லையெனில் {
+				ctx->content->layout = வேர்.children;
+				ctx->content->layout->parent = வெற்று;
 
 				ctx->cb(ctx->content, true);
 			}
 
-			assert(ctx->n == NULL);
+			ப்ரதிஜ்ஞா(ctx->n == வெற்று);
 
-			free(ctx);
-			return;
+			விடுவி(ctx);
+			திரும்பு;
 		}
-	} while (++num_processed < max_processed_before_yield);
+	} போது (++இலக்கம்_processed < max_processed_before_yield);
 
 	/* More work to do: schedule a continuation */
-	guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
+	guit->misc->schedule(0, (வெறுமை *)convert_xml_to_box, ctx);
 }
 
 
 /* exported function documented in html/box_construct.h */
 nserror
-dom_to_box(dom_node *n,
+dom_to_box(dom_முனை *n,
 	   html_content *c,
 	   box_construct_complete_cb cb,
-	   void **box_conversion_context)
+	   வெறுமை **box_conversion_context)
 {
-	struct box_construct_ctx *ctx;
+	கட்டமைப்பு box_construct_ctx *ctx;
 
-	assert(box_conversion_context != NULL);
+	ப்ரதிஜ்ஞா(box_conversion_context != வெற்று);
 
-	if (c->bctx == NULL) {
+	எனில் (c->bctx == வெற்று) {
 		/* create a context allocation for this box tree */
-		c->bctx = talloc_zero(0, int);
-		if (c->bctx == NULL) {
-			return NSERROR_NOMEM;
+		c->bctx = talloc_zero(0, முழு);
+		எனில் (c->bctx == வெற்று) {
+			திரும்பு NSERROR_NOMEM;
 		}
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL) {
-		return NSERROR_NOMEM;
+	ctx = malloc(அளவு(*ctx));
+	எனில் (ctx == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	ctx->content = c;
-	ctx->n = dom_node_ref(n);
-	ctx->root_box = NULL;
+	ctx->n = dom_முனை_ref(n);
+	ctx->வேர்_box = வெற்று;
 	ctx->cb = cb;
 	ctx->bctx = c->bctx;
 
 	*box_conversion_context = ctx;
 
-	return guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
+	திரும்பு guit->misc->schedule(0, (வெறுமை *)convert_xml_to_box, ctx);
 }
 
 
 /* exported function documented in html/box_construct.h */
-nserror cancel_dom_to_box(void *box_conversion_context)
+nserror cancel_dom_to_box(வெறுமை *box_conversion_context)
 {
-	struct box_construct_ctx *ctx = box_conversion_context;
+	கட்டமைப்பு box_construct_ctx *ctx = box_conversion_context;
 	nserror err;
 
-	err = guit->misc->schedule(-1, (void *)convert_xml_to_box, ctx);
-	if (err != NSERROR_OK) {
-		return err;
+	err = guit->misc->schedule(-1, (வெறுமை *)convert_xml_to_box, ctx);
+	எனில் (err != NSERROR_OK) {
+		திரும்பு err;
 	}
 
-	dom_node_unref(ctx->n);
-	free(ctx);
+	dom_முனை_unref(ctx->n);
+	விடுவி(ctx);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported function documented in html/box_construct.h */
-struct box *box_for_node(dom_node *n)
+கட்டமைப்பு box *box_for_முனை(dom_முனை *n)
 {
-	struct box *box = NULL;
+	கட்டமைப்பு box *box = வெற்று;
 	dom_exception err;
 
-	err = dom_node_get_user_data(n, corestring_dom___ns_key_box_node_data,
-			(void *) &box);
-	if (err != DOM_NO_ERR)
-		return NULL;
+	err = dom_முனை_get_user_data(n, corestring_dom_ns_சாவி_box_முனை_data,
+			(வெறுமை *) &box);
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு வெற்று;
 
-	return box;
+	திரும்பு box;
 }
 
 /* exported function documented in html/box_construct.h */
 bool
-box_extract_link(const html_content *content,
-		 const dom_string *dsrel,
+box_extract_link(மாறிலி html_content *content,
+		 மாறிலி dom_string *dsrel,
 		 nsurl *base,
 		 nsurl **result)
 {
-	char *s, *s1, *apos0 = 0, *apos1 = 0, *quot0 = 0, *quot1 = 0;
-	unsigned int i, j, end;
+	எழுத்து *s, *s1, *apos0 = 0, *apos1 = 0, *quot0 = 0, *quot1 = 0;
+	unsigned முழு i, j, end;
 	nserror error;
-	const char *rel;
+	மாறிலி எழுத்து *rel;
 
 	rel = dom_string_data(dsrel);
 
 	s1 = s = malloc(3 * strlen(rel) + 1);
-	if (!s)
-		return false;
+	எனில் (!s)
+		திரும்பு false;
 
 	/* copy to s, removing white space and control characters */
-	for (i = 0; rel[i] && ascii_is_space(rel[i]); i++)
+	க்கு (i = 0; rel[i] && ascii_is_space(rel[i]); i++)
 		;
-	for (end = strlen(rel);
+	க்கு (end = strlen(rel);
 	     (end != i) && ascii_is_space(rel[end - 1]);
 	     end--)
 		;
-	for (j = 0; i != end; i++) {
-		if ((unsigned char) rel[i] < 0x20) {
+	க்கு (j = 0; i != end; i++) {
+		எனில் ((unsigned எழுத்து) rel[i] < 0x20) {
 			; /* skip control characters */
-		} else if (rel[i] == ' ') {
+		} இல்லையெனில் எனில் (rel[i] == ' ') {
 			s[j++] = '%';
 			s[j++] = '2';
 			s[j++] = '0';
-		} else {
+		} இல்லையெனில் {
 			s[j++] = rel[i];
 		}
 	}
 	s[j] = 0;
 
-	if (content->enable_scripting == false) {
+	எனில் (content->enable_scripting == false) {
 		/* extract first quoted string out of "javascript:" link */
-		if (strncmp(s, "javascript:", 11) == 0) {
+		எனில் (strncmp(s, "javascript:", 11) == 0) {
 			apos0 = strchr(s, '\'');
-			if (apos0)
+			எனில் (apos0)
 				apos1 = strchr(apos0 + 1, '\'');
 			quot0 = strchr(s, '"');
-			if (quot0)
+			எனில் (quot0)
 				quot1 = strchr(quot0 + 1, '"');
-			if (apos0 && apos1 &&
+			எனில் (apos0 && apos1 &&
 					(!quot0 || !quot1 || apos0 < quot0)) {
 				*apos1 = 0;
 				s1 = apos0 + 1;
-			} else if (quot0 && quot1) {
+			} இல்லையெனில் எனில் (quot0 && quot1) {
 				*quot1 = 0;
 				s1 = quot0 + 1;
 			}
@@ -1443,11 +1443,11 @@ box_extract_link(const html_content *content,
 
 	/* construct absolute URL */
 	error = nsurl_join(base, s1, result);
-	free(s);
-	if (error != NSERROR_OK) {
-		*result = NULL;
-		return false;
+	விடுவி(s);
+	எனில் (error != NSERROR_OK) {
+		*result = வெற்று;
+		திரும்பு false;
 	}
 
-	return true;
+	திரும்பு true;
 }

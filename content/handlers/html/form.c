@@ -26,62 +26,62 @@
  * Form handling functions (implementation).
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-#include <dom/dom.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <dom/dom.h>
 
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/talloc.h"
-#include "utils/url.h"
-#include "utils/utf8.h"
-#include "utils/ascii.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/mouse.h"
-#include "netsurf/plotters.h"
-#include "netsurf/misc.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
-#include "css/utils.h"
-#include "desktop/knockout.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "utils/talloc.h"
+#அந்தர்பாவ "utils/url.h"
+#அந்தர்பாவ "utils/utf8.h"
+#அந்தர்பாவ "utils/ascii.h"
+#அந்தர்பாவ "netsurf/browser_window.h"
+#அந்தர்பாவ "netsurf/inttypes.h"
+#அந்தர்பாவ "netsurf/mouse.h"
+#அந்தர்பாவ "netsurf/plotters.h"
+#அந்தர்பாவ "netsurf/misc.h"
+#அந்தர்பாவ "content/fetch.h"
+#அந்தர்பாவ "content/hlcache.h"
+#அந்தர்பாவ "css/utils.h"
+#அந்தர்பாவ "desktop/knockout.h"
+#அந்தர்பாவ "desktop/scrollbar.h"
+#அந்தர்பாவ "desktop/textarea.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/layout.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
+#அந்தர்பாவ "html/html.h"
+#அந்தர்பாவ "html/private.h"
+#அந்தர்பாவ "html/layout.h"
+#அந்தர்பாவ "html/box.h"
+#அந்தர்பாவ "html/box_inspect.h"
+#அந்தர்பாவ "html/font.h"
+#அந்தர்பாவ "html/form_internal.h"
 
 #define MAX_SELECT_HEIGHT 210
-#define SELECT_LINE_SPACING 0.2
+#define SELECT_வரி_SPACING 0.2
 #define SELECT_BORDER_WIDTH 1
 #define SELECT_SELECTED_COLOUR 0xDB9370
 
-struct form_select_menu {
-	int line_height;
-	int width, height;
-	struct scrollbar *scrollbar;
-	int f_size;
+கட்டமைப்பு form_select_menu {
+	முழு வரி_height;
+	முழு width, height;
+	கட்டமைப்பு scrollbar *scrollbar;
+	முழு f_size;
 	bool scroll_capture;
 	select_menu_redraw_callback callback;
-	void *client_data;
-	struct content *c;
+	வெறுமை *client_data;
+	கட்டமைப்பு content *c;
 };
 
-static plot_style_t plot_style_fill_selected = {
+நிலையான plot_style_t plot_style_fill_selected = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 	.fill_colour = SELECT_SELECTED_COLOUR,
 };
 
-static plot_font_style_t plot_fstyle_entry = {
+நிலையான plot_font_style_t plot_fstyle_entry = {
 	.family = PLOT_FONT_FAMILY_SANS_SERIF,
 	.weight = 400,
 	.flags = FONTF_NONE,
@@ -103,47 +103,47 @@ static plot_font_style_t plot_fstyle_entry = {
  *                 used iff converting to charset fails
  * \return Pointer to converted string (on heap, caller frees), or NULL
  */
-static char *
-form_encode_item(const char *item,
+நிலையான எழுத்து *
+form_encode_item(மாறிலி எழுத்து *item,
 		 uint32_t len,
-		 const char *charset,
-		 const char *fallback)
+		 மாறிலி எழுத்து *charset,
+		 மாறிலி எழுத்து *fallback)
 {
 	nserror err;
-	char *ret = NULL;
-	char cset[256];
+	எழுத்து *ret = வெற்று;
+	எழுத்து cset[256];
 
-	if (!item || !charset)
-		return NULL;
+	எனில் (!item || !charset)
+		திரும்பு வெற்று;
 
-	snprintf(cset, sizeof cset, "%s//TRANSLIT", charset);
+	snprintf(cset, அளவு cset, "%s//TRANSLIT", charset);
 
 	err = utf8_to_enc(item, cset, 0, &ret);
-	if (err == NSERROR_BAD_ENCODING) {
+	எனில் (err == NSERROR_BAD_ENCODING) {
 		/* charset not understood, try without transliteration */
-		snprintf(cset, sizeof cset, "%s", charset);
+		snprintf(cset, அளவு cset, "%s", charset);
 		err = utf8_to_enc(item, cset, len, &ret);
 
-		if (err == NSERROR_BAD_ENCODING) {
+		எனில் (err == NSERROR_BAD_ENCODING) {
 			/* nope, try fallback charset (if any) */
-			if (fallback) {
-				snprintf(cset, sizeof cset,
+			எனில் (fallback) {
+				snprintf(cset, அளவு cset,
 						"%s//TRANSLIT", fallback);
 				err = utf8_to_enc(item, cset, 0, &ret);
 
-				if (err == NSERROR_BAD_ENCODING) {
+				எனில் (err == NSERROR_BAD_ENCODING) {
 					/* and without transliteration */
-					snprintf(cset, sizeof cset,
+					snprintf(cset, அளவு cset,
 							"%s", fallback);
 					err = utf8_to_enc(item, cset, 0, &ret);
 				}
 			}
 
-			if (err == NSERROR_BAD_ENCODING) {
+			எனில் (err == NSERROR_BAD_ENCODING) {
 				/* that also failed, use 8859-1 */
 				err = utf8_to_enc(item, "ISO-8859-1//TRANSLIT",
 						0, &ret);
-				if (err == NSERROR_BAD_ENCODING) {
+				எனில் (err == NSERROR_BAD_ENCODING) {
 					/* and without transliteration */
 					err = utf8_to_enc(item, "ISO-8859-1",
 							0, &ret);
@@ -151,18 +151,18 @@ form_encode_item(const char *item,
 			}
 		}
 	}
-	if (err == NSERROR_NOMEM) {
-		return NULL;
+	எனில் (err == NSERROR_NOMEM) {
+		திரும்பு வெற்று;
 	}
 
-	return ret;
+	திரும்பு ret;
 }
 
 
 /**
  * string allocation size for numeric values in multipart data
  */
-#define FETCH_DATA_INT_VALUE_SIZE 20
+#define FETCH_DATA_INT_மதிப்பு_SIZE 20
 
 
 /**
@@ -173,47 +173,47 @@ form_encode_item(const char *item,
  * \param value The value to encode
  * \param fetch_data_next_ptr The multipart data list to append to.
  */
-static nserror
-fetch_data_list_add_sname(const char *name,
-			  const char *ksfx,
-			  int value,
-			  struct fetch_multipart_data ***fetch_data_next_ptr)
+நிலையான nserror
+fetch_data_list_add_sname(மாறிலி எழுத்து *name,
+			  மாறிலி எழுத்து *ksfx,
+			  முழு மதிப்பு,
+			  கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
-	struct fetch_multipart_data *fetch_data;
-	int keysize;
+	கட்டமைப்பு fetch_multipart_data *fetch_data;
+	முழு keysize;
 
-	fetch_data = calloc(1, sizeof(*fetch_data));
-	if (fetch_data == NULL) {
+	fetch_data = calloc(1, அளவு(*fetch_data));
+	எனில் (fetch_data == வெற்று) {
 		NSLOG(netsurf, INFO, "failed allocation for fetch data");
-		return NSERROR_NOMEM;
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	/* key name */
 	keysize = snprintf(fetch_data->name, 0, "%s%s", name, ksfx);
 	fetch_data->name = malloc(keysize + 1); /* allow for null */
-	if (fetch_data->name == NULL) {
-		free(fetch_data);
+	எனில் (fetch_data->name == வெற்று) {
+		விடுவி(fetch_data);
 		NSLOG(netsurf, INFO,
 		      "keyname allocation failure for %s%s", name, ksfx);
-		return NSERROR_NOMEM;
+		திரும்பு NSERROR_NOMEM;
 	}
 	snprintf(fetch_data->name, keysize + 1, "%s%s", name, ksfx);
 
-	/* value */
-	fetch_data->value = malloc(FETCH_DATA_INT_VALUE_SIZE);
-	if (fetch_data->value == NULL) {
-		free(fetch_data->name);
-		free(fetch_data);
+	/*மதிப்பு*/
+	fetch_data->மதிப்பு = malloc(FETCH_DATA_INT_மதிப்பு_SIZE);
+	எனில் (fetch_data->மதிப்பு == வெற்று) {
+		விடுவி(fetch_data->name);
+		விடுவி(fetch_data);
 		NSLOG(netsurf, INFO, "value allocation failure");
-		return NSERROR_NOMEM;
+		திரும்பு NSERROR_NOMEM;
 	}
-	snprintf(fetch_data->value, FETCH_DATA_INT_VALUE_SIZE, "%d", value);
+	snprintf(fetch_data->மதிப்பு, FETCH_DATA_INT_மதிப்பு_SIZE, "%d", மதிப்பு);
 
 	/* link into list */
 	**fetch_data_next_ptr = fetch_data;
 	*fetch_data_next_ptr = &fetch_data->next;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -228,60 +228,60 @@ fetch_data_list_add_sname(const char *name,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
+நிலையான nserror
 fetch_data_list_add(dom_string *name,
-		    dom_string *value,
-		    const char *rawfile,
-		    const char *form_charset,
-		    const char *docu_charset,
-		    struct fetch_multipart_data ***fetch_data_next_ptr)
+		    dom_string *மதிப்பு,
+		    மாறிலி எழுத்து *rawfile,
+		    மாறிலி எழுத்து *form_charset,
+		    மாறிலி எழுத்து *docu_charset,
+		    கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
-	struct fetch_multipart_data *fetch_data;
+	கட்டமைப்பு fetch_multipart_data *fetch_data;
 
-	assert(name != NULL);
+	ப்ரதிஜ்ஞா(name != வெற்று);
 
-	fetch_data = calloc(1, sizeof(*fetch_data));
-	if (fetch_data == NULL) {
+	fetch_data = calloc(1, அளவு(*fetch_data));
+	எனில் (fetch_data == வெற்று) {
 		NSLOG(netsurf, INFO, "failed allocation for fetch data");
-		return NSERROR_NOMEM;
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	fetch_data->name = form_encode_item(dom_string_data(name),
 					    dom_string_byte_length(name),
 					    form_charset,
 					    docu_charset);
-	if (fetch_data->name == NULL) {
+	எனில் (fetch_data->name == வெற்று) {
 		NSLOG(netsurf, INFO, "Could not encode name for fetch data");
-		free(fetch_data);
-		return NSERROR_NOMEM;
+		விடுவி(fetch_data);
+		திரும்பு NSERROR_NOMEM;
 	}
 
-	if (value == NULL) {
-		fetch_data->value = strdup("");
-	} else {
-		fetch_data->value = form_encode_item(dom_string_data(value),
-						     dom_string_byte_length(value),
+	எனில் (மதிப்பு == வெற்று) {
+		fetch_data->மதிப்பு = strdup("");
+	} இல்லையெனில் {
+		fetch_data->மதிப்பு = form_encode_item(dom_string_data(மதிப்பு),
+						     dom_string_byte_length(மதிப்பு),
 						     form_charset,
 						     docu_charset);
 	}
-	if (fetch_data->value == NULL) {
+	எனில் (fetch_data->மதிப்பு == வெற்று) {
 		NSLOG(netsurf, INFO, "Could not encode value for fetch data");
-		free(fetch_data->name);
-		free(fetch_data);
-		return NSERROR_NOMEM;
+		விடுவி(fetch_data->name);
+		விடுவி(fetch_data);
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	/* deal with raw file name */
-	if (rawfile != NULL) {
+	எனில் (rawfile != வெற்று) {
 		fetch_data->file = true;
 		fetch_data->rawfile = strdup(rawfile);
-		if (fetch_data->rawfile == NULL) {
+		எனில் (fetch_data->rawfile == வெற்று) {
 			NSLOG(netsurf, INFO,
 			      "Could not encode rawfile value for fetch data");
-			free(fetch_data->value);
-			free(fetch_data->name);
-			free(fetch_data);
-			return NSERROR_NOMEM;
+			விடுவி(fetch_data->மதிப்பு);
+			விடுவி(fetch_data->name);
+			விடுவி(fetch_data);
+			திரும்பு NSERROR_NOMEM;
 		}
 	}
 
@@ -289,7 +289,7 @@ fetch_data_list_add(dom_string *name,
 	**fetch_data_next_ptr = fetch_data;
 	*fetch_data_next_ptr = &fetch_data->next;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -302,11 +302,11 @@ fetch_data_list_add(dom_string *name,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
+நிலையான nserror
 form_dom_to_data_textarea(dom_html_text_area_element *text_area_element,
-			  const char *form_charset,
-			  const char *doc_charset,
-			  struct fetch_multipart_data ***fetch_data_next_ptr)
+			  மாறிலி எழுத்து *form_charset,
+			  மாறிலி எழுத்து *doc_charset,
+			  கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	dom_exception exp; /* the result from DOM operations */
 	bool element_disabled;
@@ -317,45 +317,45 @@ form_dom_to_data_textarea(dom_html_text_area_element *text_area_element,
 	/* check if element is disabled */
 	exp = dom_html_text_area_element_get_disabled(text_area_element,
 						      &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get text area disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	எனில் (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* obtain name property */
 	exp = dom_html_text_area_element_get_name(text_area_element,
 						  &inputname);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get text area name property. exp %d", exp);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	எனில் (inputname == வெற்று) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* obtain text area value */
-	exp = dom_html_text_area_element_get_value(text_area_element,
+	exp = dom_html_text_area_element_get_மதிப்பு(text_area_element,
 						   &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get text area content. exp %d", exp);
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(inputname,
 				  inputvalue,
-				  NULL,
+				  வெற்று,
 				  form_charset,
 				  doc_charset,
 				  fetch_data_next_ptr);
@@ -363,50 +363,50 @@ form_dom_to_data_textarea(dom_html_text_area_element *text_area_element,
 	dom_string_unref(inputvalue);
 	dom_string_unref(inputname);
 
-	return res;
+	திரும்பு res;
 }
 
 
-static nserror
+நிலையான nserror
 form_dom_to_data_select_option(dom_html_option_element *option_element,
 			      dom_string *keyname,
-			      const char *form_charset,
-			      const char *docu_charset,
-			      struct fetch_multipart_data ***fetch_data_next_ptr)
+			      மாறிலி எழுத்து *form_charset,
+			      மாறிலி எழுத்து *docu_charset,
+			      கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
-	dom_string *value;
+	dom_string *மதிப்பு;
 	bool selected;
 
 	exp = dom_html_option_element_get_selected(option_element, &selected);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get option selected property");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (!selected) {
+	எனில் (!selected) {
 		/* unselected options do not add fetch data entries */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
-	exp = dom_html_option_element_get_value(option_element, &value);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_option_element_get_மதிப்பு(option_element, &மதிப்பு);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get option value");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(keyname,
-				  value,
-				  NULL,
+				  மதிப்பு,
+				  வெற்று,
 				  form_charset,
 				  docu_charset,
 				  fetch_data_next_ptr);
 
-	dom_string_unref(value);
+	dom_string_unref(மதிப்பு);
 
-	return res;
+	திரும்பு res;
 }
 
 
@@ -419,77 +419,77 @@ form_dom_to_data_select_option(dom_html_option_element *option_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
+நிலையான nserror
 form_dom_to_data_select(dom_html_select_element *select_element,
-			const char *form_charset,
-			const char *doc_charset,
-			struct fetch_multipart_data ***fetch_data_next_ptr)
+			மாறிலி எழுத்து *form_charset,
+			மாறிலி எழுத்து *doc_charset,
+			கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res = NSERROR_OK;
 	dom_exception exp; /* the result from DOM operations */
 	bool element_disabled;
 	dom_string *inputname;
-	dom_html_options_collection *options = NULL;
-	uint32_t options_count;
+	dom_html_options_collection *options = வெற்று;
+	uint32_t options_மொத்தம்;
 	uint32_t option_index;
-	dom_node *option_element = NULL;
+	dom_முனை *option_element = வெற்று;
 
 	/* check if element is disabled */
 	exp = dom_html_select_element_get_disabled(select_element,
 						   &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	எனில் (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* obtain name property */
 	exp = dom_html_select_element_get_name(select_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select name property. exp %d", exp);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	எனில் (inputname == வெற்று) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* get options collection */
 	exp = dom_html_select_element_get_options(select_element, &options);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select options collection");
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* get options collection length */
-	exp = dom_html_options_collection_get_length(options, &options_count);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_options_collection_get_length(options, &options_மொத்தம்);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select options collection length");
 		dom_html_options_collection_unref(options);
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* iterate over options collection */
-	for (option_index = 0; option_index < options_count; ++option_index) {
+	க்கு (option_index = 0; option_index < options_மொத்தம்; ++option_index) {
 		exp = dom_html_options_collection_item(options,
 						       option_index,
 						       &option_element);
-		if (exp != DOM_NO_ERR) {
+		எனில் (exp != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "Could not get options item %"PRId32, option_index);
 			res = NSERROR_DOM;
-		} else {
+		} இல்லையெனில் {
 			res = form_dom_to_data_select_option(
 				(dom_html_option_element *)option_element,
 				inputname,
@@ -497,90 +497,90 @@ form_dom_to_data_select(dom_html_select_element *select_element,
 				doc_charset,
 				fetch_data_next_ptr);
 
-			dom_node_unref(option_element);
+			dom_முனை_unref(option_element);
 		}
 
-		if (res != NSERROR_OK) {
-			break;
+		எனில் (res != NSERROR_OK) {
+			நிறுத்து;
 		}
 	}
 
 	dom_html_options_collection_unref(options);
 	dom_string_unref(inputname);
 
-	return res;
+	திரும்பு res;
 }
 
 
-static nserror
-form_dom_to_data_input_submit(dom_html_input_element *input_element,
+நிலையான nserror
+form_dom_to_data_உள்ளீடு_submit(dom_html_உள்ளீடு_element *உள்ளீடு_element,
 			      dom_string *inputname,
-			      const char *charset,
-			      const char *document_charset,
+			      மாறிலி எழுத்து *charset,
+			      மாறிலி எழுத்து *document_charset,
 			      dom_html_element **submit_button,
-			      struct fetch_multipart_data ***fetch_data_next_ptr)
+			      கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	dom_exception exp; /* the result from DOM operations */
 	dom_string *inputvalue;
 	nserror res;
 
-	if (*submit_button == NULL) {
+	எனில் (*submit_button == வெற்று) {
 		/* caller specified no button so use this one */
-		*submit_button = (dom_html_element *)input_element;
-	} else if (*submit_button != (dom_html_element *)input_element) {
-		return NSERROR_OK;
+		*submit_button = (dom_html_element *)உள்ளீடு_element;
+	} இல்லையெனில் எனில் (*submit_button != (dom_html_element *)உள்ளீடு_element) {
+		திரும்பு NSERROR_OK;
 	}
 
 	/* matched button used to submit form */
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_உள்ளீடு_element_get_மதிப்பு(உள்ளீடு_element, &inputvalue);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get submit button value");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(inputname,
 				  inputvalue,
-				  NULL,
+				  வெற்று,
 				  charset,
 				  document_charset,
 				  fetch_data_next_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	திரும்பு res;
 }
 
 
-static nserror
-form_dom_to_data_input_image(dom_html_input_element *input_element,
+நிலையான nserror
+form_dom_to_data_உள்ளீடு_image(dom_html_உள்ளீடு_element *உள்ளீடு_element,
 			     dom_string *inputname,
-			     const char *charset,
-			     const char *document_charset,
+			     மாறிலி எழுத்து *charset,
+			     மாறிலி எழுத்து *document_charset,
 			     dom_html_element **submit_button,
-			     struct fetch_multipart_data ***fetch_data_next_ptr)
+			     கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
-	struct image_input_coords *coords;
-	char *basename;
+	கட்டமைப்பு image_உள்ளீடு_coords *coords;
+	எழுத்து *basename;
 
 	/* Only use an image input if it was the thing which activated us */
-	if (*submit_button != (dom_html_element *)input_element) {
-		return NSERROR_OK;
+	எனில் (*submit_button != (dom_html_element *)உள்ளீடு_element) {
+		திரும்பு NSERROR_OK;
 	}
 
-	exp = dom_node_get_user_data((dom_node *)input_element,
-				     corestring_dom___ns_key_image_coords_node_data,
+	exp = dom_முனை_get_user_data((dom_முனை *)உள்ளீடு_element,
+				     corestring_dom_ns_சாவி_image_coords_முனை_data,
 				     &coords);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get image XY data");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (coords == NULL) {
+	எனில் (coords == வெற்று) {
 		NSLOG(netsurf, INFO, "No XY data on the image input");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* encode input name once */
@@ -588,104 +588,104 @@ form_dom_to_data_input_image(dom_html_input_element *input_element,
 				    dom_string_byte_length(inputname),
 				    charset,
 				    document_charset);
-	if (basename == NULL) {
+	எனில் (basename == வெற்று) {
 		NSLOG(netsurf, INFO, "Could not encode basename");
-		return NSERROR_NOMEM;
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	res = fetch_data_list_add_sname(basename, ".x",
 					coords->x,
 					fetch_data_next_ptr);
 
-	if (res == NSERROR_OK) {
+	எனில் (res == NSERROR_OK) {
 		res = fetch_data_list_add_sname(basename, ".y",
 						coords->y,
 						fetch_data_next_ptr);
 	}
 
-	free(basename);
+	விடுவி(basename);
 
-	return res;
+	திரும்பு res;
 }
 
 
-static nserror
-form_dom_to_data_input_checkbox(dom_html_input_element *input_element,
+நிலையான nserror
+form_dom_to_data_உள்ளீடு_checkbox(dom_html_உள்ளீடு_element *உள்ளீடு_element,
 				dom_string *inputname,
-				const char *charset,
-				const char *document_charset,
-				struct fetch_multipart_data ***fetch_data_next_ptr)
+				மாறிலி எழுத்து *charset,
+				மாறிலி எழுத்து *document_charset,
+				கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
 	bool checked;
 	dom_string *inputvalue;
 
-	exp = dom_html_input_element_get_checked(input_element, &checked);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_உள்ளீடு_element_get_checked(உள்ளீடு_element, &checked);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input element checked");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (!checked) {
+	எனில் (!checked) {
 		/* unchecked items do not generate a data entry */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_உள்ளீடு_element_get_மதிப்பு(உள்ளீடு_element, &inputvalue);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input element value");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* ensure a default value */
-	if (inputvalue == NULL) {
+	எனில் (inputvalue == வெற்று) {
 		inputvalue = dom_string_ref(corestring_dom_on);
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(inputname,
 				  inputvalue,
-				  NULL,
+				  வெற்று,
 				  charset,
 				  document_charset,
 				  fetch_data_next_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	திரும்பு res;
 }
 
 
-static nserror
-form_dom_to_data_input_file(dom_html_input_element *input_element,
+நிலையான nserror
+form_dom_to_data_உள்ளீடு_file(dom_html_உள்ளீடு_element *உள்ளீடு_element,
 			    dom_string *inputname,
-			    const char *charset,
-			    const char *document_charset,
-			    struct fetch_multipart_data ***fetch_data_next_ptr)
+			    மாறிலி எழுத்து *charset,
+			    மாறிலி எழுத்து *document_charset,
+			    கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
 	dom_string *inputvalue;
-	const char *rawfile = NULL;
+	மாறிலி எழுத்து *rawfile = வெற்று;
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_உள்ளீடு_element_get_மதிப்பு(உள்ளீடு_element, &inputvalue);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get file value");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	exp = dom_node_get_user_data((dom_node *)input_element,
-				     corestring_dom___ns_key_file_name_node_data,
+	exp = dom_முனை_get_user_data((dom_முனை *)உள்ளீடு_element,
+				     corestring_dom_ns_சாவி_file_name_முனை_data,
 				     &rawfile);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get file rawname");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (rawfile == NULL) {
+	எனில் (rawfile == வெற்று) {
 		rawfile = "";
 	}
 
@@ -699,38 +699,38 @@ form_dom_to_data_input_file(dom_html_input_element *input_element,
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	திரும்பு res;
 }
 
 
-static nserror
-form_dom_to_data_input_text(dom_html_input_element *input_element,
+நிலையான nserror
+form_dom_to_data_உள்ளீடு_text(dom_html_உள்ளீடு_element *உள்ளீடு_element,
 			    dom_string *inputname,
-			    const char *charset,
-			    const char *document_charset,
-			    struct fetch_multipart_data ***fetch_data_next_ptr)
+			    மாறிலி எழுத்து *charset,
+			    மாறிலி எழுத்து *document_charset,
+			    கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	nserror res;
 	dom_exception exp; /* the result from DOM operations */
 	dom_string *inputvalue;
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_உள்ளீடு_element_get_மதிப்பு(உள்ளீடு_element, &inputvalue);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get input value");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
 	res = fetch_data_list_add(inputname,
 				  inputvalue,
-				  NULL,
+				  வெற்று,
 				  charset,
 				  document_charset,
 				  fetch_data_next_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	திரும்பு res;
 }
 
 
@@ -746,12 +746,12 @@ form_dom_to_data_input_text(dom_html_input_element *input_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-form_dom_to_data_input(dom_html_input_element *input_element,
-		       const char *charset,
-		       const char *document_charset,
+நிலையான nserror
+form_dom_to_data_உள்ளீடு(dom_html_உள்ளீடு_element *உள்ளீடு_element,
+		       மாறிலி எழுத்து *charset,
+		       மாறிலி எழுத்து *document_charset,
 		       dom_html_element **submit_button,
-		       struct fetch_multipart_data ***fetch_data_next_ptr)
+		       கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	dom_exception exp; /* the result from DOM operations */
 	bool element_disabled;
@@ -760,81 +760,81 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	nserror res;
 
 	/* check if element is disabled */
-	exp = dom_html_input_element_get_disabled(input_element,
+	exp = dom_html_உள்ளீடு_element_get_disabled(உள்ளீடு_element,
 						  &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	எனில் (element_disabled) {
 		/* disabled element requires no more processing */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* obtain name property */
-	exp = dom_html_input_element_get_name(input_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_உள்ளீடு_element_get_name(உள்ளீடு_element, &inputname);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input name property. exp %d", exp);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	எனில் (inputname == வெற்று) {
 		/* element with no name is not converted */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* get input type */
-	exp = dom_html_input_element_get_type(input_element, &inputtype);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_உள்ளீடு_element_get_type(உள்ளீடு_element, &inputtype);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get input element type");
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* process according to input element type */
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_submit)) {
+	எனில் (dom_string_caseless_isequal(inputtype, corestring_dom_submit)) {
 
-		res = form_dom_to_data_input_submit(input_element,
+		res = form_dom_to_data_உள்ளீடு_submit(உள்ளீடு_element,
 						    inputname,
 						    charset,
 						    document_charset,
 						    submit_button,
 						    fetch_data_next_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} இல்லையெனில் எனில் (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_image)) {
 
-		res = form_dom_to_data_input_image(input_element,
+		res = form_dom_to_data_உள்ளீடு_image(உள்ளீடு_element,
 						   inputname,
 						   charset,
 						   document_charset,
 						   submit_button,
 						   fetch_data_next_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} இல்லையெனில் எனில் (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_radio) ||
 		   dom_string_caseless_isequal(inputtype,
 					       corestring_dom_checkbox)) {
 
-		res = form_dom_to_data_input_checkbox(input_element,
+		res = form_dom_to_data_உள்ளீடு_checkbox(உள்ளீடு_element,
 						      inputname,
 						      charset,
 						      document_charset,
 						      fetch_data_next_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} இல்லையெனில் எனில் (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_file)) {
 
-		res = form_dom_to_data_input_file(input_element,
+		res = form_dom_to_data_உள்ளீடு_file(உள்ளீடு_element,
 						  inputname,
 						  charset,
 						  document_charset,
 						  fetch_data_next_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} இல்லையெனில் எனில் (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_reset) ||
 		   dom_string_caseless_isequal(inputtype,
 					       corestring_dom_button)) {
@@ -842,9 +842,9 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 		NSLOG(netsurf, INFO, "Skipping RESET and BUTTON");
 		res = NSERROR_OK;
 
-	} else {
+	} இல்லையெனில் {
 		/* Everything else is treated as text values */
-		res = form_dom_to_data_input_text(input_element,
+		res = form_dom_to_data_உள்ளீடு_text(உள்ளீடு_element,
 						  inputname,
 						  charset,
 						  document_charset,
@@ -855,7 +855,7 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 	dom_string_unref(inputtype);
 	dom_string_unref(inputname);
 
-	return res;
+	திரும்பு res;
 }
 
 
@@ -871,12 +871,12 @@ form_dom_to_data_input(dom_html_input_element *input_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
+நிலையான nserror
 form_dom_to_data_button(dom_html_button_element *button_element,
-			const char *form_charset,
-			const char *doc_charset,
+			மாறிலி எழுத்து *form_charset,
+			மாறிலி எழுத்து *doc_charset,
 			dom_html_element **submit_button,
-			struct fetch_multipart_data ***fetch_data_next_ptr)
+			கட்டமைப்பு fetch_multipart_data ***fetch_data_next_ptr)
 {
 	dom_exception exp; /* the result from DOM operations */
 	bool element_disabled;
@@ -888,22 +888,22 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 	/* check if element is disabled */
 	exp = dom_html_button_element_get_disabled(button_element,
 						   &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Unable to get disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	எனில் (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* get the type attribute */
 	exp = dom_html_button_element_get_type(button_element, &inputtype);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get button element type");
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
 	/* If the type attribute is "reset" or "button" the element is
@@ -911,49 +911,49 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 	 *  default and invalid values result in submit which will
 	 *  be considered.
 	 */
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_reset)) {
+	எனில் (dom_string_caseless_isequal(inputtype, corestring_dom_reset)) {
 		/* multipart data entry not required for reset type */
 		dom_string_unref(inputtype);
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_button)) {
+	எனில் (dom_string_caseless_isequal(inputtype, corestring_dom_button)) {
 		/* multipart data entry not required for button type */
 		dom_string_unref(inputtype);
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 	dom_string_unref(inputtype);
 
 	/* only submision button generates an element */
-	if (*submit_button == NULL) {
+	எனில் (*submit_button == வெற்று) {
 		/* no submission button selected yet so use this one */
 		*submit_button = (dom_html_element *)button_element;
 	}
-	if (*submit_button != (dom_html_element *)button_element) {
-		return NSERROR_OK;
+	எனில் (*submit_button != (dom_html_element *)button_element) {
+		திரும்பு NSERROR_OK;
 	}
 
 	/* obtain name property */
 	exp = dom_html_button_element_get_name(button_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get button name property. exp %d", exp);
-		return NSERROR_DOM;
+		திரும்பு NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	எனில் (inputname == வெற்று) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* get button value and add to fetch data list */
-	exp = dom_html_button_element_get_value(button_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_button_element_get_மதிப்பு(button_element, &inputvalue);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get submit button value");
 		res = NSERROR_DOM;
-	} else {
+	} இல்லையெனில் {
 		res = fetch_data_list_add(inputname,
 					  inputvalue,
-					  NULL,
+					  வெற்று,
 					  form_charset,
 					  doc_charset,
 					  fetch_data_next_ptr);
@@ -963,7 +963,7 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 
 	dom_string_unref(inputname);
 
-	return res;
+	திரும்பு res;
 }
 
 
@@ -973,40 +973,40 @@ form_dom_to_data_button(dom_html_button_element *button_element,
  * \param form  The form
  * \return Pointer to charset name (on heap, caller should free) or NULL
  */
-static char *form_acceptable_charset(struct form *form)
+நிலையான எழுத்து *form_acceptable_charset(கட்டமைப்பு form *form)
 {
-	char *temp, *c;
+	எழுத்து *temp, *c;
 
-	if (!form->accept_charsets) {
+	எனில் (!form->accept_charsets) {
 		/* no accept-charsets attribute for this form */
-		if (form->document_charset) {
+		எனில் (form->document_charset) {
 			/* document charset present, so use it */
-			return strdup(form->document_charset);
-		} else {
+			திரும்பு strdup(form->document_charset);
+		} இல்லையெனில் {
 			/* no document charset, so default to 8859-1 */
-			return strdup("ISO-8859-1");
+			திரும்பு strdup("ISO-8859-1");
 		}
 	}
 
 	/* make temporary copy of accept-charsets attribute */
 	temp = strdup(form->accept_charsets);
-	if (!temp)
-		return NULL;
+	எனில் (!temp)
+		திரும்பு வெற்று;
 
 	/* make it upper case */
-	for (c = temp; *c; c++) {
+	க்கு (c = temp; *c; c++) {
 		*c = ascii_to_upper(*c);
 	}
 
 	/* is UTF-8 specified? */
 	c = strstr(temp, "UTF-8");
-	if (c) {
-		free(temp);
-		return strdup("UTF-8");
+	எனில் (c) {
+		விடுவி(temp);
+		திரும்பு strdup("UTF-8");
 	}
 
 	/* dispense with temporary copy */
-	free(temp);
+	விடுவி(temp);
 
 	/* according to RFC2070, the accept-charsets attribute of the
 	 * form element contains a space and/or comma separated list */
@@ -1019,13 +1019,13 @@ static char *form_acceptable_charset(struct form *form)
 	 * textual input values.  For now, we just extract the first
 	 * element of the charset list
 	 */
-	while (*c && !ascii_is_space(*c)) {
-		if (*c == ',')
-			break;
+	போது (*c && !ascii_is_space(*c)) {
+		எனில் (*c == ',')
+			நிறுத்து;
 		c++;
 	}
 
-	return strndup(form->accept_charsets, c - form->accept_charsets);
+	திரும்பு strndup(form->accept_charsets, c - form->accept_charsets);
 }
 
 
@@ -1050,75 +1050,75 @@ static char *form_acceptable_charset(struct form *form)
  *                             fetch_multipart_data, NULL if no controls
  * \return NSERROR_OK on success or appropriate error code
  */
-static nserror
-form_dom_to_data(struct form *form,
-		 struct form_control *submit_control,
-		 struct fetch_multipart_data **fetch_data_out)
+நிலையான nserror
+form_dom_to_data(கட்டமைப்பு form *form,
+		 கட்டமைப்பு form_control *submit_control,
+		 கட்டமைப்பு fetch_multipart_data **fetch_data_out)
 {
 	nserror res = NSERROR_OK;
-	char *charset; /* form characterset */
+	எழுத்து *charset; /* form characterset */
 	dom_exception exp; /* the result from DOM operations */
-	dom_html_collection *elements = NULL; /* the dom form elements */
-	uint32_t element_count; /* the number of elements in the DOM form */
+	dom_html_collection *elements = வெற்று; /* the dom form elements */
+	uint32_t element_மொத்தம்; /* the number of elements in the DOM form */
 	uint32_t element_idx; /* the index of thr enumerated element */
-	dom_node *element = NULL; /* the DOM form element */
-	dom_string *nodename = NULL; /* the DOM node name of the element */
-	struct fetch_multipart_data *fetch_data = NULL; /* fetch data list */
-	struct fetch_multipart_data **fetch_data_next = &fetch_data;
+	dom_முனை *element = வெற்று; /* the DOM form element */
+	dom_string *nodename = வெற்று; /* the DOM node name of the element */
+	கட்டமைப்பு fetch_multipart_data *fetch_data = வெற்று; /* fetch data list */
+	கட்டமைப்பு fetch_multipart_data **fetch_data_next = &fetch_data;
 	dom_html_element *submit_button;
 
 	/* obtain the submit_button DOM node from the control */
-	if (submit_control != NULL) {
-		submit_button = submit_control->node;
-	} else {
-		submit_button = NULL;
+	எனில் (submit_control != வெற்று) {
+		submit_button = submit_control->முனை;
+	} இல்லையெனில் {
+		submit_button = வெற்று;
 	}
 
 	/** \todo Replace this call with something DOMish */
 	charset = form_acceptable_charset(form);
-	if (charset == NULL) {
+	எனில் (charset == வெற்று) {
 		NSLOG(netsurf, INFO, "failed to find charset");
-		return NSERROR_NOMEM;
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	/* obtain the form elements and count */
-	exp = dom_html_form_element_get_elements(form->node, &elements);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_form_element_get_elements(form->முனை, &elements);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get form elements");
-		free(charset);
-		return NSERROR_DOM;
+		விடுவி(charset);
+		திரும்பு NSERROR_DOM;
 	}
 
-	exp = dom_html_collection_get_length(elements, &element_count);
-	if (exp != DOM_NO_ERR) {
+	exp = dom_html_collection_get_length(elements, &element_மொத்தம்);
+	எனில் (exp != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get form element count");
 		res = NSERROR_DOM;
-		goto form_dom_to_data_error;
+		செல் form_dom_to_data_error;
 	}
 
-	for (element_idx = 0; element_idx < element_count; element_idx++) {
+	க்கு (element_idx = 0; element_idx < element_மொத்தம்; element_idx++) {
 		/* obtain a form element */
 		exp = dom_html_collection_item(elements, element_idx, &element);
-		if (exp != DOM_NO_ERR) {
+		எனில் (exp != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "retrieving form element %"PRIu32" failed with %d",
 			      element_idx, exp);
 			res = NSERROR_DOM;
-			goto form_dom_to_data_error;
+			செல் form_dom_to_data_error;
 		}
 
 		/* node name from element */
-		exp = dom_node_get_node_name(element, &nodename);
-		if (exp != DOM_NO_ERR) {
+		exp = dom_முனை_get_முனை_name(element, &nodename);
+		எனில் (exp != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "getting element node name %"PRIu32" failed with %d",
 			      element_idx, exp);
-			dom_node_unref(element);
+			dom_முனை_unref(element);
 			res = NSERROR_DOM;
-			goto form_dom_to_data_error;
+			செல் form_dom_to_data_error;
 		}
 
-		if (dom_string_isequal(nodename, corestring_dom_TEXTAREA)) {
+		எனில் (dom_string_isequal(nodename, corestring_dom_TEXTAREA)) {
 			/* Form element is HTMLTextAreaElement */
 			res = form_dom_to_data_textarea(
 				(dom_html_text_area_element *)element,
@@ -1126,7 +1126,7 @@ form_dom_to_data(struct form *form,
 				form->document_charset,
 				&fetch_data_next);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_SELECT)) {
+		} இல்லையெனில் எனில் (dom_string_isequal(nodename, corestring_dom_SELECT)) {
 			/* Form element is HTMLSelectElement */
 			res = form_dom_to_data_select(
 				(dom_html_select_element *)element,
@@ -1134,16 +1134,16 @@ form_dom_to_data(struct form *form,
 				form->document_charset,
 				&fetch_data_next);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_INPUT)) {
+		} இல்லையெனில் எனில் (dom_string_isequal(nodename, corestring_dom_உள்ளீடு)) {
 			/* Form element is HTMLInputElement */
-			res = form_dom_to_data_input(
-				(dom_html_input_element *)element,
+			res = form_dom_to_data_உள்ளீடு(
+				(dom_html_உள்ளீடு_element *)element,
 				charset,
 				form->document_charset,
 				&submit_button,
 				&fetch_data_next);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_BUTTON)) {
+		} இல்லையெனில் எனில் (dom_string_isequal(nodename, corestring_dom_BUTTON)) {
 			/* Form element is HTMLButtonElement */
 			res = form_dom_to_data_button(
 				(dom_html_button_element *)element,
@@ -1152,37 +1152,37 @@ form_dom_to_data(struct form *form,
 				&submit_button,
 				&fetch_data_next);
 
-		} else {
+		} இல்லையெனில் {
 			/* Form element is not handled */
 			NSLOG(netsurf, INFO,
 			      "Unhandled element type: %*s",
-			      (int)dom_string_byte_length(nodename),
+			      (முழு)dom_string_byte_length(nodename),
 			      dom_string_data(nodename));
 			res = NSERROR_DOM;
 
 		}
 
 		dom_string_unref(nodename);
-		dom_node_unref(element);
+		dom_முனை_unref(element);
 
 		/* abort form element enumeration on error */
-		if (res != NSERROR_OK) {
-			goto form_dom_to_data_error;
+		எனில் (res != NSERROR_OK) {
+			செல் form_dom_to_data_error;
 		}
 	}
 
 	*fetch_data_out = fetch_data;
 	dom_html_collection_unref(elements);
-	free(charset);
+	விடுவி(charset);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 
 form_dom_to_data_error:
 	fetch_multipart_data_destroy(fetch_data);
 	dom_html_collection_unref(elements);
-	free(charset);
+	விடுவி(charset);
 
-	return res;
+	திரும்பு res;
 }
 
 /**
@@ -1193,90 +1193,90 @@ form_dom_to_data_error:
  * \param[out] encoded_out URL-encoded form data
  * \return NSERROR_OK on success and \a encoded_out updated else appropriate error code
  */
-static nserror
-form_url_encode(struct form *form,
-		struct fetch_multipart_data *control,
-		char **encoded_out)
+நிலையான nserror
+form_url_encode(கட்டமைப்பு form *form,
+		கட்டமைப்பு fetch_multipart_data *control,
+		எழுத்து **encoded_out)
 {
-	char *name, *value;
-	char *s, *s2;
-	unsigned int len, len1, len_init;
+	எழுத்து *name, *மதிப்பு;
+	எழுத்து *s, *s2;
+	unsigned முழு len, len1, len_init;
 	nserror res;
 
 	s = malloc(1);
 
-	if (s == NULL) {
-		return NSERROR_NOMEM;
+	எனில் (s == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	s[0] = '\0';
 	len_init = len = 0;
 
-	for (; control; control = control->next) {
-		res = url_escape(control->name, true, NULL, &name);
-		if (res != NSERROR_OK) {
-			free(s);
-			return res;
+	க்கு (; control; control = control->next) {
+		res = url_escape(control->name, true, வெற்று, &name);
+		எனில் (res != NSERROR_OK) {
+			விடுவி(s);
+			திரும்பு res;
 		}
 
-		res = url_escape(control->value, true, NULL, &value);
-		if (res != NSERROR_OK) {
-			free(name);
-			free(s);
-			return res;
+		res = url_escape(control->மதிப்பு, true, வெற்று, &மதிப்பு);
+		எனில் (res != NSERROR_OK) {
+			விடுவி(name);
+			விடுவி(s);
+			திரும்பு res;
 		}
 
 		/* resize string to allow for new key/value pair,
 		 *  equals, amphersand and terminator
 		 */
-		len1 = len + strlen(name) + strlen(value) + 2;
+		len1 = len + strlen(name) + strlen(மதிப்பு) + 2;
 		s2 = realloc(s, len1 + 1);
-		if (s2 == NULL) {
-			free(value);
-			free(name);
-			free(s);
-			return NSERROR_NOMEM;
+		எனில் (s2 == வெற்று) {
+			விடுவி(மதிப்பு);
+			விடுவி(name);
+			விடுவி(s);
+			திரும்பு NSERROR_NOMEM;
 		}
 		s = s2;
 
-		snprintf(s + len, (len1 + 1) - len, "%s=%s&", name, value);
+		snprintf(s + len, (len1 + 1) - len, "%s=%s&", name, மதிப்பு);
 		len = len1;
-		free(name);
-		free(value);
+		விடுவி(name);
+		விடுவி(மதிப்பு);
 	}
 
-	if (len > len_init) {
+	எனில் (len > len_init) {
 		/* Replace trailing '&' */
 		s[len - 1] = '\0';
 	}
 
 	*encoded_out = s;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /**
  * Callback for the select menus scroll
  */
-static void
-form_select_menu_scroll_callback(void *client_data,
-				 struct scrollbar_msg_data *scrollbar_data)
+நிலையான வெறுமை
+form_select_menu_scroll_callback(வெறுமை *client_data,
+				 கட்டமைப்பு scrollbar_செய்தி_data *scrollbar_data)
 {
-	struct form_control *control = client_data;
-	struct form_select_menu *menu = control->data.select.menu;
+	கட்டமைப்பு form_control *control = client_data;
+	கட்டமைப்பு form_select_menu *menu = control->data.select.menu;
 	html_content *html = (html_content *)menu->c;
 
-	switch (scrollbar_data->msg) {
-		case SCROLLBAR_MSG_MOVED:
+	தேர்வு (scrollbar_data->செய்தி) {
+		நிலை SCROLLBAR_செய்தி_MOVED:
 			menu->callback(menu->client_data,
 					0, 0,
 					menu->width,
 					menu->height);
-			break;
-		case SCROLLBAR_MSG_SCROLL_START:
+			நிறுத்து;
+		நிலை SCROLLBAR_செய்தி_SCROLL_START:
 		{
-			struct rect rect = {
+			கட்டமைப்பு rect rect = {
 				.x0 = scrollbar_data->x0,
 				.y0 = scrollbar_data->y0,
 				.x1 = scrollbar_data->x1,
@@ -1288,15 +1288,15 @@ form_select_menu_scroll_callback(void *client_data,
 
 			menu->scroll_capture = true;
 		}
-			break;
-		case SCROLLBAR_MSG_SCROLL_FINISHED:
+			நிறுத்து;
+		நிலை SCROLLBAR_செய்தி_SCROLL_FINISHED:
 			menu->scroll_capture = false;
 
 			browser_window_set_drag_type(html->bw,
-					DRAGGING_NONE, NULL);
-			break;
-		default:
-			break;
+					DRAGGING_NONE, வெற்று);
+			நிறுத்து;
+		இயல்பு:
+			நிறுத்து;
 	}
 }
 
@@ -1309,18 +1309,18 @@ form_select_menu_scroll_callback(void *client_data,
  * \param  item	    index of item selected from the menu
  * \return NSERROR_OK or appropriate error code.
  */
-static nserror
+நிலையான nserror
 form__select_process_selection(html_content *html,
-			       struct form_control *control,
-			       int item)
+			       கட்டமைப்பு form_control *control,
+			       முழு item)
 {
-	struct box *inline_box;
-	struct form_option *o;
-	int count;
+	கட்டமைப்பு box *inline_box;
+	கட்டமைப்பு form_option *o;
+	முழு மொத்தம்;
 	nserror ret = NSERROR_OK;
 
-	assert(control != NULL);
-	assert(html != NULL);
+	ப்ரதிஜ்ஞா(control != வெற்று);
+	ப்ரதிஜ்ஞா(html != வெற்று);
 
 	/**
 	 * \todo Even though the form code is effectively part of the html
@@ -1329,35 +1329,35 @@ form__select_process_selection(html_content *html,
 
 	inline_box = control->box->children->children;
 
-	for (count = 0, o = control->data.select.items;
-			o != NULL;
-			count++, o = o->next) {
-		if (!control->data.select.multiple && o->selected) {
+	க்கு (மொத்தம் = 0, o = control->data.select.பொருட்கள்;
+			o != வெற்று;
+			மொத்தம்++, o = o->next) {
+		எனில் (!control->data.select.multiple && o->selected) {
 			o->selected = false;
-			dom_html_option_element_set_selected(o->node, false);
+			dom_html_option_element_set_selected(o->முனை, false);
 		}
 
-		if (count == item) {
-			if (control->data.select.multiple) {
-				if (o->selected) {
+		எனில் (மொத்தம் == item) {
+			எனில் (control->data.select.multiple) {
+				எனில் (o->selected) {
 					o->selected = false;
 					dom_html_option_element_set_selected(
-							o->node, false);
-					control->data.select.num_selected--;
-				} else {
+							o->முனை, false);
+					control->data.select.இலக்கம்_selected--;
+				} இல்லையெனில் {
 					o->selected = true;
 					dom_html_option_element_set_selected(
-							o->node, true);
-					control->data.select.num_selected++;
+							o->முனை, true);
+					control->data.select.இலக்கம்_selected++;
 				}
-			} else {
+			} இல்லையெனில் {
 				dom_html_option_element_set_selected(
-						o->node, true);
+						o->முனை, true);
 				o->selected = true;
 			}
 		}
 
-		if (o->selected) {
+		எனில் (o->selected) {
 			control->data.select.current = o;
 		}
 	}
@@ -1365,28 +1365,28 @@ form__select_process_selection(html_content *html,
 	talloc_free(inline_box->text);
 	inline_box->text = 0;
 
-	if (control->data.select.num_selected == 0) {
+	எனில் (control->data.select.இலக்கம்_selected == 0) {
 		inline_box->text = talloc_strdup(html->bctx,
 				messages_get("Form_None"));
-	} else if (control->data.select.num_selected == 1) {
+	} இல்லையெனில் எனில் (control->data.select.இலக்கம்_selected == 1) {
 		inline_box->text = talloc_strdup(html->bctx,
 				control->data.select.current->text);
-	} else {
+	} இல்லையெனில் {
 		inline_box->text = talloc_strdup(html->bctx,
 				messages_get("Form_Many"));
 	}
 
-	if (!inline_box->text) {
+	எனில் (!inline_box->text) {
 		ret = NSERROR_NOMEM;
 		inline_box->length = 0;
-	} else {
+	} இல்லையெனில் {
 		inline_box->length = strlen(inline_box->text);
 	}
 	inline_box->width = control->box->width;
 
 	html__redraw_a_box(html, control->box);
 
-	return ret;
+	திரும்பு ret;
 }
 
 
@@ -1397,31 +1397,31 @@ form__select_process_selection(html_content *html,
  * \param x X coordinate of click
  * \param y Y coordinate of click
  */
-static void form_select_menu_clicked(struct form_control *control, int x, int y)
+நிலையான வெறுமை form_select_menu_clicked(கட்டமைப்பு form_control *control, முழு x, முழு y)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	struct form_option *option;
+	கட்டமைப்பு form_select_menu *menu = control->data.select.menu;
+	கட்டமைப்பு form_option *option;
 	html_content *html = (html_content *)menu->c;
-	int line_height, line_height_with_spacing;
-	int item_bottom_y;
-	int scroll, i;
+	முழு வரி_height, வரி_height_with_spacing;
+	முழு item_bottom_y;
+	முழு scroll, i;
 
 	scroll = scrollbar_get_offset(menu->scrollbar);
 
-	line_height = menu->line_height;
-	line_height_with_spacing = line_height +
-			line_height * SELECT_LINE_SPACING;
+	வரி_height = menu->வரி_height;
+	வரி_height_with_spacing = வரி_height +
+			வரி_height * SELECT_வரி_SPACING;
 
-	option = control->data.select.items;
-	item_bottom_y = line_height_with_spacing;
+	option = control->data.select.பொருட்கள்;
+	item_bottom_y = வரி_height_with_spacing;
 	i = 0;
-	while (option && item_bottom_y < scroll + y) {
-		item_bottom_y += line_height_with_spacing;
+	போது (option && item_bottom_y < scroll + y) {
+		item_bottom_y += வரி_height_with_spacing;
 		option = option->next;
 		i++;
 	}
 
-	if (option != NULL) {
+	எனில் (option != வெற்று) {
 		form__select_process_selection(html, control, i);
 	}
 
@@ -1430,161 +1430,161 @@ static void form_select_menu_clicked(struct form_control *control, int x, int y)
 
 
 /* exported interface documented in html/form_internal.h */
-void form_add_control(struct form *form, struct form_control *control)
+வெறுமை form_add_control(கட்டமைப்பு form *form, கட்டமைப்பு form_control *control)
 {
-	if (form == NULL) {
-		return;
+	எனில் (form == வெற்று) {
+		திரும்பு;
 	}
 
 	control->form = form;
 
-	if (form->controls != NULL) {
-		assert(form->last_control);
+	எனில் (form->controls != வெற்று) {
+		ப்ரதிஜ்ஞா(form->last_control);
 
 		form->last_control->next = control;
 		control->prev = form->last_control;
-		control->next = NULL;
+		control->next = வெற்று;
 		form->last_control = control;
-	} else {
+	} இல்லையெனில் {
 		form->controls = form->last_control = control;
 	}
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free_control(struct form_control *control)
+வெறுமை form_free_control(கட்டமைப்பு form_control *control)
 {
-	struct form_control *c;
-	assert(control != NULL);
+	கட்டமைப்பு form_control *c;
+	ப்ரதிஜ்ஞா(control != வெற்று);
 
 	NSLOG(netsurf, INFO, "Control:%p name:%p value:%p initial:%p",
-	      control, control->name, control->value, control->initial_value);
-	free(control->name);
-	free(control->value);
-	free(control->initial_value);
-	if (control->last_synced_value != NULL) {
-		free(control->last_synced_value);
+	      control, control->name, control->மதிப்பு, control->initial_மதிப்பு);
+	விடுவி(control->name);
+	விடுவி(control->மதிப்பு);
+	விடுவி(control->initial_மதிப்பு);
+	எனில் (control->last_synced_மதிப்பு != வெற்று) {
+		விடுவி(control->last_synced_மதிப்பு);
 	}
 
-	if (control->type == GADGET_SELECT) {
-		struct form_option *option, *next;
+	எனில் (control->type == GADGET_SELECT) {
+		கட்டமைப்பு form_option *option, *next;
 
-		for (option = control->data.select.items; option;
+		க்கு (option = control->data.select.பொருட்கள்; option;
 				option = next) {
 			next = option->next;
 			NSLOG(netsurf, INFO,
 			      "select option:%p text:%p value:%p", option,
-			      option->text, option->value);
-			free(option->text);
-			free(option->value);
-			free(option);
+			      option->text, option->மதிப்பு);
+			விடுவி(option->text);
+			விடுவி(option->மதிப்பு);
+			விடுவி(option);
 		}
-		if (control->data.select.menu != NULL) {
+		எனில் (control->data.select.menu != வெற்று) {
 			form_free_select_menu(control);
 		}
 	}
 
-	if (control->type == GADGET_TEXTAREA ||
+	எனில் (control->type == GADGET_TEXTAREA ||
 			control->type == GADGET_TEXTBOX ||
 			control->type == GADGET_PASSWORD) {
 
-		if (control->data.text.initial != NULL) {
+		எனில் (control->data.text.initial != வெற்று) {
 			dom_string_unref(control->data.text.initial);
 		}
 
-		if (control->data.text.ta != NULL) {
+		எனில் (control->data.text.ta != வெற்று) {
 			textarea_destroy(control->data.text.ta);
 		}
 	}
 
 	/* unlink the control from the form */
-	if (control->form != NULL) {
-		for (c = control->form->controls; c != NULL; c = c->next) {
-			if (c->next == control) {
+	எனில் (control->form != வெற்று) {
+		க்கு (c = control->form->controls; c != வெற்று; c = c->next) {
+			எனில் (c->next == control) {
 				c->next = control->next;
-				if (control->form->last_control == control)
+				எனில் (control->form->last_control == control)
 					control->form->last_control = c;
-				break;
+				நிறுத்து;
 			}
-			if (c == control) {
+			எனில் (c == control) {
 				/* can only happen if control was first control */
 				control->form->controls = control->next;
-				if (control->form->last_control == control)
+				எனில் (control->form->last_control == control)
 					control->form->controls =
-						control->form->last_control = NULL;
-				break;
+						control->form->last_control = வெற்று;
+				நிறுத்து;
 			}
 		}
 	}
 
-	if (control->node_value != NULL) {
-		dom_string_unref(control->node_value);
+	எனில் (control->முனை_மதிப்பு != வெற்று) {
+		dom_string_unref(control->முனை_மதிப்பு);
 	}
 
-	free(control);
+	விடுவி(control);
 }
 
 
 /* exported interface documented in html/form_internal.h */
-bool form_add_option(struct form_control *control, char *value, char *text,
-		     bool selected, void *node)
+bool form_add_option(கட்டமைப்பு form_control *control, எழுத்து *மதிப்பு, எழுத்து *text,
+		     bool selected, வெறுமை *முனை)
 {
-	struct form_option *option;
+	கட்டமைப்பு form_option *option;
 
-	assert(control);
-	assert(control->type == GADGET_SELECT);
+	ப்ரதிஜ்ஞா(control);
+	ப்ரதிஜ்ஞா(control->type == GADGET_SELECT);
 
-	option = calloc(1, sizeof *option);
-	if (!option)
-		return false;
+	option = calloc(1, அளவு *option);
+	எனில் (!option)
+		திரும்பு false;
 
-	option->value = value;
+	option->மதிப்பு = மதிப்பு;
 	option->text = text;
 
 	/* add to linked list */
-	if (control->data.select.items == 0)
-		control->data.select.items = option;
-	else
+	எனில் (control->data.select.பொருட்கள் == 0)
+		control->data.select.பொருட்கள் = option;
+	இல்லையெனில்
 		control->data.select.last_item->next = option;
 	control->data.select.last_item = option;
 
 	/* set selected */
-	if (selected && (control->data.select.num_selected == 0 ||
+	எனில் (selected && (control->data.select.இலக்கம்_selected == 0 ||
 			control->data.select.multiple)) {
 		option->selected = option->initial_selected = true;
-		control->data.select.num_selected++;
+		control->data.select.இலக்கம்_selected++;
 		control->data.select.current = option;
 	}
 
-	control->data.select.num_items++;
+	control->data.select.இலக்கம்_பொருட்கள்++;
 
-	option->node = node;
+	option->முனை = முனை;
 
-	return true;
+	திரும்பு true;
 }
 
 
 /* exported interface documented in html/form_internal.h */
 nserror
-form_open_select_menu(void *client_data,
-		      struct form_control *control,
+form_open_select_menu(வெறுமை *client_data,
+		      கட்டமைப்பு form_control *control,
 		      select_menu_redraw_callback callback,
-		      struct content *c)
+		      கட்டமைப்பு content *c)
 {
-	int line_height_with_spacing;
-	struct box *box;
+	முழு வரி_height_with_spacing;
+	கட்டமைப்பு box *box;
 	plot_font_style_t fstyle;
-	int total_height;
-	struct form_select_menu *menu;
+	முழு total_height;
+	கட்டமைப்பு form_select_menu *menu;
 	html_content *html = (html_content *)c;
 	nserror res;
 
 	/* if the menu is opened for the first time */
-	if (control->data.select.menu == NULL) {
+	எனில் (control->data.select.menu == வெற்று) {
 
-		menu = calloc(1, sizeof (struct form_select_menu));
-		if (menu == NULL) {
-			return NSERROR_NOMEM;
+		menu = calloc(1, அளவு (கட்டமைப்பு form_select_menu));
+		எனில் (menu == வெற்று) {
+			திரும்பு NSERROR_NOMEM;
 		}
 
 		control->data.select.menu = menu;
@@ -1592,27 +1592,27 @@ form_open_select_menu(void *client_data,
 		box = control->box;
 
 		menu->width = box->width +
-			box->border[RIGHT].width + box->padding[RIGHT] +
-			box->border[LEFT].width + box->padding[LEFT];
+			box->border[வலது_2].width + box->padding[வலது_2] +
+			box->border[இடது_2].width + box->padding[இடது_2];
 
 		font_plot_style_from_css(&html->unit_len_ctx,
 				control->box->style, &fstyle);
 		menu->f_size = fstyle.size;
 
-		menu->line_height = FIXTOINT(FDIV((FMUL(FLTTOFIX(1.2),
+		menu->வரி_height = FIXTOINT(FDIV((FMUL(FLTTOFIX(1.2),
 				FMUL(html->unit_len_ctx.device_dpi,
 				INTTOFIX(fstyle.size / PLOT_STYLE_SCALE)))),
 				F_72));
 
-		line_height_with_spacing = menu->line_height +
-				menu->line_height *
-				SELECT_LINE_SPACING;
+		வரி_height_with_spacing = menu->வரி_height +
+				menu->வரி_height *
+				SELECT_வரி_SPACING;
 
-		total_height = control->data.select.num_items *
-				line_height_with_spacing;
+		total_height = control->data.select.இலக்கம்_பொருட்கள் *
+				வரி_height_with_spacing;
 		menu->height = total_height;
 
-		if (menu->height > MAX_SELECT_HEIGHT) {
+		எனில் (menu->height > MAX_SELECT_HEIGHT) {
 			menu->height = MAX_SELECT_HEIGHT;
 		}
 
@@ -1625,54 +1625,54 @@ form_open_select_menu(void *client_data,
 				       control,
 				       form_select_menu_scroll_callback,
 				       &(menu->scrollbar));
-		if (res != NSERROR_OK) {
-			control->data.select.menu = NULL;
-			free(menu);
-			return res;
+		எனில் (res != NSERROR_OK) {
+			control->data.select.menu = வெற்று;
+			விடுவி(menu);
+			திரும்பு res;
 		}
 		menu->c = c;
-	} else {
+	} இல்லையெனில் {
 		menu = control->data.select.menu;
 	}
 
 	menu->callback(client_data, 0, 0, menu->width, menu->height);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free_select_menu(struct form_control *control)
+வெறுமை form_free_select_menu(கட்டமைப்பு form_control *control)
 {
-	if (control->data.select.menu->scrollbar != NULL)
+	எனில் (control->data.select.menu->scrollbar != வெற்று)
 		scrollbar_destroy(control->data.select.menu->scrollbar);
-	free(control->data.select.menu);
-	control->data.select.menu = NULL;
+	விடுவி(control->data.select.menu);
+	control->data.select.menu = வெற்று;
 }
 
 
 /* exported interface documented in html/form_internal.h */
 bool
-form_redraw_select_menu(struct form_control *control,
-			int x, int y,
-			float scale,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+form_redraw_select_menu(கட்டமைப்பு form_control *control,
+			முழு x, முழு y,
+			தசம scale,
+			மாறிலி கட்டமைப்பு rect *clip,
+			மாறிலி கட்டமைப்பு redraw_context *ctx)
 {
-	struct box *box;
-	struct form_select_menu *menu = control->data.select.menu;
-	struct form_option *option;
-	int line_height, line_height_with_spacing;
-	int width, height;
-	int x0, y0, x1, scrollbar_x, y1, y2, y3;
-	int item_y;
-	int text_pos_offset, text_x;
-	int scrollbar_width = SCROLLBAR_WIDTH;
-	int i;
-	int scroll;
-	int x_cp, y_cp;
-	struct rect r;
-	struct rect rect;
+	கட்டமைப்பு box *box;
+	கட்டமைப்பு form_select_menu *menu = control->data.select.menu;
+	கட்டமைப்பு form_option *option;
+	முழு வரி_height, வரி_height_with_spacing;
+	முழு width, height;
+	முழு x0, y0, x1, scrollbar_x, y1, y2, y3;
+	முழு item_y;
+	முழு text_pos_offset, text_x;
+	முழு scrollbar_width = SCROLLBAR_WIDTH;
+	முழு i;
+	முழு scroll;
+	முழு x_cp, y_cp;
+	கட்டமைப்பு rect r;
+	கட்டமைப்பு rect rect;
 	nserror res;
 
 	box = control->box;
@@ -1681,25 +1681,25 @@ form_redraw_select_menu(struct form_control *control,
 	y_cp = y;
 	width = menu->width;
 	height = menu->height;
-	line_height = menu->line_height;
+	வரி_height = menu->வரி_height;
 
-	line_height_with_spacing = line_height +
-			line_height * SELECT_LINE_SPACING;
+	வரி_height_with_spacing = வரி_height +
+			வரி_height * SELECT_வரி_SPACING;
 	scroll = scrollbar_get_offset(menu->scrollbar);
 
-	if (scale != 1.0) {
+	எனில் (scale != 1.0) {
 		x *= scale;
 		y *= scale;
 		width *= scale;
 		height *= scale;
 		scrollbar_width *= scale;
 
-		i = scroll / line_height_with_spacing;
-		scroll -= i * line_height_with_spacing;
-		line_height *= scale;
-		line_height_with_spacing *= scale;
+		i = scroll / வரி_height_with_spacing;
+		scroll -= i * வரி_height_with_spacing;
+		வரி_height *= scale;
+		வரி_height_with_spacing *= scale;
 		scroll *= scale;
-		scroll += i * line_height_with_spacing;
+		scroll += i * வரி_height_with_spacing;
 	}
 
 
@@ -1714,8 +1714,8 @@ form_redraw_select_menu(struct form_control *control,
 	r.x1 = x1 + 1;
 	r.y1 = y1 + 1;
 	res = ctx->plot->clip(ctx, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு false;
 	}
 
 	rect.x0 = x0;
@@ -1723,8 +1723,8 @@ form_redraw_select_menu(struct form_control *control,
 	rect.x1 = x1;
 	rect.y1 = y1;
 	res = ctx->plot->rectangle(ctx, plot_style_stroke_darkwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு false;
 	}
 
 	x0 = x0 + SELECT_BORDER_WIDTH;
@@ -1738,42 +1738,42 @@ form_redraw_select_menu(struct form_control *control,
 	r.x1 = x1 + 1;
 	r.y1 = y1 + 1;
 	res = ctx->plot->clip(ctx, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு false;
 	}
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_lightwbasec, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு false;
 	}
 
-	option = control->data.select.items;
-	item_y = line_height_with_spacing;
+	option = control->data.select.பொருட்கள்;
+	item_y = வரி_height_with_spacing;
 
-	while (item_y < scroll) {
+	போது (item_y < scroll) {
 		option = option->next;
-		item_y += line_height_with_spacing;
+		item_y += வரி_height_with_spacing;
 	}
-	item_y -= line_height_with_spacing;
+	item_y -= வரி_height_with_spacing;
 	text_pos_offset = y - scroll +
-			(int) (line_height * (0.75 + SELECT_LINE_SPACING));
-	text_x = x + (box->border[LEFT].width + box->padding[LEFT]) * scale;
+			(முழு) (வரி_height * (0.75 + SELECT_வரி_SPACING));
+	text_x = x + (box->border[இடது_2].width + box->padding[இடது_2]) * scale;
 
 	plot_fstyle_entry.size = menu->f_size;
 
-	while (option && item_y - scroll < height) {
+	போது (option && item_y - scroll < height) {
 
-		if (option->selected) {
+		எனில் (option->selected) {
 			y2 = y + item_y - scroll;
-			y3 = y + item_y + line_height_with_spacing - scroll;
+			y3 = y + item_y + வரி_height_with_spacing - scroll;
 
 			rect.x0 = x0;
 			rect.y0 = y0 > y2 ? y0 : y2;
 			rect.x1 = scrollbar_x + 1;
 			rect.y1 = y3 < y1 + 1 ? y3 : y1 + 1;
 			res = ctx->plot->rectangle(ctx, &plot_style_fill_selected, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			எனில் (res != NSERROR_OK) {
+				திரும்பு false;
 			}
 		}
 
@@ -1782,11 +1782,11 @@ form_redraw_select_menu(struct form_control *control,
 				      &plot_fstyle_entry,
 				      text_x, y2,
 				      option->text, strlen(option->text));
-		if (res != NSERROR_OK) {
-			return false;
+		எனில் (res != NSERROR_OK) {
+			திரும்பு false;
 		}
 
-		item_y += line_height_with_spacing;
+		item_y += வரி_height_with_spacing;
 		option = option->next;
 	}
 
@@ -1794,90 +1794,90 @@ form_redraw_select_menu(struct form_control *control,
 			       x_cp + menu->width - SCROLLBAR_WIDTH,
 			       y_cp,
 			       clip, scale, ctx);
-	if (res != NSERROR_OK) {
-		return false;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு false;
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 
 /* private interface described in html/form_internal.h */
 bool
-form_clip_inside_select_menu(struct form_control *control,
-			     float scale,
-			     const struct rect *clip)
+form_clip_inside_select_menu(கட்டமைப்பு form_control *control,
+			     தசம scale,
+			     மாறிலி கட்டமைப்பு rect *clip)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	int width, height;
+	கட்டமைப்பு form_select_menu *menu = control->data.select.menu;
+	முழு width, height;
 
 
 	width = menu->width;
 	height = menu->height;
 
-	if (scale != 1.0) {
+	எனில் (scale != 1.0) {
 		width *= scale;
 		height *= scale;
 	}
 
-	if (clip->x0 >= 0 &&
+	எனில் (clip->x0 >= 0 &&
 	    clip->x1 <= width &&
 	    clip->y0 >= 0 &&
 	    clip->y1 <= height)
-		return true;
+		திரும்பு true;
 
-	return false;
+	திரும்பு false;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-nserror form_select_process_selection(struct form_control *control, int item)
+nserror form_select_process_selection(கட்டமைப்பு form_control *control, முழு item)
 {
-	assert(control != NULL);
+	ப்ரதிஜ்ஞா(control != வெற்று);
 
-	return form__select_process_selection(control->html, control, item);
+	திரும்பு form__select_process_selection(control->html, control, item);
 }
 
 
 /* exported interface documented in netsurf/form.h */
-struct form_option *
-form_select_get_option(struct form_control *control, int item)
+கட்டமைப்பு form_option *
+form_select_get_option(கட்டமைப்பு form_control *control, முழு item)
 {
-	struct form_option *opt;
+	கட்டமைப்பு form_option *opt;
 
-	opt = control->data.select.items;
-	while ((opt != NULL) && (item > 0)) {
+	opt = control->data.select.பொருட்கள்;
+	போது ((opt != வெற்று) && (item > 0)) {
 		opt = opt->next;
 		item--;
 	}
-	return opt;
+	திரும்பு opt;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-char *form_control_get_name(struct form_control *control)
+எழுத்து *form_control_get_name(கட்டமைப்பு form_control *control)
 {
-	return control->name;
+	திரும்பு control->name;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-nserror form_control_bounding_rect(struct form_control *control, struct rect *r)
+nserror form_control_bounding_rect(கட்டமைப்பு form_control *control, கட்டமைப்பு rect *r)
 {
 	box_bounds( control->box, r );
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* private interface described in html/form_internal.h */
-const char *
-form_select_mouse_action(struct form_control *control,
+மாறிலி எழுத்து *
+form_select_mouse_action(கட்டமைப்பு form_control *control,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 முழு x, முழு y)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	int x0, y0, x1, y1, scrollbar_x;
-	const char *status = NULL;
+	கட்டமைப்பு form_select_menu *menu = control->data.select.menu;
+	முழு x0, y0, x1, y1, scrollbar_x;
+	மாறிலி எழுத்து *status = வெற்று;
 	bool multiple = control->data.select.multiple;
 
 	x0 = 0;
@@ -1886,66 +1886,66 @@ form_select_mouse_action(struct form_control *control,
 	y1 = menu->height;
 	scrollbar_x = x1 - SCROLLBAR_WIDTH;
 
-	if (menu->scroll_capture ||
+	எனில் (menu->scroll_capture ||
 			(x > scrollbar_x && x < x1 && y > y0 && y < y1)) {
 		/* The scroll is currently capturing all events or the mouse
 		 * event is taking place on the scrollbar widget area
 		 */
 		x -= scrollbar_x;
-		return scrollbar_mouse_status_to_message(
+		திரும்பு scrollbar_mouse_status_to_message(
 				scrollbar_mouse_action(menu->scrollbar,
 						mouse, x, y));
 	}
 
 
-	if (x > x0 && x < scrollbar_x && y > y0 && y < y1) {
+	எனில் (x > x0 && x < scrollbar_x && y > y0 && y < y1) {
 		/* over option area */
 
-		if (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2))
+		எனில் (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2))
 			/* button 1 or 2 click */
 			form_select_menu_clicked(control, x, y);
 
-		if (!(mouse & BROWSER_MOUSE_CLICK_1 && !multiple))
+		எனில் (!(mouse & BROWSER_MOUSE_CLICK_1 && !multiple))
 			/* anything but a button 1 click over a single select
 			   menu */
 			status = messages_get(control->data.select.multiple ?
 					"SelectMClick" : "SelectClick");
 
-	} else if (!(mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)))
+	} இல்லையெனில் எனில் (!(mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)))
 		/* if not a button 1 or 2 click*/
 		status = messages_get("SelectClose");
 
-	return status;
+	திரும்பு status;
 }
 
 
 /* private interface described in html/form_internal.h */
-void
-form_select_mouse_drag_end(struct form_control *control,
+வெறுமை
+form_select_mouse_drag_end(கட்டமைப்பு form_control *control,
 			   browser_mouse_state mouse,
-			   int x, int y)
+			   முழு x, முழு y)
 {
-	int x0, y0, x1, y1;
-	int box_x, box_y;
-	struct box *box;
-	struct form_select_menu *menu = control->data.select.menu;
+	முழு x0, y0, x1, y1;
+	முழு box_x, box_y;
+	கட்டமைப்பு box *box;
+	கட்டமைப்பு form_select_menu *menu = control->data.select.menu;
 
 	box = control->box;
 
 	/* Get global coords of scrollbar */
 	box_coords(box, &box_x, &box_y);
-	box_x -= box->border[LEFT].width;
+	box_x -= box->border[இடது_2].width;
 	box_y += box->height + box->border[BOTTOM].width +
-			box->padding[BOTTOM] + box->padding[TOP];
+			box->padding[BOTTOM] + box->padding[உச்சி_2];
 
 	/* Get drag end coords relative to scrollbar */
 	x = x - box_x;
 	y = y - box_y;
 
-	if (menu->scroll_capture) {
+	எனில் (menu->scroll_capture) {
 		x -= menu->width - SCROLLBAR_WIDTH;
 		scrollbar_mouse_drag_end(menu->scrollbar, mouse, x, y);
-		return;
+		திரும்பு;
 	}
 
 	x0 = 0;
@@ -1954,7 +1954,7 @@ form_select_mouse_drag_end(struct form_control *control,
 	y1 = menu->height;
 
 
-	if (x > x0 && x < x1 - SCROLLBAR_WIDTH && y >  y0 && y < y1) {
+	எனில் (x > x0 && x < x1 - SCROLLBAR_WIDTH && y >  y0 && y < y1) {
 		/* handle drag end above the option area like a regular click */
 		form_select_menu_clicked(control, x, y);
 	}
@@ -1962,8 +1962,8 @@ form_select_mouse_drag_end(struct form_control *control,
 
 
 /* private interface described in html/form_internal.h */
-void form_select_get_dimensions(struct form_control *control,
-		int *width, int *height)
+வெறுமை form_select_get_dimensions(கட்டமைப்பு form_control *control,
+		முழு *width, முழு *height)
 {
 	*width = control->data.select.menu->width;
 	*height = control->data.select.menu->height;
@@ -1971,73 +1971,73 @@ void form_select_get_dimensions(struct form_control *control,
 
 
 /* private interface described in html/form_internal.h */
-void form_select_menu_callback(void *client_data,
-		int x, int y, int width, int height)
+வெறுமை form_select_menu_callback(வெறுமை *client_data,
+		முழு x, முழு y, முழு width, முழு height)
 {
 	html_content *html = client_data;
-	int menu_x, menu_y;
-	struct box *box;
+	முழு menu_x, menu_y;
+	கட்டமைப்பு box *box;
 
 	box = html->visible_select_menu->box;
 	box_coords(box, &menu_x, &menu_y);
 
-	menu_x -= box->border[LEFT].width;
+	menu_x -= box->border[இடது_2].width;
 	menu_y += box->height + box->border[BOTTOM].width +
 			box->padding[BOTTOM] +
-			box->padding[TOP];
-	content__request_redraw((struct content *)html, menu_x + x, menu_y + y,
+			box->padding[உச்சி_2];
+	content__request_redraw((கட்டமைப்பு content *)html, menu_x + x, menu_y + y,
 			width, height);
 }
 
 
 /* private interface described in html/form_internal.h */
-void form_radio_set(struct form_control *radio)
+வெறுமை form_radio_set(கட்டமைப்பு form_control *radio)
 {
-	struct form_control *control;
+	கட்டமைப்பு form_control *control;
 
-	assert(radio);
-	if (!radio->form)
-		return;
+	ப்ரதிஜ்ஞா(radio);
+	எனில் (!radio->form)
+		திரும்பு;
 
-	if (radio->selected)
-		return;
+	எனில் (radio->selected)
+		திரும்பு;
 
 	/* Clear selected state for other controls in
 	 * the same radio button group */
-	for (control = radio->form->controls;
-	     control != NULL;
+	க்கு (control = radio->form->controls;
+	     control != வெற்று;
 	     control = control->next) {
 		/* Only interested in radio inputs */
-		if (control->type != GADGET_RADIO)
-			continue;
+		எனில் (control->type != GADGET_RADIO)
+			தொடர்;
 
 		/* Ignore ourself */
-		if (control == radio)
-			continue;
+		எனில் (control == radio)
+			தொடர்;
 
 		/* Ignore inputs where:
 		 *   a) this or the other control have no name attribute
 		 *   b) this or the other control have an empty name attribute
 		 *   c) the control names do not match
 		 */
-		if ((control->name == NULL) ||
-		    (radio->name == NULL) ||
+		எனில் ((control->name == வெற்று) ||
+		    (radio->name == வெற்று) ||
 		    (control->name[0] == '\0') ||
 		    (radio->name[0] == '\0') ||
 		    strcmp(control->name, radio->name) != 0)
-			continue;
+			தொடர்;
 
 		/* Other control is in the same radio button group: clear its
 		 * selected state */
-		if (control->selected) {
+		எனில் (control->selected) {
 			control->selected = false;
-			dom_html_input_element_set_checked(control->node, false);
+			dom_html_உள்ளீடு_element_set_checked(control->முனை, false);
 			html__redraw_a_box(radio->html, control->box);
 		}
 	}
 
 	radio->selected = true;
-	dom_html_input_element_set_checked(radio->node, true);
+	dom_html_உள்ளீடு_element_set_checked(radio->முனை, true);
 	html__redraw_a_box(radio->html, radio->box);
 }
 
@@ -2045,119 +2045,119 @@ void form_radio_set(struct form_control *radio)
 /* private interface described in html/form_internal.h */
 nserror
 form_submit(nsurl *page_url,
-	    struct browser_window *target,
-	    struct form *form,
-	    struct form_control *submit_button)
+	    கட்டமைப்பு browser_window *target,
+	    கட்டமைப்பு form *form,
+	    கட்டமைப்பு form_control *submit_button)
 {
 	nserror res;
-	char *data = NULL; /* encoded form data */
-	struct fetch_multipart_data *success = NULL; /* gcc is incapable of correctly reasoning about use and generates "maybe used uninitialised" warnings */
+	எழுத்து *data = வெற்று; /* encoded form data */
+	கட்டமைப்பு fetch_multipart_data *success = வெற்று; /* gcc is incapable of correctly reasoning about use and generates "maybe used uninitialised" warnings */
 	nsurl *action_url;
 	nsurl *query_url;
 
-	assert(form != NULL);
+	ப்ரதிஜ்ஞா(form != வெற்று);
 
 	/* obtain list of controls from DOM */
 	res = form_dom_to_data(form, submit_button, &success);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	/* Decompose action */
 	res = nsurl_create(form->action, &action_url);
-	if (res != NSERROR_OK) {
+	எனில் (res != NSERROR_OK) {
 		fetch_multipart_data_destroy(success);
-		return res;
+		திரும்பு res;
 	}
 
-	switch (form->method) {
-	case method_GET:
+	தேர்வு (form->method) {
+	நிலை method_GET:
 		res = form_url_encode(form, success, &data);
-		if (res == NSERROR_OK) {
+		எனில் (res == NSERROR_OK) {
 			/* Replace query segment */
 			res = nsurl_replace_query(action_url, data, &query_url);
-			if (res == NSERROR_OK) {
+			எனில் (res == NSERROR_OK) {
 				res = browser_window_navigate(target,
 							      query_url,
 							      page_url,
 							      BW_NAVIGATE_HISTORY,
-							      NULL,
-							      NULL,
-							      NULL);
+							      வெற்று,
+							      வெற்று,
+							      வெற்று);
 
 				nsurl_unref(query_url);
 			}
-			free(data);
+			விடுவி(data);
 		}
-		break;
+		நிறுத்து;
 
-	case method_POST_URLENC:
+	நிலை method_POST_URLENC:
 		res = form_url_encode(form, success, &data);
-		if (res == NSERROR_OK) {
+		எனில் (res == NSERROR_OK) {
 			res = browser_window_navigate(target,
 						      action_url,
 						      page_url,
 						      BW_NAVIGATE_HISTORY,
 						      data,
-						      NULL,
-						      NULL);
-			free(data);
+						      வெற்று,
+						      வெற்று);
+			விடுவி(data);
 		}
-		break;
+		நிறுத்து;
 
-	case method_POST_MULTIPART:
+	நிலை method_POST_MULTIPART:
 		res = browser_window_navigate(target,
 					      action_url,
 					      page_url,
 					      BW_NAVIGATE_HISTORY,
-					      NULL,
+					      வெற்று,
 					      success,
-					      NULL);
+					      வெற்று);
 
-		break;
+		நிறுத்து;
 	}
 
 	nsurl_unref(action_url);
 	fetch_multipart_data_destroy(success);
 
-	return res;
+	திரும்பு res;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_gadget_update_value(struct form_control *control, char *value)
+வெறுமை form_gadget_update_மதிப்பு(கட்டமைப்பு form_control *control, எழுத்து *மதிப்பு)
 {
-	switch (control->type) {
-	case GADGET_HIDDEN:
-	case GADGET_TEXTBOX:
-	case GADGET_TEXTAREA:
-	case GADGET_PASSWORD:
-	case GADGET_FILE:
-		if (control->value != NULL) {
-			free(control->value);
+	தேர்வு (control->type) {
+	நிலை GADGET_HIDDEN:
+	நிலை GADGET_TEXTBOX:
+	நிலை GADGET_TEXTAREA:
+	நிலை GADGET_PASSWORD:
+	நிலை GADGET_FILE:
+		எனில் (control->மதிப்பு != வெற்று) {
+			விடுவி(control->மதிப்பு);
 		}
-		control->value = value;
-		if (control->node != NULL) {
+		control->மதிப்பு = மதிப்பு;
+		எனில் (control->முனை != வெற்று) {
 			dom_exception err;
 			dom_string *str;
-			err = dom_string_create((uint8_t *)value,
-						strlen(value), &str);
-			if (err == DOM_NO_ERR) {
-				if (control->type == GADGET_TEXTAREA)
-					err = dom_html_text_area_element_set_value(
-						(dom_html_text_area_element *)(control->node),
+			err = dom_string_create((uint8_t *)மதிப்பு,
+						strlen(மதிப்பு), &str);
+			எனில் (err == DOM_NO_ERR) {
+				எனில் (control->type == GADGET_TEXTAREA)
+					err = dom_html_text_area_element_set_மதிப்பு(
+						(dom_html_text_area_element *)(control->முனை),
 						str);
-				else
-					err = dom_html_input_element_set_value(
-						(dom_html_input_element *)(control->node),
+				இல்லையெனில்
+					err = dom_html_உள்ளீடு_element_set_மதிப்பு(
+						(dom_html_உள்ளீடு_element *)(control->முனை),
 						str);
 				dom_string_unref(str);
 			}
 		}
-		break;
-	default:
+		நிறுத்து;
+	இயல்பு:
 		/* Do nothing */
-		break;
+		நிறுத்து;
 	}
 
 	/* Finally, sync this with the DOM */
@@ -2166,14 +2166,14 @@ void form_gadget_update_value(struct form_control *control, char *value)
 
 
 /* Exported API, see html/form_internal.h */
-void
-form_gadget_sync_with_dom(struct form_control *control)
+வெறுமை
+form_gadget_sync_with_dom(கட்டமைப்பு form_control *control)
 {
 	dom_exception exc;
-	dom_string *value = NULL;
+	dom_string *மதிப்பு = வெற்று;
 	bool changed_dom = false;
 
-	if (control->syncing ||
+	எனில் (control->syncing ||
 	    (control->type != GADGET_TEXTBOX &&
 	     control->type != GADGET_PASSWORD &&
 	     control->type != GADGET_HIDDEN &&
@@ -2181,181 +2181,181 @@ form_gadget_sync_with_dom(struct form_control *control)
 		/* Not a control we support, or the control is already
 		 * mid-sync so we don't want to disrupt that
 		 */
-		return;
+		திரும்பு;
 	}
 
 	control->syncing = true;
 
 	/* If we've changed value, sync that toward the DOM */
-	if ((control->last_synced_value == NULL &&
-	     control->value != NULL &&
-	     control->value[0] != '\0') ||
-	    (control->last_synced_value != NULL &&
-	     control->value != NULL &&
-	     strcmp(control->value, control->last_synced_value) != 0)) {
-		char *dup = strdup(control->value);
-		if (dup == NULL) {
-			goto out;
+	எனில் ((control->last_synced_மதிப்பு == வெற்று &&
+	     control->மதிப்பு != வெற்று &&
+	     control->மதிப்பு[0] != '\0') ||
+	    (control->last_synced_மதிப்பு != வெற்று &&
+	     control->மதிப்பு != வெற்று &&
+	     strcmp(control->மதிப்பு, control->last_synced_மதிப்பு) != 0)) {
+		எழுத்து *dup = strdup(control->மதிப்பு);
+		எனில் (dup == வெற்று) {
+			செல் out;
 		}
-		if (control->last_synced_value != NULL) {
-			free(control->last_synced_value);
+		எனில் (control->last_synced_மதிப்பு != வெற்று) {
+			விடுவி(control->last_synced_மதிப்பு);
 		}
-		control->last_synced_value = dup;
-		exc = dom_string_create((uint8_t *)(control->value),
-					strlen(control->value), &value);
-		if (exc != DOM_NO_ERR) {
-			goto out;
+		control->last_synced_மதிப்பு = dup;
+		exc = dom_string_create((uint8_t *)(control->மதிப்பு),
+					strlen(control->மதிப்பு), &மதிப்பு);
+		எனில் (exc != DOM_NO_ERR) {
+			செல் out;
 		}
-		if (control->node_value != NULL) {
-			dom_string_unref(control->node_value);
+		எனில் (control->முனை_மதிப்பு != வெற்று) {
+			dom_string_unref(control->முனை_மதிப்பு);
 		}
-		control->node_value = value;
-		value = NULL;
-		if (control->type == GADGET_TEXTAREA) {
-			exc = dom_html_text_area_element_set_value(control->node, control->node_value);
-		} else {
-			exc = dom_html_input_element_set_value(control->node, control->node_value);
+		control->முனை_மதிப்பு = மதிப்பு;
+		மதிப்பு = வெற்று;
+		எனில் (control->type == GADGET_TEXTAREA) {
+			exc = dom_html_text_area_element_set_மதிப்பு(control->முனை, control->முனை_மதிப்பு);
+		} இல்லையெனில் {
+			exc = dom_html_உள்ளீடு_element_set_மதிப்பு(control->முனை, control->முனை_மதிப்பு);
 		}
-		if (exc != DOM_NO_ERR) {
-			goto out;
+		எனில் (exc != DOM_NO_ERR) {
+			செல் out;
 		}
 		changed_dom = true;
 	}
 
 	/* Now check if the DOM has changed since our last go */
-	if (control->type == GADGET_TEXTAREA) {
-		exc = dom_html_text_area_element_get_value(control->node, &value);
-	} else {
-		exc = dom_html_input_element_get_value(control->node, &value);
+	எனில் (control->type == GADGET_TEXTAREA) {
+		exc = dom_html_text_area_element_get_மதிப்பு(control->முனை, &மதிப்பு);
+	} இல்லையெனில் {
+		exc = dom_html_உள்ளீடு_element_get_மதிப்பு(control->முனை, &மதிப்பு);
 	}
 
-	if (exc != DOM_NO_ERR) {
+	எனில் (exc != DOM_NO_ERR) {
 		/* Nothing much we can do here */
-		goto out;
+		செல் out;
 	}
 
-	if (!dom_string_isequal(control->node_value, value)) {
+	எனில் (!dom_string_isequal(control->முனை_மதிப்பு, மதிப்பு)) {
 		/* The DOM has changed */
-		if (!changed_dom) {
+		எனில் (!changed_dom) {
 			/* And it wasn't us */
-			char *value_s = strndup(
-				dom_string_data(value),
-				dom_string_byte_length(value));
-			char *dup = NULL;
-			if (value_s == NULL) {
-				goto out;
+			எழுத்து *மதிப்பு_s = strndup(
+				dom_string_data(மதிப்பு),
+				dom_string_byte_length(மதிப்பு));
+			எழுத்து *dup = வெற்று;
+			எனில் (மதிப்பு_s == வெற்று) {
+				செல் out;
 			}
-			dup = strdup(value_s);
-			if (dup == NULL) {
-				free(value_s);
-				goto out;
+			dup = strdup(மதிப்பு_s);
+			எனில் (dup == வெற்று) {
+				விடுவி(மதிப்பு_s);
+				செல் out;
 			}
-			free(control->value);
-			control->value = value_s;
-			free(control->last_synced_value);
-			control->last_synced_value = dup;
-			if (control->type != GADGET_HIDDEN &&
-			    control->data.text.ta != NULL) {
+			விடுவி(control->மதிப்பு);
+			control->மதிப்பு = மதிப்பு_s;
+			விடுவி(control->last_synced_மதிப்பு);
+			control->last_synced_மதிப்பு = dup;
+			எனில் (control->type != GADGET_HIDDEN &&
+			    control->data.text.ta != வெற்று) {
 				textarea_set_text(control->data.text.ta,
-						  value_s);
+						  மதிப்பு_s);
 			}
 		}
-		control->node_value = value;
-		value = NULL;
+		control->முனை_மதிப்பு = மதிப்பு;
+		மதிப்பு = வெற்று;
 	}
 
 out:
-	if (value != NULL)
-		dom_string_unref(value);
+	எனில் (மதிப்பு != வெற்று)
+		dom_string_unref(மதிப்பு);
 	control->syncing = false;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-struct form *
-form_new(void *node,
-	 const char *action,
-	 const char *target,
+கட்டமைப்பு form *
+form_new(வெறுமை *முனை,
+	 மாறிலி எழுத்து *action,
+	 மாறிலி எழுத்து *target,
 	 form_method method,
-	 const char *charset,
-	 const char *doc_charset)
+	 மாறிலி எழுத்து *charset,
+	 மாறிலி எழுத்து *doc_charset)
 {
-	struct form *form;
+	கட்டமைப்பு form *form;
 
-	form = calloc(1, sizeof *form);
-	if (!form)
-		return NULL;
+	form = calloc(1, அளவு *form);
+	எனில் (!form)
+		திரும்பு வெற்று;
 
-	form->action = strdup(action != NULL ? action : "");
-	if (form->action == NULL) {
-		free(form);
-		return NULL;
+	form->action = strdup(action != வெற்று ? action : "");
+	எனில் (form->action == வெற்று) {
+		விடுவி(form);
+		திரும்பு வெற்று;
 	}
 
-	form->target = target != NULL ? strdup(target) : NULL;
-	if (target != NULL && form->target == NULL) {
-		free(form->action);
-		free(form);
-		return NULL;
+	form->target = target != வெற்று ? strdup(target) : வெற்று;
+	எனில் (target != வெற்று && form->target == வெற்று) {
+		விடுவி(form->action);
+		விடுவி(form);
+		திரும்பு வெற்று;
 	}
 
 	form->method = method;
 
-	form->accept_charsets = charset != NULL ? strdup(charset) : NULL;
-	if (charset != NULL && form->accept_charsets == NULL) {
-		free(form->target);
-		free(form->action);
-		free(form);
-		return NULL;
+	form->accept_charsets = charset != வெற்று ? strdup(charset) : வெற்று;
+	எனில் (charset != வெற்று && form->accept_charsets == வெற்று) {
+		விடுவி(form->target);
+		விடுவி(form->action);
+		விடுவி(form);
+		திரும்பு வெற்று;
 	}
 
-	form->document_charset = doc_charset != NULL ? strdup(doc_charset)
-						     : NULL;
-	if (doc_charset && form->document_charset == NULL) {
-		free(form->accept_charsets);
-		free(form->target);
-		free(form->action);
-		free(form);
-		return NULL;
+	form->document_charset = doc_charset != வெற்று ? strdup(doc_charset)
+						     : வெற்று;
+	எனில் (doc_charset && form->document_charset == வெற்று) {
+		விடுவி(form->accept_charsets);
+		விடுவி(form->target);
+		விடுவி(form->action);
+		விடுவி(form);
+		திரும்பு வெற்று;
 	}
 
-	form->node = node;
+	form->முனை = முனை;
 
-	return form;
+	திரும்பு form;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free(struct form *form)
+வெறுமை form_free(கட்டமைப்பு form *form)
 {
-	struct form_control *c, *d;
+	கட்டமைப்பு form_control *c, *d;
 
-	for (c = form->controls; c != NULL; c = d) {
+	க்கு (c = form->controls; c != வெற்று; c = d) {
 		d = c->next;
 
 		form_free_control(c);
 	}
 
-	free(form->action);
-	free(form->target);
-	free(form->accept_charsets);
-	free(form->document_charset);
+	விடுவி(form->action);
+	விடுவி(form->target);
+	விடுவி(form->accept_charsets);
+	விடுவி(form->document_charset);
 
-	free(form);
+	விடுவி(form);
 }
 
 
 /* exported interface documented in html/form_internal.h */
-struct form_control *form_new_control(void *node, form_control_type type)
+கட்டமைப்பு form_control *form_new_control(வெறுமை *முனை, form_control_type type)
 {
-	struct form_control *control;
+	கட்டமைப்பு form_control *control;
 
-	control = calloc(1, sizeof *control);
-	if (control == NULL)
-		return NULL;
+	control = calloc(1, அளவு *control);
+	எனில் (control == வெற்று)
+		திரும்பு வெற்று;
 
-	control->node = node;
+	control->முனை = முனை;
 	control->type = type;
 
-	return control;
+	திரும்பு control;
 }

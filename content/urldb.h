@@ -24,15 +24,15 @@
 #ifndef NETSURF_CONTENT_URLDB_H
 #define NETSURF_CONTENT_URLDB_H
 
-#include <libwapcaplet/libwapcaplet.h>
+#அந்தர்பாவ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/url_db.h"
-#include "netsurf/cookie_db.h"
+#அந்தர்பாவ "netsurf/url_db.h"
+#அந்தர்பாவ "netsurf/cookie_db.h"
 
 /**
  * Destroy urldb
  */
-void urldb_destroy(void);
+வெறுமை urldb_destroy(வெறுமை);
 
 
 /**
@@ -42,7 +42,7 @@ void urldb_destroy(void);
  * \param persist True to persist, false otherwise
  * \return NSERROR_OK on success or NSERROR_NOT_FOUND if url not in database
  */
-nserror urldb_set_url_persistence(struct nsurl *url, bool persist);
+nserror urldb_set_url_persistence(கட்டமைப்பு nsurl *url, bool persist);
 
 
 /**
@@ -51,7 +51,7 @@ nserror urldb_set_url_persistence(struct nsurl *url, bool persist);
  * \param url Absolute URL to insert
  * \return true on success, false otherwise
  */
-bool urldb_add_url(struct nsurl *url);
+bool urldb_add_url(கட்டமைப்பு nsurl *url);
 
 
 /**
@@ -61,7 +61,7 @@ bool urldb_add_url(struct nsurl *url);
  * \param title The title string to use (copied)
  * \return NSERROR_OK on success otherwise appropriate error code
  */
-nserror urldb_set_url_title(struct nsurl *url, const char *title);
+nserror urldb_set_url_title(கட்டமைப்பு nsurl *url, மாறிலி எழுத்து *title);
 
 
 /**
@@ -71,7 +71,7 @@ nserror urldb_set_url_title(struct nsurl *url, const char *title);
  * \param type The type to set
  * \return NSERROR_OK on success or NSERROR_NOT_FOUND if url not in database
  */
-nserror urldb_set_url_content_type(struct nsurl *url, content_type type);
+nserror urldb_set_url_content_type(கட்டமைப்பு nsurl *url, content_type type);
 
 
 /**
@@ -81,7 +81,7 @@ nserror urldb_set_url_content_type(struct nsurl *url, content_type type);
  * \param realm The authentication realm
  * \param auth The authentication details (in form username:password)
  */
-void urldb_set_auth_details(struct nsurl *url, const char *realm, const char *auth);
+வெறுமை urldb_set_auth_details(கட்டமைப்பு nsurl *url, மாறிலி எழுத்து *realm, மாறிலி எழுத்து *auth);
 
 
 /**
@@ -92,7 +92,7 @@ void urldb_set_auth_details(struct nsurl *url, const char *realm, const char *au
  *        the protection space when that's not been done before for given URL.
  * \return Pointer to authentication details, or NULL if not found
  */
-const char *urldb_get_auth_details(struct nsurl *url, const char *realm);
+மாறிலி எழுத்து *urldb_get_auth_details(கட்டமைப்பு nsurl *url, மாறிலி எழுத்து *realm);
 
 
 /**
@@ -101,7 +101,7 @@ const char *urldb_get_auth_details(struct nsurl *url, const char *realm);
  * \param url The URL to update
  * \return NSERROR_OK on success or NSERROR_NOT_FOUND if url not in database
  */
-nserror urldb_update_url_visit_data(struct nsurl *url);
+nserror urldb_update_url_visit_data(கட்டமைப்பு nsurl *url);
 
 
 /**
@@ -109,7 +109,7 @@ nserror urldb_update_url_visit_data(struct nsurl *url);
  *
  * \param url The URL to reset
  */
-void urldb_reset_url_visit_data(struct nsurl *url);
+வெறுமை urldb_reset_url_visit_data(கட்டமைப்பு nsurl *url);
 
 
 /**
@@ -118,7 +118,7 @@ void urldb_reset_url_visit_data(struct nsurl *url);
  * \param url URL to extract
  * \return Pointer to database's copy of URL or NULL if not found
  */
-struct nsurl *urldb_get_url(struct nsurl *url);
+கட்டமைப்பு nsurl *urldb_get_url(கட்டமைப்பு nsurl *url);
 
 
 /**
@@ -128,7 +128,7 @@ struct nsurl *urldb_get_url(struct nsurl *url);
  * \return true to permit connections to hosts with invalid certificates,
  * false otherwise.
  */
-bool urldb_get_cert_permissions(struct nsurl *url);
+bool urldb_get_cert_permissions(கட்டமைப்பு nsurl *url);
 
 
 /**
@@ -139,7 +139,7 @@ bool urldb_get_cert_permissions(struct nsurl *url);
  * \param referrer Referring resource, or 0 for verifiable transaction
  * \return true on success, false otherwise
  */
-bool urldb_set_cookie(const char *header, struct nsurl *url, struct nsurl *referrer);
+bool urldb_set_cookie(மாறிலி எழுத்து *header, கட்டமைப்பு nsurl *url, கட்டமைப்பு nsurl *referrer);
 
 
 /**
@@ -149,7 +149,7 @@ bool urldb_set_cookie(const char *header, struct nsurl *url, struct nsurl *refer
  * \param include_http_only Whether to include HTTP(S) only cookies.
  * \return Cookies string for libcurl (on heap), or NULL on error/no cookies
  */
-char *urldb_get_cookie(struct nsurl *url, bool include_http_only);
+எழுத்து *urldb_get_cookie(கட்டமைப்பு nsurl *url, bool include_http_only);
 
 
 /**
@@ -159,7 +159,7 @@ char *urldb_get_cookie(struct nsurl *url, bool include_http_only);
  * \param header Strict-Transport-Security header value
  * \return true on success, false otherwise
  */
-bool urldb_set_hsts_policy(struct nsurl *url, const char *header);
+bool urldb_set_hsts_policy(கட்டமைப்பு nsurl *url, மாறிலி எழுத்து *header);
 
 
 /**
@@ -168,6 +168,6 @@ bool urldb_set_hsts_policy(struct nsurl *url, const char *header);
  * \param url URL being fetched
  * \return true if HSTS policy is enabled, false otherwise
  */
-bool urldb_get_hsts_enabled(struct nsurl *url);
+bool urldb_get_hsts_enabled(கட்டமைப்பு nsurl *url);
 
 #endif

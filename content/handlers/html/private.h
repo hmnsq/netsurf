@@ -24,19 +24,19 @@
 #ifndef NETSURF_HTML_PRIVATE_H
 #define NETSURF_HTML_PRIVATE_H
 
-#include <dom/bindings/hubbub/parser.h>
+#அந்தர்பாவ <dom/bindings/hubbub/parser.h>
 
-#include "netsurf/types.h"
-#include "content/content_protected.h"
-#include "content/handlers/css/utils.h"
+#அந்தர்பாவ "netsurf/types.h"
+#அந்தர்பாவ "content/content_protected.h"
+#அந்தர்பாவ "content/handlers/css/utils.h"
 
 
-struct gui_layout_table;
-struct scrollbar_msg_data;
-struct content_redraw_data;
-struct selection;
+கட்டமைப்பு gui_layout_table;
+கட்டமைப்பு scrollbar_செய்தி_data;
+கட்டமைப்பு content_redraw_data;
+கட்டமைப்பு selection;
 
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	HTML_DRAG_NONE,			/** No drag */
 	HTML_DRAG_SELECTION,		/** Own; Text selection */
 	HTML_DRAG_SCROLLBAR,		/** Not own; drag in scrollbar widget */
@@ -49,14 +49,14 @@ typedef enum {
 /**
  * For drags we don't own
  */
-union html_drag_owner {
+ஒன்றிப்பு html_drag_owner {
 	bool no_owner;
-	struct box *content;
-	struct scrollbar *scrollbar;
-	struct box *textarea;
+	கட்டமைப்பு box *content;
+	கட்டமைப்பு scrollbar *scrollbar;
+	கட்டமைப்பு box *textarea;
 };
 
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	HTML_SELECTION_NONE,		/** No selection */
 	HTML_SELECTION_TEXTAREA,	/** Selection in one of our textareas */
 	HTML_SELECTION_SELF,		/** Selection in this html content */
@@ -66,13 +66,13 @@ typedef enum {
 /**
  * For getting at selections in this content or things in this content
  */
-union html_selection_owner {
+ஒன்றிப்பு html_selection_owner {
 	bool none;
-	struct box *textarea;
-	struct box *content;
+	கட்டமைப்பு box *textarea;
+	கட்டமைப்பு box *content;
 };
 
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	HTML_FOCUS_SELF,		/**< Focus is our own */
 	HTML_FOCUS_CONTENT,		/**< Focus belongs to child content */
 	HTML_FOCUS_TEXTAREA		/**< Focus belongs to textarea */
@@ -81,17 +81,17 @@ typedef enum {
 /**
  * For directing input
  */
-union html_focus_owner {
+ஒன்றிப்பு html_focus_owner {
 	bool self;
-	struct box *textarea;
-	struct box *content;
+	கட்டமைப்பு box *textarea;
+	கட்டமைப்பு box *content;
 };
 
 /**
  * Data specific to CONTENT_HTML.
  */
-typedef struct html_content {
-	struct content base;
+வகைவரை கட்டமைப்பு html_content {
+	கட்டமைப்பு content base;
 
 	dom_hubbub_parser *parser; /**< Parser object handle */
 	bool parse_completed; /**< Whether the parse has been completed */
@@ -103,14 +103,14 @@ typedef struct html_content {
 	dom_document_quirks_mode quirks;
 
 	/** Encoding of source, NULL if unknown. */
-	char *encoding;
+	எழுத்து *encoding;
 	/** Source of encoding information. */
 	dom_hubbub_encoding_source encoding_source;
 
 	/** Base URL (may be a copy of content->url). */
-	struct nsurl *base_url;
+	கட்டமைப்பு nsurl *base_url;
 	/** Base target */
-	char *base_target;
+	எழுத்து *base_target;
 
 	/** Content has been aborted in the LOADING state */
 	bool aborted;
@@ -128,33 +128,33 @@ typedef struct html_content {
 	bool enable_scripting;
 
 	/* Title element node */
-	dom_node *title;
+	dom_முனை *title;
 
 	/** A talloc context purely for the render box tree */
-	int *bctx;
+	முழு *bctx;
 	/** A context pointer for the box conversion, NULL if no conversion
 	 * is in progress.
 	 */
-	void *box_conversion_context;
+	வெறுமை *box_conversion_context;
 	/** Box tree, or NULL. */
-	struct box *layout;
+	கட்டமைப்பு box *layout;
 	/** Document background colour. */
 	colour background_colour;
 
 	/** Font callback table */
-	const struct gui_layout_table *font_func;
+	மாறிலி கட்டமைப்பு gui_layout_table *font_func;
 
 	/** Number of entries in scripts */
-	unsigned int scripts_count;
+	unsigned முழு scripts_மொத்தம்;
 	/** Scripts */
-	struct html_script *scripts;
+	கட்டமைப்பு html_script *scripts;
 	/** javascript thread in use */
-	struct jsthread *jsthread;
+	கட்டமைப்பு jsthread *jsthread;
 
 	/** Number of entries in stylesheet_content. */
-	unsigned int stylesheet_count;
+	unsigned முழு stylesheet_மொத்தம்;
 	/** Stylesheets. Each may be NULL. */
-	struct html_stylesheet *stylesheets;
+	கட்டமைப்பு html_stylesheet *stylesheets;
 	/**< Style selection context */
 	css_select_ctx *select_ctx;
 	/**< Style selection media specification */
@@ -165,57 +165,57 @@ typedef struct html_content {
 	lwc_string *universal;
 
 	/** Number of entries in object_list. */
-	unsigned int num_objects;
+	unsigned முழு இலக்கம்_objects;
 	/** List of objects. */
-	struct content_html_object *object_list;
+	கட்டமைப்பு content_html_object *object_list;
 	/** Forms, in reverse order to document. */
-	struct form *forms;
+	கட்டமைப்பு form *forms;
 	/** Hash table of imagemaps. */
-	struct imagemap **imagemaps;
+	கட்டமைப்பு imagemap **imagemaps;
 
 	/** Browser window containing this document, or NULL if not open. */
-	struct browser_window *bw;
+	கட்டமைப்பு browser_window *bw;
 
 	/** Frameset information */
-	struct content_html_frames *frameset;
+	கட்டமைப்பு content_html_frames *frameset;
 
 	/** Inline frame information */
-	struct content_html_iframe *iframe;
+	கட்டமைப்பு content_html_iframe *iframe;
 
 	/** Content of type CONTENT_HTML containing this, or NULL if not an
 	 * object within a page. */
-	struct html_content *page;
+	கட்டமைப்பு html_content *page;
 
 	/** Current drag type */
 	html_drag_type drag_type;
 	/** Widget capturing all mouse events */
-	union html_drag_owner drag_owner;
+	ஒன்றிப்பு html_drag_owner drag_owner;
 
 	/** Current selection state */
 	html_selection_type selection_type;
 	/** Current selection owner */
-	union html_selection_owner selection_owner;
+	ஒன்றிப்பு html_selection_owner selection_owner;
 
 	/** Current input focus target type */
 	html_focus_type focus_type;
 	/** Current input focus target */
-	union html_focus_owner focus_owner;
+	ஒன்றிப்பு html_focus_owner focus_owner;
 
 	/** HTML content's own text selection object */
-	struct selection *sel;
+	கட்டமைப்பு selection *sel;
 
 	/**
 	 * Open core-handled form SELECT menu, or NULL if none
 	 *  currently open.
 	 */
-	struct form_control *visible_select_menu;
+	கட்டமைப்பு form_control *visible_select_menu;
 
 } html_content;
 
 /**
  * Render padding and margin box outlines in html_redraw().
  */
-extern bool html_redraw_debug;
+வெளி bool html_redraw_debug;
 
 
 /* in html/html.c */
@@ -226,7 +226,7 @@ extern bool html_redraw_debug;
  * \param htmlc HTML content
  * \param box The box to redraw.
  */
-void html__redraw_a_box(html_content *htmlc, struct box *box);
+வெறுமை html__redraw_a_box(html_content *htmlc, கட்டமைப்பு box *box);
 
 
 /**
@@ -234,7 +234,7 @@ void html__redraw_a_box(html_content *htmlc, struct box *box);
  *
  * \param htmlc Content to convert
  */
-void html_finish_conversion(html_content *htmlc);
+வெறுமை html_finish_conversion(html_content *htmlc);
 
 
 /**
@@ -257,7 +257,7 @@ bool html_begin_conversion(html_content *htmlc);
 /**
  * execute some text as a script element
  */
-bool html_exec(struct content *c, const char *src, size_t srclen);
+bool html_exec(கட்டமைப்பு content *c, மாறிலி எழுத்து *src, size_t srclen);
 
 
 /**
@@ -295,29 +295,29 @@ nserror html_proceed_to_done(html_content *html);
 
 
 /* in html/redraw.c */
-bool html_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx);
+bool html_redraw(கட்டமைப்பு content *c, கட்டமைப்பு content_redraw_data *data,
+		மாறிலி கட்டமைப்பு rect *clip, மாறிலி கட்டமைப்பு redraw_context *ctx);
 
 
 /* in html/redraw_border.c */
-bool html_redraw_borders(struct box *box, int x_parent, int y_parent,
-		int p_width, int p_height, const struct rect *clip, float scale,
-		const struct redraw_context *ctx);
+bool html_redraw_borders(கட்டமைப்பு box *box, முழு x_parent, முழு y_parent,
+		முழு p_width, முழு p_height, மாறிலி கட்டமைப்பு rect *clip, தசம scale,
+		மாறிலி கட்டமைப்பு redraw_context *ctx);
 
 
-bool html_redraw_inline_borders(struct box *box, struct rect b,
-		const struct rect *clip, float scale, bool first, bool last,
-		const struct redraw_context *ctx);
+bool html_redraw_inline_borders(கட்டமைப்பு box *box, கட்டமைப்பு rect b,
+		மாறிலி கட்டமைப்பு rect *clip, தசம scale, bool first, bool last,
+		மாறிலி கட்டமைப்பு redraw_context *ctx);
 
 
 /* in html/script.c */
-dom_hubbub_error html_process_script(void *ctx, dom_node *node);
+dom_hubbub_error html_process_script(வெறுமை *ctx, dom_முனை *முனை);
 
 
 /* in html/forms.c */
-struct form *html_forms_get_forms(const char *docenc, dom_html_document *doc);
-struct form_control *html_forms_get_control_for_node(struct form *forms,
-		dom_node *node);
+கட்டமைப்பு form *html_forms_get_forms(மாறிலி எழுத்து *docenc, dom_html_document *doc);
+கட்டமைப்பு form_control *html_forms_get_control_for_முனை(கட்டமைப்பு form *forms,
+		dom_முனை *முனை);
 
 
 /* in html/css_fetcher.c */
@@ -326,9 +326,9 @@ struct form_control *html_forms_get_control_for_node(struct form *forms,
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror html_css_fetcher_register(void);
-nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
-		uint32_t *key);
+nserror html_css_fetcher_register(வெறுமை);
+nserror html_css_fetcher_add_item(dom_string *data, கட்டமைப்பு nsurl *base_url,
+		uint32_t *சாவி);
 
 
 /* Events */
@@ -336,36 +336,36 @@ nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
  * Construct an event and fire it at the DOM
  *
  */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_முனை *target,
 		    bool bubbles, bool cancelable);
 
 /**
  * Construct a keyboard event and fire it at the DOM
  */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key);
+bool fire_dom_keyboard_event(dom_string *type, dom_முனை *target,
+		bool bubbles, bool cancelable, uint32_t சாவி);
 
 /* Useful dom_string pointers */
-struct dom_string;
+கட்டமைப்பு dom_string;
 
-extern struct dom_string *html_dom_string_map;
-extern struct dom_string *html_dom_string_id;
-extern struct dom_string *html_dom_string_name;
-extern struct dom_string *html_dom_string_area;
-extern struct dom_string *html_dom_string_a;
-extern struct dom_string *html_dom_string_nohref;
-extern struct dom_string *html_dom_string_href;
-extern struct dom_string *html_dom_string_target;
-extern struct dom_string *html_dom_string_shape;
-extern struct dom_string *html_dom_string_default;
-extern struct dom_string *html_dom_string_rect;
-extern struct dom_string *html_dom_string_rectangle;
-extern struct dom_string *html_dom_string_coords;
-extern struct dom_string *html_dom_string_circle;
-extern struct dom_string *html_dom_string_poly;
-extern struct dom_string *html_dom_string_polygon;
-extern struct dom_string *html_dom_string_text_javascript;
-extern struct dom_string *html_dom_string_type;
-extern struct dom_string *html_dom_string_src;
+வெளி கட்டமைப்பு dom_string *html_dom_string_map;
+வெளி கட்டமைப்பு dom_string *html_dom_string_id;
+வெளி கட்டமைப்பு dom_string *html_dom_string_name;
+வெளி கட்டமைப்பு dom_string *html_dom_string_area;
+வெளி கட்டமைப்பு dom_string *html_dom_string_a;
+வெளி கட்டமைப்பு dom_string *html_dom_string_nohref;
+வெளி கட்டமைப்பு dom_string *html_dom_string_href;
+வெளி கட்டமைப்பு dom_string *html_dom_string_target;
+வெளி கட்டமைப்பு dom_string *html_dom_string_shape;
+வெளி கட்டமைப்பு dom_string *html_dom_string_default;
+வெளி கட்டமைப்பு dom_string *html_dom_string_rect;
+வெளி கட்டமைப்பு dom_string *html_dom_string_rectangle;
+வெளி கட்டமைப்பு dom_string *html_dom_string_coords;
+வெளி கட்டமைப்பு dom_string *html_dom_string_circle;
+வெளி கட்டமைப்பு dom_string *html_dom_string_poly;
+வெளி கட்டமைப்பு dom_string *html_dom_string_polygon;
+வெளி கட்டமைப்பு dom_string *html_dom_string_text_javascript;
+வெளி கட்டமைப்பு dom_string *html_dom_string_type;
+வெளி கட்டமைப்பு dom_string *html_dom_string_src;
 
 #endif

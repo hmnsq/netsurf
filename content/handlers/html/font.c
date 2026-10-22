@@ -22,11 +22,11 @@
  * HTML internal font handling implementation.
  */
 
-#include "utils/nsoption.h"
-#include "netsurf/plot_style.h"
-#include "css/utils.h"
+#அந்தர்பாவ "utils/nsoption.h"
+#அந்தர்பாவ "netsurf/plot_style.h"
+#அந்தர்பாவ "css/utils.h"
 
-#include "html/font.h"
+#அந்தர்பாவ "html/font.h"
 
 /**
  * Map a generic CSS font family to a generic plot font family
@@ -34,31 +34,31 @@
  * \param css Generic CSS font family
  * \return Plot font family
  */
-static plot_font_generic_family_t
-plot_font_generic_family(enum css_font_family_e css)
+நிலையான plot_font_generic_family_t
+plot_font_generic_family(எண்ணிக்கை css_font_family_e css)
 {
 	plot_font_generic_family_t plot;
 
-	switch (css) {
-	case CSS_FONT_FAMILY_SERIF:
+	தேர்வு (css) {
+	நிலை CSS_FONT_FAMILY_SERIF:
 		plot = PLOT_FONT_FAMILY_SERIF;
-		break;
-	case CSS_FONT_FAMILY_MONOSPACE:
+		நிறுத்து;
+	நிலை CSS_FONT_FAMILY_MONOSPACE:
 		plot = PLOT_FONT_FAMILY_MONOSPACE;
-		break;
-	case CSS_FONT_FAMILY_CURSIVE:
+		நிறுத்து;
+	நிலை CSS_FONT_FAMILY_CURSIVE:
 		plot = PLOT_FONT_FAMILY_CURSIVE;
-		break;
-	case CSS_FONT_FAMILY_FANTASY:
+		நிறுத்து;
+	நிலை CSS_FONT_FAMILY_FANTASY:
 		plot = PLOT_FONT_FAMILY_FANTASY;
-		break;
-	case CSS_FONT_FAMILY_SANS_SERIF:
-	default:
+		நிறுத்து;
+	நிலை CSS_FONT_FAMILY_SANS_SERIF:
+	இயல்பு:
 		plot = PLOT_FONT_FAMILY_SANS_SERIF;
-		break;
+		நிறுத்து;
 	}
 
-	return plot;
+	திரும்பு plot;
 }
 
 /**
@@ -67,44 +67,44 @@ plot_font_generic_family(enum css_font_family_e css)
  * \param css  CSS font weight
  * \return Plot weight
  */
-static int plot_font_weight(enum css_font_weight_e css)
+நிலையான முழு plot_font_weight(எண்ணிக்கை css_font_weight_e css)
 {
-	int weight;
+	முழு weight;
 
-	switch (css) {
-	case CSS_FONT_WEIGHT_100:
+	தேர்வு (css) {
+	நிலை CSS_FONT_WEIGHT_100:
 		weight = 100;
-		break;
-	case CSS_FONT_WEIGHT_200:
+		நிறுத்து;
+	நிலை CSS_FONT_WEIGHT_200:
 		weight = 200;
-		break;
-	case CSS_FONT_WEIGHT_300:
+		நிறுத்து;
+	நிலை CSS_FONT_WEIGHT_300:
 		weight = 300;
-		break;
-	case CSS_FONT_WEIGHT_400:
-	case CSS_FONT_WEIGHT_NORMAL:
-	default:
+		நிறுத்து;
+	நிலை CSS_FONT_WEIGHT_400:
+	நிலை CSS_FONT_WEIGHT_NORMAL:
+	இயல்பு:
 		weight = 400;
-		break;
-	case CSS_FONT_WEIGHT_500:
+		நிறுத்து;
+	நிலை CSS_FONT_WEIGHT_500:
 		weight = 500;
-		break;
-	case CSS_FONT_WEIGHT_600:
+		நிறுத்து;
+	நிலை CSS_FONT_WEIGHT_600:
 		weight = 600;
-		break;
-	case CSS_FONT_WEIGHT_700:
-	case CSS_FONT_WEIGHT_BOLD:
+		நிறுத்து;
+	நிலை CSS_FONT_WEIGHT_700:
+	நிலை CSS_FONT_WEIGHT_BOLD:
 		weight = 700;
-		break;
-	case CSS_FONT_WEIGHT_800:
+		நிறுத்து;
+	நிலை CSS_FONT_WEIGHT_800:
 		weight = 800;
-		break;
-	case CSS_FONT_WEIGHT_900:
+		நிறுத்து;
+	நிலை CSS_FONT_WEIGHT_900:
 		weight = 900;
-		break;
+		நிறுத்து;
 	}
 
-	return weight;
+	திரும்பு weight;
 }
 
 /**
@@ -114,27 +114,27 @@ static int plot_font_weight(enum css_font_weight_e css)
  * \param variant  CSS font variant
  * \return Computed plot flags
  */
-static plot_font_flags_t plot_font_flags(enum css_font_style_e style,
-		enum css_font_variant_e variant)
+நிலையான plot_font_flags_t plot_font_flags(எண்ணிக்கை css_font_style_e style,
+		எண்ணிக்கை css_font_variant_e variant)
 {
 	plot_font_flags_t flags = FONTF_NONE;
 
-	if (style == CSS_FONT_STYLE_ITALIC)
+	எனில் (style == CSS_FONT_STYLE_ITALIC)
 		flags |= FONTF_ITALIC;
-	else if (style == CSS_FONT_STYLE_OBLIQUE)
+	இல்லையெனில் எனில் (style == CSS_FONT_STYLE_OBLIQUE)
 		flags |= FONTF_OBLIQUE;
 
-	if (variant == CSS_FONT_VARIANT_SMALL_CAPS)
+	எனில் (variant == CSS_FONT_VARIANT_SMALL_CAPS)
 		flags |= FONTF_SMALLCAPS;
 
-	return flags;
+	திரும்பு flags;
 }
 
 
 /* exported function documented in html/font.h */
-void font_plot_style_from_css(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *css,
+வெறுமை font_plot_style_from_css(
+		மாறிலி css_unit_ctx *unit_len_ctx,
+		மாறிலி css_computed_style *css,
 		plot_font_style_t *fstyle)
 {
 	lwc_string **families;
@@ -152,7 +152,7 @@ void font_plot_style_from_css(
 				      INTTOFIX(PLOT_STYLE_SCALE)));
 
 	/* Clamp font size to configured minimum */
-	if (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
+	எனில் (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
 		fstyle->size = (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10;
 
 	fstyle->weight = plot_font_weight(css_computed_font_weight(css));

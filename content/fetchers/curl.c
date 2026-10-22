@@ -28,38 +28,38 @@
  */
 
 /* must come first to ensure winsock2.h vs windows.h ordering issues */
-#include "utils/inet.h"
+#அந்தர்பாவ "utils/inet.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <sys/stat.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <inttypes.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <strings.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <sys/stat.h>
 
-#include <libwapcaplet/libwapcaplet.h>
-#include <nsutils/time.h>
+#அந்தர்பாவ <libwapcaplet/libwapcaplet.h>
+#அந்தர்பாவ <nsutils/time.h>
 
-#include "utils/corestrings.h"
-#include "utils/hashmap.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
-#include "utils/useragent.h"
-#include "utils/file.h"
-#include "utils/string.h"
-#include "netsurf/fetch.h"
-#include "netsurf/misc.h"
-#include "desktop/gui_internal.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/hashmap.h"
+#அந்தர்பாவ "utils/nsoption.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "utils/ring.h"
+#அந்தர்பாவ "utils/useragent.h"
+#அந்தர்பாவ "utils/file.h"
+#அந்தர்பாவ "utils/string.h"
+#அந்தர்பாவ "netsurf/fetch.h"
+#அந்தர்பாவ "netsurf/misc.h"
+#அந்தர்பாவ "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/curl.h"
-#include "content/urldb.h"
+#அந்தர்பாவ "content/fetch.h"
+#அந்தர்பாவ "content/fetchers.h"
+#அந்தர்பாவ "content/fetchers/curl.h"
+#அந்தர்பாவ "content/urldb.h"
 
 /**
  * maximum number of progress notifications per second
@@ -103,16 +103,16 @@
 /* Open SSL compatability for certificate handling */
 #ifdef WITH_OPENSSL
 
-#include <openssl/ssl.h>
-#include <openssl/x509v3.h>
+#அந்தர்பாவ <openssl/ssl.h>
+#அந்தர்பாவ <openssl/x509v3.h>
 
-#else /* WITH_OPENSSL */
+#இல்லையெனில் /* WITH_OPENSSL */
 
-typedef char X509;
+வகைவரை எழுத்து X509;
 
-static void X509_free(X509 *cert)
+நிலையான வெறுமை X509_free(X509 *cert)
 {
-	free(cert);
+	விடுவி(cert);
 }
 
 #endif /* WITH_OPENSSL */
@@ -120,28 +120,28 @@ static void X509_free(X509 *cert)
 /* SSL certificate chain cache */
 
 /* We're only interested in the hostname and port */
-static uint32_t
-curl_fetch_ssl_key_hash(void *key)
+நிலையான uint32_t
+curl_fetch_ssl_சாவி_hash(வெறுமை *சாவி)
 {
-	nsurl *url = key;
+	nsurl *url = சாவி;
 	lwc_string *hostname = nsurl_get_component(url, NSURL_HOST);
 	lwc_string *port = nsurl_get_component(url, NSURL_PORT);
 	uint32_t hash;
 
-	if (port == NULL)
+	எனில் (port == வெற்று)
 		port = lwc_string_ref(corestring_lwc_443);
 
-	hash = lwc_string_hash_value(hostname) ^ lwc_string_hash_value(port);
+	hash = lwc_string_hash_மதிப்பு(hostname) ^ lwc_string_hash_மதிப்பு(port);
 
 	lwc_string_unref(hostname);
 	lwc_string_unref(port);
 
-	return hash;
+	திரும்பு hash;
 }
 
 /* We only compare the hostname and port */
-static bool
-curl_fetch_ssl_key_eq(void *key1, void *key2)
+நிலையான bool
+curl_fetch_ssl_சாவி_eq(வெறுமை *key1, வெறுமை *key2)
 {
 	nsurl *url1 = key1;
 	nsurl *url2 = key2;
@@ -151,18 +151,18 @@ curl_fetch_ssl_key_eq(void *key1, void *key2)
 	lwc_string *port2 = nsurl_get_component(url2, NSURL_PORT);
 	bool iseq = false;
 
-	if (port1 == NULL)
+	எனில் (port1 == வெற்று)
 		port1 = lwc_string_ref(corestring_lwc_443);
-	if (port2 == NULL)
+	எனில் (port2 == வெற்று)
 		port2 = lwc_string_ref(corestring_lwc_443);
 
-	if (lwc_string_isequal(hostname1, hostname2, &iseq) != lwc_error_ok ||
+	எனில் (lwc_string_isequal(hostname1, hostname2, &iseq) != lwc_error_ok ||
 			iseq == false)
-		goto out;
+		செல் out;
 
 	iseq = false;
-	if (lwc_string_isequal(port1, port2, &iseq) != lwc_error_ok)
-		goto out;
+	எனில் (lwc_string_isequal(port1, port2, &iseq) != lwc_error_ok)
+		செல் out;
 
 out:
 	lwc_string_unref(hostname1);
@@ -170,70 +170,70 @@ out:
 	lwc_string_unref(port1);
 	lwc_string_unref(port2);
 
-	return iseq;
+	திரும்பு iseq;
 }
 
-static void *
-curl_fetch_ssl_value_alloc(void *key)
+நிலையான வெறுமை *
+curl_fetch_ssl_மதிப்பு_alloc(வெறுமை *சாவி)
 {
-	struct cert_chain *out;
+	கட்டமைப்பு cert_chain *out;
 
-	if (cert_chain_alloc(0, &out) != NSERROR_OK) {
-		return NULL;
+	எனில் (cert_chain_alloc(0, &out) != NSERROR_OK) {
+		திரும்பு வெற்று;
 	}
 
-	return out;
+	திரும்பு out;
 }
 
-static void
-curl_fetch_ssl_value_destroy(void *value)
+நிலையான வெறுமை
+curl_fetch_ssl_மதிப்பு_destroy(வெறுமை *மதிப்பு)
 {
-	struct cert_chain *chain = value;
-	if (cert_chain_free(chain) != NSERROR_OK) {
+	கட்டமைப்பு cert_chain *chain = மதிப்பு;
+	எனில் (cert_chain_free(chain) != NSERROR_OK) {
 		NSLOG(netsurf, WARNING, "Problem freeing SSL certificate chain");
 	}
 }
 
-static hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_eq = curl_fetch_ssl_key_eq,
-	.key_hash = curl_fetch_ssl_key_hash,
-	.value_alloc = curl_fetch_ssl_value_alloc,
-	.value_destroy = curl_fetch_ssl_value_destroy,
+நிலையான hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
+	.சாவி_clone = (hashmap_சாவி_clone_t)nsurl_ref,
+	.சாவி_destroy = (hashmap_சாவி_destroy_t)nsurl_unref,
+	.சாவி_eq = curl_fetch_ssl_சாவி_eq,
+	.சாவி_hash = curl_fetch_ssl_சாவி_hash,
+	.மதிப்பு_alloc = curl_fetch_ssl_மதிப்பு_alloc,
+	.மதிப்பு_destroy = curl_fetch_ssl_மதிப்பு_destroy,
 };
 
-static hashmap_t *curl_fetch_ssl_hashmap = NULL;
+நிலையான hashmap_t *curl_fetch_ssl_hashmap = வெற்று;
 
 /** SSL certificate info */
-struct cert_info {
+கட்டமைப்பு cert_info {
 	X509 *cert;		/**< Pointer to certificate */
 	long err;		/**< OpenSSL error code */
 };
 
-#if LIBCURL_VERSION_NUM >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
 #define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_XFERINFOFUNCTION
 #define NSCURLOPT_PROGRESS_DATA CURLOPT_XFERINFODATA
 #define NSCURL_PROGRESS_T curl_off_t
-#else
+#இல்லையெனில்
 #define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_PROGRESSFUNCTION
 #define NSCURLOPT_PROGRESS_DATA CURLOPT_PROGRESSDATA
-#define NSCURL_PROGRESS_T double
+#define NSCURL_PROGRESS_T இரட்டை
 #endif
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x073800 /* 7.56.0 depricated curl_formadd */
 #define NSCURL_POSTDATA_T curl_mime
 #define NSCURL_POSTDATA_CURLOPT CURLOPT_MIMEPOST
 #define NSCURL_POSTDATA_FREE(x) curl_mime_free(x)
-#else
-#define NSCURL_POSTDATA_T struct curl_httppost
+#இல்லையெனில்
+#define NSCURL_POSTDATA_T கட்டமைப்பு curl_httppost
 #define NSCURL_POSTDATA_CURLOPT CURLOPT_HTTPPOST
 #define NSCURL_POSTDATA_FREE(x) curl_formfree(x)
 #endif
 
 /** Information for a single fetch. */
-struct curl_fetch_info {
-	struct fetch *fetch_handle; /**< The fetch handle we're parented by. */
+கட்டமைப்பு curl_fetch_info {
+	கட்டமைப்பு fetch *fetch_handle; /**< The fetch handle we're parented by. */
 	CURL * curl_handle;	/**< cURL handle if being fetched, or 0. */
 	bool sent_ssl_chain;	/**< Have we tried to send the SSL chain */
 	bool had_headers;	/**< Headers have been processed. */
@@ -243,64 +243,64 @@ struct curl_fetch_info {
 	bool downgrade_tls;	/**< Downgrade to TLS 1.2 */
 	nsurl *url;		/**< URL of this fetch. */
 	lwc_string *host;	/**< The hostname of this fetch. */
-	struct curl_slist *headers;	/**< List of request headers. */
-	char *location;		/**< Response Location header, or 0. */
+	கட்டமைப்பு curl_slist *headers;	/**< List of request headers. */
+	எழுத்து *location;		/**< Response Location header, or 0. */
 	unsigned long content_length;	/**< Response Content-Length, or 0. */
-	char *cookie_string;	/**< Cookie string for this fetch */
-	char *realm;		/**< HTTP Auth Realm */
-	struct fetch_postdata *postdata; /**< POST data */
+	எழுத்து *cookie_string;	/**< Cookie string for this fetch */
+	எழுத்து *realm;		/**< HTTP Auth Realm */
+	கட்டமைப்பு fetch_postdata *postdata; /**< POST data */
 	NSCURL_POSTDATA_T *curl_postdata; /**< POST data in curl representation */
 
 	long http_code; /**< HTTP result code from cURL. */
 
 	uint64_t last_progress_update;	/**< Time of last progress update */
-	int cert_depth; /**< deepest certificate in use */
-	struct cert_info cert_data[MAX_CERT_DEPTH]; /**< HTTPS certificate data */
+	முழு cert_depth; /**< deepest certificate in use */
+	கட்டமைப்பு cert_info cert_data[MAX_CERT_DEPTH]; /**< HTTPS certificate data */
 };
 
 /** curl handle cache entry */
-struct cache_handle {
+கட்டமைப்பு cache_handle {
 	CURL *handle; /**< The cached cURL handle */
 	lwc_string *host; /**< The host for which this handle is cached */
 
-	struct cache_handle *r_prev; /**< Previous cached handle in ring. */
-	struct cache_handle *r_next; /**< Next cached handle in ring. */
+	கட்டமைப்பு cache_handle *r_prev; /**< Previous cached handle in ring. */
+	கட்டமைப்பு cache_handle *r_next; /**< Next cached handle in ring. */
 };
 
 /** Global cURL multi handle. */
 CURLM *fetch_curl_multi;
 
 /** Curl handle with default options set; not used for transfers. */
-static CURL *fetch_blank_curl;
+நிலையான CURL *fetch_blank_curl;
 
 /** Ring of cached handles */
-static struct cache_handle *curl_handle_ring = 0;
+நிலையான கட்டமைப்பு cache_handle *curl_handle_ring = 0;
 
 /** Count of how many schemes the curl fetcher is handling */
-static int curl_fetchers_registered = 0;
+நிலையான முழு curl_fetchers_registered = 0;
 
 /** Flag for runtime detection of openssl usage */
-static bool curl_with_openssl;
+நிலையான bool curl_with_openssl;
 
 /** Error buffer for cURL. */
-static char fetch_error_buffer[CURL_ERROR_SIZE];
+நிலையான எழுத்து fetch_error_buffer[CURL_ERROR_SIZE];
 
 /** Proxy authentication details. */
-static char fetch_proxy_userpwd[100];
+நிலையான எழுத்து fetch_proxy_userpwd[100];
 
 /** Interlock to prevent initiation during callbacks */
-static bool inside_curl = false;
+நிலையான bool inside_curl = false;
 
 
 /**
  * Initialise a cURL fetcher.
  */
-static bool fetch_curl_initialise(lwc_string *scheme)
+நிலையான bool fetch_curl_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "Initialise cURL fetcher for %s",
 	      lwc_string_data(scheme));
 	curl_fetchers_registered++;
-	return true; /* Always succeeds */
+	திரும்பு true; /* Always succeeds */
 }
 
 
@@ -309,14 +309,14 @@ static bool fetch_curl_initialise(lwc_string *scheme)
  *
  * \param scheme The scheme to finalise.
  */
-static void fetch_curl_finalise(lwc_string *scheme)
+நிலையான வெறுமை fetch_curl_finalise(lwc_string *scheme)
 {
-	struct cache_handle *h;
+	கட்டமைப்பு cache_handle *h;
 
 	curl_fetchers_registered--;
 	NSLOG(netsurf, INFO, "Finalise cURL fetcher %s",
 	      lwc_string_data(scheme));
-	if (curl_fetchers_registered == 0) {
+	எனில் (curl_fetchers_registered == 0) {
 		CURLMcode codem;
 		/* All the fetchers have been finalised. */
 		NSLOG(netsurf, INFO,
@@ -325,7 +325,7 @@ static void fetch_curl_finalise(lwc_string *scheme)
 		curl_easy_cleanup(fetch_blank_curl);
 
 		codem = curl_multi_cleanup(fetch_curl_multi);
-		if (codem != CURLM_OK)
+		எனில் (codem != CURLM_OK)
 			NSLOG(netsurf, INFO,
 			      "curl_multi_cleanup failed: ignoring");
 
@@ -333,16 +333,16 @@ static void fetch_curl_finalise(lwc_string *scheme)
 
 		NSLOG(netsurf, DEBUG, "Cleaning up SSL cert chain hashmap");
 		hashmap_destroy(curl_fetch_ssl_hashmap);
-		curl_fetch_ssl_hashmap = NULL;
+		curl_fetch_ssl_hashmap = வெற்று;
 	}
 
 	/* Free anything remaining in the cached curl handle ring */
-	while (curl_handle_ring != NULL) {
+	போது (curl_handle_ring != வெற்று) {
 		h = curl_handle_ring;
 		RING_REMOVE(curl_handle_ring, h);
 		lwc_string_unref(h->host);
 		curl_easy_cleanup(h->handle);
-		free(h);
+		விடுவி(h);
 	}
 }
 
@@ -353,9 +353,9 @@ static void fetch_curl_finalise(lwc_string *scheme)
  * \param url The url to check.
  * \return true if the fetcher supports the url else false.
  */
-static bool fetch_curl_can_fetch(const nsurl *url)
+நிலையான bool fetch_curl_can_fetch(மாறிலி nsurl *url)
 {
-	return nsurl_has_component(url, NSURL_HOST);
+	திரும்பு nsurl_has_component(url, NSURL_HOST);
 }
 
 
@@ -363,90 +363,90 @@ static bool fetch_curl_can_fetch(const nsurl *url)
 /**
  * allocate postdata
  */
-static struct fetch_postdata *
-fetch_curl_alloc_postdata(const char *post_urlenc,
-			  const struct fetch_multipart_data *post_multipart)
+நிலையான கட்டமைப்பு fetch_postdata *
+fetch_curl_alloc_postdata(மாறிலி எழுத்து *post_urlenc,
+			  மாறிலி கட்டமைப்பு fetch_multipart_data *post_multipart)
 {
-	struct fetch_postdata *postdata;
-	postdata = calloc(1, sizeof(struct fetch_postdata));
-	if (postdata != NULL) {
+	கட்டமைப்பு fetch_postdata *postdata;
+	postdata = calloc(1, அளவு(கட்டமைப்பு fetch_postdata));
+	எனில் (postdata != வெற்று) {
 
-		if (post_urlenc) {
+		எனில் (post_urlenc) {
 			postdata->type = FETCH_POSTDATA_URLENC;
 			postdata->data.urlenc = strdup(post_urlenc);
-			if (postdata->data.urlenc == NULL) {
-				free(postdata);
-				postdata = NULL;
+			எனில் (postdata->data.urlenc == வெற்று) {
+				விடுவி(postdata);
+				postdata = வெற்று;
 			}
-		} else if (post_multipart) {
+		} இல்லையெனில் எனில் (post_multipart) {
 			postdata->type = FETCH_POSTDATA_MULTIPART;
 			postdata->data.multipart = fetch_multipart_data_clone(post_multipart);
-			if (postdata->data.multipart == NULL) {
-				free(postdata);
-				postdata = NULL;
+			எனில் (postdata->data.multipart == வெற்று) {
+				விடுவி(postdata);
+				postdata = வெற்று;
 			}
-		} else {
+		} இல்லையெனில் {
 			postdata->type = FETCH_POSTDATA_NONE;
 		}
 	}
-	return postdata;
+	திரும்பு postdata;
 }
 
 /**
  * free postdata
  */
-static void fetch_curl_free_postdata(struct fetch_postdata *postdata)
+நிலையான வெறுமை fetch_curl_free_postdata(கட்டமைப்பு fetch_postdata *postdata)
 {
-	if (postdata != NULL) {
-		switch (postdata->type) {
-		case FETCH_POSTDATA_NONE:
-			break;
-		case FETCH_POSTDATA_URLENC:
-			free(postdata->data.urlenc);
-			break;
-		case FETCH_POSTDATA_MULTIPART:
+	எனில் (postdata != வெற்று) {
+		தேர்வு (postdata->type) {
+		நிலை FETCH_POSTDATA_NONE:
+			நிறுத்து;
+		நிலை FETCH_POSTDATA_URLENC:
+			விடுவி(postdata->data.urlenc);
+			நிறுத்து;
+		நிலை FETCH_POSTDATA_MULTIPART:
 			fetch_multipart_data_destroy(postdata->data.multipart);
-			break;
+			நிறுத்து;
 		}
 
-		free(postdata);
+		விடுவி(postdata);
 	}
 }
 
 /**
  *construct a new fetch structure
  */
-static struct curl_fetch_info *fetch_alloc(void)
+நிலையான கட்டமைப்பு curl_fetch_info *fetch_alloc(வெறுமை)
 {
-	struct curl_fetch_info *fetch;
-	fetch = malloc(sizeof (*fetch));
-	if (fetch == NULL)
-		return NULL;
+	கட்டமைப்பு curl_fetch_info *fetch;
+	fetch = malloc(அளவு (*fetch));
+	எனில் (fetch == வெற்று)
+		திரும்பு வெற்று;
 
-	fetch->curl_handle = NULL;
+	fetch->curl_handle = வெற்று;
 	fetch->sent_ssl_chain = false;
 	fetch->had_headers = false;
 	fetch->abort = false;
 	fetch->stopped = false;
 	fetch->only_2xx = false;
 	fetch->downgrade_tls = false;
-	fetch->headers = NULL;
-	fetch->url = NULL;
-	fetch->host = NULL;
-	fetch->location = NULL;
+	fetch->headers = வெற்று;
+	fetch->url = வெற்று;
+	fetch->host = வெற்று;
+	fetch->location = வெற்று;
 	fetch->content_length = 0;
 	fetch->http_code = 0;
-	fetch->cookie_string = NULL;
-	fetch->realm = NULL;
+	fetch->cookie_string = வெற்று;
+	fetch->realm = வெற்று;
 	fetch->last_progress_update = 0;
-	fetch->postdata = NULL;
-	fetch->curl_postdata = NULL;
+	fetch->postdata = வெற்று;
+	fetch->curl_postdata = வெற்று;
 
 	/* Clear certificate chain data */
-	memset(fetch->cert_data, 0, sizeof(fetch->cert_data));
+	memset(fetch->cert_data, 0, அளவு(fetch->cert_data));
 	fetch->cert_depth = -1;
 
-	return fetch;
+	திரும்பு fetch;
 }
 
 /**
@@ -470,22 +470,22 @@ static struct curl_fetch_info *fetch_alloc(void)
  * Some private data can be passed as the last parameter to fetch_start, and
  * callbacks will contain this.
  */
-static void *
-fetch_curl_setup(struct fetch *parent_fetch,
+நிலையான வெறுமை *
+fetch_curl_setup(கட்டமைப்பு fetch *parent_fetch,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 மாறிலி எழுத்து *post_urlenc,
+		 மாறிலி கட்டமைப்பு fetch_multipart_data *post_multipart,
+		 மாறிலி எழுத்து **headers)
 {
-	struct curl_fetch_info *fetch;
-	struct curl_slist *slist;
-	int i;
+	கட்டமைப்பு curl_fetch_info *fetch;
+	கட்டமைப்பு curl_slist *slist;
+	முழு i;
 
 	fetch = fetch_alloc();
-	if (fetch == NULL)
-		return NULL;
+	எனில் (fetch == வெற்று)
+		திரும்பு வெற்று;
 
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", fetch, nsurl_access(url));
 
@@ -494,18 +494,18 @@ fetch_curl_setup(struct fetch *parent_fetch,
 	fetch->fetch_handle = parent_fetch;
 	fetch->url = nsurl_ref(url);
 	fetch->host = nsurl_get_component(url, NSURL_HOST);
-	if (fetch->host == NULL) {
-		goto failed;
+	எனில் (fetch->host == வெற்று) {
+		செல் failed;
 	}
 	fetch->postdata = fetch_curl_alloc_postdata(post_urlenc, post_multipart);
-	if (fetch->postdata == NULL) {
-		goto failed;
+	எனில் (fetch->postdata == வெற்று) {
+		செல் failed;
 	}
 
-#define APPEND(list, value) \
-	slist = curl_slist_append(list, value);		\
-	if (slist == NULL)				\
-		goto failed;				\
+#define APPEND(list, மதிப்பு) \
+	slist = curl_slist_append(list, மதிப்பு);		\
+	எனில் (slist == வெற்று)				\
+		செல் failed;				\
 	list = slist;
 
 	/* remove curl default headers */
@@ -515,34 +515,34 @@ fetch_curl_setup(struct fetch *parent_fetch,
 	 * which fails with lighttpd, so disable it (see bug 1429054) */
 	APPEND(fetch->headers, "Expect:");
 
-	if ((nsoption_charp(accept_language) != NULL) &&
+	எனில் ((nsoption_charp(accept_language) != வெற்று) &&
 	    (nsoption_charp(accept_language)[0] != '\0')) {
-		char s[80];
-		snprintf(s, sizeof s, "Accept-Language: %s, *;q=0.1",
+		எழுத்து s[80];
+		snprintf(s, அளவு s, "Accept-Language: %s, *;q=0.1",
 			 nsoption_charp(accept_language));
-		s[sizeof s - 1] = 0;
+		s[அளவு s - 1] = 0;
 		APPEND(fetch->headers, s);
 	}
 
-	if (nsoption_charp(accept_charset) != NULL &&
+	எனில் (nsoption_charp(accept_charset) != வெற்று &&
 	    nsoption_charp(accept_charset)[0] != '\0') {
-		char s[80];
-		snprintf(s, sizeof s, "Accept-Charset: %s, *;q=0.1",
+		எழுத்து s[80];
+		snprintf(s, அளவு s, "Accept-Charset: %s, *;q=0.1",
 			 nsoption_charp(accept_charset));
-		s[sizeof s - 1] = 0;
+		s[அளவு s - 1] = 0;
 		APPEND(fetch->headers, s);
 	}
 
-	if (nsoption_bool(do_not_track) == true) {
+	எனில் (nsoption_bool(do_not_track) == true) {
 		APPEND(fetch->headers, "DNT: 1");
 	}
 
 	/* And add any headers specified by the caller */
-	for (i = 0; headers[i] != NULL; i++) {
+	க்கு (i = 0; headers[i] != வெற்று; i++) {
 		APPEND(fetch->headers, headers[i]);
 	}
 
-	return fetch;
+	திரும்பு fetch;
 
 #undef APPEND
 
@@ -551,8 +551,8 @@ failed:
 	nsurl_unref(fetch->url);
 	fetch_curl_free_postdata(fetch->postdata);
 	curl_slist_free_all(fetch->headers);
-	free(fetch);
-	return NULL;
+	விடுவி(fetch);
+	திரும்பு வெற்று;
 }
 
 
@@ -561,96 +561,96 @@ failed:
 /**
  * Retrieve the ssl cert chain for the fetch, creating a blank one if needed
  */
-static struct cert_chain *
-fetch_curl_get_cached_chain(struct curl_fetch_info *f)
+நிலையான கட்டமைப்பு cert_chain *
+fetch_curl_get_cached_chain(கட்டமைப்பு curl_fetch_info *f)
 {
-	struct cert_chain *chain;
+	கட்டமைப்பு cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
-	if (chain == NULL) {
-		chain = hashmap_insert(curl_fetch_ssl_hashmap, f->url);
+	எனில் (chain == வெற்று) {
+		chain = hashmap_செருகு(curl_fetch_ssl_hashmap, f->url);
 	}
 
-	return chain;
+	திரும்பு chain;
 }
 
 /**
  * Report the certificate information in the fetch to the users
  */
-static void
-fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
+நிலையான வெறுமை
+fetch_curl_store_certs_in_cache(கட்டமைப்பு curl_fetch_info *f)
 {
 	size_t depth;
 	BIO *mem;
 	BUF_MEM *buf[MAX_CERT_DEPTH];
-	struct cert_chain chain, *cached_chain;
-	struct cert_info *certs;
+	கட்டமைப்பு cert_chain chain, *cached_chain;
+	கட்டமைப்பு cert_info *certs;
 
-	memset(&chain, 0, sizeof(chain));
+	memset(&chain, 0, அளவு(chain));
 
 	certs = f->cert_data;
 	chain.depth = f->cert_depth + 1; /* 0 indexed certificate depth */
 
-	for (depth = 0; depth < chain.depth; depth++) {
-		if (certs[depth].cert == NULL) {
+	க்கு (depth = 0; depth < chain.depth; depth++) {
+		எனில் (certs[depth].cert == வெற்று) {
 			/* This certificate is missing, skip it */
 			chain.certs[depth].err = SSL_CERT_ERR_CERT_MISSING;
-			continue;
+			தொடர்;
 		}
 
 		/* error code (if any) */
-		switch (certs[depth].err) {
-		case X509_V_OK:
+		தேர்வு (certs[depth].err) {
+		நிலை X509_V_OK:
 			chain.certs[depth].err = SSL_CERT_ERR_OK;
-			break;
+			நிறுத்து;
 
-		case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+		நிலை X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
+		நிலை X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_சாவி:
 			chain.certs[depth].err = SSL_CERT_ERR_BAD_ISSUER;
-			break;
+			நிறுத்து;
 
-		case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
+		நிலை X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
+		நிலை X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
 			/* fallthrough */
-		case X509_V_ERR_CERT_SIGNATURE_FAILURE:
+		நிலை X509_V_ERR_CERT_SIGNATURE_FAILURE:
 			/* fallthrough */
-		case X509_V_ERR_CRL_SIGNATURE_FAILURE:
+		நிலை X509_V_ERR_CRL_SIGNATURE_FAILURE:
 			chain.certs[depth].err = SSL_CERT_ERR_BAD_SIG;
-			break;
+			நிறுத்து;
 
-		case X509_V_ERR_CERT_NOT_YET_VALID:
+		நிலை X509_V_ERR_CERT_NOT_YET_VALID:
 			/* fallthrough */
-		case X509_V_ERR_CRL_NOT_YET_VALID:
+		நிலை X509_V_ERR_CRL_NOT_YET_VALID:
 			chain.certs[depth].err = SSL_CERT_ERR_TOO_YOUNG;
-			break;
+			நிறுத்து;
 
-		case X509_V_ERR_CERT_HAS_EXPIRED:
+		நிலை X509_V_ERR_CERT_HAS_EXPIRED:
 			/* fallthrough */
-		case X509_V_ERR_CRL_HAS_EXPIRED:
+		நிலை X509_V_ERR_CRL_HAS_EXPIRED:
 			chain.certs[depth].err = SSL_CERT_ERR_TOO_OLD;
-			break;
+			நிறுத்து;
 
-		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+		நிலை X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
 			chain.certs[depth].err = SSL_CERT_ERR_SELF_SIGNED;
-			break;
+			நிறுத்து;
 
-		case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+		நிலை X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
 			chain.certs[depth].err = SSL_CERT_ERR_CHAIN_SELF_SIGNED;
-			break;
+			நிறுத்து;
 
-		case X509_V_ERR_CERT_REVOKED:
+		நிலை X509_V_ERR_CERT_REVOKED:
 			chain.certs[depth].err = SSL_CERT_ERR_REVOKED;
-			break;
+			நிறுத்து;
 
-		case X509_V_ERR_HOSTNAME_MISMATCH:
+		நிலை X509_V_ERR_HOSTNAME_MISMATCH:
 			chain.certs[depth].err = SSL_CERT_ERR_HOSTNAME_MISMATCH;
-			break;
+			நிறுத்து;
 
-		default:
+		இயல்பு:
 			chain.certs[depth].err = SSL_CERT_ERR_UNKNOWN;
-			break;
+			நிறுத்து;
 		}
 
 		/*
@@ -659,7 +659,7 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
 		mem = BIO_new(BIO_s_mem());
 		i2d_X509_bio(mem, certs[depth].cert);
 		BIO_get_mem_ptr(mem, &buf[depth]);
-		(void) BIO_set_close(mem, BIO_NOCLOSE);
+		(வெறுமை) BIO_set_close(mem, BIO_NOCLOSE);
 		BIO_free(mem);
 
 		chain.certs[depth].der = (uint8_t *)buf[depth]->data;
@@ -668,17 +668,17 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
 
 	/* Now dup that chain into the cache */
 	cached_chain = fetch_curl_get_cached_chain(f);
-	if (cert_chain_dup_into(&chain, cached_chain) != NSERROR_OK) {
+	எனில் (cert_chain_dup_into(&chain, cached_chain) != NSERROR_OK) {
 		/* Something went wrong storing the chain, give up */
 		hashmap_remove(curl_fetch_ssl_hashmap, f->url);
 	}
 
 	/* release the openssl memory buffer */
-	for (depth = 0; depth < chain.depth; depth++) {
-		if (chain.certs[depth].err == SSL_CERT_ERR_CERT_MISSING) {
-			continue;
+	க்கு (depth = 0; depth < chain.depth; depth++) {
+		எனில் (chain.certs[depth].err == SSL_CERT_ERR_CERT_MISSING) {
+			தொடர்;
 		}
-		if (buf[depth] != NULL) {
+		எனில் (buf[depth] != வெற்று) {
 			BUF_MEM_free(buf[depth]);
 		}
 	}
@@ -703,43 +703,43 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
  * \return 1 to indicate verification should continue and 0 to indicate
  *          verification should stop.
  */
-static int
-fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
+நிலையான முழு
+fetch_curl_verify_callback(முழு verify_ok, X509_STORE_CTX *x509_ctx)
 {
-	int depth;
-	struct curl_fetch_info *fetch;
+	முழு depth;
+	கட்டமைப்பு curl_fetch_info *fetch;
 
 	depth = X509_STORE_CTX_get_error_depth(x509_ctx);
 	fetch = X509_STORE_CTX_get_app_data(x509_ctx);
 
 	/* certificate chain is excessively deep so fail verification */
-	if (depth >= MAX_CERT_DEPTH) {
+	எனில் (depth >= MAX_CERT_DEPTH) {
 		X509_STORE_CTX_set_error(x509_ctx,
 					 X509_V_ERR_CERT_CHAIN_TOO_LONG);
-		return 0;
+		திரும்பு 0;
 	}
 
 	/* record the max depth */
-	if (depth > fetch->cert_depth) {
+	எனில் (depth > fetch->cert_depth) {
 		fetch->cert_depth = depth;
 	}
 
 	/* save the certificate by incrementing the reference count and
 	 * keeping a pointer.
 	 */
-	if (!fetch->cert_data[depth].cert) {
+	எனில் (!fetch->cert_data[depth].cert) {
 		fetch->cert_data[depth].cert = X509_STORE_CTX_get_current_cert(x509_ctx);
 		X509_up_ref(fetch->cert_data[depth].cert);
 		fetch->cert_data[depth].err = X509_STORE_CTX_get_error(x509_ctx);
 	}
 
 	/* allow certificate chain to be completed */
-	if (depth > 0) {
+	எனில் (depth > 0) {
 		verify_ok = 1;
-	} else {
+	} இல்லையெனில் {
 		/* search for deeper certificates in the chain with errors */
-		for (depth = fetch->cert_depth; depth > 0; depth--) {
-			if (fetch->cert_data[depth].err != 0) {
+		க்கு (depth = fetch->cert_depth; depth > 0; depth--) {
+			எனில் (fetch->cert_data[depth].err != 0) {
 				/* error in previous certificate so fail verification */
 				verify_ok = 0;
 				X509_STORE_CTX_set_error(x509_ctx, fetch->cert_data[depth].err);
@@ -747,7 +747,7 @@ fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
 		}
 	}
 
-	return verify_ok;
+	திரும்பு verify_ok;
 }
 
 
@@ -761,10 +761,10 @@ fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
  * \param parm The fetch context.
  * \return 1 to indicate verification success and 0 to indicate verification failure.
  */
-static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
+நிலையான முழு fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, வெறுமை *parm)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *) parm;
-	int ok;
+	கட்டமைப்பு curl_fetch_info *f = (கட்டமைப்பு curl_fetch_info *) parm;
+	முழு ok;
 	X509_VERIFY_PARAM *vparam;
 
 	/* Configure the verification parameters to include hostname */
@@ -776,18 +776,18 @@ static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
 					 lwc_string_length(f->host));
 
 	/* Store fetch struct in context for verify callback */
-	if (ok) {
+	எனில் (ok) {
 		ok = X509_STORE_CTX_set_app_data(x509_ctx, parm);
 	}
 
 	/* verify the certificate chain using standard call */
-	if (ok) {
+	எனில் (ok) {
 		ok = X509_verify_cert(x509_ctx);
 	}
 
 	fetch_curl_store_certs_in_cache(f);
 
-	return ok;
+	திரும்பு ok;
 }
 
 
@@ -799,10 +799,10 @@ static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
  * \param parm The callback context.
  * \return A curl result code.
  */
-static CURLcode
-fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
+நிலையான CURLcode
+fetch_curl_sslctxfun(CURL *curl_handle, வெறுமை *_sslctx, வெறுமை *parm)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *) parm;
+	கட்டமைப்பு curl_fetch_info *f = (கட்டமைப்பு curl_fetch_info *) parm;
 	SSL_CTX *sslctx = _sslctx;
 	long options = SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 |
 			SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1;
@@ -815,7 +815,7 @@ fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
 					 fetch_curl_cert_verify_callback,
 					 parm);
 
-	if (f->downgrade_tls) {
+	எனில் (f->downgrade_tls) {
 		/* Disable TLS 1.3 if the server can't cope with it */
 #ifdef SSL_OP_NO_TLSv1_3
 		options |= SSL_OP_NO_TLSv1_3;
@@ -832,7 +832,7 @@ fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
 	SSL_CTX_clear_options(sslctx, SSL_OP_NO_TICKET);
 #endif
 
-	return CURLE_OK;
+	திரும்பு CURLE_OK;
 }
 
 
@@ -842,75 +842,75 @@ fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
 /**
  * Report the certificate information in the fetch to the users
  */
-static void
-fetch_curl_report_certs_upstream(struct curl_fetch_info *f)
+நிலையான வெறுமை
+fetch_curl_report_certs_upstream(கட்டமைப்பு curl_fetch_info *f)
 {
-	fetch_msg msg;
-	struct cert_chain *chain;
+	fetch_செய்தி செய்தி;
+	கட்டமைப்பு cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
 
-	if (chain != NULL) {
-		msg.type = FETCH_CERTS;
-		msg.data.chain = chain;
+	எனில் (chain != வெற்று) {
+		செய்தி.type = FETCH_CERTS;
+		செய்தி.data.chain = chain;
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&செய்தி, f->fetch_handle);
 	}
 
 	f->sent_ssl_chain = true;
 }
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x073800 /* 7.56.0 depricated curl_formadd */
 
 /**
  * curl mime data context
  */
-struct curl_mime_ctx {
-	char *buffer;
+கட்டமைப்பு curl_mime_ctx {
+	எழுத்து *buffer;
 	curl_off_t size;
 	curl_off_t position;
 };
 
-static size_t mime_data_read_callback(char *buffer, size_t size, size_t nitems, void *arg)
+நிலையான size_t mime_data_read_callback(எழுத்து *buffer, size_t size, size_t nitems, வெறுமை *arg)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
+	கட்டமைப்பு curl_mime_ctx *mctx = (கட்டமைப்பு curl_mime_ctx *) arg;
 	curl_off_t sz = mctx->size - mctx->position;
 
 	nitems *= size;
-	if(sz > (curl_off_t)nitems) {
+	எனில்(sz > (curl_off_t)nitems) {
 		sz = nitems;
 	}
-	if(sz) {
+	எனில்(sz) {
 		memcpy(buffer, mctx->buffer + mctx->position, sz);
 	}
 	mctx->position += sz;
-	return sz;
+	திரும்பு sz;
 }
 
-static int mime_data_seek_callback(void *arg, curl_off_t offset, int origin)
+நிலையான முழு mime_data_seek_callback(வெறுமை *arg, curl_off_t offset, முழு origin)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
+	கட்டமைப்பு curl_mime_ctx *mctx = (கட்டமைப்பு curl_mime_ctx *) arg;
 
-	switch(origin) {
-	case SEEK_END:
+	தேர்வு(origin) {
+	நிலை SEEK_END:
 		offset += mctx->size;
-		break;
-	case SEEK_CUR:
+		நிறுத்து;
+	நிலை SEEK_CUR:
 		offset += mctx->position;
-		break;
+		நிறுத்து;
 	}
 
-	if(offset < 0) {
-		return CURL_SEEKFUNC_FAIL;
+	எனில்(offset < 0) {
+		திரும்பு CURL_SEEKFUNC_FAIL;
 	}
 	mctx->position = offset;
-	return CURL_SEEKFUNC_OK;
+	திரும்பு CURL_SEEKFUNC_OK;
 }
 
-static void mime_data_free_callback(void *arg)
+நிலையான வெறுமை mime_data_free_callback(வெறுமை *arg)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
-	free(mctx);
+	கட்டமைப்பு curl_mime_ctx *mctx = (கட்டமைப்பு curl_mime_ctx *) arg;
+	விடுவி(mctx);
 }
 
 /**
@@ -919,156 +919,156 @@ static void mime_data_free_callback(void *arg)
  * \param chandle curl fetch handle.
  * \param multipart limked list of struct ::fetch_multipart forming post data.
  */
-static curl_mime *
+நிலையான curl_mime *
 fetch_curl_postdata_convert(CURL *chandle,
-			    const struct fetch_multipart_data *multipart)
+			    மாறிலி கட்டமைப்பு fetch_multipart_data *multipart)
 {
 	curl_mime *cmime;
 	curl_mimepart *part;
 	CURLcode code = CURLE_OK;
-	size_t value_len;
+	size_t மதிப்பு_len;
 
 	cmime = curl_mime_init(chandle);
-	if (cmime == NULL) {
+	எனில் (cmime == வெற்று) {
 		NSLOG(netsurf, WARNING, "postdata conversion failed to curl mime context");
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	/* iterate post data */
-	for (; multipart != NULL; multipart = multipart->next) {
+	க்கு (; multipart != வெற்று; multipart = multipart->next) {
 		part = curl_mime_addpart(cmime);
-		if (part == NULL) {
-			goto convert_failed;
+		எனில் (part == வெற்று) {
+			செல் convert_failed;
 		}
 
 		code = curl_mime_name(part, multipart->name);
-		if (code != CURLE_OK) {
-			goto convert_failed;
+		எனில் (code != CURLE_OK) {
+			செல் convert_failed;
 		}
 
-		value_len = strlen(multipart->value);
+		மதிப்பு_len = strlen(multipart->மதிப்பு);
 
-		if (multipart->file && value_len==0) {
+		எனில் (multipart->file && மதிப்பு_len==0) {
 			/* file entries with no filename require special handling */
-			code=curl_mime_data(part, multipart->value, value_len);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			code=curl_mime_data(part, multipart->மதிப்பு, மதிப்பு_len);
+			எனில் (code != CURLE_OK) {
+				செல் convert_failed;
 			}
 
 			code = curl_mime_filename(part, "");
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			எனில் (code != CURLE_OK) {
+				செல் convert_failed;
 			}
 
 			code = curl_mime_type(part, "application/octet-stream");
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			எனில் (code != CURLE_OK) {
+				செல் convert_failed;
 			}
 
-		} else if(multipart->file) {
+		} இல்லையெனில் எனில்(multipart->file) {
 			/* file entry */
 			nserror ret;
-			char *leafname = NULL;
-			char *mimetype = NULL;
+			எழுத்து *leafname = வெற்று;
+			எழுத்து *mimetype = வெற்று;
 
 			code = curl_mime_filedata(part, multipart->rawfile);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			எனில் (code != CURLE_OK) {
+				செல் convert_failed;
 			}
 
-			ret = guit->file->basename(multipart->value, &leafname, NULL);
-			if (ret != NSERROR_OK) {
-				goto convert_failed;
+			ret = guit->file->basename(multipart->மதிப்பு, &leafname, வெற்று);
+			எனில் (ret != NSERROR_OK) {
+				செல் convert_failed;
 			}
 			code = curl_mime_filename(part, leafname);
-			free(leafname);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			விடுவி(leafname);
+			எனில் (code != CURLE_OK) {
+				செல் convert_failed;
 			}
 
-			mimetype = guit->fetch->mimetype(multipart->value);
-			if (mimetype == NULL) {
+			mimetype = guit->fetch->mimetype(multipart->மதிப்பு);
+			எனில் (mimetype == வெற்று) {
 				mimetype=strdup("text/plain");
 			}
-			if (mimetype == NULL) {
-				goto convert_failed;
+			எனில் (mimetype == வெற்று) {
+				செல் convert_failed;
 			}
 			code = curl_mime_type(part, mimetype);
-			free(mimetype);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			விடுவி(mimetype);
+			எனில் (code != CURLE_OK) {
+				செல் convert_failed;
 			}
 
-		} else {
+		} இல்லையெனில் {
 			/* make the curl mime reference the existing multipart
 			 * data which requires use of a callback and context.
 			 */
-			struct curl_mime_ctx *cb_ctx;
-			cb_ctx = malloc(sizeof(struct curl_mime_ctx));
-			if (cb_ctx == NULL) {
-				goto convert_failed;
+			கட்டமைப்பு curl_mime_ctx *cb_ctx;
+			cb_ctx = malloc(அளவு(கட்டமைப்பு curl_mime_ctx));
+			எனில் (cb_ctx == வெற்று) {
+				செல் convert_failed;
 			}
-			cb_ctx->buffer = multipart->value;
-			cb_ctx->size = value_len;
+			cb_ctx->buffer = multipart->மதிப்பு;
+			cb_ctx->size = மதிப்பு_len;
 			cb_ctx->position = 0;
 			code = curl_mime_data_cb(part,
-						 value_len,
+						 மதிப்பு_len,
 						 mime_data_read_callback,
 						 mime_data_seek_callback,
 						 mime_data_free_callback,
 						 cb_ctx);
-			if (code != CURLE_OK) {
-				free(cb_ctx);
-				goto convert_failed;
+			எனில் (code != CURLE_OK) {
+				விடுவி(cb_ctx);
+				செல் convert_failed;
 			}
 		}
 	}
 
-	return cmime;
+	திரும்பு cmime;
 
 convert_failed:
 	NSLOG(netsurf, WARNING, "postdata conversion failed with curl code: %d", code);
 	curl_mime_free(cmime);
-	return NULL;
+	திரும்பு வெற்று;
 }
 
-#else /* LIBCURL_VERSION_NUM >= 0x073800 */
+#இல்லையெனில் /* LIBCURL_VERSION_NUM >= 0x073800 */
 
 /**
  * Convert a list of struct ::fetch_multipart_data to a list of
  * struct curl_httppost for libcurl.
  */
-static struct curl_httppost *
+நிலையான கட்டமைப்பு curl_httppost *
 fetch_curl_postdata_convert(CURL *chandle,
-			    const struct fetch_multipart_data *control)
+			    மாறிலி கட்டமைப்பு fetch_multipart_data *control)
 {
-	struct curl_httppost *post = NULL, *last = NULL;
+	கட்டமைப்பு curl_httppost *post = வெற்று, *last = வெற்று;
 	CURLFORMcode code;
 	nserror ret;
 
-	for (; control; control = control->next) {
-		if (control->file) {
-			char *leafname = NULL;
-			ret = guit->file->basename(control->value, &leafname, NULL);
-			if (ret != NSERROR_OK) {
-				continue;
+	க்கு (; control; control = control->next) {
+		எனில் (control->file) {
+			எழுத்து *leafname = வெற்று;
+			ret = guit->file->basename(control->மதிப்பு, &leafname, வெற்று);
+			எனில் (ret != NSERROR_OK) {
+				தொடர்;
 			}
 
 			/* We have to special case filenames of "", so curl
 			 * a) actually attempts the fetch and
 			 * b) doesn't attempt to open the file ""
 			 */
-			if (control->value[0] == '\0') {
+			எனில் (control->மதிப்பு[0] == '\0') {
 				/* dummy buffer - needs to be static so
 				 * pointer's still valid when we go out
 				 * of scope (not that libcurl should be
 				 * attempting to access it, of course).
 				 */
-				static char buf;
+				நிலையான எழுத்து buf;
 
 				code = curl_formadd(&post, &last,
 						    CURLFORM_COPYNAME, control->name,
-						    CURLFORM_BUFFER, control->value,
+						    CURLFORM_BUFFER, control->மதிப்பு,
 						    /* needed, as basename("") == "." */
 						    CURLFORM_FILENAME, "",
 						    CURLFORM_BUFFERPTR, &buf,
@@ -1076,12 +1076,12 @@ fetch_curl_postdata_convert(CURL *chandle,
 						    CURLFORM_CONTENTTYPE,
 						    "application/octet-stream",
 						    CURLFORM_END);
-				if (code != CURL_FORMADD_OK)
+				எனில் (code != CURL_FORMADD_OK)
 					NSLOG(netsurf, INFO,
 					      "curl_formadd: %d (%s)", code,
 					      control->name);
-			} else {
-				char *mimetype = guit->fetch->mimetype(control->value);
+			} இல்லையெனில் {
+				எழுத்து *mimetype = guit->fetch->mimetype(control->மதிப்பு);
 				code = curl_formadd(&post, &last,
 						    CURLFORM_COPYNAME, control->name,
 						    CURLFORM_FILE, control->rawfile,
@@ -1089,28 +1089,28 @@ fetch_curl_postdata_convert(CURL *chandle,
 						    CURLFORM_CONTENTTYPE,
 						    (mimetype != 0 ? mimetype : "text/plain"),
 						    CURLFORM_END);
-				if (code != CURL_FORMADD_OK)
+				எனில் (code != CURL_FORMADD_OK)
 					NSLOG(netsurf, INFO,
 					      "curl_formadd: %d (%s=%s)",
 					      code,
 					      control->name,
-					      control->value);
-				free(mimetype);
+					      control->மதிப்பு);
+				விடுவி(mimetype);
 			}
-			free(leafname);
-		} else {
+			விடுவி(leafname);
+		} இல்லையெனில் {
 			code = curl_formadd(&post, &last,
 					    CURLFORM_COPYNAME, control->name,
-					    CURLFORM_COPYCONTENTS, control->value,
+					    CURLFORM_COPYCONTENTS, control->மதிப்பு,
 					    CURLFORM_END);
-			if (code != CURL_FORMADD_OK)
+			எனில் (code != CURL_FORMADD_OK)
 				NSLOG(netsurf, INFO,
 				      "curl_formadd: %d (%s=%s)", code,
-				      control->name, control->value);
+				      control->name, control->மதிப்பு);
 		}
 	}
 
-	return post;
+	திரும்பு post;
 }
 
 #endif  /* LIBCURL_VERSION_NUM >= 0x073800 */
@@ -1118,42 +1118,42 @@ fetch_curl_postdata_convert(CURL *chandle,
 /**
  * Setup multipart post data
  */
-static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
+நிலையான CURLcode fetch_curl_set_postdata(கட்டமைப்பு curl_fetch_info *f)
 {
 	CURLcode code = CURLE_OK;
 
 #undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
-	if (code != CURLE_OK)					\
-		return code;					\
+#define SETOPT(option, மதிப்பு) { \
+	code = curl_easy_setopt(f->curl_handle, option, மதிப்பு);	\
+	எனில் (code != CURLE_OK)					\
+		திரும்பு code;					\
 	}
 
-	switch (f->postdata->type) {
-	case FETCH_POSTDATA_NONE:
-		SETOPT(CURLOPT_POSTFIELDS, NULL);
-		SETOPT(NSCURL_POSTDATA_CURLOPT, NULL);
+	தேர்வு (f->postdata->type) {
+	நிலை FETCH_POSTDATA_NONE:
+		SETOPT(CURLOPT_POSTFIELDS, வெற்று);
+		SETOPT(NSCURL_POSTDATA_CURLOPT, வெற்று);
 		SETOPT(CURLOPT_HTTPGET, 1L);
-		break;
+		நிறுத்து;
 
-	case FETCH_POSTDATA_URLENC:
-		SETOPT(NSCURL_POSTDATA_CURLOPT, NULL);
+	நிலை FETCH_POSTDATA_URLENC:
+		SETOPT(NSCURL_POSTDATA_CURLOPT, வெற்று);
 		SETOPT(CURLOPT_HTTPGET, 0L);
 		SETOPT(CURLOPT_POSTFIELDS, f->postdata->data.urlenc);
-		break;
+		நிறுத்து;
 
-	case FETCH_POSTDATA_MULTIPART:
-		SETOPT(CURLOPT_POSTFIELDS, NULL);
+	நிலை FETCH_POSTDATA_MULTIPART:
+		SETOPT(CURLOPT_POSTFIELDS, வெற்று);
 		SETOPT(CURLOPT_HTTPGET, 0L);
-		if (f->curl_postdata == NULL) {
+		எனில் (f->curl_postdata == வெற்று) {
 			f->curl_postdata =
 				fetch_curl_postdata_convert(f->curl_handle,
 							    f->postdata->data.multipart);
 		}
 		SETOPT(NSCURL_POSTDATA_CURLOPT, f->curl_postdata);
-		break;
+		நிறுத்து;
 	}
-	return code;
+	திரும்பு code;
 }
 
 /**
@@ -1162,16 +1162,16 @@ static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
  * \param f The fetch to set options on.
  * \return A curl result code.
  */
-static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
+நிலையான CURLcode fetch_curl_set_options(கட்டமைப்பு curl_fetch_info *f)
 {
 	CURLcode code;
-	const char *auth;
+	மாறிலி எழுத்து *auth;
 
 #undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
-	if (code != CURLE_OK)					\
-		return code;					\
+#define SETOPT(option, மதிப்பு) { \
+	code = curl_easy_setopt(f->curl_handle, option, மதிப்பு);	\
+	எனில் (code != CURLE_OK)					\
+		திரும்பு code;					\
 	}
 
 	SETOPT(CURLOPT_URL, nsurl_access(f->url));
@@ -1181,56 +1181,56 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
 	SETOPT(NSCURLOPT_PROGRESS_DATA, f);
 	SETOPT(CURLOPT_HTTPHEADER, f->headers);
 	code = fetch_curl_set_postdata(f);
-	if (code != CURLE_OK) {
-		return code;
+	எனில் (code != CURLE_OK) {
+		திரும்பு code;
 	}
 
 	f->cookie_string = urldb_get_cookie(f->url, true);
-	if (f->cookie_string) {
+	எனில் (f->cookie_string) {
 		SETOPT(CURLOPT_COOKIE, f->cookie_string);
-	} else {
-		SETOPT(CURLOPT_COOKIE, NULL);
+	} இல்லையெனில் {
+		SETOPT(CURLOPT_COOKIE, வெற்று);
 	}
 
-	if ((auth = urldb_get_auth_details(f->url, NULL)) != NULL) {
+	எனில் ((auth = urldb_get_auth_details(f->url, வெற்று)) != வெற்று) {
 		SETOPT(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		SETOPT(CURLOPT_USERPWD, auth);
-	} else {
-		SETOPT(CURLOPT_USERPWD, NULL);
+	} இல்லையெனில் {
+		SETOPT(CURLOPT_USERPWD, வெற்று);
 	}
 
 	/* set up proxy options */
-	if (nsoption_bool(http_proxy) &&
-	    (nsoption_charp(http_proxy_host) != NULL) &&
+	எனில் (nsoption_bool(http_proxy) &&
+	    (nsoption_charp(http_proxy_host) != வெற்று) &&
 	    (strncmp(nsurl_access(f->url), "file:", 5) != 0)) {
 		SETOPT(CURLOPT_PROXY, nsoption_charp(http_proxy_host));
 		SETOPT(CURLOPT_PROXYPORT, (long) nsoption_int(http_proxy_port));
 
-#if LIBCURL_VERSION_NUM >= 0x071304
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x071304
 		/* Added in 7.19.4 */
 		/* setup the omission list */
 		SETOPT(CURLOPT_NOPROXY, nsoption_charp(http_proxy_noproxy));
 #endif
 
-		if (nsoption_int(http_proxy_auth) != OPTION_HTTP_PROXY_AUTH_NONE) {
+		எனில் (nsoption_int(http_proxy_auth) != OPTION_HTTP_PROXY_AUTH_NONE) {
 			SETOPT(CURLOPT_PROXYAUTH,
 			       nsoption_int(http_proxy_auth) ==
 					OPTION_HTTP_PROXY_AUTH_BASIC ?
 					(long) CURLAUTH_BASIC :
 					(long) CURLAUTH_NTLM);
 			snprintf(fetch_proxy_userpwd,
-					sizeof fetch_proxy_userpwd,
+					அளவு fetch_proxy_userpwd,
 					"%s:%s",
 				 nsoption_charp(http_proxy_auth_user),
 				 nsoption_charp(http_proxy_auth_pass));
 			SETOPT(CURLOPT_PROXYUSERPWD, fetch_proxy_userpwd);
 		}
-	} else {
-		SETOPT(CURLOPT_PROXY, NULL);
+	} இல்லையெனில் {
+		SETOPT(CURLOPT_PROXY, வெற்று);
 	}
 
 
-	if (curl_with_openssl) {
+	எனில் (curl_with_openssl) {
 		SETOPT(CURLOPT_SSL_CIPHER_LIST,
 			f->downgrade_tls ? CIPHER_LIST_LEGACY : CIPHER_LIST);
 	}
@@ -1238,27 +1238,27 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
 	/* Force-enable SSL session ID caching, as some distros are odd. */
 	SETOPT(CURLOPT_SSL_SESSIONID_CACHE, 1L);
 
-	if (urldb_get_cert_permissions(f->url)) {
+	எனில் (urldb_get_cert_permissions(f->url)) {
 		/* Disable certificate verification */
 		SETOPT(CURLOPT_SSL_VERIFYPEER, 0L);
 		SETOPT(CURLOPT_SSL_VERIFYHOST, 0L);
-		if (curl_with_openssl) {
-			SETOPT(CURLOPT_SSL_CTX_FUNCTION, NULL);
-			SETOPT(CURLOPT_SSL_CTX_DATA, NULL);
+		எனில் (curl_with_openssl) {
+			SETOPT(CURLOPT_SSL_CTX_FUNCTION, வெற்று);
+			SETOPT(CURLOPT_SSL_CTX_DATA, வெற்று);
 		}
-	} else {
+	} இல்லையெனில் {
 		/* do verification */
 		SETOPT(CURLOPT_SSL_VERIFYPEER, 1L);
 		SETOPT(CURLOPT_SSL_VERIFYHOST, 2L);
 #ifdef WITH_OPENSSL
-		if (curl_with_openssl) {
+		எனில் (curl_with_openssl) {
 			SETOPT(CURLOPT_SSL_CTX_FUNCTION, fetch_curl_sslctxfun);
 			SETOPT(CURLOPT_SSL_CTX_DATA, f);
 		}
 #endif
 	}
 
-	return CURLE_OK;
+	திரும்பு CURLE_OK;
 }
 
 /**
@@ -1268,8 +1268,8 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
  * \param handle CURL handle to be used to fetch the content.
  * \return true if the fetch was successfully initiated else false.
  */
-static bool
-fetch_curl_initiate_fetch(struct curl_fetch_info *fetch, CURL *handle)
+நிலையான bool
+fetch_curl_initiate_fetch(கட்டமைப்பு curl_fetch_info *fetch, CURL *handle)
 {
 	CURLcode code;
 	CURLMcode codem;
@@ -1278,77 +1278,77 @@ fetch_curl_initiate_fetch(struct curl_fetch_info *fetch, CURL *handle)
 
 	/* Initialise the handle */
 	code = fetch_curl_set_options(fetch);
-	if (code != CURLE_OK) {
+	எனில் (code != CURLE_OK) {
 		fetch->curl_handle = 0;
 		/* The handle maybe went bad, eat it */
 		NSLOG(netsurf, WARNING, "cURL handle maybe went bad, retry later");
 		curl_easy_cleanup(handle);
-		return false;
+		திரும்பு false;
 	}
 
 	/* add to the global curl multi handle */
 	codem = curl_multi_add_handle(fetch_curl_multi, fetch->curl_handle);
-	assert(codem == CURLM_OK || codem == CURLM_CALL_MULTI_PERFORM);
+	ப்ரதிஜ்ஞா(codem == CURLM_OK || codem == CURLM_CALL_MULTI_PERFORM);
 
-	return true;
+	திரும்பு true;
 }
 
 
 /**
  * Find a CURL handle to use to dispatch a job
  */
-static CURL *fetch_curl_get_handle(lwc_string *host)
+நிலையான CURL *fetch_curl_get_handle(lwc_string *host)
 {
-	struct cache_handle *h;
+	கட்டமைப்பு cache_handle *h;
 	CURL *ret;
 	RING_FINDBYLWCHOST(curl_handle_ring, h, host);
-	if (h) {
+	எனில் (h) {
 		ret = h->handle;
 		lwc_string_unref(h->host);
 		RING_REMOVE(curl_handle_ring, h);
-		free(h);
-	} else {
+		விடுவி(h);
+	} இல்லையெனில் {
 		ret = curl_easy_duphandle(fetch_blank_curl);
 	}
-	return ret;
+	திரும்பு ret;
 }
 
 
 /**
  * Dispatch a single job
  */
-static bool fetch_curl_start(void *vfetch)
+நிலையான bool fetch_curl_start(வெறுமை *vfetch)
 {
-	struct curl_fetch_info *fetch = (struct curl_fetch_info*)vfetch;
-	if (inside_curl) {
+	கட்டமைப்பு curl_fetch_info *fetch = (கட்டமைப்பு curl_fetch_info*)vfetch;
+	எனில் (inside_curl) {
 		NSLOG(netsurf, DEBUG, "Deferring fetch because we're inside cURL");
-		return false;
+		திரும்பு false;
 	}
-	return fetch_curl_initiate_fetch(fetch,
+	திரும்பு fetch_curl_initiate_fetch(fetch,
 			fetch_curl_get_handle(fetch->host));
 }
 
 /**
  * Cache a CURL handle for the provided host (if wanted)
  */
-static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
+நிலையான வெறுமை fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 {
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x071e00
 	/* 7.30.0 or later has its own connection caching; suppress ours */
 	curl_easy_cleanup(handle);
-	return;
-#else
-	struct cache_handle *h = 0;
-	int c;
+	திரும்பு;
+#இல்லையெனில்
+	கட்டமைப்பு cache_handle *h = 0;
+	முழு c;
 	RING_FINDBYLWCHOST(curl_handle_ring, h, host);
-	if (h) {
+	எனில் (h) {
 		/* Already have a handle cached for this hostname */
 		curl_easy_cleanup(handle);
-		return;
+		திரும்பு;
 	}
 	/* We do not have a handle cached, first up determine if the cache is full */
-	RING_GETSIZE(struct cache_handle, curl_handle_ring, c);
-	if (c >= nsoption_int(max_cached_fetch_handles)) {
+	RING_GETSIZE(கட்டமைப்பு cache_handle, curl_handle_ring, c);
+	எனில் (c >= nsoption_int(max_cached_fetch_handles)) {
 		/* Cache is full, so, we rotate the ring by one and
 		 * replace the oldest handle with this one. We do this
 		 * without freeing/allocating memory (except the
@@ -1356,25 +1356,25 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 		 * ring and then re-inserting it, in order to be as
 		 * efficient as we can.
 		 */
-		if (curl_handle_ring != NULL) {
+		எனில் (curl_handle_ring != வெற்று) {
 			h = curl_handle_ring;
 			curl_handle_ring = h->r_next;
 			curl_easy_cleanup(h->handle);
 			h->handle = handle;
 			lwc_string_unref(h->host);
 			h->host = lwc_string_ref(host);
-		} else {
+		} இல்லையெனில் {
 			/* Actually, we don't want to cache any handles */
 			curl_easy_cleanup(handle);
 		}
 
-		return;
+		திரும்பு;
 	}
 	/* The table isn't full yet, so make a shiny new handle to add to the ring */
-	h = (struct cache_handle*)malloc(sizeof(struct cache_handle));
+	h = (கட்டமைப்பு cache_handle*)malloc(அளவு(கட்டமைப்பு cache_handle));
 	h->handle = handle;
 	h->host = lwc_string_ref(host);
-	RING_INSERT(curl_handle_ring, h);
+	RING_செருகு(curl_handle_ring, h);
 #endif
 }
 
@@ -1384,18 +1384,18 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
  *
  * Will prod the queue afterwards to allow pending requests to be initiated.
  */
-static void fetch_curl_stop(struct curl_fetch_info *f)
+நிலையான வெறுமை fetch_curl_stop(கட்டமைப்பு curl_fetch_info *f)
 {
 	CURLMcode codem;
 
-	assert(f);
+	ப்ரதிஜ்ஞா(f);
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", f, nsurl_access(f->url));
 
-	if (f->curl_handle) {
+	எனில் (f->curl_handle) {
 		/* remove from curl multi handle */
 		codem = curl_multi_remove_handle(fetch_curl_multi,
 				f->curl_handle);
-		assert(codem == CURLM_OK);
+		ப்ரதிஜ்ஞா(codem == CURLM_OK);
 		/* Put this curl handle into the cache if wanted. */
 		fetch_curl_cache_handle(f->curl_handle, f->host);
 		f->curl_handle = 0;
@@ -1408,21 +1408,21 @@ static void fetch_curl_stop(struct curl_fetch_info *f)
 /**
  * Abort a fetch.
  */
-static void fetch_curl_abort(void *vf)
+நிலையான வெறுமை fetch_curl_abort(வெறுமை *vf)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *)vf;
-	assert(f);
+	கட்டமைப்பு curl_fetch_info *f = (கட்டமைப்பு curl_fetch_info *)vf;
+	ப்ரதிஜ்ஞா(f);
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", f, nsurl_access(f->url));
-	if (f->curl_handle) {
-		if (inside_curl) {
+	எனில் (f->curl_handle) {
+		எனில் (inside_curl) {
 			NSLOG(netsurf, DEBUG, "Deferring cleanup");
 			f->abort = true;
-		} else {
+		} இல்லையெனில் {
 			NSLOG(netsurf, DEBUG, "Immediate abort");
 			fetch_curl_stop(f);
 			fetch_free(f->fetch_handle);
 		}
-	} else {
+	} இல்லையெனில் {
 		fetch_remove_from_queues(f->fetch_handle);
 		fetch_free(f->fetch_handle);
 	}
@@ -1432,33 +1432,33 @@ static void fetch_curl_abort(void *vf)
 /**
  * Free a fetch structure and associated resources.
  */
-static void fetch_curl_free(void *vf)
+நிலையான வெறுமை fetch_curl_free(வெறுமை *vf)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *)vf;
-	int i;
+	கட்டமைப்பு curl_fetch_info *f = (கட்டமைப்பு curl_fetch_info *)vf;
+	முழு i;
 
-	if (f->curl_handle) {
+	எனில் (f->curl_handle) {
 		curl_easy_cleanup(f->curl_handle);
 	}
 	nsurl_unref(f->url);
 	lwc_string_unref(f->host);
-	free(f->location);
-	free(f->cookie_string);
-	free(f->realm);
-	if (f->headers) {
+	விடுவி(f->location);
+	விடுவி(f->cookie_string);
+	விடுவி(f->realm);
+	எனில் (f->headers) {
 		curl_slist_free_all(f->headers);
 	}
 	fetch_curl_free_postdata(f->postdata);
 	NSCURL_POSTDATA_FREE(f->curl_postdata);
 
 	/* free certificate data */
-	for (i = 0; i < MAX_CERT_DEPTH; i++) {
-		if (f->cert_data[i].cert != NULL) {
+	க்கு (i = 0; i < MAX_CERT_DEPTH; i++) {
+		எனில் (f->cert_data[i].cert != வெற்று) {
 			X509_free(f->cert_data[i].cert);
 		}
 	}
 
-	free(f);
+	விடுவி(f);
 }
 
 
@@ -1467,62 +1467,62 @@ static void fetch_curl_free(void *vf)
  *
  * Return true if the fetch is being aborted.
  */
-static bool fetch_curl_process_headers(struct curl_fetch_info *f)
+நிலையான bool fetch_curl_process_headers(கட்டமைப்பு curl_fetch_info *f)
 {
 	long http_code;
 	CURLcode code;
-	fetch_msg msg;
+	fetch_செய்தி செய்தி;
 
 	f->had_headers = true;
 
-	if (!f->http_code) {
+	எனில் (!f->http_code) {
 		code = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_CODE,
 					 &f->http_code);
-		assert(code == CURLE_OK);
+		ப்ரதிஜ்ஞா(code == CURLE_OK);
 		fetch_set_http_code(f->fetch_handle, f->http_code);
 	}
 	http_code = f->http_code;
 	NSLOG(netsurf, INFO, "HTTP status code %li", http_code);
 
-	if ((http_code == HTTP_RESPONSE_NOT_MODIFIED) &&
+	எனில் ((http_code == HTTP_RESPONSE_NOT_MODIFIED) &&
 	    (f->postdata->type==FETCH_POSTDATA_NONE)) {
 		/* Not Modified && GET request */
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		செய்தி.type = FETCH_NOTMODIFIED;
+		fetch_send_callback(&செய்தி, f->fetch_handle);
+		திரும்பு true;
 	}
 
 	/* handle HTTP redirects (3xx response codes) */
-	if (HTTP_RESPONSE_IS_3XX(http_code) && (f->location != 0)) {
+	எனில் (HTTP_RESPONSE_IS_3XX(http_code) && (f->location != 0)) {
 		NSLOG(netsurf, INFO, "FETCH_REDIRECT, '%s'", f->location);
-		msg.type = FETCH_REDIRECT;
-		msg.data.redirect = f->location;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		செய்தி.type = FETCH_REDIRECT;
+		செய்தி.data.redirect = f->location;
+		fetch_send_callback(&செய்தி, f->fetch_handle);
+		திரும்பு true;
 	}
 
 	/* handle HTTP 401 (Authentication errors) */
-	if (http_code == HTTP_RESPONSE_UNAUTHORIZED) {
-		msg.type = FETCH_AUTH;
-		msg.data.auth.realm = f->realm;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+	எனில் (http_code == HTTP_RESPONSE_UNAUTHORIZED) {
+		செய்தி.type = FETCH_AUTH;
+		செய்தி.data.auth.realm = f->realm;
+		fetch_send_callback(&செய்தி, f->fetch_handle);
+		திரும்பு true;
 	}
 
 	/* handle HTTP errors (non 2xx response codes) */
-	if (f->only_2xx &&
+	எனில் (f->only_2xx &&
 	    strncmp(nsurl_access(f->url), "http", 4) == 0 &&
 	    (HTTP_RESPONSE_IS_2XX(http_code) == false)) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = messages_get("Not2xx");
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		செய்தி.type = FETCH_ERROR;
+		செய்தி.data.error = messages_get("Not2xx");
+		fetch_send_callback(&செய்தி, f->fetch_handle);
+		திரும்பு true;
 	}
 
-	if (f->abort)
-		return true;
+	எனில் (f->abort)
+		திரும்பு true;
 
-	return false;
+	திரும்பு false;
 }
 
 
@@ -1532,25 +1532,25 @@ static bool fetch_curl_process_headers(struct curl_fetch_info *f)
  * \param curl_handle curl easy handle of fetch
  * \param result The result code of the completed fetch.
  */
-static void fetch_curl_done(CURL *curl_handle, CURLcode result)
+நிலையான வெறுமை fetch_curl_done(CURL *curl_handle, CURLcode result)
 {
 	bool finished = false;
 	bool error = false;
 	bool cert = false;
 	bool abort_fetch;
-	struct curl_fetch_info *f;
-	char **_hideous_hack = (char **) (void *) &f;
+	கட்டமைப்பு curl_fetch_info *f;
+	எழுத்து **_hideous_hack = (எழுத்து **) (வெறுமை *) &f;
 	CURLcode code;
 
 	/* find the structure associated with this fetch */
 	/* For some reason, cURL thinks CURLINFO_PRIVATE should be a string?! */
 	code = curl_easy_getinfo(curl_handle, CURLINFO_PRIVATE, _hideous_hack);
-	assert(code == CURLE_OK);
+	ப்ரதிஜ்ஞா(code == CURLE_OK);
 
 	abort_fetch = f->abort;
 	NSLOG(netsurf, INFO, "done %s", nsurl_access(f->url));
 
-	if ((abort_fetch == false) &&
+	எனில் ((abort_fetch == false) &&
 	    (result == CURLE_OK ||
 	     ((result == CURLE_WRITE_ERROR) && (f->stopped == false)))) {
 		/* fetch completed normally or the server fed us a junk gzip
@@ -1562,74 +1562,74 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
 		 * object will be truncated in this case and leave it to
 		 * the content handlers to cope.
 		 */
-		if (f->stopped ||
+		எனில் (f->stopped ||
 		    (!f->had_headers &&	fetch_curl_process_headers(f))) {
 			; /* redirect with no body or similar */
-		} else {
+		} இல்லையெனில் {
 			finished = true;
 		}
-	} else if (result == CURLE_PARTIAL_FILE) {
+	} இல்லையெனில் எனில் (result == CURLE_PARTIAL_FILE) {
 		/* CURLE_PARTIAL_FILE occurs if the received body of a
 		 * response is smaller than that specified in the
 		 * Content-Length header.
 		 */
-		if (!f->had_headers && fetch_curl_process_headers(f))
+		எனில் (!f->had_headers && fetch_curl_process_headers(f))
 			; /* redirect with partial body, or similar */
-		else {
+		இல்லையெனில் {
 			finished = true;
 		}
-	} else if (result == CURLE_WRITE_ERROR && f->stopped) {
+	} இல்லையெனில் எனில் (result == CURLE_WRITE_ERROR && f->stopped) {
 		/* CURLE_WRITE_ERROR occurs when fetch_curl_data
 		 * returns 0, which we use to abort intentionally
 		 */
 		;
-	} else if (result == CURLE_SSL_PEER_CERTIFICATE ||
+	} இல்லையெனில் எனில் (result == CURLE_SSL_PEER_CERTIFICATE ||
 		   result == CURLE_SSL_CACERT) {
 		/* Some kind of failure has occurred.  If we don't know
 		 * what happened, we'll have reported unknown errors up
 		 * to the user already via the certificate chain error fields.
 		 */
 		cert = true;
-	} else {
+	} இல்லையெனில் {
 		NSLOG(netsurf, INFO, "Unknown cURL response code %d", result);
 		error = true;
 	}
 
 	fetch_curl_stop(f);
 
-	if (f->sent_ssl_chain == false) {
+	எனில் (f->sent_ssl_chain == false) {
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	if (abort_fetch) {
+	எனில் (abort_fetch) {
 		; /* fetch was aborted: no callback */
-	} else if (finished) {
-		fetch_msg msg;
-		msg.type = FETCH_FINISHED;
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else if (cert) {
+	} இல்லையெனில் எனில் (finished) {
+		fetch_செய்தி செய்தி;
+		செய்தி.type = FETCH_FINISHED;
+		fetch_send_callback(&செய்தி, f->fetch_handle);
+	} இல்லையெனில் எனில் (cert) {
 		/* user needs to validate certificate with issue */
-		fetch_msg msg;
-		msg.type = FETCH_CERT_ERR;
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else if (error) {
-		fetch_msg msg;
-		switch (result) {
-		case CURLE_SSL_CONNECT_ERROR:
-			msg.type = FETCH_SSL_ERR;
-			break;
+		fetch_செய்தி செய்தி;
+		செய்தி.type = FETCH_CERT_ERR;
+		fetch_send_callback(&செய்தி, f->fetch_handle);
+	} இல்லையெனில் எனில் (error) {
+		fetch_செய்தி செய்தி;
+		தேர்வு (result) {
+		நிலை CURLE_SSL_CONNECT_ERROR:
+			செய்தி.type = FETCH_SSL_ERR;
+			நிறுத்து;
 
-		case CURLE_OPERATION_TIMEDOUT:
-			msg.type = FETCH_TIMEDOUT;
-			msg.data.error = curl_easy_strerror(result);
-			break;
+		நிலை CURLE_OPERATION_TIMEDOUT:
+			செய்தி.type = FETCH_TIMEDOUT;
+			செய்தி.data.error = curl_easy_strerror(result);
+			நிறுத்து;
 
-		default:
-			msg.type = FETCH_ERROR;
-			msg.data.error = curl_easy_strerror(result);
+		இயல்பு:
+			செய்தி.type = FETCH_ERROR;
+			செய்தி.data.error = curl_easy_strerror(result);
 		}
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&செய்தி, f->fetch_handle);
 	}
 
 	fetch_free(f->fetch_handle);
@@ -1641,16 +1641,16 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
  *
  * Must be called regularly to make progress on fetches.
  */
-static void fetch_curl_poll(lwc_string *scheme_ignored)
+நிலையான வெறுமை fetch_curl_poll(lwc_string *scheme_ignored)
 {
-	int running, queue;
+	முழு running, queue;
 	CURLMcode codem;
-	CURLMsg *curl_msg;
+	CURLMsg *curl_செய்தி;
 
-	if (nsoption_bool(suppress_curl_debug) == false) {
+	எனில் (nsoption_bool(suppress_curl_debug) == false) {
 		fd_set read_fd_set, write_fd_set, exc_fd_set;
-		int max_fd = -1;
-		int i;
+		முழு max_fd = -1;
+		முழு i;
 
 		FD_ZERO(&read_fd_set);
 		FD_ZERO(&write_fd_set);
@@ -1659,28 +1659,28 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 		codem = curl_multi_fdset(fetch_curl_multi,
 				&read_fd_set, &write_fd_set,
 				&exc_fd_set, &max_fd);
-		assert(codem == CURLM_OK);
+		ப்ரதிஜ்ஞா(codem == CURLM_OK);
 
 		NSLOG(netsurf, DEEPDEBUG,
 		      "Curl file descriptor states (maxfd=%i):", max_fd);
-		for (i = 0; i <= max_fd; i++) {
-			bool read = false;
-			bool write = false;
+		க்கு (i = 0; i <= max_fd; i++) {
+			bool பட = false;
+			bool லிக = false;
 			bool error = false;
 
-			if (FD_ISSET(i, &read_fd_set)) {
-				read = true;
+			எனில் (FD_ISSET(i, &read_fd_set)) {
+				பட = true;
 			}
-			if (FD_ISSET(i, &write_fd_set)) {
-				write = true;
+			எனில் (FD_ISSET(i, &write_fd_set)) {
+				லிக = true;
 			}
-			if (FD_ISSET(i, &exc_fd_set)) {
+			எனில் (FD_ISSET(i, &exc_fd_set)) {
 				error = true;
 			}
-			if (read || write || error) {
+			எனில் (பட || லிக || error) {
 				NSLOG(netsurf, DEEPDEBUG, "  fd %i: %s %s %s", i,
-				      read ? "read" : "    ",
-				      write ? "write" : "     ",
+				      பட ? "read" : "    ",
+				      லிக ? "write" : "     ",
 				      error ? "error" : "     ");
 			}
 		}
@@ -1688,28 +1688,28 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 
 	/* do any possible work on the current fetches */
 	inside_curl = true;
-	do {
+	செய் {
 		codem = curl_multi_perform(fetch_curl_multi, &running);
-		if (codem != CURLM_OK && codem != CURLM_CALL_MULTI_PERFORM) {
+		எனில் (codem != CURLM_OK && codem != CURLM_CALL_MULTI_PERFORM) {
 			NSLOG(netsurf, WARNING,
 			      "curl_multi_perform: %i %s",
 			      codem, curl_multi_strerror(codem));
-			return;
+			திரும்பு;
 		}
-	} while (codem == CURLM_CALL_MULTI_PERFORM);
+	} போது (codem == CURLM_CALL_MULTI_PERFORM);
 
 	/* process curl results */
-	curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
-	while (curl_msg) {
-		switch (curl_msg->msg) {
-			case CURLMSG_DONE:
-				fetch_curl_done(curl_msg->easy_handle,
-						curl_msg->data.result);
-				break;
-			default:
-				break;
+	curl_செய்தி = curl_multi_info_read(fetch_curl_multi, &queue);
+	போது (curl_செய்தி) {
+		தேர்வு (curl_செய்தி->செய்தி) {
+			நிலை CURLMSG_DONE:
+				fetch_curl_done(curl_செய்தி->easy_handle,
+						curl_செய்தி->data.result);
+				நிறுத்து;
+			இயல்பு:
+				நிறுத்து;
 		}
-		curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
+		curl_செய்தி = curl_multi_info_read(fetch_curl_multi, &queue);
 	}
 	inside_curl = false;
 }
@@ -1720,138 +1720,138 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 /**
  * Callback function for fetch progress.
  */
-static int
-fetch_curl_progress(void *clientp,
+நிலையான முழு
+fetch_curl_progress(வெறுமை *clientp,
 		    NSCURL_PROGRESS_T dltotal,
 		    NSCURL_PROGRESS_T dlnow,
 		    NSCURL_PROGRESS_T ultotal,
 		    NSCURL_PROGRESS_T ulnow)
 {
-	static char fetch_progress_buffer[256]; /**< Progress buffer for cURL */
-	struct curl_fetch_info *f = (struct curl_fetch_info *) clientp;
+	நிலையான எழுத்து fetch_progress_buffer[256]; /**< Progress buffer for cURL */
+	கட்டமைப்பு curl_fetch_info *f = (கட்டமைப்பு curl_fetch_info *) clientp;
 	uint64_t time_now_ms;
-	fetch_msg msg;
+	fetch_செய்தி செய்தி;
 
-	if (f->abort) {
-		return 0;
+	எனில் (f->abort) {
+		திரும்பு 0;
         }
 
-	msg.type = FETCH_PROGRESS;
-	msg.data.progress = fetch_progress_buffer;
+	செய்தி.type = FETCH_PROGRESS;
+	செய்தி.data.progress = fetch_progress_buffer;
 
 	/* Rate limit each fetch's progress notifications */
         nsu_getmonotonic_ms(&time_now_ms);
 #define UPDATE_DELAY_MS (1000 / UPDATES_PER_SECOND)
-	if (time_now_ms - f->last_progress_update < UPDATE_DELAY_MS) {
-		return 0;
+	எனில் (time_now_ms - f->last_progress_update < UPDATE_DELAY_MS) {
+		திரும்பு 0;
         }
 #undef UPDATE_DELAY_MS
 	f->last_progress_update = time_now_ms;
 
-	if (dltotal > 0) {
+	எனில் (dltotal > 0) {
 		snprintf(fetch_progress_buffer, 255,
 				messages_get("Progress"),
 				human_friendly_bytesize(dlnow),
 				human_friendly_bytesize(dltotal));
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else {
+		fetch_send_callback(&செய்தி, f->fetch_handle);
+	} இல்லையெனில் {
 		snprintf(fetch_progress_buffer, 255,
 				messages_get("ProgressU"),
 				human_friendly_bytesize(dlnow));
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&செய்தி, f->fetch_handle);
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
 
 /**
  * Format curl debug for nslog
  */
-static int
+நிலையான முழு
 fetch_curl_debug(CURL *handle,
 		 curl_infotype type,
-		 char *data,
+		 எழுத்து *data,
 		 size_t size,
-		 void *userptr)
+		 வெறுமை *userptr)
 {
-	static const char s_infotype[CURLINFO_END][3] = {
+	நிலையான மாறிலி எழுத்து s_infotype[CURLINFO_END][3] = {
 		"* ", "< ", "> ", "{ ", "} ", "{ ", "} "
 	};
-	switch(type) {
-	case CURLINFO_TEXT:
-	case CURLINFO_HEADER_OUT:
-	case CURLINFO_HEADER_IN:
-		NSLOG(fetch, DEBUG, "%s%.*s", s_infotype[type], (int)size - 1, data);
-		break;
+	தேர்வு(type) {
+	நிலை CURLINFO_TEXT:
+	நிலை CURLINFO_HEADER_OUT:
+	நிலை CURLINFO_HEADER_IN:
+		NSLOG(fetch, DEBUG, "%s%.*s", s_infotype[type], (முழு)size - 1, data);
+		நிறுத்து;
 
-	default:
-		break;
+	இயல்பு:
+		நிறுத்து;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 
-static curl_socket_t fetch_curl_socket_open(void *clientp,
-		curlsocktype purpose, struct curl_sockaddr *address)
+நிலையான curl_socket_t fetch_curl_socket_open(வெறுமை *clientp,
+		curlsocktype purpose, கட்டமைப்பு curl_sockaddr *address)
 {
-	(void) clientp;
-	(void) purpose;
+	(வெறுமை) clientp;
+	(வெறுமை) purpose;
 
-	return (curl_socket_t) guit->fetch->socket_open(
+	திரும்பு (curl_socket_t) guit->fetch->socket_open(
 			address->family, address->socktype,
 			address->protocol);
 }
 
-static int fetch_curl_socket_close(void *clientp, curl_socket_t item)
+நிலையான முழு fetch_curl_socket_close(வெறுமை *clientp, curl_socket_t item)
 {
-	(void) clientp;
+	(வெறுமை) clientp;
 
-	return guit->fetch->socket_close((int) item);
+	திரும்பு guit->fetch->socket_close((முழு) item);
 }
 
 /**
  * Callback function for cURL.
  */
-static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
+நிலையான size_t fetch_curl_data(எழுத்து *data, size_t size, size_t nmemb, வெறுமை *_f)
 {
-	struct curl_fetch_info *f = _f;
+	கட்டமைப்பு curl_fetch_info *f = _f;
 	CURLcode code;
-	fetch_msg msg;
+	fetch_செய்தி செய்தி;
 
 	/* ensure we only have to get this information once */
-	if (!f->http_code) {
+	எனில் (!f->http_code) {
 		code = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_CODE,
 					 &f->http_code);
-		assert(code == CURLE_OK);
+		ப்ரதிஜ்ஞா(code == CURLE_OK);
 		fetch_set_http_code(f->fetch_handle, f->http_code);
 	}
 
 	/* ignore body if this is a 401 reply by skipping it and reset
 	 * the HTTP response code to enable follow up fetches.
 	 */
-	if (f->http_code == HTTP_RESPONSE_UNAUTHORIZED) {
+	எனில் (f->http_code == HTTP_RESPONSE_UNAUTHORIZED) {
 		f->http_code = 0;
-		return size * nmemb;
+		திரும்பு size * nmemb;
 	}
 
-	if (f->abort || (!f->had_headers && fetch_curl_process_headers(f))) {
+	எனில் (f->abort || (!f->had_headers && fetch_curl_process_headers(f))) {
 		f->stopped = true;
-		return 0;
+		திரும்பு 0;
 	}
 
 	/* send data to the caller */
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size * nmemb;
-	fetch_send_callback(&msg, f->fetch_handle);
+	செய்தி.type = FETCH_DATA;
+	செய்தி.data.header_or_data.buf = (மாறிலி uint8_t *) data;
+	செய்தி.data.header_or_data.len = size * nmemb;
+	fetch_send_callback(&செய்தி, f->fetch_handle);
 
-	if (f->abort) {
+	எனில் (f->abort) {
 		f->stopped = true;
-		return 0;
+		திரும்பு 0;
 	}
 
-	return size * nmemb;
+	திரும்பு size * nmemb;
 }
 
 
@@ -1860,134 +1860,134 @@ static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
  *
  * See RFC 2616 4.2.
  */
-static size_t
-fetch_curl_header(char *data, size_t size, size_t nmemb, void *_f)
+நிலையான size_t
+fetch_curl_header(எழுத்து *data, size_t size, size_t nmemb, வெறுமை *_f)
 {
-	struct curl_fetch_info *f = _f;
-	int i;
-	fetch_msg msg;
+	கட்டமைப்பு curl_fetch_info *f = _f;
+	முழு i;
+	fetch_செய்தி செய்தி;
 	size *= nmemb;
 
-	if (f->abort) {
+	எனில் (f->abort) {
 		f->stopped = true;
-		return 0;
+		திரும்பு 0;
 	}
 
-	if (f->sent_ssl_chain == false) {
+	எனில் (f->sent_ssl_chain == false) {
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size;
-	fetch_send_callback(&msg, f->fetch_handle);
+	செய்தி.type = FETCH_HEADER;
+	செய்தி.data.header_or_data.buf = (மாறிலி uint8_t *) data;
+	செய்தி.data.header_or_data.len = size;
+	fetch_send_callback(&செய்தி, f->fetch_handle);
 
-#define SKIP_ST(o) for (i = (o); i < (int) size && (data[i] == ' ' || data[i] == '\t'); i++)
+#define SKIP_ST(o) க்கு (i = (o); i < (முழு) size && (data[i] == ' ' || data[i] == '\t'); i++)
 
-	if (12 < size && strncasecmp(data, "Location:", 9) == 0) {
+	எனில் (12 < size && strncasecmp(data, "Location:", 9) == 0) {
 		/* extract Location header */
-		free(f->location);
+		விடுவி(f->location);
 		f->location = malloc(size);
-		if (!f->location) {
+		எனில் (!f->location) {
 			NSLOG(netsurf, INFO, "malloc failed");
-			return size;
+			திரும்பு size;
 		}
 		SKIP_ST(9);
 		strncpy(f->location, data + i, size - i);
 		f->location[size - i] = '\0';
-		for (i = size - i - 1; i >= 0 &&
+		க்கு (i = size - i - 1; i >= 0 &&
 				(f->location[i] == ' ' ||
 				f->location[i] == '\t' ||
 				f->location[i] == '\r' ||
 				f->location[i] == '\n'); i--)
 			f->location[i] = '\0';
-	} else if (15 < size && strncasecmp(data, "Content-Length:", 15) == 0) {
+	} இல்லையெனில் எனில் (15 < size && strncasecmp(data, "Content-Length:", 15) == 0) {
 		/* extract Content-Length header */
 		SKIP_ST(15);
-		if (i < (int)size && '0' <= data[i] && data[i] <= '9')
+		எனில் (i < (முழு)size && '0' <= data[i] && data[i] <= '9')
 			f->content_length = atol(data + i);
-	} else if (17 < size && strncasecmp(data, "WWW-Authenticate:", 17) == 0) {
+	} இல்லையெனில் எனில் (17 < size && strncasecmp(data, "WWW-Authenticate:", 17) == 0) {
 		/* extract the first Realm from WWW-Authenticate header */
 		SKIP_ST(17);
 
-		while (i < (int) size - 5 &&
+		போது (i < (முழு) size - 5 &&
 				strncasecmp(data + i, "realm", 5))
 			i++;
-		while (i < (int) size - 1 && data[++i] != '"')
+		போது (i < (முழு) size - 1 && data[++i] != '"')
 			/* */;
 		i++;
 
-		if (i < (int) size) {
+		எனில் (i < (முழு) size) {
 			size_t end = i;
 
-			while (end < size && data[end] != '"')
+			போது (end < size && data[end] != '"')
 				++end;
 
-			if (end < size) {
-				free(f->realm);
+			எனில் (end < size) {
+				விடுவி(f->realm);
 				f->realm = malloc(end - i + 1);
-				if (f->realm != NULL) {
+				எனில் (f->realm != வெற்று) {
 					strncpy(f->realm, data + i, end - i);
 					f->realm[end - i] = '\0';
 				}
 			}
 		}
-	} else if (11 < size && strncasecmp(data, "Set-Cookie:", 11) == 0) {
+	} இல்லையெனில் எனில் (11 < size && strncasecmp(data, "Set-Cookie:", 11) == 0) {
 		/* extract Set-Cookie header */
 		SKIP_ST(11);
 
 		fetch_set_cookie(f->fetch_handle, &data[i]);
 	}
 
-	return size;
+	திரும்பு size;
 #undef SKIP_ST
 }
 
-static int fetch_curl_fdset(lwc_string *scheme, fd_set *read_set,
+நிலையான முழு fetch_curl_fdset(lwc_string *scheme, fd_set *read_set,
 			    fd_set *write_set, fd_set *error_set)
 {
 	CURLMcode code;
-	int maxfd = -1;
+	முழு maxfd = -1;
 
 	code = curl_multi_fdset(fetch_curl_multi,
 				read_set,
 				write_set,
 				error_set,
 				&maxfd);
-	assert(code == CURLM_OK);
+	ப்ரதிஜ்ஞா(code == CURLM_OK);
 
-	return maxfd;
+	திரும்பு maxfd;
 }
 
 
 
 /* exported function documented in content/fetchers/curl.h */
-nserror fetch_curl_register(void)
+nserror fetch_curl_register(வெறுமை)
 {
 	CURLcode code;
 	curl_version_info_data *data;
-	int i;
+	முழு i;
 	lwc_string *scheme;
-	const struct fetcher_operation_table fetcher_ops = {
+	மாறிலி கட்டமைப்பு fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_curl_initialise,
 		.acceptable = fetch_curl_can_fetch,
 		.setup = fetch_curl_setup,
 		.start = fetch_curl_start,
 		.abort = fetch_curl_abort,
-		.free = fetch_curl_free,
+		.விடுவி = fetch_curl_free,
 		.poll = fetch_curl_poll,
 		.fdset = fetch_curl_fdset,
 		.finalise = fetch_curl_finalise
 	};
 
-#if LIBCURL_VERSION_NUM >= 0x073800
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x073800
 	/* version 7.56.0 can select which SSL backend to use */
 	CURLsslset setres;
 
-	setres = curl_global_sslset(CURLSSLBACKEND_OPENSSL, NULL, NULL);
-	if (setres == CURLSSLSET_OK) {
+	setres = curl_global_sslset(CURLSSLBACKEND_OPENSSL, வெற்று, வெற்று);
+	எனில் (setres == CURLSSLSET_OK) {
 		curl_with_openssl = true;
-	} else {
+	} இல்லையெனில் {
 		curl_with_openssl = false;
 	}
 #endif
@@ -1995,30 +1995,30 @@ nserror fetch_curl_register(void)
 	NSLOG(netsurf, INFO, "curl_version %s", curl_version());
 
 	code = curl_global_init(CURL_GLOBAL_ALL);
-	if (code != CURLE_OK) {
+	எனில் (code != CURLE_OK) {
 		NSLOG(netsurf, INFO, "curl_global_init failed.");
-		return NSERROR_INIT_FAILED;
+		திரும்பு NSERROR_INIT_FAILED;
 	}
 
 	fetch_curl_multi = curl_multi_init();
-	if (!fetch_curl_multi) {
+	எனில் (!fetch_curl_multi) {
 		NSLOG(netsurf, INFO, "curl_multi_init failed.");
-		return NSERROR_INIT_FAILED;
+		திரும்பு NSERROR_INIT_FAILED;
 	}
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x071e00
 	/* built against 7.30.0 or later: configure caching */
 	{
 		CURLMcode mcode;
-		int maxconnects = nsoption_int(max_fetchers) +
+		முழு maxconnects = nsoption_int(max_fetchers) +
 				nsoption_int(max_cached_fetch_handles);
 
 #undef SETOPT
-#define SETOPT(option, value) \
-	mcode = curl_multi_setopt(fetch_curl_multi, option, value);	\
-	if (mcode != CURLM_OK) {					\
+#define SETOPT(option, மதிப்பு) \
+	mcode = curl_multi_setopt(fetch_curl_multi, option, மதிப்பு);	\
+	எனில் (mcode != CURLM_OK) {					\
 		NSLOG(netsurf, ERROR, "attempting curl_multi_setopt(%s, ...)", #option); \
-		goto curl_multi_setopt_failed;				\
+		செல் curl_multi_setopt_failed;				\
 	}
 
 		SETOPT(CURLMOPT_MAXCONNECTS, (long)maxconnects);
@@ -2031,24 +2031,24 @@ nserror fetch_curl_register(void)
 	 *  fetches.
 	 */
 	fetch_blank_curl = curl_easy_init();
-	if (!fetch_blank_curl) {
+	எனில் (!fetch_blank_curl) {
 		NSLOG(netsurf, INFO, "curl_easy_init failed");
-		return NSERROR_INIT_FAILED;
+		திரும்பு NSERROR_INIT_FAILED;
 	}
 
 #undef SETOPT
-#define SETOPT(option, value) \
-	code = curl_easy_setopt(fetch_blank_curl, option, value);	\
-	if (code != CURLE_OK) {						\
+#define SETOPT(option, மதிப்பு) \
+	code = curl_easy_setopt(fetch_blank_curl, option, மதிப்பு);	\
+	எனில் (code != CURLE_OK) {						\
 		NSLOG(netsurf, ERROR, "attempting curl_easy_setopt(%s, ...)", #option); \
-		goto curl_easy_setopt_failed;				\
+		செல் curl_easy_setopt_failed;				\
 	}
 
 	SETOPT(CURLOPT_ERRORBUFFER, fetch_error_buffer);
 	SETOPT(CURLOPT_DEBUGFUNCTION, fetch_curl_debug);
-	if (nsoption_bool(suppress_curl_debug)) {
+	எனில் (nsoption_bool(suppress_curl_debug)) {
 		SETOPT(CURLOPT_VERBOSE, 0);
-	} else {
+	} இல்லையெனில் {
 		SETOPT(CURLOPT_VERBOSE, 1);
 	}
 
@@ -2061,48 +2061,48 @@ nserror fetch_curl_register(void)
 	SETOPT(CURLOPT_NOPROGRESS, 0L);
 	SETOPT(CURLOPT_USERAGENT, user_agent_string());
 	SETOPT(CURLOPT_ENCODING, "gzip");
-	SETOPT(CURLOPT_LOW_SPEED_LIMIT, 1L);
-	SETOPT(CURLOPT_LOW_SPEED_TIME, 180L);
+	SETOPT(CURLOPT_கீழ்_SPEED_LIMIT, 1L);
+	SETOPT(CURLOPT_கீழ்_SPEED_TIME, 180L);
 	SETOPT(CURLOPT_NOSIGNAL, 1L);
 	SETOPT(CURLOPT_CONNECTTIMEOUT, (long)nsoption_uint(curl_fetch_timeout));
 	SETOPT(CURLOPT_OPENSOCKETFUNCTION, fetch_curl_socket_open);
 	SETOPT(CURLOPT_CLOSESOCKETFUNCTION, fetch_curl_socket_close);
 
-	if (nsoption_charp(ca_bundle) &&
+	எனில் (nsoption_charp(ca_bundle) &&
 	    strcmp(nsoption_charp(ca_bundle), "")) {
 		NSLOG(netsurf, INFO, "ca_bundle: '%s'",
 		      nsoption_charp(ca_bundle));
 		SETOPT(CURLOPT_CAINFO, nsoption_charp(ca_bundle));
 	}
-	if (nsoption_charp(ca_path) && strcmp(nsoption_charp(ca_path), "")) {
+	எனில் (nsoption_charp(ca_path) && strcmp(nsoption_charp(ca_path), "")) {
 		NSLOG(netsurf, INFO, "ca_path: '%s'", nsoption_charp(ca_path));
 		SETOPT(CURLOPT_CAPATH, nsoption_charp(ca_path));
 	}
 
-#if LIBCURL_VERSION_NUM < 0x073800
+#எனில் LIBCURL_VERSION_இலக்கம் < 0x073800
 	/*
 	 * before 7.56.0 Detect openssl from whether the SSL CTX
 	 *  function API works
 	 */
-	code = curl_easy_setopt(fetch_blank_curl, CURLOPT_SSL_CTX_FUNCTION, NULL);
-	if (code != CURLE_OK) {
+	code = curl_easy_setopt(fetch_blank_curl, CURLOPT_SSL_CTX_FUNCTION, வெற்று);
+	எனில் (code != CURLE_OK) {
 		curl_with_openssl = false;
-	} else {
+	} இல்லையெனில் {
 		curl_with_openssl = true;
 	}
 #endif
 
-	if (curl_with_openssl) {
+	எனில் (curl_with_openssl) {
 		/* only set the cipher list with openssl otherwise the
 		 *  fetch fails with "Unknown cipher in list"
 		 */
-#if LIBCURL_VERSION_NUM >= 0x073d00
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x073d00
 		/* Need libcurl 7.61.0 or later built against OpenSSL with
 		 * TLS1.3 support */
 		code = curl_easy_setopt(fetch_blank_curl,
 				CURLOPT_TLS13_CIPHERS, CIPHER_SUITES);
-		if (code != CURLE_OK && code != CURLE_NOT_BUILT_IN)
-			goto curl_easy_setopt_failed;
+		எனில் (code != CURLE_OK && code != CURLE_NOT_BUILT_IN)
+			செல் curl_easy_setopt_failed;
 #endif
 		SETOPT(CURLOPT_SSL_CIPHER_LIST, CIPHER_LIST);
 	}
@@ -2115,39 +2115,39 @@ nserror fetch_curl_register(void)
 	data = curl_version_info(CURLVERSION_NOW);
 
 	curl_fetch_ssl_hashmap = hashmap_create(&curl_fetch_ssl_hashmap_parameters);
-	if (curl_fetch_ssl_hashmap == NULL) {
+	எனில் (curl_fetch_ssl_hashmap == வெற்று) {
 		NSLOG(netsurf, CRITICAL, "Unable to initialise SSL certificate hashmap");
-		return NSERROR_NOMEM;
+		திரும்பு NSERROR_NOMEM;
 	}
 
-	for (i = 0; data->protocols[i]; i++) {
-		if (strcmp(data->protocols[i], "http") == 0) {
+	க்கு (i = 0; data->protocols[i]; i++) {
+		எனில் (strcmp(data->protocols[i], "http") == 0) {
 			scheme = lwc_string_ref(corestring_lwc_http);
 
-		} else if (strcmp(data->protocols[i], "https") == 0) {
+		} இல்லையெனில் எனில் (strcmp(data->protocols[i], "https") == 0) {
 			scheme = lwc_string_ref(corestring_lwc_https);
 
-		} else {
+		} இல்லையெனில் {
 			/* Ignore non-http(s) protocols */
-			continue;
+			தொடர்;
 		}
 
-		if (fetcher_add(scheme, &fetcher_ops) != NSERROR_OK) {
+		எனில் (fetcher_add(scheme, &fetcher_ops) != NSERROR_OK) {
 			NSLOG(netsurf, INFO,
 			      "Unable to register cURL fetcher for %s",
 			      data->protocols[i]);
 		}
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 
 curl_easy_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_easy_setopt failed.");
-	return NSERROR_INIT_FAILED;
+	திரும்பு NSERROR_INIT_FAILED;
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#எனில் LIBCURL_VERSION_இலக்கம் >= 0x071e00
 curl_multi_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_multi_setopt failed.");
-	return NSERROR_INIT_FAILED;
+	திரும்பு NSERROR_INIT_FAILED;
 #endif
 }

@@ -16,123 +16,123 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <string.h>
-#include <strings.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "netsurf/url_db.h"
-#include "desktop/system_colour.h"
+#அந்தர்பாவ "utils/nsoption.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/nsurl.h"
+#அந்தர்பாவ "netsurf/plot_style.h"
+#அந்தர்பாவ "netsurf/url_db.h"
+#அந்தர்பாவ "desktop/system_colour.h"
 
-#include "css/internal.h"
-#include "css/hints.h"
-#include "css/select.h"
+#அந்தர்பாவ "css/internal.h"
+#அந்தர்பாவ "css/hints.h"
+#அந்தர்பாவ "css/select.h"
 
-static css_error node_name(void *pw, void *node, css_qname *qname);
-static css_error node_classes(void *pw, void *node,
+நிலையான css_error முனை_name(வெறுமை *pw, வெறுமை *முனை, css_qname *qname);
+நிலையான css_error முனை_classes(வெறுமை *pw, வெறுமை *முனை,
 		lwc_string ***classes, uint32_t *n_classes);
-static css_error node_id(void *pw, void *node, lwc_string **id);
-static css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent);
-static css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error parent_node(void *pw, void *node, void **parent);
-static css_error sibling_node(void *pw, void *node, void **sibling);
-static css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_class(void *pw, void *node,
+நிலையான css_error முனை_id(வெறுமை *pw, வெறுமை *முனை, lwc_string **id);
+நிலையான css_error named_parent_முனை(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, வெறுமை **parent);
+நிலையான css_error named_sibling_முனை(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, வெறுமை **sibling);
+நிலையான css_error named_generic_sibling_முனை(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, வெறுமை **sibling);
+நிலையான css_error parent_முனை(வெறுமை *pw, வெறுமை *முனை, வெறுமை **parent);
+நிலையான css_error sibling_முனை(வெறுமை *pw, வெறுமை *முனை, வெறுமை **sibling);
+நிலையான css_error முனை_has_name(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, bool *match);
+நிலையான css_error முனை_has_class(வெறுமை *pw, வெறுமை *முனை,
 		lwc_string *name, bool *match);
-static css_error node_has_id(void *pw, void *node,
+நிலையான css_error முனை_has_id(வெறுமை *pw, வெறுமை *முனை,
 		lwc_string *name, bool *match);
-static css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+நிலையான css_error முனை_has_attribute(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, bool *match);
+நிலையான css_error முனை_has_attribute_equal(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match);
-static css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+நிலையான css_error முனை_has_attribute_dashmatch(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match);
-static css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+நிலையான css_error முனை_has_attribute_includes(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match);
-static css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+நிலையான css_error முனை_has_attribute_prefix(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match);
-static css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+நிலையான css_error முனை_has_attribute_suffix(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match);
-static css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+நிலையான css_error முனை_has_attribute_substring(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match);
-static css_error node_is_root(void *pw, void *node, bool *match);
-static css_error node_count_siblings(void *pw, void *node,
-		bool same_name, bool after, int32_t *count);
-static css_error node_is_empty(void *pw, void *node, bool *match);
-static css_error node_is_link(void *pw, void *node, bool *match);
-static css_error node_is_hover(void *pw, void *node, bool *match);
-static css_error node_is_active(void *pw, void *node, bool *match);
-static css_error node_is_focus(void *pw, void *node, bool *match);
-static css_error node_is_enabled(void *pw, void *node, bool *match);
-static css_error node_is_disabled(void *pw, void *node, bool *match);
-static css_error node_is_checked(void *pw, void *node, bool *match);
-static css_error node_is_target(void *pw, void *node, bool *match);
-static css_error node_is_lang(void *pw, void *node,
+நிலையான css_error முனை_is_வேர்(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_மொத்தம்_siblings(வெறுமை *pw, வெறுமை *முனை,
+		bool same_name, bool after, int32_t *மொத்தம்);
+நிலையான css_error முனை_is_empty(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_link(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_hover(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_active(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_focus(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_enabled(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_disabled(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_checked(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_target(வெறுமை *pw, வெறுமை *முனை, bool *match);
+நிலையான css_error முனை_is_lang(வெறுமை *pw, வெறுமை *முனை,
 		lwc_string *lang, bool *match);
-static css_error ua_default_for_property(void *pw, uint32_t property,
+நிலையான css_error ua_default_for_property(வெறுமை *pw, uint32_t property,
 		css_hint *hint);
-static css_error set_libcss_node_data(void *pw, void *node,
-		void *libcss_node_data);
-static css_error get_libcss_node_data(void *pw, void *node,
-		void **libcss_node_data);
+நிலையான css_error set_libcss_முனை_data(வெறுமை *pw, வெறுமை *முனை,
+		வெறுமை *libcss_முனை_data);
+நிலையான css_error get_libcss_முனை_data(வெறுமை *pw, வெறுமை *முனை,
+		வெறுமை **libcss_முனை_data);
 
 /**
  * Selection callback table for libcss
  */
-static css_select_handler selection_handler = {
+நிலையான css_select_handler selection_handler = {
 	CSS_SELECT_HANDLER_VERSION_1,
 
-	node_name,
-	node_classes,
-	node_id,
-	named_ancestor_node,
-	named_parent_node,
-	named_sibling_node,
-	named_generic_sibling_node,
-	parent_node,
-	sibling_node,
-	node_has_name,
-	node_has_class,
-	node_has_id,
-	node_has_attribute,
-	node_has_attribute_equal,
-	node_has_attribute_dashmatch,
-	node_has_attribute_includes,
-	node_has_attribute_prefix,
-	node_has_attribute_suffix,
-	node_has_attribute_substring,
-	node_is_root,
-	node_count_siblings,
-	node_is_empty,
-	node_is_link,
-	node_is_visited,
-	node_is_hover,
-	node_is_active,
-	node_is_focus,
-	node_is_enabled,
-	node_is_disabled,
-	node_is_checked,
-	node_is_target,
-	node_is_lang,
-	node_presentational_hint,
+	முனை_name,
+	முனை_classes,
+	முனை_id,
+	named_ancestor_முனை,
+	named_parent_முனை,
+	named_sibling_முனை,
+	named_generic_sibling_முனை,
+	parent_முனை,
+	sibling_முனை,
+	முனை_has_name,
+	முனை_has_class,
+	முனை_has_id,
+	முனை_has_attribute,
+	முனை_has_attribute_equal,
+	முனை_has_attribute_dashmatch,
+	முனை_has_attribute_includes,
+	முனை_has_attribute_prefix,
+	முனை_has_attribute_suffix,
+	முனை_has_attribute_substring,
+	முனை_is_வேர்,
+	முனை_மொத்தம்_siblings,
+	முனை_is_empty,
+	முனை_is_link,
+	முனை_is_visited,
+	முனை_is_hover,
+	முனை_is_active,
+	முனை_is_focus,
+	முனை_is_enabled,
+	முனை_is_disabled,
+	முனை_is_checked,
+	முனை_is_target,
+	முனை_is_lang,
+	முனை_presentational_hint,
 	ua_default_for_property,
-	set_libcss_node_data,
-	get_libcss_node_data,
+	set_libcss_முனை_data,
+	get_libcss_முனை_data,
 };
 
 /**
@@ -145,8 +145,8 @@ static css_select_handler selection_handler = {
  * \param allow_quirks  True to permit CSS parsing quirks
  * \return Pointer to stylesheet, or NULL on failure.
  */
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks)
+css_stylesheet *nscss_create_inline_style(மாறிலி uint8_t *data, size_t len,
+		மாறிலி எழுத்து *charset, மாறிலி எழுத்து *url, bool allow_quirks)
 {
 	css_stylesheet_params params;
 	css_stylesheet *sheet;
@@ -156,86 +156,86 @@ css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = வெற்று;
 	params.allow_quirks = allow_quirks;
 	params.inline_style = true;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
-	params.import = NULL;
-	params.import_pw = NULL;
+	params.resolve_pw = வெற்று;
+	params.import = வெற்று;
+	params.import_pw = வெற்று;
 	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.color_pw = வெற்று;
+	params.font = வெற்று;
+	params.font_pw = வெற்று;
 
 	error = css_stylesheet_create(&params, &sheet);
-	if (error != CSS_OK) {
+	எனில் (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "Failed creating sheet: %d", error);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	error = css_stylesheet_append_data(sheet, data, len);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	எனில் (error != CSS_OK && error != CSS_NEEDDATA) {
 		NSLOG(netsurf, INFO, "failed appending data: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	error = css_stylesheet_data_done(sheet);
-	if (error != CSS_OK) {
+	எனில் (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "failed completing parse: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	return sheet;
+	திரும்பு sheet;
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
-static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+நிலையான வெறுமை nscss_dom_user_data_handler(dom_முனை_operation operation,
+		dom_string *சாவி, வெறுமை *data, கட்டமைப்பு dom_முனை *src,
+		கட்டமைப்பு dom_முனை *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
-			key) == false || data == NULL) {
-		return;
+	எனில் (dom_string_isequal(corestring_dom_ns_சாவி_libcss_முனை_data,
+			சாவி) == false || data == வெற்று) {
+		திரும்பு;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_CLONED,
-				NULL, src, dst, data);
-		if (error != CSS_OK)
+	தேர்வு (operation) {
+	நிலை DOM_முனை_CLONED:
+		error = css_libcss_முனை_data_handler(&selection_handler,
+				CSS_முனை_CLONED,
+				வெற்று, src, dst, data);
+		எனில் (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
-		break;
+		நிறுத்து;
 
-	case DOM_NODE_RENAMED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_MODIFIED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	நிலை DOM_முனை_RENAMED:
+		error = css_libcss_முனை_data_handler(&selection_handler,
+				CSS_முனை_MODIFIED,
+				வெற்று, src, வெற்று, data);
+		எனில் (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
-		break;
+		நிறுத்து;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_DELETED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	நிலை DOM_முனை_IMPORTED:
+	நிலை DOM_முனை_ADOPTED:
+	நிலை DOM_முனை_DELETED:
+		error = css_libcss_முனை_data_handler(&selection_handler,
+				CSS_முனை_DELETED,
+				வெற்று, src, வெற்று, data);
+		எனில் (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to delete libcss_node_data.");
-		break;
+		நிறுத்து;
 
-	default:
+	இயல்பு:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ப்ரதிஜ்ஞா(0);
 	}
 }
 
@@ -250,36 +250,36 @@ static void nscss_dom_user_data_handler(dom_node_operation operation,
  * \return Pointer to selection results (containing computed styles),
  *         or NULL on failure
  */
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style)
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_முனை *n,
+		மாறிலி css_media *media,
+		மாறிலி css_unit_ctx *unit_len_ctx,
+		மாறிலி css_stylesheet *inline_style)
 {
 	css_computed_style *composed;
 	css_select_results *styles;
-	int pseudo_element;
+	முழு pseudo_element;
 	css_error error;
 
 	/* Select style for node */
 	error = css_select_style(ctx->ctx, n, unit_len_ctx, media, inline_style,
 			&selection_handler, ctx, &styles);
 
-	if (error != CSS_OK || styles == NULL) {
+	எனில் (error != CSS_OK || styles == வெற்று) {
 		/* Failed selecting partial style -- bail out */
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
 	/* If there's a parent style, compose with partial to obtain
 	 * complete computed style for element */
-	if (ctx->parent_style != NULL) {
+	எனில் (ctx->parent_style != வெற்று) {
 		/* Complete the computed style, by composing with the parent
 		 * element's style */
 		error = css_computed_style_compose(ctx->parent_style,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		எனில் (error != CSS_OK) {
 			css_select_results_destroy(styles);
-			return NULL;
+			திரும்பு வெற்று;
 		}
 
 		/* Replace select_results style with composed style */
@@ -288,19 +288,19 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[CSS_PSEUDO_ELEMENT_NONE] = composed;
 	}
 
-	for (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
-			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
+	க்கு (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
+			pseudo_element < CSS_PSEUDO_ELEMENT_மொத்தம்;
 			pseudo_element++) {
 
-		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
-				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
+		எனில் (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
+				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_வரி)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
-			continue;
+			தொடர்;
 
-		if (styles->styles[pseudo_element] == NULL)
+		எனில் (styles->styles[pseudo_element] == வெற்று)
 			/* There were no rules concerning this pseudo element */
-			continue;
+			தொடர்;
 
 		/* Complete the pseudo element's computed style, by composing
 		 * with the base element's style */
@@ -308,11 +308,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				styles->styles[pseudo_element],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		எனில் (error != CSS_OK) {
 			/* TODO: perhaps this shouldn't be quite so
 			 * catastrophic? */
 			css_select_results_destroy(styles);
-			return NULL;
+			திரும்பு வெற்று;
 		}
 
 		/* Replace select_results style with composed style */
@@ -320,7 +320,7 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[pseudo_element] = composed;
 	}
 
-	return styles;
+	திரும்பு styles;
 }
 
 /**
@@ -332,16 +332,16 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
  * \return Pointer to blank style, or NULL on failure
  */
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent)
+		மாறிலி css_unit_ctx *unit_len_ctx,
+		மாறிலி css_computed_style *parent)
 {
 	css_computed_style *partial, *composed;
 	css_error error;
 
 	error = css_select_default_style(ctx->ctx,
 			&selection_handler, ctx, &partial);
-	if (error != CSS_OK) {
-		return NULL;
+	எனில் (error != CSS_OK) {
+		திரும்பு வெற்று;
 	}
 
 	/* TODO: Do we really need to compose?  Initial style shouldn't
@@ -349,12 +349,12 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
 	error = css_computed_style_compose(parent, partial,
 			unit_len_ctx, &composed);
 	css_computed_style_destroy(partial);
-	if (error != CSS_OK) {
+	எனில் (error != CSS_OK) {
 		css_computed_style_destroy(composed);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	return composed;
+	திரும்பு composed;
 }
 
 /******************************************************************************
@@ -370,27 +370,27 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_name(void *pw, void *node, css_qname *qname)
+css_error முனை_name(வெறுமை *pw, வெறுமை *முனை, css_qname *qname)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *name;
 	dom_exception err;
 
-	err = dom_node_get_node_name(n, &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	err = dom_முனை_get_முனை_name(n, &name);
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
-	qname->ns = NULL;
+	qname->ns = வெற்று;
 
 	err = dom_string_intern(name, &qname->name);
-	if (err != DOM_NO_ERR) {
+	எனில் (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_NOMEM;
+		திரும்பு CSS_NOMEM;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -407,20 +407,20 @@ css_error node_name(void *pw, void *node, css_qname *qname)
  *       be allocated using the same allocator as used by libcss during style
  *       selection.
  */
-css_error node_classes(void *pw, void *node,
+css_error முனை_classes(வெறுமை *pw, வெறுமை *முனை,
 		lwc_string ***classes, uint32_t *n_classes)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_exception err;
 
-	*classes = NULL;
+	*classes = வெற்று;
 	*n_classes = 0;
 
 	err = dom_element_get_classes(n, classes, n_classes);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -432,29 +432,29 @@ css_error node_classes(void *pw, void *node,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_id(void *pw, void *node, lwc_string **id)
+css_error முனை_id(வெறுமை *pw, வெறுமை *முனை, lwc_string **id)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *attr;
 	dom_exception err;
 
-	*id = NULL;
+	*id = வெற்று;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
-	if (attr != NULL) {
+	எனில் (attr != வெற்று) {
 		err = dom_string_intern(attr, id);
-		if (err != DOM_NO_ERR) {
+		எனில் (err != DOM_NO_ERR) {
 			dom_string_unref(attr);
-			return CSS_NOMEM;
+			திரும்பு CSS_NOMEM;
 		}
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -468,14 +468,14 @@ css_error node_id(void *pw, void *node, lwc_string **id)
  *
  * \post \a ancestor will contain the result, or NULL if there is no match
  */
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor)
+css_error named_ancestor_முனை(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, வெறுமை **ancestor)
 {
-	dom_element_named_ancestor_node(node, qname->name,
-			(struct dom_element **)ancestor);
-	dom_node_unref(*ancestor);
+	dom_element_named_ancestor_முனை(முனை, qname->name,
+			(கட்டமைப்பு dom_element **)ancestor);
+	dom_முனை_unref(*ancestor);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -489,14 +489,14 @@ css_error named_ancestor_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent)
+css_error named_parent_முனை(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, வெறுமை **parent)
 {
-	dom_element_named_parent_node(node, qname->name,
-			(struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_named_parent_முனை(முனை, qname->name,
+			(கட்டமைப்பு dom_element **)parent);
+	dom_முனை_unref(*parent);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -510,61 +510,61 @@ css_error named_parent_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_sibling_முனை(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, வெறுமை **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_முனை *n = முனை;
+	dom_முனை *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = வெற்று;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_முனை_get_previous_sibling(n, &n);
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	போது (n != வெற்று) {
+		dom_முனை_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_முனை_get_முனை_type(n, &type);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		எனில் (type == DOM_ELEMENT_முனை)
+			நிறுத்து;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_முனை_get_previous_sibling(n, &prev);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_முனை_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	எனில் (n != வெற்று) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_முனை_get_முனை_name(n, &name);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_முனை_unref(n);
 
-		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
+		எனில் (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
 		}
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -578,57 +578,57 @@ css_error named_sibling_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_generic_sibling_முனை(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, வெறுமை **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_முனை *n = முனை;
+	dom_முனை *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = வெற்று;
 
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_முனை_get_previous_sibling(n, &n);
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	போது (n != வெற்று) {
+		dom_முனை_type type;
 		dom_string *name;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_முனை_get_முனை_type(n, &type);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
-			err = dom_node_get_node_name(n, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(n);
-				return CSS_OK;
+		எனில் (type == DOM_ELEMENT_முனை) {
+			err = dom_முனை_get_முனை_name(n, &name);
+			எனில் (err != DOM_NO_ERR) {
+				dom_முனை_unref(n);
+				திரும்பு CSS_OK;
 			}
 
-			if (dom_string_caseless_lwc_isequal(name,
+			எனில் (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
-				dom_node_unref(n);
+				dom_முனை_unref(n);
 				*sibling = n;
-				break;
+				நிறுத்து;
 			}
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_முனை_get_previous_sibling(n, &prev);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_முனை_unref(n);
 		n = prev;
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -641,12 +641,12 @@ css_error named_generic_sibling_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error parent_node(void *pw, void *node, void **parent)
+css_error parent_முனை(வெறுமை *pw, வெறுமை *முனை, வெறுமை **parent)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_parent_முனை(முனை, (கட்டமைப்பு dom_element **)parent);
+	dom_முனை_unref(*parent);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -659,49 +659,49 @@ css_error parent_node(void *pw, void *node, void **parent)
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error sibling_node(void *pw, void *node, void **sibling)
+css_error sibling_முனை(வெறுமை *pw, வெறுமை *முனை, வெறுமை **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_முனை *n = முனை;
+	dom_முனை *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = வெற்று;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_முனை_get_previous_sibling(n, &n);
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	போது (n != வெற்று) {
+		dom_முனை_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_முனை_get_முனை_type(n, &type);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		எனில் (type == DOM_ELEMENT_முனை)
+			நிறுத்து;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_முனை_get_previous_sibling(n, &prev);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_முனை_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	எனில் (n != வெற்று) {
 		/** \todo Sort out reference counting */
-		dom_node_unref(n);
+		dom_முனை_unref(n);
 
 		*sibling = n;
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -715,20 +715,20 @@ css_error sibling_node(void *pw, void *node, void **sibling)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error முனை_has_name(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, bool *match)
 {
 	nscss_select_ctx *ctx = pw;
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 
-	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
+	எனில் (lwc_string_isequal(qname->name, ctx->universal, match) ==
 			lwc_error_ok && *match == false) {
 		dom_string *name;
 		dom_exception err;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR)
-			return CSS_OK;
+		err = dom_முனை_get_முனை_name(n, &name);
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு CSS_OK;
 
 		/* Element names are case insensitive in HTML */
 		*match = dom_string_caseless_lwc_isequal(name, qname->name);
@@ -736,7 +736,7 @@ css_error node_has_name(void *pw, void *node,
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -750,19 +750,19 @@ css_error node_has_name(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_class(void *pw, void *node,
+css_error முனை_has_class(வெறுமை *pw, வெறுமை *முனை,
 		lwc_string *name, bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_exception err;
 
 	/** \todo: Ensure that libdom performs case-insensitive
 	 * matching in quirks mode */
 	err = dom_element_has_class(n, name, match);
 
-	assert(err == DOM_NO_ERR);
+	ப்ரதிஜ்ஞா(err == DOM_NO_ERR);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -776,10 +776,10 @@ css_error node_has_class(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_id(void *pw, void *node,
+css_error முனை_has_id(வெறுமை *pw, வெறுமை *முனை,
 		lwc_string *name, bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *attr;
 	dom_exception err;
 
@@ -787,16 +787,16 @@ css_error node_has_id(void *pw, void *node,
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_OK;
 
-	if (attr != NULL) {
+	எனில் (attr != வெற்று) {
 		*match = dom_string_lwc_isequal(attr, name);
 
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -811,28 +811,28 @@ css_error node_has_id(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error முனை_has_attribute(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *name;
 	dom_exception err;
 
 	err = dom_string_create_interned(
-			(const uint8_t *) lwc_string_data(qname->name),
+			(மாறிலி uint8_t *) lwc_string_data(qname->name),
 			lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
 	err = dom_element_has_attribute(n, name, match);
-	if (err != DOM_NO_ERR) {
+	எனில் (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -848,42 +848,42 @@ css_error node_has_attribute(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error முனை_has_attribute_equal(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(மதிப்பு);
 
-	if (vlen == 0) {
+	எனில் (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(மாறிலி uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	எனில் ((err != DOM_NO_ERR) || (atr_val == வெற்று)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, மதிப்பு);
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -900,47 +900,47 @@ css_error node_has_attribute_equal(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error முனை_has_attribute_dashmatch(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(மதிப்பு);
 
-	if (vlen == 0) {
+	எனில் (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(மாறிலி uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	எனில் ((err != DOM_NO_ERR) || (atr_val == வெற்று)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, மதிப்பு);
 
 	/* check for dashmatch */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *data = (const char *) dom_string_data(atr_val);
+	எனில் (*match == false) {
+		மாறிலி எழுத்து *vdata = lwc_string_data(மதிப்பு);
+		மாறிலி எழுத்து *data = (மாறிலி எழுத்து *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		if (len > vlen && data[vlen] == '-' &&
+		எனில் (len > vlen && data[vlen] == '-' &&
 		    strncasecmp(data, vdata, vlen) == 0) {
 				*match = true;
 		}
@@ -948,7 +948,7 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -965,52 +965,52 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error முனை_has_attribute_includes(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
-	size_t vlen = lwc_string_length(value);
-	const char *p;
-	const char *start;
-	const char *end;
+	size_t vlen = lwc_string_length(மதிப்பு);
+	மாறிலி எழுத்து *p;
+	மாறிலி எழுத்து *start;
+	மாறிலி எழுத்து *end;
 
 	*match = false;
 
-	if (vlen == 0) {
-		return CSS_OK;
+	எனில் (vlen == 0) {
+		திரும்பு CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(மாறிலி uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	எனில் ((err != DOM_NO_ERR) || (atr_val == வெற்று)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for match */
-	start = (const char *) dom_string_data(atr_val);
+	start = (மாறிலி எழுத்து *) dom_string_data(atr_val);
 	end = start + dom_string_byte_length(atr_val);
 
-	for (p = start; p <= end; p++) {
-		if (*p == ' ' || *p == '\0') {
-			if ((size_t) (p - start) == vlen &&
+	க்கு (p = start; p <= end; p++) {
+		எனில் (*p == ' ' || *p == '\0') {
+			எனில் ((size_t) (p - start) == vlen &&
 			    strncasecmp(start,
-					lwc_string_data(value),
+					lwc_string_data(மதிப்பு),
 					vlen) == 0) {
 				*match = true;
-				break;
+				நிறுத்து;
 			}
 
 			start = p + 1;
@@ -1019,7 +1019,7 @@ css_error node_has_attribute_includes(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1036,54 +1036,54 @@ css_error node_has_attribute_includes(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error முனை_has_attribute_prefix(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(மதிப்பு);
 
-	if (vlen == 0) {
+	எனில் (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(மாறிலி uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	எனில் ((err != DOM_NO_ERR) || (atr_val == வெற்று)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, மதிப்பு);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
+	எனில் (*match == false) {
+		மாறிலி எழுத்து *data = (மாறிலி எழுத்து *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		if ((len >= vlen) &&
-		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
+		எனில் ((len >= vlen) &&
+		    (strncasecmp(data, lwc_string_data(மதிப்பு), vlen) == 0)) {
 			*match = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1100,49 +1100,49 @@ css_error node_has_attribute_prefix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error முனை_has_attribute_suffix(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(மதிப்பு);
 
-	if (vlen == 0) {
+	எனில் (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(மாறிலி uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	எனில் ((err != DOM_NO_ERR) || (atr_val == வெற்று)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, மதிப்பு);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
+	எனில் (*match == false) {
+		மாறிலி எழுத்து *data = (மாறிலி எழுத்து *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		const char *start = (char *) data + len - vlen;
+		மாறிலி எழுத்து *start = (எழுத்து *) data + len - vlen;
 
-		if ((len >= vlen) &&
-		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
+		எனில் ((len >= vlen) &&
+		    (strncasecmp(start, lwc_string_data(மதிப்பு), vlen) == 0)) {
 			*match = true;
 		}
 
@@ -1151,7 +1151,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1168,53 +1168,53 @@ css_error node_has_attribute_suffix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error முனை_has_attribute_substring(வெறுமை *pw, வெறுமை *முனை,
+		மாறிலி css_qname *qname, lwc_string *மதிப்பு,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(மதிப்பு);
 
-	if (vlen == 0) {
+	எனில் (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(மாறிலி uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	எனில் (err != DOM_NO_ERR)
+		திரும்பு CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	எனில் ((err != DOM_NO_ERR) || (atr_val == வெற்று)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, மதிப்பு);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *start = (const char *) dom_string_data(atr_val);
+	எனில் (*match == false) {
+		மாறிலி எழுத்து *vdata = lwc_string_data(மதிப்பு);
+		மாறிலி எழுத்து *start = (மாறிலி எழுத்து *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
-		const char *last_start = start + len - vlen;
+		மாறிலி எழுத்து *last_start = start + len - vlen;
 
-		if (len >= vlen) {
-			while (start <= last_start) {
-				if (strncasecmp(start, vdata,
+		எனில் (len >= vlen) {
+			போது (start <= last_start) {
+				எனில் (strncasecmp(start, vdata,
 						vlen) == 0) {
 					*match = true;
-					break;
+					நிறுத்து;
 				}
 
 				start++;
@@ -1224,7 +1224,7 @@ css_error node_has_attribute_substring(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1237,71 +1237,71 @@ css_error node_has_attribute_substring(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_root(void *pw, void *node, bool *match)
+css_error முனை_is_வேர்(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
-	dom_node *n = node;
-	dom_node *parent;
-	dom_node_type type;
+	dom_முனை *n = முனை;
+	dom_முனை *parent;
+	dom_முனை_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_முனை_get_parent_முனை(n, &parent);
+	எனில் (err != DOM_NO_ERR) {
+		திரும்பு CSS_NOMEM;
 	}
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	எனில் (parent != வெற்று) {
+		err = dom_முனை_get_முனை_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_முனை_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return CSS_NOMEM;
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
+		எனில் (type != DOM_DOCUMENT_முனை) {
 			*match = false;
-			return CSS_OK;
+			திரும்பு CSS_OK;
 		}
 	}
 
 	*match = true;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
-static int
-node_count_siblings_check(dom_node *node,
+நிலையான முழு
+முனை_மொத்தம்_siblings_check(dom_முனை *முனை,
 			  bool check_name,
 			  dom_string *name)
 {
-	dom_node_type type;
-	int ret = 0;
+	dom_முனை_type type;
+	முழு ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
-		return 0;
+	எனில் (முனை == வெற்று)
+		திரும்பு 0;
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
-		return 0;
+	exc = dom_முனை_get_முனை_type(முனை, &type);
+	எனில் ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_முனை)) {
+		திரும்பு 0;
 	}
 
-	if (check_name) {
-		dom_string *node_name = NULL;
-		exc = dom_node_get_node_name(node, &node_name);
+	எனில் (check_name) {
+		dom_string *முனை_name = வெற்று;
+		exc = dom_முனை_get_முனை_name(முனை, &முனை_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		எனில் ((exc == DOM_NO_ERR) && (முனை_name != வெற்று)) {
 
-			if (dom_string_caseless_isequal(name,
-							node_name)) {
+			எனில் (dom_string_caseless_isequal(name,
+							முனை_name)) {
 				ret = 1;
 			}
-			dom_string_unref(node_name);
+			dom_string_unref(முனை_name);
 		}
-	} else {
+	} இல்லையெனில் {
 		ret = 1;
 	}
 
-	return ret;
+	திரும்பு ret;
 }
 
 /**
@@ -1316,58 +1316,58 @@ node_count_siblings_check(dom_node *node,
  *
  * \post \a count will contain the number of siblings
  */
-css_error node_count_siblings(void *pw, void *n, bool same_name,
-		bool after, int32_t *count)
+css_error முனை_மொத்தம்_siblings(வெறுமை *pw, வெறுமை *n, bool same_name,
+		bool after, int32_t *மொத்தம்)
 {
 	int32_t cnt = 0;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *முனை_name = வெற்று;
 
-	if (same_name) {
-		dom_node *node = n;
-		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-			return CSS_NOMEM;
+	எனில் (same_name) {
+		dom_முனை *முனை = n;
+		exc = dom_முனை_get_முனை_name(முனை, &முனை_name);
+		எனில் ((exc != DOM_NO_ERR) || (முனை_name == வெற்று)) {
+			திரும்பு CSS_NOMEM;
 		}
 	}
 
-	if (after) {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+	எனில் (after) {
+		dom_முனை *முனை = dom_முனை_ref(n);
+		dom_முனை *next;
 
-		do {
-			exc = dom_node_get_next_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		செய் {
+			exc = dom_முனை_get_next_sibling(முனை, &next);
+			எனில் ((exc != DOM_NO_ERR))
+				நிறுத்து;
 
-			dom_node_unref(node);
-			node = next;
+			dom_முனை_unref(முனை);
+			முனை = next;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
-	} else {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+			cnt += முனை_மொத்தம்_siblings_check(முனை, same_name, முனை_name);
+		} போது (முனை != வெற்று);
+	} இல்லையெனில் {
+		dom_முனை *முனை = dom_முனை_ref(n);
+		dom_முனை *next;
 
-		do {
-			exc = dom_node_get_previous_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		செய் {
+			exc = dom_முனை_get_previous_sibling(முனை, &next);
+			எனில் ((exc != DOM_NO_ERR))
+				நிறுத்து;
 
-			dom_node_unref(node);
-			node = next;
+			dom_முனை_unref(முனை);
+			முனை = next;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
+			cnt += முனை_மொத்தம்_siblings_check(முனை, same_name, முனை_name);
 
-		} while (node != NULL);
+		} போது (முனை != வெற்று);
 	}
 
-	if (node_name != NULL) {
-		dom_string_unref(node_name);
+	எனில் (முனை_name != வெற்று) {
+		dom_string_unref(முனை_name);
 	}
 
-	*count = cnt;
-	return CSS_OK;
+	*மொத்தம் = cnt;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1380,43 +1380,43 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
  *
  * \post \a match will contain true if the node is empty and false otherwise.
  */
-css_error node_is_empty(void *pw, void *node, bool *match)
+css_error முனை_is_empty(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
-	dom_node *n = node, *next;
+	dom_முனை *n = முனை, *next;
 	dom_exception err;
 
 	*match = true;
 
-	err = dom_node_get_first_child(n, &n);
-	if (err != DOM_NO_ERR) {
-		return CSS_BADPARM;
+	err = dom_முனை_get_first_child(n, &n);
+	எனில் (err != DOM_NO_ERR) {
+		திரும்பு CSS_BADPARM;
 	}
 
-	while (n != NULL) {
-		dom_node_type ntype;
-		err = dom_node_get_node_type(n, &ntype);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+	போது (n != வெற்று) {
+		dom_முனை_type ntype;
+		err = dom_முனை_get_முனை_type(n, &ntype);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
-		    ntype == DOM_TEXT_NODE) {
+		எனில் (ntype == DOM_ELEMENT_முனை ||
+		    ntype == DOM_TEXT_முனை) {
 			*match = false;
-			dom_node_unref(n);
-			break;
+			dom_முனை_unref(n);
+			நிறுத்து;
 		}
 
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+		err = dom_முனை_get_next_sibling(n, &next);
+		எனில் (err != DOM_NO_ERR) {
+			dom_முனை_unref(n);
+			திரும்பு CSS_BADPARM;
 		}
-		dom_node_unref(n);
+		dom_முனை_unref(n);
 		n = next;
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1429,32 +1429,32 @@ css_error node_is_empty(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_link(void *pw, void *n, bool *match)
+css_error முனை_is_link(வெறுமை *pw, வெறுமை *n, bool *match)
 {
-	dom_node *node = n;
+	dom_முனை *முனை = n;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *முனை_name = வெற்று;
 
-	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_முனை_get_முனை_name(முனை, &முனை_name);
+	எனில் ((exc != DOM_NO_ERR) || (முனை_name == வெற்று)) {
+		திரும்பு CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	எனில் (dom_string_caseless_lwc_isequal(முனை_name, corestring_lwc_a)) {
 		bool has_href;
-		exc = dom_element_has_attribute(node, corestring_dom_href,
+		exc = dom_element_has_attribute(முனை, corestring_dom_href,
 				&has_href);
-		if ((exc == DOM_NO_ERR) && (has_href)) {
+		எனில் ((exc == DOM_NO_ERR) && (has_href)) {
 			*match = true;
-		} else {
+		} இல்லையெனில் {
 			*match = false;
 		}
-	} else {
+	} இல்லையெனில் {
 		*match = false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(முனை_name);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1468,38 +1468,38 @@ css_error node_is_link(void *pw, void *n, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_visited(void *pw, void *node, bool *match)
+css_error முனை_is_visited(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
 	nserror error;
-	const struct url_data *data;
+	மாறிலி கட்டமைப்பு url_data *data;
 
 	dom_exception exc;
-	dom_node *n = node;
-	dom_string *s = NULL;
+	dom_முனை *n = முனை;
+	dom_string *s = வெற்று;
 
 	*match = false;
 
-	exc = dom_node_get_node_name(n, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_முனை_get_முனை_name(n, &s);
+	எனில் ((exc != DOM_NO_ERR) || (s == வெற்று)) {
+		திரும்பு CSS_NOMEM;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
+	எனில் (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
 		/* Can't be visited; not ancher element */
 		dom_string_unref(s);
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	/* Finished with node name string */
 	dom_string_unref(s);
-	s = NULL;
+	s = வெற்று;
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
+	எனில் ((exc != DOM_NO_ERR) || (s == வெற்று)) {
 		/* Can't be visited; not got a URL */
-		return CSS_OK;
+		திரும்பு CSS_OK;
 	}
 
 	/* Make href absolute */
@@ -1510,21 +1510,21 @@ css_error node_is_visited(void *pw, void *node, bool *match)
 	/* Finished with href string */
 	dom_string_unref(s);
 
-	if (error != NSERROR_OK) {
+	எனில் (error != NSERROR_OK) {
 		/* Couldn't make nsurl object */
-		return CSS_NOMEM;
+		திரும்பு CSS_NOMEM;
 	}
 
 	data = urldb_get_url_data(url);
 
 	/* Visited if in the db and has
 	 * non-zero visit count */
-	if (data != NULL && data->visits > 0)
+	எனில் (data != வெற்று && data->visits > 0)
 		*match = true;
 
 	nsurl_unref(url);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1537,13 +1537,13 @@ css_error node_is_visited(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_hover(void *pw, void *node, bool *match)
+css_error முனை_is_hover(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
 	/** \todo Support hovering */
 
 	*match = false;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1556,13 +1556,13 @@ css_error node_is_hover(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_active(void *pw, void *node, bool *match)
+css_error முனை_is_active(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
 	/** \todo Support active nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1575,13 +1575,13 @@ css_error node_is_active(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_focus(void *pw, void *node, bool *match)
+css_error முனை_is_focus(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
 	/** \todo Support focussed nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1594,13 +1594,13 @@ css_error node_is_focus(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is enabled and false otherwise.
  */
-css_error node_is_enabled(void *pw, void *node, bool *match)
+css_error முனை_is_enabled(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
 	/** \todo Support enabled nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1613,13 +1613,13 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is disabled and false otherwise.
  */
-css_error node_is_disabled(void *pw, void *node, bool *match)
+css_error முனை_is_disabled(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
 	/** \todo Support disabled nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1632,13 +1632,13 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is checked and false otherwise.
  */
-css_error node_is_checked(void *pw, void *node, bool *match)
+css_error முனை_is_checked(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
 	/** \todo Support checked nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1651,13 +1651,13 @@ css_error node_is_checked(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node matches and false otherwise.
  */
-css_error node_is_target(void *pw, void *node, bool *match)
+css_error முனை_is_target(வெறுமை *pw, வெறுமை *முனை, bool *match)
 {
 	/** \todo Support target */
 
 	*match = false;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1671,14 +1671,14 @@ css_error node_is_target(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_lang(void *pw, void *node,
+css_error முனை_is_lang(வெறுமை *pw, வெறுமை *முனை,
 		lwc_string *lang, bool *match)
 {
 	/** \todo Support languages */
 
 	*match = false;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -1690,77 +1690,77 @@ css_error node_is_lang(void *pw, void *node,
  * \return CSS_OK       on success,
  *         CSS_INVALID  if the property should not have a user-agent default.
  */
-css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
+css_error ua_default_for_property(வெறுமை *pw, uint32_t property, css_hint *hint)
 {
-	if (property == CSS_PROP_COLOR) {
+	எனில் (property == CSS_PROP_COLOR) {
 		hint->data.color = 0xff000000;
 		hint->status = CSS_COLOR_COLOR;
-	} else if (property == CSS_PROP_FONT_FAMILY) {
-		hint->data.strings = NULL;
-		switch (nsoption_int(font_default)) {
-		case PLOT_FONT_FAMILY_SANS_SERIF:
+	} இல்லையெனில் எனில் (property == CSS_PROP_FONT_FAMILY) {
+		hint->data.strings = வெற்று;
+		தேர்வு (nsoption_int(font_default)) {
+		நிலை PLOT_FONT_FAMILY_SANS_SERIF:
 			hint->status = CSS_FONT_FAMILY_SANS_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_SERIF:
+			நிறுத்து;
+		நிலை PLOT_FONT_FAMILY_SERIF:
 			hint->status = CSS_FONT_FAMILY_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_MONOSPACE:
+			நிறுத்து;
+		நிலை PLOT_FONT_FAMILY_MONOSPACE:
 			hint->status = CSS_FONT_FAMILY_MONOSPACE;
-			break;
-		case PLOT_FONT_FAMILY_CURSIVE:
+			நிறுத்து;
+		நிலை PLOT_FONT_FAMILY_CURSIVE:
 			hint->status = CSS_FONT_FAMILY_CURSIVE;
-			break;
-		case PLOT_FONT_FAMILY_FANTASY:
+			நிறுத்து;
+		நிலை PLOT_FONT_FAMILY_FANTASY:
 			hint->status = CSS_FONT_FAMILY_FANTASY;
-			break;
+			நிறுத்து;
 		}
-	} else if (property == CSS_PROP_QUOTES) {
+	} இல்லையெனில் எனில் (property == CSS_PROP_QUOTES) {
 		/** \todo Not exactly useful :) */
-		hint->data.strings = NULL;
+		hint->data.strings = வெற்று;
 		hint->status = CSS_QUOTES_NONE;
-	} else if (property == CSS_PROP_VOICE_FAMILY) {
+	} இல்லையெனில் எனில் (property == CSS_PROP_VOICE_FAMILY) {
 		/** \todo Fix this when we have voice-family done */
-		hint->data.strings = NULL;
+		hint->data.strings = வெற்று;
 		hint->status = 0;
-	} else {
-		return CSS_INVALID;
+	} இல்லையெனில் {
+		திரும்பு CSS_INVALID;
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
-css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
+css_error set_libcss_முனை_data(வெறுமை *pw, வெறுமை *முனை, வெறுமை *libcss_முனை_data)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_exception err;
-	void *old_node_data;
+	வெறுமை *old_முனை_data;
 
 	/* Set this node's node data */
-	err = dom_node_set_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data, nscss_dom_user_data_handler,
-			(void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_முனை_set_user_data(n,
+			corestring_dom_ns_சாவி_libcss_முனை_data,
+			libcss_முனை_data, nscss_dom_user_data_handler,
+			(வெறுமை *) &old_முனை_data);
+	எனில் (err != DOM_NO_ERR) {
+		திரும்பு CSS_NOMEM;
 	}
 
-	assert(old_node_data == NULL);
+	ப்ரதிஜ்ஞா(old_முனை_data == வெற்று);
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
-css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
+css_error get_libcss_முனை_data(வெறுமை *pw, வெறுமை *முனை, வெறுமை **libcss_முனை_data)
 {
-	dom_node *n = node;
+	dom_முனை *n = முனை;
 	dom_exception err;
 
 	/* Get this node's node data */
-	err = dom_node_get_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_முனை_get_user_data(n,
+			corestring_dom_ns_சாவி_libcss_முனை_data,
+			libcss_முனை_data);
+	எனில் (err != DOM_NO_ERR) {
+		திரும்பு CSS_NOMEM;
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }

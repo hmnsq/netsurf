@@ -42,7 +42,7 @@
  * styles is always owned by the box, if it is set.
  * style is only owned by the box in the case of implied boxes.
  */
-struct box * box_create(css_select_results *styles, css_computed_style *style, bool style_owned, struct nsurl *href, const char *target, const char *title, lwc_string *id, void *context);
+கட்டமைப்பு box * box_create(css_select_results *styles, css_computed_style *style, bool style_owned, கட்டமைப்பு nsurl *href, மாறிலி எழுத்து *target, மாறிலி எழுத்து *title, lwc_string *id, வெறுமை *context);
 
 
 /**
@@ -51,7 +51,7 @@ struct box * box_create(css_select_results *styles, css_computed_style *style, b
  * \param parent box giving birth
  * \param child box to link as last child of parent
  */
-void box_add_child(struct box *parent, struct box *child);
+வெறுமை box_add_child(கட்டமைப்பு box *parent, கட்டமைப்பு box *child);
 
 
 /**
@@ -60,7 +60,7 @@ void box_add_child(struct box *parent, struct box *child);
  * \param box box already in tree
  * \param new_box box to link into tree as next sibling
  */
-void box_insert_sibling(struct box *box, struct box *new_box);
+வெறுமை box_செருகு_sibling(கட்டமைப்பு box *box, கட்டமைப்பு box *new_box);
 
 
 /**
@@ -68,7 +68,7 @@ void box_insert_sibling(struct box *box, struct box *new_box);
  *
  * \param box box to unlink and free recursively.
  */
-void box_unlink_and_free(struct box *box);
+வெறுமை box_unlink_and_free(கட்டமைப்பு box *box);
 
 
 /**
@@ -78,7 +78,7 @@ void box_unlink_and_free(struct box *box);
  *
  * The box and all its children is freed.
  */
-void box_free(struct box *box);
+வெறுமை box_free(கட்டமைப்பு box *box);
 
 
 /**
@@ -86,7 +86,7 @@ void box_free(struct box *box);
  *
  * \param box box to free
  */
-void box_free_box(struct box *box);
+வெறுமை box_free_box(கட்டமைப்பு box *box);
 
 
 /**
@@ -99,8 +99,8 @@ void box_free_box(struct box *box);
  * \param right		whether the vertical scrollbar should be present
  * \return		true on success false otherwise
  */
-nserror box_handle_scrollbars(struct content *c, struct box *box,
-		bool bottom, bool right);
+nserror box_handle_scrollbars(கட்டமைப்பு content *c, கட்டமைப்பு box *box,
+		bool bottom, bool வலது);
 
 
 #endif

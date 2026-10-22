@@ -20,61 +20,61 @@
  * Dummy implementation of javascript engine functions.
  */
 
-#include "utils/errors.h"
-#include "content/content.h"
-#include "utils/nsoption.h"
+#அந்தர்பாவ "utils/errors.h"
+#அந்தர்பாவ "content/content.h"
+#அந்தர்பாவ "utils/nsoption.h"
 
-#include "javascript/js.h"
-#include "utils/log.h"
+#அந்தர்பாவ "javascript/js.h"
+#அந்தர்பாவ "utils/log.h"
 
-void js_initialise(void)
+வெறுமை js_initialise(வெறுமை)
 {
 	nsoption_set_bool(enable_javascript, false);
 }
 
-void js_finalise(void)
+வெறுமை js_finalise(வெறுமை)
 {
 }
 
-nserror js_newheap(int timeout, jsheap **heap)
+nserror js_newheap(முழு timeout, jsheap **heap)
 {
-	*heap = NULL;
-	return NSERROR_OK;
+	*heap = வெற்று;
+	திரும்பு NSERROR_OK;
 }
 
-void js_destroyheap(jsheap *heap)
+வெறுமை js_destroyheap(jsheap *heap)
 {
 }
 
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
+nserror js_newthread(jsheap *heap, வெறுமை *win_priv, வெறுமை *doc_priv, jsthread **thread)
 {
-	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	*thread = வெற்று;
+	திரும்பு NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
-void js_destroythread(jsthread *thread)
+வெறுமை js_destroythread(jsthread *thread)
 {
 }
 
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+bool js_exec(jsthread *thread, மாறிலி uint8_t *txt, size_t txtlen, மாறிலி எழுத்து *name)
 {
-	return true;
+	திரும்பு true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, மாறிலி எழுத்து *type, கட்டமைப்பு dom_document *doc, கட்டமைப்பு dom_முனை *target)
 {
-	return true;
+	திரும்பு true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+வெறுமை js_handle_new_element(jsthread *thread, கட்டமைப்பு dom_element *முனை)
 {
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+வெறுமை js_event_cleanup(jsthread *thread, கட்டமைப்பு dom_event *evt)
 {
 }

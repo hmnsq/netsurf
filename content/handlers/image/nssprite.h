@@ -23,6 +23,6 @@
 #ifndef _NETSURF_NS_SPRITE_H_
 #define _NETSURF_NS_SPRITE_H_
 
-nserror nssprite_init(void);
+nserror nssprite_init(வெறுமை);
 
 #endif

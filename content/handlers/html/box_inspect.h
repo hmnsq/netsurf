@@ -31,7 +31,7 @@
  * \param  x    updated to x coordinate
  * \param  y    updated to y coordinate
  */
-void box_coords(struct box *box, int *x, int *y);
+வெறுமை box_coords(கட்டமைப்பு box *box, முழு *x, முழு *y);
 
 
 /**
@@ -40,7 +40,7 @@ void box_coords(struct box *box, int *x, int *y);
  * \param  box  the box to calculate bounds of
  * \param  r    receives bounds
  */
-void box_bounds(struct box *box, struct rect *r);
+வெறுமை box_bounds(கட்டமைப்பு box *box, கட்டமைப்பு rect *r);
 
 
 /**
@@ -67,7 +67,7 @@ void box_bounds(struct box *box, struct rect *r);
  *	}
  * \endcode
  */
-struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, const int x, const int y, int *box_x, int *box_y);
+கட்டமைப்பு box *box_at_point(மாறிலி css_unit_ctx *unit_len_ctx, கட்டமைப்பு box *box, மாறிலி முழு x, மாறிலி முழு y, முழு *box_x, முழு *box_y);
 
 
 /**
@@ -77,7 +77,7 @@ struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, cons
  * \param  id   id to look for
  * \return  the box or 0 if not found
  */
-struct box *box_find_by_id(struct box *box, lwc_string *id);
+கட்டமைப்பு box *box_find_by_id(கட்டமைப்பு box *box, lwc_string *id);
 
 
 /**
@@ -86,13 +86,13 @@ struct box *box_find_by_id(struct box *box, lwc_string *id);
  * \param  box  box to check
  * \return  true iff the box is rendered
  */
-bool box_visible(struct box *box);
+bool box_visible(கட்டமைப்பு box *box);
 
 
 /**
  * Print a box tree to a file.
  */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
+வெறுமை box_dump(FILE *stream, கட்டமைப்பு box *box, unsigned முழு depth, bool style);
 
 
 /**
@@ -101,7 +101,7 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
  * \param  box  scrolling box
  * \return the box has a vertical scrollbar
  */
-bool box_vscrollbar_present(const struct box *box);
+bool box_vscrollbar_present(மாறிலி கட்டமைப்பு box *box);
 
 
 /**
@@ -110,7 +110,7 @@ bool box_vscrollbar_present(const struct box *box);
  * \param  box  scrolling box
  * \return the box has a horizontal scrollbar
  */
-bool box_hscrollbar_present(const struct box *box);
+bool box_hscrollbar_present(மாறிலி கட்டமைப்பு box *box);
 
 
 /**
@@ -125,7 +125,7 @@ bool box_hscrollbar_present(const struct box *box);
  * \param dx	receives x ordinate of mouse relative to text box
  * \param dy	receives y ordinate of mouse relative to text box
  */
-struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, int *dx, int *dy);
+கட்டமைப்பு box *box_pick_text_box(கட்டமைப்பு html_content *html, முழு x, முழு y, முழு dir, முழு *dx, முழு *dy);
 
 
 /**
@@ -134,22 +134,22 @@ struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, 
  * \param[in] b  Box to check.
  * \return true iff box is first child.
  */
-static inline bool box_is_first_child(struct box *b)
+நிலையான உள்வரி bool box_is_first_child(கட்டமைப்பு box *b)
 {
-	return (b->parent == NULL || b == b->parent->children);
+	திரும்பு (b->parent == வெற்று || b == b->parent->children);
 }
 
-static inline unsigned box_count_children(const struct box *b)
+நிலையான உள்வரி unsigned box_மொத்தம்_children(மாறிலி கட்டமைப்பு box *b)
 {
-	const struct box *c = b->children;
-	unsigned count = 0;
+	மாறிலி கட்டமைப்பு box *c = b->children;
+	unsigned மொத்தம் = 0;
 
-	while (c != NULL) {
-		count++;
+	போது (c != வெற்று) {
+		மொத்தம்++;
 		c = c->next;
 	}
 
-	return count;
+	திரும்பு மொத்தம்;
 }
 
 #endif

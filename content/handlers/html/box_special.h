@@ -30,6 +30,6 @@
  *
  * \return true if box construction should continue else false on error.
  */
-bool convert_special_elements(dom_node *node, html_content *content, struct box *box, bool *convert_children);
+bool convert_special_elements(dom_முனை *முனை, html_content *content, கட்டமைப்பு box *box, bool *convert_children);
 
 #endif

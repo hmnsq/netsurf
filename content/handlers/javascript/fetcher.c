@@ -22,23 +22,23 @@
  * This fetcher implements http://www.whatwg.org/specs/web-apps/current-work/multipage/browsers.html#javascript-protocol
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libwapcaplet/libwapcaplet.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <libwapcaplet/libwapcaplet.h>
 
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/ring.h"
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#அந்தர்பாவ "utils/nsurl.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/ring.h"
+#அந்தர்பாவ "content/fetch.h"
+#அந்தர்பாவ "content/fetchers.h"
 
-#include "javascript/fetcher.h"
+#அந்தர்பாவ "javascript/fetcher.h"
 
 /** Context for an resource fetch */
-struct fetch_javascript_context {
-	struct fetch_javascript_context *r_next, *r_prev;
+கட்டமைப்பு fetch_javascript_context {
+	கட்டமைப்பு fetch_javascript_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	கட்டமைப்பு fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
@@ -46,18 +46,18 @@ struct fetch_javascript_context {
 	nsurl *url; /**< The URL being fetched */
 };
 
-static struct fetch_javascript_context *ring = NULL;
+நிலையான கட்டமைப்பு fetch_javascript_context *ring = வெற்று;
 
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
-		struct fetch_javascript_context *ctx)
+நிலையான உள்வரி bool fetch_javascript_send_callback(மாறிலி fetch_செய்தி *செய்தி,
+		கட்டமைப்பு fetch_javascript_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(செய்தி, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	திரும்பு ctx->aborted;
 }
 
 
@@ -66,84 +66,84 @@ static inline bool fetch_javascript_send_callback(const fetch_msg *msg,
  *
  * \todo This is currently completely unimplemented and just returns 204
  */
-static bool fetch_javascript_handler(struct fetch_javascript_context *ctx)
+நிலையான bool fetch_javascript_handler(கட்டமைப்பு fetch_javascript_context *ctx)
 {
-	fetch_msg msg;
-	int code = 204;
+	fetch_செய்தி செய்தி;
+	முழு code = 204;
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
 
-	msg.type = FETCH_FINISHED;
-	fetch_javascript_send_callback(&msg, ctx);
+	செய்தி.type = FETCH_FINISHED;
+	fetch_javascript_send_callback(&செய்தி, ctx);
 
-	return true;
+	திரும்பு true;
 }
 
 
 
 /** callback to initialise the resource fetcher. */
-static bool fetch_javascript_initialise(lwc_string *scheme)
+நிலையான bool fetch_javascript_initialise(lwc_string *scheme)
 {
-	return true;
+	திரும்பு true;
 }
 
 /** callback to finalise the resource fetcher. */
-static void fetch_javascript_finalise(lwc_string *scheme)
+நிலையான வெறுமை fetch_javascript_finalise(lwc_string *scheme)
 {
 }
 
-static bool fetch_javascript_can_fetch(const nsurl *url)
+நிலையான bool fetch_javascript_can_fetch(மாறிலி nsurl *url)
 {
-	return true;
+	திரும்பு true;
 }
 
 /** callback to set up a resource fetch context. */
-static void *
-fetch_javascript_setup(struct fetch *fetchh,
+நிலையான வெறுமை *
+fetch_javascript_setup(கட்டமைப்பு fetch *fetchh,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 மாறிலி எழுத்து *post_urlenc,
+		 மாறிலி கட்டமைப்பு fetch_multipart_data *post_multipart,
+		 மாறிலி எழுத்து **headers)
 {
-	struct fetch_javascript_context *ctx;
+	கட்டமைப்பு fetch_javascript_context *ctx;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, அளவு(*ctx));
+	எனில் (ctx == வெற்று)
+		திரும்பு வெற்று;
 
 	ctx->url = nsurl_ref(url);
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_செருகு(ring, ctx);
 
-	return ctx;
+	திரும்பு ctx;
 }
 
 /** callback to free a resource fetch */
-static void fetch_javascript_free(void *ctx)
+நிலையான வெறுமை fetch_javascript_free(வெறுமை *ctx)
 {
-	struct fetch_javascript_context *c = ctx;
-	if (c->url != NULL) {
+	கட்டமைப்பு fetch_javascript_context *c = ctx;
+	எனில் (c->url != வெற்று) {
 		nsurl_unref(c->url);
 	}
 	RING_REMOVE(ring, c);
-	free(ctx);
+	விடுவி(ctx);
 }
 
 /** callback to start a resource fetch */
-static bool fetch_javascript_start(void *ctx)
+நிலையான bool fetch_javascript_start(வெறுமை *ctx)
 {
-	return true;
+	திரும்பு true;
 }
 
 /** callback to abort a resource fetch */
-static void fetch_javascript_abort(void *ctx)
+நிலையான வெறுமை fetch_javascript_abort(வெறுமை *ctx)
 {
-	struct fetch_javascript_context *c = ctx;
+	கட்டமைப்பு fetch_javascript_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -154,28 +154,28 @@ static void fetch_javascript_abort(void *ctx)
 
 
 /** callback to poll for additional resource fetch contents */
-static void fetch_javascript_poll(lwc_string *scheme)
+நிலையான வெறுமை fetch_javascript_poll(lwc_string *scheme)
 {
-	struct fetch_javascript_context *c, *next;
+	கட்டமைப்பு fetch_javascript_context *c, *next;
 
-	if (ring == NULL) return;
+	எனில் (ring == வெற்று) திரும்பு;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
-	do {
+	செய் {
 		/* Ignore fetches that have been flagged as locked.
 		 * This allows safe re-entrant calls to this function.
 		 * Re-entrancy can occur if, as a result of a callback,
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		எனில் (c->locked == true) {
 			next = c->r_next;
-			continue;
+			தொடர்;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		எனில் (c->aborted == false) {
 			/* resource fetches can be processed in one go */
 			fetch_javascript_handler(c);
 		}
@@ -191,7 +191,7 @@ static void fetch_javascript_poll(lwc_string *scheme)
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} போது ( (c = next) != ring && ring != வெற்று);
 }
 
 /**
@@ -199,19 +199,19 @@ static void fetch_javascript_poll(lwc_string *scheme)
  *
  * \return NSERROR_OK on success or appropriate error code on faliure.
 */
-nserror fetch_javascript_register(void)
+nserror fetch_javascript_register(வெறுமை)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_javascript);
-	const struct fetcher_operation_table fetcher_ops = {
+	மாறிலி கட்டமைப்பு fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_javascript_initialise,
 		.acceptable = fetch_javascript_can_fetch,
 		.setup = fetch_javascript_setup,
 		.start = fetch_javascript_start,
 		.abort = fetch_javascript_abort,
-		.free = fetch_javascript_free,
+		.விடுவி = fetch_javascript_free,
 		.poll = fetch_javascript_poll,
 		.finalise = fetch_javascript_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	திரும்பு fetcher_add(scheme, &fetcher_ops);
 }

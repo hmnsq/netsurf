@@ -23,6 +23,6 @@
 #ifndef _NETSURF_IMAGE_JPEGXL_H_
 #define _NETSURF_IMAGE_JPEGXL_H_
 
-nserror nsjpegxl_init(void);
+nserror nsjpegxl_init(வெறுமை);
 
 #endif

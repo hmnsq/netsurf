@@ -31,34 +31,34 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <nsutils/time.h>
-#include <nsutils/base64.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <strings.h>
+#அந்தர்பாவ <nsutils/time.h>
+#அந்தர்பாவ <nsutils/base64.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "utils/time.h"
-#include "utils/http.h"
-#include "utils/nsoption.h"
-#include "netsurf/misc.h"
-#include "desktop/gui_internal.h"
+#அந்தர்பாவ "netsurf/inttypes.h"
+#அந்தர்பாவ "utils/config.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "utils/nsurl.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "utils/time.h"
+#அந்தர்பாவ "utils/http.h"
+#அந்தர்பாவ "utils/nsoption.h"
+#அந்தர்பாவ "netsurf/misc.h"
+#அந்தர்பாவ "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/backing_store.h"
-#include "content/urldb.h"
+#அந்தர்பாவ "content/fetch.h"
+#அந்தர்பாவ "content/backing_store.h"
+#அந்தர்பாவ "content/urldb.h"
 
 /**
  * State of a low-level cache object fetch.
  */
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	LLCACHE_FETCH_INIT,		/**< Initial state, before fetch */
 	LLCACHE_FETCH_HEADERS,		/**< Fetching headers */
 	LLCACHE_FETCH_DATA,		/**< Fetching object data */
@@ -68,16 +68,16 @@ typedef enum {
 /**
  * Type of low-level cache object.
  */
-typedef struct llcache_object llcache_object;
+வகைவரை கட்டமைப்பு llcache_object llcache_object;
 
 /**
  * Handle to low-level cache object.
  */
-struct llcache_handle {
+கட்டமைப்பு llcache_handle {
 	llcache_object *object;		/**< Pointer to associated object */
 
 	llcache_handle_callback cb;	/**< Client callback */
-	void *pw;			/**< Client data */
+	வெறுமை *pw;			/**< Client data */
 
 	llcache_fetch_state state;	/**< Last known state of object fetch */
 	size_t bytes;			/**< Last reported byte count */
@@ -86,29 +86,29 @@ struct llcache_handle {
 /**
  * Low-level cache object user record.
  */
-typedef struct llcache_object_user {
+வகைவரை கட்டமைப்பு llcache_object_user {
 	llcache_handle *handle;		/**< Handle data for client */
 
 	bool iterator_target;		/**< This is the iterator target */
 	bool queued_for_delete;		/**< This user is queued for deletion */
 
-	struct llcache_object_user *prev;	/**< Previous in list */
-	struct llcache_object_user *next;	/**< Next in list */
+	கட்டமைப்பு llcache_object_user *prev;	/**< Previous in list */
+	கட்டமைப்பு llcache_object_user *next;	/**< Next in list */
 } llcache_object_user;
 
 /**
  * Low-level cache object fetch context.
  */
-typedef struct {
+வகைவரை கட்டமைப்பு {
 	uint32_t flags;			/**< Fetch flags */
 	nsurl *referer;			/**< Referring URL, or NULL if none */
 	llcache_post_data *post;	/**< POST data, or NULL for GET */
 
-	struct fetch *fetch;		/**< Fetch handle for this object */
+	கட்டமைப்பு fetch *fetch;		/**< Fetch handle for this object */
 
 	llcache_fetch_state state;	/**< Current state of object fetch */
 
-	uint32_t redirect_count;	/**< Count of redirects followed */
+	uint32_t redirect_மொத்தம்;	/**< Count of redirects followed */
 
 	uint32_t retries_remaining;     /**< Number of times to retry on timeout */
 
@@ -124,7 +124,7 @@ typedef struct {
 /**
  * Validation control.
  */
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	LLCACHE_VALIDATE_FRESH,		/**< Only revalidate if not fresh */
 	LLCACHE_VALIDATE_ALWAYS,	/**< Always revalidate */
 	LLCACHE_VALIDATE_ONCE		/**< Revalidate once only */
@@ -136,27 +136,27 @@ typedef enum {
 #define INVALID_AGE -1
 
 /** Cache control data */
-typedef struct {
+வகைவரை கட்டமைப்பு {
 	time_t req_time;	/**< Time of request */
 	time_t res_time;	/**< Time of response */
 	time_t fin_time;	/**< Time of request completion */
 	time_t date;		/**< Date: response header */
 	time_t expires;		/**< Expires: response header */
-	int age;		/**< Age: response header */
-	int max_age;		/**< Max-Age Cache-control parameter */
+	முழு age;		/**< Age: response header */
+	முழு max_age;		/**< Max-Age Cache-control parameter */
 	llcache_validate no_cache;	/**< No-Cache Cache-control parameter */
-	char *etag;		/**< Etag: response header */
+	எழுத்து *etag;		/**< Etag: response header */
 	time_t last_modified;	/**< Last-Modified: response header */
 } llcache_cache_control;
 
 /** Representation of a fetch header */
-typedef struct {
-	char *name;		/**< Header name */
-	char *value;		/**< Header value */
+வகைவரை கட்டமைப்பு {
+	எழுத்து *name;		/**< Header name */
+	எழுத்து *மதிப்பு;		/**< Header value */
 } llcache_header;
 
 /** Current status of an object's data */
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	LLCACHE_STATE_RAM = 0, /**< source data is stored in RAM only */
 	LLCACHE_STATE_DISC, /**< source data is stored on disc */
 } llcache_store_state;
@@ -166,7 +166,7 @@ typedef enum {
  *
  * \todo Consider whether a list is a sane container.
  */
-struct llcache_object {
+கட்டமைப்பு llcache_object {
 	llcache_object *prev;	     /**< Previous in list */
 	llcache_object *next;	     /**< Next in list */
 
@@ -177,7 +177,7 @@ struct llcache_object {
 	size_t source_len;	     /**< Byte length of source data */
 	size_t source_alloc;	     /**< Allocated size of source buffer */
 
-	struct cert_chain *chain;    /**< Certificate chain from the fetch */
+	கட்டமைப்பு cert_chain *chain;    /**< Certificate chain from the fetch */
 
 	llcache_store_state store_state; /**< where the data for the object is stored */
 
@@ -189,12 +189,12 @@ struct llcache_object {
 	llcache_object *candidate;   /**< Object to use, if fetch determines
 				      * that it is still fresh
 				      */
-	uint32_t candidate_count;    /**< Count of objects this is a
+	uint32_t candidate_மொத்தம்;    /**< Count of objects this is a
 				      * candidate for
 				      */
 
 	llcache_header *headers;     /**< Fetch headers */
-	size_t num_headers;	     /**< Number of fetch headers */
+	size_t இலக்கம்_headers;	     /**< Number of fetch headers */
 
 	/* Instrumentation. These elements are strictly for information
 	 * to improve the cache performance and to provide performance
@@ -207,7 +207,7 @@ struct llcache_object {
 /**
  * Core llcache control context.
  */
-struct llcache_s {
+கட்டமைப்பு llcache_s {
 	/** Head of the low-level cached object list */
 	llcache_object *cached_objects;
 
@@ -231,7 +231,7 @@ struct llcache_s {
 	 * The minimum lifetime to consider sending objects to backing
 	 * store.
 	 */
-	int minimum_lifetime;
+	முழு minimum_lifetime;
 
 	/**
 	 * The time over which to apply the bandwidth calculations in ms
@@ -264,13 +264,13 @@ struct llcache_s {
 };
 
 /** low level cache state */
-static struct llcache_s *llcache = NULL;
+நிலையான கட்டமைப்பு llcache_s *llcache = வெற்று;
 
 /* forward referenced callback function */
-static void llcache_fetch_callback(const fetch_msg *msg, void *p);
+நிலையான வெறுமை llcache_fetch_callback(மாறிலி fetch_செய்தி *செய்தி, வெறுமை *p);
 
 /* forward referenced catch up function */
-static void llcache_users_not_caught_up(void);
+நிலையான வெறுமை llcache_users_not_caught_up(வெறுமை);
 
 
 /******************************************************************************
@@ -285,21 +285,21 @@ static void llcache_users_not_caught_up(void);
  * \param user Pointer to location to receive result.
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_user_new(llcache_handle_callback cb, void *pw,
+நிலையான nserror llcache_object_user_new(llcache_handle_callback cb, வெறுமை *pw,
 		llcache_object_user **user)
 {
 	llcache_handle *h;
 	llcache_object_user *u;
 
-	h = calloc(1, sizeof(llcache_handle));
-	if (h == NULL) {
-		return NSERROR_NOMEM;
+	h = calloc(1, அளவு(llcache_handle));
+	எனில் (h == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
-	u = calloc(1, sizeof(llcache_object_user));
-	if (u == NULL) {
-		free(h);
-		return NSERROR_NOMEM;
+	u = calloc(1, அளவு(llcache_object_user));
+	எனில் (u == வெற்று) {
+		விடுவி(h);
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	h->cb = cb;
@@ -308,11 +308,11 @@ static nserror llcache_object_user_new(llcache_handle_callback cb, void *pw,
 	u->handle = h;
 
 	NSLOG(llcache, DEBUG,
-	      "Created user %p (%p, %p, %p)", u, h, (void *) cb, pw);
+	      "Created user %p (%p, %p, %p)", u, h, (வெறுமை *) cb, pw);
 
 	*user = u;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -323,19 +323,19 @@ static nserror llcache_object_user_new(llcache_handle_callback cb, void *pw,
  *
  * \pre User is not attached to an object
  */
-static nserror llcache_object_user_destroy(llcache_object_user *user)
+நிலையான nserror llcache_object_user_destroy(llcache_object_user *user)
 {
 	NSLOG(llcache, DEBUG, "Destroyed user %p", user);
 
-	assert(user->next == NULL);
-	assert(user->prev == NULL);
+	ப்ரதிஜ்ஞா(user->next == வெற்று);
+	ப்ரதிஜ்ஞா(user->prev == வெற்று);
 
-	if (user->handle != NULL)
-		free(user->handle);
+	எனில் (user->handle != வெற்று)
+		விடுவி(user->handle);
 
-	free(user);
+	விடுவி(user);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -345,33 +345,33 @@ static nserror llcache_object_user_destroy(llcache_object_user *user)
  * \param user	  User to remove
  * \return NSERROR_OK.
  */
-static nserror llcache_object_remove_user(llcache_object *object,
+நிலையான nserror llcache_object_remove_user(llcache_object *object,
 		llcache_object_user *user)
 {
-	assert(user != NULL);
-	assert(object != NULL);
-	assert(object->users != NULL);
-	assert(user->handle == NULL || user->handle->object == object);
-	assert((user->prev != NULL) || (object->users == user));
+	ப்ரதிஜ்ஞா(user != வெற்று);
+	ப்ரதிஜ்ஞா(object != வெற்று);
+	ப்ரதிஜ்ஞா(object->users != வெற்று);
+	ப்ரதிஜ்ஞா(user->handle == வெற்று || user->handle->object == object);
+	ப்ரதிஜ்ஞா((user->prev != வெற்று) || (object->users == user));
 
-	if (user == object->users)
+	எனில் (user == object->users)
 		object->users = user->next;
-	else
+	இல்லையெனில்
 		user->prev->next = user->next;
 
-	if (user->next != NULL)
+	எனில் (user->next != வெற்று)
 		user->next->prev = user->prev;
 
-	user->next = user->prev = NULL;
+	user->next = user->prev = வெற்று;
 
 	/* record the time the last user was removed from the object */
-	if (object->users == NULL) {
-		object->last_used = time(NULL);
+	எனில் (object->users == வெற்று) {
+		object->last_used = time(வெற்று);
 	}
 
 	NSLOG(llcache, DEBUG, "Removing user %p from %p", user, object);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -381,14 +381,14 @@ static nserror llcache_object_remove_user(llcache_object *object,
  * \param event		The event to pass to the callback.
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-static nserror llcache_send_event_to_users(llcache_object *object,
+நிலையான nserror llcache_send_event_to_users(llcache_object *object,
 					   llcache_event *event)
 {
 	nserror error = NSERROR_OK;
 	llcache_object_user *user, *next_user;
 
 	user = object->users;
-	while (user != NULL) {
+	போது (user != வெற்று) {
 		bool was_target = user->iterator_target;
 		user->iterator_target = true;
 
@@ -399,18 +399,18 @@ static nserror llcache_send_event_to_users(llcache_object *object,
 
 		user->iterator_target = was_target;
 
-		if (user->queued_for_delete && !was_target) {
+		எனில் (user->queued_for_delete && !was_target) {
 			llcache_object_remove_user(object, user);
 			llcache_object_user_destroy(user);
 		}
 
-		if (error != NSERROR_OK)
-			break;
+		எனில் (error != NSERROR_OK)
+			நிறுத்து;
 
 		user = next_user;
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 /**
@@ -420,11 +420,11 @@ static nserror llcache_send_event_to_users(llcache_object *object,
  * \param result  Pointer to location to receive result
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_new(nsurl *url, llcache_object **result)
+நிலையான nserror llcache_object_new(nsurl *url, llcache_object **result)
 {
-	llcache_object *obj = calloc(1, sizeof(llcache_object));
-	if (obj == NULL)
-		return NSERROR_NOMEM;
+	llcache_object *obj = calloc(1, அளவு(llcache_object));
+	எனில் (obj == வெற்று)
+		திரும்பு NSERROR_NOMEM;
 
 	NSLOG(llcache, DEBUG, "Created object %p (%s)", obj, nsurl_access(url));
 
@@ -432,7 +432,7 @@ static nserror llcache_object_new(nsurl *url, llcache_object **result)
 
 	*result = obj;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -442,38 +442,38 @@ static nserror llcache_object_new(nsurl *url, llcache_object **result)
  * \param clone	 Pointer to location to receive clone
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_post_data_clone(const llcache_post_data *orig,
+நிலையான nserror llcache_post_data_clone(மாறிலி llcache_post_data *orig,
 		llcache_post_data **clone)
 {
 	llcache_post_data *post_clone;
 
-	post_clone = calloc(1, sizeof(llcache_post_data));
-	if (post_clone == NULL)
-		return NSERROR_NOMEM;
+	post_clone = calloc(1, அளவு(llcache_post_data));
+	எனில் (post_clone == வெற்று)
+		திரும்பு NSERROR_NOMEM;
 
 	post_clone->type = orig->type;
 
 	/* Deep-copy the type-specific data */
-	if (orig->type == LLCACHE_POST_URL_ENCODED) {
+	எனில் (orig->type == LLCACHE_POST_URL_ENCODED) {
 		post_clone->data.urlenc = strdup(orig->data.urlenc);
-		if (post_clone->data.urlenc == NULL) {
-			free(post_clone);
+		எனில் (post_clone->data.urlenc == வெற்று) {
+			விடுவி(post_clone);
 
-			return NSERROR_NOMEM;
+			திரும்பு NSERROR_NOMEM;
 		}
-	} else {
+	} இல்லையெனில் {
 		post_clone->data.multipart = fetch_multipart_data_clone(
 				orig->data.multipart);
-		if (post_clone->data.multipart == NULL) {
-			free(post_clone);
+		எனில் (post_clone->data.multipart == வெற்று) {
+			விடுவி(post_clone);
 
-			return NSERROR_NOMEM;
+			திரும்பு NSERROR_NOMEM;
 		}
 	}
 
 	*clone = post_clone;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -493,82 +493,82 @@ static nserror llcache_post_data_clone(const llcache_post_data *orig,
  * \param value	 Pointer to location to receive header value
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
-		char **name, char **value)
+நிலையான nserror llcache_fetch_split_header(மாறிலி uint8_t *data, size_t len,
+		எழுத்து **name, எழுத்து **மதிப்பு)
 {
-	char *n, *v;
-	const uint8_t *colon;
+	எழுத்து *n, *v;
+	மாறிலி uint8_t *colon;
 
 	/* Strip leading whitespace from name */
-	while (data[0] == ' ' || data[0] == '\t' ||
+	போது (data[0] == ' ' || data[0] == '\t' ||
 	       data[0] == '\r' || data[0] == '\n') {
 		data++;
 	}
 
 	/* Find colon */
-	colon = (const uint8_t *) strchr((const char *) data, ':');
-	if (colon == NULL) {
+	colon = (மாறிலி uint8_t *) strchr((மாறிலி எழுத்து *) data, ':');
+	எனில் (colon == வெற்று) {
 		/* Failed, assume a key with no value */
-		colon = data + strlen((const char *)data);
+		colon = data + strlen((மாறிலி எழுத்து *)data);
 
 		/* Strip trailing whitespace from name */
-		while ((colon > data) &&
+		போது ((colon > data) &&
 		       (colon[-1] == ' ' || colon[-1] == '\t' ||
 			colon[-1] == '\r' || colon[-1] == '\n')) {
 			colon--;
 		}
-		n = strndup((const char *) data, colon - data);
-		if (n == NULL)
-			return NSERROR_NOMEM;
+		n = strndup((மாறிலி எழுத்து *) data, colon - data);
+		எனில் (n == வெற்று)
+			திரும்பு NSERROR_NOMEM;
 
 		v = strdup("");
-		if (v == NULL) {
-			free(n);
-			return NSERROR_NOMEM;
+		எனில் (v == வெற்று) {
+			விடுவி(n);
+			திரும்பு NSERROR_NOMEM;
 		}
-	} else {
+	} இல்லையெனில் {
 		/* Split header into name & value */
 
 		/* Strip trailing whitespace from name */
-		while (colon > data && (colon[-1] == ' ' ||
+		போது (colon > data && (colon[-1] == ' ' ||
 				colon[-1] == '\t' || colon[-1] == '\r' ||
 				colon[-1] == '\n'))
 			colon--;
 
-		n = strndup((const char *) data, colon - data);
-		if (n == NULL)
-			return NSERROR_NOMEM;
+		n = strndup((மாறிலி எழுத்து *) data, colon - data);
+		எனில் (n == வெற்று)
+			திரும்பு NSERROR_NOMEM;
 
 		/* Find colon again */
-		while (*colon != ':') {
+		போது (*colon != ':') {
 			colon++;
 		}
 
 		/* Skip over colon and any subsequent whitespace */
-		do {
+		செய் {
 			colon++;
-		} while (*colon == ' ' || *colon == '\t' ||
+		} போது (*colon == ' ' || *colon == '\t' ||
 				*colon == '\r' || *colon == '\n');
 
 		/* Strip trailing whitespace from value */
-		while (len > 0 && (data[len - 1] == ' ' ||
+		போது (len > 0 && (data[len - 1] == ' ' ||
 				data[len - 1] == '\t' ||
 				data[len - 1] == '\r' ||
 				data[len - 1] == '\n')) {
 			len--;
 		}
 
-		v = strndup((const char *) colon, len - (colon - data));
-		if (v == NULL) {
-			free(n);
-			return NSERROR_NOMEM;
+		v = strndup((மாறிலி எழுத்து *) colon, len - (colon - data));
+		எனில் (v == வெற்று) {
+			விடுவி(n);
+			திரும்பு NSERROR_NOMEM;
 		}
 	}
 
 	*name = n;
-	*value = v;
+	*மதிப்பு = v;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -578,19 +578,19 @@ static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
  * \param value header value
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
-llcache_fetch_parse_cache_control(llcache_object *object, char *value)
+நிலையான nserror
+llcache_fetch_parse_cache_control(llcache_object *object, எழுத்து *மதிப்பு)
 {
 	http_cache_control *cc;
 	nserror error;
 
-	error = http_parse_cache_control(value, &cc);
-	if (error != NSERROR_OK) {
+	error = http_parse_cache_control(மதிப்பு, &cc);
+	எனில் (error != NSERROR_OK) {
 		/* Ignore parse errors */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
-	if (http_cache_control_no_cache(cc) ||
+	எனில் (http_cache_control_no_cache(cc) ||
 			http_cache_control_no_store(cc)) {
 		/**
 		 * \todo When we get a disk cache we should
@@ -599,13 +599,13 @@ llcache_fetch_parse_cache_control(llcache_object *object, char *value)
 		object->cache.no_cache = LLCACHE_VALIDATE_ALWAYS;
 	}
 
-	if (http_cache_control_has_max_age(cc)) {
+	எனில் (http_cache_control_has_max_age(cc)) {
 		object->cache.max_age = http_cache_control_max_age(cc);
 	}
 
 	http_cache_control_destroy(cc);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -616,10 +616,10 @@ llcache_fetch_parse_cache_control(llcache_object *object, char *value)
  * \param value header value
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+நிலையான nserror
 llcache_fetch_header_cache_control(llcache_object *object,
-				   char *name,
-				   char *value)
+				   எழுத்து *name,
+				   எழுத்து *மதிப்பு)
 {
 	nserror res;
 	size_t name_len;
@@ -627,69 +627,69 @@ llcache_fetch_header_cache_control(llcache_object *object,
 	/* Parse cache headers to populate cache control data */
 	name_len = strlen(name);
 
-	switch (name_len) {
-	case 3:
-		if (strcasecmp(name, "Age") == 0) {
+	தேர்வு (name_len) {
+	நிலை 3:
+		எனில் (strcasecmp(name, "Age") == 0) {
 			/* extract Age header */
-			if ('0' <= *value && *value <= '9') {
-				object->cache.age = atoi(value);
+			எனில் ('0' <= *மதிப்பு && *மதிப்பு <= '9') {
+				object->cache.age = atoi(மதிப்பு);
 			}
 
 		}
-		break;
+		நிறுத்து;
 
-	case 4:
-		if (strcasecmp(name, "Date") == 0) {
+	நிலை 4:
+		எனில் (strcasecmp(name, "Date") == 0) {
 			/* extract Date header */
-			res = nsc_strntimet(value,
-					    strlen(value),
+			res = nsc_strntimet(மதிப்பு,
+					    strlen(மதிப்பு),
 					    &object->cache.date);
-			if (res != NSERROR_OK) {
+			எனில் (res != NSERROR_OK) {
 				NSLOG(llcache, INFO,
 				      "Processing Date header value \"%s\" returned %d",
-				      value, res);
+				      மதிப்பு, res);
 			}
-		} else if (strcasecmp(name, "ETag") == 0) {
+		} இல்லையெனில் எனில் (strcasecmp(name, "ETag") == 0) {
 			/* extract ETag header */
-			free(object->cache.etag);
-			object->cache.etag = strdup(value);
-			if (object->cache.etag == NULL) {
+			விடுவி(object->cache.etag);
+			object->cache.etag = strdup(மதிப்பு);
+			எனில் (object->cache.etag == வெற்று) {
 				NSLOG(llcache, INFO,
 				      "No memory to duplicate ETag");
-				return NSERROR_NOMEM;
+				திரும்பு NSERROR_NOMEM;
 			}
 		}
-		break;
+		நிறுத்து;
 
-	case 7:
-		if (strcasecmp(name, "Expires") == 0) {
+	நிலை 7:
+		எனில் (strcasecmp(name, "Expires") == 0) {
 			/* process Expires header value */
-			res = nsc_strntimet(value,
-					    strlen(value),
+			res = nsc_strntimet(மதிப்பு,
+					    strlen(மதிப்பு),
 					    &object->cache.expires);
-			if (res != NSERROR_OK) {
+			எனில் (res != NSERROR_OK) {
 				NSLOG(llcache, INFO,
 				      "Processing Expires header value \"%s\" returned %d",
-				      value, res);
+				      மதிப்பு, res);
 				object->cache.expires = (time_t)0x7fffffff;
 			}
 		}
-		break;
+		நிறுத்து;
 
-	case 13:
-		if (strcasecmp(name, "Cache-Control") == 0) {
+	நிலை 13:
+		எனில் (strcasecmp(name, "Cache-Control") == 0) {
 			/* parse Cache-Control header value */
-			llcache_fetch_parse_cache_control(object,value);
-		} else if (strcasecmp(name, "Last-Modified") == 0) {
+			llcache_fetch_parse_cache_control(object,மதிப்பு);
+		} இல்லையெனில் எனில் (strcasecmp(name, "Last-Modified") == 0) {
 			/* parse Last-Modified header value */
-			nsc_strntimet(value,
-				      strlen(value),
+			nsc_strntimet(மதிப்பு,
+				      strlen(மதிப்பு),
 				      &object->cache.last_modified);
 		}
-		break;
+		நிறுத்து;
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -697,16 +697,16 @@ llcache_fetch_header_cache_control(llcache_object *object,
  *
  * \param object The object to destroy headers within.
  */
-static inline void llcache_destroy_headers(llcache_object *object)
+நிலையான உள்வரி வெறுமை llcache_destroy_headers(llcache_object *object)
 {
-	while (object->num_headers > 0) {
-		object->num_headers--;
+	போது (object->இலக்கம்_headers > 0) {
+		object->இலக்கம்_headers--;
 
-		free(object->headers[object->num_headers].name);
-		free(object->headers[object->num_headers].value);
+		விடுவி(object->headers[object->இலக்கம்_headers].name);
+		விடுவி(object->headers[object->இலக்கம்_headers].மதிப்பு);
 	}
-	free(object->headers);
-	object->headers = NULL;
+	விடுவி(object->headers);
+	object->headers = வெற்று;
 }
 
 /**
@@ -714,10 +714,10 @@ static inline void llcache_destroy_headers(llcache_object *object)
  *
  * \param object The object to invalidate cache control for.
  */
-static inline void llcache_invalidate_cache_control_data(llcache_object *object)
+நிலையான உள்வரி வெறுமை llcache_invalidate_cache_control_data(llcache_object *object)
 {
-	free(object->cache.etag);
-	memset(&(object->cache), 0, sizeof(llcache_cache_control));
+	விடுவி(object->cache.etag);
+	memset(&(object->cache), 0, அளவு(llcache_cache_control));
 
 	object->cache.age = INVALID_AGE;
 	object->cache.max_age = INVALID_AGE;
@@ -731,11 +731,11 @@ static inline void llcache_invalidate_cache_control_data(llcache_object *object)
  * \param len	  Byte length of header
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_process_header(llcache_object *object,
-		const uint8_t *data, size_t len)
+நிலையான nserror llcache_fetch_process_header(llcache_object *object,
+		மாறிலி uint8_t *data, size_t len)
 {
 	nserror res;
-	char *name, *value;
+	எழுத்து *name, *மதிப்பு;
 	llcache_header *temp;
 
 	/**
@@ -751,7 +751,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 	 * that we might have computed, and start again.
 	 */
 	/** \todo Properly parse the response line */
-	if (strncmp((const char *) data, "HTTP/", SLEN("HTTP/")) == 0) {
+	எனில் (strncmp((மாறிலி எழுத்து *) data, "HTTP/", SLEN("HTTP/")) == 0) {
 		time_t req_time = object->cache.req_time;
 
 		llcache_invalidate_cache_control_data(object);
@@ -763,48 +763,48 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 	}
 
 	/* Set fetch response time if not already set */
-	if (object->cache.res_time == 0) {
-		object->cache.res_time = time(NULL);
+	எனில் (object->cache.res_time == 0) {
+		object->cache.res_time = time(வெற்று);
 	}
 
 	/* Parse header into name-value pair */
-	res = llcache_fetch_split_header(data, len, &name, &value);
-	if (res != NSERROR_OK) {
-		return res;
+	res = llcache_fetch_split_header(data, len, &name, &மதிப்பு);
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	/* deal with empty header */
-	if (name[0] == 0) {
-		free(name);
-		free(value);
-		return NSERROR_OK;
+	எனில் (name[0] == 0) {
+		விடுவி(name);
+		விடுவி(மதிப்பு);
+		திரும்பு NSERROR_OK;
 	}
 
 	/* update cache control data from header */
-	res = llcache_fetch_header_cache_control(object, name, value);
-	if (res != NSERROR_OK) {
-		free(name);
-		free(value);
-		return res;
+	res = llcache_fetch_header_cache_control(object, name, மதிப்பு);
+	எனில் (res != NSERROR_OK) {
+		விடுவி(name);
+		விடுவி(மதிப்பு);
+		திரும்பு res;
 	}
 
 	/* Append header data to the object's headers array */
 	temp = realloc(object->headers,
-		       (object->num_headers + 1) * sizeof(llcache_header));
-	if (temp == NULL) {
-		free(name);
-		free(value);
-		return NSERROR_NOMEM;
+		       (object->இலக்கம்_headers + 1) * அளவு(llcache_header));
+	எனில் (temp == வெற்று) {
+		விடுவி(name);
+		விடுவி(மதிப்பு);
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	object->headers = temp;
 
-	object->headers[object->num_headers].name = name;
-	object->headers[object->num_headers].value = value;
+	object->headers[object->இலக்கம்_headers].name = name;
+	object->headers[object->இலக்கம்_headers].மதிப்பு = மதிப்பு;
 
-	object->num_headers++;
+	object->இலக்கம்_headers++;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -816,7 +816,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
  *                    be freed by the caller.
  * \return NSERROR_OK and \a header_out updated on success else error code
  */
-static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
+நிலையான nserror get_referer_header(nsurl *url, nsurl *referer, எழுத்து **header_out)
 {
 	nserror res = NSERROR_INVALID;
 	lwc_string *ref_scheme;
@@ -824,23 +824,23 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	bool match;
 	bool match1;
 	bool match2;
-	char *header;
+	எழுத்து *header;
 
 	/* Determine whether to send the Referer header */
-	if (!nsoption_bool(send_referer)) {
-		return NSERROR_INVALID;
+	எனில் (!nsoption_bool(send_referer)) {
+		திரும்பு NSERROR_INVALID;
 	}
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
-		return NSERROR_BAD_URL;
+	எனில் (scheme == வெற்று) {
+		திரும்பு NSERROR_BAD_URL;
 	}
 
 	ref_scheme = nsurl_get_component(referer, NSURL_SCHEME);
-	if (ref_scheme == NULL) {
+	எனில் (ref_scheme == வெற்று) {
 		/* referer has no scheme so no header */
 		lwc_string_unref(scheme);
-		return NSERROR_INVALID;
+		திரும்பு NSERROR_INVALID;
 	}
 
 	/* User permits us to send the header
@@ -853,26 +853,26 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	 * request from a page served over http. The inverse
 	 * (https -> http) should not send the referer (15.1.3)
 	 */
-	if (lwc_string_isequal(scheme, ref_scheme,
+	எனில் (lwc_string_isequal(scheme, ref_scheme,
 			       &match) != lwc_error_ok) {
 		match = false;
 	}
-	if (lwc_string_isequal(scheme, corestring_lwc_https,
+	எனில் (lwc_string_isequal(scheme, corestring_lwc_https,
 			       &match1) != lwc_error_ok) {
 		match1 = false;
 	}
-	if (lwc_string_isequal(ref_scheme, corestring_lwc_http,
+	எனில் (lwc_string_isequal(ref_scheme, corestring_lwc_http,
 			       &match2) != lwc_error_ok) {
 		match2 = false;
 	}
-	if (match == true || (match1 == true && match2 == true)) {
-		const size_t len = SLEN("Referer: ") +
+	எனில் (match == true || (match1 == true && match2 == true)) {
+		மாறிலி size_t len = SLEN("Referer: ") +
 			nsurl_length(referer) + 1;
 
 		header = malloc(len);
-		if (header == NULL) {
+		எனில் (header == வெற்று) {
 			res = NSERROR_NOMEM;
-		} else {
+		} இல்லையெனில் {
 			snprintf(header, len, "Referer: %s",
 				 nsurl_access(referer));
 
@@ -885,7 +885,7 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	lwc_string_unref(scheme);
 	lwc_string_unref(ref_scheme);
 
-	return res;
+	திரும்பு res;
 }
 
 /**
@@ -900,37 +900,37 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
  * \param object Object to refetch
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_refetch(llcache_object *object)
+நிலையான nserror llcache_object_refetch(llcache_object *object)
 {
-	const char *urlenc = NULL;
-	struct fetch_multipart_data *multipart = NULL;
-	char **headers = NULL;
-	int header_idx = 0;
+	மாறிலி எழுத்து *urlenc = வெற்று;
+	கட்டமைப்பு fetch_multipart_data *multipart = வெற்று;
+	எழுத்து **headers = வெற்று;
+	முழு header_idx = 0;
 	nserror res;
 
-	if (object->fetch.post != NULL) {
-		if (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
+	எனில் (object->fetch.post != வெற்று) {
+		எனில் (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
 			urlenc = object->fetch.post->data.urlenc;
-		} else {
+		} இல்லையெனில் {
 			multipart = object->fetch.post->data.multipart;
 		}
 	}
 
 	/* Generate headers */
-	headers = malloc(4 * sizeof(char *));
-	if (headers == NULL) {
-		return NSERROR_NOMEM;
+	headers = malloc(4 * அளவு(எழுத்து *));
+	எனில் (headers == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	/* cache-control header for etag */
-	if (object->cache.etag != NULL) {
-		const size_t len = SLEN("If-None-Match: ") +
+	எனில் (object->cache.etag != வெற்று) {
+		மாறிலி size_t len = SLEN("If-None-Match: ") +
 				strlen(object->cache.etag) + 1;
 
 		headers[header_idx] = malloc(len);
-		if (headers[header_idx] == NULL) {
-			free(headers);
-			return NSERROR_NOMEM;
+		எனில் (headers[header_idx] == வெற்று) {
+			விடுவி(headers);
+			திரும்பு NSERROR_NOMEM;
 		}
 
 		snprintf(headers[header_idx], len, "If-None-Match: %s",
@@ -940,16 +940,16 @@ static nserror llcache_object_refetch(llcache_object *object)
 	}
 
 	/* cache-control header for modification time */
-	if (object->cache.last_modified != 0) {
+	எனில் (object->cache.last_modified != 0) {
 		/* Maximum length of an RFC 1123 date is 29 bytes */
-		const size_t len = SLEN("If-Modified-Since: ") + 29 + 1;
+		மாறிலி size_t len = SLEN("If-Modified-Since: ") + 29 + 1;
 
 		headers[header_idx] = malloc(len);
-		if (headers[header_idx] == NULL) {
-			while (--header_idx >= 0)
-				free(headers[header_idx]);
-			free(headers);
-			return NSERROR_NOMEM;
+		எனில் (headers[header_idx] == வெற்று) {
+			போது (--header_idx >= 0)
+				விடுவி(headers[header_idx]);
+			விடுவி(headers);
+			திரும்பு NSERROR_NOMEM;
 		}
 
 		snprintf(headers[header_idx], len, "If-Modified-Since: %s",
@@ -959,18 +959,18 @@ static nserror llcache_object_refetch(llcache_object *object)
 	}
 
 	/* Referer header */
-	if (object->fetch.referer != NULL) {
-		if (get_referer_header(object->url,
+	எனில் (object->fetch.referer != வெற்று) {
+		எனில் (get_referer_header(object->url,
 				       object->fetch.referer,
 				       &headers[header_idx]) == NSERROR_OK) {
 			header_idx++;
 		}
 	}
-	headers[header_idx] = NULL;
+	headers[header_idx] = வெற்று;
 
 	/* Reset cache control data */
 	llcache_invalidate_cache_control_data(object);
-	object->cache.req_time = time(NULL);
+	object->cache.req_time = time(வெற்று);
 	object->cache.fin_time = object->cache.req_time;
 
 	/* Reset fetch state */
@@ -988,16 +988,16 @@ static nserror llcache_object_refetch(llcache_object *object)
 			  multipart,
 			  object->fetch.flags & LLCACHE_RETRIEVE_VERIFIABLE,
 			  object->fetch.tried_with_tls_downgrade,
-			  (const char **)headers,
+			  (மாறிலி எழுத்து **)headers,
 			  &object->fetch.fetch);
 
 	/* Clean up cache-control headers */
-	while (--header_idx >= 0) {
-		free(headers[header_idx]);
+	போது (--header_idx >= 0) {
+		விடுவி(headers[header_idx]);
 	}
-	free(headers);
+	விடுவி(headers);
 
-	return res;
+	திரும்பு res;
 }
 
 /**
@@ -1016,33 +1016,33 @@ static nserror llcache_object_refetch(llcache_object *object)
  * \param hsts_in_use     Whether HSTS applies to this fetch
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
-		nsurl *referer, const llcache_post_data *post,
-		uint32_t redirect_count, bool hsts_in_use)
+நிலையான nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
+		nsurl *referer, மாறிலி llcache_post_data *post,
+		uint32_t redirect_மொத்தம், bool hsts_in_use)
 {
 	nserror error;
-	nsurl *referer_clone = NULL;
-	llcache_post_data *post_clone = NULL;
+	nsurl *referer_clone = வெற்று;
+	llcache_post_data *post_clone = வெற்று;
 
 	NSLOG(llcache, DEBUG, "Starting fetch for %p", object);
 
-	if (post != NULL) {
+	எனில் (post != வெற்று) {
 		error = llcache_post_data_clone(post, &post_clone);
-		if (error != NSERROR_OK)
-			return error;
+		எனில் (error != NSERROR_OK)
+			திரும்பு error;
 	}
 
-	if (referer != NULL)
+	எனில் (referer != வெற்று)
 		referer_clone = nsurl_ref(referer);
 
 	object->fetch.flags = flags;
 	object->fetch.referer = referer_clone;
 	object->fetch.post = post_clone;
-	object->fetch.redirect_count = redirect_count;
+	object->fetch.redirect_மொத்தம் = redirect_மொத்தம்;
 	object->fetch.retries_remaining = llcache->fetch_attempts;
 	object->fetch.hsts_in_use = hsts_in_use;
 
-	return llcache_object_refetch(object);
+	திரும்பு llcache_object_refetch(object);
 }
 
 /**
@@ -1055,7 +1055,7 @@ static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
  * \param object  Object to destroy
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_destroy(llcache_object *object)
+நிலையான nserror llcache_object_destroy(llcache_object *object)
 {
 	size_t i;
 
@@ -1064,46 +1064,46 @@ static nserror llcache_object_destroy(llcache_object *object)
 
 	cert_chain_free(object->chain);
 
-	if (object->source_data != NULL) {
-		if (object->store_state == LLCACHE_STATE_DISC) {
+	எனில் (object->source_data != வெற்று) {
+		எனில் (object->store_state == LLCACHE_STATE_DISC) {
 			guit->llcache->release(object->url, BACKING_STORE_NONE);
-		} else {
-			free(object->source_data);
+		} இல்லையெனில் {
+			விடுவி(object->source_data);
 		}
 	}
 
 	nsurl_unref(object->url);
 
-	if (object->fetch.fetch != NULL) {
+	எனில் (object->fetch.fetch != வெற்று) {
 		fetch_abort(object->fetch.fetch);
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = வெற்று;
 	}
 
-	if (object->fetch.referer != NULL)
+	எனில் (object->fetch.referer != வெற்று)
 		nsurl_unref(object->fetch.referer);
 
-	if (object->fetch.post != NULL) {
-		if (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
-			free(object->fetch.post->data.urlenc);
-		} else {
+	எனில் (object->fetch.post != வெற்று) {
+		எனில் (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
+			விடுவி(object->fetch.post->data.urlenc);
+		} இல்லையெனில் {
 			fetch_multipart_data_destroy(
 					object->fetch.post->data.multipart);
 		}
 
-		free(object->fetch.post);
+		விடுவி(object->fetch.post);
 	}
 
-	free(object->cache.etag);
+	விடுவி(object->cache.etag);
 
-	for (i = 0; i < object->num_headers; i++) {
-		free(object->headers[i].name);
-		free(object->headers[i].value);
+	க்கு (i = 0; i < object->இலக்கம்_headers; i++) {
+		விடுவி(object->headers[i].name);
+		விடுவி(object->headers[i].மதிப்பு);
 	}
-	free(object->headers);
+	விடுவி(object->headers);
 
-	free(object);
+	விடுவி(object);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -1113,17 +1113,17 @@ static nserror llcache_object_destroy(llcache_object *object)
  * \param list	  List to add to
  * \return NSERROR_OK
  */
-static nserror llcache_object_add_to_list(llcache_object *object,
+நிலையான nserror llcache_object_add_to_list(llcache_object *object,
 		llcache_object **list)
 {
-	object->prev = NULL;
+	object->prev = வெற்று;
 	object->next = *list;
 
-	if (*list != NULL)
+	எனில் (*list != வெற்று)
 		(*list)->prev = object;
 	*list = object;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -1132,11 +1132,11 @@ static nserror llcache_object_add_to_list(llcache_object *object,
  * \param cd cache control data.
  * \return The length of time remaining for the object or 0 if expired.
  */
-static int
-llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
+நிலையான முழு
+llcache_object_rfc2616_remaining_lifetime(மாறிலி llcache_cache_control *cd)
 {
-	int current_age, freshness_lifetime;
-	time_t now = time(NULL);
+	முழு current_age, freshness_lifetime;
+	time_t now = time(வெற்று);
 
 	/* Calculate staleness of cached object as per RFC 2616 13.2.3/13.2.4 */
 	current_age = max(0, (cd->res_time - cd->date));
@@ -1144,19 +1144,19 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
 	current_age += cd->res_time - cd->req_time + now - cd->res_time;
 
 	/* Determine freshness lifetime of this object */
-	if (cd->max_age != INVALID_AGE) {
+	எனில் (cd->max_age != INVALID_AGE) {
 		freshness_lifetime = cd->max_age;
-	} else if (cd->expires != 0) {
+	} இல்லையெனில் எனில் (cd->expires != 0) {
 		freshness_lifetime = cd->expires - cd->date;
-	} else if (cd->last_modified != 0) {
+	} இல்லையெனில் எனில் (cd->last_modified != 0) {
 		freshness_lifetime = (now - cd->last_modified) / 10;
-	} else {
+	} இல்லையெனில் {
 		freshness_lifetime = 0;
 	}
 
 	NSLOG(llcache, DEBUG, "%d:%d", freshness_lifetime, current_age);
 
-	if ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
+	எனில் ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
 	    (freshness_lifetime > current_age)) {
 		/* object was not forbidden from being returned from
 		 * the cache unvalidated (i.e. the response contained
@@ -1164,10 +1164,10 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
 		 *
 		 * The object current age is within the freshness lifetime.
 		 */
-		return freshness_lifetime - current_age;
+		திரும்பு freshness_lifetime - current_age;
 	}
 
-	return 0; /* object has no remaining lifetime */
+	திரும்பு 0; /* object has no remaining lifetime */
 }
 
 /**
@@ -1176,10 +1176,10 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
  * \param object  Object to consider
  * \return True if object is still fresh, false otherwise
  */
-static bool llcache_object_is_fresh(const llcache_object *object)
+நிலையான bool llcache_object_is_fresh(மாறிலி llcache_object *object)
 {
-	int remaining_lifetime;
-	const llcache_cache_control *cd = &object->cache;
+	முழு remaining_lifetime;
+	மாறிலி llcache_cache_control *cd = &object->cache;
 
 	remaining_lifetime = llcache_object_rfc2616_remaining_lifetime(cd);
 
@@ -1193,7 +1193,7 @@ static bool llcache_object_is_fresh(const llcache_object *object)
 	 *
 	 * - it has remaining lifetime or still being fetched.
 	 */
-	return ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
+	திரும்பு ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
 		((remaining_lifetime > 0) ||
 		 (object->fetch.state != LLCACHE_FETCH_COMPLETE)));
 }
@@ -1208,25 +1208,25 @@ static bool llcache_object_is_fresh(const llcache_object *object)
  * \param deep	       Whether to deep-copy the data or not
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_clone_cache_data(llcache_object *source,
+நிலையான nserror llcache_object_clone_cache_data(llcache_object *source,
 		llcache_object *destination, bool deep)
 {
 	/* ETag must be first, as it can fail when deep cloning */
-	if (source->cache.etag != NULL) {
-		char *etag = source->cache.etag;
+	எனில் (source->cache.etag != வெற்று) {
+		எழுத்து *etag = source->cache.etag;
 
-		if (deep) {
+		எனில் (deep) {
 			/* Copy the etag */
 			etag = strdup(source->cache.etag);
-			if (etag == NULL)
-				return NSERROR_NOMEM;
-		} else {
+			எனில் (etag == வெற்று)
+				திரும்பு NSERROR_NOMEM;
+		} இல்லையெனில் {
 			/* Destination takes ownership */
-			source->cache.etag = NULL;
+			source->cache.etag = வெற்று;
 		}
 
-		if (destination->cache.etag != NULL)
-			free(destination->cache.etag);
+		எனில் (destination->cache.etag != வெற்று)
+			விடுவி(destination->cache.etag);
 
 		destination->cache.etag = etag;
 	}
@@ -1235,25 +1235,25 @@ static nserror llcache_object_clone_cache_data(llcache_object *source,
 	destination->cache.res_time = source->cache.res_time;
 	destination->cache.fin_time = source->cache.fin_time;
 
-	if (source->cache.date != 0)
+	எனில் (source->cache.date != 0)
 		destination->cache.date = source->cache.date;
 
-	if (source->cache.expires != 0)
+	எனில் (source->cache.expires != 0)
 		destination->cache.expires = source->cache.expires;
 
-	if (source->cache.age != INVALID_AGE)
+	எனில் (source->cache.age != INVALID_AGE)
 		destination->cache.age = source->cache.age;
 
-	if (source->cache.max_age != INVALID_AGE)
+	எனில் (source->cache.max_age != INVALID_AGE)
 		destination->cache.max_age = source->cache.max_age;
 
-	if (source->cache.no_cache != LLCACHE_VALIDATE_FRESH)
+	எனில் (source->cache.no_cache != LLCACHE_VALIDATE_FRESH)
 		destination->cache.no_cache = source->cache.no_cache;
 
-	if (source->cache.last_modified != 0)
+	எனில் (source->cache.last_modified != 0)
 		destination->cache.last_modified = source->cache.last_modified;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -1263,18 +1263,18 @@ static nserror llcache_object_clone_cache_data(llcache_object *source,
  * \param list	  List to remove from
  * \return NSERROR_OK
  */
-static nserror
+நிலையான nserror
 llcache_object_remove_from_list(llcache_object *object, llcache_object **list)
 {
-	if (object == *list)
+	எனில் (object == *list)
 		*list = object->next;
-	else
+	இல்லையெனில்
 		object->prev->next = object->next;
 
-	if (object->next != NULL)
+	எனில் (object->next != வெற்று)
 		object->next->prev = object->prev;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -1287,19 +1287,19 @@ llcache_object_remove_from_list(llcache_object *object, llcache_object **list)
  * \param object the object to operate on.
  * \return appropriate error code.
  */
-static nserror llcache_retrieve_persisted_data(llcache_object *object)
+நிலையான nserror llcache_retrieve_persisted_data(llcache_object *object)
 {
 	/* ensure the source data is present if necessary */
-	if ((object->source_data != NULL) ||
+	எனில் ((object->source_data != வெற்று) ||
 	    (object->store_state != LLCACHE_STATE_DISC)) {
 		/* source data does not require retrieving from
 		 * persistent store.
 		 */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	/* Source data for the object may be in the persistent store */
-	return guit->llcache->fetch(object->url,
+	திரும்பு guit->llcache->fetch(object->url,
 				    BACKING_STORE_NONE,
 				    &object->source_data,
 				    &object->source_len);
@@ -1318,22 +1318,22 @@ static nserror llcache_retrieve_persisted_data(llcache_object *object)
  *         NSERROR_INVALID if there was an error serialising the
  *         stream.
  */
-static nserror
+நிலையான nserror
 llcache_serialise_metadata(llcache_object *object,
 			   uint8_t **data_out,
 			   size_t *datasize_out)
 {
 	size_t allocsize;
-	int datasize;
+	முழு datasize;
 	uint8_t *data;
-	char *op;
-	unsigned int hloop;
-	int use;
+	எழுத்து *op;
+	unsigned முழு hloop;
+	முழு use;
 	size_t cert_chain_depth;
 
-	if (object->chain != NULL) {
+	எனில் (object->chain != வெற்று) {
 		cert_chain_depth = object->chain->depth;
-	} else {
+	} இல்லையெனில் {
 		cert_chain_depth = 0;
 	}
 
@@ -1347,9 +1347,9 @@ llcache_serialise_metadata(llcache_object *object,
 
 	allocsize += 10 + 1; /* space for number of header entries */
 
-	for (hloop = 0 ; hloop < object->num_headers ; hloop++) {
+	க்கு (hloop = 0 ; hloop < object->இலக்கம்_headers ; hloop++) {
 		allocsize += strlen(object->headers[hloop].name) + 1;
-		allocsize += strlen(object->headers[hloop].value) + 1;
+		allocsize += strlen(object->headers[hloop].மதிப்பு) + 1;
 	}
 
 	allocsize += nsurl_length(object->url) + 1;
@@ -1357,138 +1357,138 @@ llcache_serialise_metadata(llcache_object *object,
 	/* space for number of DER formatted certificates */
 	allocsize += 10 + 1;
 
-	for (hloop = 0; hloop < cert_chain_depth; hloop++) {
+	க்கு (hloop = 0; hloop < cert_chain_depth; hloop++) {
 		allocsize += 10 + 1; /* error status */
 		allocsize += 4 * ((object->chain->certs[hloop].der_length + 2) / 3);
 	}
 
 	data = malloc(allocsize);
-	if (data == NULL) {
-		return NSERROR_NOMEM;
+	எனில் (data == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
-	op = (char *)data;
+	op = (எழுத்து *)data;
 	datasize = allocsize;
 
 	/* the url, used for checking for collisions */
 	use = snprintf(op, datasize, "%s", nsurl_access(object->url));
-	if (use < 0) {
-		goto operror;
+	எனில் (use < 0) {
+		செல் operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize) {
-		goto overflow;
+	எனில் (use > datasize) {
+		செல் overflow;
 	}
 	op += use;
 	datasize -= use;
 
 	/* object size */
 	use = snprintf(op, datasize, "%" PRIsizet, object->source_len);
-	if (use < 0) {
-		goto operror;
+	எனில் (use < 0) {
+		செல் operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
-		goto overflow;
+	எனில் (use > datasize)
+		செல் overflow;
 	op += use;
 	datasize -= use;
 
 	/* Time of request */
 	use = nsc_sntimet(op, datasize, &object->cache.req_time);
-	if (use == 0)
-		goto overflow;
+	எனில் (use == 0)
+		செல் overflow;
 	use++; /* does not count the null */
 	op += use;
 	datasize -= use;
 
 	/* Time of response */
 	use = nsc_sntimet(op, datasize, &object->cache.res_time);
-	if (use == 0)
-		goto overflow;
+	எனில் (use == 0)
+		செல் overflow;
 	use++; /* does not count the null */
 	op += use;
 	datasize -= use;
 
 	/* Time of completion */
 	use = nsc_sntimet(op, datasize, &object->cache.fin_time);
-	if (use == 0)
-		goto overflow;
+	எனில் (use == 0)
+		செல் overflow;
 	use++; /* does not count the null */
 	op += use;
 	datasize -= use;
 
 	/* number of headers */
-	use = snprintf(op, datasize, "%" PRIsizet, object->num_headers);
-	if (use < 0) {
-		goto operror;
+	use = snprintf(op, datasize, "%" PRIsizet, object->இலக்கம்_headers);
+	எனில் (use < 0) {
+		செல் operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
-		goto overflow;
+	எனில் (use > datasize)
+		செல் overflow;
 	op += use;
 	datasize -= use;
 
 	/* headers */
-	for (hloop = 0 ; hloop < object->num_headers ; hloop++) {
+	க்கு (hloop = 0 ; hloop < object->இலக்கம்_headers ; hloop++) {
 		use = snprintf(op, datasize,
 			       "%s:%s",
 			       object->headers[hloop].name,
-			       object->headers[hloop].value);
-		if (use < 0) {
-			goto operror;
+			       object->headers[hloop].மதிப்பு);
+		எனில் (use < 0) {
+			செல் operror;
 		}
 		use++; /* does not count the null */
-		if (use > datasize)
-			goto overflow;
+		எனில் (use > datasize)
+			செல் overflow;
 		op += use;
 		datasize -= use;
 	}
 
 	/* number of DER formatted ssl certificates */
 	use = snprintf(op, datasize, "%" PRIsizet, cert_chain_depth);
-	if (use < 0) {
-		goto operror;
+	எனில் (use < 0) {
+		செல் operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
-		goto overflow;
+	எனில் (use > datasize)
+		செல் overflow;
 	op += use;
 	datasize -= use;
 
 	/* SSL certificates */
-	for (hloop = 0; hloop < cert_chain_depth; hloop++) {
+	க்கு (hloop = 0; hloop < cert_chain_depth; hloop++) {
 		nsuerror res;
 
 		/* Certificate error code */
 		use = snprintf(op, datasize, "%d",
-			       (int)(object->chain->certs[hloop].err));
-		if (use < 0) {
-			goto operror;
+			       (முழு)(object->chain->certs[hloop].err));
+		எனில் (use < 0) {
+			செல் operror;
 		}
 		use++; /* does not count the null */
-		if (use > datasize)
-			goto overflow;
+		எனில் (use > datasize)
+			செல் overflow;
 		op += use;
 		datasize -= use;
 
 		/* DER certificate data in base64 encoding */
-		if (object->chain->certs[hloop].der != NULL) {
+		எனில் (object->chain->certs[hloop].der != வெற்று) {
 			size_t output_length = datasize;
 			res = nsu_base64_encode(
 				object->chain->certs[hloop].der,
 				object->chain->certs[hloop].der_length,
 				(uint8_t *)op,
 				&output_length);
-			if (res != NSUERROR_OK) {
-				goto operror;
+			எனில் (res != NSUERROR_OK) {
+				செல் operror;
 			}
 			use = output_length;
-		} else {
+		} இல்லையெனில் {
 			use = 0;
 		}
 		use++; /* allow for null */
-		if (use > datasize)
-			goto overflow;
+		எனில் (use > datasize)
+			செல் overflow;
 		op += use;
 		*(op - 1) = 0;
 		datasize -= use;
@@ -1499,19 +1499,19 @@ llcache_serialise_metadata(llcache_object *object,
 	*data_out = data;
 	*datasize_out = allocsize - datasize;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 
 overflow:
 	/* somehow we overflowed the buffer - hth? */
 	NSLOG(llcache, INFO, "Overflowed metadata buffer");
-	free(data);
-	return NSERROR_INVALID;
+	விடுவி(data);
+	திரும்பு NSERROR_INVALID;
 
 operror:
 	/* output error */
 	NSLOG(llcache, INFO, "Output error");
-	free(data);
-	return NSERROR_INVALID;
+	விடுவி(data);
+	திரும்பு NSERROR_INVALID;
 }
 
 /**
@@ -1528,26 +1528,26 @@ operror:
  *         or error code if URL is not in persistent storage or in
  *         event of deserialisation error.
  */
-static nserror
+நிலையான nserror
 llcache_process_metadata(llcache_object *object)
 {
 	nserror res;
-	uint8_t *metadata = NULL;
+	uint8_t *metadata = வெற்று;
 	size_t metadatalen = 0;
 	size_t remaining = 0;
 	nsurl *metadataurl;
-	unsigned int line;
-	char *ln;
-	int lnsize;
+	unsigned முழு வரி;
+	எழுத்து *ln;
+	முழு lnsize;
 
 	size_t source_length;
 	time_t request_time;
 	time_t response_time;
 	time_t completion_time;
-	size_t num_headers;
+	size_t இலக்கம்_headers;
 	size_t hloop;
-	size_t ssl_cert_count = 0;
-	struct cert_chain *chain = NULL;
+	size_t ssl_cert_மொத்தம் = 0;
+	கட்டமைப்பு cert_chain *chain = வெற்று;
 
 	NSLOG(llcache, INFO, "Retrieving metadata");
 
@@ -1556,8 +1556,8 @@ llcache_process_metadata(llcache_object *object)
 				   BACKING_STORE_META,
 				   &metadata,
 				   &metadatalen);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	NSLOG(llcache, INFO, "Processing retrieved data");
@@ -1572,21 +1572,21 @@ llcache_process_metadata(llcache_object *object)
 	remaining = metadatalen;
 
 	/* metadata line 1 is the url the metadata referrs to */
-	line = 1;
-	ln = (char *)metadata;
+	வரி = 1;
+	ln = (எழுத்து *)metadata;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if (lnsize < 7) {
+	எனில் (lnsize < 7) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		செல் format_error;
 	}
 
 	res = nsurl_create(ln, &metadataurl);
-	if (res != NSERROR_OK)
-		goto format_error;
+	எனில் (res != NSERROR_OK)
+		செல் format_error;
 
-	if (nsurl_compare(object->url, metadataurl, NSURL_COMPLETE) != true) {
+	எனில் (nsurl_compare(object->url, metadataurl, NSURL_COMPLETE) != true) {
 		/* backing store returned the wrong object for the
 		 * request. This may occur if the backing store had
 		 * a collision in its storage method. We cope with this
@@ -1600,70 +1600,70 @@ llcache_process_metadata(llcache_object *object)
 
 		guit->llcache->release(object->url, BACKING_STORE_META);
 
-		return NSERROR_BAD_URL;
+		திரும்பு NSERROR_BAD_URL;
 	}
 	nsurl_unref(metadataurl);
 
 
 	/* metadata line 2 is the object's length */
-	line = 2;
+	வரி = 2;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &source_length) != 1)) {
+	எனில் ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &source_length) != 1)) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		செல் format_error;
 	}
 
 
 	/* metadata line 3 is the time of request */
-	line = 3;
+	வரி = 3;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &request_time);
-	if (res != NSERROR_OK)
-		goto format_error;
+	எனில் (res != NSERROR_OK)
+		செல் format_error;
 
 
 	/* metadata line 4 is the time of response */
-	line = 4;
+	வரி = 4;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &response_time);
-	if (res != NSERROR_OK)
-		goto format_error;
+	எனில் (res != NSERROR_OK)
+		செல் format_error;
 
 
 	/* metadata line 5 is the time of request completion */
-	line = 5;
+	வரி = 5;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &completion_time);
-	if (res != NSERROR_OK)
-		goto format_error;
+	எனில் (res != NSERROR_OK)
+		செல் format_error;
 
 
 	/* metadata line 6 is the number of headers */
-	line = 6;
+	வரி = 6;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &num_headers) != 1)) {
+	எனில் ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &இலக்கம்_headers) != 1)) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		செல் format_error;
 	}
 
 	/* read headers */
-	for (hloop = 0 ; hloop < num_headers; hloop++) {
-		line++;
+	க்கு (hloop = 0 ; hloop < இலக்கம்_headers; hloop++) {
+		வரி++;
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
@@ -1671,73 +1671,73 @@ llcache_process_metadata(llcache_object *object)
 		res = llcache_fetch_process_header(object,
 						   (uint8_t *)ln,
 						   lnsize);
-		if (res != NSERROR_OK)
-			goto format_error;
+		எனில் (res != NSERROR_OK)
+			செல் format_error;
 	}
 
-	if (remaining == 0) {
-		goto skip_ssl_certificates;
+	எனில் (remaining == 0) {
+		செல் skip_ssl_certificates;
 	}
 
 	/* Next line is the number of DER base64 encoded certificates */
-	line++;
+	வரி++;
 	ln += lnsize + 1;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &ssl_cert_count) != 1)) {
+	எனில் ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &ssl_cert_மொத்தம்) != 1)) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		செல் format_error;
 	}
 
-	if (ssl_cert_count == 0) {
-		goto skip_ssl_certificates;
+	எனில் (ssl_cert_மொத்தம் == 0) {
+		செல் skip_ssl_certificates;
 	}
 
-	if (ssl_cert_count > MAX_CERT_DEPTH) {
+	எனில் (ssl_cert_மொத்தம் > MAX_CERT_DEPTH) {
 		res = NSERROR_INVALID;
-		goto format_error;
+		செல் format_error;
 	}
 
-	res = cert_chain_alloc(ssl_cert_count, &chain);
-	if (res != NSERROR_OK) {
-		goto format_error;
+	res = cert_chain_alloc(ssl_cert_மொத்தம், &chain);
+	எனில் (res != NSERROR_OK) {
+		செல் format_error;
 	}
 
-	for (hloop = 0; hloop < ssl_cert_count; hloop++) {
-		int errcode;
+	க்கு (hloop = 0; hloop < ssl_cert_மொத்தம்; hloop++) {
+		முழு errcode;
 		nsuerror nsures;
 
 		/* Certificate error code */
-		line++;
+		வரி++;
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
-		if ((lnsize < 1) || (sscanf(ln, "%d", &errcode) != 1)) {
+		எனில் ((lnsize < 1) || (sscanf(ln, "%d", &errcode) != 1)) {
 			res = NSERROR_INVALID;
-			goto format_error;
+			செல் format_error;
 		}
-		if (errcode < SSL_CERT_ERR_OK ||
+		எனில் (errcode < SSL_CERT_ERR_OK ||
 		    errcode > SSL_CERT_ERR_MAX_KNOWN) {
 			/* Error with the cert code, assume UNKNOWN */
 			chain->certs[hloop].err = SSL_CERT_ERR_UNKNOWN;
-		} else {
+		} இல்லையெனில் {
 			chain->certs[hloop].err = (ssl_cert_err)errcode;
 		}
 
 		/* base64 encoded DER certificate data */
-		line++;
+		வரி++;
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
-		if (lnsize > 0) {
-			nsures = nsu_base64_decode_alloc((const uint8_t *)ln,
+		எனில் (lnsize > 0) {
+			nsures = nsu_base64_decode_alloc((மாறிலி uint8_t *)ln,
 					lnsize,
 					&chain->certs[hloop].der,
 					&chain->certs[hloop].der_length);
-			if (nsures != NSUERROR_OK) {
+			எனில் (nsures != NSUERROR_OK) {
 				res = NSERROR_NOMEM;
-				goto format_error;
+				செல் format_error;
 			}
 		}
 	}
@@ -1760,17 +1760,17 @@ skip_ssl_certificates:
 	/* object stored in backing store */
 	object->store_state = LLCACHE_STATE_DISC;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 
 format_error:
 	NSLOG(llcache, INFO,
 	      "metadata error on line %d error code %d\n",
-	      line, res);
+	      வரி, res);
 	guit->llcache->release(object->url, BACKING_STORE_META);
 
 	cert_chain_free(chain);
 
-	return res;
+	திரும்பு res;
 }
 
 /**
@@ -1779,7 +1779,7 @@ format_error:
  * \param url  URL to check.
  * \return true iff url has a persistable scheme.
  */
-static inline bool llcache__scheme_is_persistable(const nsurl *url)
+நிலையான உள்வரி bool llcache__scheme_is_persistable(மாறிலி nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
 	bool persistable = false;
@@ -1787,7 +1787,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
 
 	/* nsurl ensures lower case schemes, and corestrings are lower
 	 * case, so it's safe to use case-sensitive comparison. */
-	if ((lwc_string_isequal(scheme, corestring_lwc_http,
+	எனில் ((lwc_string_isequal(scheme, corestring_lwc_http,
 			&match) == lwc_error_ok &&
 			(match == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_https,
@@ -1798,7 +1798,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
 
 	lwc_string_unref(scheme);
 
-	return persistable;
+	திரும்பு persistable;
 }
 
 /**
@@ -1807,7 +1807,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
  * \param url  URL to check.
  * \return true iff url has a cachable scheme.
  */
-static inline bool llcache__scheme_is_cachable(const nsurl *url)
+நிலையான உள்வரி bool llcache__scheme_is_cachable(மாறிலி nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
 	bool cachable = false;
@@ -1815,7 +1815,7 @@ static inline bool llcache__scheme_is_cachable(const nsurl *url)
 
 	/* nsurl ensures lower case schemes, and corestrings are lower
 	 * case, so it's safe to use case-sensitive comparison. */
-	if ((lwc_string_isequal(scheme, corestring_lwc_http,
+	எனில் ((lwc_string_isequal(scheme, corestring_lwc_http,
 			&match) == lwc_error_ok &&
 			(match == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_https,
@@ -1835,7 +1835,7 @@ static inline bool llcache__scheme_is_cachable(const nsurl *url)
 
 	lwc_string_unref(scheme);
 
-	return cachable;
+	திரும்பு cachable;
 }
 
 /**
@@ -1849,53 +1849,53 @@ static inline bool llcache__scheme_is_cachable(const nsurl *url)
  * \return NSERROR_OK if the object was successfully retrieved from the
  *         cache else appropriate error code.
  */
-static nserror
+நிலையான nserror
 llcache_object_fetch_persistent(llcache_object *object,
 				uint32_t flags,
 				nsurl *referer,
-				const llcache_post_data *post,
-				uint32_t redirect_count)
+				மாறிலி llcache_post_data *post,
+				uint32_t redirect_மொத்தம்)
 {
 	nserror error;
-	nsurl *referer_clone = NULL;
-	llcache_post_data *post_clone = NULL;
+	nsurl *referer_clone = வெற்று;
+	llcache_post_data *post_clone = வெற்று;
 
-	if (!llcache__scheme_is_persistable(object->url)) {
+	எனில் (!llcache__scheme_is_persistable(object->url)) {
 		/* Don't bother looking up non-http(s) stuff; we don't
 		 * persist it. */
-		return NSERROR_NOT_FOUND;
+		திரும்பு NSERROR_NOT_FOUND;
 	}
 
-	object->cache.req_time = time(NULL);
+	object->cache.req_time = time(வெற்று);
 	object->cache.fin_time = object->cache.req_time;
 
 	/* retrieve and process metadata */
 	error = llcache_process_metadata(object);
-	if (error != NSERROR_OK) {
-		return error;
+	எனில் (error != NSERROR_OK) {
+		திரும்பு error;
 	}
 
 	/* entry came out of cache - need to setup object state */
-	if (post != NULL) {
+	எனில் (post != வெற்று) {
 		error = llcache_post_data_clone(post, &post_clone);
-		if (error != NSERROR_OK)
-			return error;
+		எனில் (error != NSERROR_OK)
+			திரும்பு error;
 	}
 
-	if (referer != NULL) {
+	எனில் (referer != வெற்று) {
 		referer_clone = nsurl_ref(referer);
 	}
 
 	object->fetch.flags = flags;
 	object->fetch.referer = referer_clone;
 	object->fetch.post = post_clone;
-	object->fetch.redirect_count = redirect_count;
+	object->fetch.redirect_மொத்தம் = redirect_மொத்தம்;
 
 	/* fetch is "finished" */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = வெற்று;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -1910,28 +1910,28 @@ llcache_object_fetch_persistent(llcache_object *object,
  * \param result	  Pointer to location to receive retrieved object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+நிலையான nserror
 llcache_object_retrieve_from_cache(nsurl *url,
 				   uint32_t flags,
 				   nsurl *referer,
-				   const llcache_post_data *post,
-				   uint32_t redirect_count,
+				   மாறிலி llcache_post_data *post,
+				   uint32_t redirect_மொத்தம்,
 				   bool hsts_in_use,
 				   llcache_object **result)
 {
 	nserror error;
-	llcache_object *obj, *newest = NULL;
+	llcache_object *obj, *newest = வெற்று;
 
 	NSLOG(llcache, DEBUG,
 	      "Searching cache for %s flags:%"PRIx32" referer:%s post:%p",
 	      nsurl_access(url), flags,
-	      referer==NULL?"":nsurl_access(referer),
+	      referer==வெற்று?"":nsurl_access(referer),
 	      post);
 
 	/* Search for the most recently fetched matching object */
-	for (obj = llcache->cached_objects; obj != NULL; obj = obj->next) {
+	க்கு (obj = llcache->cached_objects; obj != வெற்று; obj = obj->next) {
 
-		if ((newest == NULL ||
+		எனில் ((newest == வெற்று ||
 		     obj->cache.req_time > newest->cache.req_time) &&
 		    nsurl_compare(obj->url, url,
 				  NSURL_COMPLETE) == true) {
@@ -1942,16 +1942,16 @@ llcache_object_retrieve_from_cache(nsurl *url,
 	/* No viable object found in cache create one and attempt to
 	 * pull from persistent store.
 	 */
-	if (newest == NULL) {
+	எனில் (newest == வெற்று) {
 		NSLOG(llcache, DEBUG, "No viable object found in llcache");
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK)
-			return error;
+		எனில் (error != NSERROR_OK)
+			திரும்பு error;
 
 		/* attempt to retrieve object from persistent store */
-		error = llcache_object_fetch_persistent(obj, flags, referer, post, redirect_count);
-		if (error == NSERROR_OK) {
+		error = llcache_object_fetch_persistent(obj, flags, referer, post, redirect_மொத்தம்);
+		எனில் (error == NSERROR_OK) {
 			NSLOG(llcache, DEBUG, "retrieved object from persistent store");
 
 			/* set newest object from persistent store which
@@ -1968,7 +1968,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		 */
 	}
 
-	if ((newest != NULL) && (llcache_object_is_fresh(newest))) {
+	எனில் ((newest != வெற்று) && (llcache_object_is_fresh(newest))) {
 		/* Found a suitable object, and it's still fresh */
 		NSLOG(llcache, DEBUG, "Found fresh %p", newest);
 
@@ -1978,13 +1978,13 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 		/* ensure the source data is present */
 		error = llcache_retrieve_persisted_data(newest);
-		if (error == NSERROR_OK) {
+		எனில் (error == NSERROR_OK) {
 			/* source data was successfully retrieved from
 			 * persistent store
 			 */
 			*result = newest;
 
-			return NSERROR_OK;
+			திரும்பு NSERROR_OK;
 		}
 
 		/* retrieval of source data from persistent store
@@ -1997,41 +1997,41 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		llcache_object_destroy(newest);
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK) {
-			return error;
+		எனில் (error != NSERROR_OK) {
+			திரும்பு error;
 		}
-	} else if (newest != NULL) {
+	} இல்லையெனில் எனில் (newest != வெற்று) {
 		/* Found a candidate object but it needs freshness validation */
 
 		/* ensure the source data is present */
 		error = llcache_retrieve_persisted_data(newest);
-		if (error == NSERROR_OK) {
+		எனில் (error == NSERROR_OK) {
 
 			/* Create a new object */
 			error = llcache_object_new(url, &obj);
-			if (error != NSERROR_OK)
-				return error;
+			எனில் (error != NSERROR_OK)
+				திரும்பு error;
 
 			NSLOG(llcache, DEBUG, "Found candidate %p (%p)", obj, newest);
 
 			/* Clone candidate's cache data */
 			error = llcache_object_clone_cache_data(newest, obj, true);
-			if (error != NSERROR_OK) {
+			எனில் (error != NSERROR_OK) {
 				llcache_object_destroy(obj);
-				return error;
+				திரும்பு error;
 			}
 
 			/* Record candidate, so we can fall back if it is still fresh */
-			newest->candidate_count++;
+			newest->candidate_மொத்தம்++;
 			obj->candidate = newest;
 
 			/* Attempt to kick-off fetch */
 			error = llcache_object_fetch(obj, flags, referer, post,
-						     redirect_count, hsts_in_use);
-			if (error != NSERROR_OK) {
-				newest->candidate_count--;
+						     redirect_மொத்தம், hsts_in_use);
+			எனில் (error != NSERROR_OK) {
+				newest->candidate_மொத்தம்--;
 				llcache_object_destroy(obj);
-				return error;
+				திரும்பு error;
 			}
 
 			/* Add new object to cache */
@@ -2039,7 +2039,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 			*result = obj;
 
-			return NSERROR_OK;
+			திரும்பு NSERROR_OK;
 		}
 
 		NSLOG(llcache, DEBUG, "Persistent retrieval failed for %p", newest);
@@ -2053,17 +2053,17 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		llcache_object_destroy(newest);
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK) {
-			return error;
+		எனில் (error != NSERROR_OK) {
+			திரும்பு error;
 		}
 	}
 
 	/* Attempt to kick-off fetch */
 	error = llcache_object_fetch(obj, flags, referer, post,
-			redirect_count, hsts_in_use);
-	if (error != NSERROR_OK) {
+			redirect_மொத்தம், hsts_in_use);
+	எனில் (error != NSERROR_OK) {
 		llcache_object_destroy(obj);
-		return error;
+		திரும்பு error;
 	}
 
 	/* Add new object to cache */
@@ -2071,7 +2071,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 	*result = obj;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -2086,12 +2086,12 @@ llcache_object_retrieve_from_cache(nsurl *url,
  * \param result	  Pointer to location to receive retrieved object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+நிலையான nserror
 llcache_object_retrieve(nsurl *url,
 			uint32_t flags,
 			nsurl *referer,
-			const llcache_post_data *post,
-			uint32_t redirect_count,
+			மாறிலி llcache_post_data *post,
+			uint32_t redirect_மொத்தம்,
 			bool hsts_in_use,
 			llcache_object **result)
 {
@@ -2101,51 +2101,51 @@ llcache_object_retrieve(nsurl *url,
 	bool uncachable = false;
 
 	NSLOG(llcache, DEBUG, "Retrieve %s (%"PRIx32", %s, %p)", nsurl_access(url), flags,
-		     referer==NULL?"":nsurl_access(referer), post);
+		     referer==வெற்று?"":nsurl_access(referer), post);
 
 
 	/* Get rid of any url fragment */
 	error = nsurl_defragment(url, &defragmented_url);
-	if (error != NSERROR_OK)
-		return error;
+	எனில் (error != NSERROR_OK)
+		திரும்பு error;
 
 	/* determine if content is cachable */
-	if ((flags & LLCACHE_RETRIEVE_FORCE_FETCH) != 0) {
+	எனில் ((flags & LLCACHE_RETRIEVE_FORCE_FETCH) != 0) {
 		/* Forced fetches are never cached */
 		uncachable = true;
-	} else if (post != NULL) {
+	} இல்லையெனில் எனில் (post != வெற்று) {
 		/* POST requests are never cached */
 		uncachable = true;
-	} else {
+	} இல்லையெனில் {
 		uncachable = !llcache__scheme_is_cachable(defragmented_url);
 	}
 
-	if (uncachable) {
+	எனில் (uncachable) {
 		/* Create new object */
 		error = llcache_object_new(defragmented_url, &obj);
-		if (error != NSERROR_OK) {
+		எனில் (error != NSERROR_OK) {
 			nsurl_unref(defragmented_url);
-			return error;
+			திரும்பு error;
 		}
 
 		/* Attempt to kick-off fetch */
 		error = llcache_object_fetch(obj, flags, referer, post,
-				redirect_count, hsts_in_use);
-		if (error != NSERROR_OK) {
+				redirect_மொத்தம், hsts_in_use);
+		எனில் (error != NSERROR_OK) {
 			llcache_object_destroy(obj);
 			nsurl_unref(defragmented_url);
-			return error;
+			திரும்பு error;
 		}
 
 		/* Add new object to uncached list */
 		llcache_object_add_to_list(obj, &llcache->uncached_objects);
-	} else {
+	} இல்லையெனில் {
 		error = llcache_object_retrieve_from_cache(defragmented_url,
-				flags, referer, post, redirect_count,
+				flags, referer, post, redirect_மொத்தம்,
 				hsts_in_use, &obj);
-		if (error != NSERROR_OK) {
+		எனில் (error != NSERROR_OK) {
 			nsurl_unref(defragmented_url);
-			return error;
+			திரும்பு error;
 		}
 
 		/* Returned object is already in the cached list */
@@ -2157,7 +2157,7 @@ llcache_object_retrieve(nsurl *url,
 
 	nsurl_unref(defragmented_url);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -2168,25 +2168,25 @@ llcache_object_retrieve(nsurl *url,
  * \param user User to add
  * \return NSERROR_OK.
  */
-static nserror llcache_object_add_user(llcache_object *object,
+நிலையான nserror llcache_object_add_user(llcache_object *object,
 		llcache_object_user *user)
 {
-	assert(user->next == NULL);
-	assert(user->prev == NULL);
-	assert(user->handle != NULL);
+	ப்ரதிஜ்ஞா(user->next == வெற்று);
+	ப்ரதிஜ்ஞா(user->prev == வெற்று);
+	ப்ரதிஜ்ஞா(user->handle != வெற்று);
 
 	user->handle->object = object;
 
-	user->prev = NULL;
+	user->prev = வெற்று;
 	user->next = object->users;
 
-	if (object->users != NULL)
+	எனில் (object->users != வெற்று)
 		object->users->prev = user;
 	object->users = user;
 
 	NSLOG(llcache, DEBUG, "Adding user %p to %p", user, object);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -2197,44 +2197,44 @@ static nserror llcache_object_add_user(llcache_object *object,
  * \param hsts_in_use Pointer to location to receive HSTS in-use flag
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_hsts_transform_url(nsurl *url, nsurl **result,
+நிலையான nserror llcache_hsts_transform_url(nsurl *url, nsurl **result,
 		bool *hsts_in_use)
 {
-	lwc_string *scheme = NULL;
+	lwc_string *scheme = வெற்று;
 	bool match;
 	nserror error = NSERROR_OK;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (lwc_string_caseless_isequal(scheme, corestring_lwc_http,
+	எனில் (lwc_string_caseless_isequal(scheme, corestring_lwc_http,
 			&match) != lwc_error_ok || match == false) {
 		/* Non-HTTP fetch: no transform required */
-		if (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
+		எனில் (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
 				&match) == lwc_error_ok && match) {
 			/* HTTPS: ask urldb if HSTS is enabled */
 			*hsts_in_use = urldb_get_hsts_enabled(url);
-		} else {
+		} இல்லையெனில் {
 			/* Anything else: no HSTS */
 			*hsts_in_use = false;
 		}
 		lwc_string_unref(scheme);
 		*result = nsurl_ref(url);
-		return error;
+		திரும்பு error;
 	}
 	lwc_string_unref(scheme);
 
-	if (urldb_get_hsts_enabled(url)) {
+	எனில் (urldb_get_hsts_enabled(url)) {
 		/* Only need to force HTTPS. If original port was explicitly
 		 * specified as 80, nsurl_create/join will remove it (as
 		 * it's redundant) */
 		error = nsurl_replace_scheme(url, corestring_lwc_https,
 				result);
 		*hsts_in_use = (error == NSERROR_OK);
-	} else {
+	} இல்லையெனில் {
 		*result = nsurl_ref(url);
 		*hsts_in_use = false;
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 /**
@@ -2243,37 +2243,37 @@ static nserror llcache_hsts_transform_url(nsurl *url, nsurl **result,
  * \param object Newly-fetched cache object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_hsts_update_policy(llcache_object *object)
+நிலையான nserror llcache_hsts_update_policy(llcache_object *object)
 {
 	size_t i;
-	lwc_string *scheme = NULL;
+	lwc_string *scheme = வெற்று;
 	bool match = false;
 
 	scheme = nsurl_get_component(object->url, NSURL_SCHEME);
-	if (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
+	எனில் (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
 			&match) != lwc_error_ok || match == false) {
 		/* Non-HTTPS fetch: ignore */
 		lwc_string_unref(scheme);
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 	lwc_string_unref(scheme);
 
-	if (object->fetch.tainted_tls) {
+	எனில் (object->fetch.tainted_tls) {
 		/* Transport is tainted: ignore */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
-	for (i = 0; i < object->num_headers; i++) {
-		if (strcasecmp("Strict-Transport-Security",
+	க்கு (i = 0; i < object->இலக்கம்_headers; i++) {
+		எனில் (strcasecmp("Strict-Transport-Security",
 				object->headers[i].name) == 0) {
 			urldb_set_hsts_policy(object->url,
-					object->headers[i].value);
+					object->headers[i].மதிப்பு);
 			/* Only process the first one we find */
-			break;
+			நிறுத்து;
 		}
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -2287,7 +2287,7 @@ static nserror llcache_hsts_update_policy(llcache_object *object)
  * \param dst_url destination URL of redirect
  * \return NSERROR_OK if safe else error code
  */
-static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
+நிலையான nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 {
 	lwc_string *scheme;
 	lwc_string *object_scheme;
@@ -2297,12 +2297,12 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 	scheme = nsurl_get_component(dst_url, NSURL_SCHEME);
 
 	/* resource: and about: are allowed to redirect anywhere */
-	if ((lwc_string_isequal(object_scheme, corestring_lwc_resource,
+	எனில் ((lwc_string_isequal(object_scheme, corestring_lwc_resource,
 			&match) == lwc_error_ok && match == false) &&
 	    (lwc_string_isequal(object_scheme, corestring_lwc_about,
 			&match) == lwc_error_ok && match == false)) {
 		/* file, about and resource are not valid redirect targets */
-		if ((lwc_string_isequal(scheme, corestring_lwc_file,
+		எனில் ((lwc_string_isequal(scheme, corestring_lwc_file,
 				&match) == lwc_error_ok && match == true) ||
 		    (lwc_string_isequal(scheme, corestring_lwc_about,
 				&match) == lwc_error_ok && match == true) ||
@@ -2311,7 +2311,7 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 			lwc_string_unref(object_scheme);
 			lwc_string_unref(scheme);
 
-			return NSERROR_UNSAFE_REDIRECT;
+			திரும்பு NSERROR_UNSAFE_REDIRECT;
 		}
 	}
 
@@ -2319,11 +2319,11 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 	lwc_string_unref(object_scheme);
 
 	/* Bail out if we've no way of handling this URL */
-	if (fetch_can_fetch(dst_url) == false) {
-		return NSERROR_UNSAFE_REDIRECT;
+	எனில் (fetch_can_fetch(dst_url) == false) {
+		திரும்பு NSERROR_UNSAFE_REDIRECT;
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -2334,13 +2334,13 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
  * \param replacement  Pointer to location to receive replacement object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_redirect(llcache_object *object,
-		const char *target, llcache_object **replacement)
+நிலையான nserror llcache_fetch_redirect(llcache_object *object,
+		மாறிலி எழுத்து *target, llcache_object **replacement)
 {
 	nserror res;
 	llcache_object *dest;
 	llcache_object_user *user, *next;
-	const llcache_post_data *post = object->fetch.post;
+	மாறிலி llcache_post_data *post = object->fetch.post;
 	nsurl *url, *hsts_url;
 	bool hsts_in_use;
 	http_response_code http_code;
@@ -2351,7 +2351,7 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 
 	/* Abort fetch for this object */
 	fetch_abort(object->fetch.fetch);
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = வெற்று;
 
 	/* Invalidate the cache control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2359,58 +2359,58 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	/* And mark it complete */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
 
-	(void) llcache_hsts_update_policy(object);
+	(வெறுமை) llcache_hsts_update_policy(object);
 
 	/* Forcibly stop redirecting if we've followed too many redirects */
-	if (object->fetch.redirect_count > nsoption_uint(fetch_redirect_limit)) {
+	எனில் (object->fetch.redirect_மொத்தம் > nsoption_uint(fetch_redirect_limit)) {
 		NSLOG(llcache, INFO, "Too many nested redirects");
-		return NSERROR_CYCLIC_REDIRECT;
+		திரும்பு NSERROR_CYCLIC_REDIRECT;
 	}
 
 	/* Make target absolute */
 	res = nsurl_join(object->url, target, &url);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 	/* Perform HSTS transform */
 	res = llcache_hsts_transform_url(url, &hsts_url, &hsts_in_use);
 	nsurl_unref(url);
-	if (res != NSERROR_OK) {
+	எனில் (res != NSERROR_OK) {
 		NSLOG(llcache, INFO, "hsts transform failed");
-		return res;
+		திரும்பு res;
 	}
 
 	/* check redirect allowed before informing users */
 	res = check_redirect_safety(object->url, hsts_url);
-	if (res != NSERROR_OK) {
+	எனில் (res != NSERROR_OK) {
 		NSLOG(llcache, INFO, "unsafe redirect");
 		nsurl_unref(hsts_url);
-		return res;
+		திரும்பு res;
 	}
 
 	/* alter behaviour based on specific redirect code */
-	switch (http_code) {
-	case HTTP_RESPONSE_MOVED_PERMANENTLY:
-	case HTTP_RESPONSE_FOUND:
-	case HTTP_RESPONSE_SEE_OTHER:
+	தேர்வு (http_code) {
+	நிலை HTTP_RESPONSE_MOVED_PERMANENTLY:
+	நிலை HTTP_RESPONSE_FOUND:
+	நிலை HTTP_RESPONSE_SEE_OTHER:
 		/* 301, 302, 303 redirects change method to GET */
-		post = NULL;
-		break;
+		post = வெற்று;
+		நிறுத்து;
 
-	case HTTP_RESPONSE_TEMPORARY_REDIRECT:
-	case HTTP_RESPONSE_PERMANENT_REDIRECT:
+	நிலை HTTP_RESPONSE_TEMPORARY_REDIRECT:
+	நிலை HTTP_RESPONSE_PERMANENT_REDIRECT:
 		/* 307 and 308 keep method unchanged */
-		break;
+		நிறுத்து;
 
-	default:
+	இயல்பு:
 		/** \todo implement codes
 		 * HTTP_RESPONSE_MULTIPLE_CHOICES (300),
 		 * HTTP_RESPONSE_USE_PROXY (305)
 		 */
 		NSLOG(llcache, INFO, "unsupported redirect %d", http_code);
 		nsurl_unref(hsts_url);
-		return NSERROR_BAD_REDIRECT;
+		திரும்பு NSERROR_BAD_REDIRECT;
 	}
 
 	/* Inform users of redirect */
@@ -2419,9 +2419,9 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	event.data.redirect.to = hsts_url;
 
 	res = llcache_send_event_to_users(object, &event);
-	if (res != NSERROR_OK) {
+	எனில் (res != NSERROR_OK) {
 		nsurl_unref(hsts_url);
-		return res;
+		திரும்பு res;
 	}
 
 	/* Attempt to fetch target URL */
@@ -2429,18 +2429,18 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 					object->fetch.flags,
 					object->fetch.referer,
 					post,
-					object->fetch.redirect_count + 1,
+					object->fetch.redirect_மொத்தம் + 1,
 					hsts_in_use,
 					&dest);
 
 	/* No longer require url */
 	nsurl_unref(hsts_url);
 
-	if (res == NSERROR_OK) {
+	எனில் (res == NSERROR_OK) {
 		/* successfully started redirected fetch */
 
 		/* Move user(s) to replacement object */
-		for (user = object->users; user != NULL; user = next) {
+		க்கு (user = object->users; user != வெற்று; user = next) {
 			next = user->next;
 
 			llcache_object_remove_user(object, user);
@@ -2451,7 +2451,7 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 		*replacement = dest;
 	}
 
-	return res;
+	திரும்பு res;
 }
 
 /**
@@ -2460,12 +2460,12 @@ static nserror llcache_fetch_redirect(llcache_object *object,
  * \param object  Object to update cache for
  * \return NSERROR_OK.
  */
-static nserror llcache_object_cache_update(llcache_object *object)
+நிலையான nserror llcache_object_cache_update(llcache_object *object)
 {
-	if (object->cache.date == 0)
-		object->cache.date = time(NULL);
+	எனில் (object->cache.date == 0)
+		object->cache.date = time(வெற்று);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -2475,7 +2475,7 @@ static nserror llcache_object_cache_update(llcache_object *object)
  * \param replacement  Pointer to location to receive replacement object
  * \return NSERROR_OK.
  */
-static nserror llcache_fetch_notmodified(llcache_object *object,
+நிலையான nserror llcache_fetch_notmodified(llcache_object *object,
 		llcache_object **replacement)
 {
 	/* There may be no candidate if the server erroneously responded
@@ -2483,11 +2483,11 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 	 * In this case, we simply retain the initial object, having
 	 * invalidated it and marked it as complete.
 	 */
-	if (object->candidate != NULL) {
+	எனில் (object->candidate != வெற்று) {
 		llcache_object_user *user, *next;
 
 		/* Move user(s) to candidate content */
-		for (user = object->users; user != NULL; user = next) {
+		க்கு (user = object->users; user != வெற்று; user = next) {
 			next = user->next;
 
 			llcache_object_remove_user(object, user);
@@ -2495,7 +2495,7 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 		}
 
 		/* Candidate is no longer a candidate for us */
-		object->candidate->candidate_count--;
+		object->candidate->candidate_மொத்தம்--;
 
 		/* Clone our cache control data into the candidate */
 		llcache_object_clone_cache_data(object, object->candidate,
@@ -2503,7 +2503,7 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 		/* Bring candidate's cache data up to date */
 		llcache_object_cache_update(object->candidate);
 		/* Revert no-cache to normal, if required */
-		if (object->candidate->cache.no_cache ==
+		எனில் (object->candidate->cache.no_cache ==
 				LLCACHE_VALIDATE_ONCE) {
 			object->candidate->cache.no_cache =
 				LLCACHE_VALIDATE_FRESH;
@@ -2511,15 +2511,15 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 
 		/* Candidate is now our object */
 		*replacement = object->candidate;
-		object->candidate = NULL;
-	} else {
+		object->candidate = வெற்று;
+	} இல்லையெனில் {
 		/* There was no candidate: retain object */
 		*replacement = object;
 	}
 
 	/* Ensure fetch has stopped */
 	fetch_abort(object->fetch.fetch);
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = வெற்று;
 
 	/* Invalidate our cache-control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2527,11 +2527,11 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 	/* Mark it complete */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
 
-	(void) llcache_hsts_update_policy(object);
+	(வெறுமை) llcache_hsts_update_policy(object);
 
 	/* Old object will be flushed from the cache on the next poll */
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -2542,12 +2542,12 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
  * \param len	  Byte length of data
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-static nserror
+நிலையான nserror
 llcache_fetch_process_data(llcache_object *object,
-			   const uint8_t *data,
+			   மாறிலி uint8_t *data,
 			   size_t len)
 {
-	if (object->fetch.state != LLCACHE_FETCH_DATA) {
+	எனில் (object->fetch.state != LLCACHE_FETCH_DATA) {
 		/**
 		 * \note
 		 * On entry into this state, check if we need to
@@ -2564,7 +2564,7 @@ llcache_fetch_process_data(llcache_object *object,
 		 */
 		long http_code = fetch_http_code(object->fetch.fetch);
 
-		if ((http_code != 200 && http_code != 203) ||
+		எனில் ((http_code != 200 && http_code != 203) ||
 		    (nsurl_has_component(object->url, NSURL_QUERY) &&
 		     (object->cache.max_age == INVALID_AGE &&
 		      object->cache.expires == 0))) {
@@ -2573,20 +2573,20 @@ llcache_fetch_process_data(llcache_object *object,
 		}
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
-			object->candidate = NULL;
+		எனில் (object->candidate != வெற்று) {
+			object->candidate->candidate_மொத்தம்--;
+			object->candidate = வெற்று;
 		}
 
 		object->fetch.state = LLCACHE_FETCH_DATA;
 	}
 
 	/* Resize source buffer if it's too small */
-	if (object->source_len + len >= object->source_alloc) {
-		const size_t new_len = object->source_len + len + 64 * 1024;
+	எனில் (object->source_len + len >= object->source_alloc) {
+		மாறிலி size_t new_len = object->source_len + len + 64 * 1024;
 		uint8_t *temp = realloc(object->source_data, new_len);
-		if (temp == NULL)
-			return NSERROR_NOMEM;
+		எனில் (temp == வெற்று)
+			திரும்பு NSERROR_NOMEM;
 
 		object->source_data = temp;
 		object->source_alloc = new_len;
@@ -2596,7 +2596,7 @@ llcache_fetch_process_data(llcache_object *object,
 	memcpy(object->source_data + object->source_len, data, len);
 	object->source_len += len;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -2607,14 +2607,14 @@ llcache_fetch_process_data(llcache_object *object,
  * \param realm	  Authentication realm
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
+நிலையான nserror llcache_fetch_auth(llcache_object *object, மாறிலி எழுத்து *realm)
 {
-	const char *auth;
+	மாறிலி எழுத்து *auth;
 	nserror error = NSERROR_OK;
 
 	/* Abort fetch for this object */
 	fetch_abort(object->fetch.fetch);
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = வெற்று;
 
 	/* Invalidate cache-control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2624,12 +2624,12 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
 
 	/* If there was no realm, then default to the URL */
 	/** \todo If there was no WWW-Authenticate header, use response body */
-	if (realm == NULL)
+	எனில் (realm == வெற்று)
 		realm = nsurl_access(object->url);
 
 	auth = urldb_get_auth_details(object->url, realm);
 
-	if (auth == NULL || object->fetch.tried_with_auth == true) {
+	எனில் (auth == வெற்று || object->fetch.tried_with_auth == true) {
 		llcache_event event;
 		/* No authentication details, or tried what we had, so ask */
 		object->fetch.tried_with_auth = false;
@@ -2641,17 +2641,17 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
 		event.type = LLCACHE_EVENT_ERROR;
 		/** \todo More appropriate error message */
 		event.data.error.code = NSERROR_BAD_AUTH;
-		event.data.error.msg = realm;
+		event.data.error.செய்தி = realm;
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} இல்லையெனில் {
 		/* Flag that we've tried to refetch with credentials, so
 		 * that if the fetch fails again, we ask the user again */
 		object->fetch.tried_with_auth = true;
 		error = llcache_object_refetch(object);
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 /**
@@ -2660,12 +2660,12 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
  * \param object  Object being fetched
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_cert_error(llcache_object *object)
+நிலையான nserror llcache_fetch_cert_error(llcache_object *object)
 {
 	nserror error = NSERROR_OK;
 
 	/* Fetch has been stopped, and destroyed. Invalidate object's pointer */
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = வெற்று;
 
 	/* Invalidate cache-control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2674,7 +2674,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 	object->fetch.tainted_tls = true;
 
 	/* Only give the user a chance if HSTS isn't in use for this fetch */
-	if (object->fetch.hsts_in_use == false) {
+	எனில் (object->fetch.hsts_in_use == false) {
 		llcache_event event;
 
 		/* Mark object complete */
@@ -2684,10 +2684,10 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 		event.type = LLCACHE_EVENT_ERROR;
 		/** \todo More appropriate error message */
 		event.data.error.code = NSERROR_BAD_CERTS;
-		event.data.error.msg = messages_get("FetchFailed");
+		event.data.error.செய்தி = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} இல்லையெனில் {
 		llcache_event event;
 
 		/* Mark object complete */
@@ -2697,12 +2697,12 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 		event.type = LLCACHE_EVENT_ERROR;
 		/** \todo More appropriate error message */
 		event.data.error.code = NSERROR_UNKNOWN;
-		event.data.error.msg = messages_get("FetchFailed");
+		event.data.error.செய்தி = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 
@@ -2712,12 +2712,12 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
  * \param object  Object being fetched
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_fetch_ssl_error(llcache_object *object)
+நிலையான nserror llcache_fetch_ssl_error(llcache_object *object)
 {
 	nserror error = NSERROR_OK;
 
 	/* Fetch has been stopped, and destroyed. Invalidate object's pointer */
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = வெற்று;
 
 	/* Invalidate cache-control data */
 	llcache_invalidate_cache_control_data(object);
@@ -2727,7 +2727,7 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
 
 	/* Make no attempt to downgrade if HSTS is in use
 	 * (i.e. assume server does TLS properly) */
-	if (object->fetch.hsts_in_use ||
+	எனில் (object->fetch.hsts_in_use ||
 	    object->fetch.tried_with_tls_downgrade) {
 		/* Have already tried to downgrade, so give up */
 		llcache_event event;
@@ -2739,17 +2739,17 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
 		event.type = LLCACHE_EVENT_ERROR;
 		/** \todo More appropriate error message */
 		event.data.error.code = NSERROR_UNKNOWN;
-		event.data.error.msg = messages_get("FetchFailed");
+		event.data.error.செய்தி = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} இல்லையெனில் {
 		/* Flag that we've tried to downgrade, so that if the
 		 * fetch fails again, we give up */
 		object->fetch.tried_with_tls_downgrade = true;
 		error = llcache_object_refetch(object);
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 
@@ -2759,26 +2759,26 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
  * \param object Object being fetched
  * \return NSERROR_OK on success otherwise error code
  */
-static nserror llcache_fetch_timeout(llcache_object *object)
+நிலையான nserror llcache_fetch_timeout(llcache_object *object)
 {
 	llcache_event event;
 
 	/* The fetch has already been cleaned up by the fetcher but
 	 * we would like to retry if we can.
 	 */
-	if (object->fetch.retries_remaining > 1) {
+	எனில் (object->fetch.retries_remaining > 1) {
 		object->fetch.retries_remaining--;
-		return llcache_object_refetch(object);
+		திரும்பு llcache_object_refetch(object);
 	}
 
 	/* The fetch has has already been cleaned up by the fetcher */
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
-	object->fetch.fetch = NULL;
+	object->fetch.fetch = வெற்று;
 
 	/* Release candidate, if any */
-	if (object->candidate != NULL) {
-		object->candidate->candidate_count--;
-		object->candidate = NULL;
+	எனில் (object->candidate != வெற்று) {
+		object->candidate->candidate_மொத்தம்--;
+		object->candidate = வெற்று;
 	}
 
 	/* Invalidate cache control data */
@@ -2786,9 +2786,9 @@ static nserror llcache_fetch_timeout(llcache_object *object)
 
 	event.type = LLCACHE_EVENT_ERROR;
 	event.data.error.code = NSERROR_TIMEOUT;
-	event.data.error.msg = NULL;
+	event.data.error.செய்தி = வெற்று;
 
-	return llcache_send_event_to_users(object, &event);
+	திரும்பு llcache_send_event_to_users(object, &event);
 }
 
 
@@ -2807,27 +2807,27 @@ static nserror llcache_fetch_timeout(llcache_object *object)
  * \return NSERROR_OK with \a lst_out and \a lst_len_out updated or
  *         error code.
  */
-static nserror
-build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
+நிலையான nserror
+build_candidate_list(கட்டமைப்பு llcache_object ***lst_out, முழு *lst_len_out)
 {
 	llcache_object *object, *next;
-	struct llcache_object **lst;
-	int lst_len = 0;
-	int remaining_lifetime;
+	கட்டமைப்பு llcache_object **lst;
+	முழு lst_len = 0;
+	முழு remaining_lifetime;
 
 #define MAX_PERSIST_PER_RUN 128
 
-	lst = calloc(MAX_PERSIST_PER_RUN, sizeof(struct llcache_object *));
-	if (lst == NULL) {
-		return NSERROR_NOMEM;
+	lst = calloc(MAX_PERSIST_PER_RUN, அளவு(கட்டமைப்பு llcache_object *));
+	எனில் (lst == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
-	for (object = llcache->cached_objects; object != NULL; object = next) {
+	க்கு (object = llcache->cached_objects; object != வெற்று; object = next) {
 		next = object->next;
 
 		/* Only consider http(s) for the disc cache. */
-		if (!llcache__scheme_is_persistable(object->url)) {
-			continue;
+		எனில் (!llcache__scheme_is_persistable(object->url)) {
+			தொடர்;
 		}
 
 		remaining_lifetime = llcache_object_rfc2616_remaining_lifetime(
@@ -2837,20 +2837,20 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
 		 * already on disc and with sufficient lifetime to
 		 * make disc cache worthwhile
 		 */
-		if ((object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		எனில் ((object->candidate_மொத்தம் == 0) &&
+		    (object->fetch.fetch == வெற்று) &&
 		    (object->store_state == LLCACHE_STATE_RAM) &&
 		    (remaining_lifetime > llcache->minimum_lifetime)) {
 			lst[lst_len] = object;
 			lst_len++;
-			if (lst_len == MAX_PERSIST_PER_RUN)
-				break;
+			எனில் (lst_len == MAX_PERSIST_PER_RUN)
+				நிறுத்து;
 		}
 	}
 
-	if (lst_len == 0) {
-		free(lst);
-		return NSERROR_NOT_FOUND;
+	எனில் (lst_len == 0) {
+		விடுவி(lst);
+		திரும்பு NSERROR_NOT_FOUND;
 	}
 
 	/** \todo sort list here */
@@ -2860,7 +2860,7 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
 
 #undef MAX_PERSIST_PER_RUN
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -2871,8 +2871,8 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
  * \param elapsed The time in ms it took to complete the write to backing store.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-write_backing_store(struct llcache_object *object,
+நிலையான nserror
+write_backing_store(கட்டமைப்பு llcache_object *object,
 		    size_t *written_out,
 		    unsigned long *elapsed)
 {
@@ -2889,18 +2889,18 @@ write_backing_store(struct llcache_object *object,
 				   BACKING_STORE_NONE,
 				   object->source_data,
 				   object->source_len);
-	if (ret != NSERROR_OK) {
+	எனில் (ret != NSERROR_OK) {
 		/* unable to put source data in backing store */
-		return ret;
+		திரும்பு ret;
 	}
 
 	ret = llcache_serialise_metadata(object, &metadata, &metadatasize);
-	if (ret != NSERROR_OK) {
+	எனில் (ret != NSERROR_OK) {
 		/* There has been a metadata serialisation error. Ensure the
 		 * already written data object is invalidated.
 		 */
 		guit->llcache->invalidate(object->url);
-		return ret;
+		திரும்பு ret;
 	}
 
 	ret = guit->llcache->store(object->url,
@@ -2908,12 +2908,12 @@ write_backing_store(struct llcache_object *object,
 				   metadata,
 				   metadatasize);
 	guit->llcache->release(object->url, BACKING_STORE_META);
-	if (ret != NSERROR_OK) {
+	எனில் (ret != NSERROR_OK) {
 		/* There has been an error putting the metadata in the
 		 * backing store. Ensure the data object is invalidated.
 		 */
 		guit->llcache->invalidate(object->url);
-		return ret;
+		திரும்பு ret;
 	}
 	nsu_getmonotonic_ms(&endms);
 
@@ -2929,11 +2929,11 @@ write_backing_store(struct llcache_object *object,
 	/* ensure the writeout is reported to have taken at least the
 	 * minimal amount of time
 	 */
-	if (*elapsed == 0) {
+	எனில் (*elapsed == 0) {
 		*elapsed = 1;
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -2948,15 +2948,15 @@ write_backing_store(struct llcache_object *object,
  *
  * \param p The context pointer passed to the callback.
  */
-static void llcache_persist_slowcheck(void *p)
+நிலையான வெறுமை llcache_persist_slowcheck(வெறுமை *p)
 {
 	uint64_t total_bandwidth; /* total bandwidth */
 
-	if (llcache->total_written > (2 * llcache->minimum_bandwidth)) {
+	எனில் (llcache->total_written > (2 * llcache->minimum_bandwidth)) {
 
 		total_bandwidth = (llcache->total_written * 1000) / llcache->total_elapsed;
 
-		if (total_bandwidth < llcache->minimum_bandwidth) {
+		எனில் (total_bandwidth < llcache->minimum_bandwidth) {
 			NSLOG(llcache, INFO,
 			      "Current bandwidth %"PRIu64" less than minimum %"PRIsizet,
 			      total_bandwidth,
@@ -2971,13 +2971,13 @@ static void llcache_persist_slowcheck(void *p)
  *
  * \param p The context pointer passed to the callback.
  */
-static void llcache_persist(void *p)
+நிலையான வெறுமை llcache_persist(வெறுமை *p)
 {
 	nserror ret;
-	struct llcache_object **lst; /* candidate object list */
-	int lst_count; /* number of candidates in list */
-	int idx; /* current candidate object index in list */
-	int next = -1; /* when the next run should be scheduled for */
+	கட்டமைப்பு llcache_object **lst; /* candidate object list */
+	முழு lst_மொத்தம்; /* number of candidates in list */
+	முழு idx; /* current candidate object index in list */
+	முழு next = -1; /* when the next run should be scheduled for */
 
 	unsigned long write_limit; /* max number of bytes to write in this run*/
 
@@ -2988,19 +2988,19 @@ static void llcache_persist(void *p)
 	unsigned long total_elapsed = 1; /* total ms used to write bytes */
 	unsigned long total_bandwidth = 0; /* total bandwidth */
 
-	ret = build_candidate_list(&lst, &lst_count);
-	if (ret != NSERROR_OK) {
+	ret = build_candidate_list(&lst, &lst_மொத்தம்);
+	எனில் (ret != NSERROR_OK) {
 		NSLOG(llcache, DEBUG, "Unable to construct candidate list for persistent writeout");
-		return;
+		திரும்பு;
 	}
 
 	write_limit = (llcache->maximum_bandwidth * llcache->time_quantum) / 1000;
 
 	/* obtained a candidate list, make each object persistent in turn */
-	for (idx = 0; idx < lst_count; idx++) {
+	க்கு (idx = 0; idx < lst_மொத்தம்; idx++) {
 		ret = write_backing_store(lst[idx], &written, &elapsed);
-		if (ret != NSERROR_OK) {
-			continue;
+		எனில் (ret != NSERROR_OK) {
+			தொடர்;
 		}
 
 		/* successfully wrote object to backing store */
@@ -3016,13 +3016,13 @@ static void llcache_persist(void *p)
 		/* check to for the time quantum or the size
 		 * (bandwidth) for this run being exceeded.
 		 */
-		if (total_elapsed > llcache->time_quantum) {
+		எனில் (total_elapsed > llcache->time_quantum) {
 			NSLOG(llcache, INFO, "Overran timeslot");
 			/* writeout has exhausted the available time.
 			 * Either the writeout is slow or the last
 			 * object was very large.
 			 */
-			if (total_bandwidth < llcache->minimum_bandwidth) {
+			எனில் (total_bandwidth < llcache->minimum_bandwidth) {
 				/* Writeout was slow in this time quantum.
 				 *  Schedule a check in the future to see if
 				 *  overall performance is too slow to be useful.
@@ -3030,45 +3030,45 @@ static void llcache_persist(void *p)
 				guit->misc->schedule(
 						llcache->time_quantum * 100,
 						llcache_persist_slowcheck,
-						NULL);
-				break;
-			} else {
-				if (total_bandwidth > llcache->maximum_bandwidth) {
+						வெற்று);
+				நிறுத்து;
+			} இல்லையெனில் {
+				எனில் (total_bandwidth > llcache->maximum_bandwidth) {
 					/* fast writeout of large file
 					 * so calculate delay as if
 					 * write happened only at max
 					 * limit
 					 */
 					next = ((total_written * llcache->time_quantum) / write_limit) - total_elapsed;
-				} else {
+				} இல்லையெனில் {
 					next = llcache->time_quantum;
 				}
-				break;
+				நிறுத்து;
 			}
-		} else if (total_written > write_limit) {
+		} இல்லையெனில் எனில் (total_written > write_limit) {
 			/* The bandwidth limit has been reached. */
 
-			if (total_bandwidth > llcache->maximum_bandwidth) {
+			எனில் (total_bandwidth > llcache->maximum_bandwidth) {
 				/* fast writeout of large file so
 				 * calculate delay as if write
 				 * happened only at max limit
 				 */
 				next = ((total_written * llcache->time_quantum) / write_limit) - total_elapsed;
-			} else {
+			} இல்லையெனில் {
 				next = llcache->time_quantum - total_elapsed;
 			}
-			break;
+			நிறுத்து;
 		}
 
 	}
-	free(lst);
+	விடுவி(lst);
 
 	/* Completed list without running out of allowed bytes or time */
-	if (idx == lst_count) {
+	எனில் (idx == lst_மொத்தம்) {
 		/* only reschedule if writing is making any progress at all */
-		if (total_written > 0) {
+		எனில் (total_written > 0) {
 			next = llcache->time_quantum - total_elapsed;
-		} else {
+		} இல்லையெனில் {
 			next = -1;
 		}
 	}
@@ -3081,7 +3081,7 @@ static void llcache_persist(void *p)
 	      total_written, total_elapsed, total_bandwidth);
 
 	NSLOG(llcache, DEBUG, "Rescheduling writeout in %dms", next);
-	guit->misc->schedule(next, llcache_persist, NULL);
+	guit->misc->schedule(next, llcache_persist, வெற்று);
 }
 
 
@@ -3091,77 +3091,77 @@ static void llcache_persist(void *p)
  * \param msg  Fetch event
  * \param p    Our private data
  */
-static void llcache_fetch_callback(const fetch_msg *msg, void *p)
+நிலையான வெறுமை llcache_fetch_callback(மாறிலி fetch_செய்தி *செய்தி, வெறுமை *p)
 {
 	nserror error = NSERROR_OK;
 	llcache_object *object = p;
 	llcache_event event;
 
-	if (llcache == NULL) {
+	எனில் (llcache == வெற்று) {
 		NSLOG(llcache, CRITICAL, "Callback happened after llcache finalisation");
-		assert(false);
+		ப்ரதிஜ்ஞா(false);
 		/* In case assertions are off, return here */
-		return;
+		திரும்பு;
 	}
 
-	NSLOG(llcache, DEBUG, "Fetch event %d for %p", msg->type, object);
+	NSLOG(llcache, DEBUG, "Fetch event %d for %p", செய்தி->type, object);
 
-	switch (msg->type) {
-	case FETCH_HEADER:
+	தேர்வு (செய்தி->type) {
+	நிலை FETCH_HEADER:
 		/* Received a fetch header */
 		object->fetch.state = LLCACHE_FETCH_HEADERS;
 
 		error = llcache_fetch_process_header(object,
-				msg->data.header_or_data.buf,
-				msg->data.header_or_data.len);
-		break;
+				செய்தி->data.header_or_data.buf,
+				செய்தி->data.header_or_data.len);
+		நிறுத்து;
 
 	/* 3xx responses */
-	case FETCH_REDIRECT:
+	நிலை FETCH_REDIRECT:
 		/* Request resulted in a redirect */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
-			object->candidate = NULL;
+		எனில் (object->candidate != வெற்று) {
+			object->candidate->candidate_மொத்தம்--;
+			object->candidate = வெற்று;
 		}
 
 		error = llcache_fetch_redirect(object,
-				msg->data.redirect, &object);
-		if (error != NSERROR_OK) {
+				செய்தி->data.redirect, &object);
+		எனில் (error != NSERROR_OK) {
 			event.type = LLCACHE_EVENT_ERROR;
 			event.data.error.code = error;
-			event.data.error.msg = NULL;
+			event.data.error.செய்தி = வெற்று;
 			error = llcache_send_event_to_users(object, &event);
 		}
-		break;
+		நிறுத்து;
 
-	case FETCH_NOTMODIFIED:
+	நிலை FETCH_NOTMODIFIED:
 		/* Conditional request determined that cached object is fresh */
 		error = llcache_fetch_notmodified(object, &object);
-		break;
+		நிறுத்து;
 
 	/* Normal 2xx state machine */
-	case FETCH_DATA:
+	நிலை FETCH_DATA:
 		/* Received some data */
 		error = llcache_fetch_process_data(object,
-				msg->data.header_or_data.buf,
-				msg->data.header_or_data.len);
-		break;
+				செய்தி->data.header_or_data.buf,
+				செய்தி->data.header_or_data.len);
+		நிறுத்து;
 
-	case FETCH_FINISHED:
+	நிலை FETCH_FINISHED:
 		/* Finished fetching */
 	{
 		uint8_t *temp;
 
 		object->fetch.state = LLCACHE_FETCH_COMPLETE;
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = வெற்று;
 
 		/* Shrink source buffer to required size */
 		temp = realloc(object->source_data,
 				object->source_len);
 		/* If source_len is 0, then temp may be NULL */
-		if (temp != NULL || object->source_len == 0) {
+		எனில் (temp != வெற்று || object->source_len == 0) {
 			object->source_data = temp;
 			object->source_alloc = object->source_len;
 		}
@@ -3169,30 +3169,30 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 		llcache_object_cache_update(object);
 
 		/* record when the fetch finished */
-		object->cache.fin_time = time(NULL);
+		object->cache.fin_time = time(வெற்று);
 
-		(void) llcache_hsts_update_policy(object);
+		(வெறுமை) llcache_hsts_update_policy(object);
 
-		guit->misc->schedule(5000, llcache_persist, NULL);
+		guit->misc->schedule(5000, llcache_persist, வெற்று);
 	}
-		break;
+		நிறுத்து;
 
 	/* Out-of-band information */
-	case FETCH_TIMEDOUT:
+	நிலை FETCH_TIMEDOUT:
 		/* Timed out while trying to fetch. */
 		error = llcache_fetch_timeout(object);
-		break;
+		நிறுத்து;
 
-	case FETCH_ERROR:
+	நிலை FETCH_ERROR:
 		/* An error occurred while fetching */
 		/* The fetch has has already been cleaned up by the fetcher */
 		object->fetch.state = LLCACHE_FETCH_COMPLETE;
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = வெற்று;
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
-			object->candidate = NULL;
+		எனில் (object->candidate != வெற்று) {
+			object->candidate->candidate_மொத்தம்--;
+			object->candidate = வெற்று;
 		}
 
 		/* Invalidate cache control data */
@@ -3202,32 +3202,32 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		event.type = LLCACHE_EVENT_ERROR;
 		event.data.error.code = NSERROR_UNKNOWN;
-		event.data.error.msg = msg->data.error;
+		event.data.error.செய்தி = செய்தி->data.error;
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		நிறுத்து;
 
-	case FETCH_PROGRESS:
+	நிலை FETCH_PROGRESS:
 		/* Progress update */
 		event.type = LLCACHE_EVENT_PROGRESS;
-		event.data.progress_msg = msg->data.progress;
+		event.data.progress_செய்தி = செய்தி->data.progress;
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		நிறுத்து;
 
-	case FETCH_CERTS:
+	நிலை FETCH_CERTS:
 		/* Certificate information from the fetch */
 
-		if (object->chain != NULL) {
+		எனில் (object->chain != வெற்று) {
 			cert_chain_free(object->chain);
-			object->chain = NULL;
+			object->chain = வெற்று;
 		}
 
 		/* Persist the chain onto our object */
-		error = cert_chain_dup(msg->data.chain, &object->chain);
-		if (error != NSERROR_OK) {
+		error = cert_chain_dup(செய்தி->data.chain, &object->chain);
+		எனில் (error != NSERROR_OK) {
 			NSLOG(llcache, ERROR,
 			      "Unable to duplicate cert chain into cache: %s",
 			      messages_get_errorcode(error));
@@ -3235,53 +3235,53 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		/* Now pass on the event */
 		event.type = LLCACHE_EVENT_GOT_CERTS;
-		event.data.chain = msg->data.chain;
+		event.data.chain = செய்தி->data.chain;
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		நிறுத்து;
 
 	/* Events requiring action */
-	case FETCH_AUTH:
+	நிலை FETCH_AUTH:
 		/* Need Authentication */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
-			object->candidate = NULL;
+		எனில் (object->candidate != வெற்று) {
+			object->candidate->candidate_மொத்தம்--;
+			object->candidate = வெற்று;
 		}
 
-		error = llcache_fetch_auth(object, msg->data.auth.realm);
-		break;
+		error = llcache_fetch_auth(object, செய்தி->data.auth.realm);
+		நிறுத்து;
 
-	case FETCH_CERT_ERR:
+	நிலை FETCH_CERT_ERR:
 		/* Something went wrong when validating TLS certificates */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
-			object->candidate = NULL;
+		எனில் (object->candidate != வெற்று) {
+			object->candidate->candidate_மொத்தம்--;
+			object->candidate = வெற்று;
 		}
 
 		error = llcache_fetch_cert_error(object);
-		break;
+		நிறுத்து;
 
-	case FETCH_SSL_ERR:
+	நிலை FETCH_SSL_ERR:
 		/* TLS connection setup failed */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
-			object->candidate->candidate_count--;
-			object->candidate = NULL;
+		எனில் (object->candidate != வெற்று) {
+			object->candidate->candidate_மொத்தம்--;
+			object->candidate = வெற்று;
 		}
 
 		error = llcache_fetch_ssl_error(object);
-		break;
+		நிறுத்து;
 	}
 
 	/* Deal with any errors reported by event handlers */
-	if (error != NSERROR_OK) {
-		if (error == NSERROR_NOMEM) {
+	எனில் (error != NSERROR_OK) {
+		எனில் (error == NSERROR_NOMEM) {
 			/* attempt to purge the cache to free some
 			 * memory. will not help this fetch, but may
 			 * allow the UI to report errors etc.
@@ -3289,9 +3289,9 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 			llcache_clean(true);
 		}
 
-		if (object->fetch.fetch != NULL) {
+		எனில் (object->fetch.fetch != வெற்று) {
 			fetch_abort(object->fetch.fetch);
-			object->fetch.fetch = NULL;
+			object->fetch.fetch = வெற்று;
 
 			/* Invalidate cache control data */
 			llcache_invalidate_cache_control_data(object);
@@ -3310,19 +3310,19 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
  * \param handle  External cache handle to search for
  * \return Pointer to corresponding user, or NULL if not found
  */
-static llcache_object_user *llcache_object_find_user(
-		const llcache_handle *handle)
+நிலையான llcache_object_user *llcache_object_find_user(
+		மாறிலி llcache_handle *handle)
 {
 	llcache_object_user *user;
 
-	assert(handle->object != NULL);
+	ப்ரதிஜ்ஞா(handle->object != வெற்று);
 
-	for (user = handle->object->users; user != NULL; user = user->next) {
-		if (user->handle == handle)
-			break;
+	க்கு (user = handle->object->users; user != வெற்று; user = user->next) {
+		எனில் (user->handle == handle)
+			நிறுத்து;
 	}
 
-	return user;
+	திரும்பு user;
 }
 
 
@@ -3333,17 +3333,17 @@ static llcache_object_user *llcache_object_find_user(
  * \param list	  List to search in
  * \return True if object resides in list, false otherwise
  */
-static bool llcache_object_in_list(const llcache_object *object,
-		const llcache_object *list)
+நிலையான bool llcache_object_in_list(மாறிலி llcache_object *object,
+		மாறிலி llcache_object *list)
 {
-	while (list != NULL) {
-		if (list == object)
-			break;
+	போது (list != வெற்று) {
+		எனில் (list == object)
+			நிறுத்து;
 
 		list = list->next;
 	}
 
-	return list != NULL;
+	திரும்பு list != வெற்று;
 }
 
 /**
@@ -3352,7 +3352,7 @@ static bool llcache_object_in_list(const llcache_object *object,
  * \param object  Object to notify users about
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror llcache_object_notify_users(llcache_object *object)
+நிலையான nserror llcache_object_notify_users(llcache_object *object)
 {
 	nserror error;
 	llcache_object_user *user, *next_user;
@@ -3382,10 +3382,10 @@ static nserror llcache_object_notify_users(llcache_object *object)
 	 * DONE	      : on transition from DATA -> COMPLETE state
 	 */
 
-	for (user = object->users; user != NULL; user = next_user) {
+	க்கு (user = object->users; user != வெற்று; user = next_user) {
 		/* Emit necessary events to bring the user up-to-date */
 		llcache_handle *handle = user->handle;
-		const llcache_fetch_state objstate = object->fetch.state;
+		மாறிலி llcache_fetch_state objstate = object->fetch.state;
 
 		/* Flag that this user is the current iteration target
 		 * in case the client attempts to destroy it underneath us */
@@ -3418,8 +3418,8 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		 * continue is used)
 		 */
 
-		if (handle->state != objstate) {
-			if (emitted_notify == false) {
+		எனில் (handle->state != objstate) {
+			எனில் (emitted_notify == false) {
 				NSLOG(llcache, DEBUG,
 				      "Notifying users of %p",
 				      object);
@@ -3434,29 +3434,29 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		}
 
 		/* User: INIT, Obj: HEADERS, DATA, COMPLETE => User->HEADERS */
-		if (handle->state == LLCACHE_FETCH_INIT &&
+		எனில் (handle->state == LLCACHE_FETCH_INIT &&
 				objstate > LLCACHE_FETCH_INIT) {
 			handle->state = LLCACHE_FETCH_HEADERS;
 
 			/* Emit any certificate data we hold */
-			if (object->chain != NULL) {
+			எனில் (object->chain != வெற்று) {
 				event.type = LLCACHE_EVENT_GOT_CERTS;
 				event.data.chain = object->chain;
 				error = handle->cb(handle, &event, handle->pw);
-			} else {
+			} இல்லையெனில் {
 				error = NSERROR_OK;
 			}
 
-			if (user->queued_for_delete) {
+			எனில் (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				எனில் (error != NSERROR_OK)
+					திரும்பு error;
 
-				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+				தொடர்;
+			} இல்லையெனில் எனில் (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_HEADERS;
 
@@ -3465,15 +3465,15 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				user->iterator_target = false;
 				next_user = user->next;
 				llcache_users_not_caught_up();
-				continue;
-			} else if (error != NSERROR_OK) {
+				தொடர்;
+			} இல்லையெனில் எனில் (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				திரும்பு error;
 			}
 		}
 
 		/* User: HEADERS, Obj: DATA, COMPLETE => User->DATA */
-		if (handle->state == LLCACHE_FETCH_HEADERS &&
+		எனில் (handle->state == LLCACHE_FETCH_HEADERS &&
 				objstate > LLCACHE_FETCH_HEADERS) {
 			handle->state = LLCACHE_FETCH_DATA;
 
@@ -3482,16 +3482,16 @@ static nserror llcache_object_notify_users(llcache_object *object)
 
 			error = handle->cb(handle, &event, handle->pw);
 
-			if (user->queued_for_delete) {
+			எனில் (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				எனில் (error != NSERROR_OK)
+					திரும்பு error;
 
-				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+				தொடர்;
+			} இல்லையெனில் எனில் (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_HEADERS;
 
@@ -3500,15 +3500,15 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				user->iterator_target = false;
 				next_user = user->next;
 				llcache_users_not_caught_up();
-				continue;
-			} else if (error != NSERROR_OK) {
+				தொடர்;
+			} இல்லையெனில் எனில் (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				திரும்பு error;
 			}
 		}
 
 		/* User: DATA, Obj: DATA, COMPLETE, more source available */
-		if (handle->state == LLCACHE_FETCH_DATA &&
+		எனில் (handle->state == LLCACHE_FETCH_DATA &&
 				objstate >= LLCACHE_FETCH_DATA &&
 				object->source_len > handle->bytes) {
 			size_t orig_handle_read;
@@ -3521,7 +3521,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
 					object->source_len - handle->bytes;
 
 			/* Update record of last byte emitted */
-			if (object->fetch.flags &
+			எனில் (object->fetch.flags &
 					LLCACHE_RETRIEVE_STREAM_DATA) {
 				/* Streaming, so reset to zero to
 				 * minimise amount of cached source data.
@@ -3529,23 +3529,23 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				 * when streaming. */
 				orig_handle_read = 0;
 				handle->bytes = object->source_len = 0;
-			} else {
+			} இல்லையெனில் {
 				orig_handle_read = handle->bytes;
 				handle->bytes = object->source_len;
 			}
 
 			/* Emit event */
 			error = handle->cb(handle, &event, handle->pw);
-			if (user->queued_for_delete) {
+			எனில் (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				எனில் (error != NSERROR_OK)
+					திரும்பு error;
 
-				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+				தொடர்;
+			} இல்லையெனில் எனில் (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->bytes = orig_handle_read;
 
@@ -3554,15 +3554,15 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				user->iterator_target = false;
 				next_user = user->next;
 				llcache_users_not_caught_up();
-				continue;
-			} else if (error != NSERROR_OK) {
+				தொடர்;
+			} இல்லையெனில் எனில் (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				திரும்பு error;
 			}
 		}
 
 		/* User: DATA, Obj: COMPLETE => User->COMPLETE */
-		if (handle->state == LLCACHE_FETCH_DATA &&
+		எனில் (handle->state == LLCACHE_FETCH_DATA &&
 				objstate > LLCACHE_FETCH_DATA) {
 			handle->state = LLCACHE_FETCH_COMPLETE;
 
@@ -3570,16 +3570,16 @@ static nserror llcache_object_notify_users(llcache_object *object)
 			event.type = LLCACHE_EVENT_DONE;
 
 			error = handle->cb(handle, &event, handle->pw);
-			if (user->queued_for_delete) {
+			எனில் (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				எனில் (error != NSERROR_OK)
+					திரும்பு error;
 
-				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+				தொடர்;
+			} இல்லையெனில் எனில் (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_DATA;
 
@@ -3588,10 +3588,10 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				user->iterator_target = false;
 				next_user = user->next;
 				llcache_users_not_caught_up();
-				continue;
-			} else if (error != NSERROR_OK) {
+				தொடர்;
+			} இல்லையெனில் எனில் (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				திரும்பு error;
 			}
 		}
 
@@ -3601,7 +3601,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		next_user = user->next;
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -3618,7 +3618,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
  * \param snapshot  Pointer to receive snapshot of \a object
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+நிலையான nserror
 llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 {
 	llcache_object *newobj;
@@ -3626,48 +3626,48 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 
 	error = llcache_object_new(object->url, &newobj);
 
-	if (error != NSERROR_OK)
-		return error;
+	எனில் (error != NSERROR_OK)
+		திரும்பு error;
 
 	newobj->source_alloc = newobj->source_len = object->source_len;
 
-	if (object->source_len > 0) {
+	எனில் (object->source_len > 0) {
 		newobj->source_data = malloc(newobj->source_alloc);
-		if (newobj->source_data == NULL) {
+		எனில் (newobj->source_data == வெற்று) {
 			llcache_object_destroy(newobj);
-			return NSERROR_NOMEM;
+			திரும்பு NSERROR_NOMEM;
 		}
 		memcpy(newobj->source_data, object->source_data,
 				newobj->source_len);
 	}
 
-	if (object->num_headers > 0) {
-		newobj->headers = calloc(object->num_headers,
-				sizeof(llcache_header));
-		if (newobj->headers == NULL) {
+	எனில் (object->இலக்கம்_headers > 0) {
+		newobj->headers = calloc(object->இலக்கம்_headers,
+				அளவு(llcache_header));
+		எனில் (newobj->headers == வெற்று) {
 			llcache_object_destroy(newobj);
-			return NSERROR_NOMEM;
+			திரும்பு NSERROR_NOMEM;
 		}
-		while (newobj->num_headers < object->num_headers) {
+		போது (newobj->இலக்கம்_headers < object->இலக்கம்_headers) {
 			llcache_header *nh =
-					&(newobj->headers[newobj->num_headers]);
+					&(newobj->headers[newobj->இலக்கம்_headers]);
 			llcache_header *oh =
-					&(object->headers[newobj->num_headers]);
-			newobj->num_headers += 1;
+					&(object->headers[newobj->இலக்கம்_headers]);
+			newobj->இலக்கம்_headers += 1;
 			nh->name = strdup(oh->name);
-			nh->value = strdup(oh->value);
-			if (nh->name == NULL || nh->value == NULL) {
+			nh->மதிப்பு = strdup(oh->மதிப்பு);
+			எனில் (nh->name == வெற்று || nh->மதிப்பு == வெற்று) {
 				llcache_object_destroy(newobj);
-				return NSERROR_NOMEM;
+				திரும்பு NSERROR_NOMEM;
 			}
 		}
 	}
 
-	if (object->chain != NULL) {
+	எனில் (object->chain != வெற்று) {
 		error = cert_chain_dup(object->chain, &newobj->chain);
-		if (error != NSERROR_OK) {
+		எனில் (error != NSERROR_OK) {
 			llcache_object_destroy(newobj);
-			return error;
+			திரும்பு error;
 		}
 	}
 
@@ -3675,7 +3675,7 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 
 	*snapshot = newobj;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -3684,33 +3684,33 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
  * \param object The object to calculate the total RAM usage of.
  * \return The total RAM usage in bytes.
  */
-static inline uint32_t
+நிலையான உள்வரி uint32_t
 total_object_size(llcache_object *object)
 {
 	uint32_t tot;
 	size_t hdrc;
 
-	tot = sizeof(*object);
+	tot = அளவு(*object);
 	tot += nsurl_length(object->url);
 
-	if (object->source_data != NULL) {
+	எனில் (object->source_data != வெற்று) {
 		tot += object->source_len;
 	}
 
-	tot += sizeof(llcache_header) * object->num_headers;
+	tot += அளவு(llcache_header) * object->இலக்கம்_headers;
 
-	for (hdrc = 0; hdrc < object->num_headers; hdrc++) {
-		if (object->headers[hdrc].name != NULL) {
+	க்கு (hdrc = 0; hdrc < object->இலக்கம்_headers; hdrc++) {
+		எனில் (object->headers[hdrc].name != வெற்று) {
 			tot += strlen(object->headers[hdrc].name);
 		}
-		if (object->headers[hdrc].value != NULL) {
-			tot += strlen(object->headers[hdrc].value);
+		எனில் (object->headers[hdrc].மதிப்பு != வெற்று) {
+			tot += strlen(object->headers[hdrc].மதிப்பு);
 		}
 	}
 
 	tot += cert_chain_size(object->chain);
 
-	return tot;
+	திரும்பு tot;
 }
 
 /**
@@ -3718,7 +3718,7 @@ total_object_size(llcache_object *object)
  *
  * \param ignored We ignore this because all our state comes from llcache.
  */
-static void llcache_catch_up_all_users(void *ignored)
+நிலையான வெறுமை llcache_catch_up_all_users(வெறுமை *ignored)
 {
 	llcache_object *object;
 
@@ -3729,12 +3729,12 @@ static void llcache_catch_up_all_users(void *ignored)
 	llcache->all_caught_up = true;
 
 	/* Catch new users up with state of objects */
-	for (object = llcache->cached_objects; object != NULL;
+	க்கு (object = llcache->cached_objects; object != வெற்று;
 			object = object->next) {
 		llcache_object_notify_users(object);
 	}
 
-	for (object = llcache->uncached_objects; object != NULL;
+	க்கு (object = llcache->uncached_objects; object != வெற்று;
 			object = object->next) {
 		llcache_object_notify_users(object);
 	}
@@ -3744,11 +3744,11 @@ static void llcache_catch_up_all_users(void *ignored)
  * Ask for ::llcache_catch_up_all_users to be scheduled ASAP to pump the
  * user state machines.
  */
-static void llcache_users_not_caught_up(void)
+நிலையான வெறுமை llcache_users_not_caught_up(வெறுமை)
 {
-	if (llcache->all_caught_up) {
+	எனில் (llcache->all_caught_up) {
 		llcache->all_caught_up = false;
-		guit->misc->schedule(0, llcache_catch_up_all_users, NULL);
+		guit->misc->schedule(0, llcache_catch_up_all_users, வெற்று);
 	}
 }
 
@@ -3764,56 +3764,56 @@ static void llcache_users_not_caught_up(void)
  *
  * Exported interface documented in llcache.h
  */
-void llcache_clean(bool purge)
+வெறுமை llcache_clean(bool purge)
 {
 	llcache_object *object, *next;
 	uint32_t llcache_size = 0;
-	int remaining_lifetime;
+	முழு remaining_lifetime;
 	uint32_t limit;
 
 	NSLOG(llcache, DEBUG, "Attempting cache clean");
 
 	/* If the cache is being purged set the size limit to zero. */
-	if (purge) {
+	எனில் (purge) {
 		limit = 0;
-	} else {
+	} இல்லையெனில் {
 		limit = llcache->limit;
 	}
 
 	/* Uncacheable objects with no users or fetches */
-	for (object = llcache->uncached_objects;
-	     object != NULL;
+	க்கு (object = llcache->uncached_objects;
+	     object != வெற்று;
 	     object = next) {
 		next = object->next;
 
 		/* The candidate count of uncacheable objects is always 0 */
-		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL)) {
+		எனில் ((object->users == வெற்று) &&
+		    (object->candidate_மொத்தம் == 0) &&
+		    (object->fetch.fetch == வெற்று)) {
 			NSLOG(llcache, DEBUG, "Discarding uncachable object with no users (%p) %s",
 				    object, nsurl_access(object->url));
 
 			llcache_object_remove_from_list(object,
 					&llcache->uncached_objects);
 			llcache_object_destroy(object);
-		} else {
+		} இல்லையெனில் {
 			llcache_size += total_object_size(object);
 		}
 	}
 
 
 	/* Stale cacheable objects with no users or pending fetches */
-	for (object = llcache->cached_objects;
-	     object != NULL;
+	க்கு (object = llcache->cached_objects;
+	     object != வெற்று;
 	     object = next) {
 		next = object->next;
 
 		remaining_lifetime = llcache_object_rfc2616_remaining_lifetime(
 				&object->cache);
 
-		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		எனில் ((object->users == வெற்று) &&
+		    (object->candidate_மொத்தம் == 0) &&
+		    (object->fetch.fetch == வெற்று) &&
 		    (remaining_lifetime <= 0)) {
 			/* object is stale */
 			NSLOG(llcache, DEBUG, "discarding stale cacheable object with no "
@@ -3823,13 +3823,13 @@ void llcache_clean(bool purge)
 				llcache_object_remove_from_list(object,
 						&llcache->cached_objects);
 
-				if (object->store_state == LLCACHE_STATE_DISC) {
+				எனில் (object->store_state == LLCACHE_STATE_DISC) {
 					guit->llcache->invalidate(object->url);
 				}
 
 				llcache_object_destroy(object);
 
-		} else {
+		} இல்லையெனில் {
 			/* object has users so account for the storage */
 			llcache_size += total_object_size(object);
 		}
@@ -3839,25 +3839,25 @@ void llcache_clean(bool purge)
 	 * persistent so their RAM can be reclaimed in the next
 	 * step
 	 */
-	if (limit < llcache_size) {
-		llcache_persist(NULL);
+	எனில் (limit < llcache_size) {
+		llcache_persist(வெற்று);
 	}
 
 	/* Source data of fresh cacheable objects with no users, no
 	 * pending fetches and pushed to persistent store while the
 	 * cache exceeds the configured size.
 	 */
-	for (object = llcache->cached_objects;
-	     ((limit < llcache_size) && (object != NULL));
+	க்கு (object = llcache->cached_objects;
+	     ((limit < llcache_size) && (object != வெற்று));
 	     object = next) {
 		next = object->next;
-		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		எனில் ((object->users == வெற்று) &&
+		    (object->candidate_மொத்தம் == 0) &&
+		    (object->fetch.fetch == வெற்று) &&
 		    (object->store_state == LLCACHE_STATE_DISC)) {
 			guit->llcache->release(object->url, BACKING_STORE_NONE);
 
-			object->source_data = NULL;
+			object->source_data = வெற்று;
 
 			llcache_size -=	object->source_len;
 
@@ -3871,19 +3871,19 @@ void llcache_clean(bool purge)
 	 * and pushed to persistent store while the cache exceeds
 	 * the configured size. Effectively just the llcache object metadata.
 	 */
-	for (object = llcache->cached_objects;
-	     ((limit < llcache_size) && (object != NULL));
+	க்கு (object = llcache->cached_objects;
+	     ((limit < llcache_size) && (object != வெற்று));
 	     object = next) {
 		next = object->next;
-		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		எனில் ((object->users == வெற்று) &&
+		    (object->candidate_மொத்தம் == 0) &&
+		    (object->fetch.fetch == வெற்று) &&
 		    (object->store_state == LLCACHE_STATE_DISC) &&
-		    (object->source_data == NULL)) {
+		    (object->source_data == வெற்று)) {
 			NSLOG(llcache, DEBUG,
 			     "discarding backed object len:%"PRIsizet" age:%ld (%p) %s",
 			      object->source_len,
-			      (long)(time(NULL) - object->last_used),
+			      (long)(time(வெற்று) - object->last_used),
 			      object,
 			      nsurl_access(object->url));
 
@@ -3901,23 +3901,23 @@ void llcache_clean(bool purge)
 	 * most valuable objects as replacing them is a full network
 	 * fetch
 	 */
-	for (object = llcache->cached_objects;
-	     ((limit < llcache_size) && (object != NULL));
+	க்கு (object = llcache->cached_objects;
+	     ((limit < llcache_size) && (object != வெற்று));
 	     object = next) {
 		next = object->next;
 
-		if ((object->users == NULL) &&
-		    (object->candidate_count == 0) &&
-		    (object->fetch.fetch == NULL) &&
+		எனில் ((object->users == வெற்று) &&
+		    (object->candidate_மொத்தம் == 0) &&
+		    (object->fetch.fetch == வெற்று) &&
 		    (object->store_state == LLCACHE_STATE_RAM)) {
 			NSLOG(llcache, DEBUG,
 			      "discarding fresh object len:%"PRIsizet" age:%ld (%p) %s",
 			      object->source_len,
-			      (long)(time(NULL) - object->last_used),
+			      (long)(time(வெற்று) - object->last_used),
 			      object,
 			      nsurl_access(object->url));
 
-			llcache_size -=	object->source_len + sizeof(*object);
+			llcache_size -=	object->source_len + அளவு(*object);
 
 			llcache_object_remove_from_list(object,
 						&llcache->cached_objects);
@@ -3930,11 +3930,11 @@ void llcache_clean(bool purge)
 
 /* Exported interface documented in content/llcache.h */
 nserror
-llcache_initialise(const struct llcache_parameters *prm)
+llcache_initialise(மாறிலி கட்டமைப்பு llcache_parameters *prm)
 {
-	llcache = calloc(1, sizeof(struct llcache_s));
-	if (llcache == NULL) {
-		return NSERROR_NOMEM;
+	llcache = calloc(1, அளவு(கட்டமைப்பு llcache_s));
+	எனில் (llcache == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	llcache->limit = prm->limit;
@@ -3950,59 +3950,59 @@ llcache_initialise(const struct llcache_parameters *prm)
 	      llcache->limit);
 
 	/* backing store initialisation */
-	return guit->llcache->initialise(&prm->store);
+	திரும்பு guit->llcache->initialise(&prm->store);
 }
 
 
 /* Exported interface documented in content/llcache.h */
-void llcache_finalise(void)
+வெறுமை llcache_finalise(வெறுமை)
 {
 	llcache_object *object, *next;
 	uint64_t total_bandwidth = 0; /* total bandwidth */
 
 	/* Attempt to persist anything we have left lying around */
-	llcache_persist(NULL);
+	llcache_persist(வெற்று);
 	/* Now clear the persistence callback */
-	guit->misc->schedule(-1, llcache_persist, NULL);
+	guit->misc->schedule(-1, llcache_persist, வெற்று);
 
 	/* Clean uncached objects */
-	for (object = llcache->uncached_objects; object != NULL; object = next) {
+	க்கு (object = llcache->uncached_objects; object != வெற்று; object = next) {
 		llcache_object_user *user, *next_user;
 
 		next = object->next;
 
-		for (user = object->users; user != NULL; user = next_user) {
+		க்கு (user = object->users; user != வெற்று; user = next_user) {
 			next_user = user->next;
 
-			if (user->handle != NULL)
-				free(user->handle);
+			எனில் (user->handle != வெற்று)
+				விடுவி(user->handle);
 
-			free(user);
+			விடுவி(user);
 		}
 
 		/* Fetch system has already been destroyed */
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = வெற்று;
 
 		llcache_object_destroy(object);
 	}
 
 	/* Clean cached objects */
-	for (object = llcache->cached_objects; object != NULL; object = next) {
+	க்கு (object = llcache->cached_objects; object != வெற்று; object = next) {
 		llcache_object_user *user, *next_user;
 
 		next = object->next;
 
-		for (user = object->users; user != NULL; user = next_user) {
+		க்கு (user = object->users; user != வெற்று; user = next_user) {
 			next_user = user->next;
 
-			if (user->handle != NULL)
-			       free(user->handle);
+			எனில் (user->handle != வெற்று)
+			       விடுவி(user->handle);
 
-			free(user);
+			விடுவி(user);
 		}
 
 		/* Fetch system has already been destroyed */
-		object->fetch.fetch = NULL;
+		object->fetch.fetch = வெற்று;
 
 		llcache_object_destroy(object);
 	}
@@ -4010,7 +4010,7 @@ void llcache_finalise(void)
 	/* backing store finalisation */
 	guit->llcache->finalise();
 
-	if (llcache->total_elapsed > 0) {
+	எனில் (llcache->total_elapsed > 0) {
 		total_bandwidth = (llcache->total_written * 1000) /
 			llcache->total_elapsed;
 	}
@@ -4021,8 +4021,8 @@ void llcache_finalise(void)
 	      llcache->total_elapsed,
 	      total_bandwidth);
 
-	free(llcache);
-	llcache = NULL;
+	விடுவி(llcache);
+	llcache = வெற்று;
 }
 
 
@@ -4032,8 +4032,8 @@ nserror
 llcache_handle_retrieve(nsurl *url,
 			uint32_t flags,
 			nsurl *referer,
-			const llcache_post_data *post,
-			llcache_handle_callback cb, void *pw,
+			மாறிலி llcache_post_data *post,
+			llcache_handle_callback cb, வெறுமை *pw,
 			llcache_handle **result)
 {
 	nserror error;
@@ -4044,31 +4044,31 @@ llcache_handle_retrieve(nsurl *url,
 
 	/* Perform HSTS transform */
 	error = llcache_hsts_transform_url(url, &hsts_url, &hsts_in_use);
-	if (error != NSERROR_OK) {
-		return error;
+	எனில் (error != NSERROR_OK) {
+		திரும்பு error;
 	}
 
 	/* Can we fetch this URL at all? */
-	if (fetch_can_fetch(hsts_url) == false) {
+	எனில் (fetch_can_fetch(hsts_url) == false) {
 		nsurl_unref(hsts_url);
-		return NSERROR_NO_FETCH_HANDLER;
+		திரும்பு NSERROR_NO_FETCH_HANDLER;
 	}
 
 	/* Create a new object user */
 	error = llcache_object_user_new(cb, pw, &user);
-	if (error != NSERROR_OK) {
+	எனில் (error != NSERROR_OK) {
 		nsurl_unref(hsts_url);
-		return error;
+		திரும்பு error;
 	}
 
 	/* Retrieve a suitable object from the cache,
 	 * creating a new one if needed. */
 	error = llcache_object_retrieve(hsts_url, flags, referer, post, 0,
 			hsts_in_use, &object);
-	if (error != NSERROR_OK) {
+	எனில் (error != NSERROR_OK) {
 		llcache_object_user_destroy(user);
 		nsurl_unref(hsts_url);
-		return error;
+		திரும்பு error;
 	}
 
 	/* Add user to object */
@@ -4081,18 +4081,18 @@ llcache_handle_retrieve(nsurl *url,
 
 	nsurl_unref(hsts_url);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /* Exported interface documented in content/llcache.h */
 nserror llcache_handle_change_callback(llcache_handle *handle,
-		llcache_handle_callback cb, void *pw)
+		llcache_handle_callback cb, வெறுமை *pw)
 {
 	handle->cb = cb;
 	handle->pw = pw;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
@@ -4103,21 +4103,21 @@ nserror llcache_handle_release(llcache_handle *handle)
 	llcache_object *object = handle->object;
 	llcache_object_user *user = llcache_object_find_user(handle);
 
-	assert(user != NULL);
+	ப்ரதிஜ்ஞா(user != வெற்று);
 
-	if (user->iterator_target) {
+	எனில் (user->iterator_target) {
 		/* Can't remove / delete user object if it's
 		 * the target of an iterator */
 		user->queued_for_delete = true;
-	} else {
+	} இல்லையெனில் {
 		/* Remove the user from the object and destroy it */
 		error = llcache_object_remove_user(object, user);
-		if (error == NSERROR_OK) {
+		எனில் (error == NSERROR_OK) {
 			error = llcache_object_user_destroy(user);
 		}
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 /* Exported interface documented in content/llcache.h */
@@ -4127,13 +4127,13 @@ nserror llcache_handle_clone(llcache_handle *handle, llcache_handle **result)
 	llcache_object_user *newuser;
 
 	error = llcache_object_user_new(handle->cb, handle->pw, &newuser);
-	if (error == NSERROR_OK) {
+	எனில் (error == NSERROR_OK) {
 		llcache_object_add_user(handle->object, newuser);
 		newuser->handle->state = handle->state;
 		*result = newuser->handle;
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 /* See llcache.h for documentation */
@@ -4145,36 +4145,36 @@ nserror llcache_handle_abort(llcache_handle *handle)
 	bool all_alone = true;
 
 	/* Determine if we are the only user */
-	if (user->prev != NULL)
+	எனில் (user->prev != வெற்று)
 		all_alone = false;
-	if (user->next != NULL)
+	எனில் (user->next != வெற்று)
 		all_alone = false;
 
-	if (all_alone == false) {
+	எனில் (all_alone == false) {
 		/* We must snapshot this object */
 		error = llcache_object_snapshot(object, &newobject);
-		if (error != NSERROR_OK)
-			return error;
+		எனில் (error != NSERROR_OK)
+			திரும்பு error;
 
 		/* Move across to the new object */
-		if (user->iterator_target) {
+		எனில் (user->iterator_target) {
 			/* User is current iterator target, clone it */
 			llcache_object_user *newuser =
-					calloc(1, sizeof(llcache_object_user));
-			if (newuser == NULL) {
+					calloc(1, அளவு(llcache_object_user));
+			எனில் (newuser == வெற்று) {
 				llcache_object_destroy(newobject);
-				return NSERROR_NOMEM;
+				திரும்பு NSERROR_NOMEM;
 			}
 
 			/* Move handle across to clone */
 			newuser->handle = user->handle;
-			user->handle = NULL;
+			user->handle = வெற்று;
 
 			/* Mark user as needing deletion */
 			user->queued_for_delete = true;
 
 			llcache_object_add_user(newobject, newuser);
-		} else {
+		} இல்லையெனில் {
 			llcache_object_remove_user(object, user);
 			llcache_object_add_user(newobject, user);
 		}
@@ -4182,11 +4182,11 @@ nserror llcache_handle_abort(llcache_handle *handle)
 		/* Add new object to uncached list */
 		llcache_object_add_to_list(newobject,
 				&llcache->uncached_objects);
-	} else {
+	} இல்லையெனில் {
 		/* We're the only user, so abort any fetch in progress */
-		if (object->fetch.fetch != NULL) {
+		எனில் (object->fetch.fetch != வெற்று) {
 			fetch_abort(object->fetch.fetch);
-			object->fetch.fetch = NULL;
+			object->fetch.fetch = வெற்று;
 		}
 
 		object->fetch.state = LLCACHE_FETCH_COMPLETE;
@@ -4195,7 +4195,7 @@ nserror llcache_handle_abort(llcache_handle *handle)
 		llcache_invalidate_cache_control_data(object);
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 /* See llcache.h for documentation */
@@ -4205,11 +4205,11 @@ nserror llcache_handle_force_stream(llcache_handle *handle)
 	llcache_object *object = handle->object;
 
 	/* Cannot stream if there are multiple users */
-	if (user->prev != NULL || user->next != NULL)
-		return NSERROR_OK;
+	எனில் (user->prev != வெற்று || user->next != வெற்று)
+		திரும்பு NSERROR_OK;
 
 	/* Forcibly uncache this object */
-	if (llcache_object_in_list(object, llcache->cached_objects)) {
+	எனில் (llcache_object_in_list(object, llcache->cached_objects)) {
 		llcache_object_remove_from_list(object,
 				&llcache->cached_objects);
 		llcache_object_add_to_list(object, &llcache->uncached_objects);
@@ -4217,59 +4217,59 @@ nserror llcache_handle_force_stream(llcache_handle *handle)
 
 	object->fetch.flags |= LLCACHE_RETRIEVE_STREAM_DATA;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* See llcache.h for documentation */
 nserror llcache_handle_invalidate_cache_data(llcache_handle *handle)
 {
-	if ((handle->object != NULL) &&
-	    (handle->object->fetch.fetch == NULL) &&
+	எனில் ((handle->object != வெற்று) &&
+	    (handle->object->fetch.fetch == வெற்று) &&
 	    (handle->object->cache.no_cache == LLCACHE_VALIDATE_FRESH)) {
 		/* mark the cached object as requiring validation */
 		handle->object->cache.no_cache = LLCACHE_VALIDATE_ONCE;
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* See llcache.h for documentation */
-nsurl *llcache_handle_get_url(const llcache_handle *handle)
+nsurl *llcache_handle_get_url(மாறிலி llcache_handle *handle)
 {
-	return handle->object != NULL ? handle->object->url : NULL;
+	திரும்பு handle->object != வெற்று ? handle->object->url : வெற்று;
 }
 
 /* See llcache.h for documentation */
-const uint8_t *llcache_handle_get_source_data(const llcache_handle *handle,
+மாறிலி uint8_t *llcache_handle_get_source_data(மாறிலி llcache_handle *handle,
 		size_t *size)
 {
-	*size = handle->object != NULL ? handle->object->source_len : 0;
+	*size = handle->object != வெற்று ? handle->object->source_len : 0;
 
-	return handle->object != NULL ? handle->object->source_data : NULL;
+	திரும்பு handle->object != வெற்று ? handle->object->source_data : வெற்று;
 }
 
 /* See llcache.h for documentation */
-const char *llcache_handle_get_header(const llcache_handle *handle,
-		const char *key)
+மாறிலி எழுத்து *llcache_handle_get_header(மாறிலி llcache_handle *handle,
+		மாறிலி எழுத்து *சாவி)
 {
-	const llcache_object *object = handle->object;
+	மாறிலி llcache_object *object = handle->object;
 	size_t i;
 
-	if (object == NULL)
-		return NULL;
+	எனில் (object == வெற்று)
+		திரும்பு வெற்று;
 
 	/* About as trivial as possible */
-	for (i = 0; i < object->num_headers; i++) {
-		if (strcasecmp(key, object->headers[i].name) == 0)
-			return object->headers[i].value;
+	க்கு (i = 0; i < object->இலக்கம்_headers; i++) {
+		எனில் (strcasecmp(சாவி, object->headers[i].name) == 0)
+			திரும்பு object->headers[i].மதிப்பு;
 	}
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 /* See llcache.h for documentation */
-bool llcache_handle_references_same_object(const llcache_handle *a,
-		const llcache_handle *b)
+bool llcache_handle_references_same_object(மாறிலி llcache_handle *a,
+		மாறிலி llcache_handle *b)
 {
-	return a->object == b->object;
+	திரும்பு a->object == b->object;
 }

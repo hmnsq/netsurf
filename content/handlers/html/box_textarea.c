@@ -21,243 +21,243 @@
  * Box tree treeview box replacement (implementation).
  */
 
-#include <string.h>
-#include <dom/dom.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <dom/dom.h>
 
-#include "utils/config.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/keypress.h"
-#include "netsurf/misc.h"
-#include "desktop/textarea.h"
+#அந்தர்பாவ "utils/config.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "netsurf/keypress.h"
+#அந்தர்பாவ "netsurf/misc.h"
+#அந்தர்பாவ "desktop/textarea.h"
 
-#include "html/private.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/box_textarea.h"
-#include "html/font.h"
-#include "html/form_internal.h"
+#அந்தர்பாவ "html/private.h"
+#அந்தர்பாவ "html/interaction.h"
+#அந்தர்பாவ "html/box.h"
+#அந்தர்பாவ "html/box_inspect.h"
+#அந்தர்பாவ "html/box_textarea.h"
+#அந்தர்பாவ "html/font.h"
+#அந்தர்பாவ "html/form_internal.h"
 
 
-nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
+nserror box_textarea_keypress(html_content *html, கட்டமைப்பு box *box, uint32_t சாவி)
 {
-	struct form_control *gadget = box->gadget;
-	struct textarea *ta = gadget->data.text.ta;
-	struct form* form = box->gadget->form;
-	struct content *c = (struct content *)html;
+	கட்டமைப்பு form_control *gadget = box->gadget;
+	கட்டமைப்பு textarea *ta = gadget->data.text.ta;
+	கட்டமைப்பு form* form = box->gadget->form;
+	கட்டமைப்பு content *c = (கட்டமைப்பு content *)html;
 	nserror res = NSERROR_OK;
 
-	assert(ta != NULL);
+	ப்ரதிஜ்ஞா(ta != வெற்று);
 
-	if (gadget->type == GADGET_TEXTAREA) {
-		if (textarea_keypress(ta, key)) {
-			return NSERROR_OK;
-		} else {
-			return NSERROR_INVALID;
+	எனில் (gadget->type == GADGET_TEXTAREA) {
+		எனில் (textarea_keypress(ta, சாவி)) {
+			திரும்பு NSERROR_OK;
+		} இல்லையெனில் {
+			திரும்பு NSERROR_INVALID;
 		}
 	}
 
 	/* non textarea input */
-	switch (key) {
-	case NS_KEY_NL:
-	case NS_KEY_CR:
-		if (form) {
+	தேர்வு (சாவி) {
+	நிலை NS_சாவி_NL:
+	நிலை NS_சாவி_CR:
+		எனில் (form) {
 			res = form_submit(content_get_url(c),
 					  html->bw,
 					  form,
-					  NULL);
+					  வெற்று);
 		}
-		break;
+		நிறுத்து;
 
-	case NS_KEY_TAB:
+	நிலை NS_சாவி_TAB:
 		{
-			struct form_control *next_input;
+			கட்டமைப்பு form_control *next_உள்ளீடு;
 			/* Find next text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (next_input = gadget->next;
-			     next_input &&
-				     ((next_input->type != GADGET_TEXTBOX &&
-				       next_input->type != GADGET_TEXTAREA &&
-				       next_input->type != GADGET_PASSWORD) ||
-				      !next_input->box);
-			     next_input = next_input->next)
+			க்கு (next_உள்ளீடு = gadget->next;
+			     next_உள்ளீடு &&
+				     ((next_உள்ளீடு->type != GADGET_TEXTBOX &&
+				       next_உள்ளீடு->type != GADGET_TEXTAREA &&
+				       next_உள்ளீடு->type != GADGET_PASSWORD) ||
+				      !next_உள்ளீடு->box);
+			     next_உள்ளீடு = next_உள்ளீடு->next)
 				;
 
-			if (next_input != NULL) {
+			எனில் (next_உள்ளீடு != வெற்று) {
 				textarea_set_caret(ta, -1);
-				textarea_set_caret(next_input->data.text.ta, 0);
+				textarea_set_caret(next_உள்ளீடு->data.text.ta, 0);
 			}
 		}
-		break;
+		நிறுத்து;
 
-	case NS_KEY_SHIFT_TAB:
+	நிலை NS_சாவி_SHIFT_TAB:
 		{
-			struct form_control *prev_input;
+			கட்டமைப்பு form_control *prev_உள்ளீடு;
 			/* Find previous text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (prev_input = gadget->prev;
-			     prev_input &&
-				     ((prev_input->type != GADGET_TEXTBOX &&
-				       prev_input->type != GADGET_TEXTAREA &&
-				       prev_input->type != GADGET_PASSWORD) ||
-				      !prev_input->box);
-			     prev_input = prev_input->prev)
+			க்கு (prev_உள்ளீடு = gadget->prev;
+			     prev_உள்ளீடு &&
+				     ((prev_உள்ளீடு->type != GADGET_TEXTBOX &&
+				       prev_உள்ளீடு->type != GADGET_TEXTAREA &&
+				       prev_உள்ளீடு->type != GADGET_PASSWORD) ||
+				      !prev_உள்ளீடு->box);
+			     prev_உள்ளீடு = prev_உள்ளீடு->prev)
 				;
 
-			if (prev_input != NULL) {
+			எனில் (prev_உள்ளீடு != வெற்று) {
 				textarea_set_caret(ta, -1);
-				textarea_set_caret(prev_input->data.text.ta, 0);
+				textarea_set_caret(prev_உள்ளீடு->data.text.ta, 0);
 			}
 		}
-		break;
+		நிறுத்து;
 
-	default:
+	இயல்பு:
 		/* Pass to textarea widget */
-		if (!textarea_keypress(ta, key)) {
+		எனில் (!textarea_keypress(ta, சாவி)) {
 			res = NSERROR_INVALID;
 		}
-		break;
+		நிறுத்து;
 	}
 
-	return res;
+	திரும்பு res;
 }
 
 
 /**
  * Callback for html form textareas.
  */
-static void box_textarea_callback(void *data, struct textarea_msg *msg)
+நிலையான வெறுமை box_textarea_callback(வெறுமை *data, கட்டமைப்பு textarea_செய்தி *செய்தி)
 {
-	struct form_textarea_data *d = data;
-	struct form_control *gadget = d->gadget;
-	struct html_content *html = d->gadget->html;
-	struct box *box = gadget->box;
+	கட்டமைப்பு form_textarea_data *d = data;
+	கட்டமைப்பு form_control *gadget = d->gadget;
+	கட்டமைப்பு html_content *html = d->gadget->html;
+	கட்டமைப்பு box *box = gadget->box;
 
-	switch (msg->type) {
-	case TEXTAREA_MSG_DRAG_REPORT:
-		if (msg->data.drag == TEXTAREA_DRAG_NONE) {
+	தேர்வு (செய்தி->type) {
+	நிலை TEXTAREA_செய்தி_DRAG_REPORT:
+		எனில் (செய்தி->data.drag == TEXTAREA_DRAG_NONE) {
 			/* Textarea drag finished */
 			html_drag_type drag_type = HTML_DRAG_NONE;
-			union html_drag_owner drag_owner;
+			ஒன்றிப்பு html_drag_owner drag_owner;
 			drag_owner.no_owner = true;
 
 			html_set_drag_type(html, drag_type, drag_owner,
-					NULL);
-		} else {
+					வெற்று);
+		} இல்லையெனில் {
 			/* Textarea drag started */
-			struct rect rect = {
+			கட்டமைப்பு rect rect = {
 				.x0 = INT_MIN,
 				.y0 = INT_MIN,
 				.x1 = INT_MAX,
 				.y1 = INT_MAX
 			};
-			union html_drag_owner drag_owner;
+			ஒன்றிப்பு html_drag_owner drag_owner;
 			drag_owner.textarea = box;
 
-			switch (msg->data.drag) {
-			case TEXTAREA_DRAG_SCROLLBAR:
+			தேர்வு (செய்தி->data.drag) {
+			நிலை TEXTAREA_DRAG_SCROLLBAR:
 				html_set_drag_type(html,
 						   HTML_DRAG_TEXTAREA_SCROLLBAR,
 						   drag_owner,
 						   &rect);
-				break;
+				நிறுத்து;
 
-			case TEXTAREA_DRAG_SELECTION:
+			நிலை TEXTAREA_DRAG_SELECTION:
 				html_set_drag_type(html,
 						   HTML_DRAG_TEXTAREA_SELECTION,
 						   drag_owner,
 						   &rect);
-				break;
+				நிறுத்து;
 
-			default:
+			இயல்பு:
 				NSLOG(netsurf, INFO,
 				      "Drag type %d not handled.",
-				      msg->data.drag);
+				      செய்தி->data.drag);
 				/* This is a logic faliure in the
 				 * front end code so abort.
 				 */
-				assert(0);
-				break;
+				ப்ரதிஜ்ஞா(0);
+				நிறுத்து;
 			}
 		}
-		break;
+		நிறுத்து;
 
-	case TEXTAREA_MSG_REDRAW_REQUEST:
+	நிலை TEXTAREA_செய்தி_REDRAW_REQUEST:
 	{
 		/* Request redraw of the required textarea rectangle */
-		int x, y;
+		முழு x, y;
 
-		if (html->reflowing == true) {
+		எனில் (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
-			break;
+			நிறுத்து;
 		}
 
 		box_coords(box, &x, &y);
 
-		content__request_redraw((struct content *)html,
-				x + msg->data.redraw.x0,
-				y + msg->data.redraw.y0,
-				msg->data.redraw.x1 - msg->data.redraw.x0,
-				msg->data.redraw.y1 - msg->data.redraw.y0);
+		content__request_redraw((கட்டமைப்பு content *)html,
+				x + செய்தி->data.redraw.x0,
+				y + செய்தி->data.redraw.y0,
+				செய்தி->data.redraw.x1 - செய்தி->data.redraw.x0,
+				செய்தி->data.redraw.y1 - செய்தி->data.redraw.y0);
 	}
-		break;
+		நிறுத்து;
 
-	case TEXTAREA_MSG_SELECTION_REPORT:
-		if (msg->data.selection.have_selection) {
+	நிலை TEXTAREA_செய்தி_SELECTION_REPORT:
+		எனில் (செய்தி->data.selection.have_selection) {
 			/* Textarea now has a selection */
-			union html_selection_owner sel_owner;
+			ஒன்றிப்பு html_selection_owner sel_owner;
 			sel_owner.textarea = box;
 
 			html_set_selection(html, HTML_SELECTION_TEXTAREA,
 					sel_owner,
-					msg->data.selection.read_only);
-		} else {
+					செய்தி->data.selection.read_only);
+		} இல்லையெனில் {
 			/* The textarea now has no selection */
-			union html_selection_owner sel_owner;
+			ஒன்றிப்பு html_selection_owner sel_owner;
 			sel_owner.none = true;
 
 			html_set_selection(html, HTML_SELECTION_NONE,
 					sel_owner, true);
 		}
-		break;
+		நிறுத்து;
 
-	case TEXTAREA_MSG_CARET_UPDATE:
-		if (html->bw == NULL)
-			break;
+	நிலை TEXTAREA_செய்தி_CARET_UPDATE:
+		எனில் (html->bw == வெற்று)
+			நிறுத்து;
 
-		if (msg->data.caret.type == TEXTAREA_CARET_HIDE) {
-			union html_focus_owner focus_owner;
+		எனில் (செய்தி->data.caret.type == TEXTAREA_CARET_HIDE) {
+			ஒன்றிப்பு html_focus_owner focus_owner;
 			focus_owner.textarea = box;
 			html_set_focus(html, HTML_FOCUS_TEXTAREA,
-					focus_owner, true, 0, 0, 0, NULL);
-		} else {
-			union html_focus_owner focus_owner;
+					focus_owner, true, 0, 0, 0, வெற்று);
+		} இல்லையெனில் {
+			ஒன்றிப்பு html_focus_owner focus_owner;
 			focus_owner.textarea = box;
 			html_set_focus(html, HTML_FOCUS_TEXTAREA,
 					focus_owner, false,
-					msg->data.caret.pos.x,
-					msg->data.caret.pos.y,
-					msg->data.caret.pos.height,
-					msg->data.caret.pos.clip);
+					செய்தி->data.caret.pos.x,
+					செய்தி->data.caret.pos.y,
+					செய்தி->data.caret.pos.height,
+					செய்தி->data.caret.pos.clip);
 		}
-		break;
+		நிறுத்து;
 
-	case TEXTAREA_MSG_TEXT_MODIFIED:
-		form_gadget_update_value(gadget,
-					 strndup(msg->data.modified.text,
-						 msg->data.modified.len));
-		break;
+	நிலை TEXTAREA_செய்தி_TEXT_MODIFIED:
+		form_gadget_update_மதிப்பு(gadget,
+					 strndup(செய்தி->data.modified.text,
+						 செய்தி->data.modified.len));
+		நிறுத்து;
 	}
 }
 
 
 /* Exported interface, documented in box_textarea.h */
 bool box_textarea_create_textarea(html_content *html,
-		struct box *box, struct dom_node *node)
+		கட்டமைப்பு box *box, கட்டமைப்பு dom_முனை *முனை)
 {
-	dom_string *dom_text = NULL;
+	dom_string *dom_text = வெற்று;
 	dom_exception err;
 	textarea_setup ta_setup;
 	textarea_flags ta_flags;
@@ -271,67 +271,67 @@ bool box_textarea_create_textarea(html_content *html,
 	};
 	bool read_only = false;
 	bool disabled = false;
-	struct form_control *gadget = box->gadget;
-	const char *text;
+	கட்டமைப்பு form_control *gadget = box->gadget;
+	மாறிலி எழுத்து *text;
 
-	assert(gadget != NULL);
-	assert(gadget->type == GADGET_TEXTAREA ||
+	ப்ரதிஜ்ஞா(gadget != வெற்று);
+	ப்ரதிஜ்ஞா(gadget->type == GADGET_TEXTAREA ||
 			gadget->type == GADGET_TEXTBOX ||
 			gadget->type == GADGET_PASSWORD);
 
-	if (gadget->type == GADGET_TEXTAREA) {
+	எனில் (gadget->type == GADGET_TEXTAREA) {
 		dom_html_text_area_element *textarea =
-				(dom_html_text_area_element *) node;
+				(dom_html_text_area_element *) முனை;
 		ta_flags = TEXTAREA_MULTILINE;
 
 		err = dom_html_text_area_element_get_read_only(
 				textarea, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு false;
 
 		err = dom_html_text_area_element_get_disabled(
 				textarea, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு false;
 
 		/* Get the textarea's initial content */
-		err = dom_html_text_area_element_get_value(textarea, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_text_area_element_get_மதிப்பு(textarea, &dom_text);
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு false;
 
-	} else {
-		dom_html_input_element *input = (dom_html_input_element *) node;
+	} இல்லையெனில் {
+		dom_html_உள்ளீடு_element *உள்ளீடு = (dom_html_உள்ளீடு_element *) முனை;
 
-		err = dom_html_input_element_get_read_only(
-				input, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_உள்ளீடு_element_get_read_only(
+				உள்ளீடு, &read_only);
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு false;
 
-		err = dom_html_input_element_get_disabled(
-				input, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_உள்ளீடு_element_get_disabled(
+				உள்ளீடு, &disabled);
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு false;
 
-		if (gadget->type == GADGET_PASSWORD)
+		எனில் (gadget->type == GADGET_PASSWORD)
 			ta_flags = TEXTAREA_PASSWORD;
-		else
+		இல்லையெனில்
 			ta_flags = TEXTAREA_DEFAULT;
 
 		/* Get initial text */
-		err = dom_html_input_element_get_value(input, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_உள்ளீடு_element_get_மதிப்பு(உள்ளீடு, &dom_text);
+		எனில் (err != DOM_NO_ERR)
+			திரும்பு false;
 	}
 
-	if (dom_text != NULL) {
+	எனில் (dom_text != வெற்று) {
 		text = dom_string_data(dom_text);
-	} else {
+	} இல்லையெனில் {
 		/* No initial text, or failed reading it;
 		 * use a blank string */
 		text = "";
 	}
 
-	if (read_only || disabled)
+	எனில் (read_only || disabled)
 		ta_flags |= TEXTAREA_READONLY;
 
 	gadget->data.text.data.gadget = gadget;
@@ -339,10 +339,10 @@ bool box_textarea_create_textarea(html_content *html,
 	/* Reset to correct values by layout */
 	ta_setup.width = 200;
 	ta_setup.height = 20;
-	ta_setup.pad_top = 4;
-	ta_setup.pad_right = 4;
+	ta_setup.pad_உச்சி = 4;
+	ta_setup.pad_வலது = 4;
 	ta_setup.pad_bottom = 4;
-	ta_setup.pad_left = 4;
+	ta_setup.pad_இடது = 4;
 
 	/* Set remaining data */
 	ta_setup.border_width = 0;
@@ -360,12 +360,12 @@ bool box_textarea_create_textarea(html_content *html,
 	gadget->data.text.ta = textarea_create(ta_flags, &ta_setup,
 			box_textarea_callback, &gadget->data.text.data);
 
-	if (gadget->data.text.ta == NULL) {
-		return false;
+	எனில் (gadget->data.text.ta == வெற்று) {
+		திரும்பு false;
 	}
 
-	if (!textarea_set_text(gadget->data.text.ta, text))
-		return false;
+	எனில் (!textarea_set_text(gadget->data.text.ta, text))
+		திரும்பு false;
 
-	return true;
+	திரும்பு true;
 }

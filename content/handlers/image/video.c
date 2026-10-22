@@ -16,49 +16,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gst/gst.h>
+#அந்தர்பாவ <gst/gst.h>
 
-#include "content/content_factory.h"
-#include "content/content_protected.h"
+#அந்தர்பாவ "content/content_factory.h"
+#அந்தர்பாவ "content/content_protected.h"
 
-#include "image/video.h"
+#அந்தர்பாவ "image/video.h"
 
-typedef struct nsvideo_content {
-	struct content base;
+வகைவரை கட்டமைப்பு nsvideo_content {
+	கட்டமைப்பு content base;
 
 	GstElement *playbin;
 	GstElement *appsrc;
 } nsvideo_content;
 
-static gboolean nsvideo_bus_call(GstBus *bus, GstMessage *msg, 
+நிலையான gboolean nsvideo_bus_call(GstBus *bus, GstMessage *செய்தி, 
 		nsvideo_content *video)
 {
-	switch (GST_MESSAGE_TYPE(msg)) {
-	case GST_MESSAGE_ERROR:
-		break;
-	case GST_MESSAGE_EOS:
-		break;
-	default:
-		break;
+	தேர்வு (GST_MESSAGE_TYPE(செய்தி)) {
+	நிலை GST_MESSAGE_ERROR:
+		நிறுத்து;
+	நிலை GST_MESSAGE_EOS:
+		நிறுத்து;
+	இயல்பு:
+		நிறுத்து;
 	}
 
-	return TRUE;
+	திரும்பு TRUE;
 }
 
-static void nsvideo_need_data_event(GstElement *playbin, guint size,
+நிலையான வெறுமை nsvideo_need_data_event(GstElement *playbin, guint size,
 		nsvideo_content *video)
 {
 }
 
-static void nsvideo_enough_data_event(GstElement *playbin,
+நிலையான வெறுமை nsvideo_enough_data_event(GstElement *playbin,
 		nsvideo_content *video)
 {
 }
 
-static void nsvideo_source_event(GObject *object, GObject *orig, 
+நிலையான வெறுமை nsvideo_source_event(GObject *object, GObject *orig, 
 		GParamSpec *pspec, nsvideo_content *video)
 {
-	g_object_get(orig, pspec->name, &video->appsrc, NULL);
+	g_object_get(orig, pspec->name, &video->appsrc, வெற்று);
 
 	g_signal_connect(video->appsrc, "need-data", 
 			G_CALLBACK(nsvideo_need_data_event), video);
@@ -66,44 +66,44 @@ static void nsvideo_source_event(GObject *object, GObject *orig,
 			G_CALLBACK(nsvideo_enough_data_event), video);
 }
 
-static nserror nsvideo_create(const content_handler *handler,
-		lwc_string *imime_type, const http_parameter *params,
+நிலையான nserror nsvideo_create(மாறிலி content_handler *handler,
+		lwc_string *imime_type, மாறிலி http_parameter *params,
 		llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
-		struct content **c)
+		மாறிலி எழுத்து *fallback_charset, bool quirks,
+		கட்டமைப்பு content **c)
 {
 	nsvideo_content *video;
 	nserror error;
 	GstBus *bus;
 
-	video = calloc(1, sizeof(nsvideo_content));
-	if (video == NULL)
-		return NSERROR_NOMEM;
+	video = calloc(1, அளவு(nsvideo_content));
+	எனில் (video == வெற்று)
+		திரும்பு NSERROR_NOMEM;
 
 	error = content__init(&video->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(video);
-		return error;
+	எனில் (error != NSERROR_OK) {
+		விடுவி(video);
+		திரும்பு error;
 	}
 
 	error = llcache_handle_force_stream(llcache);
-	if (error != NSERROR_OK) {
-		free(video);
-		return error;
+	எனில் (error != NSERROR_OK) {
+		விடுவி(video);
+		திரும்பு error;
 	}
 
-	video->playbin = gst_element_factory_make("playbin2", NULL);
-	if (video->playbin == NULL) {
-		free(video);
-		return NSERROR_NOMEM;
+	video->playbin = gst_element_factory_make("playbin2", வெற்று);
+	எனில் (video->playbin == வெற்று) {
+		விடுவி(video);
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(video->playbin));
 	gst_bus_add_watch(bus, (GstBusFunc) nsvideo_bus_call, video);
 	gst_object_unref(bus);
 
-	g_object_set(video->playbin, "uri", "appsrc://", NULL);
+	g_object_set(video->playbin, "uri", "appsrc://", வெற்று);
 	g_signal_connect(video->playbin, "deep-notify::source",
 			G_CALLBACK(nsvideo_source_event), video);
 
@@ -111,13 +111,13 @@ static nserror nsvideo_create(const content_handler *handler,
 
 	gst_element_set_state(video->playbin, GST_STATE_PLAYING);
 	
-	*c = (struct content *) video;
+	*c = (கட்டமைப்பு content *) video;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
-static bool nsvideo_process_data(struct content *c, const char *data, 
-		unsigned int size)
+நிலையான bool nsvideo_process_data(கட்டமைப்பு content *c, மாறிலி எழுத்து *data, 
+		unsigned முழு size)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstBuffer *buffer;
@@ -130,10 +130,10 @@ static bool nsvideo_process_data(struct content *c, const char *data,
 	/* Send data to appsrc */
 	g_signal_emit_by_name(video->appsrc, "push-buffer", buffer, &ret);
 
-	return ret == GST_FLOW_OK;
+	திரும்பு ret == GST_FLOW_OK;
 }
 
-static bool nsvideo_convert(struct content *c)
+நிலையான bool nsvideo_convert(கட்டமைப்பு content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstFlowReturn ret;
@@ -143,10 +143,10 @@ static bool nsvideo_convert(struct content *c)
 
 	/* Appsink will flag DONE on receipt of first frame */
 
-	return ret == GST_FLOW_OK;
+	திரும்பு ret == GST_FLOW_OK;
 }
 
-static void nsvideo_destroy(struct content *c)
+நிலையான வெறுமை nsvideo_destroy(கட்டமைப்பு content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 
@@ -154,32 +154,32 @@ static void nsvideo_destroy(struct content *c)
 	gst_object_unref(video->playbin);
 }
 
-static bool nsvideo_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+நிலையான bool nsvideo_redraw(கட்டமைப்பு content *c, கட்டமைப்பு content_redraw_data *data,
+		மாறிலி கட்டமைப்பு rect *clip, மாறிலி கட்டமைப்பு redraw_context *ctx)
 {
 	/** \todo Implement */
-	return true;
+	திரும்பு true;
 }
 
-static nserror nsvideo_clone(const struct content *old, struct content **newc)
+நிலையான nserror nsvideo_clone(மாறிலி கட்டமைப்பு content *old, கட்டமைப்பு content **newc)
 {
 	/** \todo Implement */
-	return NSERROR_CLONE_FAILED;
+	திரும்பு NSERROR_CLONE_FAILED;
 }
 
-static content_type nsvideo_type(void)
+நிலையான content_type nsvideo_type(வெறுமை)
 {
 	/** \todo Lies */
-	return CONTENT_IMAGE;
+	திரும்பு CONTENT_IMAGE;
 }
 
-static void *nsvideo_get_internal(const struct content *c, void *context)
+நிலையான வெறுமை *nsvideo_get_internal(மாறிலி கட்டமைப்பு content *c, வெறுமை *context)
 {
 	/** \todo Return pointer to bitmap containing current frame, if any? */
-	return NULL;
+	திரும்பு வெற்று;
 }
 
-static const content_handler nsvideo_content_handler = {
+நிலையான மாறிலி content_handler nsvideo_content_handler = {
 	.create = nsvideo_create,
 	.process_data = nsvideo_process_data,
 	.data_complete = nsvideo_convert,
@@ -192,7 +192,7 @@ static const content_handler nsvideo_content_handler = {
 	.no_share = true
 };
 
-static const char *nsvideo_types[] = {
+நிலையான மாறிலி எழுத்து *nsvideo_types[] = {
 	"video/mp4",
 	"video/webm"
 };

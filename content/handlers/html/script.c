@@ -21,78 +21,78 @@
  * implementation of content handling for text/html scripts.
  */
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <strings.h>
+#அந்தர்பாவ <stdlib.h>
 
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/content.h"
-#include "javascript/js.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
+#அந்தர்பாவ "utils/config.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "netsurf/content.h"
+#அந்தர்பாவ "javascript/js.h"
+#அந்தர்பாவ "content/content_protected.h"
+#அந்தர்பாவ "content/content_factory.h"
+#அந்தர்பாவ "content/fetch.h"
+#அந்தர்பாவ "content/hlcache.h"
 
-#include "html/html.h"
-#include "html/private.h"
+#அந்தர்பாவ "html/html.h"
+#அந்தர்பாவ "html/private.h"
 
-typedef bool (script_handler_t)(struct jsthread *jsthread, const uint8_t *data, size_t size, const char *name);
+வகைவரை bool (script_handler_t)(கட்டமைப்பு jsthread *jsthread, மாறிலி uint8_t *data, size_t size, மாறிலி எழுத்து *name);
 
 
-static script_handler_t *select_script_handler(content_type ctype)
+நிலையான script_handler_t *select_script_handler(content_type ctype)
 {
-	if (ctype == CONTENT_JS) {
-		return js_exec;
+	எனில் (ctype == CONTENT_JS) {
+		திரும்பு js_exec;
 	}
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_exec(html_content *c, bool allow_defer)
 {
-	unsigned int i;
-	struct html_script *s;
+	unsigned முழு i;
+	கட்டமைப்பு html_script *s;
 	script_handler_t *script_handler;
 	bool have_run_something = false;
 
-	if (c->jsthread == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	எனில் (c->jsthread == வெற்று) {
+		திரும்பு NSERROR_BAD_PARAMETER;
 	}
 
-	for (i = 0, s = c->scripts; i != c->scripts_count; i++, s++) {
-		if (s->already_started) {
-			continue;
+	க்கு (i = 0, s = c->scripts; i != c->scripts_மொத்தம்; i++, s++) {
+		எனில் (s->already_started) {
+			தொடர்;
 		}
 
-		if ((s->type == HTML_SCRIPT_ASYNC) ||
+		எனில் ((s->type == HTML_SCRIPT_ASYNC) ||
 		    (allow_defer && (s->type == HTML_SCRIPT_DEFER))) {
 			/* ensure script content is present */
-			if (s->data.handle == NULL)
-				continue;
+			எனில் (s->data.handle == வெற்று)
+				தொடர்;
 
 			/* ensure script content fetch status is not an error */
-			if (content_get_status(s->data.handle) ==
+			எனில் (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_ERROR)
-				continue;
+				தொடர்;
 
 			/* ensure script handler for content type */
 			script_handler = select_script_handler(
 					content_get_type(s->data.handle));
-			if (script_handler == NULL)
-				continue; /* unsupported type */
+			எனில் (script_handler == வெற்று)
+				தொடர்; /* unsupported type */
 
-			if (content_get_status(s->data.handle) ==
+			எனில் (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_DONE) {
 				/* external script is now available */
-				const uint8_t *data;
+				மாறிலி uint8_t *data;
 				size_t size;
 				data = content_get_source_data(
 						s->data.handle, &size );
@@ -111,32 +111,32 @@ nserror html_script_exec(html_content *c, bool allow_defer)
 		}
 	}
 
-	if (have_run_something) {
-		return html_proceed_to_done(c);
+	எனில் (have_run_something) {
+		திரும்பு html_proceed_to_done(c);
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* create new html script entry */
-static struct html_script *
+நிலையான கட்டமைப்பு html_script *
 html_process_new_script(html_content *c,
 			dom_string *mimetype,
-			enum html_script_type type)
+			எண்ணிக்கை html_script_type type)
 {
-	struct html_script *nscript;
+	கட்டமைப்பு html_script *nscript;
 	/* add space for new script entry */
 	nscript = realloc(c->scripts,
-			  sizeof(struct html_script) * (c->scripts_count + 1));
-	if (nscript == NULL) {
-		return NULL;
+			  அளவு(கட்டமைப்பு html_script) * (c->scripts_மொத்தம் + 1));
+	எனில் (nscript == வெற்று) {
+		திரும்பு வெற்று;
 	}
 
 	c->scripts = nscript;
 
 	/* increment script entry count */
-	nscript = &c->scripts[c->scripts_count];
-	c->scripts_count++;
+	nscript = &c->scripts[c->scripts_மொத்தம்];
+	c->scripts_மொத்தம்++;
 
 	nscript->already_started = false;
 	nscript->parser_inserted = false;
@@ -149,166 +149,166 @@ html_process_new_script(html_content *c,
 
 	nscript->mimetype = dom_string_ref(mimetype); /* reference mimetype */
 
-	return nscript;
+	திரும்பு nscript;
 }
 
 /**
  * Callback for asyncronous scripts
  */
-static nserror
+நிலையான nserror
 convert_script_async_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  மாறிலி hlcache_event *event,
+			  வெறுமை *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned முழு i;
+	கட்டமைப்பு html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
-			break;
+	க்கு (i = 0, s = parent->scripts; i != parent->scripts_மொத்தம்; i++, s++) {
+		எனில் (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
+			நிறுத்து;
 	}
 
-	assert(i != parent->scripts_count);
+	ப்ரதிஜ்ஞா(i != parent->scripts_மொத்தம்);
 
-	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		break;
+	தேர்வு (event->type) {
+	நிலை CONTENT_செய்தி_LOADING:
+		நிறுத்து;
 
-	case CONTENT_MSG_READY:
-		break;
+	நிலை CONTENT_செய்தி_READY:
+		நிறுத்து;
 
-	case CONTENT_MSG_DONE:
+	நிலை CONTENT_செய்தி_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		நிறுத்து;
 
-	case CONTENT_MSG_ERROR:
+	நிலை CONTENT_செய்தி_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = வெற்று;
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		நிறுத்து;
 
-	default:
-		break;
+	இயல்பு:
+		நிறுத்து;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	எனில் (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
 	/* if we have already started converting though, then we can handle the
 	 * scripts as they come in.
 	 */
-	else if (parent->conversion_begun) {
-		return html_script_exec(parent, false);
+	இல்லையெனில் எனில் (parent->conversion_begun) {
+		திரும்பு html_script_exec(parent, false);
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
  * Callback for defer scripts
  */
-static nserror
+நிலையான nserror
 convert_script_defer_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  மாறிலி hlcache_event *event,
+			  வெறுமை *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned முழு i;
+	கட்டமைப்பு html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
-			break;
+	க்கு (i = 0, s = parent->scripts; i != parent->scripts_மொத்தம்; i++, s++) {
+		எனில் (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
+			நிறுத்து;
 	}
 
-	assert(i != parent->scripts_count);
+	ப்ரதிஜ்ஞா(i != parent->scripts_மொத்தம்);
 
-	switch (event->type) {
+	தேர்வு (event->type) {
 
-	case CONTENT_MSG_DONE:
+	நிலை CONTENT_செய்தி_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		நிறுத்து;
 
-	case CONTENT_MSG_ERROR:
+	நிலை CONTENT_செய்தி_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = வெற்று;
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		நிறுத்து;
 
-	default:
-		break;
+	இயல்பு:
+		நிறுத்து;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	எனில் (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
  * Callback for syncronous scripts
  */
-static nserror
+நிலையான nserror
 convert_script_sync_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  மாறிலி hlcache_event *event,
+			  வெறுமை *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned முழு i;
+	கட்டமைப்பு html_script *s;
 	script_handler_t *script_handler;
 	dom_hubbub_error err;
-	unsigned int active_sync_scripts = 0;
+	unsigned முழு active_sync_scripts = 0;
 
 	/* Count sync scripts which have yet to complete (other than us) */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC &&
+	க்கு (i = 0, s = parent->scripts; i != parent->scripts_மொத்தம்; i++, s++) {
+		எனில் (s->type == HTML_SCRIPT_SYNC &&
 		    s->data.handle != script && s->already_started == false) {
 			active_sync_scripts++;
 		}
 	}
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
-			break;
+	க்கு (i = 0, s = parent->scripts; i != parent->scripts_மொத்தம்; i++, s++) {
+		எனில் (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
+			நிறுத்து;
 	}
 
-	assert(i != parent->scripts_count);
+	ப்ரதிஜ்ஞா(i != parent->scripts_மொத்தம்);
 
-	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	தேர்வு (event->type) {
+	நிலை CONTENT_செய்தி_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
@@ -318,9 +318,9 @@ convert_script_sync_cb(hlcache_handle *script,
 
 		/* attempt to execute script */
 		script_handler = select_script_handler(content_get_type(s->data.handle));
-		if (script_handler != NULL && parent->jsthread != NULL) {
+		எனில் (script_handler != வெற்று && parent->jsthread != வெற்று) {
 			/* script has a handler */
-			const uint8_t *data;
+			மாறிலி uint8_t *data;
 			size_t size;
 			data = content_get_source_data(s->data.handle, &size );
 			script_handler(parent->jsthread, data, size,
@@ -328,22 +328,22 @@ convert_script_sync_cb(hlcache_handle *script,
 		}
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		எனில் (parent->parser != வெற்று && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			எனில் (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
 
-		break;
+		நிறுத்து;
 
-	case CONTENT_MSG_ERROR:
+	நிலை CONTENT_செய்தி_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = வெற்று;
 		parent->base.active--;
 
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
@@ -351,57 +351,57 @@ convert_script_sync_cb(hlcache_handle *script,
 		s->already_started = true;
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		எனில் (parent->parser != வெற்று && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			எனில் (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
 
-		break;
+		நிறுத்து;
 
-	default:
-		break;
+	இயல்பு:
+		நிறுத்து;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	எனில் (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
  * process a script with a src tag
  */
-static dom_hubbub_error
+நிலையான dom_hubbub_error
 exec_src_script(html_content *c,
-		dom_node *node,
+		dom_முனை *முனை,
 		dom_string *mimetype,
 		dom_string *src)
 {
 	nserror ns_error;
 	nsurl *joined;
 	hlcache_child_context child;
-	struct html_script *nscript;
+	கட்டமைப்பு html_script *nscript;
 	bool async;
 	bool defer;
-	enum html_script_type script_type;
+	எண்ணிக்கை html_script_type script_type;
 	hlcache_handle_callback script_cb;
 	dom_hubbub_error ret = DOM_HUBBUB_OK;
 	dom_exception exc; /* returned by libdom functions */
 
 	/* src url */
 	ns_error = nsurl_join(c->base_url, dom_string_data(src), &joined);
-	if (ns_error != NSERROR_OK) {
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+	எனில் (ns_error != NSERROR_OK) {
+		content_broadcast_error(&c->base, NSERROR_NOMEM, வெற்று);
+		திரும்பு DOM_HUBBUB_NOMEM;
 	}
 
-	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_count,
+	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_மொத்தம்,
 	      nsurl_access(joined));
 
 	/* there are three ways to process the script tag at this point:
@@ -422,34 +422,34 @@ exec_src_script(html_content *c,
 	 * compatible approach is to be liberal and accept any
 	 * value. Note setting the values to "false" still makes them true!
 	 */
-	exc = dom_element_has_attribute(node, corestring_dom_async, &async);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_OK; /* dom error */
+	exc = dom_element_has_attribute(முனை, corestring_dom_async, &async);
+	எனில் (exc != DOM_NO_ERR) {
+		திரும்பு DOM_HUBBUB_OK; /* dom error */
 	}
 
-	if (c->parse_completed) {
+	எனில் (c->parse_completed) {
 		/* After parse completed, all scripts are essentially async */
 		async = true;
 		defer = false;
 	}
 
-	if (async) {
+	எனில் (async) {
 		/* asyncronous script */
 		script_type = HTML_SCRIPT_ASYNC;
 		script_cb = convert_script_async_cb;
 
-	} else {
-		exc = dom_element_has_attribute(node,
+	} இல்லையெனில் {
+		exc = dom_element_has_attribute(முனை,
 						corestring_dom_defer, &defer);
-		if (exc != DOM_NO_ERR) {
-			return DOM_HUBBUB_OK; /* dom error */
+		எனில் (exc != DOM_NO_ERR) {
+			திரும்பு DOM_HUBBUB_OK; /* dom error */
 		}
 
-		if (defer) {
+		எனில் (defer) {
 			/* defered script */
 			script_type = HTML_SCRIPT_DEFER;
 			script_cb = convert_script_defer_cb;
-		} else {
+		} இல்லையெனில் {
 			/* syncronous script */
 			script_type = HTML_SCRIPT_SYNC;
 			script_cb = convert_script_sync_cb;
@@ -457,10 +457,10 @@ exec_src_script(html_content *c,
 	}
 
 	nscript = html_process_new_script(c, mimetype, script_type);
-	if (nscript == NULL) {
+	எனில் (nscript == வெற்று) {
 		nsurl_unref(joined);
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		content_broadcast_error(&c->base, NSERROR_NOMEM, வெற்று);
+		திரும்பு DOM_HUBBUB_NOMEM;
 	}
 
 	/* set up child fetch encoding and quirks */
@@ -470,7 +470,7 @@ exec_src_script(html_content *c,
 	ns_error = hlcache_handle_retrieve(joined,
 					   0,
 					   content_get_url(&c->base),
-					   NULL,
+					   வெற்று,
 					   script_cb,
 					   c,
 					   &child,
@@ -480,58 +480,58 @@ exec_src_script(html_content *c,
 
 	nsurl_unref(joined);
 
-	if (ns_error != NSERROR_OK) {
+	எனில் (ns_error != NSERROR_OK) {
 		/* @todo Deal with fetch error better. currently assume
 		 * fetch never became active
 		 */
 		/* mark duff script fetch as already started */
 		nscript->already_started = true;
 		NSLOG(netsurf, INFO, "Fetch failed with error %d", ns_error);
-	} else {
+	} இல்லையெனில் {
 		/* update base content active fetch count */
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-		switch (script_type) {
-		case HTML_SCRIPT_SYNC:
+		தேர்வு (script_type) {
+		நிலை HTML_SCRIPT_SYNC:
 			ret =  DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED;
-			break;
+			நிறுத்து;
 
-		case HTML_SCRIPT_ASYNC:
-			break;
+		நிலை HTML_SCRIPT_ASYNC:
+			நிறுத்து;
 
-		case HTML_SCRIPT_DEFER:
-			break;
+		நிலை HTML_SCRIPT_DEFER:
+			நிறுத்து;
 
-		default:
-			assert(0);
+		இயல்பு:
+			ப்ரதிஜ்ஞா(0);
 		}
 	}
 
-	return ret;
+	திரும்பு ret;
 }
 
-static dom_hubbub_error
-exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
+நிலையான dom_hubbub_error
+exec_inline_script(html_content *c, dom_முனை *முனை, dom_string *mimetype)
 {
 	dom_string *script;
 	dom_exception exc; /* returned by libdom functions */
-	struct lwc_string_s *lwcmimetype;
+	கட்டமைப்பு lwc_string_s *lwcmimetype;
 	script_handler_t *script_handler;
-	struct html_script *nscript;
+	கட்டமைப்பு html_script *nscript;
 
 	/* does not appear to be a src so script is inline content */
-	exc = dom_node_get_text_content(node, &script);
-	if ((exc != DOM_NO_ERR) || (script == NULL)) {
-		return DOM_HUBBUB_OK; /* no contents, skip */
+	exc = dom_முனை_get_text_content(முனை, &script);
+	எனில் ((exc != DOM_NO_ERR) || (script == வெற்று)) {
+		திரும்பு DOM_HUBBUB_OK; /* no contents, skip */
 	}
 
 	nscript = html_process_new_script(c, mimetype, HTML_SCRIPT_INLINE);
-	if (nscript == NULL) {
+	எனில் (nscript == வெற்று) {
 		dom_string_unref(script);
 
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		content_broadcast_error(&c->base, NSERROR_NOMEM, வெற்று);
+		திரும்பு DOM_HUBBUB_NOMEM;
 
 	}
 
@@ -540,20 +540,20 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
 
 	/* ensure script handler for content type */
 	exc = dom_string_intern(mimetype, &lwcmimetype);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_DOM;
+	எனில் (exc != DOM_NO_ERR) {
+		திரும்பு DOM_HUBBUB_DOM;
 	}
 
 	script_handler = select_script_handler(content_factory_type_from_mime_type(lwcmimetype));
 	lwc_string_unref(lwcmimetype);
 
-	if (script_handler != NULL) {
+	எனில் (script_handler != வெற்று) {
 		script_handler(c->jsthread,
-			       (const uint8_t *)dom_string_data(script),
+			       (மாறிலி uint8_t *)dom_string_data(script),
 			       dom_string_byte_length(script),
 			       "?inline script?");
 	}
-	return DOM_HUBBUB_OK;
+	திரும்பு DOM_HUBBUB_OK;
 }
 
 
@@ -563,7 +563,7 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
  *
  */
 dom_hubbub_error
-html_process_script(void *ctx, dom_node *node)
+html_process_script(வெறுமை *ctx, dom_முனை *முனை)
 {
 	html_content *c = (html_content *)ctx;
 	dom_exception exc; /* returned by libdom functions */
@@ -574,92 +574,92 @@ html_process_script(void *ctx, dom_node *node)
 	/* We should only ever be here if scripting was enabled for this
 	 * content so it's correct to make a javascript context if there
 	 * isn't one already. */
-	if (c->jsthread == NULL) {
-		union content_msg_data msg_data;
+	எனில் (c->jsthread == வெற்று) {
+		ஒன்றிப்பு content_செய்தி_data செய்தி_data;
 
-		msg_data.jsthread = &c->jsthread;
-		content_broadcast(&c->base, CONTENT_MSG_GETTHREAD, &msg_data);
+		செய்தி_data.jsthread = &c->jsthread;
+		content_broadcast(&c->base, CONTENT_செய்தி_GETTHREAD, &செய்தி_data);
 		NSLOG(netsurf, INFO, "javascript context %p ", c->jsthread);
-		if (c->jsthread == NULL) {
+		எனில் (c->jsthread == வெற்று) {
 			/* no context and it could not be created, abort */
-			return DOM_HUBBUB_OK;
+			திரும்பு DOM_HUBBUB_OK;
 		}
 	}
 
 	NSLOG(netsurf, INFO, "content %p parser %p node %p", c, c->parser,
-	      node);
+	      முனை);
 
-	exc = dom_element_get_attribute(node, corestring_dom_type, &mimetype);
-	if (exc != DOM_NO_ERR || mimetype == NULL) {
+	exc = dom_element_get_attribute(முனை, corestring_dom_type, &mimetype);
+	எனில் (exc != DOM_NO_ERR || mimetype == வெற்று) {
 		mimetype = dom_string_ref(corestring_dom_text_javascript);
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		err = exec_inline_script(c, node, mimetype);
-	} else {
-		err = exec_src_script(c, node, mimetype, src);
+	exc = dom_element_get_attribute(முனை, corestring_dom_src, &src);
+	எனில் (exc != DOM_NO_ERR || src == வெற்று) {
+		err = exec_inline_script(c, முனை, mimetype);
+	} இல்லையெனில் {
+		err = exec_src_script(c, முனை, mimetype, src);
 		dom_string_unref(src);
 	}
 
 	dom_string_unref(mimetype);
 
-	return err;
+	திரும்பு err;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 bool html_saw_insecure_scripts(html_content *htmlc)
 {
-	struct html_script *s;
-	unsigned int i;
+	கட்டமைப்பு html_script *s;
+	unsigned முழு i;
 
-	for (i = 0, s = htmlc->scripts; i != htmlc->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_INLINE) {
+	க்கு (i = 0, s = htmlc->scripts; i != htmlc->scripts_மொத்தம்; i++, s++) {
+		எனில் (s->type == HTML_SCRIPT_INLINE) {
 			/* Inline scripts are no less secure than their
 			 * containing HTML content
 			 */
-			continue;
+			தொடர்;
 		}
-		if (s->data.handle == NULL) {
+		எனில் (s->data.handle == வெற்று) {
 			/* We've not begun loading this? */
-			continue;
+			தொடர்;
 		}
-		if (content_saw_insecure_objects(s->data.handle)) {
-			return true;
+		எனில் (content_saw_insecure_objects(s->data.handle)) {
+			திரும்பு true;
 		}
 	}
 
-	return false;
+	திரும்பு false;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_free(html_content *html)
 {
-	unsigned int i;
+	unsigned முழு i;
 
-	for (i = 0; i != html->scripts_count; i++) {
-		if (html->scripts[i].mimetype != NULL) {
+	க்கு (i = 0; i != html->scripts_மொத்தம்; i++) {
+		எனில் (html->scripts[i].mimetype != வெற்று) {
 			dom_string_unref(html->scripts[i].mimetype);
 		}
 
-		switch (html->scripts[i].type) {
-		case HTML_SCRIPT_INLINE:
-			if (html->scripts[i].data.string != NULL) {
+		தேர்வு (html->scripts[i].type) {
+		நிலை HTML_SCRIPT_INLINE:
+			எனில் (html->scripts[i].data.string != வெற்று) {
 				dom_string_unref(html->scripts[i].data.string);
 			}
-			break;
-		case HTML_SCRIPT_SYNC:
+			நிறுத்து;
+		நிலை HTML_SCRIPT_SYNC:
 			/* fallthrough */
-		case HTML_SCRIPT_ASYNC:
+		நிலை HTML_SCRIPT_ASYNC:
 			/* fallthrough */
-		case HTML_SCRIPT_DEFER:
-			if (html->scripts[i].data.handle != NULL) {
+		நிலை HTML_SCRIPT_DEFER:
+			எனில் (html->scripts[i].data.handle != வெற்று) {
 				hlcache_handle_release(html->scripts[i].data.handle);
 			}
-			break;
+			நிறுத்து;
 		}
 	}
-	free(html->scripts);
+	விடுவி(html->scripts);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }

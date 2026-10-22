@@ -26,86 +26,86 @@
  *
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <stdio.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <math.h>
+#அந்தர்பாவ <stdio.h>
 
-#include "utils/config.h"
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/errors.h"
-#include "utils/nsurl.h"
+#அந்தர்பாவ "utils/config.h"
+#அந்தர்பாவ "netsurf/inttypes.h"
+#அந்தர்பாவ "utils/config.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "utils/errors.h"
+#அந்தர்பாவ "utils/nsurl.h"
 
-#include "private.h"
-#include "chart.h"
+#அந்தர்பாவ "private.h"
+#அந்தர்பாவ "chart.h"
 
 /** minimum figure dimension */
 #define FIGURE_MIN_WIDTH 150
 #define FIGURE_MIN_HEIGHT 100
 
-enum chart_type {
+எண்ணிக்கை chart_type {
 		 CHART_TYPE_UNKNOWN,
 		 CHART_TYPE_PIE,
 };
 
 /* type of chart key */
-enum key_type {
-	       CHART_KEY_UNSET,
-	       CHART_KEY_NONE,
-	       CHART_KEY_LEFT,
-	       CHART_KEY_RIGHT,
-	       CHART_KEY_TOP,
-	       CHART_KEY_BOT,
-	       CHART_KEY_END
+எண்ணிக்கை சாவி_type {
+	       CHART_சாவி_UNSET,
+	       CHART_சாவி_NONE,
+	       CHART_சாவி_இடது,
+	       CHART_சாவி_வலது,
+	       CHART_சாவி_உச்சி,
+	       CHART_சாவி_BOT,
+	       CHART_சாவி_END
 };
 
 
-struct chart_label {
-	char *title; /* label title */
-	unsigned int colour; /* colour */
+கட்டமைப்பு chart_label {
+	எழுத்து *title; /* label title */
+	unsigned முழு colour; /* colour */
 };
 
-struct chart_series {
-	unsigned int len; /* number of values in the series */
-	float *value; /* array of values */
+கட்டமைப்பு chart_series {
+	unsigned முழு len; /* number of values in the series */
+	தசம *மதிப்பு; /* array of values */
 };
 
 #define MAX_SERIES 4
 
-struct chart_data {
-	unsigned int series_len;
-	struct chart_series series[MAX_SERIES];
+கட்டமைப்பு chart_data {
+	unsigned முழு series_len;
+	கட்டமைப்பு chart_series series[MAX_SERIES];
 
-	unsigned int label_len; /* number of labels */
-	struct chart_label *label;
+	unsigned முழு label_len; /* number of labels */
+	கட்டமைப்பு chart_label *label;
 
 };
 
 /**
  * parameters for a chart figure
  */
-struct chart_param {
-	enum chart_type type;
-	enum key_type key; /* what type of key to use */
-	unsigned int width; /* width of figure */
-	unsigned int height; /* height of figure */
-	char *title; /* title */
-	struct {
-		unsigned int x;
-		unsigned int y;
-		unsigned int width;
-		unsigned int height;
+கட்டமைப்பு chart_param {
+	எண்ணிக்கை chart_type type;
+	எண்ணிக்கை சாவி_type சாவி; /* what type of key to use */
+	unsigned முழு width; /* width of figure */
+	unsigned முழு height; /* height of figure */
+	எழுத்து *title; /* title */
+	கட்டமைப்பு {
+		unsigned முழு x;
+		unsigned முழு y;
+		unsigned முழு width;
+		unsigned முழு height;
 	} area; /* chart area within figure */
-	struct chart_data data;
+	கட்டமைப்பு chart_data data;
 };
 
-#define DEF_COLOUR_NUM 8
+#define DEF_COLOUR_இலக்கம் 8
 /** default colour series */
-static unsigned int colour_series[DEF_COLOUR_NUM] =
+நிலையான unsigned முழு colour_series[DEF_COLOUR_இலக்கம்] =
 	{
 	 0x00ff00, /* green */
 	 0x0000ff, /* blue */
@@ -119,150 +119,150 @@ static unsigned int colour_series[DEF_COLOUR_NUM] =
 
 
 /* ensures there are labels present for every value */
-static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
+நிலையான nserror ensure_label_மொத்தம்(கட்டமைப்பு chart_param *chart, unsigned முழு மொத்தம்)
 {
-	unsigned int lidx;
-	int deltac;
-	struct chart_label *nlabels;
+	unsigned முழு lidx;
+	முழு deltac;
+	கட்டமைப்பு chart_label *nlabels;
 
-	deltac = count - chart->data.label_len;
-	if (deltac <= 0) {
+	deltac = மொத்தம் - chart->data.label_len;
+	எனில் (deltac <= 0) {
 		/* there are enough labels */
-		return NSERROR_OK;
+		திரும்பு NSERROR_OK;
 	}
 
 	nlabels = realloc(chart->data.label,
-			  count * sizeof(struct chart_label));
-	if (nlabels == NULL) {
-		return NSERROR_NOMEM;
+			  மொத்தம் * அளவு(கட்டமைப்பு chart_label));
+	எனில் (nlabels == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 	chart->data.label = nlabels;
 
-	for (lidx = chart->data.label_len; lidx < count; lidx++) {
+	க்கு (lidx = chart->data.label_len; lidx < மொத்தம்; lidx++) {
 		chart->data.label[lidx].title = calloc(1, 20);
 		snprintf(chart->data.label[lidx].title, 19, "item %d", lidx + 1);
-		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_NUM];
+		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_இலக்கம்];
 	}
 
-	chart->data.label_len = count;
+	chart->data.label_len = மொத்தம்;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
  * extract values for a series
  */
-static nserror
-extract_series_values(struct chart_param *chart,
-		      unsigned int series_num,
-		      const char *valstr,
+நிலையான nserror
+extract_series_மதிப்புகள்(கட்டமைப்பு chart_param *chart,
+		      unsigned முழு series_இலக்கம்,
+		      மாறிலி எழுத்து *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcur;
+	unsigned முழு valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
-	struct chart_series *series;
+	கட்டமைப்பு chart_series *series;
 
-	series = chart->data.series + series_num;
+	series = chart->data.series + series_இலக்கம்;
 
 	/* ensure we do not leak any data in this series */
-	if (series->value != NULL) {
-		free(series->value);
+	எனில் (series->மதிப்பு != வெற்று) {
+		விடுவி(series->மதிப்பு);
 	}
 
 	/* count how many values present */
-	for (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	க்கு (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
+		எனில் (valstr[valstart] == ',') {
 			series->len++;
 		}
 	}
 
 	/* allocate storage for values */
-	series->value = calloc(series->len, sizeof(float));
-	if (series->value == NULL) {
-		return NSERROR_NOMEM;
+	series->மதிப்பு = calloc(series->len, அளவு(தசம));
+	எனில் (series->மதிப்பு == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	/* extract values from query string */
-	for (valcur = 0, vallen = 0, valstart = 0;
+	க்கு (valcur = 0, vallen = 0, valstart = 0;
 	     (valstart < valstrlen) && (valcur < series->len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		போது (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		series->value[valcur] = strtof(valstr + valstart, NULL);
+		series->மதிப்பு[valcur] = strtof(valstr + valstart, வெற்று);
 		vallen++; /* account for , separator */
 	}
 
-	res = ensure_label_count(chart, series->len);
+	res = ensure_label_மொத்தம்(chart, series->len);
 
-	return res;
+	திரும்பு res;
 }
 
 
 /**
  * extract values for next series
  */
-static nserror
-extract_next_series_values(struct chart_param *chart,
-		      const char *valstr,
+நிலையான nserror
+extract_next_series_மதிப்புகள்(கட்டமைப்பு chart_param *chart,
+		      மாறிலி எழுத்து *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
 
-	if (chart->data.series_len >= MAX_SERIES) {
-		return NSERROR_NOSPACE;
+	எனில் (chart->data.series_len >= MAX_SERIES) {
+		திரும்பு NSERROR_NOSPACE;
 	}
 
-	res = extract_series_values(chart,
+	res = extract_series_மதிப்புகள்(chart,
 				    chart->data.series_len,
 				    valstr,
 				    valstrlen);
-	if (res == NSERROR_OK) {
+	எனில் (res == NSERROR_OK) {
 		chart->data.series_len++;
 	}
 
-	return res;
+	திரும்பு res;
 }
 
 
 /**
  * extract label title
  */
-static nserror
-extract_series_labels(struct chart_param *chart,
-		      const char *valstr,
+நிலையான nserror
+extract_series_labels(கட்டமைப்பு chart_param *chart,
+		      மாறிலி எழுத்து *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcount; /* count of values in valstr */
-	unsigned int valcur;
+	unsigned முழு valcount; /* count of values in valstr */
+	unsigned முழு valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
 
-	for (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	க்கு (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
+		எனில் (valstr[valstart] == ',') {
 			valcount++;
 		}
 	}
 
-	res = ensure_label_count(chart, valcount);
-	if (res != NSERROR_OK) {
-		return res;
+	res = ensure_label_மொத்தம்(chart, valcount);
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
 
-	for (valcur = 0, vallen = 0, valstart = 0;
+	க்கு (valcur = 0, vallen = 0, valstart = 0;
 	     (valstart < valstrlen) && (valcur < chart->data.label_len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		போது (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
@@ -270,155 +270,155 @@ extract_series_labels(struct chart_param *chart,
 		chart->data.label[valcur].title = strndup(valstr + valstart, vallen);
 		vallen++; /* account for , separator */
 	}
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
 /**
  * extract labels colour
  */
-static nserror
-extract_series_colours(struct chart_param *chart,
-		      const char *valstr,
+நிலையான nserror
+extract_series_colours(கட்டமைப்பு chart_param *chart,
+		      மாறிலி எழுத்து *valstr,
 		      size_t valstrlen)
 {
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
  * process a part of a query
  */
-static nserror
-process_query_section(const char *str, size_t len, struct chart_param *chart)
+நிலையான nserror
+process_query_section(மாறிலி எழுத்து *str, size_t len, கட்டமைப்பு chart_param *chart)
 {
 	nserror res = NSERROR_OK;
 
-	if ((len > 6) &&
+	எனில் ((len > 6) &&
 	    (strncmp(str, "width=", 6) == 0)) {
 		/* figure width */
-		chart->width = strtoul(str + 6, NULL, 10);
-	} else if ((len > 7) &&
+		chart->width = strtoul(str + 6, வெற்று, 10);
+	} இல்லையெனில் எனில் ((len > 7) &&
 	    (strncmp(str, "height=", 7) == 0)) {
 		/* figure height */
-		chart->height = strtoul(str + 7, NULL, 10);
-	} else if ((len > 8) &&
+		chart->height = strtoul(str + 7, வெற்று, 10);
+	} இல்லையெனில் எனில் ((len > 8) &&
 	    (strncmp(str, "cawidth=", 8) == 0)) {
 		/* chart area width */
-		chart->area.width = strtoul(str + 8, NULL, 10);
-	} else if ((len > 9) &&
+		chart->area.width = strtoul(str + 8, வெற்று, 10);
+	} இல்லையெனில் எனில் ((len > 9) &&
 	    (strncmp(str, "caheight=", 9) == 0)) {
 		/* chart area height */
-		chart->area.height = strtoul(str + 9, NULL, 10);
-	} else if ((len > 4) &&
+		chart->area.height = strtoul(str + 9, வெற்று, 10);
+	} இல்லையெனில் எனில் ((len > 4) &&
 	    (strncmp(str, "key=", 4) == 0)) {
 		/* figure has key */
-		chart->key = strtoul(str + 4, NULL, 10);
-	} else if ((len > 6) &&
+		chart->சாவி = strtoul(str + 4, வெற்று, 10);
+	} இல்லையெனில் எனில் ((len > 6) &&
 	    (strncmp(str, "title=", 6) == 0)) {
 		chart->title = strndup(str + 6, len - 6);
-	} else if ((len > 5) &&
+	} இல்லையெனில் எனில் ((len > 5) &&
 	    (strncmp(str, "type=", 5) == 0)) {
-		if (strncmp(str + 5, "pie", len - 5) == 0) {
+		எனில் (strncmp(str + 5, "pie", len - 5) == 0) {
 			chart->type = CHART_TYPE_PIE;
-		} else {
+		} இல்லையெனில் {
 			chart->type = CHART_TYPE_UNKNOWN;
 		}
-	} else if ((len > 7) &&
+	} இல்லையெனில் எனில் ((len > 7) &&
 	    (strncmp(str, "values=", 7) == 0)) {
-		res = extract_next_series_values(chart, str + 7, len - 7);
-	} else if ((len > 7) &&
+		res = extract_next_series_மதிப்புகள்(chart, str + 7, len - 7);
+	} இல்லையெனில் எனில் ((len > 7) &&
 	    (strncmp(str, "labels=", 7) == 0)) {
 		res = extract_series_labels(chart, str + 7, len - 7);
-	} else if ((len > 8) &&
+	} இல்லையெனில் எனில் ((len > 8) &&
 	    (strncmp(str, "colours=", 8) == 0)) {
 		res = extract_series_colours(chart, str + 8, len - 8);
 	}
 
-	return res;
+	திரும்பு res;
 }
 
 
 
-static nserror
-chart_from_query(struct nsurl *url, struct chart_param *chart)
+நிலையான nserror
+chart_from_query(கட்டமைப்பு nsurl *url, கட்டமைப்பு chart_param *chart)
 {
 	nserror res;
-	char *querystr;
+	எழுத்து *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	எனில் (res != NSERROR_OK) {
+		திரும்பு res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	க்கு (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		போது (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, chart);
-		if (res != NSERROR_OK) {
-			break;
+		எனில் (res != NSERROR_OK) {
+			நிறுத்து;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	விடுவி(querystr);
 
 	/* sanity check dimensions */
-	if (chart->width < FIGURE_MIN_WIDTH) {
+	எனில் (chart->width < FIGURE_MIN_WIDTH) {
 		/* bad width - check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		எனில் (chart->height < FIGURE_MIN_HEIGHT) {
 			/* both bad set to defaults */
 			chart->width = FIGURE_MIN_WIDTH;
 			chart->height = FIGURE_MIN_HEIGHT;
-		} else {
+		} இல்லையெனில் {
 			/* base width on valid height */
 			chart->width = (chart->height * 3) / 2;
 		}
-	} else {
+	} இல்லையெனில் {
 		/* good width check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		எனில் (chart->height < FIGURE_MIN_HEIGHT) {
 			/* base height on valid width */
 			chart->height = (chart->width * 2) / 3;
 		}
 	}
 
 	/* ensure legend type correct */
-	if ((chart->key == CHART_KEY_UNSET) ||
-	    (chart->key >= CHART_KEY_END )) {
+	எனில் ((chart->சாவி == CHART_சாவி_UNSET) ||
+	    (chart->சாவி >= CHART_சாவி_END )) {
 		/* default to putting key on right */
-		chart->key = CHART_KEY_RIGHT;
+		chart->சாவி = CHART_சாவி_வலது;
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 
-static nserror
-output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
+நிலையான nserror
+output_pie_legend(கட்டமைப்பு fetch_about_context *ctx, கட்டமைப்பு chart_param *chart)
 {
 	nserror res;
-	unsigned int lblidx;
-	unsigned int legend_width;
-	unsigned int legend_height;
-	unsigned int vertical_spacing;
+	unsigned முழு lblidx;
+	unsigned முழு legend_width;
+	unsigned முழு legend_height;
+	unsigned முழு vertical_spacing;
 
-	switch (chart->key) {
+	தேர்வு (chart->சாவி) {
 
-	case CHART_KEY_NONE:
-		break;
-	case CHART_KEY_RIGHT:
+	நிலை CHART_சாவி_NONE:
+		நிறுத்து;
+	நிலை CHART_சாவி_வலது:
 		legend_width = chart->width - chart->area.width - chart->area.x;
 		legend_width -= 10; /* margin */
 		legend_height = chart->height;
 		vertical_spacing = legend_height / (chart->data.label_len + 1);
 
-		for(lblidx = 0; lblidx < chart->data.label_len ; lblidx++) {
+		க்கு(lblidx = 0; lblidx < chart->data.label_len ; lblidx++) {
 			res = fetch_about_ssenddataf(ctx,
 				"<rect  x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#%06x\" />",
 				chart->width - legend_width,
@@ -426,8 +426,8 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 				vertical_spacing * 2 / 3,
 				vertical_spacing * 2 / 3,
 				chart->data.label[lblidx].colour);
-			if (res != NSERROR_OK) {
-				return res;
+			எனில் (res != NSERROR_OK) {
+				திரும்பு res;
 			}
 			res = fetch_about_ssenddataf(ctx,
 				"<text x=\"%d\" y=\"%d\" fill=\"#%06x\" >%s</text>",
@@ -435,60 +435,60 @@ output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
 				vertical_spacing * (lblidx+1),
 			     chart->data.label[lblidx].colour,
 				chart->data.label[lblidx].title);
-			if (res != NSERROR_OK) {
-				return res;
+			எனில் (res != NSERROR_OK) {
+				திரும்பு res;
 			}
 		}
-		break;
-	default:
-		break;
+		நிறுத்து;
+	இயல்பு:
+		நிறுத்து;
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
-static float
-compute_series_total(struct chart_param *chart, unsigned int series)
+நிலையான தசம
+compute_series_total(கட்டமைப்பு chart_param *chart, unsigned முழு series)
 {
-	float total;
-	unsigned int curdata;
+	தசம total;
+	unsigned முழு curdata;
 
-	for (total = 0, curdata = 0;
+	க்கு (total = 0, curdata = 0;
 	     curdata < chart->data.series[series].len;
 	     curdata++) {
-		total += chart->data.series[series].value[curdata];
+		total += chart->data.series[series].மதிப்பு[curdata];
 	}
-	return total;
+	திரும்பு total;
 }
 
 /**
  * render the data as a pie chart svg
  */
-static bool
-pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
+நிலையான bool
+pie_chart(கட்டமைப்பு fetch_about_context *ctx, கட்டமைப்பு chart_param *chart)
 {
 	nserror res;
-	float ra; /* pie a radius */
-	float rb; /* pie b radius */
-	float series_total;
-	unsigned int curdata; /* current data point index */
-	float last_x, last_y;
-	float end_x, end_y;
-	float start;
-	float extent;
+	தசம ra; /* pie a radius */
+	தசம rb; /* pie b radius */
+	தசம series_total;
+	unsigned முழு curdata; /* current data point index */
+	தசம last_x, last_y;
+	தசம end_x, end_y;
+	தசம start;
+	தசம extent;
 	bool large;
-	float circle_centre_x, circle_centre_y;
+	தசம circle_centre_x, circle_centre_y;
 
 	/* ensure there is data to render */
-	if ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
-		return NSERROR_BAD_PARAMETER;
+	எனில் ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
+		திரும்பு NSERROR_BAD_PARAMETER;
 	}
 
 	/* get the first series total value */
 	series_total = compute_series_total(chart, 0);
-	if (series_total == 0) {
+	எனில் (series_total == 0) {
 		/* dividing by zero is embarasing */
-		return NSERROR_BAD_PARAMETER;
+		திரும்பு NSERROR_BAD_PARAMETER;
 	}
 
 	/*
@@ -497,14 +497,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	 * this is left to each chart type as different charts
 	 *  have differnt requirements
 	 */
-	if ((chart->area.width == 0) || (chart->area.height == 0)) {
+	எனில் ((chart->area.width == 0) || (chart->area.height == 0)) {
 		/*
 		 * pie chart defaults to square of smaller of figure
 		 *  width and height
 		 */
-		if (chart->width > chart->height) {
+		எனில் (chart->width > chart->height) {
 			chart->area.width = chart->area.height = (chart->height - chart->area.x);
-		} else {
+		} இல்லையெனில் {
 			chart->area.width = chart->area.height = (chart->width - chart->area.y);
 		}
 	}
@@ -513,9 +513,9 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	எனில் (fetch_about_send_header(ctx,
 			"Content-Type: image/svg; charset=utf-8")) {
-		goto aborted;
+		செல் aborted;
 	}
 
 	/* get the pie charts elipse radii */
@@ -532,14 +532,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			"<svg width=\"%u\" height=\"%u\" "
 			"xmlns=\"http://www.w3.org/2000/svg\">\n",
 			chart->width, chart->height);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	எனில் (res != NSERROR_OK) {
+		செல் aborted;
 	}
 
 	/* generate the legend */
 	res = output_pie_legend(ctx, chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	எனில் (res != NSERROR_OK) {
+		செல் aborted;
 	}
 
 	/* plot the arcs */
@@ -548,14 +548,14 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	last_y = (rb * sin(start));
 
 	/* iterate over each data point creating a slice o pie */
-	for (curdata=0; curdata < chart->data.series[0].len; curdata++) {
-		extent = ((chart->data.series[0].value[curdata] / series_total) * 2 * M_PI);
+	க்கு (curdata=0; curdata < chart->data.series[0].len; curdata++) {
+		extent = ((chart->data.series[0].மதிப்பு[curdata] / series_total) * 2 * M_PI);
 		end_x = (ra * cos(start + extent));
 		end_y = (rb * sin(start + extent));
 
-		if (extent > M_PI) {
+		எனில் (extent > M_PI) {
 			large = true;
-		} else {
+		} இல்லையெனில் {
 			large = false;
 		}
 
@@ -572,8 +572,8 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			circle_centre_x,
 			circle_centre_y,
 			chart->data.label[curdata].colour);
-		if (res != NSERROR_OK) {
-			goto aborted;
+		எனில் (res != NSERROR_OK) {
+			செல் aborted;
 		}
 		last_x = end_x;
 		last_y = end_y;
@@ -581,17 +581,17 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</svg>\n");
-	if (res != NSERROR_OK) {
-		goto aborted;
+	எனில் (res != NSERROR_OK) {
+		செல் aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	திரும்பு true;
 
  aborted:
 
-	return false;
+	திரும்பு false;
 
 }
 
@@ -603,28 +603,28 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_chart_handler(struct fetch_about_context *ctx)
+bool fetch_about_chart_handler(கட்டமைப்பு fetch_about_context *ctx)
 {
 	nserror res;
-	struct chart_param chart;
-	memset(&chart, 0, sizeof(struct chart_param));
+	கட்டமைப்பு chart_param chart;
+	memset(&chart, 0, அளவு(கட்டமைப்பு chart_param));
 
 	res = chart_from_query(fetch_about_get_url(ctx), &chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	எனில் (res != NSERROR_OK) {
+		செல் aborted;
 	}
 
-	switch (chart.type) {
-	case CHART_TYPE_PIE:
-		return pie_chart(ctx, &chart);
+	தேர்வு (chart.type) {
+	நிலை CHART_TYPE_PIE:
+		திரும்பு pie_chart(ctx, &chart);
 
 
-	default:
-		break;
+	இயல்பு:
+		நிறுத்து;
 	}
 
 aborted:
 
-	return false;
+	திரும்பு false;
 
 }

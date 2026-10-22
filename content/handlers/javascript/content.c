@@ -21,89 +21,89 @@
  * javascript content implementation
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/config.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "javascript/content.h"
+#அந்தர்பாவ "utils/errors.h"
+#அந்தர்பாவ "utils/config.h"
+#அந்தர்பாவ "content/content_protected.h"
+#அந்தர்பாவ "content/content_factory.h"
+#அந்தர்பாவ "content/hlcache.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+வகைவரை கட்டமைப்பு javascript_content {
+	கட்டமைப்பு content base;
 } javascript_content;
 
-static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+நிலையான nserror javascript_create(மாறிலி content_handler *handler,
+		lwc_string *imime_type, மாறிலி கட்டமைப்பு http_parameter *params,
+		llcache_handle *llcache, மாறிலி எழுத்து *fallback_charset,
+		bool quirks, கட்டமைப்பு content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, அளவு(javascript_content));
+	எனில் (script == வெற்று)
+		திரும்பு NSERROR_NOMEM;
 
 	error = content__init(&script->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(script);
-		return error;
+	எனில் (error != NSERROR_OK) {
+		விடுவி(script);
+		திரும்பு error;
 	}
 
-	*c = (struct content *) script;
+	*c = (கட்டமைப்பு content *) script;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+நிலையான bool javascript_convert(கட்டமைப்பு content *c)
 {
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	திரும்பு true;
 }
 
-static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+நிலையான nserror 
+javascript_clone(மாறிலி கட்டமைப்பு content *old, கட்டமைப்பு content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, அளவு(javascript_content));
+	எனில் (script == வெற்று)
+		திரும்பு NSERROR_NOMEM;
 
 	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
+	எனில் (error != NSERROR_OK) {
 		content_destroy(&script->base);
-		return error;
+		திரும்பு error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (கட்டமைப்பு content *) script;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+நிலையான வெறுமை javascript_destroy(கட்டமைப்பு content *c)
 {
 }
 
-static content_type javascript_content_type(void)
+நிலையான content_type javascript_content_type(வெறுமை)
 {
-	return CONTENT_JS;
+	திரும்பு CONTENT_JS;
 }
 
 
-static const content_handler javascript_content_handler = {
+நிலையான மாறிலி content_handler javascript_content_handler = {
 	.create = javascript_create,
 	.data_complete = javascript_convert,
 	.destroy = javascript_destroy,
@@ -112,7 +112,7 @@ static const content_handler javascript_content_handler = {
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+நிலையான மாறிலி எழுத்து *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */

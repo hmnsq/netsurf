@@ -21,23 +21,23 @@
  * Cache implementation for bitmap images decoded into frontend format.
  */
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdlib.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "netsurf/misc.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "desktop/gui_internal.h"
+#அந்தர்பாவ "netsurf/inttypes.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "netsurf/misc.h"
+#அந்தர்பாவ "netsurf/bitmap.h"
+#அந்தர்பாவ "content/llcache.h"
+#அந்தர்பாவ "content/content_protected.h"
+#அந்தர்பாவ "desktop/gui_internal.h"
 
-#include "image/image_cache.h"
-#include "image/image.h"
+#அந்தர்பாவ "image/image_cache.h"
+#அந்தர்பாவ "image/image.h"
 
 /**
  * Age of an entry within the cache
@@ -45,30 +45,30 @@
  * type deffed away so it can be readily changed later perhaps to a
  * wallclock time structure.
  */
-typedef unsigned int cache_age;
+வகைவரை unsigned முழு cache_age;
 
 /**
  * Image cache entry
  */
-struct image_cache_entry_s {
-	struct image_cache_entry_s *next; /**< next cache entry in list */
-	struct image_cache_entry_s *prev; /**< previous cache entry in list */
+கட்டமைப்பு image_cache_entry_s {
+	கட்டமைப்பு image_cache_entry_s *next; /**< next cache entry in list */
+	கட்டமைப்பு image_cache_entry_s *prev; /**< previous cache entry in list */
 
 	/** content is used as a key */
-	struct content *content;
+	கட்டமைப்பு content *content;
 	/** associated bitmap entry */
-	struct bitmap *bitmap;
+	கட்டமைப்பு bitmap *bitmap;
 	/** routine to convert content into bitmap */
 	image_cache_convert_fn *convert;
 
 	/* Statistics for replacement algorithm */
 
-	unsigned int redraw_count; /**< number of times object has been drawn */
+	unsigned முழு redraw_மொத்தம்; /**< number of times object has been drawn */
 	cache_age redraw_age; /**< Age of last redraw */
 	size_t bitmap_size; /**< size if storage occupied by bitmap */
 	cache_age bitmap_age; /**< Age of last conversion to a bitmap by cache*/
 
-	int conversion_count; /**< Number of times image has been converted */
+	முழு conversion_மொத்தம்; /**< Number of times image has been converted */
 };
 
 /**
@@ -79,15 +79,15 @@ struct image_cache_entry_s {
  * using wall clock time while allowing the LRU algorithm to work
  * sensibly.
  */
-struct image_cache_s {
+கட்டமைப்பு image_cache_s {
 	/** Cache parameters */
-	struct image_cache_parameters params;
+	கட்டமைப்பு image_cache_parameters params;
 
 	/** The "age" of the current operation */
 	cache_age current_age;
 
 	/* The objects the cache holds */
-	struct image_cache_entry_s *entries;
+	கட்டமைப்பு image_cache_entry_s *entries;
 
 
 	/* Statistics for management algorithm */
@@ -96,48 +96,48 @@ struct image_cache_s {
 	size_t total_bitmap_size;
 
 	/** Total count of bitmaps currently allocated */
-	int bitmap_count;
+	முழு bitmap_மொத்தம்;
 
 	/** Maximum size of bitmaps allocated at any one time */
 	size_t max_bitmap_size;
 	/** The number of objects when maximum bitmap usage occurred */
-	int max_bitmap_size_count;
+	முழு max_bitmap_size_மொத்தம்;
 
 	/** Maximum count of bitmaps allocated at any one time */
-	int max_bitmap_count;
+	முழு max_bitmap_மொத்தம்;
 	/** The size of the bitmaps when the max count occurred */
-	size_t max_bitmap_count_size;
+	size_t max_bitmap_மொத்தம்_size;
 
 	/** Bitmap was not available at plot time required conversion */
-	int miss_count;
+	முழு miss_மொத்தம்;
 	uint64_t miss_size;
 	/** Bitmap was available at plot time required no conversion */
-	int hit_count;
+	முழு hit_மொத்தம்;
 	uint64_t hit_size;
 	/** Bitmap was not available at plot time and required
 	 * conversion which failed.
 	 */
-	int fail_count;
+	முழு fail_மொத்தம்;
 	uint64_t fail_size;
 
 	/* Cache entry freed without ever being redrawn */
-	int total_unrendered;
+	முழு total_unrendered;
 	/** Bitmap was available but never required - wasted conversions */
-	int specultive_miss_count;
+	முழு specultive_miss_மொத்தம்;
 
 	/** Total number of additional (after the first) conversions */
-	int total_extra_conversions;
+	முழு total_extra_conversions;
 	/** counts total number of images with more than one conversion */
-	int total_extra_conversions_count;
+	முழு total_extra_conversions_மொத்தம்;
 
 	/** Bitmap with most conversions was converted this many times */
-	int peak_conversions;
+	முழு peak_conversions;
 	/** Size of bitmap with most conversions */
-	unsigned int peak_conversions_size;
+	unsigned முழு peak_conversions_size;
 };
 
 /** image cache state */
-static struct image_cache_s *image_cache = NULL;
+நிலையான கட்டமைப்பு image_cache_s *image_cache = வெற்று;
 
 
 /**
@@ -146,16 +146,16 @@ static struct image_cache_s *image_cache = NULL;
  * \param entryn index of cache entry
  * \return cache entry at index or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__findn(int entryn)
+நிலையான கட்டமைப்பு image_cache_entry_s *image_cache__findn(முழு entryn)
 {
-	struct image_cache_entry_s *found;
+	கட்டமைப்பு image_cache_entry_s *found;
 
 	found = image_cache->entries;
-	while ((found != NULL) && (entryn > 0)) {
+	போது ((found != வெற்று) && (entryn > 0)) {
 		entryn--;
 		found = found->next;
 	}
-	return found;
+	திரும்பு found;
 }
 
 
@@ -165,15 +165,15 @@ static struct image_cache_entry_s *image_cache__findn(int entryn)
  * \param c The content to get an entry for
  * \return The image cache entry or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__find(const struct content *c)
+நிலையான கட்டமைப்பு image_cache_entry_s *image_cache__find(மாறிலி கட்டமைப்பு content *c)
 {
-	struct image_cache_entry_s *found;
+	கட்டமைப்பு image_cache_entry_s *found;
 
 	found = image_cache->entries;
-	while ((found != NULL) && (found->content != c)) {
+	போது ((found != வெற்று) && (found->content != c)) {
 		found = found->next;
 	}
-	return found;
+	திரும்பு found;
 }
 
 /**
@@ -181,67 +181,67 @@ static struct image_cache_entry_s *image_cache__find(const struct content *c)
  *
  * \param centry The image cache entry to update the stats with.
  */
-static void image_cache_stats_bitmap_add(struct image_cache_entry_s *centry)
+நிலையான வெறுமை image_cache_stats_bitmap_add(கட்டமைப்பு image_cache_entry_s *centry)
 {
 	centry->bitmap_age = image_cache->current_age;
-	centry->conversion_count++;
+	centry->conversion_மொத்தம்++;
 
 	image_cache->total_bitmap_size += centry->bitmap_size;
-	image_cache->bitmap_count++;
+	image_cache->bitmap_மொத்தம்++;
 
-	if (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
+	எனில் (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
 		image_cache->max_bitmap_size = image_cache->total_bitmap_size;
-		image_cache->max_bitmap_size_count = image_cache->bitmap_count;
+		image_cache->max_bitmap_size_மொத்தம் = image_cache->bitmap_மொத்தம்;
 
 	}
 
-	if (image_cache->bitmap_count > image_cache->max_bitmap_count) {
-		image_cache->max_bitmap_count = image_cache->bitmap_count;
-		image_cache->max_bitmap_count_size = image_cache->total_bitmap_size;
+	எனில் (image_cache->bitmap_மொத்தம் > image_cache->max_bitmap_மொத்தம்) {
+		image_cache->max_bitmap_மொத்தம் = image_cache->bitmap_மொத்தம்;
+		image_cache->max_bitmap_மொத்தம்_size = image_cache->total_bitmap_size;
 	}
 
-	if (centry->conversion_count == 2) {
-		image_cache->total_extra_conversions_count++;
+	எனில் (centry->conversion_மொத்தம் == 2) {
+		image_cache->total_extra_conversions_மொத்தம்++;
 	}
 
-	if (centry->conversion_count > 1) {
+	எனில் (centry->conversion_மொத்தம் > 1) {
 		image_cache->total_extra_conversions++;
 	}
 
-	if ((centry->conversion_count > image_cache->peak_conversions) ||
-	    (centry->conversion_count == image_cache->peak_conversions &&
+	எனில் ((centry->conversion_மொத்தம் > image_cache->peak_conversions) ||
+	    (centry->conversion_மொத்தம் == image_cache->peak_conversions &&
 	     centry->bitmap_size > image_cache->peak_conversions_size)) {
-		image_cache->peak_conversions = centry->conversion_count;
+		image_cache->peak_conversions = centry->conversion_மொத்தம்;
 		image_cache->peak_conversions_size = centry->bitmap_size;
 	}
 }
 
-static void image_cache__link(struct image_cache_entry_s *centry)
+நிலையான வெறுமை image_cache__link(கட்டமைப்பு image_cache_entry_s *centry)
 {
 	centry->next = image_cache->entries;
-	centry->prev = NULL;
-	if (centry->next != NULL) {
+	centry->prev = வெற்று;
+	எனில் (centry->next != வெற்று) {
 		centry->next->prev = centry;
 	}
 	image_cache->entries = centry;
 }
 
-static void image_cache__unlink(struct image_cache_entry_s *centry)
+நிலையான வெறுமை image_cache__unlink(கட்டமைப்பு image_cache_entry_s *centry)
 {
 	/* unlink entry */
-	if (centry->prev == NULL) {
+	எனில் (centry->prev == வெற்று) {
 		/* first in list */
-		if (centry->next != NULL) {
+		எனில் (centry->next != வெற்று) {
 			centry->next->prev = centry->prev;
 			image_cache->entries = centry->next;
-		} else {
+		} இல்லையெனில் {
 			/* empty list */
-			image_cache->entries = NULL;
+			image_cache->entries = வெற்று;
 		}
-	} else {
+	} இல்லையெனில் {
 		centry->prev->next = centry->next;
 
-		if (centry->next != NULL) {
+		எனில் (centry->next != வெற்று) {
 			centry->next->prev = centry->prev;
 		}
 	}
@@ -252,23 +252,23 @@ static void image_cache__unlink(struct image_cache_entry_s *centry)
  *
  * \param centry The image cache entry to free bitmap from.
  */
-static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
+நிலையான வெறுமை image_cache__free_bitmap(கட்டமைப்பு image_cache_entry_s *centry)
 {
-	if (centry->bitmap != NULL) {
+	எனில் (centry->bitmap != வெற்று) {
 #ifdef IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
 		      "Freeing bitmap %p size %d age %d redraw count %d",
 		      centry->bitmap,
 		      centry->bitmap_size,
 		      image_cache->current_age - centry->bitmap_age,
-		      centry->redraw_count);
+		      centry->redraw_மொத்தம்);
 #endif
 		guit->bitmap->destroy(centry->bitmap);
-		centry->bitmap = NULL;
+		centry->bitmap = வெற்று;
 		image_cache->total_bitmap_size -= centry->bitmap_size;
-		image_cache->bitmap_count--;
-		if (centry->redraw_count == 0) {
-			image_cache->specultive_miss_count++;
+		image_cache->bitmap_மொத்தம்--;
+		எனில் (centry->redraw_மொத்தம் == 0) {
+			image_cache->specultive_miss_மொத்தம்++;
 		}
 	}
 
@@ -279,13 +279,13 @@ static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
  *
  * \param centry The image cache entry to free.
  */
-static void image_cache__free_entry(struct image_cache_entry_s *centry)
+நிலையான வெறுமை image_cache__free_entry(கட்டமைப்பு image_cache_entry_s *centry)
 {
 #ifdef IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "freeing %p ", centry);
 #endif
 
-	if (centry->redraw_count == 0) {
+	எனில் (centry->redraw_மொத்தம் == 0) {
 		image_cache->total_unrendered++;
 	}
 
@@ -293,7 +293,7 @@ static void image_cache__free_entry(struct image_cache_entry_s *centry)
 
 	image_cache__unlink(centry);
 
-	free(centry);
+	விடுவி(centry);
 }
 
 /**
@@ -301,15 +301,15 @@ static void image_cache__free_entry(struct image_cache_entry_s *centry)
  *
  * \param icache The image cache context.
  */
-static void image_cache__clean(struct image_cache_s *icache)
+நிலையான வெறுமை image_cache__clean(கட்டமைப்பு image_cache_s *icache)
 {
-	struct image_cache_entry_s *centry = icache->entries;
+	கட்டமைப்பு image_cache_entry_s *centry = icache->entries;
 
-	while (centry != NULL) {
-		if ((icache->current_age - centry->redraw_age) >
+	போது (centry != வெற்று) {
+		எனில் ((icache->current_age - centry->redraw_age) >
 		    icache->params.bg_clean_time) {
 			/* only consider older entries, avoids active entries */
-			if ((icache->total_bitmap_size >
+			எனில் ((icache->total_bitmap_size >
 			     (icache->params.limit - icache->params.hysteresis)) &&
 			    (rand() > (RAND_MAX / 2))) {
 				image_cache__free_bitmap(centry);
@@ -324,9 +324,9 @@ static void image_cache__clean(struct image_cache_s *icache)
  *
  * \param p The image cache context.
  */
-static void image_cache__background_update(void *p)
+நிலையான வெறுமை image_cache__background_update(வெறுமை *p)
 {
-	struct image_cache_s *icache = p;
+	கட்டமைப்பு image_cache_s *icache = p;
 
 	/* increment current cache age */
 	icache->current_age += icache->params.bg_clean_time;
@@ -343,45 +343,45 @@ static void image_cache__background_update(void *p)
 }
 
 /* exported interface documented in image_cache.h */
-struct bitmap *image_cache_get_bitmap(const struct content *c)
+கட்டமைப்பு bitmap *image_cache_get_bitmap(மாறிலி கட்டமைப்பு content *c)
 {
-	struct image_cache_entry_s *centry;
+	கட்டமைப்பு image_cache_entry_s *centry;
 
 	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	எனில் (centry == வெற்று) {
+		திரும்பு வெற்று;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	எனில் (centry->bitmap == வெற்று) {
+		எனில் (centry->convert != வெற்று) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
+		எனில் (centry->bitmap != வெற்று) {
 			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
+			image_cache->miss_மொத்தம்++;
 			image_cache->miss_size += centry->bitmap_size;
-		} else {
-			image_cache->fail_count++;
+		} இல்லையெனில் {
+			image_cache->fail_மொத்தம்++;
 			image_cache->fail_size += centry->bitmap_size;
 		}
-	} else {
-		image_cache->hit_count++;
+	} இல்லையெனில் {
+		image_cache->hit_மொத்தம்++;
 		image_cache->hit_size += centry->bitmap_size;
 	}
 
-	return centry->bitmap;
+	திரும்பு centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
-bool image_cache_speculate(struct content *c)
+bool image_cache_speculate(கட்டமைப்பு content *c)
 {
 	bool decision = false;
 
 	/* If the cache is below its target usage and the bitmap is
 	 * small enough speculate.
 	 */
-	if ((image_cache->total_bitmap_size < image_cache->params.limit) &&
+	எனில் ((image_cache->total_bitmap_size < image_cache->params.limit) &&
 	    (c->size <= image_cache->params.speculative_small)) {
 #ifdef IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
@@ -395,29 +395,29 @@ bool image_cache_speculate(struct content *c)
 #ifdef IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "returning %d", decision);
 #endif
-	return decision;
+	திரும்பு decision;
 }
 
 /* exported interface documented in image_cache.h */
-struct bitmap *image_cache_find_bitmap(struct content *c)
+கட்டமைப்பு bitmap *image_cache_find_bitmap(கட்டமைப்பு content *c)
 {
-	struct image_cache_entry_s *centry;
+	கட்டமைப்பு image_cache_entry_s *centry;
 
 	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	எனில் (centry == வெற்று) {
+		திரும்பு வெற்று;
 	}
 
-	return centry->bitmap;
+	திரும்பு centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
 nserror
-image_cache_init(const struct image_cache_parameters *image_cache_parameters)
+image_cache_init(மாறிலி கட்டமைப்பு image_cache_parameters *image_cache_parameters)
 {
-	image_cache = calloc(1, sizeof(struct image_cache_s));
-	if (image_cache == NULL) {
-		return NSERROR_NOMEM;
+	image_cache = calloc(1, அளவு(கட்டமைப்பு image_cache_s));
+	எனில் (image_cache == வெற்று) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
 	image_cache->params = *image_cache_parameters;
@@ -431,27 +431,27 @@ image_cache_init(const struct image_cache_parameters *image_cache_parameters)
 	      image_cache->params.limit,
 	      image_cache->params.hysteresis);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_fini(void)
+nserror image_cache_fini(வெறுமை)
 {
-	unsigned int op_count;
+	unsigned முழு op_மொத்தம்;
 	uint64_t op_size;
 
 	guit->misc->schedule(-1, image_cache__background_update, image_cache);
 
 	NSLOG(netsurf, INFO, "Size at finish %"PRIsizet" (in %d)",
-	      image_cache->total_bitmap_size, image_cache->bitmap_count);
+	      image_cache->total_bitmap_size, image_cache->bitmap_மொத்தம்);
 
-	while (image_cache->entries != NULL) {
+	போது (image_cache->entries != வெற்று) {
 		image_cache__free_entry(image_cache->entries);
 	}
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_மொத்தம் = image_cache->hit_மொத்தம் +
+		image_cache->miss_மொத்தம் +
+		image_cache->fail_மொத்தம்;
 
 	op_size = image_cache->hit_size +
 		image_cache->miss_size +
@@ -460,22 +460,22 @@ nserror image_cache_fini(void)
 	NSLOG(netsurf, INFO, "Age %ds", image_cache->current_age / 1000);
 	NSLOG(netsurf, INFO, "Peak size %"PRIsizet" (in %d)",
 	      image_cache->max_bitmap_size,
-	      image_cache->max_bitmap_size_count);
+	      image_cache->max_bitmap_size_மொத்தம்);
 	NSLOG(netsurf, INFO, "Peak image count %d (size %"PRIsizet")",
-	      image_cache->max_bitmap_count,
-	      image_cache->max_bitmap_count_size);
+	      image_cache->max_bitmap_மொத்தம்,
+	      image_cache->max_bitmap_மொத்தம்_size);
 
-	if ((op_count > 0) && (op_size >0)) {
+	எனில் ((op_மொத்தம் > 0) && (op_size >0)) {
 
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (counts) %d/%d/%d/%d (100%%/%d%%/%d%%/%d%%)",
-		      op_count,
-		      image_cache->hit_count,
-		      image_cache->miss_count,
-		      image_cache->fail_count,
-		      (image_cache->hit_count * 100) / op_count,
-		      (image_cache->miss_count * 100) / op_count,
-		      (image_cache->fail_count * 100) / op_count);
+		      op_மொத்தம்,
+		      image_cache->hit_மொத்தம்,
+		      image_cache->miss_மொத்தம்,
+		      image_cache->fail_மொத்தம்,
+		      (image_cache->hit_மொத்தம் * 100) / op_மொத்தம்,
+		      (image_cache->miss_மொத்தம் * 100) / op_மொத்தம்,
+		      (image_cache->fail_மொத்தம் * 100) / op_மொத்தம்);
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (size) %"PRIu64"/%"PRIu64"/%"PRIu64"/%"PRIu64" (100%%/%"PRId64"%%/%"PRId64"%%/%"PRId64"%%)",
 		      op_size,
@@ -490,28 +490,28 @@ nserror image_cache_fini(void)
 	NSLOG(netsurf, INFO,
 	      "Total images never rendered: %d (includes %d that were converted)",
 	      image_cache->total_unrendered,
-	      image_cache->specultive_miss_count);
+	      image_cache->specultive_miss_மொத்தம்);
 
 	NSLOG(netsurf, INFO,
 	      "Total number of excessive conversions: %d (from %d images converted more than once)",
 	      image_cache->total_extra_conversions,
-	      image_cache->total_extra_conversions_count);
+	      image_cache->total_extra_conversions_மொத்தம்);
 
 	NSLOG(netsurf, INFO, "Bitmap of size %d had most (%d) conversions",
 	      image_cache->peak_conversions_size,
 	      image_cache->peak_conversions);
 
-	free(image_cache);
+	விடுவி(image_cache);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_add(struct content *content,
-			struct bitmap *bitmap,
+nserror image_cache_add(கட்டமைப்பு content *content,
+			கட்டமைப்பு bitmap *bitmap,
 			image_cache_convert_fn *convert)
 {
-	struct image_cache_entry_s *centry;
+	கட்டமைப்பு image_cache_entry_s *centry;
 
 	/* bump the cache age by a ms to ensure multiple items are not
 	 * added at exactly the same time
@@ -519,11 +519,11 @@ nserror image_cache_add(struct content *content,
 	image_cache->current_age++;
 
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	எனில் (centry == வெற்று) {
 		/* new cache entry, content not previously added */
-		centry = calloc(1, sizeof(struct image_cache_entry_s));
-		if (centry == NULL) {
-			return NSERROR_NOMEM;
+		centry = calloc(1, அளவு(கட்டமைப்பு image_cache_entry_s));
+		எனில் (centry == வெற்று) {
+			திரும்பு NSERROR_NOMEM;
 		}
 		image_cache__link(centry);
 		centry->content = content;
@@ -537,134 +537,134 @@ nserror image_cache_add(struct content *content,
 	centry->convert = convert;
 
 	/* set bitmap entry if one is passed, free extant one if present */
-	if (bitmap != NULL) {
-		if (centry->bitmap != NULL) {
+	எனில் (bitmap != வெற்று) {
+		எனில் (centry->bitmap != வெற்று) {
 			guit->bitmap->destroy(centry->bitmap);
-		} else {
+		} இல்லையெனில் {
 			image_cache_stats_bitmap_add(centry);
 		}
 		centry->bitmap = bitmap;
-	} else {
+	} இல்லையெனில் {
 		/* no bitmap, check to see if we should speculatively convert */
-		if ((centry->convert != NULL) &&
+		எனில் ((centry->convert != வெற்று) &&
 		    (image_cache_speculate(content) == true)) {
 			centry->bitmap = centry->convert(centry->content);
 
-			if (centry->bitmap != NULL) {
+			எனில் (centry->bitmap != வெற்று) {
 				image_cache_stats_bitmap_add(centry);
-			} else {
-				image_cache->fail_count++;
+			} இல்லையெனில் {
+				image_cache->fail_மொத்தம்++;
 			}
 		}
 	}
 
 
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_remove(struct content *content)
+nserror image_cache_remove(கட்டமைப்பு content *content)
 {
-	struct image_cache_entry_s *centry;
+	கட்டமைப்பு image_cache_entry_s *centry;
 
 	/* get the cache entry */
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	எனில் (centry == வெற்று) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-		return NSERROR_NOT_FOUND;
+		திரும்பு NSERROR_NOT_FOUND;
 	}
 
 	image_cache__free_entry(centry);
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt)
+முழு image_cache_snsummaryf(எழுத்து *string, size_t size, மாறிலி எழுத்து *fmt)
 {
 	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	முழு fmtc = 0; /* current index into format string */
 	bool pct;
-	unsigned int op_count;
+	unsigned முழு op_மொத்தம்;
 	uint64_t op_size;
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_மொத்தம் = image_cache->hit_மொத்தம் +
+		image_cache->miss_மொத்தம் +
+		image_cache->fail_மொத்தம்;
 
 	op_size = image_cache->hit_size +
 		image_cache->miss_size +
 		image_cache->fail_size;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	போது((slen < size) && (fmt[fmtc] != 0)) {
+		எனில் (fmt[fmtc] == '%') {
 			fmtc++;
 
 			/* check for percentage modifier */
-			if (fmt[fmtc] == 'p') {
+			எனில் (fmt[fmtc] == 'p') {
 				fmtc++;
 				pct = true;
-			} else {
+			} இல்லையெனில் {
 				pct = false;
 			}
 
-#define FMTCHR(chr,fmt,var) case chr : \
-slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); break
+#define FMTCHR(chr,fmt,var) நிலை chr : \
+slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); நிறுத்து
 
 #define FMTPCHR(chr,fmt,var,div) \
-case chr :					\
-	if (pct) {							\
-		if (div > 0) {						\
+நிலை chr :					\
+	எனில் (pct) {							\
+		எனில் (div > 0) {						\
 			slen += snprintf(string + slen, size - slen, "%"PRId64, (uint64_t)((image_cache->var * 100) / div)); \
-		} else {						\
+		} இல்லையெனில் {						\
 			slen += snprintf(string + slen, size - slen, "100"); \
 		}							\
-	} else {							\
+	} இல்லையெனில் {							\
 		slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); \
-	} break
+	} நிறுத்து
 
 
-			switch (fmt[fmtc]) {
-			case '%':
+			தேர்வு (fmt[fmtc]) {
+			நிலை '%':
 				string[slen] = '%';
 				slen++;
-				break;
+				நிறுத்து;
 
 			FMTCHR('a', PRIsizet, params.limit);
 			FMTCHR('b', PRIsizet, params.hysteresis);
 			FMTCHR('c', PRIsizet, total_bitmap_size);
-			FMTCHR('d', "d", bitmap_count);
+			FMTCHR('d', "d", bitmap_மொத்தம்);
 			FMTCHR('e', "u", current_age / 1000);
 			FMTCHR('f', PRIsizet, max_bitmap_size);
-			FMTCHR('g', "d", max_bitmap_size_count);
-			FMTCHR('h', "d", max_bitmap_count);
-			FMTCHR('i', PRIsizet, max_bitmap_count_size);
+			FMTCHR('g', "d", max_bitmap_size_மொத்தம்);
+			FMTCHR('h', "d", max_bitmap_மொத்தம்);
+			FMTCHR('i', PRIsizet, max_bitmap_மொத்தம்_size);
 
 
-			case 'j':
+			நிலை 'j':
 				slen += snprintf(string + slen, size - slen,
-						 "%u", pct?100:op_count);
-				break;
+						 "%u", pct?100:op_மொத்தம்);
+				நிறுத்து;
 
-			FMTPCHR('k', "d", hit_count, op_count);
-			FMTPCHR('l', "d", miss_count, op_count);
-			FMTPCHR('m', "d", fail_count, op_count);
+			FMTPCHR('k', "d", hit_மொத்தம், op_மொத்தம்);
+			FMTPCHR('l', "d", miss_மொத்தம், op_மொத்தம்);
+			FMTPCHR('m', "d", fail_மொத்தம், op_மொத்தம்);
 
-			case 'n':
+			நிலை 'n':
 				slen += snprintf(string + slen, size - slen,
 						 "%"PRId64, pct?100:op_size);
-				break;
+				நிறுத்து;
 
 			FMTPCHR('o', PRId64, hit_size, op_size);
 			FMTPCHR('q', PRId64, miss_size, op_size);
 			FMTPCHR('r', PRId64, fail_size, op_size);
 
 			FMTCHR('s', "d", total_unrendered);
-			FMTCHR('t', "d", specultive_miss_count);
+			FMTCHR('t', "d", specultive_miss_மொத்தம்);
 			FMTCHR('u', "d", total_extra_conversions);
-			FMTCHR('v', "d", total_extra_conversions_count);
+			FMTCHR('v', "d", total_extra_conversions_மொத்தம்);
 			FMTCHR('w', "u", peak_conversions_size);
 			FMTCHR('x', "d", peak_conversions);
 
@@ -674,7 +674,7 @@ case chr :					\
 #undef FMTPCHR
 
 			fmtc++;
-		} else {
+		} இல்லையெனில் {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -684,67 +684,67 @@ case chr :					\
 	/* Ensure that we NUL-terminate the output */
 	string[min(slen, size - 1)] = '\0';
 
-	return slen;
+	திரும்பு slen;
 }
 
 /* exported interface documented in image_cache.h */
-int
-image_cache_snentryf(char *string,
+முழு
+image_cache_snentryf(எழுத்து *string,
 		     size_t size,
-		     unsigned int entryn,
-		     const char *fmt)
+		     unsigned முழு entryn,
+		     மாறிலி எழுத்து *fmt)
 {
-	struct image_cache_entry_s *centry;
+	கட்டமைப்பு image_cache_entry_s *centry;
 	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	முழு fmtc = 0; /* current index into format string */
 	lwc_string *origin; /* current entry's origin */
 
 	centry = image_cache__findn(entryn);
-	if (centry == NULL)
-		return -1;
+	எனில் (centry == வெற்று)
+		திரும்பு -1;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	போது((slen < size) && (fmt[fmtc] != 0)) {
+		எனில் (fmt[fmtc] == '%') {
 			fmtc++;
-			switch (fmt[fmtc]) {
-			case 'e':
+			தேர்வு (fmt[fmtc]) {
+			நிலை 'e':
 				slen += snprintf(string + slen, size - slen,
 						"%u", entryn);
-				break;
+				நிறுத்து;
 
-			case 'r':
+			நிலை 'r':
 				slen += snprintf(string + slen, size - slen,
-						"%u", centry->redraw_count);
-				break;
+						"%u", centry->redraw_மொத்தம்);
+				நிறுத்து;
 
-			case 'a':
+			நிலை 'a':
 				slen += snprintf(string + slen, size - slen,
-						 "%.2f", (float)((image_cache->current_age -  centry->redraw_age)) / 1000);
-				break;
+						 "%.2f", (தசம)((image_cache->current_age -  centry->redraw_age)) / 1000);
+				நிறுத்து;
 
 
-			case 'c':
+			நிலை 'c':
 				slen += snprintf(string + slen, size - slen,
-						"%d", centry->conversion_count);
-				break;
+						"%d", centry->conversion_மொத்தம்);
+				நிறுத்து;
 
-			case 'g':
+			நிலை 'g':
 				slen += snprintf(string + slen, size - slen,
-						"%.2f", (float)((image_cache->current_age -  centry->bitmap_age)) / 1000);
-				break;
+						"%.2f", (தசம)((image_cache->current_age -  centry->bitmap_age)) / 1000);
+				நிறுத்து;
 
-			case 'k':
+			நிலை 'k':
 				slen += snprintf(string + slen, size - slen,
 						"%p", centry->content);
-				break;
+				நிறுத்து;
 
-			case 'U':
+			நிலை 'U':
 				slen += snprintf(string + slen, size - slen,
 						"%s", nsurl_access(llcache_handle_get_url(centry->content->llcache)));
-				break;
+				நிறுத்து;
 
-			case 'o':
-				if (nsurl_has_component(llcache_handle_get_url(
+			நிலை 'o':
+				எனில் (nsurl_has_component(llcache_handle_get_url(
 						centry->content->llcache),
 						NSURL_HOST)) {
 					origin = nsurl_get_component(
@@ -759,28 +759,28 @@ image_cache_snentryf(char *string,
 								origin));
 
 					lwc_string_unref(origin);
-				} else {
+				} இல்லையெனில் {
 					slen += snprintf(string + slen,
 							size - slen, "%s",
 							"localhost");
 				}
-				break;
+				நிறுத்து;
 
-			case 's':
-				if (centry->bitmap != NULL) {
+			நிலை 's':
+				எனில் (centry->bitmap != வெற்று) {
 					slen += snprintf(string + slen,
 							 size - slen,
 							 "%" PRIsizet,
 							 centry->bitmap_size);
-				} else {
+				} இல்லையெனில் {
 					slen += snprintf(string + slen,
 							 size - slen,
 							 "0");
 				}
-				break;
+				நிறுத்து;
 			}
 			fmtc++;
-		} else {
+		} இல்லையெனில் {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -790,87 +790,87 @@ image_cache_snentryf(char *string,
 	/* Ensure that we NUL-terminate the output */
 	string[min(slen, size - 1)] = '\0';
 
-	return slen;
+	திரும்பு slen;
 }
 
 
 /* exported interface documented in image_cache.h */
-bool image_cache_redraw(struct content *c,
-			struct content_redraw_data *data,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+bool image_cache_redraw(கட்டமைப்பு content *c,
+			கட்டமைப்பு content_redraw_data *data,
+			மாறிலி கட்டமைப்பு rect *clip,
+			மாறிலி கட்டமைப்பு redraw_context *ctx)
 {
-	struct image_cache_entry_s *centry;
+	கட்டமைப்பு image_cache_entry_s *centry;
 
 	/* get the cache entry */
 	centry = image_cache__find(c);
-	if (centry == NULL) {
+	எனில் (centry == வெற்று) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", c);
-		return false;
+		திரும்பு false;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	எனில் (centry->bitmap == வெற்று) {
+		எனில் (centry->convert != வெற்று) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
+		எனில் (centry->bitmap != வெற்று) {
 			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
+			image_cache->miss_மொத்தம்++;
 			image_cache->miss_size += centry->bitmap_size;
-		} else {
-			image_cache->fail_count++;
+		} இல்லையெனில் {
+			image_cache->fail_மொத்தம்++;
 			image_cache->fail_size += centry->bitmap_size;
-			return false;
+			திரும்பு false;
 		}
-	} else {
-		image_cache->hit_count++;
+	} இல்லையெனில் {
+		image_cache->hit_மொத்தம்++;
 		image_cache->hit_size += centry->bitmap_size;
 	}
 
 
 	/* update statistics */
-	centry->redraw_count++;
+	centry->redraw_மொத்தம்++;
 	centry->redraw_age = image_cache->current_age;
 
-	return image_bitmap_plot(centry->bitmap, data, clip, ctx);
+	திரும்பு image_bitmap_plot(centry->bitmap, data, clip, ctx);
 }
 
 /* exported interface documented in image_cache.h */
-void image_cache_destroy(struct content *content)
+வெறுமை image_cache_destroy(கட்டமைப்பு content *content)
 {
-	struct image_cache_entry_s *centry;
+	கட்டமைப்பு image_cache_entry_s *centry;
 
 	/* get the cache entry */
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	எனில் (centry == வெற்று) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-	} else {
+	} இல்லையெனில் {
 		image_cache__free_entry(centry);
 	}
 }
 
 /* exported interface documented in image_cache.h */
-void *image_cache_get_internal(const struct content *c, void *context)
+வெறுமை *image_cache_get_internal(மாறிலி கட்டமைப்பு content *c, வெறுமை *context)
 {
-	return image_cache_get_bitmap(c);
+	திரும்பு image_cache_get_bitmap(c);
 }
 
 /* exported interface documented in image_cache.h */
-bool image_cache_is_opaque(struct content *c)
+bool image_cache_is_opaque(கட்டமைப்பு content *c)
 {
-	struct bitmap *bmp;
+	கட்டமைப்பு bitmap *bmp;
 	bmp = image_cache_get_bitmap(c);
-	if (bmp != NULL) {
-		return guit->bitmap->get_opaque(bmp);
+	எனில் (bmp != வெற்று) {
+		திரும்பு guit->bitmap->get_opaque(bmp);
 	}
-	return false;
+	திரும்பு false;
 }
 
 /* exported interface documented in image_cache.h */
-content_type image_cache_content_type(void)
+content_type image_cache_content_type(வெறுமை)
 {
-	return CONTENT_IMAGE;
+	திரும்பு CONTENT_IMAGE;
 }

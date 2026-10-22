@@ -24,27 +24,27 @@
 #ifndef NETSURF_HTML_FORM_INTERNAL_H
 #define NETSURF_HTML_FORM_INTERNAL_H
 
-#include <stdbool.h>
+#அந்தர்பாவ <stdbool.h>
 
-#include "netsurf/form.h"
+#அந்தர்பாவ "netsurf/form.h"
 
-struct box;
-struct form_control;
-struct form_option;
-struct form_select_menu;
-struct form;
-struct html_content;
-struct dom_string;
-struct content;
-struct nsurl;
-struct fetch_multipart_data;
-struct redraw_context;
-struct browser_window;
+கட்டமைப்பு box;
+கட்டமைப்பு form_control;
+கட்டமைப்பு form_option;
+கட்டமைப்பு form_select_menu;
+கட்டமைப்பு form;
+கட்டமைப்பு html_content;
+கட்டமைப்பு dom_string;
+கட்டமைப்பு content;
+கட்டமைப்பு nsurl;
+கட்டமைப்பு fetch_multipart_data;
+கட்டமைப்பு redraw_context;
+கட்டமைப்பு browser_window;
 
-enum browser_mouse_state;
+எண்ணிக்கை browser_mouse_state;
 
 /** Type of a struct form_control. */
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	GADGET_HIDDEN,
 	GADGET_TEXTBOX,
 	GADGET_RADIO,
@@ -60,83 +60,83 @@ typedef enum {
 } form_control_type;
 
 /** Data for textarea */
-struct form_textarea_data {
-	struct form_control *gadget;
+கட்டமைப்பு form_textarea_data {
+	கட்டமைப்பு form_control *gadget;
 };
 
-struct image_input_coords {
-	int x;
-	int y;
+கட்டமைப்பு image_உள்ளீடு_coords {
+	முழு x;
+	முழு y;
 };
 
 /** Form control. */
-struct form_control {
-	void *node;			/**< Corresponding DOM node */
-	struct dom_string *node_value;  /**< The last value sync'd with the DOM */
+கட்டமைப்பு form_control {
+	வெறுமை *முனை;			/**< Corresponding DOM node */
+	கட்டமைப்பு dom_string *முனை_மதிப்பு;  /**< The last value sync'd with the DOM */
 	bool syncing;                   /**< Set if a DOM sync is in-progress */
-	struct html_content *html;	/**< HTML content containing control */
+	கட்டமைப்பு html_content *html;	/**< HTML content containing control */
 
 	form_control_type type;		/**< Type of control */
 
-	struct form *form;		/**< Containing form */
+	கட்டமைப்பு form *form;		/**< Containing form */
 
-	char *name;			/**< Control name */
-	char *value;			/**< Current value of control */
-	char *initial_value;		/**< Initial value of control */
-	char *last_synced_value;        /**< The last value sync'd to the DOM */
+	எழுத்து *name;			/**< Control name */
+	எழுத்து *மதிப்பு;			/**< Current value of control */
+	எழுத்து *initial_மதிப்பு;		/**< Initial value of control */
+	எழுத்து *last_synced_மதிப்பு;        /**< The last value sync'd to the DOM */
 	bool disabled;			/**< Whether control is disabled */
 
-	struct box *box;		/**< Box for control */
+	கட்டமைப்பு box *box;		/**< Box for control */
 
-	unsigned int length;		/**< Number of characters in control */
-	unsigned int maxlength;		/**< Maximum characters permitted */
+	unsigned முழு length;		/**< Number of characters in control */
+	unsigned முழு maxlength;		/**< Maximum characters permitted */
 
 	bool selected;			/**< Whether control is selected */
 
-	union {
-		struct {
-			int mx, my;
+	ஒன்றிப்பு {
+		கட்டமைப்பு {
+			முழு mx, my;
 		} image;
-		struct {
-			int num_items;
-			struct form_option *items, *last_item;
+		கட்டமைப்பு {
+			முழு இலக்கம்_பொருட்கள்;
+			கட்டமைப்பு form_option *பொருட்கள், *last_item;
 			bool multiple;
-			int num_selected;
+			முழு இலக்கம்_selected;
 			/** Currently selected item, if num_selected == 1. */
-			struct form_option *current;
-			struct form_select_menu *menu;
+			கட்டமைப்பு form_option *current;
+			கட்டமைப்பு form_select_menu *menu;
 		} select;
-		struct {
-			struct textarea *ta;
-			struct dom_string *initial;
-			struct form_textarea_data data;
+		கட்டமைப்பு {
+			கட்டமைப்பு textarea *ta;
+			கட்டமைப்பு dom_string *initial;
+			கட்டமைப்பு form_textarea_data data;
 		} text;			/**< input type=text or textarea */
 	} data;
 
-	struct form_control *prev;      /**< Previous control in this form */
-	struct form_control *next;	/**< Next control in this form. */
+	கட்டமைப்பு form_control *prev;      /**< Previous control in this form */
+	கட்டமைப்பு form_control *next;	/**< Next control in this form. */
 };
 
 /** Form submit method. */
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	method_GET,		/**< GET, always url encoded. */
 	method_POST_URLENC,	/**< POST, url encoded. */
 	method_POST_MULTIPART	/**< POST, multipart/form-data. */
 } form_method;
 
 /** HTML form. */
-struct form {
-	void *node;			/**< Corresponding DOM node */
+கட்டமைப்பு form {
+	வெறுமை *முனை;			/**< Corresponding DOM node */
 
-	char *action;			/**< Absolute URL to submit to. */
-	char *target;			/**< Target to submit to. */
+	எழுத்து *action;			/**< Absolute URL to submit to. */
+	எழுத்து *target;			/**< Target to submit to. */
 	form_method method;		/**< Method and enctype. */
-	char *accept_charsets;		/**< Charset to submit form in */
-	char *document_charset;		/**< Charset of document containing form */
-	struct form_control *controls;	/**< Linked list of controls. */
-	struct form_control *last_control;	/**< Last control in list. */
+	எழுத்து *accept_charsets;		/**< Charset to submit form in */
+	எழுத்து *document_charset;		/**< Charset of document containing form */
+	கட்டமைப்பு form_control *controls;	/**< Linked list of controls. */
+	கட்டமைப்பு form_control *last_control;	/**< Last control in list. */
 
-	struct form *prev;		/**< Previous form in doc. */
+	கட்டமைப்பு form *prev;		/**< Previous form in doc. */
 };
 
 /**
@@ -149,8 +149,8 @@ struct form {
  * \param width		width of redraw rectangle
  * \param height	height of redraw rectangle
  */
-typedef void(*select_menu_redraw_callback)(void *client_data,
-		int x, int y, int width, int height);
+வகைவரை வெறுமை(*select_menu_redraw_callback)(வெறுமை *client_data,
+		முழு x, முழு y, முழு width, முழு height);
 
 /**
  * Create a struct form.
@@ -163,9 +163,9 @@ typedef void(*select_menu_redraw_callback)(void *client_data,
  * \param doc_charset  encoding of containing document, or NULL
  * \return A new form or NULL on memory exhaustion
  */
-struct form *form_new(void *node, const char *action, const char *target,
-		form_method method, const char *charset,
-		const char *doc_charset);
+கட்டமைப்பு form *form_new(வெறுமை *முனை, மாறிலி எழுத்து *action, மாறிலி எழுத்து *target,
+		form_method method, மாறிலி எழுத்து *charset,
+		மாறிலி எழுத்து *doc_charset);
 
 /**
  * Free a form and any controls it owns.
@@ -178,7 +178,7 @@ struct form *form_new(void *node, const char *action, const char *target,
  *
  * \param form The form to free
  */
-void form_free(struct form *form);
+வெறுமை form_free(கட்டமைப்பு form *form);
 
 
 /**
@@ -188,7 +188,7 @@ void form_free(struct form *form);
  * \param  type  control type
  * \return  a new structure, or NULL on memory exhaustion
  */
-struct form_control *form_new_control(void *node, form_control_type type);
+கட்டமைப்பு form_control *form_new_control(வெறுமை *முனை, form_control_type type);
 
 
 /**
@@ -197,7 +197,7 @@ struct form_control *form_new_control(void *node, form_control_type type);
  * \param form  The form to add the control to
  * \param control  The control to add
  */
-void form_add_control(struct form *form, struct form_control *control);
+வெறுமை form_add_control(கட்டமைப்பு form *form, கட்டமைப்பு form_control *control);
 
 
 /**
@@ -205,7 +205,7 @@ void form_add_control(struct form *form, struct form_control *control);
  *
  * \param  control  structure to free
  */
-void form_free_control(struct form_control *control);
+வெறுமை form_free_control(கட்டமைப்பு form_control *control);
 
 
 /**
@@ -218,8 +218,8 @@ void form_free_control(struct form_control *control);
  * \param  node      the DOM node this option is associated with
  * \return  true on success, false on memory exhaustion
  */
-bool form_add_option(struct form_control *control, char *value, char *text,
-		     bool selected, void *node);
+bool form_add_option(கட்டமைப்பு form_control *control, எழுத்து *மதிப்பு, எழுத்து *text,
+		     bool selected, வெறுமை *முனை);
 
 
 /**
@@ -231,10 +231,10 @@ bool form_add_option(struct form_control *control, char *value, char *text,
  * \param c The content the select menu is opening for.
  * \return NSERROR_OK on sucess else error code.
  */
-nserror form_open_select_menu(void *client_data,
-		struct form_control *control,
+nserror form_open_select_menu(வெறுமை *client_data,
+		கட்டமைப்பு form_control *control,
 		select_menu_redraw_callback redraw_callback,
-		struct content *c);
+		கட்டமைப்பு content *c);
 
 
 /**
@@ -243,7 +243,7 @@ nserror form_open_select_menu(void *client_data,
  * \param control  the select form control owning the select menu being
  *                  destroyed.
  */
-void form_free_select_menu(struct form_control *control);
+வெறுமை form_free_select_menu(கட்டமைப்பு form_control *control);
 
 
 /**
@@ -257,9 +257,9 @@ void form_free_select_menu(struct form_control *control);
  * \param ctx      current redraw context
  * \return         true on success, false otherwise
  */
-bool form_redraw_select_menu(struct form_control *control, int x, int y,
-		float scale, const struct rect *clip,
-		const struct redraw_context *ctx);
+bool form_redraw_select_menu(கட்டமைப்பு form_control *control, முழு x, முழு y,
+		தசம scale, மாறிலி கட்டமைப்பு rect *clip,
+		மாறிலி கட்டமைப்பு redraw_context *ctx);
 
 
 /**
@@ -271,8 +271,8 @@ bool form_redraw_select_menu(struct form_control *control, int x, int y,
  * \param clip     the clipping rectangle
  * \return true if inside false otherwise
  */
-bool form_clip_inside_select_menu(struct form_control *control, float scale,
-		const struct rect *clip);
+bool form_clip_inside_select_menu(கட்டமைப்பு form_control *control, தசம scale,
+		மாறிலி கட்டமைப்பு rect *clip);
 
 
 /**
@@ -284,8 +284,8 @@ bool form_clip_inside_select_menu(struct form_control *control, float scale,
  * \param y Y coordinate of click
  * \return text for the browser status bar or NULL if the menu has to be closed
  */
-const char *form_select_mouse_action(struct form_control *control,
-		enum browser_mouse_state mouse, int x, int y);
+மாறிலி எழுத்து *form_select_mouse_action(கட்டமைப்பு form_control *control,
+		எண்ணிக்கை browser_mouse_state mouse, முழு x, முழு y);
 
 
 /**
@@ -296,8 +296,8 @@ const char *form_select_mouse_action(struct form_control *control,
  * \param x X coordinate of drag end
  * \param y Y coordinate of drag end
  */
-void form_select_mouse_drag_end(struct form_control *control,
-		enum browser_mouse_state mouse, int x, int y);
+வெறுமை form_select_mouse_drag_end(கட்டமைப்பு form_control *control,
+		எண்ணிக்கை browser_mouse_state mouse, முழு x, முழு y);
 
 
 /**
@@ -307,15 +307,15 @@ void form_select_mouse_drag_end(struct form_control *control,
  * \param width		gets updated to menu width
  * \param height	gets updated to menu height
  */
-void form_select_get_dimensions(struct form_control *control,
-		int *width, int *height);
+வெறுமை form_select_get_dimensions(கட்டமைப்பு form_control *control,
+		முழு *width, முழு *height);
 
 
 /**
  * Callback for the core select menu.
  */
-void form_select_menu_callback(void *client_data,
-		int x, int y, int width, int height);
+வெறுமை form_select_menu_callback(வெறுமை *client_data,
+		முழு x, முழு y, முழு width, முழு height);
 
 
 /**
@@ -323,7 +323,7 @@ void form_select_menu_callback(void *client_data,
  *
  * \param radio form control of type GADGET_RADIO
  */
-void form_radio_set(struct form_control *radio);
+வெறுமை form_radio_set(கட்டமைப்பு form_control *radio);
 
 /**
  * navigate browser window based on form submission.
@@ -333,14 +333,14 @@ void form_radio_set(struct form_control *radio);
  * \param form The form to submit.
  * \param submit_button The control used to submit the form.
  */
-nserror form_submit(struct nsurl *page_url, struct browser_window *target,
-		struct form *form, struct form_control *submit_button);
+nserror form_submit(கட்டமைப்பு nsurl *page_url, கட்டமைப்பு browser_window *target,
+		கட்டமைப்பு form *form, கட்டமைப்பு form_control *submit_button);
 
 
 /**
  * Update gadget value.
  */
-void form_gadget_update_value(struct form_control *control, char *value);
+வெறுமை form_gadget_update_மதிப்பு(கட்டமைப்பு form_control *control, எழுத்து *மதிப்பு);
 
 
 /**
@@ -355,6 +355,6 @@ void form_gadget_update_value(struct form_control *control, char *value);
  *
  * \note Currently this will only synchronise input gadgets (text/password)
  */
-void form_gadget_sync_with_dom(struct form_control *control);
+வெறுமை form_gadget_sync_with_dom(கட்டமைப்பு form_control *control);
 
 #endif

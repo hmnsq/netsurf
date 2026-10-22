@@ -23,6 +23,6 @@
 #ifndef _NETSURF_IMAGE_RSVG_H_
 #define _NETSURF_IMAGE_RSVG_H_
 
-nserror nsrsvg_init(void);
+nserror nsrsvg_init(வெறுமை);
 
 #endif

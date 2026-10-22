@@ -16,26 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <assert.h>
-#include <libwapcaplet/libwapcaplet.h>
-#include <dom/dom.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <libwapcaplet/libwapcaplet.h>
+#அந்தர்பாவ <dom/dom.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/utils.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
-#include "desktop/system_colour.h"
+#அந்தர்பாவ "utils/errors.h"
+#அந்தர்பாவ "utils/corestrings.h"
+#அந்தர்பாவ "utils/utils.h"
+#அந்தர்பாவ "utils/http.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/messages.h"
+#அந்தர்பாவ "content/content_protected.h"
+#அந்தர்பாவ "content/content_factory.h"
+#அந்தர்பாவ "content/fetch.h"
+#அந்தர்பாவ "content/hlcache.h"
+#அந்தர்பாவ "desktop/system_colour.h"
 
-#include "css/css.h"
-#include "css/hints.h"
-#include "css/internal.h"
+#அந்தர்பாவ "css/css.h"
+#அந்தர்பாவ "css/hints.h"
+#அந்தர்பாவ "css/internal.h"
 
 /* Define to trace import fetches */
 #undef NSCSS_IMPORT_TRACE
@@ -43,7 +43,7 @@
 /** Screen DPI in fixed point units: defaults to 90, which RISC OS uses */
 css_fixed nscss_screen_dpi = F_90;
 
-struct content_css_data;
+கட்டமைப்பு content_css_data;
 
 /**
  * Type of callback called when a CSS object has finished
@@ -51,68 +51,68 @@ struct content_css_data;
  * \param css  CSS object that has completed
  * \param pw   Client-specific data
  */
-typedef void (*nscss_done_callback)(struct content_css_data *css, void *pw);
+வகைவரை வெறுமை (*nscss_done_callback)(கட்டமைப்பு content_css_data *css, வெறுமை *pw);
 
 /**
  * CSS content data
  */
-struct content_css_data
+கட்டமைப்பு content_css_data
 {
 	css_stylesheet *sheet;		/**< Stylesheet object */
-	char *charset;			/**< Character set of stylesheet */
-	struct nscss_import *imports;	/**< Array of imported sheets */
-	uint32_t import_count;		/**< Number of sheets imported */
+	எழுத்து *charset;			/**< Character set of stylesheet */
+	கட்டமைப்பு nscss_import *imports;	/**< Array of imported sheets */
+	uint32_t import_மொத்தம்;		/**< Number of sheets imported */
 	uint32_t next_to_register;	/**< Index of next import to register */
 	nscss_done_callback done;	/**< Completion callback */
-	void *pw;			/**< Client data */
+	வெறுமை *pw;			/**< Client data */
 };
 
 /**
  * CSS content data
  */
-typedef struct nscss_content
+வகைவரை கட்டமைப்பு nscss_content
 {
-	struct content base;		/**< Underlying content object */
+	கட்டமைப்பு content base;		/**< Underlying content object */
 
-	struct content_css_data data;	/**< CSS data */
+	கட்டமைப்பு content_css_data data;	/**< CSS data */
 } nscss_content;
 
 /**
  * Context for import fetches
  */
-typedef struct {
-	struct content_css_data *css;		/**< Object containing import */
+வகைவரை கட்டமைப்பு {
+	கட்டமைப்பு content_css_data *css;		/**< Object containing import */
 	uint32_t index;				/**< Index into parent sheet's
 						 *   imports array */
 } nscss_import_ctx;
 
-static bool nscss_convert(struct content *c);
-static void nscss_destroy(struct content *c);
-static nserror nscss_clone(const struct content *old, struct content **newc);
-static bool nscss_matches_quirks(const struct content *c, bool quirks);
-static content_type nscss_content_type(void);
+நிலையான bool nscss_convert(கட்டமைப்பு content *c);
+நிலையான வெறுமை nscss_destroy(கட்டமைப்பு content *c);
+நிலையான nserror nscss_clone(மாறிலி கட்டமைப்பு content *old, கட்டமைப்பு content **newc);
+நிலையான bool nscss_matches_quirks(மாறிலி கட்டமைப்பு content *c, bool quirks);
+நிலையான content_type nscss_content_type(வெறுமை);
 
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
-		nscss_done_callback done, void *pw);
-static css_error nscss_process_css_data(struct content_css_data *c, const char *data,
-		unsigned int size);
-static css_error nscss_convert_css_data(struct content_css_data *c);
-static void nscss_destroy_css_data(struct content_css_data *c);
+நிலையான nserror nscss_create_css_data(கட்டமைப்பு content_css_data *c,
+		மாறிலி எழுத்து *url, மாறிலி எழுத்து *charset, bool quirks,
+		nscss_done_callback done, வெறுமை *pw);
+நிலையான css_error nscss_process_css_data(கட்டமைப்பு content_css_data *c, மாறிலி எழுத்து *data,
+		unsigned முழு size);
+நிலையான css_error nscss_convert_css_data(கட்டமைப்பு content_css_data *c);
+நிலையான வெறுமை nscss_destroy_css_data(கட்டமைப்பு content_css_data *c);
 
-static void nscss_content_done(struct content_css_data *css, void *pw);
-static css_error nscss_handle_import(void *pw, css_stylesheet *parent,
+நிலையான வெறுமை nscss_content_done(கட்டமைப்பு content_css_data *css, வெறுமை *pw);
+நிலையான css_error nscss_handle_import(வெறுமை *pw, css_stylesheet *parent,
 		lwc_string *url);
-static nserror nscss_import(hlcache_handle *handle,
-		const hlcache_event *event, void *pw);
-static css_error nscss_import_complete(nscss_import_ctx *ctx);
+நிலையான nserror nscss_import(hlcache_handle *handle,
+		மாறிலி hlcache_event *event, வெறுமை *pw);
+நிலையான css_error nscss_import_complete(nscss_import_ctx *ctx);
 
-static css_error nscss_register_imports(struct content_css_data *c);
-static css_error nscss_register_import(struct content_css_data *c,
-		const hlcache_handle *import);
+நிலையான css_error nscss_register_imports(கட்டமைப்பு content_css_data *c);
+நிலையான css_error nscss_register_import(கட்டமைப்பு content_css_data *c,
+		மாறிலி hlcache_handle *import);
 
 
-static css_stylesheet *blank_import;
+நிலையான css_stylesheet *blank_import;
 
 
 /**
@@ -127,64 +127,64 @@ static css_stylesheet *blank_import;
  * \param c Content to initialise
  * \return NSERROR_OK or error cod eon faliure
  */
-static nserror
-nscss_create(const content_handler *handler,
+நிலையான nserror
+nscss_create(மாறிலி content_handler *handler,
 	     lwc_string *imime_type,
-	     const http_parameter *params,
+	     மாறிலி http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     மாறிலி எழுத்து *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     கட்டமைப்பு content **c)
 {
 	nscss_content *result;
-	const char *charset = NULL;
-	const char *xnsbase = NULL;
-	lwc_string *charset_value = NULL;
+	மாறிலி எழுத்து *charset = வெற்று;
+	மாறிலி எழுத்து *xnsbase = வெற்று;
+	lwc_string *charset_மதிப்பு = வெற்று;
 	nserror error;
 
-	result = calloc(1, sizeof(nscss_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	result = calloc(1, அளவு(nscss_content));
+	எனில் (result == வெற்று)
+		திரும்பு NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type,
 			params, llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	எனில் (error != NSERROR_OK) {
+		விடுவி(result);
+		திரும்பு error;
 	}
 
 	/* Find charset specified on HTTP layer, if any */
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
-			&charset_value);
-	if (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
+			&charset_மதிப்பு);
+	எனில் (error != NSERROR_OK || lwc_string_length(charset_மதிப்பு) == 0) {
 		/* No charset specified, use fallback, if any */
 		/** \todo libcss will take this as gospel, which is wrong */
 		charset = fallback_charset;
-	} else {
-		charset = lwc_string_data(charset_value);
+	} இல்லையெனில் {
+		charset = lwc_string_data(charset_மதிப்பு);
 	}
 
 	/* Compute base URL for stylesheet */
 	xnsbase = llcache_handle_get_header(llcache, "X-NS-Base");
-	if (xnsbase == NULL) {
+	எனில் (xnsbase == வெற்று) {
 		xnsbase = nsurl_access(content_get_url(&result->base));
 	}
 
 	error = nscss_create_css_data(&result->data,
 			xnsbase, charset, result->base.quirks,
 			nscss_content_done, result);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&result->base, NSERROR_NOMEM, NULL);
-		lwc_string_unref(charset_value);
-		free(result);
-		return error;
+	எனில் (error != NSERROR_OK) {
+		content_broadcast_error(&result->base, NSERROR_NOMEM, வெற்று);
+		lwc_string_unref(charset_மதிப்பு);
+		விடுவி(result);
+		திரும்பு error;
 	}
 
-	lwc_string_unref(charset_value);
+	lwc_string_unref(charset_மதிப்பு);
 
-	*c = (struct content *) result;
+	*c = (கட்டமைப்பு content *) result;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -198,9 +198,9 @@ nscss_create(const content_handler *handler,
  * \param pw       Client data for \a done
  * \return NSERROR_OK on success, NSERROR_NOMEM on memory exhaustion
  */
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
-		nscss_done_callback done, void *pw)
+நிலையான nserror nscss_create_css_data(கட்டமைப்பு content_css_data *c,
+		மாறிலி எழுத்து *url, மாறிலி எழுத்து *charset, bool quirks,
+		nscss_done_callback done, வெறுமை *pw)
 {
 	css_error error;
 	css_stylesheet_params params;
@@ -208,35 +208,35 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	c->pw = pw;
 	c->done = done;
 	c->next_to_register = (uint32_t) -1;
-	c->import_count = 0;
-	c->imports = NULL;
-	if (charset != NULL)
+	c->import_மொத்தம் = 0;
+	c->imports = வெற்று;
+	எனில் (charset != வெற்று)
 		c->charset = strdup(charset);
-	else
-		c->charset = NULL;
+	இல்லையெனில்
+		c->charset = வெற்று;
 
 	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = வெற்று;
 	params.allow_quirks = quirks;
 	params.inline_style = false;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
+	params.resolve_pw = வெற்று;
 	params.import = nscss_handle_import;
 	params.import_pw = c;
 	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.color_pw = வெற்று;
+	params.font = வெற்று;
+	params.font_pw = வெற்று;
 
 	error = css_stylesheet_create(&params, &c->sheet);
-	if (error != CSS_OK) {
-		return NSERROR_NOMEM;
+	எனில் (error != CSS_OK) {
+		திரும்பு NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
 /**
@@ -247,18 +247,18 @@ static nserror nscss_create_css_data(struct content_css_data *c,
  * \param size  Number of bytes to process
  * \return true on success, false on failure
  */
-static bool
-nscss_process_data(struct content *c, const char *data, unsigned int size)
+நிலையான bool
+nscss_process_data(கட்டமைப்பு content *c, மாறிலி எழுத்து *data, unsigned முழு size)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
 	error = nscss_process_css_data(&css->data, data, size);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
+	எனில் (error != CSS_OK && error != CSS_NEEDDATA) {
+		content_broadcast_error(c, NSERROR_CSS, வெற்று);
 	}
 
-	return (error == CSS_OK || error == CSS_NEEDDATA);
+	திரும்பு (error == CSS_OK || error == CSS_NEEDDATA);
 }
 
 /**
@@ -269,11 +269,11 @@ nscss_process_data(struct content *c, const char *data, unsigned int size)
  * \param size  Number of bytes to process
  * \return CSS_OK on success, appropriate error otherwise
  */
-static css_error nscss_process_css_data(struct content_css_data *c,
-		const char *data, unsigned int size)
+நிலையான css_error nscss_process_css_data(கட்டமைப்பு content_css_data *c,
+		மாறிலி எழுத்து *data, unsigned முழு size)
 {
-	return css_stylesheet_append_data(c->sheet,
-			(const uint8_t *) data, size);
+	திரும்பு css_stylesheet_append_data(c->sheet,
+			(மாறிலி uint8_t *) data, size);
 }
 
 /**
@@ -282,18 +282,18 @@ static css_error nscss_process_css_data(struct content_css_data *c,
  * \param c  Content to convert
  * \return true on success, false on failure
  */
-bool nscss_convert(struct content *c)
+bool nscss_convert(கட்டமைப்பு content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
 	error = nscss_convert_css_data(&css->data);
-	if (error != CSS_OK) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
-		return false;
+	எனில் (error != CSS_OK) {
+		content_broadcast_error(c, NSERROR_CSS, வெற்று);
+		திரும்பு false;
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 /**
@@ -302,37 +302,37 @@ bool nscss_convert(struct content *c)
  * \param c  CSS data to convert
  * \return CSS error
  */
-static css_error nscss_convert_css_data(struct content_css_data *c)
+நிலையான css_error nscss_convert_css_data(கட்டமைப்பு content_css_data *c)
 {
 	css_error error;
 
 	error = css_stylesheet_data_done(c->sheet);
 
 	/* Process pending imports */
-	if (error == CSS_IMPORTS_PENDING) {
+	எனில் (error == CSS_IMPORTS_PENDING) {
 		/* We must not have registered any imports yet */
-		assert(c->next_to_register == (uint32_t) -1);
+		ப்ரதிஜ்ஞா(c->next_to_register == (uint32_t) -1);
 
 		/* Start registering, until we find one that
 		 * hasn't finished fetching */
 		c->next_to_register = 0;
 		error = nscss_register_imports(c);
-	} else if (error == CSS_OK) {
+	} இல்லையெனில் எனில் (error == CSS_OK) {
 		/* No imports, and no errors, so complete conversion */
 		c->done(c, c->pw);
-	} else {
-		const char *url;
+	} இல்லையெனில் {
+		மாறிலி எழுத்து *url;
 
-		if (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
+		எனில் (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
 			NSLOG(netsurf, INFO, "Failed converting %p %s (%d)",
 			      c, url, error);
-		} else {
+		} இல்லையெனில் {
 			NSLOG(netsurf, INFO, "Failed converting %p (%d)", c,
 			      error);
 		}
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 /**
@@ -340,7 +340,7 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
  *
  * \param c  Content to clean up
  */
-void nscss_destroy(struct content *c)
+வெறுமை nscss_destroy(கட்டமைப்பு content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 
@@ -352,44 +352,44 @@ void nscss_destroy(struct content *c)
  *
  * \param c  CSS data to clean up
  */
-static void nscss_destroy_css_data(struct content_css_data *c)
+நிலையான வெறுமை nscss_destroy_css_data(கட்டமைப்பு content_css_data *c)
 {
 	uint32_t i;
 
-	for (i = 0; i < c->import_count; i++) {
-		if (c->imports[i].c != NULL) {
+	க்கு (i = 0; i < c->import_மொத்தம்; i++) {
+		எனில் (c->imports[i].c != வெற்று) {
 			hlcache_handle_release(c->imports[i].c);
 		}
-		c->imports[i].c = NULL;
+		c->imports[i].c = வெற்று;
 	}
 
-	free(c->imports);
+	விடுவி(c->imports);
 
-	if (c->sheet != NULL) {
+	எனில் (c->sheet != வெற்று) {
 		css_stylesheet_destroy(c->sheet);
-		c->sheet = NULL;
+		c->sheet = வெற்று;
 	}
 
-	free(c->charset);
+	விடுவி(c->charset);
 }
 
-nserror nscss_clone(const struct content *old, struct content **newc)
+nserror nscss_clone(மாறிலி கட்டமைப்பு content *old, கட்டமைப்பு content **newc)
 {
-	const nscss_content *old_css = (const nscss_content *) old;
+	மாறிலி nscss_content *old_css = (மாறிலி nscss_content *) old;
 	nscss_content *new_css;
-	const uint8_t *data;
+	மாறிலி uint8_t *data;
 	size_t size;
 	nserror error;
 
-	new_css = calloc(1, sizeof(nscss_content));
-	if (new_css == NULL)
-		return NSERROR_NOMEM;
+	new_css = calloc(1, அளவு(nscss_content));
+	எனில் (new_css == வெற்று)
+		திரும்பு NSERROR_NOMEM;
 
 	/* Clone content */
 	error = content__clone(old, &new_css->base);
-	if (error != NSERROR_OK) {
+	எனில் (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		திரும்பு error;
 	}
 
 	/* Simply replay create/process/convert */
@@ -398,60 +398,60 @@ nserror nscss_clone(const struct content *old, struct content **newc)
 			old_css->data.charset,
 			new_css->base.quirks,
 			nscss_content_done, new_css);
-	if (error != NSERROR_OK) {
+	எனில் (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		திரும்பு error;
 	}
 
 	data = content__get_source_data(&new_css->base, &size);
-	if (size > 0) {
-		if (nscss_process_data(&new_css->base,
-				       (char *)data,
-				       (unsigned int)size) == false) {
+	எனில் (size > 0) {
+		எனில் (nscss_process_data(&new_css->base,
+				       (எழுத்து *)data,
+				       (unsigned முழு)size) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			திரும்பு NSERROR_CLONE_FAILED;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	எனில் (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nscss_convert(&new_css->base) == false) {
+		எனில் (nscss_convert(&new_css->base) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			திரும்பு NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_css;
+	*newc = (கட்டமைப்பு content *) new_css;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 }
 
-bool nscss_matches_quirks(const struct content *c, bool quirks)
+bool nscss_matches_quirks(மாறிலி கட்டமைப்பு content *c, bool quirks)
 {
-	return c->quirks == quirks;
-}
-
-/* exported interface documented in netsurf/css.h */
-css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h)
-{
-	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
-
-	assert(c != NULL);
-
-	return c->data.sheet;
+	திரும்பு c->quirks == quirks;
 }
 
 /* exported interface documented in netsurf/css.h */
-struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+css_stylesheet *nscss_get_stylesheet(கட்டமைப்பு hlcache_handle *h)
 {
 	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	ப்ரதிஜ்ஞா(c != வெற்று);
 
-	*n = c->data.import_count;
+	திரும்பு c->data.sheet;
+}
 
-	return c->data.imports;
+/* exported interface documented in netsurf/css.h */
+கட்டமைப்பு nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+{
+	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
+
+	ப்ரதிஜ்ஞா(c != வெற்று);
+	ப்ரதிஜ்ஞா(n != வெற்று);
+
+	*n = c->data.import_மொத்தம்;
+
+	திரும்பு c->data.imports;
 }
 
 /**
@@ -459,9 +459,9 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
  *
  * \return CONTENT_CSS
  */
-content_type nscss_content_type(void)
+content_type nscss_content_type(வெறுமை)
 {
-	return CONTENT_CSS;
+	திரும்பு CONTENT_CSS;
 }
 
 /*****************************************************************************
@@ -474,29 +474,29 @@ content_type nscss_content_type(void)
  * \param css  CSS object
  * \param pw   Private data
  */
-void nscss_content_done(struct content_css_data *css, void *pw)
+வெறுமை nscss_content_done(கட்டமைப்பு content_css_data *css, வெறுமை *pw)
 {
-	struct content *c = pw;
+	கட்டமைப்பு content *c = pw;
 	uint32_t i;
 	size_t size;
 	css_error error;
 
 	/* Retrieve the size of this sheet */
 	error = css_stylesheet_size(css->sheet, &size);
-	if (error != CSS_OK) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
+	எனில் (error != CSS_OK) {
+		content_broadcast_error(c, NSERROR_CSS, வெற்று);
 		content_set_error(c);
-		return;
+		திரும்பு;
 	}
 	c->size += size;
 
 	/* Add on the size of the imported sheets */
-	for (i = 0; i < css->import_count; i++) {
-		if (css->imports[i].c != NULL) {
-			struct content *import = hlcache_handle_get_content(
+	க்கு (i = 0; i < css->import_மொத்தம்; i++) {
+		எனில் (css->imports[i].c != வெற்று) {
+			கட்டமைப்பு content *import = hlcache_handle_get_content(
 					css->imports[i].c);
 
-			if (import != NULL) {
+			எனில் (import != வெற்று) {
 				c->size += import->size;
 			}
 		}
@@ -519,83 +519,83 @@ void nscss_content_done(struct content_css_data *css, void *pw)
  * \param url     URL of the imported sheet
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_handle_import(void *pw, css_stylesheet *parent,
+css_error nscss_handle_import(வெறுமை *pw, css_stylesheet *parent,
 		lwc_string *url)
 {
 	content_type accept = CONTENT_CSS;
-	struct content_css_data *c = pw;
+	கட்டமைப்பு content_css_data *c = pw;
 	nscss_import_ctx *ctx;
 	hlcache_child_context child;
-	struct nscss_import *imports;
-	const char *referer;
+	கட்டமைப்பு nscss_import *imports;
+	மாறிலி எழுத்து *referer;
 	css_error error;
 	nserror nerror;
 
 	nsurl *ns_url;
 	nsurl *ns_ref;
 
-	assert(parent == c->sheet);
+	ப்ரதிஜ்ஞா(parent == c->sheet);
 
 	error = css_stylesheet_get_url(c->sheet, &referer);
-	if (error != CSS_OK) {
-		return error;
+	எனில் (error != CSS_OK) {
+		திரும்பு error;
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL)
-		return CSS_NOMEM;
+	ctx = malloc(அளவு(*ctx));
+	எனில் (ctx == வெற்று)
+		திரும்பு CSS_NOMEM;
 
 	ctx->css = c;
-	ctx->index = c->import_count;
+	ctx->index = c->import_மொத்தம்;
 
 	/* Increase space in table */
-	imports = realloc(c->imports, (c->import_count + 1) *
-			sizeof(struct nscss_import));
-	if (imports == NULL) {
-		free(ctx);
-		return CSS_NOMEM;
+	imports = realloc(c->imports, (c->import_மொத்தம் + 1) *
+			அளவு(கட்டமைப்பு nscss_import));
+	எனில் (imports == வெற்று) {
+		விடுவி(ctx);
+		திரும்பு CSS_NOMEM;
 	}
 	c->imports = imports;
 
 	/** \todo fallback charset */
-	child.charset = NULL;
+	child.charset = வெற்று;
 	error = css_stylesheet_quirks_allowed(c->sheet, &child.quirks);
-	if (error != CSS_OK) {
-		free(ctx);
-		return error;
+	எனில் (error != CSS_OK) {
+		விடுவி(ctx);
+		திரும்பு error;
 	}
 
 	/* Create content */
 
 	/** \todo Why aren't we getting a relative url part, to join? */
 	nerror = nsurl_create(lwc_string_data(url), &ns_url);
-	if (nerror != NSERROR_OK) {
-		free(ctx);
-		return CSS_NOMEM;
+	எனில் (nerror != NSERROR_OK) {
+		விடுவி(ctx);
+		திரும்பு CSS_NOMEM;
 	}
 
 	/** \todo Constructing nsurl for referer here is silly, avoid */
 	nerror = nsurl_create(referer, &ns_ref);
-	if (nerror != NSERROR_OK) {
+	எனில் (nerror != NSERROR_OK) {
 		nsurl_unref(ns_url);
-		free(ctx);
-		return CSS_NOMEM;
+		விடுவி(ctx);
+		திரும்பு CSS_NOMEM;
 	}
 
 	/* Avoid importing ourself */
-	if (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
-		c->imports[c->import_count].c = NULL;
+	எனில் (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
+		c->imports[c->import_மொத்தம்].c = வெற்று;
 		/* No longer require context as we're not fetching anything */
-		free(ctx);
-		ctx = NULL;
-	} else {
+		விடுவி(ctx);
+		ctx = வெற்று;
+	} இல்லையெனில் {
 		nerror = hlcache_handle_retrieve(ns_url,
-				0, ns_ref, NULL, nscss_import, ctx,
+				0, ns_ref, வெற்று, nscss_import, ctx,
 				&child, accept,
-				&c->imports[c->import_count].c);
-		if (nerror != NSERROR_OK) {
-			free(ctx);
-			return CSS_NOMEM;
+				&c->imports[c->import_மொத்தம்].c);
+		எனில் (nerror != NSERROR_OK) {
+			விடுவி(ctx);
+			திரும்பு CSS_NOMEM;
 		}
 	}
 
@@ -604,13 +604,13 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 
 #ifdef NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Import %d '%s' -> (handle: %p ctx: %p)",
-	      c->import_count, lwc_string_data(url),
-	      c->imports[c->import_count].c, ctx);
+	      c->import_மொத்தம், lwc_string_data(url),
+	      c->imports[c->import_மொத்தம்].c, ctx);
 #endif
 
-	c->import_count++;
+	c->import_மொத்தம்++;
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 /**
@@ -622,7 +622,7 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 nserror nscss_import(hlcache_handle *handle,
-		const hlcache_event *event, void *pw)
+		மாறிலி hlcache_event *event, வெறுமை *pw)
 {
 	nscss_import_ctx *ctx = pw;
 	css_error error = CSS_OK;
@@ -631,26 +631,26 @@ nserror nscss_import(hlcache_handle *handle,
 	NSLOG(netsurf, INFO, "Event %d for %p (%p)", event->type, handle, ctx);
 #endif
 
-	assert(ctx->css->imports[ctx->index].c == handle);
+	ப்ரதிஜ்ஞா(ctx->css->imports[ctx->index].c == handle);
 
-	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	தேர்வு (event->type) {
+	நிலை CONTENT_செய்தி_DONE:
 		error = nscss_import_complete(ctx);
-		break;
+		நிறுத்து;
 
-	case CONTENT_MSG_ERROR:
+	நிலை CONTENT_செய்தி_ERROR:
 		hlcache_handle_release(handle);
-		ctx->css->imports[ctx->index].c = NULL;
+		ctx->css->imports[ctx->index].c = வெற்று;
 
 		error = nscss_import_complete(ctx);
 		/* Already released handle */
-		break;
-	default:
-		break;
+		நிறுத்து;
+	இயல்பு:
+		நிறுத்து;
 	}
 
 	/* Preserve out-of-memory. Anything else is OK */
-	return error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
+	திரும்பு error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
 }
 
 /**
@@ -664,7 +664,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	css_error error = CSS_OK;
 
 	/* If this import is the next to be registered, do so */
-	if (ctx->css->next_to_register == ctx->index)
+	எனில் (ctx->css->next_to_register == ctx->index)
 		error = nscss_register_imports(ctx->css);
 
 #ifdef NSCSS_IMPORT_TRACE
@@ -673,9 +673,9 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 #endif
 
 	/* No longer need import context */
-	free(ctx);
+	விடுவி(ctx);
 
-	return error;
+	திரும்பு error;
 }
 
 /*****************************************************************************
@@ -688,40 +688,40 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
  * \param c  CSS object containing the imports
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_imports(struct content_css_data *c)
+css_error nscss_register_imports(கட்டமைப்பு content_css_data *c)
 {
 	uint32_t index;
 	css_error error;
 
-	assert(c->next_to_register != (uint32_t) -1);
-	assert(c->next_to_register < c->import_count);
+	ப்ரதிஜ்ஞா(c->next_to_register != (uint32_t) -1);
+	ப்ரதிஜ்ஞா(c->next_to_register < c->import_மொத்தம்);
 
 	/* Register imported sheets */
-	for (index = c->next_to_register; index < c->import_count; index++) {
+	க்கு (index = c->next_to_register; index < c->import_மொத்தம்; index++) {
 		/* Stop registering if we encounter one whose fetch hasn't
 		 * completed yet. We'll resume at this point when it has
 		 * completed.
 		 */
-		if (c->imports[index].c != NULL &&
+		எனில் (c->imports[index].c != வெற்று &&
 			content_get_status(c->imports[index].c) !=
 				CONTENT_STATUS_DONE) {
-			break;
+			நிறுத்து;
 		}
 
 		error = nscss_register_import(c, c->imports[index].c);
-		if (error != CSS_OK)
-			return error;
+		எனில் (error != CSS_OK)
+			திரும்பு error;
 	}
 
 	/* Record identity of the next import to register */
 	c->next_to_register = (uint32_t) index;
 
-	if (c->next_to_register == c->import_count) {
+	எனில் (c->next_to_register == c->import_மொத்தம்) {
 		/* No more imports: notify parent that we're DONE */
 		c->done(c, c->pw);
 	}
 
-	return CSS_OK;
+	திரும்பு CSS_OK;
 }
 
 
@@ -732,46 +732,46 @@ css_error nscss_register_imports(struct content_css_data *c)
  * \param import  Cache handle of import, or NULL for blank
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_import(struct content_css_data *c,
-		const hlcache_handle *import)
+css_error nscss_register_import(கட்டமைப்பு content_css_data *c,
+		மாறிலி hlcache_handle *import)
 {
 	css_stylesheet *sheet;
 	css_error error;
 
-	if (import != NULL) {
+	எனில் (import != வெற்று) {
 		nscss_content *s =
 			(nscss_content *) hlcache_handle_get_content(import);
 		sheet = s->data.sheet;
-	} else {
+	} இல்லையெனில் {
 		/* Create a blank sheet if needed. */
-		if (blank_import == NULL) {
+		எனில் (blank_import == வெற்று) {
 			css_stylesheet_params params;
 
 			params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
 			params.level = CSS_LEVEL_DEFAULT;
-			params.charset = NULL;
+			params.charset = வெற்று;
 			params.url = "";
-			params.title = NULL;
+			params.title = வெற்று;
 			params.allow_quirks = false;
 			params.inline_style = false;
 			params.resolve = nscss_resolve_url;
-			params.resolve_pw = NULL;
-			params.import = NULL;
-			params.import_pw = NULL;
+			params.resolve_pw = வெற்று;
+			params.import = வெற்று;
+			params.import_pw = வெற்று;
 			params.color = ns_system_colour;
-			params.color_pw = NULL;
-			params.font = NULL;
-			params.font_pw = NULL;
+			params.color_pw = வெற்று;
+			params.font = வெற்று;
+			params.font_pw = வெற்று;
 
 			error = css_stylesheet_create(&params, &blank_import);
-			if (error != CSS_OK) {
-				return error;
+			எனில் (error != CSS_OK) {
+				திரும்பு error;
 			}
 
 			error = css_stylesheet_data_done(blank_import);
-			if (error != CSS_OK) {
+			எனில் (error != CSS_OK) {
 				css_stylesheet_destroy(blank_import);
-				return error;
+				திரும்பு error;
 			}
 		}
 
@@ -779,26 +779,26 @@ css_error nscss_register_import(struct content_css_data *c,
 	}
 
 	error = css_stylesheet_register_import(c->sheet, sheet);
-	if (error != CSS_OK) {
-		return error;
+	எனில் (error != CSS_OK) {
+		திரும்பு error;
 	}
 
-	return error;
+	திரும்பு error;
 }
 
 /**
  * Clean up after the CSS content handler
  */
-static void nscss_fini(void)
+நிலையான வெறுமை nscss_fini(வெறுமை)
 {
-	if (blank_import != NULL) {
+	எனில் (blank_import != வெற்று) {
 		css_stylesheet_destroy(blank_import);
-		blank_import = NULL;
+		blank_import = வெற்று;
 	}
 	css_hint_fini();
 }
 
-static const content_handler css_content_handler = {
+நிலையான மாறிலி content_handler css_content_handler = {
 	.fini = nscss_fini,
 	.create = nscss_create,
 	.process_data = nscss_process_data,
@@ -811,23 +811,23 @@ static const content_handler css_content_handler = {
 };
 
 /* exported interface documented in netsurf/css.h */
-nserror nscss_init(void)
+nserror nscss_init(வெறுமை)
 {
 	nserror error;
 
 	error = content_factory_register_handler("text/css",
 			&css_content_handler);
-	if (error != NSERROR_OK)
-		goto error;
+	எனில் (error != NSERROR_OK)
+		செல் error;
 
 	error = css_hint_init();
-	if (error != NSERROR_OK)
-		goto error;
+	எனில் (error != NSERROR_OK)
+		செல் error;
 
-	return NSERROR_OK;
+	திரும்பு NSERROR_OK;
 
 error:
 	nscss_fini();
 
-	return error;
+	திரும்பு error;
 }

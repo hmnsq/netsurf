@@ -24,10 +24,10 @@
 #ifndef NETSURF_CONTENT_LLCACHE_PRIVATE_H_
 #define NETSURF_CONTENT_LLCACHE_PRIVATE_H_
 
-#include "content/llcache.h"
+#அந்தர்பாவ "content/llcache.h"
 
 /** storage control flags */
-enum backing_store_flags {
+எண்ணிக்கை backing_store_flags {
 	/** no special processing */
 	BACKING_STORE_NONE = 0,
 	/** data is metadata */
@@ -41,21 +41,21 @@ enum backing_store_flags {
  * objects and their metadata (headers etc) persistent by writing to a
  * backing store using these operations.
  */
-struct gui_llcache_table {
+கட்டமைப்பு gui_llcache_table {
 	/**
 	 * Initialise the backing store.
 	 *
 	 * @param parameters to configure backing store.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*initialise)(const struct llcache_store_parameters *parameters);
+	nserror (*initialise)(மாறிலி கட்டமைப்பு llcache_store_parameters *parameters);
 
 	/**
 	 * Finalise the backing store.
 	 *
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*finalise)(void);
+	nserror (*finalise)(வெறுமை);
 
 	/**
 	 * Place an object in the backing store.
@@ -77,8 +77,8 @@ struct gui_llcache_table {
 	 * @param[in] datalen The length of the \a data.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*store)(struct nsurl *url, enum backing_store_flags flags,
-			 uint8_t *data, const size_t datalen);
+	nserror (*store)(கட்டமைப்பு nsurl *url, எண்ணிக்கை backing_store_flags flags,
+			 uint8_t *data, மாறிலி size_t datalen);
 
 	/**
 	 * Retrieve an object from the backing store.
@@ -96,7 +96,7 @@ struct gui_llcache_table {
 	 * @param[out] datalen The length of the \a data retrieved.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*fetch)(struct nsurl *url, enum backing_store_flags flags,
+	nserror (*fetch)(கட்டமைப்பு nsurl *url, எண்ணிக்கை backing_store_flags flags,
 			 uint8_t **data, size_t *datalen);
 
 	/**
@@ -106,7 +106,7 @@ struct gui_llcache_table {
 	 * @param[in] flags The flags to control how the object data is released.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*release)(struct nsurl *url, enum backing_store_flags flags);
+	nserror (*release)(கட்டமைப்பு nsurl *url, எண்ணிக்கை backing_store_flags flags);
 
 	/**
 	 * Invalidate a source object from the backing store.
@@ -119,11 +119,11 @@ struct gui_llcache_table {
 	 * @param url The url is used as the unique primary key to invalidate.
 	 * @return NSERROR_OK on success or error code on failure.
 	 */
-	nserror (*invalidate)(struct nsurl *url);
+	nserror (*invalidate)(கட்டமைப்பு nsurl *url);
 
 };
 
-extern struct gui_llcache_table* null_llcache_table;
-extern struct gui_llcache_table* filesystem_llcache_table;
+வெளி கட்டமைப்பு gui_llcache_table* null_llcache_table;
+வெளி கட்டமைப்பு gui_llcache_table* filesystem_llcache_table;
 
 #endif

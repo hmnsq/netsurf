@@ -24,19 +24,19 @@
  * Box tree normalisation implementation.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <stdbool.h>
+#அந்தர்பாவ <string.h>
 
-#include "utils/log.h"
-#include "utils/errors.h"
-#include "css/select.h"
+#அந்தர்பாவ "utils/log.h"
+#அந்தர்பாவ "utils/errors.h"
+#அந்தர்பாவ "css/select.h"
 
-#include "html/private.h"
-#include "html/table.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_normalise.h"
+#அந்தர்பாவ "html/private.h"
+#அந்தர்பாவ "html/table.h"
+#அந்தர்பாவ "html/box.h"
+#அந்தர்பாவ "html/box_manipulate.h"
+#அந்தர்பாவ "html/box_normalise.h"
 
 /* Define to enable box normalise debug */
 #undef BOX_NORMALISE_DEBUG
@@ -44,11 +44,11 @@
 /**
  * Row spanning information for a cell
  */
-struct span_info {
+கட்டமைப்பு span_info {
 	/** Number of rows this cell spans */
-	unsigned int row_span;
+	unsigned முழு row_span;
 	/** Row group of cell */
-	struct box *rg;
+	கட்டமைப்பு box *rg;
 	/** The cell in this column spans all rows until the end of the table */
 	bool auto_row;
 };
@@ -56,15 +56,15 @@ struct span_info {
 /**
  * Column record for a table
  */
-struct columns {
+கட்டமைப்பு columns {
 	/** Current column index */
-	unsigned int current_column;
+	unsigned முழு current_column;
 	/** Number of columns in main part of table 1..max columns */
-	unsigned int num_columns;
+	unsigned முழு இலக்கம்_columns;
 	/** Information about columns in main table, array [0, num_columns) */
-	struct span_info *spans;
+	கட்டமைப்பு span_info *spans;
 	/** Number of rows in table */
-	unsigned int num_rows;
+	unsigned முழு இலக்கம்_rows;
 };
 
 
@@ -79,23 +79,23 @@ struct columns {
  * \param cell		Box for current table cell
  * \return  true on success, false on memory exhaustion
  */
-static bool
-calculate_table_row(struct columns *col_info,
-		    unsigned int col_span,
-		    unsigned int row_span,
-		    unsigned int *start_column,
-		    struct box *cell)
+நிலையான bool
+calculate_table_row(கட்டமைப்பு columns *col_info,
+		    unsigned முழு col_span,
+		    unsigned முழு row_span,
+		    unsigned முழு *start_column,
+		    கட்டமைப்பு box *cell)
 {
-	unsigned int cell_start_col = col_info->current_column;
-	unsigned int cell_end_col;
-	unsigned int i;
-	struct span_info *spans;
-	struct box *rg = cell->parent->parent; /* Cell's row group */
+	unsigned முழு cell_start_col = col_info->current_column;
+	unsigned முழு cell_end_col;
+	unsigned முழு i;
+	கட்டமைப்பு span_info *spans;
+	கட்டமைப்பு box *rg = cell->parent->parent; /* Cell's row group */
 
 	/* Skip columns with cells spanning from above */
 	/* TODO: Need to ignore cells spanning from above that belong to
 	 *       different row group.  We don't have that info here. */
-	while (col_info->spans[cell_start_col].row_span != 0 &&
+	போது (col_info->spans[cell_start_col].row_span != 0 &&
 			col_info->spans[cell_start_col].rg == rg) {
 		cell_start_col++;
 	}
@@ -105,22 +105,22 @@ calculate_table_row(struct columns *col_info,
 
 	/* If this cell has a colspan of 0, then assume 1.
 	 * No other browser supports colspan=0, anyway. */
-	if (col_span == 0)
+	எனில் (col_span == 0)
 		col_span = 1;
 
 	cell_end_col = cell_start_col + col_span;
 
-	if (col_info->num_columns < cell_end_col) {
+	எனில் (col_info->இலக்கம்_columns < cell_end_col) {
 		/* It appears that this row has more columns than
 		 * the maximum recorded for the table so far.
 		 * Allocate more span records. */
 		spans = realloc(col_info->spans,
-				sizeof *spans * (cell_end_col + 1));
-		if (spans == NULL)
-			return false;
+				அளவு *spans * (cell_end_col + 1));
+		எனில் (spans == வெற்று)
+			திரும்பு false;
 
 		col_info->spans = spans;
-		col_info->num_columns = cell_end_col;
+		col_info->இலக்கம்_columns = cell_end_col;
 
 		/* Mark new final column as sentinel */
 		col_info->spans[cell_end_col].row_span = 0;
@@ -130,7 +130,7 @@ calculate_table_row(struct columns *col_info,
 	/* This cell may span multiple columns. If it also wants to span
 	 * multiple rows, temporarily assume it spans 1 row only. This will
 	 * be fixed up in box_normalise_table_spans() */
-	for (i = cell_start_col; i < cell_end_col; i++) {
+	க்கு (i = cell_start_col; i < cell_end_col; i++) {
 		col_info->spans[i].row_span = (row_span == 0) ? 1 : row_span;
 		col_info->spans[i].auto_row = (row_span == 0);
 		col_info->spans[i].rg = rg;
@@ -141,50 +141,50 @@ calculate_table_row(struct columns *col_info,
 
 	*start_column = cell_start_col;
 
-	return true;
+	திரும்பு true;
 }
 
 
-static bool
-box_normalise_table_row(struct box *row,
-			const struct box *root,
-			struct columns *col_info,
+நிலையான bool
+box_normalise_table_row(கட்டமைப்பு box *row,
+			மாறிலி கட்டமைப்பு box *வேர்,
+			கட்டமைப்பு columns *col_info,
 			html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *cell = NULL;
+	கட்டமைப்பு box *child;
+	கட்டமைப்பு box *next_child;
+	கட்டமைப்பு box *cell = வெற்று;
 	css_computed_style *style;
-	unsigned int i;
+	unsigned முழு i;
 	nscss_select_ctx ctx;
 
-	assert(row != NULL);
-	assert(row->type == BOX_TABLE_ROW);
+	ப்ரதிஜ்ஞா(row != வெற்று);
+	ப்ரதிஜ்ஞா(row->type == BOX_TABLE_ROW);
 
-	ctx.root_style = root->style;
+	ctx.வேர்_style = வேர்->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row %p", row);
 #endif
 
-	for (child = row->children; child != NULL; child = next_child) {
+	க்கு (child = row->children; child != வெற்று; child = next_child) {
 		next_child = child->next;
 
-		switch (child->type) {
-		case BOX_TABLE_CELL:
+		தேர்வு (child->type) {
+		நிலை BOX_TABLE_CELL:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
+			எனில் (box_normalise_block(child, வேர், c) == false)
+				திரும்பு false;
 			cell = child;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
+			நிறுத்து;
+		நிலை BOX_FLEX:
+		நிலை BOX_BLOCK:
+		நிலை BOX_INLINE_CONTAINER:
+		நிலை BOX_TABLE:
+		நிலை BOX_TABLE_ROW_GROUP:
+		நிலை BOX_TABLE_ROW:
 			/* insert implied table cell */
-			assert(row->style != NULL);
+			ப்ரதிஜ்ஞா(row->style != வெற்று);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -193,25 +193,25 @@ box_normalise_table_row(struct box *row,
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					row->style);
-			if (style == NULL)
-				return false;
+			எனில் (style == வெற்று)
+				திரும்பு false;
 
-			cell = box_create(NULL, style, true, row->href,
-					row->target, NULL, NULL, c->bctx);
-			if (cell == NULL) {
+			cell = box_create(வெற்று, style, true, row->href,
+					row->target, வெற்று, வெற்று, c->bctx);
+			எனில் (cell == வெற்று) {
 				css_computed_style_destroy(style);
-				return false;
+				திரும்பு false;
 			}
 			cell->type = BOX_TABLE_CELL;
 
-			if (child->prev == NULL)
+			எனில் (child->prev == வெற்று)
 				row->children = cell;
-			else
+			இல்லையெனில்
 				child->prev->next = cell;
 
 			cell->prev = child->prev;
 
-			while (child != NULL && (
+			போது (child != வெற்று && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -221,48 +221,48 @@ box_normalise_table_row(struct box *row,
 				box_add_child(cell, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = வெற்று;
 				child = next_child;
 			}
 
-			assert(cell->last != NULL);
+			ப்ரதிஜ்ஞா(cell->last != வெற்று);
 
-			cell->last->next = NULL;
+			cell->last->next = வெற்று;
 			cell->next = next_child = child;
-			if (cell->next != NULL)
+			எனில் (cell->next != வெற்று)
 				cell->next->prev = cell;
-			else
+			இல்லையெனில்
 				row->last = cell;
 			cell->parent = row;
 
-			if (box_normalise_block(cell, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			எனில் (box_normalise_block(cell, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_INLINE:
+		நிலை BOX_INLINE_END:
+		நிலை BOX_INLINE_FLEX:
+		நிலை BOX_INLINE_BLOCK:
+		நிலை BOX_FLOAT_இடது:
+		நிலை BOX_FLOAT_வலது:
+		நிலை BOX_BR:
+		நிலை BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			ப்ரதிஜ்ஞா(0);
+			நிறுத்து;
+		இயல்பு:
+			ப்ரதிஜ்ஞா(0);
 		}
 
-		if (calculate_table_row(col_info, cell->columns, cell->rows,
+		எனில் (calculate_table_row(col_info, cell->columns, cell->rows,
 				&cell->start_column, cell) == false)
-			return false;
+			திரும்பு false;
 	}
 
 
 	/* Update row spanning details for all columns */
-	for (i = 0; i < col_info->num_columns; i++) {
-		if (col_info->spans[i].row_span != 0 &&
+	க்கு (i = 0; i < col_info->இலக்கம்_columns; i++) {
+		எனில் (col_info->spans[i].row_span != 0 &&
 				col_info->spans[i].auto_row == false) {
 			/* This cell spans rows, and is not an auto row.
 			 * Reduce number of rows left to span */
@@ -274,57 +274,57 @@ box_normalise_table_row(struct box *row,
 	col_info->current_column = 0;
 
 	/* Increment row counter */
-	col_info->num_rows++;
+	col_info->இலக்கம்_rows++;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row %p done", row);
 #endif
 
-	return true;
+	திரும்பு true;
 }
 
 
-static bool
-box_normalise_table_row_group(struct box *row_group,
-			      const struct box *root,
-			      struct columns *col_info,
+நிலையான bool
+box_normalise_table_row_group(கட்டமைப்பு box *row_group,
+			      மாறிலி கட்டமைப்பு box *வேர்,
+			      கட்டமைப்பு columns *col_info,
 			      html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row;
+	கட்டமைப்பு box *child;
+	கட்டமைப்பு box *next_child;
+	கட்டமைப்பு box *row;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
-	unsigned int group_row_count = 0;
+	unsigned முழு group_row_மொத்தம் = 0;
 
-	assert(row_group != 0);
-	assert(row_group->type == BOX_TABLE_ROW_GROUP);
+	ப்ரதிஜ்ஞா(row_group != 0);
+	ப்ரதிஜ்ஞா(row_group->type == BOX_TABLE_ROW_GROUP);
 
-	ctx.root_style = root->style;
+	ctx.வேர்_style = வேர்->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row_group %p", row_group);
 #endif
 
-	for (child = row_group->children; child != NULL; child = next_child) {
+	க்கு (child = row_group->children; child != வெற்று; child = next_child) {
 		next_child = child->next;
 
-		switch (child->type) {
-		case BOX_TABLE_ROW:
+		தேர்வு (child->type) {
+		நிலை BOX_TABLE_ROW:
 			/* ok */
-			group_row_count++;
-			if (box_normalise_table_row(child, root, col_info,
+			group_row_மொத்தம்++;
+			எனில் (box_normalise_table_row(child, வேர், col_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_CELL:
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_FLEX:
+		நிலை BOX_BLOCK:
+		நிலை BOX_INLINE_CONTAINER:
+		நிலை BOX_TABLE:
+		நிலை BOX_TABLE_ROW_GROUP:
+		நிலை BOX_TABLE_CELL:
 			/* insert implied table row */
-			assert(row_group->style != NULL);
+			ப்ரதிஜ்ஞா(row_group->style != வெற்று);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -333,25 +333,25 @@ box_normalise_table_row_group(struct box *row_group,
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					row_group->style);
-			if (style == NULL)
-				return false;
+			எனில் (style == வெற்று)
+				திரும்பு false;
 
-			row = box_create(NULL, style, true, row_group->href,
-					row_group->target, NULL, NULL, c->bctx);
-			if (row == NULL) {
+			row = box_create(வெற்று, style, true, row_group->href,
+					row_group->target, வெற்று, வெற்று, c->bctx);
+			எனில் (row == வெற்று) {
 				css_computed_style_destroy(style);
-				return false;
+				திரும்பு false;
 			}
 			row->type = BOX_TABLE_ROW;
 
-			if (child->prev == NULL)
+			எனில் (child->prev == வெற்று)
 				row_group->children = row;
-			else
+			இல்லையெனில்
 				child->prev->next = row;
 
 			row->prev = child->prev;
 
-			while (child != NULL && (
+			போது (child != வெற்று && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -361,49 +361,49 @@ box_normalise_table_row_group(struct box *row_group,
 				box_add_child(row, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = வெற்று;
 				child = next_child;
 			}
 
-			assert(row->last != NULL);
+			ப்ரதிஜ்ஞா(row->last != வெற்று);
 
-			row->last->next = NULL;
+			row->last->next = வெற்று;
 			row->next = next_child = child;
-			if (row->next != NULL)
+			எனில் (row->next != வெற்று)
 				row->next->prev = row;
-			else
+			இல்லையெனில்
 				row_group->last = row;
 			row->parent = row_group;
 
-			group_row_count++;
-			if (box_normalise_table_row(row, root, col_info,
+			group_row_மொத்தம்++;
+			எனில் (box_normalise_table_row(row, வேர், col_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_INLINE:
+		நிலை BOX_INLINE_END:
+		நிலை BOX_INLINE_FLEX:
+		நிலை BOX_INLINE_BLOCK:
+		நிலை BOX_FLOAT_இடது:
+		நிலை BOX_FLOAT_வலது:
+		நிலை BOX_BR:
+		நிலை BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			ப்ரதிஜ்ஞா(0);
+			நிறுத்து;
+		இயல்பு:
+			ப்ரதிஜ்ஞா(0);
 		}
 	}
 
-	if (row_group->children == NULL) {
+	எனில் (row_group->children == வெற்று) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "row_group->children == 0, inserting implied row");
 #endif
 
-		assert(row_group->style != NULL);
+		ப்ரதிஜ்ஞா(row_group->style != வெற்று);
 
 		ctx.ctx = c->select_ctx;
 		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -412,34 +412,34 @@ box_normalise_table_row_group(struct box *row_group,
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				row_group->style);
-		if (style == NULL) {
-			return false;
+		எனில் (style == வெற்று) {
+			திரும்பு false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		row = box_create(வெற்று, style, true, row_group->href,
+				row_group->target, வெற்று, வெற்று, c->bctx);
+		எனில் (row == வெற்று) {
 			css_computed_style_destroy(style);
-			return false;
+			திரும்பு false;
 		}
 		row->type = BOX_TABLE_ROW;
 
 		row->parent = row_group;
 		row_group->children = row_group->last = row;
 
-		group_row_count = 1;
+		group_row_மொத்தம் = 1;
 
 		/* Keep table's row count in sync */
-		col_info->num_rows++;
+		col_info->இலக்கம்_rows++;
 	}
 
-	row_group->rows = group_row_count;
+	row_group->rows = group_row_மொத்தம்;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row_group %p done", row_group);
 #endif
 
-	return true;
+	திரும்பு true;
 }
 
 
@@ -453,43 +453,43 @@ box_normalise_table_row_group(struct box *row_group,
  * \param c      Content containing table
  * \return True on success, false on memory exhaustion.
  */
-static bool
-box_normalise_table_spans(struct box *table,
-			  const struct box *root,
-			  struct span_info *spans,
+நிலையான bool
+box_normalise_table_spans(கட்டமைப்பு box *table,
+			  மாறிலி கட்டமைப்பு box *வேர்,
+			  கட்டமைப்பு span_info *spans,
 			  html_content *c)
 {
-	struct box *table_row_group;
-	struct box *table_row;
-	struct box *table_cell;
-	unsigned int rows_left = table->rows;
-	unsigned int group_rows_left;
-	unsigned int col;
+	கட்டமைப்பு box *table_row_group;
+	கட்டமைப்பு box *table_row;
+	கட்டமைப்பு box *table_cell;
+	unsigned முழு rows_இடது = table->rows;
+	unsigned முழு group_rows_இடது;
+	unsigned முழு col;
 	nscss_select_ctx ctx;
 
-	ctx.root_style = root->style;
+	ctx.வேர்_style = வேர்->style;
 
 	/* Clear span data */
-	memset(spans, 0, table->columns * sizeof(struct span_info));
+	memset(spans, 0, table->columns * அளவு(கட்டமைப்பு span_info));
 
 	/* Scan table, filling in width and height of table cells with
 	 * colspan = 0 and rowspan = 0. Also generate empty cells */
-	for (table_row_group = table->children;
-	     table_row_group != NULL;
+	க்கு (table_row_group = table->children;
+	     table_row_group != வெற்று;
 	     table_row_group = table_row_group->next) {
 
-		group_rows_left = table_row_group->rows;
+		group_rows_இடது = table_row_group->rows;
 
-		for (table_row = table_row_group->children;
-		     table_row != NULL;
+		க்கு (table_row = table_row_group->children;
+		     table_row != வெற்று;
 		     table_row = table_row->next) {
 
-			for (table_cell = table_row->children;
-			     table_cell != NULL;
+			க்கு (table_cell = table_row->children;
+			     table_cell != வெற்று;
 			     table_cell = table_cell->next) {
 
 				/* colspan = 0 -> colspan = 1 */
-				if (table_cell->columns == 0) {
+				எனில் (table_cell->columns == 0) {
 					table_cell->columns = 1;
 				}
 
@@ -497,17 +497,17 @@ box_normalise_table_spans(struct box *table,
 				 * the number of rows left in the row
 				 * group
 				 */
-				if (table_cell->rows == 0) {
-					table_cell->rows = group_rows_left;
+				எனில் (table_cell->rows == 0) {
+					table_cell->rows = group_rows_இடது;
 				}
 
 				/* limit rowspans within group */
-				if (table_cell->rows > group_rows_left) {
-					table_cell->rows = group_rows_left;
+				எனில் (table_cell->rows > group_rows_இடது) {
+					table_cell->rows = group_rows_இடது;
 				}
 
 				/* Record span information */
-				for (col = table_cell->start_column;
+				க்கு (col = table_cell->start_column;
 						col < table_cell->start_column +
 						table_cell->columns; col++) {
 					spans[col].row_span = table_cell->rows;
@@ -515,21 +515,21 @@ box_normalise_table_spans(struct box *table,
 			}
 
 			/* Reduce span count of each column */
-			for (col = 0; col < table->columns; col++) {
-				if (spans[col].row_span == 0) {
-					unsigned int start = col;
+			க்கு (col = 0; col < table->columns; col++) {
+				எனில் (spans[col].row_span == 0) {
+					unsigned முழு start = col;
 					css_computed_style *style;
-					struct box *cell, *prev;
+					கட்டமைப்பு box *cell, *prev;
 
 					/* If it's already zero, then we need
 					 * to generate an empty cell for the
 					 * gap in the row that spans as many
 					 * columns as remain blank.
 					 */
-					assert(table_row->style != NULL);
+					ப்ரதிஜ்ஞா(table_row->style != வெற்று);
 
 					/* Find width of gap */
-					while (col < table->columns &&
+					போது (col < table->columns &&
 							spans[col].row_span ==
 							0) {
 						col++;
@@ -544,17 +544,17 @@ box_normalise_table_spans(struct box *table,
 					style = nscss_get_blank_style(&ctx,
 							&c->unit_len_ctx,
 							table_row->style);
-					if (style == NULL)
-						return false;
+					எனில் (style == வெற்று)
+						திரும்பு false;
 
-					cell = box_create(NULL, style, true,
+					cell = box_create(வெற்று, style, true,
 							table_row->href,
 							table_row->target,
-							NULL, NULL, c->bctx);
-					if (cell == NULL) {
+							வெற்று, வெற்று, c->bctx);
+					எனில் (cell == வெற்று) {
 						css_computed_style_destroy(
 								style);
-						return false;
+						திரும்பு false;
 					}
 					cell->type = BOX_TABLE_CELL;
 
@@ -563,32 +563,32 @@ box_normalise_table_spans(struct box *table,
 					cell->start_column = start;
 
 					/* Find place to insert cell */
-					for (prev = table_row->children;
-							prev != NULL;
+					க்கு (prev = table_row->children;
+							prev != வெற்று;
 							prev = prev->next) {
-						if (prev->start_column +
+						எனில் (prev->start_column +
 							prev->columns ==
 								start)
-							break;
-						if (prev->next == NULL)
-							break;
+							நிறுத்து;
+						எனில் (prev->next == வெற்று)
+							நிறுத்து;
 					}
 
 					/* Insert it */
-					if (prev == NULL) {
-						if (table_row->children != NULL)
+					எனில் (prev == வெற்று) {
+						எனில் (table_row->children != வெற்று)
 							table_row->children->
 								prev = cell;
-						else
+						இல்லையெனில்
 							table_row->last = cell;
 
 						cell->next =
 							table_row->children;
 						table_row->children = cell;
-					} else {
-						if (prev->next != NULL)
+					} இல்லையெனில் {
+						எனில் (prev->next != வெற்று)
 							prev->next->prev = cell;
-						else
+						இல்லையெனில்
 							table_row->last = cell;
 
 						cell->next = prev->next;
@@ -596,72 +596,72 @@ box_normalise_table_spans(struct box *table,
 						cell->prev = prev;
 					}
 					cell->parent = table_row;
-				} else {
+				} இல்லையெனில் {
 					spans[col].row_span--;
 				}
 			}
 
-			assert(rows_left > 0);
+			ப்ரதிஜ்ஞா(rows_இடது > 0);
 
-			rows_left--;
+			rows_இடது--;
 		}
 
-		group_rows_left--;
+		group_rows_இடது--;
 	}
 
-	return true;
+	திரும்பு true;
 }
 
 
-static bool
-box_normalise_table(struct box *table, const struct box *root, html_content * c)
+நிலையான bool
+box_normalise_table(கட்டமைப்பு box *table, மாறிலி கட்டமைப்பு box *வேர், html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row_group;
+	கட்டமைப்பு box *child;
+	கட்டமைப்பு box *next_child;
+	கட்டமைப்பு box *row_group;
 	css_computed_style *style;
-	struct columns col_info;
+	கட்டமைப்பு columns col_info;
 	nscss_select_ctx ctx;
 
-	assert(table != NULL);
-	assert(table->type == BOX_TABLE);
+	ப்ரதிஜ்ஞா(table != வெற்று);
+	ப்ரதிஜ்ஞா(table->type == BOX_TABLE);
 
-	ctx.root_style = root->style;
+	ctx.வேர்_style = வேர்->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "table %p", table);
 #endif
 
-	col_info.num_columns = 1;
+	col_info.இலக்கம்_columns = 1;
 	col_info.current_column = 0;
-	col_info.spans = malloc(2 * sizeof *col_info.spans);
-	if (col_info.spans == NULL)
-		return false;
+	col_info.spans = malloc(2 * அளவு *col_info.spans);
+	எனில் (col_info.spans == வெற்று)
+		திரும்பு false;
 
 	col_info.spans[0].row_span = col_info.spans[1].row_span = 0;
 	col_info.spans[0].auto_row = false;
 	col_info.spans[1].auto_row = false;
-	col_info.num_rows = 0;
+	col_info.இலக்கம்_rows = 0;
 
-	for (child = table->children; child != NULL; child = next_child) {
+	க்கு (child = table->children; child != வெற்று; child = next_child) {
 		next_child = child->next;
-		switch (child->type) {
-		case BOX_TABLE_ROW_GROUP:
+		தேர்வு (child->type) {
+		நிலை BOX_TABLE_ROW_GROUP:
 			/* ok */
-			if (box_normalise_table_row_group(child, root,
+			எனில் (box_normalise_table_row_group(child, வேர்,
 					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+				விடுவி(col_info.spans);
+				திரும்பு false;
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			நிறுத்து;
+		நிலை BOX_FLEX:
+		நிலை BOX_BLOCK:
+		நிலை BOX_INLINE_CONTAINER:
+		நிலை BOX_TABLE:
+		நிலை BOX_TABLE_ROW:
+		நிலை BOX_TABLE_CELL:
 			/* insert implied table row group */
-			assert(table->style != NULL);
+			ப்ரதிஜ்ஞா(table->style != வெற்று);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -670,29 +670,29 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					table->style);
-			if (style == NULL) {
-				free(col_info.spans);
-				return false;
+			எனில் (style == வெற்று) {
+				விடுவி(col_info.spans);
+				திரும்பு false;
 			}
 
-			row_group = box_create(NULL, style, true, table->href,
-					table->target, NULL, NULL, c->bctx);
-			if (row_group == NULL) {
+			row_group = box_create(வெற்று, style, true, table->href,
+					table->target, வெற்று, வெற்று, c->bctx);
+			எனில் (row_group == வெற்று) {
 				css_computed_style_destroy(style);
-				free(col_info.spans);
-				return false;
+				விடுவி(col_info.spans);
+				திரும்பு false;
 			}
 
 			row_group->type = BOX_TABLE_ROW_GROUP;
 
-			if (child->prev == NULL)
+			எனில் (child->prev == வெற்று)
 				table->children = row_group;
-			else
+			இல்லையெனில்
 				child->prev->next = row_group;
 
 			row_group->prev = child->prev;
 
-			while (child != NULL && (
+			போது (child != வெற்று && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -702,56 +702,56 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 				box_add_child(row_group, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = வெற்று;
 				child = next_child;
 			}
 
-			assert(row_group->last != NULL);
+			ப்ரதிஜ்ஞா(row_group->last != வெற்று);
 
-			row_group->last->next = NULL;
+			row_group->last->next = வெற்று;
 			row_group->next = next_child = child;
-			if (row_group->next != NULL)
+			எனில் (row_group->next != வெற்று)
 				row_group->next->prev = row_group;
-			else
+			இல்லையெனில்
 				table->last = row_group;
 			row_group->parent = table;
 
-			if (box_normalise_table_row_group(row_group, root,
+			எனில் (box_normalise_table_row_group(row_group, வேர்,
 					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+				விடுவி(col_info.spans);
+				திரும்பு false;
 			}
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			நிறுத்து;
+		நிலை BOX_INLINE:
+		நிலை BOX_INLINE_END:
+		நிலை BOX_INLINE_FLEX:
+		நிலை BOX_INLINE_BLOCK:
+		நிலை BOX_FLOAT_இடது:
+		நிலை BOX_FLOAT_வலது:
+		நிலை BOX_BR:
+		நிலை BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
+			ப்ரதிஜ்ஞா(0);
+			நிறுத்து;
+		இயல்பு:
 			fprintf(stderr, "%i\n", child->type);
-			assert(0);
+			ப்ரதிஜ்ஞா(0);
 		}
 	}
 
-	table->columns = col_info.num_columns;
-	table->rows = col_info.num_rows;
+	table->columns = col_info.இலக்கம்_columns;
+	table->rows = col_info.இலக்கம்_rows;
 
-	if (table->children == NULL) {
-		struct box *row;
+	எனில் (table->children == வெற்று) {
+		கட்டமைப்பு box *row;
 
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "table->children == 0, creating implied row");
 #endif
 
-		assert(table->style != NULL);
+		ப்ரதிஜ்ஞா(table->style != வெற்று);
 
 		ctx.ctx = c->select_ctx;
 		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -760,35 +760,35 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				table->style);
-		if (style == NULL) {
-			free(col_info.spans);
-			return false;
+		எனில் (style == வெற்று) {
+			விடுவி(col_info.spans);
+			திரும்பு false;
 		}
 
-		row_group = box_create(NULL, style, true, table->href,
-				table->target, NULL, NULL, c->bctx);
-		if (row_group == NULL) {
+		row_group = box_create(வெற்று, style, true, table->href,
+				table->target, வெற்று, வெற்று, c->bctx);
+		எனில் (row_group == வெற்று) {
 			css_computed_style_destroy(style);
-			free(col_info.spans);
-			return false;
+			விடுவி(col_info.spans);
+			திரும்பு false;
 		}
 		row_group->type = BOX_TABLE_ROW_GROUP;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				row_group->style);
-		if (style == NULL) {
+		எனில் (style == வெற்று) {
 			box_free(row_group);
-			free(col_info.spans);
-			return false;
+			விடுவி(col_info.spans);
+			திரும்பு false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		row = box_create(வெற்று, style, true, row_group->href,
+				row_group->target, வெற்று, வெற்று, c->bctx);
+		எனில் (row == வெற்று) {
 			css_computed_style_destroy(style);
 			box_free(row_group);
-			free(col_info.spans);
-			return false;
+			விடுவி(col_info.spans);
+			திரும்பு false;
 		}
 		row->type = BOX_TABLE_ROW;
 
@@ -801,45 +801,45 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 		table->rows = 1;
 	}
 
-	if (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
-		free(col_info.spans);
-		return false;
+	எனில் (box_normalise_table_spans(table, வேர், col_info.spans, c) == false) {
+		விடுவி(col_info.spans);
+		திரும்பு false;
 	}
 
-	free(col_info.spans);
+	விடுவி(col_info.spans);
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "table %p done", table);
 #endif
 
-	return true;
+	திரும்பு true;
 }
 
-static bool box_normalise_flex(
-		struct box *flex_container,
-		const struct box *root,
+நிலையான bool box_normalise_flex(
+		கட்டமைப்பு box *flex_container,
+		மாறிலி கட்டமைப்பு box *வேர்,
 		html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *implied_flex_item;
+	கட்டமைப்பு box *child;
+	கட்டமைப்பு box *next_child;
+	கட்டமைப்பு box *implied_flex_item;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(flex_container != NULL);
-	assert(root != NULL);
+	ப்ரதிஜ்ஞா(flex_container != வெற்று);
+	ப்ரதிஜ்ஞா(வேர் != வெற்று);
 
-	ctx.root_style = root->style;
+	ctx.வேர்_style = வேர்->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "flex_container %p, flex_container->type %u",
 			flex_container, flex_container->type);
 #endif
 
-	assert(flex_container->type == BOX_FLEX ||
+	ப்ரதிஜ்ஞா(flex_container->type == BOX_FLEX ||
 	       flex_container->type == BOX_INLINE_FLEX);
 
-	for (child = flex_container->children; child != NULL; child = next_child) {
+	க்கு (child = flex_container->children; child != வெற்று; child = next_child) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d",
 				child, child->type);
@@ -847,20 +847,20 @@ static bool box_normalise_flex(
 
 		next_child = child->next;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		தேர்வு (child->type) {
+		நிலை BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			எனில் (box_normalise_flex(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
+			எனில் (box_normalise_block(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_INLINE_CONTAINER:
 			/* insert implied flex item */
-			assert(flex_container->style != NULL);
+			ப்ரதிஜ்ஞா(flex_container->style != வெற்று);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -869,69 +869,69 @@ static bool box_normalise_flex(
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			எனில் (style == வெற்று)
+				திரும்பு false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_item = box_create(வெற்று, style, true,
 					flex_container->href,
 					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					வெற்று, வெற்று, c->bctx);
+			எனில் (implied_flex_item == வெற்று) {
 				css_computed_style_destroy(style);
-				return false;
+				திரும்பு false;
 			}
 			implied_flex_item->type = BOX_BLOCK;
 
-			if (child->prev == NULL)
+			எனில் (child->prev == வெற்று)
 				flex_container->children = implied_flex_item;
-			else
+			இல்லையெனில்
 				child->prev->next = implied_flex_item;
 
 			implied_flex_item->prev = child->prev;
 
-			while (child != NULL &&
+			போது (child != வெற்று &&
 					child->type == BOX_INLINE_CONTAINER) {
 				box_add_child(implied_flex_item, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = வெற்று;
 				child = next_child;
 			}
 
-			implied_flex_item->last->next = NULL;
+			implied_flex_item->last->next = வெற்று;
 			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
+			எனில் (implied_flex_item->next != வெற்று)
 				implied_flex_item->next->prev = implied_flex_item;
-			else
+			இல்லையெனில்
 				flex_container->last = implied_flex_item;
 			implied_flex_item->parent = flex_container;
 
-			if (box_normalise_block(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
+			எனில் (box_normalise_block(implied_flex_item,
+					வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
 
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+		நிலை BOX_TABLE:
+			எனில் (box_normalise_table(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_INLINE:
+		நிலை BOX_INLINE_END:
+		நிலை BOX_INLINE_FLEX:
+		நிலை BOX_INLINE_BLOCK:
+		நிலை BOX_FLOAT_இடது:
+		நிலை BOX_FLOAT_வலது:
+		நிலை BOX_BR:
+		நிலை BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ப்ரதிஜ்ஞா(0);
+			நிறுத்து;
+		நிலை BOX_TABLE_ROW_GROUP:
+		நிலை BOX_TABLE_ROW:
+		நிலை BOX_TABLE_CELL:
 			/* insert implied table */
-			assert(flex_container->style != NULL);
+			ப்ரதிஜ்ஞா(flex_container->style != வெற்று);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -940,139 +940,139 @@ static bool box_normalise_flex(
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			எனில் (style == வெற்று)
+				திரும்பு false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_item = box_create(வெற்று, style, true,
 					flex_container->href,
 					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					வெற்று, வெற்று, c->bctx);
+			எனில் (implied_flex_item == வெற்று) {
 				css_computed_style_destroy(style);
-				return false;
+				திரும்பு false;
 			}
 			implied_flex_item->type = BOX_TABLE;
 
-			if (child->prev == NULL)
+			எனில் (child->prev == வெற்று)
 				flex_container->children = implied_flex_item;
-			else
+			இல்லையெனில்
 				child->prev->next = implied_flex_item;
 
 			implied_flex_item->prev = child->prev;
 
-			while (child != NULL && (
+			போது (child != வெற்று && (
 					child->type == BOX_TABLE_ROW_GROUP ||
 					child->type == BOX_TABLE_ROW ||
 					child->type == BOX_TABLE_CELL)) {
 				box_add_child(implied_flex_item, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = வெற்று;
 				child = next_child;
 			}
 
-			implied_flex_item->last->next = NULL;
+			implied_flex_item->last->next = வெற்று;
 			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
+			எனில் (implied_flex_item->next != வெற்று)
 				implied_flex_item->next->prev = implied_flex_item;
-			else
+			இல்லையெனில்
 				flex_container->last = implied_flex_item;
 			implied_flex_item->parent = flex_container;
 
-			if (box_normalise_table(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			எனில் (box_normalise_table(implied_flex_item,
+					வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		இயல்பு:
+			ப்ரதிஜ்ஞா(0);
 		}
 	}
 
-	return true;
+	திரும்பு true;
 }
 
-static bool
-box_normalise_inline_container(struct box *cont,
-			       const struct box *root,
+நிலையான bool
+box_normalise_inline_container(கட்டமைப்பு box *cont,
+			       மாறிலி கட்டமைப்பு box *வேர்,
 			       html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
+	கட்டமைப்பு box *child;
+	கட்டமைப்பு box *next_child;
 
-	assert(cont != NULL);
-	assert(cont->type == BOX_INLINE_CONTAINER);
+	ப்ரதிஜ்ஞா(cont != வெற்று);
+	ப்ரதிஜ்ஞா(cont->type == BOX_INLINE_CONTAINER);
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "cont %p", cont);
 #endif
 
-	for (child = cont->children; child != NULL; child = next_child) {
+	க்கு (child = cont->children; child != வெற்று; child = next_child) {
 		next_child = child->next;
-		switch (child->type) {
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_BR:
-		case BOX_TEXT:
+		தேர்வு (child->type) {
+		நிலை BOX_INLINE:
+		நிலை BOX_INLINE_END:
+		நிலை BOX_BR:
+		நிலை BOX_TEXT:
 			/* ok */
-			break;
-		case BOX_INLINE_BLOCK:
+			நிறுத்து;
+		நிலை BOX_INLINE_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_FLEX:
+			எனில் (box_normalise_block(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_INLINE_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+			எனில் (box_normalise_flex(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_FLOAT_இடது:
+		நிலை BOX_FLOAT_வலது:
 			/* ok */
-			assert(child->children != NULL);
+			ப்ரதிஜ்ஞா(child->children != வெற்று);
 
-			switch (child->children->type) {
-			case BOX_BLOCK:
-				if (box_normalise_block(child->children, root,
+			தேர்வு (child->children->type) {
+			நிலை BOX_BLOCK:
+				எனில் (box_normalise_block(child->children, வேர்,
 						c) == false)
-					return false;
-				break;
-			case BOX_TABLE:
-				if (box_normalise_table(child->children, root,
+					திரும்பு false;
+				நிறுத்து;
+			நிலை BOX_TABLE:
+				எனில் (box_normalise_table(child->children, வேர்,
 						c) == false)
-					return false;
-				break;
-			case BOX_FLEX:
-				if (box_normalise_flex(child->children, root,
+					திரும்பு false;
+				நிறுத்து;
+			நிலை BOX_FLEX:
+				எனில் (box_normalise_flex(child->children, வேர்,
 						c) == false)
-					return false;
-				break;
-			default:
-				assert(0);
+					திரும்பு false;
+				நிறுத்து;
+			இயல்பு:
+				ப்ரதிஜ்ஞா(0);
 			}
 
-			if (child->children == NULL) {
+			எனில் (child->children == வெற்று) {
 				/* the child has destroyed itself: remove float */
-				if (child->prev == NULL)
+				எனில் (child->prev == வெற்று)
 					child->parent->children = child->next;
-				else
+				இல்லையெனில்
 					child->prev->next = child->next;
-				if (child->next != NULL)
+				எனில் (child->next != வெற்று)
 					child->next->prev = child->prev;
-				else
+				இல்லையெனில்
 					child->parent->last = child->prev;
 
 				box_free(child);
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
-		default:
-			assert(0);
+			நிறுத்து;
+		நிலை BOX_FLEX:
+		நிலை BOX_BLOCK:
+		நிலை BOX_INLINE_CONTAINER:
+		நிலை BOX_TABLE:
+		நிலை BOX_TABLE_ROW_GROUP:
+		நிலை BOX_TABLE_ROW:
+		நிலை BOX_TABLE_CELL:
+		இயல்பு:
+			ப்ரதிஜ்ஞா(0);
 		}
 	}
 
@@ -1080,32 +1080,32 @@ box_normalise_inline_container(struct box *cont,
 	NSLOG(netsurf, INFO, "cont %p done", cont);
 #endif
 
-	return true;
+	திரும்பு true;
 }
 
 /* Exported function documented in html/box_normalise.h */
 bool
-box_normalise_block(struct box *block, const struct box *root, html_content *c)
+box_normalise_block(கட்டமைப்பு box *block, மாறிலி கட்டமைப்பு box *வேர், html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *table;
+	கட்டமைப்பு box *child;
+	கட்டமைப்பு box *next_child;
+	கட்டமைப்பு box *table;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(block != NULL);
-	assert(root != NULL);
+	ப்ரதிஜ்ஞா(block != வெற்று);
+	ப்ரதிஜ்ஞா(வேர் != வெற்று);
 
-	ctx.root_style = root->style;
+	ctx.வேர்_style = வேர்->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "block %p, block->type %u", block, block->type);
 #endif
 
-	assert(block->type == BOX_BLOCK || block->type == BOX_INLINE_BLOCK ||
+	ப்ரதிஜ்ஞா(block->type == BOX_BLOCK || block->type == BOX_INLINE_BLOCK ||
 			block->type == BOX_TABLE_CELL);
 
-	for (child = block->children; child != NULL; child = next_child) {
+	க்கு (child = block->children; child != வெற்று; child = next_child) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d", child,
 		      child->type);
@@ -1113,42 +1113,42 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 
 		next_child = child->next;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		தேர்வு (child->type) {
+		நிலை BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			எனில் (box_normalise_flex(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
-			if (box_normalise_inline_container(child, root, c) == false)
-				return false;
-			break;
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			எனில் (box_normalise_block(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_INLINE_CONTAINER:
+			எனில் (box_normalise_inline_container(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_TABLE:
+			எனில் (box_normalise_table(child, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		நிலை BOX_INLINE:
+		நிலை BOX_INLINE_END:
+		நிலை BOX_INLINE_FLEX:
+		நிலை BOX_INLINE_BLOCK:
+		நிலை BOX_FLOAT_இடது:
+		நிலை BOX_FLOAT_வலது:
+		நிலை BOX_BR:
+		நிலை BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ப்ரதிஜ்ஞா(0);
+			நிறுத்து;
+		நிலை BOX_TABLE_ROW_GROUP:
+		நிலை BOX_TABLE_ROW:
+		நிலை BOX_TABLE_CELL:
 			/* insert implied table */
-			assert(block->style != NULL);
+			ப்ரதிஜ்ஞா(block->style != வெற்று);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -1157,50 +1157,50 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					block->style);
-			if (style == NULL)
-				return false;
+			எனில் (style == வெற்று)
+				திரும்பு false;
 
-			table = box_create(NULL, style, true, block->href,
-					block->target, NULL, NULL, c->bctx);
-			if (table == NULL) {
+			table = box_create(வெற்று, style, true, block->href,
+					block->target, வெற்று, வெற்று, c->bctx);
+			எனில் (table == வெற்று) {
 				css_computed_style_destroy(style);
-				return false;
+				திரும்பு false;
 			}
 			table->type = BOX_TABLE;
 
-			if (child->prev == NULL)
+			எனில் (child->prev == வெற்று)
 				block->children = table;
-			else
+			இல்லையெனில்
 				child->prev->next = table;
 
 			table->prev = child->prev;
 
-			while (child != NULL && (
+			போது (child != வெற்று && (
 					child->type == BOX_TABLE_ROW_GROUP ||
 					child->type == BOX_TABLE_ROW ||
 					child->type == BOX_TABLE_CELL)) {
 				box_add_child(table, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = வெற்று;
 				child = next_child;
 			}
 
-			table->last->next = NULL;
+			table->last->next = வெற்று;
 			table->next = next_child = child;
-			if (table->next != NULL)
+			எனில் (table->next != வெற்று)
 				table->next->prev = table;
-			else
+			இல்லையெனில்
 				block->last = table;
 			table->parent = block;
 
-			if (box_normalise_table(table, root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			எனில் (box_normalise_table(table, வேர், c) == false)
+				திரும்பு false;
+			நிறுத்து;
+		இயல்பு:
+			ப்ரதிஜ்ஞா(0);
 		}
 	}
 
-	return true;
+	திரும்பு true;
 }
