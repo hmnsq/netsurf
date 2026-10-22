@@ -42,21 +42,21 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_nscolours_handler(struct fetch_about_context *ctx)
+bool fetch_about_nscolours_handler(sa_nracanaa fetch_about_context *ctx)
 {
 	nserror res;
-	const char *stylesheet;
+	const var_na *stylesheet;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/css; charset=utf-8")) {
+	གལ་ཏེ (fetch_about_send_header(ctx, "Content-Type: text/css; charset=utf-8")) {
 		goto aborted;
 	}
 
 	res = nscolour_get_stylesheet(&stylesheet);
-	if (res != NSERROR_OK) {
+	གལ་ཏེ (res != NSERROR_OK) {
 		goto aborted;
 	}
 
@@ -67,15 +67,15 @@ bool fetch_about_nscolours_handler(struct fetch_about_context *ctx)
 			"%s",
 			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet);
-	if (res != NSERROR_OK) {
+	གལ་ཏེ (res != NSERROR_OK) {
 		goto aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ཕྱིར true;
 
 aborted:
 
-	return false;
+	ཕྱིར false;
 }
