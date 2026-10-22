@@ -24,41 +24,41 @@
  * implementation of user interaction with a CONTENT_HTML.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
+#ضمن <assert.h>
+#ضمن <stdbool.h>
+#ضمن <string.h>
 
-#include <dom/dom.h>
+#ضمن <dom/dom.h>
 
-#include "utils/corestrings.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/mouse.h"
-#include "netsurf/misc.h"
-#include "netsurf/layout.h"
-#include "netsurf/keypress.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
-#include "desktop/browser_history.h"
-#include "desktop/frames.h"
-#include "desktop/scrollbar.h"
-#include "desktop/selection.h"
-#include "desktop/textarea.h"
-#include "javascript/js.h"
-#include "desktop/gui_internal.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/log.h"
+#ضمن "utils/nsoption.h"
+#ضمن "netsurf/content.h"
+#ضمن "netsurf/browser_window.h"
+#ضمن "netsurf/mouse.h"
+#ضمن "netsurf/misc.h"
+#ضمن "netsurf/layout.h"
+#ضمن "netsurf/keypress.h"
+#ضمن "content/hlcache.h"
+#ضمن "content/textsearch.h"
+#ضمن "desktop/browser_history.h"
+#ضمن "desktop/frames.h"
+#ضمن "desktop/scrollbar.h"
+#ضمن "desktop/selection.h"
+#ضمن "desktop/textarea.h"
+#ضمن "javascript/js.h"
+#ضمن "desktop/gui_internal.h"
 
-#include "html/box.h"
-#include "html/box_textarea.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
-#include "html/private.h"
-#include "html/imagemap.h"
-#include "html/interaction.h"
+#ضمن "html/box.h"
+#ضمن "html/box_textarea.h"
+#ضمن "html/box_inspect.h"
+#ضمن "html/font.h"
+#ضمن "html/form_internal.h"
+#ضمن "html/private.h"
+#ضمن "html/imagemap.h"
+#ضمن "html/interaction.h"
 
 /**
  * Get pointer shape for given box
@@ -67,93 +67,93 @@
  * \param imagemap  whether an imagemap applies to the box
  */
 
-static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
+ساكن browser_pointer_shape get_pointer_shape(بنية box *box, bool imagemap)
 {
 	browser_pointer_shape pointer;
 	css_computed_style *style;
-	enum css_cursor_e cursor;
+	تعداد css_cursor_e cursor;
 	lwc_string **cursor_uris;
 
-	if (box->type == BOX_FLOAT_LEFT || box->type == BOX_FLOAT_RIGHT)
+	𐤀𐤌 (box->type == BOX_FLOAT_LEFT || box->type == BOX_FLOAT_RIGHT)
 		style = box->children->style;
-	else
+	وإلا
 		style = box->style;
 
-	if (style == NULL)
-		return BROWSER_POINTER_DEFAULT;
+	𐤀𐤌 (style == عدم)
+		أرجع BROWSER_POINTER_DEFAULT;
 
 	cursor = css_computed_cursor(style, &cursor_uris);
 
-	switch (cursor) {
-	case CSS_CURSOR_AUTO:
-		if (box->href || (box->gadget &&
+	بدل (cursor) {
+	حالة CSS_CURSOR_AUTO:
+		𐤀𐤌 (box->href || (box->gadget &&
 				(box->gadget->type == GADGET_IMAGE ||
 				box->gadget->type == GADGET_SUBMIT)) ||
 				imagemap) {
 			/* link */
 			pointer = BROWSER_POINTER_POINT;
-		} else if (box->gadget &&
+		} وإلا 𐤀𐤌 (box->gadget &&
 				(box->gadget->type == GADGET_TEXTBOX ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_TEXTAREA)) {
 			/* text input */
 			pointer = BROWSER_POINTER_CARET;
-		} else {
+		} وإلا {
 			/* html content doesn't mind */
 			pointer = BROWSER_POINTER_AUTO;
 		}
-		break;
-	case CSS_CURSOR_CROSSHAIR:
+		اكسر;
+	حالة CSS_CURSOR_CROSSHAIR:
 		pointer = BROWSER_POINTER_CROSS;
-		break;
-	case CSS_CURSOR_POINTER:
+		اكسر;
+	حالة CSS_CURSOR_POINTER:
 		pointer = BROWSER_POINTER_POINT;
-		break;
-	case CSS_CURSOR_MOVE:
+		اكسر;
+	حالة CSS_CURSOR_MOVE:
 		pointer = BROWSER_POINTER_MOVE;
-		break;
-	case CSS_CURSOR_E_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_E_RESIZE:
 		pointer = BROWSER_POINTER_RIGHT;
-		break;
-	case CSS_CURSOR_W_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_W_RESIZE:
 		pointer = BROWSER_POINTER_LEFT;
-		break;
-	case CSS_CURSOR_N_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_N_RESIZE:
 		pointer = BROWSER_POINTER_UP;
-		break;
-	case CSS_CURSOR_S_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_S_RESIZE:
 		pointer = BROWSER_POINTER_DOWN;
-		break;
-	case CSS_CURSOR_NE_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_NE_RESIZE:
 		pointer = BROWSER_POINTER_RU;
-		break;
-	case CSS_CURSOR_SW_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_SW_RESIZE:
 		pointer = BROWSER_POINTER_LD;
-		break;
-	case CSS_CURSOR_SE_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_SE_RESIZE:
 		pointer = BROWSER_POINTER_RD;
-		break;
-	case CSS_CURSOR_NW_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_NW_RESIZE:
 		pointer = BROWSER_POINTER_LU;
-		break;
-	case CSS_CURSOR_TEXT:
+		اكسر;
+	حالة CSS_CURSOR_TEXT:
 		pointer = BROWSER_POINTER_CARET;
-		break;
-	case CSS_CURSOR_WAIT:
+		اكسر;
+	حالة CSS_CURSOR_WAIT:
 		pointer = BROWSER_POINTER_WAIT;
-		break;
-	case CSS_CURSOR_PROGRESS:
+		اكسر;
+	حالة CSS_CURSOR_PROGRESS:
 		pointer = BROWSER_POINTER_PROGRESS;
-		break;
-	case CSS_CURSOR_HELP:
+		اكسر;
+	حالة CSS_CURSOR_HELP:
 		pointer = BROWSER_POINTER_HELP;
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		pointer = BROWSER_POINTER_DEFAULT;
-		break;
+		اكسر;
 	}
 
-	return pointer;
+	أرجع pointer;
 }
 
 
@@ -165,21 +165,21 @@ static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
  * \param y	y ordinate
  */
 
-static void html_box_drag_start(struct box *box, int x, int y)
+ساكن فراغ html_box_drag_start(بنية box *box, صحيح x, صحيح y)
 {
-	int box_x, box_y;
-	int scroll_mouse_x, scroll_mouse_y;
+	صحيح box_x, box_y;
+	صحيح scroll_mouse_x, scroll_mouse_y;
 
 	box_coords(box, &box_x, &box_y);
 
-	if (box->scroll_x != NULL) {
+	𐤀𐤌 (box->scroll_x != عدم) {
 		scroll_mouse_x = x - box_x ;
 		scroll_mouse_y = y - (box_y + box->padding[TOP] +
 				box->height + box->padding[BOTTOM] -
 				SCROLLBAR_WIDTH);
 		scrollbar_start_content_drag(box->scroll_x,
 				scroll_mouse_x, scroll_mouse_y);
-	} else if (box->scroll_y != NULL) {
+	} وإلا 𐤀𐤌 (box->scroll_y != عدم) {
 		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
 				box->width + box->padding[RIGHT] -
 				SCROLLBAR_WIDTH);
@@ -200,16 +200,16 @@ static void html_box_drag_start(struct box *box, int x, int y)
  * \param y	 coordinate of mouse
  * \param dir    Direction of drag
  */
-static size_t html_selection_drag_end(struct html_content *html,
-		browser_mouse_state mouse, int x, int y, int dir)
+ساكن size_t html_selection_drag_end(بنية html_content *html,
+		browser_mouse_state mouse, صحيح x, صحيح y, صحيح dir)
 {
-	int pixel_offset;
-	struct box *box;
-	int dx, dy;
+	صحيح pixel_offset;
+	بنية box *box;
+	صحيح dx, dy;
 	size_t idx = 0;
 
 	box = box_pick_text_box(html, x, y, dir, &dx, &dy);
-	if (box) {
+	𐤀𐤌 (box) {
 		plot_font_style_t fstyle;
 
 		font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
@@ -220,7 +220,7 @@ static size_t html_selection_drag_end(struct html_content *html,
 		idx += box->byte_offset;
 	}
 
-	return idx;
+	أرجع idx;
 }
 
 
@@ -238,47 +238,47 @@ static size_t html_selection_drag_end(struct html_content *html,
  * \param src The source DOM node.
  * \param dst The destination DOM node.
  */
-static void
+ساكن فراغ
 html__image_coords_dom_user_data_handler(dom_node_operation operation,
 					 dom_string *key,
-					 void *_data,
-					 struct dom_node *src,
-					 struct dom_node *dst)
+					 فراغ *_data,
+					 بنية dom_node *src,
+					 بنية dom_node *dst)
 {
-	struct image_input_coords *oldcoords, *coords = _data, *newcoords;
+	بنية image_input_coords *oldcoords, *coords = _data, *newcoords;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_image_coords_node_data,
-				key) || coords == NULL) {
-		return;
+	𐤀𐤌 (!dom_string_isequal(corestring_dom___ns_key_image_coords_node_data,
+				key) || coords == عدم) {
+		أرجع;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		newcoords = calloc(1, sizeof(*newcoords));
-		if (newcoords != NULL) {
+	بدل (operation) {
+	حالة DOM_NODE_CLONED:
+		newcoords = calloc(1, حجم(*newcoords));
+		𐤀𐤌 (newcoords != عدم) {
 			*newcoords = *coords;
-			if (dom_node_set_user_data(dst,
+			𐤀𐤌 (dom_node_set_user_data(dst,
 				 corestring_dom___ns_key_image_coords_node_data,
 				 newcoords,
 				 html__image_coords_dom_user_data_handler,
 				 &oldcoords) == DOM_NO_ERR) {
-				free(oldcoords);
+				حرر(oldcoords);
 			}
 		}
-		break;
+		اكسر;
 
-	case DOM_NODE_DELETED:
-		free(coords);
-		break;
+	حالة DOM_NODE_DELETED:
+		حرر(coords);
+		اكسر;
 
-	case DOM_NODE_RENAMED:
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-		break;
+	حالة DOM_NODE_RENAMED:
+	حالة DOM_NODE_IMPORTED:
+	حالة DOM_NODE_ADOPTED:
+		اكسر;
 
-	default:
+	افتراضي:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		أكد(0);
 	}
 }
 
@@ -291,26 +291,26 @@ html__image_coords_dom_user_data_handler(dom_node_operation operation,
  * \param  x	   coordinate of mouse
  * \param  y	   coordinate of mouse
  */
-static void
-html_overflow_scroll_drag_end(struct scrollbar *scrollbar,
+ساكن فراغ
+html_overflow_scroll_drag_end(بنية scrollbar *scrollbar,
 			      browser_mouse_state mouse,
-			      int x, int y)
+			      صحيح x, صحيح y)
 {
-	int scroll_mouse_x, scroll_mouse_y, box_x, box_y;
-	struct html_scrollbar_data *data = scrollbar_get_data(scrollbar);
-	struct box *box;
+	صحيح scroll_mouse_x, scroll_mouse_y, box_x, box_y;
+	بنية html_scrollbar_data *data = scrollbar_get_data(scrollbar);
+	بنية box *box;
 
 	box = data->box;
 	box_coords(box, &box_x, &box_y);
 
-	if (scrollbar_is_horizontal(scrollbar)) {
+	𐤀𐤌 (scrollbar_is_horizontal(scrollbar)) {
 		scroll_mouse_x = x - box_x;
 		scroll_mouse_y = y - (box_y + box->padding[TOP] +
 				box->height + box->padding[BOTTOM] -
 				SCROLLBAR_WIDTH);
 		scrollbar_mouse_drag_end(scrollbar, mouse,
 				scroll_mouse_x, scroll_mouse_y);
-	} else {
+	} وإلا {
 		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
 				box->width + box->padding[RIGHT] -
 				SCROLLBAR_WIDTH);
@@ -325,24 +325,24 @@ html_overflow_scroll_drag_end(struct scrollbar *scrollbar,
  * handle html mouse action when select menu is open
  *
  */
-static nserror
+ساكن nserror
 mouse_action_select_menu(html_content *html,
-			 struct browser_window *bw,
+			 بنية browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 صحيح x, صحيح y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
-	const char *status;
-	int width, height;
-	struct hlcache_handle *bw_content;
+	بنية box *box;
+	صحيح box_x = 0;
+	صحيح box_y = 0;
+	ثابت حرف *status;
+	صحيح width, height;
+	بنية hlcache_handle *bw_content;
 	browser_drag_type bw_drag_type;
 
-	assert(html->visible_select_menu != NULL);
+	أكد(html->visible_select_menu != عدم);
 
 	bw_drag_type = browser_window_get_drag_type(bw);
-	if (bw_drag_type != DRAGGING_NONE && !mouse) {
+	𐤀𐤌 (bw_drag_type != DRAGGING_NONE && !mouse) {
 		/* drag end: select menu */
 		form_select_mouse_drag_end(html->visible_select_menu, mouse, x, y);
 	}
@@ -358,20 +358,20 @@ mouse_action_select_menu(html_content *html,
 					  mouse,
 					  x - box_x,
 					  y - box_y);
-	if (status != NULL) {
+	𐤀𐤌 (status != عدم) {
 		/* set status if menu still open */
-		union content_msg_data msg_data;
+		اتحاد content_msg_data msg_data;
 		msg_data.explicit_status_text = status;
-		content_broadcast((struct content *)html,
+		content_broadcast((بنية content *)html,
 				  CONTENT_MSG_STATUS,
 				  &msg_data);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	/* close menu and redraw where it was */
 	form_select_get_dimensions(html->visible_select_menu, &width, &height);
 
-	html->visible_select_menu = NULL;
+	html->visible_select_menu = عدم;
 
 	bw_content = browser_window_get_content(bw);
 	content_request_redraw(bw_content,
@@ -379,7 +379,7 @@ mouse_action_select_menu(html_content *html,
 			       box_y,
 			       width,
 			       height);
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -387,44 +387,44 @@ mouse_action_select_menu(html_content *html,
  * handle html mouse action when a selection drag is being performed
  *
  */
-static nserror
+ساكن nserror
 mouse_action_drag_selection(html_content *html,
-			    struct browser_window *bw,
+			    بنية browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    صحيح x, صحيح y)
 {
-	struct box *box;
-	int dir = -1;
-	int dx, dy;
+	بنية box *box;
+	صحيح dir = -1;
+	صحيح dx, dy;
 	size_t idx;
-	union html_drag_owner drag_owner;
-	int pixel_offset;
+	اتحاد html_drag_owner drag_owner;
+	صحيح pixel_offset;
 	plot_font_style_t fstyle;
 
-	if (!mouse) {
+	𐤀𐤌 (!mouse) {
 		/* End of selection drag */
-		if (selection_dragging_start(html->sel)) {
+		𐤀𐤌 (selection_dragging_start(html->sel)) {
 			dir = 1;
 		}
 
 		idx = html_selection_drag_end(html, mouse, x, y, dir);
 
-		if (idx != 0) {
+		𐤀𐤌 (idx != 0) {
 			selection_track(html->sel, mouse, idx);
 		}
 
 		drag_owner.no_owner = true;
-		html_set_drag_type(html, HTML_DRAG_NONE, drag_owner, NULL);
+		html_set_drag_type(html, HTML_DRAG_NONE, drag_owner, عدم);
 
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
-	if (selection_dragging_start(html->sel)) {
+	𐤀𐤌 (selection_dragging_start(html->sel)) {
 		dir = 1;
 	}
 
 	box = box_pick_text_box(html, x, y, dir, &dx, &dy);
-	if (box != NULL) {
+	𐤀𐤌 (box != عدم) {
 		font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
 
 		guit->layout->position(&fstyle,
@@ -436,7 +436,7 @@ mouse_action_drag_selection(html_content *html,
 
 		selection_track(html->sel, mouse, box->byte_offset + idx);
 	}
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -444,24 +444,24 @@ mouse_action_drag_selection(html_content *html,
  * handle html mouse action when a scrollbar drag is being performed
  *
  */
-static nserror
+ساكن nserror
 mouse_action_drag_scrollbar(html_content *html,
-			    struct browser_window *bw,
+			    بنية browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    صحيح x, صحيح y)
 {
-	struct scrollbar *scr;
-	struct html_scrollbar_data *data;
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
-	const char *status;
-	int scroll_mouse_x = 0, scroll_mouse_y = 0;
+	بنية scrollbar *scr;
+	بنية html_scrollbar_data *data;
+	بنية box *box;
+	صحيح box_x = 0;
+	صحيح box_y = 0;
+	ثابت حرف *status;
+	صحيح scroll_mouse_x = 0, scroll_mouse_y = 0;
 	scrollbar_mouse_status scrollbar_status;
 
 	scr = html->drag_owner.scrollbar;
 
-	if (!mouse) {
+	𐤀𐤌 (!mouse) {
 		/* drag end: scrollbar */
 		html_overflow_scroll_drag_end(scr, mouse, x, y);
 	}
@@ -472,7 +472,7 @@ mouse_action_drag_scrollbar(html_content *html,
 
 	box_coords(box, &box_x, &box_y);
 
-	if (scrollbar_is_horizontal(scr)) {
+	𐤀𐤌 (scrollbar_is_horizontal(scr)) {
 		scroll_mouse_x = x - box_x ;
 		scroll_mouse_y = y - (box_y + box->padding[TOP] +
 				      box->height + box->padding[BOTTOM] -
@@ -481,7 +481,7 @@ mouse_action_drag_scrollbar(html_content *html,
 							  mouse,
 							  scroll_mouse_x,
 							  scroll_mouse_y);
-	} else {
+	} وإلا {
 		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
 				      box->width + box->padding[RIGHT] -
 				      SCROLLBAR_WIDTH);
@@ -494,36 +494,36 @@ mouse_action_drag_scrollbar(html_content *html,
 	}
 	status = scrollbar_mouse_status_to_message(scrollbar_status);
 
-	if (status != NULL) {
-		union content_msg_data msg_data;
+	𐤀𐤌 (status != عدم) {
+		اتحاد content_msg_data msg_data;
 
 		msg_data.explicit_status_text = status;
-		content_broadcast((struct content *)html,
+		content_broadcast((بنية content *)html,
 				  CONTENT_MSG_STATUS,
 				  &msg_data);
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * handle mouse actions while dragging in a text area
  */
-static nserror
+ساكن nserror
 mouse_action_drag_textarea(html_content *html,
-			    struct browser_window *bw,
+			    بنية browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    صحيح x, صحيح y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	بنية box *box;
+	صحيح box_x = 0;
+	صحيح box_y = 0;
 
 	box = html->drag_owner.textarea;
 
-	assert(box->gadget != NULL);
-	assert(box->gadget->type == GADGET_TEXTAREA ||
+	أكد(box->gadget != عدم);
+	أكد(box->gadget->type == GADGET_TEXTAREA ||
 	       box->gadget->type == GADGET_PASSWORD ||
 	       box->gadget->type == GADGET_TEXTBOX);
 
@@ -534,43 +534,43 @@ mouse_action_drag_textarea(html_content *html,
 			      y - box_y);
 
 	/* TODO: Set appropriate statusbar message */
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * handle mouse actions while dragging in a content
  */
-static nserror
+ساكن nserror
 mouse_action_drag_content(html_content *html,
-			  struct browser_window *bw,
+			  بنية browser_window *bw,
 			  browser_mouse_state mouse,
-			  int x, int y)
+			  صحيح x, صحيح y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	بنية box *box;
+	صحيح box_x = 0;
+	صحيح box_y = 0;
 
 	box = html->drag_owner.content;
-	assert(box->object != NULL);
+	أكد(box->object != عدم);
 
 	box_coords(box, &box_x, &box_y);
 	content_mouse_track(box->object,
 			    bw, mouse,
 			    x - box_x,
 			    y - box_y);
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * local structure containing all the mouse action state information
  */
-struct mouse_action_state {
-	struct {
-		const char *status; /**< status text */
+بنية mouse_action_state {
+	بنية {
+		ثابت حرف *status; /**< status text */
 		browser_pointer_shape pointer; /**< pointer shape */
-		enum {
+		تعداد {
 		      ACTION_NONE, /**< default of no action */
 		      ACTION_NOSEND, /**< do not send status and pointer message */
 		      ACTION_SUBMIT, /**< submit form */
@@ -582,55 +582,55 @@ struct mouse_action_state {
 	} result;
 
 	/** dom node */
-	struct dom_node *node;
+	بنية dom_node *node;
 
 	/** html object */
-	struct {
-		struct box *box;
-		int pos_x;
-		int pos_y;
+	بنية {
+		بنية box *box;
+		صحيح pos_x;
+		صحيح pos_y;
 	} html_object;
 
 	/** non html object */
 	hlcache_handle *object;
 
 	/** iframe */
-	struct browser_window *iframe;
+	بنية browser_window *iframe;
 
 	/** link either from href or imagemap */
-	struct {
-		struct box *box;
+	بنية {
+		بنية box *box;
 		nsurl *url;
-		const char *target;
+		ثابت حرف *target;
 		bool is_imagemap;
 	} link;
 
 	/** gadget */
-	struct {
-		struct form_control *control;
-		struct box *box;
-		int box_x;
-		int box_y;
-		const char *target;
+	بنية {
+		بنية form_control *control;
+		بنية box *box;
+		صحيح box_x;
+		صحيح box_y;
+		ثابت حرف *target;
 	} gadget;
 
 	/** title */
-	const char *title;
+	ثابت حرف *title;
 
 	/** candidate box for drag operation */
-	struct box *drag_candidate;
+	بنية box *drag_candidate;
 
 	/** scrollbar */
-	struct {
-		struct scrollbar *bar;
-		int mouse_x;
-		int mouse_y;
+	بنية {
+		بنية scrollbar *bar;
+		صحيح mouse_x;
+		صحيح mouse_y;
 	} scroll;
 
 	/** text in box */
-	struct {
-		struct box *box;
-		int box_x;
+	بنية {
+		بنية box *box;
+		صحيح box_x;
 	} text;
 };
 
@@ -670,17 +670,17 @@ struct mouse_action_state {
  * text_box - text box
  * text_box_x - text_box
  */
-static nserror
+ساكن nserror
 get_mouse_action_node(html_content *html,
-		      int x, int y,
-		      struct mouse_action_state *man)
+		      صحيح x, صحيح y,
+		      بنية mouse_action_state *man)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	بنية box *box;
+	صحيح box_x = 0;
+	صحيح box_y = 0;
 
 	/* initialise the mouse action state data */
-	memset(man, 0, sizeof(struct mouse_action_state));
+	memset(man, 0, حجم(بنية mouse_action_state));
 	man->node = html->layout->node; /* Default dom node to the <HTML> */
 	man->result.pointer = BROWSER_POINTER_DEFAULT;
 
@@ -693,40 +693,40 @@ get_mouse_action_node(html_content *html,
 	box_x = box->margin[LEFT];
 	box_y = box->margin[TOP];
 
-	do {
+	𐤐𐤏𐤋 {
 		/* skip hidden boxes */
-		if ((box->style != NULL) &&
+		𐤀𐤌 ((box->style != عدم) &&
 		    (css_computed_visibility(box->style) ==
 		     CSS_VISIBILITY_HIDDEN)) {
-			goto next_box;
+			اذهب next_box;
 		}
 
-		if (box->node != NULL) {
+		𐤀𐤌 (box->node != عدم) {
 			man->node = box->node;
 		}
 
-		if (box->object) {
-			if (content_get_type(box->object) == CONTENT_HTML) {
+		𐤀𐤌 (box->object) {
+			𐤀𐤌 (content_get_type(box->object) == CONTENT_HTML) {
 				man->html_object.box = box;
 				man->html_object.pos_x = box_x;
 				man->html_object.pos_y = box_y;
-			} else {
+			} وإلا {
 				man->object = box->object;
 			}
 		}
 
-		if (box->iframe) {
+		𐤀𐤌 (box->iframe) {
 			man->iframe = box->iframe;
 		}
 
-		if (box->href) {
+		𐤀𐤌 (box->href) {
 			man->link.url = box->href;
 			man->link.target = box->target;
 			man->link.box = box;
 			man->link.is_imagemap = false;
 		}
 
-		if (box->usemap) {
+		𐤀𐤌 (box->usemap) {
 			man->link.url = imagemap_get(html,
 						     box->usemap,
 						     box_x,
@@ -737,30 +737,30 @@ get_mouse_action_node(html_content *html,
 			man->link.is_imagemap = true;
 		}
 
-		if (box->gadget) {
+		𐤀𐤌 (box->gadget) {
 			man->gadget.control = box->gadget;
 			man->gadget.box = box;
 			man->gadget.box_x = box_x;
 			man->gadget.box_y = box_y;
-			if (box->gadget->form) {
+			𐤀𐤌 (box->gadget->form) {
 				man->gadget.target = box->gadget->form->target;
 			}
 		}
 
-		if (box->title) {
+		𐤀𐤌 (box->title) {
 			man->title = box->title;
 		}
 
 		man->result.pointer = get_pointer_shape(box, false);
 
-		if ((box->scroll_x != NULL) ||
-		    (box->scroll_y != NULL)) {
-			int padding_left;
-			int padding_right;
-			int padding_top;
-			int padding_bottom;
+		𐤀𐤌 ((box->scroll_x != عدم) ||
+		    (box->scroll_y != عدم)) {
+			صحيح padding_left;
+			صحيح padding_right;
+			صحيح padding_top;
+			صحيح padding_bottom;
 
-			if (man->drag_candidate == NULL) {
+			𐤀𐤌 (man->drag_candidate == عدم) {
 				man->drag_candidate = box;
 			}
 
@@ -773,22 +773,22 @@ get_mouse_action_node(html_content *html,
 			padding_bottom = padding_top + box->padding[TOP] +
 					box->height + box->padding[BOTTOM];
 
-			if ((x > padding_left) &&
+			𐤀𐤌 ((x > padding_left) &&
 			    (x < padding_right) &&
 			    (y > padding_top) &&
 			    (y < padding_bottom)) {
 				/* mouse inside padding box */
 
-				if ((box->scroll_y != NULL) &&
+				𐤀𐤌 ((box->scroll_y != عدم) &&
 				    (x > (padding_right - SCROLLBAR_WIDTH))) {
 					/* mouse above vertical box scroll */
 
 					man->scroll.bar = box->scroll_y;
 					man->scroll.mouse_x = x - (padding_right - SCROLLBAR_WIDTH);
 					man->scroll.mouse_y = y - padding_top;
-					break;
+					اكسر;
 
-				} else if ((box->scroll_x != NULL) &&
+				} وإلا 𐤀𐤌 ((box->scroll_x != عدم) &&
 					   (y > (padding_bottom -
 							SCROLLBAR_WIDTH))) {
 					/* mouse above horizontal box scroll */
@@ -796,12 +796,12 @@ get_mouse_action_node(html_content *html,
 					man->scroll.bar = box->scroll_x;
 					man->scroll.mouse_x = x - padding_left;
 					man->scroll.mouse_y = y - (padding_bottom - SCROLLBAR_WIDTH);
-					break;
+					اكسر;
 				}
 			}
 		}
 
-		if (box->text && !box->object) {
+		𐤀𐤌 (box->text && !box->object) {
 			man->text.box = box;
 			man->text.box_x = box_x;
 		}
@@ -809,134 +809,134 @@ get_mouse_action_node(html_content *html,
 	next_box:
 		/* iterate to next box */
 		box = box_at_point(&html->unit_len_ctx, box, x, y, &box_x, &box_y);
-	} while (box != NULL);
+	} طالما (box != عدم);
 
 	/* use of box_x, box_y, or content below this point is probably a
 	 * mistake; they will refer to the last box returned by box_at_point */
 
-	assert(man->node != NULL);
+	أكد(man->node != عدم);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on a form gadget
  */
-static nserror
+ساكن nserror
 gadget_mouse_action(html_content *html,
 		    browser_mouse_state mouse,
-		    int x, int y,
-		    struct mouse_action_state *mas)
+		    صحيح x, صحيح y,
+		    بنية mouse_action_state *mas)
 {
-	struct content *c = (struct content *)html;
+	بنية content *c = (بنية content *)html;
 	textarea_mouse_status ta_status;
-	union content_msg_data msg_data;
+	اتحاد content_msg_data msg_data;
 	nserror res;
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	switch (mas->gadget.control->type) {
-	case GADGET_SELECT:
+	بدل (mas->gadget.control->type) {
+	حالة GADGET_SELECT:
 		mas->result.status = messages_get("FormSelect");
 		mas->result.pointer = BROWSER_POINTER_MENU;
-		if (mouse & BROWSER_MOUSE_CLICK_1 &&
+		𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1 &&
 		    nsoption_bool(core_select_menu)) {
 			html->visible_select_menu = mas->gadget.control;
 			res = form_open_select_menu(c,
 						    mas->gadget.control,
 						    form_select_menu_callback,
 						    c);
-			if (res != NSERROR_OK) {
+			𐤀𐤌 (res != NSERROR_OK) {
 				NSLOG(netsurf, ERROR, "%s",
 				      messages_get_errorcode(res));
-				html->visible_select_menu = NULL;
+				html->visible_select_menu = عدم;
 			}
 			mas->result.pointer = BROWSER_POINTER_DEFAULT;
-		} else if (mouse & BROWSER_MOUSE_CLICK_1) {
+		} وإلا 𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1) {
 			msg_data.select_menu.gadget = mas->gadget.control;
 			content_broadcast(c,
 					  CONTENT_MSG_SELECTMENU,
 					  &msg_data);
 		}
-		break;
+		اكسر;
 
-	case GADGET_CHECKBOX:
+	حالة GADGET_CHECKBOX:
 		mas->result.status = messages_get("FormCheckbox");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1) {
 			mas->gadget.control->selected = !mas->gadget.control->selected;
 			dom_html_input_element_set_checked(
 				(dom_html_input_element *)(mas->gadget.control->node),
 				mas->gadget.control->selected);
 			html__redraw_a_box(html, mas->gadget.box);
 		}
-		break;
+		اكسر;
 
-	case GADGET_RADIO:
+	حالة GADGET_RADIO:
 		mas->result.status = messages_get("FormRadio");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1) {
 			form_radio_set(mas->gadget.control);
 		}
-		break;
+		اكسر;
 
-	case GADGET_IMAGE:
+	حالة GADGET_IMAGE:
 		/* This falls through to SUBMIT */
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
-			struct image_input_coords *coords, *oldcoords;
+		𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1) {
+			بنية image_input_coords *coords, *oldcoords;
 			/** \todo Find a way to not ignore errors */
-			coords = calloc(1, sizeof(*coords));
-			if (coords == NULL) {
-				return NSERROR_OK;
+			coords = calloc(1, حجم(*coords));
+			𐤀𐤌 (coords == عدم) {
+				أرجع NSERROR_OK;
 			}
 			coords->x = x - mas->gadget.box_x;
 			coords->y = y - mas->gadget.box_y;
-			if (dom_node_set_user_data(
+			𐤀𐤌 (dom_node_set_user_data(
 				mas->gadget.control->node,
 				corestring_dom___ns_key_image_coords_node_data,
 				coords,
 				html__image_coords_dom_user_data_handler,
 				&oldcoords) != DOM_NO_ERR) {
-				return NSERROR_OK;
+				أرجع NSERROR_OK;
 			}
-			free(oldcoords);
+			حرر(oldcoords);
 		}
 		fallthrough;
 
-	case GADGET_SUBMIT:
-		if (mas->gadget.control->form) {
-			static char status_buffer[200];
+	حالة GADGET_SUBMIT:
+		𐤀𐤌 (mas->gadget.control->form) {
+			ساكن حرف status_buffer[200];
 
 			snprintf(status_buffer,
-				 sizeof status_buffer,
+				 حجم status_buffer,
 				 messages_get("FormSubmit"),
 				 mas->gadget.control->form->action);
 			mas->result.status = status_buffer;
 			mas->result.pointer = get_pointer_shape(mas->gadget.box,
 								false);
-			if (mouse & (BROWSER_MOUSE_CLICK_1 |
+			𐤀𐤌 (mouse & (BROWSER_MOUSE_CLICK_1 |
 				     BROWSER_MOUSE_CLICK_2)) {
 				mas->result.action = ACTION_SUBMIT;
 			}
-		} else {
+		} وإلا {
 			mas->result.status = messages_get("FormBadSubmit");
 		}
-		break;
+		اكسر;
 
-	case GADGET_TEXTBOX:
-	case GADGET_PASSWORD:
-	case GADGET_TEXTAREA:
-		if (mas->gadget.control->type == GADGET_TEXTAREA) {
+	حالة GADGET_TEXTBOX:
+	حالة GADGET_PASSWORD:
+	حالة GADGET_TEXTAREA:
+		𐤀𐤌 (mas->gadget.control->type == GADGET_TEXTAREA) {
 			mas->result.status = messages_get("FormTextarea");
-		} else {
+		} وإلا {
 			mas->result.status = messages_get("FormTextbox");
 		}
 
-		if (click &&
+		𐤀𐤌 (click &&
 		    (html->selection_type != HTML_SELECTION_TEXTAREA ||
 		     html->selection_owner.textarea != mas->gadget.box)) {
-			union html_selection_owner sel_owner;
+			اتحاد html_selection_owner sel_owner;
 			sel_owner.none = true;
 			html_set_selection(html,
 					   HTML_SELECTION_NONE,
@@ -949,65 +949,65 @@ gadget_mouse_action(html_content *html,
 						  x - mas->gadget.box_x,
 						  y - mas->gadget.box_y);
 
-		if (ta_status & TEXTAREA_MOUSE_EDITOR) {
+		𐤀𐤌 (ta_status & TEXTAREA_MOUSE_EDITOR) {
 			mas->result.pointer = get_pointer_shape(mas->gadget.box, false);
-		} else {
+		} وإلا {
 			mas->result.pointer = BROWSER_POINTER_DEFAULT;
 			mas->result.status = scrollbar_mouse_status_to_message(ta_status >> 3);
 		}
-		break;
+		اكسر;
 
-	case GADGET_HIDDEN:
+	حالة GADGET_HIDDEN:
 		/* not possible: no box generated */
-		break;
+		اكسر;
 
-	case GADGET_RESET:
+	حالة GADGET_RESET:
 		mas->result.status = messages_get("FormReset");
-		break;
+		اكسر;
 
-	case GADGET_FILE:
+	حالة GADGET_FILE:
 		mas->result.status = messages_get("FormFile");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1) {
 			msg_data.gadget_click.gadget = mas->gadget.control;
 			content_broadcast(c,
 					  CONTENT_MSG_GADGETCLICK,
 					  &msg_data);
 		}
-		break;
+		اكسر;
 
-	case GADGET_BUTTON:
+	حالة GADGET_BUTTON:
 		/* This gadget cannot be activated */
 		mas->result.status = messages_get("FormButton");
-		break;
+		اكسر;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on an iframe
  */
-static nserror
-iframe_mouse_action(struct browser_window *bw,
+ساكن nserror
+iframe_mouse_action(بنية browser_window *bw,
 		    browser_mouse_state mouse,
-		    int x, int y,
-		    struct mouse_action_state *mas)
+		    صحيح x, صحيح y,
+		    بنية mouse_action_state *mas)
 {
-	int pos_x, pos_y;
-	float scale;
+	صحيح pos_x, pos_y;
+	عائم scale;
 
 	scale = browser_window_get_scale(bw);
 
 	browser_window_get_position(mas->iframe, false, &pos_x, &pos_y);
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 ||
+	𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1 ||
 	    mouse & BROWSER_MOUSE_CLICK_2) {
 		browser_window_mouse_click(mas->iframe,
 					   mouse,
 					   (x * scale) - pos_x,
 					   (y * scale) - pos_y);
-	} else {
+	} وإلا {
 		browser_window_mouse_track(mas->iframe,
 					   mouse,
 					   (x * scale) - pos_x,
@@ -1015,41 +1015,41 @@ iframe_mouse_action(struct browser_window *bw,
 	}
 	mas->result.action = ACTION_NOSEND;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on an html object
  */
-static nserror
+ساكن nserror
 html_object_mouse_action(html_content *html,
-			 struct browser_window *bw,
+			 بنية browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y,
-			 struct mouse_action_state *mas)
+			 صحيح x, صحيح y,
+			 بنية mouse_action_state *mas)
 {
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	if (click &&
+	𐤀𐤌 (click &&
 	    (html->selection_type != HTML_SELECTION_CONTENT ||
 	     html->selection_owner.content != mas->html_object.box)) {
-		union html_selection_owner sel_owner;
+		اتحاد html_selection_owner sel_owner;
 		sel_owner.none = true;
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 ||
+	𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1 ||
 	    mouse & BROWSER_MOUSE_CLICK_2) {
 		content_mouse_action(mas->html_object.box->object,
 				     bw,
 				     mouse,
 				     x - mas->html_object.pos_x,
 				     y - mas->html_object.pos_y);
-	} else {
+	} وإلا {
 		content_mouse_track(mas->html_object.box->object,
 				    bw,
 				    mouse,
@@ -1058,7 +1058,7 @@ html_object_mouse_action(html_content *html,
 	}
 
 	mas->result.action = ACTION_NOSEND;
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -1068,64 +1068,64 @@ html_object_mouse_action(html_content *html,
  * \param urm The url to check.
  * \return true if the url is a javascript scheme else false
  */
-static bool is_javascript_navigate_url(nsurl *url)
+ساكن bool is_javascript_navigate_url(nsurl *url)
 {
 	bool is_js = false;
 	lwc_string *scheme;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme != NULL) {
-		if (scheme == corestring_lwc_javascript) {
+	𐤀𐤌 (scheme != عدم) {
+		𐤀𐤌 (scheme == corestring_lwc_javascript) {
 			is_js = true;
 		}
 		lwc_string_unref(scheme);
 	}
-	return is_js;
+	أرجع is_js;
 }
 
 
 /**
  * process mouse activity on a link
  */
-static nserror
+ساكن nserror
 link_mouse_action(html_content *html,
-		  struct browser_window *bw,
+		  بنية browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y,
-		  struct mouse_action_state *mas)
+		  صحيح x, صحيح y,
+		  بنية mouse_action_state *mas)
 {
 	nserror res;
-	char *url_s = NULL;
+	حرف *url_s = عدم;
 	size_t url_l = 0;
-	static char status_buffer[200];
-	union content_msg_data msg_data;
+	ساكن حرف status_buffer[200];
+	اتحاد content_msg_data msg_data;
 
-	if (nsoption_bool(display_decoded_idn) == true) {
+	𐤀𐤌 (nsoption_bool(display_decoded_idn) == true) {
 		res = nsurl_get_utf8(mas->link.url, &url_s, &url_l);
-		if (res != NSERROR_OK) {
+		𐤀𐤌 (res != NSERROR_OK) {
 			/* Unable to obtain a decoded IDN. This is not
 			 *  a fatal error.  Ensure the string pointer
 			 *  is NULL so we use the encoded version.
 			 */
-			url_s = NULL;
+			url_s = عدم;
 		}
 	}
 
-	if (mas->title) {
+	𐤀𐤌 (mas->title) {
 		snprintf(status_buffer,
-			 sizeof status_buffer,
+			 حجم status_buffer,
 			 "%s: %s",
 			 url_s ? url_s : nsurl_access(mas->link.url),
 			 mas->title);
-	} else {
+	} وإلا {
 		snprintf(status_buffer,
-			 sizeof status_buffer,
+			 حجم status_buffer,
 			 "%s",
 			 url_s ? url_s : nsurl_access(mas->link.url));
 	}
 
-	if (url_s != NULL) {
-		free(url_s);
+	𐤀𐤌 (url_s != عدم) {
+		حرر(url_s);
 	}
 
 	mas->result.status = status_buffer;
@@ -1133,91 +1133,91 @@ link_mouse_action(html_content *html,
 	mas->result.pointer = get_pointer_shape(mas->link.box,
 						mas->link.is_imagemap);
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 &&
+	𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1 &&
 	    mouse & BROWSER_MOUSE_MOD_1) {
 		/* force download of link */
 		browser_window_navigate(bw,
 					mas->link.url,
-					content_get_url((struct content *)html),
+					content_get_url((بنية content *)html),
 					BW_NAVIGATE_DOWNLOAD,
-					NULL,
-					NULL,
-					NULL);
+					عدم,
+					عدم,
+					عدم);
 
-	} else if (mouse & BROWSER_MOUSE_CLICK_2 &&
+	} وإلا 𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_2 &&
 		   mouse & BROWSER_MOUSE_MOD_1) {
 		msg_data.savelink.url = mas->link.url;
 		msg_data.savelink.title = mas->title;
-		content_broadcast((struct content *)html,
+		content_broadcast((بنية content *)html,
 				  CONTENT_MSG_SAVELINK,
 				  &msg_data);
 
-	} else if (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)) {
-		if (is_javascript_navigate_url(mas->link.url)) {
+	} وإلا 𐤀𐤌 (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)) {
+		𐤀𐤌 (is_javascript_navigate_url(mas->link.url)) {
 			mas->result.action = ACTION_JS;
-		} else {
+		} وإلا {
 			mas->result.action = ACTION_NAVIGATE;
 		}
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
-static nserror
+ساكن nserror
 default_mouse_action_focus(html_content *html, browser_mouse_state mouse)
 {
-	if (mouse && mouse < BROWSER_MOUSE_MOD_1) {
+	𐤀𐤌 (mouse && mouse < BROWSER_MOUSE_MOD_1) {
 		/* ensure key presses still act on the browser window */
-		union html_focus_owner fo;
+		اتحاد html_focus_owner fo;
 		fo.self = true;
-		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, NULL);
+		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, عدم);
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * process mouse activity if it is not anything else
  */
-static nserror
+ساكن nserror
 default_mouse_action(html_content *html,
-		  struct browser_window *bw,
+		  بنية browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y,
-		  struct mouse_action_state *mas)
+		  صحيح x, صحيح y,
+		  بنية mouse_action_state *mas)
 {
-	struct content *c = (struct content *)html;
+	بنية content *c = (بنية content *)html;
 
 	/* frame resizing */
-	if (browser_window_frame_resize_start(bw, mouse, x, y, &mas->result.pointer)) {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+	𐤀𐤌 (browser_window_frame_resize_start(bw, mouse, x, y, &mas->result.pointer)) {
+		𐤀𐤌 (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
 			mas->result.status = messages_get("FrameDrag");
 		}
-		return default_mouse_action_focus(html, mouse);
+		أرجع default_mouse_action_focus(html, mouse);
 	}
 
 	/* clicking in the main page removes the selection from any text areas.
 	 */
-	union html_selection_owner sel_owner;
+	اتحاد html_selection_owner sel_owner;
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	if (click && html->focus_type != HTML_FOCUS_SELF) {
-		union html_focus_owner fo;
+	𐤀𐤌 (click && html->focus_type != HTML_FOCUS_SELF) {
+		اتحاد html_focus_owner fo;
 		fo.self = true;
-		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, NULL);
+		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, عدم);
 	}
-	if (click && html->selection_type != HTML_SELECTION_SELF) {
+	𐤀𐤌 (click && html->selection_type != HTML_SELECTION_SELF) {
 		sel_owner.none = true;
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mas->text.box) {
-		int pixel_offset;
+	𐤀𐤌 (mas->text.box) {
+		صحيح pixel_offset;
 		size_t idx;
 		plot_font_style_t fstyle;
 
@@ -1232,7 +1232,7 @@ default_mouse_action(html_content *html,
 				       &idx,
 				       &pixel_offset);
 
-		if (selection_click(html->sel,
+		𐤀𐤌 (selection_click(html->sel,
 				    html->bw,
 				    mouse,
 				    mas->text.box->byte_offset + idx)) {
@@ -1240,72 +1240,72 @@ default_mouse_action(html_content *html,
 			 * main browser window, paste text
 			 * operations ignored */
 			html_drag_type drag_type;
-			union html_drag_owner drag_owner;
+			اتحاد html_drag_owner drag_owner;
 
-			if (selection_dragging(html->sel)) {
+			𐤀𐤌 (selection_dragging(html->sel)) {
 				drag_type = HTML_DRAG_SELECTION;
 				drag_owner.no_owner = true;
 				html_set_drag_type(html,
 						   drag_type,
 						   drag_owner,
-						   NULL);
+						   عدم);
 				mas->result.status = messages_get("Selecting");
 			}
 
-			if (selection_active(html->sel)) {
+			𐤀𐤌 (selection_active(html->sel)) {
 				sel_owner.none = false;
 				html_set_selection(html, HTML_SELECTION_SELF,
 						   sel_owner, true);
-			} else if (click && html->selection_type != HTML_SELECTION_NONE) {
+			} وإلا 𐤀𐤌 (click && html->selection_type != HTML_SELECTION_NONE) {
 				sel_owner.none = true;
 				html_set_selection(html, HTML_SELECTION_NONE,
 						   sel_owner, true);
 			}
 
-			return default_mouse_action_focus(html, mouse);
+			أرجع default_mouse_action_focus(html, mouse);
 		}
 
-	} else if (mouse & BROWSER_MOUSE_PRESS_1) {
+	} وإلا 𐤀𐤌 (mouse & BROWSER_MOUSE_PRESS_1) {
 		sel_owner.none = true;
 		selection_clear(html->sel, true);
 	}
 
-	if (selection_active(html->sel)) {
+	𐤀𐤌 (selection_active(html->sel)) {
 		sel_owner.none = false;
 		html_set_selection(html, HTML_SELECTION_SELF, sel_owner, true);
-	} else if (click && html->selection_type != HTML_SELECTION_NONE) {
+	} وإلا 𐤀𐤌 (click && html->selection_type != HTML_SELECTION_NONE) {
 		sel_owner.none = true;
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mas->title) {
+	𐤀𐤌 (mas->title) {
 		mas->result.status = mas->title;
 	}
 
-	if (mouse & BROWSER_MOUSE_DRAG_1) {
-		if (mouse & BROWSER_MOUSE_MOD_2) {
-			union content_msg_data msg_data;
+	𐤀𐤌 (mouse & BROWSER_MOUSE_DRAG_1) {
+		𐤀𐤌 (mouse & BROWSER_MOUSE_MOD_2) {
+			اتحاد content_msg_data msg_data;
 			msg_data.dragsave.type = CONTENT_SAVE_COMPLETE;
-			msg_data.dragsave.content = NULL;
+			msg_data.dragsave.content = عدم;
 			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
-		} else {
-			if (mas->drag_candidate == NULL) {
+		} وإلا {
+			𐤀𐤌 (mas->drag_candidate == عدم) {
 				browser_window_page_drag_start(bw, x, y);
-			} else {
+			} وإلا {
 				html_box_drag_start(mas->drag_candidate, x, y);
 			}
 			mas->result.pointer = BROWSER_POINTER_MOVE;
 		}
-	} else if (mouse & BROWSER_MOUSE_DRAG_2) {
-		if (mouse & BROWSER_MOUSE_MOD_2) {
-			union content_msg_data msg_data;
+	} وإلا 𐤀𐤌 (mouse & BROWSER_MOUSE_DRAG_2) {
+		𐤀𐤌 (mouse & BROWSER_MOUSE_MOD_2) {
+			اتحاد content_msg_data msg_data;
 			msg_data.dragsave.type = CONTENT_SAVE_SOURCE;
-			msg_data.dragsave.content = NULL;
+			msg_data.dragsave.content = عدم;
 			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
-		} else {
-			if (mas->drag_candidate == NULL) {
+		} وإلا {
+			𐤀𐤌 (mas->drag_candidate == عدم) {
 				browser_window_page_drag_start(bw, x, y);
-			} else {
+			} وإلا {
 				html_box_drag_start(mas->drag_candidate, x, y);
 			}
 			mas->result.pointer = BROWSER_POINTER_MOVE;
@@ -1313,22 +1313,22 @@ default_mouse_action(html_content *html,
 	}
 
 
-	return default_mouse_action_focus(html, mouse);
+	أرجع default_mouse_action_focus(html, mouse);
 }
 
 
 /**
  * handle non dragging mouse actions
  */
-static nserror
+ساكن nserror
 mouse_action_drag_none(html_content *html,
-		       struct browser_window *bw,
+		       بنية browser_window *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       صحيح x, صحيح y)
 {
 	nserror res;
-	struct content *c = (struct content *)html;
-	union content_msg_data msg_data;
+	بنية content *c = (بنية content *)html;
+	اتحاد content_msg_data msg_data;
 	lwc_string *path;
 
 	/**
@@ -1336,18 +1336,18 @@ mouse_action_drag_none(html_content *html,
 	 *
 	 * not on heap to avoid allocation or stack because it is large
 	 */
-	static struct mouse_action_state mas;
+	ساكن بنية mouse_action_state mas;
 
 	res = get_mouse_action_node(html, x, y, &mas);
-	if (res != NSERROR_OK) {
-		return res;
+	𐤀𐤌 (res != NSERROR_OK) {
+		أرجع res;
 	}
 
-	if (mouse & BROWSER_MOUSE_CLICK_4) {
+	𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_4) {
 		mas.result.action = ACTION_BACK;
-	} else if (mouse & BROWSER_MOUSE_CLICK_5) {
+	} وإلا 𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_5) {
 		mas.result.action = ACTION_FORWARD;
-	} else if (mas.scroll.bar) {
+	} وإلا 𐤀𐤌 (mas.scroll.bar) {
 		mas.result.status = scrollbar_mouse_status_to_message(
 				scrollbar_mouse_action(mas.scroll.bar,
 						       mouse,
@@ -1355,17 +1355,17 @@ mouse_action_drag_none(html_content *html,
 						       mas.scroll.mouse_y));
 		mas.result.pointer = BROWSER_POINTER_DEFAULT;
 
-	} else if (mas.gadget.control) {
+	} وإلا 𐤀𐤌 (mas.gadget.control) {
 		res = gadget_mouse_action(html, mouse, x, y, &mas);
 
-	} else if ((mas.object != NULL) && (mouse & BROWSER_MOUSE_MOD_2)) {
+	} وإلا 𐤀𐤌 ((mas.object != عدم) && (mouse & BROWSER_MOUSE_MOD_2)) {
 
-		if (mouse & BROWSER_MOUSE_DRAG_2) {
+		𐤀𐤌 (mouse & BROWSER_MOUSE_DRAG_2) {
 			msg_data.dragsave.type = CONTENT_SAVE_NATIVE;
 			msg_data.dragsave.content = mas.object;
 			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
 
-		} else if (mouse & BROWSER_MOUSE_DRAG_1) {
+		} وإلا 𐤀𐤌 (mouse & BROWSER_MOUSE_DRAG_1) {
 			msg_data.dragsave.type = CONTENT_SAVE_ORIG;
 			msg_data.dragsave.content = mas.object;
 			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
@@ -1373,25 +1373,25 @@ mouse_action_drag_none(html_content *html,
 
 		/* \todo should have a drag-saving object msg */
 
-	} else if (mas.iframe != NULL) {
+	} وإلا 𐤀𐤌 (mas.iframe != عدم) {
 		res = iframe_mouse_action(bw, mouse, x, y, &mas);
 
-	} else if (mas.html_object.box != NULL) {
+	} وإلا 𐤀𐤌 (mas.html_object.box != عدم) {
 		res = html_object_mouse_action(html, bw, mouse, x, y, &mas);
 
-	} else if (mas.link.url != NULL) {
+	} وإلا 𐤀𐤌 (mas.link.url != عدم) {
 		res = link_mouse_action(html, bw, mouse, x, y, &mas);
 
-	} else {
+	} وإلا {
 		res = default_mouse_action(html, bw, mouse, x, y, &mas);
 
 	}
-	if (res != NSERROR_OK) {
-		return res;
+	𐤀𐤌 (res != NSERROR_OK) {
+		أرجع res;
 	}
 
 	/* send status and pointer message */
-	if (mas.result.action != ACTION_NOSEND) {
+	𐤀𐤌 (mas.result.action != ACTION_NOSEND) {
 		msg_data.explicit_status_text = mas.result.status;
 		content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
 
@@ -1400,24 +1400,24 @@ mouse_action_drag_none(html_content *html,
 	}
 
 	/* fire dom click event */
-	if (mouse & BROWSER_MOUSE_CLICK_1) {
+	𐤀𐤌 (mouse & BROWSER_MOUSE_CLICK_1) {
 		fire_generic_dom_event(corestring_dom_click, mas.node, true, true);
 	}
 
 	/* deferred actions that can cause this browser_window to be destroyed
 	 * and must therefore be done after set_status/pointer
 	 */
-	switch (mas.result.action) {
-	case ACTION_SUBMIT:
+	بدل (mas.result.action) {
+	حالة ACTION_SUBMIT:
 		res = form_submit(content_get_url(c),
 				  browser_window_find_target(bw,
 							     mas.gadget.target,
 							     mouse),
 				  mas.gadget.control->form,
 				  mas.gadget.control);
-		break;
+		اكسر;
 
-	case ACTION_NAVIGATE:
+	حالة ACTION_NAVIGATE:
 		res = browser_window_navigate(
 				browser_window_find_target(bw,
 							   mas.link.target,
@@ -1425,98 +1425,98 @@ mouse_action_drag_none(html_content *html,
 				mas.link.url,
 				content_get_url(c),
 				BW_NAVIGATE_HISTORY,
-				NULL,
-				NULL,
-				NULL);
-		break;
+				عدم,
+				عدم,
+				عدم);
+		اكسر;
 
-	case ACTION_JS:
+	حالة ACTION_JS:
 		path = nsurl_get_component(mas.link.url, NSURL_PATH);
-		if (path != NULL) {
+		𐤀𐤌 (path != عدم) {
 			html_exec(c,
 				  lwc_string_data(path),
 				  lwc_string_length(path));
 			lwc_string_unref(path);
 		}
-		break;
+		اكسر;
 
-	case ACTION_BACK:
+	حالة ACTION_BACK:
 		res = browser_window_history_back(bw, false);
-		break;
+		اكسر;
 
-	case ACTION_FORWARD:
+	حالة ACTION_FORWARD:
 		res = browser_window_history_forward(bw, false);
-		break;
+		اكسر;
 
-	case ACTION_NOSEND:
-	case ACTION_NONE:
+	حالة ACTION_NOSEND:
+	حالة ACTION_NONE:
 		res = NSERROR_OK;
-		break;
+		اكسر;
 	}
 
-	return res;
+	أرجع res;
 }
 
 
 /* exported interface documented in html/interaction.h */
-nserror html_mouse_track(struct content *c,
-			 struct browser_window *bw,
+nserror html_mouse_track(بنية content *c,
+			 بنية browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 صحيح x, صحيح y)
 {
-	return html_mouse_action(c, bw, mouse, x, y);
+	أرجع html_mouse_action(c, bw, mouse, x, y);
 }
 
 
 /* exported interface documented in html/interaction.h */
 nserror
-html_mouse_action(struct content *c,
-		  struct browser_window *bw,
+html_mouse_action(بنية content *c,
+		  بنية browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y)
+		  صحيح x, صحيح y)
 {
 	html_content *html = (html_content *)c;
 	nserror res = NSERROR_OK;
 
 	/* handle open select menu */
-	if (html->visible_select_menu != NULL) {
-		return mouse_action_select_menu(html, bw, mouse, x, y);
+	𐤀𐤌 (html->visible_select_menu != عدم) {
+		أرجع mouse_action_select_menu(html, bw, mouse, x, y);
 	}
 
 	/* handle content drag */
-	switch (html->drag_type) {
-	case HTML_DRAG_SELECTION:
+	بدل (html->drag_type) {
+	حالة HTML_DRAG_SELECTION:
 		res = mouse_action_drag_selection(html, bw, mouse, x, y);
-		break;
+		اكسر;
 
-	case HTML_DRAG_SCROLLBAR:
+	حالة HTML_DRAG_SCROLLBAR:
 		res = mouse_action_drag_scrollbar(html, bw, mouse, x, y);
-		break;
+		اكسر;
 
-	case HTML_DRAG_TEXTAREA_SELECTION:
-	case HTML_DRAG_TEXTAREA_SCROLLBAR:
+	حالة HTML_DRAG_TEXTAREA_SELECTION:
+	حالة HTML_DRAG_TEXTAREA_SCROLLBAR:
 		res = mouse_action_drag_textarea(html, bw, mouse, x, y);
-		break;
+		اكسر;
 
-	case HTML_DRAG_CONTENT_SELECTION:
-	case HTML_DRAG_CONTENT_SCROLL:
+	حالة HTML_DRAG_CONTENT_SELECTION:
+	حالة HTML_DRAG_CONTENT_SCROLL:
 		res = mouse_action_drag_content(html, bw, mouse, x, y);
-		break;
+		اكسر;
 
-	case HTML_DRAG_NONE:
+	حالة HTML_DRAG_NONE:
 		res = mouse_action_drag_none(html, bw, mouse, x, y);
-		break;
+		اكسر;
 
-	default:
+	افتراضي:
 		/* Unknown content related drag type */
-		assert(0 && "Unknown content related drag type");
+		أكد(0 && "Unknown content related drag type");
 	}
 
-	if (res != NSERROR_OK) {
+	𐤀𐤌 (res != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "%s", messages_get_errorcode(res));
 	}
 
-	return res;
+	أرجع res;
 }
 
 
@@ -1527,10 +1527,10 @@ html_mouse_action(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-bool html_keypress(struct content *c, uint32_t key)
+bool html_keypress(بنية content *c, uint32_t key)
 {
 	html_content *html = (html_content *) c;
-	struct selection *sel = html->sel;
+	بنية selection *sel = html->sel;
 
 	/** \todo
 	 * At the moment, the front end interface for keypress only gives
@@ -1563,76 +1563,76 @@ bool html_keypress(struct content *c, uint32_t key)
 	 * `event.preventDefault()` then we won't handle the event when
 	 * we're not supposed to.
 	 */
-	if (html->layout != NULL && html->layout->node != NULL) {
+	𐤀𐤌 (html->layout != عدم && html->layout->node != عدم) {
 		fire_dom_keyboard_event(corestring_dom_keydown,
 				html->layout->node, true, true, key);
 	}
 
-	switch (html->focus_type) {
-	case HTML_FOCUS_CONTENT:
-		return content_keypress(html->focus_owner.content->object, key);
+	بدل (html->focus_type) {
+	حالة HTML_FOCUS_CONTENT:
+		أرجع content_keypress(html->focus_owner.content->object, key);
 
-	case HTML_FOCUS_TEXTAREA:
-		if (box_textarea_keypress(html, html->focus_owner.textarea, key) == NSERROR_OK) {
-			return true;
-		} else {
-			return false;
+	حالة HTML_FOCUS_TEXTAREA:
+		𐤀𐤌 (box_textarea_keypress(html, html->focus_owner.textarea, key) == NSERROR_OK) {
+			أرجع true;
+		} وإلا {
+			أرجع false;
 		}
 
-	default:
+	افتراضي:
 		/* Deal with it below */
-		break;
+		اكسر;
 	}
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
+	بدل (key) {
+	حالة NS_KEY_COPY_SELECTION:
 		selection_copy_to_clipboard(sel);
-		return true;
+		أرجع true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	حالة NS_KEY_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		أرجع true;
 
-	case NS_KEY_SELECT_ALL:
+	حالة NS_KEY_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		أرجع true;
 
-	case NS_KEY_ESCAPE:
+	حالة NS_KEY_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		أرجع selection_clear(sel, true);
 	}
 
-	return false;
+	أرجع false;
 }
 
 
 /**
  * Callback for in-page scrollbars.
  */
-void html_overflow_scroll_callback(void *client_data,
-		struct scrollbar_msg_data *scrollbar_data)
+فراغ html_overflow_scroll_callback(فراغ *client_data,
+		بنية scrollbar_msg_data *scrollbar_data)
 {
-	struct html_scrollbar_data *data = client_data;
+	بنية html_scrollbar_data *data = client_data;
 	html_content *html = (html_content *)data->c;
-	struct box *box = data->box;
-	union content_msg_data msg_data;
+	بنية box *box = data->box;
+	اتحاد content_msg_data msg_data;
 	html_drag_type drag_type;
-	union html_drag_owner drag_owner;
+	اتحاد html_drag_owner drag_owner;
 
-	switch(scrollbar_data->msg) {
-	case SCROLLBAR_MSG_MOVED:
+	بدل(scrollbar_data->msg) {
+	حالة SCROLLBAR_MSG_MOVED:
 
-		if (html->reflowing == true) {
+		𐤀𐤌 (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
-			break;
+			اكسر;
 		}
 
 		html__redraw_a_box(html, box);
-		break;
-	case SCROLLBAR_MSG_SCROLL_START:
+		اكسر;
+	حالة SCROLLBAR_MSG_SCROLL_START:
 	{
-		struct rect rect = {
+		بنية rect rect = {
 			.x0 = scrollbar_data->x0,
 			.y0 = scrollbar_data->y0,
 			.x1 = scrollbar_data->x1,
@@ -1642,96 +1642,96 @@ void html_overflow_scroll_callback(void *client_data,
 		drag_owner.scrollbar = scrollbar_data->scrollbar;
 		html_set_drag_type(html, drag_type, drag_owner, &rect);
 	}
-		break;
-	case SCROLLBAR_MSG_SCROLL_FINISHED:
+		اكسر;
+	حالة SCROLLBAR_MSG_SCROLL_FINISHED:
 		drag_type = HTML_DRAG_NONE;
 		drag_owner.no_owner = true;
-		html_set_drag_type(html, drag_type, drag_owner, NULL);
+		html_set_drag_type(html, drag_type, drag_owner, عدم);
 
 		msg_data.pointer = BROWSER_POINTER_AUTO;
 		content_broadcast(data->c, CONTENT_MSG_POINTER, &msg_data);
-		break;
+		اكسر;
 	}
 }
 
 
 /* Documented in html_internal.h */
-void html_set_drag_type(html_content *html, html_drag_type drag_type,
-		union html_drag_owner drag_owner, const struct rect *rect)
+فراغ html_set_drag_type(html_content *html, html_drag_type drag_type,
+		اتحاد html_drag_owner drag_owner, ثابت بنية rect *rect)
 {
-	union content_msg_data msg_data;
+	اتحاد content_msg_data msg_data;
 
-	assert(html != NULL);
+	أكد(html != عدم);
 
 	html->drag_type = drag_type;
 	html->drag_owner = drag_owner;
 
-	switch (drag_type) {
-	case HTML_DRAG_NONE:
-		assert(drag_owner.no_owner == true);
+	بدل (drag_type) {
+	حالة HTML_DRAG_NONE:
+		أكد(drag_owner.no_owner == true);
 		msg_data.drag.type = CONTENT_DRAG_NONE;
-		break;
+		اكسر;
 
-	case HTML_DRAG_SCROLLBAR:
-	case HTML_DRAG_TEXTAREA_SCROLLBAR:
-	case HTML_DRAG_CONTENT_SCROLL:
+	حالة HTML_DRAG_SCROLLBAR:
+	حالة HTML_DRAG_TEXTAREA_SCROLLBAR:
+	حالة HTML_DRAG_CONTENT_SCROLL:
 		msg_data.drag.type = CONTENT_DRAG_SCROLL;
-		break;
+		اكسر;
 
-	case HTML_DRAG_SELECTION:
-		assert(drag_owner.no_owner == true);
+	حالة HTML_DRAG_SELECTION:
+		أكد(drag_owner.no_owner == true);
 		fallthrough;
-	case HTML_DRAG_TEXTAREA_SELECTION:
-	case HTML_DRAG_CONTENT_SELECTION:
+	حالة HTML_DRAG_TEXTAREA_SELECTION:
+	حالة HTML_DRAG_CONTENT_SELECTION:
 		msg_data.drag.type = CONTENT_DRAG_SELECTION;
-		break;
+		اكسر;
 	}
 	msg_data.drag.rect = rect;
 
 	/* Inform of the content's drag status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_DRAG, &msg_data);
+	content_broadcast((بنية content *)html, CONTENT_MSG_DRAG, &msg_data);
 }
 
 /* Documented in html_internal.h */
-void html_set_focus(html_content *html, html_focus_type focus_type,
-		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip)
+فراغ html_set_focus(html_content *html, html_focus_type focus_type,
+		اتحاد html_focus_owner focus_owner, bool hide_caret,
+		صحيح x, صحيح y, صحيح height, ثابت بنية rect *clip)
 {
-	union content_msg_data msg_data;
-	int x_off = 0;
-	int y_off = 0;
-	struct rect cr;
+	اتحاد content_msg_data msg_data;
+	صحيح x_off = 0;
+	صحيح y_off = 0;
+	بنية rect cr;
 	bool textarea_lost_focus = html->focus_type == HTML_FOCUS_TEXTAREA &&
 			focus_type != HTML_FOCUS_TEXTAREA;
 
-	assert(html != NULL);
+	أكد(html != عدم);
 
-	switch (focus_type) {
-	case HTML_FOCUS_SELF:
-		assert(focus_owner.self == true);
-		if (html->focus_type == HTML_FOCUS_SELF)
+	بدل (focus_type) {
+	حالة HTML_FOCUS_SELF:
+		أكد(focus_owner.self == true);
+		𐤀𐤌 (html->focus_type == HTML_FOCUS_SELF)
 			/* Don't need to tell anyone anything */
-			return;
-		break;
+			أرجع;
+		اكسر;
 
-	case HTML_FOCUS_CONTENT:
+	حالة HTML_FOCUS_CONTENT:
 		box_coords(focus_owner.content, &x_off, &y_off);
-		break;
+		اكسر;
 
-	case HTML_FOCUS_TEXTAREA:
+	حالة HTML_FOCUS_TEXTAREA:
 		box_coords(focus_owner.textarea, &x_off, &y_off);
-		break;
+		اكسر;
 	}
 
 	html->focus_type = focus_type;
 	html->focus_owner = focus_owner;
 
-	if (textarea_lost_focus) {
+	𐤀𐤌 (textarea_lost_focus) {
 		msg_data.caret.type = CONTENT_CARET_REMOVE;
-	} else if (focus_type != HTML_FOCUS_SELF && hide_caret) {
+	} وإلا 𐤀𐤌 (focus_type != HTML_FOCUS_SELF && hide_caret) {
 		msg_data.caret.type = CONTENT_CARET_HIDE;
-	} else {
-		if (clip != NULL) {
+	} وإلا {
+		𐤀𐤌 (clip != عدم) {
 			cr = *clip;
 			cr.x0 += x_off;
 			cr.y0 += y_off;
@@ -1743,25 +1743,25 @@ void html_set_focus(html_content *html, html_focus_type focus_type,
 		msg_data.caret.pos.x = x + x_off;
 		msg_data.caret.pos.y = y + y_off;
 		msg_data.caret.pos.height = height;
-		msg_data.caret.pos.clip = (clip == NULL) ? NULL : &cr;
+		msg_data.caret.pos.clip = (clip == عدم) ? عدم : &cr;
 	}
 
 	/* Inform of the content's drag status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_CARET, &msg_data);
+	content_broadcast((بنية content *)html, CONTENT_MSG_CARET, &msg_data);
 }
 
 /* Documented in html_internal.h */
-void html_set_selection(html_content *html, html_selection_type selection_type,
-		union html_selection_owner selection_owner, bool read_only)
+فراغ html_set_selection(html_content *html, html_selection_type selection_type,
+		اتحاد html_selection_owner selection_owner, bool read_only)
 {
-	union content_msg_data msg_data;
-	struct box *box;
+	اتحاد content_msg_data msg_data;
+	بنية box *box;
 	bool changed = false;
 	bool same_type = html->selection_type == selection_type;
 
-	assert(html != NULL);
+	أكد(html != عدم);
 
-	if ((selection_type == HTML_SELECTION_NONE &&
+	𐤀𐤌 ((selection_type == HTML_SELECTION_NONE &&
 			html->selection_type != HTML_SELECTION_NONE) ||
 			(selection_type != HTML_SELECTION_NONE &&
 			html->selection_type == HTML_SELECTION_NONE))
@@ -1770,58 +1770,58 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
 		changed = true;
 
 	/* Clear any existing selection */
-	if (html->selection_type != HTML_SELECTION_NONE) {
-		switch (html->selection_type) {
-		case HTML_SELECTION_SELF:
-			if (same_type)
-				break;
+	𐤀𐤌 (html->selection_type != HTML_SELECTION_NONE) {
+		بدل (html->selection_type) {
+		حالة HTML_SELECTION_SELF:
+			𐤀𐤌 (same_type)
+				اكسر;
 			selection_clear(html->sel, true);
-			break;
-		case HTML_SELECTION_TEXTAREA:
-			if (same_type && html->selection_owner.textarea ==
+			اكسر;
+		حالة HTML_SELECTION_TEXTAREA:
+			𐤀𐤌 (same_type && html->selection_owner.textarea ==
 					selection_owner.textarea)
-				break;
+				اكسر;
 			box = html->selection_owner.textarea;
 			textarea_clear_selection(box->gadget->data.text.ta);
-			break;
-		case HTML_SELECTION_CONTENT:
-			if (same_type && html->selection_owner.content ==
+			اكسر;
+		حالة HTML_SELECTION_CONTENT:
+			𐤀𐤌 (same_type && html->selection_owner.content ==
 					selection_owner.content)
-				break;
+				اكسر;
 			box = html->selection_owner.content;
 			content_clear_selection(box->object);
-			break;
-		default:
-			break;
+			اكسر;
+		افتراضي:
+			اكسر;
 		}
 	}
 
 	html->selection_type = selection_type;
 	html->selection_owner = selection_owner;
 
-	if (!changed)
+	𐤀𐤌 (!changed)
 		/* Don't need to report lack of change to owner */
-		return;
+		أرجع;
 
 	/* Prepare msg */
-	switch (selection_type) {
-	case HTML_SELECTION_NONE:
-		assert(selection_owner.none == true);
+	بدل (selection_type) {
+	حالة HTML_SELECTION_NONE:
+		أكد(selection_owner.none == true);
 		msg_data.selection.selection = false;
-		break;
-	case HTML_SELECTION_SELF:
-		assert(selection_owner.none == false);
+		اكسر;
+	حالة HTML_SELECTION_SELF:
+		أكد(selection_owner.none == false);
 		fallthrough;
-	case HTML_SELECTION_TEXTAREA:
-	case HTML_SELECTION_CONTENT:
+	حالة HTML_SELECTION_TEXTAREA:
+	حالة HTML_SELECTION_CONTENT:
 		msg_data.selection.selection = true;
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 	msg_data.selection.read_only = read_only;
 
 	/* Inform of the content's selection status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_SELECTION,
+	content_broadcast((بنية content *)html, CONTENT_MSG_SELECTION,
 			&msg_data);
 }

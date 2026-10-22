@@ -21,28 +21,28 @@
  * implementation for image/ico content handler
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libnsbmp.h>
+#ضمن <stdbool.h>
+#ضمن <stdlib.h>
+#ضمن <libnsbmp.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "netsurf/bitmap.h"
+#ضمن "netsurf/content.h"
+#ضمن "content/llcache.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "desktop/gui_internal.h"
+#ضمن "desktop/bitmap.h"
 
-#include "image/image.h"
-#include "image/ico.h"
+#ضمن "image/image.h"
+#ضمن "image/ico.h"
 
-typedef struct nsico_content {
-	struct content base;
+تعريفنوع بنية nsico_content {
+	بنية content base;
 
-	struct ico_collection *ico; /** ICO collection data */
+	بنية ico_collection *ico; /** ICO collection data */
 } nsico_content;
 
 /**
@@ -53,9 +53,9 @@ typedef struct nsico_content {
  * \param  bmp_state A flag word indicating the initial state
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsico_bitmap_create(int width, int height, unsigned int bmp_state)
+ساكن فراغ *nsico_bitmap_create(صحيح width, صحيح height, unsigned صحيح bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	unsigned صحيح bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
@@ -63,10 +63,10 @@ static void *nsico_bitmap_create(int width, int height, unsigned int bmp_state)
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	أرجع guit->bitmap->create(width, height, bitmap_state);
 }
 
-static nserror nsico_create_ico_data(nsico_content *c)
+ساكن nserror nsico_create_ico_data(nsico_content *c)
 {
 	bmp_bitmap_callback_vt bmp_bitmap_callbacks = {
 		.bitmap_create = nsico_bitmap_create,
@@ -74,73 +74,73 @@ static nserror nsico_create_ico_data(nsico_content *c)
 		.bitmap_get_buffer = guit->bitmap->get_buffer,
 	};
 
-	c->ico = calloc(1, sizeof(ico_collection));
-	if (c->ico == NULL) {
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	c->ico = calloc(1, حجم(ico_collection));
+	𐤀𐤌 (c->ico == عدم) {
+		content_broadcast_error(&c->base, NSERROR_NOMEM, عدم);
+		أرجع NSERROR_NOMEM;
 	}
 	ico_collection_create(c->ico, &bmp_bitmap_callbacks);
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
-static nserror nsico_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ساكن nserror nsico_create(ثابت content_handler *handler,
+		lwc_string *imime_type, ثابت بنية http_parameter *params,
+		llcache_handle *llcache, ثابت حرف *fallback_charset,
+		bool quirks, بنية content **c)
 {
 	nsico_content *result;
 	nserror error;
 
-	result = calloc(1, sizeof(nsico_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	result = calloc(1, حجم(nsico_content));
+	𐤀𐤌 (result == عدم)
+		أرجع NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	𐤀𐤌 (error != NSERROR_OK) {
+		حرر(result);
+		أرجع error;
 	}
 
 	error = nsico_create_ico_data(result);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	𐤀𐤌 (error != NSERROR_OK) {
+		حرر(result);
+		أرجع error;
 	}
 
-	*c = (struct content *) result;
+	*c = (بنية content *) result;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 
-static bool nsico_convert(struct content *c)
+ساكن bool nsico_convert(بنية content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
-	struct bmp_image *bmp;
+	بنية bmp_image *bmp;
 	bmp_result res;
-	const uint8_t *data;
+	ثابت uint8_t *data;
 	size_t size;
-	char *title;
+	حرف *title;
 
 	/* set the ico data */
 	data = content__get_source_data(c, &size);
 
 	/* analyse the ico */
-	res = ico_analyse(ico->ico, size, (unsigned char *) data);
+	res = ico_analyse(ico->ico, size, (unsigned حرف *) data);
 
-	switch (res) {
-	case BMP_OK:
-		break;
-	case BMP_INSUFFICIENT_MEMORY:
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
-	case BMP_INSUFFICIENT_DATA:
-	case BMP_DATA_ERROR:
-		content_broadcast_error(c, NSERROR_ICO_ERROR, NULL);
-		return false;
+	بدل (res) {
+	حالة BMP_OK:
+		اكسر;
+	حالة BMP_INSUFFICIENT_MEMORY:
+		content_broadcast_error(c, NSERROR_NOMEM, عدم);
+		أرجع false;
+	حالة BMP_INSUFFICIENT_DATA:
+	حالة BMP_DATA_ERROR:
+		content_broadcast_error(c, NSERROR_ICO_ERROR, عدم);
+		أرجع false;
 	}
 
 	/* Store our content width, height and calculate size */
@@ -152,17 +152,17 @@ static bool nsico_convert(struct content *c)
 	title = messages_get_buff("ICOTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	𐤀𐤌 (title != عدم) {
 		content__set_title(c, title);
-		free(title);
+		حرر(title);
 	}
 
 	/* select largest icon to ensure one can be selected */
 	bmp = ico_find(ico->ico, 255, 255);
-	if (bmp == NULL) {
+	𐤀𐤌 (bmp == عدم) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		أرجع false;
 	}
 
 	content_set_ready(c);
@@ -170,15 +170,15 @@ static bool nsico_convert(struct content *c)
 
 	/* Done: update status bar */
 	content_set_status(c, "");
-	return true;
+	أرجع true;
 }
 
-static bool nsico__decode(struct bmp_image *ico)
+ساكن bool nsico__decode(بنية bmp_image *ico)
 {
-	if (ico->decoded == false) {
+	𐤀𐤌 (ico->decoded == false) {
 		NSLOG(netsurf, DEBUG, "Decoding ICO %p", ico);
-		if (bmp_decode(ico) != BMP_OK) {
-			return false;
+		𐤀𐤌 (bmp_decode(ico) != BMP_OK) {
+			أرجع false;
 		}
 
 		bitmap_format_to_client(ico->bitmap, &(bitmap_fmt_t) {
@@ -188,125 +188,125 @@ static bool nsico__decode(struct bmp_image *ico)
 
 	}
 
-	return true;
+	أرجع true;
 }
 
-static bool nsico_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ساكن bool nsico_redraw(بنية content *c, بنية content_redraw_data *data,
+		ثابت بنية rect *clip, ثابت بنية redraw_context *ctx)
 {
 	nsico_content *ico = (nsico_content *)c;
-	struct bmp_image *bmp;
+	بنية bmp_image *bmp;
 
 	/* select most appropriate sized icon for size */
 	bmp = ico_find(ico->ico, data->width, data->height);
-	if (bmp == NULL) {
+	𐤀𐤌 (bmp == عدم) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		أرجع false;
 	}
 
 	/* ensure its decided */
-	if (!nsico__decode(bmp)) {
-		return false;
+	𐤀𐤌 (!nsico__decode(bmp)) {
+		أرجع false;
 	}
 
-	return image_bitmap_plot(bmp->bitmap, data, clip, ctx);
+	أرجع image_bitmap_plot(bmp->bitmap, data, clip, ctx);
 }
 
 
-static void nsico_destroy(struct content *c)
+ساكن فراغ nsico_destroy(بنية content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
 
 	ico_finalise(ico->ico);
-	free(ico->ico);
+	حرر(ico->ico);
 }
 
-static nserror nsico_clone(const struct content *old, struct content **newc)
+ساكن nserror nsico_clone(ثابت بنية content *old, بنية content **newc)
 {
 	nsico_content *ico;
 	nserror error;
 
-	ico = calloc(1, sizeof(nsico_content));
-	if (ico == NULL)
-		return NSERROR_NOMEM;
+	ico = calloc(1, حجم(nsico_content));
+	𐤀𐤌 (ico == عدم)
+		أرجع NSERROR_NOMEM;
 
 	error = content__clone(old, &ico->base);
-	if (error != NSERROR_OK) {
+	𐤀𐤌 (error != NSERROR_OK) {
 		content_destroy(&ico->base);
-		return error;
+		أرجع error;
 	}
 
 	/* Simply replay creation and conversion */
 	error = nsico_create_ico_data(ico);
-	if (error != NSERROR_OK) {
+	𐤀𐤌 (error != NSERROR_OK) {
 		content_destroy(&ico->base);
-		return error;
+		أرجع error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	𐤀𐤌 (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nsico_convert(&ico->base) == false) {
+		𐤀𐤌 (nsico_convert(&ico->base) == false) {
 			content_destroy(&ico->base);
-			return NSERROR_CLONE_FAILED;
+			أرجع NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) ico;
+	*newc = (بنية content *) ico;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static void *nsico_get_internal(const struct content *c, void *context)
+ساكن فراغ *nsico_get_internal(ثابت بنية content *c, فراغ *context)
 {
 	nsico_content *ico = (nsico_content *) c;
 	/* TODO: Pick best size for purpose.
 	 *       Currently assumes it's for a URL bar. */
-	struct bmp_image *bmp;
+	بنية bmp_image *bmp;
 
 	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	𐤀𐤌 (bmp == عدم) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return NULL;
+		أرجع عدم;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return NULL;
+	𐤀𐤌 (!nsico__decode(bmp)) {
+		أرجع عدم;
 	}
 
-	return bmp->bitmap;
+	أرجع bmp->bitmap;
 }
 
-static content_type nsico_content_type(void)
+ساكن content_type nsico_content_type(فراغ)
 {
-	return CONTENT_IMAGE;
+	أرجع CONTENT_IMAGE;
 }
 
-static bool nsico_is_opaque(struct content *c)
+ساكن bool nsico_is_opaque(بنية content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
-	struct bmp_image *bmp;
+	بنية bmp_image *bmp;
 
 	/**
 	 * \todo Pick best size for purpose. Currently assumes
 	 *         it's for a URL bar.
 	 */
 	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	𐤀𐤌 (bmp == عدم) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		أرجع false;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return false;
+	𐤀𐤌 (!nsico__decode(bmp)) {
+		أرجع false;
 	}
 
-	return guit->bitmap->get_opaque(bmp->bitmap);
+	أرجع guit->bitmap->get_opaque(bmp->bitmap);
 }
 
-static const content_handler nsico_content_handler = {
+ساكن ثابت content_handler nsico_content_handler = {
 	.create = nsico_create,
 	.data_complete = nsico_convert,
 	.destroy = nsico_destroy,
@@ -318,7 +318,7 @@ static const content_handler nsico_content_handler = {
 	.no_share = false,
 };
 
-static const char *nsico_types[] = {
+ساكن ثابت حرف *nsico_types[] = {
 	"application/ico",
 	"application/x-ico",
 	"image/ico",
