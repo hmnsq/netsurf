@@ -23,16 +23,16 @@
 #ifndef NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
 #define NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
 
-#include <curl/curl.h>
+#ضمن <curl/curl.h>
 
 /**
  * Register curl scheme handler.
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_curl_register(void);
+nserror fetch_curl_register(فراغ);
 
 /** Global cURL multi handle. */
-extern CURLM *fetch_curl_multi;
+خارجي CURLM *fetch_curl_multi;
 
 #endif

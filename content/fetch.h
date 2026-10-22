@@ -23,23 +23,23 @@
 #ifndef _NETSURF_DESKTOP_FETCH_H_
 #define _NETSURF_DESKTOP_FETCH_H_
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-#include "utils/config.h"
-#include "utils/nsurl.h"
-#include "utils/inet.h"
-#include "utils/http/response-codes.h"
+#ضمن "utils/config.h"
+#ضمن "utils/nsurl.h"
+#ضمن "utils/inet.h"
+#ضمن "utils/http/response-codes.h"
 
-#include "netsurf/ssl_certs.h"
+#ضمن "netsurf/ssl_certs.h"
 
-struct content;
-struct fetch;
-struct ssl_cert_info;
+بنية content;
+بنية fetch;
+بنية ssl_cert_info;
 
 /**
  * Fetcher message types
  */
-typedef enum {
+تعريفنوع تعداد {
 	FETCH_PROGRESS,
 	FETCH_CERTS,
 	FETCH_HEADER,
@@ -53,14 +53,14 @@ typedef enum {
 	FETCH_AUTH,
 	FETCH_CERT_ERR,
 	FETCH_SSL_ERR
-} fetch_msg_type;
+} fetch_ئۇچۇر_type;
 
 /** Minimum finished message type.
  *
  * If a fetch does not progress this far, it's an error and the fetch machinery
  * will send FETCH_ERROR to the llcache on fetch_free()
  */
-#define FETCH_MIN_FINISHED_MSG FETCH_FINISHED
+#define FETCH_MIN_FINISHED_ئۇچۇر FETCH_FINISHED
 
 /**
  * This message is actually an internal message used to indicate
@@ -71,34 +71,34 @@ typedef enum {
 /**
  * Fetcher message data
  */
-typedef struct fetch_msg {
-	fetch_msg_type type;
+تعريفنوع بنية fetch_ئۇچۇر {
+	fetch_ئۇچۇر_type type;
 
-	union {
-		const char *progress;
+	اتحاد {
+		ثابت حرف *progress;
 
-		struct {
-			const uint8_t *buf;
+		بنية {
+			ثابت uint8_t *buf;
 			size_t len;
 		} header_or_data;
 
-		const char *error;
+		ثابت حرف *error;
 
 		/** \todo Use nsurl */
-		const char *redirect;
+		ثابت حرف *redirect;
 
-		struct {
-			const char *realm;
+		بنية {
+			ثابت حرف *realm;
 		} auth;
 
-		const struct cert_chain *chain;
+		ثابت بنية cert_chain *chain;
 	} data;
-} fetch_msg;
+} fetch_ئۇچۇر;
 
 /**
  * Fetcher post data types
  */
-typedef enum {
+تعريفنوع تعداد {
 	FETCH_POSTDATA_NONE,
 	FETCH_POSTDATA_URLENC,
 	FETCH_POSTDATA_MULTIPART,
@@ -108,31 +108,31 @@ typedef enum {
 /**
  * Fetch POST multipart data
  */
-struct fetch_multipart_data {
-	struct fetch_multipart_data *next; /**< Next in linked list */
+بنية fetch_multipart_data {
+	بنية fetch_multipart_data *next; /**< Next in linked list */
 
-	char *name; /**< Name of item */
-	char *value; /**< Item value */
+	حرف *name; /**< Name of item */
+	حرف *قىممەت; /**< Item value */
 
-	char *rawfile; /**< Raw filename if file is true */
+	حرف *rawfile; /**< Raw filename if file is true */
 	bool file; /**< Item is a file */
 };
 
 /**
  * fetch POST data
  */
-struct fetch_postdata {
+بنية fetch_postdata {
 	fetch_postdata_type type;
-	union {
+	اتحاد {
 		/** Url encoded POST string if type is FETCH_POSTDATA_URLENC */
-		char *urlenc;
+		حرف *urlenc;
 		/** Multipart post data if type is FETCH_POSTDATA_MULTIPART */
-		struct fetch_multipart_data *multipart;
+		بنية fetch_multipart_data *multipart;
 	} data;
 };
 
 
-typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
+تعريفنوع فراغ (*fetch_callback)(ثابت fetch_ئۇچۇر *ئۇچۇر, فراغ *p);
 
 /**
  * Start fetching data for the given URL.
@@ -166,15 +166,15 @@ typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
  * \return NSERROR_OK and fetch_out updated else appropriate error code
  */
 nserror fetch_start(nsurl *url, nsurl *referer, fetch_callback callback,
-		    void *p, bool only_2xx, const char *post_urlenc,
-		    const struct fetch_multipart_data *post_multipart,
+		    فراغ *p, bool only_2xx, ثابت حرف *post_urlenc,
+		    ثابت بنية fetch_multipart_data *post_multipart,
 		    bool verifiable, bool downgrade_tls,
-		    const char *headers[], struct fetch **fetch_out);
+		    ثابت حرف *headers[], بنية fetch **fetch_out);
 
 /**
  * Abort a fetch.
  */
-void fetch_abort(struct fetch *f);
+فراغ fetch_abort(بنية fetch *f);
 
 
 /**
@@ -183,17 +183,17 @@ void fetch_abort(struct fetch *f);
  * \param  url  URL to check
  * \return  true if the scheme is supported
  */
-bool fetch_can_fetch(const nsurl *url);
+bool fetch_can_fetch(ثابت nsurl *url);
 
 /**
  * Change the callback function for a fetch.
  */
-void fetch_change_callback(struct fetch *fetch, fetch_callback callback, void *p);
+فراغ fetch_change_callback(بنية fetch *fetch, fetch_callback callback, فراغ *p);
 
 /**
  * Get the HTTP response code.
  */
-http_response_code fetch_http_code(struct fetch *fetch);
+http_response_code fetch_http_code(بنية fetch *fetch);
 
 
 /**
@@ -201,7 +201,7 @@ http_response_code fetch_http_code(struct fetch *fetch);
  *
  * \param list Pointer to head of list to free
  */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
+فراغ fetch_multipart_data_destroy(بنية fetch_multipart_data *list);
 
 /**
  * Clone a linked list of fetch_multipart_data.
@@ -209,7 +209,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
  * \param list  List to clone
  * \return Pointer to head of cloned list, or NULL on failure
  */
-struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multipart_data *list);
+بنية fetch_multipart_data *fetch_multipart_data_clone(ثابت بنية fetch_multipart_data *list);
 
 /**
  * Find an entry in a fetch_multipart_data
@@ -218,8 +218,8 @@ struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multi
  * \param name The name to look for in the list
  * \return The value found, or NULL if not present
  */
-const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
-				      const char *name);
+ثابت حرف *fetch_multipart_data_find(ثابت بنية fetch_multipart_data *list,
+				      ثابت حرف *name);
 
 /**
  * Create an entry for a fetch_multipart_data
@@ -231,34 +231,34 @@ const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
  * \param value The value of the entry to create
  * \return The result of the attempt
  */
-nserror fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-				    const char *name,
-				    const char *value);
+nserror fetch_multipart_data_new_kv(بنية fetch_multipart_data **list,
+				    ثابت حرف *name,
+				    ثابت حرف *قىممەت);
 
 /**
  * send message to fetch
  */
-void fetch_send_callback(const fetch_msg *msg, struct fetch *fetch);
+فراغ fetch_send_callback(ثابت fetch_ئۇچۇر *ئۇچۇر, بنية fetch *fetch);
 
 /**
  * remove a queued fetch
  */
-void fetch_remove_from_queues(struct fetch *fetch);
+فراغ fetch_remove_from_queues(بنية fetch *fetch);
 
 /**
  * Free a fetch structure and associated resources.
  */
-void fetch_free(struct fetch *f);
+فراغ fetch_free(بنية fetch *f);
 
 /**
  * set the http code of a fetch
  */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code);
+nserror fetch_set_http_code(بنية fetch *fetch, http_response_code http_code);
 
 /**
  * set cookie data on a fetch
  */
-void fetch_set_cookie(struct fetch *fetch, const char *data);
+فراغ fetch_set_cookie(بنية fetch *fetch, ثابت حرف *data);
 
 /**
  * Get the set of file descriptors the fetchers are currently using.
@@ -284,6 +284,6 @@ void fetch_set_cookie(struct fetch *fetch, const char *data);
  * \param[out] maxfd The highest fd number in the set or -1 if no fd available.
  * \return NSERROR_OK on success or appropriate error code.
  */
-nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, int *maxfd);
+nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, صحيح *maxfd);
 
 #endif
