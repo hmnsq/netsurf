@@ -16,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <libcss/libcss.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <libcss/libcss.h>
 
-#include "utils/nsurl.h"
+#अन्तर्भाव "utils/nsurl.h"
 
-#include "css/internal.h"
+#अन्तर्भाव "css/internal.h"
 
 /* exported interface documented in content/handlers/css/internal.h */
-css_error nscss_resolve_url(void *pw, const char *base,
+css_error nscss_resolve_url(शून्य *pw, ध्रुव वर्ण *base,
 		lwc_string *rel, lwc_string **abs)
 {
 	lwc_error lerror;
@@ -35,15 +35,15 @@ css_error nscss_resolve_url(void *pw, const char *base,
 	/* Create nsurl from base */
 	/* TODO: avoid this */
 	error = nsurl_create(base, &nsbase);
-	if (error != NSERROR_OK) {
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+	जइ (error != NSERROR_OK) {
+		प्रत्यागम error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	/* Resolve URI */
 	error = nsurl_join(nsbase, lwc_string_data(rel), &nsabs);
-	if (error != NSERROR_OK) {
+	जइ (error != NSERROR_OK) {
 		nsurl_unref(nsbase);
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+		प्रत्यागम error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsbase);
@@ -51,13 +51,13 @@ css_error nscss_resolve_url(void *pw, const char *base,
 	/* Intern it */
 	lerror = lwc_intern_string(nsurl_access(nsabs),
 			nsurl_length(nsabs), abs);
-	if (lerror != lwc_error_ok) {
-		*abs = NULL;
+	जइ (lerror != lwc_error_ok) {
+		*abs = रिक्त;
 		nsurl_unref(nsabs);
-		return lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
+		प्रत्यागम lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsabs);
 
-	return CSS_OK;
+	प्रत्यागम CSS_OK;
 }

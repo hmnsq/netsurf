@@ -21,86 +21,86 @@
  * content generator for the about scheme web search
  */
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/url.h"
+#अन्तर्भाव "utils/errors.h"
+#अन्तर्भाव "utils/nsurl.h"
+#अन्तर्भाव "utils/url.h"
 
-#include "content/fetch.h"
-#include "desktop/searchweb.h"
+#अन्तर्भाव "content/fetch.h"
+#अन्तर्भाव "desktop/searchweb.h"
 
-#include "private.h"
-#include "websearch.h"
+#अन्तर्भाव "private.h"
+#अन्तर्भाव "websearch.h"
 
-static nserror
-process_query_section(const char *str, size_t len, char **term)
+स्थिर nserror
+process_query_section(ध्रुव वर्ण *str, size_t len, वर्ण **term)
 {
-	if (len < 3) {
-		return NSERROR_BAD_PARAMETER;
+	जइ (len < 3) {
+		प्रत्यागम NSERROR_BAD_PARAMETER;
 	}
-	if (str[0] != 'q' || str[1] != '=') {
-		return NSERROR_BAD_PARAMETER;
+	जइ (str[0] != 'q' || str[1] != '=') {
+		प्रत्यागम NSERROR_BAD_PARAMETER;
 	}
-	return url_unescape(str + 2, len - 2, NULL, term);
+	प्रत्यागम url_unescape(str + 2, len - 2, रिक्त, term);
 }
 
-static nserror
-searchterm_from_query(struct nsurl *url, char **term)
+स्थिर nserror
+searchterm_from_query(संरचना nsurl *url, वर्ण **term)
 {
 	nserror res;
-	char *querystr;
+	वर्ण *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	जइ (res != NSERROR_OK) {
+		प्रत्यागम res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	प्रति (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		जाव (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, term);
-		if (res == NSERROR_OK) {
-			break;
+		जइ (res == NSERROR_OK) {
+			भङ्ग;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	मुक्त(querystr);
 
-	return res;
+	प्रत्यागम res;
 }
 
-bool fetch_about_websearch_handler(struct fetch_about_context *ctx)
+bool fetch_about_websearch_handler(संरचना fetch_about_context *ctx)
 {
 	nserror res;
 	nsurl *url;
-	char *term;
+	वर्ण *term;
 
 	res = searchterm_from_query(fetch_about_get_url(ctx), &term);
-	if (res != NSERROR_OK) {
-		return false;
+	जइ (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
-	res = search_web_omni(term, SEARCH_WEB_OMNI_SEARCHONLY, &url);
-	free(term);
-	if (res != NSERROR_OK) {
-		return false;
+	res = अन्वेषणम्_web_omni(term, अन्वेषणम्_WEB_OMNI_SEARCHONLY, &url);
+	मुक्त(term);
+	जइ (res != NSERROR_OK) {
+		प्रत्यागम false;
 	}
 
 	fetch_about_redirect(ctx, nsurl_access(url));
 	nsurl_unref(url);
 
-	return true;
+	प्रत्यागम true;
 }

@@ -21,76 +21,76 @@
  * HTML form handling implementation
  */
 
-#include <string.h>
+#अन्तर्भाव <string.h>
 
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
+#अन्तर्भाव "utils/config.h"
+#अन्तर्भाव "utils/corestrings.h"
+#अन्तर्भाव "utils/log.h"
 
-#include "html/form_internal.h"
-#include "html/private.h"
+#अन्तर्भाव "html/form_internal.h"
+#अन्तर्भाव "html/private.h"
 
 /**
  * process form element from dom
  */
-static struct form *
-parse_form_element(const char *docenc, dom_node *node)
+स्थिर संरचना form *
+parse_form_element(ध्रुव वर्ण *docenc, dom_ग्रन्थिः *ग्रन्थिः)
 {
-	dom_string *ds_action = NULL;
-	dom_string *ds_charset = NULL;
-	dom_string *ds_target = NULL;
-	dom_string *ds_method = NULL;
-	dom_string *ds_enctype = NULL;
-	char *action = NULL, *charset = NULL, *target = NULL;
+	dom_string *ds_action = रिक्त;
+	dom_string *ds_charset = रिक्त;
+	dom_string *ds_target = रिक्त;
+	dom_string *ds_method = रिक्त;
+	dom_string *ds_enctype = रिक्त;
+	वर्ण *action = रिक्त, *charset = रिक्त, *target = रिक्त;
 	form_method method;
-	dom_html_form_element *formele = (dom_html_form_element *)(node);
-	struct form * ret = NULL;
+	dom_html_form_element *formele = (dom_html_form_element *)(ग्रन्थिः);
+	संरचना form * ret = रिक्त;
 
 	/* Retrieve the attributes from the node */
-	if (dom_html_form_element_get_action(formele,
+	जइ (dom_html_form_element_get_action(formele,
 			&ds_action) != DOM_NO_ERR)
-		goto out;
+		गच्छ out;
 
-	if (dom_html_form_element_get_accept_charset(formele,
+	जइ (dom_html_form_element_get_accept_charset(formele,
 			&ds_charset) != DOM_NO_ERR)
-		goto out;
+		गच्छ out;
 
-	if (dom_html_form_element_get_target(formele,
+	जइ (dom_html_form_element_get_target(formele,
 			&ds_target) != DOM_NO_ERR)
-		goto out;
+		गच्छ out;
 
-	if (dom_html_form_element_get_method(formele,
+	जइ (dom_html_form_element_get_method(formele,
 			&ds_method) != DOM_NO_ERR)
-		goto out;
+		गच्छ out;
 
-	if (dom_html_form_element_get_enctype(formele,
+	जइ (dom_html_form_element_get_enctype(formele,
 			&ds_enctype) != DOM_NO_ERR)
-		goto out;
+		गच्छ out;
 
 	/* Extract the plain attributes ready for use.  We have to do this
 	 * because we cannot guarantee that the dom_strings are NULL terminated
 	 * and thus we copy them.
 	 */
-	if (ds_action != NULL)
+	जइ (ds_action != रिक्त)
 		action = strndup(dom_string_data(ds_action),
 				 dom_string_byte_length(ds_action));
 
-	if (ds_charset != NULL)
+	जइ (ds_charset != रिक्त)
 		charset = strndup(dom_string_data(ds_charset),
 				  dom_string_byte_length(ds_charset));
 
-	if (ds_target != NULL)
+	जइ (ds_target != रिक्त)
 		target = strndup(dom_string_data(ds_target),
 				 dom_string_byte_length(ds_target));
 
 	/* Determine the method */
 	method = method_GET;
-	if (ds_method != NULL) {
-		if (dom_string_caseless_lwc_isequal(ds_method,
+	जइ (ds_method != रिक्त) {
+		जइ (dom_string_caseless_lwc_isequal(ds_method,
 				corestring_lwc_post)) {
 			method = method_POST_URLENC;
-			if (ds_enctype != NULL) {
-				if (dom_string_caseless_lwc_isequal(ds_enctype,
+			जइ (ds_enctype != रिक्त) {
+				जइ (dom_string_caseless_lwc_isequal(ds_enctype,
 					corestring_lwc_multipart_form_data)) {
 
 					method = method_POST_MULTIPART;
@@ -100,256 +100,256 @@ parse_form_element(const char *docenc, dom_node *node)
 	}
 
 	/* Construct the form object */
-	ret = form_new(node, action, target, method, charset, docenc);
+	ret = form_new(ग्रन्थिः, action, target, method, charset, docenc);
 
 out:
-	if (ds_action != NULL)
+	जइ (ds_action != रिक्त)
 		dom_string_unref(ds_action);
-	if (ds_charset != NULL)
+	जइ (ds_charset != रिक्त)
 		dom_string_unref(ds_charset);
-	if (ds_target != NULL)
+	जइ (ds_target != रिक्त)
 		dom_string_unref(ds_target);
-	if (ds_method != NULL)
+	जइ (ds_method != रिक्त)
 		dom_string_unref(ds_method);
-	if (ds_enctype != NULL)
+	जइ (ds_enctype != रिक्त)
 		dom_string_unref(ds_enctype);
-	if (action != NULL)
-		free(action);
-	if (charset != NULL)
-		free(charset);
-	if (target != NULL)
-		free(target);
-	return ret;
+	जइ (action != रिक्त)
+		मुक्त(action);
+	जइ (charset != रिक्त)
+		मुक्त(charset);
+	जइ (target != रिक्त)
+		मुक्त(target);
+	प्रत्यागम ret;
 }
 
 /* documented in html_internal.h */
-struct form *html_forms_get_forms(const char *docenc, dom_html_document *doc)
+संरचना form *html_forms_get_forms(ध्रुव वर्ण *docenc, dom_html_document *doc)
 {
 	dom_html_collection *forms;
-	struct form *ret = NULL, *newf;
-	dom_node *node;
+	संरचना form *ret = रिक्त, *newf;
+	dom_ग्रन्थिः *ग्रन्थिः;
 	unsigned long n;
 	uint32_t nforms;
 
-	if (doc == NULL)
-		return NULL;
+	जइ (doc == रिक्त)
+		प्रत्यागम रिक्त;
 
 	/* Attempt to build a set of all the forms */
-	if (dom_html_document_get_forms(doc, &forms) != DOM_NO_ERR)
-		return NULL;
+	जइ (dom_html_document_get_forms(doc, &forms) != DOM_NO_ERR)
+		प्रत्यागम रिक्त;
 
 	/* Count the number of forms so we can iterate */
-	if (dom_html_collection_get_length(forms, &nforms) != DOM_NO_ERR)
-		goto out;
+	जइ (dom_html_collection_get_length(forms, &nforms) != DOM_NO_ERR)
+		गच्छ out;
 
 	/* Iterate the forms collection, making form structs for returning */
-	for (n = 0; n < nforms; ++n) {
-		if (dom_html_collection_item(forms, n, &node) != DOM_NO_ERR) {
-			goto out;
+	प्रति (n = 0; n < nforms; ++n) {
+		जइ (dom_html_collection_item(forms, n, &ग्रन्थिः) != DOM_NO_ERR) {
+			गच्छ out;
 		}
-		newf = parse_form_element(docenc, node);
-		dom_node_unref(node);
-		if (newf == NULL) {
-			goto err;
+		newf = parse_form_element(docenc, ग्रन्थिः);
+		dom_ग्रन्थिः_unref(ग्रन्थिः);
+		जइ (newf == रिक्त) {
+			गच्छ err;
 		}
 		newf->prev = ret;
 		ret = newf;
 	}
 
 	/* All went well */
-	goto out;
+	गच्छ out;
 err:
-	while (ret != NULL) {
-		struct form *prev = ret->prev;
+	जाव (ret != रिक्त) {
+		संरचना form *prev = ret->prev;
 		/* Destroy ret */
-		free(ret);
+		मुक्त(ret);
 		ret = prev;
 	}
 out:
 	/* Finished with the collection, return it */
 	dom_html_collection_unref(forms);
 
-	return ret;
+	प्रत्यागम ret;
 }
 
-static struct form *
-find_form(struct form *forms, dom_html_form_element *form)
+स्थिर संरचना form *
+find_form(संरचना form *forms, dom_html_form_element *form)
 {
-	while (forms != NULL) {
-		if (forms->node == form)
-			break;
+	जाव (forms != रिक्त) {
+		जइ (forms->ग्रन्थिः == form)
+			भङ्ग;
 		forms = forms->prev;
 	}
 
-	return forms;
+	प्रत्यागम forms;
 }
 
-static struct form_control *
-parse_button_element(struct form *forms, dom_html_button_element *button)
+स्थिर संरचना form_control *
+parse_button_element(संरचना form *forms, dom_html_button_element *button)
 {
-	struct form_control *control = NULL;
+	संरचना form_control *control = रिक्त;
 	dom_exception err;
-	dom_html_form_element *form = NULL;
-	dom_string *ds_type = NULL;
-	dom_string *ds_value = NULL;
-	dom_string *ds_name = NULL;
+	dom_html_form_element *form = रिक्त;
+	dom_string *ds_type = रिक्त;
+	dom_string *ds_मानम् = रिक्त;
+	dom_string *ds_name = रिक्त;
 
 	err = dom_html_button_element_get_form(button, &form);
-	if (err != DOM_NO_ERR)
-		goto out;
+	जइ (err != DOM_NO_ERR)
+		गच्छ out;
 
 	err = dom_html_button_element_get_type(button, &ds_type);
-	if (err != DOM_NO_ERR)
-		goto out;
+	जइ (err != DOM_NO_ERR)
+		गच्छ out;
 
-	if (ds_type == NULL) {
+	जइ (ds_type == रिक्त) {
 		control = form_new_control(button, GADGET_SUBMIT);
-	} else {
-		if (dom_string_caseless_lwc_isequal(ds_type,
+	} अण्णहा {
+		जइ (dom_string_caseless_lwc_isequal(ds_type,
 				corestring_lwc_submit)) {
 			control = form_new_control(button, GADGET_SUBMIT);
-		} else if (dom_string_caseless_lwc_isequal(ds_type,
+		} अण्णहा जइ (dom_string_caseless_lwc_isequal(ds_type,
 				corestring_lwc_reset)) {
 			control = form_new_control(button, GADGET_RESET);
-		} else {
+		} अण्णहा {
 			control = form_new_control(button, GADGET_BUTTON);
 		}
 	}
 
-	if (control == NULL)
-		goto out;
+	जइ (control == रिक्त)
+		गच्छ out;
 
-	err = dom_html_button_element_get_value(button, &ds_value);
-	if (err != DOM_NO_ERR)
-		goto out;
+	err = dom_html_button_element_get_मानम्(button, &ds_मानम्);
+	जइ (err != DOM_NO_ERR)
+		गच्छ out;
 	err = dom_html_button_element_get_name(button, &ds_name);
-	if (err != DOM_NO_ERR)
-		goto out;
+	जइ (err != DOM_NO_ERR)
+		गच्छ out;
 
-	if (ds_value != NULL) {
-		control->value = strndup(
-			dom_string_data(ds_value),
-			dom_string_byte_length(ds_value));
+	जइ (ds_मानम् != रिक्त) {
+		control->मानम् = strndup(
+			dom_string_data(ds_मानम्),
+			dom_string_byte_length(ds_मानम्));
 
-		if (control->value == NULL) {
+		जइ (control->मानम् == रिक्त) {
 			form_free_control(control);
-			control = NULL;
-			goto out;
+			control = रिक्त;
+			गच्छ out;
 		}
 	}
 
-	if (ds_name != NULL) {
+	जइ (ds_name != रिक्त) {
 		control->name = strndup(
 			dom_string_data(ds_name),
 			dom_string_byte_length(ds_name));
 
-		if (control->name == NULL) {
+		जइ (control->name == रिक्त) {
 			form_free_control(control);
-			control = NULL;
-			goto out;
+			control = रिक्त;
+			गच्छ out;
 		}
 	}
 
-	if (form != NULL && control != NULL)
+	जइ (form != रिक्त && control != रिक्त)
 		form_add_control(find_form(forms, form), control);
 
 out:
-	if (form != NULL)
-		dom_node_unref(form);
-	if (ds_type != NULL)
+	जइ (form != रिक्त)
+		dom_ग्रन्थिः_unref(form);
+	जइ (ds_type != रिक्त)
 		dom_string_unref(ds_type);
-	if (ds_value != NULL)
-		dom_string_unref(ds_value);
-	if (ds_name != NULL)
+	जइ (ds_मानम् != रिक्त)
+		dom_string_unref(ds_मानम्);
+	जइ (ds_name != रिक्त)
 		dom_string_unref(ds_name);
 
-	return control;
+	प्रत्यागम control;
 }
 
-static struct form_control *
-parse_input_element(struct form *forms, dom_html_input_element *input)
+स्थिर संरचना form_control *
+parse_निवेशः_element(संरचना form *forms, dom_html_निवेशः_element *निवेशः)
 {
-	struct form_control *control = NULL;
-	dom_html_form_element *form = NULL;
-	dom_string *ds_type = NULL;
-	dom_string *ds_name = NULL;
-	dom_string *ds_value = NULL;
+	संरचना form_control *control = रिक्त;
+	dom_html_form_element *form = रिक्त;
+	dom_string *ds_type = रिक्त;
+	dom_string *ds_name = रिक्त;
+	dom_string *ds_मानम् = रिक्त;
 
-	char *name = NULL;
+	वर्ण *name = रिक्त;
 
-	if (dom_html_input_element_get_form(input, &form) != DOM_NO_ERR)
-		goto out;
+	जइ (dom_html_निवेशः_element_get_form(निवेशः, &form) != DOM_NO_ERR)
+		गच्छ out;
 
-	if (dom_html_input_element_get_type(input, &ds_type) != DOM_NO_ERR)
-		goto out;
+	जइ (dom_html_निवेशः_element_get_type(निवेशः, &ds_type) != DOM_NO_ERR)
+		गच्छ out;
 
-	if (dom_html_input_element_get_name(input, &ds_name) != DOM_NO_ERR)
-		goto out;
+	जइ (dom_html_निवेशः_element_get_name(निवेशः, &ds_name) != DOM_NO_ERR)
+		गच्छ out;
 
-	if (ds_name != NULL)
+	जइ (ds_name != रिक्त)
 		name = strndup(dom_string_data(ds_name),
 			       dom_string_byte_length(ds_name));
 
-	if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+	जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_password)) {
-		control = form_new_control(input, GADGET_PASSWORD);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(निवेशः, GADGET_PASSWORD);
+	} अण्णहा जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_file)) {
-		control = form_new_control(input, GADGET_FILE);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(निवेशः, GADGET_FILE);
+	} अण्णहा जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_hidden)) {
-		control = form_new_control(input, GADGET_HIDDEN);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(निवेशः, GADGET_HIDDEN);
+	} अण्णहा जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_checkbox)) {
-		control = form_new_control(input, GADGET_CHECKBOX);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(निवेशः, GADGET_CHECKBOX);
+	} अण्णहा जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_radio)) {
-		control = form_new_control(input, GADGET_RADIO);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(निवेशः, GADGET_RADIO);
+	} अण्णहा जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_submit)) {
-		control = form_new_control(input, GADGET_SUBMIT);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(निवेशः, GADGET_SUBMIT);
+	} अण्णहा जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_reset)) {
-		control = form_new_control(input, GADGET_RESET);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(निवेशः, GADGET_RESET);
+	} अण्णहा जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_button)) {
-		control = form_new_control(input, GADGET_BUTTON);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(निवेशः, GADGET_BUTTON);
+	} अण्णहा जइ (ds_type != रिक्त && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_image)) {
-		control = form_new_control(input, GADGET_IMAGE);
-	} else {
-		control = form_new_control(input, GADGET_TEXTBOX);
+		control = form_new_control(निवेशः, GADGET_IMAGE);
+	} अण्णहा {
+		control = form_new_control(निवेशः, GADGET_TEXTBOX);
 	}
 
-	if (control == NULL)
-		goto out;
+	जइ (control == रिक्त)
+		गच्छ out;
 
-	if (name != NULL) {
+	जइ (name != रिक्त) {
 		/* Hand the name string over */
 		control->name = name;
-		name = NULL;
+		name = रिक्त;
 	}
 
-	if (control->type == GADGET_CHECKBOX || control->type == GADGET_RADIO) {
+	जइ (control->type == GADGET_CHECKBOX || control->type == GADGET_RADIO) {
 		bool selected;
-		if (dom_html_input_element_get_checked(
-			    input, &selected) == DOM_NO_ERR) {
+		जइ (dom_html_निवेशः_element_get_checked(
+			    निवेशः, &selected) == DOM_NO_ERR) {
 			control->selected = selected;
 		}
 	}
 
-	if (control->type == GADGET_PASSWORD ||
+	जइ (control->type == GADGET_PASSWORD ||
 	    control->type == GADGET_TEXTBOX) {
 		int32_t maxlength;
-		if (dom_html_input_element_get_max_length(
-			    input, &maxlength) != DOM_NO_ERR) {
+		जइ (dom_html_निवेशः_element_get_max_length(
+			    निवेशः, &maxlength) != DOM_NO_ERR) {
 			maxlength = -1;
 		}
 
-		if (maxlength >= 0) {
+		जइ (maxlength >= 0) {
 			/* Got valid maxlength */
 			control->maxlength = maxlength;
-		} else {
+		} अण्णहा {
 			/* Input has no maxlength attr, or
 			 * dom_html_input_element_get_max_length failed.
 			 *
@@ -358,235 +358,235 @@ parse_input_element(struct form *forms, dom_html_input_element *input)
 		}
 	}
 
-	if (control->type != GADGET_FILE && control->type != GADGET_IMAGE) {
-		if (dom_html_input_element_get_value(
-			    input, &ds_value) == DOM_NO_ERR) {
-			if (ds_value != NULL) {
-				control->value = strndup(
-					dom_string_data(ds_value),
-					dom_string_byte_length(ds_value));
-				if (control->value == NULL) {
+	जइ (control->type != GADGET_FILE && control->type != GADGET_IMAGE) {
+		जइ (dom_html_निवेशः_element_get_मानम्(
+			    निवेशः, &ds_मानम्) == DOM_NO_ERR) {
+			जइ (ds_मानम् != रिक्त) {
+				control->मानम् = strndup(
+					dom_string_data(ds_मानम्),
+					dom_string_byte_length(ds_मानम्));
+				जइ (control->मानम् == रिक्त) {
 					form_free_control(control);
-					control = NULL;
-					goto out;
+					control = रिक्त;
+					गच्छ out;
 				}
-				control->length = strlen(control->value);
+				control->length = strlen(control->मानम्);
 			}
 		}
 
-		if (control->type == GADGET_TEXTBOX ||
+		जइ (control->type == GADGET_TEXTBOX ||
 				control->type == GADGET_PASSWORD) {
-			if (control->value == NULL) {
-				control->value = strdup("");
-				if (control->value == NULL) {
+			जइ (control->मानम् == रिक्त) {
+				control->मानम् = strdup("");
+				जइ (control->मानम् == रिक्त) {
 					form_free_control(control);
-					control = NULL;
-					goto out;
+					control = रिक्त;
+					गच्छ out;
 				}
 
 				control->length = 0;
 			}
 
-			control->initial_value = strdup(control->value);
-			if (control->initial_value == NULL) {
+			control->initial_मानम् = strdup(control->मानम्);
+			जइ (control->initial_मानम् == रिक्त) {
 				form_free_control(control);
-				control = NULL;
-				goto out;
+				control = रिक्त;
+				गच्छ out;
 			}
 
-			control->last_synced_value = strdup(control->value);
-			if (control->last_synced_value == NULL) {
+			control->last_synced_मानम् = strdup(control->मानम्);
+			जइ (control->last_synced_मानम् == रिक्त) {
 				form_free_control(control);
-				control = NULL;
-				goto out;
+				control = रिक्त;
+				गच्छ out;
 			}
 
-			control->node_value = dom_string_ref(ds_value);
+			control->ग्रन्थिः_मानम् = dom_string_ref(ds_मानम्);
 		}
 		/* Force the gadget and DOM to be in sync */
 		form_gadget_sync_with_dom(control);
 	}
 
-	if (form != NULL && control != NULL)
+	जइ (form != रिक्त && control != रिक्त)
 		form_add_control(find_form(forms, form), control);
 
 out:
-	if (form != NULL)
-		dom_node_unref(form);
-	if (ds_type != NULL)
+	जइ (form != रिक्त)
+		dom_ग्रन्थिः_unref(form);
+	जइ (ds_type != रिक्त)
 		dom_string_unref(ds_type);
-	if (ds_name != NULL)
+	जइ (ds_name != रिक्त)
 		dom_string_unref(ds_name);
-	if (ds_value != NULL)
-		dom_string_unref(ds_value);
+	जइ (ds_मानम् != रिक्त)
+		dom_string_unref(ds_मानम्);
 
-	if (name != NULL)
-		free(name);
+	जइ (name != रिक्त)
+		मुक्त(name);
 
-	return control;
+	प्रत्यागम control;
 }
 
-static struct form_control *
-parse_textarea_element(struct form *forms, dom_html_text_area_element *ta)
+स्थिर संरचना form_control *
+parse_textarea_element(संरचना form *forms, dom_html_text_area_element *ta)
 {
-	struct form_control *control = NULL;
-	dom_html_form_element *form = NULL;
-	dom_string *ds_name = NULL;
+	संरचना form_control *control = रिक्त;
+	dom_html_form_element *form = रिक्त;
+	dom_string *ds_name = रिक्त;
 
-	char *name = NULL;
+	वर्ण *name = रिक्त;
 
-	if (dom_html_text_area_element_get_form(ta, &form) != DOM_NO_ERR)
-		goto out;
+	जइ (dom_html_text_area_element_get_form(ta, &form) != DOM_NO_ERR)
+		गच्छ out;
 
-	if (dom_html_text_area_element_get_name(ta, &ds_name) != DOM_NO_ERR)
-		goto out;
+	जइ (dom_html_text_area_element_get_name(ta, &ds_name) != DOM_NO_ERR)
+		गच्छ out;
 
-	if (ds_name != NULL)
+	जइ (ds_name != रिक्त)
 		name = strndup(dom_string_data(ds_name),
 			       dom_string_byte_length(ds_name));
 
 	control = form_new_control(ta, GADGET_TEXTAREA);
 
-	if (control == NULL)
-		goto out;
+	जइ (control == रिक्त)
+		गच्छ out;
 
-	if (name != NULL) {
+	जइ (name != रिक्त) {
 		/* Hand the name string over */
 		control->name = name;
-		name = NULL;
+		name = रिक्त;
 	}
 
-	if (form != NULL && control != NULL)
+	जइ (form != रिक्त && control != रिक्त)
 		form_add_control(find_form(forms, form), control);
 
 out:
-	if (form != NULL)
-		dom_node_unref(form);
-	if (ds_name != NULL)
+	जइ (form != रिक्त)
+		dom_ग्रन्थिः_unref(form);
+	जइ (ds_name != रिक्त)
 		dom_string_unref(ds_name);
 
-	if (name != NULL)
-		free(name);
+	जइ (name != रिक्त)
+		मुक्त(name);
 
 
-	return control;
+	प्रत्यागम control;
 }
 
-static struct form_control *
-parse_select_element(struct form *forms, dom_html_select_element *select)
+स्थिर संरचना form_control *
+parse_select_element(संरचना form *forms, dom_html_select_element *select)
 {
-	struct form_control *control = NULL;
-	dom_html_form_element *form = NULL;
-	dom_string *ds_name = NULL;
+	संरचना form_control *control = रिक्त;
+	dom_html_form_element *form = रिक्त;
+	dom_string *ds_name = रिक्त;
 
-	char *name = NULL;
+	वर्ण *name = रिक्त;
 
-	if (dom_html_select_element_get_form(select, &form) != DOM_NO_ERR)
-		goto out;
+	जइ (dom_html_select_element_get_form(select, &form) != DOM_NO_ERR)
+		गच्छ out;
 
-	if (dom_html_select_element_get_name(select, &ds_name) != DOM_NO_ERR)
-		goto out;
+	जइ (dom_html_select_element_get_name(select, &ds_name) != DOM_NO_ERR)
+		गच्छ out;
 
-	if (ds_name != NULL)
+	जइ (ds_name != रिक्त)
 		name = strndup(dom_string_data(ds_name),
 			       dom_string_byte_length(ds_name));
 
 	control = form_new_control(select, GADGET_SELECT);
 
-	if (control == NULL)
-		goto out;
+	जइ (control == रिक्त)
+		गच्छ out;
 
-	if (name != NULL) {
+	जइ (name != रिक्त) {
 		/* Hand the name string over */
 		control->name = name;
-		name = NULL;
+		name = रिक्त;
 	}
 
 	dom_html_select_element_get_multiple(select,
 			&(control->data.select.multiple));
 
-	if (form != NULL && control != NULL)
+	जइ (form != रिक्त && control != रिक्त)
 		form_add_control(find_form(forms, form), control);
 
 out:
-	if (form != NULL)
-		dom_node_unref(form);
-	if (ds_name != NULL)
+	जइ (form != रिक्त)
+		dom_ग्रन्थिः_unref(form);
+	जइ (ds_name != रिक्त)
 		dom_string_unref(ds_name);
 
-	if (name != NULL)
-		free(name);
+	जइ (name != रिक्त)
+		मुक्त(name);
 
 
-	return control;
+	प्रत्यागम control;
 }
 
 
-static struct form_control *
-invent_fake_gadget(dom_node *node)
+स्थिर संरचना form_control *
+invent_fake_gadget(dom_ग्रन्थिः *ग्रन्थिः)
 {
-	struct form_control *ctl = form_new_control(node, GADGET_HIDDEN);
-	if (ctl != NULL) {
-		ctl->value = strdup("");
-		ctl->initial_value = strdup("");
+	संरचना form_control *ctl = form_new_control(ग्रन्थिः, GADGET_HIDDEN);
+	जइ (ctl != रिक्त) {
+		ctl->मानम् = strdup("");
+		ctl->initial_मानम् = strdup("");
 		ctl->name = strdup("foo");
 
-		if (ctl->value == NULL || ctl->initial_value == NULL ||
-				ctl->name == NULL) {
+		जइ (ctl->मानम् == रिक्त || ctl->initial_मानम् == रिक्त ||
+				ctl->name == रिक्त) {
 			form_free_control(ctl);
-			ctl = NULL;
+			ctl = रिक्त;
 		}
 	}
-	return ctl;
+	प्रत्यागम ctl;
 }
 
 /* documented in html_internal.h */
-struct form_control *
-html_forms_get_control_for_node(struct form *forms, dom_node *node)
+संरचना form_control *
+html_forms_get_control_for_ग्रन्थिः(संरचना form *forms, dom_ग्रन्थिः *ग्रन्थिः)
 {
-	struct form *f;
-	struct form_control *ctl = NULL;
+	संरचना form *f;
+	संरचना form_control *ctl = रिक्त;
 	dom_exception err;
-	dom_string *ds_name = NULL;
+	dom_string *ds_name = रिक्त;
 
 	/* Step one, see if we already have a control */
-	for (f = forms; f != NULL; f = f->prev) {
-		for (ctl = f->controls; ctl != NULL; ctl = ctl->next) {
-			if (ctl->node == node)
-				return ctl;
+	प्रति (f = forms; f != रिक्त; f = f->prev) {
+		प्रति (ctl = f->controls; ctl != रिक्त; ctl = ctl->next) {
+			जइ (ctl->ग्रन्थिः == ग्रन्थिः)
+				प्रत्यागम ctl;
 		}
 	}
 
 	/* Step two, extract the node's name so we can construct a gadget. */
-	err = dom_element_get_tag_name(node, &ds_name);
-	if (err == DOM_NO_ERR && ds_name != NULL) {
+	err = dom_element_get_tag_name(ग्रन्थिः, &ds_name);
+	जइ (err == DOM_NO_ERR && ds_name != रिक्त) {
 
 		/* Step three, attempt to work out what gadget to make */
-		if (dom_string_caseless_lwc_isequal(ds_name,
+		जइ (dom_string_caseless_lwc_isequal(ds_name,
 				corestring_lwc_button)) {
 			ctl = parse_button_element(forms,
-					(dom_html_button_element *) node);
-		} else if (dom_string_caseless_lwc_isequal(ds_name,
-				corestring_lwc_input)) {
-			ctl = parse_input_element(forms,
-					(dom_html_input_element *) node);
-		} else if (dom_string_caseless_lwc_isequal(ds_name,
+					(dom_html_button_element *) ग्रन्थिः);
+		} अण्णहा जइ (dom_string_caseless_lwc_isequal(ds_name,
+				corestring_lwc_निवेशः)) {
+			ctl = parse_निवेशः_element(forms,
+					(dom_html_निवेशः_element *) ग्रन्थिः);
+		} अण्णहा जइ (dom_string_caseless_lwc_isequal(ds_name,
 				corestring_lwc_textarea)) {
 			ctl = parse_textarea_element(forms,
-					(dom_html_text_area_element *) node);
-		} else if (dom_string_caseless_lwc_isequal(ds_name,
+					(dom_html_text_area_element *) ग्रन्थिः);
+		} अण्णहा जइ (dom_string_caseless_lwc_isequal(ds_name,
 				corestring_lwc_select)) {
 			ctl = parse_select_element(forms,
-					(dom_html_select_element *) node);
+					(dom_html_select_element *) ग्रन्थिः);
 		}
 	}
 
 	/* If all else fails, fake gadget time */
-	if (ctl == NULL)
-		ctl = invent_fake_gadget(node);
+	जइ (ctl == रिक्त)
+		ctl = invent_fake_gadget(ग्रन्थिः);
 
-	if (ds_name != NULL)
+	जइ (ds_name != रिक्त)
 		dom_string_unref(ds_name);
 
-	return ctl;
+	प्रत्यागम ctl;
 }

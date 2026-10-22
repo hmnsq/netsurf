@@ -21,16 +21,16 @@
  * content generator for the about scheme blank page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdio.h>
 
-#include "netsurf/types.h"
-#include "utils/errors.h"
-#include "utils/nsoption.h"
+#अन्तर्भाव "netsurf/types.h"
+#अन्तर्भाव "utils/errors.h"
+#अन्तर्भाव "utils/nsoption.h"
 
-#include "private.h"
-#include "choices.h"
+#अन्तर्भाव "private.h"
+#अन्तर्भाव "choices.h"
 
 /**
  * Generate the text of a Choices file which represents the current
@@ -39,55 +39,55 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_choices_handler(struct fetch_about_context *ctx)
+bool fetch_about_choices_handler(संरचना fetch_about_context *ctx)
 {
-	char buffer[1024];
-	int code = 200;
-	int slen;
-	unsigned int opt_loop = 0;
-	int res = 0;
+	वर्ण buffer[1024];
+	पूर्णाङ्क code = 200;
+	पूर्णाङ्क slen;
+	unsigned पूर्णाङ्क opt_loop = 0;
+	पूर्णाङ्क res = 0;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		goto fetch_about_choices_handler_aborted;
+	जइ (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+		गच्छ fetch_about_choices_handler_aborted;
 
-	slen = snprintf(buffer, sizeof buffer,
+	slen = snprintf(buffer, परिमाण buffer,
 		 "# Automatically generated current NetSurf browser Choices\n");
 
-	do {
+	करेहि {
 		res = nsoption_snoptionf(buffer + slen,
-				sizeof buffer - slen,
+				परिमाण buffer - slen,
 				opt_loop,
 				"%k:%v\n");
-		if (res <= 0)
-			break; /* last option */
+		जइ (res <= 0)
+			भङ्ग; /* last option */
 
-		if (res >= (int) (sizeof buffer - slen)) {
+		जइ (res >= (पूर्णाङ्क) (परिमाण buffer - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
-			res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-			if (res != NSERROR_OK) {
-				goto fetch_about_choices_handler_aborted;
+			res = fetch_about_senddata(ctx, (ध्रुव uint8_t *)buffer, slen);
+			जइ (res != NSERROR_OK) {
+				गच्छ fetch_about_choices_handler_aborted;
 			}
 			slen = 0;
-		} else {
+		} अण्णहा {
 			/* normal addition */
 			slen += res;
 			opt_loop++;
 		}
-	} while (res > 0);
+	} जाव (res > 0);
 
-	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
-		goto fetch_about_choices_handler_aborted;
+	res = fetch_about_senddata(ctx, (ध्रुव uint8_t *)buffer, slen);
+	जइ (res != NSERROR_OK) {
+		गच्छ fetch_about_choices_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	प्रत्यागम true;
 
 fetch_about_choices_handler_aborted:
-	return false;
+	प्रत्यागम false;
 }
