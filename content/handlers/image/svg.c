@@ -21,48 +21,48 @@
  * implementation of content for image/svg using libsvgtiny.
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#ضمن <assert.h>
+#ضمن <limits.h>
+#ضمن <string.h>
+#ضمن <stdlib.h>
 
-#include <svgtiny.h>
+#ضمن <svgtiny.h>
 
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/nsurl.h"
-#include "netsurf/plotters.h"
-#include "netsurf/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/nsurl.h"
+#ضمن "netsurf/plotters.h"
+#ضمن "netsurf/content.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
 
-#include "image/svg.h"
+#ضمن "image/svg.h"
 
-typedef struct svg_content {
-	struct content base;
+تعريفنوع بنية svg_content {
+	بنية content base;
 
-	struct svgtiny_diagram *diagram;
+	بنية svgtiny_diagram *diagram;
 
-	int current_width;
-	int current_height;
+	صحيح current_width;
+	صحيح current_height;
 } svg_content;
 
 
 
-static nserror svg_create_svg_data(svg_content *c)
+ساكن nserror svg_create_svg_data(svg_content *c)
 {
 	c->diagram = svgtiny_create();
-	if (c->diagram == NULL)
-		goto no_memory;
+	إذا (c->diagram == عدم)
+		اذهب no_memory;
 
 	c->current_width = INT_MAX;
 	c->current_height = INT_MAX;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 
 no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-	return NSERROR_NOMEM;
+	content_broadcast_error(&c->base, NSERROR_NOMEM, عدم);
+	أرجع NSERROR_NOMEM;
 }
 
 
@@ -70,34 +70,34 @@ no_memory:
  * Create a CONTENT_SVG.
  */
 
-static nserror svg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		struct llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ساكن nserror svg_create(ثابت content_handler *handler,
+		lwc_string *imime_type, ثابت بنية http_parameter *params,
+		بنية llcache_handle *llcache, ثابت حرف *fallback_charset,
+		bool quirks, بنية content **c)
 {
 	svg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(svg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, حجم(svg_content));
+	إذا (svg == عدم)
+		أرجع NSERROR_NOMEM;
 
 	error = content__init(&svg->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(svg);
+		أرجع error;
 	}
 
 	error = svg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(svg);
+		أرجع error;
 	}
 
-	*c = (struct content *) svg;
+	*c = (بنية content *) svg;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -106,7 +106,7 @@ static nserror svg_create(const content_handler *handler,
  * Convert a CONTENT_SVG for display.
  */
 
-static bool svg_convert(struct content *c)
+ساكن bool svg_convert(بنية content *c)
 {
 	/*c->title = malloc(100);
 	if (c->title)
@@ -118,27 +118,27 @@ static bool svg_convert(struct content *c)
 	/* Done: update status bar */
 	content_set_status(c, "");
 
-	return true;
+	أرجع true;
 }
 
 /**
  * Reformat a CONTENT_SVG.
  */
 
-static void svg_reformat(struct content *c, int width, int height)
+ساكن فراغ svg_reformat(بنية content *c, صحيح width, صحيح height)
 {
 	svg_content *svg = (svg_content *) c;
-	const uint8_t *source_data;
+	ثابت uint8_t *source_data;
 	size_t source_size;
 
-	assert(svg->diagram);
+	أكد(svg->diagram);
 
 	/* Avoid reformats to same width/height as we already reformatted to */
-	if (width != svg->current_width || height != svg->current_height) {
+	إذا (width != svg->current_width || height != svg->current_height) {
 		source_data = content__get_source_data(c, &source_size);
 
 		svgtiny_parse(svg->diagram,
-			      (const char *)source_data,
+			      (ثابت حرف *)source_data,
 			      source_size,
 			      nsurl_access(content_get_url(c)),
 			      width,
@@ -157,31 +157,31 @@ static void svg_reformat(struct content *c, int width, int height)
  * Redraw a CONTENT_SVG.
  */
 
-static bool
+ساكن bool
 svg_redraw_internal(svg_content *svg,
-		    int x,
-		    int y,
-		    int width,
-		    int height,
-		    const struct rect *clip,
-		    const struct redraw_context *ctx,
-		    float scale,
+		    صحيح x,
+		    صحيح y,
+		    صحيح width,
+		    صحيح height,
+		    ثابت بنية rect *clip,
+		    ثابت بنية redraw_context *ctx,
+		    عائم scale,
 		    colour background_colour)
 {
-	float transform[6];
-	struct svgtiny_diagram *diagram = svg->diagram;
-	int px, py;
-	unsigned int i;
+	عائم transform[6];
+	بنية svgtiny_diagram *diagram = svg->diagram;
+	صحيح px, py;
+	unsigned صحيح i;
 	plot_font_style_t fstyle = *plot_style_font;
 	plot_style_t pstyle;
 	nserror res;
 
-	assert(diagram);
+	أكد(diagram);
 
-	transform[0] = (float) width / (float) svg->base.width;
+	transform[0] = (عائم) width / (عائم) svg->base.width;
 	transform[1] = 0;
 	transform[2] = 0;
-	transform[3] = (float) height / (float) svg->base.height;
+	transform[3] = (عائم) height / (عائم) svg->base.height;
 	transform[4] = x;
 	transform[5] = y;
 
@@ -189,13 +189,13 @@ svg_redraw_internal(svg_content *svg,
 		 (svgtiny_GREEN((c)) << 8) |				\
 		 (svgtiny_BLUE((c)) << 16)))
 
-	for (i = 0; i != diagram->shape_count; i++) {
-		if (diagram->shape[i].path) {
+	لكل (i = 0; i != diagram->shape_کيراءن; i++) {
+		إذا (diagram->shape[i].path) {
 			/* stroke style */
-			if (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {
+			إذا (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {
 				pstyle.stroke_type = PLOT_OP_TYPE_NONE;
 				pstyle.stroke_colour = NS_TRANSPARENT;
-			} else {
+			} وإلا {
 				pstyle.stroke_type = PLOT_OP_TYPE_SOLID;
 				pstyle.stroke_colour = BGR(diagram->shape[i].stroke);
 			}
@@ -203,10 +203,10 @@ svg_redraw_internal(svg_content *svg,
 					diagram->shape[i].stroke_width);
 
 			/* fill style */
-			if (diagram->shape[i].fill == svgtiny_TRANSPARENT) {
+			إذا (diagram->shape[i].fill == svgtiny_TRANSPARENT) {
 				pstyle.fill_type = PLOT_OP_TYPE_NONE;
 				pstyle.fill_colour = NS_TRANSPARENT;
-			} else {
+			} وإلا {
 				pstyle.fill_type = PLOT_OP_TYPE_SOLID;
 				pstyle.fill_colour = BGR(diagram->shape[i].fill);
 			}
@@ -217,11 +217,11 @@ svg_redraw_internal(svg_content *svg,
 					diagram->shape[i].path,
 					diagram->shape[i].path_length,
 					transform);
-			if (res != NSERROR_OK) {
-				return false;
+			إذا (res != NSERROR_OK) {
+				أرجع false;
 			}
 
-		} else if (diagram->shape[i].text) {
+		} وإلا إذا (diagram->shape[i].text) {
 			px = transform[0] * diagram->shape[i].text_x +
 				transform[2] * diagram->shape[i].text_y +
 				transform[4];
@@ -238,87 +238,87 @@ svg_redraw_internal(svg_content *svg,
 					      px, py,
 					      diagram->shape[i].text,
 					      strlen(diagram->shape[i].text));
-			if (res != NSERROR_OK) {
-				return false;
+			إذا (res != NSERROR_OK) {
+				أرجع false;
 			}
 		}
 	}
 
 #undef BGR
 
-	return true;
+	أرجع true;
 }
 
 
-static bool
+ساكن bool
 svg_redraw_tiled_internal(svg_content *svg,
-			  struct content_redraw_data *data,
-			  const struct rect *clip,
-			  const struct redraw_context *ctx)
+			  بنية content_redraw_data *data,
+			  ثابت بنية rect *clip,
+			  ثابت بنية redraw_context *ctx)
 {
 	/* Tiled redraw required.  SVG repeats to extents of clip
 	 * rectangle, in x, y or both directions */
-	int x, y, x0, y0, x1, y1;
+	صحيح x, y, x0, y0, x1, y1;
 
 	x = x0 = data->x;
 	y = y0 = data->y;
 
 	/* Find the redraw boundaries to loop within */
-	if (data->repeat_x) {
-		for (; x0 > clip->x0; x0 -= data->width);
+	إذا (data->repeat_x) {
+		لكل (; x0 > clip->x0; x0 -= data->width);
 		x1 = clip->x1;
-	} else {
+	} وإلا {
 		x1 = x + 1;
 	}
-	if (data->repeat_y) {
-		for (; y0 > clip->y0; y0 -= data->height);
+	إذا (data->repeat_y) {
+		لكل (; y0 > clip->y0; y0 -= data->height);
 		y1 = clip->y1;
-	} else {
+	} وإلا {
 		y1 = y + 1;
 	}
 
 	/* Repeatedly plot the SVG across the area */
-	for (y = y0; y < y1; y += data->height) {
-		for (x = x0; x < x1; x += data->width) {
-			if (!svg_redraw_internal(svg, x, y,
+	لكل (y = y0; y < y1; y += data->height) {
+		لكل (x = x0; x < x1; x += data->width) {
+			إذا (!svg_redraw_internal(svg, x, y,
 						 data->width, data->height,
 						 clip, ctx, data->scale,
 						 data->background_colour)) {
-				return false;
+				أرجع false;
 			}
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Redraw a CONTENT_SVG.
  */
-static bool
-svg_redraw(struct content *c,
-	   struct content_redraw_data *data,
-	   const struct rect *clip,
-	   const struct redraw_context *ctx)
+ساكن bool
+svg_redraw(بنية content *c,
+	   بنية content_redraw_data *data,
+	   ثابت بنية rect *clip,
+	   ثابت بنية redraw_context *ctx)
 {
 	svg_content *svg = (svg_content *)c;
 
-	if ((data->width <= 0) && (data->height <= 0)) {
+	إذا ((data->width <= 0) && (data->height <= 0)) {
 		/* No point trying to plot SVG if it does not occupy a valid
 		 * area */
-		return true;
+		أرجع true;
 	}
 
-	if ((data->repeat_x == false) && (data->repeat_y == false)) {
+	إذا ((data->repeat_x == false) && (data->repeat_y == false)) {
 		/* Simple case: SVG is not tiled */
-		return svg_redraw_internal(svg, data->x, data->y,
+		أرجع svg_redraw_internal(svg, data->x, data->y,
 				data->width, data->height,
 				clip, ctx, data->scale,
 				data->background_colour);
 	}
 
-	return svg_redraw_tiled_internal(svg, data, clip, ctx);
+	أرجع svg_redraw_tiled_internal(svg, data, clip, ctx);
 }
 
 
@@ -326,56 +326,56 @@ svg_redraw(struct content *c,
  * Destroy a CONTENT_SVG and free all resources it owns.
  */
 
-static void svg_destroy(struct content *c)
+ساكن فراغ svg_destroy(بنية content *c)
 {
 	svg_content *svg = (svg_content *) c;
 
-	if (svg->diagram != NULL)
+	إذا (svg->diagram != عدم)
 		svgtiny_free(svg->diagram);
 }
 
 
-static nserror svg_clone(const struct content *old, struct content **newc)
+ساكن nserror svg_clone(ثابت بنية content *old, بنية content **newc)
 {
 	svg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(svg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, حجم(svg_content));
+	إذا (svg == عدم)
+		أرجع NSERROR_NOMEM;
 
 	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		أرجع error;
 	}
 
 	/* Simply replay create/convert */
 	error = svg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		أرجع error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	إذا (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (svg_convert(&svg->base) == false) {
+		إذا (svg_convert(&svg->base) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+			أرجع NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) svg;
+	*newc = (بنية content *) svg;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static content_type svg_content_type(void)
+ساكن content_type svg_content_type(فراغ)
 {
-	return CONTENT_IMAGE;
+	أرجع CONTENT_IMAGE;
 }
 
-static const content_handler svg_content_handler = {
+ساكن ثابت content_handler svg_content_handler = {
 	.create = svg_create,
 	.data_complete = svg_convert,
 	.reformat = svg_reformat,
@@ -386,7 +386,7 @@ static const content_handler svg_content_handler = {
 	.no_share = true
 };
 
-static const char *svg_types[] = {
+ساكن ثابت حرف *svg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };

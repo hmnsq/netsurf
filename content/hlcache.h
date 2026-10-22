@@ -24,32 +24,32 @@
 #ifndef NETSURF_CONTENT_HLCACHE_H_
 #define NETSURF_CONTENT_HLCACHE_H_
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
+#ضمن "utils/errors.h"
+#ضمن "utils/nsurl.h"
 
-#include "content/content.h"
-#include "content/llcache.h"
+#ضمن "content/content.h"
+#ضمن "content/llcache.h"
 
 /** High-level cache handle */
-typedef struct hlcache_handle hlcache_handle;
+تعريفنوع بنية hlcache_handle hlcache_handle;
 
 /** Context for retrieving a child object */
-typedef struct hlcache_child_context {
- 	const char *charset;		/**< Charset of parent */
+تعريفنوع بنية hlcache_child_context {
+ 	ثابت حرف *charset;		/**< Charset of parent */
  	bool quirks;			/**< Whether parent is quirky */
 } hlcache_child_context;
 
 /** High-level cache event */
-typedef struct hlcache_event {
-	content_msg type;		/**< Event type */
-	union content_msg_data data;	/**< Event data */
+تعريفنوع بنية hlcache_event {
+	content_ڤسنن type;		/**< Event type */
+	اتحاد content_ڤسنن_data data;	/**< Event data */
 } hlcache_event;
 
-struct hlcache_parameters {
+بنية hlcache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	unsigned صحيح bg_clean_time;
 
-	struct llcache_parameters llcache;
+	بنية llcache_parameters llcache;
 };
 
 /**
@@ -60,11 +60,11 @@ struct hlcache_parameters {
  * \param pw      Pointer to client-specific data
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-typedef nserror (*hlcache_handle_callback)(hlcache_handle *handle,
-		const hlcache_event *event, void *pw);
+تعريفنوع nserror (*hlcache_handle_callback)(hlcache_handle *handle,
+		ثابت hlcache_event *event, فراغ *pw);
 
 /** Flags for high-level cache object retrieval */
-enum hlcache_retrieve_flag {
+تعداد hlcache_retrieve_flag {
 	/* Note: low-level cache retrieval flags occupy the bottom 16 bits of
 	 * the flags word. High-level cache flags occupy the top 16 bits.
 	 * To avoid confusion, high-level flags are allocated from bit 31 down.
@@ -81,18 +81,18 @@ enum hlcache_retrieve_flag {
  * \param hlcache_parameters Settings to initialise cache with
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror hlcache_initialise(const struct hlcache_parameters *hlcache_parameters);
+nserror hlcache_initialise(ثابت بنية hlcache_parameters *hlcache_parameters);
 
 /**
  * Stop the high-level cache periodic functionality so that the
  * exit sequence can run.
  */
-void hlcache_stop(void);
+فراغ hlcache_stop(فراغ);
 
 /**
  * Finalise the high-level cache, destroying any remaining contents
  */
-void hlcache_finalise(void);
+فراغ hlcache_finalise(فراغ);
 
 /**
  * Retrieve a high-level cache handle for an object
@@ -118,7 +118,7 @@ void hlcache_finalise(void);
  */
 nserror hlcache_handle_retrieve(nsurl *url, uint32_t flags,
 		nsurl *referer, llcache_post_data *post,
-		hlcache_handle_callback cb, void *pw,
+		hlcache_handle_callback cb, فراغ *pw,
 		hlcache_child_context *child,
 		content_type accepted_types, hlcache_handle **result);
 
@@ -147,7 +147,7 @@ nserror hlcache_handle_abort(hlcache_handle *handle);
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 nserror hlcache_handle_replace_callback(hlcache_handle *handle,
-		hlcache_handle_callback cb, void *pw);
+		hlcache_handle_callback cb, فراغ *pw);
 
 /**
  * Retrieve a content object from a cache handle
@@ -164,7 +164,7 @@ nserror hlcache_handle_replace_callback(hlcache_handle *handle,
  * thing being that the client need not care about this possibility and can
  * just call the functions with impugnity.
  */
-struct content *hlcache_handle_get_content(const hlcache_handle *handle);
+بنية content *hlcache_handle_get_content(ثابت hlcache_handle *handle);
 
 /**
  * Clone a high level cache handle.
