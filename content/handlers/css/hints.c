@@ -43,7 +43,7 @@
  */
 static bool isWhitespace(char c)
 {
-	return c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
+	повернути c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
 }
 
 /**
@@ -54,7 +54,7 @@ static bool isWhitespace(char c)
  */
 static bool isHex(char c)
 {
-	return ('0' <= c && c <= '9') ||
+	повернути ('0' <= c && c <= '9') ||
 			('A' <= (c & ~0x20) && (c & ~0x20) <= 'F');
 }
 
@@ -72,14 +72,14 @@ static uint8_t charToHex(char c)
 	c -= '0';
 
 	/* A-F */
-	if (c > 9)
+	якщо (c > 9)
 		c -= 'A' - '9' - 1;
 
 	/* a-f */
-	if (c > 15)
+	якщо (c > 15)
 		c -= 'a' - 'A';
 
-	return c;
+	повернути c;
 }
 
 
@@ -106,50 +106,50 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 	int32_t intpart = 0;
 	int32_t fracpart = 0;
 	int32_t pwr = 1;
-	int sign = 1;
+	ціле sign = 1;
 
 	*consumed = 0;
 
 	len = strlen(data);
 	ptr = (const uint8_t *) data;
 
-	if (len == 0)
-		return false;
+	якщо (len == 0)
+		повернути false;
 
 	/* Skip leading whitespace */
-	while (len > 0 && isWhitespace(ptr[0])) {
+	поки (len > 0 && isWhitespace(ptr[0])) {
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	якщо (len == 0)
+		повернути false;
 
 	/* Extract sign, if any */
-	if (ptr[0] == '+') {
+	якщо (ptr[0] == '+') {
 		len--;
 		ptr++;
-	} else if (ptr[0] == '-' && maybe_negative) {
+	} інакше якщо (ptr[0] == '-' && maybe_negative) {
 		sign = -1;
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	якщо (len == 0)
+		повернути false;
 
 	/* Must have a digit [0,9] */
-	if ('0' > ptr[0] || ptr[0] > '9')
-		return false;
+	якщо ('0' > ptr[0] || ptr[0] > '9')
+		повернути false;
 
 	/* Now extract intpart, assuming base 10 */
-	while (len > 0) {
+	поки (len > 0) {
 		/* Stop on first non-digit */
-		if (ptr[0] < '0' || '9' < ptr[0])
+		якщо (ptr[0] < '0' || '9' < ptr[0])
 			break;
 
 		/* Prevent overflow of 'intpart'; proper clamping below */
-		if (intpart < (1 << 22)) {
+		якщо (intpart < (1 << 22)) {
 			intpart *= 10;
 			intpart += ptr[0] - '0';
 		}
@@ -158,16 +158,16 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 	}
 
 	/* And fracpart, again, assuming base 10 */
-	if (real && len > 1 && ptr[0] == '.' &&
+	якщо (real && len > 1 && ptr[0] == '.' &&
 			('0' <= ptr[1] && ptr[1] <= '9')) {
 		ptr++;
 		len--;
 
-		while (len > 0) {
-			if (ptr[0] < '0' || '9' < ptr[0])
+		поки (len > 0) {
+			якщо (ptr[0] < '0' || '9' < ptr[0])
 				break;
 
-			if (pwr < 1000000) {
+			якщо (pwr < 1000000) {
 				pwr *= 10;
 				fracpart *= 10;
 				fracpart += ptr[0] - '0';
@@ -177,28 +177,28 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 		}
 
 		fracpart = ((1 << 10) * fracpart + pwr/2) / pwr;
-		if (fracpart >= (1 << 10)) {
+		якщо (fracpart >= (1 << 10)) {
 			intpart++;
 			fracpart &= (1 << 10) - 1;
 		}
 	}
 
-	if (sign > 0) {
+	якщо (sign > 0) {
 		/* If the result is larger than we can represent,
 		 * then clamp to the maximum value we can store. */
-		if (intpart >= (1 << 21)) {
+		якщо (intpart >= (1 << 21)) {
 			intpart = (1 << 21) - 1;
 			fracpart = (1 << 10) - 1;
 		}
-	} else {
+	} інакше {
 		/* If the negated result is smaller than we can represent
 		 * then clamp to the minimum value we can store. */
-		if (intpart >= (1 << 21)) {
+		якщо (intpart >= (1 << 21)) {
 			intpart = -(1 << 21);
 			fracpart = 0;
-		} else {
+		} інакше {
 			intpart = -intpart;
-			if (fracpart) {
+			якщо (fracpart) {
 				fracpart = (1 << 10) - fracpart;
 				intpart--;
 			}
@@ -209,7 +209,7 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 
 	*consumed = ptr - (const uint8_t *) data;
 
-	return true;
+	повернути true;
 }
 
 /**
@@ -230,20 +230,20 @@ static bool parse_dimension(const char *data, bool strict, css_fixed *length,
 
 	len = strlen(data);
 
-	if (parse_number(data, false, true, &value, &read) == false)
-		return false;
+	якщо (parse_number(data, false, true, &value, &read) == false)
+		повернути false;
 
-	if (strict && value < INTTOFIX(1))
-		return false;
+	якщо (strict && value < INTTOFIX(1))
+		повернути false;
 
 	*length = value;
 
-	if (len > read && data[read] == '%')
+	якщо (len > read && data[read] == '%')
 		*unit = CSS_UNIT_PCT;
-	else
+	інакше
 		*unit = CSS_UNIT_PX;
 
-	return true;
+	повернути true;
 }
 
 /**
@@ -263,12 +263,12 @@ struct colour_map {
  *         < 0 if a < b,
  *         > 0 if b > a.
  */
-static int cmp_colour_name(const void *a, const void *b)
+static ціле cmp_colour_name(const void *a, const void *b)
 {
 	const char *aa = a;
 	const struct colour_map *bb = b;
 
-	return strcasecmp(aa, bb->name);
+	повернути strcasecmp(aa, bb->name);
 }
 
 /**
@@ -439,10 +439,10 @@ static bool parse_named_colour(const char *name, css_color *result)
 			sizeof(named_colours[0]),
 			cmp_colour_name);
 
-	if (entry != NULL)
+	якщо (entry != NULL)
 		*result = entry->color;
 
-	return entry != NULL;
+	повернути entry != NULL;
 }
 
 /* exported interface documented in content/handlers/css/hints.h */
@@ -452,25 +452,25 @@ bool nscss_parse_colour(const char *data, css_color *result)
 	uint8_t r, g, b;
 
 	/* 2 */
-	if (len == 0)
-		return false;
+	якщо (len == 0)
+		повернути false;
 
 	/* 3 */
-	if (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
-		return false;
+	якщо (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
+		повернути false;
 
 	/* 4 */
-	if (parse_named_colour(data, result))
-		return true;
+	якщо (parse_named_colour(data, result))
+		повернути true;
 
 	/** \todo Implement HTML5's utterly insane legacy colour parsing */
 
-	if (data[0] == '#') {
+	якщо (data[0] == '#') {
 		data++;
 		len--;
 	}
 
-	if (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
+	якщо (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
 		r = charToHex(data[0]);
 		g = charToHex(data[1]);
 		b = charToHex(data[2]);
@@ -481,8 +481,8 @@ bool nscss_parse_colour(const char *data, css_color *result)
 
 		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
-	} else if (len == 6 && isHex(data[0]) && isHex(data[1]) &&
+		повернути true;
+	} інакше якщо (len == 6 && isHex(data[0]) && isHex(data[1]) &&
 			isHex(data[2]) && isHex(data[3]) && isHex(data[4]) &&
 			isHex(data[5])) {
 		r = (charToHex(data[0]) << 4) | charToHex(data[1]);
@@ -491,10 +491,10 @@ bool nscss_parse_colour(const char *data, css_color *result)
 
 		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
+		повернути true;
 	}
 
-	return false;
+	повернути false;
 }
 
 /**
@@ -521,46 +521,46 @@ static bool parse_font_size(const char *size, uint8_t *val,
 
 	const char *p = size;
 	char mode;
-	int value = 0;
+	ціле value = 0;
 
 	/* Skip whitespace */
-	while (*p != '\0' && isWhitespace(*p))
+	поки (*p != '\0' && isWhitespace(*p))
 		p++;
 
 	mode = *p;
 
 	/* Skip +/- */
-	if (mode == '+' || mode == '-')
+	якщо (mode == '+' || mode == '-')
 		p++;
 
 	/* Need at least one digit */
-	if (*p < '0' || *p > '9') {
-		return false;
+	якщо (*p < '0' || *p > '9') {
+		повернути false;
 	}
 
 	/* Consume digits, computing value */
-	while ('0' <= *p && *p <= '9') {
+	поки ('0' <= *p && *p <= '9') {
 		value = value * 10 + (*p - '0');
 		p++;
 	}
 
 	/* Resolve relative sizes */
-	if (mode == '+')
+	якщо (mode == '+')
 		value += 3;
-	else if (mode == '-')
+	інакше якщо (mode == '-')
 		value = 3 - value;
 
 	/* Clamp to range [1,7] */
-	if (value < 1)
+	якщо (value < 1)
 		value = 1;
-	else if (value > 7)
+	інакше якщо (value > 7)
 		value = 7;
 
-	if (value == 7) {
+	якщо (value == 7) {
 		/* Manufacture xxx-large */
 	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_size))),
 				F_10);
-	} else {
+	} інакше {
 		/* Len is irrelevant */
 		*len = 0;
 	}
@@ -568,7 +568,7 @@ static bool parse_font_size(const char *size, uint8_t *val,
 	*unit = CSS_UNIT_PT;
 	*val = size_map[value - 1];
 
-	return true;
+	повернути true;
 }
 
 
@@ -589,11 +589,11 @@ nserror css_hint_init(void)
 {
 	hint_ctx.hints = malloc(sizeof(struct css_hint) *
 			MAX_HINTS_PER_ELEMENT);
-	if (hint_ctx.hints == NULL) {
-		return NSERROR_NOMEM;
+	якщо (hint_ctx.hints == NULL) {
+		повернути NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	повернути NSERROR_OK;
 }
 
 void css_hint_fini(void)
@@ -638,16 +638,16 @@ static void css_hint_table_cell_border_padding(
 
 	qs.ns = NULL;
 	qs.name = lwc_string_ref(corestring_lwc_table);
-	if (named_ancestor_node(ctx, node, &qs,
+	якщо (named_ancestor_node(ctx, node, &qs,
 			(void *)&tablenode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return;
+		повернути;
 	}
 	lwc_string_unref(qs.name);
 
-	if (tablenode == NULL) {
-		return;
+	якщо (tablenode == NULL) {
+		повернути;
 	}
 	/* No need to unref tablenode, named_ancestor_node does not
 	 * return a reffed node to the CSS
@@ -656,17 +656,17 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		if (parse_dimension(
+		якщо (parse_dimension(
 				dom_string_data(attr), false,
 						&hint_length.value,
 						&hint_length.unit) &&
 				INTTOFIX(0) != hint_length.value) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
+			для (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -674,7 +674,7 @@ static void css_hint_table_cell_border_padding(
 				css_hint_advance(&hint);
 			}
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
+			для (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -690,15 +690,15 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
+		якщо (nscss_parse_colour(
 				(const char *)dom_string_data(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
+			для (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -713,16 +713,16 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_cellpadding, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		if (parse_dimension(
+		якщо (parse_dimension(
 				dom_string_data(attr), false,
 						&hint_length.value,
 						&hint_length.unit)) {
 
-			for (hint_prop = CSS_PROP_PADDING_TOP;
+			для (hint_prop = CSS_PROP_PADDING_TOP;
 			     hint_prop <= CSS_PROP_PADDING_LEFT;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -747,28 +747,28 @@ static void css_hint_vertical_align_table_cells(
 	err = dom_element_get_attribute(node,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
+	якщо (err == DOM_NO_ERR && attr != NULL) {
 		hint->data.length.value = 0;
 		hint->data.length.unit = CSS_UNIT_PX;
-		if (dom_string_caseless_lwc_isequal(attr,
+		якщо (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_top)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_TOP;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} інакше якщо (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_middle)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} інакше якщо (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_BOTTOM;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} інакше якщо (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
@@ -789,14 +789,14 @@ static void css_hint_vertical_align_replaced(
 	err = dom_element_get_attribute(node,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (dom_string_caseless_lwc_isequal(attr,
+	якщо (err == DOM_NO_ERR && attr != NULL) {
+		якщо (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_top)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_TOP;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} інакше якщо (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
@@ -804,13 +804,13 @@ static void css_hint_vertical_align_replaced(
 			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} інакше якщо (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_texttop)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_TEXT_TOP;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} інакше якщо (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_absmiddle) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_abscenter)) {
@@ -832,26 +832,26 @@ static void css_hint_text_align_normal(
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	якщо (err == DOM_NO_ERR && align != NULL) {
+		якщо (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_left)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LEFT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} інакше якщо (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_center)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} інакше якщо (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_right)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_RIGHT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} інакше якщо (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
@@ -883,9 +883,9 @@ static void css_hint_margin_left_right_align_center(
 	exc = dom_element_get_attribute(node,
 			corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
+		якщо (dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_center) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_abscenter) ||
@@ -916,26 +916,26 @@ static void css_hint_text_align_special(
 	err = dom_element_get_attribute(node,
 			corestring_dom_align, &align);
 
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	якщо (err == DOM_NO_ERR && align != NULL) {
+		якщо (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_center)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} інакше якщо (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_left)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LIBCSS_LEFT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} інакше якщо (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_right)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LIBCSS_RIGHT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} інакше якщо (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
@@ -967,9 +967,9 @@ static void css_hint_margin_hspace_vspace(
 	exc = dom_element_get_attribute(node,
 			corestring_dom_vspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		css_hint_length hint_length;
-		if (parse_dimension(
+		якщо (parse_dimension(
 				dom_string_data(attr), false,
 				&hint_length.value,
 				&hint_length.unit)) {
@@ -991,9 +991,9 @@ static void css_hint_margin_hspace_vspace(
 	exc = dom_element_get_attribute(node,
 			corestring_dom_hspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		css_hint_length hint_length;
-		if (parse_dimension(
+		якщо (parse_dimension(
 				dom_string_data(attr), false,
 				&hint_length.value,
 				&hint_length.unit)) {
@@ -1024,9 +1024,9 @@ static void css_hint_margin_left_right_hr(
 	exc = dom_element_get_attribute(node,
 				corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
+		якщо (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_left)) {
 			hint->prop = CSS_PROP_MARGIN_LEFT;
 			hint->data.length.value = 0;
@@ -1038,7 +1038,7 @@ static void css_hint_margin_left_right_hr(
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} інакше якщо (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_center)) {
 			hint->prop = CSS_PROP_MARGIN_LEFT;
 			hint->status = CSS_MARGIN_AUTO;
@@ -1048,7 +1048,7 @@ static void css_hint_margin_left_right_hr(
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} інакше якщо (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_right)) {
 			hint->prop = CSS_PROP_MARGIN_LEFT;
 			hint->status = CSS_MARGIN_AUTO;
@@ -1074,11 +1074,11 @@ static void css_hint_table_spacing_border(
 
 	exc = dom_element_get_attribute(node, corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
+		для (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -1086,12 +1086,12 @@ static void css_hint_table_spacing_border(
 				css_hint_advance(&hint);
 		}
 
-		if (parse_dimension(
+		якщо (parse_dimension(
 				dom_string_data(attr), false,
 						&hint_length.value,
 						&hint_length.unit)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
+			для (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -1107,15 +1107,15 @@ static void css_hint_table_spacing_border(
 	exc = dom_element_get_attribute(node,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
+		якщо (nscss_parse_colour(
 				(const char *)dom_string_data(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
+			для (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
 			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
@@ -1130,8 +1130,8 @@ static void css_hint_table_spacing_border(
 	exc = dom_element_get_attribute(node,
 			corestring_dom_cellspacing, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
+	якщо (exc == DOM_NO_ERR && attr != NULL) {
+		якщо (parse_dimension(
 				(const char *)dom_string_data(attr), false,
 						&hint->data.position.h.value,
 						&hint->data.position.h.unit)) {
@@ -1155,8 +1155,8 @@ static void css_hint_height(
 	err = dom_element_get_attribute(node,
 			corestring_dom_height, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
+	якщо (err == DOM_NO_ERR && attr != NULL) {
+		якщо (parse_dimension(
 				(const char *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
@@ -1179,8 +1179,8 @@ static void css_hint_width(
 	err = dom_element_get_attribute(node,
 			corestring_dom_width, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
+	якщо (err == DOM_NO_ERR && attr != NULL) {
+		якщо (parse_dimension(
 				(const char *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
@@ -1203,8 +1203,8 @@ static void css_hint_height_width_textarea(
 	err = dom_element_get_attribute(node,
 			corestring_dom_rows, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
+	якщо (err == DOM_NO_ERR && attr != NULL) {
+		якщо (parse_dimension(
 				(const char *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
@@ -1219,8 +1219,8 @@ static void css_hint_height_width_textarea(
 	err = dom_element_get_attribute(node,
 			corestring_dom_cols, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
+	якщо (err == DOM_NO_ERR && attr != NULL) {
+		якщо (parse_dimension(
 				(const char *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
@@ -1245,8 +1245,8 @@ static void css_hint_height_width_canvas(
 	err = dom_element_get_attribute(node,
 			corestring_dom_height, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
+	якщо (err == DOM_NO_ERR && attr != NULL) {
+		якщо (parse_dimension(
 				(const char *)dom_string_data(attr), true,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
@@ -1258,22 +1258,22 @@ static void css_hint_height_width_canvas(
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	якщо (set_dim == false) {
 		/* canvas defaults to 150px tall */
 		hint->prop = CSS_PROP_HEIGHT;
 		hint->data.length.unit = CSS_UNIT_PX;
 		hint->data.length.value = INTTOFIX(150);
 		hint->status = CSS_HEIGHT_SET;
 		css_hint_advance(&hint);
-	} else {
+	} інакше {
 		set_dim = false;
 	}
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_width, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
+	якщо (err == DOM_NO_ERR && attr != NULL) {
+		якщо (parse_dimension(
 				(const char *)dom_string_data(attr), true,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
@@ -1285,7 +1285,7 @@ static void css_hint_height_width_canvas(
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	якщо (set_dim == false) {
 		/* canvas defaults to 300px wide */
 		hint->prop = CSS_PROP_WIDTH;
 		hint->data.length.unit = CSS_UNIT_PX;
@@ -1306,8 +1306,8 @@ static void css_hint_width_input(
 	err = dom_element_get_attribute(node,
 			corestring_dom_size, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
+	якщо (err == DOM_NO_ERR && attr != NULL) {
+		якщо (parse_dimension(
 				(const char *)dom_string_data(attr), false,
 				&hint->data.length.value,
 				&hint->data.length.unit)) {
@@ -1315,12 +1315,12 @@ static void css_hint_width_input(
 
 			err = dom_element_get_attribute(node,
 					corestring_dom_type, &attr2);
-			if (err == DOM_NO_ERR) {
+			якщо (err == DOM_NO_ERR) {
 
 				hint->prop = CSS_PROP_WIDTH;
 				hint->status = CSS_WIDTH_SET;
 
-				if (attr2 == NULL ||
+				якщо (attr2 == NULL ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_text) ||
@@ -1335,7 +1335,7 @@ static void css_hint_width_input(
 						corestring_lwc_file)) {
 					hint->data.length.unit = CSS_UNIT_EX;
 				}
-				if (attr2 != NULL) {
+				якщо (attr2 != NULL) {
 					dom_string_unref(attr2);
 				}
 				css_hint_advance(&hint);
@@ -1361,32 +1361,32 @@ static void css_hint_anchor_color(
 
 	qs.ns = NULL;
 	qs.name = lwc_string_ref(corestring_lwc_body);
-	if (named_ancestor_node(ctx, node, &qs,
+	якщо (named_ancestor_node(ctx, node, &qs,
 			(void *)&bodynode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return ;
+		повернути ;
 	}
 	lwc_string_unref(qs.name);
 
-	if (bodynode == NULL) {
-		return;
+	якщо (bodynode == NULL) {
+		повернути;
 	}
 
 	error = node_is_visited(ctx, node, &is_visited);
-	if (error != CSS_OK)
-		return;
+	якщо (error != CSS_OK)
+		повернути;
 
-	if (is_visited) {
+	якщо (is_visited) {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_vlink, &color);
-	} else {
+	} інакше {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_link, &color);
 	}
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
+	якщо (err == DOM_NO_ERR && color != NULL) {
+		якщо (nscss_parse_colour(
 				(const char *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
@@ -1407,8 +1407,8 @@ static void css_hint_body_color(
 
 	err = dom_element_get_attribute(node, corestring_dom_text, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
+	якщо (err == DOM_NO_ERR && color != NULL) {
+		якщо (nscss_parse_colour(
 				(const char *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
@@ -1429,8 +1429,8 @@ static void css_hint_color(
 
 	err = dom_element_get_attribute(node, corestring_dom_color, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
+	якщо (err == DOM_NO_ERR && color != NULL) {
+		якщо (nscss_parse_colour(
 				(const char *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
@@ -1450,8 +1450,8 @@ static void css_hint_font_size(
 	dom_string *size;
 
 	err = dom_element_get_attribute(node, corestring_dom_size, &size);
-	if (err == DOM_NO_ERR && size != NULL) {
-		if (parse_font_size(
+	якщо (err == DOM_NO_ERR && size != NULL) {
+		якщо (parse_font_size(
 				(const char *)dom_string_data(size),
 						&hint->status,
 						&hint->data.length.value,
@@ -1472,14 +1472,14 @@ static void css_hint_float(
 	dom_string *align;
 
 	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	якщо (err == DOM_NO_ERR && align != NULL) {
+		якщо (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_left)) {
 			hint->prop = CSS_PROP_FLOAT;
 			hint->status = CSS_FLOAT_LEFT;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} інакше якщо (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_right)) {
 			hint->prop = CSS_PROP_FLOAT;
 			hint->status = CSS_FLOAT_RIGHT;
@@ -1498,8 +1498,8 @@ static void css_hint_caption_side(
 	dom_string *align = NULL;
 
 	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	якщо (err == DOM_NO_ERR && align != NULL) {
+		якщо (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_CAPTION_SIDE;
 			hint->status = CSS_CAPTION_SIDE_BOTTOM;
@@ -1519,8 +1519,8 @@ static void css_hint_bg_color(
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_bgcolor, &bgcolor);
-	if (err == DOM_NO_ERR && bgcolor != NULL) {
-		if (nscss_parse_colour(
+	якщо (err == DOM_NO_ERR && bgcolor != NULL) {
+		якщо (nscss_parse_colour(
 				(const char *)dom_string_data(bgcolor),
 				&hint->data.color)) {
 			hint->prop = CSS_PROP_BACKGROUND_COLOR;
@@ -1541,19 +1541,19 @@ static void css_hint_bg_image(
 
 	err = dom_element_get_attribute(node,
 			corestring_dom_background, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
+	якщо (err == DOM_NO_ERR && attr != NULL) {
 		nsurl *url;
 		nserror error = nsurl_join(ctx->base_url,
 				(const char *)dom_string_data(attr), &url);
 		dom_string_unref(attr);
 
-		if (error == NSERROR_OK) {
+		якщо (error == NSERROR_OK) {
 			lwc_string *iurl;
 			lwc_error lerror = lwc_intern_string(nsurl_access(url),
 					nsurl_length(url), &iurl);
 			nsurl_unref(url);
 
-			if (lerror == lwc_error_ok) {
+			якщо (lerror == lwc_error_ok) {
 				hint->prop = CSS_PROP_BACKGROUND_IMAGE;
 				hint->data.string = iurl;
 				hint->status = CSS_BACKGROUND_IMAGE_IMAGE;
@@ -1572,7 +1572,7 @@ static void css_hint_white_space_nowrap(
 	bool nowrap;
 
 	err = dom_element_has_attribute(node, corestring_dom_nowrap, &nowrap);
-	if (err == DOM_NO_ERR && nowrap == true) {
+	якщо (err == DOM_NO_ERR && nowrap == true) {
 		hint->prop = CSS_PROP_WHITE_SPACE;
 		hint->status = CSS_WHITE_SPACE_NOWRAP;
 		css_hint_advance(&hint);
@@ -1588,12 +1588,12 @@ static void css_hint_list(
 	dom_string *attr;
 
 	err = dom_element_get_attribute(node, corestring_dom_type, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
+	якщо (err == DOM_NO_ERR && attr != NULL) {
 		const char *attr_str = dom_string_data(attr);
 		size_t attr_len = dom_string_byte_length(attr);
 		enum css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
 
-		if (attr_len == 1) {
+		якщо (attr_len == 1) {
 			switch (attr_str[0]) {
 			case 'a':
 				type = CSS_LIST_STYLE_TYPE_LOWER_ALPHA;
@@ -1613,7 +1613,7 @@ static void css_hint_list(
 			}
 		}
 
-		if (type != CSS_LIST_STYLE_TYPE_INHERIT) {
+		якщо (type != CSS_LIST_STYLE_TYPE_INHERIT) {
 			hint->prop = CSS_PROP_LIST_STYLE_TYPE;
 			hint->status = type;
 			css_hint_advance(&hint);
@@ -1631,16 +1631,16 @@ css_error node_presentational_hint(void *pw, void *node,
 	dom_exception exc;
 	dom_html_element_type tag_type;
 
-	if (nsoption_bool(author_level_css) == false) {
+	якщо (nsoption_bool(author_level_css) == false) {
 		*nhints = 0;
 		*hints = NULL;
-		return CSS_OK;
+		повернути CSS_OK;
 	}
 
 	css_hint_clean();
 
 	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
+	якщо (exc != DOM_NO_ERR) {
 		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
@@ -1728,7 +1728,7 @@ css_error node_presentational_hint(void *pw, void *node,
 		break;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
+	якщо (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
 		css_hint_color(pw, node);
 		css_hint_bg_color(pw, node);
 		css_hint_bg_image(pw, node);
@@ -1740,5 +1740,5 @@ css_error node_presentational_hint(void *pw, void *node,
 
 	css_hint_get_hints(hints, nhints);
 
-	return CSS_OK;
+	повернути CSS_OK;
 }

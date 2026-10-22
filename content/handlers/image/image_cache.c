@@ -45,7 +45,7 @@
  * type deffed away so it can be readily changed later perhaps to a
  * wallclock time structure.
  */
-typedef unsigned int cache_age;
+typedef unsigned ціле cache_age;
 
 /**
  * Image cache entry
@@ -63,12 +63,12 @@ struct image_cache_entry_s {
 
 	/* Statistics for replacement algorithm */
 
-	unsigned int redraw_count; /**< number of times object has been drawn */
+	unsigned ціле redraw_count; /**< number of times object has been drawn */
 	cache_age redraw_age; /**< Age of last redraw */
 	size_t bitmap_size; /**< size if storage occupied by bitmap */
 	cache_age bitmap_age; /**< Age of last conversion to a bitmap by cache*/
 
-	int conversion_count; /**< Number of times image has been converted */
+	ціле conversion_count; /**< Number of times image has been converted */
 };
 
 /**
@@ -96,44 +96,44 @@ struct image_cache_s {
 	size_t total_bitmap_size;
 
 	/** Total count of bitmaps currently allocated */
-	int bitmap_count;
+	ціле bitmap_count;
 
 	/** Maximum size of bitmaps allocated at any one time */
 	size_t max_bitmap_size;
 	/** The number of objects when maximum bitmap usage occurred */
-	int max_bitmap_size_count;
+	ціле max_bitmap_size_count;
 
 	/** Maximum count of bitmaps allocated at any one time */
-	int max_bitmap_count;
+	ціле max_bitmap_count;
 	/** The size of the bitmaps when the max count occurred */
 	size_t max_bitmap_count_size;
 
 	/** Bitmap was not available at plot time required conversion */
-	int miss_count;
+	ціле miss_count;
 	uint64_t miss_size;
 	/** Bitmap was available at plot time required no conversion */
-	int hit_count;
+	ціле hit_count;
 	uint64_t hit_size;
 	/** Bitmap was not available at plot time and required
 	 * conversion which failed.
 	 */
-	int fail_count;
+	ціле fail_count;
 	uint64_t fail_size;
 
 	/* Cache entry freed without ever being redrawn */
-	int total_unrendered;
+	ціле total_unrendered;
 	/** Bitmap was available but never required - wasted conversions */
-	int specultive_miss_count;
+	ціле specultive_miss_count;
 
 	/** Total number of additional (after the first) conversions */
-	int total_extra_conversions;
+	ціле total_extra_conversions;
 	/** counts total number of images with more than one conversion */
-	int total_extra_conversions_count;
+	ціле total_extra_conversions_count;
 
 	/** Bitmap with most conversions was converted this many times */
-	int peak_conversions;
+	ціле peak_conversions;
 	/** Size of bitmap with most conversions */
-	unsigned int peak_conversions_size;
+	unsigned ціле peak_conversions_size;
 };
 
 /** image cache state */
@@ -146,16 +146,16 @@ static struct image_cache_s *image_cache = NULL;
  * \param entryn index of cache entry
  * \return cache entry at index or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__findn(int entryn)
+static struct image_cache_entry_s *image_cache__findn(ціле entryn)
 {
 	struct image_cache_entry_s *found;
 
 	found = image_cache->entries;
-	while ((found != NULL) && (entryn > 0)) {
+	поки ((found != NULL) && (entryn > 0)) {
 		entryn--;
 		found = found->next;
 	}
-	return found;
+	повернути found;
 }
 
 
@@ -170,10 +170,10 @@ static struct image_cache_entry_s *image_cache__find(const struct content *c)
 	struct image_cache_entry_s *found;
 
 	found = image_cache->entries;
-	while ((found != NULL) && (found->content != c)) {
+	поки ((found != NULL) && (found->content != c)) {
 		found = found->next;
 	}
-	return found;
+	повернути found;
 }
 
 /**
@@ -189,26 +189,26 @@ static void image_cache_stats_bitmap_add(struct image_cache_entry_s *centry)
 	image_cache->total_bitmap_size += centry->bitmap_size;
 	image_cache->bitmap_count++;
 
-	if (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
+	якщо (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
 		image_cache->max_bitmap_size = image_cache->total_bitmap_size;
 		image_cache->max_bitmap_size_count = image_cache->bitmap_count;
 
 	}
 
-	if (image_cache->bitmap_count > image_cache->max_bitmap_count) {
+	якщо (image_cache->bitmap_count > image_cache->max_bitmap_count) {
 		image_cache->max_bitmap_count = image_cache->bitmap_count;
 		image_cache->max_bitmap_count_size = image_cache->total_bitmap_size;
 	}
 
-	if (centry->conversion_count == 2) {
+	якщо (centry->conversion_count == 2) {
 		image_cache->total_extra_conversions_count++;
 	}
 
-	if (centry->conversion_count > 1) {
+	якщо (centry->conversion_count > 1) {
 		image_cache->total_extra_conversions++;
 	}
 
-	if ((centry->conversion_count > image_cache->peak_conversions) ||
+	якщо ((centry->conversion_count > image_cache->peak_conversions) ||
 	    (centry->conversion_count == image_cache->peak_conversions &&
 	     centry->bitmap_size > image_cache->peak_conversions_size)) {
 		image_cache->peak_conversions = centry->conversion_count;
@@ -220,7 +220,7 @@ static void image_cache__link(struct image_cache_entry_s *centry)
 {
 	centry->next = image_cache->entries;
 	centry->prev = NULL;
-	if (centry->next != NULL) {
+	якщо (centry->next != NULL) {
 		centry->next->prev = centry;
 	}
 	image_cache->entries = centry;
@@ -229,19 +229,19 @@ static void image_cache__link(struct image_cache_entry_s *centry)
 static void image_cache__unlink(struct image_cache_entry_s *centry)
 {
 	/* unlink entry */
-	if (centry->prev == NULL) {
+	якщо (centry->prev == NULL) {
 		/* first in list */
-		if (centry->next != NULL) {
+		якщо (centry->next != NULL) {
 			centry->next->prev = centry->prev;
 			image_cache->entries = centry->next;
-		} else {
+		} інакше {
 			/* empty list */
 			image_cache->entries = NULL;
 		}
-	} else {
+	} інакше {
 		centry->prev->next = centry->next;
 
-		if (centry->next != NULL) {
+		якщо (centry->next != NULL) {
 			centry->next->prev = centry->prev;
 		}
 	}
@@ -254,7 +254,7 @@ static void image_cache__unlink(struct image_cache_entry_s *centry)
  */
 static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
 {
-	if (centry->bitmap != NULL) {
+	якщо (centry->bitmap != NULL) {
 #ifdef IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
 		      "Freeing bitmap %p size %d age %d redraw count %d",
@@ -267,7 +267,7 @@ static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
 		centry->bitmap = NULL;
 		image_cache->total_bitmap_size -= centry->bitmap_size;
 		image_cache->bitmap_count--;
-		if (centry->redraw_count == 0) {
+		якщо (centry->redraw_count == 0) {
 			image_cache->specultive_miss_count++;
 		}
 	}
@@ -285,7 +285,7 @@ static void image_cache__free_entry(struct image_cache_entry_s *centry)
 	NSLOG(netsurf, INFO, "freeing %p ", centry);
 #endif
 
-	if (centry->redraw_count == 0) {
+	якщо (centry->redraw_count == 0) {
 		image_cache->total_unrendered++;
 	}
 
@@ -305,11 +305,11 @@ static void image_cache__clean(struct image_cache_s *icache)
 {
 	struct image_cache_entry_s *centry = icache->entries;
 
-	while (centry != NULL) {
-		if ((icache->current_age - centry->redraw_age) >
+	поки (centry != NULL) {
+		якщо ((icache->current_age - centry->redraw_age) >
 		    icache->params.bg_clean_time) {
 			/* only consider older entries, avoids active entries */
-			if ((icache->total_bitmap_size >
+			якщо ((icache->total_bitmap_size >
 			     (icache->params.limit - icache->params.hysteresis)) &&
 			    (rand() > (RAND_MAX / 2))) {
 				image_cache__free_bitmap(centry);
@@ -348,29 +348,29 @@ struct bitmap *image_cache_get_bitmap(const struct content *c)
 	struct image_cache_entry_s *centry;
 
 	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	якщо (centry == NULL) {
+		повернути NULL;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	якщо (centry->bitmap == NULL) {
+		якщо (centry->convert != NULL) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
+		якщо (centry->bitmap != NULL) {
 			image_cache_stats_bitmap_add(centry);
 			image_cache->miss_count++;
 			image_cache->miss_size += centry->bitmap_size;
-		} else {
+		} інакше {
 			image_cache->fail_count++;
 			image_cache->fail_size += centry->bitmap_size;
 		}
-	} else {
+	} інакше {
 		image_cache->hit_count++;
 		image_cache->hit_size += centry->bitmap_size;
 	}
 
-	return centry->bitmap;
+	повернути centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
@@ -381,7 +381,7 @@ bool image_cache_speculate(struct content *c)
 	/* If the cache is below its target usage and the bitmap is
 	 * small enough speculate.
 	 */
-	if ((image_cache->total_bitmap_size < image_cache->params.limit) &&
+	якщо ((image_cache->total_bitmap_size < image_cache->params.limit) &&
 	    (c->size <= image_cache->params.speculative_small)) {
 #ifdef IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
@@ -395,7 +395,7 @@ bool image_cache_speculate(struct content *c)
 #ifdef IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "returning %d", decision);
 #endif
-	return decision;
+	повернути decision;
 }
 
 /* exported interface documented in image_cache.h */
@@ -404,11 +404,11 @@ struct bitmap *image_cache_find_bitmap(struct content *c)
 	struct image_cache_entry_s *centry;
 
 	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	якщо (centry == NULL) {
+		повернути NULL;
 	}
 
-	return centry->bitmap;
+	повернути centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
@@ -416,8 +416,8 @@ nserror
 image_cache_init(const struct image_cache_parameters *image_cache_parameters)
 {
 	image_cache = calloc(1, sizeof(struct image_cache_s));
-	if (image_cache == NULL) {
-		return NSERROR_NOMEM;
+	якщо (image_cache == NULL) {
+		повернути NSERROR_NOMEM;
 	}
 
 	image_cache->params = *image_cache_parameters;
@@ -431,13 +431,13 @@ image_cache_init(const struct image_cache_parameters *image_cache_parameters)
 	      image_cache->params.limit,
 	      image_cache->params.hysteresis);
 
-	return NSERROR_OK;
+	повернути NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
 nserror image_cache_fini(void)
 {
-	unsigned int op_count;
+	unsigned ціле op_count;
 	uint64_t op_size;
 
 	guit->misc->schedule(-1, image_cache__background_update, image_cache);
@@ -445,7 +445,7 @@ nserror image_cache_fini(void)
 	NSLOG(netsurf, INFO, "Size at finish %"PRIsizet" (in %d)",
 	      image_cache->total_bitmap_size, image_cache->bitmap_count);
 
-	while (image_cache->entries != NULL) {
+	поки (image_cache->entries != NULL) {
 		image_cache__free_entry(image_cache->entries);
 	}
 
@@ -465,7 +465,7 @@ nserror image_cache_fini(void)
 	      image_cache->max_bitmap_count,
 	      image_cache->max_bitmap_count_size);
 
-	if ((op_count > 0) && (op_size >0)) {
+	якщо ((op_count > 0) && (op_size >0)) {
 
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (counts) %d/%d/%d/%d (100%%/%d%%/%d%%/%d%%)",
@@ -503,7 +503,7 @@ nserror image_cache_fini(void)
 
 	free(image_cache);
 
-	return NSERROR_OK;
+	повернути NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
@@ -519,11 +519,11 @@ nserror image_cache_add(struct content *content,
 	image_cache->current_age++;
 
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	якщо (centry == NULL) {
 		/* new cache entry, content not previously added */
 		centry = calloc(1, sizeof(struct image_cache_entry_s));
-		if (centry == NULL) {
-			return NSERROR_NOMEM;
+		якщо (centry == NULL) {
+			повернути NSERROR_NOMEM;
 		}
 		image_cache__link(centry);
 		centry->content = content;
@@ -537,22 +537,22 @@ nserror image_cache_add(struct content *content,
 	centry->convert = convert;
 
 	/* set bitmap entry if one is passed, free extant one if present */
-	if (bitmap != NULL) {
-		if (centry->bitmap != NULL) {
+	якщо (bitmap != NULL) {
+		якщо (centry->bitmap != NULL) {
 			guit->bitmap->destroy(centry->bitmap);
-		} else {
+		} інакше {
 			image_cache_stats_bitmap_add(centry);
 		}
 		centry->bitmap = bitmap;
-	} else {
+	} інакше {
 		/* no bitmap, check to see if we should speculatively convert */
-		if ((centry->convert != NULL) &&
+		якщо ((centry->convert != NULL) &&
 		    (image_cache_speculate(content) == true)) {
 			centry->bitmap = centry->convert(centry->content);
 
-			if (centry->bitmap != NULL) {
+			якщо (centry->bitmap != NULL) {
 				image_cache_stats_bitmap_add(centry);
-			} else {
+			} інакше {
 				image_cache->fail_count++;
 			}
 		}
@@ -560,7 +560,7 @@ nserror image_cache_add(struct content *content,
 
 
 
-	return NSERROR_OK;
+	повернути NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
@@ -570,24 +570,24 @@ nserror image_cache_remove(struct content *content)
 
 	/* get the cache entry */
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	якщо (centry == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-		return NSERROR_NOT_FOUND;
+		повернути NSERROR_NOT_FOUND;
 	}
 
 	image_cache__free_entry(centry);
 
-	return NSERROR_OK;
+	повернути NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt)
+ціле image_cache_snsummaryf(char *string, size_t size, const char *fmt)
 {
 	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	ціле fmtc = 0; /* current index into format string */
 	bool pct;
-	unsigned int op_count;
+	unsigned ціле op_count;
 	uint64_t op_size;
 
 	op_count = image_cache->hit_count +
@@ -598,15 +598,15 @@ int image_cache_snsummaryf(char *string, size_t size, const char *fmt)
 		image_cache->miss_size +
 		image_cache->fail_size;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	поки((slen < size) && (fmt[fmtc] != 0)) {
+		якщо (fmt[fmtc] == '%') {
 			fmtc++;
 
 			/* check for percentage modifier */
-			if (fmt[fmtc] == 'p') {
+			якщо (fmt[fmtc] == 'p') {
 				fmtc++;
 				pct = true;
-			} else {
+			} інакше {
 				pct = false;
 			}
 
@@ -615,13 +615,13 @@ slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); break
 
 #define FMTPCHR(chr,fmt,var,div) \
 case chr :					\
-	if (pct) {							\
-		if (div > 0) {						\
+	якщо (pct) {							\
+		якщо (div > 0) {						\
 			slen += snprintf(string + slen, size - slen, "%"PRId64, (uint64_t)((image_cache->var * 100) / div)); \
-		} else {						\
+		} інакше {						\
 			slen += snprintf(string + slen, size - slen, "100"); \
 		}							\
-	} else {							\
+	} інакше {							\
 		slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); \
 	} break
 
@@ -674,7 +674,7 @@ case chr :					\
 #undef FMTPCHR
 
 			fmtc++;
-		} else {
+		} інакше {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -684,27 +684,27 @@ case chr :					\
 	/* Ensure that we NUL-terminate the output */
 	string[min(slen, size - 1)] = '\0';
 
-	return slen;
+	повернути slen;
 }
 
 /* exported interface documented in image_cache.h */
-int
+ціле
 image_cache_snentryf(char *string,
 		     size_t size,
-		     unsigned int entryn,
+		     unsigned ціле entryn,
 		     const char *fmt)
 {
 	struct image_cache_entry_s *centry;
 	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	ціле fmtc = 0; /* current index into format string */
 	lwc_string *origin; /* current entry's origin */
 
 	centry = image_cache__findn(entryn);
-	if (centry == NULL)
-		return -1;
+	якщо (centry == NULL)
+		повернути -1;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	поки((slen < size) && (fmt[fmtc] != 0)) {
+		якщо (fmt[fmtc] == '%') {
 			fmtc++;
 			switch (fmt[fmtc]) {
 			case 'e':
@@ -744,7 +744,7 @@ image_cache_snentryf(char *string,
 				break;
 
 			case 'o':
-				if (nsurl_has_component(llcache_handle_get_url(
+				якщо (nsurl_has_component(llcache_handle_get_url(
 						centry->content->llcache),
 						NSURL_HOST)) {
 					origin = nsurl_get_component(
@@ -759,7 +759,7 @@ image_cache_snentryf(char *string,
 								origin));
 
 					lwc_string_unref(origin);
-				} else {
+				} інакше {
 					slen += snprintf(string + slen,
 							size - slen, "%s",
 							"localhost");
@@ -767,12 +767,12 @@ image_cache_snentryf(char *string,
 				break;
 
 			case 's':
-				if (centry->bitmap != NULL) {
+				якщо (centry->bitmap != NULL) {
 					slen += snprintf(string + slen,
 							 size - slen,
 							 "%" PRIsizet,
 							 centry->bitmap_size);
-				} else {
+				} інакше {
 					slen += snprintf(string + slen,
 							 size - slen,
 							 "0");
@@ -780,7 +780,7 @@ image_cache_snentryf(char *string,
 				break;
 			}
 			fmtc++;
-		} else {
+		} інакше {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -790,7 +790,7 @@ image_cache_snentryf(char *string,
 	/* Ensure that we NUL-terminate the output */
 	string[min(slen, size - 1)] = '\0';
 
-	return slen;
+	повернути slen;
 }
 
 
@@ -804,27 +804,27 @@ bool image_cache_redraw(struct content *c,
 
 	/* get the cache entry */
 	centry = image_cache__find(c);
-	if (centry == NULL) {
+	якщо (centry == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", c);
-		return false;
+		повернути false;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	якщо (centry->bitmap == NULL) {
+		якщо (centry->convert != NULL) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
+		якщо (centry->bitmap != NULL) {
 			image_cache_stats_bitmap_add(centry);
 			image_cache->miss_count++;
 			image_cache->miss_size += centry->bitmap_size;
-		} else {
+		} інакше {
 			image_cache->fail_count++;
 			image_cache->fail_size += centry->bitmap_size;
-			return false;
+			повернути false;
 		}
-	} else {
+	} інакше {
 		image_cache->hit_count++;
 		image_cache->hit_size += centry->bitmap_size;
 	}
@@ -834,7 +834,7 @@ bool image_cache_redraw(struct content *c,
 	centry->redraw_count++;
 	centry->redraw_age = image_cache->current_age;
 
-	return image_bitmap_plot(centry->bitmap, data, clip, ctx);
+	повернути image_bitmap_plot(centry->bitmap, data, clip, ctx);
 }
 
 /* exported interface documented in image_cache.h */
@@ -844,10 +844,10 @@ void image_cache_destroy(struct content *content)
 
 	/* get the cache entry */
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	якщо (centry == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-	} else {
+	} інакше {
 		image_cache__free_entry(centry);
 	}
 }
@@ -855,7 +855,7 @@ void image_cache_destroy(struct content *content)
 /* exported interface documented in image_cache.h */
 void *image_cache_get_internal(const struct content *c, void *context)
 {
-	return image_cache_get_bitmap(c);
+	повернути image_cache_get_bitmap(c);
 }
 
 /* exported interface documented in image_cache.h */
@@ -863,14 +863,14 @@ bool image_cache_is_opaque(struct content *c)
 {
 	struct bitmap *bmp;
 	bmp = image_cache_get_bitmap(c);
-	if (bmp != NULL) {
-		return guit->bitmap->get_opaque(bmp);
+	якщо (bmp != NULL) {
+		повернути guit->bitmap->get_opaque(bmp);
 	}
-	return false;
+	повернути false;
 }
 
 /* exported interface documented in image_cache.h */
 content_type image_cache_content_type(void)
 {
-	return CONTENT_IMAGE;
+	повернути CONTENT_IMAGE;
 }

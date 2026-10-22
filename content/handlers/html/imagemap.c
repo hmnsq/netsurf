@@ -55,18 +55,18 @@ struct mapentry {
 	char *target;			/**< target frame (if any) */
 	union {
 		struct {
-			int x;		/**< x coordinate of centre */
-			int y;		/**< y coordinate of center */
-			int r;		/**< radius of circle */
+			ціле x;		/**< x coordinate of centre */
+			ціле y;		/**< y coordinate of center */
+			ціле r;		/**< radius of circle */
 		} circle;
 		struct {
-			int x0;		/**< left hand edge */
-			int y0;		/**< top edge */
-			int x1;		/**< right hand edge */
-			int y1;		/**< bottom edge */
+			ціле x0;		/**< left hand edge */
+			ціле y0;		/**< top edge */
+			ціле x1;		/**< right hand edge */
+			ціле y1;		/**< bottom edge */
 		} rect;
 		struct {
-			int num;	/**< number of points */
+			ціле num;	/**< number of points */
 			float *xcoords;	/**< x coordinates */
 			float *ycoords;	/**< y coordinates */
 		} poly;
@@ -90,14 +90,14 @@ static bool imagemap_create(html_content *c)
 {
 	assert(c != NULL);
 
-	if (c->imagemaps == NULL) {
+	якщо (c->imagemaps == NULL) {
 		c->imagemaps = calloc(HASH_SIZE, sizeof(struct imagemap *));
-		if (c->imagemaps == NULL) {
-			return false;
+		якщо (c->imagemaps == NULL) {
+			повернути false;
 		}
 	}
 
-	return true;
+	повернути true;
 }
 
 /**
@@ -106,17 +106,17 @@ static bool imagemap_create(html_content *c)
  * \param key The key to hash.
  * \return The hashed value.
  */
-static unsigned int imagemap_hash(const char *key)
+static unsigned ціле imagemap_hash(const char *key)
 {
-	unsigned int z = 0;
+	unsigned ціле z = 0;
 
-	if (key == 0) return 0;
+	якщо (key == 0) повернути 0;
 
-	for (; *key != 0; key++) {
+	для (; *key != 0; key++) {
 		z += *key & 0x1f;
 	}
 
-	return (z % (HASH_SIZE - 1)) + 1;
+	повернути (z % (HASH_SIZE - 1)) + 1;
 }
 
 /**
@@ -131,24 +131,24 @@ static bool
 imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
 {
 	struct imagemap *map;
-	unsigned int slot;
+	unsigned ціле slot;
 
 	assert(c != NULL);
 	assert(key != NULL);
 	assert(list != NULL);
 
-	if (imagemap_create(c) == false)
-		return false;
+	якщо (imagemap_create(c) == false)
+		повернути false;
 
 	map = calloc(1, sizeof(*map));
-	if (map == NULL)
-		return false;
+	якщо (map == NULL)
+		повернути false;
 
 	/* \todo Stop relying on NULL termination of dom_string */
 	map->key = strdup(dom_string_data(key));
-	if (map->key == NULL) {
+	якщо (map->key == NULL) {
 		free(map);
-		return false;
+		повернути false;
 	}
 
 	map->list = list;
@@ -158,7 +158,7 @@ imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
 	map->next = c->imagemaps[slot];
 	c->imagemaps[slot] = map;
 
-	return true;
+	повернути true;
 }
 
 /**
@@ -174,15 +174,15 @@ static void imagemap_freelist(struct mapentry *list)
 
 	entry = list;
 
-	while (entry != NULL) {
+	поки (entry != NULL) {
 		prev = entry;
 
 		nsurl_unref(entry->url);
 
-		if (entry->target)
+		якщо (entry->target)
 			free(entry->target);
 
-		if (entry->type == IMAGEMAP_POLY) {
+		якщо (entry->type == IMAGEMAP_POLY) {
 			free(entry->bounds.poly.xcoords);
 			free(entry->bounds.poly.ycoords);
 		}
@@ -199,19 +199,19 @@ static void imagemap_freelist(struct mapentry *list)
  */
 void imagemap_destroy(html_content *c)
 {
-	unsigned int i;
+	unsigned ціле i;
 
 	assert(c != NULL);
 
 	/* no imagemaps -> return */
-	if (c->imagemaps == NULL)
-		return;
+	якщо (c->imagemaps == NULL)
+		повернути;
 
-	for (i = 0; i != HASH_SIZE; i++) {
+	для (i = 0; i != HASH_SIZE; i++) {
 		struct imagemap *map, *next;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
+		поки (map != NULL) {
 			next = map->next;
 			imagemap_freelist(map->list);
 			free(map->key);
@@ -230,24 +230,24 @@ void imagemap_destroy(html_content *c)
  */
 void imagemap_dump(html_content *c)
 {
-	unsigned int i;
+	unsigned ціле i;
 
-	int j;
+	ціле j;
 
 	assert(c != NULL);
 
-	if (c->imagemaps == NULL)
-		return;
+	якщо (c->imagemaps == NULL)
+		повернути;
 
-	for (i = 0; i != HASH_SIZE; i++) {
+	для (i = 0; i != HASH_SIZE; i++) {
 		struct imagemap *map;
 		struct mapentry *entry;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
+		поки (map != NULL) {
 			NSLOG(netsurf, INFO, "Imagemap: %s", map->key);
 
-			for (entry = map->list; entry; entry = entry->next) {
+			для (entry = map->list; entry; entry = entry->next) {
 				switch (entry->type) {
 				case IMAGEMAP_DEFAULT:
 					NSLOG(netsurf, INFO, "\tDefault: %s",
@@ -274,11 +274,11 @@ void imagemap_dump(html_content *c)
 					NSLOG(netsurf, INFO,
 					      "\tPolygon: %s:",
 					      nsurl_access(entry->url));
-					for (j = 0; j != entry->bounds.poly.num;
+					для (j = 0; j != entry->bounds.poly.num;
 							j++) {
 						fprintf(stderr, "(%d,%d) ",
-							(int)entry->bounds.poly.xcoords[j],
-							(int)entry->bounds.poly.ycoords[j]);
+							(ціле)entry->bounds.poly.xcoords[j],
+							(ціле)entry->bounds.poly.ycoords[j]);
 					}
 					fprintf(stderr,"\n");
 					break;
@@ -312,74 +312,74 @@ imagemap_addtolist(const struct html_content *c,
 	struct mapentry *new_map, *temp;
 	bool ret = true;
 
-	if (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
+	якщо (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
 		bool nohref = false;
 		exc = dom_element_has_attribute(n,
 				corestring_dom_nohref, &nohref);
-		if ((exc != DOM_NO_ERR) || nohref)
+		якщо ((exc != DOM_NO_ERR) || nohref)
 			/* Skip <area nohref="anything" /> */
 			goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL) {
+	якщо (exc != DOM_NO_ERR || href == NULL) {
 		/* No href="" attribute, skip this element */
 		goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_target, &target);
-	if (exc != DOM_NO_ERR) {
+	якщо (exc != DOM_NO_ERR) {
 		goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_shape, &shape);
-	if (exc != DOM_NO_ERR) {
+	якщо (exc != DOM_NO_ERR) {
 		goto ok_out;
 	}
 
 	/* If there's no shape, we default to rectangles */
-	if (shape == NULL)
+	якщо (shape == NULL)
 		shape = dom_string_ref(corestring_dom_rect);
 
-	if (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
+	якщо (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
 		/* If not 'default' and there's no 'coords' give up */
 		exc = dom_element_get_attribute(n, corestring_dom_coords,
 						&coords);
-		if (exc != DOM_NO_ERR || coords == NULL) {
+		якщо (exc != DOM_NO_ERR || coords == NULL) {
 			goto ok_out;
 		}
 	}
 
 	new_map = calloc(1, sizeof(*new_map));
-	if (new_map == NULL) {
+	якщо (new_map == NULL) {
 		goto bad_out;
 	}
 
-	if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
+	якщо (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
 	    dom_string_caseless_lwc_isequal(shape, corestring_lwc_rectangle))
 		new_map->type = IMAGEMAP_RECT;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
+	інакше якщо (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
 		new_map->type = IMAGEMAP_CIRCLE;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
+	інакше якщо (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
 		 dom_string_caseless_lwc_isequal(shape, corestring_lwc_polygon))
 		new_map->type = IMAGEMAP_POLY;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
+	інакше якщо (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
 		new_map->type = IMAGEMAP_DEFAULT;
-	else
+	інакше
 		goto bad_out;
 
-	if (box_extract_link(c, href, base_url, &new_map->url) == false)
+	якщо (box_extract_link(c, href, base_url, &new_map->url) == false)
 		goto bad_out;
 
-	if (new_map->url == NULL) {
+	якщо (new_map->url == NULL) {
 		/* non-fatal error -> ignore this */
 		goto ok_free_map_out;
 	}
 
-	if (target != NULL) {
+	якщо (target != NULL) {
 		/* Copy target dom string into the map data */
 		new_map->target = malloc(dom_string_byte_length(target) + 1);
-		if (new_map->target == NULL)
+		якщо (new_map->target == NULL)
 			goto bad_out;
 
 		memcpy(new_map->target,
@@ -389,17 +389,17 @@ imagemap_addtolist(const struct html_content *c,
 		new_map->target[dom_string_byte_length(target)] = 0;
 	}
 
-	if (new_map->type != IMAGEMAP_DEFAULT) {
-		int x, y;
+	якщо (new_map->type != IMAGEMAP_DEFAULT) {
+		ціле x, y;
 		float *xcoords, *ycoords;
 		/* coordinates are a comma-separated list of values */
 		char *val = strtok((char *)dom_string_data(coords), ",");
-		int num = 1;
+		ціле num = 1;
 
 		switch (new_map->type) {
 		case IMAGEMAP_RECT:
 			/* (left, top, right, bottom) */
-			while (val != NULL && num <= 4) {
+			поки (val != NULL && num <= 4) {
 				switch (num) {
 				case 1:
 					new_map->bounds.rect.x0 = atoi(val);
@@ -421,7 +421,7 @@ imagemap_addtolist(const struct html_content *c,
 			break;
 		case IMAGEMAP_CIRCLE:
 			/* (x, y, radius ) */
-			while (val != NULL && num <= 3) {
+			поки (val != NULL && num <= 3) {
 				switch (num) {
 				case 1:
 					new_map->bounds.circle.x = atoi(val);
@@ -442,25 +442,25 @@ imagemap_addtolist(const struct html_content *c,
 			new_map->bounds.poly.xcoords = NULL;
 			new_map->bounds.poly.ycoords = NULL;
 
-			while (val != NULL) {
+			поки (val != NULL) {
 				x = atoi(val);
 
 				val = strtok(NULL, ",");
-				if (val == NULL)
+				якщо (val == NULL)
 					break;
 
 				y = atoi(val);
 
 				xcoords = realloc(new_map->bounds.poly.xcoords,
 						num * sizeof(float));
-				if (xcoords == NULL) {
+				якщо (xcoords == NULL) {
 					goto bad_out;
 				}
 				new_map->bounds.poly.xcoords = xcoords;
 
 				ycoords = realloc(new_map->bounds.poly.ycoords,
 					num * sizeof(float));
-				if (ycoords == NULL) {
+				якщо (ycoords == NULL) {
 					goto bad_out;
 				}
 				new_map->bounds.poly.ycoords = ycoords;
@@ -482,12 +482,12 @@ imagemap_addtolist(const struct html_content *c,
 
 	new_map->next = NULL;
 
-	if (*entry) {
+	якщо (*entry) {
 		/* add to END of list */
-		for (temp = (*entry); temp->next != NULL; temp = temp->next)
+		для (temp = (*entry); temp->next != NULL; temp = temp->next)
 			;
 		temp->next = new_map;
-	} else {
+	} інакше {
 		(*entry) = new_map;
 	}
 
@@ -497,31 +497,31 @@ imagemap_addtolist(const struct html_content *c,
 bad_out:
 	ret = false;
 ok_free_map_out:
-	if (new_map != NULL) {
-		if (new_map->url != NULL)
+	якщо (new_map != NULL) {
+		якщо (new_map->url != NULL)
 			nsurl_unref(new_map->url);
-		if (new_map->type == IMAGEMAP_POLY &&
+		якщо (new_map->type == IMAGEMAP_POLY &&
 				new_map->bounds.poly.ycoords != NULL)
 			free(new_map->bounds.poly.ycoords);
-		if (new_map->type == IMAGEMAP_POLY &&
+		якщо (new_map->type == IMAGEMAP_POLY &&
 				new_map->bounds.poly.xcoords != NULL)
 			free(new_map->bounds.poly.xcoords);
-		if (new_map->target != NULL)
+		якщо (new_map->target != NULL)
 			free(new_map->target);
 
 		free(new_map);
 	}
 ok_out:
-	if (href != NULL)
+	якщо (href != NULL)
 		dom_string_unref(href);
-	if (target != NULL)
+	якщо (target != NULL)
 		dom_string_unref(target);
-	if (shape != NULL)
+	якщо (shape != NULL)
 		dom_string_unref(shape);
-	if (coords != NULL)
+	якщо (coords != NULL)
 		dom_string_unref(coords);
 
-	return ret;
+	повернути ret;
 }
 
 /**
@@ -543,36 +543,36 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
 	uint32_t tag_count;
 
 	exc = dom_element_get_elements_by_tag_name(node, tname, &nlist);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	якщо (exc != DOM_NO_ERR) {
+		повернути false;
 	}
 
 	exc = dom_nodelist_get_length(nlist, &tag_count);
-	if (exc != DOM_NO_ERR) {
+	якщо (exc != DOM_NO_ERR) {
 		dom_nodelist_unref(nlist);
-		return false;
+		повернути false;
 	}
 
-	for (ent = 0; ent < tag_count; ++ent) {
+	для (ent = 0; ent < tag_count; ++ent) {
 		dom_node *subnode;
 
 		exc = dom_nodelist_item(nlist, ent, &subnode);
-		if (exc != DOM_NO_ERR) {
+		якщо (exc != DOM_NO_ERR) {
 			dom_nodelist_unref(nlist);
-			return false;
+			повернути false;
 		}
-		if (imagemap_addtolist(c, subnode, c->base_url,
+		якщо (imagemap_addtolist(c, subnode, c->base_url,
 				       entry, tname) == false) {
 			dom_node_unref(subnode);
 			dom_nodelist_unref(nlist);
-			return false;
+			повернути false;
 		}
 		dom_node_unref(subnode);
 	}
 
 	dom_nodelist_unref(nlist);
 
-	return true;
+	повернути true;
 }
 
 /**
@@ -586,10 +586,10 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
 static bool imagemap_extract_map(dom_node *node, html_content *c,
 		struct mapentry **entry)
 {
-	if (imagemap_extract_map_entries(node, c, entry,
+	якщо (imagemap_extract_map_entries(node, c, entry,
 			corestring_dom_area) == false)
-		return false;
-	return imagemap_extract_map_entries(node, c, entry,
+		повернути false;
+	повернути imagemap_extract_map_entries(node, c, entry,
 			corestring_dom_a);
 }
 
@@ -611,48 +611,48 @@ imagemap_extract(html_content *c)
 	exc = dom_document_get_elements_by_tag_name(c->document,
 						    corestring_dom_map,
 						    &nlist);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	якщо (exc != DOM_NO_ERR) {
+		повернути NSERROR_DOM;
 	}
 
 	exc = dom_nodelist_get_length(nlist, &maybe_maps);
-	if (exc != DOM_NO_ERR) {
+	якщо (exc != DOM_NO_ERR) {
 		ret = NSERROR_DOM;
 		goto out_nlist;
 	}
 
-	for (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
+	для (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
 		dom_node *node;
 		dom_string *name;
 		exc = dom_nodelist_item(nlist, mapnr, &node);
-		if (exc != DOM_NO_ERR) {
+		якщо (exc != DOM_NO_ERR) {
 			ret = NSERROR_DOM;
 			goto out_nlist;
 		}
 
 		exc = dom_element_get_attribute(node, corestring_dom_id,
 						&name);
-		if (exc != DOM_NO_ERR) {
+		якщо (exc != DOM_NO_ERR) {
 			dom_node_unref(node);
 			ret = NSERROR_DOM;
 			goto out_nlist;
 		}
 
-		if (name == NULL) {
+		якщо (name == NULL) {
 			exc = dom_element_get_attribute(node,
 							corestring_dom_name,
 							&name);
-			if (exc != DOM_NO_ERR) {
+			якщо (exc != DOM_NO_ERR) {
 				dom_node_unref(node);
 				ret = NSERROR_DOM;
 				goto out_nlist;
 			}
 		}
 
-		if (name != NULL) {
+		якщо (name != NULL) {
 			struct mapentry *entry = NULL;
-			if (imagemap_extract_map(node, c, &entry) == false) {
-				if (entry != NULL) {
+			якщо (imagemap_extract_map(node, c, &entry) == false) {
+				якщо (entry != NULL) {
 					imagemap_freelist(entry);
 				}
 
@@ -667,7 +667,7 @@ imagemap_extract(html_content *c)
 			 * error as it just means that we've encountered
 			 * an incorrectly defined <map>...</map> block
 			 */
-			if ((entry != NULL) &&
+			якщо ((entry != NULL) &&
 			    (imagemap_add(c, name, entry) == false)) {
 				imagemap_freelist(entry);
 
@@ -686,7 +686,7 @@ out_nlist:
 
 	dom_nodelist_unref(nlist);
 
-	return ret;
+	повернути ret;
 }
 
 /**
@@ -702,24 +702,24 @@ out_nlist:
  * \param click_y Y coordinate of click
  * \return 1 if point is in polygon, 0 if outside. 0 or 1 if on boundary
  */
-static int
-imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
+static ціле
+imagemap_point_in_poly(ціле num, float *xpt, float *ypt, unsigned long x,
 		unsigned long y, unsigned long click_x,	unsigned long click_y)
 {
-	int i, j, c = 0;
+	ціле i, j, c = 0;
 
 	assert(xpt != NULL);
 	assert(ypt != NULL);
 
-	for (i = 0, j = num - 1; i < num; j = i++) {
-		if ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
+	для (i = 0, j = num - 1; i < num; j = i++) {
+		якщо ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
 		     ((ypt[j] + y <= click_y) && (click_y < ypt[i] + y))) &&
 		     (click_x < (xpt[j] - xpt[i]) *
 		     (click_y - (ypt[i] + y)) / (ypt[j] - ypt[i]) + xpt[i] + x))
 			c = !c;
 	}
 
-	return c;
+	повернути c;
 }
 
 /**
@@ -739,73 +739,73 @@ nsurl *imagemap_get(struct html_content *c, const char *key,
 		unsigned long click_x, unsigned long click_y,
 		const char **target)
 {
-	unsigned int slot = 0;
+	unsigned ціле slot = 0;
 	struct imagemap *map;
 	struct mapentry *entry;
 	unsigned long cx, cy;
 
 	assert(c != NULL);
 
-	if (key == NULL)
-		return NULL;
+	якщо (key == NULL)
+		повернути NULL;
 
-	if (c->imagemaps == NULL)
-		return NULL;
+	якщо (c->imagemaps == NULL)
+		повернути NULL;
 
 	slot = imagemap_hash(key);
 
-	for (map = c->imagemaps[slot]; map != NULL; map = map->next) {
-		if (map->key != NULL && strcasecmp(map->key, key) == 0)
+	для (map = c->imagemaps[slot]; map != NULL; map = map->next) {
+		якщо (map->key != NULL && strcasecmp(map->key, key) == 0)
 			break;
 	}
 
-	if (map == NULL || map->list == NULL)
-		return NULL;
+	якщо (map == NULL || map->list == NULL)
+		повернути NULL;
 
-	for (entry = map->list; entry; entry = entry->next) {
+	для (entry = map->list; entry; entry = entry->next) {
 		switch (entry->type) {
 		case IMAGEMAP_DEFAULT:
 			/* just return the URL. no checks required */
-			if (target)
+			якщо (target)
 				*target = entry->target;
-			return entry->url;
+			повернути entry->url;
 			break;
 		case IMAGEMAP_RECT:
-			if (click_x >= x + entry->bounds.rect.x0 &&
+			якщо (click_x >= x + entry->bounds.rect.x0 &&
 				    click_x <= x + entry->bounds.rect.x1 &&
 				    click_y >= y + entry->bounds.rect.y0 &&
 				    click_y <= y + entry->bounds.rect.y1) {
-				if (target)
+				якщо (target)
 					*target = entry->target;
-				return entry->url;
+				повернути entry->url;
 			}
 			break;
 		case IMAGEMAP_CIRCLE:
 			cx = x + entry->bounds.circle.x - click_x;
 			cy = y + entry->bounds.circle.y - click_y;
-			if ((cx * cx + cy * cy) <=
+			якщо ((cx * cx + cy * cy) <=
 				(unsigned long) (entry->bounds.circle.r *
 					entry->bounds.circle.r)) {
-				if (target)
+				якщо (target)
 					*target = entry->target;
-				return entry->url;
+				повернути entry->url;
 			}
 			break;
 		case IMAGEMAP_POLY:
-			if (imagemap_point_in_poly(entry->bounds.poly.num,
+			якщо (imagemap_point_in_poly(entry->bounds.poly.num,
 					entry->bounds.poly.xcoords,
 					entry->bounds.poly.ycoords, x, y,
 					click_x, click_y)) {
-				if (target)
+				якщо (target)
 					*target = entry->target;
-				return entry->url;
+				повернути entry->url;
 			}
 			break;
 		}
 	}
 
-	if (target)
+	якщо (target)
 		*target = NULL;
 
-	return NULL;
+	повернути NULL;
 }
