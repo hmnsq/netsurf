@@ -21,23 +21,23 @@
  * Cache implementation for bitmap images decoded into frontend format.
  */
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdlib.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "netsurf/misc.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "desktop/gui_internal.h"
+#अन्तर्भाव "netsurf/inttypes.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "netsurf/misc.h"
+#अन्तर्भाव "netsurf/bitmap.h"
+#अन्तर्भाव "content/llcache.h"
+#अन्तर्भाव "content/content_protected.h"
+#अन्तर्भाव "desktop/gui_internal.h"
 
-#include "image/image_cache.h"
-#include "image/image.h"
+#अन्तर्भाव "image/image_cache.h"
+#अन्तर्भाव "image/image.h"
 
 /**
  * Age of an entry within the cache
@@ -45,30 +45,30 @@
  * type deffed away so it can be readily changed later perhaps to a
  * wallclock time structure.
  */
-typedef unsigned int cache_age;
+प्रकारनिर्देश अचिन्हित पूर्णाङ्क cache_age;
 
 /**
  * Image cache entry
  */
-struct image_cache_entry_s {
-	struct image_cache_entry_s *next; /**< next cache entry in list */
-	struct image_cache_entry_s *prev; /**< previous cache entry in list */
+संरचना image_cache_entry_s {
+	संरचना image_cache_entry_s *next; /**< next cache entry in list */
+	संरचना image_cache_entry_s *prev; /**< previous cache entry in list */
 
 	/** content is used as a key */
-	struct content *content;
+	संरचना content *content;
 	/** associated bitmap entry */
-	struct bitmap *bitmap;
+	संरचना bitmap *bitmap;
 	/** routine to convert content into bitmap */
 	image_cache_convert_fn *convert;
 
 	/* Statistics for replacement algorithm */
 
-	unsigned int redraw_count; /**< number of times object has been drawn */
+	अचिन्हित पूर्णाङ्क redraw_गन्ती; /**< number of times object has been drawn */
 	cache_age redraw_age; /**< Age of last redraw */
-	size_t bitmap_size; /**< size if storage occupied by bitmap */
+	माप_प्रकार bitmap_size; /**< size if storage occupied by bitmap */
 	cache_age bitmap_age; /**< Age of last conversion to a bitmap by cache*/
 
-	int conversion_count; /**< Number of times image has been converted */
+	पूर्णाङ्क conversion_गन्ती; /**< Number of times image has been converted */
 };
 
 /**
@@ -79,65 +79,65 @@ struct image_cache_entry_s {
  * using wall clock time while allowing the LRU algorithm to work
  * sensibly.
  */
-struct image_cache_s {
+संरचना image_cache_s {
 	/** Cache parameters */
-	struct image_cache_parameters params;
+	संरचना image_cache_parameters params;
 
 	/** The "age" of the current operation */
 	cache_age current_age;
 
 	/* The objects the cache holds */
-	struct image_cache_entry_s *entries;
+	संरचना image_cache_entry_s *entries;
 
 
 	/* Statistics for management algorithm */
 
 	/** total size of bitmaps currently allocated */
-	size_t total_bitmap_size;
+	माप_प्रकार total_bitmap_size;
 
 	/** Total count of bitmaps currently allocated */
-	int bitmap_count;
+	पूर्णाङ्क bitmap_गन्ती;
 
 	/** Maximum size of bitmaps allocated at any one time */
-	size_t max_bitmap_size;
+	माप_प्रकार max_bitmap_size;
 	/** The number of objects when maximum bitmap usage occurred */
-	int max_bitmap_size_count;
+	पूर्णाङ्क max_bitmap_size_गन्ती;
 
 	/** Maximum count of bitmaps allocated at any one time */
-	int max_bitmap_count;
+	पूर्णाङ्क max_bitmap_गन्ती;
 	/** The size of the bitmaps when the max count occurred */
-	size_t max_bitmap_count_size;
+	माप_प्रकार max_bitmap_गन्ती_size;
 
 	/** Bitmap was not available at plot time required conversion */
-	int miss_count;
+	पूर्णाङ्क miss_गन्ती;
 	uint64_t miss_size;
 	/** Bitmap was available at plot time required no conversion */
-	int hit_count;
+	पूर्णाङ्क hit_गन्ती;
 	uint64_t hit_size;
 	/** Bitmap was not available at plot time and required
 	 * conversion which failed.
 	 */
-	int fail_count;
+	पूर्णाङ्क fail_गन्ती;
 	uint64_t fail_size;
 
 	/* Cache entry freed without ever being redrawn */
-	int total_unrendered;
+	पूर्णाङ्क total_unrendered;
 	/** Bitmap was available but never required - wasted conversions */
-	int specultive_miss_count;
+	पूर्णाङ्क specultive_miss_गन्ती;
 
 	/** Total number of additional (after the first) conversions */
-	int total_extra_conversions;
+	पूर्णाङ्क total_extra_conversions;
 	/** counts total number of images with more than one conversion */
-	int total_extra_conversions_count;
+	पूर्णाङ्क total_extra_conversions_गन्ती;
 
 	/** Bitmap with most conversions was converted this many times */
-	int peak_conversions;
+	पूर्णाङ्क peak_conversions;
 	/** Size of bitmap with most conversions */
-	unsigned int peak_conversions_size;
+	अचिन्हित पूर्णाङ्क peak_conversions_size;
 };
 
 /** image cache state */
-static struct image_cache_s *image_cache = NULL;
+स्थिर संरचना image_cache_s *image_cache = रिक्त;
 
 
 /**
@@ -146,16 +146,16 @@ static struct image_cache_s *image_cache = NULL;
  * \param entryn index of cache entry
  * \return cache entry at index or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__findn(int entryn)
+स्थिर संरचना image_cache_entry_s *image_cache__findn(पूर्णाङ्क entryn)
 {
-	struct image_cache_entry_s *found;
+	संरचना image_cache_entry_s *found;
 
 	found = image_cache->entries;
-	while ((found != NULL) && (entryn > 0)) {
+	जबसम्म ((found != रिक्त) && (entryn > 0)) {
 		entryn--;
 		found = found->next;
 	}
-	return found;
+	फर्काऊ found;
 }
 
 
@@ -165,15 +165,15 @@ static struct image_cache_entry_s *image_cache__findn(int entryn)
  * \param c The content to get an entry for
  * \return The image cache entry or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__find(const struct content *c)
+स्थिर संरचना image_cache_entry_s *image_cache__find(अचर संरचना content *c)
 {
-	struct image_cache_entry_s *found;
+	संरचना image_cache_entry_s *found;
 
 	found = image_cache->entries;
-	while ((found != NULL) && (found->content != c)) {
+	जबसम्म ((found != रिक्त) && (found->content != c)) {
 		found = found->next;
 	}
-	return found;
+	फर्काऊ found;
 }
 
 /**
@@ -181,67 +181,67 @@ static struct image_cache_entry_s *image_cache__find(const struct content *c)
  *
  * \param centry The image cache entry to update the stats with.
  */
-static void image_cache_stats_bitmap_add(struct image_cache_entry_s *centry)
+स्थिर शून्य image_cache_stats_bitmap_add(संरचना image_cache_entry_s *centry)
 {
 	centry->bitmap_age = image_cache->current_age;
-	centry->conversion_count++;
+	centry->conversion_गन्ती++;
 
 	image_cache->total_bitmap_size += centry->bitmap_size;
-	image_cache->bitmap_count++;
+	image_cache->bitmap_गन्ती++;
 
-	if (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
+	यदि (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
 		image_cache->max_bitmap_size = image_cache->total_bitmap_size;
-		image_cache->max_bitmap_size_count = image_cache->bitmap_count;
+		image_cache->max_bitmap_size_गन्ती = image_cache->bitmap_गन्ती;
 
 	}
 
-	if (image_cache->bitmap_count > image_cache->max_bitmap_count) {
-		image_cache->max_bitmap_count = image_cache->bitmap_count;
-		image_cache->max_bitmap_count_size = image_cache->total_bitmap_size;
+	यदि (image_cache->bitmap_गन्ती > image_cache->max_bitmap_गन्ती) {
+		image_cache->max_bitmap_गन्ती = image_cache->bitmap_गन्ती;
+		image_cache->max_bitmap_गन्ती_size = image_cache->total_bitmap_size;
 	}
 
-	if (centry->conversion_count == 2) {
-		image_cache->total_extra_conversions_count++;
+	यदि (centry->conversion_गन्ती == 2) {
+		image_cache->total_extra_conversions_गन्ती++;
 	}
 
-	if (centry->conversion_count > 1) {
+	यदि (centry->conversion_गन्ती > 1) {
 		image_cache->total_extra_conversions++;
 	}
 
-	if ((centry->conversion_count > image_cache->peak_conversions) ||
-	    (centry->conversion_count == image_cache->peak_conversions &&
+	यदि ((centry->conversion_गन्ती > image_cache->peak_conversions) ||
+	    (centry->conversion_गन्ती == image_cache->peak_conversions &&
 	     centry->bitmap_size > image_cache->peak_conversions_size)) {
-		image_cache->peak_conversions = centry->conversion_count;
+		image_cache->peak_conversions = centry->conversion_गन्ती;
 		image_cache->peak_conversions_size = centry->bitmap_size;
 	}
 }
 
-static void image_cache__link(struct image_cache_entry_s *centry)
+स्थिर शून्य image_cache__link(संरचना image_cache_entry_s *centry)
 {
 	centry->next = image_cache->entries;
-	centry->prev = NULL;
-	if (centry->next != NULL) {
+	centry->prev = रिक्त;
+	यदि (centry->next != रिक्त) {
 		centry->next->prev = centry;
 	}
 	image_cache->entries = centry;
 }
 
-static void image_cache__unlink(struct image_cache_entry_s *centry)
+स्थिर शून्य image_cache__unlink(संरचना image_cache_entry_s *centry)
 {
 	/* unlink entry */
-	if (centry->prev == NULL) {
+	यदि (centry->prev == रिक्त) {
 		/* first in list */
-		if (centry->next != NULL) {
+		यदि (centry->next != रिक्त) {
 			centry->next->prev = centry->prev;
 			image_cache->entries = centry->next;
-		} else {
+		} अन्यथा {
 			/* empty list */
-			image_cache->entries = NULL;
+			image_cache->entries = रिक्त;
 		}
-	} else {
+	} अन्यथा {
 		centry->prev->next = centry->next;
 
-		if (centry->next != NULL) {
+		यदि (centry->next != रिक्त) {
 			centry->next->prev = centry->prev;
 		}
 	}
@@ -252,23 +252,23 @@ static void image_cache__unlink(struct image_cache_entry_s *centry)
  *
  * \param centry The image cache entry to free bitmap from.
  */
-static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
+स्थिर शून्य image_cache__free_bitmap(संरचना image_cache_entry_s *centry)
 {
-	if (centry->bitmap != NULL) {
+	यदि (centry->bitmap != रिक्त) {
 #ifdef IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
 		      "Freeing bitmap %p size %d age %d redraw count %d",
 		      centry->bitmap,
 		      centry->bitmap_size,
 		      image_cache->current_age - centry->bitmap_age,
-		      centry->redraw_count);
+		      centry->redraw_गन्ती);
 #endif
 		guit->bitmap->destroy(centry->bitmap);
-		centry->bitmap = NULL;
+		centry->bitmap = रिक्त;
 		image_cache->total_bitmap_size -= centry->bitmap_size;
-		image_cache->bitmap_count--;
-		if (centry->redraw_count == 0) {
-			image_cache->specultive_miss_count++;
+		image_cache->bitmap_गन्ती--;
+		यदि (centry->redraw_गन्ती == 0) {
+			image_cache->specultive_miss_गन्ती++;
 		}
 	}
 
@@ -279,13 +279,13 @@ static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
  *
  * \param centry The image cache entry to free.
  */
-static void image_cache__free_entry(struct image_cache_entry_s *centry)
+स्थिर शून्य image_cache__free_entry(संरचना image_cache_entry_s *centry)
 {
 #ifdef IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "freeing %p ", centry);
 #endif
 
-	if (centry->redraw_count == 0) {
+	यदि (centry->redraw_गन्ती == 0) {
 		image_cache->total_unrendered++;
 	}
 
@@ -293,7 +293,7 @@ static void image_cache__free_entry(struct image_cache_entry_s *centry)
 
 	image_cache__unlink(centry);
 
-	free(centry);
+	मुक्त(centry);
 }
 
 /**
@@ -301,17 +301,17 @@ static void image_cache__free_entry(struct image_cache_entry_s *centry)
  *
  * \param icache The image cache context.
  */
-static void image_cache__clean(struct image_cache_s *icache)
+स्थिर शून्य image_cache__clean(संरचना image_cache_s *icache)
 {
-	struct image_cache_entry_s *centry = icache->entries;
+	संरचना image_cache_entry_s *centry = icache->entries;
 
-	while (centry != NULL) {
-		if ((icache->current_age - centry->redraw_age) >
+	जबसम्म (centry != रिक्त) {
+		यदि ((icache->current_age - centry->redraw_age) >
 		    icache->params.bg_clean_time) {
 			/* only consider older entries, avoids active entries */
-			if ((icache->total_bitmap_size >
+			यदि ((icache->total_bitmap_size >
 			     (icache->params.limit - icache->params.hysteresis)) &&
-			    (rand() > (RAND_MAX / 2))) {
+			    (अक्रम() > (अक्रम_उच्च / 2))) {
 				image_cache__free_bitmap(centry);
 			}
 		}
@@ -324,9 +324,9 @@ static void image_cache__clean(struct image_cache_s *icache)
  *
  * \param p The image cache context.
  */
-static void image_cache__background_update(void *p)
+स्थिर शून्य image_cache__background_update(शून्य *p)
 {
-	struct image_cache_s *icache = p;
+	संरचना image_cache_s *icache = p;
 
 	/* increment current cache age */
 	icache->current_age += icache->params.bg_clean_time;
@@ -343,45 +343,45 @@ static void image_cache__background_update(void *p)
 }
 
 /* exported interface documented in image_cache.h */
-struct bitmap *image_cache_get_bitmap(const struct content *c)
+संरचना bitmap *image_cache_get_bitmap(अचर संरचना content *c)
 {
-	struct image_cache_entry_s *centry;
+	संरचना image_cache_entry_s *centry;
 
 	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	यदि (centry == रिक्त) {
+		फर्काऊ रिक्त;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	यदि (centry->bitmap == रिक्त) {
+		यदि (centry->convert != रिक्त) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
+		यदि (centry->bitmap != रिक्त) {
 			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
+			image_cache->miss_गन्ती++;
 			image_cache->miss_size += centry->bitmap_size;
-		} else {
-			image_cache->fail_count++;
+		} अन्यथा {
+			image_cache->fail_गन्ती++;
 			image_cache->fail_size += centry->bitmap_size;
 		}
-	} else {
-		image_cache->hit_count++;
+	} अन्यथा {
+		image_cache->hit_गन्ती++;
 		image_cache->hit_size += centry->bitmap_size;
 	}
 
-	return centry->bitmap;
+	फर्काऊ centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
-bool image_cache_speculate(struct content *c)
+bool image_cache_speculate(संरचना content *c)
 {
 	bool decision = false;
 
 	/* If the cache is below its target usage and the bitmap is
 	 * small enough speculate.
 	 */
-	if ((image_cache->total_bitmap_size < image_cache->params.limit) &&
+	यदि ((image_cache->total_bitmap_size < image_cache->params.limit) &&
 	    (c->size <= image_cache->params.speculative_small)) {
 #ifdef IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
@@ -395,29 +395,29 @@ bool image_cache_speculate(struct content *c)
 #ifdef IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "returning %d", decision);
 #endif
-	return decision;
+	फर्काऊ decision;
 }
 
 /* exported interface documented in image_cache.h */
-struct bitmap *image_cache_find_bitmap(struct content *c)
+संरचना bitmap *image_cache_find_bitmap(संरचना content *c)
 {
-	struct image_cache_entry_s *centry;
+	संरचना image_cache_entry_s *centry;
 
 	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	यदि (centry == रिक्त) {
+		फर्काऊ रिक्त;
 	}
 
-	return centry->bitmap;
+	फर्काऊ centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
 nserror
-image_cache_init(const struct image_cache_parameters *image_cache_parameters)
+image_cache_init(अचर संरचना image_cache_parameters *image_cache_parameters)
 {
-	image_cache = calloc(1, sizeof(struct image_cache_s));
-	if (image_cache == NULL) {
-		return NSERROR_NOMEM;
+	image_cache = सुस्मृति(1, परिमाण(संरचना image_cache_s));
+	यदि (image_cache == रिक्त) {
+		फर्काऊ NSERROR_NOMEM;
 	}
 
 	image_cache->params = *image_cache_parameters;
@@ -431,27 +431,27 @@ image_cache_init(const struct image_cache_parameters *image_cache_parameters)
 	      image_cache->params.limit,
 	      image_cache->params.hysteresis);
 
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_fini(void)
+nserror image_cache_fini(शून्य)
 {
-	unsigned int op_count;
+	अचिन्हित पूर्णाङ्क op_गन्ती;
 	uint64_t op_size;
 
 	guit->misc->schedule(-1, image_cache__background_update, image_cache);
 
 	NSLOG(netsurf, INFO, "Size at finish %"PRIsizet" (in %d)",
-	      image_cache->total_bitmap_size, image_cache->bitmap_count);
+	      image_cache->total_bitmap_size, image_cache->bitmap_गन्ती);
 
-	while (image_cache->entries != NULL) {
+	जबसम्म (image_cache->entries != रिक्त) {
 		image_cache__free_entry(image_cache->entries);
 	}
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_गन्ती = image_cache->hit_गन्ती +
+		image_cache->miss_गन्ती +
+		image_cache->fail_गन्ती;
 
 	op_size = image_cache->hit_size +
 		image_cache->miss_size +
@@ -460,22 +460,22 @@ nserror image_cache_fini(void)
 	NSLOG(netsurf, INFO, "Age %ds", image_cache->current_age / 1000);
 	NSLOG(netsurf, INFO, "Peak size %"PRIsizet" (in %d)",
 	      image_cache->max_bitmap_size,
-	      image_cache->max_bitmap_size_count);
+	      image_cache->max_bitmap_size_गन्ती);
 	NSLOG(netsurf, INFO, "Peak image count %d (size %"PRIsizet")",
-	      image_cache->max_bitmap_count,
-	      image_cache->max_bitmap_count_size);
+	      image_cache->max_bitmap_गन्ती,
+	      image_cache->max_bitmap_गन्ती_size);
 
-	if ((op_count > 0) && (op_size >0)) {
+	यदि ((op_गन्ती > 0) && (op_size >0)) {
 
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (counts) %d/%d/%d/%d (100%%/%d%%/%d%%/%d%%)",
-		      op_count,
-		      image_cache->hit_count,
-		      image_cache->miss_count,
-		      image_cache->fail_count,
-		      (image_cache->hit_count * 100) / op_count,
-		      (image_cache->miss_count * 100) / op_count,
-		      (image_cache->fail_count * 100) / op_count);
+		      op_गन्ती,
+		      image_cache->hit_गन्ती,
+		      image_cache->miss_गन्ती,
+		      image_cache->fail_गन्ती,
+		      (image_cache->hit_गन्ती * 100) / op_गन्ती,
+		      (image_cache->miss_गन्ती * 100) / op_गन्ती,
+		      (image_cache->fail_गन्ती * 100) / op_गन्ती);
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (size) %"PRIu64"/%"PRIu64"/%"PRIu64"/%"PRIu64" (100%%/%"PRId64"%%/%"PRId64"%%/%"PRId64"%%)",
 		      op_size,
@@ -490,28 +490,28 @@ nserror image_cache_fini(void)
 	NSLOG(netsurf, INFO,
 	      "Total images never rendered: %d (includes %d that were converted)",
 	      image_cache->total_unrendered,
-	      image_cache->specultive_miss_count);
+	      image_cache->specultive_miss_गन्ती);
 
 	NSLOG(netsurf, INFO,
 	      "Total number of excessive conversions: %d (from %d images converted more than once)",
 	      image_cache->total_extra_conversions,
-	      image_cache->total_extra_conversions_count);
+	      image_cache->total_extra_conversions_गन्ती);
 
 	NSLOG(netsurf, INFO, "Bitmap of size %d had most (%d) conversions",
 	      image_cache->peak_conversions_size,
 	      image_cache->peak_conversions);
 
-	free(image_cache);
+	मुक्त(image_cache);
 
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_add(struct content *content,
-			struct bitmap *bitmap,
+nserror image_cache_add(संरचना content *content,
+			संरचना bitmap *bitmap,
 			image_cache_convert_fn *convert)
 {
-	struct image_cache_entry_s *centry;
+	संरचना image_cache_entry_s *centry;
 
 	/* bump the cache age by a ms to ensure multiple items are not
 	 * added at exactly the same time
@@ -519,11 +519,11 @@ nserror image_cache_add(struct content *content,
 	image_cache->current_age++;
 
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	यदि (centry == रिक्त) {
 		/* new cache entry, content not previously added */
-		centry = calloc(1, sizeof(struct image_cache_entry_s));
-		if (centry == NULL) {
-			return NSERROR_NOMEM;
+		centry = सुस्मृति(1, परिमाण(संरचना image_cache_entry_s));
+		यदि (centry == रिक्त) {
+			फर्काऊ NSERROR_NOMEM;
 		}
 		image_cache__link(centry);
 		centry->content = content;
@@ -537,134 +537,134 @@ nserror image_cache_add(struct content *content,
 	centry->convert = convert;
 
 	/* set bitmap entry if one is passed, free extant one if present */
-	if (bitmap != NULL) {
-		if (centry->bitmap != NULL) {
+	यदि (bitmap != रिक्त) {
+		यदि (centry->bitmap != रिक्त) {
 			guit->bitmap->destroy(centry->bitmap);
-		} else {
+		} अन्यथा {
 			image_cache_stats_bitmap_add(centry);
 		}
 		centry->bitmap = bitmap;
-	} else {
+	} अन्यथा {
 		/* no bitmap, check to see if we should speculatively convert */
-		if ((centry->convert != NULL) &&
+		यदि ((centry->convert != रिक्त) &&
 		    (image_cache_speculate(content) == true)) {
 			centry->bitmap = centry->convert(centry->content);
 
-			if (centry->bitmap != NULL) {
+			यदि (centry->bitmap != रिक्त) {
 				image_cache_stats_bitmap_add(centry);
-			} else {
-				image_cache->fail_count++;
+			} अन्यथा {
+				image_cache->fail_गन्ती++;
 			}
 		}
 	}
 
 
 
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_remove(struct content *content)
+nserror image_cache_remove(संरचना content *content)
 {
-	struct image_cache_entry_s *centry;
+	संरचना image_cache_entry_s *centry;
 
 	/* get the cache entry */
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	यदि (centry == रिक्त) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-		return NSERROR_NOT_FOUND;
+		फर्काऊ NSERROR_NOT_FOUND;
 	}
 
 	image_cache__free_entry(centry);
 
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt)
+पूर्णाङ्क image_cache_snsummaryf(वर्ण *string, माप_प्रकार size, अचर वर्ण *fmt)
 {
-	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	माप_प्रकार slen = 0; /* current output string length */
+	पूर्णाङ्क fmtc = 0; /* current index into format string */
 	bool pct;
-	unsigned int op_count;
+	अचिन्हित पूर्णाङ्क op_गन्ती;
 	uint64_t op_size;
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_गन्ती = image_cache->hit_गन्ती +
+		image_cache->miss_गन्ती +
+		image_cache->fail_गन्ती;
 
 	op_size = image_cache->hit_size +
 		image_cache->miss_size +
 		image_cache->fail_size;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	जबसम्म((slen < size) && (fmt[fmtc] != 0)) {
+		यदि (fmt[fmtc] == '%') {
 			fmtc++;
 
 			/* check for percentage modifier */
-			if (fmt[fmtc] == 'p') {
+			यदि (fmt[fmtc] == 'p') {
 				fmtc++;
 				pct = true;
-			} else {
+			} अन्यथा {
 				pct = false;
 			}
 
-#define FMTCHR(chr,fmt,var) case chr : \
-slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); break
+#define FMTCHR(chr,fmt,var) पक्ष chr : \
+slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); रोक
 
-#define FMTPCHR(chr,fmt,var,div) \
-case chr :					\
-	if (pct) {							\
-		if (div > 0) {						\
-			slen += snprintf(string + slen, size - slen, "%"PRId64, (uint64_t)((image_cache->var * 100) / div)); \
-		} else {						\
+#define FMTPCHR(chr,fmt,var,भाग) \
+पक्ष chr :					\
+	यदि (pct) {							\
+		यदि (भाग > 0) {						\
+			slen += snprintf(string + slen, size - slen, "%"PRId64, (uint64_t)((image_cache->var * 100) / भाग)); \
+		} अन्यथा {						\
 			slen += snprintf(string + slen, size - slen, "100"); \
 		}							\
-	} else {							\
+	} अन्यथा {							\
 		slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); \
-	} break
+	} रोक
 
 
-			switch (fmt[fmtc]) {
-			case '%':
+			विकल्प (fmt[fmtc]) {
+			पक्ष '%':
 				string[slen] = '%';
 				slen++;
-				break;
+				रोक;
 
 			FMTCHR('a', PRIsizet, params.limit);
 			FMTCHR('b', PRIsizet, params.hysteresis);
 			FMTCHR('c', PRIsizet, total_bitmap_size);
-			FMTCHR('d', "d", bitmap_count);
+			FMTCHR('d', "d", bitmap_गन्ती);
 			FMTCHR('e', "u", current_age / 1000);
 			FMTCHR('f', PRIsizet, max_bitmap_size);
-			FMTCHR('g', "d", max_bitmap_size_count);
-			FMTCHR('h', "d", max_bitmap_count);
-			FMTCHR('i', PRIsizet, max_bitmap_count_size);
+			FMTCHR('g', "d", max_bitmap_size_गन्ती);
+			FMTCHR('h', "d", max_bitmap_गन्ती);
+			FMTCHR('i', PRIsizet, max_bitmap_गन्ती_size);
 
 
-			case 'j':
+			पक्ष 'j':
 				slen += snprintf(string + slen, size - slen,
-						 "%u", pct?100:op_count);
-				break;
+						 "%u", pct?100:op_गन्ती);
+				रोक;
 
-			FMTPCHR('k', "d", hit_count, op_count);
-			FMTPCHR('l', "d", miss_count, op_count);
-			FMTPCHR('m', "d", fail_count, op_count);
+			FMTPCHR('k', "d", hit_गन्ती, op_गन्ती);
+			FMTPCHR('l', "d", miss_गन्ती, op_गन्ती);
+			FMTPCHR('m', "d", fail_गन्ती, op_गन्ती);
 
-			case 'n':
+			पक्ष 'n':
 				slen += snprintf(string + slen, size - slen,
 						 "%"PRId64, pct?100:op_size);
-				break;
+				रोक;
 
 			FMTPCHR('o', PRId64, hit_size, op_size);
 			FMTPCHR('q', PRId64, miss_size, op_size);
 			FMTPCHR('r', PRId64, fail_size, op_size);
 
 			FMTCHR('s', "d", total_unrendered);
-			FMTCHR('t', "d", specultive_miss_count);
+			FMTCHR('t', "d", specultive_miss_गन्ती);
 			FMTCHR('u', "d", total_extra_conversions);
-			FMTCHR('v', "d", total_extra_conversions_count);
+			FMTCHR('v', "d", total_extra_conversions_गन्ती);
 			FMTCHR('w', "u", peak_conversions_size);
 			FMTCHR('x', "d", peak_conversions);
 
@@ -674,7 +674,7 @@ case chr :					\
 #undef FMTPCHR
 
 			fmtc++;
-		} else {
+		} अन्यथा {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -684,67 +684,67 @@ case chr :					\
 	/* Ensure that we NUL-terminate the output */
 	string[min(slen, size - 1)] = '\0';
 
-	return slen;
+	फर्काऊ slen;
 }
 
 /* exported interface documented in image_cache.h */
-int
-image_cache_snentryf(char *string,
-		     size_t size,
-		     unsigned int entryn,
-		     const char *fmt)
+पूर्णाङ्क
+image_cache_snentryf(वर्ण *string,
+		     माप_प्रकार size,
+		     अचिन्हित पूर्णाङ्क entryn,
+		     अचर वर्ण *fmt)
 {
-	struct image_cache_entry_s *centry;
-	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	संरचना image_cache_entry_s *centry;
+	माप_प्रकार slen = 0; /* current output string length */
+	पूर्णाङ्क fmtc = 0; /* current index into format string */
 	lwc_string *origin; /* current entry's origin */
 
 	centry = image_cache__findn(entryn);
-	if (centry == NULL)
-		return -1;
+	यदि (centry == रिक्त)
+		फर्काऊ -1;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	जबसम्म((slen < size) && (fmt[fmtc] != 0)) {
+		यदि (fmt[fmtc] == '%') {
 			fmtc++;
-			switch (fmt[fmtc]) {
-			case 'e':
+			विकल्प (fmt[fmtc]) {
+			पक्ष 'e':
 				slen += snprintf(string + slen, size - slen,
 						"%u", entryn);
-				break;
+				रोक;
 
-			case 'r':
+			पक्ष 'r':
 				slen += snprintf(string + slen, size - slen,
-						"%u", centry->redraw_count);
-				break;
+						"%u", centry->redraw_गन्ती);
+				रोक;
 
-			case 'a':
+			पक्ष 'a':
 				slen += snprintf(string + slen, size - slen,
-						 "%.2f", (float)((image_cache->current_age -  centry->redraw_age)) / 1000);
-				break;
+						 "%.2f", (भिन्न)((image_cache->current_age -  centry->redraw_age)) / 1000);
+				रोक;
 
 
-			case 'c':
+			पक्ष 'c':
 				slen += snprintf(string + slen, size - slen,
-						"%d", centry->conversion_count);
-				break;
+						"%d", centry->conversion_गन्ती);
+				रोक;
 
-			case 'g':
+			पक्ष 'g':
 				slen += snprintf(string + slen, size - slen,
-						"%.2f", (float)((image_cache->current_age -  centry->bitmap_age)) / 1000);
-				break;
+						"%.2f", (भिन्न)((image_cache->current_age -  centry->bitmap_age)) / 1000);
+				रोक;
 
-			case 'k':
+			पक्ष 'k':
 				slen += snprintf(string + slen, size - slen,
 						"%p", centry->content);
-				break;
+				रोक;
 
-			case 'U':
+			पक्ष 'U':
 				slen += snprintf(string + slen, size - slen,
 						"%s", nsurl_access(llcache_handle_get_url(centry->content->llcache)));
-				break;
+				रोक;
 
-			case 'o':
-				if (nsurl_has_component(llcache_handle_get_url(
+			पक्ष 'o':
+				यदि (nsurl_has_component(llcache_handle_get_url(
 						centry->content->llcache),
 						NSURL_HOST)) {
 					origin = nsurl_get_component(
@@ -759,28 +759,28 @@ image_cache_snentryf(char *string,
 								origin));
 
 					lwc_string_unref(origin);
-				} else {
+				} अन्यथा {
 					slen += snprintf(string + slen,
 							size - slen, "%s",
 							"localhost");
 				}
-				break;
+				रोक;
 
-			case 's':
-				if (centry->bitmap != NULL) {
+			पक्ष 's':
+				यदि (centry->bitmap != रिक्त) {
 					slen += snprintf(string + slen,
 							 size - slen,
 							 "%" PRIsizet,
 							 centry->bitmap_size);
-				} else {
+				} अन्यथा {
 					slen += snprintf(string + slen,
 							 size - slen,
 							 "0");
 				}
-				break;
+				रोक;
 			}
 			fmtc++;
-		} else {
+		} अन्यथा {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -790,87 +790,87 @@ image_cache_snentryf(char *string,
 	/* Ensure that we NUL-terminate the output */
 	string[min(slen, size - 1)] = '\0';
 
-	return slen;
+	फर्काऊ slen;
 }
 
 
 /* exported interface documented in image_cache.h */
-bool image_cache_redraw(struct content *c,
-			struct content_redraw_data *data,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+bool image_cache_redraw(संरचना content *c,
+			संरचना content_redraw_data *data,
+			अचर संरचना rect *clip,
+			अचर संरचना redraw_context *ctx)
 {
-	struct image_cache_entry_s *centry;
+	संरचना image_cache_entry_s *centry;
 
 	/* get the cache entry */
 	centry = image_cache__find(c);
-	if (centry == NULL) {
+	यदि (centry == रिक्त) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", c);
-		return false;
+		फर्काऊ false;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	यदि (centry->bitmap == रिक्त) {
+		यदि (centry->convert != रिक्त) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
+		यदि (centry->bitmap != रिक्त) {
 			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
+			image_cache->miss_गन्ती++;
 			image_cache->miss_size += centry->bitmap_size;
-		} else {
-			image_cache->fail_count++;
+		} अन्यथा {
+			image_cache->fail_गन्ती++;
 			image_cache->fail_size += centry->bitmap_size;
-			return false;
+			फर्काऊ false;
 		}
-	} else {
-		image_cache->hit_count++;
+	} अन्यथा {
+		image_cache->hit_गन्ती++;
 		image_cache->hit_size += centry->bitmap_size;
 	}
 
 
 	/* update statistics */
-	centry->redraw_count++;
+	centry->redraw_गन्ती++;
 	centry->redraw_age = image_cache->current_age;
 
-	return image_bitmap_plot(centry->bitmap, data, clip, ctx);
+	फर्काऊ image_bitmap_plot(centry->bitmap, data, clip, ctx);
 }
 
 /* exported interface documented in image_cache.h */
-void image_cache_destroy(struct content *content)
+शून्य image_cache_destroy(संरचना content *content)
 {
-	struct image_cache_entry_s *centry;
+	संरचना image_cache_entry_s *centry;
 
 	/* get the cache entry */
 	centry = image_cache__find(content);
-	if (centry == NULL) {
+	यदि (centry == रिक्त) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-	} else {
+	} अन्यथा {
 		image_cache__free_entry(centry);
 	}
 }
 
 /* exported interface documented in image_cache.h */
-void *image_cache_get_internal(const struct content *c, void *context)
+शून्य *image_cache_get_internal(अचर संरचना content *c, शून्य *context)
 {
-	return image_cache_get_bitmap(c);
+	फर्काऊ image_cache_get_bitmap(c);
 }
 
 /* exported interface documented in image_cache.h */
-bool image_cache_is_opaque(struct content *c)
+bool image_cache_is_opaque(संरचना content *c)
 {
-	struct bitmap *bmp;
+	संरचना bitmap *bmp;
 	bmp = image_cache_get_bitmap(c);
-	if (bmp != NULL) {
-		return guit->bitmap->get_opaque(bmp);
+	यदि (bmp != रिक्त) {
+		फर्काऊ guit->bitmap->get_opaque(bmp);
 	}
-	return false;
+	फर्काऊ false;
 }
 
 /* exported interface documented in image_cache.h */
-content_type image_cache_content_type(void)
+content_type image_cache_content_type(शून्य)
 {
-	return CONTENT_IMAGE;
+	फर्काऊ CONTENT_IMAGE;
 }

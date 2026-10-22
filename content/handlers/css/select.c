@@ -16,123 +16,123 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <string.h>
-#include <strings.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "netsurf/url_db.h"
-#include "desktop/system_colour.h"
+#अन्तर्भाव "utils/nsoption.h"
+#अन्तर्भाव "utils/corestrings.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/nsurl.h"
+#अन्तर्भाव "netsurf/plot_style.h"
+#अन्तर्भाव "netsurf/url_db.h"
+#अन्तर्भाव "desktop/system_colour.h"
 
-#include "css/internal.h"
-#include "css/hints.h"
-#include "css/select.h"
+#अन्तर्भाव "css/internal.h"
+#अन्तर्भाव "css/hints.h"
+#अन्तर्भाव "css/select.h"
 
-static css_error node_name(void *pw, void *node, css_qname *qname);
-static css_error node_classes(void *pw, void *node,
+स्थिर css_error गाँठो_name(शून्य *pw, शून्य *गाँठो, css_qname *qname);
+स्थिर css_error गाँठो_classes(शून्य *pw, शून्य *गाँठो,
 		lwc_string ***classes, uint32_t *n_classes);
-static css_error node_id(void *pw, void *node, lwc_string **id);
-static css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent);
-static css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error parent_node(void *pw, void *node, void **parent);
-static css_error sibling_node(void *pw, void *node, void **sibling);
-static css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_class(void *pw, void *node,
+स्थिर css_error गाँठो_id(शून्य *pw, शून्य *गाँठो, lwc_string **id);
+स्थिर css_error named_parent_गाँठो(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, शून्य **parent);
+स्थिर css_error named_sibling_गाँठो(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, शून्य **sibling);
+स्थिर css_error named_generic_sibling_गाँठो(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, शून्य **sibling);
+स्थिर css_error parent_गाँठो(शून्य *pw, शून्य *गाँठो, शून्य **parent);
+स्थिर css_error sibling_गाँठो(शून्य *pw, शून्य *गाँठो, शून्य **sibling);
+स्थिर css_error गाँठो_has_name(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, bool *match);
+स्थिर css_error गाँठो_has_class(शून्य *pw, शून्य *गाँठो,
 		lwc_string *name, bool *match);
-static css_error node_has_id(void *pw, void *node,
+स्थिर css_error गाँठो_has_id(शून्य *pw, शून्य *गाँठो,
 		lwc_string *name, bool *match);
-static css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+स्थिर css_error गाँठो_has_attribute(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, bool *match);
+स्थिर css_error गाँठो_has_attribute_equal(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match);
-static css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+स्थिर css_error गाँठो_has_attribute_dashmatch(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match);
-static css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+स्थिर css_error गाँठो_has_attribute_includes(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match);
-static css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+स्थिर css_error गाँठो_has_attribute_prefix(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match);
-static css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+स्थिर css_error गाँठो_has_attribute_suffix(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match);
-static css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+स्थिर css_error गाँठो_has_attribute_substring(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match);
-static css_error node_is_root(void *pw, void *node, bool *match);
-static css_error node_count_siblings(void *pw, void *node,
-		bool same_name, bool after, int32_t *count);
-static css_error node_is_empty(void *pw, void *node, bool *match);
-static css_error node_is_link(void *pw, void *node, bool *match);
-static css_error node_is_hover(void *pw, void *node, bool *match);
-static css_error node_is_active(void *pw, void *node, bool *match);
-static css_error node_is_focus(void *pw, void *node, bool *match);
-static css_error node_is_enabled(void *pw, void *node, bool *match);
-static css_error node_is_disabled(void *pw, void *node, bool *match);
-static css_error node_is_checked(void *pw, void *node, bool *match);
-static css_error node_is_target(void *pw, void *node, bool *match);
-static css_error node_is_lang(void *pw, void *node,
+स्थिर css_error गाँठो_is_जरा(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_गन्ती_siblings(शून्य *pw, शून्य *गाँठो,
+		bool same_name, bool after, int32_t *गन्ती);
+स्थिर css_error गाँठो_is_empty(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_link(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_hover(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_active(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_focus(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_enabled(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_disabled(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_checked(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_target(शून्य *pw, शून्य *गाँठो, bool *match);
+स्थिर css_error गाँठो_is_lang(शून्य *pw, शून्य *गाँठो,
 		lwc_string *lang, bool *match);
-static css_error ua_default_for_property(void *pw, uint32_t property,
+स्थिर css_error ua_default_for_property(शून्य *pw, uint32_t property,
 		css_hint *hint);
-static css_error set_libcss_node_data(void *pw, void *node,
-		void *libcss_node_data);
-static css_error get_libcss_node_data(void *pw, void *node,
-		void **libcss_node_data);
+स्थिर css_error set_libcss_गाँठो_data(शून्य *pw, शून्य *गाँठो,
+		शून्य *libcss_गाँठो_data);
+स्थिर css_error get_libcss_गाँठो_data(शून्य *pw, शून्य *गाँठो,
+		शून्य **libcss_गाँठो_data);
 
 /**
  * Selection callback table for libcss
  */
-static css_select_handler selection_handler = {
+स्थिर css_select_handler selection_handler = {
 	CSS_SELECT_HANDLER_VERSION_1,
 
-	node_name,
-	node_classes,
-	node_id,
-	named_ancestor_node,
-	named_parent_node,
-	named_sibling_node,
-	named_generic_sibling_node,
-	parent_node,
-	sibling_node,
-	node_has_name,
-	node_has_class,
-	node_has_id,
-	node_has_attribute,
-	node_has_attribute_equal,
-	node_has_attribute_dashmatch,
-	node_has_attribute_includes,
-	node_has_attribute_prefix,
-	node_has_attribute_suffix,
-	node_has_attribute_substring,
-	node_is_root,
-	node_count_siblings,
-	node_is_empty,
-	node_is_link,
-	node_is_visited,
-	node_is_hover,
-	node_is_active,
-	node_is_focus,
-	node_is_enabled,
-	node_is_disabled,
-	node_is_checked,
-	node_is_target,
-	node_is_lang,
-	node_presentational_hint,
+	गाँठो_name,
+	गाँठो_classes,
+	गाँठो_id,
+	named_ancestor_गाँठो,
+	named_parent_गाँठो,
+	named_sibling_गाँठो,
+	named_generic_sibling_गाँठो,
+	parent_गाँठो,
+	sibling_गाँठो,
+	गाँठो_has_name,
+	गाँठो_has_class,
+	गाँठो_has_id,
+	गाँठो_has_attribute,
+	गाँठो_has_attribute_equal,
+	गाँठो_has_attribute_dashmatch,
+	गाँठो_has_attribute_includes,
+	गाँठो_has_attribute_prefix,
+	गाँठो_has_attribute_suffix,
+	गाँठो_has_attribute_substring,
+	गाँठो_is_जरा,
+	गाँठो_गन्ती_siblings,
+	गाँठो_is_empty,
+	गाँठो_is_link,
+	गाँठो_is_visited,
+	गाँठो_is_hover,
+	गाँठो_is_active,
+	गाँठो_is_focus,
+	गाँठो_is_enabled,
+	गाँठो_is_disabled,
+	गाँठो_is_checked,
+	गाँठो_is_target,
+	गाँठो_is_lang,
+	गाँठो_presentational_hint,
 	ua_default_for_property,
-	set_libcss_node_data,
-	get_libcss_node_data,
+	set_libcss_गाँठो_data,
+	get_libcss_गाँठो_data,
 };
 
 /**
@@ -145,8 +145,8 @@ static css_select_handler selection_handler = {
  * \param allow_quirks  True to permit CSS parsing quirks
  * \return Pointer to stylesheet, or NULL on failure.
  */
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks)
+css_stylesheet *nscss_create_inline_style(अचर uint8_t *data, माप_प्रकार len,
+		अचर वर्ण *charset, अचर वर्ण *url, bool allow_quirks)
 {
 	css_stylesheet_params params;
 	css_stylesheet *sheet;
@@ -156,86 +156,86 @@ css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = रिक्त;
 	params.allow_quirks = allow_quirks;
 	params.inline_style = true;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
-	params.import = NULL;
-	params.import_pw = NULL;
+	params.resolve_pw = रिक्त;
+	params.import = रिक्त;
+	params.import_pw = रिक्त;
 	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.color_pw = रिक्त;
+	params.font = रिक्त;
+	params.font_pw = रिक्त;
 
 	error = css_stylesheet_create(&params, &sheet);
-	if (error != CSS_OK) {
+	यदि (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "Failed creating sheet: %d", error);
-		return NULL;
+		फर्काऊ रिक्त;
 	}
 
 	error = css_stylesheet_append_data(sheet, data, len);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	यदि (error != CSS_OK && error != CSS_NEEDDATA) {
 		NSLOG(netsurf, INFO, "failed appending data: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		फर्काऊ रिक्त;
 	}
 
 	error = css_stylesheet_data_done(sheet);
-	if (error != CSS_OK) {
+	यदि (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "failed completing parse: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		फर्काऊ रिक्त;
 	}
 
-	return sheet;
+	फर्काऊ sheet;
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
-static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+स्थिर शून्य nscss_dom_user_data_handler(dom_गाँठो_operation operation,
+		dom_string *साँचो, शून्य *data, संरचना dom_गाँठो *src,
+		संरचना dom_गाँठो *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
-			key) == false || data == NULL) {
-		return;
+	यदि (dom_string_isequal(corestring_dom_ns_साँचो_libcss_गाँठो_data,
+			साँचो) == false || data == रिक्त) {
+		फर्काऊ;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_CLONED,
-				NULL, src, dst, data);
-		if (error != CSS_OK)
+	विकल्प (operation) {
+	पक्ष DOM_गाँठो_CLONED:
+		error = css_libcss_गाँठो_data_handler(&selection_handler,
+				CSS_गाँठो_CLONED,
+				रिक्त, src, dst, data);
+		यदि (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
-		break;
+		रोक;
 
-	case DOM_NODE_RENAMED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_MODIFIED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	पक्ष DOM_गाँठो_RENAMED:
+		error = css_libcss_गाँठो_data_handler(&selection_handler,
+				CSS_गाँठो_MODIFIED,
+				रिक्त, src, रिक्त, data);
+		यदि (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
-		break;
+		रोक;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_DELETED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	पक्ष DOM_गाँठो_IMPORTED:
+	पक्ष DOM_गाँठो_ADOPTED:
+	पक्ष DOM_गाँठो_DELETED:
+		error = css_libcss_गाँठो_data_handler(&selection_handler,
+				CSS_गाँठो_DELETED,
+				रिक्त, src, रिक्त, data);
+		यदि (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to delete libcss_node_data.");
-		break;
+		रोक;
 
-	default:
+	स्वभाव:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		प्रतिज्ञा(0);
 	}
 }
 
@@ -250,36 +250,36 @@ static void nscss_dom_user_data_handler(dom_node_operation operation,
  * \return Pointer to selection results (containing computed styles),
  *         or NULL on failure
  */
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style)
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_गाँठो *n,
+		अचर css_media *media,
+		अचर css_unit_ctx *unit_len_ctx,
+		अचर css_stylesheet *inline_style)
 {
 	css_computed_style *composed;
 	css_select_results *styles;
-	int pseudo_element;
+	पूर्णाङ्क pseudo_element;
 	css_error error;
 
 	/* Select style for node */
 	error = css_select_style(ctx->ctx, n, unit_len_ctx, media, inline_style,
 			&selection_handler, ctx, &styles);
 
-	if (error != CSS_OK || styles == NULL) {
+	यदि (error != CSS_OK || styles == रिक्त) {
 		/* Failed selecting partial style -- bail out */
-		return NULL;
+		फर्काऊ रिक्त;
 	}
 
 	/* If there's a parent style, compose with partial to obtain
 	 * complete computed style for element */
-	if (ctx->parent_style != NULL) {
+	यदि (ctx->parent_style != रिक्त) {
 		/* Complete the computed style, by composing with the parent
 		 * element's style */
 		error = css_computed_style_compose(ctx->parent_style,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		यदि (error != CSS_OK) {
 			css_select_results_destroy(styles);
-			return NULL;
+			फर्काऊ रिक्त;
 		}
 
 		/* Replace select_results style with composed style */
@@ -288,19 +288,19 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[CSS_PSEUDO_ELEMENT_NONE] = composed;
 	}
 
-	for (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
-			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
+	लागि (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
+			pseudo_element < CSS_PSEUDO_ELEMENT_गन्ती;
 			pseudo_element++) {
 
-		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
-				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
+		यदि (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
+				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_पङ्क्ति)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
-			continue;
+			जारी;
 
-		if (styles->styles[pseudo_element] == NULL)
+		यदि (styles->styles[pseudo_element] == रिक्त)
 			/* There were no rules concerning this pseudo element */
-			continue;
+			जारी;
 
 		/* Complete the pseudo element's computed style, by composing
 		 * with the base element's style */
@@ -308,11 +308,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				styles->styles[pseudo_element],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		यदि (error != CSS_OK) {
 			/* TODO: perhaps this shouldn't be quite so
 			 * catastrophic? */
 			css_select_results_destroy(styles);
-			return NULL;
+			फर्काऊ रिक्त;
 		}
 
 		/* Replace select_results style with composed style */
@@ -320,7 +320,7 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[pseudo_element] = composed;
 	}
 
-	return styles;
+	फर्काऊ styles;
 }
 
 /**
@@ -332,16 +332,16 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
  * \return Pointer to blank style, or NULL on failure
  */
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent)
+		अचर css_unit_ctx *unit_len_ctx,
+		अचर css_computed_style *parent)
 {
 	css_computed_style *partial, *composed;
 	css_error error;
 
 	error = css_select_default_style(ctx->ctx,
 			&selection_handler, ctx, &partial);
-	if (error != CSS_OK) {
-		return NULL;
+	यदि (error != CSS_OK) {
+		फर्काऊ रिक्त;
 	}
 
 	/* TODO: Do we really need to compose?  Initial style shouldn't
@@ -349,12 +349,12 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
 	error = css_computed_style_compose(parent, partial,
 			unit_len_ctx, &composed);
 	css_computed_style_destroy(partial);
-	if (error != CSS_OK) {
+	यदि (error != CSS_OK) {
 		css_computed_style_destroy(composed);
-		return NULL;
+		फर्काऊ रिक्त;
 	}
 
-	return composed;
+	फर्काऊ composed;
 }
 
 /******************************************************************************
@@ -370,27 +370,27 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_name(void *pw, void *node, css_qname *qname)
+css_error गाँठो_name(शून्य *pw, शून्य *गाँठो, css_qname *qname)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *name;
 	dom_exception err;
 
-	err = dom_node_get_node_name(n, &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	err = dom_गाँठो_get_गाँठो_name(n, &name);
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
-	qname->ns = NULL;
+	qname->ns = रिक्त;
 
 	err = dom_string_intern(name, &qname->name);
-	if (err != DOM_NO_ERR) {
+	यदि (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_NOMEM;
+		फर्काऊ CSS_NOMEM;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -407,20 +407,20 @@ css_error node_name(void *pw, void *node, css_qname *qname)
  *       be allocated using the same allocator as used by libcss during style
  *       selection.
  */
-css_error node_classes(void *pw, void *node,
+css_error गाँठो_classes(शून्य *pw, शून्य *गाँठो,
 		lwc_string ***classes, uint32_t *n_classes)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_exception err;
 
-	*classes = NULL;
+	*classes = रिक्त;
 	*n_classes = 0;
 
 	err = dom_element_get_classes(n, classes, n_classes);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -432,29 +432,29 @@ css_error node_classes(void *pw, void *node,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_id(void *pw, void *node, lwc_string **id)
+css_error गाँठो_id(शून्य *pw, शून्य *गाँठो, lwc_string **id)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *attr;
 	dom_exception err;
 
-	*id = NULL;
+	*id = रिक्त;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
-	if (attr != NULL) {
+	यदि (attr != रिक्त) {
 		err = dom_string_intern(attr, id);
-		if (err != DOM_NO_ERR) {
+		यदि (err != DOM_NO_ERR) {
 			dom_string_unref(attr);
-			return CSS_NOMEM;
+			फर्काऊ CSS_NOMEM;
 		}
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -468,14 +468,14 @@ css_error node_id(void *pw, void *node, lwc_string **id)
  *
  * \post \a ancestor will contain the result, or NULL if there is no match
  */
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor)
+css_error named_ancestor_गाँठो(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, शून्य **ancestor)
 {
-	dom_element_named_ancestor_node(node, qname->name,
-			(struct dom_element **)ancestor);
-	dom_node_unref(*ancestor);
+	dom_element_named_ancestor_गाँठो(गाँठो, qname->name,
+			(संरचना dom_element **)ancestor);
+	dom_गाँठो_unref(*ancestor);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -489,14 +489,14 @@ css_error named_ancestor_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent)
+css_error named_parent_गाँठो(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, शून्य **parent)
 {
-	dom_element_named_parent_node(node, qname->name,
-			(struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_named_parent_गाँठो(गाँठो, qname->name,
+			(संरचना dom_element **)parent);
+	dom_गाँठो_unref(*parent);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -510,61 +510,61 @@ css_error named_parent_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_sibling_गाँठो(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, शून्य **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_गाँठो *n = गाँठो;
+	dom_गाँठो *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = रिक्त;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_गाँठो_get_previous_sibling(n, &n);
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	जबसम्म (n != रिक्त) {
+		dom_गाँठो_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_गाँठो_get_गाँठो_type(n, &type);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		यदि (type == DOM_ELEMENT_गाँठो)
+			रोक;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_गाँठो_get_previous_sibling(n, &prev);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_गाँठो_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	यदि (n != रिक्त) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_गाँठो_get_गाँठो_name(n, &name);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_गाँठो_unref(n);
 
-		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
+		यदि (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
 		}
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -578,57 +578,57 @@ css_error named_sibling_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_generic_sibling_गाँठो(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, शून्य **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_गाँठो *n = गाँठो;
+	dom_गाँठो *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = रिक्त;
 
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_गाँठो_get_previous_sibling(n, &n);
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	जबसम्म (n != रिक्त) {
+		dom_गाँठो_type type;
 		dom_string *name;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_गाँठो_get_गाँठो_type(n, &type);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
-			err = dom_node_get_node_name(n, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(n);
-				return CSS_OK;
+		यदि (type == DOM_ELEMENT_गाँठो) {
+			err = dom_गाँठो_get_गाँठो_name(n, &name);
+			यदि (err != DOM_NO_ERR) {
+				dom_गाँठो_unref(n);
+				फर्काऊ CSS_OK;
 			}
 
-			if (dom_string_caseless_lwc_isequal(name,
+			यदि (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
-				dom_node_unref(n);
+				dom_गाँठो_unref(n);
 				*sibling = n;
-				break;
+				रोक;
 			}
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_गाँठो_get_previous_sibling(n, &prev);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_गाँठो_unref(n);
 		n = prev;
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -641,12 +641,12 @@ css_error named_generic_sibling_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error parent_node(void *pw, void *node, void **parent)
+css_error parent_गाँठो(शून्य *pw, शून्य *गाँठो, शून्य **parent)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_parent_गाँठो(गाँठो, (संरचना dom_element **)parent);
+	dom_गाँठो_unref(*parent);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -659,49 +659,49 @@ css_error parent_node(void *pw, void *node, void **parent)
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error sibling_node(void *pw, void *node, void **sibling)
+css_error sibling_गाँठो(शून्य *pw, शून्य *गाँठो, शून्य **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_गाँठो *n = गाँठो;
+	dom_गाँठो *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = रिक्त;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_गाँठो_get_previous_sibling(n, &n);
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	जबसम्म (n != रिक्त) {
+		dom_गाँठो_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_गाँठो_get_गाँठो_type(n, &type);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		यदि (type == DOM_ELEMENT_गाँठो)
+			रोक;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_गाँठो_get_previous_sibling(n, &prev);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_गाँठो_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	यदि (n != रिक्त) {
 		/** \todo Sort out reference counting */
-		dom_node_unref(n);
+		dom_गाँठो_unref(n);
 
 		*sibling = n;
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -715,20 +715,20 @@ css_error sibling_node(void *pw, void *node, void **sibling)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error गाँठो_has_name(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, bool *match)
 {
 	nscss_select_ctx *ctx = pw;
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 
-	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
+	यदि (lwc_string_isequal(qname->name, ctx->universal, match) ==
 			lwc_error_ok && *match == false) {
 		dom_string *name;
 		dom_exception err;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR)
-			return CSS_OK;
+		err = dom_गाँठो_get_गाँठो_name(n, &name);
+		यदि (err != DOM_NO_ERR)
+			फर्काऊ CSS_OK;
 
 		/* Element names are case insensitive in HTML */
 		*match = dom_string_caseless_lwc_isequal(name, qname->name);
@@ -736,7 +736,7 @@ css_error node_has_name(void *pw, void *node,
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -750,19 +750,19 @@ css_error node_has_name(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_class(void *pw, void *node,
+css_error गाँठो_has_class(शून्य *pw, शून्य *गाँठो,
 		lwc_string *name, bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_exception err;
 
 	/** \todo: Ensure that libdom performs case-insensitive
 	 * matching in quirks mode */
 	err = dom_element_has_class(n, name, match);
 
-	assert(err == DOM_NO_ERR);
+	प्रतिज्ञा(err == DOM_NO_ERR);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -776,10 +776,10 @@ css_error node_has_class(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_id(void *pw, void *node,
+css_error गाँठो_has_id(शून्य *pw, शून्य *गाँठो,
 		lwc_string *name, bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *attr;
 	dom_exception err;
 
@@ -787,16 +787,16 @@ css_error node_has_id(void *pw, void *node,
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_OK;
 
-	if (attr != NULL) {
+	यदि (attr != रिक्त) {
 		*match = dom_string_lwc_isequal(attr, name);
 
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -811,28 +811,28 @@ css_error node_has_id(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error गाँठो_has_attribute(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *name;
 	dom_exception err;
 
 	err = dom_string_create_interned(
-			(const uint8_t *) lwc_string_data(qname->name),
+			(अचर uint8_t *) lwc_string_data(qname->name),
 			lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
 	err = dom_element_has_attribute(n, name, match);
-	if (err != DOM_NO_ERR) {
+	यदि (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -848,42 +848,42 @@ css_error node_has_attribute(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error गाँठो_has_attribute_equal(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	माप_प्रकार vlen = lwc_string_length(मान);
 
-	if (vlen == 0) {
+	यदि (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(अचर uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, मान);
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -900,47 +900,47 @@ css_error node_has_attribute_equal(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error गाँठो_has_attribute_dashmatch(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	माप_प्रकार vlen = lwc_string_length(मान);
 
-	if (vlen == 0) {
+	यदि (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(अचर uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, मान);
 
 	/* check for dashmatch */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	यदि (*match == false) {
+		अचर वर्ण *vdata = lwc_string_data(मान);
+		अचर वर्ण *data = (अचर वर्ण *) dom_string_data(atr_val);
+		माप_प्रकार len = dom_string_byte_length(atr_val);
 
-		if (len > vlen && data[vlen] == '-' &&
+		यदि (len > vlen && data[vlen] == '-' &&
 		    strncasecmp(data, vdata, vlen) == 0) {
 				*match = true;
 		}
@@ -948,7 +948,7 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -965,52 +965,52 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error गाँठो_has_attribute_includes(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
-	size_t vlen = lwc_string_length(value);
-	const char *p;
-	const char *start;
-	const char *end;
+	माप_प्रकार vlen = lwc_string_length(मान);
+	अचर वर्ण *p;
+	अचर वर्ण *start;
+	अचर वर्ण *end;
 
 	*match = false;
 
-	if (vlen == 0) {
-		return CSS_OK;
+	यदि (vlen == 0) {
+		फर्काऊ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(अचर uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for match */
-	start = (const char *) dom_string_data(atr_val);
+	start = (अचर वर्ण *) dom_string_data(atr_val);
 	end = start + dom_string_byte_length(atr_val);
 
-	for (p = start; p <= end; p++) {
-		if (*p == ' ' || *p == '\0') {
-			if ((size_t) (p - start) == vlen &&
+	लागि (p = start; p <= end; p++) {
+		यदि (*p == ' ' || *p == '\0') {
+			यदि ((माप_प्रकार) (p - start) == vlen &&
 			    strncasecmp(start,
-					lwc_string_data(value),
+					lwc_string_data(मान),
 					vlen) == 0) {
 				*match = true;
-				break;
+				रोक;
 			}
 
 			start = p + 1;
@@ -1019,7 +1019,7 @@ css_error node_has_attribute_includes(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1036,54 +1036,54 @@ css_error node_has_attribute_includes(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error गाँठो_has_attribute_prefix(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	माप_प्रकार vlen = lwc_string_length(मान);
 
-	if (vlen == 0) {
+	यदि (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(अचर uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, मान);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	यदि (*match == false) {
+		अचर वर्ण *data = (अचर वर्ण *) dom_string_data(atr_val);
+		माप_प्रकार len = dom_string_byte_length(atr_val);
 
-		if ((len >= vlen) &&
-		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
+		यदि ((len >= vlen) &&
+		    (strncasecmp(data, lwc_string_data(मान), vlen) == 0)) {
 			*match = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1100,49 +1100,49 @@ css_error node_has_attribute_prefix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error गाँठो_has_attribute_suffix(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	माप_प्रकार vlen = lwc_string_length(मान);
 
-	if (vlen == 0) {
+	यदि (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(अचर uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, मान);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	यदि (*match == false) {
+		अचर वर्ण *data = (अचर वर्ण *) dom_string_data(atr_val);
+		माप_प्रकार len = dom_string_byte_length(atr_val);
 
-		const char *start = (char *) data + len - vlen;
+		अचर वर्ण *start = (वर्ण *) data + len - vlen;
 
-		if ((len >= vlen) &&
-		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
+		यदि ((len >= vlen) &&
+		    (strncasecmp(start, lwc_string_data(मान), vlen) == 0)) {
 			*match = true;
 		}
 
@@ -1151,7 +1151,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1168,53 +1168,53 @@ css_error node_has_attribute_suffix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error गाँठो_has_attribute_substring(शून्य *pw, शून्य *गाँठो,
+		अचर css_qname *qname, lwc_string *मान,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	माप_प्रकार vlen = lwc_string_length(मान);
 
-	if (vlen == 0) {
+	यदि (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(अचर uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	यदि (err != DOM_NO_ERR)
+		फर्काऊ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	यदि ((err != DOM_NO_ERR) || (atr_val == रिक्त)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, मान);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *start = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
-		const char *last_start = start + len - vlen;
+	यदि (*match == false) {
+		अचर वर्ण *vdata = lwc_string_data(मान);
+		अचर वर्ण *start = (अचर वर्ण *) dom_string_data(atr_val);
+		माप_प्रकार len = dom_string_byte_length(atr_val);
+		अचर वर्ण *last_start = start + len - vlen;
 
-		if (len >= vlen) {
-			while (start <= last_start) {
-				if (strncasecmp(start, vdata,
+		यदि (len >= vlen) {
+			जबसम्म (start <= last_start) {
+				यदि (strncasecmp(start, vdata,
 						vlen) == 0) {
 					*match = true;
-					break;
+					रोक;
 				}
 
 				start++;
@@ -1224,7 +1224,7 @@ css_error node_has_attribute_substring(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1237,71 +1237,71 @@ css_error node_has_attribute_substring(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_root(void *pw, void *node, bool *match)
+css_error गाँठो_is_जरा(शून्य *pw, शून्य *गाँठो, bool *match)
 {
-	dom_node *n = node;
-	dom_node *parent;
-	dom_node_type type;
+	dom_गाँठो *n = गाँठो;
+	dom_गाँठो *parent;
+	dom_गाँठो_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_गाँठो_get_parent_गाँठो(n, &parent);
+	यदि (err != DOM_NO_ERR) {
+		फर्काऊ CSS_NOMEM;
 	}
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	यदि (parent != रिक्त) {
+		err = dom_गाँठो_get_गाँठो_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_गाँठो_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return CSS_NOMEM;
+		यदि (err != DOM_NO_ERR)
+			फर्काऊ CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
+		यदि (type != DOM_DOCUMENT_गाँठो) {
 			*match = false;
-			return CSS_OK;
+			फर्काऊ CSS_OK;
 		}
 	}
 
 	*match = true;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
-static int
-node_count_siblings_check(dom_node *node,
+स्थिर पूर्णाङ्क
+गाँठो_गन्ती_siblings_check(dom_गाँठो *गाँठो,
 			  bool check_name,
 			  dom_string *name)
 {
-	dom_node_type type;
-	int ret = 0;
+	dom_गाँठो_type type;
+	पूर्णाङ्क ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
-		return 0;
+	यदि (गाँठो == रिक्त)
+		फर्काऊ 0;
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
-		return 0;
+	exc = dom_गाँठो_get_गाँठो_type(गाँठो, &type);
+	यदि ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_गाँठो)) {
+		फर्काऊ 0;
 	}
 
-	if (check_name) {
-		dom_string *node_name = NULL;
-		exc = dom_node_get_node_name(node, &node_name);
+	यदि (check_name) {
+		dom_string *गाँठो_name = रिक्त;
+		exc = dom_गाँठो_get_गाँठो_name(गाँठो, &गाँठो_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		यदि ((exc == DOM_NO_ERR) && (गाँठो_name != रिक्त)) {
 
-			if (dom_string_caseless_isequal(name,
-							node_name)) {
+			यदि (dom_string_caseless_isequal(name,
+							गाँठो_name)) {
 				ret = 1;
 			}
-			dom_string_unref(node_name);
+			dom_string_unref(गाँठो_name);
 		}
-	} else {
+	} अन्यथा {
 		ret = 1;
 	}
 
-	return ret;
+	फर्काऊ ret;
 }
 
 /**
@@ -1316,58 +1316,58 @@ node_count_siblings_check(dom_node *node,
  *
  * \post \a count will contain the number of siblings
  */
-css_error node_count_siblings(void *pw, void *n, bool same_name,
-		bool after, int32_t *count)
+css_error गाँठो_गन्ती_siblings(शून्य *pw, शून्य *n, bool same_name,
+		bool after, int32_t *गन्ती)
 {
 	int32_t cnt = 0;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *गाँठो_name = रिक्त;
 
-	if (same_name) {
-		dom_node *node = n;
-		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-			return CSS_NOMEM;
+	यदि (same_name) {
+		dom_गाँठो *गाँठो = n;
+		exc = dom_गाँठो_get_गाँठो_name(गाँठो, &गाँठो_name);
+		यदि ((exc != DOM_NO_ERR) || (गाँठो_name == रिक्त)) {
+			फर्काऊ CSS_NOMEM;
 		}
 	}
 
-	if (after) {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+	यदि (after) {
+		dom_गाँठो *गाँठो = dom_गाँठो_ref(n);
+		dom_गाँठो *next;
 
-		do {
-			exc = dom_node_get_next_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		गर {
+			exc = dom_गाँठो_get_next_sibling(गाँठो, &next);
+			यदि ((exc != DOM_NO_ERR))
+				रोक;
 
-			dom_node_unref(node);
-			node = next;
+			dom_गाँठो_unref(गाँठो);
+			गाँठो = next;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
-	} else {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+			cnt += गाँठो_गन्ती_siblings_check(गाँठो, same_name, गाँठो_name);
+		} जबसम्म (गाँठो != रिक्त);
+	} अन्यथा {
+		dom_गाँठो *गाँठो = dom_गाँठो_ref(n);
+		dom_गाँठो *next;
 
-		do {
-			exc = dom_node_get_previous_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		गर {
+			exc = dom_गाँठो_get_previous_sibling(गाँठो, &next);
+			यदि ((exc != DOM_NO_ERR))
+				रोक;
 
-			dom_node_unref(node);
-			node = next;
+			dom_गाँठो_unref(गाँठो);
+			गाँठो = next;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
+			cnt += गाँठो_गन्ती_siblings_check(गाँठो, same_name, गाँठो_name);
 
-		} while (node != NULL);
+		} जबसम्म (गाँठो != रिक्त);
 	}
 
-	if (node_name != NULL) {
-		dom_string_unref(node_name);
+	यदि (गाँठो_name != रिक्त) {
+		dom_string_unref(गाँठो_name);
 	}
 
-	*count = cnt;
-	return CSS_OK;
+	*गन्ती = cnt;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1380,43 +1380,43 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
  *
  * \post \a match will contain true if the node is empty and false otherwise.
  */
-css_error node_is_empty(void *pw, void *node, bool *match)
+css_error गाँठो_is_empty(शून्य *pw, शून्य *गाँठो, bool *match)
 {
-	dom_node *n = node, *next;
+	dom_गाँठो *n = गाँठो, *next;
 	dom_exception err;
 
 	*match = true;
 
-	err = dom_node_get_first_child(n, &n);
-	if (err != DOM_NO_ERR) {
-		return CSS_BADPARM;
+	err = dom_गाँठो_get_first_child(n, &n);
+	यदि (err != DOM_NO_ERR) {
+		फर्काऊ CSS_BADPARM;
 	}
 
-	while (n != NULL) {
-		dom_node_type ntype;
-		err = dom_node_get_node_type(n, &ntype);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+	जबसम्म (n != रिक्त) {
+		dom_गाँठो_type ntype;
+		err = dom_गाँठो_get_गाँठो_type(n, &ntype);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
-		    ntype == DOM_TEXT_NODE) {
+		यदि (ntype == DOM_ELEMENT_गाँठो ||
+		    ntype == DOM_TEXT_गाँठो) {
 			*match = false;
-			dom_node_unref(n);
-			break;
+			dom_गाँठो_unref(n);
+			रोक;
 		}
 
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+		err = dom_गाँठो_get_next_sibling(n, &next);
+		यदि (err != DOM_NO_ERR) {
+			dom_गाँठो_unref(n);
+			फर्काऊ CSS_BADPARM;
 		}
-		dom_node_unref(n);
+		dom_गाँठो_unref(n);
 		n = next;
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1429,32 +1429,32 @@ css_error node_is_empty(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_link(void *pw, void *n, bool *match)
+css_error गाँठो_is_link(शून्य *pw, शून्य *n, bool *match)
 {
-	dom_node *node = n;
+	dom_गाँठो *गाँठो = n;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *गाँठो_name = रिक्त;
 
-	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_गाँठो_get_गाँठो_name(गाँठो, &गाँठो_name);
+	यदि ((exc != DOM_NO_ERR) || (गाँठो_name == रिक्त)) {
+		फर्काऊ CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	यदि (dom_string_caseless_lwc_isequal(गाँठो_name, corestring_lwc_a)) {
 		bool has_href;
-		exc = dom_element_has_attribute(node, corestring_dom_href,
+		exc = dom_element_has_attribute(गाँठो, corestring_dom_href,
 				&has_href);
-		if ((exc == DOM_NO_ERR) && (has_href)) {
+		यदि ((exc == DOM_NO_ERR) && (has_href)) {
 			*match = true;
-		} else {
+		} अन्यथा {
 			*match = false;
 		}
-	} else {
+	} अन्यथा {
 		*match = false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(गाँठो_name);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1468,38 +1468,38 @@ css_error node_is_link(void *pw, void *n, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_visited(void *pw, void *node, bool *match)
+css_error गाँठो_is_visited(शून्य *pw, शून्य *गाँठो, bool *match)
 {
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
 	nserror error;
-	const struct url_data *data;
+	अचर संरचना url_data *data;
 
 	dom_exception exc;
-	dom_node *n = node;
-	dom_string *s = NULL;
+	dom_गाँठो *n = गाँठो;
+	dom_string *s = रिक्त;
 
 	*match = false;
 
-	exc = dom_node_get_node_name(n, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_गाँठो_get_गाँठो_name(n, &s);
+	यदि ((exc != DOM_NO_ERR) || (s == रिक्त)) {
+		फर्काऊ CSS_NOMEM;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
+	यदि (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
 		/* Can't be visited; not ancher element */
 		dom_string_unref(s);
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	/* Finished with node name string */
 	dom_string_unref(s);
-	s = NULL;
+	s = रिक्त;
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
+	यदि ((exc != DOM_NO_ERR) || (s == रिक्त)) {
 		/* Can't be visited; not got a URL */
-		return CSS_OK;
+		फर्काऊ CSS_OK;
 	}
 
 	/* Make href absolute */
@@ -1510,21 +1510,21 @@ css_error node_is_visited(void *pw, void *node, bool *match)
 	/* Finished with href string */
 	dom_string_unref(s);
 
-	if (error != NSERROR_OK) {
+	यदि (error != NSERROR_OK) {
 		/* Couldn't make nsurl object */
-		return CSS_NOMEM;
+		फर्काऊ CSS_NOMEM;
 	}
 
 	data = urldb_get_url_data(url);
 
 	/* Visited if in the db and has
 	 * non-zero visit count */
-	if (data != NULL && data->visits > 0)
+	यदि (data != रिक्त && data->visits > 0)
 		*match = true;
 
 	nsurl_unref(url);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1537,13 +1537,13 @@ css_error node_is_visited(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_hover(void *pw, void *node, bool *match)
+css_error गाँठो_is_hover(शून्य *pw, शून्य *गाँठो, bool *match)
 {
 	/** \todo Support hovering */
 
 	*match = false;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1556,13 +1556,13 @@ css_error node_is_hover(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_active(void *pw, void *node, bool *match)
+css_error गाँठो_is_active(शून्य *pw, शून्य *गाँठो, bool *match)
 {
 	/** \todo Support active nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1575,13 +1575,13 @@ css_error node_is_active(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_focus(void *pw, void *node, bool *match)
+css_error गाँठो_is_focus(शून्य *pw, शून्य *गाँठो, bool *match)
 {
 	/** \todo Support focussed nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1594,13 +1594,13 @@ css_error node_is_focus(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is enabled and false otherwise.
  */
-css_error node_is_enabled(void *pw, void *node, bool *match)
+css_error गाँठो_is_enabled(शून्य *pw, शून्य *गाँठो, bool *match)
 {
 	/** \todo Support enabled nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1613,13 +1613,13 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is disabled and false otherwise.
  */
-css_error node_is_disabled(void *pw, void *node, bool *match)
+css_error गाँठो_is_disabled(शून्य *pw, शून्य *गाँठो, bool *match)
 {
 	/** \todo Support disabled nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1632,13 +1632,13 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is checked and false otherwise.
  */
-css_error node_is_checked(void *pw, void *node, bool *match)
+css_error गाँठो_is_checked(शून्य *pw, शून्य *गाँठो, bool *match)
 {
 	/** \todo Support checked nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1651,13 +1651,13 @@ css_error node_is_checked(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node matches and false otherwise.
  */
-css_error node_is_target(void *pw, void *node, bool *match)
+css_error गाँठो_is_target(शून्य *pw, शून्य *गाँठो, bool *match)
 {
 	/** \todo Support target */
 
 	*match = false;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1671,14 +1671,14 @@ css_error node_is_target(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_lang(void *pw, void *node,
+css_error गाँठो_is_lang(शून्य *pw, शून्य *गाँठो,
 		lwc_string *lang, bool *match)
 {
 	/** \todo Support languages */
 
 	*match = false;
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
 /**
@@ -1690,77 +1690,77 @@ css_error node_is_lang(void *pw, void *node,
  * \return CSS_OK       on success,
  *         CSS_INVALID  if the property should not have a user-agent default.
  */
-css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
+css_error ua_default_for_property(शून्य *pw, uint32_t property, css_hint *hint)
 {
-	if (property == CSS_PROP_COLOR) {
+	यदि (property == CSS_PROP_COLOR) {
 		hint->data.color = 0xff000000;
 		hint->status = CSS_COLOR_COLOR;
-	} else if (property == CSS_PROP_FONT_FAMILY) {
-		hint->data.strings = NULL;
-		switch (nsoption_int(font_default)) {
-		case PLOT_FONT_FAMILY_SANS_SERIF:
+	} अन्यथा यदि (property == CSS_PROP_FONT_FAMILY) {
+		hint->data.strings = रिक्त;
+		विकल्प (nsoption_int(font_default)) {
+		पक्ष PLOT_FONT_FAMILY_SANS_SERIF:
 			hint->status = CSS_FONT_FAMILY_SANS_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_SERIF:
+			रोक;
+		पक्ष PLOT_FONT_FAMILY_SERIF:
 			hint->status = CSS_FONT_FAMILY_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_MONOSPACE:
+			रोक;
+		पक्ष PLOT_FONT_FAMILY_MONOSPACE:
 			hint->status = CSS_FONT_FAMILY_MONOSPACE;
-			break;
-		case PLOT_FONT_FAMILY_CURSIVE:
+			रोक;
+		पक्ष PLOT_FONT_FAMILY_CURSIVE:
 			hint->status = CSS_FONT_FAMILY_CURSIVE;
-			break;
-		case PLOT_FONT_FAMILY_FANTASY:
+			रोक;
+		पक्ष PLOT_FONT_FAMILY_FANTASY:
 			hint->status = CSS_FONT_FAMILY_FANTASY;
-			break;
+			रोक;
 		}
-	} else if (property == CSS_PROP_QUOTES) {
+	} अन्यथा यदि (property == CSS_PROP_QUOTES) {
 		/** \todo Not exactly useful :) */
-		hint->data.strings = NULL;
+		hint->data.strings = रिक्त;
 		hint->status = CSS_QUOTES_NONE;
-	} else if (property == CSS_PROP_VOICE_FAMILY) {
+	} अन्यथा यदि (property == CSS_PROP_VOICE_FAMILY) {
 		/** \todo Fix this when we have voice-family done */
-		hint->data.strings = NULL;
+		hint->data.strings = रिक्त;
 		hint->status = 0;
-	} else {
-		return CSS_INVALID;
+	} अन्यथा {
+		फर्काऊ CSS_INVALID;
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
-css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
+css_error set_libcss_गाँठो_data(शून्य *pw, शून्य *गाँठो, शून्य *libcss_गाँठो_data)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_exception err;
-	void *old_node_data;
+	शून्य *old_गाँठो_data;
 
 	/* Set this node's node data */
-	err = dom_node_set_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data, nscss_dom_user_data_handler,
-			(void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_गाँठो_set_user_data(n,
+			corestring_dom_ns_साँचो_libcss_गाँठो_data,
+			libcss_गाँठो_data, nscss_dom_user_data_handler,
+			(शून्य *) &old_गाँठो_data);
+	यदि (err != DOM_NO_ERR) {
+		फर्काऊ CSS_NOMEM;
 	}
 
-	assert(old_node_data == NULL);
+	प्रतिज्ञा(old_गाँठो_data == रिक्त);
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }
 
-css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
+css_error get_libcss_गाँठो_data(शून्य *pw, शून्य *गाँठो, शून्य **libcss_गाँठो_data)
 {
-	dom_node *n = node;
+	dom_गाँठो *n = गाँठो;
 	dom_exception err;
 
 	/* Get this node's node data */
-	err = dom_node_get_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_गाँठो_get_user_data(n,
+			corestring_dom_ns_साँचो_libcss_गाँठो_data,
+			libcss_गाँठो_data);
+	यदि (err != DOM_NO_ERR) {
+		फर्काऊ CSS_NOMEM;
 	}
 
-	return CSS_OK;
+	फर्काऊ CSS_OK;
 }

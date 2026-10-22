@@ -22,91 +22,91 @@
  * Free text search
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "utils/ascii.h"
-#include "netsurf/types.h"
-#include "desktop/selection.h"
+#अन्तर्भाव "utils/errors.h"
+#अन्तर्भाव "utils/utils.h"
+#अन्तर्भाव "utils/ascii.h"
+#अन्तर्भाव "netsurf/types.h"
+#अन्तर्भाव "desktop/selection.h"
 
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
+#अन्तर्भाव "content/content.h"
+#अन्तर्भाव "content/content_protected.h"
+#अन्तर्भाव "content/hlcache.h"
+#अन्तर्भाव "content/textsearch.h"
 
 /**
  * search match
  */
-struct list_entry {
+संरचना list_entry {
 	/**
 	 * previous match
 	 */
-	struct list_entry *prev;
+	संरचना list_entry *prev;
 
 	/**
 	 * next match
 	 */
-	struct list_entry *next;
+	संरचना list_entry *next;
 
 	/**
 	 * start position of match
 	 */
-	unsigned start_idx;
+	अचिन्हित start_idx;
 
 	/**
 	 * end of match
 	 */
-	unsigned end_idx;
+	अचिन्हित end_idx;
 
 	/**
 	 * content opaque start pointer
 	 */
-	struct box *start_box;
+	संरचना box *start_box;
 
 	/**
 	 * content opaque end pointer
 	 */
-	struct box *end_box;
+	संरचना box *end_box;
 
 	/**
 	 * content specific selection object
 	 */
-	struct selection *sel;
+	संरचना selection *sel;
 };
 
 /**
  * The context for a free text search
  */
-struct textsearch_context {
+संरचना textsearch_context {
 
 	/**
 	 * content search was performed upon
 	 */
-	struct content *c;
+	संरचना content *c;
 
 	/**
 	 * opaque pointer passed to constructor.
 	 */
-	void *gui_p;
+	शून्य *gui_p;
 
 	/**
 	 * List of matches
 	 */
-	struct list_entry *found;
+	संरचना list_entry *found;
 
 	/**
 	 * current selected match
 	 */
-	struct list_entry *current; /* first for select all */
+	संरचना list_entry *current; /* first for select all */
 
 	/**
 	 * query string search results are for
 	 */
-	char *string;
+	वर्ण *string;
 	bool prev_case_sens;
 	bool newsearch;
 };
@@ -115,18 +115,18 @@ struct textsearch_context {
 /**
  * broadcast textsearch message
  */
-static inline void
-textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+स्थिर अन्तःस्थ शून्य
+textsearch_broadcast(संरचना textsearch_context *textsearch,
+		     पूर्णाङ्क type,
 		     bool state,
-		     const char *string)
+		     अचर वर्ण *string)
 {
-	union content_msg_data msg_data;
-	msg_data.textsearch.type = type;
-	msg_data.textsearch.ctx = textsearch->gui_p;
-	msg_data.textsearch.state = state;
-	msg_data.textsearch.string = string;
-	content_broadcast(textsearch->c, CONTENT_MSG_TEXTSEARCH, &msg_data);
+	सङ्घ content_सन्देश_data सन्देश_data;
+	सन्देश_data.textsearch.type = type;
+	सन्देश_data.textsearch.ctx = textsearch->gui_p;
+	सन्देश_data.textsearch.state = state;
+	सन्देश_data.textsearch.string = string;
+	content_broadcast(textsearch->c, CONTENT_सन्देश_TEXTSEARCH, &सन्देश_data);
 }
 
 
@@ -134,10 +134,10 @@ textsearch_broadcast(struct textsearch_context *textsearch,
  * Release the memory used by the list of matches,
  * deleting selection objects too
  */
-static void free_matches(struct textsearch_context *textsearch)
+स्थिर शून्य free_matches(संरचना textsearch_context *textsearch)
 {
-	struct list_entry *cur;
-	struct list_entry *nxt;
+	संरचना list_entry *cur;
+	संरचना list_entry *nxt;
 
 	cur = textsearch->found->next;
 
@@ -147,15 +147,15 @@ static void free_matches(struct textsearch_context *textsearch)
 	 * causing nested accesses to the list
 	 */
 
-	textsearch->found->prev = NULL;
-	textsearch->found->next = NULL;
+	textsearch->found->prev = रिक्त;
+	textsearch->found->next = रिक्त;
 
-	for (; cur; cur = nxt) {
+	लागि (; cur; cur = nxt) {
 		nxt = cur->next;
-		if (cur->sel) {
+		यदि (cur->sel) {
 			selection_destroy(cur->sel);
 		}
-		free(cur);
+		मुक्त(cur);
 	}
 }
 
@@ -164,24 +164,24 @@ static void free_matches(struct textsearch_context *textsearch)
  * Specifies whether all matches or just the current match should
  * be highlighted in the search text.
  */
-static void search_show_all(bool all, struct textsearch_context *context)
+स्थिर शून्य खोज_show_all(bool all, संरचना textsearch_context *context)
 {
-	struct list_entry *a;
+	संरचना list_entry *a;
 
-	for (a = context->found->next; a; a = a->next) {
+	लागि (a = context->found->next; a; a = a->next) {
 		bool add = true;
-		if (!all && a != context->current) {
+		यदि (!all && a != context->current) {
 			add = false;
-			if (a->sel) {
+			यदि (a->sel) {
 				selection_destroy(a->sel);
-				a->sel = NULL;
+				a->sel = रिक्त;
 			}
 		}
 
-		if (add && !a->sel) {
+		यदि (add && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			यदि (a->sel != रिक्त) {
 				selection_init(a->sel);
 				selection_set_position(a->sel,
 						       a->start_idx,
@@ -200,45 +200,45 @@ static void search_show_all(bool all, struct textsearch_context *context)
  * \param string_len length of search string
  * \param flags flags to control the search.
  */
-static nserror
-search_text(struct textsearch_context *context,
-	    const char *string,
-	    int string_len,
-	    search_flags_t flags)
+स्थिर nserror
+खोज_text(संरचना textsearch_context *context,
+	    अचर वर्ण *string,
+	    पूर्णाङ्क string_len,
+	    खोज_flags_t flags)
 {
-	struct rect bounds;
-	union content_msg_data msg_data;
+	संरचना rect bounds;
+	सङ्घ content_सन्देश_data सन्देश_data;
 	bool case_sensitive, forwards, showall;
 	nserror res = NSERROR_OK;
 
-	case_sensitive = ((flags & SEARCH_FLAG_CASE_SENSITIVE) != 0) ?
+	case_sensitive = ((flags & खोज_FLAG_CASE_SENSITIVE) != 0) ?
 			true : false;
-	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
-	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
+	forwards = ((flags & खोज_FLAG_FORWARDS) != 0) ? true : false;
+	showall = ((flags & खोज_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	यदि (context->c == रिक्त) {
+		फर्काऊ res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	यदि ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
-			free(context->string);
+		यदि (context->string != रिक्त) {
+			मुक्त(context->string);
 		}
 
-		context->current = NULL;
+		context->current = रिक्त;
 		free_matches(context);
 
-		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
-			memcpy(context->string, string, string_len);
+		context->string = दो_स्मृति(string_len + 1);
+		यदि (context->string != रिक्त) {
+			स_नकल(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
 
 		/* indicate find operation starting */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, NULL);
+		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, रिक्त);
 
 
 		/* call content find handler */
@@ -249,11 +249,11 @@ search_text(struct textsearch_context *context,
 							   case_sensitive);
 
 		/* indicate find operation finished */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
+		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, रिक्त);
 
-		if (res != NSERROR_OK) {
+		यदि (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			फर्काऊ res;
 		}
 
 		context->prev_case_sens = case_sensitive;
@@ -262,13 +262,13 @@ search_text(struct textsearch_context *context,
 		context->current = context->found->next;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} अन्यथा यदि (context->current != रिक्त) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
+		यदि (forwards) {
+			यदि (context->current->next)
 				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		} अन्यथा {
+			यदि (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
@@ -276,29 +276,29 @@ search_text(struct textsearch_context *context,
 	/* update match state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_MATCH,
-			     (context->current != NULL),
-			     NULL);
+			     (context->current != रिक्त),
+			     रिक्त);
 
-	search_show_all(showall, context);
+	खोज_show_all(showall, context);
 
 	/* update back state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_BACK,
-			     ((context->current != NULL) &&
-			      (context->current->prev != NULL)),
-			     NULL);
+			     ((context->current != रिक्त) &&
+			      (context->current->prev != रिक्त)),
+			     रिक्त);
 
 	/* update forward state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_FORWARD,
-			     ((context->current != NULL) &&
-			      (context->current->next != NULL)),
-			     NULL);
+			     ((context->current != रिक्त) &&
+			      (context->current->next != रिक्त)),
+			     रिक्त);
 
 
-	if (context->current == NULL) {
+	यदि (context->current == रिक्त) {
 		/* no current match */
-		return res;
+		फर्काऊ res;
 	}
 
 	/* call content match bounds handler */
@@ -308,16 +308,16 @@ search_text(struct textsearch_context *context,
 					context->current->start_box,
 					context->current->end_box,
 					&bounds);
-	if (res == NSERROR_OK) {
-		msg_data.scroll.area = true;
-		msg_data.scroll.x0 = bounds.x0;
-		msg_data.scroll.y0 = bounds.y0;
-		msg_data.scroll.x1 = bounds.x1;
-		msg_data.scroll.y1 = bounds.y1;
-		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
+	यदि (res == NSERROR_OK) {
+		सन्देश_data.scroll.area = true;
+		सन्देश_data.scroll.x0 = bounds.x0;
+		सन्देश_data.scroll.y0 = bounds.y0;
+		सन्देश_data.scroll.x1 = bounds.x1;
+		सन्देश_data.scroll.y1 = bounds.y1;
+		content_broadcast(context->c, CONTENT_सन्देश_SCROLL, &सन्देश_data);
 	}
 
-	return res;
+	फर्काऊ res;
 }
 
 
@@ -330,16 +330,16 @@ search_text(struct textsearch_context *context,
  * \param flags   The flags forward/back etc
  * \param string  The string to match
  */
-static nserror
-content_textsearch_step(struct textsearch_context *textsearch,
-			search_flags_t flags,
-			const char *string)
+स्थिर nserror
+content_textsearch_step(संरचना textsearch_context *textsearch,
+			खोज_flags_t flags,
+			अचर वर्ण *string)
 {
-	int string_len;
-	int i = 0;
+	पूर्णाङ्क string_len;
+	पूर्णाङ्क i = 0;
 	nserror res = NSERROR_OK;
 
-	assert(textsearch != NULL);
+	प्रतिज्ञा(textsearch != रिक्त);
 
 	/* broadcast recent query string */
 	textsearch_broadcast(textsearch,
@@ -347,16 +347,16 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			     false,
 			     string);
 
-	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
-			break;
+	string_len = म_माप(string);
+	लागि (i = 0; i < string_len; i++) {
+		यदि (string[i] != '#' && string[i] != '*')
+			रोक;
 	}
 
-	if (i < string_len) {
-		res = search_text(textsearch, string, string_len, flags);
-	} else {
-		union content_msg_data msg_data;
+	यदि (i < string_len) {
+		res = खोज_text(textsearch, string, string_len, flags);
+	} अन्यथा {
+		सङ्घ content_सन्देश_data सन्देश_data;
 
 		free_matches(textsearch);
 
@@ -364,30 +364,30 @@ content_textsearch_step(struct textsearch_context *textsearch,
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_MATCH,
 				     true,
-				     NULL);
+				     रिक्त);
 
 		/* update back state */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_BACK,
 				     false,
-				     NULL);
+				     रिक्त);
 
 		/* update forward state */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_FORWARD,
 				     false,
-				     NULL);
+				     रिक्त);
 
 		/* clear scroll */
-		msg_data.scroll.area = false;
-		msg_data.scroll.x0 = 0;
-		msg_data.scroll.y0 = 0;
+		सन्देश_data.scroll.area = false;
+		सन्देश_data.scroll.x0 = 0;
+		सन्देश_data.scroll.y0 = 0;
 		content_broadcast(textsearch->c,
-				  CONTENT_MSG_SCROLL,
-				  &msg_data);
+				  CONTENT_सन्देश_SCROLL,
+				  &सन्देश_data);
 	}
 
-	return res;
+	फर्काऊ res;
 }
 
 
@@ -396,16 +396,16 @@ content_textsearch_step(struct textsearch_context *textsearch,
  *
  * \param c content to clear
  */
-static nserror content_textsearch__clear(struct content *c)
+स्थिर nserror content_textsearch__clear(संरचना content *c)
 {
-	free(c->textsearch.string);
-	c->textsearch.string = NULL;
+	मुक्त(c->textsearch.string);
+	c->textsearch.string = रिक्त;
 
-	if (c->textsearch.context != NULL) {
+	यदि (c->textsearch.context != रिक्त) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = रिक्त;
 	}
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 
@@ -417,48 +417,48 @@ static nserror content_textsearch__clear(struct content *c)
  * \param search_out A pointer to recive the new text search context
  * \return NSERROR_OK on success and \a search_out updated else error code
  */
-static nserror
-content_textsearch_create(struct content *c,
-			  void *gui_data,
-			  struct textsearch_context **textsearch_out)
+स्थिर nserror
+content_textsearch_create(संरचना content *c,
+			  शून्य *gui_data,
+			  संरचना textsearch_context **textsearch_out)
 {
-	struct textsearch_context *context;
-	struct list_entry *search_head;
+	संरचना textsearch_context *context;
+	संरचना list_entry *खोज_head;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
-	    (c->handler->textsearch_bounds == NULL)) {
+	यदि ((c->handler->textsearch_find == रिक्त) ||
+	    (c->handler->textsearch_bounds == रिक्त)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		फर्काऊ NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
-	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	context = दो_स्मृति(परिमाण(संरचना textsearch_context));
+	यदि (context == रिक्त) {
+		फर्काऊ NSERROR_NOMEM;
 	}
 
-	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
-		free(context);
-		return NSERROR_NOMEM;
+	खोज_head = दो_स्मृति(परिमाण(संरचना list_entry));
+	यदि (खोज_head == रिक्त) {
+		मुक्त(context);
+		फर्काऊ NSERROR_NOMEM;
 	}
 
-	search_head->start_idx = 0;
-	search_head->end_idx = 0;
-	search_head->start_box = NULL;
-	search_head->end_box = NULL;
-	search_head->sel = NULL;
-	search_head->prev = NULL;
-	search_head->next = NULL;
+	खोज_head->start_idx = 0;
+	खोज_head->end_idx = 0;
+	खोज_head->start_box = रिक्त;
+	खोज_head->end_box = रिक्त;
+	खोज_head->sel = रिक्त;
+	खोज_head->prev = रिक्त;
+	खोज_head->next = रिक्त;
 
-	context->found = search_head;
-	context->current = NULL;
-	context->string = NULL;
+	context->found = खोज_head;
+	context->current = रिक्त;
+	context->string = रिक्त;
 	context->prev_case_sens = false;
 	context->newsearch = true;
 	context->c = c;
@@ -466,275 +466,275 @@ content_textsearch_create(struct content *c,
 
 	*textsearch_out = context;
 
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-const char *
-content_textsearch_find_pattern(const char *string,
-				int s_len,
-				const char *pattern,
-				int p_len,
+अचर वर्ण *
+content_textsearch_find_pattern(अचर वर्ण *string,
+				पूर्णाङ्क s_len,
+				अचर वर्ण *pattern,
+				पूर्णाङ्क p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				अचिन्हित पूर्णाङ्क *m_len)
 {
-	struct { const char *ss, *s, *p; bool first; } context[16];
-	const char *ep = pattern + p_len;
-	const char *es = string  + s_len;
-	const char *p = pattern - 1;  /* a virtual '*' before the pattern */
-	const char *ss = string;
-	const char *s = string;
+	संरचना { अचर वर्ण *ss, *s, *p; bool first; } context[16];
+	अचर वर्ण *ep = pattern + p_len;
+	अचर वर्ण *es = string  + s_len;
+	अचर वर्ण *p = pattern - 1;  /* a virtual '*' before the pattern */
+	अचर वर्ण *ss = string;
+	अचर वर्ण *s = string;
 	bool first = true;
-	int top = 0;
+	पूर्णाङ्क शीर्ष = 0;
 
-	while (p < ep) {
+	जबसम्म (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
-			char ch;
+		यदि (p < pattern || *p == '*') {
+			वर्ण ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			गर p++; जबसम्म (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			यदि (p >= ep) रोक;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			यदि (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
-						break;
+				यदि (!case_sens) ch = ascii_to_upper(ch);
+				जबसम्म (s < es) {
+					यदि (case_sens) {
+						यदि (*s == ch) रोक;
+					} अन्यथा यदि (ascii_to_upper(*s) == ch)
+						रोक;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			यदि (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
-					context[top].ss = ss;
-					context[top].s  = s + 1;
-					context[top].p  = p - 1;
+				यदि (शीर्ष < (पूर्णाङ्क)NOF_ELEMENTS(context)) {
+					context[शीर्ष].ss = ss;
+					context[शीर्ष].s  = s + 1;
+					context[शीर्ष].p  = p - 1;
 					/* ptr to last asterisk */
-					context[top].first = first;
-					top++;
+					context[शीर्ष].first = first;
+					शीर्ष++;
 				}
 
-				if (first) {
+				यदि (first) {
 					ss = s;
 					/* remember first non-'*' char */
 					first = false;
 				}
 
 				matches = true;
-			} else {
+			} अन्यथा {
 				matches = false;
 			}
 
-		} else if (s < es) {
-			char ch = *p;
-			if (ch == '#')
+		} अन्यथा यदि (s < es) {
+			वर्ण ch = *p;
+			यदि (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			अन्यथा {
+				यदि (case_sens)
 					matches = (*s == ch);
-				else
+				अन्यथा
 					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
 			}
-			if (matches && first) {
+			यदि (matches && first) {
 				ss = s;  /* remember first non-'*' char */
 				first = false;
 			}
-		} else {
+		} अन्यथा {
 			matches = false;
 		}
 
-		if (matches) {
+		यदि (matches) {
 			p++; s++;
-		} else {
+		} अन्यथा {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			यदि (--शीर्ष < 0)
+				फर्काऊ रिक्त;  /* no match, give up */
 
-			ss = context[top].ss;
-			s  = context[top].s;
-			p  = context[top].p;
-			first = context[top].first;
+			ss = context[शीर्ष].ss;
+			s  = context[शीर्ष].s;
+			p  = context[शीर्ष].p;
+			first = context[शीर्ष].first;
 		}
 	}
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	फर्काऊ ss;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 nserror
-content_textsearch_add_match(struct textsearch_context *context,
-			     unsigned start_idx,
-			     unsigned end_idx,
-			     struct box *start_box,
-			     struct box *end_box)
+content_textsearch_add_match(संरचना textsearch_context *context,
+			     अचिन्हित start_idx,
+			     अचिन्हित end_idx,
+			     संरचना box *start_box,
+			     संरचना box *end_box)
 {
-	struct list_entry *entry;
+	संरचना list_entry *entry;
 
 	/* found string in box => add to list */
-	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	entry = सुस्मृति(1, परिमाण(*entry));
+	यदि (entry == रिक्त) {
+		फर्काऊ NSERROR_NOMEM;
 	}
 
 	entry->start_idx = start_idx;
 	entry->end_idx = end_idx;
 	entry->start_box = start_box;
 	entry->end_box = end_box;
-	entry->sel = NULL;
+	entry->sel = रिक्त;
 
-	entry->next = NULL;
+	entry->next = रिक्त;
 	entry->prev = context->found->prev;
 
-	if (context->found->prev == NULL) {
+	यदि (context->found->prev == रिक्त) {
 		context->found->next = entry;
-	} else {
+	} अन्यथा {
 		context->found->prev->next = entry;
 	}
 
 	context->found->prev = entry;
 
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 bool
-content_textsearch_ishighlighted(struct textsearch_context *textsearch,
-				 unsigned start_offset,
-				 unsigned end_offset,
-				 unsigned *start_idx,
-				 unsigned *end_idx)
+content_textsearch_ishighlighted(संरचना textsearch_context *textsearch,
+				 अचिन्हित start_offset,
+				 अचिन्हित end_offset,
+				 अचिन्हित *start_idx,
+				 अचिन्हित *end_idx)
 {
-	struct list_entry *cur;
+	संरचना list_entry *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	लागि (cur = textsearch->found->next; cur != रिक्त; cur = cur->next) {
+		यदि (cur->sel &&
 		    selection_highlighted(cur->sel,
 					  start_offset,
 					  end_offset,
 					  start_idx,
 					  end_idx)) {
-			return true;
+			फर्काऊ true;
 		}
 	}
 
-	return false;
+	फर्काऊ false;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch)
+nserror content_textsearch_destroy(संरचना textsearch_context *textsearch)
 {
-	assert(textsearch != NULL);
+	प्रतिज्ञा(textsearch != रिक्त);
 
-	if (textsearch->string != NULL) {
+	यदि (textsearch->string != रिक्त) {
 		/* broadcast recent query string */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
 				     false,
 				     textsearch->string);
 
-		free(textsearch->string);
+		मुक्त(textsearch->string);
 	}
 
 	/* update back state */
 	textsearch_broadcast(textsearch,
 			     CONTENT_TEXTSEARCH_BACK,
 			     true,
-			     NULL);
+			     रिक्त);
 
 	/* update forward state */
 	textsearch_broadcast(textsearch,
 			     CONTENT_TEXTSEARCH_FORWARD,
 			     true,
-			     NULL);
+			     रिक्त);
 
 	free_matches(textsearch);
-	free(textsearch);
+	मुक्त(textsearch);
 
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror
-content_textsearch(struct hlcache_handle *h,
-		   void *context,
-		   search_flags_t flags,
-		   const char *string)
+content_textsearch(संरचना hlcache_handle *h,
+		   शून्य *context,
+		   खोज_flags_t flags,
+		   अचर वर्ण *string)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	संरचना content *c = hlcache_handle_get_content(h);
 	nserror res;
 
-	assert(c != NULL);
+	प्रतिज्ञा(c != रिक्त);
 
-	if (string != NULL &&
-	    c->textsearch.string != NULL &&
-	    c->textsearch.context != NULL &&
-	    strcmp(string, c->textsearch.string) == 0) {
+	यदि (string != रिक्त &&
+	    c->textsearch.string != रिक्त &&
+	    c->textsearch.context != रिक्त &&
+	    म_भेद(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} अन्यथा यदि (string != रिक्त) {
 		/* New search */
-		free(c->textsearch.string);
+		मुक्त(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		यदि (c->textsearch.string == रिक्त) {
+			फर्काऊ NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		यदि (c->textsearch.context != रिक्त) {
 			content_textsearch_destroy(c->textsearch.context);
-			c->textsearch.context = NULL;
+			c->textsearch.context = रिक्त;
 		}
 
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		यदि (res != NSERROR_OK) {
+			फर्काऊ res;
 		}
 
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else {
+	} अन्यथा {
 		/* Clear search */
 		content_textsearch__clear(c);
 
-		free(c->textsearch.string);
-		c->textsearch.string = NULL;
+		मुक्त(c->textsearch.string);
+		c->textsearch.string = रिक्त;
 	}
 
-	return NSERROR_OK;
+	फर्काऊ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
-nserror content_textsearch_clear(struct hlcache_handle *h)
+nserror content_textsearch_clear(संरचना hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	संरचना content *c = hlcache_handle_get_content(h);
+	प्रतिज्ञा(c != 0);
 
-	return(content_textsearch__clear(c));
+	फर्काऊ(content_textsearch__clear(c));
 }
