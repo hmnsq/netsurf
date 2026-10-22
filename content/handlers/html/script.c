@@ -21,78 +21,78 @@
  * implementation of content handling for text/html scripts.
  */
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
+#ضمن <assert.h>
+#ضمن <ctype.h>
+#ضمن <stdint.h>
+#ضمن <stdbool.h>
+#ضمن <string.h>
+#ضمن <strings.h>
+#ضمن <stdlib.h>
 
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/content.h"
-#include "javascript/js.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
+#ضمن "utils/config.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "netsurf/content.h"
+#ضمن "javascript/js.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "content/fetch.h"
+#ضمن "content/hlcache.h"
 
-#include "html/html.h"
-#include "html/private.h"
+#ضمن "html/html.h"
+#ضمن "html/private.h"
 
-typedef bool (script_handler_t)(struct jsthread *jsthread, const uint8_t *data, size_t size, const char *name);
+تعريفنوع bool (script_handler_t)(بنية jsthread *jsthread, ثابت uint8_t *data, size_t size, ثابت حرف *name);
 
 
-static script_handler_t *select_script_handler(content_type ctype)
+ساكن script_handler_t *select_script_handler(content_type ctype)
 {
-	if (ctype == CONTENT_JS) {
-		return js_exec;
+	إذا (ctype == CONTENT_JS) {
+		أرجع js_exec;
 	}
-	return NULL;
+	أرجع عدم;
 }
 
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_exec(html_content *c, bool allow_defer)
 {
-	unsigned int i;
-	struct html_script *s;
+	unsigned صحيح i;
+	بنية html_script *s;
 	script_handler_t *script_handler;
 	bool have_run_something = false;
 
-	if (c->jsthread == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	إذا (c->jsthread == عدم) {
+		أرجع NSERROR_BAD_PARAMETER;
 	}
 
-	for (i = 0, s = c->scripts; i != c->scripts_count; i++, s++) {
-		if (s->already_started) {
-			continue;
+	لكل (i = 0, s = c->scripts; i != c->scripts_گنتی; i++, s++) {
+		إذا (s->already_started) {
+			استمر;
 		}
 
-		if ((s->type == HTML_SCRIPT_ASYNC) ||
+		إذا ((s->type == HTML_SCRIPT_ASYNC) ||
 		    (allow_defer && (s->type == HTML_SCRIPT_DEFER))) {
 			/* ensure script content is present */
-			if (s->data.handle == NULL)
-				continue;
+			إذا (s->data.handle == عدم)
+				استمر;
 
 			/* ensure script content fetch status is not an error */
-			if (content_get_status(s->data.handle) ==
+			إذا (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_ERROR)
-				continue;
+				استمر;
 
 			/* ensure script handler for content type */
 			script_handler = select_script_handler(
 					content_get_type(s->data.handle));
-			if (script_handler == NULL)
-				continue; /* unsupported type */
+			إذا (script_handler == عدم)
+				استمر; /* unsupported type */
 
-			if (content_get_status(s->data.handle) ==
+			إذا (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_DONE) {
 				/* external script is now available */
-				const uint8_t *data;
+				ثابت uint8_t *data;
 				size_t size;
 				data = content_get_source_data(
 						s->data.handle, &size );
@@ -111,32 +111,32 @@ nserror html_script_exec(html_content *c, bool allow_defer)
 		}
 	}
 
-	if (have_run_something) {
-		return html_proceed_to_done(c);
+	إذا (have_run_something) {
+		أرجع html_proceed_to_done(c);
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /* create new html script entry */
-static struct html_script *
+ساكن بنية html_script *
 html_process_new_script(html_content *c,
 			dom_string *mimetype,
-			enum html_script_type type)
+			تعداد html_script_type type)
 {
-	struct html_script *nscript;
+	بنية html_script *nscript;
 	/* add space for new script entry */
 	nscript = realloc(c->scripts,
-			  sizeof(struct html_script) * (c->scripts_count + 1));
-	if (nscript == NULL) {
-		return NULL;
+			  حجم(بنية html_script) * (c->scripts_گنتی + 1));
+	إذا (nscript == عدم) {
+		أرجع عدم;
 	}
 
 	c->scripts = nscript;
 
 	/* increment script entry count */
-	nscript = &c->scripts[c->scripts_count];
-	c->scripts_count++;
+	nscript = &c->scripts[c->scripts_گنتی];
+	c->scripts_گنتی++;
 
 	nscript->already_started = false;
 	nscript->parser_inserted = false;
@@ -149,166 +149,166 @@ html_process_new_script(html_content *c,
 
 	nscript->mimetype = dom_string_ref(mimetype); /* reference mimetype */
 
-	return nscript;
+	أرجع nscript;
 }
 
 /**
  * Callback for asyncronous scripts
  */
-static nserror
+ساكن nserror
 convert_script_async_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  ثابت hlcache_event *event,
+			  فراغ *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned صحيح i;
+	بنية html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
-			break;
+	لكل (i = 0, s = parent->scripts; i != parent->scripts_گنتی; i++, s++) {
+		إذا (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
+			اكسر;
 	}
 
-	assert(i != parent->scripts_count);
+	أكد(i != parent->scripts_گنتی);
 
-	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		break;
+	بدل (event->type) {
+	حالة CONTENT_پیغام_LOADING:
+		اكسر;
 
-	case CONTENT_MSG_READY:
-		break;
+	حالة CONTENT_پیغام_READY:
+		اكسر;
 
-	case CONTENT_MSG_DONE:
+	حالة CONTENT_پیغام_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		اكسر;
 
-	case CONTENT_MSG_ERROR:
+	حالة CONTENT_پیغام_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = عدم;
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		اكسر;
 
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	إذا (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
 	/* if we have already started converting though, then we can handle the
 	 * scripts as they come in.
 	 */
-	else if (parent->conversion_begun) {
-		return html_script_exec(parent, false);
+	وإلا إذا (parent->conversion_begun) {
+		أرجع html_script_exec(parent, false);
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
  * Callback for defer scripts
  */
-static nserror
+ساكن nserror
 convert_script_defer_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  ثابت hlcache_event *event,
+			  فراغ *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned صحيح i;
+	بنية html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
-			break;
+	لكل (i = 0, s = parent->scripts; i != parent->scripts_گنتی; i++, s++) {
+		إذا (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
+			اكسر;
 	}
 
-	assert(i != parent->scripts_count);
+	أكد(i != parent->scripts_گنتی);
 
-	switch (event->type) {
+	بدل (event->type) {
 
-	case CONTENT_MSG_DONE:
+	حالة CONTENT_پیغام_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		اكسر;
 
-	case CONTENT_MSG_ERROR:
+	حالة CONTENT_پیغام_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = عدم;
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
 
-		break;
+		اكسر;
 
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	إذا (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
  * Callback for syncronous scripts
  */
-static nserror
+ساكن nserror
 convert_script_sync_cb(hlcache_handle *script,
-			  const hlcache_event *event,
-			  void *pw)
+			  ثابت hlcache_event *event,
+			  فراغ *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_script *s;
+	unsigned صحيح i;
+	بنية html_script *s;
 	script_handler_t *script_handler;
 	dom_hubbub_error err;
-	unsigned int active_sync_scripts = 0;
+	unsigned صحيح active_sync_scripts = 0;
 
 	/* Count sync scripts which have yet to complete (other than us) */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC &&
+	لكل (i = 0, s = parent->scripts; i != parent->scripts_گنتی; i++, s++) {
+		إذا (s->type == HTML_SCRIPT_SYNC &&
 		    s->data.handle != script && s->already_started == false) {
 			active_sync_scripts++;
 		}
 	}
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
-			break;
+	لكل (i = 0, s = parent->scripts; i != parent->scripts_گنتی; i++, s++) {
+		إذا (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
+			اكسر;
 	}
 
-	assert(i != parent->scripts_count);
+	أكد(i != parent->scripts_گنتی);
 
-	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	بدل (event->type) {
+	حالة CONTENT_پیغام_DONE:
 		NSLOG(netsurf, INFO, "script %d done '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(script)));
 		parent->base.active--;
@@ -318,9 +318,9 @@ convert_script_sync_cb(hlcache_handle *script,
 
 		/* attempt to execute script */
 		script_handler = select_script_handler(content_get_type(s->data.handle));
-		if (script_handler != NULL && parent->jsthread != NULL) {
+		إذا (script_handler != عدم && parent->jsthread != عدم) {
 			/* script has a handler */
-			const uint8_t *data;
+			ثابت uint8_t *data;
 			size_t size;
 			data = content_get_source_data(s->data.handle, &size );
 			script_handler(parent->jsthread, data, size,
@@ -328,22 +328,22 @@ convert_script_sync_cb(hlcache_handle *script,
 		}
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		إذا (parent->parser != عدم && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			إذا (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
 
-		break;
+		اكسر;
 
-	case CONTENT_MSG_ERROR:
+	حالة CONTENT_پیغام_ERROR:
 		NSLOG(netsurf, INFO, "script %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(script)),
 		      event->data.errordata.errormsg);
 
 		hlcache_handle_release(script);
-		s->data.handle = NULL;
+		s->data.handle = عدم;
 		parent->base.active--;
 
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
@@ -351,57 +351,57 @@ convert_script_sync_cb(hlcache_handle *script,
 		s->already_started = true;
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		إذا (parent->parser != عدم && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			إذا (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
 
-		break;
+		اكسر;
 
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
 
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	إذا (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
  * process a script with a src tag
  */
-static dom_hubbub_error
+ساكن dom_hubbub_error
 exec_src_script(html_content *c,
-		dom_node *node,
+		dom_گرہ *گرہ,
 		dom_string *mimetype,
 		dom_string *src)
 {
 	nserror ns_error;
 	nsurl *joined;
 	hlcache_child_context child;
-	struct html_script *nscript;
+	بنية html_script *nscript;
 	bool async;
 	bool defer;
-	enum html_script_type script_type;
+	تعداد html_script_type script_type;
 	hlcache_handle_callback script_cb;
 	dom_hubbub_error ret = DOM_HUBBUB_OK;
 	dom_exception exc; /* returned by libdom functions */
 
 	/* src url */
 	ns_error = nsurl_join(c->base_url, dom_string_data(src), &joined);
-	if (ns_error != NSERROR_OK) {
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+	إذا (ns_error != NSERROR_OK) {
+		content_broadcast_error(&c->base, NSERROR_NOMEM, عدم);
+		أرجع DOM_HUBBUB_NOMEM;
 	}
 
-	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_count,
+	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_گنتی,
 	      nsurl_access(joined));
 
 	/* there are three ways to process the script tag at this point:
@@ -422,34 +422,34 @@ exec_src_script(html_content *c,
 	 * compatible approach is to be liberal and accept any
 	 * value. Note setting the values to "false" still makes them true!
 	 */
-	exc = dom_element_has_attribute(node, corestring_dom_async, &async);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_OK; /* dom error */
+	exc = dom_element_has_attribute(گرہ, corestring_dom_async, &async);
+	إذا (exc != DOM_NO_ERR) {
+		أرجع DOM_HUBBUB_OK; /* dom error */
 	}
 
-	if (c->parse_completed) {
+	إذا (c->parse_completed) {
 		/* After parse completed, all scripts are essentially async */
 		async = true;
 		defer = false;
 	}
 
-	if (async) {
+	إذا (async) {
 		/* asyncronous script */
 		script_type = HTML_SCRIPT_ASYNC;
 		script_cb = convert_script_async_cb;
 
-	} else {
-		exc = dom_element_has_attribute(node,
+	} وإلا {
+		exc = dom_element_has_attribute(گرہ,
 						corestring_dom_defer, &defer);
-		if (exc != DOM_NO_ERR) {
-			return DOM_HUBBUB_OK; /* dom error */
+		إذا (exc != DOM_NO_ERR) {
+			أرجع DOM_HUBBUB_OK; /* dom error */
 		}
 
-		if (defer) {
+		إذا (defer) {
 			/* defered script */
 			script_type = HTML_SCRIPT_DEFER;
 			script_cb = convert_script_defer_cb;
-		} else {
+		} وإلا {
 			/* syncronous script */
 			script_type = HTML_SCRIPT_SYNC;
 			script_cb = convert_script_sync_cb;
@@ -457,10 +457,10 @@ exec_src_script(html_content *c,
 	}
 
 	nscript = html_process_new_script(c, mimetype, script_type);
-	if (nscript == NULL) {
+	إذا (nscript == عدم) {
 		nsurl_unref(joined);
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		content_broadcast_error(&c->base, NSERROR_NOMEM, عدم);
+		أرجع DOM_HUBBUB_NOMEM;
 	}
 
 	/* set up child fetch encoding and quirks */
@@ -470,7 +470,7 @@ exec_src_script(html_content *c,
 	ns_error = hlcache_handle_retrieve(joined,
 					   0,
 					   content_get_url(&c->base),
-					   NULL,
+					   عدم,
 					   script_cb,
 					   c,
 					   &child,
@@ -480,58 +480,58 @@ exec_src_script(html_content *c,
 
 	nsurl_unref(joined);
 
-	if (ns_error != NSERROR_OK) {
+	إذا (ns_error != NSERROR_OK) {
 		/* @todo Deal with fetch error better. currently assume
 		 * fetch never became active
 		 */
 		/* mark duff script fetch as already started */
 		nscript->already_started = true;
 		NSLOG(netsurf, INFO, "Fetch failed with error %d", ns_error);
-	} else {
+	} وإلا {
 		/* update base content active fetch count */
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-		switch (script_type) {
-		case HTML_SCRIPT_SYNC:
+		بدل (script_type) {
+		حالة HTML_SCRIPT_SYNC:
 			ret =  DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED;
-			break;
+			اكسر;
 
-		case HTML_SCRIPT_ASYNC:
-			break;
+		حالة HTML_SCRIPT_ASYNC:
+			اكسر;
 
-		case HTML_SCRIPT_DEFER:
-			break;
+		حالة HTML_SCRIPT_DEFER:
+			اكسر;
 
-		default:
-			assert(0);
+		افتراضي:
+			أكد(0);
 		}
 	}
 
-	return ret;
+	أرجع ret;
 }
 
-static dom_hubbub_error
-exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
+ساكن dom_hubbub_error
+exec_inline_script(html_content *c, dom_گرہ *گرہ, dom_string *mimetype)
 {
 	dom_string *script;
 	dom_exception exc; /* returned by libdom functions */
-	struct lwc_string_s *lwcmimetype;
+	بنية lwc_string_s *lwcmimetype;
 	script_handler_t *script_handler;
-	struct html_script *nscript;
+	بنية html_script *nscript;
 
 	/* does not appear to be a src so script is inline content */
-	exc = dom_node_get_text_content(node, &script);
-	if ((exc != DOM_NO_ERR) || (script == NULL)) {
-		return DOM_HUBBUB_OK; /* no contents, skip */
+	exc = dom_گرہ_get_text_content(گرہ, &script);
+	إذا ((exc != DOM_NO_ERR) || (script == عدم)) {
+		أرجع DOM_HUBBUB_OK; /* no contents, skip */
 	}
 
 	nscript = html_process_new_script(c, mimetype, HTML_SCRIPT_INLINE);
-	if (nscript == NULL) {
+	إذا (nscript == عدم) {
 		dom_string_unref(script);
 
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		content_broadcast_error(&c->base, NSERROR_NOMEM, عدم);
+		أرجع DOM_HUBBUB_NOMEM;
 
 	}
 
@@ -540,20 +540,20 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
 
 	/* ensure script handler for content type */
 	exc = dom_string_intern(mimetype, &lwcmimetype);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_DOM;
+	إذا (exc != DOM_NO_ERR) {
+		أرجع DOM_HUBBUB_DOM;
 	}
 
 	script_handler = select_script_handler(content_factory_type_from_mime_type(lwcmimetype));
 	lwc_string_unref(lwcmimetype);
 
-	if (script_handler != NULL) {
+	إذا (script_handler != عدم) {
 		script_handler(c->jsthread,
-			       (const uint8_t *)dom_string_data(script),
+			       (ثابت uint8_t *)dom_string_data(script),
 			       dom_string_byte_length(script),
 			       "?inline script?");
 	}
-	return DOM_HUBBUB_OK;
+	أرجع DOM_HUBBUB_OK;
 }
 
 
@@ -563,7 +563,7 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
  *
  */
 dom_hubbub_error
-html_process_script(void *ctx, dom_node *node)
+html_process_script(فراغ *ctx, dom_گرہ *گرہ)
 {
 	html_content *c = (html_content *)ctx;
 	dom_exception exc; /* returned by libdom functions */
@@ -574,92 +574,92 @@ html_process_script(void *ctx, dom_node *node)
 	/* We should only ever be here if scripting was enabled for this
 	 * content so it's correct to make a javascript context if there
 	 * isn't one already. */
-	if (c->jsthread == NULL) {
-		union content_msg_data msg_data;
+	إذا (c->jsthread == عدم) {
+		اتحاد content_پیغام_data پیغام_data;
 
-		msg_data.jsthread = &c->jsthread;
-		content_broadcast(&c->base, CONTENT_MSG_GETTHREAD, &msg_data);
+		پیغام_data.jsthread = &c->jsthread;
+		content_broadcast(&c->base, CONTENT_پیغام_GETTHREAD, &پیغام_data);
 		NSLOG(netsurf, INFO, "javascript context %p ", c->jsthread);
-		if (c->jsthread == NULL) {
+		إذا (c->jsthread == عدم) {
 			/* no context and it could not be created, abort */
-			return DOM_HUBBUB_OK;
+			أرجع DOM_HUBBUB_OK;
 		}
 	}
 
 	NSLOG(netsurf, INFO, "content %p parser %p node %p", c, c->parser,
-	      node);
+	      گرہ);
 
-	exc = dom_element_get_attribute(node, corestring_dom_type, &mimetype);
-	if (exc != DOM_NO_ERR || mimetype == NULL) {
+	exc = dom_element_get_attribute(گرہ, corestring_dom_type, &mimetype);
+	إذا (exc != DOM_NO_ERR || mimetype == عدم) {
 		mimetype = dom_string_ref(corestring_dom_text_javascript);
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		err = exec_inline_script(c, node, mimetype);
-	} else {
-		err = exec_src_script(c, node, mimetype, src);
+	exc = dom_element_get_attribute(گرہ, corestring_dom_src, &src);
+	إذا (exc != DOM_NO_ERR || src == عدم) {
+		err = exec_inline_script(c, گرہ, mimetype);
+	} وإلا {
+		err = exec_src_script(c, گرہ, mimetype, src);
 		dom_string_unref(src);
 	}
 
 	dom_string_unref(mimetype);
 
-	return err;
+	أرجع err;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 bool html_saw_insecure_scripts(html_content *htmlc)
 {
-	struct html_script *s;
-	unsigned int i;
+	بنية html_script *s;
+	unsigned صحيح i;
 
-	for (i = 0, s = htmlc->scripts; i != htmlc->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_INLINE) {
+	لكل (i = 0, s = htmlc->scripts; i != htmlc->scripts_گنتی; i++, s++) {
+		إذا (s->type == HTML_SCRIPT_INLINE) {
 			/* Inline scripts are no less secure than their
 			 * containing HTML content
 			 */
-			continue;
+			استمر;
 		}
-		if (s->data.handle == NULL) {
+		إذا (s->data.handle == عدم) {
 			/* We've not begun loading this? */
-			continue;
+			استمر;
 		}
-		if (content_saw_insecure_objects(s->data.handle)) {
-			return true;
+		إذا (content_saw_insecure_objects(s->data.handle)) {
+			أرجع true;
 		}
 	}
 
-	return false;
+	أرجع false;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_free(html_content *html)
 {
-	unsigned int i;
+	unsigned صحيح i;
 
-	for (i = 0; i != html->scripts_count; i++) {
-		if (html->scripts[i].mimetype != NULL) {
+	لكل (i = 0; i != html->scripts_گنتی; i++) {
+		إذا (html->scripts[i].mimetype != عدم) {
 			dom_string_unref(html->scripts[i].mimetype);
 		}
 
-		switch (html->scripts[i].type) {
-		case HTML_SCRIPT_INLINE:
-			if (html->scripts[i].data.string != NULL) {
+		بدل (html->scripts[i].type) {
+		حالة HTML_SCRIPT_INLINE:
+			إذا (html->scripts[i].data.string != عدم) {
 				dom_string_unref(html->scripts[i].data.string);
 			}
-			break;
-		case HTML_SCRIPT_SYNC:
+			اكسر;
+		حالة HTML_SCRIPT_SYNC:
 			/* fallthrough */
-		case HTML_SCRIPT_ASYNC:
+		حالة HTML_SCRIPT_ASYNC:
 			/* fallthrough */
-		case HTML_SCRIPT_DEFER:
-			if (html->scripts[i].data.handle != NULL) {
+		حالة HTML_SCRIPT_DEFER:
+			إذا (html->scripts[i].data.handle != عدم) {
 				hlcache_handle_release(html->scripts[i].data.handle);
 			}
-			break;
+			اكسر;
 		}
 	}
-	free(html->scripts);
+	حرر(html->scripts);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
