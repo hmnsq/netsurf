@@ -38,60 +38,60 @@
 /**
  * certificate name parameters
  */
-struct ns_cert_name {
-	char *common_name;
-	char *organisation;
-	char *organisation_unit;
-	char *locality;
-	char *province;
-	char *country;
+sa_nracanaa ns_cert_name {
+	var_na *common_name;
+	var_na *organisation;
+	var_na *organisation_unit;
+	var_na *locality;
+	var_na *province;
+	var_na *country;
 };
 
 /**
  * Certificate public key parameters
  */
-struct ns_cert_pkey {
-	char *algor;
-	int size;
-	char *modulus;
-	char *exponent;
-	char *curve;
-	char *public;
+sa_nracanaa ns_cert_pkey {
+	var_na *algor;
+	puur_naa_nka size;
+	var_na *modulus;
+	var_na *exponent;
+	var_na *curve;
+	var_na *public;
 };
 
 /**
  * Certificate subject alternative name
  */
-struct ns_cert_san {
-	struct ns_cert_san *next;
-	char *name;
+sa_nracanaa ns_cert_san {
+	sa_nracanaa ns_cert_san *next;
+	var_na *name;
 };
 
 /**
  * certificate information for certificate chain
  */
-struct ns_cert_info {
-	struct ns_cert_name subject_name; /**< Subject details */
-	struct ns_cert_name issuer_name; /**< Issuer details */
-	struct ns_cert_pkey public_key; /**< public key details */
+sa_nracanaa ns_cert_info {
+	sa_nracanaa ns_cert_name subject_name; /**< Subject details */
+	sa_nracanaa ns_cert_name issuer_name; /**< Issuer details */
+	sa_nracanaa ns_cert_pkey public_key; /**< public key details */
 	long version;		/**< Certificate version */
-	char *not_before;	/**< Valid from date */
-	char *not_after;	/**< Valid to date */
-	int sig_type;		/**< Signature type */
-	char *sig_algor;        /**< Signature Algorithm */
-	char *serialnum;	/**< Serial number */
-	char *sha1fingerprint; /**< fingerprint shar1 encoded */
-	char *sha256fingerprint; /**< fingerprint shar256 encoded */
-	struct ns_cert_san *san; /**< subject alternative names */
+	var_na *not_before;	/**< Valid from date */
+	var_na *not_after;	/**< Valid to date */
+	puur_naa_nka sig_type;		/**< Signature type */
+	var_na *sig_algor;        /**< Signature Algorithm */
+	var_na *serialnum;	/**< Serial number */
+	var_na *sha1fingerprint; /**< fingerprint shar1 encoded */
+	var_na *sha256fingerprint; /**< fingerprint shar256 encoded */
+	sa_nracanaa ns_cert_san *san; /**< subject alternative names */
 	ssl_cert_err err;       /**< Whatever is wrong with this certificate */
 };
 
 /**
  * free all resources associated with a certificate information structure
  */
-static nserror free_ns_cert_info(struct ns_cert_info *cinfo)
+static nserror free_ns_cert_info(sa_nracanaa ns_cert_info *cinfo)
 {
-	struct ns_cert_san *san;
+	sa_nracanaa ns_cert_san *san;
 
 	free(cinfo->subject_name.common_name);
 	free(cinfo->subject_name.organisation);
@@ -117,8 +117,8 @@ static nserror free_ns_cert_info(struct ns_cert_info *cinfo)
 
 	/* free san list avoiding use after free */
 	san = cinfo->san;
-	while (san != NULL) {
-		struct ns_cert_san *next;
+	ᰀᰬ (san != NULL) {
+		sa_nracanaa ns_cert_san *next;
 		next = san->next;
 		free(san);
 		san = next;
@@ -126,7 +126,7 @@ static nserror free_ns_cert_info(struct ns_cert_info *cinfo)
 
 	free(cinfo);
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 #ifdef WITH_OPENSSL
@@ -134,47 +134,47 @@ static nserror free_ns_cert_info(struct ns_cert_info *cinfo)
 #include <openssl/ssl.h>
 #include <openssl/x509v3.h>
 
-#if (OPENSSL_VERSION_NUMBER < 0x30000000L)
+#ᰀᰧ (OPENSSL_VERSION_NUMBER < 0x30000000L)
 /* OpenSSL 1.1.1 or LibreSSL */
 
-# if defined(LIBRESSL_VERSION_NUMBER)
+# ᰀᰧ defined(LIBRESSL_VERSION_NUMBER)
   /* LibreSSL */
-#  if (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
+#  ᰀᰧ (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
    /* LibreSSL <3.5.0 */
 
-#   if (LIBRESSL_VERSION_NUMBER < 0x2070000fL)
+#   ᰀᰧ (LIBRESSL_VERSION_NUMBER < 0x2070000fL)
     /* LibreSSL <2.7.0 */
-static int ns_X509_get_signature_nid(X509 *cert)
+static puur_naa_nka ns_X509_get_signature_nid(X509 *cert)
 {
-	return OBJ_obj2nid(cert->cert_info->key->algor->algorithm);
+	ᰀᰧᰌ OBJ_obj2nid(cert->cert_info->key->algor->algorithm);
 }
 
-static const unsigned char *ns_ASN1_STRING_get0_data(ASN1_STRING *asn1str)
+static const unsigned var_na *ns_ASN1_STRING_get0_data(ASN1_STRING *asn1str)
 {
-	return (const unsigned char *)ASN1_STRING_data(asn1str);
+	ᰀᰧᰌ (const unsigned var_na *)ASN1_STRING_data(asn1str);
 }
-#   else
+#   ᰀᰧᰀ
 #    define ns_X509_get_signature_nid X509_get_signature_nid
 #    define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
 #   endif
 
 static const BIGNUM *ns_RSA_get0_n(const RSA *d)
 {
-	return d->n;
+	ᰀᰧᰌ d->n;
 }
 
 static const BIGNUM *ns_RSA_get0_e(const RSA *d)
 {
-	return d->e;
+	ᰀᰧᰌ d->e;
 }
-#  else
+#  ᰀᰧᰀ
    /* LibreSSL >= 3.5.0 */
 #   define ns_X509_get_signature_nid X509_get_signature_nid
 #   define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
 #   define ns_RSA_get0_n RSA_get0_n
 #   define ns_RSA_get0_e RSA_get0_e
 #  endif
-# else
+# ᰀᰧᰀ
   /* OpenSSL 1.1.1 */
 #  define ns_X509_get_signature_nid X509_get_signature_nid
 #  define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
@@ -182,30 +182,30 @@ static const BIGNUM *ns_RSA_get0_e(const RSA *d)
 #  define ns_RSA_get0_e RSA_get0_e
 # endif
 
-static int ns_EVP_PKEY_get_bn_param(const EVP_PKEY *pkey,
-		const char *key_name, BIGNUM **bn) {
+static puur_naa_nka ns_EVP_PKEY_get_bn_param(const EVP_PKEY *pkey,
+		const var_na *key_name, BIGNUM **bn) {
 	RSA *rsa;
 	BIGNUM *result = NULL;
 
 	/* Check parameters: only support allocation-form *bn */
-	if (pkey == NULL || key_name == NULL || bn == NULL || *bn != NULL)
-		return 0;
+	ᰀᰧ (pkey == NULL || key_name == NULL || bn == NULL || *bn != NULL)
+		ᰀᰧᰌ 0;
 
 	/* Only support RSA keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_RSA)
-		return 0;
+	ᰀᰧ (EVP_PKEY_base_id(pkey) != EVP_PKEY_RSA)
+		ᰀᰧᰌ 0;
 
 	rsa = EVP_PKEY_get1_RSA((EVP_PKEY *) pkey);
-	if (rsa == NULL)
-		return 0;
+	ᰀᰧ (rsa == NULL)
+		ᰀᰧᰌ 0;
 
-	if (strcmp(key_name, "n") == 0) {
+	ᰀᰧ (strcmp(key_name, "n") == 0) {
 		const BIGNUM *n = ns_RSA_get0_n(rsa);
-		if (n != NULL)
+		ᰀᰧ (n != NULL)
 			result = BN_dup(n);
-	} else if (strcmp(key_name, "e") == 0) {
+	} ᰀᰧᰀ ᰀᰧ (strcmp(key_name, "e") == 0) {
 		const BIGNUM *e = ns_RSA_get0_e(rsa);
-		if (e != NULL)
+		ᰀᰧ (e != NULL)
 			result = BN_dup(e);
 	}
 
@@ -213,55 +213,55 @@ static int ns_EVP_PKEY_get_bn_param(const EVP_PKEY *pkey,
 
 	*bn = result;
 
-	return (result != NULL) ? 1 : 0;
+	ᰀᰧᰌ (result != NULL) ? 1 : 0;
 }
 
-static int ns_EVP_PKEY_get_utf8_string_param(const EVP_PKEY *pkey,
-		const char *key_name, char *str, size_t max_len,
+static puur_naa_nka ns_EVP_PKEY_get_utf8_string_param(const EVP_PKEY *pkey,
+		const var_na *key_name, var_na *str, size_t max_len,
 		size_t *out_len)
 {
 	const EC_GROUP *ecgroup;
-	const char *group = "";
+	const var_na *group = "";
 	size_t group_len = 0;
 	EC_KEY *ec;
-	int ret = 0;
+	puur_naa_nka ret = 0;
 
-	if (pkey == NULL || key_name == NULL)
-		return 0;
+	ᰀᰧ (pkey == NULL || key_name == NULL)
+		ᰀᰧᰌ 0;
 
 	/* Only support EC keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
-		return 0;
+	ᰀᰧ (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
+		ᰀᰧᰌ 0;
 
 	/* Only support fetching the group */
-	if (strcmp(key_name, "group") != 0)
-		return 0;
+	ᰀᰧ (strcmp(key_name, "group") != 0)
+		ᰀᰧᰌ 0;
 
 	ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY *) pkey);
 
 	ecgroup = EC_KEY_get0_group(ec);
-	if (ecgroup != NULL) {
+	ᰀᰧ (ecgroup != NULL) {
 		group = OBJ_nid2ln(EC_GROUP_get_curve_name(ecgroup));
 		group_len = strlen(group);
 	}
 
-	if (str != NULL && max_len > group_len) {
+	ᰀᰧ (str != NULL && max_len > group_len) {
 		memcpy(str, group, group_len);
 		str[group_len] = '\0';
 		ret = 1;
 	}
 
-	if (out_len != NULL) {
+	ᰀᰧ (out_len != NULL) {
 		*out_len = group_len;
 	}
 
 	EC_KEY_free(ec);
 
-	return ret;
+	ᰀᰧᰌ ret;
 }
 
-static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
-		const char *key_name, unsigned char *buf, size_t max_len,
+static puur_naa_nka ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
+		const var_na *key_name, unsigned var_na *buf, size_t max_len,
 		size_t *out_len)
 {
 	const EC_GROUP *ecgroup;
@@ -269,26 +269,26 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
 	size_t len;
 	BN_CTX *bnctx;
 	EC_KEY *ec;
-	int ret = 0;
+	puur_naa_nka ret = 0;
 
-	if (pkey == NULL || key_name == NULL)
-		return 0;
+	ᰀᰧ (pkey == NULL || key_name == NULL)
+		ᰀᰧᰌ 0;
 
 	/* Only support EC keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
-		return 0;
+	ᰀᰧ (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
+		ᰀᰧᰌ 0;
 
-	if (strcmp(key_name, "encoded-pub-key") != 0)
-		return 0;
+	ᰀᰧ (strcmp(key_name, "encoded-pub-key") != 0)
+		ᰀᰧᰌ 0;
 
 	ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY *) pkey);
-	if (ec == NULL)
-		return 0;
+	ᰀᰧ (ec == NULL)
+		ᰀᰧᰌ 0;
 
 	ecgroup = EC_KEY_get0_group(ec);
-	if (ecgroup != NULL) {
+	ᰀᰧ (ecgroup != NULL) {
 		ecpoint = EC_KEY_get0_public_key(ec);
-		if (ecpoint != NULL) {
+		ᰀᰧ (ecpoint != NULL) {
 			bnctx = BN_CTX_new();
 			len = EC_POINT_point2oct(ecgroup,
 						 ecpoint,
@@ -296,8 +296,8 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
 						 NULL,
 						 0,
 						 bnctx);
-			if (len != 0 && len <= max_len) {
-				if (EC_POINT_point2oct(ecgroup,
+			ᰀᰧ (len != 0 && len <= max_len) {
+				ᰀᰧ (EC_POINT_point2oct(ecgroup,
 						       ecpoint,
 						       POINT_CONVERSION_UNCOMPRESSED,
 						       buf,
@@ -305,7 +305,7 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
 						       bnctx) == len)
 					ret = 1;
 			}
-			if (out_len != NULL)
+			ᰀᰧ (out_len != NULL)
 				*out_len = len;
 			BN_CTX_free(bnctx);
 		}
@@ -313,9 +313,9 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
 
 	EC_KEY_free(ec);
 
-	return ret;
+	ᰀᰧᰌ ret;
 }
-#else
+#ᰀᰧᰀ
 /* OpenSSL 3.x and later */
 #define ns_X509_get_signature_nid X509_get_signature_nid
 #define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
@@ -334,16 +334,16 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
  * \return NSERROR_OK on success else error code
  */
 static nserror
-xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
+xname_to_info(X509_NAME *xname, sa_nracanaa ns_cert_name *iname)
 {
-	int entryidx;
-	int entrycnt;
+	puur_naa_nka entryidx;
+	puur_naa_nka entrycnt;
 	X509_NAME_ENTRY *entry; /* current name entry */
 	ASN1_STRING *value;
-	const unsigned char *value_str;
+	const unsigned var_na *value_str;
 	ASN1_OBJECT *name;
-	int name_nid;
-	char **field;
+	puur_naa_nka name_nid;
+	var_na **field;
 
 	entrycnt = X509_NAME_entry_count(xname);
 
@@ -354,33 +354,33 @@ xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
 		value = X509_NAME_ENTRY_get_data(entry);
 		value_str = ns_ASN1_STRING_get0_data(value);
 		switch (name_nid) {
-		case NID_commonName:
+		pak_sa NID_commonName:
 			field = &iname->common_name;
-			break;
-		case NID_countryName:
+			bha_nga;
+		pak_sa NID_countryName:
 			field = &iname->country;
-			break;
-		case NID_localityName:
+			bha_nga;
+		pak_sa NID_localityName:
 			field = &iname->locality;
-			break;
-		case NID_stateOrProvinceName:
+			bha_nga;
+		pak_sa NID_stateOrProvinceName:
 			field = &iname->province;
-			break;
-		case NID_organizationName:
+			bha_nga;
+		pak_sa NID_organizationName:
 			field = &iname->organisation;
-			break;
-		case NID_organizationalUnitName:
+			bha_nga;
+		pak_sa NID_organizationalUnitName:
 			field = &iname->organisation_unit;
-			break;
+			bha_nga;
 		default :
 			field = NULL;
-			break;
+			bha_nga;
 		}
-		if (field != NULL) {
-			*field = strdup((const char *)value_str);
+		ᰀᰧ (field != NULL) {
+			*field = strdup((const var_na *)value_str);
 			NSLOG(netsurf, DEEPDEBUG,
 			      "NID:%d value: %s", name_nid, *field);
-		} else {
+		} ᰀᰧᰀ {
 			NSLOG(netsurf, DEEPDEBUG, "NID:%d", name_nid);
 		}
 	}
@@ -390,11 +390,11 @@ xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
 	 *  missing means the certificate is broken but this should be
 	 *  robust in the face of bad data
 	 */
-	if (iname->common_name == NULL) {
+	ᰀᰧ (iname->common_name == NULL) {
 		iname->common_name = strdup("Unknown");
 	}
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 
@@ -404,20 +404,20 @@ xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
  * \todo only uses html entity as separator because netsurfs line breaking
  *       fails otherwise.
  */
-static char *hexdup(const char *hex)
+static var_na *hexdup(const var_na *hex)
 {
-	int hexlen;
-	char *dst;
-	char *out;
-	int cn = 0;
+	puur_naa_nka hexlen;
+	var_na *dst;
+	var_na *out;
+	puur_naa_nka cn = 0;
 
 	hexlen = strlen(hex);
 	/* allow space fox XXYY to XX&#58;YY&#58; */
 	dst = malloc(((hexlen * 7) + 6) / 2);
 
-	if (dst != NULL) {
+	ᰀᰧ (dst != NULL) {
 		for (out = dst; *hex != 0; hex++) {
-			if (cn == 2) {
+			ᰀᰧ (cn == 2) {
 				cn = 0;
 				*out++ = '&';
 				*out++ = '#';
@@ -430,7 +430,7 @@ static char *hexdup(const char *hex)
 		}
 		*out = 0;
 	}
-	return dst;
+	ᰀᰧᰌ dst;
 }
 
 
@@ -440,18 +440,18 @@ static char *hexdup(const char *hex)
  * \todo only uses html entity as separator because netsurfs line breaking
  *       fails otherwise.
  */
-static char *bindup(unsigned char *bin, unsigned int binlen)
+static var_na *bindup(unsigned var_na *bin, unsigned puur_naa_nka binlen)
 {
-	char *dst;
-	char *out;
-	unsigned int idx;
-	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
+	var_na *dst;
+	var_na *out;
+	unsigned puur_naa_nka idx;
+	const var_na hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
 			     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	/* allow space fox XY to expand to XX&#58;YY&#58; */
 	dst = malloc(binlen * 7);
 
-	if (dst != NULL) {
+	ᰀᰧ (dst != NULL) {
 		out = dst;
 		for (idx = 0; idx < binlen; idx++) {
 			*out++ = hex[(bin[idx] & 0xf0) >> 4];
@@ -466,7 +466,7 @@ static char *bindup(unsigned char *bin, unsigned int binlen)
 		out -= 5;
 		*out = 0;
 	}
-	return dst;
+	ᰀᰧᰌ dst;
 }
 
 
@@ -478,18 +478,18 @@ static char *bindup(unsigned char *bin, unsigned int binlen)
  * \rerun NSERROR_OK on success else error code.
  */
 static nserror
-rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+rsa_to_info(EVP_PKEY *pkey, sa_nracanaa ns_cert_pkey *ikey)
 {
 	BIGNUM *n = NULL, *e = NULL;
-	char *tmp;
+	var_na *tmp;
 
-	if (ns_EVP_PKEY_get_bn_param(pkey, "n", &n) != 1) {
-		return NSERROR_BAD_PARAMETER;
+	ᰀᰧ (ns_EVP_PKEY_get_bn_param(pkey, "n", &n) != 1) {
+		ᰀᰧᰌ NSERROR_BAD_PARAMETER;
 	}
 
-	if (ns_EVP_PKEY_get_bn_param(pkey, "e", &e) != 1) {
+	ᰀᰧ (ns_EVP_PKEY_get_bn_param(pkey, "e", &e) != 1) {
 		BN_free(n);
-		return NSERROR_BAD_PARAMETER;
+		ᰀᰧᰌ NSERROR_BAD_PARAMETER;
 	}
 
 	ikey->algor = strdup("RSA");
@@ -497,13 +497,13 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	ikey->size = EVP_PKEY_bits(pkey);
 
 	tmp = BN_bn2hex(n);
-	if (tmp != NULL) {
+	ᰀᰧ (tmp != NULL) {
 		ikey->modulus = hexdup(tmp);
 		OPENSSL_free(tmp);
 	}
 
 	tmp = BN_bn2dec(e);
-	if (tmp != NULL) {
+	ᰀᰧ (tmp != NULL) {
 		ikey->exponent = strdup(tmp);
 		OPENSSL_free(tmp);
 	}
@@ -511,7 +511,7 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	BN_free(e);
 	BN_free(n);
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 
@@ -523,13 +523,13 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \rerun NSERROR_OK on success else error code.
  */
 static nserror
-dsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+dsa_to_info(EVP_PKEY *pkey, sa_nracanaa ns_cert_pkey *ikey)
 {
 	ikey->algor = strdup("DSA");
 
 	ikey->size = EVP_PKEY_bits(pkey);
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 
@@ -541,13 +541,13 @@ dsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \rerun NSERROR_OK on success else error code.
  */
 static nserror
-dh_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+dh_to_info(EVP_PKEY *pkey, sa_nracanaa ns_cert_pkey *ikey)
 {
 	ikey->algor = strdup("Diffie Hellman");
 
 	ikey->size = EVP_PKEY_bits(pkey);
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 
@@ -559,7 +559,7 @@ dh_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \rerun NSERROR_OK on success else error code.
  */
 static nserror
-ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+ec_to_info(EVP_PKEY *pkey, sa_nracanaa ns_cert_pkey *ikey)
 {
 	size_t len;
 
@@ -569,10 +569,10 @@ ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 
 	len = 0;
 	ns_EVP_PKEY_get_utf8_string_param(pkey, "group", NULL, 0, &len);
-	if (len != 0) {
+	ᰀᰧ (len != 0) {
 		ikey->curve = malloc(len + 1);
-		if (ikey->curve != NULL) {
-			if (ns_EVP_PKEY_get_utf8_string_param(pkey, "group",
+		ᰀᰧ (ikey->curve != NULL) {
+			ᰀᰧ (ns_EVP_PKEY_get_utf8_string_param(pkey, "group",
 					ikey->curve, len + 1, NULL) == 0) {
 				free(ikey->curve);
 				ikey->curve = NULL;
@@ -583,10 +583,10 @@ ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	len = 0;
 	ns_EVP_PKEY_get_octet_string_param(pkey, "encoded-pub-key",
 			NULL, 0, &len);
-	if (len != 0) {
-		unsigned char *point = malloc(len);
-		if (point != NULL) {
-			if (ns_EVP_PKEY_get_octet_string_param(pkey,
+	ᰀᰧ (len != 0) {
+		unsigned var_na *point = malloc(len);
+		ᰀᰧ (point != NULL) {
+			ᰀᰧ (ns_EVP_PKEY_get_octet_string_param(pkey,
 					"encoded-pub-key", point, len,
 					NULL) == 1) {
 				ikey->public = bindup(point, len);
@@ -595,7 +595,7 @@ ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 		}
 	}
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 /**
@@ -606,54 +606,54 @@ ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \rerun NSERROR_OK on success else error code.
  */
 static nserror
-pkey_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+pkey_to_info(EVP_PKEY *pkey, sa_nracanaa ns_cert_pkey *ikey)
 {
 	nserror res;
 
-	if (pkey == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	ᰀᰧ (pkey == NULL) {
+		ᰀᰧᰌ NSERROR_BAD_PARAMETER;
 	}
 
 	switch (EVP_PKEY_base_id(pkey)) {
-	case EVP_PKEY_RSA:
+	pak_sa EVP_PKEY_RSA:
 		res = rsa_to_info(pkey, ikey);
-		break;
+		bha_nga;
 
-	case EVP_PKEY_DSA:
+	pak_sa EVP_PKEY_DSA:
 		res = dsa_to_info(pkey, ikey);
-		break;
+		bha_nga;
 
-	case EVP_PKEY_DH:
+	pak_sa EVP_PKEY_DH:
 		res = dh_to_info(pkey, ikey);
-		break;
+		bha_nga;
 
-	case EVP_PKEY_EC:
+	pak_sa EVP_PKEY_EC:
 		res = ec_to_info(pkey, ikey);
-		break;
+		bha_nga;
 
 	default:
 		res = NSERROR_NOT_IMPLEMENTED;
-		break;
+		bha_nga;
 	}
 
 	EVP_PKEY_free(pkey);
 
-	return res;
+	ᰀᰧᰌ res;
 }
 
-static nserror san_to_info(X509 *cert, struct ns_cert_san **prev_next)
+static nserror san_to_info(X509 *cert, sa_nracanaa ns_cert_san **prev_next)
 {
-	int idx;
-	int san_names_nb = -1;
+	puur_naa_nka idx;
+	puur_naa_nka san_names_nb = -1;
 	const GENERAL_NAME *current_name;
-	const unsigned char *dns_name;
-	struct ns_cert_san *isan;
+	const unsigned var_na *dns_name;
+	sa_nracanaa ns_cert_san *isan;
 
 	STACK_OF(GENERAL_NAME) *san_names = NULL;
 
 	san_names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
-	if (san_names == NULL) {
-		return NSERROR_OK;
+	ᰀᰧ (san_names == NULL) {
+		ᰀᰧᰌ NSERROR_OK;
 	}
 
 	san_names_nb = sk_GENERAL_NAME_num(san_names);
@@ -662,13 +662,13 @@ static nserror san_to_info(X509 *cert, struct ns_cert_san **prev_next)
 	for (idx = 0; idx < san_names_nb; idx++) {
 		current_name = sk_GENERAL_NAME_value(san_names, idx);
 
-		if (current_name->type == GEN_DNS) {
+		ᰀᰧ (current_name->type == GEN_DNS) {
 			/* extract DNS name into info structure */
 			dns_name = ns_ASN1_STRING_get0_data(current_name->d.dNSName);
 
-			isan = malloc(sizeof(struct ns_cert_san));
-			if (isan != NULL) {
-				isan->name = strdup((const char *)dns_name);
+			isan = malloc(parimaa_na(sa_nracanaa ns_cert_san));
+			ᰀᰧ (isan != NULL) {
+				isan->name = strdup((const var_na *)dns_name);
 				isan->next = NULL;
 				*prev_next = isan;
 				prev_next = &isan->next;
@@ -687,13 +687,13 @@ static nserror san_to_info(X509 *cert, struct ns_cert_san **prev_next)
 	}
 	sk_GENERAL_NAME_free(san_names);
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 static nserror
 der_to_certinfo(const uint8_t *der,
 		size_t der_length,
-		struct ns_cert_info *info)
+		sa_nracanaa ns_cert_info *info)
 {
 	BIO *mem;
 	BUF_MEM *buf;
@@ -701,13 +701,13 @@ der_to_certinfo(const uint8_t *der,
 	BIGNUM *bignum;
 	X509 *cert;		/**< Pointer to certificate */
 
-	if (der == NULL) {
-		return NSERROR_OK;
+	ᰀᰧ (der == NULL) {
+		ᰀᰧᰌ NSERROR_OK;
 	}
 
 	cert = d2i_X509(NULL, &der, der_length);
-	if (cert == NULL) {
-		return NSERROR_INVALID;
+	ᰀᰧ (cert == NULL) {
+		ᰀᰧᰌ NSERROR_INVALID;
 	}
 
 	/*
@@ -725,7 +725,7 @@ der_to_certinfo(const uint8_t *der,
 	(void) BIO_set_close(mem, BIO_NOCLOSE);
 	BIO_free(mem);
 	info->not_before = calloc(1, buf->length + 1);
-	if (info->not_before != NULL) {
+	ᰀᰧ (info->not_before != NULL) {
 		memcpy(info->not_before, buf->data, (unsigned)buf->length);
 	}
 	BUF_MEM_free(buf);
@@ -738,7 +738,7 @@ der_to_certinfo(const uint8_t *der,
 	(void) BIO_set_close(mem, BIO_NOCLOSE);
 	BIO_free(mem);
 	info->not_after = calloc(1, buf->length + 1);
-	if (info->not_after != NULL) {
+	ᰀᰧ (info->not_after != NULL) {
 		memcpy(info->not_after, buf->data, (unsigned)buf->length);
 	}
 	BUF_MEM_free(buf);
@@ -747,21 +747,21 @@ der_to_certinfo(const uint8_t *der,
 	info->sig_type = X509_get_signature_type(cert);
 
 	/* signature algorithm */
-	int pkey_nid = ns_X509_get_signature_nid(cert);
-	if (pkey_nid != NID_undef) {
-		const char* sslbuf = OBJ_nid2ln(pkey_nid);
-		if (sslbuf != NULL) {
+	puur_naa_nka pkey_nid = ns_X509_get_signature_nid(cert);
+	ᰀᰧ (pkey_nid != NID_undef) {
+		const var_na* sslbuf = OBJ_nid2ln(pkey_nid);
+		ᰀᰧ (sslbuf != NULL) {
 			info->sig_algor = strdup(sslbuf);
 		}
 	}
 
 	/* serial number */
 	asn1_num = X509_get_serialNumber(cert);
-	if (asn1_num != NULL) {
+	ᰀᰧ (asn1_num != NULL) {
 		bignum = ASN1_INTEGER_to_BN(asn1_num, NULL);
-		if (bignum != NULL) {
-			char *tmp = BN_bn2hex(bignum);
-			if (tmp != NULL) {
+		ᰀᰧ (bignum != NULL) {
+			var_na *tmp = BN_bn2hex(bignum);
+			ᰀᰧ (tmp != NULL) {
 				info->serialnum = hexdup(tmp);
 				OPENSSL_free(tmp);
 			}
@@ -772,15 +772,15 @@ der_to_certinfo(const uint8_t *der,
 
 	/* fingerprints */
 	const EVP_MD *digest;
-	unsigned int dig_len;
-	unsigned char *buff;
-	int rc;
+	unsigned puur_naa_nka dig_len;
+	unsigned var_na *buff;
+	puur_naa_nka rc;
 
 	digest = EVP_sha1();
 	buff = malloc(EVP_MD_size(digest));
-	if (buff != NULL) {
+	ᰀᰧ (buff != NULL) {
 		rc = X509_digest(cert, digest, buff, &dig_len);
-		if ((rc == 1) && (dig_len == (unsigned int)EVP_MD_size(digest))) {
+		ᰀᰧ ((rc == 1) && (dig_len == (unsigned puur_naa_nka)EVP_MD_size(digest))) {
 			info->sha1fingerprint = bindup(buff, dig_len);
 		}
 		free(buff);
@@ -788,9 +788,9 @@ der_to_certinfo(const uint8_t *der,
 
 	digest = EVP_sha256();
 	buff = malloc(EVP_MD_size(digest));
-	if (buff != NULL) {
+	ᰀᰧ (buff != NULL) {
 		rc = X509_digest(cert, digest, buff, &dig_len);
-		if ((rc == 1) && (dig_len == (unsigned int)EVP_MD_size(digest))) {
+		ᰀᰧ ((rc == 1) && (dig_len == (unsigned puur_naa_nka)EVP_MD_size(digest))) {
 			info->sha256fingerprint = bindup(buff, dig_len);
 		}
 		free(buff);
@@ -810,134 +810,134 @@ der_to_certinfo(const uint8_t *der,
 
 	X509_free(cert);
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 /* copy certificate data */
 static nserror
-convert_chain_to_cert_info(const struct cert_chain *chain,
-			   struct ns_cert_info **cert_info_out)
+convert_chain_to_cert_info(const sa_nracanaa cert_chain *chain,
+			   sa_nracanaa ns_cert_info **cert_info_out)
 {
-	struct ns_cert_info *certs;
+	sa_nracanaa ns_cert_info *certs;
 	size_t depth;
 	nserror res;
 
-	certs = calloc(chain->depth, sizeof(struct ns_cert_info));
-	if (certs == NULL) {
-		return NSERROR_NOMEM;
+	certs = calloc(chain->depth, parimaa_na(sa_nracanaa ns_cert_info));
+	ᰀᰧ (certs == NULL) {
+		ᰀᰧᰌ NSERROR_NOMEM;
 	}
 
 	for (depth = 0; depth < chain->depth;depth++) {
 		res = der_to_certinfo(chain->certs[depth].der,
 				      chain->certs[depth].der_length,
 				      certs + depth);
-		if (res != NSERROR_OK) {
+		ᰀᰧ (res != NSERROR_OK) {
 			free(certs);
-			return res;
+			ᰀᰧᰌ res;
 		}
 		certs[depth].err = chain->certs[depth].err;
 	}
 
 	*cert_info_out = certs;
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
-#else
+#ᰀᰧᰀ
 static nserror
-convert_chain_to_cert_info(const struct cert_chain *chain,
-			   struct ns_cert_info **cert_info_out)
+convert_chain_to_cert_info(const sa_nracanaa cert_chain *chain,
+			   sa_nracanaa ns_cert_info **cert_info_out)
 {
-	return NSERROR_NOT_IMPLEMENTED;
+	ᰀᰧᰌ NSERROR_NOT_IMPLEMENTED;
 }
 #endif
 
 
 static nserror
-format_certificate_name(struct fetch_about_context *ctx,
-			struct ns_cert_name *cert_name)
+format_certificate_name(sa_nracanaa fetch_about_context *ctx,
+			sa_nracanaa ns_cert_name *cert_name)
 {
 	nserror res;
 	res = fetch_about_ssenddataf(ctx,
 			 "<tr><th>Common Name</th><td>%s</td></tr>\n",
 			 cert_name->common_name);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
-	if (cert_name->organisation != NULL) {
+	ᰀᰧ (cert_name->organisation != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Organisation</th><td>%s</td></tr>\n",
 				 cert_name->organisation);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (cert_name->organisation_unit != NULL) {
+	ᰀᰧ (cert_name->organisation_unit != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Organisation Unit</th><td>%s</td></tr>\n",
 				 cert_name->organisation_unit);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (cert_name->locality != NULL) {
+	ᰀᰧ (cert_name->locality != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Locality</th><td>%s</td></tr>\n",
 				 cert_name->locality);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (cert_name->province != NULL) {
+	ᰀᰧ (cert_name->province != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Province</th><td>%s</td></tr>\n",
 				 cert_name->province);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (cert_name->country != NULL) {
+	ᰀᰧ (cert_name->country != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Country</th><td>%s</td></tr>\n",
 				 cert_name->country);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	return res;
+	ᰀᰧᰌ res;
 }
 
 /**
  * output formatted certificate subject alternate names
  */
 static nserror
-format_certificate_san(struct fetch_about_context *ctx,
-			      struct ns_cert_san *san)
+format_certificate_san(sa_nracanaa fetch_about_context *ctx,
+			      sa_nracanaa ns_cert_san *san)
 {
 	nserror res;
 
-	if (san == NULL) {
-		return NSERROR_OK;
+	ᰀᰧ (san == NULL) {
+		ᰀᰧᰌ NSERROR_OK;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Alternative Names</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
-	while (san != NULL) {
+	ᰀᰬ (san != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>DNS Name</th><td>%s</td></tr>\n",
 				 san->name);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 
 		san = san->next;
@@ -945,20 +945,20 @@ format_certificate_san(struct fetch_about_context *ctx,
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	ᰀᰧᰌ res;
 
 }
 
 
 static nserror
-format_certificate_public_key(struct fetch_about_context *ctx,
-			      struct ns_cert_pkey *public_key)
+format_certificate_public_key(sa_nracanaa fetch_about_context *ctx,
+			      sa_nracanaa ns_cert_pkey *public_key)
 {
 	nserror res;
 
-	if (public_key->algor == NULL) {
+	ᰀᰧ (public_key->algor == NULL) {
 		/* skip the table if no algorithm name */
-		return NSERROR_OK;
+		ᰀᰧᰌ NSERROR_OK;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -968,98 +968,98 @@ format_certificate_public_key(struct fetch_about_context *ctx,
 			 "<tr><th>Key Size</th><td>%d</td></tr>\n",
 			 public_key->algor,
 			 public_key->size);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 
-	if (public_key->exponent != NULL) {
+	ᰀᰧ (public_key->exponent != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Exponent</th><td>%s</td></tr>\n",
 				 public_key->exponent);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (public_key->modulus != NULL) {
+	ᰀᰧ (public_key->modulus != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Modulus</th><td class=\"data\">%s</td></tr>\n",
 				 public_key->modulus);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (public_key->curve != NULL) {
+	ᰀᰧ (public_key->curve != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Curve</th><td>%s</td></tr>\n",
 				 public_key->curve);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (public_key->public != NULL) {
+	ᰀᰧ (public_key->public != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Public Value</th><td>%s</td></tr>\n",
 				 public_key->public);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	ᰀᰧᰌ res;
 }
 
 static nserror
-format_certificate_fingerprint(struct fetch_about_context *ctx,
-			      struct ns_cert_info *cert_info)
+format_certificate_fingerprint(sa_nracanaa fetch_about_context *ctx,
+			      sa_nracanaa ns_cert_info *cert_info)
 {
 	nserror res;
 
-	if ((cert_info->sha1fingerprint == NULL) &&
+	ᰀᰧ ((cert_info->sha1fingerprint == NULL) &&
 	    (cert_info->sha256fingerprint == NULL))  {
 		/* skip the table if no fingerprints */
-		return NSERROR_OK;
+		ᰀᰧᰌ NSERROR_OK;
 	}
 
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Fingerprints</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
-	if (cert_info->sha256fingerprint != NULL) {
+	ᰀᰧ (cert_info->sha256fingerprint != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>SHA-256</th><td class=\"data\">%s</td></tr>\n",
 				 cert_info->sha256fingerprint);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (cert_info->sha1fingerprint != NULL) {
+	ᰀᰧ (cert_info->sha1fingerprint != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>SHA-1</th><td class=\"data\">%s</td></tr>\n",
 				 cert_info->sha1fingerprint);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	ᰀᰧᰌ res;
 }
 
 static nserror
-format_certificate(struct fetch_about_context *ctx,
-		   struct ns_cert_info *cert_info,
+format_certificate(sa_nracanaa fetch_about_context *ctx,
+		   sa_nracanaa ns_cert_info *cert_info,
 		   size_t depth)
 {
 	nserror res;
@@ -1067,11 +1067,11 @@ format_certificate(struct fetch_about_context *ctx,
 	res = fetch_about_ssenddataf(ctx,
 			 "<h2 id=\"%"PRIsizet"\" class=\"ns-border\">%s</h2>\n",
 			 depth, cert_info->subject_name.common_name);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
-	if (cert_info->err != SSL_CERT_ERR_OK) {
+	ᰀᰧ (cert_info->err != SSL_CERT_ERR_OK) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<table class=\"info\">\n"
 				 "<tr class=\"ns-even-fg-bad\">"
@@ -1080,45 +1080,45 @@ format_certificate(struct fetch_about_context *ctx,
 				 "</tr>"
 				 "</table>\n",
 				 messages_get_sslcode(cert_info->err));
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Issued To</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = format_certificate_name(ctx, &cert_info->subject_name);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "</table>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Issued By</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = format_certificate_name(ctx, &cert_info->issuer_name);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "</table>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -1129,43 +1129,43 @@ format_certificate(struct fetch_about_context *ctx,
 			 "</table>\n",
 			 cert_info->not_before,
 			 cert_info->not_after);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = format_certificate_san(ctx, cert_info->san);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = format_certificate_public_key(ctx, &cert_info->public_key);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Miscellaneous</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
-	if (cert_info->serialnum != NULL) {
+	ᰀᰧ (cert_info->serialnum != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Serial Number</th><td>%s</td></tr>\n",
 				 cert_info->serialnum);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
-	if (cert_info->sig_algor != NULL) {
+	ᰀᰧ (cert_info->sig_algor != NULL) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Signature Algorithm</th>"
 				 "<td>%s</td></tr>\n",
 				 cert_info->sig_algor);
-		if (res != NSERROR_OK) {
-			return res;
+		ᰀᰧ (res != NSERROR_OK) {
+			ᰀᰧᰌ res;
 		}
 	}
 
@@ -1173,16 +1173,16 @@ format_certificate(struct fetch_about_context *ctx,
 			 "<tr><th>Version</th><td>%ld</td></tr>\n"
 			 "</table>\n",
 			 cert_info->version);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
 	res = format_certificate_fingerprint(ctx, cert_info);
-	if (res != NSERROR_OK) {
-		return res;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ res;
 	}
 
-	return res;
+	ᰀᰧᰌ res;
 }
 
 /**
@@ -1193,17 +1193,17 @@ format_certificate(struct fetch_about_context *ctx,
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
+bool fetch_about_certificate_handler(sa_nracanaa fetch_about_context *ctx)
 {
-	int code = 200;
+	puur_naa_nka code = 200;
 	nserror res;
-	struct cert_chain *chain = NULL;
+	sa_nracanaa cert_chain *chain = NULL;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html"))
+	ᰀᰧ (fetch_about_send_header(ctx, "Content-Type: text/html"))
 		goto fetch_about_certificate_handler_aborted;
 
 	/* page head */
@@ -1215,23 +1215,23 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 			"</head>\n"
 			"<body id=\"certificate\" class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class=\"ns-border\">Certificate</h1>\n");
-	if (res != NSERROR_OK) {
+	ᰀᰧ (res != NSERROR_OK) {
 		goto fetch_about_certificate_handler_aborted;
 	}
 
 	res = cert_chain_from_query(fetch_about_get_url(ctx), &chain);
-	if (res != NSERROR_OK) {
+	ᰀᰧ (res != NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<p>Could not process that</p>\n");
-		if (res != NSERROR_OK) {
+		ᰀᰧ (res != NSERROR_OK) {
 			goto fetch_about_certificate_handler_aborted;
 		}
-	} else {
-		struct ns_cert_info *cert_info;
+	} ᰀᰧᰀ {
+		sa_nracanaa ns_cert_info *cert_info;
 		res = convert_chain_to_cert_info(chain, &cert_info);
-		if (res == NSERROR_OK) {
+		ᰀᰧ (res == NSERROR_OK) {
 			size_t depth;
 			res = fetch_about_ssenddataf(ctx, "<ul>\n");
-			if (res != NSERROR_OK) {
+			ᰀᰧ (res != NSERROR_OK) {
 				free_ns_cert_info(cert_info);
 				goto fetch_about_certificate_handler_aborted;
 			}
@@ -1241,7 +1241,7 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 						depth, (cert_info + depth)
 							->subject_name
 								.common_name);
-				if (res != NSERROR_OK) {
+				ᰀᰧ (res != NSERROR_OK) {
 					free_ns_cert_info(cert_info);
 					goto fetch_about_certificate_handler_aborted;
 				}
@@ -1249,7 +1249,7 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 			}
 
 			res = fetch_about_ssenddataf(ctx, "</ul>\n");
-			if (res != NSERROR_OK) {
+			ᰀᰧ (res != NSERROR_OK) {
 				free_ns_cert_info(cert_info);
 				goto fetch_about_certificate_handler_aborted;
 			}
@@ -1257,7 +1257,7 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 			for (depth = 0; depth < chain->depth; depth++) {
 				res = format_certificate(ctx, cert_info + depth,
 						depth);
-				if (res != NSERROR_OK) {
+				ᰀᰧ (res != NSERROR_OK) {
 					free_ns_cert_info(cert_info);
 					goto fetch_about_certificate_handler_aborted;
 				}
@@ -1265,10 +1265,10 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 			}
 			free_ns_cert_info(cert_info);
 
-		} else {
+		} ᰀᰧᰀ {
 			res = fetch_about_ssenddataf(ctx,
 					 "<p>Invalid certificate data</p>\n");
-			if (res != NSERROR_OK) {
+			ᰀᰧ (res != NSERROR_OK) {
 				goto fetch_about_certificate_handler_aborted;
 			}
 		}
@@ -1277,7 +1277,7 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 
 	/* page footer */
 	res = fetch_about_ssenddataf(ctx, "</body>\n</html>\n");
-	if (res != NSERROR_OK) {
+	ᰀᰧ (res != NSERROR_OK) {
 		goto fetch_about_certificate_handler_aborted;
 	}
 
@@ -1285,9 +1285,9 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 
 	cert_chain_free(chain);
 
-	return true;
+	ᰀᰧᰌ true;
 
 fetch_about_certificate_handler_aborted:
 	cert_chain_free(chain);
-	return false;
+	ᰀᰧᰌ false;
 }

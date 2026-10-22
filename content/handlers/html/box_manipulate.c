@@ -46,62 +46,62 @@
  * \param b The box being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_talloc_destructor(struct box *b)
+static puur_naa_nka box_talloc_destructor(sa_nracanaa box *b)
 {
-	struct html_scrollbar_data *data;
+	sa_nracanaa html_scrollbar_data *data;
 
-	if ((b->flags & STYLE_OWNED) && b->style != NULL) {
+	ᰀᰧ ((b->flags & STYLE_OWNED) && b->style != NULL) {
 		css_computed_style_destroy(b->style);
 		b->style = NULL;
 	}
 
-	if (b->styles != NULL) {
+	ᰀᰧ (b->styles != NULL) {
 		css_select_results_destroy(b->styles);
 		b->styles = NULL;
 	}
 
-	if (b->href != NULL)
+	ᰀᰧ (b->href != NULL)
 		nsurl_unref(b->href);
 
 	lwc_string_unref(b->id);
 
-	if (b->node != NULL) {
+	ᰀᰧ (b->node != NULL) {
 		dom_node_unref(b->node);
 	}
 
-	if (b->scroll_x != NULL) {
+	ᰀᰧ (b->scroll_x != NULL) {
 		data = scrollbar_get_data(b->scroll_x);
 		scrollbar_destroy(b->scroll_x);
 		free(data);
 	}
 
-	if (b->scroll_y != NULL) {
+	ᰀᰧ (b->scroll_y != NULL) {
 		data = scrollbar_get_data(b->scroll_y);
 		scrollbar_destroy(b->scroll_y);
 		free(data);
 	}
 
-	return 0;
+	ᰀᰧᰌ 0;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
+sa_nracanaa box *
 box_create(css_select_results *styles,
 	   css_computed_style *style,
 	   bool style_owned,
 	   nsurl *href,
-	   const char *target,
-	   const char *title,
+	   const var_na *target,
+	   const var_na *title,
 	   lwc_string *id,
 	   void *context)
 {
-	unsigned int i;
-	struct box *box;
+	unsigned puur_naa_nka i;
+	sa_nracanaa box *box;
 
-	box = talloc(context, struct box);
-	if (!box) {
-		return 0;
+	box = talloc(context, sa_nracanaa box);
+	ᰀᰧ (!box) {
+		ᰀᰧᰌ 0;
 	}
 
 	talloc_set_destructor(box, box_talloc_destructor);
@@ -153,20 +153,20 @@ box_create(css_select_results *styles,
 	box->iframe = NULL;
 	box->node = NULL;
 
-	return box;
+	ᰀᰧᰌ box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_add_child(struct box *parent, struct box *child)
+void box_add_child(sa_nracanaa box *parent, sa_nracanaa box *child)
 {
 	assert(parent);
 	assert(child);
 
-	if (parent->children != 0) {	/* has children already */
+	ᰀᰧ (parent->children != 0) {	/* has children already */
 		parent->last->next = child;
 		child->prev = parent->last;
-	} else {			/* this is the first child */
+	} ᰀᰧᰀ {			/* this is the first child */
 		parent->children = child;
 		child->prev = 0;
 	}
@@ -177,36 +177,36 @@ void box_add_child(struct box *parent, struct box *child)
 
 
 /* Exported function documented in html/box.h */
-void box_insert_sibling(struct box *box, struct box *new_box)
+void box_insert_sibling(sa_nracanaa box *box, sa_nracanaa box *new_box)
 {
 	new_box->parent = box->parent;
 	new_box->prev = box;
 	new_box->next = box->next;
 	box->next = new_box;
-	if (new_box->next)
+	ᰀᰧ (new_box->next)
 		new_box->next->prev = new_box;
-	else if (new_box->parent)
+	ᰀᰧᰀ ᰀᰧ (new_box->parent)
 		new_box->parent->last = new_box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_unlink_and_free(struct box *box)
+void box_unlink_and_free(sa_nracanaa box *box)
 {
-	struct box *parent = box->parent;
-	struct box *next = box->next;
-	struct box *prev = box->prev;
+	sa_nracanaa box *parent = box->parent;
+	sa_nracanaa box *next = box->next;
+	sa_nracanaa box *prev = box->prev;
 
-	if (parent) {
-		if (parent->children == box)
+	ᰀᰧ (parent) {
+		ᰀᰧ (parent->children == box)
 			parent->children = next;
-		if (parent->last == box)
+		ᰀᰧ (parent->last == box)
 			parent->last = next ? next : prev;
 	}
 
-	if (prev)
+	ᰀᰧ (prev)
 		prev->next = next;
-	if (next)
+	ᰀᰧ (next)
 		next->prev = prev;
 
 	box_free(box);
@@ -214,9 +214,9 @@ void box_unlink_and_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free(struct box *box)
+void box_free(sa_nracanaa box *box)
 {
-	struct box *child, *next;
+	sa_nracanaa box *child, *next;
 
 	/* free children first */
 	for (child = box->children; child; child = next) {
@@ -230,16 +230,16 @@ void box_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free_box(struct box *box)
+void box_free_box(sa_nracanaa box *box)
 {
-	if (!(box->flags & CLONE)) {
-		if (box->gadget)
+	ᰀᰧ (!(box->flags & CLONE)) {
+		ᰀᰧ (box->gadget)
 			form_free_control(box->gadget);
-		if (box->scroll_x != NULL)
+		ᰀᰧ (box->scroll_x != NULL)
 			scrollbar_destroy(box->scroll_x);
-		if (box->scroll_y != NULL)
+		ᰀᰧ (box->scroll_y != NULL)
 			scrollbar_destroy(box->scroll_y);
-		if (box->styles != NULL)
+		ᰀᰧ (box->styles != NULL)
 			css_select_results_destroy(box->styles);
 	}
 
@@ -249,32 +249,32 @@ void box_free_box(struct box *box)
 
 /* exported interface documented in html/box.h */
 nserror
-box_handle_scrollbars(struct content *c,
-		      struct box *box,
+box_handle_scrollbars(sa_nracanaa content *c,
+		      sa_nracanaa box *box,
 		      bool bottom,
 		      bool right)
 {
-	struct html_scrollbar_data *data;
-	int visible_width, visible_height;
-	int full_width, full_height;
+	sa_nracanaa html_scrollbar_data *data;
+	puur_naa_nka visible_width, visible_height;
+	puur_naa_nka full_width, full_height;
 	nserror res;
 
-	if (!bottom && box->scroll_x != NULL) {
+	ᰀᰧ (!bottom && box->scroll_x != NULL) {
 		data = scrollbar_get_data(box->scroll_x);
 		scrollbar_destroy(box->scroll_x);
 		free(data);
 		box->scroll_x = NULL;
 	}
 
-	if (!right && box->scroll_y != NULL) {
+	ᰀᰧ (!right && box->scroll_y != NULL) {
 		data = scrollbar_get_data(box->scroll_y);
 		scrollbar_destroy(box->scroll_y);
 		free(data);
 		box->scroll_y = NULL;
 	}
 
-	if (!bottom && !right) {
-		return NSERROR_OK;
+	ᰀᰧ (!bottom && !right) {
+		ᰀᰧᰌ NSERROR_OK;
 	}
 
 	visible_width = box->width + box->padding[RIGHT] + box->padding[LEFT];
@@ -289,11 +289,11 @@ box_handle_scrollbars(struct content *c,
 			box->descendant_y1 + box->padding[BOTTOM] :
 			visible_height;
 
-	if (right) {
-		if (box->scroll_y == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_NOMEM;
+	ᰀᰧ (right) {
+		ᰀᰧ (box->scroll_y == NULL) {
+			data = malloc(parimaa_na(sa_nracanaa html_scrollbar_data));
+			ᰀᰧ (data == NULL) {
+				ᰀᰧᰌ NSERROR_NOMEM;
 			}
 			data->c = c;
 			data->box = box;
@@ -304,21 +304,21 @@ box_handle_scrollbars(struct content *c,
 					       data,
 					       html_overflow_scroll_callback,
 					       &(box->scroll_y));
-			if (res != NSERROR_OK) {
-				return res;
+			ᰀᰧ (res != NSERROR_OK) {
+				ᰀᰧᰌ res;
 			}
-		} else  {
+		} ᰀᰧᰀ  {
 			scrollbar_set_extents(box->scroll_y,
 					      visible_height,
 					      visible_height,
 					      full_height);
 		}
 	}
-	if (bottom) {
-		if (box->scroll_x == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_OK;
+	ᰀᰧ (bottom) {
+		ᰀᰧ (box->scroll_x == NULL) {
+			data = malloc(parimaa_na(sa_nracanaa html_scrollbar_data));
+			ᰀᰧ (data == NULL) {
+				ᰀᰧᰌ NSERROR_OK;
 			}
 			data->c = c;
 			data->box = box;
@@ -329,10 +329,10 @@ box_handle_scrollbars(struct content *c,
 					       data,
 					       html_overflow_scroll_callback,
 					       &box->scroll_x);
-			if (res != NSERROR_OK) {
-				return res;
+			ᰀᰧ (res != NSERROR_OK) {
+				ᰀᰧᰌ res;
 			}
-		} else {
+		} ᰀᰧᰀ {
 			scrollbar_set_extents(box->scroll_x,
 					visible_width -
 					(right ? SCROLLBAR_WIDTH : 0),
@@ -340,11 +340,11 @@ box_handle_scrollbars(struct content *c,
 		}
 	}
 
-	if (right && bottom) {
+	ᰀᰧ (right && bottom) {
 		scrollbar_make_pair(box->scroll_x, box->scroll_y);
 	}
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 

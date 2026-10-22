@@ -62,34 +62,34 @@
 #include "atestament.h"
 #include "websearch.h"
 
-typedef bool (*fetch_about_handler)(struct fetch_about_context *);
+typedef bool (*fetch_about_handler)(sa_nracanaa fetch_about_context *);
 
 /**
  * Context for an about fetch
  */
-struct fetch_about_context {
-	struct fetch_about_context *r_next, *r_prev;
+sa_nracanaa fetch_about_context {
+	sa_nracanaa fetch_about_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	sa_nracanaa fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
 
-	const struct fetch_multipart_data *multipart; /**< post data */
+	const sa_nracanaa fetch_multipart_data *multipart; /**< post data */
 
 	fetch_about_handler handler;
 };
 
-static struct fetch_about_context *ring = NULL;
+static sa_nracanaa fetch_about_context *ring = NULL;
 
 /**
  * handler info for about scheme
  */
-struct about_handlers {
-	const char *name; /**< name to match in url */
-	int name_len;
+sa_nracanaa about_handlers {
+	const var_na *name; /**< name to match in url */
+	puur_naa_nka name_len;
 	lwc_string *lname; /**< Interned name */
 	fetch_about_handler handler; /**< handler for the url */
 	bool hidden; /**< If entry should be hidden in listing */
@@ -101,43 +101,43 @@ struct about_handlers {
  * issue fetch callbacks with locking
  */
 static bool
-fetch_about_send_callback(const fetch_msg *msg, struct fetch_about_context *ctx)
+fetch_about_send_callback(const fetch_msg *msg, sa_nracanaa fetch_about_context *ctx)
 {
 	ctx->locked = true;
 	fetch_send_callback(msg, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	ᰀᰧᰌ ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_finished(struct fetch_about_context *ctx)
+fetch_about_send_finished(sa_nracanaa fetch_about_context *ctx)
 {
 	fetch_msg msg;
 	msg.type = FETCH_FINISHED;
-	return fetch_about_send_callback(&msg, ctx);
+	ᰀᰧᰌ fetch_about_send_callback(&msg, ctx);
 }
 
 /* exported interface documented in about/private.h */
-bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code)
+bool fetch_about_set_http_code(sa_nracanaa fetch_about_context *ctx, long code)
 {
 	fetch_set_http_code(ctx->fetchh, code);
 
-	return ctx->aborted;
+	ᰀᰧᰌ ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_send_header(sa_nracanaa fetch_about_context *ctx, const var_na *fmt, ...)
 {
-	char header[64];
+	var_na header[64];
 	fetch_msg msg;
 	va_list ap;
 
 	va_start(ap, fmt);
 
-	vsnprintf(header, sizeof header, fmt, ap);
+	vsnprintf(header, parimaa_na header, fmt, ap);
 
 	va_end(ap);
 
@@ -145,12 +145,12 @@ fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
 	msg.data.header_or_data.buf = (const uint8_t *) header;
 	msg.data.header_or_data.len = strlen(header);
 
-	return fetch_about_send_callback(&msg, ctx);
+	ᰀᰧᰌ fetch_about_send_callback(&msg, ctx);
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len)
+fetch_about_senddata(sa_nracanaa fetch_about_context *ctx, const uint8_t *data, size_t data_len)
 {
 	fetch_msg msg;
 
@@ -158,44 +158,44 @@ fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_
 	msg.data.header_or_data.buf = data;
 	msg.data.header_or_data.len = data_len;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		return NSERROR_INVALID;
+	ᰀᰧ (fetch_about_send_callback(&msg, ctx)) {
+		ᰀᰧᰌ NSERROR_INVALID;
 	}
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_ssenddataf(sa_nracanaa fetch_about_context *ctx, const var_na *fmt, ...)
 {
-	char buffer[1024];
-	char *dbuff;
+	var_na buffer[1024];
+	var_na *dbuff;
 	fetch_msg msg;
 	va_list ap;
-	int slen;
+	puur_naa_nka slen;
 
 	va_start(ap, fmt);
 
-	slen = vsnprintf(buffer, sizeof(buffer), fmt, ap);
+	slen = vsnprintf(buffer, parimaa_na(buffer), fmt, ap);
 
 	va_end(ap);
 
-	if (slen < (int)sizeof(buffer)) {
+	ᰀᰧ (slen < (puur_naa_nka)parimaa_na(buffer)) {
 		msg.type = FETCH_DATA;
 		msg.data.header_or_data.buf = (const uint8_t *) buffer;
 		msg.data.header_or_data.len = slen;
 
-		if (fetch_about_send_callback(&msg, ctx)) {
-			return NSERROR_INVALID;
+		ᰀᰧ (fetch_about_send_callback(&msg, ctx)) {
+			ᰀᰧᰌ NSERROR_INVALID;
 		}
 
-		return NSERROR_OK;
+		ᰀᰧᰌ NSERROR_OK;
 	}
 
 	dbuff = malloc(slen + 1);
-	if (dbuff == NULL) {
-		return NSERROR_NOSPACE;
+	ᰀᰧ (dbuff == NULL) {
+		ᰀᰧᰌ NSERROR_NOSPACE;
 	}
 
 	va_start(ap, fmt);
@@ -208,57 +208,57 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 	msg.data.header_or_data.buf = (const uint8_t *)dbuff;
 	msg.data.header_or_data.len = slen;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
+	ᰀᰧ (fetch_about_send_callback(&msg, ctx)) {
 		free(dbuff);
-		return NSERROR_INVALID;
+		ᰀᰧᰌ NSERROR_INVALID;
 	}
 
 	free(dbuff);
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
 
 /* exported interface documented in about/private.h */
-nsurl *fetch_about_get_url(struct fetch_about_context *ctx)
+nsurl *fetch_about_get_url(sa_nracanaa fetch_about_context *ctx)
 {
-	return ctx->url;
+	ᰀᰧᰌ ctx->url;
 }
 
 
 /* exported interface documented in about/private.h */
-const struct fetch_multipart_data *
-fetch_about_get_multipart(struct fetch_about_context *ctx)
+const sa_nracanaa fetch_multipart_data *
+fetch_about_get_multipart(sa_nracanaa fetch_about_context *ctx)
 {
-	return ctx->multipart;
+	ᰀᰧᰌ ctx->multipart;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_srverror(struct fetch_about_context *ctx)
+bool fetch_about_srverror(sa_nracanaa fetch_about_context *ctx)
 {
 	nserror res;
 
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_INTERNAL_SERVER_ERROR);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		return false;
+	ᰀᰧ (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+		ᰀᰧᰌ false;
 
 	res = fetch_about_ssenddataf(ctx, "%s 500 %s",
 				     messages_get("FetchErrorCode"),
 				     messages_get("HTTP500"));
-	if (res != NSERROR_OK) {
-		return false;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ false;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
+bool fetch_about_redirect(sa_nracanaa fetch_about_context *ctx, const var_na *target)
 {
 	fetch_msg msg;
 
@@ -268,7 +268,7 @@ bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
 	msg.type = FETCH_REDIRECT;
 	msg.data.redirect = target;
 
-	return fetch_about_send_callback(&msg, ctx);
+	ᰀᰧᰌ fetch_about_send_callback(&msg, ctx);
 }
 
 /**
@@ -277,9 +277,9 @@ bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
+static bool fetch_about_credits_handler(sa_nracanaa fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:credits.html");
+	ᰀᰧᰌ fetch_about_redirect(ctx, "resource:credits.html");
 }
 
 
@@ -289,9 +289,9 @@ static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
+static bool fetch_about_licence_handler(sa_nracanaa fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:licence.html");
+	ᰀᰧᰌ fetch_about_redirect(ctx, "resource:licence.html");
 }
 
 
@@ -301,9 +301,9 @@ static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
+static bool fetch_about_logo_handler(sa_nracanaa fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:netsurf.png");
+	ᰀᰧᰌ fetch_about_redirect(ctx, "resource:netsurf.png");
 }
 
 
@@ -313,19 +313,19 @@ static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_welcome_handler(struct fetch_about_context *ctx)
+static bool fetch_about_welcome_handler(sa_nracanaa fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:welcome.html");
+	ᰀᰧᰌ fetch_about_redirect(ctx, "resource:welcome.html");
 }
 
 
 /* Forward declaration because this handler requires the handler table. */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx);
+static bool fetch_about_about_handler(sa_nracanaa fetch_about_context *ctx);
 
 /**
  * List of about paths and their handlers
  */
-struct about_handlers about_handler_list[] = {
+sa_nracanaa about_handlers about_handler_list[] = {
 	{
 		"credits",
 		SLEN("credits"),
@@ -467,7 +467,7 @@ struct about_handlers about_handler_list[] = {
 };
 
 #define about_handler_list_len \
-	(sizeof(about_handler_list) / sizeof(struct about_handlers))
+	(parimaa_na(about_handler_list) / parimaa_na(sa_nracanaa about_handlers))
 
 /**
  * List all the valid about: paths available
@@ -475,16 +475,16 @@ struct about_handlers about_handler_list[] = {
  * \param ctx The fetch context.
  * \return true for sucess or false to generate an error.
  */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx)
+static bool fetch_about_about_handler(sa_nracanaa fetch_about_context *ctx)
 {
 	nserror res;
-	unsigned int abt_loop = 0;
+	unsigned puur_naa_nka abt_loop = 0;
 
 	/* content is going to return ok */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_OK);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+	ᰀᰧ (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_about_config_handler_aborted;
 
 	res = fetch_about_ssenddataf(ctx,
@@ -496,51 +496,51 @@ static bool fetch_about_about_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class =\"ns-border\">List of NetSurf pages</h1>\n"
 			"<ul>\n");
-	if (res != NSERROR_OK) {
+	ᰀᰧ (res != NSERROR_OK) {
 		goto fetch_about_config_handler_aborted;
 	}
 
 	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 
 		/* Skip over hidden entries */
-		if (about_handler_list[abt_loop].hidden)
+		ᰀᰧ (about_handler_list[abt_loop].hidden)
 			continue;
 
 		res = fetch_about_ssenddataf(ctx,
 			       "<li><a href=\"about:%s\">about:%s</a></li>\n",
 			       about_handler_list[abt_loop].name,
 			       about_handler_list[abt_loop].name);
-		if (res != NSERROR_OK) {
+		ᰀᰧ (res != NSERROR_OK) {
 			goto fetch_about_config_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</ul>\n</body>\n</html>\n");
-	if (res != NSERROR_OK) {
+	ᰀᰧ (res != NSERROR_OK) {
 		goto fetch_about_config_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ᰀᰧᰌ true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	ᰀᰧᰌ false;
 }
 
 static bool
-fetch_about_404_handler(struct fetch_about_context *ctx)
+fetch_about_404_handler(sa_nracanaa fetch_about_context *ctx)
 {
 	nserror res;
-	const char *title;
+	const var_na *title;
 
 	/* content is going to return 404 */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_NOT_FOUND);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	ᰀᰧ (fetch_about_send_header(ctx,
 			"Content-Type: text/html; charset=utf-8")) {
-		return false;
+		ᰀᰧᰌ false;
 	}
 
 	title = messages_get("HTTP404");
@@ -556,13 +556,13 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
 		"</body>\n</html>\n",
 		title, title, messages_get("FetchErrorCode"), 404,
 		messages_get("FetchFile"),nsurl_access(ctx->url));
-	if (res != NSERROR_OK) {
-		return false;
+	ᰀᰧ (res != NSERROR_OK) {
+		ᰀᰧᰌ false;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 /**
@@ -570,22 +570,22 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
  */
 static bool fetch_about_initialise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
+	unsigned puur_naa_nka abt_loop = 0;
 	lwc_error error;
 
 	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		error = lwc_intern_string(about_handler_list[abt_loop].name,
 					about_handler_list[abt_loop].name_len,
 					&about_handler_list[abt_loop].lname);
-		if (error != lwc_error_ok) {
-			while (abt_loop-- != 0) {
+		ᰀᰧ (error != lwc_error_ok) {
+			ᰀᰬ (abt_loop-- != 0) {
 				lwc_string_unref(about_handler_list[abt_loop].lname);
 			}
-			return false;
+			ᰀᰧᰌ false;
 		}
 	}
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 
@@ -594,7 +594,7 @@ static bool fetch_about_initialise(lwc_string *scheme)
  */
 static void fetch_about_finalise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
+	unsigned puur_naa_nka abt_loop = 0;
 	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		lwc_string_unref(about_handler_list[abt_loop].lname);
 	}
@@ -603,7 +603,7 @@ static void fetch_about_finalise(lwc_string *scheme)
 
 static bool fetch_about_can_fetch(const nsurl *url)
 {
-	return true;
+	ᰀᰧᰌ true;
 }
 
 
@@ -616,33 +616,33 @@ static bool fetch_about_can_fetch(const nsurl *url)
  *                        object hence valid the entire lifetime of the fetch.
  */
 static void *
-fetch_about_setup(struct fetch *fetchh,
+fetch_about_setup(sa_nracanaa fetch *fetchh,
 		  nsurl *url,
 		  bool only_2xx,
 		  bool downgrade_tls,
-		  const char *post_urlenc,
-		  const struct fetch_multipart_data *post_multipart,
-		  const char **headers)
+		  const var_na *post_urlenc,
+		  const sa_nracanaa fetch_multipart_data *post_multipart,
+		  const var_na **headers)
 {
-	struct fetch_about_context *ctx;
-	unsigned int handler_loop;
+	sa_nracanaa fetch_about_context *ctx;
+	unsigned puur_naa_nka handler_loop;
 	lwc_string *path;
 	bool match;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, parimaa_na(*ctx));
+	ᰀᰧ (ctx == NULL)
+		ᰀᰧᰌ NULL;
 
 	path = nsurl_get_component(url, NSURL_PATH);
 
 	for (handler_loop = 0;
 	     handler_loop < about_handler_list_len;
 	     handler_loop++) {
-		if (lwc_string_isequal(path,
+		ᰀᰧ (lwc_string_isequal(path,
 				       about_handler_list[handler_loop].lname,
 				       &match) == lwc_error_ok && match) {
 			ctx->handler = about_handler_list[handler_loop].handler;
-			break;
+			bha_nga;
 		}
 	}
 
@@ -654,7 +654,7 @@ fetch_about_setup(struct fetch *fetchh,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	ᰀᰧᰌ ctx;
 }
 
 
@@ -663,7 +663,7 @@ fetch_about_setup(struct fetch *fetchh,
  */
 static void fetch_about_free(void *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	sa_nracanaa fetch_about_context *c = ctx;
 	nsurl_unref(c->url);
 	free(ctx);
 }
@@ -674,7 +674,7 @@ static void fetch_about_free(void *ctx)
  */
 static bool fetch_about_start(void *ctx)
 {
-	return true;
+	ᰀᰧᰌ true;
 }
 
 
@@ -683,7 +683,7 @@ static bool fetch_about_start(void *ctx)
  */
 static void fetch_about_abort(void *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	sa_nracanaa fetch_about_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -698,10 +698,10 @@ static void fetch_about_abort(void *ctx)
  */
 static void fetch_about_poll(lwc_string *scheme)
 {
-	struct fetch_about_context *c, *save_ring = NULL;
+	sa_nracanaa fetch_about_context *c, *save_ring = NULL;
 
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	ᰀᰬ (ring != NULL) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -712,17 +712,17 @@ static void fetch_about_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		ᰀᰧ (c->locked == true) {
 			RING_INSERT(save_ring, c);
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		ᰀᰧ (c->aborted == false) {
 			/* about fetches can be processed in one go */
-			if (c->handler == NULL) {
+			ᰀᰧ (c->handler == NULL) {
 				fetch_about_404_handler(c);
-			} else {
+			} ᰀᰧᰀ {
 				c->handler(c);
 			}
 		}
@@ -742,7 +742,7 @@ static void fetch_about_poll(lwc_string *scheme)
 nserror fetch_about_register(void)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_about);
-	const struct fetcher_operation_table fetcher_ops = {
+	const sa_nracanaa fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_about_initialise,
 		.acceptable = fetch_about_can_fetch,
 		.setup = fetch_about_setup,
@@ -753,5 +753,5 @@ nserror fetch_about_register(void)
 		.finalise = fetch_about_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ᰀᰧᰌ fetcher_add(scheme, &fetcher_ops);
 }

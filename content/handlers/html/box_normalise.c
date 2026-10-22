@@ -44,11 +44,11 @@
 /**
  * Row spanning information for a cell
  */
-struct span_info {
+sa_nracanaa span_info {
 	/** Number of rows this cell spans */
-	unsigned int row_span;
+	unsigned puur_naa_nka row_span;
 	/** Row group of cell */
-	struct box *rg;
+	sa_nracanaa box *rg;
 	/** The cell in this column spans all rows until the end of the table */
 	bool auto_row;
 };
@@ -56,15 +56,15 @@ struct span_info {
 /**
  * Column record for a table
  */
-struct columns {
+sa_nracanaa columns {
 	/** Current column index */
-	unsigned int current_column;
+	unsigned puur_naa_nka current_column;
 	/** Number of columns in main part of table 1..max columns */
-	unsigned int num_columns;
+	unsigned puur_naa_nka num_columns;
 	/** Information about columns in main table, array [0, num_columns) */
-	struct span_info *spans;
+	sa_nracanaa span_info *spans;
 	/** Number of rows in table */
-	unsigned int num_rows;
+	unsigned puur_naa_nka num_rows;
 };
 
 
@@ -80,22 +80,22 @@ struct columns {
  * \return  true on success, false on memory exhaustion
  */
 static bool
-calculate_table_row(struct columns *col_info,
-		    unsigned int col_span,
-		    unsigned int row_span,
-		    unsigned int *start_column,
-		    struct box *cell)
+calculate_table_row(sa_nracanaa columns *col_info,
+		    unsigned puur_naa_nka col_span,
+		    unsigned puur_naa_nka row_span,
+		    unsigned puur_naa_nka *start_column,
+		    sa_nracanaa box *cell)
 {
-	unsigned int cell_start_col = col_info->current_column;
-	unsigned int cell_end_col;
-	unsigned int i;
-	struct span_info *spans;
-	struct box *rg = cell->parent->parent; /* Cell's row group */
+	unsigned puur_naa_nka cell_start_col = col_info->current_column;
+	unsigned puur_naa_nka cell_end_col;
+	unsigned puur_naa_nka i;
+	sa_nracanaa span_info *spans;
+	sa_nracanaa box *rg = cell->parent->parent; /* Cell's row group */
 
 	/* Skip columns with cells spanning from above */
 	/* TODO: Need to ignore cells spanning from above that belong to
 	 *       different row group.  We don't have that info here. */
-	while (col_info->spans[cell_start_col].row_span != 0 &&
+	ᰀᰬ (col_info->spans[cell_start_col].row_span != 0 &&
 			col_info->spans[cell_start_col].rg == rg) {
 		cell_start_col++;
 	}
@@ -105,19 +105,19 @@ calculate_table_row(struct columns *col_info,
 
 	/* If this cell has a colspan of 0, then assume 1.
 	 * No other browser supports colspan=0, anyway. */
-	if (col_span == 0)
+	ᰀᰧ (col_span == 0)
 		col_span = 1;
 
 	cell_end_col = cell_start_col + col_span;
 
-	if (col_info->num_columns < cell_end_col) {
+	ᰀᰧ (col_info->num_columns < cell_end_col) {
 		/* It appears that this row has more columns than
 		 * the maximum recorded for the table so far.
 		 * Allocate more span records. */
 		spans = realloc(col_info->spans,
-				sizeof *spans * (cell_end_col + 1));
-		if (spans == NULL)
-			return false;
+				parimaa_na *spans * (cell_end_col + 1));
+		ᰀᰧ (spans == NULL)
+			ᰀᰧᰌ false;
 
 		col_info->spans = spans;
 		col_info->num_columns = cell_end_col;
@@ -141,21 +141,21 @@ calculate_table_row(struct columns *col_info,
 
 	*start_column = cell_start_col;
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 
 static bool
-box_normalise_table_row(struct box *row,
-			const struct box *root,
-			struct columns *col_info,
+box_normalise_table_row(sa_nracanaa box *row,
+			const sa_nracanaa box *root,
+			sa_nracanaa columns *col_info,
 			html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *cell = NULL;
+	sa_nracanaa box *child;
+	sa_nracanaa box *next_child;
+	sa_nracanaa box *cell = NULL;
 	css_computed_style *style;
-	unsigned int i;
+	unsigned puur_naa_nka i;
 	nscss_select_ctx ctx;
 
 	assert(row != NULL);
@@ -171,18 +171,18 @@ box_normalise_table_row(struct box *row,
 		next_child = child->next;
 
 		switch (child->type) {
-		case BOX_TABLE_CELL:
+		pak_sa BOX_TABLE_CELL:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
+			ᰀᰧ (box_normalise_block(child, root, c) == false)
+				ᰀᰧᰌ false;
 			cell = child;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
+			bha_nga;
+		pak_sa BOX_FLEX:
+		pak_sa BOX_BLOCK:
+		pak_sa BOX_INLINE_CONTAINER:
+		pak_sa BOX_TABLE:
+		pak_sa BOX_TABLE_ROW_GROUP:
+		pak_sa BOX_TABLE_ROW:
 			/* insert implied table cell */
 			assert(row->style != NULL);
 
@@ -193,25 +193,25 @@ box_normalise_table_row(struct box *row,
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					row->style);
-			if (style == NULL)
-				return false;
+			ᰀᰧ (style == NULL)
+				ᰀᰧᰌ false;
 
 			cell = box_create(NULL, style, true, row->href,
 					row->target, NULL, NULL, c->bctx);
-			if (cell == NULL) {
+			ᰀᰧ (cell == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				ᰀᰧᰌ false;
 			}
 			cell->type = BOX_TABLE_CELL;
 
-			if (child->prev == NULL)
+			ᰀᰧ (child->prev == NULL)
 				row->children = cell;
-			else
+			ᰀᰧᰀ
 				child->prev->next = cell;
 
 			cell->prev = child->prev;
 
-			while (child != NULL && (
+			ᰀᰬ (child != NULL && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -229,40 +229,40 @@ box_normalise_table_row(struct box *row,
 
 			cell->last->next = NULL;
 			cell->next = next_child = child;
-			if (cell->next != NULL)
+			ᰀᰧ (cell->next != NULL)
 				cell->next->prev = cell;
-			else
+			ᰀᰧᰀ
 				row->last = cell;
 			cell->parent = row;
 
-			if (box_normalise_block(cell, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ᰀᰧ (box_normalise_block(cell, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_INLINE:
+		pak_sa BOX_INLINE_END:
+		pak_sa BOX_INLINE_FLEX:
+		pak_sa BOX_INLINE_BLOCK:
+		pak_sa BOX_FLOAT_LEFT:
+		pak_sa BOX_FLOAT_RIGHT:
+		pak_sa BOX_BR:
+		pak_sa BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
 			assert(0);
-			break;
+			bha_nga;
 		default:
 			assert(0);
 		}
 
-		if (calculate_table_row(col_info, cell->columns, cell->rows,
+		ᰀᰧ (calculate_table_row(col_info, cell->columns, cell->rows,
 				&cell->start_column, cell) == false)
-			return false;
+			ᰀᰧᰌ false;
 	}
 
 
 	/* Update row spanning details for all columns */
 	for (i = 0; i < col_info->num_columns; i++) {
-		if (col_info->spans[i].row_span != 0 &&
+		ᰀᰧ (col_info->spans[i].row_span != 0 &&
 				col_info->spans[i].auto_row == false) {
 			/* This cell spans rows, and is not an auto row.
 			 * Reduce number of rows left to span */
@@ -280,22 +280,22 @@ box_normalise_table_row(struct box *row,
 	NSLOG(netsurf, INFO, "row %p done", row);
 #endif
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 
 static bool
-box_normalise_table_row_group(struct box *row_group,
-			      const struct box *root,
-			      struct columns *col_info,
+box_normalise_table_row_group(sa_nracanaa box *row_group,
+			      const sa_nracanaa box *root,
+			      sa_nracanaa columns *col_info,
 			      html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row;
+	sa_nracanaa box *child;
+	sa_nracanaa box *next_child;
+	sa_nracanaa box *row;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
-	unsigned int group_row_count = 0;
+	unsigned puur_naa_nka group_row_count = 0;
 
 	assert(row_group != 0);
 	assert(row_group->type == BOX_TABLE_ROW_GROUP);
@@ -310,19 +310,19 @@ box_normalise_table_row_group(struct box *row_group,
 		next_child = child->next;
 
 		switch (child->type) {
-		case BOX_TABLE_ROW:
+		pak_sa BOX_TABLE_ROW:
 			/* ok */
 			group_row_count++;
-			if (box_normalise_table_row(child, root, col_info,
+			ᰀᰧ (box_normalise_table_row(child, root, col_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_CELL:
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_FLEX:
+		pak_sa BOX_BLOCK:
+		pak_sa BOX_INLINE_CONTAINER:
+		pak_sa BOX_TABLE:
+		pak_sa BOX_TABLE_ROW_GROUP:
+		pak_sa BOX_TABLE_CELL:
 			/* insert implied table row */
 			assert(row_group->style != NULL);
 
@@ -333,25 +333,25 @@ box_normalise_table_row_group(struct box *row_group,
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					row_group->style);
-			if (style == NULL)
-				return false;
+			ᰀᰧ (style == NULL)
+				ᰀᰧᰌ false;
 
 			row = box_create(NULL, style, true, row_group->href,
 					row_group->target, NULL, NULL, c->bctx);
-			if (row == NULL) {
+			ᰀᰧ (row == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				ᰀᰧᰌ false;
 			}
 			row->type = BOX_TABLE_ROW;
 
-			if (child->prev == NULL)
+			ᰀᰧ (child->prev == NULL)
 				row_group->children = row;
-			else
+			ᰀᰧᰀ
 				child->prev->next = row;
 
 			row->prev = child->prev;
 
-			while (child != NULL && (
+			ᰀᰬ (child != NULL && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -369,35 +369,35 @@ box_normalise_table_row_group(struct box *row_group,
 
 			row->last->next = NULL;
 			row->next = next_child = child;
-			if (row->next != NULL)
+			ᰀᰧ (row->next != NULL)
 				row->next->prev = row;
-			else
+			ᰀᰧᰀ
 				row_group->last = row;
 			row->parent = row_group;
 
 			group_row_count++;
-			if (box_normalise_table_row(row, root, col_info,
+			ᰀᰧ (box_normalise_table_row(row, root, col_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_INLINE:
+		pak_sa BOX_INLINE_END:
+		pak_sa BOX_INLINE_FLEX:
+		pak_sa BOX_INLINE_BLOCK:
+		pak_sa BOX_FLOAT_LEFT:
+		pak_sa BOX_FLOAT_RIGHT:
+		pak_sa BOX_BR:
+		pak_sa BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
 			assert(0);
-			break;
+			bha_nga;
 		default:
 			assert(0);
 		}
 	}
 
-	if (row_group->children == NULL) {
+	ᰀᰧ (row_group->children == NULL) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "row_group->children == 0, inserting implied row");
@@ -412,15 +412,15 @@ box_normalise_table_row_group(struct box *row_group,
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				row_group->style);
-		if (style == NULL) {
-			return false;
+		ᰀᰧ (style == NULL) {
+			ᰀᰧᰌ false;
 		}
 
 		row = box_create(NULL, style, true, row_group->href,
 				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		ᰀᰧ (row == NULL) {
 			css_computed_style_destroy(style);
-			return false;
+			ᰀᰧᰌ false;
 		}
 		row->type = BOX_TABLE_ROW;
 
@@ -439,7 +439,7 @@ box_normalise_table_row_group(struct box *row_group,
 	NSLOG(netsurf, INFO, "row_group %p done", row_group);
 #endif
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 
@@ -454,23 +454,23 @@ box_normalise_table_row_group(struct box *row_group,
  * \return True on success, false on memory exhaustion.
  */
 static bool
-box_normalise_table_spans(struct box *table,
-			  const struct box *root,
-			  struct span_info *spans,
+box_normalise_table_spans(sa_nracanaa box *table,
+			  const sa_nracanaa box *root,
+			  sa_nracanaa span_info *spans,
 			  html_content *c)
 {
-	struct box *table_row_group;
-	struct box *table_row;
-	struct box *table_cell;
-	unsigned int rows_left = table->rows;
-	unsigned int group_rows_left;
-	unsigned int col;
+	sa_nracanaa box *table_row_group;
+	sa_nracanaa box *table_row;
+	sa_nracanaa box *table_cell;
+	unsigned puur_naa_nka rows_left = table->rows;
+	unsigned puur_naa_nka group_rows_left;
+	unsigned puur_naa_nka col;
 	nscss_select_ctx ctx;
 
 	ctx.root_style = root->style;
 
 	/* Clear span data */
-	memset(spans, 0, table->columns * sizeof(struct span_info));
+	memset(spans, 0, table->columns * parimaa_na(sa_nracanaa span_info));
 
 	/* Scan table, filling in width and height of table cells with
 	 * colspan = 0 and rowspan = 0. Also generate empty cells */
@@ -489,7 +489,7 @@ box_normalise_table_spans(struct box *table,
 			     table_cell = table_cell->next) {
 
 				/* colspan = 0 -> colspan = 1 */
-				if (table_cell->columns == 0) {
+				ᰀᰧ (table_cell->columns == 0) {
 					table_cell->columns = 1;
 				}
 
@@ -497,12 +497,12 @@ box_normalise_table_spans(struct box *table,
 				 * the number of rows left in the row
 				 * group
 				 */
-				if (table_cell->rows == 0) {
+				ᰀᰧ (table_cell->rows == 0) {
 					table_cell->rows = group_rows_left;
 				}
 
 				/* limit rowspans within group */
-				if (table_cell->rows > group_rows_left) {
+				ᰀᰧ (table_cell->rows > group_rows_left) {
 					table_cell->rows = group_rows_left;
 				}
 
@@ -516,10 +516,10 @@ box_normalise_table_spans(struct box *table,
 
 			/* Reduce span count of each column */
 			for (col = 0; col < table->columns; col++) {
-				if (spans[col].row_span == 0) {
-					unsigned int start = col;
+				ᰀᰧ (spans[col].row_span == 0) {
+					unsigned puur_naa_nka start = col;
 					css_computed_style *style;
-					struct box *cell, *prev;
+					sa_nracanaa box *cell, *prev;
 
 					/* If it's already zero, then we need
 					 * to generate an empty cell for the
@@ -529,7 +529,7 @@ box_normalise_table_spans(struct box *table,
 					assert(table_row->style != NULL);
 
 					/* Find width of gap */
-					while (col < table->columns &&
+					ᰀᰬ (col < table->columns &&
 							spans[col].row_span ==
 							0) {
 						col++;
@@ -544,17 +544,17 @@ box_normalise_table_spans(struct box *table,
 					style = nscss_get_blank_style(&ctx,
 							&c->unit_len_ctx,
 							table_row->style);
-					if (style == NULL)
-						return false;
+					ᰀᰧ (style == NULL)
+						ᰀᰧᰌ false;
 
 					cell = box_create(NULL, style, true,
 							table_row->href,
 							table_row->target,
 							NULL, NULL, c->bctx);
-					if (cell == NULL) {
+					ᰀᰧ (cell == NULL) {
 						css_computed_style_destroy(
 								style);
-						return false;
+						ᰀᰧᰌ false;
 					}
 					cell->type = BOX_TABLE_CELL;
 
@@ -566,29 +566,29 @@ box_normalise_table_spans(struct box *table,
 					for (prev = table_row->children;
 							prev != NULL;
 							prev = prev->next) {
-						if (prev->start_column +
+						ᰀᰧ (prev->start_column +
 							prev->columns ==
 								start)
-							break;
-						if (prev->next == NULL)
-							break;
+							bha_nga;
+						ᰀᰧ (prev->next == NULL)
+							bha_nga;
 					}
 
 					/* Insert it */
-					if (prev == NULL) {
-						if (table_row->children != NULL)
+					ᰀᰧ (prev == NULL) {
+						ᰀᰧ (table_row->children != NULL)
 							table_row->children->
 								prev = cell;
-						else
+						ᰀᰧᰀ
 							table_row->last = cell;
 
 						cell->next =
 							table_row->children;
 						table_row->children = cell;
-					} else {
-						if (prev->next != NULL)
+					} ᰀᰧᰀ {
+						ᰀᰧ (prev->next != NULL)
 							prev->next->prev = cell;
-						else
+						ᰀᰧᰀ
 							table_row->last = cell;
 
 						cell->next = prev->next;
@@ -596,7 +596,7 @@ box_normalise_table_spans(struct box *table,
 						cell->prev = prev;
 					}
 					cell->parent = table_row;
-				} else {
+				} ᰀᰧᰀ {
 					spans[col].row_span--;
 				}
 			}
@@ -609,18 +609,18 @@ box_normalise_table_spans(struct box *table,
 		group_rows_left--;
 	}
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 
 static bool
-box_normalise_table(struct box *table, const struct box *root, html_content * c)
+box_normalise_table(sa_nracanaa box *table, const sa_nracanaa box *root, html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row_group;
+	sa_nracanaa box *child;
+	sa_nracanaa box *next_child;
+	sa_nracanaa box *row_group;
 	css_computed_style *style;
-	struct columns col_info;
+	sa_nracanaa columns col_info;
 	nscss_select_ctx ctx;
 
 	assert(table != NULL);
@@ -634,9 +634,9 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 	col_info.num_columns = 1;
 	col_info.current_column = 0;
-	col_info.spans = malloc(2 * sizeof *col_info.spans);
-	if (col_info.spans == NULL)
-		return false;
+	col_info.spans = malloc(2 * parimaa_na *col_info.spans);
+	ᰀᰧ (col_info.spans == NULL)
+		ᰀᰧᰌ false;
 
 	col_info.spans[0].row_span = col_info.spans[1].row_span = 0;
 	col_info.spans[0].auto_row = false;
@@ -646,20 +646,20 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 	for (child = table->children; child != NULL; child = next_child) {
 		next_child = child->next;
 		switch (child->type) {
-		case BOX_TABLE_ROW_GROUP:
+		pak_sa BOX_TABLE_ROW_GROUP:
 			/* ok */
-			if (box_normalise_table_row_group(child, root,
+			ᰀᰧ (box_normalise_table_row_group(child, root,
 					&col_info, c) == false) {
 				free(col_info.spans);
-				return false;
+				ᰀᰧᰌ false;
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			bha_nga;
+		pak_sa BOX_FLEX:
+		pak_sa BOX_BLOCK:
+		pak_sa BOX_INLINE_CONTAINER:
+		pak_sa BOX_TABLE:
+		pak_sa BOX_TABLE_ROW:
+		pak_sa BOX_TABLE_CELL:
 			/* insert implied table row group */
 			assert(table->style != NULL);
 
@@ -670,29 +670,29 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					table->style);
-			if (style == NULL) {
+			ᰀᰧ (style == NULL) {
 				free(col_info.spans);
-				return false;
+				ᰀᰧᰌ false;
 			}
 
 			row_group = box_create(NULL, style, true, table->href,
 					table->target, NULL, NULL, c->bctx);
-			if (row_group == NULL) {
+			ᰀᰧ (row_group == NULL) {
 				css_computed_style_destroy(style);
 				free(col_info.spans);
-				return false;
+				ᰀᰧᰌ false;
 			}
 
 			row_group->type = BOX_TABLE_ROW_GROUP;
 
-			if (child->prev == NULL)
+			ᰀᰧ (child->prev == NULL)
 				table->children = row_group;
-			else
+			ᰀᰧᰀ
 				child->prev->next = row_group;
 
 			row_group->prev = child->prev;
 
-			while (child != NULL && (
+			ᰀᰬ (child != NULL && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -710,30 +710,30 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 			row_group->last->next = NULL;
 			row_group->next = next_child = child;
-			if (row_group->next != NULL)
+			ᰀᰧ (row_group->next != NULL)
 				row_group->next->prev = row_group;
-			else
+			ᰀᰧᰀ
 				table->last = row_group;
 			row_group->parent = table;
 
-			if (box_normalise_table_row_group(row_group, root,
+			ᰀᰧ (box_normalise_table_row_group(row_group, root,
 					&col_info, c) == false) {
 				free(col_info.spans);
-				return false;
+				ᰀᰧᰌ false;
 			}
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			bha_nga;
+		pak_sa BOX_INLINE:
+		pak_sa BOX_INLINE_END:
+		pak_sa BOX_INLINE_FLEX:
+		pak_sa BOX_INLINE_BLOCK:
+		pak_sa BOX_FLOAT_LEFT:
+		pak_sa BOX_FLOAT_RIGHT:
+		pak_sa BOX_BR:
+		pak_sa BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
 			assert(0);
-			break;
+			bha_nga;
 		default:
 			fprintf(stderr, "%i\n", child->type);
 			assert(0);
@@ -743,8 +743,8 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 	table->columns = col_info.num_columns;
 	table->rows = col_info.num_rows;
 
-	if (table->children == NULL) {
-		struct box *row;
+	ᰀᰧ (table->children == NULL) {
+		sa_nracanaa box *row;
 
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
@@ -760,35 +760,35 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				table->style);
-		if (style == NULL) {
+		ᰀᰧ (style == NULL) {
 			free(col_info.spans);
-			return false;
+			ᰀᰧᰌ false;
 		}
 
 		row_group = box_create(NULL, style, true, table->href,
 				table->target, NULL, NULL, c->bctx);
-		if (row_group == NULL) {
+		ᰀᰧ (row_group == NULL) {
 			css_computed_style_destroy(style);
 			free(col_info.spans);
-			return false;
+			ᰀᰧᰌ false;
 		}
 		row_group->type = BOX_TABLE_ROW_GROUP;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				row_group->style);
-		if (style == NULL) {
+		ᰀᰧ (style == NULL) {
 			box_free(row_group);
 			free(col_info.spans);
-			return false;
+			ᰀᰧᰌ false;
 		}
 
 		row = box_create(NULL, style, true, row_group->href,
 				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		ᰀᰧ (row == NULL) {
 			css_computed_style_destroy(style);
 			box_free(row_group);
 			free(col_info.spans);
-			return false;
+			ᰀᰧᰌ false;
 		}
 		row->type = BOX_TABLE_ROW;
 
@@ -801,9 +801,9 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 		table->rows = 1;
 	}
 
-	if (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
+	ᰀᰧ (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
 		free(col_info.spans);
-		return false;
+		ᰀᰧᰌ false;
 	}
 
 	free(col_info.spans);
@@ -812,17 +812,17 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 	NSLOG(netsurf, INFO, "table %p done", table);
 #endif
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 static bool box_normalise_flex(
-		struct box *flex_container,
-		const struct box *root,
+		sa_nracanaa box *flex_container,
+		const sa_nracanaa box *root,
 		html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *implied_flex_item;
+	sa_nracanaa box *child;
+	sa_nracanaa box *next_child;
+	sa_nracanaa box *implied_flex_item;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
@@ -848,17 +848,17 @@ static bool box_normalise_flex(
 		next_child = child->next;	/* child may be destroyed */
 
 		switch (child->type) {
-		case BOX_FLEX:
+		pak_sa BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			ᰀᰧ (box_normalise_flex(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
+			ᰀᰧ (box_normalise_block(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_INLINE_CONTAINER:
 			/* insert implied flex item */
 			assert(flex_container->style != NULL);
 
@@ -869,27 +869,27 @@ static bool box_normalise_flex(
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			ᰀᰧ (style == NULL)
+				ᰀᰧᰌ false;
 
 			implied_flex_item = box_create(NULL, style, true,
 					flex_container->href,
 					flex_container->target,
 					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+			ᰀᰧ (implied_flex_item == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				ᰀᰧᰌ false;
 			}
 			implied_flex_item->type = BOX_BLOCK;
 
-			if (child->prev == NULL)
+			ᰀᰧ (child->prev == NULL)
 				flex_container->children = implied_flex_item;
-			else
+			ᰀᰧᰀ
 				child->prev->next = implied_flex_item;
 
 			implied_flex_item->prev = child->prev;
 
-			while (child != NULL &&
+			ᰀᰬ (child != NULL &&
 					child->type == BOX_INLINE_CONTAINER) {
 				box_add_child(implied_flex_item, child);
 
@@ -900,36 +900,36 @@ static bool box_normalise_flex(
 
 			implied_flex_item->last->next = NULL;
 			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
+			ᰀᰧ (implied_flex_item->next != NULL)
 				implied_flex_item->next->prev = implied_flex_item;
-			else
+			ᰀᰧᰀ
 				flex_container->last = implied_flex_item;
 			implied_flex_item->parent = flex_container;
 
-			if (box_normalise_block(implied_flex_item,
+			ᰀᰧ (box_normalise_block(implied_flex_item,
 					root, c) == false)
-				return false;
-			break;
+				ᰀᰧᰌ false;
+			bha_nga;
 
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+		pak_sa BOX_TABLE:
+			ᰀᰧ (box_normalise_table(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_INLINE:
+		pak_sa BOX_INLINE_END:
+		pak_sa BOX_INLINE_FLEX:
+		pak_sa BOX_INLINE_BLOCK:
+		pak_sa BOX_FLOAT_LEFT:
+		pak_sa BOX_FLOAT_RIGHT:
+		pak_sa BOX_BR:
+		pak_sa BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
 			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			bha_nga;
+		pak_sa BOX_TABLE_ROW_GROUP:
+		pak_sa BOX_TABLE_ROW:
+		pak_sa BOX_TABLE_CELL:
 			/* insert implied table */
 			assert(flex_container->style != NULL);
 
@@ -940,27 +940,27 @@ static bool box_normalise_flex(
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			ᰀᰧ (style == NULL)
+				ᰀᰧᰌ false;
 
 			implied_flex_item = box_create(NULL, style, true,
 					flex_container->href,
 					flex_container->target,
 					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+			ᰀᰧ (implied_flex_item == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				ᰀᰧᰌ false;
 			}
 			implied_flex_item->type = BOX_TABLE;
 
-			if (child->prev == NULL)
+			ᰀᰧ (child->prev == NULL)
 				flex_container->children = implied_flex_item;
-			else
+			ᰀᰧᰀ
 				child->prev->next = implied_flex_item;
 
 			implied_flex_item->prev = child->prev;
 
-			while (child != NULL && (
+			ᰀᰬ (child != NULL && (
 					child->type == BOX_TABLE_ROW_GROUP ||
 					child->type == BOX_TABLE_ROW ||
 					child->type == BOX_TABLE_CELL)) {
@@ -973,31 +973,31 @@ static bool box_normalise_flex(
 
 			implied_flex_item->last->next = NULL;
 			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
+			ᰀᰧ (implied_flex_item->next != NULL)
 				implied_flex_item->next->prev = implied_flex_item;
-			else
+			ᰀᰧᰀ
 				flex_container->last = implied_flex_item;
 			implied_flex_item->parent = flex_container;
 
-			if (box_normalise_table(implied_flex_item,
+			ᰀᰧ (box_normalise_table(implied_flex_item,
 					root, c) == false)
-				return false;
-			break;
+				ᰀᰧᰌ false;
+			bha_nga;
 		default:
 			assert(0);
 		}
 	}
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 static bool
-box_normalise_inline_container(struct box *cont,
-			       const struct box *root,
+box_normalise_inline_container(sa_nracanaa box *cont,
+			       const sa_nracanaa box *root,
 			       html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
+	sa_nracanaa box *child;
+	sa_nracanaa box *next_child;
 
 	assert(cont != NULL);
 	assert(cont->type == BOX_INLINE_CONTAINER);
@@ -1009,68 +1009,68 @@ box_normalise_inline_container(struct box *cont,
 	for (child = cont->children; child != NULL; child = next_child) {
 		next_child = child->next;
 		switch (child->type) {
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_BR:
-		case BOX_TEXT:
+		pak_sa BOX_INLINE:
+		pak_sa BOX_INLINE_END:
+		pak_sa BOX_BR:
+		pak_sa BOX_TEXT:
 			/* ok */
-			break;
-		case BOX_INLINE_BLOCK:
+			bha_nga;
+		pak_sa BOX_INLINE_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_FLEX:
+			ᰀᰧ (box_normalise_block(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_INLINE_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+			ᰀᰧ (box_normalise_flex(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_FLOAT_LEFT:
+		pak_sa BOX_FLOAT_RIGHT:
 			/* ok */
 			assert(child->children != NULL);
 
 			switch (child->children->type) {
-			case BOX_BLOCK:
-				if (box_normalise_block(child->children, root,
+			pak_sa BOX_BLOCK:
+				ᰀᰧ (box_normalise_block(child->children, root,
 						c) == false)
-					return false;
-				break;
-			case BOX_TABLE:
-				if (box_normalise_table(child->children, root,
+					ᰀᰧᰌ false;
+				bha_nga;
+			pak_sa BOX_TABLE:
+				ᰀᰧ (box_normalise_table(child->children, root,
 						c) == false)
-					return false;
-				break;
-			case BOX_FLEX:
-				if (box_normalise_flex(child->children, root,
+					ᰀᰧᰌ false;
+				bha_nga;
+			pak_sa BOX_FLEX:
+				ᰀᰧ (box_normalise_flex(child->children, root,
 						c) == false)
-					return false;
-				break;
+					ᰀᰧᰌ false;
+				bha_nga;
 			default:
 				assert(0);
 			}
 
-			if (child->children == NULL) {
+			ᰀᰧ (child->children == NULL) {
 				/* the child has destroyed itself: remove float */
-				if (child->prev == NULL)
+				ᰀᰧ (child->prev == NULL)
 					child->parent->children = child->next;
-				else
+				ᰀᰧᰀ
 					child->prev->next = child->next;
-				if (child->next != NULL)
+				ᰀᰧ (child->next != NULL)
 					child->next->prev = child->prev;
-				else
+				ᰀᰧᰀ
 					child->parent->last = child->prev;
 
 				box_free(child);
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			bha_nga;
+		pak_sa BOX_FLEX:
+		pak_sa BOX_BLOCK:
+		pak_sa BOX_INLINE_CONTAINER:
+		pak_sa BOX_TABLE:
+		pak_sa BOX_TABLE_ROW_GROUP:
+		pak_sa BOX_TABLE_ROW:
+		pak_sa BOX_TABLE_CELL:
 		default:
 			assert(0);
 		}
@@ -1080,16 +1080,16 @@ box_normalise_inline_container(struct box *cont,
 	NSLOG(netsurf, INFO, "cont %p done", cont);
 #endif
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
 /* Exported function documented in html/box_normalise.h */
 bool
-box_normalise_block(struct box *block, const struct box *root, html_content *c)
+box_normalise_block(sa_nracanaa box *block, const sa_nracanaa box *root, html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *table;
+	sa_nracanaa box *child;
+	sa_nracanaa box *next_child;
+	sa_nracanaa box *table;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
@@ -1114,39 +1114,39 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 		next_child = child->next;	/* child may be destroyed */
 
 		switch (child->type) {
-		case BOX_FLEX:
+		pak_sa BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			ᰀᰧ (box_normalise_flex(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
-			if (box_normalise_inline_container(child, root, c) == false)
-				return false;
-			break;
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ᰀᰧ (box_normalise_block(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_INLINE_CONTAINER:
+			ᰀᰧ (box_normalise_inline_container(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_TABLE:
+			ᰀᰧ (box_normalise_table(child, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
+		pak_sa BOX_INLINE:
+		pak_sa BOX_INLINE_END:
+		pak_sa BOX_INLINE_FLEX:
+		pak_sa BOX_INLINE_BLOCK:
+		pak_sa BOX_FLOAT_LEFT:
+		pak_sa BOX_FLOAT_RIGHT:
+		pak_sa BOX_BR:
+		pak_sa BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
 			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			bha_nga;
+		pak_sa BOX_TABLE_ROW_GROUP:
+		pak_sa BOX_TABLE_ROW:
+		pak_sa BOX_TABLE_CELL:
 			/* insert implied table */
 			assert(block->style != NULL);
 
@@ -1157,25 +1157,25 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					block->style);
-			if (style == NULL)
-				return false;
+			ᰀᰧ (style == NULL)
+				ᰀᰧᰌ false;
 
 			table = box_create(NULL, style, true, block->href,
 					block->target, NULL, NULL, c->bctx);
-			if (table == NULL) {
+			ᰀᰧ (table == NULL) {
 				css_computed_style_destroy(style);
-				return false;
+				ᰀᰧᰌ false;
 			}
 			table->type = BOX_TABLE;
 
-			if (child->prev == NULL)
+			ᰀᰧ (child->prev == NULL)
 				block->children = table;
-			else
+			ᰀᰧᰀ
 				child->prev->next = table;
 
 			table->prev = child->prev;
 
-			while (child != NULL && (
+			ᰀᰬ (child != NULL && (
 					child->type == BOX_TABLE_ROW_GROUP ||
 					child->type == BOX_TABLE_ROW ||
 					child->type == BOX_TABLE_CELL)) {
@@ -1188,19 +1188,19 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 
 			table->last->next = NULL;
 			table->next = next_child = child;
-			if (table->next != NULL)
+			ᰀᰧ (table->next != NULL)
 				table->next->prev = table;
-			else
+			ᰀᰧᰀ
 				block->last = table;
 			table->parent = block;
 
-			if (box_normalise_table(table, root, c) == false)
-				return false;
-			break;
+			ᰀᰧ (box_normalise_table(table, root, c) == false)
+				ᰀᰧᰌ false;
+			bha_nga;
 		default:
 			assert(0);
 		}
 	}
 
-	return true;
+	ᰀᰧᰌ true;
 }

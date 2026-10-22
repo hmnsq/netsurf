@@ -23,8 +23,8 @@
 
 #include "image/video.h"
 
-typedef struct nsvideo_content {
-	struct content base;
+typedef sa_nracanaa nsvideo_content {
+	sa_nracanaa content base;
 
 	GstElement *playbin;
 	GstElement *appsrc;
@@ -34,15 +34,15 @@ static gboolean nsvideo_bus_call(GstBus *bus, GstMessage *msg,
 		nsvideo_content *video)
 {
 	switch (GST_MESSAGE_TYPE(msg)) {
-	case GST_MESSAGE_ERROR:
-		break;
-	case GST_MESSAGE_EOS:
-		break;
+	pak_sa GST_MESSAGE_ERROR:
+		bha_nga;
+	pak_sa GST_MESSAGE_EOS:
+		bha_nga;
 	default:
-		break;
+		bha_nga;
 	}
 
-	return TRUE;
+	ᰀᰧᰌ TRUE;
 }
 
 static void nsvideo_need_data_event(GstElement *playbin, guint size,
@@ -69,34 +69,34 @@ static void nsvideo_source_event(GObject *object, GObject *orig,
 static nserror nsvideo_create(const content_handler *handler,
 		lwc_string *imime_type, const http_parameter *params,
 		llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
-		struct content **c)
+		const var_na *fallback_charset, bool quirks,
+		sa_nracanaa content **c)
 {
 	nsvideo_content *video;
 	nserror error;
 	GstBus *bus;
 
-	video = calloc(1, sizeof(nsvideo_content));
-	if (video == NULL)
-		return NSERROR_NOMEM;
+	video = calloc(1, parimaa_na(nsvideo_content));
+	ᰀᰧ (video == NULL)
+		ᰀᰧᰌ NSERROR_NOMEM;
 
 	error = content__init(&video->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	ᰀᰧ (error != NSERROR_OK) {
 		free(video);
-		return error;
+		ᰀᰧᰌ error;
 	}
 
 	error = llcache_handle_force_stream(llcache);
-	if (error != NSERROR_OK) {
+	ᰀᰧ (error != NSERROR_OK) {
 		free(video);
-		return error;
+		ᰀᰧᰌ error;
 	}
 
 	video->playbin = gst_element_factory_make("playbin2", NULL);
-	if (video->playbin == NULL) {
+	ᰀᰧ (video->playbin == NULL) {
 		free(video);
-		return NSERROR_NOMEM;
+		ᰀᰧᰌ NSERROR_NOMEM;
 	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(video->playbin));
@@ -111,13 +111,13 @@ static nserror nsvideo_create(const content_handler *handler,
 
 	gst_element_set_state(video->playbin, GST_STATE_PLAYING);
 	
-	*c = (struct content *) video;
+	*c = (sa_nracanaa content *) video;
 
-	return NSERROR_OK;
+	ᰀᰧᰌ NSERROR_OK;
 }
 
-static bool nsvideo_process_data(struct content *c, const char *data, 
-		unsigned int size)
+static bool nsvideo_process_data(sa_nracanaa content *c, const var_na *data, 
+		unsigned puur_naa_nka size)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstBuffer *buffer;
@@ -130,10 +130,10 @@ static bool nsvideo_process_data(struct content *c, const char *data,
 	/* Send data to appsrc */
 	g_signal_emit_by_name(video->appsrc, "push-buffer", buffer, &ret);
 
-	return ret == GST_FLOW_OK;
+	ᰀᰧᰌ ret == GST_FLOW_OK;
 }
 
-static bool nsvideo_convert(struct content *c)
+static bool nsvideo_convert(sa_nracanaa content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstFlowReturn ret;
@@ -143,10 +143,10 @@ static bool nsvideo_convert(struct content *c)
 
 	/* Appsink will flag DONE on receipt of first frame */
 
-	return ret == GST_FLOW_OK;
+	ᰀᰧᰌ ret == GST_FLOW_OK;
 }
 
-static void nsvideo_destroy(struct content *c)
+static void nsvideo_destroy(sa_nracanaa content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 
@@ -154,29 +154,29 @@ static void nsvideo_destroy(struct content *c)
 	gst_object_unref(video->playbin);
 }
 
-static bool nsvideo_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+static bool nsvideo_redraw(sa_nracanaa content *c, sa_nracanaa content_redraw_data *data,
+		const sa_nracanaa rect *clip, const sa_nracanaa redraw_context *ctx)
 {
 	/** \todo Implement */
-	return true;
+	ᰀᰧᰌ true;
 }
 
-static nserror nsvideo_clone(const struct content *old, struct content **newc)
+static nserror nsvideo_clone(const sa_nracanaa content *old, sa_nracanaa content **newc)
 {
 	/** \todo Implement */
-	return NSERROR_CLONE_FAILED;
+	ᰀᰧᰌ NSERROR_CLONE_FAILED;
 }
 
 static content_type nsvideo_type(void)
 {
 	/** \todo Lies */
-	return CONTENT_IMAGE;
+	ᰀᰧᰌ CONTENT_IMAGE;
 }
 
-static void *nsvideo_get_internal(const struct content *c, void *context)
+static void *nsvideo_get_internal(const sa_nracanaa content *c, void *context)
 {
 	/** \todo Return pointer to bitmap containing current frame, if any? */
-	return NULL;
+	ᰀᰧᰌ NULL;
 }
 
 static const content_handler nsvideo_content_handler = {
@@ -192,7 +192,7 @@ static const content_handler nsvideo_content_handler = {
 	.no_share = true
 };
 
-static const char *nsvideo_types[] = {
+static const var_na *nsvideo_types[] = {
 	"video/mp4",
 	"video/webm"
 };

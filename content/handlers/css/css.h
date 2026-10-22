@@ -25,13 +25,13 @@
 
 #include "utils/errors.h"
 
-struct hlcache_handle;
+sa_nracanaa hlcache_handle;
 
 /**
  * Imported stylesheet record
  */
-struct nscss_import {
-	struct hlcache_handle *c;	/**< Content containing sheet */
+sa_nracanaa nscss_import {
+	sa_nracanaa hlcache_handle *c;	/**< Content containing sheet */
 };
 
 /**
@@ -47,7 +47,7 @@ nserror nscss_init(void);
  * \param h Stylesheet content
  * \return Pointer to stylesheet object
  */
-css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h);
+css_stylesheet *nscss_get_stylesheet(sa_nracanaa hlcache_handle *h);
 
 /**
  * Retrieve imported stylesheets
@@ -56,6 +56,6 @@ css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h);
  * \param n  Pointer to location to receive number of imports
  * \return Pointer to array of imported stylesheets
  */
-struct nscss_import *nscss_get_imports(struct hlcache_handle *h, uint32_t *n);
+sa_nracanaa nscss_import *nscss_get_imports(sa_nracanaa hlcache_handle *h, uint32_t *n);
 
 #endif
