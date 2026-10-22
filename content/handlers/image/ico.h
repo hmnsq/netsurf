@@ -23,6 +23,6 @@
 #ifndef _NETSURF_IMAGE_ICO_H_
 #define _NETSURF_IMAGE_ICO_H_
 
-nserror nsico_init(void);
+nserror nsico_init(ശൂന്യം);
 
 #endif

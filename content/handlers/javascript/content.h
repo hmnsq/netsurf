@@ -1,1 +1,1 @@
-nserror javascript_init(void);
+nserror javascript_init(ശൂന്യം);

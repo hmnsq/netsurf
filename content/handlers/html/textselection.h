@@ -24,12 +24,12 @@
 #ifndef NETSURF_HTML_TEXTSELECTION_H
 #define NETSURF_HTML_TEXTSELECTION_H
 
-struct content;
-struct selection;
+ഘടന content;
+ഘടന selection;
 
-nserror html_textselection_redraw(struct content *c, unsigned start_idx, unsigned end_idx);
+nserror html_textselection_redraw(ഘടന content *c, unsigned start_idx, unsigned end_idx);
 
-nserror html_textselection_copy(struct content *c, unsigned start_idx, unsigned end_idx, struct selection_string *selstr);
+nserror html_textselection_copy(ഘടന content *c, unsigned start_idx, unsigned end_idx, ഘടന selection_string *selstr);
 
 /**
  * get maximum index of text section.
@@ -38,6 +38,6 @@ nserror html_textselection_copy(struct content *c, unsigned start_idx, unsigned 
  * \param[out] end_idx pointer to value to recive result
  * \return NSERROR_OK and \a end_idx updated else error code
  */
-nserror html_textselection_get_end(struct content *c, unsigned *end_idx);
+nserror html_textselection_get_end(ഘടന content *c, unsigned *end_idx);
 
 #endif

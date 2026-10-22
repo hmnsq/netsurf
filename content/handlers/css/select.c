@@ -16,123 +16,123 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <string.h>
-#include <strings.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "netsurf/url_db.h"
-#include "desktop/system_colour.h"
+#അന്തര്ഭാവ "utils/nsoption.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "netsurf/plot_style.h"
+#അന്തര്ഭാവ "netsurf/url_db.h"
+#അന്തര്ഭാവ "desktop/system_colour.h"
 
-#include "css/internal.h"
-#include "css/hints.h"
-#include "css/select.h"
+#അന്തര്ഭാവ "css/internal.h"
+#അന്തര്ഭാവ "css/hints.h"
+#അന്തര്ഭാവ "css/select.h"
 
-static css_error node_name(void *pw, void *node, css_qname *qname);
-static css_error node_classes(void *pw, void *node,
+സ്ഥിതം css_error കണ്ണി_name(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, css_qname *qname);
+സ്ഥിതം css_error കണ്ണി_classes(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
 		lwc_string ***classes, uint32_t *n_classes);
-static css_error node_id(void *pw, void *node, lwc_string **id);
-static css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent);
-static css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error parent_node(void *pw, void *node, void **parent);
-static css_error sibling_node(void *pw, void *node, void **sibling);
-static css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_class(void *pw, void *node,
+സ്ഥിതം css_error കണ്ണി_id(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, lwc_string **id);
+സ്ഥിതം css_error named_parent_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, ശൂന്യം **parent);
+സ്ഥിതം css_error named_sibling_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, ശൂന്യം **sibling);
+സ്ഥിതം css_error named_generic_sibling_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, ശൂന്യം **sibling);
+സ്ഥിതം css_error parent_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, ശൂന്യം **parent);
+സ്ഥിതം css_error sibling_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, ശൂന്യം **sibling);
+സ്ഥിതം css_error കണ്ണി_has_name(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, bool *match);
+സ്ഥിതം css_error കണ്ണി_has_class(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
 		lwc_string *name, bool *match);
-static css_error node_has_id(void *pw, void *node,
+സ്ഥിതം css_error കണ്ണി_has_id(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
 		lwc_string *name, bool *match);
-static css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+സ്ഥിതം css_error കണ്ണി_has_attribute(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, bool *match);
+സ്ഥിതം css_error കണ്ണി_has_attribute_equal(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match);
-static css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+സ്ഥിതം css_error കണ്ണി_has_attribute_dashmatch(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match);
-static css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+സ്ഥിതം css_error കണ്ണി_has_attribute_includes(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match);
-static css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+സ്ഥിതം css_error കണ്ണി_has_attribute_prefix(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match);
-static css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+സ്ഥിതം css_error കണ്ണി_has_attribute_suffix(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match);
-static css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+സ്ഥിതം css_error കണ്ണി_has_attribute_substring(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match);
-static css_error node_is_root(void *pw, void *node, bool *match);
-static css_error node_count_siblings(void *pw, void *node,
-		bool same_name, bool after, int32_t *count);
-static css_error node_is_empty(void *pw, void *node, bool *match);
-static css_error node_is_link(void *pw, void *node, bool *match);
-static css_error node_is_hover(void *pw, void *node, bool *match);
-static css_error node_is_active(void *pw, void *node, bool *match);
-static css_error node_is_focus(void *pw, void *node, bool *match);
-static css_error node_is_enabled(void *pw, void *node, bool *match);
-static css_error node_is_disabled(void *pw, void *node, bool *match);
-static css_error node_is_checked(void *pw, void *node, bool *match);
-static css_error node_is_target(void *pw, void *node, bool *match);
-static css_error node_is_lang(void *pw, void *node,
+സ്ഥിതം css_error കണ്ണി_is_വേര്(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_എണ്ണം_siblings(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		bool same_name, bool after, int32_t *എണ്ണം);
+സ്ഥിതം css_error കണ്ണി_is_empty(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_link(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_hover(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_active(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_focus(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_enabled(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_disabled(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_checked(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_target(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
+സ്ഥിതം css_error കണ്ണി_is_lang(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
 		lwc_string *lang, bool *match);
-static css_error ua_default_for_property(void *pw, uint32_t property,
+സ്ഥിതം css_error ua_default_for_property(ശൂന്യം *pw, uint32_t property,
 		css_hint *hint);
-static css_error set_libcss_node_data(void *pw, void *node,
-		void *libcss_node_data);
-static css_error get_libcss_node_data(void *pw, void *node,
-		void **libcss_node_data);
+സ്ഥിതം css_error set_libcss_കണ്ണി_data(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		ശൂന്യം *libcss_കണ്ണി_data);
+സ്ഥിതം css_error get_libcss_കണ്ണി_data(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		ശൂന്യം **libcss_കണ്ണി_data);
 
 /**
  * Selection callback table for libcss
  */
-static css_select_handler selection_handler = {
+സ്ഥിതം css_select_handler selection_handler = {
 	CSS_SELECT_HANDLER_VERSION_1,
 
-	node_name,
-	node_classes,
-	node_id,
-	named_ancestor_node,
-	named_parent_node,
-	named_sibling_node,
-	named_generic_sibling_node,
-	parent_node,
-	sibling_node,
-	node_has_name,
-	node_has_class,
-	node_has_id,
-	node_has_attribute,
-	node_has_attribute_equal,
-	node_has_attribute_dashmatch,
-	node_has_attribute_includes,
-	node_has_attribute_prefix,
-	node_has_attribute_suffix,
-	node_has_attribute_substring,
-	node_is_root,
-	node_count_siblings,
-	node_is_empty,
-	node_is_link,
-	node_is_visited,
-	node_is_hover,
-	node_is_active,
-	node_is_focus,
-	node_is_enabled,
-	node_is_disabled,
-	node_is_checked,
-	node_is_target,
-	node_is_lang,
-	node_presentational_hint,
+	കണ്ണി_name,
+	കണ്ണി_classes,
+	കണ്ണി_id,
+	named_ancestor_കണ്ണി,
+	named_parent_കണ്ണി,
+	named_sibling_കണ്ണി,
+	named_generic_sibling_കണ്ണി,
+	parent_കണ്ണി,
+	sibling_കണ്ണി,
+	കണ്ണി_has_name,
+	കണ്ണി_has_class,
+	കണ്ണി_has_id,
+	കണ്ണി_has_attribute,
+	കണ്ണി_has_attribute_equal,
+	കണ്ണി_has_attribute_dashmatch,
+	കണ്ണി_has_attribute_includes,
+	കണ്ണി_has_attribute_prefix,
+	കണ്ണി_has_attribute_suffix,
+	കണ്ണി_has_attribute_substring,
+	കണ്ണി_is_വേര്,
+	കണ്ണി_എണ്ണം_siblings,
+	കണ്ണി_is_empty,
+	കണ്ണി_is_link,
+	കണ്ണി_is_visited,
+	കണ്ണി_is_hover,
+	കണ്ണി_is_active,
+	കണ്ണി_is_focus,
+	കണ്ണി_is_enabled,
+	കണ്ണി_is_disabled,
+	കണ്ണി_is_checked,
+	കണ്ണി_is_target,
+	കണ്ണി_is_lang,
+	കണ്ണി_presentational_hint,
 	ua_default_for_property,
-	set_libcss_node_data,
-	get_libcss_node_data,
+	set_libcss_കണ്ണി_data,
+	get_libcss_കണ്ണി_data,
 };
 
 /**
@@ -145,8 +145,8 @@ static css_select_handler selection_handler = {
  * \param allow_quirks  True to permit CSS parsing quirks
  * \return Pointer to stylesheet, or NULL on failure.
  */
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks)
+css_stylesheet *nscss_create_inline_style(സ്ഥിരം uint8_t *data, size_t len,
+		സ്ഥിരം അക്ഷരം *charset, സ്ഥിരം അക്ഷരം *url, bool allow_quirks)
 {
 	css_stylesheet_params params;
 	css_stylesheet *sheet;
@@ -156,86 +156,86 @@ css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = ശൂന്യ;
 	params.allow_quirks = allow_quirks;
 	params.inline_style = true;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
-	params.import = NULL;
-	params.import_pw = NULL;
+	params.resolve_pw = ശൂന്യ;
+	params.import = ശൂന്യ;
+	params.import_pw = ശൂന്യ;
 	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.color_pw = ശൂന്യ;
+	params.font = ശൂന്യ;
+	params.font_pw = ശൂന്യ;
 
 	error = css_stylesheet_create(&params, &sheet);
-	if (error != CSS_OK) {
+	എങ്കിൽ (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "Failed creating sheet: %d", error);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
 	error = css_stylesheet_append_data(sheet, data, len);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	എങ്കിൽ (error != CSS_OK && error != CSS_NEEDDATA) {
 		NSLOG(netsurf, INFO, "failed appending data: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
 	error = css_stylesheet_data_done(sheet);
-	if (error != CSS_OK) {
+	എങ്കിൽ (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "failed completing parse: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
-	return sheet;
+	തിരികെ sheet;
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
-static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+സ്ഥിതം ശൂന്യം nscss_dom_user_data_handler(dom_കണ്ണി_operation operation,
+		dom_string *താക്കോൽ, ശൂന്യം *data, ഘടന dom_കണ്ണി *src,
+		ഘടന dom_കണ്ണി *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
-			key) == false || data == NULL) {
-		return;
+	എങ്കിൽ (dom_string_isequal(corestring_dom_ns_താക്കോൽ_libcss_കണ്ണി_data,
+			താക്കോൽ) == false || data == ശൂന്യ) {
+		തിരികെ;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_CLONED,
-				NULL, src, dst, data);
-		if (error != CSS_OK)
+	തിരഞ്ഞെടുപ്പ് (operation) {
+	അവസ്ഥ DOM_കണ്ണി_CLONED:
+		error = css_libcss_കണ്ണി_data_handler(&selection_handler,
+				CSS_കണ്ണി_CLONED,
+				ശൂന്യ, src, dst, data);
+		എങ്കിൽ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
-		break;
+		നിർത്തുക;
 
-	case DOM_NODE_RENAMED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_MODIFIED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	അവസ്ഥ DOM_കണ്ണി_RENAMED:
+		error = css_libcss_കണ്ണി_data_handler(&selection_handler,
+				CSS_കണ്ണി_MODIFIED,
+				ശൂന്യ, src, ശൂന്യ, data);
+		എങ്കിൽ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
-		break;
+		നിർത്തുക;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_DELETED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	അവസ്ഥ DOM_കണ്ണി_IMPORTED:
+	അവസ്ഥ DOM_കണ്ണി_ADOPTED:
+	അവസ്ഥ DOM_കണ്ണി_DELETED:
+		error = css_libcss_കണ്ണി_data_handler(&selection_handler,
+				CSS_കണ്ണി_DELETED,
+				ശൂന്യ, src, ശൂന്യ, data);
+		എങ്കിൽ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to delete libcss_node_data.");
-		break;
+		നിർത്തുക;
 
-	default:
+	സ്ഥിരസ്ഥിതി:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		പ്രതിജ്ഞാ(0);
 	}
 }
 
@@ -250,36 +250,36 @@ static void nscss_dom_user_data_handler(dom_node_operation operation,
  * \return Pointer to selection results (containing computed styles),
  *         or NULL on failure
  */
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style)
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_കണ്ണി *n,
+		സ്ഥിരം css_media *media,
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		സ്ഥിരം css_stylesheet *inline_style)
 {
 	css_computed_style *composed;
 	css_select_results *styles;
-	int pseudo_element;
+	പൂർണ്ണസംഖ്യ pseudo_element;
 	css_error error;
 
 	/* Select style for node */
 	error = css_select_style(ctx->ctx, n, unit_len_ctx, media, inline_style,
 			&selection_handler, ctx, &styles);
 
-	if (error != CSS_OK || styles == NULL) {
+	എങ്കിൽ (error != CSS_OK || styles == ശൂന്യ) {
 		/* Failed selecting partial style -- bail out */
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
 	/* If there's a parent style, compose with partial to obtain
 	 * complete computed style for element */
-	if (ctx->parent_style != NULL) {
+	എങ്കിൽ (ctx->parent_style != ശൂന്യ) {
 		/* Complete the computed style, by composing with the parent
 		 * element's style */
 		error = css_computed_style_compose(ctx->parent_style,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		എങ്കിൽ (error != CSS_OK) {
 			css_select_results_destroy(styles);
-			return NULL;
+			തിരികെ ശൂന്യ;
 		}
 
 		/* Replace select_results style with composed style */
@@ -288,19 +288,19 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[CSS_PSEUDO_ELEMENT_NONE] = composed;
 	}
 
-	for (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
-			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
+	വേണ്ടി (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
+			pseudo_element < CSS_PSEUDO_ELEMENT_എണ്ണം;
 			pseudo_element++) {
 
-		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
-				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
+		എങ്കിൽ (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
+				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_വരി)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
-			continue;
+			തുടരുക;
 
-		if (styles->styles[pseudo_element] == NULL)
+		എങ്കിൽ (styles->styles[pseudo_element] == ശൂന്യ)
 			/* There were no rules concerning this pseudo element */
-			continue;
+			തുടരുക;
 
 		/* Complete the pseudo element's computed style, by composing
 		 * with the base element's style */
@@ -308,11 +308,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				styles->styles[pseudo_element],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		എങ്കിൽ (error != CSS_OK) {
 			/* TODO: perhaps this shouldn't be quite so
 			 * catastrophic? */
 			css_select_results_destroy(styles);
-			return NULL;
+			തിരികെ ശൂന്യ;
 		}
 
 		/* Replace select_results style with composed style */
@@ -320,7 +320,7 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[pseudo_element] = composed;
 	}
 
-	return styles;
+	തിരികെ styles;
 }
 
 /**
@@ -332,16 +332,16 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
  * \return Pointer to blank style, or NULL on failure
  */
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent)
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		സ്ഥിരം css_computed_style *parent)
 {
 	css_computed_style *partial, *composed;
 	css_error error;
 
 	error = css_select_default_style(ctx->ctx,
 			&selection_handler, ctx, &partial);
-	if (error != CSS_OK) {
-		return NULL;
+	എങ്കിൽ (error != CSS_OK) {
+		തിരികെ ശൂന്യ;
 	}
 
 	/* TODO: Do we really need to compose?  Initial style shouldn't
@@ -349,12 +349,12 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
 	error = css_computed_style_compose(parent, partial,
 			unit_len_ctx, &composed);
 	css_computed_style_destroy(partial);
-	if (error != CSS_OK) {
+	എങ്കിൽ (error != CSS_OK) {
 		css_computed_style_destroy(composed);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
-	return composed;
+	തിരികെ composed;
 }
 
 /******************************************************************************
@@ -370,27 +370,27 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_name(void *pw, void *node, css_qname *qname)
+css_error കണ്ണി_name(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, css_qname *qname)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *name;
 	dom_exception err;
 
-	err = dom_node_get_node_name(n, &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	err = dom_കണ്ണി_get_കണ്ണി_name(n, &name);
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
-	qname->ns = NULL;
+	qname->ns = ശൂന്യ;
 
 	err = dom_string_intern(name, &qname->name);
-	if (err != DOM_NO_ERR) {
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_NOMEM;
+		തിരികെ CSS_NOMEM;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -407,20 +407,20 @@ css_error node_name(void *pw, void *node, css_qname *qname)
  *       be allocated using the same allocator as used by libcss during style
  *       selection.
  */
-css_error node_classes(void *pw, void *node,
+css_error കണ്ണി_classes(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
 		lwc_string ***classes, uint32_t *n_classes)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_exception err;
 
-	*classes = NULL;
+	*classes = ശൂന്യ;
 	*n_classes = 0;
 
 	err = dom_element_get_classes(n, classes, n_classes);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -432,29 +432,29 @@ css_error node_classes(void *pw, void *node,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_id(void *pw, void *node, lwc_string **id)
+css_error കണ്ണി_id(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, lwc_string **id)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *attr;
 	dom_exception err;
 
-	*id = NULL;
+	*id = ശൂന്യ;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
-	if (attr != NULL) {
+	എങ്കിൽ (attr != ശൂന്യ) {
 		err = dom_string_intern(attr, id);
-		if (err != DOM_NO_ERR) {
+		എങ്കിൽ (err != DOM_NO_ERR) {
 			dom_string_unref(attr);
-			return CSS_NOMEM;
+			തിരികെ CSS_NOMEM;
 		}
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -468,14 +468,14 @@ css_error node_id(void *pw, void *node, lwc_string **id)
  *
  * \post \a ancestor will contain the result, or NULL if there is no match
  */
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor)
+css_error named_ancestor_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, ശൂന്യം **ancestor)
 {
-	dom_element_named_ancestor_node(node, qname->name,
-			(struct dom_element **)ancestor);
-	dom_node_unref(*ancestor);
+	dom_element_named_ancestor_കണ്ണി(കണ്ണി, qname->name,
+			(ഘടന dom_element **)ancestor);
+	dom_കണ്ണി_unref(*ancestor);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -489,14 +489,14 @@ css_error named_ancestor_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent)
+css_error named_parent_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, ശൂന്യം **parent)
 {
-	dom_element_named_parent_node(node, qname->name,
-			(struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_named_parent_കണ്ണി(കണ്ണി, qname->name,
+			(ഘടന dom_element **)parent);
+	dom_കണ്ണി_unref(*parent);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -510,61 +510,61 @@ css_error named_parent_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_sibling_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, ശൂന്യം **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_കണ്ണി *n = കണ്ണി;
+	dom_കണ്ണി *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ശൂന്യ;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_കണ്ണി_get_previous_sibling(n, &n);
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	ആകുമ്പോൾ (n != ശൂന്യ) {
+		dom_കണ്ണി_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_കണ്ണി_get_കണ്ണി_type(n, &type);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		എങ്കിൽ (type == DOM_ELEMENT_കണ്ണി)
+			നിർത്തുക;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_കണ്ണി_get_previous_sibling(n, &prev);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_കണ്ണി_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	എങ്കിൽ (n != ശൂന്യ) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_കണ്ണി_get_കണ്ണി_name(n, &name);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_കണ്ണി_unref(n);
 
-		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
+		എങ്കിൽ (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
 		}
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -578,57 +578,57 @@ css_error named_sibling_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_generic_sibling_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, ശൂന്യം **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_കണ്ണി *n = കണ്ണി;
+	dom_കണ്ണി *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ശൂന്യ;
 
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_കണ്ണി_get_previous_sibling(n, &n);
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	ആകുമ്പോൾ (n != ശൂന്യ) {
+		dom_കണ്ണി_type type;
 		dom_string *name;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_കണ്ണി_get_കണ്ണി_type(n, &type);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
-			err = dom_node_get_node_name(n, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(n);
-				return CSS_OK;
+		എങ്കിൽ (type == DOM_ELEMENT_കണ്ണി) {
+			err = dom_കണ്ണി_get_കണ്ണി_name(n, &name);
+			എങ്കിൽ (err != DOM_NO_ERR) {
+				dom_കണ്ണി_unref(n);
+				തിരികെ CSS_OK;
 			}
 
-			if (dom_string_caseless_lwc_isequal(name,
+			എങ്കിൽ (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
-				dom_node_unref(n);
+				dom_കണ്ണി_unref(n);
 				*sibling = n;
-				break;
+				നിർത്തുക;
 			}
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_കണ്ണി_get_previous_sibling(n, &prev);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_കണ്ണി_unref(n);
 		n = prev;
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -641,12 +641,12 @@ css_error named_generic_sibling_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error parent_node(void *pw, void *node, void **parent)
+css_error parent_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, ശൂന്യം **parent)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_parent_കണ്ണി(കണ്ണി, (ഘടന dom_element **)parent);
+	dom_കണ്ണി_unref(*parent);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -659,49 +659,49 @@ css_error parent_node(void *pw, void *node, void **parent)
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error sibling_node(void *pw, void *node, void **sibling)
+css_error sibling_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, ശൂന്യം **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_കണ്ണി *n = കണ്ണി;
+	dom_കണ്ണി *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ശൂന്യ;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_കണ്ണി_get_previous_sibling(n, &n);
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	ആകുമ്പോൾ (n != ശൂന്യ) {
+		dom_കണ്ണി_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_കണ്ണി_get_കണ്ണി_type(n, &type);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		എങ്കിൽ (type == DOM_ELEMENT_കണ്ണി)
+			നിർത്തുക;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_കണ്ണി_get_previous_sibling(n, &prev);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_കണ്ണി_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	എങ്കിൽ (n != ശൂന്യ) {
 		/** \todo Sort out reference counting */
-		dom_node_unref(n);
+		dom_കണ്ണി_unref(n);
 
 		*sibling = n;
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -715,20 +715,20 @@ css_error sibling_node(void *pw, void *node, void **sibling)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error കണ്ണി_has_name(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, bool *match)
 {
 	nscss_select_ctx *ctx = pw;
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 
-	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
+	എങ്കിൽ (lwc_string_isequal(qname->name, ctx->universal, match) ==
 			lwc_error_ok && *match == false) {
 		dom_string *name;
 		dom_exception err;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR)
-			return CSS_OK;
+		err = dom_കണ്ണി_get_കണ്ണി_name(n, &name);
+		എങ്കിൽ (err != DOM_NO_ERR)
+			തിരികെ CSS_OK;
 
 		/* Element names are case insensitive in HTML */
 		*match = dom_string_caseless_lwc_isequal(name, qname->name);
@@ -736,7 +736,7 @@ css_error node_has_name(void *pw, void *node,
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -750,19 +750,19 @@ css_error node_has_name(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_class(void *pw, void *node,
+css_error കണ്ണി_has_class(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
 		lwc_string *name, bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_exception err;
 
 	/** \todo: Ensure that libdom performs case-insensitive
 	 * matching in quirks mode */
 	err = dom_element_has_class(n, name, match);
 
-	assert(err == DOM_NO_ERR);
+	പ്രതിജ്ഞാ(err == DOM_NO_ERR);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -776,10 +776,10 @@ css_error node_has_class(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_id(void *pw, void *node,
+css_error കണ്ണി_has_id(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
 		lwc_string *name, bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *attr;
 	dom_exception err;
 
@@ -787,16 +787,16 @@ css_error node_has_id(void *pw, void *node,
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_OK;
 
-	if (attr != NULL) {
+	എങ്കിൽ (attr != ശൂന്യ) {
 		*match = dom_string_lwc_isequal(attr, name);
 
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -811,28 +811,28 @@ css_error node_has_id(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error കണ്ണി_has_attribute(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *name;
 	dom_exception err;
 
 	err = dom_string_create_interned(
-			(const uint8_t *) lwc_string_data(qname->name),
+			(സ്ഥിരം uint8_t *) lwc_string_data(qname->name),
 			lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
 	err = dom_element_has_attribute(n, name, match);
-	if (err != DOM_NO_ERR) {
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -848,42 +848,42 @@ css_error node_has_attribute(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error കണ്ണി_has_attribute_equal(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(മൂല്യം);
 
-	if (vlen == 0) {
+	എങ്കിൽ (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(സ്ഥിരം uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	എങ്കിൽ ((err != DOM_NO_ERR) || (atr_val == ശൂന്യ)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, മൂല്യം);
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -900,47 +900,47 @@ css_error node_has_attribute_equal(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error കണ്ണി_has_attribute_dashmatch(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(മൂല്യം);
 
-	if (vlen == 0) {
+	എങ്കിൽ (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(സ്ഥിരം uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	എങ്കിൽ ((err != DOM_NO_ERR) || (atr_val == ശൂന്യ)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, മൂല്യം);
 
 	/* check for dashmatch */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *data = (const char *) dom_string_data(atr_val);
+	എങ്കിൽ (*match == false) {
+		സ്ഥിരം അക്ഷരം *vdata = lwc_string_data(മൂല്യം);
+		സ്ഥിരം അക്ഷരം *data = (സ്ഥിരം അക്ഷരം *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		if (len > vlen && data[vlen] == '-' &&
+		എങ്കിൽ (len > vlen && data[vlen] == '-' &&
 		    strncasecmp(data, vdata, vlen) == 0) {
 				*match = true;
 		}
@@ -948,7 +948,7 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -965,52 +965,52 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error കണ്ണി_has_attribute_includes(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
-	size_t vlen = lwc_string_length(value);
-	const char *p;
-	const char *start;
-	const char *end;
+	size_t vlen = lwc_string_length(മൂല്യം);
+	സ്ഥിരം അക്ഷരം *p;
+	സ്ഥിരം അക്ഷരം *start;
+	സ്ഥിരം അക്ഷരം *end;
 
 	*match = false;
 
-	if (vlen == 0) {
-		return CSS_OK;
+	എങ്കിൽ (vlen == 0) {
+		തിരികെ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(സ്ഥിരം uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	എങ്കിൽ ((err != DOM_NO_ERR) || (atr_val == ശൂന്യ)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for match */
-	start = (const char *) dom_string_data(atr_val);
+	start = (സ്ഥിരം അക്ഷരം *) dom_string_data(atr_val);
 	end = start + dom_string_byte_length(atr_val);
 
-	for (p = start; p <= end; p++) {
-		if (*p == ' ' || *p == '\0') {
-			if ((size_t) (p - start) == vlen &&
+	വേണ്ടി (p = start; p <= end; p++) {
+		എങ്കിൽ (*p == ' ' || *p == '\0') {
+			എങ്കിൽ ((size_t) (p - start) == vlen &&
 			    strncasecmp(start,
-					lwc_string_data(value),
+					lwc_string_data(മൂല്യം),
 					vlen) == 0) {
 				*match = true;
-				break;
+				നിർത്തുക;
 			}
 
 			start = p + 1;
@@ -1019,7 +1019,7 @@ css_error node_has_attribute_includes(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1036,54 +1036,54 @@ css_error node_has_attribute_includes(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error കണ്ണി_has_attribute_prefix(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(മൂല്യം);
 
-	if (vlen == 0) {
+	എങ്കിൽ (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(സ്ഥിരം uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	എങ്കിൽ ((err != DOM_NO_ERR) || (atr_val == ശൂന്യ)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, മൂല്യം);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
+	എങ്കിൽ (*match == false) {
+		സ്ഥിരം അക്ഷരം *data = (സ്ഥിരം അക്ഷരം *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		if ((len >= vlen) &&
-		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
+		എങ്കിൽ ((len >= vlen) &&
+		    (strncasecmp(data, lwc_string_data(മൂല്യം), vlen) == 0)) {
 			*match = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1100,49 +1100,49 @@ css_error node_has_attribute_prefix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error കണ്ണി_has_attribute_suffix(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(മൂല്യം);
 
-	if (vlen == 0) {
+	എങ്കിൽ (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(സ്ഥിരം uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	എങ്കിൽ ((err != DOM_NO_ERR) || (atr_val == ശൂന്യ)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, മൂല്യം);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
+	എങ്കിൽ (*match == false) {
+		സ്ഥിരം അക്ഷരം *data = (സ്ഥിരം അക്ഷരം *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
 
-		const char *start = (char *) data + len - vlen;
+		സ്ഥിരം അക്ഷരം *start = (അക്ഷരം *) data + len - vlen;
 
-		if ((len >= vlen) &&
-		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
+		എങ്കിൽ ((len >= vlen) &&
+		    (strncasecmp(start, lwc_string_data(മൂല്യം), vlen) == 0)) {
 			*match = true;
 		}
 
@@ -1151,7 +1151,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1168,53 +1168,53 @@ css_error node_has_attribute_suffix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
+css_error കണ്ണി_has_attribute_substring(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, lwc_string *മൂല്യം,
 		bool *match)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_length(മൂല്യം);
 
-	if (vlen == 0) {
+	എങ്കിൽ (vlen == 0) {
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
+		(സ്ഥിരം uint8_t *) lwc_string_data(qname->name),
 		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	എങ്കിൽ (err != DOM_NO_ERR)
+		തിരികെ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	എങ്കിൽ ((err != DOM_NO_ERR) || (atr_val == ശൂന്യ)) {
 		dom_string_unref(name);
 		*match = false;
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*match = dom_string_caseless_lwc_isequal(atr_val, മൂല്യം);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *start = (const char *) dom_string_data(atr_val);
+	എങ്കിൽ (*match == false) {
+		സ്ഥിരം അക്ഷരം *vdata = lwc_string_data(മൂല്യം);
+		സ്ഥിരം അക്ഷരം *start = (സ്ഥിരം അക്ഷരം *) dom_string_data(atr_val);
 		size_t len = dom_string_byte_length(atr_val);
-		const char *last_start = start + len - vlen;
+		സ്ഥിരം അക്ഷരം *last_start = start + len - vlen;
 
-		if (len >= vlen) {
-			while (start <= last_start) {
-				if (strncasecmp(start, vdata,
+		എങ്കിൽ (len >= vlen) {
+			ആകുമ്പോൾ (start <= last_start) {
+				എങ്കിൽ (strncasecmp(start, vdata,
 						vlen) == 0) {
 					*match = true;
-					break;
+					നിർത്തുക;
 				}
 
 				start++;
@@ -1224,7 +1224,7 @@ css_error node_has_attribute_substring(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1237,71 +1237,71 @@ css_error node_has_attribute_substring(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_root(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_വേര്(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
-	dom_node *n = node;
-	dom_node *parent;
-	dom_node_type type;
+	dom_കണ്ണി *n = കണ്ണി;
+	dom_കണ്ണി *parent;
+	dom_കണ്ണി_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_കണ്ണി_get_parent_കണ്ണി(n, &parent);
+	എങ്കിൽ (err != DOM_NO_ERR) {
+		തിരികെ CSS_NOMEM;
 	}
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	എങ്കിൽ (parent != ശൂന്യ) {
+		err = dom_കണ്ണി_get_കണ്ണി_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_കണ്ണി_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return CSS_NOMEM;
+		എങ്കിൽ (err != DOM_NO_ERR)
+			തിരികെ CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
+		എങ്കിൽ (type != DOM_DOCUMENT_കണ്ണി) {
 			*match = false;
-			return CSS_OK;
+			തിരികെ CSS_OK;
 		}
 	}
 
 	*match = true;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
-static int
-node_count_siblings_check(dom_node *node,
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+കണ്ണി_എണ്ണം_siblings_check(dom_കണ്ണി *കണ്ണി,
 			  bool check_name,
 			  dom_string *name)
 {
-	dom_node_type type;
-	int ret = 0;
+	dom_കണ്ണി_type type;
+	പൂർണ്ണസംഖ്യ ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
-		return 0;
+	എങ്കിൽ (കണ്ണി == ശൂന്യ)
+		തിരികെ 0;
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
-		return 0;
+	exc = dom_കണ്ണി_get_കണ്ണി_type(കണ്ണി, &type);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_കണ്ണി)) {
+		തിരികെ 0;
 	}
 
-	if (check_name) {
-		dom_string *node_name = NULL;
-		exc = dom_node_get_node_name(node, &node_name);
+	എങ്കിൽ (check_name) {
+		dom_string *കണ്ണി_name = ശൂന്യ;
+		exc = dom_കണ്ണി_get_കണ്ണി_name(കണ്ണി, &കണ്ണി_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		എങ്കിൽ ((exc == DOM_NO_ERR) && (കണ്ണി_name != ശൂന്യ)) {
 
-			if (dom_string_caseless_isequal(name,
-							node_name)) {
+			എങ്കിൽ (dom_string_caseless_isequal(name,
+							കണ്ണി_name)) {
 				ret = 1;
 			}
-			dom_string_unref(node_name);
+			dom_string_unref(കണ്ണി_name);
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		ret = 1;
 	}
 
-	return ret;
+	തിരികെ ret;
 }
 
 /**
@@ -1316,58 +1316,58 @@ node_count_siblings_check(dom_node *node,
  *
  * \post \a count will contain the number of siblings
  */
-css_error node_count_siblings(void *pw, void *n, bool same_name,
-		bool after, int32_t *count)
+css_error കണ്ണി_എണ്ണം_siblings(ശൂന്യം *pw, ശൂന്യം *n, bool same_name,
+		bool after, int32_t *എണ്ണം)
 {
 	int32_t cnt = 0;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *കണ്ണി_name = ശൂന്യ;
 
-	if (same_name) {
-		dom_node *node = n;
-		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-			return CSS_NOMEM;
+	എങ്കിൽ (same_name) {
+		dom_കണ്ണി *കണ്ണി = n;
+		exc = dom_കണ്ണി_get_കണ്ണി_name(കണ്ണി, &കണ്ണി_name);
+		എങ്കിൽ ((exc != DOM_NO_ERR) || (കണ്ണി_name == ശൂന്യ)) {
+			തിരികെ CSS_NOMEM;
 		}
 	}
 
-	if (after) {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+	എങ്കിൽ (after) {
+		dom_കണ്ണി *കണ്ണി = dom_കണ്ണി_ref(n);
+		dom_കണ്ണി *next;
 
-		do {
-			exc = dom_node_get_next_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		ചെയ്യുക {
+			exc = dom_കണ്ണി_get_next_sibling(കണ്ണി, &next);
+			എങ്കിൽ ((exc != DOM_NO_ERR))
+				നിർത്തുക;
 
-			dom_node_unref(node);
-			node = next;
+			dom_കണ്ണി_unref(കണ്ണി);
+			കണ്ണി = next;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
-	} else {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+			cnt += കണ്ണി_എണ്ണം_siblings_check(കണ്ണി, same_name, കണ്ണി_name);
+		} ആകുമ്പോൾ (കണ്ണി != ശൂന്യ);
+	} അല്ലെങ്കിൽ {
+		dom_കണ്ണി *കണ്ണി = dom_കണ്ണി_ref(n);
+		dom_കണ്ണി *next;
 
-		do {
-			exc = dom_node_get_previous_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		ചെയ്യുക {
+			exc = dom_കണ്ണി_get_previous_sibling(കണ്ണി, &next);
+			എങ്കിൽ ((exc != DOM_NO_ERR))
+				നിർത്തുക;
 
-			dom_node_unref(node);
-			node = next;
+			dom_കണ്ണി_unref(കണ്ണി);
+			കണ്ണി = next;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
+			cnt += കണ്ണി_എണ്ണം_siblings_check(കണ്ണി, same_name, കണ്ണി_name);
 
-		} while (node != NULL);
+		} ആകുമ്പോൾ (കണ്ണി != ശൂന്യ);
 	}
 
-	if (node_name != NULL) {
-		dom_string_unref(node_name);
+	എങ്കിൽ (കണ്ണി_name != ശൂന്യ) {
+		dom_string_unref(കണ്ണി_name);
 	}
 
-	*count = cnt;
-	return CSS_OK;
+	*എണ്ണം = cnt;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1380,43 +1380,43 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
  *
  * \post \a match will contain true if the node is empty and false otherwise.
  */
-css_error node_is_empty(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_empty(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
-	dom_node *n = node, *next;
+	dom_കണ്ണി *n = കണ്ണി, *next;
 	dom_exception err;
 
 	*match = true;
 
-	err = dom_node_get_first_child(n, &n);
-	if (err != DOM_NO_ERR) {
-		return CSS_BADPARM;
+	err = dom_കണ്ണി_get_first_child(n, &n);
+	എങ്കിൽ (err != DOM_NO_ERR) {
+		തിരികെ CSS_BADPARM;
 	}
 
-	while (n != NULL) {
-		dom_node_type ntype;
-		err = dom_node_get_node_type(n, &ntype);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+	ആകുമ്പോൾ (n != ശൂന്യ) {
+		dom_കണ്ണി_type ntype;
+		err = dom_കണ്ണി_get_കണ്ണി_type(n, &ntype);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
-		    ntype == DOM_TEXT_NODE) {
+		എങ്കിൽ (ntype == DOM_ELEMENT_കണ്ണി ||
+		    ntype == DOM_TEXT_കണ്ണി) {
 			*match = false;
-			dom_node_unref(n);
-			break;
+			dom_കണ്ണി_unref(n);
+			നിർത്തുക;
 		}
 
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+		err = dom_കണ്ണി_get_next_sibling(n, &next);
+		എങ്കിൽ (err != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(n);
+			തിരികെ CSS_BADPARM;
 		}
-		dom_node_unref(n);
+		dom_കണ്ണി_unref(n);
 		n = next;
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1429,32 +1429,32 @@ css_error node_is_empty(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_link(void *pw, void *n, bool *match)
+css_error കണ്ണി_is_link(ശൂന്യം *pw, ശൂന്യം *n, bool *match)
 {
-	dom_node *node = n;
+	dom_കണ്ണി *കണ്ണി = n;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *കണ്ണി_name = ശൂന്യ;
 
-	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_കണ്ണി_get_കണ്ണി_name(കണ്ണി, &കണ്ണി_name);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (കണ്ണി_name == ശൂന്യ)) {
+		തിരികെ CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	എങ്കിൽ (dom_string_caseless_lwc_isequal(കണ്ണി_name, corestring_lwc_a)) {
 		bool has_href;
-		exc = dom_element_has_attribute(node, corestring_dom_href,
+		exc = dom_element_has_attribute(കണ്ണി, corestring_dom_href,
 				&has_href);
-		if ((exc == DOM_NO_ERR) && (has_href)) {
+		എങ്കിൽ ((exc == DOM_NO_ERR) && (has_href)) {
 			*match = true;
-		} else {
+		} അല്ലെങ്കിൽ {
 			*match = false;
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		*match = false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(കണ്ണി_name);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1468,38 +1468,38 @@ css_error node_is_link(void *pw, void *n, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_visited(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_visited(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
 	nserror error;
-	const struct url_data *data;
+	സ്ഥിരം ഘടന url_data *data;
 
 	dom_exception exc;
-	dom_node *n = node;
-	dom_string *s = NULL;
+	dom_കണ്ണി *n = കണ്ണി;
+	dom_string *s = ശൂന്യ;
 
 	*match = false;
 
-	exc = dom_node_get_node_name(n, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_കണ്ണി_get_കണ്ണി_name(n, &s);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (s == ശൂന്യ)) {
+		തിരികെ CSS_NOMEM;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
+	എങ്കിൽ (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
 		/* Can't be visited; not ancher element */
 		dom_string_unref(s);
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	/* Finished with node name string */
 	dom_string_unref(s);
-	s = NULL;
+	s = ശൂന്യ;
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (s == ശൂന്യ)) {
 		/* Can't be visited; not got a URL */
-		return CSS_OK;
+		തിരികെ CSS_OK;
 	}
 
 	/* Make href absolute */
@@ -1510,21 +1510,21 @@ css_error node_is_visited(void *pw, void *node, bool *match)
 	/* Finished with href string */
 	dom_string_unref(s);
 
-	if (error != NSERROR_OK) {
+	എങ്കിൽ (error != NSERROR_OK) {
 		/* Couldn't make nsurl object */
-		return CSS_NOMEM;
+		തിരികെ CSS_NOMEM;
 	}
 
 	data = urldb_get_url_data(url);
 
 	/* Visited if in the db and has
 	 * non-zero visit count */
-	if (data != NULL && data->visits > 0)
+	എങ്കിൽ (data != ശൂന്യ && data->visits > 0)
 		*match = true;
 
 	nsurl_unref(url);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1537,13 +1537,13 @@ css_error node_is_visited(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_hover(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_hover(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
 	/** \todo Support hovering */
 
 	*match = false;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1556,13 +1556,13 @@ css_error node_is_hover(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_active(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_active(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
 	/** \todo Support active nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1575,13 +1575,13 @@ css_error node_is_active(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_focus(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_focus(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
 	/** \todo Support focussed nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1594,13 +1594,13 @@ css_error node_is_focus(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is enabled and false otherwise.
  */
-css_error node_is_enabled(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_enabled(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
 	/** \todo Support enabled nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1613,13 +1613,13 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is disabled and false otherwise.
  */
-css_error node_is_disabled(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_disabled(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
 	/** \todo Support disabled nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1632,13 +1632,13 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is checked and false otherwise.
  */
-css_error node_is_checked(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_checked(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
 	/** \todo Support checked nodes */
 
 	*match = false;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1651,13 +1651,13 @@ css_error node_is_checked(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node matches and false otherwise.
  */
-css_error node_is_target(void *pw, void *node, bool *match)
+css_error കണ്ണി_is_target(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match)
 {
 	/** \todo Support target */
 
 	*match = false;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1671,14 +1671,14 @@ css_error node_is_target(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_lang(void *pw, void *node,
+css_error കണ്ണി_is_lang(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
 		lwc_string *lang, bool *match)
 {
 	/** \todo Support languages */
 
 	*match = false;
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
 /**
@@ -1690,77 +1690,77 @@ css_error node_is_lang(void *pw, void *node,
  * \return CSS_OK       on success,
  *         CSS_INVALID  if the property should not have a user-agent default.
  */
-css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
+css_error ua_default_for_property(ശൂന്യം *pw, uint32_t property, css_hint *hint)
 {
-	if (property == CSS_PROP_COLOR) {
+	എങ്കിൽ (property == CSS_PROP_COLOR) {
 		hint->data.color = 0xff000000;
 		hint->status = CSS_COLOR_COLOR;
-	} else if (property == CSS_PROP_FONT_FAMILY) {
-		hint->data.strings = NULL;
-		switch (nsoption_int(font_default)) {
-		case PLOT_FONT_FAMILY_SANS_SERIF:
+	} അല്ലെങ്കിൽ എങ്കിൽ (property == CSS_PROP_FONT_FAMILY) {
+		hint->data.strings = ശൂന്യ;
+		തിരഞ്ഞെടുപ്പ് (nsoption_int(font_default)) {
+		അവസ്ഥ PLOT_FONT_FAMILY_SANS_SERIF:
 			hint->status = CSS_FONT_FAMILY_SANS_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_SERIF:
+			നിർത്തുക;
+		അവസ്ഥ PLOT_FONT_FAMILY_SERIF:
 			hint->status = CSS_FONT_FAMILY_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_MONOSPACE:
+			നിർത്തുക;
+		അവസ്ഥ PLOT_FONT_FAMILY_MONOSPACE:
 			hint->status = CSS_FONT_FAMILY_MONOSPACE;
-			break;
-		case PLOT_FONT_FAMILY_CURSIVE:
+			നിർത്തുക;
+		അവസ്ഥ PLOT_FONT_FAMILY_CURSIVE:
 			hint->status = CSS_FONT_FAMILY_CURSIVE;
-			break;
-		case PLOT_FONT_FAMILY_FANTASY:
+			നിർത്തുക;
+		അവസ്ഥ PLOT_FONT_FAMILY_FANTASY:
 			hint->status = CSS_FONT_FAMILY_FANTASY;
-			break;
+			നിർത്തുക;
 		}
-	} else if (property == CSS_PROP_QUOTES) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (property == CSS_PROP_QUOTES) {
 		/** \todo Not exactly useful :) */
-		hint->data.strings = NULL;
+		hint->data.strings = ശൂന്യ;
 		hint->status = CSS_QUOTES_NONE;
-	} else if (property == CSS_PROP_VOICE_FAMILY) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (property == CSS_PROP_VOICE_FAMILY) {
 		/** \todo Fix this when we have voice-family done */
-		hint->data.strings = NULL;
+		hint->data.strings = ശൂന്യ;
 		hint->status = 0;
-	} else {
-		return CSS_INVALID;
+	} അല്ലെങ്കിൽ {
+		തിരികെ CSS_INVALID;
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
-css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
+css_error set_libcss_കണ്ണി_data(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, ശൂന്യം *libcss_കണ്ണി_data)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_exception err;
-	void *old_node_data;
+	ശൂന്യം *old_കണ്ണി_data;
 
 	/* Set this node's node data */
-	err = dom_node_set_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data, nscss_dom_user_data_handler,
-			(void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_കണ്ണി_set_user_data(n,
+			corestring_dom_ns_താക്കോൽ_libcss_കണ്ണി_data,
+			libcss_കണ്ണി_data, nscss_dom_user_data_handler,
+			(ശൂന്യം *) &old_കണ്ണി_data);
+	എങ്കിൽ (err != DOM_NO_ERR) {
+		തിരികെ CSS_NOMEM;
 	}
 
-	assert(old_node_data == NULL);
+	പ്രതിജ്ഞാ(old_കണ്ണി_data == ശൂന്യ);
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }
 
-css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
+css_error get_libcss_കണ്ണി_data(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, ശൂന്യം **libcss_കണ്ണി_data)
 {
-	dom_node *n = node;
+	dom_കണ്ണി *n = കണ്ണി;
 	dom_exception err;
 
 	/* Get this node's node data */
-	err = dom_node_get_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_കണ്ണി_get_user_data(n,
+			corestring_dom_ns_താക്കോൽ_libcss_കണ്ണി_data,
+			libcss_കണ്ണി_data);
+	എങ്കിൽ (err != DOM_NO_ERR) {
+		തിരികെ CSS_NOMEM;
 	}
 
-	return CSS_OK;
+	തിരികെ CSS_OK;
 }

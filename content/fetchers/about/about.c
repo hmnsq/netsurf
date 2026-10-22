@@ -26,70 +26,70 @@
  * information from the browser from a known, fixed URL.
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "netsurf/inttypes.h"
+#അന്തര്ഭാവ "netsurf/inttypes.h"
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
-#include "utils/messages.h"
+#അന്തര്ഭാവ "utils/errors.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/ring.h"
+#അന്തര്ഭാവ "utils/messages.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#അന്തര്ഭാവ "content/fetch.h"
+#അന്തര്ഭാവ "content/fetchers.h"
 
-#include "private.h"
-#include "about.h"
-#include "blank.h"
-#include "certificate.h"
-#include "config.h"
-#include "chart.h"
-#include "choices.h"
-#include "imagecache.h"
-#include "nscolours.h"
-#include "query.h"
-#include "query_auth.h"
-#include "query_fetcherror.h"
-#include "query_privacy.h"
-#include "query_timeout.h"
-#include "atestament.h"
-#include "websearch.h"
+#അന്തര്ഭാവ "private.h"
+#അന്തര്ഭാവ "about.h"
+#അന്തര്ഭാവ "blank.h"
+#അന്തര്ഭാവ "certificate.h"
+#അന്തര്ഭാവ "config.h"
+#അന്തര്ഭാവ "chart.h"
+#അന്തര്ഭാവ "choices.h"
+#അന്തര്ഭാവ "imagecache.h"
+#അന്തര്ഭാവ "nscolours.h"
+#അന്തര്ഭാവ "query.h"
+#അന്തര്ഭാവ "query_auth.h"
+#അന്തര്ഭാവ "query_fetcherror.h"
+#അന്തര്ഭാവ "query_privacy.h"
+#അന്തര്ഭാവ "query_timeout.h"
+#അന്തര്ഭാവ "atestament.h"
+#അന്തര്ഭാവ "websearch.h"
 
-typedef bool (*fetch_about_handler)(struct fetch_about_context *);
+തരനിർവചനം bool (*fetch_about_handler)(ഘടന fetch_about_context *);
 
 /**
  * Context for an about fetch
  */
-struct fetch_about_context {
-	struct fetch_about_context *r_next, *r_prev;
+ഘടന fetch_about_context {
+	ഘടന fetch_about_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	ഘടന fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
 
-	const struct fetch_multipart_data *multipart; /**< post data */
+	സ്ഥിരം ഘടന fetch_multipart_data *multipart; /**< post data */
 
 	fetch_about_handler handler;
 };
 
-static struct fetch_about_context *ring = NULL;
+സ്ഥിതം ഘടന fetch_about_context *ring = ശൂന്യ;
 
 /**
  * handler info for about scheme
  */
-struct about_handlers {
-	const char *name; /**< name to match in url */
-	int name_len;
+ഘടന about_handlers {
+	സ്ഥിരം അക്ഷരം *name; /**< name to match in url */
+	പൂർണ്ണസംഖ്യ name_len;
 	lwc_string *lname; /**< Interned name */
 	fetch_about_handler handler; /**< handler for the url */
 	bool hidden; /**< If entry should be hidden in listing */
@@ -100,102 +100,102 @@ struct about_handlers {
 /**
  * issue fetch callbacks with locking
  */
-static bool
-fetch_about_send_callback(const fetch_msg *msg, struct fetch_about_context *ctx)
+സ്ഥിതം bool
+fetch_about_send_callback(സ്ഥിരം fetch_സന്ദേശം *സന്ദേശം, ഘടന fetch_about_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(സന്ദേശം, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	തിരികെ ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_finished(struct fetch_about_context *ctx)
+fetch_about_send_finished(ഘടന fetch_about_context *ctx)
 {
-	fetch_msg msg;
-	msg.type = FETCH_FINISHED;
-	return fetch_about_send_callback(&msg, ctx);
+	fetch_സന്ദേശം സന്ദേശം;
+	സന്ദേശം.type = FETCH_FINISHED;
+	തിരികെ fetch_about_send_callback(&സന്ദേശം, ctx);
 }
 
 /* exported interface documented in about/private.h */
-bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code)
+bool fetch_about_set_http_code(ഘടന fetch_about_context *ctx, long code)
 {
 	fetch_set_http_code(ctx->fetchh, code);
 
-	return ctx->aborted;
+	തിരികെ ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_send_header(ഘടന fetch_about_context *ctx, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
-	char header[64];
-	fetch_msg msg;
+	അക്ഷരം header[64];
+	fetch_സന്ദേശം സന്ദേശം;
 	va_list ap;
 
 	va_start(ap, fmt);
 
-	vsnprintf(header, sizeof header, fmt, ap);
+	vsnprintf(header, വലുപ്പം header, fmt, ap);
 
 	va_end(ap);
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = strlen(header);
+	സന്ദേശം.type = FETCH_HEADER;
+	സന്ദേശം.data.header_or_data.buf = (സ്ഥിരം uint8_t *) header;
+	സന്ദേശം.data.header_or_data.len = strlen(header);
 
-	return fetch_about_send_callback(&msg, ctx);
+	തിരികെ fetch_about_send_callback(&സന്ദേശം, ctx);
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len)
+fetch_about_senddata(ഘടന fetch_about_context *ctx, സ്ഥിരം uint8_t *data, size_t data_len)
 {
-	fetch_msg msg;
+	fetch_സന്ദേശം സന്ദേശം;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = data;
-	msg.data.header_or_data.len = data_len;
+	സന്ദേശം.type = FETCH_DATA;
+	സന്ദേശം.data.header_or_data.buf = data;
+	സന്ദേശം.data.header_or_data.len = data_len;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		return NSERROR_INVALID;
+	എങ്കിൽ (fetch_about_send_callback(&സന്ദേശം, ctx)) {
+		തിരികെ NSERROR_INVALID;
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_ssenddataf(ഘടന fetch_about_context *ctx, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
-	char buffer[1024];
-	char *dbuff;
-	fetch_msg msg;
+	അക്ഷരം buffer[1024];
+	അക്ഷരം *dbuff;
+	fetch_സന്ദേശം സന്ദേശം;
 	va_list ap;
-	int slen;
+	പൂർണ്ണസംഖ്യ slen;
 
 	va_start(ap, fmt);
 
-	slen = vsnprintf(buffer, sizeof(buffer), fmt, ap);
+	slen = vsnprintf(buffer, വലുപ്പം(buffer), fmt, ap);
 
 	va_end(ap);
 
-	if (slen < (int)sizeof(buffer)) {
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buffer;
-		msg.data.header_or_data.len = slen;
+	എങ്കിൽ (slen < (പൂർണ്ണസംഖ്യ)വലുപ്പം(buffer)) {
+		സന്ദേശം.type = FETCH_DATA;
+		സന്ദേശം.data.header_or_data.buf = (സ്ഥിരം uint8_t *) buffer;
+		സന്ദേശം.data.header_or_data.len = slen;
 
-		if (fetch_about_send_callback(&msg, ctx)) {
-			return NSERROR_INVALID;
+		എങ്കിൽ (fetch_about_send_callback(&സന്ദേശം, ctx)) {
+			തിരികെ NSERROR_INVALID;
 		}
 
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	dbuff = malloc(slen + 1);
-	if (dbuff == NULL) {
-		return NSERROR_NOSPACE;
+	എങ്കിൽ (dbuff == ശൂന്യ) {
+		തിരികെ NSERROR_NOSPACE;
 	}
 
 	va_start(ap, fmt);
@@ -204,71 +204,71 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 
 	va_end(ap);
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *)dbuff;
-	msg.data.header_or_data.len = slen;
+	സന്ദേശം.type = FETCH_DATA;
+	സന്ദേശം.data.header_or_data.buf = (സ്ഥിരം uint8_t *)dbuff;
+	സന്ദേശം.data.header_or_data.len = slen;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		free(dbuff);
-		return NSERROR_INVALID;
+	എങ്കിൽ (fetch_about_send_callback(&സന്ദേശം, ctx)) {
+		സ്വതന്ത്രം(dbuff);
+		തിരികെ NSERROR_INVALID;
 	}
 
-	free(dbuff);
-	return NSERROR_OK;
+	സ്വതന്ത്രം(dbuff);
+	തിരികെ NSERROR_OK;
 }
 
 
 /* exported interface documented in about/private.h */
-nsurl *fetch_about_get_url(struct fetch_about_context *ctx)
+nsurl *fetch_about_get_url(ഘടന fetch_about_context *ctx)
 {
-	return ctx->url;
+	തിരികെ ctx->url;
 }
 
 
 /* exported interface documented in about/private.h */
-const struct fetch_multipart_data *
-fetch_about_get_multipart(struct fetch_about_context *ctx)
+സ്ഥിരം ഘടന fetch_multipart_data *
+fetch_about_get_multipart(ഘടന fetch_about_context *ctx)
 {
-	return ctx->multipart;
+	തിരികെ ctx->multipart;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_srverror(struct fetch_about_context *ctx)
+bool fetch_about_srverror(ഘടന fetch_about_context *ctx)
 {
 	nserror res;
 
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_INTERNAL_SERVER_ERROR);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		return false;
+	എങ്കിൽ (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+		തിരികെ false;
 
 	res = fetch_about_ssenddataf(ctx, "%s 500 %s",
 				     messages_get("FetchErrorCode"),
 				     messages_get("HTTP500"));
-	if (res != NSERROR_OK) {
-		return false;
+	എങ്കിൽ (res != NSERROR_OK) {
+		തിരികെ false;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	തിരികെ true;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
+bool fetch_about_redirect(ഘടന fetch_about_context *ctx, സ്ഥിരം അക്ഷരം *target)
 {
-	fetch_msg msg;
+	fetch_സന്ദേശം സന്ദേശം;
 
 	/* content is going to return redirect */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_FOUND);
 
-	msg.type = FETCH_REDIRECT;
-	msg.data.redirect = target;
+	സന്ദേശം.type = FETCH_REDIRECT;
+	സന്ദേശം.data.redirect = target;
 
-	return fetch_about_send_callback(&msg, ctx);
+	തിരികെ fetch_about_send_callback(&സന്ദേശം, ctx);
 }
 
 /**
@@ -277,9 +277,9 @@ bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
+സ്ഥിതം bool fetch_about_credits_handler(ഘടന fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:credits.html");
+	തിരികെ fetch_about_redirect(ctx, "resource:credits.html");
 }
 
 
@@ -289,9 +289,9 @@ static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
+സ്ഥിതം bool fetch_about_licence_handler(ഘടന fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:licence.html");
+	തിരികെ fetch_about_redirect(ctx, "resource:licence.html");
 }
 
 
@@ -301,9 +301,9 @@ static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
+സ്ഥിതം bool fetch_about_logo_handler(ഘടന fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:netsurf.png");
+	തിരികെ fetch_about_redirect(ctx, "resource:netsurf.png");
 }
 
 
@@ -313,86 +313,86 @@ static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_welcome_handler(struct fetch_about_context *ctx)
+സ്ഥിതം bool fetch_about_welcome_handler(ഘടന fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:welcome.html");
+	തിരികെ fetch_about_redirect(ctx, "resource:welcome.html");
 }
 
 
 /* Forward declaration because this handler requires the handler table. */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx);
+സ്ഥിതം bool fetch_about_about_handler(ഘടന fetch_about_context *ctx);
 
 /**
  * List of about paths and their handlers
  */
-struct about_handlers about_handler_list[] = {
+ഘടന about_handlers about_handler_list[] = {
 	{
 		"credits",
 		SLEN("credits"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_credits_handler,
 		false
 	},
 	{
 		"licence",
 		SLEN("licence"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_licence_handler,
 		false
 	},
 	{
 		"license",
 		SLEN("license"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_licence_handler,
 		true
 	},
 	{
 		"welcome",
 		SLEN("welcome"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_welcome_handler,
 		false
 	},
 	{
 		"config",
 		SLEN("config"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_config_handler,
 		false
 	},
 	{
 		"Choices",
 		SLEN("Choices"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_choices_handler,
 		false
 	},
 	{
 		"testament",
 		SLEN("testament"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_testament_handler,
 		false
 	},
 	{
 		"about",
 		SLEN("about"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_about_handler,
 		true
 	},
 	{
 		"nscolours.css",
 		SLEN("nscolours.css"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_nscolours_handler,
 		true
 	},
 	{
 		"logo",
 		SLEN("logo"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_logo_handler,
 		true
 	},
@@ -400,7 +400,7 @@ struct about_handlers about_handler_list[] = {
 		/* details about the image cache */
 		"imagecache",
 		SLEN("imagecache"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_imagecache_handler,
 		true
 	},
@@ -408,7 +408,7 @@ struct about_handlers about_handler_list[] = {
 		/* The default blank page */
 		"blank",
 		SLEN("blank"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_blank_handler,
 		true
 	},
@@ -416,7 +416,7 @@ struct about_handlers about_handler_list[] = {
 		/* details about a certificate */
 		"certificate",
 		SLEN("certificate"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_certificate_handler,
 		true
 	},
@@ -424,35 +424,35 @@ struct about_handlers about_handler_list[] = {
 		/* chart generator */
 		"chart",
 		SLEN("chart"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_chart_handler,
 		true
 	},
 	{
 		"query/auth",
 		SLEN("query/auth"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_query_auth_handler,
 		true
 	},
 	{
 		"query/ssl",
 		SLEN("query/ssl"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_query_privacy_handler,
 		true
 	},
 	{
 		"query/timeout",
 		SLEN("query/timeout"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_query_timeout_handler,
 		true
 	},
 	{
 		"query/fetcherror",
 		SLEN("query/fetcherror"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_query_fetcherror_handler,
 		true
 	},
@@ -460,14 +460,14 @@ struct about_handlers about_handler_list[] = {
 		/* web search using the configured provider */
 		"websearch",
 		SLEN("websearch"),
-		NULL,
+		ശൂന്യ,
 		fetch_about_websearch_handler,
 		true
 	}
 };
 
 #define about_handler_list_len \
-	(sizeof(about_handler_list) / sizeof(struct about_handlers))
+	(വലുപ്പം(about_handler_list) / വലുപ്പം(ഘടന about_handlers))
 
 /**
  * List all the valid about: paths available
@@ -475,17 +475,17 @@ struct about_handlers about_handler_list[] = {
  * \param ctx The fetch context.
  * \return true for sucess or false to generate an error.
  */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx)
+സ്ഥിതം bool fetch_about_about_handler(ഘടന fetch_about_context *ctx)
 {
 	nserror res;
-	unsigned int abt_loop = 0;
+	unsigned പൂർണ്ണസംഖ്യ abt_loop = 0;
 
 	/* content is going to return ok */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_OK);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_about_config_handler_aborted;
+	എങ്കിൽ (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+		പോകുക fetch_about_config_handler_aborted;
 
 	res = fetch_about_ssenddataf(ctx,
 			"<html>\n<head>\n"
@@ -496,51 +496,51 @@ static bool fetch_about_about_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class =\"ns-border\">List of NetSurf pages</h1>\n"
 			"<ul>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	എങ്കിൽ (res != NSERROR_OK) {
+		പോകുക fetch_about_config_handler_aborted;
 	}
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	വേണ്ടി (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 
 		/* Skip over hidden entries */
-		if (about_handler_list[abt_loop].hidden)
-			continue;
+		എങ്കിൽ (about_handler_list[abt_loop].hidden)
+			തുടരുക;
 
 		res = fetch_about_ssenddataf(ctx,
 			       "<li><a href=\"about:%s\">about:%s</a></li>\n",
 			       about_handler_list[abt_loop].name,
 			       about_handler_list[abt_loop].name);
-		if (res != NSERROR_OK) {
-			goto fetch_about_config_handler_aborted;
+		എങ്കിൽ (res != NSERROR_OK) {
+			പോകുക fetch_about_config_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</ul>\n</body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	എങ്കിൽ (res != NSERROR_OK) {
+		പോകുക fetch_about_config_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	തിരികെ true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	തിരികെ false;
 }
 
-static bool
-fetch_about_404_handler(struct fetch_about_context *ctx)
+സ്ഥിതം bool
+fetch_about_404_handler(ഘടന fetch_about_context *ctx)
 {
 	nserror res;
-	const char *title;
+	സ്ഥിരം അക്ഷരം *title;
 
 	/* content is going to return 404 */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_NOT_FOUND);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	എങ്കിൽ (fetch_about_send_header(ctx,
 			"Content-Type: text/html; charset=utf-8")) {
-		return false;
+		തിരികെ false;
 	}
 
 	title = messages_get("HTTP404");
@@ -556,54 +556,54 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
 		"</body>\n</html>\n",
 		title, title, messages_get("FetchErrorCode"), 404,
 		messages_get("FetchFile"),nsurl_access(ctx->url));
-	if (res != NSERROR_OK) {
-		return false;
+	എങ്കിൽ (res != NSERROR_OK) {
+		തിരികെ false;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	തിരികെ true;
 }
 
 /**
  * callback to initialise the about scheme fetcher.
  */
-static bool fetch_about_initialise(lwc_string *scheme)
+സ്ഥിതം bool fetch_about_initialise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
+	unsigned പൂർണ്ണസംഖ്യ abt_loop = 0;
 	lwc_error error;
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	വേണ്ടി (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		error = lwc_intern_string(about_handler_list[abt_loop].name,
 					about_handler_list[abt_loop].name_len,
 					&about_handler_list[abt_loop].lname);
-		if (error != lwc_error_ok) {
-			while (abt_loop-- != 0) {
+		എങ്കിൽ (error != lwc_error_ok) {
+			ആകുമ്പോൾ (abt_loop-- != 0) {
 				lwc_string_unref(about_handler_list[abt_loop].lname);
 			}
-			return false;
+			തിരികെ false;
 		}
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 
 /**
  * callback to finalise the about scheme fetcher.
  */
-static void fetch_about_finalise(lwc_string *scheme)
+സ്ഥിതം ശൂന്യം fetch_about_finalise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	unsigned പൂർണ്ണസംഖ്യ abt_loop = 0;
+	വേണ്ടി (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		lwc_string_unref(about_handler_list[abt_loop].lname);
 	}
 }
 
 
-static bool fetch_about_can_fetch(const nsurl *url)
+സ്ഥിതം bool fetch_about_can_fetch(സ്ഥിരം nsurl *url)
 {
-	return true;
+	തിരികെ true;
 }
 
 
@@ -615,34 +615,34 @@ static bool fetch_about_can_fetch(const nsurl *url)
  * \param post_multipart post data in multipart format, owned by the llcache
  *                        object hence valid the entire lifetime of the fetch.
  */
-static void *
-fetch_about_setup(struct fetch *fetchh,
+സ്ഥിതം ശൂന്യം *
+fetch_about_setup(ഘടന fetch *fetchh,
 		  nsurl *url,
 		  bool only_2xx,
 		  bool downgrade_tls,
-		  const char *post_urlenc,
-		  const struct fetch_multipart_data *post_multipart,
-		  const char **headers)
+		  സ്ഥിരം അക്ഷരം *post_urlenc,
+		  സ്ഥിരം ഘടന fetch_multipart_data *post_multipart,
+		  സ്ഥിരം അക്ഷരം **headers)
 {
-	struct fetch_about_context *ctx;
-	unsigned int handler_loop;
+	ഘടന fetch_about_context *ctx;
+	unsigned പൂർണ്ണസംഖ്യ handler_loop;
 	lwc_string *path;
 	bool match;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, വലുപ്പം(*ctx));
+	എങ്കിൽ (ctx == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
 	path = nsurl_get_component(url, NSURL_PATH);
 
-	for (handler_loop = 0;
+	വേണ്ടി (handler_loop = 0;
 	     handler_loop < about_handler_list_len;
 	     handler_loop++) {
-		if (lwc_string_isequal(path,
+		എങ്കിൽ (lwc_string_isequal(path,
 				       about_handler_list[handler_loop].lname,
 				       &match) == lwc_error_ok && match) {
 			ctx->handler = about_handler_list[handler_loop].handler;
-			break;
+			നിർത്തുക;
 		}
 	}
 
@@ -652,38 +652,38 @@ fetch_about_setup(struct fetch *fetchh,
 	ctx->url = nsurl_ref(url);
 	ctx->multipart = post_multipart;
 
-	RING_INSERT(ring, ctx);
+	RING_തിരുകുക(ring, ctx);
 
-	return ctx;
+	തിരികെ ctx;
 }
 
 
 /**
  * callback to free a about scheme fetch
  */
-static void fetch_about_free(void *ctx)
+സ്ഥിതം ശൂന്യം fetch_about_free(ശൂന്യം *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	ഘടന fetch_about_context *c = ctx;
 	nsurl_unref(c->url);
-	free(ctx);
+	സ്വതന്ത്രം(ctx);
 }
 
 
 /**
  * callback to start an about scheme fetch
  */
-static bool fetch_about_start(void *ctx)
+സ്ഥിതം bool fetch_about_start(ശൂന്യം *ctx)
 {
-	return true;
+	തിരികെ true;
 }
 
 
 /**
  * callback to abort a about fetch
  */
-static void fetch_about_abort(void *ctx)
+സ്ഥിതം ശൂന്യം fetch_about_abort(ശൂന്യം *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	ഘടന fetch_about_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -696,12 +696,12 @@ static void fetch_about_abort(void *ctx)
 /**
  * callback to poll for additional about fetch contents
  */
-static void fetch_about_poll(lwc_string *scheme)
+സ്ഥിതം ശൂന്യം fetch_about_poll(lwc_string *scheme)
 {
-	struct fetch_about_context *c, *save_ring = NULL;
+	ഘടന fetch_about_context *c, *save_ring = ശൂന്യ;
 
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	ആകുമ്പോൾ (ring != ശൂന്യ) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -712,17 +712,17 @@ static void fetch_about_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		എങ്കിൽ (c->locked == true) {
+			RING_തിരുകുക(save_ring, c);
+			തുടരുക;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		എങ്കിൽ (c->aborted == false) {
 			/* about fetches can be processed in one go */
-			if (c->handler == NULL) {
+			എങ്കിൽ (c->handler == ശൂന്യ) {
 				fetch_about_404_handler(c);
-			} else {
+			} അല്ലെങ്കിൽ {
 				c->handler(c);
 			}
 		}
@@ -739,19 +739,19 @@ static void fetch_about_poll(lwc_string *scheme)
 }
 
 
-nserror fetch_about_register(void)
+nserror fetch_about_register(ശൂന്യം)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_about);
-	const struct fetcher_operation_table fetcher_ops = {
+	സ്ഥിരം ഘടന fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_about_initialise,
 		.acceptable = fetch_about_can_fetch,
 		.setup = fetch_about_setup,
 		.start = fetch_about_start,
 		.abort = fetch_about_abort,
-		.free = fetch_about_free,
+		.സ്വതന്ത്രം = fetch_about_free,
 		.poll = fetch_about_poll,
 		.finalise = fetch_about_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	തിരികെ fetcher_add(scheme, &fetcher_ops);
 }

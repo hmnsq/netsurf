@@ -20,25 +20,25 @@
  * Generate HTML content for displaying directory listings (implementation).
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "utils/nsurl.h"
-#include "utils/messages.h"
-#include "utils/nscolour.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "utils/messages.h"
+#അന്തര്ഭാവ "utils/nscolour.h"
 
-#include "netsurf/inttypes.h"
-#include "netsurf/types.h"
-#include "netsurf/plot_style.h"
+#അന്തര്ഭാവ "netsurf/inttypes.h"
+#അന്തര്ഭാവ "netsurf/types.h"
+#അന്തര്ഭാവ "netsurf/plot_style.h"
 
-#include "dirlist.h"
-#include "desktop/system_colour.h"
+#അന്തര്ഭാവ "dirlist.h"
+#അന്തര്ഭാവ "desktop/system_colour.h"
 
-static int dirlist_filesize_calculate(unsigned long *bytesize);
-static int dirlist_filesize_value(unsigned long bytesize);
-static char* dirlist_filesize_unit(unsigned long bytesize);
+സ്ഥിതം പൂർണ്ണസംഖ്യ dirlist_filesize_calculate(unsigned long *bytesize);
+സ്ഥിതം പൂർണ്ണസംഖ്യ dirlist_filesize_മൂല്യം(unsigned long bytesize);
+സ്ഥിതം അക്ഷരം* dirlist_filesize_unit(unsigned long bytesize);
 
 
 /**
@@ -58,20 +58,20 @@ static char* dirlist_filesize_unit(unsigned long bytesize);
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_top(char *buffer, int buffer_length)
+bool dirlist_generate_മുകൾ(അക്ഷരം *buffer, പൂർണ്ണസംഖ്യ buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	പൂർണ്ണസംഖ്യ error = snprintf(buffer, buffer_length,
 		"<html>\n"
 		"<head>\n"
 		"<link rel=\"stylesheet\" title=\"Standard\" "
 			"type=\"text/css\" href=\"resource:internal.css\">\n"
 		"<style>\n");
-	if (error < 0 || error >= buffer_length)
+	എങ്കിൽ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		തിരികെ false;
+	അല്ലെങ്കിൽ
 		/* OK */
-		return true;
+		തിരികെ true;
 
 }
 
@@ -97,9 +97,9 @@ bool dirlist_generate_top(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
+bool dirlist_generate_hide_columns(പൂർണ്ണസംഖ്യ flags, അക്ഷരം *buffer, പൂർണ്ണസംഖ്യ buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	പൂർണ്ണസംഖ്യ error = snprintf(buffer, buffer_length,
 			"%s\n%s\n%s\n%s\n%s\n",
 			(flags & DIRLIST_NO_NAME_COLUMN) ?
 					"span.name { display: none; }\n" : "",
@@ -111,12 +111,12 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
 					"span.date { display: none; }\n" : "",
 			(flags & DIRLIST_NO_TIME_COLUMN) ?
 					"span.time { display: none; }\n" : "");
-	if (error < 0 || error >= buffer_length)
+	എങ്കിൽ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		തിരികെ false;
+	അല്ലെങ്കിൽ
 		/* OK */
-		return true;
+		തിരികെ true;
 }
 
 
@@ -140,18 +140,18 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
+bool dirlist_generate_title(സ്ഥിരം അക്ഷരം *title, അക്ഷരം *buffer, പൂർണ്ണസംഖ്യ buffer_length)
 {
-	const char *stylesheet;
+	സ്ഥിരം അക്ഷരം *stylesheet;
 	nserror err;
-	int error;
+	പൂർണ്ണസംഖ്യ error;
 
-	if (title == NULL)
+	എങ്കിൽ (title == ശൂന്യ)
 		title = "";
 
 	err = nscolour_get_stylesheet(&stylesheet);
-	if (err != NSERROR_OK) {
-		return false;
+	എങ്കിൽ (err != NSERROR_OK) {
+		തിരികെ false;
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -169,12 +169,12 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
 			title,
 			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet, title);
-	if (error < 0 || error >= buffer_length)
+	എങ്കിൽ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		തിരികെ false;
+	അല്ലെങ്കിൽ
 		/* OK */
-		return true;
+		തിരികെ true;
 }
 
 
@@ -199,18 +199,18 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length)
+bool dirlist_generate_parent_link(സ്ഥിരം അക്ഷരം *parent, അക്ഷരം *buffer,
+		പൂർണ്ണസംഖ്യ buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	പൂർണ്ണസംഖ്യ error = snprintf(buffer, buffer_length,
 			"<p><a href=\"%s\">%s</a></p>",
 			parent, messages_get("FileParent"));
-	if (error < 0 || error >= buffer_length)
+	എങ്കിൽ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		തിരികെ false;
+	അല്ലെങ്കിൽ
 		/* OK */
-		return true;
+		തിരികെ true;
 }
 
 
@@ -234,9 +234,9 @@ bool dirlist_generate_parent_link(const char *parent, char *buffer,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_headings(char *buffer, int buffer_length)
+bool dirlist_generate_headings(അക്ഷരം *buffer, പൂർണ്ണസംഖ്യ buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	പൂർണ്ണസംഖ്യ error = snprintf(buffer, buffer_length,
 			"<div>\n"
 			"<strong>\n"
 			"\t<span class=\"name\">%s</span>\n"
@@ -249,12 +249,12 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
 			messages_get("FileName"), messages_get("FileType"),
 			messages_get("FileSize"), messages_get("FileDate"),
 			messages_get("FileTime"));
-	if (error < 0 || error >= buffer_length)
+	എങ്കിൽ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		തിരികെ false;
+	അല്ലെങ്കിൽ
 		/* OK */
-		return true;
+		തിരികെ true;
 }
 
 
@@ -286,21 +286,21 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
-		const char *mimetype, long long size, char *date, char *time,
-		char *buffer, int buffer_length)
+bool dirlist_generate_row(bool even, bool directory, nsurl *url, അക്ഷരം *name,
+		സ്ഥിരം അക്ഷരം *mimetype, long long size, അക്ഷരം *date, അക്ഷരം *time,
+		അക്ഷരം *buffer, പൂർണ്ണസംഖ്യ buffer_length)
 {
-	const char *unit;
-	char size_string[100];
-	int error;
+	സ്ഥിരം അക്ഷരം *unit;
+	അക്ഷരം size_string[100];
+	പൂർണ്ണസംഖ്യ error;
 
-	if (size < 0) {
+	എങ്കിൽ (size < 0) {
 		unit = "";
-		strncpy(size_string, "", sizeof size_string);
-	} else {
+		strncpy(size_string, "", വലുപ്പം size_string);
+	} അല്ലെങ്കിൽ {
 		unit = messages_get(dirlist_filesize_unit((unsigned long)size));
-		snprintf(size_string, sizeof size_string, "%d",
-				dirlist_filesize_value((unsigned long)size));
+		snprintf(size_string, വലുപ്പം size_string, "%d",
+				dirlist_filesize_മൂല്യം((unsigned long)size));
 	}
 
 	error = snprintf(buffer, buffer_length,
@@ -315,12 +315,12 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
 			even ? "even ns-even-bg" : "odd  ns-odd-bg",
 			directory ? "dir" : "file",
 			name, mimetype, size_string, unit, date, time);
-	if (error < 0 || error >= buffer_length)
+	എങ്കിൽ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		തിരികെ false;
+	അല്ലെങ്കിൽ
 		/* OK */
-		return true;
+		തിരികെ true;
 }
 
 
@@ -341,18 +341,18 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_bottom(char *buffer, int buffer_length)
+bool dirlist_generate_bottom(അക്ഷരം *buffer, പൂർണ്ണസംഖ്യ buffer_length)
 {
-	int error = snprintf(buffer, buffer_length,
+	പൂർണ്ണസംഖ്യ error = snprintf(buffer, buffer_length,
 			"</div>\n"
 			"</body>\n"
 			"</html>\n");
-	if (error < 0 || error >= buffer_length)
+	എങ്കിൽ (error < 0 || error >= buffer_length)
 		/* Error or buffer too small */
-		return false;
-	else
+		തിരികെ false;
+	അല്ലെങ്കിൽ
 		/* OK */
-		return true;
+		തിരികെ true;
 }
 
 
@@ -364,16 +364,16 @@ bool dirlist_generate_bottom(char *buffer, int buffer_length)
  * \return  number of times bytesize has been divided by 1024
  */
 
-int dirlist_filesize_calculate(unsigned long *bytesize)
+പൂർണ്ണസംഖ്യ dirlist_filesize_calculate(unsigned long *bytesize)
 {
-	int i = 0;
-	while (*bytesize > 1024 * 4) {
+	പൂർണ്ണസംഖ്യ i = 0;
+	ആകുമ്പോൾ (*bytesize > 1024 * 4) {
 		*bytesize /= 1024;
 		i++;
-		if (i == 3)
-			break;
+		എങ്കിൽ (i == 3)
+			നിർത്തുക;
 	}
-	return i;
+	തിരികെ i;
 }
 
 
@@ -385,10 +385,10 @@ int dirlist_filesize_calculate(unsigned long *bytesize)
  * \return  Value to display for file size, in units given by filesize_unit()
  */
 
-int dirlist_filesize_value(unsigned long bytesize)
+പൂർണ്ണസംഖ്യ dirlist_filesize_മൂല്യം(unsigned long bytesize)
 {
 	dirlist_filesize_calculate(&bytesize);
-	return (int)bytesize;
+	തിരികെ (പൂർണ്ണസംഖ്യ)bytesize;
 }
 
 
@@ -400,8 +400,8 @@ int dirlist_filesize_value(unsigned long bytesize)
  * \return  Units to display for file size, for value given by filesize_value()
  */
 
-char* dirlist_filesize_unit(unsigned long bytesize)
+അക്ഷരം* dirlist_filesize_unit(unsigned long bytesize)
 {
-	const char* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
-	return (char*)units[dirlist_filesize_calculate(&bytesize)];
+	സ്ഥിരം അക്ഷരം* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
+	തിരികെ (അക്ഷരം*)units[dirlist_filesize_calculate(&bytesize)];
 }

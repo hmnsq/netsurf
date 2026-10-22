@@ -19,42 +19,42 @@
 #ifndef NETSURF_CONTENT_CONTENT_FACTORY_H_
 #define NETSURF_CONTENT_CONTENT_FACTORY_H_
 
-#include <stdbool.h>
+#അന്തര്ഭാവ <stdbool.h>
 
-#include <libwapcaplet/libwapcaplet.h>
+#അന്തര്ഭാവ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/content_type.h"
-#include "utils/errors.h"
+#അന്തര്ഭാവ "netsurf/content_type.h"
+#അന്തര്ഭാവ "utils/errors.h"
 
 #define CONTENT_FACTORY_REGISTER_TYPES(HNAME, HTYPELIST, HHANDLER)	\
 									\
-nserror HNAME##_init(void)						\
+nserror HNAME##_init(ശൂന്യം)						\
 {									\
 	uint32_t i;							\
 	nserror error = NSERROR_OK;					\
 									\
-	for (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
+	വേണ്ടി (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
 		error = content_factory_register_handler(		\
 			HTYPELIST[i],					\
 			&HHANDLER);					\
-		if (error != NSERROR_OK)				\
-			break;						\
+		എങ്കിൽ (error != NSERROR_OK)				\
+			നിർത്തുക;						\
 	}								\
 									\
-	return error;							\
+	തിരികെ error;							\
 }
 
-struct content;
-struct llcache_handle;
-struct content_handler;
+ഘടന content;
+ഘടന llcache_handle;
+ഘടന content_handler;
 
-void content_factory_fini(void);
+ശൂന്യം content_factory_fini(ശൂന്യം);
 
-nserror content_factory_register_handler(const char *mime_type,
-		const struct content_handler *handler);
+nserror content_factory_register_handler(സ്ഥിരം അക്ഷരം *mime_type,
+		സ്ഥിരം ഘടന content_handler *handler);
 
-struct content *content_factory_create_content(struct llcache_handle *llcache, 
-		const char *fallback_charset, bool quirks,
+ഘടന content *content_factory_create_content(ഘടന llcache_handle *llcache, 
+		സ്ഥിരം അക്ഷരം *fallback_charset, bool quirks,
 		lwc_string *effective_type);
 
 content_type content_factory_type_from_mime_type(lwc_string *mime_type);

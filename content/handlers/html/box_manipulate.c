@@ -26,18 +26,18 @@
  */
 
 
-#include "utils/errors.h"
-#include "utils/talloc.h"
-#include "utils/nsurl.h"
-#include "netsurf/types.h"
-#include "netsurf/mouse.h"
-#include "desktop/scrollbar.h"
+#അന്തര്ഭാവ "utils/errors.h"
+#അന്തര്ഭാവ "utils/talloc.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "netsurf/types.h"
+#അന്തര്ഭാവ "netsurf/mouse.h"
+#അന്തര്ഭാവ "desktop/scrollbar.h"
 
-#include "html/private.h"
-#include "html/form_internal.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
+#അന്തര്ഭാവ "html/private.h"
+#അന്തര്ഭാവ "html/form_internal.h"
+#അന്തര്ഭാവ "html/interaction.h"
+#അന്തര്ഭാവ "html/box.h"
+#അന്തര്ഭാവ "html/box_manipulate.h"
 
 
 /**
@@ -46,62 +46,62 @@
  * \param b The box being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_talloc_destructor(struct box *b)
+സ്ഥിതം പൂർണ്ണസംഖ്യ box_talloc_destructor(ഘടന box *b)
 {
-	struct html_scrollbar_data *data;
+	ഘടന html_scrollbar_data *data;
 
-	if ((b->flags & STYLE_OWNED) && b->style != NULL) {
+	എങ്കിൽ ((b->flags & STYLE_OWNED) && b->style != ശൂന്യ) {
 		css_computed_style_destroy(b->style);
-		b->style = NULL;
+		b->style = ശൂന്യ;
 	}
 
-	if (b->styles != NULL) {
+	എങ്കിൽ (b->styles != ശൂന്യ) {
 		css_select_results_destroy(b->styles);
-		b->styles = NULL;
+		b->styles = ശൂന്യ;
 	}
 
-	if (b->href != NULL)
+	എങ്കിൽ (b->href != ശൂന്യ)
 		nsurl_unref(b->href);
 
 	lwc_string_unref(b->id);
 
-	if (b->node != NULL) {
-		dom_node_unref(b->node);
+	എങ്കിൽ (b->കണ്ണി != ശൂന്യ) {
+		dom_കണ്ണി_unref(b->കണ്ണി);
 	}
 
-	if (b->scroll_x != NULL) {
+	എങ്കിൽ (b->scroll_x != ശൂന്യ) {
 		data = scrollbar_get_data(b->scroll_x);
 		scrollbar_destroy(b->scroll_x);
-		free(data);
+		സ്വതന്ത്രം(data);
 	}
 
-	if (b->scroll_y != NULL) {
+	എങ്കിൽ (b->scroll_y != ശൂന്യ) {
 		data = scrollbar_get_data(b->scroll_y);
 		scrollbar_destroy(b->scroll_y);
-		free(data);
+		സ്വതന്ത്രം(data);
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
+ഘടന box *
 box_create(css_select_results *styles,
 	   css_computed_style *style,
 	   bool style_owned,
 	   nsurl *href,
-	   const char *target,
-	   const char *title,
+	   സ്ഥിരം അക്ഷരം *target,
+	   സ്ഥിരം അക്ഷരം *title,
 	   lwc_string *id,
-	   void *context)
+	   ശൂന്യം *context)
 {
-	unsigned int i;
-	struct box *box;
+	unsigned പൂർണ്ണസംഖ്യ i;
+	ഘടന box *box;
 
-	box = talloc(context, struct box);
-	if (!box) {
-		return 0;
+	box = talloc(context, ഘടന box);
+	എങ്കിൽ (!box) {
+		തിരികെ 0;
 	}
 
 	talloc_set_destructor(box, box_talloc_destructor);
@@ -116,57 +116,57 @@ box_create(css_select_results *styles,
 	box->height = 0;
 	box->descendant_x0 = box->descendant_y0 = 0;
 	box->descendant_x1 = box->descendant_y1 = 0;
-	for (i = 0; i != 4; i++)
+	വേണ്ടി (i = 0; i != 4; i++)
 		box->margin[i] = box->padding[i] = box->border[i].width = 0;
-	box->scroll_x = box->scroll_y = NULL;
+	box->scroll_x = box->scroll_y = ശൂന്യ;
 	box->min_width = 0;
 	box->max_width = UNKNOWN_MAX_WIDTH;
 	box->byte_offset = 0;
-	box->text = NULL;
+	box->text = ശൂന്യ;
 	box->length = 0;
 	box->space = 0;
-	box->href = (href == NULL) ? NULL : nsurl_ref(href);
+	box->href = (href == ശൂന്യ) ? ശൂന്യ : nsurl_ref(href);
 	box->target = target;
 	box->title = title;
 	box->columns = 1;
 	box->rows = 1;
 	box->start_column = 0;
-	box->next = NULL;
-	box->prev = NULL;
-	box->children = NULL;
-	box->last = NULL;
-	box->parent = NULL;
-	box->inline_end = NULL;
-	box->float_children = NULL;
-	box->float_container = NULL;
-	box->next_float = NULL;
+	box->next = ശൂന്യ;
+	box->prev = ശൂന്യ;
+	box->children = ശൂന്യ;
+	box->last = ശൂന്യ;
+	box->parent = ശൂന്യ;
+	box->inline_end = ശൂന്യ;
+	box->float_children = ശൂന്യ;
+	box->float_container = ശൂന്യ;
+	box->next_float = ശൂന്യ;
 	box->cached_place_below_level = 0;
-	box->list_value = 1;
-	box->list_marker = NULL;
-	box->col = NULL;
-	box->gadget = NULL;
-	box->usemap = NULL;
+	box->list_മൂല്യം = 1;
+	box->list_marker = ശൂന്യ;
+	box->col = ശൂന്യ;
+	box->gadget = ശൂന്യ;
+	box->usemap = ശൂന്യ;
 	box->id = id;
-	box->background = NULL;
-	box->object = NULL;
-	box->object_params = NULL;
-	box->iframe = NULL;
-	box->node = NULL;
+	box->background = ശൂന്യ;
+	box->object = ശൂന്യ;
+	box->object_params = ശൂന്യ;
+	box->iframe = ശൂന്യ;
+	box->കണ്ണി = ശൂന്യ;
 
-	return box;
+	തിരികെ box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_add_child(struct box *parent, struct box *child)
+ശൂന്യം box_add_child(ഘടന box *parent, ഘടന box *child)
 {
-	assert(parent);
-	assert(child);
+	പ്രതിജ്ഞാ(parent);
+	പ്രതിജ്ഞാ(child);
 
-	if (parent->children != 0) {	/* has children already */
+	എങ്കിൽ (parent->children != 0) {	/* has children already */
 		parent->last->next = child;
 		child->prev = parent->last;
-	} else {			/* this is the first child */
+	} അല്ലെങ്കിൽ {			/* this is the first child */
 		parent->children = child;
 		child->prev = 0;
 	}
@@ -177,36 +177,36 @@ void box_add_child(struct box *parent, struct box *child)
 
 
 /* Exported function documented in html/box.h */
-void box_insert_sibling(struct box *box, struct box *new_box)
+ശൂന്യം box_തിരുകുക_sibling(ഘടന box *box, ഘടന box *new_box)
 {
 	new_box->parent = box->parent;
 	new_box->prev = box;
 	new_box->next = box->next;
 	box->next = new_box;
-	if (new_box->next)
+	എങ്കിൽ (new_box->next)
 		new_box->next->prev = new_box;
-	else if (new_box->parent)
+	അല്ലെങ്കിൽ എങ്കിൽ (new_box->parent)
 		new_box->parent->last = new_box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_unlink_and_free(struct box *box)
+ശൂന്യം box_unlink_and_free(ഘടന box *box)
 {
-	struct box *parent = box->parent;
-	struct box *next = box->next;
-	struct box *prev = box->prev;
+	ഘടന box *parent = box->parent;
+	ഘടന box *next = box->next;
+	ഘടന box *prev = box->prev;
 
-	if (parent) {
-		if (parent->children == box)
+	എങ്കിൽ (parent) {
+		എങ്കിൽ (parent->children == box)
 			parent->children = next;
-		if (parent->last == box)
+		എങ്കിൽ (parent->last == box)
 			parent->last = next ? next : prev;
 	}
 
-	if (prev)
+	എങ്കിൽ (prev)
 		prev->next = next;
-	if (next)
+	എങ്കിൽ (next)
 		next->prev = prev;
 
 	box_free(box);
@@ -214,12 +214,12 @@ void box_unlink_and_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free(struct box *box)
+ശൂന്യം box_free(ഘടന box *box)
 {
-	struct box *child, *next;
+	ഘടന box *child, *next;
 
 	/* free children first */
-	for (child = box->children; child; child = next) {
+	വേണ്ടി (child = box->children; child; child = next) {
 		next = child->next;
 		box_free(child);
 	}
@@ -230,16 +230,16 @@ void box_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free_box(struct box *box)
+ശൂന്യം box_free_box(ഘടന box *box)
 {
-	if (!(box->flags & CLONE)) {
-		if (box->gadget)
+	എങ്കിൽ (!(box->flags & CLONE)) {
+		എങ്കിൽ (box->gadget)
 			form_free_control(box->gadget);
-		if (box->scroll_x != NULL)
+		എങ്കിൽ (box->scroll_x != ശൂന്യ)
 			scrollbar_destroy(box->scroll_x);
-		if (box->scroll_y != NULL)
+		എങ്കിൽ (box->scroll_y != ശൂന്യ)
 			scrollbar_destroy(box->scroll_y);
-		if (box->styles != NULL)
+		എങ്കിൽ (box->styles != ശൂന്യ)
 			css_select_results_destroy(box->styles);
 	}
 
@@ -249,51 +249,51 @@ void box_free_box(struct box *box)
 
 /* exported interface documented in html/box.h */
 nserror
-box_handle_scrollbars(struct content *c,
-		      struct box *box,
+box_handle_scrollbars(ഘടന content *c,
+		      ഘടന box *box,
 		      bool bottom,
-		      bool right)
+		      bool വലത്)
 {
-	struct html_scrollbar_data *data;
-	int visible_width, visible_height;
-	int full_width, full_height;
+	ഘടന html_scrollbar_data *data;
+	പൂർണ്ണസംഖ്യ visible_width, visible_height;
+	പൂർണ്ണസംഖ്യ full_width, full_height;
 	nserror res;
 
-	if (!bottom && box->scroll_x != NULL) {
+	എങ്കിൽ (!bottom && box->scroll_x != ശൂന്യ) {
 		data = scrollbar_get_data(box->scroll_x);
 		scrollbar_destroy(box->scroll_x);
-		free(data);
-		box->scroll_x = NULL;
+		സ്വതന്ത്രം(data);
+		box->scroll_x = ശൂന്യ;
 	}
 
-	if (!right && box->scroll_y != NULL) {
+	എങ്കിൽ (!വലത് && box->scroll_y != ശൂന്യ) {
 		data = scrollbar_get_data(box->scroll_y);
 		scrollbar_destroy(box->scroll_y);
-		free(data);
-		box->scroll_y = NULL;
+		സ്വതന്ത്രം(data);
+		box->scroll_y = ശൂന്യ;
 	}
 
-	if (!bottom && !right) {
-		return NSERROR_OK;
+	എങ്കിൽ (!bottom && !വലത്) {
+		തിരികെ NSERROR_OK;
 	}
 
-	visible_width = box->width + box->padding[RIGHT] + box->padding[LEFT];
-	visible_height = box->height + box->padding[TOP] + box->padding[BOTTOM];
+	visible_width = box->width + box->padding[വലത്_2] + box->padding[ഇടത്_2];
+	visible_height = box->height + box->padding[മുകൾ_2] + box->padding[BOTTOM];
 
-	full_width = ((box->descendant_x1 - box->border[RIGHT].width) >
+	full_width = ((box->descendant_x1 - box->border[വലത്_2].width) >
 			visible_width) ?
-			box->descendant_x1 + box->padding[RIGHT] :
+			box->descendant_x1 + box->padding[വലത്_2] :
 			visible_width;
 	full_height = ((box->descendant_y1 - box->border[BOTTOM].width) >
 			visible_height) ?
 			box->descendant_y1 + box->padding[BOTTOM] :
 			visible_height;
 
-	if (right) {
-		if (box->scroll_y == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_NOMEM;
+	എങ്കിൽ (വലത്) {
+		എങ്കിൽ (box->scroll_y == ശൂന്യ) {
+			data = malloc(വലുപ്പം(ഘടന html_scrollbar_data));
+			എങ്കിൽ (data == ശൂന്യ) {
+				തിരികെ NSERROR_NOMEM;
 			}
 			data->c = c;
 			data->box = box;
@@ -304,47 +304,47 @@ box_handle_scrollbars(struct content *c,
 					       data,
 					       html_overflow_scroll_callback,
 					       &(box->scroll_y));
-			if (res != NSERROR_OK) {
-				return res;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ res;
 			}
-		} else  {
+		} അല്ലെങ്കിൽ  {
 			scrollbar_set_extents(box->scroll_y,
 					      visible_height,
 					      visible_height,
 					      full_height);
 		}
 	}
-	if (bottom) {
-		if (box->scroll_x == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_OK;
+	എങ്കിൽ (bottom) {
+		എങ്കിൽ (box->scroll_x == ശൂന്യ) {
+			data = malloc(വലുപ്പം(ഘടന html_scrollbar_data));
+			എങ്കിൽ (data == ശൂന്യ) {
+				തിരികെ NSERROR_OK;
 			}
 			data->c = c;
 			data->box = box;
 			res = scrollbar_create(true,
-					       visible_width - (right ? SCROLLBAR_WIDTH : 0),
+					       visible_width - (വലത് ? SCROLLBAR_WIDTH : 0),
 					       full_width,
 					       visible_width,
 					       data,
 					       html_overflow_scroll_callback,
 					       &box->scroll_x);
-			if (res != NSERROR_OK) {
-				return res;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ res;
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			scrollbar_set_extents(box->scroll_x,
 					visible_width -
-					(right ? SCROLLBAR_WIDTH : 0),
+					(വലത് ? SCROLLBAR_WIDTH : 0),
 					visible_width, full_width);
 		}
 	}
 
-	if (right && bottom) {
+	എങ്കിൽ (വലത് && bottom) {
 		scrollbar_make_pair(box->scroll_x, box->scroll_y);
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 

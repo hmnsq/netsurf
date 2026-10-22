@@ -22,30 +22,30 @@
  * implementation of content handler for BMP images.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libnsbmp.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <libnsbmp.h>
 
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/messages.h"
+#അന്തര്ഭാവ "netsurf/plotters.h"
+#അന്തര്ഭാവ "netsurf/bitmap.h"
+#അന്തര്ഭാവ "netsurf/content.h"
+#അന്തര്ഭാവ "content/llcache.h"
+#അന്തര്ഭാവ "content/content_protected.h"
+#അന്തര്ഭാവ "content/content_factory.h"
+#അന്തര്ഭാവ "desktop/gui_internal.h"
+#അന്തര്ഭാവ "desktop/bitmap.h"
 
-#include "image/bmp.h"
+#അന്തര്ഭാവ "image/bmp.h"
 
 /** bmp context. */
-typedef struct nsbmp_content {
-	struct content base;
+തരനിർവചനം ഘടന nsbmp_content {
+	ഘടന content base;
 
 	bmp_image *bmp;	/** BMP image data */
 
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	ഘടന bitmap *bitmap;	/**< Created NetSurf bitmap */
 } nsbmp_content;
 
 /**
@@ -56,9 +56,9 @@ typedef struct nsbmp_content {
  * \param bmp_state A flag word indicating the initial state
  * \return An opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsbmp_bitmap_create(int width, int height, unsigned int bmp_state)
+സ്ഥിതം ശൂന്യം *nsbmp_bitmap_create(പൂർണ്ണസംഖ്യ width, പൂർണ്ണസംഖ്യ height, unsigned പൂർണ്ണസംഖ്യ bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	unsigned പൂർണ്ണസംഖ്യ bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
@@ -66,10 +66,10 @@ static void *nsbmp_bitmap_create(int width, int height, unsigned int bmp_state)
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	തിരികെ guit->bitmap->create(width, height, bitmap_state);
 }
 
-static nserror nsbmp_create_bmp_data(nsbmp_content *bmp)
+സ്ഥിതം nserror nsbmp_create_bmp_data(nsbmp_content *bmp)
 {
 	bmp_bitmap_callback_vt bmp_bitmap_callbacks = {
 		.bitmap_create = nsbmp_bitmap_create,
@@ -77,90 +77,90 @@ static nserror nsbmp_create_bmp_data(nsbmp_content *bmp)
 		.bitmap_get_buffer = guit->bitmap->get_buffer,
 	};
 
-	bmp->bmp = calloc(1, sizeof(struct bmp_image));
-	if (bmp->bmp == NULL) {
-		content_broadcast_error(&bmp->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	bmp->bmp = calloc(1, വലുപ്പം(ഘടന bmp_image));
+	എങ്കിൽ (bmp->bmp == ശൂന്യ) {
+		content_broadcast_error(&bmp->base, NSERROR_NOMEM, ശൂന്യ);
+		തിരികെ NSERROR_NOMEM;
 	}
 
 	bmp_create(bmp->bmp, &bmp_bitmap_callbacks);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-static nserror
-nsbmp_create(const struct content_handler *handler,
+സ്ഥിതം nserror
+nsbmp_create(സ്ഥിരം ഘടന content_handler *handler,
 	     lwc_string *imime_type,
-	     const struct http_parameter *params,
+	     സ്ഥിരം ഘടന http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     സ്ഥിരം അക്ഷരം *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     ഘടന content **c)
 {
 	nsbmp_content *bmp;
 	nserror error;
 
-	bmp = calloc(1, sizeof(nsbmp_content));
-	if (bmp == NULL)
-		return NSERROR_NOMEM;
+	bmp = calloc(1, വലുപ്പം(nsbmp_content));
+	എങ്കിൽ (bmp == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__init(&bmp->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(bmp);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(bmp);
+		തിരികെ error;
 	}
 
 	error = nsbmp_create_bmp_data(bmp);
-	if (error != NSERROR_OK) {
-		free(bmp);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(bmp);
+		തിരികെ error;
 	}
 
-	*c = (struct content *) bmp;
+	*c = (ഘടന content *) bmp;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-static bool nsbmp_convert(struct content *c)
+സ്ഥിതം bool nsbmp_convert(ഘടന content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 	bmp_result res;
 	uint32_t swidth;
-	const uint8_t *data;
+	സ്ഥിരം uint8_t *data;
 	size_t size;
-	char *title;
+	അക്ഷരം *title;
 
 	/* set the bmp data */
 	data = content__get_source_data(c, &size);
 
 	/* analyse the BMP */
-	res = bmp_analyse(bmp->bmp, size, (unsigned char *) data);
-	switch (res) {
-		case BMP_OK:
-			break;
-		case BMP_INSUFFICIENT_MEMORY:
-			content_broadcast_error(c, NSERROR_NOMEM, NULL);
-			return false;
-		case BMP_INSUFFICIENT_DATA:
-		case BMP_DATA_ERROR:
-			content_broadcast_error(c, NSERROR_BMP_ERROR, NULL);
-			return false;
+	res = bmp_analyse(bmp->bmp, size, (unsigned അക്ഷരം *) data);
+	തിരഞ്ഞെടുപ്പ് (res) {
+		അവസ്ഥ BMP_OK:
+			നിർത്തുക;
+		അവസ്ഥ BMP_INSUFFICIENT_MEMORY:
+			content_broadcast_error(c, NSERROR_NOMEM, ശൂന്യ);
+			തിരികെ false;
+		അവസ്ഥ BMP_INSUFFICIENT_DATA:
+		അവസ്ഥ BMP_DATA_ERROR:
+			content_broadcast_error(c, NSERROR_BMP_ERROR, ശൂന്യ);
+			തിരികെ false;
 	}
 
 	/* Store our content width and description */
 	c->width = bmp->bmp->width;
 	c->height = bmp->bmp->height;
-	swidth = sizeof(uint32_t) * bmp->bmp->width;
+	swidth = വലുപ്പം(uint32_t) * bmp->bmp->width;
 	c->size += (swidth * bmp->bmp->height) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("BMPTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	എങ്കിൽ (title != ശൂന്യ) {
 		content__set_title(c, title);
-		free(title);
+		സ്വതന്ത്രം(title);
 	}
 
 	/* exit as a success */
@@ -171,23 +171,23 @@ static bool nsbmp_convert(struct content *c)
 
 	/* Done: update status bar */
 	content_set_status(c, "");
-	return true;
+	തിരികെ true;
 }
 
-static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+സ്ഥിതം bool nsbmp_redraw(ഘടന content *c, ഘടന content_redraw_data *data,
+		സ്ഥിരം ഘടന rect *clip, സ്ഥിരം ഘടന redraw_context *ctx)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (bmp->bmp->decoded == false) {
+	എങ്കിൽ (bmp->bmp->decoded == false) {
 		bmp_result res;
 		res = bmp_decode(bmp->bmp);
 		/* allow short or incomplete image data giving a partial image*/
-		if ((res != BMP_OK) &&
+		എങ്കിൽ ((res != BMP_OK) &&
 		    (res != BMP_INSUFFICIENT_DATA) &&
 		    (res != BMP_DATA_ERROR)) {
-			return false;
+			തിരികെ false;
 		}
 
 		bitmap_format_to_client(bmp->bitmap, &(bitmap_fmt_t) {
@@ -196,12 +196,12 @@ static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
 		guit->bitmap->modified(bmp->bitmap);
 	}
 
-	if (data->repeat_x)
+	എങ്കിൽ (data->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	എങ്കിൽ (data->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	തിരികെ (ctx->plot->bitmap(ctx,
 				  bmp->bitmap,
 				  data->x, data->y,
 				  data->width, data->height,
@@ -210,74 +210,74 @@ static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
 }
 
 
-static void nsbmp_destroy(struct content *c)
+സ്ഥിതം ശൂന്യം nsbmp_destroy(ഘടന content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 
 	bmp_finalise(bmp->bmp);
-	free(bmp->bmp);
+	സ്വതന്ത്രം(bmp->bmp);
 }
 
 
-static nserror nsbmp_clone(const struct content *old, struct content **newc)
+സ്ഥിതം nserror nsbmp_clone(സ്ഥിരം ഘടന content *old, ഘടന content **newc)
 {
 	nsbmp_content *new_bmp;
 	nserror error;
 
-	new_bmp = calloc(1, sizeof(nsbmp_content));
-	if (new_bmp == NULL)
-		return NSERROR_NOMEM;
+	new_bmp = calloc(1, വലുപ്പം(nsbmp_content));
+	എങ്കിൽ (new_bmp == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__clone(old, &new_bmp->base);
-	if (error != NSERROR_OK) {
+	എങ്കിൽ (error != NSERROR_OK) {
 		content_destroy(&new_bmp->base);
-		return error;
+		തിരികെ error;
 	}
 
 	/* We "clone" the old content by replaying creation and conversion */
 	error = nsbmp_create_bmp_data(new_bmp);
-	if (error != NSERROR_OK) {
+	എങ്കിൽ (error != NSERROR_OK) {
 		content_destroy(&new_bmp->base);
-		return error;
+		തിരികെ error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY || 
+	എങ്കിൽ (old->status == CONTENT_STATUS_READY || 
 			old->status == CONTENT_STATUS_DONE) {
-		if (nsbmp_convert(&new_bmp->base) == false) {
+		എങ്കിൽ (nsbmp_convert(&new_bmp->base) == false) {
 			content_destroy(&new_bmp->base);
-			return NSERROR_CLONE_FAILED;
+			തിരികെ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_bmp;
+	*newc = (ഘടന content *) new_bmp;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-static void *nsbmp_get_internal(const struct content *c, void *context)
+സ്ഥിതം ശൂന്യം *nsbmp_get_internal(സ്ഥിരം ഘടന content *c, ശൂന്യം *context)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	return bmp->bitmap;
+	തിരികെ bmp->bitmap;
 }
 
-static content_type nsbmp_content_type(void)
+സ്ഥിതം content_type nsbmp_content_type(ശൂന്യം)
 {
-	return CONTENT_IMAGE;
+	തിരികെ CONTENT_IMAGE;
 }
 
-static bool nsbmp_content_is_opaque(struct content *c)
+സ്ഥിതം bool nsbmp_content_is_opaque(ഘടന content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	if (bmp->bitmap != NULL) {
-		return guit->bitmap->get_opaque(bmp->bitmap);
+	എങ്കിൽ (bmp->bitmap != ശൂന്യ) {
+		തിരികെ guit->bitmap->get_opaque(bmp->bitmap);
 	}
 
-	return false;
+	തിരികെ false;
 }
 
-static const content_handler nsbmp_content_handler = {
+സ്ഥിതം സ്ഥിരം content_handler nsbmp_content_handler = {
 	.create = nsbmp_create,
 	.data_complete = nsbmp_convert,
 	.destroy = nsbmp_destroy,
@@ -289,7 +289,7 @@ static const content_handler nsbmp_content_handler = {
 	.no_share = false,
 };
 
-static const char *nsbmp_types[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *nsbmp_types[] = {
 	"application/bmp",
 	"application/preview",
 	"application/x-bmp",

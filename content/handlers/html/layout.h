@@ -28,9 +28,9 @@
 #ifndef NETSURF_HTML_LAYOUT_H
 #define NETSURF_HTML_LAYOUT_H
 
-struct box;
-struct html_content;
-struct gui_layout_table;
+ഘടന box;
+ഘടന html_content;
+ഘടന gui_layout_table;
 
 /**
  * Calculate positions of boxes in a document.
@@ -40,6 +40,6 @@ struct gui_layout_table;
  * \param height available height
  * \return true on success, false on memory exhaustion
  */
-bool layout_document(struct html_content *content, int width, int height);
+bool layout_document(ഘടന html_content *content, പൂർണ്ണസംഖ്യ width, പൂർണ്ണസംഖ്യ height);
 
 #endif

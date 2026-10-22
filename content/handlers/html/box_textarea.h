@@ -24,9 +24,9 @@
 #ifndef NETSURF_HTML_BOX_TEXTAREA_H
 #define NETSURF_HTML_BOX_TEXTAREA_H
 
-struct dom_node;
-struct html_content;
-struct box;
+ഘടന dom_കണ്ണി;
+ഘടന html_content;
+ഘടന box;
 
 /**
  * Create textarea widget for a form element
@@ -35,8 +35,8 @@ struct box;
  * \param box     box with gadget to be given textarea widget
  * \param node    DOM node for form element
  */
-bool box_textarea_create_textarea(struct html_content *html,
-		struct box *box, struct dom_node *node);
+bool box_textarea_create_textarea(ഘടന html_content *html,
+		ഘടന box *box, ഘടന dom_കണ്ണി *കണ്ണി);
 
 
 /**
@@ -47,6 +47,6 @@ bool box_textarea_create_textarea(struct html_content *html,
  * \param key     keypress
  * \return NSERROR_OK iff keypress handled
  */
-nserror box_textarea_keypress(struct html_content *html, struct box *box, uint32_t key);
+nserror box_textarea_keypress(ഘടന html_content *html, ഘടന box *box, uint32_t താക്കോൽ);
 
 #endif

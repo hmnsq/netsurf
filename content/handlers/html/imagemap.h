@@ -24,19 +24,19 @@
 #ifndef NETSURF_HTML_IMAGEMAP_H
 #define NETSURF_HTML_IMAGEMAP_H
 
-#include <dom/dom.h>
+#അന്തര്ഭാവ <dom/dom.h>
 
-struct html_content;
-struct hlcache_handle;
-struct nsurl;
+ഘടന html_content;
+ഘടന hlcache_handle;
+ഘടന nsurl;
 
-void imagemap_destroy(struct html_content *c);
-void imagemap_dump(struct html_content *c);
-nserror imagemap_extract(struct html_content *c);
+ശൂന്യം imagemap_destroy(ഘടന html_content *c);
+ശൂന്യം imagemap_dump(ഘടന html_content *c);
+nserror imagemap_extract(ഘടന html_content *c);
 
-struct nsurl *imagemap_get(struct html_content *c, const char *key,
+ഘടന nsurl *imagemap_get(ഘടന html_content *c, സ്ഥിരം അക്ഷരം *താക്കോൽ,
 		unsigned long x, unsigned long y,
 		unsigned long click_x, unsigned long click_y,
-		const char **target);
+		സ്ഥിരം അക്ഷരം **target);
 
 #endif

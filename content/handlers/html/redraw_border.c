@@ -22,43 +22,43 @@
  * Redrawing CONTENT_HTML borders implementation.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "netsurf/plotters.h"
-#include "netsurf/css.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "netsurf/plotters.h"
+#അന്തര്ഭാവ "netsurf/css.h"
 
-#include "html/box.h"
-#include "html/private.h"
+#അന്തര്ഭാവ "html/box.h"
+#അന്തര്ഭാവ "html/private.h"
 
 
-static plot_style_t plot_style_bdr = {
+സ്ഥിതം plot_style_t plot_style_bdr = {
 	.stroke_type = PLOT_OP_TYPE_DASH,
 };
-static plot_style_t plot_style_fillbdr = {
+സ്ഥിതം plot_style_t plot_style_fillbdr = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_dark = {
+സ്ഥിതം plot_style_t plot_style_fillbdr_dark = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_light = {
+സ്ഥിതം plot_style_t plot_style_fillbdr_light = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_ddark = {
+സ്ഥിതം plot_style_t plot_style_fillbdr_ddark = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_dlight = {
+സ്ഥിതം plot_style_t plot_style_fillbdr_dlight = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
 
 
-static inline nserror
-plot_clipped_rectangle(const struct redraw_context *ctx,
-		       const plot_style_t *style,
-		       const struct rect *clip,
-		       struct rect *rect)
+സ്ഥിതം വരിയിൽ nserror
+plot_clipped_rectangle(സ്ഥിരം ഘടന redraw_context *ctx,
+		       സ്ഥിരം plot_style_t *style,
+		       സ്ഥിരം ഘടന rect *clip,
+		       ഘടന rect *rect)
 {
 	nserror res;
 
@@ -66,13 +66,13 @@ plot_clipped_rectangle(const struct redraw_context *ctx,
 	rect->y0 = (clip->y0 > rect->y0) ? clip->y0 : rect->y0;
 	rect->x1 = (clip->x1 < rect->x1) ? clip->x1 : rect->x1;
 	rect->y1 = (clip->y1 < rect->y1) ? clip->y1 : rect->y1;
-	if ((rect->x0 < rect->x1) && (rect->y0 < rect->y1)) {
+	എങ്കിൽ ((rect->x0 < rect->x1) && (rect->y0 < rect->y1)) {
 		/* valid clip rectangles only */
 		res = ctx->plot->rectangle(ctx, style, rect);
-	} else {
+	} അല്ലെങ്കിൽ {
 		res = NSERROR_OK;
 	}
-	return res;
+	തിരികെ res;
 }
 
 
@@ -89,25 +89,25 @@ plot_clipped_rectangle(const struct redraw_context *ctx,
  * \param ctx current redraw context
  * \return NSERROR_OK if successful otherwise appropriate error code
  */
-static nserror
-html_redraw_border_plot(const int side,
-			const int *p,
+സ്ഥിതം nserror
+html_redraw_border_plot(സ്ഥിരം പൂർണ്ണസംഖ്യ side,
+			സ്ഥിരം പൂർണ്ണസംഖ്യ *p,
 			colour c,
-			enum css_border_style_e style,
-			int thickness,
+			എണ്ണൽ css_border_style_e style,
+			പൂർണ്ണസംഖ്യ thickness,
 			bool rectangular,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+			സ്ഥിരം ഘടന rect *clip,
+			സ്ഥിരം ഘടന redraw_context *ctx)
 {
-	int z[8]; /* Vertices of border part */
-	unsigned int light = side;
+	പൂർണ്ണസംഖ്യ z[8]; /* Vertices of border part */
+	unsigned പൂർണ്ണസംഖ്യ light = side;
 	plot_style_t *plot_style_bdr_in;
 	plot_style_t *plot_style_bdr_out;
 	nserror res = NSERROR_OK;
-	struct rect rect;
+	ഘടന rect rect;
 
-	if (c == NS_TRANSPARENT) {
-		return res;
+	എങ്കിൽ (c == NS_TRANSPARENT) {
+		തിരികെ res;
 	}
 
 	plot_style_bdr.stroke_type = PLOT_OP_TYPE_DASH;
@@ -119,41 +119,41 @@ html_redraw_border_plot(const int side,
 	plot_style_fillbdr_ddark.fill_colour = double_darken_colour(c);
 	plot_style_fillbdr_dlight.fill_colour = double_lighten_colour(c);
 
-	switch (style) {
-	case CSS_BORDER_STYLE_DOTTED:
+	തിരഞ്ഞെടുപ്പ് (style) {
+	അവസ്ഥ CSS_BORDER_STYLE_DOTTED:
 		plot_style_bdr.stroke_type = PLOT_OP_TYPE_DOT;
 		fallthrough;
-	case CSS_BORDER_STYLE_DASHED:
+	അവസ്ഥ CSS_BORDER_STYLE_DASHED:
 		rect.x0 = (p[0] + p[2]) / 2;
 		rect.y0 = (p[1] + p[3]) / 2;
 		rect.x1 = (p[4] + p[6]) / 2;
 		rect.y1 = (p[5] + p[7]) / 2;
-		res = ctx->plot->line(ctx, &plot_style_bdr, &rect);
-		break;
+		res = ctx->plot->വരി(ctx, &plot_style_bdr, &rect);
+		നിർത്തുക;
 
-	case CSS_BORDER_STYLE_SOLID:
+	അവസ്ഥ CSS_BORDER_STYLE_SOLID:
 		/* solid is the default */
-	default:
-		if (rectangular || thickness == 1) {
+	സ്ഥിരസ്ഥിതി:
+		എങ്കിൽ (rectangular || thickness == 1) {
 
-			if (side == TOP || side == RIGHT) {
+			എങ്കിൽ (side == മുകൾ_2 || side == വലത്_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
-				if ((side == TOP) &&
+				എങ്കിൽ ((side == മുകൾ_2) &&
 				    (p[4] - p[6] != 0)) {
 					rect.x1 = p[4];
-				} else {
+				} അല്ലെങ്കിൽ {
 					rect.x1 = p[6];
 				}
 				rect.y1 = p[7];
-			} else {
+			} അല്ലെങ്കിൽ {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
-				if ((side == LEFT) &&
+				എങ്കിൽ ((side == ഇടത്_2) &&
 				    (p[1] - p[3] != 0)) {
 					rect.y1 = p[1];
-				} else {
+				} അല്ലെങ്കിൽ {
 					rect.y1 = p[3];
 				}
 			}
@@ -161,12 +161,12 @@ html_redraw_border_plot(const int side,
 						     &plot_style_fillbdr,
 						     clip,
 						     &rect);
-		} else {
+		} അല്ലെങ്കിൽ {
 			res = ctx->plot->polygon(ctx, &plot_style_fillbdr, p, 4);
 		}
-		break;
+		നിർത്തുക;
 
-	case CSS_BORDER_STYLE_DOUBLE:
+	അവസ്ഥ CSS_BORDER_STYLE_DOUBLE:
 		z[0] = p[0];
 		z[1] = p[1];
 		z[2] = (p[0] * 2 + p[2]) / 3;
@@ -176,7 +176,7 @@ html_redraw_border_plot(const int side,
 		z[6] = p[6];
 		z[7] = p[7];
 		res = ctx->plot->polygon(ctx, &plot_style_fillbdr, z, 4);
-		if (res == NSERROR_OK) {
+		എങ്കിൽ (res == NSERROR_OK) {
 			z[0] = p[2];
 			z[1] = p[3];
 			z[2] = (p[2] * 2 + p[0]) / 3;
@@ -187,34 +187,34 @@ html_redraw_border_plot(const int side,
 			z[7] = p[5];
 			res = ctx->plot->polygon(ctx, &plot_style_fillbdr, z, 4);
 		}
-		break;
+		നിർത്തുക;
 
-	case CSS_BORDER_STYLE_GROOVE:
+	അവസ്ഥ CSS_BORDER_STYLE_GROOVE:
 		light = 3 - light;
 		fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:
+	അവസ്ഥ CSS_BORDER_STYLE_RIDGE:
 		/* choose correct colours for each part of the border line */
-		if (light <= 1) {
+		എങ്കിൽ (light <= 1) {
 			plot_style_bdr_in = &plot_style_fillbdr_dark;
 			plot_style_bdr_out = &plot_style_fillbdr_light;
-		} else {
+		} അല്ലെങ്കിൽ {
 			plot_style_bdr_in = &plot_style_fillbdr_light;
 			plot_style_bdr_out = &plot_style_fillbdr_dark;
 		}
 
 		/* Render border */
-		if ((rectangular || thickness == 2) && thickness != 1) {
+		എങ്കിൽ ((rectangular || thickness == 2) && thickness != 1) {
 			/* Border made up from two parts and can be
 			 * plotted with rectangles
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			എങ്കിൽ (side == മുകൾ_2 || side == വലത്_2) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-			} else {
+			} അല്ലെങ്കിൽ {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = (p[0] + p[2]) / 2;
@@ -224,17 +224,17 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_in,
 						     clip,
 						     &rect);
-			if (res != NSERROR_OK) {
-				return res;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ res;
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			എങ്കിൽ (side == മുകൾ_2 || side == വലത്_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
 				rect.y1 = (p[7] + p[5]) / 2;
-			} else {
+			} അല്ലെങ്കിൽ {
 				rect.x0 = (p[6] + p[4]) / 2;
 				rect.y0 = (p[7] + p[5]) / 2;
 				rect.x1 = p[2];
@@ -244,36 +244,36 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_out,
 						     clip,
 						     &rect);
-		} else if (thickness == 1) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (thickness == 1) {
 			/* Border made up from one part which can be
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			എങ്കിൽ (side == മുകൾ_2 || side == വലത്_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-				rect.x1 = ((side == TOP) && (p[4] - p[6] != 0)) ?
+				rect.x1 = ((side == മുകൾ_2) && (p[4] - p[6] != 0)) ?
 					rect.x1 + p[4] - p[6] : rect.x1;
 
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_in,
 							     clip,
 							     &rect);
-			} else {
+			} അല്ലെങ്കിൽ {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
 				rect.y1 = p[3];
-				rect.y1 = ((side == LEFT) && (p[1] - p[3] != 0)) ?
+				rect.y1 = ((side == ഇടത്_2) && (p[1] - p[3] != 0)) ?
 					rect.y1 + p[1] - p[3] : rect.y1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_out,
 							     clip,
 							     &rect);
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* Border made up from two parts and can't be
 			 * plotted with rectangles
 			 */
@@ -286,7 +286,7 @@ html_redraw_border_plot(const int side,
 			z[6] = p[6];
 			z[7] = p[7];
 			res = ctx->plot->polygon(ctx, plot_style_bdr_in, z, 4);
-			if (res == NSERROR_OK) {
+			എങ്കിൽ (res == NSERROR_OK) {
 				z[0] = p[2];
 				z[1] = p[3];
 				z[6] = p[4];
@@ -297,49 +297,49 @@ html_redraw_border_plot(const int side,
 							 4);
 			}
 		}
-		break;
+		നിർത്തുക;
 
-	case CSS_BORDER_STYLE_INSET:
+	അവസ്ഥ CSS_BORDER_STYLE_INSET:
 		light = (light + 2) % 4;
 		fallthrough;
-	case CSS_BORDER_STYLE_OUTSET:
+	അവസ്ഥ CSS_BORDER_STYLE_OUTSET:
 		/* choose correct colours for each part of the border line */
-		switch (light) {
-		case 0:
+		തിരഞ്ഞെടുപ്പ് (light) {
+		അവസ്ഥ 0:
 			plot_style_bdr_in = &plot_style_fillbdr_light;
 			plot_style_bdr_out = &plot_style_fillbdr_dlight;
-			break;
-		case 1:
+			നിർത്തുക;
+		അവസ്ഥ 1:
 			plot_style_bdr_in = &plot_style_fillbdr_ddark;
 			plot_style_bdr_out = &plot_style_fillbdr_dark;
-			break;
-		case 2:
+			നിർത്തുക;
+		അവസ്ഥ 2:
 			plot_style_bdr_in = &plot_style_fillbdr_dark;
 			plot_style_bdr_out = &plot_style_fillbdr_ddark;
-			break;
-		case 3:
+			നിർത്തുക;
+		അവസ്ഥ 3:
 			plot_style_bdr_in = &plot_style_fillbdr_dlight;
 			plot_style_bdr_out = &plot_style_fillbdr_light;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			plot_style_bdr_in = &plot_style_fillbdr;
 			plot_style_bdr_out = &plot_style_fillbdr;
-			break;
+			നിർത്തുക;
 		}
 
 		/* Render border */
-		if ((rectangular || thickness == 2) && thickness != 1) {
+		എങ്കിൽ ((rectangular || thickness == 2) && thickness != 1) {
 			/* Border made up from two parts and can be
 			 * plotted with rectangles
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			എങ്കിൽ (side == മുകൾ_2 || side == വലത്_2) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-			} else {
+			} അല്ലെങ്കിൽ {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = (p[0] + p[2]) / 2;
@@ -349,17 +349,17 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_in,
 						     clip,
 						     &rect);
-			if (res != NSERROR_OK) {
-				return res;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ res;
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			എങ്കിൽ (side == മുകൾ_2 || side == വലത്_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
 				rect.y1 = (p[7] + p[5]) / 2;
-			} else {
+			} അല്ലെങ്കിൽ {
 				rect.x0 = (p[6] + p[4]) / 2;
 				rect.y0 = (p[7] + p[5]) / 2;
 				rect.x1 = p[2];
@@ -369,35 +369,35 @@ html_redraw_border_plot(const int side,
 						     plot_style_bdr_out,
 						     clip,
 						     &rect);
-		} else if (thickness == 1) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (thickness == 1) {
 			/* Border made up from one part which can be
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			എങ്കിൽ (side == മുകൾ_2 || side == വലത്_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-				rect.x1 = ((side == TOP) && (p[4] - p[6] != 0)) ?
+				rect.x1 = ((side == മുകൾ_2) && (p[4] - p[6] != 0)) ?
 					rect.x1 + p[4] - p[6] : rect.x1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_in,
 							     clip,
 							     &rect);
-			} else {
+			} അല്ലെങ്കിൽ {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
 				rect.y1 = p[3];
-				rect.y1 = ((side == LEFT) && (p[1] - p[3] != 0)) ?
+				rect.y1 = ((side == ഇടത്_2) && (p[1] - p[3] != 0)) ?
 					rect.y1 + p[1] - p[3] : rect.y1;
 				res = plot_clipped_rectangle(ctx,
 							     plot_style_bdr_out,
 							     clip,
 							     &rect);
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* Border made up from two parts and can't be
 			 * plotted with rectangles
 			 */
@@ -411,8 +411,8 @@ html_redraw_border_plot(const int side,
 			z[6] = p[6];
 			z[7] = p[7];
 			res = ctx->plot->polygon(ctx, plot_style_bdr_in, z, 4);
-			if (res != NSERROR_OK) {
-				return res;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ res;
 			}
 			z[0] = p[2];
 			z[1] = p[3];
@@ -420,10 +420,10 @@ html_redraw_border_plot(const int side,
 			z[7] = p[5];
 			res = ctx->plot->polygon(ctx, plot_style_bdr_out, z, 4);
 		}
-		break;
+		നിർത്തുക;
 	}
 
-	return res;
+	തിരികെ res;
 }
 
 
@@ -441,24 +441,24 @@ html_redraw_border_plot(const int side,
  * \return true if successful, false otherwise
  */
 bool
-html_redraw_borders(struct box *box,
-		    int x_parent,
-		    int y_parent,
-		    int p_width,
-		    int p_height,
-		    const struct rect *clip,
-		    float scale,
-		    const struct redraw_context *ctx)
+html_redraw_borders(ഘടന box *box,
+		    പൂർണ്ണസംഖ്യ x_parent,
+		    പൂർണ്ണസംഖ്യ y_parent,
+		    പൂർണ്ണസംഖ്യ p_width,
+		    പൂർണ്ണസംഖ്യ p_height,
+		    സ്ഥിരം ഘടന rect *clip,
+		    ദശാംശം scale,
+		    സ്ഥിരം ഘടന redraw_context *ctx)
 {
-	unsigned int sides[] = { LEFT, RIGHT, TOP, BOTTOM };
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
-	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
-	int x, y;
-	unsigned int i, side;
-	int p[8]; /* Box border vertices */
-	int z[8]; /* Border vertices */
+	unsigned പൂർണ്ണസംഖ്യ sides[] = { ഇടത്_2, വലത്_2, മുകൾ_2, BOTTOM };
+	പൂർണ്ണസംഖ്യ മുകൾ = box->border[മുകൾ_2].width;
+	പൂർണ്ണസംഖ്യ വലത് = box->border[വലത്_2].width;
+	പൂർണ്ണസംഖ്യ bottom = box->border[BOTTOM].width;
+	പൂർണ്ണസംഖ്യ ഇടത് = box->border[ഇടത്_2].width;
+	പൂർണ്ണസംഖ്യ x, y;
+	unsigned പൂർണ്ണസംഖ്യ i, side;
+	പൂർണ്ണസംഖ്യ p[8]; /* Box border vertices */
+	പൂർണ്ണസംഖ്യ z[8]; /* Border vertices */
 	bool square_end_1 = false;
 	bool square_end_2 = false;
 	nserror res;
@@ -466,16 +466,16 @@ html_redraw_borders(struct box *box,
 	x = x_parent + box->x;
 	y = y_parent + box->y;
 
-	if (scale != 1.0) {
-		top *= scale;
-		right *= scale;
+	എങ്കിൽ (scale != 1.0) {
+		മുകൾ *= scale;
+		വലത് *= scale;
 		bottom *= scale;
-		left *= scale;
+		ഇടത് *= scale;
 		x *= scale;
 		y *= scale;
 	}
 
-	assert(box->style);
+	പ്രതിജ്ഞാ(box->style);
 
 	/* Calculate border vertices
 	 *
@@ -487,23 +487,23 @@ html_redraw_borders(struct box *box,
 	 *    | /                  \ |
 	 *    +----------------------D
 	 */
-	p[0] = x - left;		p[1] = y - top;			/* A */
+	p[0] = x - ഇടത്;		p[1] = y - മുകൾ;			/* A */
 	p[2] = x;			p[3] = y;			/* B */
 	p[4] = x + p_width;		p[5] = y + p_height;		/* C */
-	p[6] = x + p_width + right;	p[7] = y + p_height + bottom;	/* D */
+	p[6] = x + p_width + വലത്;	p[7] = y + p_height + bottom;	/* D */
 
-	for (i = 0; i != 4; i++) {
+	വേണ്ടി (i = 0; i != 4; i++) {
 		colour col = 0;
 		side = sides[i]; /* plot order */
 
-		if (box->border[side].width == 0 ||
+		എങ്കിൽ (box->border[side].width == 0 ||
 		    nscss_color_is_transparent(box->border[side].c)) {
-			continue;
+			തുടരുക;
 		}
 
-		switch (side) {
-		case LEFT:
-			square_end_1 = (top == 0);
+		തിരഞ്ഞെടുപ്പ് (side) {
+		അവസ്ഥ ഇടത്_2:
+			square_end_1 = (മുകൾ == 0);
 			square_end_2 = (bottom == 0);
 
 			z[0] = p[0];	z[1] = p[7];
@@ -511,15 +511,15 @@ html_redraw_borders(struct box *box,
 			z[4] = p[2];	z[5] = p[3];
 			z[6] = p[0];	z[7] = p[1];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+			എങ്കിൽ (nscss_color_is_transparent(box->border[മുകൾ_2].c) == false &&
+			    box->border[മുകൾ_2].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
 				 */
-				z[5] -= top;
+				z[5] -= മുകൾ;
 				square_end_1 = true;
 			}
-			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+			എങ്കിൽ (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 			    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang bottom corner fully,
 				 * if bottom border is opaque
@@ -538,13 +538,13 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ false;
 			}
-			break;
+			നിർത്തുക;
 
-		case RIGHT:
-			square_end_1 = (top == 0);
+		അവസ്ഥ വലത്_2:
+			square_end_1 = (മുകൾ == 0);
 			square_end_2 = (bottom == 0);
 
 			z[0] = p[6];	z[1] = p[1];
@@ -552,15 +552,15 @@ html_redraw_borders(struct box *box,
 			z[4] = p[4];	z[5] = p[5];
 			z[6] = p[6];	z[7] = p[7];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+			എങ്കിൽ (nscss_color_is_transparent(box->border[മുകൾ_2].c) == false &&
+			    box->border[മുകൾ_2].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
 				 */
-				z[3] -= top;
+				z[3] -= മുകൾ;
 				square_end_1 = true;
 			}
-			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+			എങ്കിൽ (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 			    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang bottom corner fully,
 				 * if bottom border is opaque
@@ -579,41 +579,41 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ false;
 			}
-			break;
+			നിർത്തുക;
 
-		case TOP:
-			if (clip->y0 > p[3]) {
+		അവസ്ഥ മുകൾ_2:
+			എങ്കിൽ (clip->y0 > p[3]) {
 				/* clip rectangle is below border; nothing to
 				 * plot
 				 */
-				continue;
+				തുടരുക;
 			}
 
-			square_end_1 = (left == 0);
-			square_end_2 = (right == 0);
+			square_end_1 = (ഇടത് == 0);
+			square_end_2 = (വലത് == 0);
 
 			z[0] = p[2];	z[1] = p[3];
 			z[2] = p[0];	z[3] = p[1];
 			z[4] = p[6];	z[5] = p[1];
 			z[6] = p[4];	z[7] = p[3];
 
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[TOP].c == box->border[LEFT].c) {
+			എങ്കിൽ (box->border[മുകൾ_2].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[മുകൾ_2].c == box->border[ഇടത്_2].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
 				 */
-				z[2] += left;
+				z[2] += ഇടത്;
 				square_end_1 = true;
 			}
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[TOP].c == box->border[RIGHT].c) {
+			എങ്കിൽ (box->border[മുകൾ_2].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[മുകൾ_2].c == box->border[വലത്_2].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
 				 */
-				z[4] -= right;
+				z[4] -= വലത്;
 				square_end_2 = true;
 			}
 
@@ -627,41 +627,41 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ false;
 			}
-			break;
+			നിർത്തുക;
 
-		case BOTTOM:
-			if (clip->y1 < p[5]) {
+		അവസ്ഥ BOTTOM:
+			എങ്കിൽ (clip->y1 < p[5]) {
 				/* clip rectangle is above border; nothing to
 				 * plot
 				 */
-				continue;
+				തുടരുക;
 			}
 
-			square_end_1 = (left == 0);
-			square_end_2 = (right == 0);
+			square_end_1 = (ഇടത് == 0);
+			square_end_2 = (വലത് == 0);
 
 			z[0] = p[4];	z[1] = p[5];
 			z[2] = p[6];	z[3] = p[7];
 			z[4] = p[0];	z[5] = p[7];
 			z[6] = p[2];	z[7] = p[5];
 
-			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[BOTTOM].c == box->border[LEFT].c) {
+			എങ്കിൽ (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[BOTTOM].c == box->border[ഇടത്_2].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
 				 */
-				z[4] += left;
+				z[4] += ഇടത്;
 				square_end_1 = true;
 			}
-			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[BOTTOM].c == box->border[RIGHT].c) {
+			എങ്കിൽ (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[BOTTOM].c == box->border[വലത്_2].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
 				 */
-				z[2] -= right;
+				z[2] -= വലത്;
 				square_end_2 = true;
 			}
 
@@ -675,19 +675,19 @@ html_redraw_borders(struct box *box,
 						      square_end_1 && square_end_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ false;
 			}
-			break;
+			നിർത്തുക;
 
-		default:
-			assert(side == TOP || side == BOTTOM ||
-			       side == LEFT || side == RIGHT);
-			break;
+		സ്ഥിരസ്ഥിതി:
+			പ്രതിജ്ഞാ(side == മുകൾ_2 || side == BOTTOM ||
+			       side == ഇടത്_2 || side == വലത്_2);
+			നിർത്തുക;
 		}
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -704,30 +704,30 @@ html_redraw_borders(struct box *box,
  * \return true if successful, false otherwise
  */
 bool
-html_redraw_inline_borders(struct box *box,
-			   struct rect b,
-			   const struct rect *clip,
-			   float scale,
+html_redraw_inline_borders(ഘടന box *box,
+			   ഘടന rect b,
+			   സ്ഥിരം ഘടന rect *clip,
+			   ദശാംശം scale,
 			   bool first,
 			   bool last,
-			   const struct redraw_context *ctx)
+			   സ്ഥിരം ഘടന redraw_context *ctx)
 {
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
-	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
+	പൂർണ്ണസംഖ്യ മുകൾ = box->border[മുകൾ_2].width;
+	പൂർണ്ണസംഖ്യ വലത് = box->border[വലത്_2].width;
+	പൂർണ്ണസംഖ്യ bottom = box->border[BOTTOM].width;
+	പൂർണ്ണസംഖ്യ ഇടത് = box->border[ഇടത്_2].width;
 	colour col;
-	int p[8]; /* Box border vertices */
-	int z[8]; /* Border vertices */
+	പൂർണ്ണസംഖ്യ p[8]; /* Box border vertices */
+	പൂർണ്ണസംഖ്യ z[8]; /* Border vertices */
 	bool square_end_1;
 	bool square_end_2;
 	nserror res;
 
-	if (scale != 1.0) {
-		top *= scale;
-		right *= scale;
+	എങ്കിൽ (scale != 1.0) {
+		മുകൾ *= scale;
+		വലത് *= scale;
 		bottom *= scale;
-		left *= scale;
+		ഇടത് *= scale;
 	}
 
 	/* Calculate border vertices
@@ -741,35 +741,35 @@ html_redraw_inline_borders(struct box *box,
 	 *    +----------------------D
 	 */
 	p[0] = b.x0;				p[1] = b.y0;		/* A */
-	p[2] = first ? b.x0 + left : b.x0;	p[3] = b.y0 + top;	/* B */
-	p[4] = last ? b.x1 - right : b.x1;	p[5] = b.y1 - bottom;	/* C */
+	p[2] = first ? b.x0 + ഇടത് : b.x0;	p[3] = b.y0 + മുകൾ;	/* B */
+	p[4] = last ? b.x1 - വലത് : b.x1;	p[5] = b.y1 - bottom;	/* C */
 	p[6] = b.x1;				p[7] = b.y1;		/* D */
 
-	assert(box->style);
+	പ്രതിജ്ഞാ(box->style);
 
 	/* Left */
-	square_end_1 = (top == 0);
+	square_end_1 = (മുകൾ == 0);
 	square_end_2 = (bottom == 0);
-	if (left != 0 &&
+	എങ്കിൽ (ഇടത് != 0 &&
 	    first &&
-	    nscss_color_is_transparent(box->border[LEFT].c) == false) {
-		col = nscss_color_to_ns(box->border[LEFT].c);
+	    nscss_color_is_transparent(box->border[ഇടത്_2].c) == false) {
+		col = nscss_color_to_ns(box->border[ഇടത്_2].c);
 
 		z[0] = p[0];	z[1] = p[7];
 		z[2] = p[2];	z[3] = p[5];
 		z[4] = p[2];	z[5] = p[3];
 		z[6] = p[0];	z[7] = p[1];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+		എങ്കിൽ (nscss_color_is_transparent(box->border[മുകൾ_2].c) == false &&
+		    box->border[മുകൾ_2].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
 			 */
-			z[5] -= top;
+			z[5] -= മുകൾ;
 			square_end_1 = true;
 		}
 
-		if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+		എങ്കിൽ (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 		    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang bottom corner fully,
 			 * if bottom border is opaque
@@ -778,42 +778,42 @@ html_redraw_inline_borders(struct box *box,
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(LEFT,
+		res = html_redraw_border_plot(ഇടത്_2,
 					      z,
 					      col,
-					      box->border[LEFT].style,
-					      left,
+					      box->border[ഇടത്_2].style,
+					      ഇടത്,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		എങ്കിൽ (res != NSERROR_OK) {
+			തിരികെ false;
 		}
 	}
 
 	/* Right */
-	square_end_1 = (top == 0);
+	square_end_1 = (മുകൾ == 0);
 	square_end_2 = (bottom == 0);
-	if (right != 0 &&
+	എങ്കിൽ (വലത് != 0 &&
 	    last &&
-	    nscss_color_is_transparent(box->border[RIGHT].c) == false) {
-		col = nscss_color_to_ns(box->border[RIGHT].c);
+	    nscss_color_is_transparent(box->border[വലത്_2].c) == false) {
+		col = nscss_color_to_ns(box->border[വലത്_2].c);
 
 		z[0] = p[6];	z[1] = p[1];
 		z[2] = p[4];	z[3] = p[3];
 		z[4] = p[4];	z[5] = p[5];
 		z[6] = p[6];	z[7] = p[7];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+		എങ്കിൽ (nscss_color_is_transparent(box->border[മുകൾ_2].c) == false &&
+		    box->border[മുകൾ_2].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
 			 */
-			z[3] -= top;
+			z[3] -= മുകൾ;
 			square_end_1 = true;
 		}
 
-		if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+		എങ്കിൽ (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 		    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang bottom corner fully,
 			 * if bottom border is opaque
@@ -822,68 +822,68 @@ html_redraw_inline_borders(struct box *box,
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(RIGHT,
+		res = html_redraw_border_plot(വലത്_2,
 					      z,
 					      col,
-					      box->border[RIGHT].style,
-					      right,
+					      box->border[വലത്_2].style,
+					      വലത്,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		എങ്കിൽ (res != NSERROR_OK) {
+			തിരികെ false;
 		}
 	}
 
 	/* Top */
-	square_end_1 = (left == 0);
-	square_end_2 = (right == 0);
-	if (top != 0 &&
-	    nscss_color_is_transparent(box->border[TOP].c) == false) {
-		col = nscss_color_to_ns(box->border[TOP].c);
+	square_end_1 = (ഇടത് == 0);
+	square_end_2 = (വലത് == 0);
+	എങ്കിൽ (മുകൾ != 0 &&
+	    nscss_color_is_transparent(box->border[മുകൾ_2].c) == false) {
+		col = nscss_color_to_ns(box->border[മുകൾ_2].c);
 
 		z[0] = p[2];	z[1] = p[3];
 		z[2] = p[0];	z[3] = p[1];
 		z[4] = p[6];	z[5] = p[1];
 		z[6] = p[4];	z[7] = p[3];
 
-		if (first &&
-		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[TOP].c == box->border[LEFT].c) {
+		എങ്കിൽ (first &&
+		    box->border[മുകൾ_2].style == CSS_BORDER_STYLE_SOLID &&
+		    box->border[മുകൾ_2].c == box->border[ഇടത്_2].c) {
 			/* don't bother overlapping left corner if
 			 * it's the same colour anyway
 			 */
-			z[2] += left;
+			z[2] += ഇടത്;
 			square_end_1 = true;
 		}
 
-		if (last &&
-		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[TOP].c == box->border[RIGHT].c) {
+		എങ്കിൽ (last &&
+		    box->border[മുകൾ_2].style == CSS_BORDER_STYLE_SOLID &&
+		    box->border[മുകൾ_2].c == box->border[വലത്_2].c) {
 			/* don't bother overlapping right corner if
 			 * it's the same colour anyway
 			 */
-			z[4] -= right;
+			z[4] -= വലത്;
 			square_end_2 = true;
 		}
 
-		res = html_redraw_border_plot(TOP,
+		res = html_redraw_border_plot(മുകൾ_2,
 					      z,
 					      col,
-					      box->border[TOP].style,
-					      top,
+					      box->border[മുകൾ_2].style,
+					      മുകൾ,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		എങ്കിൽ (res != NSERROR_OK) {
+			തിരികെ false;
 		}
 	}
 
 	/* Bottom */
-	square_end_1 = (left == 0);
-	square_end_2 = (right == 0);
-	if (bottom != 0 &&
+	square_end_1 = (ഇടത് == 0);
+	square_end_2 = (വലത് == 0);
+	എങ്കിൽ (bottom != 0 &&
 	    nscss_color_is_transparent(box->border[BOTTOM].c) == false) {
 		col = nscss_color_to_ns(box->border[BOTTOM].c);
 
@@ -892,23 +892,23 @@ html_redraw_inline_borders(struct box *box,
 		z[4] = p[0];	z[5] = p[7];
 		z[6] = p[2];	z[7] = p[5];
 
-		if (first &&
+		എങ്കിൽ (first &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[BOTTOM].c == box->border[LEFT].c) {
+		    box->border[BOTTOM].c == box->border[ഇടത്_2].c) {
 			/* don't bother overlapping left corner if
 			 * it's the same colour anyway
 			 */
-			z[4] += left;
+			z[4] += ഇടത്;
 			square_end_1 = true;
 		}
 
-		if (last &&
+		എങ്കിൽ (last &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[BOTTOM].c == box->border[RIGHT].c) {
+		    box->border[BOTTOM].c == box->border[വലത്_2].c) {
 			/* don't bother overlapping right corner if
 			 * it's the same colour anyway
 			 */
-			z[2] -= right;
+			z[2] -= വലത്;
 			square_end_2 = true;
 		}
 
@@ -920,10 +920,10 @@ html_redraw_inline_borders(struct box *box,
 					      square_end_1 && square_end_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		എങ്കിൽ (res != NSERROR_OK) {
+			തിരികെ false;
 		}
 	}
 
-	return true;
+	തിരികെ true;
 }

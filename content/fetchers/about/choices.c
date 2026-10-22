@@ -21,16 +21,16 @@
  * content generator for the about scheme blank page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdio.h>
 
-#include "netsurf/types.h"
-#include "utils/errors.h"
-#include "utils/nsoption.h"
+#അന്തര്ഭാവ "netsurf/types.h"
+#അന്തര്ഭാവ "utils/errors.h"
+#അന്തര്ഭാവ "utils/nsoption.h"
 
-#include "private.h"
-#include "choices.h"
+#അന്തര്ഭാവ "private.h"
+#അന്തര്ഭാവ "choices.h"
 
 /**
  * Generate the text of a Choices file which represents the current
@@ -39,55 +39,55 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_choices_handler(struct fetch_about_context *ctx)
+bool fetch_about_choices_handler(ഘടന fetch_about_context *ctx)
 {
-	char buffer[1024];
-	int code = 200;
-	int slen;
-	unsigned int opt_loop = 0;
-	int res = 0;
+	അക്ഷരം buffer[1024];
+	പൂർണ്ണസംഖ്യ code = 200;
+	പൂർണ്ണസംഖ്യ slen;
+	unsigned പൂർണ്ണസംഖ്യ opt_loop = 0;
+	പൂർണ്ണസംഖ്യ res = 0;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		goto fetch_about_choices_handler_aborted;
+	എങ്കിൽ (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+		പോകുക fetch_about_choices_handler_aborted;
 
-	slen = snprintf(buffer, sizeof buffer,
+	slen = snprintf(buffer, വലുപ്പം buffer,
 		 "# Automatically generated current NetSurf browser Choices\n");
 
-	do {
+	ചെയ്യുക {
 		res = nsoption_snoptionf(buffer + slen,
-				sizeof buffer - slen,
+				വലുപ്പം buffer - slen,
 				opt_loop,
 				"%k:%v\n");
-		if (res <= 0)
-			break; /* last option */
+		എങ്കിൽ (res <= 0)
+			നിർത്തുക; /* last option */
 
-		if (res >= (int) (sizeof buffer - slen)) {
+		എങ്കിൽ (res >= (പൂർണ്ണസംഖ്യ) (വലുപ്പം buffer - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
-			res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-			if (res != NSERROR_OK) {
-				goto fetch_about_choices_handler_aborted;
+			res = fetch_about_senddata(ctx, (സ്ഥിരം uint8_t *)buffer, slen);
+			എങ്കിൽ (res != NSERROR_OK) {
+				പോകുക fetch_about_choices_handler_aborted;
 			}
 			slen = 0;
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* normal addition */
 			slen += res;
 			opt_loop++;
 		}
-	} while (res > 0);
+	} ആകുമ്പോൾ (res > 0);
 
-	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
-		goto fetch_about_choices_handler_aborted;
+	res = fetch_about_senddata(ctx, (സ്ഥിരം uint8_t *)buffer, slen);
+	എങ്കിൽ (res != NSERROR_OK) {
+		പോകുക fetch_about_choices_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	തിരികെ true;
 
 fetch_about_choices_handler_aborted:
-	return false;
+	തിരികെ false;
 }

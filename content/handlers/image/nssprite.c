@@ -21,73 +21,73 @@
  * librosprite implementation for content image/x-riscos-sprite
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include <librosprite.h>
+#അന്തര്ഭാവ <librosprite.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/messages.h"
+#അന്തര്ഭാവ "netsurf/plotters.h"
+#അന്തര്ഭാവ "netsurf/bitmap.h"
+#അന്തര്ഭാവ "netsurf/content.h"
+#അന്തര്ഭാവ "content/llcache.h"
+#അന്തര്ഭാവ "content/content_protected.h"
+#അന്തര്ഭാവ "content/content_factory.h"
+#അന്തര്ഭാവ "desktop/gui_internal.h"
+#അന്തര്ഭാവ "desktop/bitmap.h"
 
-#include "image/nssprite.h"
+#അന്തര്ഭാവ "image/nssprite.h"
 
-typedef struct nssprite_content {
-	struct content base;
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+തരനിർവചനം ഘടന nssprite_content {
+	ഘടന content base;
+	ഘടന bitmap *bitmap;	/**< Created NetSurf bitmap */
 
-	struct rosprite_area* sprite_area;
+	ഘടന rosprite_area* sprite_area;
 } nssprite_content;
 
 
-#define ERRCHK(x) do { \
+#define ERRCHK(x) ചെയ്യുക { \
 	rosprite_error err = x; \
-	if (err == ROSPRITE_EOF) { \
+	എങ്കിൽ (err == ROSPRITE_EOF) { \
 		NSLOG(netsurf, INFO, "Got ROSPRITE_EOF when loading sprite file"); \
-		goto ro_sprite_error; \
-	} else if (err == ROSPRITE_BADMODE) { \
+		പോകുക ro_sprite_error; \
+	} അല്ലെങ്കിൽ എങ്കിൽ (err == ROSPRITE_BADMODE) { \
 		NSLOG(netsurf, INFO, "Got ROSPRITE_BADMODE when loading sprite file"); \
-		goto ro_sprite_error; \
-	} else if (err == ROSPRITE_OK) { \
-	} else { \
-		goto ro_sprite_error; \
+		പോകുക ro_sprite_error; \
+	} അല്ലെങ്കിൽ എങ്കിൽ (err == ROSPRITE_OK) { \
+	} അല്ലെങ്കിൽ { \
+		പോകുക ro_sprite_error; \
 	} \
-} while(0)
+} ആകുമ്പോൾ(0)
 
 
 
 
-static nserror nssprite_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		struct llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+സ്ഥിതം nserror nssprite_create(സ്ഥിരം content_handler *handler,
+		lwc_string *imime_type, സ്ഥിരം ഘടന http_parameter *params,
+		ഘടന llcache_handle *llcache, സ്ഥിരം അക്ഷരം *fallback_charset,
+		bool quirks, ഘടന content **c)
 {
 	nssprite_content *sprite;
 	nserror error;
 
-	sprite = calloc(1, sizeof(nssprite_content));
-	if (sprite == NULL)
-		return NSERROR_NOMEM;
+	sprite = calloc(1, വലുപ്പം(nssprite_content));
+	എങ്കിൽ (sprite == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__init(&sprite->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(sprite);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(sprite);
+		തിരികെ error;
 	}
 
-	*c = (struct content *) sprite;
+	*c = (ഘടന content *) sprite;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -96,40 +96,40 @@ static nserror nssprite_create(const content_handler *handler,
  * No conversion is necessary. We merely read the sprite dimensions.
  */
 
-static bool nssprite_convert(struct content *c)
+സ്ഥിതം bool nssprite_convert(ഘടന content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	struct rosprite_mem_context* ctx = NULL;
+	ഘടന rosprite_mem_context* ctx = ശൂന്യ;
 
-	const uint8_t *data;
+	സ്ഥിരം uint8_t *data;
 	size_t size;
-	char *title;
+	അക്ഷരം *title;
 
 	data = content__get_source_data(c, &size);
 
 	ERRCHK(rosprite_create_mem_context((uint8_t *) data, size, &ctx));
 
-	struct rosprite_area* sprite_area;
+	ഘടന rosprite_area* sprite_area;
 	ERRCHK(rosprite_load(rosprite_mem_reader, ctx, &sprite_area));
 	rosprite_destroy_mem_context(ctx);
 	nssprite->sprite_area = sprite_area;
 
-	assert(sprite_area->sprite_count > 0);
+	പ്രതിജ്ഞാ(sprite_area->sprite_എണ്ണം > 0);
 
-	struct rosprite* sprite = sprite_area->sprites[0];
+	ഘടന rosprite* sprite = sprite_area->sprites[0];
 
 	nssprite->bitmap = guit->bitmap->create(sprite->width, sprite->height, BITMAP_NONE);
-	if (!nssprite->bitmap) {
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+	എങ്കിൽ (!nssprite->bitmap) {
+		content_broadcast_error(c, NSERROR_NOMEM, ശൂന്യ);
+		തിരികെ false;
 	}
-	uint32_t* imagebuf = (uint32_t *)(void *)guit->bitmap->get_buffer(nssprite->bitmap);
-	if (!imagebuf) {
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+	uint32_t* imagebuf = (uint32_t *)(ശൂന്യം *)guit->bitmap->get_buffer(nssprite->bitmap);
+	എങ്കിൽ (!imagebuf) {
+		content_broadcast_error(c, NSERROR_NOMEM, ശൂന്യ);
+		തിരികെ false;
 	}
-	unsigned char *spritebuf = (unsigned char *)sprite->image;
+	unsigned അക്ഷരം *spritebuf = (unsigned അക്ഷരം *)sprite->image;
 
 	memcpy(imagebuf, spritebuf, sprite->width * sprite->height * 4);
 
@@ -140,9 +140,9 @@ static bool nssprite_convert(struct content *c)
 	title = messages_get_buff("SpriteTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	എങ്കിൽ (title != ശൂന്യ) {
 		content__set_title(c, title);
-		free(title);
+		സ്വതന്ത്രം(title);
 	}
 
 	bitmap_format_to_client(nssprite->bitmap, &(bitmap_fmt_t) {
@@ -154,15 +154,15 @@ static bool nssprite_convert(struct content *c)
 	content_set_done(c);
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	തിരികെ true;
 
 ro_sprite_error:
-	if (ctx != NULL) {
+	എങ്കിൽ (ctx != ശൂന്യ) {
 		rosprite_destroy_mem_context(ctx);
 	}
-	content_broadcast_error(c, NSERROR_SPRITE_ERROR, NULL);
+	content_broadcast_error(c, NSERROR_SPRITE_ERROR, ശൂന്യ);
 
-	return false;
+	തിരികെ false;
 }
 
 
@@ -170,13 +170,13 @@ ro_sprite_error:
  * Destroy a CONTENT_SPRITE and free all resources it owns.
  */
 
-static void nssprite_destroy(struct content *c)
+സ്ഥിതം ശൂന്യം nssprite_destroy(ഘടന content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	if (nssprite->sprite_area != NULL)
+	എങ്കിൽ (nssprite->sprite_area != ശൂന്യ)
 		rosprite_destroy_sprite_area(nssprite->sprite_area);
-	if (nssprite->bitmap != NULL)
+	എങ്കിൽ (nssprite->bitmap != ശൂന്യ)
 		guit->bitmap->destroy(nssprite->bitmap);
 }
 
@@ -185,23 +185,23 @@ static void nssprite_destroy(struct content *c)
  * Redraw a CONTENT_SPRITE.
  */
 
-static bool
-nssprite_redraw(struct content *c,
-		struct content_redraw_data *data,
-		const struct rect *clip,
-		const struct redraw_context *ctx)
+സ്ഥിതം bool
+nssprite_redraw(ഘടന content *c,
+		ഘടന content_redraw_data *data,
+		സ്ഥിരം ഘടന rect *clip,
+		സ്ഥിരം ഘടന redraw_context *ctx)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (data->repeat_x) {
+	എങ്കിൽ (data->repeat_x) {
 		flags |= BITMAPF_REPEAT_X;
 	}
-	if (data->repeat_y) {
+	എങ്കിൽ (data->repeat_y) {
 		flags |= BITMAPF_REPEAT_Y;
 	}
 
-	return (ctx->plot->bitmap(ctx,
+	തിരികെ (ctx->plot->bitmap(ctx,
 				  nssprite->bitmap,
 				  data->x, data->y,
 				  data->width, data->height,
@@ -210,60 +210,60 @@ nssprite_redraw(struct content *c,
 }
 
 
-static nserror nssprite_clone(const struct content *old, struct content **newc)
+സ്ഥിതം nserror nssprite_clone(സ്ഥിരം ഘടന content *old, ഘടന content **newc)
 {
 	nssprite_content *sprite;
 	nserror error;
 
-	sprite = calloc(1, sizeof(nssprite_content));
-	if (sprite == NULL)
-		return NSERROR_NOMEM;
+	sprite = calloc(1, വലുപ്പം(nssprite_content));
+	എങ്കിൽ (sprite == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__clone(old, &sprite->base);
-	if (error != NSERROR_OK) {
+	എങ്കിൽ (error != NSERROR_OK) {
 		content_destroy(&sprite->base);
-		return error;
+		തിരികെ error;
 	}
 
 	/* Simply replay convert */
-	if (old->status == CONTENT_STATUS_READY ||
+	എങ്കിൽ (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nssprite_convert(&sprite->base) == false) {
+		എങ്കിൽ (nssprite_convert(&sprite->base) == false) {
 			content_destroy(&sprite->base);
-			return NSERROR_CLONE_FAILED;
+			തിരികെ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) sprite;
+	*newc = (ഘടന content *) sprite;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-static void *nssprite_get_internal(const struct content *c, void *context)
+സ്ഥിതം ശൂന്യം *nssprite_get_internal(സ്ഥിരം ഘടന content *c, ശൂന്യം *context)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	return nssprite->bitmap;
+	തിരികെ nssprite->bitmap;
 }
 
-static content_type nssprite_content_type(void)
+സ്ഥിതം content_type nssprite_content_type(ശൂന്യം)
 {
-	return CONTENT_IMAGE;
+	തിരികെ CONTENT_IMAGE;
 }
 
 
-static bool nssprite_content_is_opaque(struct content *c)
+സ്ഥിതം bool nssprite_content_is_opaque(ഘടന content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	if (nssprite->bitmap != NULL) {
-		return guit->bitmap->get_opaque(nssprite->bitmap);
+	എങ്കിൽ (nssprite->bitmap != ശൂന്യ) {
+		തിരികെ guit->bitmap->get_opaque(nssprite->bitmap);
 	}
 
-	return false;
+	തിരികെ false;
 }
 
-static const content_handler nssprite_content_handler = {
+സ്ഥിതം സ്ഥിരം content_handler nssprite_content_handler = {
 	.create = nssprite_create,
 	.data_complete = nssprite_convert,
 	.destroy = nssprite_destroy,
@@ -275,7 +275,7 @@ static const content_handler nssprite_content_handler = {
 	.no_share = false,
 };
 
-static const char *nssprite_types[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *nssprite_types[] = {
 	"image/x-riscos-sprite"
 };
 

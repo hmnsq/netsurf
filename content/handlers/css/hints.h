@@ -19,12 +19,12 @@
 #ifndef NETSURF_CSS_HINTS_H_
 #define NETSURF_CSS_HINTS_H_
 
-#include <stdint.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#include <libcss/libcss.h>
+#അന്തര്ഭാവ <libcss/libcss.h>
 
-nserror css_hint_init(void);
-void css_hint_fini(void);
+nserror css_hint_init(ശൂന്യം);
+ശൂന്യം css_hint_fini(ശൂന്യം);
 
 /**
  * Callback to retrieve presentational hints for a node
@@ -37,9 +37,9 @@ void css_hint_fini(void);
  *         CSS_PROPERTY_NOT_SET if there is no hint for the requested property,
  *         CSS_NOMEM            on memory exhaustion.
  */
-css_error node_presentational_hint(
-		void *pw,
-		void *node,
+css_error കണ്ണി_presentational_hint(
+		ശൂന്യം *pw,
+		ശൂന്യം *കണ്ണി,
 		uint32_t *nhints,
 		css_hint **hints);
 
@@ -50,6 +50,6 @@ css_error node_presentational_hint(
  * \param result  Pointer to location to receive resulting css_color
  * \return true on success, false on invalid input
  */
-bool nscss_parse_colour(const char *data, css_color *result);
+bool nscss_parse_colour(സ്ഥിരം അക്ഷരം *data, css_color *result);
 
 #endif

@@ -19,44 +19,44 @@
 #ifndef NETSURF_CSS_SELECT_H_
 #define NETSURF_CSS_SELECT_H_
 
-#include <stdint.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#include <dom/dom.h>
+#അന്തര്ഭാവ <dom/dom.h>
 
-#include <libcss/libcss.h>
+#അന്തര്ഭാവ <libcss/libcss.h>
 
-struct content;
-struct nsurl;
+ഘടന content;
+ഘടന nsurl;
 
 /**
  * Selection context
  */
-typedef struct nscss_select_ctx
+തരനിർവചനം ഘടന nscss_select_ctx
 {
 	css_select_ctx *ctx;
 	bool quirks;
-	struct nsurl *base_url;
+	ഘടന nsurl *base_url;
 	lwc_string *universal;
-	const css_computed_style *root_style;
-	const css_computed_style *parent_style;
+	സ്ഥിരം css_computed_style *വേര്_style;
+	സ്ഥിരം css_computed_style *parent_style;
 } nscss_select_ctx;
 
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks);
+css_stylesheet *nscss_create_inline_style(സ്ഥിരം uint8_t *data, size_t len,
+		സ്ഥിരം അക്ഷരം *charset, സ്ഥിരം അക്ഷരം *url, bool allow_quirks);
 
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style);
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_കണ്ണി *n,
+		സ്ഥിരം css_media *media,
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		സ്ഥിരം css_stylesheet *inline_style);
 
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent);
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		സ്ഥിരം css_computed_style *parent);
 
 
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor);
+css_error named_ancestor_കണ്ണി(ശൂന്യം *pw, ശൂന്യം *കണ്ണി,
+		സ്ഥിരം css_qname *qname, ശൂന്യം **ancestor);
 
-css_error node_is_visited(void *pw, void *node, bool *match);
+css_error കണ്ണി_is_visited(ശൂന്യം *pw, ശൂന്യം *കണ്ണി, bool *match);
 
 #endif

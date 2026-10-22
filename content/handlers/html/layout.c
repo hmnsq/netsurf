@@ -34,87 +34,87 @@
  * layout_minmax_X() and layout_X().
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <dom/dom.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <math.h>
+#അന്തര്ഭാവ <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/talloc.h"
-#include "utils/utils.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/nsurl.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/layout.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "css/utils.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/talloc.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/nsoption.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "netsurf/inttypes.h"
+#അന്തര്ഭാവ "netsurf/content.h"
+#അന്തര്ഭാവ "netsurf/browser_window.h"
+#അന്തര്ഭാവ "netsurf/layout.h"
+#അന്തര്ഭാവ "content/content.h"
+#അന്തര്ഭാവ "content/content_protected.h"
+#അന്തര്ഭാവ "css/utils.h"
+#അന്തര്ഭാവ "desktop/scrollbar.h"
+#അന്തര്ഭാവ "desktop/textarea.h"
 
-#include "html/html.h"
-#include "html/html_save.h"
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
-#include "html/layout.h"
-#include "html/layout_internal.h"
-#include "html/table.h"
+#അന്തര്ഭാവ "html/html.h"
+#അന്തര്ഭാവ "html/html_save.h"
+#അന്തര്ഭാവ "html/private.h"
+#അന്തര്ഭാവ "html/box.h"
+#അന്തര്ഭാവ "html/box_inspect.h"
+#അന്തര്ഭാവ "html/font.h"
+#അന്തര്ഭാവ "html/form_internal.h"
+#അന്തര്ഭാവ "html/layout.h"
+#അന്തര്ഭാവ "html/layout_internal.h"
+#അന്തര്ഭാവ "html/table.h"
 
 /** Array of per-side access functions for computed style margins. */
-const css_len_func margin_funcs[4] = {
-	[TOP]    = css_computed_margin_top,
-	[RIGHT]  = css_computed_margin_right,
+സ്ഥിരം css_len_func margin_funcs[4] = {
+	[മുകൾ_2]    = css_computed_margin_മുകൾ,
+	[വലത്_2]  = css_computed_margin_വലത്,
 	[BOTTOM] = css_computed_margin_bottom,
-	[LEFT]   = css_computed_margin_left,
+	[ഇടത്_2]   = css_computed_margin_ഇടത്,
 };
 
 /** Array of per-side access functions for computed style paddings. */
-const css_len_func padding_funcs[4] = {
-	[TOP]    = css_computed_padding_top,
-	[RIGHT]  = css_computed_padding_right,
+സ്ഥിരം css_len_func padding_funcs[4] = {
+	[മുകൾ_2]    = css_computed_padding_മുകൾ,
+	[വലത്_2]  = css_computed_padding_വലത്,
 	[BOTTOM] = css_computed_padding_bottom,
-	[LEFT]   = css_computed_padding_left,
+	[ഇടത്_2]   = css_computed_padding_ഇടത്,
 };
 
 /** Array of per-side access functions for computed style border_widths. */
-const css_len_func border_width_funcs[4] = {
-	[TOP]    = css_computed_border_top_width,
-	[RIGHT]  = css_computed_border_right_width,
+സ്ഥിരം css_len_func border_width_funcs[4] = {
+	[മുകൾ_2]    = css_computed_border_മുകൾ_width,
+	[വലത്_2]  = css_computed_border_വലത്_width,
 	[BOTTOM] = css_computed_border_bottom_width,
-	[LEFT]   = css_computed_border_left_width,
+	[ഇടത്_2]   = css_computed_border_ഇടത്_width,
 };
 
 /** Array of per-side access functions for computed style border styles. */
-const css_border_style_func border_style_funcs[4] = {
-	[TOP]    = css_computed_border_top_style,
-	[RIGHT]  = css_computed_border_right_style,
+സ്ഥിരം css_border_style_func border_style_funcs[4] = {
+	[മുകൾ_2]    = css_computed_border_മുകൾ_style,
+	[വലത്_2]  = css_computed_border_വലത്_style,
 	[BOTTOM] = css_computed_border_bottom_style,
-	[LEFT]   = css_computed_border_left_style,
+	[ഇടത്_2]   = css_computed_border_ഇടത്_style,
 };
 
 /** Array of per-side access functions for computed style border colors. */
-const css_border_color_func border_color_funcs[4] = {
-	[TOP]    = css_computed_border_top_color,
-	[RIGHT]  = css_computed_border_right_color,
+സ്ഥിരം css_border_color_func border_color_funcs[4] = {
+	[മുകൾ_2]    = css_computed_border_മുകൾ_color,
+	[വലത്_2]  = css_computed_border_വലത്_color,
 	[BOTTOM] = css_computed_border_bottom_color,
-	[LEFT]   = css_computed_border_left_color,
+	[ഇടത്_2]   = css_computed_border_ഇടത്_color,
 };
 
 /* forward declaration to break cycles */
-static void layout_minmax_block(
-		struct box *block,
-		const struct gui_layout_table *font_func,
-		const html_content *content);
+സ്ഥിതം ശൂന്യം layout_minmax_block(
+		ഘടന box *block,
+		സ്ഥിരം ഘടന gui_layout_table *font_func,
+		സ്ഥിരം html_content *content);
 
 /**
  * Compute the size of replaced boxes with auto dimensions, according to
@@ -130,37 +130,37 @@ static void layout_minmax_block(
  *
  * See CSS 2.1 sections 10.3 and 10.6.
  */
-static void
-layout_get_object_dimensions(struct box *box,
-			     int *width, int *height,
-			     int min_width, int max_width,
-			     int min_height, int max_height)
+സ്ഥിതം ശൂന്യം
+layout_get_object_dimensions(ഘടന box *box,
+			     പൂർണ്ണസംഖ്യ *width, പൂർണ്ണസംഖ്യ *height,
+			     പൂർണ്ണസംഖ്യ min_width, പൂർണ്ണസംഖ്യ max_width,
+			     പൂർണ്ണസംഖ്യ min_height, പൂർണ്ണസംഖ്യ max_height)
 {
-	assert(box->object != NULL);
-	assert(width != NULL && height != NULL);
+	പ്രതിജ്ഞാ(box->object != ശൂന്യ);
+	പ്രതിജ്ഞാ(width != ശൂന്യ && height != ശൂന്യ);
 
-	if (*width == AUTO && *height == AUTO) {
+	എങ്കിൽ (*width == AUTO && *height == AUTO) {
 		/* No given dimensions */
 
 		bool scaled = false;
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		പൂർണ്ണസംഖ്യ intrinsic_width = content_get_width(box->object);
+		പൂർണ്ണസംഖ്യ intrinsic_height = content_get_height(box->object);
 
 		/* use intrinsic dimensions */
 		*width = intrinsic_width;
 		*height = intrinsic_height;
 
 		/* Deal with min/max-width first */
-		if (min_width >  0 && min_width > *width) {
+		എങ്കിൽ (min_width >  0 && min_width > *width) {
 			*width = min_width;
 			scaled = true;
 		}
-		if (max_width >= 0 && max_width < *width) {
+		എങ്കിൽ (max_width >= 0 && max_width < *width) {
 			*width = max_width;
 			scaled = true;
 		}
 
-		if (scaled && (intrinsic_width != 0)) {
+		എങ്കിൽ (scaled && (intrinsic_width != 0)) {
 			/* Update height */
 			*height = (*width * intrinsic_height) /
 					intrinsic_width;
@@ -168,53 +168,53 @@ layout_get_object_dimensions(struct box *box,
 
 		scaled = false;
 		/* Deal with min/max-height */
-		if (min_height >  0 && min_height > *height) {
+		എങ്കിൽ (min_height >  0 && min_height > *height) {
 			*height = min_height;
 			scaled = true;
 		}
-		if (max_height >= 0 && max_height < *height) {
+		എങ്കിൽ (max_height >= 0 && max_height < *height) {
 			*height = max_height;
 			scaled = true;
 		}
 
-		if (scaled && (intrinsic_height != 0)) {
+		എങ്കിൽ (scaled && (intrinsic_height != 0)) {
 			/* Update width */
 			*width = (*height * intrinsic_width) /
 					intrinsic_height;
 		}
 
-	} else if (*width == AUTO) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (*width == AUTO) {
 		/* Have given height; width is calculated from the given height
 		 * and ratio of intrinsic dimensions */
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		പൂർണ്ണസംഖ്യ intrinsic_width = content_get_width(box->object);
+		പൂർണ്ണസംഖ്യ intrinsic_height = content_get_height(box->object);
 
-		if (intrinsic_height != 0)
+		എങ്കിൽ (intrinsic_height != 0)
 			*width = (*height * intrinsic_width) /
 					intrinsic_height;
-		else
+		അല്ലെങ്കിൽ
 			*width = intrinsic_width;
 
-		if (min_width >  0 && min_width > *width)
+		എങ്കിൽ (min_width >  0 && min_width > *width)
 			*width = min_width;
-		if (max_width >= 0 && max_width < *width)
+		എങ്കിൽ (max_width >= 0 && max_width < *width)
 			*width = max_width;
 
-	} else if (*height == AUTO) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (*height == AUTO) {
 		/* Have given width; height is calculated from the given width
 		 * and ratio of intrinsic dimensions */
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		പൂർണ്ണസംഖ്യ intrinsic_width = content_get_width(box->object);
+		പൂർണ്ണസംഖ്യ intrinsic_height = content_get_height(box->object);
 
-		if (min_width >  0 && min_width > *width)
+		എങ്കിൽ (min_width >  0 && min_width > *width)
 			*width = min_width;
-		if (max_width >= 0 && max_width < *width)
+		എങ്കിൽ (max_width >= 0 && max_width < *width)
 			*width = max_width;
 
-		if (intrinsic_width != 0)
+		എങ്കിൽ (intrinsic_width != 0)
 			*height = (*width * intrinsic_height) /
 					intrinsic_width;
-		else
+		അല്ലെങ്കിൽ
 			*height = intrinsic_height;
 	}
 }
@@ -227,20 +227,20 @@ layout_get_object_dimensions(struct box *box,
  * \param  width  width of containing block
  * \return  length of indent
  */
-static int layout_text_indent(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style, int width)
+സ്ഥിതം പൂർണ്ണസംഖ്യ layout_text_indent(
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		സ്ഥിരം css_computed_style *style, പൂർണ്ണസംഖ്യ width)
 {
-	css_fixed value = 0;
+	css_fixed മൂല്യം = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	css_computed_text_indent(style, &value, &unit);
+	css_computed_text_indent(style, &മൂല്യം, &unit);
 
-	if (unit == CSS_UNIT_PCT) {
-		return FPCT_OF_INT_TOINT(value, width);
-	} else {
-		return FIXTOINT(css_unit_len2device_px(style, unit_len_ctx,
-				value, unit));
+	എങ്കിൽ (unit == CSS_UNIT_PCT) {
+		തിരികെ FPCT_OF_INT_TOINT(മൂല്യം, width);
+	} അല്ലെങ്കിൽ {
+		തിരികെ FIXTOINT(css_unit_len2device_px(style, unit_len_ctx,
+				മൂല്യം, unit));
 	}
 }
 
@@ -254,40 +254,40 @@ static int layout_text_indent(
  * \post  table->min_width and table->max_width filled in,
  *        0 <= table->min_width <= table->max_width
  */
-static void layout_minmax_table(struct box *table,
-		const struct gui_layout_table *font_func,
-		const html_content *content)
+സ്ഥിതം ശൂന്യം layout_minmax_table(ഘടന box *table,
+		സ്ഥിരം ഘടന gui_layout_table *font_func,
+		സ്ഥിരം html_content *content)
 {
-	unsigned int i, j;
-	int width;
-	int border_spacing_h = 0;
-	int table_min = 0, table_max = 0;
-	int extra_fixed = 0;
-	float extra_frac = 0;
-	struct column *col;
-	struct box *row_group, *row, *cell;
+	unsigned പൂർണ്ണസംഖ്യ i, j;
+	പൂർണ്ണസംഖ്യ width;
+	പൂർണ്ണസംഖ്യ border_spacing_h = 0;
+	പൂർണ്ണസംഖ്യ table_min = 0, table_max = 0;
+	പൂർണ്ണസംഖ്യ extra_fixed = 0;
+	ദശാംശം extra_frac = 0;
+	ഘടന column *col;
+	ഘടന box *row_group, *row, *cell;
 
 	/* check if the widths have already been calculated */
-	if (table->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	എങ്കിൽ (table->max_width != UNKNOWN_MAX_WIDTH)
+		തിരികെ;
 
-	if (table_calculate_column_types(&content->unit_len_ctx, table) == false) {
+	എങ്കിൽ (table_calculate_column_types(&content->unit_len_ctx, table) == false) {
 		NSLOG(netsurf, ERROR,
 				"Could not establish table column types.");
-		return;
+		തിരികെ;
 	}
 	col = table->col;
 
 	/* start with 0 except for fixed-width columns */
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_FIXED)
+	വേണ്ടി (i = 0; i != table->columns; i++) {
+		എങ്കിൽ (col[i].type == COLUMN_WIDTH_FIXED)
 			col[i].min = col[i].max = col[i].width;
-		else
+		അല്ലെങ്കിൽ
 			col[i].min = col[i].max = 0;
 	}
 
 	/* border-spacing is used in the separated borders model */
-	if (css_computed_border_collapse(table->style) ==
+	എങ്കിൽ (css_computed_border_collapse(table->style) ==
 			CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
@@ -301,73 +301,73 @@ static void layout_minmax_table(struct box *table,
 	}
 
 	/* 1st pass: consider cells with colspan 1 only */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-	for (row = row_group->children; row; row = row->next)
-	for (cell = row->children; cell; cell = cell->next) {
-		assert(cell->type == BOX_TABLE_CELL);
-		assert(cell->style);
+	വേണ്ടി (row_group = table->children; row_group; row_group =row_group->next)
+	വേണ്ടി (row = row_group->children; row; row = row->next)
+	വേണ്ടി (cell = row->children; cell; cell = cell->next) {
+		പ്രതിജ്ഞാ(cell->type == BOX_TABLE_CELL);
+		പ്രതിജ്ഞാ(cell->style);
 		/** TODO: Handle colspan="0" correctly.
 		 *        It's currently converted to 1 in box normaisation */
-		assert(cell->columns != 0);
+		പ്രതിജ്ഞാ(cell->columns != 0);
 
-		if (cell->columns != 1)
-			continue;
+		എങ്കിൽ (cell->columns != 1)
+			തുടരുക;
 
 		layout_minmax_block(cell, font_func, content);
 		i = cell->start_column;
 
-		if (col[i].positioned)
-			continue;
+		എങ്കിൽ (col[i].positioned)
+			തുടരുക;
 
 		/* update column min, max widths using cell widths */
-		if (col[i].min < cell->min_width)
+		എങ്കിൽ (col[i].min < cell->min_width)
 			col[i].min = cell->min_width;
-		if (col[i].max < cell->max_width)
+		എങ്കിൽ (col[i].max < cell->max_width)
 			col[i].max = cell->max_width;
 	}
 
 	/* 2nd pass: cells which span multiple columns */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-	for (row = row_group->children; row; row = row->next)
-	for (cell = row->children; cell; cell = cell->next) {
-		unsigned int flexible_columns = 0;
-		int min = 0, max = 0, fixed_width = 0, extra;
+	വേണ്ടി (row_group = table->children; row_group; row_group =row_group->next)
+	വേണ്ടി (row = row_group->children; row; row = row->next)
+	വേണ്ടി (cell = row->children; cell; cell = cell->next) {
+		unsigned പൂർണ്ണസംഖ്യ flexible_columns = 0;
+		പൂർണ്ണസംഖ്യ min = 0, max = 0, fixed_width = 0, extra;
 
-		if (cell->columns == 1)
-			continue;
+		എങ്കിൽ (cell->columns == 1)
+			തുടരുക;
 
 		layout_minmax_block(cell, font_func, content);
 		i = cell->start_column;
 
 		/* find min width so far of spanned columns, and count
 		 * number of non-fixed spanned columns and total fixed width */
-		for (j = 0; j != cell->columns; j++) {
+		വേണ്ടി (j = 0; j != cell->columns; j++) {
 			min += col[i + j].min;
-			if (col[i + j].type == COLUMN_WIDTH_FIXED)
+			എങ്കിൽ (col[i + j].type == COLUMN_WIDTH_FIXED)
 				fixed_width += col[i + j].width;
-			else
+			അല്ലെങ്കിൽ
 				flexible_columns++;
 		}
 		min += (cell->columns - 1) * border_spacing_h;
 
 		/* distribute extra min to spanned columns */
-		if (min < cell->min_width) {
-			if (flexible_columns == 0) {
+		എങ്കിൽ (min < cell->min_width) {
+			എങ്കിൽ (flexible_columns == 0) {
 				extra = 1 + (cell->min_width - min) /
 						cell->columns;
-				for (j = 0; j != cell->columns; j++) {
+				വേണ്ടി (j = 0; j != cell->columns; j++) {
 					col[i + j].min += extra;
-					if (col[i + j].max < col[i + j].min)
+					എങ്കിൽ (col[i + j].max < col[i + j].min)
 						col[i + j].max = col[i + j].min;
 				}
-			} else {
+			} അല്ലെങ്കിൽ {
 				extra = 1 + (cell->min_width - min) /
 						flexible_columns;
-				for (j = 0; j != cell->columns; j++) {
-					if (col[i + j].type !=
+				വേണ്ടി (j = 0; j != cell->columns; j++) {
+					എങ്കിൽ (col[i + j].type !=
 							COLUMN_WIDTH_FIXED) {
 						col[i + j].min += extra;
-						if (col[i + j].max <
+						എങ്കിൽ (col[i + j].max <
 								col[i + j].min)
 							col[i + j].max =
 								col[i + j].min;
@@ -377,56 +377,56 @@ static void layout_minmax_table(struct box *table,
 		}
 
 		/* find max width so far of spanned columns */
-		for (j = 0; j != cell->columns; j++)
+		വേണ്ടി (j = 0; j != cell->columns; j++)
 			max += col[i + j].max;
 		max += (cell->columns - 1) * border_spacing_h;
 
 		/* distribute extra max to spanned columns */
-		if (max < cell->max_width && flexible_columns) {
+		എങ്കിൽ (max < cell->max_width && flexible_columns) {
 			extra = 1 + (cell->max_width - max) / flexible_columns;
-			for (j = 0; j != cell->columns; j++)
-				if (col[i + j].type != COLUMN_WIDTH_FIXED)
+			വേണ്ടി (j = 0; j != cell->columns; j++)
+				എങ്കിൽ (col[i + j].type != COLUMN_WIDTH_FIXED)
 					col[i + j].max += extra;
 		}
 	}
 
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].max < col[i].min) {
+	വേണ്ടി (i = 0; i != table->columns; i++) {
+		എങ്കിൽ (col[i].max < col[i].min) {
 			box_dump(stderr, table, 0, true);
-			assert(0);
+			പ്രതിജ്ഞാ(0);
 		}
 		table_min += col[i].min;
 		table_max += col[i].max;
 	}
 
 	/* fixed width takes priority, unless it is too narrow */
-	if (css_computed_width_px(table->style, &content->unit_len_ctx,
+	എങ്കിൽ (css_computed_width_px(table->style, &content->unit_len_ctx,
 			-1, &width) == CSS_WIDTH_SET) {
-		if (table_min < width)
+		എങ്കിൽ (table_min < width)
 			table_min = width;
-		if (table_max < width)
+		എങ്കിൽ (table_max < width)
 			table_max = width;
 	}
 
 	/* add margins, border, padding to min, max widths */
 	calculate_mbp_width(&content->unit_len_ctx,
-			table->style, LEFT, true, true, true,
+			table->style, ഇടത്_2, true, true, true,
 			&extra_fixed, &extra_frac);
 	calculate_mbp_width(&content->unit_len_ctx,
-			table->style, RIGHT, true, true, true,
+			table->style, വലത്_2, true, true, true,
 			&extra_fixed, &extra_frac);
-	if (extra_fixed < 0)
+	എങ്കിൽ (extra_fixed < 0)
 		extra_fixed = 0;
-	if (extra_frac < 0)
+	എങ്കിൽ (extra_frac < 0)
 		extra_frac = 0;
-	if (1.0 <= extra_frac)
+	എങ്കിൽ (1.0 <= extra_frac)
 		extra_frac = 0.9;
 	table->min_width = (table_min + extra_fixed) / (1.0 - extra_frac);
 	table->max_width = (table_max + extra_fixed) / (1.0 - extra_frac);
 	table->min_width += (table->columns + 1) * border_spacing_h;
 	table->max_width += (table->columns + 1) * border_spacing_h;
 
-	assert(0 <= table->min_width && table->min_width <= table->max_width);
+	പ്രതിജ്ഞാ(0 <= table->min_width && table->min_width <= table->max_width);
 }
 
 /**
@@ -435,16 +435,16 @@ static void layout_minmax_table(struct box *table,
  * \param[in]  b  Box to check.
  * \return true iff box has percnetage max width.
  */
-static inline bool box_has_percentage_max_width(struct box *b)
+സ്ഥിതം വരിയിൽ bool box_has_percentage_max_width(ഘടന box *b)
 {
 	css_unit unit = CSS_UNIT_PX;
-	enum css_max_width_e type;
-	css_fixed value = 0;
+	എണ്ണൽ css_max_width_e type;
+	css_fixed മൂല്യം = 0;
 
-	assert(b != NULL);
+	പ്രതിജ്ഞാ(b != ശൂന്യ);
 
-	type = css_computed_max_width(b->style, &value, &unit);
-	return ((type == CSS_MAX_WIDTH_SET) && (unit == CSS_UNIT_PCT));
+	type = css_computed_max_width(b->style, &മൂല്യം, &unit);
+	തിരികെ ((type == CSS_MAX_WIDTH_SET) && (unit == CSS_UNIT_PCT));
 }
 
 /**
@@ -459,26 +459,26 @@ static inline bool box_has_percentage_max_width(struct box *b)
  * \return  first box in next line, or 0 if no more lines
  * \post  0 <= *line_min <= *line_max
  */
-static struct box *
-layout_minmax_line(struct box *first,
-		   int *line_min,
-		   int *line_max,
-		   bool first_line,
-		   bool *line_has_height,
-		   const struct gui_layout_table *font_func,
-		   const html_content *content)
+സ്ഥിതം ഘടന box *
+layout_minmax_വരി(ഘടന box *first,
+		   പൂർണ്ണസംഖ്യ *വരി_min,
+		   പൂർണ്ണസംഖ്യ *വരി_max,
+		   bool first_വരി,
+		   bool *വരി_has_height,
+		   സ്ഥിരം ഘടന gui_layout_table *font_func,
+		   സ്ഥിരം html_content *content)
 {
-	int min = 0, max = 0, width, height, fixed;
-	float frac;
+	പൂർണ്ണസംഖ്യ min = 0, max = 0, width, height, fixed;
+	ദശാംശം frac;
 	size_t i, j;
-	struct box *b;
-	struct box *block;
+	ഘടന box *b;
+	ഘടന box *block;
 	plot_font_style_t fstyle;
 	bool no_wrap;
 
-	assert(first->parent);
-	assert(first->parent->parent);
-	assert(first->parent->parent->style);
+	പ്രതിജ്ഞാ(first->parent);
+	പ്രതിജ്ഞാ(first->parent->parent);
+	പ്രതിജ്ഞാ(first->parent->parent->style);
 
 	block = first->parent->parent;
 	no_wrap = (css_computed_white_space(block->style) ==
@@ -486,223 +486,223 @@ layout_minmax_line(struct box *first,
 			css_computed_white_space(block->style) ==
 			CSS_WHITE_SPACE_PRE);
 
-	*line_has_height = false;
+	*വരി_has_height = false;
 
 	/* corresponds to the pass 1 loop in layout_line() */
-	for (b = first; b; b = b->next) {
-		enum css_width_e wtype;
-		enum css_height_e htype;
-		enum css_box_sizing_e bs;
-		css_fixed value = 0;
+	വേണ്ടി (b = first; b; b = b->next) {
+		എണ്ണൽ css_width_e wtype;
+		എണ്ണൽ css_height_e htype;
+		എണ്ണൽ css_box_sizing_e bs;
+		css_fixed മൂല്യം = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		assert(lh__box_is_inline_content(b));
+		പ്രതിജ്ഞാ(lh__box_is_inline_content(b));
 
 		NSLOG(layout, DEBUG, "%p: min %i, max %i", b, min, max);
 
-		if (b->type == BOX_BR) {
+		എങ്കിൽ (b->type == BOX_BR) {
 			b = b->next;
-			break;
+			നിർത്തുക;
 		}
 
-		if (lh__box_is_float_box(b)) {
-			assert(b->children);
-			if (b->children->type == BOX_TABLE)
+		എങ്കിൽ (lh__box_is_float_box(b)) {
+			പ്രതിജ്ഞാ(b->children);
+			എങ്കിൽ (b->children->type == BOX_TABLE)
 				layout_minmax_table(b->children, font_func,
 						content);
-			else
+			അല്ലെങ്കിൽ
 				layout_minmax_block(b->children, font_func,
 						content);
 			b->min_width = b->children->min_width;
 			b->max_width = b->children->max_width;
-			if (min < b->min_width)
+			എങ്കിൽ (min < b->min_width)
 				min = b->min_width;
 			max += b->max_width;
-			continue;
+			തുടരുക;
 		}
 
-		if (b->type == BOX_INLINE_BLOCK || b->type == BOX_INLINE_FLEX) {
+		എങ്കിൽ (b->type == BOX_INLINE_BLOCK || b->type == BOX_INLINE_FLEX) {
 			layout_minmax_block(b, font_func, content);
-			if (min < b->min_width)
+			എങ്കിൽ (min < b->min_width)
 				min = b->min_width;
 			max += b->max_width;
 
-			if (b->flags & HAS_HEIGHT)
-				*line_has_height = true;
-			continue;
+			എങ്കിൽ (b->flags & HAS_HEIGHT)
+				*വരി_has_height = true;
+			തുടരുക;
 		}
 
-		assert(b->style);
+		പ്രതിജ്ഞാ(b->style);
 		font_plot_style_from_css(&content->unit_len_ctx, b->style, &fstyle);
 
-		if (b->type == BOX_INLINE && !b->object &&
+		എങ്കിൽ (b->type == BOX_INLINE && !b->object &&
 				!(b->flags & REPLACE_DIM) &&
 				!(b->flags & IFRAME)) {
 			fixed = frac = 0;
 			calculate_mbp_width(&content->unit_len_ctx,
-					b->style, LEFT, true, true, true,
+					b->style, ഇടത്_2, true, true, true,
 					&fixed, &frac);
-			if (!b->inline_end)
+			എങ്കിൽ (!b->inline_end)
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+						b->style, വലത്_2,
 						true, true, true,
 						&fixed, &frac);
-			if (0 < fixed)
+			എങ്കിൽ (0 < fixed)
 				max += fixed;
-			*line_has_height = true;
+			*വരി_has_height = true;
 			/* \todo  update min width, consider fractional extra */
-		} else if (b->type == BOX_INLINE_END) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (b->type == BOX_INLINE_END) {
 			fixed = frac = 0;
 			calculate_mbp_width(&content->unit_len_ctx,
-					b->inline_end->style, RIGHT,
+					b->inline_end->style, വലത്_2,
 					true, true, true,
 					&fixed, &frac);
-			if (0 < fixed)
+			എങ്കിൽ (0 < fixed)
 				max += fixed;
 
-			if (b->next) {
-				if (b->space == UNKNOWN_WIDTH) {
+			എങ്കിൽ (b->next) {
+				എങ്കിൽ (b->space == UNKNOWN_WIDTH) {
 					font_func->width(&fstyle, " ", 1,
 							 &b->space);
 				}
 				max += b->space;
 			}
 
-			*line_has_height = true;
-			continue;
+			*വരി_has_height = true;
+			തുടരുക;
 		}
 
-		if (lh__box_is_replace(b) == false) {
+		എങ്കിൽ (lh__box_is_replace(b) == false) {
 			/* inline non-replaced, 10.3.1 and 10.6.1 */
 			bool no_wrap_box;
-			if (!b->text)
-				continue;
+			എങ്കിൽ (!b->text)
+				തുടരുക;
 
 			no_wrap_box = (css_computed_white_space(b->style) ==
 					CSS_WHITE_SPACE_NOWRAP ||
 					css_computed_white_space(b->style) ==
 					CSS_WHITE_SPACE_PRE);
 
-			if (b->width == UNKNOWN_WIDTH) {
+			എങ്കിൽ (b->width == UNKNOWN_WIDTH) {
 				/** \todo handle errors */
 
 				/* If it's a select element, we must use the
 				 * width of the widest option text */
-				if (b->parent->parent->gadget &&
+				എങ്കിൽ (b->parent->parent->gadget &&
 						b->parent->parent->gadget->type
 						== GADGET_SELECT) {
-					int opt_maxwidth = 0;
-					struct form_option *o;
+					പൂർണ്ണസംഖ്യ opt_maxwidth = 0;
+					ഘടന form_option *o;
 
-					for (o = b->parent->parent->gadget->
-							data.select.items; o;
+					വേണ്ടി (o = b->parent->parent->gadget->
+							data.select.ഇനങ്ങൾ; o;
 							o = o->next) {
-						int opt_width;
+						പൂർണ്ണസംഖ്യ opt_width;
 						font_func->width(&fstyle,
 								o->text,
 								strlen(o->text),
 								&opt_width);
 
-						if (opt_maxwidth < opt_width)
+						എങ്കിൽ (opt_maxwidth < opt_width)
 							opt_maxwidth =opt_width;
 					}
 
 					b->width = opt_maxwidth;
-					if (nsoption_bool(core_select_menu))
+					എങ്കിൽ (nsoption_bool(core_select_menu))
 						b->width += SCROLLBAR_WIDTH;
 
-				} else {
+				} അല്ലെങ്കിൽ {
 					font_func->width(&fstyle, b->text,
 						b->length, &b->width);
 					b->flags |= MEASURED;
 				}
 			}
 			max += b->width;
-			if (b->next) {
-				if (b->space == UNKNOWN_WIDTH) {
+			എങ്കിൽ (b->next) {
+				എങ്കിൽ (b->space == UNKNOWN_WIDTH) {
 					font_func->width(&fstyle, " ", 1,
 							 &b->space);
 				}
 				max += b->space;
 			}
 
-			if (no_wrap) {
+			എങ്കിൽ (no_wrap) {
 				/* Don't wrap due to block style,
 				 * so min is the same as max */
 				min = max;
 
-			} else if (no_wrap_box) {
+			} അല്ലെങ്കിൽ എങ്കിൽ (no_wrap_box) {
 				/* This inline box can't be wrapped,
 				 * for min, consider box's width */
-				if (min < b->width)
+				എങ്കിൽ (min < b->width)
 					min = b->width;
 
-			} else if (b->parent->flags & NEED_MIN) {
+			} അല്ലെങ്കിൽ എങ്കിൽ (b->parent->flags & NEED_MIN) {
 				/* If we care what the minimum width is,
 				 * calculate it.  (It's only needed if we're
 				 * shrinking-to-fit.) */
 				/* min = widest single word */
 				i = 0;
-				do {
-					for (j = i; j != b->length &&
+				ചെയ്യുക {
+					വേണ്ടി (j = i; j != b->length &&
 							b->text[j] != ' '; j++)
 						;
 					font_func->width(&fstyle, b->text + i,
 							 j - i, &width);
-					if (min < width)
+					എങ്കിൽ (min < width)
 						min = width;
 					i = j + 1;
-				} while (j != b->length);
+				} ആകുമ്പോൾ (j != b->length);
 			}
 
-			*line_has_height = true;
+			*വരി_has_height = true;
 
-			continue;
+			തുടരുക;
 		}
 
 		/* inline replaced, 10.3.2 and 10.6.2 */
-		assert(b->style);
+		പ്രതിജ്ഞാ(b->style);
 
 		bs = css_computed_box_sizing(block->style);
 
 		/* calculate box width */
 		wtype = css_computed_width_px(b->style,
 				&content->unit_len_ctx, -1, &width);
-		if (wtype == CSS_WIDTH_SET) {
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		എങ്കിൽ (wtype == CSS_WIDTH_SET) {
+			എങ്കിൽ (bs == CSS_BOX_SIZING_BORDER_BOX) {
 				fixed = frac = 0;
 				calculate_mbp_width(&content->unit_len_ctx,
-						block->style, LEFT,
+						block->style, ഇടത്_2,
 						false, true, true,
 						&fixed, &frac);
 				calculate_mbp_width(&content->unit_len_ctx,
-						block->style, RIGHT,
+						block->style, വലത്_2,
 						false, true, true,
 						&fixed, &frac);
-				if (width < fixed) {
+				എങ്കിൽ (width < fixed) {
 					width = fixed;
 				}
 			}
-			if (width < 0)
+			എങ്കിൽ (width < 0)
 				width = 0;
-		} else {
+		} അല്ലെങ്കിൽ {
 			width = AUTO;
 		}
 
 		/* height */
-		htype = css_computed_height(b->style, &value, &unit);
-		if (htype == CSS_HEIGHT_SET) {
+		htype = css_computed_height(b->style, &മൂല്യം, &unit);
+		എങ്കിൽ (htype == CSS_HEIGHT_SET) {
 			height = FIXTOINT(css_unit_len2device_px(
 					b->style,
 					&content->unit_len_ctx,
-					value, unit));
-		} else {
+					മൂല്യം, unit));
+		} അല്ലെങ്കിൽ {
 			height = AUTO;
 		}
 
-		if (b->object || (b->flags & REPLACE_DIM)) {
-			if (b->object) {
-				int temp_height = height;
+		എങ്കിൽ (b->object || (b->flags & REPLACE_DIM)) {
+			എങ്കിൽ (b->object) {
+				പൂർണ്ണസംഖ്യ temp_height = height;
 				layout_get_object_dimensions(b,
 						&width, &temp_height,
 						INT_MIN, INT_MAX,
@@ -710,91 +710,91 @@ layout_minmax_line(struct box *first,
 			}
 
 			fixed = frac = 0;
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
+			എങ്കിൽ (bs == CSS_BOX_SIZING_BORDER_BOX) {
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+						b->style, ഇടത്_2,
 						true, false, false,
 						&fixed, &frac);
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+						b->style, വലത്_2,
 						true, false, false,
 						&fixed, &frac);
-			} else {
+			} അല്ലെങ്കിൽ {
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+						b->style, ഇടത്_2,
 						true, true, true,
 						&fixed, &frac);
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+						b->style, വലത്_2,
 						true, true, true,
 						&fixed, &frac);
 			}
-			if (0 < width + fixed)
+			എങ്കിൽ (0 < width + fixed)
 				width += fixed;
-		} else if (b->flags & IFRAME) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (b->flags & IFRAME) {
 			/* TODO: handle percentage widths properly */
-			if (width == AUTO)
+			എങ്കിൽ (width == AUTO)
 				width = 400;
 
 			fixed = frac = 0;
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
+			എങ്കിൽ (bs == CSS_BOX_SIZING_BORDER_BOX) {
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+						b->style, ഇടത്_2,
 						true, false, false,
 						&fixed, &frac);
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+						b->style, വലത്_2,
 						true, false, false,
 						&fixed, &frac);
-			} else {
+			} അല്ലെങ്കിൽ {
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, LEFT,
+						b->style, ഇടത്_2,
 						true, true, true,
 						&fixed, &frac);
 				calculate_mbp_width(&content->unit_len_ctx,
-						b->style, RIGHT,
+						b->style, വലത്_2,
 						true, true, true,
 						&fixed, &frac);
 			}
 
-			if (0 < width + fixed)
+			എങ്കിൽ (0 < width + fixed)
 				width += fixed;
 
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* form control with no object */
-			if (width == AUTO)
+			എങ്കിൽ (width == AUTO)
 				width = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx,
 						INTTOFIX(1), CSS_UNIT_EM));
 		}
 
-		if (min < width && !box_has_percentage_max_width(b))
+		എങ്കിൽ (min < width && !box_has_percentage_max_width(b))
 			min = width;
-		if (width > 0)
+		എങ്കിൽ (width > 0)
 			max += width;
 
-		*line_has_height = true;
+		*വരി_has_height = true;
 	}
 
-	if (first_line) {
+	എങ്കിൽ (first_വരി) {
 		/* todo: handle percentage values properly */
 		/* todo: handle text-indent interaction with floats */
-		int text_indent = layout_text_indent(&content->unit_len_ctx,
+		പൂർണ്ണസംഖ്യ text_indent = layout_text_indent(&content->unit_len_ctx,
 				first->parent->parent->style, 100);
 		min = (min + text_indent < 0) ? 0 : min + text_indent;
 		max = (max + text_indent < 0) ? 0 : max + text_indent;
 	}
 
-	*line_min = min;
-	*line_max = max;
+	*വരി_min = min;
+	*വരി_max = max;
 
 	NSLOG(layout, DEBUG,  "line_min %i, line_max %i", min, max);
 
-	assert(b != first);
-	assert(0 <= *line_min);
-	assert(*line_min <= *line_max);
-	return b;
+	പ്രതിജ്ഞാ(b != first);
+	പ്രതിജ്ഞാ(0 <= *വരി_min);
+	പ്രതിജ്ഞാ(*വരി_min <= *വരി_max);
+	തിരികെ b;
 }
 
 
@@ -807,42 +807,42 @@ layout_minmax_line(struct box *first,
  * \post  inline_container->min_width and inline_container->max_width filled in,
  *        0 <= inline_container->min_width <= inline_container->max_width
  */
-static void
-layout_minmax_inline_container(struct box *inline_container,
+സ്ഥിതം ശൂന്യം
+layout_minmax_inline_container(ഘടന box *inline_container,
 			       bool *has_height,
-			       const struct gui_layout_table *font_func,
-			       const html_content *content)
+			       സ്ഥിരം ഘടന gui_layout_table *font_func,
+			       സ്ഥിരം html_content *content)
 {
-	struct box *child;
-	int line_min = 0, line_max = 0;
-	int min = 0, max = 0;
-	bool first_line = true;
-	bool line_has_height;
+	ഘടന box *child;
+	പൂർണ്ണസംഖ്യ വരി_min = 0, വരി_max = 0;
+	പൂർണ്ണസംഖ്യ min = 0, max = 0;
+	bool first_വരി = true;
+	bool വരി_has_height;
 
-	assert(inline_container->type == BOX_INLINE_CONTAINER);
+	പ്രതിജ്ഞാ(inline_container->type == BOX_INLINE_CONTAINER);
 
 	/* check if the widths have already been calculated */
-	if (inline_container->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	എങ്കിൽ (inline_container->max_width != UNKNOWN_MAX_WIDTH)
+		തിരികെ;
 
 	*has_height = false;
 
-	for (child = inline_container->children; child; ) {
-		child = layout_minmax_line(child, &line_min, &line_max,
-				first_line, &line_has_height, font_func,
+	വേണ്ടി (child = inline_container->children; child; ) {
+		child = layout_minmax_വരി(child, &വരി_min, &വരി_max,
+				first_വരി, &വരി_has_height, font_func,
 				content);
-		if (min < line_min)
-			min = line_min;
-		if (max < line_max)
-			max = line_max;
-		first_line = false;
-		*has_height |= line_has_height;
+		എങ്കിൽ (min < വരി_min)
+			min = വരി_min;
+		എങ്കിൽ (max < വരി_max)
+			max = വരി_max;
+		first_വരി = false;
+		*has_height |= വരി_has_height;
 	}
 
 	inline_container->min_width = min;
 	inline_container->max_width = max;
 
-	assert(0 <= inline_container->min_width &&
+	പ്രതിജ്ഞാ(0 <= inline_container->min_width &&
 			inline_container->min_width <=
 			inline_container->max_width);
 }
@@ -856,62 +856,62 @@ layout_minmax_inline_container(struct box *inline_container,
  * \post  block->min_width and block->max_width filled in,
  *        0 <= block->min_width <= block->max_width
  */
-static void layout_minmax_block(
-		struct box *block,
-		const struct gui_layout_table *font_func,
-		const html_content *content)
+സ്ഥിതം ശൂന്യം layout_minmax_block(
+		ഘടന box *block,
+		സ്ഥിരം ഘടന gui_layout_table *font_func,
+		സ്ഥിരം html_content *content)
 {
-	struct box *child;
-	int min = 0, max = 0;
-	int extra_fixed = 0;
-	float extra_frac = 0;
-	enum css_width_e wtype = CSS_WIDTH_AUTO;
+	ഘടന box *child;
+	പൂർണ്ണസംഖ്യ min = 0, max = 0;
+	പൂർണ്ണസംഖ്യ extra_fixed = 0;
+	ദശാംശം extra_frac = 0;
+	എണ്ണൽ css_width_e wtype = CSS_WIDTH_AUTO;
 	css_fixed width = 0;
 	css_unit wunit = CSS_UNIT_PX;
-	enum css_height_e htype = CSS_HEIGHT_AUTO;
+	എണ്ണൽ css_height_e htype = CSS_HEIGHT_AUTO;
 	css_fixed height = 0;
 	css_unit hunit = CSS_UNIT_PX;
-	enum css_box_sizing_e bs = CSS_BOX_SIZING_CONTENT_BOX;
+	എണ്ണൽ css_box_sizing_e bs = CSS_BOX_SIZING_CONTENT_BOX;
 	bool using_min_border_box = false;
 	bool using_max_border_box = false;
 	bool child_has_height = false;
 
-	assert(block->type == BOX_BLOCK ||
+	പ്രതിജ്ഞാ(block->type == BOX_BLOCK ||
 			block->type == BOX_FLEX ||
 			block->type == BOX_INLINE_FLEX ||
 			block->type == BOX_INLINE_BLOCK ||
 			block->type == BOX_TABLE_CELL);
 
 	/* check if the widths have already been calculated */
-	if (block->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	എങ്കിൽ (block->max_width != UNKNOWN_MAX_WIDTH)
+		തിരികെ;
 
-	if (block->style != NULL) {
+	എങ്കിൽ (block->style != ശൂന്യ) {
 		wtype = css_computed_width(block->style, &width, &wunit);
 		htype = css_computed_height(block->style, &height, &hunit);
 		bs = css_computed_box_sizing(block->style);
 	}
 
 	/* set whether the minimum width is of any interest for this box */
-	if (((block->parent && lh__box_is_float_box(block->parent)) ||
+	എങ്കിൽ (((block->parent && lh__box_is_float_box(block->parent)) ||
 			block->type == BOX_INLINE_BLOCK ||
 			block->type == BOX_INLINE_FLEX) &&
 			wtype != CSS_WIDTH_SET) {
 		/* box shrinks to fit; need minimum width */
 		block->flags |= NEED_MIN;
-	} else if (block->type == BOX_TABLE_CELL) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (block->type == BOX_TABLE_CELL) {
 		/* box shrinks to fit; need minimum width */
 		block->flags |= NEED_MIN;
-	} else if (block->parent && (block->parent->flags & NEED_MIN) &&
+	} അല്ലെങ്കിൽ എങ്കിൽ (block->parent && (block->parent->flags & NEED_MIN) &&
 			wtype != CSS_WIDTH_SET) {
 		/* box inside shrink-to-fit context; need minimum width */
 		block->flags |= NEED_MIN;
-	} else if (block->parent && (block->parent->type == BOX_FLEX)) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (block->parent && (block->parent->type == BOX_FLEX)) {
 		/* box is flex item */
 		block->flags |= NEED_MIN;
 	}
 
-	if (block->gadget && (block->gadget->type == GADGET_TEXTBOX ||
+	എങ്കിൽ (block->gadget && (block->gadget->type == GADGET_TEXTBOX ||
 			block->gadget->type == GADGET_PASSWORD ||
 			block->gadget->type == GADGET_FILE ||
 			block->gadget->type == GADGET_TEXTAREA) &&
@@ -925,7 +925,7 @@ static void layout_minmax_block(
 		block->flags |= HAS_HEIGHT;
 	}
 
-	if (block->gadget && (block->gadget->type == GADGET_RADIO ||
+	എങ്കിൽ (block->gadget && (block->gadget->type == GADGET_RADIO ||
 			block->gadget->type == GADGET_CHECKBOX) &&
 			block->style && wtype == CSS_WIDTH_AUTO) {
 		css_fixed size = INTTOFIX(1);
@@ -939,136 +939,136 @@ static void layout_minmax_block(
 		block->flags |= HAS_HEIGHT;
 	}
 
-	if (block->object) {
-		if (content_get_type(block->object) == CONTENT_HTML) {
-			layout_minmax_block(html_get_box_tree(block->object),
+	എങ്കിൽ (block->object) {
+		എങ്കിൽ (content_get_type(block->object) == CONTENT_HTML) {
+			layout_minmax_block(html_get_box_വൃക്ഷം(block->object),
 					font_func, content);
-			min = html_get_box_tree(block->object)->min_width;
-			max = html_get_box_tree(block->object)->max_width;
-		} else {
+			min = html_get_box_വൃക്ഷം(block->object)->min_width;
+			max = html_get_box_വൃക്ഷം(block->object)->max_width;
+		} അല്ലെങ്കിൽ {
 			min = max = content_get_width(block->object);
 		}
 
 		block->flags |= HAS_HEIGHT;
-	} else if (block->flags & IFRAME) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (block->flags & IFRAME) {
 		/** \todo do we need to know the min/max width of the iframe's
 		 * content? */
 		block->flags |= HAS_HEIGHT;
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* recurse through children */
-		for (child = block->children; child; child = child->next) {
-			switch (child->type) {
-			case BOX_FLEX:
-			case BOX_BLOCK:
+		വേണ്ടി (child = block->children; child; child = child->next) {
+			തിരഞ്ഞെടുപ്പ് (child->type) {
+			അവസ്ഥ BOX_FLEX:
+			അവസ്ഥ BOX_BLOCK:
 				layout_minmax_block(child, font_func,
 						content);
-				if (child->flags & HAS_HEIGHT)
+				എങ്കിൽ (child->flags & HAS_HEIGHT)
 					child_has_height = true;
-				break;
-			case BOX_INLINE_CONTAINER:
-				if (block->flags & NEED_MIN)
+				നിർത്തുക;
+			അവസ്ഥ BOX_INLINE_CONTAINER:
+				എങ്കിൽ (block->flags & NEED_MIN)
 					child->flags |= NEED_MIN;
 
 				layout_minmax_inline_container(child,
 						&child_has_height, font_func,
 						content);
-				if (child_has_height &&
+				എങ്കിൽ (child_has_height &&
 						child ==
 						child->parent->children) {
 					block->flags |= MAKE_HEIGHT;
 				}
-				break;
-			case BOX_TABLE:
+				നിർത്തുക;
+			അവസ്ഥ BOX_TABLE:
 				layout_minmax_table(child, font_func,
 						content);
 				/* todo: fix for zero height tables */
 				child_has_height = true;
 				child->flags |= MAKE_HEIGHT;
-				break;
-			default:
-				assert(0);
+				നിർത്തുക;
+			സ്ഥിരസ്ഥിതി:
+				പ്രതിജ്ഞാ(0);
 			}
-			assert(child->max_width != UNKNOWN_MAX_WIDTH);
+			പ്രതിജ്ഞാ(child->max_width != UNKNOWN_MAX_WIDTH);
 
-			if (child->style &&
+			എങ്കിൽ (child->style &&
 					(css_computed_position(child->style) ==
 							CSS_POSITION_ABSOLUTE ||
 					css_computed_position(child->style) ==
 							CSS_POSITION_FIXED)) {
 				/* This child is positioned out of normal flow,
 				 * so it will have no affect on width */
-				continue;
+				തുടരുക;
 			}
 
-			if (lh__box_is_flex_container(block) &&
+			എങ്കിൽ (lh__box_is_flex_container(block) &&
 			    lh__flex_main_is_horizontal(block)) {
-				if (block->style != NULL &&
+				എങ്കിൽ (block->style != ശൂന്യ &&
 				    css_computed_flex_wrap(block->style) ==
 						CSS_FLEX_WRAP_NOWRAP) {
 					min += child->min_width;
-				} else {
-					if (min < child->min_width)
+				} അല്ലെങ്കിൽ {
+					എങ്കിൽ (min < child->min_width)
 						min = child->min_width;
 				}
 				max += child->max_width;
 
-			} else {
-				if (min < child->min_width)
+			} അല്ലെങ്കിൽ {
+				എങ്കിൽ (min < child->min_width)
 					min = child->min_width;
-				if (max < child->max_width)
+				എങ്കിൽ (max < child->max_width)
 					max = child->max_width;
 			}
 
-			if (child_has_height)
+			എങ്കിൽ (child_has_height)
 				block->flags |= HAS_HEIGHT;
 		}
 	}
 
-	if (max < min) {
+	എങ്കിൽ (max < min) {
 		box_dump(stderr, block, 0, true);
-		assert(0);
+		പ്രതിജ്ഞാ(0);
 	}
 
 	/* fixed width takes priority */
-	if (block->type != BOX_TABLE_CELL && !lh__box_is_flex_item(block)) {
+	എങ്കിൽ (block->type != BOX_TABLE_CELL && !lh__box_is_flex_item(block)) {
 		bool border_box = bs == CSS_BOX_SIZING_BORDER_BOX;
-		enum css_max_width_e max_type;
-		enum css_min_width_e min_type;
+		എണ്ണൽ css_max_width_e max_type;
+		എണ്ണൽ css_min_width_e min_type;
 		css_unit unit = CSS_UNIT_PX;
-		css_fixed value = 0;
-		int width;
+		css_fixed മൂല്യം = 0;
+		പൂർണ്ണസംഖ്യ width;
 
-		if (css_computed_width_px(block->style, &content->unit_len_ctx,
+		എങ്കിൽ (css_computed_width_px(block->style, &content->unit_len_ctx,
 				-1, &width) == CSS_WIDTH_SET) {
 			min = max = width;
 			using_max_border_box = border_box;
 			using_min_border_box = border_box;
 		}
 
-		min_type = css_computed_min_width(block->style, &value, &unit);
-		if (min_type == CSS_MIN_WIDTH_SET && unit != CSS_UNIT_PCT) {
-			int val = FIXTOINT(css_unit_len2device_px(block->style,
-					&content->unit_len_ctx, value, unit));
+		min_type = css_computed_min_width(block->style, &മൂല്യം, &unit);
+		എങ്കിൽ (min_type == CSS_MIN_WIDTH_SET && unit != CSS_UNIT_PCT) {
+			പൂർണ്ണസംഖ്യ val = FIXTOINT(css_unit_len2device_px(block->style,
+					&content->unit_len_ctx, മൂല്യം, unit));
 
-			if (min < val) {
+			എങ്കിൽ (min < val) {
 				min = val;
 				using_min_border_box = border_box;
 			}
 		}
 
-		max_type = css_computed_max_width(block->style, &value, &unit);
-		if (max_type == CSS_MAX_WIDTH_SET && unit != CSS_UNIT_PCT) {
-			int val = FIXTOINT(css_unit_len2device_px(block->style,
-					&content->unit_len_ctx, value, unit));
+		max_type = css_computed_max_width(block->style, &മൂല്യം, &unit);
+		എങ്കിൽ (max_type == CSS_MAX_WIDTH_SET && unit != CSS_UNIT_PCT) {
+			പൂർണ്ണസംഖ്യ val = FIXTOINT(css_unit_len2device_px(block->style,
+					&content->unit_len_ctx, മൂല്യം, unit));
 
-			if (val >= 0 && max > val) {
+			എങ്കിൽ (val >= 0 && max > val) {
 				max = val;
 				using_max_border_box = border_box;
 			}
 		}
 	}
 
-	if (htype == CSS_HEIGHT_SET && hunit != CSS_UNIT_PCT &&
+	എങ്കിൽ (htype == CSS_HEIGHT_SET && hunit != CSS_UNIT_PCT &&
 			height > INTTOFIX(0)) {
 		block->flags |= MAKE_HEIGHT;
 		block->flags |= HAS_HEIGHT;
@@ -1077,50 +1077,50 @@ static void layout_minmax_block(
 	/* add margins, border, padding to min, max widths */
 	/* Note: we don't know available width here so percentage margin
 	 * and paddings are wrong. */
-	calculate_mbp_width(&content->unit_len_ctx, block->style, LEFT,
+	calculate_mbp_width(&content->unit_len_ctx, block->style, ഇടത്_2,
 			false, true, true, &extra_fixed, &extra_frac);
-	calculate_mbp_width(&content->unit_len_ctx, block->style, RIGHT,
+	calculate_mbp_width(&content->unit_len_ctx, block->style, വലത്_2,
 			false, true, true, &extra_fixed, &extra_frac);
 
-	if (using_max_border_box) {
+	എങ്കിൽ (using_max_border_box) {
 		max -= extra_fixed;
 		max = max(max, 0);
 	}
 
-	if (using_min_border_box) {
+	എങ്കിൽ (using_min_border_box) {
 		min -= extra_fixed;
 		min = max(min, 0);
 	}
 
-	if (max < min) {
+	എങ്കിൽ (max < min) {
 		min = max;
 	}
 
-	calculate_mbp_width(&content->unit_len_ctx, block->style, LEFT,
+	calculate_mbp_width(&content->unit_len_ctx, block->style, ഇടത്_2,
 			true, false, false, &extra_fixed, &extra_frac);
-	calculate_mbp_width(&content->unit_len_ctx, block->style, RIGHT,
+	calculate_mbp_width(&content->unit_len_ctx, block->style, വലത്_2,
 			true, false, false, &extra_fixed, &extra_frac);
 
-	if (extra_fixed < 0)
+	എങ്കിൽ (extra_fixed < 0)
 		extra_fixed = 0;
-	if (extra_frac < 0)
+	എങ്കിൽ (extra_frac < 0)
 		extra_frac = 0;
-	if (1.0 <= extra_frac)
+	എങ്കിൽ (1.0 <= extra_frac)
 		extra_frac = 0.9;
-	if (block->style != NULL &&
-			(css_computed_float(block->style) == CSS_FLOAT_LEFT ||
-			css_computed_float(block->style) == CSS_FLOAT_RIGHT)) {
+	എങ്കിൽ (block->style != ശൂന്യ &&
+			(css_computed_float(block->style) == CSS_FLOAT_ഇടത് ||
+			css_computed_float(block->style) == CSS_FLOAT_വലത്)) {
 		/* floated boxs */
 		block->min_width = min + extra_fixed;
 		block->max_width = max + extra_fixed;
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* not floated */
 		block->min_width = (min + extra_fixed) / (1.0 - extra_frac);
 		block->max_width = (max + extra_fixed) / (1.0 - extra_frac);
 	}
 
-	assert(0 <= block->min_width);
-	assert(block->min_width <= block->max_width);
+	പ്രതിജ്ഞാ(0 <= block->min_width);
+	പ്രതിജ്ഞാ(block->min_width <= block->max_width);
 }
 
 
@@ -1135,19 +1135,19 @@ static void layout_minmax_block(
  * \param  max_neg_margin  updated to to maximum negative margin encountered
  * \return  next box that current margin collapses to, or NULL if none.
  */
-static struct box*
-layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
-			 struct box *box,
-			 struct box *block,
-			 int viewport_height,
-			 int *max_pos_margin,
-			 int *max_neg_margin)
+സ്ഥിതം ഘടന box*
+layout_next_margin_block(സ്ഥിരം css_unit_ctx *unit_len_ctx,
+			 ഘടന box *box,
+			 ഘടന box *block,
+			 പൂർണ്ണസംഖ്യ viewport_height,
+			 പൂർണ്ണസംഖ്യ *max_pos_margin,
+			 പൂർണ്ണസംഖ്യ *max_neg_margin)
 {
-	assert(block != NULL);
+	പ്രതിജ്ഞാ(block != ശൂന്യ);
 
-	while (box != NULL) {
+	ആകുമ്പോൾ (box != ശൂന്യ) {
 
-		if (box->type == BOX_INLINE_CONTAINER || (box->style &&
+		എങ്കിൽ (box->type == BOX_INLINE_CONTAINER || (box->style &&
 				(css_computed_position(box->style) !=
 					CSS_POSITION_ABSOLUTE &&
 				 css_computed_position(box->style) !=
@@ -1155,94 +1155,94 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
 			/* Not positioned */
 
 			/* Get margins */
-			if (box->style) {
+			എങ്കിൽ (box->style) {
 				layout_find_dimensions(unit_len_ctx,
 						box->parent->width,
 						viewport_height, box,
 						box->style,
-						NULL, NULL, NULL, NULL,
-						NULL, NULL, box->margin,
+						ശൂന്യ, ശൂന്യ, ശൂന്യ, ശൂന്യ,
+						ശൂന്യ, ശൂന്യ, box->margin,
 						box->padding, box->border);
 
 				/* Apply top margin */
-				if (*max_pos_margin < box->margin[TOP])
-					*max_pos_margin = box->margin[TOP];
-				else if (*max_neg_margin < -box->margin[TOP])
-					*max_neg_margin = -box->margin[TOP];
+				എങ്കിൽ (*max_pos_margin < box->margin[മുകൾ_2])
+					*max_pos_margin = box->margin[മുകൾ_2];
+				അല്ലെങ്കിൽ എങ്കിൽ (*max_neg_margin < -box->margin[മുകൾ_2])
+					*max_neg_margin = -box->margin[മുകൾ_2];
 			}
 
 			/* Check whether box is the box current margin collapses
 			 * to */
-			if (box->flags & MAKE_HEIGHT ||
-					box->border[TOP].width ||
-					box->padding[TOP] ||
+			എങ്കിൽ (box->flags & MAKE_HEIGHT ||
+					box->border[മുകൾ_2].width ||
+					box->padding[മുകൾ_2] ||
 					(box->style &&
 					css_computed_overflow_y(box->style) !=
 					CSS_OVERFLOW_VISIBLE) ||
 					(box->type == BOX_INLINE_CONTAINER &&
 					!box_is_first_child(box))) {
 				/* Collapse to this box; return it */
-				return box;
+				തിരികെ box;
 			}
 		}
 
 
 		/* Find next box */
-		if (box->type == BOX_BLOCK && !box->object && box->children &&
+		എങ്കിൽ (box->type == BOX_BLOCK && !box->object && box->children &&
 				box->style &&
 				css_computed_overflow_y(box->style) ==
 				CSS_OVERFLOW_VISIBLE) {
 			/* Down into children. */
 			box = box->children;
-		} else {
-			if (!box->next) {
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (!box->next) {
 				/* No more siblings:
 				 * Go up to first ancestor with a sibling. */
-				do {
+				ചെയ്യുക {
 					/* Apply bottom margin */
-					if (*max_pos_margin <
+					എങ്കിൽ (*max_pos_margin <
 							box->margin[BOTTOM])
 						*max_pos_margin =
 							box->margin[BOTTOM];
-					else if (*max_neg_margin <
+					അല്ലെങ്കിൽ എങ്കിൽ (*max_neg_margin <
 							-box->margin[BOTTOM])
 						*max_neg_margin =
 							-box->margin[BOTTOM];
 
 					box = box->parent;
-				} while (box != block && !box->next);
+				} ആകുമ്പോൾ (box != block && !box->next);
 
-				if (box == block) {
+				എങ്കിൽ (box == block) {
 					/* Margins don't collapse with stuff
 					 * outside the block formatting context
 					 */
-					return block;
+					തിരികെ block;
 				}
 			}
 
 			/* Apply bottom margin */
-			if (*max_pos_margin < box->margin[BOTTOM])
+			എങ്കിൽ (*max_pos_margin < box->margin[BOTTOM])
 				*max_pos_margin = box->margin[BOTTOM];
-			else if (*max_neg_margin < -box->margin[BOTTOM])
+			അല്ലെങ്കിൽ എങ്കിൽ (*max_neg_margin < -box->margin[BOTTOM])
 				*max_neg_margin = -box->margin[BOTTOM];
 
 			/* To next sibling. */
 			box = box->next;
 
 			/* Get margins */
-			if (box->style) {
+			എങ്കിൽ (box->style) {
 				layout_find_dimensions(unit_len_ctx,
 						box->parent->width,
 						viewport_height, box,
 						box->style,
-						NULL, NULL, NULL, NULL,
-						NULL, NULL, box->margin,
+						ശൂന്യ, ശൂന്യ, ശൂന്യ, ശൂന്യ,
+						ശൂന്യ, ശൂന്യ, box->margin,
 						box->padding, box->border);
 			}
 		}
 	}
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 
@@ -1253,20 +1253,20 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
  * \param  clear  type of clear
  * \return  y coordinate relative to ancestor box for floats
  */
-static int layout_clear(struct box *fl, enum css_clear_e clear)
+സ്ഥിതം പൂർണ്ണസംഖ്യ layout_clear(ഘടന box *fl, എണ്ണൽ css_clear_e clear)
 {
-	int y = 0;
-	for (; fl; fl = fl->next_float) {
-		if ((clear == CSS_CLEAR_LEFT || clear == CSS_CLEAR_BOTH) &&
-				fl->type == BOX_FLOAT_LEFT)
-			if (y < fl->y + fl->height)
+	പൂർണ്ണസംഖ്യ y = 0;
+	വേണ്ടി (; fl; fl = fl->next_float) {
+		എങ്കിൽ ((clear == CSS_CLEAR_ഇടത് || clear == CSS_CLEAR_BOTH) &&
+				fl->type == BOX_FLOAT_ഇടത്)
+			എങ്കിൽ (y < fl->y + fl->height)
 				y = fl->y + fl->height;
-		if ((clear == CSS_CLEAR_RIGHT || clear == CSS_CLEAR_BOTH) &&
-				fl->type == BOX_FLOAT_RIGHT)
-			if (y < fl->y + fl->height)
+		എങ്കിൽ ((clear == CSS_CLEAR_വലത് || clear == CSS_CLEAR_BOTH) &&
+				fl->type == BOX_FLOAT_വലത്)
+			എങ്കിൽ (y < fl->y + fl->height)
 				y = fl->y + fl->height;
 	}
-	return y;
+	തിരികെ y;
 }
 
 
@@ -1281,46 +1281,46 @@ static int layout_clear(struct box *fl, enum css_clear_e clear)
  * \param  left	  returns float on left if present
  * \param  right  returns float on right if present
  */
-static void
-find_sides(struct box *fl,
-	   int y0, int y1,
-	   int *x0, int *x1,
-	   struct box **left,
-	   struct box **right)
+സ്ഥിതം ശൂന്യം
+find_sides(ഘടന box *fl,
+	   പൂർണ്ണസംഖ്യ y0, പൂർണ്ണസംഖ്യ y1,
+	   പൂർണ്ണസംഖ്യ *x0, പൂർണ്ണസംഖ്യ *x1,
+	   ഘടന box **ഇടത്,
+	   ഘടന box **വലത്)
 {
-	int fy0, fy1, fx0, fx1;
+	പൂർണ്ണസംഖ്യ fy0, fy1, fx0, fx1;
 
 	NSLOG(layout, DEBUG, "y0 %i, y1 %i, x0 %i, x1 %i", y0, y1, *x0, *x1);
 
-	*left = *right = 0;
-	for (; fl; fl = fl->next_float) {
+	*ഇടത് = *വലത് = 0;
+	വേണ്ടി (; fl; fl = fl->next_float) {
 		fy1 = fl->y + fl->height;
-		if (fy1 < y0) {
+		എങ്കിൽ (fy1 < y0) {
 			/* Floats are sorted in order of decreasing bottom pos.
 			 * Past here, all floats will be too high to concern us.
 			 */
-			return;
+			തിരികെ;
 		}
 		fy0 = fl->y;
-		if (y0 < fy1 && fy0 <= y1) {
-			if (fl->type == BOX_FLOAT_LEFT) {
+		എങ്കിൽ (y0 < fy1 && fy0 <= y1) {
+			എങ്കിൽ (fl->type == BOX_FLOAT_ഇടത്) {
 				fx1 = fl->x + fl->width;
-				if (*x0 < fx1) {
+				എങ്കിൽ (*x0 < fx1) {
 					*x0 = fx1;
-					*left = fl;
+					*ഇടത് = fl;
 				}
-			} else {
+			} അല്ലെങ്കിൽ {
 				fx0 = fl->x;
-				if (fx0 < *x1) {
+				എങ്കിൽ (fx0 < *x1) {
 					*x1 = fx0;
-					*right = fl;
+					*വലത് = fl;
 				}
 			}
 		}
 	}
 
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, left %p, right %p", *x0, *x1,
-	      *left, *right);
+	      *ഇടത്, *വലത്);
 }
 
 
@@ -1342,125 +1342,125 @@ find_sides(struct box *fl,
  *
  * \post \a box's left/right margins will be updated.
  */
-static int
-layout_solve_width(struct box *box,
-		   int available_width,
-		   int width,
-		   int lm,
-		   int rm,
-		   int max_width,
-		   int min_width)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+layout_solve_width(ഘടന box *box,
+		   പൂർണ്ണസംഖ്യ available_width,
+		   പൂർണ്ണസംഖ്യ width,
+		   പൂർണ്ണസംഖ്യ lm,
+		   പൂർണ്ണസംഖ്യ rm,
+		   പൂർണ്ണസംഖ്യ max_width,
+		   പൂർണ്ണസംഖ്യ min_width)
 {
 	bool auto_width = false;
 
 	/* Increase specified left/right margins */
-	if (box->margin[LEFT] != AUTO && box->margin[LEFT] < lm &&
-			box->margin[LEFT] >= 0)
-		box->margin[LEFT] = lm;
-	if (box->margin[RIGHT] != AUTO && box->margin[RIGHT] < rm &&
-			box->margin[RIGHT] >= 0)
-		box->margin[RIGHT] = rm;
+	എങ്കിൽ (box->margin[ഇടത്_2] != AUTO && box->margin[ഇടത്_2] < lm &&
+			box->margin[ഇടത്_2] >= 0)
+		box->margin[ഇടത്_2] = lm;
+	എങ്കിൽ (box->margin[വലത്_2] != AUTO && box->margin[വലത്_2] < rm &&
+			box->margin[വലത്_2] >= 0)
+		box->margin[വലത്_2] = rm;
 
 	/* Find width */
-	if (width == AUTO) {
-		int margin_left = box->margin[LEFT];
-		int margin_right = box->margin[RIGHT];
+	എങ്കിൽ (width == AUTO) {
+		പൂർണ്ണസംഖ്യ margin_ഇടത് = box->margin[ഇടത്_2];
+		പൂർണ്ണസംഖ്യ margin_വലത് = box->margin[വലത്_2];
 
-		if (margin_left == AUTO) {
-			margin_left = lm;
+		എങ്കിൽ (margin_ഇടത് == AUTO) {
+			margin_ഇടത് = lm;
 		}
-		if (margin_right == AUTO) {
-			margin_right = rm;
+		എങ്കിൽ (margin_വലത് == AUTO) {
+			margin_വലത് = rm;
 		}
 
 		width = available_width -
-				(margin_left + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + margin_right);
+				(margin_ഇടത് + box->border[ഇടത്_2].width +
+				box->padding[ഇടത്_2] + box->padding[വലത്_2] +
+				box->border[വലത്_2].width + margin_വലത്);
 		width = width < 0 ? 0 : width;
 		auto_width = true;
 	}
 
-	if (max_width >= 0 && width > max_width) {
+	എങ്കിൽ (max_width >= 0 && width > max_width) {
 		/* max-width is admissable and width exceeds max-width */
 		width = max_width;
 		auto_width = false;
 	}
 
-	if (min_width > 0 && width < min_width) {
+	എങ്കിൽ (min_width > 0 && width < min_width) {
 		/* min-width is admissable and width is less than max-width */
 		width = min_width;
 		auto_width = false;
 	}
 
 	/* Width was auto, and unconstrained by min/max width, so we're done */
-	if (auto_width) {
+	എങ്കിൽ (auto_width) {
 		/* any other 'auto' become 0 or the minimum required values */
-		if (box->margin[LEFT] == AUTO) {
-			box->margin[LEFT] = lm;
+		എങ്കിൽ (box->margin[ഇടത്_2] == AUTO) {
+			box->margin[ഇടത്_2] = lm;
 		}
-		if (box->margin[RIGHT] == AUTO) {
-			box->margin[RIGHT] = rm;
+		എങ്കിൽ (box->margin[വലത്_2] == AUTO) {
+			box->margin[വലത്_2] = rm;
 		}
-		return width;
+		തിരികെ width;
 	}
 
 	/* Width was not auto, or was constrained by min/max width
 	 * Need to compute left/right margins */
 
 	/* HTML alignment (only applies to over-constrained boxes) */
-	if (box->margin[LEFT] != AUTO && box->margin[RIGHT] != AUTO &&
-			box->parent != NULL && box->parent->style != NULL) {
-		switch (css_computed_text_align(box->parent->style)) {
-		case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
-			box->margin[LEFT] = AUTO;
-			box->margin[RIGHT] = 0;
-			break;
-		case CSS_TEXT_ALIGN_LIBCSS_CENTER:
-			box->margin[LEFT] = box->margin[RIGHT] = AUTO;
-			break;
-		case CSS_TEXT_ALIGN_LIBCSS_LEFT:
-			box->margin[LEFT] = 0;
-			box->margin[RIGHT] = AUTO;
-			break;
-		default:
+	എങ്കിൽ (box->margin[ഇടത്_2] != AUTO && box->margin[വലത്_2] != AUTO &&
+			box->parent != ശൂന്യ && box->parent->style != ശൂന്യ) {
+		തിരഞ്ഞെടുപ്പ് (css_computed_text_align(box->parent->style)) {
+		അവസ്ഥ CSS_TEXT_ALIGN_LIBCSS_വലത്:
+			box->margin[ഇടത്_2] = AUTO;
+			box->margin[വലത്_2] = 0;
+			നിർത്തുക;
+		അവസ്ഥ CSS_TEXT_ALIGN_LIBCSS_CENTER:
+			box->margin[ഇടത്_2] = box->margin[വലത്_2] = AUTO;
+			നിർത്തുക;
+		അവസ്ഥ CSS_TEXT_ALIGN_LIBCSS_ഇടത്:
+			box->margin[ഇടത്_2] = 0;
+			box->margin[വലത്_2] = AUTO;
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			/* Leave it alone; no HTML alignment */
-			break;
+			നിർത്തുക;
 		}
 	}
 
-	if (box->margin[LEFT] == AUTO && box->margin[RIGHT] == AUTO) {
+	എങ്കിൽ (box->margin[ഇടത്_2] == AUTO && box->margin[വലത്_2] == AUTO) {
 		/* make the margins equal, centering the element */
-		box->margin[LEFT] = box->margin[RIGHT] =
+		box->margin[ഇടത്_2] = box->margin[വലത്_2] =
 				(available_width - lm - rm -
-				(box->border[LEFT].width + box->padding[LEFT] +
-				width + box->padding[RIGHT] +
-				box->border[RIGHT].width)) / 2;
+				(box->border[ഇടത്_2].width + box->padding[ഇടത്_2] +
+				width + box->padding[വലത്_2] +
+				box->border[വലത്_2].width)) / 2;
 
-		if (box->margin[LEFT] < 0) {
-			box->margin[RIGHT] += box->margin[LEFT];
-			box->margin[LEFT] = 0;
+		എങ്കിൽ (box->margin[ഇടത്_2] < 0) {
+			box->margin[വലത്_2] += box->margin[ഇടത്_2];
+			box->margin[ഇടത്_2] = 0;
 		}
 
-		box->margin[LEFT] += lm;
+		box->margin[ഇടത്_2] += lm;
 
-	} else if (box->margin[LEFT] == AUTO) {
-		box->margin[LEFT] = available_width - lm -
-				(box->border[LEFT].width + box->padding[LEFT] +
-				width + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT]);
-		box->margin[LEFT] = box->margin[LEFT] < lm
-				? lm : box->margin[LEFT];
-	} else {
+	} അല്ലെങ്കിൽ എങ്കിൽ (box->margin[ഇടത്_2] == AUTO) {
+		box->margin[ഇടത്_2] = available_width - lm -
+				(box->border[ഇടത്_2].width + box->padding[ഇടത്_2] +
+				width + box->padding[വലത്_2] +
+				box->border[വലത്_2].width + box->margin[വലത്_2]);
+		box->margin[ഇടത്_2] = box->margin[ഇടത്_2] < lm
+				? lm : box->margin[ഇടത്_2];
+	} അല്ലെങ്കിൽ {
 		/* margin-right auto or "over-constrained" */
-		box->margin[RIGHT] = available_width - rm -
-				(box->margin[LEFT] + box->border[LEFT].width +
-				 box->padding[LEFT] + width +
-				 box->padding[RIGHT] +
-				 box->border[RIGHT].width);
+		box->margin[വലത്_2] = available_width - rm -
+				(box->margin[ഇടത്_2] + box->border[ഇടത്_2].width +
+				 box->padding[ഇടത്_2] + width +
+				 box->padding[വലത്_2] +
+				 box->border[വലത്_2].width);
 	}
 
-	return width;
+	തിരികെ width;
 }
 
 
@@ -1480,26 +1480,26 @@ layout_solve_width(struct box *box,
  *
  * See CSS 2.1 10.3.3, 10.3.4, 10.6.2, and 10.6.3.
  */
-static void
-layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
-			     int available_width,
-			     int viewport_height,
-			     int lm,
-			     int rm,
-			     struct box *box)
+സ്ഥിതം ശൂന്യം
+layout_block_find_dimensions(സ്ഥിരം css_unit_ctx *unit_len_ctx,
+			     പൂർണ്ണസംഖ്യ available_width,
+			     പൂർണ്ണസംഖ്യ viewport_height,
+			     പൂർണ്ണസംഖ്യ lm,
+			     പൂർണ്ണസംഖ്യ rm,
+			     ഘടന box *box)
 {
-	int width, max_width, min_width;
-	int height, max_height, min_height;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	const css_computed_style *style = box->style;
+	പൂർണ്ണസംഖ്യ width, max_width, min_width;
+	പൂർണ്ണസംഖ്യ height, max_height, min_height;
+	പൂർണ്ണസംഖ്യ *margin = box->margin;
+	പൂർണ്ണസംഖ്യ *padding = box->padding;
+	ഘടന box_border *border = box->border;
+	സ്ഥിരം css_computed_style *style = box->style;
 
 	layout_find_dimensions(unit_len_ctx, available_width, viewport_height, box,
 			style, &width, &height, &max_width, &min_width,
 			&max_height, &min_height, margin, padding, border);
 
-	if (box->object && !(box->flags & REPLACE_DIM) &&
+	എങ്കിൽ (box->object && !(box->flags & REPLACE_DIM) &&
 			content_get_type(box->object) != CONTENT_HTML) {
 		/* block-level replaced element, see 10.3.4 and 10.6.2 */
 		layout_get_object_dimensions(box, &width, &height,
@@ -1510,9 +1510,9 @@ layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
 			max_width, min_width);
 	box->height = height;
 
-	if (margin[TOP] == AUTO)
-		margin[TOP] = 0;
-	if (margin[BOTTOM] == AUTO)
+	എങ്കിൽ (margin[മുകൾ_2] == AUTO)
+		margin[മുകൾ_2] = 0;
+	എങ്കിൽ (margin[BOTTOM] == AUTO)
 		margin[BOTTOM] = 0;
 }
 
@@ -1523,47 +1523,47 @@ layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
  * \param  box	  Box to apply scrollbar space too. Must be BOX_BLOCK.
  * \param  which  Which scrollbar to make space for. Must be RIGHT or BOTTOM.
  */
-static void layout_block_add_scrollbar(struct box *box, int which)
+സ്ഥിതം ശൂന്യം layout_block_add_scrollbar(ഘടന box *box, പൂർണ്ണസംഖ്യ which)
 {
-	enum css_overflow_e overflow_x, overflow_y;
+	എണ്ണൽ css_overflow_e overflow_x, overflow_y;
 
-	assert(box->type == BOX_BLOCK && (which == RIGHT || which == BOTTOM));
+	പ്രതിജ്ഞാ(box->type == BOX_BLOCK && (which == വലത്_2 || which == BOTTOM));
 
-	if (box->style == NULL)
-		return;
+	എങ്കിൽ (box->style == ശൂന്യ)
+		തിരികെ;
 
 	overflow_x = css_computed_overflow_x(box->style);
 	overflow_y = css_computed_overflow_y(box->style);
 
-	if (which == BOTTOM &&
+	എങ്കിൽ (which == BOTTOM &&
 			(overflow_x == CSS_OVERFLOW_SCROLL ||
 			 overflow_x == CSS_OVERFLOW_AUTO ||
 			(box->object &&
 			 content_get_type(box->object) == CONTENT_HTML))) {
 		/* make space for scrollbar, unless height is AUTO */
-		if (box->height != AUTO &&
+		എങ്കിൽ (box->height != AUTO &&
 				(overflow_x == CSS_OVERFLOW_SCROLL ||
 				box_hscrollbar_present(box))) {
 			box->padding[BOTTOM] += SCROLLBAR_WIDTH;
 		}
 
-	} else if (which == RIGHT &&
+	} അല്ലെങ്കിൽ എങ്കിൽ (which == വലത്_2 &&
 			(overflow_y == CSS_OVERFLOW_SCROLL ||
 			 overflow_y == CSS_OVERFLOW_AUTO ||
 			(box->object &&
 			 content_get_type(box->object) == CONTENT_HTML))) {
 		/* make space for scrollbars, unless width is AUTO */
-		enum css_height_e htype;
+		എണ്ണൽ css_height_e htype;
 		css_fixed height = 0;
 		css_unit hunit = CSS_UNIT_PX;
 		htype = css_computed_height(box->style, &height, &hunit);
 
-		if (which == RIGHT && box->width != AUTO &&
+		എങ്കിൽ (which == വലത്_2 && box->width != AUTO &&
 				htype == CSS_HEIGHT_SET &&
 				(overflow_y == CSS_OVERFLOW_SCROLL ||
 				box_vscrollbar_present(box))) {
 			box->width -= SCROLLBAR_WIDTH;
-			box->padding[RIGHT] += SCROLLBAR_WIDTH;
+			box->padding[വലത്_2] += SCROLLBAR_WIDTH;
 		}
 	}
 }
@@ -1576,11 +1576,11 @@ static void layout_block_add_scrollbar(struct box *box, int which)
  * \param  x	the amount to move children by horizontally
  * \param  y	the amount to move children by vertically
  */
-static void layout_move_children(struct box *box, int x, int y)
+സ്ഥിതം ശൂന്യം layout_move_children(ഘടന box *box, പൂർണ്ണസംഖ്യ x, പൂർണ്ണസംഖ്യ y)
 {
-	assert(box);
+	പ്രതിജ്ഞാ(box);
 
-	for (box = box->children; box; box = box->next) {
+	വേണ്ടി (box = box->children; box; box = box->next) {
 		box->x += x;
 		box->y += y;
 	}
@@ -1589,71 +1589,71 @@ static void layout_move_children(struct box *box, int x, int y)
 
 /* Documented in layout_internal.h */
 bool layout_table(
-		struct box *table,
-		int available_width,
+		ഘടന box *table,
+		പൂർണ്ണസംഖ്യ available_width,
 		html_content *content)
 {
-	unsigned int columns = table->columns;  /* total columns */
-	unsigned int i;
-	unsigned int *row_span;
-	int *excess_y;
-	int table_width, min_width = 0, max_width = 0;
-	int required_width = 0;
-	int x, remainder = 0, count = 0;
-	int table_height = 0;
-	int min_height = 0;
-	int *xs;  /* array of column x positions */
-	int auto_width;
-	int spare_width;
-	int relative_sum = 0;
-	int border_spacing_h = 0, border_spacing_v = 0;
-	int spare_height;
-	int positioned_columns = 0;
-	struct box *containing_block = NULL;
-	struct box *c;
-	struct box *row;
-	struct box *row_group;
-	struct box **row_span_cell;
-	struct column *col;
-	const css_computed_style *style = table->style;
-	enum css_height_e htype;
-	css_fixed value = 0;
+	unsigned പൂർണ്ണസംഖ്യ columns = table->columns;  /* total columns */
+	unsigned പൂർണ്ണസംഖ്യ i;
+	unsigned പൂർണ്ണസംഖ്യ *row_span;
+	പൂർണ്ണസംഖ്യ *excess_y;
+	പൂർണ്ണസംഖ്യ table_width, min_width = 0, max_width = 0;
+	പൂർണ്ണസംഖ്യ required_width = 0;
+	പൂർണ്ണസംഖ്യ x, remainder = 0, എണ്ണം = 0;
+	പൂർണ്ണസംഖ്യ table_height = 0;
+	പൂർണ്ണസംഖ്യ min_height = 0;
+	പൂർണ്ണസംഖ്യ *xs;  /* array of column x positions */
+	പൂർണ്ണസംഖ്യ auto_width;
+	പൂർണ്ണസംഖ്യ spare_width;
+	പൂർണ്ണസംഖ്യ relative_sum = 0;
+	പൂർണ്ണസംഖ്യ border_spacing_h = 0, border_spacing_v = 0;
+	പൂർണ്ണസംഖ്യ spare_height;
+	പൂർണ്ണസംഖ്യ positioned_columns = 0;
+	ഘടന box *containing_block = ശൂന്യ;
+	ഘടന box *c;
+	ഘടന box *row;
+	ഘടന box *row_group;
+	ഘടന box **row_span_cell;
+	ഘടന column *col;
+	സ്ഥിരം css_computed_style *style = table->style;
+	എണ്ണൽ css_height_e htype;
+	css_fixed മൂല്യം = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(table->type == BOX_TABLE);
-	assert(style);
-	assert(table->children && table->children->children);
-	assert(columns);
+	പ്രതിജ്ഞാ(table->type == BOX_TABLE);
+	പ്രതിജ്ഞാ(style);
+	പ്രതിജ്ഞാ(table->children && table->children->children);
+	പ്രതിജ്ഞാ(columns);
 
 	/* allocate working buffers */
-	col = malloc(columns * sizeof col[0]);
-	excess_y = malloc(columns * sizeof excess_y[0]);
-	row_span = malloc(columns * sizeof row_span[0]);
-	row_span_cell = malloc(columns * sizeof row_span_cell[0]);
-	xs = malloc((columns + 1) * sizeof xs[0]);
-	if (!col || !xs || !row_span || !excess_y || !row_span_cell) {
-		free(col);
-		free(excess_y);
-		free(row_span);
-		free(row_span_cell);
-		free(xs);
-		return false;
+	col = malloc(columns * വലുപ്പം col[0]);
+	excess_y = malloc(columns * വലുപ്പം excess_y[0]);
+	row_span = malloc(columns * വലുപ്പം row_span[0]);
+	row_span_cell = malloc(columns * വലുപ്പം row_span_cell[0]);
+	xs = malloc((columns + 1) * വലുപ്പം xs[0]);
+	എങ്കിൽ (!col || !xs || !row_span || !excess_y || !row_span_cell) {
+		സ്വതന്ത്രം(col);
+		സ്വതന്ത്രം(excess_y);
+		സ്വതന്ത്രം(row_span);
+		സ്വതന്ത്രം(row_span_cell);
+		സ്വതന്ത്രം(xs);
+		തിരികെ false;
 	}
 
-	memcpy(col, table->col, sizeof(col[0]) * columns);
+	memcpy(col, table->col, വലുപ്പം(col[0]) * columns);
 
 	/* find margins, paddings, and borders for table and cells */
 	layout_find_dimensions(&content->unit_len_ctx, available_width, -1, table,
 			style, 0, 0, 0, 0, 0, 0, table->margin, table->padding,
 			table->border);
-	for (row_group = table->children; row_group;
+	വേണ്ടി (row_group = table->children; row_group;
 			row_group = row_group->next) {
-		for (row = row_group->children; row; row = row->next) {
-			for (c = row->children; c; c = c->next) {
-				enum css_overflow_e overflow_x;
-				enum css_overflow_e overflow_y;
+		വേണ്ടി (row = row_group->children; row; row = row->next) {
+			വേണ്ടി (c = row->children; c; c = c->next) {
+				എണ്ണൽ css_overflow_e overflow_x;
+				എണ്ണൽ css_overflow_e overflow_y;
 
-				assert(c->style);
+				പ്രതിജ്ഞാ(c->style);
 				table_used_border_for_cell(
 						&content->unit_len_ctx, c);
 				layout_find_dimensions(&content->unit_len_ctx,
@@ -1664,22 +1664,22 @@ bool layout_table(
 				overflow_x = css_computed_overflow_x(c->style);
 				overflow_y = css_computed_overflow_y(c->style);
 
-				if (overflow_x == CSS_OVERFLOW_SCROLL ||
+				എങ്കിൽ (overflow_x == CSS_OVERFLOW_SCROLL ||
 						overflow_x ==
 						CSS_OVERFLOW_AUTO) {
 					c->padding[BOTTOM] += SCROLLBAR_WIDTH;
 				}
-				if (overflow_y == CSS_OVERFLOW_SCROLL ||
+				എങ്കിൽ (overflow_y == CSS_OVERFLOW_SCROLL ||
 						overflow_y ==
 						CSS_OVERFLOW_AUTO) {
-					c->padding[RIGHT] += SCROLLBAR_WIDTH;
+					c->padding[വലത്_2] += SCROLLBAR_WIDTH;
 				}
 			}
 		}
 	}
 
 	/* border-spacing is used in the separated borders model */
-	if (css_computed_border_collapse(style) ==
+	എങ്കിൽ (css_computed_border_collapse(style) ==
 			CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
@@ -1693,62 +1693,62 @@ bool layout_table(
 	}
 
 	/* find specified table width, or available width if auto-width */
-	if (css_computed_width_px(style, &content->unit_len_ctx,
+	എങ്കിൽ (css_computed_width_px(style, &content->unit_len_ctx,
 			available_width, &table_width) == CSS_WIDTH_SET) {
 		/* specified width includes border */
-		table_width -= table->border[LEFT].width +
-				table->border[RIGHT].width;
+		table_width -= table->border[ഇടത്_2].width +
+				table->border[വലത്_2].width;
 		table_width = table_width < 0 ? 0 : table_width;
 
 		auto_width = table_width;
-	} else {
+	} അല്ലെങ്കിൽ {
 		table_width = AUTO;
 		auto_width = available_width -
-				((table->margin[LEFT] == AUTO ? 0 :
-						table->margin[LEFT]) +
-				 table->border[LEFT].width +
-				 table->padding[LEFT] +
-				 table->padding[RIGHT] +
-				 table->border[RIGHT].width +
-				 (table->margin[RIGHT] == AUTO ? 0 :
-						table->margin[RIGHT]));
+				((table->margin[ഇടത്_2] == AUTO ? 0 :
+						table->margin[ഇടത്_2]) +
+				 table->border[ഇടത്_2].width +
+				 table->padding[ഇടത്_2] +
+				 table->padding[വലത്_2] +
+				 table->border[വലത്_2].width +
+				 (table->margin[വലത്_2] == AUTO ? 0 :
+						table->margin[വലത്_2]));
 	}
 
 	/* Find any table height specified within CSS/HTML */
-	htype = css_computed_height(style, &value, &unit);
-	if (htype == CSS_HEIGHT_SET) {
-		if (unit == CSS_UNIT_PCT) {
+	htype = css_computed_height(style, &മൂല്യം, &unit);
+	എങ്കിൽ (htype == CSS_HEIGHT_SET) {
+		എങ്കിൽ (unit == CSS_UNIT_PCT) {
 			/* This is the minimum height for the table
 			 * (see 17.5.3) */
-			if (css_computed_position(table->style) ==
+			എങ്കിൽ (css_computed_position(table->style) ==
 					CSS_POSITION_ABSOLUTE) {
 				/* Table is absolutely positioned */
-				assert(table->float_container);
+				പ്രതിജ്ഞാ(table->float_container);
 				containing_block = table->float_container;
-			} else if (table->float_container &&
+			} അല്ലെങ്കിൽ എങ്കിൽ (table->float_container &&
 					css_computed_position(table->style) !=
 						CSS_POSITION_ABSOLUTE &&
 					(css_computed_float(table->style) ==
-						CSS_FLOAT_LEFT ||
+						CSS_FLOAT_ഇടത് ||
 					css_computed_float(table->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_വലത്)) {
 				/* Table is a float */
-				assert(table->parent && table->parent->parent &&
+				പ്രതിജ്ഞാ(table->parent && table->parent->parent &&
 						table->parent->parent->parent);
 				containing_block =
 						table->parent->parent->parent;
-			} else if (table->parent && table->parent->type !=
+			} അല്ലെങ്കിൽ എങ്കിൽ (table->parent && table->parent->type !=
 					BOX_INLINE_CONTAINER) {
 				/* Table is a block level element */
 				containing_block = table->parent;
-			} else if (table->parent && table->parent->type ==
+			} അല്ലെങ്കിൽ എങ്കിൽ (table->parent && table->parent->type ==
 					BOX_INLINE_CONTAINER) {
 				/* Table is an inline block */
-				assert(table->parent->parent);
+				പ്രതിജ്ഞാ(table->parent->parent);
 				containing_block = table->parent->parent;
 			}
 
-			if (containing_block) {
+			എങ്കിൽ (containing_block) {
 				css_fixed ignored = 0;
 
 				htype = css_computed_height(
@@ -1756,7 +1756,7 @@ bool layout_table(
 						&ignored, &unit);
 			}
 
-			if (containing_block &&
+			എങ്കിൽ (containing_block &&
 					containing_block->height != AUTO &&
 					(css_computed_position(table->style) ==
 							CSS_POSITION_ABSOLUTE ||
@@ -1764,26 +1764,26 @@ bool layout_table(
 				/* Table is absolutely positioned or its
 				 * containing block has a valid specified
 				 * height. (CSS 2.1 Section 10.5) */
-				min_height = FPCT_OF_INT_TOINT(value,
+				min_height = FPCT_OF_INT_TOINT(മൂല്യം,
 						containing_block->height);
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* This is the minimum height for the table
 			 * (see 17.5.3) */
 			min_height = FIXTOINT(css_unit_len2device_px(
 					style, &content->unit_len_ctx,
-					value, unit));
+					മൂല്യം, unit));
 		}
 	}
 
 	/* calculate width required by cells */
-	for (i = 0; i != columns; i++) {
+	വേണ്ടി (i = 0; i != columns; i++) {
 
 		NSLOG(layout, DEBUG,
 		      "table %p, column %u: type %s, width %i, min %i, max %i",
 		      table,
 		      i,
-		      ((const char *[]){
+		      ((സ്ഥിരം അക്ഷരം *[]){
 			      "UNKNOWN",
 				      "FIXED",
 				      "AUTO",
@@ -1795,20 +1795,20 @@ bool layout_table(
 		      col[i].max);
 
 
-		if (col[i].positioned) {
+		എങ്കിൽ (col[i].positioned) {
 			positioned_columns++;
-			continue;
-		} else if (col[i].type == COLUMN_WIDTH_FIXED) {
-			if (col[i].width < col[i].min)
+			തുടരുക;
+		} അല്ലെങ്കിൽ എങ്കിൽ (col[i].type == COLUMN_WIDTH_FIXED) {
+			എങ്കിൽ (col[i].width < col[i].min)
 				col[i].width = col[i].max = col[i].min;
-			else
+			അല്ലെങ്കിൽ
 				col[i].min = col[i].max = col[i].width;
 			required_width += col[i].width;
-		} else if (col[i].type == COLUMN_WIDTH_PERCENT) {
-			int width = col[i].width * auto_width / 100;
+		} അല്ലെങ്കിൽ എങ്കിൽ (col[i].type == COLUMN_WIDTH_PERCENT) {
+			പൂർണ്ണസംഖ്യ width = col[i].width * auto_width / 100;
 			required_width += col[i].min < width ? width :
 					col[i].min;
-		} else
+		} അല്ലെങ്കിൽ
 			required_width += col[i].min;
 
 		NSLOG(layout, DEBUG,  "required_width %i", required_width);
@@ -1820,28 +1820,28 @@ bool layout_table(
 	      "width %i, min %i, max %i, auto %i, required %i", table_width,
 	      table->min_width, table->max_width, auto_width, required_width);
 
-	if (auto_width < required_width) {
+	എങ്കിൽ (auto_width < required_width) {
 		/* table narrower than required width for columns:
 		 * treat percentage widths as maximums */
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE)
-				continue;
-			if (col[i].type == COLUMN_WIDTH_PERCENT) {
+		വേണ്ടി (i = 0; i != columns; i++) {
+			എങ്കിൽ (col[i].type == COLUMN_WIDTH_RELATIVE)
+				തുടരുക;
+			എങ്കിൽ (col[i].type == COLUMN_WIDTH_PERCENT) {
 				col[i].max = auto_width * col[i].width / 100;
-				if (col[i].max < col[i].min)
+				എങ്കിൽ (col[i].max < col[i].min)
 					col[i].max = col[i].min;
 			}
 			min_width += col[i].min;
 			max_width += col[i].max;
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* take percentages exactly */
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE)
-				continue;
-			if (col[i].type == COLUMN_WIDTH_PERCENT) {
-				int width = auto_width * col[i].width / 100;
-				if (width < col[i].min)
+		വേണ്ടി (i = 0; i != columns; i++) {
+			എങ്കിൽ (col[i].type == COLUMN_WIDTH_RELATIVE)
+				തുടരുക;
+			എങ്കിൽ (col[i].type == COLUMN_WIDTH_PERCENT) {
+				പൂർണ്ണസംഖ്യ width = auto_width * col[i].width / 100;
+				എങ്കിൽ (width < col[i].min)
 					width = col[i].min;
 				col[i].min = col[i].width = col[i].max = width;
 				col[i].type = COLUMN_WIDTH_FIXED;
@@ -1853,23 +1853,23 @@ bool layout_table(
 
 	/* allocate relative widths */
 	spare_width = auto_width;
-	for (i = 0; i != columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_RELATIVE)
+	വേണ്ടി (i = 0; i != columns; i++) {
+		എങ്കിൽ (col[i].type == COLUMN_WIDTH_RELATIVE)
 			relative_sum += col[i].width;
-		else if (col[i].type == COLUMN_WIDTH_FIXED)
+		അല്ലെങ്കിൽ എങ്കിൽ (col[i].type == COLUMN_WIDTH_FIXED)
 			spare_width -= col[i].width;
-		else
+		അല്ലെങ്കിൽ
 			spare_width -= col[i].min;
 	}
 	spare_width -= (columns + 1) * border_spacing_h;
-	if (relative_sum != 0) {
-		if (spare_width < 0)
+	എങ്കിൽ (relative_sum != 0) {
+		എങ്കിൽ (spare_width < 0)
 			spare_width = 0;
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE) {
+		വേണ്ടി (i = 0; i != columns; i++) {
+			എങ്കിൽ (col[i].type == COLUMN_WIDTH_RELATIVE) {
 				col[i].min = ceil(col[i].max =
-						(float) spare_width
-						* (float) col[i].width
+						(ദശാംശം) spare_width
+						* (ദശാംശം) col[i].width
 						/ relative_sum);
 				min_width += col[i].min;
 				max_width += col[i].max;
@@ -1879,72 +1879,72 @@ bool layout_table(
 	min_width += (columns + 1) * border_spacing_h;
 	max_width += (columns + 1) * border_spacing_h;
 
-	if (auto_width <= min_width) {
+	എങ്കിൽ (auto_width <= min_width) {
 		/* not enough space: minimise column widths */
-		for (i = 0; i < columns; i++) {
+		വേണ്ടി (i = 0; i < columns; i++) {
 			col[i].width = col[i].min;
 		}
 		table_width = min_width;
-	} else if (max_width <= auto_width) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (max_width <= auto_width) {
 		/* more space than maximum width */
-		if (table_width == AUTO) {
+		എങ്കിൽ (table_width == AUTO) {
 			/* for auto-width tables, make columns max width */
-			for (i = 0; i < columns; i++) {
+			വേണ്ടി (i = 0; i < columns; i++) {
 				col[i].width = col[i].max;
 			}
 			table_width = max_width;
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* for fixed-width tables, distribute the extra space
 			 * too */
-			unsigned int flexible_columns = 0;
-			for (i = 0; i != columns; i++)
-				if (col[i].type != COLUMN_WIDTH_FIXED)
+			unsigned പൂർണ്ണസംഖ്യ flexible_columns = 0;
+			വേണ്ടി (i = 0; i != columns; i++)
+				എങ്കിൽ (col[i].type != COLUMN_WIDTH_FIXED)
 					flexible_columns++;
-			if (flexible_columns == 0) {
-				int extra = (table_width - max_width) / columns;
+			എങ്കിൽ (flexible_columns == 0) {
+				പൂർണ്ണസംഖ്യ extra = (table_width - max_width) / columns;
 				remainder = (table_width - max_width) -
 						(extra * columns);
-				for (i = 0; i != columns; i++) {
+				വേണ്ടി (i = 0; i != columns; i++) {
 					col[i].width = col[i].max + extra;
-					count -= remainder;
-					if (count < 0) {
+					എണ്ണം -= remainder;
+					എങ്കിൽ (എണ്ണം < 0) {
 						col[i].width++;
-						count += columns;
+						എണ്ണം += columns;
 					}
 				}
 
-			} else {
-				int extra = (table_width - max_width) /
+			} അല്ലെങ്കിൽ {
+				പൂർണ്ണസംഖ്യ extra = (table_width - max_width) /
 						flexible_columns;
 				remainder = (table_width - max_width) -
 						(extra * flexible_columns);
-				for (i = 0; i != columns; i++)
-					if (col[i].type != COLUMN_WIDTH_FIXED) {
+				വേണ്ടി (i = 0; i != columns; i++)
+					എങ്കിൽ (col[i].type != COLUMN_WIDTH_FIXED) {
 						col[i].width = col[i].max +
 								extra;
-						count -= remainder;
-						if (count < 0) {
+						എണ്ണം -= remainder;
+						എങ്കിൽ (എണ്ണം < 0) {
 							col[i].width++;
-							count += flexible_columns;
+							എണ്ണം += flexible_columns;
 						}
 					}
 			}
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* space between min and max: fill it exactly */
-		float scale = (float) (auto_width - min_width) /
-				(float) (max_width - min_width);
+		ദശാംശം scale = (ദശാംശം) (auto_width - min_width) /
+				(ദശാംശം) (max_width - min_width);
 		/* fprintf(stderr, "filling, scale %f\n", scale); */
-		for (i = 0; i < columns; i++) {
-			col[i].width = col[i].min + (int) (0.5 +
+		വേണ്ടി (i = 0; i < columns; i++) {
+			col[i].width = col[i].min + (പൂർണ്ണസംഖ്യ) (0.5 +
 					(col[i].max - col[i].min) * scale);
 		}
 		table_width = auto_width;
 	}
 
 	xs[0] = x = border_spacing_h;
-	for (i = 0; i != columns; i++) {
-		if (!col[i].positioned)
+	വേണ്ടി (i = 0; i != columns; i++) {
+		എങ്കിൽ (!col[i].positioned)
 			x += col[i].width + border_spacing_h;
 		xs[i + 1] = x;
 		row_span[i] = 0;
@@ -1954,39 +1954,39 @@ bool layout_table(
 
 	/* position cells */
 	table_height = border_spacing_v;
-	for (row_group = table->children; row_group;
+	വേണ്ടി (row_group = table->children; row_group;
 			row_group = row_group->next) {
-		int row_group_height = 0;
-		for (row = row_group->children; row; row = row->next) {
-			int row_height = 0;
+		പൂർണ്ണസംഖ്യ row_group_height = 0;
+		വേണ്ടി (row = row_group->children; row; row = row->next) {
+			പൂർണ്ണസംഖ്യ row_height = 0;
 
-			htype = css_computed_height(row->style, &value, &unit);
-			if (htype == CSS_HEIGHT_SET && unit != CSS_UNIT_PCT) {
+			htype = css_computed_height(row->style, &മൂല്യം, &unit);
+			എങ്കിൽ (htype == CSS_HEIGHT_SET && unit != CSS_UNIT_PCT) {
 				row_height = FIXTOINT(css_unit_len2device_px(
 						row->style,
 						&content->unit_len_ctx,
-						value, unit));
+						മൂല്യം, unit));
 			}
-			for (c = row->children; c; c = c->next) {
-				assert(c->style);
+			വേണ്ടി (c = row->children; c; c = c->next) {
+				പ്രതിജ്ഞാ(c->style);
 				c->width = xs[c->start_column + c->columns] -
 						xs[c->start_column] -
 						border_spacing_h -
-						c->border[LEFT].width -
-						c->padding[LEFT] -
-						c->padding[RIGHT] -
-						c->border[RIGHT].width;
+						c->border[ഇടത്_2].width -
+						c->padding[ഇടത്_2] -
+						c->padding[വലത്_2] -
+						c->border[വലത്_2].width;
 				c->float_children = 0;
 				c->cached_place_below_level = 0;
 
 				c->height = AUTO;
-				if (!layout_block_context(c, -1, content)) {
-					free(col);
-					free(excess_y);
-					free(row_span);
-					free(row_span_cell);
-					free(xs);
-					return false;
+				എങ്കിൽ (!layout_block_context(c, -1, content)) {
+					സ്വതന്ത്രം(col);
+					സ്വതന്ത്രം(excess_y);
+					സ്വതന്ത്രം(row_span);
+					സ്വതന്ത്രം(row_span_cell);
+					സ്വതന്ത്രം(xs);
+					തിരികെ false;
 				}
 				/* warning: c->descendant_y0 and
 				 * c->descendant_y1 used as temporary storage
@@ -1995,32 +1995,32 @@ bool layout_table(
 				c->descendant_y1 = c->padding[BOTTOM];
 
 				htype = css_computed_height(c->style,
-						&value, &unit);
+						&മൂല്യം, &unit);
 
-				if (htype == CSS_HEIGHT_SET &&
+				എങ്കിൽ (htype == CSS_HEIGHT_SET &&
 						unit != CSS_UNIT_PCT) {
 					/* some sites use height="1" or similar
 					 * to attempt to make cells as small as
 					 * possible, so treat it as a minimum */
-					int h = FIXTOINT(css_unit_len2device_px(
+					പൂർണ്ണസംഖ്യ h = FIXTOINT(css_unit_len2device_px(
 							c->style,
 							&content->unit_len_ctx,
-							value, unit));
-					if (c->height < h)
+							മൂല്യം, unit));
+					എങ്കിൽ (c->height < h)
 						c->height = h;
 				}
 				/* specified row height is treated as a minimum
 				 */
-				if (c->height < row_height)
+				എങ്കിൽ (c->height < row_height)
 					c->height = row_height;
 				c->x = xs[c->start_column] +
-						c->border[LEFT].width;
-				c->y = c->border[TOP].width;
-				for (i = 0; i != c->columns; i++) {
+						c->border[ഇടത്_2].width;
+				c->y = c->border[മുകൾ_2].width;
+				വേണ്ടി (i = 0; i != c->columns; i++) {
 					row_span[c->start_column + i] = c->rows;
 					excess_y[c->start_column + i] =
-							c->border[TOP].width +
-							c->padding[TOP] +
+							c->border[മുകൾ_2].width +
+							c->padding[മുകൾ_2] +
 							c->height +
 							c->padding[BOTTOM] +
 							c->border[BOTTOM].width;
@@ -2028,35 +2028,35 @@ bool layout_table(
 				}
 				row_span_cell[c->start_column] = c;
 				c->padding[BOTTOM] = -border_spacing_v -
-						c->border[TOP].width -
-						c->padding[TOP] -
+						c->border[മുകൾ_2].width -
+						c->padding[മുകൾ_2] -
 						c->height -
 						c->border[BOTTOM].width;
 			}
-			for (i = 0; i != columns; i++)
-				if (row_span[i] != 0)
+			വേണ്ടി (i = 0; i != columns; i++)
+				എങ്കിൽ (row_span[i] != 0)
 					row_span[i]--;
-				else
+				അല്ലെങ്കിൽ
 					row_span_cell[i] = 0;
-			if (row->next || row_group->next) {
+			എങ്കിൽ (row->next || row_group->next) {
 				/* row height is greatest excess of a cell
 				 * which ends in this row */
-				for (i = 0; i != columns; i++)
-					if (row_span[i] == 0 && row_height <
+				വേണ്ടി (i = 0; i != columns; i++)
+					എങ്കിൽ (row_span[i] == 0 && row_height <
 							excess_y[i])
 						row_height = excess_y[i];
-			} else {
+			} അല്ലെങ്കിൽ {
 				/* except in the last row */
-				for (i = 0; i != columns; i++)
-					if (row_height < excess_y[i])
+				വേണ്ടി (i = 0; i != columns; i++)
+					എങ്കിൽ (row_height < excess_y[i])
 						row_height = excess_y[i];
 			}
-			for (i = 0; i != columns; i++) {
-				if (row_height < excess_y[i])
+			വേണ്ടി (i = 0; i != columns; i++) {
+				എങ്കിൽ (row_height < excess_y[i])
 					excess_y[i] -= row_height;
-				else
+				അല്ലെങ്കിൽ
 					excess_y[i] = 0;
-				if (row_span_cell[i] != 0)
+				എങ്കിൽ (row_span_cell[i] != 0)
 					row_span_cell[i]->padding[BOTTOM] +=
 							row_height +
 							border_spacing_v;
@@ -2080,11 +2080,11 @@ bool layout_table(
 	/** \todo distribute spare height over the row groups / rows / cells */
 
 	/* perform vertical alignment */
-	for (row_group = table->children; row_group;
+	വേണ്ടി (row_group = table->children; row_group;
 			row_group = row_group->next) {
-		for (row = row_group->children; row; row = row->next) {
-			for (c = row->children; c; c = c->next) {
-				enum css_vertical_align_e vertical_align;
+		വേണ്ടി (row = row_group->children; row; row = row->next) {
+			വേണ്ടി (c = row->children; c; c = c->next) {
+				എണ്ണൽ css_vertical_align_e vertical_align;
 
 				/* unextended bottom padding is in
 				 * c->descendant_y1, and unextended
@@ -2094,55 +2094,55 @@ bool layout_table(
 						(c->height - c->descendant_y0);
 
 				vertical_align = css_computed_vertical_align(
-						c->style, &value, &unit);
+						c->style, &മൂല്യം, &unit);
 
-				switch (vertical_align) {
-				case CSS_VERTICAL_ALIGN_SUB:
-				case CSS_VERTICAL_ALIGN_SUPER:
-				case CSS_VERTICAL_ALIGN_TEXT_TOP:
-				case CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
-				case CSS_VERTICAL_ALIGN_SET:
-				case CSS_VERTICAL_ALIGN_BASELINE:
+				തിരഞ്ഞെടുപ്പ് (vertical_align) {
+				അവസ്ഥ CSS_VERTICAL_ALIGN_SUB:
+				അവസ്ഥ CSS_VERTICAL_ALIGN_SUPER:
+				അവസ്ഥ CSS_VERTICAL_ALIGN_TEXT_മുകൾ:
+				അവസ്ഥ CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
+				അവസ്ഥ CSS_VERTICAL_ALIGN_SET:
+				അവസ്ഥ CSS_VERTICAL_ALIGN_BASELINE:
 					/* todo: baseline alignment, for now
 					 * just use ALIGN_TOP */
-				case CSS_VERTICAL_ALIGN_TOP:
-					break;
-				case CSS_VERTICAL_ALIGN_MIDDLE:
-					c->padding[TOP] += spare_height / 2;
+				അവസ്ഥ CSS_VERTICAL_ALIGN_മുകൾ:
+					നിർത്തുക;
+				അവസ്ഥ CSS_VERTICAL_ALIGN_നടുവ്:
+					c->padding[മുകൾ_2] += spare_height / 2;
 					c->padding[BOTTOM] -= spare_height / 2;
 					layout_move_children(c, 0,
 							spare_height / 2);
-					break;
-				case CSS_VERTICAL_ALIGN_BOTTOM:
-					c->padding[TOP] += spare_height;
+					നിർത്തുക;
+				അവസ്ഥ CSS_VERTICAL_ALIGN_BOTTOM:
+					c->padding[മുകൾ_2] += spare_height;
 					c->padding[BOTTOM] -= spare_height;
 					layout_move_children(c, 0,
 							spare_height);
-					break;
-				case CSS_VERTICAL_ALIGN_INHERIT:
-					assert(0);
-					break;
+					നിർത്തുക;
+				അവസ്ഥ CSS_VERTICAL_ALIGN_INHERIT:
+					പ്രതിജ്ഞാ(0);
+					നിർത്തുക;
 				}
 			}
 		}
 	}
 
 	/* Top and bottom margins of 'auto' are set to 0.  CSS2.1 10.6.3 */
-	if (table->margin[TOP] == AUTO)
-		table->margin[TOP] = 0;
-	if (table->margin[BOTTOM] == AUTO)
+	എങ്കിൽ (table->margin[മുകൾ_2] == AUTO)
+		table->margin[മുകൾ_2] = 0;
+	എങ്കിൽ (table->margin[BOTTOM] == AUTO)
 		table->margin[BOTTOM] = 0;
 
-	free(col);
-	free(excess_y);
-	free(row_span);
-	free(row_span_cell);
-	free(xs);
+	സ്വതന്ത്രം(col);
+	സ്വതന്ത്രം(excess_y);
+	സ്വതന്ത്രം(row_span);
+	സ്വതന്ത്രം(row_span_cell);
+	സ്വതന്ത്രം(xs);
 
 	table->width = table_width;
 	table->height = table_height;
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -2155,52 +2155,52 @@ bool layout_table(
  *			NULL for non absolutely positioned elements.
  * \return		whether the height has been changed
  */
-static bool layout_apply_minmax_height(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		struct box *container)
+സ്ഥിതം bool layout_apply_minmax_height(
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		ഘടന box *box,
+		ഘടന box *container)
 {
-	int h;
-	struct box *containing_block = NULL;
+	പൂർണ്ണസംഖ്യ h;
+	ഘടന box *containing_block = ശൂന്യ;
 	bool updated = false;
 
 	/* Find containing block for percentage heights */
-	if (box->style != NULL && css_computed_position(box->style) ==
+	എങ്കിൽ (box->style != ശൂന്യ && css_computed_position(box->style) ==
 			CSS_POSITION_ABSOLUTE) {
 		/* Box is absolutely positioned */
-		assert(container);
+		പ്രതിജ്ഞാ(container);
 		containing_block = container;
-	} else if (box->float_container && box->style != NULL &&
-			(css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-			 css_computed_float(box->style) == CSS_FLOAT_RIGHT)) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (box->float_container && box->style != ശൂന്യ &&
+			(css_computed_float(box->style) == CSS_FLOAT_ഇടത് ||
+			 css_computed_float(box->style) == CSS_FLOAT_വലത്)) {
 		/* Box is a float */
-		assert(box->parent && box->parent->parent &&
+		പ്രതിജ്ഞാ(box->parent && box->parent->parent &&
 				box->parent->parent->parent);
 		containing_block = box->parent->parent->parent;
-	} else if (box->parent && box->parent->type != BOX_INLINE_CONTAINER) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (box->parent && box->parent->type != BOX_INLINE_CONTAINER) {
 		/* Box is a block level element */
 		containing_block = box->parent;
-	} else if (box->parent && box->parent->type == BOX_INLINE_CONTAINER) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (box->parent && box->parent->type == BOX_INLINE_CONTAINER) {
 		/* Box is an inline block */
-		assert(box->parent->parent);
+		പ്രതിജ്ഞാ(box->parent->parent);
 		containing_block = box->parent->parent;
 	}
 
-	if (box->style) {
-		enum css_height_e htype = CSS_HEIGHT_AUTO;
-		css_fixed value = 0;
+	എങ്കിൽ (box->style) {
+		എണ്ണൽ css_height_e htype = CSS_HEIGHT_AUTO;
+		css_fixed മൂല്യം = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		if (containing_block) {
+		എങ്കിൽ (containing_block) {
 			htype = css_computed_height(containing_block->style,
-					&value, &unit);
+					&മൂല്യം, &unit);
 		}
 
 		/* max-height */
-		if (css_computed_max_height(box->style, &value, &unit) ==
+		എങ്കിൽ (css_computed_max_height(box->style, &മൂല്യം, &unit) ==
 				CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				if (containing_block &&
+			എങ്കിൽ (unit == CSS_UNIT_PCT) {
+				എങ്കിൽ (containing_block &&
 					containing_block->height != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
@@ -2209,18 +2209,18 @@ static bool layout_apply_minmax_height(
 					 * containing block has a valid
 					 * specified height. (CSS 2.1
 					 * Section 10.5) */
-					h = FPCT_OF_INT_TOINT(value,
+					h = FPCT_OF_INT_TOINT(മൂല്യം,
 						containing_block->height);
-					if (h < box->height) {
+					എങ്കിൽ (h < box->height) {
 						box->height = h;
 						updated = true;
 					}
 				}
-			} else {
+			} അല്ലെങ്കിൽ {
 				h = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						value, unit));
-				if (h < box->height) {
+						മൂല്യം, unit));
+				എങ്കിൽ (h < box->height) {
 					box->height = h;
 					updated = true;
 				}
@@ -2228,10 +2228,10 @@ static bool layout_apply_minmax_height(
 		}
 
 		/* min-height */
-		if (ns_computed_min_height(box->style, &value, &unit) ==
+		എങ്കിൽ (ns_computed_min_height(box->style, &മൂല്യം, &unit) ==
 				CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				if (containing_block &&
+			എങ്കിൽ (unit == CSS_UNIT_PCT) {
+				എങ്കിൽ (containing_block &&
 					containing_block->height != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
@@ -2240,25 +2240,25 @@ static bool layout_apply_minmax_height(
 					 * containing block has a valid
 					 * specified height. (CSS 2.1
 					 * Section 10.5) */
-					h = FPCT_OF_INT_TOINT(value,
+					h = FPCT_OF_INT_TOINT(മൂല്യം,
 						containing_block->height);
-					if (h > box->height) {
+					എങ്കിൽ (h > box->height) {
 						box->height = h;
 						updated = true;
 					}
 				}
-			} else {
+			} അല്ലെങ്കിൽ {
 				h = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
-						value, unit));
-				if (h > box->height) {
+						മൂല്യം, unit));
+				എങ്കിൽ (h > box->height) {
 					box->height = h;
 					updated = true;
 				}
 			}
 		}
 	}
-	return updated;
+	തിരികെ updated;
 }
 
 
@@ -2268,29 +2268,29 @@ static bool layout_apply_minmax_height(
  * \param  block  box of type BLOCK, INLINE_BLOCK, TABLE, or TABLE_CELL
  * \return  true on success, false on memory exhaustion
  */
-static bool layout_block_object(struct box *block)
+സ്ഥിതം bool layout_block_object(ഘടന box *block)
 {
-	assert(block);
-	assert(block->type == BOX_BLOCK ||
+	പ്രതിജ്ഞാ(block);
+	പ്രതിജ്ഞാ(block->type == BOX_BLOCK ||
 			block->type == BOX_FLEX ||
 			block->type == BOX_INLINE_BLOCK ||
 			block->type == BOX_INLINE_FLEX ||
 			block->type == BOX_TABLE ||
 			block->type == BOX_TABLE_CELL);
-	assert(block->object);
+	പ്രതിജ്ഞാ(block->object);
 
 	NSLOG(layout, DEBUG,  "block %p, object %p, width %i", block,
 	      hlcache_handle_get_url(block->object), block->width);
 
-	if (content_can_reformat(block->object)) {
+	എങ്കിൽ (content_can_reformat(block->object)) {
 		content_reformat(block->object, false, block->width, 1);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Non-HTML objects */
 		/* this case handled already in
 		 * layout_block_find_dimensions() */
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -2302,29 +2302,29 @@ static bool layout_block_object(struct box *block)
  *
  * This sorts floats in order of descending bottom edges.
  */
-static void add_float_to_container(struct box *cont, struct box *b)
+സ്ഥിതം ശൂന്യം add_float_to_container(ഘടന box *cont, ഘടന box *b)
 {
-	struct box *box = cont->float_children;
-	int b_bottom = b->y + b->height;
+	ഘടന box *box = cont->float_children;
+	പൂർണ്ണസംഖ്യ b_bottom = b->y + b->height;
 
-	assert(b->type == BOX_FLOAT_LEFT || b->type == BOX_FLOAT_RIGHT);
+	പ്രതിജ്ഞാ(b->type == BOX_FLOAT_ഇടത് || b->type == BOX_FLOAT_വലത്);
 
-	if (box == NULL) {
+	എങ്കിൽ (box == ശൂന്യ) {
 		/* No other float children */
-		b->next_float = NULL;
+		b->next_float = ശൂന്യ;
 		cont->float_children = b;
-		return;
-	} else if (b_bottom >= box->y + box->height) {
+		തിരികെ;
+	} അല്ലെങ്കിൽ എങ്കിൽ (b_bottom >= box->y + box->height) {
 		/* Goes at start of list */
 		b->next_float = cont->float_children;
 		cont->float_children = b;
-	} else {
-		struct box *prev = NULL;
-		while (box != NULL && b_bottom < box->y + box->height) {
+	} അല്ലെങ്കിൽ {
+		ഘടന box *prev = ശൂന്യ;
+		ആകുമ്പോൾ (box != ശൂന്യ && b_bottom < box->y + box->height) {
 			prev = box;
 			box = box->next_float;
 		}
-		if (prev != NULL) {
+		എങ്കിൽ (prev != ശൂന്യ) {
 			b->next_float = prev->next_float;
 			prev->next_float = b;
 		}
@@ -2345,35 +2345,35 @@ static void add_float_to_container(struct box *cont, struct box *b)
  * A new box is created and inserted into the box tree after split_box,
  * containing the text after new_length excluding the initial space character.
  */
-static bool
+സ്ഥിതം bool
 layout_text_box_split(html_content *content,
 		      plot_font_style_t *fstyle,
-		      struct box *split_box,
+		      ഘടന box *split_box,
 		      size_t new_length,
-		      int new_width)
+		      പൂർണ്ണസംഖ്യ new_width)
 {
-	int space_width = split_box->space;
-	struct box *c2;
-	const struct gui_layout_table *font_func = content->font_func;
+	പൂർണ്ണസംഖ്യ space_width = split_box->space;
+	ഘടന box *c2;
+	സ്ഥിരം ഘടന gui_layout_table *font_func = content->font_func;
 	bool space = (split_box->text[new_length] == ' ');
-	int used_length = new_length + (space ? 1 : 0);
+	പൂർണ്ണസംഖ്യ used_length = new_length + (space ? 1 : 0);
 
-	if ((space && space_width == 0) || space_width == UNKNOWN_WIDTH) {
+	എങ്കിൽ ((space && space_width == 0) || space_width == UNKNOWN_WIDTH) {
 		/* We're need to add a space, and we don't know how big
 		 * it's to be, OR we have a space of unknown width anyway;
 		 * Calculate space width */
 		font_func->width(fstyle, " ", 1, &space_width);
 	}
 
-	if (split_box->space == UNKNOWN_WIDTH)
+	എങ്കിൽ (split_box->space == UNKNOWN_WIDTH)
 		split_box->space = space_width;
-	if (!space)
+	എങ്കിൽ (!space)
 		space_width = 0;
 
 	/* Create clone of split_box, c2 */
-	c2 = talloc_memdup(content->bctx, split_box, sizeof *c2);
-	if (!c2)
-		return false;
+	c2 = talloc_memdup(content->bctx, split_box, വലുപ്പം *c2);
+	എങ്കിൽ (!c2)
+		തിരികെ false;
 	c2->flags |= CLONE;
 
 	/* Set remaining text in c2 */
@@ -2394,25 +2394,25 @@ layout_text_box_split(html_content *content,
 	c2->next = split_box->next;
 	split_box->next = c2;
 	c2->prev = split_box;
-	if (c2->next)
+	എങ്കിൽ (c2->next)
 		c2->next->prev = c2;
-	else
+	അല്ലെങ്കിൽ
 		c2->parent->last = c2;
 
 	NSLOG(layout, DEBUG,
 	      "split_box %p len: %" PRIsizet " \"%.*s\"",
 	      split_box,
 	      split_box->length,
-	      (int)split_box->length,
+	      (പൂർണ്ണസംഖ്യ)split_box->length,
 	      split_box->text);
 	NSLOG(layout, DEBUG,
 	      "  new_box %p len: %" PRIsizet " \"%.*s\"",
 	      c2,
 	      c2->length,
-	      (int)c2->length,
+	      (പൂർണ്ണസംഖ്യ)c2->length,
 	      c2->text);
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -2427,24 +2427,24 @@ layout_text_box_split(html_content *content,
  *				Box margins, borders, paddings, width and
  *				height are updated.
  */
-static void
+സ്ഥിതം ശൂന്യം
 layout_float_find_dimensions(
-		const css_unit_ctx *unit_len_ctx,
-		int available_width,
-		const css_computed_style *style,
-		struct box *box)
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		പൂർണ്ണസംഖ്യ available_width,
+		സ്ഥിരം css_computed_style *style,
+		ഘടന box *box)
 {
-	int width, height, max_width, min_width, max_height, min_height;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	enum css_overflow_e overflow_x = css_computed_overflow_x(style);
-	enum css_overflow_e overflow_y = css_computed_overflow_y(style);
-	int scrollbar_width_x =
+	പൂർണ്ണസംഖ്യ width, height, max_width, min_width, max_height, min_height;
+	പൂർണ്ണസംഖ്യ *margin = box->margin;
+	പൂർണ്ണസംഖ്യ *padding = box->padding;
+	ഘടന box_border *border = box->border;
+	എണ്ണൽ css_overflow_e overflow_x = css_computed_overflow_x(style);
+	എണ്ണൽ css_overflow_e overflow_y = css_computed_overflow_y(style);
+	പൂർണ്ണസംഖ്യ scrollbar_width_x =
 			(overflow_x == CSS_OVERFLOW_SCROLL ||
 			 overflow_x == CSS_OVERFLOW_AUTO) ?
 			SCROLLBAR_WIDTH : 0;
-	int scrollbar_width_y =
+	പൂർണ്ണസംഖ്യ scrollbar_width_y =
 			(overflow_y == CSS_OVERFLOW_SCROLL ||
 			 overflow_y == CSS_OVERFLOW_AUTO) ?
 			SCROLLBAR_WIDTH : 0;
@@ -2453,23 +2453,23 @@ layout_float_find_dimensions(
 			&width, &height, &max_width, &min_width,
 			&max_height, &min_height, margin, padding, border);
 
-	if (margin[LEFT] == AUTO)
-		margin[LEFT] = 0;
-	if (margin[RIGHT] == AUTO)
-		margin[RIGHT] = 0;
+	എങ്കിൽ (margin[ഇടത്_2] == AUTO)
+		margin[ഇടത്_2] = 0;
+	എങ്കിൽ (margin[വലത്_2] == AUTO)
+		margin[വലത്_2] = 0;
 
-	if (box->gadget == NULL) {
-		padding[RIGHT] += scrollbar_width_y;
+	എങ്കിൽ (box->gadget == ശൂന്യ) {
+		padding[വലത്_2] += scrollbar_width_y;
 		padding[BOTTOM] += scrollbar_width_x;
 	}
 
-	if (box->object && !(box->flags & REPLACE_DIM) &&
+	എങ്കിൽ (box->object && !(box->flags & REPLACE_DIM) &&
 			content_get_type(box->object) != CONTENT_HTML) {
 		/* Floating replaced element, with intrinsic width or height.
 		 * See 10.3.6 and 10.6.2 */
 		layout_get_object_dimensions(box, &width, &height,
 				min_width, max_width, min_height, max_height);
-	} else if (box->gadget && (box->gadget->type == GADGET_TEXTBOX ||
+	} അല്ലെങ്കിൽ എങ്കിൽ (box->gadget && (box->gadget->type == GADGET_TEXTBOX ||
 			box->gadget->type == GADGET_PASSWORD ||
 			box->gadget->type == GADGET_FILE ||
 			box->gadget->type == GADGET_TEXTAREA)) {
@@ -2478,18 +2478,18 @@ layout_float_find_dimensions(
 
 		/* Give sensible dimensions to gadgets, with auto width/height,
 		 * that don't shrink to fit contained text. */
-		assert(box->style);
+		പ്രതിജ്ഞാ(box->style);
 
-		if (box->gadget->type == GADGET_TEXTBOX ||
+		എങ്കിൽ (box->gadget->type == GADGET_TEXTBOX ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_FILE) {
-			if (width == AUTO) {
+			എങ്കിൽ (width == AUTO) {
 				size = INTTOFIX(10);
 				width = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
 						size, unit));
 			}
-			if (box->gadget->type == GADGET_FILE &&
+			എങ്കിൽ (box->gadget->type == GADGET_FILE &&
 					height == AUTO) {
 				size = FLTTOFIX(1.5);
 				height = FIXTOINT(css_unit_len2device_px(
@@ -2497,63 +2497,63 @@ layout_float_find_dimensions(
 						size, unit));
 			}
 		}
-		if (box->gadget->type == GADGET_TEXTAREA) {
-			if (width == AUTO) {
+		എങ്കിൽ (box->gadget->type == GADGET_TEXTAREA) {
+			എങ്കിൽ (width == AUTO) {
 				size = INTTOFIX(10);
 				width = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
 						size, unit));
 			}
-			if (height == AUTO) {
+			എങ്കിൽ (height == AUTO) {
 				size = INTTOFIX(4);
 				height = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
 						size, unit));
 			}
 		}
-	} else if (width == AUTO) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (width == AUTO) {
 		/* CSS 2.1 section 10.3.5 */
 		width = min(max(box->min_width, available_width),
 				box->max_width);
 
 		/* width includes margin, borders and padding */
-		if (width == available_width) {
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-					box->padding[LEFT] +
-					box->padding[RIGHT] +
-					box->border[RIGHT].width +
-					box->margin[RIGHT];
-		} else {
+		എങ്കിൽ (width == available_width) {
+			width -= box->margin[ഇടത്_2] + box->border[ഇടത്_2].width +
+					box->padding[ഇടത്_2] +
+					box->padding[വലത്_2] +
+					box->border[വലത്_2].width +
+					box->margin[വലത്_2];
+		} അല്ലെങ്കിൽ {
 			/* width was obtained from a min_width or max_width
 			 * value, so need to use the same method for calculating
 			 * mbp as was used in layout_minmax_block() */
-			int fixed = 0;
-			float frac = 0;
-			calculate_mbp_width(unit_len_ctx, box->style, LEFT,
+			പൂർണ്ണസംഖ്യ fixed = 0;
+			ദശാംശം frac = 0;
+			calculate_mbp_width(unit_len_ctx, box->style, ഇടത്_2,
 					true, true, true, &fixed, &frac);
-			calculate_mbp_width(unit_len_ctx, box->style, RIGHT,
+			calculate_mbp_width(unit_len_ctx, box->style, വലത്_2,
 					true, true, true, &fixed, &frac);
-			if (fixed < 0)
+			എങ്കിൽ (fixed < 0)
 				fixed = 0;
 
 			width -= fixed;
 		}
 
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+		എങ്കിൽ (max_width >= 0 && width > max_width) width = max_width;
+		എങ്കിൽ (min_width >  0 && width < min_width) width = min_width;
 
-	} else {
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (max_width >= 0 && width > max_width) width = max_width;
+		എങ്കിൽ (min_width >  0 && width < min_width) width = min_width;
 		width -= scrollbar_width_y;
 	}
 
 	box->width = width;
 	box->height = height;
 
-	if (margin[TOP] == AUTO)
-		margin[TOP] = 0;
-	if (margin[BOTTOM] == AUTO)
+	എങ്കിൽ (margin[മുകൾ_2] == AUTO)
+		margin[മുകൾ_2] = 0;
+	എങ്കിൽ (margin[BOTTOM] == AUTO)
 		margin[BOTTOM] = 0;
 }
 
@@ -2566,34 +2566,34 @@ layout_float_find_dimensions(
  * \param  content  memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool layout_float(struct box *b, int width, html_content *content)
+സ്ഥിതം bool layout_float(ഘടന box *b, പൂർണ്ണസംഖ്യ width, html_content *content)
 {
-	assert(b->type == BOX_TABLE ||
+	പ്രതിജ്ഞാ(b->type == BOX_TABLE ||
 	       b->type == BOX_BLOCK ||
 	       b->type == BOX_INLINE_BLOCK ||
 	       b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX);
 	layout_float_find_dimensions(&content->unit_len_ctx, width, b->style, b);
-	if (b->type == BOX_TABLE || b->type == BOX_INLINE_FLEX) {
-		if (b->type == BOX_TABLE) {
-			if (!layout_table(b, width, content))
-				return false;
-		} else {
-			if (!layout_flex(b, width, content))
-				return false;
+	എങ്കിൽ (b->type == BOX_TABLE || b->type == BOX_INLINE_FLEX) {
+		എങ്കിൽ (b->type == BOX_TABLE) {
+			എങ്കിൽ (!layout_table(b, width, content))
+				തിരികെ false;
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (!layout_flex(b, width, content))
+				തിരികെ false;
 		}
-		if (b->margin[LEFT] == AUTO)
-			b->margin[LEFT] = 0;
-		if (b->margin[RIGHT] == AUTO)
-			b->margin[RIGHT] = 0;
-		if (b->margin[TOP] == AUTO)
-			b->margin[TOP] = 0;
-		if (b->margin[BOTTOM] == AUTO)
+		എങ്കിൽ (b->margin[ഇടത്_2] == AUTO)
+			b->margin[ഇടത്_2] = 0;
+		എങ്കിൽ (b->margin[വലത്_2] == AUTO)
+			b->margin[വലത്_2] = 0;
+		എങ്കിൽ (b->margin[മുകൾ_2] == AUTO)
+			b->margin[മുകൾ_2] = 0;
+		എങ്കിൽ (b->margin[BOTTOM] == AUTO)
 			b->margin[BOTTOM] = 0;
-	} else {
-		return layout_block_context(b, -1, content);
+	} അല്ലെങ്കിൽ {
+		തിരികെ layout_block_context(b, -1, content);
 	}
-	return true;
+	തിരികെ true;
 }
 
 
@@ -2606,12 +2606,12 @@ static bool layout_float(struct box *b, int width, html_content *content)
  * \param  y	  y coordinate relative to cont to place float below
  * \param  cont	  ancestor box which defines horizontal space, for floats
  */
-static void
-place_float_below(struct box *c, int width, int cx, int y, struct box *cont)
+സ്ഥിതം ശൂന്യം
+place_float_below(ഘടന box *c, പൂർണ്ണസംഖ്യ width, പൂർണ്ണസംഖ്യ cx, പൂർണ്ണസംഖ്യ y, ഘടന box *cont)
 {
-	int x0, x1, yy;
-	struct box *left;
-	struct box *right;
+	പൂർണ്ണസംഖ്യ x0, x1, yy;
+	ഘടന box *ഇടത്;
+	ഘടന box *വലത്;
 
 	yy = y > cont->cached_place_below_level ?
 			y : cont->cached_place_below_level;
@@ -2620,27 +2620,27 @@ place_float_below(struct box *c, int width, int cx, int y, struct box *cont)
 	      "c %p, width %i, cx %i, y %i, cont %p", c,
 	      width, cx, y, cont);
 
-	do {
+	ചെയ്യുക {
 		y = yy;
 		x0 = cx;
 		x1 = cx + width;
 		find_sides(cont->float_children, y, y + c->height, &x0, &x1,
-				&left, &right);
-		if (left != 0 && right != 0) {
-			yy = (left->y + left->height <
-					right->y + right->height ?
-					left->y + left->height :
-					right->y + right->height);
-		} else if (left == 0 && right != 0) {
-			yy = right->y + right->height;
-		} else if (left != 0 && right == 0) {
-			yy = left->y + left->height;
+				&ഇടത്, &വലത്);
+		എങ്കിൽ (ഇടത് != 0 && വലത് != 0) {
+			yy = (ഇടത്->y + ഇടത്->height <
+					വലത്->y + വലത്->height ?
+					ഇടത്->y + ഇടത്->height :
+					വലത്->y + വലത്->height);
+		} അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് == 0 && വലത് != 0) {
+			yy = വലത്->y + വലത്->height;
+		} അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് != 0 && വലത് == 0) {
+			yy = ഇടത്->y + ഇടത്->height;
 		}
-	} while ((left != 0 || right != 0) && (c->width > x1 - x0));
+	} ആകുമ്പോൾ ((ഇടത് != 0 || വലത് != 0) && (c->width > x1 - x0));
 
-	if (c->type == BOX_FLOAT_LEFT) {
+	എങ്കിൽ (c->type == BOX_FLOAT_ഇടത്) {
 		c->x = x0;
-	} else {
+	} അല്ലെങ്കിൽ {
 		c->x = x1 - c->width;
 	}
 	c->y = y;
@@ -2651,39 +2651,39 @@ place_float_below(struct box *c, int width, int cx, int y, struct box *cont)
 /**
  * Calculate line height from a style.
  */
-static int line_height(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style)
+സ്ഥിതം പൂർണ്ണസംഖ്യ വരി_height(
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		സ്ഥിരം css_computed_style *style)
 {
-	enum css_line_height_e lhtype;
+	എണ്ണൽ css_വരി_height_e lhtype;
 	css_fixed lhvalue = 0;
 	css_unit lhunit = CSS_UNIT_PX;
-	css_fixed line_height;
+	css_fixed വരി_height;
 
-	assert(style);
+	പ്രതിജ്ഞാ(style);
 
-	lhtype = css_computed_line_height(style, &lhvalue, &lhunit);
-	if (lhtype == CSS_LINE_HEIGHT_NORMAL) {
+	lhtype = css_computed_വരി_height(style, &lhvalue, &lhunit);
+	എങ്കിൽ (lhtype == CSS_വരി_HEIGHT_NORMAL) {
 		/* Normal => use a constant of 1.3 * font-size */
 		lhvalue = FLTTOFIX(1.3);
-		lhtype = CSS_LINE_HEIGHT_NUMBER;
+		lhtype = CSS_വരി_HEIGHT_സംഖ്യ;
 	}
 
-	if (lhtype == CSS_LINE_HEIGHT_NUMBER ||
+	എങ്കിൽ (lhtype == CSS_വരി_HEIGHT_സംഖ്യ ||
 			lhunit == CSS_UNIT_PCT) {
-		line_height = css_unit_len2device_px(style, unit_len_ctx,
+		വരി_height = css_unit_len2device_px(style, unit_len_ctx,
 				lhvalue, CSS_UNIT_EM);
 
-		if (lhtype != CSS_LINE_HEIGHT_NUMBER)
-			line_height = FDIV(line_height, F_100);
-	} else {
-		assert(lhunit != CSS_UNIT_PCT);
+		എങ്കിൽ (lhtype != CSS_വരി_HEIGHT_സംഖ്യ)
+			വരി_height = FDIV(വരി_height, F_100);
+	} അല്ലെങ്കിൽ {
+		പ്രതിജ്ഞാ(lhunit != CSS_UNIT_PCT);
 
-		line_height = css_unit_len2device_px(style, unit_len_ctx,
+		വരി_height = css_unit_len2device_px(style, unit_len_ctx,
 				lhvalue, lhunit);
 	}
 
-	return FIXTOINT(line_height);
+	തിരികെ FIXTOINT(വരി_height);
 }
 
 
@@ -2703,41 +2703,41 @@ static int line_height(
  * \param  content  memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_line(struct box *first,
-	    int *width,
-	    int *y,
-	    int cx,
-	    int cy,
-	    struct box *cont,
+സ്ഥിതം bool
+layout_വരി(ഘടന box *first,
+	    പൂർണ്ണസംഖ്യ *width,
+	    പൂർണ്ണസംഖ്യ *y,
+	    പൂർണ്ണസംഖ്യ cx,
+	    പൂർണ്ണസംഖ്യ cy,
+	    ഘടന box *cont,
 	    bool indent,
 	    bool has_text_children,
 	    html_content *content,
-	    struct box **next_box)
+	    ഘടന box **next_box)
 {
-	int height, used_height;
-	int x0 = 0;
-	int x1 = *width;
-	int x, h, x_previous;
-	int fy = cy;
-	struct box *left;
-	struct box *right;
-	struct box *b;
-	struct box *split_box = 0;
-	struct box *d;
-	struct box *br_box = 0;
+	പൂർണ്ണസംഖ്യ height, used_height;
+	പൂർണ്ണസംഖ്യ x0 = 0;
+	പൂർണ്ണസംഖ്യ x1 = *width;
+	പൂർണ്ണസംഖ്യ x, h, x_previous;
+	പൂർണ്ണസംഖ്യ fy = cy;
+	ഘടന box *ഇടത്;
+	ഘടന box *വലത്;
+	ഘടന box *b;
+	ഘടന box *split_box = 0;
+	ഘടന box *d;
+	ഘടന box *br_box = 0;
 	bool move_y = false;
 	bool place_below = false;
-	int space_before = 0, space_after = 0;
-	unsigned int inline_count = 0;
-	unsigned int i;
-	const struct gui_layout_table *font_func = content->font_func;
+	പൂർണ്ണസംഖ്യ space_before = 0, space_after = 0;
+	unsigned പൂർണ്ണസംഖ്യ inline_എണ്ണം = 0;
+	unsigned പൂർണ്ണസംഖ്യ i;
+	സ്ഥിരം ഘടന gui_layout_table *font_func = content->font_func;
 	plot_font_style_t fstyle;
 
 	NSLOG(layout, DEBUG,
 	      "first %p, first->text '%.*s', width %i, y %i, cx %i, cy %i",
 	      first,
-	      (int)first->length,
+	      (പൂർണ്ണസംഖ്യ)first->length,
 	      first->text,
 	      *width,
 	      *y,
@@ -2747,24 +2747,24 @@ layout_line(struct box *first,
 	/* find sides at top of line */
 	x0 += cx;
 	x1 += cx;
-	find_sides(cont->float_children, cy, cy, &x0, &x1, &left, &right);
+	find_sides(cont->float_children, cy, cy, &x0, &x1, &ഇടത്, &വലത്);
 	x0 -= cx;
 	x1 -= cx;
 
-	if (indent)
+	എങ്കിൽ (indent)
 		x0 += layout_text_indent(&content->unit_len_ctx,
 				first->parent->parent->style, *width);
 
-	if (x1 < x0)
+	എങ്കിൽ (x1 < x0)
 		x1 = x0;
 
 	/* get minimum line height from containing block.
 	 * this is the line-height if there are text children and also in the
 	 * case of an initially empty text input */
-	if (has_text_children || first->parent->parent->gadget)
-		used_height = height = line_height(&content->unit_len_ctx,
+	എങ്കിൽ (has_text_children || first->parent->parent->gadget)
+		used_height = height = വരി_height(&content->unit_len_ctx,
 				first->parent->parent->style);
-	else
+	അല്ലെങ്കിൽ
 		/* inline containers with no text are usually for layout and
 		 * look better with no minimum line-height */
 		used_height = height = 0;
@@ -2776,124 +2776,124 @@ layout_line(struct box *first,
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, x1 - x0 %i", x0, x1, x1 - x0);
 
 
-	for (x = 0, b = first; x <= x1 - x0 && b != 0; b = b->next) {
-		int min_width, max_width, min_height, max_height;
+	വേണ്ടി (x = 0, b = first; x <= x1 - x0 && b != 0; b = b->next) {
+		പൂർണ്ണസംഖ്യ min_width, max_width, min_height, max_height;
 
-		assert(lh__box_is_inline_content(b));
+		പ്രതിജ്ഞാ(lh__box_is_inline_content(b));
 
 		NSLOG(layout, DEBUG,  "pass 1: b %p, x %i", b, x);
 
-		if (b->type == BOX_BR)
-			break;
+		എങ്കിൽ (b->type == BOX_BR)
+			നിർത്തുക;
 
-		if (lh__box_is_float_box(b))
-			continue;
-		if (b->type == BOX_INLINE_BLOCK &&
+		എങ്കിൽ (lh__box_is_float_box(b))
+			തുടരുക;
+		എങ്കിൽ (b->type == BOX_INLINE_BLOCK &&
 				(css_computed_position(b->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(b->style) ==
 						CSS_POSITION_FIXED))
-			continue;
+			തുടരുക;
 
-		assert(b->style != NULL);
+		പ്രതിജ്ഞാ(b->style != ശൂന്യ);
 		font_plot_style_from_css(&content->unit_len_ctx, b->style, &fstyle);
 
 		x += space_after;
 
-		if (b->type == BOX_INLINE_BLOCK ||
+		എങ്കിൽ (b->type == BOX_INLINE_BLOCK ||
 		    b->type == BOX_INLINE_FLEX) {
-			if (b->max_width != UNKNOWN_WIDTH)
-				if (!layout_float(b, *width, content))
-					return false;
-			h = b->border[TOP].width + b->padding[TOP] + b->height +
+			എങ്കിൽ (b->max_width != UNKNOWN_WIDTH)
+				എങ്കിൽ (!layout_float(b, *width, content))
+					തിരികെ false;
+			h = b->border[മുകൾ_2].width + b->padding[മുകൾ_2] + b->height +
 					b->padding[BOTTOM] +
 					b->border[BOTTOM].width;
-			if (height < h)
+			എങ്കിൽ (height < h)
 				height = h;
-			x += b->margin[LEFT] + b->border[LEFT].width +
-					b->padding[LEFT] + b->width +
-					b->padding[RIGHT] +
-					b->border[RIGHT].width +
-					b->margin[RIGHT];
+			x += b->margin[ഇടത്_2] + b->border[ഇടത്_2].width +
+					b->padding[ഇടത്_2] + b->width +
+					b->padding[വലത്_2] +
+					b->border[വലത്_2].width +
+					b->margin[വലത്_2];
 			space_after = 0;
-			continue;
+			തുടരുക;
 		}
 
-		if (b->type == BOX_INLINE) {
+		എങ്കിൽ (b->type == BOX_INLINE) {
 			/* calculate borders, margins, and padding */
 			layout_find_dimensions(&content->unit_len_ctx,
 					*width, -1, b, b->style, 0, 0, 0, 0,
 					0, 0, b->margin, b->padding, b->border);
-			for (i = 0; i != 4; i++)
-				if (b->margin[i] == AUTO)
+			വേണ്ടി (i = 0; i != 4; i++)
+				എങ്കിൽ (b->margin[i] == AUTO)
 					b->margin[i] = 0;
-			x += b->margin[LEFT] + b->border[LEFT].width +
-					b->padding[LEFT];
-			if (b->inline_end) {
-				b->inline_end->margin[RIGHT] = b->margin[RIGHT];
-				b->inline_end->padding[RIGHT] =
-						b->padding[RIGHT];
-				b->inline_end->border[RIGHT] =
-						b->border[RIGHT];
-			} else {
-				x += b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
+			x += b->margin[ഇടത്_2] + b->border[ഇടത്_2].width +
+					b->padding[ഇടത്_2];
+			എങ്കിൽ (b->inline_end) {
+				b->inline_end->margin[വലത്_2] = b->margin[വലത്_2];
+				b->inline_end->padding[വലത്_2] =
+						b->padding[വലത്_2];
+				b->inline_end->border[വലത്_2] =
+						b->border[വലത്_2];
+			} അല്ലെങ്കിൽ {
+				x += b->padding[വലത്_2] +
+						b->border[വലത്_2].width +
+						b->margin[വലത്_2];
 			}
-		} else if (b->type == BOX_INLINE_END) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (b->type == BOX_INLINE_END) {
 			b->width = 0;
-			if (b->space == UNKNOWN_WIDTH) {
+			എങ്കിൽ (b->space == UNKNOWN_WIDTH) {
 				font_func->width(&fstyle, " ", 1, &b->space);
 				/** \todo handle errors */
 			}
 			space_after = b->space;
 
-			x += b->padding[RIGHT] + b->border[RIGHT].width +
-					b->margin[RIGHT];
-			continue;
+			x += b->padding[വലത്_2] + b->border[വലത്_2].width +
+					b->margin[വലത്_2];
+			തുടരുക;
 		}
 
-		if (lh__box_is_replace(b) == false) {
+		എങ്കിൽ (lh__box_is_replace(b) == false) {
 			/* inline non-replaced, 10.3.1 and 10.6.1 */
-			b->height = line_height(&content->unit_len_ctx,
+			b->height = വരി_height(&content->unit_len_ctx,
 					b->style ? b->style :
 					b->parent->parent->style);
-			if (height < b->height)
+			എങ്കിൽ (height < b->height)
 				height = b->height;
 
-			if (!b->text) {
+			എങ്കിൽ (!b->text) {
 				b->width = 0;
 				space_after = 0;
-				continue;
+				തുടരുക;
 			}
 
-			if (b->width == UNKNOWN_WIDTH) {
+			എങ്കിൽ (b->width == UNKNOWN_WIDTH) {
 				/** \todo handle errors */
 
 				/* If it's a select element, we must use the
 				 * width of the widest option text */
-				if (b->parent->parent->gadget &&
+				എങ്കിൽ (b->parent->parent->gadget &&
 						b->parent->parent->gadget->type
 						== GADGET_SELECT) {
-					int opt_maxwidth = 0;
-					struct form_option *o;
+					പൂർണ്ണസംഖ്യ opt_maxwidth = 0;
+					ഘടന form_option *o;
 
-					for (o = b->parent->parent->gadget->
-							data.select.items; o;
+					വേണ്ടി (o = b->parent->parent->gadget->
+							data.select.ഇനങ്ങൾ; o;
 							o = o->next) {
-						int opt_width;
+						പൂർണ്ണസംഖ്യ opt_width;
 						font_func->width(&fstyle,
 								o->text,
 								strlen(o->text),
 								&opt_width);
 
-						if (opt_maxwidth < opt_width)
+						എങ്കിൽ (opt_maxwidth < opt_width)
 							opt_maxwidth =opt_width;
 					}
 					b->width = opt_maxwidth;
-					if (nsoption_bool(core_select_menu))
+					എങ്കിൽ (nsoption_bool(core_select_menu))
 						b->width += SCROLLBAR_WIDTH;
-				} else {
+				} അല്ലെങ്കിൽ {
 					font_func->width(&fstyle, b->text,
 							b->length, &b->width);
 					b->flags |= MEASURED;
@@ -2904,7 +2904,7 @@ layout_line(struct box *first,
 			 * width was estimated after splitting), and it fits on
 			 * the line, measure it properly, so next box is placed
 			 * correctly. */
-			if (b->text && (x + b->width < x1 - x0) &&
+			എങ്കിൽ (b->text && (x + b->width < x1 - x0) &&
 					!(b->flags & MEASURED) &&
 					b->next) {
 				font_func->width(&fstyle, b->text,
@@ -2913,47 +2913,47 @@ layout_line(struct box *first,
 			}
 
 			x += b->width;
-			if (b->space == UNKNOWN_WIDTH) {
+			എങ്കിൽ (b->space == UNKNOWN_WIDTH) {
 				font_func->width(&fstyle, " ", 1, &b->space);
 				/** \todo handle errors */
 			}
 			space_after = b->space;
-			continue;
+			തുടരുക;
 		}
 
 		space_after = 0;
 
 		/* inline replaced, 10.3.2 and 10.6.2 */
-		assert(b->style);
+		പ്രതിജ്ഞാ(b->style);
 
 		layout_find_dimensions(&content->unit_len_ctx,
 				*width, -1, b, b->style,
 				&b->width, &b->height,
 				&max_width, &min_width,
 				&max_height, &min_height,
-				NULL, NULL, NULL);
+				ശൂന്യ, ശൂന്യ, ശൂന്യ);
 
-		if (b->object && !(b->flags & REPLACE_DIM)) {
+		എങ്കിൽ (b->object && !(b->flags & REPLACE_DIM)) {
 			layout_get_object_dimensions(b, &b->width, &b->height,
 					min_width, max_width,
 					min_height, max_height);
-		} else if (b->flags & IFRAME) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (b->flags & IFRAME) {
 			/* TODO: should we look at the content dimensions? */
-			if (b->width == AUTO)
+			എങ്കിൽ (b->width == AUTO)
 				b->width = 400;
-			if (b->height == AUTO)
+			എങ്കിൽ (b->height == AUTO)
 				b->height = 300;
 
 			/* We reformat the iframe browser window to new
 			 * dimensions in pass 2 */
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* form control with no object */
-			if (b->width == AUTO)
+			എങ്കിൽ (b->width == AUTO)
 				b->width = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx, INTTOFIX(1),
 						CSS_UNIT_EM));
-			if (b->height == AUTO)
+			എങ്കിൽ (b->height == AUTO)
 				b->height = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx, INTTOFIX(1),
@@ -2961,21 +2961,21 @@ layout_line(struct box *first,
 		}
 
 		/* Reformat object to new box size */
-		if (b->object && content_can_reformat(b->object) &&
+		എങ്കിൽ (b->object && content_can_reformat(b->object) &&
 				b->width !=
 				content_get_available_width(b->object)) {
-			css_fixed value = 0;
+			css_fixed മൂല്യം = 0;
 			css_unit unit = CSS_UNIT_PX;
-			enum css_height_e htype = css_computed_height(b->style,
-					&value, &unit);
+			എണ്ണൽ css_height_e htype = css_computed_height(b->style,
+					&മൂല്യം, &unit);
 
 			content_reformat(b->object, false, b->width, b->height);
 
-			if (htype == CSS_HEIGHT_AUTO)
+			എങ്കിൽ (htype == CSS_HEIGHT_AUTO)
 				b->height = content_get_height(b->object);
 		}
 
-		if (height < b->height)
+		എങ്കിൽ (height < b->height)
 			height = b->height;
 
 		x += b->width;
@@ -2985,15 +2985,15 @@ layout_line(struct box *first,
 	x0 = cx;
 	x1 = cx + *width;
 	find_sides(cont->float_children, cy, cy + height, &x0, &x1,
-			&left, &right);
+			&ഇടത്, &വലത്);
 	x0 -= cx;
 	x1 -= cx;
 
-	if (indent)
+	എങ്കിൽ (indent)
 		x0 += layout_text_indent(&content->unit_len_ctx,
 				first->parent->parent->style, *width);
 
-	if (x1 < x0)
+	എങ്കിൽ (x1 < x0)
 		x1 = x0;
 
 	space_after = space_before = 0;
@@ -3002,50 +3002,50 @@ layout_line(struct box *first,
 
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, x1 - x0 %i", x0, x1, x1 - x0);
 
-	for (x = x_previous = 0, b = first; x <= x1 - x0 && b; b = b->next) {
+	വേണ്ടി (x = x_previous = 0, b = first; x <= x1 - x0 && b; b = b->next) {
 
 		NSLOG(layout, DEBUG,  "pass 2: b %p, x %i", b, x);
 
-		if (b->type == BOX_INLINE_BLOCK &&
+		എങ്കിൽ (b->type == BOX_INLINE_BLOCK &&
 				(css_computed_position(b->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(b->style) ==
 						CSS_POSITION_FIXED)) {
 			b->x = x + space_after;
 
-		} else if (lh__box_is_inline_flow(b)) {
-			assert(b->width != UNKNOWN_WIDTH);
+		} അല്ലെങ്കിൽ എങ്കിൽ (lh__box_is_inline_flow(b)) {
+			പ്രതിജ്ഞാ(b->width != UNKNOWN_WIDTH);
 
 			x_previous = x;
 			x += space_after;
 			b->x = x;
 
-			if ((b->type == BOX_INLINE && !b->inline_end) ||
+			എങ്കിൽ ((b->type == BOX_INLINE && !b->inline_end) ||
 					b->type == BOX_INLINE_BLOCK ||
 					b->type == BOX_INLINE_FLEX) {
-				b->x += b->margin[LEFT] + b->border[LEFT].width;
-				x = b->x + b->padding[LEFT] + b->width +
-						b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
-			} else if (b->type == BOX_INLINE) {
-				b->x += b->margin[LEFT] + b->border[LEFT].width;
-				x = b->x + b->padding[LEFT] + b->width;
-			} else if (b->type == BOX_INLINE_END) {
+				b->x += b->margin[ഇടത്_2] + b->border[ഇടത്_2].width;
+				x = b->x + b->padding[ഇടത്_2] + b->width +
+						b->padding[വലത്_2] +
+						b->border[വലത്_2].width +
+						b->margin[വലത്_2];
+			} അല്ലെങ്കിൽ എങ്കിൽ (b->type == BOX_INLINE) {
+				b->x += b->margin[ഇടത്_2] + b->border[ഇടത്_2].width;
+				x = b->x + b->padding[ഇടത്_2] + b->width;
+			} അല്ലെങ്കിൽ എങ്കിൽ (b->type == BOX_INLINE_END) {
 				b->height = b->inline_end->height;
-				x += b->padding[RIGHT] +
-						b->border[RIGHT].width +
-						b->margin[RIGHT];
-			} else {
+				x += b->padding[വലത്_2] +
+						b->border[വലത്_2].width +
+						b->margin[വലത്_2];
+			} അല്ലെങ്കിൽ {
 				x += b->width;
 			}
 
 			space_before = space_after;
-			if (b->object || b->flags & REPLACE_DIM ||
+			എങ്കിൽ (b->object || b->flags & REPLACE_DIM ||
 					b->flags & IFRAME)
 				space_after = 0;
-			else if (b->text || b->type == BOX_INLINE_END) {
-				if (b->space == UNKNOWN_WIDTH) {
+			അല്ലെങ്കിൽ എങ്കിൽ (b->text || b->type == BOX_INLINE_END) {
+				എങ്കിൽ (b->space == UNKNOWN_WIDTH) {
 					font_plot_style_from_css(
 							&content->unit_len_ctx,
 							b->style, &fstyle);
@@ -3054,22 +3054,22 @@ layout_line(struct box *first,
 							 &b->space);
 				}
 				space_after = b->space;
-			} else {
+			} അല്ലെങ്കിൽ {
 				space_after = 0;
 			}
 			split_box = b;
 			move_y = true;
-			inline_count++;
-		} else if (b->type == BOX_BR) {
+			inline_എണ്ണം++;
+		} അല്ലെങ്കിൽ എങ്കിൽ (b->type == BOX_BR) {
 			b->x = x;
 			b->width = 0;
 			br_box = b;
 			b = b->next;
 			split_box = 0;
 			move_y = true;
-			break;
+			നിർത്തുക;
 
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* float */
 			NSLOG(layout, DEBUG,  "float %p", b);
 
@@ -3078,42 +3078,42 @@ layout_line(struct box *first,
 			d->cached_place_below_level = 0;
 			b->float_container = d->float_container = cont;
 
-			if (!layout_float(d, *width, content))
-				return false;
+			എങ്കിൽ (!layout_float(d, *width, content))
+				തിരികെ false;
 
 			NSLOG(layout, DEBUG,
 			      "%p : %d %d",
 			      d,
-			      d->margin[TOP],
-			      d->border[TOP].width);
+			      d->margin[മുകൾ_2],
+			      d->border[മുകൾ_2].width);
 
-			d->x = d->margin[LEFT] + d->border[LEFT].width;
-			d->y = d->margin[TOP] + d->border[TOP].width;
-			b->width = d->margin[LEFT] + d->border[LEFT].width +
-					d->padding[LEFT] + d->width +
-					d->padding[RIGHT] +
-					d->border[RIGHT].width +
-					d->margin[RIGHT];
-			b->height = d->margin[TOP] + d->border[TOP].width +
-					d->padding[TOP] + d->height +
+			d->x = d->margin[ഇടത്_2] + d->border[ഇടത്_2].width;
+			d->y = d->margin[മുകൾ_2] + d->border[മുകൾ_2].width;
+			b->width = d->margin[ഇടത്_2] + d->border[ഇടത്_2].width +
+					d->padding[ഇടത്_2] + d->width +
+					d->padding[വലത്_2] +
+					d->border[വലത്_2].width +
+					d->margin[വലത്_2];
+			b->height = d->margin[മുകൾ_2] + d->border[മുകൾ_2].width +
+					d->padding[മുകൾ_2] + d->height +
 					d->padding[BOTTOM] +
 					d->border[BOTTOM].width +
 					d->margin[BOTTOM];
 
-			if (b->width > (x1 - x0) - x)
+			എങ്കിൽ (b->width > (x1 - x0) - x)
 				place_below = true;
-			if (d->style && (css_computed_clear(d->style) ==
+			എങ്കിൽ (d->style && (css_computed_clear(d->style) ==
 						CSS_CLEAR_NONE ||
 					(css_computed_clear(d->style) ==
-						CSS_CLEAR_LEFT && left == 0) ||
+						CSS_CLEAR_ഇടത് && ഇടത് == 0) ||
 					(css_computed_clear(d->style) ==
-						CSS_CLEAR_RIGHT &&
-						right == 0) ||
+						CSS_CLEAR_വലത് &&
+						വലത് == 0) ||
 					(css_computed_clear(d->style) ==
 						CSS_CLEAR_BOTH &&
-						left == 0 && right == 0)) &&
+						ഇടത് == 0 && വലത് == 0)) &&
 					(!place_below ||
-					(left == 0 && right == 0 && x == 0)) &&
+					(ഇടത് == 0 && വലത് == 0 && x == 0)) &&
 					cy >= cont->clear_level &&
 					cy >= cont->cached_place_below_level) {
 				/* + not cleared or,
@@ -3123,22 +3123,22 @@ layout_line(struct box *first,
 				 * + current y, cy, is below the clear level
 				 *
 				 * Float affects current line */
-				if (b->type == BOX_FLOAT_LEFT) {
+				എങ്കിൽ (b->type == BOX_FLOAT_ഇടത്) {
 					b->x = cx + x0;
-					if (b->width > 0)
+					എങ്കിൽ (b->width > 0)
 						x0 += b->width;
-					left = b;
-				} else {
+					ഇടത് = b;
+				} അല്ലെങ്കിൽ {
 					b->x = cx + x1 - b->width;
-					if (b->width > 0)
+					എങ്കിൽ (b->width > 0)
 						x1 -= b->width;
-					right = b;
+					വലത് = b;
 				}
 				b->y = cy;
-			} else {
+			} അല്ലെങ്കിൽ {
 				/* cleared or doesn't fit on line */
 				/* place below into next available space */
-				int fcy = (cy > cont->clear_level) ? cy :
+				പൂർണ്ണസംഖ്യ fcy = (cy > cont->clear_level) ? cy :
 						cont->clear_level;
 				fcy = (fcy > cont->cached_place_below_level) ?
 						fcy :
@@ -3148,33 +3148,33 @@ layout_line(struct box *first,
 
 				place_float_below(b, *width, cx, fy, cont);
 				fy = b->y;
-				if (d->style && (
+				എങ്കിൽ (d->style && (
 						(css_computed_clear(d->style) ==
-						CSS_CLEAR_LEFT && left != 0) ||
+						CSS_CLEAR_ഇടത് && ഇടത് != 0) ||
 						(css_computed_clear(d->style) ==
-						CSS_CLEAR_RIGHT &&
-						right != 0) ||
+						CSS_CLEAR_വലത് &&
+						വലത് != 0) ||
 						(css_computed_clear(d->style) ==
 						CSS_CLEAR_BOTH &&
-						(left != 0 || right != 0)))) {
+						(ഇടത് != 0 || വലത് != 0)))) {
 					/* to be cleared below existing
 					 * floats */
-					if (b->type == BOX_FLOAT_LEFT)
+					എങ്കിൽ (b->type == BOX_FLOAT_ഇടത്)
 						b->x = cx;
-					else
+					അല്ലെങ്കിൽ
 						b->x = cx + *width - b->width;
 
 					fcy = layout_clear(cont->float_children,
 						css_computed_clear(d->style));
-					if (fcy > cont->clear_level)
+					എങ്കിൽ (fcy > cont->clear_level)
 						cont->clear_level = fcy;
-					if (b->y < fcy)
+					എങ്കിൽ (b->y < fcy)
 						b->y = fcy;
 				}
-				if (b->type == BOX_FLOAT_LEFT)
-					left = b;
-				else
-					right = b;
+				എങ്കിൽ (b->type == BOX_FLOAT_ഇടത്)
+					ഇടത് = b;
+				അല്ലെങ്കിൽ
+					വലത് = b;
 			}
 			add_float_to_container(cont, b);
 
@@ -3182,10 +3182,10 @@ layout_line(struct box *first,
 		}
 	}
 
-	if (x1 - x0 < x && split_box) {
+	എങ്കിൽ (x1 - x0 < x && split_box) {
 		/* the last box went over the end */
 		size_t split = 0;
-		int w;
+		പൂർണ്ണസംഖ്യ w;
 		bool no_wrap = css_computed_white_space(
 				split_box->style) == CSS_WHITE_SPACE_NOWRAP ||
 				css_computed_white_space(
@@ -3193,7 +3193,7 @@ layout_line(struct box *first,
 
 		x = x_previous;
 
-		if (!no_wrap &&
+		എങ്കിൽ (!no_wrap &&
 		    (split_box->type == BOX_INLINE ||
 		     split_box->type == BOX_TEXT) &&
 		    !split_box->object &&
@@ -3214,7 +3214,7 @@ layout_line(struct box *first,
 
 		/* split == 0 implies that text can't be split */
 
-		if (split == 0)
+		എങ്കിൽ (split == 0)
 			w = split_box->width;
 
 
@@ -3222,84 +3222,84 @@ layout_line(struct box *first,
 		      "splitting: split_box %p \"%.*s\", spilt %"PRIsizet
 		      ", w %i, left %p, right %p, inline_count %u",
 		      split_box,
-		      (int)split_box->length,
+		      (പൂർണ്ണസംഖ്യ)split_box->length,
 		      split_box->text,
 		      split,
 		      w,
-		      left,
-		      right,
-		      inline_count);
+		      ഇടത്,
+		      വലത്,
+		      inline_എണ്ണം);
 
-		if ((split == 0 || x1 - x0 <= x + space_before + w) &&
-				!left && !right && inline_count == 1) {
+		എങ്കിൽ ((split == 0 || x1 - x0 <= x + space_before + w) &&
+				!ഇടത് && !വലത് && inline_എണ്ണം == 1) {
 			/* first word of box doesn't fit, but no floats and
 			 * first box on line so force in */
-			if (split == 0 || split == split_box->length) {
+			എങ്കിൽ (split == 0 || split == split_box->length) {
 				/* only one word in this box, or not text
 				 * or white-space:nowrap */
 				b = split_box->next;
-			} else {
+			} അല്ലെങ്കിൽ {
 				/* cut off first word for this line */
-				if (!layout_text_box_split(content, &fstyle,
+				എങ്കിൽ (!layout_text_box_split(content, &fstyle,
 						split_box, split, w))
-					return false;
+					തിരികെ false;
 				b = split_box->next;
 			}
 			x += space_before + w;
 
 			NSLOG(layout, DEBUG,  "forcing");
 
-		} else if ((split == 0 || x1 - x0 <= x + space_before + w) &&
-				inline_count == 1) {
+		} അല്ലെങ്കിൽ എങ്കിൽ ((split == 0 || x1 - x0 <= x + space_before + w) &&
+				inline_എണ്ണം == 1) {
 			/* first word of first box doesn't fit, but a float is
 			 * taking some of the width so move below it */
-			assert(left || right);
+			പ്രതിജ്ഞാ(ഇടത് || വലത്);
 			used_height = 0;
-			if (left) {
+			എങ്കിൽ (ഇടത്) {
 
 				NSLOG(layout, DEBUG,
 				      "cy %i, left->y %i, left->height %i",
 				      cy,
-				      left->y,
-				      left->height);
+				      ഇടത്->y,
+				      ഇടത്->height);
 
-				used_height = left->y + left->height - cy + 1;
+				used_height = ഇടത്->y + ഇടത്->height - cy + 1;
 
 				NSLOG(layout, DEBUG,  "used_height %i",
 				      used_height);
 
 			}
-			if (right && used_height <
-					right->y + right->height - cy + 1)
-				used_height = right->y + right->height - cy + 1;
+			എങ്കിൽ (വലത് && used_height <
+					വലത്->y + വലത്->height - cy + 1)
+				used_height = വലത്->y + വലത്->height - cy + 1;
 
-			if (used_height < 0)
+			എങ്കിൽ (used_height < 0)
 				used_height = 0;
 
 			b = split_box;
 
 			NSLOG(layout, DEBUG,  "moving below float");
 
-		} else if (split == 0 || x1 - x0 <= x + space_before + w) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (split == 0 || x1 - x0 <= x + space_before + w) {
 			/* first word of box doesn't fit so leave box for next
 			 * line */
 			b = split_box;
 
 			NSLOG(layout, DEBUG,  "leaving for next line");
 
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* fit as many words as possible */
-			assert(split != 0);
+			പ്രതിജ്ഞാ(split != 0);
 
 			NSLOG(layout, DEBUG,
 			      "'%.*s' %i %"PRIsizet" %i",
-			      (int)split_box->length, split_box->text,
+			      (പൂർണ്ണസംഖ്യ)split_box->length, split_box->text,
 			      x1 - x0, split, w);
 
-			if (split != split_box->length) {
-				if (!layout_text_box_split(content, &fstyle,
+			എങ്കിൽ (split != split_box->length) {
+				എങ്കിൽ (!layout_text_box_split(content, &fstyle,
 						split_box, split, w))
-					return false;
+					തിരികെ false;
 				b = split_box->next;
 			}
 			x += space_before + w;
@@ -3311,37 +3311,37 @@ layout_line(struct box *first,
 	}
 
 	/* set positions */
-	switch (css_computed_text_align(first->parent->parent->style)) {
-	case CSS_TEXT_ALIGN_RIGHT:
-	case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
+	തിരഞ്ഞെടുപ്പ് (css_computed_text_align(first->parent->parent->style)) {
+	അവസ്ഥ CSS_TEXT_ALIGN_വലത്:
+	അവസ്ഥ CSS_TEXT_ALIGN_LIBCSS_വലത്:
 		x0 = x1 - x;
-		break;
-	case CSS_TEXT_ALIGN_CENTER:
-	case CSS_TEXT_ALIGN_LIBCSS_CENTER:
+		നിർത്തുക;
+	അവസ്ഥ CSS_TEXT_ALIGN_CENTER:
+	അവസ്ഥ CSS_TEXT_ALIGN_LIBCSS_CENTER:
 		x0 = (x0 + (x1 - x)) / 2;
-		break;
-	case CSS_TEXT_ALIGN_LEFT:
-	case CSS_TEXT_ALIGN_LIBCSS_LEFT:
-	case CSS_TEXT_ALIGN_JUSTIFY:
+		നിർത്തുക;
+	അവസ്ഥ CSS_TEXT_ALIGN_ഇടത്:
+	അവസ്ഥ CSS_TEXT_ALIGN_LIBCSS_ഇടത്:
+	അവസ്ഥ CSS_TEXT_ALIGN_JUSTIFY:
 		/* leave on left */
-		break;
-	case CSS_TEXT_ALIGN_DEFAULT:
+		നിർത്തുക;
+	അവസ്ഥ CSS_TEXT_ALIGN_DEFAULT:
 		/* None; consider text direction */
-		switch (css_computed_direction(first->parent->parent->style)) {
-		case CSS_DIRECTION_LTR:
+		തിരഞ്ഞെടുപ്പ് (css_computed_direction(first->parent->parent->style)) {
+		അവസ്ഥ CSS_DIRECTION_LTR:
 			/* leave on left */
-			break;
-		case CSS_DIRECTION_RTL:
+			നിർത്തുക;
+		അവസ്ഥ CSS_DIRECTION_RTL:
 			x0 = x1 - x;
-			break;
+			നിർത്തുക;
 		}
-		break;
+		നിർത്തുക;
 	}
 
-	for (d = first; d != b; d = d->next) {
-		d->flags &= ~NEW_LINE;
+	വേണ്ടി (d = first; d != b; d = d->next) {
+		d->flags &= ~NEW_വരി;
 
-		if (d->type == BOX_INLINE_BLOCK &&
+		എങ്കിൽ (d->type == BOX_INLINE_BLOCK &&
 				(css_computed_position(d->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(d->style) ==
@@ -3351,81 +3351,81 @@ layout_line(struct box *first,
 			 * is handled later */
 			d->x += x0;
 			d->y = *y;
-			continue;
-		} else if ((d->type == BOX_INLINE &&
+			തുടരുക;
+		} അല്ലെങ്കിൽ എങ്കിൽ ((d->type == BOX_INLINE &&
 				lh__box_is_replace(d) == false) ||
 				d->type == BOX_BR ||
 				d->type == BOX_TEXT ||
 				d->type == BOX_INLINE_END) {
 			/* regular (non-replaced) inlines */
 			d->x += x0;
-			d->y = *y - d->padding[TOP];
+			d->y = *y - d->padding[മുകൾ_2];
 
-			if (d->type == BOX_TEXT && d->height > used_height) {
+			എങ്കിൽ (d->type == BOX_TEXT && d->height > used_height) {
 				/* text */
 				used_height = d->height;
 			}
-		} else if ((d->type == BOX_INLINE) ||
+		} അല്ലെങ്കിൽ എങ്കിൽ ((d->type == BOX_INLINE) ||
 				d->type == BOX_INLINE_BLOCK) {
 			/* replaced inlines and inline-blocks */
 			d->x += x0;
-			d->y = *y + d->border[TOP].width + d->margin[TOP];
-			h = d->margin[TOP] + d->border[TOP].width +
-					d->padding[TOP] + d->height +
+			d->y = *y + d->border[മുകൾ_2].width + d->margin[മുകൾ_2];
+			h = d->margin[മുകൾ_2] + d->border[മുകൾ_2].width +
+					d->padding[മുകൾ_2] + d->height +
 					d->padding[BOTTOM] +
 					d->border[BOTTOM].width +
 					d->margin[BOTTOM];
-			if (used_height < h)
+			എങ്കിൽ (used_height < h)
 				used_height = h;
 		}
 	}
 
-	first->flags |= NEW_LINE;
+	first->flags |= NEW_വരി;
 
-	assert(b != first || (move_y && 0 < used_height && (left || right)));
+	പ്രതിജ്ഞാ(b != first || (move_y && 0 < used_height && (ഇടത് || വലത്)));
 
 	/* handle vertical-align by adjusting box y values */
 	/** \todo  proper vertical alignment handling */
-	for (d = first; d != b; d = d->next) {
-		if ((d->type == BOX_INLINE && d->inline_end) ||
+	വേണ്ടി (d = first; d != b; d = d->next) {
+		എങ്കിൽ ((d->type == BOX_INLINE && d->inline_end) ||
 				d->type == BOX_BR ||
 				d->type == BOX_TEXT ||
 				d->type == BOX_INLINE_END) {
-			css_fixed value = 0;
+			css_fixed മൂല്യം = 0;
 			css_unit unit = CSS_UNIT_PX;
-			switch (css_computed_vertical_align(d->style, &value,
+			തിരഞ്ഞെടുപ്പ് (css_computed_vertical_align(d->style, &മൂല്യം,
 					&unit)) {
-			case CSS_VERTICAL_ALIGN_SUPER:
-			case CSS_VERTICAL_ALIGN_TOP:
-			case CSS_VERTICAL_ALIGN_TEXT_TOP:
+			അവസ്ഥ CSS_VERTICAL_ALIGN_SUPER:
+			അവസ്ഥ CSS_VERTICAL_ALIGN_മുകൾ:
+			അവസ്ഥ CSS_VERTICAL_ALIGN_TEXT_മുകൾ:
 				/* already at top */
-				break;
-			case CSS_VERTICAL_ALIGN_SUB:
-			case CSS_VERTICAL_ALIGN_BOTTOM:
-			case CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
+				നിർത്തുക;
+			അവസ്ഥ CSS_VERTICAL_ALIGN_SUB:
+			അവസ്ഥ CSS_VERTICAL_ALIGN_BOTTOM:
+			അവസ്ഥ CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
 				d->y += used_height - d->height;
-				break;
-			default:
-			case CSS_VERTICAL_ALIGN_BASELINE:
+				നിർത്തുക;
+			സ്ഥിരസ്ഥിതി:
+			അവസ്ഥ CSS_VERTICAL_ALIGN_BASELINE:
 				d->y += 0.75 * (used_height - d->height);
-				break;
+				നിർത്തുക;
 			}
 		}
 	}
 
 	/* handle clearance for br */
-	if (br_box && css_computed_clear(br_box->style) != CSS_CLEAR_NONE) {
-		int clear_y = layout_clear(cont->float_children,
+	എങ്കിൽ (br_box && css_computed_clear(br_box->style) != CSS_CLEAR_NONE) {
+		പൂർണ്ണസംഖ്യ clear_y = layout_clear(cont->float_children,
 				css_computed_clear(br_box->style));
-		if (used_height < clear_y - cy)
+		എങ്കിൽ (used_height < clear_y - cy)
 			used_height = clear_y - cy;
 	}
 
-	if (move_y)
+	എങ്കിൽ (move_y)
 		*y += used_height;
 	*next_box = b;
 	*width = x; /* return actual width */
-	return true;
+	തിരികെ true;
 }
 
 
@@ -3440,16 +3440,16 @@ layout_line(struct box *first,
  * \param content  memory pool for any new boxes
  * \return true on success, false on memory exhaustion
  */
-static bool layout_inline_container(struct box *inline_container, int width,
-		struct box *cont, int cx, int cy, html_content *content)
+സ്ഥിതം bool layout_inline_container(ഘടന box *inline_container, പൂർണ്ണസംഖ്യ width,
+		ഘടന box *cont, പൂർണ്ണസംഖ്യ cx, പൂർണ്ണസംഖ്യ cy, html_content *content)
 {
-	bool first_line = true;
+	bool first_വരി = true;
 	bool has_text_children;
-	struct box *c, *next;
-	int y = 0;
-	int curwidth,maxwidth = width;
+	ഘടന box *c, *next;
+	പൂർണ്ണസംഖ്യ y = 0;
+	പൂർണ്ണസംഖ്യ curwidth,maxwidth = width;
 
-	assert(inline_container->type == BOX_INLINE_CONTAINER);
+	പ്രതിജ്ഞാ(inline_container->type == BOX_INLINE_CONTAINER);
 
 	NSLOG(layout, DEBUG,
 	      "inline_container %p, width %i, cont %p, cx %i, cy %i",
@@ -3461,20 +3461,20 @@ static bool layout_inline_container(struct box *inline_container, int width,
 
 
 	has_text_children = false;
-	for (c = inline_container->children; c; c = c->next) {
+	വേണ്ടി (c = inline_container->children; c; c = c->next) {
 		bool is_pre = false;
 
-		if (c->style) {
-			enum css_white_space_e whitespace;
+		എങ്കിൽ (c->style) {
+			എണ്ണൽ css_white_space_e whitespace;
 
 			whitespace = css_computed_white_space(c->style);
 
 			is_pre = (whitespace == CSS_WHITE_SPACE_PRE ||
-				whitespace == CSS_WHITE_SPACE_PRE_LINE ||
+				whitespace == CSS_WHITE_SPACE_PRE_വരി ||
 				whitespace == CSS_WHITE_SPACE_PRE_WRAP);
 		}
 
-		if ((lh__box_is_object(c) == false &&
+		എങ്കിൽ ((lh__box_is_object(c) == false &&
 				c->text && (c->length || is_pre)) ||
 				c->type == BOX_BR)
 			has_text_children = true;
@@ -3484,76 +3484,76 @@ static bool layout_inline_container(struct box *inline_container, int width,
 	 * shrink back to 'width' if no word is wider than 'width' (Or just set
 	 * curwidth = width and have the multiword lines wrap to the min width)
 	 */
-	for (c = inline_container->children; c; ) {
+	വേണ്ടി (c = inline_container->children; c; ) {
 
 		NSLOG(layout, DEBUG, "c %p", c);
 
 		curwidth = inline_container->width;
-		if (!layout_line(c, &curwidth, &y, cx, cy + y, cont, first_line,
+		എങ്കിൽ (!layout_വരി(c, &curwidth, &y, cx, cy + y, cont, first_വരി,
 				has_text_children, content, &next))
-			return false;
+			തിരികെ false;
 		maxwidth = max(maxwidth,curwidth);
 		c = next;
-		first_line = false;
+		first_വരി = false;
 	}
 
 	inline_container->width = maxwidth;
 	inline_container->height = y;
 
-	return true;
+	തിരികെ true;
 }
 
 
 /* Documented in layout_intertnal.h */
 bool layout_block_context(
-		struct box *block,
-		int viewport_height,
+		ഘടന box *block,
+		പൂർണ്ണസംഖ്യ viewport_height,
 		html_content *content)
 {
-	struct box *box;
-	int cx, cy;  /**< current coordinates */
-	int max_pos_margin = 0;
-	int max_neg_margin = 0;
-	int y = 0;
-	int lm, rm;
-	struct box *margin_collapse = NULL;
+	ഘടന box *box;
+	പൂർണ്ണസംഖ്യ cx, cy;  /**< current coordinates */
+	പൂർണ്ണസംഖ്യ max_pos_margin = 0;
+	പൂർണ്ണസംഖ്യ max_neg_margin = 0;
+	പൂർണ്ണസംഖ്യ y = 0;
+	പൂർണ്ണസംഖ്യ lm, rm;
+	ഘടന box *margin_collapse = ശൂന്യ;
 	bool in_margin = false;
 	css_fixed gadget_size;
 	css_unit gadget_unit; /* Checkbox / radio buttons */
 
-	assert(block->type == BOX_BLOCK ||
+	പ്രതിജ്ഞാ(block->type == BOX_BLOCK ||
 			block->type == BOX_INLINE_BLOCK ||
 			block->type == BOX_TABLE_CELL ||
 			block->type == BOX_FLEX ||
 			block->type == BOX_INLINE_FLEX);
-	assert(block->width != UNKNOWN_WIDTH);
-	assert(block->width != AUTO);
+	പ്രതിജ്ഞാ(block->width != UNKNOWN_WIDTH);
+	പ്രതിജ്ഞാ(block->width != AUTO);
 
-	block->float_children = NULL;
+	block->float_children = ശൂന്യ;
 	block->cached_place_below_level = 0;
 	block->clear_level = 0;
 
 	/* special case if the block contains an object */
-	if (block->object) {
-		int temp_width = block->width;
-		if (!layout_block_object(block))
-			return false;
+	എങ്കിൽ (block->object) {
+		പൂർണ്ണസംഖ്യ temp_width = block->width;
+		എങ്കിൽ (!layout_block_object(block))
+			തിരികെ false;
 		layout_get_object_dimensions(block, &temp_width,
 				&block->height, INT_MIN, INT_MAX,
 				INT_MIN, INT_MAX);
-		return true;
-	} else if (block->flags & REPLACE_DIM) {
-		return true;
+		തിരികെ true;
+	} അല്ലെങ്കിൽ എങ്കിൽ (block->flags & REPLACE_DIM) {
+		തിരികെ true;
 	}
 
 	/* special case if the block contains an radio button or checkbox */
-	if (block->gadget && (block->gadget->type == GADGET_RADIO ||
+	എങ്കിൽ (block->gadget && (block->gadget->type == GADGET_RADIO ||
 			block->gadget->type == GADGET_CHECKBOX)) {
 		/* form checkbox or radio button
 		 * if width or height is AUTO, set it to 1em */
 		gadget_unit = CSS_UNIT_EM;
 		gadget_size = INTTOFIX(1);
-		if (block->height == AUTO)
+		എങ്കിൽ (block->height == AUTO)
 			block->height = FIXTOINT(css_unit_len2device_px(
 					block->style,
 					&content->unit_len_ctx,
@@ -3563,9 +3563,9 @@ bool layout_block_context(
 	box = block->children;
 	/* set current coordinates to top-left of the block */
 	cx = 0;
-	y = cy = block->padding[TOP];
-	if (box)
-		box->y = block->padding[TOP];
+	y = cy = block->padding[മുകൾ_2];
+	എങ്കിൽ (box)
+		box->y = block->padding[മുകൾ_2];
 
 	/* Step through the descendants of the block in depth-first order, but
 	 * not into the children of boxes which aren't blocks. For example, if
@@ -3590,11 +3590,11 @@ bool layout_block_context(
 	 *                   ...
 	 * then the while loop will visit each box marked with *, setting box
 	 * to each in the order shown. */
-	while (box) {
-		enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
-		enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
+	ആകുമ്പോൾ (box) {
+		എണ്ണൽ css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
+		എണ്ണൽ css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
 
-		assert(box->type == BOX_BLOCK ||
+		പ്രതിജ്ഞാ(box->type == BOX_BLOCK ||
 				box->type == BOX_FLEX ||
 				box->type == BOX_TABLE ||
 				box->type == BOX_INLINE_CONTAINER);
@@ -3607,21 +3607,21 @@ bool layout_block_context(
 		 * correct handling of floats.
 		 */
 
-		if (box->style &&
+		എങ്കിൽ (box->style &&
 				(css_computed_position(box->style) ==
 					CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(box->style) ==
 					CSS_POSITION_FIXED)) {
-			box->x = box->parent->padding[LEFT];
+			box->x = box->parent->padding[ഇടത്_2];
 			/* absolute positioned; this element will establish
 			 * its own block context when it gets laid out later,
 			 * so no need to look at its children now. */
-			goto advance_to_next_box;
+			പോകുക advance_to_next_box;
 		}
 
 		/* If we don't know which box the current margin collapses
 		 * through to, find out.  Update the pos/neg margin values. */
-		if (margin_collapse == NULL) {
+		എങ്കിൽ (margin_collapse == ശൂന്യ) {
 			margin_collapse = layout_next_margin_block(
 					&content->unit_len_ctx, box, block,
 					viewport_height,
@@ -3632,13 +3632,13 @@ bool layout_block_context(
 
 		/* Clearance. */
 		y = 0;
-		if (box->style && css_computed_clear(box->style) !=
+		എങ്കിൽ (box->style && css_computed_clear(box->style) !=
 				CSS_CLEAR_NONE)
 			y = layout_clear(block->float_children,
 					css_computed_clear(box->style));
 
 		/* Find box's overflow properties */
-		if (box->style) {
+		എങ്കിൽ (box->style) {
 			overflow_x = css_computed_overflow_x(box->style);
 			overflow_y = css_computed_overflow_y(box->style);
 		}
@@ -3647,94 +3647,94 @@ bool layout_block_context(
 		 * left and right margins to avoid any floats. */
 		lm = rm = 0;
 
-		if (box->type == BOX_FLEX ||
+		എങ്കിൽ (box->type == BOX_FLEX ||
 		    box->type == BOX_BLOCK ||
 		    box->flags & IFRAME) {
-			if (lh__box_is_object(box) == false &&
+			എങ്കിൽ (lh__box_is_object(box) == false &&
 					box->style &&
 					(overflow_x != CSS_OVERFLOW_VISIBLE ||
 					 overflow_y != CSS_OVERFLOW_VISIBLE)) {
 				/* box establishes new block formatting context
 				 * so available width may be diminished due to
 				 * floats. */
-				int x0, x1, top;
-				struct box *left, *right;
-				top = cy + max_pos_margin - max_neg_margin;
-				top = (top > y) ? top : y;
+				പൂർണ്ണസംഖ്യ x0, x1, മുകൾ;
+				ഘടന box *ഇടത്, *വലത്;
+				മുകൾ = cy + max_pos_margin - max_neg_margin;
+				മുകൾ = (മുകൾ > y) ? മുകൾ : y;
 				x0 = cx;
 				x1 = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT];
-				find_sides(block->float_children, top, top,
-						&x0, &x1, &left, &right);
+						box->parent->padding[ഇടത്_2] -
+						box->parent->padding[വലത്_2];
+				find_sides(block->float_children, മുകൾ, മുകൾ,
+						&x0, &x1, &ഇടത്, &വലത്);
 				/* calculate min required left & right margins
 				 * needed to avoid floats */
 				lm = x0 - cx;
 				rm = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT] -
+						box->parent->padding[ഇടത്_2] -
+						box->parent->padding[വലത്_2] -
 						x1;
 			}
 			layout_block_find_dimensions(&content->unit_len_ctx,
 					box->parent->width,
 					viewport_height, lm, rm, box);
-			if (box->type == BOX_BLOCK && !(box->flags & IFRAME)) {
-				layout_block_add_scrollbar(box, RIGHT);
+			എങ്കിൽ (box->type == BOX_BLOCK && !(box->flags & IFRAME)) {
+				layout_block_add_scrollbar(box, വലത്_2);
 				layout_block_add_scrollbar(box, BOTTOM);
 			}
-		} else if (box->type == BOX_TABLE) {
-			if (box->style != NULL) {
-				enum css_width_e wtype;
+		} അല്ലെങ്കിൽ എങ്കിൽ (box->type == BOX_TABLE) {
+			എങ്കിൽ (box->style != ശൂന്യ) {
+				എണ്ണൽ css_width_e wtype;
 				css_fixed width = 0;
 				css_unit unit = CSS_UNIT_PX;
 
 				wtype = css_computed_width(box->style, &width,
 						&unit);
 
-				if (wtype == CSS_WIDTH_AUTO) {
+				എങ്കിൽ (wtype == CSS_WIDTH_AUTO) {
 					/* max available width may be
 					 * diminished due to floats. */
-					int x0, x1, top;
-					struct box *left, *right;
-					top = cy + max_pos_margin -
+					പൂർണ്ണസംഖ്യ x0, x1, മുകൾ;
+					ഘടന box *ഇടത്, *വലത്;
+					മുകൾ = cy + max_pos_margin -
 							max_neg_margin;
-					top = (top > y) ? top : y;
+					മുകൾ = (മുകൾ > y) ? മുകൾ : y;
 					x0 = cx;
 					x1 = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT];
+						box->parent->padding[ഇടത്_2] -
+						box->parent->padding[വലത്_2];
 					find_sides(block->float_children,
-						top, top, &x0, &x1,
-						&left, &right);
+						മുകൾ, മുകൾ, &x0, &x1,
+						&ഇടത്, &വലത്);
 					/* calculate min required left & right
 					 * margins needed to avoid floats */
 					lm = x0 - cx;
 					rm = cx + box->parent->width -
-						box->parent->padding[LEFT] -
-						box->parent->padding[RIGHT] -
+						box->parent->padding[ഇടത്_2] -
+						box->parent->padding[വലത്_2] -
 						x1;
 				}
 			}
-			if (!layout_table(box, box->parent->width - lm - rm,
+			എങ്കിൽ (!layout_table(box, box->parent->width - lm - rm,
 					content))
-				return false;
+				തിരികെ false;
 			layout_solve_width(box, box->parent->width, box->width,
 					lm, rm, -1, -1);
 		}
 
 		/* Position box: horizontal. */
-		box->x = box->parent->padding[LEFT] + box->margin[LEFT] +
-				box->border[LEFT].width;
+		box->x = box->parent->padding[ഇടത്_2] + box->margin[ഇടത്_2] +
+				box->border[ഇടത്_2].width;
 		cx += box->x;
 
 		/* Position box: vertical. */
-		if (box->border[TOP].width) {
-			box->y += box->border[TOP].width;
-			cy += box->border[TOP].width;
+		എങ്കിൽ (box->border[മുകൾ_2].width) {
+			box->y += box->border[മുകൾ_2].width;
+			cy += box->border[മുകൾ_2].width;
 		}
 
 		/* Vertical margin */
-		if (((box->type == BOX_BLOCK && (box->flags & HAS_HEIGHT)) ||
+		എങ്കിൽ (((box->type == BOX_BLOCK && (box->flags & HAS_HEIGHT)) ||
 		     box->type == BOX_FLEX ||
 		     box->type == BOX_TABLE ||
 		     (box->type == BOX_INLINE_CONTAINER &&
@@ -3751,7 +3751,7 @@ bool layout_block_context(
 		}
 
 		/* Handle clearance */
-		if (box->type != BOX_INLINE_CONTAINER &&
+		എങ്കിൽ (box->type != BOX_INLINE_CONTAINER &&
 				(y > 0) && (cy < y)) {
 			/* box clears something*/
 			box->y += y - cy;
@@ -3760,23 +3760,23 @@ bool layout_block_context(
 
 		/* Unless the box has an overflow style of visible, the box
 		 * establishes a new block context. */
-		if (box->type == BOX_FLEX ||
+		എങ്കിൽ (box->type == BOX_FLEX ||
 				(box->type == BOX_BLOCK && box->style &&
 				 (overflow_x != CSS_OVERFLOW_VISIBLE ||
 				  overflow_y != CSS_OVERFLOW_VISIBLE))) {
 
-			if (box->type == BOX_FLEX) {
-				if (!layout_flex(box, box->width, content)) {
-					return false;
+			എങ്കിൽ (box->type == BOX_FLEX) {
+				എങ്കിൽ (!layout_flex(box, box->width, content)) {
+					തിരികെ false;
 				}
-			} else {
+			} അല്ലെങ്കിൽ {
 				layout_block_context(box,
 						viewport_height, content);
 			}
 
-			cy += box->padding[TOP];
+			cy += box->padding[മുകൾ_2];
 
-			if (box->height == AUTO) {
+			എങ്കിൽ (box->height == AUTO) {
 				box->height = 0;
 				layout_block_add_scrollbar(box, BOTTOM);
 			}
@@ -3784,36 +3784,36 @@ bool layout_block_context(
 			cx -= box->x;
 			cy += box->height + box->padding[BOTTOM] +
 					box->border[BOTTOM].width;
-			y = box->y + box->padding[TOP] + box->height +
+			y = box->y + box->padding[മുകൾ_2] + box->height +
 					box->padding[BOTTOM] +
 					box->border[BOTTOM].width;
 
 			/* Skip children, because they are done in the new
 			 * block context */
-			goto advance_to_next_box;
+			പോകുക advance_to_next_box;
 		}
 
 		NSLOG(layout, DEBUG,  "box %p, cx %i, cy %i, width %i",
 				box, cx, cy, box->width);
 
 		/* Layout (except tables). */
-		if (box->object) {
-			if (!layout_block_object(box))
-				return false;
+		എങ്കിൽ (box->object) {
+			എങ്കിൽ (!layout_block_object(box))
+				തിരികെ false;
 
-		} else if (box->type == BOX_INLINE_CONTAINER) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (box->type == BOX_INLINE_CONTAINER) {
 			box->width = box->parent->width;
-			if (!layout_inline_container(box, box->width, block,
+			എങ്കിൽ (!layout_inline_container(box, box->width, block,
 					cx, cy, content))
-				return false;
+				തിരികെ false;
 
-		} else if (box->type == BOX_TABLE) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (box->type == BOX_TABLE) {
 			/* Move down to avoid floats if necessary. */
-			int x0, x1;
-			struct box *left, *right;
+			പൂർണ്ണസംഖ്യ x0, x1;
+			ഘടന box *ഇടത്, *വലത്;
 			y = cy;
-			while (1) {
-				enum css_width_e wtype;
+			ആകുമ്പോൾ (1) {
+				എണ്ണൽ css_width_e wtype;
 				css_fixed width = 0;
 				css_unit unit = CSS_UNIT_PX;
 
@@ -3824,22 +3824,22 @@ bool layout_block_context(
 				x1 = cx + box->parent->width;
 				find_sides(block->float_children, y,
 						y + box->height,
-						&x0, &x1, &left, &right);
-				if (wtype == CSS_WIDTH_AUTO)
-					break;
-				if (box->width <= x1 - x0)
-					break;
-				if (!left && !right)
-					break;
-				else if (!left)
-					y = right->y + right->height + 1;
-				else if (!right)
-					y = left->y + left->height + 1;
-				else if (left->y + left->height <
-						right->y + right->height)
-					y = left->y + left->height + 1;
-				else
-					y = right->y + right->height + 1;
+						&x0, &x1, &ഇടത്, &വലത്);
+				എങ്കിൽ (wtype == CSS_WIDTH_AUTO)
+					നിർത്തുക;
+				എങ്കിൽ (box->width <= x1 - x0)
+					നിർത്തുക;
+				എങ്കിൽ (!ഇടത് && !വലത്)
+					നിർത്തുക;
+				അല്ലെങ്കിൽ എങ്കിൽ (!ഇടത്)
+					y = വലത്->y + വലത്->height + 1;
+				അല്ലെങ്കിൽ എങ്കിൽ (!വലത്)
+					y = ഇടത്->y + ഇടത്->height + 1;
+				അല്ലെങ്കിൽ എങ്കിൽ (ഇടത്->y + ഇടത്->height <
+						വലത്->y + വലത്->height)
+					y = ഇടത്->y + ഇടത്->height + 1;
+				അല്ലെങ്കിൽ
+					y = വലത്->y + വലത്->height + 1;
 			}
 			box->x += x0 - cx;
 			cx = x0;
@@ -3848,26 +3848,26 @@ bool layout_block_context(
 		}
 
 		/* Advance to next box. */
-		if (box->type == BOX_BLOCK && !box->object && !(box->iframe) &&
+		എങ്കിൽ (box->type == BOX_BLOCK && !box->object && !(box->iframe) &&
 				box->children) {
 			/* Down into children. */
 
-			if (box == margin_collapse) {
+			എങ്കിൽ (box == margin_collapse) {
 				/* Current margin collapsed though to this box.
 				 * Unset margin_collapse. */
-				margin_collapse = NULL;
+				margin_collapse = ശൂന്യ;
 			}
 
-			y = box->padding[TOP];
+			y = box->padding[മുകൾ_2];
 			box = box->children;
 			box->y = y;
 			cy += y;
-			continue;
-		} else if (box->type == BOX_BLOCK || box->object ||
+			തുടരുക;
+		} അല്ലെങ്കിൽ എങ്കിൽ (box->type == BOX_BLOCK || box->object ||
 				box->flags & IFRAME)
-			cy += box->padding[TOP];
+			cy += box->padding[മുകൾ_2];
 
-		if (box->type == BOX_BLOCK && box->height == AUTO) {
+		എങ്കിൽ (box->type == BOX_BLOCK && box->height == AUTO) {
 			box->height = 0;
 			layout_block_add_scrollbar(box, BOTTOM);
 		}
@@ -3875,88 +3875,88 @@ bool layout_block_context(
 		cy += box->height + box->padding[BOTTOM] +
 				box->border[BOTTOM].width;
 		cx -= box->x;
-		y = box->y + box->padding[TOP] + box->height +
+		y = box->y + box->padding[മുകൾ_2] + box->height +
 				box->padding[BOTTOM] +
 				box->border[BOTTOM].width;
 
 	advance_to_next_box:
-		if (!box->next) {
+		എങ്കിൽ (!box->next) {
 			/* No more siblings:
 			 * up to first ancestor with a sibling. */
 
-			do {
-				if (box == margin_collapse) {
+			ചെയ്യുക {
+				എങ്കിൽ (box == margin_collapse) {
 					/* Current margin collapsed though to
 					 * this box.  Unset margin_collapse. */
-					margin_collapse = NULL;
+					margin_collapse = ശൂന്യ;
 				}
 
 				/* Apply bottom margin */
-				if (max_pos_margin < box->margin[BOTTOM])
+				എങ്കിൽ (max_pos_margin < box->margin[BOTTOM])
 					max_pos_margin = box->margin[BOTTOM];
-				else if (max_neg_margin < -box->margin[BOTTOM])
+				അല്ലെങ്കിൽ എങ്കിൽ (max_neg_margin < -box->margin[BOTTOM])
 					max_neg_margin = -box->margin[BOTTOM];
 
 				box = box->parent;
-				if (box == block)
-					break;
+				എങ്കിൽ (box == block)
+					നിർത്തുക;
 
 				/* Margin is invalidated if this is a box
 				 * margins can't collapse through. */
-				if (box->type == BOX_BLOCK &&
+				എങ്കിൽ (box->type == BOX_BLOCK &&
 						box->flags & MAKE_HEIGHT) {
-					margin_collapse = NULL;
+					margin_collapse = ശൂന്യ;
 					in_margin = false;
 					max_pos_margin = max_neg_margin = 0;
 				}
 
-				if (box->height == AUTO) {
-					box->height = y - box->padding[TOP];
+				എങ്കിൽ (box->height == AUTO) {
+					box->height = y - box->padding[മുകൾ_2];
 
-					if (box->type == BOX_BLOCK)
+					എങ്കിൽ (box->type == BOX_BLOCK)
 						layout_block_add_scrollbar(box,
 								BOTTOM);
-				} else
+				} അല്ലെങ്കിൽ
 					cy += box->height -
-							(y - box->padding[TOP]);
+							(y - box->padding[മുകൾ_2]);
 
 				/* Apply any min-height and max-height to
 				 * boxes in normal flow */
-				if (box->style &&
+				എങ്കിൽ (box->style &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 						layout_apply_minmax_height(
 							&content->unit_len_ctx,
-							box, NULL)) {
+							box, ശൂന്യ)) {
 					/* Height altered */
 					/* Set current cy */
 					cy += box->height -
-							(y - box->padding[TOP]);
+							(y - box->padding[മുകൾ_2]);
 				}
 
 				cy += box->padding[BOTTOM] +
 						box->border[BOTTOM].width;
 				cx -= box->x;
-				y = box->y + box->padding[TOP] + box->height +
+				y = box->y + box->padding[മുകൾ_2] + box->height +
 						box->padding[BOTTOM] +
 						box->border[BOTTOM].width;
 
-			} while (box->next == NULL);
-			if (box == block)
-				break;
+			} ആകുമ്പോൾ (box->next == ശൂന്യ);
+			എങ്കിൽ (box == block)
+				നിർത്തുക;
 		}
 
 		/* To next sibling. */
 
-		if (box == margin_collapse) {
+		എങ്കിൽ (box == margin_collapse) {
 			/* Current margin collapsed though to this box.
 			 * Unset margin_collapse. */
-			margin_collapse = NULL;
+			margin_collapse = ശൂന്യ;
 		}
 
-		if (max_pos_margin < box->margin[BOTTOM])
+		എങ്കിൽ (max_pos_margin < box->margin[BOTTOM])
 			max_pos_margin = box->margin[BOTTOM];
-		else if (max_neg_margin < -box->margin[BOTTOM])
+		അല്ലെങ്കിൽ എങ്കിൽ (max_neg_margin < -box->margin[BOTTOM])
 			max_neg_margin = -box->margin[BOTTOM];
 
 		box = box->next;
@@ -3967,44 +3967,44 @@ bool layout_block_context(
 	cy += max_pos_margin - max_neg_margin;
 
 	/* Increase height to contain any floats inside (CSS 2.1 10.6.7). */
-	for (box = block->float_children; box; box = box->next_float) {
+	വേണ്ടി (box = block->float_children; box; box = box->next_float) {
 		y = box->y + box->height + box->padding[BOTTOM] +
 				box->border[BOTTOM].width + box->margin[BOTTOM];
-		if (cy < y)
+		എങ്കിൽ (cy < y)
 			cy = y;
 	}
 
-	if (block->height == AUTO) {
-		block->height = cy - block->padding[TOP];
-		if (block->type == BOX_BLOCK)
+	എങ്കിൽ (block->height == AUTO) {
+		block->height = cy - block->padding[മുകൾ_2];
+		എങ്കിൽ (block->type == BOX_BLOCK)
 			layout_block_add_scrollbar(block, BOTTOM);
 	}
 
-	if (block->style && css_computed_position(block->style) !=
+	എങ്കിൽ (block->style && css_computed_position(block->style) !=
 			CSS_POSITION_ABSOLUTE) {
 		/* Block is in normal flow */
-		layout_apply_minmax_height(&content->unit_len_ctx, block, NULL);
+		layout_apply_minmax_height(&content->unit_len_ctx, block, ശൂന്യ);
 	}
 
-	if (block->gadget &&
+	എങ്കിൽ (block->gadget &&
 			(block->gadget->type == GADGET_TEXTAREA ||
 			block->gadget->type == GADGET_PASSWORD ||
 			block->gadget->type == GADGET_TEXTBOX)) {
 		plot_font_style_t fstyle;
-		int ta_width = block->padding[LEFT] + block->width +
-				block->padding[RIGHT];
-		int ta_height = block->padding[TOP] + block->height +
+		പൂർണ്ണസംഖ്യ ta_width = block->padding[ഇടത്_2] + block->width +
+				block->padding[വലത്_2];
+		പൂർണ്ണസംഖ്യ ta_height = block->padding[മുകൾ_2] + block->height +
 				block->padding[BOTTOM];
 		font_plot_style_from_css(&content->unit_len_ctx,
 				block->style, &fstyle);
 		fstyle.background = NS_TRANSPARENT;
 		textarea_set_layout(block->gadget->data.text.ta,
 				&fstyle, ta_width, ta_height,
-				block->padding[TOP], block->padding[RIGHT],
-				block->padding[BOTTOM], block->padding[LEFT]);
+				block->padding[മുകൾ_2], block->padding[വലത്_2],
+				block->padding[BOTTOM], block->padding[ഇടത്_2]);
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 /**
@@ -4014,28 +4014,28 @@ bool layout_block_context(
  * \param[in]  type  Returns element tag type on success.
  * \return true if on success, false otherwise.
  */
-static bool
+സ്ഥിതം bool
 layout__get_element_tag(
-		const dom_node *node,
+		സ്ഥിരം dom_കണ്ണി *കണ്ണി,
 		dom_html_element_type *type)
 {
 	dom_html_element_type element_type;
-	dom_node_type node_type;
+	dom_കണ്ണി_type കണ്ണി_type;
 	dom_exception exc;
 
-	exc = dom_node_get_node_type(node, &node_type);
-	if (exc != DOM_NO_ERR ||
-	    node_type != DOM_ELEMENT_NODE) {
-		return false;
+	exc = dom_കണ്ണി_get_കണ്ണി_type(കണ്ണി, &കണ്ണി_type);
+	എങ്കിൽ (exc != DOM_NO_ERR ||
+	    കണ്ണി_type != DOM_ELEMENT_കണ്ണി) {
+		തിരികെ false;
 	}
 
-	exc = dom_html_element_get_tag_type(node, &element_type);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_html_element_get_tag_type(കണ്ണി, &element_type);
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ false;
 	}
 
 	*type = element_type;
-	return true;
+	തിരികെ true;
 }
 
 
@@ -4046,18 +4046,18 @@ layout__get_element_tag(
  * \param[in]  type  Tag type to test for.
  * \return true if if node has given type, false otherwise.
  */
-static inline bool
+സ്ഥിതം വരിയിൽ bool
 layout__check_element_type(
-		const dom_node *node,
+		സ്ഥിരം dom_കണ്ണി *കണ്ണി,
 		dom_html_element_type type)
 {
 	dom_html_element_type element_type;
 
-	if (!layout__get_element_tag(node, &element_type)) {
-		return false;
+	എങ്കിൽ (!layout__get_element_tag(കണ്ണി, &element_type)) {
+		തിരികെ false;
 	}
 
-	return element_type == type;
+	തിരികെ element_type == type;
 }
 
 
@@ -4068,12 +4068,12 @@ layout__check_element_type(
  * \param[out] value_out  Returns the value on success.
  * \return true if node has value, otherwise false.
  */
-static bool
-layout__get_li_value(dom_node *li_node, dom_long *value_out)
+സ്ഥിതം bool
+layout_get_li_മൂല്യം(dom_കണ്ണി *li_കണ്ണി, dom_long *മൂല്യം_out)
 {
 	dom_exception exc;
-	dom_long value;
-	bool has_value;
+	dom_long മൂല്യം;
+	bool has_മൂല്യം;
 
 	/** \todo
 	 * dom_html_li_element_get_value() is rubbish and we can't tell
@@ -4084,22 +4084,22 @@ layout__get_li_value(dom_node *li_node, dom_long *value_out)
 	 * fix libdom to have some kind of sane interface to get numerical
 	 * attributes.
 	 */
-	exc = dom_element_has_attribute(li_node,
-			corestring_dom_value,
-			&has_value);
-	if (exc != DOM_NO_ERR || has_value == false) {
-		return false;
+	exc = dom_element_has_attribute(li_കണ്ണി,
+			corestring_dom_മൂല്യം,
+			&has_മൂല്യം);
+	എങ്കിൽ (exc != DOM_NO_ERR || has_മൂല്യം == false) {
+		തിരികെ false;
 	}
 
-	exc = dom_html_li_element_get_value(
-			(dom_html_li_element *)li_node,
-			&value);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_html_li_element_get_മൂല്യം(
+			(dom_html_li_element *)li_കണ്ണി,
+			&മൂല്യം);
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ false;
 	}
 
-	*value_out = value;
-	return true;
+	*മൂല്യം_out = മൂല്യം;
+	തിരികെ true;
 }
 
 
@@ -4110,8 +4110,8 @@ layout__get_li_value(dom_node *li_node, dom_long *value_out)
  * \param[out] start_out  Returns the value on success.
  * \return true if node has value, otherwise false.
  */
-static bool
-layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
+സ്ഥിതം bool
+layout__get_ol_start(dom_കണ്ണി *ol_കണ്ണി, dom_long *start_out)
 {
 	dom_exception exc;
 	dom_long start;
@@ -4120,22 +4120,22 @@ layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
 	/** \todo
 	 * see layout__get_li_value().
 	 */
-	exc = dom_element_has_attribute(ol_node,
+	exc = dom_element_has_attribute(ol_കണ്ണി,
 			corestring_dom_start,
 			&has_start);
-	if (exc != DOM_NO_ERR || has_start == false) {
-		return false;
+	എങ്കിൽ (exc != DOM_NO_ERR || has_start == false) {
+		തിരികെ false;
 	}
 
 	exc = dom_html_olist_element_get_start(
-			(dom_html_olist_element *)ol_node,
+			(dom_html_olist_element *)ol_കണ്ണി,
 			&start);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ false;
 	}
 
 	*start_out = start;
-	return true;
+	തിരികെ true;
 }
 
 
@@ -4145,20 +4145,20 @@ layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
  * \param[in]  ol_node    DOM node for the OL element;
  * \return true if node has reversed, otherwise false.
  */
-static bool
-layout__get_ol_reversed(dom_node *ol_node)
+സ്ഥിതം bool
+layout__get_ol_reversed(dom_കണ്ണി *ol_കണ്ണി)
 {
 	dom_exception exc;
 	bool has_reversed;
 
-	exc = dom_element_has_attribute(ol_node,
+	exc = dom_element_has_attribute(ol_കണ്ണി,
 			corestring_dom_reversed,
 			&has_reversed);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ false;
 	}
 
-	return has_reversed;
+	തിരികെ has_reversed;
 }
 
 
@@ -4169,64 +4169,64 @@ layout__get_ol_reversed(dom_node *ol_node)
  * \param[in]  count_out   Returns list item count on success.
  * \return true on success, otherwise false.
  */
-static bool
-layout__get_list_item_count(
-		dom_node *list_owner, dom_long *count_out)
+സ്ഥിതം bool
+layout_get_list_item_എണ്ണം(
+		dom_കണ്ണി *list_owner, dom_long *എണ്ണം_out)
 {
 	dom_html_element_type tag_type;
 	dom_exception exc;
-	dom_node *child;
-	int count;
+	dom_കണ്ണി *child;
+	പൂർണ്ണസംഖ്യ എണ്ണം;
 
-	if (list_owner == NULL) {
-		return false;
+	എങ്കിൽ (list_owner == ശൂന്യ) {
+		തിരികെ false;
 	}
 
-	if (!layout__get_element_tag(list_owner, &tag_type)) {
-		return false;
+	എങ്കിൽ (!layout__get_element_tag(list_owner, &tag_type)) {
+		തിരികെ false;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
+	എങ്കിൽ (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
 	    tag_type != DOM_HTML_ELEMENT_TYPE_UL) {
-		return false;
+		തിരികെ false;
 	}
 
-	exc = dom_node_get_first_child(list_owner, &child);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_കണ്ണി_get_first_child(list_owner, &child);
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ false;
 	}
 
-	count = 0;
-	while (child != NULL) {
-		dom_node *temp_node;
+	എണ്ണം = 0;
+	ആകുമ്പോൾ (child != ശൂന്യ) {
+		dom_കണ്ണി *temp_കണ്ണി;
 
-		if (layout__check_element_type(child,
+		എങ്കിൽ (layout__check_element_type(child,
 				DOM_HTML_ELEMENT_TYPE_LI)) {
-			struct box *child_box;
-			if (dom_node_get_user_data(child,
-					corestring_dom___ns_key_box_node_data,
+			ഘടന box *child_box;
+			എങ്കിൽ (dom_കണ്ണി_get_user_data(child,
+					corestring_dom_ns_താക്കോൽ_box_കണ്ണി_data,
 					&child_box) != DOM_NO_ERR) {
-				dom_node_unref(child);
-				return false;
+				dom_കണ്ണി_unref(child);
+				തിരികെ false;
 			}
 
-			if (child_box != NULL &&
-			    child_box->list_marker != NULL) {
-				count++;
+			എങ്കിൽ (child_box != ശൂന്യ &&
+			    child_box->list_marker != ശൂന്യ) {
+				എണ്ണം++;
 			}
 		}
 
-		exc = dom_node_get_next_sibling(child, &temp_node);
-		dom_node_unref(child);
-		if (exc != DOM_NO_ERR) {
-			return false;
+		exc = dom_കണ്ണി_get_next_sibling(child, &temp_കണ്ണി);
+		dom_കണ്ണി_unref(child);
+		എങ്കിൽ (exc != DOM_NO_ERR) {
+			തിരികെ false;
 		}
 
-		child = temp_node;
+		child = temp_കണ്ണി;
 	}
 
-	*count_out = count;
-	return true;
+	*എണ്ണം_out = എണ്ണം;
+	തിരികെ true;
 }
 
 
@@ -4235,83 +4235,83 @@ layout__get_list_item_count(
  *
  * \param[in]  box  Box to do list item counting for.
  */
-static void
-layout__ordered_list_count(
-		struct box *box)
+സ്ഥിതം ശൂന്യം
+layout_ordered_list_എണ്ണം(
+		ഘടന box *box)
 {
 	dom_html_element_type tag_type;
 	dom_exception exc;
-	dom_node *child;
-	int step = 1;
+	dom_കണ്ണി *child;
+	പൂർണ്ണസംഖ്യ step = 1;
 	dom_long next;
 
-	if (box->node == NULL) {
-		return;
+	എങ്കിൽ (box->കണ്ണി == ശൂന്യ) {
+		തിരികെ;
 	}
 
-	if (!layout__get_element_tag(box->node, &tag_type)) {
-		return;
+	എങ്കിൽ (!layout__get_element_tag(box->കണ്ണി, &tag_type)) {
+		തിരികെ;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
+	എങ്കിൽ (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
 	    tag_type != DOM_HTML_ELEMENT_TYPE_UL) {
-		return;
+		തിരികെ;
 	}
 
 	next = 1;
-	if (tag_type == DOM_HTML_ELEMENT_TYPE_OL) {
-		bool have_start = layout__get_ol_start(box->node, &next);
-		bool have_reversed = layout__get_ol_reversed(box->node);
+	എങ്കിൽ (tag_type == DOM_HTML_ELEMENT_TYPE_OL) {
+		bool have_start = layout__get_ol_start(box->കണ്ണി, &next);
+		bool have_reversed = layout__get_ol_reversed(box->കണ്ണി);
 
-		if (have_reversed) {
+		എങ്കിൽ (have_reversed) {
 			step = -1;
 		}
 
-		if (!have_start && have_reversed) {
-			layout__get_list_item_count(box->node, &next);
+		എങ്കിൽ (!have_start && have_reversed) {
+			layout_get_list_item_എണ്ണം(box->കണ്ണി, &next);
 		}
 	}
 
-	exc = dom_node_get_first_child(box->node, &child);
-	if (exc != DOM_NO_ERR) {
-		return;
+	exc = dom_കണ്ണി_get_first_child(box->കണ്ണി, &child);
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ;
 	}
 
-	while (child != NULL) {
-		dom_node *temp_node;
+	ആകുമ്പോൾ (child != ശൂന്യ) {
+		dom_കണ്ണി *temp_കണ്ണി;
 
-		if (layout__check_element_type(child,
+		എങ്കിൽ (layout__check_element_type(child,
 				DOM_HTML_ELEMENT_TYPE_LI)) {
-			struct box *child_box;
+			ഘടന box *child_box;
 
-			if (dom_node_get_user_data(child,
-					corestring_dom___ns_key_box_node_data,
+			എങ്കിൽ (dom_കണ്ണി_get_user_data(child,
+					corestring_dom_ns_താക്കോൽ_box_കണ്ണി_data,
 					&child_box) != DOM_NO_ERR) {
-				dom_node_unref(child);
-				return;
+				dom_കണ്ണി_unref(child);
+				തിരികെ;
 			}
 
-			if (child_box != NULL &&
-			    child_box->list_marker != NULL) {
-				dom_long value;
-				struct box *marker = child_box->list_marker;
-				if (layout__get_li_value(child, &value)) {
-					marker->list_value = value;
-					next = marker->list_value;
-				} else {
-					marker->list_value = next;
+			എങ്കിൽ (child_box != ശൂന്യ &&
+			    child_box->list_marker != ശൂന്യ) {
+				dom_long മൂല്യം;
+				ഘടന box *marker = child_box->list_marker;
+				എങ്കിൽ (layout_get_li_മൂല്യം(child, &മൂല്യം)) {
+					marker->list_മൂല്യം = മൂല്യം;
+					next = marker->list_മൂല്യം;
+				} അല്ലെങ്കിൽ {
+					marker->list_മൂല്യം = next;
 				}
 				next += step;
 			}
 		}
 
-		exc = dom_node_get_next_sibling(child, &temp_node);
-		dom_node_unref(child);
-		if (exc != DOM_NO_ERR) {
-			return;
+		exc = dom_കണ്ണി_get_next_sibling(child, &temp_കണ്ണി);
+		dom_കണ്ണി_unref(child);
+		എങ്കിൽ (exc != DOM_NO_ERR) {
+			തിരികെ;
 		}
 
-		child = temp_node;
+		child = temp_കണ്ണി;
 	}
 }
 
@@ -4321,15 +4321,15 @@ layout__ordered_list_count(
  * \param[in]  content  The HTML content.
  * \param[in]  box      The list item's main box.
  */
-static void
+സ്ഥിതം ശൂന്യം
 layout__set_numerical_marker_text(
-		const html_content *content,
-		struct box *box)
+		സ്ഥിരം html_content *content,
+		ഘടന box *box)
 {
-	struct box *marker = box->list_marker;
+	ഘടന box *marker = box->list_marker;
 	size_t counter_len;
 	css_error css_res;
-	enum {
+	എണ്ണൽ {
 		/**
 		 * initial length of a list marker buffer
 		 *
@@ -4339,26 +4339,26 @@ layout__set_numerical_marker_text(
 		LIST_MARKER_SIZE = 20,
 	};
 
-	marker->text = talloc_array(content->bctx, char, LIST_MARKER_SIZE);
-	if (marker->text == NULL) {
-		return;
+	marker->text = talloc_array(content->bctx, അക്ഷരം, LIST_MARKER_SIZE);
+	എങ്കിൽ (marker->text == ശൂന്യ) {
+		തിരികെ;
 	}
 
-	css_res = css_computed_format_list_style(box->style, marker->list_value,
+	css_res = css_computed_format_list_style(box->style, marker->list_മൂല്യം,
 			marker->text, LIST_MARKER_SIZE, &counter_len);
-	if (css_res == CSS_OK) {
-		if (counter_len > LIST_MARKER_SIZE) {
+	എങ്കിൽ (css_res == CSS_OK) {
+		എങ്കിൽ (counter_len > LIST_MARKER_SIZE) {
 			/* Use computed size as marker did not fit in
 			 * default allocation. */
 			marker->text = talloc_realloc(content->bctx,
 					marker->text,
-					char,
+					അക്ഷരം,
 					counter_len);
-			if (marker->text == NULL) {
-				return;
+			എങ്കിൽ (marker->text == ശൂന്യ) {
+				തിരികെ;
 			}
 			css_computed_format_list_style(box->style,
-					marker->list_value, marker->text,
+					marker->list_മൂല്യം, marker->text,
 					counter_len, &counter_len);
 		}
 		marker->length = counter_len;
@@ -4371,56 +4371,56 @@ layout__set_numerical_marker_text(
  * \param[in]  b  Box with style to test.
  * \return true if box has numerical list style type, false otherwise.
  */
-static bool
+സ്ഥിതം bool
 layout__list_item_is_numerical(
-		const struct box *b)
+		സ്ഥിരം ഘടന box *b)
 {
-	enum css_list_style_type_e t = css_computed_list_style_type(b->style);
+	എണ്ണൽ css_list_style_type_e t = css_computed_list_style_type(b->style);
 
-	switch (t) {
-	case CSS_LIST_STYLE_TYPE_DISC:   /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_CIRCLE: /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_SQUARE: /* Fall through. */
-	case CSS_LIST_STYLE_TYPE_NONE:
-		return false;
+	തിരഞ്ഞെടുപ്പ് (t) {
+	അവസ്ഥ CSS_LIST_STYLE_TYPE_DISC:   /* Fall through. */
+	അവസ്ഥ CSS_LIST_STYLE_TYPE_CIRCLE: /* Fall through. */
+	അവസ്ഥ CSS_LIST_STYLE_TYPE_SQUARE: /* Fall through. */
+	അവസ്ഥ CSS_LIST_STYLE_TYPE_NONE:
+		തിരികെ false;
 
-	default:
-		return true;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ true;
 	}
 }
 
 /**
  * Layout list markers.
  */
-static void
-layout_lists(const html_content *content, struct box *box)
+സ്ഥിതം ശൂന്യം
+layout_lists(സ്ഥിരം html_content *content, ഘടന box *box)
 {
-	struct box *child;
+	ഘടന box *child;
 
-	layout__ordered_list_count(box);
+	layout_ordered_list_എണ്ണം(box);
 
-	for (child = box->children; child; child = child->next) {
-		if (child->list_marker) {
-			struct box *marker = child->list_marker;
+	വേണ്ടി (child = box->children; child; child = child->next) {
+		എങ്കിൽ (child->list_marker) {
+			ഘടന box *marker = child->list_marker;
 
-			if (layout__list_item_is_numerical(child)) {
-				if (marker->text == NULL) {
+			എങ്കിൽ (layout__list_item_is_numerical(child)) {
+				എങ്കിൽ (marker->text == ശൂന്യ) {
 					layout__set_numerical_marker_text(
 							content, child);
 				}
 			}
-			if (marker->object) {
+			എങ്കിൽ (marker->object) {
 				marker->width =
 					content_get_width(marker->object);
 				marker->x = -marker->width;
 				marker->height =
 					content_get_height(marker->object);
-				marker->y = (line_height(
+				marker->y = (വരി_height(
 						&content->unit_len_ctx,
 						marker->style) -
 						marker->height) / 2;
-			} else if (marker->text) {
-				if (marker->width == UNKNOWN_WIDTH) {
+			} അല്ലെങ്കിൽ എങ്കിൽ (marker->text) {
+				എങ്കിൽ (marker->width == UNKNOWN_WIDTH) {
 					plot_font_style_t fstyle;
 					font_plot_style_from_css(
 							&content->unit_len_ctx,
@@ -4434,10 +4434,10 @@ layout_lists(const html_content *content, struct box *box)
 				}
 				marker->x = -marker->width;
 				marker->y = 0;
-				marker->height = line_height(
+				marker->height = വരി_height(
 						&content->unit_len_ctx,
 						marker->style);
-			} else {
+			} അല്ലെങ്കിൽ {
 				marker->x = 0;
 				marker->y = 0;
 				marker->width = 0;
@@ -4465,80 +4465,80 @@ layout_lists(const html_content *content, struct box *box)
  *
  * See CSS 2.1 9.3.2. containing_block must have width and height.
  */
-static void
-layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
-		       struct box *box,
-		       struct box *containing_block,
-		       int *top,
-		       int *right,
-		       int *bottom,
-		       int *left)
+സ്ഥിതം ശൂന്യം
+layout_compute_offsets(സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		       ഘടന box *box,
+		       ഘടന box *containing_block,
+		       പൂർണ്ണസംഖ്യ *മുകൾ,
+		       പൂർണ്ണസംഖ്യ *വലത്,
+		       പൂർണ്ണസംഖ്യ *bottom,
+		       പൂർണ്ണസംഖ്യ *ഇടത്)
 {
 	uint32_t type;
-	css_fixed value = 0;
+	css_fixed മൂല്യം = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(containing_block->width != UNKNOWN_WIDTH);
-	assert(containing_block->width != AUTO);
-	assert(containing_block->height != AUTO);
+	പ്രതിജ്ഞാ(containing_block->width != UNKNOWN_WIDTH);
+	പ്രതിജ്ഞാ(containing_block->width != AUTO);
+	പ്രതിജ്ഞാ(containing_block->height != AUTO);
 
-	/* left */
-	type = css_computed_left(box->style, &value, &unit);
-	if (type == CSS_LEFT_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*left = FPCT_OF_INT_TOINT(value,
+	/*ഇടത്*/
+	type = css_computed_ഇടത്(box->style, &മൂല്യം, &unit);
+	എങ്കിൽ (type == CSS_ഇടത്_SET) {
+		എങ്കിൽ (unit == CSS_UNIT_PCT) {
+			*ഇടത് = FPCT_OF_INT_TOINT(മൂല്യം,
 					containing_block->width);
-		} else {
-			*left = FIXTOINT(css_unit_len2device_px(
+		} അല്ലെങ്കിൽ {
+			*ഇടത് = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					മൂല്യം, unit));
 		}
-	} else {
-		*left = AUTO;
+	} അല്ലെങ്കിൽ {
+		*ഇടത് = AUTO;
 	}
 
-	/* right */
-	type = css_computed_right(box->style, &value, &unit);
-	if (type == CSS_RIGHT_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*right = FPCT_OF_INT_TOINT(value,
+	/*വലത്*/
+	type = css_computed_വലത്(box->style, &മൂല്യം, &unit);
+	എങ്കിൽ (type == CSS_വലത്_SET) {
+		എങ്കിൽ (unit == CSS_UNIT_PCT) {
+			*വലത് = FPCT_OF_INT_TOINT(മൂല്യം,
 					containing_block->width);
-		} else {
-			*right = FIXTOINT(css_unit_len2device_px(
+		} അല്ലെങ്കിൽ {
+			*വലത് = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					മൂല്യം, unit));
 		}
-	} else {
-		*right = AUTO;
+	} അല്ലെങ്കിൽ {
+		*വലത് = AUTO;
 	}
 
-	/* top */
-	type = css_computed_top(box->style, &value, &unit);
-	if (type == CSS_TOP_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*top = FPCT_OF_INT_TOINT(value,
+	/*മുകൾ*/
+	type = css_computed_മുകൾ(box->style, &മൂല്യം, &unit);
+	എങ്കിൽ (type == CSS_മുകൾ_SET) {
+		എങ്കിൽ (unit == CSS_UNIT_PCT) {
+			*മുകൾ = FPCT_OF_INT_TOINT(മൂല്യം,
 					containing_block->height);
-		} else {
-			*top = FIXTOINT(css_unit_len2device_px(
+		} അല്ലെങ്കിൽ {
+			*മുകൾ = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					മൂല്യം, unit));
 		}
-	} else {
-		*top = AUTO;
+	} അല്ലെങ്കിൽ {
+		*മുകൾ = AUTO;
 	}
 
 	/* bottom */
-	type = css_computed_bottom(box->style, &value, &unit);
-	if (type == CSS_BOTTOM_SET) {
-		if (unit == CSS_UNIT_PCT) {
-			*bottom = FPCT_OF_INT_TOINT(value,
+	type = css_computed_bottom(box->style, &മൂല്യം, &unit);
+	എങ്കിൽ (type == CSS_BOTTOM_SET) {
+		എങ്കിൽ (unit == CSS_UNIT_PCT) {
+			*bottom = FPCT_OF_INT_TOINT(മൂല്യം,
 					containing_block->height);
-		} else {
+		} അല്ലെങ്കിൽ {
 			*bottom = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
-					value, unit));
+					മൂല്യം, unit));
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		*bottom = AUTO;
 	}
 }
@@ -4554,22 +4554,22 @@ layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
  * \param  content           memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_absolute(struct box *box,
-		struct box *containing_block,
-		int cx, int cy,
+സ്ഥിതം bool
+layout_absolute(ഘടന box *box,
+		ഘടന box *containing_block,
+		പൂർണ്ണസംഖ്യ cx, പൂർണ്ണസംഖ്യ cy,
 		html_content *content)
 {
-	int static_left, static_top;  /* static position */
-	int top, right, bottom, left;
-	int width, height, max_width, min_width;
-	int *margin = box->margin;
-	int *padding = box->padding;
-	struct box_border *border = box->border;
-	int available_width = containing_block->width;
-	int space;
+	പൂർണ്ണസംഖ്യ static_ഇടത്, static_മുകൾ;  /* static position */
+	പൂർണ്ണസംഖ്യ മുകൾ, വലത്, bottom, ഇടത്;
+	പൂർണ്ണസംഖ്യ width, height, max_width, min_width;
+	പൂർണ്ണസംഖ്യ *margin = box->margin;
+	പൂർണ്ണസംഖ്യ *padding = box->padding;
+	ഘടന box_border *border = box->border;
+	പൂർണ്ണസംഖ്യ available_width = containing_block->width;
+	പൂർണ്ണസംഖ്യ space;
 
-	assert(box->type == BOX_BLOCK || box->type == BOX_TABLE ||
+	പ്രതിജ്ഞാ(box->type == BOX_BLOCK || box->type == BOX_TABLE ||
 			box->type == BOX_INLINE_BLOCK ||
 			box->type == BOX_FLEX ||
 			box->type == BOX_INLINE_FLEX);
@@ -4577,23 +4577,23 @@ layout_absolute(struct box *box,
 	/* The static position is where the box would be if it was not
 	 * absolutely positioned. The x and y are filled in by
 	 * layout_block_context(). */
-	static_left = cx + box->x;
-	static_top = cy + box->y;
+	static_ഇടത് = cx + box->x;
+	static_മുകൾ = cy + box->y;
 
-	if (containing_block->type == BOX_BLOCK ||
+	എങ്കിൽ (containing_block->type == BOX_BLOCK ||
 			containing_block->type == BOX_INLINE_BLOCK ||
 			containing_block->type == BOX_TABLE_CELL) {
 		/* Block level container => temporarily increase containing
 		 * block dimensions to include padding (we restore this
 		 * again at the end) */
-		containing_block->width += containing_block->padding[LEFT] +
-				containing_block->padding[RIGHT];
-		containing_block->height += containing_block->padding[TOP] +
+		containing_block->width += containing_block->padding[ഇടത്_2] +
+				containing_block->padding[വലത്_2];
+		containing_block->height += containing_block->padding[മുകൾ_2] +
 				containing_block->padding[BOTTOM];
 	}
 
 	layout_compute_offsets(&content->unit_len_ctx, box, containing_block,
-			&top, &right, &bottom, &left);
+			&മുകൾ, &വലത്, &bottom, &ഇടത്);
 
 	/* Pass containing block into layout_find_dimensions via the float
 	 * containing block box member. This is unused for absolutely positioned
@@ -4603,305 +4603,305 @@ layout_absolute(struct box *box,
 			box, box->style, &width, &height,
 			&max_width, &min_width, 0, 0,
 			margin, padding, border);
-	box->float_container = NULL;
+	box->float_container = ശൂന്യ;
 
 	/* 10.3.7 */
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      left, margin[LEFT], border[LEFT].width, padding[LEFT], width,
-	      padding[RIGHT], border[RIGHT].width, margin[RIGHT], right,
+	      ഇടത്, margin[ഇടത്_2], border[ഇടത്_2].width, padding[ഇടത്_2], width,
+	      padding[വലത്_2], border[വലത്_2].width, margin[വലത്_2], വലത്,
 	      containing_block->width);
 
 
-	if (left == AUTO && width == AUTO && right == AUTO) {
-		if (margin[LEFT] == AUTO)
-			margin[LEFT] = 0;
-		if (margin[RIGHT] == AUTO)
-			margin[RIGHT] = 0;
-		left = static_left;
+	എങ്കിൽ (ഇടത് == AUTO && width == AUTO && വലത് == AUTO) {
+		എങ്കിൽ (margin[ഇടത്_2] == AUTO)
+			margin[ഇടത്_2] = 0;
+		എങ്കിൽ (margin[വലത്_2] == AUTO)
+			margin[വലത്_2] = 0;
+		ഇടത് = static_ഇടത്;
 
 		width = min(max(box->min_width, available_width),
 			box->max_width);
-		width -= box->margin[LEFT] + box->border[LEFT].width +
-			box->padding[LEFT] + box->padding[RIGHT] +
-			box->border[RIGHT].width + box->margin[RIGHT];
+		width -= box->margin[ഇടത്_2] + box->border[ഇടത്_2].width +
+			box->padding[ഇടത്_2] + box->padding[വലത്_2] +
+			box->border[വലത്_2].width + box->margin[വലത്_2];
 
 		/* Adjust for {min|max}-width */
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (width < min_width) width = min_width;
+		എങ്കിൽ (max_width >= 0 && width > max_width) width = max_width;
+		എങ്കിൽ (width < min_width) width = min_width;
 
-		right = containing_block->width -
-			left -
-			margin[LEFT] - border[LEFT].width - padding[LEFT] -
+		വലത് = containing_block->width -
+			ഇടത് -
+			margin[ഇടത്_2] - border[ഇടത്_2].width - padding[ഇടത്_2] -
 			width -
-			padding[RIGHT] - border[RIGHT].width - margin[RIGHT];
-	} else if (left != AUTO && width != AUTO && right != AUTO) {
+			padding[വലത്_2] - border[വലത്_2].width - margin[വലത്_2];
+	} അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് != AUTO && width != AUTO && വലത് != AUTO) {
 
 		/* Adjust for {min|max}-width */
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+		എങ്കിൽ (max_width >= 0 && width > max_width) width = max_width;
+		എങ്കിൽ (min_width >  0 && width < min_width) width = min_width;
 
-		if (margin[LEFT] == AUTO && margin[RIGHT] == AUTO) {
+		എങ്കിൽ (margin[ഇടത്_2] == AUTO && margin[വലത്_2] == AUTO) {
 			space = containing_block->width -
-					left - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - right;
-			if (space < 0) {
-				margin[LEFT] = 0;
-				margin[RIGHT] = space;
-			} else {
-				margin[LEFT] = margin[RIGHT] = space / 2;
+					ഇടത് - border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - വലത്;
+			എങ്കിൽ (space < 0) {
+				margin[ഇടത്_2] = 0;
+				margin[വലത്_2] = space;
+			} അല്ലെങ്കിൽ {
+				margin[ഇടത്_2] = margin[വലത്_2] = space / 2;
 			}
-		} else if (margin[LEFT] == AUTO) {
-			margin[LEFT] = containing_block->width -
-					left - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (margin[RIGHT] == AUTO) {
-			margin[RIGHT] = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - right;
-		} else {
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
+		} അല്ലെങ്കിൽ എങ്കിൽ (margin[ഇടത്_2] == AUTO) {
+			margin[ഇടത്_2] = containing_block->width -
+					ഇടത് - border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - margin[വലത്_2] -
+					വലത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (margin[വലത്_2] == AUTO) {
+			margin[വലത്_2] = containing_block->width -
+					ഇടത് - margin[ഇടത്_2] -
+					border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - വലത്;
+		} അല്ലെങ്കിൽ {
+			വലത് = containing_block->width -
+					ഇടത് - margin[ഇടത്_2] -
+					border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - margin[വലത്_2];
 		}
-	} else {
-		if (margin[LEFT] == AUTO)
-			margin[LEFT] = 0;
-		if (margin[RIGHT] == AUTO)
-			margin[RIGHT] = 0;
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (margin[ഇടത്_2] == AUTO)
+			margin[ഇടത്_2] = 0;
+		എങ്കിൽ (margin[വലത്_2] == AUTO)
+			margin[വലത്_2] = 0;
 
-		if (left == AUTO && width == AUTO && right != AUTO) {
-			available_width -= right;
-
-			width = min(max(box->min_width, available_width),
-				box->max_width);
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT];
-
-			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (width < min_width)
-				width = min_width;
-
-			left = containing_block->width -
-					margin[LEFT] - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (left == AUTO && width != AUTO && right == AUTO) {
-
-			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
-				width = max_width;
-			if (min_width >  0 && width < min_width)
-				width = min_width;
-
-			left = static_left;
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
-		} else if (left != AUTO && width == AUTO && right == AUTO) {
-			available_width -= left;
+		എങ്കിൽ (ഇടത് == AUTO && width == AUTO && വലത് != AUTO) {
+			available_width -= വലത്;
 
 			width = min(max(box->min_width, available_width),
 				box->max_width);
-			width -= box->margin[LEFT] + box->border[LEFT].width +
-				box->padding[LEFT] + box->padding[RIGHT] +
-				box->border[RIGHT].width + box->margin[RIGHT];
+			width -= box->margin[ഇടത്_2] + box->border[ഇടത്_2].width +
+				box->padding[ഇടത്_2] + box->padding[വലത്_2] +
+				box->border[വലത്_2].width + box->margin[വലത്_2];
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			എങ്കിൽ (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			എങ്കിൽ (width < min_width)
 				width = min_width;
 
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
-		} else if (left == AUTO && width != AUTO && right != AUTO) {
+			ഇടത് = containing_block->width -
+					margin[ഇടത്_2] - border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - margin[വലത്_2] -
+					വലത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് == AUTO && width != AUTO && വലത് == AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			എങ്കിൽ (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			എങ്കിൽ (min_width >  0 && width < min_width)
 				width = min_width;
 
-			left = containing_block->width -
-					margin[LEFT] - border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
-		} else if (left != AUTO && width == AUTO && right != AUTO) {
+			ഇടത് = static_ഇടത്;
+			വലത് = containing_block->width -
+					ഇടത് - margin[ഇടത്_2] -
+					border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - margin[വലത്_2];
+		} അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് != AUTO && width == AUTO && വലത് == AUTO) {
+			available_width -= ഇടത്;
+
+			width = min(max(box->min_width, available_width),
+				box->max_width);
+			width -= box->margin[ഇടത്_2] + box->border[ഇടത്_2].width +
+				box->padding[ഇടത്_2] + box->padding[വലത്_2] +
+				box->border[വലത്_2].width + box->margin[വലത്_2];
+
+			/* Adjust for {min|max}-width */
+			എങ്കിൽ (max_width >= 0 && width > max_width)
+				width = max_width;
+			എങ്കിൽ (width < min_width)
+				width = min_width;
+
+			വലത് = containing_block->width -
+					ഇടത് - margin[ഇടത്_2] -
+					border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - margin[വലത്_2];
+		} അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് == AUTO && width != AUTO && വലത് != AUTO) {
+
+			/* Adjust for {min|max}-width */
+			എങ്കിൽ (max_width >= 0 && width > max_width)
+				width = max_width;
+			എങ്കിൽ (width < min_width)
+				width = min_width;
+
+			ഇടത് = containing_block->width -
+					margin[ഇടത്_2] - border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - margin[വലത്_2] -
+					വലത്;
+		} അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് != AUTO && width == AUTO && വലത് != AUTO) {
 			width = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT] -
-					right;
+					ഇടത് - margin[ഇടത്_2] -
+					border[ഇടത്_2].width -
+					padding[ഇടത്_2] - padding[വലത്_2] -
+					border[വലത്_2].width - margin[വലത്_2] -
+					വലത്;
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			എങ്കിൽ (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			എങ്കിൽ (width < min_width)
 				width = min_width;
 
-		} else if (left != AUTO && width != AUTO && right == AUTO) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് != AUTO && width != AUTO && വലത് == AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			എങ്കിൽ (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			എങ്കിൽ (width < min_width)
 				width = min_width;
 
-			right = containing_block->width -
-					left - margin[LEFT] -
-					border[LEFT].width -
-					padding[LEFT] - width - padding[RIGHT] -
-					border[RIGHT].width - margin[RIGHT];
+			വലത് = containing_block->width -
+					ഇടത് - margin[ഇടത്_2] -
+					border[ഇടത്_2].width -
+					padding[ഇടത്_2] - width - padding[വലത്_2] -
+					border[വലത്_2].width - margin[വലത്_2];
 		}
 	}
 
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      left, margin[LEFT], border[LEFT].width, padding[LEFT], width,
-	      padding[RIGHT], border[RIGHT].width, margin[RIGHT], right,
+	      ഇടത്, margin[ഇടത്_2], border[ഇടത്_2].width, padding[ഇടത്_2], width,
+	      padding[വലത്_2], border[വലത്_2].width, margin[വലത്_2], വലത്,
 	      containing_block->width);
 
-	box->x = left + margin[LEFT] + border[LEFT].width - cx;
-	if (containing_block->type == BOX_BLOCK ||
+	box->x = ഇടത് + margin[ഇടത്_2] + border[ഇടത്_2].width - cx;
+	എങ്കിൽ (containing_block->type == BOX_BLOCK ||
 			containing_block->type == BOX_INLINE_BLOCK ||
 			containing_block->type == BOX_TABLE_CELL) {
 		/* Block-level ancestor => reset container's width */
-		containing_block->width -= containing_block->padding[LEFT] +
-				containing_block->padding[RIGHT];
-	} else {
+		containing_block->width -= containing_block->padding[ഇടത്_2] +
+				containing_block->padding[വലത്_2];
+	} അല്ലെങ്കിൽ {
 		/** \todo inline ancestors */
 	}
 	box->width = width;
 	box->height = height;
 
-	if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
+	എങ്കിൽ (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
 			box->object || box->flags & IFRAME) {
-		if (!layout_block_context(box, -1, content))
-			return false;
-	} else if (box->type == BOX_TABLE) {
+		എങ്കിൽ (!layout_block_context(box, -1, content))
+			തിരികെ false;
+	} അല്ലെങ്കിൽ എങ്കിൽ (box->type == BOX_TABLE) {
 		/* layout_table also expects the containing block to be
 		 * stored in the float_container field */
 		box->float_container = containing_block;
 		/* \todo  layout_table considers margins etc. again */
-		if (!layout_table(box, width, content))
-			return false;
-		box->float_container = NULL;
+		എങ്കിൽ (!layout_table(box, width, content))
+			തിരികെ false;
+		box->float_container = ശൂന്യ;
 		layout_solve_width(box, box->parent->width, box->width, 0, 0,
 				-1, -1);
-	} else if (box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX) {
 		/* layout_table also expects the containing block to be
 		 * stored in the float_container field */
 		box->float_container = containing_block;
-		if (!layout_flex(box, width, content))
-			return false;
-		box->float_container = NULL;
+		എങ്കിൽ (!layout_flex(box, width, content))
+			തിരികെ false;
+		box->float_container = ശൂന്യ;
 	}
 
 	/* 10.6.4 */
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      top, margin[TOP], border[TOP].width, padding[TOP], height,
+	      മുകൾ, margin[മുകൾ_2], border[മുകൾ_2].width, padding[മുകൾ_2], height,
 	      padding[BOTTOM], border[BOTTOM].width, margin[BOTTOM], bottom,
 	      containing_block->height);
 
-	if (top == AUTO && height == AUTO && bottom == AUTO) {
-		top = static_top;
+	എങ്കിൽ (മുകൾ == AUTO && height == AUTO && bottom == AUTO) {
+		മുകൾ = static_മുകൾ;
 		height = box->height;
-		if (margin[TOP] == AUTO)
-			margin[TOP] = 0;
-		if (margin[BOTTOM] == AUTO)
+		എങ്കിൽ (margin[മുകൾ_2] == AUTO)
+			margin[മുകൾ_2] = 0;
+		എങ്കിൽ (margin[BOTTOM] == AUTO)
 			margin[BOTTOM] = 0;
 		bottom = containing_block->height -
-				top - margin[TOP] - border[TOP].width -
-				padding[TOP] - height - padding[BOTTOM] -
+				മുകൾ - margin[മുകൾ_2] - border[മുകൾ_2].width -
+				padding[മുകൾ_2] - height - padding[BOTTOM] -
 				border[BOTTOM].width - margin[BOTTOM];
-	} else if (top != AUTO && height != AUTO && bottom != AUTO) {
-		if (margin[TOP] == AUTO && margin[BOTTOM] == AUTO) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (മുകൾ != AUTO && height != AUTO && bottom != AUTO) {
+		എങ്കിൽ (margin[മുകൾ_2] == AUTO && margin[BOTTOM] == AUTO) {
 			space = containing_block->height -
-					top - border[TOP].width - padding[TOP] -
+					മുകൾ - border[മുകൾ_2].width - padding[മുകൾ_2] -
 					height - padding[BOTTOM] -
 					border[BOTTOM].width - bottom;
-			margin[TOP] = margin[BOTTOM] = space / 2;
-		} else if (margin[TOP] == AUTO) {
-			margin[TOP] = containing_block->height -
-					top - border[TOP].width - padding[TOP] -
+			margin[മുകൾ_2] = margin[BOTTOM] = space / 2;
+		} അല്ലെങ്കിൽ എങ്കിൽ (margin[മുകൾ_2] == AUTO) {
+			margin[മുകൾ_2] = containing_block->height -
+					മുകൾ - border[മുകൾ_2].width - padding[മുകൾ_2] -
 					height - padding[BOTTOM] -
 					border[BOTTOM].width - margin[BOTTOM] -
 					bottom;
-		} else if (margin[BOTTOM] == AUTO) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (margin[BOTTOM] == AUTO) {
 			margin[BOTTOM] = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
+					മുകൾ - margin[മുകൾ_2] - border[മുകൾ_2].width -
+					padding[മുകൾ_2] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					bottom;
-		} else {
+		} അല്ലെങ്കിൽ {
 			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
+					മുകൾ - margin[മുകൾ_2] - border[മുകൾ_2].width -
+					padding[മുകൾ_2] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM];
 		}
-	} else {
-		if (margin[TOP] == AUTO)
-			margin[TOP] = 0;
-		if (margin[BOTTOM] == AUTO)
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (margin[മുകൾ_2] == AUTO)
+			margin[മുകൾ_2] = 0;
+		എങ്കിൽ (margin[BOTTOM] == AUTO)
 			margin[BOTTOM] = 0;
-		if (top == AUTO && height == AUTO && bottom != AUTO) {
+		എങ്കിൽ (മുകൾ == AUTO && height == AUTO && bottom != AUTO) {
 			height = box->height;
-			top = containing_block->height -
-					margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
+			മുകൾ = containing_block->height -
+					margin[മുകൾ_2] - border[മുകൾ_2].width -
+					padding[മുകൾ_2] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM] - bottom;
-		} else if (top == AUTO && height != AUTO && bottom == AUTO) {
-			top = static_top;
+		} അല്ലെങ്കിൽ എങ്കിൽ (മുകൾ == AUTO && height != AUTO && bottom == AUTO) {
+			മുകൾ = static_മുകൾ;
 			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
+					മുകൾ - margin[മുകൾ_2] - border[മുകൾ_2].width -
+					padding[മുകൾ_2] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM];
-		} else if (top != AUTO && height == AUTO && bottom == AUTO) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (മുകൾ != AUTO && height == AUTO && bottom == AUTO) {
 			height = box->height;
 			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
+					മുകൾ - margin[മുകൾ_2] - border[മുകൾ_2].width -
+					padding[മുകൾ_2] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM];
-		} else if (top == AUTO && height != AUTO && bottom != AUTO) {
-			top = containing_block->height -
-					margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
+		} അല്ലെങ്കിൽ എങ്കിൽ (മുകൾ == AUTO && height != AUTO && bottom != AUTO) {
+			മുകൾ = containing_block->height -
+					margin[മുകൾ_2] - border[മുകൾ_2].width -
+					padding[മുകൾ_2] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM] - bottom;
-		} else if (top != AUTO && height == AUTO && bottom != AUTO) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (മുകൾ != AUTO && height == AUTO && bottom != AUTO) {
 			height = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - padding[BOTTOM] -
+					മുകൾ - margin[മുകൾ_2] - border[മുകൾ_2].width -
+					padding[മുകൾ_2] - padding[BOTTOM] -
 					border[BOTTOM].width - margin[BOTTOM] -
 					bottom;
-		} else if (top != AUTO && height != AUTO && bottom == AUTO) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (മുകൾ != AUTO && height != AUTO && bottom == AUTO) {
 			bottom = containing_block->height -
-					top - margin[TOP] - border[TOP].width -
-					padding[TOP] - height -
+					മുകൾ - margin[മുകൾ_2] - border[മുകൾ_2].width -
+					padding[മുകൾ_2] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM];
 		}
@@ -4909,24 +4909,24 @@ layout_absolute(struct box *box,
 
 	NSLOG(layout, DEBUG,
 	      "%i + %i + %i + %i + %i + %i + %i + %i + %i = %i",
-	      top, margin[TOP], border[TOP].width, padding[TOP], height,
+	      മുകൾ, margin[മുകൾ_2], border[മുകൾ_2].width, padding[മുകൾ_2], height,
 	      padding[BOTTOM], border[BOTTOM].width, margin[BOTTOM], bottom,
 	      containing_block->height);
 
-	box->y = top + margin[TOP] + border[TOP].width - cy;
-	if (containing_block->type == BOX_BLOCK ||
+	box->y = മുകൾ + margin[മുകൾ_2] + border[മുകൾ_2].width - cy;
+	എങ്കിൽ (containing_block->type == BOX_BLOCK ||
 			containing_block->type == BOX_INLINE_BLOCK ||
 			containing_block->type == BOX_TABLE_CELL) {
 		/* Block-level ancestor => reset container's height */
-		containing_block->height -= containing_block->padding[TOP] +
+		containing_block->height -= containing_block->padding[മുകൾ_2] +
 				containing_block->padding[BOTTOM];
-	} else {
+	} അല്ലെങ്കിൽ {
 		/** \todo Inline ancestors */
 	}
 	box->height = height;
 	layout_apply_minmax_height(&content->unit_len_ctx, box, containing_block);
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -4940,16 +4940,16 @@ layout_absolute(struct box *box,
  * \param  content           memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool
-layout_position_absolute(struct box *box,
-			 struct box *containing_block,
-			 int cx, int cy,
+സ്ഥിതം bool
+layout_position_absolute(ഘടന box *box,
+			 ഘടന box *containing_block,
+			 പൂർണ്ണസംഖ്യ cx, പൂർണ്ണസംഖ്യ cy,
 			 html_content *content)
 {
-	struct box *c;
+	ഘടന box *c;
 
-	for (c = box->children; c; c = c->next) {
-		if ((c->type == BOX_BLOCK || c->type == BOX_TABLE ||
+	വേണ്ടി (c = box->children; c; c = c->next) {
+		എങ്കിൽ ((c->type == BOX_BLOCK || c->type == BOX_TABLE ||
 				c->type == BOX_INLINE_BLOCK ||
 				c->type == BOX_FLEX ||
 				c->type == BOX_INLINE_FLEX) &&
@@ -4957,46 +4957,46 @@ layout_position_absolute(struct box *box,
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(c->style) ==
 						CSS_POSITION_FIXED)) {
-			if (!layout_absolute(c, containing_block,
+			എങ്കിൽ (!layout_absolute(c, containing_block,
 					cx, cy, content))
-				return false;
-			if (!layout_position_absolute(c, c, 0, 0, content))
-				return false;
-		} else if (c->style && css_computed_position(c->style) ==
+				തിരികെ false;
+			എങ്കിൽ (!layout_position_absolute(c, c, 0, 0, content))
+				തിരികെ false;
+		} അല്ലെങ്കിൽ എങ്കിൽ (c->style && css_computed_position(c->style) ==
 				CSS_POSITION_RELATIVE) {
-			if (!layout_position_absolute(c, c, 0, 0, content))
-				return false;
-		} else {
-			int px, py;
-			if (c->style && (css_computed_float(c->style) ==
-						CSS_FLOAT_LEFT ||
+			എങ്കിൽ (!layout_position_absolute(c, c, 0, 0, content))
+				തിരികെ false;
+		} അല്ലെങ്കിൽ {
+			പൂർണ്ണസംഖ്യ px, py;
+			എങ്കിൽ (c->style && (css_computed_float(c->style) ==
+						CSS_FLOAT_ഇടത് ||
 					css_computed_float(c->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_വലത്)) {
 				/* Float x/y coords are relative to nearest
 				 * ansestor with float_children, rather than
 				 * relative to parent. Need to get x/y relative
 				 * to parent */
-				struct box *p;
+				ഘടന box *p;
 				px = c->x;
 				py = c->y;
-				for (p = box->parent; p && !p->float_children;
+				വേണ്ടി (p = box->parent; p && !p->float_children;
 						p = p->parent) {
 					px -= p->x;
 					py -= p->y;
 				}
-			} else {
+			} അല്ലെങ്കിൽ {
 				/* Not a float, so box x/y coords are relative
 				 * to parent */
 				px = c->x;
 				py = c->y;
 			}
-			if (!layout_position_absolute(c, containing_block,
+			എങ്കിൽ (!layout_position_absolute(c, containing_block,
 					cx + px, cy + py, content))
-				return false;
+				തിരികെ false;
 		}
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -5008,69 +5008,69 @@ layout_position_absolute(struct box *box,
  * \param  x	Receives relative offset in x.
  * \param  y	Receives relative offset in y.
  */
-static void layout_compute_relative_offset(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		int *x,
-		int *y)
+സ്ഥിതം ശൂന്യം layout_compute_relative_offset(
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		ഘടന box *box,
+		പൂർണ്ണസംഖ്യ *x,
+		പൂർണ്ണസംഖ്യ *y)
 {
-	int left, right, top, bottom;
-	struct box *containing_block;
+	പൂർണ്ണസംഖ്യ ഇടത്, വലത്, മുകൾ, bottom;
+	ഘടന box *containing_block;
 
-	assert(box && box->parent && box->style &&
+	പ്രതിജ്ഞാ(box && box->parent && box->style &&
 			css_computed_position(box->style) ==
 			CSS_POSITION_RELATIVE);
 
-	if (box->float_container &&
-			(css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-			css_computed_float(box->style) == CSS_FLOAT_RIGHT)) {
+	എങ്കിൽ (box->float_container &&
+			(css_computed_float(box->style) == CSS_FLOAT_ഇടത് ||
+			css_computed_float(box->style) == CSS_FLOAT_വലത്)) {
 		containing_block = box->float_container;
-	} else {
+	} അല്ലെങ്കിൽ {
 		containing_block = box->parent;
 	}
 
 	layout_compute_offsets(unit_len_ctx, box, containing_block,
-			&top, &right, &bottom, &left);
+			&മുകൾ, &വലത്, &bottom, &ഇടത്);
 
-	if (left == AUTO && right == AUTO)
-		left = right = 0;
-	else if (left == AUTO)
+	എങ്കിൽ (ഇടത് == AUTO && വലത് == AUTO)
+		ഇടത് = വലത് = 0;
+	അല്ലെങ്കിൽ എങ്കിൽ (ഇടത് == AUTO)
 		/* left is auto => computed = -right */
-		left = -right;
-	else if (right == AUTO)
+		ഇടത് = -വലത്;
+	അല്ലെങ്കിൽ എങ്കിൽ (വലത് == AUTO)
 		/* right is auto => computed = -left */
-		right = -left;
-	else {
+		വലത് = -ഇടത്;
+	അല്ലെങ്കിൽ {
 		/* over constrained => examine direction property
 		 * of containing block */
-		if (containing_block->style &&
+		എങ്കിൽ (containing_block->style &&
 				css_computed_direction(
 				containing_block->style) ==
 				CSS_DIRECTION_RTL) {
 			/* right wins */
-			left = -right;
-		} else {
+			ഇടത് = -വലത്;
+		} അല്ലെങ്കിൽ {
 			/* assume LTR in all other cases */
-			right = -left;
+			വലത് = -ഇടത്;
 		}
 	}
 
-	assert(left == -right);
+	പ്രതിജ്ഞാ(ഇടത് == -വലത്);
 
-	if (top == AUTO && bottom == AUTO) {
-		top = bottom = 0;
-	} else if (top == AUTO) {
-		top = -bottom;
-	} else {
+	എങ്കിൽ (മുകൾ == AUTO && bottom == AUTO) {
+		മുകൾ = bottom = 0;
+	} അല്ലെങ്കിൽ എങ്കിൽ (മുകൾ == AUTO) {
+		മുകൾ = -bottom;
+	} അല്ലെങ്കിൽ {
 		/* bottom is AUTO, or neither are AUTO */
-		bottom = -top;
+		bottom = -മുകൾ;
 	}
 
-	NSLOG(layout, DEBUG,  "left %i, right %i, top %i, bottom %i", left,
-	      right, top, bottom);
+	NSLOG(layout, DEBUG,  "left %i, right %i, top %i, bottom %i", ഇടത്,
+	      വലത്, മുകൾ, bottom);
 
-	*x = left;
-	*y = top;
+	*x = ഇടത്;
+	*y = മുകൾ;
 }
 
 
@@ -5088,53 +5088,53 @@ static void layout_compute_relative_offset(
  *               between current box, "root", and the block formatting context
  *               box, "fp", for float children of "root"
  */
-static void
+സ്ഥിതം ശൂന്യം
 layout_position_relative(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *root,
-		struct box *fp,
-		int fx,
-		int fy)
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		ഘടന box *വേര്,
+		ഘടന box *fp,
+		പൂർണ്ണസംഖ്യ fx,
+		പൂർണ്ണസംഖ്യ fy)
 {
-	struct box *box; /* for children of "root" */
-	struct box *fn;  /* for block formatting context box for children of
+	ഘടന box *box; /* for children of "root" */
+	ഘടന box *fn;  /* for block formatting context box for children of
 			  * "box" */
-	struct box *fc;  /* for float children of the block formatting context,
+	ഘടന box *fc;  /* for float children of the block formatting context,
 			  * "fp" */
-	int x, y;	 /* for the offsets resulting from any relative
+	പൂർണ്ണസംഖ്യ x, y;	 /* for the offsets resulting from any relative
 			  * positioning on the current block */
-	int fnx, fny;    /* for affsets which apply to flat children of "box" */
+	പൂർണ്ണസംഖ്യ fnx, fny;    /* for affsets which apply to flat children of "box" */
 
 	/**\todo ensure containing box is large enough after moving boxes */
 
-	assert(root);
+	പ്രതിജ്ഞാ(വേര്);
 
 	/* Normal children */
-	for (box = root->children; box; box = box->next) {
+	വേണ്ടി (box = വേര്->children; box; box = box->next) {
 
-		if (box->type == BOX_TEXT)
-			continue;
+		എങ്കിൽ (box->type == BOX_TEXT)
+			തുടരുക;
 
 		/* If relatively positioned, get offsets */
-		if (box->style && css_computed_position(box->style) ==
+		എങ്കിൽ (box->style && css_computed_position(box->style) ==
 				CSS_POSITION_RELATIVE)
 			layout_compute_relative_offset(
 					unit_len_ctx, box, &x, &y);
-		else
+		അല്ലെങ്കിൽ
 			x = y = 0;
 
 		/* Adjust float coordinates.
 		 * (note float x and y are relative to their block formatting
 		 * context box and not their parent) */
-		if (box->style && (css_computed_float(box->style) ==
-					CSS_FLOAT_LEFT ||
+		എങ്കിൽ (box->style && (css_computed_float(box->style) ==
+					CSS_FLOAT_ഇടത് ||
 				css_computed_float(box->style) ==
-					CSS_FLOAT_RIGHT) &&
+					CSS_FLOAT_വലത്) &&
 				(fx != 0 || fy != 0)) {
 			/* box is a float and there is a float offset to
 			 * apply */
-			for (fc = fp->float_children; fc; fc = fc->next_float) {
-				if (box == fc->children) {
+			വേണ്ടി (fc = fp->float_children; fc; fc = fc->next_float) {
+				എങ്കിൽ (box == fc->children) {
 					/* Box is floated in the block
 					 * formatting context block, fp.
 					 * Apply float offsets. */
@@ -5145,10 +5145,10 @@ layout_position_relative(
 			}
 		}
 
-		if (box->float_children) {
+		എങ്കിൽ (box->float_children) {
 			fn = box;
 			fnx = fny = 0;
-		} else {
+		} അല്ലെങ്കിൽ {
 			fn = fp;
 			fnx = fx + x;
 			fny = fy + y;
@@ -5158,10 +5158,10 @@ layout_position_relative(
 		layout_position_relative(unit_len_ctx, box, fn, fnx, fny);
 
 		/* Ignore things we're not interested in. */
-		if (!box->style || (box->style &&
+		എങ്കിൽ (!box->style || (box->style &&
 				css_computed_position(box->style) !=
 				CSS_POSITION_RELATIVE))
-			continue;
+			തുടരുക;
 
 		box->x += x;
 		box->y += y;
@@ -5169,9 +5169,9 @@ layout_position_relative(
 		/* Handle INLINEs - their "children" are in fact
 		 * the sibling boxes between the INLINE and
 		 * INLINE_END boxes */
-		if (box->type == BOX_INLINE && box->inline_end) {
-			struct box *b;
-			for (b = box->next; b && b != box->inline_end;
+		എങ്കിൽ (box->type == BOX_INLINE && box->inline_end) {
+			ഘടന box *b;
+			വേണ്ടി (b = box->next; b && b != box->inline_end;
 					b = b->next) {
 				b->x += x;
 				b->y += y;
@@ -5191,29 +5191,29 @@ layout_position_relative(
  * \param  desc_x1  updated to right of box's bbox
  * \param  desc_y1  updated to bottom of box's bbox
  */
-static void
+സ്ഥിതം ശൂന്യം
 layout_get_box_bbox(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		int *desc_x0, int *desc_y0,
-		int *desc_x1, int *desc_y1)
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		ഘടന box *box,
+		പൂർണ്ണസംഖ്യ *desc_x0, പൂർണ്ണസംഖ്യ *desc_y0,
+		പൂർണ്ണസംഖ്യ *desc_x1, പൂർണ്ണസംഖ്യ *desc_y1)
 {
-	*desc_x0 = -box->border[LEFT].width;
-	*desc_y0 = -box->border[TOP].width;
-	*desc_x1 = box->padding[LEFT] + box->width + box->padding[RIGHT] +
-			box->border[RIGHT].width;
-	*desc_y1 = box->padding[TOP] + box->height + box->padding[BOTTOM] +
+	*desc_x0 = -box->border[ഇടത്_2].width;
+	*desc_y0 = -box->border[മുകൾ_2].width;
+	*desc_x1 = box->padding[ഇടത്_2] + box->width + box->padding[വലത്_2] +
+			box->border[വലത്_2].width;
+	*desc_y1 = box->padding[മുകൾ_2] + box->height + box->padding[BOTTOM] +
 			box->border[BOTTOM].width;
 
 	/* To stop the top of text getting clipped when css line-height is
 	 * reduced, we increase the top of the descendant bbox. */
-	if (box->type == BOX_BLOCK && box->style != NULL &&
+	എങ്കിൽ (box->type == BOX_BLOCK && box->style != ശൂന്യ &&
 			css_computed_overflow_y(box->style) ==
 					CSS_OVERFLOW_VISIBLE &&
-			box->object == NULL) {
+			box->object == ശൂന്യ) {
 		css_fixed font_size = 0;
 		css_unit font_unit = CSS_UNIT_PT;
-		int text_height;
+		പൂർണ്ണസംഖ്യ text_height;
 
 		css_computed_font_size(box->style, &font_size, &font_unit);
 		text_height = css_unit_len2device_px(box->style, unit_len_ctx,
@@ -5233,27 +5233,27 @@ layout_get_box_bbox(
  * \param  off_x    offset to apply to child->x coord to treat as child of box
  * \param  off_y    offset to apply to child->y coord to treat as child of box
  */
-static void
+സ്ഥിതം ശൂന്യം
 layout_update_descendant_bbox(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box,
-		struct box *child,
-		int off_x,
-		int off_y)
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		ഘടന box *box,
+		ഘടന box *child,
+		പൂർണ്ണസംഖ്യ off_x,
+		പൂർണ്ണസംഖ്യ off_y)
 {
-	int child_desc_x0, child_desc_y0, child_desc_x1, child_desc_y1;
+	പൂർണ്ണസംഖ്യ child_desc_x0, child_desc_y0, child_desc_x1, child_desc_y1;
 
 	/* get coordinates of child relative to box */
-	int child_x = child->x - off_x;
-	int child_y = child->y - off_y;
+	പൂർണ്ണസംഖ്യ child_x = child->x - off_x;
+	പൂർണ്ണസംഖ്യ child_y = child->y - off_y;
 
 	bool html_object = (child->object &&
 			content_get_type(child->object) == CONTENT_HTML);
 
-	enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
-	enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
+	എണ്ണൽ css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
+	എണ്ണൽ css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
 
-	if (child->style != NULL) {
+	എങ്കിൽ (child->style != ശൂന്യ) {
 		overflow_x = css_computed_overflow_x(child->style);
 		overflow_y = css_computed_overflow_y(child->style);
 	}
@@ -5263,13 +5263,13 @@ layout_update_descendant_bbox(
 			&child_desc_x0, &child_desc_y0,
 			&child_desc_x1, &child_desc_y1);
 
-	if (overflow_x == CSS_OVERFLOW_VISIBLE &&
+	എങ്കിൽ (overflow_x == CSS_OVERFLOW_VISIBLE &&
 			html_object == false) {
 		/* get child's descendant bbox relative to box */
 		child_desc_x0 = child->descendant_x0;
 		child_desc_x1 = child->descendant_x1;
 	}
-	if (overflow_y == CSS_OVERFLOW_VISIBLE &&
+	എങ്കിൽ (overflow_y == CSS_OVERFLOW_VISIBLE &&
 			html_object == false) {
 		/* get child's descendant bbox relative to box */
 		child_desc_y0 = child->descendant_y0;
@@ -5282,13 +5282,13 @@ layout_update_descendant_bbox(
 	child_desc_y1 += child_y;
 
 	/* increase box's descendant bbox to contain descendants */
-	if (child_desc_x0 < box->descendant_x0)
+	എങ്കിൽ (child_desc_x0 < box->descendant_x0)
 		box->descendant_x0 = child_desc_x0;
-	if (child_desc_y0 < box->descendant_y0)
+	എങ്കിൽ (child_desc_y0 < box->descendant_y0)
 		box->descendant_y0 = child_desc_y0;
-	if (box->descendant_x1 < child_desc_x1)
+	എങ്കിൽ (box->descendant_x1 < child_desc_x1)
 		box->descendant_x1 = child_desc_x1;
-	if (box->descendant_y1 < child_desc_y1)
+	എങ്കിൽ (box->descendant_y1 < child_desc_y1)
 		box->descendant_y1 = child_desc_y1;
 }
 
@@ -5300,14 +5300,14 @@ layout_update_descendant_bbox(
  * \param  unit_len_ctx  Length conversion context
  * \param  box      tree of boxes to update
  */
-static void layout_calculate_descendant_bboxes(
-		const css_unit_ctx *unit_len_ctx,
-		struct box *box)
+സ്ഥിതം ശൂന്യം layout_calculate_descendant_bboxes(
+		സ്ഥിരം css_unit_ctx *unit_len_ctx,
+		ഘടന box *box)
 {
-	struct box *child;
+	ഘടന box *child;
 
-	assert(box->width != UNKNOWN_WIDTH);
-	assert(box->height != AUTO);
+	പ്രതിജ്ഞാ(box->width != UNKNOWN_WIDTH);
+	പ്രതിജ്ഞാ(box->height != AUTO);
 	/* assert((box->width >= 0) && (box->height >= 0)); */
 
 	/* Initialise box's descendant box to border edge box */
@@ -5316,15 +5316,15 @@ static void layout_calculate_descendant_bboxes(
 			&box->descendant_x1, &box->descendant_y1);
 
 	/* Extend it to contain HTML contents if box is replaced */
-	if (box->object && content_get_type(box->object) == CONTENT_HTML) {
-		if (box->descendant_x1 < content_get_width(box->object))
+	എങ്കിൽ (box->object && content_get_type(box->object) == CONTENT_HTML) {
+		എങ്കിൽ (box->descendant_x1 < content_get_width(box->object))
 			box->descendant_x1 = content_get_width(box->object);
-		if (box->descendant_y1 < content_get_height(box->object))
+		എങ്കിൽ (box->descendant_y1 < content_get_height(box->object))
 			box->descendant_y1 = content_get_height(box->object);
 	}
 
-	if (box->iframe != NULL) {
-		int x, y;
+	എങ്കിൽ (box->iframe != ശൂന്യ) {
+		പൂർണ്ണസംഖ്യ x, y;
 		box_coords(box, &x, &y);
 
 		browser_window_set_position(box->iframe, x, y);
@@ -5334,56 +5334,56 @@ static void layout_calculate_descendant_bboxes(
 				box->width, box->height);
 	}
 
-	if (box->type == BOX_INLINE || box->type == BOX_TEXT)
-		return;
+	എങ്കിൽ (box->type == BOX_INLINE || box->type == BOX_TEXT)
+		തിരികെ;
 
-	if (box->type == BOX_INLINE_END) {
+	എങ്കിൽ (box->type == BOX_INLINE_END) {
 		box = box->inline_end;
-		for (child = box->next; child;
+		വേണ്ടി (child = box->next; child;
 				child = child->next) {
-			if (child->type == BOX_FLOAT_LEFT ||
-					child->type == BOX_FLOAT_RIGHT)
-				continue;
+			എങ്കിൽ (child->type == BOX_FLOAT_ഇടത് ||
+					child->type == BOX_FLOAT_വലത്)
+				തുടരുക;
 
 			layout_update_descendant_bbox(unit_len_ctx, box, child,
 					box->x, box->y);
 
-			if (child == box->inline_end)
-				break;
+			എങ്കിൽ (child == box->inline_end)
+				നിർത്തുക;
 		}
-		return;
+		തിരികെ;
 	}
 
-	if (box->flags & REPLACE_DIM)
+	എങ്കിൽ (box->flags & REPLACE_DIM)
 		/* Box's children aren't displayed if the box is replaced */
-		return;
+		തിരികെ;
 
-	for (child = box->children; child; child = child->next) {
-		if (child->type == BOX_FLOAT_LEFT ||
-				child->type == BOX_FLOAT_RIGHT)
-			continue;
+	വേണ്ടി (child = box->children; child; child = child->next) {
+		എങ്കിൽ (child->type == BOX_FLOAT_ഇടത് ||
+				child->type == BOX_FLOAT_വലത്)
+			തുടരുക;
 
 		layout_calculate_descendant_bboxes(unit_len_ctx, child);
 
-		if (box->style && css_computed_overflow_x(box->style) ==
+		എങ്കിൽ (box->style && css_computed_overflow_x(box->style) ==
 				CSS_OVERFLOW_HIDDEN &&
 				css_computed_overflow_y(box->style) ==
 				CSS_OVERFLOW_HIDDEN)
-			continue;
+			തുടരുക;
 
 		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
 	}
 
-	for (child = box->float_children; child; child = child->next_float) {
-		assert(child->type == BOX_FLOAT_LEFT ||
-				child->type == BOX_FLOAT_RIGHT);
+	വേണ്ടി (child = box->float_children; child; child = child->next_float) {
+		പ്രതിജ്ഞാ(child->type == BOX_FLOAT_ഇടത് ||
+				child->type == BOX_FLOAT_വലത്);
 
 		layout_calculate_descendant_bboxes(unit_len_ctx, child);
 
 		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
 	}
 
-	if (box->list_marker) {
+	എങ്കിൽ (box->list_marker) {
 		child = box->list_marker;
 		layout_calculate_descendant_bboxes(unit_len_ctx, child);
 
@@ -5393,11 +5393,11 @@ static void layout_calculate_descendant_bboxes(
 
 
 /* exported function documented in html/layout.h */
-bool layout_document(html_content *content, int width, int height)
+bool layout_document(html_content *content, പൂർണ്ണസംഖ്യ width, പൂർണ്ണസംഖ്യ height)
 {
 	bool ret;
-	struct box *doc = content->layout;
-	const struct gui_layout_table *font_func = content->font_func;
+	ഘടന box *doc = content->layout;
+	സ്ഥിരം ഘടന gui_layout_table *font_func = content->font_func;
 
 	NSLOG(layout, DEBUG, "Doing layout to %ix%i of %s",
 			width, height, nsurl_access(content_get_url(
@@ -5407,12 +5407,12 @@ bool layout_document(html_content *content, int width, int height)
 
 	layout_block_find_dimensions(&content->unit_len_ctx,
 			width, height, 0, 0, doc);
-	doc->x = doc->margin[LEFT] + doc->border[LEFT].width;
-	doc->y = doc->margin[TOP] + doc->border[TOP].width;
-	width -= doc->margin[LEFT] + doc->border[LEFT].width +
-			doc->padding[LEFT] + doc->padding[RIGHT] +
-			doc->border[RIGHT].width + doc->margin[RIGHT];
-	if (width < 0) {
+	doc->x = doc->margin[ഇടത്_2] + doc->border[ഇടത്_2].width;
+	doc->y = doc->margin[മുകൾ_2] + doc->border[മുകൾ_2].width;
+	width -= doc->margin[ഇടത്_2] + doc->border[ഇടത്_2].width +
+			doc->padding[ഇടത്_2] + doc->padding[വലത്_2] +
+			doc->border[വലത്_2].width + doc->margin[വലത്_2];
+	എങ്കിൽ (width < 0) {
 		width = 0;
 	}
 	doc->width = width;
@@ -5420,18 +5420,18 @@ bool layout_document(html_content *content, int width, int height)
 	ret = layout_block_context(doc, height, content);
 
 	/* make <html> and <body> fill available height */
-	if (doc->y + doc->padding[TOP] + doc->height + doc->padding[BOTTOM] +
+	എങ്കിൽ (doc->y + doc->padding[മുകൾ_2] + doc->height + doc->padding[BOTTOM] +
 			doc->border[BOTTOM].width + doc->margin[BOTTOM] <
 			height) {
-		doc->height = height - (doc->y + doc->padding[TOP] +
+		doc->height = height - (doc->y + doc->padding[മുകൾ_2] +
 				doc->padding[BOTTOM] +
 				doc->border[BOTTOM].width +
 				doc->margin[BOTTOM]);
-		if (doc->children)
+		എങ്കിൽ (doc->children)
 			doc->children->height = doc->height -
-					(doc->children->margin[TOP] +
-					 doc->children->border[TOP].width +
-					 doc->children->padding[TOP] +
+					(doc->children->margin[മുകൾ_2] +
+					 doc->children->border[മുകൾ_2].width +
+					 doc->children->padding[മുകൾ_2] +
 					 doc->children->padding[BOTTOM] +
 					 doc->children->border[BOTTOM].width +
 					 doc->children->margin[BOTTOM]);
@@ -5443,5 +5443,5 @@ bool layout_document(html_content *content, int width, int height)
 
 	layout_calculate_descendant_bboxes(&content->unit_len_ctx, doc);
 
-	return ret;
+	തിരികെ ret;
 }

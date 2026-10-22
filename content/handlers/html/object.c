@@ -21,34 +21,34 @@
  * Processing for html content object operations.
  */
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
-#include <nsutils/time.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <ctype.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <strings.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <nsutils/time.h>
 
-#include "utils/corestrings.h"
-#include "utils/config.h"
-#include "utils/log.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/misc.h"
-#include "content/hlcache.h"
-#include "css/utils.h"
-#include "desktop/scrollbar.h"
-#include "desktop/gui_internal.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "utils/config.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/nsoption.h"
+#അന്തര്ഭാവ "netsurf/content.h"
+#അന്തര്ഭാവ "netsurf/misc.h"
+#അന്തര്ഭാവ "content/hlcache.h"
+#അന്തര്ഭാവ "css/utils.h"
+#അന്തര്ഭാവ "desktop/scrollbar.h"
+#അന്തര്ഭാവ "desktop/gui_internal.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/object.h"
+#അന്തര്ഭാവ "html/html.h"
+#അന്തര്ഭാവ "html/private.h"
+#അന്തര്ഭാവ "html/interaction.h"
+#അന്തര്ഭാവ "html/box.h"
+#അന്തര്ഭാവ "html/box_inspect.h"
+#അന്തര്ഭാവ "html/object.h"
 
 /* break reference loop */
-static void html_object_refresh(void *p);
+സ്ഥിതം ശൂന്യം html_object_refresh(ശൂന്യം *p);
 
 /**
  * Retrieve objects used by HTML document
@@ -57,16 +57,16 @@ static void html_object_refresh(void *p);
  * \param n  Pointer to location to receive number of objects
  * \return Pointer to list of objects
  */
-struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
+ഘടന content_html_object *html_get_objects(hlcache_handle *h, unsigned പൂർണ്ണസംഖ്യ *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
+	പ്രതിജ്ഞാ(n != ശൂന്യ);
 
-	*n = c->num_objects;
+	*n = c->അക്കം_objects;
 
-	return c->object_list;
+	തിരികെ c->object_list;
 }
 
 /**
@@ -77,48 +77,48 @@ struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
  * \param  background  the object was the background image for the box
  */
 
-static void
-html_object_failed(struct box *box, html_content *content, bool background)
+സ്ഥിതം ശൂന്യം
+html_object_failed(ഘടന box *box, html_content *content, bool background)
 {
 	/* Nothing to do */
-	return;
+	തിരികെ;
 }
 
 /**
  * Update a box whose content has completed rendering.
  */
 
-static void
-html_object_done(struct box *box,
+സ്ഥിതം ശൂന്യം
+html_object_done(ഘടന box *box,
 		 hlcache_handle *object,
 		 bool background)
 {
-	struct box *b;
+	ഘടന box *b;
 
-	if (background) {
+	എങ്കിൽ (background) {
 		box->background = object;
-		return;
+		തിരികെ;
 	}
 
 	box->object = object;
 
 	/* Normalise the box type, now it has been replaced. */
-	switch (box->type) {
-	case BOX_TABLE:
+	തിരഞ്ഞെടുപ്പ് (box->type) {
+	അവസ്ഥ BOX_TABLE:
 		box->type = BOX_BLOCK;
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		/* TODO: Any other box types need mapping? */
-		break;
+		നിർത്തുക;
 	}
 
-	if (!(box->flags & REPLACE_DIM)) {
+	എങ്കിൽ (!(box->flags & REPLACE_DIM)) {
 		/* invalidate parent min, max widths */
-		for (b = box; b; b = b->parent)
+		വേണ്ടി (b = box; b; b = b->parent)
 			b->max_width = UNKNOWN_MAX_WIDTH;
 
 		/* delete any clones of this box */
-		while (box->next && (box->next->flags & CLONE)) {
+		ആകുമ്പോൾ (box->next && (box->next->flags & CLONE)) {
 			/* box_free_box(box->next); */
 			box->next = box->next->next;
 		}
@@ -129,53 +129,53 @@ html_object_done(struct box *box,
 /**
  * Callback for hlcache_handle_retrieve() for objects with no box.
  */
-static nserror
+സ്ഥിതം nserror
 html_object_nobox_callback(hlcache_handle *object,
-			   const hlcache_event *event,
-			   void *pw)
+			   സ്ഥിരം hlcache_event *event,
+			   ശൂന്യം *pw)
 {
-	struct content_html_object *chobject = pw;
+	ഘടന content_html_object *chobject = pw;
 
-	switch (event->type) {
-	case CONTENT_MSG_ERROR:
+	തിരഞ്ഞെടുപ്പ് (event->type) {
+	അവസ്ഥ CONTENT_സന്ദേശം_ERROR:
 		hlcache_handle_release(object);
 
-		chobject->content = NULL;
-		break;
+		chobject->content = ശൂന്യ;
+		നിർത്തുക;
 
-	default:
-		break;
+	സ്ഥിരസ്ഥിതി:
+		നിർത്തുക;
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /**
  * Callback for hlcache_handle_retrieve() for objects with a box.
  */
-static nserror
+സ്ഥിതം nserror
 html_object_callback(hlcache_handle *object,
-		     const hlcache_event *event,
-		     void *pw)
+		     സ്ഥിരം hlcache_event *event,
+		     ശൂന്യം *pw)
 {
-	struct content_html_object *o = pw;
+	ഘടന content_html_object *o = pw;
 	html_content *c = (html_content *) o->parent;
-	int x, y;
-	struct box *box;
+	പൂർണ്ണസംഖ്യ x, y;
+	ഘടന box *box;
 
 	box = o->box;
 
-	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		if (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
+	തിരഞ്ഞെടുപ്പ് (event->type) {
+	അവസ്ഥ CONTENT_സന്ദേശം_LOADING:
+		എങ്കിൽ (c->base.status != CONTENT_STATUS_LOADING && c->bw != ശൂന്യ)
 			content_open(object,
 					c->bw, &c->base,
 					box->object_params);
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_READY:
-		if (content_can_reformat(object)) {
+	അവസ്ഥ CONTENT_സന്ദേശം_READY:
+		എങ്കിൽ (content_can_reformat(object)) {
 			/* TODO: avoid knowledge of box internals here */
 			content_reformat(object, false,
 					box->max_width != UNKNOWN_MAX_WIDTH ?
@@ -185,86 +185,86 @@ html_object_callback(hlcache_handle *object,
 
 			/* Adjust parent content for new object size */
 			html_object_done(box, object, o->background);
-			if (c->base.status == CONTENT_STATUS_READY ||
+			എങ്കിൽ (c->base.status == CONTENT_STATUS_READY ||
 					c->base.status == CONTENT_STATUS_DONE)
 				content__reformat(&c->base, false,
 						c->base.available_width,
 						c->base.available_height);
 		}
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_DONE:
+	അവസ്ഥ CONTENT_സന്ദേശം_DONE:
 		c->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		html_object_done(box, object, o->background);
 
-		if (c->base.status != CONTENT_STATUS_LOADING &&
+		എങ്കിൽ (c->base.status != CONTENT_STATUS_LOADING &&
 				box->flags & REPLACE_DIM) {
-			union content_msg_data data;
+			സംഘം content_സന്ദേശം_data data;
 
-			if (c->had_initial_layout == false) {
-				break;
+			എങ്കിൽ (c->had_initial_layout == false) {
+				നിർത്തുക;
 			}
 
-			if (!box_visible(box))
-				break;
+			എങ്കിൽ (!box_visible(box))
+				നിർത്തുക;
 
 			box_coords(box, &x, &y);
 
-			data.redraw.x = x + box->padding[LEFT];
-			data.redraw.y = y + box->padding[TOP];
+			data.redraw.x = x + box->padding[ഇടത്_2];
+			data.redraw.y = y + box->padding[മുകൾ_2];
 			data.redraw.width = box->width;
 			data.redraw.height = box->height;
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_broadcast(&c->base, CONTENT_സന്ദേശം_REDRAW, &data);
 		}
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_ERROR:
+	അവസ്ഥ CONTENT_സന്ദേശം_ERROR:
 		hlcache_handle_release(object);
 
-		o->content = NULL;
+		o->content = ശൂന്യ;
 
 		c->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		html_object_failed(box, c, o->background);
 
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_REDRAW:
-		if (c->base.status != CONTENT_STATUS_LOADING) {
-			union content_msg_data data = event->data;
+	അവസ്ഥ CONTENT_സന്ദേശം_REDRAW:
+		എങ്കിൽ (c->base.status != CONTENT_STATUS_LOADING) {
+			സംഘം content_സന്ദേശം_data data = event->data;
 
-			if (c->had_initial_layout == false) {
-				break;
+			എങ്കിൽ (c->had_initial_layout == false) {
+				നിർത്തുക;
 			}
 
-			if (!box_visible(box))
-				break;
+			എങ്കിൽ (!box_visible(box))
+				നിർത്തുക;
 
 			box_coords(box, &x, &y);
 
-			if (object == box->background) {
+			എങ്കിൽ (object == box->background) {
 				/* Redraw request is for background */
 				css_fixed hpos = 0, vpos = 0;
 				css_unit hunit = CSS_UNIT_PX;
 				css_unit vunit = CSS_UNIT_PX;
-				int width = box->padding[LEFT] + box->width +
-						box->padding[RIGHT];
-				int height = box->padding[TOP] + box->height +
+				പൂർണ്ണസംഖ്യ width = box->padding[ഇടത്_2] + box->width +
+						box->padding[വലത്_2];
+				പൂർണ്ണസംഖ്യ height = box->padding[മുകൾ_2] + box->height +
 						box->padding[BOTTOM];
-				int t, h, l, w;
+				പൂർണ്ണസംഖ്യ t, h, l, w;
 
 				/* Need to know background-position */
 				css_computed_background_position(box->style,
 						&hpos, &hunit, &vpos, &vunit);
 
 				w = content_get_width(box->background);
-				if (hunit == CSS_UNIT_PCT) {
+				എങ്കിൽ (hunit == CSS_UNIT_PCT) {
 					l = (width - w) * hpos / INTTOFIX(100);
-				} else {
+				} അല്ലെങ്കിൽ {
 					l = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -272,9 +272,9 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				h = content_get_height(box->background);
-				if (vunit == CSS_UNIT_PCT) {
+				എങ്കിൽ (vunit == CSS_UNIT_PCT) {
 					t = (height - h) * vpos / INTTOFIX(100);
-				} else {
+				} അല്ലെങ്കിൽ {
 					t = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -282,46 +282,46 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				/* Redraw area depends on background-repeat */
-				switch (css_computed_background_repeat(
+				തിരഞ്ഞെടുപ്പ് (css_computed_background_repeat(
 						box->style)) {
-				case CSS_BACKGROUND_REPEAT_REPEAT:
+				അവസ്ഥ CSS_BACKGROUND_REPEAT_REPEAT:
 					data.redraw.x = 0;
 					data.redraw.y = 0;
 					data.redraw.width = box->width;
 					data.redraw.height = box->height;
-					break;
+					നിർത്തുക;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_X:
+				അവസ്ഥ CSS_BACKGROUND_REPEAT_REPEAT_X:
 					data.redraw.x = 0;
 					data.redraw.y += t;
 					data.redraw.width = box->width;
-					break;
+					നിർത്തുക;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+				അവസ്ഥ CSS_BACKGROUND_REPEAT_REPEAT_Y:
 					data.redraw.x += l;
 					data.redraw.y = 0;
 					data.redraw.height = box->height;
-					break;
+					നിർത്തുക;
 
-				case CSS_BACKGROUND_REPEAT_NO_REPEAT:
+				അവസ്ഥ CSS_BACKGROUND_REPEAT_NO_REPEAT:
 					data.redraw.x += l;
 					data.redraw.y += t;
-					break;
+					നിർത്തുക;
 
-				default:
-					break;
+				സ്ഥിരസ്ഥിതി:
+					നിർത്തുക;
 				}
 
 				/* Add offset to box */
 				data.redraw.x += x;
 				data.redraw.y += y;
 
-			} else {
+			} അല്ലെങ്കിൽ {
 				/* Non-background case */
-				int w = content_get_width(object);
-				int h = content_get_height(object);
+				പൂർണ്ണസംഖ്യ w = content_get_width(object);
+				പൂർണ്ണസംഖ്യ h = content_get_height(object);
 
-				if (w != 0 && box->width != w) {
+				എങ്കിൽ (w != 0 && box->width != w) {
 					/* Not showing image at intrinsic
 					 * width; need to scale the redraw
 					 * request area. */
@@ -332,7 +332,7 @@ html_object_callback(hlcache_handle *object,
 							box->width / w;
 				}
 
-				if (h != 0 && box->height != w) {
+				എങ്കിൽ (h != 0 && box->height != w) {
 					/* Not showing image at intrinsic
 					 * height; need to scale the redraw
 					 * request area. */
@@ -343,148 +343,148 @@ html_object_callback(hlcache_handle *object,
 							box->height / h;
 				}
 
-				data.redraw.x += x + box->padding[LEFT];
-				data.redraw.y += y + box->padding[TOP];
+				data.redraw.x += x + box->padding[ഇടത്_2];
+				data.redraw.y += y + box->padding[മുകൾ_2];
 			}
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_broadcast(&c->base, CONTENT_സന്ദേശം_REDRAW, &data);
 		}
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_REFRESH:
-		if (content_get_type(object) == CONTENT_HTML) {
+	അവസ്ഥ CONTENT_സന്ദേശം_REFRESH:
+		എങ്കിൽ (content_get_type(object) == CONTENT_HTML) {
 			/* only for HTML objects */
 			guit->misc->schedule(event->data.delay * 1000,
 					html_object_refresh, o);
 		}
 
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_LINK:
+	അവസ്ഥ CONTENT_സന്ദേശം_LINK:
 		/* Don't care about favicons that aren't on top level content */
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_GETTHREAD:
+	അവസ്ഥ CONTENT_സന്ദേശം_GETTHREAD:
 		/* Objects don't have JS threads */
-		*(event->data.jsthread) = NULL;
-		break;
+		*(event->data.jsthread) = ശൂന്യ;
+		നിർത്തുക;
 
-	case CONTENT_MSG_GETDIMS:
+	അവസ്ഥ CONTENT_സന്ദേശം_GETDIMS:
 		*(event->data.getdims.viewport_width) =
 				content__get_width(&c->base);
 		*(event->data.getdims.viewport_height) =
 				content__get_height(&c->base);
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_SCROLL:
-		if (box->scroll_x != NULL)
+	അവസ്ഥ CONTENT_സന്ദേശം_SCROLL:
+		എങ്കിൽ (box->scroll_x != ശൂന്യ)
 			scrollbar_set(box->scroll_x, event->data.scroll.x0,
 					false);
-		if (box->scroll_y != NULL)
+		എങ്കിൽ (box->scroll_y != ശൂന്യ)
 			scrollbar_set(box->scroll_y, event->data.scroll.y0,
 					false);
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_DRAGSAVE:
+	അവസ്ഥ CONTENT_സന്ദേശം_DRAGSAVE:
 	{
-		union content_msg_data msg_data;
-		if (event->data.dragsave.content == NULL)
-			msg_data.dragsave.content = object;
-		else
-			msg_data.dragsave.content =
+		സംഘം content_സന്ദേശം_data സന്ദേശം_data;
+		എങ്കിൽ (event->data.dragsave.content == ശൂന്യ)
+			സന്ദേശം_data.dragsave.content = object;
+		അല്ലെങ്കിൽ
+			സന്ദേശം_data.dragsave.content =
 					event->data.dragsave.content;
 
-		content_broadcast(&c->base, CONTENT_MSG_DRAGSAVE, &msg_data);
+		content_broadcast(&c->base, CONTENT_സന്ദേശം_DRAGSAVE, &സന്ദേശം_data);
 	}
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_SAVELINK:
-	case CONTENT_MSG_POINTER:
-	case CONTENT_MSG_SELECTMENU:
-	case CONTENT_MSG_GADGETCLICK:
+	അവസ്ഥ CONTENT_സന്ദേശം_SAVELINK:
+	അവസ്ഥ CONTENT_സന്ദേശം_POINTER:
+	അവസ്ഥ CONTENT_സന്ദേശം_SELECTMENU:
+	അവസ്ഥ CONTENT_സന്ദേശം_GADGETCLICK:
 		/* These messages are for browser window layer.
 		 * we're not interested, so pass them on. */
 		content_broadcast(&c->base, event->type, &event->data);
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_CARET:
+	അവസ്ഥ CONTENT_സന്ദേശം_CARET:
 	{
-		union html_focus_owner focus_owner;
+		സംഘം html_focus_owner focus_owner;
 		focus_owner.content = box;
 
-		switch (event->data.caret.type) {
-		case CONTENT_CARET_REMOVE:
-		case CONTENT_CARET_HIDE:
+		തിരഞ്ഞെടുപ്പ് (event->data.caret.type) {
+		അവസ്ഥ CONTENT_CARET_REMOVE:
+		അവസ്ഥ CONTENT_CARET_HIDE:
 			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
-					true, 0, 0, 0, NULL);
-			break;
-		case CONTENT_CARET_SET_POS:
+					true, 0, 0, 0, ശൂന്യ);
+			നിർത്തുക;
+		അവസ്ഥ CONTENT_CARET_SET_POS:
 			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
 					false, event->data.caret.pos.x,
 					event->data.caret.pos.y,
 					event->data.caret.pos.height,
 					event->data.caret.pos.clip);
-			break;
+			നിർത്തുക;
 		}
 	}
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_DRAG:
+	അവസ്ഥ CONTENT_സന്ദേശം_DRAG:
 	{
 		html_drag_type drag_type = HTML_DRAG_NONE;
-		union html_drag_owner drag_owner;
+		സംഘം html_drag_owner drag_owner;
 		drag_owner.content = box;
 
-		switch (event->data.drag.type) {
-		case CONTENT_DRAG_NONE:
+		തിരഞ്ഞെടുപ്പ് (event->data.drag.type) {
+		അവസ്ഥ CONTENT_DRAG_NONE:
 			drag_type = HTML_DRAG_NONE;
 			drag_owner.no_owner = true;
-			break;
-		case CONTENT_DRAG_SCROLL:
+			നിർത്തുക;
+		അവസ്ഥ CONTENT_DRAG_SCROLL:
 			drag_type = HTML_DRAG_CONTENT_SCROLL;
-			break;
-		case CONTENT_DRAG_SELECTION:
+			നിർത്തുക;
+		അവസ്ഥ CONTENT_DRAG_SELECTION:
 			drag_type = HTML_DRAG_CONTENT_SELECTION;
-			break;
+			നിർത്തുക;
 		}
 		html_set_drag_type(c, drag_type, drag_owner,
 				event->data.drag.rect);
 	}
-		break;
+		നിർത്തുക;
 
-	case CONTENT_MSG_SELECTION:
+	അവസ്ഥ CONTENT_സന്ദേശം_SELECTION:
 	{
 		html_selection_type sel_type;
-		union html_selection_owner sel_owner;
+		സംഘം html_selection_owner sel_owner;
 
-		if (event->data.selection.selection) {
+		എങ്കിൽ (event->data.selection.selection) {
 			sel_type = HTML_SELECTION_CONTENT;
 			sel_owner.content = box;
-		} else {
+		} അല്ലെങ്കിൽ {
 			sel_type = HTML_SELECTION_NONE;
 			sel_owner.none = true;
 		}
 		html_set_selection(c, sel_type, sel_owner,
 				event->data.selection.read_only);
 	}
-		break;
+		നിർത്തുക;
 
-	default:
-		break;
+	സ്ഥിരസ്ഥിതി:
+		നിർത്തുക;
 	}
 
-	if (c->base.status == CONTENT_STATUS_READY &&
+	എങ്കിൽ (c->base.status == CONTENT_STATUS_READY &&
 	    c->base.active == 0 &&
-	    (event->type == CONTENT_MSG_LOADING ||
-	     event->type == CONTENT_MSG_DONE ||
-	     event->type == CONTENT_MSG_ERROR)) {
+	    (event->type == CONTENT_സന്ദേശം_LOADING ||
+	     event->type == CONTENT_സന്ദേശം_DONE ||
+	     event->type == CONTENT_സന്ദേശം_ERROR)) {
 		/* all objects have arrived */
 		content__reformat(&c->base, false, c->base.available_width,
 				c->base.available_height);
 		content_set_done(&c->base);
-	} else if (nsoption_bool(incremental_reflow) &&
-		   event->type == CONTENT_MSG_DONE &&
-		   box != NULL &&
+	} അല്ലെങ്കിൽ എങ്കിൽ (nsoption_bool(incremental_reflow) &&
+		   event->type == CONTENT_സന്ദേശം_DONE &&
+		   box != ശൂന്യ &&
 		   !(box->flags & REPLACE_DIM) &&
 		   (c->base.status == CONTENT_STATUS_READY ||
 		    c->base.status == CONTENT_STATUS_DONE)) {
@@ -496,7 +496,7 @@ html_object_callback(hlcache_handle *object,
 		 */
 		uint64_t ms_now;
 		nsu_getmonotonic_ms(&ms_now);
-		if (ms_now > c->base.reformat_time) {
+		എങ്കിൽ (ms_now > c->base.reformat_time) {
 			/* The time since the previous reformat is
 			 *  more than the configured minimum time
 			 *  between reformats so reformat the page to
@@ -509,7 +509,7 @@ html_object_callback(hlcache_handle *object,
 		}
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -520,188 +520,188 @@ html_object_callback(hlcache_handle *object,
  * \param  url             URL of object to fetch (copied)
  * \return  true on success, false on memory exhaustion
  */
-static bool html_replace_object(struct content_html_object *object, nsurl *url)
+സ്ഥിതം bool html_replace_object(ഘടന content_html_object *object, nsurl *url)
 {
 	html_content *c;
 	hlcache_child_context child;
 	html_content *page;
 	nserror error;
 
-	assert(object != NULL);
-	assert(object->box != NULL);
+	പ്രതിജ്ഞാ(object != ശൂന്യ);
+	പ്രതിജ്ഞാ(object->box != ശൂന്യ);
 
 	c = (html_content *) object->parent;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	if (object->content != NULL) {
+	എങ്കിൽ (object->content != ശൂന്യ) {
 		/* remove existing object */
-		if (content_get_status(object->content) != CONTENT_STATUS_DONE) {
+		എങ്കിൽ (content_get_status(object->content) != CONTENT_STATUS_DONE) {
 			c->base.active--;
 			NSLOG(netsurf, INFO, "%d fetches active",
 			      c->base.active);
 		}
 
 		hlcache_handle_release(object->content);
-		object->content = NULL;
+		object->content = ശൂന്യ;
 
-		object->box->object = NULL;
+		object->box->object = ശൂന്യ;
 	}
 
 	/* initialise fetch */
 	error = hlcache_handle_retrieve(url, HLCACHE_RETRIEVE_SNIFF_TYPE,
-			content_get_url(&c->base), NULL,
+			content_get_url(&c->base), ശൂന്യ,
 			html_object_callback, object, &child,
 			object->permitted_types,
 			&object->content);
 
-	if (error != NSERROR_OK)
-		return false;
+	എങ്കിൽ (error != NSERROR_OK)
+		തിരികെ false;
 
-	for (page = c; page != NULL; page = page->page) {
+	വേണ്ടി (page = c; page != ശൂന്യ; page = page->page) {
 		page->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		page->base.status = CONTENT_STATUS_READY;
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 /**
  * schedule callback for object refresh
  */
-static void html_object_refresh(void *p)
+സ്ഥിതം ശൂന്യം html_object_refresh(ശൂന്യം *p)
 {
-	struct content_html_object *object = p;
+	ഘടന content_html_object *object = p;
 	nsurl *refresh_url;
 
-	assert(content_get_type(object->content) == CONTENT_HTML);
+	പ്രതിജ്ഞാ(content_get_type(object->content) == CONTENT_HTML);
 
 	refresh_url = content_get_refresh_url(object->content);
 
 	/* Ignore if refresh URL has gone
 	 * (may happen if fetch errored) */
-	if (refresh_url == NULL)
-		return;
+	എങ്കിൽ (refresh_url == ശൂന്യ)
+		തിരികെ;
 
 	content_invalidate_reuse_data(object->content);
 
-	if (!html_replace_object(object, refresh_url)) {
+	എങ്കിൽ (!html_replace_object(object, refresh_url)) {
 		/** \todo handle memory exhaustion */
 	}
 }
 
 
 /* exported interface documented in html/object.h */
-nserror html_object_open_objects(html_content *html, struct browser_window *bw)
+nserror html_object_open_objects(html_content *html, ഘടന browser_window *bw)
 {
-	struct content_html_object *object, *next;
+	ഘടന content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	വേണ്ടി (object = html->object_list; object != ശൂന്യ; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
-			continue;
+		എങ്കിൽ (object->content == ശൂന്യ || object->box == ശൂന്യ)
+			തുടരുക;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
-			continue;
+		എങ്കിൽ (content_get_type(object->content) == CONTENT_NONE)
+			തുടരുക;
 
 		content_open(object->content,
 			     bw,
 			     &html->base,
 			     object->box->object_params);
 	}
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_abort_objects(html_content *htmlc)
 {
-	struct content_html_object *object;
+	ഘടന content_html_object *object;
 
-	for (object = htmlc->object_list;
-	     object != NULL;
+	വേണ്ടി (object = htmlc->object_list;
+	     object != ശൂന്യ;
 	     object = object->next) {
-		if (object->content == NULL)
-			continue;
+		എങ്കിൽ (object->content == ശൂന്യ)
+			തുടരുക;
 
-		switch (content_get_status(object->content)) {
-		case CONTENT_STATUS_DONE:
+		തിരഞ്ഞെടുപ്പ് (content_get_status(object->content)) {
+		അവസ്ഥ CONTENT_STATUS_DONE:
 			/* already loaded: do nothing */
-			break;
+			നിർത്തുക;
 
-		case CONTENT_STATUS_READY:
+		അവസ്ഥ CONTENT_STATUS_READY:
 			hlcache_handle_abort(object->content);
 			/* Active count will be updated when
 			 * html_object_callback receives
 			 * CONTENT_MSG_DONE from this object
 			 */
-			break;
+			നിർത്തുക;
 
-		default:
+		സ്ഥിരസ്ഥിതി:
 			hlcache_handle_abort(object->content);
 			hlcache_handle_release(object->content);
-			object->content = NULL;
-			if (object->box != NULL) {
+			object->content = ശൂന്യ;
+			എങ്കിൽ (object->box != ശൂന്യ) {
 				htmlc->base.active--;
 				NSLOG(netsurf, INFO, "%d fetches active",
 				      htmlc->base.active);
 			}
-			break;
+			നിർത്തുക;
 
 		}
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_close_objects(html_content *html)
 {
-	struct content_html_object *object, *next;
+	ഘടന content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	വേണ്ടി (object = html->object_list; object != ശൂന്യ; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
-			continue;
+		എങ്കിൽ (object->content == ശൂന്യ || object->box == ശൂന്യ)
+			തുടരുക;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
-			continue;
+		എങ്കിൽ (content_get_type(object->content) == CONTENT_NONE)
+			തുടരുക;
 
-		if (content_get_type(object->content) == CONTENT_HTML) {
+		എങ്കിൽ (content_get_type(object->content) == CONTENT_HTML) {
 			guit->misc->schedule(-1, html_object_refresh, object);
 		}
 
 		content_close(object->content);
 	}
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_free_objects(html_content *html)
 {
-	while (html->object_list != NULL) {
-		struct content_html_object *victim = html->object_list;
+	ആകുമ്പോൾ (html->object_list != ശൂന്യ) {
+		ഘടന content_html_object *victim = html->object_list;
 
-		if (victim->content != NULL) {
+		എങ്കിൽ (victim->content != ശൂന്യ) {
 			NSLOG(netsurf, INFO, "object %p", victim->content);
 
-			if (content_get_type(victim->content) == CONTENT_HTML) {
+			എങ്കിൽ (content_get_type(victim->content) == CONTENT_HTML) {
 				guit->misc->schedule(-1, html_object_refresh, victim);
 			}
 			hlcache_handle_release(victim->content);
 		}
 
 		html->object_list = victim->next;
-		free(victim);
+		സ്വതന്ത്രം(victim);
 	}
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -709,36 +709,36 @@ nserror html_object_free_objects(html_content *html)
 bool
 html_fetch_object(html_content *c,
 		  nsurl *url,
-		  struct box *box,
+		  ഘടന box *box,
 		  content_type permitted_types,
 		  bool background)
 {
-	struct content_html_object *object;
+	ഘടന content_html_object *object;
 	hlcache_handle_callback object_callback;
 	hlcache_child_context child;
 	nserror error;
 
 	/* If we've already been aborted, don't bother attempting the fetch */
-	if (c->aborted)
-		return true;
+	എങ്കിൽ (c->aborted)
+		തിരികെ true;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	object = calloc(1, sizeof(struct content_html_object));
-	if (object == NULL) {
-		return false;
+	object = calloc(1, വലുപ്പം(ഘടന content_html_object));
+	എങ്കിൽ (object == ശൂന്യ) {
+		തിരികെ false;
 	}
 
-	if (box == NULL) {
+	എങ്കിൽ (box == ശൂന്യ) {
 		object_callback = html_object_nobox_callback;
-	} else {
+	} അല്ലെങ്കിൽ {
 		object_callback = html_object_callback;
 	}
 
-	object->parent = (struct content *) c;
-	object->next = NULL;
-	object->content = NULL;
+	object->parent = (ഘടന content *) c;
+	object->next = ശൂന്യ;
+	object->content = ശൂന്യ;
 	object->box = box;
 	object->permitted_types = permitted_types;
 	object->background = background;
@@ -746,26 +746,26 @@ html_fetch_object(html_content *c,
 	error = hlcache_handle_retrieve(url,
 					HLCACHE_RETRIEVE_SNIFF_TYPE,
 					content_get_url(&c->base),
-					NULL,
+					ശൂന്യ,
 					object_callback,
 					object,
 					&child,
 					object->permitted_types,
 					&object->content);
-	if (error != NSERROR_OK) {
-		free(object);
-		return error != NSERROR_NOMEM;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(object);
+		തിരികെ error != NSERROR_NOMEM;
 	}
 
 	/* add to content object list */
 	object->next = c->object_list;
 	c->object_list = object;
 
-	c->num_objects++;
-	if (box != NULL) {
+	c->അക്കം_objects++;
+	എങ്കിൽ (box != ശൂന്യ) {
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 	}
 
-	return true;
+	തിരികെ true;
 }

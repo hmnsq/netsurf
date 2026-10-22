@@ -22,55 +22,55 @@
  * Implementation of HTML content handling.
  */
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
-#include <nsutils/time.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <strings.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <nsutils/time.h>
 
-#include "utils/utils.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/http.h"
-#include "utils/libdom.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/talloc.h"
-#include "utils/utf8.h"
-#include "utils/nsoption.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/utf8.h"
-#include "netsurf/keypress.h"
-#include "netsurf/layout.h"
-#include "netsurf/misc.h"
-#include "content/hlcache.h"
-#include "content/content_factory.h"
-#include "content/textsearch.h"
-#include "desktop/selection.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
-#include "netsurf/bitmap.h"
-#include "javascript/js.h"
-#include "desktop/gui_internal.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/config.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "utils/http.h"
+#അന്തര്ഭാവ "utils/libdom.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/messages.h"
+#അന്തര്ഭാവ "utils/talloc.h"
+#അന്തര്ഭാവ "utils/utf8.h"
+#അന്തര്ഭാവ "utils/nsoption.h"
+#അന്തര്ഭാവ "utils/string.h"
+#അന്തര്ഭാവ "utils/ascii.h"
+#അന്തര്ഭാവ "netsurf/content.h"
+#അന്തര്ഭാവ "netsurf/browser_window.h"
+#അന്തര്ഭാവ "netsurf/utf8.h"
+#അന്തര്ഭാവ "netsurf/keypress.h"
+#അന്തര്ഭാവ "netsurf/layout.h"
+#അന്തര്ഭാവ "netsurf/misc.h"
+#അന്തര്ഭാവ "content/hlcache.h"
+#അന്തര്ഭാവ "content/content_factory.h"
+#അന്തര്ഭാവ "content/textsearch.h"
+#അന്തര്ഭാവ "desktop/selection.h"
+#അന്തര്ഭാവ "desktop/scrollbar.h"
+#അന്തര്ഭാവ "desktop/textarea.h"
+#അന്തര്ഭാവ "netsurf/bitmap.h"
+#അന്തര്ഭാവ "javascript/js.h"
+#അന്തര്ഭാവ "desktop/gui_internal.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/dom_event.h"
-#include "html/css.h"
-#include "html/object.h"
-#include "html/html_save.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/box_inspect.h"
-#include "html/form_internal.h"
-#include "html/imagemap.h"
-#include "html/layout.h"
-#include "html/textselection.h"
+#അന്തര്ഭാവ "html/html.h"
+#അന്തര്ഭാവ "html/private.h"
+#അന്തര്ഭാവ "html/dom_event.h"
+#അന്തര്ഭാവ "html/css.h"
+#അന്തര്ഭാവ "html/object.h"
+#അന്തര്ഭാവ "html/html_save.h"
+#അന്തര്ഭാവ "html/interaction.h"
+#അന്തര്ഭാവ "html/box.h"
+#അന്തര്ഭാവ "html/box_construct.h"
+#അന്തര്ഭാവ "html/box_inspect.h"
+#അന്തര്ഭാവ "html/form_internal.h"
+#അന്തര്ഭാവ "html/imagemap.h"
+#അന്തര്ഭാവ "html/layout.h"
+#അന്തര്ഭാവ "html/textselection.h"
 
 #define CHUNK 4096
 
@@ -80,7 +80,7 @@
 #define ALWAYS_DUMP_FRAMESET 0
 #define ALWAYS_DUMP_BOX 0
 
-static const char *html_types[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *html_types[] = {
 	"application/xhtml+xml",
 	"text/html"
 };
@@ -94,21 +94,21 @@ static const char *html_types[] = {
  * \param[in] target  the event target
  * \return true on success
  */
-static bool fire_dom_event(dom_event *event, dom_node *target)
+സ്ഥിതം bool fire_dom_event(dom_event *event, dom_കണ്ണി *target)
 {
 	dom_exception exc;
 	bool result;
 
 	exc = dom_event_target_dispatch_event(target, event, &result);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ false;
 	}
 
-	return result;
+	തിരികെ result;
 }
 
 /* Exported interface, see html_internal.h */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_കണ്ണി *target,
 		bool bubbles, bool cancelable)
 {
 	dom_exception exc;
@@ -116,95 +116,95 @@ bool fire_generic_dom_event(dom_string *type, dom_node *target,
 	bool result;
 
 	exc = dom_event_create(&evt);
-	if (exc != DOM_NO_ERR) return false;
+	എങ്കിൽ (exc != DOM_NO_ERR) തിരികെ false;
 	exc = dom_event_init(evt, type, bubbles, cancelable);
-	if (exc != DOM_NO_ERR) {
+	എങ്കിൽ (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return false;
+		തിരികെ false;
 	}
 	NSLOG(netsurf, INFO, "Dispatching '%*s' against %p",
-	      (int)dom_string_length(type), dom_string_data(type), target);
+	      (പൂർണ്ണസംഖ്യ)dom_string_length(type), dom_string_data(type), target);
 	result = fire_dom_event(evt, target);
 	dom_event_unref(evt);
-	return result;
+	തിരികെ result;
 }
 
 /* Exported interface, see html_internal.h */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key)
+bool fire_dom_keyboard_event(dom_string *type, dom_കണ്ണി *target,
+		bool bubbles, bool cancelable, uint32_t താക്കോൽ)
 {
-	bool is_special = key <= 0x001F || (0x007F <= key && key <= 0x009F);
-	dom_string *dom_key = NULL;
+	bool is_special = താക്കോൽ <= 0x001F || (0x007F <= താക്കോൽ && താക്കോൽ <= 0x009F);
+	dom_string *dom_താക്കോൽ = ശൂന്യ;
 	dom_keyboard_event *evt;
 	dom_exception exc;
 	bool result;
 
-	if (is_special) {
-		switch (key) {
-		case NS_KEY_ESCAPE:
-			dom_key = dom_string_ref(corestring_dom_Escape);
-			break;
-		case NS_KEY_LEFT:
-			dom_key = dom_string_ref(corestring_dom_ArrowLeft);
-			break;
-		case NS_KEY_RIGHT:
-			dom_key = dom_string_ref(corestring_dom_ArrowRight);
-			break;
-		case NS_KEY_UP:
-			dom_key = dom_string_ref(corestring_dom_ArrowUp);
-			break;
-		case NS_KEY_DOWN:
-			dom_key = dom_string_ref(corestring_dom_ArrowDown);
-			break;
-		case NS_KEY_PAGE_UP:
-			dom_key = dom_string_ref(corestring_dom_PageUp);
-			break;
-		case NS_KEY_PAGE_DOWN:
-			dom_key = dom_string_ref(corestring_dom_PageDown);
-			break;
-		case NS_KEY_TEXT_START:
-			dom_key = dom_string_ref(corestring_dom_Home);
-			break;
-		case NS_KEY_TEXT_END:
-			dom_key = dom_string_ref(corestring_dom_End);
-			break;
-		default:
-			dom_key = NULL;
-			break;
+	എങ്കിൽ (is_special) {
+		തിരഞ്ഞെടുപ്പ് (താക്കോൽ) {
+		അവസ്ഥ NS_താക്കോൽ_ESCAPE:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_Escape);
+			നിർത്തുക;
+		അവസ്ഥ NS_താക്കോൽ_ഇടത്:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_Arrow_ഇടത്);
+			നിർത്തുക;
+		അവസ്ഥ NS_താക്കോൽ_വലത്:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_Arrow_വലത്);
+			നിർത്തുക;
+		അവസ്ഥ NS_താക്കോൽ_UP:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_ArrowUp);
+			നിർത്തുക;
+		അവസ്ഥ NS_താക്കോൽ_DOWN:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_ArrowDown);
+			നിർത്തുക;
+		അവസ്ഥ NS_താക്കോൽ_PAGE_UP:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_PageUp);
+			നിർത്തുക;
+		അവസ്ഥ NS_താക്കോൽ_PAGE_DOWN:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_PageDown);
+			നിർത്തുക;
+		അവസ്ഥ NS_താക്കോൽ_TEXT_START:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_Home);
+			നിർത്തുക;
+		അവസ്ഥ NS_താക്കോൽ_TEXT_END:
+			dom_താക്കോൽ = dom_string_ref(corestring_dom_End);
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
+			dom_താക്കോൽ = ശൂന്യ;
+			നിർത്തുക;
 		}
-	} else {
-		char utf8[6];
-		size_t length = utf8_from_ucs4(key, utf8);
+	} അല്ലെങ്കിൽ {
+		അക്ഷരം utf8[6];
+		size_t length = utf8_from_ucs4(താക്കോൽ, utf8);
 		utf8[length] = '\0';
 
-		exc = dom_string_create((const uint8_t *)utf8, strlen(utf8),
-				&dom_key);
-		if (exc != DOM_NO_ERR) {
-			return exc;
+		exc = dom_string_create((സ്ഥിരം uint8_t *)utf8, strlen(utf8),
+				&dom_താക്കോൽ);
+		എങ്കിൽ (exc != DOM_NO_ERR) {
+			തിരികെ exc;
 		}
 	}
 
 	exc = dom_keyboard_event_create(&evt);
-	if (exc != DOM_NO_ERR) {
-		dom_string_unref(dom_key);
-		return false;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		dom_string_unref(dom_താക്കോൽ);
+		തിരികെ false;
 	}
 
-	exc = dom_keyboard_event_init(evt, type, bubbles, cancelable, NULL,
-			dom_key, NULL, DOM_KEY_LOCATION_STANDARD, false,
+	exc = dom_keyboard_event_init(evt, type, bubbles, cancelable, ശൂന്യ,
+			dom_താക്കോൽ, ശൂന്യ, DOM_താക്കോൽ_LOCATION_STANDARD, false,
 			false, false, false, false, false);
-	dom_string_unref(dom_key);
-	if (exc != DOM_NO_ERR) {
+	dom_string_unref(dom_താക്കോൽ);
+	എങ്കിൽ (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return false;
+		തിരികെ false;
 	}
 
 	NSLOG(netsurf, INFO, "Dispatching '%*s' against %p",
-			(int)dom_string_length(type), dom_string_data(type), target);
+			(പൂർണ്ണസംഖ്യ)dom_string_length(type), dom_string_data(type), target);
 
 	result = fire_dom_event((dom_event *) evt, target);
 	dom_event_unref(evt);
-	return result;
+	തിരികെ result;
 }
 
 /**
@@ -213,111 +213,111 @@ bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
  * \param c        HTML content to complete conversion of
  * \param success  Whether box tree construction was successful
  */
-static void html_box_convert_done(html_content *c, bool success)
+സ്ഥിതം ശൂന്യം html_box_convert_done(html_content *c, bool success)
 {
 	nserror err;
 	dom_exception exc; /* returned by libdom functions */
-	dom_node *html;
+	dom_കണ്ണി *html;
 
 	NSLOG(netsurf, INFO, "DOM to box conversion complete (content %p)", c);
 
-	c->box_conversion_context = NULL;
+	c->box_conversion_context = ശൂന്യ;
 
 	/* Clean up and report error if unsuccessful or aborted */
-	if ((success == false) || (c->aborted)) {
+	എങ്കിൽ ((success == false) || (c->aborted)) {
 		html_object_free_objects(c);
 
-		if (success == false) {
-			content_broadcast_error(&c->base, NSERROR_BOX_CONVERT, NULL);
-		} else {
-			content_broadcast_error(&c->base, NSERROR_STOPPED, NULL);
+		എങ്കിൽ (success == false) {
+			content_broadcast_error(&c->base, NSERROR_BOX_CONVERT, ശൂന്യ);
+		} അല്ലെങ്കിൽ {
+			content_broadcast_error(&c->base, NSERROR_STOPPED, ശൂന്യ);
 		}
 
 		content_set_error(&c->base);
-		return;
+		തിരികെ;
 	}
 
 
-#if ALWAYS_DUMP_BOX
+#എങ്കിൽ ALWAYS_DUMP_BOX
 	box_dump(stderr, c->layout->children, 0, true);
 #endif
-#if ALWAYS_DUMP_FRAMESET
-	if (c->frameset)
+#എങ്കിൽ ALWAYS_DUMP_FRAMESET
+	എങ്കിൽ (c->frameset)
 		html_dump_frameset(c->frameset, 0);
 #endif
 
-	exc = dom_document_get_document_element(c->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(c->document, (ശൂന്യം *) &html);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (html == ശൂന്യ)) {
 		/** @todo should this call html_object_free_objects(c);
 		 * like the other error paths
 		 */
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&c->base, NSERROR_DOM, NULL);
+		content_broadcast_error(&c->base, NSERROR_DOM, ശൂന്യ);
 		content_set_error(&c->base);
-		return;
+		തിരികെ;
 	}
 
 	/* extract image maps - can't do this sensibly in dom_to_box */
 	err = imagemap_extract(c);
-	if (err != NSERROR_OK) {
+	എങ്കിൽ (err != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "imagemap extraction failed");
 		html_object_free_objects(c);
-		content_broadcast_error(&c->base, err, NULL);
+		content_broadcast_error(&c->base, err, ശൂന്യ);
 		content_set_error(&c->base);
-		dom_node_unref(html);
-		return;
+		dom_കണ്ണി_unref(html);
+		തിരികെ;
 	}
 	/*imagemap_dump(c);*/
 
 	/* Destroy the parser binding */
 	dom_hubbub_parser_destroy(c->parser);
-	c->parser = NULL;
+	c->parser = ശൂന്യ;
 
 	content_set_ready(&c->base);
 
 	html_proceed_to_done(c);
 
-	dom_node_unref(html);
+	dom_കണ്ണി_unref(html);
 }
 
 /* Documented in html_internal.h */
 nserror
 html_proceed_to_done(html_content *html)
 {
-	switch (content__get_status(&html->base)) {
-	case CONTENT_STATUS_READY:
-		if (html->base.active == 0) {
+	തിരഞ്ഞെടുപ്പ് (content__get_status(&html->base)) {
+	അവസ്ഥ CONTENT_STATUS_READY:
+		എങ്കിൽ (html->base.active == 0) {
 			content_set_done(&html->base);
-			return NSERROR_OK;
+			തിരികെ NSERROR_OK;
 		}
-		break;
-	case CONTENT_STATUS_DONE:
+		നിർത്തുക;
+	അവസ്ഥ CONTENT_STATUS_DONE:
 		/* fallthrough */
-	case CONTENT_STATUS_LOADING:
-		return NSERROR_OK;
-	default:
+	അവസ്ഥ CONTENT_STATUS_LOADING:
+		തിരികെ NSERROR_OK;
+	സ്ഥിരസ്ഥിതി:
 		NSLOG(netsurf, ERROR, "Content status unexpectedly not LOADING/READY/DONE");
-		break;
+		നിർത്തുക;
 	}
-	return NSERROR_UNKNOWN;
+	തിരികെ NSERROR_UNKNOWN;
 }
 
 
-static void html_get_dimensions(html_content *htmlc)
+സ്ഥിതം ശൂന്യം html_get_dimensions(html_content *htmlc)
 {
 	css_fixed device_dpi = nscss_screen_dpi;
 	unsigned f_size;
 	unsigned f_min;
 	unsigned w;
 	unsigned h;
-	union content_msg_data msg_data = {
+	സംഘം content_സന്ദേശം_data സന്ദേശം_data = {
 		.getdims = {
 			.viewport_width = &w,
 			.viewport_height = &h,
 		},
 	};
 
-	content_broadcast(&htmlc->base, CONTENT_MSG_GETDIMS, &msg_data);
+	content_broadcast(&htmlc->base, CONTENT_സന്ദേശം_GETDIMS, &സന്ദേശം_data);
 
 
 	w = css_unit_device2css_px(INTTOFIX(w), device_dpi);
@@ -338,18 +338,18 @@ static void html_get_dimensions(html_content *htmlc)
 }
 
 /* exported function documented in html/html_internal.h */
-void html_finish_conversion(html_content *htmlc)
+ശൂന്യം html_finish_conversion(html_content *htmlc)
 {
-	union content_msg_data msg_data;
+	സംഘം content_സന്ദേശം_data സന്ദേശം_data;
 	dom_exception exc; /* returned by libdom functions */
-	dom_node *html;
+	dom_കണ്ണി *html;
 	nserror error;
 
 	/* Bail out if we've been aborted */
-	if (htmlc->aborted) {
-		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, NULL);
+	എങ്കിൽ (htmlc->aborted) {
+		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, ശൂന്യ);
 		content_set_error(&htmlc->base);
-		return;
+		തിരികെ;
 	}
 
 	/* If we already have a selection context, then we have already
@@ -362,18 +362,18 @@ void html_finish_conversion(html_content *htmlc)
 	 * NetSurf has no concept of dynamically changing documents, so this
 	 * would break badly.
 	 */
-	if (htmlc->select_ctx != NULL) {
+	എങ്കിൽ (htmlc->select_ctx != ശൂന്യ) {
 		NSLOG(netsurf, INFO,
 				"Ignoring style change: NS layout is static.");
-		return;
+		തിരികെ;
 	}
 
 	/* create new css selection context */
 	error = html_css_new_selection_context(htmlc, &htmlc->select_ctx);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&htmlc->base, error, NULL);
+	എങ്കിൽ (error != NSERROR_OK) {
+		content_broadcast_error(&htmlc->base, error, ശൂന്യ);
 		content_set_error(&htmlc->base);
-		return;
+		തിരികെ;
 	}
 
 
@@ -381,114 +381,114 @@ void html_finish_conversion(html_content *htmlc)
 	 * object, but with its target set to the Document object (and
 	 * the currentTarget set to the Window object)
 	 */
-	if (htmlc->jsthread != NULL) {
-		js_fire_event(htmlc->jsthread, "load", htmlc->document, NULL);
+	എങ്കിൽ (htmlc->jsthread != ശൂന്യ) {
+		js_fire_event(htmlc->jsthread, "load", htmlc->document, ശൂന്യ);
 	}
 
 	/* convert dom tree to box tree */
 	NSLOG(netsurf, INFO, "DOM to box (%p)", htmlc);
 	content_set_status(&htmlc->base, messages_get("Processing"));
-	msg_data.explicit_status_text = NULL;
-	content_broadcast(&htmlc->base, CONTENT_MSG_STATUS, &msg_data);
+	സന്ദേശം_data.explicit_status_text = ശൂന്യ;
+	content_broadcast(&htmlc->base, CONTENT_സന്ദേശം_STATUS, &സന്ദേശം_data);
 
-	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(htmlc->document, (ശൂന്യം *) &html);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (html == ശൂന്യ)) {
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
+		content_broadcast_error(&htmlc->base, NSERROR_DOM, ശൂന്യ);
 		content_set_error(&htmlc->base);
-		return;
+		തിരികെ;
 	}
 
 	html_get_dimensions(htmlc);
 
 	error = dom_to_box(html, htmlc, html_box_convert_done, &htmlc->box_conversion_context);
-	if (error != NSERROR_OK) {
+	എങ്കിൽ (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "box conversion failed");
-		dom_node_unref(html);
+		dom_കണ്ണി_unref(html);
 		html_object_free_objects(htmlc);
-		content_broadcast_error(&htmlc->base, error, NULL);
+		content_broadcast_error(&htmlc->base, error, ശൂന്യ);
 		content_set_error(&htmlc->base);
-		return;
+		തിരികെ;
 	}
 
-	dom_node_unref(html);
+	dom_കണ്ണി_unref(html);
 }
 
 
-static void
-html_document_user_data_handler(dom_node_operation operation,
-				dom_string *key, void *data,
-				struct dom_node *src,
-				struct dom_node *dst)
+സ്ഥിതം ശൂന്യം
+html_document_user_data_handler(dom_കണ്ണി_operation operation,
+				dom_string *താക്കോൽ, ശൂന്യം *data,
+				ഘടന dom_കണ്ണി *src,
+				ഘടന dom_കണ്ണി *dst)
 {
-	if (dom_string_isequal(corestring_dom___ns_key_html_content_data,
-			       key) == false || data == NULL) {
-		return;
+	എങ്കിൽ (dom_string_isequal(corestring_dom_ns_താക്കോൽ_html_content_data,
+			       താക്കോൽ) == false || data == ശൂന്യ) {
+		തിരികെ;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
+	തിരഞ്ഞെടുപ്പ് (operation) {
+	അവസ്ഥ DOM_കണ്ണി_CLONED:
 		NSLOG(netsurf, INFO, "Cloned");
-		break;
-	case DOM_NODE_RENAMED:
+		നിർത്തുക;
+	അവസ്ഥ DOM_കണ്ണി_RENAMED:
 		NSLOG(netsurf, INFO, "Renamed");
-		break;
-	case DOM_NODE_IMPORTED:
+		നിർത്തുക;
+	അവസ്ഥ DOM_കണ്ണി_IMPORTED:
 		NSLOG(netsurf, INFO, "imported");
-		break;
-	case DOM_NODE_ADOPTED:
+		നിർത്തുക;
+	അവസ്ഥ DOM_കണ്ണി_ADOPTED:
 		NSLOG(netsurf, INFO, "Adopted");
-		break;
-	case DOM_NODE_DELETED:
+		നിർത്തുക;
+	അവസ്ഥ DOM_കണ്ണി_DELETED:
 		/* This is the only path I expect */
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		പ്രതിജ്ഞാ(0);
 	}
 }
 
 
-static nserror
-html_create_html_data(html_content *c, const http_parameter *params)
+സ്ഥിതം nserror
+html_create_html_data(html_content *c, സ്ഥിരം http_parameter *params)
 {
 	lwc_string *charset;
 	nserror nerror;
 	dom_hubbub_parser_params parse_params;
 	dom_hubbub_error error;
 	dom_exception err;
-	void *old_node_data;
-	const char *prefer_color_mode = (nsoption_bool(prefer_dark_mode)) ?
+	ശൂന്യം *old_കണ്ണി_data;
+	സ്ഥിരം അക്ഷരം *prefer_color_mode = (nsoption_bool(prefer_dark_mode)) ?
 			"dark" : "light";
 
-	c->parser = NULL;
+	c->parser = ശൂന്യ;
 	c->parse_completed = false;
 	c->conversion_begun = false;
-	c->document = NULL;
+	c->document = ശൂന്യ;
 	c->quirks = DOM_DOCUMENT_QUIRKS_MODE_NONE;
-	c->encoding = NULL;
+	c->encoding = ശൂന്യ;
 	c->base_url = nsurl_ref(content_get_url(&c->base));
-	c->base_target = NULL;
+	c->base_target = ശൂന്യ;
 	c->aborted = false;
 	c->refresh = false;
 	c->reflowing = false;
-	c->title = NULL;
-	c->bctx = NULL;
-	c->layout = NULL;
+	c->title = ശൂന്യ;
+	c->bctx = ശൂന്യ;
+	c->layout = ശൂന്യ;
 	c->background_colour = NS_TRANSPARENT;
-	c->stylesheet_count = 0;
-	c->stylesheets = NULL;
-	c->select_ctx = NULL;
+	c->stylesheet_എണ്ണം = 0;
+	c->stylesheets = ശൂന്യ;
+	c->select_ctx = ശൂന്യ;
 	c->media.type = CSS_MEDIA_SCREEN;
-	c->universal = NULL;
-	c->num_objects = 0;
-	c->object_list = NULL;
-	c->forms = NULL;
-	c->imagemaps = NULL;
-	c->bw = NULL;
-	c->frameset = NULL;
-	c->iframe = NULL;
-	c->page = NULL;
+	c->universal = ശൂന്യ;
+	c->അക്കം_objects = 0;
+	c->object_list = ശൂന്യ;
+	c->forms = ശൂന്യ;
+	c->imagemaps = ശൂന്യ;
+	c->bw = ശൂന്യ;
+	c->frameset = ശൂന്യ;
+	c->iframe = ശൂന്യ;
+	c->page = ശൂന്യ;
 	c->font_func = guit->layout;
 	c->drag_type = HTML_DRAG_NONE;
 	c->drag_owner.no_owner = true;
@@ -496,38 +496,38 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	c->selection_owner.none = true;
 	c->focus_type = HTML_FOCUS_SELF;
 	c->focus_owner.self = true;
-	c->scripts_count = 0;
-	c->scripts = NULL;
-	c->jsthread = NULL;
+	c->scripts_എണ്ണം = 0;
+	c->scripts = ശൂന്യ;
+	c->jsthread = ശൂന്യ;
 
 	c->enable_scripting = nsoption_bool(enable_javascript);
 	c->base.active = 1; /* The html content itself is active */
 
-	if (lwc_intern_string("*", SLEN("*"), &c->universal) != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	എങ്കിൽ (lwc_intern_string("*", SLEN("*"), &c->universal) != lwc_error_ok) {
+		തിരികെ NSERROR_NOMEM;
 	}
 
-	if (lwc_intern_string(prefer_color_mode, strlen(prefer_color_mode),
+	എങ്കിൽ (lwc_intern_string(prefer_color_mode, strlen(prefer_color_mode),
 			&c->media.prefers_color_scheme) != lwc_error_ok) {
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
-		return NSERROR_NOMEM;
+		c->universal = ശൂന്യ;
+		തിരികെ NSERROR_NOMEM;
 	}
 
-	c->sel = selection_create((struct content *)c);
+	c->sel = selection_create((ഘടന content *)c);
 
 	nerror = http_parameter_list_find_item(params, corestring_lwc_charset, &charset);
-	if (nerror == NSERROR_OK) {
+	എങ്കിൽ (nerror == NSERROR_OK) {
 		c->encoding = strdup(lwc_string_data(charset));
 
 		lwc_string_unref(charset);
 
-		if (c->encoding == NULL) {
+		എങ്കിൽ (c->encoding == ശൂന്യ) {
 			lwc_string_unref(c->universal);
-			c->universal = NULL;
+			c->universal = ശൂന്യ;
 			lwc_string_unref(c->media.prefers_color_scheme);
-			c->media.prefers_color_scheme = NULL;
-			return NSERROR_NOMEM;
+			c->media.prefers_color_scheme = ശൂന്യ;
+			തിരികെ NSERROR_NOMEM;
 
 		}
 		c->encoding_source = DOM_HUBBUB_ENCODING_SOURCE_HEADER;
@@ -537,7 +537,7 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	parse_params.enc = c->encoding;
 	parse_params.fix_enc = true;
 	parse_params.enable_script = c->enable_scripting;
-	parse_params.msg = NULL;
+	parse_params.സന്ദേശം = ശൂന്യ;
 	parse_params.script = html_process_script;
 	parse_params.ctx = c;
 	parse_params.daf = html_dom_event_fetcher;
@@ -545,11 +545,11 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	error = dom_hubbub_parser_create(&parse_params,
 					 &c->parser,
 					 &c->document);
-	if ((error != DOM_HUBBUB_OK) && (c->encoding != NULL)) {
+	എങ്കിൽ ((error != DOM_HUBBUB_OK) && (c->encoding != ശൂന്യ)) {
 		/* Ok, we don't support the declared encoding. Bailing out
 		 * isn't exactly user-friendly, so fall back to autodetect */
-		free(c->encoding);
-		c->encoding = NULL;
+		സ്വതന്ത്രം(c->encoding);
+		c->encoding = ശൂന്യ;
 
 		parse_params.enc = c->encoding;
 
@@ -557,40 +557,40 @@ html_create_html_data(html_content *c, const http_parameter *params)
 						 &c->parser,
 						 &c->document);
 	}
-	if (error != DOM_HUBBUB_OK) {
+	എങ്കിൽ (error != DOM_HUBBUB_OK) {
 		nsurl_unref(c->base_url);
-		c->base_url = NULL;
+		c->base_url = ശൂന്യ;
 
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
+		c->universal = ശൂന്യ;
 		lwc_string_unref(c->media.prefers_color_scheme);
-		c->media.prefers_color_scheme = NULL;
+		c->media.prefers_color_scheme = ശൂന്യ;
 
-		return libdom_hubbub_error_to_nserror(error);
+		തിരികെ libdom_hubbub_error_to_nserror(error);
 	}
 
-	err = dom_node_set_user_data(c->document,
-				     corestring_dom___ns_key_html_content_data,
+	err = dom_കണ്ണി_set_user_data(c->document,
+				     corestring_dom_ns_താക്കോൽ_html_content_data,
 				     c, html_document_user_data_handler,
-				     (void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
+				     (ശൂന്യം *) &old_കണ്ണി_data);
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		dom_hubbub_parser_destroy(c->parser);
-		c->parser = NULL;
+		c->parser = ശൂന്യ;
 		nsurl_unref(c->base_url);
-		c->base_url = NULL;
+		c->base_url = ശൂന്യ;
 
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
+		c->universal = ശൂന്യ;
 		lwc_string_unref(c->media.prefers_color_scheme);
-		c->media.prefers_color_scheme = NULL;
+		c->media.prefers_color_scheme = ശൂന്യ;
 
 		NSLOG(netsurf, INFO, "Unable to set user data.");
-		return NSERROR_DOM;
+		തിരികെ NSERROR_DOM;
 	}
 
-	assert(old_node_data == NULL);
+	പ്രതിജ്ഞാ(old_കണ്ണി_data == ശൂന്യ);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 
 }
 
@@ -601,91 +601,91 @@ html_create_html_data(html_content *c, const http_parameter *params)
  * created.
  */
 
-static nserror
-html_create(const content_handler *handler,
+സ്ഥിതം nserror
+html_create(സ്ഥിരം content_handler *handler,
 	    lwc_string *imime_type,
-	    const http_parameter *params,
+	    സ്ഥിരം http_parameter *params,
 	    llcache_handle *llcache,
-	    const char *fallback_charset,
+	    സ്ഥിരം അക്ഷരം *fallback_charset,
 	    bool quirks,
-	    struct content **c)
+	    ഘടന content **c)
 {
 	html_content *html;
 	nserror error;
 
-	html = calloc(1, sizeof(html_content));
-	if (html == NULL)
-		return NSERROR_NOMEM;
+	html = calloc(1, വലുപ്പം(html_content));
+	എങ്കിൽ (html == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__init(&html->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(html);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(html);
+		തിരികെ error;
 	}
 
 	error = html_create_html_data(html, params);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&html->base, error, NULL);
-		free(html);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		content_broadcast_error(&html->base, error, ശൂന്യ);
+		സ്വതന്ത്രം(html);
+		തിരികെ error;
 	}
 
 	error = html_css_new_stylesheets(html);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&html->base, error, NULL);
-		free(html);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		content_broadcast_error(&html->base, error, ശൂന്യ);
+		സ്വതന്ത്രം(html);
+		തിരികെ error;
 	}
 
-	*c = (struct content *) html;
+	*c = (ഘടന content *) html;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 
-static nserror
-html_process_encoding_change(struct content *c,
-			     const char *data,
-			     unsigned int size)
+സ്ഥിതം nserror
+html_process_encoding_change(ഘടന content *c,
+			     സ്ഥിരം അക്ഷരം *data,
+			     unsigned പൂർണ്ണസംഖ്യ size)
 {
 	html_content *html = (html_content *) c;
 	dom_hubbub_parser_params parse_params;
 	dom_hubbub_error error;
-	const char *encoding;
-	const uint8_t *source_data;
+	സ്ഥിരം അക്ഷരം *encoding;
+	സ്ഥിരം uint8_t *source_data;
 	size_t source_size;
 
 	/* Retrieve new encoding */
 	encoding = dom_hubbub_parser_get_encoding(html->parser,
 						  &html->encoding_source);
-	if (encoding == NULL) {
-		return NSERROR_NOMEM;
+	എങ്കിൽ (encoding == ശൂന്യ) {
+		തിരികെ NSERROR_NOMEM;
 	}
 
-	if (html->encoding != NULL) {
-		free(html->encoding);
-		html->encoding = NULL;
+	എങ്കിൽ (html->encoding != ശൂന്യ) {
+		സ്വതന്ത്രം(html->encoding);
+		html->encoding = ശൂന്യ;
 	}
 
 	html->encoding = strdup(encoding);
-	if (html->encoding == NULL) {
-		return NSERROR_NOMEM;
+	എങ്കിൽ (html->encoding == ശൂന്യ) {
+		തിരികെ NSERROR_NOMEM;
 	}
 
 	/* Destroy binding */
 	dom_hubbub_parser_destroy(html->parser);
-	html->parser = NULL;
+	html->parser = ശൂന്യ;
 
-	if (html->document != NULL) {
-		dom_node_unref(html->document);
+	എങ്കിൽ (html->document != ശൂന്യ) {
+		dom_കണ്ണി_unref(html->document);
 	}
 
 	parse_params.enc = html->encoding;
 	parse_params.fix_enc = true;
 	parse_params.enable_script = html->enable_scripting;
-	parse_params.msg = NULL;
+	parse_params.സന്ദേശം = ശൂന്യ;
 	parse_params.script = html_process_script;
 	parse_params.ctx = html;
 	parse_params.daf = html_dom_event_fetcher;
@@ -694,13 +694,13 @@ html_process_encoding_change(struct content *c,
 	error = dom_hubbub_parser_create(&parse_params,
 					 &html->parser,
 					 &html->document);
-	if (error != DOM_HUBBUB_OK) {
+	എങ്കിൽ (error != DOM_HUBBUB_OK) {
 		/* Ok, we don't support the declared encoding. Bailing out
 		 * isn't exactly user-friendly, so fall back to Windows-1252 */
-		free(html->encoding);
+		സ്വതന്ത്രം(html->encoding);
 		html->encoding = strdup("Windows-1252");
-		if (html->encoding == NULL) {
-			return NSERROR_NOMEM;
+		എങ്കിൽ (html->encoding == ശൂന്യ) {
+			തിരികെ NSERROR_NOMEM;
 		}
 		parse_params.enc = html->encoding;
 
@@ -708,8 +708,8 @@ html_process_encoding_change(struct content *c,
 						 &html->parser,
 						 &html->document);
 
-		if (error != DOM_HUBBUB_OK) {
-			return libdom_hubbub_error_to_nserror(error);
+		എങ്കിൽ (error != DOM_HUBBUB_OK) {
+			തിരികെ libdom_hubbub_error_to_nserror(error);
 		}
 
 	}
@@ -724,7 +724,7 @@ html_process_encoding_change(struct content *c,
 					      source_data,
 					      source_size);
 
-	return libdom_hubbub_error_to_nserror(error);
+	തിരികെ libdom_hubbub_error_to_nserror(error);
 }
 
 
@@ -732,31 +732,31 @@ html_process_encoding_change(struct content *c,
  * Process data for CONTENT_HTML.
  */
 
-static bool
-html_process_data(struct content *c, const char *data, unsigned int size)
+സ്ഥിതം bool
+html_process_data(ഘടന content *c, സ്ഥിരം അക്ഷരം *data, unsigned പൂർണ്ണസംഖ്യ size)
 {
 	html_content *html = (html_content *) c;
 	dom_hubbub_error dom_ret;
 	nserror err = NSERROR_OK; /* assume its all going to be ok */
 
 	dom_ret = dom_hubbub_parser_parse_chunk(html->parser,
-					      (const uint8_t *) data,
+					      (സ്ഥിരം uint8_t *) data,
 					      size);
 
 	err = libdom_hubbub_error_to_nserror(dom_ret);
 
 	/* deal with encoding change */
-	if (err == NSERROR_ENCODING_CHANGE) {
+	എങ്കിൽ (err == NSERROR_ENCODING_CHANGE) {
 		 err = html_process_encoding_change(c, data, size);
 	}
 
 	/* broadcast the error if necessary */
-	if (err != NSERROR_OK) {
-		content_broadcast_error(c, err, NULL);
-		return false;
+	എങ്കിൽ (err != NSERROR_OK) {
+		content_broadcast_error(c, err, ശൂന്യ);
+		തിരികെ false;
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -774,7 +774,7 @@ html_process_data(struct content *c, const char *data, unsigned int size)
  * being fetched.
  */
 
-static bool html_convert(struct content *c)
+സ്ഥിതം bool html_convert(ഘടന content *c)
 {
 	html_content *htmlc = (html_content *) c;
 	dom_exception exc; /* returned by libdom functions */
@@ -789,7 +789,7 @@ static bool html_convert(struct content *c)
 	 * render for want of a quirks stylesheet.
 	 */
 	exc = dom_document_get_quirks_mode(htmlc->document, &htmlc->quirks);
-	if (exc == DOM_NO_ERR) {
+	എങ്കിൽ (exc == DOM_NO_ERR) {
 		html_css_quirks_stylesheets(htmlc);
 		NSLOG(netsurf, INFO, "quirks set to %d", htmlc->quirks);
 	}
@@ -804,39 +804,39 @@ static bool html_convert(struct content *c)
 	/* if there are no active fetches in progress no scripts are
 	 * being fetched or they completed already.
 	 */
-	if (html_can_begin_conversion(htmlc)) {
-		return html_begin_conversion(htmlc);
+	എങ്കിൽ (html_can_begin_conversion(htmlc)) {
+		തിരികെ html_begin_conversion(htmlc);
 	}
-	return true;
+	തിരികെ true;
 }
 
 /* Exported interface documented in html_internal.h */
 bool html_can_begin_conversion(html_content *htmlc)
 {
-	unsigned int i;
+	unsigned പൂർണ്ണസംഖ്യ i;
 
 	/* Cannot begin conversion if we're still fetching stuff */
-	if (htmlc->base.active != 0)
-		return false;
+	എങ്കിൽ (htmlc->base.active != 0)
+		തിരികെ false;
 
-	for (i = 0; i != htmlc->stylesheet_count; i++) {
+	വേണ്ടി (i = 0; i != htmlc->stylesheet_എണ്ണം; i++) {
 		/* Cannot begin conversion if the stylesheets are modified */
-		if (htmlc->stylesheets[i].modified)
-			return false;
+		എങ്കിൽ (htmlc->stylesheets[i].modified)
+			തിരികെ false;
 	}
 
 	/* All is good, begin */
-	return true;
+	തിരികെ true;
 }
 
 bool
 html_begin_conversion(html_content *htmlc)
 {
-	dom_node *html;
+	dom_കണ്ണി *html;
 	nserror ns_error;
-	struct form *f;
+	ഘടന form *f;
 	dom_exception exc; /* returned by libdom functions */
-	dom_string *node_name = NULL;
+	dom_string *കണ്ണി_name = ശൂന്യ;
 	dom_hubbub_error error;
 
 	/* The act of completing the parse can result in additional data
@@ -850,42 +850,42 @@ html_begin_conversion(html_content *htmlc)
 	 * multiple times, so store a flag to indicate that parsing is
 	 * complete to avoid repeating the completion pointlessly.
 	 */
-	if (htmlc->parse_completed == false) {
+	എങ്കിൽ (htmlc->parse_completed == false) {
 		NSLOG(netsurf, INFO, "Completing parse (%p)", htmlc);
 		/* complete parsing */
 		error = dom_hubbub_parser_completed(htmlc->parser);
-		if (error == DOM_HUBBUB_HUBBUB_ERR_PAUSED && htmlc->base.active > 0) {
+		എങ്കിൽ (error == DOM_HUBBUB_HUBBUB_ERR_PAUSED && htmlc->base.active > 0) {
 			/* The act of completing the parse failed because we've
 			 * encountered a sync script which needs to run
 			 */
 			NSLOG(netsurf, INFO, "Completing parse brought synchronous JS to light, cannot complete yet");
-			return true;
+			തിരികെ true;
 		}
-		if (error != DOM_HUBBUB_OK) {
+		എങ്കിൽ (error != DOM_HUBBUB_OK) {
 			NSLOG(netsurf, INFO, "Parsing failed");
 
 			content_broadcast_error(&htmlc->base,
 						libdom_hubbub_error_to_nserror(error),
-						NULL);
+						ശൂന്യ);
 
-			return false;
+			തിരികെ false;
 		}
 		htmlc->parse_completed = true;
 	}
 
-	if (html_can_begin_conversion(htmlc) == false) {
+	എങ്കിൽ (html_can_begin_conversion(htmlc) == false) {
 		NSLOG(netsurf, INFO, "Can't begin conversion (%p)", htmlc);
 		/* We can't proceed (see commentary above) */
-		return true;
+		തിരികെ true;
 	}
 
 	/* Give up processing if we've been aborted */
-	if (htmlc->aborted) {
+	എങ്കിൽ (htmlc->aborted) {
 		NSLOG(netsurf, INFO, "Conversion aborted (%p) (active: %u)",
 		      htmlc, htmlc->base.active);
 		content_set_error(&htmlc->base);
-		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, NULL);
-		return false;
+		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, ശൂന്യ);
+		തിരികെ false;
 	}
 
 	/* Conversion begins proper at this point */
@@ -899,105 +899,105 @@ html_begin_conversion(html_content *htmlc)
 	 */
 
 	/* get encoding */
-	if (htmlc->encoding == NULL) {
-		const char *encoding;
+	എങ്കിൽ (htmlc->encoding == ശൂന്യ) {
+		സ്ഥിരം അക്ഷരം *encoding;
 
 		encoding = dom_hubbub_parser_get_encoding(htmlc->parser,
 					&htmlc->encoding_source);
-		if (encoding == NULL) {
+		എങ്കിൽ (encoding == ശൂന്യ) {
 			content_broadcast_error(&htmlc->base,
 						NSERROR_NOMEM,
-						NULL);
-			return false;
+						ശൂന്യ);
+			തിരികെ false;
 		}
 
 		htmlc->encoding = strdup(encoding);
-		if (htmlc->encoding == NULL) {
+		എങ്കിൽ (htmlc->encoding == ശൂന്യ) {
 			content_broadcast_error(&htmlc->base,
 						NSERROR_NOMEM,
-						NULL);
-			return false;
+						ശൂന്യ);
+			തിരികെ false;
 		}
 	}
 
 	/* locate root element and ensure it is html */
-	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(htmlc->document, (ശൂന്യം *) &html);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (html == ശൂന്യ)) {
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		return false;
+		content_broadcast_error(&htmlc->base, NSERROR_DOM, ശൂന്യ);
+		തിരികെ false;
 	}
 
-	exc = dom_node_get_node_name(html, &node_name);
-	if ((exc != DOM_NO_ERR) ||
-	    (node_name == NULL) ||
-	    (!dom_string_caseless_lwc_isequal(node_name,
+	exc = dom_കണ്ണി_get_കണ്ണി_name(html, &കണ്ണി_name);
+	എങ്കിൽ ((exc != DOM_NO_ERR) ||
+	    (കണ്ണി_name == ശൂന്യ) ||
+	    (!dom_string_caseless_lwc_isequal(കണ്ണി_name,
 			corestring_lwc_html))) {
 		NSLOG(netsurf, INFO, "root element not html");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		dom_node_unref(html);
-		return false;
+		content_broadcast_error(&htmlc->base, NSERROR_DOM, ശൂന്യ);
+		dom_കണ്ണി_unref(html);
+		തിരികെ false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(കണ്ണി_name);
 
 	/* Retrieve forms from parser */
 	htmlc->forms = html_forms_get_forms(htmlc->encoding,
 			(dom_html_document *) htmlc->document);
-	for (f = htmlc->forms; f != NULL; f = f->prev) {
+	വേണ്ടി (f = htmlc->forms; f != ശൂന്യ; f = f->prev) {
 		nsurl *action;
 
 		/* Make all actions absolute */
-		if (f->action == NULL || f->action[0] == '\0') {
+		എങ്കിൽ (f->action == ശൂന്യ || f->action[0] == '\0') {
 			/* HTML5 4.10.22.3 step 9 */
 			nsurl *doc_addr = content_get_url(&htmlc->base);
 			ns_error = nsurl_join(htmlc->base_url,
 					      nsurl_access(doc_addr),
 					      &action);
-		} else {
+		} അല്ലെങ്കിൽ {
 			ns_error = nsurl_join(htmlc->base_url,
 					      f->action,
 					      &action);
 		}
 
-		if (ns_error != NSERROR_OK) {
-			content_broadcast_error(&htmlc->base, ns_error, NULL);
+		എങ്കിൽ (ns_error != NSERROR_OK) {
+			content_broadcast_error(&htmlc->base, ns_error, ശൂന്യ);
 
-			dom_node_unref(html);
-			return false;
+			dom_കണ്ണി_unref(html);
+			തിരികെ false;
 		}
 
-		free(f->action);
+		സ്വതന്ത്രം(f->action);
 		f->action = strdup(nsurl_access(action));
 		nsurl_unref(action);
-		if (f->action == NULL) {
+		എങ്കിൽ (f->action == ശൂന്യ) {
 			content_broadcast_error(&htmlc->base,
 						NSERROR_NOMEM,
-						NULL);
+						ശൂന്യ);
 
-			dom_node_unref(html);
-			return false;
+			dom_കണ്ണി_unref(html);
+			തിരികെ false;
 		}
 
 		/* Ensure each form has a document encoding */
-		if (f->document_charset == NULL) {
+		എങ്കിൽ (f->document_charset == ശൂന്യ) {
 			f->document_charset = strdup(htmlc->encoding);
-			if (f->document_charset == NULL) {
+			എങ്കിൽ (f->document_charset == ശൂന്യ) {
 				content_broadcast_error(&htmlc->base,
 							NSERROR_NOMEM,
-							NULL);
-				dom_node_unref(html);
-				return false;
+							ശൂന്യ);
+				dom_കണ്ണി_unref(html);
+				തിരികെ false;
 			}
 		}
 	}
 
-	dom_node_unref(html);
+	dom_കണ്ണി_unref(html);
 
-	if (htmlc->base.active == 0) {
+	എങ്കിൽ (htmlc->base.active == 0) {
 		html_finish_conversion(htmlc);
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -1008,40 +1008,40 @@ html_begin_conversion(html_content *htmlc)
  * created during the fetch.
  */
 
-static void html_stop(struct content *c)
+സ്ഥിതം ശൂന്യം html_stop(ഘടന content *c)
 {
 	html_content *htmlc = (html_content *) c;
 
-	switch (c->status) {
-	case CONTENT_STATUS_LOADING:
+	തിരഞ്ഞെടുപ്പ് (c->status) {
+	അവസ്ഥ CONTENT_STATUS_LOADING:
 		/* Still loading; simply flag that we've been aborted
 		 * html_convert/html_finish_conversion will do the rest */
 		htmlc->aborted = true;
-		if (htmlc->jsthread != NULL) {
+		എങ്കിൽ (htmlc->jsthread != ശൂന്യ) {
 			/* Close the JS thread to cancel out any callbacks */
 			js_closethread(htmlc->jsthread);
 		}
-		break;
+		നിർത്തുക;
 
-	case CONTENT_STATUS_READY:
+	അവസ്ഥ CONTENT_STATUS_READY:
 		html_object_abort_objects(htmlc);
 
 		/* If there are no further active fetches and we're still
 		 * in the READY state, transition to the DONE state. */
-		if (c->status == CONTENT_STATUS_READY && c->active == 0) {
+		എങ്കിൽ (c->status == CONTENT_STATUS_READY && c->active == 0) {
 			content_set_done(c);
 		}
 
-		break;
+		നിർത്തുക;
 
-	case CONTENT_STATUS_DONE:
+	അവസ്ഥ CONTENT_STATUS_DONE:
 		/* Nothing to do */
-		break;
+		നിർത്തുക;
 
-	default:
+	സ്ഥിരസ്ഥിതി:
 		NSLOG(netsurf, INFO, "Unexpected status %d (%p)", c->status,
 		      c);
-		assert(0);
+		പ്രതിജ്ഞാ(0);
 	}
 }
 
@@ -1050,10 +1050,10 @@ static void html_stop(struct content *c)
  * Reformat a CONTENT_HTML to a new width.
  */
 
-static void html_reformat(struct content *c, int width, int height)
+സ്ഥിതം ശൂന്യം html_reformat(ഘടന content *c, പൂർണ്ണസംഖ്യ width, പൂർണ്ണസംഖ്യ height)
 {
 	html_content *htmlc = (html_content *) c;
-	struct box *layout;
+	ഘടന box *layout;
 	uint64_t ms_before;
 	uint64_t ms_after;
 	uint64_t ms_interval;
@@ -1066,23 +1066,23 @@ static void html_reformat(struct content *c, int width, int height)
 			INTTOFIX(width), htmlc->unit_len_ctx.device_dpi);
 	htmlc->unit_len_ctx.viewport_height = css_unit_device2css_px(
 			INTTOFIX(height), htmlc->unit_len_ctx.device_dpi);
-	htmlc->unit_len_ctx.root_style = htmlc->layout->style;
+	htmlc->unit_len_ctx.വേര്_style = htmlc->layout->style;
 
 	layout_document(htmlc, width, height);
 	layout = htmlc->layout;
 
 	/* width and height are at least margin box of document */
-	c->width = layout->x + layout->padding[LEFT] + layout->width +
-		layout->padding[RIGHT] + layout->border[RIGHT].width +
-		layout->margin[RIGHT];
-	c->height = layout->y + layout->padding[TOP] + layout->height +
+	c->width = layout->x + layout->padding[ഇടത്_2] + layout->width +
+		layout->padding[വലത്_2] + layout->border[വലത്_2].width +
+		layout->margin[വലത്_2];
+	c->height = layout->y + layout->padding[മുകൾ_2] + layout->height +
 		layout->padding[BOTTOM] + layout->border[BOTTOM].width +
 		layout->margin[BOTTOM];
 
 	/* if boxes overflow right or bottom edge, expand to contain it */
-	if (c->width < layout->x + layout->descendant_x1)
+	എങ്കിൽ (c->width < layout->x + layout->descendant_x1)
 		c->width = layout->x + layout->descendant_x1;
-	if (c->height < layout->y + layout->descendant_y1)
+	എങ്കിൽ (c->height < layout->y + layout->descendant_y1)
 		c->height = layout->y + layout->descendant_y1;
 
 	selection_reinit(htmlc->sel);
@@ -1094,7 +1094,7 @@ static void html_reformat(struct content *c, int width, int height)
 	nsu_getmonotonic_ms(&ms_after);
 
 	ms_interval = (ms_after - ms_before) * 3;
-	if (ms_interval < (nsoption_uint(min_reflow_period) * 10)) {
+	എങ്കിൽ (ms_interval < (nsoption_uint(min_reflow_period) * 10)) {
 		ms_interval = nsoption_uint(min_reflow_period) * 10;
 	}
 	c->reformat_time = ms_after + ms_interval;
@@ -1108,15 +1108,15 @@ static void html_reformat(struct content *c, int width, int height)
  * \param  box  box to redraw
  */
 
-void html_redraw_a_box(hlcache_handle *h, struct box *box)
+ശൂന്യം html_redraw_a_box(hlcache_handle *h, ഘടന box *box)
 {
-	int x, y;
+	പൂർണ്ണസംഖ്യ x, y;
 
 	box_coords(box, &x, &y);
 
 	content_request_redraw(h, x, y,
-			box->padding[LEFT] + box->width + box->padding[RIGHT],
-			box->padding[TOP] + box->height + box->padding[BOTTOM]);
+			box->padding[ഇടത്_2] + box->width + box->padding[വലത്_2],
+			box->padding[മുകൾ_2] + box->height + box->padding[BOTTOM]);
 }
 
 
@@ -1127,67 +1127,67 @@ void html_redraw_a_box(hlcache_handle *h, struct box *box)
  * \param box  box to redraw.
  */
 
-void html__redraw_a_box(struct html_content *html, struct box *box)
+ശൂന്യം html__redraw_a_box(ഘടന html_content *html, ഘടന box *box)
 {
-	int x, y;
+	പൂർണ്ണസംഖ്യ x, y;
 
 	box_coords(box, &x, &y);
 
-	content__request_redraw((struct content *)html, x, y,
-			box->padding[LEFT] + box->width + box->padding[RIGHT],
-			box->padding[TOP] + box->height + box->padding[BOTTOM]);
+	content__request_redraw((ഘടന content *)html, x, y,
+			box->padding[ഇടത്_2] + box->width + box->padding[വലത്_2],
+			box->padding[മുകൾ_2] + box->height + box->padding[BOTTOM]);
 }
 
-static void html_destroy_frameset(struct content_html_frames *frameset)
+സ്ഥിതം ശൂന്യം html_destroy_frameset(ഘടന content_html_frames *frameset)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	if (frameset->name) {
+	എങ്കിൽ (frameset->name) {
 		talloc_free(frameset->name);
-		frameset->name = NULL;
+		frameset->name = ശൂന്യ;
 	}
-	if (frameset->url) {
+	എങ്കിൽ (frameset->url) {
 		talloc_free(frameset->url);
-		frameset->url = NULL;
+		frameset->url = ശൂന്യ;
 	}
-	if (frameset->children) {
-		for (i = 0; i < (frameset->rows * frameset->cols); i++) {
-			if (frameset->children[i].name) {
+	എങ്കിൽ (frameset->children) {
+		വേണ്ടി (i = 0; i < (frameset->rows * frameset->cols); i++) {
+			എങ്കിൽ (frameset->children[i].name) {
 				talloc_free(frameset->children[i].name);
-				frameset->children[i].name = NULL;
+				frameset->children[i].name = ശൂന്യ;
 			}
-			if (frameset->children[i].url) {
+			എങ്കിൽ (frameset->children[i].url) {
 				nsurl_unref(frameset->children[i].url);
-				frameset->children[i].url = NULL;
+				frameset->children[i].url = ശൂന്യ;
 			}
-			if (frameset->children[i].children)
+			എങ്കിൽ (frameset->children[i].children)
 				html_destroy_frameset(&frameset->children[i]);
 		}
 		talloc_free(frameset->children);
-		frameset->children = NULL;
+		frameset->children = ശൂന്യ;
 	}
 }
 
-static void html_destroy_iframe(struct content_html_iframe *iframe)
+സ്ഥിതം ശൂന്യം html_destroy_iframe(ഘടന content_html_iframe *iframe)
 {
-	struct content_html_iframe *next;
+	ഘടന content_html_iframe *next;
 	next = iframe;
-	while ((iframe = next) != NULL) {
+	ആകുമ്പോൾ ((iframe = next) != ശൂന്യ) {
 		next = iframe->next;
-		if (iframe->name)
+		എങ്കിൽ (iframe->name)
 			talloc_free(iframe->name);
-		if (iframe->url) {
+		എങ്കിൽ (iframe->url) {
 			nsurl_unref(iframe->url);
-			iframe->url = NULL;
+			iframe->url = ശൂന്യ;
 		}
 		talloc_free(iframe);
 	}
 }
 
 
-static void html_free_layout(html_content *htmlc)
+സ്ഥിതം ശൂന്യം html_free_layout(html_content *htmlc)
 {
-	if (htmlc->bctx != NULL) {
+	എങ്കിൽ (htmlc->bctx != ശൂന്യ) {
 		/* freeing talloc context should let the entire box
 		 * set be destroyed
 		 */
@@ -1199,16 +1199,16 @@ static void html_free_layout(html_content *htmlc)
  * Destroy a CONTENT_HTML and free all resources it owns.
  */
 
-static void html_destroy(struct content *c)
+സ്ഥിതം ശൂന്യം html_destroy(ഘടന content *c)
 {
 	html_content *html = (html_content *) c;
-	struct form *f, *g;
+	ഘടന form *f, *g;
 
 	NSLOG(netsurf, INFO, "content %p", c);
 
 	/* If we're still converting a layout, cancel it */
-	if (html->box_conversion_context != NULL) {
-		if (cancel_dom_to_box(html->box_conversion_context) != NSERROR_OK) {
+	എങ്കിൽ (html->box_conversion_context != ശൂന്യ) {
+		എങ്കിൽ (cancel_dom_to_box(html->box_conversion_context) != NSERROR_OK) {
 			NSLOG(netsurf, CRITICAL, "WARNING, Unable to cancel conversion context, browser may crash");
 		}
 	}
@@ -1216,7 +1216,7 @@ static void html_destroy(struct content *c)
 	selection_destroy(html->sel);
 
 	/* Destroy forms */
-	for (f = html->forms; f != NULL; f = g) {
+	വേണ്ടി (f = html->forms; f != ശൂന്യ; f = g) {
 		g = f->prev;
 
 		form_free(f);
@@ -1224,71 +1224,71 @@ static void html_destroy(struct content *c)
 
 	imagemap_destroy(html);
 
-	if (c->refresh)
+	എങ്കിൽ (c->refresh)
 		nsurl_unref(c->refresh);
 
-	if (html->base_url)
+	എങ്കിൽ (html->base_url)
 		nsurl_unref(html->base_url);
 
 	/* At this point we can be moderately confident the JS is offline
 	 * so we destroy the JS thread.
 	 */
-	if (html->jsthread != NULL) {
+	എങ്കിൽ (html->jsthread != ശൂന്യ) {
 		js_destroythread(html->jsthread);
-		html->jsthread = NULL;
+		html->jsthread = ശൂന്യ;
 	}
 
-	if (html->parser != NULL) {
+	എങ്കിൽ (html->parser != ശൂന്യ) {
 		dom_hubbub_parser_destroy(html->parser);
-		html->parser = NULL;
+		html->parser = ശൂന്യ;
 	}
 
-	if (html->document != NULL) {
-		dom_node_unref(html->document);
-		html->document = NULL;
+	എങ്കിൽ (html->document != ശൂന്യ) {
+		dom_കണ്ണി_unref(html->document);
+		html->document = ശൂന്യ;
 	}
 
-	if (html->title != NULL) {
-		dom_node_unref(html->title);
-		html->title = NULL;
+	എങ്കിൽ (html->title != ശൂന്യ) {
+		dom_കണ്ണി_unref(html->title);
+		html->title = ശൂന്യ;
 	}
 
 	/* Free encoding */
-	if (html->encoding != NULL) {
-		free(html->encoding);
-		html->encoding = NULL;
+	എങ്കിൽ (html->encoding != ശൂന്യ) {
+		സ്വതന്ത്രം(html->encoding);
+		html->encoding = ശൂന്യ;
 	}
 
 	/* Free base target */
-	if (html->base_target != NULL) {
-		free(html->base_target);
-		html->base_target = NULL;
+	എങ്കിൽ (html->base_target != ശൂന്യ) {
+		സ്വതന്ത്രം(html->base_target);
+		html->base_target = ശൂന്യ;
 	}
 
 	/* Free frameset */
-	if (html->frameset != NULL) {
+	എങ്കിൽ (html->frameset != ശൂന്യ) {
 		html_destroy_frameset(html->frameset);
 		talloc_free(html->frameset);
-		html->frameset = NULL;
+		html->frameset = ശൂന്യ;
 	}
 
 	/* Free iframes */
-	if (html->iframe != NULL) {
+	എങ്കിൽ (html->iframe != ശൂന്യ) {
 		html_destroy_iframe(html->iframe);
-		html->iframe = NULL;
+		html->iframe = ശൂന്യ;
 	}
 
 	/* Destroy selection context */
-	if (html->select_ctx != NULL) {
+	എങ്കിൽ (html->select_ctx != ശൂന്യ) {
 		css_select_ctx_destroy(html->select_ctx);
-		html->select_ctx = NULL;
+		html->select_ctx = ശൂന്യ;
 	}
 
 	lwc_string_unref(html->universal);
-	html->universal = NULL;
+	html->universal = ശൂന്യ;
 
 	lwc_string_unref(html->media.prefers_color_scheme);
-	html->media.prefers_color_scheme = NULL;
+	html->media.prefers_color_scheme = ശൂന്യ;
 
 	/* Free stylesheets */
 	html_css_free_stylesheets(html);
@@ -1304,16 +1304,16 @@ static void html_destroy(struct content *c)
 }
 
 
-static nserror html_clone(const struct content *old, struct content **newc)
+സ്ഥിതം nserror html_clone(സ്ഥിരം ഘടന content *old, ഘടന content **newc)
 {
 	/** \todo Clone HTML specifics */
 
 	/* In the meantime, we should never be called, as HTML contents
 	 * cannot be shared and we're not intending to fix printing's
 	 * cloning of documents. */
-	assert(0 && "html_clone should never be called");
+	പ്രതിജ്ഞാ(0 && "html_clone should never be called");
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -1321,11 +1321,11 @@ static nserror html_clone(const struct content *old, struct content **newc)
  * Handle a window containing a CONTENT_HTML being opened.
  */
 
-static nserror
-html_open(struct content *c,
-	  struct browser_window *bw,
-	  struct content *page,
-	  struct object_params *params)
+സ്ഥിതം nserror
+html_open(ഘടന content *c,
+	  ഘടന browser_window *bw,
+	  ഘടന content *page,
+	  ഘടന object_params *params)
 {
 	html_content *html = (html_content *) c;
 
@@ -1342,7 +1342,7 @@ html_open(struct content *c,
 
 	html_object_open_objects(html, bw);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1350,7 +1350,7 @@ html_open(struct content *c,
  * Handle a window containing a CONTENT_HTML being closed.
  */
 
-static nserror html_close(struct content *c)
+സ്ഥിതം nserror html_close(ഘടന content *c)
 {
 	html_content *htmlc = (html_content *) c;
 	nserror ret = NSERROR_OK;
@@ -1358,17 +1358,17 @@ static nserror html_close(struct content *c)
 	selection_clear(htmlc->sel, false);
 
 	/* clear the html content reference to the browser window */
-	htmlc->bw = NULL;
+	htmlc->bw = ശൂന്യ;
 
 	/* remove all object references from the html content */
 	html_object_close_objects(htmlc);
 
-	if (htmlc->jsthread != NULL) {
+	എങ്കിൽ (htmlc->jsthread != ശൂന്യ) {
 		/* Close, but do not destroy (yet) the JS thread */
 		ret = js_closethread(htmlc->jsthread);
 	}
 
-	return ret;
+	തിരികെ ret;
 }
 
 
@@ -1376,28 +1376,28 @@ static nserror html_close(struct content *c)
  * Return an HTML content's selection context
  */
 
-static void html_clear_selection(struct content *c)
+സ്ഥിതം ശൂന്യം html_clear_selection(ഘടന content *c)
 {
 	html_content *html = (html_content *) c;
 
-	switch (html->selection_type) {
-	case HTML_SELECTION_NONE:
+	തിരഞ്ഞെടുപ്പ് (html->selection_type) {
+	അവസ്ഥ HTML_SELECTION_NONE:
 		/* Nothing to do */
-		assert(html->selection_owner.none == true);
-		break;
-	case HTML_SELECTION_TEXTAREA:
+		പ്രതിജ്ഞാ(html->selection_owner.none == true);
+		നിർത്തുക;
+	അവസ്ഥ HTML_SELECTION_TEXTAREA:
 		textarea_clear_selection(html->selection_owner.textarea->
 				gadget->data.text.ta);
-		break;
-	case HTML_SELECTION_SELF:
-		assert(html->selection_owner.none == false);
+		നിർത്തുക;
+	അവസ്ഥ HTML_SELECTION_SELF:
+		പ്രതിജ്ഞാ(html->selection_owner.none == false);
 		selection_clear(html->sel, true);
-		break;
-	case HTML_SELECTION_CONTENT:
+		നിർത്തുക;
+	അവസ്ഥ HTML_SELECTION_CONTENT:
 		content_clear_selection(html->selection_owner.content->object);
-		break;
-	default:
-		break;
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		നിർത്തുക;
 	}
 
 	/* There is no selection now. */
@@ -1410,29 +1410,29 @@ static void html_clear_selection(struct content *c)
  * Return an HTML content's selection context
  */
 
-static char *html_get_selection(struct content *c)
+സ്ഥിതം അക്ഷരം *html_get_selection(ഘടന content *c)
 {
 	html_content *html = (html_content *) c;
 
-	switch (html->selection_type) {
-	case HTML_SELECTION_TEXTAREA:
-		return textarea_get_selection(html->selection_owner.textarea->
+	തിരഞ്ഞെടുപ്പ് (html->selection_type) {
+	അവസ്ഥ HTML_SELECTION_TEXTAREA:
+		തിരികെ textarea_get_selection(html->selection_owner.textarea->
 				gadget->data.text.ta);
-	case HTML_SELECTION_SELF:
-		assert(html->selection_owner.none == false);
-		return selection_get_copy(html->sel);
-	case HTML_SELECTION_CONTENT:
-		return content_get_selection(
+	അവസ്ഥ HTML_SELECTION_SELF:
+		പ്രതിജ്ഞാ(html->selection_owner.none == false);
+		തിരികെ selection_get_copy(html->sel);
+	അവസ്ഥ HTML_SELECTION_CONTENT:
+		തിരികെ content_get_selection(
 				html->selection_owner.content->object);
-	case HTML_SELECTION_NONE:
+	അവസ്ഥ HTML_SELECTION_NONE:
 		/* Nothing to do */
-		assert(html->selection_owner.none == true);
-		break;
-	default:
-		break;
+		പ്രതിജ്ഞാ(html->selection_owner.none == true);
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		നിർത്തുക;
 	}
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 
@@ -1447,75 +1447,75 @@ static char *html_get_selection(struct content *c)
  *             relevent content, or set to NULL if none.
  * \return NSERROR_OK on success else appropriate error code.
  */
-static nserror
-html_get_contextual_content(struct content *c, int x, int y,
-			    struct browser_window_features *data)
+സ്ഥിതം nserror
+html_get_contextual_content(ഘടന content *c, പൂർണ്ണസംഖ്യ x, പൂർണ്ണസംഖ്യ y,
+			    ഘടന browser_window_features *data)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	int box_x = 0, box_y = 0;
+	ഘടന box *box = html->layout;
+	ഘടന box *next;
+	പൂർണ്ണസംഖ്യ box_x = 0, box_y = 0;
 
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
+	ആകുമ്പോൾ ((next = box_at_point(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ശൂന്യ) {
 		box = next;
 
 		/* hidden boxes are ignored */
-		if ((box->style != NULL) &&
+		എങ്കിൽ ((box->style != ശൂന്യ) &&
 		    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
-			continue;
+			തുടരുക;
 		}
 
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
+		എങ്കിൽ (box->iframe) {
+			ദശാംശം scale = browser_window_get_scale(box->iframe);
 			browser_window_get_features(box->iframe,
 						    (x - box_x) * scale,
 						    (y - box_y) * scale,
 						    data);
 		}
 
-		if (box->object)
+		എങ്കിൽ (box->object)
 			content_get_contextual_content(box->object,
 					x - box_x, y - box_y, data);
 
-		if (box->object)
+		എങ്കിൽ (box->object)
 			data->object = box->object;
 
-		if (box->href) {
+		എങ്കിൽ (box->href) {
 			data->link = box->href;
 			data->link_title = box->text;
 			data->link_title_length = box->length;
 		}
 
-		if (box->usemap) {
-			const char *target = NULL;
+		എങ്കിൽ (box->usemap) {
+			സ്ഥിരം അക്ഷരം *target = ശൂന്യ;
 			nsurl *url = imagemap_get(html, box->usemap, box_x,
 					box_y, x, y, &target);
 			/* Box might have imagemap, but no actual link area
 			 * at point */
-			if (url != NULL)
+			എങ്കിൽ (url != ശൂന്യ)
 				data->link = url;
 		}
-		if (box->gadget) {
-			switch (box->gadget->type) {
-			case GADGET_TEXTBOX:
-			case GADGET_TEXTAREA:
-			case GADGET_PASSWORD:
+		എങ്കിൽ (box->gadget) {
+			തിരഞ്ഞെടുപ്പ് (box->gadget->type) {
+			അവസ്ഥ GADGET_TEXTBOX:
+			അവസ്ഥ GADGET_TEXTAREA:
+			അവസ്ഥ GADGET_PASSWORD:
 				data->form_features = CTX_FORM_TEXT;
-				break;
+				നിർത്തുക;
 
-			case GADGET_FILE:
+			അവസ്ഥ GADGET_FILE:
 				data->form_features = CTX_FORM_FILE;
-				break;
+				നിർത്തുക;
 
-			default:
+			സ്ഥിരസ്ഥിതി:
 				data->form_features = CTX_FORM_NONE;
-				break;
+				നിർത്തുക;
 			}
 		}
 	}
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1529,63 +1529,63 @@ html_get_contextual_content(struct content *c, int x, int y,
  * \param scry	number of px try to scroll something in y direction
  * \return true iff scroll was consumed by something in the content
  */
-static bool
-html_scroll_at_point(struct content *c, int x, int y, int scrx, int scry)
+സ്ഥിതം bool
+html_scroll_at_point(ഘടന content *c, പൂർണ്ണസംഖ്യ x, പൂർണ്ണസംഖ്യ y, പൂർണ്ണസംഖ്യ scrx, പൂർണ്ണസംഖ്യ scry)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	int box_x = 0, box_y = 0;
+	ഘടന box *box = html->layout;
+	ഘടന box *next;
+	പൂർണ്ണസംഖ്യ box_x = 0, box_y = 0;
 	bool handled_scroll = false;
 
 	/* TODO: invert order; visit deepest box first */
 
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
+	ആകുമ്പോൾ ((next = box_at_point(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ശൂന്യ) {
 		box = next;
 
-		if (box->style && css_computed_visibility(box->style) ==
+		എങ്കിൽ (box->style && css_computed_visibility(box->style) ==
 				CSS_VISIBILITY_HIDDEN)
-			continue;
+			തുടരുക;
 
 		/* Pass into iframe */
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
+		എങ്കിൽ (box->iframe) {
+			ദശാംശം scale = browser_window_get_scale(box->iframe);
 
-			if (browser_window_scroll_at_point(box->iframe,
+			എങ്കിൽ (browser_window_scroll_at_point(box->iframe,
 							   (x - box_x) * scale,
 							   (y - box_y) * scale,
 							   scrx, scry) == true)
-				return true;
+				തിരികെ true;
 		}
 
 		/* Pass into textarea widget */
-		if (box->gadget && (box->gadget->type == GADGET_TEXTAREA ||
+		എങ്കിൽ (box->gadget && (box->gadget->type == GADGET_TEXTAREA ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_TEXTBOX) &&
 				textarea_scroll(box->gadget->data.text.ta,
 						scrx, scry) == true)
-			return true;
+			തിരികെ true;
 
 		/* Pass into object */
-		if (box->object != NULL && content_scroll_at_point(
+		എങ്കിൽ (box->object != ശൂന്യ && content_scroll_at_point(
 				box->object, x - box_x, y - box_y,
 				scrx, scry) == true)
-			return true;
+			തിരികെ true;
 
 		/* Handle box scrollbars */
-		if (box->scroll_y && scrollbar_scroll(box->scroll_y, scry))
+		എങ്കിൽ (box->scroll_y && scrollbar_scroll(box->scroll_y, scry))
 			handled_scroll = true;
 
-		if (box->scroll_x && scrollbar_scroll(box->scroll_x, scrx))
+		എങ്കിൽ (box->scroll_x && scrollbar_scroll(box->scroll_x, scrx))
 			handled_scroll = true;
 
-		if (handled_scroll == true)
-			return true;
+		എങ്കിൽ (handled_scroll == true)
+			തിരികെ true;
 	}
 
-	return false;
+	തിരികെ false;
 }
 
 /** Helper for file gadgets to store their filename unencoded on the
@@ -1593,79 +1593,79 @@ html_scroll_at_point(struct content *c, int x, int y, int scrx, int scry)
  *
  * \todo Get rid of this crap eventually
  */
-static void html__dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *_data, struct dom_node *src,
-		struct dom_node *dst)
+സ്ഥിതം ശൂന്യം html__dom_user_data_handler(dom_കണ്ണി_operation operation,
+		dom_string *താക്കോൽ, ശൂന്യം *_data, ഘടന dom_കണ്ണി *src,
+		ഘടന dom_കണ്ണി *dst)
 {
-	char *oldfile;
-	char *data = (char *)_data;
+	അക്ഷരം *oldfile;
+	അക്ഷരം *data = (അക്ഷരം *)_data;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_file_name_node_data,
-				key) || data == NULL) {
-		return;
+	എങ്കിൽ (!dom_string_isequal(corestring_dom_ns_താക്കോൽ_file_name_കണ്ണി_data,
+				താക്കോൽ) || data == ശൂന്യ) {
+		തിരികെ;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		if (dom_node_set_user_data(dst,
-					   corestring_dom___ns_key_file_name_node_data,
+	തിരഞ്ഞെടുപ്പ് (operation) {
+	അവസ്ഥ DOM_കണ്ണി_CLONED:
+		എങ്കിൽ (dom_കണ്ണി_set_user_data(dst,
+					   corestring_dom_ns_താക്കോൽ_file_name_കണ്ണി_data,
 					   strdup(data), html__dom_user_data_handler,
 					   &oldfile) == DOM_NO_ERR) {
-			if (oldfile != NULL)
-				free(oldfile);
+			എങ്കിൽ (oldfile != ശൂന്യ)
+				സ്വതന്ത്രം(oldfile);
 		}
-		break;
+		നിർത്തുക;
 
-	case DOM_NODE_RENAMED:
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-		break;
+	അവസ്ഥ DOM_കണ്ണി_RENAMED:
+	അവസ്ഥ DOM_കണ്ണി_IMPORTED:
+	അവസ്ഥ DOM_കണ്ണി_ADOPTED:
+		നിർത്തുക;
 
-	case DOM_NODE_DELETED:
-		free(data);
-		break;
-	default:
+	അവസ്ഥ DOM_കണ്ണി_DELETED:
+		സ്വതന്ത്രം(data);
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		പ്രതിജ്ഞാ(0);
 	}
 }
 
-static void html__set_file_gadget_filename(struct content *c,
-	struct form_control *gadget, const char *fn)
+സ്ഥിതം ശൂന്യം html__set_file_gadget_filename(ഘടന content *c,
+	ഘടന form_control *gadget, സ്ഥിരം അക്ഷരം *fn)
 {
 	nserror ret;
-	char *utf8_fn, *oldfile = NULL;
+	അക്ഷരം *utf8_fn, *oldfile = ശൂന്യ;
 	html_content *html = (html_content *)c;
-	struct box *file_box = gadget->box;
+	ഘടന box *file_box = gadget->box;
 
 	ret = guit->utf8->local_to_utf8(fn, 0, &utf8_fn);
-	if (ret != NSERROR_OK) {
-		assert(ret != NSERROR_BAD_ENCODING);
+	എങ്കിൽ (ret != NSERROR_OK) {
+		പ്രതിജ്ഞാ(ret != NSERROR_BAD_ENCODING);
 		NSLOG(netsurf, INFO,
 		      "utf8 to local encoding conversion failed");
 		/* Load was for us - just no memory */
-		return;
+		തിരികെ;
 	}
 
-	form_gadget_update_value(gadget, utf8_fn);
+	form_gadget_update_മൂല്യം(gadget, utf8_fn);
 
 	/* corestring_dom___ns_key_file_name_node_data */
-	if (dom_node_set_user_data((dom_node *)file_box->gadget->node,
-				   corestring_dom___ns_key_file_name_node_data,
+	എങ്കിൽ (dom_കണ്ണി_set_user_data((dom_കണ്ണി *)file_box->gadget->കണ്ണി,
+				   corestring_dom_ns_താക്കോൽ_file_name_കണ്ണി_data,
 				   strdup(fn), html__dom_user_data_handler,
 				   &oldfile) == DOM_NO_ERR) {
-		if (oldfile != NULL)
-			free(oldfile);
+		എങ്കിൽ (oldfile != ശൂന്യ)
+			സ്വതന്ത്രം(oldfile);
 	}
 
 	/* Redraw box. */
 	html__redraw_a_box(html, file_box);
 }
 
-void html_set_file_gadget_filename(struct hlcache_handle *hl,
-	struct form_control *gadget, const char *fn)
+ശൂന്യം html_set_file_gadget_filename(ഘടന hlcache_handle *hl,
+	ഘടന form_control *gadget, സ്ഥിരം അക്ഷരം *fn)
 {
-	return html__set_file_gadget_filename(hlcache_handle_get_content(hl),
+	തിരികെ html__set_file_gadget_filename(hlcache_handle_get_content(hl),
 		gadget, fn);
 }
 
@@ -1679,86 +1679,86 @@ void html_set_file_gadget_filename(struct hlcache_handle *hl,
  * \param file	path to file to be dropped, or NULL to know if drop allowed
  * \return true iff file drop has been handled, or if drop possible (NULL file)
  */
-static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
+സ്ഥിതം bool html_drop_file_at_point(ഘടന content *c, പൂർണ്ണസംഖ്യ x, പൂർണ്ണസംഖ്യ y, അക്ഷരം *file)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	struct box *file_box = NULL;
-	struct box *text_box = NULL;
-	int box_x = 0, box_y = 0;
+	ഘടന box *box = html->layout;
+	ഘടന box *next;
+	ഘടന box *file_box = ശൂന്യ;
+	ഘടന box *text_box = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ box_x = 0, box_y = 0;
 
 	/* Scan box tree for boxes that can handle drop */
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
+	ആകുമ്പോൾ ((next = box_at_point(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ശൂന്യ) {
 		box = next;
 
-		if (box->style &&
+		എങ്കിൽ (box->style &&
 		    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN)
-			continue;
+			തുടരുക;
 
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
-			return browser_window_drop_file_at_point(
+		എങ്കിൽ (box->iframe) {
+			ദശാംശം scale = browser_window_get_scale(box->iframe);
+			തിരികെ browser_window_drop_file_at_point(
 				box->iframe,
 				(x - box_x) * scale,
 				(y - box_y) * scale,
 				file);
 		}
 
-		if (box->object &&
+		എങ്കിൽ (box->object &&
 		    content_drop_file_at_point(box->object,
 					x - box_x, y - box_y, file) == true)
-			return true;
+			തിരികെ true;
 
-		if (box->gadget) {
-			switch (box->gadget->type) {
-				case GADGET_FILE:
+		എങ്കിൽ (box->gadget) {
+			തിരഞ്ഞെടുപ്പ് (box->gadget->type) {
+				അവസ്ഥ GADGET_FILE:
 					file_box = box;
-				break;
+				നിർത്തുക;
 
-				case GADGET_TEXTBOX:
-				case GADGET_TEXTAREA:
-				case GADGET_PASSWORD:
+				അവസ്ഥ GADGET_TEXTBOX:
+				അവസ്ഥ GADGET_TEXTAREA:
+				അവസ്ഥ GADGET_PASSWORD:
 					text_box = box;
-					break;
+					നിർത്തുക;
 
-				default:	/* appease compiler */
-					break;
+				സ്ഥിരസ്ഥിതി:	/* appease compiler */
+					നിർത്തുക;
 			}
 		}
 	}
 
-	if (!file_box && !text_box)
+	എങ്കിൽ (!file_box && !text_box)
 		/* No box capable of handling drop */
-		return false;
+		തിരികെ false;
 
-	if (file == NULL)
+	എങ്കിൽ (file == ശൂന്യ)
 		/* There is a box capable of handling drop here */
-		return true;
+		തിരികെ true;
 
 	/* Handle the drop */
-	if (file_box) {
+	എങ്കിൽ (file_box) {
 		/* File dropped on file input */
 		html__set_file_gadget_filename(c, file_box->gadget, file);
 
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* File dropped on text input */
 
 		size_t file_len;
-		FILE *fp = NULL;
-		char *buffer;
-		char *utf8_buff;
+		FILE *fp = ശൂന്യ;
+		അക്ഷരം *buffer;
+		അക്ഷരം *utf8_buff;
 		nserror ret;
-		unsigned int size;
-		int bx, by;
+		unsigned പൂർണ്ണസംഖ്യ size;
+		പൂർണ്ണസംഖ്യ bx, by;
 
 		/* Open file */
 		fp = fopen(file, "rb");
-		if (fp == NULL) {
+		എങ്കിൽ (fp == ശൂന്യ) {
 			/* Couldn't open file, but drop was for us */
-			return true;
+			തിരികെ true;
 		}
 
 		/* Get filesize */
@@ -1766,26 +1766,26 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 		file_len = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 
-		if ((long)file_len == -1) {
+		എങ്കിൽ ((long)file_len == -1) {
 			/* unable to get file length, but drop was for us */
 			fclose(fp);
-			return true;
+			തിരികെ true;
 		}
 
 		/* Allocate buffer for file data */
 		buffer = malloc(file_len + 1);
-		if (buffer == NULL) {
+		എങ്കിൽ (buffer == ശൂന്യ) {
 			/* No memory, but drop was for us */
 			fclose(fp);
-			return true;
+			തിരികെ true;
 		}
 
 		/* Stick file into buffer */
-		if (file_len != fread(buffer, 1, file_len, fp)) {
+		എങ്കിൽ (file_len != fread(buffer, 1, file_len, fp)) {
 			/* Failed, but drop was for us */
-			free(buffer);
+			സ്വതന്ത്രം(buffer);
 			fclose(fp);
-			return true;
+			തിരികെ true;
 		}
 
 		/* Done with file */
@@ -1798,18 +1798,18 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 
 		/* Convert to UTF-8 */
 		ret = guit->utf8->local_to_utf8(buffer, file_len, &utf8_buff);
-		if (ret != NSERROR_OK) {
+		എങ്കിൽ (ret != NSERROR_OK) {
 			/* bad encoding shouldn't happen */
 			NSLOG(netsurf, ERROR,
 			      "local to utf8 encoding failed (%s)",
 			      messages_get_errorcode(ret));
-			assert(ret != NSERROR_BAD_ENCODING);
-			free(buffer);
-			return true;
+			പ്രതിജ്ഞാ(ret != NSERROR_BAD_ENCODING);
+			സ്വതന്ത്രം(buffer);
+			തിരികെ true;
 		}
 
 		/* Done with buffer */
-		free(buffer);
+		സ്വതന്ത്രം(buffer);
 
 		/* Get new length */
 		size = strlen(utf8_buff);
@@ -1823,10 +1823,10 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 		textarea_drop_text(text_box->gadget->data.text.ta,
 				utf8_buff, size);
 
-		free(utf8_buff);
+		സ്വതന്ത്രം(utf8_buff);
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -1836,12 +1836,12 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
  * \param c The content to debug
  * \param op The debug operation type
  */
-static nserror
-html_debug(struct content *c, enum content_debug op)
+സ്ഥിതം nserror
+html_debug(ഘടന content *c, എണ്ണൽ content_debug op)
 {
 	html_redraw_debug = !html_redraw_debug;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1852,85 +1852,85 @@ html_debug(struct content *c, enum content_debug op)
  * \param f The file to dump to
  * \param op The debug dump type
  */
-static nserror
-html_debug_dump(struct content *c, FILE *f, enum content_debug op)
+സ്ഥിതം nserror
+html_debug_dump(ഘടന content *c, FILE *f, എണ്ണൽ content_debug op)
 {
 	html_content *htmlc = (html_content *)c;
-	dom_node *html;
+	dom_കണ്ണി *html;
 	dom_exception exc; /* returned by libdom functions */
 	nserror ret;
 
-	assert(htmlc != NULL);
+	പ്രതിജ്ഞാ(htmlc != ശൂന്യ);
 
-	if (op == CONTENT_DEBUG_RENDER) {
-		assert(htmlc->layout != NULL);
+	എങ്കിൽ (op == CONTENT_DEBUG_RENDER) {
+		പ്രതിജ്ഞാ(htmlc->layout != ശൂന്യ);
 		box_dump(f, htmlc->layout, 0, true);
 		ret = NSERROR_OK;
-	} else {
-		if (htmlc->document == NULL) {
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (htmlc->document == ശൂന്യ) {
 			NSLOG(netsurf, INFO, "No document to dump");
-			return NSERROR_DOM;
+			തിരികെ NSERROR_DOM;
 		}
 
-		exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-		if ((exc != DOM_NO_ERR) || (html == NULL)) {
+		exc = dom_document_get_document_element(htmlc->document, (ശൂന്യം *) &html);
+		എങ്കിൽ ((exc != DOM_NO_ERR) || (html == ശൂന്യ)) {
 			NSLOG(netsurf, INFO, "Unable to obtain root node");
-			return NSERROR_DOM;
+			തിരികെ NSERROR_DOM;
 		}
 
 		ret = libdom_dump_structure(html, f, 0);
 
 		NSLOG(netsurf, INFO, "DOM structure dump returning %d", ret);
 
-		dom_node_unref(html);
+		dom_കണ്ണി_unref(html);
 	}
 
-	return ret;
+	തിരികെ ret;
 }
 
 
-#if ALWAYS_DUMP_FRAMESET
+#എങ്കിൽ ALWAYS_DUMP_FRAMESET
 /**
  * Print a frameset tree to stderr.
  */
 
-static void
-html_dump_frameset(struct content_html_frames *frame, unsigned int depth)
+സ്ഥിതം ശൂന്യം
+html_dump_frameset(ഘടന content_html_frames *frame, unsigned പൂർണ്ണസംഖ്യ depth)
 {
-	unsigned int i;
-	int row, col, index;
-	const char *unit[] = {"px", "%", "*"};
-	const char *scrolling[] = {"auto", "yes", "no"};
+	unsigned പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ row, col, index;
+	സ്ഥിരം അക്ഷരം *unit[] = {"px", "%", "*"};
+	സ്ഥിരം അക്ഷരം *scrolling[] = {"auto", "yes", "no"};
 
-	assert(frame);
+	പ്രതിജ്ഞാ(frame);
 
 	fprintf(stderr, "%p ", frame);
 
 	fprintf(stderr, "(%i %i) ", frame->rows, frame->cols);
 
-	fprintf(stderr, "w%g%s ", frame->width.value, unit[frame->width.unit]);
-	fprintf(stderr, "h%g%s ", frame->height.value,unit[frame->height.unit]);
+	fprintf(stderr, "w%g%s ", frame->width.മൂല്യം, unit[frame->width.unit]);
+	fprintf(stderr, "h%g%s ", frame->height.മൂല്യം,unit[frame->height.unit]);
 	fprintf(stderr, "(margin w%i h%i) ",
 			frame->margin_width, frame->margin_height);
 
-	if (frame->name)
+	എങ്കിൽ (frame->name)
 		fprintf(stderr, "'%s' ", frame->name);
-	if (frame->url)
+	എങ്കിൽ (frame->url)
 		fprintf(stderr, "<%s> ", frame->url);
 
-	if (frame->no_resize)
+	എങ്കിൽ (frame->no_resize)
 		fprintf(stderr, "noresize ");
 	fprintf(stderr, "(scrolling %s) ", scrolling[frame->scrolling]);
-	if (frame->border)
+	എങ്കിൽ (frame->border)
 		fprintf(stderr, "border %x ",
-				(unsigned int) frame->border_colour);
+				(unsigned പൂർണ്ണസംഖ്യ) frame->border_colour);
 
 	fprintf(stderr, "\n");
 
-	if (frame->children) {
-		for (row = 0; row != frame->rows; row++) {
-			for (col = 0; col != frame->cols; col++) {
-				for (i = 0; i != depth; i++)
+	എങ്കിൽ (frame->children) {
+		വേണ്ടി (row = 0; row != frame->rows; row++) {
+			വേണ്ടി (col = 0; col != frame->cols; col++) {
+				വേണ്ടി (i = 0; i != depth; i++)
 					fprintf(stderr, "  ");
 				fprintf(stderr, "(%i %i): ", row, col);
 				index = (row * frame->cols) + col;
@@ -1953,9 +1953,9 @@ dom_document *html_get_document(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	return c->document;
+	തിരികെ c->document;
 }
 
 /**
@@ -1967,13 +1967,13 @@ dom_document *html_get_document(hlcache_handle *h)
  * \todo This API must die, as must all use of the box tree outside of
  *         HTML content handler
  */
-struct box *html_get_box_tree(hlcache_handle *h)
+ഘടന box *html_get_box_വൃക്ഷം(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	return c->layout;
+	തിരികെ c->layout;
 }
 
 /**
@@ -1983,19 +1983,19 @@ struct box *html_get_box_tree(hlcache_handle *h)
  * \param op The content encoding operation to perform.
  * \return Pointer to charset, or NULL
  */
-static const char *html_encoding(const struct content *c, enum content_encoding_type op)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *html_encoding(സ്ഥിരം ഘടന content *c, എണ്ണൽ content_encoding_type op)
 {
 	html_content *html = (html_content *) c;
-	static char enc_token[10] = "Encoding0";
+	സ്ഥിതം അക്ഷരം enc_token[10] = "Encoding0";
 
-	assert(html != NULL);
+	പ്രതിജ്ഞാ(html != ശൂന്യ);
 
-	if (op == CONTENT_ENCODING_SOURCE) {
+	എങ്കിൽ (op == CONTENT_ENCODING_SOURCE) {
 		enc_token[8] = '0' + html->encoding_source;
-		return messages_get(enc_token);
+		തിരികെ messages_get(enc_token);
 	}
 
-	return html->encoding;
+	തിരികെ html->encoding;
 }
 
 
@@ -2005,13 +2005,13 @@ static const char *html_encoding(const struct content *c, enum content_encoding_
  * \param h  Content to inspect
  * \return Pointer to framesets, or NULL if none
  */
-struct content_html_frames *html_get_frameset(hlcache_handle *h)
+ഘടന content_html_frames *html_get_frameset(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	return c->frameset;
+	തിരികെ c->frameset;
 }
 
 /**
@@ -2020,13 +2020,13 @@ struct content_html_frames *html_get_frameset(hlcache_handle *h)
  * \param h  Content to inspect
  * \return Pointer to iframes, or NULL if none
  */
-struct content_html_iframe *html_get_iframe(hlcache_handle *h)
+ഘടന content_html_iframe *html_get_iframe(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	return c->iframe;
+	തിരികെ c->iframe;
 }
 
 /**
@@ -2039,9 +2039,9 @@ nsurl *html_get_base_url(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	return c->base_url;
+	തിരികെ c->base_url;
 }
 
 /**
@@ -2050,13 +2050,13 @@ nsurl *html_get_base_url(hlcache_handle *h)
  * \param h  Content to retrieve base target from
  * \return Pointer to target, or NULL if none
  */
-const char *html_get_base_target(hlcache_handle *h)
+സ്ഥിരം അക്ഷരം *html_get_base_target(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	return c->base_target;
+	തിരികെ c->base_target;
 }
 
 
@@ -2069,76 +2069,76 @@ const char *html_get_base_target(hlcache_handle *h)
  * \param y        Updated to global y coord iff id found
  * \return  true iff id found
  */
-bool html_get_id_offset(hlcache_handle *h, lwc_string *frag_id, int *x, int *y)
+bool html_get_id_offset(hlcache_handle *h, lwc_string *frag_id, പൂർണ്ണസംഖ്യ *x, പൂർണ്ണസംഖ്യ *y)
 {
-	struct box *pos;
-	struct box *layout;
+	ഘടന box *pos;
+	ഘടന box *layout;
 
-	if (content_get_type(h) != CONTENT_HTML)
-		return false;
+	എങ്കിൽ (content_get_type(h) != CONTENT_HTML)
+		തിരികെ false;
 
-	layout = html_get_box_tree(h);
+	layout = html_get_box_വൃക്ഷം(h);
 
-	if ((pos = box_find_by_id(layout, frag_id)) != 0) {
+	എങ്കിൽ ((pos = box_find_by_id(layout, frag_id)) != 0) {
 		box_coords(pos, x, y);
-		return true;
+		തിരികെ true;
 	}
-	return false;
+	തിരികെ false;
 }
 
-bool html_exec(struct content *c, const char *src, size_t srclen)
+bool html_exec(ഘടന content *c, സ്ഥിരം അക്ഷരം *src, size_t srclen)
 {
 	html_content *htmlc = (html_content *)c;
 	bool result = false;
 	dom_exception err;
-	dom_html_body_element *body_node;
+	dom_html_body_element *body_കണ്ണി;
 	dom_string *dom_src;
-	dom_text *text_node;
-	dom_node *spare_node;
-	dom_html_script_element *script_node;
+	dom_text *text_കണ്ണി;
+	dom_കണ്ണി *spare_കണ്ണി;
+	dom_html_script_element *script_കണ്ണി;
 
-	if (htmlc->document == NULL) {
+	എങ്കിൽ (htmlc->document == ശൂന്യ) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no document");
-		goto out_no_string;
+		പോകുക out_no_string;
 	}
 
-	err = dom_string_create((const uint8_t *)src, srclen, &dom_src);
-	if (err != DOM_NO_ERR) {
+	err = dom_string_create((സ്ഥിരം uint8_t *)src, srclen, &dom_src);
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create string");
-		goto out_no_string;
+		പോകുക out_no_string;
 	}
 
-	err = dom_html_document_get_body(htmlc->document, &body_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_html_document_get_body(htmlc->document, &body_കണ്ണി);
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve body element");
-		goto out_no_body;
+		പോകുക out_no_body;
 	}
 
-	err = dom_document_create_text_node(htmlc->document, dom_src, &text_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_document_create_text_കണ്ണി(htmlc->document, dom_src, &text_കണ്ണി);
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create text node");
-		goto out_no_text_node;
+		പോകുക out_no_text_കണ്ണി;
 	}
 
-	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_കണ്ണി);
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create script node");
-		goto out_no_script_node;
+		പോകുക out_no_script_കണ്ണി;
 	}
 
-	err = dom_node_append_child(script_node, text_node, &spare_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_കണ്ണി_append_child(script_കണ്ണി, text_കണ്ണി, &spare_കണ്ണി);
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert code node into script node");
-		goto out_unparented;
+		പോകുക out_unparented;
 	}
-	dom_node_unref(spare_node); /* We do not need the spare ref at all */
+	dom_കണ്ണി_unref(spare_കണ്ണി); /* We do not need the spare ref at all */
 
-	err = dom_node_append_child(body_node, script_node, &spare_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_കണ്ണി_append_child(body_കണ്ണി, script_കണ്ണി, &spare_കണ്ണി);
+	എങ്കിൽ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert script node into document body");
-		goto out_unparented;
+		പോകുക out_unparented;
 	}
-	dom_node_unref(spare_node); /* Again no need for the spare ref */
+	dom_കണ്ണി_unref(spare_കണ്ണി); /* Again no need for the spare ref */
 
 	/* We successfully inserted the node into the DOM */
 
@@ -2148,55 +2148,55 @@ bool html_exec(struct content *c, const char *src, size_t srclen)
 	 * ended up parented
 	 */
 
-	err = dom_node_get_parent_node(script_node, &spare_node);
-	if (err == DOM_NO_ERR && spare_node != NULL) {
-		dom_node *second_spare;
-		err = dom_node_remove_child(spare_node, script_node, &second_spare);
-		if (err == DOM_NO_ERR) {
-			dom_node_unref(second_spare);
+	err = dom_കണ്ണി_get_parent_കണ്ണി(script_കണ്ണി, &spare_കണ്ണി);
+	എങ്കിൽ (err == DOM_NO_ERR && spare_കണ്ണി != ശൂന്യ) {
+		dom_കണ്ണി *second_spare;
+		err = dom_കണ്ണി_remove_child(spare_കണ്ണി, script_കണ്ണി, &second_spare);
+		എങ്കിൽ (err == DOM_NO_ERR) {
+			dom_കണ്ണി_unref(second_spare);
 		}
-		dom_node_unref(spare_node);
+		dom_കണ്ണി_unref(spare_കണ്ണി);
 	}
 
 out_unparented:
-	dom_node_unref(script_node);
-out_no_script_node:
-	dom_node_unref(text_node);
-out_no_text_node:
-	dom_node_unref(body_node);
+	dom_കണ്ണി_unref(script_കണ്ണി);
+out_no_script_കണ്ണി:
+	dom_കണ്ണി_unref(text_കണ്ണി);
+out_no_text_കണ്ണി:
+	dom_കണ്ണി_unref(body_കണ്ണി);
 out_no_body:
 	dom_string_unref(dom_src);
 out_no_string:
-	return result;
+	തിരികെ result;
 }
 
 /* See \ref content_saw_insecure_objects */
-static bool
-html_saw_insecure_objects(struct content *c)
+സ്ഥിതം bool
+html_saw_insecure_objects(ഘടന content *c)
 {
 	html_content *htmlc = (html_content *)c;
-	struct content_html_object *obj = htmlc->object_list;
+	ഘടന content_html_object *obj = htmlc->object_list;
 
 	/* Check through the object list */
-	while (obj != NULL) {
-		if (obj->content != NULL) {
-			if (content_saw_insecure_objects(obj->content))
-				return true;
+	ആകുമ്പോൾ (obj != ശൂന്യ) {
+		എങ്കിൽ (obj->content != ശൂന്യ) {
+			എങ്കിൽ (content_saw_insecure_objects(obj->content))
+				തിരികെ true;
 		}
 		obj = obj->next;
 	}
 
 	/* Now check the script list */
-	if (html_saw_insecure_scripts(htmlc)) {
-		return true;
+	എങ്കിൽ (html_saw_insecure_scripts(htmlc)) {
+		തിരികെ true;
 	}
 
 	/* Now check stylesheets */
-	if (html_css_saw_insecure_stylesheets(htmlc)) {
-		return true;
+	എങ്കിൽ (html_css_saw_insecure_stylesheets(htmlc)) {
+		തിരികെ true;
 	}
 
-	return false;
+	തിരികെ false;
 }
 
 /**
@@ -2204,13 +2204,13 @@ html_saw_insecure_objects(struct content *c)
  *
  * \return CONTENT_HTML
  */
-static content_type html_content_type(void)
+സ്ഥിതം content_type html_content_type(ശൂന്യം)
 {
-	return CONTENT_HTML;
+	തിരികെ CONTENT_HTML;
 }
 
 
-static void html_fini(void)
+സ്ഥിതം ശൂന്യം html_fini(ശൂന്യം)
 {
 	html_css_fini();
 }
@@ -2225,26 +2225,26 @@ static void html_fini(void)
  * \param context   The search context to add the entry to.
  * \return true on success, false on memory allocation failure
  */
-static nserror
-find_occurrences_html_box(const char *pattern,
-			  int p_len,
-			  struct box *cur,
+സ്ഥിതം nserror
+find_occurrences_html_box(സ്ഥിരം അക്ഷരം *pattern,
+			  പൂർണ്ണസംഖ്യ p_len,
+			  ഘടന box *cur,
 			  bool case_sens,
-			  struct textsearch_context *context)
+			  ഘടന textsearch_context *context)
 {
-	struct box *a;
+	ഘടന box *a;
 	nserror res = NSERROR_OK;
 
 	/* ignore this box, if there's no visible text */
-	if (!cur->object && cur->text) {
-		const char *text = cur->text;
+	എങ്കിൽ (!cur->object && cur->text) {
+		സ്ഥിരം അക്ഷരം *text = cur->text;
 		unsigned length = cur->length;
 
-		while (length > 0) {
+		ആകുമ്പോൾ (length > 0) {
 			unsigned match_length;
 			unsigned match_offset;
-			const char *new_text;
-			const char *pos;
+			സ്ഥിരം അക്ഷരം *new_text;
+			സ്ഥിരം അക്ഷരം *pos;
 
 			pos = content_textsearch_find_pattern(text,
 					   length,
@@ -2252,8 +2252,8 @@ find_occurrences_html_box(const char *pattern,
 					   p_len,
 					   case_sens,
 					   &match_length);
-			if (!pos)
-				break;
+			എങ്കിൽ (!pos)
+				നിർത്തുക;
 
 			/* found string in box => add to list */
 			match_offset = pos - cur->text;
@@ -2263,8 +2263,8 @@ find_occurrences_html_box(const char *pattern,
 					cur->byte_offset + match_offset + match_length,
 					cur,
 					cur);
-			if (res != NSERROR_OK) {
-				return res;
+			എങ്കിൽ (res != NSERROR_OK) {
+				തിരികെ res;
 			}
 
 			new_text = pos + match_length;
@@ -2274,18 +2274,18 @@ find_occurrences_html_box(const char *pattern,
 	}
 
 	/* and recurse */
-	for (a = cur->children; a; a = a->next) {
+	വേണ്ടി (a = cur->children; a; a = a->next) {
 		res = find_occurrences_html_box(pattern,
 						p_len,
 						a,
 						case_sens,
 						context);
-		if (res != NSERROR_OK) {
-			return res;
+		എങ്കിൽ (res != NSERROR_OK) {
+			തിരികെ res;
 		}
 	}
 
-	return res;
+	തിരികെ res;
 }
 
 /**
@@ -2298,20 +2298,20 @@ find_occurrences_html_box(const char *pattern,
  * \param context   The search context to add the entry to.
  * \return true on success, false on memory allocation failure
  */
-static nserror
-html_textsearch_find(struct content *c,
-		     struct textsearch_context *context,
-		     const char *pattern,
-		     int p_len,
+സ്ഥിതം nserror
+html_textsearch_find(ഘടന content *c,
+		     ഘടന textsearch_context *context,
+		     സ്ഥിരം അക്ഷരം *pattern,
+		     പൂർണ്ണസംഖ്യ p_len,
 		     bool csens)
 {
 	html_content *html = (html_content *)c;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	എങ്കിൽ (html->layout == ശൂന്യ) {
+		തിരികെ NSERROR_INVALID;
 	}
 
-	return find_occurrences_html_box(pattern,
+	തിരികെ find_occurrences_html_box(pattern,
 					 p_len,
 					 html->layout,
 					 csens,
@@ -2319,13 +2319,13 @@ html_textsearch_find(struct content *c,
 }
 
 
-static nserror
-html_textsearch_bounds(struct content *c,
+സ്ഥിതം nserror
+html_textsearch_bounds(ഘടന content *c,
 		       unsigned start_idx,
 		       unsigned end_idx,
-		       struct box *start_box,
-		       struct box *end_box,
-		       struct rect *bounds)
+		       ഘടന box *start_box,
+		       ഘടന box *end_box,
+		       ഘടന rect *bounds)
 {
 	/* get box position and jump to it */
 	box_coords(start_box, &bounds->x0, &bounds->y0);
@@ -2335,14 +2335,14 @@ html_textsearch_bounds(struct content *c,
 	bounds->x1 += end_box->width;
 	bounds->y1 += end_box->height;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /**
  * HTML content handler function table
  */
-static const content_handler html_content_handler = {
+സ്ഥിതം സ്ഥിരം content_handler html_content_handler = {
 	.fini = html_fini,
 	.create = html_create,
 	.process_data = html_process_data,
@@ -2378,26 +2378,26 @@ static const content_handler html_content_handler = {
 
 
 /* exported function documented in html/html.h */
-nserror html_init(void)
+nserror html_init(ശൂന്യം)
 {
 	uint32_t i;
 	nserror error;
 
 	error = html_css_init();
-	if (error != NSERROR_OK)
-		goto error;
+	എങ്കിൽ (error != NSERROR_OK)
+		പോകുക error;
 
-	for (i = 0; i < NOF_ELEMENTS(html_types); i++) {
+	വേണ്ടി (i = 0; i < NOF_ELEMENTS(html_types); i++) {
 		error = content_factory_register_handler(html_types[i],
 				&html_content_handler);
-		if (error != NSERROR_OK)
-			goto error;
+		എങ്കിൽ (error != NSERROR_OK)
+			പോകുക error;
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 
 error:
 	html_fini();
 
-	return error;
+	തിരികെ error;
 }

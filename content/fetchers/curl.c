@@ -28,38 +28,38 @@
  */
 
 /* must come first to ensure winsock2.h vs windows.h ordering issues */
-#include "utils/inet.h"
+#അന്തര്ഭാവ "utils/inet.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <sys/stat.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <inttypes.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <strings.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <sys/stat.h>
 
-#include <libwapcaplet/libwapcaplet.h>
-#include <nsutils/time.h>
+#അന്തര്ഭാവ <libwapcaplet/libwapcaplet.h>
+#അന്തര്ഭാവ <nsutils/time.h>
 
-#include "utils/corestrings.h"
-#include "utils/hashmap.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
-#include "utils/useragent.h"
-#include "utils/file.h"
-#include "utils/string.h"
-#include "netsurf/fetch.h"
-#include "netsurf/misc.h"
-#include "desktop/gui_internal.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "utils/hashmap.h"
+#അന്തര്ഭാവ "utils/nsoption.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/messages.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/ring.h"
+#അന്തര്ഭാവ "utils/useragent.h"
+#അന്തര്ഭാവ "utils/file.h"
+#അന്തര്ഭാവ "utils/string.h"
+#അന്തര്ഭാവ "netsurf/fetch.h"
+#അന്തര്ഭാവ "netsurf/misc.h"
+#അന്തര്ഭാവ "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/curl.h"
-#include "content/urldb.h"
+#അന്തര്ഭാവ "content/fetch.h"
+#അന്തര്ഭാവ "content/fetchers.h"
+#അന്തര്ഭാവ "content/fetchers/curl.h"
+#അന്തര്ഭാവ "content/urldb.h"
 
 /**
  * maximum number of progress notifications per second
@@ -103,16 +103,16 @@
 /* Open SSL compatability for certificate handling */
 #ifdef WITH_OPENSSL
 
-#include <openssl/ssl.h>
-#include <openssl/x509v3.h>
+#അന്തര്ഭാവ <openssl/ssl.h>
+#അന്തര്ഭാവ <openssl/x509v3.h>
 
-#else /* WITH_OPENSSL */
+#അല്ലെങ്കിൽ /* WITH_OPENSSL */
 
-typedef char X509;
+തരനിർവചനം അക്ഷരം X509;
 
-static void X509_free(X509 *cert)
+സ്ഥിതം ശൂന്യം X509_free(X509 *cert)
 {
-	free(cert);
+	സ്വതന്ത്രം(cert);
 }
 
 #endif /* WITH_OPENSSL */
@@ -120,28 +120,28 @@ static void X509_free(X509 *cert)
 /* SSL certificate chain cache */
 
 /* We're only interested in the hostname and port */
-static uint32_t
-curl_fetch_ssl_key_hash(void *key)
+സ്ഥിതം uint32_t
+curl_fetch_ssl_താക്കോൽ_hash(ശൂന്യം *താക്കോൽ)
 {
-	nsurl *url = key;
+	nsurl *url = താക്കോൽ;
 	lwc_string *hostname = nsurl_get_component(url, NSURL_HOST);
 	lwc_string *port = nsurl_get_component(url, NSURL_PORT);
 	uint32_t hash;
 
-	if (port == NULL)
+	എങ്കിൽ (port == ശൂന്യ)
 		port = lwc_string_ref(corestring_lwc_443);
 
-	hash = lwc_string_hash_value(hostname) ^ lwc_string_hash_value(port);
+	hash = lwc_string_hash_മൂല്യം(hostname) ^ lwc_string_hash_മൂല്യം(port);
 
 	lwc_string_unref(hostname);
 	lwc_string_unref(port);
 
-	return hash;
+	തിരികെ hash;
 }
 
 /* We only compare the hostname and port */
-static bool
-curl_fetch_ssl_key_eq(void *key1, void *key2)
+സ്ഥിതം bool
+curl_fetch_ssl_താക്കോൽ_eq(ശൂന്യം *key1, ശൂന്യം *key2)
 {
 	nsurl *url1 = key1;
 	nsurl *url2 = key2;
@@ -151,18 +151,18 @@ curl_fetch_ssl_key_eq(void *key1, void *key2)
 	lwc_string *port2 = nsurl_get_component(url2, NSURL_PORT);
 	bool iseq = false;
 
-	if (port1 == NULL)
+	എങ്കിൽ (port1 == ശൂന്യ)
 		port1 = lwc_string_ref(corestring_lwc_443);
-	if (port2 == NULL)
+	എങ്കിൽ (port2 == ശൂന്യ)
 		port2 = lwc_string_ref(corestring_lwc_443);
 
-	if (lwc_string_isequal(hostname1, hostname2, &iseq) != lwc_error_ok ||
+	എങ്കിൽ (lwc_string_isequal(hostname1, hostname2, &iseq) != lwc_error_ok ||
 			iseq == false)
-		goto out;
+		പോകുക out;
 
 	iseq = false;
-	if (lwc_string_isequal(port1, port2, &iseq) != lwc_error_ok)
-		goto out;
+	എങ്കിൽ (lwc_string_isequal(port1, port2, &iseq) != lwc_error_ok)
+		പോകുക out;
 
 out:
 	lwc_string_unref(hostname1);
@@ -170,70 +170,70 @@ out:
 	lwc_string_unref(port1);
 	lwc_string_unref(port2);
 
-	return iseq;
+	തിരികെ iseq;
 }
 
-static void *
-curl_fetch_ssl_value_alloc(void *key)
+സ്ഥിതം ശൂന്യം *
+curl_fetch_ssl_മൂല്യം_alloc(ശൂന്യം *താക്കോൽ)
 {
-	struct cert_chain *out;
+	ഘടന cert_chain *out;
 
-	if (cert_chain_alloc(0, &out) != NSERROR_OK) {
-		return NULL;
+	എങ്കിൽ (cert_chain_alloc(0, &out) != NSERROR_OK) {
+		തിരികെ ശൂന്യ;
 	}
 
-	return out;
+	തിരികെ out;
 }
 
-static void
-curl_fetch_ssl_value_destroy(void *value)
+സ്ഥിതം ശൂന്യം
+curl_fetch_ssl_മൂല്യം_destroy(ശൂന്യം *മൂല്യം)
 {
-	struct cert_chain *chain = value;
-	if (cert_chain_free(chain) != NSERROR_OK) {
+	ഘടന cert_chain *chain = മൂല്യം;
+	എങ്കിൽ (cert_chain_free(chain) != NSERROR_OK) {
 		NSLOG(netsurf, WARNING, "Problem freeing SSL certificate chain");
 	}
 }
 
-static hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_eq = curl_fetch_ssl_key_eq,
-	.key_hash = curl_fetch_ssl_key_hash,
-	.value_alloc = curl_fetch_ssl_value_alloc,
-	.value_destroy = curl_fetch_ssl_value_destroy,
+സ്ഥിതം hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
+	.താക്കോൽ_clone = (hashmap_താക്കോൽ_clone_t)nsurl_ref,
+	.താക്കോൽ_destroy = (hashmap_താക്കോൽ_destroy_t)nsurl_unref,
+	.താക്കോൽ_eq = curl_fetch_ssl_താക്കോൽ_eq,
+	.താക്കോൽ_hash = curl_fetch_ssl_താക്കോൽ_hash,
+	.മൂല്യം_alloc = curl_fetch_ssl_മൂല്യം_alloc,
+	.മൂല്യം_destroy = curl_fetch_ssl_മൂല്യം_destroy,
 };
 
-static hashmap_t *curl_fetch_ssl_hashmap = NULL;
+സ്ഥിതം hashmap_t *curl_fetch_ssl_hashmap = ശൂന്യ;
 
 /** SSL certificate info */
-struct cert_info {
+ഘടന cert_info {
 	X509 *cert;		/**< Pointer to certificate */
 	long err;		/**< OpenSSL error code */
 };
 
-#if LIBCURL_VERSION_NUM >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
 #define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_XFERINFOFUNCTION
 #define NSCURLOPT_PROGRESS_DATA CURLOPT_XFERINFODATA
 #define NSCURL_PROGRESS_T curl_off_t
-#else
+#അല്ലെങ്കിൽ
 #define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_PROGRESSFUNCTION
 #define NSCURLOPT_PROGRESS_DATA CURLOPT_PROGRESSDATA
-#define NSCURL_PROGRESS_T double
+#define NSCURL_PROGRESS_T ഇരട്ട
 #endif
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x073800 /* 7.56.0 depricated curl_formadd */
 #define NSCURL_POSTDATA_T curl_mime
 #define NSCURL_POSTDATA_CURLOPT CURLOPT_MIMEPOST
 #define NSCURL_POSTDATA_FREE(x) curl_mime_free(x)
-#else
-#define NSCURL_POSTDATA_T struct curl_httppost
+#അല്ലെങ്കിൽ
+#define NSCURL_POSTDATA_T ഘടന curl_httppost
 #define NSCURL_POSTDATA_CURLOPT CURLOPT_HTTPPOST
 #define NSCURL_POSTDATA_FREE(x) curl_formfree(x)
 #endif
 
 /** Information for a single fetch. */
-struct curl_fetch_info {
-	struct fetch *fetch_handle; /**< The fetch handle we're parented by. */
+ഘടന curl_fetch_info {
+	ഘടന fetch *fetch_handle; /**< The fetch handle we're parented by. */
 	CURL * curl_handle;	/**< cURL handle if being fetched, or 0. */
 	bool sent_ssl_chain;	/**< Have we tried to send the SSL chain */
 	bool had_headers;	/**< Headers have been processed. */
@@ -243,64 +243,64 @@ struct curl_fetch_info {
 	bool downgrade_tls;	/**< Downgrade to TLS 1.2 */
 	nsurl *url;		/**< URL of this fetch. */
 	lwc_string *host;	/**< The hostname of this fetch. */
-	struct curl_slist *headers;	/**< List of request headers. */
-	char *location;		/**< Response Location header, or 0. */
+	ഘടന curl_slist *headers;	/**< List of request headers. */
+	അക്ഷരം *location;		/**< Response Location header, or 0. */
 	unsigned long content_length;	/**< Response Content-Length, or 0. */
-	char *cookie_string;	/**< Cookie string for this fetch */
-	char *realm;		/**< HTTP Auth Realm */
-	struct fetch_postdata *postdata; /**< POST data */
+	അക്ഷരം *cookie_string;	/**< Cookie string for this fetch */
+	അക്ഷരം *realm;		/**< HTTP Auth Realm */
+	ഘടന fetch_postdata *postdata; /**< POST data */
 	NSCURL_POSTDATA_T *curl_postdata; /**< POST data in curl representation */
 
 	long http_code; /**< HTTP result code from cURL. */
 
 	uint64_t last_progress_update;	/**< Time of last progress update */
-	int cert_depth; /**< deepest certificate in use */
-	struct cert_info cert_data[MAX_CERT_DEPTH]; /**< HTTPS certificate data */
+	പൂർണ്ണസംഖ്യ cert_depth; /**< deepest certificate in use */
+	ഘടന cert_info cert_data[MAX_CERT_DEPTH]; /**< HTTPS certificate data */
 };
 
 /** curl handle cache entry */
-struct cache_handle {
+ഘടന cache_handle {
 	CURL *handle; /**< The cached cURL handle */
 	lwc_string *host; /**< The host for which this handle is cached */
 
-	struct cache_handle *r_prev; /**< Previous cached handle in ring. */
-	struct cache_handle *r_next; /**< Next cached handle in ring. */
+	ഘടന cache_handle *r_prev; /**< Previous cached handle in ring. */
+	ഘടന cache_handle *r_next; /**< Next cached handle in ring. */
 };
 
 /** Global cURL multi handle. */
 CURLM *fetch_curl_multi;
 
 /** Curl handle with default options set; not used for transfers. */
-static CURL *fetch_blank_curl;
+സ്ഥിതം CURL *fetch_blank_curl;
 
 /** Ring of cached handles */
-static struct cache_handle *curl_handle_ring = 0;
+സ്ഥിതം ഘടന cache_handle *curl_handle_ring = 0;
 
 /** Count of how many schemes the curl fetcher is handling */
-static int curl_fetchers_registered = 0;
+സ്ഥിതം പൂർണ്ണസംഖ്യ curl_fetchers_registered = 0;
 
 /** Flag for runtime detection of openssl usage */
-static bool curl_with_openssl;
+സ്ഥിതം bool curl_with_openssl;
 
 /** Error buffer for cURL. */
-static char fetch_error_buffer[CURL_ERROR_SIZE];
+സ്ഥിതം അക്ഷരം fetch_error_buffer[CURL_ERROR_SIZE];
 
 /** Proxy authentication details. */
-static char fetch_proxy_userpwd[100];
+സ്ഥിതം അക്ഷരം fetch_proxy_userpwd[100];
 
 /** Interlock to prevent initiation during callbacks */
-static bool inside_curl = false;
+സ്ഥിതം bool inside_curl = false;
 
 
 /**
  * Initialise a cURL fetcher.
  */
-static bool fetch_curl_initialise(lwc_string *scheme)
+സ്ഥിതം bool fetch_curl_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "Initialise cURL fetcher for %s",
 	      lwc_string_data(scheme));
 	curl_fetchers_registered++;
-	return true; /* Always succeeds */
+	തിരികെ true; /* Always succeeds */
 }
 
 
@@ -309,14 +309,14 @@ static bool fetch_curl_initialise(lwc_string *scheme)
  *
  * \param scheme The scheme to finalise.
  */
-static void fetch_curl_finalise(lwc_string *scheme)
+സ്ഥിതം ശൂന്യം fetch_curl_finalise(lwc_string *scheme)
 {
-	struct cache_handle *h;
+	ഘടന cache_handle *h;
 
 	curl_fetchers_registered--;
 	NSLOG(netsurf, INFO, "Finalise cURL fetcher %s",
 	      lwc_string_data(scheme));
-	if (curl_fetchers_registered == 0) {
+	എങ്കിൽ (curl_fetchers_registered == 0) {
 		CURLMcode codem;
 		/* All the fetchers have been finalised. */
 		NSLOG(netsurf, INFO,
@@ -325,7 +325,7 @@ static void fetch_curl_finalise(lwc_string *scheme)
 		curl_easy_cleanup(fetch_blank_curl);
 
 		codem = curl_multi_cleanup(fetch_curl_multi);
-		if (codem != CURLM_OK)
+		എങ്കിൽ (codem != CURLM_OK)
 			NSLOG(netsurf, INFO,
 			      "curl_multi_cleanup failed: ignoring");
 
@@ -333,16 +333,16 @@ static void fetch_curl_finalise(lwc_string *scheme)
 
 		NSLOG(netsurf, DEBUG, "Cleaning up SSL cert chain hashmap");
 		hashmap_destroy(curl_fetch_ssl_hashmap);
-		curl_fetch_ssl_hashmap = NULL;
+		curl_fetch_ssl_hashmap = ശൂന്യ;
 	}
 
 	/* Free anything remaining in the cached curl handle ring */
-	while (curl_handle_ring != NULL) {
+	ആകുമ്പോൾ (curl_handle_ring != ശൂന്യ) {
 		h = curl_handle_ring;
 		RING_REMOVE(curl_handle_ring, h);
 		lwc_string_unref(h->host);
 		curl_easy_cleanup(h->handle);
-		free(h);
+		സ്വതന്ത്രം(h);
 	}
 }
 
@@ -353,9 +353,9 @@ static void fetch_curl_finalise(lwc_string *scheme)
  * \param url The url to check.
  * \return true if the fetcher supports the url else false.
  */
-static bool fetch_curl_can_fetch(const nsurl *url)
+സ്ഥിതം bool fetch_curl_can_fetch(സ്ഥിരം nsurl *url)
 {
-	return nsurl_has_component(url, NSURL_HOST);
+	തിരികെ nsurl_has_component(url, NSURL_HOST);
 }
 
 
@@ -363,90 +363,90 @@ static bool fetch_curl_can_fetch(const nsurl *url)
 /**
  * allocate postdata
  */
-static struct fetch_postdata *
-fetch_curl_alloc_postdata(const char *post_urlenc,
-			  const struct fetch_multipart_data *post_multipart)
+സ്ഥിതം ഘടന fetch_postdata *
+fetch_curl_alloc_postdata(സ്ഥിരം അക്ഷരം *post_urlenc,
+			  സ്ഥിരം ഘടന fetch_multipart_data *post_multipart)
 {
-	struct fetch_postdata *postdata;
-	postdata = calloc(1, sizeof(struct fetch_postdata));
-	if (postdata != NULL) {
+	ഘടന fetch_postdata *postdata;
+	postdata = calloc(1, വലുപ്പം(ഘടന fetch_postdata));
+	എങ്കിൽ (postdata != ശൂന്യ) {
 
-		if (post_urlenc) {
+		എങ്കിൽ (post_urlenc) {
 			postdata->type = FETCH_POSTDATA_URLENC;
 			postdata->data.urlenc = strdup(post_urlenc);
-			if (postdata->data.urlenc == NULL) {
-				free(postdata);
-				postdata = NULL;
+			എങ്കിൽ (postdata->data.urlenc == ശൂന്യ) {
+				സ്വതന്ത്രം(postdata);
+				postdata = ശൂന്യ;
 			}
-		} else if (post_multipart) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (post_multipart) {
 			postdata->type = FETCH_POSTDATA_MULTIPART;
 			postdata->data.multipart = fetch_multipart_data_clone(post_multipart);
-			if (postdata->data.multipart == NULL) {
-				free(postdata);
-				postdata = NULL;
+			എങ്കിൽ (postdata->data.multipart == ശൂന്യ) {
+				സ്വതന്ത്രം(postdata);
+				postdata = ശൂന്യ;
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			postdata->type = FETCH_POSTDATA_NONE;
 		}
 	}
-	return postdata;
+	തിരികെ postdata;
 }
 
 /**
  * free postdata
  */
-static void fetch_curl_free_postdata(struct fetch_postdata *postdata)
+സ്ഥിതം ശൂന്യം fetch_curl_free_postdata(ഘടന fetch_postdata *postdata)
 {
-	if (postdata != NULL) {
-		switch (postdata->type) {
-		case FETCH_POSTDATA_NONE:
-			break;
-		case FETCH_POSTDATA_URLENC:
-			free(postdata->data.urlenc);
-			break;
-		case FETCH_POSTDATA_MULTIPART:
+	എങ്കിൽ (postdata != ശൂന്യ) {
+		തിരഞ്ഞെടുപ്പ് (postdata->type) {
+		അവസ്ഥ FETCH_POSTDATA_NONE:
+			നിർത്തുക;
+		അവസ്ഥ FETCH_POSTDATA_URLENC:
+			സ്വതന്ത്രം(postdata->data.urlenc);
+			നിർത്തുക;
+		അവസ്ഥ FETCH_POSTDATA_MULTIPART:
 			fetch_multipart_data_destroy(postdata->data.multipart);
-			break;
+			നിർത്തുക;
 		}
 
-		free(postdata);
+		സ്വതന്ത്രം(postdata);
 	}
 }
 
 /**
  *construct a new fetch structure
  */
-static struct curl_fetch_info *fetch_alloc(void)
+സ്ഥിതം ഘടന curl_fetch_info *fetch_alloc(ശൂന്യം)
 {
-	struct curl_fetch_info *fetch;
-	fetch = malloc(sizeof (*fetch));
-	if (fetch == NULL)
-		return NULL;
+	ഘടന curl_fetch_info *fetch;
+	fetch = malloc(വലുപ്പം (*fetch));
+	എങ്കിൽ (fetch == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
-	fetch->curl_handle = NULL;
+	fetch->curl_handle = ശൂന്യ;
 	fetch->sent_ssl_chain = false;
 	fetch->had_headers = false;
 	fetch->abort = false;
 	fetch->stopped = false;
 	fetch->only_2xx = false;
 	fetch->downgrade_tls = false;
-	fetch->headers = NULL;
-	fetch->url = NULL;
-	fetch->host = NULL;
-	fetch->location = NULL;
+	fetch->headers = ശൂന്യ;
+	fetch->url = ശൂന്യ;
+	fetch->host = ശൂന്യ;
+	fetch->location = ശൂന്യ;
 	fetch->content_length = 0;
 	fetch->http_code = 0;
-	fetch->cookie_string = NULL;
-	fetch->realm = NULL;
+	fetch->cookie_string = ശൂന്യ;
+	fetch->realm = ശൂന്യ;
 	fetch->last_progress_update = 0;
-	fetch->postdata = NULL;
-	fetch->curl_postdata = NULL;
+	fetch->postdata = ശൂന്യ;
+	fetch->curl_postdata = ശൂന്യ;
 
 	/* Clear certificate chain data */
-	memset(fetch->cert_data, 0, sizeof(fetch->cert_data));
+	memset(fetch->cert_data, 0, വലുപ്പം(fetch->cert_data));
 	fetch->cert_depth = -1;
 
-	return fetch;
+	തിരികെ fetch;
 }
 
 /**
@@ -470,22 +470,22 @@ static struct curl_fetch_info *fetch_alloc(void)
  * Some private data can be passed as the last parameter to fetch_start, and
  * callbacks will contain this.
  */
-static void *
-fetch_curl_setup(struct fetch *parent_fetch,
+സ്ഥിതം ശൂന്യം *
+fetch_curl_setup(ഘടന fetch *parent_fetch,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 സ്ഥിരം അക്ഷരം *post_urlenc,
+		 സ്ഥിരം ഘടന fetch_multipart_data *post_multipart,
+		 സ്ഥിരം അക്ഷരം **headers)
 {
-	struct curl_fetch_info *fetch;
-	struct curl_slist *slist;
-	int i;
+	ഘടന curl_fetch_info *fetch;
+	ഘടന curl_slist *slist;
+	പൂർണ്ണസംഖ്യ i;
 
 	fetch = fetch_alloc();
-	if (fetch == NULL)
-		return NULL;
+	എങ്കിൽ (fetch == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", fetch, nsurl_access(url));
 
@@ -494,18 +494,18 @@ fetch_curl_setup(struct fetch *parent_fetch,
 	fetch->fetch_handle = parent_fetch;
 	fetch->url = nsurl_ref(url);
 	fetch->host = nsurl_get_component(url, NSURL_HOST);
-	if (fetch->host == NULL) {
-		goto failed;
+	എങ്കിൽ (fetch->host == ശൂന്യ) {
+		പോകുക failed;
 	}
 	fetch->postdata = fetch_curl_alloc_postdata(post_urlenc, post_multipart);
-	if (fetch->postdata == NULL) {
-		goto failed;
+	എങ്കിൽ (fetch->postdata == ശൂന്യ) {
+		പോകുക failed;
 	}
 
-#define APPEND(list, value) \
-	slist = curl_slist_append(list, value);		\
-	if (slist == NULL)				\
-		goto failed;				\
+#define APPEND(list, മൂല്യം) \
+	slist = curl_slist_append(list, മൂല്യം);		\
+	എങ്കിൽ (slist == ശൂന്യ)				\
+		പോകുക failed;				\
 	list = slist;
 
 	/* remove curl default headers */
@@ -515,34 +515,34 @@ fetch_curl_setup(struct fetch *parent_fetch,
 	 * which fails with lighttpd, so disable it (see bug 1429054) */
 	APPEND(fetch->headers, "Expect:");
 
-	if ((nsoption_charp(accept_language) != NULL) &&
+	എങ്കിൽ ((nsoption_charp(accept_language) != ശൂന്യ) &&
 	    (nsoption_charp(accept_language)[0] != '\0')) {
-		char s[80];
-		snprintf(s, sizeof s, "Accept-Language: %s, *;q=0.1",
+		അക്ഷരം s[80];
+		snprintf(s, വലുപ്പം s, "Accept-Language: %s, *;q=0.1",
 			 nsoption_charp(accept_language));
-		s[sizeof s - 1] = 0;
+		s[വലുപ്പം s - 1] = 0;
 		APPEND(fetch->headers, s);
 	}
 
-	if (nsoption_charp(accept_charset) != NULL &&
+	എങ്കിൽ (nsoption_charp(accept_charset) != ശൂന്യ &&
 	    nsoption_charp(accept_charset)[0] != '\0') {
-		char s[80];
-		snprintf(s, sizeof s, "Accept-Charset: %s, *;q=0.1",
+		അക്ഷരം s[80];
+		snprintf(s, വലുപ്പം s, "Accept-Charset: %s, *;q=0.1",
 			 nsoption_charp(accept_charset));
-		s[sizeof s - 1] = 0;
+		s[വലുപ്പം s - 1] = 0;
 		APPEND(fetch->headers, s);
 	}
 
-	if (nsoption_bool(do_not_track) == true) {
+	എങ്കിൽ (nsoption_bool(do_not_track) == true) {
 		APPEND(fetch->headers, "DNT: 1");
 	}
 
 	/* And add any headers specified by the caller */
-	for (i = 0; headers[i] != NULL; i++) {
+	വേണ്ടി (i = 0; headers[i] != ശൂന്യ; i++) {
 		APPEND(fetch->headers, headers[i]);
 	}
 
-	return fetch;
+	തിരികെ fetch;
 
 #undef APPEND
 
@@ -551,8 +551,8 @@ failed:
 	nsurl_unref(fetch->url);
 	fetch_curl_free_postdata(fetch->postdata);
 	curl_slist_free_all(fetch->headers);
-	free(fetch);
-	return NULL;
+	സ്വതന്ത്രം(fetch);
+	തിരികെ ശൂന്യ;
 }
 
 
@@ -561,96 +561,96 @@ failed:
 /**
  * Retrieve the ssl cert chain for the fetch, creating a blank one if needed
  */
-static struct cert_chain *
-fetch_curl_get_cached_chain(struct curl_fetch_info *f)
+സ്ഥിതം ഘടന cert_chain *
+fetch_curl_get_cached_chain(ഘടന curl_fetch_info *f)
 {
-	struct cert_chain *chain;
+	ഘടന cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
-	if (chain == NULL) {
-		chain = hashmap_insert(curl_fetch_ssl_hashmap, f->url);
+	എങ്കിൽ (chain == ശൂന്യ) {
+		chain = hashmap_തിരുകുക(curl_fetch_ssl_hashmap, f->url);
 	}
 
-	return chain;
+	തിരികെ chain;
 }
 
 /**
  * Report the certificate information in the fetch to the users
  */
-static void
-fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
+സ്ഥിതം ശൂന്യം
+fetch_curl_store_certs_in_cache(ഘടന curl_fetch_info *f)
 {
 	size_t depth;
 	BIO *mem;
 	BUF_MEM *buf[MAX_CERT_DEPTH];
-	struct cert_chain chain, *cached_chain;
-	struct cert_info *certs;
+	ഘടന cert_chain chain, *cached_chain;
+	ഘടന cert_info *certs;
 
-	memset(&chain, 0, sizeof(chain));
+	memset(&chain, 0, വലുപ്പം(chain));
 
 	certs = f->cert_data;
 	chain.depth = f->cert_depth + 1; /* 0 indexed certificate depth */
 
-	for (depth = 0; depth < chain.depth; depth++) {
-		if (certs[depth].cert == NULL) {
+	വേണ്ടി (depth = 0; depth < chain.depth; depth++) {
+		എങ്കിൽ (certs[depth].cert == ശൂന്യ) {
 			/* This certificate is missing, skip it */
 			chain.certs[depth].err = SSL_CERT_ERR_CERT_MISSING;
-			continue;
+			തുടരുക;
 		}
 
 		/* error code (if any) */
-		switch (certs[depth].err) {
-		case X509_V_OK:
+		തിരഞ്ഞെടുപ്പ് (certs[depth].err) {
+		അവസ്ഥ X509_V_OK:
 			chain.certs[depth].err = SSL_CERT_ERR_OK;
-			break;
+			നിർത്തുക;
 
-		case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+		അവസ്ഥ X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
+		അവസ്ഥ X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_താക്കോൽ:
 			chain.certs[depth].err = SSL_CERT_ERR_BAD_ISSUER;
-			break;
+			നിർത്തുക;
 
-		case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
+		അവസ്ഥ X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
+		അവസ്ഥ X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
 			/* fallthrough */
-		case X509_V_ERR_CERT_SIGNATURE_FAILURE:
+		അവസ്ഥ X509_V_ERR_CERT_SIGNATURE_FAILURE:
 			/* fallthrough */
-		case X509_V_ERR_CRL_SIGNATURE_FAILURE:
+		അവസ്ഥ X509_V_ERR_CRL_SIGNATURE_FAILURE:
 			chain.certs[depth].err = SSL_CERT_ERR_BAD_SIG;
-			break;
+			നിർത്തുക;
 
-		case X509_V_ERR_CERT_NOT_YET_VALID:
+		അവസ്ഥ X509_V_ERR_CERT_NOT_YET_VALID:
 			/* fallthrough */
-		case X509_V_ERR_CRL_NOT_YET_VALID:
+		അവസ്ഥ X509_V_ERR_CRL_NOT_YET_VALID:
 			chain.certs[depth].err = SSL_CERT_ERR_TOO_YOUNG;
-			break;
+			നിർത്തുക;
 
-		case X509_V_ERR_CERT_HAS_EXPIRED:
+		അവസ്ഥ X509_V_ERR_CERT_HAS_EXPIRED:
 			/* fallthrough */
-		case X509_V_ERR_CRL_HAS_EXPIRED:
+		അവസ്ഥ X509_V_ERR_CRL_HAS_EXPIRED:
 			chain.certs[depth].err = SSL_CERT_ERR_TOO_OLD;
-			break;
+			നിർത്തുക;
 
-		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+		അവസ്ഥ X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
 			chain.certs[depth].err = SSL_CERT_ERR_SELF_SIGNED;
-			break;
+			നിർത്തുക;
 
-		case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+		അവസ്ഥ X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
 			chain.certs[depth].err = SSL_CERT_ERR_CHAIN_SELF_SIGNED;
-			break;
+			നിർത്തുക;
 
-		case X509_V_ERR_CERT_REVOKED:
+		അവസ്ഥ X509_V_ERR_CERT_REVOKED:
 			chain.certs[depth].err = SSL_CERT_ERR_REVOKED;
-			break;
+			നിർത്തുക;
 
-		case X509_V_ERR_HOSTNAME_MISMATCH:
+		അവസ്ഥ X509_V_ERR_HOSTNAME_MISMATCH:
 			chain.certs[depth].err = SSL_CERT_ERR_HOSTNAME_MISMATCH;
-			break;
+			നിർത്തുക;
 
-		default:
+		സ്ഥിരസ്ഥിതി:
 			chain.certs[depth].err = SSL_CERT_ERR_UNKNOWN;
-			break;
+			നിർത്തുക;
 		}
 
 		/*
@@ -659,7 +659,7 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
 		mem = BIO_new(BIO_s_mem());
 		i2d_X509_bio(mem, certs[depth].cert);
 		BIO_get_mem_ptr(mem, &buf[depth]);
-		(void) BIO_set_close(mem, BIO_NOCLOSE);
+		(ശൂന്യം) BIO_set_close(mem, BIO_NOCLOSE);
 		BIO_free(mem);
 
 		chain.certs[depth].der = (uint8_t *)buf[depth]->data;
@@ -668,17 +668,17 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
 
 	/* Now dup that chain into the cache */
 	cached_chain = fetch_curl_get_cached_chain(f);
-	if (cert_chain_dup_into(&chain, cached_chain) != NSERROR_OK) {
+	എങ്കിൽ (cert_chain_dup_into(&chain, cached_chain) != NSERROR_OK) {
 		/* Something went wrong storing the chain, give up */
 		hashmap_remove(curl_fetch_ssl_hashmap, f->url);
 	}
 
 	/* release the openssl memory buffer */
-	for (depth = 0; depth < chain.depth; depth++) {
-		if (chain.certs[depth].err == SSL_CERT_ERR_CERT_MISSING) {
-			continue;
+	വേണ്ടി (depth = 0; depth < chain.depth; depth++) {
+		എങ്കിൽ (chain.certs[depth].err == SSL_CERT_ERR_CERT_MISSING) {
+			തുടരുക;
 		}
-		if (buf[depth] != NULL) {
+		എങ്കിൽ (buf[depth] != ശൂന്യ) {
 			BUF_MEM_free(buf[depth]);
 		}
 	}
@@ -703,43 +703,43 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
  * \return 1 to indicate verification should continue and 0 to indicate
  *          verification should stop.
  */
-static int
-fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+fetch_curl_verify_callback(പൂർണ്ണസംഖ്യ verify_ok, X509_STORE_CTX *x509_ctx)
 {
-	int depth;
-	struct curl_fetch_info *fetch;
+	പൂർണ്ണസംഖ്യ depth;
+	ഘടന curl_fetch_info *fetch;
 
 	depth = X509_STORE_CTX_get_error_depth(x509_ctx);
 	fetch = X509_STORE_CTX_get_app_data(x509_ctx);
 
 	/* certificate chain is excessively deep so fail verification */
-	if (depth >= MAX_CERT_DEPTH) {
+	എങ്കിൽ (depth >= MAX_CERT_DEPTH) {
 		X509_STORE_CTX_set_error(x509_ctx,
 					 X509_V_ERR_CERT_CHAIN_TOO_LONG);
-		return 0;
+		തിരികെ 0;
 	}
 
 	/* record the max depth */
-	if (depth > fetch->cert_depth) {
+	എങ്കിൽ (depth > fetch->cert_depth) {
 		fetch->cert_depth = depth;
 	}
 
 	/* save the certificate by incrementing the reference count and
 	 * keeping a pointer.
 	 */
-	if (!fetch->cert_data[depth].cert) {
+	എങ്കിൽ (!fetch->cert_data[depth].cert) {
 		fetch->cert_data[depth].cert = X509_STORE_CTX_get_current_cert(x509_ctx);
 		X509_up_ref(fetch->cert_data[depth].cert);
 		fetch->cert_data[depth].err = X509_STORE_CTX_get_error(x509_ctx);
 	}
 
 	/* allow certificate chain to be completed */
-	if (depth > 0) {
+	എങ്കിൽ (depth > 0) {
 		verify_ok = 1;
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* search for deeper certificates in the chain with errors */
-		for (depth = fetch->cert_depth; depth > 0; depth--) {
-			if (fetch->cert_data[depth].err != 0) {
+		വേണ്ടി (depth = fetch->cert_depth; depth > 0; depth--) {
+			എങ്കിൽ (fetch->cert_data[depth].err != 0) {
 				/* error in previous certificate so fail verification */
 				verify_ok = 0;
 				X509_STORE_CTX_set_error(x509_ctx, fetch->cert_data[depth].err);
@@ -747,7 +747,7 @@ fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
 		}
 	}
 
-	return verify_ok;
+	തിരികെ verify_ok;
 }
 
 
@@ -761,10 +761,10 @@ fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
  * \param parm The fetch context.
  * \return 1 to indicate verification success and 0 to indicate verification failure.
  */
-static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
+സ്ഥിതം പൂർണ്ണസംഖ്യ fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, ശൂന്യം *parm)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *) parm;
-	int ok;
+	ഘടന curl_fetch_info *f = (ഘടന curl_fetch_info *) parm;
+	പൂർണ്ണസംഖ്യ ok;
 	X509_VERIFY_PARAM *vparam;
 
 	/* Configure the verification parameters to include hostname */
@@ -776,18 +776,18 @@ static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
 					 lwc_string_length(f->host));
 
 	/* Store fetch struct in context for verify callback */
-	if (ok) {
+	എങ്കിൽ (ok) {
 		ok = X509_STORE_CTX_set_app_data(x509_ctx, parm);
 	}
 
 	/* verify the certificate chain using standard call */
-	if (ok) {
+	എങ്കിൽ (ok) {
 		ok = X509_verify_cert(x509_ctx);
 	}
 
 	fetch_curl_store_certs_in_cache(f);
 
-	return ok;
+	തിരികെ ok;
 }
 
 
@@ -799,10 +799,10 @@ static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
  * \param parm The callback context.
  * \return A curl result code.
  */
-static CURLcode
-fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
+സ്ഥിതം CURLcode
+fetch_curl_sslctxfun(CURL *curl_handle, ശൂന്യം *_sslctx, ശൂന്യം *parm)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *) parm;
+	ഘടന curl_fetch_info *f = (ഘടന curl_fetch_info *) parm;
 	SSL_CTX *sslctx = _sslctx;
 	long options = SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 |
 			SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1;
@@ -815,7 +815,7 @@ fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
 					 fetch_curl_cert_verify_callback,
 					 parm);
 
-	if (f->downgrade_tls) {
+	എങ്കിൽ (f->downgrade_tls) {
 		/* Disable TLS 1.3 if the server can't cope with it */
 #ifdef SSL_OP_NO_TLSv1_3
 		options |= SSL_OP_NO_TLSv1_3;
@@ -832,7 +832,7 @@ fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
 	SSL_CTX_clear_options(sslctx, SSL_OP_NO_TICKET);
 #endif
 
-	return CURLE_OK;
+	തിരികെ CURLE_OK;
 }
 
 
@@ -842,75 +842,75 @@ fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
 /**
  * Report the certificate information in the fetch to the users
  */
-static void
-fetch_curl_report_certs_upstream(struct curl_fetch_info *f)
+സ്ഥിതം ശൂന്യം
+fetch_curl_report_certs_upstream(ഘടന curl_fetch_info *f)
 {
-	fetch_msg msg;
-	struct cert_chain *chain;
+	fetch_സന്ദേശം സന്ദേശം;
+	ഘടന cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
 
-	if (chain != NULL) {
-		msg.type = FETCH_CERTS;
-		msg.data.chain = chain;
+	എങ്കിൽ (chain != ശൂന്യ) {
+		സന്ദേശം.type = FETCH_CERTS;
+		സന്ദേശം.data.chain = chain;
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
 	}
 
 	f->sent_ssl_chain = true;
 }
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x073800 /* 7.56.0 depricated curl_formadd */
 
 /**
  * curl mime data context
  */
-struct curl_mime_ctx {
-	char *buffer;
+ഘടന curl_mime_ctx {
+	അക്ഷരം *buffer;
 	curl_off_t size;
 	curl_off_t position;
 };
 
-static size_t mime_data_read_callback(char *buffer, size_t size, size_t nitems, void *arg)
+സ്ഥിതം size_t mime_data_read_callback(അക്ഷരം *buffer, size_t size, size_t nitems, ശൂന്യം *arg)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
+	ഘടന curl_mime_ctx *mctx = (ഘടന curl_mime_ctx *) arg;
 	curl_off_t sz = mctx->size - mctx->position;
 
 	nitems *= size;
-	if(sz > (curl_off_t)nitems) {
+	എങ്കിൽ(sz > (curl_off_t)nitems) {
 		sz = nitems;
 	}
-	if(sz) {
+	എങ്കിൽ(sz) {
 		memcpy(buffer, mctx->buffer + mctx->position, sz);
 	}
 	mctx->position += sz;
-	return sz;
+	തിരികെ sz;
 }
 
-static int mime_data_seek_callback(void *arg, curl_off_t offset, int origin)
+സ്ഥിതം പൂർണ്ണസംഖ്യ mime_data_seek_callback(ശൂന്യം *arg, curl_off_t offset, പൂർണ്ണസംഖ്യ origin)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
+	ഘടന curl_mime_ctx *mctx = (ഘടന curl_mime_ctx *) arg;
 
-	switch(origin) {
-	case SEEK_END:
+	തിരഞ്ഞെടുപ്പ്(origin) {
+	അവസ്ഥ SEEK_END:
 		offset += mctx->size;
-		break;
-	case SEEK_CUR:
+		നിർത്തുക;
+	അവസ്ഥ SEEK_CUR:
 		offset += mctx->position;
-		break;
+		നിർത്തുക;
 	}
 
-	if(offset < 0) {
-		return CURL_SEEKFUNC_FAIL;
+	എങ്കിൽ(offset < 0) {
+		തിരികെ CURL_SEEKFUNC_FAIL;
 	}
 	mctx->position = offset;
-	return CURL_SEEKFUNC_OK;
+	തിരികെ CURL_SEEKFUNC_OK;
 }
 
-static void mime_data_free_callback(void *arg)
+സ്ഥിതം ശൂന്യം mime_data_free_callback(ശൂന്യം *arg)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
-	free(mctx);
+	ഘടന curl_mime_ctx *mctx = (ഘടന curl_mime_ctx *) arg;
+	സ്വതന്ത്രം(mctx);
 }
 
 /**
@@ -919,156 +919,156 @@ static void mime_data_free_callback(void *arg)
  * \param chandle curl fetch handle.
  * \param multipart limked list of struct ::fetch_multipart forming post data.
  */
-static curl_mime *
+സ്ഥിതം curl_mime *
 fetch_curl_postdata_convert(CURL *chandle,
-			    const struct fetch_multipart_data *multipart)
+			    സ്ഥിരം ഘടന fetch_multipart_data *multipart)
 {
 	curl_mime *cmime;
 	curl_mimepart *part;
 	CURLcode code = CURLE_OK;
-	size_t value_len;
+	size_t മൂല്യം_len;
 
 	cmime = curl_mime_init(chandle);
-	if (cmime == NULL) {
+	എങ്കിൽ (cmime == ശൂന്യ) {
 		NSLOG(netsurf, WARNING, "postdata conversion failed to curl mime context");
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
 	/* iterate post data */
-	for (; multipart != NULL; multipart = multipart->next) {
+	വേണ്ടി (; multipart != ശൂന്യ; multipart = multipart->next) {
 		part = curl_mime_addpart(cmime);
-		if (part == NULL) {
-			goto convert_failed;
+		എങ്കിൽ (part == ശൂന്യ) {
+			പോകുക convert_failed;
 		}
 
 		code = curl_mime_name(part, multipart->name);
-		if (code != CURLE_OK) {
-			goto convert_failed;
+		എങ്കിൽ (code != CURLE_OK) {
+			പോകുക convert_failed;
 		}
 
-		value_len = strlen(multipart->value);
+		മൂല്യം_len = strlen(multipart->മൂല്യം);
 
-		if (multipart->file && value_len==0) {
+		എങ്കിൽ (multipart->file && മൂല്യം_len==0) {
 			/* file entries with no filename require special handling */
-			code=curl_mime_data(part, multipart->value, value_len);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			code=curl_mime_data(part, multipart->മൂല്യം, മൂല്യം_len);
+			എങ്കിൽ (code != CURLE_OK) {
+				പോകുക convert_failed;
 			}
 
 			code = curl_mime_filename(part, "");
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			എങ്കിൽ (code != CURLE_OK) {
+				പോകുക convert_failed;
 			}
 
 			code = curl_mime_type(part, "application/octet-stream");
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			എങ്കിൽ (code != CURLE_OK) {
+				പോകുക convert_failed;
 			}
 
-		} else if(multipart->file) {
+		} അല്ലെങ്കിൽ എങ്കിൽ(multipart->file) {
 			/* file entry */
 			nserror ret;
-			char *leafname = NULL;
-			char *mimetype = NULL;
+			അക്ഷരം *leafname = ശൂന്യ;
+			അക്ഷരം *mimetype = ശൂന്യ;
 
 			code = curl_mime_filedata(part, multipart->rawfile);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			എങ്കിൽ (code != CURLE_OK) {
+				പോകുക convert_failed;
 			}
 
-			ret = guit->file->basename(multipart->value, &leafname, NULL);
-			if (ret != NSERROR_OK) {
-				goto convert_failed;
+			ret = guit->file->basename(multipart->മൂല്യം, &leafname, ശൂന്യ);
+			എങ്കിൽ (ret != NSERROR_OK) {
+				പോകുക convert_failed;
 			}
 			code = curl_mime_filename(part, leafname);
-			free(leafname);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			സ്വതന്ത്രം(leafname);
+			എങ്കിൽ (code != CURLE_OK) {
+				പോകുക convert_failed;
 			}
 
-			mimetype = guit->fetch->mimetype(multipart->value);
-			if (mimetype == NULL) {
+			mimetype = guit->fetch->mimetype(multipart->മൂല്യം);
+			എങ്കിൽ (mimetype == ശൂന്യ) {
 				mimetype=strdup("text/plain");
 			}
-			if (mimetype == NULL) {
-				goto convert_failed;
+			എങ്കിൽ (mimetype == ശൂന്യ) {
+				പോകുക convert_failed;
 			}
 			code = curl_mime_type(part, mimetype);
-			free(mimetype);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			സ്വതന്ത്രം(mimetype);
+			എങ്കിൽ (code != CURLE_OK) {
+				പോകുക convert_failed;
 			}
 
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* make the curl mime reference the existing multipart
 			 * data which requires use of a callback and context.
 			 */
-			struct curl_mime_ctx *cb_ctx;
-			cb_ctx = malloc(sizeof(struct curl_mime_ctx));
-			if (cb_ctx == NULL) {
-				goto convert_failed;
+			ഘടന curl_mime_ctx *cb_ctx;
+			cb_ctx = malloc(വലുപ്പം(ഘടന curl_mime_ctx));
+			എങ്കിൽ (cb_ctx == ശൂന്യ) {
+				പോകുക convert_failed;
 			}
-			cb_ctx->buffer = multipart->value;
-			cb_ctx->size = value_len;
+			cb_ctx->buffer = multipart->മൂല്യം;
+			cb_ctx->size = മൂല്യം_len;
 			cb_ctx->position = 0;
 			code = curl_mime_data_cb(part,
-						 value_len,
+						 മൂല്യം_len,
 						 mime_data_read_callback,
 						 mime_data_seek_callback,
 						 mime_data_free_callback,
 						 cb_ctx);
-			if (code != CURLE_OK) {
-				free(cb_ctx);
-				goto convert_failed;
+			എങ്കിൽ (code != CURLE_OK) {
+				സ്വതന്ത്രം(cb_ctx);
+				പോകുക convert_failed;
 			}
 		}
 	}
 
-	return cmime;
+	തിരികെ cmime;
 
 convert_failed:
 	NSLOG(netsurf, WARNING, "postdata conversion failed with curl code: %d", code);
 	curl_mime_free(cmime);
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-#else /* LIBCURL_VERSION_NUM >= 0x073800 */
+#അല്ലെങ്കിൽ /* LIBCURL_VERSION_NUM >= 0x073800 */
 
 /**
  * Convert a list of struct ::fetch_multipart_data to a list of
  * struct curl_httppost for libcurl.
  */
-static struct curl_httppost *
+സ്ഥിതം ഘടന curl_httppost *
 fetch_curl_postdata_convert(CURL *chandle,
-			    const struct fetch_multipart_data *control)
+			    സ്ഥിരം ഘടന fetch_multipart_data *control)
 {
-	struct curl_httppost *post = NULL, *last = NULL;
+	ഘടന curl_httppost *post = ശൂന്യ, *last = ശൂന്യ;
 	CURLFORMcode code;
 	nserror ret;
 
-	for (; control; control = control->next) {
-		if (control->file) {
-			char *leafname = NULL;
-			ret = guit->file->basename(control->value, &leafname, NULL);
-			if (ret != NSERROR_OK) {
-				continue;
+	വേണ്ടി (; control; control = control->next) {
+		എങ്കിൽ (control->file) {
+			അക്ഷരം *leafname = ശൂന്യ;
+			ret = guit->file->basename(control->മൂല്യം, &leafname, ശൂന്യ);
+			എങ്കിൽ (ret != NSERROR_OK) {
+				തുടരുക;
 			}
 
 			/* We have to special case filenames of "", so curl
 			 * a) actually attempts the fetch and
 			 * b) doesn't attempt to open the file ""
 			 */
-			if (control->value[0] == '\0') {
+			എങ്കിൽ (control->മൂല്യം[0] == '\0') {
 				/* dummy buffer - needs to be static so
 				 * pointer's still valid when we go out
 				 * of scope (not that libcurl should be
 				 * attempting to access it, of course).
 				 */
-				static char buf;
+				സ്ഥിതം അക്ഷരം buf;
 
 				code = curl_formadd(&post, &last,
 						    CURLFORM_COPYNAME, control->name,
-						    CURLFORM_BUFFER, control->value,
+						    CURLFORM_BUFFER, control->മൂല്യം,
 						    /* needed, as basename("") == "." */
 						    CURLFORM_FILENAME, "",
 						    CURLFORM_BUFFERPTR, &buf,
@@ -1076,12 +1076,12 @@ fetch_curl_postdata_convert(CURL *chandle,
 						    CURLFORM_CONTENTTYPE,
 						    "application/octet-stream",
 						    CURLFORM_END);
-				if (code != CURL_FORMADD_OK)
+				എങ്കിൽ (code != CURL_FORMADD_OK)
 					NSLOG(netsurf, INFO,
 					      "curl_formadd: %d (%s)", code,
 					      control->name);
-			} else {
-				char *mimetype = guit->fetch->mimetype(control->value);
+			} അല്ലെങ്കിൽ {
+				അക്ഷരം *mimetype = guit->fetch->mimetype(control->മൂല്യം);
 				code = curl_formadd(&post, &last,
 						    CURLFORM_COPYNAME, control->name,
 						    CURLFORM_FILE, control->rawfile,
@@ -1089,28 +1089,28 @@ fetch_curl_postdata_convert(CURL *chandle,
 						    CURLFORM_CONTENTTYPE,
 						    (mimetype != 0 ? mimetype : "text/plain"),
 						    CURLFORM_END);
-				if (code != CURL_FORMADD_OK)
+				എങ്കിൽ (code != CURL_FORMADD_OK)
 					NSLOG(netsurf, INFO,
 					      "curl_formadd: %d (%s=%s)",
 					      code,
 					      control->name,
-					      control->value);
-				free(mimetype);
+					      control->മൂല്യം);
+				സ്വതന്ത്രം(mimetype);
 			}
-			free(leafname);
-		} else {
+			സ്വതന്ത്രം(leafname);
+		} അല്ലെങ്കിൽ {
 			code = curl_formadd(&post, &last,
 					    CURLFORM_COPYNAME, control->name,
-					    CURLFORM_COPYCONTENTS, control->value,
+					    CURLFORM_COPYCONTENTS, control->മൂല്യം,
 					    CURLFORM_END);
-			if (code != CURL_FORMADD_OK)
+			എങ്കിൽ (code != CURL_FORMADD_OK)
 				NSLOG(netsurf, INFO,
 				      "curl_formadd: %d (%s=%s)", code,
-				      control->name, control->value);
+				      control->name, control->മൂല്യം);
 		}
 	}
 
-	return post;
+	തിരികെ post;
 }
 
 #endif  /* LIBCURL_VERSION_NUM >= 0x073800 */
@@ -1118,42 +1118,42 @@ fetch_curl_postdata_convert(CURL *chandle,
 /**
  * Setup multipart post data
  */
-static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
+സ്ഥിതം CURLcode fetch_curl_set_postdata(ഘടന curl_fetch_info *f)
 {
 	CURLcode code = CURLE_OK;
 
 #undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
-	if (code != CURLE_OK)					\
-		return code;					\
+#define SETOPT(option, മൂല്യം) { \
+	code = curl_easy_setopt(f->curl_handle, option, മൂല്യം);	\
+	എങ്കിൽ (code != CURLE_OK)					\
+		തിരികെ code;					\
 	}
 
-	switch (f->postdata->type) {
-	case FETCH_POSTDATA_NONE:
-		SETOPT(CURLOPT_POSTFIELDS, NULL);
-		SETOPT(NSCURL_POSTDATA_CURLOPT, NULL);
+	തിരഞ്ഞെടുപ്പ് (f->postdata->type) {
+	അവസ്ഥ FETCH_POSTDATA_NONE:
+		SETOPT(CURLOPT_POSTFIELDS, ശൂന്യ);
+		SETOPT(NSCURL_POSTDATA_CURLOPT, ശൂന്യ);
 		SETOPT(CURLOPT_HTTPGET, 1L);
-		break;
+		നിർത്തുക;
 
-	case FETCH_POSTDATA_URLENC:
-		SETOPT(NSCURL_POSTDATA_CURLOPT, NULL);
+	അവസ്ഥ FETCH_POSTDATA_URLENC:
+		SETOPT(NSCURL_POSTDATA_CURLOPT, ശൂന്യ);
 		SETOPT(CURLOPT_HTTPGET, 0L);
 		SETOPT(CURLOPT_POSTFIELDS, f->postdata->data.urlenc);
-		break;
+		നിർത്തുക;
 
-	case FETCH_POSTDATA_MULTIPART:
-		SETOPT(CURLOPT_POSTFIELDS, NULL);
+	അവസ്ഥ FETCH_POSTDATA_MULTIPART:
+		SETOPT(CURLOPT_POSTFIELDS, ശൂന്യ);
 		SETOPT(CURLOPT_HTTPGET, 0L);
-		if (f->curl_postdata == NULL) {
+		എങ്കിൽ (f->curl_postdata == ശൂന്യ) {
 			f->curl_postdata =
 				fetch_curl_postdata_convert(f->curl_handle,
 							    f->postdata->data.multipart);
 		}
 		SETOPT(NSCURL_POSTDATA_CURLOPT, f->curl_postdata);
-		break;
+		നിർത്തുക;
 	}
-	return code;
+	തിരികെ code;
 }
 
 /**
@@ -1162,16 +1162,16 @@ static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
  * \param f The fetch to set options on.
  * \return A curl result code.
  */
-static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
+സ്ഥിതം CURLcode fetch_curl_set_options(ഘടന curl_fetch_info *f)
 {
 	CURLcode code;
-	const char *auth;
+	സ്ഥിരം അക്ഷരം *auth;
 
 #undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
-	if (code != CURLE_OK)					\
-		return code;					\
+#define SETOPT(option, മൂല്യം) { \
+	code = curl_easy_setopt(f->curl_handle, option, മൂല്യം);	\
+	എങ്കിൽ (code != CURLE_OK)					\
+		തിരികെ code;					\
 	}
 
 	SETOPT(CURLOPT_URL, nsurl_access(f->url));
@@ -1181,56 +1181,56 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
 	SETOPT(NSCURLOPT_PROGRESS_DATA, f);
 	SETOPT(CURLOPT_HTTPHEADER, f->headers);
 	code = fetch_curl_set_postdata(f);
-	if (code != CURLE_OK) {
-		return code;
+	എങ്കിൽ (code != CURLE_OK) {
+		തിരികെ code;
 	}
 
 	f->cookie_string = urldb_get_cookie(f->url, true);
-	if (f->cookie_string) {
+	എങ്കിൽ (f->cookie_string) {
 		SETOPT(CURLOPT_COOKIE, f->cookie_string);
-	} else {
-		SETOPT(CURLOPT_COOKIE, NULL);
+	} അല്ലെങ്കിൽ {
+		SETOPT(CURLOPT_COOKIE, ശൂന്യ);
 	}
 
-	if ((auth = urldb_get_auth_details(f->url, NULL)) != NULL) {
+	എങ്കിൽ ((auth = urldb_get_auth_details(f->url, ശൂന്യ)) != ശൂന്യ) {
 		SETOPT(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		SETOPT(CURLOPT_USERPWD, auth);
-	} else {
-		SETOPT(CURLOPT_USERPWD, NULL);
+	} അല്ലെങ്കിൽ {
+		SETOPT(CURLOPT_USERPWD, ശൂന്യ);
 	}
 
 	/* set up proxy options */
-	if (nsoption_bool(http_proxy) &&
-	    (nsoption_charp(http_proxy_host) != NULL) &&
+	എങ്കിൽ (nsoption_bool(http_proxy) &&
+	    (nsoption_charp(http_proxy_host) != ശൂന്യ) &&
 	    (strncmp(nsurl_access(f->url), "file:", 5) != 0)) {
 		SETOPT(CURLOPT_PROXY, nsoption_charp(http_proxy_host));
 		SETOPT(CURLOPT_PROXYPORT, (long) nsoption_int(http_proxy_port));
 
-#if LIBCURL_VERSION_NUM >= 0x071304
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x071304
 		/* Added in 7.19.4 */
 		/* setup the omission list */
 		SETOPT(CURLOPT_NOPROXY, nsoption_charp(http_proxy_noproxy));
 #endif
 
-		if (nsoption_int(http_proxy_auth) != OPTION_HTTP_PROXY_AUTH_NONE) {
+		എങ്കിൽ (nsoption_int(http_proxy_auth) != OPTION_HTTP_PROXY_AUTH_NONE) {
 			SETOPT(CURLOPT_PROXYAUTH,
 			       nsoption_int(http_proxy_auth) ==
 					OPTION_HTTP_PROXY_AUTH_BASIC ?
 					(long) CURLAUTH_BASIC :
 					(long) CURLAUTH_NTLM);
 			snprintf(fetch_proxy_userpwd,
-					sizeof fetch_proxy_userpwd,
+					വലുപ്പം fetch_proxy_userpwd,
 					"%s:%s",
 				 nsoption_charp(http_proxy_auth_user),
 				 nsoption_charp(http_proxy_auth_pass));
 			SETOPT(CURLOPT_PROXYUSERPWD, fetch_proxy_userpwd);
 		}
-	} else {
-		SETOPT(CURLOPT_PROXY, NULL);
+	} അല്ലെങ്കിൽ {
+		SETOPT(CURLOPT_PROXY, ശൂന്യ);
 	}
 
 
-	if (curl_with_openssl) {
+	എങ്കിൽ (curl_with_openssl) {
 		SETOPT(CURLOPT_SSL_CIPHER_LIST,
 			f->downgrade_tls ? CIPHER_LIST_LEGACY : CIPHER_LIST);
 	}
@@ -1238,27 +1238,27 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
 	/* Force-enable SSL session ID caching, as some distros are odd. */
 	SETOPT(CURLOPT_SSL_SESSIONID_CACHE, 1L);
 
-	if (urldb_get_cert_permissions(f->url)) {
+	എങ്കിൽ (urldb_get_cert_permissions(f->url)) {
 		/* Disable certificate verification */
 		SETOPT(CURLOPT_SSL_VERIFYPEER, 0L);
 		SETOPT(CURLOPT_SSL_VERIFYHOST, 0L);
-		if (curl_with_openssl) {
-			SETOPT(CURLOPT_SSL_CTX_FUNCTION, NULL);
-			SETOPT(CURLOPT_SSL_CTX_DATA, NULL);
+		എങ്കിൽ (curl_with_openssl) {
+			SETOPT(CURLOPT_SSL_CTX_FUNCTION, ശൂന്യ);
+			SETOPT(CURLOPT_SSL_CTX_DATA, ശൂന്യ);
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* do verification */
 		SETOPT(CURLOPT_SSL_VERIFYPEER, 1L);
 		SETOPT(CURLOPT_SSL_VERIFYHOST, 2L);
 #ifdef WITH_OPENSSL
-		if (curl_with_openssl) {
+		എങ്കിൽ (curl_with_openssl) {
 			SETOPT(CURLOPT_SSL_CTX_FUNCTION, fetch_curl_sslctxfun);
 			SETOPT(CURLOPT_SSL_CTX_DATA, f);
 		}
 #endif
 	}
 
-	return CURLE_OK;
+	തിരികെ CURLE_OK;
 }
 
 /**
@@ -1268,8 +1268,8 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
  * \param handle CURL handle to be used to fetch the content.
  * \return true if the fetch was successfully initiated else false.
  */
-static bool
-fetch_curl_initiate_fetch(struct curl_fetch_info *fetch, CURL *handle)
+സ്ഥിതം bool
+fetch_curl_initiate_fetch(ഘടന curl_fetch_info *fetch, CURL *handle)
 {
 	CURLcode code;
 	CURLMcode codem;
@@ -1278,77 +1278,77 @@ fetch_curl_initiate_fetch(struct curl_fetch_info *fetch, CURL *handle)
 
 	/* Initialise the handle */
 	code = fetch_curl_set_options(fetch);
-	if (code != CURLE_OK) {
+	എങ്കിൽ (code != CURLE_OK) {
 		fetch->curl_handle = 0;
 		/* The handle maybe went bad, eat it */
 		NSLOG(netsurf, WARNING, "cURL handle maybe went bad, retry later");
 		curl_easy_cleanup(handle);
-		return false;
+		തിരികെ false;
 	}
 
 	/* add to the global curl multi handle */
 	codem = curl_multi_add_handle(fetch_curl_multi, fetch->curl_handle);
-	assert(codem == CURLM_OK || codem == CURLM_CALL_MULTI_PERFORM);
+	പ്രതിജ്ഞാ(codem == CURLM_OK || codem == CURLM_CALL_MULTI_PERFORM);
 
-	return true;
+	തിരികെ true;
 }
 
 
 /**
  * Find a CURL handle to use to dispatch a job
  */
-static CURL *fetch_curl_get_handle(lwc_string *host)
+സ്ഥിതം CURL *fetch_curl_get_handle(lwc_string *host)
 {
-	struct cache_handle *h;
+	ഘടന cache_handle *h;
 	CURL *ret;
 	RING_FINDBYLWCHOST(curl_handle_ring, h, host);
-	if (h) {
+	എങ്കിൽ (h) {
 		ret = h->handle;
 		lwc_string_unref(h->host);
 		RING_REMOVE(curl_handle_ring, h);
-		free(h);
-	} else {
+		സ്വതന്ത്രം(h);
+	} അല്ലെങ്കിൽ {
 		ret = curl_easy_duphandle(fetch_blank_curl);
 	}
-	return ret;
+	തിരികെ ret;
 }
 
 
 /**
  * Dispatch a single job
  */
-static bool fetch_curl_start(void *vfetch)
+സ്ഥിതം bool fetch_curl_start(ശൂന്യം *vfetch)
 {
-	struct curl_fetch_info *fetch = (struct curl_fetch_info*)vfetch;
-	if (inside_curl) {
+	ഘടന curl_fetch_info *fetch = (ഘടന curl_fetch_info*)vfetch;
+	എങ്കിൽ (inside_curl) {
 		NSLOG(netsurf, DEBUG, "Deferring fetch because we're inside cURL");
-		return false;
+		തിരികെ false;
 	}
-	return fetch_curl_initiate_fetch(fetch,
+	തിരികെ fetch_curl_initiate_fetch(fetch,
 			fetch_curl_get_handle(fetch->host));
 }
 
 /**
  * Cache a CURL handle for the provided host (if wanted)
  */
-static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
+സ്ഥിതം ശൂന്യം fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 {
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x071e00
 	/* 7.30.0 or later has its own connection caching; suppress ours */
 	curl_easy_cleanup(handle);
-	return;
-#else
-	struct cache_handle *h = 0;
-	int c;
+	തിരികെ;
+#അല്ലെങ്കിൽ
+	ഘടന cache_handle *h = 0;
+	പൂർണ്ണസംഖ്യ c;
 	RING_FINDBYLWCHOST(curl_handle_ring, h, host);
-	if (h) {
+	എങ്കിൽ (h) {
 		/* Already have a handle cached for this hostname */
 		curl_easy_cleanup(handle);
-		return;
+		തിരികെ;
 	}
 	/* We do not have a handle cached, first up determine if the cache is full */
-	RING_GETSIZE(struct cache_handle, curl_handle_ring, c);
-	if (c >= nsoption_int(max_cached_fetch_handles)) {
+	RING_GETSIZE(ഘടന cache_handle, curl_handle_ring, c);
+	എങ്കിൽ (c >= nsoption_int(max_cached_fetch_handles)) {
 		/* Cache is full, so, we rotate the ring by one and
 		 * replace the oldest handle with this one. We do this
 		 * without freeing/allocating memory (except the
@@ -1356,25 +1356,25 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 		 * ring and then re-inserting it, in order to be as
 		 * efficient as we can.
 		 */
-		if (curl_handle_ring != NULL) {
+		എങ്കിൽ (curl_handle_ring != ശൂന്യ) {
 			h = curl_handle_ring;
 			curl_handle_ring = h->r_next;
 			curl_easy_cleanup(h->handle);
 			h->handle = handle;
 			lwc_string_unref(h->host);
 			h->host = lwc_string_ref(host);
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* Actually, we don't want to cache any handles */
 			curl_easy_cleanup(handle);
 		}
 
-		return;
+		തിരികെ;
 	}
 	/* The table isn't full yet, so make a shiny new handle to add to the ring */
-	h = (struct cache_handle*)malloc(sizeof(struct cache_handle));
+	h = (ഘടന cache_handle*)malloc(വലുപ്പം(ഘടന cache_handle));
 	h->handle = handle;
 	h->host = lwc_string_ref(host);
-	RING_INSERT(curl_handle_ring, h);
+	RING_തിരുകുക(curl_handle_ring, h);
 #endif
 }
 
@@ -1384,18 +1384,18 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
  *
  * Will prod the queue afterwards to allow pending requests to be initiated.
  */
-static void fetch_curl_stop(struct curl_fetch_info *f)
+സ്ഥിതം ശൂന്യം fetch_curl_stop(ഘടന curl_fetch_info *f)
 {
 	CURLMcode codem;
 
-	assert(f);
+	പ്രതിജ്ഞാ(f);
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", f, nsurl_access(f->url));
 
-	if (f->curl_handle) {
+	എങ്കിൽ (f->curl_handle) {
 		/* remove from curl multi handle */
 		codem = curl_multi_remove_handle(fetch_curl_multi,
 				f->curl_handle);
-		assert(codem == CURLM_OK);
+		പ്രതിജ്ഞാ(codem == CURLM_OK);
 		/* Put this curl handle into the cache if wanted. */
 		fetch_curl_cache_handle(f->curl_handle, f->host);
 		f->curl_handle = 0;
@@ -1408,21 +1408,21 @@ static void fetch_curl_stop(struct curl_fetch_info *f)
 /**
  * Abort a fetch.
  */
-static void fetch_curl_abort(void *vf)
+സ്ഥിതം ശൂന്യം fetch_curl_abort(ശൂന്യം *vf)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *)vf;
-	assert(f);
+	ഘടന curl_fetch_info *f = (ഘടന curl_fetch_info *)vf;
+	പ്രതിജ്ഞാ(f);
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", f, nsurl_access(f->url));
-	if (f->curl_handle) {
-		if (inside_curl) {
+	എങ്കിൽ (f->curl_handle) {
+		എങ്കിൽ (inside_curl) {
 			NSLOG(netsurf, DEBUG, "Deferring cleanup");
 			f->abort = true;
-		} else {
+		} അല്ലെങ്കിൽ {
 			NSLOG(netsurf, DEBUG, "Immediate abort");
 			fetch_curl_stop(f);
 			fetch_free(f->fetch_handle);
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		fetch_remove_from_queues(f->fetch_handle);
 		fetch_free(f->fetch_handle);
 	}
@@ -1432,33 +1432,33 @@ static void fetch_curl_abort(void *vf)
 /**
  * Free a fetch structure and associated resources.
  */
-static void fetch_curl_free(void *vf)
+സ്ഥിതം ശൂന്യം fetch_curl_free(ശൂന്യം *vf)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *)vf;
-	int i;
+	ഘടന curl_fetch_info *f = (ഘടന curl_fetch_info *)vf;
+	പൂർണ്ണസംഖ്യ i;
 
-	if (f->curl_handle) {
+	എങ്കിൽ (f->curl_handle) {
 		curl_easy_cleanup(f->curl_handle);
 	}
 	nsurl_unref(f->url);
 	lwc_string_unref(f->host);
-	free(f->location);
-	free(f->cookie_string);
-	free(f->realm);
-	if (f->headers) {
+	സ്വതന്ത്രം(f->location);
+	സ്വതന്ത്രം(f->cookie_string);
+	സ്വതന്ത്രം(f->realm);
+	എങ്കിൽ (f->headers) {
 		curl_slist_free_all(f->headers);
 	}
 	fetch_curl_free_postdata(f->postdata);
 	NSCURL_POSTDATA_FREE(f->curl_postdata);
 
 	/* free certificate data */
-	for (i = 0; i < MAX_CERT_DEPTH; i++) {
-		if (f->cert_data[i].cert != NULL) {
+	വേണ്ടി (i = 0; i < MAX_CERT_DEPTH; i++) {
+		എങ്കിൽ (f->cert_data[i].cert != ശൂന്യ) {
 			X509_free(f->cert_data[i].cert);
 		}
 	}
 
-	free(f);
+	സ്വതന്ത്രം(f);
 }
 
 
@@ -1467,62 +1467,62 @@ static void fetch_curl_free(void *vf)
  *
  * Return true if the fetch is being aborted.
  */
-static bool fetch_curl_process_headers(struct curl_fetch_info *f)
+സ്ഥിതം bool fetch_curl_process_headers(ഘടന curl_fetch_info *f)
 {
 	long http_code;
 	CURLcode code;
-	fetch_msg msg;
+	fetch_സന്ദേശം സന്ദേശം;
 
 	f->had_headers = true;
 
-	if (!f->http_code) {
+	എങ്കിൽ (!f->http_code) {
 		code = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_CODE,
 					 &f->http_code);
-		assert(code == CURLE_OK);
+		പ്രതിജ്ഞാ(code == CURLE_OK);
 		fetch_set_http_code(f->fetch_handle, f->http_code);
 	}
 	http_code = f->http_code;
 	NSLOG(netsurf, INFO, "HTTP status code %li", http_code);
 
-	if ((http_code == HTTP_RESPONSE_NOT_MODIFIED) &&
+	എങ്കിൽ ((http_code == HTTP_RESPONSE_NOT_MODIFIED) &&
 	    (f->postdata->type==FETCH_POSTDATA_NONE)) {
 		/* Not Modified && GET request */
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		സന്ദേശം.type = FETCH_NOTMODIFIED;
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
+		തിരികെ true;
 	}
 
 	/* handle HTTP redirects (3xx response codes) */
-	if (HTTP_RESPONSE_IS_3XX(http_code) && (f->location != 0)) {
+	എങ്കിൽ (HTTP_RESPONSE_IS_3XX(http_code) && (f->location != 0)) {
 		NSLOG(netsurf, INFO, "FETCH_REDIRECT, '%s'", f->location);
-		msg.type = FETCH_REDIRECT;
-		msg.data.redirect = f->location;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		സന്ദേശം.type = FETCH_REDIRECT;
+		സന്ദേശം.data.redirect = f->location;
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
+		തിരികെ true;
 	}
 
 	/* handle HTTP 401 (Authentication errors) */
-	if (http_code == HTTP_RESPONSE_UNAUTHORIZED) {
-		msg.type = FETCH_AUTH;
-		msg.data.auth.realm = f->realm;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+	എങ്കിൽ (http_code == HTTP_RESPONSE_UNAUTHORIZED) {
+		സന്ദേശം.type = FETCH_AUTH;
+		സന്ദേശം.data.auth.realm = f->realm;
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
+		തിരികെ true;
 	}
 
 	/* handle HTTP errors (non 2xx response codes) */
-	if (f->only_2xx &&
+	എങ്കിൽ (f->only_2xx &&
 	    strncmp(nsurl_access(f->url), "http", 4) == 0 &&
 	    (HTTP_RESPONSE_IS_2XX(http_code) == false)) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = messages_get("Not2xx");
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		സന്ദേശം.type = FETCH_ERROR;
+		സന്ദേശം.data.error = messages_get("Not2xx");
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
+		തിരികെ true;
 	}
 
-	if (f->abort)
-		return true;
+	എങ്കിൽ (f->abort)
+		തിരികെ true;
 
-	return false;
+	തിരികെ false;
 }
 
 
@@ -1532,25 +1532,25 @@ static bool fetch_curl_process_headers(struct curl_fetch_info *f)
  * \param curl_handle curl easy handle of fetch
  * \param result The result code of the completed fetch.
  */
-static void fetch_curl_done(CURL *curl_handle, CURLcode result)
+സ്ഥിതം ശൂന്യം fetch_curl_done(CURL *curl_handle, CURLcode result)
 {
 	bool finished = false;
 	bool error = false;
 	bool cert = false;
 	bool abort_fetch;
-	struct curl_fetch_info *f;
-	char **_hideous_hack = (char **) (void *) &f;
+	ഘടന curl_fetch_info *f;
+	അക്ഷരം **_hideous_hack = (അക്ഷരം **) (ശൂന്യം *) &f;
 	CURLcode code;
 
 	/* find the structure associated with this fetch */
 	/* For some reason, cURL thinks CURLINFO_PRIVATE should be a string?! */
 	code = curl_easy_getinfo(curl_handle, CURLINFO_PRIVATE, _hideous_hack);
-	assert(code == CURLE_OK);
+	പ്രതിജ്ഞാ(code == CURLE_OK);
 
 	abort_fetch = f->abort;
 	NSLOG(netsurf, INFO, "done %s", nsurl_access(f->url));
 
-	if ((abort_fetch == false) &&
+	എങ്കിൽ ((abort_fetch == false) &&
 	    (result == CURLE_OK ||
 	     ((result == CURLE_WRITE_ERROR) && (f->stopped == false)))) {
 		/* fetch completed normally or the server fed us a junk gzip
@@ -1562,74 +1562,74 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
 		 * object will be truncated in this case and leave it to
 		 * the content handlers to cope.
 		 */
-		if (f->stopped ||
+		എങ്കിൽ (f->stopped ||
 		    (!f->had_headers &&	fetch_curl_process_headers(f))) {
 			; /* redirect with no body or similar */
-		} else {
+		} അല്ലെങ്കിൽ {
 			finished = true;
 		}
-	} else if (result == CURLE_PARTIAL_FILE) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (result == CURLE_PARTIAL_FILE) {
 		/* CURLE_PARTIAL_FILE occurs if the received body of a
 		 * response is smaller than that specified in the
 		 * Content-Length header.
 		 */
-		if (!f->had_headers && fetch_curl_process_headers(f))
+		എങ്കിൽ (!f->had_headers && fetch_curl_process_headers(f))
 			; /* redirect with partial body, or similar */
-		else {
+		അല്ലെങ്കിൽ {
 			finished = true;
 		}
-	} else if (result == CURLE_WRITE_ERROR && f->stopped) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (result == CURLE_WRITE_ERROR && f->stopped) {
 		/* CURLE_WRITE_ERROR occurs when fetch_curl_data
 		 * returns 0, which we use to abort intentionally
 		 */
 		;
-	} else if (result == CURLE_SSL_PEER_CERTIFICATE ||
+	} അല്ലെങ്കിൽ എങ്കിൽ (result == CURLE_SSL_PEER_CERTIFICATE ||
 		   result == CURLE_SSL_CACERT) {
 		/* Some kind of failure has occurred.  If we don't know
 		 * what happened, we'll have reported unknown errors up
 		 * to the user already via the certificate chain error fields.
 		 */
 		cert = true;
-	} else {
+	} അല്ലെങ്കിൽ {
 		NSLOG(netsurf, INFO, "Unknown cURL response code %d", result);
 		error = true;
 	}
 
 	fetch_curl_stop(f);
 
-	if (f->sent_ssl_chain == false) {
+	എങ്കിൽ (f->sent_ssl_chain == false) {
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	if (abort_fetch) {
+	എങ്കിൽ (abort_fetch) {
 		; /* fetch was aborted: no callback */
-	} else if (finished) {
-		fetch_msg msg;
-		msg.type = FETCH_FINISHED;
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else if (cert) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (finished) {
+		fetch_സന്ദേശം സന്ദേശം;
+		സന്ദേശം.type = FETCH_FINISHED;
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
+	} അല്ലെങ്കിൽ എങ്കിൽ (cert) {
 		/* user needs to validate certificate with issue */
-		fetch_msg msg;
-		msg.type = FETCH_CERT_ERR;
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else if (error) {
-		fetch_msg msg;
-		switch (result) {
-		case CURLE_SSL_CONNECT_ERROR:
-			msg.type = FETCH_SSL_ERR;
-			break;
+		fetch_സന്ദേശം സന്ദേശം;
+		സന്ദേശം.type = FETCH_CERT_ERR;
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
+	} അല്ലെങ്കിൽ എങ്കിൽ (error) {
+		fetch_സന്ദേശം സന്ദേശം;
+		തിരഞ്ഞെടുപ്പ് (result) {
+		അവസ്ഥ CURLE_SSL_CONNECT_ERROR:
+			സന്ദേശം.type = FETCH_SSL_ERR;
+			നിർത്തുക;
 
-		case CURLE_OPERATION_TIMEDOUT:
-			msg.type = FETCH_TIMEDOUT;
-			msg.data.error = curl_easy_strerror(result);
-			break;
+		അവസ്ഥ CURLE_OPERATION_TIMEDOUT:
+			സന്ദേശം.type = FETCH_TIMEDOUT;
+			സന്ദേശം.data.error = curl_easy_strerror(result);
+			നിർത്തുക;
 
-		default:
-			msg.type = FETCH_ERROR;
-			msg.data.error = curl_easy_strerror(result);
+		സ്ഥിരസ്ഥിതി:
+			സന്ദേശം.type = FETCH_ERROR;
+			സന്ദേശം.data.error = curl_easy_strerror(result);
 		}
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
 	}
 
 	fetch_free(f->fetch_handle);
@@ -1641,16 +1641,16 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
  *
  * Must be called regularly to make progress on fetches.
  */
-static void fetch_curl_poll(lwc_string *scheme_ignored)
+സ്ഥിതം ശൂന്യം fetch_curl_poll(lwc_string *scheme_ignored)
 {
-	int running, queue;
+	പൂർണ്ണസംഖ്യ running, queue;
 	CURLMcode codem;
-	CURLMsg *curl_msg;
+	CURLMsg *curl_സന്ദേശം;
 
-	if (nsoption_bool(suppress_curl_debug) == false) {
+	എങ്കിൽ (nsoption_bool(suppress_curl_debug) == false) {
 		fd_set read_fd_set, write_fd_set, exc_fd_set;
-		int max_fd = -1;
-		int i;
+		പൂർണ്ണസംഖ്യ max_fd = -1;
+		പൂർണ്ണസംഖ്യ i;
 
 		FD_ZERO(&read_fd_set);
 		FD_ZERO(&write_fd_set);
@@ -1659,28 +1659,28 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 		codem = curl_multi_fdset(fetch_curl_multi,
 				&read_fd_set, &write_fd_set,
 				&exc_fd_set, &max_fd);
-		assert(codem == CURLM_OK);
+		പ്രതിജ്ഞാ(codem == CURLM_OK);
 
 		NSLOG(netsurf, DEEPDEBUG,
 		      "Curl file descriptor states (maxfd=%i):", max_fd);
-		for (i = 0; i <= max_fd; i++) {
-			bool read = false;
-			bool write = false;
+		വേണ്ടി (i = 0; i <= max_fd; i++) {
+			bool പഠ = false;
+			bool ലിഖ = false;
 			bool error = false;
 
-			if (FD_ISSET(i, &read_fd_set)) {
-				read = true;
+			എങ്കിൽ (FD_ISSET(i, &read_fd_set)) {
+				പഠ = true;
 			}
-			if (FD_ISSET(i, &write_fd_set)) {
-				write = true;
+			എങ്കിൽ (FD_ISSET(i, &write_fd_set)) {
+				ലിഖ = true;
 			}
-			if (FD_ISSET(i, &exc_fd_set)) {
+			എങ്കിൽ (FD_ISSET(i, &exc_fd_set)) {
 				error = true;
 			}
-			if (read || write || error) {
+			എങ്കിൽ (പഠ || ലിഖ || error) {
 				NSLOG(netsurf, DEEPDEBUG, "  fd %i: %s %s %s", i,
-				      read ? "read" : "    ",
-				      write ? "write" : "     ",
+				      പഠ ? "read" : "    ",
+				      ലിഖ ? "write" : "     ",
 				      error ? "error" : "     ");
 			}
 		}
@@ -1688,28 +1688,28 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 
 	/* do any possible work on the current fetches */
 	inside_curl = true;
-	do {
+	ചെയ്യുക {
 		codem = curl_multi_perform(fetch_curl_multi, &running);
-		if (codem != CURLM_OK && codem != CURLM_CALL_MULTI_PERFORM) {
+		എങ്കിൽ (codem != CURLM_OK && codem != CURLM_CALL_MULTI_PERFORM) {
 			NSLOG(netsurf, WARNING,
 			      "curl_multi_perform: %i %s",
 			      codem, curl_multi_strerror(codem));
-			return;
+			തിരികെ;
 		}
-	} while (codem == CURLM_CALL_MULTI_PERFORM);
+	} ആകുമ്പോൾ (codem == CURLM_CALL_MULTI_PERFORM);
 
 	/* process curl results */
-	curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
-	while (curl_msg) {
-		switch (curl_msg->msg) {
-			case CURLMSG_DONE:
-				fetch_curl_done(curl_msg->easy_handle,
-						curl_msg->data.result);
-				break;
-			default:
-				break;
+	curl_സന്ദേശം = curl_multi_info_read(fetch_curl_multi, &queue);
+	ആകുമ്പോൾ (curl_സന്ദേശം) {
+		തിരഞ്ഞെടുപ്പ് (curl_സന്ദേശം->സന്ദേശം) {
+			അവസ്ഥ CURLMSG_DONE:
+				fetch_curl_done(curl_സന്ദേശം->easy_handle,
+						curl_സന്ദേശം->data.result);
+				നിർത്തുക;
+			സ്ഥിരസ്ഥിതി:
+				നിർത്തുക;
 		}
-		curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
+		curl_സന്ദേശം = curl_multi_info_read(fetch_curl_multi, &queue);
 	}
 	inside_curl = false;
 }
@@ -1720,138 +1720,138 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 /**
  * Callback function for fetch progress.
  */
-static int
-fetch_curl_progress(void *clientp,
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+fetch_curl_progress(ശൂന്യം *clientp,
 		    NSCURL_PROGRESS_T dltotal,
 		    NSCURL_PROGRESS_T dlnow,
 		    NSCURL_PROGRESS_T ultotal,
 		    NSCURL_PROGRESS_T ulnow)
 {
-	static char fetch_progress_buffer[256]; /**< Progress buffer for cURL */
-	struct curl_fetch_info *f = (struct curl_fetch_info *) clientp;
+	സ്ഥിതം അക്ഷരം fetch_progress_buffer[256]; /**< Progress buffer for cURL */
+	ഘടന curl_fetch_info *f = (ഘടന curl_fetch_info *) clientp;
 	uint64_t time_now_ms;
-	fetch_msg msg;
+	fetch_സന്ദേശം സന്ദേശം;
 
-	if (f->abort) {
-		return 0;
+	എങ്കിൽ (f->abort) {
+		തിരികെ 0;
         }
 
-	msg.type = FETCH_PROGRESS;
-	msg.data.progress = fetch_progress_buffer;
+	സന്ദേശം.type = FETCH_PROGRESS;
+	സന്ദേശം.data.progress = fetch_progress_buffer;
 
 	/* Rate limit each fetch's progress notifications */
         nsu_getmonotonic_ms(&time_now_ms);
 #define UPDATE_DELAY_MS (1000 / UPDATES_PER_SECOND)
-	if (time_now_ms - f->last_progress_update < UPDATE_DELAY_MS) {
-		return 0;
+	എങ്കിൽ (time_now_ms - f->last_progress_update < UPDATE_DELAY_MS) {
+		തിരികെ 0;
         }
 #undef UPDATE_DELAY_MS
 	f->last_progress_update = time_now_ms;
 
-	if (dltotal > 0) {
+	എങ്കിൽ (dltotal > 0) {
 		snprintf(fetch_progress_buffer, 255,
 				messages_get("Progress"),
 				human_friendly_bytesize(dlnow),
 				human_friendly_bytesize(dltotal));
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else {
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
+	} അല്ലെങ്കിൽ {
 		snprintf(fetch_progress_buffer, 255,
 				messages_get("ProgressU"),
 				human_friendly_bytesize(dlnow));
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&സന്ദേശം, f->fetch_handle);
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
 
 /**
  * Format curl debug for nslog
  */
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 fetch_curl_debug(CURL *handle,
 		 curl_infotype type,
-		 char *data,
+		 അക്ഷരം *data,
 		 size_t size,
-		 void *userptr)
+		 ശൂന്യം *userptr)
 {
-	static const char s_infotype[CURLINFO_END][3] = {
+	സ്ഥിതം സ്ഥിരം അക്ഷരം s_infotype[CURLINFO_END][3] = {
 		"* ", "< ", "> ", "{ ", "} ", "{ ", "} "
 	};
-	switch(type) {
-	case CURLINFO_TEXT:
-	case CURLINFO_HEADER_OUT:
-	case CURLINFO_HEADER_IN:
-		NSLOG(fetch, DEBUG, "%s%.*s", s_infotype[type], (int)size - 1, data);
-		break;
+	തിരഞ്ഞെടുപ്പ്(type) {
+	അവസ്ഥ CURLINFO_TEXT:
+	അവസ്ഥ CURLINFO_HEADER_OUT:
+	അവസ്ഥ CURLINFO_HEADER_IN:
+		NSLOG(fetch, DEBUG, "%s%.*s", s_infotype[type], (പൂർണ്ണസംഖ്യ)size - 1, data);
+		നിർത്തുക;
 
-	default:
-		break;
+	സ്ഥിരസ്ഥിതി:
+		നിർത്തുക;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 
-static curl_socket_t fetch_curl_socket_open(void *clientp,
-		curlsocktype purpose, struct curl_sockaddr *address)
+സ്ഥിതം curl_socket_t fetch_curl_socket_open(ശൂന്യം *clientp,
+		curlsocktype purpose, ഘടന curl_sockaddr *address)
 {
-	(void) clientp;
-	(void) purpose;
+	(ശൂന്യം) clientp;
+	(ശൂന്യം) purpose;
 
-	return (curl_socket_t) guit->fetch->socket_open(
+	തിരികെ (curl_socket_t) guit->fetch->socket_open(
 			address->family, address->socktype,
 			address->protocol);
 }
 
-static int fetch_curl_socket_close(void *clientp, curl_socket_t item)
+സ്ഥിതം പൂർണ്ണസംഖ്യ fetch_curl_socket_close(ശൂന്യം *clientp, curl_socket_t item)
 {
-	(void) clientp;
+	(ശൂന്യം) clientp;
 
-	return guit->fetch->socket_close((int) item);
+	തിരികെ guit->fetch->socket_close((പൂർണ്ണസംഖ്യ) item);
 }
 
 /**
  * Callback function for cURL.
  */
-static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
+സ്ഥിതം size_t fetch_curl_data(അക്ഷരം *data, size_t size, size_t nmemb, ശൂന്യം *_f)
 {
-	struct curl_fetch_info *f = _f;
+	ഘടന curl_fetch_info *f = _f;
 	CURLcode code;
-	fetch_msg msg;
+	fetch_സന്ദേശം സന്ദേശം;
 
 	/* ensure we only have to get this information once */
-	if (!f->http_code) {
+	എങ്കിൽ (!f->http_code) {
 		code = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_CODE,
 					 &f->http_code);
-		assert(code == CURLE_OK);
+		പ്രതിജ്ഞാ(code == CURLE_OK);
 		fetch_set_http_code(f->fetch_handle, f->http_code);
 	}
 
 	/* ignore body if this is a 401 reply by skipping it and reset
 	 * the HTTP response code to enable follow up fetches.
 	 */
-	if (f->http_code == HTTP_RESPONSE_UNAUTHORIZED) {
+	എങ്കിൽ (f->http_code == HTTP_RESPONSE_UNAUTHORIZED) {
 		f->http_code = 0;
-		return size * nmemb;
+		തിരികെ size * nmemb;
 	}
 
-	if (f->abort || (!f->had_headers && fetch_curl_process_headers(f))) {
+	എങ്കിൽ (f->abort || (!f->had_headers && fetch_curl_process_headers(f))) {
 		f->stopped = true;
-		return 0;
+		തിരികെ 0;
 	}
 
 	/* send data to the caller */
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size * nmemb;
-	fetch_send_callback(&msg, f->fetch_handle);
+	സന്ദേശം.type = FETCH_DATA;
+	സന്ദേശം.data.header_or_data.buf = (സ്ഥിരം uint8_t *) data;
+	സന്ദേശം.data.header_or_data.len = size * nmemb;
+	fetch_send_callback(&സന്ദേശം, f->fetch_handle);
 
-	if (f->abort) {
+	എങ്കിൽ (f->abort) {
 		f->stopped = true;
-		return 0;
+		തിരികെ 0;
 	}
 
-	return size * nmemb;
+	തിരികെ size * nmemb;
 }
 
 
@@ -1860,134 +1860,134 @@ static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
  *
  * See RFC 2616 4.2.
  */
-static size_t
-fetch_curl_header(char *data, size_t size, size_t nmemb, void *_f)
+സ്ഥിതം size_t
+fetch_curl_header(അക്ഷരം *data, size_t size, size_t nmemb, ശൂന്യം *_f)
 {
-	struct curl_fetch_info *f = _f;
-	int i;
-	fetch_msg msg;
+	ഘടന curl_fetch_info *f = _f;
+	പൂർണ്ണസംഖ്യ i;
+	fetch_സന്ദേശം സന്ദേശം;
 	size *= nmemb;
 
-	if (f->abort) {
+	എങ്കിൽ (f->abort) {
 		f->stopped = true;
-		return 0;
+		തിരികെ 0;
 	}
 
-	if (f->sent_ssl_chain == false) {
+	എങ്കിൽ (f->sent_ssl_chain == false) {
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size;
-	fetch_send_callback(&msg, f->fetch_handle);
+	സന്ദേശം.type = FETCH_HEADER;
+	സന്ദേശം.data.header_or_data.buf = (സ്ഥിരം uint8_t *) data;
+	സന്ദേശം.data.header_or_data.len = size;
+	fetch_send_callback(&സന്ദേശം, f->fetch_handle);
 
-#define SKIP_ST(o) for (i = (o); i < (int) size && (data[i] == ' ' || data[i] == '\t'); i++)
+#define SKIP_ST(o) വേണ്ടി (i = (o); i < (പൂർണ്ണസംഖ്യ) size && (data[i] == ' ' || data[i] == '\t'); i++)
 
-	if (12 < size && strncasecmp(data, "Location:", 9) == 0) {
+	എങ്കിൽ (12 < size && strncasecmp(data, "Location:", 9) == 0) {
 		/* extract Location header */
-		free(f->location);
+		സ്വതന്ത്രം(f->location);
 		f->location = malloc(size);
-		if (!f->location) {
+		എങ്കിൽ (!f->location) {
 			NSLOG(netsurf, INFO, "malloc failed");
-			return size;
+			തിരികെ size;
 		}
 		SKIP_ST(9);
 		strncpy(f->location, data + i, size - i);
 		f->location[size - i] = '\0';
-		for (i = size - i - 1; i >= 0 &&
+		വേണ്ടി (i = size - i - 1; i >= 0 &&
 				(f->location[i] == ' ' ||
 				f->location[i] == '\t' ||
 				f->location[i] == '\r' ||
 				f->location[i] == '\n'); i--)
 			f->location[i] = '\0';
-	} else if (15 < size && strncasecmp(data, "Content-Length:", 15) == 0) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (15 < size && strncasecmp(data, "Content-Length:", 15) == 0) {
 		/* extract Content-Length header */
 		SKIP_ST(15);
-		if (i < (int)size && '0' <= data[i] && data[i] <= '9')
+		എങ്കിൽ (i < (പൂർണ്ണസംഖ്യ)size && '0' <= data[i] && data[i] <= '9')
 			f->content_length = atol(data + i);
-	} else if (17 < size && strncasecmp(data, "WWW-Authenticate:", 17) == 0) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (17 < size && strncasecmp(data, "WWW-Authenticate:", 17) == 0) {
 		/* extract the first Realm from WWW-Authenticate header */
 		SKIP_ST(17);
 
-		while (i < (int) size - 5 &&
+		ആകുമ്പോൾ (i < (പൂർണ്ണസംഖ്യ) size - 5 &&
 				strncasecmp(data + i, "realm", 5))
 			i++;
-		while (i < (int) size - 1 && data[++i] != '"')
+		ആകുമ്പോൾ (i < (പൂർണ്ണസംഖ്യ) size - 1 && data[++i] != '"')
 			/* */;
 		i++;
 
-		if (i < (int) size) {
+		എങ്കിൽ (i < (പൂർണ്ണസംഖ്യ) size) {
 			size_t end = i;
 
-			while (end < size && data[end] != '"')
+			ആകുമ്പോൾ (end < size && data[end] != '"')
 				++end;
 
-			if (end < size) {
-				free(f->realm);
+			എങ്കിൽ (end < size) {
+				സ്വതന്ത്രം(f->realm);
 				f->realm = malloc(end - i + 1);
-				if (f->realm != NULL) {
+				എങ്കിൽ (f->realm != ശൂന്യ) {
 					strncpy(f->realm, data + i, end - i);
 					f->realm[end - i] = '\0';
 				}
 			}
 		}
-	} else if (11 < size && strncasecmp(data, "Set-Cookie:", 11) == 0) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (11 < size && strncasecmp(data, "Set-Cookie:", 11) == 0) {
 		/* extract Set-Cookie header */
 		SKIP_ST(11);
 
 		fetch_set_cookie(f->fetch_handle, &data[i]);
 	}
 
-	return size;
+	തിരികെ size;
 #undef SKIP_ST
 }
 
-static int fetch_curl_fdset(lwc_string *scheme, fd_set *read_set,
+സ്ഥിതം പൂർണ്ണസംഖ്യ fetch_curl_fdset(lwc_string *scheme, fd_set *read_set,
 			    fd_set *write_set, fd_set *error_set)
 {
 	CURLMcode code;
-	int maxfd = -1;
+	പൂർണ്ണസംഖ്യ maxfd = -1;
 
 	code = curl_multi_fdset(fetch_curl_multi,
 				read_set,
 				write_set,
 				error_set,
 				&maxfd);
-	assert(code == CURLM_OK);
+	പ്രതിജ്ഞാ(code == CURLM_OK);
 
-	return maxfd;
+	തിരികെ maxfd;
 }
 
 
 
 /* exported function documented in content/fetchers/curl.h */
-nserror fetch_curl_register(void)
+nserror fetch_curl_register(ശൂന്യം)
 {
 	CURLcode code;
 	curl_version_info_data *data;
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 	lwc_string *scheme;
-	const struct fetcher_operation_table fetcher_ops = {
+	സ്ഥിരം ഘടന fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_curl_initialise,
 		.acceptable = fetch_curl_can_fetch,
 		.setup = fetch_curl_setup,
 		.start = fetch_curl_start,
 		.abort = fetch_curl_abort,
-		.free = fetch_curl_free,
+		.സ്വതന്ത്രം = fetch_curl_free,
 		.poll = fetch_curl_poll,
 		.fdset = fetch_curl_fdset,
 		.finalise = fetch_curl_finalise
 	};
 
-#if LIBCURL_VERSION_NUM >= 0x073800
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x073800
 	/* version 7.56.0 can select which SSL backend to use */
 	CURLsslset setres;
 
-	setres = curl_global_sslset(CURLSSLBACKEND_OPENSSL, NULL, NULL);
-	if (setres == CURLSSLSET_OK) {
+	setres = curl_global_sslset(CURLSSLBACKEND_OPENSSL, ശൂന്യ, ശൂന്യ);
+	എങ്കിൽ (setres == CURLSSLSET_OK) {
 		curl_with_openssl = true;
-	} else {
+	} അല്ലെങ്കിൽ {
 		curl_with_openssl = false;
 	}
 #endif
@@ -1995,30 +1995,30 @@ nserror fetch_curl_register(void)
 	NSLOG(netsurf, INFO, "curl_version %s", curl_version());
 
 	code = curl_global_init(CURL_GLOBAL_ALL);
-	if (code != CURLE_OK) {
+	എങ്കിൽ (code != CURLE_OK) {
 		NSLOG(netsurf, INFO, "curl_global_init failed.");
-		return NSERROR_INIT_FAILED;
+		തിരികെ NSERROR_INIT_FAILED;
 	}
 
 	fetch_curl_multi = curl_multi_init();
-	if (!fetch_curl_multi) {
+	എങ്കിൽ (!fetch_curl_multi) {
 		NSLOG(netsurf, INFO, "curl_multi_init failed.");
-		return NSERROR_INIT_FAILED;
+		തിരികെ NSERROR_INIT_FAILED;
 	}
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x071e00
 	/* built against 7.30.0 or later: configure caching */
 	{
 		CURLMcode mcode;
-		int maxconnects = nsoption_int(max_fetchers) +
+		പൂർണ്ണസംഖ്യ maxconnects = nsoption_int(max_fetchers) +
 				nsoption_int(max_cached_fetch_handles);
 
 #undef SETOPT
-#define SETOPT(option, value) \
-	mcode = curl_multi_setopt(fetch_curl_multi, option, value);	\
-	if (mcode != CURLM_OK) {					\
+#define SETOPT(option, മൂല്യം) \
+	mcode = curl_multi_setopt(fetch_curl_multi, option, മൂല്യം);	\
+	എങ്കിൽ (mcode != CURLM_OK) {					\
 		NSLOG(netsurf, ERROR, "attempting curl_multi_setopt(%s, ...)", #option); \
-		goto curl_multi_setopt_failed;				\
+		പോകുക curl_multi_setopt_failed;				\
 	}
 
 		SETOPT(CURLMOPT_MAXCONNECTS, (long)maxconnects);
@@ -2031,24 +2031,24 @@ nserror fetch_curl_register(void)
 	 *  fetches.
 	 */
 	fetch_blank_curl = curl_easy_init();
-	if (!fetch_blank_curl) {
+	എങ്കിൽ (!fetch_blank_curl) {
 		NSLOG(netsurf, INFO, "curl_easy_init failed");
-		return NSERROR_INIT_FAILED;
+		തിരികെ NSERROR_INIT_FAILED;
 	}
 
 #undef SETOPT
-#define SETOPT(option, value) \
-	code = curl_easy_setopt(fetch_blank_curl, option, value);	\
-	if (code != CURLE_OK) {						\
+#define SETOPT(option, മൂല്യം) \
+	code = curl_easy_setopt(fetch_blank_curl, option, മൂല്യം);	\
+	എങ്കിൽ (code != CURLE_OK) {						\
 		NSLOG(netsurf, ERROR, "attempting curl_easy_setopt(%s, ...)", #option); \
-		goto curl_easy_setopt_failed;				\
+		പോകുക curl_easy_setopt_failed;				\
 	}
 
 	SETOPT(CURLOPT_ERRORBUFFER, fetch_error_buffer);
 	SETOPT(CURLOPT_DEBUGFUNCTION, fetch_curl_debug);
-	if (nsoption_bool(suppress_curl_debug)) {
+	എങ്കിൽ (nsoption_bool(suppress_curl_debug)) {
 		SETOPT(CURLOPT_VERBOSE, 0);
-	} else {
+	} അല്ലെങ്കിൽ {
 		SETOPT(CURLOPT_VERBOSE, 1);
 	}
 
@@ -2061,48 +2061,48 @@ nserror fetch_curl_register(void)
 	SETOPT(CURLOPT_NOPROGRESS, 0L);
 	SETOPT(CURLOPT_USERAGENT, user_agent_string());
 	SETOPT(CURLOPT_ENCODING, "gzip");
-	SETOPT(CURLOPT_LOW_SPEED_LIMIT, 1L);
-	SETOPT(CURLOPT_LOW_SPEED_TIME, 180L);
+	SETOPT(CURLOPT_താഴെയുള്ള_SPEED_LIMIT, 1L);
+	SETOPT(CURLOPT_താഴെയുള്ള_SPEED_TIME, 180L);
 	SETOPT(CURLOPT_NOSIGNAL, 1L);
 	SETOPT(CURLOPT_CONNECTTIMEOUT, (long)nsoption_uint(curl_fetch_timeout));
 	SETOPT(CURLOPT_OPENSOCKETFUNCTION, fetch_curl_socket_open);
 	SETOPT(CURLOPT_CLOSESOCKETFUNCTION, fetch_curl_socket_close);
 
-	if (nsoption_charp(ca_bundle) &&
+	എങ്കിൽ (nsoption_charp(ca_bundle) &&
 	    strcmp(nsoption_charp(ca_bundle), "")) {
 		NSLOG(netsurf, INFO, "ca_bundle: '%s'",
 		      nsoption_charp(ca_bundle));
 		SETOPT(CURLOPT_CAINFO, nsoption_charp(ca_bundle));
 	}
-	if (nsoption_charp(ca_path) && strcmp(nsoption_charp(ca_path), "")) {
+	എങ്കിൽ (nsoption_charp(ca_path) && strcmp(nsoption_charp(ca_path), "")) {
 		NSLOG(netsurf, INFO, "ca_path: '%s'", nsoption_charp(ca_path));
 		SETOPT(CURLOPT_CAPATH, nsoption_charp(ca_path));
 	}
 
-#if LIBCURL_VERSION_NUM < 0x073800
+#എങ്കിൽ LIBCURL_VERSION_അക്കം < 0x073800
 	/*
 	 * before 7.56.0 Detect openssl from whether the SSL CTX
 	 *  function API works
 	 */
-	code = curl_easy_setopt(fetch_blank_curl, CURLOPT_SSL_CTX_FUNCTION, NULL);
-	if (code != CURLE_OK) {
+	code = curl_easy_setopt(fetch_blank_curl, CURLOPT_SSL_CTX_FUNCTION, ശൂന്യ);
+	എങ്കിൽ (code != CURLE_OK) {
 		curl_with_openssl = false;
-	} else {
+	} അല്ലെങ്കിൽ {
 		curl_with_openssl = true;
 	}
 #endif
 
-	if (curl_with_openssl) {
+	എങ്കിൽ (curl_with_openssl) {
 		/* only set the cipher list with openssl otherwise the
 		 *  fetch fails with "Unknown cipher in list"
 		 */
-#if LIBCURL_VERSION_NUM >= 0x073d00
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x073d00
 		/* Need libcurl 7.61.0 or later built against OpenSSL with
 		 * TLS1.3 support */
 		code = curl_easy_setopt(fetch_blank_curl,
 				CURLOPT_TLS13_CIPHERS, CIPHER_SUITES);
-		if (code != CURLE_OK && code != CURLE_NOT_BUILT_IN)
-			goto curl_easy_setopt_failed;
+		എങ്കിൽ (code != CURLE_OK && code != CURLE_NOT_BUILT_IN)
+			പോകുക curl_easy_setopt_failed;
 #endif
 		SETOPT(CURLOPT_SSL_CIPHER_LIST, CIPHER_LIST);
 	}
@@ -2115,39 +2115,39 @@ nserror fetch_curl_register(void)
 	data = curl_version_info(CURLVERSION_NOW);
 
 	curl_fetch_ssl_hashmap = hashmap_create(&curl_fetch_ssl_hashmap_parameters);
-	if (curl_fetch_ssl_hashmap == NULL) {
+	എങ്കിൽ (curl_fetch_ssl_hashmap == ശൂന്യ) {
 		NSLOG(netsurf, CRITICAL, "Unable to initialise SSL certificate hashmap");
-		return NSERROR_NOMEM;
+		തിരികെ NSERROR_NOMEM;
 	}
 
-	for (i = 0; data->protocols[i]; i++) {
-		if (strcmp(data->protocols[i], "http") == 0) {
+	വേണ്ടി (i = 0; data->protocols[i]; i++) {
+		എങ്കിൽ (strcmp(data->protocols[i], "http") == 0) {
 			scheme = lwc_string_ref(corestring_lwc_http);
 
-		} else if (strcmp(data->protocols[i], "https") == 0) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (strcmp(data->protocols[i], "https") == 0) {
 			scheme = lwc_string_ref(corestring_lwc_https);
 
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* Ignore non-http(s) protocols */
-			continue;
+			തുടരുക;
 		}
 
-		if (fetcher_add(scheme, &fetcher_ops) != NSERROR_OK) {
+		എങ്കിൽ (fetcher_add(scheme, &fetcher_ops) != NSERROR_OK) {
 			NSLOG(netsurf, INFO,
 			      "Unable to register cURL fetcher for %s",
 			      data->protocols[i]);
 		}
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 
 curl_easy_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_easy_setopt failed.");
-	return NSERROR_INIT_FAILED;
+	തിരികെ NSERROR_INIT_FAILED;
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#എങ്കിൽ LIBCURL_VERSION_അക്കം >= 0x071e00
 curl_multi_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_multi_setopt failed.");
-	return NSERROR_INIT_FAILED;
+	തിരികെ NSERROR_INIT_FAILED;
 #endif
 }

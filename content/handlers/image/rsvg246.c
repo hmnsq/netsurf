@@ -28,109 +28,109 @@
  * function to render it for redraw requests.
  */
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <string.h>
-#include <sys/types.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <librsvg/rsvg.h>
+#അന്തര്ഭാവ <librsvg/rsvg.h>
 
-#include <nsutils/endian.h>
+#അന്തര്ഭാവ <nsutils/endian.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/messages.h"
+#അന്തര്ഭാവ "netsurf/plotters.h"
+#അന്തര്ഭാവ "netsurf/bitmap.h"
+#അന്തര്ഭാവ "netsurf/content.h"
+#അന്തര്ഭാവ "content/llcache.h"
+#അന്തര്ഭാവ "content/content_protected.h"
+#അന്തര്ഭാവ "content/content_factory.h"
+#അന്തര്ഭാവ "desktop/gui_internal.h"
+#അന്തര്ഭാവ "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#അന്തര്ഭാവ "image/image_cache.h"
 
-#include "image/rsvg.h"
+#അന്തര്ഭാവ "image/rsvg.h"
 
 
-typedef struct rsvg_content {
-	struct content base;
+തരനിർവചനം ഘടന rsvg_content {
+	ഘടന content base;
 
 	RsvgHandle *rsvgh;	/**< Context handle for RSVG renderer */
 } rsvg_content;
 
 
-static nserror
-rsvg_create(const content_handler *handler,
+സ്ഥിതം nserror
+rsvg_create(സ്ഥിരം content_handler *handler,
 	    lwc_string *imime_type,
-	    const struct http_parameter *params,
+	    സ്ഥിരം ഘടന http_parameter *params,
 	    llcache_handle *llcache,
-	    const char *fallback_charset,
+	    സ്ഥിരം അക്ഷരം *fallback_charset,
 	    bool quirks,
-	    struct content **c)
+	    ഘടന content **c)
 {
 	rsvg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, വലുപ്പം(rsvg_content));
+	എങ്കിൽ (svg == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__init(&svg->base, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(svg);
+		തിരികെ error;
 	}
 
-	*c = (struct content *)svg;
+	*c = (ഘടന content *)svg;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /**
  * create a bitmap from jpeg content for the image cache.
  */
-static struct bitmap *
-rsvg_cache_convert(struct content *c)
+സ്ഥിതം ഘടന bitmap *
+rsvg_cache_convert(ഘടന content *c)
 {
 	rsvg_content *svgc = (rsvg_content *)c;
-	struct bitmap *bitmap;
+	ഘടന bitmap *bitmap;
 	cairo_surface_t *cs;
 	cairo_t *cr;
 	RsvgRectangle viewport;
 	gboolean renderres;
 
-	if ((bitmap = guit->bitmap->create(c->width, c->height,	BITMAP_NONE)) == NULL) {
+	എങ്കിൽ ((bitmap = guit->bitmap->create(c->width, c->height,	BITMAP_NONE)) == ശൂന്യ) {
 		NSLOG(netsurf, INFO, "Failed to create bitmap for rsvg render.");
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
-	if ((cs = cairo_image_surface_create_for_data(
-		     (unsigned char *)guit->bitmap->get_buffer(bitmap),
+	എങ്കിൽ ((cs = cairo_image_surface_create_for_data(
+		     (unsigned അക്ഷരം *)guit->bitmap->get_buffer(bitmap),
 		     CAIRO_FORMAT_ARGB32,
 		     c->width, c->height,
-		     guit->bitmap->get_rowstride(bitmap))) == NULL) {
+		     guit->bitmap->get_rowstride(bitmap))) == ശൂന്യ) {
 		NSLOG(netsurf, INFO, "Failed to create Cairo image surface for rsvg render.");
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
-	if ((cr = cairo_create(cs)) == NULL) {
+	എങ്കിൽ ((cr = cairo_create(cs)) == ശൂന്യ) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo drawing context for rsvg render.");
 		cairo_surface_destroy(cs);
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
 	viewport.x = 0;
 	viewport.y = 0;
 	viewport.width = c->width;
 	viewport.height = c->height;
-	renderres = rsvg_handle_render_document(svgc->rsvgh, cr, &viewport, NULL);
+	renderres = rsvg_handle_render_document(svgc->rsvgh, cr, &viewport, ശൂന്യ);
 	NSLOG(netsurf, DEBUG, "rsvg render:%d, width:%d, height %d", renderres, c->width, c->height);
 
 	bitmap_format_to_client(bitmap, &(bitmap_fmt_t) {
@@ -141,13 +141,13 @@ rsvg_cache_convert(struct content *c)
 	cairo_destroy(cr);
 	cairo_surface_destroy(cs);
 
-	return bitmap;
+	തിരികെ bitmap;
 }
 
-static void rsvg__get_demensions(const rsvg_content *svgc,
-		int *width, int *height)
+സ്ഥിതം ശൂന്യം rsvg__get_demensions(സ്ഥിരം rsvg_content *svgc,
+		പൂർണ്ണസംഖ്യ *width, പൂർണ്ണസംഖ്യ *height)
 {
-#if LIBRSVG_MAJOR_VERSION >= 2 && LIBRSVG_MINOR_VERSION >= 52
+#എങ്കിൽ LIBRSVG_MAJOR_VERSION >= 2 && LIBRSVG_MINOR_VERSION >= 52
 	gdouble rwidth;
 	gdouble rheight;
 	gboolean gotsize;
@@ -155,21 +155,21 @@ static void rsvg__get_demensions(const rsvg_content *svgc,
 	gotsize = rsvg_handle_get_intrinsic_size_in_pixels(svgc->rsvgh,
 							   &rwidth,
 							   &rheight);
-	if (gotsize == TRUE) {
+	എങ്കിൽ (gotsize == TRUE) {
 		*width = rwidth;
 		*height = rheight;
-	} else {
+	} അല്ലെങ്കിൽ {
 		RsvgRectangle ink_rect;
 		RsvgRectangle logical_rect;
 		rsvg_handle_get_geometry_for_element(svgc->rsvgh,
-						     NULL,
+						     ശൂന്യ,
 						     &ink_rect,
 						     &logical_rect,
-						     NULL);
+						     ശൂന്യ);
 		*width = ink_rect.width;
 		*height = ink_rect.height;
 	}
-#else
+#അല്ലെങ്കിൽ
 	RsvgDimensionData rsvgsize;
 
 	rsvg_handle_get_dimensions(svgc->rsvgh, &rsvgsize);
@@ -179,87 +179,87 @@ static void rsvg__get_demensions(const rsvg_content *svgc,
 	NSLOG(netsurf, DEBUG, "rsvg width:%d height:%d.", *width, *height);
 }
 
-static bool rsvg_convert(struct content *c)
+സ്ഥിതം bool rsvg_convert(ഘടന content *c)
 {
 	rsvg_content *svgc = (rsvg_content *)c;
-	const uint8_t *data; /* content data */
+	സ്ഥിരം uint8_t *data; /* content data */
 	size_t size; /* content data size */
 	GInputStream * istream;
-	GError *gerror = NULL;
+	GError *gerror = ശൂന്യ;
 
 	/* check image header is valid and get width/height */
 
 	data = content__get_source_data(c, &size);
 
-	istream = g_memory_input_stream_new_from_data(data, size, NULL);
+	istream = g_memory_നിവേശം_stream_new_from_data(data, size, ശൂന്യ);
 	svgc->rsvgh = rsvg_handle_new_from_stream_sync(istream,
-						       NULL,
+						       ശൂന്യ,
 						       RSVG_HANDLE_FLAGS_NONE,
-						       NULL,
+						       ശൂന്യ,
 						       &gerror);
 	g_object_unref(istream);
-	if (svgc->rsvgh == NULL) {
+	എങ്കിൽ (svgc->rsvgh == ശൂന്യ) {
 		NSLOG(netsurf, INFO, "Failed to create rsvg handle for content.");
-		return false;
+		തിരികെ false;
 	}
 
 	rsvg__get_demensions(svgc, &c->width, &c->height);
 
 	c->size = c->width * c->height * 4;
 
-	image_cache_add(c, NULL, rsvg_cache_convert);
+	image_cache_add(c, ശൂന്യ, rsvg_cache_convert);
 
 	content_set_ready(c);
 	content_set_done(c);
 	content_set_status(c, ""); /* Done: update status bar */
 
-	return true;
+	തിരികെ true;
 }
 
 
-static nserror rsvg_clone(const struct content *old, struct content **newc)
+സ്ഥിതം nserror rsvg_clone(സ്ഥിരം ഘടന content *old, ഘടന content **newc)
 {
 	rsvg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = calloc(1, വലുപ്പം(rsvg_content));
+	എങ്കിൽ (svg == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
+	എങ്കിൽ (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		തിരികെ error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	എങ്കിൽ ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (rsvg_convert(&svg->base) == false) {
+		എങ്കിൽ (rsvg_convert(&svg->base) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+			തിരികെ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *)svg;
+	*newc = (ഘടന content *)svg;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
-static void rsvg_destroy(struct content *c)
+സ്ഥിതം ശൂന്യം rsvg_destroy(ഘടന content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->rsvgh != NULL) {
+	എങ്കിൽ (d->rsvgh != ശൂന്യ) {
 		g_object_unref(d->rsvgh);
-		d->rsvgh = NULL;
+		d->rsvgh = ശൂന്യ;
 	}
 
-	return image_cache_destroy(c);
+	തിരികെ image_cache_destroy(c);
 }
 
-static const content_handler rsvg_content_handler = {
+സ്ഥിതം സ്ഥിരം content_handler rsvg_content_handler = {
 	.create = rsvg_create,
 	.data_complete = rsvg_convert,
 	.destroy = rsvg_destroy,
@@ -271,7 +271,7 @@ static const content_handler rsvg_content_handler = {
 	.no_share = false,
 };
 
-static const char *rsvg_types[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *rsvg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };

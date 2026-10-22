@@ -20,61 +20,61 @@
  * Dummy implementation of javascript engine functions.
  */
 
-#include "utils/errors.h"
-#include "content/content.h"
-#include "utils/nsoption.h"
+#അന്തര്ഭാവ "utils/errors.h"
+#അന്തര്ഭാവ "content/content.h"
+#അന്തര്ഭാവ "utils/nsoption.h"
 
-#include "javascript/js.h"
-#include "utils/log.h"
+#അന്തര്ഭാവ "javascript/js.h"
+#അന്തര്ഭാവ "utils/log.h"
 
-void js_initialise(void)
+ശൂന്യം js_initialise(ശൂന്യം)
 {
 	nsoption_set_bool(enable_javascript, false);
 }
 
-void js_finalise(void)
+ശൂന്യം js_finalise(ശൂന്യം)
 {
 }
 
-nserror js_newheap(int timeout, jsheap **heap)
+nserror js_newheap(പൂർണ്ണസംഖ്യ timeout, jsheap **heap)
 {
-	*heap = NULL;
-	return NSERROR_OK;
+	*heap = ശൂന്യ;
+	തിരികെ NSERROR_OK;
 }
 
-void js_destroyheap(jsheap *heap)
+ശൂന്യം js_destroyheap(jsheap *heap)
 {
 }
 
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
+nserror js_newthread(jsheap *heap, ശൂന്യം *win_priv, ശൂന്യം *doc_priv, jsthread **thread)
 {
-	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	*thread = ശൂന്യ;
+	തിരികെ NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-void js_destroythread(jsthread *thread)
+ശൂന്യം js_destroythread(jsthread *thread)
 {
 }
 
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+bool js_exec(jsthread *thread, സ്ഥിരം uint8_t *txt, size_t txtlen, സ്ഥിരം അക്ഷരം *name)
 {
-	return true;
+	തിരികെ true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, സ്ഥിരം അക്ഷരം *type, ഘടന dom_document *doc, ഘടന dom_കണ്ണി *target)
 {
-	return true;
+	തിരികെ true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+ശൂന്യം js_handle_new_element(jsthread *thread, ഘടന dom_element *കണ്ണി)
 {
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+ശൂന്യം js_event_cleanup(jsthread *thread, ഘടന dom_event *evt)
 {
 }

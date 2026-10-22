@@ -22,35 +22,35 @@
  * Free text search
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "utils/ascii.h"
-#include "netsurf/types.h"
-#include "desktop/selection.h"
+#അന്തര്ഭാവ "utils/errors.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/ascii.h"
+#അന്തര്ഭാവ "netsurf/types.h"
+#അന്തര്ഭാവ "desktop/selection.h"
 
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
+#അന്തര്ഭാവ "content/content.h"
+#അന്തര്ഭാവ "content/content_protected.h"
+#അന്തര്ഭാവ "content/hlcache.h"
+#അന്തര്ഭാവ "content/textsearch.h"
 
 /**
  * search match
  */
-struct list_entry {
+ഘടന list_entry {
 	/**
 	 * previous match
 	 */
-	struct list_entry *prev;
+	ഘടന list_entry *prev;
 
 	/**
 	 * next match
 	 */
-	struct list_entry *next;
+	ഘടന list_entry *next;
 
 	/**
 	 * start position of match
@@ -65,48 +65,48 @@ struct list_entry {
 	/**
 	 * content opaque start pointer
 	 */
-	struct box *start_box;
+	ഘടന box *start_box;
 
 	/**
 	 * content opaque end pointer
 	 */
-	struct box *end_box;
+	ഘടന box *end_box;
 
 	/**
 	 * content specific selection object
 	 */
-	struct selection *sel;
+	ഘടന selection *sel;
 };
 
 /**
  * The context for a free text search
  */
-struct textsearch_context {
+ഘടന textsearch_context {
 
 	/**
 	 * content search was performed upon
 	 */
-	struct content *c;
+	ഘടന content *c;
 
 	/**
 	 * opaque pointer passed to constructor.
 	 */
-	void *gui_p;
+	ശൂന്യം *gui_p;
 
 	/**
 	 * List of matches
 	 */
-	struct list_entry *found;
+	ഘടന list_entry *found;
 
 	/**
 	 * current selected match
 	 */
-	struct list_entry *current; /* first for select all */
+	ഘടന list_entry *current; /* first for select all */
 
 	/**
 	 * query string search results are for
 	 */
-	char *string;
+	അക്ഷരം *string;
 	bool prev_case_sens;
 	bool newsearch;
 };
@@ -115,18 +115,18 @@ struct textsearch_context {
 /**
  * broadcast textsearch message
  */
-static inline void
-textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+സ്ഥിതം വരിയിൽ ശൂന്യം
+textsearch_broadcast(ഘടന textsearch_context *textsearch,
+		     പൂർണ്ണസംഖ്യ type,
 		     bool state,
-		     const char *string)
+		     സ്ഥിരം അക്ഷരം *string)
 {
-	union content_msg_data msg_data;
-	msg_data.textsearch.type = type;
-	msg_data.textsearch.ctx = textsearch->gui_p;
-	msg_data.textsearch.state = state;
-	msg_data.textsearch.string = string;
-	content_broadcast(textsearch->c, CONTENT_MSG_TEXTSEARCH, &msg_data);
+	സംഘം content_സന്ദേശം_data സന്ദേശം_data;
+	സന്ദേശം_data.textsearch.type = type;
+	സന്ദേശം_data.textsearch.ctx = textsearch->gui_p;
+	സന്ദേശം_data.textsearch.state = state;
+	സന്ദേശം_data.textsearch.string = string;
+	content_broadcast(textsearch->c, CONTENT_സന്ദേശം_TEXTSEARCH, &സന്ദേശം_data);
 }
 
 
@@ -134,10 +134,10 @@ textsearch_broadcast(struct textsearch_context *textsearch,
  * Release the memory used by the list of matches,
  * deleting selection objects too
  */
-static void free_matches(struct textsearch_context *textsearch)
+സ്ഥിതം ശൂന്യം free_matches(ഘടന textsearch_context *textsearch)
 {
-	struct list_entry *cur;
-	struct list_entry *nxt;
+	ഘടന list_entry *cur;
+	ഘടന list_entry *nxt;
 
 	cur = textsearch->found->next;
 
@@ -147,15 +147,15 @@ static void free_matches(struct textsearch_context *textsearch)
 	 * causing nested accesses to the list
 	 */
 
-	textsearch->found->prev = NULL;
-	textsearch->found->next = NULL;
+	textsearch->found->prev = ശൂന്യ;
+	textsearch->found->next = ശൂന്യ;
 
-	for (; cur; cur = nxt) {
+	വേണ്ടി (; cur; cur = nxt) {
 		nxt = cur->next;
-		if (cur->sel) {
+		എങ്കിൽ (cur->sel) {
 			selection_destroy(cur->sel);
 		}
-		free(cur);
+		സ്വതന്ത്രം(cur);
 	}
 }
 
@@ -164,24 +164,24 @@ static void free_matches(struct textsearch_context *textsearch)
  * Specifies whether all matches or just the current match should
  * be highlighted in the search text.
  */
-static void search_show_all(bool all, struct textsearch_context *context)
+സ്ഥിതം ശൂന്യം തിരയൽ_show_all(bool all, ഘടന textsearch_context *context)
 {
-	struct list_entry *a;
+	ഘടന list_entry *a;
 
-	for (a = context->found->next; a; a = a->next) {
+	വേണ്ടി (a = context->found->next; a; a = a->next) {
 		bool add = true;
-		if (!all && a != context->current) {
+		എങ്കിൽ (!all && a != context->current) {
 			add = false;
-			if (a->sel) {
+			എങ്കിൽ (a->sel) {
 				selection_destroy(a->sel);
-				a->sel = NULL;
+				a->sel = ശൂന്യ;
 			}
 		}
 
-		if (add && !a->sel) {
+		എങ്കിൽ (add && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			എങ്കിൽ (a->sel != ശൂന്യ) {
 				selection_init(a->sel);
 				selection_set_position(a->sel,
 						       a->start_idx,
@@ -200,45 +200,45 @@ static void search_show_all(bool all, struct textsearch_context *context)
  * \param string_len length of search string
  * \param flags flags to control the search.
  */
-static nserror
-search_text(struct textsearch_context *context,
-	    const char *string,
-	    int string_len,
-	    search_flags_t flags)
+സ്ഥിതം nserror
+തിരയൽ_text(ഘടന textsearch_context *context,
+	    സ്ഥിരം അക്ഷരം *string,
+	    പൂർണ്ണസംഖ്യ string_len,
+	    തിരയൽ_flags_t flags)
 {
-	struct rect bounds;
-	union content_msg_data msg_data;
+	ഘടന rect bounds;
+	സംഘം content_സന്ദേശം_data സന്ദേശം_data;
 	bool case_sensitive, forwards, showall;
 	nserror res = NSERROR_OK;
 
-	case_sensitive = ((flags & SEARCH_FLAG_CASE_SENSITIVE) != 0) ?
+	case_sensitive = ((flags & തിരയൽ_FLAG_CASE_SENSITIVE) != 0) ?
 			true : false;
-	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
-	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
+	forwards = ((flags & തിരയൽ_FLAG_FORWARDS) != 0) ? true : false;
+	showall = ((flags & തിരയൽ_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	എങ്കിൽ (context->c == ശൂന്യ) {
+		തിരികെ res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	എങ്കിൽ ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
-			free(context->string);
+		എങ്കിൽ (context->string != ശൂന്യ) {
+			സ്വതന്ത്രം(context->string);
 		}
 
-		context->current = NULL;
+		context->current = ശൂന്യ;
 		free_matches(context);
 
 		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
+		എങ്കിൽ (context->string != ശൂന്യ) {
 			memcpy(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
 
 		/* indicate find operation starting */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, NULL);
+		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, ശൂന്യ);
 
 
 		/* call content find handler */
@@ -249,11 +249,11 @@ search_text(struct textsearch_context *context,
 							   case_sensitive);
 
 		/* indicate find operation finished */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
+		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, ശൂന്യ);
 
-		if (res != NSERROR_OK) {
+		എങ്കിൽ (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			തിരികെ res;
 		}
 
 		context->prev_case_sens = case_sensitive;
@@ -262,13 +262,13 @@ search_text(struct textsearch_context *context,
 		context->current = context->found->next;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (context->current != ശൂന്യ) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
+		എങ്കിൽ (forwards) {
+			എങ്കിൽ (context->current->next)
 				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
@@ -276,29 +276,29 @@ search_text(struct textsearch_context *context,
 	/* update match state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_MATCH,
-			     (context->current != NULL),
-			     NULL);
+			     (context->current != ശൂന്യ),
+			     ശൂന്യ);
 
-	search_show_all(showall, context);
+	തിരയൽ_show_all(showall, context);
 
 	/* update back state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_BACK,
-			     ((context->current != NULL) &&
-			      (context->current->prev != NULL)),
-			     NULL);
+			     ((context->current != ശൂന്യ) &&
+			      (context->current->prev != ശൂന്യ)),
+			     ശൂന്യ);
 
 	/* update forward state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_FORWARD,
-			     ((context->current != NULL) &&
-			      (context->current->next != NULL)),
-			     NULL);
+			     ((context->current != ശൂന്യ) &&
+			      (context->current->next != ശൂന്യ)),
+			     ശൂന്യ);
 
 
-	if (context->current == NULL) {
+	എങ്കിൽ (context->current == ശൂന്യ) {
 		/* no current match */
-		return res;
+		തിരികെ res;
 	}
 
 	/* call content match bounds handler */
@@ -308,16 +308,16 @@ search_text(struct textsearch_context *context,
 					context->current->start_box,
 					context->current->end_box,
 					&bounds);
-	if (res == NSERROR_OK) {
-		msg_data.scroll.area = true;
-		msg_data.scroll.x0 = bounds.x0;
-		msg_data.scroll.y0 = bounds.y0;
-		msg_data.scroll.x1 = bounds.x1;
-		msg_data.scroll.y1 = bounds.y1;
-		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
+	എങ്കിൽ (res == NSERROR_OK) {
+		സന്ദേശം_data.scroll.area = true;
+		സന്ദേശം_data.scroll.x0 = bounds.x0;
+		സന്ദേശം_data.scroll.y0 = bounds.y0;
+		സന്ദേശം_data.scroll.x1 = bounds.x1;
+		സന്ദേശം_data.scroll.y1 = bounds.y1;
+		content_broadcast(context->c, CONTENT_സന്ദേശം_SCROLL, &സന്ദേശം_data);
 	}
 
-	return res;
+	തിരികെ res;
 }
 
 
@@ -330,16 +330,16 @@ search_text(struct textsearch_context *context,
  * \param flags   The flags forward/back etc
  * \param string  The string to match
  */
-static nserror
-content_textsearch_step(struct textsearch_context *textsearch,
-			search_flags_t flags,
-			const char *string)
+സ്ഥിതം nserror
+content_textsearch_step(ഘടന textsearch_context *textsearch,
+			തിരയൽ_flags_t flags,
+			സ്ഥിരം അക്ഷരം *string)
 {
-	int string_len;
-	int i = 0;
+	പൂർണ്ണസംഖ്യ string_len;
+	പൂർണ്ണസംഖ്യ i = 0;
 	nserror res = NSERROR_OK;
 
-	assert(textsearch != NULL);
+	പ്രതിജ്ഞാ(textsearch != ശൂന്യ);
 
 	/* broadcast recent query string */
 	textsearch_broadcast(textsearch,
@@ -348,15 +348,15 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			     string);
 
 	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
-			break;
+	വേണ്ടി (i = 0; i < string_len; i++) {
+		എങ്കിൽ (string[i] != '#' && string[i] != '*')
+			നിർത്തുക;
 	}
 
-	if (i < string_len) {
-		res = search_text(textsearch, string, string_len, flags);
-	} else {
-		union content_msg_data msg_data;
+	എങ്കിൽ (i < string_len) {
+		res = തിരയൽ_text(textsearch, string, string_len, flags);
+	} അല്ലെങ്കിൽ {
+		സംഘം content_സന്ദേശം_data സന്ദേശം_data;
 
 		free_matches(textsearch);
 
@@ -364,30 +364,30 @@ content_textsearch_step(struct textsearch_context *textsearch,
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_MATCH,
 				     true,
-				     NULL);
+				     ശൂന്യ);
 
 		/* update back state */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_BACK,
 				     false,
-				     NULL);
+				     ശൂന്യ);
 
 		/* update forward state */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_FORWARD,
 				     false,
-				     NULL);
+				     ശൂന്യ);
 
 		/* clear scroll */
-		msg_data.scroll.area = false;
-		msg_data.scroll.x0 = 0;
-		msg_data.scroll.y0 = 0;
+		സന്ദേശം_data.scroll.area = false;
+		സന്ദേശം_data.scroll.x0 = 0;
+		സന്ദേശം_data.scroll.y0 = 0;
 		content_broadcast(textsearch->c,
-				  CONTENT_MSG_SCROLL,
-				  &msg_data);
+				  CONTENT_സന്ദേശം_SCROLL,
+				  &സന്ദേശം_data);
 	}
 
-	return res;
+	തിരികെ res;
 }
 
 
@@ -396,16 +396,16 @@ content_textsearch_step(struct textsearch_context *textsearch,
  *
  * \param c content to clear
  */
-static nserror content_textsearch__clear(struct content *c)
+സ്ഥിതം nserror content_textsearch__clear(ഘടന content *c)
 {
-	free(c->textsearch.string);
-	c->textsearch.string = NULL;
+	സ്വതന്ത്രം(c->textsearch.string);
+	c->textsearch.string = ശൂന്യ;
 
-	if (c->textsearch.context != NULL) {
+	എങ്കിൽ (c->textsearch.context != ശൂന്യ) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = ശൂന്യ;
 	}
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -417,48 +417,48 @@ static nserror content_textsearch__clear(struct content *c)
  * \param search_out A pointer to recive the new text search context
  * \return NSERROR_OK on success and \a search_out updated else error code
  */
-static nserror
-content_textsearch_create(struct content *c,
-			  void *gui_data,
-			  struct textsearch_context **textsearch_out)
+സ്ഥിതം nserror
+content_textsearch_create(ഘടന content *c,
+			  ശൂന്യം *gui_data,
+			  ഘടന textsearch_context **textsearch_out)
 {
-	struct textsearch_context *context;
-	struct list_entry *search_head;
+	ഘടന textsearch_context *context;
+	ഘടന list_entry *തിരയൽ_head;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
-	    (c->handler->textsearch_bounds == NULL)) {
+	എങ്കിൽ ((c->handler->textsearch_find == ശൂന്യ) ||
+	    (c->handler->textsearch_bounds == ശൂന്യ)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		തിരികെ NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
-	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	context = malloc(വലുപ്പം(ഘടന textsearch_context));
+	എങ്കിൽ (context == ശൂന്യ) {
+		തിരികെ NSERROR_NOMEM;
 	}
 
-	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
-		free(context);
-		return NSERROR_NOMEM;
+	തിരയൽ_head = malloc(വലുപ്പം(ഘടന list_entry));
+	എങ്കിൽ (തിരയൽ_head == ശൂന്യ) {
+		സ്വതന്ത്രം(context);
+		തിരികെ NSERROR_NOMEM;
 	}
 
-	search_head->start_idx = 0;
-	search_head->end_idx = 0;
-	search_head->start_box = NULL;
-	search_head->end_box = NULL;
-	search_head->sel = NULL;
-	search_head->prev = NULL;
-	search_head->next = NULL;
+	തിരയൽ_head->start_idx = 0;
+	തിരയൽ_head->end_idx = 0;
+	തിരയൽ_head->start_box = ശൂന്യ;
+	തിരയൽ_head->end_box = ശൂന്യ;
+	തിരയൽ_head->sel = ശൂന്യ;
+	തിരയൽ_head->prev = ശൂന്യ;
+	തിരയൽ_head->next = ശൂന്യ;
 
-	context->found = search_head;
-	context->current = NULL;
-	context->string = NULL;
+	context->found = തിരയൽ_head;
+	context->current = ശൂന്യ;
+	context->string = ശൂന്യ;
 	context->prev_case_sens = false;
 	context->newsearch = true;
 	context->c = c;
@@ -466,275 +466,275 @@ content_textsearch_create(struct content *c,
 
 	*textsearch_out = context;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-const char *
-content_textsearch_find_pattern(const char *string,
-				int s_len,
-				const char *pattern,
-				int p_len,
+സ്ഥിരം അക്ഷരം *
+content_textsearch_find_pattern(സ്ഥിരം അക്ഷരം *string,
+				പൂർണ്ണസംഖ്യ s_len,
+				സ്ഥിരം അക്ഷരം *pattern,
+				പൂർണ്ണസംഖ്യ p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				unsigned പൂർണ്ണസംഖ്യ *m_len)
 {
-	struct { const char *ss, *s, *p; bool first; } context[16];
-	const char *ep = pattern + p_len;
-	const char *es = string  + s_len;
-	const char *p = pattern - 1;  /* a virtual '*' before the pattern */
-	const char *ss = string;
-	const char *s = string;
+	ഘടന { സ്ഥിരം അക്ഷരം *ss, *s, *p; bool first; } context[16];
+	സ്ഥിരം അക്ഷരം *ep = pattern + p_len;
+	സ്ഥിരം അക്ഷരം *es = string  + s_len;
+	സ്ഥിരം അക്ഷരം *p = pattern - 1;  /* a virtual '*' before the pattern */
+	സ്ഥിരം അക്ഷരം *ss = string;
+	സ്ഥിരം അക്ഷരം *s = string;
 	bool first = true;
-	int top = 0;
+	പൂർണ്ണസംഖ്യ മുകൾ = 0;
 
-	while (p < ep) {
+	ആകുമ്പോൾ (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
-			char ch;
+		എങ്കിൽ (p < pattern || *p == '*') {
+			അക്ഷരം ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			ചെയ്യുക p++; ആകുമ്പോൾ (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			എങ്കിൽ (p >= ep) നിർത്തുക;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			എങ്കിൽ (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
-						break;
+				എങ്കിൽ (!case_sens) ch = ascii_to_upper(ch);
+				ആകുമ്പോൾ (s < es) {
+					എങ്കിൽ (case_sens) {
+						എങ്കിൽ (*s == ch) നിർത്തുക;
+					} അല്ലെങ്കിൽ എങ്കിൽ (ascii_to_upper(*s) == ch)
+						നിർത്തുക;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			എങ്കിൽ (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
-					context[top].ss = ss;
-					context[top].s  = s + 1;
-					context[top].p  = p - 1;
+				എങ്കിൽ (മുകൾ < (പൂർണ്ണസംഖ്യ)NOF_ELEMENTS(context)) {
+					context[മുകൾ].ss = ss;
+					context[മുകൾ].s  = s + 1;
+					context[മുകൾ].p  = p - 1;
 					/* ptr to last asterisk */
-					context[top].first = first;
-					top++;
+					context[മുകൾ].first = first;
+					മുകൾ++;
 				}
 
-				if (first) {
+				എങ്കിൽ (first) {
 					ss = s;
 					/* remember first non-'*' char */
 					first = false;
 				}
 
 				matches = true;
-			} else {
+			} അല്ലെങ്കിൽ {
 				matches = false;
 			}
 
-		} else if (s < es) {
-			char ch = *p;
-			if (ch == '#')
+		} അല്ലെങ്കിൽ എങ്കിൽ (s < es) {
+			അക്ഷരം ch = *p;
+			എങ്കിൽ (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			അല്ലെങ്കിൽ {
+				എങ്കിൽ (case_sens)
 					matches = (*s == ch);
-				else
+				അല്ലെങ്കിൽ
 					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
 			}
-			if (matches && first) {
+			എങ്കിൽ (matches && first) {
 				ss = s;  /* remember first non-'*' char */
 				first = false;
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			matches = false;
 		}
 
-		if (matches) {
+		എങ്കിൽ (matches) {
 			p++; s++;
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			എങ്കിൽ (--മുകൾ < 0)
+				തിരികെ ശൂന്യ;  /* no match, give up */
 
-			ss = context[top].ss;
-			s  = context[top].s;
-			p  = context[top].p;
-			first = context[top].first;
+			ss = context[മുകൾ].ss;
+			s  = context[മുകൾ].s;
+			p  = context[മുകൾ].p;
+			first = context[മുകൾ].first;
 		}
 	}
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	തിരികെ ss;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 nserror
-content_textsearch_add_match(struct textsearch_context *context,
+content_textsearch_add_match(ഘടന textsearch_context *context,
 			     unsigned start_idx,
 			     unsigned end_idx,
-			     struct box *start_box,
-			     struct box *end_box)
+			     ഘടന box *start_box,
+			     ഘടന box *end_box)
 {
-	struct list_entry *entry;
+	ഘടന list_entry *entry;
 
 	/* found string in box => add to list */
-	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	entry = calloc(1, വലുപ്പം(*entry));
+	എങ്കിൽ (entry == ശൂന്യ) {
+		തിരികെ NSERROR_NOMEM;
 	}
 
 	entry->start_idx = start_idx;
 	entry->end_idx = end_idx;
 	entry->start_box = start_box;
 	entry->end_box = end_box;
-	entry->sel = NULL;
+	entry->sel = ശൂന്യ;
 
-	entry->next = NULL;
+	entry->next = ശൂന്യ;
 	entry->prev = context->found->prev;
 
-	if (context->found->prev == NULL) {
+	എങ്കിൽ (context->found->prev == ശൂന്യ) {
 		context->found->next = entry;
-	} else {
+	} അല്ലെങ്കിൽ {
 		context->found->prev->next = entry;
 	}
 
 	context->found->prev = entry;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 bool
-content_textsearch_ishighlighted(struct textsearch_context *textsearch,
+content_textsearch_ishighlighted(ഘടന textsearch_context *textsearch,
 				 unsigned start_offset,
 				 unsigned end_offset,
 				 unsigned *start_idx,
 				 unsigned *end_idx)
 {
-	struct list_entry *cur;
+	ഘടന list_entry *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	വേണ്ടി (cur = textsearch->found->next; cur != ശൂന്യ; cur = cur->next) {
+		എങ്കിൽ (cur->sel &&
 		    selection_highlighted(cur->sel,
 					  start_offset,
 					  end_offset,
 					  start_idx,
 					  end_idx)) {
-			return true;
+			തിരികെ true;
 		}
 	}
 
-	return false;
+	തിരികെ false;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch)
+nserror content_textsearch_destroy(ഘടന textsearch_context *textsearch)
 {
-	assert(textsearch != NULL);
+	പ്രതിജ്ഞാ(textsearch != ശൂന്യ);
 
-	if (textsearch->string != NULL) {
+	എങ്കിൽ (textsearch->string != ശൂന്യ) {
 		/* broadcast recent query string */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
 				     false,
 				     textsearch->string);
 
-		free(textsearch->string);
+		സ്വതന്ത്രം(textsearch->string);
 	}
 
 	/* update back state */
 	textsearch_broadcast(textsearch,
 			     CONTENT_TEXTSEARCH_BACK,
 			     true,
-			     NULL);
+			     ശൂന്യ);
 
 	/* update forward state */
 	textsearch_broadcast(textsearch,
 			     CONTENT_TEXTSEARCH_FORWARD,
 			     true,
-			     NULL);
+			     ശൂന്യ);
 
 	free_matches(textsearch);
-	free(textsearch);
+	സ്വതന്ത്രം(textsearch);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror
-content_textsearch(struct hlcache_handle *h,
-		   void *context,
-		   search_flags_t flags,
-		   const char *string)
+content_textsearch(ഘടന hlcache_handle *h,
+		   ശൂന്യം *context,
+		   തിരയൽ_flags_t flags,
+		   സ്ഥിരം അക്ഷരം *string)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ഘടന content *c = hlcache_handle_get_content(h);
 	nserror res;
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	if (string != NULL &&
-	    c->textsearch.string != NULL &&
-	    c->textsearch.context != NULL &&
+	എങ്കിൽ (string != ശൂന്യ &&
+	    c->textsearch.string != ശൂന്യ &&
+	    c->textsearch.context != ശൂന്യ &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (string != ശൂന്യ) {
 		/* New search */
-		free(c->textsearch.string);
+		സ്വതന്ത്രം(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		എങ്കിൽ (c->textsearch.string == ശൂന്യ) {
+			തിരികെ NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		എങ്കിൽ (c->textsearch.context != ശൂന്യ) {
 			content_textsearch_destroy(c->textsearch.context);
-			c->textsearch.context = NULL;
+			c->textsearch.context = ശൂന്യ;
 		}
 
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		എങ്കിൽ (res != NSERROR_OK) {
+			തിരികെ res;
 		}
 
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Clear search */
 		content_textsearch__clear(c);
 
-		free(c->textsearch.string);
-		c->textsearch.string = NULL;
+		സ്വതന്ത്രം(c->textsearch.string);
+		c->textsearch.string = ശൂന്യ;
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
-nserror content_textsearch_clear(struct hlcache_handle *h)
+nserror content_textsearch_clear(ഘടന hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ഘടന content *c = hlcache_handle_get_content(h);
+	പ്രതിജ്ഞാ(c != 0);
 
-	return(content_textsearch__clear(c));
+	തിരികെ(content_textsearch__clear(c));
 }

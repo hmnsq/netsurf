@@ -16,49 +16,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gst/gst.h>
+#അന്തര്ഭാവ <gst/gst.h>
 
-#include "content/content_factory.h"
-#include "content/content_protected.h"
+#അന്തര്ഭാവ "content/content_factory.h"
+#അന്തര്ഭാവ "content/content_protected.h"
 
-#include "image/video.h"
+#അന്തര്ഭാവ "image/video.h"
 
-typedef struct nsvideo_content {
-	struct content base;
+തരനിർവചനം ഘടന nsvideo_content {
+	ഘടന content base;
 
 	GstElement *playbin;
 	GstElement *appsrc;
 } nsvideo_content;
 
-static gboolean nsvideo_bus_call(GstBus *bus, GstMessage *msg, 
+സ്ഥിതം gboolean nsvideo_bus_call(GstBus *bus, GstMessage *സന്ദേശം, 
 		nsvideo_content *video)
 {
-	switch (GST_MESSAGE_TYPE(msg)) {
-	case GST_MESSAGE_ERROR:
-		break;
-	case GST_MESSAGE_EOS:
-		break;
-	default:
-		break;
+	തിരഞ്ഞെടുപ്പ് (GST_MESSAGE_TYPE(സന്ദേശം)) {
+	അവസ്ഥ GST_MESSAGE_ERROR:
+		നിർത്തുക;
+	അവസ്ഥ GST_MESSAGE_EOS:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		നിർത്തുക;
 	}
 
-	return TRUE;
+	തിരികെ TRUE;
 }
 
-static void nsvideo_need_data_event(GstElement *playbin, guint size,
+സ്ഥിതം ശൂന്യം nsvideo_need_data_event(GstElement *playbin, guint size,
 		nsvideo_content *video)
 {
 }
 
-static void nsvideo_enough_data_event(GstElement *playbin,
+സ്ഥിതം ശൂന്യം nsvideo_enough_data_event(GstElement *playbin,
 		nsvideo_content *video)
 {
 }
 
-static void nsvideo_source_event(GObject *object, GObject *orig, 
+സ്ഥിതം ശൂന്യം nsvideo_source_event(GObject *object, GObject *orig, 
 		GParamSpec *pspec, nsvideo_content *video)
 {
-	g_object_get(orig, pspec->name, &video->appsrc, NULL);
+	g_object_get(orig, pspec->name, &video->appsrc, ശൂന്യ);
 
 	g_signal_connect(video->appsrc, "need-data", 
 			G_CALLBACK(nsvideo_need_data_event), video);
@@ -66,44 +66,44 @@ static void nsvideo_source_event(GObject *object, GObject *orig,
 			G_CALLBACK(nsvideo_enough_data_event), video);
 }
 
-static nserror nsvideo_create(const content_handler *handler,
-		lwc_string *imime_type, const http_parameter *params,
+സ്ഥിതം nserror nsvideo_create(സ്ഥിരം content_handler *handler,
+		lwc_string *imime_type, സ്ഥിരം http_parameter *params,
 		llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
-		struct content **c)
+		സ്ഥിരം അക്ഷരം *fallback_charset, bool quirks,
+		ഘടന content **c)
 {
 	nsvideo_content *video;
 	nserror error;
 	GstBus *bus;
 
-	video = calloc(1, sizeof(nsvideo_content));
-	if (video == NULL)
-		return NSERROR_NOMEM;
+	video = calloc(1, വലുപ്പം(nsvideo_content));
+	എങ്കിൽ (video == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__init(&video->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(video);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(video);
+		തിരികെ error;
 	}
 
 	error = llcache_handle_force_stream(llcache);
-	if (error != NSERROR_OK) {
-		free(video);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(video);
+		തിരികെ error;
 	}
 
-	video->playbin = gst_element_factory_make("playbin2", NULL);
-	if (video->playbin == NULL) {
-		free(video);
-		return NSERROR_NOMEM;
+	video->playbin = gst_element_factory_make("playbin2", ശൂന്യ);
+	എങ്കിൽ (video->playbin == ശൂന്യ) {
+		സ്വതന്ത്രം(video);
+		തിരികെ NSERROR_NOMEM;
 	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(video->playbin));
 	gst_bus_add_watch(bus, (GstBusFunc) nsvideo_bus_call, video);
 	gst_object_unref(bus);
 
-	g_object_set(video->playbin, "uri", "appsrc://", NULL);
+	g_object_set(video->playbin, "uri", "appsrc://", ശൂന്യ);
 	g_signal_connect(video->playbin, "deep-notify::source",
 			G_CALLBACK(nsvideo_source_event), video);
 
@@ -111,13 +111,13 @@ static nserror nsvideo_create(const content_handler *handler,
 
 	gst_element_set_state(video->playbin, GST_STATE_PLAYING);
 	
-	*c = (struct content *) video;
+	*c = (ഘടന content *) video;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-static bool nsvideo_process_data(struct content *c, const char *data, 
-		unsigned int size)
+സ്ഥിതം bool nsvideo_process_data(ഘടന content *c, സ്ഥിരം അക്ഷരം *data, 
+		unsigned പൂർണ്ണസംഖ്യ size)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstBuffer *buffer;
@@ -130,10 +130,10 @@ static bool nsvideo_process_data(struct content *c, const char *data,
 	/* Send data to appsrc */
 	g_signal_emit_by_name(video->appsrc, "push-buffer", buffer, &ret);
 
-	return ret == GST_FLOW_OK;
+	തിരികെ ret == GST_FLOW_OK;
 }
 
-static bool nsvideo_convert(struct content *c)
+സ്ഥിതം bool nsvideo_convert(ഘടന content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstFlowReturn ret;
@@ -143,10 +143,10 @@ static bool nsvideo_convert(struct content *c)
 
 	/* Appsink will flag DONE on receipt of first frame */
 
-	return ret == GST_FLOW_OK;
+	തിരികെ ret == GST_FLOW_OK;
 }
 
-static void nsvideo_destroy(struct content *c)
+സ്ഥിതം ശൂന്യം nsvideo_destroy(ഘടന content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 
@@ -154,32 +154,32 @@ static void nsvideo_destroy(struct content *c)
 	gst_object_unref(video->playbin);
 }
 
-static bool nsvideo_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+സ്ഥിതം bool nsvideo_redraw(ഘടന content *c, ഘടന content_redraw_data *data,
+		സ്ഥിരം ഘടന rect *clip, സ്ഥിരം ഘടന redraw_context *ctx)
 {
 	/** \todo Implement */
-	return true;
+	തിരികെ true;
 }
 
-static nserror nsvideo_clone(const struct content *old, struct content **newc)
+സ്ഥിതം nserror nsvideo_clone(സ്ഥിരം ഘടന content *old, ഘടന content **newc)
 {
 	/** \todo Implement */
-	return NSERROR_CLONE_FAILED;
+	തിരികെ NSERROR_CLONE_FAILED;
 }
 
-static content_type nsvideo_type(void)
+സ്ഥിതം content_type nsvideo_type(ശൂന്യം)
 {
 	/** \todo Lies */
-	return CONTENT_IMAGE;
+	തിരികെ CONTENT_IMAGE;
 }
 
-static void *nsvideo_get_internal(const struct content *c, void *context)
+സ്ഥിതം ശൂന്യം *nsvideo_get_internal(സ്ഥിരം ഘടന content *c, ശൂന്യം *context)
 {
 	/** \todo Return pointer to bitmap containing current frame, if any? */
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-static const content_handler nsvideo_content_handler = {
+സ്ഥിതം സ്ഥിരം content_handler nsvideo_content_handler = {
 	.create = nsvideo_create,
 	.process_data = nsvideo_process_data,
 	.data_complete = nsvideo_convert,
@@ -192,7 +192,7 @@ static const content_handler nsvideo_content_handler = {
 	.no_share = true
 };
 
-static const char *nsvideo_types[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *nsvideo_types[] = {
 	"video/mp4",
 	"video/webm"
 };

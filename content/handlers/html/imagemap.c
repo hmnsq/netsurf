@@ -23,61 +23,61 @@
  * \todo should this should use the general hashmap instead of its own
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <strings.h>
 
-#include <dom/dom.h>
+#അന്തര്ഭാവ <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/corestrings.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "content/content_protected.h"
+#അന്തര്ഭാവ "content/hlcache.h"
 
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/private.h"
-#include "html/imagemap.h"
+#അന്തര്ഭാവ "html/box.h"
+#അന്തര്ഭാവ "html/box_construct.h"
+#അന്തര്ഭാവ "html/private.h"
+#അന്തര്ഭാവ "html/imagemap.h"
 
 #define HASH_SIZE 31 /* fixed size hash table */
 
-typedef enum {
+തരനിർവചനം എണ്ണൽ {
 	IMAGEMAP_DEFAULT,
 	IMAGEMAP_RECT,
 	IMAGEMAP_CIRCLE,
 	IMAGEMAP_POLY
 } imagemap_entry_type;
 
-struct mapentry {
+ഘടന mapentry {
 	imagemap_entry_type type;	/**< type of shape */
 	nsurl *url;			/**< absolute url to go to */
-	char *target;			/**< target frame (if any) */
-	union {
-		struct {
-			int x;		/**< x coordinate of centre */
-			int y;		/**< y coordinate of center */
-			int r;		/**< radius of circle */
+	അക്ഷരം *target;			/**< target frame (if any) */
+	സംഘം {
+		ഘടന {
+			പൂർണ്ണസംഖ്യ x;		/**< x coordinate of centre */
+			പൂർണ്ണസംഖ്യ y;		/**< y coordinate of center */
+			പൂർണ്ണസംഖ്യ r;		/**< radius of circle */
 		} circle;
-		struct {
-			int x0;		/**< left hand edge */
-			int y0;		/**< top edge */
-			int x1;		/**< right hand edge */
-			int y1;		/**< bottom edge */
+		ഘടന {
+			പൂർണ്ണസംഖ്യ x0;		/**< left hand edge */
+			പൂർണ്ണസംഖ്യ y0;		/**< top edge */
+			പൂർണ്ണസംഖ്യ x1;		/**< right hand edge */
+			പൂർണ്ണസംഖ്യ y1;		/**< bottom edge */
 		} rect;
-		struct {
-			int num;	/**< number of points */
-			float *xcoords;	/**< x coordinates */
-			float *ycoords;	/**< y coordinates */
+		ഘടന {
+			പൂർണ്ണസംഖ്യ അക്കം;	/**< number of points */
+			ദശാംശം *xcoords;	/**< x coordinates */
+			ദശാംശം *ycoords;	/**< y coordinates */
 		} poly;
 	} bounds;
-	struct mapentry *next;		/**< next entry in list */
+	ഘടന mapentry *next;		/**< next entry in list */
 };
 
-struct imagemap {
-	char *key;		/**< key for this entry */
-	struct mapentry *list;	/**< pointer to linked list of entries */
-	struct imagemap *next;	/**< next entry in this hash chain */
+ഘടന imagemap {
+	അക്ഷരം *താക്കോൽ;		/**< key for this entry */
+	ഘടന mapentry *list;	/**< pointer to linked list of entries */
+	ഘടന imagemap *next;	/**< next entry in this hash chain */
 };
 
 /**
@@ -86,18 +86,18 @@ struct imagemap {
  * \param c The containing content
  * \return true on success, false otherwise
  */
-static bool imagemap_create(html_content *c)
+സ്ഥിതം bool imagemap_create(html_content *c)
 {
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	if (c->imagemaps == NULL) {
-		c->imagemaps = calloc(HASH_SIZE, sizeof(struct imagemap *));
-		if (c->imagemaps == NULL) {
-			return false;
+	എങ്കിൽ (c->imagemaps == ശൂന്യ) {
+		c->imagemaps = calloc(HASH_SIZE, വലുപ്പം(ഘടന imagemap *));
+		എങ്കിൽ (c->imagemaps == ശൂന്യ) {
+			തിരികെ false;
 		}
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 /**
@@ -106,17 +106,17 @@ static bool imagemap_create(html_content *c)
  * \param key The key to hash.
  * \return The hashed value.
  */
-static unsigned int imagemap_hash(const char *key)
+സ്ഥിതം unsigned പൂർണ്ണസംഖ്യ imagemap_hash(സ്ഥിരം അക്ഷരം *താക്കോൽ)
 {
-	unsigned int z = 0;
+	unsigned പൂർണ്ണസംഖ്യ z = 0;
 
-	if (key == 0) return 0;
+	എങ്കിൽ (താക്കോൽ == 0) തിരികെ 0;
 
-	for (; *key != 0; key++) {
-		z += *key & 0x1f;
+	വേണ്ടി (; *താക്കോൽ != 0; താക്കോൽ++) {
+		z += *താക്കോൽ & 0x1f;
 	}
 
-	return (z % (HASH_SIZE - 1)) + 1;
+	തിരികെ (z % (HASH_SIZE - 1)) + 1;
 }
 
 /**
@@ -127,38 +127,38 @@ static unsigned int imagemap_hash(const char *key)
  * \param list List of map regions
  * \return true on succes, false otherwise
  */
-static bool
-imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
+സ്ഥിതം bool
+imagemap_add(html_content *c, dom_string *താക്കോൽ, ഘടന mapentry *list)
 {
-	struct imagemap *map;
-	unsigned int slot;
+	ഘടന imagemap *map;
+	unsigned പൂർണ്ണസംഖ്യ slot;
 
-	assert(c != NULL);
-	assert(key != NULL);
-	assert(list != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
+	പ്രതിജ്ഞാ(താക്കോൽ != ശൂന്യ);
+	പ്രതിജ്ഞാ(list != ശൂന്യ);
 
-	if (imagemap_create(c) == false)
-		return false;
+	എങ്കിൽ (imagemap_create(c) == false)
+		തിരികെ false;
 
-	map = calloc(1, sizeof(*map));
-	if (map == NULL)
-		return false;
+	map = calloc(1, വലുപ്പം(*map));
+	എങ്കിൽ (map == ശൂന്യ)
+		തിരികെ false;
 
 	/* \todo Stop relying on NULL termination of dom_string */
-	map->key = strdup(dom_string_data(key));
-	if (map->key == NULL) {
-		free(map);
-		return false;
+	map->താക്കോൽ = strdup(dom_string_data(താക്കോൽ));
+	എങ്കിൽ (map->താക്കോൽ == ശൂന്യ) {
+		സ്വതന്ത്രം(map);
+		തിരികെ false;
 	}
 
 	map->list = list;
 
-	slot = imagemap_hash(map->key);
+	slot = imagemap_hash(map->താക്കോൽ);
 
 	map->next = c->imagemaps[slot];
 	c->imagemaps[slot] = map;
 
-	return true;
+	തിരികെ true;
 }
 
 /**
@@ -166,29 +166,29 @@ imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
  *
  * \param list Pointer to head of list
  */
-static void imagemap_freelist(struct mapentry *list)
+സ്ഥിതം ശൂന്യം imagemap_freelist(ഘടന mapentry *list)
 {
-	struct mapentry *entry, *prev;
+	ഘടന mapentry *entry, *prev;
 
-	assert(list != NULL);
+	പ്രതിജ്ഞാ(list != ശൂന്യ);
 
 	entry = list;
 
-	while (entry != NULL) {
+	ആകുമ്പോൾ (entry != ശൂന്യ) {
 		prev = entry;
 
 		nsurl_unref(entry->url);
 
-		if (entry->target)
-			free(entry->target);
+		എങ്കിൽ (entry->target)
+			സ്വതന്ത്രം(entry->target);
 
-		if (entry->type == IMAGEMAP_POLY) {
-			free(entry->bounds.poly.xcoords);
-			free(entry->bounds.poly.ycoords);
+		എങ്കിൽ (entry->type == IMAGEMAP_POLY) {
+			സ്വതന്ത്രം(entry->bounds.poly.xcoords);
+			സ്വതന്ത്രം(entry->bounds.poly.ycoords);
 		}
 
 		entry = entry->next;
-		free(prev);
+		സ്വതന്ത്രം(prev);
 	}
 }
 
@@ -197,30 +197,30 @@ static void imagemap_freelist(struct mapentry *list)
  *
  * \param c The containing content
  */
-void imagemap_destroy(html_content *c)
+ശൂന്യം imagemap_destroy(html_content *c)
 {
-	unsigned int i;
+	unsigned പൂർണ്ണസംഖ്യ i;
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
 	/* no imagemaps -> return */
-	if (c->imagemaps == NULL)
-		return;
+	എങ്കിൽ (c->imagemaps == ശൂന്യ)
+		തിരികെ;
 
-	for (i = 0; i != HASH_SIZE; i++) {
-		struct imagemap *map, *next;
+	വേണ്ടി (i = 0; i != HASH_SIZE; i++) {
+		ഘടന imagemap *map, *next;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
+		ആകുമ്പോൾ (map != ശൂന്യ) {
 			next = map->next;
 			imagemap_freelist(map->list);
-			free(map->key);
-			free(map);
+			സ്വതന്ത്രം(map->താക്കോൽ);
+			സ്വതന്ത്രം(map);
 			map = next;
 		}
 	}
 
-	free(c->imagemaps);
+	സ്വതന്ത്രം(c->imagemaps);
 }
 
 /**
@@ -228,32 +228,32 @@ void imagemap_destroy(html_content *c)
  *
  * \param c The containing content
  */
-void imagemap_dump(html_content *c)
+ശൂന്യം imagemap_dump(html_content *c)
 {
-	unsigned int i;
+	unsigned പൂർണ്ണസംഖ്യ i;
 
-	int j;
+	പൂർണ്ണസംഖ്യ j;
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	if (c->imagemaps == NULL)
-		return;
+	എങ്കിൽ (c->imagemaps == ശൂന്യ)
+		തിരികെ;
 
-	for (i = 0; i != HASH_SIZE; i++) {
-		struct imagemap *map;
-		struct mapentry *entry;
+	വേണ്ടി (i = 0; i != HASH_SIZE; i++) {
+		ഘടന imagemap *map;
+		ഘടന mapentry *entry;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
-			NSLOG(netsurf, INFO, "Imagemap: %s", map->key);
+		ആകുമ്പോൾ (map != ശൂന്യ) {
+			NSLOG(netsurf, INFO, "Imagemap: %s", map->താക്കോൽ);
 
-			for (entry = map->list; entry; entry = entry->next) {
-				switch (entry->type) {
-				case IMAGEMAP_DEFAULT:
+			വേണ്ടി (entry = map->list; entry; entry = entry->next) {
+				തിരഞ്ഞെടുപ്പ് (entry->type) {
+				അവസ്ഥ IMAGEMAP_DEFAULT:
 					NSLOG(netsurf, INFO, "\tDefault: %s",
 					      nsurl_access(entry->url));
-					break;
-				case IMAGEMAP_RECT:
+					നിർത്തുക;
+				അവസ്ഥ IMAGEMAP_RECT:
 					NSLOG(netsurf, INFO,
 					      "\tRectangle: %s: [(%d,%d),(%d,%d)]",
 					      nsurl_access(entry->url),
@@ -261,27 +261,27 @@ void imagemap_dump(html_content *c)
 					      entry->bounds.rect.y0,
 					      entry->bounds.rect.x1,
 					      entry->bounds.rect.y1);
-					break;
-				case IMAGEMAP_CIRCLE:
+					നിർത്തുക;
+				അവസ്ഥ IMAGEMAP_CIRCLE:
 					NSLOG(netsurf, INFO,
 					      "\tCircle: %s: [(%d,%d),%d]",
 					      nsurl_access(entry->url),
 					      entry->bounds.circle.x,
 					      entry->bounds.circle.y,
 					      entry->bounds.circle.r);
-					break;
-				case IMAGEMAP_POLY:
+					നിർത്തുക;
+				അവസ്ഥ IMAGEMAP_POLY:
 					NSLOG(netsurf, INFO,
 					      "\tPolygon: %s:",
 					      nsurl_access(entry->url));
-					for (j = 0; j != entry->bounds.poly.num;
+					വേണ്ടി (j = 0; j != entry->bounds.poly.അക്കം;
 							j++) {
 						fprintf(stderr, "(%d,%d) ",
-							(int)entry->bounds.poly.xcoords[j],
-							(int)entry->bounds.poly.ycoords[j]);
+							(പൂർണ്ണസംഖ്യ)entry->bounds.poly.xcoords[j],
+							(പൂർണ്ണസംഖ്യ)entry->bounds.poly.ycoords[j]);
 					}
 					fprintf(stderr,"\n");
-					break;
+					നിർത്തുക;
 				}
 			}
 			map = map->next;
@@ -299,88 +299,88 @@ void imagemap_dump(html_content *c)
  * \param tagtype  The type of tag
  * \return false on memory exhaustion, true otherwise
  */
-static bool
-imagemap_addtolist(const struct html_content *c,
-		   dom_node *n,
+സ്ഥിതം bool
+imagemap_addtolist(സ്ഥിരം ഘടന html_content *c,
+		   dom_കണ്ണി *n,
 		   nsurl *base_url,
-		   struct mapentry **entry,
+		   ഘടന mapentry **entry,
 		   dom_string *tagtype)
 {
 	dom_exception exc;
-	dom_string *href = NULL, *target = NULL, *shape = NULL;
-	dom_string *coords = NULL;
-	struct mapentry *new_map, *temp;
+	dom_string *href = ശൂന്യ, *target = ശൂന്യ, *shape = ശൂന്യ;
+	dom_string *coords = ശൂന്യ;
+	ഘടന mapentry *new_map, *temp;
 	bool ret = true;
 
-	if (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
+	എങ്കിൽ (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
 		bool nohref = false;
 		exc = dom_element_has_attribute(n,
 				corestring_dom_nohref, &nohref);
-		if ((exc != DOM_NO_ERR) || nohref)
+		എങ്കിൽ ((exc != DOM_NO_ERR) || nohref)
 			/* Skip <area nohref="anything" /> */
-			goto ok_out;
+			പോകുക ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL) {
+	എങ്കിൽ (exc != DOM_NO_ERR || href == ശൂന്യ) {
 		/* No href="" attribute, skip this element */
-		goto ok_out;
+		പോകുക ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_target, &target);
-	if (exc != DOM_NO_ERR) {
-		goto ok_out;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		പോകുക ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_shape, &shape);
-	if (exc != DOM_NO_ERR) {
-		goto ok_out;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		പോകുക ok_out;
 	}
 
 	/* If there's no shape, we default to rectangles */
-	if (shape == NULL)
+	എങ്കിൽ (shape == ശൂന്യ)
 		shape = dom_string_ref(corestring_dom_rect);
 
-	if (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
+	എങ്കിൽ (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
 		/* If not 'default' and there's no 'coords' give up */
 		exc = dom_element_get_attribute(n, corestring_dom_coords,
 						&coords);
-		if (exc != DOM_NO_ERR || coords == NULL) {
-			goto ok_out;
+		എങ്കിൽ (exc != DOM_NO_ERR || coords == ശൂന്യ) {
+			പോകുക ok_out;
 		}
 	}
 
-	new_map = calloc(1, sizeof(*new_map));
-	if (new_map == NULL) {
-		goto bad_out;
+	new_map = calloc(1, വലുപ്പം(*new_map));
+	എങ്കിൽ (new_map == ശൂന്യ) {
+		പോകുക bad_out;
 	}
 
-	if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
+	എങ്കിൽ (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
 	    dom_string_caseless_lwc_isequal(shape, corestring_lwc_rectangle))
 		new_map->type = IMAGEMAP_RECT;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
+	അല്ലെങ്കിൽ എങ്കിൽ (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
 		new_map->type = IMAGEMAP_CIRCLE;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
+	അല്ലെങ്കിൽ എങ്കിൽ (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
 		 dom_string_caseless_lwc_isequal(shape, corestring_lwc_polygon))
 		new_map->type = IMAGEMAP_POLY;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
+	അല്ലെങ്കിൽ എങ്കിൽ (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
 		new_map->type = IMAGEMAP_DEFAULT;
-	else
-		goto bad_out;
+	അല്ലെങ്കിൽ
+		പോകുക bad_out;
 
-	if (box_extract_link(c, href, base_url, &new_map->url) == false)
-		goto bad_out;
+	എങ്കിൽ (box_extract_link(c, href, base_url, &new_map->url) == false)
+		പോകുക bad_out;
 
-	if (new_map->url == NULL) {
+	എങ്കിൽ (new_map->url == ശൂന്യ) {
 		/* non-fatal error -> ignore this */
-		goto ok_free_map_out;
+		പോകുക ok_free_map_out;
 	}
 
-	if (target != NULL) {
+	എങ്കിൽ (target != ശൂന്യ) {
 		/* Copy target dom string into the map data */
 		new_map->target = malloc(dom_string_byte_length(target) + 1);
-		if (new_map->target == NULL)
-			goto bad_out;
+		എങ്കിൽ (new_map->target == ശൂന്യ)
+			പോകുക bad_out;
 
 		memcpy(new_map->target,
 		       dom_string_data(target),
@@ -389,139 +389,139 @@ imagemap_addtolist(const struct html_content *c,
 		new_map->target[dom_string_byte_length(target)] = 0;
 	}
 
-	if (new_map->type != IMAGEMAP_DEFAULT) {
-		int x, y;
-		float *xcoords, *ycoords;
+	എങ്കിൽ (new_map->type != IMAGEMAP_DEFAULT) {
+		പൂർണ്ണസംഖ്യ x, y;
+		ദശാംശം *xcoords, *ycoords;
 		/* coordinates are a comma-separated list of values */
-		char *val = strtok((char *)dom_string_data(coords), ",");
-		int num = 1;
+		അക്ഷരം *val = strtok((അക്ഷരം *)dom_string_data(coords), ",");
+		പൂർണ്ണസംഖ്യ അക്കം = 1;
 
-		switch (new_map->type) {
-		case IMAGEMAP_RECT:
+		തിരഞ്ഞെടുപ്പ് (new_map->type) {
+		അവസ്ഥ IMAGEMAP_RECT:
 			/* (left, top, right, bottom) */
-			while (val != NULL && num <= 4) {
-				switch (num) {
-				case 1:
+			ആകുമ്പോൾ (val != ശൂന്യ && അക്കം <= 4) {
+				തിരഞ്ഞെടുപ്പ് (അക്കം) {
+				അവസ്ഥ 1:
 					new_map->bounds.rect.x0 = atoi(val);
-					break;
-				case 2:
+					നിർത്തുക;
+				അവസ്ഥ 2:
 					new_map->bounds.rect.y0 = atoi(val);
-					break;
-				case 3:
+					നിർത്തുക;
+				അവസ്ഥ 3:
 					new_map->bounds.rect.x1 = atoi(val);
-					break;
-				case 4:
+					നിർത്തുക;
+				അവസ്ഥ 4:
 					new_map->bounds.rect.y1 = atoi(val);
-					break;
+					നിർത്തുക;
 				}
 
-				num++;
-				val = strtok(NULL, ",");
+				അക്കം++;
+				val = strtok(ശൂന്യ, ",");
 			}
-			break;
-		case IMAGEMAP_CIRCLE:
+			നിർത്തുക;
+		അവസ്ഥ IMAGEMAP_CIRCLE:
 			/* (x, y, radius ) */
-			while (val != NULL && num <= 3) {
-				switch (num) {
-				case 1:
+			ആകുമ്പോൾ (val != ശൂന്യ && അക്കം <= 3) {
+				തിരഞ്ഞെടുപ്പ് (അക്കം) {
+				അവസ്ഥ 1:
 					new_map->bounds.circle.x = atoi(val);
-					break;
-				case 2:
+					നിർത്തുക;
+				അവസ്ഥ 2:
 					new_map->bounds.circle.y = atoi(val);
-					break;
-				case 3:
+					നിർത്തുക;
+				അവസ്ഥ 3:
 					new_map->bounds.circle.r = atoi(val);
-					break;
+					നിർത്തുക;
 				}
 
-				num++;
-				val = strtok(NULL, ",");
+				അക്കം++;
+				val = strtok(ശൂന്യ, ",");
 			}
-			break;
-		case IMAGEMAP_POLY:
-			new_map->bounds.poly.xcoords = NULL;
-			new_map->bounds.poly.ycoords = NULL;
+			നിർത്തുക;
+		അവസ്ഥ IMAGEMAP_POLY:
+			new_map->bounds.poly.xcoords = ശൂന്യ;
+			new_map->bounds.poly.ycoords = ശൂന്യ;
 
-			while (val != NULL) {
+			ആകുമ്പോൾ (val != ശൂന്യ) {
 				x = atoi(val);
 
-				val = strtok(NULL, ",");
-				if (val == NULL)
-					break;
+				val = strtok(ശൂന്യ, ",");
+				എങ്കിൽ (val == ശൂന്യ)
+					നിർത്തുക;
 
 				y = atoi(val);
 
 				xcoords = realloc(new_map->bounds.poly.xcoords,
-						num * sizeof(float));
-				if (xcoords == NULL) {
-					goto bad_out;
+						അക്കം * വലുപ്പം(ദശാംശം));
+				എങ്കിൽ (xcoords == ശൂന്യ) {
+					പോകുക bad_out;
 				}
 				new_map->bounds.poly.xcoords = xcoords;
 
 				ycoords = realloc(new_map->bounds.poly.ycoords,
-					num * sizeof(float));
-				if (ycoords == NULL) {
-					goto bad_out;
+					അക്കം * വലുപ്പം(ദശാംശം));
+				എങ്കിൽ (ycoords == ശൂന്യ) {
+					പോകുക bad_out;
 				}
 				new_map->bounds.poly.ycoords = ycoords;
 
-				new_map->bounds.poly.xcoords[num - 1] = x;
-				new_map->bounds.poly.ycoords[num - 1] = y;
+				new_map->bounds.poly.xcoords[അക്കം - 1] = x;
+				new_map->bounds.poly.ycoords[അക്കം - 1] = y;
 
-				num++;
-				val = strtok(NULL, ",");
+				അക്കം++;
+				val = strtok(ശൂന്യ, ",");
 			}
 
-			new_map->bounds.poly.num = num - 1;
+			new_map->bounds.poly.അക്കം = അക്കം - 1;
 
-			break;
-		default:
-			break;
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
+			നിർത്തുക;
 		}
 	}
 
-	new_map->next = NULL;
+	new_map->next = ശൂന്യ;
 
-	if (*entry) {
+	എങ്കിൽ (*entry) {
 		/* add to END of list */
-		for (temp = (*entry); temp->next != NULL; temp = temp->next)
+		വേണ്ടി (temp = (*entry); temp->next != ശൂന്യ; temp = temp->next)
 			;
 		temp->next = new_map;
-	} else {
+	} അല്ലെങ്കിൽ {
 		(*entry) = new_map;
 	}
 
 	/* All good, linked in, let's clean up */
-	goto ok_out;
+	പോകുക ok_out;
 
 bad_out:
 	ret = false;
 ok_free_map_out:
-	if (new_map != NULL) {
-		if (new_map->url != NULL)
+	എങ്കിൽ (new_map != ശൂന്യ) {
+		എങ്കിൽ (new_map->url != ശൂന്യ)
 			nsurl_unref(new_map->url);
-		if (new_map->type == IMAGEMAP_POLY &&
-				new_map->bounds.poly.ycoords != NULL)
-			free(new_map->bounds.poly.ycoords);
-		if (new_map->type == IMAGEMAP_POLY &&
-				new_map->bounds.poly.xcoords != NULL)
-			free(new_map->bounds.poly.xcoords);
-		if (new_map->target != NULL)
-			free(new_map->target);
+		എങ്കിൽ (new_map->type == IMAGEMAP_POLY &&
+				new_map->bounds.poly.ycoords != ശൂന്യ)
+			സ്വതന്ത്രം(new_map->bounds.poly.ycoords);
+		എങ്കിൽ (new_map->type == IMAGEMAP_POLY &&
+				new_map->bounds.poly.xcoords != ശൂന്യ)
+			സ്വതന്ത്രം(new_map->bounds.poly.xcoords);
+		എങ്കിൽ (new_map->target != ശൂന്യ)
+			സ്വതന്ത്രം(new_map->target);
 
-		free(new_map);
+		സ്വതന്ത്രം(new_map);
 	}
 ok_out:
-	if (href != NULL)
+	എങ്കിൽ (href != ശൂന്യ)
 		dom_string_unref(href);
-	if (target != NULL)
+	എങ്കിൽ (target != ശൂന്യ)
 		dom_string_unref(target);
-	if (shape != NULL)
+	എങ്കിൽ (shape != ശൂന്യ)
 		dom_string_unref(shape);
-	if (coords != NULL)
+	എങ്കിൽ (coords != ശൂന്യ)
 		dom_string_unref(coords);
 
-	return ret;
+	തിരികെ ret;
 }
 
 /**
@@ -533,46 +533,46 @@ ok_out:
  * \param tname The sub-tags to consider on this pass
  * \return false on memory exhaustion, true otherwise
  */
-static bool
-imagemap_extract_map_entries(dom_node *node, html_content *c,
-			     struct mapentry **entry, dom_string *tname)
+സ്ഥിതം bool
+imagemap_extract_map_entries(dom_കണ്ണി *കണ്ണി, html_content *c,
+			     ഘടന mapentry **entry, dom_string *tname)
 {
 	dom_nodelist *nlist;
 	dom_exception exc;
 	unsigned long ent;
-	uint32_t tag_count;
+	uint32_t tag_എണ്ണം;
 
-	exc = dom_element_get_elements_by_tag_name(node, tname, &nlist);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_element_get_elements_by_tag_name(കണ്ണി, tname, &nlist);
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ false;
 	}
 
-	exc = dom_nodelist_get_length(nlist, &tag_count);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_nodelist_get_length(nlist, &tag_എണ്ണം);
+	എങ്കിൽ (exc != DOM_NO_ERR) {
 		dom_nodelist_unref(nlist);
-		return false;
+		തിരികെ false;
 	}
 
-	for (ent = 0; ent < tag_count; ++ent) {
-		dom_node *subnode;
+	വേണ്ടി (ent = 0; ent < tag_എണ്ണം; ++ent) {
+		dom_കണ്ണി *subnode;
 
 		exc = dom_nodelist_item(nlist, ent, &subnode);
-		if (exc != DOM_NO_ERR) {
+		എങ്കിൽ (exc != DOM_NO_ERR) {
 			dom_nodelist_unref(nlist);
-			return false;
+			തിരികെ false;
 		}
-		if (imagemap_addtolist(c, subnode, c->base_url,
+		എങ്കിൽ (imagemap_addtolist(c, subnode, c->base_url,
 				       entry, tname) == false) {
-			dom_node_unref(subnode);
+			dom_കണ്ണി_unref(subnode);
 			dom_nodelist_unref(nlist);
-			return false;
+			തിരികെ false;
 		}
-		dom_node_unref(subnode);
+		dom_കണ്ണി_unref(subnode);
 	}
 
 	dom_nodelist_unref(nlist);
 
-	return true;
+	തിരികെ true;
 }
 
 /**
@@ -583,13 +583,13 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
  * \param entry List of map entries
  * \return false on memory exhaustion, true otherwise
  */
-static bool imagemap_extract_map(dom_node *node, html_content *c,
-		struct mapentry **entry)
+സ്ഥിതം bool imagemap_extract_map(dom_കണ്ണി *കണ്ണി, html_content *c,
+		ഘടന mapentry **entry)
 {
-	if (imagemap_extract_map_entries(node, c, entry,
+	എങ്കിൽ (imagemap_extract_map_entries(കണ്ണി, c, entry,
 			corestring_dom_area) == false)
-		return false;
-	return imagemap_extract_map_entries(node, c, entry,
+		തിരികെ false;
+	തിരികെ imagemap_extract_map_entries(കണ്ണി, c, entry,
 			corestring_dom_a);
 }
 
@@ -611,55 +611,55 @@ imagemap_extract(html_content *c)
 	exc = dom_document_get_elements_by_tag_name(c->document,
 						    corestring_dom_map,
 						    &nlist);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ NSERROR_DOM;
 	}
 
 	exc = dom_nodelist_get_length(nlist, &maybe_maps);
-	if (exc != DOM_NO_ERR) {
+	എങ്കിൽ (exc != DOM_NO_ERR) {
 		ret = NSERROR_DOM;
-		goto out_nlist;
+		പോകുക out_nlist;
 	}
 
-	for (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
-		dom_node *node;
+	വേണ്ടി (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
+		dom_കണ്ണി *കണ്ണി;
 		dom_string *name;
-		exc = dom_nodelist_item(nlist, mapnr, &node);
-		if (exc != DOM_NO_ERR) {
+		exc = dom_nodelist_item(nlist, mapnr, &കണ്ണി);
+		എങ്കിൽ (exc != DOM_NO_ERR) {
 			ret = NSERROR_DOM;
-			goto out_nlist;
+			പോകുക out_nlist;
 		}
 
-		exc = dom_element_get_attribute(node, corestring_dom_id,
+		exc = dom_element_get_attribute(കണ്ണി, corestring_dom_id,
 						&name);
-		if (exc != DOM_NO_ERR) {
-			dom_node_unref(node);
+		എങ്കിൽ (exc != DOM_NO_ERR) {
+			dom_കണ്ണി_unref(കണ്ണി);
 			ret = NSERROR_DOM;
-			goto out_nlist;
+			പോകുക out_nlist;
 		}
 
-		if (name == NULL) {
-			exc = dom_element_get_attribute(node,
+		എങ്കിൽ (name == ശൂന്യ) {
+			exc = dom_element_get_attribute(കണ്ണി,
 							corestring_dom_name,
 							&name);
-			if (exc != DOM_NO_ERR) {
-				dom_node_unref(node);
+			എങ്കിൽ (exc != DOM_NO_ERR) {
+				dom_കണ്ണി_unref(കണ്ണി);
 				ret = NSERROR_DOM;
-				goto out_nlist;
+				പോകുക out_nlist;
 			}
 		}
 
-		if (name != NULL) {
-			struct mapentry *entry = NULL;
-			if (imagemap_extract_map(node, c, &entry) == false) {
-				if (entry != NULL) {
+		എങ്കിൽ (name != ശൂന്യ) {
+			ഘടന mapentry *entry = ശൂന്യ;
+			എങ്കിൽ (imagemap_extract_map(കണ്ണി, c, &entry) == false) {
+				എങ്കിൽ (entry != ശൂന്യ) {
 					imagemap_freelist(entry);
 				}
 
 				dom_string_unref(name);
-				dom_node_unref(node);
+				dom_കണ്ണി_unref(കണ്ണി);
 				ret = NSERROR_NOMEM; /** @todo check this */
-				goto out_nlist;
+				പോകുക out_nlist;
 			}
 
 			/* imagemap_extract_map may not extract anything,
@@ -667,26 +667,26 @@ imagemap_extract(html_content *c)
 			 * error as it just means that we've encountered
 			 * an incorrectly defined <map>...</map> block
 			 */
-			if ((entry != NULL) &&
+			എങ്കിൽ ((entry != ശൂന്യ) &&
 			    (imagemap_add(c, name, entry) == false)) {
 				imagemap_freelist(entry);
 
 				dom_string_unref(name);
-				dom_node_unref(node);
+				dom_കണ്ണി_unref(കണ്ണി);
 				ret = NSERROR_NOMEM; /** @todo check this */
-				goto out_nlist;
+				പോകുക out_nlist;
 			}
 		}
 
 		dom_string_unref(name);
-		dom_node_unref(node);
+		dom_കണ്ണി_unref(കണ്ണി);
 	}
 
 out_nlist:
 
 	dom_nodelist_unref(nlist);
 
-	return ret;
+	തിരികെ ret;
 }
 
 /**
@@ -702,24 +702,24 @@ out_nlist:
  * \param click_y Y coordinate of click
  * \return 1 if point is in polygon, 0 if outside. 0 or 1 if on boundary
  */
-static int
-imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+imagemap_point_in_poly(പൂർണ്ണസംഖ്യ അക്കം, ദശാംശം *xpt, ദശാംശം *ypt, unsigned long x,
 		unsigned long y, unsigned long click_x,	unsigned long click_y)
 {
-	int i, j, c = 0;
+	പൂർണ്ണസംഖ്യ i, j, c = 0;
 
-	assert(xpt != NULL);
-	assert(ypt != NULL);
+	പ്രതിജ്ഞാ(xpt != ശൂന്യ);
+	പ്രതിജ്ഞാ(ypt != ശൂന്യ);
 
-	for (i = 0, j = num - 1; i < num; j = i++) {
-		if ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
+	വേണ്ടി (i = 0, j = അക്കം - 1; i < അക്കം; j = i++) {
+		എങ്കിൽ ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
 		     ((ypt[j] + y <= click_y) && (click_y < ypt[i] + y))) &&
 		     (click_x < (xpt[j] - xpt[i]) *
 		     (click_y - (ypt[i] + y)) / (ypt[j] - ypt[i]) + xpt[i] + x))
 			c = !c;
 	}
 
-	return c;
+	തിരികെ c;
 }
 
 /**
@@ -734,78 +734,78 @@ imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
  * \param target   Pointer to location to receive target pointer (if any)
  * \return The url associated with this area, or NULL if not found
  */
-nsurl *imagemap_get(struct html_content *c, const char *key,
+nsurl *imagemap_get(ഘടന html_content *c, സ്ഥിരം അക്ഷരം *താക്കോൽ,
 		unsigned long x, unsigned long y,
 		unsigned long click_x, unsigned long click_y,
-		const char **target)
+		സ്ഥിരം അക്ഷരം **target)
 {
-	unsigned int slot = 0;
-	struct imagemap *map;
-	struct mapentry *entry;
+	unsigned പൂർണ്ണസംഖ്യ slot = 0;
+	ഘടന imagemap *map;
+	ഘടന mapentry *entry;
 	unsigned long cx, cy;
 
-	assert(c != NULL);
+	പ്രതിജ്ഞാ(c != ശൂന്യ);
 
-	if (key == NULL)
-		return NULL;
+	എങ്കിൽ (താക്കോൽ == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
-	if (c->imagemaps == NULL)
-		return NULL;
+	എങ്കിൽ (c->imagemaps == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
-	slot = imagemap_hash(key);
+	slot = imagemap_hash(താക്കോൽ);
 
-	for (map = c->imagemaps[slot]; map != NULL; map = map->next) {
-		if (map->key != NULL && strcasecmp(map->key, key) == 0)
-			break;
+	വേണ്ടി (map = c->imagemaps[slot]; map != ശൂന്യ; map = map->next) {
+		എങ്കിൽ (map->താക്കോൽ != ശൂന്യ && strcasecmp(map->താക്കോൽ, താക്കോൽ) == 0)
+			നിർത്തുക;
 	}
 
-	if (map == NULL || map->list == NULL)
-		return NULL;
+	എങ്കിൽ (map == ശൂന്യ || map->list == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
-	for (entry = map->list; entry; entry = entry->next) {
-		switch (entry->type) {
-		case IMAGEMAP_DEFAULT:
+	വേണ്ടി (entry = map->list; entry; entry = entry->next) {
+		തിരഞ്ഞെടുപ്പ് (entry->type) {
+		അവസ്ഥ IMAGEMAP_DEFAULT:
 			/* just return the URL. no checks required */
-			if (target)
+			എങ്കിൽ (target)
 				*target = entry->target;
-			return entry->url;
-			break;
-		case IMAGEMAP_RECT:
-			if (click_x >= x + entry->bounds.rect.x0 &&
+			തിരികെ entry->url;
+			നിർത്തുക;
+		അവസ്ഥ IMAGEMAP_RECT:
+			എങ്കിൽ (click_x >= x + entry->bounds.rect.x0 &&
 				    click_x <= x + entry->bounds.rect.x1 &&
 				    click_y >= y + entry->bounds.rect.y0 &&
 				    click_y <= y + entry->bounds.rect.y1) {
-				if (target)
+				എങ്കിൽ (target)
 					*target = entry->target;
-				return entry->url;
+				തിരികെ entry->url;
 			}
-			break;
-		case IMAGEMAP_CIRCLE:
+			നിർത്തുക;
+		അവസ്ഥ IMAGEMAP_CIRCLE:
 			cx = x + entry->bounds.circle.x - click_x;
 			cy = y + entry->bounds.circle.y - click_y;
-			if ((cx * cx + cy * cy) <=
+			എങ്കിൽ ((cx * cx + cy * cy) <=
 				(unsigned long) (entry->bounds.circle.r *
 					entry->bounds.circle.r)) {
-				if (target)
+				എങ്കിൽ (target)
 					*target = entry->target;
-				return entry->url;
+				തിരികെ entry->url;
 			}
-			break;
-		case IMAGEMAP_POLY:
-			if (imagemap_point_in_poly(entry->bounds.poly.num,
+			നിർത്തുക;
+		അവസ്ഥ IMAGEMAP_POLY:
+			എങ്കിൽ (imagemap_point_in_poly(entry->bounds.poly.അക്കം,
 					entry->bounds.poly.xcoords,
 					entry->bounds.poly.ycoords, x, y,
 					click_x, click_y)) {
-				if (target)
+				എങ്കിൽ (target)
 					*target = entry->target;
-				return entry->url;
+				തിരികെ entry->url;
 			}
-			break;
+			നിർത്തുക;
 		}
 	}
 
-	if (target)
-		*target = NULL;
+	എങ്കിൽ (target)
+		*target = ശൂന്യ;
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }

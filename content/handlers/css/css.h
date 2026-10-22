@@ -19,19 +19,19 @@
 #ifndef netsurf_css_css_h_
 #define netsurf_css_css_h_
 
-#include <stdint.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#include <libcss/libcss.h>
+#അന്തര്ഭാവ <libcss/libcss.h>
 
-#include "utils/errors.h"
+#അന്തര്ഭാവ "utils/errors.h"
 
-struct hlcache_handle;
+ഘടന hlcache_handle;
 
 /**
  * Imported stylesheet record
  */
-struct nscss_import {
-	struct hlcache_handle *c;	/**< Content containing sheet */
+ഘടന nscss_import {
+	ഘടന hlcache_handle *c;	/**< Content containing sheet */
 };
 
 /**
@@ -39,7 +39,7 @@ struct nscss_import {
  *
  * \return NSERROR_OK on success or error code on faliure
  */
-nserror nscss_init(void);
+nserror nscss_init(ശൂന്യം);
 
 /**
  * Retrieve the stylesheet object associated with a CSS content
@@ -47,7 +47,7 @@ nserror nscss_init(void);
  * \param h Stylesheet content
  * \return Pointer to stylesheet object
  */
-css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h);
+css_stylesheet *nscss_get_stylesheet(ഘടന hlcache_handle *h);
 
 /**
  * Retrieve imported stylesheets
@@ -56,6 +56,6 @@ css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h);
  * \param n  Pointer to location to receive number of imports
  * \return Pointer to array of imported stylesheets
  */
-struct nscss_import *nscss_get_imports(struct hlcache_handle *h, uint32_t *n);
+ഘടന nscss_import *nscss_get_imports(ഘടന hlcache_handle *h, uint32_t *n);
 
 #endif

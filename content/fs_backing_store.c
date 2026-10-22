@@ -33,27 +33,27 @@
  *
  */
 
-#include <unistd.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <time.h>
-#include <stdlib.h>
-#include <nsutils/unistd.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <nsutils/unistd.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/filepath.h"
-#include "utils/file.h"
-#include "utils/nsurl.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/hashmap.h"
-#include "desktop/gui_internal.h"
-#include "netsurf/misc.h"
+#അന്തര്ഭാവ "netsurf/inttypes.h"
+#അന്തര്ഭാവ "utils/filepath.h"
+#അന്തര്ഭാവ "utils/file.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/messages.h"
+#അന്തര്ഭാവ "utils/hashmap.h"
+#അന്തര്ഭാവ "desktop/gui_internal.h"
+#അന്തര്ഭാവ "netsurf/misc.h"
 
-#include "content/backing_store.h"
+#അന്തര്ഭാവ "content/backing_store.h"
 
 /** Backing store file format version */
 #define CONTROL_VERSION 202
@@ -74,10 +74,10 @@
 #define BLOCK_ADDR_LEN 16
 
 /** log2 number of entries per block file(1024) */
-#define BLOCK_ENTRY_COUNT 10
+#define BLOCK_ENTRY_എണ്ണം 10
 
 /** log2 number of data block files */
-#define BLOCK_FILE_COUNT (BLOCK_ADDR_LEN - BLOCK_ENTRY_COUNT)
+#define BLOCK_FILE_എണ്ണം (BLOCK_ADDR_LEN - BLOCK_ENTRY_എണ്ണം)
 
 /** log2 size of data blocks (8k) */
 #define BLOCK_DATA_SIZE 13
@@ -86,37 +86,37 @@
 #define BLOCK_META_SIZE 13
 
 /** length in bytes of a block files use map */
-#define BLOCK_USE_MAP_SIZE (1 << (BLOCK_ENTRY_COUNT - 3))
+#define BLOCK_USE_MAP_SIZE (1 << (BLOCK_ENTRY_എണ്ണം - 3))
 
 /**
  * The type used as a binary identifier for each entry derived from
  * the URL. A larger identifier will have fewer collisions but
  * requires proportionately more storage.
  */
-typedef uint32_t entry_ident_t;
+തരനിർവചനം uint32_t entry_ident_t;
 
 /**
  * The type used to store block file index values. If this is changed
  * it will affect the entry storage/alignment and BLOCK_ADDR_LEN must
  * also be updated.
  */
-typedef uint16_t block_index_t;
+തരനിർവചനം uint16_t block_index_t;
 
 
 /**
  * Entry element index values.
  */
-enum store_entry_elem_idx {
+എണ്ണൽ store_entry_elem_idx {
 	ENTRY_ELEM_DATA = 0, /**< entry element is data */
 	ENTRY_ELEM_META = 1,  /**< entry element is metadata */
-	ENTRY_ELEM_COUNT = 2, /**< count of elements on an entry */
+	ENTRY_ELEM_എണ്ണം = 2, /**< count of elements on an entry */
 };
 
 /**
  * flags that indicate what additional information is contained within
  * an entry element.
  */
-enum store_entry_elem_flags {
+എണ്ണൽ store_entry_elem_flags {
 	/** store not managing any allocation on entry */
 	ENTRY_ELEM_FLAG_NONE = 0,
 	/** entry data allocation is on heap */
@@ -128,7 +128,7 @@ enum store_entry_elem_flags {
 };
 
 
-enum store_entry_flags {
+എണ്ണൽ store_entry_flags {
 	/** entry is normal */
 	ENTRY_FLAGS_NONE = 0,
 	/** entry has been invalidated but something still holding a reference */
@@ -146,7 +146,7 @@ enum store_entry_flags {
  *
  * @note Order is important to avoid excessive structure packing overhead.
  */
-struct store_entry_element {
+ഘടന store_entry_element {
 	uint8_t* data; /**< data allocated */
 	uint32_t size; /**< size of entry element on disc */
 	block_index_t block; /**< small object data block */
@@ -164,21 +164,21 @@ struct store_entry_element {
  *
  * @note Order is important to avoid excessive structure packing overhead.
  */
-struct store_entry {
+ഘടന store_entry {
 	nsurl *url; /**< The URL for this entry */
 	int64_t last_used; /**< UNIX time the entry was last used */
-	uint16_t use_count; /**< number of times this entry has been accessed */
+	uint16_t use_എണ്ണം; /**< number of times this entry has been accessed */
 	uint8_t flags; /**< entry flags */
 	/** Entry element (data or meta) specific information */
-	struct store_entry_element elem[ENTRY_ELEM_COUNT];
+	ഘടന store_entry_element elem[ENTRY_ELEM_എണ്ണം];
 };
 
 /**
  * Small block file.
  */
-struct block_file {
+ഘടന block_file {
 	/** file descriptor of the block file */
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 	/** map of used and unused entries within the block file */
 	uint8_t use_map[BLOCK_USE_MAP_SIZE];
 };
@@ -186,7 +186,7 @@ struct block_file {
 /**
  * log2 of block size.
  */
-static const unsigned int log2_block_size[ENTRY_ELEM_COUNT] = {
+സ്ഥിതം സ്ഥിരം unsigned പൂർണ്ണസംഖ്യ log2_block_size[ENTRY_ELEM_എണ്ണം] = {
 	BLOCK_DATA_SIZE, /**< Data block size */
 	BLOCK_META_SIZE  /**< Metadata block size */
 };
@@ -194,9 +194,9 @@ static const unsigned int log2_block_size[ENTRY_ELEM_COUNT] = {
 /**
  * Parameters controlling the backing store.
  */
-struct store_state {
+ഘടന store_state {
 	/* store config */
-	char *path; /**< The path to the backing store */
+	അക്ഷരം *path; /**< The path to the backing store */
 	size_t limit; /**< The backing store upper bound target size */
 	size_t hysteresis; /**< The hysteresis around the target size */
 
@@ -211,7 +211,7 @@ struct store_state {
 	bool entries_dirty;
 
 	/** small block indexes */
-	struct block_file blocks[ENTRY_ELEM_COUNT][BLOCK_FILE_COUNT];
+	ഘടന block_file blocks[ENTRY_ELEM_എണ്ണം][BLOCK_FILE_എണ്ണം];
 
 	/** flag indicating if the block file use maps have been made
 	 * persistent since they were last changed.
@@ -227,9 +227,9 @@ struct store_state {
 	/* stats */
 	uint64_t total_alloc; /**< total size of all allocated storage. */
 
-	size_t hit_count; /**< number of cache hits */
+	size_t hit_എണ്ണം; /**< number of cache hits */
 	uint64_t hit_size; /**< size of storage served */
-	size_t miss_count; /**< number of cache misses */
+	size_t miss_എണ്ണം; /**< number of cache misses */
 
 };
 
@@ -239,45 +239,45 @@ struct store_state {
  * @todo Investigate if there is a way to have a context rather than
  * use a global.
  */
-struct store_state *storestate;
+ഘടന store_state *storestate;
 
 /* Entries hashmap parameters
  *
  * Our hashmap has nsurl keys and store_entry values
  */
 
-static bool
-entries_hashmap_key_eq(void *key1, void *key2)
+സ്ഥിതം bool
+entries_hashmap_താക്കോൽ_eq(ശൂന്യം *key1, ശൂന്യം *key2)
 {
-	return nsurl_compare((nsurl *)key1, (nsurl *)key2, NSURL_COMPLETE);
+	തിരികെ nsurl_compare((nsurl *)key1, (nsurl *)key2, NSURL_COMPLETE);
 }
 
-static void *
-entries_hashmap_value_alloc(void *key)
+സ്ഥിതം ശൂന്യം *
+entries_hashmap_മൂല്യം_alloc(ശൂന്യം *താക്കോൽ)
 {
-	struct store_entry *ent = calloc(1, sizeof(struct store_entry));
-	if (ent != NULL) {
-		ent->url = nsurl_ref(key);
+	ഘടന store_entry *ent = calloc(1, വലുപ്പം(ഘടന store_entry));
+	എങ്കിൽ (ent != ശൂന്യ) {
+		ent->url = nsurl_ref(താക്കോൽ);
 	}
-	return ent;
+	തിരികെ ent;
 }
 
-static void
-entries_hashmap_value_destroy(void *value)
+സ്ഥിതം ശൂന്യം
+entries_hashmap_മൂല്യം_destroy(ശൂന്യം *മൂല്യം)
 {
-	struct store_entry *ent = value;
+	ഘടന store_entry *ent = മൂല്യം;
 	/** \todo Do we need to do any disk cleanup here?  if so, meep! */
 	nsurl_unref(ent->url);
-	free(ent);
+	സ്വതന്ത്രം(ent);
 }
 
-static hashmap_parameters_t entries_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_hash = (hashmap_key_hash_t)nsurl_hash,
-	.key_eq = entries_hashmap_key_eq,
-	.value_alloc = entries_hashmap_value_alloc,
-	.value_destroy = entries_hashmap_value_destroy,
+സ്ഥിതം hashmap_parameters_t entries_hashmap_parameters = {
+	.താക്കോൽ_clone = (hashmap_താക്കോൽ_clone_t)nsurl_ref,
+	.താക്കോൽ_destroy = (hashmap_താക്കോൽ_destroy_t)nsurl_unref,
+	.താക്കോൽ_hash = (hashmap_താക്കോൽ_hash_t)nsurl_hash,
+	.താക്കോൽ_eq = entries_hashmap_താക്കോൽ_eq,
+	.മൂല്യം_alloc = entries_hashmap_മൂല്യം_alloc,
+	.മൂല്യം_destroy = entries_hashmap_മൂല്യം_destroy,
 };
 
 /**
@@ -316,22 +316,22 @@ static hashmap_parameters_t entries_hashmap_parameters = {
  * @param elem_idx The element index.
  * @return The filename string or NULL on allocation error.
  */
-static char *
-store_fname(struct store_state *state,
+സ്ഥിതം അക്ഷരം *
+store_fname(ഘടന store_state *state,
 	    entry_ident_t ident,
-	    int elem_idx)
+	    പൂർണ്ണസംഖ്യ elem_idx)
 {
-	char *fname = NULL;
+	അക്ഷരം *fname = ശൂന്യ;
 	uint8_t b32u_i[8]; /* base32 encoded ident */
-	const uint8_t *b32u_d[6]; /* base32 ident as separate components */
+	സ്ഥിരം uint8_t *b32u_d[6]; /* base32 ident as separate components */
 
 	/* directories used to separate elements */
-	const char *base_dir_table[] = {
+	സ്ഥിരം അക്ഷരം *base_dir_table[] = {
 		"d", "m", "dblk", "mblk"
 	};
 
 	/* RFC4648 base32 encoding table (six bits) */
-	const uint8_t encoding_table[64][3] = {
+	സ്ഥിരം uint8_t encoding_table[64][3] = {
 		{ 'A',   0, 0 }, { 'B',   0, 0 }, /*  0 */
 		{ 'C',   0, 0 }, { 'D',   0, 0 }, /*  2 */
 		{ 'E',   0, 0 }, { 'F',   0, 0 }, /*  4 */
@@ -384,26 +384,26 @@ store_fname(struct store_state *state,
 	b32u_d[4] = &encoding_table[(ident >> 18) & 0x3f][0];
 	b32u_d[5] = &encoding_table[(ident >> 24) & 0x3f][0];
 
-	switch (elem_idx) {
-	case ENTRY_ELEM_DATA:
-	case ENTRY_ELEM_META:
-		netsurf_mkpath(&fname, NULL, 8,
+	തിരഞ്ഞെടുപ്പ് (elem_idx) {
+	അവസ്ഥ ENTRY_ELEM_DATA:
+	അവസ്ഥ ENTRY_ELEM_META:
+		netsurf_mkpath(&fname, ശൂന്യ, 8,
 			       state->path, b32u_d[0], b32u_d[1], b32u_d[2],
 			       b32u_d[3], b32u_d[4], b32u_d[5], b32u_i);
-		break;
+		നിർത്തുക;
 
-	case (ENTRY_ELEM_COUNT + ENTRY_ELEM_META):
-	case (ENTRY_ELEM_COUNT + ENTRY_ELEM_DATA):
-		netsurf_mkpath(&fname, NULL, 3,
+	അവസ്ഥ (ENTRY_ELEM_എണ്ണം + ENTRY_ELEM_META):
+	അവസ്ഥ (ENTRY_ELEM_എണ്ണം + ENTRY_ELEM_DATA):
+		netsurf_mkpath(&fname, ശൂന്യ, 3,
 			       state->path, b32u_d[0], b32u_d[1]);
-		break;
+		നിർത്തുക;
 
-	default:
-		assert("bad element index" == NULL);
-		break;
+	സ്ഥിരസ്ഥിതി:
+		പ്രതിജ്ഞാ("bad element index" == ശൂന്യ);
+		നിർത്തുക;
 	}
 
-	return fname;
+	തിരികെ fname;
 }
 
 /**
@@ -414,39 +414,39 @@ store_fname(struct store_state *state,
  * @param elem_idx The element index to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-invalidate_element(struct store_state *state,
-		   struct store_entry *bse,
-		   int elem_idx)
+സ്ഥിതം nserror
+invalidate_element(ഘടന store_state *state,
+		   ഘടന store_entry *bse,
+		   പൂർണ്ണസംഖ്യ elem_idx)
 {
-	if (bse->elem[elem_idx].block != 0) {
+	എങ്കിൽ (bse->elem[elem_idx].block != 0) {
 		block_index_t bf;
 		block_index_t bi;
 
 		/* block file block resides in */
-		bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-			((1 << BLOCK_FILE_COUNT) - 1);
+		bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_എണ്ണം) &
+			((1 << BLOCK_FILE_എണ്ണം) - 1);
 
 		/* block index in file */
-		bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_COUNT) -1);
+		bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_എണ്ണം) -1);
 
 		/* clear bit in use map */
 		state->blocks[elem_idx][bf].use_map[bi >> 3] &= ~(1U << (bi & 7));
-	} else {
-		char *fname;
+	} അല്ലെങ്കിൽ {
+		അക്ഷരം *fname;
 
 		/* unlink the file from disc */
 		fname = store_fname(state, nsurl_hash(bse->url), elem_idx);
-		if (fname == NULL) {
-			return NSERROR_NOMEM;
+		എങ്കിൽ (fname == ശൂന്യ) {
+			തിരികെ NSERROR_NOMEM;
 		}
 		unlink(fname);
-		free(fname);
+		സ്വതന്ത്രം(fname);
 	}
 
 	state->total_alloc -= bse->elem[elem_idx].size;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -456,8 +456,8 @@ invalidate_element(struct store_state *state,
  * @param bse The entry to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-invalidate_entry(struct store_state *state, struct store_entry *bse)
+സ്ഥിതം nserror
+invalidate_entry(ഘടന store_state *state, ഘടന store_entry *bse)
 {
 	nserror ret;
 
@@ -465,7 +465,7 @@ invalidate_entry(struct store_state *state, struct store_entry *bse)
 	bse->flags |= ENTRY_FLAGS_INVALID;
 
 	/* check if the entry has storage already allocated */
-	if (((bse->elem[ENTRY_ELEM_DATA].flags &
+	എങ്കിൽ (((bse->elem[ENTRY_ELEM_DATA].flags &
 	     (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0) ||
 	    ((bse->elem[ENTRY_ELEM_META].flags &
 	      (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0)) {
@@ -475,18 +475,18 @@ invalidate_entry(struct store_state *state, struct store_entry *bse)
 		 */
 		NSLOG(netsurf, DEBUG,
 		      "invalidating entry with referenced allocation");
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	NSLOG(netsurf, VERBOSE, "Removing entry for %s", nsurl_access(bse->url));
 
 	ret = invalidate_element(state, bse, ENTRY_ELEM_META);
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "Error invalidating metadata element");
 	}
 
 	ret = invalidate_element(state, bse, ENTRY_ELEM_DATA);
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "Error invalidating data element");
 	}
 
@@ -494,70 +494,70 @@ invalidate_entry(struct store_state *state, struct store_entry *bse)
 	hashmap_remove(state->entries, bse->url);
 	/* From now, bse is invalid memory */
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /**
  * Quick sort comparison.
  */
-static int compar(const void *va, const void *vb)
+സ്ഥിതം പൂർണ്ണസംഖ്യ compar(സ്ഥിരം ശൂന്യം *va, സ്ഥിരം ശൂന്യം *vb)
 {
-	const struct store_entry *a = *(const struct store_entry **)va;
-	const struct store_entry *b = *(const struct store_entry **)vb;
+	സ്ഥിരം ഘടന store_entry *a = *(സ്ഥിരം ഘടന store_entry **)va;
+	സ്ഥിരം ഘടന store_entry *b = *(സ്ഥിരം ഘടന store_entry **)vb;
 
 	/* consider the allocation flags - if an entry has an
 	 * allocation it is considered more valuable as it cannot be
 	 * freed.
 	 */
-	if ((a->elem[ENTRY_ELEM_DATA].flags == ENTRY_ELEM_FLAG_NONE) &&
+	എങ്കിൽ ((a->elem[ENTRY_ELEM_DATA].flags == ENTRY_ELEM_FLAG_NONE) &&
 	    (b->elem[ENTRY_ELEM_DATA].flags != ENTRY_ELEM_FLAG_NONE)) {
-		return -1;
-	} else if ((a->elem[ENTRY_ELEM_DATA].flags != ENTRY_ELEM_FLAG_NONE) &&
+		തിരികെ -1;
+	} അല്ലെങ്കിൽ എങ്കിൽ ((a->elem[ENTRY_ELEM_DATA].flags != ENTRY_ELEM_FLAG_NONE) &&
 		   (b->elem[ENTRY_ELEM_DATA].flags == ENTRY_ELEM_FLAG_NONE)) {
-		return 1;
+		തിരികെ 1;
 	}
 
-	if ((a->elem[ENTRY_ELEM_META].flags == ENTRY_ELEM_FLAG_NONE) &&
+	എങ്കിൽ ((a->elem[ENTRY_ELEM_META].flags == ENTRY_ELEM_FLAG_NONE) &&
 	    (b->elem[ENTRY_ELEM_META].flags != ENTRY_ELEM_FLAG_NONE)) {
-		return -1;
-	} else if ((a->elem[ENTRY_ELEM_META].flags != ENTRY_ELEM_FLAG_NONE) &&
+		തിരികെ -1;
+	} അല്ലെങ്കിൽ എങ്കിൽ ((a->elem[ENTRY_ELEM_META].flags != ENTRY_ELEM_FLAG_NONE) &&
 		   (b->elem[ENTRY_ELEM_META].flags == ENTRY_ELEM_FLAG_NONE)) {
-		return 1;
+		തിരികെ 1;
 	}
 
-	if (a->use_count < b->use_count) {
-		return -1;
-	} else if (a->use_count > b->use_count) {
-		return 1;
+	എങ്കിൽ (a->use_എണ്ണം < b->use_എണ്ണം) {
+		തിരികെ -1;
+	} അല്ലെങ്കിൽ എങ്കിൽ (a->use_എണ്ണം > b->use_എണ്ണം) {
+		തിരികെ 1;
 	}
 	/* use count is the same - now consider last use time */
 
-	if (a->last_used < b->last_used) {
-		return -1;
-	} else if (a->last_used > b->last_used) {
-		return 1;
+	എങ്കിൽ (a->last_used < b->last_used) {
+		തിരികെ -1;
+	} അല്ലെങ്കിൽ എങ്കിൽ (a->last_used > b->last_used) {
+		തിരികെ 1;
 	}
 
 	/* they are the same */
-	return 0;
+	തിരികെ 0;
 }
 
-typedef struct {
-	struct store_entry **elist;
-	size_t ent_count;
+തരനിർവചനം ഘടന {
+	ഘടന store_entry **elist;
+	size_t ent_എണ്ണം;
 } eviction_state_t;
 
 /**
  * Iterator for gathering entries to compute eviction order
  */
-static bool
-entry_eviction_iterator_cb(void *key, void *value, void *ctx)
+സ്ഥിതം bool
+entry_eviction_iterator_cb(ശൂന്യം *താക്കോൽ, ശൂന്യം *മൂല്യം, ശൂന്യം *ctx)
 {
 	eviction_state_t *estate = ctx;
-	struct store_entry *ent = value;
-	estate->elist[estate->ent_count++] = ent;
-	return false;
+	ഘടന store_entry *ent = മൂല്യം;
+	estate->elist[estate->ent_എണ്ണം++] = ent;
+	തിരികെ false;
 }
 
 /**
@@ -574,18 +574,18 @@ entry_eviction_iterator_cb(void *key, void *value, void *ctx)
  * @param state The store state to use.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror store_evict(struct store_state *state)
+സ്ഥിതം nserror store_evict(ഘടന store_state *state)
 {
 	size_t ent = 0;
 	size_t removed = 0; /* size of removed entries */
 	nserror ret = NSERROR_OK;
-	size_t old_count;
+	size_t old_എണ്ണം;
 	eviction_state_t estate;
 
 	/* check if the cache has exceeded configured limit */
-	if (state->total_alloc < state->limit) {
+	എങ്കിൽ (state->total_alloc < state->limit) {
 		/* cache within limits */
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	NSLOG(netsurf, INFO,
@@ -594,52 +594,52 @@ static nserror store_evict(struct store_state *state)
 	      state->hysteresis);
 
 	/* allocate storage for the list */
-	old_count = hashmap_count(state->entries);
-	estate.ent_count = 0;
-	estate.elist = malloc(sizeof(struct state_entry*) * old_count);
-	if (estate.elist == NULL) {
-		return NSERROR_NOMEM;
+	old_എണ്ണം = hashmap_എണ്ണം(state->entries);
+	estate.ent_എണ്ണം = 0;
+	estate.elist = malloc(വലുപ്പം(ഘടന state_entry*) * old_എണ്ണം);
+	എങ്കിൽ (estate.elist == ശൂന്യ) {
+		തിരികെ NSERROR_NOMEM;
 	}
 
-	if (hashmap_iterate(state->entries, entry_eviction_iterator_cb, &estate)) {
+	എങ്കിൽ (hashmap_iterate(state->entries, entry_eviction_iterator_cb, &estate)) {
 		NSLOG(netsurf, WARNING, "Unexpected termination of eviction iterator");
-		free(estate.elist);
-		return NSERROR_UNKNOWN;
+		സ്വതന്ത്രം(estate.elist);
+		തിരികെ NSERROR_UNKNOWN;
 	}
 
-	if (old_count != estate.ent_count) {
+	എങ്കിൽ (old_എണ്ണം != estate.ent_എണ്ണം) {
 		NSLOG(netsurf, WARNING, "Incorrect entry count after eviction iterator");
-		free(estate.elist);
-		return NSERROR_UNKNOWN;
+		സ്വതന്ത്രം(estate.elist);
+		തിരികെ NSERROR_UNKNOWN;
 	}
 
-	qsort(estate.elist, estate.ent_count, sizeof(struct state_entry*), compar);
+	qsort(estate.elist, estate.ent_എണ്ണം, വലുപ്പം(ഘടന state_entry*), compar);
 
 	/* evict entries in listed order */
 	removed = 0;
-	for (ent = 0; ent < estate.ent_count; ent++) {
-		struct store_entry *bse = estate.elist[ent];
+	വേണ്ടി (ent = 0; ent < estate.ent_എണ്ണം; ent++) {
+		ഘടന store_entry *bse = estate.elist[ent];
 
 		removed += bse->elem[ENTRY_ELEM_DATA].size;
 		removed += bse->elem[ENTRY_ELEM_META].size;
 
 		ret = invalidate_entry(state, bse);
-		if (ret != NSERROR_OK) {
-			break;
+		എങ്കിൽ (ret != NSERROR_OK) {
+			നിർത്തുക;
 		}
 
-		if (removed > state->hysteresis) {
-			break;
+		എങ്കിൽ (removed > state->hysteresis) {
+			നിർത്തുക;
 		}
 	}
 
-	free(estate.elist);
+	സ്വതന്ത്രം(estate.elist);
 
 	NSLOG(netsurf, INFO,
 	      "removed %"PRIsizet" in %"PRIsizet" entries, %"PRIu64" remaining in %"PRIsizet" entries",
-	      removed, ent, state->total_alloc, old_count - ent);
+	      removed, ent, state->total_alloc, old_എണ്ണം - ent);
 
-	return ret;
+	തിരികെ ret;
 }
 
 /**
@@ -650,37 +650,37 @@ static nserror store_evict(struct store_state *state)
  * Then we write out the full store entry struct as-is, which includes
  * a useless nsurl pointer.
  */
-static nserror
-write_entry(struct store_entry *ent, int fd)
+സ്ഥിതം nserror
+write_entry(ഘടന store_entry *ent, പൂർണ്ണസംഖ്യ fd)
 {
 	uint32_t len = strlen(nsurl_access(ent->url));
-	if (write(fd, &len, sizeof(len)) != sizeof(len))
-		return NSERROR_SAVE_FAILED;
-	if (write(fd, nsurl_access(ent->url), len) != (ssize_t)len)
-		return NSERROR_SAVE_FAILED;
-	if (write(fd, ent, sizeof(*ent)) != sizeof(*ent))
-		return NSERROR_SAVE_FAILED;
+	എങ്കിൽ (ലിഖ(fd, &len, വലുപ്പം(len)) != വലുപ്പം(len))
+		തിരികെ NSERROR_SAVE_FAILED;
+	എങ്കിൽ (ലിഖ(fd, nsurl_access(ent->url), len) != (ssize_t)len)
+		തിരികെ NSERROR_SAVE_FAILED;
+	എങ്കിൽ (ലിഖ(fd, ent, വലുപ്പം(*ent)) != വലുപ്പം(*ent))
+		തിരികെ NSERROR_SAVE_FAILED;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-typedef struct {
-	int fd;
+തരനിർവചനം ഘടന {
+	പൂർണ്ണസംഖ്യ fd;
 	size_t written;
 } write_entry_iteration_state;
 
 /**
  * Callback for iterating the entries hashmap
  */
-static bool
-write_entry_iterator(void *key, void *value, void *ctx)
+സ്ഥിതം bool
+write_entry_iterator(ശൂന്യം *താക്കോൽ, ശൂന്യം *മൂല്യം, ശൂന്യം *ctx)
 {
 	/* We ignore the key */
-	struct store_entry *ent = value;
+	ഘടന store_entry *ent = മൂല്യം;
 	write_entry_iteration_state *state = ctx;
 	state->written++;
 	/* We stop early if we fail to write this entry */
-	return write_entry(ent, state->fd) != NSERROR_OK;
+	തിരികെ write_entry(ent, state->fd) != NSERROR_OK;
 }
 
 /**
@@ -691,60 +691,60 @@ write_entry_iterator(void *key, void *value, void *ctx)
  * @param state The backing store state to serialise.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror write_entries(struct store_state *state)
+സ്ഥിതം nserror write_entries(ഘടന store_state *state)
 {
-	char *tname = NULL; /* temporary file name for atomic replace */
-	char *fname = NULL; /* target filename */
+	അക്ഷരം *tname = ശൂന്യ; /* temporary file name for atomic replace */
+	അക്ഷരം *fname = ശൂന്യ; /* target filename */
 	write_entry_iteration_state weistate;
 	nserror ret;
 
-	memset(&weistate, 0, sizeof(weistate));
+	memset(&weistate, 0, വലുപ്പം(weistate));
 
-	if (state->entries_dirty == false) {
+	എങ്കിൽ (state->entries_dirty == false) {
 		/* entries have not been updated since last write */
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
-	ret = netsurf_mkpath(&tname, NULL, 2, state->path, "t"ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&tname, ശൂന്യ, 2, state->path, "t"ENTRIES_FNAME);
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	weistate.fd = open(tname, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-	if (weistate.fd == -1) {
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+	എങ്കിൽ (weistate.fd == -1) {
+		സ്വതന്ത്രം(tname);
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
-	if (hashmap_iterate(state->entries, write_entry_iterator, &weistate)) {
+	എങ്കിൽ (hashmap_iterate(state->entries, write_entry_iterator, &weistate)) {
 		/* The iteration ended early, so we failed */
 		close(weistate.fd);
 		unlink(tname);
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+		സ്വതന്ത്രം(tname);
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
 	close(weistate.fd);
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
+	ret = netsurf_mkpath(&fname, ശൂന്യ, 2, state->path, ENTRIES_FNAME);
+	എങ്കിൽ (ret != NSERROR_OK) {
 		unlink(tname);
-		free(tname);
-		return ret;
+		സ്വതന്ത്രം(tname);
+		തിരികെ ret;
 	}
 
 	/* remove() call is to handle non-POSIX rename() implementations */
-	(void)remove(fname);
-	if (rename(tname, fname) != 0) {
+	(ശൂന്യം)remove(fname);
+	എങ്കിൽ (rename(tname, fname) != 0) {
 		unlink(tname);
-		free(tname);
-		free(fname);
-		return NSERROR_SAVE_FAILED;
+		സ്വതന്ത്രം(tname);
+		സ്വതന്ത്രം(fname);
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, INFO, "Wrote out %"PRIsizet" entries", weistate.written);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -755,47 +755,47 @@ static nserror write_entries(struct store_state *state)
  * \param state The backing store state to serialise.
  * \return NSERROR_OK on success or error code on failure.
  */
-static nserror write_blocks(struct store_state *state)
+സ്ഥിതം nserror write_blocks(ഘടന store_state *state)
 {
-	int fd;
-	char *tname = NULL; /* temporary file name for atomic replace */
-	char *fname = NULL; /* target filename */
+	പൂർണ്ണസംഖ്യ fd;
+	അക്ഷരം *tname = ശൂന്യ; /* temporary file name for atomic replace */
+	അക്ഷരം *fname = ശൂന്യ; /* target filename */
 	size_t blocks_size;
 	size_t written = 0;
 	size_t wr;
 	nserror ret;
-	int bfidx; /* block file index */
-	int elem_idx;
+	പൂർണ്ണസംഖ്യ bfidx; /* block file index */
+	പൂർണ്ണസംഖ്യ elem_idx;
 
-	if (state->blocks_dirty == false) {
+	എങ്കിൽ (state->blocks_dirty == false) {
 		/* blocks use maps have not been updated since last write */
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
-	ret = netsurf_mkpath(&tname, NULL, 2, state->path, "t"BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&tname, ശൂന്യ, 2, state->path, "t"BLOCKS_FNAME);
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	fd = open(tname, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-	if (fd == -1) {
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+	എങ്കിൽ (fd == -1) {
+		സ്വതന്ത്രം(tname);
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
-	blocks_size = (BLOCK_FILE_COUNT * ENTRY_ELEM_COUNT) * BLOCK_USE_MAP_SIZE;
+	blocks_size = (BLOCK_FILE_എണ്ണം * ENTRY_ELEM_എണ്ണം) * BLOCK_USE_MAP_SIZE;
 
-	for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-		for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-			wr = write(fd,
+	വേണ്ടി (elem_idx = 0; elem_idx < ENTRY_ELEM_എണ്ണം; elem_idx++) {
+		വേണ്ടി (bfidx = 0; bfidx < BLOCK_FILE_എണ്ണം; bfidx++) {
+			wr = ലിഖ(fd,
 				   &state->blocks[elem_idx][bfidx].use_map[0],
 				   BLOCK_USE_MAP_SIZE);
-			if (wr != BLOCK_USE_MAP_SIZE) {
+			എങ്കിൽ (wr != BLOCK_USE_MAP_SIZE) {
 				NSLOG(netsurf, DEBUG,
 				      "writing block file %d use index on file number %d failed",
 				      elem_idx,
 				      bfidx);
-				goto wr_err;
+				പോകുക wr_err;
 			}
 			written += wr;
 		}
@@ -804,29 +804,29 @@ wr_err:
 	close(fd);
 
 	/* check all data was written */
-	if (written != blocks_size) {
+	എങ്കിൽ (written != blocks_size) {
 		unlink(tname);
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+		സ്വതന്ത്രം(tname);
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
+	ret = netsurf_mkpath(&fname, ശൂന്യ, 2, state->path, BLOCKS_FNAME);
+	എങ്കിൽ (ret != NSERROR_OK) {
 		unlink(tname);
-		free(tname);
-		return ret;
+		സ്വതന്ത്രം(tname);
+		തിരികെ ret;
 	}
 
 	/* remove() call is to handle non-POSIX rename() implementations */
-	(void)remove(fname);
-	if (rename(tname, fname) != 0) {
+	(ശൂന്യം)remove(fname);
+	എങ്കിൽ (rename(tname, fname) != 0) {
 		unlink(tname);
-		free(tname);
-		free(fname);
-		return NSERROR_SAVE_FAILED;
+		സ്വതന്ത്രം(tname);
+		സ്വതന്ത്രം(fname);
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -839,24 +839,24 @@ wr_err:
  * \param state The backing store state to set block extent for.
  * \return NSERROR_OK on success or error code on failure.
  */
-static nserror set_block_extents(struct store_state *state)
+സ്ഥിതം nserror set_block_extents(ഘടന store_state *state)
 {
-	int bfidx; /* block file index */
-	int elem_idx;
-	int ftr;
+	പൂർണ്ണസംഖ്യ bfidx; /* block file index */
+	പൂർണ്ണസംഖ്യ elem_idx;
+	പൂർണ്ണസംഖ്യ ftr;
 
-	if (state->blocks_opened == false) {
+	എങ്കിൽ (state->blocks_opened == false) {
 		/* no blocks have been opened since last write */
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	NSLOG(netsurf, DEBUG, "Starting");
-	for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-		for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-			if (state->blocks[elem_idx][bfidx].fd != -1) {
+	വേണ്ടി (elem_idx = 0; elem_idx < ENTRY_ELEM_എണ്ണം; elem_idx++) {
+		വേണ്ടി (bfidx = 0; bfidx < BLOCK_FILE_എണ്ണം; bfidx++) {
+			എങ്കിൽ (state->blocks[elem_idx][bfidx].fd != -1) {
 				/* ensure block file is correct extent */
-				ftr = ftruncate(state->blocks[elem_idx][bfidx].fd, 1U << (log2_block_size[elem_idx] + BLOCK_ENTRY_COUNT));
-				if (ftr == -1) {
+				ftr = ftruncate(state->blocks[elem_idx][bfidx].fd, 1U << (log2_block_size[elem_idx] + BLOCK_ENTRY_എണ്ണം));
+				എങ്കിൽ (ftr == -1) {
 					NSLOG(netsurf, ERROR,
 					      "Truncate failed errno:%d",
 					      errno);
@@ -868,7 +868,7 @@ static nserror set_block_extents(struct store_state *state)
 
 	state->blocks_opened = false;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -880,9 +880,9 @@ static nserror set_block_extents(struct store_state *state)
  *
  * \param s store state to maintain.
  */
-static void control_maintenance(void *s)
+സ്ഥിതം ശൂന്യം control_maintenance(ശൂന്യം *s)
 {
-	struct store_state *state = s;
+	ഘടന store_state *state = s;
 
 	write_entries(state);
 	write_blocks(state);
@@ -903,58 +903,58 @@ static void control_maintenance(void *s)
  * @return NSERROR_OK and bse updated on success or NSERROR_NOT_FOUND
  *         if no entry corresponds to the url.
  */
-static nserror
-get_store_entry(struct store_state *state, nsurl *url, struct store_entry **bse)
+സ്ഥിതം nserror
+get_store_entry(ഘടന store_state *state, nsurl *url, ഘടന store_entry **bse)
 {
-	struct store_entry *ent;
+	ഘടന store_entry *ent;
 
 	ent = hashmap_lookup(state->entries, url);
 
-	if (ent == NULL) {
-		return NSERROR_NOT_FOUND;
+	എങ്കിൽ (ent == ശൂന്യ) {
+		തിരികെ NSERROR_NOT_FOUND;
 	}
 
 	*bse = ent;
 
-	ent->last_used = time(NULL);
-	ent->use_count++;
+	ent->last_used = time(ശൂന്യ);
+	ent->use_എണ്ണം++;
 
 	state->entries_dirty = true;
 
 	guit->misc->schedule(CONTROL_MAINT_TIME, control_maintenance, state);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
  * Find next available small block.
  */
-static block_index_t alloc_block(struct store_state *state, int elem_idx)
+സ്ഥിതം block_index_t alloc_block(ഘടന store_state *state, പൂർണ്ണസംഖ്യ elem_idx)
 {
-	int bf;
-	int idx;
-	int bit;
+	പൂർണ്ണസംഖ്യ bf;
+	പൂർണ്ണസംഖ്യ idx;
+	പൂർണ്ണസംഖ്യ bit;
 	uint8_t *map;
 
-	for (bf = 0; bf < BLOCK_FILE_COUNT; bf++) {
+	വേണ്ടി (bf = 0; bf < BLOCK_FILE_എണ്ണം; bf++) {
 		map = &state->blocks[elem_idx][bf].use_map[0];
 
-		for (idx = 0; idx < BLOCK_USE_MAP_SIZE; idx++) {
-			if (*(map + idx) != 0xff) {
+		വേണ്ടി (idx = 0; idx < BLOCK_USE_MAP_SIZE; idx++) {
+			എങ്കിൽ (*(map + idx) != 0xff) {
 				/* located an unused block */
-				for (bit = 0; bit < 8;bit++) {
-					if (((*(map + idx)) & (1U << bit)) == 0) {
+				വേണ്ടി (bit = 0; bit < 8;bit++) {
+					എങ്കിൽ (((*(map + idx)) & (1U << bit)) == 0) {
 						/* mark block as used */
 						*(map + idx) |= 1U << bit;
 						state->blocks_dirty = true;
-						return (((bf * BLOCK_USE_MAP_SIZE) + idx) * 8) + bit;
+						തിരികെ (((bf * BLOCK_USE_MAP_SIZE) + idx) * 8) + bit;
 					}
 				}
 			}
 		}
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
 /**
@@ -971,17 +971,17 @@ static block_index_t alloc_block(struct store_state *state, int elem_idx)
  * @return NSERROR_OK and \a bse updated on success or NSERROR_NOT_FOUND
  *         if no entry corresponds to the url.
  */
-static nserror
-set_store_entry(struct store_state *state,
+സ്ഥിതം nserror
+set_store_entry(ഘടന store_state *state,
 		nsurl *url,
-		int elem_idx,
+		പൂർണ്ണസംഖ്യ elem_idx,
 		uint8_t *data,
-		const size_t datalen,
-		struct store_entry **bse)
+		സ്ഥിരം size_t datalen,
+		ഘടന store_entry **bse)
 {
-	struct store_entry *se;
+	ഘടന store_entry *se;
 	nserror ret;
-	struct store_entry_element *elem;
+	ഘടന store_entry_element *elem;
 
 	NSLOG(netsurf, DEBUG, "url:%s", nsurl_access(url));
 
@@ -989,34 +989,34 @@ set_store_entry(struct store_state *state,
 	 * new entry available.
 	 */
 	ret = store_evict(state);
-	if (ret != NSERROR_OK) {
-		return ret;
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	se = hashmap_lookup(state->entries, url);
-	if (se == NULL) {
-		se = hashmap_insert(state->entries, url);
+	എങ്കിൽ (se == ശൂന്യ) {
+		se = hashmap_തിരുകുക(state->entries, url);
 	}
-	if (se == NULL) {
-		return NSERROR_NOMEM;
+	എങ്കിൽ (se == ശൂന്യ) {
+		തിരികെ NSERROR_NOMEM;
 	}
 
 	/* the entry element */
 	elem = &se->elem[elem_idx];
 
 	/* check if the element has storage already allocated */
-	if ((elem->flags & (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0) {
+	എങ്കിൽ ((elem->flags & (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0) {
 		/* this entry cannot be removed as it has associated
 		 * allocation.
 		 */
 		NSLOG(netsurf, ERROR,
 		      "attempt to overwrite entry with in use data");
-		return NSERROR_PERMISSION;
+		തിരികെ NSERROR_PERMISSION;
 	}
 
 	/* set the common entry data */
-	se->use_count = 1;
-	se->last_used = time(NULL);
+	se->use_എണ്ണം = 1;
+	se->last_used = time(ശൂന്യ);
 
 	/* store the data in the element */
 	elem->flags |= ENTRY_ELEM_FLAG_HEAP;
@@ -1029,7 +1029,7 @@ set_store_entry(struct store_state *state,
 	state->total_alloc += elem->size;
 
 	/* if the element will fit in a small block attempt to allocate one */
-	if (elem->size <= (1U << log2_block_size[elem_idx])) {
+	എങ്കിൽ (elem->size <= (1U << log2_block_size[elem_idx])) {
 		elem->block = alloc_block(state, elem_idx);
 	}
 
@@ -1039,7 +1039,7 @@ set_store_entry(struct store_state *state,
 
 	*bse = se;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1056,39 +1056,39 @@ set_store_entry(struct store_state *state,
  * @param openflags The flags used with the open call.
  * @return An fd from the open call or -1 on error.
  */
-static int
-store_open(struct store_state *state,
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+store_open(ഘടന store_state *state,
 	   entry_ident_t ident,
-	   int elem_idx,
-	   int openflags)
+	   പൂർണ്ണസംഖ്യ elem_idx,
+	   പൂർണ്ണസംഖ്യ openflags)
 {
-	char *fname;
+	അക്ഷരം *fname;
 	nserror ret;
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 
 	fname = store_fname(state, ident, elem_idx);
-	if (fname == NULL) {
+	എങ്കിൽ (fname == ശൂന്യ) {
 		NSLOG(netsurf, ERROR, "filename error");
-		return -1;
+		തിരികെ -1;
 	}
 
 	/* ensure all path elements to file exist if creating file */
-	if (openflags & O_CREAT) {
+	എങ്കിൽ (openflags & O_CREAT) {
 		ret = netsurf_mkdir_all(fname);
-		if (ret != NSERROR_OK) {
+		എങ്കിൽ (ret != NSERROR_OK) {
 			NSLOG(netsurf, WARNING,
 			      "file path \"%s\" could not be created", fname);
-			free(fname);
-			return -1;
+			സ്വതന്ത്രം(fname);
+			തിരികെ -1;
 		}
 	}
 
 	NSLOG(netsurf, DEBUG, "opening %s", fname);
 	fd = open(fname, openflags, S_IRUSR | S_IWUSR);
 
-	free(fname);
+	സ്വതന്ത്രം(fname);
 
-	return fd;
+	തിരികെ fd;
 }
 
 
@@ -1098,21 +1098,21 @@ store_open(struct store_state *state,
  * @param state The backing store state.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-unlink_entries(struct store_state *state)
+സ്ഥിതം nserror
+unlink_entries(ഘടന store_state *state)
 {
-	char *fname = NULL;
+	അക്ഷരം *fname = ശൂന്യ;
 	nserror ret;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ശൂന്യ, 2, state->path, ENTRIES_FNAME);
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	unlink(fname);
 
-	free(fname);
-	return NSERROR_OK;
+	സ്വതന്ത്രം(fname);
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -1121,68 +1121,68 @@ unlink_entries(struct store_state *state)
  * @param state The backing store state to put the loaded entries in.
  * @return NSERROR_OK on success or error code on faliure.
  */
-static nserror
-read_entries(struct store_state *state)
+സ്ഥിതം nserror
+read_entries(ഘടന store_state *state)
 {
-	char *fname = NULL;
-	char *url;
+	അക്ഷരം *fname = ശൂന്യ;
+	അക്ഷരം *url;
 	nsurl *nsurl;
 	nserror ret;
 	size_t read_entries = 0;
-	struct store_entry *ent;
-	int fd;
+	ഘടന store_entry *ent;
+	പൂർണ്ണസംഖ്യ fd;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ശൂന്യ, 2, state->path, ENTRIES_FNAME);
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	state->entries = hashmap_create(&entries_hashmap_parameters);
-	if (state->entries == NULL) {
-		free(fname);
-		return NSERROR_NOMEM;
+	എങ്കിൽ (state->entries == ശൂന്യ) {
+		സ്വതന്ത്രം(fname);
+		തിരികെ NSERROR_NOMEM;
 	}
 
 	fd = open(fname, O_RDWR);
-	if (fd != -1) {
+	എങ്കിൽ (fd != -1) {
 		uint32_t urllen;
-		while (read(fd, &urllen, sizeof(urllen)) == sizeof(urllen)) {
+		ആകുമ്പോൾ (പഠ(fd, &urllen, വലുപ്പം(urllen)) == വലുപ്പം(urllen)) {
 			url = calloc(1, urllen+1);
-			if (url == NULL) {
+			എങ്കിൽ (url == ശൂന്യ) {
 				close(fd);
-				free(fname);
-				return NSERROR_NOMEM;
+				സ്വതന്ത്രം(fname);
+				തിരികെ NSERROR_NOMEM;
 			}
-			if (read(fd, url, urllen) != (ssize_t)urllen) {
-				free(url);
+			എങ്കിൽ (പഠ(fd, url, urllen) != (ssize_t)urllen) {
+				സ്വതന്ത്രം(url);
 				close(fd);
-				free(fname);
-				return NSERROR_INIT_FAILED;
+				സ്വതന്ത്രം(fname);
+				തിരികെ NSERROR_INIT_FAILED;
 			}
 			ret = nsurl_create(url, &nsurl);
-			if (ret != NSERROR_OK) {
-				free(url);
+			എങ്കിൽ (ret != NSERROR_OK) {
+				സ്വതന്ത്രം(url);
 				close(fd);
-				free(fname);
-				return ret;
+				സ്വതന്ത്രം(fname);
+				തിരികെ ret;
 			}
-			free(url);
+			സ്വതന്ത്രം(url);
 			/* We have to be careful here about nsurl refs */
-			ent = hashmap_insert(state->entries, nsurl);
-			if (ent == NULL) {
+			ent = hashmap_തിരുകുക(state->entries, nsurl);
+			എങ്കിൽ (ent == ശൂന്യ) {
 				nsurl_unref(nsurl);
 				close(fd);
-				free(fname);
-				return NSERROR_NOMEM;
+				സ്വതന്ത്രം(fname);
+				തിരികെ NSERROR_NOMEM;
 			}
 			/* At this point, ent actually owns a ref of nsurl */
-			if (read(fd, ent, sizeof(*ent)) != sizeof(*ent)) {
+			എങ്കിൽ (പഠ(fd, ent, വലുപ്പം(*ent)) != വലുപ്പം(*ent)) {
 				/* The read failed, so reset the ptr */
 				ent->url = nsurl; /* It already had a ref */
 				nsurl_unref(nsurl);
 				close(fd);
-				free(fname);
-				return NSERROR_INIT_FAILED;
+				സ്വതന്ത്രം(fname);
+				തിരികെ NSERROR_INIT_FAILED;
 			}
 			ent->url = nsurl; /* It already owns a ref */
 			nsurl_unref(nsurl);
@@ -1201,8 +1201,8 @@ read_entries(struct store_state *state)
 
 	NSLOG(netsurf, INFO, "Read %"PRIsizet" entries from cache", read_entries);
 
-	free(fname);
-	return NSERROR_OK;
+	സ്വതന്ത്രം(fname);
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1212,45 +1212,45 @@ read_entries(struct store_state *state)
  * @param state The backing store state to put the loaded entries in.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-read_blocks(struct store_state *state)
+സ്ഥിതം nserror
+read_blocks(ഘടന store_state *state)
 {
-	int bfidx; /* block file index */
-	int elem_idx;
-	int fd;
+	പൂർണ്ണസംഖ്യ bfidx; /* block file index */
+	പൂർണ്ണസംഖ്യ elem_idx;
+	പൂർണ്ണസംഖ്യ fd;
 	ssize_t rd;
-	char *fname = NULL;
+	അക്ഷരം *fname = ശൂന്യ;
 	nserror ret;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ശൂന്യ, 2, state->path, BLOCKS_FNAME);
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	NSLOG(netsurf, INFO, "Initialising block use map from %s", fname);
 
 	fd = open(fname, O_RDWR);
-	free(fname);
-	if (fd != -1) {
+	സ്വതന്ത്രം(fname);
+	എങ്കിൽ (fd != -1) {
 		/* initialise block file use array */
-		for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-			for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-				rd = read(fd,
+		വേണ്ടി (elem_idx = 0; elem_idx < ENTRY_ELEM_എണ്ണം; elem_idx++) {
+			വേണ്ടി (bfidx = 0; bfidx < BLOCK_FILE_എണ്ണം; bfidx++) {
+				rd = പഠ(fd,
 					  &state->blocks[elem_idx][bfidx].use_map[0],
 					  BLOCK_USE_MAP_SIZE);
-				if (rd <= 0) {
+				എങ്കിൽ (rd <= 0) {
 					NSLOG(netsurf, ERROR,
 					      "reading block file %d use index on file number %d failed",
 					      elem_idx,
 					      bfidx);
-					goto rd_err;
+					പോകുക rd_err;
 				}
 			}
 		}
 	rd_err:
 		close(fd);
 
-	} else {
+	} അല്ലെങ്കിൽ {
 		NSLOG(netsurf, INFO, "Initialising block use map to defaults");
 		/* ensure block 0 (invalid sentinel) is skipped */
 		state->blocks[ENTRY_ELEM_DATA][0].use_map[0] = 1;
@@ -1258,12 +1258,12 @@ read_blocks(struct store_state *state)
 	}
 
 	/* initialise block file file descriptors */
-	for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
+	വേണ്ടി (bfidx = 0; bfidx < BLOCK_FILE_എണ്ണം; bfidx++) {
 		state->blocks[ENTRY_ELEM_DATA][bfidx].fd = -1;
 		state->blocks[ENTRY_ELEM_META][bfidx].fd = -1;
 	}
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -1272,24 +1272,24 @@ read_blocks(struct store_state *state)
  * @param state The cache state.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-write_cache_tag(struct store_state *state)
+സ്ഥിതം nserror
+write_cache_tag(ഘടന store_state *state)
 {
 	FILE *fcachetag;
 	nserror ret;
-	char *fname = NULL;
+	അക്ഷരം *fname = ശൂന്യ;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "CACHEDIR.TAG");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ശൂന്യ, 2, state->path, "CACHEDIR.TAG");
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	fcachetag = fopen(fname, "wb");
 
-	free(fname);
+	സ്വതന്ത്രം(fname);
 
-	if (fcachetag == NULL) {
-		return NSERROR_NOT_FOUND;
+	എങ്കിൽ (fcachetag == ശൂന്യ) {
+		തിരികെ NSERROR_NOT_FOUND;
 	}
 
 	fprintf(fcachetag,
@@ -1300,7 +1300,7 @@ write_cache_tag(struct store_state *state)
 
 	fclose(fcachetag);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -1309,39 +1309,39 @@ write_cache_tag(struct store_state *state)
  * @param state The state to write to the control file.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-write_control(struct store_state *state)
+സ്ഥിതം nserror
+write_control(ഘടന store_state *state)
 {
 	FILE *fcontrol;
 	nserror ret;
-	char *fname = NULL;
+	അക്ഷരം *fname = ശൂന്യ;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "control");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ശൂന്യ, 2, state->path, "control");
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	NSLOG(netsurf, INFO, "writing control file \"%s\"", fname);
 
 	ret = netsurf_mkdir_all(fname);
-	if (ret != NSERROR_OK) {
-		free(fname);
-		return ret;
+	എങ്കിൽ (ret != NSERROR_OK) {
+		സ്വതന്ത്രം(fname);
+		തിരികെ ret;
 	}
 
 	fcontrol = fopen(fname, "wb");
 
-	free(fname);
+	സ്വതന്ത്രം(fname);
 
-	if (fcontrol == NULL) {
-		return NSERROR_NOT_FOUND;
+	എങ്കിൽ (fcontrol == ശൂന്യ) {
+		തിരികെ NSERROR_NOT_FOUND;
 	}
 
 	fprintf(fcontrol, "%u%c", CONTROL_VERSION, 0);
 
 	fclose(fcontrol);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1351,58 +1351,58 @@ write_control(struct store_state *state)
  * @param state The state to read from the control file.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-read_control(struct store_state *state)
+സ്ഥിതം nserror
+read_control(ഘടന store_state *state)
 {
 	nserror ret;
 	FILE *fcontrol;
-	unsigned int ctrlversion;
-	char *fname = NULL;
+	unsigned പൂർണ്ണസംഖ്യ ctrlversion;
+	അക്ഷരം *fname = ശൂന്യ;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "control");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ശൂന്യ, 2, state->path, "control");
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
 	NSLOG(netsurf, INFO, "opening control file \"%s\"", fname);
 
 	fcontrol = fopen(fname, "rb");
 
-	free(fname);
+	സ്വതന്ത്രം(fname);
 
-	if (fcontrol == NULL) {
+	എങ്കിൽ (fcontrol == ശൂന്യ) {
 		/* unable to open control file */
-		if (errno == ENOENT) {
-			return NSERROR_NOT_FOUND;
-		} else {
-			return NSERROR_INIT_FAILED;
+		എങ്കിൽ (errno == ENOENT) {
+			തിരികെ NSERROR_NOT_FOUND;
+		} അല്ലെങ്കിൽ {
+			തിരികെ NSERROR_INIT_FAILED;
 		}
 	}
 
 	/* read control and setup new state */
 
 	/* first line is version */
-	if (fscanf(fcontrol, "%u", &ctrlversion) != 1) {
-		goto control_error;
+	എങ്കിൽ (fscanf(fcontrol, "%u", &ctrlversion) != 1) {
+		പോകുക control_error;
 	}
 
-	if (ctrlversion != CONTROL_VERSION) {
-		goto control_error;
+	എങ്കിൽ (ctrlversion != CONTROL_VERSION) {
+		പോകുക control_error;
 	}
 
-	if (fgetc(fcontrol) != 0) {
-		goto control_error;
+	എങ്കിൽ (fgetc(fcontrol) != 0) {
+		പോകുക control_error;
 	}
 
 	fclose(fcontrol);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 
 control_error: /* problem with the control file */
 
 	fclose(fcontrol);
 
-	return NSERROR_INIT_FAILED;
+	തിരികെ NSERROR_INIT_FAILED;
 }
 
 
@@ -1416,31 +1416,31 @@ control_error: /* problem with the control file */
  * @param parameters to configure backing store.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-initialise(const struct llcache_store_parameters *parameters)
+സ്ഥിതം nserror
+initialise(സ്ഥിരം ഘടന llcache_store_parameters *parameters)
 {
-	struct store_state *newstate;
+	ഘടന store_state *newstate;
 	nserror ret;
 
 	/* check backing store is not already initialised */
-	if (storestate != NULL) {
-		return NSERROR_INIT_FAILED;
+	എങ്കിൽ (storestate != ശൂന്യ) {
+		തിരികെ NSERROR_INIT_FAILED;
 	}
 
 	/* if we are not allowed any space simply give up on init */
-	if (parameters->limit == 0) {
-		return NSERROR_OK;
+	എങ്കിൽ (parameters->limit == 0) {
+		തിരികെ NSERROR_OK;
 	}
 
 	/* if the path to the cache directory is not set do not init */
-	if (parameters->path == NULL) {
-		return NSERROR_OK;
+	എങ്കിൽ (parameters->path == ശൂന്യ) {
+		തിരികെ NSERROR_OK;
 	}
 
 	/* allocate new store state and set defaults */
-	newstate = calloc(1, sizeof(struct store_state));
-	if (newstate == NULL) {
-		return NSERROR_NOMEM;
+	newstate = calloc(1, വലുപ്പം(ഘടന store_state));
+	എങ്കിൽ (newstate == ശൂന്യ) {
+		തിരികെ NSERROR_NOMEM;
 	}
 
 	newstate->path = strdup(parameters->path);
@@ -1449,53 +1449,53 @@ initialise(const struct llcache_store_parameters *parameters)
 
 	/* read store control and create new if required */
 	ret = read_control(newstate);
-	if (ret != NSERROR_OK) {
-		if (ret == NSERROR_NOT_FOUND) {
+	എങ്കിൽ (ret != NSERROR_OK) {
+		എങ്കിൽ (ret == NSERROR_NOT_FOUND) {
 			NSLOG(netsurf, INFO, "cache control file not found, making fresh");
-		} else {
+		} അല്ലെങ്കിൽ {
 			NSLOG(netsurf, ERROR, "read control failed %s",
 			      messages_get_errorcode(ret));
 			ret = netsurf_recursive_rm(newstate->path);
-			if (ret != NSERROR_OK) {
+			എങ്കിൽ (ret != NSERROR_OK) {
 				NSLOG(netsurf, WARNING, "Error `%s` while removing `%s`",
 				      messages_get_errorcode(ret), newstate->path);
 				NSLOG(netsurf, WARNING, "Unable to clean up partial cache state.");
 				NSLOG(netsurf, WARNING, "Funky behaviour may ensue.");
-			} else {
+			} അല്ലെങ്കിൽ {
 				NSLOG(netsurf, INFO, "Successfully removed old cache from `%s`",
 				      newstate->path);
 			}
 		}
 		ret = write_control(newstate);
-		if (ret == NSERROR_OK) {
+		എങ്കിൽ (ret == NSERROR_OK) {
 			unlink_entries(newstate);
 			write_cache_tag(newstate);
 		}
 	}
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		/* that went well obviously */
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		സ്വതന്ത്രം(newstate->path);
+		സ്വതന്ത്രം(newstate);
+		തിരികെ ret;
 	}
 
 	/* read filesystem entries */
 	ret = read_entries(newstate);
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		/* that went well obviously */
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		സ്വതന്ത്രം(newstate->path);
+		സ്വതന്ത്രം(newstate);
+		തിരികെ ret;
 	}
 
 	/* read blocks */
 	ret = read_blocks(newstate);
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		/* oh dear */
 		hashmap_destroy(newstate->entries);
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		സ്വതന്ത്രം(newstate->path);
+		സ്വതന്ത്രം(newstate);
+		തിരികെ ret;
 	}
 
 	storestate = newstate;
@@ -1510,7 +1510,7 @@ initialise(const struct llcache_store_parameters *parameters)
 	NSLOG(netsurf, INFO, "Using %"PRIu64"/%"PRIsizet,
 	      newstate->total_alloc, newstate->limit);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1522,48 +1522,48 @@ initialise(const struct llcache_store_parameters *parameters)
  *
  * @return NSERROR_OK on success.
  */
-static nserror
-finalise(void)
+സ്ഥിതം nserror
+finalise(ശൂന്യം)
 {
-	int bf; /* block file index */
-	unsigned int op_count;
+	പൂർണ്ണസംഖ്യ bf; /* block file index */
+	unsigned പൂർണ്ണസംഖ്യ op_എണ്ണം;
 
-	if (storestate != NULL) {
+	എങ്കിൽ (storestate != ശൂന്യ) {
 		guit->misc->schedule(-1, control_maintenance, storestate);
 		write_entries(storestate);
 		write_blocks(storestate);
 
 		/* ensure all block files are closed */
-		for (bf = 0; bf < BLOCK_FILE_COUNT; bf++) {
-			if (storestate->blocks[ENTRY_ELEM_DATA][bf].fd != -1) {
+		വേണ്ടി (bf = 0; bf < BLOCK_FILE_എണ്ണം; bf++) {
+			എങ്കിൽ (storestate->blocks[ENTRY_ELEM_DATA][bf].fd != -1) {
 				close(storestate->blocks[ENTRY_ELEM_DATA][bf].fd);
 			}
-			if (storestate->blocks[ENTRY_ELEM_META][bf].fd != -1) {
+			എങ്കിൽ (storestate->blocks[ENTRY_ELEM_META][bf].fd != -1) {
 				close(storestate->blocks[ENTRY_ELEM_META][bf].fd);
 			}
 		}
 
-		op_count = storestate->hit_count + storestate->miss_count;
+		op_എണ്ണം = storestate->hit_എണ്ണം + storestate->miss_എണ്ണം;
 
 		/* avoid division by zero */
-		if (op_count > 0) {
+		എങ്കിൽ (op_എണ്ണം > 0) {
 			NSLOG(netsurf, INFO,
 			      "Cache total/hit/miss/fail (counts) %d/%"PRIsizet"/%"PRIsizet"/%d (100%%/%"PRIsizet"%%/%"PRIsizet"%%/%d%%)",
-			      op_count,
-			      storestate->hit_count,
-			      storestate->miss_count,
+			      op_എണ്ണം,
+			      storestate->hit_എണ്ണം,
+			      storestate->miss_എണ്ണം,
 			      0,
-			      (storestate->hit_count * 100) / op_count,
-			      (storestate->miss_count * 100) / op_count,
+			      (storestate->hit_എണ്ണം * 100) / op_എണ്ണം,
+			      (storestate->miss_എണ്ണം * 100) / op_എണ്ണം,
 			      0);
 		}
 
 		hashmap_destroy(storestate->entries);
-		free(storestate->path);
-		free(storestate);
-		storestate = NULL;
+		സ്വതന്ത്രം(storestate->path);
+		സ്വതന്ത്രം(storestate);
+		storestate = ശൂന്യ;
 	}
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1575,36 +1575,36 @@ finalise(void)
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_write_block(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+സ്ഥിതം nserror store_write_block(ഘടന store_state *state,
+			 ഘടന store_entry *bse,
+			 പൂർണ്ണസംഖ്യ elem_idx)
 {
-	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-		((1 << BLOCK_FILE_COUNT) - 1); /* block file block resides in */
-	block_index_t bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_COUNT) -1); /* block index in file */
+	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_എണ്ണം) &
+		((1 << BLOCK_FILE_എണ്ണം) - 1); /* block file block resides in */
+	block_index_t bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_എണ്ണം) -1); /* block index in file */
 	ssize_t wr;
 	off_t offst;
 
 	/* ensure the block file fd is good */
-	if (state->blocks[elem_idx][bf].fd == -1) {
+	എങ്കിൽ (state->blocks[elem_idx][bf].fd == -1) {
 		state->blocks[elem_idx][bf].fd = store_open(state, bf,
-				elem_idx + ENTRY_ELEM_COUNT, O_CREAT | O_RDWR);
-		if (state->blocks[elem_idx][bf].fd == -1) {
+				elem_idx + ENTRY_ELEM_എണ്ണം, O_CREAT | O_RDWR);
+		എങ്കിൽ (state->blocks[elem_idx][bf].fd == -1) {
 			NSLOG(netsurf, ERROR, "Open failed errno %d", errno);
-			return NSERROR_SAVE_FAILED;
+			തിരികെ NSERROR_SAVE_FAILED;
 		}
 
 		/* flag that a block file has been opened */
 		state->blocks_opened = true;
 	}
 
-	offst = (unsigned int)bi << log2_block_size[elem_idx];
+	offst = (unsigned പൂർണ്ണസംഖ്യ)bi << log2_block_size[elem_idx];
 
 	wr = nsu_pwrite(state->blocks[elem_idx][bf].fd,
 			bse->elem[elem_idx].data,
 			bse->elem[elem_idx].size,
 			offst);
-	if (wr != (ssize_t)bse->elem[elem_idx].size) {
+	എങ്കിൽ (wr != (ssize_t)bse->elem[elem_idx].size) {
 		NSLOG(netsurf, ERROR,
 		      "Write failed %"PRIssizet" of %"PRId32" bytes from %p at %"PRIsizet" block %"PRIu16" errno %d",
 		      wr,
@@ -1613,7 +1613,7 @@ static nserror store_write_block(struct store_state *state,
 		      (size_t)offst,
 		      bse->elem[elem_idx].block,
 		      errno);
-		return NSERROR_SAVE_FAILED;
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, INFO,
@@ -1621,7 +1621,7 @@ static nserror store_write_block(struct store_state *state,
 	      bse->elem[elem_idx].data, (size_t)offst,
 	      bse->elem[elem_idx].block);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -1632,26 +1632,26 @@ static nserror store_write_block(struct store_state *state,
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_write_file(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+സ്ഥിതം nserror store_write_file(ഘടന store_state *state,
+			 ഘടന store_entry *bse,
+			 പൂർണ്ണസംഖ്യ elem_idx)
 {
 	ssize_t wr;
-	int fd;
-	int err;
+	പൂർണ്ണസംഖ്യ fd;
+	പൂർണ്ണസംഖ്യ err;
 
 	fd = store_open(state, nsurl_hash(bse->url), elem_idx, O_CREAT | O_WRONLY);
-	if (fd < 0) {
+	എങ്കിൽ (fd < 0) {
 		perror("");
 		NSLOG(netsurf, ERROR, "Open failed %d errno %d", fd, errno);
-		return NSERROR_SAVE_FAILED;
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
-	wr = write(fd, bse->elem[elem_idx].data, bse->elem[elem_idx].size);
+	wr = ലിഖ(fd, bse->elem[elem_idx].data, bse->elem[elem_idx].size);
 	err = errno; /* close can change errno */
 
 	close(fd);
-	if (wr != (ssize_t)bse->elem[elem_idx].size) {
+	എങ്കിൽ (wr != (ssize_t)bse->elem[elem_idx].size) {
 		NSLOG(netsurf, ERROR,
 		      "Write failed %"PRIssizet" of %"PRId32" bytes from %p errno %d",
 		      wr,
@@ -1660,13 +1660,13 @@ static nserror store_write_file(struct store_state *state,
 		      err);
 
 		/** @todo Delete the file? */
-		return NSERROR_SAVE_FAILED;
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, VERBOSE, "Wrote %"PRIssizet" bytes from %p", wr,
 	      bse->elem[elem_idx].data);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -1680,60 +1680,60 @@ static nserror store_write_file(struct store_state *state,
  * @param datalen The length of the \a data.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+സ്ഥിതം nserror
 store(nsurl *url,
-      enum backing_store_flags bsflags,
+      എണ്ണൽ backing_store_flags bsflags,
       uint8_t *data,
-      const size_t datalen)
+      സ്ഥിരം size_t datalen)
 {
 	nserror ret;
-	struct store_entry *bse;
-	int elem_idx;
+	ഘടന store_entry *bse;
+	പൂർണ്ണസംഖ്യ elem_idx;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	എങ്കിൽ (storestate == ശൂന്യ) {
+		തിരികെ NSERROR_INIT_FAILED;
 	}
 
 	/* calculate the entry element index */
-	if ((bsflags & BACKING_STORE_META) != 0) {
+	എങ്കിൽ ((bsflags & BACKING_STORE_META) != 0) {
 		elem_idx = ENTRY_ELEM_META;
-	} else {
+	} അല്ലെങ്കിൽ {
 		elem_idx = ENTRY_ELEM_DATA;
 	}
 
 	/* set the store entry up */
 	ret = set_store_entry(storestate, url, elem_idx, data, datalen, &bse);
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "store entry setting failed");
-		return ret;
+		തിരികെ ret;
 	}
 
-	if (bse->elem[elem_idx].block != 0) {
+	എങ്കിൽ (bse->elem[elem_idx].block != 0) {
 		/* small block storage */
 		ret = store_write_block(storestate, bse, elem_idx);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* separate file in backing store */
 		ret = store_write_file(storestate, bse, elem_idx);
 	}
 
-	return ret;
+	തിരികെ ret;
 }
 
 /**
  * release any allocation for an entry
  */
-static nserror entry_release_alloc(struct store_entry_element *elem)
+സ്ഥിതം nserror entry_release_alloc(ഘടന store_entry_element *elem)
 {
-	if ((elem->flags & ENTRY_ELEM_FLAG_HEAP) != 0) {
+	എങ്കിൽ ((elem->flags & ENTRY_ELEM_FLAG_HEAP) != 0) {
 		elem->ref--;
-		if (elem->ref == 0) {
+		എങ്കിൽ (elem->ref == 0) {
 			NSLOG(netsurf, DEEPDEBUG, "freeing %p", elem->data);
-			free(elem->data);
+			സ്വതന്ത്രം(elem->data);
 			elem->flags &= ~ENTRY_ELEM_FLAG_HEAP;
 		}
 	}
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
@@ -1745,36 +1745,36 @@ static nserror entry_release_alloc(struct store_entry_element *elem)
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_read_block(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+സ്ഥിതം nserror store_read_block(ഘടന store_state *state,
+			 ഘടന store_entry *bse,
+			 പൂർണ്ണസംഖ്യ elem_idx)
 {
-	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-		((1 << BLOCK_FILE_COUNT) - 1); /* block file block resides in */
-	block_index_t bi = bse->elem[elem_idx].block & ((1 << BLOCK_ENTRY_COUNT) -1); /* block index in file */
+	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_എണ്ണം) &
+		((1 << BLOCK_FILE_എണ്ണം) - 1); /* block file block resides in */
+	block_index_t bi = bse->elem[elem_idx].block & ((1 << BLOCK_ENTRY_എണ്ണം) -1); /* block index in file */
 	ssize_t rd;
 	off_t offst;
 
 	/* ensure the block file fd is good */
-	if (state->blocks[elem_idx][bf].fd == -1) {
+	എങ്കിൽ (state->blocks[elem_idx][bf].fd == -1) {
 		state->blocks[elem_idx][bf].fd = store_open(state, bf,
-				elem_idx + ENTRY_ELEM_COUNT, O_CREAT | O_RDWR);
-		if (state->blocks[elem_idx][bf].fd == -1) {
+				elem_idx + ENTRY_ELEM_എണ്ണം, O_CREAT | O_RDWR);
+		എങ്കിൽ (state->blocks[elem_idx][bf].fd == -1) {
 			NSLOG(netsurf, ERROR, "Open failed errno %d", errno);
-			return NSERROR_SAVE_FAILED;
+			തിരികെ NSERROR_SAVE_FAILED;
 		}
 
 		/* flag that a block file has been opened */
 		state->blocks_opened = true;
 	}
 
-	offst = (unsigned int)bi << log2_block_size[elem_idx];
+	offst = (unsigned പൂർണ്ണസംഖ്യ)bi << log2_block_size[elem_idx];
 
 	rd = nsu_pread(state->blocks[elem_idx][bf].fd,
 		       bse->elem[elem_idx].data,
 		       bse->elem[elem_idx].size,
 		       offst);
-	if (rd != (ssize_t)bse->elem[elem_idx].size) {
+	എങ്കിൽ (rd != (ssize_t)bse->elem[elem_idx].size) {
 		NSLOG(netsurf, ERROR,
 		      "Failed reading %"PRIssizet" of %"PRId32" bytes into %p from %"PRIsizet" block %"PRIu16" errno %d",
 		      rd,
@@ -1783,7 +1783,7 @@ static nserror store_read_block(struct store_state *state,
 		      (size_t)offst,
 		      bse->elem[elem_idx].block,
 		      errno);
-		return NSERROR_SAVE_FAILED;
+		തിരികെ NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG,
@@ -1791,7 +1791,7 @@ static nserror store_read_block(struct store_state *state,
 	      bse->elem[elem_idx].data, (size_t)offst,
 	      bse->elem[elem_idx].block);
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 /**
@@ -1802,34 +1802,34 @@ static nserror store_read_block(struct store_state *state,
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_read_file(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+സ്ഥിതം nserror store_read_file(ഘടന store_state *state,
+			 ഘടന store_entry *bse,
+			 പൂർണ്ണസംഖ്യ elem_idx)
 {
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 	ssize_t rd; /* return from read */
-	int ret = NSERROR_OK;
+	പൂർണ്ണസംഖ്യ ret = NSERROR_OK;
 	size_t tot = 0; /* total size */
 
 	/* separate file in backing store */
 	fd = store_open(storestate, nsurl_hash(bse->url), elem_idx, O_RDONLY);
-	if (fd < 0) {
+	എങ്കിൽ (fd < 0) {
 		NSLOG(netsurf, ERROR, "Open failed %d errno %d", fd, errno);
 		/** @todo should this invalidate the entry? */
-		return NSERROR_NOT_FOUND;
+		തിരികെ NSERROR_NOT_FOUND;
 	}
 
-	while (tot < bse->elem[elem_idx].size) {
-		rd = read(fd,
+	ആകുമ്പോൾ (tot < bse->elem[elem_idx].size) {
+		rd = പഠ(fd,
 			  bse->elem[elem_idx].data + tot,
 			  bse->elem[elem_idx].size - tot);
-		if (rd <= 0) {
+		എങ്കിൽ (rd <= 0) {
 			NSLOG(netsurf, ERROR,
 			      "read error returned %"PRIssizet" errno %d",
 			      rd,
 			      errno);
 			ret = NSERROR_NOT_FOUND;
-			break;
+			നിർത്തുക;
 		}
 		tot += rd;
 	}
@@ -1839,7 +1839,7 @@ static nserror store_read_file(struct store_state *state,
 	NSLOG(netsurf, DEEPDEBUG, "Read %"PRIsizet" bytes into %p", tot,
 	      bse->elem[elem_idx].data);
 
-	return ret;
+	തിരികെ ret;
 }
 
 /**
@@ -1851,44 +1851,44 @@ static nserror store_read_file(struct store_state *state,
  * @param[out] datalen_out The length of the \a data retrieved.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+സ്ഥിതം nserror
 fetch(nsurl *url,
-      enum backing_store_flags bsflags,
+      എണ്ണൽ backing_store_flags bsflags,
       uint8_t **data_out,
       size_t *datalen_out)
 {
 	nserror ret;
-	struct store_entry *bse;
-	struct store_entry_element *elem;
-	int elem_idx;
+	ഘടന store_entry *bse;
+	ഘടന store_entry_element *elem;
+	പൂർണ്ണസംഖ്യ elem_idx;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	എങ്കിൽ (storestate == ശൂന്യ) {
+		തിരികെ NSERROR_INIT_FAILED;
 	}
 
 	/* fetch store entry */
 	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		NSLOG(netsurf, DEBUG, "Entry for %s not found", nsurl_access(url));
-		storestate->miss_count++;
-		return ret;
+		storestate->miss_എണ്ണം++;
+		തിരികെ ret;
 	}
-	storestate->hit_count++;
+	storestate->hit_എണ്ണം++;
 
 	NSLOG(netsurf, DEBUG, "retrieving cache data for url:%s",
 	      nsurl_access(url));
 
 	/* calculate the entry element index */
-	if ((bsflags & BACKING_STORE_META) != 0) {
+	എങ്കിൽ ((bsflags & BACKING_STORE_META) != 0) {
 		elem_idx = ENTRY_ELEM_META;
-	} else {
+	} അല്ലെങ്കിൽ {
 		elem_idx = ENTRY_ELEM_DATA;
 	}
 	elem = &bse->elem[elem_idx];
 
 	/* if an allocation already exists return it */
-	if ((elem->flags & ENTRY_ELEM_FLAG_HEAP) != 0) {
+	എങ്കിൽ ((elem->flags & ENTRY_ELEM_FLAG_HEAP) != 0) {
 		/* use the existing allocation and bump the ref count. */
 		elem->ref++;
 
@@ -1896,13 +1896,13 @@ fetch(nsurl *url,
 		      "Using existing entry (%p) allocation %p refs:%d", bse,
 		      elem->data, elem->ref);
 
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* allocate from the heap */
 		elem->data = malloc(elem->size);
-		if (elem->data == NULL) {
+		എങ്കിൽ (elem->data == ശൂന്യ) {
 			NSLOG(netsurf, ERROR,
 			      "Failed to create new heap allocation");
-			return NSERROR_NOMEM;
+			തിരികെ NSERROR_NOMEM;
 		}
 		NSLOG(netsurf, DEEPDEBUG, "Created new heap allocation %p",
 		      elem->data);
@@ -1912,17 +1912,17 @@ fetch(nsurl *url,
 		elem->ref = 1;
 
 		/* fill the new block */
-		if (elem->block != 0) {
+		എങ്കിൽ (elem->block != 0) {
 			ret = store_read_block(storestate, bse, elem_idx);
-		} else {
+		} അല്ലെങ്കിൽ {
 			ret = store_read_file(storestate, bse, elem_idx);
 		}
 	}
 
 	/* free the allocation if there is a read error */
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		entry_release_alloc(elem);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* update stats and setup return pointers */
 		storestate->hit_size += elem->size;
 
@@ -1930,7 +1930,7 @@ fetch(nsurl *url,
 		*datalen_out = elem->size;
 	}
 
-	return ret;
+	തിരികെ ret;
 }
 
 
@@ -1941,27 +1941,27 @@ fetch(nsurl *url,
  * @param[in] bsflags The flags to control how the object data is released.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror release(nsurl *url, enum backing_store_flags bsflags)
+സ്ഥിതം nserror release(nsurl *url, എണ്ണൽ backing_store_flags bsflags)
 {
 	nserror ret;
-	struct store_entry *bse;
-	struct store_entry_element *elem;
+	ഘടന store_entry *bse;
+	ഘടന store_entry_element *elem;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	എങ്കിൽ (storestate == ശൂന്യ) {
+		തിരികെ NSERROR_INIT_FAILED;
 	}
 
 	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
+	എങ്കിൽ (ret != NSERROR_OK) {
 		NSLOG(netsurf, WARNING, "entry not found");
-		return ret;
+		തിരികെ ret;
 	}
 
 	/* the entry element */
-	if ((bsflags & BACKING_STORE_META) != 0) {
+	എങ്കിൽ ((bsflags & BACKING_STORE_META) != 0) {
 		elem = &bse->elem[ENTRY_ELEM_META];
-	} else {
+	} അല്ലെങ്കിൽ {
 		elem = &bse->elem[ENTRY_ELEM_DATA];
 	}
 
@@ -1971,12 +1971,12 @@ static nserror release(nsurl *url, enum backing_store_flags bsflags)
 	 * allocation it must be invalidated fully now the allocation
 	 * has been released.
 	 */
-	if ((ret == NSERROR_OK) &&
+	എങ്കിൽ ((ret == NSERROR_OK) &&
 	    ((bse->flags & ENTRY_FLAGS_INVALID) != 0)) {
 		ret = invalidate_entry(storestate, bse);
 	}
 
-	return ret;
+	തിരികെ ret;
 }
 
 
@@ -1989,27 +1989,27 @@ static nserror release(nsurl *url, enum backing_store_flags bsflags)
  * @param url The url is used as the unique primary key to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+സ്ഥിതം nserror
 invalidate(nsurl *url)
 {
 	nserror ret;
-	struct store_entry *bse;
+	ഘടന store_entry *bse;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	എങ്കിൽ (storestate == ശൂന്യ) {
+		തിരികെ NSERROR_INIT_FAILED;
 	}
 
 	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
-		return ret;
+	എങ്കിൽ (ret != NSERROR_OK) {
+		തിരികെ ret;
 	}
 
-	return invalidate_entry(storestate, bse);
+	തിരികെ invalidate_entry(storestate, bse);
 }
 
 
-static struct gui_llcache_table llcache_table = {
+സ്ഥിതം ഘടന gui_llcache_table llcache_table = {
 	.initialise = initialise,
 	.finalise = finalise,
 	.store = store,
@@ -2018,4 +2018,4 @@ static struct gui_llcache_table llcache_table = {
 	.release = release,
 };
 
-struct gui_llcache_table *filesystem_llcache_table = &llcache_table;
+ഘടന gui_llcache_table *filesystem_llcache_table = &llcache_table;

@@ -21,89 +21,89 @@
  * javascript content implementation
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/config.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "javascript/content.h"
+#അന്തര്ഭാവ "utils/errors.h"
+#അന്തര്ഭാവ "utils/config.h"
+#അന്തര്ഭാവ "content/content_protected.h"
+#അന്തര്ഭാവ "content/content_factory.h"
+#അന്തര്ഭാവ "content/hlcache.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/messages.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+തരനിർവചനം ഘടന javascript_content {
+	ഘടന content base;
 } javascript_content;
 
-static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+സ്ഥിതം nserror javascript_create(സ്ഥിരം content_handler *handler,
+		lwc_string *imime_type, സ്ഥിരം ഘടന http_parameter *params,
+		llcache_handle *llcache, സ്ഥിരം അക്ഷരം *fallback_charset,
+		bool quirks, ഘടന content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, വലുപ്പം(javascript_content));
+	എങ്കിൽ (script == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__init(&script->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(script);
-		return error;
+	എങ്കിൽ (error != NSERROR_OK) {
+		സ്വതന്ത്രം(script);
+		തിരികെ error;
 	}
 
-	*c = (struct content *) script;
+	*c = (ഘടന content *) script;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+സ്ഥിതം bool javascript_convert(ഘടന content *c)
 {
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	തിരികെ true;
 }
 
-static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+സ്ഥിതം nserror 
+javascript_clone(സ്ഥിരം ഘടന content *old, ഘടന content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, വലുപ്പം(javascript_content));
+	എങ്കിൽ (script == ശൂന്യ)
+		തിരികെ NSERROR_NOMEM;
 
 	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
+	എങ്കിൽ (error != NSERROR_OK) {
 		content_destroy(&script->base);
-		return error;
+		തിരികെ error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (ഘടന content *) script;
 
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+സ്ഥിതം ശൂന്യം javascript_destroy(ഘടന content *c)
 {
 }
 
-static content_type javascript_content_type(void)
+സ്ഥിതം content_type javascript_content_type(ശൂന്യം)
 {
-	return CONTENT_JS;
+	തിരികെ CONTENT_JS;
 }
 
 
-static const content_handler javascript_content_handler = {
+സ്ഥിതം സ്ഥിരം content_handler javascript_content_handler = {
 	.create = javascript_create,
 	.data_complete = javascript_convert,
 	.destroy = javascript_destroy,
@@ -112,7 +112,7 @@ static const content_handler javascript_content_handler = {
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */

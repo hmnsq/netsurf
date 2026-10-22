@@ -21,126 +21,126 @@
  * data scheme handling.  See http://tools.ietf.org/html/rfc2397
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <libwapcaplet/libwapcaplet.h>
-#include <nsutils/base64.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <libwapcaplet/libwapcaplet.h>
+#അന്തര്ഭാവ <nsutils/base64.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/url.h"
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
+#അന്തര്ഭാവ "netsurf/inttypes.h"
+#അന്തര്ഭാവ "utils/url.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/ring.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/data.h"
+#അന്തര്ഭാവ "content/fetch.h"
+#അന്തര്ഭാവ "content/fetchers.h"
+#അന്തര്ഭാവ "content/fetchers/data.h"
 
-struct fetch_data_context {
-	struct fetch *parent_fetch;
+ഘടന fetch_data_context {
+	ഘടന fetch *parent_fetch;
 	nsurl *url;
-	char *mimetype;
-	char *data;
+	അക്ഷരം *mimetype;
+	അക്ഷരം *data;
 	size_t datalen;
 	bool base64;
 
 	bool aborted;
 	bool locked;
 	
-	struct fetch_data_context *r_next, *r_prev;
+	ഘടന fetch_data_context *r_next, *r_prev;
 };
 
-static struct fetch_data_context *ring = NULL;
+സ്ഥിതം ഘടന fetch_data_context *ring = ശൂന്യ;
 
-static bool fetch_data_initialise(lwc_string *scheme)
+സ്ഥിതം bool fetch_data_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_initialise called for %s",
 	      lwc_string_data(scheme));
 
-	return true;
+	തിരികെ true;
 }
 
-static void fetch_data_finalise(lwc_string *scheme)
+സ്ഥിതം ശൂന്യം fetch_data_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_finalise called for %s",
 	      lwc_string_data(scheme));
 }
 
-static bool fetch_data_can_fetch(const nsurl *url)
+സ്ഥിതം bool fetch_data_can_fetch(സ്ഥിരം nsurl *url)
 {
-	return true;
+	തിരികെ true;
 }
 
-static void fetch_data_send_callback(const fetch_msg *msg,
-		struct fetch_data_context *c)
+സ്ഥിതം ശൂന്യം fetch_data_send_callback(സ്ഥിരം fetch_സന്ദേശം *സന്ദേശം,
+		ഘടന fetch_data_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(സന്ദേശം, c->parent_fetch);
 	c->locked = false;
 }
 
-static void fetch_data_send_header(struct fetch_data_context *ctx,
-		const char *fmt, ...)
+സ്ഥിതം ശൂന്യം fetch_data_send_header(ഘടന fetch_data_context *ctx,
+		സ്ഥിരം അക്ഷരം *fmt, ...)
 {
-	char header[64];
-	fetch_msg msg;
+	അക്ഷരം header[64];
+	fetch_സന്ദേശം സന്ദേശം;
 	va_list ap;
-	int len;
+	പൂർണ്ണസംഖ്യ len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof(header), fmt, ap);
+	len = vsnprintf(header, വലുപ്പം(header), fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return;
+	എങ്കിൽ (len >= (പൂർണ്ണസംഖ്യ)വലുപ്പം(header) || len < 0) {
+		തിരികെ;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.len = len;
-	msg.data.header_or_data.buf = (const uint8_t *)header;
-	fetch_data_send_callback(&msg, ctx);
+	സന്ദേശം.type = FETCH_HEADER;
+	സന്ദേശം.data.header_or_data.len = len;
+	സന്ദേശം.data.header_or_data.buf = (സ്ഥിരം uint8_t *)header;
+	fetch_data_send_callback(&സന്ദേശം, ctx);
 }
 
-static void *fetch_data_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+സ്ഥിതം ശൂന്യം *fetch_data_setup(ഘടന fetch *parent_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, സ്ഥിരം അക്ഷരം *post_urlenc,
+		 സ്ഥിരം ഘടന fetch_multipart_data *post_multipart,
+		 സ്ഥിരം അക്ഷരം **headers)
 {
-	struct fetch_data_context *ctx = calloc(1, sizeof(*ctx));
+	ഘടന fetch_data_context *ctx = calloc(1, വലുപ്പം(*ctx));
 	
-	if (ctx == NULL)
-		return NULL;
+	എങ്കിൽ (ctx == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 		
 	ctx->parent_fetch = parent_fetch;
 	ctx->url = nsurl_ref(url);
 
-	RING_INSERT(ring, ctx);
+	RING_തിരുകുക(ring, ctx);
 	
-	return ctx;
+	തിരികെ ctx;
 }
 
-static bool fetch_data_start(void *ctx)
+സ്ഥിതം bool fetch_data_start(ശൂന്യം *ctx)
 {
-	return true;
+	തിരികെ true;
 }
 
-static void fetch_data_free(void *ctx)
+സ്ഥിതം ശൂന്യം fetch_data_free(ശൂന്യം *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	ഘടന fetch_data_context *c = ctx;
 
 	nsurl_unref(c->url);
-	free(c->data);
-	free(c->mimetype);
-	free(ctx);
+	സ്വതന്ത്രം(c->data);
+	സ്വതന്ത്രം(c->mimetype);
+	സ്വതന്ത്രം(ctx);
 }
 
-static void fetch_data_abort(void *ctx)
+സ്ഥിതം ശൂന്യം fetch_data_abort(ശൂന്യം *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	ഘടന fetch_data_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here. 
@@ -149,13 +149,13 @@ static void fetch_data_abort(void *ctx)
 	c->aborted = true;
 }
 
-static bool fetch_data_process(struct fetch_data_context *c)
+സ്ഥിതം bool fetch_data_process(ഘടന fetch_data_context *c)
 {
 	nserror res;
-	fetch_msg msg;
-	const char *params;
-	const char *comma;
-	char *unescaped;
+	fetch_സന്ദേശം സന്ദേശം;
+	സ്ഥിരം അക്ഷരം *params;
+	സ്ഥിരം അക്ഷരം *comma;
+	അക്ഷരം *unescaped;
 	size_t unescaped_len;
 	
 	/* format of a data: URL is:
@@ -166,45 +166,45 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	
 	NSLOG(netsurf, DEEPDEBUG, "url: %.140s", nsurl_access(c->url));
 	
-	if (nsurl_length(c->url) < 6) {
+	എങ്കിൽ (nsurl_length(c->url) < 6) {
 		/* 6 is the minimum possible length (data:,) */
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+		സന്ദേശം.type = FETCH_ERROR;
+		സന്ദേശം.data.error = "Malformed data: URL";
+		fetch_data_send_callback(&സന്ദേശം, c);
+		തിരികെ false;
 	}
 	
 	/* skip the data: part */
 	params = nsurl_access(c->url) + SLEN("data:");
 	
 	/* find the comma */
-	if ( (comma = strchr(params, ',')) == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+	എങ്കിൽ ( (comma = strchr(params, ',')) == ശൂന്യ) {
+		സന്ദേശം.type = FETCH_ERROR;
+		സന്ദേശം.data.error = "Malformed data: URL";
+		fetch_data_send_callback(&സന്ദേശം, c);
+		തിരികെ false;
 	}
 	
-	if (params[0] == ',') {
+	എങ്കിൽ (params[0] == ',') {
 		/* there is no mimetype here, assume text/plain */
 		c->mimetype = strdup("text/plain;charset=US-ASCII");
-	} else {	
+	} അല്ലെങ്കിൽ {	
 		/* make a copy of everything between data: and the comma */
 		c->mimetype = strndup(params, comma - params);
 	}
 	
-	if (c->mimetype == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = 
+	എങ്കിൽ (c->mimetype == ശൂന്യ) {
+		സന്ദേശം.type = FETCH_ERROR;
+		സന്ദേശം.data.error = 
 			"Unable to allocate memory for mimetype in data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+		fetch_data_send_callback(&സന്ദേശം, c);
+		തിരികെ false;
 	}
 	
-	if (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
+	എങ്കിൽ (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
 		c->base64 = true;
 		c->mimetype[strlen(c->mimetype) - 7] = '\0';
-	} else {
+	} അല്ലെങ്കിൽ {
 		c->base64 = false;
 	}
 	
@@ -212,42 +212,42 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	 * decides to nest URL and base64 encoding.  Like, say, Acid2.
 	 */
 	res = url_unescape(comma + 1, 0, &unescaped_len, &unescaped);
-	if (res != NSERROR_OK) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Unable to URL decode data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+	എങ്കിൽ (res != NSERROR_OK) {
+		സന്ദേശം.type = FETCH_ERROR;
+		സന്ദേശം.data.error = "Unable to URL decode data: URL";
+		fetch_data_send_callback(&സന്ദേശം, c);
+		തിരികെ false;
 	}
 	
-	if (c->base64) {
-		if ((nsu_base64_decode_alloc((uint8_t *)unescaped,
+	എങ്കിൽ (c->base64) {
+		എങ്കിൽ ((nsu_base64_decode_alloc((uint8_t *)unescaped,
 					     unescaped_len,
 					     (uint8_t **)&c->data,
 					     &c->datalen) != NSUERROR_OK) ||
-		    (c->data == NULL)) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to Base64 decode data: URL";
-			fetch_data_send_callback(&msg, c);
-			free(unescaped);
-			return false;
+		    (c->data == ശൂന്യ)) {
+			സന്ദേശം.type = FETCH_ERROR;
+			സന്ദേശം.data.error = "Unable to Base64 decode data: URL";
+			fetch_data_send_callback(&സന്ദേശം, c);
+			സ്വതന്ത്രം(unescaped);
+			തിരികെ false;
 		}
-		free(unescaped);
-	} else {
+		സ്വതന്ത്രം(unescaped);
+	} അല്ലെങ്കിൽ {
 		c->datalen = unescaped_len;
 		c->data = unescaped;
 	}
 	
 	
-	return true;
+	തിരികെ true;
 }
 
-static void fetch_data_poll(lwc_string *scheme)
+സ്ഥിതം ശൂന്യം fetch_data_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	struct fetch_data_context *c, *save_ring = NULL;
+	fetch_സന്ദേശം സന്ദേശം;
+	ഘടന fetch_data_context *c, *save_ring = ശൂന്യ;
 	
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	ആകുമ്പോൾ (ring != ശൂന്യ) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -258,13 +258,13 @@ static void fetch_data_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called 
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		എങ്കിൽ (c->locked == true) {
+			RING_തിരുകുക(save_ring, c);
+			തുടരുക;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false && fetch_data_process(c) == true) {
+		എങ്കിൽ (c->aborted == false && fetch_data_process(c) == true) {
 			fetch_set_http_code(c->parent_fetch, 200);
 			NSLOG(netsurf, INFO,
 			      "setting data: MIME type to %s, length to %"PRIsizet,
@@ -277,37 +277,37 @@ static void fetch_data_poll(lwc_string *scheme)
 			fetch_data_send_header(c, "Content-Type: %s",
 					c->mimetype);
 
-			if (c->aborted == false) {
+			എങ്കിൽ (c->aborted == false) {
 				fetch_data_send_header(c, "Content-Length: %"
 						PRIsizet, c->datalen);
 			}
 
-			if (c->aborted == false) {
+			എങ്കിൽ (c->aborted == false) {
 				/* Set max-age to 1 year. */
 				fetch_data_send_header(c, "Cache-Control: "
 						"max-age=31536000");
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf = 
-						(const uint8_t *) c->data;
-				msg.data.header_or_data.len = c->datalen;
-				fetch_data_send_callback(&msg, c);
+			എങ്കിൽ (c->aborted == false) {
+				സന്ദേശം.type = FETCH_DATA;
+				സന്ദേശം.data.header_or_data.buf = 
+						(സ്ഥിരം uint8_t *) c->data;
+				സന്ദേശം.data.header_or_data.len = c->datalen;
+				fetch_data_send_callback(&സന്ദേശം, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				fetch_data_send_callback(&msg, c);
+			എങ്കിൽ (c->aborted == false) {
+				സന്ദേശം.type = FETCH_FINISHED;
+				fetch_data_send_callback(&സന്ദേശം, c);
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			NSLOG(netsurf, INFO, "Processing of %.140s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't, 
 			 * then fetch_data_process() is broken.
 			 */
-			assert(c->locked == false);
+			പ്രതിജ്ഞാ(c->locked == false);
 		}
 
 		/* And now finish */
@@ -321,19 +321,19 @@ static void fetch_data_poll(lwc_string *scheme)
 	ring = save_ring;
 }
 
-nserror fetch_data_register(void)
+nserror fetch_data_register(ശൂന്യം)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_data);
-	const struct fetcher_operation_table fetcher_ops = {
+	സ്ഥിരം ഘടന fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_data_initialise,
 		.acceptable = fetch_data_can_fetch,
 		.setup = fetch_data_setup,
 		.start = fetch_data_start,
 		.abort = fetch_data_abort,
-		.free = fetch_data_free,
+		.സ്വതന്ത്രം = fetch_data_free,
 		.poll = fetch_data_poll,
 		.finalise = fetch_data_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	തിരികെ fetcher_add(scheme, &fetcher_ops);
 }

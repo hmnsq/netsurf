@@ -23,23 +23,23 @@
 #ifndef _NETSURF_DESKTOP_FETCH_H_
 #define _NETSURF_DESKTOP_FETCH_H_
 
-#include <stdbool.h>
+#അന്തര്ഭാവ <stdbool.h>
 
-#include "utils/config.h"
-#include "utils/nsurl.h"
-#include "utils/inet.h"
-#include "utils/http/response-codes.h"
+#അന്തര്ഭാവ "utils/config.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "utils/inet.h"
+#അന്തര്ഭാവ "utils/http/response-codes.h"
 
-#include "netsurf/ssl_certs.h"
+#അന്തര്ഭാവ "netsurf/ssl_certs.h"
 
-struct content;
-struct fetch;
-struct ssl_cert_info;
+ഘടന content;
+ഘടന fetch;
+ഘടന ssl_cert_info;
 
 /**
  * Fetcher message types
  */
-typedef enum {
+തരനിർവചനം എണ്ണൽ {
 	FETCH_PROGRESS,
 	FETCH_CERTS,
 	FETCH_HEADER,
@@ -53,14 +53,14 @@ typedef enum {
 	FETCH_AUTH,
 	FETCH_CERT_ERR,
 	FETCH_SSL_ERR
-} fetch_msg_type;
+} fetch_സന്ദേശം_type;
 
 /** Minimum finished message type.
  *
  * If a fetch does not progress this far, it's an error and the fetch machinery
  * will send FETCH_ERROR to the llcache on fetch_free()
  */
-#define FETCH_MIN_FINISHED_MSG FETCH_FINISHED
+#define FETCH_MIN_FINISHED_സന്ദേശം FETCH_FINISHED
 
 /**
  * This message is actually an internal message used to indicate
@@ -71,34 +71,34 @@ typedef enum {
 /**
  * Fetcher message data
  */
-typedef struct fetch_msg {
-	fetch_msg_type type;
+തരനിർവചനം ഘടന fetch_സന്ദേശം {
+	fetch_സന്ദേശം_type type;
 
-	union {
-		const char *progress;
+	സംഘം {
+		സ്ഥിരം അക്ഷരം *progress;
 
-		struct {
-			const uint8_t *buf;
+		ഘടന {
+			സ്ഥിരം uint8_t *buf;
 			size_t len;
 		} header_or_data;
 
-		const char *error;
+		സ്ഥിരം അക്ഷരം *error;
 
 		/** \todo Use nsurl */
-		const char *redirect;
+		സ്ഥിരം അക്ഷരം *redirect;
 
-		struct {
-			const char *realm;
+		ഘടന {
+			സ്ഥിരം അക്ഷരം *realm;
 		} auth;
 
-		const struct cert_chain *chain;
+		സ്ഥിരം ഘടന cert_chain *chain;
 	} data;
-} fetch_msg;
+} fetch_സന്ദേശം;
 
 /**
  * Fetcher post data types
  */
-typedef enum {
+തരനിർവചനം എണ്ണൽ {
 	FETCH_POSTDATA_NONE,
 	FETCH_POSTDATA_URLENC,
 	FETCH_POSTDATA_MULTIPART,
@@ -108,31 +108,31 @@ typedef enum {
 /**
  * Fetch POST multipart data
  */
-struct fetch_multipart_data {
-	struct fetch_multipart_data *next; /**< Next in linked list */
+ഘടന fetch_multipart_data {
+	ഘടന fetch_multipart_data *next; /**< Next in linked list */
 
-	char *name; /**< Name of item */
-	char *value; /**< Item value */
+	അക്ഷരം *name; /**< Name of item */
+	അക്ഷരം *മൂല്യം; /**< Item value */
 
-	char *rawfile; /**< Raw filename if file is true */
+	അക്ഷരം *rawfile; /**< Raw filename if file is true */
 	bool file; /**< Item is a file */
 };
 
 /**
  * fetch POST data
  */
-struct fetch_postdata {
+ഘടന fetch_postdata {
 	fetch_postdata_type type;
-	union {
+	സംഘം {
 		/** Url encoded POST string if type is FETCH_POSTDATA_URLENC */
-		char *urlenc;
+		അക്ഷരം *urlenc;
 		/** Multipart post data if type is FETCH_POSTDATA_MULTIPART */
-		struct fetch_multipart_data *multipart;
+		ഘടന fetch_multipart_data *multipart;
 	} data;
 };
 
 
-typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
+തരനിർവചനം ശൂന്യം (*fetch_callback)(സ്ഥിരം fetch_സന്ദേശം *സന്ദേശം, ശൂന്യം *p);
 
 /**
  * Start fetching data for the given URL.
@@ -166,15 +166,15 @@ typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
  * \return NSERROR_OK and fetch_out updated else appropriate error code
  */
 nserror fetch_start(nsurl *url, nsurl *referer, fetch_callback callback,
-		    void *p, bool only_2xx, const char *post_urlenc,
-		    const struct fetch_multipart_data *post_multipart,
+		    ശൂന്യം *p, bool only_2xx, സ്ഥിരം അക്ഷരം *post_urlenc,
+		    സ്ഥിരം ഘടന fetch_multipart_data *post_multipart,
 		    bool verifiable, bool downgrade_tls,
-		    const char *headers[], struct fetch **fetch_out);
+		    സ്ഥിരം അക്ഷരം *headers[], ഘടന fetch **fetch_out);
 
 /**
  * Abort a fetch.
  */
-void fetch_abort(struct fetch *f);
+ശൂന്യം fetch_abort(ഘടന fetch *f);
 
 
 /**
@@ -183,17 +183,17 @@ void fetch_abort(struct fetch *f);
  * \param  url  URL to check
  * \return  true if the scheme is supported
  */
-bool fetch_can_fetch(const nsurl *url);
+bool fetch_can_fetch(സ്ഥിരം nsurl *url);
 
 /**
  * Change the callback function for a fetch.
  */
-void fetch_change_callback(struct fetch *fetch, fetch_callback callback, void *p);
+ശൂന്യം fetch_change_callback(ഘടന fetch *fetch, fetch_callback callback, ശൂന്യം *p);
 
 /**
  * Get the HTTP response code.
  */
-http_response_code fetch_http_code(struct fetch *fetch);
+http_response_code fetch_http_code(ഘടന fetch *fetch);
 
 
 /**
@@ -201,7 +201,7 @@ http_response_code fetch_http_code(struct fetch *fetch);
  *
  * \param list Pointer to head of list to free
  */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
+ശൂന്യം fetch_multipart_data_destroy(ഘടന fetch_multipart_data *list);
 
 /**
  * Clone a linked list of fetch_multipart_data.
@@ -209,7 +209,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
  * \param list  List to clone
  * \return Pointer to head of cloned list, or NULL on failure
  */
-struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multipart_data *list);
+ഘടന fetch_multipart_data *fetch_multipart_data_clone(സ്ഥിരം ഘടന fetch_multipart_data *list);
 
 /**
  * Find an entry in a fetch_multipart_data
@@ -218,8 +218,8 @@ struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multi
  * \param name The name to look for in the list
  * \return The value found, or NULL if not present
  */
-const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
-				      const char *name);
+സ്ഥിരം അക്ഷരം *fetch_multipart_data_find(സ്ഥിരം ഘടന fetch_multipart_data *list,
+				      സ്ഥിരം അക്ഷരം *name);
 
 /**
  * Create an entry for a fetch_multipart_data
@@ -231,34 +231,34 @@ const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
  * \param value The value of the entry to create
  * \return The result of the attempt
  */
-nserror fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-				    const char *name,
-				    const char *value);
+nserror fetch_multipart_data_new_kv(ഘടന fetch_multipart_data **list,
+				    സ്ഥിരം അക്ഷരം *name,
+				    സ്ഥിരം അക്ഷരം *മൂല്യം);
 
 /**
  * send message to fetch
  */
-void fetch_send_callback(const fetch_msg *msg, struct fetch *fetch);
+ശൂന്യം fetch_send_callback(സ്ഥിരം fetch_സന്ദേശം *സന്ദേശം, ഘടന fetch *fetch);
 
 /**
  * remove a queued fetch
  */
-void fetch_remove_from_queues(struct fetch *fetch);
+ശൂന്യം fetch_remove_from_queues(ഘടന fetch *fetch);
 
 /**
  * Free a fetch structure and associated resources.
  */
-void fetch_free(struct fetch *f);
+ശൂന്യം fetch_free(ഘടന fetch *f);
 
 /**
  * set the http code of a fetch
  */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code);
+nserror fetch_set_http_code(ഘടന fetch *fetch, http_response_code http_code);
 
 /**
  * set cookie data on a fetch
  */
-void fetch_set_cookie(struct fetch *fetch, const char *data);
+ശൂന്യം fetch_set_cookie(ഘടന fetch *fetch, സ്ഥിരം അക്ഷരം *data);
 
 /**
  * Get the set of file descriptors the fetchers are currently using.
@@ -284,6 +284,6 @@ void fetch_set_cookie(struct fetch *fetch, const char *data);
  * \param[out] maxfd The highest fd number in the set or -1 if no fd available.
  * \return NSERROR_OK on success or appropriate error code.
  */
-nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, int *maxfd);
+nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, പൂർണ്ണസംഖ്യ *maxfd);
 
 #endif

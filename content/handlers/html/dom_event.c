@@ -22,28 +22,28 @@
  * Implementation of HTML content DOM event handling.
  */
 
-#include <string.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/ascii.h"
-#include "utils/string.h"
-#include "utils/nsurl.h"
-#include "content/content.h"
-#include "javascript/js.h"
+#അന്തര്ഭാവ "utils/config.h"
+#അന്തര്ഭാവ "utils/utils.h"
+#അന്തര്ഭാവ "utils/corestrings.h"
+#അന്തര്ഭാവ "utils/nsoption.h"
+#അന്തര്ഭാവ "utils/log.h"
+#അന്തര്ഭാവ "utils/ascii.h"
+#അന്തര്ഭാവ "utils/string.h"
+#അന്തര്ഭാവ "utils/nsurl.h"
+#അന്തര്ഭാവ "content/content.h"
+#അന്തര്ഭാവ "javascript/js.h"
 
-#include "netsurf/bitmap.h"
+#അന്തര്ഭാവ "netsurf/bitmap.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/css.h"
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/form_internal.h"
-#include "html/dom_event.h"
+#അന്തര്ഭാവ "html/private.h"
+#അന്തര്ഭാവ "html/object.h"
+#അന്തര്ഭാവ "html/css.h"
+#അന്തര്ഭാവ "html/box.h"
+#അന്തര്ഭാവ "html/box_construct.h"
+#അന്തര്ഭാവ "html/form_internal.h"
+#അന്തര്ഭാവ "html/dom_event.h"
 
 
 /**
@@ -53,22 +53,22 @@
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
+സ്ഥിതം bool html_process_inserted_base(html_content *htmlc, dom_കണ്ണി *കണ്ണി)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 
 	/* get href attribute if present */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	exc = dom_element_get_attribute(കണ്ണി, corestring_dom_href, &atr_string);
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (atr_string != ശൂന്യ)) {
 		nsurl *url;
 		nserror error;
 
 		/* get url from string */
 		error = nsurl_create(dom_string_data(atr_string), &url);
 		dom_string_unref(atr_string);
-		if (error == NSERROR_OK) {
-			if (htmlc->base_url != NULL) {
+		എങ്കിൽ (error == NSERROR_OK) {
+			എങ്കിൽ (htmlc->base_url != ശൂന്യ) {
 				nsurl_unref(htmlc->base_url);
 			}
 			htmlc->base_url = url;
@@ -77,20 +77,20 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 
 
 	/* get target attribute if present and not already set */
-	if (htmlc->base_target != NULL) {
-		return true;
+	എങ്കിൽ (htmlc->base_target != ശൂന്യ) {
+		തിരികെ true;
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(കണ്ണി,
 					corestring_dom_target,
 					&atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (atr_string != ശൂന്യ)) {
 		/* Validation rules from the HTML5 spec for the base element:
 		 *  The target must be one of _blank, _self, _parent, or
 		 *  _top or any identifier which does not begin with an
 		 *  underscore
 		 */
-		if (*dom_string_data(atr_string) != '_' ||
+		എങ്കിൽ (*dom_string_data(atr_string) != '_' ||
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__blank) ||
 				dom_string_caseless_lwc_isequal(atr_string,
@@ -98,13 +98,13 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__parent) ||
 				dom_string_caseless_lwc_isequal(atr_string,
-						corestring_lwc__top)) {
+						corestring_lwc_മുകൾ_2)) {
 			htmlc->base_target = strdup(dom_string_data(atr_string));
 		}
 		dom_string_unref(atr_string);
 	}
 
-	return true;
+	തിരികെ true;
 }
 
 
@@ -116,7 +116,7 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
+സ്ഥിതം bool html_process_inserted_img(html_content *htmlc, dom_കണ്ണി *കണ്ണി)
 {
 	dom_string *src;
 	nsurl *url;
@@ -125,27 +125,27 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	bool success;
 
 	/* Do nothing if foreground images are disabled */
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	എങ്കിൽ (nsoption_bool(foreground_images) == false) {
+		തിരികെ true;
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		return true;
+	exc = dom_element_get_attribute(കണ്ണി, corestring_dom_src, &src);
+	എങ്കിൽ (exc != DOM_NO_ERR || src == ശൂന്യ) {
+		തിരികെ true;
 	}
 
 	err = nsurl_join(htmlc->base_url, dom_string_data(src), &url);
-	if (err != NSERROR_OK) {
+	എങ്കിൽ (err != NSERROR_OK) {
 		dom_string_unref(src);
-		return false;
+		തിരികെ false;
 	}
 	dom_string_unref(src);
 
 	/* Speculatively fetch the image */
-	success = html_fetch_object(htmlc, url, NULL, CONTENT_IMAGE, false);
+	success = html_fetch_object(htmlc, url, ശൂന്യ, CONTENT_IMAGE, false);
 	nsurl_unref(url);
 
-	return success;
+	തിരികെ success;
 }
 
 
@@ -158,79 +158,79 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_link(html_content *c, dom_node *node)
+സ്ഥിതം bool html_process_inserted_link(html_content *c, dom_കണ്ണി *കണ്ണി)
 {
-	struct content_rfc5988_link link; /* the link added to the content */
+	ഘടന content_rfc5988_link link; /* the link added to the content */
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 	nserror error;
 
 	/* Handle stylesheet loading */
-	html_css_process_link(c, (dom_node *)node);
+	html_css_process_link(c, (dom_കണ്ണി *)കണ്ണി);
 
 	/* try Generic link handling */
 
-	memset(&link, 0, sizeof(struct content_rfc5988_link));
+	memset(&link, 0, വലുപ്പം(ഘടന content_rfc5988_link));
 
 	/* check that the relation exists - w3c spec says must be present */
-	exc = dom_element_get_attribute(node, corestring_dom_rel, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
-		return false;
+	exc = dom_element_get_attribute(കണ്ണി, corestring_dom_rel, &atr_string);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (atr_string == ശൂന്യ)) {
+		തിരികെ false;
 	}
 	/* get a lwc string containing the link relation */
 	exc = dom_string_intern(atr_string, &link.rel);
 	dom_string_unref(atr_string);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ false;
 	}
 
 	/* check that the href exists - w3c spec says must be present */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+	exc = dom_element_get_attribute(കണ്ണി, corestring_dom_href, &atr_string);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (atr_string == ശൂന്യ)) {
 		lwc_string_unref(link.rel);
-		return false;
+		തിരികെ false;
 	}
 
 	/* get nsurl */
 	error = nsurl_join(c->base_url, dom_string_data(atr_string),
 			&link.href);
 	dom_string_unref(atr_string);
-	if (error != NSERROR_OK) {
+	എങ്കിൽ (error != NSERROR_OK) {
 		lwc_string_unref(link.rel);
-		return false;
+		തിരികെ false;
 	}
 
 	/* look for optional properties -- we don't care if internment fails */
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(കണ്ണി,
 			corestring_dom_hreflang, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (atr_string != ശൂന്യ)) {
 		/* get a lwc string containing the href lang */
-		(void)dom_string_intern(atr_string, &link.hreflang);
+		(ശൂന്യം)dom_string_intern(atr_string, &link.hreflang);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(കണ്ണി,
 			corestring_dom_type, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (atr_string != ശൂന്യ)) {
 		/* get a lwc string containing the type */
-		(void)dom_string_intern(atr_string, &link.type);
+		(ശൂന്യം)dom_string_intern(atr_string, &link.type);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(കണ്ണി,
 			corestring_dom_media, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (atr_string != ശൂന്യ)) {
 		/* get a lwc string containing the media */
-		(void)dom_string_intern(atr_string, &link.media);
+		(ശൂന്യം)dom_string_intern(atr_string, &link.media);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(കണ്ണി,
 			corestring_dom_sizes, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (atr_string != ശൂന്യ)) {
 		/* get a lwc string containing the sizes */
-		(void)dom_string_intern(atr_string, &link.sizes);
+		(ശൂന്യം)dom_string_intern(atr_string, &link.sizes);
 		dom_string_unref(atr_string);
 	}
 
@@ -245,12 +245,12 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 	nsurl_unref(link.href);
 	lwc_string_unref(link.rel);
 
-	return true;
+	തിരികെ true;
 }
 
 
 /* handler for a SCRIPT which has been added to a tree */
-static void
+സ്ഥിതം ശൂന്യം
 dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 {
 	dom_exception exc;
@@ -258,42 +258,42 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 	dom_hubbub_error res;
 	bool within;
 
-	if (!htmlc->enable_scripting) {
+	എങ്കിൽ (!htmlc->enable_scripting) {
 		NSLOG(netsurf, INFO, "Encountered a script, but scripting is off, ignoring");
-		return;
+		തിരികെ;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG, "Encountered a script, node %p showed up", script);
 
 	exc = dom_html_script_element_get_flags(script, &flags);
-	if (exc != DOM_NO_ERR) {
+	എങ്കിൽ (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve flags, giving up");
-		return;
+		തിരികെ;
 	}
 
-	if (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
+	എങ്കിൽ (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
 		NSLOG(netsurf, DEBUG, "Script was parser inserted, skipping");
-		return;
+		തിരികെ;
 	}
 
-	exc = dom_node_contains(htmlc->document, script, &within);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_കണ്ണി_contains(htmlc->document, script, &within);
+	എങ്കിൽ (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEBUG, "Unable to determine if script was within document, ignoring");
-		return;
+		തിരികെ;
 	}
 
-	if (!within) {
+	എങ്കിൽ (!within) {
 		NSLOG(netsurf, DEBUG, "Script was not within the document, ignoring for now");
-		return;
+		തിരികെ;
 	}
 
-	res = html_process_script(htmlc, (dom_node *) script);
-	if (res == DOM_HUBBUB_OK) {
+	res = html_process_script(htmlc, (dom_കണ്ണി *) script);
+	എങ്കിൽ (res == DOM_HUBBUB_OK) {
 		NSLOG(netsurf, DEEPDEBUG, "Inserted script has finished running");
-	} else {
-		if (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
 			NSLOG(netsurf, DEEPDEBUG, "Inserted script has launced asynchronously");
-		} else {
+		} അല്ലെങ്കിൽ {
 			NSLOG(netsurf, DEEPDEBUG, "Failure starting script");
 		}
 	}
@@ -309,45 +309,45 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_meta(html_content *c, dom_node *n)
+സ്ഥിതം nserror html_process_inserted_meta(html_content *c, dom_കണ്ണി *n)
 {
-	union content_msg_data msg_data;
-	const char *url, *end, *refresh = NULL;
-	char *new_url;
-	char quote = '\0';
+	സംഘം content_സന്ദേശം_data സന്ദേശം_data;
+	സ്ഥിരം അക്ഷരം *url, *end, *refresh = ശൂന്യ;
+	അക്ഷരം *new_url;
+	അക്ഷരം quote = '\0';
 	dom_string *equiv, *content;
 	dom_exception exc;
 	nsurl *nsurl;
 	nserror error = NSERROR_OK;
 
-	if (c->refresh) {
+	എങ്കിൽ (c->refresh) {
 		/* refresh already delt with */
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_http_equiv, &equiv);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ NSERROR_DOM;
 	}
 
-	if (equiv == NULL) {
-		return NSERROR_OK;
+	എങ്കിൽ (equiv == ശൂന്യ) {
+		തിരികെ NSERROR_OK;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
+	എങ്കിൽ (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
 		dom_string_unref(equiv);
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	dom_string_unref(equiv);
 
 	exc = dom_element_get_attribute(n, corestring_dom_content, &content);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	എങ്കിൽ (exc != DOM_NO_ERR) {
+		തിരികെ NSERROR_DOM;
 	}
 
-	if (content == NULL) {
-		return NSERROR_OK;
+	എങ്കിൽ (content == ശൂന്യ) {
+		തിരികെ NSERROR_OK;
 	}
 
 	end = dom_string_data(content) + dom_string_byte_length(content);
@@ -366,100 +366,100 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	url = dom_string_data(content);
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ആകുമ്പോൾ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* intpart */
-	if (url == end || (*url < '0' || '9' < *url)) {
+	എങ്കിൽ (url == end || (*url < '0' || '9' < *url)) {
 		/* Empty content, or invalid timeval */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
-	msg_data.delay = (int) strtol(url, &new_url, 10);
+	സന്ദേശം_data.delay = (പൂർണ്ണസംഖ്യ) strtol(url, &new_url, 10);
 	/* a very small delay and self-referencing URL can cause a loop
 	 * that grinds machines to a halt. To prevent this we set a
 	 * minimum refresh delay of 1s. */
-	if (msg_data.delay < 1) {
-		msg_data.delay = 1;
+	എങ്കിൽ (സന്ദേശം_data.delay < 1) {
+		സന്ദേശം_data.delay = 1;
 	}
 
 	url = new_url;
 
 	/* fracpart? (ignored, as delay is integer only) */
-	while (url < end && (('0' <= *url && *url <= '9') ||
+	ആകുമ്പോൾ (url < end && (('0' <= *url && *url <= '9') ||
 			*url == '.')) {
 		url++;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ആകുമ്പോൾ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* ';' */
-	if (url < end && *url == ';')
+	എങ്കിൽ (url < end && *url == ';')
 		url++;
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ആകുമ്പോൾ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
-	if (url == end) {
+	എങ്കിൽ (url == end) {
 		/* Just delay specified, so refresh current page */
 		dom_string_unref(content);
 
 		c->base.refresh = nsurl_ref(content_get_url(&c->base));
 
-		content_broadcast(&c->base, CONTENT_MSG_REFRESH, &msg_data);
+		content_broadcast(&c->base, CONTENT_സന്ദേശം_REFRESH, &സന്ദേശം_data);
 
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	/* "url" */
-	if (url <= end - 3) {
-		if (strncasecmp(url, "url", 3) == 0) {
+	എങ്കിൽ (url <= end - 3) {
+		എങ്കിൽ (strncasecmp(url, "url", 3) == 0) {
 			url += 3;
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			തിരികെ NSERROR_OK;
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ആകുമ്പോൾ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '=' */
-	if (url < end) {
-		if (*url == '=') {
+	എങ്കിൽ (url < end) {
+		എങ്കിൽ (*url == '=') {
 			url++;
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			തിരികെ NSERROR_OK;
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		തിരികെ NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ആകുമ്പോൾ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '"' or "'" */
-	if (url < end && (*url == '"' || *url == '\'')) {
+	എങ്കിൽ (url < end && (*url == '"' || *url == '\'')) {
 		quote = *url;
 		url++;
 	}
@@ -467,44 +467,44 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	/* Start of URL */
 	refresh = url;
 
-	if (quote != 0) {
+	എങ്കിൽ (quote != 0) {
 		/* url-sq | url-dq */
-		while (url < end && *url != quote)
+		ആകുമ്പോൾ (url < end && *url != quote)
 			url++;
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* url-nq */
-		while (url < end && !ascii_is_space(*url))
+		ആകുമ്പോൾ (url < end && !ascii_is_space(*url))
 			url++;
 	}
 
 	/* '"' or "'" or *LWS (we don't care) */
-	if (url > refresh) {
+	എങ്കിൽ (url > refresh) {
 		/* There's a URL */
 		new_url = strndup(refresh, url - refresh);
-		if (new_url == NULL) {
+		എങ്കിൽ (new_url == ശൂന്യ) {
 			dom_string_unref(content);
-			return NSERROR_NOMEM;
+			തിരികെ NSERROR_NOMEM;
 		}
 
 		error = nsurl_join(c->base_url, new_url, &nsurl);
-		if (error == NSERROR_OK) {
+		എങ്കിൽ (error == NSERROR_OK) {
 			/* broadcast valid refresh url */
 
 			c->base.refresh = nsurl;
 
 			content_broadcast(&c->base,
-					  CONTENT_MSG_REFRESH,
-					  &msg_data);
+					  CONTENT_സന്ദേശം_REFRESH,
+					  &സന്ദേശം_data);
 			c->refresh = true;
 		}
 
-		free(new_url);
+		സ്വതന്ത്രം(new_url);
 
 	}
 
 	dom_string_unref(content);
 
-	return error;
+	തിരികെ error;
 }
 
 
@@ -517,41 +517,41 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_title(html_content *htmlc, dom_node *node)
+സ്ഥിതം nserror html_process_inserted_title(html_content *htmlc, dom_കണ്ണി *കണ്ണി)
 {
-	if (htmlc->title == NULL) {
+	എങ്കിൽ (htmlc->title == ശൂന്യ) {
 		/* only the first title is considered */
-		htmlc->title = dom_node_ref(node);
+		htmlc->title = dom_കണ്ണി_ref(കണ്ണി);
 	}
-	return NSERROR_OK;
+	തിരികെ NSERROR_OK;
 }
 
 
 /** process title node */
-static bool html_process_title(html_content *c, dom_node *node)
+സ്ഥിതം bool html_process_title(html_content *c, dom_കണ്ണി *കണ്ണി)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *title;
-	char *title_str;
+	അക്ഷരം *title_str;
 	bool success;
 
-	exc = dom_node_get_text_content(node, &title);
-	if ((exc != DOM_NO_ERR) || (title == NULL)) {
-		return false;
+	exc = dom_കണ്ണി_get_text_content(കണ്ണി, &title);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (title == ശൂന്യ)) {
+		തിരികെ false;
 	}
 
 	title_str = squash_whitespace(dom_string_data(title));
 	dom_string_unref(title);
 
-	if (title_str == NULL) {
-		return false;
+	എങ്കിൽ (title_str == ശൂന്യ) {
+		തിരികെ false;
 	}
 
 	success = content__set_title(&c->base, title_str);
 
-	free(title_str);
+	സ്വതന്ത്രം(title_str);
 
-	return success;
+	തിരികെ success;
 }
 
 
@@ -559,14 +559,14 @@ static bool html_process_title(html_content *c, dom_node *node)
  * Deal with input elements being modified by resyncing their gadget
  * if they have one.
  */
-static void html_texty_element_update(html_content *htmlc, dom_node *node)
+സ്ഥിതം ശൂന്യം html_texty_element_update(html_content *htmlc, dom_കണ്ണി *കണ്ണി)
 {
-	struct box *box = box_for_node(node);
-	if (box == NULL) {
-		return; /* No Box (yet?) so no gadget to update */
+	ഘടന box *box = box_for_കണ്ണി(കണ്ണി);
+	എങ്കിൽ (box == ശൂന്യ) {
+		തിരികെ; /* No Box (yet?) so no gadget to update */
 	}
-	if (box->gadget == NULL) {
-		return; /* No gadget yet (under construction perhaps?) */
+	എങ്കിൽ (box->gadget == ശൂന്യ) {
+		തിരികെ; /* No gadget yet (under construction perhaps?) */
 	}
 	form_gadget_sync_with_dom(box->gadget);
 	/* And schedule a redraw for the box */
@@ -577,123 +577,123 @@ static void html_texty_element_update(html_content *htmlc, dom_node *node)
 /**
  * callback for DOMNodeInserted end type
  */
-static void
-dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
+സ്ഥിതം ശൂന്യം
+dom_default_action_DOMNodeInserted_cb(ഘടന dom_event *evt, ശൂന്യം *pw)
 {
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *കണ്ണി;
+	dom_കണ്ണി_type type;
 	dom_exception exc;
 	html_content *htmlc = pw;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc != DOM_NO_ERR) || (node == NULL)) {
+	exc = dom_event_get_target(evt, &കണ്ണി);
+	എങ്കിൽ ((exc != DOM_NO_ERR) || (കണ്ണി == ശൂന്യ)) {
 		/* failed to obtain the event target node */
-		return;
+		തിരികെ;
 	}
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	exc = dom_കണ്ണി_get_കണ്ണി_type(കണ്ണി, &type);
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_കണ്ണി)) {
 		/* an element node has been inserted */
 		dom_html_element_type tag_type;
 
-		exc = dom_html_element_get_tag_type(node, &tag_type);
-		if (exc != DOM_NO_ERR) {
+		exc = dom_html_element_get_tag_type(കണ്ണി, &tag_type);
+		എങ്കിൽ (exc != DOM_NO_ERR) {
 			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
 
-		switch (tag_type) {
-		case DOM_HTML_ELEMENT_TYPE_BASE:
-			html_process_inserted_base(htmlc, (dom_node *)node);
-			break;
+		തിരഞ്ഞെടുപ്പ് (tag_type) {
+		അവസ്ഥ DOM_HTML_ELEMENT_TYPE_BASE:
+			html_process_inserted_base(htmlc, (dom_കണ്ണി *)കണ്ണി);
+			നിർത്തുക;
 
-		case DOM_HTML_ELEMENT_TYPE_IMG:
-			html_process_inserted_img(htmlc, (dom_node *)node);
-			break;
+		അവസ്ഥ DOM_HTML_ELEMENT_TYPE_IMG:
+			html_process_inserted_img(htmlc, (dom_കണ്ണി *)കണ്ണി);
+			നിർത്തുക;
 
-		case DOM_HTML_ELEMENT_TYPE_LINK:
-			html_process_inserted_link(htmlc, (dom_node *)node);
-			break;
+		അവസ്ഥ DOM_HTML_ELEMENT_TYPE_LINK:
+			html_process_inserted_link(htmlc, (dom_കണ്ണി *)കണ്ണി);
+			നിർത്തുക;
 
-		case DOM_HTML_ELEMENT_TYPE_META:
-			html_process_inserted_meta(htmlc, (dom_node *)node);
-			break;
+		അവസ്ഥ DOM_HTML_ELEMENT_TYPE_META:
+			html_process_inserted_meta(htmlc, (dom_കണ്ണി *)കണ്ണി);
+			നിർത്തുക;
 
-		case DOM_HTML_ELEMENT_TYPE_STYLE:
-			if (nsoption_bool(author_level_css)) {
-				html_css_process_style(htmlc, (dom_node *)node);
+		അവസ്ഥ DOM_HTML_ELEMENT_TYPE_STYLE:
+			എങ്കിൽ (nsoption_bool(author_level_css)) {
+				html_css_process_style(htmlc, (dom_കണ്ണി *)കണ്ണി);
 			}
-			break;
+			നിർത്തുക;
 
-		case DOM_HTML_ELEMENT_TYPE_SCRIPT:
+		അവസ്ഥ DOM_HTML_ELEMENT_TYPE_SCRIPT:
 			dom_SCRIPT_showed_up(htmlc,
-					     (dom_html_script_element *)node);
-			break;
+					     (dom_html_script_element *)കണ്ണി);
+			നിർത്തുക;
 
-		case DOM_HTML_ELEMENT_TYPE_TITLE:
-			html_process_inserted_title(htmlc, (dom_node *)node);
-			break;
+		അവസ്ഥ DOM_HTML_ELEMENT_TYPE_TITLE:
+			html_process_inserted_title(htmlc, (dom_കണ്ണി *)കണ്ണി);
+			നിർത്തുക;
 
-		default:
-			break;
+		സ്ഥിരസ്ഥിതി:
+			നിർത്തുക;
 		}
 
-		if (htmlc->enable_scripting) {
+		എങ്കിൽ (htmlc->enable_scripting) {
 			/* ensure javascript context is available */
-			if (htmlc->jsthread == NULL) {
-				union content_msg_data msg_data;
+			എങ്കിൽ (htmlc->jsthread == ശൂന്യ) {
+				സംഘം content_സന്ദേശം_data സന്ദേശം_data;
 
-				msg_data.jsthread = &htmlc->jsthread;
+				സന്ദേശം_data.jsthread = &htmlc->jsthread;
 				content_broadcast(&htmlc->base,
-						  CONTENT_MSG_GETTHREAD,
-						  &msg_data);
+						  CONTENT_സന്ദേശം_GETTHREAD,
+						  &സന്ദേശം_data);
 				NSLOG(netsurf, INFO,
 				      "javascript context: %p (htmlc: %p)",
 				      htmlc->jsthread,
 				      htmlc);
 			}
-			if (htmlc->jsthread != NULL) {
+			എങ്കിൽ (htmlc->jsthread != ശൂന്യ) {
 				js_handle_new_element(htmlc->jsthread,
-						      (dom_element *) node);
+						      (dom_element *) കണ്ണി);
 			}
 		}
 	}
-	dom_node_unref(node);
+	dom_കണ്ണി_unref(കണ്ണി);
 }
 
 
 /**
  * callback for DOMNodeInsertedIntoDocument end type
  */
-static void
-dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
-						  void *pw)
+സ്ഥിതം ശൂന്യം
+dom_default_action_DOMNodeInsertedIntoDocument_cb(ഘടന dom_event *evt,
+						  ശൂന്യം *pw)
 {
 	html_content *htmlc = pw;
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *കണ്ണി;
+	dom_കണ്ണി_type type;
 	dom_exception exc;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	exc = dom_event_get_target(evt, &കണ്ണി);
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (കണ്ണി != ശൂന്യ)) {
+		exc = dom_കണ്ണി_get_കണ്ണി_type(കണ്ണി, &type);
+		എങ്കിൽ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_കണ്ണി)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
-			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			exc = dom_html_element_get_tag_type(കണ്ണി, &tag_type);
+			എങ്കിൽ (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_SCRIPT:
-				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) node);
+			തിരഞ്ഞെടുപ്പ് (tag_type) {
+			അവസ്ഥ DOM_HTML_ELEMENT_TYPE_SCRIPT:
+				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) കണ്ണി);
 				fallthrough;
-			default:
-				break;
+			സ്ഥിരസ്ഥിതി:
+				നിർത്തുക;
 			}
 		}
-		dom_node_unref(node);
+		dom_കണ്ണി_unref(കണ്ണി);
 	}
 }
 
@@ -701,49 +701,49 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
 /**
  * callback for DOMSubtreeModified end type
  */
-static void
-dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
+സ്ഥിതം ശൂന്യം
+dom_default_action_DOMSubtreeModified_cb(ഘടന dom_event *evt, ശൂന്യം *pw)
 {
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_target *കണ്ണി;
+	dom_കണ്ണി_type type;
 	dom_exception exc;
 	html_content *htmlc = pw;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		if (htmlc->title == (dom_node *)node) {
+	exc = dom_event_get_target(evt, &കണ്ണി);
+	എങ്കിൽ ((exc == DOM_NO_ERR) && (കണ്ണി != ശൂന്യ)) {
+		എങ്കിൽ (htmlc->title == (dom_കണ്ണി *)കണ്ണി) {
 			/* Node is our title node */
-			html_process_title(htmlc, (dom_node *)node);
-			dom_node_unref(node);
-			return;
+			html_process_title(htmlc, (dom_കണ്ണി *)കണ്ണി);
+			dom_കണ്ണി_unref(കണ്ണി);
+			തിരികെ;
 		}
 
-		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		exc = dom_കണ്ണി_get_കണ്ണി_type(കണ്ണി, &type);
+		എങ്കിൽ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_കണ്ണി)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
-			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			exc = dom_html_element_get_tag_type(കണ്ണി, &tag_type);
+			എങ്കിൽ (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_STYLE:
-				if (nsoption_bool(author_level_css)) {
+			തിരഞ്ഞെടുപ്പ് (tag_type) {
+			അവസ്ഥ DOM_HTML_ELEMENT_TYPE_STYLE:
+				എങ്കിൽ (nsoption_bool(author_level_css)) {
 					html_css_update_style(htmlc,
-							(dom_node *)node);
+							(dom_കണ്ണി *)കണ്ണി);
 				}
-				break;
-			case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-			case DOM_HTML_ELEMENT_TYPE_INPUT:
-				html_texty_element_update(htmlc, (dom_node *)node);
+				നിർത്തുക;
+			അവസ്ഥ DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+			അവസ്ഥ DOM_HTML_ELEMENT_TYPE_നിവേശം:
+				html_texty_element_update(htmlc, (dom_കണ്ണി *)കണ്ണി);
 				fallthrough;
-			default:
-				break;
+			സ്ഥിരസ്ഥിതി:
+				നിർത്തുക;
 			}
 		}
-		dom_node_unref(node);
+		dom_കണ്ണി_unref(കണ്ണി);
 	}
 }
 
@@ -751,12 +751,12 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
 /**
  * callback for default action finished
  */
-static void
-dom_default_action_finished_cb(struct dom_event *evt, void *pw)
+സ്ഥിതം ശൂന്യം
+dom_default_action_finished_cb(ഘടന dom_event *evt, ശൂന്യം *pw)
 {
 	html_content *htmlc = pw;
 
-	if (htmlc->jsthread != NULL)
+	എങ്കിൽ (htmlc->jsthread != ശൂന്യ)
 		js_event_cleanup(htmlc->jsthread, evt);
 }
 
@@ -765,21 +765,21 @@ dom_default_action_finished_cb(struct dom_event *evt, void *pw)
 dom_default_action_callback
 html_dom_event_fetcher(dom_string *type,
 		  dom_default_action_phase phase,
-		  void **pw)
+		  ശൂന്യം **pw)
 {
 	NSLOG(netsurf, DEEPDEBUG,
 	      "phase:%d type:%s", phase, dom_string_data(type));
 
-	if (phase == DOM_DEFAULT_ACTION_END) {
-		if (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
-			return dom_default_action_DOMNodeInserted_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
-			return dom_default_action_DOMNodeInsertedIntoDocument_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
-			return dom_default_action_DOMSubtreeModified_cb;
+	എങ്കിൽ (phase == DOM_DEFAULT_ACTION_END) {
+		എങ്കിൽ (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
+			തിരികെ dom_default_action_DOMNodeInserted_cb;
+		} അല്ലെങ്കിൽ എങ്കിൽ (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
+			തിരികെ dom_default_action_DOMNodeInsertedIntoDocument_cb;
+		} അല്ലെങ്കിൽ എങ്കിൽ (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
+			തിരികെ dom_default_action_DOMSubtreeModified_cb;
 		}
-	} else if (phase == DOM_DEFAULT_ACTION_FINISHED) {
-		return dom_default_action_finished_cb;
+	} അല്ലെങ്കിൽ എങ്കിൽ (phase == DOM_DEFAULT_ACTION_FINISHED) {
+		തിരികെ dom_default_action_finished_cb;
 	}
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
