@@ -16,17 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <strings.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
+#अन्तर्भाव "utils/nsoption.h"
+#अन्तर्भाव "utils/corestrings.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/nsurl.h"
+#अन्तर्भाव "utils/utils.h"
 
-#include "css/hints.h"
-#include "css/select.h"
+#अन्तर्भाव "css/hints.h"
+#अन्तर्भाव "css/select.h"
 
 #define LOG_STATS
 #undef LOG_STATS
@@ -41,9 +41,9 @@
  * \param c  Character to consider
  * \return true if character is whitespace, false otherwise
  */
-static bool isWhitespace(char c)
+स्थिर bool isWhitespace(अक्षर c)
 {
-	return c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
+	परत c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
 }
 
 /**
@@ -52,9 +52,9 @@ static bool isWhitespace(char c)
  * \param c  Character to consider
  * \return true if character is a valid hex digit, false otherwise
  */
-static bool isHex(char c)
+स्थिर bool isHex(अक्षर c)
 {
-	return ('0' <= c && c <= '9') ||
+	परत ('0' <= c && c <= '9') ||
 			('A' <= (c & ~0x20) && (c & ~0x20) <= 'F');
 }
 
@@ -66,20 +66,20 @@ static bool isHex(char c)
  *
  * \note This function assumes an ASCII-compatible character set
  */
-static uint8_t charToHex(char c)
+स्थिर uint8_t charToHex(अक्षर c)
 {
 	/* 0-9 */
 	c -= '0';
 
 	/* A-F */
-	if (c > 9)
+	जर (c > 9)
 		c -= 'A' - '9' - 1;
 
 	/* a-f */
-	if (c > 15)
+	जर (c > 15)
 		c -= 'a' - 'A';
 
-	return c;
+	परत c;
 }
 
 
@@ -98,58 +98,58 @@ static uint8_t charToHex(char c)
  *                        bytes consumed
  * \return true on success, false on invalid input
  */
-static bool parse_number(const char *data, bool maybe_negative, bool real,
-		css_fixed *value, size_t *consumed)
+स्थिर bool parse_संख्या(स्थिरांक अक्षर *data, bool maybe_negative, bool real,
+		css_fixed *मूल्य, माप_प्रकार *consumed)
 {
-	size_t len;
-	const uint8_t *ptr;
+	माप_प्रकार len;
+	स्थिरांक uint8_t *ptr;
 	int32_t intpart = 0;
 	int32_t fracpart = 0;
 	int32_t pwr = 1;
-	int sign = 1;
+	पूर्णांक sign = 1;
 
 	*consumed = 0;
 
-	len = strlen(data);
-	ptr = (const uint8_t *) data;
+	len = म_माप(data);
+	ptr = (स्थिरांक uint8_t *) data;
 
-	if (len == 0)
-		return false;
+	जर (len == 0)
+		परत false;
 
 	/* Skip leading whitespace */
-	while (len > 0 && isWhitespace(ptr[0])) {
+	पर्यंत (len > 0 && isWhitespace(ptr[0])) {
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	जर (len == 0)
+		परत false;
 
 	/* Extract sign, if any */
-	if (ptr[0] == '+') {
+	जर (ptr[0] == '+') {
 		len--;
 		ptr++;
-	} else if (ptr[0] == '-' && maybe_negative) {
+	} अन्यथा जर (ptr[0] == '-' && maybe_negative) {
 		sign = -1;
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	जर (len == 0)
+		परत false;
 
 	/* Must have a digit [0,9] */
-	if ('0' > ptr[0] || ptr[0] > '9')
-		return false;
+	जर ('0' > ptr[0] || ptr[0] > '9')
+		परत false;
 
 	/* Now extract intpart, assuming base 10 */
-	while (len > 0) {
+	पर्यंत (len > 0) {
 		/* Stop on first non-digit */
-		if (ptr[0] < '0' || '9' < ptr[0])
-			break;
+		जर (ptr[0] < '0' || '9' < ptr[0])
+			थांबा;
 
 		/* Prevent overflow of 'intpart'; proper clamping below */
-		if (intpart < (1 << 22)) {
+		जर (intpart < (1 << 22)) {
 			intpart *= 10;
 			intpart += ptr[0] - '0';
 		}
@@ -158,16 +158,16 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 	}
 
 	/* And fracpart, again, assuming base 10 */
-	if (real && len > 1 && ptr[0] == '.' &&
+	जर (real && len > 1 && ptr[0] == '.' &&
 			('0' <= ptr[1] && ptr[1] <= '9')) {
 		ptr++;
 		len--;
 
-		while (len > 0) {
-			if (ptr[0] < '0' || '9' < ptr[0])
-				break;
+		पर्यंत (len > 0) {
+			जर (ptr[0] < '0' || '9' < ptr[0])
+				थांबा;
 
-			if (pwr < 1000000) {
+			जर (pwr < 1000000) {
 				pwr *= 10;
 				fracpart *= 10;
 				fracpart += ptr[0] - '0';
@@ -177,39 +177,39 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 		}
 
 		fracpart = ((1 << 10) * fracpart + pwr/2) / pwr;
-		if (fracpart >= (1 << 10)) {
+		जर (fracpart >= (1 << 10)) {
 			intpart++;
 			fracpart &= (1 << 10) - 1;
 		}
 	}
 
-	if (sign > 0) {
+	जर (sign > 0) {
 		/* If the result is larger than we can represent,
 		 * then clamp to the maximum value we can store. */
-		if (intpart >= (1 << 21)) {
+		जर (intpart >= (1 << 21)) {
 			intpart = (1 << 21) - 1;
 			fracpart = (1 << 10) - 1;
 		}
-	} else {
+	} अन्यथा {
 		/* If the negated result is smaller than we can represent
 		 * then clamp to the minimum value we can store. */
-		if (intpart >= (1 << 21)) {
+		जर (intpart >= (1 << 21)) {
 			intpart = -(1 << 21);
 			fracpart = 0;
-		} else {
+		} अन्यथा {
 			intpart = -intpart;
-			if (fracpart) {
+			जर (fracpart) {
 				fracpart = (1 << 10) - fracpart;
 				intpart--;
 			}
 		}
 	}
 
-	*value = (intpart << 10) | fracpart;
+	*मूल्य = (intpart << 10) | fracpart;
 
-	*consumed = ptr - (const uint8_t *) data;
+	*consumed = ptr - (स्थिरांक uint8_t *) data;
 
-	return true;
+	परत true;
 }
 
 /**
@@ -221,36 +221,36 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
  * \param unit    Pointer to location to receive dimension's unit
  * \return true on success, false on invalid input
  */
-static bool parse_dimension(const char *data, bool strict, css_fixed *length,
+स्थिर bool parse_dimension(स्थिरांक अक्षर *data, bool strict, css_fixed *length,
 		css_unit *unit)
 {
-	size_t len;
-	size_t read;
-	css_fixed value;
+	माप_प्रकार len;
+	माप_प्रकार पठ;
+	css_fixed मूल्य;
 
-	len = strlen(data);
+	len = म_माप(data);
 
-	if (parse_number(data, false, true, &value, &read) == false)
-		return false;
+	जर (parse_संख्या(data, false, true, &मूल्य, &पठ) == false)
+		परत false;
 
-	if (strict && value < INTTOFIX(1))
-		return false;
+	जर (strict && मूल्य < INTTOFIX(1))
+		परत false;
 
-	*length = value;
+	*length = मूल्य;
 
-	if (len > read && data[read] == '%')
+	जर (len > पठ && data[पठ] == '%')
 		*unit = CSS_UNIT_PCT;
-	else
+	अन्यथा
 		*unit = CSS_UNIT_PX;
 
-	return true;
+	परत true;
 }
 
 /**
  * Mapping of colour name to CSS color
  */
-struct colour_map {
-	const char *name;
+संरचना colour_map {
+	स्थिरांक अक्षर *name;
 	css_color color;
 };
 
@@ -263,12 +263,12 @@ struct colour_map {
  *         < 0 if a < b,
  *         > 0 if b > a.
  */
-static int cmp_colour_name(const void *a, const void *b)
+स्थिर पूर्णांक cmp_colour_name(स्थिरांक शून्य *a, स्थिरांक शून्य *b)
 {
-	const char *aa = a;
-	const struct colour_map *bb = b;
+	स्थिरांक अक्षर *aa = a;
+	स्थिरांक संरचना colour_map *bb = b;
 
-	return strcasecmp(aa, bb->name);
+	परत strcasecmp(aa, bb->name);
 }
 
 /**
@@ -278,9 +278,9 @@ static int cmp_colour_name(const void *a, const void *b)
  * \param result  Pointer to location to receive css_color
  * \return true on success, false on invalid input
  */
-static bool parse_named_colour(const char *name, css_color *result)
+स्थिर bool parse_named_colour(स्थिरांक अक्षर *name, css_color *result)
 {
-	static const struct colour_map named_colours[] = {
+	स्थिर स्थिरांक संरचना colour_map named_colours[] = {
 		{ "aliceblue",		0xfff0f8ff },
 		{ "antiquewhite",	0xfffaebd7 },
 		{ "aqua",		0xff00ffff },
@@ -432,45 +432,45 @@ static bool parse_named_colour(const char *name, css_color *result)
 		{ "yellow",		0xffffff00 },
 		{ "yellowgreen",	0xff9acd32 }
 	};
-	const struct colour_map *entry;
+	स्थिरांक संरचना colour_map *entry;
 
-	entry = bsearch(name, named_colours,
-			sizeof(named_colours) / sizeof(named_colours[0]),
-			sizeof(named_colours[0]),
+	entry = द्वा_खोज(name, named_colours,
+			आकार(named_colours) / आकार(named_colours[0]),
+			आकार(named_colours[0]),
 			cmp_colour_name);
 
-	if (entry != NULL)
+	जर (entry != रिक्त)
 		*result = entry->color;
 
-	return entry != NULL;
+	परत entry != रिक्त;
 }
 
 /* exported interface documented in content/handlers/css/hints.h */
-bool nscss_parse_colour(const char *data, css_color *result)
+bool nscss_parse_colour(स्थिरांक अक्षर *data, css_color *result)
 {
-	size_t len = strlen(data);
+	माप_प्रकार len = म_माप(data);
 	uint8_t r, g, b;
 
 	/* 2 */
-	if (len == 0)
-		return false;
+	जर (len == 0)
+		परत false;
 
 	/* 3 */
-	if (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
-		return false;
+	जर (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
+		परत false;
 
 	/* 4 */
-	if (parse_named_colour(data, result))
-		return true;
+	जर (parse_named_colour(data, result))
+		परत true;
 
 	/** \todo Implement HTML5's utterly insane legacy colour parsing */
 
-	if (data[0] == '#') {
+	जर (data[0] == '#') {
 		data++;
 		len--;
 	}
 
-	if (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
+	जर (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
 		r = charToHex(data[0]);
 		g = charToHex(data[1]);
 		b = charToHex(data[2]);
@@ -481,8 +481,8 @@ bool nscss_parse_colour(const char *data, css_color *result)
 
 		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
-	} else if (len == 6 && isHex(data[0]) && isHex(data[1]) &&
+		परत true;
+	} अन्यथा जर (len == 6 && isHex(data[0]) && isHex(data[1]) &&
 			isHex(data[2]) && isHex(data[3]) && isHex(data[4]) &&
 			isHex(data[5])) {
 		r = (charToHex(data[0]) << 4) | charToHex(data[1]);
@@ -491,10 +491,10 @@ bool nscss_parse_colour(const char *data, css_color *result)
 
 		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
+		परत true;
 	}
 
-	return false;
+	परत false;
 }
 
 /**
@@ -506,10 +506,10 @@ bool nscss_parse_colour(const char *data, css_color *result)
  * \param unit  Pointer to location to receive unit
  * \return True on success, false on failure
  */
-static bool parse_font_size(const char *size, uint8_t *val,
+स्थिर bool parse_font_size(स्थिरांक अक्षर *size, uint8_t *val,
 		css_fixed *len, css_unit *unit)
 {
-	static const uint8_t size_map[] = {
+	स्थिर स्थिरांक uint8_t size_map[] = {
 		CSS_FONT_SIZE_XX_SMALL,
 		CSS_FONT_SIZE_SMALL,
 		CSS_FONT_SIZE_MEDIUM,
@@ -519,56 +519,56 @@ static bool parse_font_size(const char *size, uint8_t *val,
 		CSS_FONT_SIZE_DIMENSION	/* xxx-large (see below) */
 	};
 
-	const char *p = size;
-	char mode;
-	int value = 0;
+	स्थिरांक अक्षर *p = size;
+	अक्षर mode;
+	पूर्णांक मूल्य = 0;
 
 	/* Skip whitespace */
-	while (*p != '\0' && isWhitespace(*p))
+	पर्यंत (*p != '\0' && isWhitespace(*p))
 		p++;
 
 	mode = *p;
 
 	/* Skip +/- */
-	if (mode == '+' || mode == '-')
+	जर (mode == '+' || mode == '-')
 		p++;
 
 	/* Need at least one digit */
-	if (*p < '0' || *p > '9') {
-		return false;
+	जर (*p < '0' || *p > '9') {
+		परत false;
 	}
 
 	/* Consume digits, computing value */
-	while ('0' <= *p && *p <= '9') {
-		value = value * 10 + (*p - '0');
+	पर्यंत ('0' <= *p && *p <= '9') {
+		मूल्य = मूल्य * 10 + (*p - '0');
 		p++;
 	}
 
 	/* Resolve relative sizes */
-	if (mode == '+')
-		value += 3;
-	else if (mode == '-')
-		value = 3 - value;
+	जर (mode == '+')
+		मूल्य += 3;
+	अन्यथा जर (mode == '-')
+		मूल्य = 3 - मूल्य;
 
 	/* Clamp to range [1,7] */
-	if (value < 1)
-		value = 1;
-	else if (value > 7)
-		value = 7;
+	जर (मूल्य < 1)
+		मूल्य = 1;
+	अन्यथा जर (मूल्य > 7)
+		मूल्य = 7;
 
-	if (value == 7) {
+	जर (मूल्य == 7) {
 		/* Manufacture xxx-large */
 	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_size))),
 				F_10);
-	} else {
+	} अन्यथा {
 		/* Len is irrelevant */
 		*len = 0;
 	}
 
 	*unit = CSS_UNIT_PT;
-	*val = size_map[value - 1];
+	*val = size_map[मूल्य - 1];
 
-	return true;
+	परत true;
 }
 
 
@@ -578,44 +578,44 @@ static bool parse_font_size(const char *size, uint8_t *val,
 
 #define MAX_HINTS_PER_ELEMENT 32
 
-struct css_hint_ctx {
-	struct css_hint *hints;
+संरचना css_hint_ctx {
+	संरचना css_hint *hints;
 	uint32_t len;
 };
 
-struct css_hint_ctx hint_ctx;
+संरचना css_hint_ctx hint_ctx;
 
-nserror css_hint_init(void)
+nserror css_hint_init(शून्य)
 {
-	hint_ctx.hints = malloc(sizeof(struct css_hint) *
+	hint_ctx.hints = दो_स्मृति(आकार(संरचना css_hint) *
 			MAX_HINTS_PER_ELEMENT);
-	if (hint_ctx.hints == NULL) {
-		return NSERROR_NOMEM;
+	जर (hint_ctx.hints == रिक्त) {
+		परत NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	परत NSERROR_OK;
 }
 
-void css_hint_fini(void)
+शून्य css_hint_fini(शून्य)
 {
 	hint_ctx.len = 0;
-	free(hint_ctx.hints);
+	मुक्त(hint_ctx.hints);
 }
 
-static void css_hint_clean(void)
+स्थिर शून्य css_hint_clean(शून्य)
 {
 	hint_ctx.len = 0;
 }
 
-static inline void css_hint_advance(struct css_hint **hint)
+स्थिर ओळीत शून्य css_hint_advance(संरचना css_hint **hint)
 {
 	hint_ctx.len++;
-	assert(hint_ctx.len < MAX_HINTS_PER_ELEMENT);
+	प्रतिज्ञा(hint_ctx.len < MAX_HINTS_PER_ELEMENT);
 
 	(*hint)++;
 }
 
-static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
+स्थिर शून्य css_hint_get_hints(संरचना css_hint **hints, uint32_t *nhints)
 {
 	*hints = hint_ctx.hints;
 	*nhints = hint_ctx.len;
@@ -626,28 +626,28 @@ static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
  * Presentational hint handlers                                               *
  ******************************************************************************/
 
-static void css_hint_table_cell_border_padding(
+स्थिर शून्य css_hint_table_cell_border_padding(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_qname qs;
-	dom_string *attr = NULL;
-	dom_node *tablenode = NULL;
+	dom_string *attr = रिक्त;
+	dom_गाठ *tablenode = रिक्त;
 	dom_exception exc;
 
-	qs.ns = NULL;
+	qs.ns = रिक्त;
 	qs.name = lwc_string_ref(corestring_lwc_table);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&tablenode) != CSS_OK) {
+	जर (named_ancestor_गाठ(ctx, गाठ, &qs,
+			(शून्य *)&tablenode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return;
+		परत;
 	}
 	lwc_string_unref(qs.name);
 
-	if (tablenode == NULL) {
-		return;
+	जर (tablenode == रिक्त) {
+		परत;
 	}
 	/* No need to unref tablenode, named_ancestor_node does not
 	 * return a reffed node to the CSS
@@ -656,29 +656,29 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		if (parse_dimension(
+		जर (parse_dimension(
 				dom_string_data(attr), false,
-						&hint_length.value,
+						&hint_length.मूल्य,
 						&hint_length.unit) &&
-				INTTOFIX(0) != hint_length.value) {
+				INTTOFIX(0) != hint_length.मूल्य) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
+			साठी (hint_prop = CSS_PROP_BORDER_शीर्ष_STYLE;
+			     hint_prop <= CSS_PROP_BORDER_डावा_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
 				hint->status = CSS_BORDER_STYLE_INSET;
 				css_hint_advance(&hint);
 			}
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
+			साठी (hint_prop = CSS_PROP_BORDER_शीर्ष_WIDTH;
+			     hint_prop <= CSS_PROP_BORDER_डावा_WIDTH;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = INTTOFIX(1);
+				hint->data.length.मूल्य = INTTOFIX(1);
 				hint->data.length.unit = CSS_UNIT_PX;
 				hint->status = CSS_BORDER_WIDTH_WIDTH;
 				css_hint_advance(&hint);
@@ -690,16 +690,16 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		जर (nscss_parse_colour(
+				(स्थिरांक अक्षर *)dom_string_data(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
+			साठी (hint_prop = CSS_PROP_BORDER_शीर्ष_COLOR;
+			     hint_prop <= CSS_PROP_BORDER_डावा_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
 				hint->data.color = hint_color;
@@ -713,20 +713,20 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_cellpadding, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		if (parse_dimension(
+		जर (parse_dimension(
 				dom_string_data(attr), false,
-						&hint_length.value,
+						&hint_length.मूल्य,
 						&hint_length.unit)) {
 
-			for (hint_prop = CSS_PROP_PADDING_TOP;
-			     hint_prop <= CSS_PROP_PADDING_LEFT;
+			साठी (hint_prop = CSS_PROP_PADDING_शीर्ष;
+			     hint_prop <= CSS_PROP_PADDING_डावा;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = hint_length.value;
+				hint->data.length.मूल्य = hint_length.मूल्य;
 				hint->data.length.unit = hint_length.unit;
 				hint->status = CSS_PADDING_SET;
 				css_hint_advance(&hint);
@@ -736,39 +736,39 @@ static void css_hint_table_cell_border_padding(
 	}
 }
 
-static void css_hint_vertical_align_table_cells(
+स्थिर शून्य css_hint_vertical_align_table_cells(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = रिक्त;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		hint->data.length.value = 0;
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		hint->data.length.मूल्य = 0;
 		hint->data.length.unit = CSS_UNIT_PX;
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_top)) {
+		जर (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_शीर्ष)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TOP;
+			hint->status = CSS_VERTICAL_ALIGN_शीर्ष;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
-					corestring_lwc_middle)) {
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(attr,
+					corestring_lwc_मधला)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
+			hint->status = CSS_VERTICAL_ALIGN_मधला;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_BOTTOM;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
 			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
@@ -778,25 +778,25 @@ static void css_hint_vertical_align_table_cells(
 	}
 }
 
-static void css_hint_vertical_align_replaced(
+स्थिर शून्य css_hint_vertical_align_replaced(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = रिक्त;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_top)) {
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		जर (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_शीर्ष)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TOP;
+			hint->status = CSS_VERTICAL_ALIGN_शीर्ष;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
@@ -804,54 +804,54 @@ static void css_hint_vertical_align_replaced(
 			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_texttop)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TEXT_TOP;
+			hint->status = CSS_VERTICAL_ALIGN_TEXT_शीर्ष;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_absmiddle) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_abscenter)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
+			hint->status = CSS_VERTICAL_ALIGN_मधला;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_text_align_normal(
+स्थिर शून्य css_hint_text_align_normal(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = रिक्त;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_left)) {
+	जर (err == DOM_NO_ERR && align != रिक्त) {
+		जर (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_डावा)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LEFT;
+			hint->status = CSS_TEXT_ALIGN_डावा;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_center)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_right)) {
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_उजवा)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_RIGHT;
+			hint->status = CSS_TEXT_ALIGN_उजवा;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
@@ -861,43 +861,43 @@ static void css_hint_text_align_normal(
 	}
 }
 
-static void css_hint_text_align_center(
+स्थिर शून्य css_hint_text_align_center(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
 	hint->prop = CSS_PROP_TEXT_ALIGN;
 	hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_left_right_align_center(
+स्थिर शून्य css_hint_margin_डावा_उजवा_align_center(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(गाठ,
 			corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
+		स_रखो(hint, 0, आकार(*hint) * 2);
+		जर (dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_center) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_abscenter) ||
 				dom_string_caseless_lwc_isequal(attr,
-						corestring_lwc_middle) ||
+						corestring_lwc_मधला) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_absmiddle)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
+			hint->prop = CSS_PROP_MARGIN_डावा;
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
+			hint->prop = CSS_PROP_MARGIN_उजवा;
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 		}
@@ -905,37 +905,37 @@ static void css_hint_margin_left_right_align_center(
 	}
 }
 
-static void css_hint_text_align_special(
+स्थिर शून्य css_hint_text_align_special(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = रिक्त;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_align, &align);
 
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	जर (err == DOM_NO_ERR && align != रिक्त) {
+		जर (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_center)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_left)) {
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_डावा)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_LEFT;
+			hint->status = CSS_TEXT_ALIGN_LIBCSS_डावा;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_right)) {
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_उजवा)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_RIGHT;
+			hint->status = CSS_TEXT_ALIGN_LIBCSS_उजवा;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
 			hint->prop = CSS_PROP_TEXT_ALIGN;
 			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
@@ -945,42 +945,42 @@ static void css_hint_text_align_special(
 	}
 }
 
-static void css_hint_text_align_table_special(
+स्थिर शून्य css_hint_text_align_table_special(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
 	hint->prop = CSS_PROP_TEXT_ALIGN;
 	hint->status = CSS_TEXT_ALIGN_INHERIT_IF_NON_MAGIC;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_hspace_vspace(
+स्थिर शून्य css_hint_margin_hspace_vspace(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = रिक्त;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(गाठ,
 			corestring_dom_vspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
 		css_hint_length hint_length;
-		if (parse_dimension(
+		जर (parse_dimension(
 				dom_string_data(attr), false,
-				&hint_length.value,
+				&hint_length.मूल्य,
 				&hint_length.unit)) {
-			hint->prop = CSS_PROP_MARGIN_TOP;
-			hint->data.length.value = hint_length.value;
+			hint->prop = CSS_PROP_MARGIN_शीर्ष;
+			hint->data.length.मूल्य = hint_length.मूल्य;
 			hint->data.length.unit = hint_length.unit;
 			hint->status = CSS_MARGIN_SET;
 			css_hint_advance(&hint);
 
 			hint->prop = CSS_PROP_MARGIN_BOTTOM;
-			hint->data.length.value = hint_length.value;
+			hint->data.length.मूल्य = hint_length.मूल्य;
 			hint->data.length.unit = hint_length.unit;
 			hint->status = CSS_MARGIN_SET;
 			css_hint_advance(&hint);
@@ -988,23 +988,23 @@ static void css_hint_margin_hspace_vspace(
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(गाठ,
 			corestring_dom_hspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
 		css_hint_length hint_length;
-		if (parse_dimension(
+		जर (parse_dimension(
 				dom_string_data(attr), false,
-				&hint_length.value,
+				&hint_length.मूल्य,
 				&hint_length.unit)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->data.length.value = hint_length.value;
+			hint->prop = CSS_PROP_MARGIN_डावा;
+			hint->data.length.मूल्य = hint_length.मूल्य;
 			hint->data.length.unit = hint_length.unit;
 			hint->status = CSS_MARGIN_SET;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->data.length.value = hint_length.value;
+			hint->prop = CSS_PROP_MARGIN_उजवा;
+			hint->data.length.मूल्य = hint_length.मूल्य;
 			hint->data.length.unit = hint_length.unit;
 			hint->status = CSS_MARGIN_SET;
 			css_hint_advance(&hint);
@@ -1013,49 +1013,49 @@ static void css_hint_margin_hspace_vspace(
 	}
 }
 
-static void css_hint_margin_left_right_hr(
+स्थिर शून्य css_hint_margin_डावा_उजवा_hr(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(गाठ,
 				corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_left)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->data.length.value = 0;
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
+		स_रखो(hint, 0, आकार(*hint) * 2);
+		जर (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_डावा)) {
+			hint->prop = CSS_PROP_MARGIN_डावा;
+			hint->data.length.मूल्य = 0;
 			hint->data.length.unit = CSS_UNIT_PX;
 			hint->status = CSS_MARGIN_SET;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
+			hint->prop = CSS_PROP_MARGIN_उजवा;
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_center)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
+			hint->prop = CSS_PROP_MARGIN_डावा;
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
+			hint->prop = CSS_PROP_MARGIN_उजवा;
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_right)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_उजवा)) {
+			hint->prop = CSS_PROP_MARGIN_डावा;
 			hint->status = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->data.length.value = 0;
+			hint->prop = CSS_PROP_MARGIN_उजवा;
+			hint->data.length.मूल्य = 0;
 			hint->data.length.unit = CSS_UNIT_PX;
 			hint->status = CSS_MARGIN_SET;
 			css_hint_advance(&hint);
@@ -1064,38 +1064,38 @@ static void css_hint_margin_left_right_hr(
 	}
 }
 
-static void css_hint_table_spacing_border(
+स्थिर शून्य css_hint_table_spacing_border(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception exc;
-	dom_string *attr = NULL;
+	dom_string *attr = रिक्त;
 
-	exc = dom_element_get_attribute(node, corestring_dom_border, &attr);
+	exc = dom_element_get_attribute(गाठ, corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
 		uint32_t hint_prop;
 		css_hint_length hint_length;
 
-		for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
+		साठी (hint_prop = CSS_PROP_BORDER_शीर्ष_STYLE;
+			     hint_prop <= CSS_PROP_BORDER_डावा_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
 				hint->status = CSS_BORDER_STYLE_OUTSET;
 				css_hint_advance(&hint);
 		}
 
-		if (parse_dimension(
+		जर (parse_dimension(
 				dom_string_data(attr), false,
-						&hint_length.value,
+						&hint_length.मूल्य,
 						&hint_length.unit)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
+			साठी (hint_prop = CSS_PROP_BORDER_शीर्ष_WIDTH;
+			     hint_prop <= CSS_PROP_BORDER_डावा_WIDTH;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = hint_length.value;
+				hint->data.length.मूल्य = hint_length.मूल्य;
 				hint->data.length.unit = hint_length.unit;
 				hint->status = CSS_BORDER_WIDTH_WIDTH;
 				css_hint_advance(&hint);
@@ -1104,19 +1104,19 @@ static void css_hint_table_spacing_border(
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(गाठ,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		जर (nscss_parse_colour(
+				(स्थिरांक अक्षर *)dom_string_data(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
+			साठी (hint_prop = CSS_PROP_BORDER_शीर्ष_COLOR;
+			     hint_prop <= CSS_PROP_BORDER_डावा_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
 				hint->data.color = hint_color;
@@ -1127,13 +1127,13 @@ static void css_hint_table_spacing_border(
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(गाठ,
 			corestring_dom_cellspacing, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-						&hint->data.position.h.value,
+	जर (exc == DOM_NO_ERR && attr != रिक्त) {
+		जर (parse_dimension(
+				(स्थिरांक अक्षर *)dom_string_data(attr), false,
+						&hint->data.position.h.मूल्य,
 						&hint->data.position.h.unit)) {
 			hint->prop = CSS_PROP_BORDER_SPACING;
 			hint->data.position.v = hint->data.position.h;
@@ -1144,21 +1144,21 @@ static void css_hint_table_spacing_border(
 	}
 }
 
-static void css_hint_height(
+स्थिर शून्य css_hint_height(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = रिक्त;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_height, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		जर (parse_dimension(
+				(स्थिरांक अक्षर *)dom_string_data(attr), false,
+				&hint->data.length.मूल्य,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_HEIGHT;
 			hint->status = CSS_HEIGHT_SET;
@@ -1168,21 +1168,21 @@ static void css_hint_height(
 	}
 }
 
-static void css_hint_width(
+स्थिर शून्य css_hint_width(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = रिक्त;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_width, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		जर (parse_dimension(
+				(स्थिरांक अक्षर *)dom_string_data(attr), false,
+				&hint->data.length.मूल्य,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_WIDTH;
 			hint->status = CSS_WIDTH_SET;
@@ -1192,21 +1192,21 @@ static void css_hint_width(
 	}
 }
 
-static void css_hint_height_width_textarea(
+स्थिर शून्य css_hint_height_width_textarea(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = रिक्त;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_rows, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		जर (parse_dimension(
+				(स्थिरांक अक्षर *)dom_string_data(attr), false,
+				&hint->data.length.मूल्य,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_HEIGHT;
 			hint->data.length.unit = CSS_UNIT_EM;
@@ -1216,13 +1216,13 @@ static void css_hint_height_width_textarea(
 		dom_string_unref(attr);
 	}
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_cols, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		जर (parse_dimension(
+				(स्थिरांक अक्षर *)dom_string_data(attr), false,
+				&hint->data.length.मूल्य,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_WIDTH;
 			hint->data.length.unit = CSS_UNIT_EX;
@@ -1233,22 +1233,22 @@ static void css_hint_height_width_textarea(
 	}
 }
 
-static void css_hint_height_width_canvas(
+स्थिर शून्य css_hint_height_width_canvas(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = रिक्त;
 	dom_exception err;
 	bool set_dim = false;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_height, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
-				&hint->data.length.value,
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		जर (parse_dimension(
+				(स्थिरांक अक्षर *)dom_string_data(attr), true,
+				&hint->data.length.मूल्य,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_HEIGHT;
 			hint->data.length.unit = CSS_UNIT_PX;
@@ -1258,24 +1258,24 @@ static void css_hint_height_width_canvas(
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	जर (set_dim == false) {
 		/* canvas defaults to 150px tall */
 		hint->prop = CSS_PROP_HEIGHT;
 		hint->data.length.unit = CSS_UNIT_PX;
-		hint->data.length.value = INTTOFIX(150);
+		hint->data.length.मूल्य = INTTOFIX(150);
 		hint->status = CSS_HEIGHT_SET;
 		css_hint_advance(&hint);
-	} else {
+	} अन्यथा {
 		set_dim = false;
 	}
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_width, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
-				&hint->data.length.value,
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		जर (parse_dimension(
+				(स्थिरांक अक्षर *)dom_string_data(attr), true,
+				&hint->data.length.मूल्य,
 				&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_WIDTH;
 			hint->data.length.unit = CSS_UNIT_PX;
@@ -1285,48 +1285,48 @@ static void css_hint_height_width_canvas(
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	जर (set_dim == false) {
 		/* canvas defaults to 300px wide */
 		hint->prop = CSS_PROP_WIDTH;
 		hint->data.length.unit = CSS_UNIT_PX;
-		hint->data.length.value = INTTOFIX(300);
+		hint->data.length.मूल्य = INTTOFIX(300);
 		hint->status = CSS_WIDTH_SET;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_width_input(
+स्थिर शून्य css_hint_width_आदान(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
-	dom_string *attr = NULL;
+	संरचना css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	dom_string *attr = रिक्त;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_size, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		जर (parse_dimension(
+				(स्थिरांक अक्षर *)dom_string_data(attr), false,
+				&hint->data.length.मूल्य,
 				&hint->data.length.unit)) {
-			dom_string *attr2 = NULL;
+			dom_string *attr2 = रिक्त;
 
-			err = dom_element_get_attribute(node,
+			err = dom_element_get_attribute(गाठ,
 					corestring_dom_type, &attr2);
-			if (err == DOM_NO_ERR) {
+			जर (err == DOM_NO_ERR) {
 
 				hint->prop = CSS_PROP_WIDTH;
 				hint->status = CSS_WIDTH_SET;
 
-				if (attr2 == NULL ||
+				जर (attr2 == रिक्त ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_text) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
-						corestring_lwc_search) ||
+						corestring_lwc_शोध) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_password) ||
@@ -1335,7 +1335,7 @@ static void css_hint_width_input(
 						corestring_lwc_file)) {
 					hint->data.length.unit = CSS_UNIT_EX;
 				}
-				if (attr2 != NULL) {
+				जर (attr2 != रिक्त) {
 					dom_string_unref(attr2);
 				}
 				css_hint_advance(&hint);
@@ -1345,49 +1345,49 @@ static void css_hint_width_input(
 	}
 }
 
-static void css_hint_anchor_color(
+स्थिर शून्य css_hint_anchor_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_error error;
 	dom_exception err;
 	dom_string *color;
-	dom_node *bodynode = NULL;
+	dom_गाठ *bodynode = रिक्त;
 
 	/* find body node */
 	css_qname qs;
 	bool is_visited;
 
-	qs.ns = NULL;
+	qs.ns = रिक्त;
 	qs.name = lwc_string_ref(corestring_lwc_body);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&bodynode) != CSS_OK) {
+	जर (named_ancestor_गाठ(ctx, गाठ, &qs,
+			(शून्य *)&bodynode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return ;
+		परत ;
 	}
 	lwc_string_unref(qs.name);
 
-	if (bodynode == NULL) {
-		return;
+	जर (bodynode == रिक्त) {
+		परत;
 	}
 
-	error = node_is_visited(ctx, node, &is_visited);
-	if (error != CSS_OK)
-		return;
+	error = गाठ_is_visited(ctx, गाठ, &is_visited);
+	जर (error != CSS_OK)
+		परत;
 
-	if (is_visited) {
+	जर (is_visited) {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_vlink, &color);
-	} else {
+	} अन्यथा {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_link, &color);
 	}
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
+	जर (err == DOM_NO_ERR && color != रिक्त) {
+		जर (nscss_parse_colour(
+				(स्थिरांक अक्षर *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
 			hint->status = CSS_COLOR_COLOR;
@@ -1397,19 +1397,19 @@ static void css_hint_anchor_color(
 	}
 }
 
-static void css_hint_body_color(
+स्थिर शून्य css_hint_body_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
-	err = dom_element_get_attribute(node, corestring_dom_text, &color);
+	err = dom_element_get_attribute(गाठ, corestring_dom_text, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
+	जर (err == DOM_NO_ERR && color != रिक्त) {
+		जर (nscss_parse_colour(
+				(स्थिरांक अक्षर *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
 			hint->status = CSS_COLOR_COLOR;
@@ -1419,19 +1419,19 @@ static void css_hint_body_color(
 	}
 }
 
-static void css_hint_color(
+स्थिर शून्य css_hint_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
-	err = dom_element_get_attribute(node, corestring_dom_color, &color);
+	err = dom_element_get_attribute(गाठ, corestring_dom_color, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
+	जर (err == DOM_NO_ERR && color != रिक्त) {
+		जर (nscss_parse_colour(
+				(स्थिरांक अक्षर *)dom_string_data(color),
 						&hint->data.color)) {
 			hint->prop = CSS_PROP_COLOR;
 			hint->status = CSS_COLOR_COLOR;
@@ -1441,20 +1441,20 @@ static void css_hint_color(
 	}
 }
 
-static void css_hint_font_size(
+स्थिर शून्य css_hint_font_size(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *size;
 
-	err = dom_element_get_attribute(node, corestring_dom_size, &size);
-	if (err == DOM_NO_ERR && size != NULL) {
-		if (parse_font_size(
-				(const char *)dom_string_data(size),
+	err = dom_element_get_attribute(गाठ, corestring_dom_size, &size);
+	जर (err == DOM_NO_ERR && size != रिक्त) {
+		जर (parse_font_size(
+				(स्थिरांक अक्षर *)dom_string_data(size),
 						&hint->status,
-						&hint->data.length.value,
+						&hint->data.length.मूल्य,
 						&hint->data.length.unit)) {
 			hint->prop = CSS_PROP_FONT_SIZE;
 			css_hint_advance(&hint);
@@ -1463,43 +1463,43 @@ static void css_hint_font_size(
 	}
 }
 
-static void css_hint_float(
+स्थिर शून्य css_hint_float(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *align;
 
-	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_left)) {
+	err = dom_element_get_attribute(गाठ, corestring_dom_align, &align);
+	जर (err == DOM_NO_ERR && align != रिक्त) {
+		जर (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_डावा)) {
 			hint->prop = CSS_PROP_FLOAT;
-			hint->status = CSS_FLOAT_LEFT;
+			hint->status = CSS_FLOAT_डावा;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_right)) {
+		} अन्यथा जर (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_उजवा)) {
 			hint->prop = CSS_PROP_FLOAT;
-			hint->status = CSS_FLOAT_RIGHT;
+			hint->status = CSS_FLOAT_उजवा;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_caption_side(
+स्थिर शून्य css_hint_caption_side(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
-	dom_string *align = NULL;
+	dom_string *align = रिक्त;
 
-	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	err = dom_element_get_attribute(गाठ, corestring_dom_align, &align);
+	जर (err == DOM_NO_ERR && align != रिक्त) {
+		जर (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_CAPTION_SIDE;
 			hint->status = CSS_CAPTION_SIDE_BOTTOM;
@@ -1509,19 +1509,19 @@ static void css_hint_caption_side(
 	}
 }
 
-static void css_hint_bg_color(
+स्थिर शून्य css_hint_bg_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	संरचना css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *bgcolor;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_bgcolor, &bgcolor);
-	if (err == DOM_NO_ERR && bgcolor != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(bgcolor),
+	जर (err == DOM_NO_ERR && bgcolor != रिक्त) {
+		जर (nscss_parse_colour(
+				(स्थिरांक अक्षर *)dom_string_data(bgcolor),
 				&hint->data.color)) {
 			hint->prop = CSS_PROP_BACKGROUND_COLOR;
 			hint->status = CSS_BACKGROUND_COLOR_COLOR;
@@ -1531,29 +1531,29 @@ static void css_hint_bg_color(
 	}
 }
 
-static void css_hint_bg_image(
+स्थिर शून्य css_hint_bg_image(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	संरचना css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(गाठ,
 			corestring_dom_background, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
 		nsurl *url;
 		nserror error = nsurl_join(ctx->base_url,
-				(const char *)dom_string_data(attr), &url);
+				(स्थिरांक अक्षर *)dom_string_data(attr), &url);
 		dom_string_unref(attr);
 
-		if (error == NSERROR_OK) {
+		जर (error == NSERROR_OK) {
 			lwc_string *iurl;
 			lwc_error lerror = lwc_intern_string(nsurl_access(url),
 					nsurl_length(url), &iurl);
 			nsurl_unref(url);
 
-			if (lerror == lwc_error_ok) {
+			जर (lerror == lwc_error_ok) {
 				hint->prop = CSS_PROP_BACKGROUND_IMAGE;
 				hint->data.string = iurl;
 				hint->status = CSS_BACKGROUND_IMAGE_IMAGE;
@@ -1563,57 +1563,57 @@ static void css_hint_bg_image(
 	}
 }
 
-static void css_hint_white_space_nowrap(
+स्थिर शून्य css_hint_white_space_nowrap(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	संरचना css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	bool nowrap;
 
-	err = dom_element_has_attribute(node, corestring_dom_nowrap, &nowrap);
-	if (err == DOM_NO_ERR && nowrap == true) {
+	err = dom_element_has_attribute(गाठ, corestring_dom_nowrap, &nowrap);
+	जर (err == DOM_NO_ERR && nowrap == true) {
 		hint->prop = CSS_PROP_WHITE_SPACE;
 		hint->status = CSS_WHITE_SPACE_NOWRAP;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_list(
+स्थिर शून्य css_hint_list(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_गाठ *गाठ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	संरचना css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
-	err = dom_element_get_attribute(node, corestring_dom_type, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
-		const char *attr_str = dom_string_data(attr);
-		size_t attr_len = dom_string_byte_length(attr);
-		enum css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
+	err = dom_element_get_attribute(गाठ, corestring_dom_type, &attr);
+	जर (err == DOM_NO_ERR && attr != रिक्त) {
+		स्थिरांक अक्षर *attr_str = dom_string_data(attr);
+		माप_प्रकार attr_len = dom_string_byte_length(attr);
+		गणना css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
 
-		if (attr_len == 1) {
-			switch (attr_str[0]) {
-			case 'a':
+		जर (attr_len == 1) {
+			निवड (attr_str[0]) {
+			स्थिती 'a':
 				type = CSS_LIST_STYLE_TYPE_LOWER_ALPHA;
-				break;
-			case 'A':
+				थांबा;
+			स्थिती 'A':
 				type = CSS_LIST_STYLE_TYPE_UPPER_ALPHA;
-				break;
-			case 'i':
+				थांबा;
+			स्थिती 'i':
 				type = CSS_LIST_STYLE_TYPE_LOWER_ROMAN;
-				break;
-			case 'I':
+				थांबा;
+			स्थिती 'I':
 				type = CSS_LIST_STYLE_TYPE_UPPER_ROMAN;
-				break;
-			case '1':
+				थांबा;
+			स्थिती '1':
 				type = CSS_LIST_STYLE_TYPE_DECIMAL;
-				break;
+				थांबा;
 			}
 		}
 
-		if (type != CSS_LIST_STYLE_TYPE_INHERIT) {
+		जर (type != CSS_LIST_STYLE_TYPE_INHERIT) {
 			hint->prop = CSS_PROP_LIST_STYLE_TYPE;
 			hint->status = type;
 			css_hint_advance(&hint);
@@ -1625,113 +1625,113 @@ static void css_hint_list(
 
 
 /* Exported function, documented in css/hints.h */
-css_error node_presentational_hint(void *pw, void *node,
+css_error गाठ_presentational_hint(शून्य *pw, शून्य *गाठ,
 		uint32_t *nhints, css_hint **hints)
 {
 	dom_exception exc;
 	dom_html_element_type tag_type;
 
-	if (nsoption_bool(author_level_css) == false) {
+	जर (nsoption_bool(author_level_css) == false) {
 		*nhints = 0;
-		*hints = NULL;
-		return CSS_OK;
+		*hints = रिक्त;
+		परत CSS_OK;
 	}
 
 	css_hint_clean();
 
-	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_html_element_get_tag_type(गाठ, &tag_type);
+	जर (exc != DOM_NO_ERR) {
 		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	switch (tag_type) {
-	case DOM_HTML_ELEMENT_TYPE_TH:
-	case DOM_HTML_ELEMENT_TYPE_TD:
-		css_hint_width(pw, node);
-		css_hint_table_cell_border_padding(pw, node);
-		css_hint_white_space_nowrap(pw, node);
+	निवड (tag_type) {
+	स्थिती DOM_HTML_ELEMENT_TYPE_TH:
+	स्थिती DOM_HTML_ELEMENT_TYPE_TD:
+		css_hint_width(pw, गाठ);
+		css_hint_table_cell_border_padding(pw, गाठ);
+		css_hint_white_space_nowrap(pw, गाठ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_TR:
-		css_hint_height(pw, node);
+	स्थिती DOM_HTML_ELEMENT_TYPE_TR:
+		css_hint_height(pw, गाठ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_THEAD:
-	case DOM_HTML_ELEMENT_TYPE_TBODY:
-	case DOM_HTML_ELEMENT_TYPE_TFOOT:
-		css_hint_text_align_special(pw, node);
+	स्थिती DOM_HTML_ELEMENT_TYPE_THEAD:
+	स्थिती DOM_HTML_ELEMENT_TYPE_TBODY:
+	स्थिती DOM_HTML_ELEMENT_TYPE_TFOOT:
+		css_hint_text_align_special(pw, गाठ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_COL:
-		css_hint_vertical_align_table_cells(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_APPLET:
-	case DOM_HTML_ELEMENT_TYPE_IMG:
-		css_hint_margin_hspace_vspace(pw, node);
+	स्थिती DOM_HTML_ELEMENT_TYPE_COL:
+		css_hint_vertical_align_table_cells(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_APPLET:
+	स्थिती DOM_HTML_ELEMENT_TYPE_IMG:
+		css_hint_margin_hspace_vspace(pw, गाठ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_EMBED:
-	case DOM_HTML_ELEMENT_TYPE_IFRAME:
-	case DOM_HTML_ELEMENT_TYPE_OBJECT:
-		css_hint_height(pw, node);
-		css_hint_width(pw, node);
-		css_hint_vertical_align_replaced(pw, node);
-		css_hint_float(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_P:
-	case DOM_HTML_ELEMENT_TYPE_H1:
-	case DOM_HTML_ELEMENT_TYPE_H2:
-	case DOM_HTML_ELEMENT_TYPE_H3:
-	case DOM_HTML_ELEMENT_TYPE_H4:
-	case DOM_HTML_ELEMENT_TYPE_H5:
-	case DOM_HTML_ELEMENT_TYPE_H6:
-		css_hint_text_align_normal(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CENTER:
-		css_hint_text_align_center(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CAPTION:
-		css_hint_caption_side(pw, node);
+	स्थिती DOM_HTML_ELEMENT_TYPE_EMBED:
+	स्थिती DOM_HTML_ELEMENT_TYPE_IFRAME:
+	स्थिती DOM_HTML_ELEMENT_TYPE_OBJECT:
+		css_hint_height(pw, गाठ);
+		css_hint_width(pw, गाठ);
+		css_hint_vertical_align_replaced(pw, गाठ);
+		css_hint_float(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_P:
+	स्थिती DOM_HTML_ELEMENT_TYPE_H1:
+	स्थिती DOM_HTML_ELEMENT_TYPE_H2:
+	स्थिती DOM_HTML_ELEMENT_TYPE_H3:
+	स्थिती DOM_HTML_ELEMENT_TYPE_H4:
+	स्थिती DOM_HTML_ELEMENT_TYPE_H5:
+	स्थिती DOM_HTML_ELEMENT_TYPE_H6:
+		css_hint_text_align_normal(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_CENTER:
+		css_hint_text_align_center(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_CAPTION:
+		css_hint_caption_side(pw, गाठ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_DIV:
-		css_hint_text_align_special(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TABLE:
-		css_hint_text_align_table_special(pw, node);
-		css_hint_table_spacing_border(pw, node);
-		css_hint_float(pw, node);
-		css_hint_margin_left_right_align_center(pw, node);
-		css_hint_width(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_HR:
-		css_hint_width(pw, node);
-		css_hint_margin_left_right_hr(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-		css_hint_height_width_textarea(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
-		css_hint_width_input(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_A:
-		css_hint_anchor_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FONT:
-		css_hint_font_size(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BODY:
-		css_hint_body_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CANVAS:
-		css_hint_height_width_canvas(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OL:
-		css_hint_list(pw, node);
-		break;
-	default:
-		break;
+	स्थिती DOM_HTML_ELEMENT_TYPE_DIV:
+		css_hint_text_align_special(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_TABLE:
+		css_hint_text_align_table_special(pw, गाठ);
+		css_hint_table_spacing_border(pw, गाठ);
+		css_hint_float(pw, गाठ);
+		css_hint_margin_डावा_उजवा_align_center(pw, गाठ);
+		css_hint_width(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_HR:
+		css_hint_width(pw, गाठ);
+		css_hint_margin_डावा_उजवा_hr(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+		css_hint_height_width_textarea(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_आदान:
+		css_hint_width_आदान(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_A:
+		css_hint_anchor_color(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_FONT:
+		css_hint_font_size(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_BODY:
+		css_hint_body_color(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_CANVAS:
+		css_hint_height_width_canvas(pw, गाठ);
+		थांबा;
+	स्थिती DOM_HTML_ELEMENT_TYPE_OL:
+		css_hint_list(pw, गाठ);
+		थांबा;
+	पूर्वनिर्धारित:
+		थांबा;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
-		css_hint_color(pw, node);
-		css_hint_bg_color(pw, node);
-		css_hint_bg_image(pw, node);
+	जर (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
+		css_hint_color(pw, गाठ);
+		css_hint_bg_color(pw, गाठ);
+		css_hint_bg_image(pw, गाठ);
 	}
 
 #ifdef LOG_STATS
@@ -1740,5 +1740,5 @@ css_error node_presentational_hint(void *pw, void *node,
 
 	css_hint_get_hints(hints, nhints);
 
-	return CSS_OK;
+	परत CSS_OK;
 }

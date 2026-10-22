@@ -24,27 +24,27 @@
 #ifndef NETSURF_HTML_FORM_INTERNAL_H
 #define NETSURF_HTML_FORM_INTERNAL_H
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
-#include "netsurf/form.h"
+#अन्तर्भाव "netsurf/form.h"
 
-struct box;
-struct form_control;
-struct form_option;
-struct form_select_menu;
-struct form;
-struct html_content;
-struct dom_string;
-struct content;
-struct nsurl;
-struct fetch_multipart_data;
-struct redraw_context;
-struct browser_window;
+संरचना box;
+संरचना form_control;
+संरचना form_option;
+संरचना form_select_menu;
+संरचना form;
+संरचना html_content;
+संरचना dom_string;
+संरचना content;
+संरचना nsurl;
+संरचना fetch_multipart_data;
+संरचना redraw_context;
+संरचना browser_window;
 
-enum browser_mouse_state;
+गणना browser_mouse_state;
 
 /** Type of a struct form_control. */
-typedef enum {
+प्रकारव्याख्या गणना {
 	GADGET_HIDDEN,
 	GADGET_TEXTBOX,
 	GADGET_RADIO,
@@ -60,83 +60,83 @@ typedef enum {
 } form_control_type;
 
 /** Data for textarea */
-struct form_textarea_data {
-	struct form_control *gadget;
+संरचना form_textarea_data {
+	संरचना form_control *gadget;
 };
 
-struct image_input_coords {
-	int x;
-	int y;
+संरचना image_आदान_coords {
+	पूर्णांक x;
+	पूर्णांक y;
 };
 
 /** Form control. */
-struct form_control {
-	void *node;			/**< Corresponding DOM node */
-	struct dom_string *node_value;  /**< The last value sync'd with the DOM */
+संरचना form_control {
+	शून्य *गाठ;			/**< Corresponding DOM node */
+	संरचना dom_string *गाठ_मूल्य;  /**< The last value sync'd with the DOM */
 	bool syncing;                   /**< Set if a DOM sync is in-progress */
-	struct html_content *html;	/**< HTML content containing control */
+	संरचना html_content *html;	/**< HTML content containing control */
 
 	form_control_type type;		/**< Type of control */
 
-	struct form *form;		/**< Containing form */
+	संरचना form *form;		/**< Containing form */
 
-	char *name;			/**< Control name */
-	char *value;			/**< Current value of control */
-	char *initial_value;		/**< Initial value of control */
-	char *last_synced_value;        /**< The last value sync'd to the DOM */
+	अक्षर *name;			/**< Control name */
+	अक्षर *मूल्य;			/**< Current value of control */
+	अक्षर *initial_मूल्य;		/**< Initial value of control */
+	अक्षर *last_synced_मूल्य;        /**< The last value sync'd to the DOM */
 	bool disabled;			/**< Whether control is disabled */
 
-	struct box *box;		/**< Box for control */
+	संरचना box *box;		/**< Box for control */
 
-	unsigned int length;		/**< Number of characters in control */
-	unsigned int maxlength;		/**< Maximum characters permitted */
+	अचिन्हित पूर्णांक length;		/**< Number of characters in control */
+	अचिन्हित पूर्णांक maxlength;		/**< Maximum characters permitted */
 
 	bool selected;			/**< Whether control is selected */
 
-	union {
-		struct {
-			int mx, my;
+	संघ {
+		संरचना {
+			पूर्णांक mx, my;
 		} image;
-		struct {
-			int num_items;
-			struct form_option *items, *last_item;
+		संरचना {
+			पूर्णांक अंक_वस्तुसंच;
+			संरचना form_option *वस्तुसंच, *last_item;
 			bool multiple;
-			int num_selected;
+			पूर्णांक अंक_selected;
 			/** Currently selected item, if num_selected == 1. */
-			struct form_option *current;
-			struct form_select_menu *menu;
+			संरचना form_option *current;
+			संरचना form_select_menu *menu;
 		} select;
-		struct {
-			struct textarea *ta;
-			struct dom_string *initial;
-			struct form_textarea_data data;
+		संरचना {
+			संरचना textarea *ta;
+			संरचना dom_string *initial;
+			संरचना form_textarea_data data;
 		} text;			/**< input type=text or textarea */
 	} data;
 
-	struct form_control *prev;      /**< Previous control in this form */
-	struct form_control *next;	/**< Next control in this form. */
+	संरचना form_control *prev;      /**< Previous control in this form */
+	संरचना form_control *next;	/**< Next control in this form. */
 };
 
 /** Form submit method. */
-typedef enum {
+प्रकारव्याख्या गणना {
 	method_GET,		/**< GET, always url encoded. */
 	method_POST_URLENC,	/**< POST, url encoded. */
 	method_POST_MULTIPART	/**< POST, multipart/form-data. */
 } form_method;
 
 /** HTML form. */
-struct form {
-	void *node;			/**< Corresponding DOM node */
+संरचना form {
+	शून्य *गाठ;			/**< Corresponding DOM node */
 
-	char *action;			/**< Absolute URL to submit to. */
-	char *target;			/**< Target to submit to. */
+	अक्षर *action;			/**< Absolute URL to submit to. */
+	अक्षर *target;			/**< Target to submit to. */
 	form_method method;		/**< Method and enctype. */
-	char *accept_charsets;		/**< Charset to submit form in */
-	char *document_charset;		/**< Charset of document containing form */
-	struct form_control *controls;	/**< Linked list of controls. */
-	struct form_control *last_control;	/**< Last control in list. */
+	अक्षर *accept_charsets;		/**< Charset to submit form in */
+	अक्षर *document_charset;		/**< Charset of document containing form */
+	संरचना form_control *controls;	/**< Linked list of controls. */
+	संरचना form_control *last_control;	/**< Last control in list. */
 
-	struct form *prev;		/**< Previous form in doc. */
+	संरचना form *prev;		/**< Previous form in doc. */
 };
 
 /**
@@ -149,8 +149,8 @@ struct form {
  * \param width		width of redraw rectangle
  * \param height	height of redraw rectangle
  */
-typedef void(*select_menu_redraw_callback)(void *client_data,
-		int x, int y, int width, int height);
+प्रकारव्याख्या शून्य(*select_menu_redraw_callback)(शून्य *client_data,
+		पूर्णांक x, पूर्णांक y, पूर्णांक width, पूर्णांक height);
 
 /**
  * Create a struct form.
@@ -163,9 +163,9 @@ typedef void(*select_menu_redraw_callback)(void *client_data,
  * \param doc_charset  encoding of containing document, or NULL
  * \return A new form or NULL on memory exhaustion
  */
-struct form *form_new(void *node, const char *action, const char *target,
-		form_method method, const char *charset,
-		const char *doc_charset);
+संरचना form *form_new(शून्य *गाठ, स्थिरांक अक्षर *action, स्थिरांक अक्षर *target,
+		form_method method, स्थिरांक अक्षर *charset,
+		स्थिरांक अक्षर *doc_charset);
 
 /**
  * Free a form and any controls it owns.
@@ -178,7 +178,7 @@ struct form *form_new(void *node, const char *action, const char *target,
  *
  * \param form The form to free
  */
-void form_free(struct form *form);
+शून्य form_free(संरचना form *form);
 
 
 /**
@@ -188,7 +188,7 @@ void form_free(struct form *form);
  * \param  type  control type
  * \return  a new structure, or NULL on memory exhaustion
  */
-struct form_control *form_new_control(void *node, form_control_type type);
+संरचना form_control *form_new_control(शून्य *गाठ, form_control_type type);
 
 
 /**
@@ -197,7 +197,7 @@ struct form_control *form_new_control(void *node, form_control_type type);
  * \param form  The form to add the control to
  * \param control  The control to add
  */
-void form_add_control(struct form *form, struct form_control *control);
+शून्य form_add_control(संरचना form *form, संरचना form_control *control);
 
 
 /**
@@ -205,7 +205,7 @@ void form_add_control(struct form *form, struct form_control *control);
  *
  * \param  control  structure to free
  */
-void form_free_control(struct form_control *control);
+शून्य form_free_control(संरचना form_control *control);
 
 
 /**
@@ -218,8 +218,8 @@ void form_free_control(struct form_control *control);
  * \param  node      the DOM node this option is associated with
  * \return  true on success, false on memory exhaustion
  */
-bool form_add_option(struct form_control *control, char *value, char *text,
-		     bool selected, void *node);
+bool form_add_option(संरचना form_control *control, अक्षर *मूल्य, अक्षर *text,
+		     bool selected, शून्य *गाठ);
 
 
 /**
@@ -231,10 +231,10 @@ bool form_add_option(struct form_control *control, char *value, char *text,
  * \param c The content the select menu is opening for.
  * \return NSERROR_OK on sucess else error code.
  */
-nserror form_open_select_menu(void *client_data,
-		struct form_control *control,
+nserror form_open_select_menu(शून्य *client_data,
+		संरचना form_control *control,
 		select_menu_redraw_callback redraw_callback,
-		struct content *c);
+		संरचना content *c);
 
 
 /**
@@ -243,7 +243,7 @@ nserror form_open_select_menu(void *client_data,
  * \param control  the select form control owning the select menu being
  *                  destroyed.
  */
-void form_free_select_menu(struct form_control *control);
+शून्य form_free_select_menu(संरचना form_control *control);
 
 
 /**
@@ -257,9 +257,9 @@ void form_free_select_menu(struct form_control *control);
  * \param ctx      current redraw context
  * \return         true on success, false otherwise
  */
-bool form_redraw_select_menu(struct form_control *control, int x, int y,
-		float scale, const struct rect *clip,
-		const struct redraw_context *ctx);
+bool form_redraw_select_menu(संरचना form_control *control, पूर्णांक x, पूर्णांक y,
+		दशांश scale, स्थिरांक संरचना rect *clip,
+		स्थिरांक संरचना redraw_context *ctx);
 
 
 /**
@@ -271,8 +271,8 @@ bool form_redraw_select_menu(struct form_control *control, int x, int y,
  * \param clip     the clipping rectangle
  * \return true if inside false otherwise
  */
-bool form_clip_inside_select_menu(struct form_control *control, float scale,
-		const struct rect *clip);
+bool form_clip_inside_select_menu(संरचना form_control *control, दशांश scale,
+		स्थिरांक संरचना rect *clip);
 
 
 /**
@@ -284,8 +284,8 @@ bool form_clip_inside_select_menu(struct form_control *control, float scale,
  * \param y Y coordinate of click
  * \return text for the browser status bar or NULL if the menu has to be closed
  */
-const char *form_select_mouse_action(struct form_control *control,
-		enum browser_mouse_state mouse, int x, int y);
+स्थिरांक अक्षर *form_select_mouse_action(संरचना form_control *control,
+		गणना browser_mouse_state mouse, पूर्णांक x, पूर्णांक y);
 
 
 /**
@@ -296,8 +296,8 @@ const char *form_select_mouse_action(struct form_control *control,
  * \param x X coordinate of drag end
  * \param y Y coordinate of drag end
  */
-void form_select_mouse_drag_end(struct form_control *control,
-		enum browser_mouse_state mouse, int x, int y);
+शून्य form_select_mouse_drag_end(संरचना form_control *control,
+		गणना browser_mouse_state mouse, पूर्णांक x, पूर्णांक y);
 
 
 /**
@@ -307,15 +307,15 @@ void form_select_mouse_drag_end(struct form_control *control,
  * \param width		gets updated to menu width
  * \param height	gets updated to menu height
  */
-void form_select_get_dimensions(struct form_control *control,
-		int *width, int *height);
+शून्य form_select_get_dimensions(संरचना form_control *control,
+		पूर्णांक *width, पूर्णांक *height);
 
 
 /**
  * Callback for the core select menu.
  */
-void form_select_menu_callback(void *client_data,
-		int x, int y, int width, int height);
+शून्य form_select_menu_callback(शून्य *client_data,
+		पूर्णांक x, पूर्णांक y, पूर्णांक width, पूर्णांक height);
 
 
 /**
@@ -323,7 +323,7 @@ void form_select_menu_callback(void *client_data,
  *
  * \param radio form control of type GADGET_RADIO
  */
-void form_radio_set(struct form_control *radio);
+शून्य form_radio_set(संरचना form_control *radio);
 
 /**
  * navigate browser window based on form submission.
@@ -333,14 +333,14 @@ void form_radio_set(struct form_control *radio);
  * \param form The form to submit.
  * \param submit_button The control used to submit the form.
  */
-nserror form_submit(struct nsurl *page_url, struct browser_window *target,
-		struct form *form, struct form_control *submit_button);
+nserror form_submit(संरचना nsurl *page_url, संरचना browser_window *target,
+		संरचना form *form, संरचना form_control *submit_button);
 
 
 /**
  * Update gadget value.
  */
-void form_gadget_update_value(struct form_control *control, char *value);
+शून्य form_gadget_update_मूल्य(संरचना form_control *control, अक्षर *मूल्य);
 
 
 /**
@@ -355,6 +355,6 @@ void form_gadget_update_value(struct form_control *control, char *value);
  *
  * \note Currently this will only synchronise input gadgets (text/password)
  */
-void form_gadget_sync_with_dom(struct form_control *control);
+शून्य form_gadget_sync_with_dom(संरचना form_control *control);
 
 #endif
