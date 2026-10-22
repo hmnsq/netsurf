@@ -23,61 +23,61 @@
  * These functions should in general be called via the content interface.
  */
 
-#ifndef NETSURF_HTML_HTML_H
-#define NETSURF_HTML_HTML_H
+#که_نه_تعریف_شوی NETSURF_HTML_HTML_H
+#تعریف_کړه NETSURF_HTML_HTML_H
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-#include "netsurf/types.h"
-#include "netsurf/content_type.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/mouse.h"
-#include "desktop/frame_types.h"
+#ضمن "netsurf/types.h"
+#ضمن "netsurf/content_type.h"
+#ضمن "netsurf/browser_window.h"
+#ضمن "netsurf/mouse.h"
+#ضمن "desktop/frame_types.h"
 
-struct fetch_multipart_data;
-struct box;
-struct rect;
-struct browser_window;
-struct content;
-struct hlcache_handle;
-struct http_parameter;
-struct imagemap;
-struct object_params;
-struct plotters;
-struct textarea;
-struct scrollbar;
-struct scrollbar_msg_data;
-struct search_context;
-struct selection;
-struct nsurl;
-struct plot_font_style;
+بنية fetch_multipart_معلومات;
+بنية box;
+بنية rect;
+بنية browser_کړکۍ;
+بنية content;
+بنية hlcache_handle;
+بنية http_parameter;
+بنية imagemap;
+بنية object_params;
+بنية plotters;
+بنية textarea;
+بنية scrollbar;
+بنية scrollbar_پیغام_معلومات;
+بنية پلټنه_context;
+بنية selection;
+بنية nsurl;
+بنية plot_font_style;
 
 /**
  * Container for stylesheets used by an HTML document
  */
-struct html_stylesheet {
-	struct dom_node *node; /**< dom node associated with sheet */
-	struct hlcache_handle *sheet;
+بنية html_stylesheet {
+	بنية dom_غوټه *غوټه; /**< dom node associated with sheet */
+	بنية hlcache_handle *sheet;
 	bool modified;
-	bool unused;
+	bool ناکارول_شوی;
 };
 
 
 /**
  * Container for scripts used by an HTML document
  */
-struct html_script {
+بنية html_script {
 	/** Type of script */
-	enum html_script_type { HTML_SCRIPT_INLINE,
+	تعداد html_script_type { HTML_SCRIPT_INLINE,
 				HTML_SCRIPT_SYNC,
 				HTML_SCRIPT_DEFER,
 				HTML_SCRIPT_ASYNC } type;
-	union {
-		struct hlcache_handle *handle;
-		struct dom_string *string;
-	} data;	/**< Script data */
-	struct dom_string *mimetype;
-	struct dom_string *encoding;
+	اتحاد {
+		بنية hlcache_handle *handle;
+		بنية dom_string *string;
+	} معلومات;	/**< Script data */
+	بنية dom_string *mimetype;
+	بنية dom_string *encoding;
 	bool already_started;
 	bool parser_inserted;
 	bool force_async;
@@ -90,12 +90,12 @@ struct html_script {
 /**
  * An object (img, object, etc. tag) in a CONTENT_HTML document.
  */
-struct content_html_object {
-	struct content *parent;		/**< Parent document */
-	struct content_html_object *next; /**< Next in chain */
+بنية content_html_object {
+	بنية content *پلار;		/**< Parent document */
+	بنية content_html_object *بل; /**< Next in chain */
 
-	struct hlcache_handle *content;  /**< Content, or 0. */
-	struct box *box;  /**< Node in box tree containing it. */
+	بنية hlcache_handle *content;  /**< Content, or 0. */
+	بنية box *box;  /**< Node in box tree containing it. */
 	/** Bitmap of acceptable content types */
 	content_type permitted_types;
 	bool background;  /**< This object is a background image. */
@@ -105,94 +105,94 @@ struct content_html_object {
 /**
  * Frame tree (frameset or frame tag)
  */
-struct content_html_frames {
-	int cols;	/** number of columns in frameset */
-	int rows;	/** number of rows in frameset */
+بنية content_html_چوکاټونه {
+	صحيح ستون_شمېر;	/** number of columns in frameset */
+	صحيح لیکې;	/** number of rows in frameset */
 
-	struct frame_dimension width;	/** frame width */
-	struct frame_dimension height;	/** frame width */
-	int margin_width;	/** frame margin width */
-	int margin_height;	/** frame margin height */
+	بنية چوکاټ_dimension پلنوالی;	/** frame width */
+	بنية چوکاټ_dimension لوړوالی;	/** frame width */
+	صحيح margin_پلنوالی;	/** frame margin width */
+	صحيح margin_لوړوالی;	/** frame margin height */
 
-	char *name;	/** frame name (for targetting) */
-	struct nsurl *url;	/** frame url */
+	حرف *name;	/** frame name (for targetting) */
+	بنية nsurl *url;	/** frame url */
 
 	bool no_resize;	/** frame is not resizable */
 	browser_scrolling scrolling;	/** scrolling characteristics */
 	bool border;	/** frame has a border */
-	colour border_colour;	/** frame border colour */
+	رنګ border_رنګ;	/** frame border colour */
 
-	struct content_html_frames *children; /** [cols * rows] children */
+	بنية content_html_چوکاټونه *children; /** [cols * rows] children */
 };
 
 /**
  * Inline frame list (iframe tag)
  */
-struct content_html_iframe {
-	struct box *box;
+بنية content_html_iframe {
+	بنية box *box;
 
-	int margin_width;	/** frame margin width */
-	int margin_height;	/** frame margin height */
+	صحيح margin_پلنوالی;	/** frame margin width */
+	صحيح margin_لوړوالی;	/** frame margin height */
 
-	char *name;	/** frame name (for targetting) */
-	struct nsurl *url;	/** frame url */
+	حرف *name;	/** frame name (for targetting) */
+	بنية nsurl *url;	/** frame url */
 
 	browser_scrolling scrolling;	/** scrolling characteristics */
 	bool border;	/** frame has a border */
-	colour border_colour;	/** frame border colour */
+	رنګ border_رنګ;	/** frame border colour */
 
-	struct content_html_iframe *next;
+	بنية content_html_iframe *بل;
 };
 
 /* entries in stylesheet_content */
-#define STYLESHEET_BASE		0	/* base style sheet */
-#define STYLESHEET_QUIRKS	1	/* quirks mode stylesheet */
-#define STYLESHEET_ADBLOCK	2	/* adblocking stylesheet */
-#define STYLESHEET_USER		3	/* user stylesheet */
-#define STYLESHEET_START	4	/* start of document stylesheets */
+#تعریف_کړه STYLESHEET_بنسټ		0	/* base style sheet */
+#تعریف_کړه STYLESHEET_QUIRKS	1	/* quirks mode stylesheet */
+#تعریف_کړه STYLESHEET_ADBLOCK	2	/* adblocking stylesheet */
+#تعریف_کړه STYLESHEET_USER		3	/* user stylesheet */
+#تعریف_کړه STYLESHEET_پیل	4	/* start of document stylesheets */
 
 /**
  * initialise content handler
  *
  * \return NSERROR_OK on success otherwise appropriate error code
  */
-nserror html_init(void);
+nserror html_init(فراغ);
 
 /**
  * redraw a specific box
  *
  * used by core browser
  */
-void html_redraw_a_box(struct hlcache_handle *h, struct box *box);
+فراغ html_redraw_a_box(بنية hlcache_handle *h, بنية box *box);
 
 /**
  * obtain html frame content from handle
  *
  * used by core browser
  */
-struct content_html_frames *html_get_frameset(struct hlcache_handle *h);
+بنية content_html_چوکاټونه *html_get_frameset(بنية hlcache_handle *h);
 
 /**
  * obtain html iframe content from handle
  *
  * used by core browser
  */
-struct content_html_iframe *html_get_iframe(struct hlcache_handle *h);
+بنية content_html_iframe *html_get_iframe(بنية hlcache_handle *h);
 
 /**
  * obtain html base target from handle
  *
  * used by core browser
  */
-const char *html_get_base_target(struct hlcache_handle *h);
+ثابت حرف *html_get_بنسټ_موخه(بنية hlcache_handle *h);
 
 /**
  * set filename on a file gadget
  *
  * used by core browser
  */
-void html_set_file_gadget_filename(struct hlcache_handle *hl,
-	struct form_control *gadget, const char *fn);
+فراغ html_سېټ_file_gadget_filename_2(بنية hlcache_handle *hl,
+	بنية form_control *gadget, ثابت حرف *fn);
 
 /**
  * Retrieve stylesheets used by HTML document
@@ -201,8 +201,8 @@ void html_set_file_gadget_filename(struct hlcache_handle *hl,
  * \param n Pointer to location to receive number of sheets
  * \return Pointer to array of stylesheets
  */
-struct html_stylesheet *html_get_stylesheets(struct hlcache_handle *h,
-		unsigned int *n);
+بنية html_stylesheet *html_get_stylesheets(بنية hlcache_handle *h,
+		بینښه صحيح *n);
 
 /**
  * Retrieve objects used by HTML document
@@ -211,13 +211,13 @@ struct html_stylesheet *html_get_stylesheets(struct hlcache_handle *h,
  * \param n Pointer to location to receive number of objects
  * \return Pointer to array of objects
  */
-struct content_html_object *html_get_objects(struct hlcache_handle *h,
-		unsigned int *n);
+بنية content_html_object *html_get_objects(بنية hlcache_handle *h,
+		بینښه صحيح *n);
 
 /**
  * get the offset within the docuemnt of a fragment id
  */
-bool html_get_id_offset(struct hlcache_handle *h, lwc_string *frag_id,
-		int *x, int *y);
+bool html_get_id_دننه_واټن(بنية hlcache_handle *h, lwc_string *frag_id,
+		صحيح *x, صحيح *y);
 
-#endif
+#د_که_پای

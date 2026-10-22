@@ -24,23 +24,23 @@
  *         exporting the html content to disc.
  */
 
-#ifndef NETSURF_HTML_HTML_SAVE_H
-#define NETSURF_HTML_HTML_SAVE_H
+#که_نه_تعریف_شوی NETSURF_HTML_HTML_SAVE_H
+#تعریف_کړه NETSURF_HTML_HTML_SAVE_H
 
 /**
  * get the dom document of a html content from a handle
  */
-dom_document *html_get_document(struct hlcache_handle *h);
+dom_document *html_get_document(بنية hlcache_handle *h);
 
 
 /**
  * get the render box tree of a html content from a handle
  */
-struct box *html_get_box_tree(struct hlcache_handle *h);
+بنية box *html_get_box_ونه(بنية hlcache_handle *h);
 
 /**
  * get the base url of an html content from a handle
  */
-struct nsurl *html_get_base_url(struct hlcache_handle *h);
+بنية nsurl *html_get_بنسټ_url(بنية hlcache_handle *h);
 
-#endif
+#د_که_پای

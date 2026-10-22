@@ -20,9 +20,9 @@
  * Content for image/ico (interface).
  */
 
-#ifndef _NETSURF_IMAGE_ICO_H_
-#define _NETSURF_IMAGE_ICO_H_
+#که_نه_تعریف_شوی _NETSURF_IMAGE_ICO_H_
+#تعریف_کړه _NETSURF_IMAGE_ICO_H_
 
-nserror nsico_init(void);
+nserror nsico_init(فراغ);
 
-#endif
+#د_که_پای

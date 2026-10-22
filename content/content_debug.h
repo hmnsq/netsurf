@@ -21,10 +21,10 @@
  * Interface to content handling debug.
  */
 
-#ifndef _NETSURF_CONTENT_CONTENT_DEBUG_H_
-#define _NETSURF_CONTENT_CONTENT_DEBUG_H_
+#که_نه_تعریف_شوی _NETSURF_CONTENT_CONTENT_DEBUG_H_
+#تعریف_کړه _NETSURF_CONTENT_CONTENT_DEBUG_H_
 
-#include <stdio.h>
+#ضمن <stdio.h>
 
 /**
  * Dump debug information to file.
@@ -33,6 +33,6 @@
  * \param f File to write output to.
  * \param op Debug operation type.
  */
-nserror content_debug_dump(struct hlcache_handle *h, FILE *f, enum content_debug op);
+nserror content_debug_dump(بنية hlcache_handle *h, FILE *f, تعداد content_debug op);
 
-#endif
+#د_که_پای

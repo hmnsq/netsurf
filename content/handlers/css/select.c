@@ -16,123 +16,123 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <string.h>
-#include <strings.h>
+#ضمن <assert.h>
+#ضمن <string.h>
+#ضمن <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "netsurf/url_db.h"
-#include "desktop/system_colour.h"
+#ضمن "utils/nsoption.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/log.h"
+#ضمن "utils/nsurl.h"
+#ضمن "netsurf/plot_style.h"
+#ضمن "netsurf/url_db.h"
+#ضمن "desktop/system_colour.h"
 
-#include "css/internal.h"
-#include "css/hints.h"
-#include "css/select.h"
+#ضمن "css/internal.h"
+#ضمن "css/hints.h"
+#ضمن "css/select.h"
 
-static css_error node_name(void *pw, void *node, css_qname *qname);
-static css_error node_classes(void *pw, void *node,
+ساكن css_error غوټه_name(فراغ *pw, فراغ *غوټه, css_qname *qname);
+ساكن css_error غوټه_classes(فراغ *pw, فراغ *غوټه,
 		lwc_string ***classes, uint32_t *n_classes);
-static css_error node_id(void *pw, void *node, lwc_string **id);
-static css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent);
-static css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error parent_node(void *pw, void *node, void **parent);
-static css_error sibling_node(void *pw, void *node, void **sibling);
-static css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_class(void *pw, void *node,
-		lwc_string *name, bool *match);
-static css_error node_has_id(void *pw, void *node,
-		lwc_string *name, bool *match);
-static css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_is_root(void *pw, void *node, bool *match);
-static css_error node_count_siblings(void *pw, void *node,
-		bool same_name, bool after, int32_t *count);
-static css_error node_is_empty(void *pw, void *node, bool *match);
-static css_error node_is_link(void *pw, void *node, bool *match);
-static css_error node_is_hover(void *pw, void *node, bool *match);
-static css_error node_is_active(void *pw, void *node, bool *match);
-static css_error node_is_focus(void *pw, void *node, bool *match);
-static css_error node_is_enabled(void *pw, void *node, bool *match);
-static css_error node_is_disabled(void *pw, void *node, bool *match);
-static css_error node_is_checked(void *pw, void *node, bool *match);
-static css_error node_is_target(void *pw, void *node, bool *match);
-static css_error node_is_lang(void *pw, void *node,
-		lwc_string *lang, bool *match);
-static css_error ua_default_for_property(void *pw, uint32_t property,
+ساكن css_error غوټه_id(فراغ *pw, فراغ *غوټه, lwc_string **id);
+ساكن css_error named_پلار_غوټه(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, فراغ **پلار);
+ساكن css_error named_sibling_غوټه(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, فراغ **sibling);
+ساكن css_error named_generic_sibling_غوټه(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, فراغ **sibling);
+ساكن css_error پلار_غوټه(فراغ *pw, فراغ *غوټه, فراغ **پلار);
+ساكن css_error sibling_غوټه(فراغ *pw, فراغ *غوټه, فراغ **sibling);
+ساكن css_error غوټه_has_name(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, bool *سمون);
+ساكن css_error غوټه_has_class(فراغ *pw, فراغ *غوټه,
+		lwc_string *name, bool *سمون);
+ساكن css_error غوټه_has_id(فراغ *pw, فراغ *غوټه,
+		lwc_string *name, bool *سمون);
+ساكن css_error غوټه_has_attribute(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, bool *سمون);
+ساكن css_error غوټه_has_attribute_equal(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون);
+ساكن css_error غوټه_has_attribute_dashmatch(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون);
+ساكن css_error غوټه_has_attribute_includes(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون);
+ساكن css_error غوټه_has_attribute_مختاړی(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون);
+ساكن css_error غوټه_has_attribute_suffix(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون);
+ساكن css_error غوټه_has_attribute_substring(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون);
+ساكن css_error غوټه_is_ریښه(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_شمېر_siblings(فراغ *pw, فراغ *غوټه,
+		bool same_name, bool after, int32_t *شمېر);
+ساكن css_error غوټه_is_تشه(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_link(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_hover(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_فعال(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_focus(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_enabled(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_disabled(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_checked(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_موخه(فراغ *pw, فراغ *غوټه, bool *سمون);
+ساكن css_error غوټه_is_lang(فراغ *pw, فراغ *غوټه,
+		lwc_string *lang, bool *سمون);
+ساكن css_error ua_default_for_property(فراغ *pw, uint32_t property,
 		css_hint *hint);
-static css_error set_libcss_node_data(void *pw, void *node,
-		void *libcss_node_data);
-static css_error get_libcss_node_data(void *pw, void *node,
-		void **libcss_node_data);
+ساكن css_error سېټ_libcss_غوټه_معلومات(فراغ *pw, فراغ *غوټه,
+		فراغ *libcss_غوټه_معلومات);
+ساكن css_error get_libcss_غوټه_معلومات(فراغ *pw, فراغ *غوټه,
+		فراغ **libcss_غوټه_معلومات);
 
 /**
  * Selection callback table for libcss
  */
-static css_select_handler selection_handler = {
-	CSS_SELECT_HANDLER_VERSION_1,
+ساكن css_select_handler selection_handler = {
+	CSS_SELECT_HANDLER_نسخه_1,
 
-	node_name,
-	node_classes,
-	node_id,
-	named_ancestor_node,
-	named_parent_node,
-	named_sibling_node,
-	named_generic_sibling_node,
-	parent_node,
-	sibling_node,
-	node_has_name,
-	node_has_class,
-	node_has_id,
-	node_has_attribute,
-	node_has_attribute_equal,
-	node_has_attribute_dashmatch,
-	node_has_attribute_includes,
-	node_has_attribute_prefix,
-	node_has_attribute_suffix,
-	node_has_attribute_substring,
-	node_is_root,
-	node_count_siblings,
-	node_is_empty,
-	node_is_link,
-	node_is_visited,
-	node_is_hover,
-	node_is_active,
-	node_is_focus,
-	node_is_enabled,
-	node_is_disabled,
-	node_is_checked,
-	node_is_target,
-	node_is_lang,
-	node_presentational_hint,
+	غوټه_name,
+	غوټه_classes,
+	غوټه_id,
+	named_ancestor_غوټه,
+	named_پلار_غوټه,
+	named_sibling_غوټه,
+	named_generic_sibling_غوټه,
+	پلار_غوټه,
+	sibling_غوټه,
+	غوټه_has_name,
+	غوټه_has_class,
+	غوټه_has_id,
+	غوټه_has_attribute,
+	غوټه_has_attribute_equal,
+	غوټه_has_attribute_dashmatch,
+	غوټه_has_attribute_includes,
+	غوټه_has_attribute_مختاړی,
+	غوټه_has_attribute_suffix,
+	غوټه_has_attribute_substring,
+	غوټه_is_ریښه,
+	غوټه_شمېر_siblings,
+	غوټه_is_تشه,
+	غوټه_is_link,
+	غوټه_is_لیدل_شوی,
+	غوټه_is_hover,
+	غوټه_is_فعال,
+	غوټه_is_focus,
+	غوټه_is_enabled,
+	غوټه_is_disabled,
+	غوټه_is_checked,
+	غوټه_is_موخه,
+	غوټه_is_lang,
+	غوټه_presentational_hint,
 	ua_default_for_property,
-	set_libcss_node_data,
-	get_libcss_node_data,
+	سېټ_libcss_غوټه_معلومات,
+	get_libcss_غوټه_معلومات,
 };
 
 /**
@@ -145,97 +145,97 @@ static css_select_handler selection_handler = {
  * \param allow_quirks  True to permit CSS parsing quirks
  * \return Pointer to stylesheet, or NULL on failure.
  */
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks)
+css_stylesheet *nscss_create_inline_style(ثابت uint8_t *معلومات, size_t len,
+		ثابت حرف *charset, ثابت حرف *url, bool allow_quirks)
 {
 	css_stylesheet_params params;
 	css_stylesheet *sheet;
 	css_error error;
 
-	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+	params.params_نسخه = CSS_STYLESHEET_PARAMS_نسخه_1;
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = عدم;
 	params.allow_quirks = allow_quirks;
 	params.inline_style = true;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
-	params.import = NULL;
-	params.import_pw = NULL;
-	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.resolve_pw = عدم;
+	params.import = عدم;
+	params.import_pw = عدم;
+	params.color = ns_system_رنګ;
+	params.color_pw = عدم;
+	params.font = عدم;
+	params.font_pw = عدم;
 
 	error = css_stylesheet_create(&params, &sheet);
-	if (error != CSS_OK) {
+	إذا (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "Failed creating sheet: %d", error);
-		return NULL;
+		أرجع عدم;
 	}
 
-	error = css_stylesheet_append_data(sheet, data, len);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	error = css_stylesheet_append_معلومات(sheet, معلومات, len);
+	إذا (error != CSS_OK && error != CSS_NEEDDATA) {
 		NSLOG(netsurf, INFO, "failed appending data: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		أرجع عدم;
 	}
 
-	error = css_stylesheet_data_done(sheet);
-	if (error != CSS_OK) {
+	error = css_stylesheet_معلومات_بشپړ(sheet);
+	إذا (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "failed completing parse: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		أرجع عدم;
 	}
 
-	return sheet;
+	أرجع sheet;
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
-static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+ساكن فراغ nscss_dom_user_معلومات_handler(dom_غوټه_operation operation,
+		dom_string *کلی, فراغ *معلومات, بنية dom_غوټه *src,
+		بنية dom_غوټه *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
-			key) == false || data == NULL) {
-		return;
+	إذا (dom_string_isequal(corestring_dom_ns_کلی_libcss_غوټه_معلومات,
+			کلی) == false || معلومات == عدم) {
+		أرجع;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_CLONED,
-				NULL, src, dst, data);
-		if (error != CSS_OK)
+	بدل (operation) {
+	حالة DOM_غوټه_CLONED:
+		error = css_libcss_غوټه_معلومات_handler(&selection_handler,
+				CSS_غوټه_CLONED,
+				عدم, src, dst, معلومات);
+		إذا (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
-		break;
+		اكسر;
 
-	case DOM_NODE_RENAMED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_MODIFIED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	حالة DOM_غوټه_RENAMED:
+		error = css_libcss_غوټه_معلومات_handler(&selection_handler,
+				CSS_غوټه_MODIFIED,
+				عدم, src, عدم, معلومات);
+		إذا (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
-		break;
+		اكسر;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_DELETED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	حالة DOM_غوټه_IMPORTED:
+	حالة DOM_غوټه_ADOPTED:
+	حالة DOM_غوټه_DELETED:
+		error = css_libcss_غوټه_معلومات_handler(&selection_handler,
+				CSS_غوټه_DELETED,
+				عدم, src, عدم, معلومات);
+		إذا (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to delete libcss_node_data.");
-		break;
+		اكسر;
 
-	default:
+	افتراضي:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		أكد(0);
 	}
 }
 
@@ -250,36 +250,36 @@ static void nscss_dom_user_data_handler(dom_node_operation operation,
  * \return Pointer to selection results (containing computed styles),
  *         or NULL on failure
  */
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style)
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_غوټه *n,
+		ثابت css_media *media,
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت css_stylesheet *inline_style)
 {
 	css_computed_style *composed;
 	css_select_results *styles;
-	int pseudo_element;
+	صحيح pseudo_element;
 	css_error error;
 
 	/* Select style for node */
 	error = css_select_style(ctx->ctx, n, unit_len_ctx, media, inline_style,
 			&selection_handler, ctx, &styles);
 
-	if (error != CSS_OK || styles == NULL) {
+	إذا (error != CSS_OK || styles == عدم) {
 		/* Failed selecting partial style -- bail out */
-		return NULL;
+		أرجع عدم;
 	}
 
 	/* If there's a parent style, compose with partial to obtain
 	 * complete computed style for element */
-	if (ctx->parent_style != NULL) {
+	إذا (ctx->پلار_style != عدم) {
 		/* Complete the computed style, by composing with the parent
 		 * element's style */
-		error = css_computed_style_compose(ctx->parent_style,
+		error = css_computed_style_compose(ctx->پلار_style,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		إذا (error != CSS_OK) {
 			css_select_results_destroy(styles);
-			return NULL;
+			أرجع عدم;
 		}
 
 		/* Replace select_results style with composed style */
@@ -288,19 +288,19 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[CSS_PSEUDO_ELEMENT_NONE] = composed;
 	}
 
-	for (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
-			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
+	لكل (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
+			pseudo_element < CSS_PSEUDO_ELEMENT_شمېر;
 			pseudo_element++) {
 
-		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
-				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
+		إذا (pseudo_element == CSS_PSEUDO_ELEMENT_لومړی_LETTER ||
+				pseudo_element == CSS_PSEUDO_ELEMENT_لومړی_کرښه)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
-			continue;
+			استمر;
 
-		if (styles->styles[pseudo_element] == NULL)
+		إذا (styles->styles[pseudo_element] == عدم)
 			/* There were no rules concerning this pseudo element */
-			continue;
+			استمر;
 
 		/* Complete the pseudo element's computed style, by composing
 		 * with the base element's style */
@@ -308,11 +308,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				styles->styles[pseudo_element],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		إذا (error != CSS_OK) {
 			/* TODO: perhaps this shouldn't be quite so
 			 * catastrophic? */
 			css_select_results_destroy(styles);
-			return NULL;
+			أرجع عدم;
 		}
 
 		/* Replace select_results style with composed style */
@@ -320,7 +320,7 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[pseudo_element] = composed;
 	}
 
-	return styles;
+	أرجع styles;
 }
 
 /**
@@ -332,29 +332,29 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
  * \return Pointer to blank style, or NULL on failure
  */
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent)
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت css_computed_style *پلار)
 {
 	css_computed_style *partial, *composed;
 	css_error error;
 
 	error = css_select_default_style(ctx->ctx,
 			&selection_handler, ctx, &partial);
-	if (error != CSS_OK) {
-		return NULL;
+	إذا (error != CSS_OK) {
+		أرجع عدم;
 	}
 
 	/* TODO: Do we really need to compose?  Initial style shouldn't
 	 * have any inherited properties. */
-	error = css_computed_style_compose(parent, partial,
+	error = css_computed_style_compose(پلار, partial,
 			unit_len_ctx, &composed);
 	css_computed_style_destroy(partial);
-	if (error != CSS_OK) {
+	إذا (error != CSS_OK) {
 		css_computed_style_destroy(composed);
-		return NULL;
+		أرجع عدم;
 	}
 
-	return composed;
+	أرجع composed;
 }
 
 /******************************************************************************
@@ -370,27 +370,27 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_name(void *pw, void *node, css_qname *qname)
+css_error غوټه_name(فراغ *pw, فراغ *غوټه, css_qname *qname)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *name;
 	dom_exception err;
 
-	err = dom_node_get_node_name(n, &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	err = dom_غوټه_get_غوټه_name(n, &name);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
-	qname->ns = NULL;
+	qname->ns = عدم;
 
 	err = dom_string_intern(name, &qname->name);
-	if (err != DOM_NO_ERR) {
+	إذا (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_NOMEM;
+		أرجع CSS_NOMEM;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -407,20 +407,20 @@ css_error node_name(void *pw, void *node, css_qname *qname)
  *       be allocated using the same allocator as used by libcss during style
  *       selection.
  */
-css_error node_classes(void *pw, void *node,
+css_error غوټه_classes(فراغ *pw, فراغ *غوټه,
 		lwc_string ***classes, uint32_t *n_classes)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_exception err;
 
-	*classes = NULL;
+	*classes = عدم;
 	*n_classes = 0;
 
 	err = dom_element_get_classes(n, classes, n_classes);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -432,29 +432,29 @@ css_error node_classes(void *pw, void *node,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_id(void *pw, void *node, lwc_string **id)
+css_error غوټه_id(فراغ *pw, فراغ *غوټه, lwc_string **id)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *attr;
 	dom_exception err;
 
-	*id = NULL;
+	*id = عدم;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
-	if (attr != NULL) {
+	إذا (attr != عدم) {
 		err = dom_string_intern(attr, id);
-		if (err != DOM_NO_ERR) {
+		إذا (err != DOM_NO_ERR) {
 			dom_string_unref(attr);
-			return CSS_NOMEM;
+			أرجع CSS_NOMEM;
 		}
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -468,14 +468,14 @@ css_error node_id(void *pw, void *node, lwc_string **id)
  *
  * \post \a ancestor will contain the result, or NULL if there is no match
  */
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor)
+css_error named_ancestor_غوټه(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, فراغ **ancestor)
 {
-	dom_element_named_ancestor_node(node, qname->name,
-			(struct dom_element **)ancestor);
-	dom_node_unref(*ancestor);
+	dom_element_named_ancestor_غوټه(غوټه, qname->name,
+			(بنية dom_element **)ancestor);
+	dom_غوټه_unref(*ancestor);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -489,14 +489,14 @@ css_error named_ancestor_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent)
+css_error named_پلار_غوټه(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, فراغ **پلار)
 {
-	dom_element_named_parent_node(node, qname->name,
-			(struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_named_پلار_غوټه(غوټه, qname->name,
+			(بنية dom_element **)پلار);
+	dom_غوټه_unref(*پلار);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -510,61 +510,61 @@ css_error named_parent_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_sibling_غوټه(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, فراغ **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_غوټه *n = غوټه;
+	dom_غوټه *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = عدم;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_غوټه_get_پخوانی_sibling(n, &n);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	طالما (n != عدم) {
+		dom_غوټه_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_غوټه_get_غوټه_type(n, &type);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		إذا (type == DOM_ELEMENT_غوټه)
+			اكسر;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_غوټه_get_پخوانی_sibling(n, &prev);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_غوټه_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	إذا (n != عدم) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_غوټه_get_غوټه_name(n, &name);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_غوټه_unref(n);
 
-		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
+		إذا (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
 		}
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -578,57 +578,57 @@ css_error named_sibling_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_generic_sibling_غوټه(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, فراغ **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_غوټه *n = غوټه;
+	dom_غوټه *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = عدم;
 
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_غوټه_get_پخوانی_sibling(n, &n);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	طالما (n != عدم) {
+		dom_غوټه_type type;
 		dom_string *name;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_غوټه_get_غوټه_type(n, &type);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
-			err = dom_node_get_node_name(n, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(n);
-				return CSS_OK;
+		إذا (type == DOM_ELEMENT_غوټه) {
+			err = dom_غوټه_get_غوټه_name(n, &name);
+			إذا (err != DOM_NO_ERR) {
+				dom_غوټه_unref(n);
+				أرجع CSS_OK;
 			}
 
-			if (dom_string_caseless_lwc_isequal(name,
+			إذا (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
-				dom_node_unref(n);
+				dom_غوټه_unref(n);
 				*sibling = n;
-				break;
+				اكسر;
 			}
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_غوټه_get_پخوانی_sibling(n, &prev);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_غوټه_unref(n);
 		n = prev;
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -641,12 +641,12 @@ css_error named_generic_sibling_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error parent_node(void *pw, void *node, void **parent)
+css_error پلار_غوټه(فراغ *pw, فراغ *غوټه, فراغ **پلار)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_پلار_غوټه(غوټه, (بنية dom_element **)پلار);
+	dom_غوټه_unref(*پلار);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -659,49 +659,49 @@ css_error parent_node(void *pw, void *node, void **parent)
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error sibling_node(void *pw, void *node, void **sibling)
+css_error sibling_غوټه(فراغ *pw, فراغ *غوټه, فراغ **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_غوټه *n = غوټه;
+	dom_غوټه *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = عدم;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_غوټه_get_پخوانی_sibling(n, &n);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	طالما (n != عدم) {
+		dom_غوټه_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_غوټه_get_غوټه_type(n, &type);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		إذا (type == DOM_ELEMENT_غوټه)
+			اكسر;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_غوټه_get_پخوانی_sibling(n, &prev);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_غوټه_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	إذا (n != عدم) {
 		/** \todo Sort out reference counting */
-		dom_node_unref(n);
+		dom_غوټه_unref(n);
 
 		*sibling = n;
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -715,28 +715,28 @@ css_error sibling_node(void *pw, void *node, void **sibling)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error غوټه_has_name(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, bool *سمون)
 {
 	nscss_select_ctx *ctx = pw;
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 
-	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
-			lwc_error_ok && *match == false) {
+	إذا (lwc_string_isequal(qname->name, ctx->universal, سمون) ==
+			lwc_error_ok && *سمون == false) {
 		dom_string *name;
 		dom_exception err;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR)
-			return CSS_OK;
+		err = dom_غوټه_get_غوټه_name(n, &name);
+		إذا (err != DOM_NO_ERR)
+			أرجع CSS_OK;
 
 		/* Element names are case insensitive in HTML */
-		*match = dom_string_caseless_lwc_isequal(name, qname->name);
+		*سمون = dom_string_caseless_lwc_isequal(name, qname->name);
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -750,19 +750,19 @@ css_error node_has_name(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_class(void *pw, void *node,
-		lwc_string *name, bool *match)
+css_error غوټه_has_class(فراغ *pw, فراغ *غوټه,
+		lwc_string *name, bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_exception err;
 
 	/** \todo: Ensure that libdom performs case-insensitive
 	 * matching in quirks mode */
-	err = dom_element_has_class(n, name, match);
+	err = dom_element_has_class(n, name, سمون);
 
-	assert(err == DOM_NO_ERR);
+	أكد(err == DOM_NO_ERR);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -776,27 +776,27 @@ css_error node_has_class(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_id(void *pw, void *node,
-		lwc_string *name, bool *match)
+css_error غوټه_has_id(فراغ *pw, فراغ *غوټه,
+		lwc_string *name, bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *attr;
 	dom_exception err;
 
-	*match = false;
+	*سمون = false;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_OK;
 
-	if (attr != NULL) {
-		*match = dom_string_lwc_isequal(attr, name);
+	إذا (attr != عدم) {
+		*سمون = dom_string_lwc_isequal(attr, name);
 
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -811,28 +811,28 @@ css_error node_has_id(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error غوټه_has_attribute(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *name;
 	dom_exception err;
 
 	err = dom_string_create_interned(
-			(const uint8_t *) lwc_string_data(qname->name),
-			lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+			(ثابت uint8_t *) lwc_string_معلومات(qname->name),
+			lwc_string_اوږدتیا(qname->name), &name);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
-	err = dom_element_has_attribute(n, name, match);
-	if (err != DOM_NO_ERR) {
+	err = dom_element_has_attribute(n, name, سمون);
+	إذا (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_OK;
+		أرجع CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -848,42 +848,42 @@ css_error node_has_attribute(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error غوټه_has_attribute_equal(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_اوږدتیا(ارزښت);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	إذا (vlen == 0) {
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ثابت uint8_t *) lwc_string_معلومات(qname->name),
+		lwc_string_اوږدتیا(qname->name), &name);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	إذا ((err != DOM_NO_ERR) || (atr_val == عدم)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*سمون = dom_string_caseless_lwc_isequal(atr_val, ارزښت);
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -900,55 +900,55 @@ css_error node_has_attribute_equal(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error غوټه_has_attribute_dashmatch(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_اوږدتیا(ارزښت);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	إذا (vlen == 0) {
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ثابت uint8_t *) lwc_string_معلومات(qname->name),
+		lwc_string_اوږدتیا(qname->name), &name);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	إذا ((err != DOM_NO_ERR) || (atr_val == عدم)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*سمون = dom_string_caseless_lwc_isequal(atr_val, ارزښت);
 
 	/* check for dashmatch */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	إذا (*سمون == false) {
+		ثابت حرف *vdata = lwc_string_معلومات(ارزښت);
+		ثابت حرف *معلومات = (ثابت حرف *) dom_string_معلومات(atr_val);
+		size_t len = dom_string_byte_اوږدتیا(atr_val);
 
-		if (len > vlen && data[vlen] == '-' &&
-		    strncasecmp(data, vdata, vlen) == 0) {
-				*match = true;
+		إذا (len > vlen && معلومات[vlen] == '-' &&
+		    strncasecmp(معلومات, vdata, vlen) == 0) {
+				*سمون = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -965,61 +965,61 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error غوټه_has_attribute_includes(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
-	size_t vlen = lwc_string_length(value);
-	const char *p;
-	const char *start;
-	const char *end;
+	size_t vlen = lwc_string_اوږدتیا(ارزښت);
+	ثابت حرف *p;
+	ثابت حرف *پیل;
+	ثابت حرف *پای_ټکی;
 
-	*match = false;
+	*سمون = false;
 
-	if (vlen == 0) {
-		return CSS_OK;
+	إذا (vlen == 0) {
+		أرجع CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ثابت uint8_t *) lwc_string_معلومات(qname->name),
+		lwc_string_اوږدتیا(qname->name), &name);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	إذا ((err != DOM_NO_ERR) || (atr_val == عدم)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for match */
-	start = (const char *) dom_string_data(atr_val);
-	end = start + dom_string_byte_length(atr_val);
+	پیل = (ثابت حرف *) dom_string_معلومات(atr_val);
+	پای_ټکی = پیل + dom_string_byte_اوږدتیا(atr_val);
 
-	for (p = start; p <= end; p++) {
-		if (*p == ' ' || *p == '\0') {
-			if ((size_t) (p - start) == vlen &&
-			    strncasecmp(start,
-					lwc_string_data(value),
+	لكل (p = پیل; p <= پای_ټکی; p++) {
+		إذا (*p == ' ' || *p == '\0') {
+			إذا ((size_t) (p - پیل) == vlen &&
+			    strncasecmp(پیل,
+					lwc_string_معلومات(ارزښت),
 					vlen) == 0) {
-				*match = true;
-				break;
+				*سمون = true;
+				اكسر;
 			}
 
-			start = p + 1;
+			پیل = p + 1;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1036,54 +1036,54 @@ css_error node_has_attribute_includes(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error غوټه_has_attribute_مختاړی(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_اوږدتیا(ارزښت);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	إذا (vlen == 0) {
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ثابت uint8_t *) lwc_string_معلومات(qname->name),
+		lwc_string_اوږدتیا(qname->name), &name);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	إذا ((err != DOM_NO_ERR) || (atr_val == عدم)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*سمون = dom_string_caseless_lwc_isequal(atr_val, ارزښت);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	إذا (*سمون == false) {
+		ثابت حرف *معلومات = (ثابت حرف *) dom_string_معلومات(atr_val);
+		size_t len = dom_string_byte_اوږدتیا(atr_val);
 
-		if ((len >= vlen) &&
-		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
-			*match = true;
+		إذا ((len >= vlen) &&
+		    (strncasecmp(معلومات, lwc_string_معلومات(ارزښت), vlen) == 0)) {
+			*سمون = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1100,50 +1100,50 @@ css_error node_has_attribute_prefix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error غوټه_has_attribute_suffix(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_اوږدتیا(ارزښت);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	إذا (vlen == 0) {
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ثابت uint8_t *) lwc_string_معلومات(qname->name),
+		lwc_string_اوږدتیا(qname->name), &name);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	إذا ((err != DOM_NO_ERR) || (atr_val == عدم)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*سمون = dom_string_caseless_lwc_isequal(atr_val, ارزښت);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	إذا (*سمون == false) {
+		ثابت حرف *معلومات = (ثابت حرف *) dom_string_معلومات(atr_val);
+		size_t len = dom_string_byte_اوږدتیا(atr_val);
 
-		const char *start = (char *) data + len - vlen;
+		ثابت حرف *پیل = (حرف *) معلومات + len - vlen;
 
-		if ((len >= vlen) &&
-		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
-			*match = true;
+		إذا ((len >= vlen) &&
+		    (strncasecmp(پیل, lwc_string_معلومات(ارزښت), vlen) == 0)) {
+			*سمون = true;
 		}
 
 
@@ -1151,7 +1151,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1168,63 +1168,63 @@ css_error node_has_attribute_suffix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error غوټه_has_attribute_substring(فراغ *pw, فراغ *غوټه,
+		ثابت css_qname *qname, lwc_string *ارزښت,
+		bool *سمون)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_اوږدتیا(ارزښت);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	إذا (vlen == 0) {
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ثابت uint8_t *) lwc_string_معلومات(qname->name),
+		lwc_string_اوږدتیا(qname->name), &name);
+	إذا (err != DOM_NO_ERR)
+		أرجع CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	إذا ((err != DOM_NO_ERR) || (atr_val == عدم)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*سمون = false;
+		أرجع CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*سمون = dom_string_caseless_lwc_isequal(atr_val, ارزښت);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *start = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
-		const char *last_start = start + len - vlen;
+	إذا (*سمون == false) {
+		ثابت حرف *vdata = lwc_string_معلومات(ارزښت);
+		ثابت حرف *پیل = (ثابت حرف *) dom_string_معلومات(atr_val);
+		size_t len = dom_string_byte_اوږدتیا(atr_val);
+		ثابت حرف *وروستی_پیل = پیل + len - vlen;
 
-		if (len >= vlen) {
-			while (start <= last_start) {
-				if (strncasecmp(start, vdata,
+		إذا (len >= vlen) {
+			طالما (پیل <= وروستی_پیل) {
+				إذا (strncasecmp(پیل, vdata,
 						vlen) == 0) {
-					*match = true;
-					break;
+					*سمون = true;
+					اكسر;
 				}
 
-				start++;
+				پیل++;
 			}
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1237,71 +1237,71 @@ css_error node_has_attribute_substring(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_root(void *pw, void *node, bool *match)
+css_error غوټه_is_ریښه(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
-	dom_node *n = node;
-	dom_node *parent;
-	dom_node_type type;
+	dom_غوټه *n = غوټه;
+	dom_غوټه *پلار;
+	dom_غوټه_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_غوټه_get_پلار_غوټه(n, &پلار);
+	إذا (err != DOM_NO_ERR) {
+		أرجع CSS_NOMEM;
 	}
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	إذا (پلار != عدم) {
+		err = dom_غوټه_get_غوټه_type(پلار, &type);
 
-		dom_node_unref(parent);
+		dom_غوټه_unref(پلار);
 
-		if (err != DOM_NO_ERR)
-			return CSS_NOMEM;
+		إذا (err != DOM_NO_ERR)
+			أرجع CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
-			*match = false;
-			return CSS_OK;
+		إذا (type != DOM_DOCUMENT_غوټه) {
+			*سمون = false;
+			أرجع CSS_OK;
 		}
 	}
 
-	*match = true;
+	*سمون = true;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
-static int
-node_count_siblings_check(dom_node *node,
+ساكن صحيح
+غوټه_شمېر_siblings_check(dom_غوټه *غوټه,
 			  bool check_name,
 			  dom_string *name)
 {
-	dom_node_type type;
-	int ret = 0;
+	dom_غوټه_type type;
+	صحيح ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
-		return 0;
+	إذا (غوټه == عدم)
+		أرجع 0;
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
-		return 0;
+	exc = dom_غوټه_get_غوټه_type(غوټه, &type);
+	إذا ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_غوټه)) {
+		أرجع 0;
 	}
 
-	if (check_name) {
-		dom_string *node_name = NULL;
-		exc = dom_node_get_node_name(node, &node_name);
+	إذا (check_name) {
+		dom_string *غوټه_name = عدم;
+		exc = dom_غوټه_get_غوټه_name(غوټه, &غوټه_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		إذا ((exc == DOM_NO_ERR) && (غوټه_name != عدم)) {
 
-			if (dom_string_caseless_isequal(name,
-							node_name)) {
+			إذا (dom_string_caseless_isequal(name,
+							غوټه_name)) {
 				ret = 1;
 			}
-			dom_string_unref(node_name);
+			dom_string_unref(غوټه_name);
 		}
-	} else {
+	} وإلا {
 		ret = 1;
 	}
 
-	return ret;
+	أرجع ret;
 }
 
 /**
@@ -1316,58 +1316,58 @@ node_count_siblings_check(dom_node *node,
  *
  * \post \a count will contain the number of siblings
  */
-css_error node_count_siblings(void *pw, void *n, bool same_name,
-		bool after, int32_t *count)
+css_error غوټه_شمېر_siblings(فراغ *pw, فراغ *n, bool same_name,
+		bool after, int32_t *شمېر)
 {
 	int32_t cnt = 0;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *غوټه_name = عدم;
 
-	if (same_name) {
-		dom_node *node = n;
-		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-			return CSS_NOMEM;
+	إذا (same_name) {
+		dom_غوټه *غوټه = n;
+		exc = dom_غوټه_get_غوټه_name(غوټه, &غوټه_name);
+		إذا ((exc != DOM_NO_ERR) || (غوټه_name == عدم)) {
+			أرجع CSS_NOMEM;
 		}
 	}
 
-	if (after) {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+	إذا (after) {
+		dom_غوټه *غوټه = dom_غوټه_ref(n);
+		dom_غوټه *بل;
 
-		do {
-			exc = dom_node_get_next_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		افعل {
+			exc = dom_غوټه_get_بل_sibling(غوټه, &بل);
+			إذا ((exc != DOM_NO_ERR))
+				اكسر;
 
-			dom_node_unref(node);
-			node = next;
+			dom_غوټه_unref(غوټه);
+			غوټه = بل;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
-	} else {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+			cnt += غوټه_شمېر_siblings_check(غوټه, same_name, غوټه_name);
+		} طالما (غوټه != عدم);
+	} وإلا {
+		dom_غوټه *غوټه = dom_غوټه_ref(n);
+		dom_غوټه *بل;
 
-		do {
-			exc = dom_node_get_previous_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		افعل {
+			exc = dom_غوټه_get_پخوانی_sibling(غوټه, &بل);
+			إذا ((exc != DOM_NO_ERR))
+				اكسر;
 
-			dom_node_unref(node);
-			node = next;
+			dom_غوټه_unref(غوټه);
+			غوټه = بل;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
+			cnt += غوټه_شمېر_siblings_check(غوټه, same_name, غوټه_name);
 
-		} while (node != NULL);
+		} طالما (غوټه != عدم);
 	}
 
-	if (node_name != NULL) {
-		dom_string_unref(node_name);
+	إذا (غوټه_name != عدم) {
+		dom_string_unref(غوټه_name);
 	}
 
-	*count = cnt;
-	return CSS_OK;
+	*شمېر = cnt;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1380,43 +1380,43 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
  *
  * \post \a match will contain true if the node is empty and false otherwise.
  */
-css_error node_is_empty(void *pw, void *node, bool *match)
+css_error غوټه_is_تشه(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
-	dom_node *n = node, *next;
+	dom_غوټه *n = غوټه, *بل;
 	dom_exception err;
 
-	*match = true;
+	*سمون = true;
 
-	err = dom_node_get_first_child(n, &n);
-	if (err != DOM_NO_ERR) {
-		return CSS_BADPARM;
+	err = dom_غوټه_get_لومړی_ماشوم(n, &n);
+	إذا (err != DOM_NO_ERR) {
+		أرجع CSS_BADPARM;
 	}
 
-	while (n != NULL) {
-		dom_node_type ntype;
-		err = dom_node_get_node_type(n, &ntype);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+	طالما (n != عدم) {
+		dom_غوټه_type ntype;
+		err = dom_غوټه_get_غوټه_type(n, &ntype);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
-		    ntype == DOM_TEXT_NODE) {
-			*match = false;
-			dom_node_unref(n);
-			break;
+		إذا (ntype == DOM_ELEMENT_غوټه ||
+		    ntype == DOM_متن_غوټه) {
+			*سمون = false;
+			dom_غوټه_unref(n);
+			اكسر;
 		}
 
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+		err = dom_غوټه_get_بل_sibling(n, &بل);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(n);
+			أرجع CSS_BADPARM;
 		}
-		dom_node_unref(n);
-		n = next;
+		dom_غوټه_unref(n);
+		n = بل;
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1429,32 +1429,32 @@ css_error node_is_empty(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_link(void *pw, void *n, bool *match)
+css_error غوټه_is_link(فراغ *pw, فراغ *n, bool *سمون)
 {
-	dom_node *node = n;
+	dom_غوټه *غوټه = n;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *غوټه_name = عدم;
 
-	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_غوټه_get_غوټه_name(غوټه, &غوټه_name);
+	إذا ((exc != DOM_NO_ERR) || (غوټه_name == عدم)) {
+		أرجع CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	إذا (dom_string_caseless_lwc_isequal(غوټه_name, corestring_lwc_a)) {
 		bool has_href;
-		exc = dom_element_has_attribute(node, corestring_dom_href,
+		exc = dom_element_has_attribute(غوټه, corestring_dom_href,
 				&has_href);
-		if ((exc == DOM_NO_ERR) && (has_href)) {
-			*match = true;
-		} else {
-			*match = false;
+		إذا ((exc == DOM_NO_ERR) && (has_href)) {
+			*سمون = true;
+		} وإلا {
+			*سمون = false;
 		}
-	} else {
-		*match = false;
+	} وإلا {
+		*سمون = false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(غوټه_name);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1468,63 +1468,63 @@ css_error node_is_link(void *pw, void *n, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_visited(void *pw, void *node, bool *match)
+css_error غوټه_is_لیدل_شوی(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
 	nserror error;
-	const struct url_data *data;
+	ثابت بنية url_معلومات *معلومات;
 
 	dom_exception exc;
-	dom_node *n = node;
-	dom_string *s = NULL;
+	dom_غوټه *n = غوټه;
+	dom_string *s = عدم;
 
-	*match = false;
+	*سمون = false;
 
-	exc = dom_node_get_node_name(n, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_غوټه_get_غوټه_name(n, &s);
+	إذا ((exc != DOM_NO_ERR) || (s == عدم)) {
+		أرجع CSS_NOMEM;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
+	إذا (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
 		/* Can't be visited; not ancher element */
 		dom_string_unref(s);
-		return CSS_OK;
+		أرجع CSS_OK;
 	}
 
 	/* Finished with node name string */
 	dom_string_unref(s);
-	s = NULL;
+	s = عدم;
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
+	إذا ((exc != DOM_NO_ERR) || (s == عدم)) {
 		/* Can't be visited; not got a URL */
-		return CSS_OK;
+		أرجع CSS_OK;
 	}
 
 	/* Make href absolute */
 	/* TODO: this duplicates what we do for box->href
 	 *       should we put the absolute URL on the dom node? */
-	error = nsurl_join(ctx->base_url, dom_string_data(s), &url);
+	error = nsurl_join(ctx->بنسټ_url, dom_string_معلومات(s), &url);
 
 	/* Finished with href string */
 	dom_string_unref(s);
 
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		/* Couldn't make nsurl object */
-		return CSS_NOMEM;
+		أرجع CSS_NOMEM;
 	}
 
-	data = urldb_get_url_data(url);
+	معلومات = urldb_get_url_معلومات(url);
 
 	/* Visited if in the db and has
 	 * non-zero visit count */
-	if (data != NULL && data->visits > 0)
-		*match = true;
+	إذا (معلومات != عدم && معلومات->visits > 0)
+		*سمون = true;
 
 	nsurl_unref(url);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1537,13 +1537,13 @@ css_error node_is_visited(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_hover(void *pw, void *node, bool *match)
+css_error غوټه_is_hover(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
 	/** \todo Support hovering */
 
-	*match = false;
+	*سمون = false;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1556,13 +1556,13 @@ css_error node_is_hover(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_active(void *pw, void *node, bool *match)
+css_error غوټه_is_فعال(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
 	/** \todo Support active nodes */
 
-	*match = false;
+	*سمون = false;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1575,13 +1575,13 @@ css_error node_is_active(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_focus(void *pw, void *node, bool *match)
+css_error غوټه_is_focus(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
 	/** \todo Support focussed nodes */
 
-	*match = false;
+	*سمون = false;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1594,13 +1594,13 @@ css_error node_is_focus(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is enabled and false otherwise.
  */
-css_error node_is_enabled(void *pw, void *node, bool *match)
+css_error غوټه_is_enabled(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
 	/** \todo Support enabled nodes */
 
-	*match = false;
+	*سمون = false;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1613,13 +1613,13 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is disabled and false otherwise.
  */
-css_error node_is_disabled(void *pw, void *node, bool *match)
+css_error غوټه_is_disabled(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
 	/** \todo Support disabled nodes */
 
-	*match = false;
+	*سمون = false;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1632,13 +1632,13 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is checked and false otherwise.
  */
-css_error node_is_checked(void *pw, void *node, bool *match)
+css_error غوټه_is_checked(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
 	/** \todo Support checked nodes */
 
-	*match = false;
+	*سمون = false;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1651,13 +1651,13 @@ css_error node_is_checked(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node matches and false otherwise.
  */
-css_error node_is_target(void *pw, void *node, bool *match)
+css_error غوټه_is_موخه(فراغ *pw, فراغ *غوټه, bool *سمون)
 {
 	/** \todo Support target */
 
-	*match = false;
+	*سمون = false;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1671,14 +1671,14 @@ css_error node_is_target(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_lang(void *pw, void *node,
-		lwc_string *lang, bool *match)
+css_error غوټه_is_lang(فراغ *pw, فراغ *غوټه,
+		lwc_string *lang, bool *سمون)
 {
 	/** \todo Support languages */
 
-	*match = false;
+	*سمون = false;
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
 /**
@@ -1690,77 +1690,77 @@ css_error node_is_lang(void *pw, void *node,
  * \return CSS_OK       on success,
  *         CSS_INVALID  if the property should not have a user-agent default.
  */
-css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
+css_error ua_default_for_property(فراغ *pw, uint32_t property, css_hint *hint)
 {
-	if (property == CSS_PROP_COLOR) {
-		hint->data.color = 0xff000000;
-		hint->status = CSS_COLOR_COLOR;
-	} else if (property == CSS_PROP_FONT_FAMILY) {
-		hint->data.strings = NULL;
-		switch (nsoption_int(font_default)) {
-		case PLOT_FONT_FAMILY_SANS_SERIF:
-			hint->status = CSS_FONT_FAMILY_SANS_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_SERIF:
-			hint->status = CSS_FONT_FAMILY_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_MONOSPACE:
-			hint->status = CSS_FONT_FAMILY_MONOSPACE;
-			break;
-		case PLOT_FONT_FAMILY_CURSIVE:
-			hint->status = CSS_FONT_FAMILY_CURSIVE;
-			break;
-		case PLOT_FONT_FAMILY_FANTASY:
-			hint->status = CSS_FONT_FAMILY_FANTASY;
-			break;
+	إذا (property == CSS_PROP_COLOR) {
+		hint->معلومات.color = 0xff000000;
+		hint->حالت = CSS_COLOR_COLOR;
+	} وإلا إذا (property == CSS_PROP_FONT_FAMILY) {
+		hint->معلومات.مزي_ګانې = عدم;
+		بدل (nsoption_int(font_default)) {
+		حالة PLOT_FONT_FAMILY_SANS_SERIF:
+			hint->حالت = CSS_FONT_FAMILY_SANS_SERIF;
+			اكسر;
+		حالة PLOT_FONT_FAMILY_SERIF:
+			hint->حالت = CSS_FONT_FAMILY_SERIF;
+			اكسر;
+		حالة PLOT_FONT_FAMILY_MONOSPACE:
+			hint->حالت = CSS_FONT_FAMILY_MONOSPACE;
+			اكسر;
+		حالة PLOT_FONT_FAMILY_CURSIVE:
+			hint->حالت = CSS_FONT_FAMILY_CURSIVE;
+			اكسر;
+		حالة PLOT_FONT_FAMILY_FANTASY:
+			hint->حالت = CSS_FONT_FAMILY_FANTASY;
+			اكسر;
 		}
-	} else if (property == CSS_PROP_QUOTES) {
+	} وإلا إذا (property == CSS_PROP_QUOTES) {
 		/** \todo Not exactly useful :) */
-		hint->data.strings = NULL;
-		hint->status = CSS_QUOTES_NONE;
-	} else if (property == CSS_PROP_VOICE_FAMILY) {
+		hint->معلومات.مزي_ګانې = عدم;
+		hint->حالت = CSS_QUOTES_NONE;
+	} وإلا إذا (property == CSS_PROP_VOICE_FAMILY) {
 		/** \todo Fix this when we have voice-family done */
-		hint->data.strings = NULL;
-		hint->status = 0;
-	} else {
-		return CSS_INVALID;
+		hint->معلومات.مزي_ګانې = عدم;
+		hint->حالت = 0;
+	} وإلا {
+		أرجع CSS_INVALID;
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
-css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
+css_error سېټ_libcss_غوټه_معلومات(فراغ *pw, فراغ *غوټه, فراغ *libcss_غوټه_معلومات)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_exception err;
-	void *old_node_data;
+	فراغ *old_غوټه_معلومات;
 
 	/* Set this node's node data */
-	err = dom_node_set_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data, nscss_dom_user_data_handler,
-			(void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_غوټه_سېټ_user_معلومات(n,
+			corestring_dom_ns_کلی_libcss_غوټه_معلومات,
+			libcss_غوټه_معلومات, nscss_dom_user_معلومات_handler,
+			(فراغ *) &old_غوټه_معلومات);
+	إذا (err != DOM_NO_ERR) {
+		أرجع CSS_NOMEM;
 	}
 
-	assert(old_node_data == NULL);
+	أكد(old_غوټه_معلومات == عدم);
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }
 
-css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
+css_error get_libcss_غوټه_معلومات(فراغ *pw, فراغ *غوټه, فراغ **libcss_غوټه_معلومات)
 {
-	dom_node *n = node;
+	dom_غوټه *n = غوټه;
 	dom_exception err;
 
 	/* Get this node's node data */
-	err = dom_node_get_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_غوټه_get_user_معلومات(n,
+			corestring_dom_ns_کلی_libcss_غوټه_معلومات,
+			libcss_غوټه_معلومات);
+	إذا (err != DOM_NO_ERR) {
+		أرجع CSS_NOMEM;
 	}
 
-	return CSS_OK;
+	أرجع CSS_OK;
 }

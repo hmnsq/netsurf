@@ -20,9 +20,9 @@
  * Content for image/svg (interface).
  */
 
-#ifndef _NETSURF_IMAGE_SVG_H_
-#define _NETSURF_IMAGE_SVG_H_
+#که_نه_تعریف_شوی _NETSURF_IMAGE_SVG_H_
+#تعریف_کړه _NETSURF_IMAGE_SVG_H_
 
-nserror svg_init(void);
+nserror svg_init(فراغ);
 
-#endif
+#د_که_پای

@@ -20,41 +20,41 @@
  * Low-level resource cache null persistant storage implementation.
  */
 
-#include "utils/nsurl.h"
+#ضمن "utils/nsurl.h"
 
-#include "content/backing_store.h"
+#ضمن "content/backing_store.h"
 
 
 /* default to disabled backing store */
-static nserror initialise(const struct llcache_store_parameters *parameters)
+ساكن nserror initialise(ثابت بنية llcache_store_parameters *parameters)
 {
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static nserror finalise(void)
+ساكن nserror finalise(فراغ)
 {
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static nserror store(nsurl *url,
-		     enum backing_store_flags flags,
-		     uint8_t *data,
-		     const size_t datalen)
+ساكن nserror store(nsurl *url,
+		     تعداد backing_store_flags flags,
+		     uint8_t *معلومات,
+		     ثابت size_t datalen)
 {
-	return NSERROR_SAVE_FAILED;
+	أرجع NSERROR_SAVE_FAILED;
 }
 
-static nserror fetch(nsurl *url,
-		     enum backing_store_flags flags,
-		     uint8_t **data_out,
-		     size_t *datalen_out)
+ساكن nserror fetch(nsurl *url,
+		     تعداد backing_store_flags flags,
+		     uint8_t **معلومات_بهر,
+		     size_t *datalen_بهر)
 {
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_وموندل;
 }
 
-static nserror invalidate(nsurl *url)
+ساكن nserror invalidate(nsurl *url)
 {
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_وموندل;
 }
 
 /**
@@ -69,12 +69,12 @@ static nserror invalidate(nsurl *url)
  * @param[in] flags The flags to control how the object data is released.
  * @return NSERROR_OK on success or error code on faliure.
  */
-static nserror release(nsurl *url, enum backing_store_flags flags)
+ساكن nserror release(nsurl *url, تعداد backing_store_flags flags)
 {
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_وموندل;
 }
 
-static struct gui_llcache_table llcache_table = {
+ساكن بنية gui_llcache_جدول llcache_جدول = {
 	.initialise = initialise,
 	.finalise = finalise,
 	.store = store,
@@ -83,4 +83,4 @@ static struct gui_llcache_table llcache_table = {
 	.release = release,
 };
 
-struct gui_llcache_table *null_llcache_table = &llcache_table;
+بنية gui_llcache_جدول *null_llcache_جدول = &llcache_جدول;

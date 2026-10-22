@@ -21,8 +21,8 @@
  * about scheme query timeout handler interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_TIMEOUT_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_TIMEOUT_H
+#که_نه_تعریف_شوی NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_TIMEOUT_H
+#تعریف_کړه NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_TIMEOUT_H
 
 /**
  * Handler to generate about scheme timeout query page
@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_query_timeout_handler(struct fetch_about_context *ctx);
+bool fetch_about_query_timeout_handler(بنية fetch_about_context *ctx);
 
-#endif
+#د_که_پای

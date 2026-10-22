@@ -26,35 +26,35 @@
  * Implementation of special element handling conversion.
  */
 
-#include <string.h>
-#include <stdbool.h>
-#include <dom/dom.h>
+#ضمن <string.h>
+#ضمن <stdbool.h>
+#ضمن <dom/dom.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/talloc.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "css/hints.h"
-#include "desktop/frame_types.h"
-#include "content/content_factory.h"
+#ضمن "utils/nsoption.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/talloc.h"
+#ضمن "utils/string.h"
+#ضمن "utils/ascii.h"
+#ضمن "utils/nsurl.h"
+#ضمن "netsurf/plot_style.h"
+#ضمن "css/hints.h"
+#ضمن "desktop/frame_types.h"
+#ضمن "content/content_factory.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/object.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_construct.h"
-#include "html/box_special.h"
-#include "html/box_textarea.h"
-#include "html/form_internal.h"
+#ضمن "html/html.h"
+#ضمن "html/private.h"
+#ضمن "html/object.h"
+#ضمن "html/box.h"
+#ضمن "html/box_manipulate.h"
+#ضمن "html/box_construct.h"
+#ضمن "html/box_special.h"
+#ضمن "html/box_textarea.h"
+#ضمن "html/form_internal.h"
 
 
-static const content_type image_types = CONTENT_IMAGE;
+ساكن ثابت content_type image_types = CONTENT_IMAGE;
 
 
 /**
@@ -63,29 +63,29 @@ static const content_type image_types = CONTENT_IMAGE;
  * \param n node to check
  * \return true if node is root else false.
  */
-static inline bool box_is_root(dom_node *n)
+ساكن مضمن bool box_is_ریښه(dom_غوټه *n)
 {
-	dom_node *parent;
-	dom_node_type type;
+	dom_غوټه *پلار;
+	dom_غوټه_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_غوټه_get_پلار_غوټه(n, &پلار);
+	إذا (err != DOM_NO_ERR)
+		أرجع false;
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	إذا (پلار != عدم) {
+		err = dom_غوټه_get_غوټه_type(پلار, &type);
 
-		dom_node_unref(parent);
+		dom_غوټه_unref(پلار);
 
-		if (err != DOM_NO_ERR)
-			return false;
+		إذا (err != DOM_NO_ERR)
+			أرجع false;
 
-		if (type != DOM_DOCUMENT_NODE)
-			return false;
+		إذا (type != DOM_DOCUMENT_غوټه)
+			أرجع false;
 	}
 
-	return true;
+	أرجع true;
 }
 
 
@@ -95,16 +95,16 @@ static inline bool box_is_root(dom_node *n)
  * \param o  The object params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_object_talloc_destructor(struct object_params *o)
+ساكن صحيح box_object_talloc_destructor(بنية object_params *o)
 {
-	if (o->codebase != NULL)
+	إذا (o->codebase != عدم)
 		nsurl_unref(o->codebase);
-	if (o->classid != NULL)
+	إذا (o->classid != عدم)
 		nsurl_unref(o->classid);
-	if (o->data != NULL)
-		nsurl_unref(o->data);
+	إذا (o->معلومات != عدم)
+		nsurl_unref(o->معلومات);
 
-	return 0;
+	أرجع 0;
 }
 
 
@@ -115,54 +115,54 @@ static int box_object_talloc_destructor(struct object_params *o)
  * \param count updated to number of entries
  * \return array of struct box_multi_length, or 0 on memory exhaustion
  */
-static struct frame_dimension *
-box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
+ساكن بنية چوکاټ_dimension *
+box_parse_multi_lengths(ثابت dom_string *ds, بینښه صحيح *شمېر)
 {
-	char *end;
-	unsigned int i, n;
-	struct frame_dimension *length;
-	const char *s;
+	حرف *پای_ټکی;
+	بینښه صحيح i, n;
+	بنية چوکاټ_dimension *اوږدتیا;
+	ثابت حرف *s;
 
-	s = dom_string_data(ds);
+	s = dom_string_معلومات(ds);
 
-	for (i = 0, n = 1; s[i]; i++)
-		if (s[i] == ',')
+	لكل (i = 0, n = 1; s[i]; i++)
+		إذا (s[i] == ',')
 			n++;
 
-	length = calloc(n, sizeof(struct frame_dimension));
-	if (!length)
-		return NULL;
+	اوږدتیا = حافظه_صفر_ورکړه(n, حجم(بنية چوکاټ_dimension));
+	إذا (!اوږدتیا)
+		أرجع عدم;
 
-	for (i = 0; i != n; i++) {
-		while (ascii_is_space(*s)) {
+	لكل (i = 0; i != n; i++) {
+		طالما (ascii_is_space(*s)) {
 			s++;
 		}
-		length[i].value = strtof(s, &end);
-		if (length[i].value <= 0) {
-			length[i].value = 1;
+		اوږدتیا[i].ارزښت = strtof(s, &پای_ټکی);
+		إذا (اوږدتیا[i].ارزښت <= 0) {
+			اوږدتیا[i].ارزښت = 1;
 		}
-		s = end;
-		switch (*s) {
-			case '%':
-				length[i].unit = FRAME_DIMENSION_PERCENT;
-				break;
-			case '*':
-				length[i].unit = FRAME_DIMENSION_RELATIVE;
-				break;
-			default:
-				length[i].unit = FRAME_DIMENSION_PIXELS;
-				break;
+		s = پای_ټکی;
+		بدل (*s) {
+			حالة '%':
+				اوږدتیا[i].unit = چوکاټ_DIMENSION_PERCENT;
+				اكسر;
+			حالة '*':
+				اوږدتیا[i].unit = چوکاټ_DIMENSION_RELATIVE;
+				اكسر;
+			افتراضي:
+				اوږدتیا[i].unit = چوکاټ_DIMENSION_PIXELS;
+				اكسر;
 		}
-		while (*s && *s != ',') {
+		طالما (*s && *s != ',') {
 			s++;
 		}
-		if (*s == ',') {
+		إذا (*s == ',') {
 			s++;
 		}
 	}
 
-	*count = n;
-	return length;
+	*شمېر = n;
+	أرجع اوږدتیا;
 }
 
 
@@ -172,82 +172,82 @@ box_parse_multi_lengths(const dom_string *ds, unsigned int *count)
  * \param f  The frame params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_frames_talloc_destructor(struct content_html_frames *f)
+ساكن صحيح box_چوکاټونه_talloc_destructor(بنية content_html_چوکاټونه *f)
 {
-	if (f->url != NULL) {
+	إذا (f->url != عدم) {
 		nsurl_unref(f->url);
-		f->url = NULL;
+		f->url = عدم;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
 
 /**
  * create a frameset box tree
  */
-static bool
-box_create_frameset(struct content_html_frames *f,
-		    dom_node *n,
+ساكن bool
+box_create_frameset(بنية content_html_چوکاټونه *f,
+		    dom_غوټه *n,
 		    html_content *content)
 {
-	unsigned int row, col, index, i;
-	unsigned int rows = 1, cols = 1;
+	بینښه صحيح لیکه, ستون, index, i;
+	بینښه صحيح لیکې = 1, ستون_شمېر = 1;
 	dom_string *s;
 	dom_exception err;
 	nsurl *url;
-	struct frame_dimension *row_height = 0, *col_width = 0;
-	dom_node *c, *next;
-	struct content_html_frames *frame;
+	بنية چوکاټ_dimension *لیکه_لوړوالی = 0, *ستون_پلنوالی = 0;
+	dom_غوټه *c, *بل;
+	بنية content_html_چوکاټونه *چوکاټ;
 	bool default_border = true;
-	colour default_border_colour = 0x000000;
+	رنګ default_border_رنګ = 0x000000;
 
 	/* parse rows and columns */
-	err = dom_element_get_attribute(n, corestring_dom_rows, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		row_height = box_parse_multi_lengths(s, &rows);
+	err = dom_element_get_attribute(n, corestring_dom_لیکې, &s);
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		لیکه_لوړوالی = box_parse_multi_lengths(s, &لیکې);
 		dom_string_unref(s);
-		if (row_height == NULL)
-			return false;
-	} else {
-		row_height = calloc(1, sizeof(struct frame_dimension));
-		if (row_height == NULL)
-			return false;
-		row_height->value = 100;
-		row_height->unit = FRAME_DIMENSION_PERCENT;
+		إذا (لیکه_لوړوالی == عدم)
+			أرجع false;
+	} وإلا {
+		لیکه_لوړوالی = حافظه_صفر_ورکړه(1, حجم(بنية چوکاټ_dimension));
+		إذا (لیکه_لوړوالی == عدم)
+			أرجع false;
+		لیکه_لوړوالی->ارزښت = 100;
+		لیکه_لوړوالی->unit = چوکاټ_DIMENSION_PERCENT;
 	}
 
-	err = dom_element_get_attribute(n, corestring_dom_cols, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		col_width = box_parse_multi_lengths(s, &cols);
+	err = dom_element_get_attribute(n, corestring_dom_ستون_شمېر, &s);
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		ستون_پلنوالی = box_parse_multi_lengths(s, &ستون_شمېر);
 		dom_string_unref(s);
-		if (col_width == NULL) {
-			free(row_height);
-			return false;
+		إذا (ستون_پلنوالی == عدم) {
+			حرر(لیکه_لوړوالی);
+			أرجع false;
 		}
-	} else {
-		col_width = calloc(1, sizeof(struct frame_dimension));
-		if (col_width == NULL) {
-			free(row_height);
-			return false;
+	} وإلا {
+		ستون_پلنوالی = حافظه_صفر_ورکړه(1, حجم(بنية چوکاټ_dimension));
+		إذا (ستون_پلنوالی == عدم) {
+			حرر(لیکه_لوړوالی);
+			أرجع false;
 		}
-		col_width->value = 100;
-		col_width->unit = FRAME_DIMENSION_PERCENT;
+		ستون_پلنوالی->ارزښت = 100;
+		ستون_پلنوالی->unit = چوکاټ_DIMENSION_PERCENT;
 	}
 
 	/* common extension: border="0|1" to control all children */
 	err = dom_element_get_attribute(n, corestring_dom_border, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if ((dom_string_data(s)[0] == '0') &&
-				(dom_string_data(s)[1] == '\0'))
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		إذا ((dom_string_معلومات(s)[0] == '0') &&
+				(dom_string_معلومات(s)[1] == '\0'))
 			default_border = false;
 		dom_string_unref(s);
 	}
 
 	/* common extension: frameborder="yes|no" to control all children */
 	err = dom_element_get_attribute(n, corestring_dom_frameborder, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		إذا (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_no) == 0)
 			default_border = false;
 		dom_string_unref(s);
@@ -256,230 +256,230 @@ box_create_frameset(struct content_html_frames *f,
 	/* common extension: bordercolor="#RRGGBB|<named colour>" to control
 	 *all children */
 	err = dom_element_get_attribute(n, corestring_dom_bordercolor, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	إذا (err == DOM_NO_ERR && s != عدم) {
 		css_color color;
 
-		if (nscss_parse_colour(dom_string_data(s), &color))
-			default_border_colour = nscss_color_to_ns(color);
+		إذا (nscss_parse_رنګ(dom_string_معلومات(s), &color))
+			default_border_رنګ = nscss_color_منزل_ns(color);
 
 		dom_string_unref(s);
 	}
 
 	/* update frameset and create default children */
-	f->cols = cols;
-	f->rows = rows;
+	f->ستون_شمېر = ستون_شمېر;
+	f->لیکې = لیکې;
 	f->scrolling = BW_SCROLLING_NO;
-	f->children = talloc_array(content->bctx, struct content_html_frames,
-								(rows * cols));
+	f->children = talloc_array(content->bctx, بنية content_html_چوکاټونه,
+								(لیکې * ستون_شمېر));
 
-	talloc_set_destructor(f->children, box_frames_talloc_destructor);
+	talloc_سېټ_destructor(f->children, box_چوکاټونه_talloc_destructor);
 
-	for (row = 0; row < rows; row++) {
-		for (col = 0; col < cols; col++) {
-			index = (row * cols) + col;
-			frame = &f->children[index];
-			frame->cols = 0;
-			frame->rows = 0;
-			frame->width = col_width[col];
-			frame->height = row_height[row];
-			frame->margin_width = 0;
-			frame->margin_height = 0;
-			frame->name = NULL;
-			frame->url = NULL;
-			frame->no_resize = false;
-			frame->scrolling = BW_SCROLLING_AUTO;
-			frame->border = default_border;
-			frame->border_colour = default_border_colour;
-			frame->children = NULL;
+	لكل (لیکه = 0; لیکه < لیکې; لیکه++) {
+		لكل (ستون = 0; ستون < ستون_شمېر; ستون++) {
+			index = (لیکه * ستون_شمېر) + ستون;
+			چوکاټ = &f->children[index];
+			چوکاټ->ستون_شمېر = 0;
+			چوکاټ->لیکې = 0;
+			چوکاټ->پلنوالی = ستون_پلنوالی[ستون];
+			چوکاټ->لوړوالی = لیکه_لوړوالی[لیکه];
+			چوکاټ->margin_پلنوالی = 0;
+			چوکاټ->margin_لوړوالی = 0;
+			چوکاټ->name = عدم;
+			چوکاټ->url = عدم;
+			چوکاټ->no_resize = false;
+			چوکاټ->scrolling = BW_SCROLLING_AUTO;
+			چوکاټ->border = default_border;
+			چوکاټ->border_رنګ = default_border_رنګ;
+			چوکاټ->children = عدم;
 		}
 	}
-	free(col_width);
-	free(row_height);
+	حرر(ستون_پلنوالی);
+	حرر(لیکه_لوړوالی);
 
 	/* create the frameset windows */
-	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_غوټه_get_لومړی_ماشوم(n, &c);
+	إذا (err != DOM_NO_ERR)
+		أرجع false;
 
-	for (row = 0; c != NULL && row < rows; row++) {
-		for (col = 0; c != NULL && col < cols; col++) {
-			while (c != NULL) {
-				dom_node_type type;
+	لكل (لیکه = 0; c != عدم && لیکه < لیکې; لیکه++) {
+		لكل (ستون = 0; c != عدم && ستون < ستون_شمېر; ستون++) {
+			طالما (c != عدم) {
+				dom_غوټه_type type;
 				dom_string *name;
 
-				err = dom_node_get_node_type(c, &type);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
-					return false;
+				err = dom_غوټه_get_غوټه_type(c, &type);
+				إذا (err != DOM_NO_ERR) {
+					dom_غوټه_unref(c);
+					أرجع false;
 				}
 
-				err = dom_node_get_node_name(c, &name);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
-					return false;
+				err = dom_غوټه_get_غوټه_name(c, &name);
+				إذا (err != DOM_NO_ERR) {
+					dom_غوټه_unref(c);
+					أرجع false;
 				}
 
-				if (type != DOM_ELEMENT_NODE ||
+				إذا (type != DOM_ELEMENT_غوټه ||
 					(!dom_string_caseless_lwc_isequal(
 							name,
-							corestring_lwc_frame) &&
+							corestring_lwc_چوکاټ) &&
 					!dom_string_caseless_lwc_isequal(
 							name,
 							corestring_lwc_frameset
 							))) {
-					err = dom_node_get_next_sibling(c,
-							&next);
-					if (err != DOM_NO_ERR) {
+					err = dom_غوټه_get_بل_sibling(c,
+							&بل);
+					إذا (err != DOM_NO_ERR) {
 						dom_string_unref(name);
-						dom_node_unref(c);
-						return false;
+						dom_غوټه_unref(c);
+						أرجع false;
 					}
 
 					dom_string_unref(name);
-					dom_node_unref(c);
-					c = next;
-				} else {
+					dom_غوټه_unref(c);
+					c = بل;
+				} وإلا {
 					/* Got a FRAME or FRAMESET element */
 					dom_string_unref(name);
-					break;
+					اكسر;
 				}
 			}
 
-			if (c == NULL)
-				break;
+			إذا (c == عدم)
+				اكسر;
 
 			/* get current frame */
-			index = (row * cols) + col;
-			frame = &f->children[index];
+			index = (لیکه * ستون_شمېر) + ستون;
+			چوکاټ = &f->children[index];
 
 			/* nest framesets */
-			err = dom_node_get_node_name(c, &s);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
-				return false;
+			err = dom_غوټه_get_غوټه_name(c, &s);
+			إذا (err != DOM_NO_ERR) {
+				dom_غوټه_unref(c);
+				أرجع false;
 			}
 
-			if (dom_string_caseless_lwc_isequal(s,
+			إذا (dom_string_caseless_lwc_isequal(s,
 					corestring_lwc_frameset)) {
 				dom_string_unref(s);
-				frame->border = 0;
-				if (box_create_frameset(frame, c,
+				چوکاټ->border = 0;
+				إذا (box_create_frameset(چوکاټ, c,
 						content) == false) {
-					dom_node_unref(c);
-					return false;
+					dom_غوټه_unref(c);
+					أرجع false;
 				}
 
-				err = dom_node_get_next_sibling(c, &next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c);
-					return false;
+				err = dom_غوټه_get_بل_sibling(c, &بل);
+				إذا (err != DOM_NO_ERR) {
+					dom_غوټه_unref(c);
+					أرجع false;
 				}
 
-				dom_node_unref(c);
-				c = next;
-				continue;
+				dom_غوټه_unref(c);
+				c = بل;
+				استمر;
 			}
 
 			dom_string_unref(s);
 
 			/* get frame URL (not required) */
-			url = NULL;
+			url = عدم;
 			err = dom_element_get_attribute(c, corestring_dom_src, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				box_extract_link(content, s, content->base_url,
+			إذا (err == DOM_NO_ERR && s != عدم) {
+				box_ایستل_link(content, s, content->بنسټ_url,
 						 &url);
 				dom_string_unref(s);
 			}
 
 			/* copy url */
-			if (url != NULL) {
+			إذا (url != عدم) {
 				/* no self-references */
-				if (nsurl_compare(content->base_url, url,
+				إذا (nsurl_compare(content->بنسټ_url, url,
 						NSURL_COMPLETE) == false)
-					frame->url = url;
-				url = NULL;
+					چوکاټ->url = url;
+				url = عدم;
 			}
 
 			/* fill in specified values */
 			err = dom_element_get_attribute(c, corestring_dom_name, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				frame->name = talloc_strdup(content->bctx,
-						dom_string_data(s));
+			إذا (err == DOM_NO_ERR && s != عدم) {
+				چوکاټ->name = talloc_strdup(content->bctx,
+						dom_string_معلومات(s));
 				dom_string_unref(s);
 			}
 
-			if (dom_element_has_attribute(c, corestring_dom_noresize,
-						      &frame->no_resize) != DOM_NO_ERR) {
+			إذا (dom_element_has_attribute(c, corestring_dom_noresize,
+						      &چوکاټ->no_resize) != DOM_NO_ERR) {
 				/* If we can't read the attribute for some reason,
 				 * assume we didn't have it.
 				 */
-				frame->no_resize = false;
+				چوکاټ->no_resize = false;
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_frameborder,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				i = atoi(dom_string_data(s));
-				frame->border = (i != 0);
+			إذا (err == DOM_NO_ERR && s != عدم) {
+				i = atoi(dom_string_معلومات(s));
+				چوکاټ->border = (i != 0);
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_scrolling, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				if (dom_string_caseless_lwc_isequal(s,
+			إذا (err == DOM_NO_ERR && s != عدم) {
+				إذا (dom_string_caseless_lwc_isequal(s,
 						corestring_lwc_yes))
-					frame->scrolling = BW_SCROLLING_YES;
-				else if (dom_string_caseless_lwc_isequal(s,
+					چوکاټ->scrolling = BW_SCROLLING_YES;
+				وإلا إذا (dom_string_caseless_lwc_isequal(s,
 						corestring_lwc_no))
-					frame->scrolling = BW_SCROLLING_NO;
+					چوکاټ->scrolling = BW_SCROLLING_NO;
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_marginwidth,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				frame->margin_width = atoi(dom_string_data(s));
+			إذا (err == DOM_NO_ERR && s != عدم) {
+				چوکاټ->margin_پلنوالی = atoi(dom_string_معلومات(s));
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_marginheight,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				frame->margin_height = atoi(dom_string_data(s));
+			إذا (err == DOM_NO_ERR && s != عدم) {
+				چوکاټ->margin_لوړوالی = atoi(dom_string_معلومات(s));
 				dom_string_unref(s);
 			}
 
 			err = dom_element_get_attribute(c, corestring_dom_bordercolor,
 					&s);
-			if (err == DOM_NO_ERR && s != NULL) {
+			إذا (err == DOM_NO_ERR && s != عدم) {
 				css_color color;
 
-				if (nscss_parse_colour(dom_string_data(s),
+				إذا (nscss_parse_رنګ(dom_string_معلومات(s),
 						&color))
-					frame->border_colour =
-						nscss_color_to_ns(color);
+					چوکاټ->border_رنګ =
+						nscss_color_منزل_ns(color);
 
 				dom_string_unref(s);
 			}
 
 			/* advance */
-			err = dom_node_get_next_sibling(c, &next);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
-				return false;
+			err = dom_غوټه_get_بل_sibling(c, &بل);
+			إذا (err != DOM_NO_ERR) {
+				dom_غوټه_unref(c);
+				أرجع false;
 			}
 
-			dom_node_unref(c);
-			c = next;
+			dom_غوټه_unref(c);
+			c = بل;
 		}
 	}
 
 	/* If the last child wasn't a frame, we still need to unref it */
-	if (c != NULL) {
-		dom_node_unref(c);
+	إذا (c != عدم) {
+		dom_غوټه_unref(c);
 	}
 
-	return true;
+	أرجع true;
 }
 
 
@@ -489,14 +489,14 @@ box_create_frameset(struct content_html_frames *f,
  * \param f The iframe params being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_iframes_talloc_destructor(struct content_html_iframe *f)
+ساكن صحيح box_iframes_talloc_destructor(بنية content_html_iframe *f)
 {
-	if (f->url != NULL) {
+	إذا (f->url != عدم) {
 		nsurl_unref(f->url);
-		f->url = NULL;
+		f->url = عدم;
 	}
 
-	return 0;
+	أرجع 0;
 }
 
 
@@ -512,41 +512,41 @@ static int box_iframes_talloc_destructor(struct content_html_iframe *f)
  * \note returning true does not imply that the attribute was found. If the
  * attribute was not found, *value will be unchanged.
  */
-static bool
-box_get_attribute(dom_node *n,
-		  const char *attribute,
-		  void *context,
-		  char **value)
+ساكن bool
+box_get_attribute(dom_غوټه *n,
+		  ثابت حرف *attribute,
+		  فراغ *context,
+		  حرف **ارزښت)
 {
-	char *result;
+	حرف *پایله;
 	dom_string *attr, *attr_name;
 	dom_exception err;
 
-	err = dom_string_create_interned((const uint8_t *) attribute,
-			strlen(attribute), &attr_name);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_string_create_interned((ثابت uint8_t *) attribute,
+			مزي_اوږدوالی(attribute), &attr_name);
+	إذا (err != DOM_NO_ERR)
+		أرجع false;
 
 	err = dom_element_get_attribute(n, attr_name, &attr);
-	if (err != DOM_NO_ERR) {
+	إذا (err != DOM_NO_ERR) {
 		dom_string_unref(attr_name);
-		return false;
+		أرجع false;
 	}
 
 	dom_string_unref(attr_name);
 
-	if (attr != NULL) {
-		result = talloc_strdup(context, dom_string_data(attr));
+	إذا (attr != عدم) {
+		پایله = talloc_strdup(context, dom_string_معلومات(attr));
 
 		dom_string_unref(attr);
 
-		if (result == NULL)
-			return false;
+		إذا (پایله == عدم)
+			أرجع false;
 
-		*value = result;
+		*ارزښت = پایله;
 	}
 
-	return true;
+	أرجع true;
 }
 
 
@@ -556,38 +556,38 @@ box_get_attribute(dom_node *n,
  * This is a load of hacks to ensure boxes replaced with textareas
  * can be handled by the layout code.
  */
-static bool
-box_input_text(html_content *html, struct box *box, struct dom_node *node)
+ساكن bool
+box_ننوت_متن(html_content *html, بنية box *box, بنية dom_غوټه *غوټه)
 {
-	struct box *inline_container, *inline_box;
+	بنية box *inline_container, *inline_box;
 	uint8_t display = css_computed_display_static(box->style);
 
-	switch (display) {
-	case CSS_DISPLAY_GRID:
-	case CSS_DISPLAY_FLEX:
-	case CSS_DISPLAY_BLOCK:
-		box->type = BOX_BLOCK;
-		break;
-	default:
-		box->type = BOX_INLINE_BLOCK;
-		break;
+	بدل (display) {
+	حالة CSS_DISPLAY_GRID:
+	حالة CSS_DISPLAY_FLEX:
+	حالة CSS_DISPLAY_بلاک:
+		box->type = BOX_بلاک;
+		اكسر;
+	افتراضي:
+		box->type = BOX_INLINE_بلاک;
+		اكسر;
 	}
 
-	inline_container = box_create(NULL, 0, false, 0, 0, 0, 0, html->bctx);
-	if (!inline_container)
-		return false;
+	inline_container = box_create(عدم, 0, false, 0, 0, 0, 0, html->bctx);
+	إذا (!inline_container)
+		أرجع false;
 	inline_container->type = BOX_INLINE_CONTAINER;
-	inline_box = box_create(NULL, box->style, false, 0, 0, box->title, 0,
+	inline_box = box_create(عدم, box->style, false, 0, 0, box->title, 0,
 			html->bctx);
-	if (!inline_box)
-		return false;
-	inline_box->type = BOX_TEXT;
-	inline_box->text = talloc_strdup(html->bctx, "");
+	إذا (!inline_box)
+		أرجع false;
+	inline_box->type = BOX_متن;
+	inline_box->متن = talloc_strdup(html->bctx, "");
 
-	box_add_child(inline_container, inline_box);
-	box_add_child(box, inline_container);
+	box_جمع_کړه_ماشوم(inline_container, inline_box);
+	box_جمع_کړه_ماشوم(box, inline_container);
 
-	return box_textarea_create_textarea(html, box, node);
+	أرجع box_textarea_create_textarea(html, box, غوټه);
 }
 
 
@@ -598,62 +598,62 @@ box_input_text(html_content *html, struct box *box, struct dom_node *node)
  * \param  n	    xml element node for &lt;option&gt;
  * \return  true on success, false on memory exhaustion
  */
-static bool box_select_add_option(struct form_control *control, dom_node *n)
+ساكن bool box_select_جمع_کړه_option(بنية form_control *control, dom_غوټه *n)
 {
-	char *value = NULL;
-	char *text = NULL;
-	char *text_nowrap = NULL;
+	حرف *ارزښت = عدم;
+	حرف *متن = عدم;
+	حرف *متن_nowrap = عدم;
 	bool selected;
 	dom_string *content, *s;
 	dom_exception err;
 
-	err = dom_node_get_text_content(n, &content);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_غوټه_get_متن_content(n, &content);
+	إذا (err != DOM_NO_ERR)
+		أرجع false;
 
-	if (content != NULL) {
-		text = squash_whitespace(dom_string_data(content));
+	إذا (content != عدم) {
+		متن = squash_whitespace(dom_string_معلومات(content));
 		dom_string_unref(content);
-	} else {
-		text = strdup("");
+	} وإلا {
+		متن = strdup("");
 	}
 
-	if (text == NULL)
-		goto no_memory;
+	إذا (متن == عدم)
+		اذهب no_حافظه;
 
-	err = dom_element_get_attribute(n, corestring_dom_value, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		value = strdup(dom_string_data(s));
+	err = dom_element_get_attribute(n, corestring_dom_ارزښت, &s);
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		ارزښت = strdup(dom_string_معلومات(s));
 		dom_string_unref(s);
-	} else {
-		value = strdup(text);
+	} وإلا {
+		ارزښت = strdup(متن);
 	}
 
-	if (value == NULL)
-		goto no_memory;
+	إذا (ارزښت == عدم)
+		اذهب no_حافظه;
 
-	if (dom_element_has_attribute(n, corestring_dom_selected, &selected) != DOM_NO_ERR) {
+	إذا (dom_element_has_attribute(n, corestring_dom_selected, &selected) != DOM_NO_ERR) {
 		/* Assume not selected if we can't read the attribute presence */
 		selected = false;
 	}
 
 	/* replace spaces/TABs with hard spaces to prevent line wrapping */
-	text_nowrap = cnv_space2nbsp(text);
-	if (text_nowrap == NULL)
-		goto no_memory;
+	متن_nowrap = cnv_space2nbsp(متن);
+	إذا (متن_nowrap == عدم)
+		اذهب no_حافظه;
 
-	if (form_add_option(control, value, text_nowrap, selected, n) == false)
-		goto no_memory;
+	إذا (form_جمع_کړه_option(control, ارزښت, متن_nowrap, selected, n) == false)
+		اذهب no_حافظه;
 
-	free(text);
+	حرر(متن);
 
-	return true;
+	أرجع true;
 
-no_memory:
-	free(value);
-	free(text);
-	free(text_nowrap);
-	return false;
+no_حافظه:
+	حرر(ارزښت);
+	حرر(متن);
+	حرر(متن_nowrap);
+	أرجع false;
 }
 
 
@@ -679,10 +679,10 @@ no_memory:
 /**
  * special element handler for Anchor [12.2].
  */
-static bool
-box_a(dom_node *n,
+ساكن bool
+box_a(dom_غوټه *n,
       html_content *content,
-      struct box *box,
+      بنية box *box,
       bool *convert_children)
 {
 	bool ok;
@@ -691,13 +691,13 @@ box_a(dom_node *n,
 	dom_exception err;
 
 	err = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		ok = box_extract_link(content, s, content->base_url, &url);
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		ok = box_ایستل_link(content, s, content->بنسټ_url, &url);
 		dom_string_unref(s);
-		if (!ok)
-			return false;
-		if (url) {
-			if (box->href != NULL)
+		إذا (!ok)
+			أرجع false;
+		إذا (url) {
+			إذا (box->href != عدم)
 				nsurl_unref(box->href);
 			box->href = url;
 		}
@@ -705,14 +705,14 @@ box_a(dom_node *n,
 
 	/* name and id share the same namespace */
 	err = dom_element_get_attribute(n, corestring_dom_name, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	إذا (err == DOM_NO_ERR && s != عدم) {
 		lwc_string *lwc_name;
 
 		err = dom_string_intern(s, &lwc_name);
 
 		dom_string_unref(s);
 
-		if (err == DOM_NO_ERR) {
+		إذا (err == DOM_NO_ERR) {
 			/* name replaces existing id
 			 * TODO: really? */
 			lwc_string_unref(box->id);
@@ -721,126 +721,126 @@ box_a(dom_node *n,
 	}
 
 	/* target frame [16.3] */
-	err = dom_element_get_attribute(n, corestring_dom_target, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	err = dom_element_get_attribute(n, corestring_dom_موخه, &s);
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		إذا (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__blank))
-			box->target = "_blank";
-		else if (dom_string_caseless_lwc_isequal(s,
-				corestring_lwc__top))
-			box->target = "_top";
-		else if (dom_string_caseless_lwc_isequal(s,
-				corestring_lwc__parent))
-			box->target = "_parent";
-		else if (dom_string_caseless_lwc_isequal(s,
+			box->موخه = "_blank";
+		وإلا إذا (dom_string_caseless_lwc_isequal(s,
+				corestring_lwc_سر_2))
+			box->موخه = "_top";
+		وإلا إذا (dom_string_caseless_lwc_isequal(s,
+				corestring_lwc_پلار))
+			box->موخه = "_parent";
+		وإلا إذا (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc__self))
 			/* the default may have been overridden by a
 			 * <base target=...>, so this is different to 0 */
-			box->target = "_self";
-		else {
+			box->موخه = "_self";
+		وإلا {
 			/* 6.16 says that frame names must begin with [a-zA-Z]
 			 * This doesn't match reality, so just take anything */
-			box->target = talloc_strdup(content->bctx,
-					dom_string_data(s));
-			if (!box->target) {
+			box->موخه = talloc_strdup(content->bctx,
+					dom_string_معلومات(s));
+			إذا (!box->موخه) {
 				dom_string_unref(s);
-				return false;
+				أرجع false;
 			}
 		}
 		dom_string_unref(s);
 	}
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Document body special element handler [7.5.1].
  */
-static bool
-box_body(dom_node *n,
+ساكن bool
+box_body(dom_غوټه *n,
 	 html_content *content,
-	 struct box *box,
+	 بنية box *box,
 	 bool *convert_children)
 {
 	css_color color;
 
 	css_computed_background_color(box->style, &color);
-	if (nscss_color_is_transparent(color)) {
-		content->background_colour = NS_TRANSPARENT;
-	} else {
-		content->background_colour = nscss_color_to_ns(color);
+	إذا (nscss_color_is_transparent(color)) {
+		content->background_رنګ = NS_TRANSPARENT;
+	} وإلا {
+		content->background_رنګ = nscss_color_منزل_ns(color);
 	}
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * special element handler for forced line break [9.3.2].
  */
-static bool
-box_br(dom_node *n,
+ساكن bool
+box_br(dom_غوټه *n,
        html_content *content,
-       struct box *box,
+       بنية box *box,
        bool *convert_children)
 {
 	box->type = BOX_BR;
-	return true;
+	أرجع true;
 }
 
 
 /**
  * special element handler for Push button [17.5].
  */
-static bool
-box_button(dom_node *n,
+ساكن bool
+box_button(dom_غوټه *n,
 	   html_content *content,
-	   struct box *box,
+	   بنية box *box,
 	   bool *convert_children)
 {
-	struct form_control *gadget;
+	بنية form_control *gadget;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (!gadget)
-		return false;
+	gadget = html_forms_get_control_for_غوټه(content->forms, n);
+	إذا (!gadget)
+		أرجع false;
 
 	gadget->html = content;
 	box->gadget = gadget;
 	box->flags |= IS_REPLACED;
 	gadget->box = box;
 
-	box->type = BOX_INLINE_BLOCK;
+	box->type = BOX_INLINE_بلاک;
 
 	/* Just render the contents */
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Canvas element
  */
-static bool
-box_canvas(dom_node *n,
+ساكن bool
+box_canvas(dom_غوټه *n,
 	     html_content *content,
-	     struct box *box,
+	     بنية box *box,
 	     bool *convert_children)
 {
 	/* If scripting is not enabled display the contents of canvas */
-	if (!content->enable_scripting) {
-		return true;
+	إذا (!content->enable_scripting) {
+		أرجع true;
 	}
 	*convert_children = false;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	إذا (box->style && ns_computed_display(box->style,
+			box_is_ریښه(n)) == CSS_DISPLAY_NONE)
+		أرجع true;
 
 	/* This is replaced content */
 	box->flags |= IS_REPLACED | REPLACE_DIM;
 
-	return true;
+	أرجع true;
 }
 
 
@@ -848,124 +848,124 @@ box_canvas(dom_node *n,
  * Embedded object (not in any HTML specification:
  * see http://wp.netscape.com/assist/net_sites/new_html3_prop.html )
  */
-static bool
-box_embed(dom_node *n,
+ساكن bool
+box_embed(dom_غوټه *n,
 	  html_content *content,
-	  struct box *box,
+	  بنية box *box,
 	  bool *convert_children)
 {
-	struct object_params *params;
-	struct object_param *param;
+	بنية object_params *params;
+	بنية object_param *param;
 	dom_namednodemap *attrs;
-	unsigned long idx;
-	uint32_t num_attrs;
+	بینښه اوږد idx;
+	uint32_t عدد_attrs;
 	dom_string *src;
 	dom_exception err;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	إذا (box->style && ns_computed_display(box->style,
+			box_is_ریښه(n)) == CSS_DISPLAY_NONE)
+		أرجع true;
 
-	params = talloc(content->bctx, struct object_params);
-	if (params == NULL)
-		return false;
+	params = talloc(content->bctx, بنية object_params);
+	إذا (params == عدم)
+		أرجع false;
 
-	talloc_set_destructor(params, box_object_talloc_destructor);
+	talloc_سېټ_destructor(params, box_object_talloc_destructor);
 
-	params->data = NULL;
-	params->type = NULL;
-	params->codetype = NULL;
-	params->codebase = NULL;
-	params->classid = NULL;
-	params->params = NULL;
+	params->معلومات = عدم;
+	params->type = عدم;
+	params->codetype = عدم;
+	params->codebase = عدم;
+	params->classid = عدم;
+	params->params = عدم;
 
 	/* src is a URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &src);
-	if (err != DOM_NO_ERR || src == NULL)
-		return true;
-	if (box_extract_link(content, src, content->base_url,
-			     &params->data) == false) {
+	إذا (err != DOM_NO_ERR || src == عدم)
+		أرجع true;
+	إذا (box_ایستل_link(content, src, content->بنسټ_url,
+			     &params->معلومات) == false) {
 		dom_string_unref(src);
-		return false;
+		أرجع false;
 	}
 
 	dom_string_unref(src);
 
-	if (params->data == NULL)
-		return true;
+	إذا (params->معلومات == عدم)
+		أرجع true;
 
 	/* Don't include ourself */
-	if (nsurl_compare(content->base_url, params->data, NSURL_COMPLETE))
-		return true;
+	إذا (nsurl_compare(content->بنسټ_url, params->معلومات, NSURL_COMPLETE))
+		أرجع true;
 
 	/* add attributes as parameters to linked list */
-	err = dom_node_get_attributes(n, &attrs);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_غوټه_get_ځانګړتیاوې(n, &attrs);
+	إذا (err != DOM_NO_ERR)
+		أرجع false;
 
-	err = dom_namednodemap_get_length(attrs, &num_attrs);
-	if (err != DOM_NO_ERR) {
+	err = dom_namednodemap_get_اوږدتیا(attrs, &عدد_attrs);
+	إذا (err != DOM_NO_ERR) {
 		dom_namednodemap_unref(attrs);
-		return false;
+		أرجع false;
 	}
 
-	for (idx = 0; idx < num_attrs; idx++) {
+	لكل (idx = 0; idx < عدد_attrs; idx++) {
 		dom_attr *attr;
-		dom_string *name, *value;
+		dom_string *name, *ارزښت;
 
-		err = dom_namednodemap_item(attrs, idx, (void *) &attr);
-		if (err != DOM_NO_ERR) {
+		err = dom_namednodemap_توکی(attrs, idx, (فراغ *) &attr);
+		إذا (err != DOM_NO_ERR) {
 			dom_namednodemap_unref(attrs);
-			return false;
+			أرجع false;
 		}
 
 		err = dom_attr_get_name(attr, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(attr);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(attr);
 			dom_namednodemap_unref(attrs);
-			return false;
+			أرجع false;
 		}
 
-		if (dom_string_caseless_lwc_isequal(name, corestring_lwc_src)) {
-			dom_node_unref(attr);
+		إذا (dom_string_caseless_lwc_isequal(name, corestring_lwc_src)) {
+			dom_غوټه_unref(attr);
 			dom_string_unref(name);
-			continue;
+			استمر;
 		}
 
-		err = dom_attr_get_value(attr, &value);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(attr);
-			dom_string_unref(name);
-			dom_namednodemap_unref(attrs);
-			return false;
-		}
-
-		param = talloc(content->bctx, struct object_param);
-		if (param == NULL) {
-			dom_node_unref(attr);
-			dom_string_unref(value);
+		err = dom_attr_get_ارزښت(attr, &ارزښت);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(attr);
 			dom_string_unref(name);
 			dom_namednodemap_unref(attrs);
-			return false;
+			أرجع false;
 		}
 
-		param->name = talloc_strdup(content->bctx, dom_string_data(name));
-		param->value = talloc_strdup(content->bctx, dom_string_data(value));
-		param->type = NULL;
+		param = talloc(content->bctx, بنية object_param);
+		إذا (param == عدم) {
+			dom_غوټه_unref(attr);
+			dom_string_unref(ارزښت);
+			dom_string_unref(name);
+			dom_namednodemap_unref(attrs);
+			أرجع false;
+		}
+
+		param->name = talloc_strdup(content->bctx, dom_string_معلومات(name));
+		param->ارزښت = talloc_strdup(content->bctx, dom_string_معلومات(ارزښت));
+		param->type = عدم;
 		param->valuetype = talloc_strdup(content->bctx, "data");
-		param->next = NULL;
+		param->بل = عدم;
 
-		dom_string_unref(value);
+		dom_string_unref(ارزښت);
 		dom_string_unref(name);
-		dom_node_unref(attr);
+		dom_غوټه_unref(attr);
 
-		if (param->name == NULL || param->value == NULL ||
-				param->valuetype == NULL) {
+		إذا (param->name == عدم || param->ارزښت == عدم ||
+				param->valuetype == عدم) {
 			dom_namednodemap_unref(attrs);
-			return false;
+			أرجع false;
 		}
 
-		param->next = params->params;
+		param->بل = params->params;
 		params->params = param;
 	}
 
@@ -975,275 +975,275 @@ box_embed(dom_node *n,
 
 	/* start fetch */
 	box->flags |= IS_REPLACED;
-	return html_fetch_object(content, params->data, box, CONTENT_ANY, false);
+	أرجع html_fetch_object(content, params->معلومات, box, CONTENT_ANY, false);
 }
 
 
 /**
  * Window subdivision [16.2.1].
  */
-static bool
-box_frameset(dom_node *n,
+ساكن bool
+box_frameset(dom_غوټه *n,
 	     html_content *content,
-	     struct box *box,
+	     بنية box *box,
 	     bool *convert_children)
 {
 	bool ok;
 
-	if (content->frameset) {
+	إذا (content->frameset) {
 		NSLOG(netsurf, INFO, "Error: multiple framesets in document.");
 		/* Don't convert children */
-		if (convert_children)
+		إذا (convert_children)
 			*convert_children = false;
 		/* And ignore this spurious frameset */
 		box->type = BOX_NONE;
-		return true;
+		أرجع true;
 	}
 
 	content->frameset = talloc_zero(content->bctx,
-					struct content_html_frames);
-	if (!content->frameset) {
-		return false;
+					بنية content_html_چوکاټونه);
+	إذا (!content->frameset) {
+		أرجع false;
 	}
 
 	ok = box_create_frameset(content->frameset, n, content);
-	if (ok) {
+	إذا (ok) {
 		box->type = BOX_NONE;
 	}
 
-	if (convert_children) {
+	إذا (convert_children) {
 		*convert_children = false;
 	}
-	return ok;
+	أرجع ok;
 }
 
 
 /**
  * Inline subwindow [16.5].
  */
-static bool
-box_iframe(dom_node *n,
+ساكن bool
+box_iframe(dom_غوټه *n,
 	   html_content *content,
-	   struct box *box,
+	   بنية box *box,
 	   bool *convert_children)
 {
 	nsurl *url;
 	dom_string *s;
 	dom_exception err;
-	struct content_html_iframe *iframe;
-	int i;
+	بنية content_html_iframe *iframe;
+	صحيح i;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	إذا (box->style && ns_computed_display(box->style,
+			box_is_ریښه(n)) == CSS_DISPLAY_NONE)
+		أرجع true;
 
-	if (box->style &&
+	إذا (box->style &&
 	    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
 		/* Don't create iframe discriptors for invisible iframes
 		 * TODO: handle hidden iframes at browser_window generation
 		 * time instead? */
-		return true;
+		أرجع true;
 	}
 
 	/* get frame URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &s);
-	if (err != DOM_NO_ERR || s == NULL)
-		return true;
-	if (box_extract_link(content, s, content->base_url, &url) == false) {
+	إذا (err != DOM_NO_ERR || s == عدم)
+		أرجع true;
+	إذا (box_ایستل_link(content, s, content->بنسټ_url, &url) == false) {
 		dom_string_unref(s);
-		return false;
+		أرجع false;
 	}
 	dom_string_unref(s);
-	if (url == NULL)
-		return true;
+	إذا (url == عدم)
+		أرجع true;
 
 	/* don't include ourself */
-	if (nsurl_compare(content->base_url, url, NSURL_COMPLETE)) {
+	إذا (nsurl_compare(content->بنسټ_url, url, NSURL_COMPLETE)) {
 		nsurl_unref(url);
-		return true;
+		أرجع true;
 	}
 
 	/* create a new iframe */
-	iframe = talloc(content->bctx, struct content_html_iframe);
-	if (iframe == NULL) {
+	iframe = talloc(content->bctx, بنية content_html_iframe);
+	إذا (iframe == عدم) {
 		nsurl_unref(url);
-		return false;
+		أرجع false;
 	}
 
-	talloc_set_destructor(iframe, box_iframes_talloc_destructor);
+	talloc_سېټ_destructor(iframe, box_iframes_talloc_destructor);
 
 	iframe->box = box;
-	iframe->margin_width = 0;
-	iframe->margin_height = 0;
-	iframe->name = NULL;
+	iframe->margin_پلنوالی = 0;
+	iframe->margin_لوړوالی = 0;
+	iframe->name = عدم;
 	iframe->url = url;
 	iframe->scrolling = BW_SCROLLING_AUTO;
 	iframe->border = true;
 
 	/* Add this iframe to the linked list of iframes */
-	iframe->next = content->iframe;
+	iframe->بل = content->iframe;
 	content->iframe = iframe;
 
 	/* fill in specified values */
 	err = dom_element_get_attribute(n, corestring_dom_name, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		iframe->name = talloc_strdup(content->bctx, dom_string_data(s));
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		iframe->name = talloc_strdup(content->bctx, dom_string_معلومات(s));
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_frameborder, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		i = atoi(dom_string_data(s));
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		i = atoi(dom_string_معلومات(s));
 		iframe->border = (i != 0);
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_bordercolor, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
+	إذا (err == DOM_NO_ERR && s != عدم) {
 		css_color color;
 
-		if (nscss_parse_colour(dom_string_data(s), &color))
-			iframe->border_colour = nscss_color_to_ns(color);
+		إذا (nscss_parse_رنګ(dom_string_معلومات(s), &color))
+			iframe->border_رنګ = nscss_color_منزل_ns(color);
 
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_scrolling, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		if (dom_string_caseless_lwc_isequal(s,
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		إذا (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_yes))
 			iframe->scrolling = BW_SCROLLING_YES;
-		else if (dom_string_caseless_lwc_isequal(s,
+		وإلا إذا (dom_string_caseless_lwc_isequal(s,
 				corestring_lwc_no))
 			iframe->scrolling = BW_SCROLLING_NO;
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_marginwidth, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		iframe->margin_width = atoi(dom_string_data(s));
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		iframe->margin_پلنوالی = atoi(dom_string_معلومات(s));
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(n, corestring_dom_marginheight, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		iframe->margin_height = atoi(dom_string_data(s));
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		iframe->margin_لوړوالی = atoi(dom_string_معلومات(s));
 		dom_string_unref(s);
 	}
 
 	/* box */
-	assert(box->style);
+	أكد(box->style);
 	box->flags |= IFRAME;
 	box->flags |= IS_REPLACED;
 
 	/* Showing iframe, so don't show alternate content */
-	if (convert_children)
+	إذا (convert_children)
 		*convert_children = false;
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Embedded image [13.2].
  */
-static bool
-box_image(dom_node *n,
+ساكن bool
+box_image(dom_غوټه *n,
 	  html_content *content,
-	  struct box *box,
+	  بنية box *box,
 	  bool *convert_children)
 {
 	bool ok;
 	dom_string *s;
 	dom_exception err;
 	nsurl *url;
-	enum css_width_e wtype;
-	enum css_height_e htype;
-	css_fixed value = 0;
+	تعداد css_پلنوالی_e wtype;
+	تعداد css_لوړوالی_e htype;
+	css_fixed ارزښت = 0;
 	css_unit wunit = CSS_UNIT_PX;
 	css_unit hunit = CSS_UNIT_PX;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	إذا (box->style && ns_computed_display(box->style,
+			box_is_ریښه(n)) == CSS_DISPLAY_NONE)
+		أرجع true;
 
 	/* handle alt text */
 	err = dom_element_get_attribute(n, corestring_dom_alt, &s);
-	if (err == DOM_NO_ERR && s != NULL) {
-		char *alt = squash_whitespace(dom_string_data(s));
+	إذا (err == DOM_NO_ERR && s != عدم) {
+		حرف *alt = squash_whitespace(dom_string_معلومات(s));
 		dom_string_unref(s);
-		if (alt == NULL)
-			return false;
-		box->text = talloc_strdup(content->bctx, alt);
-		free(alt);
-		if (box->text == NULL)
-			return false;
-		box->length = strlen(box->text);
+		إذا (alt == عدم)
+			أرجع false;
+		box->متن = talloc_strdup(content->bctx, alt);
+		حرر(alt);
+		إذا (box->متن == عدم)
+			أرجع false;
+		box->اوږدتیا = مزي_اوږدوالی(box->متن);
 	}
 
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	إذا (nsoption_bool(foreground_images) == false) {
+		أرجع true;
 	}
 
 	/* imagemap associated with this image */
-	if (!box_get_attribute(n, "usemap", content->bctx, &box->usemap))
-		return false;
-	if (box->usemap && box->usemap[0] == '#')
+	إذا (!box_get_attribute(n, "usemap", content->bctx, &box->usemap))
+		أرجع false;
+	إذا (box->usemap && box->usemap[0] == '#')
 		box->usemap++;
 
 	/* get image URL */
 	err = dom_element_get_attribute(n, corestring_dom_src, &s);
-	if (err != DOM_NO_ERR || s == NULL)
-		return true;
+	إذا (err != DOM_NO_ERR || s == عدم)
+		أرجع true;
 
-	if (box_extract_link(content, s, content->base_url, &url) == false) {
+	إذا (box_ایستل_link(content, s, content->بنسټ_url, &url) == false) {
 		dom_string_unref(s);
-		return false;
+		أرجع false;
 	}
 
 	dom_string_unref(s);
 
-	if (url == NULL)
-		return true;
+	إذا (url == عدم)
+		أرجع true;
 
 	/* start fetch */
 	box->flags |= IS_REPLACED;
 	ok = html_fetch_object(content, url, box, image_types, false);
 	nsurl_unref(url);
 
-	wtype = css_computed_width(box->style, &value, &wunit);
-	htype = css_computed_height(box->style, &value, &hunit);
+	wtype = css_computed_پلنوالی(box->style, &ارزښت, &wunit);
+	htype = css_computed_لوړوالی(box->style, &ارزښت, &hunit);
 
-	if (wtype == CSS_WIDTH_SET &&
+	إذا (wtype == CSS_پلنوالی_سېټ &&
 	    wunit != CSS_UNIT_PCT &&
-	    htype == CSS_HEIGHT_SET &&
+	    htype == CSS_لوړوالی_سېټ &&
 	    hunit != CSS_UNIT_PCT) {
 		/* We know the dimensions the image will be shown at
 		 * before it's fetched. */
 		box->flags |= REPLACE_DIM;
 	}
 
-	return ok;
+	أرجع ok;
 }
 
 
 /**
  * Form control [17.4].
  */
-static bool
-box_input(dom_node *n,
+ساكن bool
+box_ننوت(dom_غوټه *n,
 	  html_content *content,
-	  struct box *box,
+	  بنية box *box,
 	  bool *convert_children)
 {
-	struct form_control *gadget;
-	dom_string *type = NULL;
+	بنية form_control *gadget;
+	dom_string *type = عدم;
 	dom_exception err;
 	nsurl *url;
 	nserror error;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (gadget == NULL) {
-		return false;
+	gadget = html_forms_get_control_for_غوټه(content->forms, n);
+	إذا (gadget == عدم) {
+		أرجع false;
 	}
 
 	box->gadget = gadget;
@@ -1253,593 +1253,593 @@ box_input(dom_node *n,
 
 	/* get entry type */
 	err = dom_element_get_attribute(n, corestring_dom_type, &type);
-	if ((err != DOM_NO_ERR) || (type == NULL)) {
+	إذا ((err != DOM_NO_ERR) || (type == عدم)) {
 		/* no type so "text" is assumed */
-		if (box_input_text(content, box, n) == false) {
-			return false;
+		إذا (box_ننوت_متن(content, box, n) == false) {
+			أرجع false;
 		}
 		*convert_children = false;
-		return true;
+		أرجع true;
 	}
 
-	if (dom_string_caseless_lwc_isequal(type, corestring_lwc_password)) {
-		if (box_input_text(content, box, n) == false)
-			goto no_memory;
+	إذا (dom_string_caseless_lwc_isequal(type, corestring_lwc_password)) {
+		إذا (box_ننوت_متن(content, box, n) == false)
+			اذهب no_حافظه;
 
-	} else if (dom_string_caseless_lwc_isequal(type, corestring_lwc_file)) {
-		box->type = BOX_INLINE_BLOCK;
+	} وإلا إذا (dom_string_caseless_lwc_isequal(type, corestring_lwc_file)) {
+		box->type = BOX_INLINE_بلاک;
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} وإلا إذا (dom_string_caseless_lwc_isequal(type,
 			corestring_lwc_hidden)) {
 		/* no box for hidden inputs */
 		box->type = BOX_NONE;
 
-	} else if ((dom_string_caseless_lwc_isequal(type,
+	} وإلا إذا ((dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_checkbox) ||
 			dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_radio))) {
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} وإلا إذا (dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_submit) ||
 			dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_reset) ||
 			dom_string_caseless_lwc_isequal(type,
 				corestring_lwc_button)) {
-		struct box *inline_container, *inline_box;
+		بنية box *inline_container, *inline_box;
 
-		if (box_button(n, content, box, 0) == false)
-			goto no_memory;
+		إذا (box_button(n, content, box, 0) == false)
+			اذهب no_حافظه;
 
-		inline_container = box_create(NULL, 0, false, 0, 0, 0, 0,
+		inline_container = box_create(عدم, 0, false, 0, 0, 0, 0,
 				content->bctx);
-		if (inline_container == NULL)
-			goto no_memory;
+		إذا (inline_container == عدم)
+			اذهب no_حافظه;
 
 		inline_container->type = BOX_INLINE_CONTAINER;
 
-		inline_box = box_create(NULL, box->style, false, 0, 0,
+		inline_box = box_create(عدم, box->style, false, 0, 0,
 				box->title, 0, content->bctx);
-		if (inline_box == NULL)
-			goto no_memory;
+		إذا (inline_box == عدم)
+			اذهب no_حافظه;
 
-		inline_box->type = BOX_TEXT;
+		inline_box->type = BOX_متن;
 
-		if (box->gadget->value != NULL)
-			inline_box->text = talloc_strdup(content->bctx,
-					box->gadget->value);
-		else if (box->gadget->type == GADGET_SUBMIT)
-			inline_box->text = talloc_strdup(content->bctx,
+		إذا (box->gadget->ارزښت != عدم)
+			inline_box->متن = talloc_strdup(content->bctx,
+					box->gadget->ارزښت);
+		وإلا إذا (box->gadget->type == GADGET_SUBMIT)
+			inline_box->متن = talloc_strdup(content->bctx,
 					messages_get("Form_Submit"));
-		else if (box->gadget->type == GADGET_RESET)
-			inline_box->text = talloc_strdup(content->bctx,
+		وإلا إذا (box->gadget->type == GADGET_RESET)
+			inline_box->متن = talloc_strdup(content->bctx,
 					messages_get("Form_Reset"));
-		else
-			inline_box->text = talloc_strdup(content->bctx,
+		وإلا
+			inline_box->متن = talloc_strdup(content->bctx,
 							 "Button");
 
-		if (inline_box->text == NULL)
-			goto no_memory;
+		إذا (inline_box->متن == عدم)
+			اذهب no_حافظه;
 
-		inline_box->length = strlen(inline_box->text);
+		inline_box->اوږدتیا = مزي_اوږدوالی(inline_box->متن);
 
-		box_add_child(inline_container, inline_box);
+		box_جمع_کړه_ماشوم(inline_container, inline_box);
 
-		box_add_child(box, inline_container);
+		box_جمع_کړه_ماشوم(box, inline_container);
 
-	} else if (dom_string_caseless_lwc_isequal(type,
+	} وإلا إذا (dom_string_caseless_lwc_isequal(type,
 						   corestring_lwc_image)) {
 		gadget->type = GADGET_IMAGE;
 
-		if (box->style && ns_computed_display(box->style,
-				box_is_root(n)) != CSS_DISPLAY_NONE &&
+		إذا (box->style && ns_computed_display(box->style,
+				box_is_ریښه(n)) != CSS_DISPLAY_NONE &&
 				nsoption_bool(foreground_images) == true) {
 			dom_string *s;
 
 			err = dom_element_get_attribute(n, corestring_dom_src, &s);
-			if (err == DOM_NO_ERR && s != NULL) {
-				error = nsurl_join(content->base_url,
-						dom_string_data(s), &url);
+			إذا (err == DOM_NO_ERR && s != عدم) {
+				error = nsurl_join(content->بنسټ_url,
+						dom_string_معلومات(s), &url);
 				dom_string_unref(s);
-				if (error != NSERROR_OK)
-					goto no_memory;
+				إذا (error != NSERROR_OK)
+					اذهب no_حافظه;
 
 				/* if url is equivalent to the parent's url,
 				 * we've got infinite inclusion. stop it here
 				 */
-				if (nsurl_compare(url, content->base_url,
+				إذا (nsurl_compare(url, content->بنسټ_url,
 						NSURL_COMPLETE) == false) {
-					if (!html_fetch_object(content,
+					إذا (!html_fetch_object(content,
 							       url,
 							       box,
 							       image_types,
 							       false)) {
 						nsurl_unref(url);
-						goto no_memory;
+						اذهب no_حافظه;
 					}
 				}
 				nsurl_unref(url);
 			}
 		}
-	} else {
+	} وإلا {
 		/* unhandled type the default is "text" */
-		if (box_input_text(content, box, n) == false)
-			goto no_memory;
+		إذا (box_ننوت_متن(content, box, n) == false)
+			اذهب no_حافظه;
 	}
 
 	dom_string_unref(type);
 
 	*convert_children = false;
 
-	return true;
+	أرجع true;
 
-no_memory:
+no_حافظه:
 	dom_string_unref(type);
 
-	return false;
+	أرجع false;
 }
 
 
 /**
  * Noscript element
  */
-static bool
-box_noscript(dom_node *n,
+ساكن bool
+box_noscript(dom_غوټه *n,
 	     html_content *content,
-	     struct box *box,
+	     بنية box *box,
 	     bool *convert_children)
 {
 	/* If scripting is enabled, do not display the contents of noscript */
-	if (content->enable_scripting) {
+	إذا (content->enable_scripting) {
 		*convert_children = false;
 	}
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Generic embedded object [13.3].
  */
-static bool
-box_object(dom_node *n,
+ساكن bool
+box_object(dom_غوټه *n,
 	   html_content *content,
-	   struct box *box,
+	   بنية box *box,
 	   bool *convert_children)
 {
-	struct object_params *params;
-	struct object_param *param;
-	dom_string *codebase, *classid, *data;
-	dom_node *c;
+	بنية object_params *params;
+	بنية object_param *param;
+	dom_string *codebase, *classid, *معلومات;
+	dom_غوټه *c;
 	dom_exception err;
 
-	if (box->style && ns_computed_display(box->style,
-			box_is_root(n)) == CSS_DISPLAY_NONE)
-		return true;
+	إذا (box->style && ns_computed_display(box->style,
+			box_is_ریښه(n)) == CSS_DISPLAY_NONE)
+		أرجع true;
 
-	if (box_get_attribute(n, "usemap", content->bctx, &box->usemap) ==
+	إذا (box_get_attribute(n, "usemap", content->bctx, &box->usemap) ==
 			false)
-		return false;
-	if (box->usemap && box->usemap[0] == '#')
+		أرجع false;
+	إذا (box->usemap && box->usemap[0] == '#')
 		box->usemap++;
 
-	params = talloc(content->bctx, struct object_params);
-	if (params == NULL)
-		return false;
+	params = talloc(content->bctx, بنية object_params);
+	إذا (params == عدم)
+		أرجع false;
 
-	talloc_set_destructor(params, box_object_talloc_destructor);
+	talloc_سېټ_destructor(params, box_object_talloc_destructor);
 
-	params->data = NULL;
-	params->type = NULL;
-	params->codetype = NULL;
-	params->codebase = NULL;
-	params->classid = NULL;
-	params->params = NULL;
+	params->معلومات = عدم;
+	params->type = عدم;
+	params->codetype = عدم;
+	params->codebase = عدم;
+	params->classid = عدم;
+	params->params = عدم;
 
 	/* codebase, classid, and data are URLs
 	 * (codebase is the base for the other two) */
 	err = dom_element_get_attribute(n, corestring_dom_codebase, &codebase);
-	if (err == DOM_NO_ERR && codebase != NULL) {
-		if (box_extract_link(content, codebase,	content->base_url,
+	إذا (err == DOM_NO_ERR && codebase != عدم) {
+		إذا (box_ایستل_link(content, codebase,	content->بنسټ_url,
 				&params->codebase) == false) {
 			dom_string_unref(codebase);
-			return false;
+			أرجع false;
 		}
 		dom_string_unref(codebase);
 	}
-	if (params->codebase == NULL)
-		params->codebase = nsurl_ref(content->base_url);
+	إذا (params->codebase == عدم)
+		params->codebase = nsurl_ref(content->بنسټ_url);
 
 	err = dom_element_get_attribute(n, corestring_dom_classid, &classid);
-	if (err == DOM_NO_ERR && classid != NULL) {
-		if (box_extract_link(content, classid,
+	إذا (err == DOM_NO_ERR && classid != عدم) {
+		إذا (box_ایستل_link(content, classid,
 				params->codebase, &params->classid) == false) {
 			dom_string_unref(classid);
-			return false;
+			أرجع false;
 		}
 		dom_string_unref(classid);
 	}
 
-	err = dom_element_get_attribute(n, corestring_dom_data, &data);
-	if (err == DOM_NO_ERR && data != NULL) {
-		if (box_extract_link(content, data,
-				params->codebase, &params->data) == false) {
-			dom_string_unref(data);
-			return false;
+	err = dom_element_get_attribute(n, corestring_dom_معلومات, &معلومات);
+	إذا (err == DOM_NO_ERR && معلومات != عدم) {
+		إذا (box_ایستل_link(content, معلومات,
+				params->codebase, &params->معلومات) == false) {
+			dom_string_unref(معلومات);
+			أرجع false;
 		}
-		dom_string_unref(data);
+		dom_string_unref(معلومات);
 	}
 
-	if (params->classid == NULL && params->data == NULL)
+	إذا (params->classid == عدم && params->معلومات == عدم)
 		/* nothing to embed; ignore */
-		return true;
+		أرجع true;
 
 	/* Don't include ourself */
-	if (params->classid != NULL && nsurl_compare(content->base_url,
+	إذا (params->classid != عدم && nsurl_compare(content->بنسټ_url,
 			params->classid, NSURL_COMPLETE))
-		return true;
+		أرجع true;
 
-	if (params->data != NULL && nsurl_compare(content->base_url,
-			params->data, NSURL_COMPLETE))
-		return true;
+	إذا (params->معلومات != عدم && nsurl_compare(content->بنسټ_url,
+			params->معلومات, NSURL_COMPLETE))
+		أرجع true;
 
 	/* codetype and type are MIME types */
-	if (box_get_attribute(n, "codetype", params,
+	إذا (box_get_attribute(n, "codetype", params,
 			&params->codetype) == false)
-		return false;
-	if (box_get_attribute(n, "type", params, &params->type) == false)
-		return false;
+		أرجع false;
+	إذا (box_get_attribute(n, "type", params, &params->type) == false)
+		أرجع false;
 
 	/* classid && !data => classid is used (consult codetype)
 	 * (classid || !classid) && data => data is used (consult type)
 	 * !classid && !data => invalid; ignored */
 
-	if (params->classid != NULL && params->data == NULL &&
-			params->codetype != NULL) {
+	إذا (params->classid != عدم && params->معلومات == عدم &&
+			params->codetype != عدم) {
 		lwc_string *icodetype;
 		lwc_error lerror;
 
 		lerror = lwc_intern_string(params->codetype,
-				strlen(params->codetype), &icodetype);
-		if (lerror != lwc_error_ok)
-			return false;
+				مزي_اوږدوالی(params->codetype), &icodetype);
+		إذا (lerror != lwc_error_ok)
+			أرجع false;
 
-		if (content_factory_type_from_mime_type(icodetype) ==
+		إذا (content_factory_type_from_mime_type(icodetype) ==
 				CONTENT_NONE) {
 			/* can't handle this MIME type */
 			lwc_string_unref(icodetype);
-			return true;
+			أرجع true;
 		}
 
 		lwc_string_unref(icodetype);
 	}
 
-	if (params->data != NULL && params->type != NULL) {
+	إذا (params->معلومات != عدم && params->type != عدم) {
 		lwc_string *itype;
 		lwc_error lerror;
 
-		lerror = lwc_intern_string(params->type, strlen(params->type),
+		lerror = lwc_intern_string(params->type, مزي_اوږدوالی(params->type),
 				&itype);
-		if (lerror != lwc_error_ok)
-			return false;
+		إذا (lerror != lwc_error_ok)
+			أرجع false;
 
-		if (content_factory_type_from_mime_type(itype) ==
+		إذا (content_factory_type_from_mime_type(itype) ==
 				CONTENT_NONE) {
 			/* can't handle this MIME type */
 			lwc_string_unref(itype);
-			return true;
+			أرجع true;
 		}
 
 		lwc_string_unref(itype);
 	}
 
 	/* add parameters to linked list */
-	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_غوټه_get_لومړی_ماشوم(n, &c);
+	إذا (err != DOM_NO_ERR)
+		أرجع false;
 
-	while (c != NULL) {
-		dom_node *next;
-		dom_node_type type;
+	طالما (c != عدم) {
+		dom_غوټه *بل;
+		dom_غوټه_type type;
 
-		err = dom_node_get_node_type(c, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
-			return false;
+		err = dom_غوټه_get_غوټه_type(c, &type);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(c);
+			أرجع false;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
+		إذا (type == DOM_ELEMENT_غوټه) {
 			dom_string *name;
 
-			err = dom_node_get_node_name(c, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
-				return false;
+			err = dom_غوټه_get_غوټه_name(c, &name);
+			إذا (err != DOM_NO_ERR) {
+				dom_غوټه_unref(c);
+				أرجع false;
 			}
 
-			if (!dom_string_caseless_lwc_isequal(name,
+			إذا (!dom_string_caseless_lwc_isequal(name,
 					corestring_lwc_param)) {
 				/* The first non-param child is the start of
 				 * the alt html. Therefore, we should break
 				 * out of this loop. */
 				dom_string_unref(name);
-				dom_node_unref(c);
-				break;
+				dom_غوټه_unref(c);
+				اكسر;
 			}
 			dom_string_unref(name);
 
-			param = talloc(params, struct object_param);
-			if (param == NULL) {
-				dom_node_unref(c);
-				return false;
+			param = talloc(params, بنية object_param);
+			إذا (param == عدم) {
+				dom_غوټه_unref(c);
+				أرجع false;
 			}
-			param->name = NULL;
-			param->value = NULL;
-			param->type = NULL;
-			param->valuetype = NULL;
-			param->next = NULL;
+			param->name = عدم;
+			param->ارزښت = عدم;
+			param->type = عدم;
+			param->valuetype = عدم;
+			param->بل = عدم;
 
-			if (box_get_attribute(c, "name", param,
+			إذا (box_get_attribute(c, "name", param,
 					&param->name) == false) {
-				dom_node_unref(c);
-				return false;
+				dom_غوټه_unref(c);
+				أرجع false;
 			}
 
-			if (box_get_attribute(c, "value", param,
-					&param->value) == false) {
-				dom_node_unref(c);
-				return false;
+			إذا (box_get_attribute(c, "value", param,
+					&param->ارزښت) == false) {
+				dom_غوټه_unref(c);
+				أرجع false;
 			}
 
-			if (box_get_attribute(c, "type", param,
+			إذا (box_get_attribute(c, "type", param,
 					&param->type) == false) {
-				dom_node_unref(c);
-				return false;
+				dom_غوټه_unref(c);
+				أرجع false;
 			}
 
-			if (box_get_attribute(c, "valuetype", param,
+			إذا (box_get_attribute(c, "valuetype", param,
 					&param->valuetype) == false) {
-				dom_node_unref(c);
-				return false;
+				dom_غوټه_unref(c);
+				أرجع false;
 			}
 
-			if (param->valuetype == NULL) {
+			إذا (param->valuetype == عدم) {
 				param->valuetype = talloc_strdup(param, "data");
-				if (param->valuetype == NULL) {
-					dom_node_unref(c);
-					return false;
+				إذا (param->valuetype == عدم) {
+					dom_غوټه_unref(c);
+					أرجع false;
 				}
 			}
 
-			param->next = params->params;
+			param->بل = params->params;
 			params->params = param;
 		}
 
-		err = dom_node_get_next_sibling(c, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
-			return false;
+		err = dom_غوټه_get_بل_sibling(c, &بل);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(c);
+			أرجع false;
 		}
 
-		dom_node_unref(c);
-		c = next;
+		dom_غوټه_unref(c);
+		c = بل;
 	}
 
 	box->object_params = params;
 
 	/* start fetch (MIME type is ok or not specified) */
 	box->flags |= IS_REPLACED;
-	if (!html_fetch_object(content,
-			       params->data ? params->data : params->classid,
+	إذا (!html_fetch_object(content,
+			       params->معلومات ? params->معلومات : params->classid,
 			       box,
 			       CONTENT_ANY,
 			       false))
-		return false;
+		أرجع false;
 
 	*convert_children = false;
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Preformatted text [9.3.4].
  */
-static bool
-box_pre(dom_node *n,
+ساكن bool
+box_pre(dom_غوټه *n,
 	html_content *content,
-	struct box *box,
+	بنية box *box,
 	bool *convert_children)
 {
 	box->flags |= PRE_STRIP;
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Option selector [17.6].
  */
-static bool
-box_select(dom_node *n,
+ساكن bool
+box_select(dom_غوټه *n,
 	   html_content *content,
-	   struct box *box,
+	   بنية box *box,
 	   bool *convert_children)
 {
-	struct box *inline_container;
-	struct box *inline_box;
-	struct form_control *gadget;
-	dom_node *c, *c2;
-	dom_node *next, *next2;
+	بنية box *inline_container;
+	بنية box *inline_box;
+	بنية form_control *gadget;
+	dom_غوټه *c, *c2;
+	dom_غوټه *بل, *next2;
 	dom_exception err;
 
-	gadget = html_forms_get_control_for_node(content->forms, n);
-	if (gadget == NULL)
-		return false;
+	gadget = html_forms_get_control_for_غوټه(content->forms, n);
+	إذا (gadget == عدم)
+		أرجع false;
 
 	gadget->html = content;
-	err = dom_node_get_first_child(n, &c);
-	if (err != DOM_NO_ERR) {
+	err = dom_غوټه_get_لومړی_ماشوم(n, &c);
+	إذا (err != DOM_NO_ERR) {
 		form_free_control(gadget);
-		return false;
+		أرجع false;
 	}
 
-	while (c != NULL) {
+	طالما (c != عدم) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(c, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
+		err = dom_غوټه_get_غوټه_name(c, &name);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(c);
 			form_free_control(gadget);
-			return false;
+			أرجع false;
 		}
 
-		if (dom_string_caseless_lwc_isequal(name,
+		إذا (dom_string_caseless_lwc_isequal(name,
 				corestring_lwc_option)) {
 			dom_string_unref(name);
 
-			if (box_select_add_option(gadget, c) == false) {
-				dom_node_unref(c);
+			إذا (box_select_جمع_کړه_option(gadget, c) == false) {
+				dom_غوټه_unref(c);
 				form_free_control(gadget);
-				return false;
+				أرجع false;
 			}
-		} else if (dom_string_caseless_lwc_isequal(name,
+		} وإلا إذا (dom_string_caseless_lwc_isequal(name,
 				corestring_lwc_optgroup)) {
 			dom_string_unref(name);
 
-			err = dom_node_get_first_child(c, &c2);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(c);
+			err = dom_غوټه_get_لومړی_ماشوم(c, &c2);
+			إذا (err != DOM_NO_ERR) {
+				dom_غوټه_unref(c);
 				form_free_control(gadget);
-				return false;
+				أرجع false;
 			}
 
-			while (c2 != NULL) {
+			طالما (c2 != عدم) {
 				dom_string *c2_name;
 
-				err = dom_node_get_node_name(c2, &c2_name);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c2);
-					dom_node_unref(c);
+				err = dom_غوټه_get_غوټه_name(c2, &c2_name);
+				إذا (err != DOM_NO_ERR) {
+					dom_غوټه_unref(c2);
+					dom_غوټه_unref(c);
 					form_free_control(gadget);
-					return false;
+					أرجع false;
 				}
 
-				if (dom_string_caseless_lwc_isequal(c2_name,
+				إذا (dom_string_caseless_lwc_isequal(c2_name,
 						corestring_lwc_option)) {
 					dom_string_unref(c2_name);
 
-					if (box_select_add_option(gadget,
+					إذا (box_select_جمع_کړه_option(gadget,
 							c2) == false) {
-						dom_node_unref(c2);
-						dom_node_unref(c);
+						dom_غوټه_unref(c2);
+						dom_غوټه_unref(c);
 						form_free_control(gadget);
-						return false;
+						أرجع false;
 					}
-				} else {
+				} وإلا {
 					dom_string_unref(c2_name);
 				}
 
-				err = dom_node_get_next_sibling(c2, &next2);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(c2);
-					dom_node_unref(c);
+				err = dom_غوټه_get_بل_sibling(c2, &next2);
+				إذا (err != DOM_NO_ERR) {
+					dom_غوټه_unref(c2);
+					dom_غوټه_unref(c);
 					form_free_control(gadget);
-					return false;
+					أرجع false;
 				}
 
-				dom_node_unref(c2);
+				dom_غوټه_unref(c2);
 				c2 = next2;
 			}
-		} else {
+		} وإلا {
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_next_sibling(c, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(c);
+		err = dom_غوټه_get_بل_sibling(c, &بل);
+		إذا (err != DOM_NO_ERR) {
+			dom_غوټه_unref(c);
 			form_free_control(gadget);
-			return false;
+			أرجع false;
 		}
 
-		dom_node_unref(c);
-		c = next;
+		dom_غوټه_unref(c);
+		c = بل;
 	}
 
-	if (gadget->data.select.num_items == 0) {
+	إذا (gadget->معلومات.select.عدد_توکي == 0) {
 		/* no options: ignore entire select */
 		form_free_control(gadget);
-		return true;
+		أرجع true;
 	}
 
-	box->type = BOX_INLINE_BLOCK;
+	box->type = BOX_INLINE_بلاک;
 	box->gadget = gadget;
 	box->flags |= IS_REPLACED;
 	gadget->box = box;
 
-	inline_container = box_create(NULL, 0, false, 0, 0, 0, 0, content->bctx);
-	if (inline_container == NULL)
-		goto no_memory;
+	inline_container = box_create(عدم, 0, false, 0, 0, 0, 0, content->bctx);
+	إذا (inline_container == عدم)
+		اذهب no_حافظه;
 	inline_container->type = BOX_INLINE_CONTAINER;
-	inline_box = box_create(NULL, box->style, false, 0, 0, box->title, 0,
+	inline_box = box_create(عدم, box->style, false, 0, 0, box->title, 0,
 			content->bctx);
-	if (inline_box == NULL)
-		goto no_memory;
-	inline_box->type = BOX_TEXT;
-	box_add_child(inline_container, inline_box);
-	box_add_child(box, inline_container);
+	إذا (inline_box == عدم)
+		اذهب no_حافظه;
+	inline_box->type = BOX_متن;
+	box_جمع_کړه_ماشوم(inline_container, inline_box);
+	box_جمع_کړه_ماشوم(box, inline_container);
 
-	if (gadget->data.select.multiple == false &&
-			gadget->data.select.num_selected == 0) {
-		gadget->data.select.current = gadget->data.select.items;
-		gadget->data.select.current->initial_selected =
-			gadget->data.select.current->selected = true;
-		gadget->data.select.num_selected = 1;
-		dom_html_option_element_set_selected(
-				gadget->data.select.current->node, true);
+	إذا (gadget->معلومات.select.مضرب == false &&
+			gadget->معلومات.select.عدد_selected == 0) {
+		gadget->معلومات.select.current = gadget->معلومات.select.توکي;
+		gadget->معلومات.select.current->initial_selected =
+			gadget->معلومات.select.current->selected = true;
+		gadget->معلومات.select.عدد_selected = 1;
+		dom_html_option_element_سېټ_selected(
+				gadget->معلومات.select.current->غوټه, true);
 	}
 
-	if (gadget->data.select.num_selected == 0)
-		inline_box->text = talloc_strdup(content->bctx,
+	إذا (gadget->معلومات.select.عدد_selected == 0)
+		inline_box->متن = talloc_strdup(content->bctx,
 				messages_get("Form_None"));
-	else if (gadget->data.select.num_selected == 1)
-		inline_box->text = talloc_strdup(content->bctx,
-				gadget->data.select.current->text);
-	else
-		inline_box->text = talloc_strdup(content->bctx,
+	وإلا إذا (gadget->معلومات.select.عدد_selected == 1)
+		inline_box->متن = talloc_strdup(content->bctx,
+				gadget->معلومات.select.current->متن);
+	وإلا
+		inline_box->متن = talloc_strdup(content->bctx,
 				messages_get("Form_Many"));
-	if (inline_box->text == NULL)
-		goto no_memory;
+	إذا (inline_box->متن == عدم)
+		اذهب no_حافظه;
 
-	inline_box->length = strlen(inline_box->text);
+	inline_box->اوږدتیا = مزي_اوږدوالی(inline_box->متن);
 
 	*convert_children = false;
-	return true;
+	أرجع true;
 
-no_memory:
-	return false;
+no_حافظه:
+	أرجع false;
 }
 
 
 /**
  * Multi-line text field [17.7].
  */
-static bool box_textarea(dom_node *n,
+ساكن bool box_textarea(dom_غوټه *n,
 			html_content *content,
-			struct box *box,
+			بنية box *box,
 			bool *convert_children)
 {
 	/* Get the form_control for the DOM node */
-	box->gadget = html_forms_get_control_for_node(content->forms, n);
-	if (box->gadget == NULL)
-		return false;
+	box->gadget = html_forms_get_control_for_غوټه(content->forms, n);
+	إذا (box->gadget == عدم)
+		أرجع false;
 
 	box->flags |= IS_REPLACED;
 	box->gadget->html = content;
 	box->gadget->box = box;
 
-	if (!box_input_text(content, box, n))
-		return false;
+	إذا (!box_ننوت_متن(content, box, n))
+		أرجع false;
 
 	*convert_children = false;
-	return true;
+	أرجع true;
 }
 
 
@@ -1850,84 +1850,84 @@ static bool box_textarea(dom_node *n,
 
 /* exported interface documented in html/box_special.h */
 bool
-convert_special_elements(dom_node *node,
+convert_special_elements(dom_غوټه *غوټه,
 			 html_content *content,
-			 struct box *box,
+			 بنية box *box,
 			 bool *convert_children)
 {
 	dom_exception exc;
-	dom_html_element_type tag_type;
+	dom_html_element_type نښان_type;
 	bool res;
 
-	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
-		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+	exc = dom_html_element_get_نښان_type(غوټه, &نښان_type);
+	إذا (exc != DOM_NO_ERR) {
+		نښان_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	switch (tag_type) {
-	case DOM_HTML_ELEMENT_TYPE_A:
-		res =  box_a(node, content, box, convert_children);
-		break;
+	بدل (نښان_type) {
+	حالة DOM_HTML_ELEMENT_TYPE_A:
+		res =  box_a(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_BODY:
-		res = box_body(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_BODY:
+		res = box_body(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_BR:
-		res = box_br(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_BR:
+		res = box_br(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_BUTTON:
-		res = box_button(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_BUTTON:
+		res = box_button(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_CANVAS:
-		res = box_canvas(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_CANVAS:
+		res = box_canvas(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_EMBED:
-		res = box_embed(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_EMBED:
+		res = box_embed(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_FRAMESET:
-		res = box_frameset(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_FRAMESET:
+		res = box_frameset(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_IFRAME:
-		res = box_iframe(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_IFRAME:
+		res = box_iframe(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_IMG:
-		res = box_image(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_IMG:
+		res = box_image(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
-		res = box_input(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_ننوت:
+		res = box_ننوت(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_NOSCRIPT:
-		res = box_noscript(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_NOSCRIPT:
+		res = box_noscript(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_OBJECT:
-		res = box_object(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_OBJECT:
+		res = box_object(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_PRE:
-		res = box_pre(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_PRE:
+		res = box_pre(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_SELECT:
-		res = box_select(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_SELECT:
+		res = box_select(غوټه, content, box, convert_children);
+		اكسر;
 
-	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-		res = box_textarea(node, content, box, convert_children);
-		break;
+	حالة DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+		res = box_textarea(غوټه, content, box, convert_children);
+		اكسر;
 
-	default:
+	افتراضي:
 		res = true;
 	}
 
-	return res;
+	أرجع res;
 }

@@ -21,12 +21,12 @@
  * Box tree treeview box replacement (interface).
  */
 
-#ifndef NETSURF_HTML_BOX_TEXTAREA_H
-#define NETSURF_HTML_BOX_TEXTAREA_H
+#که_نه_تعریف_شوی NETSURF_HTML_BOX_TEXTAREA_H
+#تعریف_کړه NETSURF_HTML_BOX_TEXTAREA_H
 
-struct dom_node;
-struct html_content;
-struct box;
+بنية dom_غوټه;
+بنية html_content;
+بنية box;
 
 /**
  * Create textarea widget for a form element
@@ -35,8 +35,8 @@ struct box;
  * \param box     box with gadget to be given textarea widget
  * \param node    DOM node for form element
  */
-bool box_textarea_create_textarea(struct html_content *html,
-		struct box *box, struct dom_node *node);
+bool box_textarea_create_textarea(بنية html_content *html,
+		بنية box *box, بنية dom_غوټه *غوټه);
 
 
 /**
@@ -47,6 +47,6 @@ bool box_textarea_create_textarea(struct html_content *html,
  * \param key     keypress
  * \return NSERROR_OK iff keypress handled
  */
-nserror box_textarea_keypress(struct html_content *html, struct box *box, uint32_t key);
+nserror box_textarea_keypress(بنية html_content *html, بنية box *box, uint32_t کلی);
 
-#endif
+#د_که_پای

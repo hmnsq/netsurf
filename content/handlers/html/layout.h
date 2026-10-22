@@ -25,12 +25,12 @@
  * also adds boxes to the tree (eg. when formatting lines of text).
  */
 
-#ifndef NETSURF_HTML_LAYOUT_H
-#define NETSURF_HTML_LAYOUT_H
+#که_نه_تعریف_شوی NETSURF_HTML_LAYOUT_H
+#تعریف_کړه NETSURF_HTML_LAYOUT_H
 
-struct box;
-struct html_content;
-struct gui_layout_table;
+بنية box;
+بنية html_content;
+بنية gui_layout_جدول;
 
 /**
  * Calculate positions of boxes in a document.
@@ -40,6 +40,6 @@ struct gui_layout_table;
  * \param height available height
  * \return true on success, false on memory exhaustion
  */
-bool layout_document(struct html_content *content, int width, int height);
+bool layout_document(بنية html_content *content, صحيح پلنوالی, صحيح لوړوالی);
 
-#endif
+#د_که_پای
