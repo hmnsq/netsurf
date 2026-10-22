@@ -21,22 +21,22 @@
  * Interface to HTML imagemap
  */
 
-#ifndef NETSURF_HTML_IMAGEMAP_H
-#define NETSURF_HTML_IMAGEMAP_H
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_HTML_IMAGEMAP_H
+#وصف_ڪريو NETSURF_HTML_IMAGEMAP_H
 
-#include <dom/dom.h>
+#ضمن <dom/dom.h>
 
-struct html_content;
-struct hlcache_handle;
-struct nsurl;
+بنية html_content;
+بنية hlcache_handle;
+بنية nsurl;
 
-void imagemap_destroy(struct html_content *c);
-void imagemap_dump(struct html_content *c);
-nserror imagemap_extract(struct html_content *c);
+فراغ imagemap_destroy(بنية html_content *c);
+فراغ imagemap_dump(بنية html_content *c);
+nserror imagemap_ڪڍو(بنية html_content *c);
 
-struct nsurl *imagemap_get(struct html_content *c, const char *key,
-		unsigned long x, unsigned long y,
-		unsigned long click_x, unsigned long click_y,
-		const char **target);
+بنية nsurl *imagemap_get(بنية html_content *c, ثابت حرف *ڪنجي,
+		بنانشان ڊگهو x, بنانشان ڊگهو y,
+		بنانشان ڊگهو click_x, بنانشان ڊگهو click_y,
+		ثابت حرف **هدف);
 
-#endif
+#جيڪڏهن_پورو

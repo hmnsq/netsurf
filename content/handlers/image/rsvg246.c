@@ -28,112 +28,112 @@
  * function to render it for redraw requests.
  */
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <string.h>
-#include <sys/types.h>
+#ضمن <stdlib.h>
+#ضمن <stdbool.h>
+#ضمن <assert.h>
+#ضمن <string.h>
+#ضمن <sys/types.h>
 
-#include <librsvg/rsvg.h>
+#ضمن <librsvg/rsvg.h>
 
-#include <nsutils/endian.h>
+#ضمن <nsutils/endian.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ضمن "utils/log.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/messages.h"
+#ضمن "netsurf/plotters.h"
+#ضمن "netsurf/bitmap.h"
+#ضمن "netsurf/content.h"
+#ضمن "content/llcache.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "desktop/gui_internal.h"
+#ضمن "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#ضمن "image/image_cache.h"
 
-#include "image/rsvg.h"
+#ضمن "image/rsvg.h"
 
 
-typedef struct rsvg_content {
-	struct content base;
+تعريفنوع بنية rsvg_content {
+	بنية content بنياد;
 
 	RsvgHandle *rsvgh;	/**< Context handle for RSVG renderer */
 } rsvg_content;
 
 
-static nserror
-rsvg_create(const content_handler *handler,
+ساكن nserror
+rsvg_create(ثابت content_handler *handler,
 	    lwc_string *imime_type,
-	    const struct http_parameter *params,
+	    ثابت بنية http_parameter *params,
 	    llcache_handle *llcache,
-	    const char *fallback_charset,
+	    ثابت حرف *fallback_charset,
 	    bool quirks,
-	    struct content **c)
+	    بنية content **c)
 {
 	rsvg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = صفر_يادگيري_ڏيو(1, حجم(rsvg_content));
+	إذا (svg == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__init(&svg->base, handler, imime_type, params,
+	error = content__init(&svg->بنياد, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(svg);
+		أرجع error;
 	}
 
-	*c = (struct content *)svg;
+	*c = (بنية content *)svg;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * create a bitmap from jpeg content for the image cache.
  */
-static struct bitmap *
-rsvg_cache_convert(struct content *c)
+ساكن بنية bitmap *
+rsvg_cache_convert(بنية content *c)
 {
 	rsvg_content *svgc = (rsvg_content *)c;
-	struct bitmap *bitmap;
+	بنية bitmap *bitmap;
 	cairo_surface_t *cs;
 	cairo_t *cr;
 	RsvgRectangle viewport;
 	gboolean renderres;
 
-	if ((bitmap = guit->bitmap->create(c->width, c->height,	BITMAP_NONE)) == NULL) {
+	إذا ((bitmap = guit->bitmap->create(c->ويڪر, c->اوچائي,	BITMAP_NONE)) == عدم) {
 		NSLOG(netsurf, INFO, "Failed to create bitmap for rsvg render.");
-		return NULL;
+		أرجع عدم;
 	}
 
-	if ((cs = cairo_image_surface_create_for_data(
-		     (unsigned char *)guit->bitmap->get_buffer(bitmap),
+	إذا ((cs = cairo_image_surface_create_for_معلومات(
+		     (بنانشان حرف *)guit->bitmap->get_بفر(bitmap),
 		     CAIRO_FORMAT_ARGB32,
-		     c->width, c->height,
-		     guit->bitmap->get_rowstride(bitmap))) == NULL) {
+		     c->ويڪر, c->اوچائي,
+		     guit->bitmap->get_rowstride(bitmap))) == عدم) {
 		NSLOG(netsurf, INFO, "Failed to create Cairo image surface for rsvg render.");
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		أرجع عدم;
 	}
-	if ((cr = cairo_create(cs)) == NULL) {
+	إذا ((cr = cairo_create(cs)) == عدم) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo drawing context for rsvg render.");
 		cairo_surface_destroy(cs);
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		أرجع عدم;
 	}
 
 	viewport.x = 0;
 	viewport.y = 0;
-	viewport.width = c->width;
-	viewport.height = c->height;
-	renderres = rsvg_handle_render_document(svgc->rsvgh, cr, &viewport, NULL);
-	NSLOG(netsurf, DEBUG, "rsvg render:%d, width:%d, height %d", renderres, c->width, c->height);
+	viewport.ويڪر = c->ويڪر;
+	viewport.اوچائي = c->اوچائي;
+	renderres = rsvg_handle_render_document(svgc->rsvgh, cr, &viewport, عدم);
+	NSLOG(netsurf, DEBUG, "rsvg render:%d, width:%d, height %d", renderres, c->ويڪر, c->اوچائي);
 
-	bitmap_format_to_client(bitmap, &(bitmap_fmt_t) {
+	bitmap_format_منزل_client(bitmap, &(bitmap_fmt_t) {
 			.layout = BITMAP_LAYOUT_ARGB8888,
 		});
 	guit->bitmap->modified(bitmap);
@@ -141,140 +141,140 @@ rsvg_cache_convert(struct content *c)
 	cairo_destroy(cr);
 	cairo_surface_destroy(cs);
 
-	return bitmap;
+	أرجع bitmap;
 }
 
-static void rsvg__get_demensions(const rsvg_content *svgc,
-		int *width, int *height)
+ساكن فراغ rsvg__get_demensions(ثابت rsvg_content *svgc,
+		صحيح *ويڪر, صحيح *اوچائي)
 {
-#if LIBRSVG_MAJOR_VERSION >= 2 && LIBRSVG_MINOR_VERSION >= 52
+#إذا LIBRSVG_MAJOR_نسخو >= 2 && LIBRSVG_MINOR_نسخو >= 52
 	gdouble rwidth;
 	gdouble rheight;
 	gboolean gotsize;
 
-	gotsize = rsvg_handle_get_intrinsic_size_in_pixels(svgc->rsvgh,
+	gotsize = rsvg_handle_get_intrinsic_سائيز_اندريون_pixels(svgc->rsvgh,
 							   &rwidth,
 							   &rheight);
-	if (gotsize == TRUE) {
-		*width = rwidth;
-		*height = rheight;
-	} else {
+	إذا (gotsize == TRUE) {
+		*ويڪر = rwidth;
+		*اوچائي = rheight;
+	} وإلا {
 		RsvgRectangle ink_rect;
 		RsvgRectangle logical_rect;
 		rsvg_handle_get_geometry_for_element(svgc->rsvgh,
-						     NULL,
+						     عدم,
 						     &ink_rect,
 						     &logical_rect,
-						     NULL);
-		*width = ink_rect.width;
-		*height = ink_rect.height;
+						     عدم);
+		*ويڪر = ink_rect.ويڪر;
+		*اوچائي = ink_rect.اوچائي;
 	}
-#else
-	RsvgDimensionData rsvgsize;
+#وإلا
+	Rsvg_Dimension_معلومات rsvgsize;
 
 	rsvg_handle_get_dimensions(svgc->rsvgh, &rsvgsize);
-	*width = rsvgsize.width;
-	*height = rsvgsize.height;
-#endif
-	NSLOG(netsurf, DEBUG, "rsvg width:%d height:%d.", *width, *height);
+	*ويڪر = rsvgsize.ويڪر;
+	*اوچائي = rsvgsize.اوچائي;
+#جيڪڏهن_پورو
+	NSLOG(netsurf, DEBUG, "rsvg width:%d height:%d.", *ويڪر, *اوچائي);
 }
 
-static bool rsvg_convert(struct content *c)
+ساكن bool rsvg_convert(بنية content *c)
 {
 	rsvg_content *svgc = (rsvg_content *)c;
-	const uint8_t *data; /* content data */
-	size_t size; /* content data size */
-	GInputStream * istream;
-	GError *gerror = NULL;
+	ثابت uint8_t *معلومات; /* content data */
+	size_t سائيز; /* content data size */
+	GInput_وهڪرو * istream;
+	GError *gerror = عدم;
 
 	/* check image header is valid and get width/height */
 
-	data = content__get_source_data(c, &size);
+	معلومات = content_get_ذريعو_معلومات_2(c, &سائيز);
 
-	istream = g_memory_input_stream_new_from_data(data, size, NULL);
-	svgc->rsvgh = rsvg_handle_new_from_stream_sync(istream,
-						       NULL,
+	istream = g_يادگيري_داخلا_وهڪرو_new_from_معلومات(معلومات, سائيز, عدم);
+	svgc->rsvgh = rsvg_handle_new_from_وهڪرو_sync(istream,
+						       عدم,
 						       RSVG_HANDLE_FLAGS_NONE,
-						       NULL,
+						       عدم,
 						       &gerror);
 	g_object_unref(istream);
-	if (svgc->rsvgh == NULL) {
+	إذا (svgc->rsvgh == عدم) {
 		NSLOG(netsurf, INFO, "Failed to create rsvg handle for content.");
-		return false;
+		أرجع false;
 	}
 
-	rsvg__get_demensions(svgc, &c->width, &c->height);
+	rsvg__get_demensions(svgc, &c->ويڪر, &c->اوچائي);
 
-	c->size = c->width * c->height * 4;
+	c->سائيز = c->ويڪر * c->اوچائي * 4;
 
-	image_cache_add(c, NULL, rsvg_cache_convert);
+	image_cache_جوڙيو(c, عدم, rsvg_cache_convert);
 
-	content_set_ready(c);
-	content_set_done(c);
-	content_set_status(c, ""); /* Done: update status bar */
+	content_سيٽ_ready(c);
+	content_سيٽ_پورو(c);
+	content_سيٽ_حالت(c, ""); /* Done: update status bar */
 
-	return true;
+	أرجع true;
 }
 
 
-static nserror rsvg_clone(const struct content *old, struct content **newc)
+ساكن nserror rsvg_clone(ثابت بنية content *old, بنية content **newc)
 {
 	rsvg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = صفر_يادگيري_ڏيو(1, حجم(rsvg_content));
+	إذا (svg == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&svg->base);
-		return error;
+	error = content__clone(old, &svg->بنياد);
+	إذا (error != NSERROR_OK) {
+		content_destroy(&svg->بنياد);
+		أرجع error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
-	    (old->status == CONTENT_STATUS_DONE)) {
-		if (rsvg_convert(&svg->base) == false) {
-			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+	إذا ((old->حالت == CONTENT_حالت_READY) ||
+	    (old->حالت == CONTENT_حالت_پورو)) {
+		إذا (rsvg_convert(&svg->بنياد) == false) {
+			content_destroy(&svg->بنياد);
+			أرجع NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *)svg;
+	*newc = (بنية content *)svg;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
-static void rsvg_destroy(struct content *c)
+ساكن فراغ rsvg_destroy(بنية content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->rsvgh != NULL) {
+	إذا (d->rsvgh != عدم) {
 		g_object_unref(d->rsvgh);
-		d->rsvgh = NULL;
+		d->rsvgh = عدم;
 	}
 
-	return image_cache_destroy(c);
+	أرجع image_cache_destroy(c);
 }
 
-static const content_handler rsvg_content_handler = {
+ساكن ثابت content_handler rsvg_content_handler = {
 	.create = rsvg_create,
-	.data_complete = rsvg_convert,
+	.معلومات_complete = rsvg_convert,
 	.destroy = rsvg_destroy,
 	.redraw = image_cache_redraw,
 	.clone = rsvg_clone,
-	.get_internal = image_cache_get_internal,
+	.get_اندروني = image_cache_get_اندروني,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *rsvg_types[] = {
+ساكن ثابت حرف *rsvg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsrsvg, rsvg_types, rsvg_content_handler);
+CONTENT_FACTORY_رجسٽر_TYPES(nsrsvg, rsvg_types, rsvg_content_handler);
 

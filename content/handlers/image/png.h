@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _NETSURF_RISCOS_PNG_H_
-#define _NETSURF_RISCOS_PNG_H_
+#جيڪڏهن_وصف_نه_ٿيل _NETSURF_RISCOS_PNG_H_
+#وصف_ڪريو _NETSURF_RISCOS_PNG_H_
 
-nserror nspng_init(void);
+nserror nspng_init(فراغ);
 
-#endif
+#جيڪڏهن_پورو

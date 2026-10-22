@@ -21,8 +21,8 @@
  * HTML Box tree construction special element conversion interface.
  */
 
-#ifndef NETSURF_HTML_BOX_SPECIAL_H
-#define NETSURF_HTML_BOX_SPECIAL_H
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_HTML_BOX_SPECIAL_H
+#وصف_ڪريو NETSURF_HTML_BOX_SPECIAL_H
 
 
 /**
@@ -30,6 +30,6 @@
  *
  * \return true if box construction should continue else false on error.
  */
-bool convert_special_elements(dom_node *node, html_content *content, struct box *box, bool *convert_children);
+bool convert_special_elements(dom_ڳنڍ *ڳنڍ, html_content *content, بنية box *box, bool *convert_children);
 
-#endif
+#جيڪڏهن_پورو

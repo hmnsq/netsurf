@@ -23,85 +23,85 @@
  * plain text content handling implementation.
  */
 
-#include <string.h>
-#include <parserutils/input/inputstream.h>
+#ضمن <string.h>
+#ضمن <parserutils/input/inputstream.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/utf8.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/keypress.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/plotters.h"
-#include "netsurf/layout.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
-#include "content/handlers/css/utils.h"
-#include "desktop/selection.h"
-#include "desktop/gui_internal.h"
+#ضمن "utils/errors.h"
+#ضمن "utils/corestrings.h"
+#ضمن "utils/http.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/utf8.h"
+#ضمن "utils/nsoption.h"
+#ضمن "netsurf/content.h"
+#ضمن "netsurf/keypress.h"
+#ضمن "netsurf/browser_window.h"
+#ضمن "netsurf/plotters.h"
+#ضمن "netsurf/layout.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/content_factory.h"
+#ضمن "content/hlcache.h"
+#ضمن "content/textsearch.h"
+#ضمن "content/handlers/css/utils.h"
+#ضمن "desktop/selection.h"
+#ضمن "desktop/gui_internal.h"
 
-#include "text/textplain.h"
+#ضمن "text/textplain.h"
 
-struct textplain_line {
-	size_t	start;
-	size_t	length;
+بنية textplain_سٽ {
+	size_t	شروعات;
+	size_t	ڊيگهائي;
 };
 
 /**
  * plain text content
  */
-typedef struct textplain_content {
-	struct content base;
+تعريفنوع بنية textplain_content {
+	بنية content بنياد;
 
 	lwc_string *encoding;
-	void *inputstream;
-	char *utf8_data;
-	size_t utf8_data_size;
-	size_t utf8_data_allocated;
-	unsigned long physical_line_count;
-	struct textplain_line *physical_line;
-	int formatted_width;
-	struct browser_window *bw;
+	فراغ *inputstream;
+	حرف *utf8_معلومات;
+	size_t utf8_معلومات_سائيز;
+	size_t utf8_معلومات_allocated;
+	بنانشان ڊگهو physical_سٽ_ڳڻپ;
+	بنية textplain_سٽ *physical_سٽ;
+	صحيح formatted_ويڪر;
+	بنية browser_دري *bw;
 
-	struct selection *sel; /** Selection state */
+	بنية selection *sel; /** Selection state */
 
 } textplain_content;
 
 
-#define CHUNK 32768 /* Must be a power of 2 */
-#define MARGIN 4
+#وصف_ڪريو CHUNK 32768 /* Must be a power of 2 */
+#وصف_ڪريو MARGIN 4
 
-#define TAB_WIDTH 8  /* must be power of 2 currently */
-#define TEXT_SIZE 10 * PLOT_STYLE_SCALE  /* Unscaled text size in pt */
+#وصف_ڪريو TAB_ويڪر 8  /* must be power of 2 currently */
+#وصف_ڪريو متن_سائيز 10 * PLOT_STYLE_SCALE  /* Unscaled text size in pt */
 
-static plot_font_style_t textplain_style = {
+ساكن plot_font_style_t textplain_style = {
 	.family = PLOT_FONT_FAMILY_MONOSPACE,
-	.size = TEXT_SIZE,
-	.weight = 400,
+	.سائيز = متن_سائيز,
+	.وزن = 400,
 	.flags = FONTF_NONE,
 	.background = 0xffffff,
 	.foreground = 0x000000,
 };
 
-static int textplain_tab_width = 256;  /* try for a sensible default */
+ساكن صحيح textplain_tab_ويڪر = 256;  /* try for a sensible default */
 
-static lwc_string *textplain_default_charset;
+ساكن lwc_string *textplain_default_charset;
 
 
 /**
  * Clean up after the text content handler
  */
-static void textplain_fini(void)
+ساكن فراغ textplain_fini(فراغ)
 {
 	lwc_string_unref(textplain_default_charset);
-	textplain_default_charset = NULL;
+	textplain_default_charset = عدم;
 }
 
 
@@ -116,13 +116,13 @@ static void textplain_fini(void)
  * thus preserving whatever charset information we decided on in
  * textplain_create.
  */
-static parserutils_error
-textplain_charset_hack(const uint8_t *data,
+ساكن parserutils_error
+textplain_charset_hack(ثابت uint8_t *معلومات,
 		       size_t len,
 		       uint16_t *mibenum,
-		       uint32_t *source)
+		       uint32_t *ذريعو)
 {
-	return PARSERUTILS_OK;
+	أرجع PARSERUTILS_OK;
 }
 
 
@@ -133,250 +133,250 @@ textplain_charset_hack(const uint8_t *data,
  * \param[in] encoding the encoding of the content.
  * \return NSERROR_OK else appropriate error code.
  */
-static nserror
-textplain_create_internal(textplain_content *c, lwc_string *encoding)
+ساكن nserror
+textplain_create_اندروني(textplain_content *c, lwc_string *encoding)
 {
-	char *utf8_data;
-	parserutils_inputstream *stream;
+	حرف *utf8_معلومات;
+	parserutils_inputstream *وهڪرو;
 	parserutils_error error;
 
-	textplain_style.size = (nsoption_int(font_size) * PLOT_STYLE_SCALE) / 10;
+	textplain_style.سائيز = (nsoption_int(font_سائيز) * PLOT_STYLE_SCALE) / 10;
 
-	utf8_data = malloc(CHUNK);
-	if (utf8_data == NULL)
-		goto no_memory;
+	utf8_معلومات = يادگيري_ڏيو(CHUNK);
+	إذا (utf8_معلومات == عدم)
+		اذهب no_يادگيري;
 
-	error = parserutils_inputstream_create(lwc_string_data(encoding), 0,
-					       textplain_charset_hack, &stream);
-	if (error == PARSERUTILS_BADENCODING) {
+	error = parserutils_inputstream_create(lwc_string_معلومات(encoding), 0,
+					       textplain_charset_hack, &وهڪرو);
+	إذا (error == PARSERUTILS_BADENCODING) {
 		/* Fall back to Windows-1252 */
 		error = parserutils_inputstream_create("Windows-1252", 0,
-					textplain_charset_hack, &stream);
+					textplain_charset_hack, &وهڪرو);
 	}
-	if (error != PARSERUTILS_OK) {
-		free(utf8_data);
-		goto no_memory;
+	إذا (error != PARSERUTILS_OK) {
+		حرر(utf8_معلومات);
+		اذهب no_يادگيري;
 	}
 
 	c->encoding = lwc_string_ref(encoding);
-	c->inputstream = stream;
-	c->utf8_data = utf8_data;
-	c->utf8_data_size = 0;
-	c->utf8_data_allocated = CHUNK;
-	c->physical_line = 0;
-	c->physical_line_count = 0;
-	c->formatted_width = 0;
-	c->bw = NULL;
-	c->sel = selection_create((struct content *)c);
+	c->inputstream = وهڪرو;
+	c->utf8_معلومات = utf8_معلومات;
+	c->utf8_معلومات_سائيز = 0;
+	c->utf8_معلومات_allocated = CHUNK;
+	c->physical_سٽ = 0;
+	c->physical_سٽ_ڳڻپ = 0;
+	c->formatted_ويڪر = 0;
+	c->bw = عدم;
+	c->sel = selection_create((بنية content *)c);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 
-no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
+no_يادگيري:
+	content_نشر_error(&c->بنياد, NSERROR_NOMEM, عدم);
 
-	return NSERROR_NOMEM;
+	أرجع NSERROR_NOMEM;
 }
 
 
 /**
  * Create a CONTENT_TEXTPLAIN.
  */
-static nserror
-textplain_create(const content_handler *handler,
+ساكن nserror
+textplain_create(ثابت content_handler *handler,
 		 lwc_string *imime_type,
-		 const struct http_parameter *params,
+		 ثابت بنية http_parameter *params,
 		 llcache_handle *llcache,
-		 const char *fallback_charset,
+		 ثابت حرف *fallback_charset,
 		 bool quirks,
-		 struct content **c)
+		 بنية content **c)
 {
-	textplain_content *text;
+	textplain_content *متن;
 	nserror error;
 	lwc_string *encoding;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL) {
-		return NSERROR_NOMEM;
+	متن = صفر_يادگيري_ڏيو(1, حجم(textplain_content));
+	إذا (متن == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
 
-	error = content__init(&text->base, handler, imime_type, params,
+	error = content__init(&متن->بنياد, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(text);
-		return error;
+	إذا (error != NSERROR_OK) {
+		حرر(متن);
+		أرجع error;
 	}
 
-	error = http_parameter_list_find_item(params, corestring_lwc_charset,
+	error = http_parameter_list_ڳوليو_شي(params, corestring_lwc_charset,
 					      &encoding);
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		encoding = lwc_string_ref(textplain_default_charset);
 	}
 
-	error = textplain_create_internal(text, encoding);
-	if (error != NSERROR_OK) {
+	error = textplain_create_اندروني(متن, encoding);
+	إذا (error != NSERROR_OK) {
 		lwc_string_unref(encoding);
-		free(text);
-		return error;
+		حرر(متن);
+		أرجع error;
 	}
 
 	lwc_string_unref(encoding);
 
-	*c = (struct content *) text;
+	*c = (بنية content *) متن;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * copy utf8 encoded data
  */
-static bool
-textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
+ساكن bool
+textplain_copy_utf8_معلومات(textplain_content *c, ثابت uint8_t *buf, size_t len)
 {
-	if (c->utf8_data_size + len >= c->utf8_data_allocated) {
+	إذا (c->utf8_معلومات_سائيز + len >= c->utf8_معلومات_allocated) {
 		/* Compute next multiple of chunk above the required space */
 		size_t allocated;
-		char *utf8_data;
+		حرف *utf8_معلومات;
 
-		allocated = (c->utf8_data_size + len + CHUNK - 1) & ~(CHUNK - 1);
-		utf8_data = realloc(c->utf8_data, allocated);
-		if (utf8_data == NULL)
-			return false;
+		allocated = (c->utf8_معلومات_سائيز + len + CHUNK - 1) & ~(CHUNK - 1);
+		utf8_معلومات = realloc(c->utf8_معلومات, allocated);
+		إذا (utf8_معلومات == عدم)
+			أرجع false;
 
-		c->utf8_data = utf8_data;
-		c->utf8_data_allocated = allocated;
+		c->utf8_معلومات = utf8_معلومات;
+		c->utf8_معلومات_allocated = allocated;
 	}
 
-	memcpy(c->utf8_data + c->utf8_data_size, buf, len);
-	c->utf8_data_size += len;
+	يادگيري_نقل(c->utf8_معلومات + c->utf8_معلومات_سائيز, buf, len);
+	c->utf8_معلومات_سائيز += len;
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * drain input
  */
-static bool
-textplain_drain_input(textplain_content *c,
-		      parserutils_inputstream *stream,
+ساكن bool
+textplain_drain_داخلا(textplain_content *c,
+		      parserutils_inputstream *وهڪرو,
 		      parserutils_error terminator)
 {
-	static const uint8_t *u_fffd = (const uint8_t *) "\xef\xbf\xbd";
-	const uint8_t *ch;
-	size_t chlen, offset = 0;
+	ساكن ثابت uint8_t *u_fffd = (ثابت uint8_t *) "\xef\xbf\xbd";
+	ثابت uint8_t *ch;
+	size_t chlen, وٿي = 0;
 
-	while (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
+	طالما (parserutils_inputstream_peek(وهڪرو, وٿي, &ch, &chlen) !=
 	       terminator) {
 		/* Replace all instances of NUL with U+FFFD */
-		if (chlen == 1 && *ch == 0) {
-			if (offset > 0) {
+		إذا (chlen == 1 && *ch == 0) {
+			إذا (وٿي > 0) {
 				/* Obtain pointer to start of input data */
-				parserutils_inputstream_peek(stream, 0,
+				parserutils_inputstream_peek(وهڪرو, 0,
 							     &ch, &chlen);
 				/* Copy from it up to the start of the NUL */
-				if (textplain_copy_utf8_data(c, ch,
-							     offset) == false)
-					return false;
+				إذا (textplain_copy_utf8_معلومات(c, ch,
+							     وٿي) == false)
+					أرجع false;
 			}
 
 			/* Emit U+FFFD */
-			if (textplain_copy_utf8_data(c, u_fffd, 3) == false)
-				return false;
+			إذا (textplain_copy_utf8_معلومات(c, u_fffd, 3) == false)
+				أرجع false;
 
 			/* Advance inputstream past the NUL we just read */
-			parserutils_inputstream_advance(stream, offset + 1);
+			parserutils_inputstream_advance(وهڪرو, وٿي + 1);
 			/* Reset the read offset */
-			offset = 0;
-		} else {
+			وٿي = 0;
+		} وإلا {
 			/* Accumulate input */
-			offset += chlen;
+			وٿي += chlen;
 
-			if (offset > CHUNK) {
+			إذا (وٿي > CHUNK) {
 				/* Obtain pointer to start of input data */
-				parserutils_inputstream_peek(stream, 0,
+				parserutils_inputstream_peek(وهڪرو, 0,
 							     &ch, &chlen);
 
 				/* Emit the data we've read */
-				if (textplain_copy_utf8_data(c, ch,
-							     offset) == false)
-					return false;
+				إذا (textplain_copy_utf8_معلومات(c, ch,
+							     وٿي) == false)
+					أرجع false;
 
 				/* Advance the inputstream */
-				parserutils_inputstream_advance(stream, offset);
+				parserutils_inputstream_advance(وهڪرو, وٿي);
 				/* Reset the read offset */
-				offset = 0;
+				وٿي = 0;
 			}
 		}
 	}
 
-	if (offset > 0) {
+	إذا (وٿي > 0) {
 		/* Obtain pointer to start of input data */
-		parserutils_inputstream_peek(stream, 0, &ch, &chlen);
+		parserutils_inputstream_peek(وهڪرو, 0, &ch, &chlen);
 		/* Emit any data remaining */
-		if (textplain_copy_utf8_data(c, ch, offset) == false)
-			return false;
+		إذا (textplain_copy_utf8_معلومات(c, ch, وٿي) == false)
+			أرجع false;
 
 		/* Advance the inputstream past the data we've read */
-		parserutils_inputstream_advance(stream, offset);
+		parserutils_inputstream_advance(وهڪرو, وٿي);
 	}
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Process data for CONTENT_TEXTPLAIN.
  */
-static bool
-textplain_process_data(struct content *c, const char *data, unsigned int size)
+ساكن bool
+textplain_process_معلومات(بنية content *c, ثابت حرف *معلومات, بنانشان صحيح سائيز)
 {
-	textplain_content *text = (textplain_content *) c;
-	parserutils_inputstream *stream = text->inputstream;
+	textplain_content *متن = (textplain_content *) c;
+	parserutils_inputstream *وهڪرو = متن->inputstream;
 	parserutils_error error;
 
-	error = parserutils_inputstream_append(stream,
-					       (const uint8_t *) data, size);
-	if (error != PARSERUTILS_OK) {
-		goto no_memory;
+	error = parserutils_inputstream_append(وهڪرو,
+					       (ثابت uint8_t *) معلومات, سائيز);
+	إذا (error != PARSERUTILS_OK) {
+		اذهب no_يادگيري;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_NEEDDATA) == false)
-		goto no_memory;
+	إذا (textplain_drain_داخلا(متن, وهڪرو, PARSERUTILS_NEEDDATA) == false)
+		اذهب no_يادگيري;
 
-	return true;
+	أرجع true;
 
-no_memory:
-	content_broadcast_error(c, NSERROR_NOMEM, NULL);
-	return false;
+no_يادگيري:
+	content_نشر_error(c, NSERROR_NOMEM, عدم);
+	أرجع false;
 }
 
 
 /**
  * Convert a CONTENT_TEXTPLAIN for display.
  */
-static bool textplain_convert(struct content *c)
+ساكن bool textplain_convert(بنية content *c)
 {
-	textplain_content *text = (textplain_content *) c;
-	parserutils_inputstream *stream = text->inputstream;
+	textplain_content *متن = (textplain_content *) c;
+	parserutils_inputstream *وهڪرو = متن->inputstream;
 	parserutils_error error;
 
-	error = parserutils_inputstream_append(stream, NULL, 0);
-	if (error != PARSERUTILS_OK) {
-		return false;
+	error = parserutils_inputstream_append(وهڪرو, عدم, 0);
+	إذا (error != PARSERUTILS_OK) {
+		أرجع false;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_EOF) == false)
-		return false;
+	إذا (textplain_drain_داخلا(متن, وهڪرو, PARSERUTILS_EOF) == false)
+		أرجع false;
 
-	parserutils_inputstream_destroy(stream);
-	text->inputstream = NULL;
+	parserutils_inputstream_destroy(وهڪرو);
+	متن->inputstream = عدم;
 
-	content_set_ready(c);
-	content_set_done(c);
-	content_set_status(c, messages_get("Done"));
+	content_سيٽ_ready(c);
+	content_سيٽ_پورو(c);
+	content_سيٽ_حالت(c, messages_get("Done"));
 
-	return true;
+	أرجع true;
 }
 
 
@@ -385,133 +385,133 @@ static bool textplain_convert(struct content *c)
  *
  * \return Line height, in pixels
  */
-static float textplain_line_height(void)
+ساكن عائم textplain_سٽ_اوچائي(فراغ)
 {
 	/* Size is in points, so convert to pixels.
 	 * Then use a constant line height of 1.2 x font size.
 	 */
-	return FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
+	أرجع FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.سائيز / PLOT_STYLE_SCALE))))), F_72));
 }
 
 
 /**
  * Reformat a CONTENT_TEXTPLAIN to a new width.
  */
-static void textplain_reformat(struct content *c, int width, int height)
+ساكن فراغ textplain_reformat(بنية content *c, صحيح ويڪر, صحيح اوچائي)
 {
-	textplain_content *text = (textplain_content *) c;
-	char *utf8_data = text->utf8_data;
-	size_t utf8_data_size = text->utf8_data_size;
-	unsigned long line_count = 0;
-	struct textplain_line *line = text->physical_line;
-	struct textplain_line *line1;
-	size_t i, space, col;
+	textplain_content *متن = (textplain_content *) c;
+	حرف *utf8_معلومات = متن->utf8_معلومات;
+	size_t utf8_معلومات_سائيز = متن->utf8_معلومات_سائيز;
+	بنانشان ڊگهو سٽ_ڳڻپ = 0;
+	بنية textplain_سٽ *سٽ = متن->physical_سٽ;
+	بنية textplain_سٽ *line1;
+	size_t i, space, کانو;
 	size_t columns = 80;
-	int character_width;
-	size_t line_start;
+	صحيح character_ويڪر;
+	size_t سٽ_شروعات;
 	nserror res;
 
-	NSLOG(netsurf, INFO, "content %p w:%d h:%d", c, width, height);
+	NSLOG(netsurf, INFO, "content %p w:%d h:%d", c, ويڪر, اوچائي);
 
 	/* compute available columns (assuming monospaced font) - use 8
 	 * characters for better accuracy
 	 */
-	res = guit->layout->width(&textplain_style,
+	res = guit->layout->ويڪر(&textplain_style,
 				  "ABCDEFGH", 8,
-				  &character_width);
-	if (res != NSERROR_OK) {
-		return;
+				  &character_ويڪر);
+	إذا (res != NSERROR_OK) {
+		أرجع;
 	}
 
-	columns = (width - MARGIN - MARGIN) * 8 / character_width;
-	textplain_tab_width = (TAB_WIDTH * character_width) / 8;
+	columns = (ويڪر - MARGIN - MARGIN) * 8 / character_ويڪر;
+	textplain_tab_ويڪر = (TAB_ويڪر * character_ويڪر) / 8;
 
-	text->formatted_width = width;
+	متن->formatted_ويڪر = ويڪر;
 
-	text->physical_line_count = 0;
+	متن->physical_سٽ_ڳڻپ = 0;
 
-	if (!line) {
-		text->physical_line = line =
-			malloc(sizeof(struct textplain_line) * (1024 + 3));
-		if (!line)
-			goto no_memory;
+	إذا (!سٽ) {
+		متن->physical_سٽ = سٽ =
+			يادگيري_ڏيو(حجم(بنية textplain_سٽ) * (1024 + 3));
+		إذا (!سٽ)
+			اذهب no_يادگيري;
 	}
 
-	line[line_count++].start = line_start = 0;
+	سٽ[سٽ_ڳڻپ++].شروعات = سٽ_شروعات = 0;
 	space = 0;
 	i = 0;
-	col = 0;
-	while (i < utf8_data_size) {
+	کانو = 0;
+	طالما (i < utf8_معلومات_سائيز) {
 		size_t csize; /* number of bytes in character */
 		uint32_t chr;
-		bool term;
-		size_t next_col;
+		bool رڪن;
+		size_t ايندڙ_کانو;
 		parserutils_error perror;
 
-		perror = parserutils_charset_utf8_to_ucs4((const uint8_t *)utf8_data + i, utf8_data_size - i, &chr, &csize);
-		if (perror != PARSERUTILS_OK) {
+		perror = parserutils_charset_utf8_منزل_ucs4((ثابت uint8_t *)utf8_معلومات + i, utf8_معلومات_سائيز - i, &chr, &csize);
+		إذا (perror != PARSERUTILS_OK) {
 			chr = 0xfffd;
 		}
 
-		term = (chr == '\n' || chr == '\r');
+		رڪن = (chr == '\n' || chr == '\r');
 
-		next_col = col + 1;
+		ايندڙ_کانو = کانو + 1;
 
-		if (chr == '\t') {
-			next_col = (next_col + TAB_WIDTH - 1) & ~(TAB_WIDTH - 1);
+		إذا (chr == '\t') {
+			ايندڙ_کانو = (ايندڙ_کانو + TAB_ويڪر - 1) & ~(TAB_ويڪر - 1);
 		}
 
-		if (term || next_col >= columns) {
-			if (line_count % 1024 == 0) {
-				line1 = realloc(line,
-						sizeof(struct textplain_line) *
-						(line_count + 1024 + 3));
-				if (!line1)
-					goto no_memory;
-				text->physical_line = line = line1;
+		إذا (رڪن || ايندڙ_کانو >= columns) {
+			إذا (سٽ_ڳڻپ % 1024 == 0) {
+				line1 = realloc(سٽ,
+						حجم(بنية textplain_سٽ) *
+						(سٽ_ڳڻپ + 1024 + 3));
+				إذا (!line1)
+					اذهب no_يادگيري;
+				متن->physical_سٽ = سٽ = line1;
 			}
 
-			if (term) {
-				line[line_count-1].length = i - line_start;
+			إذا (رڪن) {
+				سٽ[سٽ_ڳڻپ-1].ڊيگهائي = i - سٽ_شروعات;
 
 				/* skip second char of CR/LF or LF/CR pair */
-				if (i + 1 < utf8_data_size &&
-				    utf8_data[i+1] != utf8_data[i] &&
-				    (utf8_data[i+1] == '\n' ||
-				     utf8_data[i+1] == '\r')) {
+				إذا (i + 1 < utf8_معلومات_سائيز &&
+				    utf8_معلومات[i+1] != utf8_معلومات[i] &&
+				    (utf8_معلومات[i+1] == '\n' ||
+				     utf8_معلومات[i+1] == '\r')) {
 					i++;
 				}
-			} else {
-				if (space) {
+			} وإلا {
+				إذا (space) {
 					/* break at last space in line */
 					i = space;
-					line[line_count-1].length = (i + 1) - line_start;
-				} else
-					line[line_count-1].length = i - line_start;
+					سٽ[سٽ_ڳڻپ-1].ڊيگهائي = (i + 1) - سٽ_شروعات;
+				} وإلا
+					سٽ[سٽ_ڳڻپ-1].ڊيگهائي = i - سٽ_شروعات;
 			}
 
-			line[line_count++].start = line_start = i + 1;
-			col = 0;
+			سٽ[سٽ_ڳڻپ++].شروعات = سٽ_شروعات = i + 1;
+			کانو = 0;
 			space = 0;
-		} else {
-			col++;
-			if (chr == ' ')
+		} وإلا {
+			کانو++;
+			إذا (chr == ' ')
 				space = i;
 		}
 		i += csize;
 	}
-	line[line_count-1].length = i - line[line_count-1].start;
-	line[line_count].start = utf8_data_size;
+	سٽ[سٽ_ڳڻپ-1].ڊيگهائي = i - سٽ[سٽ_ڳڻپ-1].شروعات;
+	سٽ[سٽ_ڳڻپ].شروعات = utf8_معلومات_سائيز;
 
-	text->physical_line_count = line_count;
-	c->width = width;
-	c->height = line_count * textplain_line_height() + MARGIN + MARGIN;
+	متن->physical_سٽ_ڳڻپ = سٽ_ڳڻپ;
+	c->ويڪر = ويڪر;
+	c->اوچائي = سٽ_ڳڻپ * textplain_سٽ_اوچائي() + MARGIN + MARGIN;
 
-	return;
+	أرجع;
 
-no_memory:
-	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", line_count);
-	return;
+no_يادگيري:
+	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", سٽ_ڳڻپ);
+	أرجع;
 }
 
 
@@ -519,80 +519,80 @@ no_memory:
  * Destroy a CONTENT_TEXTPLAIN and free all resources it owns.
  */
 
-static void textplain_destroy(struct content *c)
+ساكن فراغ textplain_destroy(بنية content *c)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *متن = (textplain_content *) c;
 
-	lwc_string_unref(text->encoding);
+	lwc_string_unref(متن->encoding);
 
-	if (text->inputstream != NULL) {
-		parserutils_inputstream_destroy(text->inputstream);
+	إذا (متن->inputstream != عدم) {
+		parserutils_inputstream_destroy(متن->inputstream);
 	}
 
-	if (text->physical_line != NULL) {
-		free(text->physical_line);
+	إذا (متن->physical_سٽ != عدم) {
+		حرر(متن->physical_سٽ);
 	}
 
-	if (text->utf8_data != NULL) {
-		free(text->utf8_data);
+	إذا (متن->utf8_معلومات != عدم) {
+		حرر(متن->utf8_معلومات);
 	}
 
-	if (text->sel != NULL) {
-		selection_destroy(text->sel);
+	إذا (متن->sel != عدم) {
+		selection_destroy(متن->sel);
 	}
 }
 
 
-static nserror textplain_clone(const struct content *old, struct content **newc)
+ساكن nserror textplain_clone(ثابت بنية content *old, بنية content **newc)
 {
-	const textplain_content *old_text = (textplain_content *) old;
-	textplain_content *text;
+	ثابت textplain_content *old_متن = (textplain_content *) old;
+	textplain_content *متن;
 	nserror error;
-	const uint8_t *data;
-	size_t size;
+	ثابت uint8_t *معلومات;
+	size_t سائيز;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL)
-		return NSERROR_NOMEM;
+	متن = صفر_يادگيري_ڏيو(1, حجم(textplain_content));
+	إذا (متن == عدم)
+		أرجع NSERROR_NOMEM;
 
-	error = content__clone(old, &text->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&text->base);
-		return error;
+	error = content__clone(old, &متن->بنياد);
+	إذا (error != NSERROR_OK) {
+		content_destroy(&متن->بنياد);
+		أرجع error;
 	}
 
 	/* Simply replay create/process/convert */
-	error = textplain_create_internal(text, old_text->encoding);
-	if (error != NSERROR_OK) {
-		content_destroy(&text->base);
-		return error;
+	error = textplain_create_اندروني(متن, old_متن->encoding);
+	إذا (error != NSERROR_OK) {
+		content_destroy(&متن->بنياد);
+		أرجع error;
 	}
 
-	data = content__get_source_data(&text->base, &size);
-	if (size > 0) {
-		if (textplain_process_data(&text->base,
-					   (const char *)data,
-					   size) == false) {
-			content_destroy(&text->base);
-			return NSERROR_NOMEM;
+	معلومات = content_get_ذريعو_معلومات_2(&متن->بنياد, &سائيز);
+	إذا (سائيز > 0) {
+		إذا (textplain_process_معلومات(&متن->بنياد,
+					   (ثابت حرف *)معلومات,
+					   سائيز) == false) {
+			content_destroy(&متن->بنياد);
+			أرجع NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-	    old->status == CONTENT_STATUS_DONE) {
-		if (textplain_convert(&text->base) == false) {
-			content_destroy(&text->base);
-			return NSERROR_CLONE_FAILED;
+	إذا (old->حالت == CONTENT_حالت_READY ||
+	    old->حالت == CONTENT_حالت_پورو) {
+		إذا (textplain_convert(&متن->بنياد) == false) {
+			content_destroy(&متن->بنياد);
+			أرجع NSERROR_CLONE_FAILED;
 		}
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
-static content_type textplain_content_type(void)
+ساكن content_type textplain_content_type(فراغ)
 {
-	return CONTENT_TEXTPLAIN;
+	أرجع CONTENT_TEXTPLAIN;
 }
 
 
@@ -609,78 +609,78 @@ static content_type textplain_content_type(void)
  * \param[in] dir direction of search if not within line
  * \return byte offset of character containing (or nearest to) point
  */
-static size_t
-textplain_offset_from_coords(struct content *c, int x, int y, int dir)
+ساكن size_t
+textplain_وٿي_from_coords(بنية content *c, صحيح x, صحيح y, صحيح dir)
 {
 	textplain_content *textc = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	struct textplain_line *line;
-	const char *text;
-	unsigned nlines;
-	size_t length;
-	int idx;
+	عائم سٽ_اوچائي = textplain_سٽ_اوچائي();
+	بنية textplain_سٽ *سٽ;
+	ثابت حرف *متن;
+	بنانشان nlines;
+	size_t ڊيگهائي;
+	صحيح idx;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	y = (int)((float)(y - MARGIN) / line_height);
+	y = (صحيح)((عائم)(y - MARGIN) / سٽ_اوچائي);
 	x -= MARGIN;
 
-	nlines = textc->physical_line_count;
-	if (!nlines)
-		return 0;
+	nlines = textc->physical_سٽ_ڳڻپ;
+	إذا (!nlines)
+		أرجع 0;
 
-	if (y <= 0) y = 0;
-	else if ((unsigned)y >= nlines)
+	إذا (y <= 0) y = 0;
+	وإلا إذا ((بنانشان)y >= nlines)
 		y = nlines - 1;
 
-	line = &textc->physical_line[y];
-	text = textc->utf8_data + line->start;
-	length = line->length;
+	سٽ = &textc->physical_سٽ[y];
+	متن = textc->utf8_معلومات + سٽ->شروعات;
+	ڊيگهائي = سٽ->ڊيگهائي;
 	idx = 0;
 
-	while (x > 0) {
-		size_t next_offset = 0;
-		int width = INT_MAX;
+	طالما (x > 0) {
+		size_t ايندڙ_وٿي = 0;
+		صحيح ويڪر = وڌ_کان_وڌ_عدد;
 
-		while (next_offset < length && text[next_offset] != '\t') {
-			next_offset = utf8_next(text, length, next_offset);
+		طالما (ايندڙ_وٿي < ڊيگهائي && متن[ايندڙ_وٿي] != '\t') {
+			ايندڙ_وٿي = utf8_ايندڙ(متن, ڊيگهائي, ايندڙ_وٿي);
 		}
 
-		if (next_offset < length) {
-			guit->layout->width(&textplain_style,
-					    text,
-					    next_offset,
-					    &width);
+		إذا (ايندڙ_وٿي < ڊيگهائي) {
+			guit->layout->ويڪر(&textplain_style,
+					    متن,
+					    ايندڙ_وٿي,
+					    &ويڪر);
 		}
 
-		if (x <= width) {
-			int pixel_offset;
-			size_t char_offset;
+		إذا (x <= ويڪر) {
+			صحيح pixel_وٿي;
+			size_t char_وٿي;
 
 			guit->layout->position(&textplain_style,
-					       text, next_offset, x,
-					       &char_offset, &pixel_offset);
+					       متن, ايندڙ_وٿي, x,
+					       &char_وٿي, &pixel_وٿي);
 
-			idx += char_offset;
-			break;
+			idx += char_وٿي;
+			اكسر;
 		}
 
-		x -= width;
-		length -= next_offset;
-		text += next_offset;
-		idx += next_offset;
+		x -= ويڪر;
+		ڊيگهائي -= ايندڙ_وٿي;
+		متن += ايندڙ_وٿي;
+		idx += ايندڙ_وٿي;
 
 		/* check if it's within the tab */
-		width = textplain_tab_width - (width % textplain_tab_width);
-		if (x <= width) break;
+		ويڪر = textplain_tab_ويڪر - (ويڪر % textplain_tab_ويڪر);
+		إذا (x <= ويڪر) اكسر;
 
-		x -= width;
-		length--;
-		text++;
+		x -= ويڪر;
+		ڊيگهائي--;
+		متن++;
 		idx++;
 	}
 
-	return line->start + idx;
+	أرجع سٽ->شروعات + idx;
 }
 
 
@@ -693,44 +693,44 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
  * \param x	  coordinate of mouse
  * \param y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_action(struct content *c,
-		       struct browser_window *bw,
+ساكن nserror
+textplain_mouse_action(بنية content *c,
+		       بنية browser_دري *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       صحيح x, صحيح y)
 {
-	textplain_content *text = (textplain_content *) c;
-	browser_pointer_shape pointer = BROWSER_POINTER_DEFAULT;
-	union content_msg_data msg_data;
-	const char *status = 0;
+	textplain_content *متن = (textplain_content *) c;
+	browser_اشارو_shape اشارو = BROWSER_اشارو_DEFAULT;
+	اتحاد content_نياپو_معلومات نياپو_معلومات;
+	ثابت حرف *حالت = 0;
 	size_t idx;
-	int dir = 0;
+	صحيح dir = 0;
 
-	browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+	browser_دري_سيٽ_drag_type(bw, DRAGGING_NONE, عدم);
 
-	idx = textplain_offset_from_coords(c, x, y, dir);
-	if (selection_click(text->sel, text->bw, mouse, idx)) {
+	idx = textplain_وٿي_from_coords(c, x, y, dir);
+	إذا (selection_click(متن->sel, متن->bw, mouse, idx)) {
 
-		if (selection_dragging(text->sel)) {
-			browser_window_set_drag_type(bw,
-						     DRAGGING_SELECTION, NULL);
-			status = messages_get("Selecting");
+		إذا (selection_dragging(متن->sel)) {
+			browser_دري_سيٽ_drag_type(bw,
+						     DRAGGING_SELECTION, عدم);
+			حالت = messages_get("Selecting");
 		}
 
-	} else {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
-			browser_window_page_drag_start(bw, x, y);
-			pointer = BROWSER_POINTER_MOVE;
+	} وإلا {
+		إذا (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+			browser_دري_صفحو_drag_شروعات(bw, x, y);
+			اشارو = BROWSER_اشارو_MOVE;
 		}
 	}
 
-	msg_data.explicit_status_text = status;
-	content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+	نياپو_معلومات.explicit_حالت_متن = حالت;
+	content_نشر(c, CONTENT_نياپو_حالت, &نياپو_معلومات);
 
-	msg_data.pointer = pointer;
-	content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	نياپو_معلومات.اشارو = اشارو;
+	content_نشر(c, CONTENT_نياپو_اشارو, &نياپو_معلومات);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -743,46 +743,46 @@ textplain_mouse_action(struct content *c,
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_track(struct content *c,
-		      struct browser_window *bw,
+ساكن nserror
+textplain_mouse_track(بنية content *c,
+		      بنية browser_دري *bw,
 		      browser_mouse_state mouse,
-		      int x, int y)
+		      صحيح x, صحيح y)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *متن = (textplain_content *) c;
 
-	if (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
-		int dir = -1;
+	إذا (browser_دري_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
+		صحيح dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel))
+		إذا (selection_dragging_شروعات(متن->sel))
 			dir = 1;
 
-		idx = textplain_offset_from_coords(c, x, y, dir);
-		selection_track(text->sel, mouse, idx);
+		idx = textplain_وٿي_from_coords(c, x, y, dir);
+		selection_track(متن->sel, mouse, idx);
 
-		browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+		browser_دري_سيٽ_drag_type(bw, DRAGGING_NONE, عدم);
 	}
 
-	switch (browser_window_get_drag_type(bw)) {
+	بدل (browser_دري_get_drag_type(bw)) {
 
-	case DRAGGING_SELECTION: {
-		int dir = -1;
+	حالة DRAGGING_SELECTION: {
+		صحيح dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel)) dir = 1;
+		إذا (selection_dragging_شروعات(متن->sel)) dir = 1;
 
-		idx = textplain_offset_from_coords(c, x, y, dir);
-		selection_track(text->sel, mouse, idx);
+		idx = textplain_وٿي_from_coords(c, x, y, dir);
+		selection_track(متن->sel, mouse, idx);
 	}
-		break;
+		اكسر;
 
-	default:
+	افتراضي:
 		textplain_mouse_action(c, bw, mouse, x, y);
-		break;
+		اكسر;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -793,30 +793,30 @@ textplain_mouse_track(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-static bool textplain_keypress(struct content *c, uint32_t key)
+ساكن bool textplain_keypress(بنية content *c, uint32_t ڪنجي)
 {
-	textplain_content *text = (textplain_content *) c;
-	struct selection *sel = text->sel;
+	textplain_content *متن = (textplain_content *) c;
+	بنية selection *sel = متن->sel;
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
-		selection_copy_to_clipboard(sel);
-		return true;
+	بدل (ڪنجي) {
+	حالة NS_ڪنجي_COPY_SELECTION:
+		selection_copy_منزل_clipboard(sel);
+		أرجع true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	حالة NS_ڪنجي_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		أرجع true;
 
-	case NS_KEY_SELECT_ALL:
+	حالة NS_ڪنجي_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		أرجع true;
 
-	case NS_KEY_ESCAPE:
+	حالة NS_ڪنجي_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		أرجع selection_clear(sel, true);
 	}
 
-	return false;
+	أرجع false;
 }
 
 
@@ -838,18 +838,18 @@ static bool textplain_keypress(struct content *c, uint32_t key)
  * \param ctx	    current redraw context
  * \return true iff successful and redraw should proceed
  */
-static bool
-text_draw(const char *utf8_text,
+ساكن bool
+متن_draw(ثابت حرف *utf8_متن,
 	    size_t utf8_len,
-	    size_t offset,
-	    int x,
-	    int y,
-	    const struct rect *clip,
-	    int height,
-	    float scale,
-	    textplain_content *text,
-	    const struct selection *sel,
-	    const struct redraw_context *ctx)
+	    size_t وٿي,
+	    صحيح x,
+	    صحيح y,
+	    ثابت بنية rect *clip,
+	    صحيح اوچائي,
+	    عائم scale,
+	    textplain_content *متن,
+	    ثابت بنية selection *sel,
+	    ثابت بنية redraw_context *ctx)
 {
 	bool highlighted = false;
 	plot_font_style_t plot_fstyle;
@@ -857,180 +857,180 @@ text_draw(const char *utf8_text,
 
 	/* Need scaled text size to pass to plotters */
 	plot_fstyle = textplain_style;
-	plot_fstyle.size *= scale;
+	plot_fstyle.سائيز *= scale;
 
 	/* is this box part of a selection? */
-	if (ctx->interactive == true) {
-		unsigned len = utf8_len;
-		unsigned start_idx;
-		unsigned end_idx;
+	إذا (ctx->interactive == true) {
+		بنانشان len = utf8_len;
+		بنانشان شروعات_idx;
+		بنانشان پڇاڙي_idx;
 
 		/* first try the browser window's current selection */
-		if (selection_highlighted(sel,
-					  offset,
-					  offset + len,
-					  &start_idx,
-					  &end_idx)) {
+		إذا (selection_highlighted(sel,
+					  وٿي,
+					  وٿي + len,
+					  &شروعات_idx,
+					  &پڇاڙي_idx)) {
 			highlighted = true;
 		}
 
 		/* what about the current search operation, if any? */
-		if (!highlighted &&
-		    (text->base.textsearch.context != NULL) &&
-		    content_textsearch_ishighlighted(text->base.textsearch.context,
-						     offset,
-						     offset + len,
-						     &start_idx,
-						     &end_idx)) {
+		إذا (!highlighted &&
+		    (متن->بنياد.textsearch.context != عدم) &&
+		    content_textsearch_ishighlighted(متن->بنياد.textsearch.context,
+						     وٿي,
+						     وٿي + len,
+						     &شروعات_idx,
+						     &پڇاڙي_idx)) {
 			highlighted = true;
 		}
 
 		/* \todo make search terms visible within selected text */
-		if (highlighted) {
-			struct rect r;
-			unsigned endtxt_idx = end_idx;
-			bool clip_changed = false;
-			bool text_visible = true;
-			int startx, endx;
+		إذا (highlighted) {
+			بنية rect r;
+			بنانشان endtxt_idx = پڇاڙي_idx;
+			bool clip_بدليو = false;
+			bool متن_visible = true;
+			صحيح startx, endx;
 			plot_style_t pstyle_fill_hback = *plot_style_fill_white;
 			plot_font_style_t fstyle_hback = plot_fstyle;
 
-			if (end_idx > utf8_len) {
+			إذا (پڇاڙي_idx > utf8_len) {
 				/* adjust for trailing space, not present in
 				 * utf8_text
 				 */
-				assert(end_idx == utf8_len + 1);
+				أكد(پڇاڙي_idx == utf8_len + 1);
 				endtxt_idx = utf8_len;
 			}
 
-			res = guit->layout->width(&textplain_style,
-						  utf8_text,
-						  start_idx,
+			res = guit->layout->ويڪر(&textplain_style,
+						  utf8_متن,
+						  شروعات_idx,
 						  &startx);
-			if (res != NSERROR_OK) {
+			إذا (res != NSERROR_OK) {
 				startx = 0;
 			}
 
-			res = guit->layout->width(&textplain_style,
-						  utf8_text,
+			res = guit->layout->ويڪر(&textplain_style,
+						  utf8_متن,
 						  endtxt_idx,
 						  &endx);
-			if (res != NSERROR_OK) {
+			إذا (res != NSERROR_OK) {
 				endx = 0;
 			}
 
-			if (scale != 1.0) {
+			إذا (scale != 1.0) {
 				startx *= scale;
 				endx *= scale;
 			}
 
 			/* draw any text preceding highlighted portion */
-			if (start_idx > 0) {
-				res = ctx->plot->text(ctx,
+			إذا (شروعات_idx > 0) {
+				res = ctx->plot->متن(ctx,
 					      &plot_fstyle,
 					      x,
-					      y + (int)(height * 0.75 * scale),
-					      utf8_text,
-					      start_idx);
-				if (res != NSERROR_OK) {
-					return false;
+					      y + (صحيح)(اوچائي * 0.75 * scale),
+					      utf8_متن,
+					      شروعات_idx);
+				إذا (res != NSERROR_OK) {
+					أرجع false;
 				}
 			}
 
-			pstyle_fill_hback.fill_colour = textplain_style.foreground;
+			pstyle_fill_hback.fill_رنگ = textplain_style.foreground;
 
 			/* highlighted portion */
 			r.x0 = x + startx;
 			r.y0 = y;
 			r.x1 = x + endx;
-			r.y1 = y + height * scale;
+			r.y1 = y + اوچائي * scale;
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_hback, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			إذا (res != NSERROR_OK) {
+				أرجع false;
 			}
 
-			if (start_idx > 0) {
-				int px0 = max(x + startx, clip->x0);
-				int px1 = min(x + endx, clip->x1);
+			إذا (شروعات_idx > 0) {
+				صحيح px0 = max(x + startx, clip->x0);
+				صحيح px1 = min(x + endx, clip->x1);
 
-				if (px0 < px1) {
+				إذا (px0 < px1) {
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = px1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					إذا (res != NSERROR_OK) {
+						أرجع false;
 					}
 
-					clip_changed = true;
-				} else {
-					text_visible = false;
+					clip_بدليو = true;
+				} وإلا {
+					متن_visible = false;
 				}
 			}
 
 			fstyle_hback.background =
-				pstyle_fill_hback.fill_colour;
-			fstyle_hback.foreground = colour_to_bw_furthest(
-				pstyle_fill_hback.fill_colour);
+				pstyle_fill_hback.fill_رنگ;
+			fstyle_hback.foreground = رنگ_منزل_bw_furthest(
+				pstyle_fill_hback.fill_رنگ);
 
-			if (text_visible &&
-			    (ctx->plot->text(ctx,
+			إذا (متن_visible &&
+			    (ctx->plot->متن(ctx,
 					     &fstyle_hback,
 					     x,
-					     y + (int)(height * 0.75 * scale),
-					     utf8_text,
+					     y + (صحيح)(اوچائي * 0.75 * scale),
+					     utf8_متن,
 					     endtxt_idx) != NSERROR_OK)) {
-				return false;
+				أرجع false;
 			}
 
 			/* draw any text succeeding highlighted portion */
-			if (endtxt_idx < utf8_len) {
-				int px0 = max(x + endx, clip->x0);
-				if (px0 < clip->x1) {
+			إذا (endtxt_idx < utf8_len) {
+				صحيح px0 = max(x + endx, clip->x0);
+				إذا (px0 < clip->x1) {
 
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = clip->x1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					إذا (res != NSERROR_OK) {
+						أرجع false;
 					}
 
-					clip_changed = true;
+					clip_بدليو = true;
 
-					res = ctx->plot->text(ctx,
+					res = ctx->plot->متن(ctx,
 							      &plot_fstyle,
 							      x,
-							      y + (int)(height * 0.75 * scale),
-							      utf8_text,
+							      y + (صحيح)(اوچائي * 0.75 * scale),
+							      utf8_متن,
 							      utf8_len);
-					if (res != NSERROR_OK) {
-						return false;
+					إذا (res != NSERROR_OK) {
+						أرجع false;
 					}
 				}
 			}
 
-			if (clip_changed &&
+			إذا (clip_بدليو &&
 			    (ctx->plot->clip(ctx, clip) != NSERROR_OK)) {
-				return false;
+				أرجع false;
 			}
 		}
 	}
 
-	if (!highlighted) {
-		res = ctx->plot->text(ctx,
+	إذا (!highlighted) {
+		res = ctx->plot->متن(ctx,
 				      &plot_fstyle,
 				      x,
-				      y + (int) (height * 0.75 * scale),
-				      utf8_text,
+				      y + (صحيح) (اوچائي * 0.75 * scale),
+				      utf8_متن,
 				      utf8_len);
-		if (res != NSERROR_OK) {
-			return false;
+		إذا (res != NSERROR_OK) {
+			أرجع false;
 		}
 	}
-	return true;
+	أرجع true;
 }
 
 
@@ -1045,110 +1045,110 @@ text_draw(const char *utf8_text,
  * \param  ctx	 current redraw context
  * \return true if successful, false otherwise
  */
-static bool
-textplain_redraw(struct content *c,
-		 struct content_redraw_data *data,
-		 const struct rect *clip,
-		 const struct redraw_context *ctx)
+ساكن bool
+textplain_redraw(بنية content *c,
+		 بنية content_redraw_معلومات *معلومات,
+		 ثابت بنية rect *clip,
+		 ثابت بنية redraw_context *ctx)
 {
-	textplain_content *text = (textplain_content *) c;
-	struct browser_window *bw = text->bw;
-	char *utf8_data = text->utf8_data;
-	long lineno;
-	int x = data->x;
-	int y = data->y;
-	unsigned long line_count = text->physical_line_count;
-	float line_height = textplain_line_height();
-	float scaled_line_height = line_height * data->scale;
-	long line0 = (clip->y0 - y * data->scale) / scaled_line_height - 1;
-	long line1 = (clip->y1 - y * data->scale) / scaled_line_height + 1;
-	struct textplain_line *line = text->physical_line;
-	size_t length;
+	textplain_content *متن = (textplain_content *) c;
+	بنية browser_دري *bw = متن->bw;
+	حرف *utf8_معلومات = متن->utf8_معلومات;
+	ڊگهو lineno;
+	صحيح x = معلومات->x;
+	صحيح y = معلومات->y;
+	بنانشان ڊگهو سٽ_ڳڻپ = متن->physical_سٽ_ڳڻپ;
+	عائم سٽ_اوچائي = textplain_سٽ_اوچائي();
+	عائم scaled_سٽ_اوچائي = سٽ_اوچائي * معلومات->scale;
+	ڊگهو line0 = (clip->y0 - y * معلومات->scale) / scaled_سٽ_اوچائي - 1;
+	ڊگهو line1 = (clip->y1 - y * معلومات->scale) / scaled_سٽ_اوچائي + 1;
+	بنية textplain_سٽ *سٽ = متن->physical_سٽ;
+	size_t ڊيگهائي;
 	plot_style_t *plot_style_highlight;
 	nserror res;
 
-	if (line0 < 0)
+	إذا (line0 < 0)
 		line0 = 0;
-	if (line1 < 0)
+	إذا (line1 < 0)
 		line1 = 0;
-	if (line_count < (unsigned long) line0)
-		line0 = line_count;
-	if (line_count < (unsigned long) line1)
-		line1 = line_count;
-	if (line1 < line0)
+	إذا (سٽ_ڳڻپ < (بنانشان ڊگهو) line0)
+		line0 = سٽ_ڳڻپ;
+	إذا (سٽ_ڳڻپ < (بنانشان ڊگهو) line1)
+		line1 = سٽ_ڳڻپ;
+	إذا (line1 < line0)
 		line1 = line0;
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_white, clip);
-	if (res != NSERROR_OK) {
-		return false;
+	إذا (res != NSERROR_OK) {
+		أرجع false;
 	}
 
-	if (!line)
-		return true;
+	إذا (!سٽ)
+		أرجع true;
 
 	/* choose a suitable background colour for any highlighted text */
-	if ((data->background_colour & 0x808080) == 0x808080)
+	إذا ((معلومات->background_رنگ & 0x808080) == 0x808080)
 		plot_style_highlight = plot_style_fill_black;
-	else
+	وإلا
 		plot_style_highlight = plot_style_fill_white;
 
 	/* Set up font plot style */
-	textplain_style.background = data->background_colour;
+	textplain_style.background = معلومات->background_رنگ;
 
-	x = (x + MARGIN) * data->scale;
-	y = (y + MARGIN) * data->scale;
-	for (lineno = line0; lineno != line1; lineno++) {
-		const char *text_d = utf8_data + line[lineno].start;
-		int tab_width = textplain_tab_width * data->scale;
-		size_t offset = 0;
-		int tx = x;
+	x = (x + MARGIN) * معلومات->scale;
+	y = (y + MARGIN) * معلومات->scale;
+	لكل (lineno = line0; lineno != line1; lineno++) {
+		ثابت حرف *متن_d = utf8_معلومات + سٽ[lineno].شروعات;
+		صحيح tab_ويڪر = textplain_tab_ويڪر * معلومات->scale;
+		size_t وٿي = 0;
+		صحيح tx = x;
 
-		if (!tab_width) tab_width = 1;
+		إذا (!tab_ويڪر) tab_ويڪر = 1;
 
-		length = line[lineno].length;
-		if (!length)
-			continue;
+		ڊيگهائي = سٽ[lineno].ڊيگهائي;
+		إذا (!ڊيگهائي)
+			استمر;
 
-		while (offset < length) {
-			size_t next_offset = offset;
-			int width;
-			int ntx;
+		طالما (وٿي < ڊيگهائي) {
+			size_t ايندڙ_وٿي = وٿي;
+			صحيح ويڪر;
+			صحيح ntx;
 			nserror res;
 
-			while ((next_offset < length) &&
-			       (text_d[next_offset] != '\t')) {
-				next_offset = utf8_next(text_d,
-							length,
-							next_offset);
+			طالما ((ايندڙ_وٿي < ڊيگهائي) &&
+			       (متن_d[ايندڙ_وٿي] != '\t')) {
+				ايندڙ_وٿي = utf8_ايندڙ(متن_d,
+							ڊيگهائي,
+							ايندڙ_وٿي);
 			}
 
-			if (!text_draw(text_d + offset,
-				       next_offset - offset,
-				       line[lineno].start + offset,
+			إذا (!متن_draw(متن_d + وٿي,
+				       ايندڙ_وٿي - وٿي,
+				       سٽ[lineno].شروعات + وٿي,
 				       tx,
-				       y + (lineno * scaled_line_height),
+				       y + (lineno * scaled_سٽ_اوچائي),
 				       clip,
-				       line_height,
-				       data->scale,
-				       text,
-				       text->sel,
+				       سٽ_اوچائي,
+				       معلومات->scale,
+				       متن,
+				       متن->sel,
 				       ctx)) {
-				return false;
+				أرجع false;
 			}
 
-			if (next_offset >= length)
-				break;
+			إذا (ايندڙ_وٿي >= ڊيگهائي)
+				اكسر;
 
-			res = guit->layout->width(&textplain_style,
-						  &text_d[offset],
-						  next_offset - offset,
-						  &width);
+			res = guit->layout->ويڪر(&textplain_style,
+						  &متن_d[وٿي],
+						  ايندڙ_وٿي - وٿي,
+						  &ويڪر);
 			/* locate end of string and align to next tab position */
-			if (res == NSERROR_OK) {
-				tx += (int)(width * data->scale);
+			إذا (res == NSERROR_OK) {
+				tx += (صحيح)(ويڪر * معلومات->scale);
 			}
 
-			ntx = x + ((1 + (tx - x) / tab_width) * tab_width);
+			ntx = x + ((1 + (tx - x) / tab_ويڪر) * tab_ويڪر);
 
 			/* if the tab character lies within the
 			 *  selection, if any, then we must draw it as
@@ -1156,99 +1156,99 @@ textplain_redraw(struct content *c,
 			 *  with background of the selected text
 			 */
 
-			if (bw) {
-				unsigned tab_ofst = line[lineno].start + next_offset;
-				struct selection *sel = text->sel;
+			إذا (bw) {
+				بنانشان tab_ofst = سٽ[lineno].شروعات + ايندڙ_وٿي;
+				بنية selection *sel = متن->sel;
 				bool highlighted = false;
 
-				unsigned start_idx, end_idx;
-				if (selection_highlighted(sel,
+				بنانشان شروعات_idx, پڇاڙي_idx;
+				إذا (selection_highlighted(sel,
 							  tab_ofst,
 							  tab_ofst + 1,
-							  &start_idx,
-							  &end_idx)) {
+							  &شروعات_idx,
+							  &پڇاڙي_idx)) {
 					highlighted = true;
 				}
 
 
-				if (!highlighted &&
-				    (c->textsearch.context != NULL)) {
-					unsigned start_idx, end_idx;
-					if (content_textsearch_ishighlighted(
+				إذا (!highlighted &&
+				    (c->textsearch.context != عدم)) {
+					بنانشان شروعات_idx, پڇاڙي_idx;
+					إذا (content_textsearch_ishighlighted(
 						    c->textsearch.context,
 						    tab_ofst,
 						    tab_ofst + 1,
-						    &start_idx,
-						    &end_idx)) {
+						    &شروعات_idx,
+						    &پڇاڙي_idx)) {
 						highlighted = true;
 					}
 				}
 
-				if (highlighted) {
-					struct rect rect;
+				إذا (highlighted) {
+					بنية rect rect;
 					rect.x0 = tx;
-					rect.y0 = y + (lineno * scaled_line_height);
+					rect.y0 = y + (lineno * scaled_سٽ_اوچائي);
 					rect.x1 = ntx;
-					rect.y1 = rect.y0 + scaled_line_height;
+					rect.y1 = rect.y0 + scaled_سٽ_اوچائي;
 					res = ctx->plot->rectangle(ctx,
 								   plot_style_highlight,
 								   &rect);
-					if (res != NSERROR_OK) {
-						return false;
+					إذا (res != NSERROR_OK) {
+						أرجع false;
 					}
 				}
 			}
 
-			offset = next_offset + 1;
+			وٿي = ايندڙ_وٿي + 1;
 			tx = ntx;
 		}
 	}
 
-	return true;
+	أرجع true;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being opened.
  */
-static nserror
-textplain_open(struct content *c,
-	       struct browser_window *bw,
-	       struct content *page,
-	       struct object_params *params)
+ساكن nserror
+textplain_open(بنية content *c,
+	       بنية browser_دري *bw,
+	       بنية content *صفحو,
+	       بنية object_params *params)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *متن = (textplain_content *) c;
 
-	text->bw = bw;
+	متن->bw = bw;
 
 	/* text selection */
-	selection_init(text->sel);
+	selection_init(متن->sel);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being closed.
  */
-static nserror textplain_close(struct content *c)
+ساكن nserror textplain_close(بنية content *c)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *متن = (textplain_content *) c;
 
-	text->bw = NULL;
+	متن->bw = عدم;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * Return an textplain content's selection context
  */
-static char *textplain_get_selection(struct content *c)
+ساكن حرف *textplain_get_selection(بنية content *c)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *متن = (textplain_content *) c;
 
-	return selection_get_copy(text->sel);
+	أرجع selection_get_copy(متن->sel);
 }
 
 
@@ -1264,35 +1264,35 @@ static char *textplain_get_selection(struct content *c)
  * \param  length  line length
  * \return x ordinate
  */
-static int
-textplain_coord_from_offset(const char *text, size_t offset, size_t length)
+ساكن صحيح
+textplain_coord_from_وٿي(ثابت حرف *متن, size_t وٿي, size_t ڊيگهائي)
 {
-	int x = 0;
+	صحيح x = 0;
 
-	while (offset > 0) {
-		size_t next_offset = 0;
-		int tx;
+	طالما (وٿي > 0) {
+		size_t ايندڙ_وٿي = 0;
+		صحيح tx;
 
-		while (next_offset < offset && text[next_offset] != '\t') {
-			next_offset = utf8_next(text, length, next_offset);
+		طالما (ايندڙ_وٿي < وٿي && متن[ايندڙ_وٿي] != '\t') {
+			ايندڙ_وٿي = utf8_ايندڙ(متن, ڊيگهائي, ايندڙ_وٿي);
 		}
 
-		guit->layout->width(&textplain_style, text, next_offset, &tx);
+		guit->layout->ويڪر(&textplain_style, متن, ايندڙ_وٿي, &tx);
 
 		x += tx;
 
-		if (next_offset >= offset)
-			break;
+		إذا (ايندڙ_وٿي >= وٿي)
+			اكسر;
 
 		/* align to next tab boundary */
-		next_offset++;
-		x = (1 + (x / textplain_tab_width)) * textplain_tab_width;
-		offset -= next_offset;
-		text += next_offset;
-		length -= next_offset;
+		ايندڙ_وٿي++;
+		x = (1 + (x / textplain_tab_ويڪر)) * textplain_tab_ويڪر;
+		وٿي -= ايندڙ_وٿي;
+		متن += ايندڙ_وٿي;
+		ڊيگهائي -= ايندڙ_وٿي;
 	}
 
-	return x;
+	أرجع x;
 }
 
 
@@ -1302,13 +1302,13 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
  * \param[in] c Content to retrieve line count from
  * \return Number of lines
  */
-static unsigned long textplain_line_count(struct content *c)
+ساكن بنانشان ڊگهو textplain_سٽ_ڳڻپ(بنية content *c)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *متن = (textplain_content *) c;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	return text->physical_line_count;
+	أرجع متن->physical_سٽ_ڳڻپ;
 }
 
 
@@ -1321,24 +1321,24 @@ static unsigned long textplain_line_count(struct content *c)
  * \param[out] plen    receives length of returned line
  * \return pointer to text, or NULL if invalid line number
  */
-static char *
-textplain_get_line(struct content *c,
-		   unsigned lineno,
+ساكن حرف *
+textplain_get_سٽ(بنية content *c,
+		   بنانشان lineno,
 		   size_t *poffset,
 		   size_t *plen)
 {
-	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
+	textplain_content *متن = (textplain_content *) c;
+	بنية textplain_سٽ *سٽ;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	if (lineno >= text->physical_line_count)
-		return NULL;
-	line = &text->physical_line[lineno];
+	إذا (lineno >= متن->physical_سٽ_ڳڻپ)
+		أرجع عدم;
+	سٽ = &متن->physical_سٽ[lineno];
 
-	*poffset = line->start;
-	*plen = line->length;
-	return text->utf8_data + line->start;
+	*poffset = سٽ->شروعات;
+	*plen = سٽ->ڊيگهائي;
+	أرجع متن->utf8_معلومات + سٽ->شروعات;
 }
 
 
@@ -1352,31 +1352,31 @@ textplain_get_line(struct content *c,
  * \param[in] offset  byte offset within textual representation
  * \return line number, or -1 if offset invalid (larger than size)
  */
-static int textplain_find_line(struct content *c, unsigned offset)
+ساكن صحيح textplain_ڳوليو_سٽ(بنية content *c, بنانشان وٿي)
 {
-	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
-	int nlines;
-	int lineno = 0;
+	textplain_content *متن = (textplain_content *) c;
+	بنية textplain_سٽ *سٽ;
+	صحيح nlines;
+	صحيح lineno = 0;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	line = text->physical_line;
-	nlines = text->physical_line_count;
+	سٽ = متن->physical_سٽ;
+	nlines = متن->physical_سٽ_ڳڻپ;
 
-	if (offset > text->utf8_data_size) {
-		return -1;
+	إذا (وٿي > متن->utf8_معلومات_سائيز) {
+		أرجع -1;
 	}
 
 /* \todo - implement binary search here */
-	while (lineno < nlines && line[lineno].start < offset) {
+	طالما (lineno < nlines && سٽ[lineno].شروعات < وٿي) {
 		lineno++;
 	}
-	if (line[lineno].start > offset) {
+	إذا (سٽ[lineno].شروعات > وٿي) {
 		lineno--;
 	}
 
-	return lineno;
+	أرجع lineno;
 }
 
 
@@ -1390,59 +1390,59 @@ static int textplain_find_line(struct content *c, unsigned offset)
  * \param case_sens whether to perform a case sensitive search
  * \return NSERROR_OK on success else error code on faliure
  */
-static nserror
-textplain_textsearch_find(struct content *c,
-			  struct textsearch_context *context,
-			  const char *pattern,
-			  int p_len,
+ساكن nserror
+textplain_textsearch_ڳوليو(بنية content *c,
+			  بنية textsearch_context *context,
+			  ثابت حرف *نمونو,
+			  صحيح p_len,
 			  bool case_sens)
 {
-	int nlines = textplain_line_count(c);
-	int line;
+	صحيح nlines = textplain_سٽ_ڳڻپ(c);
+	صحيح سٽ;
 	nserror res = NSERROR_OK;
 
-	for(line = 0; line < nlines; line++) {
-		size_t offset, length;
-		const char *text;
+	لكل(سٽ = 0; سٽ < nlines; سٽ++) {
+		size_t وٿي, ڊيگهائي;
+		ثابت حرف *متن;
 
-		text = textplain_get_line(c, line, &offset, &length);
-		if (text) {
-			while (length > 0) {
-				unsigned match_length;
-				size_t start_idx;
-				const char *new_text;
-				const char *pos;
+		متن = textplain_get_سٽ(c, سٽ, &وٿي, &ڊيگهائي);
+		إذا (متن) {
+			طالما (ڊيگهائي > 0) {
+				بنانشان ميلاپ_ڊيگهائي;
+				size_t شروعات_idx;
+				ثابت حرف *new_متن;
+				ثابت حرف *pos;
 
-				pos = content_textsearch_find_pattern(
-						text,
-						length,
-						pattern,
+				pos = content_textsearch_ڳوليو_نمونو(
+						متن,
+						ڊيگهائي,
+						نمونو,
 						p_len,
 						case_sens,
-						&match_length);
-				if (!pos)
-					break;
+						&ميلاپ_ڊيگهائي);
+				إذا (!pos)
+					اكسر;
 
 				/* found string in line => add to list */
-				start_idx = offset + (pos - text);
-				res = content_textsearch_add_match(context,
-						start_idx,
-						start_idx + match_length,
-						NULL,
-						NULL);
-				if (res != NSERROR_OK) {
-					return res;
+				شروعات_idx = وٿي + (pos - متن);
+				res = content_textsearch_جوڙيو_ميلاپ(context,
+						شروعات_idx,
+						شروعات_idx + ميلاپ_ڊيگهائي,
+						عدم,
+						عدم);
+				إذا (res != NSERROR_OK) {
+					أرجع res;
 				}
 
-				new_text = pos + match_length;
-				offset += (new_text - text);
-				length -= (new_text - text);
-				text = new_text;
+				new_متن = pos + ميلاپ_ڊيگهائي;
+				وٿي += (new_متن - متن);
+				ڊيگهائي -= (new_متن - متن);
+				متن = new_متن;
 			}
 		}
 	}
 
-	return res;
+	أرجع res;
 }
 
 
@@ -1455,56 +1455,56 @@ textplain_textsearch_find(struct content *c,
  * \param[in] end   byte offset of end
  * \param[out] r    rectangle to be completed
  */
-static void
-textplain_coords_from_range(struct content *c,
-			    unsigned start,
-			    unsigned end,
-			    struct rect *r)
+ساكن فراغ
+textplain_coords_from_range(بنية content *c,
+			    بنانشان شروعات,
+			    بنانشان پڇاڙي,
+			    بنية rect *r)
 {
-	textplain_content *text = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	char *utf8_data;
-	struct textplain_line *line;
-	unsigned lineno = 0;
-	unsigned nlines;
+	textplain_content *متن = (textplain_content *) c;
+	عائم سٽ_اوچائي = textplain_سٽ_اوچائي();
+	حرف *utf8_معلومات;
+	بنية textplain_سٽ *سٽ;
+	بنانشان lineno = 0;
+	بنانشان nlines;
 
-	assert(c != NULL);
-	assert(start <= end);
-	assert(end <= text->utf8_data_size);
+	أكد(c != عدم);
+	أكد(شروعات <= پڇاڙي);
+	أكد(پڇاڙي <= متن->utf8_معلومات_سائيز);
 
-	utf8_data = text->utf8_data;
-	nlines = text->physical_line_count;
-	line = text->physical_line;
+	utf8_معلومات = متن->utf8_معلومات;
+	nlines = متن->physical_سٽ_ڳڻپ;
+	سٽ = متن->physical_سٽ;
 
 	/* find start */
-	lineno = textplain_find_line(c, start);
+	lineno = textplain_ڳوليو_سٽ(c, شروعات);
 
-	r->y0 = (int)(MARGIN + lineno * line_height);
+	r->y0 = (صحيح)(MARGIN + lineno * سٽ_اوچائي);
 
-	if (lineno + 1 <= nlines || line[lineno + 1].start >= end) {
+	إذا (lineno + 1 <= nlines || سٽ[lineno + 1].شروعات >= پڇاڙي) {
 		/* \todo - it may actually be more efficient just to
 		 *   run forwards most of the time
 		 */
 
 		/* find end */
-		lineno = textplain_find_line(c, end);
+		lineno = textplain_ڳوليو_سٽ(c, پڇاڙي);
 
 		r->x0 = 0;
-		r->x1 = text->formatted_width;
-	} else {
+		r->x1 = متن->formatted_ويڪر;
+	} وإلا {
 		/* single line */
-		const char *text = utf8_data + line[lineno].start;
+		ثابت حرف *متن = utf8_معلومات + سٽ[lineno].شروعات;
 
-		r->x0 = textplain_coord_from_offset(text,
-						    start - line[lineno].start,
-						    line[lineno].length);
+		r->x0 = textplain_coord_from_وٿي(متن,
+						    شروعات - سٽ[lineno].شروعات,
+						    سٽ[lineno].ڊيگهائي);
 
-		r->x1 = textplain_coord_from_offset(text,
-						    end - line[lineno].start,
-						    line[lineno].length);
+		r->x1 = textplain_coord_from_وٿي(متن,
+						    پڇاڙي - سٽ[lineno].شروعات,
+						    سٽ[lineno].ڊيگهائي);
 	}
 
-	r->y1 = (int)(MARGIN + (lineno + 1) * line_height);
+	r->y1 = (صحيح)(MARGIN + (lineno + 1) * سٽ_اوچائي);
 }
 
 
@@ -1519,88 +1519,88 @@ textplain_coords_from_range(struct content *c,
  * \param[out] plen receives validated length
  * \return pointer to text, or NULL if no text
  */
-static char *
-textplain_get_raw_data(struct content *c,
-		       unsigned start,
-		       unsigned end,
+ساكن حرف *
+textplain_get_raw_معلومات(بنية content *c,
+		       بنانشان شروعات,
+		       بنانشان پڇاڙي,
 		       size_t *plen)
 {
-	textplain_content *text = (textplain_content *) c;
-	size_t utf8_size;
+	textplain_content *متن = (textplain_content *) c;
+	size_t utf8_سائيز;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	utf8_size = text->utf8_data_size;
+	utf8_سائيز = متن->utf8_معلومات_سائيز;
 
 	/* any text at all? */
-	if (!utf8_size) return NULL;
+	إذا (!utf8_سائيز) أرجع عدم;
 
 	/* clamp to valid offset range */
-	if (start >= utf8_size) start = utf8_size;
-	if (end >= utf8_size) end = utf8_size;
+	إذا (شروعات >= utf8_سائيز) شروعات = utf8_سائيز;
+	إذا (پڇاڙي >= utf8_سائيز) پڇاڙي = utf8_سائيز;
 
-	*plen = end - start;
+	*plen = پڇاڙي - شروعات;
 
-	return text->utf8_data + start;
+	أرجع متن->utf8_معلومات + شروعات;
 }
 
 
 /**
  * get bounds of a free text search match
  */
-static nserror
-textplain_textsearch_bounds(struct content *c,
-			    unsigned start_idx,
-			    unsigned end_idx,
-			    struct box *start_box,
-			    struct box *end_box,
-			    struct rect *bounds)
+ساكن nserror
+textplain_textsearch_bounds(بنية content *c,
+			    بنانشان شروعات_idx,
+			    بنانشان پڇاڙي_idx,
+			    بنية box *شروعات_box,
+			    بنية box *پڇاڙي_box,
+			    بنية rect *bounds)
 {
-	textplain_coords_from_range(c, start_idx, end_idx, bounds);
+	textplain_coords_from_range(c, شروعات_idx, پڇاڙي_idx, bounds);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * invalidate a region based on offsets into the text cauing a redraw
  */
-static nserror
-textplain_textselection_redraw(struct content *c,
-			       unsigned start_idx,
-			       unsigned end_idx)
+ساكن nserror
+textplain_textselection_redraw(بنية content *c,
+			       بنانشان شروعات_idx,
+			       بنانشان پڇاڙي_idx)
 {
-	struct rect r;
+	بنية rect r;
 
-	if (end_idx <= start_idx) {
-		return NSERROR_BAD_PARAMETER;
+	إذا (پڇاڙي_idx <= شروعات_idx) {
+		أرجع NSERROR_BAD_PARAMETER;
 	}
 
-	textplain_coords_from_range(c, start_idx, end_idx, &r);
+	textplain_coords_from_range(c, شروعات_idx, پڇاڙي_idx, &r);
 
 	content__request_redraw(c, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static nserror
-textplain_textselection_copy(struct content *c,
-			     unsigned start_idx,
-			     unsigned end_idx,
-			     struct selection_string *selstr)
+ساكن nserror
+textplain_textselection_copy(بنية content *c,
+			     بنانشان شروعات_idx,
+			     بنانشان پڇاڙي_idx,
+			     بنية selection_string *selstr)
 {
-	const char *text;
-	size_t length;
+	ثابت حرف *متن;
+	size_t ڊيگهائي;
 	bool res = false;
 
-	text = textplain_get_raw_data(c, start_idx, end_idx, &length);
-	if (text != NULL) {
-		res = selection_string_append(text, length, false, NULL, selstr);
+	متن = textplain_get_raw_معلومات(c, شروعات_idx, پڇاڙي_idx, &ڊيگهائي);
+	إذا (متن != عدم) {
+		res = selection_string_append(متن, ڊيگهائي, false, عدم, selstr);
 	}
-	if (res == false) {
-		return NSERROR_NOMEM;
+	إذا (res == false) {
+		أرجع NSERROR_NOMEM;
 	}
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -1610,24 +1610,24 @@ textplain_textselection_copy(struct content *c,
  * \param[in] c Content to retrieve size of
  * \return Size, in bytes, of data
  */
-static nserror
-textplain_textselection_get_end(struct content *c, unsigned *end_idx)
+ساكن nserror
+textplain_textselection_get_پڇاڙي(بنية content *c, بنانشان *پڇاڙي_idx)
 {
-	textplain_content *text = (textplain_content *)c;
+	textplain_content *متن = (textplain_content *)c;
 
-	*end_idx = text->utf8_data_size;
-	return NSERROR_OK;
+	*پڇاڙي_idx = متن->utf8_معلومات_سائيز;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * plain text content handler table
  */
-static const content_handler textplain_content_handler = {
+ساكن ثابت content_handler textplain_content_handler = {
 	.fini = textplain_fini,
 	.create = textplain_create,
-	.process_data = textplain_process_data,
-	.data_complete = textplain_convert,
+	.process_معلومات = textplain_process_معلومات,
+	.معلومات_complete = textplain_convert,
 	.reformat = textplain_reformat,
 	.destroy = textplain_destroy,
 	.mouse_track = textplain_mouse_track,
@@ -1639,17 +1639,17 @@ static const content_handler textplain_content_handler = {
 	.get_selection = textplain_get_selection,
 	.clone = textplain_clone,
 	.type = textplain_content_type,
-	.textsearch_find = textplain_textsearch_find,
+	.textsearch_ڳوليو = textplain_textsearch_ڳوليو,
 	.textsearch_bounds = textplain_textsearch_bounds,
 	.textselection_redraw = textplain_textselection_redraw,
 	.textselection_copy = textplain_textselection_copy,
-	.textselection_get_end = textplain_textselection_get_end,
+	.textselection_get_پڇاڙي = textplain_textselection_get_پڇاڙي,
 	.no_share = true,
 };
 
 
 /* exported interface documented in html/textplain.h */
-nserror textplain_init(void)
+nserror textplain_init(فراغ)
 {
 	lwc_error lerror;
 	nserror error;
@@ -1657,23 +1657,23 @@ nserror textplain_init(void)
 	lerror = lwc_intern_string("Windows-1252",
 				   SLEN("Windows-1252"),
 				   &textplain_default_charset);
-	if (lerror != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	إذا (lerror != lwc_error_ok) {
+		أرجع NSERROR_NOMEM;
 	}
 
-	error = content_factory_register_handler("text/plain",
+	error = content_factory_رجسٽر_handler("text/plain",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
-	error = content_factory_register_handler("application/json",
+	error = content_factory_رجسٽر_handler("application/json",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
-	return error;
+	أرجع error;
 }
 
 

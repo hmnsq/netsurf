@@ -20,19 +20,19 @@
  * Fetching of data from a URL (Registration).
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
-#define NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
+#وصف_ڪريو NETSURF_CONTENT_FETCHERS_FETCH_CURL_H
 
-#include <curl/curl.h>
+#ضمن <curl/curl.h>
 
 /**
  * Register curl scheme handler.
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_curl_register(void);
+nserror fetch_curl_رجسٽر(فراغ);
 
 /** Global cURL multi handle. */
-extern CURLM *fetch_curl_multi;
+خارجي CURLM *fetch_curl_multi;
 
-#endif
+#جيڪڏهن_پورو

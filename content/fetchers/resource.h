@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_FETCH_RESOURCE_H
-#define NETSURF_CONTENT_FETCHERS_FETCH_RESOURCE_H
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_CONTENT_FETCHERS_FETCH_RESOURCE_H
+#وصف_ڪريو NETSURF_CONTENT_FETCHERS_FETCH_RESOURCE_H
 
 /**
  * Register the resource scheme.
@@ -38,6 +38,6 @@
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_resource_register(void);
+nserror fetch_resource_رجسٽر(فراغ);
 
-#endif
+#جيڪڏهن_پورو

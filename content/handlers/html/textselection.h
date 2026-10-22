@@ -21,15 +21,15 @@
  * HTML text selection handling
  */
 
-#ifndef NETSURF_HTML_TEXTSELECTION_H
-#define NETSURF_HTML_TEXTSELECTION_H
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_HTML_TEXTSELECTION_H
+#وصف_ڪريو NETSURF_HTML_TEXTSELECTION_H
 
-struct content;
-struct selection;
+بنية content;
+بنية selection;
 
-nserror html_textselection_redraw(struct content *c, unsigned start_idx, unsigned end_idx);
+nserror html_textselection_redraw(بنية content *c, بنانشان شروعات_idx, بنانشان پڇاڙي_idx);
 
-nserror html_textselection_copy(struct content *c, unsigned start_idx, unsigned end_idx, struct selection_string *selstr);
+nserror html_textselection_copy(بنية content *c, بنانشان شروعات_idx, بنانشان پڇاڙي_idx, بنية selection_string *selstr);
 
 /**
  * get maximum index of text section.
@@ -38,6 +38,6 @@ nserror html_textselection_copy(struct content *c, unsigned start_idx, unsigned 
  * \param[out] end_idx pointer to value to recive result
  * \return NSERROR_OK and \a end_idx updated else error code
  */
-nserror html_textselection_get_end(struct content *c, unsigned *end_idx);
+nserror html_textselection_get_پڇاڙي(بنية content *c, بنانشان *پڇاڙي_idx);
 
-#endif
+#جيڪڏهن_پورو

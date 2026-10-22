@@ -23,45 +23,45 @@
  * Spec version: 2011-11-27
  */
 
-#include <string.h>
-#include <strings.h>
+#ضمن <string.h>
+#ضمن <strings.h>
 
-#include "utils/http.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
+#ضمن "utils/http.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/corestrings.h"
 
-#include "content/content_factory.h"
-#include "content/mimesniff.h"
+#ضمن "content/content_factory.h"
+#ضمن "content/mimesniff.h"
 
-struct map_s {
-	const uint8_t *sig;
+بنية map_s {
+	ثابت uint8_t *sig;
 	size_t len;
-	bool safe;
+	bool محفوظ;
 	lwc_string **type;
 };
 
-static bool mimesniff__has_binary_octets(const uint8_t *data, size_t len)
+ساكن bool mimesniff_has_ٻٽو_octets(ثابت uint8_t *معلومات, size_t len)
 {
-	const uint8_t *end = data + len;
+	ثابت uint8_t *پڇاڙي = معلومات + len;
 
-	while (data != end) {
-		const uint8_t c = *data;
+	طالما (معلومات != پڇاڙي) {
+		ثابت uint8_t c = *معلومات;
 
 		/* Binary iff in C0 and not ESC, CR, FF, LF, HT */
-		if (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
+		إذا (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
 				c != '\n' && c != '\t')
-			break;
+			اكسر;
 
-		data++;
+		معلومات++;
 	}
 
-	return data != end;
+	أرجع معلومات != پڇاڙي;
 }
 
-static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
+ساكن nserror mimesniff_ميلاپ_mp4(ثابت uint8_t *معلومات, size_t len,
 		lwc_string **effective_type)
 {
-	uint32_t box_size, i;
+	uint32_t box_سائيز, i;
 
 	/* ISO/IEC 14496-12:2008 $4.3 says (effectively):
 	 *
@@ -87,166 +87,166 @@ static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
 	/* 12 reflects the minimum number of octets needed to sniff useful
 	 * information out of an 'ftyp' box (i.e. the size, type,
 	 * and major_brand words). */
-	if (len < 12)
-		return NSERROR_NOT_FOUND;
+	إذا (len < 12)
+		أرجع NSERROR_NOT_مليو;
 
 	/* Box size is big-endian */
-	box_size = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+	box_سائيز = (معلومات[0] << 24) | (معلومات[1] << 16) | (معلومات[2] << 8) | معلومات[3];
 
 	/* Require that we can read the entire box, and reject bad box sizes */
-	if (len < box_size || box_size % 4 != 0)
-		return NSERROR_NOT_FOUND;
+	إذا (len < box_سائيز || box_سائيز % 4 != 0)
+		أرجع NSERROR_NOT_مليو;
 
 	/* Ensure this is an 'ftyp' box */
-	if (data[4] != 'f' || data[5] != 't' ||
-			data[6] != 'y' || data[7] != 'p')
-		return NSERROR_NOT_FOUND;
+	إذا (معلومات[4] != 'f' || معلومات[5] != 't' ||
+			معلومات[6] != 'y' || معلومات[7] != 'p')
+		أرجع NSERROR_NOT_مليو;
 
 	/* Check if major brand begins with 'mp4' */
-	if (data[8] == 'm' && data[9] == 'p' && data[10] == '4') {
+	إذا (معلومات[8] == 'm' && معلومات[9] == 'p' && معلومات[10] == '4') {
 		*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	/* Search each compatible brand in the box for "mp4" */
-	for (i = 16; i <= box_size - 4; i += 4) {
-		if (data[i] == 'm' &&
-		    data[i+1] == 'p' &&
-		    data[i+2] == '4') {
+	لكل (i = 16; i <= box_سائيز - 4; i += 4) {
+		إذا (معلومات[i] == 'm' &&
+		    معلومات[i+1] == 'p' &&
+		    معلومات[i+2] == '4') {
 			*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_مليو;
 }
 
-static nserror mimesniff__match_unknown_ws(const uint8_t *data, size_t len,
+ساكن nserror mimesniff_ميلاپ_unknown_ws(ثابت uint8_t *معلومات, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s ws_exact_match_types[] = {
-		SIG(&corestring_lwc_text_xml, "<?xml", false),
-		{ NULL, 0, false, NULL }
+#وصف_ڪريو SIG(t, s, x) { (ثابت uint8_t *) s, SLEN(s), x, t }
+	ساكن ثابت بنية map_s ws_exact_ميلاپ_types[] = {
+		SIG(&corestring_lwc_متن_xml, "<?xml", false),
+		{ عدم, 0, false, عدم }
 	};
 
-	static const struct map_s ws_inexact_match_types[] = {
-		SIG(&corestring_lwc_text_html, "<!DOCTYPE HTML", false),
-		SIG(&corestring_lwc_text_html, "<HTML",          false),
-		SIG(&corestring_lwc_text_html, "<HEAD",          false),
-		SIG(&corestring_lwc_text_html, "<SCRIPT",        false),
-		SIG(&corestring_lwc_text_html, "<IFRAME",        false),
-		SIG(&corestring_lwc_text_html, "<H1",            false),
-		SIG(&corestring_lwc_text_html, "<DIV",           false),
-		SIG(&corestring_lwc_text_html, "<FONT",          false),
-		SIG(&corestring_lwc_text_html, "<TABLE",         false),
-		SIG(&corestring_lwc_text_html, "<A",             false),
-		SIG(&corestring_lwc_text_html, "<STYLE",         false),
-		SIG(&corestring_lwc_text_html, "<TITLE",         false),
-		SIG(&corestring_lwc_text_html, "<B",             false),
-		SIG(&corestring_lwc_text_html, "<BODY",          false),
-		SIG(&corestring_lwc_text_html, "<BR",            false),
-		SIG(&corestring_lwc_text_html, "<P",             false),
-		SIG(&corestring_lwc_text_html, "<!--",           false),
-		{ NULL, 0, false, NULL }
+	ساكن ثابت بنية map_s ws_inexact_ميلاپ_types[] = {
+		SIG(&corestring_lwc_متن_html, "<!DOCTYPE HTML", false),
+		SIG(&corestring_lwc_متن_html, "<HTML",          false),
+		SIG(&corestring_lwc_متن_html, "<HEAD",          false),
+		SIG(&corestring_lwc_متن_html, "<SCRIPT",        false),
+		SIG(&corestring_lwc_متن_html, "<IFRAME",        false),
+		SIG(&corestring_lwc_متن_html, "<H1",            false),
+		SIG(&corestring_lwc_متن_html, "<DIV",           false),
+		SIG(&corestring_lwc_متن_html, "<FONT",          false),
+		SIG(&corestring_lwc_متن_html, "<TABLE",         false),
+		SIG(&corestring_lwc_متن_html, "<A",             false),
+		SIG(&corestring_lwc_متن_html, "<STYLE",         false),
+		SIG(&corestring_lwc_متن_html, "<TITLE",         false),
+		SIG(&corestring_lwc_متن_html, "<B",             false),
+		SIG(&corestring_lwc_متن_html, "<BODY",          false),
+		SIG(&corestring_lwc_متن_html, "<BR",            false),
+		SIG(&corestring_lwc_متن_html, "<P",             false),
+		SIG(&corestring_lwc_متن_html, "<!--",           false),
+		{ عدم, 0, false, عدم }
 	};
-#undef SIG
-	const uint8_t *end = data + len;
-	const struct map_s *it;
+#وصف_رد SIG
+	ثابت uint8_t *پڇاڙي = معلومات + len;
+	ثابت بنية map_s *it;
 
 	/* Skip leading whitespace */
-	while (data != end) {
-		const uint8_t c = *data;
+	طالما (معلومات != پڇاڙي) {
+		ثابت uint8_t c = *معلومات;
 
-		if (c != '\t' && c != '\n' && c != '\f' &&
+		إذا (c != '\t' && c != '\n' && c != '\f' &&
 				c != '\r' && c != ' ')
-			break;
+			اكسر;
 
-		data++;
+		معلومات++;
 	}
 
-	if (data == end)
-		return NSERROR_NOT_FOUND;
+	إذا (معلومات == پڇاڙي)
+		أرجع NSERROR_NOT_مليو;
 
-	len = end - data;
+	len = پڇاڙي - معلومات;
 
-	for (it = ws_exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	لكل (it = ws_exact_ميلاپ_types; it->sig != عدم; it++) {
+		إذا (it->len <= len && memcmp(معلومات, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
 	}
 
-	for (it = ws_inexact_match_types; it->sig != NULL; it++) {
+	لكل (it = ws_inexact_ميلاپ_types; it->sig != عدم; it++) {
 		/* +1 for trailing space or > */
-		if (len < it->len + 1)
-			continue;
+		إذا (len < it->len + 1)
+			استمر;
 
-		if (strncasecmp((const char *) data,
-				(const char *) it->sig, it->len) == 0 &&
-				(data[it->len] == ' ' ||
-				data[it->len] == '>')) {
+		إذا (strncasecmp((ثابت حرف *) معلومات,
+				(ثابت حرف *) it->sig, it->len) == 0 &&
+				(معلومات[it->len] == ' ' ||
+				معلومات[it->len] == '>')) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_مليو;
 }
 
-static nserror mimesniff__match_unknown_bom(const uint8_t *data, size_t len,
+ساكن nserror mimesniff_ميلاپ_unknown_bom(ثابت uint8_t *معلومات, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s bom_match_types[] = {
-		SIG(&corestring_lwc_text_plain, "\xfe\xff",     false),
-		SIG(&corestring_lwc_text_plain, "\xff\xfe",     false),
-		SIG(&corestring_lwc_text_plain, "\xef\xbb\xbf", false),
-		{ NULL, 0, false, NULL }
+#وصف_ڪريو SIG(t, s, x) { (ثابت uint8_t *) s, SLEN(s), x, t }
+	ساكن ثابت بنية map_s bom_ميلاپ_types[] = {
+		SIG(&corestring_lwc_متن_plain, "\xfe\xff",     false),
+		SIG(&corestring_lwc_متن_plain, "\xff\xfe",     false),
+		SIG(&corestring_lwc_متن_plain, "\xef\xbb\xbf", false),
+		{ عدم, 0, false, عدم }
 	};
-#undef SIG
-	const struct map_s *it;
+#وصف_رد SIG
+	ثابت بنية map_s *it;
 
-	for (it = bom_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	لكل (it = bom_ميلاپ_types; it->sig != عدم; it++) {
+		إذا (it->len <= len && memcmp(معلومات, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_مليو;
 }
 
-static nserror mimesniff__match_unknown_riff(const uint8_t *data, size_t len,
+ساكن nserror mimesniff_ميلاپ_unknown_riff(ثابت uint8_t *معلومات, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s riff_match_types[] = {
+#وصف_ڪريو SIG(t, s, x) { (ثابت uint8_t *) s, SLEN(s), x, t }
+	ساكن ثابت بنية map_s riff_ميلاپ_types[] = {
 		SIG(&corestring_lwc_image_webp, "WEBPVP", true),
 		SIG(&corestring_lwc_audio_wave, "WAVE",   true),
-		{ NULL, 0, false, NULL }
+		{ عدم, 0, false, عدم }
 	};
-#undef SIG
-	const struct map_s *it;
+#وصف_رد SIG
+	ثابت بنية map_s *it;
 
-	for (it = riff_match_types; it->sig != NULL; it++) {
-		if (it->len + SLEN("RIFF????") <= len &&
-				memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
-				memcmp(data + SLEN("RIFF????"),
+	لكل (it = riff_ميلاپ_types; it->sig != عدم; it++) {
+		إذا (it->len + SLEN("RIFF????") <= len &&
+				memcmp(معلومات, "RIFF", SLEN("RIFF")) == 0 &&
+				memcmp(معلومات + SLEN("RIFF????"),
 						it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_مليو;
 }
 
-static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
+ساكن nserror mimesniff_ميلاپ_unknown_exact(ثابت uint8_t *معلومات, size_t len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s exact_match_types[] = {
+#وصف_ڪريو SIG(t, s, x) { (ثابت uint8_t *) s, SLEN(s), x, t }
+	ساكن ثابت بنية map_s exact_ميلاپ_types[] = {
 		SIG(&corestring_lwc_image_gif, "GIF87a", true),
 		SIG(&corestring_lwc_image_gif, "GIF89a", true),
 		SIG(&corestring_lwc_image_png, "\x89PNG\r\n\x1a\n", true),
@@ -262,118 +262,118 @@ static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
 		SIG(&corestring_lwc_application_pdf, "%PDF-", false),
 		SIG(&corestring_lwc_image_jxl, "\xFF\x0A", true), /* containerless jpeg xl*/
 		{
-			(const uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
+			(ثابت uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
 			12,
 			true,
 			&corestring_lwc_image_jxl
 		}, /* containered jpeg xl*/
-		{ NULL, 0, false, NULL }
+		{ عدم, 0, false, عدم }
 	};
-#undef SIG
-	const struct map_s *it;
+#وصف_رد SIG
+	ثابت بنية map_s *it;
 
-	for (it = exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0 &&
-				(allow_unsafe || it->safe)) {
+	لكل (it = exact_ميلاپ_types; it->sig != عدم; it++) {
+		إذا (it->len <= len && memcmp(معلومات, it->sig, it->len) == 0 &&
+				(allow_unsafe || it->محفوظ)) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_مليو;
 }
 
-static nserror mimesniff__match_unknown(const uint8_t *data, size_t len,
+ساكن nserror mimesniff_ميلاپ_unknown(ثابت uint8_t *معلومات, size_t len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-	if (mimesniff__match_unknown_exact(data, len, allow_unsafe,
+	إذا (mimesniff_ميلاپ_unknown_exact(معلومات, len, allow_unsafe,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 
-	if (mimesniff__match_unknown_riff(data, len,
+	إذا (mimesniff_ميلاپ_unknown_riff(معلومات, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 
-	if (allow_unsafe == false)
-		return NSERROR_NOT_FOUND;
+	إذا (allow_unsafe == false)
+		أرجع NSERROR_NOT_مليو;
 
-	if (mimesniff__match_unknown_bom(data, len,
+	إذا (mimesniff_ميلاپ_unknown_bom(معلومات, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 
-	if (mimesniff__match_unknown_ws(data, len,
+	إذا (mimesniff_ميلاپ_unknown_ws(معلومات, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 
-	if (mimesniff__match_mp4(data, len, effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+	إذا (mimesniff_ميلاپ_mp4(معلومات, len, effective_type) == NSERROR_OK)
+		أرجع NSERROR_OK;
 
-	return NSERROR_NOT_FOUND;
+	أرجع NSERROR_NOT_مليو;
 }
 
-static nserror mimesniff__compute_unknown(const uint8_t *data, size_t len,
+ساكن nserror mimesniff__compute_unknown(ثابت uint8_t *معلومات, size_t len,
 		lwc_string **effective_type)
 {
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	إذا (معلومات == عدم)
+		أرجع NSERROR_NEED_معلومات;
 
 	len = min(len, 512);
 
-	if (mimesniff__match_unknown(data, len, true,
+	إذا (mimesniff_ميلاپ_unknown(معلومات, len, true,
 				     effective_type) == NSERROR_OK) {
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	إذا (mimesniff_has_ٻٽو_octets(معلومات, len) == false) {
 		/* No binary octets => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_متن_plain);
+		أرجع NSERROR_OK;
 	}
 
-	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
+	*effective_type = lwc_string_ref(corestring_lwc_application_octet_وهڪرو);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static nserror mimesniff__compute_text_or_binary(const uint8_t *data,
+ساكن nserror mimesniff_compute_متن_or_ٻٽو(ثابت uint8_t *معلومات,
 		size_t len, lwc_string **effective_type)
 {
-	if (data == NULL) {
-		return NSERROR_NEED_DATA;
+	إذا (معلومات == عدم) {
+		أرجع NSERROR_NEED_معلومات;
 	}
 
 	len = min(len, 512);
 
-	if (len >= 3 && ((data[0] == 0xfe && data[1] == 0xff) ||
-			(data[0] == 0xff && data[1] == 0xfe) ||
-			(data[0] == 0xef && data[1] == 0xbb &&
-				data[2] == 0xbf))) {
+	إذا (len >= 3 && ((معلومات[0] == 0xfe && معلومات[1] == 0xff) ||
+			(معلومات[0] == 0xff && معلومات[1] == 0xfe) ||
+			(معلومات[0] == 0xef && معلومات[1] == 0xbb &&
+				معلومات[2] == 0xbf))) {
 		/* Found a BOM => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_متن_plain);
+		أرجع NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	إذا (mimesniff_has_ٻٽو_octets(معلومات, len) == false) {
 		/* No binary octets => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_متن_plain);
+		أرجع NSERROR_OK;
 	}
 
-	if (mimesniff__match_unknown(data, len, false,
+	إذا (mimesniff_ميلاپ_unknown(معلومات, len, false,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 
-	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
+	*effective_type = lwc_string_ref(corestring_lwc_application_octet_وهڪرو);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static nserror mimesniff__compute_image(lwc_string *official_type,
-		const uint8_t *data, size_t len, lwc_string **effective_type)
+ساكن nserror mimesniff__compute_image(lwc_string *official_type,
+		ثابت uint8_t *معلومات, size_t len, lwc_string **effective_type)
 {
-#define SIG(t, s) { (const uint8_t *) s, SLEN(s), t }
-	static const struct it_s {
-		const uint8_t *sig;
+#وصف_ڪريو SIG(t, s) { (ثابت uint8_t *) s, SLEN(s), t }
+	ساكن ثابت بنية it_s {
+		ثابت uint8_t *sig;
 		size_t len;
 		lwc_string **type;
 	} image_types[] = {
@@ -385,316 +385,316 @@ static nserror mimesniff__compute_image(lwc_string *official_type,
 		SIG(&corestring_lwc_image_vnd_microsoft_icon, "\x00\x00\x01\x00"),
 		SIG(&corestring_lwc_image_jxl, "\xFF\x0A"), /* containerless jpeg xl*/
 		{
-			(const uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
+			(ثابت uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
 			12,
 			&corestring_lwc_image_jxl
 		}, /* containered jpeg xl*/
-		{ NULL, 0, NULL }
+		{ عدم, 0, عدم }
 	};
-#undef SIG
+#وصف_رد SIG
 
-	const struct it_s *it;
+	ثابت بنية it_s *it;
 
-	if (data == NULL) {
+	إذا (معلومات == عدم) {
 		lwc_string_unref(official_type);
-		return NSERROR_NEED_DATA;
+		أرجع NSERROR_NEED_معلومات;
 	}
 
-	for (it = image_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	لكل (it = image_types; it->sig != عدم; it++) {
+		إذا (it->len <= len && memcmp(معلومات, it->sig, it->len) == 0) {
 			lwc_string_unref(official_type);
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
 	}
 
 	/* WebP has a signature that doesn't fit into the above table */
-	if (SLEN("RIFF????WEBPVP") <= len &&
-			memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
-			memcmp(data + SLEN("RIFF????"),
+	إذا (SLEN("RIFF????WEBPVP") <= len &&
+			memcmp(معلومات, "RIFF", SLEN("RIFF")) == 0 &&
+			memcmp(معلومات + SLEN("RIFF????"),
 					"WEBPVP", SLEN("WEBPVP")) == 0 ) {
 		lwc_string_unref(official_type);
 		*effective_type = lwc_string_ref(corestring_lwc_image_webp);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	*effective_type = official_type;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
+ساكن nserror mimesniff__compute_feed_or_html(ثابت uint8_t *معلومات,
 		size_t len, lwc_string **effective_type)
 {
-#define RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-#define RSS_NS "http://purl.org/rss/1.0"
+#وصف_ڪريو RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#وصف_ڪريو RSS_NS "http://purl.org/rss/1.0"
 
-	enum state_e {
+	تعداد state_e {
 		BEFORE_BOM,
 		BEFORE_MARKUP,
-		MARKUP_START,
+		MARKUP_شروعات,
 		COMMENT_OR_DOCTYPE,
-		IN_COMMENT,
-		IN_DOCTYPE,
-		IN_PI,
-		IN_TAG,
-		IN_RDF
+		اندريون_COMMENT,
+		اندريون_DOCTYPE,
+		اندريون_PI,
+		اندريون_ٽيگ,
+		اندريون_RDF
 	} state = BEFORE_BOM;
 
 	bool rdf = false, rss = false;
-	const uint8_t *end;
+	ثابت uint8_t *پڇاڙي;
 
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	إذا (معلومات == عدم)
+		أرجع NSERROR_NEED_معلومات;
 
-	end = data + min(len, 512);
+	پڇاڙي = معلومات + min(len, 512);
 
-	while (data < end) {
-		const uint8_t c = *data;
+	طالما (معلومات < پڇاڙي) {
+		ثابت uint8_t c = *معلومات;
 
-#define MATCH(s) SLEN(s) <= (size_t) (end - data) && \
-			memcmp(data, s, SLEN(s)) == 0
+#وصف_ڪريو ميلاپ_2(s) SLEN(s) <= (size_t) (پڇاڙي - معلومات) && \
+			memcmp(معلومات, s, SLEN(s)) == 0
 
-		switch (state) {
-		case BEFORE_BOM:
-			if (3 <= end - data && c == 0xef && data[1] == 0xbb &&
-					data[2] == 0xbf) {
-				data += 3;
+		بدل (state) {
+		حالة BEFORE_BOM:
+			إذا (3 <= پڇاڙي - معلومات && c == 0xef && معلومات[1] == 0xbb &&
+					معلومات[2] == 0xbf) {
+				معلومات += 3;
 			}
 
 			state = BEFORE_MARKUP;
-			break;
-		case BEFORE_MARKUP:
-			if (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
-				data++;
-			else if (c != '<')
-				data = end;
-			else {
-				state = MARKUP_START;
-				data++;
+			اكسر;
+		حالة BEFORE_MARKUP:
+			إذا (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
+				معلومات++;
+			وإلا إذا (c != '<')
+				معلومات = پڇاڙي;
+			وإلا {
+				state = MARKUP_شروعات;
+				معلومات++;
 			}
-			break;
-		case MARKUP_START:
-			if (c == '!') {
+			اكسر;
+		حالة MARKUP_شروعات:
+			إذا (c == '!') {
 				state = COMMENT_OR_DOCTYPE;
-				data++;
-			} else if (c == '?') {
-				state = IN_PI;
-				data++;
-			} else {
+				معلومات++;
+			} وإلا إذا (c == '?') {
+				state = اندريون_PI;
+				معلومات++;
+			} وإلا {
 				/* Reconsume input */
-				state = IN_TAG;
+				state = اندريون_ٽيگ;
 			}
-			break;
-		case COMMENT_OR_DOCTYPE:
-			if (2 <= end - data && c == '-' && data[1] == '-') {
-				state = IN_COMMENT;
-				data += 2;
-			} else {
+			اكسر;
+		حالة COMMENT_OR_DOCTYPE:
+			إذا (2 <= پڇاڙي - معلومات && c == '-' && معلومات[1] == '-') {
+				state = اندريون_COMMENT;
+				معلومات += 2;
+			} وإلا {
 				/* Reconsume input */
-				state = IN_DOCTYPE;
+				state = اندريون_DOCTYPE;
 			}
-			break;
-		case IN_COMMENT:
-			if (3 <= end - data && c == '-' && data[1] == '-' &&
-					data[2] == '>') {
+			اكسر;
+		حالة اندريون_COMMENT:
+			إذا (3 <= پڇاڙي - معلومات && c == '-' && معلومات[1] == '-' &&
+					معلومات[2] == '>') {
 				state = BEFORE_MARKUP;
-				data += 3;
-			} else
-				data++;
-			break;
-		case IN_DOCTYPE:
-			if (c == '>')
+				معلومات += 3;
+			} وإلا
+				معلومات++;
+			اكسر;
+		حالة اندريون_DOCTYPE:
+			إذا (c == '>')
 				state = BEFORE_MARKUP;
-			data++;
-			break;
-		case IN_PI:
-			if (2 <= end - data && c == '?' && data[1] == '>') {
+			معلومات++;
+			اكسر;
+		حالة اندريون_PI:
+			إذا (2 <= پڇاڙي - معلومات && c == '?' && معلومات[1] == '>') {
 				state = BEFORE_MARKUP;
-				data += 2;
-			} else
-				data++;
-			break;
-		case IN_TAG:
-			if (MATCH("rss")) {
+				معلومات += 2;
+			} وإلا
+				معلومات++;
+			اكسر;
+		حالة اندريون_ٽيگ:
+			إذا (ميلاپ_2("rss")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
-			} else if (MATCH("feed")) {
+				أرجع NSERROR_OK;
+			} وإلا إذا (ميلاپ_2("feed")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_atom_xml);
-				return NSERROR_OK;
-			} else if (MATCH("rdf:RDF")) {
-				state = IN_RDF;
-				data += SLEN("rdf:RDF");
-			} else
-				data = end;
-			break;
-		case IN_RDF:
-			if (MATCH(RSS_NS)) {
+				أرجع NSERROR_OK;
+			} وإلا إذا (ميلاپ_2("rdf:RDF")) {
+				state = اندريون_RDF;
+				معلومات += SLEN("rdf:RDF");
+			} وإلا
+				معلومات = پڇاڙي;
+			اكسر;
+		حالة اندريون_RDF:
+			إذا (ميلاپ_2(RSS_NS)) {
 				rss = true;
-				data += SLEN(RSS_NS);
-			} else if (MATCH(RDF_NS)) {
+				معلومات += SLEN(RSS_NS);
+			} وإلا إذا (ميلاپ_2(RDF_NS)) {
 				rdf = true;
-				data += SLEN(RDF_NS);
-			} else
-				data++;
+				معلومات += SLEN(RDF_NS);
+			} وإلا
+				معلومات++;
 
-			if (rdf && rss) {
+			إذا (rdf && rss) {
 				*effective_type = lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
+				أرجع NSERROR_OK;
 			}
 
-			break;
+			اكسر;
 		}
-#undef MATCH
+#وصف_رد ميلاپ_2
 	}
 
-	*effective_type = lwc_string_ref(corestring_lwc_text_html);
+	*effective_type = lwc_string_ref(corestring_lwc_متن_html);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 
-#undef RSS_NS
-#undef RDF_NS
+#وصف_رد RSS_NS
+#وصف_رد RDF_NS
 }
 
 /* See mimesniff.h for documentation */
 nserror
-mimesniff_compute_effective_type(const char *content_type_header,
-				 const uint8_t *data,
+mimesniff_compute_effective_type(ثابت حرف *content_type_سرو,
+				 ثابت uint8_t *معلومات,
 				 size_t len,
 				 bool sniff_allowed,
 				 bool image_only,
 				 lwc_string **effective_type)
 {
-#define S(s) { s, SLEN(s) }
-	static const struct tt_s {
-		const char *data;
+#وصف_ڪريو S(s) { s, SLEN(s) }
+	ساكن ثابت بنية tt_s {
+		ثابت حرف *معلومات;
 		size_t len;
-	} text_types[] = {
+	} متن_types[] = {
 		S("text/plain"),
 		S("text/plain; charset=ISO-8859-1"),
 		S("text/plain; charset=iso-8859-1"),
 		S("text/plain; charset=UTF-8"),
-		{ NULL, 0 }
+		{ عدم, 0 }
 	};
-#undef S
+#وصف_رد S
 
-	size_t content_type_header_len;
+	size_t content_type_سرو_len;
 	http_content_type *ct;
-	const struct tt_s *tt;
-	bool match;
+	ثابت بنية tt_s *tt;
+	bool ميلاپ;
 	nserror error;
 
-	if (content_type_header == NULL) {
-		if (sniff_allowed == false) {
-			return NSERROR_NOT_FOUND;
+	إذا (content_type_سرو == عدم) {
+		إذا (sniff_allowed == false) {
+			أرجع NSERROR_NOT_مليو;
 		}
 
 		/* No official type => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		أرجع mimesniff__compute_unknown(معلومات, len, effective_type);
 	}
 
-	error = http_parse_content_type(content_type_header, &ct);
-	if (error != NSERROR_OK) {
-		if (sniff_allowed == false)
-			return NSERROR_NOT_FOUND;
+	error = http_parse_content_type(content_type_سرو, &ct);
+	إذا (error != NSERROR_OK) {
+		إذا (sniff_allowed == false)
+			أرجع NSERROR_NOT_مليو;
 
 		/* Unparseable => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		أرجع mimesniff__compute_unknown(معلومات, len, effective_type);
 	}
 
-	if (sniff_allowed == false) {
+	إذا (sniff_allowed == false) {
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
-	if (image_only) {
+	إذا (image_only) {
 		lwc_string *official_type;
 
-		if (lwc_string_caseless_isequal(ct->media_type,
+		إذا (lwc_string_caseless_isequal(ct->media_type,
 						corestring_lwc_image_svg,
-						&match) == lwc_error_ok && match) {
+						&ميلاپ) == lwc_error_ok && ميلاپ) {
 			*effective_type = lwc_string_ref(corestring_lwc_image_svg);
 			http_content_type_destroy(ct);
-			return NSERROR_OK;
+			أرجع NSERROR_OK;
 		}
 
 		official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
-				data, len, effective_type);
+		أرجع mimesniff__compute_image(official_type,
+				معلومات, len, effective_type);
 	}
 
-	content_type_header_len = strlen(content_type_header);
+	content_type_سرو_len = لڙي_ڊيگهه(content_type_سرو);
 
 	/* Look for text types */
-	for (tt = text_types; tt->data != NULL; tt++) {
-		if (tt->len == content_type_header_len &&
-		    memcmp(tt->data,
-			   content_type_header,
-			   content_type_header_len) == 0) {
+	لكل (tt = متن_types; tt->معلومات != عدم; tt++) {
+		إذا (tt->len == content_type_سرو_len &&
+		    memcmp(tt->معلومات,
+			   content_type_سرو,
+			   content_type_سرو_len) == 0) {
 			http_content_type_destroy(ct);
-			return mimesniff__compute_text_or_binary(data, len,
+			أرجع mimesniff_compute_متن_or_ٻٽو(معلومات, len,
 					effective_type);
 		}
 	}
 
 	/* unknown/unknown, application/unknown, * / * */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	إذا ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_unknown_unknown,
-					 &match) == lwc_error_ok && match) ||
+					 &ميلاپ) == lwc_error_ok && ميلاپ) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_application_unknown,
-					 &match) == lwc_error_ok && match) ||
+					 &ميلاپ) == lwc_error_ok && ميلاپ) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_any,
-					 &match) == lwc_error_ok && match)) {
+					 &ميلاپ) == lwc_error_ok && ميلاپ)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_unknown(data, len, effective_type);
+		أرجع mimesniff__compute_unknown(معلومات, len, effective_type);
 	}
 
 	/* +xml */
-	if (lwc_string_length(ct->media_type) > SLEN("+xml") &&
-			strncasecmp(lwc_string_data(ct->media_type) +
-				lwc_string_length(ct->media_type) -
+	إذا (lwc_string_ڊيگهائي(ct->media_type) > SLEN("+xml") &&
+			strncasecmp(lwc_string_معلومات(ct->media_type) +
+				lwc_string_ڊيگهائي(ct->media_type) -
 				SLEN("+xml"),
 				"+xml", SLEN("+xml")) == 0) {
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	/* text/xml, application/xml */
-	if ((lwc_string_caseless_isequal(ct->media_type,
-					 corestring_lwc_text_xml,
-					 &match) == lwc_error_ok && match) ||
+	إذا ((lwc_string_caseless_isequal(ct->media_type,
+					 corestring_lwc_متن_xml,
+					 &ميلاپ) == lwc_error_ok && ميلاپ) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_application_xml,
-					 &match) == lwc_error_ok && match)) {
+					 &ميلاپ) == lwc_error_ok && ميلاپ)) {
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
 	/* Image types */
-	if (content_factory_type_from_mime_type(ct->media_type) ==
+	إذا (content_factory_type_from_mime_type(ct->media_type) ==
 			CONTENT_IMAGE) {
 		lwc_string *official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
-				data, len, effective_type);
+		أرجع mimesniff__compute_image(official_type,
+				معلومات, len, effective_type);
 	}
 
 	/* text/html */
-	if ((lwc_string_caseless_isequal(ct->media_type,
-					 corestring_lwc_text_html,
-					 &match) == lwc_error_ok && match)) {
+	إذا ((lwc_string_caseless_isequal(ct->media_type,
+					 corestring_lwc_متن_html,
+					 &ميلاپ) == lwc_error_ok && ميلاپ)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_feed_or_html(data, len,
+		أرجع mimesniff__compute_feed_or_html(معلومات, len,
 						       effective_type);
 	}
 
@@ -703,5 +703,5 @@ mimesniff_compute_effective_type(const char *content_type_header,
 
 	http_content_type_destroy(ct);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }

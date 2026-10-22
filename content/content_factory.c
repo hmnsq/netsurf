@@ -21,50 +21,50 @@
  * Content factory implementation
  */
 
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <assert.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "utils/http.h"
+#ضمن "utils/http.h"
 
-#include "content/content.h"
-#include "content/content_factory.h"
-#include "content/content_protected.h"
-#include "content/llcache.h"
+#ضمن "content/content.h"
+#ضمن "content/content_factory.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/llcache.h"
 
 /**
  * Entry in list of content handlers
  */
-typedef struct content_handler_entry {
+تعريفنوع بنية content_handler_داخلا {
 	/** Next entry */
-	struct content_handler_entry *next;
+	بنية content_handler_داخلا *ايندڙ;
 
 	/** MIME type handled by handler */
 	lwc_string *mime_type;
 	/** Content handler object */
-	const content_handler *handler;
-} content_handler_entry;
+	ثابت content_handler *handler;
+} content_handler_داخلا;
 
-static content_handler_entry *content_handlers;
+ساكن content_handler_داخلا *content_handlers;
 
 /**
  * Clean up after the content factory
  */
-void content_factory_fini(void)
+فراغ content_factory_fini(فراغ)
 {
-	content_handler_entry *victim;
+	content_handler_داخلا *victim;
 
-	while (content_handlers != NULL) {
+	طالما (content_handlers != عدم) {
 		victim = content_handlers;
 
-		content_handlers = content_handlers->next;
+		content_handlers = content_handlers->ايندڙ;
 
-		if (victim->handler->fini != NULL)
+		إذا (victim->handler->fini != عدم)
 			victim->handler->fini();
 
 		lwc_string_unref(victim->mime_type);
 
-		free(victim);
+		حرر(victim);
 	}
 }
 
@@ -77,40 +77,40 @@ void content_factory_fini(void)
  *
  * \note Latest registration for a MIME type wins
  */
-nserror content_factory_register_handler(const char *mime_type,
-		const content_handler *handler)
+nserror content_factory_رجسٽر_handler(ثابت حرف *mime_type,
+		ثابت content_handler *handler)
 {
 	lwc_string *imime_type;
 	lwc_error lerror;
-	content_handler_entry *entry;
-	bool match;
+	content_handler_داخلا *داخلا;
+	bool ميلاپ;
 
-	lerror = lwc_intern_string(mime_type, strlen(mime_type), &imime_type);
-	if (lerror != lwc_error_ok)
-		return NSERROR_NOMEM;
+	lerror = lwc_intern_string(mime_type, لڙي_ڊيگهه(mime_type), &imime_type);
+	إذا (lerror != lwc_error_ok)
+		أرجع NSERROR_NOMEM;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(imime_type, entry->mime_type,
-				&match) == lwc_error_ok && match)
-			break;
+	لكل (داخلا = content_handlers; داخلا != عدم; داخلا = داخلا->ايندڙ) {
+		إذا (lwc_string_caseless_isequal(imime_type, داخلا->mime_type,
+				&ميلاپ) == lwc_error_ok && ميلاپ)
+			اكسر;
 	}
 
-	if (entry == NULL) {
-		entry = malloc(sizeof(content_handler_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+	إذا (داخلا == عدم) {
+		داخلا = يادگيري_ڏيو(حجم(content_handler_داخلا));
+		إذا (داخلا == عدم)
+			أرجع NSERROR_NOMEM;
 
-		entry->next = content_handlers;
-		content_handlers = entry;
+		داخلا->ايندڙ = content_handlers;
+		content_handlers = داخلا;
 
-		entry->mime_type = imime_type;
-	} else {
+		داخلا->mime_type = imime_type;
+	} وإلا {
 		lwc_string_unref(imime_type);
 	}
 
-	entry->handler = handler;
+	داخلا->handler = handler;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
@@ -119,23 +119,23 @@ nserror content_factory_register_handler(const char *mime_type,
  * \param mime_type  MIME type to search for
  * \return Associated handler, or NULL if none
  */
-static const content_handler *content_lookup(lwc_string *mime_type)
+ساكن ثابت content_handler *content_lookup(lwc_string *mime_type)
 {
-	content_handler_entry *entry;
-	bool match;
+	content_handler_داخلا *داخلا;
+	bool ميلاپ;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(mime_type, entry->mime_type,
-					&match) == lwc_error_ok && match) {
-			break;
+	لكل (داخلا = content_handlers; داخلا != عدم; داخلا = داخلا->ايندڙ) {
+		إذا (lwc_string_caseless_isequal(mime_type, داخلا->mime_type,
+					&ميلاپ) == lwc_error_ok && ميلاپ) {
+			اكسر;
 		}
 	}
 
-	if (entry != NULL) {
-		return entry->handler;
+	إذا (داخلا != عدم) {
+		أرجع داخلا->handler;
 	}
 
-	return NULL;
+	أرجع عدم;
 }
 
 /**
@@ -146,15 +146,15 @@ static const content_handler *content_lookup(lwc_string *mime_type)
  */
 content_type content_factory_type_from_mime_type(lwc_string *mime_type)
 {
-	const content_handler *handler;
+	ثابت content_handler *handler;
 	content_type type = CONTENT_NONE;
 
 	handler = content_lookup(mime_type);
-	if (handler != NULL) {
+	إذا (handler != عدم) {
 		type = handler->type();
 	}
 
-	return type;
+	أرجع type;
 }
 
 /**
@@ -166,41 +166,41 @@ content_type content_factory_type_from_mime_type(lwc_string *mime_type)
  * \param effective_type    Effective MIME type of content
  * \return Pointer to content object, or NULL on failure
  */
-struct content *content_factory_create_content(llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
+بنية content *content_factory_create_content(llcache_handle *llcache,
+		ثابت حرف *fallback_charset, bool quirks,
 		lwc_string *effective_type)
 {
-	struct content *c;
-	const char *content_type_header;
-	const content_handler *handler;
-	http_content_type *ct = NULL;
+	بنية content *c;
+	ثابت حرف *content_type_سرو;
+	ثابت content_handler *handler;
+	http_content_type *ct = عدم;
 	nserror error;
 
 	handler = content_lookup(effective_type);
-	if (handler == NULL)
-		return NULL;
+	إذا (handler == عدم)
+		أرجع عدم;
 
-	assert(handler->create != NULL);
+	أكد(handler->create != عدم);
 
 	/* Use the parameters from the declared Content-Type header */
-	content_type_header = 
-			llcache_handle_get_header(llcache, "Content-Type");
-	if (content_type_header != NULL) {
+	content_type_سرو = 
+			llcache_handle_get_سرو(llcache, "Content-Type");
+	إذا (content_type_سرو != عدم) {
 		/* We don't care if this fails */
-		http_parse_content_type(content_type_header, &ct);
+		http_parse_content_type(content_type_سرو, &ct);
 	}
 
 	error = handler->create(handler, effective_type, 
-			ct != NULL ? ct->parameters : NULL, 
+			ct != عدم ? ct->parameters : عدم, 
 			llcache, fallback_charset, quirks, 
 			&c);
 
-	if (ct != NULL)
+	إذا (ct != عدم)
 		http_content_type_destroy(ct);
 
-	if (error != NSERROR_OK)
-		return NULL;
+	إذا (error != NSERROR_OK)
+		أرجع عدم;
 
-	return c;
+	أرجع c;
 }
 

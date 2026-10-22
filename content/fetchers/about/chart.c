@@ -26,86 +26,86 @@
  *
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <stdio.h>
+#ضمن <stdbool.h>
+#ضمن <stddef.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <math.h>
+#ضمن <stdio.h>
 
-#include "utils/config.h"
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/errors.h"
-#include "utils/nsurl.h"
+#ضمن "utils/config.h"
+#ضمن "netsurf/inttypes.h"
+#ضمن "utils/config.h"
+#ضمن "utils/utils.h"
+#ضمن "utils/errors.h"
+#ضمن "utils/nsurl.h"
 
-#include "private.h"
-#include "chart.h"
+#ضمن "private.h"
+#ضمن "chart.h"
 
 /** minimum figure dimension */
-#define FIGURE_MIN_WIDTH 150
-#define FIGURE_MIN_HEIGHT 100
+#وصف_ڪريو FIGURE_MIN_ويڪر 150
+#وصف_ڪريو FIGURE_MIN_اوچائي 100
 
-enum chart_type {
+تعداد chart_type {
 		 CHART_TYPE_UNKNOWN,
 		 CHART_TYPE_PIE,
 };
 
 /* type of chart key */
-enum key_type {
-	       CHART_KEY_UNSET,
-	       CHART_KEY_NONE,
-	       CHART_KEY_LEFT,
-	       CHART_KEY_RIGHT,
-	       CHART_KEY_TOP,
-	       CHART_KEY_BOT,
-	       CHART_KEY_END
+تعداد ڪنجي_type {
+	       CHART_ڪنجي_UNSET,
+	       CHART_ڪنجي_NONE,
+	       CHART_ڪنجي_کاٻو,
+	       CHART_ڪنجي_ساڄو,
+	       CHART_ڪنجي_چوٽي,
+	       CHART_ڪنجي_BOT,
+	       CHART_ڪنجي_پڇاڙي
 };
 
 
-struct chart_label {
-	char *title; /* label title */
-	unsigned int colour; /* colour */
+بنية chart_label {
+	حرف *title; /* label title */
+	بنانشان صحيح رنگ; /*رنگ*/
 };
 
-struct chart_series {
-	unsigned int len; /* number of values in the series */
-	float *value; /* array of values */
+بنية chart_series {
+	بنانشان صحيح len; /* number of values in the series */
+	عائم *قدر; /* array of values */
 };
 
-#define MAX_SERIES 4
+#وصف_ڪريو MAX_SERIES 4
 
-struct chart_data {
-	unsigned int series_len;
-	struct chart_series series[MAX_SERIES];
+بنية chart_معلومات {
+	بنانشان صحيح series_len;
+	بنية chart_series series[MAX_SERIES];
 
-	unsigned int label_len; /* number of labels */
-	struct chart_label *label;
+	بنانشان صحيح label_len; /* number of labels */
+	بنية chart_label *label;
 
 };
 
 /**
  * parameters for a chart figure
  */
-struct chart_param {
-	enum chart_type type;
-	enum key_type key; /* what type of key to use */
-	unsigned int width; /* width of figure */
-	unsigned int height; /* height of figure */
-	char *title; /* title */
-	struct {
-		unsigned int x;
-		unsigned int y;
-		unsigned int width;
-		unsigned int height;
+بنية chart_param {
+	تعداد chart_type type;
+	تعداد ڪنجي_type ڪنجي; /* what type of key to use */
+	بنانشان صحيح ويڪر; /* width of figure */
+	بنانشان صحيح اوچائي; /* height of figure */
+	حرف *title; /* title */
+	بنية {
+		بنانشان صحيح x;
+		بنانشان صحيح y;
+		بنانشان صحيح ويڪر;
+		بنانشان صحيح اوچائي;
 	} area; /* chart area within figure */
-	struct chart_data data;
+	بنية chart_معلومات معلومات;
 };
 
-#define DEF_COLOUR_NUM 8
+#وصف_ڪريو DEF_رنگ_انگ 8
 /** default colour series */
-static unsigned int colour_series[DEF_COLOUR_NUM] =
+ساكن بنانشان صحيح رنگ_series[DEF_رنگ_انگ] =
 	{
 	 0x00ff00, /* green */
 	 0x0000ff, /* blue */
@@ -119,376 +119,376 @@ static unsigned int colour_series[DEF_COLOUR_NUM] =
 
 
 /* ensures there are labels present for every value */
-static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
+ساكن nserror ensure_label_ڳڻپ(بنية chart_param *chart, بنانشان صحيح ڳڻپ)
 {
-	unsigned int lidx;
-	int deltac;
-	struct chart_label *nlabels;
+	بنانشان صحيح lidx;
+	صحيح deltac;
+	بنية chart_label *nlabels;
 
-	deltac = count - chart->data.label_len;
-	if (deltac <= 0) {
+	deltac = ڳڻپ - chart->معلومات.label_len;
+	إذا (deltac <= 0) {
 		/* there are enough labels */
-		return NSERROR_OK;
+		أرجع NSERROR_OK;
 	}
 
-	nlabels = realloc(chart->data.label,
-			  count * sizeof(struct chart_label));
-	if (nlabels == NULL) {
-		return NSERROR_NOMEM;
+	nlabels = realloc(chart->معلومات.label,
+			  ڳڻپ * حجم(بنية chart_label));
+	إذا (nlabels == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
-	chart->data.label = nlabels;
+	chart->معلومات.label = nlabels;
 
-	for (lidx = chart->data.label_len; lidx < count; lidx++) {
-		chart->data.label[lidx].title = calloc(1, 20);
-		snprintf(chart->data.label[lidx].title, 19, "item %d", lidx + 1);
-		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_NUM];
+	لكل (lidx = chart->معلومات.label_len; lidx < ڳڻپ; lidx++) {
+		chart->معلومات.label[lidx].title = صفر_يادگيري_ڏيو(1, 20);
+		snprintf(chart->معلومات.label[lidx].title, 19, "item %d", lidx + 1);
+		chart->معلومات.label[lidx].رنگ = رنگ_series[lidx % DEF_رنگ_انگ];
 	}
 
-	chart->data.label_len = count;
+	chart->معلومات.label_len = ڳڻپ;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
  * extract values for a series
  */
-static nserror
-extract_series_values(struct chart_param *chart,
-		      unsigned int series_num,
-		      const char *valstr,
+ساكن nserror
+ڪڍو_series_قدرون(بنية chart_param *chart,
+		      بنانشان صحيح series_انگ,
+		      ثابت حرف *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcur;
+	بنانشان صحيح valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
-	struct chart_series *series;
+	بنية chart_series *series;
 
-	series = chart->data.series + series_num;
+	series = chart->معلومات.series + series_انگ;
 
 	/* ensure we do not leak any data in this series */
-	if (series->value != NULL) {
-		free(series->value);
+	إذا (series->قدر != عدم) {
+		حرر(series->قدر);
 	}
 
 	/* count how many values present */
-	for (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	لكل (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
+		إذا (valstr[valstart] == ',') {
 			series->len++;
 		}
 	}
 
 	/* allocate storage for values */
-	series->value = calloc(series->len, sizeof(float));
-	if (series->value == NULL) {
-		return NSERROR_NOMEM;
+	series->قدر = صفر_يادگيري_ڏيو(series->len, حجم(عائم));
+	إذا (series->قدر == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
 
 	/* extract values from query string */
-	for (valcur = 0, vallen = 0, valstart = 0;
+	لكل (valcur = 0, vallen = 0, valstart = 0;
 	     (valstart < valstrlen) && (valcur < series->len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		طالما (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		series->value[valcur] = strtof(valstr + valstart, NULL);
+		series->قدر[valcur] = strtof(valstr + valstart, عدم);
 		vallen++; /* account for , separator */
 	}
 
-	res = ensure_label_count(chart, series->len);
+	res = ensure_label_ڳڻپ(chart, series->len);
 
-	return res;
+	أرجع res;
 }
 
 
 /**
  * extract values for next series
  */
-static nserror
-extract_next_series_values(struct chart_param *chart,
-		      const char *valstr,
+ساكن nserror
+ڪڍو_ايندڙ_series_قدرون(بنية chart_param *chart,
+		      ثابت حرف *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
 
-	if (chart->data.series_len >= MAX_SERIES) {
-		return NSERROR_NOSPACE;
+	إذا (chart->معلومات.series_len >= MAX_SERIES) {
+		أرجع NSERROR_NOSPACE;
 	}
 
-	res = extract_series_values(chart,
-				    chart->data.series_len,
+	res = ڪڍو_series_قدرون(chart,
+				    chart->معلومات.series_len,
 				    valstr,
 				    valstrlen);
-	if (res == NSERROR_OK) {
-		chart->data.series_len++;
+	إذا (res == NSERROR_OK) {
+		chart->معلومات.series_len++;
 	}
 
-	return res;
+	أرجع res;
 }
 
 
 /**
  * extract label title
  */
-static nserror
-extract_series_labels(struct chart_param *chart,
-		      const char *valstr,
+ساكن nserror
+ڪڍو_series_labels(بنية chart_param *chart,
+		      ثابت حرف *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcount; /* count of values in valstr */
-	unsigned int valcur;
+	بنانشان صحيح valcount; /* count of values in valstr */
+	بنانشان صحيح valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
 
-	for (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	لكل (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
+		إذا (valstr[valstart] == ',') {
 			valcount++;
 		}
 	}
 
-	res = ensure_label_count(chart, valcount);
-	if (res != NSERROR_OK) {
-		return res;
+	res = ensure_label_ڳڻپ(chart, valcount);
+	إذا (res != NSERROR_OK) {
+		أرجع res;
 	}
 
 
-	for (valcur = 0, vallen = 0, valstart = 0;
-	     (valstart < valstrlen) && (valcur < chart->data.label_len);
+	لكل (valcur = 0, vallen = 0, valstart = 0;
+	     (valstart < valstrlen) && (valcur < chart->معلومات.label_len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		طالما (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		chart->data.label[valcur].title = strndup(valstr + valstart, vallen);
+		chart->معلومات.label[valcur].title = strndup(valstr + valstart, vallen);
 		vallen++; /* account for , separator */
 	}
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /**
  * extract labels colour
  */
-static nserror
-extract_series_colours(struct chart_param *chart,
-		      const char *valstr,
+ساكن nserror
+ڪڍو_series_colours(بنية chart_param *chart,
+		      ثابت حرف *valstr,
 		      size_t valstrlen)
 {
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 /**
  * process a part of a query
  */
-static nserror
-process_query_section(const char *str, size_t len, struct chart_param *chart)
+ساكن nserror
+process_query_section(ثابت حرف *str, size_t len, بنية chart_param *chart)
 {
 	nserror res = NSERROR_OK;
 
-	if ((len > 6) &&
-	    (strncmp(str, "width=", 6) == 0)) {
+	إذا ((len > 6) &&
+	    (لڙي_ڀيٽ(str, "width=", 6) == 0)) {
 		/* figure width */
-		chart->width = strtoul(str + 6, NULL, 10);
-	} else if ((len > 7) &&
-	    (strncmp(str, "height=", 7) == 0)) {
+		chart->ويڪر = strtoul(str + 6, عدم, 10);
+	} وإلا إذا ((len > 7) &&
+	    (لڙي_ڀيٽ(str, "height=", 7) == 0)) {
 		/* figure height */
-		chart->height = strtoul(str + 7, NULL, 10);
-	} else if ((len > 8) &&
-	    (strncmp(str, "cawidth=", 8) == 0)) {
+		chart->اوچائي = strtoul(str + 7, عدم, 10);
+	} وإلا إذا ((len > 8) &&
+	    (لڙي_ڀيٽ(str, "cawidth=", 8) == 0)) {
 		/* chart area width */
-		chart->area.width = strtoul(str + 8, NULL, 10);
-	} else if ((len > 9) &&
-	    (strncmp(str, "caheight=", 9) == 0)) {
+		chart->area.ويڪر = strtoul(str + 8, عدم, 10);
+	} وإلا إذا ((len > 9) &&
+	    (لڙي_ڀيٽ(str, "caheight=", 9) == 0)) {
 		/* chart area height */
-		chart->area.height = strtoul(str + 9, NULL, 10);
-	} else if ((len > 4) &&
-	    (strncmp(str, "key=", 4) == 0)) {
+		chart->area.اوچائي = strtoul(str + 9, عدم, 10);
+	} وإلا إذا ((len > 4) &&
+	    (لڙي_ڀيٽ(str, "key=", 4) == 0)) {
 		/* figure has key */
-		chart->key = strtoul(str + 4, NULL, 10);
-	} else if ((len > 6) &&
-	    (strncmp(str, "title=", 6) == 0)) {
+		chart->ڪنجي = strtoul(str + 4, عدم, 10);
+	} وإلا إذا ((len > 6) &&
+	    (لڙي_ڀيٽ(str, "title=", 6) == 0)) {
 		chart->title = strndup(str + 6, len - 6);
-	} else if ((len > 5) &&
-	    (strncmp(str, "type=", 5) == 0)) {
-		if (strncmp(str + 5, "pie", len - 5) == 0) {
+	} وإلا إذا ((len > 5) &&
+	    (لڙي_ڀيٽ(str, "type=", 5) == 0)) {
+		إذا (لڙي_ڀيٽ(str + 5, "pie", len - 5) == 0) {
 			chart->type = CHART_TYPE_PIE;
-		} else {
+		} وإلا {
 			chart->type = CHART_TYPE_UNKNOWN;
 		}
-	} else if ((len > 7) &&
-	    (strncmp(str, "values=", 7) == 0)) {
-		res = extract_next_series_values(chart, str + 7, len - 7);
-	} else if ((len > 7) &&
-	    (strncmp(str, "labels=", 7) == 0)) {
-		res = extract_series_labels(chart, str + 7, len - 7);
-	} else if ((len > 8) &&
-	    (strncmp(str, "colours=", 8) == 0)) {
-		res = extract_series_colours(chart, str + 8, len - 8);
+	} وإلا إذا ((len > 7) &&
+	    (لڙي_ڀيٽ(str, "values=", 7) == 0)) {
+		res = ڪڍو_ايندڙ_series_قدرون(chart, str + 7, len - 7);
+	} وإلا إذا ((len > 7) &&
+	    (لڙي_ڀيٽ(str, "labels=", 7) == 0)) {
+		res = ڪڍو_series_labels(chart, str + 7, len - 7);
+	} وإلا إذا ((len > 8) &&
+	    (لڙي_ڀيٽ(str, "colours=", 8) == 0)) {
+		res = ڪڍو_series_colours(chart, str + 8, len - 8);
 	}
 
-	return res;
+	أرجع res;
 }
 
 
 
-static nserror
-chart_from_query(struct nsurl *url, struct chart_param *chart)
+ساكن nserror
+chart_from_query(بنية nsurl *url, بنية chart_param *chart)
 {
 	nserror res;
-	char *querystr;
+	حرف *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	إذا (res != NSERROR_OK) {
+		أرجع res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	لكل (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		طالما (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, chart);
-		if (res != NSERROR_OK) {
-			break;
+		إذا (res != NSERROR_OK) {
+			اكسر;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	حرر(querystr);
 
 	/* sanity check dimensions */
-	if (chart->width < FIGURE_MIN_WIDTH) {
+	إذا (chart->ويڪر < FIGURE_MIN_ويڪر) {
 		/* bad width - check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		إذا (chart->اوچائي < FIGURE_MIN_اوچائي) {
 			/* both bad set to defaults */
-			chart->width = FIGURE_MIN_WIDTH;
-			chart->height = FIGURE_MIN_HEIGHT;
-		} else {
+			chart->ويڪر = FIGURE_MIN_ويڪر;
+			chart->اوچائي = FIGURE_MIN_اوچائي;
+		} وإلا {
 			/* base width on valid height */
-			chart->width = (chart->height * 3) / 2;
+			chart->ويڪر = (chart->اوچائي * 3) / 2;
 		}
-	} else {
+	} وإلا {
 		/* good width check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		إذا (chart->اوچائي < FIGURE_MIN_اوچائي) {
 			/* base height on valid width */
-			chart->height = (chart->width * 2) / 3;
+			chart->اوچائي = (chart->ويڪر * 2) / 3;
 		}
 	}
 
 	/* ensure legend type correct */
-	if ((chart->key == CHART_KEY_UNSET) ||
-	    (chart->key >= CHART_KEY_END )) {
+	إذا ((chart->ڪنجي == CHART_ڪنجي_UNSET) ||
+	    (chart->ڪنجي >= CHART_ڪنجي_پڇاڙي )) {
 		/* default to putting key on right */
-		chart->key = CHART_KEY_RIGHT;
+		chart->ڪنجي = CHART_ڪنجي_ساڄو;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
-static nserror
-output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
+ساكن nserror
+output_pie_legend(بنية fetch_about_context *ctx, بنية chart_param *chart)
 {
 	nserror res;
-	unsigned int lblidx;
-	unsigned int legend_width;
-	unsigned int legend_height;
-	unsigned int vertical_spacing;
+	بنانشان صحيح lblidx;
+	بنانشان صحيح legend_ويڪر;
+	بنانشان صحيح legend_اوچائي;
+	بنانشان صحيح vertical_spacing;
 
-	switch (chart->key) {
+	بدل (chart->ڪنجي) {
 
-	case CHART_KEY_NONE:
-		break;
-	case CHART_KEY_RIGHT:
-		legend_width = chart->width - chart->area.width - chart->area.x;
-		legend_width -= 10; /* margin */
-		legend_height = chart->height;
-		vertical_spacing = legend_height / (chart->data.label_len + 1);
+	حالة CHART_ڪنجي_NONE:
+		اكسر;
+	حالة CHART_ڪنجي_ساڄو:
+		legend_ويڪر = chart->ويڪر - chart->area.ويڪر - chart->area.x;
+		legend_ويڪر -= 10; /* margin */
+		legend_اوچائي = chart->اوچائي;
+		vertical_spacing = legend_اوچائي / (chart->معلومات.label_len + 1);
 
-		for(lblidx = 0; lblidx < chart->data.label_len ; lblidx++) {
+		لكل(lblidx = 0; lblidx < chart->معلومات.label_len ; lblidx++) {
 			res = fetch_about_ssenddataf(ctx,
 				"<rect  x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#%06x\" />",
-				chart->width - legend_width,
+				chart->ويڪر - legend_ويڪر,
 				(vertical_spacing * lblidx) + (vertical_spacing/2),
 				vertical_spacing * 2 / 3,
 				vertical_spacing * 2 / 3,
-				chart->data.label[lblidx].colour);
-			if (res != NSERROR_OK) {
-				return res;
+				chart->معلومات.label[lblidx].رنگ);
+			إذا (res != NSERROR_OK) {
+				أرجع res;
 			}
 			res = fetch_about_ssenddataf(ctx,
 				"<text x=\"%d\" y=\"%d\" fill=\"#%06x\" >%s</text>",
-				chart->width - legend_width + vertical_spacing,
+				chart->ويڪر - legend_ويڪر + vertical_spacing,
 				vertical_spacing * (lblidx+1),
-			     chart->data.label[lblidx].colour,
-				chart->data.label[lblidx].title);
-			if (res != NSERROR_OK) {
-				return res;
+			     chart->معلومات.label[lblidx].رنگ,
+				chart->معلومات.label[lblidx].title);
+			إذا (res != NSERROR_OK) {
+				أرجع res;
 			}
 		}
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
-static float
-compute_series_total(struct chart_param *chart, unsigned int series)
+ساكن عائم
+compute_series_ڪل(بنية chart_param *chart, بنانشان صحيح series)
 {
-	float total;
-	unsigned int curdata;
+	عائم ڪل;
+	بنانشان صحيح curdata;
 
-	for (total = 0, curdata = 0;
-	     curdata < chart->data.series[series].len;
+	لكل (ڪل = 0, curdata = 0;
+	     curdata < chart->معلومات.series[series].len;
 	     curdata++) {
-		total += chart->data.series[series].value[curdata];
+		ڪل += chart->معلومات.series[series].قدر[curdata];
 	}
-	return total;
+	أرجع ڪل;
 }
 
 /**
  * render the data as a pie chart svg
  */
-static bool
-pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
+ساكن bool
+pie_chart(بنية fetch_about_context *ctx, بنية chart_param *chart)
 {
 	nserror res;
-	float ra; /* pie a radius */
-	float rb; /* pie b radius */
-	float series_total;
-	unsigned int curdata; /* current data point index */
-	float last_x, last_y;
-	float end_x, end_y;
-	float start;
-	float extent;
+	عائم ra; /* pie a radius */
+	عائم rb; /* pie b radius */
+	عائم series_ڪل;
+	بنانشان صحيح curdata; /* current data point index */
+	عائم آخري_x, آخري_y;
+	عائم پڇاڙي_x, پڇاڙي_y;
+	عائم شروعات;
+	عائم extent;
 	bool large;
-	float circle_centre_x, circle_centre_y;
+	عائم circle_centre_x, circle_centre_y;
 
 	/* ensure there is data to render */
-	if ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
-		return NSERROR_BAD_PARAMETER;
+	إذا ((chart->معلومات.series_len < 1) || (chart->معلومات.series[0].len < 2)) {
+		أرجع NSERROR_BAD_PARAMETER;
 	}
 
 	/* get the first series total value */
-	series_total = compute_series_total(chart, 0);
-	if (series_total == 0) {
+	series_ڪل = compute_series_ڪل(chart, 0);
+	إذا (series_ڪل == 0) {
 		/* dividing by zero is embarasing */
-		return NSERROR_BAD_PARAMETER;
+		أرجع NSERROR_BAD_PARAMETER;
 	}
 
 	/*
@@ -497,30 +497,30 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	 * this is left to each chart type as different charts
 	 *  have differnt requirements
 	 */
-	if ((chart->area.width == 0) || (chart->area.height == 0)) {
+	إذا ((chart->area.ويڪر == 0) || (chart->area.اوچائي == 0)) {
 		/*
 		 * pie chart defaults to square of smaller of figure
 		 *  width and height
 		 */
-		if (chart->width > chart->height) {
-			chart->area.width = chart->area.height = (chart->height - chart->area.x);
-		} else {
-			chart->area.width = chart->area.height = (chart->width - chart->area.y);
+		إذا (chart->ويڪر > chart->اوچائي) {
+			chart->area.ويڪر = chart->area.اوچائي = (chart->اوچائي - chart->area.x);
+		} وإلا {
+			chart->area.ويڪر = chart->area.اوچائي = (chart->ويڪر - chart->area.y);
 		}
 	}
 
 	/* content is going to return ok */
-	fetch_about_set_http_code(ctx, 200);
+	fetch_about_سيٽ_http_ڪوڊ(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	إذا (fetch_about_send_سرو(ctx,
 			"Content-Type: image/svg; charset=utf-8")) {
-		goto aborted;
+		اذهب aborted;
 	}
 
 	/* get the pie charts elipse radii */
-	ra = chart->area.width / 2;
-	rb = chart->area.height / 2;
+	ra = chart->area.ويڪر / 2;
+	rb = chart->area.اوچائي / 2;
 
 	/* get the offset to the circle centre */
 	circle_centre_x = chart->area.x + ra;
@@ -531,31 +531,31 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	res = fetch_about_ssenddataf(ctx,
 			"<svg width=\"%u\" height=\"%u\" "
 			"xmlns=\"http://www.w3.org/2000/svg\">\n",
-			chart->width, chart->height);
-	if (res != NSERROR_OK) {
-		goto aborted;
+			chart->ويڪر, chart->اوچائي);
+	إذا (res != NSERROR_OK) {
+		اذهب aborted;
 	}
 
 	/* generate the legend */
 	res = output_pie_legend(ctx, chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	إذا (res != NSERROR_OK) {
+		اذهب aborted;
 	}
 
 	/* plot the arcs */
-	start = -M_PI_2;
-	last_x = (ra * cos(start));
-	last_y = (rb * sin(start));
+	شروعات = -M_PI_2;
+	آخري_x = (ra * جيب_تمام(شروعات));
+	آخري_y = (rb * جيب(شروعات));
 
 	/* iterate over each data point creating a slice o pie */
-	for (curdata=0; curdata < chart->data.series[0].len; curdata++) {
-		extent = ((chart->data.series[0].value[curdata] / series_total) * 2 * M_PI);
-		end_x = (ra * cos(start + extent));
-		end_y = (rb * sin(start + extent));
+	لكل (curdata=0; curdata < chart->معلومات.series[0].len; curdata++) {
+		extent = ((chart->معلومات.series[0].قدر[curdata] / series_ڪل) * 2 * M_PI);
+		پڇاڙي_x = (ra * جيب_تمام(شروعات + extent));
+		پڇاڙي_y = (rb * جيب(شروعات + extent));
 
-		if (extent > M_PI) {
+		إذا (extent > M_PI) {
 			large = true;
-		} else {
+		} وإلا {
 			large = false;
 		}
 
@@ -564,34 +564,34 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			"<path d=\"M %g %g\n"
 			"A %g %g 0 %d 1 %g %g\n"
 			"L %g %g Z\" fill=\"#%06x\" />\n",
-			circle_centre_x + last_x,
-			circle_centre_y + last_y,
+			circle_centre_x + آخري_x,
+			circle_centre_y + آخري_y,
 			ra, rb, large?1:0,
-			circle_centre_x + end_x,
-			circle_centre_y + end_y,
+			circle_centre_x + پڇاڙي_x,
+			circle_centre_y + پڇاڙي_y,
 			circle_centre_x,
 			circle_centre_y,
-			chart->data.label[curdata].colour);
-		if (res != NSERROR_OK) {
-			goto aborted;
+			chart->معلومات.label[curdata].رنگ);
+		إذا (res != NSERROR_OK) {
+			اذهب aborted;
 		}
-		last_x = end_x;
-		last_y = end_y;
-		start +=extent;
+		آخري_x = پڇاڙي_x;
+		آخري_y = پڇاڙي_y;
+		شروعات +=extent;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</svg>\n");
-	if (res != NSERROR_OK) {
-		goto aborted;
+	إذا (res != NSERROR_OK) {
+		اذهب aborted;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ختم(ctx);
 
-	return true;
+	أرجع true;
 
  aborted:
 
-	return false;
+	أرجع false;
 
 }
 
@@ -603,28 +603,28 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_chart_handler(struct fetch_about_context *ctx)
+bool fetch_about_chart_handler(بنية fetch_about_context *ctx)
 {
 	nserror res;
-	struct chart_param chart;
-	memset(&chart, 0, sizeof(struct chart_param));
+	بنية chart_param chart;
+	memset(&chart, 0, حجم(بنية chart_param));
 
 	res = chart_from_query(fetch_about_get_url(ctx), &chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	إذا (res != NSERROR_OK) {
+		اذهب aborted;
 	}
 
-	switch (chart.type) {
-	case CHART_TYPE_PIE:
-		return pie_chart(ctx, &chart);
+	بدل (chart.type) {
+	حالة CHART_TYPE_PIE:
+		أرجع pie_chart(ctx, &chart);
 
 
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
 
 aborted:
 
-	return false;
+	أرجع false;
 
 }

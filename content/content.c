@@ -21,29 +21,29 @@
  * Content handling implementation.
  */
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <nsutils/time.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <nsutils/time.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/corestrings.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "desktop/knockout.h"
+#ضمن "netsurf/inttypes.h"
+#ضمن "utils/log.h"
+#ضمن "utils/messages.h"
+#ضمن "utils/corestrings.h"
+#ضمن "netsurf/browser_window.h"
+#ضمن "netsurf/bitmap.h"
+#ضمن "netsurf/content.h"
+#ضمن "desktop/knockout.h"
 
-#include "content/content_protected.h"
-#include "content/textsearch.h"
-#include "content/content_debug.h"
-#include "content/hlcache.h"
-#include "content/urldb.h"
+#ضمن "content/content_protected.h"
+#ضمن "content/textsearch.h"
+#ضمن "content/content_debug.h"
+#ضمن "content/hlcache.h"
+#ضمن "content/urldb.h"
 
-#define URL_FMT_SPC "%.140s"
+#وصف_ڪريو URL_FMT_SPC "%.140s"
 
-const char * const content_status_name[] = {
+ثابت حرف * ثابت content_حالت_name[] = {
 	"LOADING",
 	"READY",
 	"DONE",
@@ -64,30 +64,30 @@ const char * const content_status_name[] = {
  * - If the conversion fails, CONTENT_MSG_ERROR is sent. The content will soon
  *   be destroyed and must no longer be used.
  */
-static void content_convert(struct content *c)
+ساكن فراغ content_convert(بنية content *c)
 {
-	assert(c);
-	assert(c->status == CONTENT_STATUS_LOADING ||
-	       c->status == CONTENT_STATUS_ERROR);
+	أكد(c);
+	أكد(c->حالت == CONTENT_حالت_LOADING ||
+	       c->حالت == CONTENT_حالت_ERROR);
 
-	if (c->status != CONTENT_STATUS_LOADING)
-		return;
+	إذا (c->حالت != CONTENT_حالت_LOADING)
+		أرجع;
 
-	if (c->locked == true)
-		return;
+	إذا (c->locked == true)
+		أرجع;
 
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p)",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)), c);
 
-	if (c->handler->data_complete != NULL) {
+	إذا (c->handler->معلومات_complete != عدم) {
 		c->locked = true;
-		if (c->handler->data_complete(c) == false) {
-			content_set_error(c);
+		إذا (c->handler->معلومات_complete(c) == false) {
+			content_سيٽ_error(c);
 		}
 		/* Conversion to the READY state will unlock the content */
-	} else {
-		content_set_ready(c);
-		content_set_done(c);
+	} وإلا {
+		content_سيٽ_ready(c);
+		content_سيٽ_پورو(c);
 	}
 }
 
@@ -100,66 +100,66 @@ static void content_convert(struct content *c)
  * \param pw	   Pointer to our context
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+ساكن nserror
 content_llcache_callback(llcache_handle *llcache,
-			 const llcache_event *event, void *pw)
+			 ثابت llcache_event *event, فراغ *pw)
 {
-	struct content *c = pw;
-	union content_msg_data msg_data;
+	بنية content *c = pw;
+	اتحاد content_نياپو_معلومات نياپو_معلومات;
 	nserror error = NSERROR_OK;
 
-	switch (event->type) {
-	case LLCACHE_EVENT_GOT_CERTS:
+	بدل (event->type) {
+	حالة LLCACHE_EVENT_GOT_CERTS:
 		/* Will never happen: handled in hlcache */
-		break;
-	case LLCACHE_EVENT_HAD_HEADERS:
+		اكسر;
+	حالة LLCACHE_EVENT_HAD_سرا:
 		/* Will never happen: handled in hlcache */
-		break;
-	case LLCACHE_EVENT_HAD_DATA:
-		if (c->handler->process_data != NULL) {
-			if (c->handler->process_data(c,
-						     (const char *) event->data.data.buf,
-						     event->data.data.len) == false) {
+		اكسر;
+	حالة LLCACHE_EVENT_HAD_معلومات:
+		إذا (c->handler->process_معلومات != عدم) {
+			إذا (c->handler->process_معلومات(c,
+						     (ثابت حرف *) event->معلومات.معلومات.buf,
+						     event->معلومات.معلومات.len) == false) {
 				llcache_handle_abort(c->llcache);
-				c->status = CONTENT_STATUS_ERROR;
+				c->حالت = CONTENT_حالت_ERROR;
 				/** \todo It's not clear what error this is */
 				error = NSERROR_NOMEM;
 			}
 		}
-		break;
-	case LLCACHE_EVENT_DONE:
+		اكسر;
+	حالة LLCACHE_EVENT_پورو:
 		{
-			size_t source_size;
+			size_t ذريعو_سائيز;
 
-			(void) llcache_handle_get_source_data(llcache, &source_size);
+			(فراغ) llcache_handle_get_ذريعو_معلومات(llcache, &ذريعو_سائيز);
 
-			content_set_status(c, messages_get("Processing"));
-			msg_data.explicit_status_text = NULL;
-			content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+			content_سيٽ_حالت(c, messages_get("Processing"));
+			نياپو_معلومات.explicit_حالت_متن = عدم;
+			content_نشر(c, CONTENT_نياپو_حالت, &نياپو_معلومات);
 
 			content_convert(c);
 		}
-		break;
-	case LLCACHE_EVENT_ERROR:
+		اكسر;
+	حالة LLCACHE_EVENT_ERROR:
 		/** \todo Error page? */
-		c->status = CONTENT_STATUS_ERROR;
-		msg_data.errordata.errorcode = event->data.error.code;
-		msg_data.errordata.errormsg = event->data.error.msg;
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		break;
-	case LLCACHE_EVENT_PROGRESS:
-		content_set_status(c, event->data.progress_msg);
-		msg_data.explicit_status_text = NULL;
-		content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
-		break;
-	case LLCACHE_EVENT_REDIRECT:
-		msg_data.redirect.from = event->data.redirect.from;
-		msg_data.redirect.to = event->data.redirect.to;
-		content_broadcast(c, CONTENT_MSG_REDIRECT, &msg_data);
-		break;
+		c->حالت = CONTENT_حالت_ERROR;
+		نياپو_معلومات.errordata.errorcode = event->معلومات.error.ڪوڊ;
+		نياپو_معلومات.errordata.errormsg = event->معلومات.error.نياپو;
+		content_نشر(c, CONTENT_نياپو_ERROR, &نياپو_معلومات);
+		اكسر;
+	حالة LLCACHE_EVENT_ترقي:
+		content_سيٽ_حالت(c, event->معلومات.ترقي_نياپو);
+		نياپو_معلومات.explicit_حالت_متن = عدم;
+		content_نشر(c, CONTENT_نياپو_حالت, &نياپو_معلومات);
+		اكسر;
+	حالة LLCACHE_EVENT_REDIRECT:
+		نياپو_معلومات.redirect.from = event->معلومات.redirect.from;
+		نياپو_معلومات.redirect.منزل = event->معلومات.redirect.منزل;
+		content_نشر(c, CONTENT_نياپو_REDIRECT, &نياپو_معلومات);
+		اكسر;
 	}
 
-	return error;
+	أرجع error;
 }
 
 
@@ -168,451 +168,451 @@ content_llcache_callback(llcache_handle *llcache,
  *
  * \param c the content to update.
  */
-static void content_update_status(struct content *c)
+ساكن فراغ content_update_حالت(بنية content *c)
 {
-	if (c->status == CONTENT_STATUS_LOADING ||
-	    c->status == CONTENT_STATUS_READY) {
+	إذا (c->حالت == CONTENT_حالت_LOADING ||
+	    c->حالت == CONTENT_حالت_READY) {
 		/* Not done yet */
-		snprintf(c->status_message, sizeof (c->status_message),
+		snprintf(c->حالت_پيغام, حجم (c->حالت_پيغام),
 			 "%s%s%s", messages_get("Fetching"),
-			 c->sub_status[0] != '\0' ? ", " : " ",
-			 c->sub_status);
-	} else {
-		snprintf(c->status_message, sizeof (c->status_message),
+			 c->sub_حالت[0] != '\0' ? ", " : " ",
+			 c->sub_حالت);
+	} وإلا {
+		snprintf(c->حالت_پيغام, حجم (c->حالت_پيغام),
 			 "%s (%.1fs)", messages_get("Done"),
-			 (float) c->time / 1000);
+			 (عائم) c->time / 1000);
 	}
 }
 
 
 /* exported interface documented in content/protected.h */
 nserror
-content__init(struct content *c,
-	      const content_handler *handler,
+content__init(بنية content *c,
+	      ثابت content_handler *handler,
 	      lwc_string *imime_type,
-	      const struct http_parameter *params,
+	      ثابت بنية http_parameter *params,
 	      llcache_handle *llcache,
-	      const char *fallback_charset,
+	      ثابت حرف *fallback_charset,
 	      bool quirks)
 {
-	struct content_user *user_sentinel;
+	بنية content_user *user_sentinel;
 	nserror error;
 
 	NSLOG(netsurf, INFO, "url "URL_FMT_SPC" -> %p",
 	      nsurl_access_log(llcache_handle_get_url(llcache)), c);
 
-	user_sentinel = calloc(1, sizeof(struct content_user));
-	if (user_sentinel == NULL) {
-		return NSERROR_NOMEM;
+	user_sentinel = صفر_يادگيري_ڏيو(1, حجم(بنية content_user));
+	إذا (user_sentinel == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
 
-	if (fallback_charset != NULL) {
+	إذا (fallback_charset != عدم) {
 		c->fallback_charset = strdup(fallback_charset);
-		if (c->fallback_charset == NULL) {
-			free(user_sentinel);
-			return NSERROR_NOMEM;
+		إذا (c->fallback_charset == عدم) {
+			حرر(user_sentinel);
+			أرجع NSERROR_NOMEM;
 		}
 	}
 
 	c->llcache = llcache;
 	c->mime_type = lwc_string_ref(imime_type);
 	c->handler = handler;
-	c->status = CONTENT_STATUS_LOADING;
-	c->width = 0;
-	c->height = 0;
-	c->available_width = 0;
-	c->available_height = 0;
+	c->حالت = CONTENT_حالت_LOADING;
+	c->ويڪر = 0;
+	c->اوچائي = 0;
+	c->موجود_ويڪر = 0;
+	c->موجود_اوچائي = 0;
 	c->quirks = quirks;
 	c->refresh = 0;
 	nsu_getmonotonic_ms(&c->time);
-	c->size = 0;
-	c->title = NULL;
-	c->active = 0;
-	user_sentinel->callback = NULL;
-	user_sentinel->pw = NULL;
-	user_sentinel->next = NULL;
+	c->سائيز = 0;
+	c->title = عدم;
+	c->سرگرم = 0;
+	user_sentinel->callback = عدم;
+	user_sentinel->pw = عدم;
+	user_sentinel->ايندڙ = عدم;
 	c->user_list = user_sentinel;
-	c->sub_status[0] = 0;
+	c->sub_حالت[0] = 0;
 	c->locked = false;
-	c->total_size = 0;
-	c->http_code = 0;
+	c->ڪل_سائيز = 0;
+	c->http_ڪوڊ = 0;
 
-	c->textsearch.string = NULL;
-	c->textsearch.context = NULL;
+	c->textsearch.string = عدم;
+	c->textsearch.context = عدم;
 
-	content_set_status(c, messages_get("Loading"));
+	content_سيٽ_حالت(c, messages_get("Loading"));
 
 	/* Finally, claim low-level cache events */
 	error = llcache_handle_change_callback(llcache,
 					       content_llcache_callback, c);
-	if (error != NSERROR_OK) {
+	إذا (error != NSERROR_OK) {
 		lwc_string_unref(c->mime_type);
-		return error;
+		أرجع error;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_can_reformat(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	بنية content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return false;
+	إذا (c == عدم)
+		أرجع false;
 
-	return (c->handler->reformat != NULL);
+	أرجع (c->handler->reformat != عدم);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_status(struct content *c, const char *status_message)
+فراغ content_سيٽ_حالت(بنية content *c, ثابت حرف *حالت_پيغام)
 {
-	size_t len = strlen(status_message);
+	size_t len = لڙي_ڊيگهه(حالت_پيغام);
 
-	if (len >= sizeof(c->sub_status)) {
-		len = sizeof(c->sub_status) - 1;
+	إذا (len >= حجم(c->sub_حالت)) {
+		len = حجم(c->sub_حالت) - 1;
 	}
-	memcpy(c->sub_status, status_message, len);
-	c->sub_status[len] = '\0';
+	يادگيري_نقل(c->sub_حالت, حالت_پيغام, len);
+	c->sub_حالت[len] = '\0';
 
-	content_update_status(c);
+	content_update_حالت(c);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_ready(struct content *c)
+فراغ content_سيٽ_ready(بنية content *c)
 {
 	/* The content must be locked at this point, as it can only
 	 * become READY after conversion. */
-	assert(c->locked);
+	أكد(c->locked);
 	c->locked = false;
 
-	c->status = CONTENT_STATUS_READY;
-	content_update_status(c);
-	content_broadcast(c, CONTENT_MSG_READY, NULL);
+	c->حالت = CONTENT_حالت_READY;
+	content_update_حالت(c);
+	content_نشر(c, CONTENT_نياپو_READY, عدم);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_done(struct content *c)
+فراغ content_سيٽ_پورو(بنية content *c)
 {
 	uint64_t now_ms;
 
 	nsu_getmonotonic_ms(&now_ms);
 
-	c->status = CONTENT_STATUS_DONE;
+	c->حالت = CONTENT_حالت_پورو;
 	c->time = now_ms - c->time;
-	content_update_status(c);
-	content_broadcast(c, CONTENT_MSG_DONE, NULL);
+	content_update_حالت(c);
+	content_نشر(c, CONTENT_نياپو_پورو, عدم);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_error(struct content *c)
+فراغ content_سيٽ_error(بنية content *c)
 {
 	c->locked = false;
-	c->status = CONTENT_STATUS_ERROR;
+	c->حالت = CONTENT_حالت_ERROR;
 }
 
 
 /* exported interface documented in content/content.h */
-void content_reformat(hlcache_handle *h, bool background,
-		      int width, int height)
+فراغ content_reformat(hlcache_handle *h, bool background,
+		      صحيح ويڪر, صحيح اوچائي)
 {
 	content__reformat(hlcache_handle_get_content(h), background,
-			  width, height);
+			  ويڪر, اوچائي);
 }
 
 
 /* exported interface documented in content/protected.h */
-void
-content__reformat(struct content *c, bool background, int width, int height)
+فراغ
+content__reformat(بنية content *c, bool background, صحيح ويڪر, صحيح اوچائي)
 {
-	union content_msg_data data;
-	assert(c != 0);
-	assert(c->status == CONTENT_STATUS_READY ||
-	       c->status == CONTENT_STATUS_DONE);
-	assert(c->locked == false);
+	اتحاد content_نياپو_معلومات معلومات;
+	أكد(c != 0);
+	أكد(c->حالت == CONTENT_حالت_READY ||
+	       c->حالت == CONTENT_حالت_پورو);
+	أكد(c->locked == false);
 
-	c->available_width = width;
-	c->available_height = height;
-	if (c->handler->reformat != NULL) {
+	c->موجود_ويڪر = ويڪر;
+	c->موجود_اوچائي = اوچائي;
+	إذا (c->handler->reformat != عدم) {
 
 		c->locked = true;
-		c->handler->reformat(c, width, height);
+		c->handler->reformat(c, ويڪر, اوچائي);
 		c->locked = false;
 
-		data.background = background;
-		content_broadcast(c, CONTENT_MSG_REFORMAT, &data);
+		معلومات.background = background;
+		content_نشر(c, CONTENT_نياپو_REFORMAT, &معلومات);
 	}
 }
 
 
 /* exported interface documented in content/content.h */
-void content_destroy(struct content *c)
+فراغ content_destroy(بنية content *c)
 {
-	struct content_rfc5988_link *link;
+	بنية content_rfc5988_link *link;
 
-	assert(c);
+	أكد(c);
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
-	assert(c->locked == false);
+	أكد(c->locked == false);
 
-	if (c->handler->destroy != NULL)
+	إذا (c->handler->destroy != عدم)
 		c->handler->destroy(c);
 
 	llcache_handle_release(c->llcache);
-	c->llcache = NULL;
+	c->llcache = عدم;
 
 	lwc_string_unref(c->mime_type);
 
 	/* release metadata links */
 	link = c->links;
-	while (link != NULL) {
+	طالما (link != عدم) {
 		link = content__free_rfc5988_link(link);
 	}
 
 	/* free the user list */
-	if (c->user_list != NULL) {
-		free(c->user_list);
+	إذا (c->user_list != عدم) {
+		حرر(c->user_list);
 	}
 
 	/* free the title */
-	if (c->title != NULL) {
-		free(c->title);
+	إذا (c->title != عدم) {
+		حرر(c->title);
 	}
 
 	/* free the fallback characterset */
-	if (c->fallback_charset != NULL) {
-		free(c->fallback_charset);
+	إذا (c->fallback_charset != عدم) {
+		حرر(c->fallback_charset);
 	}
 
-	free(c);
+	حرر(c);
 }
 
 
 /* exported interface documented in content/content.h */
-void
+فراغ
 content_mouse_track(hlcache_handle *h,
-		    struct browser_window *bw,
+		    بنية browser_دري *bw,
 		    browser_mouse_state mouse,
-		    int x, int y)
+		    صحيح x, صحيح y)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != عدم);
 
-	if (c->handler->mouse_track != NULL) {
+	إذا (c->handler->mouse_track != عدم) {
 		c->handler->mouse_track(c, bw, mouse, x, y);
-	} else {
-		union content_msg_data msg_data;
-		msg_data.pointer = BROWSER_POINTER_AUTO;
-		content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	} وإلا {
+		اتحاد content_نياپو_معلومات نياپو_معلومات;
+		نياپو_معلومات.اشارو = BROWSER_اشارو_AUTO;
+		content_نشر(c, CONTENT_نياپو_اشارو, &نياپو_معلومات);
 	}
 
 
-	return;
+	أرجع;
 }
 
 
 /* exported interface documented in content/content.h */
-void
+فراغ
 content_mouse_action(hlcache_handle *h,
-		     struct browser_window *bw,
+		     بنية browser_دري *bw,
 		     browser_mouse_state mouse,
-		     int x, int y)
+		     صحيح x, صحيح y)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != عدم);
 
-	if (c->handler->mouse_action != NULL)
+	إذا (c->handler->mouse_action != عدم)
 		c->handler->mouse_action(c, bw, mouse, x, y);
 
-	return;
+	أرجع;
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_keypress(struct hlcache_handle *h, uint32_t key)
+bool content_keypress(بنية hlcache_handle *h, uint32_t ڪنجي)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != عدم);
 
-	if (c->handler->keypress != NULL)
-		return c->handler->keypress(c, key);
+	إذا (c->handler->keypress != عدم)
+		أرجع c->handler->keypress(c, ڪنجي);
 
-	return false;
+	أرجع false;
 }
 
 
 /* exported interface documented in content/content.h */
-void content_request_redraw(struct hlcache_handle *h,
-			    int x, int y, int width, int height)
+فراغ content_request_redraw(بنية hlcache_handle *h,
+			    صحيح x, صحيح y, صحيح ويڪر, صحيح اوچائي)
 {
 	content__request_redraw(hlcache_handle_get_content(h),
-				x, y, width, height);
+				x, y, ويڪر, اوچائي);
 }
 
 
 /* exported interface, documented in content/protected.h */
-void content__request_redraw(struct content *c,
-			     int x, int y, int width, int height)
+فراغ content__request_redraw(بنية content *c,
+			     صحيح x, صحيح y, صحيح ويڪر, صحيح اوچائي)
 {
-	union content_msg_data data;
+	اتحاد content_نياپو_معلومات معلومات;
 
-	if (c == NULL)
-		return;
+	إذا (c == عدم)
+		أرجع;
 
-	data.redraw.x = x;
-	data.redraw.y = y;
-	data.redraw.width = width;
-	data.redraw.height = height;
+	معلومات.redraw.x = x;
+	معلومات.redraw.y = y;
+	معلومات.redraw.ويڪر = ويڪر;
+	معلومات.redraw.اوچائي = اوچائي;
 
-	content_broadcast(c, CONTENT_MSG_REDRAW, &data);
+	content_نشر(c, CONTENT_نياپو_REDRAW, &معلومات);
 }
 
 
 /* exported interface, documented in content/content.h */
-bool content_exec(struct hlcache_handle *h, const char *src, size_t srclen)
+bool content_exec(بنية hlcache_handle *h, ثابت حرف *src, size_t srclen)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	بنية content *c = hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	if (c->locked) {
+	إذا (c->locked) {
 		/* Not safe to do stuff */
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, content locked");
-		return false;
+		أرجع false;
 	}
 
-	if (c->handler->exec == NULL) {
+	إذا (c->handler->exec == عدم) {
 		/* Can't exec something on this content */
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no exec function");
-		return false;
+		أرجع false;
 	}
 
-	return c->handler->exec(c, src, srclen);
+	أرجع c->handler->exec(c, src, srclen);
 }
 
 
 /* exported interface, documented in content/content.h */
-bool content_saw_insecure_objects(struct hlcache_handle *h)
+bool content_saw_insecure_objects(بنية hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct nsurl *url = hlcache_handle_get_url(h);
+	بنية content *c = hlcache_handle_get_content(h);
+	بنية nsurl *url = hlcache_handle_get_url(h);
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
-	bool match;
+	bool ميلاپ;
 
 	/* Is this an internal scheme? If so, we trust here and stop */
-	if ((lwc_string_isequal(scheme, corestring_lwc_about,
-				&match) == lwc_error_ok &&
-	     (match == true)) ||
-	    (lwc_string_isequal(scheme, corestring_lwc_data,
-				&match) == lwc_error_ok &&
-	     (match == true)) ||
+	إذا ((lwc_string_isequal(scheme, corestring_lwc_about,
+				&ميلاپ) == lwc_error_ok &&
+	     (ميلاپ == true)) ||
+	    (lwc_string_isequal(scheme, corestring_lwc_معلومات,
+				&ميلاپ) == lwc_error_ok &&
+	     (ميلاپ == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_resource,
-				&match) == lwc_error_ok &&
-	     (match == true)) ||
+				&ميلاپ) == lwc_error_ok &&
+	     (ميلاپ == true)) ||
 	    /* Our internal x-ns-css scheme is secure */
 	    (lwc_string_isequal(scheme, corestring_lwc_x_ns_css,
-				&match) == lwc_error_ok &&
-	     (match == true)) ||
+				&ميلاپ) == lwc_error_ok &&
+	     (ميلاپ == true)) ||
 	    /* We also treat file: as "not insecure" here */
 	    (lwc_string_isequal(scheme, corestring_lwc_file,
-				&match) == lwc_error_ok &&
-	     (match == true))) {
+				&ميلاپ) == lwc_error_ok &&
+	     (ميلاپ == true))) {
 		/* No insecurity to find */
 		lwc_string_unref(scheme);
-		return false;
+		أرجع false;
 	}
 
 	/* Okay, not internal, am *I* secure? */
-	if ((lwc_string_isequal(scheme, corestring_lwc_https,
-				&match) == lwc_error_ok)
-	    && (match == false)) {
+	إذا ((lwc_string_isequal(scheme, corestring_lwc_https,
+				&ميلاپ) == lwc_error_ok)
+	    && (ميلاپ == false)) {
 		/* I did see something insecure -- ME! */
 		lwc_string_unref(scheme);
-		return true;
+		أرجع true;
 	}
 
 	lwc_string_unref(scheme);
 	/* I am supposed to be secure, but was I overridden */
-	if (urldb_get_cert_permissions(url)) {
+	إذا (urldb_get_cert_permissions(url)) {
 		/* I was https:// but I was overridden, that's no good */
-		return true;
+		أرجع true;
 	}
 
 	/* Otherwise try and chain through the handler */
-	if (c != NULL && c->handler->saw_insecure_objects != NULL) {
-		return c->handler->saw_insecure_objects(c);
+	إذا (c != عدم && c->handler->saw_insecure_objects != عدم) {
+		أرجع c->handler->saw_insecure_objects(c);
 	}
 
 	/* If we can't see insecure objects, we can't see them */
-	return false;
+	أرجع false;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
 content_redraw(hlcache_handle *h,
-	       struct content_redraw_data *data,
-	       const struct rect *clip,
-	       const struct redraw_context *ctx)
+	       بنية content_redraw_معلومات *معلومات,
+	       ثابت بنية rect *clip,
+	       ثابت بنية redraw_context *ctx)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	بنية content *c = hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	if (c->locked) {
+	إذا (c->locked) {
 		/* not safe to attempt redraw */
-		return true;
+		أرجع true;
 	}
 
 	/* ensure we have a redrawable content */
-	if (c->handler->redraw == NULL) {
-		return true;
+	إذا (c->handler->redraw == عدم) {
+		أرجع true;
 	}
 
-	return c->handler->redraw(c, data, clip, ctx);
+	أرجع c->handler->redraw(c, معلومات, clip, ctx);
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_scaled_redraw(struct hlcache_handle *h,
-		      int width, int height,
-		      const struct redraw_context *ctx)
+content_scaled_redraw(بنية hlcache_handle *h,
+		      صحيح ويڪر, صحيح اوچائي,
+		      ثابت بنية redraw_context *ctx)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct redraw_context new_ctx = *ctx;
-	struct rect clip;
-	struct content_redraw_data data;
+	بنية content *c = hlcache_handle_get_content(h);
+	بنية redraw_context new_ctx = *ctx;
+	بنية rect clip;
+	بنية content_redraw_معلومات معلومات;
 	bool plot_ok = true;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
 	/* ensure it is safe to attempt redraw */
-	if (c->locked) {
-		return true;
+	إذا (c->locked) {
+		أرجع true;
 	}
 
 	/* ensure we have a redrawable content */
-	if (c->handler->redraw == NULL) {
-		return true;
+	إذا (c->handler->redraw == عدم) {
+		أرجع true;
 	}
 
-	NSLOG(netsurf, INFO, "Content %p %dx%d ctx:%p", c, width, height, ctx);
+	NSLOG(netsurf, INFO, "Content %p %dx%d ctx:%p", c, ويڪر, اوچائي, ctx);
 
-	if (ctx->plot->option_knockout) {
-		knockout_plot_start(ctx, &new_ctx);
+	إذا (ctx->plot->option_knockout) {
+		knockout_plot_شروعات(ctx, &new_ctx);
 	}
 
 	/* Set clip rectangle to required thumbnail size */
 	clip.x0 = 0;
 	clip.y0 = 0;
-	clip.x1 = width;
-	clip.y1 = height;
+	clip.x1 = ويڪر;
+	clip.y1 = اوچائي;
 
 	new_ctx.plot->clip(&new_ctx, &clip);
 
@@ -622,165 +622,165 @@ content_scaled_redraw(struct hlcache_handle *h,
 					    &clip) == NSERROR_OK);
 
 	/* Set up content redraw data */
-	data.x = 0;
-	data.y = 0;
-	data.width = width;
-	data.height = height;
+	معلومات.x = 0;
+	معلومات.y = 0;
+	معلومات.ويڪر = ويڪر;
+	معلومات.اوچائي = اوچائي;
 
-	data.background_colour = 0xFFFFFF;
-	data.repeat_x = false;
-	data.repeat_y = false;
+	معلومات.background_رنگ = 0xFFFFFF;
+	معلومات.repeat_x = false;
+	معلومات.repeat_y = false;
 
 	/* Find the scale factor to use if the content has a width */
-	if (c->width) {
-		data.scale = (float)width / (float)c->width;
-	} else {
-		data.scale = 1.0;
+	إذا (c->ويڪر) {
+		معلومات.scale = (عائم)ويڪر / (عائم)c->ويڪر;
+	} وإلا {
+		معلومات.scale = 1.0;
 	}
 
 	/* Render the content */
-	plot_ok &= c->handler->redraw(c, &data, &clip, &new_ctx);
+	plot_ok &= c->handler->redraw(c, &معلومات, &clip, &new_ctx);
 
-	if (ctx->plot->option_knockout) {
-		knockout_plot_end(ctx);
+	إذا (ctx->plot->option_knockout) {
+		knockout_plot_پڇاڙي(ctx);
 	}
 
-	return plot_ok;
+	أرجع plot_ok;
 }
 
 
 /* exported interface documented in content/content.h */
 bool
-content_add_user(struct content *c,
-		 void (*callback)(
-				  struct content *c,
-				  content_msg msg,
-				  const union content_msg_data *data,
-				  void *pw),
-		 void *pw)
+content_جوڙيو_user(بنية content *c,
+		 فراغ (*callback)(
+				  بنية content *c,
+				  content_نياپو نياپو,
+				  ثابت اتحاد content_نياپو_معلومات *معلومات,
+				  فراغ *pw),
+		 فراغ *pw)
 {
-	struct content_user *user;
+	بنية content_user *user;
 
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p), user %p %p",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)),
 	      c, callback, pw);
-	user = malloc(sizeof(struct content_user));
-	if (!user)
-		return false;
+	user = يادگيري_ڏيو(حجم(بنية content_user));
+	إذا (!user)
+		أرجع false;
 	user->callback = callback;
 	user->pw = pw;
-	user->next = c->user_list->next;
-	c->user_list->next = user;
+	user->ايندڙ = c->user_list->ايندڙ;
+	c->user_list->ايندڙ = user;
 
-	if (c->handler->add_user != NULL)
-		c->handler->add_user(c);
+	إذا (c->handler->جوڙيو_user != عدم)
+		c->handler->جوڙيو_user(c);
 
-	return true;
+	أرجع true;
 }
 
 
 /* exported interface documented in content/content.h */
-void
-content_remove_user(struct content *c,
-		    void (*callback)(
-				     struct content *c,
-				     content_msg msg,
-				     const union content_msg_data *data,
-				     void *pw),
-		    void *pw)
+فراغ
+content_remove_user(بنية content *c,
+		    فراغ (*callback)(
+				     بنية content *c,
+				     content_نياپو نياپو,
+				     ثابت اتحاد content_نياپو_معلومات *معلومات,
+				     فراغ *pw),
+		    فراغ *pw)
 {
-	struct content_user *user, *next;
+	بنية content_user *user, *ايندڙ;
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p), user %p %p",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)),
 	      c, callback, pw);
 
 	/* user_list starts with a sentinel */
-	for (user = c->user_list; user->next != 0 &&
-		     !(user->next->callback == callback &&
-		       user->next->pw == pw); user = user->next)
+	لكل (user = c->user_list; user->ايندڙ != 0 &&
+		     !(user->ايندڙ->callback == callback &&
+		       user->ايندڙ->pw == pw); user = user->ايندڙ)
 		;
-	if (user->next == 0) {
+	إذا (user->ايندڙ == 0) {
 		NSLOG(netsurf, INFO, "user not found in list");
-		assert(0);
-		return;
+		أكد(0);
+		أرجع;
 	}
 
-	if (c->handler->remove_user != NULL)
+	إذا (c->handler->remove_user != عدم)
 		c->handler->remove_user(c);
 
-	next = user->next;
-	user->next = next->next;
-	free(next);
+	ايندڙ = user->ايندڙ;
+	user->ايندڙ = ايندڙ->ايندڙ;
+	حرر(ايندڙ);
 }
 
 
 /* exported interface documented in content/content.h */
-uint32_t content_count_users(struct content *c)
+uint32_t content_ڳڻپ_users(بنية content *c)
 {
-	struct content_user *user;
+	بنية content_user *user;
 	uint32_t counter = 0;
 
-	assert(c != NULL);
+	أكد(c != عدم);
 
-	for (user = c->user_list; user != NULL; user = user->next)
+	لكل (user = c->user_list; user != عدم; user = user->ايندڙ)
 		counter += 1;
 
-	assert(counter > 0);
+	أكد(counter > 0);
 
-	return counter - 1; /* Subtract 1 for the sentinel */
+	أرجع counter - 1; /* Subtract 1 for the sentinel */
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_matches_quirks(struct content *c, bool quirks)
+bool content_matches_quirks(بنية content *c, bool quirks)
 {
-	if (c->handler->matches_quirks == NULL)
-		return true;
+	إذا (c->handler->matches_quirks == عدم)
+		أرجع true;
 
-	return c->handler->matches_quirks(c, quirks);
+	أرجع c->handler->matches_quirks(c, quirks);
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_is_shareable(struct content *c)
+bool content_is_shareable(بنية content *c)
 {
-	return c->handler->no_share == false;
+	أرجع c->handler->no_share == false;
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_broadcast(struct content *c, content_msg msg,
-		       const union content_msg_data *data)
+فراغ content_نشر(بنية content *c, content_نياپو نياپو,
+		       ثابت اتحاد content_نياپو_معلومات *معلومات)
 {
-	struct content_user *user, *next;
-	assert(c);
+	بنية content_user *user, *ايندڙ;
+	أكد(c);
 
-	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, msg);
-	for (user = c->user_list->next; user != 0; user = next) {
-		next = user->next;  /* user may be destroyed during callback */
-		if (user->callback != 0)
-			user->callback(c, msg, data, user->pw);
+	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, نياپو);
+	لكل (user = c->user_list->ايندڙ; user != 0; user = ايندڙ) {
+		ايندڙ = user->ايندڙ;  /* user may be destroyed during callback */
+		إذا (user->callback != 0)
+			user->callback(c, نياپو, معلومات, user->pw);
 	}
 }
 
 
 /* exported interface documented in content_protected.h */
-void
-content_broadcast_error(struct content *c, nserror errorcode, const char *msg)
+فراغ
+content_نشر_error(بنية content *c, nserror errorcode, ثابت حرف *نياپو)
 {
-	struct content_user *user, *next;
-	union content_msg_data data;
+	بنية content_user *user, *ايندڙ;
+	اتحاد content_نياپو_معلومات معلومات;
 
-	assert(c);
+	أكد(c);
 
-	data.errordata.errorcode = errorcode;
-	data.errordata.errormsg = msg;
+	معلومات.errordata.errorcode = errorcode;
+	معلومات.errordata.errormsg = نياپو;
 
-	for (user = c->user_list->next; user != 0; user = next) {
-		next = user->next;  /* user may be destroyed during callback */
-		if (user->callback != 0) {
-			user->callback(c, CONTENT_MSG_ERROR,
-				       &data, user->pw);
+	لكل (user = c->user_list->ايندڙ; user != 0; user = ايندڙ) {
+		ايندڙ = user->ايندڙ;  /* user may be destroyed during callback */
+		إذا (user->callback != 0) {
+			user->callback(c, CONTENT_نياپو_ERROR,
+				       &معلومات, user->pw);
 		}
 	}
 }
@@ -789,192 +789,192 @@ content_broadcast_error(struct content *c, nserror errorcode, const char *msg)
 /* exported interface, documented in content/content.h */
 nserror
 content_open(hlcache_handle *h,
-	     struct browser_window *bw,
-	     struct content *page,
-	     struct object_params *params)
+	     بنية browser_دري *bw,
+	     بنية content *صفحو,
+	     بنية object_params *params)
 {
-	struct content *c;
+	بنية content *c;
 	nserror res;
 
 	c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	أكد(c != 0);
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
-	if (c->handler->open != NULL) {
-		res = c->handler->open(c, bw, page, params);
-	} else {
+	إذا (c->handler->open != عدم) {
+		res = c->handler->open(c, bw, صفحو, params);
+	} وإلا {
 		res = NSERROR_OK;
 	}
-	return res;
+	أرجع res;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror content_close(hlcache_handle *h)
 {
-	struct content *c;
+	بنية content *c;
 	nserror res;
 
 	c = hlcache_handle_get_content(h);
-	if (c == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	إذا (c == عدم) {
+		أرجع NSERROR_BAD_PARAMETER;
 	}
 
-	if ((c->status != CONTENT_STATUS_READY) &&
-	    (c->status != CONTENT_STATUS_DONE)) {
+	إذا ((c->حالت != CONTENT_حالت_READY) &&
+	    (c->حالت != CONTENT_حالت_پورو)) {
 		/* status is not read or done so nothing to do */
-		return NSERROR_INVALID;
+		أرجع NSERROR_INVALID;
 	}
 
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
 
-	if (c->textsearch.context != NULL) {
+	إذا (c->textsearch.context != عدم) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = عدم;
 	}
 
-	if (c->handler->close != NULL) {
+	إذا (c->handler->close != عدم) {
 		res = c->handler->close(c);
-	} else {
+	} وإلا {
 		res = NSERROR_OK;
 	}
-	return res;
+	أرجع res;
 }
 
 
 /* exported interface, documented in content/content.h */
-void content_clear_selection(hlcache_handle *h)
+فراغ content_clear_selection(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != 0);
 
-	if (c->handler->get_selection != NULL)
+	إذا (c->handler->get_selection != عدم)
 		c->handler->clear_selection(c);
 }
 
 
 /* exported interface, documented in content/content.h */
-char * content_get_selection(hlcache_handle *h)
+حرف * content_get_selection(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != 0);
 
-	if (c->handler->get_selection != NULL)
-		return c->handler->get_selection(c);
-	else
-		return NULL;
+	إذا (c->handler->get_selection != عدم)
+		أرجع c->handler->get_selection(c);
+	وإلا
+		أرجع عدم;
 }
 
 
 /* exported interface documented in content/content.h */
 nserror
-content_get_contextual_content(struct hlcache_handle *h,
-			       int x, int y,
-			       struct browser_window_features *data)
+content_get_contextual_content(بنية hlcache_handle *h,
+			       صحيح x, صحيح y,
+			       بنية browser_دري_features *معلومات)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != 0);
 
-	if (c->handler->get_contextual_content != NULL) {
-		return c->handler->get_contextual_content(c, x, y, data);
+	إذا (c->handler->get_contextual_content != عدم) {
+		أرجع c->handler->get_contextual_content(c, x, y, معلومات);
 	}
 
-	data->object = h;
-	return NSERROR_OK;
+	معلومات->object = h;
+	أرجع NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_scroll_at_point(struct hlcache_handle *h,
-			int x, int y,
-			int scrx, int scry)
+content_scroll_at_نقطو(بنية hlcache_handle *h,
+			صحيح x, صحيح y,
+			صحيح scrx, صحيح scry)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != 0);
 
-	if (c->handler->scroll_at_point != NULL)
-		return c->handler->scroll_at_point(c, x, y, scrx, scry);
+	إذا (c->handler->scroll_at_نقطو != عدم)
+		أرجع c->handler->scroll_at_نقطو(c, x, y, scrx, scry);
 
-	return false;
+	أرجع false;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_drop_file_at_point(struct hlcache_handle *h,
-			   int x, int y,
-			   char *file)
+content_drop_file_at_نقطو(بنية hlcache_handle *h,
+			   صحيح x, صحيح y,
+			   حرف *file)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != 0);
 
-	if (c->handler->drop_file_at_point != NULL)
-		return c->handler->drop_file_at_point(c, x, y, file);
+	إذا (c->handler->drop_file_at_نقطو != عدم)
+		أرجع c->handler->drop_file_at_نقطو(c, x, y, file);
 
-	return false;
+	أرجع false;
 }
 
 
 /* exported interface documented in content/content.h */
 nserror
-content_debug_dump(struct hlcache_handle *h, FILE *f, enum content_debug op)
+content_debug_dump(بنية hlcache_handle *h, FILE *f, تعداد content_debug op)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	بنية content *c = hlcache_handle_get_content(h);
+	أكد(c != 0);
 
-	if (c->handler->debug_dump == NULL) {
-		return NSERROR_NOT_IMPLEMENTED;
+	إذا (c->handler->debug_dump == عدم) {
+		أرجع NSERROR_NOT_IMPLEMENTED;
 	}
 
-	return c->handler->debug_dump(c, f, op);
+	أرجع c->handler->debug_dump(c, f, op);
 }
 
 
 /* exported interface documented in content/content.h */
-nserror content_debug(struct hlcache_handle *h, enum content_debug op)
+nserror content_debug(بنية hlcache_handle *h, تعداد content_debug op)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	بنية content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	إذا (c == عدم) {
+		أرجع NSERROR_BAD_PARAMETER;
 	}
 
-	if (c->handler->debug == NULL) {
-		return NSERROR_NOT_IMPLEMENTED;
+	إذا (c->handler->debug == عدم) {
+		أرجع NSERROR_NOT_IMPLEMENTED;
 	}
 
-	return c->handler->debug(c, op);
+	أرجع c->handler->debug(c, op);
 }
 
 
 /* exported interface documented in content/content.h */
-struct content_rfc5988_link *
-content_find_rfc5988_link(hlcache_handle *h, lwc_string *rel)
+بنية content_rfc5988_link *
+content_ڳوليو_rfc5988_link(hlcache_handle *h, lwc_string *rel)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct content_rfc5988_link *link = c->links;
-	bool rel_match = false;
+	بنية content *c = hlcache_handle_get_content(h);
+	بنية content_rfc5988_link *link = c->links;
+	bool rel_ميلاپ = false;
 
-	while (link != NULL) {
-		if (lwc_string_caseless_isequal(link->rel, rel,
-						&rel_match) == lwc_error_ok && rel_match) {
-			break;
+	طالما (link != عدم) {
+		إذا (lwc_string_caseless_isequal(link->rel, rel,
+						&rel_ميلاپ) == lwc_error_ok && rel_ميلاپ) {
+			اكسر;
 		}
-		link = link->next;
+		link = link->ايندڙ;
 	}
-	return link;
+	أرجع link;
 }
 
 
 /* exported interface documented in content/protected.h */
-struct content_rfc5988_link *
-content__free_rfc5988_link(struct content_rfc5988_link *link)
+بنية content_rfc5988_link *
+content__free_rfc5988_link(بنية content_rfc5988_link *link)
 {
-	struct content_rfc5988_link *next;
+	بنية content_rfc5988_link *ايندڙ;
 
-	next = link->next;
+	ايندڙ = link->ايندڙ;
 
 	nsurl_unref(link->href);
 	lwc_string_unref(link->rel);
@@ -982,402 +982,402 @@ content__free_rfc5988_link(struct content_rfc5988_link *link)
 	lwc_string_unref(link->type);
 	lwc_string_unref(link->media);
 	lwc_string_unref(link->sizes);
-	free(link);
+	حرر(link);
 
-	return next;
+	أرجع ايندڙ;
 }
 
 
 /* exported interface documented in content/protected.h */
 bool
-content__add_rfc5988_link(struct content *c,
-			  const struct content_rfc5988_link *link)
+content_جوڙيو_rfc5988_link(بنية content *c,
+			  ثابت بنية content_rfc5988_link *link)
 {
-	struct content_rfc5988_link *newlink;
-	union content_msg_data msg_data;
+	بنية content_rfc5988_link *newlink;
+	اتحاد content_نياپو_معلومات نياپو_معلومات;
 
 	/* a link relation must be present for it to be a link */
-	if (link->rel == NULL) {
-		return false;
+	إذا (link->rel == عدم) {
+		أرجع false;
 	}
 
 	/* a link href must be present for it to be a link */
-	if (link->href == NULL) {
-		return false;
+	إذا (link->href == عدم) {
+		أرجع false;
 	}
 
-	newlink = calloc(1, sizeof(struct content_rfc5988_link));
-	if (newlink == NULL) {
-		return false;
+	newlink = صفر_يادگيري_ڏيو(1, حجم(بنية content_rfc5988_link));
+	إذا (newlink == عدم) {
+		أرجع false;
 	}
 
 	/* copy values */
 	newlink->rel = lwc_string_ref(link->rel);
 	newlink->href = nsurl_ref(link->href);
-	if (link->hreflang != NULL) {
+	إذا (link->hreflang != عدم) {
 		newlink->hreflang = lwc_string_ref(link->hreflang);
 	}
-	if (link->type != NULL) {
+	إذا (link->type != عدم) {
 		newlink->type = lwc_string_ref(link->type);
 	}
-	if (link->media != NULL) {
+	إذا (link->media != عدم) {
 		newlink->media = lwc_string_ref(link->media);
 	}
-	if (link->sizes != NULL) {
+	إذا (link->sizes != عدم) {
 		newlink->sizes = lwc_string_ref(link->sizes);
 	}
 
 	/* add to metadata link to list */
-	newlink->next = c->links;
+	newlink->ايندڙ = c->links;
 	c->links = newlink;
 
 	/* broadcast the data */
-	msg_data.rfc5988_link = newlink;
-	content_broadcast(c, CONTENT_MSG_LINK, &msg_data);
+	نياپو_معلومات.rfc5988_link = newlink;
+	content_نشر(c, CONTENT_نياپو_LINK, &نياپو_معلومات);
 
-	return true;
+	أرجع true;
 }
 
 
 /* exported interface documented in content/content.h */
-nsurl *content_get_url(struct content *c)
+nsurl *content_get_url(بنية content *c)
 {
-	if (c == NULL)
-		return NULL;
+	إذا (c == عدم)
+		أرجع عدم;
 
-	return llcache_handle_get_url(c->llcache);
+	أرجع llcache_handle_get_url(c->llcache);
 }
 
 
 /* exported interface documented in content/content.h */
 content_type content_get_type(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	بنية content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return CONTENT_NONE;
+	إذا (c == عدم)
+		أرجع CONTENT_NONE;
 
-	return c->handler->type();
+	أرجع c->handler->type();
 }
 
 
 /* exported interface documented in content/content.h */
 lwc_string *content_get_mime_type(hlcache_handle *h)
 {
-	return content__get_mime_type(hlcache_handle_get_content(h));
+	أرجع content__get_mime_type(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-lwc_string *content__get_mime_type(struct content *c)
+lwc_string *content__get_mime_type(بنية content *c)
 {
-	if (c == NULL)
-		return NULL;
+	إذا (c == عدم)
+		أرجع عدم;
 
-	return lwc_string_ref(c->mime_type);
+	أرجع lwc_string_ref(c->mime_type);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__set_title(struct content *c, const char *title)
+bool content_سيٽ_title(بنية content *c, ثابت حرف *title)
 {
-	char *new_title = strdup(title);
-	if (new_title == NULL)
-		return false;
+	حرف *new_title = strdup(title);
+	إذا (new_title == عدم)
+		أرجع false;
 
-	if (c->title != NULL)
-		free(c->title);
+	إذا (c->title != عدم)
+		حرر(c->title);
 
 	c->title = new_title;
 
-	return true;
+	أرجع true;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *content_get_title(hlcache_handle *h)
+ثابت حرف *content_get_title(hlcache_handle *h)
 {
-	return content__get_title(hlcache_handle_get_content(h));
+	أرجع content__get_title(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *content__get_title(struct content *c)
+ثابت حرف *content__get_title(بنية content *c)
 {
-	if (c == NULL)
-		return NULL;
+	إذا (c == عدم)
+		أرجع عدم;
 
-	return c->title != NULL ? c->title :
+	أرجع c->title != عدم ? c->title :
 		nsurl_access(llcache_handle_get_url(c->llcache));
 }
 
 
 /* exported interface documented in content/content.h */
-content_status content_get_status(hlcache_handle *h)
+content_حالت content_get_حالت(hlcache_handle *h)
 {
-	return content__get_status(hlcache_handle_get_content(h));
+	أرجع content_get_حالت_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-content_status content__get_status(struct content *c)
+content_حالت content_get_حالت_2(بنية content *c)
 {
-	if (c == NULL)
-		return CONTENT_STATUS_ERROR;
+	إذا (c == عدم)
+		أرجع CONTENT_حالت_ERROR;
 
-	return c->status;
+	أرجع c->حالت;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *content_get_status_message(hlcache_handle *h)
+ثابت حرف *content_get_حالت_پيغام(hlcache_handle *h)
 {
-	return content__get_status_message(hlcache_handle_get_content(h));
+	أرجع content_get_حالت_پيغام_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *content__get_status_message(struct content *c)
+ثابت حرف *content_get_حالت_پيغام_2(بنية content *c)
 {
-	if (c == NULL)
-		return NULL;
+	إذا (c == عدم)
+		أرجع عدم;
 
-	return c->status_message;
+	أرجع c->حالت_پيغام;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_width(hlcache_handle *h)
+صحيح content_get_ويڪر(hlcache_handle *h)
 {
-	return content__get_width(hlcache_handle_get_content(h));
+	أرجع content_get_ويڪر_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_width(struct content *c)
+صحيح content_get_ويڪر_2(بنية content *c)
 {
-	if (c == NULL)
-		return 0;
+	إذا (c == عدم)
+		أرجع 0;
 
-	return c->width;
+	أرجع c->ويڪر;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_height(hlcache_handle *h)
+صحيح content_get_اوچائي(hlcache_handle *h)
 {
-	return content__get_height(hlcache_handle_get_content(h));
+	أرجع content_get_اوچائي_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_height(struct content *c)
+صحيح content_get_اوچائي_2(بنية content *c)
 {
-	if (c == NULL)
-		return 0;
+	إذا (c == عدم)
+		أرجع 0;
 
-	return c->height;
+	أرجع c->اوچائي;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_available_width(hlcache_handle *h)
+صحيح content_get_موجود_ويڪر(hlcache_handle *h)
 {
-	return content__get_available_width(hlcache_handle_get_content(h));
+	أرجع content_get_موجود_ويڪر_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_available_width(struct content *c)
+صحيح content_get_موجود_ويڪر_2(بنية content *c)
 {
-	if (c == NULL)
-		return 0;
+	إذا (c == عدم)
+		أرجع 0;
 
-	return c->available_width;
+	أرجع c->موجود_ويڪر;
 }
 
 
 /* exported interface documented in content/content.h */
-const uint8_t *content_get_source_data(hlcache_handle *h, size_t *size)
+ثابت uint8_t *content_get_ذريعو_معلومات(hlcache_handle *h, size_t *سائيز)
 {
-	return content__get_source_data(hlcache_handle_get_content(h), size);
+	أرجع content_get_ذريعو_معلومات_2(hlcache_handle_get_content(h), سائيز);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const uint8_t *content__get_source_data(struct content *c, size_t *size)
+ثابت uint8_t *content_get_ذريعو_معلومات_2(بنية content *c, size_t *سائيز)
 {
-	assert(size != NULL);
+	أكد(سائيز != عدم);
 
 	/** \todo check if the content check should be an assert */
-	if (c == NULL)
-		return NULL;
+	إذا (c == عدم)
+		أرجع عدم;
 
-	return llcache_handle_get_source_data(c->llcache, size);
+	أرجع llcache_handle_get_ذريعو_معلومات(c->llcache, سائيز);
 }
 
 
 /* exported interface documented in content/content.h */
-void content_invalidate_reuse_data(hlcache_handle *h)
+فراغ content_invalidate_reuse_معلومات(hlcache_handle *h)
 {
-	content__invalidate_reuse_data(hlcache_handle_get_content(h));
+	content_invalidate_reuse_معلومات_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-void content__invalidate_reuse_data(struct content *c)
+فراغ content_invalidate_reuse_معلومات_2(بنية content *c)
 {
-	if (c == NULL || c->llcache == NULL)
-		return;
+	إذا (c == عدم || c->llcache == عدم)
+		أرجع;
 
 	/* Invalidate low-level cache data */
-	llcache_handle_invalidate_cache_data(c->llcache);
+	llcache_handle_invalidate_cache_معلومات(c->llcache);
 }
 
 
 /* exported interface documented in content/content.h */
 nsurl *content_get_refresh_url(hlcache_handle *h)
 {
-	return content__get_refresh_url(hlcache_handle_get_content(h));
+	أرجع content__get_refresh_url(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-nsurl *content__get_refresh_url(struct content *c)
+nsurl *content__get_refresh_url(بنية content *c)
 {
-	if (c == NULL)
-		return NULL;
+	إذا (c == عدم)
+		أرجع عدم;
 
-	return c->refresh;
+	أرجع c->refresh;
 }
 
 
 /* exported interface documented in content/content.h */
-struct bitmap *content_get_bitmap(hlcache_handle *h)
+بنية bitmap *content_get_bitmap(hlcache_handle *h)
 {
-	return content__get_bitmap(hlcache_handle_get_content(h));
+	أرجع content__get_bitmap(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-struct bitmap *content__get_bitmap(struct content *c)
+بنية bitmap *content__get_bitmap(بنية content *c)
 {
-	struct bitmap *bitmap = NULL;
+	بنية bitmap *bitmap = عدم;
 
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->type != NULL) &&
+	إذا ((c != عدم) &&
+	    (c->handler != عدم) &&
+	    (c->handler->type != عدم) &&
 	    (c->handler->type() == CONTENT_IMAGE) &&
-	    (c->handler->get_internal != NULL) ) {
-		bitmap = c->handler->get_internal(c, NULL);
+	    (c->handler->get_اندروني != عدم) ) {
+		bitmap = c->handler->get_اندروني(c, عدم);
 	}
 
-	return bitmap;
+	أرجع bitmap;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_get_opaque(hlcache_handle *h)
 {
-	return content__get_opaque(hlcache_handle_get_content(h));
+	أرجع content__get_opaque(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__get_opaque(struct content *c)
+bool content__get_opaque(بنية content *c)
 {
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->is_opaque != NULL)) {
-		return c->handler->is_opaque(c);
+	إذا ((c != عدم) &&
+	    (c->handler != عدم) &&
+	    (c->handler->is_opaque != عدم)) {
+		أرجع c->handler->is_opaque(c);
 	}
 
-	return false;
+	أرجع false;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_get_quirks(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	بنية content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return false;
+	إذا (c == عدم)
+		أرجع false;
 
-	return c->quirks;
+	أرجع c->quirks;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *
-content_get_encoding(hlcache_handle *h, enum content_encoding_type op)
+ثابت حرف *
+content_get_encoding(hlcache_handle *h, تعداد content_encoding_type op)
 {
-	return content__get_encoding(hlcache_handle_get_content(h), op);
+	أرجع content__get_encoding(hlcache_handle_get_content(h), op);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *
-content__get_encoding(struct content *c, enum content_encoding_type op)
+ثابت حرف *
+content__get_encoding(بنية content *c, تعداد content_encoding_type op)
 {
-	const char *encoding = NULL;
+	ثابت حرف *encoding = عدم;
 
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->get_encoding != NULL) ) {
+	إذا ((c != عدم) &&
+	    (c->handler != عدم) &&
+	    (c->handler->get_encoding != عدم) ) {
 		encoding = c->handler->get_encoding(c, op);
 	}
 
-	return encoding;
+	أرجع encoding;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_is_locked(hlcache_handle *h)
 {
-	return content__is_locked(hlcache_handle_get_content(h));
+	أرجع content__is_locked(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__is_locked(struct content *c)
+bool content__is_locked(بنية content *c)
 {
-	return c->locked;
+	أرجع c->locked;
 }
 
 
 /* exported interface documented in content/content.h */
-const llcache_handle *content_get_llcache_handle(struct content *c)
+ثابت llcache_handle *content_get_llcache_handle(بنية content *c)
 {
-	if (c == NULL)
-		return NULL;
+	إذا (c == عدم)
+		أرجع عدم;
 
-	return c->llcache;
+	أرجع c->llcache;
 }
 
 
 /* exported interface documented in content/protected.h */
-struct content *content_clone(struct content *c)
+بنية content *content_clone(بنية content *c)
 {
-	struct content *nc;
+	بنية content *nc;
 	nserror error;
 
 	error = c->handler->clone(c, &nc);
-	if (error != NSERROR_OK)
-		return NULL;
+	إذا (error != NSERROR_OK)
+		أرجع عدم;
 
-	return nc;
+	أرجع nc;
 };
 
 
 /* exported interface documented in content/protected.h */
-nserror content__clone(const struct content *c, struct content *nc)
+nserror content__clone(ثابت بنية content *c, بنية content *nc)
 {
 	nserror error;
 
 	error = llcache_handle_clone(c->llcache, &(nc->llcache));
-	if (error != NSERROR_OK) {
-		return error;
+	إذا (error != NSERROR_OK) {
+		أرجع error;
 	}
 
 	llcache_handle_change_callback(nc->llcache,
@@ -1386,64 +1386,64 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nc->mime_type = lwc_string_ref(c->mime_type);
 	nc->handler = c->handler;
 
-	nc->status = c->status;
+	nc->حالت = c->حالت;
 
-	nc->width = c->width;
-	nc->height = c->height;
-	nc->available_width = c->available_width;
+	nc->ويڪر = c->ويڪر;
+	nc->اوچائي = c->اوچائي;
+	nc->موجود_ويڪر = c->موجود_ويڪر;
 	nc->quirks = c->quirks;
 
-	if (c->fallback_charset != NULL) {
+	إذا (c->fallback_charset != عدم) {
 		nc->fallback_charset = strdup(c->fallback_charset);
-		if (nc->fallback_charset == NULL) {
-			return NSERROR_NOMEM;
+		إذا (nc->fallback_charset == عدم) {
+			أرجع NSERROR_NOMEM;
 		}
 	}
 
-	if (c->refresh != NULL) {
+	إذا (c->refresh != عدم) {
 		nc->refresh = nsurl_ref(c->refresh);
-		if (nc->refresh == NULL) {
-			return NSERROR_NOMEM;
+		إذا (nc->refresh == عدم) {
+			أرجع NSERROR_NOMEM;
 		}
 	}
 
 	nc->time = c->time;
-	nc->reformat_time = c->reformat_time;
-	nc->size = c->size;
+	nc->reformat_وقت = c->reformat_وقت;
+	nc->سائيز = c->سائيز;
 
-	if (c->title != NULL) {
+	إذا (c->title != عدم) {
 		nc->title = strdup(c->title);
-		if (nc->title == NULL) {
-			return NSERROR_NOMEM;
+		إذا (nc->title == عدم) {
+			أرجع NSERROR_NOMEM;
 		}
 	}
 
-	nc->active = c->active;
+	nc->سرگرم = c->سرگرم;
 
-	nc->user_list = calloc(1, sizeof(struct content_user));
-	if (nc->user_list == NULL) {
-		return NSERROR_NOMEM;
+	nc->user_list = صفر_يادگيري_ڏيو(1, حجم(بنية content_user));
+	إذا (nc->user_list == عدم) {
+		أرجع NSERROR_NOMEM;
 	}
 
-	memcpy(&(nc->status_message), &(c->status_message), 120);
-	memcpy(&(nc->sub_status), &(c->sub_status), 80);
+	يادگيري_نقل(&(nc->حالت_پيغام), &(c->حالت_پيغام), 120);
+	يادگيري_نقل(&(nc->sub_حالت), &(c->sub_حالت), 80);
 
 	nc->locked = c->locked;
-	nc->total_size = c->total_size;
-	nc->http_code = c->http_code;
+	nc->ڪل_سائيز = c->ڪل_سائيز;
+	nc->http_ڪوڊ = c->http_ڪوڊ;
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /* exported interface documented in content/content.h */
-nserror content_abort(struct content *c)
+nserror content_abort(بنية content *c)
 {
 	NSLOG(netsurf, INFO, "Aborting %p", c);
 
-	if (c->handler->stop != NULL)
+	إذا (c->handler->stop != عدم)
 		c->handler->stop(c);
 
 	/* And for now, abort our llcache object */
-	return llcache_handle_abort(c->llcache);
+	أرجع llcache_handle_abort(c->llcache);
 }

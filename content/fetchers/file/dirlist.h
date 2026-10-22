@@ -23,28 +23,28 @@
  * These functions should in general be called via the content interface.
  */
 
-#ifndef NETSURF_CONTENT_DIRLIST_H_
-#define NETSURF_CONTENT_DIRLIST_H_
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_CONTENT_DIRLIST_H_
+#وصف_ڪريو NETSURF_CONTENT_DIRLIST_H_
 
-#include <stdbool.h>
+#ضمن <stdbool.h>
 
-#define DIRLIST_NO_NAME_COLUMN 1
-#define DIRLIST_NO_TYPE_COLUMN 1 << 1
-#define DIRLIST_NO_SIZE_COLUMN 1 << 2
-#define DIRLIST_NO_DATE_COLUMN 1 << 3
-#define DIRLIST_NO_TIME_COLUMN 1 << 4
+#وصف_ڪريو DIRLIST_NO_NAME_ڪالم 1
+#وصف_ڪريو DIRLIST_NO_TYPE_ڪالم 1 << 1
+#وصف_ڪريو DIRLIST_NO_سائيز_ڪالم 1 << 2
+#وصف_ڪريو DIRLIST_NO_DATE_ڪالم 1 << 3
+#وصف_ڪريو DIRLIST_NO_وقت_ڪالم 1 << 4
 
-struct nsurl;
+بنية nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length);
-bool dirlist_generate_headings(char *buffer, int buffer_length);
-bool dirlist_generate_row(bool even, bool directory, struct nsurl *url,
-		char *name, const char *mimetype, long long size, char *date,
-		char *time, char *buffer, int buffer_length);
-bool dirlist_generate_bottom(char *buffer, int buffer_length);
+bool dirlist_generate_چوٽي(حرف *بفر, صحيح بفر_ڊيگهائي);
+bool dirlist_generate_hide_columns(صحيح flags, حرف *بفر, صحيح بفر_ڊيگهائي);
+bool dirlist_generate_title(ثابت حرف *title, حرف *بفر, صحيح بفر_ڊيگهائي);
+bool dirlist_generate_والد_link(ثابت حرف *والد, حرف *بفر,
+		صحيح بفر_ڊيگهائي);
+bool dirlist_generate_headings(حرف *بفر, صحيح بفر_ڊيگهائي);
+bool dirlist_generate_صف(bool even, bool directory, بنية nsurl *url,
+		حرف *name, ثابت حرف *mimetype, ڊگهو ڊگهو سائيز, حرف *date,
+		حرف *time, حرف *بفر, صحيح بفر_ڊيگهائي);
+bool dirlist_generate_bottom(حرف *بفر, صحيح بفر_ڊيگهائي);
 
-#endif
+#جيڪڏهن_پورو

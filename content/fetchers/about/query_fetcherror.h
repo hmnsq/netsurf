@@ -21,8 +21,8 @@
  * about scheme query fetch error handler interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_FETCHERROR_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_FETCHERROR_H
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_FETCHERROR_H
+#وصف_ڪريو NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_FETCHERROR_H
 
 /**
  * Handler to generate about scheme fetch error query page
@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_query_fetcherror_handler(struct fetch_about_context *ctx);
+bool fetch_about_query_fetcherror_handler(بنية fetch_about_context *ctx);
 
-#endif
+#جيڪڏهن_پورو

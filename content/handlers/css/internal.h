@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_INTERNAL_H_
-#define NETSURF_CSS_INTERNAL_H_
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_CSS_اندروني_H
+#وصف_ڪريو NETSURF_CSS_اندروني_H
 
 /**
  * URL resolution callback for libcss
@@ -30,6 +30,6 @@
  *         CSS_NOMEM    on memory exhaustion,
  *         CSS_INVALID  if resolution failed.
  */
-css_error nscss_resolve_url(void *pw, const char *base, lwc_string *rel, lwc_string **abs);
+css_error nscss_resolve_url(فراغ *pw, ثابت حرف *بنياد, lwc_string *rel, lwc_string **مطلق_قدر);
 
-#endif
+#جيڪڏهن_پورو

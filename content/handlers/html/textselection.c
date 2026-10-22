@@ -21,26 +21,26 @@
  * implementation of text selection for a HTML content.
  */
 
-#include <stdlib.h>
+#ضمن <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "netsurf/types.h"
-#include "netsurf/plot_style.h"
-#include "desktop/selection.h"
-#include "desktop/save_text.h"
+#ضمن "utils/errors.h"
+#ضمن "utils/utils.h"
+#ضمن "netsurf/types.h"
+#ضمن "netsurf/plot_style.h"
+#ضمن "desktop/selection.h"
+#ضمن "desktop/save_text.h"
 
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/textselection.h"
+#ضمن "html/private.h"
+#ضمن "html/box.h"
+#ضمن "html/box_inspect.h"
+#ضمن "html/font.h"
+#ضمن "html/textselection.h"
 
-#define SPACE_LEN(b) ((b->space == 0) ? 0 : 1)
+#وصف_ڪريو SPACE_LEN(b) ((b->space == 0) ? 0 : 1)
 
-struct rdw_info {
+بنية rdw_info {
 	bool inited;
-	struct rect r;
+	بنية rect r;
 };
 
 
@@ -56,46 +56,46 @@ struct rdw_info {
  * \param end_offset receives the end offset of the selected part
  * \return true iff the range encloses at least part of the box
  */
-static bool
-selected_part(struct box *box,
-	      unsigned start_idx,
-	      unsigned end_idx,
-	      unsigned *start_offset,
-	      unsigned *end_offset)
+ساكن bool
+selected_part(بنية box *box,
+	      بنانشان شروعات_idx,
+	      بنانشان پڇاڙي_idx,
+	      بنانشان *شروعات_وٿي,
+	      بنانشان *پڇاڙي_وٿي)
 {
-	size_t box_length = box->length + SPACE_LEN(box);
+	size_t box_ڊيگهائي = box->ڊيگهائي + SPACE_LEN(box);
 
-	if (box_length > 0) {
-		if ((box->byte_offset >= start_idx) &&
-		    (box->byte_offset + box_length <= end_idx)) {
+	إذا (box_ڊيگهائي > 0) {
+		إذا ((box->byte_وٿي >= شروعات_idx) &&
+		    (box->byte_وٿي + box_ڊيگهائي <= پڇاڙي_idx)) {
 
 			/* fully enclosed */
-			*start_offset = 0;
-			*end_offset = box_length;
-			return true;
-		} else if ((box->byte_offset + box_length > start_idx) &&
-			   (box->byte_offset < end_idx)) {
+			*شروعات_وٿي = 0;
+			*پڇاڙي_وٿي = box_ڊيگهائي;
+			أرجع true;
+		} وإلا إذا ((box->byte_وٿي + box_ڊيگهائي > شروعات_idx) &&
+			   (box->byte_وٿي < پڇاڙي_idx)) {
 			/* partly enclosed */
-			int offset = 0;
-			int len;
+			صحيح وٿي = 0;
+			صحيح len;
 
-			if (box->byte_offset < start_idx) {
-				offset = start_idx - box->byte_offset;
+			إذا (box->byte_وٿي < شروعات_idx) {
+				وٿي = شروعات_idx - box->byte_وٿي;
 			}
 
-			len = box_length - offset;
+			len = box_ڊيگهائي - وٿي;
 
-			if (box->byte_offset + box_length > end_idx) {
-				len = end_idx - (box->byte_offset + offset);
+			إذا (box->byte_وٿي + box_ڊيگهائي > پڇاڙي_idx) {
+				len = پڇاڙي_idx - (box->byte_وٿي + وٿي);
 			}
 
-			*start_offset = offset;
-			*end_offset = offset + len;
+			*شروعات_وٿي = وٿي;
+			*پڇاڙي_وٿي = وٿي + len;
 
-			return true;
+			أرجع true;
 		}
 	}
-	return false;
+	أرجع false;
 }
 
 
@@ -110,58 +110,58 @@ selected_part(struct box *box,
  * \param do_marker whether deal enter any marker box
  * \return NSERROR_OK on success else error code
  */
-static nserror
-coords_from_range(struct box *box,
-		  unsigned start_idx,
-		  unsigned end_idx,
-		  struct rdw_info *rdwi,
+ساكن nserror
+coords_from_range(بنية box *box,
+		  بنانشان شروعات_idx,
+		  بنانشان پڇاڙي_idx,
+		  بنية rdw_info *rdwi,
 		  bool do_marker)
 {
-	struct box *child;
+	بنية box *ٻار;
 	nserror res;
 
-	assert(box);
+	أكد(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
-	    box->parent->list_marker == box &&
+	إذا (box->والد &&
+	    box->والد->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
-		box = box->parent;
+		box = box->والد;
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	إذا (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = coords_from_range(box->list_marker,
-					start_idx,
-					end_idx,
+					شروعات_idx,
+					پڇاڙي_idx,
 					rdwi,
 					true);
-		if (res != NSERROR_OK) {
-			return res;
+		إذا (res != NSERROR_OK) {
+			أرجع res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	إذا (box->byte_وٿي >= پڇاڙي_idx) {
+		أرجع NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
-	child = box->children;
+	ٻار = box->children;
 
-	if ((box->type != BOX_BR) &&
-	    !((box->type == BOX_FLOAT_LEFT ||
-	       box->type == BOX_FLOAT_RIGHT) &&
-	      !box->text)) {
-		unsigned start_off;
-		unsigned end_off;
+	إذا ((box->type != BOX_BR) &&
+	    !((box->type == BOX_FLOAT_کاٻو ||
+	       box->type == BOX_FLOAT_ساڄو) &&
+	      !box->متن)) {
+		بنانشان شروعات_off;
+		بنانشان پڇاڙي_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
-			int width, height;
-			int x, y;
+		إذا (selected_part(box, شروعات_idx, پڇاڙي_idx, &شروعات_off, &پڇاڙي_off)) {
+			صحيح ويڪر, اوچائي;
+			صحيح x, y;
 
 			/**
 			 * \todo it should be possible to reduce the redrawn
@@ -169,33 +169,33 @@ coords_from_range(struct box *box,
 			 */
 			box_coords(box, &x, &y);
 
-			width = box->padding[LEFT] + box->width + box->padding[RIGHT];
-			height = box->padding[TOP] + box->height + box->padding[BOTTOM];
+			ويڪر = box->padding[کاٻو_2] + box->ويڪر + box->padding[ساڄو_2];
+			اوچائي = box->padding[چوٽي_2] + box->اوچائي + box->padding[BOTTOM];
 
-			if ((box->type == BOX_TEXT) &&
+			إذا ((box->type == BOX_متن) &&
 			    (box->space != 0)) {
-				width += box->space;
+				ويڪر += box->space;
 			}
 
-			if (rdwi->inited) {
-				if (x < rdwi->r.x0) {
+			إذا (rdwi->inited) {
+				إذا (x < rdwi->r.x0) {
 					rdwi->r.x0 = x;
 				}
-				if (y < rdwi->r.y0) {
+				إذا (y < rdwi->r.y0) {
 					rdwi->r.y0 = y;
 				}
-				if (x + width > rdwi->r.x1) {
-					rdwi->r.x1 = x + width;
+				إذا (x + ويڪر > rdwi->r.x1) {
+					rdwi->r.x1 = x + ويڪر;
 				}
-				if (y + height > rdwi->r.y1) {
-					rdwi->r.y1 = y + height;
+				إذا (y + اوچائي > rdwi->r.y1) {
+					rdwi->r.y1 = y + اوچائي;
 				}
-			} else {
+			} وإلا {
 				rdwi->inited = true;
 				rdwi->r.x0 = x;
 				rdwi->r.y0 = y;
-				rdwi->r.x1 = x + width;
-				rdwi->r.y1 = y + height;
+				rdwi->r.x1 = x + ويڪر;
+				rdwi->r.y1 = y + اوچائي;
 			}
 		}
 	}
@@ -204,33 +204,33 @@ coords_from_range(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
-		struct box *next = child->next;
+	إذا (ٻار) {
+		بنية box *ايندڙ = ٻار->ايندڙ;
 
-		while (next && next->byte_offset < start_idx) {
-			child = next;
-			next = child->next;
+		طالما (ايندڙ && ايندڙ->byte_وٿي < شروعات_idx) {
+			ٻار = ايندڙ;
+			ايندڙ = ٻار->ايندڙ;
 		}
 
-		while (child) {
+		طالما (ٻار) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
-			struct box *next = child->next;
+			بنية box *ايندڙ = ٻار->ايندڙ;
 
-			res = coords_from_range(child,
-						start_idx,
-						end_idx,
+			res = coords_from_range(ٻار,
+						شروعات_idx,
+						پڇاڙي_idx,
 						rdwi,
 						false);
-			if (res != NSERROR_OK) {
-				return res;
+			إذا (res != NSERROR_OK) {
+				أرجع res;
 			}
 
-			child = next;
+			ٻار = ايندڙ;
 		}
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -247,51 +247,51 @@ coords_from_range(struct box *box,
  * \param whitespace_length  length of whitespace_text
  * \return NSERROR_OK iff successful and traversal should continue else error code
  */
-static nserror
-selection_copy_box(const char *text,
-		   size_t length,
-		   struct box *box,
-		   const css_unit_ctx *unit_len_ctx,
-		   struct selection_string *handle,
-		   const char *whitespace_text,
-		   size_t whitespace_length)
+ساكن nserror
+selection_copy_box(ثابت حرف *متن,
+		   size_t ڊيگهائي,
+		   بنية box *box,
+		   ثابت css_unit_ctx *unit_len_ctx,
+		   بنية selection_string *handle,
+		   ثابت حرف *whitespace_متن,
+		   size_t whitespace_ڊيگهائي)
 {
-	bool add_space = false;
+	bool جوڙيو_space = false;
 	plot_font_style_t style;
-	plot_font_style_t *pstyle = NULL;
+	plot_font_style_t *pstyle = عدم;
 
 	/* add any whitespace which precedes the text from this box */
-	if (whitespace_text != NULL &&
-	    whitespace_length > 0) {
-		if (!selection_string_append(whitespace_text,
-					     whitespace_length,
+	إذا (whitespace_متن != عدم &&
+	    whitespace_ڊيگهائي > 0) {
+		إذا (!selection_string_append(whitespace_متن,
+					     whitespace_ڊيگهائي,
 					     false,
 					     pstyle,
 					     handle)) {
-			return NSERROR_NOMEM;
+			أرجع NSERROR_NOMEM;
 		}
 	}
 
-	if (box != NULL) {
+	إذا (box != عدم) {
 		/* HTML */
-		add_space = (box->space != 0);
+		جوڙيو_space = (box->space != 0);
 
-		if (box->style != NULL) {
+		إذا (box->style != عدم) {
 			/* Override default font style */
 			font_plot_style_from_css(unit_len_ctx, box->style, &style);
 			pstyle = &style;
-		} else {
+		} وإلا {
 			/* If there's no style, there must be no text */
-			assert(box->text == NULL);
+			أكد(box->متن == عدم);
 		}
 	}
 
 	/* add the text from this box */
-	if (!selection_string_append(text, length, add_space, pstyle, handle)) {
-		return NSERROR_NOMEM;
+	إذا (!selection_string_append(متن, ڊيگهائي, جوڙيو_space, pstyle, handle)) {
+		أرجع NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -310,88 +310,88 @@ selection_copy_box(const char *text,
  * \param do_marker  whether deal enter any marker box
  * \return NSERROR_OK on sucess else error code
  */
-static nserror
-selection_copy(struct box *box,
-	       const css_unit_ctx *unit_len_ctx,
-	       unsigned start_idx,
-	       unsigned end_idx,
-	       struct selection_string *selstr,
-	       save_text_whitespace *before,
-	       bool *first,
+ساكن nserror
+selection_copy(بنية box *box,
+	       ثابت css_unit_ctx *unit_len_ctx,
+	       بنانشان شروعات_idx,
+	       بنانشان پڇاڙي_idx,
+	       بنية selection_string *selstr,
+	       save_متن_whitespace *before,
+	       bool *پهريون,
 	       bool do_marker)
 {
 	nserror res;
-	struct box *child;
-	const char *whitespace_text = "";
-	size_t whitespace_length = 0;
+	بنية box *ٻار;
+	ثابت حرف *whitespace_متن = "";
+	size_t whitespace_ڊيگهائي = 0;
 
-	assert(box);
+	أكد(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
-	    box->parent->list_marker == box &&
+	إذا (box->والد &&
+	    box->والد->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
-		box = box->parent;
+		box = box->والد;
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	إذا (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = selection_copy(box->list_marker,
 				     unit_len_ctx,
-				     start_idx,
-				     end_idx,
+				     شروعات_idx,
+				     پڇاڙي_idx,
 				     selstr,
 				     before,
-				     first,
+				     پهريون,
 				     true);
-		if (res != NSERROR_OK) {
-			return res;
+		إذا (res != NSERROR_OK) {
+			أرجع res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	إذا (box->byte_وٿي >= پڇاڙي_idx) {
+		أرجع NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
-	child = box->children;
+	ٻار = box->children;
 
 	/* If nicely formatted output of the selected text is required, work
 	 * out what whitespace should be placed before the next bit of text */
-	if (before) {
-		save_text_solve_whitespace(box,
-					   first,
+	إذا (before) {
+		save_متن_solve_whitespace(box,
+					   پهريون,
 					   before,
-					   &whitespace_text,
-					   &whitespace_length);
-	} else {
-		whitespace_text = NULL;
+					   &whitespace_متن,
+					   &whitespace_ڊيگهائي);
+	} وإلا {
+		whitespace_متن = عدم;
 	}
 
-	if ((box->type != BOX_BR) &&
-	    !((box->type == BOX_FLOAT_LEFT ||
-	       box->type == BOX_FLOAT_RIGHT) &&
-	      !box->text)) {
-		unsigned start_off;
-		unsigned end_off;
+	إذا ((box->type != BOX_BR) &&
+	    !((box->type == BOX_FLOAT_کاٻو ||
+	       box->type == BOX_FLOAT_ساڄو) &&
+	      !box->متن)) {
+		بنانشان شروعات_off;
+		بنانشان پڇاڙي_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
-			res = selection_copy_box(box->text + start_off,
-						 min(box->length, end_off) - start_off,
+		إذا (selected_part(box, شروعات_idx, پڇاڙي_idx, &شروعات_off, &پڇاڙي_off)) {
+			res = selection_copy_box(box->متن + شروعات_off,
+						 min(box->ڊيگهائي, پڇاڙي_off) - شروعات_off,
 						 box,
 						 unit_len_ctx,
 						 selstr,
-						 whitespace_text,
-						 whitespace_length);
-			if (res != NSERROR_OK) {
-				return res;
+						 whitespace_متن,
+						 whitespace_ڊيگهائي);
+			إذا (res != NSERROR_OK) {
+				أرجع res;
 			}
-			if (before) {
-				*first = false;
+			إذا (before) {
+				*پهريون = false;
 				*before = WHITESPACE_NONE;
 			}
 		}
@@ -401,36 +401,36 @@ selection_copy(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
-		struct box *next = child->next;
+	إذا (ٻار) {
+		بنية box *ايندڙ = ٻار->ايندڙ;
 
-		while (next && next->byte_offset < start_idx) {
-			child = next;
-			next = child->next;
+		طالما (ايندڙ && ايندڙ->byte_وٿي < شروعات_idx) {
+			ٻار = ايندڙ;
+			ايندڙ = ٻار->ايندڙ;
 		}
 
-		while (child) {
+		طالما (ٻار) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
-			struct box *next = child->next;
+			بنية box *ايندڙ = ٻار->ايندڙ;
 
-			res = selection_copy(child,
+			res = selection_copy(ٻار,
 					     unit_len_ctx,
-					     start_idx,
-					     end_idx,
+					     شروعات_idx,
+					     پڇاڙي_idx,
 					     selstr,
 					     before,
-					     first,
+					     پهريون,
 					     false);
-			if (res != NSERROR_OK) {
-				return res;
+			إذا (res != NSERROR_OK) {
+				أرجع res;
 			}
 
-			child = next;
+			ٻار = ايندڙ;
 		}
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
@@ -442,55 +442,55 @@ selection_copy(struct box *box,
  * \param idx current position within textual representation
  * \return updated position
  */
-static unsigned selection_label_subtree(struct box *box, unsigned idx)
+ساكن بنانشان selection_label_subtree(بنية box *box, بنانشان idx)
 {
-	struct box *child;
+	بنية box *ٻار;
 
-	assert(box != NULL);
+	أكد(box != عدم);
 
-	child = box->children;
+	ٻار = box->children;
 
-	box->byte_offset = idx;
+	box->byte_وٿي = idx;
 
-	if (box->text) {
-		idx += box->length + SPACE_LEN(box);
+	إذا (box->متن) {
+		idx += box->ڊيگهائي + SPACE_LEN(box);
 	}
 
-	while (child) {
-		if (child->list_marker) {
-			idx = selection_label_subtree(child->list_marker, idx);
+	طالما (ٻار) {
+		إذا (ٻار->list_marker) {
+			idx = selection_label_subtree(ٻار->list_marker, idx);
 		}
 
-		idx = selection_label_subtree(child, idx);
-		child = child->next;
+		idx = selection_label_subtree(ٻار, idx);
+		ٻار = ٻار->ايندڙ;
 	}
 
-	return idx;
+	أرجع idx;
 }
 
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_redraw(struct content *c,
-			  unsigned start_idx,
-			  unsigned end_idx)
+html_textselection_redraw(بنية content *c,
+			  بنانشان شروعات_idx,
+			  بنانشان پڇاڙي_idx)
 {
 	nserror res;
 	html_content *html = (html_content *)c;
-	struct rdw_info rdw;
+	بنية rdw_info rdw;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	إذا (html->layout == عدم) {
+		أرجع NSERROR_INVALID;
 	}
 
 	rdw.inited = false;
 
-	res = coords_from_range(html->layout, start_idx, end_idx, &rdw, false);
-	if (res != NSERROR_OK) {
-		return res;
+	res = coords_from_range(html->layout, شروعات_idx, پڇاڙي_idx, &rdw, false);
+	إذا (res != NSERROR_OK) {
+		أرجع res;
 	}
 
-	if (rdw.inited) {
+	إذا (rdw.inited) {
 		content__request_redraw(c,
 					rdw.r.x0,
 					rdw.r.y0,
@@ -498,50 +498,50 @@ html_textselection_redraw(struct content *c,
 					rdw.r.y1 - rdw.r.y0);
 	}
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }
 
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_copy(struct content *c,
-			unsigned start_idx,
-			unsigned end_idx,
-			struct selection_string *selstr)
+html_textselection_copy(بنية content *c,
+			بنانشان شروعات_idx,
+			بنانشان پڇاڙي_idx,
+			بنية selection_string *selstr)
 {
 	html_content *html = (html_content *)c;
-	save_text_whitespace before = WHITESPACE_NONE;
-	bool first = true;
+	save_متن_whitespace before = WHITESPACE_NONE;
+	bool پهريون = true;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	إذا (html->layout == عدم) {
+		أرجع NSERROR_INVALID;
 	}
 
-	return selection_copy(html->layout,
+	أرجع selection_copy(html->layout,
 			      &html->unit_len_ctx,
-			      start_idx,
-			      end_idx,
+			      شروعات_idx,
+			      پڇاڙي_idx,
 			      selstr,
 			      &before,
-			      &first,
+			      &پهريون,
 			      false);
 }
 
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_get_end(struct content *c, unsigned *end_idx)
+html_textselection_get_پڇاڙي(بنية content *c, بنانشان *پڇاڙي_idx)
 {
 	html_content *html = (html_content *)c;
-	unsigned root_idx;
+	بنانشان پاڙ_idx;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	إذا (html->layout == عدم) {
+		أرجع NSERROR_INVALID;
 	}
 
-	root_idx = 0;
+	پاڙ_idx = 0;
 
-	*end_idx = selection_label_subtree(html->layout, root_idx);
+	*پڇاڙي_idx = selection_label_subtree(html->layout, پاڙ_idx);
 
-	return NSERROR_OK;
+	أرجع NSERROR_OK;
 }

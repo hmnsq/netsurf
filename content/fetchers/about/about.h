@@ -21,14 +21,14 @@
  * about scheme URL method handler
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_ABOUT_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_ABOUT_H
+#جيڪڏهن_وصف_نه_ٿيل NETSURF_CONTENT_FETCHERS_ABOUT_ABOUT_H
+#وصف_ڪريو NETSURF_CONTENT_FETCHERS_ABOUT_ABOUT_H
 
 /**
  * Register about scheme handler.
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_about_register(void);
+nserror fetch_about_رجسٽر(فراغ);
 
-#endif
+#جيڪڏهن_پورو
