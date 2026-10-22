@@ -81,13 +81,13 @@
  * \param box_conversion_context pointer that recives the conversion context
  * \return netsurf error code indicating status of call
  */
-nserror dom_to_box(struct dom_node *n, struct html_content *c, box_construct_complete_cb cb, void **box_conversion_context);
+nserror dom_to_box(संरचना dom_गाँठ *n, संरचना html_content *c, box_construct_complete_cb cb, शून्य **box_conversion_context);
 
 
 /**
  * aborts any ongoing box construction
  */
-nserror cancel_dom_to_box(void *box_conversion_context);
+nserror cancel_dom_to_box(शून्य *box_conversion_context);
 
 
 /**
@@ -96,7 +96,7 @@ nserror cancel_dom_to_box(void *box_conversion_context);
  * \param node The DOM node
  * \return The box if there is one
  */
-struct box *box_for_node(struct dom_node *node);
+संरचना box *box_for_गाँठ(संरचना dom_गाँठ *गाँठ);
 
 /**
  * Extract a URL from a relative link, handling junk like whitespace and
@@ -108,6 +108,6 @@ struct box *box_for_node(struct dom_node *node);
  * \param result updated to target URL on heap, unchanged if extract failed
  * \return true on success, false on memory exhaustion
  */
-bool box_extract_link(const struct html_content *content, const struct dom_string *dsrel, struct nsurl *base, struct nsurl **result);
+bool box_extract_link(ध्रुव संरचना html_content *content, ध्रुव संरचना dom_string *dsrel, संरचना nsurl *base, संरचना nsurl **result);
 
 #endif
