@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <libcss/libcss.h>
+#ضمن <stdio.h>
+#ضمن <libcss/libcss.h>
 
-#include "netsurf/inttypes.h"
+#ضمن "netsurf/inttypes.h"
 
-#include "css/dump.h"
-#include "css/utils.h"
+#ضمن "css/dump.h"
+#ضمن "css/utils.h"
 
 /**
  * Dump a fixed point value to the stream in a textual form.
@@ -30,7 +30,7 @@
  * \param stream  Stream to write to
  * \param f       Value to write
  */
-static void dump_css_fixed(FILE *stream, css_fixed f)
+ساكن فراغ dump_css_fixed(FILE *stream, css_fixed f)
 {
 #define NSCSS_ABS(x) (uint32_t)((x) < 0 ? -(x) : (x))
 	uint32_t uintpart = FIXTOINT(NSCSS_ABS(f));
@@ -47,11 +47,11 @@ static void dump_css_fixed(FILE *stream, css_fixed f)
  * \param stream  Stream to write to
  * \param val     Value to write
  */
-static void dump_css_number(FILE *stream, css_fixed val)
+ساكن فراغ dump_css_نمبر(FILE *stream, css_fixed val)
 {
-	if (INTTOFIX(FIXTOINT(val)) == val)
+	إذا (INTTOFIX(FIXTOINT(val)) == val)
 		fprintf(stream, "%"PRId32, FIXTOINT(val));
-	else
+	وإلا
 		dump_css_fixed(stream, val);
 }
 
@@ -62,150 +62,150 @@ static void dump_css_number(FILE *stream, css_fixed val)
  * \param val     Value to write
  * \param unit    Unit to write
  */
-static void dump_css_unit(FILE *stream, css_fixed val, css_unit unit)
+ساكن فراغ dump_css_unit(FILE *stream, css_fixed val, css_unit unit)
 {
-	dump_css_number(stream, val);
+	dump_css_نمبر(stream, val);
 
-	switch (unit) {
-	case CSS_UNIT_PX:
+	بدل (unit) {
+	حالة CSS_UNIT_PX:
 		fprintf(stream, "px");
-		break;
-	case CSS_UNIT_EX:
+		اكسر;
+	حالة CSS_UNIT_EX:
 		fprintf(stream, "ex");
-		break;
-	case CSS_UNIT_EM:
+		اكسر;
+	حالة CSS_UNIT_EM:
 		fprintf(stream, "em");
-		break;
-	case CSS_UNIT_IN:
+		اكسر;
+	حالة CSS_UNIT_IN:
 		fprintf(stream, "in");
-		break;
-	case CSS_UNIT_CM:
+		اكسر;
+	حالة CSS_UNIT_CM:
 		fprintf(stream, "cm");
-		break;
-	case CSS_UNIT_MM:
+		اكسر;
+	حالة CSS_UNIT_MM:
 		fprintf(stream, "mm");
-		break;
-	case CSS_UNIT_PT:
+		اكسر;
+	حالة CSS_UNIT_PT:
 		fprintf(stream, "pt");
-		break;
-	case CSS_UNIT_PC:
+		اكسر;
+	حالة CSS_UNIT_PC:
 		fprintf(stream, "pc");
-		break;
-	case CSS_UNIT_PCT:
+		اكسر;
+	حالة CSS_UNIT_PCT:
 		fprintf(stream, "%%");
-		break;
-	case CSS_UNIT_DEG:
+		اكسر;
+	حالة CSS_UNIT_DEG:
 		fprintf(stream, "deg");
-		break;
-	case CSS_UNIT_GRAD:
+		اكسر;
+	حالة CSS_UNIT_GRAD:
 		fprintf(stream, "grad");
-		break;
-	case CSS_UNIT_RAD:
+		اكسر;
+	حالة CSS_UNIT_RAD:
 		fprintf(stream, "rad");
-		break;
-	case CSS_UNIT_MS:
+		اكسر;
+	حالة CSS_UNIT_MS:
 		fprintf(stream, "ms");
-		break;
-	case CSS_UNIT_S:
+		اكسر;
+	حالة CSS_UNIT_S:
 		fprintf(stream, "s");
-		break;
-	case CSS_UNIT_HZ:
+		اكسر;
+	حالة CSS_UNIT_HZ:
 		fprintf(stream, "Hz");
-		break;
-	case CSS_UNIT_KHZ:
+		اكسر;
+	حالة CSS_UNIT_KHZ:
 		fprintf(stream, "kHz");
-		break;
-	case CSS_UNIT_CH:
+		اكسر;
+	حالة CSS_UNIT_CH:
 		fprintf(stream, "ch");
-		break;
-	case CSS_UNIT_REM:
+		اكسر;
+	حالة CSS_UNIT_REM:
 		fprintf(stream, "rem");
-		break;
-	case CSS_UNIT_LH:
+		اكسر;
+	حالة CSS_UNIT_LH:
 		fprintf(stream, "lh");
-		break;
-	case CSS_UNIT_VH:
+		اكسر;
+	حالة CSS_UNIT_VH:
 		fprintf(stream, "vh");
-		break;
-	case CSS_UNIT_VW:
+		اكسر;
+	حالة CSS_UNIT_VW:
 		fprintf(stream, "vw");
-		break;
-	case CSS_UNIT_VI:
+		اكسر;
+	حالة CSS_UNIT_VI:
 		fprintf(stream, "vi");
-		break;
-	case CSS_UNIT_VB:
+		اكسر;
+	حالة CSS_UNIT_VB:
 		fprintf(stream, "vb");
-		break;
-	case CSS_UNIT_VMIN:
+		اكسر;
+	حالة CSS_UNIT_VMIN:
 		fprintf(stream, "vmin");
-		break;
-	case CSS_UNIT_VMAX:
+		اكسر;
+	حالة CSS_UNIT_VMAX:
 		fprintf(stream, "vmax");
-		break;
-	case CSS_UNIT_Q:
+		اكسر;
+	حالة CSS_UNIT_Q:
 		fprintf(stream, "q");
-		break;
-	case CSS_UNIT_CALC:
+		اكسر;
+	حالة CSS_UNIT_CALC:
 		fprintf(stream, "calc()");
-		break;
+		اكسر;
 	}
 }
 
 /* exported interface documented in content/handlers/css/dump.h */
-void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
+فراغ nscss_dump_computed_style(FILE *stream, ثابت css_computed_style *style)
 {
 	uint8_t val;
 	css_color color = 0;
-	lwc_string *url = NULL;
+	lwc_string *url = عدم;
 	css_fixed len1 = 0, len2 = 0;
 	css_unit unit1 = CSS_UNIT_PX, unit2 = CSS_UNIT_PX;
 	css_computed_clip_rect rect = { 0, 0, 0, 0, CSS_UNIT_PX, CSS_UNIT_PX,
 					CSS_UNIT_PX, CSS_UNIT_PX, true, true,
 					true, true };
-	const css_computed_content_item *content = NULL;
-	const css_computed_counter *counter = NULL;
-	lwc_string **string_list = NULL;
+	ثابت css_computed_content_item *content = عدم;
+	ثابت css_computed_counter *counter = عدم;
+	lwc_string **string_list = عدم;
 	int32_t zindex = 0;
 
 	fprintf(stream, "{ ");
 
 	/* background-attachment */
 	val = css_computed_background_attachment(style);
-	switch (val) {
-	case CSS_BACKGROUND_ATTACHMENT_FIXED:
+	بدل (val) {
+	حالة CSS_BACKGROUND_ATTACHMENT_FIXED:
 		fprintf(stream, "background-attachment: fixed ");
-		break;
-	case CSS_BACKGROUND_ATTACHMENT_SCROLL:
+		اكسر;
+	حالة CSS_BACKGROUND_ATTACHMENT_SCROLL:
 		fprintf(stream, "background-attachment: scroll ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* background-color */
 	val = css_computed_background_color(style, &color);
-	switch (val) {
-	case CSS_BACKGROUND_COLOR_COLOR:
+	بدل (val) {
+	حالة CSS_BACKGROUND_COLOR_COLOR:
 		fprintf(stream, "background-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* background-image */
 	val = css_computed_background_image(style, &url);
-	if (val == CSS_BACKGROUND_IMAGE_IMAGE && url != NULL) {
+	إذا (val == CSS_BACKGROUND_IMAGE_IMAGE && url != عدم) {
 		fprintf(stream, "background-image: url('%.*s') ",
-				(int) lwc_string_length(url),
+				(صحيح) lwc_string_length(url),
 				lwc_string_data(url));
-	} else if (val == CSS_BACKGROUND_IMAGE_NONE) {
+	} وإلا إذا (val == CSS_BACKGROUND_IMAGE_NONE) {
 		fprintf(stream, "background-image: none ");
 	}
 
 	/* background-position */
 	val = css_computed_background_position(style, &len1, &unit1,
 			&len2, &unit2);
-	if (val == CSS_BACKGROUND_POSITION_SET) {
+	إذا (val == CSS_BACKGROUND_POSITION_SET) {
 		fprintf(stream, "background-position: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
@@ -215,40 +215,40 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* background-repeat */
 	val = css_computed_background_repeat(style);
-	switch (val) {
-	case CSS_BACKGROUND_REPEAT_REPEAT_X:
+	بدل (val) {
+	حالة CSS_BACKGROUND_REPEAT_REPEAT_X:
 		fprintf(stream, "background-repeat: repeat-x ");
-		break;
-	case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+		اكسر;
+	حالة CSS_BACKGROUND_REPEAT_REPEAT_Y:
 		fprintf(stream, "background-repeat: repeat-y ");
-		break;
-	case CSS_BACKGROUND_REPEAT_REPEAT:
+		اكسر;
+	حالة CSS_BACKGROUND_REPEAT_REPEAT:
 		fprintf(stream, "background-repeat: repeat ");
-		break;
-	case CSS_BACKGROUND_REPEAT_NO_REPEAT:
+		اكسر;
+	حالة CSS_BACKGROUND_REPEAT_NO_REPEAT:
 		fprintf(stream, "background-repeat: no-repeat ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-collapse */
 	val = css_computed_border_collapse(style);
-	switch (val) {
-	case CSS_BORDER_COLLAPSE_SEPARATE:
+	بدل (val) {
+	حالة CSS_BORDER_COLLAPSE_SEPARATE:
 		fprintf(stream, "border-collapse: separate ");
-		break;
-	case CSS_BORDER_COLLAPSE_COLLAPSE:
+		اكسر;
+	حالة CSS_BORDER_COLLAPSE_COLLAPSE:
 		fprintf(stream, "border-collapse: collapse ");
-		break;
-	default:
+		اكسر;
+	افتراضي:
 
-		break;
+		اكسر;
 	}
 
 	/* border-spacing */
 	val = css_computed_border_spacing(style, &len1, &unit1, &len2, &unit2);
-	if (val == CSS_BORDER_SPACING_SET) {
+	إذا (val == CSS_BORDER_SPACING_SET) {
 		fprintf(stream, "border-spacing: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
@@ -257,458 +257,458 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	}
 
 	/* border-top-color */
-	val = css_computed_border_top_color(style, &color);
-	switch (val) {
-	case CSS_BORDER_COLOR_COLOR:
+	val = css_computed_border_چوٹی_color(style, &color);
+	بدل (val) {
+	حالة CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-top-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-right-color */
-	val = css_computed_border_right_color(style, &color);
-	switch (val) {
-	case CSS_BORDER_COLOR_COLOR:
+	val = css_computed_border_دایاں_color(style, &color);
+	بدل (val) {
+	حالة CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-right-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-bottom-color */
 	val = css_computed_border_bottom_color(style, &color);
-	switch (val) {
-	case CSS_BORDER_COLOR_COLOR:
+	بدل (val) {
+	حالة CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-bottom-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-left-color */
-	val = css_computed_border_left_color(style, &color);
-	switch (val) {
-	case CSS_BORDER_COLOR_COLOR:
+	val = css_computed_border_بایاں_color(style, &color);
+	بدل (val) {
+	حالة CSS_BORDER_COLOR_COLOR:
 		fprintf(stream, "border-left-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-top-style */
-	val = css_computed_border_top_style(style);
-	switch (val) {
-	case CSS_BORDER_STYLE_NONE:
+	val = css_computed_border_چوٹی_style(style);
+	بدل (val) {
+	حالة CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-top-style: none ");
-		break;
-	case CSS_BORDER_STYLE_HIDDEN:
+		اكسر;
+	حالة CSS_BORDER_STYLE_HIDDEN:
 		fprintf(stream, "border-top-style: hidden ");
-		break;
-	case CSS_BORDER_STYLE_DOTTED:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DOTTED:
 		fprintf(stream, "border-top-style: dotted ");
-		break;
-	case CSS_BORDER_STYLE_DASHED:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DASHED:
 		fprintf(stream, "border-top-style: dashed ");
-		break;
-	case CSS_BORDER_STYLE_SOLID:
+		اكسر;
+	حالة CSS_BORDER_STYLE_SOLID:
 		fprintf(stream, "border-top-style: solid ");
-		break;
-	case CSS_BORDER_STYLE_DOUBLE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DOUBLE:
 		fprintf(stream, "border-top-style: double ");
-		break;
-	case CSS_BORDER_STYLE_GROOVE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_GROOVE:
 		fprintf(stream, "border-top-style: groove ");
-		break;
-	case CSS_BORDER_STYLE_RIDGE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_RIDGE:
 		fprintf(stream, "border-top-style: ridge ");
-		break;
-	case CSS_BORDER_STYLE_INSET:
+		اكسر;
+	حالة CSS_BORDER_STYLE_INSET:
 		fprintf(stream, "border-top-style: inset ");
-		break;
-	case CSS_BORDER_STYLE_OUTSET:
+		اكسر;
+	حالة CSS_BORDER_STYLE_OUTSET:
 		fprintf(stream, "border-top-style: outset ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-right-style */
-	val = css_computed_border_right_style(style);
-	switch (val) {
-	case CSS_BORDER_STYLE_NONE:
+	val = css_computed_border_دایاں_style(style);
+	بدل (val) {
+	حالة CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-right-style: none ");
-		break;
-	case CSS_BORDER_STYLE_HIDDEN:
+		اكسر;
+	حالة CSS_BORDER_STYLE_HIDDEN:
 		fprintf(stream, "border-right-style: hidden ");
-		break;
-	case CSS_BORDER_STYLE_DOTTED:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DOTTED:
 		fprintf(stream, "border-right-style: dotted ");
-		break;
-	case CSS_BORDER_STYLE_DASHED:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DASHED:
 		fprintf(stream, "border-right-style: dashed ");
-		break;
-	case CSS_BORDER_STYLE_SOLID:
+		اكسر;
+	حالة CSS_BORDER_STYLE_SOLID:
 		fprintf(stream, "border-right-style: solid ");
-		break;
-	case CSS_BORDER_STYLE_DOUBLE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DOUBLE:
 		fprintf(stream, "border-right-style: double ");
-		break;
-	case CSS_BORDER_STYLE_GROOVE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_GROOVE:
 		fprintf(stream, "border-right-style: groove ");
-		break;
-	case CSS_BORDER_STYLE_RIDGE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_RIDGE:
 		fprintf(stream, "border-right-style: ridge ");
-		break;
-	case CSS_BORDER_STYLE_INSET:
+		اكسر;
+	حالة CSS_BORDER_STYLE_INSET:
 		fprintf(stream, "border-right-style: inset ");
-		break;
-	case CSS_BORDER_STYLE_OUTSET:
+		اكسر;
+	حالة CSS_BORDER_STYLE_OUTSET:
 		fprintf(stream, "border-right-style: outset ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-bottom-style */
 	val = css_computed_border_bottom_style(style);
-	switch (val) {
-	case CSS_BORDER_STYLE_NONE:
+	بدل (val) {
+	حالة CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-bottom-style: none ");
-		break;
-	case CSS_BORDER_STYLE_HIDDEN:
+		اكسر;
+	حالة CSS_BORDER_STYLE_HIDDEN:
 		fprintf(stream, "border-bottom-style: hidden ");
-		break;
-	case CSS_BORDER_STYLE_DOTTED:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DOTTED:
 		fprintf(stream, "border-bottom-style: dotted ");
-		break;
-	case CSS_BORDER_STYLE_DASHED:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DASHED:
 		fprintf(stream, "border-bottom-style: dashed ");
-		break;
-	case CSS_BORDER_STYLE_SOLID:
+		اكسر;
+	حالة CSS_BORDER_STYLE_SOLID:
 		fprintf(stream, "border-bottom-style: solid ");
-		break;
-	case CSS_BORDER_STYLE_DOUBLE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DOUBLE:
 		fprintf(stream, "border-bottom-style: double ");
-		break;
-	case CSS_BORDER_STYLE_GROOVE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_GROOVE:
 		fprintf(stream, "border-bottom-style: groove ");
-		break;
-	case CSS_BORDER_STYLE_RIDGE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_RIDGE:
 		fprintf(stream, "border-bottom-style: ridge ");
-		break;
-	case CSS_BORDER_STYLE_INSET:
+		اكسر;
+	حالة CSS_BORDER_STYLE_INSET:
 		fprintf(stream, "border-bottom-style: inset ");
-		break;
-	case CSS_BORDER_STYLE_OUTSET:
+		اكسر;
+	حالة CSS_BORDER_STYLE_OUTSET:
 		fprintf(stream, "border-bottom-style: outset ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-left-style */
-	val = css_computed_border_left_style(style);
-	switch (val) {
-	case CSS_BORDER_STYLE_NONE:
+	val = css_computed_border_بایاں_style(style);
+	بدل (val) {
+	حالة CSS_BORDER_STYLE_NONE:
 		fprintf(stream, "border-left-style: none ");
-		break;
-	case CSS_BORDER_STYLE_HIDDEN:
+		اكسر;
+	حالة CSS_BORDER_STYLE_HIDDEN:
 		fprintf(stream, "border-left-style: hidden ");
-		break;
-	case CSS_BORDER_STYLE_DOTTED:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DOTTED:
 		fprintf(stream, "border-left-style: dotted ");
-		break;
-	case CSS_BORDER_STYLE_DASHED:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DASHED:
 		fprintf(stream, "border-left-style: dashed ");
-		break;
-	case CSS_BORDER_STYLE_SOLID:
+		اكسر;
+	حالة CSS_BORDER_STYLE_SOLID:
 		fprintf(stream, "border-left-style: solid ");
-		break;
-	case CSS_BORDER_STYLE_DOUBLE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_DOUBLE:
 		fprintf(stream, "border-left-style: double ");
-		break;
-	case CSS_BORDER_STYLE_GROOVE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_GROOVE:
 		fprintf(stream, "border-left-style: groove ");
-		break;
-	case CSS_BORDER_STYLE_RIDGE:
+		اكسر;
+	حالة CSS_BORDER_STYLE_RIDGE:
 		fprintf(stream, "border-left-style: ridge ");
-		break;
-	case CSS_BORDER_STYLE_INSET:
+		اكسر;
+	حالة CSS_BORDER_STYLE_INSET:
 		fprintf(stream, "border-left-style: inset ");
-		break;
-	case CSS_BORDER_STYLE_OUTSET:
+		اكسر;
+	حالة CSS_BORDER_STYLE_OUTSET:
 		fprintf(stream, "border-left-style: outset ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-top-width */
-	val = css_computed_border_top_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BORDER_WIDTH_THIN:
+	val = css_computed_border_چوٹی_width(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-top-width: thin ");
-		break;
-	case CSS_BORDER_WIDTH_MEDIUM:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_MEDIUM:
 		fprintf(stream, "border-top-width: medium ");
-		break;
-	case CSS_BORDER_WIDTH_THICK:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_THICK:
 		fprintf(stream, "border-top-width: thick ");
-		break;
-	case CSS_BORDER_WIDTH_WIDTH:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_WIDTH:
 		fprintf(stream, "border-top-width: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-right-width */
-	val = css_computed_border_right_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BORDER_WIDTH_THIN:
+	val = css_computed_border_دایاں_width(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-right-width: thin ");
-		break;
-	case CSS_BORDER_WIDTH_MEDIUM:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_MEDIUM:
 		fprintf(stream, "border-right-width: medium ");
-		break;
-	case CSS_BORDER_WIDTH_THICK:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_THICK:
 		fprintf(stream, "border-right-width: thick ");
-		break;
-	case CSS_BORDER_WIDTH_WIDTH:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_WIDTH:
 		fprintf(stream, "border-right-width: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-bottom-width */
 	val = css_computed_border_bottom_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BORDER_WIDTH_THIN:
+	بدل (val) {
+	حالة CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-bottom-width: thin ");
-		break;
-	case CSS_BORDER_WIDTH_MEDIUM:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_MEDIUM:
 		fprintf(stream, "border-bottom-width: medium ");
-		break;
-	case CSS_BORDER_WIDTH_THICK:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_THICK:
 		fprintf(stream, "border-bottom-width: thick ");
-		break;
-	case CSS_BORDER_WIDTH_WIDTH:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_WIDTH:
 		fprintf(stream, "border-bottom-width: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* border-left-width */
-	val = css_computed_border_left_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BORDER_WIDTH_THIN:
+	val = css_computed_border_بایاں_width(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_BORDER_WIDTH_THIN:
 		fprintf(stream, "border-left-width: thin ");
-		break;
-	case CSS_BORDER_WIDTH_MEDIUM:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_MEDIUM:
 		fprintf(stream, "border-left-width: medium ");
-		break;
-	case CSS_BORDER_WIDTH_THICK:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_THICK:
 		fprintf(stream, "border-left-width: thick ");
-		break;
-	case CSS_BORDER_WIDTH_WIDTH:
+		اكسر;
+	حالة CSS_BORDER_WIDTH_WIDTH:
 		fprintf(stream, "border-left-width: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* bottom */
 	val = css_computed_bottom(style, &len1, &unit1);
-	switch (val) {
-	case CSS_BOTTOM_AUTO:
+	بدل (val) {
+	حالة CSS_BOTTOM_AUTO:
 		fprintf(stream, "bottom: auto ");
-		break;
-	case CSS_BOTTOM_SET:
+		اكسر;
+	حالة CSS_BOTTOM_SET:
 		fprintf(stream, "bottom: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* caption-side */
 	val = css_computed_caption_side(style);
-	switch (val) {
-	case CSS_CAPTION_SIDE_TOP:
+	بدل (val) {
+	حالة CSS_CAPTION_SIDE_چوٹی:
 		fprintf(stream, "caption_side: top ");
-		break;
-	case CSS_CAPTION_SIDE_BOTTOM:
+		اكسر;
+	حالة CSS_CAPTION_SIDE_BOTTOM:
 		fprintf(stream, "caption_side: bottom ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* clear */
 	val = css_computed_clear(style);
-	switch (val) {
-	case CSS_CLEAR_NONE:
+	بدل (val) {
+	حالة CSS_CLEAR_NONE:
 		fprintf(stream, "clear: none ");
-		break;
-	case CSS_CLEAR_LEFT:
+		اكسر;
+	حالة CSS_CLEAR_بایاں:
 		fprintf(stream, "clear: left ");
-		break;
-	case CSS_CLEAR_RIGHT:
+		اكسر;
+	حالة CSS_CLEAR_دایاں:
 		fprintf(stream, "clear: right ");
-		break;
-	case CSS_CLEAR_BOTH:
+		اكسر;
+	حالة CSS_CLEAR_BOTH:
 		fprintf(stream, "clear: both ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* clip */
 	val = css_computed_clip(style, &rect);
-	switch (val) {
-	case CSS_CLIP_AUTO:
+	بدل (val) {
+	حالة CSS_CLIP_AUTO:
 		fprintf(stream, "clip: auto ");
-		break;
-	case CSS_CLIP_RECT:
+		اكسر;
+	حالة CSS_CLIP_RECT:
 		fprintf(stream, "clip: rect( ");
 
-		if (rect.top_auto)
+		إذا (rect.چوٹی_auto)
 			fprintf(stream, "auto");
-		else
-			dump_css_unit(stream, rect.top, rect.tunit);
+		وإلا
+			dump_css_unit(stream, rect.چوٹی, rect.tunit);
 		fprintf(stream, ", ");
 
-		if (rect.right_auto)
+		إذا (rect.دایاں_auto)
 			fprintf(stream, "auto");
-		else
-			dump_css_unit(stream, rect.right, rect.runit);
+		وإلا
+			dump_css_unit(stream, rect.دایاں, rect.runit);
 		fprintf(stream, ", ");
 
-		if (rect.bottom_auto)
+		إذا (rect.bottom_auto)
 			fprintf(stream, "auto");
-		else
+		وإلا
 			dump_css_unit(stream, rect.bottom, rect.bunit);
 		fprintf(stream, ", ");
 
-		if (rect.left_auto)
+		إذا (rect.بایاں_auto)
 			fprintf(stream, "auto");
-		else
-			dump_css_unit(stream, rect.left, rect.lunit);
+		وإلا
+			dump_css_unit(stream, rect.بایاں, rect.lunit);
 		fprintf(stream, ") ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* color */
 	val = css_computed_color(style, &color);
-	if (val == CSS_COLOR_COLOR) {
+	إذا (val == CSS_COLOR_COLOR) {
 		fprintf(stream, "color: #%08"PRIx32" ", color);
 	}
 
 	/* content */
 	val = css_computed_content(style, &content);
-	switch (val) {
-	case CSS_CONTENT_NONE:
+	بدل (val) {
+	حالة CSS_CONTENT_NONE:
 		fprintf(stream, "content: none ");
-		break;
-	case CSS_CONTENT_NORMAL:
+		اكسر;
+	حالة CSS_CONTENT_NORMAL:
 		fprintf(stream, "content: normal ");
-		break;
-	case CSS_CONTENT_SET:
+		اكسر;
+	حالة CSS_CONTENT_SET:
 		fprintf(stream, "content:");
 
-		while (content->type != CSS_COMPUTED_CONTENT_NONE) {
+		طالما (content->type != CSS_COMPUTED_CONTENT_NONE) {
 			fprintf(stream, " ");
 
-			switch (content->type) {
-			case CSS_COMPUTED_CONTENT_STRING:
+			بدل (content->type) {
+			حالة CSS_COMPUTED_CONTENT_STRING:
 				fprintf(stream,	"\"%.*s\"",
-						(int) lwc_string_length(
+						(صحيح) lwc_string_length(
 						content->data.string),
 						lwc_string_data(
 						content->data.string));
-				break;
-			case CSS_COMPUTED_CONTENT_URI:
+				اكسر;
+			حالة CSS_COMPUTED_CONTENT_URI:
 				fprintf(stream,	"uri(\"%.*s\")",
-						(int) lwc_string_length(
+						(صحيح) lwc_string_length(
 						content->data.uri),
 						lwc_string_data(
 						content->data.uri));
-				break;
-			case CSS_COMPUTED_CONTENT_COUNTER:
+				اكسر;
+			حالة CSS_COMPUTED_CONTENT_COUNTER:
 				fprintf(stream, "counter(%.*s)",
-						(int) lwc_string_length(
+						(صحيح) lwc_string_length(
 						content->data.counter.name),
 						lwc_string_data(
 						content->data.counter.name));
-				break;
-			case CSS_COMPUTED_CONTENT_COUNTERS:
+				اكسر;
+			حالة CSS_COMPUTED_CONTENT_COUNTERS:
 				fprintf(stream, "counters(%.*s, \"%.*s\")",
-						(int) lwc_string_length(
+						(صحيح) lwc_string_length(
 						content->data.counters.name),
 						lwc_string_data(
 						content->data.counters.name),
-						(int) lwc_string_length(
+						(صحيح) lwc_string_length(
 						content->data.counters.sep),
 						lwc_string_data(
 						content->data.counters.sep));
-				break;
-			case CSS_COMPUTED_CONTENT_ATTR:
+				اكسر;
+			حالة CSS_COMPUTED_CONTENT_ATTR:
 				fprintf(stream, "attr(%.*s)",
-						(int) lwc_string_length(
+						(صحيح) lwc_string_length(
 						content->data.attr),
 						lwc_string_data(
 						content->data.attr));
-				break;
-			case CSS_COMPUTED_CONTENT_OPEN_QUOTE:
+				اكسر;
+			حالة CSS_COMPUTED_CONTENT_OPEN_QUOTE:
 				fprintf(stream, "open-quote");
-				break;
-			case CSS_COMPUTED_CONTENT_CLOSE_QUOTE:
+				اكسر;
+			حالة CSS_COMPUTED_CONTENT_CLOSE_QUOTE:
 				fprintf(stream, "close-quote");
-				break;
-			case CSS_COMPUTED_CONTENT_NO_OPEN_QUOTE:
+				اكسر;
+			حالة CSS_COMPUTED_CONTENT_NO_OPEN_QUOTE:
 				fprintf(stream, "no-open-quote");
-				break;
-			case CSS_COMPUTED_CONTENT_NO_CLOSE_QUOTE:
+				اكسر;
+			حالة CSS_COMPUTED_CONTENT_NO_CLOSE_QUOTE:
 				fprintf(stream, "no-close-quote");
-				break;
+				اكسر;
 			}
 
 			content++;
 		}
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* counter-increment */
 	val = css_computed_counter_increment(style, &counter);
-	if ((val == CSS_COUNTER_INCREMENT_NONE) || (counter == NULL)) {
+	إذا ((val == CSS_COUNTER_INCREMENT_NONE) || (counter == عدم)) {
 		fprintf(stream, "counter-increment: none ");
-	} else {
+	} وإلا {
 		fprintf(stream, "counter-increment:");
 
-		while (counter->name != NULL) {
+		طالما (counter->name != عدم) {
 			fprintf(stream, " %.*s ",
-					(int) lwc_string_length(counter->name),
+					(صحيح) lwc_string_length(counter->name),
 					lwc_string_data(counter->name));
 
-			dump_css_fixed(stream, counter->value);
+			dump_css_fixed(stream, counter->قدر);
 
 			counter++;
 		}
@@ -718,17 +718,17 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* counter-reset */
 	val = css_computed_counter_reset(style, &counter);
-	if ((val == CSS_COUNTER_RESET_NONE) || (counter == NULL)) {
+	إذا ((val == CSS_COUNTER_RESET_NONE) || (counter == عدم)) {
 		fprintf(stream, "counter-reset: none ");
-	} else {
+	} وإلا {
 		fprintf(stream, "counter-reset:");
 
-		while (counter->name != NULL) {
+		طالما (counter->name != عدم) {
 			fprintf(stream, " %.*s ",
-					(int) lwc_string_length(counter->name),
+					(صحيح) lwc_string_length(counter->name),
 					lwc_string_data(counter->name));
 
-			dump_css_fixed(stream, counter->value);
+			dump_css_fixed(stream, counter->قدر);
 
 			counter++;
 		}
@@ -740,902 +740,902 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	val = css_computed_cursor(style, &string_list);
 	fprintf(stream, "cursor:");
 
-	if (string_list != NULL) {
-		while (*string_list != NULL) {
+	إذا (string_list != عدم) {
+		طالما (*string_list != عدم) {
 			fprintf(stream, " url\"%.*s\")",
-					(int) lwc_string_length(*string_list),
+					(صحيح) lwc_string_length(*string_list),
 					lwc_string_data(*string_list));
 
 			string_list++;
 		}
 	}
-	switch (val) {
-	case CSS_CURSOR_AUTO:
+	بدل (val) {
+	حالة CSS_CURSOR_AUTO:
 		fprintf(stream, " auto ");
-		break;
-	case CSS_CURSOR_CROSSHAIR:
+		اكسر;
+	حالة CSS_CURSOR_CROSSHAIR:
 		fprintf(stream, " crosshair ");
-		break;
-	case CSS_CURSOR_DEFAULT:
+		اكسر;
+	حالة CSS_CURSOR_DEFAULT:
 		fprintf(stream, " default ");
-		break;
-	case CSS_CURSOR_POINTER:
+		اكسر;
+	حالة CSS_CURSOR_POINTER:
 		fprintf(stream, " pointer ");
-		break;
-	case CSS_CURSOR_MOVE:
+		اكسر;
+	حالة CSS_CURSOR_MOVE:
 		fprintf(stream, " move ");
-		break;
-	case CSS_CURSOR_E_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_E_RESIZE:
 		fprintf(stream, " e-resize ");
-		break;
-	case CSS_CURSOR_NE_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_NE_RESIZE:
 		fprintf(stream, " ne-resize ");
-		break;
-	case CSS_CURSOR_NW_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_NW_RESIZE:
 		fprintf(stream, " nw-resize ");
-		break;
-	case CSS_CURSOR_N_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_N_RESIZE:
 		fprintf(stream, " n-resize ");
-		break;
-	case CSS_CURSOR_SE_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_SE_RESIZE:
 		fprintf(stream, " se-resize ");
-		break;
-	case CSS_CURSOR_SW_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_SW_RESIZE:
 		fprintf(stream, " sw-resize ");
-		break;
-	case CSS_CURSOR_S_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_S_RESIZE:
 		fprintf(stream, " s-resize ");
-		break;
-	case CSS_CURSOR_W_RESIZE:
+		اكسر;
+	حالة CSS_CURSOR_W_RESIZE:
 		fprintf(stream, " w-resize ");
-		break;
-	case CSS_CURSOR_TEXT:
+		اكسر;
+	حالة CSS_CURSOR_TEXT:
 		fprintf(stream, " text ");
-		break;
-	case CSS_CURSOR_WAIT:
+		اكسر;
+	حالة CSS_CURSOR_WAIT:
 		fprintf(stream, " wait ");
-		break;
-	case CSS_CURSOR_HELP:
+		اكسر;
+	حالة CSS_CURSOR_HELP:
 		fprintf(stream, " help ");
-		break;
-	case CSS_CURSOR_PROGRESS:
+		اكسر;
+	حالة CSS_CURSOR_PROGRESS:
 		fprintf(stream, " progress ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* direction */
 	val = css_computed_direction(style);
-	switch (val) {
-	case CSS_DIRECTION_LTR:
+	بدل (val) {
+	حالة CSS_DIRECTION_LTR:
 		fprintf(stream, "direction: ltr ");
-		break;
-	case CSS_DIRECTION_RTL:
+		اكسر;
+	حالة CSS_DIRECTION_RTL:
 		fprintf(stream, "direction: rtl ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* display */
 	val = ns_computed_display_static(style);
-	switch (val) {
-	case CSS_DISPLAY_INLINE:
+	بدل (val) {
+	حالة CSS_DISPLAY_INLINE:
 		fprintf(stream, "display: inline ");
-		break;
-	case CSS_DISPLAY_BLOCK:
+		اكسر;
+	حالة CSS_DISPLAY_BLOCK:
 		fprintf(stream, "display: block ");
-		break;
-	case CSS_DISPLAY_LIST_ITEM:
+		اكسر;
+	حالة CSS_DISPLAY_LIST_ITEM:
 		fprintf(stream, "display: list-item ");
-		break;
-	case CSS_DISPLAY_RUN_IN:
+		اكسر;
+	حالة CSS_DISPLAY_RUN_IN:
 		fprintf(stream, "display: run-in ");
-		break;
-	case CSS_DISPLAY_INLINE_BLOCK:
+		اكسر;
+	حالة CSS_DISPLAY_INLINE_BLOCK:
 		fprintf(stream, "display: inline-block ");
-		break;
-	case CSS_DISPLAY_TABLE:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE:
 		fprintf(stream, "display: table ");
-		break;
-	case CSS_DISPLAY_INLINE_TABLE:
+		اكسر;
+	حالة CSS_DISPLAY_INLINE_TABLE:
 		fprintf(stream, "display: inline-table ");
-		break;
-	case CSS_DISPLAY_TABLE_ROW_GROUP:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE_ROW_GROUP:
 		fprintf(stream, "display: table-row-group ");
-		break;
-	case CSS_DISPLAY_TABLE_HEADER_GROUP:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE_HEADER_GROUP:
 		fprintf(stream, "display: table-header-group ");
-		break;
-	case CSS_DISPLAY_TABLE_FOOTER_GROUP:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE_FOOTER_GROUP:
 		fprintf(stream, "display: table-footer-group ");
-		break;
-	case CSS_DISPLAY_TABLE_ROW:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE_ROW:
 		fprintf(stream, "display: table-row ");
-		break;
-	case CSS_DISPLAY_TABLE_COLUMN_GROUP:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE_COLUMN_GROUP:
 		fprintf(stream, "display: table-column-group ");
-		break;
-	case CSS_DISPLAY_TABLE_COLUMN:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE_COLUMN:
 		fprintf(stream, "display: table-column ");
-		break;
-	case CSS_DISPLAY_TABLE_CELL:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE_CELL:
 		fprintf(stream, "display: table-cell ");
-		break;
-	case CSS_DISPLAY_TABLE_CAPTION:
+		اكسر;
+	حالة CSS_DISPLAY_TABLE_CAPTION:
 		fprintf(stream, "display: table-caption ");
-		break;
-	case CSS_DISPLAY_NONE:
+		اكسر;
+	حالة CSS_DISPLAY_NONE:
 		fprintf(stream, "display: none ");
-		break;
-	case CSS_DISPLAY_FLEX:
+		اكسر;
+	حالة CSS_DISPLAY_FLEX:
 		fprintf(stream, "display: flex ");
-		break;
-	case CSS_DISPLAY_INLINE_FLEX:
+		اكسر;
+	حالة CSS_DISPLAY_INLINE_FLEX:
 		fprintf(stream, "display: inline-flex ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* empty-cells */
 	val = css_computed_empty_cells(style);
-	switch (val) {
-	case CSS_EMPTY_CELLS_SHOW:
+	بدل (val) {
+	حالة CSS_EMPTY_CELLS_SHOW:
 		fprintf(stream, "empty-cells: show ");
-		break;
-	case CSS_EMPTY_CELLS_HIDE:
+		اكسر;
+	حالة CSS_EMPTY_CELLS_HIDE:
 		fprintf(stream, "empty-cells: hide ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* float */
 	val = css_computed_float(style);
-	switch (val) {
-	case CSS_FLOAT_LEFT:
+	بدل (val) {
+	حالة CSS_FLOAT_بایاں:
 		fprintf(stream, "float: left ");
-		break;
-	case CSS_FLOAT_RIGHT:
+		اكسر;
+	حالة CSS_FLOAT_دایاں:
 		fprintf(stream, "float: right ");
-		break;
-	case CSS_FLOAT_NONE:
+		اكسر;
+	حالة CSS_FLOAT_NONE:
 		fprintf(stream, "float: none ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* font-family */
 	val = css_computed_font_family(style, &string_list);
-	if (val != CSS_FONT_FAMILY_INHERIT) {
+	إذا (val != CSS_FONT_FAMILY_INHERIT) {
 		fprintf(stream, "font-family:");
 
-		if (string_list != NULL) {
-			while (*string_list != NULL) {
+		إذا (string_list != عدم) {
+			طالما (*string_list != عدم) {
 				fprintf(stream, " \"%.*s\"",
-					(int) lwc_string_length(*string_list),
+					(صحيح) lwc_string_length(*string_list),
 					lwc_string_data(*string_list));
 
 				string_list++;
 			}
 		}
-		switch (val) {
-		case CSS_FONT_FAMILY_SERIF:
+		بدل (val) {
+		حالة CSS_FONT_FAMILY_SERIF:
 			fprintf(stream, " serif ");
-			break;
-		case CSS_FONT_FAMILY_SANS_SERIF:
+			اكسر;
+		حالة CSS_FONT_FAMILY_SANS_SERIF:
 			fprintf(stream, " sans-serif ");
-			break;
-		case CSS_FONT_FAMILY_CURSIVE:
+			اكسر;
+		حالة CSS_FONT_FAMILY_CURSIVE:
 			fprintf(stream, " cursive ");
-			break;
-		case CSS_FONT_FAMILY_FANTASY:
+			اكسر;
+		حالة CSS_FONT_FAMILY_FANTASY:
 			fprintf(stream, " fantasy ");
-			break;
-		case CSS_FONT_FAMILY_MONOSPACE:
+			اكسر;
+		حالة CSS_FONT_FAMILY_MONOSPACE:
 			fprintf(stream, " monospace ");
-			break;
+			اكسر;
 		}
 	}
 
 	/* font-size */
 	val = css_computed_font_size(style, &len1, &unit1);
-	switch (val) {
-	case CSS_FONT_SIZE_XX_SMALL:
+	بدل (val) {
+	حالة CSS_FONT_SIZE_XX_SMALL:
 		fprintf(stream, "font-size: xx-small ");
-		break;
-	case CSS_FONT_SIZE_X_SMALL:
+		اكسر;
+	حالة CSS_FONT_SIZE_X_SMALL:
 		fprintf(stream, "font-size: x-small ");
-		break;
-	case CSS_FONT_SIZE_SMALL:
+		اكسر;
+	حالة CSS_FONT_SIZE_SMALL:
 		fprintf(stream, "font-size: small ");
-		break;
-	case CSS_FONT_SIZE_MEDIUM:
+		اكسر;
+	حالة CSS_FONT_SIZE_MEDIUM:
 		fprintf(stream, "font-size: medium ");
-		break;
-	case CSS_FONT_SIZE_LARGE:
+		اكسر;
+	حالة CSS_FONT_SIZE_LARGE:
 		fprintf(stream, "font-size: large ");
-		break;
-	case CSS_FONT_SIZE_X_LARGE:
+		اكسر;
+	حالة CSS_FONT_SIZE_X_LARGE:
 		fprintf(stream, "font-size: x-large ");
-		break;
-	case CSS_FONT_SIZE_XX_LARGE:
+		اكسر;
+	حالة CSS_FONT_SIZE_XX_LARGE:
 		fprintf(stream, "font-size: xx-large ");
-		break;
-	case CSS_FONT_SIZE_LARGER:
+		اكسر;
+	حالة CSS_FONT_SIZE_LARGER:
 		fprintf(stream, "font-size: larger ");
-		break;
-	case CSS_FONT_SIZE_SMALLER:
+		اكسر;
+	حالة CSS_FONT_SIZE_SMALLER:
 		fprintf(stream, "font-size: smaller ");
-		break;
-	case CSS_FONT_SIZE_DIMENSION:
+		اكسر;
+	حالة CSS_FONT_SIZE_DIMENSION:
 		fprintf(stream, "font-size: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* font-style */
 	val = css_computed_font_style(style);
-	switch (val) {
-	case CSS_FONT_STYLE_NORMAL:
+	بدل (val) {
+	حالة CSS_FONT_STYLE_NORMAL:
 		fprintf(stream, "font-style: normal ");
-		break;
-	case CSS_FONT_STYLE_ITALIC:
+		اكسر;
+	حالة CSS_FONT_STYLE_ITALIC:
 		fprintf(stream, "font-style: italic ");
-		break;
-	case CSS_FONT_STYLE_OBLIQUE:
+		اكسر;
+	حالة CSS_FONT_STYLE_OBLIQUE:
 		fprintf(stream, "font-style: oblique ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* font-variant */
 	val = css_computed_font_variant(style);
-	switch (val) {
-	case CSS_FONT_VARIANT_NORMAL:
+	بدل (val) {
+	حالة CSS_FONT_VARIANT_NORMAL:
 		fprintf(stream, "font-variant: normal ");
-		break;
-	case CSS_FONT_VARIANT_SMALL_CAPS:
+		اكسر;
+	حالة CSS_FONT_VARIANT_SMALL_CAPS:
 		fprintf(stream, "font-variant: small-caps ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* font-weight */
 	val = css_computed_font_weight(style);
-	switch (val) {
-	case CSS_FONT_WEIGHT_NORMAL:
+	بدل (val) {
+	حالة CSS_FONT_WEIGHT_NORMAL:
 		fprintf(stream, "font-weight: normal ");
-		break;
-	case CSS_FONT_WEIGHT_BOLD:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_BOLD:
 		fprintf(stream, "font-weight: bold ");
-		break;
-	case CSS_FONT_WEIGHT_BOLDER:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_BOLDER:
 		fprintf(stream, "font-weight: bolder ");
-		break;
-	case CSS_FONT_WEIGHT_LIGHTER:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_LIGHTER:
 		fprintf(stream, "font-weight: lighter ");
-		break;
-	case CSS_FONT_WEIGHT_100:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_100:
 		fprintf(stream, "font-weight: 100 ");
-		break;
-	case CSS_FONT_WEIGHT_200:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_200:
 		fprintf(stream, "font-weight: 200 ");
-		break;
-	case CSS_FONT_WEIGHT_300:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_300:
 		fprintf(stream, "font-weight: 300 ");
-		break;
-	case CSS_FONT_WEIGHT_400:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_400:
 		fprintf(stream, "font-weight: 400 ");
-		break;
-	case CSS_FONT_WEIGHT_500:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_500:
 		fprintf(stream, "font-weight: 500 ");
-		break;
-	case CSS_FONT_WEIGHT_600:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_600:
 		fprintf(stream, "font-weight: 600 ");
-		break;
-	case CSS_FONT_WEIGHT_700:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_700:
 		fprintf(stream, "font-weight: 700 ");
-		break;
-	case CSS_FONT_WEIGHT_800:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_800:
 		fprintf(stream, "font-weight: 800 ");
-		break;
-	case CSS_FONT_WEIGHT_900:
+		اكسر;
+	حالة CSS_FONT_WEIGHT_900:
 		fprintf(stream, "font-weight: 900 ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* height */
 	val = css_computed_height(style, &len1, &unit1);
-	switch (val) {
-	case CSS_HEIGHT_AUTO:
+	بدل (val) {
+	حالة CSS_HEIGHT_AUTO:
 		fprintf(stream, "height: auto ");
-		break;
-	case CSS_HEIGHT_SET:
+		اكسر;
+	حالة CSS_HEIGHT_SET:
 		fprintf(stream, "height: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
-	/* left */
-	val = css_computed_left(style, &len1, &unit1);
-	switch (val) {
-	case CSS_LEFT_AUTO:
+	/*بایاں*/
+	val = css_computed_بایاں(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_بایاں_AUTO:
 		fprintf(stream, "left: auto ");
-		break;
-	case CSS_LEFT_SET:
+		اكسر;
+	حالة CSS_بایاں_SET:
 		fprintf(stream, "left: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* letter-spacing */
 	val = css_computed_letter_spacing(style, &len1, &unit1);
-	switch (val) {
-	case CSS_LETTER_SPACING_NORMAL:
+	بدل (val) {
+	حالة CSS_LETTER_SPACING_NORMAL:
 		fprintf(stream, "letter-spacing: normal ");
-		break;
-	case CSS_LETTER_SPACING_SET:
+		اكسر;
+	حالة CSS_LETTER_SPACING_SET:
 		fprintf(stream, "letter-spacing: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* line-height */
-	val = css_computed_line_height(style, &len1, &unit1);
-	switch (val) {
-	case CSS_LINE_HEIGHT_NORMAL:
+	val = css_computed_سطر_height(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_سطر_HEIGHT_NORMAL:
 		fprintf(stream, "line-height: normal ");
-		break;
-	case CSS_LINE_HEIGHT_NUMBER:
+		اكسر;
+	حالة CSS_سطر_HEIGHT_نمبر:
 		fprintf(stream, "line-height: ");
 
 		dump_css_fixed(stream, len1);
 
 		fprintf(stream, " ");
-		break;
-	case CSS_LINE_HEIGHT_DIMENSION:
+		اكسر;
+	حالة CSS_سطر_HEIGHT_DIMENSION:
 		fprintf(stream, "line-height: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* list-style-image */
 	val = css_computed_list_style_image(style, &url);
-	if (url != NULL) {
+	إذا (url != عدم) {
 		fprintf(stream, "list-style-image: url('%.*s') ",
-				(int) lwc_string_length(url),
+				(صحيح) lwc_string_length(url),
 				lwc_string_data(url));
-	} else if (val == CSS_LIST_STYLE_IMAGE_NONE) {
+	} وإلا إذا (val == CSS_LIST_STYLE_IMAGE_NONE) {
 		fprintf(stream, "list-style-image: none ");
 	}
 
 	/* list-style-position */
 	val = css_computed_list_style_position(style);
-	switch (val) {
-	case CSS_LIST_STYLE_POSITION_INSIDE:
+	بدل (val) {
+	حالة CSS_LIST_STYLE_POSITION_INSIDE:
 		fprintf(stream, "list-style-position: inside ");
-		break;
-	case CSS_LIST_STYLE_POSITION_OUTSIDE:
+		اكسر;
+	حالة CSS_LIST_STYLE_POSITION_OUTSIDE:
 		fprintf(stream, "list-style-position: outside ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* list-style-type */
 	val = css_computed_list_style_type(style);
-	switch (val) {
-	case CSS_LIST_STYLE_TYPE_DISC:
+	بدل (val) {
+	حالة CSS_LIST_STYLE_TYPE_DISC:
 		fprintf(stream, "list-style-type: disc ");
-		break;
-	case CSS_LIST_STYLE_TYPE_CIRCLE:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_CIRCLE:
 		fprintf(stream, "list-style-type: circle ");
-		break;
-	case CSS_LIST_STYLE_TYPE_SQUARE:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_SQUARE:
 		fprintf(stream, "list-style-type: square ");
-		break;
-	case CSS_LIST_STYLE_TYPE_DECIMAL:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_DECIMAL:
 		fprintf(stream, "list-style-type: decimal ");
-		break;
-	case CSS_LIST_STYLE_TYPE_DECIMAL_LEADING_ZERO:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_DECIMAL_LEADING_ZERO:
 		fprintf(stream, "list-style-type: decimal-leading-zero ");
-		break;
-	case CSS_LIST_STYLE_TYPE_LOWER_ROMAN:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_LOWER_ROMAN:
 		fprintf(stream, "list-style-type: lower-roman ");
-		break;
-	case CSS_LIST_STYLE_TYPE_UPPER_ROMAN:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_UPPER_ROMAN:
 		fprintf(stream, "list-style-type: upper-roman ");
-		break;
-	case CSS_LIST_STYLE_TYPE_LOWER_GREEK:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_LOWER_GREEK:
 		fprintf(stream, "list-style-type: lower-greek ");
-		break;
-	case CSS_LIST_STYLE_TYPE_LOWER_LATIN:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_LOWER_LATIN:
 		fprintf(stream, "list-style-type: lower-latin ");
-		break;
-	case CSS_LIST_STYLE_TYPE_UPPER_LATIN:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_UPPER_LATIN:
 		fprintf(stream, "list-style-type: upper-latin ");
-		break;
-	case CSS_LIST_STYLE_TYPE_ARMENIAN:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_ARMENIAN:
 		fprintf(stream, "list-style-type: armenian ");
-		break;
-	case CSS_LIST_STYLE_TYPE_GEORGIAN:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_GEORGIAN:
 		fprintf(stream, "list-style-type: georgian ");
-		break;
-	case CSS_LIST_STYLE_TYPE_LOWER_ALPHA:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_LOWER_ALPHA:
 		fprintf(stream, "list-style-type: lower-alpha ");
-		break;
-	case CSS_LIST_STYLE_TYPE_UPPER_ALPHA:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_UPPER_ALPHA:
 		fprintf(stream, "list-style-type: upper-alpha ");
-		break;
-	case CSS_LIST_STYLE_TYPE_NONE:
+		اكسر;
+	حالة CSS_LIST_STYLE_TYPE_NONE:
 		fprintf(stream, "list-style-type: none ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* margin-top */
-	val = css_computed_margin_top(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MARGIN_AUTO:
+	val = css_computed_margin_چوٹی(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-top: auto ");
-		break;
-	case CSS_MARGIN_SET:
+		اكسر;
+	حالة CSS_MARGIN_SET:
 		fprintf(stream, "margin-top: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* margin-right */
-	val = css_computed_margin_right(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MARGIN_AUTO:
+	val = css_computed_margin_دایاں(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-right: auto ");
-		break;
-	case CSS_MARGIN_SET:
+		اكسر;
+	حالة CSS_MARGIN_SET:
 		fprintf(stream, "margin-right: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* margin-bottom */
 	val = css_computed_margin_bottom(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MARGIN_AUTO:
+	بدل (val) {
+	حالة CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-bottom: auto ");
-		break;
-	case CSS_MARGIN_SET:
+		اكسر;
+	حالة CSS_MARGIN_SET:
 		fprintf(stream, "margin-bottom: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* margin-left */
-	val = css_computed_margin_left(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MARGIN_AUTO:
+	val = css_computed_margin_بایاں(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_MARGIN_AUTO:
 		fprintf(stream, "margin-left: auto ");
-		break;
-	case CSS_MARGIN_SET:
+		اكسر;
+	حالة CSS_MARGIN_SET:
 		fprintf(stream, "margin-left: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* max-height */
 	val = css_computed_max_height(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MAX_HEIGHT_NONE:
+	بدل (val) {
+	حالة CSS_MAX_HEIGHT_NONE:
 		fprintf(stream, "max-height: none ");
-		break;
-	case CSS_MAX_HEIGHT_SET:
+		اكسر;
+	حالة CSS_MAX_HEIGHT_SET:
 		fprintf(stream, "max-height: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* max-width */
 	val = css_computed_max_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MAX_WIDTH_NONE:
+	بدل (val) {
+	حالة CSS_MAX_WIDTH_NONE:
 		fprintf(stream, "max-width: none ");
-		break;
-	case CSS_MAX_WIDTH_SET:
+		اكسر;
+	حالة CSS_MAX_WIDTH_SET:
 		fprintf(stream, "max-width: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* min-height */
 	val = ns_computed_min_height(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MIN_HEIGHT_SET:
+	بدل (val) {
+	حالة CSS_MIN_HEIGHT_SET:
 		fprintf(stream, "min-height: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* min-width */
 	val = ns_computed_min_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_MIN_WIDTH_SET:
+	بدل (val) {
+	حالة CSS_MIN_WIDTH_SET:
 		fprintf(stream, "min-width: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* opacity */
 	val = css_computed_opacity(style, &len1);
-	switch (val) {
-	case CSS_OPACITY_SET:
+	بدل (val) {
+	حالة CSS_OPACITY_SET:
 		fprintf(stream, "opacity: ");
 
 		dump_css_fixed(stream, len1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* outline-color */
 	val = css_computed_outline_color(style, &color);
-	switch (val) {
-	case CSS_OUTLINE_COLOR_INVERT:
+	بدل (val) {
+	حالة CSS_OUTLINE_COLOR_INVERT:
 		fprintf(stream, "outline-color: invert ");
-		break;
-	case CSS_OUTLINE_COLOR_COLOR:
+		اكسر;
+	حالة CSS_OUTLINE_COLOR_COLOR:
 		fprintf(stream, "outline-color: #%08"PRIx32" ", color);
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* outline-style */
 	val = css_computed_outline_style(style);
-	switch (val) {
-	case CSS_OUTLINE_STYLE_NONE:
+	بدل (val) {
+	حالة CSS_OUTLINE_STYLE_NONE:
 		fprintf(stream, "outline-style: none ");
-		break;
-	case CSS_OUTLINE_STYLE_DOTTED:
+		اكسر;
+	حالة CSS_OUTLINE_STYLE_DOTTED:
 		fprintf(stream, "outline-style: dotted ");
-		break;
-	case CSS_OUTLINE_STYLE_DASHED:
+		اكسر;
+	حالة CSS_OUTLINE_STYLE_DASHED:
 		fprintf(stream, "outline-style: dashed ");
-		break;
-	case CSS_OUTLINE_STYLE_SOLID:
+		اكسر;
+	حالة CSS_OUTLINE_STYLE_SOLID:
 		fprintf(stream, "outline-style: solid ");
-		break;
-	case CSS_OUTLINE_STYLE_DOUBLE:
+		اكسر;
+	حالة CSS_OUTLINE_STYLE_DOUBLE:
 		fprintf(stream, "outline-style: double ");
-		break;
-	case CSS_OUTLINE_STYLE_GROOVE:
+		اكسر;
+	حالة CSS_OUTLINE_STYLE_GROOVE:
 		fprintf(stream, "outline-style: groove ");
-		break;
-	case CSS_OUTLINE_STYLE_RIDGE:
+		اكسر;
+	حالة CSS_OUTLINE_STYLE_RIDGE:
 		fprintf(stream, "outline-style: ridge ");
-		break;
-	case CSS_OUTLINE_STYLE_INSET:
+		اكسر;
+	حالة CSS_OUTLINE_STYLE_INSET:
 		fprintf(stream, "outline-style: inset ");
-		break;
-	case CSS_OUTLINE_STYLE_OUTSET:
+		اكسر;
+	حالة CSS_OUTLINE_STYLE_OUTSET:
 		fprintf(stream, "outline-style: outset ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* outline-width */
 	val = css_computed_outline_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_OUTLINE_WIDTH_THIN:
+	بدل (val) {
+	حالة CSS_OUTLINE_WIDTH_THIN:
 		fprintf(stream, "outline-width: thin ");
-		break;
-	case CSS_OUTLINE_WIDTH_MEDIUM:
+		اكسر;
+	حالة CSS_OUTLINE_WIDTH_MEDIUM:
 		fprintf(stream, "outline-width: medium ");
-		break;
-	case CSS_OUTLINE_WIDTH_THICK:
+		اكسر;
+	حالة CSS_OUTLINE_WIDTH_THICK:
 		fprintf(stream, "outline-width: thick ");
-		break;
-	case CSS_OUTLINE_WIDTH_WIDTH:
+		اكسر;
+	حالة CSS_OUTLINE_WIDTH_WIDTH:
 		fprintf(stream, "outline-width: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* overflow */
 	val = css_computed_overflow_x(style);
-	switch (val) {
-	case CSS_OVERFLOW_VISIBLE:
+	بدل (val) {
+	حالة CSS_OVERFLOW_VISIBLE:
 		fprintf(stream, "overflow-x: visible ");
-		break;
-	case CSS_OVERFLOW_HIDDEN:
+		اكسر;
+	حالة CSS_OVERFLOW_HIDDEN:
 		fprintf(stream, "overflow-x: hidden ");
-		break;
-	case CSS_OVERFLOW_SCROLL:
+		اكسر;
+	حالة CSS_OVERFLOW_SCROLL:
 		fprintf(stream, "overflow-x: scroll ");
-		break;
-	case CSS_OVERFLOW_AUTO:
+		اكسر;
+	حالة CSS_OVERFLOW_AUTO:
 		fprintf(stream, "overflow-x auto ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* overflow */
 	val = css_computed_overflow_y(style);
-	switch (val) {
-	case CSS_OVERFLOW_VISIBLE:
+	بدل (val) {
+	حالة CSS_OVERFLOW_VISIBLE:
 		fprintf(stream, "overflow-y: visible ");
-		break;
-	case CSS_OVERFLOW_HIDDEN:
+		اكسر;
+	حالة CSS_OVERFLOW_HIDDEN:
 		fprintf(stream, "overflow-y: hidden ");
-		break;
-	case CSS_OVERFLOW_SCROLL:
+		اكسر;
+	حالة CSS_OVERFLOW_SCROLL:
 		fprintf(stream, "overflow-y: scroll ");
-		break;
-	case CSS_OVERFLOW_AUTO:
+		اكسر;
+	حالة CSS_OVERFLOW_AUTO:
 		fprintf(stream, "overflow-y: auto ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* padding-top */
-	val = css_computed_padding_top(style, &len1, &unit1);
-	switch (val) {
-	case CSS_PADDING_SET:
+	val = css_computed_padding_چوٹی(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_PADDING_SET:
 		fprintf(stream, "padding-top: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* padding-right */
-	val = css_computed_padding_right(style, &len1, &unit1);
-	switch (val) {
-	case CSS_PADDING_SET:
+	val = css_computed_padding_دایاں(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_PADDING_SET:
 		fprintf(stream, "padding-right: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* padding-bottom */
 	val = css_computed_padding_bottom(style, &len1, &unit1);
-	switch (val) {
-	case CSS_PADDING_SET:
+	بدل (val) {
+	حالة CSS_PADDING_SET:
 		fprintf(stream, "padding-bottom: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* padding-left */
-	val = css_computed_padding_left(style, &len1, &unit1);
-	switch (val) {
-	case CSS_PADDING_SET:
+	val = css_computed_padding_بایاں(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_PADDING_SET:
 		fprintf(stream, "padding-left: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* position */
 	val = css_computed_position(style);
-	switch (val) {
-	case CSS_POSITION_STATIC:
+	بدل (val) {
+	حالة CSS_POSITION_STATIC:
 		fprintf(stream, "position: static ");
-		break;
-	case CSS_POSITION_RELATIVE:
+		اكسر;
+	حالة CSS_POSITION_RELATIVE:
 		fprintf(stream, "position: relative ");
-		break;
-	case CSS_POSITION_ABSOLUTE:
+		اكسر;
+	حالة CSS_POSITION_ABSOLUTE:
 		fprintf(stream, "position: absolute ");
-		break;
-	case CSS_POSITION_FIXED:
+		اكسر;
+	حالة CSS_POSITION_FIXED:
 		fprintf(stream, "position: fixed ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* quotes */
 	val = css_computed_quotes(style, &string_list);
-	if (val == CSS_QUOTES_STRING && string_list != NULL) {
+	إذا (val == CSS_QUOTES_STRING && string_list != عدم) {
 		fprintf(stream, "quotes:");
 
-		while (*string_list != NULL) {
+		طالما (*string_list != عدم) {
 			fprintf(stream, " \"%.*s\"",
-				(int) lwc_string_length(*string_list),
+				(صحيح) lwc_string_length(*string_list),
 				lwc_string_data(*string_list));
 
 			string_list++;
 		}
 
 		fprintf(stream, " ");
-	} else {
-		switch (val) {
-		case CSS_QUOTES_NONE:
+	} وإلا {
+		بدل (val) {
+		حالة CSS_QUOTES_NONE:
 			fprintf(stream, "quotes: none ");
-			break;
-		default:
-			break;
+			اكسر;
+		افتراضي:
+			اكسر;
 		}
 	}
 
-	/* right */
-	val = css_computed_right(style, &len1, &unit1);
-	switch (val) {
-	case CSS_RIGHT_AUTO:
+	/*دایاں*/
+	val = css_computed_دایاں(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_دایاں_AUTO:
 		fprintf(stream, "right: auto ");
-		break;
-	case CSS_RIGHT_SET:
+		اكسر;
+	حالة CSS_دایاں_SET:
 		fprintf(stream, "right: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* table-layout */
 	val = css_computed_table_layout(style);
-	switch (val) {
-	case CSS_TABLE_LAYOUT_AUTO:
+	بدل (val) {
+	حالة CSS_TABLE_LAYOUT_AUTO:
 		fprintf(stream, "table-layout: auto ");
-		break;
-	case CSS_TABLE_LAYOUT_FIXED:
+		اكسر;
+	حالة CSS_TABLE_LAYOUT_FIXED:
 		fprintf(stream, "table-layout: fixed ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* text-align */
 	val = css_computed_text_align(style);
-	switch (val) {
-	case CSS_TEXT_ALIGN_LEFT:
+	بدل (val) {
+	حالة CSS_TEXT_ALIGN_بایاں:
 		fprintf(stream, "text-align: left ");
-		break;
-	case CSS_TEXT_ALIGN_RIGHT:
+		اكسر;
+	حالة CSS_TEXT_ALIGN_دایاں:
 		fprintf(stream, "text-align: right ");
-		break;
-	case CSS_TEXT_ALIGN_CENTER:
+		اكسر;
+	حالة CSS_TEXT_ALIGN_CENTER:
 		fprintf(stream, "text-align: center ");
-		break;
-	case CSS_TEXT_ALIGN_JUSTIFY:
+		اكسر;
+	حالة CSS_TEXT_ALIGN_JUSTIFY:
 		fprintf(stream, "text-align: justify ");
-		break;
-	case CSS_TEXT_ALIGN_DEFAULT:
+		اكسر;
+	حالة CSS_TEXT_ALIGN_DEFAULT:
 		fprintf(stream, "text-align: default ");
-		break;
-	case CSS_TEXT_ALIGN_LIBCSS_LEFT:
+		اكسر;
+	حالة CSS_TEXT_ALIGN_LIBCSS_بایاں:
 		fprintf(stream, "text-align: -libcss-left ");
-		break;
-	case CSS_TEXT_ALIGN_LIBCSS_CENTER:
+		اكسر;
+	حالة CSS_TEXT_ALIGN_LIBCSS_CENTER:
 		fprintf(stream, "text-align: -libcss-center ");
-		break;
-	case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
+		اكسر;
+	حالة CSS_TEXT_ALIGN_LIBCSS_دایاں:
 		fprintf(stream, "text-align: -libcss-right ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* text-decoration */
 	val = css_computed_text_decoration(style);
-	if (val == CSS_TEXT_DECORATION_NONE) {
+	إذا (val == CSS_TEXT_DECORATION_NONE) {
 		fprintf(stream, "text-decoration: none ");
-	} else {
+	} وإلا {
 		fprintf(stream, "text-decoration:");
 
-		if (val & CSS_TEXT_DECORATION_BLINK) {
+		إذا (val & CSS_TEXT_DECORATION_BLINK) {
 			fprintf(stream, " blink");
 		}
-		if (val & CSS_TEXT_DECORATION_LINE_THROUGH) {
+		إذا (val & CSS_TEXT_DECORATION_سطر_THROUGH) {
 			fprintf(stream, " line-through");
 		}
-		if (val & CSS_TEXT_DECORATION_OVERLINE) {
+		إذا (val & CSS_TEXT_DECORATION_OVERLINE) {
 			fprintf(stream, " overline");
 		}
-		if (val & CSS_TEXT_DECORATION_UNDERLINE) {
+		إذا (val & CSS_TEXT_DECORATION_UNDERLINE) {
 			fprintf(stream, " underline");
 		}
 
@@ -1644,191 +1644,191 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* text-indent */
 	val = css_computed_text_indent(style, &len1, &unit1);
-	switch (val) {
-	case CSS_TEXT_INDENT_SET:
+	بدل (val) {
+	حالة CSS_TEXT_INDENT_SET:
 		fprintf(stream, "text-indent: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* text-transform */
 	val = css_computed_text_transform(style);
-	switch (val) {
-	case CSS_TEXT_TRANSFORM_CAPITALIZE:
+	بدل (val) {
+	حالة CSS_TEXT_TRANSFORM_CAPITALIZE:
 		fprintf(stream, "text-transform: capitalize ");
-		break;
-	case CSS_TEXT_TRANSFORM_UPPERCASE:
+		اكسر;
+	حالة CSS_TEXT_TRANSFORM_UPPERCASE:
 		fprintf(stream, "text-transform: uppercase ");
-		break;
-	case CSS_TEXT_TRANSFORM_LOWERCASE:
+		اكسر;
+	حالة CSS_TEXT_TRANSFORM_LOWERCASE:
 		fprintf(stream, "text-transform: lowercase ");
-		break;
-	case CSS_TEXT_TRANSFORM_NONE:
+		اكسر;
+	حالة CSS_TEXT_TRANSFORM_NONE:
 		fprintf(stream, "text-transform: none ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
-	/* top */
-	val = css_computed_top(style, &len1, &unit1);
-	switch (val) {
-	case CSS_TOP_AUTO:
+	/*چوٹی*/
+	val = css_computed_چوٹی(style, &len1, &unit1);
+	بدل (val) {
+	حالة CSS_چوٹی_AUTO:
 		fprintf(stream, "top: auto ");
-		break;
-	case CSS_TOP_SET:
+		اكسر;
+	حالة CSS_چوٹی_SET:
 		fprintf(stream, "top: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* unicode-bidi */
 	val = css_computed_unicode_bidi(style);
-	switch (val) {
-	case CSS_UNICODE_BIDI_NORMAL:
+	بدل (val) {
+	حالة CSS_UNICODE_BIDI_NORMAL:
 		fprintf(stream, "unicode-bidi: normal ");
-		break;
-	case CSS_UNICODE_BIDI_EMBED:
+		اكسر;
+	حالة CSS_UNICODE_BIDI_EMBED:
 		fprintf(stream, "unicode-bidi: embed ");
-		break;
-	case CSS_UNICODE_BIDI_BIDI_OVERRIDE:
+		اكسر;
+	حالة CSS_UNICODE_BIDI_BIDI_OVERRIDE:
 		fprintf(stream, "unicode-bidi: bidi-override ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* vertical-align */
 	val = css_computed_vertical_align(style, &len1, &unit1);
-	switch (val) {
-	case CSS_VERTICAL_ALIGN_BASELINE:
+	بدل (val) {
+	حالة CSS_VERTICAL_ALIGN_BASELINE:
 		fprintf(stream, "vertical-align: baseline ");
-		break;
-	case CSS_VERTICAL_ALIGN_SUB:
+		اكسر;
+	حالة CSS_VERTICAL_ALIGN_SUB:
 		fprintf(stream, "vertical-align: sub ");
-		break;
-	case CSS_VERTICAL_ALIGN_SUPER:
+		اكسر;
+	حالة CSS_VERTICAL_ALIGN_SUPER:
 		fprintf(stream, "vertical-align: super ");
-		break;
-	case CSS_VERTICAL_ALIGN_TOP:
+		اكسر;
+	حالة CSS_VERTICAL_ALIGN_چوٹی:
 		fprintf(stream, "vertical-align: top ");
-		break;
-	case CSS_VERTICAL_ALIGN_TEXT_TOP:
+		اكسر;
+	حالة CSS_VERTICAL_ALIGN_TEXT_چوٹی:
 		fprintf(stream, "vertical-align: text-top ");
-		break;
-	case CSS_VERTICAL_ALIGN_MIDDLE:
+		اكسر;
+	حالة CSS_VERTICAL_ALIGN_درمیان:
 		fprintf(stream, "vertical-align: middle ");
-		break;
-	case CSS_VERTICAL_ALIGN_BOTTOM:
+		اكسر;
+	حالة CSS_VERTICAL_ALIGN_BOTTOM:
 		fprintf(stream, "vertical-align: bottom ");
-		break;
-	case CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
+		اكسر;
+	حالة CSS_VERTICAL_ALIGN_TEXT_BOTTOM:
 		fprintf(stream, "vertical-align: text-bottom ");
-		break;
-	case CSS_VERTICAL_ALIGN_SET:
+		اكسر;
+	حالة CSS_VERTICAL_ALIGN_SET:
 		fprintf(stream, "vertical-align: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* visibility */
 	val = css_computed_visibility(style);
-	switch (val) {
-	case CSS_VISIBILITY_VISIBLE:
+	بدل (val) {
+	حالة CSS_VISIBILITY_VISIBLE:
 		fprintf(stream, "visibility: visible ");
-		break;
-	case CSS_VISIBILITY_HIDDEN:
+		اكسر;
+	حالة CSS_VISIBILITY_HIDDEN:
 		fprintf(stream, "visibility: hidden ");
-		break;
-	case CSS_VISIBILITY_COLLAPSE:
+		اكسر;
+	حالة CSS_VISIBILITY_COLLAPSE:
 		fprintf(stream, "visibility: collapse ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* white-space */
 	val = css_computed_white_space(style);
-	switch (val) {
-	case CSS_WHITE_SPACE_NORMAL:
+	بدل (val) {
+	حالة CSS_WHITE_SPACE_NORMAL:
 		fprintf(stream, "white-space: normal ");
-		break;
-	case CSS_WHITE_SPACE_PRE:
+		اكسر;
+	حالة CSS_WHITE_SPACE_PRE:
 		fprintf(stream, "white-space: pre ");
-		break;
-	case CSS_WHITE_SPACE_NOWRAP:
+		اكسر;
+	حالة CSS_WHITE_SPACE_NOWRAP:
 		fprintf(stream, "white-space: nowrap ");
-		break;
-	case CSS_WHITE_SPACE_PRE_WRAP:
+		اكسر;
+	حالة CSS_WHITE_SPACE_PRE_WRAP:
 		fprintf(stream, "white-space: pre-wrap ");
-		break;
-	case CSS_WHITE_SPACE_PRE_LINE:
+		اكسر;
+	حالة CSS_WHITE_SPACE_PRE_سطر:
 		fprintf(stream, "white-space: pre-line ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* width */
 	val = css_computed_width(style, &len1, &unit1);
-	switch (val) {
-	case CSS_WIDTH_AUTO:
+	بدل (val) {
+	حالة CSS_WIDTH_AUTO:
 		fprintf(stream, "width: auto ");
-		break;
-	case CSS_WIDTH_SET:
+		اكسر;
+	حالة CSS_WIDTH_SET:
 		fprintf(stream, "width: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* word-spacing */
 	val = css_computed_word_spacing(style, &len1, &unit1);
-	switch (val) {
-	case CSS_WORD_SPACING_NORMAL:
+	بدل (val) {
+	حالة CSS_WORD_SPACING_NORMAL:
 		fprintf(stream, "word-spacing: normal ");
-		break;
-	case CSS_WORD_SPACING_SET:
+		اكسر;
+	حالة CSS_WORD_SPACING_SET:
 		fprintf(stream, "word-spacing: ");
 
 		dump_css_unit(stream, len1, unit1);
 
 		fprintf(stream, " ");
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	/* z-index */
 	val = css_computed_z_index(style, &zindex);
-	switch (val) {
-	case CSS_Z_INDEX_AUTO:
+	بدل (val) {
+	حالة CSS_Z_INDEX_AUTO:
 		fprintf(stream, "z-index: auto ");
-		break;
-	case CSS_Z_INDEX_SET:
+		اكسر;
+	حالة CSS_Z_INDEX_SET:
 		fprintf(stream, "z-index: %"PRId32" ", zindex);
-		break;
-	default:
-		break;
+		اكسر;
+	افتراضي:
+		اكسر;
 	}
 
 	fprintf(stream, "}");
