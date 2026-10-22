@@ -84,7 +84,7 @@ bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
  * \param  m_len      accepts length of match in bytes
  * \return pointer to first match, NULL if none
  */
-const char *content_textsearch_find_pattern(const char *string, int s_len, const char *pattern, int p_len, bool case_sens, unsigned int *m_len);
+const char *content_textsearch_find_pattern(const char *string, 整数 s_len, const char *pattern, 整数 p_len, bool case_sens, unsigned 整数 *m_len);
 
 /**
  * Add a new entry to the list of matches

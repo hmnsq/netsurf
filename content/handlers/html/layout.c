@@ -132,35 +132,35 @@ static void layout_minmax_block(
  */
 static void
 layout_get_object_dimensions(struct box *box,
-			     int *width, int *height,
-			     int min_width, int max_width,
-			     int min_height, int max_height)
+			     整数 *width, 整数 *height,
+			     整数 min_width, 整数 max_width,
+			     整数 min_height, 整数 max_height)
 {
 	assert(box->object != NULL);
 	assert(width != NULL && height != NULL);
 
-	if (*width == AUTO && *height == AUTO) {
+	如果 (*width == AUTO && *height == AUTO) {
 		/* No given dimensions */
 
 		bool scaled = false;
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		整数 intrinsic_width = content_get_width(box->object);
+		整数 intrinsic_height = content_get_height(box->object);
 
 		/* use intrinsic dimensions */
 		*width = intrinsic_width;
 		*height = intrinsic_height;
 
 		/* Deal with min/max-width first */
-		if (min_width >  0 && min_width > *width) {
+		如果 (min_width >  0 && min_width > *width) {
 			*width = min_width;
 			scaled = true;
 		}
-		if (max_width >= 0 && max_width < *width) {
+		如果 (max_width >= 0 && max_width < *width) {
 			*width = max_width;
 			scaled = true;
 		}
 
-		if (scaled && (intrinsic_width != 0)) {
+		如果 (scaled && (intrinsic_width != 0)) {
 			/* Update height */
 			*height = (*width * intrinsic_height) /
 					intrinsic_width;
@@ -168,53 +168,53 @@ layout_get_object_dimensions(struct box *box,
 
 		scaled = false;
 		/* Deal with min/max-height */
-		if (min_height >  0 && min_height > *height) {
+		如果 (min_height >  0 && min_height > *height) {
 			*height = min_height;
 			scaled = true;
 		}
-		if (max_height >= 0 && max_height < *height) {
+		如果 (max_height >= 0 && max_height < *height) {
 			*height = max_height;
 			scaled = true;
 		}
 
-		if (scaled && (intrinsic_height != 0)) {
+		如果 (scaled && (intrinsic_height != 0)) {
 			/* Update width */
 			*width = (*height * intrinsic_width) /
 					intrinsic_height;
 		}
 
-	} else if (*width == AUTO) {
+	} 否则 如果 (*width == AUTO) {
 		/* Have given height; width is calculated from the given height
 		 * and ratio of intrinsic dimensions */
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		整数 intrinsic_width = content_get_width(box->object);
+		整数 intrinsic_height = content_get_height(box->object);
 
-		if (intrinsic_height != 0)
+		如果 (intrinsic_height != 0)
 			*width = (*height * intrinsic_width) /
 					intrinsic_height;
-		else
+		否则
 			*width = intrinsic_width;
 
-		if (min_width >  0 && min_width > *width)
+		如果 (min_width >  0 && min_width > *width)
 			*width = min_width;
-		if (max_width >= 0 && max_width < *width)
+		如果 (max_width >= 0 && max_width < *width)
 			*width = max_width;
 
-	} else if (*height == AUTO) {
+	} 否则 如果 (*height == AUTO) {
 		/* Have given width; height is calculated from the given width
 		 * and ratio of intrinsic dimensions */
-		int intrinsic_width = content_get_width(box->object);
-		int intrinsic_height = content_get_height(box->object);
+		整数 intrinsic_width = content_get_width(box->object);
+		整数 intrinsic_height = content_get_height(box->object);
 
-		if (min_width >  0 && min_width > *width)
+		如果 (min_width >  0 && min_width > *width)
 			*width = min_width;
-		if (max_width >= 0 && max_width < *width)
+		如果 (max_width >= 0 && max_width < *width)
 			*width = max_width;
 
-		if (intrinsic_width != 0)
+		如果 (intrinsic_width != 0)
 			*height = (*width * intrinsic_height) /
 					intrinsic_width;
-		else
+		否则
 			*height = intrinsic_height;
 	}
 }
@@ -227,19 +227,19 @@ layout_get_object_dimensions(struct box *box,
  * \param  width  width of containing block
  * \return  length of indent
  */
-static int layout_text_indent(
+static 整数 layout_text_indent(
 		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style, int width)
+		const css_computed_style *style, 整数 width)
 {
 	css_fixed value = 0;
 	css_unit unit = CSS_UNIT_PX;
 
 	css_computed_text_indent(style, &value, &unit);
 
-	if (unit == CSS_UNIT_PCT) {
-		return FPCT_OF_INT_TOINT(value, width);
-	} else {
-		return FIXTOINT(css_unit_len2device_px(style, unit_len_ctx,
+	如果 (unit == CSS_UNIT_PCT) {
+		返回 FPCT_OF_INT_TOINT(value, width);
+	} 否则 {
+		返回 FIXTOINT(css_unit_len2device_px(style, unit_len_ctx,
 				value, unit));
 	}
 }
@@ -258,36 +258,36 @@ static void layout_minmax_table(struct box *table,
 		const struct gui_layout_table *font_func,
 		const html_content *content)
 {
-	unsigned int i, j;
-	int width;
-	int border_spacing_h = 0;
-	int table_min = 0, table_max = 0;
-	int extra_fixed = 0;
+	unsigned 整数 i, j;
+	整数 width;
+	整数 border_spacing_h = 0;
+	整数 table_min = 0, table_max = 0;
+	整数 extra_fixed = 0;
 	float extra_frac = 0;
 	struct column *col;
 	struct box *row_group, *row, *cell;
 
 	/* check if the widths have already been calculated */
-	if (table->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	如果 (table->max_width != UNKNOWN_MAX_WIDTH)
+		返回;
 
-	if (table_calculate_column_types(&content->unit_len_ctx, table) == false) {
+	如果 (table_calculate_column_types(&content->unit_len_ctx, table) == false) {
 		NSLOG(netsurf, ERROR,
 				"Could not establish table column types.");
-		return;
+		返回;
 	}
 	col = table->col;
 
 	/* start with 0 except for fixed-width columns */
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_FIXED)
+	为 (i = 0; i != table->columns; i++) {
+		如果 (col[i].type == COLUMN_WIDTH_FIXED)
 			col[i].min = col[i].max = col[i].width;
-		else
+		否则
 			col[i].min = col[i].max = 0;
 	}
 
 	/* border-spacing is used in the separated borders model */
-	if (css_computed_border_collapse(table->style) ==
+	如果 (css_computed_border_collapse(table->style) ==
 			CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
@@ -301,39 +301,39 @@ static void layout_minmax_table(struct box *table,
 	}
 
 	/* 1st pass: consider cells with colspan 1 only */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-	for (row = row_group->children; row; row = row->next)
-	for (cell = row->children; cell; cell = cell->next) {
+	为 (row_group = table->children; row_group; row_group =row_group->next)
+	为 (row = row_group->children; row; row = row->next)
+	为 (cell = row->children; cell; cell = cell->next) {
 		assert(cell->type == BOX_TABLE_CELL);
 		assert(cell->style);
 		/** TODO: Handle colspan="0" correctly.
 		 *        It's currently converted to 1 in box normaisation */
 		assert(cell->columns != 0);
 
-		if (cell->columns != 1)
+		如果 (cell->columns != 1)
 			continue;
 
 		layout_minmax_block(cell, font_func, content);
 		i = cell->start_column;
 
-		if (col[i].positioned)
+		如果 (col[i].positioned)
 			continue;
 
 		/* update column min, max widths using cell widths */
-		if (col[i].min < cell->min_width)
+		如果 (col[i].min < cell->min_width)
 			col[i].min = cell->min_width;
-		if (col[i].max < cell->max_width)
+		如果 (col[i].max < cell->max_width)
 			col[i].max = cell->max_width;
 	}
 
 	/* 2nd pass: cells which span multiple columns */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-	for (row = row_group->children; row; row = row->next)
-	for (cell = row->children; cell; cell = cell->next) {
-		unsigned int flexible_columns = 0;
-		int min = 0, max = 0, fixed_width = 0, extra;
+	为 (row_group = table->children; row_group; row_group =row_group->next)
+	为 (row = row_group->children; row; row = row->next)
+	为 (cell = row->children; cell; cell = cell->next) {
+		unsigned 整数 flexible_columns = 0;
+		整数 min = 0, max = 0, fixed_width = 0, extra;
 
-		if (cell->columns == 1)
+		如果 (cell->columns == 1)
 			continue;
 
 		layout_minmax_block(cell, font_func, content);
@@ -341,33 +341,33 @@ static void layout_minmax_table(struct box *table,
 
 		/* find min width so far of spanned columns, and count
 		 * number of non-fixed spanned columns and total fixed width */
-		for (j = 0; j != cell->columns; j++) {
+		为 (j = 0; j != cell->columns; j++) {
 			min += col[i + j].min;
-			if (col[i + j].type == COLUMN_WIDTH_FIXED)
+			如果 (col[i + j].type == COLUMN_WIDTH_FIXED)
 				fixed_width += col[i + j].width;
-			else
+			否则
 				flexible_columns++;
 		}
 		min += (cell->columns - 1) * border_spacing_h;
 
 		/* distribute extra min to spanned columns */
-		if (min < cell->min_width) {
-			if (flexible_columns == 0) {
+		如果 (min < cell->min_width) {
+			如果 (flexible_columns == 0) {
 				extra = 1 + (cell->min_width - min) /
 						cell->columns;
-				for (j = 0; j != cell->columns; j++) {
+				为 (j = 0; j != cell->columns; j++) {
 					col[i + j].min += extra;
-					if (col[i + j].max < col[i + j].min)
+					如果 (col[i + j].max < col[i + j].min)
 						col[i + j].max = col[i + j].min;
 				}
-			} else {
+			} 否则 {
 				extra = 1 + (cell->min_width - min) /
 						flexible_columns;
-				for (j = 0; j != cell->columns; j++) {
-					if (col[i + j].type !=
+				为 (j = 0; j != cell->columns; j++) {
+					如果 (col[i + j].type !=
 							COLUMN_WIDTH_FIXED) {
 						col[i + j].min += extra;
-						if (col[i + j].max <
+						如果 (col[i + j].max <
 								col[i + j].min)
 							col[i + j].max =
 								col[i + j].min;
@@ -377,21 +377,21 @@ static void layout_minmax_table(struct box *table,
 		}
 
 		/* find max width so far of spanned columns */
-		for (j = 0; j != cell->columns; j++)
+		为 (j = 0; j != cell->columns; j++)
 			max += col[i + j].max;
 		max += (cell->columns - 1) * border_spacing_h;
 
 		/* distribute extra max to spanned columns */
-		if (max < cell->max_width && flexible_columns) {
+		如果 (max < cell->max_width && flexible_columns) {
 			extra = 1 + (cell->max_width - max) / flexible_columns;
-			for (j = 0; j != cell->columns; j++)
-				if (col[i + j].type != COLUMN_WIDTH_FIXED)
+			为 (j = 0; j != cell->columns; j++)
+				如果 (col[i + j].type != COLUMN_WIDTH_FIXED)
 					col[i + j].max += extra;
 		}
 	}
 
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].max < col[i].min) {
+	为 (i = 0; i != table->columns; i++) {
+		如果 (col[i].max < col[i].min) {
 			box_dump(stderr, table, 0, true);
 			assert(0);
 		}
@@ -400,11 +400,11 @@ static void layout_minmax_table(struct box *table,
 	}
 
 	/* fixed width takes priority, unless it is too narrow */
-	if (css_computed_width_px(table->style, &content->unit_len_ctx,
+	如果 (css_computed_width_px(table->style, &content->unit_len_ctx,
 			-1, &width) == CSS_WIDTH_SET) {
-		if (table_min < width)
+		如果 (table_min < width)
 			table_min = width;
-		if (table_max < width)
+		如果 (table_max < width)
 			table_max = width;
 	}
 
@@ -415,11 +415,11 @@ static void layout_minmax_table(struct box *table,
 	calculate_mbp_width(&content->unit_len_ctx,
 			table->style, RIGHT, true, true, true,
 			&extra_fixed, &extra_frac);
-	if (extra_fixed < 0)
+	如果 (extra_fixed < 0)
 		extra_fixed = 0;
-	if (extra_frac < 0)
+	如果 (extra_frac < 0)
 		extra_frac = 0;
-	if (1.0 <= extra_frac)
+	如果 (1.0 <= extra_frac)
 		extra_frac = 0.9;
 	table->min_width = (table_min + extra_fixed) / (1.0 - extra_frac);
 	table->max_width = (table_max + extra_fixed) / (1.0 - extra_frac);
@@ -444,7 +444,7 @@ static inline bool box_has_percentage_max_width(struct box *b)
 	assert(b != NULL);
 
 	type = css_computed_max_width(b->style, &value, &unit);
-	return ((type == CSS_MAX_WIDTH_SET) && (unit == CSS_UNIT_PCT));
+	返回 ((type == CSS_MAX_WIDTH_SET) && (unit == CSS_UNIT_PCT));
 }
 
 /**
@@ -461,14 +461,14 @@ static inline bool box_has_percentage_max_width(struct box *b)
  */
 static struct box *
 layout_minmax_line(struct box *first,
-		   int *line_min,
-		   int *line_max,
+		   整数 *line_min,
+		   整数 *line_max,
 		   bool first_line,
 		   bool *line_has_height,
 		   const struct gui_layout_table *font_func,
 		   const html_content *content)
 {
-	int min = 0, max = 0, width, height, fixed;
+	整数 min = 0, max = 0, width, height, fixed;
 	float frac;
 	size_t i, j;
 	struct box *b;
@@ -489,7 +489,7 @@ layout_minmax_line(struct box *first,
 	*line_has_height = false;
 
 	/* corresponds to the pass 1 loop in layout_line() */
-	for (b = first; b; b = b->next) {
+	为 (b = first; b; b = b->next) {
 		enum css_width_e wtype;
 		enum css_height_e htype;
 		enum css_box_sizing_e bs;
@@ -500,34 +500,34 @@ layout_minmax_line(struct box *first,
 
 		NSLOG(layout, DEBUG, "%p: min %i, max %i", b, min, max);
 
-		if (b->type == BOX_BR) {
+		如果 (b->type == BOX_BR) {
 			b = b->next;
 			break;
 		}
 
-		if (lh__box_is_float_box(b)) {
+		如果 (lh__box_is_float_box(b)) {
 			assert(b->children);
-			if (b->children->type == BOX_TABLE)
+			如果 (b->children->type == BOX_TABLE)
 				layout_minmax_table(b->children, font_func,
 						content);
-			else
+			否则
 				layout_minmax_block(b->children, font_func,
 						content);
 			b->min_width = b->children->min_width;
 			b->max_width = b->children->max_width;
-			if (min < b->min_width)
+			如果 (min < b->min_width)
 				min = b->min_width;
 			max += b->max_width;
 			continue;
 		}
 
-		if (b->type == BOX_INLINE_BLOCK || b->type == BOX_INLINE_FLEX) {
+		如果 (b->type == BOX_INLINE_BLOCK || b->type == BOX_INLINE_FLEX) {
 			layout_minmax_block(b, font_func, content);
-			if (min < b->min_width)
+			如果 (min < b->min_width)
 				min = b->min_width;
 			max += b->max_width;
 
-			if (b->flags & HAS_HEIGHT)
+			如果 (b->flags & HAS_HEIGHT)
 				*line_has_height = true;
 			continue;
 		}
@@ -535,33 +535,33 @@ layout_minmax_line(struct box *first,
 		assert(b->style);
 		font_plot_style_from_css(&content->unit_len_ctx, b->style, &fstyle);
 
-		if (b->type == BOX_INLINE && !b->object &&
+		如果 (b->type == BOX_INLINE && !b->object &&
 				!(b->flags & REPLACE_DIM) &&
 				!(b->flags & IFRAME)) {
 			fixed = frac = 0;
 			calculate_mbp_width(&content->unit_len_ctx,
 					b->style, LEFT, true, true, true,
 					&fixed, &frac);
-			if (!b->inline_end)
+			如果 (!b->inline_end)
 				calculate_mbp_width(&content->unit_len_ctx,
 						b->style, RIGHT,
 						true, true, true,
 						&fixed, &frac);
-			if (0 < fixed)
+			如果 (0 < fixed)
 				max += fixed;
 			*line_has_height = true;
 			/* \todo  update min width, consider fractional extra */
-		} else if (b->type == BOX_INLINE_END) {
+		} 否则 如果 (b->type == BOX_INLINE_END) {
 			fixed = frac = 0;
 			calculate_mbp_width(&content->unit_len_ctx,
 					b->inline_end->style, RIGHT,
 					true, true, true,
 					&fixed, &frac);
-			if (0 < fixed)
+			如果 (0 < fixed)
 				max += fixed;
 
-			if (b->next) {
-				if (b->space == UNKNOWN_WIDTH) {
+			如果 (b->next) {
+				如果 (b->space == UNKNOWN_WIDTH) {
 					font_func->width(&fstyle, " ", 1,
 							 &b->space);
 				}
@@ -572,10 +572,10 @@ layout_minmax_line(struct box *first,
 			continue;
 		}
 
-		if (lh__box_is_replace(b) == false) {
+		如果 (lh__box_is_replace(b) == false) {
 			/* inline non-replaced, 10.3.1 and 10.6.1 */
 			bool no_wrap_box;
-			if (!b->text)
+			如果 (!b->text)
 				continue;
 
 			no_wrap_box = (css_computed_white_space(b->style) ==
@@ -583,76 +583,76 @@ layout_minmax_line(struct box *first,
 					css_computed_white_space(b->style) ==
 					CSS_WHITE_SPACE_PRE);
 
-			if (b->width == UNKNOWN_WIDTH) {
+			如果 (b->width == UNKNOWN_WIDTH) {
 				/** \todo handle errors */
 
 				/* If it's a select element, we must use the
 				 * width of the widest option text */
-				if (b->parent->parent->gadget &&
+				如果 (b->parent->parent->gadget &&
 						b->parent->parent->gadget->type
 						== GADGET_SELECT) {
-					int opt_maxwidth = 0;
+					整数 opt_maxwidth = 0;
 					struct form_option *o;
 
-					for (o = b->parent->parent->gadget->
+					为 (o = b->parent->parent->gadget->
 							data.select.items; o;
 							o = o->next) {
-						int opt_width;
+						整数 opt_width;
 						font_func->width(&fstyle,
 								o->text,
 								strlen(o->text),
 								&opt_width);
 
-						if (opt_maxwidth < opt_width)
+						如果 (opt_maxwidth < opt_width)
 							opt_maxwidth =opt_width;
 					}
 
 					b->width = opt_maxwidth;
-					if (nsoption_bool(core_select_menu))
+					如果 (nsoption_bool(core_select_menu))
 						b->width += SCROLLBAR_WIDTH;
 
-				} else {
+				} 否则 {
 					font_func->width(&fstyle, b->text,
 						b->length, &b->width);
 					b->flags |= MEASURED;
 				}
 			}
 			max += b->width;
-			if (b->next) {
-				if (b->space == UNKNOWN_WIDTH) {
+			如果 (b->next) {
+				如果 (b->space == UNKNOWN_WIDTH) {
 					font_func->width(&fstyle, " ", 1,
 							 &b->space);
 				}
 				max += b->space;
 			}
 
-			if (no_wrap) {
+			如果 (no_wrap) {
 				/* Don't wrap due to block style,
 				 * so min is the same as max */
 				min = max;
 
-			} else if (no_wrap_box) {
+			} 否则 如果 (no_wrap_box) {
 				/* This inline box can't be wrapped,
 				 * for min, consider box's width */
-				if (min < b->width)
+				如果 (min < b->width)
 					min = b->width;
 
-			} else if (b->parent->flags & NEED_MIN) {
+			} 否则 如果 (b->parent->flags & NEED_MIN) {
 				/* If we care what the minimum width is,
 				 * calculate it.  (It's only needed if we're
 				 * shrinking-to-fit.) */
 				/* min = widest single word */
 				i = 0;
 				do {
-					for (j = i; j != b->length &&
+					为 (j = i; j != b->length &&
 							b->text[j] != ' '; j++)
 						;
 					font_func->width(&fstyle, b->text + i,
 							 j - i, &width);
-					if (min < width)
+					如果 (min < width)
 						min = width;
 					i = j + 1;
-				} while (j != b->length);
+				} 当 (j != b->length);
 			}
 
 			*line_has_height = true;
@@ -668,8 +668,8 @@ layout_minmax_line(struct box *first,
 		/* calculate box width */
 		wtype = css_computed_width_px(b->style,
 				&content->unit_len_ctx, -1, &width);
-		if (wtype == CSS_WIDTH_SET) {
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		如果 (wtype == CSS_WIDTH_SET) {
+			如果 (bs == CSS_BOX_SIZING_BORDER_BOX) {
 				fixed = frac = 0;
 				calculate_mbp_width(&content->unit_len_ctx,
 						block->style, LEFT,
@@ -679,30 +679,30 @@ layout_minmax_line(struct box *first,
 						block->style, RIGHT,
 						false, true, true,
 						&fixed, &frac);
-				if (width < fixed) {
+				如果 (width < fixed) {
 					width = fixed;
 				}
 			}
-			if (width < 0)
+			如果 (width < 0)
 				width = 0;
-		} else {
+		} 否则 {
 			width = AUTO;
 		}
 
 		/* height */
 		htype = css_computed_height(b->style, &value, &unit);
-		if (htype == CSS_HEIGHT_SET) {
+		如果 (htype == CSS_HEIGHT_SET) {
 			height = FIXTOINT(css_unit_len2device_px(
 					b->style,
 					&content->unit_len_ctx,
 					value, unit));
-		} else {
+		} 否则 {
 			height = AUTO;
 		}
 
-		if (b->object || (b->flags & REPLACE_DIM)) {
-			if (b->object) {
-				int temp_height = height;
+		如果 (b->object || (b->flags & REPLACE_DIM)) {
+			如果 (b->object) {
+				整数 temp_height = height;
 				layout_get_object_dimensions(b,
 						&width, &temp_height,
 						INT_MIN, INT_MAX,
@@ -710,7 +710,7 @@ layout_minmax_line(struct box *first,
 			}
 
 			fixed = frac = 0;
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
+			如果 (bs == CSS_BOX_SIZING_BORDER_BOX) {
 				calculate_mbp_width(&content->unit_len_ctx,
 						b->style, LEFT,
 						true, false, false,
@@ -719,7 +719,7 @@ layout_minmax_line(struct box *first,
 						b->style, RIGHT,
 						true, false, false,
 						&fixed, &frac);
-			} else {
+			} 否则 {
 				calculate_mbp_width(&content->unit_len_ctx,
 						b->style, LEFT,
 						true, true, true,
@@ -729,15 +729,15 @@ layout_minmax_line(struct box *first,
 						true, true, true,
 						&fixed, &frac);
 			}
-			if (0 < width + fixed)
+			如果 (0 < width + fixed)
 				width += fixed;
-		} else if (b->flags & IFRAME) {
+		} 否则 如果 (b->flags & IFRAME) {
 			/* TODO: handle percentage widths properly */
-			if (width == AUTO)
+			如果 (width == AUTO)
 				width = 400;
 
 			fixed = frac = 0;
-			if (bs == CSS_BOX_SIZING_BORDER_BOX) {
+			如果 (bs == CSS_BOX_SIZING_BORDER_BOX) {
 				calculate_mbp_width(&content->unit_len_ctx,
 						b->style, LEFT,
 						true, false, false,
@@ -746,7 +746,7 @@ layout_minmax_line(struct box *first,
 						b->style, RIGHT,
 						true, false, false,
 						&fixed, &frac);
-			} else {
+			} 否则 {
 				calculate_mbp_width(&content->unit_len_ctx,
 						b->style, LEFT,
 						true, true, true,
@@ -757,30 +757,30 @@ layout_minmax_line(struct box *first,
 						&fixed, &frac);
 			}
 
-			if (0 < width + fixed)
+			如果 (0 < width + fixed)
 				width += fixed;
 
-		} else {
+		} 否则 {
 			/* form control with no object */
-			if (width == AUTO)
+			如果 (width == AUTO)
 				width = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx,
 						INTTOFIX(1), CSS_UNIT_EM));
 		}
 
-		if (min < width && !box_has_percentage_max_width(b))
+		如果 (min < width && !box_has_percentage_max_width(b))
 			min = width;
-		if (width > 0)
+		如果 (width > 0)
 			max += width;
 
 		*line_has_height = true;
 	}
 
-	if (first_line) {
+	如果 (first_line) {
 		/* todo: handle percentage values properly */
 		/* todo: handle text-indent interaction with floats */
-		int text_indent = layout_text_indent(&content->unit_len_ctx,
+		整数 text_indent = layout_text_indent(&content->unit_len_ctx,
 				first->parent->parent->style, 100);
 		min = (min + text_indent < 0) ? 0 : min + text_indent;
 		max = (max + text_indent < 0) ? 0 : max + text_indent;
@@ -794,7 +794,7 @@ layout_minmax_line(struct box *first,
 	assert(b != first);
 	assert(0 <= *line_min);
 	assert(*line_min <= *line_max);
-	return b;
+	返回 b;
 }
 
 
@@ -814,26 +814,26 @@ layout_minmax_inline_container(struct box *inline_container,
 			       const html_content *content)
 {
 	struct box *child;
-	int line_min = 0, line_max = 0;
-	int min = 0, max = 0;
+	整数 line_min = 0, line_max = 0;
+	整数 min = 0, max = 0;
 	bool first_line = true;
 	bool line_has_height;
 
 	assert(inline_container->type == BOX_INLINE_CONTAINER);
 
 	/* check if the widths have already been calculated */
-	if (inline_container->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	如果 (inline_container->max_width != UNKNOWN_MAX_WIDTH)
+		返回;
 
 	*has_height = false;
 
-	for (child = inline_container->children; child; ) {
+	为 (child = inline_container->children; child; ) {
 		child = layout_minmax_line(child, &line_min, &line_max,
 				first_line, &line_has_height, font_func,
 				content);
-		if (min < line_min)
+		如果 (min < line_min)
 			min = line_min;
-		if (max < line_max)
+		如果 (max < line_max)
 			max = line_max;
 		first_line = false;
 		*has_height |= line_has_height;
@@ -862,8 +862,8 @@ static void layout_minmax_block(
 		const html_content *content)
 {
 	struct box *child;
-	int min = 0, max = 0;
-	int extra_fixed = 0;
+	整数 min = 0, max = 0;
+	整数 extra_fixed = 0;
 	float extra_frac = 0;
 	enum css_width_e wtype = CSS_WIDTH_AUTO;
 	css_fixed width = 0;
@@ -883,35 +883,35 @@ static void layout_minmax_block(
 			block->type == BOX_TABLE_CELL);
 
 	/* check if the widths have already been calculated */
-	if (block->max_width != UNKNOWN_MAX_WIDTH)
-		return;
+	如果 (block->max_width != UNKNOWN_MAX_WIDTH)
+		返回;
 
-	if (block->style != NULL) {
+	如果 (block->style != NULL) {
 		wtype = css_computed_width(block->style, &width, &wunit);
 		htype = css_computed_height(block->style, &height, &hunit);
 		bs = css_computed_box_sizing(block->style);
 	}
 
 	/* set whether the minimum width is of any interest for this box */
-	if (((block->parent && lh__box_is_float_box(block->parent)) ||
+	如果 (((block->parent && lh__box_is_float_box(block->parent)) ||
 			block->type == BOX_INLINE_BLOCK ||
 			block->type == BOX_INLINE_FLEX) &&
 			wtype != CSS_WIDTH_SET) {
 		/* box shrinks to fit; need minimum width */
 		block->flags |= NEED_MIN;
-	} else if (block->type == BOX_TABLE_CELL) {
+	} 否则 如果 (block->type == BOX_TABLE_CELL) {
 		/* box shrinks to fit; need minimum width */
 		block->flags |= NEED_MIN;
-	} else if (block->parent && (block->parent->flags & NEED_MIN) &&
+	} 否则 如果 (block->parent && (block->parent->flags & NEED_MIN) &&
 			wtype != CSS_WIDTH_SET) {
 		/* box inside shrink-to-fit context; need minimum width */
 		block->flags |= NEED_MIN;
-	} else if (block->parent && (block->parent->type == BOX_FLEX)) {
+	} 否则 如果 (block->parent && (block->parent->type == BOX_FLEX)) {
 		/* box is flex item */
 		block->flags |= NEED_MIN;
 	}
 
-	if (block->gadget && (block->gadget->type == GADGET_TEXTBOX ||
+	如果 (block->gadget && (block->gadget->type == GADGET_TEXTBOX ||
 			block->gadget->type == GADGET_PASSWORD ||
 			block->gadget->type == GADGET_FILE ||
 			block->gadget->type == GADGET_TEXTAREA) &&
@@ -925,7 +925,7 @@ static void layout_minmax_block(
 		block->flags |= HAS_HEIGHT;
 	}
 
-	if (block->gadget && (block->gadget->type == GADGET_RADIO ||
+	如果 (block->gadget && (block->gadget->type == GADGET_RADIO ||
 			block->gadget->type == GADGET_CHECKBOX) &&
 			block->style && wtype == CSS_WIDTH_AUTO) {
 		css_fixed size = INTTOFIX(1);
@@ -939,40 +939,40 @@ static void layout_minmax_block(
 		block->flags |= HAS_HEIGHT;
 	}
 
-	if (block->object) {
-		if (content_get_type(block->object) == CONTENT_HTML) {
+	如果 (block->object) {
+		如果 (content_get_type(block->object) == CONTENT_HTML) {
 			layout_minmax_block(html_get_box_tree(block->object),
 					font_func, content);
 			min = html_get_box_tree(block->object)->min_width;
 			max = html_get_box_tree(block->object)->max_width;
-		} else {
+		} 否则 {
 			min = max = content_get_width(block->object);
 		}
 
 		block->flags |= HAS_HEIGHT;
-	} else if (block->flags & IFRAME) {
+	} 否则 如果 (block->flags & IFRAME) {
 		/** \todo do we need to know the min/max width of the iframe's
 		 * content? */
 		block->flags |= HAS_HEIGHT;
-	} else {
+	} 否则 {
 		/* recurse through children */
-		for (child = block->children; child; child = child->next) {
+		为 (child = block->children; child; child = child->next) {
 			switch (child->type) {
 			case BOX_FLEX:
 			case BOX_BLOCK:
 				layout_minmax_block(child, font_func,
 						content);
-				if (child->flags & HAS_HEIGHT)
+				如果 (child->flags & HAS_HEIGHT)
 					child_has_height = true;
 				break;
 			case BOX_INLINE_CONTAINER:
-				if (block->flags & NEED_MIN)
+				如果 (block->flags & NEED_MIN)
 					child->flags |= NEED_MIN;
 
 				layout_minmax_inline_container(child,
 						&child_has_height, font_func,
 						content);
-				if (child_has_height &&
+				如果 (child_has_height &&
 						child ==
 						child->parent->children) {
 					block->flags |= MAKE_HEIGHT;
@@ -990,7 +990,7 @@ static void layout_minmax_block(
 			}
 			assert(child->max_width != UNKNOWN_MAX_WIDTH);
 
-			if (child->style &&
+			如果 (child->style &&
 					(css_computed_position(child->style) ==
 							CSS_POSITION_ABSOLUTE ||
 					css_computed_position(child->style) ==
@@ -1000,45 +1000,45 @@ static void layout_minmax_block(
 				continue;
 			}
 
-			if (lh__box_is_flex_container(block) &&
+			如果 (lh__box_is_flex_container(block) &&
 			    lh__flex_main_is_horizontal(block)) {
-				if (block->style != NULL &&
+				如果 (block->style != NULL &&
 				    css_computed_flex_wrap(block->style) ==
 						CSS_FLEX_WRAP_NOWRAP) {
 					min += child->min_width;
-				} else {
-					if (min < child->min_width)
+				} 否则 {
+					如果 (min < child->min_width)
 						min = child->min_width;
 				}
 				max += child->max_width;
 
-			} else {
-				if (min < child->min_width)
+			} 否则 {
+				如果 (min < child->min_width)
 					min = child->min_width;
-				if (max < child->max_width)
+				如果 (max < child->max_width)
 					max = child->max_width;
 			}
 
-			if (child_has_height)
+			如果 (child_has_height)
 				block->flags |= HAS_HEIGHT;
 		}
 	}
 
-	if (max < min) {
+	如果 (max < min) {
 		box_dump(stderr, block, 0, true);
 		assert(0);
 	}
 
 	/* fixed width takes priority */
-	if (block->type != BOX_TABLE_CELL && !lh__box_is_flex_item(block)) {
+	如果 (block->type != BOX_TABLE_CELL && !lh__box_is_flex_item(block)) {
 		bool border_box = bs == CSS_BOX_SIZING_BORDER_BOX;
 		enum css_max_width_e max_type;
 		enum css_min_width_e min_type;
 		css_unit unit = CSS_UNIT_PX;
 		css_fixed value = 0;
-		int width;
+		整数 width;
 
-		if (css_computed_width_px(block->style, &content->unit_len_ctx,
+		如果 (css_computed_width_px(block->style, &content->unit_len_ctx,
 				-1, &width) == CSS_WIDTH_SET) {
 			min = max = width;
 			using_max_border_box = border_box;
@@ -1046,29 +1046,29 @@ static void layout_minmax_block(
 		}
 
 		min_type = css_computed_min_width(block->style, &value, &unit);
-		if (min_type == CSS_MIN_WIDTH_SET && unit != CSS_UNIT_PCT) {
-			int val = FIXTOINT(css_unit_len2device_px(block->style,
+		如果 (min_type == CSS_MIN_WIDTH_SET && unit != CSS_UNIT_PCT) {
+			整数 val = FIXTOINT(css_unit_len2device_px(block->style,
 					&content->unit_len_ctx, value, unit));
 
-			if (min < val) {
+			如果 (min < val) {
 				min = val;
 				using_min_border_box = border_box;
 			}
 		}
 
 		max_type = css_computed_max_width(block->style, &value, &unit);
-		if (max_type == CSS_MAX_WIDTH_SET && unit != CSS_UNIT_PCT) {
-			int val = FIXTOINT(css_unit_len2device_px(block->style,
+		如果 (max_type == CSS_MAX_WIDTH_SET && unit != CSS_UNIT_PCT) {
+			整数 val = FIXTOINT(css_unit_len2device_px(block->style,
 					&content->unit_len_ctx, value, unit));
 
-			if (val >= 0 && max > val) {
+			如果 (val >= 0 && max > val) {
 				max = val;
 				using_max_border_box = border_box;
 			}
 		}
 	}
 
-	if (htype == CSS_HEIGHT_SET && hunit != CSS_UNIT_PCT &&
+	如果 (htype == CSS_HEIGHT_SET && hunit != CSS_UNIT_PCT &&
 			height > INTTOFIX(0)) {
 		block->flags |= MAKE_HEIGHT;
 		block->flags |= HAS_HEIGHT;
@@ -1082,17 +1082,17 @@ static void layout_minmax_block(
 	calculate_mbp_width(&content->unit_len_ctx, block->style, RIGHT,
 			false, true, true, &extra_fixed, &extra_frac);
 
-	if (using_max_border_box) {
+	如果 (using_max_border_box) {
 		max -= extra_fixed;
 		max = max(max, 0);
 	}
 
-	if (using_min_border_box) {
+	如果 (using_min_border_box) {
 		min -= extra_fixed;
 		min = max(min, 0);
 	}
 
-	if (max < min) {
+	如果 (max < min) {
 		min = max;
 	}
 
@@ -1101,19 +1101,19 @@ static void layout_minmax_block(
 	calculate_mbp_width(&content->unit_len_ctx, block->style, RIGHT,
 			true, false, false, &extra_fixed, &extra_frac);
 
-	if (extra_fixed < 0)
+	如果 (extra_fixed < 0)
 		extra_fixed = 0;
-	if (extra_frac < 0)
+	如果 (extra_frac < 0)
 		extra_frac = 0;
-	if (1.0 <= extra_frac)
+	如果 (1.0 <= extra_frac)
 		extra_frac = 0.9;
-	if (block->style != NULL &&
+	如果 (block->style != NULL &&
 			(css_computed_float(block->style) == CSS_FLOAT_LEFT ||
 			css_computed_float(block->style) == CSS_FLOAT_RIGHT)) {
 		/* floated boxs */
 		block->min_width = min + extra_fixed;
 		block->max_width = max + extra_fixed;
-	} else {
+	} 否则 {
 		/* not floated */
 		block->min_width = (min + extra_fixed) / (1.0 - extra_frac);
 		block->max_width = (max + extra_fixed) / (1.0 - extra_frac);
@@ -1139,15 +1139,15 @@ static struct box*
 layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
 			 struct box *box,
 			 struct box *block,
-			 int viewport_height,
-			 int *max_pos_margin,
-			 int *max_neg_margin)
+			 整数 viewport_height,
+			 整数 *max_pos_margin,
+			 整数 *max_neg_margin)
 {
 	assert(block != NULL);
 
-	while (box != NULL) {
+	当 (box != NULL) {
 
-		if (box->type == BOX_INLINE_CONTAINER || (box->style &&
+		如果 (box->type == BOX_INLINE_CONTAINER || (box->style &&
 				(css_computed_position(box->style) !=
 					CSS_POSITION_ABSOLUTE &&
 				 css_computed_position(box->style) !=
@@ -1155,7 +1155,7 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
 			/* Not positioned */
 
 			/* Get margins */
-			if (box->style) {
+			如果 (box->style) {
 				layout_find_dimensions(unit_len_ctx,
 						box->parent->width,
 						viewport_height, box,
@@ -1165,15 +1165,15 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
 						box->padding, box->border);
 
 				/* Apply top margin */
-				if (*max_pos_margin < box->margin[TOP])
+				如果 (*max_pos_margin < box->margin[TOP])
 					*max_pos_margin = box->margin[TOP];
-				else if (*max_neg_margin < -box->margin[TOP])
+				否则 如果 (*max_neg_margin < -box->margin[TOP])
 					*max_neg_margin = -box->margin[TOP];
 			}
 
 			/* Check whether box is the box current margin collapses
 			 * to */
-			if (box->flags & MAKE_HEIGHT ||
+			如果 (box->flags & MAKE_HEIGHT ||
 					box->border[TOP].width ||
 					box->padding[TOP] ||
 					(box->style &&
@@ -1182,55 +1182,55 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
 					(box->type == BOX_INLINE_CONTAINER &&
 					!box_is_first_child(box))) {
 				/* Collapse to this box; return it */
-				return box;
+				返回 box;
 			}
 		}
 
 
 		/* Find next box */
-		if (box->type == BOX_BLOCK && !box->object && box->children &&
+		如果 (box->type == BOX_BLOCK && !box->object && box->children &&
 				box->style &&
 				css_computed_overflow_y(box->style) ==
 				CSS_OVERFLOW_VISIBLE) {
 			/* Down into children. */
 			box = box->children;
-		} else {
-			if (!box->next) {
+		} 否则 {
+			如果 (!box->next) {
 				/* No more siblings:
 				 * Go up to first ancestor with a sibling. */
 				do {
 					/* Apply bottom margin */
-					if (*max_pos_margin <
+					如果 (*max_pos_margin <
 							box->margin[BOTTOM])
 						*max_pos_margin =
 							box->margin[BOTTOM];
-					else if (*max_neg_margin <
+					否则 如果 (*max_neg_margin <
 							-box->margin[BOTTOM])
 						*max_neg_margin =
 							-box->margin[BOTTOM];
 
 					box = box->parent;
-				} while (box != block && !box->next);
+				} 当 (box != block && !box->next);
 
-				if (box == block) {
+				如果 (box == block) {
 					/* Margins don't collapse with stuff
 					 * outside the block formatting context
 					 */
-					return block;
+					返回 block;
 				}
 			}
 
 			/* Apply bottom margin */
-			if (*max_pos_margin < box->margin[BOTTOM])
+			如果 (*max_pos_margin < box->margin[BOTTOM])
 				*max_pos_margin = box->margin[BOTTOM];
-			else if (*max_neg_margin < -box->margin[BOTTOM])
+			否则 如果 (*max_neg_margin < -box->margin[BOTTOM])
 				*max_neg_margin = -box->margin[BOTTOM];
 
 			/* To next sibling. */
 			box = box->next;
 
 			/* Get margins */
-			if (box->style) {
+			如果 (box->style) {
 				layout_find_dimensions(unit_len_ctx,
 						box->parent->width,
 						viewport_height, box,
@@ -1242,7 +1242,7 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
 		}
 	}
 
-	return NULL;
+	返回 NULL;
 }
 
 
@@ -1253,20 +1253,20 @@ layout_next_margin_block(const css_unit_ctx *unit_len_ctx,
  * \param  clear  type of clear
  * \return  y coordinate relative to ancestor box for floats
  */
-static int layout_clear(struct box *fl, enum css_clear_e clear)
+static 整数 layout_clear(struct box *fl, enum css_clear_e clear)
 {
-	int y = 0;
-	for (; fl; fl = fl->next_float) {
-		if ((clear == CSS_CLEAR_LEFT || clear == CSS_CLEAR_BOTH) &&
+	整数 y = 0;
+	为 (; fl; fl = fl->next_float) {
+		如果 ((clear == CSS_CLEAR_LEFT || clear == CSS_CLEAR_BOTH) &&
 				fl->type == BOX_FLOAT_LEFT)
-			if (y < fl->y + fl->height)
+			如果 (y < fl->y + fl->height)
 				y = fl->y + fl->height;
-		if ((clear == CSS_CLEAR_RIGHT || clear == CSS_CLEAR_BOTH) &&
+		如果 ((clear == CSS_CLEAR_RIGHT || clear == CSS_CLEAR_BOTH) &&
 				fl->type == BOX_FLOAT_RIGHT)
-			if (y < fl->y + fl->height)
+			如果 (y < fl->y + fl->height)
 				y = fl->y + fl->height;
 	}
-	return y;
+	返回 y;
 }
 
 
@@ -1283,35 +1283,35 @@ static int layout_clear(struct box *fl, enum css_clear_e clear)
  */
 static void
 find_sides(struct box *fl,
-	   int y0, int y1,
-	   int *x0, int *x1,
+	   整数 y0, 整数 y1,
+	   整数 *x0, 整数 *x1,
 	   struct box **left,
 	   struct box **right)
 {
-	int fy0, fy1, fx0, fx1;
+	整数 fy0, fy1, fx0, fx1;
 
 	NSLOG(layout, DEBUG, "y0 %i, y1 %i, x0 %i, x1 %i", y0, y1, *x0, *x1);
 
 	*left = *right = 0;
-	for (; fl; fl = fl->next_float) {
+	为 (; fl; fl = fl->next_float) {
 		fy1 = fl->y + fl->height;
-		if (fy1 < y0) {
+		如果 (fy1 < y0) {
 			/* Floats are sorted in order of decreasing bottom pos.
 			 * Past here, all floats will be too high to concern us.
 			 */
-			return;
+			返回;
 		}
 		fy0 = fl->y;
-		if (y0 < fy1 && fy0 <= y1) {
-			if (fl->type == BOX_FLOAT_LEFT) {
+		如果 (y0 < fy1 && fy0 <= y1) {
+			如果 (fl->type == BOX_FLOAT_LEFT) {
 				fx1 = fl->x + fl->width;
-				if (*x0 < fx1) {
+				如果 (*x0 < fx1) {
 					*x0 = fx1;
 					*left = fl;
 				}
-			} else {
+			} 否则 {
 				fx0 = fl->x;
-				if (fx0 < *x1) {
+				如果 (fx0 < *x1) {
 					*x1 = fx0;
 					*right = fl;
 				}
@@ -1342,34 +1342,34 @@ find_sides(struct box *fl,
  *
  * \post \a box's left/right margins will be updated.
  */
-static int
+static 整数
 layout_solve_width(struct box *box,
-		   int available_width,
-		   int width,
-		   int lm,
-		   int rm,
-		   int max_width,
-		   int min_width)
+		   整数 available_width,
+		   整数 width,
+		   整数 lm,
+		   整数 rm,
+		   整数 max_width,
+		   整数 min_width)
 {
 	bool auto_width = false;
 
 	/* Increase specified left/right margins */
-	if (box->margin[LEFT] != AUTO && box->margin[LEFT] < lm &&
+	如果 (box->margin[LEFT] != AUTO && box->margin[LEFT] < lm &&
 			box->margin[LEFT] >= 0)
 		box->margin[LEFT] = lm;
-	if (box->margin[RIGHT] != AUTO && box->margin[RIGHT] < rm &&
+	如果 (box->margin[RIGHT] != AUTO && box->margin[RIGHT] < rm &&
 			box->margin[RIGHT] >= 0)
 		box->margin[RIGHT] = rm;
 
 	/* Find width */
-	if (width == AUTO) {
-		int margin_left = box->margin[LEFT];
-		int margin_right = box->margin[RIGHT];
+	如果 (width == AUTO) {
+		整数 margin_left = box->margin[LEFT];
+		整数 margin_right = box->margin[RIGHT];
 
-		if (margin_left == AUTO) {
+		如果 (margin_left == AUTO) {
 			margin_left = lm;
 		}
-		if (margin_right == AUTO) {
+		如果 (margin_right == AUTO) {
 			margin_right = rm;
 		}
 
@@ -1381,35 +1381,35 @@ layout_solve_width(struct box *box,
 		auto_width = true;
 	}
 
-	if (max_width >= 0 && width > max_width) {
+	如果 (max_width >= 0 && width > max_width) {
 		/* max-width is admissable and width exceeds max-width */
 		width = max_width;
 		auto_width = false;
 	}
 
-	if (min_width > 0 && width < min_width) {
+	如果 (min_width > 0 && width < min_width) {
 		/* min-width is admissable and width is less than max-width */
 		width = min_width;
 		auto_width = false;
 	}
 
 	/* Width was auto, and unconstrained by min/max width, so we're done */
-	if (auto_width) {
+	如果 (auto_width) {
 		/* any other 'auto' become 0 or the minimum required values */
-		if (box->margin[LEFT] == AUTO) {
+		如果 (box->margin[LEFT] == AUTO) {
 			box->margin[LEFT] = lm;
 		}
-		if (box->margin[RIGHT] == AUTO) {
+		如果 (box->margin[RIGHT] == AUTO) {
 			box->margin[RIGHT] = rm;
 		}
-		return width;
+		返回 width;
 	}
 
 	/* Width was not auto, or was constrained by min/max width
 	 * Need to compute left/right margins */
 
 	/* HTML alignment (only applies to over-constrained boxes) */
-	if (box->margin[LEFT] != AUTO && box->margin[RIGHT] != AUTO &&
+	如果 (box->margin[LEFT] != AUTO && box->margin[RIGHT] != AUTO &&
 			box->parent != NULL && box->parent->style != NULL) {
 		switch (css_computed_text_align(box->parent->style)) {
 		case CSS_TEXT_ALIGN_LIBCSS_RIGHT:
@@ -1429,7 +1429,7 @@ layout_solve_width(struct box *box,
 		}
 	}
 
-	if (box->margin[LEFT] == AUTO && box->margin[RIGHT] == AUTO) {
+	如果 (box->margin[LEFT] == AUTO && box->margin[RIGHT] == AUTO) {
 		/* make the margins equal, centering the element */
 		box->margin[LEFT] = box->margin[RIGHT] =
 				(available_width - lm - rm -
@@ -1437,21 +1437,21 @@ layout_solve_width(struct box *box,
 				width + box->padding[RIGHT] +
 				box->border[RIGHT].width)) / 2;
 
-		if (box->margin[LEFT] < 0) {
+		如果 (box->margin[LEFT] < 0) {
 			box->margin[RIGHT] += box->margin[LEFT];
 			box->margin[LEFT] = 0;
 		}
 
 		box->margin[LEFT] += lm;
 
-	} else if (box->margin[LEFT] == AUTO) {
+	} 否则 如果 (box->margin[LEFT] == AUTO) {
 		box->margin[LEFT] = available_width - lm -
 				(box->border[LEFT].width + box->padding[LEFT] +
 				width + box->padding[RIGHT] +
 				box->border[RIGHT].width + box->margin[RIGHT]);
 		box->margin[LEFT] = box->margin[LEFT] < lm
 				? lm : box->margin[LEFT];
-	} else {
+	} 否则 {
 		/* margin-right auto or "over-constrained" */
 		box->margin[RIGHT] = available_width - rm -
 				(box->margin[LEFT] + box->border[LEFT].width +
@@ -1460,7 +1460,7 @@ layout_solve_width(struct box *box,
 				 box->border[RIGHT].width);
 	}
 
-	return width;
+	返回 width;
 }
 
 
@@ -1482,16 +1482,16 @@ layout_solve_width(struct box *box,
  */
 static void
 layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
-			     int available_width,
-			     int viewport_height,
-			     int lm,
-			     int rm,
+			     整数 available_width,
+			     整数 viewport_height,
+			     整数 lm,
+			     整数 rm,
 			     struct box *box)
 {
-	int width, max_width, min_width;
-	int height, max_height, min_height;
-	int *margin = box->margin;
-	int *padding = box->padding;
+	整数 width, max_width, min_width;
+	整数 height, max_height, min_height;
+	整数 *margin = box->margin;
+	整数 *padding = box->padding;
 	struct box_border *border = box->border;
 	const css_computed_style *style = box->style;
 
@@ -1499,7 +1499,7 @@ layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
 			style, &width, &height, &max_width, &min_width,
 			&max_height, &min_height, margin, padding, border);
 
-	if (box->object && !(box->flags & REPLACE_DIM) &&
+	如果 (box->object && !(box->flags & REPLACE_DIM) &&
 			content_get_type(box->object) != CONTENT_HTML) {
 		/* block-level replaced element, see 10.3.4 and 10.6.2 */
 		layout_get_object_dimensions(box, &width, &height,
@@ -1510,9 +1510,9 @@ layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
 			max_width, min_width);
 	box->height = height;
 
-	if (margin[TOP] == AUTO)
+	如果 (margin[TOP] == AUTO)
 		margin[TOP] = 0;
-	if (margin[BOTTOM] == AUTO)
+	如果 (margin[BOTTOM] == AUTO)
 		margin[BOTTOM] = 0;
 }
 
@@ -1523,31 +1523,31 @@ layout_block_find_dimensions(const css_unit_ctx *unit_len_ctx,
  * \param  box	  Box to apply scrollbar space too. Must be BOX_BLOCK.
  * \param  which  Which scrollbar to make space for. Must be RIGHT or BOTTOM.
  */
-static void layout_block_add_scrollbar(struct box *box, int which)
+static void layout_block_add_scrollbar(struct box *box, 整数 which)
 {
 	enum css_overflow_e overflow_x, overflow_y;
 
 	assert(box->type == BOX_BLOCK && (which == RIGHT || which == BOTTOM));
 
-	if (box->style == NULL)
-		return;
+	如果 (box->style == NULL)
+		返回;
 
 	overflow_x = css_computed_overflow_x(box->style);
 	overflow_y = css_computed_overflow_y(box->style);
 
-	if (which == BOTTOM &&
+	如果 (which == BOTTOM &&
 			(overflow_x == CSS_OVERFLOW_SCROLL ||
 			 overflow_x == CSS_OVERFLOW_AUTO ||
 			(box->object &&
 			 content_get_type(box->object) == CONTENT_HTML))) {
 		/* make space for scrollbar, unless height is AUTO */
-		if (box->height != AUTO &&
+		如果 (box->height != AUTO &&
 				(overflow_x == CSS_OVERFLOW_SCROLL ||
 				box_hscrollbar_present(box))) {
 			box->padding[BOTTOM] += SCROLLBAR_WIDTH;
 		}
 
-	} else if (which == RIGHT &&
+	} 否则 如果 (which == RIGHT &&
 			(overflow_y == CSS_OVERFLOW_SCROLL ||
 			 overflow_y == CSS_OVERFLOW_AUTO ||
 			(box->object &&
@@ -1558,7 +1558,7 @@ static void layout_block_add_scrollbar(struct box *box, int which)
 		css_unit hunit = CSS_UNIT_PX;
 		htype = css_computed_height(box->style, &height, &hunit);
 
-		if (which == RIGHT && box->width != AUTO &&
+		如果 (which == RIGHT && box->width != AUTO &&
 				htype == CSS_HEIGHT_SET &&
 				(overflow_y == CSS_OVERFLOW_SCROLL ||
 				box_vscrollbar_present(box))) {
@@ -1576,11 +1576,11 @@ static void layout_block_add_scrollbar(struct box *box, int which)
  * \param  x	the amount to move children by horizontally
  * \param  y	the amount to move children by vertically
  */
-static void layout_move_children(struct box *box, int x, int y)
+static void layout_move_children(struct box *box, 整数 x, 整数 y)
 {
 	assert(box);
 
-	for (box = box->children; box; box = box->next) {
+	为 (box = box->children; box; box = box->next) {
 		box->x += x;
 		box->y += y;
 	}
@@ -1590,25 +1590,25 @@ static void layout_move_children(struct box *box, int x, int y)
 /* Documented in layout_internal.h */
 bool layout_table(
 		struct box *table,
-		int available_width,
+		整数 available_width,
 		html_content *content)
 {
-	unsigned int columns = table->columns;  /* total columns */
-	unsigned int i;
-	unsigned int *row_span;
-	int *excess_y;
-	int table_width, min_width = 0, max_width = 0;
-	int required_width = 0;
-	int x, remainder = 0, count = 0;
-	int table_height = 0;
-	int min_height = 0;
-	int *xs;  /* array of column x positions */
-	int auto_width;
-	int spare_width;
-	int relative_sum = 0;
-	int border_spacing_h = 0, border_spacing_v = 0;
-	int spare_height;
-	int positioned_columns = 0;
+	unsigned 整数 columns = table->columns;  /* total columns */
+	unsigned 整数 i;
+	unsigned 整数 *row_span;
+	整数 *excess_y;
+	整数 table_width, min_width = 0, max_width = 0;
+	整数 required_width = 0;
+	整数 x, remainder = 0, count = 0;
+	整数 table_height = 0;
+	整数 min_height = 0;
+	整数 *xs;  /* array of column x positions */
+	整数 auto_width;
+	整数 spare_width;
+	整数 relative_sum = 0;
+	整数 border_spacing_h = 0, border_spacing_v = 0;
+	整数 spare_height;
+	整数 positioned_columns = 0;
 	struct box *containing_block = NULL;
 	struct box *c;
 	struct box *row;
@@ -1631,13 +1631,13 @@ bool layout_table(
 	row_span = malloc(columns * sizeof row_span[0]);
 	row_span_cell = malloc(columns * sizeof row_span_cell[0]);
 	xs = malloc((columns + 1) * sizeof xs[0]);
-	if (!col || !xs || !row_span || !excess_y || !row_span_cell) {
+	如果 (!col || !xs || !row_span || !excess_y || !row_span_cell) {
 		free(col);
 		free(excess_y);
 		free(row_span);
 		free(row_span_cell);
 		free(xs);
-		return false;
+		返回 false;
 	}
 
 	memcpy(col, table->col, sizeof(col[0]) * columns);
@@ -1646,10 +1646,10 @@ bool layout_table(
 	layout_find_dimensions(&content->unit_len_ctx, available_width, -1, table,
 			style, 0, 0, 0, 0, 0, 0, table->margin, table->padding,
 			table->border);
-	for (row_group = table->children; row_group;
+	为 (row_group = table->children; row_group;
 			row_group = row_group->next) {
-		for (row = row_group->children; row; row = row->next) {
-			for (c = row->children; c; c = c->next) {
+		为 (row = row_group->children; row; row = row->next) {
+			为 (c = row->children; c; c = c->next) {
 				enum css_overflow_e overflow_x;
 				enum css_overflow_e overflow_y;
 
@@ -1664,12 +1664,12 @@ bool layout_table(
 				overflow_x = css_computed_overflow_x(c->style);
 				overflow_y = css_computed_overflow_y(c->style);
 
-				if (overflow_x == CSS_OVERFLOW_SCROLL ||
+				如果 (overflow_x == CSS_OVERFLOW_SCROLL ||
 						overflow_x ==
 						CSS_OVERFLOW_AUTO) {
 					c->padding[BOTTOM] += SCROLLBAR_WIDTH;
 				}
-				if (overflow_y == CSS_OVERFLOW_SCROLL ||
+				如果 (overflow_y == CSS_OVERFLOW_SCROLL ||
 						overflow_y ==
 						CSS_OVERFLOW_AUTO) {
 					c->padding[RIGHT] += SCROLLBAR_WIDTH;
@@ -1679,7 +1679,7 @@ bool layout_table(
 	}
 
 	/* border-spacing is used in the separated borders model */
-	if (css_computed_border_collapse(style) ==
+	如果 (css_computed_border_collapse(style) ==
 			CSS_BORDER_COLLAPSE_SEPARATE) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
@@ -1693,7 +1693,7 @@ bool layout_table(
 	}
 
 	/* find specified table width, or available width if auto-width */
-	if (css_computed_width_px(style, &content->unit_len_ctx,
+	如果 (css_computed_width_px(style, &content->unit_len_ctx,
 			available_width, &table_width) == CSS_WIDTH_SET) {
 		/* specified width includes border */
 		table_width -= table->border[LEFT].width +
@@ -1701,7 +1701,7 @@ bool layout_table(
 		table_width = table_width < 0 ? 0 : table_width;
 
 		auto_width = table_width;
-	} else {
+	} 否则 {
 		table_width = AUTO;
 		auto_width = available_width -
 				((table->margin[LEFT] == AUTO ? 0 :
@@ -1716,16 +1716,16 @@ bool layout_table(
 
 	/* Find any table height specified within CSS/HTML */
 	htype = css_computed_height(style, &value, &unit);
-	if (htype == CSS_HEIGHT_SET) {
-		if (unit == CSS_UNIT_PCT) {
+	如果 (htype == CSS_HEIGHT_SET) {
+		如果 (unit == CSS_UNIT_PCT) {
 			/* This is the minimum height for the table
 			 * (see 17.5.3) */
-			if (css_computed_position(table->style) ==
+			如果 (css_computed_position(table->style) ==
 					CSS_POSITION_ABSOLUTE) {
 				/* Table is absolutely positioned */
 				assert(table->float_container);
 				containing_block = table->float_container;
-			} else if (table->float_container &&
+			} 否则 如果 (table->float_container &&
 					css_computed_position(table->style) !=
 						CSS_POSITION_ABSOLUTE &&
 					(css_computed_float(table->style) ==
@@ -1737,18 +1737,18 @@ bool layout_table(
 						table->parent->parent->parent);
 				containing_block =
 						table->parent->parent->parent;
-			} else if (table->parent && table->parent->type !=
+			} 否则 如果 (table->parent && table->parent->type !=
 					BOX_INLINE_CONTAINER) {
 				/* Table is a block level element */
 				containing_block = table->parent;
-			} else if (table->parent && table->parent->type ==
+			} 否则 如果 (table->parent && table->parent->type ==
 					BOX_INLINE_CONTAINER) {
 				/* Table is an inline block */
 				assert(table->parent->parent);
 				containing_block = table->parent->parent;
 			}
 
-			if (containing_block) {
+			如果 (containing_block) {
 				css_fixed ignored = 0;
 
 				htype = css_computed_height(
@@ -1756,7 +1756,7 @@ bool layout_table(
 						&ignored, &unit);
 			}
 
-			if (containing_block &&
+			如果 (containing_block &&
 					containing_block->height != AUTO &&
 					(css_computed_position(table->style) ==
 							CSS_POSITION_ABSOLUTE ||
@@ -1767,7 +1767,7 @@ bool layout_table(
 				min_height = FPCT_OF_INT_TOINT(value,
 						containing_block->height);
 			}
-		} else {
+		} 否则 {
 			/* This is the minimum height for the table
 			 * (see 17.5.3) */
 			min_height = FIXTOINT(css_unit_len2device_px(
@@ -1777,7 +1777,7 @@ bool layout_table(
 	}
 
 	/* calculate width required by cells */
-	for (i = 0; i != columns; i++) {
+	为 (i = 0; i != columns; i++) {
 
 		NSLOG(layout, DEBUG,
 		      "table %p, column %u: type %s, width %i, min %i, max %i",
@@ -1795,20 +1795,20 @@ bool layout_table(
 		      col[i].max);
 
 
-		if (col[i].positioned) {
+		如果 (col[i].positioned) {
 			positioned_columns++;
 			continue;
-		} else if (col[i].type == COLUMN_WIDTH_FIXED) {
-			if (col[i].width < col[i].min)
+		} 否则 如果 (col[i].type == COLUMN_WIDTH_FIXED) {
+			如果 (col[i].width < col[i].min)
 				col[i].width = col[i].max = col[i].min;
-			else
+			否则
 				col[i].min = col[i].max = col[i].width;
 			required_width += col[i].width;
-		} else if (col[i].type == COLUMN_WIDTH_PERCENT) {
-			int width = col[i].width * auto_width / 100;
+		} 否则 如果 (col[i].type == COLUMN_WIDTH_PERCENT) {
+			整数 width = col[i].width * auto_width / 100;
 			required_width += col[i].min < width ? width :
 					col[i].min;
-		} else
+		} 否则
 			required_width += col[i].min;
 
 		NSLOG(layout, DEBUG,  "required_width %i", required_width);
@@ -1820,28 +1820,28 @@ bool layout_table(
 	      "width %i, min %i, max %i, auto %i, required %i", table_width,
 	      table->min_width, table->max_width, auto_width, required_width);
 
-	if (auto_width < required_width) {
+	如果 (auto_width < required_width) {
 		/* table narrower than required width for columns:
 		 * treat percentage widths as maximums */
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE)
+		为 (i = 0; i != columns; i++) {
+			如果 (col[i].type == COLUMN_WIDTH_RELATIVE)
 				continue;
-			if (col[i].type == COLUMN_WIDTH_PERCENT) {
+			如果 (col[i].type == COLUMN_WIDTH_PERCENT) {
 				col[i].max = auto_width * col[i].width / 100;
-				if (col[i].max < col[i].min)
+				如果 (col[i].max < col[i].min)
 					col[i].max = col[i].min;
 			}
 			min_width += col[i].min;
 			max_width += col[i].max;
 		}
-	} else {
+	} 否则 {
 		/* take percentages exactly */
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE)
+		为 (i = 0; i != columns; i++) {
+			如果 (col[i].type == COLUMN_WIDTH_RELATIVE)
 				continue;
-			if (col[i].type == COLUMN_WIDTH_PERCENT) {
-				int width = auto_width * col[i].width / 100;
-				if (width < col[i].min)
+			如果 (col[i].type == COLUMN_WIDTH_PERCENT) {
+				整数 width = auto_width * col[i].width / 100;
+				如果 (width < col[i].min)
 					width = col[i].min;
 				col[i].min = col[i].width = col[i].max = width;
 				col[i].type = COLUMN_WIDTH_FIXED;
@@ -1853,20 +1853,20 @@ bool layout_table(
 
 	/* allocate relative widths */
 	spare_width = auto_width;
-	for (i = 0; i != columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_RELATIVE)
+	为 (i = 0; i != columns; i++) {
+		如果 (col[i].type == COLUMN_WIDTH_RELATIVE)
 			relative_sum += col[i].width;
-		else if (col[i].type == COLUMN_WIDTH_FIXED)
+		否则 如果 (col[i].type == COLUMN_WIDTH_FIXED)
 			spare_width -= col[i].width;
-		else
+		否则
 			spare_width -= col[i].min;
 	}
 	spare_width -= (columns + 1) * border_spacing_h;
-	if (relative_sum != 0) {
-		if (spare_width < 0)
+	如果 (relative_sum != 0) {
+		如果 (spare_width < 0)
 			spare_width = 0;
-		for (i = 0; i != columns; i++) {
-			if (col[i].type == COLUMN_WIDTH_RELATIVE) {
+		为 (i = 0; i != columns; i++) {
+			如果 (col[i].type == COLUMN_WIDTH_RELATIVE) {
 				col[i].min = ceil(col[i].max =
 						(float) spare_width
 						* (float) col[i].width
@@ -1879,72 +1879,72 @@ bool layout_table(
 	min_width += (columns + 1) * border_spacing_h;
 	max_width += (columns + 1) * border_spacing_h;
 
-	if (auto_width <= min_width) {
+	如果 (auto_width <= min_width) {
 		/* not enough space: minimise column widths */
-		for (i = 0; i < columns; i++) {
+		为 (i = 0; i < columns; i++) {
 			col[i].width = col[i].min;
 		}
 		table_width = min_width;
-	} else if (max_width <= auto_width) {
+	} 否则 如果 (max_width <= auto_width) {
 		/* more space than maximum width */
-		if (table_width == AUTO) {
+		如果 (table_width == AUTO) {
 			/* for auto-width tables, make columns max width */
-			for (i = 0; i < columns; i++) {
+			为 (i = 0; i < columns; i++) {
 				col[i].width = col[i].max;
 			}
 			table_width = max_width;
-		} else {
+		} 否则 {
 			/* for fixed-width tables, distribute the extra space
 			 * too */
-			unsigned int flexible_columns = 0;
-			for (i = 0; i != columns; i++)
-				if (col[i].type != COLUMN_WIDTH_FIXED)
+			unsigned 整数 flexible_columns = 0;
+			为 (i = 0; i != columns; i++)
+				如果 (col[i].type != COLUMN_WIDTH_FIXED)
 					flexible_columns++;
-			if (flexible_columns == 0) {
-				int extra = (table_width - max_width) / columns;
+			如果 (flexible_columns == 0) {
+				整数 extra = (table_width - max_width) / columns;
 				remainder = (table_width - max_width) -
 						(extra * columns);
-				for (i = 0; i != columns; i++) {
+				为 (i = 0; i != columns; i++) {
 					col[i].width = col[i].max + extra;
 					count -= remainder;
-					if (count < 0) {
+					如果 (count < 0) {
 						col[i].width++;
 						count += columns;
 					}
 				}
 
-			} else {
-				int extra = (table_width - max_width) /
+			} 否则 {
+				整数 extra = (table_width - max_width) /
 						flexible_columns;
 				remainder = (table_width - max_width) -
 						(extra * flexible_columns);
-				for (i = 0; i != columns; i++)
-					if (col[i].type != COLUMN_WIDTH_FIXED) {
+				为 (i = 0; i != columns; i++)
+					如果 (col[i].type != COLUMN_WIDTH_FIXED) {
 						col[i].width = col[i].max +
 								extra;
 						count -= remainder;
-						if (count < 0) {
+						如果 (count < 0) {
 							col[i].width++;
 							count += flexible_columns;
 						}
 					}
 			}
 		}
-	} else {
+	} 否则 {
 		/* space between min and max: fill it exactly */
 		float scale = (float) (auto_width - min_width) /
 				(float) (max_width - min_width);
 		/* fprintf(stderr, "filling, scale %f\n", scale); */
-		for (i = 0; i < columns; i++) {
-			col[i].width = col[i].min + (int) (0.5 +
+		为 (i = 0; i < columns; i++) {
+			col[i].width = col[i].min + (整数) (0.5 +
 					(col[i].max - col[i].min) * scale);
 		}
 		table_width = auto_width;
 	}
 
 	xs[0] = x = border_spacing_h;
-	for (i = 0; i != columns; i++) {
-		if (!col[i].positioned)
+	为 (i = 0; i != columns; i++) {
+		如果 (!col[i].positioned)
 			x += col[i].width + border_spacing_h;
 		xs[i + 1] = x;
 		row_span[i] = 0;
@@ -1954,20 +1954,20 @@ bool layout_table(
 
 	/* position cells */
 	table_height = border_spacing_v;
-	for (row_group = table->children; row_group;
+	为 (row_group = table->children; row_group;
 			row_group = row_group->next) {
-		int row_group_height = 0;
-		for (row = row_group->children; row; row = row->next) {
-			int row_height = 0;
+		整数 row_group_height = 0;
+		为 (row = row_group->children; row; row = row->next) {
+			整数 row_height = 0;
 
 			htype = css_computed_height(row->style, &value, &unit);
-			if (htype == CSS_HEIGHT_SET && unit != CSS_UNIT_PCT) {
+			如果 (htype == CSS_HEIGHT_SET && unit != CSS_UNIT_PCT) {
 				row_height = FIXTOINT(css_unit_len2device_px(
 						row->style,
 						&content->unit_len_ctx,
 						value, unit));
 			}
-			for (c = row->children; c; c = c->next) {
+			为 (c = row->children; c; c = c->next) {
 				assert(c->style);
 				c->width = xs[c->start_column + c->columns] -
 						xs[c->start_column] -
@@ -1980,13 +1980,13 @@ bool layout_table(
 				c->cached_place_below_level = 0;
 
 				c->height = AUTO;
-				if (!layout_block_context(c, -1, content)) {
+				如果 (!layout_block_context(c, -1, content)) {
 					free(col);
 					free(excess_y);
 					free(row_span);
 					free(row_span_cell);
 					free(xs);
-					return false;
+					返回 false;
 				}
 				/* warning: c->descendant_y0 and
 				 * c->descendant_y1 used as temporary storage
@@ -1997,26 +1997,26 @@ bool layout_table(
 				htype = css_computed_height(c->style,
 						&value, &unit);
 
-				if (htype == CSS_HEIGHT_SET &&
+				如果 (htype == CSS_HEIGHT_SET &&
 						unit != CSS_UNIT_PCT) {
 					/* some sites use height="1" or similar
 					 * to attempt to make cells as small as
 					 * possible, so treat it as a minimum */
-					int h = FIXTOINT(css_unit_len2device_px(
+					整数 h = FIXTOINT(css_unit_len2device_px(
 							c->style,
 							&content->unit_len_ctx,
 							value, unit));
-					if (c->height < h)
+					如果 (c->height < h)
 						c->height = h;
 				}
 				/* specified row height is treated as a minimum
 				 */
-				if (c->height < row_height)
+				如果 (c->height < row_height)
 					c->height = row_height;
 				c->x = xs[c->start_column] +
 						c->border[LEFT].width;
 				c->y = c->border[TOP].width;
-				for (i = 0; i != c->columns; i++) {
+				为 (i = 0; i != c->columns; i++) {
 					row_span[c->start_column + i] = c->rows;
 					excess_y[c->start_column + i] =
 							c->border[TOP].width +
@@ -2033,30 +2033,30 @@ bool layout_table(
 						c->height -
 						c->border[BOTTOM].width;
 			}
-			for (i = 0; i != columns; i++)
-				if (row_span[i] != 0)
+			为 (i = 0; i != columns; i++)
+				如果 (row_span[i] != 0)
 					row_span[i]--;
-				else
+				否则
 					row_span_cell[i] = 0;
-			if (row->next || row_group->next) {
+			如果 (row->next || row_group->next) {
 				/* row height is greatest excess of a cell
 				 * which ends in this row */
-				for (i = 0; i != columns; i++)
-					if (row_span[i] == 0 && row_height <
+				为 (i = 0; i != columns; i++)
+					如果 (row_span[i] == 0 && row_height <
 							excess_y[i])
 						row_height = excess_y[i];
-			} else {
+			} 否则 {
 				/* except in the last row */
-				for (i = 0; i != columns; i++)
-					if (row_height < excess_y[i])
+				为 (i = 0; i != columns; i++)
+					如果 (row_height < excess_y[i])
 						row_height = excess_y[i];
 			}
-			for (i = 0; i != columns; i++) {
-				if (row_height < excess_y[i])
+			为 (i = 0; i != columns; i++) {
+				如果 (row_height < excess_y[i])
 					excess_y[i] -= row_height;
-				else
+				否则
 					excess_y[i] = 0;
-				if (row_span_cell[i] != 0)
+				如果 (row_span_cell[i] != 0)
 					row_span_cell[i]->padding[BOTTOM] +=
 							row_height +
 							border_spacing_v;
@@ -2080,10 +2080,10 @@ bool layout_table(
 	/** \todo distribute spare height over the row groups / rows / cells */
 
 	/* perform vertical alignment */
-	for (row_group = table->children; row_group;
+	为 (row_group = table->children; row_group;
 			row_group = row_group->next) {
-		for (row = row_group->children; row; row = row->next) {
-			for (c = row->children; c; c = c->next) {
+		为 (row = row_group->children; row; row = row->next) {
+			为 (c = row->children; c; c = c->next) {
 				enum css_vertical_align_e vertical_align;
 
 				/* unextended bottom padding is in
@@ -2128,9 +2128,9 @@ bool layout_table(
 	}
 
 	/* Top and bottom margins of 'auto' are set to 0.  CSS2.1 10.6.3 */
-	if (table->margin[TOP] == AUTO)
+	如果 (table->margin[TOP] == AUTO)
 		table->margin[TOP] = 0;
-	if (table->margin[BOTTOM] == AUTO)
+	如果 (table->margin[BOTTOM] == AUTO)
 		table->margin[BOTTOM] = 0;
 
 	free(col);
@@ -2142,7 +2142,7 @@ bool layout_table(
 	table->width = table_width;
 	table->height = table_height;
 
-	return true;
+	返回 true;
 }
 
 
@@ -2160,47 +2160,47 @@ static bool layout_apply_minmax_height(
 		struct box *box,
 		struct box *container)
 {
-	int h;
+	整数 h;
 	struct box *containing_block = NULL;
 	bool updated = false;
 
 	/* Find containing block for percentage heights */
-	if (box->style != NULL && css_computed_position(box->style) ==
+	如果 (box->style != NULL && css_computed_position(box->style) ==
 			CSS_POSITION_ABSOLUTE) {
 		/* Box is absolutely positioned */
 		assert(container);
 		containing_block = container;
-	} else if (box->float_container && box->style != NULL &&
+	} 否则 如果 (box->float_container && box->style != NULL &&
 			(css_computed_float(box->style) == CSS_FLOAT_LEFT ||
 			 css_computed_float(box->style) == CSS_FLOAT_RIGHT)) {
 		/* Box is a float */
 		assert(box->parent && box->parent->parent &&
 				box->parent->parent->parent);
 		containing_block = box->parent->parent->parent;
-	} else if (box->parent && box->parent->type != BOX_INLINE_CONTAINER) {
+	} 否则 如果 (box->parent && box->parent->type != BOX_INLINE_CONTAINER) {
 		/* Box is a block level element */
 		containing_block = box->parent;
-	} else if (box->parent && box->parent->type == BOX_INLINE_CONTAINER) {
+	} 否则 如果 (box->parent && box->parent->type == BOX_INLINE_CONTAINER) {
 		/* Box is an inline block */
 		assert(box->parent->parent);
 		containing_block = box->parent->parent;
 	}
 
-	if (box->style) {
+	如果 (box->style) {
 		enum css_height_e htype = CSS_HEIGHT_AUTO;
 		css_fixed value = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		if (containing_block) {
+		如果 (containing_block) {
 			htype = css_computed_height(containing_block->style,
 					&value, &unit);
 		}
 
 		/* max-height */
-		if (css_computed_max_height(box->style, &value, &unit) ==
+		如果 (css_computed_max_height(box->style, &value, &unit) ==
 				CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				if (containing_block &&
+			如果 (unit == CSS_UNIT_PCT) {
+				如果 (containing_block &&
 					containing_block->height != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
@@ -2211,16 +2211,16 @@ static bool layout_apply_minmax_height(
 					 * Section 10.5) */
 					h = FPCT_OF_INT_TOINT(value,
 						containing_block->height);
-					if (h < box->height) {
+					如果 (h < box->height) {
 						box->height = h;
 						updated = true;
 					}
 				}
-			} else {
+			} 否则 {
 				h = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
 						value, unit));
-				if (h < box->height) {
+				如果 (h < box->height) {
 					box->height = h;
 					updated = true;
 				}
@@ -2228,10 +2228,10 @@ static bool layout_apply_minmax_height(
 		}
 
 		/* min-height */
-		if (ns_computed_min_height(box->style, &value, &unit) ==
+		如果 (ns_computed_min_height(box->style, &value, &unit) ==
 				CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				if (containing_block &&
+			如果 (unit == CSS_UNIT_PCT) {
+				如果 (containing_block &&
 					containing_block->height != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
@@ -2242,23 +2242,23 @@ static bool layout_apply_minmax_height(
 					 * Section 10.5) */
 					h = FPCT_OF_INT_TOINT(value,
 						containing_block->height);
-					if (h > box->height) {
+					如果 (h > box->height) {
 						box->height = h;
 						updated = true;
 					}
 				}
-			} else {
+			} 否则 {
 				h = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
 						value, unit));
-				if (h > box->height) {
+				如果 (h > box->height) {
 					box->height = h;
 					updated = true;
 				}
 			}
 		}
 	}
-	return updated;
+	返回 updated;
 }
 
 
@@ -2282,15 +2282,15 @@ static bool layout_block_object(struct box *block)
 	NSLOG(layout, DEBUG,  "block %p, object %p, width %i", block,
 	      hlcache_handle_get_url(block->object), block->width);
 
-	if (content_can_reformat(block->object)) {
+	如果 (content_can_reformat(block->object)) {
 		content_reformat(block->object, false, block->width, 1);
-	} else {
+	} 否则 {
 		/* Non-HTML objects */
 		/* this case handled already in
 		 * layout_block_find_dimensions() */
 	}
 
-	return true;
+	返回 true;
 }
 
 
@@ -2305,26 +2305,26 @@ static bool layout_block_object(struct box *block)
 static void add_float_to_container(struct box *cont, struct box *b)
 {
 	struct box *box = cont->float_children;
-	int b_bottom = b->y + b->height;
+	整数 b_bottom = b->y + b->height;
 
 	assert(b->type == BOX_FLOAT_LEFT || b->type == BOX_FLOAT_RIGHT);
 
-	if (box == NULL) {
+	如果 (box == NULL) {
 		/* No other float children */
 		b->next_float = NULL;
 		cont->float_children = b;
-		return;
-	} else if (b_bottom >= box->y + box->height) {
+		返回;
+	} 否则 如果 (b_bottom >= box->y + box->height) {
 		/* Goes at start of list */
 		b->next_float = cont->float_children;
 		cont->float_children = b;
-	} else {
+	} 否则 {
 		struct box *prev = NULL;
-		while (box != NULL && b_bottom < box->y + box->height) {
+		当 (box != NULL && b_bottom < box->y + box->height) {
 			prev = box;
 			box = box->next_float;
 		}
-		if (prev != NULL) {
+		如果 (prev != NULL) {
 			b->next_float = prev->next_float;
 			prev->next_float = b;
 		}
@@ -2350,30 +2350,30 @@ layout_text_box_split(html_content *content,
 		      plot_font_style_t *fstyle,
 		      struct box *split_box,
 		      size_t new_length,
-		      int new_width)
+		      整数 new_width)
 {
-	int space_width = split_box->space;
+	整数 space_width = split_box->space;
 	struct box *c2;
 	const struct gui_layout_table *font_func = content->font_func;
 	bool space = (split_box->text[new_length] == ' ');
-	int used_length = new_length + (space ? 1 : 0);
+	整数 used_length = new_length + (space ? 1 : 0);
 
-	if ((space && space_width == 0) || space_width == UNKNOWN_WIDTH) {
+	如果 ((space && space_width == 0) || space_width == UNKNOWN_WIDTH) {
 		/* We're need to add a space, and we don't know how big
 		 * it's to be, OR we have a space of unknown width anyway;
 		 * Calculate space width */
 		font_func->width(fstyle, " ", 1, &space_width);
 	}
 
-	if (split_box->space == UNKNOWN_WIDTH)
+	如果 (split_box->space == UNKNOWN_WIDTH)
 		split_box->space = space_width;
-	if (!space)
+	如果 (!space)
 		space_width = 0;
 
 	/* Create clone of split_box, c2 */
 	c2 = talloc_memdup(content->bctx, split_box, sizeof *c2);
-	if (!c2)
-		return false;
+	如果 (!c2)
+		返回 false;
 	c2->flags |= CLONE;
 
 	/* Set remaining text in c2 */
@@ -2394,25 +2394,25 @@ layout_text_box_split(html_content *content,
 	c2->next = split_box->next;
 	split_box->next = c2;
 	c2->prev = split_box;
-	if (c2->next)
+	如果 (c2->next)
 		c2->next->prev = c2;
-	else
+	否则
 		c2->parent->last = c2;
 
 	NSLOG(layout, DEBUG,
 	      "split_box %p len: %" PRIsizet " \"%.*s\"",
 	      split_box,
 	      split_box->length,
-	      (int)split_box->length,
+	      (整数)split_box->length,
 	      split_box->text);
 	NSLOG(layout, DEBUG,
 	      "  new_box %p len: %" PRIsizet " \"%.*s\"",
 	      c2,
 	      c2->length,
-	      (int)c2->length,
+	      (整数)c2->length,
 	      c2->text);
 
-	return true;
+	返回 true;
 }
 
 
@@ -2430,21 +2430,21 @@ layout_text_box_split(html_content *content,
 static void
 layout_float_find_dimensions(
 		const css_unit_ctx *unit_len_ctx,
-		int available_width,
+		整数 available_width,
 		const css_computed_style *style,
 		struct box *box)
 {
-	int width, height, max_width, min_width, max_height, min_height;
-	int *margin = box->margin;
-	int *padding = box->padding;
+	整数 width, height, max_width, min_width, max_height, min_height;
+	整数 *margin = box->margin;
+	整数 *padding = box->padding;
 	struct box_border *border = box->border;
 	enum css_overflow_e overflow_x = css_computed_overflow_x(style);
 	enum css_overflow_e overflow_y = css_computed_overflow_y(style);
-	int scrollbar_width_x =
+	整数 scrollbar_width_x =
 			(overflow_x == CSS_OVERFLOW_SCROLL ||
 			 overflow_x == CSS_OVERFLOW_AUTO) ?
 			SCROLLBAR_WIDTH : 0;
-	int scrollbar_width_y =
+	整数 scrollbar_width_y =
 			(overflow_y == CSS_OVERFLOW_SCROLL ||
 			 overflow_y == CSS_OVERFLOW_AUTO) ?
 			SCROLLBAR_WIDTH : 0;
@@ -2453,23 +2453,23 @@ layout_float_find_dimensions(
 			&width, &height, &max_width, &min_width,
 			&max_height, &min_height, margin, padding, border);
 
-	if (margin[LEFT] == AUTO)
+	如果 (margin[LEFT] == AUTO)
 		margin[LEFT] = 0;
-	if (margin[RIGHT] == AUTO)
+	如果 (margin[RIGHT] == AUTO)
 		margin[RIGHT] = 0;
 
-	if (box->gadget == NULL) {
+	如果 (box->gadget == NULL) {
 		padding[RIGHT] += scrollbar_width_y;
 		padding[BOTTOM] += scrollbar_width_x;
 	}
 
-	if (box->object && !(box->flags & REPLACE_DIM) &&
+	如果 (box->object && !(box->flags & REPLACE_DIM) &&
 			content_get_type(box->object) != CONTENT_HTML) {
 		/* Floating replaced element, with intrinsic width or height.
 		 * See 10.3.6 and 10.6.2 */
 		layout_get_object_dimensions(box, &width, &height,
 				min_width, max_width, min_height, max_height);
-	} else if (box->gadget && (box->gadget->type == GADGET_TEXTBOX ||
+	} 否则 如果 (box->gadget && (box->gadget->type == GADGET_TEXTBOX ||
 			box->gadget->type == GADGET_PASSWORD ||
 			box->gadget->type == GADGET_FILE ||
 			box->gadget->type == GADGET_TEXTAREA)) {
@@ -2480,16 +2480,16 @@ layout_float_find_dimensions(
 		 * that don't shrink to fit contained text. */
 		assert(box->style);
 
-		if (box->gadget->type == GADGET_TEXTBOX ||
+		如果 (box->gadget->type == GADGET_TEXTBOX ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_FILE) {
-			if (width == AUTO) {
+			如果 (width == AUTO) {
 				size = INTTOFIX(10);
 				width = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
 						size, unit));
 			}
-			if (box->gadget->type == GADGET_FILE &&
+			如果 (box->gadget->type == GADGET_FILE &&
 					height == AUTO) {
 				size = FLTTOFIX(1.5);
 				height = FIXTOINT(css_unit_len2device_px(
@@ -2497,63 +2497,63 @@ layout_float_find_dimensions(
 						size, unit));
 			}
 		}
-		if (box->gadget->type == GADGET_TEXTAREA) {
-			if (width == AUTO) {
+		如果 (box->gadget->type == GADGET_TEXTAREA) {
+			如果 (width == AUTO) {
 				size = INTTOFIX(10);
 				width = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
 						size, unit));
 			}
-			if (height == AUTO) {
+			如果 (height == AUTO) {
 				size = INTTOFIX(4);
 				height = FIXTOINT(css_unit_len2device_px(
 						box->style, unit_len_ctx,
 						size, unit));
 			}
 		}
-	} else if (width == AUTO) {
+	} 否则 如果 (width == AUTO) {
 		/* CSS 2.1 section 10.3.5 */
 		width = min(max(box->min_width, available_width),
 				box->max_width);
 
 		/* width includes margin, borders and padding */
-		if (width == available_width) {
+		如果 (width == available_width) {
 			width -= box->margin[LEFT] + box->border[LEFT].width +
 					box->padding[LEFT] +
 					box->padding[RIGHT] +
 					box->border[RIGHT].width +
 					box->margin[RIGHT];
-		} else {
+		} 否则 {
 			/* width was obtained from a min_width or max_width
 			 * value, so need to use the same method for calculating
 			 * mbp as was used in layout_minmax_block() */
-			int fixed = 0;
+			整数 fixed = 0;
 			float frac = 0;
 			calculate_mbp_width(unit_len_ctx, box->style, LEFT,
 					true, true, true, &fixed, &frac);
 			calculate_mbp_width(unit_len_ctx, box->style, RIGHT,
 					true, true, true, &fixed, &frac);
-			if (fixed < 0)
+			如果 (fixed < 0)
 				fixed = 0;
 
 			width -= fixed;
 		}
 
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+		如果 (max_width >= 0 && width > max_width) width = max_width;
+		如果 (min_width >  0 && width < min_width) width = min_width;
 
-	} else {
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+	} 否则 {
+		如果 (max_width >= 0 && width > max_width) width = max_width;
+		如果 (min_width >  0 && width < min_width) width = min_width;
 		width -= scrollbar_width_y;
 	}
 
 	box->width = width;
 	box->height = height;
 
-	if (margin[TOP] == AUTO)
+	如果 (margin[TOP] == AUTO)
 		margin[TOP] = 0;
-	if (margin[BOTTOM] == AUTO)
+	如果 (margin[BOTTOM] == AUTO)
 		margin[BOTTOM] = 0;
 }
 
@@ -2566,7 +2566,7 @@ layout_float_find_dimensions(
  * \param  content  memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-static bool layout_float(struct box *b, int width, html_content *content)
+static bool layout_float(struct box *b, 整数 width, html_content *content)
 {
 	assert(b->type == BOX_TABLE ||
 	       b->type == BOX_BLOCK ||
@@ -2574,26 +2574,26 @@ static bool layout_float(struct box *b, int width, html_content *content)
 	       b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX);
 	layout_float_find_dimensions(&content->unit_len_ctx, width, b->style, b);
-	if (b->type == BOX_TABLE || b->type == BOX_INLINE_FLEX) {
-		if (b->type == BOX_TABLE) {
-			if (!layout_table(b, width, content))
-				return false;
-		} else {
-			if (!layout_flex(b, width, content))
-				return false;
+	如果 (b->type == BOX_TABLE || b->type == BOX_INLINE_FLEX) {
+		如果 (b->type == BOX_TABLE) {
+			如果 (!layout_table(b, width, content))
+				返回 false;
+		} 否则 {
+			如果 (!layout_flex(b, width, content))
+				返回 false;
 		}
-		if (b->margin[LEFT] == AUTO)
+		如果 (b->margin[LEFT] == AUTO)
 			b->margin[LEFT] = 0;
-		if (b->margin[RIGHT] == AUTO)
+		如果 (b->margin[RIGHT] == AUTO)
 			b->margin[RIGHT] = 0;
-		if (b->margin[TOP] == AUTO)
+		如果 (b->margin[TOP] == AUTO)
 			b->margin[TOP] = 0;
-		if (b->margin[BOTTOM] == AUTO)
+		如果 (b->margin[BOTTOM] == AUTO)
 			b->margin[BOTTOM] = 0;
-	} else {
-		return layout_block_context(b, -1, content);
+	} 否则 {
+		返回 layout_block_context(b, -1, content);
 	}
-	return true;
+	返回 true;
 }
 
 
@@ -2607,9 +2607,9 @@ static bool layout_float(struct box *b, int width, html_content *content)
  * \param  cont	  ancestor box which defines horizontal space, for floats
  */
 static void
-place_float_below(struct box *c, int width, int cx, int y, struct box *cont)
+place_float_below(struct box *c, 整数 width, 整数 cx, 整数 y, struct box *cont)
 {
-	int x0, x1, yy;
+	整数 x0, x1, yy;
 	struct box *left;
 	struct box *right;
 
@@ -2626,21 +2626,21 @@ place_float_below(struct box *c, int width, int cx, int y, struct box *cont)
 		x1 = cx + width;
 		find_sides(cont->float_children, y, y + c->height, &x0, &x1,
 				&left, &right);
-		if (left != 0 && right != 0) {
+		如果 (left != 0 && right != 0) {
 			yy = (left->y + left->height <
 					right->y + right->height ?
 					left->y + left->height :
 					right->y + right->height);
-		} else if (left == 0 && right != 0) {
+		} 否则 如果 (left == 0 && right != 0) {
 			yy = right->y + right->height;
-		} else if (left != 0 && right == 0) {
+		} 否则 如果 (left != 0 && right == 0) {
 			yy = left->y + left->height;
 		}
-	} while ((left != 0 || right != 0) && (c->width > x1 - x0));
+	} 当 ((left != 0 || right != 0) && (c->width > x1 - x0));
 
-	if (c->type == BOX_FLOAT_LEFT) {
+	如果 (c->type == BOX_FLOAT_LEFT) {
 		c->x = x0;
-	} else {
+	} 否则 {
 		c->x = x1 - c->width;
 	}
 	c->y = y;
@@ -2651,7 +2651,7 @@ place_float_below(struct box *c, int width, int cx, int y, struct box *cont)
 /**
  * Calculate line height from a style.
  */
-static int line_height(
+static 整数 line_height(
 		const css_unit_ctx *unit_len_ctx,
 		const css_computed_style *style)
 {
@@ -2663,27 +2663,27 @@ static int line_height(
 	assert(style);
 
 	lhtype = css_computed_line_height(style, &lhvalue, &lhunit);
-	if (lhtype == CSS_LINE_HEIGHT_NORMAL) {
+	如果 (lhtype == CSS_LINE_HEIGHT_NORMAL) {
 		/* Normal => use a constant of 1.3 * font-size */
 		lhvalue = FLTTOFIX(1.3);
 		lhtype = CSS_LINE_HEIGHT_NUMBER;
 	}
 
-	if (lhtype == CSS_LINE_HEIGHT_NUMBER ||
+	如果 (lhtype == CSS_LINE_HEIGHT_NUMBER ||
 			lhunit == CSS_UNIT_PCT) {
 		line_height = css_unit_len2device_px(style, unit_len_ctx,
 				lhvalue, CSS_UNIT_EM);
 
-		if (lhtype != CSS_LINE_HEIGHT_NUMBER)
+		如果 (lhtype != CSS_LINE_HEIGHT_NUMBER)
 			line_height = FDIV(line_height, F_100);
-	} else {
+	} 否则 {
 		assert(lhunit != CSS_UNIT_PCT);
 
 		line_height = css_unit_len2device_px(style, unit_len_ctx,
 				lhvalue, lhunit);
 	}
 
-	return FIXTOINT(line_height);
+	返回 FIXTOINT(line_height);
 }
 
 
@@ -2705,21 +2705,21 @@ static int line_height(
  */
 static bool
 layout_line(struct box *first,
-	    int *width,
-	    int *y,
-	    int cx,
-	    int cy,
+	    整数 *width,
+	    整数 *y,
+	    整数 cx,
+	    整数 cy,
 	    struct box *cont,
 	    bool indent,
 	    bool has_text_children,
 	    html_content *content,
 	    struct box **next_box)
 {
-	int height, used_height;
-	int x0 = 0;
-	int x1 = *width;
-	int x, h, x_previous;
-	int fy = cy;
+	整数 height, used_height;
+	整数 x0 = 0;
+	整数 x1 = *width;
+	整数 x, h, x_previous;
+	整数 fy = cy;
 	struct box *left;
 	struct box *right;
 	struct box *b;
@@ -2728,16 +2728,16 @@ layout_line(struct box *first,
 	struct box *br_box = 0;
 	bool move_y = false;
 	bool place_below = false;
-	int space_before = 0, space_after = 0;
-	unsigned int inline_count = 0;
-	unsigned int i;
+	整数 space_before = 0, space_after = 0;
+	unsigned 整数 inline_count = 0;
+	unsigned 整数 i;
 	const struct gui_layout_table *font_func = content->font_func;
 	plot_font_style_t fstyle;
 
 	NSLOG(layout, DEBUG,
 	      "first %p, first->text '%.*s', width %i, y %i, cx %i, cy %i",
 	      first,
-	      (int)first->length,
+	      (整数)first->length,
 	      first->text,
 	      *width,
 	      *y,
@@ -2751,20 +2751,20 @@ layout_line(struct box *first,
 	x0 -= cx;
 	x1 -= cx;
 
-	if (indent)
+	如果 (indent)
 		x0 += layout_text_indent(&content->unit_len_ctx,
 				first->parent->parent->style, *width);
 
-	if (x1 < x0)
+	如果 (x1 < x0)
 		x1 = x0;
 
 	/* get minimum line height from containing block.
 	 * this is the line-height if there are text children and also in the
 	 * case of an initially empty text input */
-	if (has_text_children || first->parent->parent->gadget)
+	如果 (has_text_children || first->parent->parent->gadget)
 		used_height = height = line_height(&content->unit_len_ctx,
 				first->parent->parent->style);
-	else
+	否则
 		/* inline containers with no text are usually for layout and
 		 * look better with no minimum line-height */
 		used_height = height = 0;
@@ -2776,19 +2776,19 @@ layout_line(struct box *first,
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, x1 - x0 %i", x0, x1, x1 - x0);
 
 
-	for (x = 0, b = first; x <= x1 - x0 && b != 0; b = b->next) {
-		int min_width, max_width, min_height, max_height;
+	为 (x = 0, b = first; x <= x1 - x0 && b != 0; b = b->next) {
+		整数 min_width, max_width, min_height, max_height;
 
 		assert(lh__box_is_inline_content(b));
 
 		NSLOG(layout, DEBUG,  "pass 1: b %p, x %i", b, x);
 
-		if (b->type == BOX_BR)
+		如果 (b->type == BOX_BR)
 			break;
 
-		if (lh__box_is_float_box(b))
+		如果 (lh__box_is_float_box(b))
 			continue;
-		if (b->type == BOX_INLINE_BLOCK &&
+		如果 (b->type == BOX_INLINE_BLOCK &&
 				(css_computed_position(b->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(b->style) ==
@@ -2800,15 +2800,15 @@ layout_line(struct box *first,
 
 		x += space_after;
 
-		if (b->type == BOX_INLINE_BLOCK ||
+		如果 (b->type == BOX_INLINE_BLOCK ||
 		    b->type == BOX_INLINE_FLEX) {
-			if (b->max_width != UNKNOWN_WIDTH)
-				if (!layout_float(b, *width, content))
-					return false;
+			如果 (b->max_width != UNKNOWN_WIDTH)
+				如果 (!layout_float(b, *width, content))
+					返回 false;
 			h = b->border[TOP].width + b->padding[TOP] + b->height +
 					b->padding[BOTTOM] +
 					b->border[BOTTOM].width;
-			if (height < h)
+			如果 (height < h)
 				height = h;
 			x += b->margin[LEFT] + b->border[LEFT].width +
 					b->padding[LEFT] + b->width +
@@ -2819,30 +2819,30 @@ layout_line(struct box *first,
 			continue;
 		}
 
-		if (b->type == BOX_INLINE) {
+		如果 (b->type == BOX_INLINE) {
 			/* calculate borders, margins, and padding */
 			layout_find_dimensions(&content->unit_len_ctx,
 					*width, -1, b, b->style, 0, 0, 0, 0,
 					0, 0, b->margin, b->padding, b->border);
-			for (i = 0; i != 4; i++)
-				if (b->margin[i] == AUTO)
+			为 (i = 0; i != 4; i++)
+				如果 (b->margin[i] == AUTO)
 					b->margin[i] = 0;
 			x += b->margin[LEFT] + b->border[LEFT].width +
 					b->padding[LEFT];
-			if (b->inline_end) {
+			如果 (b->inline_end) {
 				b->inline_end->margin[RIGHT] = b->margin[RIGHT];
 				b->inline_end->padding[RIGHT] =
 						b->padding[RIGHT];
 				b->inline_end->border[RIGHT] =
 						b->border[RIGHT];
-			} else {
+			} 否则 {
 				x += b->padding[RIGHT] +
 						b->border[RIGHT].width +
 						b->margin[RIGHT];
 			}
-		} else if (b->type == BOX_INLINE_END) {
+		} 否则 如果 (b->type == BOX_INLINE_END) {
 			b->width = 0;
-			if (b->space == UNKNOWN_WIDTH) {
+			如果 (b->space == UNKNOWN_WIDTH) {
 				font_func->width(&fstyle, " ", 1, &b->space);
 				/** \todo handle errors */
 			}
@@ -2853,47 +2853,47 @@ layout_line(struct box *first,
 			continue;
 		}
 
-		if (lh__box_is_replace(b) == false) {
+		如果 (lh__box_is_replace(b) == false) {
 			/* inline non-replaced, 10.3.1 and 10.6.1 */
 			b->height = line_height(&content->unit_len_ctx,
 					b->style ? b->style :
 					b->parent->parent->style);
-			if (height < b->height)
+			如果 (height < b->height)
 				height = b->height;
 
-			if (!b->text) {
+			如果 (!b->text) {
 				b->width = 0;
 				space_after = 0;
 				continue;
 			}
 
-			if (b->width == UNKNOWN_WIDTH) {
+			如果 (b->width == UNKNOWN_WIDTH) {
 				/** \todo handle errors */
 
 				/* If it's a select element, we must use the
 				 * width of the widest option text */
-				if (b->parent->parent->gadget &&
+				如果 (b->parent->parent->gadget &&
 						b->parent->parent->gadget->type
 						== GADGET_SELECT) {
-					int opt_maxwidth = 0;
+					整数 opt_maxwidth = 0;
 					struct form_option *o;
 
-					for (o = b->parent->parent->gadget->
+					为 (o = b->parent->parent->gadget->
 							data.select.items; o;
 							o = o->next) {
-						int opt_width;
+						整数 opt_width;
 						font_func->width(&fstyle,
 								o->text,
 								strlen(o->text),
 								&opt_width);
 
-						if (opt_maxwidth < opt_width)
+						如果 (opt_maxwidth < opt_width)
 							opt_maxwidth =opt_width;
 					}
 					b->width = opt_maxwidth;
-					if (nsoption_bool(core_select_menu))
+					如果 (nsoption_bool(core_select_menu))
 						b->width += SCROLLBAR_WIDTH;
-				} else {
+				} 否则 {
 					font_func->width(&fstyle, b->text,
 							b->length, &b->width);
 					b->flags |= MEASURED;
@@ -2904,7 +2904,7 @@ layout_line(struct box *first,
 			 * width was estimated after splitting), and it fits on
 			 * the line, measure it properly, so next box is placed
 			 * correctly. */
-			if (b->text && (x + b->width < x1 - x0) &&
+			如果 (b->text && (x + b->width < x1 - x0) &&
 					!(b->flags & MEASURED) &&
 					b->next) {
 				font_func->width(&fstyle, b->text,
@@ -2913,7 +2913,7 @@ layout_line(struct box *first,
 			}
 
 			x += b->width;
-			if (b->space == UNKNOWN_WIDTH) {
+			如果 (b->space == UNKNOWN_WIDTH) {
 				font_func->width(&fstyle, " ", 1, &b->space);
 				/** \todo handle errors */
 			}
@@ -2933,27 +2933,27 @@ layout_line(struct box *first,
 				&max_height, &min_height,
 				NULL, NULL, NULL);
 
-		if (b->object && !(b->flags & REPLACE_DIM)) {
+		如果 (b->object && !(b->flags & REPLACE_DIM)) {
 			layout_get_object_dimensions(b, &b->width, &b->height,
 					min_width, max_width,
 					min_height, max_height);
-		} else if (b->flags & IFRAME) {
+		} 否则 如果 (b->flags & IFRAME) {
 			/* TODO: should we look at the content dimensions? */
-			if (b->width == AUTO)
+			如果 (b->width == AUTO)
 				b->width = 400;
-			if (b->height == AUTO)
+			如果 (b->height == AUTO)
 				b->height = 300;
 
 			/* We reformat the iframe browser window to new
 			 * dimensions in pass 2 */
-		} else {
+		} 否则 {
 			/* form control with no object */
-			if (b->width == AUTO)
+			如果 (b->width == AUTO)
 				b->width = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx, INTTOFIX(1),
 						CSS_UNIT_EM));
-			if (b->height == AUTO)
+			如果 (b->height == AUTO)
 				b->height = FIXTOINT(css_unit_len2device_px(
 						b->style,
 						&content->unit_len_ctx, INTTOFIX(1),
@@ -2961,7 +2961,7 @@ layout_line(struct box *first,
 		}
 
 		/* Reformat object to new box size */
-		if (b->object && content_can_reformat(b->object) &&
+		如果 (b->object && content_can_reformat(b->object) &&
 				b->width !=
 				content_get_available_width(b->object)) {
 			css_fixed value = 0;
@@ -2971,11 +2971,11 @@ layout_line(struct box *first,
 
 			content_reformat(b->object, false, b->width, b->height);
 
-			if (htype == CSS_HEIGHT_AUTO)
+			如果 (htype == CSS_HEIGHT_AUTO)
 				b->height = content_get_height(b->object);
 		}
 
-		if (height < b->height)
+		如果 (height < b->height)
 			height = b->height;
 
 		x += b->width;
@@ -2989,11 +2989,11 @@ layout_line(struct box *first,
 	x0 -= cx;
 	x1 -= cx;
 
-	if (indent)
+	如果 (indent)
 		x0 += layout_text_indent(&content->unit_len_ctx,
 				first->parent->parent->style, *width);
 
-	if (x1 < x0)
+	如果 (x1 < x0)
 		x1 = x0;
 
 	space_after = space_before = 0;
@@ -3002,25 +3002,25 @@ layout_line(struct box *first,
 
 	NSLOG(layout, DEBUG,  "x0 %i, x1 %i, x1 - x0 %i", x0, x1, x1 - x0);
 
-	for (x = x_previous = 0, b = first; x <= x1 - x0 && b; b = b->next) {
+	为 (x = x_previous = 0, b = first; x <= x1 - x0 && b; b = b->next) {
 
 		NSLOG(layout, DEBUG,  "pass 2: b %p, x %i", b, x);
 
-		if (b->type == BOX_INLINE_BLOCK &&
+		如果 (b->type == BOX_INLINE_BLOCK &&
 				(css_computed_position(b->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(b->style) ==
 						CSS_POSITION_FIXED)) {
 			b->x = x + space_after;
 
-		} else if (lh__box_is_inline_flow(b)) {
+		} 否则 如果 (lh__box_is_inline_flow(b)) {
 			assert(b->width != UNKNOWN_WIDTH);
 
 			x_previous = x;
 			x += space_after;
 			b->x = x;
 
-			if ((b->type == BOX_INLINE && !b->inline_end) ||
+			如果 ((b->type == BOX_INLINE && !b->inline_end) ||
 					b->type == BOX_INLINE_BLOCK ||
 					b->type == BOX_INLINE_FLEX) {
 				b->x += b->margin[LEFT] + b->border[LEFT].width;
@@ -3028,24 +3028,24 @@ layout_line(struct box *first,
 						b->padding[RIGHT] +
 						b->border[RIGHT].width +
 						b->margin[RIGHT];
-			} else if (b->type == BOX_INLINE) {
+			} 否则 如果 (b->type == BOX_INLINE) {
 				b->x += b->margin[LEFT] + b->border[LEFT].width;
 				x = b->x + b->padding[LEFT] + b->width;
-			} else if (b->type == BOX_INLINE_END) {
+			} 否则 如果 (b->type == BOX_INLINE_END) {
 				b->height = b->inline_end->height;
 				x += b->padding[RIGHT] +
 						b->border[RIGHT].width +
 						b->margin[RIGHT];
-			} else {
+			} 否则 {
 				x += b->width;
 			}
 
 			space_before = space_after;
-			if (b->object || b->flags & REPLACE_DIM ||
+			如果 (b->object || b->flags & REPLACE_DIM ||
 					b->flags & IFRAME)
 				space_after = 0;
-			else if (b->text || b->type == BOX_INLINE_END) {
-				if (b->space == UNKNOWN_WIDTH) {
+			否则 如果 (b->text || b->type == BOX_INLINE_END) {
+				如果 (b->space == UNKNOWN_WIDTH) {
 					font_plot_style_from_css(
 							&content->unit_len_ctx,
 							b->style, &fstyle);
@@ -3054,13 +3054,13 @@ layout_line(struct box *first,
 							 &b->space);
 				}
 				space_after = b->space;
-			} else {
+			} 否则 {
 				space_after = 0;
 			}
 			split_box = b;
 			move_y = true;
 			inline_count++;
-		} else if (b->type == BOX_BR) {
+		} 否则 如果 (b->type == BOX_BR) {
 			b->x = x;
 			b->width = 0;
 			br_box = b;
@@ -3069,7 +3069,7 @@ layout_line(struct box *first,
 			move_y = true;
 			break;
 
-		} else {
+		} 否则 {
 			/* float */
 			NSLOG(layout, DEBUG,  "float %p", b);
 
@@ -3078,8 +3078,8 @@ layout_line(struct box *first,
 			d->cached_place_below_level = 0;
 			b->float_container = d->float_container = cont;
 
-			if (!layout_float(d, *width, content))
-				return false;
+			如果 (!layout_float(d, *width, content))
+				返回 false;
 
 			NSLOG(layout, DEBUG,
 			      "%p : %d %d",
@@ -3100,9 +3100,9 @@ layout_line(struct box *first,
 					d->border[BOTTOM].width +
 					d->margin[BOTTOM];
 
-			if (b->width > (x1 - x0) - x)
+			如果 (b->width > (x1 - x0) - x)
 				place_below = true;
-			if (d->style && (css_computed_clear(d->style) ==
+			如果 (d->style && (css_computed_clear(d->style) ==
 						CSS_CLEAR_NONE ||
 					(css_computed_clear(d->style) ==
 						CSS_CLEAR_LEFT && left == 0) ||
@@ -3123,22 +3123,22 @@ layout_line(struct box *first,
 				 * + current y, cy, is below the clear level
 				 *
 				 * Float affects current line */
-				if (b->type == BOX_FLOAT_LEFT) {
+				如果 (b->type == BOX_FLOAT_LEFT) {
 					b->x = cx + x0;
-					if (b->width > 0)
+					如果 (b->width > 0)
 						x0 += b->width;
 					left = b;
-				} else {
+				} 否则 {
 					b->x = cx + x1 - b->width;
-					if (b->width > 0)
+					如果 (b->width > 0)
 						x1 -= b->width;
 					right = b;
 				}
 				b->y = cy;
-			} else {
+			} 否则 {
 				/* cleared or doesn't fit on line */
 				/* place below into next available space */
-				int fcy = (cy > cont->clear_level) ? cy :
+				整数 fcy = (cy > cont->clear_level) ? cy :
 						cont->clear_level;
 				fcy = (fcy > cont->cached_place_below_level) ?
 						fcy :
@@ -3148,7 +3148,7 @@ layout_line(struct box *first,
 
 				place_float_below(b, *width, cx, fy, cont);
 				fy = b->y;
-				if (d->style && (
+				如果 (d->style && (
 						(css_computed_clear(d->style) ==
 						CSS_CLEAR_LEFT && left != 0) ||
 						(css_computed_clear(d->style) ==
@@ -3159,21 +3159,21 @@ layout_line(struct box *first,
 						(left != 0 || right != 0)))) {
 					/* to be cleared below existing
 					 * floats */
-					if (b->type == BOX_FLOAT_LEFT)
+					如果 (b->type == BOX_FLOAT_LEFT)
 						b->x = cx;
-					else
+					否则
 						b->x = cx + *width - b->width;
 
 					fcy = layout_clear(cont->float_children,
 						css_computed_clear(d->style));
-					if (fcy > cont->clear_level)
+					如果 (fcy > cont->clear_level)
 						cont->clear_level = fcy;
-					if (b->y < fcy)
+					如果 (b->y < fcy)
 						b->y = fcy;
 				}
-				if (b->type == BOX_FLOAT_LEFT)
+				如果 (b->type == BOX_FLOAT_LEFT)
 					left = b;
-				else
+				否则
 					right = b;
 			}
 			add_float_to_container(cont, b);
@@ -3182,10 +3182,10 @@ layout_line(struct box *first,
 		}
 	}
 
-	if (x1 - x0 < x && split_box) {
+	如果 (x1 - x0 < x && split_box) {
 		/* the last box went over the end */
 		size_t split = 0;
-		int w;
+		整数 w;
 		bool no_wrap = css_computed_white_space(
 				split_box->style) == CSS_WHITE_SPACE_NOWRAP ||
 				css_computed_white_space(
@@ -3193,7 +3193,7 @@ layout_line(struct box *first,
 
 		x = x_previous;
 
-		if (!no_wrap &&
+		如果 (!no_wrap &&
 		    (split_box->type == BOX_INLINE ||
 		     split_box->type == BOX_TEXT) &&
 		    !split_box->object &&
@@ -3214,7 +3214,7 @@ layout_line(struct box *first,
 
 		/* split == 0 implies that text can't be split */
 
-		if (split == 0)
+		如果 (split == 0)
 			w = split_box->width;
 
 
@@ -3222,7 +3222,7 @@ layout_line(struct box *first,
 		      "splitting: split_box %p \"%.*s\", spilt %"PRIsizet
 		      ", w %i, left %p, right %p, inline_count %u",
 		      split_box,
-		      (int)split_box->length,
+		      (整数)split_box->length,
 		      split_box->text,
 		      split,
 		      w,
@@ -3230,32 +3230,32 @@ layout_line(struct box *first,
 		      right,
 		      inline_count);
 
-		if ((split == 0 || x1 - x0 <= x + space_before + w) &&
+		如果 ((split == 0 || x1 - x0 <= x + space_before + w) &&
 				!left && !right && inline_count == 1) {
 			/* first word of box doesn't fit, but no floats and
 			 * first box on line so force in */
-			if (split == 0 || split == split_box->length) {
+			如果 (split == 0 || split == split_box->length) {
 				/* only one word in this box, or not text
 				 * or white-space:nowrap */
 				b = split_box->next;
-			} else {
+			} 否则 {
 				/* cut off first word for this line */
-				if (!layout_text_box_split(content, &fstyle,
+				如果 (!layout_text_box_split(content, &fstyle,
 						split_box, split, w))
-					return false;
+					返回 false;
 				b = split_box->next;
 			}
 			x += space_before + w;
 
 			NSLOG(layout, DEBUG,  "forcing");
 
-		} else if ((split == 0 || x1 - x0 <= x + space_before + w) &&
+		} 否则 如果 ((split == 0 || x1 - x0 <= x + space_before + w) &&
 				inline_count == 1) {
 			/* first word of first box doesn't fit, but a float is
 			 * taking some of the width so move below it */
 			assert(left || right);
 			used_height = 0;
-			if (left) {
+			如果 (left) {
 
 				NSLOG(layout, DEBUG,
 				      "cy %i, left->y %i, left->height %i",
@@ -3269,37 +3269,37 @@ layout_line(struct box *first,
 				      used_height);
 
 			}
-			if (right && used_height <
+			如果 (right && used_height <
 					right->y + right->height - cy + 1)
 				used_height = right->y + right->height - cy + 1;
 
-			if (used_height < 0)
+			如果 (used_height < 0)
 				used_height = 0;
 
 			b = split_box;
 
 			NSLOG(layout, DEBUG,  "moving below float");
 
-		} else if (split == 0 || x1 - x0 <= x + space_before + w) {
+		} 否则 如果 (split == 0 || x1 - x0 <= x + space_before + w) {
 			/* first word of box doesn't fit so leave box for next
 			 * line */
 			b = split_box;
 
 			NSLOG(layout, DEBUG,  "leaving for next line");
 
-		} else {
+		} 否则 {
 			/* fit as many words as possible */
 			assert(split != 0);
 
 			NSLOG(layout, DEBUG,
 			      "'%.*s' %i %"PRIsizet" %i",
-			      (int)split_box->length, split_box->text,
+			      (整数)split_box->length, split_box->text,
 			      x1 - x0, split, w);
 
-			if (split != split_box->length) {
-				if (!layout_text_box_split(content, &fstyle,
+			如果 (split != split_box->length) {
+				如果 (!layout_text_box_split(content, &fstyle,
 						split_box, split, w))
-					return false;
+					返回 false;
 				b = split_box->next;
 			}
 			x += space_before + w;
@@ -3338,10 +3338,10 @@ layout_line(struct box *first,
 		break;
 	}
 
-	for (d = first; d != b; d = d->next) {
+	为 (d = first; d != b; d = d->next) {
 		d->flags &= ~NEW_LINE;
 
-		if (d->type == BOX_INLINE_BLOCK &&
+		如果 (d->type == BOX_INLINE_BLOCK &&
 				(css_computed_position(d->style) ==
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(d->style) ==
@@ -3352,7 +3352,7 @@ layout_line(struct box *first,
 			d->x += x0;
 			d->y = *y;
 			continue;
-		} else if ((d->type == BOX_INLINE &&
+		} 否则 如果 ((d->type == BOX_INLINE &&
 				lh__box_is_replace(d) == false) ||
 				d->type == BOX_BR ||
 				d->type == BOX_TEXT ||
@@ -3361,11 +3361,11 @@ layout_line(struct box *first,
 			d->x += x0;
 			d->y = *y - d->padding[TOP];
 
-			if (d->type == BOX_TEXT && d->height > used_height) {
+			如果 (d->type == BOX_TEXT && d->height > used_height) {
 				/* text */
 				used_height = d->height;
 			}
-		} else if ((d->type == BOX_INLINE) ||
+		} 否则 如果 ((d->type == BOX_INLINE) ||
 				d->type == BOX_INLINE_BLOCK) {
 			/* replaced inlines and inline-blocks */
 			d->x += x0;
@@ -3375,7 +3375,7 @@ layout_line(struct box *first,
 					d->padding[BOTTOM] +
 					d->border[BOTTOM].width +
 					d->margin[BOTTOM];
-			if (used_height < h)
+			如果 (used_height < h)
 				used_height = h;
 		}
 	}
@@ -3386,8 +3386,8 @@ layout_line(struct box *first,
 
 	/* handle vertical-align by adjusting box y values */
 	/** \todo  proper vertical alignment handling */
-	for (d = first; d != b; d = d->next) {
-		if ((d->type == BOX_INLINE && d->inline_end) ||
+	为 (d = first; d != b; d = d->next) {
+		如果 ((d->type == BOX_INLINE && d->inline_end) ||
 				d->type == BOX_BR ||
 				d->type == BOX_TEXT ||
 				d->type == BOX_INLINE_END) {
@@ -3414,18 +3414,18 @@ layout_line(struct box *first,
 	}
 
 	/* handle clearance for br */
-	if (br_box && css_computed_clear(br_box->style) != CSS_CLEAR_NONE) {
-		int clear_y = layout_clear(cont->float_children,
+	如果 (br_box && css_computed_clear(br_box->style) != CSS_CLEAR_NONE) {
+		整数 clear_y = layout_clear(cont->float_children,
 				css_computed_clear(br_box->style));
-		if (used_height < clear_y - cy)
+		如果 (used_height < clear_y - cy)
 			used_height = clear_y - cy;
 	}
 
-	if (move_y)
+	如果 (move_y)
 		*y += used_height;
 	*next_box = b;
 	*width = x; /* return actual width */
-	return true;
+	返回 true;
 }
 
 
@@ -3440,14 +3440,14 @@ layout_line(struct box *first,
  * \param content  memory pool for any new boxes
  * \return true on success, false on memory exhaustion
  */
-static bool layout_inline_container(struct box *inline_container, int width,
-		struct box *cont, int cx, int cy, html_content *content)
+static bool layout_inline_container(struct box *inline_container, 整数 width,
+		struct box *cont, 整数 cx, 整数 cy, html_content *content)
 {
 	bool first_line = true;
 	bool has_text_children;
 	struct box *c, *next;
-	int y = 0;
-	int curwidth,maxwidth = width;
+	整数 y = 0;
+	整数 curwidth,maxwidth = width;
 
 	assert(inline_container->type == BOX_INLINE_CONTAINER);
 
@@ -3461,10 +3461,10 @@ static bool layout_inline_container(struct box *inline_container, int width,
 
 
 	has_text_children = false;
-	for (c = inline_container->children; c; c = c->next) {
+	为 (c = inline_container->children; c; c = c->next) {
 		bool is_pre = false;
 
-		if (c->style) {
+		如果 (c->style) {
 			enum css_white_space_e whitespace;
 
 			whitespace = css_computed_white_space(c->style);
@@ -3474,7 +3474,7 @@ static bool layout_inline_container(struct box *inline_container, int width,
 				whitespace == CSS_WHITE_SPACE_PRE_WRAP);
 		}
 
-		if ((lh__box_is_object(c) == false &&
+		如果 ((lh__box_is_object(c) == false &&
 				c->text && (c->length || is_pre)) ||
 				c->type == BOX_BR)
 			has_text_children = true;
@@ -3484,14 +3484,14 @@ static bool layout_inline_container(struct box *inline_container, int width,
 	 * shrink back to 'width' if no word is wider than 'width' (Or just set
 	 * curwidth = width and have the multiword lines wrap to the min width)
 	 */
-	for (c = inline_container->children; c; ) {
+	为 (c = inline_container->children; c; ) {
 
 		NSLOG(layout, DEBUG, "c %p", c);
 
 		curwidth = inline_container->width;
-		if (!layout_line(c, &curwidth, &y, cx, cy + y, cont, first_line,
+		如果 (!layout_line(c, &curwidth, &y, cx, cy + y, cont, first_line,
 				has_text_children, content, &next))
-			return false;
+			返回 false;
 		maxwidth = max(maxwidth,curwidth);
 		c = next;
 		first_line = false;
@@ -3500,22 +3500,22 @@ static bool layout_inline_container(struct box *inline_container, int width,
 	inline_container->width = maxwidth;
 	inline_container->height = y;
 
-	return true;
+	返回 true;
 }
 
 
 /* Documented in layout_intertnal.h */
 bool layout_block_context(
 		struct box *block,
-		int viewport_height,
+		整数 viewport_height,
 		html_content *content)
 {
 	struct box *box;
-	int cx, cy;  /**< current coordinates */
-	int max_pos_margin = 0;
-	int max_neg_margin = 0;
-	int y = 0;
-	int lm, rm;
+	整数 cx, cy;  /**< current coordinates */
+	整数 max_pos_margin = 0;
+	整数 max_neg_margin = 0;
+	整数 y = 0;
+	整数 lm, rm;
 	struct box *margin_collapse = NULL;
 	bool in_margin = false;
 	css_fixed gadget_size;
@@ -3534,26 +3534,26 @@ bool layout_block_context(
 	block->clear_level = 0;
 
 	/* special case if the block contains an object */
-	if (block->object) {
-		int temp_width = block->width;
-		if (!layout_block_object(block))
-			return false;
+	如果 (block->object) {
+		整数 temp_width = block->width;
+		如果 (!layout_block_object(block))
+			返回 false;
 		layout_get_object_dimensions(block, &temp_width,
 				&block->height, INT_MIN, INT_MAX,
 				INT_MIN, INT_MAX);
-		return true;
-	} else if (block->flags & REPLACE_DIM) {
-		return true;
+		返回 true;
+	} 否则 如果 (block->flags & REPLACE_DIM) {
+		返回 true;
 	}
 
 	/* special case if the block contains an radio button or checkbox */
-	if (block->gadget && (block->gadget->type == GADGET_RADIO ||
+	如果 (block->gadget && (block->gadget->type == GADGET_RADIO ||
 			block->gadget->type == GADGET_CHECKBOX)) {
 		/* form checkbox or radio button
 		 * if width or height is AUTO, set it to 1em */
 		gadget_unit = CSS_UNIT_EM;
 		gadget_size = INTTOFIX(1);
-		if (block->height == AUTO)
+		如果 (block->height == AUTO)
 			block->height = FIXTOINT(css_unit_len2device_px(
 					block->style,
 					&content->unit_len_ctx,
@@ -3564,7 +3564,7 @@ bool layout_block_context(
 	/* set current coordinates to top-left of the block */
 	cx = 0;
 	y = cy = block->padding[TOP];
-	if (box)
+	如果 (box)
 		box->y = block->padding[TOP];
 
 	/* Step through the descendants of the block in depth-first order, but
@@ -3590,7 +3590,7 @@ bool layout_block_context(
 	 *                   ...
 	 * then the while loop will visit each box marked with *, setting box
 	 * to each in the order shown. */
-	while (box) {
+	当 (box) {
 		enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
 		enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
 
@@ -3607,7 +3607,7 @@ bool layout_block_context(
 		 * correct handling of floats.
 		 */
 
-		if (box->style &&
+		如果 (box->style &&
 				(css_computed_position(box->style) ==
 					CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(box->style) ==
@@ -3621,7 +3621,7 @@ bool layout_block_context(
 
 		/* If we don't know which box the current margin collapses
 		 * through to, find out.  Update the pos/neg margin values. */
-		if (margin_collapse == NULL) {
+		如果 (margin_collapse == NULL) {
 			margin_collapse = layout_next_margin_block(
 					&content->unit_len_ctx, box, block,
 					viewport_height,
@@ -3632,13 +3632,13 @@ bool layout_block_context(
 
 		/* Clearance. */
 		y = 0;
-		if (box->style && css_computed_clear(box->style) !=
+		如果 (box->style && css_computed_clear(box->style) !=
 				CSS_CLEAR_NONE)
 			y = layout_clear(block->float_children,
 					css_computed_clear(box->style));
 
 		/* Find box's overflow properties */
-		if (box->style) {
+		如果 (box->style) {
 			overflow_x = css_computed_overflow_x(box->style);
 			overflow_y = css_computed_overflow_y(box->style);
 		}
@@ -3647,17 +3647,17 @@ bool layout_block_context(
 		 * left and right margins to avoid any floats. */
 		lm = rm = 0;
 
-		if (box->type == BOX_FLEX ||
+		如果 (box->type == BOX_FLEX ||
 		    box->type == BOX_BLOCK ||
 		    box->flags & IFRAME) {
-			if (lh__box_is_object(box) == false &&
+			如果 (lh__box_is_object(box) == false &&
 					box->style &&
 					(overflow_x != CSS_OVERFLOW_VISIBLE ||
 					 overflow_y != CSS_OVERFLOW_VISIBLE)) {
 				/* box establishes new block formatting context
 				 * so available width may be diminished due to
 				 * floats. */
-				int x0, x1, top;
+				整数 x0, x1, top;
 				struct box *left, *right;
 				top = cy + max_pos_margin - max_neg_margin;
 				top = (top > y) ? top : y;
@@ -3678,12 +3678,12 @@ bool layout_block_context(
 			layout_block_find_dimensions(&content->unit_len_ctx,
 					box->parent->width,
 					viewport_height, lm, rm, box);
-			if (box->type == BOX_BLOCK && !(box->flags & IFRAME)) {
+			如果 (box->type == BOX_BLOCK && !(box->flags & IFRAME)) {
 				layout_block_add_scrollbar(box, RIGHT);
 				layout_block_add_scrollbar(box, BOTTOM);
 			}
-		} else if (box->type == BOX_TABLE) {
-			if (box->style != NULL) {
+		} 否则 如果 (box->type == BOX_TABLE) {
+			如果 (box->style != NULL) {
 				enum css_width_e wtype;
 				css_fixed width = 0;
 				css_unit unit = CSS_UNIT_PX;
@@ -3691,10 +3691,10 @@ bool layout_block_context(
 				wtype = css_computed_width(box->style, &width,
 						&unit);
 
-				if (wtype == CSS_WIDTH_AUTO) {
+				如果 (wtype == CSS_WIDTH_AUTO) {
 					/* max available width may be
 					 * diminished due to floats. */
-					int x0, x1, top;
+					整数 x0, x1, top;
 					struct box *left, *right;
 					top = cy + max_pos_margin -
 							max_neg_margin;
@@ -3715,9 +3715,9 @@ bool layout_block_context(
 						x1;
 				}
 			}
-			if (!layout_table(box, box->parent->width - lm - rm,
+			如果 (!layout_table(box, box->parent->width - lm - rm,
 					content))
-				return false;
+				返回 false;
 			layout_solve_width(box, box->parent->width, box->width,
 					lm, rm, -1, -1);
 		}
@@ -3728,13 +3728,13 @@ bool layout_block_context(
 		cx += box->x;
 
 		/* Position box: vertical. */
-		if (box->border[TOP].width) {
+		如果 (box->border[TOP].width) {
 			box->y += box->border[TOP].width;
 			cy += box->border[TOP].width;
 		}
 
 		/* Vertical margin */
-		if (((box->type == BOX_BLOCK && (box->flags & HAS_HEIGHT)) ||
+		如果 (((box->type == BOX_BLOCK && (box->flags & HAS_HEIGHT)) ||
 		     box->type == BOX_FLEX ||
 		     box->type == BOX_TABLE ||
 		     (box->type == BOX_INLINE_CONTAINER &&
@@ -3751,7 +3751,7 @@ bool layout_block_context(
 		}
 
 		/* Handle clearance */
-		if (box->type != BOX_INLINE_CONTAINER &&
+		如果 (box->type != BOX_INLINE_CONTAINER &&
 				(y > 0) && (cy < y)) {
 			/* box clears something*/
 			box->y += y - cy;
@@ -3760,23 +3760,23 @@ bool layout_block_context(
 
 		/* Unless the box has an overflow style of visible, the box
 		 * establishes a new block context. */
-		if (box->type == BOX_FLEX ||
+		如果 (box->type == BOX_FLEX ||
 				(box->type == BOX_BLOCK && box->style &&
 				 (overflow_x != CSS_OVERFLOW_VISIBLE ||
 				  overflow_y != CSS_OVERFLOW_VISIBLE))) {
 
-			if (box->type == BOX_FLEX) {
-				if (!layout_flex(box, box->width, content)) {
-					return false;
+			如果 (box->type == BOX_FLEX) {
+				如果 (!layout_flex(box, box->width, content)) {
+					返回 false;
 				}
-			} else {
+			} 否则 {
 				layout_block_context(box,
 						viewport_height, content);
 			}
 
 			cy += box->padding[TOP];
 
-			if (box->height == AUTO) {
+			如果 (box->height == AUTO) {
 				box->height = 0;
 				layout_block_add_scrollbar(box, BOTTOM);
 			}
@@ -3797,22 +3797,22 @@ bool layout_block_context(
 				box, cx, cy, box->width);
 
 		/* Layout (except tables). */
-		if (box->object) {
-			if (!layout_block_object(box))
-				return false;
+		如果 (box->object) {
+			如果 (!layout_block_object(box))
+				返回 false;
 
-		} else if (box->type == BOX_INLINE_CONTAINER) {
+		} 否则 如果 (box->type == BOX_INLINE_CONTAINER) {
 			box->width = box->parent->width;
-			if (!layout_inline_container(box, box->width, block,
+			如果 (!layout_inline_container(box, box->width, block,
 					cx, cy, content))
-				return false;
+				返回 false;
 
-		} else if (box->type == BOX_TABLE) {
+		} 否则 如果 (box->type == BOX_TABLE) {
 			/* Move down to avoid floats if necessary. */
-			int x0, x1;
+			整数 x0, x1;
 			struct box *left, *right;
 			y = cy;
-			while (1) {
+			当 (1) {
 				enum css_width_e wtype;
 				css_fixed width = 0;
 				css_unit unit = CSS_UNIT_PX;
@@ -3825,20 +3825,20 @@ bool layout_block_context(
 				find_sides(block->float_children, y,
 						y + box->height,
 						&x0, &x1, &left, &right);
-				if (wtype == CSS_WIDTH_AUTO)
+				如果 (wtype == CSS_WIDTH_AUTO)
 					break;
-				if (box->width <= x1 - x0)
+				如果 (box->width <= x1 - x0)
 					break;
-				if (!left && !right)
+				如果 (!left && !right)
 					break;
-				else if (!left)
+				否则 如果 (!left)
 					y = right->y + right->height + 1;
-				else if (!right)
+				否则 如果 (!right)
 					y = left->y + left->height + 1;
-				else if (left->y + left->height <
+				否则 如果 (left->y + left->height <
 						right->y + right->height)
 					y = left->y + left->height + 1;
-				else
+				否则
 					y = right->y + right->height + 1;
 			}
 			box->x += x0 - cx;
@@ -3848,11 +3848,11 @@ bool layout_block_context(
 		}
 
 		/* Advance to next box. */
-		if (box->type == BOX_BLOCK && !box->object && !(box->iframe) &&
+		如果 (box->type == BOX_BLOCK && !box->object && !(box->iframe) &&
 				box->children) {
 			/* Down into children. */
 
-			if (box == margin_collapse) {
+			如果 (box == margin_collapse) {
 				/* Current margin collapsed though to this box.
 				 * Unset margin_collapse. */
 				margin_collapse = NULL;
@@ -3863,11 +3863,11 @@ bool layout_block_context(
 			box->y = y;
 			cy += y;
 			continue;
-		} else if (box->type == BOX_BLOCK || box->object ||
+		} 否则 如果 (box->type == BOX_BLOCK || box->object ||
 				box->flags & IFRAME)
 			cy += box->padding[TOP];
 
-		if (box->type == BOX_BLOCK && box->height == AUTO) {
+		如果 (box->type == BOX_BLOCK && box->height == AUTO) {
 			box->height = 0;
 			layout_block_add_scrollbar(box, BOTTOM);
 		}
@@ -3880,49 +3880,49 @@ bool layout_block_context(
 				box->border[BOTTOM].width;
 
 	advance_to_next_box:
-		if (!box->next) {
+		如果 (!box->next) {
 			/* No more siblings:
 			 * up to first ancestor with a sibling. */
 
 			do {
-				if (box == margin_collapse) {
+				如果 (box == margin_collapse) {
 					/* Current margin collapsed though to
 					 * this box.  Unset margin_collapse. */
 					margin_collapse = NULL;
 				}
 
 				/* Apply bottom margin */
-				if (max_pos_margin < box->margin[BOTTOM])
+				如果 (max_pos_margin < box->margin[BOTTOM])
 					max_pos_margin = box->margin[BOTTOM];
-				else if (max_neg_margin < -box->margin[BOTTOM])
+				否则 如果 (max_neg_margin < -box->margin[BOTTOM])
 					max_neg_margin = -box->margin[BOTTOM];
 
 				box = box->parent;
-				if (box == block)
+				如果 (box == block)
 					break;
 
 				/* Margin is invalidated if this is a box
 				 * margins can't collapse through. */
-				if (box->type == BOX_BLOCK &&
+				如果 (box->type == BOX_BLOCK &&
 						box->flags & MAKE_HEIGHT) {
 					margin_collapse = NULL;
 					in_margin = false;
 					max_pos_margin = max_neg_margin = 0;
 				}
 
-				if (box->height == AUTO) {
+				如果 (box->height == AUTO) {
 					box->height = y - box->padding[TOP];
 
-					if (box->type == BOX_BLOCK)
+					如果 (box->type == BOX_BLOCK)
 						layout_block_add_scrollbar(box,
 								BOTTOM);
-				} else
+				} 否则
 					cy += box->height -
 							(y - box->padding[TOP]);
 
 				/* Apply any min-height and max-height to
 				 * boxes in normal flow */
-				if (box->style &&
+				如果 (box->style &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 						layout_apply_minmax_height(
@@ -3941,22 +3941,22 @@ bool layout_block_context(
 						box->padding[BOTTOM] +
 						box->border[BOTTOM].width;
 
-			} while (box->next == NULL);
-			if (box == block)
+			} 当 (box->next == NULL);
+			如果 (box == block)
 				break;
 		}
 
 		/* To next sibling. */
 
-		if (box == margin_collapse) {
+		如果 (box == margin_collapse) {
 			/* Current margin collapsed though to this box.
 			 * Unset margin_collapse. */
 			margin_collapse = NULL;
 		}
 
-		if (max_pos_margin < box->margin[BOTTOM])
+		如果 (max_pos_margin < box->margin[BOTTOM])
 			max_pos_margin = box->margin[BOTTOM];
-		else if (max_neg_margin < -box->margin[BOTTOM])
+		否则 如果 (max_neg_margin < -box->margin[BOTTOM])
 			max_neg_margin = -box->margin[BOTTOM];
 
 		box = box->next;
@@ -3967,33 +3967,33 @@ bool layout_block_context(
 	cy += max_pos_margin - max_neg_margin;
 
 	/* Increase height to contain any floats inside (CSS 2.1 10.6.7). */
-	for (box = block->float_children; box; box = box->next_float) {
+	为 (box = block->float_children; box; box = box->next_float) {
 		y = box->y + box->height + box->padding[BOTTOM] +
 				box->border[BOTTOM].width + box->margin[BOTTOM];
-		if (cy < y)
+		如果 (cy < y)
 			cy = y;
 	}
 
-	if (block->height == AUTO) {
+	如果 (block->height == AUTO) {
 		block->height = cy - block->padding[TOP];
-		if (block->type == BOX_BLOCK)
+		如果 (block->type == BOX_BLOCK)
 			layout_block_add_scrollbar(block, BOTTOM);
 	}
 
-	if (block->style && css_computed_position(block->style) !=
+	如果 (block->style && css_computed_position(block->style) !=
 			CSS_POSITION_ABSOLUTE) {
 		/* Block is in normal flow */
 		layout_apply_minmax_height(&content->unit_len_ctx, block, NULL);
 	}
 
-	if (block->gadget &&
+	如果 (block->gadget &&
 			(block->gadget->type == GADGET_TEXTAREA ||
 			block->gadget->type == GADGET_PASSWORD ||
 			block->gadget->type == GADGET_TEXTBOX)) {
 		plot_font_style_t fstyle;
-		int ta_width = block->padding[LEFT] + block->width +
+		整数 ta_width = block->padding[LEFT] + block->width +
 				block->padding[RIGHT];
-		int ta_height = block->padding[TOP] + block->height +
+		整数 ta_height = block->padding[TOP] + block->height +
 				block->padding[BOTTOM];
 		font_plot_style_from_css(&content->unit_len_ctx,
 				block->style, &fstyle);
@@ -4004,7 +4004,7 @@ bool layout_block_context(
 				block->padding[BOTTOM], block->padding[LEFT]);
 	}
 
-	return true;
+	返回 true;
 }
 
 /**
@@ -4024,18 +4024,18 @@ layout__get_element_tag(
 	dom_exception exc;
 
 	exc = dom_node_get_node_type(node, &node_type);
-	if (exc != DOM_NO_ERR ||
+	如果 (exc != DOM_NO_ERR ||
 	    node_type != DOM_ELEMENT_NODE) {
-		return false;
+		返回 false;
 	}
 
 	exc = dom_html_element_get_tag_type(node, &element_type);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	如果 (exc != DOM_NO_ERR) {
+		返回 false;
 	}
 
 	*type = element_type;
-	return true;
+	返回 true;
 }
 
 
@@ -4053,11 +4053,11 @@ layout__check_element_type(
 {
 	dom_html_element_type element_type;
 
-	if (!layout__get_element_tag(node, &element_type)) {
-		return false;
+	如果 (!layout__get_element_tag(node, &element_type)) {
+		返回 false;
 	}
 
-	return element_type == type;
+	返回 element_type == type;
 }
 
 
@@ -4087,19 +4087,19 @@ layout__get_li_value(dom_node *li_node, dom_long *value_out)
 	exc = dom_element_has_attribute(li_node,
 			corestring_dom_value,
 			&has_value);
-	if (exc != DOM_NO_ERR || has_value == false) {
-		return false;
+	如果 (exc != DOM_NO_ERR || has_value == false) {
+		返回 false;
 	}
 
 	exc = dom_html_li_element_get_value(
 			(dom_html_li_element *)li_node,
 			&value);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	如果 (exc != DOM_NO_ERR) {
+		返回 false;
 	}
 
 	*value_out = value;
-	return true;
+	返回 true;
 }
 
 
@@ -4123,19 +4123,19 @@ layout__get_ol_start(dom_node *ol_node, dom_long *start_out)
 	exc = dom_element_has_attribute(ol_node,
 			corestring_dom_start,
 			&has_start);
-	if (exc != DOM_NO_ERR || has_start == false) {
-		return false;
+	如果 (exc != DOM_NO_ERR || has_start == false) {
+		返回 false;
 	}
 
 	exc = dom_html_olist_element_get_start(
 			(dom_html_olist_element *)ol_node,
 			&start);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	如果 (exc != DOM_NO_ERR) {
+		返回 false;
 	}
 
 	*start_out = start;
-	return true;
+	返回 true;
 }
 
 
@@ -4154,11 +4154,11 @@ layout__get_ol_reversed(dom_node *ol_node)
 	exc = dom_element_has_attribute(ol_node,
 			corestring_dom_reversed,
 			&has_reversed);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	如果 (exc != DOM_NO_ERR) {
+		返回 false;
 	}
 
-	return has_reversed;
+	返回 has_reversed;
 }
 
 
@@ -4176,41 +4176,41 @@ layout__get_list_item_count(
 	dom_html_element_type tag_type;
 	dom_exception exc;
 	dom_node *child;
-	int count;
+	整数 count;
 
-	if (list_owner == NULL) {
-		return false;
+	如果 (list_owner == NULL) {
+		返回 false;
 	}
 
-	if (!layout__get_element_tag(list_owner, &tag_type)) {
-		return false;
+	如果 (!layout__get_element_tag(list_owner, &tag_type)) {
+		返回 false;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
+	如果 (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
 	    tag_type != DOM_HTML_ELEMENT_TYPE_UL) {
-		return false;
+		返回 false;
 	}
 
 	exc = dom_node_get_first_child(list_owner, &child);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	如果 (exc != DOM_NO_ERR) {
+		返回 false;
 	}
 
 	count = 0;
-	while (child != NULL) {
+	当 (child != NULL) {
 		dom_node *temp_node;
 
-		if (layout__check_element_type(child,
+		如果 (layout__check_element_type(child,
 				DOM_HTML_ELEMENT_TYPE_LI)) {
 			struct box *child_box;
-			if (dom_node_get_user_data(child,
+			如果 (dom_node_get_user_data(child,
 					corestring_dom___ns_key_box_node_data,
 					&child_box) != DOM_NO_ERR) {
 				dom_node_unref(child);
-				return false;
+				返回 false;
 			}
 
-			if (child_box != NULL &&
+			如果 (child_box != NULL &&
 			    child_box->list_marker != NULL) {
 				count++;
 			}
@@ -4218,15 +4218,15 @@ layout__get_list_item_count(
 
 		exc = dom_node_get_next_sibling(child, &temp_node);
 		dom_node_unref(child);
-		if (exc != DOM_NO_ERR) {
-			return false;
+		如果 (exc != DOM_NO_ERR) {
+			返回 false;
 		}
 
 		child = temp_node;
 	}
 
 	*count_out = count;
-	return true;
+	返回 true;
 }
 
 
@@ -4242,63 +4242,63 @@ layout__ordered_list_count(
 	dom_html_element_type tag_type;
 	dom_exception exc;
 	dom_node *child;
-	int step = 1;
+	整数 step = 1;
 	dom_long next;
 
-	if (box->node == NULL) {
-		return;
+	如果 (box->node == NULL) {
+		返回;
 	}
 
-	if (!layout__get_element_tag(box->node, &tag_type)) {
-		return;
+	如果 (!layout__get_element_tag(box->node, &tag_type)) {
+		返回;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
+	如果 (tag_type != DOM_HTML_ELEMENT_TYPE_OL &&
 	    tag_type != DOM_HTML_ELEMENT_TYPE_UL) {
-		return;
+		返回;
 	}
 
 	next = 1;
-	if (tag_type == DOM_HTML_ELEMENT_TYPE_OL) {
+	如果 (tag_type == DOM_HTML_ELEMENT_TYPE_OL) {
 		bool have_start = layout__get_ol_start(box->node, &next);
 		bool have_reversed = layout__get_ol_reversed(box->node);
 
-		if (have_reversed) {
+		如果 (have_reversed) {
 			step = -1;
 		}
 
-		if (!have_start && have_reversed) {
+		如果 (!have_start && have_reversed) {
 			layout__get_list_item_count(box->node, &next);
 		}
 	}
 
 	exc = dom_node_get_first_child(box->node, &child);
-	if (exc != DOM_NO_ERR) {
-		return;
+	如果 (exc != DOM_NO_ERR) {
+		返回;
 	}
 
-	while (child != NULL) {
+	当 (child != NULL) {
 		dom_node *temp_node;
 
-		if (layout__check_element_type(child,
+		如果 (layout__check_element_type(child,
 				DOM_HTML_ELEMENT_TYPE_LI)) {
 			struct box *child_box;
 
-			if (dom_node_get_user_data(child,
+			如果 (dom_node_get_user_data(child,
 					corestring_dom___ns_key_box_node_data,
 					&child_box) != DOM_NO_ERR) {
 				dom_node_unref(child);
-				return;
+				返回;
 			}
 
-			if (child_box != NULL &&
+			如果 (child_box != NULL &&
 			    child_box->list_marker != NULL) {
 				dom_long value;
 				struct box *marker = child_box->list_marker;
-				if (layout__get_li_value(child, &value)) {
+				如果 (layout__get_li_value(child, &value)) {
 					marker->list_value = value;
 					next = marker->list_value;
-				} else {
+				} 否则 {
 					marker->list_value = next;
 				}
 				next += step;
@@ -4307,8 +4307,8 @@ layout__ordered_list_count(
 
 		exc = dom_node_get_next_sibling(child, &temp_node);
 		dom_node_unref(child);
-		if (exc != DOM_NO_ERR) {
-			return;
+		如果 (exc != DOM_NO_ERR) {
+			返回;
 		}
 
 		child = temp_node;
@@ -4340,22 +4340,22 @@ layout__set_numerical_marker_text(
 	};
 
 	marker->text = talloc_array(content->bctx, char, LIST_MARKER_SIZE);
-	if (marker->text == NULL) {
-		return;
+	如果 (marker->text == NULL) {
+		返回;
 	}
 
 	css_res = css_computed_format_list_style(box->style, marker->list_value,
 			marker->text, LIST_MARKER_SIZE, &counter_len);
-	if (css_res == CSS_OK) {
-		if (counter_len > LIST_MARKER_SIZE) {
+	如果 (css_res == CSS_OK) {
+		如果 (counter_len > LIST_MARKER_SIZE) {
 			/* Use computed size as marker did not fit in
 			 * default allocation. */
 			marker->text = talloc_realloc(content->bctx,
 					marker->text,
 					char,
 					counter_len);
-			if (marker->text == NULL) {
-				return;
+			如果 (marker->text == NULL) {
+				返回;
 			}
 			css_computed_format_list_style(box->style,
 					marker->list_value, marker->text,
@@ -4382,10 +4382,10 @@ layout__list_item_is_numerical(
 	case CSS_LIST_STYLE_TYPE_CIRCLE: /* Fall through. */
 	case CSS_LIST_STYLE_TYPE_SQUARE: /* Fall through. */
 	case CSS_LIST_STYLE_TYPE_NONE:
-		return false;
+		返回 false;
 
 	default:
-		return true;
+		返回 true;
 	}
 }
 
@@ -4399,17 +4399,17 @@ layout_lists(const html_content *content, struct box *box)
 
 	layout__ordered_list_count(box);
 
-	for (child = box->children; child; child = child->next) {
-		if (child->list_marker) {
+	为 (child = box->children; child; child = child->next) {
+		如果 (child->list_marker) {
 			struct box *marker = child->list_marker;
 
-			if (layout__list_item_is_numerical(child)) {
-				if (marker->text == NULL) {
+			如果 (layout__list_item_is_numerical(child)) {
+				如果 (marker->text == NULL) {
 					layout__set_numerical_marker_text(
 							content, child);
 				}
 			}
-			if (marker->object) {
+			如果 (marker->object) {
 				marker->width =
 					content_get_width(marker->object);
 				marker->x = -marker->width;
@@ -4419,8 +4419,8 @@ layout_lists(const html_content *content, struct box *box)
 						&content->unit_len_ctx,
 						marker->style) -
 						marker->height) / 2;
-			} else if (marker->text) {
-				if (marker->width == UNKNOWN_WIDTH) {
+			} 否则 如果 (marker->text) {
+				如果 (marker->width == UNKNOWN_WIDTH) {
 					plot_font_style_t fstyle;
 					font_plot_style_from_css(
 							&content->unit_len_ctx,
@@ -4437,7 +4437,7 @@ layout_lists(const html_content *content, struct box *box)
 				marker->height = line_height(
 						&content->unit_len_ctx,
 						marker->style);
-			} else {
+			} 否则 {
 				marker->x = 0;
 				marker->y = 0;
 				marker->width = 0;
@@ -4469,10 +4469,10 @@ static void
 layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
 		       struct box *box,
 		       struct box *containing_block,
-		       int *top,
-		       int *right,
-		       int *bottom,
-		       int *left)
+		       整数 *top,
+		       整数 *right,
+		       整数 *bottom,
+		       整数 *left)
 {
 	uint32_t type;
 	css_fixed value = 0;
@@ -4484,61 +4484,61 @@ layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
 
 	/* left */
 	type = css_computed_left(box->style, &value, &unit);
-	if (type == CSS_LEFT_SET) {
-		if (unit == CSS_UNIT_PCT) {
+	如果 (type == CSS_LEFT_SET) {
+		如果 (unit == CSS_UNIT_PCT) {
 			*left = FPCT_OF_INT_TOINT(value,
 					containing_block->width);
-		} else {
+		} 否则 {
 			*left = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
 					value, unit));
 		}
-	} else {
+	} 否则 {
 		*left = AUTO;
 	}
 
 	/* right */
 	type = css_computed_right(box->style, &value, &unit);
-	if (type == CSS_RIGHT_SET) {
-		if (unit == CSS_UNIT_PCT) {
+	如果 (type == CSS_RIGHT_SET) {
+		如果 (unit == CSS_UNIT_PCT) {
 			*right = FPCT_OF_INT_TOINT(value,
 					containing_block->width);
-		} else {
+		} 否则 {
 			*right = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
 					value, unit));
 		}
-	} else {
+	} 否则 {
 		*right = AUTO;
 	}
 
 	/* top */
 	type = css_computed_top(box->style, &value, &unit);
-	if (type == CSS_TOP_SET) {
-		if (unit == CSS_UNIT_PCT) {
+	如果 (type == CSS_TOP_SET) {
+		如果 (unit == CSS_UNIT_PCT) {
 			*top = FPCT_OF_INT_TOINT(value,
 					containing_block->height);
-		} else {
+		} 否则 {
 			*top = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
 					value, unit));
 		}
-	} else {
+	} 否则 {
 		*top = AUTO;
 	}
 
 	/* bottom */
 	type = css_computed_bottom(box->style, &value, &unit);
-	if (type == CSS_BOTTOM_SET) {
-		if (unit == CSS_UNIT_PCT) {
+	如果 (type == CSS_BOTTOM_SET) {
+		如果 (unit == CSS_UNIT_PCT) {
 			*bottom = FPCT_OF_INT_TOINT(value,
 					containing_block->height);
-		} else {
+		} 否则 {
 			*bottom = FIXTOINT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
 					value, unit));
 		}
-	} else {
+	} 否则 {
 		*bottom = AUTO;
 	}
 }
@@ -4557,17 +4557,17 @@ layout_compute_offsets(const css_unit_ctx *unit_len_ctx,
 static bool
 layout_absolute(struct box *box,
 		struct box *containing_block,
-		int cx, int cy,
+		整数 cx, 整数 cy,
 		html_content *content)
 {
-	int static_left, static_top;  /* static position */
-	int top, right, bottom, left;
-	int width, height, max_width, min_width;
-	int *margin = box->margin;
-	int *padding = box->padding;
+	整数 static_left, static_top;  /* static position */
+	整数 top, right, bottom, left;
+	整数 width, height, max_width, min_width;
+	整数 *margin = box->margin;
+	整数 *padding = box->padding;
 	struct box_border *border = box->border;
-	int available_width = containing_block->width;
-	int space;
+	整数 available_width = containing_block->width;
+	整数 space;
 
 	assert(box->type == BOX_BLOCK || box->type == BOX_TABLE ||
 			box->type == BOX_INLINE_BLOCK ||
@@ -4580,7 +4580,7 @@ layout_absolute(struct box *box,
 	static_left = cx + box->x;
 	static_top = cy + box->y;
 
-	if (containing_block->type == BOX_BLOCK ||
+	如果 (containing_block->type == BOX_BLOCK ||
 			containing_block->type == BOX_INLINE_BLOCK ||
 			containing_block->type == BOX_TABLE_CELL) {
 		/* Block level container => temporarily increase containing
@@ -4613,10 +4613,10 @@ layout_absolute(struct box *box,
 	      containing_block->width);
 
 
-	if (left == AUTO && width == AUTO && right == AUTO) {
-		if (margin[LEFT] == AUTO)
+	如果 (left == AUTO && width == AUTO && right == AUTO) {
+		如果 (margin[LEFT] == AUTO)
 			margin[LEFT] = 0;
-		if (margin[RIGHT] == AUTO)
+		如果 (margin[RIGHT] == AUTO)
 			margin[RIGHT] = 0;
 		left = static_left;
 
@@ -4627,57 +4627,57 @@ layout_absolute(struct box *box,
 			box->border[RIGHT].width + box->margin[RIGHT];
 
 		/* Adjust for {min|max}-width */
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (width < min_width) width = min_width;
+		如果 (max_width >= 0 && width > max_width) width = max_width;
+		如果 (width < min_width) width = min_width;
 
 		right = containing_block->width -
 			left -
 			margin[LEFT] - border[LEFT].width - padding[LEFT] -
 			width -
 			padding[RIGHT] - border[RIGHT].width - margin[RIGHT];
-	} else if (left != AUTO && width != AUTO && right != AUTO) {
+	} 否则 如果 (left != AUTO && width != AUTO && right != AUTO) {
 
 		/* Adjust for {min|max}-width */
-		if (max_width >= 0 && width > max_width) width = max_width;
-		if (min_width >  0 && width < min_width) width = min_width;
+		如果 (max_width >= 0 && width > max_width) width = max_width;
+		如果 (min_width >  0 && width < min_width) width = min_width;
 
-		if (margin[LEFT] == AUTO && margin[RIGHT] == AUTO) {
+		如果 (margin[LEFT] == AUTO && margin[RIGHT] == AUTO) {
 			space = containing_block->width -
 					left - border[LEFT].width -
 					padding[LEFT] - width - padding[RIGHT] -
 					border[RIGHT].width - right;
-			if (space < 0) {
+			如果 (space < 0) {
 				margin[LEFT] = 0;
 				margin[RIGHT] = space;
-			} else {
+			} 否则 {
 				margin[LEFT] = margin[RIGHT] = space / 2;
 			}
-		} else if (margin[LEFT] == AUTO) {
+		} 否则 如果 (margin[LEFT] == AUTO) {
 			margin[LEFT] = containing_block->width -
 					left - border[LEFT].width -
 					padding[LEFT] - width - padding[RIGHT] -
 					border[RIGHT].width - margin[RIGHT] -
 					right;
-		} else if (margin[RIGHT] == AUTO) {
+		} 否则 如果 (margin[RIGHT] == AUTO) {
 			margin[RIGHT] = containing_block->width -
 					left - margin[LEFT] -
 					border[LEFT].width -
 					padding[LEFT] - width - padding[RIGHT] -
 					border[RIGHT].width - right;
-		} else {
+		} 否则 {
 			right = containing_block->width -
 					left - margin[LEFT] -
 					border[LEFT].width -
 					padding[LEFT] - width - padding[RIGHT] -
 					border[RIGHT].width - margin[RIGHT];
 		}
-	} else {
-		if (margin[LEFT] == AUTO)
+	} 否则 {
+		如果 (margin[LEFT] == AUTO)
 			margin[LEFT] = 0;
-		if (margin[RIGHT] == AUTO)
+		如果 (margin[RIGHT] == AUTO)
 			margin[RIGHT] = 0;
 
-		if (left == AUTO && width == AUTO && right != AUTO) {
+		如果 (left == AUTO && width == AUTO && right != AUTO) {
 			available_width -= right;
 
 			width = min(max(box->min_width, available_width),
@@ -4687,9 +4687,9 @@ layout_absolute(struct box *box,
 				box->border[RIGHT].width + box->margin[RIGHT];
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			如果 (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			如果 (width < min_width)
 				width = min_width;
 
 			left = containing_block->width -
@@ -4697,12 +4697,12 @@ layout_absolute(struct box *box,
 					padding[LEFT] - width - padding[RIGHT] -
 					border[RIGHT].width - margin[RIGHT] -
 					right;
-		} else if (left == AUTO && width != AUTO && right == AUTO) {
+		} 否则 如果 (left == AUTO && width != AUTO && right == AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			如果 (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (min_width >  0 && width < min_width)
+			如果 (min_width >  0 && width < min_width)
 				width = min_width;
 
 			left = static_left;
@@ -4711,7 +4711,7 @@ layout_absolute(struct box *box,
 					border[LEFT].width -
 					padding[LEFT] - width - padding[RIGHT] -
 					border[RIGHT].width - margin[RIGHT];
-		} else if (left != AUTO && width == AUTO && right == AUTO) {
+		} 否则 如果 (left != AUTO && width == AUTO && right == AUTO) {
 			available_width -= left;
 
 			width = min(max(box->min_width, available_width),
@@ -4721,9 +4721,9 @@ layout_absolute(struct box *box,
 				box->border[RIGHT].width + box->margin[RIGHT];
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			如果 (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			如果 (width < min_width)
 				width = min_width;
 
 			right = containing_block->width -
@@ -4731,12 +4731,12 @@ layout_absolute(struct box *box,
 					border[LEFT].width -
 					padding[LEFT] - width - padding[RIGHT] -
 					border[RIGHT].width - margin[RIGHT];
-		} else if (left == AUTO && width != AUTO && right != AUTO) {
+		} 否则 如果 (left == AUTO && width != AUTO && right != AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			如果 (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			如果 (width < min_width)
 				width = min_width;
 
 			left = containing_block->width -
@@ -4744,7 +4744,7 @@ layout_absolute(struct box *box,
 					padding[LEFT] - width - padding[RIGHT] -
 					border[RIGHT].width - margin[RIGHT] -
 					right;
-		} else if (left != AUTO && width == AUTO && right != AUTO) {
+		} 否则 如果 (left != AUTO && width == AUTO && right != AUTO) {
 			width = containing_block->width -
 					left - margin[LEFT] -
 					border[LEFT].width -
@@ -4753,17 +4753,17 @@ layout_absolute(struct box *box,
 					right;
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			如果 (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			如果 (width < min_width)
 				width = min_width;
 
-		} else if (left != AUTO && width != AUTO && right == AUTO) {
+		} 否则 如果 (left != AUTO && width != AUTO && right == AUTO) {
 
 			/* Adjust for {min|max}-width */
-			if (max_width >= 0 && width > max_width)
+			如果 (max_width >= 0 && width > max_width)
 				width = max_width;
-			if (width < min_width)
+			如果 (width < min_width)
 				width = min_width;
 
 			right = containing_block->width -
@@ -4781,38 +4781,38 @@ layout_absolute(struct box *box,
 	      containing_block->width);
 
 	box->x = left + margin[LEFT] + border[LEFT].width - cx;
-	if (containing_block->type == BOX_BLOCK ||
+	如果 (containing_block->type == BOX_BLOCK ||
 			containing_block->type == BOX_INLINE_BLOCK ||
 			containing_block->type == BOX_TABLE_CELL) {
 		/* Block-level ancestor => reset container's width */
 		containing_block->width -= containing_block->padding[LEFT] +
 				containing_block->padding[RIGHT];
-	} else {
+	} 否则 {
 		/** \todo inline ancestors */
 	}
 	box->width = width;
 	box->height = height;
 
-	if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
+	如果 (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
 			box->object || box->flags & IFRAME) {
-		if (!layout_block_context(box, -1, content))
-			return false;
-	} else if (box->type == BOX_TABLE) {
+		如果 (!layout_block_context(box, -1, content))
+			返回 false;
+	} 否则 如果 (box->type == BOX_TABLE) {
 		/* layout_table also expects the containing block to be
 		 * stored in the float_container field */
 		box->float_container = containing_block;
 		/* \todo  layout_table considers margins etc. again */
-		if (!layout_table(box, width, content))
-			return false;
+		如果 (!layout_table(box, width, content))
+			返回 false;
 		box->float_container = NULL;
 		layout_solve_width(box, box->parent->width, box->width, 0, 0,
 				-1, -1);
-	} else if (box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX) {
+	} 否则 如果 (box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX) {
 		/* layout_table also expects the containing block to be
 		 * stored in the float_container field */
 		box->float_container = containing_block;
-		if (!layout_flex(box, width, content))
-			return false;
+		如果 (!layout_flex(box, width, content))
+			返回 false;
 		box->float_container = NULL;
 	}
 
@@ -4823,82 +4823,82 @@ layout_absolute(struct box *box,
 	      padding[BOTTOM], border[BOTTOM].width, margin[BOTTOM], bottom,
 	      containing_block->height);
 
-	if (top == AUTO && height == AUTO && bottom == AUTO) {
+	如果 (top == AUTO && height == AUTO && bottom == AUTO) {
 		top = static_top;
 		height = box->height;
-		if (margin[TOP] == AUTO)
+		如果 (margin[TOP] == AUTO)
 			margin[TOP] = 0;
-		if (margin[BOTTOM] == AUTO)
+		如果 (margin[BOTTOM] == AUTO)
 			margin[BOTTOM] = 0;
 		bottom = containing_block->height -
 				top - margin[TOP] - border[TOP].width -
 				padding[TOP] - height - padding[BOTTOM] -
 				border[BOTTOM].width - margin[BOTTOM];
-	} else if (top != AUTO && height != AUTO && bottom != AUTO) {
-		if (margin[TOP] == AUTO && margin[BOTTOM] == AUTO) {
+	} 否则 如果 (top != AUTO && height != AUTO && bottom != AUTO) {
+		如果 (margin[TOP] == AUTO && margin[BOTTOM] == AUTO) {
 			space = containing_block->height -
 					top - border[TOP].width - padding[TOP] -
 					height - padding[BOTTOM] -
 					border[BOTTOM].width - bottom;
 			margin[TOP] = margin[BOTTOM] = space / 2;
-		} else if (margin[TOP] == AUTO) {
+		} 否则 如果 (margin[TOP] == AUTO) {
 			margin[TOP] = containing_block->height -
 					top - border[TOP].width - padding[TOP] -
 					height - padding[BOTTOM] -
 					border[BOTTOM].width - margin[BOTTOM] -
 					bottom;
-		} else if (margin[BOTTOM] == AUTO) {
+		} 否则 如果 (margin[BOTTOM] == AUTO) {
 			margin[BOTTOM] = containing_block->height -
 					top - margin[TOP] - border[TOP].width -
 					padding[TOP] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					bottom;
-		} else {
+		} 否则 {
 			bottom = containing_block->height -
 					top - margin[TOP] - border[TOP].width -
 					padding[TOP] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM];
 		}
-	} else {
-		if (margin[TOP] == AUTO)
+	} 否则 {
+		如果 (margin[TOP] == AUTO)
 			margin[TOP] = 0;
-		if (margin[BOTTOM] == AUTO)
+		如果 (margin[BOTTOM] == AUTO)
 			margin[BOTTOM] = 0;
-		if (top == AUTO && height == AUTO && bottom != AUTO) {
+		如果 (top == AUTO && height == AUTO && bottom != AUTO) {
 			height = box->height;
 			top = containing_block->height -
 					margin[TOP] - border[TOP].width -
 					padding[TOP] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM] - bottom;
-		} else if (top == AUTO && height != AUTO && bottom == AUTO) {
+		} 否则 如果 (top == AUTO && height != AUTO && bottom == AUTO) {
 			top = static_top;
 			bottom = containing_block->height -
 					top - margin[TOP] - border[TOP].width -
 					padding[TOP] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM];
-		} else if (top != AUTO && height == AUTO && bottom == AUTO) {
+		} 否则 如果 (top != AUTO && height == AUTO && bottom == AUTO) {
 			height = box->height;
 			bottom = containing_block->height -
 					top - margin[TOP] - border[TOP].width -
 					padding[TOP] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM];
-		} else if (top == AUTO && height != AUTO && bottom != AUTO) {
+		} 否则 如果 (top == AUTO && height != AUTO && bottom != AUTO) {
 			top = containing_block->height -
 					margin[TOP] - border[TOP].width -
 					padding[TOP] - height -
 					padding[BOTTOM] - border[BOTTOM].width -
 					margin[BOTTOM] - bottom;
-		} else if (top != AUTO && height == AUTO && bottom != AUTO) {
+		} 否则 如果 (top != AUTO && height == AUTO && bottom != AUTO) {
 			height = containing_block->height -
 					top - margin[TOP] - border[TOP].width -
 					padding[TOP] - padding[BOTTOM] -
 					border[BOTTOM].width - margin[BOTTOM] -
 					bottom;
-		} else if (top != AUTO && height != AUTO && bottom == AUTO) {
+		} 否则 如果 (top != AUTO && height != AUTO && bottom == AUTO) {
 			bottom = containing_block->height -
 					top - margin[TOP] - border[TOP].width -
 					padding[TOP] - height -
@@ -4914,19 +4914,19 @@ layout_absolute(struct box *box,
 	      containing_block->height);
 
 	box->y = top + margin[TOP] + border[TOP].width - cy;
-	if (containing_block->type == BOX_BLOCK ||
+	如果 (containing_block->type == BOX_BLOCK ||
 			containing_block->type == BOX_INLINE_BLOCK ||
 			containing_block->type == BOX_TABLE_CELL) {
 		/* Block-level ancestor => reset container's height */
 		containing_block->height -= containing_block->padding[TOP] +
 				containing_block->padding[BOTTOM];
-	} else {
+	} 否则 {
 		/** \todo Inline ancestors */
 	}
 	box->height = height;
 	layout_apply_minmax_height(&content->unit_len_ctx, box, containing_block);
 
-	return true;
+	返回 true;
 }
 
 
@@ -4943,13 +4943,13 @@ layout_absolute(struct box *box,
 static bool
 layout_position_absolute(struct box *box,
 			 struct box *containing_block,
-			 int cx, int cy,
+			 整数 cx, 整数 cy,
 			 html_content *content)
 {
 	struct box *c;
 
-	for (c = box->children; c; c = c->next) {
-		if ((c->type == BOX_BLOCK || c->type == BOX_TABLE ||
+	为 (c = box->children; c; c = c->next) {
+		如果 ((c->type == BOX_BLOCK || c->type == BOX_TABLE ||
 				c->type == BOX_INLINE_BLOCK ||
 				c->type == BOX_FLEX ||
 				c->type == BOX_INLINE_FLEX) &&
@@ -4957,18 +4957,18 @@ layout_position_absolute(struct box *box,
 						CSS_POSITION_ABSOLUTE ||
 				 css_computed_position(c->style) ==
 						CSS_POSITION_FIXED)) {
-			if (!layout_absolute(c, containing_block,
+			如果 (!layout_absolute(c, containing_block,
 					cx, cy, content))
-				return false;
-			if (!layout_position_absolute(c, c, 0, 0, content))
-				return false;
-		} else if (c->style && css_computed_position(c->style) ==
+				返回 false;
+			如果 (!layout_position_absolute(c, c, 0, 0, content))
+				返回 false;
+		} 否则 如果 (c->style && css_computed_position(c->style) ==
 				CSS_POSITION_RELATIVE) {
-			if (!layout_position_absolute(c, c, 0, 0, content))
-				return false;
-		} else {
-			int px, py;
-			if (c->style && (css_computed_float(c->style) ==
+			如果 (!layout_position_absolute(c, c, 0, 0, content))
+				返回 false;
+		} 否则 {
+			整数 px, py;
+			如果 (c->style && (css_computed_float(c->style) ==
 						CSS_FLOAT_LEFT ||
 					css_computed_float(c->style) ==
 						CSS_FLOAT_RIGHT)) {
@@ -4979,24 +4979,24 @@ layout_position_absolute(struct box *box,
 				struct box *p;
 				px = c->x;
 				py = c->y;
-				for (p = box->parent; p && !p->float_children;
+				为 (p = box->parent; p && !p->float_children;
 						p = p->parent) {
 					px -= p->x;
 					py -= p->y;
 				}
-			} else {
+			} 否则 {
 				/* Not a float, so box x/y coords are relative
 				 * to parent */
 				px = c->x;
 				py = c->y;
 			}
-			if (!layout_position_absolute(c, containing_block,
+			如果 (!layout_position_absolute(c, containing_block,
 					cx + px, cy + py, content))
-				return false;
+				返回 false;
 		}
 	}
 
-	return true;
+	返回 true;
 }
 
 
@@ -5011,45 +5011,45 @@ layout_position_absolute(struct box *box,
 static void layout_compute_relative_offset(
 		const css_unit_ctx *unit_len_ctx,
 		struct box *box,
-		int *x,
-		int *y)
+		整数 *x,
+		整数 *y)
 {
-	int left, right, top, bottom;
+	整数 left, right, top, bottom;
 	struct box *containing_block;
 
 	assert(box && box->parent && box->style &&
 			css_computed_position(box->style) ==
 			CSS_POSITION_RELATIVE);
 
-	if (box->float_container &&
+	如果 (box->float_container &&
 			(css_computed_float(box->style) == CSS_FLOAT_LEFT ||
 			css_computed_float(box->style) == CSS_FLOAT_RIGHT)) {
 		containing_block = box->float_container;
-	} else {
+	} 否则 {
 		containing_block = box->parent;
 	}
 
 	layout_compute_offsets(unit_len_ctx, box, containing_block,
 			&top, &right, &bottom, &left);
 
-	if (left == AUTO && right == AUTO)
+	如果 (left == AUTO && right == AUTO)
 		left = right = 0;
-	else if (left == AUTO)
+	否则 如果 (left == AUTO)
 		/* left is auto => computed = -right */
 		left = -right;
-	else if (right == AUTO)
+	否则 如果 (right == AUTO)
 		/* right is auto => computed = -left */
 		right = -left;
-	else {
+	否则 {
 		/* over constrained => examine direction property
 		 * of containing block */
-		if (containing_block->style &&
+		如果 (containing_block->style &&
 				css_computed_direction(
 				containing_block->style) ==
 				CSS_DIRECTION_RTL) {
 			/* right wins */
 			left = -right;
-		} else {
+		} 否则 {
 			/* assume LTR in all other cases */
 			right = -left;
 		}
@@ -5057,11 +5057,11 @@ static void layout_compute_relative_offset(
 
 	assert(left == -right);
 
-	if (top == AUTO && bottom == AUTO) {
+	如果 (top == AUTO && bottom == AUTO) {
 		top = bottom = 0;
-	} else if (top == AUTO) {
+	} 否则 如果 (top == AUTO) {
 		top = -bottom;
-	} else {
+	} 否则 {
 		/* bottom is AUTO, or neither are AUTO */
 		bottom = -top;
 	}
@@ -5093,48 +5093,48 @@ layout_position_relative(
 		const css_unit_ctx *unit_len_ctx,
 		struct box *root,
 		struct box *fp,
-		int fx,
-		int fy)
+		整数 fx,
+		整数 fy)
 {
 	struct box *box; /* for children of "root" */
 	struct box *fn;  /* for block formatting context box for children of
 			  * "box" */
 	struct box *fc;  /* for float children of the block formatting context,
 			  * "fp" */
-	int x, y;	 /* for the offsets resulting from any relative
+	整数 x, y;	 /* for the offsets resulting from any relative
 			  * positioning on the current block */
-	int fnx, fny;    /* for affsets which apply to flat children of "box" */
+	整数 fnx, fny;    /* for affsets which apply to flat children of "box" */
 
 	/**\todo ensure containing box is large enough after moving boxes */
 
 	assert(root);
 
 	/* Normal children */
-	for (box = root->children; box; box = box->next) {
+	为 (box = root->children; box; box = box->next) {
 
-		if (box->type == BOX_TEXT)
+		如果 (box->type == BOX_TEXT)
 			continue;
 
 		/* If relatively positioned, get offsets */
-		if (box->style && css_computed_position(box->style) ==
+		如果 (box->style && css_computed_position(box->style) ==
 				CSS_POSITION_RELATIVE)
 			layout_compute_relative_offset(
 					unit_len_ctx, box, &x, &y);
-		else
+		否则
 			x = y = 0;
 
 		/* Adjust float coordinates.
 		 * (note float x and y are relative to their block formatting
 		 * context box and not their parent) */
-		if (box->style && (css_computed_float(box->style) ==
+		如果 (box->style && (css_computed_float(box->style) ==
 					CSS_FLOAT_LEFT ||
 				css_computed_float(box->style) ==
 					CSS_FLOAT_RIGHT) &&
 				(fx != 0 || fy != 0)) {
 			/* box is a float and there is a float offset to
 			 * apply */
-			for (fc = fp->float_children; fc; fc = fc->next_float) {
-				if (box == fc->children) {
+			为 (fc = fp->float_children; fc; fc = fc->next_float) {
+				如果 (box == fc->children) {
 					/* Box is floated in the block
 					 * formatting context block, fp.
 					 * Apply float offsets. */
@@ -5145,10 +5145,10 @@ layout_position_relative(
 			}
 		}
 
-		if (box->float_children) {
+		如果 (box->float_children) {
 			fn = box;
 			fnx = fny = 0;
-		} else {
+		} 否则 {
 			fn = fp;
 			fnx = fx + x;
 			fny = fy + y;
@@ -5158,7 +5158,7 @@ layout_position_relative(
 		layout_position_relative(unit_len_ctx, box, fn, fnx, fny);
 
 		/* Ignore things we're not interested in. */
-		if (!box->style || (box->style &&
+		如果 (!box->style || (box->style &&
 				css_computed_position(box->style) !=
 				CSS_POSITION_RELATIVE))
 			continue;
@@ -5169,9 +5169,9 @@ layout_position_relative(
 		/* Handle INLINEs - their "children" are in fact
 		 * the sibling boxes between the INLINE and
 		 * INLINE_END boxes */
-		if (box->type == BOX_INLINE && box->inline_end) {
+		如果 (box->type == BOX_INLINE && box->inline_end) {
 			struct box *b;
-			for (b = box->next; b && b != box->inline_end;
+			为 (b = box->next; b && b != box->inline_end;
 					b = b->next) {
 				b->x += x;
 				b->y += y;
@@ -5195,8 +5195,8 @@ static void
 layout_get_box_bbox(
 		const css_unit_ctx *unit_len_ctx,
 		struct box *box,
-		int *desc_x0, int *desc_y0,
-		int *desc_x1, int *desc_y1)
+		整数 *desc_x0, 整数 *desc_y0,
+		整数 *desc_x1, 整数 *desc_y1)
 {
 	*desc_x0 = -box->border[LEFT].width;
 	*desc_y0 = -box->border[TOP].width;
@@ -5207,13 +5207,13 @@ layout_get_box_bbox(
 
 	/* To stop the top of text getting clipped when css line-height is
 	 * reduced, we increase the top of the descendant bbox. */
-	if (box->type == BOX_BLOCK && box->style != NULL &&
+	如果 (box->type == BOX_BLOCK && box->style != NULL &&
 			css_computed_overflow_y(box->style) ==
 					CSS_OVERFLOW_VISIBLE &&
 			box->object == NULL) {
 		css_fixed font_size = 0;
 		css_unit font_unit = CSS_UNIT_PT;
-		int text_height;
+		整数 text_height;
 
 		css_computed_font_size(box->style, &font_size, &font_unit);
 		text_height = css_unit_len2device_px(box->style, unit_len_ctx,
@@ -5238,14 +5238,14 @@ layout_update_descendant_bbox(
 		const css_unit_ctx *unit_len_ctx,
 		struct box *box,
 		struct box *child,
-		int off_x,
-		int off_y)
+		整数 off_x,
+		整数 off_y)
 {
-	int child_desc_x0, child_desc_y0, child_desc_x1, child_desc_y1;
+	整数 child_desc_x0, child_desc_y0, child_desc_x1, child_desc_y1;
 
 	/* get coordinates of child relative to box */
-	int child_x = child->x - off_x;
-	int child_y = child->y - off_y;
+	整数 child_x = child->x - off_x;
+	整数 child_y = child->y - off_y;
 
 	bool html_object = (child->object &&
 			content_get_type(child->object) == CONTENT_HTML);
@@ -5253,7 +5253,7 @@ layout_update_descendant_bbox(
 	enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
 	enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
 
-	if (child->style != NULL) {
+	如果 (child->style != NULL) {
 		overflow_x = css_computed_overflow_x(child->style);
 		overflow_y = css_computed_overflow_y(child->style);
 	}
@@ -5263,13 +5263,13 @@ layout_update_descendant_bbox(
 			&child_desc_x0, &child_desc_y0,
 			&child_desc_x1, &child_desc_y1);
 
-	if (overflow_x == CSS_OVERFLOW_VISIBLE &&
+	如果 (overflow_x == CSS_OVERFLOW_VISIBLE &&
 			html_object == false) {
 		/* get child's descendant bbox relative to box */
 		child_desc_x0 = child->descendant_x0;
 		child_desc_x1 = child->descendant_x1;
 	}
-	if (overflow_y == CSS_OVERFLOW_VISIBLE &&
+	如果 (overflow_y == CSS_OVERFLOW_VISIBLE &&
 			html_object == false) {
 		/* get child's descendant bbox relative to box */
 		child_desc_y0 = child->descendant_y0;
@@ -5282,13 +5282,13 @@ layout_update_descendant_bbox(
 	child_desc_y1 += child_y;
 
 	/* increase box's descendant bbox to contain descendants */
-	if (child_desc_x0 < box->descendant_x0)
+	如果 (child_desc_x0 < box->descendant_x0)
 		box->descendant_x0 = child_desc_x0;
-	if (child_desc_y0 < box->descendant_y0)
+	如果 (child_desc_y0 < box->descendant_y0)
 		box->descendant_y0 = child_desc_y0;
-	if (box->descendant_x1 < child_desc_x1)
+	如果 (box->descendant_x1 < child_desc_x1)
 		box->descendant_x1 = child_desc_x1;
-	if (box->descendant_y1 < child_desc_y1)
+	如果 (box->descendant_y1 < child_desc_y1)
 		box->descendant_y1 = child_desc_y1;
 }
 
@@ -5316,15 +5316,15 @@ static void layout_calculate_descendant_bboxes(
 			&box->descendant_x1, &box->descendant_y1);
 
 	/* Extend it to contain HTML contents if box is replaced */
-	if (box->object && content_get_type(box->object) == CONTENT_HTML) {
-		if (box->descendant_x1 < content_get_width(box->object))
+	如果 (box->object && content_get_type(box->object) == CONTENT_HTML) {
+		如果 (box->descendant_x1 < content_get_width(box->object))
 			box->descendant_x1 = content_get_width(box->object);
-		if (box->descendant_y1 < content_get_height(box->object))
+		如果 (box->descendant_y1 < content_get_height(box->object))
 			box->descendant_y1 = content_get_height(box->object);
 	}
 
-	if (box->iframe != NULL) {
-		int x, y;
+	如果 (box->iframe != NULL) {
+		整数 x, y;
 		box_coords(box, &x, &y);
 
 		browser_window_set_position(box->iframe, x, y);
@@ -5334,38 +5334,38 @@ static void layout_calculate_descendant_bboxes(
 				box->width, box->height);
 	}
 
-	if (box->type == BOX_INLINE || box->type == BOX_TEXT)
-		return;
+	如果 (box->type == BOX_INLINE || box->type == BOX_TEXT)
+		返回;
 
-	if (box->type == BOX_INLINE_END) {
+	如果 (box->type == BOX_INLINE_END) {
 		box = box->inline_end;
-		for (child = box->next; child;
+		为 (child = box->next; child;
 				child = child->next) {
-			if (child->type == BOX_FLOAT_LEFT ||
+			如果 (child->type == BOX_FLOAT_LEFT ||
 					child->type == BOX_FLOAT_RIGHT)
 				continue;
 
 			layout_update_descendant_bbox(unit_len_ctx, box, child,
 					box->x, box->y);
 
-			if (child == box->inline_end)
+			如果 (child == box->inline_end)
 				break;
 		}
-		return;
+		返回;
 	}
 
-	if (box->flags & REPLACE_DIM)
+	如果 (box->flags & REPLACE_DIM)
 		/* Box's children aren't displayed if the box is replaced */
-		return;
+		返回;
 
-	for (child = box->children; child; child = child->next) {
-		if (child->type == BOX_FLOAT_LEFT ||
+	为 (child = box->children; child; child = child->next) {
+		如果 (child->type == BOX_FLOAT_LEFT ||
 				child->type == BOX_FLOAT_RIGHT)
 			continue;
 
 		layout_calculate_descendant_bboxes(unit_len_ctx, child);
 
-		if (box->style && css_computed_overflow_x(box->style) ==
+		如果 (box->style && css_computed_overflow_x(box->style) ==
 				CSS_OVERFLOW_HIDDEN &&
 				css_computed_overflow_y(box->style) ==
 				CSS_OVERFLOW_HIDDEN)
@@ -5374,7 +5374,7 @@ static void layout_calculate_descendant_bboxes(
 		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
 	}
 
-	for (child = box->float_children; child; child = child->next_float) {
+	为 (child = box->float_children; child; child = child->next_float) {
 		assert(child->type == BOX_FLOAT_LEFT ||
 				child->type == BOX_FLOAT_RIGHT);
 
@@ -5383,7 +5383,7 @@ static void layout_calculate_descendant_bboxes(
 		layout_update_descendant_bbox(unit_len_ctx, box, child, 0, 0);
 	}
 
-	if (box->list_marker) {
+	如果 (box->list_marker) {
 		child = box->list_marker;
 		layout_calculate_descendant_bboxes(unit_len_ctx, child);
 
@@ -5393,7 +5393,7 @@ static void layout_calculate_descendant_bboxes(
 
 
 /* exported function documented in html/layout.h */
-bool layout_document(html_content *content, int width, int height)
+bool layout_document(html_content *content, 整数 width, 整数 height)
 {
 	bool ret;
 	struct box *doc = content->layout;
@@ -5412,7 +5412,7 @@ bool layout_document(html_content *content, int width, int height)
 	width -= doc->margin[LEFT] + doc->border[LEFT].width +
 			doc->padding[LEFT] + doc->padding[RIGHT] +
 			doc->border[RIGHT].width + doc->margin[RIGHT];
-	if (width < 0) {
+	如果 (width < 0) {
 		width = 0;
 	}
 	doc->width = width;
@@ -5420,14 +5420,14 @@ bool layout_document(html_content *content, int width, int height)
 	ret = layout_block_context(doc, height, content);
 
 	/* make <html> and <body> fill available height */
-	if (doc->y + doc->padding[TOP] + doc->height + doc->padding[BOTTOM] +
+	如果 (doc->y + doc->padding[TOP] + doc->height + doc->padding[BOTTOM] +
 			doc->border[BOTTOM].width + doc->margin[BOTTOM] <
 			height) {
 		doc->height = height - (doc->y + doc->padding[TOP] +
 				doc->padding[BOTTOM] +
 				doc->border[BOTTOM].width +
 				doc->margin[BOTTOM]);
-		if (doc->children)
+		如果 (doc->children)
 			doc->children->height = doc->height -
 					(doc->children->margin[TOP] +
 					 doc->children->border[TOP].width +
@@ -5443,5 +5443,5 @@ bool layout_document(html_content *content, int width, int height)
 
 	layout_calculate_descendant_bboxes(&content->unit_len_ctx, doc);
 
-	return ret;
+	返回 ret;
 }

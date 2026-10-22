@@ -44,18 +44,18 @@ static bool mimesniff__has_binary_octets(const uint8_t *data, size_t len)
 {
 	const uint8_t *end = data + len;
 
-	while (data != end) {
+	当 (data != end) {
 		const uint8_t c = *data;
 
 		/* Binary iff in C0 and not ESC, CR, FF, LF, HT */
-		if (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
+		如果 (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
 				c != '\n' && c != '\t')
 			break;
 
 		data++;
 	}
 
-	return data != end;
+	返回 data != end;
 }
 
 static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
@@ -87,38 +87,38 @@ static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
 	/* 12 reflects the minimum number of octets needed to sniff useful
 	 * information out of an 'ftyp' box (i.e. the size, type,
 	 * and major_brand words). */
-	if (len < 12)
-		return NSERROR_NOT_FOUND;
+	如果 (len < 12)
+		返回 NSERROR_NOT_FOUND;
 
 	/* Box size is big-endian */
 	box_size = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
 
 	/* Require that we can read the entire box, and reject bad box sizes */
-	if (len < box_size || box_size % 4 != 0)
-		return NSERROR_NOT_FOUND;
+	如果 (len < box_size || box_size % 4 != 0)
+		返回 NSERROR_NOT_FOUND;
 
 	/* Ensure this is an 'ftyp' box */
-	if (data[4] != 'f' || data[5] != 't' ||
+	如果 (data[4] != 'f' || data[5] != 't' ||
 			data[6] != 'y' || data[7] != 'p')
-		return NSERROR_NOT_FOUND;
+		返回 NSERROR_NOT_FOUND;
 
 	/* Check if major brand begins with 'mp4' */
-	if (data[8] == 'm' && data[9] == 'p' && data[10] == '4') {
+	如果 (data[8] == 'm' && data[9] == 'p' && data[10] == '4') {
 		*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
 	/* Search each compatible brand in the box for "mp4" */
-	for (i = 16; i <= box_size - 4; i += 4) {
-		if (data[i] == 'm' &&
+	为 (i = 16; i <= box_size - 4; i += 4) {
+		如果 (data[i] == 'm' &&
 		    data[i+1] == 'p' &&
 		    data[i+2] == '4') {
 			*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-			return NSERROR_OK;
+			返回 NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	返回 NSERROR_NOT_FOUND;
 }
 
 static nserror mimesniff__match_unknown_ws(const uint8_t *data, size_t len,
@@ -155,43 +155,43 @@ static nserror mimesniff__match_unknown_ws(const uint8_t *data, size_t len,
 	const struct map_s *it;
 
 	/* Skip leading whitespace */
-	while (data != end) {
+	当 (data != end) {
 		const uint8_t c = *data;
 
-		if (c != '\t' && c != '\n' && c != '\f' &&
+		如果 (c != '\t' && c != '\n' && c != '\f' &&
 				c != '\r' && c != ' ')
 			break;
 
 		data++;
 	}
 
-	if (data == end)
-		return NSERROR_NOT_FOUND;
+	如果 (data == end)
+		返回 NSERROR_NOT_FOUND;
 
 	len = end - data;
 
-	for (it = ws_exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	为 (it = ws_exact_match_types; it->sig != NULL; it++) {
+		如果 (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			返回 NSERROR_OK;
 		}
 	}
 
-	for (it = ws_inexact_match_types; it->sig != NULL; it++) {
+	为 (it = ws_inexact_match_types; it->sig != NULL; it++) {
 		/* +1 for trailing space or > */
-		if (len < it->len + 1)
+		如果 (len < it->len + 1)
 			continue;
 
-		if (strncasecmp((const char *) data,
+		如果 (strncasecmp((const char *) data,
 				(const char *) it->sig, it->len) == 0 &&
 				(data[it->len] == ' ' ||
 				data[it->len] == '>')) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			返回 NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	返回 NSERROR_NOT_FOUND;
 }
 
 static nserror mimesniff__match_unknown_bom(const uint8_t *data, size_t len,
@@ -207,14 +207,14 @@ static nserror mimesniff__match_unknown_bom(const uint8_t *data, size_t len,
 #undef SIG
 	const struct map_s *it;
 
-	for (it = bom_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	为 (it = bom_match_types; it->sig != NULL; it++) {
+		如果 (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			返回 NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	返回 NSERROR_NOT_FOUND;
 }
 
 static nserror mimesniff__match_unknown_riff(const uint8_t *data, size_t len,
@@ -229,17 +229,17 @@ static nserror mimesniff__match_unknown_riff(const uint8_t *data, size_t len,
 #undef SIG
 	const struct map_s *it;
 
-	for (it = riff_match_types; it->sig != NULL; it++) {
-		if (it->len + SLEN("RIFF????") <= len &&
+	为 (it = riff_match_types; it->sig != NULL; it++) {
+		如果 (it->len + SLEN("RIFF????") <= len &&
 				memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
 				memcmp(data + SLEN("RIFF????"),
 						it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			返回 NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	返回 NSERROR_NOT_FOUND;
 }
 
 static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
@@ -272,100 +272,100 @@ static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
 #undef SIG
 	const struct map_s *it;
 
-	for (it = exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0 &&
+	为 (it = exact_match_types; it->sig != NULL; it++) {
+		如果 (it->len <= len && memcmp(data, it->sig, it->len) == 0 &&
 				(allow_unsafe || it->safe)) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			返回 NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	返回 NSERROR_NOT_FOUND;
 }
 
 static nserror mimesniff__match_unknown(const uint8_t *data, size_t len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-	if (mimesniff__match_unknown_exact(data, len, allow_unsafe,
+	如果 (mimesniff__match_unknown_exact(data, len, allow_unsafe,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 
-	if (mimesniff__match_unknown_riff(data, len,
+	如果 (mimesniff__match_unknown_riff(data, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 
-	if (allow_unsafe == false)
-		return NSERROR_NOT_FOUND;
+	如果 (allow_unsafe == false)
+		返回 NSERROR_NOT_FOUND;
 
-	if (mimesniff__match_unknown_bom(data, len,
+	如果 (mimesniff__match_unknown_bom(data, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 
-	if (mimesniff__match_unknown_ws(data, len,
+	如果 (mimesniff__match_unknown_ws(data, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 
-	if (mimesniff__match_mp4(data, len, effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+	如果 (mimesniff__match_mp4(data, len, effective_type) == NSERROR_OK)
+		返回 NSERROR_OK;
 
-	return NSERROR_NOT_FOUND;
+	返回 NSERROR_NOT_FOUND;
 }
 
 static nserror mimesniff__compute_unknown(const uint8_t *data, size_t len,
 		lwc_string **effective_type)
 {
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	如果 (data == NULL)
+		返回 NSERROR_NEED_DATA;
 
 	len = min(len, 512);
 
-	if (mimesniff__match_unknown(data, len, true,
+	如果 (mimesniff__match_unknown(data, len, true,
 				     effective_type) == NSERROR_OK) {
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	如果 (mimesniff__has_binary_octets(data, len) == false) {
 		/* No binary octets => text/plain */
 		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
 	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 static nserror mimesniff__compute_text_or_binary(const uint8_t *data,
 		size_t len, lwc_string **effective_type)
 {
-	if (data == NULL) {
-		return NSERROR_NEED_DATA;
+	如果 (data == NULL) {
+		返回 NSERROR_NEED_DATA;
 	}
 
 	len = min(len, 512);
 
-	if (len >= 3 && ((data[0] == 0xfe && data[1] == 0xff) ||
+	如果 (len >= 3 && ((data[0] == 0xfe && data[1] == 0xff) ||
 			(data[0] == 0xff && data[1] == 0xfe) ||
 			(data[0] == 0xef && data[1] == 0xbb &&
 				data[2] == 0xbf))) {
 		/* Found a BOM => text/plain */
 		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	如果 (mimesniff__has_binary_octets(data, len) == false) {
 		/* No binary octets => text/plain */
 		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
-	if (mimesniff__match_unknown(data, len, false,
+	如果 (mimesniff__match_unknown(data, len, false,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 
 	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 static nserror mimesniff__compute_image(lwc_string *official_type,
@@ -395,32 +395,32 @@ static nserror mimesniff__compute_image(lwc_string *official_type,
 
 	const struct it_s *it;
 
-	if (data == NULL) {
+	如果 (data == NULL) {
 		lwc_string_unref(official_type);
-		return NSERROR_NEED_DATA;
+		返回 NSERROR_NEED_DATA;
 	}
 
-	for (it = image_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	为 (it = image_types; it->sig != NULL; it++) {
+		如果 (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
 			lwc_string_unref(official_type);
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			返回 NSERROR_OK;
 		}
 	}
 
 	/* WebP has a signature that doesn't fit into the above table */
-	if (SLEN("RIFF????WEBPVP") <= len &&
+	如果 (SLEN("RIFF????WEBPVP") <= len &&
 			memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
 			memcmp(data + SLEN("RIFF????"),
 					"WEBPVP", SLEN("WEBPVP")) == 0 ) {
 		lwc_string_unref(official_type);
 		*effective_type = lwc_string_ref(corestring_lwc_image_webp);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
 	*effective_type = official_type;
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
@@ -444,12 +444,12 @@ static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
 	bool rdf = false, rss = false;
 	const uint8_t *end;
 
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	如果 (data == NULL)
+		返回 NSERROR_NEED_DATA;
 
 	end = data + min(len, 512);
 
-	while (data < end) {
+	当 (data < end) {
 		const uint8_t c = *data;
 
 #define MATCH(s) SLEN(s) <= (size_t) (end - data) && \
@@ -457,7 +457,7 @@ static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
 
 		switch (state) {
 		case BEFORE_BOM:
-			if (3 <= end - data && c == 0xef && data[1] == 0xbb &&
+			如果 (3 <= end - data && c == 0xef && data[1] == 0xbb &&
 					data[2] == 0xbf) {
 				data += 3;
 			}
@@ -465,84 +465,84 @@ static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
 			state = BEFORE_MARKUP;
 			break;
 		case BEFORE_MARKUP:
-			if (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
+			如果 (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
 				data++;
-			else if (c != '<')
+			否则 如果 (c != '<')
 				data = end;
-			else {
+			否则 {
 				state = MARKUP_START;
 				data++;
 			}
 			break;
 		case MARKUP_START:
-			if (c == '!') {
+			如果 (c == '!') {
 				state = COMMENT_OR_DOCTYPE;
 				data++;
-			} else if (c == '?') {
+			} 否则 如果 (c == '?') {
 				state = IN_PI;
 				data++;
-			} else {
+			} 否则 {
 				/* Reconsume input */
 				state = IN_TAG;
 			}
 			break;
 		case COMMENT_OR_DOCTYPE:
-			if (2 <= end - data && c == '-' && data[1] == '-') {
+			如果 (2 <= end - data && c == '-' && data[1] == '-') {
 				state = IN_COMMENT;
 				data += 2;
-			} else {
+			} 否则 {
 				/* Reconsume input */
 				state = IN_DOCTYPE;
 			}
 			break;
 		case IN_COMMENT:
-			if (3 <= end - data && c == '-' && data[1] == '-' &&
+			如果 (3 <= end - data && c == '-' && data[1] == '-' &&
 					data[2] == '>') {
 				state = BEFORE_MARKUP;
 				data += 3;
-			} else
+			} 否则
 				data++;
 			break;
 		case IN_DOCTYPE:
-			if (c == '>')
+			如果 (c == '>')
 				state = BEFORE_MARKUP;
 			data++;
 			break;
 		case IN_PI:
-			if (2 <= end - data && c == '?' && data[1] == '>') {
+			如果 (2 <= end - data && c == '?' && data[1] == '>') {
 				state = BEFORE_MARKUP;
 				data += 2;
-			} else
+			} 否则
 				data++;
 			break;
 		case IN_TAG:
-			if (MATCH("rss")) {
+			如果 (MATCH("rss")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
-			} else if (MATCH("feed")) {
+				返回 NSERROR_OK;
+			} 否则 如果 (MATCH("feed")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_atom_xml);
-				return NSERROR_OK;
-			} else if (MATCH("rdf:RDF")) {
+				返回 NSERROR_OK;
+			} 否则 如果 (MATCH("rdf:RDF")) {
 				state = IN_RDF;
 				data += SLEN("rdf:RDF");
-			} else
+			} 否则
 				data = end;
 			break;
 		case IN_RDF:
-			if (MATCH(RSS_NS)) {
+			如果 (MATCH(RSS_NS)) {
 				rss = true;
 				data += SLEN(RSS_NS);
-			} else if (MATCH(RDF_NS)) {
+			} 否则 如果 (MATCH(RDF_NS)) {
 				rdf = true;
 				data += SLEN(RDF_NS);
-			} else
+			} 否则
 				data++;
 
-			if (rdf && rss) {
+			如果 (rdf && rss) {
 				*effective_type = lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
+				返回 NSERROR_OK;
 			}
 
 			break;
@@ -552,7 +552,7 @@ static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
 
 	*effective_type = lwc_string_ref(corestring_lwc_text_html);
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 
 #undef RSS_NS
 #undef RDF_NS
@@ -586,63 +586,63 @@ mimesniff_compute_effective_type(const char *content_type_header,
 	bool match;
 	nserror error;
 
-	if (content_type_header == NULL) {
-		if (sniff_allowed == false) {
-			return NSERROR_NOT_FOUND;
+	如果 (content_type_header == NULL) {
+		如果 (sniff_allowed == false) {
+			返回 NSERROR_NOT_FOUND;
 		}
 
 		/* No official type => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		返回 mimesniff__compute_unknown(data, len, effective_type);
 	}
 
 	error = http_parse_content_type(content_type_header, &ct);
-	if (error != NSERROR_OK) {
-		if (sniff_allowed == false)
-			return NSERROR_NOT_FOUND;
+	如果 (error != NSERROR_OK) {
+		如果 (sniff_allowed == false)
+			返回 NSERROR_NOT_FOUND;
 
 		/* Unparseable => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		返回 mimesniff__compute_unknown(data, len, effective_type);
 	}
 
-	if (sniff_allowed == false) {
+	如果 (sniff_allowed == false) {
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
-	if (image_only) {
+	如果 (image_only) {
 		lwc_string *official_type;
 
-		if (lwc_string_caseless_isequal(ct->media_type,
+		如果 (lwc_string_caseless_isequal(ct->media_type,
 						corestring_lwc_image_svg,
 						&match) == lwc_error_ok && match) {
 			*effective_type = lwc_string_ref(corestring_lwc_image_svg);
 			http_content_type_destroy(ct);
-			return NSERROR_OK;
+			返回 NSERROR_OK;
 		}
 
 		official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
+		返回 mimesniff__compute_image(official_type,
 				data, len, effective_type);
 	}
 
 	content_type_header_len = strlen(content_type_header);
 
 	/* Look for text types */
-	for (tt = text_types; tt->data != NULL; tt++) {
-		if (tt->len == content_type_header_len &&
+	为 (tt = text_types; tt->data != NULL; tt++) {
+		如果 (tt->len == content_type_header_len &&
 		    memcmp(tt->data,
 			   content_type_header,
 			   content_type_header_len) == 0) {
 			http_content_type_destroy(ct);
-			return mimesniff__compute_text_or_binary(data, len,
+			返回 mimesniff__compute_text_or_binary(data, len,
 					effective_type);
 		}
 	}
 
 	/* unknown/unknown, application/unknown, * / * */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	如果 ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_unknown_unknown,
 					 &match) == lwc_error_ok && match) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
@@ -652,11 +652,11 @@ mimesniff_compute_effective_type(const char *content_type_header,
 					 corestring_lwc_any,
 					 &match) == lwc_error_ok && match)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_unknown(data, len, effective_type);
+		返回 mimesniff__compute_unknown(data, len, effective_type);
 	}
 
 	/* +xml */
-	if (lwc_string_length(ct->media_type) > SLEN("+xml") &&
+	如果 (lwc_string_length(ct->media_type) > SLEN("+xml") &&
 			strncasecmp(lwc_string_data(ct->media_type) +
 				lwc_string_length(ct->media_type) -
 				SLEN("+xml"),
@@ -664,11 +664,11 @@ mimesniff_compute_effective_type(const char *content_type_header,
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
 	/* text/xml, application/xml */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	如果 ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_text_xml,
 					 &match) == lwc_error_ok && match) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
@@ -677,24 +677,24 @@ mimesniff_compute_effective_type(const char *content_type_header,
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
 	/* Image types */
-	if (content_factory_type_from_mime_type(ct->media_type) ==
+	如果 (content_factory_type_from_mime_type(ct->media_type) ==
 			CONTENT_IMAGE) {
 		lwc_string *official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
+		返回 mimesniff__compute_image(official_type,
 				data, len, effective_type);
 	}
 
 	/* text/html */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	如果 ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_text_html,
 					 &match) == lwc_error_ok && match)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_feed_or_html(data, len,
+		返回 mimesniff__compute_feed_or_html(data, len,
 						       effective_type);
 	}
 
@@ -703,5 +703,5 @@ mimesniff_compute_effective_type(const char *content_type_header,
 
 	http_content_type_destroy(ct);
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }

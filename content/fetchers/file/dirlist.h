@@ -36,15 +36,15 @@
 
 struct nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
+bool dirlist_generate_top(char *buffer, 整数 buffer_length);
+bool dirlist_generate_hide_columns(整数 flags, char *buffer, 整数 buffer_length);
+bool dirlist_generate_title(const char *title, char *buffer, 整数 buffer_length);
 bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length);
-bool dirlist_generate_headings(char *buffer, int buffer_length);
+		整数 buffer_length);
+bool dirlist_generate_headings(char *buffer, 整数 buffer_length);
 bool dirlist_generate_row(bool even, bool directory, struct nsurl *url,
 		char *name, const char *mimetype, long long size, char *date,
-		char *time, char *buffer, int buffer_length);
-bool dirlist_generate_bottom(char *buffer, int buffer_length);
+		char *time, char *buffer, 整数 buffer_length);
+bool dirlist_generate_bottom(char *buffer, 整数 buffer_length);
 
 #endif

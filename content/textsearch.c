@@ -117,7 +117,7 @@ struct textsearch_context {
  */
 static inline void
 textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+		     整数 type,
 		     bool state,
 		     const char *string)
 {
@@ -150,9 +150,9 @@ static void free_matches(struct textsearch_context *textsearch)
 	textsearch->found->prev = NULL;
 	textsearch->found->next = NULL;
 
-	for (; cur; cur = nxt) {
+	为 (; cur; cur = nxt) {
 		nxt = cur->next;
-		if (cur->sel) {
+		如果 (cur->sel) {
 			selection_destroy(cur->sel);
 		}
 		free(cur);
@@ -168,20 +168,20 @@ static void search_show_all(bool all, struct textsearch_context *context)
 {
 	struct list_entry *a;
 
-	for (a = context->found->next; a; a = a->next) {
+	为 (a = context->found->next; a; a = a->next) {
 		bool add = true;
-		if (!all && a != context->current) {
+		如果 (!all && a != context->current) {
 			add = false;
-			if (a->sel) {
+			如果 (a->sel) {
 				selection_destroy(a->sel);
 				a->sel = NULL;
 			}
 		}
 
-		if (add && !a->sel) {
+		如果 (add && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			如果 (a->sel != NULL) {
 				selection_init(a->sel);
 				selection_set_position(a->sel,
 						       a->start_idx,
@@ -203,7 +203,7 @@ static void search_show_all(bool all, struct textsearch_context *context)
 static nserror
 search_text(struct textsearch_context *context,
 	    const char *string,
-	    int string_len,
+	    整数 string_len,
 	    search_flags_t flags)
 {
 	struct rect bounds;
@@ -216,15 +216,15 @@ search_text(struct textsearch_context *context,
 	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
 	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	如果 (context->c == NULL) {
+		返回 res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	如果 ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
+		如果 (context->string != NULL) {
 			free(context->string);
 		}
 
@@ -232,7 +232,7 @@ search_text(struct textsearch_context *context,
 		free_matches(context);
 
 		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
+		如果 (context->string != NULL) {
 			memcpy(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
@@ -251,9 +251,9 @@ search_text(struct textsearch_context *context,
 		/* indicate find operation finished */
 		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
 
-		if (res != NSERROR_OK) {
+		如果 (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			返回 res;
 		}
 
 		context->prev_case_sens = case_sensitive;
@@ -262,13 +262,13 @@ search_text(struct textsearch_context *context,
 		context->current = context->found->next;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} 否则 如果 (context->current != NULL) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
+		如果 (forwards) {
+			如果 (context->current->next)
 				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		} 否则 {
+			如果 (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
@@ -296,9 +296,9 @@ search_text(struct textsearch_context *context,
 			     NULL);
 
 
-	if (context->current == NULL) {
+	如果 (context->current == NULL) {
 		/* no current match */
-		return res;
+		返回 res;
 	}
 
 	/* call content match bounds handler */
@@ -308,7 +308,7 @@ search_text(struct textsearch_context *context,
 					context->current->start_box,
 					context->current->end_box,
 					&bounds);
-	if (res == NSERROR_OK) {
+	如果 (res == NSERROR_OK) {
 		msg_data.scroll.area = true;
 		msg_data.scroll.x0 = bounds.x0;
 		msg_data.scroll.y0 = bounds.y0;
@@ -317,7 +317,7 @@ search_text(struct textsearch_context *context,
 		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
 	}
 
-	return res;
+	返回 res;
 }
 
 
@@ -335,8 +335,8 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			search_flags_t flags,
 			const char *string)
 {
-	int string_len;
-	int i = 0;
+	整数 string_len;
+	整数 i = 0;
 	nserror res = NSERROR_OK;
 
 	assert(textsearch != NULL);
@@ -348,14 +348,14 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			     string);
 
 	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
+	为 (i = 0; i < string_len; i++) {
+		如果 (string[i] != '#' && string[i] != '*')
 			break;
 	}
 
-	if (i < string_len) {
+	如果 (i < string_len) {
 		res = search_text(textsearch, string, string_len, flags);
-	} else {
+	} 否则 {
 		union content_msg_data msg_data;
 
 		free_matches(textsearch);
@@ -387,7 +387,7 @@ content_textsearch_step(struct textsearch_context *textsearch,
 				  &msg_data);
 	}
 
-	return res;
+	返回 res;
 }
 
 
@@ -401,11 +401,11 @@ static nserror content_textsearch__clear(struct content *c)
 	free(c->textsearch.string);
 	c->textsearch.string = NULL;
 
-	if (c->textsearch.context != NULL) {
+	如果 (c->textsearch.context != NULL) {
 		content_textsearch_destroy(c->textsearch.context);
 		c->textsearch.context = NULL;
 	}
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -426,26 +426,26 @@ content_textsearch_create(struct content *c,
 	struct list_entry *search_head;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
+	如果 ((c->handler->textsearch_find == NULL) ||
 	    (c->handler->textsearch_bounds == NULL)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		返回 NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
 	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	如果 (context == NULL) {
+		返回 NSERROR_NOMEM;
 	}
 
 	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
+	如果 (search_head == NULL) {
 		free(context);
-		return NSERROR_NOMEM;
+		返回 NSERROR_NOMEM;
 	}
 
 	search_head->start_idx = 0;
@@ -466,18 +466,18 @@ content_textsearch_create(struct content *c,
 
 	*textsearch_out = context;
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 const char *
 content_textsearch_find_pattern(const char *string,
-				int s_len,
+				整数 s_len,
 				const char *pattern,
-				int p_len,
+				整数 p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				unsigned 整数 *m_len)
 {
 	struct { const char *ss, *s, *p; bool first; } context[16];
 	const char *ep = pattern + p_len;
@@ -486,43 +486,43 @@ content_textsearch_find_pattern(const char *string,
 	const char *ss = string;
 	const char *s = string;
 	bool first = true;
-	int top = 0;
+	整数 top = 0;
 
-	while (p < ep) {
+	当 (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
+		如果 (p < pattern || *p == '*') {
 			char ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			do p++; 当 (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			如果 (p >= ep) break;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			如果 (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
+				如果 (!case_sens) ch = ascii_to_upper(ch);
+				当 (s < es) {
+					如果 (case_sens) {
+						如果 (*s == ch) break;
+					} 否则 如果 (ascii_to_upper(*s) == ch)
 						break;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			如果 (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
+				如果 (top < (整数)NOF_ELEMENTS(context)) {
 					context[top].ss = ss;
 					context[top].s  = s + 1;
 					context[top].p  = p - 1;
@@ -531,42 +531,42 @@ content_textsearch_find_pattern(const char *string,
 					top++;
 				}
 
-				if (first) {
+				如果 (first) {
 					ss = s;
 					/* remember first non-'*' char */
 					first = false;
 				}
 
 				matches = true;
-			} else {
+			} 否则 {
 				matches = false;
 			}
 
-		} else if (s < es) {
+		} 否则 如果 (s < es) {
 			char ch = *p;
-			if (ch == '#')
+			如果 (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			否则 {
+				如果 (case_sens)
 					matches = (*s == ch);
-				else
+				否则
 					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
 			}
-			if (matches && first) {
+			如果 (matches && first) {
 				ss = s;  /* remember first non-'*' char */
 				first = false;
 			}
-		} else {
+		} 否则 {
 			matches = false;
 		}
 
-		if (matches) {
+		如果 (matches) {
 			p++; s++;
-		} else {
+		} 否则 {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			如果 (--top < 0)
+				返回 NULL;  /* no match, give up */
 
 			ss = context[top].ss;
 			s  = context[top].s;
@@ -577,7 +577,7 @@ content_textsearch_find_pattern(const char *string,
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	返回 ss;
 }
 
 
@@ -593,8 +593,8 @@ content_textsearch_add_match(struct textsearch_context *context,
 
 	/* found string in box => add to list */
 	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	如果 (entry == NULL) {
+		返回 NSERROR_NOMEM;
 	}
 
 	entry->start_idx = start_idx;
@@ -606,15 +606,15 @@ content_textsearch_add_match(struct textsearch_context *context,
 	entry->next = NULL;
 	entry->prev = context->found->prev;
 
-	if (context->found->prev == NULL) {
+	如果 (context->found->prev == NULL) {
 		context->found->next = entry;
-	} else {
+	} 否则 {
 		context->found->prev->next = entry;
 	}
 
 	context->found->prev = entry;
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -628,18 +628,18 @@ content_textsearch_ishighlighted(struct textsearch_context *textsearch,
 {
 	struct list_entry *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	为 (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
+		如果 (cur->sel &&
 		    selection_highlighted(cur->sel,
 					  start_offset,
 					  end_offset,
 					  start_idx,
 					  end_idx)) {
-			return true;
+			返回 true;
 		}
 	}
 
-	return false;
+	返回 false;
 }
 
 
@@ -648,7 +648,7 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch)
 {
 	assert(textsearch != NULL);
 
-	if (textsearch->string != NULL) {
+	如果 (textsearch->string != NULL) {
 		/* broadcast recent query string */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
@@ -673,7 +673,7 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch)
 	free_matches(textsearch);
 	free(textsearch);
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -689,22 +689,22 @@ content_textsearch(struct hlcache_handle *h,
 
 	assert(c != NULL);
 
-	if (string != NULL &&
+	如果 (string != NULL &&
 	    c->textsearch.string != NULL &&
 	    c->textsearch.context != NULL &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} 否则 如果 (string != NULL) {
 		/* New search */
 		free(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		如果 (c->textsearch.string == NULL) {
+			返回 NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		如果 (c->textsearch.context != NULL) {
 			content_textsearch_destroy(c->textsearch.context);
 			c->textsearch.context = NULL;
 		}
@@ -712,13 +712,13 @@ content_textsearch(struct hlcache_handle *h,
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		如果 (res != NSERROR_OK) {
+			返回 res;
 		}
 
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else {
+	} 否则 {
 		/* Clear search */
 		content_textsearch__clear(c);
 
@@ -726,7 +726,7 @@ content_textsearch(struct hlcache_handle *h,
 		c->textsearch.string = NULL;
 	}
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -736,5 +736,5 @@ nserror content_textsearch_clear(struct hlcache_handle *h)
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	return(content_textsearch__clear(c));
+	返回(content_textsearch__clear(c));
 }

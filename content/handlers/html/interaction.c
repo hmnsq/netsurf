@@ -74,31 +74,31 @@ static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
 	enum css_cursor_e cursor;
 	lwc_string **cursor_uris;
 
-	if (box->type == BOX_FLOAT_LEFT || box->type == BOX_FLOAT_RIGHT)
+	如果 (box->type == BOX_FLOAT_LEFT || box->type == BOX_FLOAT_RIGHT)
 		style = box->children->style;
-	else
+	否则
 		style = box->style;
 
-	if (style == NULL)
-		return BROWSER_POINTER_DEFAULT;
+	如果 (style == NULL)
+		返回 BROWSER_POINTER_DEFAULT;
 
 	cursor = css_computed_cursor(style, &cursor_uris);
 
 	switch (cursor) {
 	case CSS_CURSOR_AUTO:
-		if (box->href || (box->gadget &&
+		如果 (box->href || (box->gadget &&
 				(box->gadget->type == GADGET_IMAGE ||
 				box->gadget->type == GADGET_SUBMIT)) ||
 				imagemap) {
 			/* link */
 			pointer = BROWSER_POINTER_POINT;
-		} else if (box->gadget &&
+		} 否则 如果 (box->gadget &&
 				(box->gadget->type == GADGET_TEXTBOX ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_TEXTAREA)) {
 			/* text input */
 			pointer = BROWSER_POINTER_CARET;
-		} else {
+		} 否则 {
 			/* html content doesn't mind */
 			pointer = BROWSER_POINTER_AUTO;
 		}
@@ -153,7 +153,7 @@ static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
 		break;
 	}
 
-	return pointer;
+	返回 pointer;
 }
 
 
@@ -165,21 +165,21 @@ static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
  * \param y	y ordinate
  */
 
-static void html_box_drag_start(struct box *box, int x, int y)
+static void html_box_drag_start(struct box *box, 整数 x, 整数 y)
 {
-	int box_x, box_y;
-	int scroll_mouse_x, scroll_mouse_y;
+	整数 box_x, box_y;
+	整数 scroll_mouse_x, scroll_mouse_y;
 
 	box_coords(box, &box_x, &box_y);
 
-	if (box->scroll_x != NULL) {
+	如果 (box->scroll_x != NULL) {
 		scroll_mouse_x = x - box_x ;
 		scroll_mouse_y = y - (box_y + box->padding[TOP] +
 				box->height + box->padding[BOTTOM] -
 				SCROLLBAR_WIDTH);
 		scrollbar_start_content_drag(box->scroll_x,
 				scroll_mouse_x, scroll_mouse_y);
-	} else if (box->scroll_y != NULL) {
+	} 否则 如果 (box->scroll_y != NULL) {
 		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
 				box->width + box->padding[RIGHT] -
 				SCROLLBAR_WIDTH);
@@ -201,15 +201,15 @@ static void html_box_drag_start(struct box *box, int x, int y)
  * \param dir    Direction of drag
  */
 static size_t html_selection_drag_end(struct html_content *html,
-		browser_mouse_state mouse, int x, int y, int dir)
+		browser_mouse_state mouse, 整数 x, 整数 y, 整数 dir)
 {
-	int pixel_offset;
+	整数 pixel_offset;
 	struct box *box;
-	int dx, dy;
+	整数 dx, dy;
 	size_t idx = 0;
 
 	box = box_pick_text_box(html, x, y, dir, &dx, &dy);
-	if (box) {
+	如果 (box) {
 		plot_font_style_t fstyle;
 
 		font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
@@ -220,7 +220,7 @@ static size_t html_selection_drag_end(struct html_content *html,
 		idx += box->byte_offset;
 	}
 
-	return idx;
+	返回 idx;
 }
 
 
@@ -247,17 +247,17 @@ html__image_coords_dom_user_data_handler(dom_node_operation operation,
 {
 	struct image_input_coords *oldcoords, *coords = _data, *newcoords;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_image_coords_node_data,
+	如果 (!dom_string_isequal(corestring_dom___ns_key_image_coords_node_data,
 				key) || coords == NULL) {
-		return;
+		返回;
 	}
 
 	switch (operation) {
 	case DOM_NODE_CLONED:
 		newcoords = calloc(1, sizeof(*newcoords));
-		if (newcoords != NULL) {
+		如果 (newcoords != NULL) {
 			*newcoords = *coords;
-			if (dom_node_set_user_data(dst,
+			如果 (dom_node_set_user_data(dst,
 				 corestring_dom___ns_key_image_coords_node_data,
 				 newcoords,
 				 html__image_coords_dom_user_data_handler,
@@ -294,23 +294,23 @@ html__image_coords_dom_user_data_handler(dom_node_operation operation,
 static void
 html_overflow_scroll_drag_end(struct scrollbar *scrollbar,
 			      browser_mouse_state mouse,
-			      int x, int y)
+			      整数 x, 整数 y)
 {
-	int scroll_mouse_x, scroll_mouse_y, box_x, box_y;
+	整数 scroll_mouse_x, scroll_mouse_y, box_x, box_y;
 	struct html_scrollbar_data *data = scrollbar_get_data(scrollbar);
 	struct box *box;
 
 	box = data->box;
 	box_coords(box, &box_x, &box_y);
 
-	if (scrollbar_is_horizontal(scrollbar)) {
+	如果 (scrollbar_is_horizontal(scrollbar)) {
 		scroll_mouse_x = x - box_x;
 		scroll_mouse_y = y - (box_y + box->padding[TOP] +
 				box->height + box->padding[BOTTOM] -
 				SCROLLBAR_WIDTH);
 		scrollbar_mouse_drag_end(scrollbar, mouse,
 				scroll_mouse_x, scroll_mouse_y);
-	} else {
+	} 否则 {
 		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
 				box->width + box->padding[RIGHT] -
 				SCROLLBAR_WIDTH);
@@ -329,20 +329,20 @@ static nserror
 mouse_action_select_menu(html_content *html,
 			 struct browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 整数 x, 整数 y)
 {
 	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	整数 box_x = 0;
+	整数 box_y = 0;
 	const char *status;
-	int width, height;
+	整数 width, height;
 	struct hlcache_handle *bw_content;
 	browser_drag_type bw_drag_type;
 
 	assert(html->visible_select_menu != NULL);
 
 	bw_drag_type = browser_window_get_drag_type(bw);
-	if (bw_drag_type != DRAGGING_NONE && !mouse) {
+	如果 (bw_drag_type != DRAGGING_NONE && !mouse) {
 		/* drag end: select menu */
 		form_select_mouse_drag_end(html->visible_select_menu, mouse, x, y);
 	}
@@ -358,14 +358,14 @@ mouse_action_select_menu(html_content *html,
 					  mouse,
 					  x - box_x,
 					  y - box_y);
-	if (status != NULL) {
+	如果 (status != NULL) {
 		/* set status if menu still open */
 		union content_msg_data msg_data;
 		msg_data.explicit_status_text = status;
 		content_broadcast((struct content *)html,
 				  CONTENT_MSG_STATUS,
 				  &msg_data);
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
 	/* close menu and redraw where it was */
@@ -379,7 +379,7 @@ mouse_action_select_menu(html_content *html,
 			       box_y,
 			       width,
 			       height);
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -391,40 +391,40 @@ static nserror
 mouse_action_drag_selection(html_content *html,
 			    struct browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    整数 x, 整数 y)
 {
 	struct box *box;
-	int dir = -1;
-	int dx, dy;
+	整数 dir = -1;
+	整数 dx, dy;
 	size_t idx;
 	union html_drag_owner drag_owner;
-	int pixel_offset;
+	整数 pixel_offset;
 	plot_font_style_t fstyle;
 
-	if (!mouse) {
+	如果 (!mouse) {
 		/* End of selection drag */
-		if (selection_dragging_start(html->sel)) {
+		如果 (selection_dragging_start(html->sel)) {
 			dir = 1;
 		}
 
 		idx = html_selection_drag_end(html, mouse, x, y, dir);
 
-		if (idx != 0) {
+		如果 (idx != 0) {
 			selection_track(html->sel, mouse, idx);
 		}
 
 		drag_owner.no_owner = true;
 		html_set_drag_type(html, HTML_DRAG_NONE, drag_owner, NULL);
 
-		return NSERROR_OK;
+		返回 NSERROR_OK;
 	}
 
-	if (selection_dragging_start(html->sel)) {
+	如果 (selection_dragging_start(html->sel)) {
 		dir = 1;
 	}
 
 	box = box_pick_text_box(html, x, y, dir, &dx, &dy);
-	if (box != NULL) {
+	如果 (box != NULL) {
 		font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
 
 		guit->layout->position(&fstyle,
@@ -436,7 +436,7 @@ mouse_action_drag_selection(html_content *html,
 
 		selection_track(html->sel, mouse, box->byte_offset + idx);
 	}
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -448,20 +448,20 @@ static nserror
 mouse_action_drag_scrollbar(html_content *html,
 			    struct browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    整数 x, 整数 y)
 {
 	struct scrollbar *scr;
 	struct html_scrollbar_data *data;
 	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	整数 box_x = 0;
+	整数 box_y = 0;
 	const char *status;
-	int scroll_mouse_x = 0, scroll_mouse_y = 0;
+	整数 scroll_mouse_x = 0, scroll_mouse_y = 0;
 	scrollbar_mouse_status scrollbar_status;
 
 	scr = html->drag_owner.scrollbar;
 
-	if (!mouse) {
+	如果 (!mouse) {
 		/* drag end: scrollbar */
 		html_overflow_scroll_drag_end(scr, mouse, x, y);
 	}
@@ -472,7 +472,7 @@ mouse_action_drag_scrollbar(html_content *html,
 
 	box_coords(box, &box_x, &box_y);
 
-	if (scrollbar_is_horizontal(scr)) {
+	如果 (scrollbar_is_horizontal(scr)) {
 		scroll_mouse_x = x - box_x ;
 		scroll_mouse_y = y - (box_y + box->padding[TOP] +
 				      box->height + box->padding[BOTTOM] -
@@ -481,7 +481,7 @@ mouse_action_drag_scrollbar(html_content *html,
 							  mouse,
 							  scroll_mouse_x,
 							  scroll_mouse_y);
-	} else {
+	} 否则 {
 		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
 				      box->width + box->padding[RIGHT] -
 				      SCROLLBAR_WIDTH);
@@ -494,7 +494,7 @@ mouse_action_drag_scrollbar(html_content *html,
 	}
 	status = scrollbar_mouse_status_to_message(scrollbar_status);
 
-	if (status != NULL) {
+	如果 (status != NULL) {
 		union content_msg_data msg_data;
 
 		msg_data.explicit_status_text = status;
@@ -503,7 +503,7 @@ mouse_action_drag_scrollbar(html_content *html,
 				  &msg_data);
 	}
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -514,11 +514,11 @@ static nserror
 mouse_action_drag_textarea(html_content *html,
 			    struct browser_window *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    整数 x, 整数 y)
 {
 	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	整数 box_x = 0;
+	整数 box_y = 0;
 
 	box = html->drag_owner.textarea;
 
@@ -534,7 +534,7 @@ mouse_action_drag_textarea(html_content *html,
 			      y - box_y);
 
 	/* TODO: Set appropriate statusbar message */
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -545,11 +545,11 @@ static nserror
 mouse_action_drag_content(html_content *html,
 			  struct browser_window *bw,
 			  browser_mouse_state mouse,
-			  int x, int y)
+			  整数 x, 整数 y)
 {
 	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	整数 box_x = 0;
+	整数 box_y = 0;
 
 	box = html->drag_owner.content;
 	assert(box->object != NULL);
@@ -559,7 +559,7 @@ mouse_action_drag_content(html_content *html,
 			    bw, mouse,
 			    x - box_x,
 			    y - box_y);
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -587,8 +587,8 @@ struct mouse_action_state {
 	/** html object */
 	struct {
 		struct box *box;
-		int pos_x;
-		int pos_y;
+		整数 pos_x;
+		整数 pos_y;
 	} html_object;
 
 	/** non html object */
@@ -609,8 +609,8 @@ struct mouse_action_state {
 	struct {
 		struct form_control *control;
 		struct box *box;
-		int box_x;
-		int box_y;
+		整数 box_x;
+		整数 box_y;
 		const char *target;
 	} gadget;
 
@@ -623,14 +623,14 @@ struct mouse_action_state {
 	/** scrollbar */
 	struct {
 		struct scrollbar *bar;
-		int mouse_x;
-		int mouse_y;
+		整数 mouse_x;
+		整数 mouse_y;
 	} scroll;
 
 	/** text in box */
 	struct {
 		struct box *box;
-		int box_x;
+		整数 box_x;
 	} text;
 };
 
@@ -672,12 +672,12 @@ struct mouse_action_state {
  */
 static nserror
 get_mouse_action_node(html_content *html,
-		      int x, int y,
+		      整数 x, 整数 y,
 		      struct mouse_action_state *man)
 {
 	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	整数 box_x = 0;
+	整数 box_y = 0;
 
 	/* initialise the mouse action state data */
 	memset(man, 0, sizeof(struct mouse_action_state));
@@ -695,38 +695,38 @@ get_mouse_action_node(html_content *html,
 
 	do {
 		/* skip hidden boxes */
-		if ((box->style != NULL) &&
+		如果 ((box->style != NULL) &&
 		    (css_computed_visibility(box->style) ==
 		     CSS_VISIBILITY_HIDDEN)) {
 			goto next_box;
 		}
 
-		if (box->node != NULL) {
+		如果 (box->node != NULL) {
 			man->node = box->node;
 		}
 
-		if (box->object) {
-			if (content_get_type(box->object) == CONTENT_HTML) {
+		如果 (box->object) {
+			如果 (content_get_type(box->object) == CONTENT_HTML) {
 				man->html_object.box = box;
 				man->html_object.pos_x = box_x;
 				man->html_object.pos_y = box_y;
-			} else {
+			} 否则 {
 				man->object = box->object;
 			}
 		}
 
-		if (box->iframe) {
+		如果 (box->iframe) {
 			man->iframe = box->iframe;
 		}
 
-		if (box->href) {
+		如果 (box->href) {
 			man->link.url = box->href;
 			man->link.target = box->target;
 			man->link.box = box;
 			man->link.is_imagemap = false;
 		}
 
-		if (box->usemap) {
+		如果 (box->usemap) {
 			man->link.url = imagemap_get(html,
 						     box->usemap,
 						     box_x,
@@ -737,30 +737,30 @@ get_mouse_action_node(html_content *html,
 			man->link.is_imagemap = true;
 		}
 
-		if (box->gadget) {
+		如果 (box->gadget) {
 			man->gadget.control = box->gadget;
 			man->gadget.box = box;
 			man->gadget.box_x = box_x;
 			man->gadget.box_y = box_y;
-			if (box->gadget->form) {
+			如果 (box->gadget->form) {
 				man->gadget.target = box->gadget->form->target;
 			}
 		}
 
-		if (box->title) {
+		如果 (box->title) {
 			man->title = box->title;
 		}
 
 		man->result.pointer = get_pointer_shape(box, false);
 
-		if ((box->scroll_x != NULL) ||
+		如果 ((box->scroll_x != NULL) ||
 		    (box->scroll_y != NULL)) {
-			int padding_left;
-			int padding_right;
-			int padding_top;
-			int padding_bottom;
+			整数 padding_left;
+			整数 padding_right;
+			整数 padding_top;
+			整数 padding_bottom;
 
-			if (man->drag_candidate == NULL) {
+			如果 (man->drag_candidate == NULL) {
 				man->drag_candidate = box;
 			}
 
@@ -773,13 +773,13 @@ get_mouse_action_node(html_content *html,
 			padding_bottom = padding_top + box->padding[TOP] +
 					box->height + box->padding[BOTTOM];
 
-			if ((x > padding_left) &&
+			如果 ((x > padding_left) &&
 			    (x < padding_right) &&
 			    (y > padding_top) &&
 			    (y < padding_bottom)) {
 				/* mouse inside padding box */
 
-				if ((box->scroll_y != NULL) &&
+				如果 ((box->scroll_y != NULL) &&
 				    (x > (padding_right - SCROLLBAR_WIDTH))) {
 					/* mouse above vertical box scroll */
 
@@ -788,7 +788,7 @@ get_mouse_action_node(html_content *html,
 					man->scroll.mouse_y = y - padding_top;
 					break;
 
-				} else if ((box->scroll_x != NULL) &&
+				} 否则 如果 ((box->scroll_x != NULL) &&
 					   (y > (padding_bottom -
 							SCROLLBAR_WIDTH))) {
 					/* mouse above horizontal box scroll */
@@ -801,7 +801,7 @@ get_mouse_action_node(html_content *html,
 			}
 		}
 
-		if (box->text && !box->object) {
+		如果 (box->text && !box->object) {
 			man->text.box = box;
 			man->text.box_x = box_x;
 		}
@@ -809,14 +809,14 @@ get_mouse_action_node(html_content *html,
 	next_box:
 		/* iterate to next box */
 		box = box_at_point(&html->unit_len_ctx, box, x, y, &box_x, &box_y);
-	} while (box != NULL);
+	} 当 (box != NULL);
 
 	/* use of box_x, box_y, or content below this point is probably a
 	 * mistake; they will refer to the last box returned by box_at_point */
 
 	assert(man->node != NULL);
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -826,7 +826,7 @@ get_mouse_action_node(html_content *html,
 static nserror
 gadget_mouse_action(html_content *html,
 		    browser_mouse_state mouse,
-		    int x, int y,
+		    整数 x, 整数 y,
 		    struct mouse_action_state *mas)
 {
 	struct content *c = (struct content *)html;
@@ -842,20 +842,20 @@ gadget_mouse_action(html_content *html,
 	case GADGET_SELECT:
 		mas->result.status = messages_get("FormSelect");
 		mas->result.pointer = BROWSER_POINTER_MENU;
-		if (mouse & BROWSER_MOUSE_CLICK_1 &&
+		如果 (mouse & BROWSER_MOUSE_CLICK_1 &&
 		    nsoption_bool(core_select_menu)) {
 			html->visible_select_menu = mas->gadget.control;
 			res = form_open_select_menu(c,
 						    mas->gadget.control,
 						    form_select_menu_callback,
 						    c);
-			if (res != NSERROR_OK) {
+			如果 (res != NSERROR_OK) {
 				NSLOG(netsurf, ERROR, "%s",
 				      messages_get_errorcode(res));
 				html->visible_select_menu = NULL;
 			}
 			mas->result.pointer = BROWSER_POINTER_DEFAULT;
-		} else if (mouse & BROWSER_MOUSE_CLICK_1) {
+		} 否则 如果 (mouse & BROWSER_MOUSE_CLICK_1) {
 			msg_data.select_menu.gadget = mas->gadget.control;
 			content_broadcast(c,
 					  CONTENT_MSG_SELECTMENU,
@@ -865,7 +865,7 @@ gadget_mouse_action(html_content *html,
 
 	case GADGET_CHECKBOX:
 		mas->result.status = messages_get("FormCheckbox");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		如果 (mouse & BROWSER_MOUSE_CLICK_1) {
 			mas->gadget.control->selected = !mas->gadget.control->selected;
 			dom_html_input_element_set_checked(
 				(dom_html_input_element *)(mas->gadget.control->node),
@@ -876,36 +876,36 @@ gadget_mouse_action(html_content *html,
 
 	case GADGET_RADIO:
 		mas->result.status = messages_get("FormRadio");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		如果 (mouse & BROWSER_MOUSE_CLICK_1) {
 			form_radio_set(mas->gadget.control);
 		}
 		break;
 
 	case GADGET_IMAGE:
 		/* This falls through to SUBMIT */
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		如果 (mouse & BROWSER_MOUSE_CLICK_1) {
 			struct image_input_coords *coords, *oldcoords;
 			/** \todo Find a way to not ignore errors */
 			coords = calloc(1, sizeof(*coords));
-			if (coords == NULL) {
-				return NSERROR_OK;
+			如果 (coords == NULL) {
+				返回 NSERROR_OK;
 			}
 			coords->x = x - mas->gadget.box_x;
 			coords->y = y - mas->gadget.box_y;
-			if (dom_node_set_user_data(
+			如果 (dom_node_set_user_data(
 				mas->gadget.control->node,
 				corestring_dom___ns_key_image_coords_node_data,
 				coords,
 				html__image_coords_dom_user_data_handler,
 				&oldcoords) != DOM_NO_ERR) {
-				return NSERROR_OK;
+				返回 NSERROR_OK;
 			}
 			free(oldcoords);
 		}
 		fallthrough;
 
 	case GADGET_SUBMIT:
-		if (mas->gadget.control->form) {
+		如果 (mas->gadget.control->form) {
 			static char status_buffer[200];
 
 			snprintf(status_buffer,
@@ -915,11 +915,11 @@ gadget_mouse_action(html_content *html,
 			mas->result.status = status_buffer;
 			mas->result.pointer = get_pointer_shape(mas->gadget.box,
 								false);
-			if (mouse & (BROWSER_MOUSE_CLICK_1 |
+			如果 (mouse & (BROWSER_MOUSE_CLICK_1 |
 				     BROWSER_MOUSE_CLICK_2)) {
 				mas->result.action = ACTION_SUBMIT;
 			}
-		} else {
+		} 否则 {
 			mas->result.status = messages_get("FormBadSubmit");
 		}
 		break;
@@ -927,13 +927,13 @@ gadget_mouse_action(html_content *html,
 	case GADGET_TEXTBOX:
 	case GADGET_PASSWORD:
 	case GADGET_TEXTAREA:
-		if (mas->gadget.control->type == GADGET_TEXTAREA) {
+		如果 (mas->gadget.control->type == GADGET_TEXTAREA) {
 			mas->result.status = messages_get("FormTextarea");
-		} else {
+		} 否则 {
 			mas->result.status = messages_get("FormTextbox");
 		}
 
-		if (click &&
+		如果 (click &&
 		    (html->selection_type != HTML_SELECTION_TEXTAREA ||
 		     html->selection_owner.textarea != mas->gadget.box)) {
 			union html_selection_owner sel_owner;
@@ -949,9 +949,9 @@ gadget_mouse_action(html_content *html,
 						  x - mas->gadget.box_x,
 						  y - mas->gadget.box_y);
 
-		if (ta_status & TEXTAREA_MOUSE_EDITOR) {
+		如果 (ta_status & TEXTAREA_MOUSE_EDITOR) {
 			mas->result.pointer = get_pointer_shape(mas->gadget.box, false);
-		} else {
+		} 否则 {
 			mas->result.pointer = BROWSER_POINTER_DEFAULT;
 			mas->result.status = scrollbar_mouse_status_to_message(ta_status >> 3);
 		}
@@ -967,7 +967,7 @@ gadget_mouse_action(html_content *html,
 
 	case GADGET_FILE:
 		mas->result.status = messages_get("FormFile");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+		如果 (mouse & BROWSER_MOUSE_CLICK_1) {
 			msg_data.gadget_click.gadget = mas->gadget.control;
 			content_broadcast(c,
 					  CONTENT_MSG_GADGETCLICK,
@@ -981,7 +981,7 @@ gadget_mouse_action(html_content *html,
 		break;
 	}
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -991,23 +991,23 @@ gadget_mouse_action(html_content *html,
 static nserror
 iframe_mouse_action(struct browser_window *bw,
 		    browser_mouse_state mouse,
-		    int x, int y,
+		    整数 x, 整数 y,
 		    struct mouse_action_state *mas)
 {
-	int pos_x, pos_y;
+	整数 pos_x, pos_y;
 	float scale;
 
 	scale = browser_window_get_scale(bw);
 
 	browser_window_get_position(mas->iframe, false, &pos_x, &pos_y);
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 ||
+	如果 (mouse & BROWSER_MOUSE_CLICK_1 ||
 	    mouse & BROWSER_MOUSE_CLICK_2) {
 		browser_window_mouse_click(mas->iframe,
 					   mouse,
 					   (x * scale) - pos_x,
 					   (y * scale) - pos_y);
-	} else {
+	} 否则 {
 		browser_window_mouse_track(mas->iframe,
 					   mouse,
 					   (x * scale) - pos_x,
@@ -1015,7 +1015,7 @@ iframe_mouse_action(struct browser_window *bw,
 	}
 	mas->result.action = ACTION_NOSEND;
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -1026,7 +1026,7 @@ static nserror
 html_object_mouse_action(html_content *html,
 			 struct browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y,
+			 整数 x, 整数 y,
 			 struct mouse_action_state *mas)
 {
 	bool click;
@@ -1034,7 +1034,7 @@ html_object_mouse_action(html_content *html,
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	if (click &&
+	如果 (click &&
 	    (html->selection_type != HTML_SELECTION_CONTENT ||
 	     html->selection_owner.content != mas->html_object.box)) {
 		union html_selection_owner sel_owner;
@@ -1042,14 +1042,14 @@ html_object_mouse_action(html_content *html,
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 ||
+	如果 (mouse & BROWSER_MOUSE_CLICK_1 ||
 	    mouse & BROWSER_MOUSE_CLICK_2) {
 		content_mouse_action(mas->html_object.box->object,
 				     bw,
 				     mouse,
 				     x - mas->html_object.pos_x,
 				     y - mas->html_object.pos_y);
-	} else {
+	} 否则 {
 		content_mouse_track(mas->html_object.box->object,
 				    bw,
 				    mouse,
@@ -1058,7 +1058,7 @@ html_object_mouse_action(html_content *html,
 	}
 
 	mas->result.action = ACTION_NOSEND;
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -1074,13 +1074,13 @@ static bool is_javascript_navigate_url(nsurl *url)
 	lwc_string *scheme;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme != NULL) {
-		if (scheme == corestring_lwc_javascript) {
+	如果 (scheme != NULL) {
+		如果 (scheme == corestring_lwc_javascript) {
 			is_js = true;
 		}
 		lwc_string_unref(scheme);
 	}
-	return is_js;
+	返回 is_js;
 }
 
 
@@ -1091,7 +1091,7 @@ static nserror
 link_mouse_action(html_content *html,
 		  struct browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y,
+		  整数 x, 整数 y,
 		  struct mouse_action_state *mas)
 {
 	nserror res;
@@ -1100,9 +1100,9 @@ link_mouse_action(html_content *html,
 	static char status_buffer[200];
 	union content_msg_data msg_data;
 
-	if (nsoption_bool(display_decoded_idn) == true) {
+	如果 (nsoption_bool(display_decoded_idn) == true) {
 		res = nsurl_get_utf8(mas->link.url, &url_s, &url_l);
-		if (res != NSERROR_OK) {
+		如果 (res != NSERROR_OK) {
 			/* Unable to obtain a decoded IDN. This is not
 			 *  a fatal error.  Ensure the string pointer
 			 *  is NULL so we use the encoded version.
@@ -1111,20 +1111,20 @@ link_mouse_action(html_content *html,
 		}
 	}
 
-	if (mas->title) {
+	如果 (mas->title) {
 		snprintf(status_buffer,
 			 sizeof status_buffer,
 			 "%s: %s",
 			 url_s ? url_s : nsurl_access(mas->link.url),
 			 mas->title);
-	} else {
+	} 否则 {
 		snprintf(status_buffer,
 			 sizeof status_buffer,
 			 "%s",
 			 url_s ? url_s : nsurl_access(mas->link.url));
 	}
 
-	if (url_s != NULL) {
+	如果 (url_s != NULL) {
 		free(url_s);
 	}
 
@@ -1133,7 +1133,7 @@ link_mouse_action(html_content *html,
 	mas->result.pointer = get_pointer_shape(mas->link.box,
 						mas->link.is_imagemap);
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 &&
+	如果 (mouse & BROWSER_MOUSE_CLICK_1 &&
 	    mouse & BROWSER_MOUSE_MOD_1) {
 		/* force download of link */
 		browser_window_navigate(bw,
@@ -1144,7 +1144,7 @@ link_mouse_action(html_content *html,
 					NULL,
 					NULL);
 
-	} else if (mouse & BROWSER_MOUSE_CLICK_2 &&
+	} 否则 如果 (mouse & BROWSER_MOUSE_CLICK_2 &&
 		   mouse & BROWSER_MOUSE_MOD_1) {
 		msg_data.savelink.url = mas->link.url;
 		msg_data.savelink.title = mas->title;
@@ -1152,29 +1152,29 @@ link_mouse_action(html_content *html,
 				  CONTENT_MSG_SAVELINK,
 				  &msg_data);
 
-	} else if (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)) {
-		if (is_javascript_navigate_url(mas->link.url)) {
+	} 否则 如果 (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)) {
+		如果 (is_javascript_navigate_url(mas->link.url)) {
 			mas->result.action = ACTION_JS;
-		} else {
+		} 否则 {
 			mas->result.action = ACTION_NAVIGATE;
 		}
 	}
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
 static nserror
 default_mouse_action_focus(html_content *html, browser_mouse_state mouse)
 {
-	if (mouse && mouse < BROWSER_MOUSE_MOD_1) {
+	如果 (mouse && mouse < BROWSER_MOUSE_MOD_1) {
 		/* ensure key presses still act on the browser window */
 		union html_focus_owner fo;
 		fo.self = true;
 		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, NULL);
 	}
 
-	return NSERROR_OK;
+	返回 NSERROR_OK;
 }
 
 
@@ -1185,17 +1185,17 @@ static nserror
 default_mouse_action(html_content *html,
 		  struct browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y,
+		  整数 x, 整数 y,
 		  struct mouse_action_state *mas)
 {
 	struct content *c = (struct content *)html;
 
 	/* frame resizing */
-	if (browser_window_frame_resize_start(bw, mouse, x, y, &mas->result.pointer)) {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+	如果 (browser_window_frame_resize_start(bw, mouse, x, y, &mas->result.pointer)) {
+		如果 (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
 			mas->result.status = messages_get("FrameDrag");
 		}
-		return default_mouse_action_focus(html, mouse);
+		返回 default_mouse_action_focus(html, mouse);
 	}
 
 	/* clicking in the main page removes the selection from any text areas.
@@ -1206,18 +1206,18 @@ default_mouse_action(html_content *html,
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	if (click && html->focus_type != HTML_FOCUS_SELF) {
+	如果 (click && html->focus_type != HTML_FOCUS_SELF) {
 		union html_focus_owner fo;
 		fo.self = true;
 		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, NULL);
 	}
-	if (click && html->selection_type != HTML_SELECTION_SELF) {
+	如果 (click && html->selection_type != HTML_SELECTION_SELF) {
 		sel_owner.none = true;
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mas->text.box) {
-		int pixel_offset;
+	如果 (mas->text.box) {
+		整数 pixel_offset;
 		size_t idx;
 		plot_font_style_t fstyle;
 
@@ -1232,7 +1232,7 @@ default_mouse_action(html_content *html,
 				       &idx,
 				       &pixel_offset);
 
-		if (selection_click(html->sel,
+		如果 (selection_click(html->sel,
 				    html->bw,
 				    mouse,
 				    mas->text.box->byte_offset + idx)) {
@@ -1242,7 +1242,7 @@ default_mouse_action(html_content *html,
 			html_drag_type drag_type;
 			union html_drag_owner drag_owner;
 
-			if (selection_dragging(html->sel)) {
+			如果 (selection_dragging(html->sel)) {
 				drag_type = HTML_DRAG_SELECTION;
 				drag_owner.no_owner = true;
 				html_set_drag_type(html,
@@ -1252,60 +1252,60 @@ default_mouse_action(html_content *html,
 				mas->result.status = messages_get("Selecting");
 			}
 
-			if (selection_active(html->sel)) {
+			如果 (selection_active(html->sel)) {
 				sel_owner.none = false;
 				html_set_selection(html, HTML_SELECTION_SELF,
 						   sel_owner, true);
-			} else if (click && html->selection_type != HTML_SELECTION_NONE) {
+			} 否则 如果 (click && html->selection_type != HTML_SELECTION_NONE) {
 				sel_owner.none = true;
 				html_set_selection(html, HTML_SELECTION_NONE,
 						   sel_owner, true);
 			}
 
-			return default_mouse_action_focus(html, mouse);
+			返回 default_mouse_action_focus(html, mouse);
 		}
 
-	} else if (mouse & BROWSER_MOUSE_PRESS_1) {
+	} 否则 如果 (mouse & BROWSER_MOUSE_PRESS_1) {
 		sel_owner.none = true;
 		selection_clear(html->sel, true);
 	}
 
-	if (selection_active(html->sel)) {
+	如果 (selection_active(html->sel)) {
 		sel_owner.none = false;
 		html_set_selection(html, HTML_SELECTION_SELF, sel_owner, true);
-	} else if (click && html->selection_type != HTML_SELECTION_NONE) {
+	} 否则 如果 (click && html->selection_type != HTML_SELECTION_NONE) {
 		sel_owner.none = true;
 		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mas->title) {
+	如果 (mas->title) {
 		mas->result.status = mas->title;
 	}
 
-	if (mouse & BROWSER_MOUSE_DRAG_1) {
-		if (mouse & BROWSER_MOUSE_MOD_2) {
+	如果 (mouse & BROWSER_MOUSE_DRAG_1) {
+		如果 (mouse & BROWSER_MOUSE_MOD_2) {
 			union content_msg_data msg_data;
 			msg_data.dragsave.type = CONTENT_SAVE_COMPLETE;
 			msg_data.dragsave.content = NULL;
 			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
-		} else {
-			if (mas->drag_candidate == NULL) {
+		} 否则 {
+			如果 (mas->drag_candidate == NULL) {
 				browser_window_page_drag_start(bw, x, y);
-			} else {
+			} 否则 {
 				html_box_drag_start(mas->drag_candidate, x, y);
 			}
 			mas->result.pointer = BROWSER_POINTER_MOVE;
 		}
-	} else if (mouse & BROWSER_MOUSE_DRAG_2) {
-		if (mouse & BROWSER_MOUSE_MOD_2) {
+	} 否则 如果 (mouse & BROWSER_MOUSE_DRAG_2) {
+		如果 (mouse & BROWSER_MOUSE_MOD_2) {
 			union content_msg_data msg_data;
 			msg_data.dragsave.type = CONTENT_SAVE_SOURCE;
 			msg_data.dragsave.content = NULL;
 			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
-		} else {
-			if (mas->drag_candidate == NULL) {
+		} 否则 {
+			如果 (mas->drag_candidate == NULL) {
 				browser_window_page_drag_start(bw, x, y);
-			} else {
+			} 否则 {
 				html_box_drag_start(mas->drag_candidate, x, y);
 			}
 			mas->result.pointer = BROWSER_POINTER_MOVE;
@@ -1313,7 +1313,7 @@ default_mouse_action(html_content *html,
 	}
 
 
-	return default_mouse_action_focus(html, mouse);
+	返回 default_mouse_action_focus(html, mouse);
 }
 
 
@@ -1324,7 +1324,7 @@ static nserror
 mouse_action_drag_none(html_content *html,
 		       struct browser_window *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       整数 x, 整数 y)
 {
 	nserror res;
 	struct content *c = (struct content *)html;
@@ -1339,15 +1339,15 @@ mouse_action_drag_none(html_content *html,
 	static struct mouse_action_state mas;
 
 	res = get_mouse_action_node(html, x, y, &mas);
-	if (res != NSERROR_OK) {
-		return res;
+	如果 (res != NSERROR_OK) {
+		返回 res;
 	}
 
-	if (mouse & BROWSER_MOUSE_CLICK_4) {
+	如果 (mouse & BROWSER_MOUSE_CLICK_4) {
 		mas.result.action = ACTION_BACK;
-	} else if (mouse & BROWSER_MOUSE_CLICK_5) {
+	} 否则 如果 (mouse & BROWSER_MOUSE_CLICK_5) {
 		mas.result.action = ACTION_FORWARD;
-	} else if (mas.scroll.bar) {
+	} 否则 如果 (mas.scroll.bar) {
 		mas.result.status = scrollbar_mouse_status_to_message(
 				scrollbar_mouse_action(mas.scroll.bar,
 						       mouse,
@@ -1355,17 +1355,17 @@ mouse_action_drag_none(html_content *html,
 						       mas.scroll.mouse_y));
 		mas.result.pointer = BROWSER_POINTER_DEFAULT;
 
-	} else if (mas.gadget.control) {
+	} 否则 如果 (mas.gadget.control) {
 		res = gadget_mouse_action(html, mouse, x, y, &mas);
 
-	} else if ((mas.object != NULL) && (mouse & BROWSER_MOUSE_MOD_2)) {
+	} 否则 如果 ((mas.object != NULL) && (mouse & BROWSER_MOUSE_MOD_2)) {
 
-		if (mouse & BROWSER_MOUSE_DRAG_2) {
+		如果 (mouse & BROWSER_MOUSE_DRAG_2) {
 			msg_data.dragsave.type = CONTENT_SAVE_NATIVE;
 			msg_data.dragsave.content = mas.object;
 			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
 
-		} else if (mouse & BROWSER_MOUSE_DRAG_1) {
+		} 否则 如果 (mouse & BROWSER_MOUSE_DRAG_1) {
 			msg_data.dragsave.type = CONTENT_SAVE_ORIG;
 			msg_data.dragsave.content = mas.object;
 			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
@@ -1373,25 +1373,25 @@ mouse_action_drag_none(html_content *html,
 
 		/* \todo should have a drag-saving object msg */
 
-	} else if (mas.iframe != NULL) {
+	} 否则 如果 (mas.iframe != NULL) {
 		res = iframe_mouse_action(bw, mouse, x, y, &mas);
 
-	} else if (mas.html_object.box != NULL) {
+	} 否则 如果 (mas.html_object.box != NULL) {
 		res = html_object_mouse_action(html, bw, mouse, x, y, &mas);
 
-	} else if (mas.link.url != NULL) {
+	} 否则 如果 (mas.link.url != NULL) {
 		res = link_mouse_action(html, bw, mouse, x, y, &mas);
 
-	} else {
+	} 否则 {
 		res = default_mouse_action(html, bw, mouse, x, y, &mas);
 
 	}
-	if (res != NSERROR_OK) {
-		return res;
+	如果 (res != NSERROR_OK) {
+		返回 res;
 	}
 
 	/* send status and pointer message */
-	if (mas.result.action != ACTION_NOSEND) {
+	如果 (mas.result.action != ACTION_NOSEND) {
 		msg_data.explicit_status_text = mas.result.status;
 		content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
 
@@ -1400,7 +1400,7 @@ mouse_action_drag_none(html_content *html,
 	}
 
 	/* fire dom click event */
-	if (mouse & BROWSER_MOUSE_CLICK_1) {
+	如果 (mouse & BROWSER_MOUSE_CLICK_1) {
 		fire_generic_dom_event(corestring_dom_click, mas.node, true, true);
 	}
 
@@ -1432,7 +1432,7 @@ mouse_action_drag_none(html_content *html,
 
 	case ACTION_JS:
 		path = nsurl_get_component(mas.link.url, NSURL_PATH);
-		if (path != NULL) {
+		如果 (path != NULL) {
 			html_exec(c,
 				  lwc_string_data(path),
 				  lwc_string_length(path));
@@ -1454,7 +1454,7 @@ mouse_action_drag_none(html_content *html,
 		break;
 	}
 
-	return res;
+	返回 res;
 }
 
 
@@ -1462,9 +1462,9 @@ mouse_action_drag_none(html_content *html,
 nserror html_mouse_track(struct content *c,
 			 struct browser_window *bw,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 整数 x, 整数 y)
 {
-	return html_mouse_action(c, bw, mouse, x, y);
+	返回 html_mouse_action(c, bw, mouse, x, y);
 }
 
 
@@ -1473,14 +1473,14 @@ nserror
 html_mouse_action(struct content *c,
 		  struct browser_window *bw,
 		  browser_mouse_state mouse,
-		  int x, int y)
+		  整数 x, 整数 y)
 {
 	html_content *html = (html_content *)c;
 	nserror res = NSERROR_OK;
 
 	/* handle open select menu */
-	if (html->visible_select_menu != NULL) {
-		return mouse_action_select_menu(html, bw, mouse, x, y);
+	如果 (html->visible_select_menu != NULL) {
+		返回 mouse_action_select_menu(html, bw, mouse, x, y);
 	}
 
 	/* handle content drag */
@@ -1512,11 +1512,11 @@ html_mouse_action(struct content *c,
 		assert(0 && "Unknown content related drag type");
 	}
 
-	if (res != NSERROR_OK) {
+	如果 (res != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "%s", messages_get_errorcode(res));
 	}
 
-	return res;
+	返回 res;
 }
 
 
@@ -1563,20 +1563,20 @@ bool html_keypress(struct content *c, uint32_t key)
 	 * `event.preventDefault()` then we won't handle the event when
 	 * we're not supposed to.
 	 */
-	if (html->layout != NULL && html->layout->node != NULL) {
+	如果 (html->layout != NULL && html->layout->node != NULL) {
 		fire_dom_keyboard_event(corestring_dom_keydown,
 				html->layout->node, true, true, key);
 	}
 
 	switch (html->focus_type) {
 	case HTML_FOCUS_CONTENT:
-		return content_keypress(html->focus_owner.content->object, key);
+		返回 content_keypress(html->focus_owner.content->object, key);
 
 	case HTML_FOCUS_TEXTAREA:
-		if (box_textarea_keypress(html, html->focus_owner.textarea, key) == NSERROR_OK) {
-			return true;
-		} else {
-			return false;
+		如果 (box_textarea_keypress(html, html->focus_owner.textarea, key) == NSERROR_OK) {
+			返回 true;
+		} 否则 {
+			返回 false;
 		}
 
 	default:
@@ -1587,22 +1587,22 @@ bool html_keypress(struct content *c, uint32_t key)
 	switch (key) {
 	case NS_KEY_COPY_SELECTION:
 		selection_copy_to_clipboard(sel);
-		return true;
+		返回 true;
 
 	case NS_KEY_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		返回 true;
 
 	case NS_KEY_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		返回 true;
 
 	case NS_KEY_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		返回 selection_clear(sel, true);
 	}
 
-	return false;
+	返回 false;
 }
 
 
@@ -1622,7 +1622,7 @@ void html_overflow_scroll_callback(void *client_data,
 	switch(scrollbar_data->msg) {
 	case SCROLLBAR_MSG_MOVED:
 
-		if (html->reflowing == true) {
+		如果 (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
 			break;
@@ -1695,11 +1695,11 @@ void html_set_drag_type(html_content *html, html_drag_type drag_type,
 /* Documented in html_internal.h */
 void html_set_focus(html_content *html, html_focus_type focus_type,
 		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip)
+		整数 x, 整数 y, 整数 height, const struct rect *clip)
 {
 	union content_msg_data msg_data;
-	int x_off = 0;
-	int y_off = 0;
+	整数 x_off = 0;
+	整数 y_off = 0;
 	struct rect cr;
 	bool textarea_lost_focus = html->focus_type == HTML_FOCUS_TEXTAREA &&
 			focus_type != HTML_FOCUS_TEXTAREA;
@@ -1709,9 +1709,9 @@ void html_set_focus(html_content *html, html_focus_type focus_type,
 	switch (focus_type) {
 	case HTML_FOCUS_SELF:
 		assert(focus_owner.self == true);
-		if (html->focus_type == HTML_FOCUS_SELF)
+		如果 (html->focus_type == HTML_FOCUS_SELF)
 			/* Don't need to tell anyone anything */
-			return;
+			返回;
 		break;
 
 	case HTML_FOCUS_CONTENT:
@@ -1726,12 +1726,12 @@ void html_set_focus(html_content *html, html_focus_type focus_type,
 	html->focus_type = focus_type;
 	html->focus_owner = focus_owner;
 
-	if (textarea_lost_focus) {
+	如果 (textarea_lost_focus) {
 		msg_data.caret.type = CONTENT_CARET_REMOVE;
-	} else if (focus_type != HTML_FOCUS_SELF && hide_caret) {
+	} 否则 如果 (focus_type != HTML_FOCUS_SELF && hide_caret) {
 		msg_data.caret.type = CONTENT_CARET_HIDE;
-	} else {
-		if (clip != NULL) {
+	} 否则 {
+		如果 (clip != NULL) {
 			cr = *clip;
 			cr.x0 += x_off;
 			cr.y0 += y_off;
@@ -1761,7 +1761,7 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
 
 	assert(html != NULL);
 
-	if ((selection_type == HTML_SELECTION_NONE &&
+	如果 ((selection_type == HTML_SELECTION_NONE &&
 			html->selection_type != HTML_SELECTION_NONE) ||
 			(selection_type != HTML_SELECTION_NONE &&
 			html->selection_type == HTML_SELECTION_NONE))
@@ -1770,22 +1770,22 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
 		changed = true;
 
 	/* Clear any existing selection */
-	if (html->selection_type != HTML_SELECTION_NONE) {
+	如果 (html->selection_type != HTML_SELECTION_NONE) {
 		switch (html->selection_type) {
 		case HTML_SELECTION_SELF:
-			if (same_type)
+			如果 (same_type)
 				break;
 			selection_clear(html->sel, true);
 			break;
 		case HTML_SELECTION_TEXTAREA:
-			if (same_type && html->selection_owner.textarea ==
+			如果 (same_type && html->selection_owner.textarea ==
 					selection_owner.textarea)
 				break;
 			box = html->selection_owner.textarea;
 			textarea_clear_selection(box->gadget->data.text.ta);
 			break;
 		case HTML_SELECTION_CONTENT:
-			if (same_type && html->selection_owner.content ==
+			如果 (same_type && html->selection_owner.content ==
 					selection_owner.content)
 				break;
 			box = html->selection_owner.content;
@@ -1799,9 +1799,9 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
 	html->selection_type = selection_type;
 	html->selection_owner = selection_owner;
 
-	if (!changed)
+	如果 (!changed)
 		/* Don't need to report lack of change to owner */
-		return;
+		返回;
 
 	/* Prepare msg */
 	switch (selection_type) {

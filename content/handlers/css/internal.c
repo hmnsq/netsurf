@@ -35,15 +35,15 @@ css_error nscss_resolve_url(void *pw, const char *base,
 	/* Create nsurl from base */
 	/* TODO: avoid this */
 	error = nsurl_create(base, &nsbase);
-	if (error != NSERROR_OK) {
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+	如果 (error != NSERROR_OK) {
+		返回 error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	/* Resolve URI */
 	error = nsurl_join(nsbase, lwc_string_data(rel), &nsabs);
-	if (error != NSERROR_OK) {
+	如果 (error != NSERROR_OK) {
 		nsurl_unref(nsbase);
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+		返回 error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsbase);
@@ -51,13 +51,13 @@ css_error nscss_resolve_url(void *pw, const char *base,
 	/* Intern it */
 	lerror = lwc_intern_string(nsurl_access(nsabs),
 			nsurl_length(nsabs), abs);
-	if (lerror != lwc_error_ok) {
+	如果 (lerror != lwc_error_ok) {
 		*abs = NULL;
 		nsurl_unref(nsabs);
-		return lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
+		返回 lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsabs);
 
-	return CSS_OK;
+	返回 CSS_OK;
 }

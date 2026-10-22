@@ -50,11 +50,11 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 
 	assert(ta != NULL);
 
-	if (gadget->type == GADGET_TEXTAREA) {
-		if (textarea_keypress(ta, key)) {
-			return NSERROR_OK;
-		} else {
-			return NSERROR_INVALID;
+	如果 (gadget->type == GADGET_TEXTAREA) {
+		如果 (textarea_keypress(ta, key)) {
+			返回 NSERROR_OK;
+		} 否则 {
+			返回 NSERROR_INVALID;
 		}
 	}
 
@@ -62,7 +62,7 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 	switch (key) {
 	case NS_KEY_NL:
 	case NS_KEY_CR:
-		if (form) {
+		如果 (form) {
 			res = form_submit(content_get_url(c),
 					  html->bw,
 					  form,
@@ -75,7 +75,7 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 			struct form_control *next_input;
 			/* Find next text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (next_input = gadget->next;
+			为 (next_input = gadget->next;
 			     next_input &&
 				     ((next_input->type != GADGET_TEXTBOX &&
 				       next_input->type != GADGET_TEXTAREA &&
@@ -84,7 +84,7 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 			     next_input = next_input->next)
 				;
 
-			if (next_input != NULL) {
+			如果 (next_input != NULL) {
 				textarea_set_caret(ta, -1);
 				textarea_set_caret(next_input->data.text.ta, 0);
 			}
@@ -96,7 +96,7 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 			struct form_control *prev_input;
 			/* Find previous text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (prev_input = gadget->prev;
+			为 (prev_input = gadget->prev;
 			     prev_input &&
 				     ((prev_input->type != GADGET_TEXTBOX &&
 				       prev_input->type != GADGET_TEXTAREA &&
@@ -105,7 +105,7 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 			     prev_input = prev_input->prev)
 				;
 
-			if (prev_input != NULL) {
+			如果 (prev_input != NULL) {
 				textarea_set_caret(ta, -1);
 				textarea_set_caret(prev_input->data.text.ta, 0);
 			}
@@ -114,13 +114,13 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 
 	default:
 		/* Pass to textarea widget */
-		if (!textarea_keypress(ta, key)) {
+		如果 (!textarea_keypress(ta, key)) {
 			res = NSERROR_INVALID;
 		}
 		break;
 	}
 
-	return res;
+	返回 res;
 }
 
 
@@ -136,7 +136,7 @@ static void box_textarea_callback(void *data, struct textarea_msg *msg)
 
 	switch (msg->type) {
 	case TEXTAREA_MSG_DRAG_REPORT:
-		if (msg->data.drag == TEXTAREA_DRAG_NONE) {
+		如果 (msg->data.drag == TEXTAREA_DRAG_NONE) {
 			/* Textarea drag finished */
 			html_drag_type drag_type = HTML_DRAG_NONE;
 			union html_drag_owner drag_owner;
@@ -144,7 +144,7 @@ static void box_textarea_callback(void *data, struct textarea_msg *msg)
 
 			html_set_drag_type(html, drag_type, drag_owner,
 					NULL);
-		} else {
+		} 否则 {
 			/* Textarea drag started */
 			struct rect rect = {
 				.x0 = INT_MIN,
@@ -186,9 +186,9 @@ static void box_textarea_callback(void *data, struct textarea_msg *msg)
 	case TEXTAREA_MSG_REDRAW_REQUEST:
 	{
 		/* Request redraw of the required textarea rectangle */
-		int x, y;
+		整数 x, y;
 
-		if (html->reflowing == true) {
+		如果 (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
 			break;
@@ -205,7 +205,7 @@ static void box_textarea_callback(void *data, struct textarea_msg *msg)
 		break;
 
 	case TEXTAREA_MSG_SELECTION_REPORT:
-		if (msg->data.selection.have_selection) {
+		如果 (msg->data.selection.have_selection) {
 			/* Textarea now has a selection */
 			union html_selection_owner sel_owner;
 			sel_owner.textarea = box;
@@ -213,7 +213,7 @@ static void box_textarea_callback(void *data, struct textarea_msg *msg)
 			html_set_selection(html, HTML_SELECTION_TEXTAREA,
 					sel_owner,
 					msg->data.selection.read_only);
-		} else {
+		} 否则 {
 			/* The textarea now has no selection */
 			union html_selection_owner sel_owner;
 			sel_owner.none = true;
@@ -224,15 +224,15 @@ static void box_textarea_callback(void *data, struct textarea_msg *msg)
 		break;
 
 	case TEXTAREA_MSG_CARET_UPDATE:
-		if (html->bw == NULL)
+		如果 (html->bw == NULL)
 			break;
 
-		if (msg->data.caret.type == TEXTAREA_CARET_HIDE) {
+		如果 (msg->data.caret.type == TEXTAREA_CARET_HIDE) {
 			union html_focus_owner focus_owner;
 			focus_owner.textarea = box;
 			html_set_focus(html, HTML_FOCUS_TEXTAREA,
 					focus_owner, true, 0, 0, 0, NULL);
-		} else {
+		} 否则 {
 			union html_focus_owner focus_owner;
 			focus_owner.textarea = box;
 			html_set_focus(html, HTML_FOCUS_TEXTAREA,
@@ -279,59 +279,59 @@ bool box_textarea_create_textarea(html_content *html,
 			gadget->type == GADGET_TEXTBOX ||
 			gadget->type == GADGET_PASSWORD);
 
-	if (gadget->type == GADGET_TEXTAREA) {
+	如果 (gadget->type == GADGET_TEXTAREA) {
 		dom_html_text_area_element *textarea =
 				(dom_html_text_area_element *) node;
 		ta_flags = TEXTAREA_MULTILINE;
 
 		err = dom_html_text_area_element_get_read_only(
 				textarea, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		如果 (err != DOM_NO_ERR)
+			返回 false;
 
 		err = dom_html_text_area_element_get_disabled(
 				textarea, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		如果 (err != DOM_NO_ERR)
+			返回 false;
 
 		/* Get the textarea's initial content */
 		err = dom_html_text_area_element_get_value(textarea, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		如果 (err != DOM_NO_ERR)
+			返回 false;
 
-	} else {
+	} 否则 {
 		dom_html_input_element *input = (dom_html_input_element *) node;
 
 		err = dom_html_input_element_get_read_only(
 				input, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		如果 (err != DOM_NO_ERR)
+			返回 false;
 
 		err = dom_html_input_element_get_disabled(
 				input, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		如果 (err != DOM_NO_ERR)
+			返回 false;
 
-		if (gadget->type == GADGET_PASSWORD)
+		如果 (gadget->type == GADGET_PASSWORD)
 			ta_flags = TEXTAREA_PASSWORD;
-		else
+		否则
 			ta_flags = TEXTAREA_DEFAULT;
 
 		/* Get initial text */
 		err = dom_html_input_element_get_value(input, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		如果 (err != DOM_NO_ERR)
+			返回 false;
 	}
 
-	if (dom_text != NULL) {
+	如果 (dom_text != NULL) {
 		text = dom_string_data(dom_text);
-	} else {
+	} 否则 {
 		/* No initial text, or failed reading it;
 		 * use a blank string */
 		text = "";
 	}
 
-	if (read_only || disabled)
+	如果 (read_only || disabled)
 		ta_flags |= TEXTAREA_READONLY;
 
 	gadget->data.text.data.gadget = gadget;
@@ -360,12 +360,12 @@ bool box_textarea_create_textarea(html_content *html,
 	gadget->data.text.ta = textarea_create(ta_flags, &ta_setup,
 			box_textarea_callback, &gadget->data.text.data);
 
-	if (gadget->data.text.ta == NULL) {
-		return false;
+	如果 (gadget->data.text.ta == NULL) {
+		返回 false;
 	}
 
-	if (!textarea_set_text(gadget->data.text.ta, text))
-		return false;
+	如果 (!textarea_set_text(gadget->data.text.ta, text))
+		返回 false;
 
-	return true;
+	返回 true;
 }
