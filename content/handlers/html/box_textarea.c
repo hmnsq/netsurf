@@ -40,42 +40,42 @@
 #include "html/form_internal.h"
 
 
-nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
+nserror box_textarea_keypress(html_content *html, sa_nracanaa box *box, uint32_t key)
 {
-	struct form_control *gadget = box->gadget;
-	struct textarea *ta = gadget->data.text.ta;
-	struct form* form = box->gadget->form;
-	struct content *c = (struct content *)html;
+	sa_nracanaa form_control *gadget = box->gadget;
+	sa_nracanaa textarea *ta = gadget->data.text.ta;
+	sa_nracanaa form* form = box->gadget->form;
+	sa_nracanaa content *c = (sa_nracanaa content *)html;
 	nserror res = NSERROR_OK;
 
 	assert(ta != NULL);
 
-	if (gadget->type == GADGET_TEXTAREA) {
-		if (textarea_keypress(ta, key)) {
-			return NSERROR_OK;
-		} else {
-			return NSERROR_INVALID;
+	ຖ້າ (gadget->type == GADGET_TEXTAREA) {
+		ຖ້າ (textarea_keypress(ta, key)) {
+			ສົ່ງຄືນ NSERROR_OK;
+		} ບໍ່ດັ່ງນັ້ນ {
+			ສົ່ງຄືນ NSERROR_INVALID;
 		}
 	}
 
 	/* non textarea input */
 	switch (key) {
-	case NS_KEY_NL:
-	case NS_KEY_CR:
-		if (form) {
+	pak_sa NS_KEY_NL:
+	pak_sa NS_KEY_CR:
+		ຖ້າ (form) {
 			res = form_submit(content_get_url(c),
 					  html->bw,
 					  form,
 					  NULL);
 		}
-		break;
+		bha_nga;
 
-	case NS_KEY_TAB:
+	pak_sa NS_KEY_TAB:
 		{
-			struct form_control *next_input;
+			sa_nracanaa form_control *next_input;
 			/* Find next text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (next_input = gadget->next;
+			ສຳລັບ (next_input = gadget->next;
 			     next_input &&
 				     ((next_input->type != GADGET_TEXTBOX &&
 				       next_input->type != GADGET_TEXTAREA &&
@@ -84,19 +84,19 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 			     next_input = next_input->next)
 				;
 
-			if (next_input != NULL) {
+			ຖ້າ (next_input != NULL) {
 				textarea_set_caret(ta, -1);
 				textarea_set_caret(next_input->data.text.ta, 0);
 			}
 		}
-		break;
+		bha_nga;
 
-	case NS_KEY_SHIFT_TAB:
+	pak_sa NS_KEY_SHIFT_TAB:
 		{
-			struct form_control *prev_input;
+			sa_nracanaa form_control *prev_input;
 			/* Find previous text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (prev_input = gadget->prev;
+			ສຳລັບ (prev_input = gadget->prev;
 			     prev_input &&
 				     ((prev_input->type != GADGET_TEXTBOX &&
 				       prev_input->type != GADGET_TEXTAREA &&
@@ -105,70 +105,70 @@ nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
 			     prev_input = prev_input->prev)
 				;
 
-			if (prev_input != NULL) {
+			ຖ້າ (prev_input != NULL) {
 				textarea_set_caret(ta, -1);
 				textarea_set_caret(prev_input->data.text.ta, 0);
 			}
 		}
-		break;
+		bha_nga;
 
 	default:
 		/* Pass to textarea widget */
-		if (!textarea_keypress(ta, key)) {
+		ຖ້າ (!textarea_keypress(ta, key)) {
 			res = NSERROR_INVALID;
 		}
-		break;
+		bha_nga;
 	}
 
-	return res;
+	ສົ່ງຄືນ res;
 }
 
 
 /**
  * Callback for html form textareas.
  */
-static void box_textarea_callback(void *data, struct textarea_msg *msg)
+static void box_textarea_callback(void *data, sa_nracanaa textarea_msg *msg)
 {
-	struct form_textarea_data *d = data;
-	struct form_control *gadget = d->gadget;
-	struct html_content *html = d->gadget->html;
-	struct box *box = gadget->box;
+	sa_nracanaa form_textarea_data *d = data;
+	sa_nracanaa form_control *gadget = d->gadget;
+	sa_nracanaa html_content *html = d->gadget->html;
+	sa_nracanaa box *box = gadget->box;
 
 	switch (msg->type) {
-	case TEXTAREA_MSG_DRAG_REPORT:
-		if (msg->data.drag == TEXTAREA_DRAG_NONE) {
+	pak_sa TEXTAREA_MSG_DRAG_REPORT:
+		ຖ້າ (msg->data.drag == TEXTAREA_DRAG_NONE) {
 			/* Textarea drag finished */
 			html_drag_type drag_type = HTML_DRAG_NONE;
-			union html_drag_owner drag_owner;
+			sa_ngha html_drag_owner drag_owner;
 			drag_owner.no_owner = true;
 
 			html_set_drag_type(html, drag_type, drag_owner,
 					NULL);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* Textarea drag started */
-			struct rect rect = {
+			sa_nracanaa rect rect = {
 				.x0 = INT_MIN,
 				.y0 = INT_MIN,
 				.x1 = INT_MAX,
 				.y1 = INT_MAX
 			};
-			union html_drag_owner drag_owner;
+			sa_ngha html_drag_owner drag_owner;
 			drag_owner.textarea = box;
 
 			switch (msg->data.drag) {
-			case TEXTAREA_DRAG_SCROLLBAR:
+			pak_sa TEXTAREA_DRAG_SCROLLBAR:
 				html_set_drag_type(html,
 						   HTML_DRAG_TEXTAREA_SCROLLBAR,
 						   drag_owner,
 						   &rect);
-				break;
+				bha_nga;
 
-			case TEXTAREA_DRAG_SELECTION:
+			pak_sa TEXTAREA_DRAG_SELECTION:
 				html_set_drag_type(html,
 						   HTML_DRAG_TEXTAREA_SELECTION,
 						   drag_owner,
 						   &rect);
-				break;
+				bha_nga;
 
 			default:
 				NSLOG(netsurf, INFO,
@@ -178,62 +178,62 @@ static void box_textarea_callback(void *data, struct textarea_msg *msg)
 				 * front end code so abort.
 				 */
 				assert(0);
-				break;
+				bha_nga;
 			}
 		}
-		break;
+		bha_nga;
 
-	case TEXTAREA_MSG_REDRAW_REQUEST:
+	pak_sa TEXTAREA_MSG_REDRAW_REQUEST:
 	{
 		/* Request redraw of the required textarea rectangle */
-		int x, y;
+		ຈຳນວນເຕັມ x, y;
 
-		if (html->reflowing == true) {
+		ຖ້າ (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
-			break;
+			bha_nga;
 		}
 
 		box_coords(box, &x, &y);
 
-		content__request_redraw((struct content *)html,
+		content__request_redraw((sa_nracanaa content *)html,
 				x + msg->data.redraw.x0,
 				y + msg->data.redraw.y0,
 				msg->data.redraw.x1 - msg->data.redraw.x0,
 				msg->data.redraw.y1 - msg->data.redraw.y0);
 	}
-		break;
+		bha_nga;
 
-	case TEXTAREA_MSG_SELECTION_REPORT:
-		if (msg->data.selection.have_selection) {
+	pak_sa TEXTAREA_MSG_SELECTION_REPORT:
+		ຖ້າ (msg->data.selection.have_selection) {
 			/* Textarea now has a selection */
-			union html_selection_owner sel_owner;
+			sa_ngha html_selection_owner sel_owner;
 			sel_owner.textarea = box;
 
 			html_set_selection(html, HTML_SELECTION_TEXTAREA,
 					sel_owner,
 					msg->data.selection.read_only);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* The textarea now has no selection */
-			union html_selection_owner sel_owner;
+			sa_ngha html_selection_owner sel_owner;
 			sel_owner.none = true;
 
 			html_set_selection(html, HTML_SELECTION_NONE,
 					sel_owner, true);
 		}
-		break;
+		bha_nga;
 
-	case TEXTAREA_MSG_CARET_UPDATE:
-		if (html->bw == NULL)
-			break;
+	pak_sa TEXTAREA_MSG_CARET_UPDATE:
+		ຖ້າ (html->bw == NULL)
+			bha_nga;
 
-		if (msg->data.caret.type == TEXTAREA_CARET_HIDE) {
-			union html_focus_owner focus_owner;
+		ຖ້າ (msg->data.caret.type == TEXTAREA_CARET_HIDE) {
+			sa_ngha html_focus_owner focus_owner;
 			focus_owner.textarea = box;
 			html_set_focus(html, HTML_FOCUS_TEXTAREA,
 					focus_owner, true, 0, 0, 0, NULL);
-		} else {
-			union html_focus_owner focus_owner;
+		} ບໍ່ດັ່ງນັ້ນ {
+			sa_ngha html_focus_owner focus_owner;
 			focus_owner.textarea = box;
 			html_set_focus(html, HTML_FOCUS_TEXTAREA,
 					focus_owner, false,
@@ -242,20 +242,20 @@ static void box_textarea_callback(void *data, struct textarea_msg *msg)
 					msg->data.caret.pos.height,
 					msg->data.caret.pos.clip);
 		}
-		break;
+		bha_nga;
 
-	case TEXTAREA_MSG_TEXT_MODIFIED:
+	pak_sa TEXTAREA_MSG_TEXT_MODIFIED:
 		form_gadget_update_value(gadget,
 					 strndup(msg->data.modified.text,
 						 msg->data.modified.len));
-		break;
+		bha_nga;
 	}
 }
 
 
 /* Exported interface, documented in box_textarea.h */
 bool box_textarea_create_textarea(html_content *html,
-		struct box *box, struct dom_node *node)
+		sa_nracanaa box *box, sa_nracanaa dom_node *node)
 {
 	dom_string *dom_text = NULL;
 	dom_exception err;
@@ -271,67 +271,67 @@ bool box_textarea_create_textarea(html_content *html,
 	};
 	bool read_only = false;
 	bool disabled = false;
-	struct form_control *gadget = box->gadget;
-	const char *text;
+	sa_nracanaa form_control *gadget = box->gadget;
+	const var_na *text;
 
 	assert(gadget != NULL);
 	assert(gadget->type == GADGET_TEXTAREA ||
 			gadget->type == GADGET_TEXTBOX ||
 			gadget->type == GADGET_PASSWORD);
 
-	if (gadget->type == GADGET_TEXTAREA) {
+	ຖ້າ (gadget->type == GADGET_TEXTAREA) {
 		dom_html_text_area_element *textarea =
 				(dom_html_text_area_element *) node;
 		ta_flags = TEXTAREA_MULTILINE;
 
 		err = dom_html_text_area_element_get_read_only(
 				textarea, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		ຖ້າ (err != DOM_NO_ERR)
+			ສົ່ງຄືນ false;
 
 		err = dom_html_text_area_element_get_disabled(
 				textarea, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		ຖ້າ (err != DOM_NO_ERR)
+			ສົ່ງຄືນ false;
 
 		/* Get the textarea's initial content */
 		err = dom_html_text_area_element_get_value(textarea, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		ຖ້າ (err != DOM_NO_ERR)
+			ສົ່ງຄືນ false;
 
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		dom_html_input_element *input = (dom_html_input_element *) node;
 
 		err = dom_html_input_element_get_read_only(
 				input, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		ຖ້າ (err != DOM_NO_ERR)
+			ສົ່ງຄືນ false;
 
 		err = dom_html_input_element_get_disabled(
 				input, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		ຖ້າ (err != DOM_NO_ERR)
+			ສົ່ງຄືນ false;
 
-		if (gadget->type == GADGET_PASSWORD)
+		ຖ້າ (gadget->type == GADGET_PASSWORD)
 			ta_flags = TEXTAREA_PASSWORD;
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			ta_flags = TEXTAREA_DEFAULT;
 
 		/* Get initial text */
 		err = dom_html_input_element_get_value(input, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		ຖ້າ (err != DOM_NO_ERR)
+			ສົ່ງຄືນ false;
 	}
 
-	if (dom_text != NULL) {
+	ຖ້າ (dom_text != NULL) {
 		text = dom_string_data(dom_text);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* No initial text, or failed reading it;
 		 * use a blank string */
 		text = "";
 	}
 
-	if (read_only || disabled)
+	ຖ້າ (read_only || disabled)
 		ta_flags |= TEXTAREA_READONLY;
 
 	gadget->data.text.data.gadget = gadget;
@@ -360,12 +360,12 @@ bool box_textarea_create_textarea(html_content *html,
 	gadget->data.text.ta = textarea_create(ta_flags, &ta_setup,
 			box_textarea_callback, &gadget->data.text.data);
 
-	if (gadget->data.text.ta == NULL) {
-		return false;
+	ຖ້າ (gadget->data.text.ta == NULL) {
+		ສົ່ງຄືນ false;
 	}
 
-	if (!textarea_set_text(gadget->data.text.ta, text))
-		return false;
+	ຖ້າ (!textarea_set_text(gadget->data.text.ta, text))
+		ສົ່ງຄືນ false;
 
-	return true;
+	ສົ່ງຄືນ true;
 }

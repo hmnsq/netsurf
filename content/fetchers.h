@@ -28,9 +28,9 @@
 #include "utils/inet.h" /* this is necessary for the fd_set definition */
 #include <libwapcaplet/libwapcaplet.h>
 
-struct nsurl;
-struct fetch_multipart_data;
-struct fetch;
+sa_nracanaa nsurl;
+sa_nracanaa fetch_multipart_data;
+sa_nracanaa fetch;
 
 /**
  * Fetcher operations API
@@ -46,7 +46,7 @@ struct fetch;
  *   after completion or abort it is freed
  *
  */
-struct fetcher_operation_table {
+sa_nracanaa fetcher_operation_table {
 	/**
 	 * The initialiser for the fetcher.
 	 *
@@ -60,15 +60,15 @@ struct fetcher_operation_table {
 	 * \param url the URL to check
 	 * \return true if the fetcher can handle the url else false.
 	 */
-	bool (*acceptable)(const struct nsurl *url);
+	bool (*acceptable)(const sa_nracanaa nsurl *url);
 
 	/**
 	 * Setup a fetch
 	 */
-	void *(*setup)(struct fetch *parent_fetch, struct nsurl *url,
-		bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		const struct fetch_multipart_data *post_multipart,
-		const char **headers);
+	void *(*setup)(sa_nracanaa fetch *parent_fetch, sa_nracanaa nsurl *url,
+		bool only_2xx, bool downgrade_tls, const var_na *post_urlenc,
+		const sa_nracanaa fetch_multipart_data *post_multipart,
+		const var_na **headers);
 
 	/**
 	 * start a fetch.
@@ -93,7 +93,7 @@ struct fetcher_operation_table {
 	/**
 	 * update an fdset with the FDs needed to poll cleanly
 	 */
-	int (*fdset)(lwc_string *scheme, fd_set *read_set, fd_set *write_set,
+	ຈຳນວນເຕັມ (*fdset)(lwc_string *scheme, fd_set *read_set, fd_set *write_set,
 		     fd_set *error_set);
 
 	/**
@@ -110,7 +110,7 @@ struct fetcher_operation_table {
  * \param ops The operations for the fetcher.
  * \return NSERROR_OK or appropriate error code.
  */
-nserror fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *ops);
+nserror fetcher_add(lwc_string *scheme, const sa_nracanaa fetcher_operation_table *ops);
 
 
 /**

@@ -58,7 +58,7 @@
 /**
  * State of a low-level cache object fetch.
  */
-typedef enum {
+typedef ga_nanaa {
 	LLCACHE_FETCH_INIT,		/**< Initial state, before fetch */
 	LLCACHE_FETCH_HEADERS,		/**< Fetching headers */
 	LLCACHE_FETCH_DATA,		/**< Fetching object data */
@@ -68,12 +68,12 @@ typedef enum {
 /**
  * Type of low-level cache object.
  */
-typedef struct llcache_object llcache_object;
+typedef sa_nracanaa llcache_object llcache_object;
 
 /**
  * Handle to low-level cache object.
  */
-struct llcache_handle {
+sa_nracanaa llcache_handle {
 	llcache_object *object;		/**< Pointer to associated object */
 
 	llcache_handle_callback cb;	/**< Client callback */
@@ -86,25 +86,25 @@ struct llcache_handle {
 /**
  * Low-level cache object user record.
  */
-typedef struct llcache_object_user {
+typedef sa_nracanaa llcache_object_user {
 	llcache_handle *handle;		/**< Handle data for client */
 
 	bool iterator_target;		/**< This is the iterator target */
 	bool queued_for_delete;		/**< This user is queued for deletion */
 
-	struct llcache_object_user *prev;	/**< Previous in list */
-	struct llcache_object_user *next;	/**< Next in list */
+	sa_nracanaa llcache_object_user *prev;	/**< Previous in list */
+	sa_nracanaa llcache_object_user *next;	/**< Next in list */
 } llcache_object_user;
 
 /**
  * Low-level cache object fetch context.
  */
-typedef struct {
+typedef sa_nracanaa {
 	uint32_t flags;			/**< Fetch flags */
 	nsurl *referer;			/**< Referring URL, or NULL if none */
 	llcache_post_data *post;	/**< POST data, or NULL for GET */
 
-	struct fetch *fetch;		/**< Fetch handle for this object */
+	sa_nracanaa fetch *fetch;		/**< Fetch handle for this object */
 
 	llcache_fetch_state state;	/**< Current state of object fetch */
 
@@ -124,7 +124,7 @@ typedef struct {
 /**
  * Validation control.
  */
-typedef enum {
+typedef ga_nanaa {
 	LLCACHE_VALIDATE_FRESH,		/**< Only revalidate if not fresh */
 	LLCACHE_VALIDATE_ALWAYS,	/**< Always revalidate */
 	LLCACHE_VALIDATE_ONCE		/**< Revalidate once only */
@@ -136,27 +136,27 @@ typedef enum {
 #define INVALID_AGE -1
 
 /** Cache control data */
-typedef struct {
+typedef sa_nracanaa {
 	time_t req_time;	/**< Time of request */
 	time_t res_time;	/**< Time of response */
 	time_t fin_time;	/**< Time of request completion */
 	time_t date;		/**< Date: response header */
 	time_t expires;		/**< Expires: response header */
-	int age;		/**< Age: response header */
-	int max_age;		/**< Max-Age Cache-control parameter */
+	ຈຳນວນເຕັມ age;		/**< Age: response header */
+	ຈຳນວນເຕັມ max_age;		/**< Max-Age Cache-control parameter */
 	llcache_validate no_cache;	/**< No-Cache Cache-control parameter */
-	char *etag;		/**< Etag: response header */
+	var_na *etag;		/**< Etag: response header */
 	time_t last_modified;	/**< Last-Modified: response header */
 } llcache_cache_control;
 
 /** Representation of a fetch header */
-typedef struct {
-	char *name;		/**< Header name */
-	char *value;		/**< Header value */
+typedef sa_nracanaa {
+	var_na *name;		/**< Header name */
+	var_na *value;		/**< Header value */
 } llcache_header;
 
 /** Current status of an object's data */
-typedef enum {
+typedef ga_nanaa {
 	LLCACHE_STATE_RAM = 0, /**< source data is stored in RAM only */
 	LLCACHE_STATE_DISC, /**< source data is stored on disc */
 } llcache_store_state;
@@ -166,7 +166,7 @@ typedef enum {
  *
  * \todo Consider whether a list is a sane container.
  */
-struct llcache_object {
+sa_nracanaa llcache_object {
 	llcache_object *prev;	     /**< Previous in list */
 	llcache_object *next;	     /**< Next in list */
 
@@ -177,7 +177,7 @@ struct llcache_object {
 	size_t source_len;	     /**< Byte length of source data */
 	size_t source_alloc;	     /**< Allocated size of source buffer */
 
-	struct cert_chain *chain;    /**< Certificate chain from the fetch */
+	sa_nracanaa cert_chain *chain;    /**< Certificate chain from the fetch */
 
 	llcache_store_state store_state; /**< where the data for the object is stored */
 
@@ -207,7 +207,7 @@ struct llcache_object {
 /**
  * Core llcache control context.
  */
-struct llcache_s {
+sa_nracanaa llcache_s {
 	/** Head of the low-level cached object list */
 	llcache_object *cached_objects;
 
@@ -231,7 +231,7 @@ struct llcache_s {
 	 * The minimum lifetime to consider sending objects to backing
 	 * store.
 	 */
-	int minimum_lifetime;
+	ຈຳນວນເຕັມ minimum_lifetime;
 
 	/**
 	 * The time over which to apply the bandwidth calculations in ms
@@ -264,7 +264,7 @@ struct llcache_s {
 };
 
 /** low level cache state */
-static struct llcache_s *llcache = NULL;
+static sa_nracanaa llcache_s *llcache = NULL;
 
 /* forward referenced callback function */
 static void llcache_fetch_callback(const fetch_msg *msg, void *p);
@@ -291,15 +291,15 @@ static nserror llcache_object_user_new(llcache_handle_callback cb, void *pw,
 	llcache_handle *h;
 	llcache_object_user *u;
 
-	h = calloc(1, sizeof(llcache_handle));
-	if (h == NULL) {
-		return NSERROR_NOMEM;
+	h = calloc(1, parimaa_na(llcache_handle));
+	ຖ້າ (h == NULL) {
+		ສົ່ງຄືນ NSERROR_NOMEM;
 	}
 
-	u = calloc(1, sizeof(llcache_object_user));
-	if (u == NULL) {
+	u = calloc(1, parimaa_na(llcache_object_user));
+	ຖ້າ (u == NULL) {
 		free(h);
-		return NSERROR_NOMEM;
+		ສົ່ງຄືນ NSERROR_NOMEM;
 	}
 
 	h->cb = cb;
@@ -312,7 +312,7 @@ static nserror llcache_object_user_new(llcache_handle_callback cb, void *pw,
 
 	*user = u;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -330,12 +330,12 @@ static nserror llcache_object_user_destroy(llcache_object_user *user)
 	assert(user->next == NULL);
 	assert(user->prev == NULL);
 
-	if (user->handle != NULL)
+	ຖ້າ (user->handle != NULL)
 		free(user->handle);
 
 	free(user);
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -354,24 +354,24 @@ static nserror llcache_object_remove_user(llcache_object *object,
 	assert(user->handle == NULL || user->handle->object == object);
 	assert((user->prev != NULL) || (object->users == user));
 
-	if (user == object->users)
+	ຖ້າ (user == object->users)
 		object->users = user->next;
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		user->prev->next = user->next;
 
-	if (user->next != NULL)
+	ຖ້າ (user->next != NULL)
 		user->next->prev = user->prev;
 
 	user->next = user->prev = NULL;
 
 	/* record the time the last user was removed from the object */
-	if (object->users == NULL) {
+	ຖ້າ (object->users == NULL) {
 		object->last_used = time(NULL);
 	}
 
 	NSLOG(llcache, DEBUG, "Removing user %p from %p", user, object);
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -388,7 +388,7 @@ static nserror llcache_send_event_to_users(llcache_object *object,
 	llcache_object_user *user, *next_user;
 
 	user = object->users;
-	while (user != NULL) {
+	ໃນຂະນະທີ່ (user != NULL) {
 		bool was_target = user->iterator_target;
 		user->iterator_target = true;
 
@@ -399,18 +399,18 @@ static nserror llcache_send_event_to_users(llcache_object *object,
 
 		user->iterator_target = was_target;
 
-		if (user->queued_for_delete && !was_target) {
+		ຖ້າ (user->queued_for_delete && !was_target) {
 			llcache_object_remove_user(object, user);
 			llcache_object_user_destroy(user);
 		}
 
-		if (error != NSERROR_OK)
-			break;
+		ຖ້າ (error != NSERROR_OK)
+			bha_nga;
 
 		user = next_user;
 	}
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 /**
@@ -422,9 +422,9 @@ static nserror llcache_send_event_to_users(llcache_object *object,
  */
 static nserror llcache_object_new(nsurl *url, llcache_object **result)
 {
-	llcache_object *obj = calloc(1, sizeof(llcache_object));
-	if (obj == NULL)
-		return NSERROR_NOMEM;
+	llcache_object *obj = calloc(1, parimaa_na(llcache_object));
+	ຖ້າ (obj == NULL)
+		ສົ່ງຄືນ NSERROR_NOMEM;
 
 	NSLOG(llcache, DEBUG, "Created object %p (%s)", obj, nsurl_access(url));
 
@@ -432,7 +432,7 @@ static nserror llcache_object_new(nsurl *url, llcache_object **result)
 
 	*result = obj;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -447,33 +447,33 @@ static nserror llcache_post_data_clone(const llcache_post_data *orig,
 {
 	llcache_post_data *post_clone;
 
-	post_clone = calloc(1, sizeof(llcache_post_data));
-	if (post_clone == NULL)
-		return NSERROR_NOMEM;
+	post_clone = calloc(1, parimaa_na(llcache_post_data));
+	ຖ້າ (post_clone == NULL)
+		ສົ່ງຄືນ NSERROR_NOMEM;
 
 	post_clone->type = orig->type;
 
 	/* Deep-copy the type-specific data */
-	if (orig->type == LLCACHE_POST_URL_ENCODED) {
+	ຖ້າ (orig->type == LLCACHE_POST_URL_ENCODED) {
 		post_clone->data.urlenc = strdup(orig->data.urlenc);
-		if (post_clone->data.urlenc == NULL) {
+		ຖ້າ (post_clone->data.urlenc == NULL) {
 			free(post_clone);
 
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		post_clone->data.multipart = fetch_multipart_data_clone(
 				orig->data.multipart);
-		if (post_clone->data.multipart == NULL) {
+		ຖ້າ (post_clone->data.multipart == NULL) {
 			free(post_clone);
 
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
 	}
 
 	*clone = post_clone;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -494,81 +494,81 @@ static nserror llcache_post_data_clone(const llcache_post_data *orig,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
-		char **name, char **value)
+		var_na **name, var_na **value)
 {
-	char *n, *v;
+	var_na *n, *v;
 	const uint8_t *colon;
 
 	/* Strip leading whitespace from name */
-	while (data[0] == ' ' || data[0] == '\t' ||
+	ໃນຂະນະທີ່ (data[0] == ' ' || data[0] == '\t' ||
 	       data[0] == '\r' || data[0] == '\n') {
 		data++;
 	}
 
 	/* Find colon */
-	colon = (const uint8_t *) strchr((const char *) data, ':');
-	if (colon == NULL) {
+	colon = (const uint8_t *) strchr((const var_na *) data, ':');
+	ຖ້າ (colon == NULL) {
 		/* Failed, assume a key with no value */
-		colon = data + strlen((const char *)data);
+		colon = data + strlen((const var_na *)data);
 
 		/* Strip trailing whitespace from name */
-		while ((colon > data) &&
+		ໃນຂະນະທີ່ ((colon > data) &&
 		       (colon[-1] == ' ' || colon[-1] == '\t' ||
 			colon[-1] == '\r' || colon[-1] == '\n')) {
 			colon--;
 		}
-		n = strndup((const char *) data, colon - data);
-		if (n == NULL)
-			return NSERROR_NOMEM;
+		n = strndup((const var_na *) data, colon - data);
+		ຖ້າ (n == NULL)
+			ສົ່ງຄືນ NSERROR_NOMEM;
 
 		v = strdup("");
-		if (v == NULL) {
+		ຖ້າ (v == NULL) {
 			free(n);
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* Split header into name & value */
 
 		/* Strip trailing whitespace from name */
-		while (colon > data && (colon[-1] == ' ' ||
+		ໃນຂະນະທີ່ (colon > data && (colon[-1] == ' ' ||
 				colon[-1] == '\t' || colon[-1] == '\r' ||
 				colon[-1] == '\n'))
 			colon--;
 
-		n = strndup((const char *) data, colon - data);
-		if (n == NULL)
-			return NSERROR_NOMEM;
+		n = strndup((const var_na *) data, colon - data);
+		ຖ້າ (n == NULL)
+			ສົ່ງຄືນ NSERROR_NOMEM;
 
 		/* Find colon again */
-		while (*colon != ':') {
+		ໃນຂະນະທີ່ (*colon != ':') {
 			colon++;
 		}
 
 		/* Skip over colon and any subsequent whitespace */
 		do {
 			colon++;
-		} while (*colon == ' ' || *colon == '\t' ||
+		} ໃນຂະນະທີ່ (*colon == ' ' || *colon == '\t' ||
 				*colon == '\r' || *colon == '\n');
 
 		/* Strip trailing whitespace from value */
-		while (len > 0 && (data[len - 1] == ' ' ||
+		ໃນຂະນະທີ່ (len > 0 && (data[len - 1] == ' ' ||
 				data[len - 1] == '\t' ||
 				data[len - 1] == '\r' ||
 				data[len - 1] == '\n')) {
 			len--;
 		}
 
-		v = strndup((const char *) colon, len - (colon - data));
-		if (v == NULL) {
+		v = strndup((const var_na *) colon, len - (colon - data));
+		ຖ້າ (v == NULL) {
 			free(n);
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
 	}
 
 	*name = n;
 	*value = v;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -579,18 +579,18 @@ static nserror llcache_fetch_split_header(const uint8_t *data, size_t len,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 static nserror
-llcache_fetch_parse_cache_control(llcache_object *object, char *value)
+llcache_fetch_parse_cache_control(llcache_object *object, var_na *value)
 {
 	http_cache_control *cc;
 	nserror error;
 
 	error = http_parse_cache_control(value, &cc);
-	if (error != NSERROR_OK) {
+	ຖ້າ (error != NSERROR_OK) {
 		/* Ignore parse errors */
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
-	if (http_cache_control_no_cache(cc) ||
+	ຖ້າ (http_cache_control_no_cache(cc) ||
 			http_cache_control_no_store(cc)) {
 		/**
 		 * \todo When we get a disk cache we should
@@ -599,13 +599,13 @@ llcache_fetch_parse_cache_control(llcache_object *object, char *value)
 		object->cache.no_cache = LLCACHE_VALIDATE_ALWAYS;
 	}
 
-	if (http_cache_control_has_max_age(cc)) {
+	ຖ້າ (http_cache_control_has_max_age(cc)) {
 		object->cache.max_age = http_cache_control_max_age(cc);
 	}
 
 	http_cache_control_destroy(cc);
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -618,8 +618,8 @@ llcache_fetch_parse_cache_control(llcache_object *object, char *value)
  */
 static nserror
 llcache_fetch_header_cache_control(llcache_object *object,
-				   char *name,
-				   char *value)
+				   var_na *name,
+				   var_na *value)
 {
 	nserror res;
 	size_t name_len;
@@ -628,68 +628,68 @@ llcache_fetch_header_cache_control(llcache_object *object,
 	name_len = strlen(name);
 
 	switch (name_len) {
-	case 3:
-		if (strcasecmp(name, "Age") == 0) {
+	pak_sa 3:
+		ຖ້າ (strcasecmp(name, "Age") == 0) {
 			/* extract Age header */
-			if ('0' <= *value && *value <= '9') {
+			ຖ້າ ('0' <= *value && *value <= '9') {
 				object->cache.age = atoi(value);
 			}
 
 		}
-		break;
+		bha_nga;
 
-	case 4:
-		if (strcasecmp(name, "Date") == 0) {
+	pak_sa 4:
+		ຖ້າ (strcasecmp(name, "Date") == 0) {
 			/* extract Date header */
 			res = nsc_strntimet(value,
 					    strlen(value),
 					    &object->cache.date);
-			if (res != NSERROR_OK) {
+			ຖ້າ (res != NSERROR_OK) {
 				NSLOG(llcache, INFO,
 				      "Processing Date header value \"%s\" returned %d",
 				      value, res);
 			}
-		} else if (strcasecmp(name, "ETag") == 0) {
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (strcasecmp(name, "ETag") == 0) {
 			/* extract ETag header */
 			free(object->cache.etag);
 			object->cache.etag = strdup(value);
-			if (object->cache.etag == NULL) {
+			ຖ້າ (object->cache.etag == NULL) {
 				NSLOG(llcache, INFO,
 				      "No memory to duplicate ETag");
-				return NSERROR_NOMEM;
+				ສົ່ງຄືນ NSERROR_NOMEM;
 			}
 		}
-		break;
+		bha_nga;
 
-	case 7:
-		if (strcasecmp(name, "Expires") == 0) {
+	pak_sa 7:
+		ຖ້າ (strcasecmp(name, "Expires") == 0) {
 			/* process Expires header value */
 			res = nsc_strntimet(value,
 					    strlen(value),
 					    &object->cache.expires);
-			if (res != NSERROR_OK) {
+			ຖ້າ (res != NSERROR_OK) {
 				NSLOG(llcache, INFO,
 				      "Processing Expires header value \"%s\" returned %d",
 				      value, res);
 				object->cache.expires = (time_t)0x7fffffff;
 			}
 		}
-		break;
+		bha_nga;
 
-	case 13:
-		if (strcasecmp(name, "Cache-Control") == 0) {
+	pak_sa 13:
+		ຖ້າ (strcasecmp(name, "Cache-Control") == 0) {
 			/* parse Cache-Control header value */
 			llcache_fetch_parse_cache_control(object,value);
-		} else if (strcasecmp(name, "Last-Modified") == 0) {
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (strcasecmp(name, "Last-Modified") == 0) {
 			/* parse Last-Modified header value */
 			nsc_strntimet(value,
 				      strlen(value),
 				      &object->cache.last_modified);
 		}
-		break;
+		bha_nga;
 	}
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -697,9 +697,9 @@ llcache_fetch_header_cache_control(llcache_object *object,
  *
  * \param object The object to destroy headers within.
  */
-static inline void llcache_destroy_headers(llcache_object *object)
+static anta_hstha void llcache_destroy_headers(llcache_object *object)
 {
-	while (object->num_headers > 0) {
+	ໃນຂະນະທີ່ (object->num_headers > 0) {
 		object->num_headers--;
 
 		free(object->headers[object->num_headers].name);
@@ -714,10 +714,10 @@ static inline void llcache_destroy_headers(llcache_object *object)
  *
  * \param object The object to invalidate cache control for.
  */
-static inline void llcache_invalidate_cache_control_data(llcache_object *object)
+static anta_hstha void llcache_invalidate_cache_control_data(llcache_object *object)
 {
 	free(object->cache.etag);
-	memset(&(object->cache), 0, sizeof(llcache_cache_control));
+	memset(&(object->cache), 0, parimaa_na(llcache_cache_control));
 
 	object->cache.age = INVALID_AGE;
 	object->cache.max_age = INVALID_AGE;
@@ -735,7 +735,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 		const uint8_t *data, size_t len)
 {
 	nserror res;
-	char *name, *value;
+	var_na *name, *value;
 	llcache_header *temp;
 
 	/**
@@ -751,7 +751,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 	 * that we might have computed, and start again.
 	 */
 	/** \todo Properly parse the response line */
-	if (strncmp((const char *) data, "HTTP/", SLEN("HTTP/")) == 0) {
+	ຖ້າ (strncmp((const var_na *) data, "HTTP/", SLEN("HTTP/")) == 0) {
 		time_t req_time = object->cache.req_time;
 
 		llcache_invalidate_cache_control_data(object);
@@ -763,38 +763,38 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 	}
 
 	/* Set fetch response time if not already set */
-	if (object->cache.res_time == 0) {
+	ຖ້າ (object->cache.res_time == 0) {
 		object->cache.res_time = time(NULL);
 	}
 
 	/* Parse header into name-value pair */
 	res = llcache_fetch_split_header(data, len, &name, &value);
-	if (res != NSERROR_OK) {
-		return res;
+	ຖ້າ (res != NSERROR_OK) {
+		ສົ່ງຄືນ res;
 	}
 
 	/* deal with empty header */
-	if (name[0] == 0) {
+	ຖ້າ (name[0] == 0) {
 		free(name);
 		free(value);
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
 	/* update cache control data from header */
 	res = llcache_fetch_header_cache_control(object, name, value);
-	if (res != NSERROR_OK) {
+	ຖ້າ (res != NSERROR_OK) {
 		free(name);
 		free(value);
-		return res;
+		ສົ່ງຄືນ res;
 	}
 
 	/* Append header data to the object's headers array */
 	temp = realloc(object->headers,
-		       (object->num_headers + 1) * sizeof(llcache_header));
-	if (temp == NULL) {
+		       (object->num_headers + 1) * parimaa_na(llcache_header));
+	ຖ້າ (temp == NULL) {
 		free(name);
 		free(value);
-		return NSERROR_NOMEM;
+		ສົ່ງຄືນ NSERROR_NOMEM;
 	}
 
 	object->headers = temp;
@@ -804,7 +804,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
 
 	object->num_headers++;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -816,7 +816,7 @@ static nserror llcache_fetch_process_header(llcache_object *object,
  *                    be freed by the caller.
  * \return NSERROR_OK and \a header_out updated on success else error code
  */
-static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
+static nserror get_referer_header(nsurl *url, nsurl *referer, var_na **header_out)
 {
 	nserror res = NSERROR_INVALID;
 	lwc_string *ref_scheme;
@@ -824,23 +824,23 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	bool match;
 	bool match1;
 	bool match2;
-	char *header;
+	var_na *header;
 
 	/* Determine whether to send the Referer header */
-	if (!nsoption_bool(send_referer)) {
-		return NSERROR_INVALID;
+	ຖ້າ (!nsoption_bool(send_referer)) {
+		ສົ່ງຄືນ NSERROR_INVALID;
 	}
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
-		return NSERROR_BAD_URL;
+	ຖ້າ (scheme == NULL) {
+		ສົ່ງຄືນ NSERROR_BAD_URL;
 	}
 
 	ref_scheme = nsurl_get_component(referer, NSURL_SCHEME);
-	if (ref_scheme == NULL) {
+	ຖ້າ (ref_scheme == NULL) {
 		/* referer has no scheme so no header */
 		lwc_string_unref(scheme);
-		return NSERROR_INVALID;
+		ສົ່ງຄືນ NSERROR_INVALID;
 	}
 
 	/* User permits us to send the header
@@ -853,26 +853,26 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	 * request from a page served over http. The inverse
 	 * (https -> http) should not send the referer (15.1.3)
 	 */
-	if (lwc_string_isequal(scheme, ref_scheme,
+	ຖ້າ (lwc_string_isequal(scheme, ref_scheme,
 			       &match) != lwc_error_ok) {
 		match = false;
 	}
-	if (lwc_string_isequal(scheme, corestring_lwc_https,
+	ຖ້າ (lwc_string_isequal(scheme, corestring_lwc_https,
 			       &match1) != lwc_error_ok) {
 		match1 = false;
 	}
-	if (lwc_string_isequal(ref_scheme, corestring_lwc_http,
+	ຖ້າ (lwc_string_isequal(ref_scheme, corestring_lwc_http,
 			       &match2) != lwc_error_ok) {
 		match2 = false;
 	}
-	if (match == true || (match1 == true && match2 == true)) {
+	ຖ້າ (match == true || (match1 == true && match2 == true)) {
 		const size_t len = SLEN("Referer: ") +
 			nsurl_length(referer) + 1;
 
 		header = malloc(len);
-		if (header == NULL) {
+		ຖ້າ (header == NULL) {
 			res = NSERROR_NOMEM;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			snprintf(header, len, "Referer: %s",
 				 nsurl_access(referer));
 
@@ -885,7 +885,7 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
 	lwc_string_unref(scheme);
 	lwc_string_unref(ref_scheme);
 
-	return res;
+	ສົ່ງຄືນ res;
 }
 
 /**
@@ -902,35 +902,35 @@ static nserror get_referer_header(nsurl *url, nsurl *referer, char **header_out)
  */
 static nserror llcache_object_refetch(llcache_object *object)
 {
-	const char *urlenc = NULL;
-	struct fetch_multipart_data *multipart = NULL;
-	char **headers = NULL;
-	int header_idx = 0;
+	const var_na *urlenc = NULL;
+	sa_nracanaa fetch_multipart_data *multipart = NULL;
+	var_na **headers = NULL;
+	ຈຳນວນເຕັມ header_idx = 0;
 	nserror res;
 
-	if (object->fetch.post != NULL) {
-		if (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
+	ຖ້າ (object->fetch.post != NULL) {
+		ຖ້າ (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
 			urlenc = object->fetch.post->data.urlenc;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			multipart = object->fetch.post->data.multipart;
 		}
 	}
 
 	/* Generate headers */
-	headers = malloc(4 * sizeof(char *));
-	if (headers == NULL) {
-		return NSERROR_NOMEM;
+	headers = malloc(4 * parimaa_na(var_na *));
+	ຖ້າ (headers == NULL) {
+		ສົ່ງຄືນ NSERROR_NOMEM;
 	}
 
 	/* cache-control header for etag */
-	if (object->cache.etag != NULL) {
+	ຖ້າ (object->cache.etag != NULL) {
 		const size_t len = SLEN("If-None-Match: ") +
 				strlen(object->cache.etag) + 1;
 
 		headers[header_idx] = malloc(len);
-		if (headers[header_idx] == NULL) {
+		ຖ້າ (headers[header_idx] == NULL) {
 			free(headers);
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
 
 		snprintf(headers[header_idx], len, "If-None-Match: %s",
@@ -940,16 +940,16 @@ static nserror llcache_object_refetch(llcache_object *object)
 	}
 
 	/* cache-control header for modification time */
-	if (object->cache.last_modified != 0) {
+	ຖ້າ (object->cache.last_modified != 0) {
 		/* Maximum length of an RFC 1123 date is 29 bytes */
 		const size_t len = SLEN("If-Modified-Since: ") + 29 + 1;
 
 		headers[header_idx] = malloc(len);
-		if (headers[header_idx] == NULL) {
-			while (--header_idx >= 0)
+		ຖ້າ (headers[header_idx] == NULL) {
+			ໃນຂະນະທີ່ (--header_idx >= 0)
 				free(headers[header_idx]);
 			free(headers);
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
 
 		snprintf(headers[header_idx], len, "If-Modified-Since: %s",
@@ -959,8 +959,8 @@ static nserror llcache_object_refetch(llcache_object *object)
 	}
 
 	/* Referer header */
-	if (object->fetch.referer != NULL) {
-		if (get_referer_header(object->url,
+	ຖ້າ (object->fetch.referer != NULL) {
+		ຖ້າ (get_referer_header(object->url,
 				       object->fetch.referer,
 				       &headers[header_idx]) == NSERROR_OK) {
 			header_idx++;
@@ -988,16 +988,16 @@ static nserror llcache_object_refetch(llcache_object *object)
 			  multipart,
 			  object->fetch.flags & LLCACHE_RETRIEVE_VERIFIABLE,
 			  object->fetch.tried_with_tls_downgrade,
-			  (const char **)headers,
+			  (const var_na **)headers,
 			  &object->fetch.fetch);
 
 	/* Clean up cache-control headers */
-	while (--header_idx >= 0) {
+	ໃນຂະນະທີ່ (--header_idx >= 0) {
 		free(headers[header_idx]);
 	}
 	free(headers);
 
-	return res;
+	ສົ່ງຄືນ res;
 }
 
 /**
@@ -1026,13 +1026,13 @@ static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
 
 	NSLOG(llcache, DEBUG, "Starting fetch for %p", object);
 
-	if (post != NULL) {
+	ຖ້າ (post != NULL) {
 		error = llcache_post_data_clone(post, &post_clone);
-		if (error != NSERROR_OK)
-			return error;
+		ຖ້າ (error != NSERROR_OK)
+			ສົ່ງຄືນ error;
 	}
 
-	if (referer != NULL)
+	ຖ້າ (referer != NULL)
 		referer_clone = nsurl_ref(referer);
 
 	object->fetch.flags = flags;
@@ -1042,7 +1042,7 @@ static nserror llcache_object_fetch(llcache_object *object, uint32_t flags,
 	object->fetch.retries_remaining = llcache->fetch_attempts;
 	object->fetch.hsts_in_use = hsts_in_use;
 
-	return llcache_object_refetch(object);
+	ສົ່ງຄືນ llcache_object_refetch(object);
 }
 
 /**
@@ -1064,28 +1064,28 @@ static nserror llcache_object_destroy(llcache_object *object)
 
 	cert_chain_free(object->chain);
 
-	if (object->source_data != NULL) {
-		if (object->store_state == LLCACHE_STATE_DISC) {
+	ຖ້າ (object->source_data != NULL) {
+		ຖ້າ (object->store_state == LLCACHE_STATE_DISC) {
 			guit->llcache->release(object->url, BACKING_STORE_NONE);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			free(object->source_data);
 		}
 	}
 
 	nsurl_unref(object->url);
 
-	if (object->fetch.fetch != NULL) {
+	ຖ້າ (object->fetch.fetch != NULL) {
 		fetch_abort(object->fetch.fetch);
 		object->fetch.fetch = NULL;
 	}
 
-	if (object->fetch.referer != NULL)
+	ຖ້າ (object->fetch.referer != NULL)
 		nsurl_unref(object->fetch.referer);
 
-	if (object->fetch.post != NULL) {
-		if (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
+	ຖ້າ (object->fetch.post != NULL) {
+		ຖ້າ (object->fetch.post->type == LLCACHE_POST_URL_ENCODED) {
 			free(object->fetch.post->data.urlenc);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			fetch_multipart_data_destroy(
 					object->fetch.post->data.multipart);
 		}
@@ -1095,7 +1095,7 @@ static nserror llcache_object_destroy(llcache_object *object)
 
 	free(object->cache.etag);
 
-	for (i = 0; i < object->num_headers; i++) {
+	ສຳລັບ (i = 0; i < object->num_headers; i++) {
 		free(object->headers[i].name);
 		free(object->headers[i].value);
 	}
@@ -1103,7 +1103,7 @@ static nserror llcache_object_destroy(llcache_object *object)
 
 	free(object);
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -1119,11 +1119,11 @@ static nserror llcache_object_add_to_list(llcache_object *object,
 	object->prev = NULL;
 	object->next = *list;
 
-	if (*list != NULL)
+	ຖ້າ (*list != NULL)
 		(*list)->prev = object;
 	*list = object;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -1132,10 +1132,10 @@ static nserror llcache_object_add_to_list(llcache_object *object,
  * \param cd cache control data.
  * \return The length of time remaining for the object or 0 if expired.
  */
-static int
+static ຈຳນວນເຕັມ
 llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
 {
-	int current_age, freshness_lifetime;
+	ຈຳນວນເຕັມ current_age, freshness_lifetime;
 	time_t now = time(NULL);
 
 	/* Calculate staleness of cached object as per RFC 2616 13.2.3/13.2.4 */
@@ -1144,19 +1144,19 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
 	current_age += cd->res_time - cd->req_time + now - cd->res_time;
 
 	/* Determine freshness lifetime of this object */
-	if (cd->max_age != INVALID_AGE) {
+	ຖ້າ (cd->max_age != INVALID_AGE) {
 		freshness_lifetime = cd->max_age;
-	} else if (cd->expires != 0) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (cd->expires != 0) {
 		freshness_lifetime = cd->expires - cd->date;
-	} else if (cd->last_modified != 0) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (cd->last_modified != 0) {
 		freshness_lifetime = (now - cd->last_modified) / 10;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		freshness_lifetime = 0;
 	}
 
 	NSLOG(llcache, DEBUG, "%d:%d", freshness_lifetime, current_age);
 
-	if ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
+	ຖ້າ ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
 	    (freshness_lifetime > current_age)) {
 		/* object was not forbidden from being returned from
 		 * the cache unvalidated (i.e. the response contained
@@ -1164,10 +1164,10 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
 		 *
 		 * The object current age is within the freshness lifetime.
 		 */
-		return freshness_lifetime - current_age;
+		ສົ່ງຄືນ freshness_lifetime - current_age;
 	}
 
-	return 0; /* object has no remaining lifetime */
+	ສົ່ງຄືນ 0; /* object has no remaining lifetime */
 }
 
 /**
@@ -1178,7 +1178,7 @@ llcache_object_rfc2616_remaining_lifetime(const llcache_cache_control *cd)
  */
 static bool llcache_object_is_fresh(const llcache_object *object)
 {
-	int remaining_lifetime;
+	ຈຳນວນເຕັມ remaining_lifetime;
 	const llcache_cache_control *cd = &object->cache;
 
 	remaining_lifetime = llcache_object_rfc2616_remaining_lifetime(cd);
@@ -1193,7 +1193,7 @@ static bool llcache_object_is_fresh(const llcache_object *object)
 	 *
 	 * - it has remaining lifetime or still being fetched.
 	 */
-	return ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
+	ສົ່ງຄືນ ((cd->no_cache == LLCACHE_VALIDATE_FRESH) &&
 		((remaining_lifetime > 0) ||
 		 (object->fetch.state != LLCACHE_FETCH_COMPLETE)));
 }
@@ -1212,20 +1212,20 @@ static nserror llcache_object_clone_cache_data(llcache_object *source,
 		llcache_object *destination, bool deep)
 {
 	/* ETag must be first, as it can fail when deep cloning */
-	if (source->cache.etag != NULL) {
-		char *etag = source->cache.etag;
+	ຖ້າ (source->cache.etag != NULL) {
+		var_na *etag = source->cache.etag;
 
-		if (deep) {
+		ຖ້າ (deep) {
 			/* Copy the etag */
 			etag = strdup(source->cache.etag);
-			if (etag == NULL)
-				return NSERROR_NOMEM;
-		} else {
+			ຖ້າ (etag == NULL)
+				ສົ່ງຄືນ NSERROR_NOMEM;
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* Destination takes ownership */
 			source->cache.etag = NULL;
 		}
 
-		if (destination->cache.etag != NULL)
+		ຖ້າ (destination->cache.etag != NULL)
 			free(destination->cache.etag);
 
 		destination->cache.etag = etag;
@@ -1235,25 +1235,25 @@ static nserror llcache_object_clone_cache_data(llcache_object *source,
 	destination->cache.res_time = source->cache.res_time;
 	destination->cache.fin_time = source->cache.fin_time;
 
-	if (source->cache.date != 0)
+	ຖ້າ (source->cache.date != 0)
 		destination->cache.date = source->cache.date;
 
-	if (source->cache.expires != 0)
+	ຖ້າ (source->cache.expires != 0)
 		destination->cache.expires = source->cache.expires;
 
-	if (source->cache.age != INVALID_AGE)
+	ຖ້າ (source->cache.age != INVALID_AGE)
 		destination->cache.age = source->cache.age;
 
-	if (source->cache.max_age != INVALID_AGE)
+	ຖ້າ (source->cache.max_age != INVALID_AGE)
 		destination->cache.max_age = source->cache.max_age;
 
-	if (source->cache.no_cache != LLCACHE_VALIDATE_FRESH)
+	ຖ້າ (source->cache.no_cache != LLCACHE_VALIDATE_FRESH)
 		destination->cache.no_cache = source->cache.no_cache;
 
-	if (source->cache.last_modified != 0)
+	ຖ້າ (source->cache.last_modified != 0)
 		destination->cache.last_modified = source->cache.last_modified;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -1266,15 +1266,15 @@ static nserror llcache_object_clone_cache_data(llcache_object *source,
 static nserror
 llcache_object_remove_from_list(llcache_object *object, llcache_object **list)
 {
-	if (object == *list)
+	ຖ້າ (object == *list)
 		*list = object->next;
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		object->prev->next = object->next;
 
-	if (object->next != NULL)
+	ຖ້າ (object->next != NULL)
 		object->next->prev = object->prev;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -1290,16 +1290,16 @@ llcache_object_remove_from_list(llcache_object *object, llcache_object **list)
 static nserror llcache_retrieve_persisted_data(llcache_object *object)
 {
 	/* ensure the source data is present if necessary */
-	if ((object->source_data != NULL) ||
+	ຖ້າ ((object->source_data != NULL) ||
 	    (object->store_state != LLCACHE_STATE_DISC)) {
 		/* source data does not require retrieving from
 		 * persistent store.
 		 */
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
 	/* Source data for the object may be in the persistent store */
-	return guit->llcache->fetch(object->url,
+	ສົ່ງຄືນ guit->llcache->fetch(object->url,
 				    BACKING_STORE_NONE,
 				    &object->source_data,
 				    &object->source_len);
@@ -1324,16 +1324,16 @@ llcache_serialise_metadata(llcache_object *object,
 			   size_t *datasize_out)
 {
 	size_t allocsize;
-	int datasize;
+	ຈຳນວນເຕັມ datasize;
 	uint8_t *data;
-	char *op;
-	unsigned int hloop;
-	int use;
+	var_na *op;
+	unsigned ຈຳນວນເຕັມ hloop;
+	ຈຳນວນເຕັມ use;
 	size_t cert_chain_depth;
 
-	if (object->chain != NULL) {
+	ຖ້າ (object->chain != NULL) {
 		cert_chain_depth = object->chain->depth;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		cert_chain_depth = 0;
 	}
 
@@ -1347,7 +1347,7 @@ llcache_serialise_metadata(llcache_object *object,
 
 	allocsize += 10 + 1; /* space for number of header entries */
 
-	for (hloop = 0 ; hloop < object->num_headers ; hloop++) {
+	ສຳລັບ (hloop = 0 ; hloop < object->num_headers ; hloop++) {
 		allocsize += strlen(object->headers[hloop].name) + 1;
 		allocsize += strlen(object->headers[hloop].value) + 1;
 	}
@@ -1357,26 +1357,26 @@ llcache_serialise_metadata(llcache_object *object,
 	/* space for number of DER formatted certificates */
 	allocsize += 10 + 1;
 
-	for (hloop = 0; hloop < cert_chain_depth; hloop++) {
+	ສຳລັບ (hloop = 0; hloop < cert_chain_depth; hloop++) {
 		allocsize += 10 + 1; /* error status */
 		allocsize += 4 * ((object->chain->certs[hloop].der_length + 2) / 3);
 	}
 
 	data = malloc(allocsize);
-	if (data == NULL) {
-		return NSERROR_NOMEM;
+	ຖ້າ (data == NULL) {
+		ສົ່ງຄືນ NSERROR_NOMEM;
 	}
 
-	op = (char *)data;
+	op = (var_na *)data;
 	datasize = allocsize;
 
 	/* the url, used for checking for collisions */
 	use = snprintf(op, datasize, "%s", nsurl_access(object->url));
-	if (use < 0) {
+	ຖ້າ (use < 0) {
 		goto operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize) {
+	ຖ້າ (use > datasize) {
 		goto overflow;
 	}
 	op += use;
@@ -1384,18 +1384,18 @@ llcache_serialise_metadata(llcache_object *object,
 
 	/* object size */
 	use = snprintf(op, datasize, "%" PRIsizet, object->source_len);
-	if (use < 0) {
+	ຖ້າ (use < 0) {
 		goto operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
+	ຖ້າ (use > datasize)
 		goto overflow;
 	op += use;
 	datasize -= use;
 
 	/* Time of request */
 	use = nsc_sntimet(op, datasize, &object->cache.req_time);
-	if (use == 0)
+	ຖ້າ (use == 0)
 		goto overflow;
 	use++; /* does not count the null */
 	op += use;
@@ -1403,7 +1403,7 @@ llcache_serialise_metadata(llcache_object *object,
 
 	/* Time of response */
 	use = nsc_sntimet(op, datasize, &object->cache.res_time);
-	if (use == 0)
+	ຖ້າ (use == 0)
 		goto overflow;
 	use++; /* does not count the null */
 	op += use;
@@ -1411,7 +1411,7 @@ llcache_serialise_metadata(llcache_object *object,
 
 	/* Time of completion */
 	use = nsc_sntimet(op, datasize, &object->cache.fin_time);
-	if (use == 0)
+	ຖ້າ (use == 0)
 		goto overflow;
 	use++; /* does not count the null */
 	op += use;
@@ -1419,26 +1419,26 @@ llcache_serialise_metadata(llcache_object *object,
 
 	/* number of headers */
 	use = snprintf(op, datasize, "%" PRIsizet, object->num_headers);
-	if (use < 0) {
+	ຖ້າ (use < 0) {
 		goto operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
+	ຖ້າ (use > datasize)
 		goto overflow;
 	op += use;
 	datasize -= use;
 
 	/* headers */
-	for (hloop = 0 ; hloop < object->num_headers ; hloop++) {
+	ສຳລັບ (hloop = 0 ; hloop < object->num_headers ; hloop++) {
 		use = snprintf(op, datasize,
 			       "%s:%s",
 			       object->headers[hloop].name,
 			       object->headers[hloop].value);
-		if (use < 0) {
+		ຖ້າ (use < 0) {
 			goto operror;
 		}
 		use++; /* does not count the null */
-		if (use > datasize)
+		ຖ້າ (use > datasize)
 			goto overflow;
 		op += use;
 		datasize -= use;
@@ -1446,48 +1446,48 @@ llcache_serialise_metadata(llcache_object *object,
 
 	/* number of DER formatted ssl certificates */
 	use = snprintf(op, datasize, "%" PRIsizet, cert_chain_depth);
-	if (use < 0) {
+	ຖ້າ (use < 0) {
 		goto operror;
 	}
 	use++; /* does not count the null */
-	if (use > datasize)
+	ຖ້າ (use > datasize)
 		goto overflow;
 	op += use;
 	datasize -= use;
 
 	/* SSL certificates */
-	for (hloop = 0; hloop < cert_chain_depth; hloop++) {
+	ສຳລັບ (hloop = 0; hloop < cert_chain_depth; hloop++) {
 		nsuerror res;
 
 		/* Certificate error code */
 		use = snprintf(op, datasize, "%d",
-			       (int)(object->chain->certs[hloop].err));
-		if (use < 0) {
+			       (ຈຳນວນເຕັມ)(object->chain->certs[hloop].err));
+		ຖ້າ (use < 0) {
 			goto operror;
 		}
 		use++; /* does not count the null */
-		if (use > datasize)
+		ຖ້າ (use > datasize)
 			goto overflow;
 		op += use;
 		datasize -= use;
 
 		/* DER certificate data in base64 encoding */
-		if (object->chain->certs[hloop].der != NULL) {
+		ຖ້າ (object->chain->certs[hloop].der != NULL) {
 			size_t output_length = datasize;
 			res = nsu_base64_encode(
 				object->chain->certs[hloop].der,
 				object->chain->certs[hloop].der_length,
 				(uint8_t *)op,
 				&output_length);
-			if (res != NSUERROR_OK) {
+			ຖ້າ (res != NSUERROR_OK) {
 				goto operror;
 			}
 			use = output_length;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			use = 0;
 		}
 		use++; /* allow for null */
-		if (use > datasize)
+		ຖ້າ (use > datasize)
 			goto overflow;
 		op += use;
 		*(op - 1) = 0;
@@ -1499,19 +1499,19 @@ llcache_serialise_metadata(llcache_object *object,
 	*data_out = data;
 	*datasize_out = allocsize - datasize;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 
 overflow:
 	/* somehow we overflowed the buffer - hth? */
 	NSLOG(llcache, INFO, "Overflowed metadata buffer");
 	free(data);
-	return NSERROR_INVALID;
+	ສົ່ງຄືນ NSERROR_INVALID;
 
 operror:
 	/* output error */
 	NSLOG(llcache, INFO, "Output error");
 	free(data);
-	return NSERROR_INVALID;
+	ສົ່ງຄືນ NSERROR_INVALID;
 }
 
 /**
@@ -1536,9 +1536,9 @@ llcache_process_metadata(llcache_object *object)
 	size_t metadatalen = 0;
 	size_t remaining = 0;
 	nsurl *metadataurl;
-	unsigned int line;
-	char *ln;
-	int lnsize;
+	unsigned ຈຳນວນເຕັມ line;
+	var_na *ln;
+	ຈຳນວນເຕັມ lnsize;
 
 	size_t source_length;
 	time_t request_time;
@@ -1547,7 +1547,7 @@ llcache_process_metadata(llcache_object *object)
 	size_t num_headers;
 	size_t hloop;
 	size_t ssl_cert_count = 0;
-	struct cert_chain *chain = NULL;
+	sa_nracanaa cert_chain *chain = NULL;
 
 	NSLOG(llcache, INFO, "Retrieving metadata");
 
@@ -1556,8 +1556,8 @@ llcache_process_metadata(llcache_object *object)
 				   BACKING_STORE_META,
 				   &metadata,
 				   &metadatalen);
-	if (res != NSERROR_OK) {
-		return res;
+	ຖ້າ (res != NSERROR_OK) {
+		ສົ່ງຄືນ res;
 	}
 
 	NSLOG(llcache, INFO, "Processing retrieved data");
@@ -1573,20 +1573,20 @@ llcache_process_metadata(llcache_object *object)
 
 	/* metadata line 1 is the url the metadata referrs to */
 	line = 1;
-	ln = (char *)metadata;
+	ln = (var_na *)metadata;
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if (lnsize < 7) {
+	ຖ້າ (lnsize < 7) {
 		res = NSERROR_INVALID;
 		goto format_error;
 	}
 
 	res = nsurl_create(ln, &metadataurl);
-	if (res != NSERROR_OK)
+	ຖ້າ (res != NSERROR_OK)
 		goto format_error;
 
-	if (nsurl_compare(object->url, metadataurl, NSURL_COMPLETE) != true) {
+	ຖ້າ (nsurl_compare(object->url, metadataurl, NSURL_COMPLETE) != true) {
 		/* backing store returned the wrong object for the
 		 * request. This may occur if the backing store had
 		 * a collision in its storage method. We cope with this
@@ -1600,7 +1600,7 @@ llcache_process_metadata(llcache_object *object)
 
 		guit->llcache->release(object->url, BACKING_STORE_META);
 
-		return NSERROR_BAD_URL;
+		ສົ່ງຄືນ NSERROR_BAD_URL;
 	}
 	nsurl_unref(metadataurl);
 
@@ -1611,7 +1611,7 @@ llcache_process_metadata(llcache_object *object)
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &source_length) != 1)) {
+	ຖ້າ ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &source_length) != 1)) {
 		res = NSERROR_INVALID;
 		goto format_error;
 	}
@@ -1624,7 +1624,7 @@ llcache_process_metadata(llcache_object *object)
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &request_time);
-	if (res != NSERROR_OK)
+	ຖ້າ (res != NSERROR_OK)
 		goto format_error;
 
 
@@ -1635,7 +1635,7 @@ llcache_process_metadata(llcache_object *object)
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &response_time);
-	if (res != NSERROR_OK)
+	ຖ້າ (res != NSERROR_OK)
 		goto format_error;
 
 
@@ -1646,7 +1646,7 @@ llcache_process_metadata(llcache_object *object)
 	remaining -= lnsize + 1;
 
 	res = nsc_snptimet(ln, lnsize, &completion_time);
-	if (res != NSERROR_OK)
+	ຖ້າ (res != NSERROR_OK)
 		goto format_error;
 
 
@@ -1656,13 +1656,13 @@ llcache_process_metadata(llcache_object *object)
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &num_headers) != 1)) {
+	ຖ້າ ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &num_headers) != 1)) {
 		res = NSERROR_INVALID;
 		goto format_error;
 	}
 
 	/* read headers */
-	for (hloop = 0 ; hloop < num_headers; hloop++) {
+	ສຳລັບ (hloop = 0 ; hloop < num_headers; hloop++) {
 		line++;
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
@@ -1671,11 +1671,11 @@ llcache_process_metadata(llcache_object *object)
 		res = llcache_fetch_process_header(object,
 						   (uint8_t *)ln,
 						   lnsize);
-		if (res != NSERROR_OK)
+		ຖ້າ (res != NSERROR_OK)
 			goto format_error;
 	}
 
-	if (remaining == 0) {
+	ຖ້າ (remaining == 0) {
 		goto skip_ssl_certificates;
 	}
 
@@ -1685,27 +1685,27 @@ llcache_process_metadata(llcache_object *object)
 	lnsize = strlen(ln);
 	remaining -= lnsize + 1;
 
-	if ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &ssl_cert_count) != 1)) {
+	ຖ້າ ((lnsize < 1) || (sscanf(ln, "%" PRIsizet, &ssl_cert_count) != 1)) {
 		res = NSERROR_INVALID;
 		goto format_error;
 	}
 
-	if (ssl_cert_count == 0) {
+	ຖ້າ (ssl_cert_count == 0) {
 		goto skip_ssl_certificates;
 	}
 
-	if (ssl_cert_count > MAX_CERT_DEPTH) {
+	ຖ້າ (ssl_cert_count > MAX_CERT_DEPTH) {
 		res = NSERROR_INVALID;
 		goto format_error;
 	}
 
 	res = cert_chain_alloc(ssl_cert_count, &chain);
-	if (res != NSERROR_OK) {
+	ຖ້າ (res != NSERROR_OK) {
 		goto format_error;
 	}
 
-	for (hloop = 0; hloop < ssl_cert_count; hloop++) {
-		int errcode;
+	ສຳລັບ (hloop = 0; hloop < ssl_cert_count; hloop++) {
+		ຈຳນວນເຕັມ errcode;
 		nsuerror nsures;
 
 		/* Certificate error code */
@@ -1713,15 +1713,15 @@ llcache_process_metadata(llcache_object *object)
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
-		if ((lnsize < 1) || (sscanf(ln, "%d", &errcode) != 1)) {
+		ຖ້າ ((lnsize < 1) || (sscanf(ln, "%d", &errcode) != 1)) {
 			res = NSERROR_INVALID;
 			goto format_error;
 		}
-		if (errcode < SSL_CERT_ERR_OK ||
+		ຖ້າ (errcode < SSL_CERT_ERR_OK ||
 		    errcode > SSL_CERT_ERR_MAX_KNOWN) {
 			/* Error with the cert code, assume UNKNOWN */
 			chain->certs[hloop].err = SSL_CERT_ERR_UNKNOWN;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			chain->certs[hloop].err = (ssl_cert_err)errcode;
 		}
 
@@ -1730,12 +1730,12 @@ llcache_process_metadata(llcache_object *object)
 		ln += lnsize + 1;
 		lnsize = strlen(ln);
 		remaining -= lnsize + 1;
-		if (lnsize > 0) {
+		ຖ້າ (lnsize > 0) {
 			nsures = nsu_base64_decode_alloc((const uint8_t *)ln,
 					lnsize,
 					&chain->certs[hloop].der,
 					&chain->certs[hloop].der_length);
-			if (nsures != NSUERROR_OK) {
+			ຖ້າ (nsures != NSUERROR_OK) {
 				res = NSERROR_NOMEM;
 				goto format_error;
 			}
@@ -1760,7 +1760,7 @@ skip_ssl_certificates:
 	/* object stored in backing store */
 	object->store_state = LLCACHE_STATE_DISC;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 
 format_error:
 	NSLOG(llcache, INFO,
@@ -1770,7 +1770,7 @@ format_error:
 
 	cert_chain_free(chain);
 
-	return res;
+	ສົ່ງຄືນ res;
 }
 
 /**
@@ -1779,7 +1779,7 @@ format_error:
  * \param url  URL to check.
  * \return true iff url has a persistable scheme.
  */
-static inline bool llcache__scheme_is_persistable(const nsurl *url)
+static anta_hstha bool llcache__scheme_is_persistable(const nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
 	bool persistable = false;
@@ -1787,7 +1787,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
 
 	/* nsurl ensures lower case schemes, and corestrings are lower
 	 * case, so it's safe to use case-sensitive comparison. */
-	if ((lwc_string_isequal(scheme, corestring_lwc_http,
+	ຖ້າ ((lwc_string_isequal(scheme, corestring_lwc_http,
 			&match) == lwc_error_ok &&
 			(match == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_https,
@@ -1798,7 +1798,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
 
 	lwc_string_unref(scheme);
 
-	return persistable;
+	ສົ່ງຄືນ persistable;
 }
 
 /**
@@ -1807,7 +1807,7 @@ static inline bool llcache__scheme_is_persistable(const nsurl *url)
  * \param url  URL to check.
  * \return true iff url has a cachable scheme.
  */
-static inline bool llcache__scheme_is_cachable(const nsurl *url)
+static anta_hstha bool llcache__scheme_is_cachable(const nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
 	bool cachable = false;
@@ -1815,7 +1815,7 @@ static inline bool llcache__scheme_is_cachable(const nsurl *url)
 
 	/* nsurl ensures lower case schemes, and corestrings are lower
 	 * case, so it's safe to use case-sensitive comparison. */
-	if ((lwc_string_isequal(scheme, corestring_lwc_http,
+	ຖ້າ ((lwc_string_isequal(scheme, corestring_lwc_http,
 			&match) == lwc_error_ok &&
 			(match == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_https,
@@ -1835,7 +1835,7 @@ static inline bool llcache__scheme_is_cachable(const nsurl *url)
 
 	lwc_string_unref(scheme);
 
-	return cachable;
+	ສົ່ງຄືນ cachable;
 }
 
 /**
@@ -1860,10 +1860,10 @@ llcache_object_fetch_persistent(llcache_object *object,
 	nsurl *referer_clone = NULL;
 	llcache_post_data *post_clone = NULL;
 
-	if (!llcache__scheme_is_persistable(object->url)) {
+	ຖ້າ (!llcache__scheme_is_persistable(object->url)) {
 		/* Don't bother looking up non-http(s) stuff; we don't
 		 * persist it. */
-		return NSERROR_NOT_FOUND;
+		ສົ່ງຄືນ NSERROR_NOT_FOUND;
 	}
 
 	object->cache.req_time = time(NULL);
@@ -1871,18 +1871,18 @@ llcache_object_fetch_persistent(llcache_object *object,
 
 	/* retrieve and process metadata */
 	error = llcache_process_metadata(object);
-	if (error != NSERROR_OK) {
-		return error;
+	ຖ້າ (error != NSERROR_OK) {
+		ສົ່ງຄືນ error;
 	}
 
 	/* entry came out of cache - need to setup object state */
-	if (post != NULL) {
+	ຖ້າ (post != NULL) {
 		error = llcache_post_data_clone(post, &post_clone);
-		if (error != NSERROR_OK)
-			return error;
+		ຖ້າ (error != NSERROR_OK)
+			ສົ່ງຄືນ error;
 	}
 
-	if (referer != NULL) {
+	ຖ້າ (referer != NULL) {
 		referer_clone = nsurl_ref(referer);
 	}
 
@@ -1895,7 +1895,7 @@ llcache_object_fetch_persistent(llcache_object *object,
 	object->fetch.state = LLCACHE_FETCH_COMPLETE;
 	object->fetch.fetch = NULL;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -1929,9 +1929,9 @@ llcache_object_retrieve_from_cache(nsurl *url,
 	      post);
 
 	/* Search for the most recently fetched matching object */
-	for (obj = llcache->cached_objects; obj != NULL; obj = obj->next) {
+	ສຳລັບ (obj = llcache->cached_objects; obj != NULL; obj = obj->next) {
 
-		if ((newest == NULL ||
+		ຖ້າ ((newest == NULL ||
 		     obj->cache.req_time > newest->cache.req_time) &&
 		    nsurl_compare(obj->url, url,
 				  NSURL_COMPLETE) == true) {
@@ -1942,16 +1942,16 @@ llcache_object_retrieve_from_cache(nsurl *url,
 	/* No viable object found in cache create one and attempt to
 	 * pull from persistent store.
 	 */
-	if (newest == NULL) {
+	ຖ້າ (newest == NULL) {
 		NSLOG(llcache, DEBUG, "No viable object found in llcache");
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK)
-			return error;
+		ຖ້າ (error != NSERROR_OK)
+			ສົ່ງຄືນ error;
 
 		/* attempt to retrieve object from persistent store */
 		error = llcache_object_fetch_persistent(obj, flags, referer, post, redirect_count);
-		if (error == NSERROR_OK) {
+		ຖ້າ (error == NSERROR_OK) {
 			NSLOG(llcache, DEBUG, "retrieved object from persistent store");
 
 			/* set newest object from persistent store which
@@ -1968,7 +1968,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		 */
 	}
 
-	if ((newest != NULL) && (llcache_object_is_fresh(newest))) {
+	ຖ້າ ((newest != NULL) && (llcache_object_is_fresh(newest))) {
 		/* Found a suitable object, and it's still fresh */
 		NSLOG(llcache, DEBUG, "Found fresh %p", newest);
 
@@ -1978,13 +1978,13 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 		/* ensure the source data is present */
 		error = llcache_retrieve_persisted_data(newest);
-		if (error == NSERROR_OK) {
+		ຖ້າ (error == NSERROR_OK) {
 			/* source data was successfully retrieved from
 			 * persistent store
 			 */
 			*result = newest;
 
-			return NSERROR_OK;
+			ສົ່ງຄືນ NSERROR_OK;
 		}
 
 		/* retrieval of source data from persistent store
@@ -1997,28 +1997,28 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		llcache_object_destroy(newest);
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK) {
-			return error;
+		ຖ້າ (error != NSERROR_OK) {
+			ສົ່ງຄືນ error;
 		}
-	} else if (newest != NULL) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (newest != NULL) {
 		/* Found a candidate object but it needs freshness validation */
 
 		/* ensure the source data is present */
 		error = llcache_retrieve_persisted_data(newest);
-		if (error == NSERROR_OK) {
+		ຖ້າ (error == NSERROR_OK) {
 
 			/* Create a new object */
 			error = llcache_object_new(url, &obj);
-			if (error != NSERROR_OK)
-				return error;
+			ຖ້າ (error != NSERROR_OK)
+				ສົ່ງຄືນ error;
 
 			NSLOG(llcache, DEBUG, "Found candidate %p (%p)", obj, newest);
 
 			/* Clone candidate's cache data */
 			error = llcache_object_clone_cache_data(newest, obj, true);
-			if (error != NSERROR_OK) {
+			ຖ້າ (error != NSERROR_OK) {
 				llcache_object_destroy(obj);
-				return error;
+				ສົ່ງຄືນ error;
 			}
 
 			/* Record candidate, so we can fall back if it is still fresh */
@@ -2028,10 +2028,10 @@ llcache_object_retrieve_from_cache(nsurl *url,
 			/* Attempt to kick-off fetch */
 			error = llcache_object_fetch(obj, flags, referer, post,
 						     redirect_count, hsts_in_use);
-			if (error != NSERROR_OK) {
+			ຖ້າ (error != NSERROR_OK) {
 				newest->candidate_count--;
 				llcache_object_destroy(obj);
-				return error;
+				ສົ່ງຄືນ error;
 			}
 
 			/* Add new object to cache */
@@ -2039,7 +2039,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 			*result = obj;
 
-			return NSERROR_OK;
+			ສົ່ງຄືນ NSERROR_OK;
 		}
 
 		NSLOG(llcache, DEBUG, "Persistent retrieval failed for %p", newest);
@@ -2053,17 +2053,17 @@ llcache_object_retrieve_from_cache(nsurl *url,
 		llcache_object_destroy(newest);
 
 		error = llcache_object_new(url, &obj);
-		if (error != NSERROR_OK) {
-			return error;
+		ຖ້າ (error != NSERROR_OK) {
+			ສົ່ງຄືນ error;
 		}
 	}
 
 	/* Attempt to kick-off fetch */
 	error = llcache_object_fetch(obj, flags, referer, post,
 			redirect_count, hsts_in_use);
-	if (error != NSERROR_OK) {
+	ຖ້າ (error != NSERROR_OK) {
 		llcache_object_destroy(obj);
-		return error;
+		ສົ່ງຄືນ error;
 	}
 
 	/* Add new object to cache */
@@ -2071,7 +2071,7 @@ llcache_object_retrieve_from_cache(nsurl *url,
 
 	*result = obj;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -2106,46 +2106,46 @@ llcache_object_retrieve(nsurl *url,
 
 	/* Get rid of any url fragment */
 	error = nsurl_defragment(url, &defragmented_url);
-	if (error != NSERROR_OK)
-		return error;
+	ຖ້າ (error != NSERROR_OK)
+		ສົ່ງຄືນ error;
 
 	/* determine if content is cachable */
-	if ((flags & LLCACHE_RETRIEVE_FORCE_FETCH) != 0) {
+	ຖ້າ ((flags & LLCACHE_RETRIEVE_FORCE_FETCH) != 0) {
 		/* Forced fetches are never cached */
 		uncachable = true;
-	} else if (post != NULL) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (post != NULL) {
 		/* POST requests are never cached */
 		uncachable = true;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		uncachable = !llcache__scheme_is_cachable(defragmented_url);
 	}
 
-	if (uncachable) {
+	ຖ້າ (uncachable) {
 		/* Create new object */
 		error = llcache_object_new(defragmented_url, &obj);
-		if (error != NSERROR_OK) {
+		ຖ້າ (error != NSERROR_OK) {
 			nsurl_unref(defragmented_url);
-			return error;
+			ສົ່ງຄືນ error;
 		}
 
 		/* Attempt to kick-off fetch */
 		error = llcache_object_fetch(obj, flags, referer, post,
 				redirect_count, hsts_in_use);
-		if (error != NSERROR_OK) {
+		ຖ້າ (error != NSERROR_OK) {
 			llcache_object_destroy(obj);
 			nsurl_unref(defragmented_url);
-			return error;
+			ສົ່ງຄືນ error;
 		}
 
 		/* Add new object to uncached list */
 		llcache_object_add_to_list(obj, &llcache->uncached_objects);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		error = llcache_object_retrieve_from_cache(defragmented_url,
 				flags, referer, post, redirect_count,
 				hsts_in_use, &obj);
-		if (error != NSERROR_OK) {
+		ຖ້າ (error != NSERROR_OK) {
 			nsurl_unref(defragmented_url);
-			return error;
+			ສົ່ງຄືນ error;
 		}
 
 		/* Returned object is already in the cached list */
@@ -2157,7 +2157,7 @@ llcache_object_retrieve(nsurl *url,
 
 	nsurl_unref(defragmented_url);
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 
@@ -2180,13 +2180,13 @@ static nserror llcache_object_add_user(llcache_object *object,
 	user->prev = NULL;
 	user->next = object->users;
 
-	if (object->users != NULL)
+	ຖ້າ (object->users != NULL)
 		object->users->prev = user;
 	object->users = user;
 
 	NSLOG(llcache, DEBUG, "Adding user %p to %p", user, object);
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -2205,36 +2205,36 @@ static nserror llcache_hsts_transform_url(nsurl *url, nsurl **result,
 	nserror error = NSERROR_OK;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (lwc_string_caseless_isequal(scheme, corestring_lwc_http,
+	ຖ້າ (lwc_string_caseless_isequal(scheme, corestring_lwc_http,
 			&match) != lwc_error_ok || match == false) {
 		/* Non-HTTP fetch: no transform required */
-		if (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
+		ຖ້າ (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
 				&match) == lwc_error_ok && match) {
 			/* HTTPS: ask urldb if HSTS is enabled */
 			*hsts_in_use = urldb_get_hsts_enabled(url);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* Anything else: no HSTS */
 			*hsts_in_use = false;
 		}
 		lwc_string_unref(scheme);
 		*result = nsurl_ref(url);
-		return error;
+		ສົ່ງຄືນ error;
 	}
 	lwc_string_unref(scheme);
 
-	if (urldb_get_hsts_enabled(url)) {
+	ຖ້າ (urldb_get_hsts_enabled(url)) {
 		/* Only need to force HTTPS. If original port was explicitly
 		 * specified as 80, nsurl_create/join will remove it (as
 		 * it's redundant) */
 		error = nsurl_replace_scheme(url, corestring_lwc_https,
 				result);
 		*hsts_in_use = (error == NSERROR_OK);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		*result = nsurl_ref(url);
 		*hsts_in_use = false;
 	}
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 /**
@@ -2250,30 +2250,30 @@ static nserror llcache_hsts_update_policy(llcache_object *object)
 	bool match = false;
 
 	scheme = nsurl_get_component(object->url, NSURL_SCHEME);
-	if (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
+	ຖ້າ (lwc_string_caseless_isequal(scheme, corestring_lwc_https,
 			&match) != lwc_error_ok || match == false) {
 		/* Non-HTTPS fetch: ignore */
 		lwc_string_unref(scheme);
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 	lwc_string_unref(scheme);
 
-	if (object->fetch.tainted_tls) {
+	ຖ້າ (object->fetch.tainted_tls) {
 		/* Transport is tainted: ignore */
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
-	for (i = 0; i < object->num_headers; i++) {
-		if (strcasecmp("Strict-Transport-Security",
+	ສຳລັບ (i = 0; i < object->num_headers; i++) {
+		ຖ້າ (strcasecmp("Strict-Transport-Security",
 				object->headers[i].name) == 0) {
 			urldb_set_hsts_policy(object->url,
 					object->headers[i].value);
 			/* Only process the first one we find */
-			break;
+			bha_nga;
 		}
 	}
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -2297,12 +2297,12 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 	scheme = nsurl_get_component(dst_url, NSURL_SCHEME);
 
 	/* resource: and about: are allowed to redirect anywhere */
-	if ((lwc_string_isequal(object_scheme, corestring_lwc_resource,
+	ຖ້າ ((lwc_string_isequal(object_scheme, corestring_lwc_resource,
 			&match) == lwc_error_ok && match == false) &&
 	    (lwc_string_isequal(object_scheme, corestring_lwc_about,
 			&match) == lwc_error_ok && match == false)) {
 		/* file, about and resource are not valid redirect targets */
-		if ((lwc_string_isequal(scheme, corestring_lwc_file,
+		ຖ້າ ((lwc_string_isequal(scheme, corestring_lwc_file,
 				&match) == lwc_error_ok && match == true) ||
 		    (lwc_string_isequal(scheme, corestring_lwc_about,
 				&match) == lwc_error_ok && match == true) ||
@@ -2311,7 +2311,7 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 			lwc_string_unref(object_scheme);
 			lwc_string_unref(scheme);
 
-			return NSERROR_UNSAFE_REDIRECT;
+			ສົ່ງຄືນ NSERROR_UNSAFE_REDIRECT;
 		}
 	}
 
@@ -2319,11 +2319,11 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
 	lwc_string_unref(object_scheme);
 
 	/* Bail out if we've no way of handling this URL */
-	if (fetch_can_fetch(dst_url) == false) {
-		return NSERROR_UNSAFE_REDIRECT;
+	ຖ້າ (fetch_can_fetch(dst_url) == false) {
+		ສົ່ງຄືນ NSERROR_UNSAFE_REDIRECT;
 	}
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -2335,7 +2335,7 @@ static nserror check_redirect_safety(nsurl *src_url, nsurl *dst_url)
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 static nserror llcache_fetch_redirect(llcache_object *object,
-		const char *target, llcache_object **replacement)
+		const var_na *target, llcache_object **replacement)
 {
 	nserror res;
 	llcache_object *dest;
@@ -2362,46 +2362,46 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	(void) llcache_hsts_update_policy(object);
 
 	/* Forcibly stop redirecting if we've followed too many redirects */
-	if (object->fetch.redirect_count > nsoption_uint(fetch_redirect_limit)) {
+	ຖ້າ (object->fetch.redirect_count > nsoption_uint(fetch_redirect_limit)) {
 		NSLOG(llcache, INFO, "Too many nested redirects");
-		return NSERROR_CYCLIC_REDIRECT;
+		ສົ່ງຄືນ NSERROR_CYCLIC_REDIRECT;
 	}
 
 	/* Make target absolute */
 	res = nsurl_join(object->url, target, &url);
-	if (res != NSERROR_OK) {
-		return res;
+	ຖ້າ (res != NSERROR_OK) {
+		ສົ່ງຄືນ res;
 	}
 
 	/* Perform HSTS transform */
 	res = llcache_hsts_transform_url(url, &hsts_url, &hsts_in_use);
 	nsurl_unref(url);
-	if (res != NSERROR_OK) {
+	ຖ້າ (res != NSERROR_OK) {
 		NSLOG(llcache, INFO, "hsts transform failed");
-		return res;
+		ສົ່ງຄືນ res;
 	}
 
 	/* check redirect allowed before informing users */
 	res = check_redirect_safety(object->url, hsts_url);
-	if (res != NSERROR_OK) {
+	ຖ້າ (res != NSERROR_OK) {
 		NSLOG(llcache, INFO, "unsafe redirect");
 		nsurl_unref(hsts_url);
-		return res;
+		ສົ່ງຄືນ res;
 	}
 
 	/* alter behaviour based on specific redirect code */
 	switch (http_code) {
-	case HTTP_RESPONSE_MOVED_PERMANENTLY:
-	case HTTP_RESPONSE_FOUND:
-	case HTTP_RESPONSE_SEE_OTHER:
+	pak_sa HTTP_RESPONSE_MOVED_PERMANENTLY:
+	pak_sa HTTP_RESPONSE_FOUND:
+	pak_sa HTTP_RESPONSE_SEE_OTHER:
 		/* 301, 302, 303 redirects change method to GET */
 		post = NULL;
-		break;
+		bha_nga;
 
-	case HTTP_RESPONSE_TEMPORARY_REDIRECT:
-	case HTTP_RESPONSE_PERMANENT_REDIRECT:
+	pak_sa HTTP_RESPONSE_TEMPORARY_REDIRECT:
+	pak_sa HTTP_RESPONSE_PERMANENT_REDIRECT:
 		/* 307 and 308 keep method unchanged */
-		break;
+		bha_nga;
 
 	default:
 		/** \todo implement codes
@@ -2410,7 +2410,7 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 		 */
 		NSLOG(llcache, INFO, "unsupported redirect %d", http_code);
 		nsurl_unref(hsts_url);
-		return NSERROR_BAD_REDIRECT;
+		ສົ່ງຄືນ NSERROR_BAD_REDIRECT;
 	}
 
 	/* Inform users of redirect */
@@ -2419,9 +2419,9 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	event.data.redirect.to = hsts_url;
 
 	res = llcache_send_event_to_users(object, &event);
-	if (res != NSERROR_OK) {
+	ຖ້າ (res != NSERROR_OK) {
 		nsurl_unref(hsts_url);
-		return res;
+		ສົ່ງຄືນ res;
 	}
 
 	/* Attempt to fetch target URL */
@@ -2436,11 +2436,11 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 	/* No longer require url */
 	nsurl_unref(hsts_url);
 
-	if (res == NSERROR_OK) {
+	ຖ້າ (res == NSERROR_OK) {
 		/* successfully started redirected fetch */
 
 		/* Move user(s) to replacement object */
-		for (user = object->users; user != NULL; user = next) {
+		ສຳລັບ (user = object->users; user != NULL; user = next) {
 			next = user->next;
 
 			llcache_object_remove_user(object, user);
@@ -2451,7 +2451,7 @@ static nserror llcache_fetch_redirect(llcache_object *object,
 		*replacement = dest;
 	}
 
-	return res;
+	ສົ່ງຄືນ res;
 }
 
 /**
@@ -2462,10 +2462,10 @@ static nserror llcache_fetch_redirect(llcache_object *object,
  */
 static nserror llcache_object_cache_update(llcache_object *object)
 {
-	if (object->cache.date == 0)
+	ຖ້າ (object->cache.date == 0)
 		object->cache.date = time(NULL);
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -2483,11 +2483,11 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 	 * In this case, we simply retain the initial object, having
 	 * invalidated it and marked it as complete.
 	 */
-	if (object->candidate != NULL) {
+	ຖ້າ (object->candidate != NULL) {
 		llcache_object_user *user, *next;
 
 		/* Move user(s) to candidate content */
-		for (user = object->users; user != NULL; user = next) {
+		ສຳລັບ (user = object->users; user != NULL; user = next) {
 			next = user->next;
 
 			llcache_object_remove_user(object, user);
@@ -2503,7 +2503,7 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 		/* Bring candidate's cache data up to date */
 		llcache_object_cache_update(object->candidate);
 		/* Revert no-cache to normal, if required */
-		if (object->candidate->cache.no_cache ==
+		ຖ້າ (object->candidate->cache.no_cache ==
 				LLCACHE_VALIDATE_ONCE) {
 			object->candidate->cache.no_cache =
 				LLCACHE_VALIDATE_FRESH;
@@ -2512,7 +2512,7 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 		/* Candidate is now our object */
 		*replacement = object->candidate;
 		object->candidate = NULL;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* There was no candidate: retain object */
 		*replacement = object;
 	}
@@ -2531,7 +2531,7 @@ static nserror llcache_fetch_notmodified(llcache_object *object,
 
 	/* Old object will be flushed from the cache on the next poll */
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -2547,7 +2547,7 @@ llcache_fetch_process_data(llcache_object *object,
 			   const uint8_t *data,
 			   size_t len)
 {
-	if (object->fetch.state != LLCACHE_FETCH_DATA) {
+	ຖ້າ (object->fetch.state != LLCACHE_FETCH_DATA) {
 		/**
 		 * \note
 		 * On entry into this state, check if we need to
@@ -2564,7 +2564,7 @@ llcache_fetch_process_data(llcache_object *object,
 		 */
 		long http_code = fetch_http_code(object->fetch.fetch);
 
-		if ((http_code != 200 && http_code != 203) ||
+		ຖ້າ ((http_code != 200 && http_code != 203) ||
 		    (nsurl_has_component(object->url, NSURL_QUERY) &&
 		     (object->cache.max_age == INVALID_AGE &&
 		      object->cache.expires == 0))) {
@@ -2573,7 +2573,7 @@ llcache_fetch_process_data(llcache_object *object,
 		}
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		ຖ້າ (object->candidate != NULL) {
 			object->candidate->candidate_count--;
 			object->candidate = NULL;
 		}
@@ -2582,11 +2582,11 @@ llcache_fetch_process_data(llcache_object *object,
 	}
 
 	/* Resize source buffer if it's too small */
-	if (object->source_len + len >= object->source_alloc) {
+	ຖ້າ (object->source_len + len >= object->source_alloc) {
 		const size_t new_len = object->source_len + len + 64 * 1024;
 		uint8_t *temp = realloc(object->source_data, new_len);
-		if (temp == NULL)
-			return NSERROR_NOMEM;
+		ຖ້າ (temp == NULL)
+			ສົ່ງຄືນ NSERROR_NOMEM;
 
 		object->source_data = temp;
 		object->source_alloc = new_len;
@@ -2596,7 +2596,7 @@ llcache_fetch_process_data(llcache_object *object,
 	memcpy(object->source_data + object->source_len, data, len);
 	object->source_len += len;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 
@@ -2607,9 +2607,9 @@ llcache_fetch_process_data(llcache_object *object,
  * \param realm	  Authentication realm
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
+static nserror llcache_fetch_auth(llcache_object *object, const var_na *realm)
 {
-	const char *auth;
+	const var_na *auth;
 	nserror error = NSERROR_OK;
 
 	/* Abort fetch for this object */
@@ -2624,12 +2624,12 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
 
 	/* If there was no realm, then default to the URL */
 	/** \todo If there was no WWW-Authenticate header, use response body */
-	if (realm == NULL)
+	ຖ້າ (realm == NULL)
 		realm = nsurl_access(object->url);
 
 	auth = urldb_get_auth_details(object->url, realm);
 
-	if (auth == NULL || object->fetch.tried_with_auth == true) {
+	ຖ້າ (auth == NULL || object->fetch.tried_with_auth == true) {
 		llcache_event event;
 		/* No authentication details, or tried what we had, so ask */
 		object->fetch.tried_with_auth = false;
@@ -2644,14 +2644,14 @@ static nserror llcache_fetch_auth(llcache_object *object, const char *realm)
 		event.data.error.msg = realm;
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* Flag that we've tried to refetch with credentials, so
 		 * that if the fetch fails again, we ask the user again */
 		object->fetch.tried_with_auth = true;
 		error = llcache_object_refetch(object);
 	}
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 /**
@@ -2674,7 +2674,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 	object->fetch.tainted_tls = true;
 
 	/* Only give the user a chance if HSTS isn't in use for this fetch */
-	if (object->fetch.hsts_in_use == false) {
+	ຖ້າ (object->fetch.hsts_in_use == false) {
 		llcache_event event;
 
 		/* Mark object complete */
@@ -2687,7 +2687,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 		event.data.error.msg = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		llcache_event event;
 
 		/* Mark object complete */
@@ -2702,7 +2702,7 @@ static nserror llcache_fetch_cert_error(llcache_object *object)
 		error = llcache_send_event_to_users(object, &event);
 	}
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 
@@ -2727,7 +2727,7 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
 
 	/* Make no attempt to downgrade if HSTS is in use
 	 * (i.e. assume server does TLS properly) */
-	if (object->fetch.hsts_in_use ||
+	ຖ້າ (object->fetch.hsts_in_use ||
 	    object->fetch.tried_with_tls_downgrade) {
 		/* Have already tried to downgrade, so give up */
 		llcache_event event;
@@ -2742,14 +2742,14 @@ static nserror llcache_fetch_ssl_error(llcache_object *object)
 		event.data.error.msg = messages_get("FetchFailed");
 
 		error = llcache_send_event_to_users(object, &event);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* Flag that we've tried to downgrade, so that if the
 		 * fetch fails again, we give up */
 		object->fetch.tried_with_tls_downgrade = true;
 		error = llcache_object_refetch(object);
 	}
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 
@@ -2766,9 +2766,9 @@ static nserror llcache_fetch_timeout(llcache_object *object)
 	/* The fetch has already been cleaned up by the fetcher but
 	 * we would like to retry if we can.
 	 */
-	if (object->fetch.retries_remaining > 1) {
+	ຖ້າ (object->fetch.retries_remaining > 1) {
 		object->fetch.retries_remaining--;
-		return llcache_object_refetch(object);
+		ສົ່ງຄືນ llcache_object_refetch(object);
 	}
 
 	/* The fetch has has already been cleaned up by the fetcher */
@@ -2776,7 +2776,7 @@ static nserror llcache_fetch_timeout(llcache_object *object)
 	object->fetch.fetch = NULL;
 
 	/* Release candidate, if any */
-	if (object->candidate != NULL) {
+	ຖ້າ (object->candidate != NULL) {
 		object->candidate->candidate_count--;
 		object->candidate = NULL;
 	}
@@ -2788,7 +2788,7 @@ static nserror llcache_fetch_timeout(llcache_object *object)
 	event.data.error.code = NSERROR_TIMEOUT;
 	event.data.error.msg = NULL;
 
-	return llcache_send_event_to_users(object, &event);
+	ສົ່ງຄືນ llcache_send_event_to_users(object, &event);
 }
 
 
@@ -2808,25 +2808,25 @@ static nserror llcache_fetch_timeout(llcache_object *object)
  *         error code.
  */
 static nserror
-build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
+build_candidate_list(sa_nracanaa llcache_object ***lst_out, ຈຳນວນເຕັມ *lst_len_out)
 {
 	llcache_object *object, *next;
-	struct llcache_object **lst;
-	int lst_len = 0;
-	int remaining_lifetime;
+	sa_nracanaa llcache_object **lst;
+	ຈຳນວນເຕັມ lst_len = 0;
+	ຈຳນວນເຕັມ remaining_lifetime;
 
 #define MAX_PERSIST_PER_RUN 128
 
-	lst = calloc(MAX_PERSIST_PER_RUN, sizeof(struct llcache_object *));
-	if (lst == NULL) {
-		return NSERROR_NOMEM;
+	lst = calloc(MAX_PERSIST_PER_RUN, parimaa_na(sa_nracanaa llcache_object *));
+	ຖ້າ (lst == NULL) {
+		ສົ່ງຄືນ NSERROR_NOMEM;
 	}
 
-	for (object = llcache->cached_objects; object != NULL; object = next) {
+	ສຳລັບ (object = llcache->cached_objects; object != NULL; object = next) {
 		next = object->next;
 
 		/* Only consider http(s) for the disc cache. */
-		if (!llcache__scheme_is_persistable(object->url)) {
+		ຖ້າ (!llcache__scheme_is_persistable(object->url)) {
 			continue;
 		}
 
@@ -2837,20 +2837,20 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
 		 * already on disc and with sufficient lifetime to
 		 * make disc cache worthwhile
 		 */
-		if ((object->candidate_count == 0) &&
+		ຖ້າ ((object->candidate_count == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (object->store_state == LLCACHE_STATE_RAM) &&
 		    (remaining_lifetime > llcache->minimum_lifetime)) {
 			lst[lst_len] = object;
 			lst_len++;
-			if (lst_len == MAX_PERSIST_PER_RUN)
-				break;
+			ຖ້າ (lst_len == MAX_PERSIST_PER_RUN)
+				bha_nga;
 		}
 	}
 
-	if (lst_len == 0) {
+	ຖ້າ (lst_len == 0) {
 		free(lst);
-		return NSERROR_NOT_FOUND;
+		ສົ່ງຄືນ NSERROR_NOT_FOUND;
 	}
 
 	/** \todo sort list here */
@@ -2860,7 +2860,7 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
 
 #undef MAX_PERSIST_PER_RUN
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -2872,7 +2872,7 @@ build_candidate_list(struct llcache_object ***lst_out, int *lst_len_out)
  * \return NSERROR_OK on success or appropriate error code.
  */
 static nserror
-write_backing_store(struct llcache_object *object,
+write_backing_store(sa_nracanaa llcache_object *object,
 		    size_t *written_out,
 		    unsigned long *elapsed)
 {
@@ -2889,18 +2889,18 @@ write_backing_store(struct llcache_object *object,
 				   BACKING_STORE_NONE,
 				   object->source_data,
 				   object->source_len);
-	if (ret != NSERROR_OK) {
+	ຖ້າ (ret != NSERROR_OK) {
 		/* unable to put source data in backing store */
-		return ret;
+		ສົ່ງຄືນ ret;
 	}
 
 	ret = llcache_serialise_metadata(object, &metadata, &metadatasize);
-	if (ret != NSERROR_OK) {
+	ຖ້າ (ret != NSERROR_OK) {
 		/* There has been a metadata serialisation error. Ensure the
 		 * already written data object is invalidated.
 		 */
 		guit->llcache->invalidate(object->url);
-		return ret;
+		ສົ່ງຄືນ ret;
 	}
 
 	ret = guit->llcache->store(object->url,
@@ -2908,12 +2908,12 @@ write_backing_store(struct llcache_object *object,
 				   metadata,
 				   metadatasize);
 	guit->llcache->release(object->url, BACKING_STORE_META);
-	if (ret != NSERROR_OK) {
+	ຖ້າ (ret != NSERROR_OK) {
 		/* There has been an error putting the metadata in the
 		 * backing store. Ensure the data object is invalidated.
 		 */
 		guit->llcache->invalidate(object->url);
-		return ret;
+		ສົ່ງຄືນ ret;
 	}
 	nsu_getmonotonic_ms(&endms);
 
@@ -2929,11 +2929,11 @@ write_backing_store(struct llcache_object *object,
 	/* ensure the writeout is reported to have taken at least the
 	 * minimal amount of time
 	 */
-	if (*elapsed == 0) {
+	ຖ້າ (*elapsed == 0) {
 		*elapsed = 1;
 	}
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -2952,11 +2952,11 @@ static void llcache_persist_slowcheck(void *p)
 {
 	uint64_t total_bandwidth; /* total bandwidth */
 
-	if (llcache->total_written > (2 * llcache->minimum_bandwidth)) {
+	ຖ້າ (llcache->total_written > (2 * llcache->minimum_bandwidth)) {
 
 		total_bandwidth = (llcache->total_written * 1000) / llcache->total_elapsed;
 
-		if (total_bandwidth < llcache->minimum_bandwidth) {
+		ຖ້າ (total_bandwidth < llcache->minimum_bandwidth) {
 			NSLOG(llcache, INFO,
 			      "Current bandwidth %"PRIu64" less than minimum %"PRIsizet,
 			      total_bandwidth,
@@ -2974,10 +2974,10 @@ static void llcache_persist_slowcheck(void *p)
 static void llcache_persist(void *p)
 {
 	nserror ret;
-	struct llcache_object **lst; /* candidate object list */
-	int lst_count; /* number of candidates in list */
-	int idx; /* current candidate object index in list */
-	int next = -1; /* when the next run should be scheduled for */
+	sa_nracanaa llcache_object **lst; /* candidate object list */
+	ຈຳນວນເຕັມ lst_count; /* number of candidates in list */
+	ຈຳນວນເຕັມ idx; /* current candidate object index in list */
+	ຈຳນວນເຕັມ next = -1; /* when the next run should be scheduled for */
 
 	unsigned long write_limit; /* max number of bytes to write in this run*/
 
@@ -2989,17 +2989,17 @@ static void llcache_persist(void *p)
 	unsigned long total_bandwidth = 0; /* total bandwidth */
 
 	ret = build_candidate_list(&lst, &lst_count);
-	if (ret != NSERROR_OK) {
+	ຖ້າ (ret != NSERROR_OK) {
 		NSLOG(llcache, DEBUG, "Unable to construct candidate list for persistent writeout");
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	write_limit = (llcache->maximum_bandwidth * llcache->time_quantum) / 1000;
 
 	/* obtained a candidate list, make each object persistent in turn */
-	for (idx = 0; idx < lst_count; idx++) {
+	ສຳລັບ (idx = 0; idx < lst_count; idx++) {
 		ret = write_backing_store(lst[idx], &written, &elapsed);
-		if (ret != NSERROR_OK) {
+		ຖ້າ (ret != NSERROR_OK) {
 			continue;
 		}
 
@@ -3016,13 +3016,13 @@ static void llcache_persist(void *p)
 		/* check to for the time quantum or the size
 		 * (bandwidth) for this run being exceeded.
 		 */
-		if (total_elapsed > llcache->time_quantum) {
+		ຖ້າ (total_elapsed > llcache->time_quantum) {
 			NSLOG(llcache, INFO, "Overran timeslot");
 			/* writeout has exhausted the available time.
 			 * Either the writeout is slow or the last
 			 * object was very large.
 			 */
-			if (total_bandwidth < llcache->minimum_bandwidth) {
+			ຖ້າ (total_bandwidth < llcache->minimum_bandwidth) {
 				/* Writeout was slow in this time quantum.
 				 *  Schedule a check in the future to see if
 				 *  overall performance is too slow to be useful.
@@ -3031,44 +3031,44 @@ static void llcache_persist(void *p)
 						llcache->time_quantum * 100,
 						llcache_persist_slowcheck,
 						NULL);
-				break;
-			} else {
-				if (total_bandwidth > llcache->maximum_bandwidth) {
+				bha_nga;
+			} ບໍ່ດັ່ງນັ້ນ {
+				ຖ້າ (total_bandwidth > llcache->maximum_bandwidth) {
 					/* fast writeout of large file
 					 * so calculate delay as if
 					 * write happened only at max
 					 * limit
 					 */
 					next = ((total_written * llcache->time_quantum) / write_limit) - total_elapsed;
-				} else {
+				} ບໍ່ດັ່ງນັ້ນ {
 					next = llcache->time_quantum;
 				}
-				break;
+				bha_nga;
 			}
-		} else if (total_written > write_limit) {
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (total_written > write_limit) {
 			/* The bandwidth limit has been reached. */
 
-			if (total_bandwidth > llcache->maximum_bandwidth) {
+			ຖ້າ (total_bandwidth > llcache->maximum_bandwidth) {
 				/* fast writeout of large file so
 				 * calculate delay as if write
 				 * happened only at max limit
 				 */
 				next = ((total_written * llcache->time_quantum) / write_limit) - total_elapsed;
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				next = llcache->time_quantum - total_elapsed;
 			}
-			break;
+			bha_nga;
 		}
 
 	}
 	free(lst);
 
 	/* Completed list without running out of allowed bytes or time */
-	if (idx == lst_count) {
+	ຖ້າ (idx == lst_count) {
 		/* only reschedule if writing is making any progress at all */
-		if (total_written > 0) {
+		ຖ້າ (total_written > 0) {
 			next = llcache->time_quantum - total_elapsed;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			next = -1;
 		}
 	}
@@ -3097,59 +3097,59 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 	llcache_object *object = p;
 	llcache_event event;
 
-	if (llcache == NULL) {
+	ຖ້າ (llcache == NULL) {
 		NSLOG(llcache, CRITICAL, "Callback happened after llcache finalisation");
 		assert(false);
 		/* In case assertions are off, return here */
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	NSLOG(llcache, DEBUG, "Fetch event %d for %p", msg->type, object);
 
 	switch (msg->type) {
-	case FETCH_HEADER:
+	pak_sa FETCH_HEADER:
 		/* Received a fetch header */
 		object->fetch.state = LLCACHE_FETCH_HEADERS;
 
 		error = llcache_fetch_process_header(object,
 				msg->data.header_or_data.buf,
 				msg->data.header_or_data.len);
-		break;
+		bha_nga;
 
 	/* 3xx responses */
-	case FETCH_REDIRECT:
+	pak_sa FETCH_REDIRECT:
 		/* Request resulted in a redirect */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		ຖ້າ (object->candidate != NULL) {
 			object->candidate->candidate_count--;
 			object->candidate = NULL;
 		}
 
 		error = llcache_fetch_redirect(object,
 				msg->data.redirect, &object);
-		if (error != NSERROR_OK) {
+		ຖ້າ (error != NSERROR_OK) {
 			event.type = LLCACHE_EVENT_ERROR;
 			event.data.error.code = error;
 			event.data.error.msg = NULL;
 			error = llcache_send_event_to_users(object, &event);
 		}
-		break;
+		bha_nga;
 
-	case FETCH_NOTMODIFIED:
+	pak_sa FETCH_NOTMODIFIED:
 		/* Conditional request determined that cached object is fresh */
 		error = llcache_fetch_notmodified(object, &object);
-		break;
+		bha_nga;
 
 	/* Normal 2xx state machine */
-	case FETCH_DATA:
+	pak_sa FETCH_DATA:
 		/* Received some data */
 		error = llcache_fetch_process_data(object,
 				msg->data.header_or_data.buf,
 				msg->data.header_or_data.len);
-		break;
+		bha_nga;
 
-	case FETCH_FINISHED:
+	pak_sa FETCH_FINISHED:
 		/* Finished fetching */
 	{
 		uint8_t *temp;
@@ -3161,7 +3161,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 		temp = realloc(object->source_data,
 				object->source_len);
 		/* If source_len is 0, then temp may be NULL */
-		if (temp != NULL || object->source_len == 0) {
+		ຖ້າ (temp != NULL || object->source_len == 0) {
 			object->source_data = temp;
 			object->source_alloc = object->source_len;
 		}
@@ -3175,22 +3175,22 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		guit->misc->schedule(5000, llcache_persist, NULL);
 	}
-		break;
+		bha_nga;
 
 	/* Out-of-band information */
-	case FETCH_TIMEDOUT:
+	pak_sa FETCH_TIMEDOUT:
 		/* Timed out while trying to fetch. */
 		error = llcache_fetch_timeout(object);
-		break;
+		bha_nga;
 
-	case FETCH_ERROR:
+	pak_sa FETCH_ERROR:
 		/* An error occurred while fetching */
 		/* The fetch has has already been cleaned up by the fetcher */
 		object->fetch.state = LLCACHE_FETCH_COMPLETE;
 		object->fetch.fetch = NULL;
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		ຖ້າ (object->candidate != NULL) {
 			object->candidate->candidate_count--;
 			object->candidate = NULL;
 		}
@@ -3206,28 +3206,28 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		bha_nga;
 
-	case FETCH_PROGRESS:
+	pak_sa FETCH_PROGRESS:
 		/* Progress update */
 		event.type = LLCACHE_EVENT_PROGRESS;
 		event.data.progress_msg = msg->data.progress;
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		bha_nga;
 
-	case FETCH_CERTS:
+	pak_sa FETCH_CERTS:
 		/* Certificate information from the fetch */
 
-		if (object->chain != NULL) {
+		ຖ້າ (object->chain != NULL) {
 			cert_chain_free(object->chain);
 			object->chain = NULL;
 		}
 
 		/* Persist the chain onto our object */
 		error = cert_chain_dup(msg->data.chain, &object->chain);
-		if (error != NSERROR_OK) {
+		ຖ້າ (error != NSERROR_OK) {
 			NSLOG(llcache, ERROR,
 			      "Unable to duplicate cert chain into cache: %s",
 			      messages_get_errorcode(error));
@@ -3239,49 +3239,49 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 
 		error = llcache_send_event_to_users(object, &event);
 
-		break;
+		bha_nga;
 
 	/* Events requiring action */
-	case FETCH_AUTH:
+	pak_sa FETCH_AUTH:
 		/* Need Authentication */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		ຖ້າ (object->candidate != NULL) {
 			object->candidate->candidate_count--;
 			object->candidate = NULL;
 		}
 
 		error = llcache_fetch_auth(object, msg->data.auth.realm);
-		break;
+		bha_nga;
 
-	case FETCH_CERT_ERR:
+	pak_sa FETCH_CERT_ERR:
 		/* Something went wrong when validating TLS certificates */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		ຖ້າ (object->candidate != NULL) {
 			object->candidate->candidate_count--;
 			object->candidate = NULL;
 		}
 
 		error = llcache_fetch_cert_error(object);
-		break;
+		bha_nga;
 
-	case FETCH_SSL_ERR:
+	pak_sa FETCH_SSL_ERR:
 		/* TLS connection setup failed */
 
 		/* Release candidate, if any */
-		if (object->candidate != NULL) {
+		ຖ້າ (object->candidate != NULL) {
 			object->candidate->candidate_count--;
 			object->candidate = NULL;
 		}
 
 		error = llcache_fetch_ssl_error(object);
-		break;
+		bha_nga;
 	}
 
 	/* Deal with any errors reported by event handlers */
-	if (error != NSERROR_OK) {
-		if (error == NSERROR_NOMEM) {
+	ຖ້າ (error != NSERROR_OK) {
+		ຖ້າ (error == NSERROR_NOMEM) {
 			/* attempt to purge the cache to free some
 			 * memory. will not help this fetch, but may
 			 * allow the UI to report errors etc.
@@ -3289,7 +3289,7 @@ static void llcache_fetch_callback(const fetch_msg *msg, void *p)
 			llcache_clean(true);
 		}
 
-		if (object->fetch.fetch != NULL) {
+		ຖ້າ (object->fetch.fetch != NULL) {
 			fetch_abort(object->fetch.fetch);
 			object->fetch.fetch = NULL;
 
@@ -3317,12 +3317,12 @@ static llcache_object_user *llcache_object_find_user(
 
 	assert(handle->object != NULL);
 
-	for (user = handle->object->users; user != NULL; user = user->next) {
-		if (user->handle == handle)
-			break;
+	ສຳລັບ (user = handle->object->users; user != NULL; user = user->next) {
+		ຖ້າ (user->handle == handle)
+			bha_nga;
 	}
 
-	return user;
+	ສົ່ງຄືນ user;
 }
 
 
@@ -3336,14 +3336,14 @@ static llcache_object_user *llcache_object_find_user(
 static bool llcache_object_in_list(const llcache_object *object,
 		const llcache_object *list)
 {
-	while (list != NULL) {
-		if (list == object)
-			break;
+	ໃນຂະນະທີ່ (list != NULL) {
+		ຖ້າ (list == object)
+			bha_nga;
 
 		list = list->next;
 	}
 
-	return list != NULL;
+	ສົ່ງຄືນ list != NULL;
 }
 
 /**
@@ -3382,7 +3382,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
 	 * DONE	      : on transition from DATA -> COMPLETE state
 	 */
 
-	for (user = object->users; user != NULL; user = next_user) {
+	ສຳລັບ (user = object->users; user != NULL; user = next_user) {
 		/* Emit necessary events to bring the user up-to-date */
 		llcache_handle *handle = user->handle;
 		const llcache_fetch_state objstate = object->fetch.state;
@@ -3418,8 +3418,8 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		 * continue is used)
 		 */
 
-		if (handle->state != objstate) {
-			if (emitted_notify == false) {
+		ຖ້າ (handle->state != objstate) {
+			ຖ້າ (emitted_notify == false) {
 				NSLOG(llcache, DEBUG,
 				      "Notifying users of %p",
 				      object);
@@ -3434,29 +3434,29 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		}
 
 		/* User: INIT, Obj: HEADERS, DATA, COMPLETE => User->HEADERS */
-		if (handle->state == LLCACHE_FETCH_INIT &&
+		ຖ້າ (handle->state == LLCACHE_FETCH_INIT &&
 				objstate > LLCACHE_FETCH_INIT) {
 			handle->state = LLCACHE_FETCH_HEADERS;
 
 			/* Emit any certificate data we hold */
-			if (object->chain != NULL) {
+			ຖ້າ (object->chain != NULL) {
 				event.type = LLCACHE_EVENT_GOT_CERTS;
 				event.data.chain = object->chain;
 				error = handle->cb(handle, &event, handle->pw);
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				error = NSERROR_OK;
 			}
 
-			if (user->queued_for_delete) {
+			ຖ້າ (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				ຖ້າ (error != NSERROR_OK)
+					ສົ່ງຄືນ error;
 
 				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_HEADERS;
 
@@ -3466,14 +3466,14 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				next_user = user->next;
 				llcache_users_not_caught_up();
 				continue;
-			} else if (error != NSERROR_OK) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				ສົ່ງຄືນ error;
 			}
 		}
 
 		/* User: HEADERS, Obj: DATA, COMPLETE => User->DATA */
-		if (handle->state == LLCACHE_FETCH_HEADERS &&
+		ຖ້າ (handle->state == LLCACHE_FETCH_HEADERS &&
 				objstate > LLCACHE_FETCH_HEADERS) {
 			handle->state = LLCACHE_FETCH_DATA;
 
@@ -3482,16 +3482,16 @@ static nserror llcache_object_notify_users(llcache_object *object)
 
 			error = handle->cb(handle, &event, handle->pw);
 
-			if (user->queued_for_delete) {
+			ຖ້າ (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				ຖ້າ (error != NSERROR_OK)
+					ສົ່ງຄືນ error;
 
 				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_HEADERS;
 
@@ -3501,14 +3501,14 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				next_user = user->next;
 				llcache_users_not_caught_up();
 				continue;
-			} else if (error != NSERROR_OK) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				ສົ່ງຄືນ error;
 			}
 		}
 
 		/* User: DATA, Obj: DATA, COMPLETE, more source available */
-		if (handle->state == LLCACHE_FETCH_DATA &&
+		ຖ້າ (handle->state == LLCACHE_FETCH_DATA &&
 				objstate >= LLCACHE_FETCH_DATA &&
 				object->source_len > handle->bytes) {
 			size_t orig_handle_read;
@@ -3521,7 +3521,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
 					object->source_len - handle->bytes;
 
 			/* Update record of last byte emitted */
-			if (object->fetch.flags &
+			ຖ້າ (object->fetch.flags &
 					LLCACHE_RETRIEVE_STREAM_DATA) {
 				/* Streaming, so reset to zero to
 				 * minimise amount of cached source data.
@@ -3529,23 +3529,23 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				 * when streaming. */
 				orig_handle_read = 0;
 				handle->bytes = object->source_len = 0;
-			} else {
+			} ບໍ່ດັ່ງນັ້ນ {
 				orig_handle_read = handle->bytes;
 				handle->bytes = object->source_len;
 			}
 
 			/* Emit event */
 			error = handle->cb(handle, &event, handle->pw);
-			if (user->queued_for_delete) {
+			ຖ້າ (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				ຖ້າ (error != NSERROR_OK)
+					ສົ່ງຄືນ error;
 
 				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->bytes = orig_handle_read;
 
@@ -3555,14 +3555,14 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				next_user = user->next;
 				llcache_users_not_caught_up();
 				continue;
-			} else if (error != NSERROR_OK) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				ສົ່ງຄືນ error;
 			}
 		}
 
 		/* User: DATA, Obj: COMPLETE => User->COMPLETE */
-		if (handle->state == LLCACHE_FETCH_DATA &&
+		ຖ້າ (handle->state == LLCACHE_FETCH_DATA &&
 				objstate > LLCACHE_FETCH_DATA) {
 			handle->state = LLCACHE_FETCH_COMPLETE;
 
@@ -3570,16 +3570,16 @@ static nserror llcache_object_notify_users(llcache_object *object)
 			event.type = LLCACHE_EVENT_DONE;
 
 			error = handle->cb(handle, &event, handle->pw);
-			if (user->queued_for_delete) {
+			ຖ້າ (user->queued_for_delete) {
 				next_user = user->next;
 				llcache_object_remove_user(object, user);
 				llcache_object_user_destroy(user);
 
-				if (error != NSERROR_OK)
-					return error;
+				ຖ້າ (error != NSERROR_OK)
+					ສົ່ງຄືນ error;
 
 				continue;
-			} else if (error == NSERROR_NEED_DATA) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (error == NSERROR_NEED_DATA) {
 				/* User requested replay */
 				handle->state = LLCACHE_FETCH_DATA;
 
@@ -3589,9 +3589,9 @@ static nserror llcache_object_notify_users(llcache_object *object)
 				next_user = user->next;
 				llcache_users_not_caught_up();
 				continue;
-			} else if (error != NSERROR_OK) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (error != NSERROR_OK) {
 				user->iterator_target = false;
-				return error;
+				ສົ່ງຄືນ error;
 			}
 		}
 
@@ -3601,7 +3601,7 @@ static nserror llcache_object_notify_users(llcache_object *object)
 		next_user = user->next;
 	}
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -3626,29 +3626,29 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 
 	error = llcache_object_new(object->url, &newobj);
 
-	if (error != NSERROR_OK)
-		return error;
+	ຖ້າ (error != NSERROR_OK)
+		ສົ່ງຄືນ error;
 
 	newobj->source_alloc = newobj->source_len = object->source_len;
 
-	if (object->source_len > 0) {
+	ຖ້າ (object->source_len > 0) {
 		newobj->source_data = malloc(newobj->source_alloc);
-		if (newobj->source_data == NULL) {
+		ຖ້າ (newobj->source_data == NULL) {
 			llcache_object_destroy(newobj);
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
 		memcpy(newobj->source_data, object->source_data,
 				newobj->source_len);
 	}
 
-	if (object->num_headers > 0) {
+	ຖ້າ (object->num_headers > 0) {
 		newobj->headers = calloc(object->num_headers,
-				sizeof(llcache_header));
-		if (newobj->headers == NULL) {
+				parimaa_na(llcache_header));
+		ຖ້າ (newobj->headers == NULL) {
 			llcache_object_destroy(newobj);
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
-		while (newobj->num_headers < object->num_headers) {
+		ໃນຂະນະທີ່ (newobj->num_headers < object->num_headers) {
 			llcache_header *nh =
 					&(newobj->headers[newobj->num_headers]);
 			llcache_header *oh =
@@ -3656,18 +3656,18 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 			newobj->num_headers += 1;
 			nh->name = strdup(oh->name);
 			nh->value = strdup(oh->value);
-			if (nh->name == NULL || nh->value == NULL) {
+			ຖ້າ (nh->name == NULL || nh->value == NULL) {
 				llcache_object_destroy(newobj);
-				return NSERROR_NOMEM;
+				ສົ່ງຄືນ NSERROR_NOMEM;
 			}
 		}
 	}
 
-	if (object->chain != NULL) {
+	ຖ້າ (object->chain != NULL) {
 		error = cert_chain_dup(object->chain, &newobj->chain);
-		if (error != NSERROR_OK) {
+		ຖ້າ (error != NSERROR_OK) {
 			llcache_object_destroy(newobj);
-			return error;
+			ສົ່ງຄືນ error;
 		}
 	}
 
@@ -3675,7 +3675,7 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
 
 	*snapshot = newobj;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /**
@@ -3684,33 +3684,33 @@ llcache_object_snapshot(llcache_object *object,	llcache_object **snapshot)
  * \param object The object to calculate the total RAM usage of.
  * \return The total RAM usage in bytes.
  */
-static inline uint32_t
+static anta_hstha uint32_t
 total_object_size(llcache_object *object)
 {
 	uint32_t tot;
 	size_t hdrc;
 
-	tot = sizeof(*object);
+	tot = parimaa_na(*object);
 	tot += nsurl_length(object->url);
 
-	if (object->source_data != NULL) {
+	ຖ້າ (object->source_data != NULL) {
 		tot += object->source_len;
 	}
 
-	tot += sizeof(llcache_header) * object->num_headers;
+	tot += parimaa_na(llcache_header) * object->num_headers;
 
-	for (hdrc = 0; hdrc < object->num_headers; hdrc++) {
-		if (object->headers[hdrc].name != NULL) {
+	ສຳລັບ (hdrc = 0; hdrc < object->num_headers; hdrc++) {
+		ຖ້າ (object->headers[hdrc].name != NULL) {
 			tot += strlen(object->headers[hdrc].name);
 		}
-		if (object->headers[hdrc].value != NULL) {
+		ຖ້າ (object->headers[hdrc].value != NULL) {
 			tot += strlen(object->headers[hdrc].value);
 		}
 	}
 
 	tot += cert_chain_size(object->chain);
 
-	return tot;
+	ສົ່ງຄືນ tot;
 }
 
 /**
@@ -3729,12 +3729,12 @@ static void llcache_catch_up_all_users(void *ignored)
 	llcache->all_caught_up = true;
 
 	/* Catch new users up with state of objects */
-	for (object = llcache->cached_objects; object != NULL;
+	ສຳລັບ (object = llcache->cached_objects; object != NULL;
 			object = object->next) {
 		llcache_object_notify_users(object);
 	}
 
-	for (object = llcache->uncached_objects; object != NULL;
+	ສຳລັບ (object = llcache->uncached_objects; object != NULL;
 			object = object->next) {
 		llcache_object_notify_users(object);
 	}
@@ -3746,7 +3746,7 @@ static void llcache_catch_up_all_users(void *ignored)
  */
 static void llcache_users_not_caught_up(void)
 {
-	if (llcache->all_caught_up) {
+	ຖ້າ (llcache->all_caught_up) {
 		llcache->all_caught_up = false;
 		guit->misc->schedule(0, llcache_catch_up_all_users, NULL);
 	}
@@ -3768,26 +3768,26 @@ void llcache_clean(bool purge)
 {
 	llcache_object *object, *next;
 	uint32_t llcache_size = 0;
-	int remaining_lifetime;
+	ຈຳນວນເຕັມ remaining_lifetime;
 	uint32_t limit;
 
 	NSLOG(llcache, DEBUG, "Attempting cache clean");
 
 	/* If the cache is being purged set the size limit to zero. */
-	if (purge) {
+	ຖ້າ (purge) {
 		limit = 0;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		limit = llcache->limit;
 	}
 
 	/* Uncacheable objects with no users or fetches */
-	for (object = llcache->uncached_objects;
+	ສຳລັບ (object = llcache->uncached_objects;
 	     object != NULL;
 	     object = next) {
 		next = object->next;
 
 		/* The candidate count of uncacheable objects is always 0 */
-		if ((object->users == NULL) &&
+		ຖ້າ ((object->users == NULL) &&
 		    (object->candidate_count == 0) &&
 		    (object->fetch.fetch == NULL)) {
 			NSLOG(llcache, DEBUG, "Discarding uncachable object with no users (%p) %s",
@@ -3796,14 +3796,14 @@ void llcache_clean(bool purge)
 			llcache_object_remove_from_list(object,
 					&llcache->uncached_objects);
 			llcache_object_destroy(object);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			llcache_size += total_object_size(object);
 		}
 	}
 
 
 	/* Stale cacheable objects with no users or pending fetches */
-	for (object = llcache->cached_objects;
+	ສຳລັບ (object = llcache->cached_objects;
 	     object != NULL;
 	     object = next) {
 		next = object->next;
@@ -3811,7 +3811,7 @@ void llcache_clean(bool purge)
 		remaining_lifetime = llcache_object_rfc2616_remaining_lifetime(
 				&object->cache);
 
-		if ((object->users == NULL) &&
+		ຖ້າ ((object->users == NULL) &&
 		    (object->candidate_count == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (remaining_lifetime <= 0)) {
@@ -3823,13 +3823,13 @@ void llcache_clean(bool purge)
 				llcache_object_remove_from_list(object,
 						&llcache->cached_objects);
 
-				if (object->store_state == LLCACHE_STATE_DISC) {
+				ຖ້າ (object->store_state == LLCACHE_STATE_DISC) {
 					guit->llcache->invalidate(object->url);
 				}
 
 				llcache_object_destroy(object);
 
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* object has users so account for the storage */
 			llcache_size += total_object_size(object);
 		}
@@ -3839,7 +3839,7 @@ void llcache_clean(bool purge)
 	 * persistent so their RAM can be reclaimed in the next
 	 * step
 	 */
-	if (limit < llcache_size) {
+	ຖ້າ (limit < llcache_size) {
 		llcache_persist(NULL);
 	}
 
@@ -3847,11 +3847,11 @@ void llcache_clean(bool purge)
 	 * pending fetches and pushed to persistent store while the
 	 * cache exceeds the configured size.
 	 */
-	for (object = llcache->cached_objects;
+	ສຳລັບ (object = llcache->cached_objects;
 	     ((limit < llcache_size) && (object != NULL));
 	     object = next) {
 		next = object->next;
-		if ((object->users == NULL) &&
+		ຖ້າ ((object->users == NULL) &&
 		    (object->candidate_count == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (object->store_state == LLCACHE_STATE_DISC)) {
@@ -3871,11 +3871,11 @@ void llcache_clean(bool purge)
 	 * and pushed to persistent store while the cache exceeds
 	 * the configured size. Effectively just the llcache object metadata.
 	 */
-	for (object = llcache->cached_objects;
+	ສຳລັບ (object = llcache->cached_objects;
 	     ((limit < llcache_size) && (object != NULL));
 	     object = next) {
 		next = object->next;
-		if ((object->users == NULL) &&
+		ຖ້າ ((object->users == NULL) &&
 		    (object->candidate_count == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (object->store_state == LLCACHE_STATE_DISC) &&
@@ -3901,12 +3901,12 @@ void llcache_clean(bool purge)
 	 * most valuable objects as replacing them is a full network
 	 * fetch
 	 */
-	for (object = llcache->cached_objects;
+	ສຳລັບ (object = llcache->cached_objects;
 	     ((limit < llcache_size) && (object != NULL));
 	     object = next) {
 		next = object->next;
 
-		if ((object->users == NULL) &&
+		ຖ້າ ((object->users == NULL) &&
 		    (object->candidate_count == 0) &&
 		    (object->fetch.fetch == NULL) &&
 		    (object->store_state == LLCACHE_STATE_RAM)) {
@@ -3917,7 +3917,7 @@ void llcache_clean(bool purge)
 			      object,
 			      nsurl_access(object->url));
 
-			llcache_size -=	object->source_len + sizeof(*object);
+			llcache_size -=	object->source_len + parimaa_na(*object);
 
 			llcache_object_remove_from_list(object,
 						&llcache->cached_objects);
@@ -3930,11 +3930,11 @@ void llcache_clean(bool purge)
 
 /* Exported interface documented in content/llcache.h */
 nserror
-llcache_initialise(const struct llcache_parameters *prm)
+llcache_initialise(const sa_nracanaa llcache_parameters *prm)
 {
-	llcache = calloc(1, sizeof(struct llcache_s));
-	if (llcache == NULL) {
-		return NSERROR_NOMEM;
+	llcache = calloc(1, parimaa_na(sa_nracanaa llcache_s));
+	ຖ້າ (llcache == NULL) {
+		ສົ່ງຄືນ NSERROR_NOMEM;
 	}
 
 	llcache->limit = prm->limit;
@@ -3950,7 +3950,7 @@ llcache_initialise(const struct llcache_parameters *prm)
 	      llcache->limit);
 
 	/* backing store initialisation */
-	return guit->llcache->initialise(&prm->store);
+	ສົ່ງຄືນ guit->llcache->initialise(&prm->store);
 }
 
 
@@ -3966,15 +3966,15 @@ void llcache_finalise(void)
 	guit->misc->schedule(-1, llcache_persist, NULL);
 
 	/* Clean uncached objects */
-	for (object = llcache->uncached_objects; object != NULL; object = next) {
+	ສຳລັບ (object = llcache->uncached_objects; object != NULL; object = next) {
 		llcache_object_user *user, *next_user;
 
 		next = object->next;
 
-		for (user = object->users; user != NULL; user = next_user) {
+		ສຳລັບ (user = object->users; user != NULL; user = next_user) {
 			next_user = user->next;
 
-			if (user->handle != NULL)
+			ຖ້າ (user->handle != NULL)
 				free(user->handle);
 
 			free(user);
@@ -3987,15 +3987,15 @@ void llcache_finalise(void)
 	}
 
 	/* Clean cached objects */
-	for (object = llcache->cached_objects; object != NULL; object = next) {
+	ສຳລັບ (object = llcache->cached_objects; object != NULL; object = next) {
 		llcache_object_user *user, *next_user;
 
 		next = object->next;
 
-		for (user = object->users; user != NULL; user = next_user) {
+		ສຳລັບ (user = object->users; user != NULL; user = next_user) {
 			next_user = user->next;
 
-			if (user->handle != NULL)
+			ຖ້າ (user->handle != NULL)
 			       free(user->handle);
 
 			free(user);
@@ -4010,7 +4010,7 @@ void llcache_finalise(void)
 	/* backing store finalisation */
 	guit->llcache->finalise();
 
-	if (llcache->total_elapsed > 0) {
+	ຖ້າ (llcache->total_elapsed > 0) {
 		total_bandwidth = (llcache->total_written * 1000) /
 			llcache->total_elapsed;
 	}
@@ -4044,31 +4044,31 @@ llcache_handle_retrieve(nsurl *url,
 
 	/* Perform HSTS transform */
 	error = llcache_hsts_transform_url(url, &hsts_url, &hsts_in_use);
-	if (error != NSERROR_OK) {
-		return error;
+	ຖ້າ (error != NSERROR_OK) {
+		ສົ່ງຄືນ error;
 	}
 
 	/* Can we fetch this URL at all? */
-	if (fetch_can_fetch(hsts_url) == false) {
+	ຖ້າ (fetch_can_fetch(hsts_url) == false) {
 		nsurl_unref(hsts_url);
-		return NSERROR_NO_FETCH_HANDLER;
+		ສົ່ງຄືນ NSERROR_NO_FETCH_HANDLER;
 	}
 
 	/* Create a new object user */
 	error = llcache_object_user_new(cb, pw, &user);
-	if (error != NSERROR_OK) {
+	ຖ້າ (error != NSERROR_OK) {
 		nsurl_unref(hsts_url);
-		return error;
+		ສົ່ງຄືນ error;
 	}
 
 	/* Retrieve a suitable object from the cache,
 	 * creating a new one if needed. */
 	error = llcache_object_retrieve(hsts_url, flags, referer, post, 0,
 			hsts_in_use, &object);
-	if (error != NSERROR_OK) {
+	ຖ້າ (error != NSERROR_OK) {
 		llcache_object_user_destroy(user);
 		nsurl_unref(hsts_url);
-		return error;
+		ສົ່ງຄືນ error;
 	}
 
 	/* Add user to object */
@@ -4081,7 +4081,7 @@ llcache_handle_retrieve(nsurl *url,
 
 	nsurl_unref(hsts_url);
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 
@@ -4092,7 +4092,7 @@ nserror llcache_handle_change_callback(llcache_handle *handle,
 	handle->cb = cb;
 	handle->pw = pw;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 
@@ -4105,19 +4105,19 @@ nserror llcache_handle_release(llcache_handle *handle)
 
 	assert(user != NULL);
 
-	if (user->iterator_target) {
+	ຖ້າ (user->iterator_target) {
 		/* Can't remove / delete user object if it's
 		 * the target of an iterator */
 		user->queued_for_delete = true;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* Remove the user from the object and destroy it */
 		error = llcache_object_remove_user(object, user);
-		if (error == NSERROR_OK) {
+		ຖ້າ (error == NSERROR_OK) {
 			error = llcache_object_user_destroy(user);
 		}
 	}
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 /* Exported interface documented in content/llcache.h */
@@ -4127,13 +4127,13 @@ nserror llcache_handle_clone(llcache_handle *handle, llcache_handle **result)
 	llcache_object_user *newuser;
 
 	error = llcache_object_user_new(handle->cb, handle->pw, &newuser);
-	if (error == NSERROR_OK) {
+	ຖ້າ (error == NSERROR_OK) {
 		llcache_object_add_user(handle->object, newuser);
 		newuser->handle->state = handle->state;
 		*result = newuser->handle;
 	}
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 /* See llcache.h for documentation */
@@ -4145,25 +4145,25 @@ nserror llcache_handle_abort(llcache_handle *handle)
 	bool all_alone = true;
 
 	/* Determine if we are the only user */
-	if (user->prev != NULL)
+	ຖ້າ (user->prev != NULL)
 		all_alone = false;
-	if (user->next != NULL)
+	ຖ້າ (user->next != NULL)
 		all_alone = false;
 
-	if (all_alone == false) {
+	ຖ້າ (all_alone == false) {
 		/* We must snapshot this object */
 		error = llcache_object_snapshot(object, &newobject);
-		if (error != NSERROR_OK)
-			return error;
+		ຖ້າ (error != NSERROR_OK)
+			ສົ່ງຄືນ error;
 
 		/* Move across to the new object */
-		if (user->iterator_target) {
+		ຖ້າ (user->iterator_target) {
 			/* User is current iterator target, clone it */
 			llcache_object_user *newuser =
-					calloc(1, sizeof(llcache_object_user));
-			if (newuser == NULL) {
+					calloc(1, parimaa_na(llcache_object_user));
+			ຖ້າ (newuser == NULL) {
 				llcache_object_destroy(newobject);
-				return NSERROR_NOMEM;
+				ສົ່ງຄືນ NSERROR_NOMEM;
 			}
 
 			/* Move handle across to clone */
@@ -4174,7 +4174,7 @@ nserror llcache_handle_abort(llcache_handle *handle)
 			user->queued_for_delete = true;
 
 			llcache_object_add_user(newobject, newuser);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			llcache_object_remove_user(object, user);
 			llcache_object_add_user(newobject, user);
 		}
@@ -4182,9 +4182,9 @@ nserror llcache_handle_abort(llcache_handle *handle)
 		/* Add new object to uncached list */
 		llcache_object_add_to_list(newobject,
 				&llcache->uncached_objects);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* We're the only user, so abort any fetch in progress */
-		if (object->fetch.fetch != NULL) {
+		ຖ້າ (object->fetch.fetch != NULL) {
 			fetch_abort(object->fetch.fetch);
 			object->fetch.fetch = NULL;
 		}
@@ -4195,7 +4195,7 @@ nserror llcache_handle_abort(llcache_handle *handle)
 		llcache_invalidate_cache_control_data(object);
 	}
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 /* See llcache.h for documentation */
@@ -4205,11 +4205,11 @@ nserror llcache_handle_force_stream(llcache_handle *handle)
 	llcache_object *object = handle->object;
 
 	/* Cannot stream if there are multiple users */
-	if (user->prev != NULL || user->next != NULL)
-		return NSERROR_OK;
+	ຖ້າ (user->prev != NULL || user->next != NULL)
+		ສົ່ງຄືນ NSERROR_OK;
 
 	/* Forcibly uncache this object */
-	if (llcache_object_in_list(object, llcache->cached_objects)) {
+	ຖ້າ (llcache_object_in_list(object, llcache->cached_objects)) {
 		llcache_object_remove_from_list(object,
 				&llcache->cached_objects);
 		llcache_object_add_to_list(object, &llcache->uncached_objects);
@@ -4217,26 +4217,26 @@ nserror llcache_handle_force_stream(llcache_handle *handle)
 
 	object->fetch.flags |= LLCACHE_RETRIEVE_STREAM_DATA;
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /* See llcache.h for documentation */
 nserror llcache_handle_invalidate_cache_data(llcache_handle *handle)
 {
-	if ((handle->object != NULL) &&
+	ຖ້າ ((handle->object != NULL) &&
 	    (handle->object->fetch.fetch == NULL) &&
 	    (handle->object->cache.no_cache == LLCACHE_VALIDATE_FRESH)) {
 		/* mark the cached object as requiring validation */
 		handle->object->cache.no_cache = LLCACHE_VALIDATE_ONCE;
 	}
 
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 /* See llcache.h for documentation */
 nsurl *llcache_handle_get_url(const llcache_handle *handle)
 {
-	return handle->object != NULL ? handle->object->url : NULL;
+	ສົ່ງຄືນ handle->object != NULL ? handle->object->url : NULL;
 }
 
 /* See llcache.h for documentation */
@@ -4245,31 +4245,31 @@ const uint8_t *llcache_handle_get_source_data(const llcache_handle *handle,
 {
 	*size = handle->object != NULL ? handle->object->source_len : 0;
 
-	return handle->object != NULL ? handle->object->source_data : NULL;
+	ສົ່ງຄືນ handle->object != NULL ? handle->object->source_data : NULL;
 }
 
 /* See llcache.h for documentation */
-const char *llcache_handle_get_header(const llcache_handle *handle,
-		const char *key)
+const var_na *llcache_handle_get_header(const llcache_handle *handle,
+		const var_na *key)
 {
 	const llcache_object *object = handle->object;
 	size_t i;
 
-	if (object == NULL)
-		return NULL;
+	ຖ້າ (object == NULL)
+		ສົ່ງຄືນ NULL;
 
 	/* About as trivial as possible */
-	for (i = 0; i < object->num_headers; i++) {
-		if (strcasecmp(key, object->headers[i].name) == 0)
-			return object->headers[i].value;
+	ສຳລັບ (i = 0; i < object->num_headers; i++) {
+		ຖ້າ (strcasecmp(key, object->headers[i].name) == 0)
+			ສົ່ງຄືນ object->headers[i].value;
 	}
 
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }
 
 /* See llcache.h for documentation */
 bool llcache_handle_references_same_object(const llcache_handle *a,
 		const llcache_handle *b)
 {
-	return a->object == b->object;
+	ສົ່ງຄືນ a->object == b->object;
 }

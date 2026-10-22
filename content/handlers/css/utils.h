@@ -30,77 +30,77 @@ extern css_fixed nscss_screen_dpi;
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display(
+static anta_hstha uint8_t ns_computed_display(
 		const css_computed_style *style, bool root)
 {
 	uint8_t value = css_computed_display(style, root);
 
 	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	pak_sa CSS_DISPLAY_GRID:
+		ສົ່ງຄືນ CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	pak_sa CSS_DISPLAY_INLINE_GRID:
+		ສົ່ງຄືນ CSS_DISPLAY_INLINE_BLOCK;
 
 	default:
-		break;
+		bha_nga;
 	}
 
-	return value;
+	ສົ່ງຄືນ value;
 }
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display_static(
+static anta_hstha uint8_t ns_computed_display_static(
 		const css_computed_style *style)
 {
 	uint8_t value = css_computed_display_static(style);
 
 	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	pak_sa CSS_DISPLAY_GRID:
+		ສົ່ງຄືນ CSS_DISPLAY_BLOCK;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	pak_sa CSS_DISPLAY_INLINE_GRID:
+		ສົ່ງຄືນ CSS_DISPLAY_INLINE_BLOCK;
 
 	default:
-		break;
+		bha_nga;
 	}
 
-	return value;
+	ສົ່ງຄືນ value;
 }
 
-static inline uint8_t ns_computed_min_height(
+static anta_hstha uint8_t ns_computed_min_height(
 		const css_computed_style *style,
 		css_fixed *length, css_unit *unit)
 {
 	uint8_t value = css_computed_min_height(style, length, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
+	ຖ້າ (value == CSS_MIN_HEIGHT_AUTO) {
 		value = CSS_MIN_HEIGHT_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	ສົ່ງຄືນ value;
 }
 
 
-static inline uint8_t ns_computed_min_width(
+static anta_hstha uint8_t ns_computed_min_width(
 		const css_computed_style *style,
 		css_fixed *length, css_unit *unit)
 {
 	uint8_t value = css_computed_min_width(style, length, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
+	ຖ້າ (value == CSS_MIN_WIDTH_AUTO) {
 		value = CSS_MIN_WIDTH_SET;
 		*length = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	ສົ່ງຄືນ value;
 }
 
 #endif

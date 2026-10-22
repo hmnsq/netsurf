@@ -60,15 +60,15 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 
 	/* get href attribute if present */
 	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		nsurl *url;
 		nserror error;
 
 		/* get url from string */
 		error = nsurl_create(dom_string_data(atr_string), &url);
 		dom_string_unref(atr_string);
-		if (error == NSERROR_OK) {
-			if (htmlc->base_url != NULL) {
+		ຖ້າ (error == NSERROR_OK) {
+			ຖ້າ (htmlc->base_url != NULL) {
 				nsurl_unref(htmlc->base_url);
 			}
 			htmlc->base_url = url;
@@ -77,20 +77,20 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 
 
 	/* get target attribute if present and not already set */
-	if (htmlc->base_target != NULL) {
-		return true;
+	ຖ້າ (htmlc->base_target != NULL) {
+		ສົ່ງຄືນ true;
 	}
 
 	exc = dom_element_get_attribute(node,
 					corestring_dom_target,
 					&atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* Validation rules from the HTML5 spec for the base element:
 		 *  The target must be one of _blank, _self, _parent, or
 		 *  _top or any identifier which does not begin with an
 		 *  underscore
 		 */
-		if (*dom_string_data(atr_string) != '_' ||
+		ຖ້າ (*dom_string_data(atr_string) != '_' ||
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__blank) ||
 				dom_string_caseless_lwc_isequal(atr_string,
@@ -104,7 +104,7 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 		dom_string_unref(atr_string);
 	}
 
-	return true;
+	ສົ່ງຄືນ true;
 }
 
 
@@ -125,19 +125,19 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	bool success;
 
 	/* Do nothing if foreground images are disabled */
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	ຖ້າ (nsoption_bool(foreground_images) == false) {
+		ສົ່ງຄືນ true;
 	}
 
 	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		return true;
+	ຖ້າ (exc != DOM_NO_ERR || src == NULL) {
+		ສົ່ງຄືນ true;
 	}
 
 	err = nsurl_join(htmlc->base_url, dom_string_data(src), &url);
-	if (err != NSERROR_OK) {
+	ຖ້າ (err != NSERROR_OK) {
 		dom_string_unref(src);
-		return false;
+		ສົ່ງຄືນ false;
 	}
 	dom_string_unref(src);
 
@@ -145,7 +145,7 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	success = html_fetch_object(htmlc, url, NULL, CONTENT_IMAGE, false);
 	nsurl_unref(url);
 
-	return success;
+	ສົ່ງຄືນ success;
 }
 
 
@@ -160,7 +160,7 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
  */
 static bool html_process_inserted_link(html_content *c, dom_node *node)
 {
-	struct content_rfc5988_link link; /* the link added to the content */
+	sa_nracanaa content_rfc5988_link link; /* the link added to the content */
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 	nserror error;
@@ -170,41 +170,41 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	/* try Generic link handling */
 
-	memset(&link, 0, sizeof(struct content_rfc5988_link));
+	memset(&link, 0, parimaa_na(sa_nracanaa content_rfc5988_link));
 
 	/* check that the relation exists - w3c spec says must be present */
 	exc = dom_element_get_attribute(node, corestring_dom_rel, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
-		return false;
+	ຖ້າ ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+		ສົ່ງຄືນ false;
 	}
 	/* get a lwc string containing the link relation */
 	exc = dom_string_intern(atr_string, &link.rel);
 	dom_string_unref(atr_string);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	ຖ້າ (exc != DOM_NO_ERR) {
+		ສົ່ງຄືນ false;
 	}
 
 	/* check that the href exists - w3c spec says must be present */
 	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+	ຖ້າ ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
 		lwc_string_unref(link.rel);
-		return false;
+		ສົ່ງຄືນ false;
 	}
 
 	/* get nsurl */
 	error = nsurl_join(c->base_url, dom_string_data(atr_string),
 			&link.href);
 	dom_string_unref(atr_string);
-	if (error != NSERROR_OK) {
+	ຖ້າ (error != NSERROR_OK) {
 		lwc_string_unref(link.rel);
-		return false;
+		ສົ່ງຄືນ false;
 	}
 
 	/* look for optional properties -- we don't care if internment fails */
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_hreflang, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* get a lwc string containing the href lang */
 		(void)dom_string_intern(atr_string, &link.hreflang);
 		dom_string_unref(atr_string);
@@ -212,7 +212,7 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_type, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* get a lwc string containing the type */
 		(void)dom_string_intern(atr_string, &link.type);
 		dom_string_unref(atr_string);
@@ -220,7 +220,7 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_media, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* get a lwc string containing the media */
 		(void)dom_string_intern(atr_string, &link.media);
 		dom_string_unref(atr_string);
@@ -228,7 +228,7 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_sizes, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* get a lwc string containing the sizes */
 		(void)dom_string_intern(atr_string, &link.sizes);
 		dom_string_unref(atr_string);
@@ -245,7 +245,7 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 	nsurl_unref(link.href);
 	lwc_string_unref(link.rel);
 
-	return true;
+	ສົ່ງຄືນ true;
 }
 
 
@@ -258,42 +258,42 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 	dom_hubbub_error res;
 	bool within;
 
-	if (!htmlc->enable_scripting) {
+	ຖ້າ (!htmlc->enable_scripting) {
 		NSLOG(netsurf, INFO, "Encountered a script, but scripting is off, ignoring");
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG, "Encountered a script, node %p showed up", script);
 
 	exc = dom_html_script_element_get_flags(script, &flags);
-	if (exc != DOM_NO_ERR) {
+	ຖ້າ (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve flags, giving up");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	if (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
+	ຖ້າ (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
 		NSLOG(netsurf, DEBUG, "Script was parser inserted, skipping");
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	exc = dom_node_contains(htmlc->document, script, &within);
-	if (exc != DOM_NO_ERR) {
+	ຖ້າ (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEBUG, "Unable to determine if script was within document, ignoring");
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	if (!within) {
+	ຖ້າ (!within) {
 		NSLOG(netsurf, DEBUG, "Script was not within the document, ignoring for now");
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	res = html_process_script(htmlc, (dom_node *) script);
-	if (res == DOM_HUBBUB_OK) {
+	ຖ້າ (res == DOM_HUBBUB_OK) {
 		NSLOG(netsurf, DEEPDEBUG, "Inserted script has finished running");
-	} else {
-		if (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
+	} ບໍ່ດັ່ງນັ້ນ {
+		ຖ້າ (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
 			NSLOG(netsurf, DEEPDEBUG, "Inserted script has launced asynchronously");
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			NSLOG(netsurf, DEEPDEBUG, "Failure starting script");
 		}
 	}
@@ -311,43 +311,43 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
  */
 static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 {
-	union content_msg_data msg_data;
-	const char *url, *end, *refresh = NULL;
-	char *new_url;
-	char quote = '\0';
+	sa_ngha content_msg_data msg_data;
+	const var_na *url, *end, *refresh = NULL;
+	var_na *new_url;
+	var_na quote = '\0';
 	dom_string *equiv, *content;
 	dom_exception exc;
 	nsurl *nsurl;
 	nserror error = NSERROR_OK;
 
-	if (c->refresh) {
+	ຖ້າ (c->refresh) {
 		/* refresh already delt with */
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_http_equiv, &equiv);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	ຖ້າ (exc != DOM_NO_ERR) {
+		ສົ່ງຄືນ NSERROR_DOM;
 	}
 
-	if (equiv == NULL) {
-		return NSERROR_OK;
+	ຖ້າ (equiv == NULL) {
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
+	ຖ້າ (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
 		dom_string_unref(equiv);
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
 	dom_string_unref(equiv);
 
 	exc = dom_element_get_attribute(n, corestring_dom_content, &content);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	ຖ້າ (exc != DOM_NO_ERR) {
+		ສົ່ງຄືນ NSERROR_DOM;
 	}
 
-	if (content == NULL) {
-		return NSERROR_OK;
+	ຖ້າ (content == NULL) {
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
 	end = dom_string_data(content) + dom_string_byte_length(content);
@@ -366,48 +366,48 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	url = dom_string_data(content);
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ໃນຂະນະທີ່ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* intpart */
-	if (url == end || (*url < '0' || '9' < *url)) {
+	ຖ້າ (url == end || (*url < '0' || '9' < *url)) {
 		/* Empty content, or invalid timeval */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
-	msg_data.delay = (int) strtol(url, &new_url, 10);
+	msg_data.delay = (ຈຳນວນເຕັມ) strtol(url, &new_url, 10);
 	/* a very small delay and self-referencing URL can cause a loop
 	 * that grinds machines to a halt. To prevent this we set a
 	 * minimum refresh delay of 1s. */
-	if (msg_data.delay < 1) {
+	ຖ້າ (msg_data.delay < 1) {
 		msg_data.delay = 1;
 	}
 
 	url = new_url;
 
 	/* fracpart? (ignored, as delay is integer only) */
-	while (url < end && (('0' <= *url && *url <= '9') ||
+	ໃນຂະນະທີ່ (url < end && (('0' <= *url && *url <= '9') ||
 			*url == '.')) {
 		url++;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ໃນຂະນະທີ່ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* ';' */
-	if (url < end && *url == ';')
+	ຖ້າ (url < end && *url == ';')
 		url++;
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ໃນຂະນະທີ່ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
-	if (url == end) {
+	ຖ້າ (url == end) {
 		/* Just delay specified, so refresh current page */
 		dom_string_unref(content);
 
@@ -415,51 +415,51 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 
 		content_broadcast(&c->base, CONTENT_MSG_REFRESH, &msg_data);
 
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
 	/* "url" */
-	if (url <= end - 3) {
-		if (strncasecmp(url, "url", 3) == 0) {
+	ຖ້າ (url <= end - 3) {
+		ຖ້າ (strncasecmp(url, "url", 3) == 0) {
 			url += 3;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			ສົ່ງຄືນ NSERROR_OK;
 		}
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ໃນຂະນະທີ່ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '=' */
-	if (url < end) {
-		if (*url == '=') {
+	ຖ້າ (url < end) {
+		ຖ້າ (*url == '=') {
 			url++;
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			ສົ່ງຄືນ NSERROR_OK;
 		}
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		ສົ່ງຄືນ NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	ໃນຂະນະທີ່ (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '"' or "'" */
-	if (url < end && (*url == '"' || *url == '\'')) {
+	ຖ້າ (url < end && (*url == '"' || *url == '\'')) {
 		quote = *url;
 		url++;
 	}
@@ -467,27 +467,27 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	/* Start of URL */
 	refresh = url;
 
-	if (quote != 0) {
+	ຖ້າ (quote != 0) {
 		/* url-sq | url-dq */
-		while (url < end && *url != quote)
+		ໃນຂະນະທີ່ (url < end && *url != quote)
 			url++;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* url-nq */
-		while (url < end && !ascii_is_space(*url))
+		ໃນຂະນະທີ່ (url < end && !ascii_is_space(*url))
 			url++;
 	}
 
 	/* '"' or "'" or *LWS (we don't care) */
-	if (url > refresh) {
+	ຖ້າ (url > refresh) {
 		/* There's a URL */
 		new_url = strndup(refresh, url - refresh);
-		if (new_url == NULL) {
+		ຖ້າ (new_url == NULL) {
 			dom_string_unref(content);
-			return NSERROR_NOMEM;
+			ສົ່ງຄືນ NSERROR_NOMEM;
 		}
 
 		error = nsurl_join(c->base_url, new_url, &nsurl);
-		if (error == NSERROR_OK) {
+		ຖ້າ (error == NSERROR_OK) {
 			/* broadcast valid refresh url */
 
 			c->base.refresh = nsurl;
@@ -504,7 +504,7 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 
 	dom_string_unref(content);
 
-	return error;
+	ສົ່ງຄືນ error;
 }
 
 
@@ -519,11 +519,11 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
  */
 static nserror html_process_inserted_title(html_content *htmlc, dom_node *node)
 {
-	if (htmlc->title == NULL) {
+	ຖ້າ (htmlc->title == NULL) {
 		/* only the first title is considered */
 		htmlc->title = dom_node_ref(node);
 	}
-	return NSERROR_OK;
+	ສົ່ງຄືນ NSERROR_OK;
 }
 
 
@@ -532,26 +532,26 @@ static bool html_process_title(html_content *c, dom_node *node)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *title;
-	char *title_str;
+	var_na *title_str;
 	bool success;
 
 	exc = dom_node_get_text_content(node, &title);
-	if ((exc != DOM_NO_ERR) || (title == NULL)) {
-		return false;
+	ຖ້າ ((exc != DOM_NO_ERR) || (title == NULL)) {
+		ສົ່ງຄືນ false;
 	}
 
 	title_str = squash_whitespace(dom_string_data(title));
 	dom_string_unref(title);
 
-	if (title_str == NULL) {
-		return false;
+	ຖ້າ (title_str == NULL) {
+		ສົ່ງຄືນ false;
 	}
 
 	success = content__set_title(&c->base, title_str);
 
 	free(title_str);
 
-	return success;
+	ສົ່ງຄືນ success;
 }
 
 
@@ -561,12 +561,12 @@ static bool html_process_title(html_content *c, dom_node *node)
  */
 static void html_texty_element_update(html_content *htmlc, dom_node *node)
 {
-	struct box *box = box_for_node(node);
-	if (box == NULL) {
-		return; /* No Box (yet?) so no gadget to update */
+	sa_nracanaa box *box = box_for_node(node);
+	ຖ້າ (box == NULL) {
+		ສົ່ງຄືນ; /* No Box (yet?) so no gadget to update */
 	}
-	if (box->gadget == NULL) {
-		return; /* No gadget yet (under construction perhaps?) */
+	ຖ້າ (box->gadget == NULL) {
+		ສົ່ງຄືນ; /* No gadget yet (under construction perhaps?) */
 	}
 	form_gadget_sync_with_dom(box->gadget);
 	/* And schedule a redraw for the box */
@@ -578,7 +578,7 @@ static void html_texty_element_update(html_content *htmlc, dom_node *node)
  * callback for DOMNodeInserted end type
  */
 static void
-dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
+dom_default_action_DOMNodeInserted_cb(sa_nracanaa dom_event *evt, void *pw)
 {
 	dom_event_target *node;
 	dom_node_type type;
@@ -586,61 +586,61 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 	html_content *htmlc = pw;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc != DOM_NO_ERR) || (node == NULL)) {
+	ຖ້າ ((exc != DOM_NO_ERR) || (node == NULL)) {
 		/* failed to obtain the event target node */
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	exc = dom_node_get_node_type(node, &type);
-	if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 		/* an element node has been inserted */
 		dom_html_element_type tag_type;
 
 		exc = dom_html_element_get_tag_type(node, &tag_type);
-		if (exc != DOM_NO_ERR) {
+		ຖ້າ (exc != DOM_NO_ERR) {
 			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
 
 		switch (tag_type) {
-		case DOM_HTML_ELEMENT_TYPE_BASE:
+		pak_sa DOM_HTML_ELEMENT_TYPE_BASE:
 			html_process_inserted_base(htmlc, (dom_node *)node);
-			break;
+			bha_nga;
 
-		case DOM_HTML_ELEMENT_TYPE_IMG:
+		pak_sa DOM_HTML_ELEMENT_TYPE_IMG:
 			html_process_inserted_img(htmlc, (dom_node *)node);
-			break;
+			bha_nga;
 
-		case DOM_HTML_ELEMENT_TYPE_LINK:
+		pak_sa DOM_HTML_ELEMENT_TYPE_LINK:
 			html_process_inserted_link(htmlc, (dom_node *)node);
-			break;
+			bha_nga;
 
-		case DOM_HTML_ELEMENT_TYPE_META:
+		pak_sa DOM_HTML_ELEMENT_TYPE_META:
 			html_process_inserted_meta(htmlc, (dom_node *)node);
-			break;
+			bha_nga;
 
-		case DOM_HTML_ELEMENT_TYPE_STYLE:
-			if (nsoption_bool(author_level_css)) {
+		pak_sa DOM_HTML_ELEMENT_TYPE_STYLE:
+			ຖ້າ (nsoption_bool(author_level_css)) {
 				html_css_process_style(htmlc, (dom_node *)node);
 			}
-			break;
+			bha_nga;
 
-		case DOM_HTML_ELEMENT_TYPE_SCRIPT:
+		pak_sa DOM_HTML_ELEMENT_TYPE_SCRIPT:
 			dom_SCRIPT_showed_up(htmlc,
 					     (dom_html_script_element *)node);
-			break;
+			bha_nga;
 
-		case DOM_HTML_ELEMENT_TYPE_TITLE:
+		pak_sa DOM_HTML_ELEMENT_TYPE_TITLE:
 			html_process_inserted_title(htmlc, (dom_node *)node);
-			break;
+			bha_nga;
 
 		default:
-			break;
+			bha_nga;
 		}
 
-		if (htmlc->enable_scripting) {
+		ຖ້າ (htmlc->enable_scripting) {
 			/* ensure javascript context is available */
-			if (htmlc->jsthread == NULL) {
-				union content_msg_data msg_data;
+			ຖ້າ (htmlc->jsthread == NULL) {
+				sa_ngha content_msg_data msg_data;
 
 				msg_data.jsthread = &htmlc->jsthread;
 				content_broadcast(&htmlc->base,
@@ -651,7 +651,7 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 				      htmlc->jsthread,
 				      htmlc);
 			}
-			if (htmlc->jsthread != NULL) {
+			ຖ້າ (htmlc->jsthread != NULL) {
 				js_handle_new_element(htmlc->jsthread,
 						      (dom_element *) node);
 			}
@@ -665,7 +665,7 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
  * callback for DOMNodeInsertedIntoDocument end type
  */
 static void
-dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
+dom_default_action_DOMNodeInsertedIntoDocument_cb(sa_nracanaa dom_event *evt,
 						  void *pw)
 {
 	html_content *htmlc = pw;
@@ -674,23 +674,23 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
 	dom_exception exc;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (node != NULL)) {
 		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		ຖ້າ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
 			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			ຖ້າ (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
 			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_SCRIPT:
+			pak_sa DOM_HTML_ELEMENT_TYPE_SCRIPT:
 				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) node);
 				fallthrough;
 			default:
-				break;
+				bha_nga;
 			}
 		}
 		dom_node_unref(node);
@@ -702,7 +702,7 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
  * callback for DOMSubtreeModified end type
  */
 static void
-dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
+dom_default_action_DOMSubtreeModified_cb(sa_nracanaa dom_event *evt, void *pw)
 {
 	dom_event_target *node;
 	dom_node_type type;
@@ -710,37 +710,37 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
 	html_content *htmlc = pw;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		if (htmlc->title == (dom_node *)node) {
+	ຖ້າ ((exc == DOM_NO_ERR) && (node != NULL)) {
+		ຖ້າ (htmlc->title == (dom_node *)node) {
 			/* Node is our title node */
 			html_process_title(htmlc, (dom_node *)node);
 			dom_node_unref(node);
-			return;
+			ສົ່ງຄືນ;
 		}
 
 		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		ຖ້າ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
 			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			ຖ້າ (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
 			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_STYLE:
-				if (nsoption_bool(author_level_css)) {
+			pak_sa DOM_HTML_ELEMENT_TYPE_STYLE:
+				ຖ້າ (nsoption_bool(author_level_css)) {
 					html_css_update_style(htmlc,
 							(dom_node *)node);
 				}
-				break;
-			case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-			case DOM_HTML_ELEMENT_TYPE_INPUT:
+				bha_nga;
+			pak_sa DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+			pak_sa DOM_HTML_ELEMENT_TYPE_INPUT:
 				html_texty_element_update(htmlc, (dom_node *)node);
 				fallthrough;
 			default:
-				break;
+				bha_nga;
 			}
 		}
 		dom_node_unref(node);
@@ -752,11 +752,11 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
  * callback for default action finished
  */
 static void
-dom_default_action_finished_cb(struct dom_event *evt, void *pw)
+dom_default_action_finished_cb(sa_nracanaa dom_event *evt, void *pw)
 {
 	html_content *htmlc = pw;
 
-	if (htmlc->jsthread != NULL)
+	ຖ້າ (htmlc->jsthread != NULL)
 		js_event_cleanup(htmlc->jsthread, evt);
 }
 
@@ -770,16 +770,16 @@ html_dom_event_fetcher(dom_string *type,
 	NSLOG(netsurf, DEEPDEBUG,
 	      "phase:%d type:%s", phase, dom_string_data(type));
 
-	if (phase == DOM_DEFAULT_ACTION_END) {
-		if (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
-			return dom_default_action_DOMNodeInserted_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
-			return dom_default_action_DOMNodeInsertedIntoDocument_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
-			return dom_default_action_DOMSubtreeModified_cb;
+	ຖ້າ (phase == DOM_DEFAULT_ACTION_END) {
+		ຖ້າ (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
+			ສົ່ງຄືນ dom_default_action_DOMNodeInserted_cb;
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
+			ສົ່ງຄືນ dom_default_action_DOMNodeInsertedIntoDocument_cb;
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
+			ສົ່ງຄືນ dom_default_action_DOMSubtreeModified_cb;
 		}
-	} else if (phase == DOM_DEFAULT_ACTION_FINISHED) {
-		return dom_default_action_finished_cb;
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (phase == DOM_DEFAULT_ACTION_FINISHED) {
+		ສົ່ງຄືນ dom_default_action_finished_cb;
 	}
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }

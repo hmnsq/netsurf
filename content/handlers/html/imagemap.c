@@ -42,42 +42,42 @@
 
 #define HASH_SIZE 31 /* fixed size hash table */
 
-typedef enum {
+typedef ga_nanaa {
 	IMAGEMAP_DEFAULT,
 	IMAGEMAP_RECT,
 	IMAGEMAP_CIRCLE,
 	IMAGEMAP_POLY
 } imagemap_entry_type;
 
-struct mapentry {
+sa_nracanaa mapentry {
 	imagemap_entry_type type;	/**< type of shape */
 	nsurl *url;			/**< absolute url to go to */
-	char *target;			/**< target frame (if any) */
-	union {
-		struct {
-			int x;		/**< x coordinate of centre */
-			int y;		/**< y coordinate of center */
-			int r;		/**< radius of circle */
+	var_na *target;			/**< target frame (if any) */
+	sa_ngha {
+		sa_nracanaa {
+			ຈຳນວນເຕັມ x;		/**< x coordinate of centre */
+			ຈຳນວນເຕັມ y;		/**< y coordinate of center */
+			ຈຳນວນເຕັມ r;		/**< radius of circle */
 		} circle;
-		struct {
-			int x0;		/**< left hand edge */
-			int y0;		/**< top edge */
-			int x1;		/**< right hand edge */
-			int y1;		/**< bottom edge */
+		sa_nracanaa {
+			ຈຳນວນເຕັມ x0;		/**< left hand edge */
+			ຈຳນວນເຕັມ y0;		/**< top edge */
+			ຈຳນວນເຕັມ x1;		/**< right hand edge */
+			ຈຳນວນເຕັມ y1;		/**< bottom edge */
 		} rect;
-		struct {
-			int num;	/**< number of points */
+		sa_nracanaa {
+			ຈຳນວນເຕັມ num;	/**< number of points */
 			float *xcoords;	/**< x coordinates */
 			float *ycoords;	/**< y coordinates */
 		} poly;
 	} bounds;
-	struct mapentry *next;		/**< next entry in list */
+	sa_nracanaa mapentry *next;		/**< next entry in list */
 };
 
-struct imagemap {
-	char *key;		/**< key for this entry */
-	struct mapentry *list;	/**< pointer to linked list of entries */
-	struct imagemap *next;	/**< next entry in this hash chain */
+sa_nracanaa imagemap {
+	var_na *key;		/**< key for this entry */
+	sa_nracanaa mapentry *list;	/**< pointer to linked list of entries */
+	sa_nracanaa imagemap *next;	/**< next entry in this hash chain */
 };
 
 /**
@@ -90,14 +90,14 @@ static bool imagemap_create(html_content *c)
 {
 	assert(c != NULL);
 
-	if (c->imagemaps == NULL) {
-		c->imagemaps = calloc(HASH_SIZE, sizeof(struct imagemap *));
-		if (c->imagemaps == NULL) {
-			return false;
+	ຖ້າ (c->imagemaps == NULL) {
+		c->imagemaps = calloc(HASH_SIZE, parimaa_na(sa_nracanaa imagemap *));
+		ຖ້າ (c->imagemaps == NULL) {
+			ສົ່ງຄືນ false;
 		}
 	}
 
-	return true;
+	ສົ່ງຄືນ true;
 }
 
 /**
@@ -106,17 +106,17 @@ static bool imagemap_create(html_content *c)
  * \param key The key to hash.
  * \return The hashed value.
  */
-static unsigned int imagemap_hash(const char *key)
+static unsigned ຈຳນວນເຕັມ imagemap_hash(const var_na *key)
 {
-	unsigned int z = 0;
+	unsigned ຈຳນວນເຕັມ z = 0;
 
-	if (key == 0) return 0;
+	ຖ້າ (key == 0) ສົ່ງຄືນ 0;
 
-	for (; *key != 0; key++) {
+	ສຳລັບ (; *key != 0; key++) {
 		z += *key & 0x1f;
 	}
 
-	return (z % (HASH_SIZE - 1)) + 1;
+	ສົ່ງຄືນ (z % (HASH_SIZE - 1)) + 1;
 }
 
 /**
@@ -128,27 +128,27 @@ static unsigned int imagemap_hash(const char *key)
  * \return true on succes, false otherwise
  */
 static bool
-imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
+imagemap_add(html_content *c, dom_string *key, sa_nracanaa mapentry *list)
 {
-	struct imagemap *map;
-	unsigned int slot;
+	sa_nracanaa imagemap *map;
+	unsigned ຈຳນວນເຕັມ slot;
 
 	assert(c != NULL);
 	assert(key != NULL);
 	assert(list != NULL);
 
-	if (imagemap_create(c) == false)
-		return false;
+	ຖ້າ (imagemap_create(c) == false)
+		ສົ່ງຄືນ false;
 
-	map = calloc(1, sizeof(*map));
-	if (map == NULL)
-		return false;
+	map = calloc(1, parimaa_na(*map));
+	ຖ້າ (map == NULL)
+		ສົ່ງຄືນ false;
 
 	/* \todo Stop relying on NULL termination of dom_string */
 	map->key = strdup(dom_string_data(key));
-	if (map->key == NULL) {
+	ຖ້າ (map->key == NULL) {
 		free(map);
-		return false;
+		ສົ່ງຄືນ false;
 	}
 
 	map->list = list;
@@ -158,7 +158,7 @@ imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
 	map->next = c->imagemaps[slot];
 	c->imagemaps[slot] = map;
 
-	return true;
+	ສົ່ງຄືນ true;
 }
 
 /**
@@ -166,23 +166,23 @@ imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
  *
  * \param list Pointer to head of list
  */
-static void imagemap_freelist(struct mapentry *list)
+static void imagemap_freelist(sa_nracanaa mapentry *list)
 {
-	struct mapentry *entry, *prev;
+	sa_nracanaa mapentry *entry, *prev;
 
 	assert(list != NULL);
 
 	entry = list;
 
-	while (entry != NULL) {
+	ໃນຂະນະທີ່ (entry != NULL) {
 		prev = entry;
 
 		nsurl_unref(entry->url);
 
-		if (entry->target)
+		ຖ້າ (entry->target)
 			free(entry->target);
 
-		if (entry->type == IMAGEMAP_POLY) {
+		ຖ້າ (entry->type == IMAGEMAP_POLY) {
 			free(entry->bounds.poly.xcoords);
 			free(entry->bounds.poly.ycoords);
 		}
@@ -199,19 +199,19 @@ static void imagemap_freelist(struct mapentry *list)
  */
 void imagemap_destroy(html_content *c)
 {
-	unsigned int i;
+	unsigned ຈຳນວນເຕັມ i;
 
 	assert(c != NULL);
 
 	/* no imagemaps -> return */
-	if (c->imagemaps == NULL)
-		return;
+	ຖ້າ (c->imagemaps == NULL)
+		ສົ່ງຄືນ;
 
-	for (i = 0; i != HASH_SIZE; i++) {
-		struct imagemap *map, *next;
+	ສຳລັບ (i = 0; i != HASH_SIZE; i++) {
+		sa_nracanaa imagemap *map, *next;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
+		ໃນຂະນະທີ່ (map != NULL) {
 			next = map->next;
 			imagemap_freelist(map->list);
 			free(map->key);
@@ -230,30 +230,30 @@ void imagemap_destroy(html_content *c)
  */
 void imagemap_dump(html_content *c)
 {
-	unsigned int i;
+	unsigned ຈຳນວນເຕັມ i;
 
-	int j;
+	ຈຳນວນເຕັມ j;
 
 	assert(c != NULL);
 
-	if (c->imagemaps == NULL)
-		return;
+	ຖ້າ (c->imagemaps == NULL)
+		ສົ່ງຄືນ;
 
-	for (i = 0; i != HASH_SIZE; i++) {
-		struct imagemap *map;
-		struct mapentry *entry;
+	ສຳລັບ (i = 0; i != HASH_SIZE; i++) {
+		sa_nracanaa imagemap *map;
+		sa_nracanaa mapentry *entry;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
+		ໃນຂະນະທີ່ (map != NULL) {
 			NSLOG(netsurf, INFO, "Imagemap: %s", map->key);
 
-			for (entry = map->list; entry; entry = entry->next) {
+			ສຳລັບ (entry = map->list; entry; entry = entry->next) {
 				switch (entry->type) {
-				case IMAGEMAP_DEFAULT:
+				pak_sa IMAGEMAP_DEFAULT:
 					NSLOG(netsurf, INFO, "\tDefault: %s",
 					      nsurl_access(entry->url));
-					break;
-				case IMAGEMAP_RECT:
+					bha_nga;
+				pak_sa IMAGEMAP_RECT:
 					NSLOG(netsurf, INFO,
 					      "\tRectangle: %s: [(%d,%d),(%d,%d)]",
 					      nsurl_access(entry->url),
@@ -261,27 +261,27 @@ void imagemap_dump(html_content *c)
 					      entry->bounds.rect.y0,
 					      entry->bounds.rect.x1,
 					      entry->bounds.rect.y1);
-					break;
-				case IMAGEMAP_CIRCLE:
+					bha_nga;
+				pak_sa IMAGEMAP_CIRCLE:
 					NSLOG(netsurf, INFO,
 					      "\tCircle: %s: [(%d,%d),%d]",
 					      nsurl_access(entry->url),
 					      entry->bounds.circle.x,
 					      entry->bounds.circle.y,
 					      entry->bounds.circle.r);
-					break;
-				case IMAGEMAP_POLY:
+					bha_nga;
+				pak_sa IMAGEMAP_POLY:
 					NSLOG(netsurf, INFO,
 					      "\tPolygon: %s:",
 					      nsurl_access(entry->url));
-					for (j = 0; j != entry->bounds.poly.num;
+					ສຳລັບ (j = 0; j != entry->bounds.poly.num;
 							j++) {
 						fprintf(stderr, "(%d,%d) ",
-							(int)entry->bounds.poly.xcoords[j],
-							(int)entry->bounds.poly.ycoords[j]);
+							(ຈຳນວນເຕັມ)entry->bounds.poly.xcoords[j],
+							(ຈຳນວນເຕັມ)entry->bounds.poly.ycoords[j]);
 					}
 					fprintf(stderr,"\n");
-					break;
+					bha_nga;
 				}
 			}
 			map = map->next;
@@ -300,86 +300,86 @@ void imagemap_dump(html_content *c)
  * \return false on memory exhaustion, true otherwise
  */
 static bool
-imagemap_addtolist(const struct html_content *c,
+imagemap_addtolist(const sa_nracanaa html_content *c,
 		   dom_node *n,
 		   nsurl *base_url,
-		   struct mapentry **entry,
+		   sa_nracanaa mapentry **entry,
 		   dom_string *tagtype)
 {
 	dom_exception exc;
 	dom_string *href = NULL, *target = NULL, *shape = NULL;
 	dom_string *coords = NULL;
-	struct mapentry *new_map, *temp;
+	sa_nracanaa mapentry *new_map, *temp;
 	bool ret = true;
 
-	if (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
+	ຖ້າ (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
 		bool nohref = false;
 		exc = dom_element_has_attribute(n,
 				corestring_dom_nohref, &nohref);
-		if ((exc != DOM_NO_ERR) || nohref)
+		ຖ້າ ((exc != DOM_NO_ERR) || nohref)
 			/* Skip <area nohref="anything" /> */
 			goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL) {
+	ຖ້າ (exc != DOM_NO_ERR || href == NULL) {
 		/* No href="" attribute, skip this element */
 		goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_target, &target);
-	if (exc != DOM_NO_ERR) {
+	ຖ້າ (exc != DOM_NO_ERR) {
 		goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_shape, &shape);
-	if (exc != DOM_NO_ERR) {
+	ຖ້າ (exc != DOM_NO_ERR) {
 		goto ok_out;
 	}
 
 	/* If there's no shape, we default to rectangles */
-	if (shape == NULL)
+	ຖ້າ (shape == NULL)
 		shape = dom_string_ref(corestring_dom_rect);
 
-	if (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
+	ຖ້າ (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
 		/* If not 'default' and there's no 'coords' give up */
 		exc = dom_element_get_attribute(n, corestring_dom_coords,
 						&coords);
-		if (exc != DOM_NO_ERR || coords == NULL) {
+		ຖ້າ (exc != DOM_NO_ERR || coords == NULL) {
 			goto ok_out;
 		}
 	}
 
-	new_map = calloc(1, sizeof(*new_map));
-	if (new_map == NULL) {
+	new_map = calloc(1, parimaa_na(*new_map));
+	ຖ້າ (new_map == NULL) {
 		goto bad_out;
 	}
 
-	if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
+	ຖ້າ (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
 	    dom_string_caseless_lwc_isequal(shape, corestring_lwc_rectangle))
 		new_map->type = IMAGEMAP_RECT;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
 		new_map->type = IMAGEMAP_CIRCLE;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
 		 dom_string_caseless_lwc_isequal(shape, corestring_lwc_polygon))
 		new_map->type = IMAGEMAP_POLY;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
 		new_map->type = IMAGEMAP_DEFAULT;
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		goto bad_out;
 
-	if (box_extract_link(c, href, base_url, &new_map->url) == false)
+	ຖ້າ (box_extract_link(c, href, base_url, &new_map->url) == false)
 		goto bad_out;
 
-	if (new_map->url == NULL) {
+	ຖ້າ (new_map->url == NULL) {
 		/* non-fatal error -> ignore this */
 		goto ok_free_map_out;
 	}
 
-	if (target != NULL) {
+	ຖ້າ (target != NULL) {
 		/* Copy target dom string into the map data */
 		new_map->target = malloc(dom_string_byte_length(target) + 1);
-		if (new_map->target == NULL)
+		ຖ້າ (new_map->target == NULL)
 			goto bad_out;
 
 		memcpy(new_map->target,
@@ -389,78 +389,78 @@ imagemap_addtolist(const struct html_content *c,
 		new_map->target[dom_string_byte_length(target)] = 0;
 	}
 
-	if (new_map->type != IMAGEMAP_DEFAULT) {
-		int x, y;
+	ຖ້າ (new_map->type != IMAGEMAP_DEFAULT) {
+		ຈຳນວນເຕັມ x, y;
 		float *xcoords, *ycoords;
 		/* coordinates are a comma-separated list of values */
-		char *val = strtok((char *)dom_string_data(coords), ",");
-		int num = 1;
+		var_na *val = strtok((var_na *)dom_string_data(coords), ",");
+		ຈຳນວນເຕັມ num = 1;
 
 		switch (new_map->type) {
-		case IMAGEMAP_RECT:
+		pak_sa IMAGEMAP_RECT:
 			/* (left, top, right, bottom) */
-			while (val != NULL && num <= 4) {
+			ໃນຂະນະທີ່ (val != NULL && num <= 4) {
 				switch (num) {
-				case 1:
+				pak_sa 1:
 					new_map->bounds.rect.x0 = atoi(val);
-					break;
-				case 2:
+					bha_nga;
+				pak_sa 2:
 					new_map->bounds.rect.y0 = atoi(val);
-					break;
-				case 3:
+					bha_nga;
+				pak_sa 3:
 					new_map->bounds.rect.x1 = atoi(val);
-					break;
-				case 4:
+					bha_nga;
+				pak_sa 4:
 					new_map->bounds.rect.y1 = atoi(val);
-					break;
+					bha_nga;
 				}
 
 				num++;
 				val = strtok(NULL, ",");
 			}
-			break;
-		case IMAGEMAP_CIRCLE:
+			bha_nga;
+		pak_sa IMAGEMAP_CIRCLE:
 			/* (x, y, radius ) */
-			while (val != NULL && num <= 3) {
+			ໃນຂະນະທີ່ (val != NULL && num <= 3) {
 				switch (num) {
-				case 1:
+				pak_sa 1:
 					new_map->bounds.circle.x = atoi(val);
-					break;
-				case 2:
+					bha_nga;
+				pak_sa 2:
 					new_map->bounds.circle.y = atoi(val);
-					break;
-				case 3:
+					bha_nga;
+				pak_sa 3:
 					new_map->bounds.circle.r = atoi(val);
-					break;
+					bha_nga;
 				}
 
 				num++;
 				val = strtok(NULL, ",");
 			}
-			break;
-		case IMAGEMAP_POLY:
+			bha_nga;
+		pak_sa IMAGEMAP_POLY:
 			new_map->bounds.poly.xcoords = NULL;
 			new_map->bounds.poly.ycoords = NULL;
 
-			while (val != NULL) {
+			ໃນຂະນະທີ່ (val != NULL) {
 				x = atoi(val);
 
 				val = strtok(NULL, ",");
-				if (val == NULL)
-					break;
+				ຖ້າ (val == NULL)
+					bha_nga;
 
 				y = atoi(val);
 
 				xcoords = realloc(new_map->bounds.poly.xcoords,
-						num * sizeof(float));
-				if (xcoords == NULL) {
+						num * parimaa_na(float));
+				ຖ້າ (xcoords == NULL) {
 					goto bad_out;
 				}
 				new_map->bounds.poly.xcoords = xcoords;
 
 				ycoords = realloc(new_map->bounds.poly.ycoords,
-					num * sizeof(float));
-				if (ycoords == NULL) {
+					num * parimaa_na(float));
+				ຖ້າ (ycoords == NULL) {
 					goto bad_out;
 				}
 				new_map->bounds.poly.ycoords = ycoords;
@@ -474,20 +474,20 @@ imagemap_addtolist(const struct html_content *c,
 
 			new_map->bounds.poly.num = num - 1;
 
-			break;
+			bha_nga;
 		default:
-			break;
+			bha_nga;
 		}
 	}
 
 	new_map->next = NULL;
 
-	if (*entry) {
+	ຖ້າ (*entry) {
 		/* add to END of list */
-		for (temp = (*entry); temp->next != NULL; temp = temp->next)
+		ສຳລັບ (temp = (*entry); temp->next != NULL; temp = temp->next)
 			;
 		temp->next = new_map;
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		(*entry) = new_map;
 	}
 
@@ -497,31 +497,31 @@ imagemap_addtolist(const struct html_content *c,
 bad_out:
 	ret = false;
 ok_free_map_out:
-	if (new_map != NULL) {
-		if (new_map->url != NULL)
+	ຖ້າ (new_map != NULL) {
+		ຖ້າ (new_map->url != NULL)
 			nsurl_unref(new_map->url);
-		if (new_map->type == IMAGEMAP_POLY &&
+		ຖ້າ (new_map->type == IMAGEMAP_POLY &&
 				new_map->bounds.poly.ycoords != NULL)
 			free(new_map->bounds.poly.ycoords);
-		if (new_map->type == IMAGEMAP_POLY &&
+		ຖ້າ (new_map->type == IMAGEMAP_POLY &&
 				new_map->bounds.poly.xcoords != NULL)
 			free(new_map->bounds.poly.xcoords);
-		if (new_map->target != NULL)
+		ຖ້າ (new_map->target != NULL)
 			free(new_map->target);
 
 		free(new_map);
 	}
 ok_out:
-	if (href != NULL)
+	ຖ້າ (href != NULL)
 		dom_string_unref(href);
-	if (target != NULL)
+	ຖ້າ (target != NULL)
 		dom_string_unref(target);
-	if (shape != NULL)
+	ຖ້າ (shape != NULL)
 		dom_string_unref(shape);
-	if (coords != NULL)
+	ຖ້າ (coords != NULL)
 		dom_string_unref(coords);
 
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
 /**
@@ -535,7 +535,7 @@ ok_out:
  */
 static bool
 imagemap_extract_map_entries(dom_node *node, html_content *c,
-			     struct mapentry **entry, dom_string *tname)
+			     sa_nracanaa mapentry **entry, dom_string *tname)
 {
 	dom_nodelist *nlist;
 	dom_exception exc;
@@ -543,36 +543,36 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
 	uint32_t tag_count;
 
 	exc = dom_element_get_elements_by_tag_name(node, tname, &nlist);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	ຖ້າ (exc != DOM_NO_ERR) {
+		ສົ່ງຄືນ false;
 	}
 
 	exc = dom_nodelist_get_length(nlist, &tag_count);
-	if (exc != DOM_NO_ERR) {
+	ຖ້າ (exc != DOM_NO_ERR) {
 		dom_nodelist_unref(nlist);
-		return false;
+		ສົ່ງຄືນ false;
 	}
 
-	for (ent = 0; ent < tag_count; ++ent) {
+	ສຳລັບ (ent = 0; ent < tag_count; ++ent) {
 		dom_node *subnode;
 
 		exc = dom_nodelist_item(nlist, ent, &subnode);
-		if (exc != DOM_NO_ERR) {
+		ຖ້າ (exc != DOM_NO_ERR) {
 			dom_nodelist_unref(nlist);
-			return false;
+			ສົ່ງຄືນ false;
 		}
-		if (imagemap_addtolist(c, subnode, c->base_url,
+		ຖ້າ (imagemap_addtolist(c, subnode, c->base_url,
 				       entry, tname) == false) {
 			dom_node_unref(subnode);
 			dom_nodelist_unref(nlist);
-			return false;
+			ສົ່ງຄືນ false;
 		}
 		dom_node_unref(subnode);
 	}
 
 	dom_nodelist_unref(nlist);
 
-	return true;
+	ສົ່ງຄືນ true;
 }
 
 /**
@@ -584,12 +584,12 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
  * \return false on memory exhaustion, true otherwise
  */
 static bool imagemap_extract_map(dom_node *node, html_content *c,
-		struct mapentry **entry)
+		sa_nracanaa mapentry **entry)
 {
-	if (imagemap_extract_map_entries(node, c, entry,
+	ຖ້າ (imagemap_extract_map_entries(node, c, entry,
 			corestring_dom_area) == false)
-		return false;
-	return imagemap_extract_map_entries(node, c, entry,
+		ສົ່ງຄືນ false;
+	ສົ່ງຄືນ imagemap_extract_map_entries(node, c, entry,
 			corestring_dom_a);
 }
 
@@ -611,48 +611,48 @@ imagemap_extract(html_content *c)
 	exc = dom_document_get_elements_by_tag_name(c->document,
 						    corestring_dom_map,
 						    &nlist);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	ຖ້າ (exc != DOM_NO_ERR) {
+		ສົ່ງຄືນ NSERROR_DOM;
 	}
 
 	exc = dom_nodelist_get_length(nlist, &maybe_maps);
-	if (exc != DOM_NO_ERR) {
+	ຖ້າ (exc != DOM_NO_ERR) {
 		ret = NSERROR_DOM;
 		goto out_nlist;
 	}
 
-	for (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
+	ສຳລັບ (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
 		dom_node *node;
 		dom_string *name;
 		exc = dom_nodelist_item(nlist, mapnr, &node);
-		if (exc != DOM_NO_ERR) {
+		ຖ້າ (exc != DOM_NO_ERR) {
 			ret = NSERROR_DOM;
 			goto out_nlist;
 		}
 
 		exc = dom_element_get_attribute(node, corestring_dom_id,
 						&name);
-		if (exc != DOM_NO_ERR) {
+		ຖ້າ (exc != DOM_NO_ERR) {
 			dom_node_unref(node);
 			ret = NSERROR_DOM;
 			goto out_nlist;
 		}
 
-		if (name == NULL) {
+		ຖ້າ (name == NULL) {
 			exc = dom_element_get_attribute(node,
 							corestring_dom_name,
 							&name);
-			if (exc != DOM_NO_ERR) {
+			ຖ້າ (exc != DOM_NO_ERR) {
 				dom_node_unref(node);
 				ret = NSERROR_DOM;
 				goto out_nlist;
 			}
 		}
 
-		if (name != NULL) {
-			struct mapentry *entry = NULL;
-			if (imagemap_extract_map(node, c, &entry) == false) {
-				if (entry != NULL) {
+		ຖ້າ (name != NULL) {
+			sa_nracanaa mapentry *entry = NULL;
+			ຖ້າ (imagemap_extract_map(node, c, &entry) == false) {
+				ຖ້າ (entry != NULL) {
 					imagemap_freelist(entry);
 				}
 
@@ -667,7 +667,7 @@ imagemap_extract(html_content *c)
 			 * error as it just means that we've encountered
 			 * an incorrectly defined <map>...</map> block
 			 */
-			if ((entry != NULL) &&
+			ຖ້າ ((entry != NULL) &&
 			    (imagemap_add(c, name, entry) == false)) {
 				imagemap_freelist(entry);
 
@@ -686,7 +686,7 @@ out_nlist:
 
 	dom_nodelist_unref(nlist);
 
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 
 /**
@@ -702,24 +702,24 @@ out_nlist:
  * \param click_y Y coordinate of click
  * \return 1 if point is in polygon, 0 if outside. 0 or 1 if on boundary
  */
-static int
-imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
+static ຈຳນວນເຕັມ
+imagemap_point_in_poly(ຈຳນວນເຕັມ num, float *xpt, float *ypt, unsigned long x,
 		unsigned long y, unsigned long click_x,	unsigned long click_y)
 {
-	int i, j, c = 0;
+	ຈຳນວນເຕັມ i, j, c = 0;
 
 	assert(xpt != NULL);
 	assert(ypt != NULL);
 
-	for (i = 0, j = num - 1; i < num; j = i++) {
-		if ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
+	ສຳລັບ (i = 0, j = num - 1; i < num; j = i++) {
+		ຖ້າ ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
 		     ((ypt[j] + y <= click_y) && (click_y < ypt[i] + y))) &&
 		     (click_x < (xpt[j] - xpt[i]) *
 		     (click_y - (ypt[i] + y)) / (ypt[j] - ypt[i]) + xpt[i] + x))
 			c = !c;
 	}
 
-	return c;
+	ສົ່ງຄືນ c;
 }
 
 /**
@@ -734,78 +734,78 @@ imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
  * \param target   Pointer to location to receive target pointer (if any)
  * \return The url associated with this area, or NULL if not found
  */
-nsurl *imagemap_get(struct html_content *c, const char *key,
+nsurl *imagemap_get(sa_nracanaa html_content *c, const var_na *key,
 		unsigned long x, unsigned long y,
 		unsigned long click_x, unsigned long click_y,
-		const char **target)
+		const var_na **target)
 {
-	unsigned int slot = 0;
-	struct imagemap *map;
-	struct mapentry *entry;
+	unsigned ຈຳນວນເຕັມ slot = 0;
+	sa_nracanaa imagemap *map;
+	sa_nracanaa mapentry *entry;
 	unsigned long cx, cy;
 
 	assert(c != NULL);
 
-	if (key == NULL)
-		return NULL;
+	ຖ້າ (key == NULL)
+		ສົ່ງຄືນ NULL;
 
-	if (c->imagemaps == NULL)
-		return NULL;
+	ຖ້າ (c->imagemaps == NULL)
+		ສົ່ງຄືນ NULL;
 
 	slot = imagemap_hash(key);
 
-	for (map = c->imagemaps[slot]; map != NULL; map = map->next) {
-		if (map->key != NULL && strcasecmp(map->key, key) == 0)
-			break;
+	ສຳລັບ (map = c->imagemaps[slot]; map != NULL; map = map->next) {
+		ຖ້າ (map->key != NULL && strcasecmp(map->key, key) == 0)
+			bha_nga;
 	}
 
-	if (map == NULL || map->list == NULL)
-		return NULL;
+	ຖ້າ (map == NULL || map->list == NULL)
+		ສົ່ງຄືນ NULL;
 
-	for (entry = map->list; entry; entry = entry->next) {
+	ສຳລັບ (entry = map->list; entry; entry = entry->next) {
 		switch (entry->type) {
-		case IMAGEMAP_DEFAULT:
+		pak_sa IMAGEMAP_DEFAULT:
 			/* just return the URL. no checks required */
-			if (target)
+			ຖ້າ (target)
 				*target = entry->target;
-			return entry->url;
-			break;
-		case IMAGEMAP_RECT:
-			if (click_x >= x + entry->bounds.rect.x0 &&
+			ສົ່ງຄືນ entry->url;
+			bha_nga;
+		pak_sa IMAGEMAP_RECT:
+			ຖ້າ (click_x >= x + entry->bounds.rect.x0 &&
 				    click_x <= x + entry->bounds.rect.x1 &&
 				    click_y >= y + entry->bounds.rect.y0 &&
 				    click_y <= y + entry->bounds.rect.y1) {
-				if (target)
+				ຖ້າ (target)
 					*target = entry->target;
-				return entry->url;
+				ສົ່ງຄືນ entry->url;
 			}
-			break;
-		case IMAGEMAP_CIRCLE:
+			bha_nga;
+		pak_sa IMAGEMAP_CIRCLE:
 			cx = x + entry->bounds.circle.x - click_x;
 			cy = y + entry->bounds.circle.y - click_y;
-			if ((cx * cx + cy * cy) <=
+			ຖ້າ ((cx * cx + cy * cy) <=
 				(unsigned long) (entry->bounds.circle.r *
 					entry->bounds.circle.r)) {
-				if (target)
+				ຖ້າ (target)
 					*target = entry->target;
-				return entry->url;
+				ສົ່ງຄືນ entry->url;
 			}
-			break;
-		case IMAGEMAP_POLY:
-			if (imagemap_point_in_poly(entry->bounds.poly.num,
+			bha_nga;
+		pak_sa IMAGEMAP_POLY:
+			ຖ້າ (imagemap_point_in_poly(entry->bounds.poly.num,
 					entry->bounds.poly.xcoords,
 					entry->bounds.poly.ycoords, x, y,
 					click_x, click_y)) {
-				if (target)
+				ຖ້າ (target)
 					*target = entry->target;
-				return entry->url;
+				ສົ່ງຄືນ entry->url;
 			}
-			break;
+			bha_nga;
 		}
 	}
 
-	if (target)
+	ຖ້າ (target)
 		*target = NULL;
 
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }

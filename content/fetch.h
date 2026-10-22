@@ -32,14 +32,14 @@
 
 #include "netsurf/ssl_certs.h"
 
-struct content;
-struct fetch;
-struct ssl_cert_info;
+sa_nracanaa content;
+sa_nracanaa fetch;
+sa_nracanaa ssl_cert_info;
 
 /**
  * Fetcher message types
  */
-typedef enum {
+typedef ga_nanaa {
 	FETCH_PROGRESS,
 	FETCH_CERTS,
 	FETCH_HEADER,
@@ -71,34 +71,34 @@ typedef enum {
 /**
  * Fetcher message data
  */
-typedef struct fetch_msg {
+typedef sa_nracanaa fetch_msg {
 	fetch_msg_type type;
 
-	union {
-		const char *progress;
+	sa_ngha {
+		const var_na *progress;
 
-		struct {
+		sa_nracanaa {
 			const uint8_t *buf;
 			size_t len;
 		} header_or_data;
 
-		const char *error;
+		const var_na *error;
 
 		/** \todo Use nsurl */
-		const char *redirect;
+		const var_na *redirect;
 
-		struct {
-			const char *realm;
+		sa_nracanaa {
+			const var_na *realm;
 		} auth;
 
-		const struct cert_chain *chain;
+		const sa_nracanaa cert_chain *chain;
 	} data;
 } fetch_msg;
 
 /**
  * Fetcher post data types
  */
-typedef enum {
+typedef ga_nanaa {
 	FETCH_POSTDATA_NONE,
 	FETCH_POSTDATA_URLENC,
 	FETCH_POSTDATA_MULTIPART,
@@ -108,26 +108,26 @@ typedef enum {
 /**
  * Fetch POST multipart data
  */
-struct fetch_multipart_data {
-	struct fetch_multipart_data *next; /**< Next in linked list */
+sa_nracanaa fetch_multipart_data {
+	sa_nracanaa fetch_multipart_data *next; /**< Next in linked list */
 
-	char *name; /**< Name of item */
-	char *value; /**< Item value */
+	var_na *name; /**< Name of item */
+	var_na *value; /**< Item value */
 
-	char *rawfile; /**< Raw filename if file is true */
+	var_na *rawfile; /**< Raw filename if file is true */
 	bool file; /**< Item is a file */
 };
 
 /**
  * fetch POST data
  */
-struct fetch_postdata {
+sa_nracanaa fetch_postdata {
 	fetch_postdata_type type;
-	union {
+	sa_ngha {
 		/** Url encoded POST string if type is FETCH_POSTDATA_URLENC */
-		char *urlenc;
+		var_na *urlenc;
 		/** Multipart post data if type is FETCH_POSTDATA_MULTIPART */
-		struct fetch_multipart_data *multipart;
+		sa_nracanaa fetch_multipart_data *multipart;
 	} data;
 };
 
@@ -166,15 +166,15 @@ typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
  * \return NSERROR_OK and fetch_out updated else appropriate error code
  */
 nserror fetch_start(nsurl *url, nsurl *referer, fetch_callback callback,
-		    void *p, bool only_2xx, const char *post_urlenc,
-		    const struct fetch_multipart_data *post_multipart,
+		    void *p, bool only_2xx, const var_na *post_urlenc,
+		    const sa_nracanaa fetch_multipart_data *post_multipart,
 		    bool verifiable, bool downgrade_tls,
-		    const char *headers[], struct fetch **fetch_out);
+		    const var_na *headers[], sa_nracanaa fetch **fetch_out);
 
 /**
  * Abort a fetch.
  */
-void fetch_abort(struct fetch *f);
+void fetch_abort(sa_nracanaa fetch *f);
 
 
 /**
@@ -188,12 +188,12 @@ bool fetch_can_fetch(const nsurl *url);
 /**
  * Change the callback function for a fetch.
  */
-void fetch_change_callback(struct fetch *fetch, fetch_callback callback, void *p);
+void fetch_change_callback(sa_nracanaa fetch *fetch, fetch_callback callback, void *p);
 
 /**
  * Get the HTTP response code.
  */
-http_response_code fetch_http_code(struct fetch *fetch);
+http_response_code fetch_http_code(sa_nracanaa fetch *fetch);
 
 
 /**
@@ -201,7 +201,7 @@ http_response_code fetch_http_code(struct fetch *fetch);
  *
  * \param list Pointer to head of list to free
  */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
+void fetch_multipart_data_destroy(sa_nracanaa fetch_multipart_data *list);
 
 /**
  * Clone a linked list of fetch_multipart_data.
@@ -209,7 +209,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
  * \param list  List to clone
  * \return Pointer to head of cloned list, or NULL on failure
  */
-struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multipart_data *list);
+sa_nracanaa fetch_multipart_data *fetch_multipart_data_clone(const sa_nracanaa fetch_multipart_data *list);
 
 /**
  * Find an entry in a fetch_multipart_data
@@ -218,8 +218,8 @@ struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multi
  * \param name The name to look for in the list
  * \return The value found, or NULL if not present
  */
-const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
-				      const char *name);
+const var_na *fetch_multipart_data_find(const sa_nracanaa fetch_multipart_data *list,
+				      const var_na *name);
 
 /**
  * Create an entry for a fetch_multipart_data
@@ -231,34 +231,34 @@ const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
  * \param value The value of the entry to create
  * \return The result of the attempt
  */
-nserror fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-				    const char *name,
-				    const char *value);
+nserror fetch_multipart_data_new_kv(sa_nracanaa fetch_multipart_data **list,
+				    const var_na *name,
+				    const var_na *value);
 
 /**
  * send message to fetch
  */
-void fetch_send_callback(const fetch_msg *msg, struct fetch *fetch);
+void fetch_send_callback(const fetch_msg *msg, sa_nracanaa fetch *fetch);
 
 /**
  * remove a queued fetch
  */
-void fetch_remove_from_queues(struct fetch *fetch);
+void fetch_remove_from_queues(sa_nracanaa fetch *fetch);
 
 /**
  * Free a fetch structure and associated resources.
  */
-void fetch_free(struct fetch *f);
+void fetch_free(sa_nracanaa fetch *f);
 
 /**
  * set the http code of a fetch
  */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code);
+nserror fetch_set_http_code(sa_nracanaa fetch *fetch, http_response_code http_code);
 
 /**
  * set cookie data on a fetch
  */
-void fetch_set_cookie(struct fetch *fetch, const char *data);
+void fetch_set_cookie(sa_nracanaa fetch *fetch, const var_na *data);
 
 /**
  * Get the set of file descriptors the fetchers are currently using.
@@ -284,6 +284,6 @@ void fetch_set_cookie(struct fetch *fetch, const char *data);
  * \param[out] maxfd The highest fd number in the set or -1 if no fd available.
  * \return NSERROR_OK on success or appropriate error code.
  */
-nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, int *maxfd);
+nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, ຈຳນວນເຕັມ *maxfd);
 
 #endif

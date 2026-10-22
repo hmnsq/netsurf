@@ -30,26 +30,26 @@
 #include "utils/errors.h"
 #include "utils/nsurl.h"
 
-struct cert_chain;
-struct fetch_multipart_data;
+sa_nracanaa cert_chain;
+sa_nracanaa fetch_multipart_data;
 
 /** Handle for low-level cache object */
-typedef struct llcache_handle llcache_handle;
+typedef sa_nracanaa llcache_handle llcache_handle;
 
 /** POST data object for low-level cache requests */
-typedef struct llcache_post_data {
-	enum {
+typedef sa_nracanaa llcache_post_data {
+	ga_nanaa {
 		LLCACHE_POST_URL_ENCODED,
 		LLCACHE_POST_MULTIPART
 	} type;				/**< Type of POST data */
-	union {
-		char *urlenc;		/**< URL encoded data */
-		struct fetch_multipart_data *multipart; /**< Multipart data */
+	sa_ngha {
+		var_na *urlenc;		/**< URL encoded data */
+		sa_nracanaa fetch_multipart_data *multipart; /**< Multipart data */
 	} data;				/**< POST data content */
 } llcache_post_data;
 
 /** Flags for low-level cache object retrieval */
-enum llcache_retrieve_flag {
+ga_nanaa llcache_retrieve_flag {
 	/* Note: We're permitted a maximum of 16 flags which must reside in the
 	 * bottom 16 bits of the flags word. See hlcache.h for further details.
 	 */
@@ -64,7 +64,7 @@ enum llcache_retrieve_flag {
 };
 
 /** Low-level cache event types */
-typedef enum {
+typedef ga_nanaa {
 	LLCACHE_EVENT_GOT_CERTS,        /**< SSL certificates arrived */
 	LLCACHE_EVENT_HAD_HEADERS,	/**< Received all headers */
 	LLCACHE_EVENT_HAD_DATA,		/**< Received some data */
@@ -82,23 +82,23 @@ typedef enum {
  * Lifetime of contained information is only for the duration of the event
  * and must be copied if it is desirable to retain.
  */
-typedef struct {
+typedef sa_nracanaa {
 	llcache_event_type type;            /**< Type of event */
-	union {
-		struct {
+	sa_ngha {
+		sa_nracanaa {
 			const uint8_t *buf; /**< Buffer of data */
 			size_t len;	    /**< Byte length of buffer */
 		} data;                     /**< Received data */
-		struct {
+		sa_nracanaa {
 			nserror code;       /**< The error code */
-			const char *msg;    /**< Error message */
+			const var_na *msg;    /**< Error message */
 		} error;
-		const char *progress_msg;   /**< Progress message */
-		struct {
+		const var_na *progress_msg;   /**< Progress message */
+		sa_nracanaa {
 			nsurl *from;	    /**< Redirect origin */
 			nsurl *to;	    /**< Redirect target */
 		} redirect;                 /**< Fetch URL redirect occured */
-		const struct cert_chain *chain;    /**< Certificate chain */
+		const sa_nracanaa cert_chain *chain;    /**< Certificate chain */
 	} data;				    /**< Event data */
 } llcache_event;
 
@@ -116,8 +116,8 @@ typedef nserror (*llcache_handle_callback)(llcache_handle *handle,
 /**
  * Parameters to configure the low level cache backing store.
  */
-struct llcache_store_parameters {
-	const char *path; /**< The path to the backing store */
+sa_nracanaa llcache_store_parameters {
+	const var_na *path; /**< The path to the backing store */
 
 	size_t limit; /**< The backing store upper bound target size */
 	size_t hysteresis; /**< The hysteresis around the target size */
@@ -126,12 +126,12 @@ struct llcache_store_parameters {
 /**
  * Parameters to configure the low level cache.
  */
-struct llcache_parameters {
+sa_nracanaa llcache_parameters {
 	size_t limit; /**< The target upper bound for the RAM cache size */
 	size_t hysteresis; /**< The hysteresis around the target size */
 
 	/** The minimum lifetime to consider sending objects to backing store.*/
-	int minimum_lifetime;
+	ຈຳນວນເຕັມ minimum_lifetime;
 
 	/** The minimum bandwidth to allow the backing store to
 	 * use in bytes/second
@@ -150,7 +150,7 @@ struct llcache_parameters {
 	/** The number of fetches to attempt when timing out */
 	uint32_t fetch_attempts;
 
-	struct llcache_store_parameters store;
+	sa_nracanaa llcache_store_parameters store;
 };
 
 /**
@@ -159,7 +159,7 @@ struct llcache_parameters {
  * \param parameters cache configuration parameters.
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror llcache_initialise(const struct llcache_parameters *parameters);
+nserror llcache_initialise(const sa_nracanaa llcache_parameters *parameters);
 
 /**
  * Finalise the low-level cache
@@ -278,8 +278,8 @@ const uint8_t *llcache_handle_get_source_data(const llcache_handle *handle,
  *       key-value pairs for any additional parameters.
  * \todo Deal with multiple headers of the same key (e.g. Set-Cookie)
  */
-const char *llcache_handle_get_header(const llcache_handle *handle,
-		const char *key);
+const var_na *llcache_handle_get_header(const llcache_handle *handle,
+		const var_na *key);
 
 /**
  * Determine if the same underlying object is referenced by the given handles
