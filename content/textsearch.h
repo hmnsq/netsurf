@@ -21,15 +21,15 @@
  * Interface to HTML searching.
  */
 
-#ifndef NETSURF_CONTENT_SEARCH_H
-#define NETSURF_CONTENT_SEARCH_H
+#ifndef NETSURF_CONTENT_تلاش_H
+#define NETSURF_CONTENT_تلاش_H
 
-#include "desktop/search.h"
+#ضمن "desktop/search.h"
 
-struct textsearch_context;
-struct content;
-struct hlcache_handle;
-struct box;
+بنية textsearch_context;
+بنية content;
+بنية hlcache_handle;
+بنية box;
 
 /**
  * Free text search a content
@@ -40,20 +40,20 @@ struct box;
  * \param[in] The string being searched for.
  * \retun NSERROR_OK on success else error code on faliure
  */
-nserror content_textsearch(struct hlcache_handle *h, void *context, search_flags_t flags, const char *string);
+nserror content_textsearch(بنية hlcache_handle *h, فراغ *context, تلاش_flags_t flags, ثابت حرف *string);
 
 /**
  * Clear a search
  *
  * \param[in] h Handle to content to clear search from.
  */
-nserror content_textsearch_clear(struct hlcache_handle *h);
+nserror content_textsearch_clear(بنية hlcache_handle *h);
 
 /**
  * Ends the search process, invalidating all state freeing the list of
  * found boxes.
  */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch);
+nserror content_textsearch_destroy(بنية textsearch_context *textsearch);
 
 /**
  * Determines whether any portion of the given text box should be
@@ -67,7 +67,7 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch);
  * \param end_idx      byte offset of highlight end
  * \return true iff part of the box should be highlighted
  */
-bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
+bool content_textsearch_ishighlighted(بنية textsearch_context *textsearch,
 				      unsigned start_offset,
 				      unsigned end_offset,
 				      unsigned *start_idx,
@@ -84,7 +84,7 @@ bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
  * \param  m_len      accepts length of match in bytes
  * \return pointer to first match, NULL if none
  */
-const char *content_textsearch_find_pattern(const char *string, int s_len, const char *pattern, int p_len, bool case_sens, unsigned int *m_len);
+ثابت حرف *content_textsearch_find_pattern(ثابت حرف *string, صحيح s_len, ثابت حرف *pattern, صحيح p_len, bool case_sens, unsigned صحيح *m_len);
 
 /**
  * Add a new entry to the list of matches
@@ -96,6 +96,6 @@ const char *content_textsearch_find_pattern(const char *string, int s_len, const
  * \param end A pointer for the end
  * \return NSERROR_OK on sucess else error code on faliure
  */
-nserror content_textsearch_add_match(struct textsearch_context *context, unsigned start_idx, unsigned end_idx, struct box *start_ptr, struct box *end_ptr);
+nserror content_textsearch_add_match(بنية textsearch_context *context, unsigned start_idx, unsigned end_idx, بنية box *start_ptr, بنية box *end_ptr);
 
 #endif
