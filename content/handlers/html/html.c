@@ -22,65 +22,65 @@
  * Implementation of HTML content handling.
  */
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
-#include <nsutils/time.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <strings.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <nsutils/time.h>
 
-#include "utils/utils.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/http.h"
-#include "utils/libdom.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/talloc.h"
-#include "utils/utf8.h"
-#include "utils/nsoption.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/utf8.h"
-#include "netsurf/keypress.h"
-#include "netsurf/layout.h"
-#include "netsurf/misc.h"
-#include "content/hlcache.h"
-#include "content/content_factory.h"
-#include "content/textsearch.h"
-#include "desktop/selection.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
-#include "netsurf/bitmap.h"
-#include "javascript/js.h"
-#include "desktop/gui_internal.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/http.h"
+#అన్తర్భావ "utils/libdom.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/talloc.h"
+#అన్తర్భావ "utils/utf8.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "utils/string.h"
+#అన్తర్భావ "utils/ascii.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "netsurf/browser_window.h"
+#అన్తర్భావ "netsurf/utf8.h"
+#అన్తర్భావ "netsurf/keypress.h"
+#అన్తర్భావ "netsurf/layout.h"
+#అన్తర్భావ "netsurf/misc.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "content/textsearch.h"
+#అన్తర్భావ "desktop/selection.h"
+#అన్తర్భావ "desktop/scrollbar.h"
+#అన్తర్భావ "desktop/textarea.h"
+#అన్తర్భావ "netsurf/bitmap.h"
+#అన్తర్భావ "javascript/js.h"
+#అన్తర్భావ "desktop/gui_internal.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/dom_event.h"
-#include "html/css.h"
-#include "html/object.h"
-#include "html/html_save.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/box_inspect.h"
-#include "html/form_internal.h"
-#include "html/imagemap.h"
-#include "html/layout.h"
-#include "html/textselection.h"
+#అన్తర్భావ "html/html.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/dom_event.h"
+#అన్తర్భావ "html/css.h"
+#అన్తర్భావ "html/object.h"
+#అన్తర్భావ "html/html_save.h"
+#అన్తర్భావ "html/interaction.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_construct.h"
+#అన్తర్భావ "html/box_inspect.h"
+#అన్తర్భావ "html/form_internal.h"
+#అన్తర్భావ "html/imagemap.h"
+#అన్తర్భావ "html/layout.h"
+#అన్తర్భావ "html/textselection.h"
 
-#define CHUNK 4096
+#నిర్వచించు CHUNK 4096
 
 /* Change these to 1 to cause a dump to stderr of the frameset or box
  * when the trees have been built.
  */
-#define ALWAYS_DUMP_FRAMESET 0
-#define ALWAYS_DUMP_BOX 0
+#నిర్వచించు ALWAYS_DUMP_FRAMESET 0
+#నిర్వచించు ALWAYS_DUMP_BOX 0
 
-static const char *html_types[] = {
+స్థిర స్థిరరాశి అక్షరం *html_types[] = {
 	"application/xhtml+xml",
 	"text/html"
 };
@@ -94,117 +94,117 @@ static const char *html_types[] = {
  * \param[in] target  the event target
  * \return true on success
  */
-static bool fire_dom_event(dom_event *event, dom_node *target)
+స్థిర bool fire_dom_event(dom_event *event, dom_కణుపు *లక్ష్యం)
 {
 	dom_exception exc;
-	bool result;
+	bool ఫలితం;
 
-	exc = dom_event_target_dispatch_event(target, event, &result);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_event_లక్ష్యం_dispatch_event(లక్ష్యం, event, &ఫలితం);
+	ఒకవేళ (exc != DOM_NO_ERR) {
+		తిరిగి false;
 	}
 
-	return result;
+	తిరిగి ఫలితం;
 }
 
 /* Exported interface, see html_internal.h */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_కణుపు *లక్ష్యం,
 		bool bubbles, bool cancelable)
 {
 	dom_exception exc;
 	dom_event *evt;
-	bool result;
+	bool ఫలితం;
 
 	exc = dom_event_create(&evt);
-	if (exc != DOM_NO_ERR) return false;
+	ఒకవేళ (exc != DOM_NO_ERR) తిరిగి false;
 	exc = dom_event_init(evt, type, bubbles, cancelable);
-	if (exc != DOM_NO_ERR) {
+	ఒకవేళ (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return false;
+		తిరిగి false;
 	}
 	NSLOG(netsurf, INFO, "Dispatching '%*s' against %p",
-	      (int)dom_string_length(type), dom_string_data(type), target);
-	result = fire_dom_event(evt, target);
+	      (పూర్ణాంకం)dom_string_నిడివి(type), dom_string_దత్తాంశం(type), లక్ష్యం);
+	ఫలితం = fire_dom_event(evt, లక్ష్యం);
 	dom_event_unref(evt);
-	return result;
+	తిరిగి ఫలితం;
 }
 
 /* Exported interface, see html_internal.h */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key)
+bool fire_dom_keyboard_event(dom_string *type, dom_కణుపు *లక్ష్యం,
+		bool bubbles, bool cancelable, uint32_t కీలకం)
 {
-	bool is_special = key <= 0x001F || (0x007F <= key && key <= 0x009F);
-	dom_string *dom_key = NULL;
+	bool is_special = కీలకం <= 0x001F || (0x007F <= కీలకం && కీలకం <= 0x009F);
+	dom_string *dom_కీలకం = ఖాళీ;
 	dom_keyboard_event *evt;
 	dom_exception exc;
-	bool result;
+	bool ఫలితం;
 
-	if (is_special) {
-		switch (key) {
-		case NS_KEY_ESCAPE:
-			dom_key = dom_string_ref(corestring_dom_Escape);
-			break;
-		case NS_KEY_LEFT:
-			dom_key = dom_string_ref(corestring_dom_ArrowLeft);
-			break;
-		case NS_KEY_RIGHT:
-			dom_key = dom_string_ref(corestring_dom_ArrowRight);
-			break;
-		case NS_KEY_UP:
-			dom_key = dom_string_ref(corestring_dom_ArrowUp);
-			break;
-		case NS_KEY_DOWN:
-			dom_key = dom_string_ref(corestring_dom_ArrowDown);
-			break;
-		case NS_KEY_PAGE_UP:
-			dom_key = dom_string_ref(corestring_dom_PageUp);
-			break;
-		case NS_KEY_PAGE_DOWN:
-			dom_key = dom_string_ref(corestring_dom_PageDown);
-			break;
-		case NS_KEY_TEXT_START:
-			dom_key = dom_string_ref(corestring_dom_Home);
-			break;
-		case NS_KEY_TEXT_END:
-			dom_key = dom_string_ref(corestring_dom_End);
-			break;
-		default:
-			dom_key = NULL;
-			break;
+	ఒకవేళ (is_special) {
+		ఎంపిక (కీలకం) {
+		స్థితి NS_కీలకం_ESCAPE:
+			dom_కీలకం = dom_string_ref(corestring_dom_Escape);
+			ఆపు;
+		స్థితి NS_కీలకం_ఎడమ:
+			dom_కీలకం = dom_string_ref(corestring_dom_Arrow_ఎడమ);
+			ఆపు;
+		స్థితి NS_కీలకం_కుడి:
+			dom_కీలకం = dom_string_ref(corestring_dom_Arrow_కుడి);
+			ఆపు;
+		స్థితి NS_కీలకం_పైకి:
+			dom_కీలకం = dom_string_ref(corestring_dom_Arrow_పైకి);
+			ఆపు;
+		స్థితి NS_కీలకం_కిందికి:
+			dom_కీలకం = dom_string_ref(corestring_dom_Arrow_కిందికి);
+			ఆపు;
+		స్థితి NS_కీలకం_పుట_పైకి:
+			dom_కీలకం = dom_string_ref(corestring_dom_పుట_పైకి);
+			ఆపు;
+		స్థితి NS_కీలకం_పుట_కిందికి:
+			dom_కీలకం = dom_string_ref(corestring_dom_పుట_కిందికి);
+			ఆపు;
+		స్థితి NS_కీలకం_పాఠ్యం_ప్రారంభం:
+			dom_కీలకం = dom_string_ref(corestring_dom_Home);
+			ఆపు;
+		స్థితి NS_కీలకం_పాఠ్యం_చివర:
+			dom_కీలకం = dom_string_ref(corestring_dom_చివర);
+			ఆపు;
+		అప్రమేయ:
+			dom_కీలకం = ఖాళీ;
+			ఆపు;
 		}
-	} else {
-		char utf8[6];
-		size_t length = utf8_from_ucs4(key, utf8);
-		utf8[length] = '\0';
+	} లేకపోతే {
+		అక్షరం utf8[6];
+		size_t నిడివి = utf8_from_ucs4(కీలకం, utf8);
+		utf8[నిడివి] = '\0';
 
-		exc = dom_string_create((const uint8_t *)utf8, strlen(utf8),
-				&dom_key);
-		if (exc != DOM_NO_ERR) {
-			return exc;
+		exc = dom_string_create((స్థిరరాశి uint8_t *)utf8, అక్షరశ్రేణి_పొడవు(utf8),
+				&dom_కీలకం);
+		ఒకవేళ (exc != DOM_NO_ERR) {
+			తిరిగి exc;
 		}
 	}
 
 	exc = dom_keyboard_event_create(&evt);
-	if (exc != DOM_NO_ERR) {
-		dom_string_unref(dom_key);
-		return false;
+	ఒకవేళ (exc != DOM_NO_ERR) {
+		dom_string_unref(dom_కీలకం);
+		తిరిగి false;
 	}
 
-	exc = dom_keyboard_event_init(evt, type, bubbles, cancelable, NULL,
-			dom_key, NULL, DOM_KEY_LOCATION_STANDARD, false,
+	exc = dom_keyboard_event_init(evt, type, bubbles, cancelable, ఖాళీ,
+			dom_కీలకం, ఖాళీ, DOM_కీలకం_LOCATION_STANDARD, false,
 			false, false, false, false, false);
-	dom_string_unref(dom_key);
-	if (exc != DOM_NO_ERR) {
+	dom_string_unref(dom_కీలకం);
+	ఒకవేళ (exc != DOM_NO_ERR) {
 		dom_event_unref(evt);
-		return false;
+		తిరిగి false;
 	}
 
 	NSLOG(netsurf, INFO, "Dispatching '%*s' against %p",
-			(int)dom_string_length(type), dom_string_data(type), target);
+			(పూర్ణాంకం)dom_string_నిడివి(type), dom_string_దత్తాంశం(type), లక్ష్యం);
 
-	result = fire_dom_event((dom_event *) evt, target);
+	ఫలితం = fire_dom_event((dom_event *) evt, లక్ష్యం);
 	dom_event_unref(evt);
-	return result;
+	తిరిగి ఫలితం;
 }
 
 /**
@@ -213,143 +213,143 @@ bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
  * \param c        HTML content to complete conversion of
  * \param success  Whether box tree construction was successful
  */
-static void html_box_convert_done(html_content *c, bool success)
+స్థిర శూన్య html_box_convert_పూర్తి(html_content *c, bool success)
 {
 	nserror err;
 	dom_exception exc; /* returned by libdom functions */
-	dom_node *html;
+	dom_కణుపు *html;
 
 	NSLOG(netsurf, INFO, "DOM to box conversion complete (content %p)", c);
 
-	c->box_conversion_context = NULL;
+	c->box_conversion_context = ఖాళీ;
 
 	/* Clean up and report error if unsuccessful or aborted */
-	if ((success == false) || (c->aborted)) {
+	ఒకవేళ ((success == false) || (c->aborted)) {
 		html_object_free_objects(c);
 
-		if (success == false) {
-			content_broadcast_error(&c->base, NSERROR_BOX_CONVERT, NULL);
-		} else {
-			content_broadcast_error(&c->base, NSERROR_STOPPED, NULL);
+		ఒకవేళ (success == false) {
+			content_ప్రసారం_error(&c->పునాది, NSERROR_BOX_CONVERT, ఖాళీ);
+		} లేకపోతే {
+			content_ప్రసారం_error(&c->పునాది, NSERROR_STOPPED, ఖాళీ);
 		}
 
-		content_set_error(&c->base);
-		return;
+		content_సమితి_error(&c->పునాది);
+		తిరిగి;
 	}
 
 
-#if ALWAYS_DUMP_BOX
+#ఒకవేళ ALWAYS_DUMP_BOX
 	box_dump(stderr, c->layout->children, 0, true);
-#endif
-#if ALWAYS_DUMP_FRAMESET
-	if (c->frameset)
+#అయితే_ముగింపు
+#ఒకవేళ ALWAYS_DUMP_FRAMESET
+	ఒకవేళ (c->frameset)
 		html_dump_frameset(c->frameset, 0);
-#endif
+#అయితే_ముగింపు
 
-	exc = dom_document_get_document_element(c->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(c->document, (శూన్య *) &html);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (html == ఖాళీ)) {
 		/** @todo should this call html_object_free_objects(c);
 		 * like the other error paths
 		 */
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&c->base, NSERROR_DOM, NULL);
-		content_set_error(&c->base);
-		return;
+		content_ప్రసారం_error(&c->పునాది, NSERROR_DOM, ఖాళీ);
+		content_సమితి_error(&c->పునాది);
+		తిరిగి;
 	}
 
 	/* extract image maps - can't do this sensibly in dom_to_box */
-	err = imagemap_extract(c);
-	if (err != NSERROR_OK) {
+	err = imagemap_వెలికితీయి(c);
+	ఒకవేళ (err != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "imagemap extraction failed");
 		html_object_free_objects(c);
-		content_broadcast_error(&c->base, err, NULL);
-		content_set_error(&c->base);
-		dom_node_unref(html);
-		return;
+		content_ప్రసారం_error(&c->పునాది, err, ఖాళీ);
+		content_సమితి_error(&c->పునాది);
+		dom_కణుపు_unref(html);
+		తిరిగి;
 	}
 	/*imagemap_dump(c);*/
 
 	/* Destroy the parser binding */
 	dom_hubbub_parser_destroy(c->parser);
-	c->parser = NULL;
+	c->parser = ఖాళీ;
 
-	content_set_ready(&c->base);
+	content_సమితి_ready(&c->పునాది);
 
-	html_proceed_to_done(c);
+	html_proceed_గమ్యం_పూర్తి(c);
 
-	dom_node_unref(html);
+	dom_కణుపు_unref(html);
 }
 
 /* Documented in html_internal.h */
 nserror
-html_proceed_to_done(html_content *html)
+html_proceed_గమ్యం_పూర్తి(html_content *html)
 {
-	switch (content__get_status(&html->base)) {
-	case CONTENT_STATUS_READY:
-		if (html->base.active == 0) {
-			content_set_done(&html->base);
-			return NSERROR_OK;
+	ఎంపిక (content_get_స్థితి_2(&html->పునాది)) {
+	స్థితి CONTENT_స్థితి_READY:
+		ఒకవేళ (html->పునాది.చురుకైన == 0) {
+			content_సమితి_పూర్తి(&html->పునాది);
+			తిరిగి NSERROR_OK;
 		}
-		break;
-	case CONTENT_STATUS_DONE:
+		ఆపు;
+	స్థితి CONTENT_స్థితి_పూర్తి:
 		/* fallthrough */
-	case CONTENT_STATUS_LOADING:
-		return NSERROR_OK;
-	default:
+	స్థితి CONTENT_స్థితి_LOADING:
+		తిరిగి NSERROR_OK;
+	అప్రమేయ:
 		NSLOG(netsurf, ERROR, "Content status unexpectedly not LOADING/READY/DONE");
-		break;
+		ఆపు;
 	}
-	return NSERROR_UNKNOWN;
+	తిరిగి NSERROR_UNKNOWN;
 }
 
 
-static void html_get_dimensions(html_content *htmlc)
+స్థిర శూన్య html_get_dimensions(html_content *htmlc)
 {
 	css_fixed device_dpi = nscss_screen_dpi;
-	unsigned f_size;
-	unsigned f_min;
-	unsigned w;
-	unsigned h;
-	union content_msg_data msg_data = {
+	గుర్తులేని f_కొలత;
+	గుర్తులేని f_min;
+	గుర్తులేని w;
+	గుర్తులేని h;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం = {
 		.getdims = {
-			.viewport_width = &w,
-			.viewport_height = &h,
+			.viewport_వెడల్పు = &w,
+			.viewport_ఎత్తు = &h,
 		},
 	};
 
-	content_broadcast(&htmlc->base, CONTENT_MSG_GETDIMS, &msg_data);
+	content_ప్రసారం(&htmlc->పునాది, CONTENT_సందేశం_GETDIMS, &సందేశం_దత్తాంశం);
 
 
 	w = css_unit_device2css_px(INTTOFIX(w), device_dpi);
 	h = css_unit_device2css_px(INTTOFIX(h), device_dpi);
 
-	htmlc->media.width  = w;
-	htmlc->media.height = h;
-	htmlc->unit_len_ctx.viewport_width  = w;
-	htmlc->unit_len_ctx.viewport_height = h;
+	htmlc->media.వెడల్పు  = w;
+	htmlc->media.ఎత్తు = h;
+	htmlc->unit_len_ctx.viewport_వెడల్పు  = w;
+	htmlc->unit_len_ctx.viewport_ఎత్తు = h;
 	htmlc->unit_len_ctx.device_dpi = device_dpi;
 
 	/** \todo Change nsoption font sizes to px. */
-	f_size = FDIV(FMUL(F_96, FDIV(INTTOFIX(nsoption_int(font_size)), F_10)), F_72);
-	f_min  = FDIV(FMUL(F_96, FDIV(INTTOFIX(nsoption_int(font_min_size)), F_10)), F_72);
+	f_కొలత = FDIV(FMUL(F_96, FDIV(INTTOFIX(nsoption_int(font_కొలత)), F_10)), F_72);
+	f_min  = FDIV(FMUL(F_96, FDIV(INTTOFIX(nsoption_int(font_min_కొలత)), F_10)), F_72);
 
-	htmlc->unit_len_ctx.font_size_default = f_size;
-	htmlc->unit_len_ctx.font_size_minimum = f_min;
+	htmlc->unit_len_ctx.font_కొలత_default = f_కొలత;
+	htmlc->unit_len_ctx.font_కొలత_minimum = f_min;
 }
 
 /* exported function documented in html/html_internal.h */
-void html_finish_conversion(html_content *htmlc)
+శూన్య html_ముగింపు_conversion(html_content *htmlc)
 {
-	union content_msg_data msg_data;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 	dom_exception exc; /* returned by libdom functions */
-	dom_node *html;
+	dom_కణుపు *html;
 	nserror error;
 
 	/* Bail out if we've been aborted */
-	if (htmlc->aborted) {
-		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, NULL);
-		content_set_error(&htmlc->base);
-		return;
+	ఒకవేళ (htmlc->aborted) {
+		content_ప్రసారం_error(&htmlc->పునాది, NSERROR_STOPPED, ఖాళీ);
+		content_సమితి_error(&htmlc->పునాది);
+		తిరిగి;
 	}
 
 	/* If we already have a selection context, then we have already
@@ -362,18 +362,18 @@ void html_finish_conversion(html_content *htmlc)
 	 * NetSurf has no concept of dynamically changing documents, so this
 	 * would break badly.
 	 */
-	if (htmlc->select_ctx != NULL) {
+	ఒకవేళ (htmlc->select_ctx != ఖాళీ) {
 		NSLOG(netsurf, INFO,
 				"Ignoring style change: NS layout is static.");
-		return;
+		తిరిగి;
 	}
 
 	/* create new css selection context */
 	error = html_css_new_selection_context(htmlc, &htmlc->select_ctx);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&htmlc->base, error, NULL);
-		content_set_error(&htmlc->base);
-		return;
+	ఒకవేళ (error != NSERROR_OK) {
+		content_ప్రసారం_error(&htmlc->పునాది, error, ఖాళీ);
+		content_సమితి_error(&htmlc->పునాది);
+		తిరిగి;
 	}
 
 
@@ -381,114 +381,114 @@ void html_finish_conversion(html_content *htmlc)
 	 * object, but with its target set to the Document object (and
 	 * the currentTarget set to the Window object)
 	 */
-	if (htmlc->jsthread != NULL) {
-		js_fire_event(htmlc->jsthread, "load", htmlc->document, NULL);
+	ఒకవేళ (htmlc->jsthread != ఖాళీ) {
+		js_fire_event(htmlc->jsthread, "load", htmlc->document, ఖాళీ);
 	}
 
 	/* convert dom tree to box tree */
 	NSLOG(netsurf, INFO, "DOM to box (%p)", htmlc);
-	content_set_status(&htmlc->base, messages_get("Processing"));
-	msg_data.explicit_status_text = NULL;
-	content_broadcast(&htmlc->base, CONTENT_MSG_STATUS, &msg_data);
+	content_సమితి_స్థితి(&htmlc->పునాది, messages_get("Processing"));
+	సందేశం_దత్తాంశం.explicit_స్థితి_పాఠ్యం = ఖాళీ;
+	content_ప్రసారం(&htmlc->పునాది, CONTENT_సందేశం_స్థితి, &సందేశం_దత్తాంశం);
 
-	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(htmlc->document, (శూన్య *) &html);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (html == ఖాళీ)) {
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		content_set_error(&htmlc->base);
-		return;
+		content_ప్రసారం_error(&htmlc->పునాది, NSERROR_DOM, ఖాళీ);
+		content_సమితి_error(&htmlc->పునాది);
+		తిరిగి;
 	}
 
 	html_get_dimensions(htmlc);
 
-	error = dom_to_box(html, htmlc, html_box_convert_done, &htmlc->box_conversion_context);
-	if (error != NSERROR_OK) {
+	error = dom_గమ్యం_box(html, htmlc, html_box_convert_పూర్తి, &htmlc->box_conversion_context);
+	ఒకవేళ (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "box conversion failed");
-		dom_node_unref(html);
+		dom_కణుపు_unref(html);
 		html_object_free_objects(htmlc);
-		content_broadcast_error(&htmlc->base, error, NULL);
-		content_set_error(&htmlc->base);
-		return;
+		content_ప్రసారం_error(&htmlc->పునాది, error, ఖాళీ);
+		content_సమితి_error(&htmlc->పునాది);
+		తిరిగి;
 	}
 
-	dom_node_unref(html);
+	dom_కణుపు_unref(html);
 }
 
 
-static void
-html_document_user_data_handler(dom_node_operation operation,
-				dom_string *key, void *data,
-				struct dom_node *src,
-				struct dom_node *dst)
+స్థిర శూన్య
+html_document_user_దత్తాంశం_handler(dom_కణుపు_operation operation,
+				dom_string *కీలకం, శూన్య *దత్తాంశం,
+				నిర్మాణం dom_కణుపు *src,
+				నిర్మాణం dom_కణుపు *dst)
 {
-	if (dom_string_isequal(corestring_dom___ns_key_html_content_data,
-			       key) == false || data == NULL) {
-		return;
+	ఒకవేళ (dom_string_isequal(corestring_dom_ns_కీలకం_html_content_దత్తాంశం,
+			       కీలకం) == false || దత్తాంశం == ఖాళీ) {
+		తిరిగి;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
+	ఎంపిక (operation) {
+	స్థితి DOM_కణుపు_CLONED:
 		NSLOG(netsurf, INFO, "Cloned");
-		break;
-	case DOM_NODE_RENAMED:
+		ఆపు;
+	స్థితి DOM_కణుపు_RENAMED:
 		NSLOG(netsurf, INFO, "Renamed");
-		break;
-	case DOM_NODE_IMPORTED:
+		ఆపు;
+	స్థితి DOM_కణుపు_IMPORTED:
 		NSLOG(netsurf, INFO, "imported");
-		break;
-	case DOM_NODE_ADOPTED:
+		ఆపు;
+	స్థితి DOM_కణుపు_ADOPTED:
 		NSLOG(netsurf, INFO, "Adopted");
-		break;
-	case DOM_NODE_DELETED:
+		ఆపు;
+	స్థితి DOM_కణుపు_DELETED:
 		/* This is the only path I expect */
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ప్రతిజ్ఞా(0);
 	}
 }
 
 
-static nserror
-html_create_html_data(html_content *c, const http_parameter *params)
+స్థిర nserror
+html_create_html_దత్తాంశం(html_content *c, స్థిరరాశి http_parameter *params)
 {
 	lwc_string *charset;
 	nserror nerror;
 	dom_hubbub_parser_params parse_params;
 	dom_hubbub_error error;
 	dom_exception err;
-	void *old_node_data;
-	const char *prefer_color_mode = (nsoption_bool(prefer_dark_mode)) ?
+	శూన్య *old_కణుపు_దత్తాంశం;
+	స్థిరరాశి అక్షరం *prefer_color_బహుళకం = (nsoption_bool(prefer_dark_బహుళకం)) ?
 			"dark" : "light";
 
-	c->parser = NULL;
+	c->parser = ఖాళీ;
 	c->parse_completed = false;
 	c->conversion_begun = false;
-	c->document = NULL;
-	c->quirks = DOM_DOCUMENT_QUIRKS_MODE_NONE;
-	c->encoding = NULL;
-	c->base_url = nsurl_ref(content_get_url(&c->base));
-	c->base_target = NULL;
+	c->document = ఖాళీ;
+	c->quirks = DOM_DOCUMENT_QUIRKS_బహుళకం_NONE;
+	c->encoding = ఖాళీ;
+	c->పునాది_url = nsurl_ref(content_get_url(&c->పునాది));
+	c->పునాది_లక్ష్యం = ఖాళీ;
 	c->aborted = false;
 	c->refresh = false;
 	c->reflowing = false;
-	c->title = NULL;
-	c->bctx = NULL;
-	c->layout = NULL;
-	c->background_colour = NS_TRANSPARENT;
-	c->stylesheet_count = 0;
-	c->stylesheets = NULL;
-	c->select_ctx = NULL;
+	c->title = ఖాళీ;
+	c->bctx = ఖాళీ;
+	c->layout = ఖాళీ;
+	c->background_రంగు = NS_TRANSPARENT;
+	c->stylesheet_లెక్క = 0;
+	c->stylesheets = ఖాళీ;
+	c->select_ctx = ఖాళీ;
 	c->media.type = CSS_MEDIA_SCREEN;
-	c->universal = NULL;
-	c->num_objects = 0;
-	c->object_list = NULL;
-	c->forms = NULL;
-	c->imagemaps = NULL;
-	c->bw = NULL;
-	c->frameset = NULL;
-	c->iframe = NULL;
-	c->page = NULL;
+	c->universal = ఖాళీ;
+	c->అంకె_objects = 0;
+	c->object_list = ఖాళీ;
+	c->forms = ఖాళీ;
+	c->imagemaps = ఖాళీ;
+	c->bw = ఖాళీ;
+	c->frameset = ఖాళీ;
+	c->iframe = ఖాళీ;
+	c->పుట = ఖాళీ;
 	c->font_func = guit->layout;
 	c->drag_type = HTML_DRAG_NONE;
 	c->drag_owner.no_owner = true;
@@ -496,48 +496,48 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	c->selection_owner.none = true;
 	c->focus_type = HTML_FOCUS_SELF;
 	c->focus_owner.self = true;
-	c->scripts_count = 0;
-	c->scripts = NULL;
-	c->jsthread = NULL;
+	c->scripts_లెక్క = 0;
+	c->scripts = ఖాళీ;
+	c->jsthread = ఖాళీ;
 
 	c->enable_scripting = nsoption_bool(enable_javascript);
-	c->base.active = 1; /* The html content itself is active */
+	c->పునాది.చురుకైన = 1; /* The html content itself is active */
 
-	if (lwc_intern_string("*", SLEN("*"), &c->universal) != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (lwc_intern_string("*", SLEN("*"), &c->universal) != lwc_error_ok) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	if (lwc_intern_string(prefer_color_mode, strlen(prefer_color_mode),
+	ఒకవేళ (lwc_intern_string(prefer_color_బహుళకం, అక్షరశ్రేణి_పొడవు(prefer_color_బహుళకం),
 			&c->media.prefers_color_scheme) != lwc_error_ok) {
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
-		return NSERROR_NOMEM;
+		c->universal = ఖాళీ;
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	c->sel = selection_create((struct content *)c);
+	c->sel = selection_create((నిర్మాణం content *)c);
 
-	nerror = http_parameter_list_find_item(params, corestring_lwc_charset, &charset);
-	if (nerror == NSERROR_OK) {
-		c->encoding = strdup(lwc_string_data(charset));
+	nerror = http_parameter_list_కనుగొను_అంశం(params, corestring_lwc_charset, &charset);
+	ఒకవేళ (nerror == NSERROR_OK) {
+		c->encoding = strdup(lwc_string_దత్తాంశం(charset));
 
 		lwc_string_unref(charset);
 
-		if (c->encoding == NULL) {
+		ఒకవేళ (c->encoding == ఖాళీ) {
 			lwc_string_unref(c->universal);
-			c->universal = NULL;
+			c->universal = ఖాళీ;
 			lwc_string_unref(c->media.prefers_color_scheme);
-			c->media.prefers_color_scheme = NULL;
-			return NSERROR_NOMEM;
+			c->media.prefers_color_scheme = ఖాళీ;
+			తిరిగి NSERROR_NOMEM;
 
 		}
-		c->encoding_source = DOM_HUBBUB_ENCODING_SOURCE_HEADER;
+		c->encoding_ఆధారం = DOM_HUBBUB_ENCODING_ఆధారం_శీర్షిక;
 	}
 
 	/* Create the parser binding */
 	parse_params.enc = c->encoding;
 	parse_params.fix_enc = true;
 	parse_params.enable_script = c->enable_scripting;
-	parse_params.msg = NULL;
+	parse_params.సందేశం = ఖాళీ;
 	parse_params.script = html_process_script;
 	parse_params.ctx = c;
 	parse_params.daf = html_dom_event_fetcher;
@@ -545,11 +545,11 @@ html_create_html_data(html_content *c, const http_parameter *params)
 	error = dom_hubbub_parser_create(&parse_params,
 					 &c->parser,
 					 &c->document);
-	if ((error != DOM_HUBBUB_OK) && (c->encoding != NULL)) {
+	ఒకవేళ ((error != DOM_HUBBUB_OK) && (c->encoding != ఖాళీ)) {
 		/* Ok, we don't support the declared encoding. Bailing out
 		 * isn't exactly user-friendly, so fall back to autodetect */
-		free(c->encoding);
-		c->encoding = NULL;
+		విడుదల(c->encoding);
+		c->encoding = ఖాళీ;
 
 		parse_params.enc = c->encoding;
 
@@ -557,40 +557,40 @@ html_create_html_data(html_content *c, const http_parameter *params)
 						 &c->parser,
 						 &c->document);
 	}
-	if (error != DOM_HUBBUB_OK) {
-		nsurl_unref(c->base_url);
-		c->base_url = NULL;
+	ఒకవేళ (error != DOM_HUBBUB_OK) {
+		nsurl_unref(c->పునాది_url);
+		c->పునాది_url = ఖాళీ;
 
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
+		c->universal = ఖాళీ;
 		lwc_string_unref(c->media.prefers_color_scheme);
-		c->media.prefers_color_scheme = NULL;
+		c->media.prefers_color_scheme = ఖాళీ;
 
-		return libdom_hubbub_error_to_nserror(error);
+		తిరిగి libdom_hubbub_error_గమ్యం_nserror(error);
 	}
 
-	err = dom_node_set_user_data(c->document,
-				     corestring_dom___ns_key_html_content_data,
-				     c, html_document_user_data_handler,
-				     (void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
+	err = dom_కణుపు_సమితి_user_దత్తాంశం(c->document,
+				     corestring_dom_ns_కీలకం_html_content_దత్తాంశం,
+				     c, html_document_user_దత్తాంశం_handler,
+				     (శూన్య *) &old_కణుపు_దత్తాంశం);
+	ఒకవేళ (err != DOM_NO_ERR) {
 		dom_hubbub_parser_destroy(c->parser);
-		c->parser = NULL;
-		nsurl_unref(c->base_url);
-		c->base_url = NULL;
+		c->parser = ఖాళీ;
+		nsurl_unref(c->పునాది_url);
+		c->పునాది_url = ఖాళీ;
 
 		lwc_string_unref(c->universal);
-		c->universal = NULL;
+		c->universal = ఖాళీ;
 		lwc_string_unref(c->media.prefers_color_scheme);
-		c->media.prefers_color_scheme = NULL;
+		c->media.prefers_color_scheme = ఖాళీ;
 
 		NSLOG(netsurf, INFO, "Unable to set user data.");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
-	assert(old_node_data == NULL);
+	ప్రతిజ్ఞా(old_కణుపు_దత్తాంశం == ఖాళీ);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
 }
 
@@ -601,91 +601,91 @@ html_create_html_data(html_content *c, const http_parameter *params)
  * created.
  */
 
-static nserror
-html_create(const content_handler *handler,
+స్థిర nserror
+html_create(స్థిరరాశి content_handler *handler,
 	    lwc_string *imime_type,
-	    const http_parameter *params,
+	    స్థిరరాశి http_parameter *params,
 	    llcache_handle *llcache,
-	    const char *fallback_charset,
+	    స్థిరరాశి అక్షరం *fallback_charset,
 	    bool quirks,
-	    struct content **c)
+	    నిర్మాణం content **c)
 {
 	html_content *html;
 	nserror error;
 
-	html = calloc(1, sizeof(html_content));
-	if (html == NULL)
-		return NSERROR_NOMEM;
+	html = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(html_content));
+	ఒకవేళ (html == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__init(&html->base, handler, imime_type, params,
+	error = content__init(&html->పునాది, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(html);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(html);
+		తిరిగి error;
 	}
 
-	error = html_create_html_data(html, params);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&html->base, error, NULL);
-		free(html);
-		return error;
+	error = html_create_html_దత్తాంశం(html, params);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_ప్రసారం_error(&html->పునాది, error, ఖాళీ);
+		విడుదల(html);
+		తిరిగి error;
 	}
 
 	error = html_css_new_stylesheets(html);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&html->base, error, NULL);
-		free(html);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		content_ప్రసారం_error(&html->పునాది, error, ఖాళీ);
+		విడుదల(html);
+		తిరిగి error;
 	}
 
-	*c = (struct content *) html;
+	*c = (నిర్మాణం content *) html;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 
-static nserror
-html_process_encoding_change(struct content *c,
-			     const char *data,
-			     unsigned int size)
+స్థిర nserror
+html_process_encoding_change(నిర్మాణం content *c,
+			     స్థిరరాశి అక్షరం *దత్తాంశం,
+			     గుర్తులేని పూర్ణాంకం కొలత)
 {
 	html_content *html = (html_content *) c;
 	dom_hubbub_parser_params parse_params;
 	dom_hubbub_error error;
-	const char *encoding;
-	const uint8_t *source_data;
-	size_t source_size;
+	స్థిరరాశి అక్షరం *encoding;
+	స్థిరరాశి uint8_t *ఆధారం_దత్తాంశం;
+	size_t ఆధారం_కొలత;
 
 	/* Retrieve new encoding */
 	encoding = dom_hubbub_parser_get_encoding(html->parser,
-						  &html->encoding_source);
-	if (encoding == NULL) {
-		return NSERROR_NOMEM;
+						  &html->encoding_ఆధారం);
+	ఒకవేళ (encoding == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	if (html->encoding != NULL) {
-		free(html->encoding);
-		html->encoding = NULL;
+	ఒకవేళ (html->encoding != ఖాళీ) {
+		విడుదల(html->encoding);
+		html->encoding = ఖాళీ;
 	}
 
 	html->encoding = strdup(encoding);
-	if (html->encoding == NULL) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (html->encoding == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	/* Destroy binding */
 	dom_hubbub_parser_destroy(html->parser);
-	html->parser = NULL;
+	html->parser = ఖాళీ;
 
-	if (html->document != NULL) {
-		dom_node_unref(html->document);
+	ఒకవేళ (html->document != ఖాళీ) {
+		dom_కణుపు_unref(html->document);
 	}
 
 	parse_params.enc = html->encoding;
 	parse_params.fix_enc = true;
 	parse_params.enable_script = html->enable_scripting;
-	parse_params.msg = NULL;
+	parse_params.సందేశం = ఖాళీ;
 	parse_params.script = html_process_script;
 	parse_params.ctx = html;
 	parse_params.daf = html_dom_event_fetcher;
@@ -694,13 +694,13 @@ html_process_encoding_change(struct content *c,
 	error = dom_hubbub_parser_create(&parse_params,
 					 &html->parser,
 					 &html->document);
-	if (error != DOM_HUBBUB_OK) {
+	ఒకవేళ (error != DOM_HUBBUB_OK) {
 		/* Ok, we don't support the declared encoding. Bailing out
 		 * isn't exactly user-friendly, so fall back to Windows-1252 */
-		free(html->encoding);
+		విడుదల(html->encoding);
 		html->encoding = strdup("Windows-1252");
-		if (html->encoding == NULL) {
-			return NSERROR_NOMEM;
+		ఒకవేళ (html->encoding == ఖాళీ) {
+			తిరిగి NSERROR_NOMEM;
 		}
 		parse_params.enc = html->encoding;
 
@@ -708,23 +708,23 @@ html_process_encoding_change(struct content *c,
 						 &html->parser,
 						 &html->document);
 
-		if (error != DOM_HUBBUB_OK) {
-			return libdom_hubbub_error_to_nserror(error);
+		ఒకవేళ (error != DOM_HUBBUB_OK) {
+			తిరిగి libdom_hubbub_error_గమ్యం_nserror(error);
 		}
 
 	}
 
-	source_data = content__get_source_data(c, &source_size);
+	ఆధారం_దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &ఆధారం_కొలత);
 
 	/* Reprocess all the data.  This is safe because
 	 * the encoding is now specified at parser start which means
 	 * it cannot be changed again.
 	 */
 	error = dom_hubbub_parser_parse_chunk(html->parser,
-					      source_data,
-					      source_size);
+					      ఆధారం_దత్తాంశం,
+					      ఆధారం_కొలత);
 
-	return libdom_hubbub_error_to_nserror(error);
+	తిరిగి libdom_hubbub_error_గమ్యం_nserror(error);
 }
 
 
@@ -732,31 +732,31 @@ html_process_encoding_change(struct content *c,
  * Process data for CONTENT_HTML.
  */
 
-static bool
-html_process_data(struct content *c, const char *data, unsigned int size)
+స్థిర bool
+html_process_దత్తాంశం(నిర్మాణం content *c, స్థిరరాశి అక్షరం *దత్తాంశం, గుర్తులేని పూర్ణాంకం కొలత)
 {
 	html_content *html = (html_content *) c;
 	dom_hubbub_error dom_ret;
 	nserror err = NSERROR_OK; /* assume its all going to be ok */
 
 	dom_ret = dom_hubbub_parser_parse_chunk(html->parser,
-					      (const uint8_t *) data,
-					      size);
+					      (స్థిరరాశి uint8_t *) దత్తాంశం,
+					      కొలత);
 
-	err = libdom_hubbub_error_to_nserror(dom_ret);
+	err = libdom_hubbub_error_గమ్యం_nserror(dom_ret);
 
 	/* deal with encoding change */
-	if (err == NSERROR_ENCODING_CHANGE) {
-		 err = html_process_encoding_change(c, data, size);
+	ఒకవేళ (err == NSERROR_ENCODING_CHANGE) {
+		 err = html_process_encoding_change(c, దత్తాంశం, కొలత);
 	}
 
 	/* broadcast the error if necessary */
-	if (err != NSERROR_OK) {
-		content_broadcast_error(c, err, NULL);
-		return false;
+	ఒకవేళ (err != NSERROR_OK) {
+		content_ప్రసారం_error(c, err, ఖాళీ);
+		తిరిగి false;
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -774,7 +774,7 @@ html_process_data(struct content *c, const char *data, unsigned int size)
  * being fetched.
  */
 
-static bool html_convert(struct content *c)
+స్థిర bool html_convert(నిర్మాణం content *c)
 {
 	html_content *htmlc = (html_content *) c;
 	dom_exception exc; /* returned by libdom functions */
@@ -788,14 +788,14 @@ static bool html_convert(struct content *c)
 	 * render and it would annoy the user to fail the entire
 	 * render for want of a quirks stylesheet.
 	 */
-	exc = dom_document_get_quirks_mode(htmlc->document, &htmlc->quirks);
-	if (exc == DOM_NO_ERR) {
+	exc = dom_document_get_quirks_బహుళకం(htmlc->document, &htmlc->quirks);
+	ఒకవేళ (exc == DOM_NO_ERR) {
 		html_css_quirks_stylesheets(htmlc);
 		NSLOG(netsurf, INFO, "quirks set to %d", htmlc->quirks);
 	}
 
-	htmlc->base.active--; /* the html fetch is no longer active */
-	NSLOG(netsurf, INFO, "%d fetches active (%p)", htmlc->base.active, c);
+	htmlc->పునాది.చురుకైన--; /* the html fetch is no longer active */
+	NSLOG(netsurf, INFO, "%d fetches active (%p)", htmlc->పునాది.చురుకైన, c);
 
 	/* The parse cannot be completed here because it may be paused
 	 * untill all the resources being fetched have completed.
@@ -804,39 +804,39 @@ static bool html_convert(struct content *c)
 	/* if there are no active fetches in progress no scripts are
 	 * being fetched or they completed already.
 	 */
-	if (html_can_begin_conversion(htmlc)) {
-		return html_begin_conversion(htmlc);
+	ఒకవేళ (html_can_begin_conversion(htmlc)) {
+		తిరిగి html_begin_conversion(htmlc);
 	}
-	return true;
+	తిరిగి true;
 }
 
 /* Exported interface documented in html_internal.h */
 bool html_can_begin_conversion(html_content *htmlc)
 {
-	unsigned int i;
+	గుర్తులేని పూర్ణాంకం i;
 
 	/* Cannot begin conversion if we're still fetching stuff */
-	if (htmlc->base.active != 0)
-		return false;
+	ఒకవేళ (htmlc->పునాది.చురుకైన != 0)
+		తిరిగి false;
 
-	for (i = 0; i != htmlc->stylesheet_count; i++) {
+	కొరకు (i = 0; i != htmlc->stylesheet_లెక్క; i++) {
 		/* Cannot begin conversion if the stylesheets are modified */
-		if (htmlc->stylesheets[i].modified)
-			return false;
+		ఒకవేళ (htmlc->stylesheets[i].modified)
+			తిరిగి false;
 	}
 
 	/* All is good, begin */
-	return true;
+	తిరిగి true;
 }
 
 bool
 html_begin_conversion(html_content *htmlc)
 {
-	dom_node *html;
+	dom_కణుపు *html;
 	nserror ns_error;
-	struct form *f;
+	నిర్మాణం form *f;
 	dom_exception exc; /* returned by libdom functions */
-	dom_string *node_name = NULL;
+	dom_string *కణుపు_name = ఖాళీ;
 	dom_hubbub_error error;
 
 	/* The act of completing the parse can result in additional data
@@ -850,42 +850,42 @@ html_begin_conversion(html_content *htmlc)
 	 * multiple times, so store a flag to indicate that parsing is
 	 * complete to avoid repeating the completion pointlessly.
 	 */
-	if (htmlc->parse_completed == false) {
+	ఒకవేళ (htmlc->parse_completed == false) {
 		NSLOG(netsurf, INFO, "Completing parse (%p)", htmlc);
 		/* complete parsing */
 		error = dom_hubbub_parser_completed(htmlc->parser);
-		if (error == DOM_HUBBUB_HUBBUB_ERR_PAUSED && htmlc->base.active > 0) {
+		ఒకవేళ (error == DOM_HUBBUB_HUBBUB_ERR_PAUSED && htmlc->పునాది.చురుకైన > 0) {
 			/* The act of completing the parse failed because we've
 			 * encountered a sync script which needs to run
 			 */
 			NSLOG(netsurf, INFO, "Completing parse brought synchronous JS to light, cannot complete yet");
-			return true;
+			తిరిగి true;
 		}
-		if (error != DOM_HUBBUB_OK) {
+		ఒకవేళ (error != DOM_HUBBUB_OK) {
 			NSLOG(netsurf, INFO, "Parsing failed");
 
-			content_broadcast_error(&htmlc->base,
-						libdom_hubbub_error_to_nserror(error),
-						NULL);
+			content_ప్రసారం_error(&htmlc->పునాది,
+						libdom_hubbub_error_గమ్యం_nserror(error),
+						ఖాళీ);
 
-			return false;
+			తిరిగి false;
 		}
 		htmlc->parse_completed = true;
 	}
 
-	if (html_can_begin_conversion(htmlc) == false) {
+	ఒకవేళ (html_can_begin_conversion(htmlc) == false) {
 		NSLOG(netsurf, INFO, "Can't begin conversion (%p)", htmlc);
 		/* We can't proceed (see commentary above) */
-		return true;
+		తిరిగి true;
 	}
 
 	/* Give up processing if we've been aborted */
-	if (htmlc->aborted) {
+	ఒకవేళ (htmlc->aborted) {
 		NSLOG(netsurf, INFO, "Conversion aborted (%p) (active: %u)",
-		      htmlc, htmlc->base.active);
-		content_set_error(&htmlc->base);
-		content_broadcast_error(&htmlc->base, NSERROR_STOPPED, NULL);
-		return false;
+		      htmlc, htmlc->పునాది.చురుకైన);
+		content_సమితి_error(&htmlc->పునాది);
+		content_ప్రసారం_error(&htmlc->పునాది, NSERROR_STOPPED, ఖాళీ);
+		తిరిగి false;
 	}
 
 	/* Conversion begins proper at this point */
@@ -899,105 +899,105 @@ html_begin_conversion(html_content *htmlc)
 	 */
 
 	/* get encoding */
-	if (htmlc->encoding == NULL) {
-		const char *encoding;
+	ఒకవేళ (htmlc->encoding == ఖాళీ) {
+		స్థిరరాశి అక్షరం *encoding;
 
 		encoding = dom_hubbub_parser_get_encoding(htmlc->parser,
-					&htmlc->encoding_source);
-		if (encoding == NULL) {
-			content_broadcast_error(&htmlc->base,
+					&htmlc->encoding_ఆధారం);
+		ఒకవేళ (encoding == ఖాళీ) {
+			content_ప్రసారం_error(&htmlc->పునాది,
 						NSERROR_NOMEM,
-						NULL);
-			return false;
+						ఖాళీ);
+			తిరిగి false;
 		}
 
 		htmlc->encoding = strdup(encoding);
-		if (htmlc->encoding == NULL) {
-			content_broadcast_error(&htmlc->base,
+		ఒకవేళ (htmlc->encoding == ఖాళీ) {
+			content_ప్రసారం_error(&htmlc->పునాది,
 						NSERROR_NOMEM,
-						NULL);
-			return false;
+						ఖాళీ);
+			తిరిగి false;
 		}
 	}
 
 	/* locate root element and ensure it is html */
-	exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-	if ((exc != DOM_NO_ERR) || (html == NULL)) {
+	exc = dom_document_get_document_element(htmlc->document, (శూన్య *) &html);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (html == ఖాళీ)) {
 		NSLOG(netsurf, INFO, "error retrieving html element from dom");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		return false;
+		content_ప్రసారం_error(&htmlc->పునాది, NSERROR_DOM, ఖాళీ);
+		తిరిగి false;
 	}
 
-	exc = dom_node_get_node_name(html, &node_name);
-	if ((exc != DOM_NO_ERR) ||
-	    (node_name == NULL) ||
-	    (!dom_string_caseless_lwc_isequal(node_name,
+	exc = dom_కణుపు_get_కణుపు_name(html, &కణుపు_name);
+	ఒకవేళ ((exc != DOM_NO_ERR) ||
+	    (కణుపు_name == ఖాళీ) ||
+	    (!dom_string_caseless_lwc_isequal(కణుపు_name,
 			corestring_lwc_html))) {
 		NSLOG(netsurf, INFO, "root element not html");
-		content_broadcast_error(&htmlc->base, NSERROR_DOM, NULL);
-		dom_node_unref(html);
-		return false;
+		content_ప్రసారం_error(&htmlc->పునాది, NSERROR_DOM, ఖాళీ);
+		dom_కణుపు_unref(html);
+		తిరిగి false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(కణుపు_name);
 
 	/* Retrieve forms from parser */
 	htmlc->forms = html_forms_get_forms(htmlc->encoding,
 			(dom_html_document *) htmlc->document);
-	for (f = htmlc->forms; f != NULL; f = f->prev) {
+	కొరకు (f = htmlc->forms; f != ఖాళీ; f = f->prev) {
 		nsurl *action;
 
 		/* Make all actions absolute */
-		if (f->action == NULL || f->action[0] == '\0') {
+		ఒకవేళ (f->action == ఖాళీ || f->action[0] == '\0') {
 			/* HTML5 4.10.22.3 step 9 */
-			nsurl *doc_addr = content_get_url(&htmlc->base);
-			ns_error = nsurl_join(htmlc->base_url,
+			nsurl *doc_addr = content_get_url(&htmlc->పునాది);
+			ns_error = nsurl_join(htmlc->పునాది_url,
 					      nsurl_access(doc_addr),
 					      &action);
-		} else {
-			ns_error = nsurl_join(htmlc->base_url,
+		} లేకపోతే {
+			ns_error = nsurl_join(htmlc->పునాది_url,
 					      f->action,
 					      &action);
 		}
 
-		if (ns_error != NSERROR_OK) {
-			content_broadcast_error(&htmlc->base, ns_error, NULL);
+		ఒకవేళ (ns_error != NSERROR_OK) {
+			content_ప్రసారం_error(&htmlc->పునాది, ns_error, ఖాళీ);
 
-			dom_node_unref(html);
-			return false;
+			dom_కణుపు_unref(html);
+			తిరిగి false;
 		}
 
-		free(f->action);
+		విడుదల(f->action);
 		f->action = strdup(nsurl_access(action));
 		nsurl_unref(action);
-		if (f->action == NULL) {
-			content_broadcast_error(&htmlc->base,
+		ఒకవేళ (f->action == ఖాళీ) {
+			content_ప్రసారం_error(&htmlc->పునాది,
 						NSERROR_NOMEM,
-						NULL);
+						ఖాళీ);
 
-			dom_node_unref(html);
-			return false;
+			dom_కణుపు_unref(html);
+			తిరిగి false;
 		}
 
 		/* Ensure each form has a document encoding */
-		if (f->document_charset == NULL) {
+		ఒకవేళ (f->document_charset == ఖాళీ) {
 			f->document_charset = strdup(htmlc->encoding);
-			if (f->document_charset == NULL) {
-				content_broadcast_error(&htmlc->base,
+			ఒకవేళ (f->document_charset == ఖాళీ) {
+				content_ప్రసారం_error(&htmlc->పునాది,
 							NSERROR_NOMEM,
-							NULL);
-				dom_node_unref(html);
-				return false;
+							ఖాళీ);
+				dom_కణుపు_unref(html);
+				తిరిగి false;
 			}
 		}
 	}
 
-	dom_node_unref(html);
+	dom_కణుపు_unref(html);
 
-	if (htmlc->base.active == 0) {
-		html_finish_conversion(htmlc);
+	ఒకవేళ (htmlc->పునాది.చురుకైన == 0) {
+		html_ముగింపు_conversion(htmlc);
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -1008,40 +1008,40 @@ html_begin_conversion(html_content *htmlc)
  * created during the fetch.
  */
 
-static void html_stop(struct content *c)
+స్థిర శూన్య html_stop(నిర్మాణం content *c)
 {
 	html_content *htmlc = (html_content *) c;
 
-	switch (c->status) {
-	case CONTENT_STATUS_LOADING:
+	ఎంపిక (c->స్థితి_2) {
+	స్థితి CONTENT_స్థితి_LOADING:
 		/* Still loading; simply flag that we've been aborted
 		 * html_convert/html_finish_conversion will do the rest */
 		htmlc->aborted = true;
-		if (htmlc->jsthread != NULL) {
+		ఒకవేళ (htmlc->jsthread != ఖాళీ) {
 			/* Close the JS thread to cancel out any callbacks */
 			js_closethread(htmlc->jsthread);
 		}
-		break;
+		ఆపు;
 
-	case CONTENT_STATUS_READY:
+	స్థితి CONTENT_స్థితి_READY:
 		html_object_abort_objects(htmlc);
 
 		/* If there are no further active fetches and we're still
 		 * in the READY state, transition to the DONE state. */
-		if (c->status == CONTENT_STATUS_READY && c->active == 0) {
-			content_set_done(c);
+		ఒకవేళ (c->స్థితి_2 == CONTENT_స్థితి_READY && c->చురుకైన == 0) {
+			content_సమితి_పూర్తి(c);
 		}
 
-		break;
+		ఆపు;
 
-	case CONTENT_STATUS_DONE:
+	స్థితి CONTENT_స్థితి_పూర్తి:
 		/* Nothing to do */
-		break;
+		ఆపు;
 
-	default:
-		NSLOG(netsurf, INFO, "Unexpected status %d (%p)", c->status,
+	అప్రమేయ:
+		NSLOG(netsurf, INFO, "Unexpected status %d (%p)", c->స్థితి_2,
 		      c);
-		assert(0);
+		ప్రతిజ్ఞా(0);
 	}
 }
 
@@ -1050,10 +1050,10 @@ static void html_stop(struct content *c)
  * Reformat a CONTENT_HTML to a new width.
  */
 
-static void html_reformat(struct content *c, int width, int height)
+స్థిర శూన్య html_reformat(నిర్మాణం content *c, పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు)
 {
 	html_content *htmlc = (html_content *) c;
-	struct box *layout;
+	నిర్మాణం box *layout;
 	uint64_t ms_before;
 	uint64_t ms_after;
 	uint64_t ms_interval;
@@ -1062,28 +1062,28 @@ static void html_reformat(struct content *c, int width, int height)
 
 	htmlc->reflowing = true;
 
-	htmlc->unit_len_ctx.viewport_width = css_unit_device2css_px(
-			INTTOFIX(width), htmlc->unit_len_ctx.device_dpi);
-	htmlc->unit_len_ctx.viewport_height = css_unit_device2css_px(
-			INTTOFIX(height), htmlc->unit_len_ctx.device_dpi);
-	htmlc->unit_len_ctx.root_style = htmlc->layout->style;
+	htmlc->unit_len_ctx.viewport_వెడల్పు = css_unit_device2css_px(
+			INTTOFIX(వెడల్పు), htmlc->unit_len_ctx.device_dpi);
+	htmlc->unit_len_ctx.viewport_ఎత్తు = css_unit_device2css_px(
+			INTTOFIX(ఎత్తు), htmlc->unit_len_ctx.device_dpi);
+	htmlc->unit_len_ctx.మూలం_style = htmlc->layout->style;
 
-	layout_document(htmlc, width, height);
+	layout_document(htmlc, వెడల్పు, ఎత్తు);
 	layout = htmlc->layout;
 
 	/* width and height are at least margin box of document */
-	c->width = layout->x + layout->padding[LEFT] + layout->width +
-		layout->padding[RIGHT] + layout->border[RIGHT].width +
-		layout->margin[RIGHT];
-	c->height = layout->y + layout->padding[TOP] + layout->height +
-		layout->padding[BOTTOM] + layout->border[BOTTOM].width +
+	c->వెడల్పు = layout->x + layout->padding[ఎడమ_2] + layout->వెడల్పు +
+		layout->padding[కుడి_2] + layout->border[కుడి_2].వెడల్పు +
+		layout->margin[కుడి_2];
+	c->ఎత్తు = layout->y + layout->padding[శిఖరం_2] + layout->ఎత్తు +
+		layout->padding[BOTTOM] + layout->border[BOTTOM].వెడల్పు +
 		layout->margin[BOTTOM];
 
 	/* if boxes overflow right or bottom edge, expand to contain it */
-	if (c->width < layout->x + layout->descendant_x1)
-		c->width = layout->x + layout->descendant_x1;
-	if (c->height < layout->y + layout->descendant_y1)
-		c->height = layout->y + layout->descendant_y1;
+	ఒకవేళ (c->వెడల్పు < layout->x + layout->descendant_x1)
+		c->వెడల్పు = layout->x + layout->descendant_x1;
+	ఒకవేళ (c->ఎత్తు < layout->y + layout->descendant_y1)
+		c->ఎత్తు = layout->y + layout->descendant_y1;
 
 	selection_reinit(htmlc->sel);
 
@@ -1094,10 +1094,10 @@ static void html_reformat(struct content *c, int width, int height)
 	nsu_getmonotonic_ms(&ms_after);
 
 	ms_interval = (ms_after - ms_before) * 3;
-	if (ms_interval < (nsoption_uint(min_reflow_period) * 10)) {
+	ఒకవేళ (ms_interval < (nsoption_uint(min_reflow_period) * 10)) {
 		ms_interval = nsoption_uint(min_reflow_period) * 10;
 	}
-	c->reformat_time = ms_after + ms_interval;
+	c->reformat_సమయం = ms_after + ms_interval;
 }
 
 
@@ -1108,15 +1108,15 @@ static void html_reformat(struct content *c, int width, int height)
  * \param  box  box to redraw
  */
 
-void html_redraw_a_box(hlcache_handle *h, struct box *box)
+శూన్య html_redraw_a_box(hlcache_handle *h, నిర్మాణం box *box)
 {
-	int x, y;
+	పూర్ణాంకం x, y;
 
 	box_coords(box, &x, &y);
 
 	content_request_redraw(h, x, y,
-			box->padding[LEFT] + box->width + box->padding[RIGHT],
-			box->padding[TOP] + box->height + box->padding[BOTTOM]);
+			box->padding[ఎడమ_2] + box->వెడల్పు + box->padding[కుడి_2],
+			box->padding[శిఖరం_2] + box->ఎత్తు + box->padding[BOTTOM]);
 }
 
 
@@ -1127,67 +1127,67 @@ void html_redraw_a_box(hlcache_handle *h, struct box *box)
  * \param box  box to redraw.
  */
 
-void html__redraw_a_box(struct html_content *html, struct box *box)
+శూన్య html__redraw_a_box(నిర్మాణం html_content *html, నిర్మాణం box *box)
 {
-	int x, y;
+	పూర్ణాంకం x, y;
 
 	box_coords(box, &x, &y);
 
-	content__request_redraw((struct content *)html, x, y,
-			box->padding[LEFT] + box->width + box->padding[RIGHT],
-			box->padding[TOP] + box->height + box->padding[BOTTOM]);
+	content__request_redraw((నిర్మాణం content *)html, x, y,
+			box->padding[ఎడమ_2] + box->వెడల్పు + box->padding[కుడి_2],
+			box->padding[శిఖరం_2] + box->ఎత్తు + box->padding[BOTTOM]);
 }
 
-static void html_destroy_frameset(struct content_html_frames *frameset)
+స్థిర శూన్య html_destroy_frameset(నిర్మాణం content_html_చట్రాలు *frameset)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	if (frameset->name) {
+	ఒకవేళ (frameset->name) {
 		talloc_free(frameset->name);
-		frameset->name = NULL;
+		frameset->name = ఖాళీ;
 	}
-	if (frameset->url) {
+	ఒకవేళ (frameset->url) {
 		talloc_free(frameset->url);
-		frameset->url = NULL;
+		frameset->url = ఖాళీ;
 	}
-	if (frameset->children) {
-		for (i = 0; i < (frameset->rows * frameset->cols); i++) {
-			if (frameset->children[i].name) {
+	ఒకవేళ (frameset->children) {
+		కొరకు (i = 0; i < (frameset->అడ్డువరుసలు * frameset->నిలువుల_సంఖ్య); i++) {
+			ఒకవేళ (frameset->children[i].name) {
 				talloc_free(frameset->children[i].name);
-				frameset->children[i].name = NULL;
+				frameset->children[i].name = ఖాళీ;
 			}
-			if (frameset->children[i].url) {
+			ఒకవేళ (frameset->children[i].url) {
 				nsurl_unref(frameset->children[i].url);
-				frameset->children[i].url = NULL;
+				frameset->children[i].url = ఖాళీ;
 			}
-			if (frameset->children[i].children)
+			ఒకవేళ (frameset->children[i].children)
 				html_destroy_frameset(&frameset->children[i]);
 		}
 		talloc_free(frameset->children);
-		frameset->children = NULL;
+		frameset->children = ఖాళీ;
 	}
 }
 
-static void html_destroy_iframe(struct content_html_iframe *iframe)
+స్థిర శూన్య html_destroy_iframe(నిర్మాణం content_html_iframe *iframe)
 {
-	struct content_html_iframe *next;
-	next = iframe;
-	while ((iframe = next) != NULL) {
-		next = iframe->next;
-		if (iframe->name)
+	నిర్మాణం content_html_iframe *తదుపరి;
+	తదుపరి = iframe;
+	అయితే ((iframe = తదుపరి) != ఖాళీ) {
+		తదుపరి = iframe->తదుపరి;
+		ఒకవేళ (iframe->name)
 			talloc_free(iframe->name);
-		if (iframe->url) {
+		ఒకవేళ (iframe->url) {
 			nsurl_unref(iframe->url);
-			iframe->url = NULL;
+			iframe->url = ఖాళీ;
 		}
 		talloc_free(iframe);
 	}
 }
 
 
-static void html_free_layout(html_content *htmlc)
+స్థిర శూన్య html_free_layout(html_content *htmlc)
 {
-	if (htmlc->bctx != NULL) {
+	ఒకవేళ (htmlc->bctx != ఖాళీ) {
 		/* freeing talloc context should let the entire box
 		 * set be destroyed
 		 */
@@ -1199,16 +1199,16 @@ static void html_free_layout(html_content *htmlc)
  * Destroy a CONTENT_HTML and free all resources it owns.
  */
 
-static void html_destroy(struct content *c)
+స్థిర శూన్య html_destroy(నిర్మాణం content *c)
 {
 	html_content *html = (html_content *) c;
-	struct form *f, *g;
+	నిర్మాణం form *f, *g;
 
 	NSLOG(netsurf, INFO, "content %p", c);
 
 	/* If we're still converting a layout, cancel it */
-	if (html->box_conversion_context != NULL) {
-		if (cancel_dom_to_box(html->box_conversion_context) != NSERROR_OK) {
+	ఒకవేళ (html->box_conversion_context != ఖాళీ) {
+		ఒకవేళ (cancel_dom_గమ్యం_box(html->box_conversion_context) != NSERROR_OK) {
 			NSLOG(netsurf, CRITICAL, "WARNING, Unable to cancel conversion context, browser may crash");
 		}
 	}
@@ -1216,7 +1216,7 @@ static void html_destroy(struct content *c)
 	selection_destroy(html->sel);
 
 	/* Destroy forms */
-	for (f = html->forms; f != NULL; f = g) {
+	కొరకు (f = html->forms; f != ఖాళీ; f = g) {
 		g = f->prev;
 
 		form_free(f);
@@ -1224,71 +1224,71 @@ static void html_destroy(struct content *c)
 
 	imagemap_destroy(html);
 
-	if (c->refresh)
+	ఒకవేళ (c->refresh)
 		nsurl_unref(c->refresh);
 
-	if (html->base_url)
-		nsurl_unref(html->base_url);
+	ఒకవేళ (html->పునాది_url)
+		nsurl_unref(html->పునాది_url);
 
 	/* At this point we can be moderately confident the JS is offline
 	 * so we destroy the JS thread.
 	 */
-	if (html->jsthread != NULL) {
+	ఒకవేళ (html->jsthread != ఖాళీ) {
 		js_destroythread(html->jsthread);
-		html->jsthread = NULL;
+		html->jsthread = ఖాళీ;
 	}
 
-	if (html->parser != NULL) {
+	ఒకవేళ (html->parser != ఖాళీ) {
 		dom_hubbub_parser_destroy(html->parser);
-		html->parser = NULL;
+		html->parser = ఖాళీ;
 	}
 
-	if (html->document != NULL) {
-		dom_node_unref(html->document);
-		html->document = NULL;
+	ఒకవేళ (html->document != ఖాళీ) {
+		dom_కణుపు_unref(html->document);
+		html->document = ఖాళీ;
 	}
 
-	if (html->title != NULL) {
-		dom_node_unref(html->title);
-		html->title = NULL;
+	ఒకవేళ (html->title != ఖాళీ) {
+		dom_కణుపు_unref(html->title);
+		html->title = ఖాళీ;
 	}
 
 	/* Free encoding */
-	if (html->encoding != NULL) {
-		free(html->encoding);
-		html->encoding = NULL;
+	ఒకవేళ (html->encoding != ఖాళీ) {
+		విడుదల(html->encoding);
+		html->encoding = ఖాళీ;
 	}
 
 	/* Free base target */
-	if (html->base_target != NULL) {
-		free(html->base_target);
-		html->base_target = NULL;
+	ఒకవేళ (html->పునాది_లక్ష్యం != ఖాళీ) {
+		విడుదల(html->పునాది_లక్ష్యం);
+		html->పునాది_లక్ష్యం = ఖాళీ;
 	}
 
 	/* Free frameset */
-	if (html->frameset != NULL) {
+	ఒకవేళ (html->frameset != ఖాళీ) {
 		html_destroy_frameset(html->frameset);
 		talloc_free(html->frameset);
-		html->frameset = NULL;
+		html->frameset = ఖాళీ;
 	}
 
 	/* Free iframes */
-	if (html->iframe != NULL) {
+	ఒకవేళ (html->iframe != ఖాళీ) {
 		html_destroy_iframe(html->iframe);
-		html->iframe = NULL;
+		html->iframe = ఖాళీ;
 	}
 
 	/* Destroy selection context */
-	if (html->select_ctx != NULL) {
+	ఒకవేళ (html->select_ctx != ఖాళీ) {
 		css_select_ctx_destroy(html->select_ctx);
-		html->select_ctx = NULL;
+		html->select_ctx = ఖాళీ;
 	}
 
 	lwc_string_unref(html->universal);
-	html->universal = NULL;
+	html->universal = ఖాళీ;
 
 	lwc_string_unref(html->media.prefers_color_scheme);
-	html->media.prefers_color_scheme = NULL;
+	html->media.prefers_color_scheme = ఖాళీ;
 
 	/* Free stylesheets */
 	html_css_free_stylesheets(html);
@@ -1304,16 +1304,16 @@ static void html_destroy(struct content *c)
 }
 
 
-static nserror html_clone(const struct content *old, struct content **newc)
+స్థిర nserror html_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
 	/** \todo Clone HTML specifics */
 
 	/* In the meantime, we should never be called, as HTML contents
 	 * cannot be shared and we're not intending to fix printing's
 	 * cloning of documents. */
-	assert(0 && "html_clone should never be called");
+	ప్రతిజ్ఞా(0 && "html_clone should never be called");
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -1321,16 +1321,16 @@ static nserror html_clone(const struct content *old, struct content **newc)
  * Handle a window containing a CONTENT_HTML being opened.
  */
 
-static nserror
-html_open(struct content *c,
-	  struct browser_window *bw,
-	  struct content *page,
-	  struct object_params *params)
+స్థిర nserror
+html_open(నిర్మాణం content *c,
+	  నిర్మాణం browser_కిటికీ *bw,
+	  నిర్మాణం content *పుట,
+	  నిర్మాణం object_params *params)
 {
 	html_content *html = (html_content *) c;
 
 	html->bw = bw;
-	html->page = (html_content *) page;
+	html->పుట = (html_content *) పుట;
 
 	html->drag_type = HTML_DRAG_NONE;
 	html->drag_owner.no_owner = true;
@@ -1342,7 +1342,7 @@ html_open(struct content *c,
 
 	html_object_open_objects(html, bw);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1350,7 +1350,7 @@ html_open(struct content *c,
  * Handle a window containing a CONTENT_HTML being closed.
  */
 
-static nserror html_close(struct content *c)
+స్థిర nserror html_close(నిర్మాణం content *c)
 {
 	html_content *htmlc = (html_content *) c;
 	nserror ret = NSERROR_OK;
@@ -1358,17 +1358,17 @@ static nserror html_close(struct content *c)
 	selection_clear(htmlc->sel, false);
 
 	/* clear the html content reference to the browser window */
-	htmlc->bw = NULL;
+	htmlc->bw = ఖాళీ;
 
 	/* remove all object references from the html content */
 	html_object_close_objects(htmlc);
 
-	if (htmlc->jsthread != NULL) {
+	ఒకవేళ (htmlc->jsthread != ఖాళీ) {
 		/* Close, but do not destroy (yet) the JS thread */
 		ret = js_closethread(htmlc->jsthread);
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
 
@@ -1376,28 +1376,28 @@ static nserror html_close(struct content *c)
  * Return an HTML content's selection context
  */
 
-static void html_clear_selection(struct content *c)
+స్థిర శూన్య html_clear_selection(నిర్మాణం content *c)
 {
 	html_content *html = (html_content *) c;
 
-	switch (html->selection_type) {
-	case HTML_SELECTION_NONE:
+	ఎంపిక (html->selection_type) {
+	స్థితి HTML_SELECTION_NONE:
 		/* Nothing to do */
-		assert(html->selection_owner.none == true);
-		break;
-	case HTML_SELECTION_TEXTAREA:
+		ప్రతిజ్ఞా(html->selection_owner.none == true);
+		ఆపు;
+	స్థితి HTML_SELECTION_TEXTAREA:
 		textarea_clear_selection(html->selection_owner.textarea->
-				gadget->data.text.ta);
-		break;
-	case HTML_SELECTION_SELF:
-		assert(html->selection_owner.none == false);
+				gadget->దత్తాంశం.పాఠ్యం.ta);
+		ఆపు;
+	స్థితి HTML_SELECTION_SELF:
+		ప్రతిజ్ఞా(html->selection_owner.none == false);
 		selection_clear(html->sel, true);
-		break;
-	case HTML_SELECTION_CONTENT:
+		ఆపు;
+	స్థితి HTML_SELECTION_CONTENT:
 		content_clear_selection(html->selection_owner.content->object);
-		break;
-	default:
-		break;
+		ఆపు;
+	అప్రమేయ:
+		ఆపు;
 	}
 
 	/* There is no selection now. */
@@ -1410,29 +1410,29 @@ static void html_clear_selection(struct content *c)
  * Return an HTML content's selection context
  */
 
-static char *html_get_selection(struct content *c)
+స్థిర అక్షరం *html_get_selection(నిర్మాణం content *c)
 {
 	html_content *html = (html_content *) c;
 
-	switch (html->selection_type) {
-	case HTML_SELECTION_TEXTAREA:
-		return textarea_get_selection(html->selection_owner.textarea->
-				gadget->data.text.ta);
-	case HTML_SELECTION_SELF:
-		assert(html->selection_owner.none == false);
-		return selection_get_copy(html->sel);
-	case HTML_SELECTION_CONTENT:
-		return content_get_selection(
+	ఎంపిక (html->selection_type) {
+	స్థితి HTML_SELECTION_TEXTAREA:
+		తిరిగి textarea_get_selection(html->selection_owner.textarea->
+				gadget->దత్తాంశం.పాఠ్యం.ta);
+	స్థితి HTML_SELECTION_SELF:
+		ప్రతిజ్ఞా(html->selection_owner.none == false);
+		తిరిగి selection_get_copy(html->sel);
+	స్థితి HTML_SELECTION_CONTENT:
+		తిరిగి content_get_selection(
 				html->selection_owner.content->object);
-	case HTML_SELECTION_NONE:
+	స్థితి HTML_SELECTION_NONE:
 		/* Nothing to do */
-		assert(html->selection_owner.none == true);
-		break;
-	default:
-		break;
+		ప్రతిజ్ఞా(html->selection_owner.none == true);
+		ఆపు;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
 
@@ -1447,75 +1447,75 @@ static char *html_get_selection(struct content *c)
  *             relevent content, or set to NULL if none.
  * \return NSERROR_OK on success else appropriate error code.
  */
-static nserror
-html_get_contextual_content(struct content *c, int x, int y,
-			    struct browser_window_features *data)
+స్థిర nserror
+html_get_contextual_content(నిర్మాణం content *c, పూర్ణాంకం x, పూర్ణాంకం y,
+			    నిర్మాణం browser_కిటికీ_features *దత్తాంశం)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	int box_x = 0, box_y = 0;
+	నిర్మాణం box *box = html->layout;
+	నిర్మాణం box *తదుపరి;
+	పూర్ణాంకం box_x = 0, box_y = 0;
 
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
-		box = next;
+	అయితే ((తదుపరి = box_at_బిందువు(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ఖాళీ) {
+		box = తదుపరి;
 
 		/* hidden boxes are ignored */
-		if ((box->style != NULL) &&
+		ఒకవేళ ((box->style != ఖాళీ) &&
 		    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
-			continue;
+			కొనసాగు;
 		}
 
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
-			browser_window_get_features(box->iframe,
+		ఒకవేళ (box->iframe) {
+			దశాంశం scale = browser_కిటికీ_get_scale(box->iframe);
+			browser_కిటికీ_get_features(box->iframe,
 						    (x - box_x) * scale,
 						    (y - box_y) * scale,
-						    data);
+						    దత్తాంశం);
 		}
 
-		if (box->object)
+		ఒకవేళ (box->object)
 			content_get_contextual_content(box->object,
-					x - box_x, y - box_y, data);
+					x - box_x, y - box_y, దత్తాంశం);
 
-		if (box->object)
-			data->object = box->object;
+		ఒకవేళ (box->object)
+			దత్తాంశం->object = box->object;
 
-		if (box->href) {
-			data->link = box->href;
-			data->link_title = box->text;
-			data->link_title_length = box->length;
+		ఒకవేళ (box->href) {
+			దత్తాంశం->link = box->href;
+			దత్తాంశం->link_title = box->పాఠ్యం;
+			దత్తాంశం->link_title_నిడివి = box->నిడివి;
 		}
 
-		if (box->usemap) {
-			const char *target = NULL;
+		ఒకవేళ (box->usemap) {
+			స్థిరరాశి అక్షరం *లక్ష్యం = ఖాళీ;
 			nsurl *url = imagemap_get(html, box->usemap, box_x,
-					box_y, x, y, &target);
+					box_y, x, y, &లక్ష్యం);
 			/* Box might have imagemap, but no actual link area
 			 * at point */
-			if (url != NULL)
-				data->link = url;
+			ఒకవేళ (url != ఖాళీ)
+				దత్తాంశం->link = url;
 		}
-		if (box->gadget) {
-			switch (box->gadget->type) {
-			case GADGET_TEXTBOX:
-			case GADGET_TEXTAREA:
-			case GADGET_PASSWORD:
-				data->form_features = CTX_FORM_TEXT;
-				break;
+		ఒకవేళ (box->gadget) {
+			ఎంపిక (box->gadget->type) {
+			స్థితి GADGET_TEXTBOX:
+			స్థితి GADGET_TEXTAREA:
+			స్థితి GADGET_PASSWORD:
+				దత్తాంశం->form_features = CTX_FORM_పాఠ్యం;
+				ఆపు;
 
-			case GADGET_FILE:
-				data->form_features = CTX_FORM_FILE;
-				break;
+			స్థితి GADGET_FILE:
+				దత్తాంశం->form_features = CTX_FORM_FILE;
+				ఆపు;
 
-			default:
-				data->form_features = CTX_FORM_NONE;
-				break;
+			అప్రమేయ:
+				దత్తాంశం->form_features = CTX_FORM_NONE;
+				ఆపు;
 			}
 		}
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1529,63 +1529,63 @@ html_get_contextual_content(struct content *c, int x, int y,
  * \param scry	number of px try to scroll something in y direction
  * \return true iff scroll was consumed by something in the content
  */
-static bool
-html_scroll_at_point(struct content *c, int x, int y, int scrx, int scry)
+స్థిర bool
+html_scroll_at_బిందువు(నిర్మాణం content *c, పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం scrx, పూర్ణాంకం scry)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	int box_x = 0, box_y = 0;
+	నిర్మాణం box *box = html->layout;
+	నిర్మాణం box *తదుపరి;
+	పూర్ణాంకం box_x = 0, box_y = 0;
 	bool handled_scroll = false;
 
 	/* TODO: invert order; visit deepest box first */
 
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
-		box = next;
+	అయితే ((తదుపరి = box_at_బిందువు(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ఖాళీ) {
+		box = తదుపరి;
 
-		if (box->style && css_computed_visibility(box->style) ==
+		ఒకవేళ (box->style && css_computed_visibility(box->style) ==
 				CSS_VISIBILITY_HIDDEN)
-			continue;
+			కొనసాగు;
 
 		/* Pass into iframe */
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
+		ఒకవేళ (box->iframe) {
+			దశాంశం scale = browser_కిటికీ_get_scale(box->iframe);
 
-			if (browser_window_scroll_at_point(box->iframe,
+			ఒకవేళ (browser_కిటికీ_scroll_at_బిందువు(box->iframe,
 							   (x - box_x) * scale,
 							   (y - box_y) * scale,
 							   scrx, scry) == true)
-				return true;
+				తిరిగి true;
 		}
 
 		/* Pass into textarea widget */
-		if (box->gadget && (box->gadget->type == GADGET_TEXTAREA ||
+		ఒకవేళ (box->gadget && (box->gadget->type == GADGET_TEXTAREA ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_TEXTBOX) &&
-				textarea_scroll(box->gadget->data.text.ta,
+				textarea_scroll(box->gadget->దత్తాంశం.పాఠ్యం.ta,
 						scrx, scry) == true)
-			return true;
+			తిరిగి true;
 
 		/* Pass into object */
-		if (box->object != NULL && content_scroll_at_point(
+		ఒకవేళ (box->object != ఖాళీ && content_scroll_at_బిందువు(
 				box->object, x - box_x, y - box_y,
 				scrx, scry) == true)
-			return true;
+			తిరిగి true;
 
 		/* Handle box scrollbars */
-		if (box->scroll_y && scrollbar_scroll(box->scroll_y, scry))
+		ఒకవేళ (box->scroll_y && scrollbar_scroll(box->scroll_y, scry))
 			handled_scroll = true;
 
-		if (box->scroll_x && scrollbar_scroll(box->scroll_x, scrx))
+		ఒకవేళ (box->scroll_x && scrollbar_scroll(box->scroll_x, scrx))
 			handled_scroll = true;
 
-		if (handled_scroll == true)
-			return true;
+		ఒకవేళ (handled_scroll == true)
+			తిరిగి true;
 	}
 
-	return false;
+	తిరిగి false;
 }
 
 /** Helper for file gadgets to store their filename unencoded on the
@@ -1593,79 +1593,79 @@ html_scroll_at_point(struct content *c, int x, int y, int scrx, int scry)
  *
  * \todo Get rid of this crap eventually
  */
-static void html__dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *_data, struct dom_node *src,
-		struct dom_node *dst)
+స్థిర శూన్య html_dom_user_దత్తాంశం_handler(dom_కణుపు_operation operation,
+		dom_string *కీలకం, శూన్య *దత్తాంశం_2, నిర్మాణం dom_కణుపు *src,
+		నిర్మాణం dom_కణుపు *dst)
 {
-	char *oldfile;
-	char *data = (char *)_data;
+	అక్షరం *oldfile;
+	అక్షరం *దత్తాంశం = (అక్షరం *)దత్తాంశం_2;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_file_name_node_data,
-				key) || data == NULL) {
-		return;
+	ఒకవేళ (!dom_string_isequal(corestring_dom_ns_కీలకం_file_name_కణుపు_దత్తాంశం,
+				కీలకం) || దత్తాంశం == ఖాళీ) {
+		తిరిగి;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		if (dom_node_set_user_data(dst,
-					   corestring_dom___ns_key_file_name_node_data,
-					   strdup(data), html__dom_user_data_handler,
+	ఎంపిక (operation) {
+	స్థితి DOM_కణుపు_CLONED:
+		ఒకవేళ (dom_కణుపు_సమితి_user_దత్తాంశం(dst,
+					   corestring_dom_ns_కీలకం_file_name_కణుపు_దత్తాంశం,
+					   strdup(దత్తాంశం), html_dom_user_దత్తాంశం_handler,
 					   &oldfile) == DOM_NO_ERR) {
-			if (oldfile != NULL)
-				free(oldfile);
+			ఒకవేళ (oldfile != ఖాళీ)
+				విడుదల(oldfile);
 		}
-		break;
+		ఆపు;
 
-	case DOM_NODE_RENAMED:
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-		break;
+	స్థితి DOM_కణుపు_RENAMED:
+	స్థితి DOM_కణుపు_IMPORTED:
+	స్థితి DOM_కణుపు_ADOPTED:
+		ఆపు;
 
-	case DOM_NODE_DELETED:
-		free(data);
-		break;
-	default:
+	స్థితి DOM_కణుపు_DELETED:
+		విడుదల(దత్తాంశం);
+		ఆపు;
+	అప్రమేయ:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ప్రతిజ్ఞా(0);
 	}
 }
 
-static void html__set_file_gadget_filename(struct content *c,
-	struct form_control *gadget, const char *fn)
+స్థిర శూన్య html_సమితి_file_gadget_filename(నిర్మాణం content *c,
+	నిర్మాణం form_control *gadget, స్థిరరాశి అక్షరం *fn)
 {
 	nserror ret;
-	char *utf8_fn, *oldfile = NULL;
+	అక్షరం *utf8_fn, *oldfile = ఖాళీ;
 	html_content *html = (html_content *)c;
-	struct box *file_box = gadget->box;
+	నిర్మాణం box *file_box = gadget->box;
 
-	ret = guit->utf8->local_to_utf8(fn, 0, &utf8_fn);
-	if (ret != NSERROR_OK) {
-		assert(ret != NSERROR_BAD_ENCODING);
+	ret = guit->utf8->local_గమ్యం_utf8(fn, 0, &utf8_fn);
+	ఒకవేళ (ret != NSERROR_OK) {
+		ప్రతిజ్ఞా(ret != NSERROR_BAD_ENCODING);
 		NSLOG(netsurf, INFO,
 		      "utf8 to local encoding conversion failed");
 		/* Load was for us - just no memory */
-		return;
+		తిరిగి;
 	}
 
-	form_gadget_update_value(gadget, utf8_fn);
+	form_gadget_update_విలువ(gadget, utf8_fn);
 
 	/* corestring_dom___ns_key_file_name_node_data */
-	if (dom_node_set_user_data((dom_node *)file_box->gadget->node,
-				   corestring_dom___ns_key_file_name_node_data,
-				   strdup(fn), html__dom_user_data_handler,
+	ఒకవేళ (dom_కణుపు_సమితి_user_దత్తాంశం((dom_కణుపు *)file_box->gadget->కణుపు,
+				   corestring_dom_ns_కీలకం_file_name_కణుపు_దత్తాంశం,
+				   strdup(fn), html_dom_user_దత్తాంశం_handler,
 				   &oldfile) == DOM_NO_ERR) {
-		if (oldfile != NULL)
-			free(oldfile);
+		ఒకవేళ (oldfile != ఖాళీ)
+			విడుదల(oldfile);
 	}
 
 	/* Redraw box. */
 	html__redraw_a_box(html, file_box);
 }
 
-void html_set_file_gadget_filename(struct hlcache_handle *hl,
-	struct form_control *gadget, const char *fn)
+శూన్య html_సమితి_file_gadget_filename_2(నిర్మాణం hlcache_handle *hl,
+	నిర్మాణం form_control *gadget, స్థిరరాశి అక్షరం *fn)
 {
-	return html__set_file_gadget_filename(hlcache_handle_get_content(hl),
+	తిరిగి html_సమితి_file_gadget_filename(hlcache_handle_get_content(hl),
 		gadget, fn);
 }
 
@@ -1679,86 +1679,86 @@ void html_set_file_gadget_filename(struct hlcache_handle *hl,
  * \param file	path to file to be dropped, or NULL to know if drop allowed
  * \return true iff file drop has been handled, or if drop possible (NULL file)
  */
-static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
+స్థిర bool html_drop_file_at_బిందువు(నిర్మాణం content *c, పూర్ణాంకం x, పూర్ణాంకం y, అక్షరం *file)
 {
 	html_content *html = (html_content *) c;
 
-	struct box *box = html->layout;
-	struct box *next;
-	struct box *file_box = NULL;
-	struct box *text_box = NULL;
-	int box_x = 0, box_y = 0;
+	నిర్మాణం box *box = html->layout;
+	నిర్మాణం box *తదుపరి;
+	నిర్మాణం box *file_box = ఖాళీ;
+	నిర్మాణం box *పాఠ్యం_box = ఖాళీ;
+	పూర్ణాంకం box_x = 0, box_y = 0;
 
 	/* Scan box tree for boxes that can handle drop */
-	while ((next = box_at_point(&html->unit_len_ctx, box, x, y,
-			&box_x, &box_y)) != NULL) {
-		box = next;
+	అయితే ((తదుపరి = box_at_బిందువు(&html->unit_len_ctx, box, x, y,
+			&box_x, &box_y)) != ఖాళీ) {
+		box = తదుపరి;
 
-		if (box->style &&
+		ఒకవేళ (box->style &&
 		    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN)
-			continue;
+			కొనసాగు;
 
-		if (box->iframe) {
-			float scale = browser_window_get_scale(box->iframe);
-			return browser_window_drop_file_at_point(
+		ఒకవేళ (box->iframe) {
+			దశాంశం scale = browser_కిటికీ_get_scale(box->iframe);
+			తిరిగి browser_కిటికీ_drop_file_at_బిందువు(
 				box->iframe,
 				(x - box_x) * scale,
 				(y - box_y) * scale,
 				file);
 		}
 
-		if (box->object &&
-		    content_drop_file_at_point(box->object,
+		ఒకవేళ (box->object &&
+		    content_drop_file_at_బిందువు(box->object,
 					x - box_x, y - box_y, file) == true)
-			return true;
+			తిరిగి true;
 
-		if (box->gadget) {
-			switch (box->gadget->type) {
-				case GADGET_FILE:
+		ఒకవేళ (box->gadget) {
+			ఎంపిక (box->gadget->type) {
+				స్థితి GADGET_FILE:
 					file_box = box;
-				break;
+				ఆపు;
 
-				case GADGET_TEXTBOX:
-				case GADGET_TEXTAREA:
-				case GADGET_PASSWORD:
-					text_box = box;
-					break;
+				స్థితి GADGET_TEXTBOX:
+				స్థితి GADGET_TEXTAREA:
+				స్థితి GADGET_PASSWORD:
+					పాఠ్యం_box = box;
+					ఆపు;
 
-				default:	/* appease compiler */
-					break;
+				అప్రమేయ:	/* appease compiler */
+					ఆపు;
 			}
 		}
 	}
 
-	if (!file_box && !text_box)
+	ఒకవేళ (!file_box && !పాఠ్యం_box)
 		/* No box capable of handling drop */
-		return false;
+		తిరిగి false;
 
-	if (file == NULL)
+	ఒకవేళ (file == ఖాళీ)
 		/* There is a box capable of handling drop here */
-		return true;
+		తిరిగి true;
 
 	/* Handle the drop */
-	if (file_box) {
+	ఒకవేళ (file_box) {
 		/* File dropped on file input */
-		html__set_file_gadget_filename(c, file_box->gadget, file);
+		html_సమితి_file_gadget_filename(c, file_box->gadget, file);
 
-	} else {
+	} లేకపోతే {
 		/* File dropped on text input */
 
 		size_t file_len;
-		FILE *fp = NULL;
-		char *buffer;
-		char *utf8_buff;
+		FILE *fp = ఖాళీ;
+		అక్షరం *బఫరు;
+		అక్షరం *utf8_buff;
 		nserror ret;
-		unsigned int size;
-		int bx, by;
+		గుర్తులేని పూర్ణాంకం కొలత;
+		పూర్ణాంకం bx, by;
 
 		/* Open file */
 		fp = fopen(file, "rb");
-		if (fp == NULL) {
+		ఒకవేళ (fp == ఖాళీ) {
 			/* Couldn't open file, but drop was for us */
-			return true;
+			తిరిగి true;
 		}
 
 		/* Get filesize */
@@ -1766,67 +1766,67 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
 		file_len = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 
-		if ((long)file_len == -1) {
+		ఒకవేళ ((దీర్ఘ)file_len == -1) {
 			/* unable to get file length, but drop was for us */
 			fclose(fp);
-			return true;
+			తిరిగి true;
 		}
 
 		/* Allocate buffer for file data */
-		buffer = malloc(file_len + 1);
-		if (buffer == NULL) {
+		బఫరు = జ్ఞాపకం_ఇవ్వు(file_len + 1);
+		ఒకవేళ (బఫరు == ఖాళీ) {
 			/* No memory, but drop was for us */
 			fclose(fp);
-			return true;
+			తిరిగి true;
 		}
 
 		/* Stick file into buffer */
-		if (file_len != fread(buffer, 1, file_len, fp)) {
+		ఒకవేళ (file_len != fread(బఫరు, 1, file_len, fp)) {
 			/* Failed, but drop was for us */
-			free(buffer);
+			విడుదల(బఫరు);
 			fclose(fp);
-			return true;
+			తిరిగి true;
 		}
 
 		/* Done with file */
 		fclose(fp);
 
 		/* Ensure buffer's string termination */
-		buffer[file_len] = '\0';
+		బఫరు[file_len] = '\0';
 
 		/* TODO: Sniff for text? */
 
 		/* Convert to UTF-8 */
-		ret = guit->utf8->local_to_utf8(buffer, file_len, &utf8_buff);
-		if (ret != NSERROR_OK) {
+		ret = guit->utf8->local_గమ్యం_utf8(బఫరు, file_len, &utf8_buff);
+		ఒకవేళ (ret != NSERROR_OK) {
 			/* bad encoding shouldn't happen */
 			NSLOG(netsurf, ERROR,
 			      "local to utf8 encoding failed (%s)",
 			      messages_get_errorcode(ret));
-			assert(ret != NSERROR_BAD_ENCODING);
-			free(buffer);
-			return true;
+			ప్రతిజ్ఞా(ret != NSERROR_BAD_ENCODING);
+			విడుదల(బఫరు);
+			తిరిగి true;
 		}
 
 		/* Done with buffer */
-		free(buffer);
+		విడుదల(బఫరు);
 
 		/* Get new length */
-		size = strlen(utf8_buff);
+		కొలత = అక్షరశ్రేణి_పొడవు(utf8_buff);
 
 		/* Simulate a click over the input box, to place caret */
-		box_coords(text_box, &bx, &by);
-		textarea_mouse_action(text_box->gadget->data.text.ta,
+		box_coords(పాఠ్యం_box, &bx, &by);
+		textarea_mouse_action(పాఠ్యం_box->gadget->దత్తాంశం.పాఠ్యం.ta,
 				BROWSER_MOUSE_PRESS_1, x - bx, y - by);
 
 		/* Paste the file as text */
-		textarea_drop_text(text_box->gadget->data.text.ta,
-				utf8_buff, size);
+		textarea_drop_పాఠ్యం(పాఠ్యం_box->gadget->దత్తాంశం.పాఠ్యం.ta,
+				utf8_buff, కొలత);
 
-		free(utf8_buff);
+		విడుదల(utf8_buff);
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -1836,12 +1836,12 @@ static bool html_drop_file_at_point(struct content *c, int x, int y, char *file)
  * \param c The content to debug
  * \param op The debug operation type
  */
-static nserror
-html_debug(struct content *c, enum content_debug op)
+స్థిర nserror
+html_debug(నిర్మాణం content *c, గణన content_debug op)
 {
 	html_redraw_debug = !html_redraw_debug;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1852,96 +1852,96 @@ html_debug(struct content *c, enum content_debug op)
  * \param f The file to dump to
  * \param op The debug dump type
  */
-static nserror
-html_debug_dump(struct content *c, FILE *f, enum content_debug op)
+స్థిర nserror
+html_debug_dump(నిర్మాణం content *c, FILE *f, గణన content_debug op)
 {
 	html_content *htmlc = (html_content *)c;
-	dom_node *html;
+	dom_కణుపు *html;
 	dom_exception exc; /* returned by libdom functions */
 	nserror ret;
 
-	assert(htmlc != NULL);
+	ప్రతిజ్ఞా(htmlc != ఖాళీ);
 
-	if (op == CONTENT_DEBUG_RENDER) {
-		assert(htmlc->layout != NULL);
+	ఒకవేళ (op == CONTENT_DEBUG_RENDER) {
+		ప్రతిజ్ఞా(htmlc->layout != ఖాళీ);
 		box_dump(f, htmlc->layout, 0, true);
 		ret = NSERROR_OK;
-	} else {
-		if (htmlc->document == NULL) {
+	} లేకపోతే {
+		ఒకవేళ (htmlc->document == ఖాళీ) {
 			NSLOG(netsurf, INFO, "No document to dump");
-			return NSERROR_DOM;
+			తిరిగి NSERROR_DOM;
 		}
 
-		exc = dom_document_get_document_element(htmlc->document, (void *) &html);
-		if ((exc != DOM_NO_ERR) || (html == NULL)) {
+		exc = dom_document_get_document_element(htmlc->document, (శూన్య *) &html);
+		ఒకవేళ ((exc != DOM_NO_ERR) || (html == ఖాళీ)) {
 			NSLOG(netsurf, INFO, "Unable to obtain root node");
-			return NSERROR_DOM;
+			తిరిగి NSERROR_DOM;
 		}
 
 		ret = libdom_dump_structure(html, f, 0);
 
 		NSLOG(netsurf, INFO, "DOM structure dump returning %d", ret);
 
-		dom_node_unref(html);
+		dom_కణుపు_unref(html);
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
 
-#if ALWAYS_DUMP_FRAMESET
+#ఒకవేళ ALWAYS_DUMP_FRAMESET
 /**
  * Print a frameset tree to stderr.
  */
 
-static void
-html_dump_frameset(struct content_html_frames *frame, unsigned int depth)
+స్థిర శూన్య
+html_dump_frameset(నిర్మాణం content_html_చట్రాలు *చట్రం, గుర్తులేని పూర్ణాంకం లోతు)
 {
-	unsigned int i;
-	int row, col, index;
-	const char *unit[] = {"px", "%", "*"};
-	const char *scrolling[] = {"auto", "yes", "no"};
+	గుర్తులేని పూర్ణాంకం i;
+	పూర్ణాంకం అడ్డువరుస, నిలువు, index;
+	స్థిరరాశి అక్షరం *unit[] = {"px", "%", "*"};
+	స్థిరరాశి అక్షరం *scrolling[] = {"auto", "yes", "no"};
 
-	assert(frame);
+	ప్రతిజ్ఞా(చట్రం);
 
-	fprintf(stderr, "%p ", frame);
+	fprintf(stderr, "%p ", చట్రం);
 
-	fprintf(stderr, "(%i %i) ", frame->rows, frame->cols);
+	fprintf(stderr, "(%i %i) ", చట్రం->అడ్డువరుసలు, చట్రం->నిలువుల_సంఖ్య);
 
-	fprintf(stderr, "w%g%s ", frame->width.value, unit[frame->width.unit]);
-	fprintf(stderr, "h%g%s ", frame->height.value,unit[frame->height.unit]);
+	fprintf(stderr, "w%g%s ", చట్రం->వెడల్పు.విలువ, unit[చట్రం->వెడల్పు.unit]);
+	fprintf(stderr, "h%g%s ", చట్రం->ఎత్తు.విలువ,unit[చట్రం->ఎత్తు.unit]);
 	fprintf(stderr, "(margin w%i h%i) ",
-			frame->margin_width, frame->margin_height);
+			చట్రం->margin_వెడల్పు, చట్రం->margin_ఎత్తు);
 
-	if (frame->name)
-		fprintf(stderr, "'%s' ", frame->name);
-	if (frame->url)
-		fprintf(stderr, "<%s> ", frame->url);
+	ఒకవేళ (చట్రం->name)
+		fprintf(stderr, "'%s' ", చట్రం->name);
+	ఒకవేళ (చట్రం->url)
+		fprintf(stderr, "<%s> ", చట్రం->url);
 
-	if (frame->no_resize)
+	ఒకవేళ (చట్రం->no_resize)
 		fprintf(stderr, "noresize ");
-	fprintf(stderr, "(scrolling %s) ", scrolling[frame->scrolling]);
-	if (frame->border)
+	fprintf(stderr, "(scrolling %s) ", scrolling[చట్రం->scrolling]);
+	ఒకవేళ (చట్రం->border)
 		fprintf(stderr, "border %x ",
-				(unsigned int) frame->border_colour);
+				(గుర్తులేని పూర్ణాంకం) చట్రం->border_రంగు);
 
 	fprintf(stderr, "\n");
 
-	if (frame->children) {
-		for (row = 0; row != frame->rows; row++) {
-			for (col = 0; col != frame->cols; col++) {
-				for (i = 0; i != depth; i++)
+	ఒకవేళ (చట్రం->children) {
+		కొరకు (అడ్డువరుస = 0; అడ్డువరుస != చట్రం->అడ్డువరుసలు; అడ్డువరుస++) {
+			కొరకు (నిలువు = 0; నిలువు != చట్రం->నిలువుల_సంఖ్య; నిలువు++) {
+				కొరకు (i = 0; i != లోతు; i++)
 					fprintf(stderr, "  ");
-				fprintf(stderr, "(%i %i): ", row, col);
-				index = (row * frame->cols) + col;
-				html_dump_frameset(&frame->children[index],
-						depth + 1);
+				fprintf(stderr, "(%i %i): ", అడ్డువరుస, నిలువు);
+				index = (అడ్డువరుస * చట్రం->నిలువుల_సంఖ్య) + నిలువు;
+				html_dump_frameset(&చట్రం->children[index],
+						లోతు + 1);
 			}
 		}
 	}
 }
 
-#endif
+#అయితే_ముగింపు
 
 /**
  * Retrieve HTML document tree
@@ -1953,9 +1953,9 @@ dom_document *html_get_document(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	return c->document;
+	తిరిగి c->document;
 }
 
 /**
@@ -1967,13 +1967,13 @@ dom_document *html_get_document(hlcache_handle *h)
  * \todo This API must die, as must all use of the box tree outside of
  *         HTML content handler
  */
-struct box *html_get_box_tree(hlcache_handle *h)
+నిర్మాణం box *html_get_box_వృక్షం(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	return c->layout;
+	తిరిగి c->layout;
 }
 
 /**
@@ -1983,19 +1983,19 @@ struct box *html_get_box_tree(hlcache_handle *h)
  * \param op The content encoding operation to perform.
  * \return Pointer to charset, or NULL
  */
-static const char *html_encoding(const struct content *c, enum content_encoding_type op)
+స్థిర స్థిరరాశి అక్షరం *html_encoding(స్థిరరాశి నిర్మాణం content *c, గణన content_encoding_type op)
 {
 	html_content *html = (html_content *) c;
-	static char enc_token[10] = "Encoding0";
+	స్థిర అక్షరం enc_token[10] = "Encoding0";
 
-	assert(html != NULL);
+	ప్రతిజ్ఞా(html != ఖాళీ);
 
-	if (op == CONTENT_ENCODING_SOURCE) {
-		enc_token[8] = '0' + html->encoding_source;
-		return messages_get(enc_token);
+	ఒకవేళ (op == CONTENT_ENCODING_ఆధారం) {
+		enc_token[8] = '0' + html->encoding_ఆధారం;
+		తిరిగి messages_get(enc_token);
 	}
 
-	return html->encoding;
+	తిరిగి html->encoding;
 }
 
 
@@ -2005,13 +2005,13 @@ static const char *html_encoding(const struct content *c, enum content_encoding_
  * \param h  Content to inspect
  * \return Pointer to framesets, or NULL if none
  */
-struct content_html_frames *html_get_frameset(hlcache_handle *h)
+నిర్మాణం content_html_చట్రాలు *html_get_frameset(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	return c->frameset;
+	తిరిగి c->frameset;
 }
 
 /**
@@ -2020,13 +2020,13 @@ struct content_html_frames *html_get_frameset(hlcache_handle *h)
  * \param h  Content to inspect
  * \return Pointer to iframes, or NULL if none
  */
-struct content_html_iframe *html_get_iframe(hlcache_handle *h)
+నిర్మాణం content_html_iframe *html_get_iframe(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	return c->iframe;
+	తిరిగి c->iframe;
 }
 
 /**
@@ -2035,13 +2035,13 @@ struct content_html_iframe *html_get_iframe(hlcache_handle *h)
  * \param h  Content to retrieve base target from
  * \return Pointer to URL
  */
-nsurl *html_get_base_url(hlcache_handle *h)
+nsurl *html_get_పునాది_url(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	return c->base_url;
+	తిరిగి c->పునాది_url;
 }
 
 /**
@@ -2050,13 +2050,13 @@ nsurl *html_get_base_url(hlcache_handle *h)
  * \param h  Content to retrieve base target from
  * \return Pointer to target, or NULL if none
  */
-const char *html_get_base_target(hlcache_handle *h)
+స్థిరరాశి అక్షరం *html_get_పునాది_లక్ష్యం(hlcache_handle *h)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	return c->base_target;
+	తిరిగి c->పునాది_లక్ష్యం;
 }
 
 
@@ -2069,134 +2069,134 @@ const char *html_get_base_target(hlcache_handle *h)
  * \param y        Updated to global y coord iff id found
  * \return  true iff id found
  */
-bool html_get_id_offset(hlcache_handle *h, lwc_string *frag_id, int *x, int *y)
+bool html_get_id_స్థానభ్రంశం(hlcache_handle *h, lwc_string *frag_id, పూర్ణాంకం *x, పూర్ణాంకం *y)
 {
-	struct box *pos;
-	struct box *layout;
+	నిర్మాణం box *pos;
+	నిర్మాణం box *layout;
 
-	if (content_get_type(h) != CONTENT_HTML)
-		return false;
+	ఒకవేళ (content_get_type(h) != CONTENT_HTML)
+		తిరిగి false;
 
-	layout = html_get_box_tree(h);
+	layout = html_get_box_వృక్షం(h);
 
-	if ((pos = box_find_by_id(layout, frag_id)) != 0) {
+	ఒకవేళ ((pos = box_కనుగొను_by_id(layout, frag_id)) != 0) {
 		box_coords(pos, x, y);
-		return true;
+		తిరిగి true;
 	}
-	return false;
+	తిరిగి false;
 }
 
-bool html_exec(struct content *c, const char *src, size_t srclen)
+bool html_exec(నిర్మాణం content *c, స్థిరరాశి అక్షరం *src, size_t srclen)
 {
 	html_content *htmlc = (html_content *)c;
-	bool result = false;
+	bool ఫలితం = false;
 	dom_exception err;
-	dom_html_body_element *body_node;
+	dom_html_body_element *body_కణుపు;
 	dom_string *dom_src;
-	dom_text *text_node;
-	dom_node *spare_node;
-	dom_html_script_element *script_node;
+	dom_పాఠ్యం *పాఠ్యం_కణుపు;
+	dom_కణుపు *అదనపు_కణుపు;
+	dom_html_script_element *script_కణుపు;
 
-	if (htmlc->document == NULL) {
+	ఒకవేళ (htmlc->document == ఖాళీ) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no document");
-		goto out_no_string;
+		వెళ్ళు బహిర్గతం_no_string;
 	}
 
-	err = dom_string_create((const uint8_t *)src, srclen, &dom_src);
-	if (err != DOM_NO_ERR) {
+	err = dom_string_create((స్థిరరాశి uint8_t *)src, srclen, &dom_src);
+	ఒకవేళ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create string");
-		goto out_no_string;
+		వెళ్ళు బహిర్గతం_no_string;
 	}
 
-	err = dom_html_document_get_body(htmlc->document, &body_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_html_document_get_body(htmlc->document, &body_కణుపు);
+	ఒకవేళ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve body element");
-		goto out_no_body;
+		వెళ్ళు బహిర్గతం_no_body;
 	}
 
-	err = dom_document_create_text_node(htmlc->document, dom_src, &text_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_document_create_పాఠ్యం_కణుపు(htmlc->document, dom_src, &పాఠ్యం_కణుపు);
+	ఒకవేళ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create text node");
-		goto out_no_text_node;
+		వెళ్ళు బహిర్గతం_no_పాఠ్యం_కణుపు;
 	}
 
-	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_document_create_element(htmlc->document, corestring_dom_SCRIPT, &script_కణుపు);
+	ఒకవేళ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not create script node");
-		goto out_no_script_node;
+		వెళ్ళు బహిర్గతం_no_script_కణుపు;
 	}
 
-	err = dom_node_append_child(script_node, text_node, &spare_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_కణుపు_append_బిడ్డ(script_కణుపు, పాఠ్యం_కణుపు, &అదనపు_కణుపు);
+	ఒకవేళ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert code node into script node");
-		goto out_unparented;
+		వెళ్ళు బహిర్గతం_unparented;
 	}
-	dom_node_unref(spare_node); /* We do not need the spare ref at all */
+	dom_కణుపు_unref(అదనపు_కణుపు); /* We do not need the spare ref at all */
 
-	err = dom_node_append_child(body_node, script_node, &spare_node);
-	if (err != DOM_NO_ERR) {
+	err = dom_కణుపు_append_బిడ్డ(body_కణుపు, script_కణుపు, &అదనపు_కణుపు);
+	ఒకవేళ (err != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, could not insert script node into document body");
-		goto out_unparented;
+		వెళ్ళు బహిర్గతం_unparented;
 	}
-	dom_node_unref(spare_node); /* Again no need for the spare ref */
+	dom_కణుపు_unref(అదనపు_కణుపు); /* Again no need for the spare ref */
 
 	/* We successfully inserted the node into the DOM */
 
-	result = true;
+	ఫలితం = true;
 
 	/* Now we unwind, starting by removing the script from wherever it
 	 * ended up parented
 	 */
 
-	err = dom_node_get_parent_node(script_node, &spare_node);
-	if (err == DOM_NO_ERR && spare_node != NULL) {
-		dom_node *second_spare;
-		err = dom_node_remove_child(spare_node, script_node, &second_spare);
-		if (err == DOM_NO_ERR) {
-			dom_node_unref(second_spare);
+	err = dom_కణుపు_get_మాతృ_కణుపు(script_కణుపు, &అదనపు_కణుపు);
+	ఒకవేళ (err == DOM_NO_ERR && అదనపు_కణుపు != ఖాళీ) {
+		dom_కణుపు *రెండవ_అదనపు;
+		err = dom_కణుపు_remove_బిడ్డ(అదనపు_కణుపు, script_కణుపు, &రెండవ_అదనపు);
+		ఒకవేళ (err == DOM_NO_ERR) {
+			dom_కణుపు_unref(రెండవ_అదనపు);
 		}
-		dom_node_unref(spare_node);
+		dom_కణుపు_unref(అదనపు_కణుపు);
 	}
 
-out_unparented:
-	dom_node_unref(script_node);
-out_no_script_node:
-	dom_node_unref(text_node);
-out_no_text_node:
-	dom_node_unref(body_node);
-out_no_body:
+బహిర్గతం_unparented:
+	dom_కణుపు_unref(script_కణుపు);
+బహిర్గతం_no_script_కణుపు:
+	dom_కణుపు_unref(పాఠ్యం_కణుపు);
+బహిర్గతం_no_పాఠ్యం_కణుపు:
+	dom_కణుపు_unref(body_కణుపు);
+బహిర్గతం_no_body:
 	dom_string_unref(dom_src);
-out_no_string:
-	return result;
+బహిర్గతం_no_string:
+	తిరిగి ఫలితం;
 }
 
 /* See \ref content_saw_insecure_objects */
-static bool
-html_saw_insecure_objects(struct content *c)
+స్థిర bool
+html_saw_insecure_objects(నిర్మాణం content *c)
 {
 	html_content *htmlc = (html_content *)c;
-	struct content_html_object *obj = htmlc->object_list;
+	నిర్మాణం content_html_object *obj = htmlc->object_list;
 
 	/* Check through the object list */
-	while (obj != NULL) {
-		if (obj->content != NULL) {
-			if (content_saw_insecure_objects(obj->content))
-				return true;
+	అయితే (obj != ఖాళీ) {
+		ఒకవేళ (obj->content != ఖాళీ) {
+			ఒకవేళ (content_saw_insecure_objects(obj->content))
+				తిరిగి true;
 		}
-		obj = obj->next;
+		obj = obj->తదుపరి;
 	}
 
 	/* Now check the script list */
-	if (html_saw_insecure_scripts(htmlc)) {
-		return true;
+	ఒకవేళ (html_saw_insecure_scripts(htmlc)) {
+		తిరిగి true;
 	}
 
 	/* Now check stylesheets */
-	if (html_css_saw_insecure_stylesheets(htmlc)) {
-		return true;
+	ఒకవేళ (html_css_saw_insecure_stylesheets(htmlc)) {
+		తిరిగి true;
 	}
 
-	return false;
+	తిరిగి false;
 }
 
 /**
@@ -2204,13 +2204,13 @@ html_saw_insecure_objects(struct content *c)
  *
  * \return CONTENT_HTML
  */
-static content_type html_content_type(void)
+స్థిర content_type html_content_type(శూన్య)
 {
-	return CONTENT_HTML;
+	తిరిగి CONTENT_HTML;
 }
 
 
-static void html_fini(void)
+స్థిర శూన్య html_fini(శూన్య)
 {
 	html_css_fini();
 }
@@ -2225,67 +2225,67 @@ static void html_fini(void)
  * \param context   The search context to add the entry to.
  * \return true on success, false on memory allocation failure
  */
-static nserror
-find_occurrences_html_box(const char *pattern,
-			  int p_len,
-			  struct box *cur,
+స్థిర nserror
+కనుగొను_occurrences_html_box(స్థిరరాశి అక్షరం *నమూనా,
+			  పూర్ణాంకం p_len,
+			  నిర్మాణం box *cur,
 			  bool case_sens,
-			  struct textsearch_context *context)
+			  నిర్మాణం textsearch_context *context)
 {
-	struct box *a;
+	నిర్మాణం box *a;
 	nserror res = NSERROR_OK;
 
 	/* ignore this box, if there's no visible text */
-	if (!cur->object && cur->text) {
-		const char *text = cur->text;
-		unsigned length = cur->length;
+	ఒకవేళ (!cur->object && cur->పాఠ్యం) {
+		స్థిరరాశి అక్షరం *పాఠ్యం = cur->పాఠ్యం;
+		గుర్తులేని నిడివి = cur->నిడివి;
 
-		while (length > 0) {
-			unsigned match_length;
-			unsigned match_offset;
-			const char *new_text;
-			const char *pos;
+		అయితే (నిడివి > 0) {
+			గుర్తులేని సరిపోలిక_నిడివి;
+			గుర్తులేని సరిపోలిక_స్థానభ్రంశం;
+			స్థిరరాశి అక్షరం *new_పాఠ్యం;
+			స్థిరరాశి అక్షరం *pos;
 
-			pos = content_textsearch_find_pattern(text,
-					   length,
-					   pattern,
+			pos = content_textsearch_కనుగొను_నమూనా(పాఠ్యం,
+					   నిడివి,
+					   నమూనా,
 					   p_len,
 					   case_sens,
-					   &match_length);
-			if (!pos)
-				break;
+					   &సరిపోలిక_నిడివి);
+			ఒకవేళ (!pos)
+				ఆపు;
 
 			/* found string in box => add to list */
-			match_offset = pos - cur->text;
+			సరిపోలిక_స్థానభ్రంశం = pos - cur->పాఠ్యం;
 
-			res = content_textsearch_add_match(context,
-					cur->byte_offset + match_offset,
-					cur->byte_offset + match_offset + match_length,
+			res = content_textsearch_కూడు_సరిపోలిక(context,
+					cur->byte_స్థానభ్రంశం + సరిపోలిక_స్థానభ్రంశం,
+					cur->byte_స్థానభ్రంశం + సరిపోలిక_స్థానభ్రంశం + సరిపోలిక_నిడివి,
 					cur,
 					cur);
-			if (res != NSERROR_OK) {
-				return res;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
 
-			new_text = pos + match_length;
-			length -= (new_text - text);
-			text = new_text;
+			new_పాఠ్యం = pos + సరిపోలిక_నిడివి;
+			నిడివి -= (new_పాఠ్యం - పాఠ్యం);
+			పాఠ్యం = new_పాఠ్యం;
 		}
 	}
 
 	/* and recurse */
-	for (a = cur->children; a; a = a->next) {
-		res = find_occurrences_html_box(pattern,
+	కొరకు (a = cur->children; a; a = a->తదుపరి) {
+		res = కనుగొను_occurrences_html_box(నమూనా,
 						p_len,
 						a,
 						case_sens,
 						context);
-		if (res != NSERROR_OK) {
-			return res;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి res;
 		}
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 /**
@@ -2298,20 +2298,20 @@ find_occurrences_html_box(const char *pattern,
  * \param context   The search context to add the entry to.
  * \return true on success, false on memory allocation failure
  */
-static nserror
-html_textsearch_find(struct content *c,
-		     struct textsearch_context *context,
-		     const char *pattern,
-		     int p_len,
+స్థిర nserror
+html_textsearch_కనుగొను(నిర్మాణం content *c,
+		     నిర్మాణం textsearch_context *context,
+		     స్థిరరాశి అక్షరం *నమూనా,
+		     పూర్ణాంకం p_len,
 		     bool csens)
 {
 	html_content *html = (html_content *)c;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	ఒకవేళ (html->layout == ఖాళీ) {
+		తిరిగి NSERROR_INVALID;
 	}
 
-	return find_occurrences_html_box(pattern,
+	తిరిగి కనుగొను_occurrences_html_box(నమూనా,
 					 p_len,
 					 html->layout,
 					 csens,
@@ -2319,34 +2319,34 @@ html_textsearch_find(struct content *c,
 }
 
 
-static nserror
-html_textsearch_bounds(struct content *c,
-		       unsigned start_idx,
-		       unsigned end_idx,
-		       struct box *start_box,
-		       struct box *end_box,
-		       struct rect *bounds)
+స్థిర nserror
+html_textsearch_bounds(నిర్మాణం content *c,
+		       గుర్తులేని ప్రారంభం_idx,
+		       గుర్తులేని చివర_idx,
+		       నిర్మాణం box *ప్రారంభం_box,
+		       నిర్మాణం box *చివర_box,
+		       నిర్మాణం rect *bounds)
 {
 	/* get box position and jump to it */
-	box_coords(start_box, &bounds->x0, &bounds->y0);
+	box_coords(ప్రారంభం_box, &bounds->x0, &bounds->y0);
 	/* \todo: move x0 in by correct idx */
-	box_coords(end_box, &bounds->x1, &bounds->y1);
+	box_coords(చివర_box, &bounds->x1, &bounds->y1);
 	/* \todo: move x1 in by correct idx */
-	bounds->x1 += end_box->width;
-	bounds->y1 += end_box->height;
+	bounds->x1 += చివర_box->వెడల్పు;
+	bounds->y1 += చివర_box->ఎత్తు;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * HTML content handler function table
  */
-static const content_handler html_content_handler = {
+స్థిర స్థిరరాశి content_handler html_content_handler = {
 	.fini = html_fini,
 	.create = html_create,
-	.process_data = html_process_data,
-	.data_complete = html_convert,
+	.process_దత్తాంశం = html_process_దత్తాంశం,
+	.దత్తాంశం_complete = html_convert,
 	.reformat = html_reformat,
 	.destroy = html_destroy,
 	.stop = html_stop,
@@ -2359,8 +2359,8 @@ static const content_handler html_content_handler = {
 	.get_selection = html_get_selection,
 	.clear_selection = html_clear_selection,
 	.get_contextual_content = html_get_contextual_content,
-	.scroll_at_point = html_scroll_at_point,
-	.drop_file_at_point = html_drop_file_at_point,
+	.scroll_at_బిందువు = html_scroll_at_బిందువు,
+	.drop_file_at_బిందువు = html_drop_file_at_బిందువు,
 	.debug_dump = html_debug_dump,
 	.debug = html_debug,
 	.clone = html_clone,
@@ -2368,36 +2368,36 @@ static const content_handler html_content_handler = {
 	.type = html_content_type,
 	.exec = html_exec,
 	.saw_insecure_objects = html_saw_insecure_objects,
-	.textsearch_find = html_textsearch_find,
+	.textsearch_కనుగొను = html_textsearch_కనుగొను,
 	.textsearch_bounds = html_textsearch_bounds,
 	.textselection_redraw = html_textselection_redraw,
 	.textselection_copy = html_textselection_copy,
-	.textselection_get_end = html_textselection_get_end,
+	.textselection_get_చివర = html_textselection_get_చివర,
 	.no_share = true,
 };
 
 
 /* exported function documented in html/html.h */
-nserror html_init(void)
+nserror html_init(శూన్య)
 {
 	uint32_t i;
 	nserror error;
 
 	error = html_css_init();
-	if (error != NSERROR_OK)
-		goto error;
+	ఒకవేళ (error != NSERROR_OK)
+		వెళ్ళు error;
 
-	for (i = 0; i < NOF_ELEMENTS(html_types); i++) {
-		error = content_factory_register_handler(html_types[i],
+	కొరకు (i = 0; i < NOF_ELEMENTS(html_types); i++) {
+		error = content_factory_రిజిస్టరు_handler(html_types[i],
 				&html_content_handler);
-		if (error != NSERROR_OK)
-			goto error;
+		ఒకవేళ (error != NSERROR_OK)
+			వెళ్ళు error;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
 error:
 	html_fini();
 
-	return error;
+	తిరిగి error;
 }

@@ -20,61 +20,61 @@
  * Dummy implementation of javascript engine functions.
  */
 
-#include "utils/errors.h"
-#include "content/content.h"
-#include "utils/nsoption.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "content/content.h"
+#అన్తర్భావ "utils/nsoption.h"
 
-#include "javascript/js.h"
-#include "utils/log.h"
+#అన్తర్భావ "javascript/js.h"
+#అన్తర్భావ "utils/log.h"
 
-void js_initialise(void)
+శూన్య js_initialise(శూన్య)
 {
-	nsoption_set_bool(enable_javascript, false);
+	nsoption_సమితి_bool(enable_javascript, false);
 }
 
-void js_finalise(void)
-{
-}
-
-nserror js_newheap(int timeout, jsheap **heap)
-{
-	*heap = NULL;
-	return NSERROR_OK;
-}
-
-void js_destroyheap(jsheap *heap)
+శూన్య js_finalise(శూన్య)
 {
 }
 
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
+nserror js_newheap(పూర్ణాంకం timeout, jsheap **కుప్ప)
 {
-	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	*కుప్ప = ఖాళీ;
+	తిరిగి NSERROR_OK;
+}
+
+శూన్య js_destroyheap(jsheap *కుప్ప)
+{
+}
+
+nserror js_newthread(jsheap *కుప్ప, శూన్య *win_priv, శూన్య *doc_priv, jsthread **thread)
+{
+	*thread = ఖాళీ;
+	తిరిగి NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-void js_destroythread(jsthread *thread)
+శూన్య js_destroythread(jsthread *thread)
 {
 }
 
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+bool js_exec(jsthread *thread, స్థిరరాశి uint8_t *txt, size_t txtlen, స్థిరరాశి అక్షరం *name)
 {
-	return true;
+	తిరిగి true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, స్థిరరాశి అక్షరం *type, నిర్మాణం dom_document *doc, నిర్మాణం dom_కణుపు *లక్ష్యం)
 {
-	return true;
+	తిరిగి true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+శూన్య js_handle_new_element(jsthread *thread, నిర్మాణం dom_element *కణుపు)
 {
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+శూన్య js_event_cleanup(jsthread *thread, నిర్మాణం dom_event *evt)
 {
 }

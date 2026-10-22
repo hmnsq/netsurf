@@ -26,64 +26,64 @@
  * Form handling functions (implementation).
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-#include <dom/dom.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <dom/dom.h>
 
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/talloc.h"
-#include "utils/url.h"
-#include "utils/utf8.h"
-#include "utils/ascii.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/mouse.h"
-#include "netsurf/plotters.h"
-#include "netsurf/misc.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
-#include "css/utils.h"
-#include "desktop/knockout.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/talloc.h"
+#అన్తర్భావ "utils/url.h"
+#అన్తర్భావ "utils/utf8.h"
+#అన్తర్భావ "utils/ascii.h"
+#అన్తర్భావ "netsurf/browser_window.h"
+#అన్తర్భావ "netsurf/inttypes.h"
+#అన్తర్భావ "netsurf/mouse.h"
+#అన్తర్భావ "netsurf/plotters.h"
+#అన్తర్భావ "netsurf/misc.h"
+#అన్తర్భావ "content/fetch.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "css/utils.h"
+#అన్తర్భావ "desktop/knockout.h"
+#అన్తర్భావ "desktop/scrollbar.h"
+#అన్తర్భావ "desktop/textarea.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/layout.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
+#అన్తర్భావ "html/html.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/layout.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_inspect.h"
+#అన్తర్భావ "html/font.h"
+#అన్తర్భావ "html/form_internal.h"
 
-#define MAX_SELECT_HEIGHT 210
-#define SELECT_LINE_SPACING 0.2
-#define SELECT_BORDER_WIDTH 1
-#define SELECT_SELECTED_COLOUR 0xDB9370
+#నిర్వచించు MAX_SELECT_ఎత్తు 210
+#నిర్వచించు SELECT_పంక్తి_SPACING 0.2
+#నిర్వచించు SELECT_BORDER_వెడల్పు 1
+#నిర్వచించు SELECT_SELECTED_రంగు 0xDB9370
 
-struct form_select_menu {
-	int line_height;
-	int width, height;
-	struct scrollbar *scrollbar;
-	int f_size;
+నిర్మాణం form_select_menu {
+	పూర్ణాంకం పంక్తి_ఎత్తు;
+	పూర్ణాంకం వెడల్పు, ఎత్తు;
+	నిర్మాణం scrollbar *scrollbar;
+	పూర్ణాంకం f_కొలత;
 	bool scroll_capture;
 	select_menu_redraw_callback callback;
-	void *client_data;
-	struct content *c;
+	శూన్య *client_దత్తాంశం;
+	నిర్మాణం content *c;
 };
 
-static plot_style_t plot_style_fill_selected = {
+స్థిర plot_style_t plot_style_fill_selected = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
-	.fill_colour = SELECT_SELECTED_COLOUR,
+	.fill_రంగు = SELECT_SELECTED_రంగు,
 };
 
-static plot_font_style_t plot_fstyle_entry = {
+స్థిర plot_font_style_t plot_fstyle_నమోదు = {
 	.family = PLOT_FONT_FAMILY_SANS_SERIF,
-	.weight = 400,
+	.బరువు = 400,
 	.flags = FONTF_NONE,
 	.background = 0xffffff,
 	.foreground = 0x000000,
@@ -103,66 +103,66 @@ static plot_font_style_t plot_fstyle_entry = {
  *                 used iff converting to charset fails
  * \return Pointer to converted string (on heap, caller frees), or NULL
  */
-static char *
-form_encode_item(const char *item,
+స్థిర అక్షరం *
+form_encode_అంశం(స్థిరరాశి అక్షరం *అంశం,
 		 uint32_t len,
-		 const char *charset,
-		 const char *fallback)
+		 స్థిరరాశి అక్షరం *charset,
+		 స్థిరరాశి అక్షరం *fallback)
 {
 	nserror err;
-	char *ret = NULL;
-	char cset[256];
+	అక్షరం *ret = ఖాళీ;
+	అక్షరం cset[256];
 
-	if (!item || !charset)
-		return NULL;
+	ఒకవేళ (!అంశం || !charset)
+		తిరిగి ఖాళీ;
 
-	snprintf(cset, sizeof cset, "%s//TRANSLIT", charset);
+	snprintf(cset, పరిమాణం cset, "%s//TRANSLIT", charset);
 
-	err = utf8_to_enc(item, cset, 0, &ret);
-	if (err == NSERROR_BAD_ENCODING) {
+	err = utf8_గమ్యం_enc(అంశం, cset, 0, &ret);
+	ఒకవేళ (err == NSERROR_BAD_ENCODING) {
 		/* charset not understood, try without transliteration */
-		snprintf(cset, sizeof cset, "%s", charset);
-		err = utf8_to_enc(item, cset, len, &ret);
+		snprintf(cset, పరిమాణం cset, "%s", charset);
+		err = utf8_గమ్యం_enc(అంశం, cset, len, &ret);
 
-		if (err == NSERROR_BAD_ENCODING) {
+		ఒకవేళ (err == NSERROR_BAD_ENCODING) {
 			/* nope, try fallback charset (if any) */
-			if (fallback) {
-				snprintf(cset, sizeof cset,
+			ఒకవేళ (fallback) {
+				snprintf(cset, పరిమాణం cset,
 						"%s//TRANSLIT", fallback);
-				err = utf8_to_enc(item, cset, 0, &ret);
+				err = utf8_గమ్యం_enc(అంశం, cset, 0, &ret);
 
-				if (err == NSERROR_BAD_ENCODING) {
+				ఒకవేళ (err == NSERROR_BAD_ENCODING) {
 					/* and without transliteration */
-					snprintf(cset, sizeof cset,
+					snprintf(cset, పరిమాణం cset,
 							"%s", fallback);
-					err = utf8_to_enc(item, cset, 0, &ret);
+					err = utf8_గమ్యం_enc(అంశం, cset, 0, &ret);
 				}
 			}
 
-			if (err == NSERROR_BAD_ENCODING) {
+			ఒకవేళ (err == NSERROR_BAD_ENCODING) {
 				/* that also failed, use 8859-1 */
-				err = utf8_to_enc(item, "ISO-8859-1//TRANSLIT",
+				err = utf8_గమ్యం_enc(అంశం, "ISO-8859-1//TRANSLIT",
 						0, &ret);
-				if (err == NSERROR_BAD_ENCODING) {
+				ఒకవేళ (err == NSERROR_BAD_ENCODING) {
 					/* and without transliteration */
-					err = utf8_to_enc(item, "ISO-8859-1",
+					err = utf8_గమ్యం_enc(అంశం, "ISO-8859-1",
 							0, &ret);
 				}
 			}
 		}
 	}
-	if (err == NSERROR_NOMEM) {
-		return NULL;
+	ఒకవేళ (err == NSERROR_NOMEM) {
+		తిరిగి ఖాళీ;
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
 
 /**
  * string allocation size for numeric values in multipart data
  */
-#define FETCH_DATA_INT_VALUE_SIZE 20
+#నిర్వచించు FETCH_దత్తాంశం_INT_విలువ_కొలత 20
 
 
 /**
@@ -173,47 +173,47 @@ form_encode_item(const char *item,
  * \param value The value to encode
  * \param fetch_data_next_ptr The multipart data list to append to.
  */
-static nserror
-fetch_data_list_add_sname(const char *name,
-			  const char *ksfx,
-			  int value,
-			  struct fetch_multipart_data ***fetch_data_next_ptr)
+స్థిర nserror
+fetch_దత్తాంశం_list_కూడు_sname(స్థిరరాశి అక్షరం *name,
+			  స్థిరరాశి అక్షరం *ksfx,
+			  పూర్ణాంకం విలువ,
+			  నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
-	struct fetch_multipart_data *fetch_data;
-	int keysize;
+	నిర్మాణం fetch_multipart_దత్తాంశం *fetch_దత్తాంశం;
+	పూర్ణాంకం keysize;
 
-	fetch_data = calloc(1, sizeof(*fetch_data));
-	if (fetch_data == NULL) {
+	fetch_దత్తాంశం = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*fetch_దత్తాంశం));
+	ఒకవేళ (fetch_దత్తాంశం == ఖాళీ) {
 		NSLOG(netsurf, INFO, "failed allocation for fetch data");
-		return NSERROR_NOMEM;
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	/* key name */
-	keysize = snprintf(fetch_data->name, 0, "%s%s", name, ksfx);
-	fetch_data->name = malloc(keysize + 1); /* allow for null */
-	if (fetch_data->name == NULL) {
-		free(fetch_data);
+	keysize = snprintf(fetch_దత్తాంశం->name, 0, "%s%s", name, ksfx);
+	fetch_దత్తాంశం->name = జ్ఞాపకం_ఇవ్వు(keysize + 1); /* allow for null */
+	ఒకవేళ (fetch_దత్తాంశం->name == ఖాళీ) {
+		విడుదల(fetch_దత్తాంశం);
 		NSLOG(netsurf, INFO,
 		      "keyname allocation failure for %s%s", name, ksfx);
-		return NSERROR_NOMEM;
+		తిరిగి NSERROR_NOMEM;
 	}
-	snprintf(fetch_data->name, keysize + 1, "%s%s", name, ksfx);
+	snprintf(fetch_దత్తాంశం->name, keysize + 1, "%s%s", name, ksfx);
 
-	/* value */
-	fetch_data->value = malloc(FETCH_DATA_INT_VALUE_SIZE);
-	if (fetch_data->value == NULL) {
-		free(fetch_data->name);
-		free(fetch_data);
+	/*విలువ*/
+	fetch_దత్తాంశం->విలువ = జ్ఞాపకం_ఇవ్వు(FETCH_దత్తాంశం_INT_విలువ_కొలత);
+	ఒకవేళ (fetch_దత్తాంశం->విలువ == ఖాళీ) {
+		విడుదల(fetch_దత్తాంశం->name);
+		విడుదల(fetch_దత్తాంశం);
 		NSLOG(netsurf, INFO, "value allocation failure");
-		return NSERROR_NOMEM;
+		తిరిగి NSERROR_NOMEM;
 	}
-	snprintf(fetch_data->value, FETCH_DATA_INT_VALUE_SIZE, "%d", value);
+	snprintf(fetch_దత్తాంశం->విలువ, FETCH_దత్తాంశం_INT_విలువ_కొలత, "%d", విలువ);
 
 	/* link into list */
-	**fetch_data_next_ptr = fetch_data;
-	*fetch_data_next_ptr = &fetch_data->next;
+	**fetch_దత్తాంశం_తదుపరి_ptr = fetch_దత్తాంశం;
+	*fetch_దత్తాంశం_తదుపరి_ptr = &fetch_దత్తాంశం->తదుపరి;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -228,68 +228,68 @@ fetch_data_list_add_sname(const char *name,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-fetch_data_list_add(dom_string *name,
-		    dom_string *value,
-		    const char *rawfile,
-		    const char *form_charset,
-		    const char *docu_charset,
-		    struct fetch_multipart_data ***fetch_data_next_ptr)
+స్థిర nserror
+fetch_దత్తాంశం_list_కూడు(dom_string *name,
+		    dom_string *విలువ,
+		    స్థిరరాశి అక్షరం *rawfile,
+		    స్థిరరాశి అక్షరం *form_charset,
+		    స్థిరరాశి అక్షరం *docu_charset,
+		    నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
-	struct fetch_multipart_data *fetch_data;
+	నిర్మాణం fetch_multipart_దత్తాంశం *fetch_దత్తాంశం;
 
-	assert(name != NULL);
+	ప్రతిజ్ఞా(name != ఖాళీ);
 
-	fetch_data = calloc(1, sizeof(*fetch_data));
-	if (fetch_data == NULL) {
+	fetch_దత్తాంశం = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*fetch_దత్తాంశం));
+	ఒకవేళ (fetch_దత్తాంశం == ఖాళీ) {
 		NSLOG(netsurf, INFO, "failed allocation for fetch data");
-		return NSERROR_NOMEM;
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	fetch_data->name = form_encode_item(dom_string_data(name),
-					    dom_string_byte_length(name),
+	fetch_దత్తాంశం->name = form_encode_అంశం(dom_string_దత్తాంశం(name),
+					    dom_string_byte_నిడివి(name),
 					    form_charset,
 					    docu_charset);
-	if (fetch_data->name == NULL) {
+	ఒకవేళ (fetch_దత్తాంశం->name == ఖాళీ) {
 		NSLOG(netsurf, INFO, "Could not encode name for fetch data");
-		free(fetch_data);
-		return NSERROR_NOMEM;
+		విడుదల(fetch_దత్తాంశం);
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	if (value == NULL) {
-		fetch_data->value = strdup("");
-	} else {
-		fetch_data->value = form_encode_item(dom_string_data(value),
-						     dom_string_byte_length(value),
+	ఒకవేళ (విలువ == ఖాళీ) {
+		fetch_దత్తాంశం->విలువ = strdup("");
+	} లేకపోతే {
+		fetch_దత్తాంశం->విలువ = form_encode_అంశం(dom_string_దత్తాంశం(విలువ),
+						     dom_string_byte_నిడివి(విలువ),
 						     form_charset,
 						     docu_charset);
 	}
-	if (fetch_data->value == NULL) {
+	ఒకవేళ (fetch_దత్తాంశం->విలువ == ఖాళీ) {
 		NSLOG(netsurf, INFO, "Could not encode value for fetch data");
-		free(fetch_data->name);
-		free(fetch_data);
-		return NSERROR_NOMEM;
+		విడుదల(fetch_దత్తాంశం->name);
+		విడుదల(fetch_దత్తాంశం);
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	/* deal with raw file name */
-	if (rawfile != NULL) {
-		fetch_data->file = true;
-		fetch_data->rawfile = strdup(rawfile);
-		if (fetch_data->rawfile == NULL) {
+	ఒకవేళ (rawfile != ఖాళీ) {
+		fetch_దత్తాంశం->file = true;
+		fetch_దత్తాంశం->rawfile = strdup(rawfile);
+		ఒకవేళ (fetch_దత్తాంశం->rawfile == ఖాళీ) {
 			NSLOG(netsurf, INFO,
 			      "Could not encode rawfile value for fetch data");
-			free(fetch_data->value);
-			free(fetch_data->name);
-			free(fetch_data);
-			return NSERROR_NOMEM;
+			విడుదల(fetch_దత్తాంశం->విలువ);
+			విడుదల(fetch_దత్తాంశం->name);
+			విడుదల(fetch_దత్తాంశం);
+			తిరిగి NSERROR_NOMEM;
 		}
 	}
 
 	/* link into list */
-	**fetch_data_next_ptr = fetch_data;
-	*fetch_data_next_ptr = &fetch_data->next;
+	**fetch_దత్తాంశం_తదుపరి_ptr = fetch_దత్తాంశం;
+	*fetch_దత్తాంశం_తదుపరి_ptr = &fetch_దత్తాంశం->తదుపరి;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -302,111 +302,111 @@ fetch_data_list_add(dom_string *name,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-form_dom_to_data_textarea(dom_html_text_area_element *text_area_element,
-			  const char *form_charset,
-			  const char *doc_charset,
-			  struct fetch_multipart_data ***fetch_data_next_ptr)
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_textarea(dom_html_పాఠ్యం_area_element *పాఠ్యం_area_element,
+			  స్థిరరాశి అక్షరం *form_charset,
+			  స్థిరరాశి అక్షరం *doc_charset,
+			  నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
-	dom_exception exp; /* the result from DOM operations */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
 	bool element_disabled;
 	dom_string *inputname;
 	dom_string *inputvalue;
 	nserror res;
 
 	/* check if element is disabled */
-	exp = dom_html_text_area_element_get_disabled(text_area_element,
+	ఘాతాంకం = dom_html_పాఠ్యం_area_element_get_disabled(పాఠ్యం_area_element,
 						      &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Could not get text area disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		      "Could not get text area disabled property. exp %d", ఘాతాంకం);
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	ఒకవేళ (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* obtain name property */
-	exp = dom_html_text_area_element_get_name(text_area_element,
+	ఘాతాంకం = dom_html_పాఠ్యం_area_element_get_name(పాఠ్యం_area_element,
 						  &inputname);
-	if (exp != DOM_NO_ERR) {
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Could not get text area name property. exp %d", exp);
-		return NSERROR_DOM;
+		      "Could not get text area name property. exp %d", ఘాతాంకం);
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	ఒకవేళ (inputname == ఖాళీ) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* obtain text area value */
-	exp = dom_html_text_area_element_get_value(text_area_element,
+	ఘాతాంకం = dom_html_పాఠ్యం_area_element_get_విలువ(పాఠ్యం_area_element,
 						   &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Could not get text area content. exp %d", exp);
+		      "Could not get text area content. exp %d", ఘాతాంకం);
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
-	res = fetch_data_list_add(inputname,
+	res = fetch_దత్తాంశం_list_కూడు(inputname,
 				  inputvalue,
-				  NULL,
+				  ఖాళీ,
 				  form_charset,
 				  doc_charset,
-				  fetch_data_next_ptr);
+				  fetch_దత్తాంశం_తదుపరి_ptr);
 
 	dom_string_unref(inputvalue);
 	dom_string_unref(inputname);
 
-	return res;
+	తిరిగి res;
 }
 
 
-static nserror
-form_dom_to_data_select_option(dom_html_option_element *option_element,
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_select_option(dom_html_option_element *option_element,
 			      dom_string *keyname,
-			      const char *form_charset,
-			      const char *docu_charset,
-			      struct fetch_multipart_data ***fetch_data_next_ptr)
+			      స్థిరరాశి అక్షరం *form_charset,
+			      స్థిరరాశి అక్షరం *docu_charset,
+			      నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
 	nserror res;
-	dom_exception exp; /* the result from DOM operations */
-	dom_string *value;
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
+	dom_string *విలువ;
 	bool selected;
 
-	exp = dom_html_option_element_get_selected(option_element, &selected);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_option_element_get_selected(option_element, &selected);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get option selected property");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (!selected) {
+	ఒకవేళ (!selected) {
 		/* unselected options do not add fetch data entries */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	exp = dom_html_option_element_get_value(option_element, &value);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_option_element_get_విలువ(option_element, &విలువ);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get option value");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
-	res = fetch_data_list_add(keyname,
-				  value,
-				  NULL,
+	res = fetch_దత్తాంశం_list_కూడు(keyname,
+				  విలువ,
+				  ఖాళీ,
 				  form_charset,
 				  docu_charset,
-				  fetch_data_next_ptr);
+				  fetch_దత్తాంశం_తదుపరి_ptr);
 
-	dom_string_unref(value);
+	dom_string_unref(విలువ);
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -419,318 +419,318 @@ form_dom_to_data_select_option(dom_html_option_element *option_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-form_dom_to_data_select(dom_html_select_element *select_element,
-			const char *form_charset,
-			const char *doc_charset,
-			struct fetch_multipart_data ***fetch_data_next_ptr)
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_select(dom_html_select_element *select_element,
+			స్థిరరాశి అక్షరం *form_charset,
+			స్థిరరాశి అక్షరం *doc_charset,
+			నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
 	nserror res = NSERROR_OK;
-	dom_exception exp; /* the result from DOM operations */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
 	bool element_disabled;
 	dom_string *inputname;
-	dom_html_options_collection *options = NULL;
-	uint32_t options_count;
-	uint32_t option_index;
-	dom_node *option_element = NULL;
+	dom_html_options_collection *options = ఖాళీ;
+	uint32_t options_లెక్క;
+	uint32_t option_సూచీ;
+	dom_కణుపు *option_element = ఖాళీ;
 
 	/* check if element is disabled */
-	exp = dom_html_select_element_get_disabled(select_element,
+	ఘాతాంకం = dom_html_select_element_get_disabled(select_element,
 						   &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Could not get select disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		      "Could not get select disabled property. exp %d", ఘాతాంకం);
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	ఒకవేళ (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* obtain name property */
-	exp = dom_html_select_element_get_name(select_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_select_element_get_name(select_element, &inputname);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Could not get select name property. exp %d", exp);
-		return NSERROR_DOM;
+		      "Could not get select name property. exp %d", ఘాతాంకం);
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	ఒకవేళ (inputname == ఖాళీ) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* get options collection */
-	exp = dom_html_select_element_get_options(select_element, &options);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_select_element_get_options(select_element, &options);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select options collection");
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* get options collection length */
-	exp = dom_html_options_collection_get_length(options, &options_count);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_options_collection_get_నిడివి(options, &options_లెక్క);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get select options collection length");
 		dom_html_options_collection_unref(options);
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* iterate over options collection */
-	for (option_index = 0; option_index < options_count; ++option_index) {
-		exp = dom_html_options_collection_item(options,
-						       option_index,
+	కొరకు (option_సూచీ = 0; option_సూచీ < options_లెక్క; ++option_సూచీ) {
+		ఘాతాంకం = dom_html_options_collection_అంశం(options,
+						       option_సూచీ,
 						       &option_element);
-		if (exp != DOM_NO_ERR) {
+		ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
-			      "Could not get options item %"PRId32, option_index);
+			      "Could not get options item %"PRId32, option_సూచీ);
 			res = NSERROR_DOM;
-		} else {
-			res = form_dom_to_data_select_option(
+		} లేకపోతే {
+			res = form_dom_గమ్యం_దత్తాంశం_select_option(
 				(dom_html_option_element *)option_element,
 				inputname,
 				form_charset,
 				doc_charset,
-				fetch_data_next_ptr);
+				fetch_దత్తాంశం_తదుపరి_ptr);
 
-			dom_node_unref(option_element);
+			dom_కణుపు_unref(option_element);
 		}
 
-		if (res != NSERROR_OK) {
-			break;
+		ఒకవేళ (res != NSERROR_OK) {
+			ఆపు;
 		}
 	}
 
 	dom_html_options_collection_unref(options);
 	dom_string_unref(inputname);
 
-	return res;
+	తిరిగి res;
 }
 
 
-static nserror
-form_dom_to_data_input_submit(dom_html_input_element *input_element,
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_ఆదానం_submit(dom_html_ఆదానం_element *ఆదానం_element,
 			      dom_string *inputname,
-			      const char *charset,
-			      const char *document_charset,
+			      స్థిరరాశి అక్షరం *charset,
+			      స్థిరరాశి అక్షరం *document_charset,
 			      dom_html_element **submit_button,
-			      struct fetch_multipart_data ***fetch_data_next_ptr)
+			      నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
-	dom_exception exp; /* the result from DOM operations */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
 	dom_string *inputvalue;
 	nserror res;
 
-	if (*submit_button == NULL) {
+	ఒకవేళ (*submit_button == ఖాళీ) {
 		/* caller specified no button so use this one */
-		*submit_button = (dom_html_element *)input_element;
-	} else if (*submit_button != (dom_html_element *)input_element) {
-		return NSERROR_OK;
+		*submit_button = (dom_html_element *)ఆదానం_element;
+	} లేకపోతే ఒకవేళ (*submit_button != (dom_html_element *)ఆదానం_element) {
+		తిరిగి NSERROR_OK;
 	}
 
 	/* matched button used to submit form */
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_ఆదానం_element_get_విలువ(ఆదానం_element, &inputvalue);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get submit button value");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
-	res = fetch_data_list_add(inputname,
+	res = fetch_దత్తాంశం_list_కూడు(inputname,
 				  inputvalue,
-				  NULL,
+				  ఖాళీ,
 				  charset,
 				  document_charset,
-				  fetch_data_next_ptr);
+				  fetch_దత్తాంశం_తదుపరి_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	తిరిగి res;
 }
 
 
-static nserror
-form_dom_to_data_input_image(dom_html_input_element *input_element,
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_ఆదానం_image(dom_html_ఆదానం_element *ఆదానం_element,
 			     dom_string *inputname,
-			     const char *charset,
-			     const char *document_charset,
+			     స్థిరరాశి అక్షరం *charset,
+			     స్థిరరాశి అక్షరం *document_charset,
 			     dom_html_element **submit_button,
-			     struct fetch_multipart_data ***fetch_data_next_ptr)
+			     నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
 	nserror res;
-	dom_exception exp; /* the result from DOM operations */
-	struct image_input_coords *coords;
-	char *basename;
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
+	నిర్మాణం image_ఆదానం_coords *coords;
+	అక్షరం *basename;
 
 	/* Only use an image input if it was the thing which activated us */
-	if (*submit_button != (dom_html_element *)input_element) {
-		return NSERROR_OK;
+	ఒకవేళ (*submit_button != (dom_html_element *)ఆదానం_element) {
+		తిరిగి NSERROR_OK;
 	}
 
-	exp = dom_node_get_user_data((dom_node *)input_element,
-				     corestring_dom___ns_key_image_coords_node_data,
+	ఘాతాంకం = dom_కణుపు_get_user_దత్తాంశం((dom_కణుపు *)ఆదానం_element,
+				     corestring_dom_ns_కీలకం_image_coords_కణుపు_దత్తాంశం,
 				     &coords);
-	if (exp != DOM_NO_ERR) {
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get image XY data");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (coords == NULL) {
+	ఒకవేళ (coords == ఖాళీ) {
 		NSLOG(netsurf, INFO, "No XY data on the image input");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* encode input name once */
-	basename = form_encode_item(dom_string_data(inputname),
-				    dom_string_byte_length(inputname),
+	basename = form_encode_అంశం(dom_string_దత్తాంశం(inputname),
+				    dom_string_byte_నిడివి(inputname),
 				    charset,
 				    document_charset);
-	if (basename == NULL) {
+	ఒకవేళ (basename == ఖాళీ) {
 		NSLOG(netsurf, INFO, "Could not encode basename");
-		return NSERROR_NOMEM;
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	res = fetch_data_list_add_sname(basename, ".x",
+	res = fetch_దత్తాంశం_list_కూడు_sname(basename, ".x",
 					coords->x,
-					fetch_data_next_ptr);
+					fetch_దత్తాంశం_తదుపరి_ptr);
 
-	if (res == NSERROR_OK) {
-		res = fetch_data_list_add_sname(basename, ".y",
+	ఒకవేళ (res == NSERROR_OK) {
+		res = fetch_దత్తాంశం_list_కూడు_sname(basename, ".y",
 						coords->y,
-						fetch_data_next_ptr);
+						fetch_దత్తాంశం_తదుపరి_ptr);
 	}
 
-	free(basename);
+	విడుదల(basename);
 
-	return res;
+	తిరిగి res;
 }
 
 
-static nserror
-form_dom_to_data_input_checkbox(dom_html_input_element *input_element,
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_ఆదానం_checkbox(dom_html_ఆదానం_element *ఆదానం_element,
 				dom_string *inputname,
-				const char *charset,
-				const char *document_charset,
-				struct fetch_multipart_data ***fetch_data_next_ptr)
+				స్థిరరాశి అక్షరం *charset,
+				స్థిరరాశి అక్షరం *document_charset,
+				నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
 	nserror res;
-	dom_exception exp; /* the result from DOM operations */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
 	bool checked;
 	dom_string *inputvalue;
 
-	exp = dom_html_input_element_get_checked(input_element, &checked);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_ఆదానం_element_get_checked(ఆదానం_element, &checked);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input element checked");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (!checked) {
+	ఒకవేళ (!checked) {
 		/* unchecked items do not generate a data entry */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_ఆదానం_element_get_విలువ(ఆదానం_element, &inputvalue);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
 		      "Could not get input element value");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* ensure a default value */
-	if (inputvalue == NULL) {
+	ఒకవేళ (inputvalue == ఖాళీ) {
 		inputvalue = dom_string_ref(corestring_dom_on);
 	}
 
 	/* add key/value pair to fetch data list */
-	res = fetch_data_list_add(inputname,
+	res = fetch_దత్తాంశం_list_కూడు(inputname,
 				  inputvalue,
-				  NULL,
+				  ఖాళీ,
 				  charset,
 				  document_charset,
-				  fetch_data_next_ptr);
+				  fetch_దత్తాంశం_తదుపరి_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	తిరిగి res;
 }
 
 
-static nserror
-form_dom_to_data_input_file(dom_html_input_element *input_element,
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_ఆదానం_file(dom_html_ఆదానం_element *ఆదానం_element,
 			    dom_string *inputname,
-			    const char *charset,
-			    const char *document_charset,
-			    struct fetch_multipart_data ***fetch_data_next_ptr)
+			    స్థిరరాశి అక్షరం *charset,
+			    స్థిరరాశి అక్షరం *document_charset,
+			    నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
 	nserror res;
-	dom_exception exp; /* the result from DOM operations */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
 	dom_string *inputvalue;
-	const char *rawfile = NULL;
+	స్థిరరాశి అక్షరం *rawfile = ఖాళీ;
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_ఆదానం_element_get_విలువ(ఆదానం_element, &inputvalue);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get file value");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
-	exp = dom_node_get_user_data((dom_node *)input_element,
-				     corestring_dom___ns_key_file_name_node_data,
+	ఘాతాంకం = dom_కణుపు_get_user_దత్తాంశం((dom_కణుపు *)ఆదానం_element,
+				     corestring_dom_ns_కీలకం_file_name_కణుపు_దత్తాంశం,
 				     &rawfile);
-	if (exp != DOM_NO_ERR) {
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get file rawname");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (rawfile == NULL) {
+	ఒకవేళ (rawfile == ఖాళీ) {
 		rawfile = "";
 	}
 
 	/* add key/value pair to fetch data list */
-	res = fetch_data_list_add(inputname,
+	res = fetch_దత్తాంశం_list_కూడు(inputname,
 				  inputvalue,
 				  rawfile,
 				  charset,
 				  document_charset,
-				  fetch_data_next_ptr);
+				  fetch_దత్తాంశం_తదుపరి_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	తిరిగి res;
 }
 
 
-static nserror
-form_dom_to_data_input_text(dom_html_input_element *input_element,
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_ఆదానం_పాఠ్యం(dom_html_ఆదానం_element *ఆదానం_element,
 			    dom_string *inputname,
-			    const char *charset,
-			    const char *document_charset,
-			    struct fetch_multipart_data ***fetch_data_next_ptr)
+			    స్థిరరాశి అక్షరం *charset,
+			    స్థిరరాశి అక్షరం *document_charset,
+			    నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
 	nserror res;
-	dom_exception exp; /* the result from DOM operations */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
 	dom_string *inputvalue;
 
-	exp = dom_html_input_element_get_value(input_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_ఆదానం_element_get_విలువ(ఆదానం_element, &inputvalue);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get input value");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* add key/value pair to fetch data list */
-	res = fetch_data_list_add(inputname,
+	res = fetch_దత్తాంశం_list_కూడు(inputname,
 				  inputvalue,
-				  NULL,
+				  ఖాళీ,
 				  charset,
 				  document_charset,
-				  fetch_data_next_ptr);
+				  fetch_దత్తాంశం_తదుపరి_ptr);
 
 	dom_string_unref(inputvalue);
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -746,95 +746,95 @@ form_dom_to_data_input_text(dom_html_input_element *input_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-form_dom_to_data_input(dom_html_input_element *input_element,
-		       const char *charset,
-		       const char *document_charset,
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_ఆదానం(dom_html_ఆదానం_element *ఆదానం_element,
+		       స్థిరరాశి అక్షరం *charset,
+		       స్థిరరాశి అక్షరం *document_charset,
 		       dom_html_element **submit_button,
-		       struct fetch_multipart_data ***fetch_data_next_ptr)
+		       నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
-	dom_exception exp; /* the result from DOM operations */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
 	bool element_disabled;
 	dom_string *inputname;
 	dom_string *inputtype;
 	nserror res;
 
 	/* check if element is disabled */
-	exp = dom_html_input_element_get_disabled(input_element,
+	ఘాతాంకం = dom_html_ఆదానం_element_get_disabled(ఆదానం_element,
 						  &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Could not get input disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		      "Could not get input disabled property. exp %d", ఘాతాంకం);
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	ఒకవేళ (element_disabled) {
 		/* disabled element requires no more processing */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* obtain name property */
-	exp = dom_html_input_element_get_name(input_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_ఆదానం_element_get_name(ఆదానం_element, &inputname);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Could not get input name property. exp %d", exp);
-		return NSERROR_DOM;
+		      "Could not get input name property. exp %d", ఘాతాంకం);
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	ఒకవేళ (inputname == ఖాళీ) {
 		/* element with no name is not converted */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* get input type */
-	exp = dom_html_input_element_get_type(input_element, &inputtype);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_ఆదానం_element_get_type(ఆదానం_element, &inputtype);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get input element type");
 		dom_string_unref(inputname);
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* process according to input element type */
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_submit)) {
+	ఒకవేళ (dom_string_caseless_isequal(inputtype, corestring_dom_submit)) {
 
-		res = form_dom_to_data_input_submit(input_element,
+		res = form_dom_గమ్యం_దత్తాంశం_ఆదానం_submit(ఆదానం_element,
 						    inputname,
 						    charset,
 						    document_charset,
 						    submit_button,
-						    fetch_data_next_ptr);
+						    fetch_దత్తాంశం_తదుపరి_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} లేకపోతే ఒకవేళ (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_image)) {
 
-		res = form_dom_to_data_input_image(input_element,
+		res = form_dom_గమ్యం_దత్తాంశం_ఆదానం_image(ఆదానం_element,
 						   inputname,
 						   charset,
 						   document_charset,
 						   submit_button,
-						   fetch_data_next_ptr);
+						   fetch_దత్తాంశం_తదుపరి_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} లేకపోతే ఒకవేళ (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_radio) ||
 		   dom_string_caseless_isequal(inputtype,
 					       corestring_dom_checkbox)) {
 
-		res = form_dom_to_data_input_checkbox(input_element,
+		res = form_dom_గమ్యం_దత్తాంశం_ఆదానం_checkbox(ఆదానం_element,
 						      inputname,
 						      charset,
 						      document_charset,
-						      fetch_data_next_ptr);
+						      fetch_దత్తాంశం_తదుపరి_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} లేకపోతే ఒకవేళ (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_file)) {
 
-		res = form_dom_to_data_input_file(input_element,
+		res = form_dom_గమ్యం_దత్తాంశం_ఆదానం_file(ఆదానం_element,
 						  inputname,
 						  charset,
 						  document_charset,
-						  fetch_data_next_ptr);
+						  fetch_దత్తాంశం_తదుపరి_ptr);
 
-	} else if (dom_string_caseless_isequal(inputtype,
+	} లేకపోతే ఒకవేళ (dom_string_caseless_isequal(inputtype,
 					       corestring_dom_reset) ||
 		   dom_string_caseless_isequal(inputtype,
 					       corestring_dom_button)) {
@@ -842,20 +842,20 @@ form_dom_to_data_input(dom_html_input_element *input_element,
 		NSLOG(netsurf, INFO, "Skipping RESET and BUTTON");
 		res = NSERROR_OK;
 
-	} else {
+	} లేకపోతే {
 		/* Everything else is treated as text values */
-		res = form_dom_to_data_input_text(input_element,
+		res = form_dom_గమ్యం_దత్తాంశం_ఆదానం_పాఠ్యం(ఆదానం_element,
 						  inputname,
 						  charset,
 						  document_charset,
-						  fetch_data_next_ptr);
+						  fetch_దత్తాంశం_తదుపరి_ptr);
 
 	}
 
 	dom_string_unref(inputtype);
 	dom_string_unref(inputname);
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -871,14 +871,14 @@ form_dom_to_data_input(dom_html_input_element *input_element,
  * \param fetch_data_next_ptr The multipart data list being constructed.
  * \return NSERROR_OK on success or appropriate error code.
  */
-static nserror
-form_dom_to_data_button(dom_html_button_element *button_element,
-			const char *form_charset,
-			const char *doc_charset,
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం_button(dom_html_button_element *button_element,
+			స్థిరరాశి అక్షరం *form_charset,
+			స్థిరరాశి అక్షరం *doc_charset,
 			dom_html_element **submit_button,
-			struct fetch_multipart_data ***fetch_data_next_ptr)
+			నిర్మాణం fetch_multipart_దత్తాంశం ***fetch_దత్తాంశం_తదుపరి_ptr)
 {
-	dom_exception exp; /* the result from DOM operations */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
 	bool element_disabled;
 	dom_string *inputname;
 	dom_string *inputvalue;
@@ -886,24 +886,24 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 	nserror res = NSERROR_OK;
 
 	/* check if element is disabled */
-	exp = dom_html_button_element_get_disabled(button_element,
+	ఘాతాంకం = dom_html_button_element_get_disabled(button_element,
 						   &element_disabled);
-	if (exp != DOM_NO_ERR) {
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Unable to get disabled property. exp %d", exp);
-		return NSERROR_DOM;
+		      "Unable to get disabled property. exp %d", ఘాతాంకం);
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (element_disabled) {
+	ఒకవేళ (element_disabled) {
 		/* allow enumeration to continue after disabled element */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* get the type attribute */
-	exp = dom_html_button_element_get_type(button_element, &inputtype);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_button_element_get_type(button_element, &inputtype);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get button element type");
-		return NSERROR_DOM;
+		తిరిగి NSERROR_DOM;
 	}
 
 	/* If the type attribute is "reset" or "button" the element is
@@ -911,59 +911,59 @@ form_dom_to_data_button(dom_html_button_element *button_element,
 	 *  default and invalid values result in submit which will
 	 *  be considered.
 	 */
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_reset)) {
+	ఒకవేళ (dom_string_caseless_isequal(inputtype, corestring_dom_reset)) {
 		/* multipart data entry not required for reset type */
 		dom_string_unref(inputtype);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
-	if (dom_string_caseless_isequal(inputtype, corestring_dom_button)) {
+	ఒకవేళ (dom_string_caseless_isequal(inputtype, corestring_dom_button)) {
 		/* multipart data entry not required for button type */
 		dom_string_unref(inputtype);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 	dom_string_unref(inputtype);
 
 	/* only submision button generates an element */
-	if (*submit_button == NULL) {
+	ఒకవేళ (*submit_button == ఖాళీ) {
 		/* no submission button selected yet so use this one */
 		*submit_button = (dom_html_element *)button_element;
 	}
-	if (*submit_button != (dom_html_element *)button_element) {
-		return NSERROR_OK;
+	ఒకవేళ (*submit_button != (dom_html_element *)button_element) {
+		తిరిగి NSERROR_OK;
 	}
 
 	/* obtain name property */
-	exp = dom_html_button_element_get_name(button_element, &inputname);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_button_element_get_name(button_element, &inputname);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO,
-		      "Could not get button name property. exp %d", exp);
-		return NSERROR_DOM;
+		      "Could not get button name property. exp %d", ఘాతాంకం);
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (inputname == NULL) {
+	ఒకవేళ (inputname == ఖాళీ) {
 		/* allow enumeration to continue after element with no name */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* get button value and add to fetch data list */
-	exp = dom_html_button_element_get_value(button_element, &inputvalue);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_button_element_get_విలువ(button_element, &inputvalue);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get submit button value");
 		res = NSERROR_DOM;
-	} else {
-		res = fetch_data_list_add(inputname,
+	} లేకపోతే {
+		res = fetch_దత్తాంశం_list_కూడు(inputname,
 					  inputvalue,
-					  NULL,
+					  ఖాళీ,
 					  form_charset,
 					  doc_charset,
-					  fetch_data_next_ptr);
+					  fetch_దత్తాంశం_తదుపరి_ptr);
 
 		dom_string_unref(inputvalue);
 	}
 
 	dom_string_unref(inputname);
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -973,40 +973,40 @@ form_dom_to_data_button(dom_html_button_element *button_element,
  * \param form  The form
  * \return Pointer to charset name (on heap, caller should free) or NULL
  */
-static char *form_acceptable_charset(struct form *form)
+స్థిర అక్షరం *form_acceptable_charset(నిర్మాణం form *form)
 {
-	char *temp, *c;
+	అక్షరం *తాత్కాలిక, *c;
 
-	if (!form->accept_charsets) {
+	ఒకవేళ (!form->accept_charsets) {
 		/* no accept-charsets attribute for this form */
-		if (form->document_charset) {
+		ఒకవేళ (form->document_charset) {
 			/* document charset present, so use it */
-			return strdup(form->document_charset);
-		} else {
+			తిరిగి strdup(form->document_charset);
+		} లేకపోతే {
 			/* no document charset, so default to 8859-1 */
-			return strdup("ISO-8859-1");
+			తిరిగి strdup("ISO-8859-1");
 		}
 	}
 
 	/* make temporary copy of accept-charsets attribute */
-	temp = strdup(form->accept_charsets);
-	if (!temp)
-		return NULL;
+	తాత్కాలిక = strdup(form->accept_charsets);
+	ఒకవేళ (!తాత్కాలిక)
+		తిరిగి ఖాళీ;
 
 	/* make it upper case */
-	for (c = temp; *c; c++) {
-		*c = ascii_to_upper(*c);
+	కొరకు (c = తాత్కాలిక; *c; c++) {
+		*c = ascii_గమ్యం_పై(*c);
 	}
 
 	/* is UTF-8 specified? */
-	c = strstr(temp, "UTF-8");
-	if (c) {
-		free(temp);
-		return strdup("UTF-8");
+	c = అక్షరశ్రేణి_శోధన(తాత్కాలిక, "UTF-8");
+	ఒకవేళ (c) {
+		విడుదల(తాత్కాలిక);
+		తిరిగి strdup("UTF-8");
 	}
 
 	/* dispense with temporary copy */
-	free(temp);
+	విడుదల(తాత్కాలిక);
 
 	/* according to RFC2070, the accept-charsets attribute of the
 	 * form element contains a space and/or comma separated list */
@@ -1019,13 +1019,13 @@ static char *form_acceptable_charset(struct form *form)
 	 * textual input values.  For now, we just extract the first
 	 * element of the charset list
 	 */
-	while (*c && !ascii_is_space(*c)) {
-		if (*c == ',')
-			break;
+	అయితే (*c && !ascii_is_space(*c)) {
+		ఒకవేళ (*c == ',')
+			ఆపు;
 		c++;
 	}
 
-	return strndup(form->accept_charsets, c - form->accept_charsets);
+	తిరిగి strndup(form->accept_charsets, c - form->accept_charsets);
 }
 
 
@@ -1050,139 +1050,139 @@ static char *form_acceptable_charset(struct form *form)
  *                             fetch_multipart_data, NULL if no controls
  * \return NSERROR_OK on success or appropriate error code
  */
-static nserror
-form_dom_to_data(struct form *form,
-		 struct form_control *submit_control,
-		 struct fetch_multipart_data **fetch_data_out)
+స్థిర nserror
+form_dom_గమ్యం_దత్తాంశం(నిర్మాణం form *form,
+		 నిర్మాణం form_control *submit_control,
+		 నిర్మాణం fetch_multipart_దత్తాంశం **fetch_దత్తాంశం_బహిర్గతం)
 {
 	nserror res = NSERROR_OK;
-	char *charset; /* form characterset */
-	dom_exception exp; /* the result from DOM operations */
-	dom_html_collection *elements = NULL; /* the dom form elements */
-	uint32_t element_count; /* the number of elements in the DOM form */
+	అక్షరం *charset; /* form characterset */
+	dom_exception ఘాతాంకం; /* the result from DOM operations */
+	dom_html_collection *elements = ఖాళీ; /* the dom form elements */
+	uint32_t element_లెక్క; /* the number of elements in the DOM form */
 	uint32_t element_idx; /* the index of thr enumerated element */
-	dom_node *element = NULL; /* the DOM form element */
-	dom_string *nodename = NULL; /* the DOM node name of the element */
-	struct fetch_multipart_data *fetch_data = NULL; /* fetch data list */
-	struct fetch_multipart_data **fetch_data_next = &fetch_data;
+	dom_కణుపు *element = ఖాళీ; /* the DOM form element */
+	dom_string *nodename = ఖాళీ; /* the DOM node name of the element */
+	నిర్మాణం fetch_multipart_దత్తాంశం *fetch_దత్తాంశం = ఖాళీ; /* fetch data list */
+	నిర్మాణం fetch_multipart_దత్తాంశం **fetch_దత్తాంశం_తదుపరి = &fetch_దత్తాంశం;
 	dom_html_element *submit_button;
 
 	/* obtain the submit_button DOM node from the control */
-	if (submit_control != NULL) {
-		submit_button = submit_control->node;
-	} else {
-		submit_button = NULL;
+	ఒకవేళ (submit_control != ఖాళీ) {
+		submit_button = submit_control->కణుపు;
+	} లేకపోతే {
+		submit_button = ఖాళీ;
 	}
 
 	/** \todo Replace this call with something DOMish */
 	charset = form_acceptable_charset(form);
-	if (charset == NULL) {
+	ఒకవేళ (charset == ఖాళీ) {
 		NSLOG(netsurf, INFO, "failed to find charset");
-		return NSERROR_NOMEM;
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	/* obtain the form elements and count */
-	exp = dom_html_form_element_get_elements(form->node, &elements);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_form_element_get_elements(form->కణుపు, &elements);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get form elements");
-		free(charset);
-		return NSERROR_DOM;
+		విడుదల(charset);
+		తిరిగి NSERROR_DOM;
 	}
 
-	exp = dom_html_collection_get_length(elements, &element_count);
-	if (exp != DOM_NO_ERR) {
+	ఘాతాంకం = dom_html_collection_get_నిడివి(elements, &element_లెక్క);
+	ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 		NSLOG(netsurf, INFO, "Could not get form element count");
 		res = NSERROR_DOM;
-		goto form_dom_to_data_error;
+		వెళ్ళు form_dom_గమ్యం_దత్తాంశం_error;
 	}
 
-	for (element_idx = 0; element_idx < element_count; element_idx++) {
+	కొరకు (element_idx = 0; element_idx < element_లెక్క; element_idx++) {
 		/* obtain a form element */
-		exp = dom_html_collection_item(elements, element_idx, &element);
-		if (exp != DOM_NO_ERR) {
+		ఘాతాంకం = dom_html_collection_అంశం(elements, element_idx, &element);
+		ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "retrieving form element %"PRIu32" failed with %d",
-			      element_idx, exp);
+			      element_idx, ఘాతాంకం);
 			res = NSERROR_DOM;
-			goto form_dom_to_data_error;
+			వెళ్ళు form_dom_గమ్యం_దత్తాంశం_error;
 		}
 
 		/* node name from element */
-		exp = dom_node_get_node_name(element, &nodename);
-		if (exp != DOM_NO_ERR) {
+		ఘాతాంకం = dom_కణుపు_get_కణుపు_name(element, &nodename);
+		ఒకవేళ (ఘాతాంకం != DOM_NO_ERR) {
 			NSLOG(netsurf, INFO,
 			      "getting element node name %"PRIu32" failed with %d",
-			      element_idx, exp);
-			dom_node_unref(element);
+			      element_idx, ఘాతాంకం);
+			dom_కణుపు_unref(element);
 			res = NSERROR_DOM;
-			goto form_dom_to_data_error;
+			వెళ్ళు form_dom_గమ్యం_దత్తాంశం_error;
 		}
 
-		if (dom_string_isequal(nodename, corestring_dom_TEXTAREA)) {
+		ఒకవేళ (dom_string_isequal(nodename, corestring_dom_TEXTAREA)) {
 			/* Form element is HTMLTextAreaElement */
-			res = form_dom_to_data_textarea(
-				(dom_html_text_area_element *)element,
+			res = form_dom_గమ్యం_దత్తాంశం_textarea(
+				(dom_html_పాఠ్యం_area_element *)element,
 				charset,
 				form->document_charset,
-				&fetch_data_next);
+				&fetch_దత్తాంశం_తదుపరి);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_SELECT)) {
+		} లేకపోతే ఒకవేళ (dom_string_isequal(nodename, corestring_dom_SELECT)) {
 			/* Form element is HTMLSelectElement */
-			res = form_dom_to_data_select(
+			res = form_dom_గమ్యం_దత్తాంశం_select(
 				(dom_html_select_element *)element,
 				charset,
 				form->document_charset,
-				&fetch_data_next);
+				&fetch_దత్తాంశం_తదుపరి);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_INPUT)) {
+		} లేకపోతే ఒకవేళ (dom_string_isequal(nodename, corestring_dom_ఆదానం)) {
 			/* Form element is HTMLInputElement */
-			res = form_dom_to_data_input(
-				(dom_html_input_element *)element,
+			res = form_dom_గమ్యం_దత్తాంశం_ఆదానం(
+				(dom_html_ఆదానం_element *)element,
 				charset,
 				form->document_charset,
 				&submit_button,
-				&fetch_data_next);
+				&fetch_దత్తాంశం_తదుపరి);
 
-		} else if (dom_string_isequal(nodename, corestring_dom_BUTTON)) {
+		} లేకపోతే ఒకవేళ (dom_string_isequal(nodename, corestring_dom_BUTTON)) {
 			/* Form element is HTMLButtonElement */
-			res = form_dom_to_data_button(
+			res = form_dom_గమ్యం_దత్తాంశం_button(
 				(dom_html_button_element *)element,
 				charset,
 				form->document_charset,
 				&submit_button,
-				&fetch_data_next);
+				&fetch_దత్తాంశం_తదుపరి);
 
-		} else {
+		} లేకపోతే {
 			/* Form element is not handled */
 			NSLOG(netsurf, INFO,
 			      "Unhandled element type: %*s",
-			      (int)dom_string_byte_length(nodename),
-			      dom_string_data(nodename));
+			      (పూర్ణాంకం)dom_string_byte_నిడివి(nodename),
+			      dom_string_దత్తాంశం(nodename));
 			res = NSERROR_DOM;
 
 		}
 
 		dom_string_unref(nodename);
-		dom_node_unref(element);
+		dom_కణుపు_unref(element);
 
 		/* abort form element enumeration on error */
-		if (res != NSERROR_OK) {
-			goto form_dom_to_data_error;
+		ఒకవేళ (res != NSERROR_OK) {
+			వెళ్ళు form_dom_గమ్యం_దత్తాంశం_error;
 		}
 	}
 
-	*fetch_data_out = fetch_data;
+	*fetch_దత్తాంశం_బహిర్గతం = fetch_దత్తాంశం;
 	dom_html_collection_unref(elements);
-	free(charset);
+	విడుదల(charset);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
-form_dom_to_data_error:
-	fetch_multipart_data_destroy(fetch_data);
+form_dom_గమ్యం_దత్తాంశం_error:
+	fetch_multipart_దత్తాంశం_destroy(fetch_దత్తాంశం);
 	dom_html_collection_unref(elements);
-	free(charset);
+	విడుదల(charset);
 
-	return res;
+	తిరిగి res;
 }
 
 /**
@@ -1193,110 +1193,110 @@ form_dom_to_data_error:
  * \param[out] encoded_out URL-encoded form data
  * \return NSERROR_OK on success and \a encoded_out updated else appropriate error code
  */
-static nserror
-form_url_encode(struct form *form,
-		struct fetch_multipart_data *control,
-		char **encoded_out)
+స్థిర nserror
+form_url_encode(నిర్మాణం form *form,
+		నిర్మాణం fetch_multipart_దత్తాంశం *control,
+		అక్షరం **encoded_బహిర్గతం)
 {
-	char *name, *value;
-	char *s, *s2;
-	unsigned int len, len1, len_init;
+	అక్షరం *name, *విలువ;
+	అక్షరం *s, *s2;
+	గుర్తులేని పూర్ణాంకం len, len1, len_init;
 	nserror res;
 
-	s = malloc(1);
+	s = జ్ఞాపకం_ఇవ్వు(1);
 
-	if (s == NULL) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (s == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	s[0] = '\0';
 	len_init = len = 0;
 
-	for (; control; control = control->next) {
-		res = url_escape(control->name, true, NULL, &name);
-		if (res != NSERROR_OK) {
-			free(s);
-			return res;
+	కొరకు (; control; control = control->తదుపరి) {
+		res = url_escape(control->name, true, ఖాళీ, &name);
+		ఒకవేళ (res != NSERROR_OK) {
+			విడుదల(s);
+			తిరిగి res;
 		}
 
-		res = url_escape(control->value, true, NULL, &value);
-		if (res != NSERROR_OK) {
-			free(name);
-			free(s);
-			return res;
+		res = url_escape(control->విలువ, true, ఖాళీ, &విలువ);
+		ఒకవేళ (res != NSERROR_OK) {
+			విడుదల(name);
+			విడుదల(s);
+			తిరిగి res;
 		}
 
 		/* resize string to allow for new key/value pair,
 		 *  equals, amphersand and terminator
 		 */
-		len1 = len + strlen(name) + strlen(value) + 2;
+		len1 = len + అక్షరశ్రేణి_పొడవు(name) + అక్షరశ్రేణి_పొడవు(విలువ) + 2;
 		s2 = realloc(s, len1 + 1);
-		if (s2 == NULL) {
-			free(value);
-			free(name);
-			free(s);
-			return NSERROR_NOMEM;
+		ఒకవేళ (s2 == ఖాళీ) {
+			విడుదల(విలువ);
+			విడుదల(name);
+			విడుదల(s);
+			తిరిగి NSERROR_NOMEM;
 		}
 		s = s2;
 
-		snprintf(s + len, (len1 + 1) - len, "%s=%s&", name, value);
+		snprintf(s + len, (len1 + 1) - len, "%s=%s&", name, విలువ);
 		len = len1;
-		free(name);
-		free(value);
+		విడుదల(name);
+		విడుదల(విలువ);
 	}
 
-	if (len > len_init) {
+	ఒకవేళ (len > len_init) {
 		/* Replace trailing '&' */
 		s[len - 1] = '\0';
 	}
 
-	*encoded_out = s;
+	*encoded_బహిర్గతం = s;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * Callback for the select menus scroll
  */
-static void
-form_select_menu_scroll_callback(void *client_data,
-				 struct scrollbar_msg_data *scrollbar_data)
+స్థిర శూన్య
+form_select_menu_scroll_callback(శూన్య *client_దత్తాంశం,
+				 నిర్మాణం scrollbar_సందేశం_దత్తాంశం *scrollbar_దత్తాంశం)
 {
-	struct form_control *control = client_data;
-	struct form_select_menu *menu = control->data.select.menu;
+	నిర్మాణం form_control *control = client_దత్తాంశం;
+	నిర్మాణం form_select_menu *menu = control->దత్తాంశం.select.menu;
 	html_content *html = (html_content *)menu->c;
 
-	switch (scrollbar_data->msg) {
-		case SCROLLBAR_MSG_MOVED:
-			menu->callback(menu->client_data,
+	ఎంపిక (scrollbar_దత్తాంశం->సందేశం) {
+		స్థితి SCROLLBAR_సందేశం_MOVED:
+			menu->callback(menu->client_దత్తాంశం,
 					0, 0,
-					menu->width,
-					menu->height);
-			break;
-		case SCROLLBAR_MSG_SCROLL_START:
+					menu->వెడల్పు,
+					menu->ఎత్తు);
+			ఆపు;
+		స్థితి SCROLLBAR_సందేశం_SCROLL_ప్రారంభం:
 		{
-			struct rect rect = {
-				.x0 = scrollbar_data->x0,
-				.y0 = scrollbar_data->y0,
-				.x1 = scrollbar_data->x1,
-				.y1 = scrollbar_data->y1
+			నిర్మాణం rect rect = {
+				.x0 = scrollbar_దత్తాంశం->x0,
+				.y0 = scrollbar_దత్తాంశం->y0,
+				.x1 = scrollbar_దత్తాంశం->x1,
+				.y1 = scrollbar_దత్తాంశం->y1
 			};
 
-			browser_window_set_drag_type(html->bw,
+			browser_కిటికీ_సమితి_drag_type(html->bw,
 					DRAGGING_CONTENT_SCROLLBAR, &rect);
 
 			menu->scroll_capture = true;
 		}
-			break;
-		case SCROLLBAR_MSG_SCROLL_FINISHED:
+			ఆపు;
+		స్థితి SCROLLBAR_సందేశం_SCROLL_ముగిసిన:
 			menu->scroll_capture = false;
 
-			browser_window_set_drag_type(html->bw,
-					DRAGGING_NONE, NULL);
-			break;
-		default:
-			break;
+			browser_కిటికీ_సమితి_drag_type(html->bw,
+					DRAGGING_NONE, ఖాళీ);
+			ఆపు;
+		అప్రమేయ:
+			ఆపు;
 	}
 }
 
@@ -1309,18 +1309,18 @@ form_select_menu_scroll_callback(void *client_data,
  * \param  item	    index of item selected from the menu
  * \return NSERROR_OK or appropriate error code.
  */
-static nserror
+స్థిర nserror
 form__select_process_selection(html_content *html,
-			       struct form_control *control,
-			       int item)
+			       నిర్మాణం form_control *control,
+			       పూర్ణాంకం అంశం)
 {
-	struct box *inline_box;
-	struct form_option *o;
-	int count;
+	నిర్మాణం box *inline_box;
+	నిర్మాణం form_option *o;
+	పూర్ణాంకం లెక్క;
 	nserror ret = NSERROR_OK;
 
-	assert(control != NULL);
-	assert(html != NULL);
+	ప్రతిజ్ఞా(control != ఖాళీ);
+	ప్రతిజ్ఞా(html != ఖాళీ);
 
 	/**
 	 * \todo Even though the form code is effectively part of the html
@@ -1329,64 +1329,64 @@ form__select_process_selection(html_content *html,
 
 	inline_box = control->box->children->children;
 
-	for (count = 0, o = control->data.select.items;
-			o != NULL;
-			count++, o = o->next) {
-		if (!control->data.select.multiple && o->selected) {
+	కొరకు (లెక్క = 0, o = control->దత్తాంశం.select.వస్తువులు;
+			o != ఖాళీ;
+			లెక్క++, o = o->తదుపరి) {
+		ఒకవేళ (!control->దత్తాంశం.select.గుణిజం && o->selected) {
 			o->selected = false;
-			dom_html_option_element_set_selected(o->node, false);
+			dom_html_option_element_సమితి_selected(o->కణుపు, false);
 		}
 
-		if (count == item) {
-			if (control->data.select.multiple) {
-				if (o->selected) {
+		ఒకవేళ (లెక్క == అంశం) {
+			ఒకవేళ (control->దత్తాంశం.select.గుణిజం) {
+				ఒకవేళ (o->selected) {
 					o->selected = false;
-					dom_html_option_element_set_selected(
-							o->node, false);
-					control->data.select.num_selected--;
-				} else {
+					dom_html_option_element_సమితి_selected(
+							o->కణుపు, false);
+					control->దత్తాంశం.select.అంకె_selected--;
+				} లేకపోతే {
 					o->selected = true;
-					dom_html_option_element_set_selected(
-							o->node, true);
-					control->data.select.num_selected++;
+					dom_html_option_element_సమితి_selected(
+							o->కణుపు, true);
+					control->దత్తాంశం.select.అంకె_selected++;
 				}
-			} else {
-				dom_html_option_element_set_selected(
-						o->node, true);
+			} లేకపోతే {
+				dom_html_option_element_సమితి_selected(
+						o->కణుపు, true);
 				o->selected = true;
 			}
 		}
 
-		if (o->selected) {
-			control->data.select.current = o;
+		ఒకవేళ (o->selected) {
+			control->దత్తాంశం.select.current = o;
 		}
 	}
 
-	talloc_free(inline_box->text);
-	inline_box->text = 0;
+	talloc_free(inline_box->పాఠ్యం);
+	inline_box->పాఠ్యం = 0;
 
-	if (control->data.select.num_selected == 0) {
-		inline_box->text = talloc_strdup(html->bctx,
+	ఒకవేళ (control->దత్తాంశం.select.అంకె_selected == 0) {
+		inline_box->పాఠ్యం = talloc_strdup(html->bctx,
 				messages_get("Form_None"));
-	} else if (control->data.select.num_selected == 1) {
-		inline_box->text = talloc_strdup(html->bctx,
-				control->data.select.current->text);
-	} else {
-		inline_box->text = talloc_strdup(html->bctx,
+	} లేకపోతే ఒకవేళ (control->దత్తాంశం.select.అంకె_selected == 1) {
+		inline_box->పాఠ్యం = talloc_strdup(html->bctx,
+				control->దత్తాంశం.select.current->పాఠ్యం);
+	} లేకపోతే {
+		inline_box->పాఠ్యం = talloc_strdup(html->bctx,
 				messages_get("Form_Many"));
 	}
 
-	if (!inline_box->text) {
+	ఒకవేళ (!inline_box->పాఠ్యం) {
 		ret = NSERROR_NOMEM;
-		inline_box->length = 0;
-	} else {
-		inline_box->length = strlen(inline_box->text);
+		inline_box->నిడివి = 0;
+	} లేకపోతే {
+		inline_box->నిడివి = అక్షరశ్రేణి_పొడవు(inline_box->పాఠ్యం);
 	}
-	inline_box->width = control->box->width;
+	inline_box->వెడల్పు = control->box->వెడల్పు;
 
 	html__redraw_a_box(html, control->box);
 
-	return ret;
+	తిరిగి ret;
 }
 
 
@@ -1397,325 +1397,325 @@ form__select_process_selection(html_content *html,
  * \param x X coordinate of click
  * \param y Y coordinate of click
  */
-static void form_select_menu_clicked(struct form_control *control, int x, int y)
+స్థిర శూన్య form_select_menu_clicked(నిర్మాణం form_control *control, పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	struct form_option *option;
+	నిర్మాణం form_select_menu *menu = control->దత్తాంశం.select.menu;
+	నిర్మాణం form_option *option;
 	html_content *html = (html_content *)menu->c;
-	int line_height, line_height_with_spacing;
-	int item_bottom_y;
-	int scroll, i;
+	పూర్ణాంకం పంక్తి_ఎత్తు, పంక్తి_ఎత్తు_with_spacing;
+	పూర్ణాంకం అంశం_bottom_y;
+	పూర్ణాంకం scroll, i;
 
-	scroll = scrollbar_get_offset(menu->scrollbar);
+	scroll = scrollbar_get_స్థానభ్రంశం(menu->scrollbar);
 
-	line_height = menu->line_height;
-	line_height_with_spacing = line_height +
-			line_height * SELECT_LINE_SPACING;
+	పంక్తి_ఎత్తు = menu->పంక్తి_ఎత్తు;
+	పంక్తి_ఎత్తు_with_spacing = పంక్తి_ఎత్తు +
+			పంక్తి_ఎత్తు * SELECT_పంక్తి_SPACING;
 
-	option = control->data.select.items;
-	item_bottom_y = line_height_with_spacing;
+	option = control->దత్తాంశం.select.వస్తువులు;
+	అంశం_bottom_y = పంక్తి_ఎత్తు_with_spacing;
 	i = 0;
-	while (option && item_bottom_y < scroll + y) {
-		item_bottom_y += line_height_with_spacing;
-		option = option->next;
+	అయితే (option && అంశం_bottom_y < scroll + y) {
+		అంశం_bottom_y += పంక్తి_ఎత్తు_with_spacing;
+		option = option->తదుపరి;
 		i++;
 	}
 
-	if (option != NULL) {
+	ఒకవేళ (option != ఖాళీ) {
 		form__select_process_selection(html, control, i);
 	}
 
-	menu->callback(menu->client_data, 0, 0, menu->width, menu->height);
+	menu->callback(menu->client_దత్తాంశం, 0, 0, menu->వెడల్పు, menu->ఎత్తు);
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_add_control(struct form *form, struct form_control *control)
+శూన్య form_కూడు_control(నిర్మాణం form *form, నిర్మాణం form_control *control)
 {
-	if (form == NULL) {
-		return;
+	ఒకవేళ (form == ఖాళీ) {
+		తిరిగి;
 	}
 
 	control->form = form;
 
-	if (form->controls != NULL) {
-		assert(form->last_control);
+	ఒకవేళ (form->controls != ఖాళీ) {
+		ప్రతిజ్ఞా(form->చివరి_control);
 
-		form->last_control->next = control;
-		control->prev = form->last_control;
-		control->next = NULL;
-		form->last_control = control;
-	} else {
-		form->controls = form->last_control = control;
+		form->చివరి_control->తదుపరి = control;
+		control->prev = form->చివరి_control;
+		control->తదుపరి = ఖాళీ;
+		form->చివరి_control = control;
+	} లేకపోతే {
+		form->controls = form->చివరి_control = control;
 	}
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free_control(struct form_control *control)
+శూన్య form_free_control(నిర్మాణం form_control *control)
 {
-	struct form_control *c;
-	assert(control != NULL);
+	నిర్మాణం form_control *c;
+	ప్రతిజ్ఞా(control != ఖాళీ);
 
 	NSLOG(netsurf, INFO, "Control:%p name:%p value:%p initial:%p",
-	      control, control->name, control->value, control->initial_value);
-	free(control->name);
-	free(control->value);
-	free(control->initial_value);
-	if (control->last_synced_value != NULL) {
-		free(control->last_synced_value);
+	      control, control->name, control->విలువ, control->initial_విలువ);
+	విడుదల(control->name);
+	విడుదల(control->విలువ);
+	విడుదల(control->initial_విలువ);
+	ఒకవేళ (control->చివరి_synced_విలువ != ఖాళీ) {
+		విడుదల(control->చివరి_synced_విలువ);
 	}
 
-	if (control->type == GADGET_SELECT) {
-		struct form_option *option, *next;
+	ఒకవేళ (control->type == GADGET_SELECT) {
+		నిర్మాణం form_option *option, *తదుపరి;
 
-		for (option = control->data.select.items; option;
-				option = next) {
-			next = option->next;
+		కొరకు (option = control->దత్తాంశం.select.వస్తువులు; option;
+				option = తదుపరి) {
+			తదుపరి = option->తదుపరి;
 			NSLOG(netsurf, INFO,
 			      "select option:%p text:%p value:%p", option,
-			      option->text, option->value);
-			free(option->text);
-			free(option->value);
-			free(option);
+			      option->పాఠ్యం, option->విలువ);
+			విడుదల(option->పాఠ్యం);
+			విడుదల(option->విలువ);
+			విడుదల(option);
 		}
-		if (control->data.select.menu != NULL) {
+		ఒకవేళ (control->దత్తాంశం.select.menu != ఖాళీ) {
 			form_free_select_menu(control);
 		}
 	}
 
-	if (control->type == GADGET_TEXTAREA ||
+	ఒకవేళ (control->type == GADGET_TEXTAREA ||
 			control->type == GADGET_TEXTBOX ||
 			control->type == GADGET_PASSWORD) {
 
-		if (control->data.text.initial != NULL) {
-			dom_string_unref(control->data.text.initial);
+		ఒకవేళ (control->దత్తాంశం.పాఠ్యం.initial != ఖాళీ) {
+			dom_string_unref(control->దత్తాంశం.పాఠ్యం.initial);
 		}
 
-		if (control->data.text.ta != NULL) {
-			textarea_destroy(control->data.text.ta);
+		ఒకవేళ (control->దత్తాంశం.పాఠ్యం.ta != ఖాళీ) {
+			textarea_destroy(control->దత్తాంశం.పాఠ్యం.ta);
 		}
 	}
 
 	/* unlink the control from the form */
-	if (control->form != NULL) {
-		for (c = control->form->controls; c != NULL; c = c->next) {
-			if (c->next == control) {
-				c->next = control->next;
-				if (control->form->last_control == control)
-					control->form->last_control = c;
-				break;
+	ఒకవేళ (control->form != ఖాళీ) {
+		కొరకు (c = control->form->controls; c != ఖాళీ; c = c->తదుపరి) {
+			ఒకవేళ (c->తదుపరి == control) {
+				c->తదుపరి = control->తదుపరి;
+				ఒకవేళ (control->form->చివరి_control == control)
+					control->form->చివరి_control = c;
+				ఆపు;
 			}
-			if (c == control) {
+			ఒకవేళ (c == control) {
 				/* can only happen if control was first control */
-				control->form->controls = control->next;
-				if (control->form->last_control == control)
+				control->form->controls = control->తదుపరి;
+				ఒకవేళ (control->form->చివరి_control == control)
 					control->form->controls =
-						control->form->last_control = NULL;
-				break;
+						control->form->చివరి_control = ఖాళీ;
+				ఆపు;
 			}
 		}
 	}
 
-	if (control->node_value != NULL) {
-		dom_string_unref(control->node_value);
+	ఒకవేళ (control->కణుపు_విలువ != ఖాళీ) {
+		dom_string_unref(control->కణుపు_విలువ);
 	}
 
-	free(control);
+	విడుదల(control);
 }
 
 
 /* exported interface documented in html/form_internal.h */
-bool form_add_option(struct form_control *control, char *value, char *text,
-		     bool selected, void *node)
+bool form_కూడు_option(నిర్మాణం form_control *control, అక్షరం *విలువ, అక్షరం *పాఠ్యం,
+		     bool selected, శూన్య *కణుపు)
 {
-	struct form_option *option;
+	నిర్మాణం form_option *option;
 
-	assert(control);
-	assert(control->type == GADGET_SELECT);
+	ప్రతిజ్ఞా(control);
+	ప్రతిజ్ఞా(control->type == GADGET_SELECT);
 
-	option = calloc(1, sizeof *option);
-	if (!option)
-		return false;
+	option = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం *option);
+	ఒకవేళ (!option)
+		తిరిగి false;
 
-	option->value = value;
-	option->text = text;
+	option->విలువ = విలువ;
+	option->పాఠ్యం = పాఠ్యం;
 
 	/* add to linked list */
-	if (control->data.select.items == 0)
-		control->data.select.items = option;
-	else
-		control->data.select.last_item->next = option;
-	control->data.select.last_item = option;
+	ఒకవేళ (control->దత్తాంశం.select.వస్తువులు == 0)
+		control->దత్తాంశం.select.వస్తువులు = option;
+	లేకపోతే
+		control->దత్తాంశం.select.చివరి_అంశం->తదుపరి = option;
+	control->దత్తాంశం.select.చివరి_అంశం = option;
 
 	/* set selected */
-	if (selected && (control->data.select.num_selected == 0 ||
-			control->data.select.multiple)) {
+	ఒకవేళ (selected && (control->దత్తాంశం.select.అంకె_selected == 0 ||
+			control->దత్తాంశం.select.గుణిజం)) {
 		option->selected = option->initial_selected = true;
-		control->data.select.num_selected++;
-		control->data.select.current = option;
+		control->దత్తాంశం.select.అంకె_selected++;
+		control->దత్తాంశం.select.current = option;
 	}
 
-	control->data.select.num_items++;
+	control->దత్తాంశం.select.అంకె_వస్తువులు++;
 
-	option->node = node;
+	option->కణుపు = కణుపు;
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* exported interface documented in html/form_internal.h */
 nserror
-form_open_select_menu(void *client_data,
-		      struct form_control *control,
+form_open_select_menu(శూన్య *client_దత్తాంశం,
+		      నిర్మాణం form_control *control,
 		      select_menu_redraw_callback callback,
-		      struct content *c)
+		      నిర్మాణం content *c)
 {
-	int line_height_with_spacing;
-	struct box *box;
+	పూర్ణాంకం పంక్తి_ఎత్తు_with_spacing;
+	నిర్మాణం box *box;
 	plot_font_style_t fstyle;
-	int total_height;
-	struct form_select_menu *menu;
+	పూర్ణాంకం మొత్తం_ఎత్తు;
+	నిర్మాణం form_select_menu *menu;
 	html_content *html = (html_content *)c;
 	nserror res;
 
 	/* if the menu is opened for the first time */
-	if (control->data.select.menu == NULL) {
+	ఒకవేళ (control->దత్తాంశం.select.menu == ఖాళీ) {
 
-		menu = calloc(1, sizeof (struct form_select_menu));
-		if (menu == NULL) {
-			return NSERROR_NOMEM;
+		menu = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం (నిర్మాణం form_select_menu));
+		ఒకవేళ (menu == ఖాళీ) {
+			తిరిగి NSERROR_NOMEM;
 		}
 
-		control->data.select.menu = menu;
+		control->దత్తాంశం.select.menu = menu;
 
 		box = control->box;
 
-		menu->width = box->width +
-			box->border[RIGHT].width + box->padding[RIGHT] +
-			box->border[LEFT].width + box->padding[LEFT];
+		menu->వెడల్పు = box->వెడల్పు +
+			box->border[కుడి_2].వెడల్పు + box->padding[కుడి_2] +
+			box->border[ఎడమ_2].వెడల్పు + box->padding[ఎడమ_2];
 
 		font_plot_style_from_css(&html->unit_len_ctx,
 				control->box->style, &fstyle);
-		menu->f_size = fstyle.size;
+		menu->f_కొలత = fstyle.కొలత;
 
-		menu->line_height = FIXTOINT(FDIV((FMUL(FLTTOFIX(1.2),
+		menu->పంక్తి_ఎత్తు = FIXTOINT(FDIV((FMUL(FLTTOFIX(1.2),
 				FMUL(html->unit_len_ctx.device_dpi,
-				INTTOFIX(fstyle.size / PLOT_STYLE_SCALE)))),
+				INTTOFIX(fstyle.కొలత / PLOT_STYLE_SCALE)))),
 				F_72));
 
-		line_height_with_spacing = menu->line_height +
-				menu->line_height *
-				SELECT_LINE_SPACING;
+		పంక్తి_ఎత్తు_with_spacing = menu->పంక్తి_ఎత్తు +
+				menu->పంక్తి_ఎత్తు *
+				SELECT_పంక్తి_SPACING;
 
-		total_height = control->data.select.num_items *
-				line_height_with_spacing;
-		menu->height = total_height;
+		మొత్తం_ఎత్తు = control->దత్తాంశం.select.అంకె_వస్తువులు *
+				పంక్తి_ఎత్తు_with_spacing;
+		menu->ఎత్తు = మొత్తం_ఎత్తు;
 
-		if (menu->height > MAX_SELECT_HEIGHT) {
-			menu->height = MAX_SELECT_HEIGHT;
+		ఒకవేళ (menu->ఎత్తు > MAX_SELECT_ఎత్తు) {
+			menu->ఎత్తు = MAX_SELECT_ఎత్తు;
 		}
 
-		menu->client_data = client_data;
+		menu->client_దత్తాంశం = client_దత్తాంశం;
 		menu->callback = callback;
 		res = scrollbar_create(false,
-				       menu->height,
-				       total_height,
-				       menu->height,
+				       menu->ఎత్తు,
+				       మొత్తం_ఎత్తు,
+				       menu->ఎత్తు,
 				       control,
 				       form_select_menu_scroll_callback,
 				       &(menu->scrollbar));
-		if (res != NSERROR_OK) {
-			control->data.select.menu = NULL;
-			free(menu);
-			return res;
+		ఒకవేళ (res != NSERROR_OK) {
+			control->దత్తాంశం.select.menu = ఖాళీ;
+			విడుదల(menu);
+			తిరిగి res;
 		}
 		menu->c = c;
-	} else {
-		menu = control->data.select.menu;
+	} లేకపోతే {
+		menu = control->దత్తాంశం.select.menu;
 	}
 
-	menu->callback(client_data, 0, 0, menu->width, menu->height);
+	menu->callback(client_దత్తాంశం, 0, 0, menu->వెడల్పు, menu->ఎత్తు);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free_select_menu(struct form_control *control)
+శూన్య form_free_select_menu(నిర్మాణం form_control *control)
 {
-	if (control->data.select.menu->scrollbar != NULL)
-		scrollbar_destroy(control->data.select.menu->scrollbar);
-	free(control->data.select.menu);
-	control->data.select.menu = NULL;
+	ఒకవేళ (control->దత్తాంశం.select.menu->scrollbar != ఖాళీ)
+		scrollbar_destroy(control->దత్తాంశం.select.menu->scrollbar);
+	విడుదల(control->దత్తాంశం.select.menu);
+	control->దత్తాంశం.select.menu = ఖాళీ;
 }
 
 
 /* exported interface documented in html/form_internal.h */
 bool
-form_redraw_select_menu(struct form_control *control,
-			int x, int y,
-			float scale,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+form_redraw_select_menu(నిర్మాణం form_control *control,
+			పూర్ణాంకం x, పూర్ణాంకం y,
+			దశాంశం scale,
+			స్థిరరాశి నిర్మాణం rect *clip,
+			స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
-	struct box *box;
-	struct form_select_menu *menu = control->data.select.menu;
-	struct form_option *option;
-	int line_height, line_height_with_spacing;
-	int width, height;
-	int x0, y0, x1, scrollbar_x, y1, y2, y3;
-	int item_y;
-	int text_pos_offset, text_x;
-	int scrollbar_width = SCROLLBAR_WIDTH;
-	int i;
-	int scroll;
-	int x_cp, y_cp;
-	struct rect r;
-	struct rect rect;
+	నిర్మాణం box *box;
+	నిర్మాణం form_select_menu *menu = control->దత్తాంశం.select.menu;
+	నిర్మాణం form_option *option;
+	పూర్ణాంకం పంక్తి_ఎత్తు, పంక్తి_ఎత్తు_with_spacing;
+	పూర్ణాంకం వెడల్పు, ఎత్తు;
+	పూర్ణాంకం x0, y0, x1, scrollbar_x, y1, y2, y3;
+	పూర్ణాంకం అంశం_y;
+	పూర్ణాంకం పాఠ్యం_pos_స్థానభ్రంశం, పాఠ్యం_x;
+	పూర్ణాంకం scrollbar_వెడల్పు = SCROLLBAR_వెడల్పు;
+	పూర్ణాంకం i;
+	పూర్ణాంకం scroll;
+	పూర్ణాంకం x_cp, y_cp;
+	నిర్మాణం rect r;
+	నిర్మాణం rect rect;
 	nserror res;
 
 	box = control->box;
 
 	x_cp = x;
 	y_cp = y;
-	width = menu->width;
-	height = menu->height;
-	line_height = menu->line_height;
+	వెడల్పు = menu->వెడల్పు;
+	ఎత్తు = menu->ఎత్తు;
+	పంక్తి_ఎత్తు = menu->పంక్తి_ఎత్తు;
 
-	line_height_with_spacing = line_height +
-			line_height * SELECT_LINE_SPACING;
-	scroll = scrollbar_get_offset(menu->scrollbar);
+	పంక్తి_ఎత్తు_with_spacing = పంక్తి_ఎత్తు +
+			పంక్తి_ఎత్తు * SELECT_పంక్తి_SPACING;
+	scroll = scrollbar_get_స్థానభ్రంశం(menu->scrollbar);
 
-	if (scale != 1.0) {
+	ఒకవేళ (scale != 1.0) {
 		x *= scale;
 		y *= scale;
-		width *= scale;
-		height *= scale;
-		scrollbar_width *= scale;
+		వెడల్పు *= scale;
+		ఎత్తు *= scale;
+		scrollbar_వెడల్పు *= scale;
 
-		i = scroll / line_height_with_spacing;
-		scroll -= i * line_height_with_spacing;
-		line_height *= scale;
-		line_height_with_spacing *= scale;
+		i = scroll / పంక్తి_ఎత్తు_with_spacing;
+		scroll -= i * పంక్తి_ఎత్తు_with_spacing;
+		పంక్తి_ఎత్తు *= scale;
+		పంక్తి_ఎత్తు_with_spacing *= scale;
 		scroll *= scale;
-		scroll += i * line_height_with_spacing;
+		scroll += i * పంక్తి_ఎత్తు_with_spacing;
 	}
 
 
 	x0 = x;
 	y0 = y;
-	x1 = x + width - 1;
-	y1 = y + height - 1;
-	scrollbar_x = x1 - scrollbar_width;
+	x1 = x + వెడల్పు - 1;
+	y1 = y + ఎత్తు - 1;
+	scrollbar_x = x1 - scrollbar_వెడల్పు;
 
 	r.x0 = x0;
 	r.y0 = y0;
 	r.x1 = x1 + 1;
 	r.y1 = y1 + 1;
 	res = ctx->plot->clip(ctx, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
 	rect.x0 = x0;
@@ -1723,238 +1723,238 @@ form_redraw_select_menu(struct form_control *control,
 	rect.x1 = x1;
 	rect.y1 = y1;
 	res = ctx->plot->rectangle(ctx, plot_style_stroke_darkwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
-	x0 = x0 + SELECT_BORDER_WIDTH;
-	y0 = y0 + SELECT_BORDER_WIDTH;
-	x1 = x1 - SELECT_BORDER_WIDTH;
-	y1 = y1 - SELECT_BORDER_WIDTH;
-	height = height - 2 * SELECT_BORDER_WIDTH;
+	x0 = x0 + SELECT_BORDER_వెడల్పు;
+	y0 = y0 + SELECT_BORDER_వెడల్పు;
+	x1 = x1 - SELECT_BORDER_వెడల్పు;
+	y1 = y1 - SELECT_BORDER_వెడల్పు;
+	ఎత్తు = ఎత్తు - 2 * SELECT_BORDER_వెడల్పు;
 
 	r.x0 = x0;
 	r.y0 = y0;
 	r.x1 = x1 + 1;
 	r.y1 = y1 + 1;
 	res = ctx->plot->clip(ctx, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_lightwbasec, &r);
-	if (res != NSERROR_OK) {
-		return false;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
-	option = control->data.select.items;
-	item_y = line_height_with_spacing;
+	option = control->దత్తాంశం.select.వస్తువులు;
+	అంశం_y = పంక్తి_ఎత్తు_with_spacing;
 
-	while (item_y < scroll) {
-		option = option->next;
-		item_y += line_height_with_spacing;
+	అయితే (అంశం_y < scroll) {
+		option = option->తదుపరి;
+		అంశం_y += పంక్తి_ఎత్తు_with_spacing;
 	}
-	item_y -= line_height_with_spacing;
-	text_pos_offset = y - scroll +
-			(int) (line_height * (0.75 + SELECT_LINE_SPACING));
-	text_x = x + (box->border[LEFT].width + box->padding[LEFT]) * scale;
+	అంశం_y -= పంక్తి_ఎత్తు_with_spacing;
+	పాఠ్యం_pos_స్థానభ్రంశం = y - scroll +
+			(పూర్ణాంకం) (పంక్తి_ఎత్తు * (0.75 + SELECT_పంక్తి_SPACING));
+	పాఠ్యం_x = x + (box->border[ఎడమ_2].వెడల్పు + box->padding[ఎడమ_2]) * scale;
 
-	plot_fstyle_entry.size = menu->f_size;
+	plot_fstyle_నమోదు.కొలత = menu->f_కొలత;
 
-	while (option && item_y - scroll < height) {
+	అయితే (option && అంశం_y - scroll < ఎత్తు) {
 
-		if (option->selected) {
-			y2 = y + item_y - scroll;
-			y3 = y + item_y + line_height_with_spacing - scroll;
+		ఒకవేళ (option->selected) {
+			y2 = y + అంశం_y - scroll;
+			y3 = y + అంశం_y + పంక్తి_ఎత్తు_with_spacing - scroll;
 
 			rect.x0 = x0;
 			rect.y0 = y0 > y2 ? y0 : y2;
 			rect.x1 = scrollbar_x + 1;
 			rect.y1 = y3 < y1 + 1 ? y3 : y1 + 1;
 			res = ctx->plot->rectangle(ctx, &plot_style_fill_selected, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి false;
 			}
 		}
 
-		y2 = text_pos_offset + item_y;
-		res = ctx->plot->text(ctx,
-				      &plot_fstyle_entry,
-				      text_x, y2,
-				      option->text, strlen(option->text));
-		if (res != NSERROR_OK) {
-			return false;
+		y2 = పాఠ్యం_pos_స్థానభ్రంశం + అంశం_y;
+		res = ctx->plot->పాఠ్యం(ctx,
+				      &plot_fstyle_నమోదు,
+				      పాఠ్యం_x, y2,
+				      option->పాఠ్యం, అక్షరశ్రేణి_పొడవు(option->పాఠ్యం));
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి false;
 		}
 
-		item_y += line_height_with_spacing;
-		option = option->next;
+		అంశం_y += పంక్తి_ఎత్తు_with_spacing;
+		option = option->తదుపరి;
 	}
 
 	res = scrollbar_redraw(menu->scrollbar,
-			       x_cp + menu->width - SCROLLBAR_WIDTH,
+			       x_cp + menu->వెడల్పు - SCROLLBAR_వెడల్పు,
 			       y_cp,
 			       clip, scale, ctx);
-	if (res != NSERROR_OK) {
-		return false;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* private interface described in html/form_internal.h */
 bool
-form_clip_inside_select_menu(struct form_control *control,
-			     float scale,
-			     const struct rect *clip)
+form_clip_inside_select_menu(నిర్మాణం form_control *control,
+			     దశాంశం scale,
+			     స్థిరరాశి నిర్మాణం rect *clip)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	int width, height;
+	నిర్మాణం form_select_menu *menu = control->దత్తాంశం.select.menu;
+	పూర్ణాంకం వెడల్పు, ఎత్తు;
 
 
-	width = menu->width;
-	height = menu->height;
+	వెడల్పు = menu->వెడల్పు;
+	ఎత్తు = menu->ఎత్తు;
 
-	if (scale != 1.0) {
-		width *= scale;
-		height *= scale;
+	ఒకవేళ (scale != 1.0) {
+		వెడల్పు *= scale;
+		ఎత్తు *= scale;
 	}
 
-	if (clip->x0 >= 0 &&
-	    clip->x1 <= width &&
+	ఒకవేళ (clip->x0 >= 0 &&
+	    clip->x1 <= వెడల్పు &&
 	    clip->y0 >= 0 &&
-	    clip->y1 <= height)
-		return true;
+	    clip->y1 <= ఎత్తు)
+		తిరిగి true;
 
-	return false;
+	తిరిగి false;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-nserror form_select_process_selection(struct form_control *control, int item)
+nserror form_select_process_selection(నిర్మాణం form_control *control, పూర్ణాంకం అంశం)
 {
-	assert(control != NULL);
+	ప్రతిజ్ఞా(control != ఖాళీ);
 
-	return form__select_process_selection(control->html, control, item);
+	తిరిగి form__select_process_selection(control->html, control, అంశం);
 }
 
 
 /* exported interface documented in netsurf/form.h */
-struct form_option *
-form_select_get_option(struct form_control *control, int item)
+నిర్మాణం form_option *
+form_select_get_option(నిర్మాణం form_control *control, పూర్ణాంకం అంశం)
 {
-	struct form_option *opt;
+	నిర్మాణం form_option *opt;
 
-	opt = control->data.select.items;
-	while ((opt != NULL) && (item > 0)) {
-		opt = opt->next;
-		item--;
+	opt = control->దత్తాంశం.select.వస్తువులు;
+	అయితే ((opt != ఖాళీ) && (అంశం > 0)) {
+		opt = opt->తదుపరి;
+		అంశం--;
 	}
-	return opt;
+	తిరిగి opt;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-char *form_control_get_name(struct form_control *control)
+అక్షరం *form_control_get_name(నిర్మాణం form_control *control)
 {
-	return control->name;
+	తిరిగి control->name;
 }
 
 
 /* exported interface documented in netsurf/form.h */
-nserror form_control_bounding_rect(struct form_control *control, struct rect *r)
+nserror form_control_bounding_rect(నిర్మాణం form_control *control, నిర్మాణం rect *r)
 {
 	box_bounds( control->box, r );
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* private interface described in html/form_internal.h */
-const char *
-form_select_mouse_action(struct form_control *control,
+స్థిరరాశి అక్షరం *
+form_select_mouse_action(నిర్మాణం form_control *control,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct form_select_menu *menu = control->data.select.menu;
-	int x0, y0, x1, y1, scrollbar_x;
-	const char *status = NULL;
-	bool multiple = control->data.select.multiple;
+	నిర్మాణం form_select_menu *menu = control->దత్తాంశం.select.menu;
+	పూర్ణాంకం x0, y0, x1, y1, scrollbar_x;
+	స్థిరరాశి అక్షరం *స్థితి_2 = ఖాళీ;
+	bool గుణిజం = control->దత్తాంశం.select.గుణిజం;
 
 	x0 = 0;
 	y0 = 0;
-	x1 = menu->width;
-	y1 = menu->height;
-	scrollbar_x = x1 - SCROLLBAR_WIDTH;
+	x1 = menu->వెడల్పు;
+	y1 = menu->ఎత్తు;
+	scrollbar_x = x1 - SCROLLBAR_వెడల్పు;
 
-	if (menu->scroll_capture ||
+	ఒకవేళ (menu->scroll_capture ||
 			(x > scrollbar_x && x < x1 && y > y0 && y < y1)) {
 		/* The scroll is currently capturing all events or the mouse
 		 * event is taking place on the scrollbar widget area
 		 */
 		x -= scrollbar_x;
-		return scrollbar_mouse_status_to_message(
+		తిరిగి scrollbar_mouse_స్థితి_గమ్యం_సందేశం(
 				scrollbar_mouse_action(menu->scrollbar,
 						mouse, x, y));
 	}
 
 
-	if (x > x0 && x < scrollbar_x && y > y0 && y < y1) {
+	ఒకవేళ (x > x0 && x < scrollbar_x && y > y0 && y < y1) {
 		/* over option area */
 
-		if (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2))
+		ఒకవేళ (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2))
 			/* button 1 or 2 click */
 			form_select_menu_clicked(control, x, y);
 
-		if (!(mouse & BROWSER_MOUSE_CLICK_1 && !multiple))
+		ఒకవేళ (!(mouse & BROWSER_MOUSE_CLICK_1 && !గుణిజం))
 			/* anything but a button 1 click over a single select
 			   menu */
-			status = messages_get(control->data.select.multiple ?
+			స్థితి_2 = messages_get(control->దత్తాంశం.select.గుణిజం ?
 					"SelectMClick" : "SelectClick");
 
-	} else if (!(mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)))
+	} లేకపోతే ఒకవేళ (!(mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)))
 		/* if not a button 1 or 2 click*/
-		status = messages_get("SelectClose");
+		స్థితి_2 = messages_get("SelectClose");
 
-	return status;
+	తిరిగి స్థితి_2;
 }
 
 
 /* private interface described in html/form_internal.h */
-void
-form_select_mouse_drag_end(struct form_control *control,
+శూన్య
+form_select_mouse_drag_చివర(నిర్మాణం form_control *control,
 			   browser_mouse_state mouse,
-			   int x, int y)
+			   పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	int x0, y0, x1, y1;
-	int box_x, box_y;
-	struct box *box;
-	struct form_select_menu *menu = control->data.select.menu;
+	పూర్ణాంకం x0, y0, x1, y1;
+	పూర్ణాంకం box_x, box_y;
+	నిర్మాణం box *box;
+	నిర్మాణం form_select_menu *menu = control->దత్తాంశం.select.menu;
 
 	box = control->box;
 
 	/* Get global coords of scrollbar */
 	box_coords(box, &box_x, &box_y);
-	box_x -= box->border[LEFT].width;
-	box_y += box->height + box->border[BOTTOM].width +
-			box->padding[BOTTOM] + box->padding[TOP];
+	box_x -= box->border[ఎడమ_2].వెడల్పు;
+	box_y += box->ఎత్తు + box->border[BOTTOM].వెడల్పు +
+			box->padding[BOTTOM] + box->padding[శిఖరం_2];
 
 	/* Get drag end coords relative to scrollbar */
 	x = x - box_x;
 	y = y - box_y;
 
-	if (menu->scroll_capture) {
-		x -= menu->width - SCROLLBAR_WIDTH;
-		scrollbar_mouse_drag_end(menu->scrollbar, mouse, x, y);
-		return;
+	ఒకవేళ (menu->scroll_capture) {
+		x -= menu->వెడల్పు - SCROLLBAR_వెడల్పు;
+		scrollbar_mouse_drag_చివర(menu->scrollbar, mouse, x, y);
+		తిరిగి;
 	}
 
 	x0 = 0;
 	y0 = 0;
-	x1 = menu->width;
-	y1 = menu->height;
+	x1 = menu->వెడల్పు;
+	y1 = menu->ఎత్తు;
 
 
-	if (x > x0 && x < x1 - SCROLLBAR_WIDTH && y >  y0 && y < y1) {
+	ఒకవేళ (x > x0 && x < x1 - SCROLLBAR_వెడల్పు && y >  y0 && y < y1) {
 		/* handle drag end above the option area like a regular click */
 		form_select_menu_clicked(control, x, y);
 	}
@@ -1962,202 +1962,202 @@ form_select_mouse_drag_end(struct form_control *control,
 
 
 /* private interface described in html/form_internal.h */
-void form_select_get_dimensions(struct form_control *control,
-		int *width, int *height)
+శూన్య form_select_get_dimensions(నిర్మాణం form_control *control,
+		పూర్ణాంకం *వెడల్పు, పూర్ణాంకం *ఎత్తు)
 {
-	*width = control->data.select.menu->width;
-	*height = control->data.select.menu->height;
+	*వెడల్పు = control->దత్తాంశం.select.menu->వెడల్పు;
+	*ఎత్తు = control->దత్తాంశం.select.menu->ఎత్తు;
 }
 
 
 /* private interface described in html/form_internal.h */
-void form_select_menu_callback(void *client_data,
-		int x, int y, int width, int height)
+శూన్య form_select_menu_callback(శూన్య *client_దత్తాంశం,
+		పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు)
 {
-	html_content *html = client_data;
-	int menu_x, menu_y;
-	struct box *box;
+	html_content *html = client_దత్తాంశం;
+	పూర్ణాంకం menu_x, menu_y;
+	నిర్మాణం box *box;
 
 	box = html->visible_select_menu->box;
 	box_coords(box, &menu_x, &menu_y);
 
-	menu_x -= box->border[LEFT].width;
-	menu_y += box->height + box->border[BOTTOM].width +
+	menu_x -= box->border[ఎడమ_2].వెడల్పు;
+	menu_y += box->ఎత్తు + box->border[BOTTOM].వెడల్పు +
 			box->padding[BOTTOM] +
-			box->padding[TOP];
-	content__request_redraw((struct content *)html, menu_x + x, menu_y + y,
-			width, height);
+			box->padding[శిఖరం_2];
+	content__request_redraw((నిర్మాణం content *)html, menu_x + x, menu_y + y,
+			వెడల్పు, ఎత్తు);
 }
 
 
 /* private interface described in html/form_internal.h */
-void form_radio_set(struct form_control *radio)
+శూన్య form_radio_సమితి(నిర్మాణం form_control *radio)
 {
-	struct form_control *control;
+	నిర్మాణం form_control *control;
 
-	assert(radio);
-	if (!radio->form)
-		return;
+	ప్రతిజ్ఞా(radio);
+	ఒకవేళ (!radio->form)
+		తిరిగి;
 
-	if (radio->selected)
-		return;
+	ఒకవేళ (radio->selected)
+		తిరిగి;
 
 	/* Clear selected state for other controls in
 	 * the same radio button group */
-	for (control = radio->form->controls;
-	     control != NULL;
-	     control = control->next) {
+	కొరకు (control = radio->form->controls;
+	     control != ఖాళీ;
+	     control = control->తదుపరి) {
 		/* Only interested in radio inputs */
-		if (control->type != GADGET_RADIO)
-			continue;
+		ఒకవేళ (control->type != GADGET_RADIO)
+			కొనసాగు;
 
 		/* Ignore ourself */
-		if (control == radio)
-			continue;
+		ఒకవేళ (control == radio)
+			కొనసాగు;
 
 		/* Ignore inputs where:
 		 *   a) this or the other control have no name attribute
 		 *   b) this or the other control have an empty name attribute
 		 *   c) the control names do not match
 		 */
-		if ((control->name == NULL) ||
-		    (radio->name == NULL) ||
+		ఒకవేళ ((control->name == ఖాళీ) ||
+		    (radio->name == ఖాళీ) ||
 		    (control->name[0] == '\0') ||
 		    (radio->name[0] == '\0') ||
 		    strcmp(control->name, radio->name) != 0)
-			continue;
+			కొనసాగు;
 
 		/* Other control is in the same radio button group: clear its
 		 * selected state */
-		if (control->selected) {
+		ఒకవేళ (control->selected) {
 			control->selected = false;
-			dom_html_input_element_set_checked(control->node, false);
+			dom_html_ఆదానం_element_సమితి_checked(control->కణుపు, false);
 			html__redraw_a_box(radio->html, control->box);
 		}
 	}
 
 	radio->selected = true;
-	dom_html_input_element_set_checked(radio->node, true);
+	dom_html_ఆదానం_element_సమితి_checked(radio->కణుపు, true);
 	html__redraw_a_box(radio->html, radio->box);
 }
 
 
 /* private interface described in html/form_internal.h */
 nserror
-form_submit(nsurl *page_url,
-	    struct browser_window *target,
-	    struct form *form,
-	    struct form_control *submit_button)
+form_submit(nsurl *పుట_url,
+	    నిర్మాణం browser_కిటికీ *లక్ష్యం,
+	    నిర్మాణం form *form,
+	    నిర్మాణం form_control *submit_button)
 {
 	nserror res;
-	char *data = NULL; /* encoded form data */
-	struct fetch_multipart_data *success = NULL; /* gcc is incapable of correctly reasoning about use and generates "maybe used uninitialised" warnings */
+	అక్షరం *దత్తాంశం = ఖాళీ; /* encoded form data */
+	నిర్మాణం fetch_multipart_దత్తాంశం *success = ఖాళీ; /* gcc is incapable of correctly reasoning about use and generates "maybe used uninitialised" warnings */
 	nsurl *action_url;
 	nsurl *query_url;
 
-	assert(form != NULL);
+	ప్రతిజ్ఞా(form != ఖాళీ);
 
 	/* obtain list of controls from DOM */
-	res = form_dom_to_data(form, submit_button, &success);
-	if (res != NSERROR_OK) {
-		return res;
+	res = form_dom_గమ్యం_దత్తాంశం(form, submit_button, &success);
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి res;
 	}
 
 	/* Decompose action */
 	res = nsurl_create(form->action, &action_url);
-	if (res != NSERROR_OK) {
-		fetch_multipart_data_destroy(success);
-		return res;
+	ఒకవేళ (res != NSERROR_OK) {
+		fetch_multipart_దత్తాంశం_destroy(success);
+		తిరిగి res;
 	}
 
-	switch (form->method) {
-	case method_GET:
-		res = form_url_encode(form, success, &data);
-		if (res == NSERROR_OK) {
+	ఎంపిక (form->పద్ధతి) {
+	స్థితి పద్ధతి_GET:
+		res = form_url_encode(form, success, &దత్తాంశం);
+		ఒకవేళ (res == NSERROR_OK) {
 			/* Replace query segment */
-			res = nsurl_replace_query(action_url, data, &query_url);
-			if (res == NSERROR_OK) {
-				res = browser_window_navigate(target,
+			res = nsurl_replace_query(action_url, దత్తాంశం, &query_url);
+			ఒకవేళ (res == NSERROR_OK) {
+				res = browser_కిటికీ_navigate(లక్ష్యం,
 							      query_url,
-							      page_url,
+							      పుట_url,
 							      BW_NAVIGATE_HISTORY,
-							      NULL,
-							      NULL,
-							      NULL);
+							      ఖాళీ,
+							      ఖాళీ,
+							      ఖాళీ);
 
 				nsurl_unref(query_url);
 			}
-			free(data);
+			విడుదల(దత్తాంశం);
 		}
-		break;
+		ఆపు;
 
-	case method_POST_URLENC:
-		res = form_url_encode(form, success, &data);
-		if (res == NSERROR_OK) {
-			res = browser_window_navigate(target,
+	స్థితి పద్ధతి_POST_URLENC:
+		res = form_url_encode(form, success, &దత్తాంశం);
+		ఒకవేళ (res == NSERROR_OK) {
+			res = browser_కిటికీ_navigate(లక్ష్యం,
 						      action_url,
-						      page_url,
+						      పుట_url,
 						      BW_NAVIGATE_HISTORY,
-						      data,
-						      NULL,
-						      NULL);
-			free(data);
+						      దత్తాంశం,
+						      ఖాళీ,
+						      ఖాళీ);
+			విడుదల(దత్తాంశం);
 		}
-		break;
+		ఆపు;
 
-	case method_POST_MULTIPART:
-		res = browser_window_navigate(target,
+	స్థితి పద్ధతి_POST_MULTIPART:
+		res = browser_కిటికీ_navigate(లక్ష్యం,
 					      action_url,
-					      page_url,
+					      పుట_url,
 					      BW_NAVIGATE_HISTORY,
-					      NULL,
+					      ఖాళీ,
 					      success,
-					      NULL);
+					      ఖాళీ);
 
-		break;
+		ఆపు;
 	}
 
 	nsurl_unref(action_url);
-	fetch_multipart_data_destroy(success);
+	fetch_multipart_దత్తాంశం_destroy(success);
 
-	return res;
+	తిరిగి res;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_gadget_update_value(struct form_control *control, char *value)
+శూన్య form_gadget_update_విలువ(నిర్మాణం form_control *control, అక్షరం *విలువ)
 {
-	switch (control->type) {
-	case GADGET_HIDDEN:
-	case GADGET_TEXTBOX:
-	case GADGET_TEXTAREA:
-	case GADGET_PASSWORD:
-	case GADGET_FILE:
-		if (control->value != NULL) {
-			free(control->value);
+	ఎంపిక (control->type) {
+	స్థితి GADGET_HIDDEN:
+	స్థితి GADGET_TEXTBOX:
+	స్థితి GADGET_TEXTAREA:
+	స్థితి GADGET_PASSWORD:
+	స్థితి GADGET_FILE:
+		ఒకవేళ (control->విలువ != ఖాళీ) {
+			విడుదల(control->విలువ);
 		}
-		control->value = value;
-		if (control->node != NULL) {
+		control->విలువ = విలువ;
+		ఒకవేళ (control->కణుపు != ఖాళీ) {
 			dom_exception err;
 			dom_string *str;
-			err = dom_string_create((uint8_t *)value,
-						strlen(value), &str);
-			if (err == DOM_NO_ERR) {
-				if (control->type == GADGET_TEXTAREA)
-					err = dom_html_text_area_element_set_value(
-						(dom_html_text_area_element *)(control->node),
+			err = dom_string_create((uint8_t *)విలువ,
+						అక్షరశ్రేణి_పొడవు(విలువ), &str);
+			ఒకవేళ (err == DOM_NO_ERR) {
+				ఒకవేళ (control->type == GADGET_TEXTAREA)
+					err = dom_html_పాఠ్యం_area_element_సమితి_విలువ(
+						(dom_html_పాఠ్యం_area_element *)(control->కణుపు),
 						str);
-				else
-					err = dom_html_input_element_set_value(
-						(dom_html_input_element *)(control->node),
+				లేకపోతే
+					err = dom_html_ఆదానం_element_సమితి_విలువ(
+						(dom_html_ఆదానం_element *)(control->కణుపు),
 						str);
 				dom_string_unref(str);
 			}
 		}
-		break;
-	default:
+		ఆపు;
+	అప్రమేయ:
 		/* Do nothing */
-		break;
+		ఆపు;
 	}
 
 	/* Finally, sync this with the DOM */
@@ -2166,14 +2166,14 @@ void form_gadget_update_value(struct form_control *control, char *value)
 
 
 /* Exported API, see html/form_internal.h */
-void
-form_gadget_sync_with_dom(struct form_control *control)
+శూన్య
+form_gadget_sync_with_dom(నిర్మాణం form_control *control)
 {
 	dom_exception exc;
-	dom_string *value = NULL;
-	bool changed_dom = false;
+	dom_string *విలువ = ఖాళీ;
+	bool మారింది_dom = false;
 
-	if (control->syncing ||
+	ఒకవేళ (control->syncing ||
 	    (control->type != GADGET_TEXTBOX &&
 	     control->type != GADGET_PASSWORD &&
 	     control->type != GADGET_HIDDEN &&
@@ -2181,181 +2181,181 @@ form_gadget_sync_with_dom(struct form_control *control)
 		/* Not a control we support, or the control is already
 		 * mid-sync so we don't want to disrupt that
 		 */
-		return;
+		తిరిగి;
 	}
 
 	control->syncing = true;
 
 	/* If we've changed value, sync that toward the DOM */
-	if ((control->last_synced_value == NULL &&
-	     control->value != NULL &&
-	     control->value[0] != '\0') ||
-	    (control->last_synced_value != NULL &&
-	     control->value != NULL &&
-	     strcmp(control->value, control->last_synced_value) != 0)) {
-		char *dup = strdup(control->value);
-		if (dup == NULL) {
-			goto out;
+	ఒకవేళ ((control->చివరి_synced_విలువ == ఖాళీ &&
+	     control->విలువ != ఖాళీ &&
+	     control->విలువ[0] != '\0') ||
+	    (control->చివరి_synced_విలువ != ఖాళీ &&
+	     control->విలువ != ఖాళీ &&
+	     strcmp(control->విలువ, control->చివరి_synced_విలువ) != 0)) {
+		అక్షరం *dup = strdup(control->విలువ);
+		ఒకవేళ (dup == ఖాళీ) {
+			వెళ్ళు బహిర్గతం;
 		}
-		if (control->last_synced_value != NULL) {
-			free(control->last_synced_value);
+		ఒకవేళ (control->చివరి_synced_విలువ != ఖాళీ) {
+			విడుదల(control->చివరి_synced_విలువ);
 		}
-		control->last_synced_value = dup;
-		exc = dom_string_create((uint8_t *)(control->value),
-					strlen(control->value), &value);
-		if (exc != DOM_NO_ERR) {
-			goto out;
+		control->చివరి_synced_విలువ = dup;
+		exc = dom_string_create((uint8_t *)(control->విలువ),
+					అక్షరశ్రేణి_పొడవు(control->విలువ), &విలువ);
+		ఒకవేళ (exc != DOM_NO_ERR) {
+			వెళ్ళు బహిర్గతం;
 		}
-		if (control->node_value != NULL) {
-			dom_string_unref(control->node_value);
+		ఒకవేళ (control->కణుపు_విలువ != ఖాళీ) {
+			dom_string_unref(control->కణుపు_విలువ);
 		}
-		control->node_value = value;
-		value = NULL;
-		if (control->type == GADGET_TEXTAREA) {
-			exc = dom_html_text_area_element_set_value(control->node, control->node_value);
-		} else {
-			exc = dom_html_input_element_set_value(control->node, control->node_value);
+		control->కణుపు_విలువ = విలువ;
+		విలువ = ఖాళీ;
+		ఒకవేళ (control->type == GADGET_TEXTAREA) {
+			exc = dom_html_పాఠ్యం_area_element_సమితి_విలువ(control->కణుపు, control->కణుపు_విలువ);
+		} లేకపోతే {
+			exc = dom_html_ఆదానం_element_సమితి_విలువ(control->కణుపు, control->కణుపు_విలువ);
 		}
-		if (exc != DOM_NO_ERR) {
-			goto out;
+		ఒకవేళ (exc != DOM_NO_ERR) {
+			వెళ్ళు బహిర్గతం;
 		}
-		changed_dom = true;
+		మారింది_dom = true;
 	}
 
 	/* Now check if the DOM has changed since our last go */
-	if (control->type == GADGET_TEXTAREA) {
-		exc = dom_html_text_area_element_get_value(control->node, &value);
-	} else {
-		exc = dom_html_input_element_get_value(control->node, &value);
+	ఒకవేళ (control->type == GADGET_TEXTAREA) {
+		exc = dom_html_పాఠ్యం_area_element_get_విలువ(control->కణుపు, &విలువ);
+	} లేకపోతే {
+		exc = dom_html_ఆదానం_element_get_విలువ(control->కణుపు, &విలువ);
 	}
 
-	if (exc != DOM_NO_ERR) {
+	ఒకవేళ (exc != DOM_NO_ERR) {
 		/* Nothing much we can do here */
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (!dom_string_isequal(control->node_value, value)) {
+	ఒకవేళ (!dom_string_isequal(control->కణుపు_విలువ, విలువ)) {
 		/* The DOM has changed */
-		if (!changed_dom) {
+		ఒకవేళ (!మారింది_dom) {
 			/* And it wasn't us */
-			char *value_s = strndup(
-				dom_string_data(value),
-				dom_string_byte_length(value));
-			char *dup = NULL;
-			if (value_s == NULL) {
-				goto out;
+			అక్షరం *విలువ_s = strndup(
+				dom_string_దత్తాంశం(విలువ),
+				dom_string_byte_నిడివి(విలువ));
+			అక్షరం *dup = ఖాళీ;
+			ఒకవేళ (విలువ_s == ఖాళీ) {
+				వెళ్ళు బహిర్గతం;
 			}
-			dup = strdup(value_s);
-			if (dup == NULL) {
-				free(value_s);
-				goto out;
+			dup = strdup(విలువ_s);
+			ఒకవేళ (dup == ఖాళీ) {
+				విడుదల(విలువ_s);
+				వెళ్ళు బహిర్గతం;
 			}
-			free(control->value);
-			control->value = value_s;
-			free(control->last_synced_value);
-			control->last_synced_value = dup;
-			if (control->type != GADGET_HIDDEN &&
-			    control->data.text.ta != NULL) {
-				textarea_set_text(control->data.text.ta,
-						  value_s);
+			విడుదల(control->విలువ);
+			control->విలువ = విలువ_s;
+			విడుదల(control->చివరి_synced_విలువ);
+			control->చివరి_synced_విలువ = dup;
+			ఒకవేళ (control->type != GADGET_HIDDEN &&
+			    control->దత్తాంశం.పాఠ్యం.ta != ఖాళీ) {
+				textarea_సమితి_పాఠ్యం(control->దత్తాంశం.పాఠ్యం.ta,
+						  విలువ_s);
 			}
 		}
-		control->node_value = value;
-		value = NULL;
+		control->కణుపు_విలువ = విలువ;
+		విలువ = ఖాళీ;
 	}
 
-out:
-	if (value != NULL)
-		dom_string_unref(value);
+బహిర్గతం:
+	ఒకవేళ (విలువ != ఖాళీ)
+		dom_string_unref(విలువ);
 	control->syncing = false;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-struct form *
-form_new(void *node,
-	 const char *action,
-	 const char *target,
-	 form_method method,
-	 const char *charset,
-	 const char *doc_charset)
+నిర్మాణం form *
+form_new(శూన్య *కణుపు,
+	 స్థిరరాశి అక్షరం *action,
+	 స్థిరరాశి అక్షరం *లక్ష్యం,
+	 form_పద్ధతి పద్ధతి,
+	 స్థిరరాశి అక్షరం *charset,
+	 స్థిరరాశి అక్షరం *doc_charset)
 {
-	struct form *form;
+	నిర్మాణం form *form;
 
-	form = calloc(1, sizeof *form);
-	if (!form)
-		return NULL;
+	form = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం *form);
+	ఒకవేళ (!form)
+		తిరిగి ఖాళీ;
 
-	form->action = strdup(action != NULL ? action : "");
-	if (form->action == NULL) {
-		free(form);
-		return NULL;
+	form->action = strdup(action != ఖాళీ ? action : "");
+	ఒకవేళ (form->action == ఖాళీ) {
+		విడుదల(form);
+		తిరిగి ఖాళీ;
 	}
 
-	form->target = target != NULL ? strdup(target) : NULL;
-	if (target != NULL && form->target == NULL) {
-		free(form->action);
-		free(form);
-		return NULL;
+	form->లక్ష్యం = లక్ష్యం != ఖాళీ ? strdup(లక్ష్యం) : ఖాళీ;
+	ఒకవేళ (లక్ష్యం != ఖాళీ && form->లక్ష్యం == ఖాళీ) {
+		విడుదల(form->action);
+		విడుదల(form);
+		తిరిగి ఖాళీ;
 	}
 
-	form->method = method;
+	form->పద్ధతి = పద్ధతి;
 
-	form->accept_charsets = charset != NULL ? strdup(charset) : NULL;
-	if (charset != NULL && form->accept_charsets == NULL) {
-		free(form->target);
-		free(form->action);
-		free(form);
-		return NULL;
+	form->accept_charsets = charset != ఖాళీ ? strdup(charset) : ఖాళీ;
+	ఒకవేళ (charset != ఖాళీ && form->accept_charsets == ఖాళీ) {
+		విడుదల(form->లక్ష్యం);
+		విడుదల(form->action);
+		విడుదల(form);
+		తిరిగి ఖాళీ;
 	}
 
-	form->document_charset = doc_charset != NULL ? strdup(doc_charset)
-						     : NULL;
-	if (doc_charset && form->document_charset == NULL) {
-		free(form->accept_charsets);
-		free(form->target);
-		free(form->action);
-		free(form);
-		return NULL;
+	form->document_charset = doc_charset != ఖాళీ ? strdup(doc_charset)
+						     : ఖాళీ;
+	ఒకవేళ (doc_charset && form->document_charset == ఖాళీ) {
+		విడుదల(form->accept_charsets);
+		విడుదల(form->లక్ష్యం);
+		విడుదల(form->action);
+		విడుదల(form);
+		తిరిగి ఖాళీ;
 	}
 
-	form->node = node;
+	form->కణుపు = కణుపు;
 
-	return form;
+	తిరిగి form;
 }
 
 
 /* exported interface documented in html/form_internal.h */
-void form_free(struct form *form)
+శూన్య form_free(నిర్మాణం form *form)
 {
-	struct form_control *c, *d;
+	నిర్మాణం form_control *c, *d;
 
-	for (c = form->controls; c != NULL; c = d) {
-		d = c->next;
+	కొరకు (c = form->controls; c != ఖాళీ; c = d) {
+		d = c->తదుపరి;
 
 		form_free_control(c);
 	}
 
-	free(form->action);
-	free(form->target);
-	free(form->accept_charsets);
-	free(form->document_charset);
+	విడుదల(form->action);
+	విడుదల(form->లక్ష్యం);
+	విడుదల(form->accept_charsets);
+	విడుదల(form->document_charset);
 
-	free(form);
+	విడుదల(form);
 }
 
 
 /* exported interface documented in html/form_internal.h */
-struct form_control *form_new_control(void *node, form_control_type type)
+నిర్మాణం form_control *form_new_control(శూన్య *కణుపు, form_control_type type)
 {
-	struct form_control *control;
+	నిర్మాణం form_control *control;
 
-	control = calloc(1, sizeof *control);
-	if (control == NULL)
-		return NULL;
+	control = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం *control);
+	ఒకవేళ (control == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	control->node = node;
+	control->కణుపు = కణుపు;
 	control->type = type;
 
-	return control;
+	తిరిగి control;
 }

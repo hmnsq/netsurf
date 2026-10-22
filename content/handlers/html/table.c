@@ -22,28 +22,28 @@
  * implementation of HTML table processing and layout.
  */
 
-#include <assert.h>
-#include <dom/dom.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/talloc.h"
-#include "css/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/talloc.h"
+#అన్తర్భావ "css/utils.h"
 
-#include "html/box.h"
-#include "html/table.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/table.h"
 
 /* Define to enable verbose table debug */
-#undef TABLE_DEBUG
+#నిర్వచనం_రద్దు పట్టిక_DEBUG
 
 /**
  * Container for border values during table border calculations
  */
-struct border {
-	enum css_border_style_e style;	/**< border-style */
-	enum css_border_color_e color;	/**< border-color type */
+నిర్మాణం border {
+	గణన css_border_style_e style;	/**< border-style */
+	గణన css_border_color_e color;	/**< border-color type */
 	css_color c;			/**< border-color value */
-	css_fixed width;		/**< border-width length */
+	css_fixed వెడల్పు;		/**< border-width length */
 	css_unit unit;			/**< border-width units */
 };
 
@@ -58,103 +58,103 @@ struct border {
  * \param b_src    Source of \a b
  * \return True if \a b is more eyecatching than \a a
  */
-static bool
-table_border_is_more_eyecatching(const css_unit_ctx *unit_len_ctx,
-				 const struct border *a,
+స్థిర bool
+పట్టిక_border_is_మరిన్ని_eyecatching(స్థిరరాశి css_unit_ctx *unit_len_ctx,
+				 స్థిరరాశి నిర్మాణం border *a,
 				 box_type a_src,
-				 const struct border *b,
+				 స్థిరరాశి నిర్మాణం border *b,
 				 box_type b_src)
 {
 	css_fixed awidth, bwidth;
-	int impact = 0;
+	పూర్ణాంకం impact = 0;
 
 	/* See CSS 2.1 $17.6.2.1 */
 
 	/* 1 + 2 -- hidden beats everything, none beats nothing */
-	if (a->style == CSS_BORDER_STYLE_HIDDEN ||
+	ఒకవేళ (a->style == CSS_BORDER_STYLE_HIDDEN ||
 	    b->style == CSS_BORDER_STYLE_NONE)
-		return false;
+		తిరిగి false;
 
-	if (b->style == CSS_BORDER_STYLE_HIDDEN ||
+	ఒకవేళ (b->style == CSS_BORDER_STYLE_HIDDEN ||
 	    a->style == CSS_BORDER_STYLE_NONE)
-		return true;
+		తిరిగి true;
 
 	/* 3a -- wider borders beat narrow ones */
 	/* The widths must be absolute, which will be the case
 	 * if they've come from a computed style. */
-	assert(a->unit != CSS_UNIT_EM && a->unit != CSS_UNIT_EX);
-	assert(b->unit != CSS_UNIT_EM && b->unit != CSS_UNIT_EX);
-	awidth = css_unit_len2device_px(NULL, unit_len_ctx, a->width, a->unit);
-	bwidth = css_unit_len2device_px(NULL, unit_len_ctx, b->width, b->unit);
+	ప్రతిజ్ఞా(a->unit != CSS_UNIT_EM && a->unit != CSS_UNIT_EX);
+	ప్రతిజ్ఞా(b->unit != CSS_UNIT_EM && b->unit != CSS_UNIT_EX);
+	awidth = css_unit_len2device_px(ఖాళీ, unit_len_ctx, a->వెడల్పు, a->unit);
+	bwidth = css_unit_len2device_px(ఖాళీ, unit_len_ctx, b->వెడల్పు, b->unit);
 
-	if (awidth < bwidth)
-		return true;
-	else if (bwidth < awidth)
-		return false;
+	ఒకవేళ (awidth < bwidth)
+		తిరిగి true;
+	లేకపోతే ఒకవేళ (bwidth < awidth)
+		తిరిగి false;
 
 	/* 3b -- sort by style */
-	switch (a->style) {
-	case CSS_BORDER_STYLE_DOUBLE: impact++; fallthrough;
-	case CSS_BORDER_STYLE_SOLID:  impact++; fallthrough;
-	case CSS_BORDER_STYLE_DASHED: impact++; fallthrough;
-	case CSS_BORDER_STYLE_DOTTED: impact++; fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:  impact++; fallthrough;
-	case CSS_BORDER_STYLE_OUTSET: impact++; fallthrough;
-	case CSS_BORDER_STYLE_GROOVE: impact++; fallthrough;
-	case CSS_BORDER_STYLE_INSET:  impact++; fallthrough;
-	default:
-		break;
+	ఎంపిక (a->style) {
+	స్థితి CSS_BORDER_STYLE_DOUBLE: impact++; fallthrough;
+	స్థితి CSS_BORDER_STYLE_SOLID:  impact++; fallthrough;
+	స్థితి CSS_BORDER_STYLE_DASHED: impact++; fallthrough;
+	స్థితి CSS_BORDER_STYLE_DOTTED: impact++; fallthrough;
+	స్థితి CSS_BORDER_STYLE_RIDGE:  impact++; fallthrough;
+	స్థితి CSS_BORDER_STYLE_OUTSET: impact++; fallthrough;
+	స్థితి CSS_BORDER_STYLE_GROOVE: impact++; fallthrough;
+	స్థితి CSS_BORDER_STYLE_INSET:  impact++; fallthrough;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	switch (b->style) {
-	case CSS_BORDER_STYLE_DOUBLE: impact--; fallthrough;
-	case CSS_BORDER_STYLE_SOLID:  impact--; fallthrough;
-	case CSS_BORDER_STYLE_DASHED: impact--; fallthrough;
-	case CSS_BORDER_STYLE_DOTTED: impact--; fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:  impact--; fallthrough;
-	case CSS_BORDER_STYLE_OUTSET: impact--; fallthrough;
-	case CSS_BORDER_STYLE_GROOVE: impact--; fallthrough;
-	case CSS_BORDER_STYLE_INSET:  impact--; fallthrough;
-	default:
-		break;
+	ఎంపిక (b->style) {
+	స్థితి CSS_BORDER_STYLE_DOUBLE: impact--; fallthrough;
+	స్థితి CSS_BORDER_STYLE_SOLID:  impact--; fallthrough;
+	స్థితి CSS_BORDER_STYLE_DASHED: impact--; fallthrough;
+	స్థితి CSS_BORDER_STYLE_DOTTED: impact--; fallthrough;
+	స్థితి CSS_BORDER_STYLE_RIDGE:  impact--; fallthrough;
+	స్థితి CSS_BORDER_STYLE_OUTSET: impact--; fallthrough;
+	స్థితి CSS_BORDER_STYLE_GROOVE: impact--; fallthrough;
+	స్థితి CSS_BORDER_STYLE_INSET:  impact--; fallthrough;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	if (impact < 0)
-		return true;
-	else if (impact > 0)
-		return false;
+	ఒకవేళ (impact < 0)
+		తిరిగి true;
+	లేకపోతే ఒకవేళ (impact > 0)
+		తిరిగి false;
 
 	/* 4a -- sort by origin */
 	impact = 0;
 
 	/** \todo COL/COL_GROUP */
-	switch (a_src) {
-	case BOX_TABLE_CELL:       impact++; fallthrough;
-	case BOX_TABLE_ROW:        impact++; fallthrough;
-	case BOX_TABLE_ROW_GROUP:  impact++; fallthrough;
-	case BOX_TABLE:            impact++; fallthrough;
-	default:
-		break;
+	ఎంపిక (a_src) {
+	స్థితి BOX_పట్టిక_CELL:       impact++; fallthrough;
+	స్థితి BOX_పట్టిక_అడ్డువరుస:        impact++; fallthrough;
+	స్థితి BOX_పట్టిక_అడ్డువరుస_సమూహం:  impact++; fallthrough;
+	స్థితి BOX_పట్టిక:            impact++; fallthrough;
+	అప్రమేయ:
+		ఆపు;
 	}
 
 	/** \todo COL/COL_GROUP */
-	switch (b_src) {
-	case BOX_TABLE_CELL:       impact--; fallthrough;
-	case BOX_TABLE_ROW:        impact--; fallthrough;
-	case BOX_TABLE_ROW_GROUP:  impact--; fallthrough;
-	case BOX_TABLE:            impact--; fallthrough;
-	default:
-		break;
+	ఎంపిక (b_src) {
+	స్థితి BOX_పట్టిక_CELL:       impact--; fallthrough;
+	స్థితి BOX_పట్టిక_అడ్డువరుస:        impact--; fallthrough;
+	స్థితి BOX_పట్టిక_అడ్డువరుస_సమూహం:  impact--; fallthrough;
+	స్థితి BOX_పట్టిక:            impact--; fallthrough;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	if (impact < 0)
-		return true;
-	else if (impact > 0)
-		return false;
+	ఒకవేళ (impact < 0)
+		తిరిగి true;
+	లేకపోతే ఒకవేళ (impact > 0)
+		తిరిగి false;
 
 	/* 4b -- furthest left (if direction: ltr) and towards top wins */
 	/** \todo Currently assumes b satisifies this */
-	return true;
+	తిరిగి true;
 }
 
 
@@ -169,25 +169,25 @@ table_border_is_more_eyecatching(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static void
-table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
-			     struct box *table,
-			     struct border *a,
+స్థిర శూన్య
+పట్టిక_cell_శిఖరం_process_పట్టిక(స్థిరరాశి css_unit_ctx *unit_len_ctx,
+			     నిర్మాణం box *పట్టిక,
+			     నిర్మాణం border *a,
 			     box_type *a_src)
 {
-	struct border b;
+	నిర్మాణం border b;
 	box_type b_src;
 
 	/* Top border of table */
-	b.style = css_computed_border_top_style(table->style);
-	b.color = css_computed_border_top_color(table->style, &b.c);
-	css_computed_border_top_width(table->style, &b.width, &b.unit);
-	b.width = css_unit_len2device_px(table->style, unit_len_ctx,
-			b.width, b.unit);
+	b.style = css_computed_border_శిఖరం_style(పట్టిక->style);
+	b.color = css_computed_border_శిఖరం_color(పట్టిక->style, &b.c);
+	css_computed_border_శిఖరం_వెడల్పు(పట్టిక->style, &b.వెడల్పు, &b.unit);
+	b.వెడల్పు = css_unit_len2device_px(పట్టిక->style, unit_len_ctx,
+			b.వెడల్పు, b.unit);
 	b.unit = CSS_UNIT_PX;
-	b_src = BOX_TABLE;
+	b_src = BOX_పట్టిక;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
@@ -207,64 +207,64 @@ table_cell_top_process_table(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static bool
-table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
-			   struct box *cell,
-			   struct box *row,
-			   struct border *a,
+స్థిర bool
+పట్టిక_cell_శిఖరం_process_అడ్డువరుస(స్థిరరాశి css_unit_ctx *unit_len_ctx,
+			   నిర్మాణం box *cell,
+			   నిర్మాణం box *అడ్డువరుస,
+			   నిర్మాణం border *a,
 			   box_type *a_src)
 {
-	struct border b;
+	నిర్మాణం border b;
 	box_type b_src;
 
 	/* Bottom border of row */
-	b.style = css_computed_border_bottom_style(row->style);
-	b.color = css_computed_border_bottom_color(row->style, &b.c);
-	css_computed_border_bottom_width(row->style, &b.width, &b.unit);
-	b.width = css_unit_len2device_px(row->style, unit_len_ctx,
-			b.width, b.unit);
+	b.style = css_computed_border_bottom_style(అడ్డువరుస->style);
+	b.color = css_computed_border_bottom_color(అడ్డువరుస->style, &b.c);
+	css_computed_border_bottom_వెడల్పు(అడ్డువరుస->style, &b.వెడల్పు, &b.unit);
+	b.వెడల్పు = css_unit_len2device_px(అడ్డువరుస->style, unit_len_ctx,
+			b.వెడల్పు, b.unit);
 	b.unit = CSS_UNIT_PX;
-	b_src = BOX_TABLE_ROW;
+	b_src = BOX_పట్టిక_అడ్డువరుస;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
 
-	if (row->children == NULL) {
+	ఒకవేళ (అడ్డువరుస->children == ఖాళీ) {
 		/* Row is empty, so consider its top border */
-		b.style = css_computed_border_top_style(row->style);
-		b.color = css_computed_border_top_color(row->style, &b.c);
-		css_computed_border_top_width(row->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(row->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_శిఖరం_style(అడ్డువరుస->style);
+		b.color = css_computed_border_శిఖరం_color(అడ్డువరుస->style, &b.c);
+		css_computed_border_శిఖరం_వెడల్పు(అడ్డువరుస->style, &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(అడ్డువరుస->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW;
+		b_src = BOX_పట్టిక_అడ్డువరుస;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     a, *a_src, &b, b_src)) {
 			*a = b;
 			*a_src = b_src;
 		}
 
-		return false;
-	} else {
+		తిరిగి false;
+	} లేకపోతే {
 		/* Process cells that are directly above the cell being
 		 * considered. They may not be in this row, but in one of the
 		 * rows above it in the case where rowspan > 1. */
-		struct box *c;
+		నిర్మాణం box *c;
 		bool processed = false;
 
-		while (processed == false) {
-			for (c = row->children; c != NULL; c = c->next) {
+		అయితే (processed == false) {
+			కొరకు (c = అడ్డువరుస->children; c != ఖాళీ; c = c->తదుపరి) {
 				/* Ignore cells to the left */
-				if (c->start_column + c->columns - 1 <
-				    cell->start_column)
-					continue;
+				ఒకవేళ (c->ప్రారంభం_స్తంభం + c->columns - 1 <
+				    cell->ప్రారంభం_స్తంభం)
+					కొనసాగు;
 				/* Ignore cells to the right */
-				if (c->start_column > cell->start_column +
+				ఒకవేళ (c->ప్రారంభం_స్తంభం > cell->ప్రారంభం_స్తంభం +
 				    cell->columns - 1)
-					continue;
+					కొనసాగు;
 
 				/* Flag that we've processed a cell */
 				processed = true;
@@ -274,15 +274,15 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
 							c->style);
 				b.color = css_computed_border_bottom_color(
 							c->style, &b.c);
-				css_computed_border_bottom_width(c->style,
-							&b.width, &b.unit);
-				b.width = css_unit_len2device_px(
+				css_computed_border_bottom_వెడల్పు(c->style,
+							&b.వెడల్పు, &b.unit);
+				b.వెడల్పు = css_unit_len2device_px(
 						c->style, unit_len_ctx,
-						b.width, b.unit);
+						b.వెడల్పు, b.unit);
 				b.unit = CSS_UNIT_PX;
-				b_src = BOX_TABLE_CELL;
+				b_src = BOX_పట్టిక_CELL;
 
-				if (table_border_is_more_eyecatching(unit_len_ctx,
+				ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 								     a,
 								     *a_src,
 								     &b,
@@ -292,16 +292,16 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
 				}
 			}
 
-			if (processed == false) {
+			ఒకవేళ (processed == false) {
 				/* There must be a preceding row */
-				assert(row->prev != NULL);
+				ప్రతిజ్ఞా(అడ్డువరుస->prev != ఖాళీ);
 
-				row = row->prev;
+				అడ్డువరుస = అడ్డువరుస->prev;
 			}
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -318,62 +318,62 @@ table_cell_top_process_row(const css_unit_ctx *unit_len_ctx,
  * \post \a a will be updated with most eyecatching style
  * \post \a a_src will be updated also
  */
-static bool
-table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
-			     struct box *cell,
-			     struct box *group,
-			     struct border *a,
+స్థిర bool
+పట్టిక_cell_శిఖరం_process_సమూహం(స్థిరరాశి css_unit_ctx *unit_len_ctx,
+			     నిర్మాణం box *cell,
+			     నిర్మాణం box *సమూహం,
+			     నిర్మాణం border *a,
 			     box_type *a_src)
 {
-	struct border b;
+	నిర్మాణం border b;
 	box_type b_src;
 
 	/* Bottom border of group */
-	b.style = css_computed_border_bottom_style(group->style);
-	b.color = css_computed_border_bottom_color(group->style, &b.c);
-	css_computed_border_bottom_width(group->style, &b.width, &b.unit);
-	b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-			b.width, b.unit);
+	b.style = css_computed_border_bottom_style(సమూహం->style);
+	b.color = css_computed_border_bottom_color(సమూహం->style, &b.c);
+	css_computed_border_bottom_వెడల్పు(సమూహం->style, &b.వెడల్పు, &b.unit);
+	b.వెడల్పు = css_unit_len2device_px(సమూహం->style, unit_len_ctx,
+			b.వెడల్పు, b.unit);
 	b.unit = CSS_UNIT_PX;
-	b_src = BOX_TABLE_ROW_GROUP;
+	b_src = BOX_పట్టిక_అడ్డువరుస_సమూహం;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
+	ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx, a, *a_src, &b, b_src)) {
 		*a = b;
 		*a_src = b_src;
 	}
 
-	if (group->last != NULL) {
+	ఒకవేళ (సమూహం->చివరి != ఖాళీ) {
 		/* Process rows in group, starting with last */
-		struct box *row = group->last;
+		నిర్మాణం box *అడ్డువరుస = సమూహం->చివరి;
 
-		while (table_cell_top_process_row(unit_len_ctx, cell, row,
+		అయితే (పట్టిక_cell_శిఖరం_process_అడ్డువరుస(unit_len_ctx, cell, అడ్డువరుస,
 						  a, a_src) == false) {
-			if (row->prev == NULL) {
-				return false;
-			} else {
-				row = row->prev;
+			ఒకవేళ (అడ్డువరుస->prev == ఖాళీ) {
+				తిరిగి false;
+			} లేకపోతే {
+				అడ్డువరుస = అడ్డువరుస->prev;
 			}
 		}
-	} else {
+	} లేకపోతే {
 		/* Group is empty, so consider its top border */
-		b.style = css_computed_border_top_style(group->style);
-		b.color = css_computed_border_top_color(group->style, &b.c);
-		css_computed_border_top_width(group->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_శిఖరం_style(సమూహం->style);
+		b.color = css_computed_border_శిఖరం_color(సమూహం->style, &b.c);
+		css_computed_border_శిఖరం_వెడల్పు(సమూహం->style, &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(సమూహం->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_పట్టిక_అడ్డువరుస_సమూహం;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     a, *a_src, &b, b_src)) {
 			*a = b;
 			*a_src = b_src;
 		}
 
-		return false;
+		తిరిగి false;
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -383,118 +383,118 @@ table_cell_top_process_group(const css_unit_ctx *unit_len_ctx,
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+స్థిర శూన్య
+పట్టిక_వాడిన_ఎడమ_border_for_cell(స్థిరరాశి css_unit_ctx *unit_len_ctx, నిర్మాణం box *cell)
 {
-	struct border a, b;
+	నిర్మాణం border a, b;
 	box_type a_src, b_src;
 
 	/** \todo Need column and column_group, too */
 
 	/* Initialise to computed left border for cell */
-	a.style = css_computed_border_left_style(cell->style);
-	a.color = css_computed_border_left_color(cell->style, &a.c);
-	css_computed_border_left_width(cell->style, &a.width, &a.unit);
-	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
-			a.width, a.unit);
+	a.style = css_computed_border_ఎడమ_style(cell->style);
+	a.color = css_computed_border_ఎడమ_color(cell->style, &a.c);
+	css_computed_border_ఎడమ_వెడల్పు(cell->style, &a.వెడల్పు, &a.unit);
+	a.వెడల్పు = css_unit_len2device_px(cell->style, unit_len_ctx,
+			a.వెడల్పు, a.unit);
 	a.unit = CSS_UNIT_PX;
-	a_src = BOX_TABLE_CELL;
+	a_src = BOX_పట్టిక_CELL;
 
-	if (cell->prev != NULL || cell->start_column != 0) {
+	ఒకవేళ (cell->prev != ఖాళీ || cell->ప్రారంభం_స్తంభం != 0) {
 		/* Cell to the left -- consider its right border */
-		struct box *prev = NULL;
+		నిర్మాణం box *prev = ఖాళీ;
 
-		if (cell->prev == NULL) {
-			struct box *row;
+		ఒకవేళ (cell->prev == ఖాళీ) {
+			నిర్మాణం box *అడ్డువరుస;
 
 			/* Spanned from a previous row in current row group */
-			for (row = cell->parent; row != NULL; row = row->prev) {
-				for (prev = row->children; prev != NULL;
-				     prev = prev->next) {
-					if (prev->start_column +
+			కొరకు (అడ్డువరుస = cell->మాతృ; అడ్డువరుస != ఖాళీ; అడ్డువరుస = అడ్డువరుస->prev) {
+				కొరకు (prev = అడ్డువరుస->children; prev != ఖాళీ;
+				     prev = prev->తదుపరి) {
+					ఒకవేళ (prev->ప్రారంభం_స్తంభం +
 					    prev->columns ==
-					    cell->start_column)
-						break;
+					    cell->ప్రారంభం_స్తంభం)
+						ఆపు;
 				}
 
-				if (prev != NULL)
-					break;
+				ఒకవేళ (prev != ఖాళీ)
+					ఆపు;
 			}
 
-			assert(prev != NULL);
-		} else {
+			ప్రతిజ్ఞా(prev != ఖాళీ);
+		} లేకపోతే {
 			prev = cell->prev;
 		}
 
-		b.style = css_computed_border_right_style(prev->style);
-		b.color = css_computed_border_right_color(prev->style, &b.c);
-		css_computed_border_right_width(prev->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(prev->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_కుడి_style(prev->style);
+		b.color = css_computed_border_కుడి_color(prev->style, &b.c);
+		css_computed_border_కుడి_వెడల్పు(prev->style, &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(prev->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_CELL;
+		b_src = BOX_పట్టిక_CELL;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
-	} else {
+	} లేకపోతే {
 		/* First cell in row, so consider rows and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
-		unsigned int rows = cell->rows;
+		నిర్మాణం box *అడ్డువరుస = cell->మాతృ;
+		నిర్మాణం box *సమూహం = అడ్డువరుస->మాతృ;
+		నిర్మాణం box *పట్టిక = సమూహం->మాతృ;
+		గుర్తులేని పూర్ణాంకం అడ్డువరుసలు = cell->అడ్డువరుసలు;
 
-		while (rows-- > 0 && row != NULL) {
+		అయితే (అడ్డువరుసలు-- > 0 && అడ్డువరుస != ఖాళీ) {
 			/* Spanned rows -- consider their left border */
-			b.style = css_computed_border_left_style(row->style);
-			b.color = css_computed_border_left_color(
-								 row->style, &b.c);
-			css_computed_border_left_width(
-						       row->style, &b.width, &b.unit);
-			b.width = css_unit_len2device_px(
-					row->style, unit_len_ctx,
-					b.width, b.unit);
+			b.style = css_computed_border_ఎడమ_style(అడ్డువరుస->style);
+			b.color = css_computed_border_ఎడమ_color(
+								 అడ్డువరుస->style, &b.c);
+			css_computed_border_ఎడమ_వెడల్పు(
+						       అడ్డువరుస->style, &b.వెడల్పు, &b.unit);
+			b.వెడల్పు = css_unit_len2device_px(
+					అడ్డువరుస->style, unit_len_ctx,
+					b.వెడల్పు, b.unit);
 			b.unit = CSS_UNIT_PX;
-			b_src = BOX_TABLE_ROW;
+			b_src = BOX_పట్టిక_అడ్డువరుస;
 
-			if (table_border_is_more_eyecatching(unit_len_ctx,
+			ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 							     &a, a_src, &b, b_src)) {
 				a = b;
 				a_src = b_src;
 			}
 
-			row = row->next;
+			అడ్డువరుస = అడ్డువరుస->తదుపరి;
 		}
 
 		/** \todo can cells span row groups? */
 
 		/* Row group -- consider its left border */
-		b.style = css_computed_border_left_style(group->style);
-		b.color = css_computed_border_left_color(group->style, &b.c);
-		css_computed_border_left_width(group->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_ఎడమ_style(సమూహం->style);
+		b.color = css_computed_border_ఎడమ_color(సమూహం->style, &b.c);
+		css_computed_border_ఎడమ_వెడల్పు(సమూహం->style, &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(సమూహం->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_పట్టిక_అడ్డువరుస_సమూహం;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* The table itself -- consider its left border */
-		b.style = css_computed_border_left_style(table->style);
-		b.color = css_computed_border_left_color(table->style, &b.c);
-		css_computed_border_left_width(table->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_ఎడమ_style(పట్టిక->style);
+		b.color = css_computed_border_ఎడమ_color(పట్టిక->style, &b.c);
+		css_computed_border_ఎడమ_వెడల్పు(పట్టిక->style, &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(పట్టిక->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE;
+		b_src = BOX_పట్టిక;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
@@ -502,10 +502,10 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
 	}
 
 	/* a now contains the used left border for the cell */
-	cell->border[LEFT].style = a.style;
-	cell->border[LEFT].c = a.c;
-	cell->border[LEFT].width = FIXTOINT(css_unit_len2device_px(
-			cell->style, unit_len_ctx, a.width, a.unit));
+	cell->border[ఎడమ_2].style = a.style;
+	cell->border[ఎడమ_2].c = a.c;
+	cell->border[ఎడమ_2].వెడల్పు = FIXTOINT(css_unit_len2device_px(
+			cell->style, unit_len_ctx, a.వెడల్పు, a.unit));
 }
 
 
@@ -515,98 +515,98 @@ table_used_left_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *ce
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+స్థిర శూన్య
+పట్టిక_వాడిన_శిఖరం_border_for_cell(స్థిరరాశి css_unit_ctx *unit_len_ctx, నిర్మాణం box *cell)
 {
-	struct border a, b;
+	నిర్మాణం border a, b;
 	box_type a_src, b_src;
-	struct box *row = cell->parent;
-	bool process_group = false;
+	నిర్మాణం box *అడ్డువరుస = cell->మాతృ;
+	bool process_సమూహం = false;
 
 	/* Initialise to computed top border for cell */
-	a.style = css_computed_border_top_style(cell->style);
-	css_computed_border_top_color(cell->style, &a.c);
-	css_computed_border_top_width(cell->style, &a.width, &a.unit);
-	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
-			a.width, a.unit);
+	a.style = css_computed_border_శిఖరం_style(cell->style);
+	css_computed_border_శిఖరం_color(cell->style, &a.c);
+	css_computed_border_శిఖరం_వెడల్పు(cell->style, &a.వెడల్పు, &a.unit);
+	a.వెడల్పు = css_unit_len2device_px(cell->style, unit_len_ctx,
+			a.వెడల్పు, a.unit);
 	a.unit = CSS_UNIT_PX;
-	a_src = BOX_TABLE_CELL;
+	a_src = BOX_పట్టిక_CELL;
 
 	/* Top border of row */
-	b.style = css_computed_border_top_style(row->style);
-	css_computed_border_top_color(row->style, &b.c);
-	css_computed_border_top_width(row->style, &b.width, &b.unit);
-	b.width = css_unit_len2device_px(row->style, unit_len_ctx,
-			b.width, b.unit);
+	b.style = css_computed_border_శిఖరం_style(అడ్డువరుస->style);
+	css_computed_border_శిఖరం_color(అడ్డువరుస->style, &b.c);
+	css_computed_border_శిఖరం_వెడల్పు(అడ్డువరుస->style, &b.వెడల్పు, &b.unit);
+	b.వెడల్పు = css_unit_len2device_px(అడ్డువరుస->style, unit_len_ctx,
+			b.వెడల్పు, b.unit);
 	b.unit = CSS_UNIT_PX;
-	b_src = BOX_TABLE_ROW;
+	b_src = BOX_పట్టిక_అడ్డువరుస;
 
-	if (table_border_is_more_eyecatching(unit_len_ctx, &a, a_src, &b, b_src)) {
+	ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx, &a, a_src, &b, b_src)) {
 		a = b;
 		a_src = b_src;
 	}
 
-	if (row->prev != NULL) {
+	ఒకవేళ (అడ్డువరుస->prev != ఖాళీ) {
 		/* Consider row(s) above */
-		while (table_cell_top_process_row(unit_len_ctx, cell, row->prev,
+		అయితే (పట్టిక_cell_శిఖరం_process_అడ్డువరుస(unit_len_ctx, cell, అడ్డువరుస->prev,
 						  &a, &a_src) == false) {
-			if (row->prev->prev == NULL) {
+			ఒకవేళ (అడ్డువరుస->prev->prev == ఖాళీ) {
 				/* Consider row group */
-				process_group = true;
-				break;
-			} else {
-				row = row->prev;
+				process_సమూహం = true;
+				ఆపు;
+			} లేకపోతే {
+				అడ్డువరుస = అడ్డువరుస->prev;
 			}
 		}
-	} else {
-		process_group = true;
+	} లేకపోతే {
+		process_సమూహం = true;
 	}
 
-	if (process_group) {
-		struct box *group = row->parent;
+	ఒకవేళ (process_సమూహం) {
+		నిర్మాణం box *సమూహం = అడ్డువరుస->మాతృ;
 
 		/* Top border of row group */
-		b.style = css_computed_border_top_style(group->style);
-		b.color = css_computed_border_top_color(group->style, &b.c);
-		css_computed_border_top_width(group->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_శిఖరం_style(సమూహం->style);
+		b.color = css_computed_border_శిఖరం_color(సమూహం->style, &b.c);
+		css_computed_border_శిఖరం_వెడల్పు(సమూహం->style, &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(సమూహం->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_పట్టిక_అడ్డువరుస_సమూహం;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
-		if (group->prev == NULL) {
+		ఒకవేళ (సమూహం->prev == ఖాళీ) {
 			/* Top border of table */
-			table_cell_top_process_table(unit_len_ctx,
-						     group->parent, &a, &a_src);
-		} else {
+			పట్టిక_cell_శిఖరం_process_పట్టిక(unit_len_ctx,
+						     సమూహం->మాతృ, &a, &a_src);
+		} లేకపోతే {
 			/* Process previous group(s) */
-			while (table_cell_top_process_group(unit_len_ctx,
-							    cell, group->prev,
+			అయితే (పట్టిక_cell_శిఖరం_process_సమూహం(unit_len_ctx,
+							    cell, సమూహం->prev,
 							    &a, &a_src) == false) {
-				if (group->prev->prev == NULL) {
+				ఒకవేళ (సమూహం->prev->prev == ఖాళీ) {
 					/* Top border of table */
-					table_cell_top_process_table(unit_len_ctx,
-								     group->parent,
+					పట్టిక_cell_శిఖరం_process_పట్టిక(unit_len_ctx,
+								     సమూహం->మాతృ,
 								     &a, &a_src);
-					break;
-				} else {
-					group = group->prev;
+					ఆపు;
+				} లేకపోతే {
+					సమూహం = సమూహం->prev;
 				}
 			}
 		}
 	}
 
 	/* a now contains the used top border for the cell */
-	cell->border[TOP].style = a.style;
-	cell->border[TOP].c = a.c;
-	cell->border[TOP].width = FIXTOINT(css_unit_len2device_px(
-			cell->style, unit_len_ctx, a.width, a.unit));
+	cell->border[శిఖరం_2].style = a.style;
+	cell->border[శిఖరం_2].c = a.c;
+	cell->border[శిఖరం_2].వెడల్పు = FIXTOINT(css_unit_len2device_px(
+			cell->style, unit_len_ctx, a.వెడల్పు, a.unit));
 }
 
 /**
@@ -615,89 +615,89 @@ table_used_top_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cel
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+స్థిర శూన్య
+పట్టిక_వాడిన_కుడి_border_for_cell(స్థిరరాశి css_unit_ctx *unit_len_ctx, నిర్మాణం box *cell)
 {
-	struct border a, b;
+	నిర్మాణం border a, b;
 	box_type a_src, b_src;
 
 	/** \todo Need column and column_group, too */
 
 	/* Initialise to computed right border for cell */
-	a.style = css_computed_border_right_style(cell->style);
-	css_computed_border_right_color(cell->style, &a.c);
-	css_computed_border_right_width(cell->style, &a.width, &a.unit);
-	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
-			a.width, a.unit);
+	a.style = css_computed_border_కుడి_style(cell->style);
+	css_computed_border_కుడి_color(cell->style, &a.c);
+	css_computed_border_కుడి_వెడల్పు(cell->style, &a.వెడల్పు, &a.unit);
+	a.వెడల్పు = css_unit_len2device_px(cell->style, unit_len_ctx,
+			a.వెడల్పు, a.unit);
 	a.unit = CSS_UNIT_PX;
-	a_src = BOX_TABLE_CELL;
+	a_src = BOX_పట్టిక_CELL;
 
-	if (cell->next != NULL || cell->start_column + cell->columns !=
-	    cell->parent->parent->parent->columns) {
+	ఒకవేళ (cell->తదుపరి != ఖాళీ || cell->ప్రారంభం_స్తంభం + cell->columns !=
+	    cell->మాతృ->మాతృ->మాతృ->columns) {
 		/* Cell is not at right edge of table -- no right border */
 		a.style = CSS_BORDER_STYLE_NONE;
-		a.width = 0;
+		a.వెడల్పు = 0;
 		a.unit = CSS_UNIT_PX;
-	} else {
+	} లేకపోతే {
 		/* Last cell in row, so consider rows and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
-		unsigned int rows = cell->rows;
+		నిర్మాణం box *అడ్డువరుస = cell->మాతృ;
+		నిర్మాణం box *సమూహం = అడ్డువరుస->మాతృ;
+		నిర్మాణం box *పట్టిక = సమూహం->మాతృ;
+		గుర్తులేని పూర్ణాంకం అడ్డువరుసలు = cell->అడ్డువరుసలు;
 
-		while (rows-- > 0 && row != NULL) {
+		అయితే (అడ్డువరుసలు-- > 0 && అడ్డువరుస != ఖాళీ) {
 			/* Spanned rows -- consider their right border */
-			b.style = css_computed_border_right_style(row->style);
-			b.color = css_computed_border_right_color(row->style,
+			b.style = css_computed_border_కుడి_style(అడ్డువరుస->style);
+			b.color = css_computed_border_కుడి_color(అడ్డువరుస->style,
 								  &b.c);
-			css_computed_border_right_width(row->style,
-							&b.width,
+			css_computed_border_కుడి_వెడల్పు(అడ్డువరుస->style,
+							&b.వెడల్పు,
 							&b.unit);
-			b.width = css_unit_len2device_px(
-					row->style, unit_len_ctx,
-					b.width, b.unit);
+			b.వెడల్పు = css_unit_len2device_px(
+					అడ్డువరుస->style, unit_len_ctx,
+					b.వెడల్పు, b.unit);
 			b.unit = CSS_UNIT_PX;
-			b_src = BOX_TABLE_ROW;
+			b_src = BOX_పట్టిక_అడ్డువరుస;
 
-			if (table_border_is_more_eyecatching(unit_len_ctx,
+			ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 							     &a, a_src,
 							     &b, b_src)) {
 				a = b;
 				a_src = b_src;
 			}
 
-			row = row->next;
+			అడ్డువరుస = అడ్డువరుస->తదుపరి;
 		}
 
 		/** \todo can cells span row groups? */
 
 		/* Row group -- consider its right border */
-		b.style = css_computed_border_right_style(group->style);
-		b.color = css_computed_border_right_color(group->style, &b.c);
-		css_computed_border_right_width(group->style,
-						&b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_కుడి_style(సమూహం->style);
+		b.color = css_computed_border_కుడి_color(సమూహం->style, &b.c);
+		css_computed_border_కుడి_వెడల్పు(సమూహం->style,
+						&b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(సమూహం->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_పట్టిక_అడ్డువరుస_సమూహం;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* The table itself -- consider its right border */
-		b.style = css_computed_border_right_style(table->style);
-		b.color = css_computed_border_right_color(table->style, &b.c);
-		css_computed_border_right_width(table->style,
-						&b.width, &b.unit);
-		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_కుడి_style(పట్టిక->style);
+		b.color = css_computed_border_కుడి_color(పట్టిక->style, &b.c);
+		css_computed_border_కుడి_వెడల్పు(పట్టిక->style,
+						&b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(పట్టిక->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE;
+		b_src = BOX_పట్టిక;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src,
 						     &b, b_src)) {
 			a = b;
@@ -706,10 +706,10 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
 	}
 
 	/* a now contains the used right border for the cell */
-	cell->border[RIGHT].style = a.style;
-	cell->border[RIGHT].c = a.c;
-	cell->border[RIGHT].width = FIXTOINT(css_unit_len2device_px(
-			cell->style, unit_len_ctx, a.width, a.unit));
+	cell->border[కుడి_2].style = a.style;
+	cell->border[కుడి_2].c = a.c;
+	cell->border[కుడి_2].వెడల్పు = FIXTOINT(css_unit_len2device_px(
+			cell->style, unit_len_ctx, a.వెడల్పు, a.unit));
 }
 
 
@@ -719,82 +719,82 @@ table_used_right_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *c
  * \param unit_len_ctx  Length conversion context
  * \param cell     Table cell to consider
  */
-static void
-table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
-				  struct box *cell)
+స్థిర శూన్య
+పట్టిక_వాడిన_bottom_border_for_cell(స్థిరరాశి css_unit_ctx *unit_len_ctx,
+				  నిర్మాణం box *cell)
 {
-	struct border a, b;
+	నిర్మాణం border a, b;
 	box_type a_src, b_src;
-	struct box *row = cell->parent;
-	unsigned int rows = cell->rows;
+	నిర్మాణం box *అడ్డువరుస = cell->మాతృ;
+	గుర్తులేని పూర్ణాంకం అడ్డువరుసలు = cell->అడ్డువరుసలు;
 
 	/* Initialise to computed bottom border for cell */
 	a.style = css_computed_border_bottom_style(cell->style);
 	css_computed_border_bottom_color(cell->style, &a.c);
-	css_computed_border_bottom_width(cell->style, &a.width, &a.unit);
-	a.width = css_unit_len2device_px(cell->style, unit_len_ctx,
-			a.width, a.unit);
+	css_computed_border_bottom_వెడల్పు(cell->style, &a.వెడల్పు, &a.unit);
+	a.వెడల్పు = css_unit_len2device_px(cell->style, unit_len_ctx,
+			a.వెడల్పు, a.unit);
 	a.unit = CSS_UNIT_PX;
-	a_src = BOX_TABLE_CELL;
+	a_src = BOX_పట్టిక_CELL;
 
-	while (rows-- > 0 && row != NULL)
-		row = row->next;
+	అయితే (అడ్డువరుసలు-- > 0 && అడ్డువరుస != ఖాళీ)
+		అడ్డువరుస = అడ్డువరుస->తదుపరి;
 
 	/** \todo Can cells span row groups? */
 
-	if (row != NULL) {
+	ఒకవేళ (అడ్డువరుస != ఖాళీ) {
 		/* Cell is not at bottom edge of table -- no bottom border */
 		a.style = CSS_BORDER_STYLE_NONE;
-		a.width = 0;
+		a.వెడల్పు = 0;
 		a.unit = CSS_UNIT_PX;
-	} else {
+	} లేకపోతే {
 		/* Cell at bottom of table, so consider row and row group */
-		struct box *row = cell->parent;
-		struct box *group = row->parent;
-		struct box *table = group->parent;
+		నిర్మాణం box *అడ్డువరుస = cell->మాతృ;
+		నిర్మాణం box *సమూహం = అడ్డువరుస->మాతృ;
+		నిర్మాణం box *పట్టిక = సమూహం->మాతృ;
 
 		/* Bottom border of row */
-		b.style = css_computed_border_bottom_style(row->style);
-		b.color = css_computed_border_bottom_color(row->style, &b.c);
-		css_computed_border_bottom_width(row->style, &b.width, &b.unit);
-		b.width = css_unit_len2device_px(row->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_bottom_style(అడ్డువరుస->style);
+		b.color = css_computed_border_bottom_color(అడ్డువరుస->style, &b.c);
+		css_computed_border_bottom_వెడల్పు(అడ్డువరుస->style, &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(అడ్డువరుస->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW;
+		b_src = BOX_పట్టిక_అడ్డువరుస;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* Row group -- consider its bottom border */
-		b.style = css_computed_border_bottom_style(group->style);
-		b.color = css_computed_border_bottom_color(group->style, &b.c);
-		css_computed_border_bottom_width(group->style,
-						 &b.width, &b.unit);
-		b.width = css_unit_len2device_px(group->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_bottom_style(సమూహం->style);
+		b.color = css_computed_border_bottom_color(సమూహం->style, &b.c);
+		css_computed_border_bottom_వెడల్పు(సమూహం->style,
+						 &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(సమూహం->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE_ROW_GROUP;
+		b_src = BOX_పట్టిక_అడ్డువరుస_సమూహం;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 			a_src = b_src;
 		}
 
 		/* The table itself -- consider its bottom border */
-		b.style = css_computed_border_bottom_style(table->style);
-		b.color = css_computed_border_bottom_color(table->style, &b.c);
-		css_computed_border_bottom_width(table->style,
-						 &b.width, &b.unit);
-		b.width = css_unit_len2device_px(table->style, unit_len_ctx,
-				b.width, b.unit);
+		b.style = css_computed_border_bottom_style(పట్టిక->style);
+		b.color = css_computed_border_bottom_color(పట్టిక->style, &b.c);
+		css_computed_border_bottom_వెడల్పు(పట్టిక->style,
+						 &b.వెడల్పు, &b.unit);
+		b.వెడల్పు = css_unit_len2device_px(పట్టిక->style, unit_len_ctx,
+				b.వెడల్పు, b.unit);
 		b.unit = CSS_UNIT_PX;
-		b_src = BOX_TABLE;
+		b_src = BOX_పట్టిక;
 
-		if (table_border_is_more_eyecatching(unit_len_ctx,
+		ఒకవేళ (పట్టిక_border_is_మరిన్ని_eyecatching(unit_len_ctx,
 						     &a, a_src, &b, b_src)) {
 			a = b;
 		}
@@ -803,262 +803,262 @@ table_used_bottom_border_for_cell(const css_unit_ctx *unit_len_ctx,
 	/* a now contains the used bottom border for the cell */
 	cell->border[BOTTOM].style = a.style;
 	cell->border[BOTTOM].c = a.c;
-	cell->border[BOTTOM].width = FIXTOINT(css_unit_len2device_px(
-			cell->style, unit_len_ctx, a.width, a.unit));
+	cell->border[BOTTOM].వెడల్పు = FIXTOINT(css_unit_len2device_px(
+			cell->style, unit_len_ctx, a.వెడల్పు, a.unit));
 }
 
 
 /* exported interface documented in html/table.h */
 bool
-table_calculate_column_types(const css_unit_ctx *unit_len_ctx, struct box *table)
+పట్టిక_calculate_స్తంభం_types(స్థిరరాశి css_unit_ctx *unit_len_ctx, నిర్మాణం box *పట్టిక)
 {
-	unsigned int i, j;
-	struct column *col;
-	struct box *row_group, *row, *cell;
+	గుర్తులేని పూర్ణాంకం i, j;
+	నిర్మాణం స్తంభం *నిలువు;
+	నిర్మాణం box *అడ్డువరుస_సమూహం, *అడ్డువరుస, *cell;
 
-	if (table->col)
+	ఒకవేళ (పట్టిక->నిలువు)
 		/* table->col already constructed, for example frameset table */
-		return true;
+		తిరిగి true;
 
-	table->col = col = talloc_array(table, struct column, table->columns);
-	if (!col)
-		return false;
+	పట్టిక->నిలువు = నిలువు = talloc_array(పట్టిక, నిర్మాణం స్తంభం, పట్టిక->columns);
+	ఒకవేళ (!నిలువు)
+		తిరిగి false;
 
-	for (i = 0; i != table->columns; i++) {
-		col[i].type = COLUMN_WIDTH_UNKNOWN;
-		col[i].width = 0;
-		col[i].positioned = true;
+	కొరకు (i = 0; i != పట్టిక->columns; i++) {
+		నిలువు[i].type = స్తంభం_వెడల్పు_UNKNOWN;
+		నిలువు[i].వెడల్పు = 0;
+		నిలువు[i].positioned = true;
 	}
 
 	/* 1st pass: cells with colspan 1 only */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-		for (row = row_group->children; row; row = row->next)
-			for (cell = row->children; cell; cell = cell->next) {
-				enum css_width_e type;
-				css_fixed value = 0;
+	కొరకు (అడ్డువరుస_సమూహం = పట్టిక->children; అడ్డువరుస_సమూహం; అడ్డువరుస_సమూహం =అడ్డువరుస_సమూహం->తదుపరి)
+		కొరకు (అడ్డువరుస = అడ్డువరుస_సమూహం->children; అడ్డువరుస; అడ్డువరుస = అడ్డువరుస->తదుపరి)
+			కొరకు (cell = అడ్డువరుస->children; cell; cell = cell->తదుపరి) {
+				గణన css_వెడల్పు_e type;
+				css_fixed విలువ = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				assert(cell->type == BOX_TABLE_CELL);
-				assert(cell->style);
+				ప్రతిజ్ఞా(cell->type == BOX_పట్టిక_CELL);
+				ప్రతిజ్ఞా(cell->style);
 
-				if (cell->columns != 1)
-					continue;
-				i = cell->start_column;
+				ఒకవేళ (cell->columns != 1)
+					కొనసాగు;
+				i = cell->ప్రారంభం_స్తంభం;
 
-				if (css_computed_position(cell->style) !=
+				ఒకవేళ (css_computed_position(cell->style) !=
 				    CSS_POSITION_ABSOLUTE &&
 				    css_computed_position(cell->style) !=
 				    CSS_POSITION_FIXED) {
-					col[i].positioned = false;
+					నిలువు[i].positioned = false;
 				}
 
-				type = css_computed_width(cell->style, &value, &unit);
+				type = css_computed_వెడల్పు(cell->style, &విలువ, &unit);
 
 				/* fixed width takes priority over any other width type */
-				if (col[i].type != COLUMN_WIDTH_FIXED &&
-				    type == CSS_WIDTH_SET && unit != CSS_UNIT_PCT) {
-					col[i].type = COLUMN_WIDTH_FIXED;
-					col[i].width = FIXTOINT(css_unit_len2device_px(
+				ఒకవేళ (నిలువు[i].type != స్తంభం_వెడల్పు_FIXED &&
+				    type == CSS_వెడల్పు_సమితి && unit != CSS_UNIT_PCT) {
+					నిలువు[i].type = స్తంభం_వెడల్పు_FIXED;
+					నిలువు[i].వెడల్పు = FIXTOINT(css_unit_len2device_px(
 							cell->style,
 							unit_len_ctx,
-							value, unit));
-					if (col[i].width < 0)
-						col[i].width = 0;
-					continue;
+							విలువ, unit));
+					ఒకవేళ (నిలువు[i].వెడల్పు < 0)
+						నిలువు[i].వెడల్పు = 0;
+					కొనసాగు;
 				}
 
-				if (col[i].type != COLUMN_WIDTH_UNKNOWN)
-					continue;
+				ఒకవేళ (నిలువు[i].type != స్తంభం_వెడల్పు_UNKNOWN)
+					కొనసాగు;
 
-				if (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT) {
-					col[i].type = COLUMN_WIDTH_PERCENT;
-					col[i].width = FIXTOINT(value);
-					if (col[i].width < 0)
-						col[i].width = 0;
-				} else if (type == CSS_WIDTH_AUTO) {
-					col[i].type = COLUMN_WIDTH_AUTO;
+				ఒకవేళ (type == CSS_వెడల్పు_సమితి && unit == CSS_UNIT_PCT) {
+					నిలువు[i].type = స్తంభం_వెడల్పు_PERCENT;
+					నిలువు[i].వెడల్పు = FIXTOINT(విలువ);
+					ఒకవేళ (నిలువు[i].వెడల్పు < 0)
+						నిలువు[i].వెడల్పు = 0;
+				} లేకపోతే ఒకవేళ (type == CSS_వెడల్పు_AUTO) {
+					నిలువు[i].type = స్తంభం_వెడల్పు_AUTO;
 				}
 			}
 
 	/* 2nd pass: cells which span multiple columns */
-	for (row_group = table->children; row_group; row_group =row_group->next)
-		for (row = row_group->children; row; row = row->next)
-			for (cell = row->children; cell; cell = cell->next) {
-				unsigned int fixed_columns = 0,
+	కొరకు (అడ్డువరుస_సమూహం = పట్టిక->children; అడ్డువరుస_సమూహం; అడ్డువరుస_సమూహం =అడ్డువరుస_సమూహం->తదుపరి)
+		కొరకు (అడ్డువరుస = అడ్డువరుస_సమూహం->children; అడ్డువరుస; అడ్డువరుస = అడ్డువరుస->తదుపరి)
+			కొరకు (cell = అడ్డువరుస->children; cell; cell = cell->తదుపరి) {
+				గుర్తులేని పూర్ణాంకం fixed_columns = 0,
 					percent_columns = 0,
 					auto_columns = 0,
 					unknown_columns = 0;
-				int fixed_width = 0, percent_width = 0;
-				enum css_width_e type;
-				css_fixed value = 0;
+				పూర్ణాంకం fixed_వెడల్పు = 0, percent_వెడల్పు = 0;
+				గణన css_వెడల్పు_e type;
+				css_fixed విలువ = 0;
 				css_unit unit = CSS_UNIT_PX;
 
-				if (cell->columns == 1)
-					continue;
-				i = cell->start_column;
+				ఒకవేళ (cell->columns == 1)
+					కొనసాగు;
+				i = cell->ప్రారంభం_స్తంభం;
 
-				for (j = i; j < i + cell->columns; j++) {
-					col[j].positioned = false;
+				కొరకు (j = i; j < i + cell->columns; j++) {
+					నిలువు[j].positioned = false;
 				}
 
 				/* count column types in spanned cells */
-				for (j = 0; j != cell->columns; j++) {
-					if (col[i + j].type == COLUMN_WIDTH_FIXED) {
-						fixed_width += col[i + j].width;
+				కొరకు (j = 0; j != cell->columns; j++) {
+					ఒకవేళ (నిలువు[i + j].type == స్తంభం_వెడల్పు_FIXED) {
+						fixed_వెడల్పు += నిలువు[i + j].వెడల్పు;
 						fixed_columns++;
-					} else if (col[i + j].type == COLUMN_WIDTH_PERCENT) {
-						percent_width += col[i + j].width;
+					} లేకపోతే ఒకవేళ (నిలువు[i + j].type == స్తంభం_వెడల్పు_PERCENT) {
+						percent_వెడల్పు += నిలువు[i + j].వెడల్పు;
 						percent_columns++;
-					} else if (col[i + j].type == COLUMN_WIDTH_AUTO) {
+					} లేకపోతే ఒకవేళ (నిలువు[i + j].type == స్తంభం_వెడల్పు_AUTO) {
 						auto_columns++;
-					} else {
+					} లేకపోతే {
 						unknown_columns++;
 					}
 				}
 
-				if (!unknown_columns)
-					continue;
+				ఒకవేళ (!unknown_columns)
+					కొనసాగు;
 
-				type = css_computed_width(cell->style, &value, &unit);
+				type = css_computed_వెడల్పు(cell->style, &విలువ, &unit);
 
 				/* if cell is fixed width, and all spanned columns are fixed
 				 * or unknown width, split extra width among unknown columns */
-				if (type == CSS_WIDTH_SET && unit != CSS_UNIT_PCT &&
+				ఒకవేళ (type == CSS_వెడల్పు_సమితి && unit != CSS_UNIT_PCT &&
 				    fixed_columns + unknown_columns ==
 				    cell->columns) {
-					int width = (FIXTOFLT(css_unit_len2device_px(
+					పూర్ణాంకం వెడల్పు = (FIXTOFLT(css_unit_len2device_px(
 							cell->style,
 							unit_len_ctx,
-							value, unit)) -
-						fixed_width) / unknown_columns;
-					if (width < 0)
-						width = 0;
-					for (j = 0; j != cell->columns; j++) {
-						if (col[i + j].type == COLUMN_WIDTH_UNKNOWN) {
-							col[i + j].type = COLUMN_WIDTH_FIXED;
-							col[i + j].width = width;
+							విలువ, unit)) -
+						fixed_వెడల్పు) / unknown_columns;
+					ఒకవేళ (వెడల్పు < 0)
+						వెడల్పు = 0;
+					కొరకు (j = 0; j != cell->columns; j++) {
+						ఒకవేళ (నిలువు[i + j].type == స్తంభం_వెడల్పు_UNKNOWN) {
+							నిలువు[i + j].type = స్తంభం_వెడల్పు_FIXED;
+							నిలువు[i + j].వెడల్పు = వెడల్పు;
 						}
 					}
 				}
 
 				/* as above for percentage width */
-				if (type == CSS_WIDTH_SET && unit == CSS_UNIT_PCT &&
+				ఒకవేళ (type == CSS_వెడల్పు_సమితి && unit == CSS_UNIT_PCT &&
 				    percent_columns + unknown_columns ==
 				    cell->columns) {
-					int width = (FIXTOFLT(value) -
-						     percent_width) / unknown_columns;
-					if (width < 0)
-						width = 0;
-					for (j = 0; j != cell->columns; j++) {
-						if (col[i + j].type == COLUMN_WIDTH_UNKNOWN) {
-							col[i + j].type = COLUMN_WIDTH_PERCENT;
-							col[i + j].width = width;
+					పూర్ణాంకం వెడల్పు = (FIXTOFLT(విలువ) -
+						     percent_వెడల్పు) / unknown_columns;
+					ఒకవేళ (వెడల్పు < 0)
+						వెడల్పు = 0;
+					కొరకు (j = 0; j != cell->columns; j++) {
+						ఒకవేళ (నిలువు[i + j].type == స్తంభం_వెడల్పు_UNKNOWN) {
+							నిలువు[i + j].type = స్తంభం_వెడల్పు_PERCENT;
+							నిలువు[i + j].వెడల్పు = వెడల్పు;
 						}
 					}
 				}
 			}
 
 	/* use AUTO if no width type was specified */
-	for (i = 0; i != table->columns; i++) {
-		if (col[i].type == COLUMN_WIDTH_UNKNOWN)
-			col[i].type = COLUMN_WIDTH_AUTO;
+	కొరకు (i = 0; i != పట్టిక->columns; i++) {
+		ఒకవేళ (నిలువు[i].type == స్తంభం_వెడల్పు_UNKNOWN)
+			నిలువు[i].type = స్తంభం_వెడల్పు_AUTO;
 	}
 
-#ifdef TABLE_DEBUG
-	for (i = 0; i != table->columns; i++)
+#నిర్వచితమైతే పట్టిక_DEBUG
+	కొరకు (i = 0; i != పట్టిక->columns; i++)
 		NSLOG(netsurf, INFO,
 		      "table %p, column %u: type %s, width %i",
-		      table,
+		      పట్టిక,
 		      i,
-		      ((const char *[]){
+		      ((స్థిరరాశి అక్షరం *[]){
 					"UNKNOWN",
 					"FIXED",
 					"AUTO",
 					"PERCENT",
 					"RELATIVE",
-				      })[col[i].type],
-		      col[i].width);
-#endif
+				      })[నిలువు[i].type],
+		      నిలువు[i].వెడల్పు);
+#అయితే_ముగింపు
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* exported interface documented in html/table.h */
-void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell)
+శూన్య పట్టిక_వాడిన_border_for_cell(స్థిరరాశి css_unit_ctx *unit_len_ctx, నిర్మాణం box *cell)
 {
-	int side;
+	పూర్ణాంకం side;
 
-	assert(cell->type == BOX_TABLE_CELL);
+	ప్రతిజ్ఞా(cell->type == BOX_పట్టిక_CELL);
 
-	if (css_computed_border_collapse(cell->style) ==
+	ఒకవేళ (css_computed_border_collapse(cell->style) ==
 	    CSS_BORDER_COLLAPSE_SEPARATE) {
-		css_fixed width = 0;
+		css_fixed వెడల్పు = 0;
 		css_unit unit = CSS_UNIT_PX;
 
 		/* Left border */
-		cell->border[LEFT].style =
-			css_computed_border_left_style(cell->style);
-		css_computed_border_left_color(cell->style,
-					       &cell->border[LEFT].c);
-		css_computed_border_left_width(cell->style, &width, &unit);
-		cell->border[LEFT].width =
+		cell->border[ఎడమ_2].style =
+			css_computed_border_ఎడమ_style(cell->style);
+		css_computed_border_ఎడమ_color(cell->style,
+					       &cell->border[ఎడమ_2].c);
+		css_computed_border_ఎడమ_వెడల్పు(cell->style, &వెడల్పు, &unit);
+		cell->border[ఎడమ_2].వెడల్పు =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
-					width, unit));
+					వెడల్పు, unit));
 
 		/* Top border */
-		cell->border[TOP].style =
-			css_computed_border_top_style(cell->style);
-		css_computed_border_top_color(cell->style,
-					      &cell->border[TOP].c);
-		css_computed_border_top_width(cell->style, &width, &unit);
-		cell->border[TOP].width =
+		cell->border[శిఖరం_2].style =
+			css_computed_border_శిఖరం_style(cell->style);
+		css_computed_border_శిఖరం_color(cell->style,
+					      &cell->border[శిఖరం_2].c);
+		css_computed_border_శిఖరం_వెడల్పు(cell->style, &వెడల్పు, &unit);
+		cell->border[శిఖరం_2].వెడల్పు =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
-					width, unit));
+					వెడల్పు, unit));
 
 		/* Right border */
-		cell->border[RIGHT].style =
-			css_computed_border_right_style(cell->style);
-		css_computed_border_right_color(cell->style,
-						&cell->border[RIGHT].c);
-		css_computed_border_right_width(cell->style, &width, &unit);
-		cell->border[RIGHT].width =
+		cell->border[కుడి_2].style =
+			css_computed_border_కుడి_style(cell->style);
+		css_computed_border_కుడి_color(cell->style,
+						&cell->border[కుడి_2].c);
+		css_computed_border_కుడి_వెడల్పు(cell->style, &వెడల్పు, &unit);
+		cell->border[కుడి_2].వెడల్పు =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
-					width, unit));
+					వెడల్పు, unit));
 
 		/* Bottom border */
 		cell->border[BOTTOM].style =
 			css_computed_border_bottom_style(cell->style);
 		css_computed_border_bottom_color(cell->style,
 						 &cell->border[BOTTOM].c);
-		css_computed_border_bottom_width(cell->style, &width, &unit);
-		cell->border[BOTTOM].width =
+		css_computed_border_bottom_వెడల్పు(cell->style, &వెడల్పు, &unit);
+		cell->border[BOTTOM].వెడల్పు =
 			FIXTOINT(css_unit_len2device_px(
 					cell->style, unit_len_ctx,
-					width, unit));
-	} else {
+					వెడల్పు, unit));
+	} లేకపోతే {
 		/* Left border */
-		table_used_left_border_for_cell(unit_len_ctx, cell);
+		పట్టిక_వాడిన_ఎడమ_border_for_cell(unit_len_ctx, cell);
 
 		/* Top border */
-		table_used_top_border_for_cell(unit_len_ctx, cell);
+		పట్టిక_వాడిన_శిఖరం_border_for_cell(unit_len_ctx, cell);
 
 		/* Right border */
-		table_used_right_border_for_cell(unit_len_ctx, cell);
+		పట్టిక_వాడిన_కుడి_border_for_cell(unit_len_ctx, cell);
 
 		/* Bottom border */
-		table_used_bottom_border_for_cell(unit_len_ctx, cell);
+		పట్టిక_వాడిన_bottom_border_for_cell(unit_len_ctx, cell);
 	}
 
 	/* Finally, ensure that any borders configured as
 	 * hidden or none have zero width. (c.f. layout_find_dimensions) */
-	for (side = 0; side != 4; side++) {
-		if (cell->border[side].style == CSS_BORDER_STYLE_HIDDEN ||
+	కొరకు (side = 0; side != 4; side++) {
+		ఒకవేళ (cell->border[side].style == CSS_BORDER_STYLE_HIDDEN ||
 		    cell->border[side].style ==
 		    CSS_BORDER_STYLE_NONE)
-			cell->border[side].width = 0;
+			cell->border[side].వెడల్పు = 0;
 	}
 }

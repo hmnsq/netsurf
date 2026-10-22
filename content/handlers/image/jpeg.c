@@ -24,71 +24,71 @@
  * This implementation uses the IJG JPEG library.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <setjmp.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "netsurf/bitmap.h"
+#అన్తర్భావ "content/llcache.h"
+#అన్తర్భావ "content/content.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "desktop/gui_internal.h"
+#అన్తర్భావ "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#అన్తర్భావ "image/image_cache.h"
 
-#define JPEG_INTERNAL_OPTIONS
-#include "jpeglib.h"
-#include "jpeg.h"
+#నిర్వచించు JPEG_అంతర్గత_OPTIONS
+#అన్తర్భావ "jpeglib.h"
+#అన్తర్భావ "jpeg.h"
 
 /** absolute minimum size of a jpeg below which it is not even worth
  * trying to read header data
  */
-#define MIN_JPEG_SIZE 20
+#నిర్వచించు MIN_JPEG_కొలత 20
 
-#ifndef LIBJPEG_TURBO_VERSION
+#నిర్వచితం_కాకపోతే LIBJPEG_TURBO_సంస్కరణ
 #warning Using libjpeg (libjpeg-turbo is recommended)
-#endif
+#అయితే_ముగింపు
 
-static char nsjpeg_error_buffer[JMSG_LENGTH_MAX];
+స్థిర అక్షరం nsjpeg_error_బఫరు[JMSG_నిడివి_MAX];
 
-static unsigned char nsjpeg_eoi[] = { 0xff, JPEG_EOI };
+స్థిర గుర్తులేని అక్షరం nsjpeg_eoi[] = { 0xff, JPEG_EOI };
 
 /**
  * Content create entry point.
  */
-static nserror nsjpeg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+స్థిర nserror nsjpeg_create(స్థిరరాశి content_handler *handler,
+		lwc_string *imime_type, స్థిరరాశి నిర్మాణం http_parameter *params,
+		llcache_handle *llcache, స్థిరరాశి అక్షరం *fallback_charset,
+		bool quirks, నిర్మాణం content **c)
 {
-	struct content *jpeg;
+	నిర్మాణం content *jpeg;
 	nserror error;
 
-	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	jpeg = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content));
+	ఒకవేళ (jpeg == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(jpeg);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(jpeg);
+		తిరిగి error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
  * JPEG data source manager: initialize source.
  */
-static void nsjpeg_init_source(j_decompress_ptr cinfo)
+స్థిర శూన్య nsjpeg_init_ఆధారం(j_decompress_ptr cinfo)
 {
 }
 
@@ -99,11 +99,11 @@ static void nsjpeg_init_source(j_decompress_ptr cinfo)
  * This can only occur if the JPEG data was truncated or corrupted. Insert a
  * fake EOI marker to allow the decompressor to output as much as possible.
  */
-static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
+స్థిర boolean nsjpeg_fill_ఆదానం_బఫరు(j_decompress_ptr cinfo)
 {
-	cinfo->src->next_input_byte = nsjpeg_eoi;
-	cinfo->src->bytes_in_buffer = 2;
- 	return TRUE;
+	cinfo->src->తదుపరి_ఆదానం_byte = nsjpeg_eoi;
+	cinfo->src->బైట్లు_లోపల_బఫరు = 2;
+ 	తిరిగి TRUE;
 }
 
 
@@ -111,14 +111,14 @@ static boolean nsjpeg_fill_input_buffer(j_decompress_ptr cinfo)
  * JPEG data source manager: skip num_bytes worth of data.
  */
 
-static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
+స్థిర శూన్య nsjpeg_skip_ఆదానం_దత్తాంశం(j_decompress_ptr cinfo, దీర్ఘ అంకె_బైట్లు)
 {
-	if ((long) cinfo->src->bytes_in_buffer < num_bytes) {
-		cinfo->src->next_input_byte = 0;
-		cinfo->src->bytes_in_buffer = 0;
-	} else {
-		cinfo->src->next_input_byte += num_bytes;
-		cinfo->src->bytes_in_buffer -= num_bytes;
+	ఒకవేళ ((దీర్ఘ) cinfo->src->బైట్లు_లోపల_బఫరు < అంకె_బైట్లు) {
+		cinfo->src->తదుపరి_ఆదానం_byte = 0;
+		cinfo->src->బైట్లు_లోపల_బఫరు = 0;
+	} లేకపోతే {
+		cinfo->src->తదుపరి_ఆదానం_byte += అంకె_బైట్లు;
+		cinfo->src->బైట్లు_లోపల_బఫరు -= అంకె_బైట్లు;
 	}
 }
 
@@ -126,7 +126,7 @@ static void nsjpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 /**
  * JPEG data source manager: terminate source.
  */
-static void nsjpeg_term_source(j_decompress_ptr cinfo)
+స్థిర శూన్య nsjpeg_పదం_ఆధారం(j_decompress_ptr cinfo)
 {
 }
 
@@ -138,10 +138,10 @@ static void nsjpeg_term_source(j_decompress_ptr cinfo)
  * Warnings only - fatal errors are trapped by nsjpeg_error_exit
  *                 and do not call the output handler.
  */
-static void nsjpeg_error_log(j_common_ptr cinfo)
+స్థిర శూన్య nsjpeg_error_log(j_common_ptr cinfo)
 {
-	cinfo->err->format_message(cinfo, nsjpeg_error_buffer);
-	NSLOG(netsurf, INFO, "%s", nsjpeg_error_buffer);
+	cinfo->err->format_సందేశం(cinfo, nsjpeg_error_బఫరు);
+	NSLOG(netsurf, INFO, "%s", nsjpeg_error_బఫరు);
 }
 
 
@@ -150,302 +150,302 @@ static void nsjpeg_error_log(j_common_ptr cinfo)
  *
  * This prevents jpeglib calling exit() on a fatal error.
  */
-static void nsjpeg_error_exit(j_common_ptr cinfo)
+స్థిర శూన్య nsjpeg_error_exit(j_common_ptr cinfo)
 {
-	jmp_buf *setjmp_buffer = (jmp_buf *) cinfo->client_data;
+	jmp_buf *setjmp_బఫరు = (jmp_buf *) cinfo->client_దత్తాంశం;
 
-	cinfo->err->format_message(cinfo, nsjpeg_error_buffer);
-	NSLOG(netsurf, INFO, "%s", nsjpeg_error_buffer);
+	cinfo->err->format_సందేశం(cinfo, nsjpeg_error_బఫరు);
+	NSLOG(netsurf, INFO, "%s", nsjpeg_error_బఫరు);
 
-	longjmp(*setjmp_buffer, 1);
+	longjmp(*setjmp_బఫరు, 1);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_cmyk(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+స్థిర అంతఃవరుస శూన్య nsjpeg__decode_cmyk(
+		నిర్మాణం jpeg_decompress_struct *cinfo,
+		uint8_t * అస్థిర pixels,
 		size_t rowstride)
 {
-	int width = cinfo->output_width * 4;
+	పూర్ణాంకం వెడల్పు = cinfo->output_వెడల్పు * 4;
 
-	do {
+	చేయి {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-		for (int i = width - 4; 0 <= i; i -= 4) {
+		కొరకు (పూర్ణాంకం i = వెడల్పు - 4; 0 <= i; i -= 4) {
 			/* Trivial inverse CMYK -> RGBA */
-			const int c = scanlines[0][i + 0];
-			const int m = scanlines[0][i + 1];
-			const int y = scanlines[0][i + 2];
-			const int k = scanlines[0][i + 3];
+			స్థిరరాశి పూర్ణాంకం c = scanlines[0][i + 0];
+			స్థిరరాశి పూర్ణాంకం m = scanlines[0][i + 1];
+			స్థిరరాశి పూర్ణాంకం y = scanlines[0][i + 2];
+			స్థిరరాశి పూర్ణాంకం k = scanlines[0][i + 3];
 
-			const int ck = c * k;
-			const int mk = m * k;
-			const int yk = y * k;
+			స్థిరరాశి పూర్ణాంకం ck = c * k;
+			స్థిరరాశి పూర్ణాంకం mk = m * k;
+			స్థిరరాశి పూర్ణాంకం yk = y * k;
 
-#define DIV255(x) ((x) + 1 + ((x) >> 8)) >> 8
+#నిర్వచించు DIV255(x) ((x) + 1 + ((x) >> 8)) >> 8
 			scanlines[0][i + bitmap_layout.r] = DIV255(ck);
 			scanlines[0][i + bitmap_layout.g] = DIV255(mk);
 			scanlines[0][i + bitmap_layout.b] = DIV255(yk);
 			scanlines[0][i + bitmap_layout.a] = 0xff;
-#undef DIV255
+#నిర్వచనం_రద్దు DIV255
 		}
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} అయితే (cinfo->output_scanline != cinfo->output_ఎత్తు);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_rgb(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+స్థిర అంతఃవరుస శూన్య nsjpeg__decode_rgb(
+		నిర్మాణం jpeg_decompress_struct *cinfo,
+		uint8_t * అస్థిర pixels,
 		size_t rowstride)
 {
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
-	int width = cinfo->output_width;
-#endif
+#ఒకవేళ RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+	పూర్ణాంకం వెడల్పు = cinfo->output_వెడల్పు;
+#అయితే_ముగింపు
 
-	do {
+	చేయి {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
 
-#if RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
+#ఒకవేళ RGB_RED != 0 || RGB_GREEN != 1 || RGB_BLUE != 2 || RGB_PIXELSIZE != 4
 		/* Missmatch between configured libjpeg pixel format and
 		 * NetSurf pixel format.  Convert to RGBA */
-		for (int i = width - 1; 0 <= i; i--) {
-			int r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
-			int g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
-			int b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
+		కొరకు (పూర్ణాంకం i = వెడల్పు - 1; 0 <= i; i--) {
+			పూర్ణాంకం r = scanlines[0][i * RGB_PIXELSIZE + RGB_RED];
+			పూర్ణాంకం g = scanlines[0][i * RGB_PIXELSIZE + RGB_GREEN];
+			పూర్ణాంకం b = scanlines[0][i * RGB_PIXELSIZE + RGB_BLUE];
 			scanlines[0][i * 4 + bitmap_layout.r] = r;
 			scanlines[0][i * 4 + bitmap_layout.g] = g;
 			scanlines[0][i * 4 + bitmap_layout.b] = b;
 			scanlines[0][i * 4 + bitmap_layout.a] = 0xff;
 		}
-#endif
-	} while (cinfo->output_scanline != cinfo->output_height);
+#అయితే_ముగింపు
+	} అయితే (cinfo->output_scanline != cinfo->output_ఎత్తు);
 }
 
 /**
  * Convert scan lines from CMYK to core client bitmap layout.
  */
-static inline void nsjpeg__decode_client_fmt(
-		struct jpeg_decompress_struct *cinfo,
-		uint8_t * volatile pixels,
+స్థిర అంతఃవరుస శూన్య nsjpeg__decode_client_fmt(
+		నిర్మాణం jpeg_decompress_struct *cinfo,
+		uint8_t * అస్థిర pixels,
 		size_t rowstride)
 {
-	do {
+	చేయి {
 		JSAMPROW scanlines[1] = {
 			[0] = (JSAMPROW)
 				(pixels + rowstride * cinfo->output_scanline),
 		};
 		jpeg_read_scanlines(cinfo, scanlines, 1);
-	} while (cinfo->output_scanline != cinfo->output_height);
+	} అయితే (cinfo->output_scanline != cinfo->output_ఎత్తు);
 }
 
 /**
  * create a bitmap from jpeg content.
  */
-static struct bitmap *
-jpeg_cache_convert(struct content *c)
+స్థిర నిర్మాణం bitmap *
+jpeg_cache_convert(నిర్మాణం content *c)
 {
-	const uint8_t *source_data; /* Jpeg source data */
-	size_t source_size; /* length of Jpeg source data */
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
-	jmp_buf setjmp_buffer;
-	struct bitmap * volatile bitmap = NULL;
-	uint8_t * volatile pixels = NULL;
+	స్థిరరాశి uint8_t *ఆధారం_దత్తాంశం; /* Jpeg source data */
+	size_t ఆధారం_కొలత; /* length of Jpeg source data */
+	నిర్మాణం jpeg_decompress_struct cinfo;
+	నిర్మాణం jpeg_error_mgr jerr;
+	jmp_buf setjmp_బఫరు;
+	నిర్మాణం bitmap * అస్థిర bitmap = ఖాళీ;
+	uint8_t * అస్థిర pixels = ఖాళీ;
 	size_t rowstride;
-	struct jpeg_source_mgr source_mgr = {
+	నిర్మాణం jpeg_ఆధారం_mgr ఆధారం_mgr = {
 		0,
 		0,
-		nsjpeg_init_source,
-		nsjpeg_fill_input_buffer,
-		nsjpeg_skip_input_data,
-		jpeg_resync_to_restart,
-		nsjpeg_term_source };
+		nsjpeg_init_ఆధారం,
+		nsjpeg_fill_ఆదానం_బఫరు,
+		nsjpeg_skip_ఆదానం_దత్తాంశం,
+		jpeg_resync_గమ్యం_restart,
+		nsjpeg_పదం_ఆధారం };
 
 	/* obtain jpeg source data and perfom minimal sanity checks */
-	source_data = content__get_source_data(c, &source_size);
+	ఆధారం_దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &ఆధారం_కొలత);
 
-	if ((source_data == NULL) ||
-	    (source_size < MIN_JPEG_SIZE)) {
-		return NULL;
+	ఒకవేళ ((ఆధారం_దత్తాంశం == ఖాళీ) ||
+	    (ఆధారం_కొలత < MIN_JPEG_కొలత)) {
+		తిరిగి ఖాళీ;
 	}
 
 	/* setup a JPEG library error handler */
 	cinfo.err = jpeg_std_error(&jerr);
 	jerr.error_exit = nsjpeg_error_exit;
-	jerr.output_message = nsjpeg_error_log;
+	jerr.output_సందేశం = nsjpeg_error_log;
 
 	/* handler for fatal errors during decompression */
-	if (setjmp(setjmp_buffer)) {
+	ఒకవేళ (setjmp(setjmp_బఫరు)) {
 		jpeg_destroy_decompress(&cinfo);
-		return bitmap;
+		తిరిగి bitmap;
 	}
 
-	cinfo.client_data = &setjmp_buffer;
+	cinfo.client_దత్తాంశం = &setjmp_బఫరు;
 	jpeg_create_decompress(&cinfo);
 
 	/* setup data source */
-	source_mgr.next_input_byte = source_data;
-	source_mgr.bytes_in_buffer = source_size;
-	cinfo.src = &source_mgr;
+	ఆధారం_mgr.తదుపరి_ఆదానం_byte = ఆధారం_దత్తాంశం;
+	ఆధారం_mgr.బైట్లు_లోపల_బఫరు = ఆధారం_కొలత;
+	cinfo.src = &ఆధారం_mgr;
 
 	/* read JPEG header information */
-	jpeg_read_header(&cinfo, TRUE);
+	jpeg_read_శీర్షిక(&cinfo, TRUE);
 
 	/* set output processing parameters */
-	if (cinfo.jpeg_color_space == JCS_CMYK ||
+	ఒకవేళ (cinfo.jpeg_color_space == JCS_CMYK ||
 	    cinfo.jpeg_color_space == JCS_YCCK) {
-		cinfo.out_color_space = JCS_CMYK;
-	} else {
-#ifdef JCS_ALPHA_EXTENSIONS
-		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_R8G8B8A8:
-			cinfo.out_color_space = JCS_EXT_RGBA;
-			break;
-		case BITMAP_LAYOUT_B8G8R8A8:
-			cinfo.out_color_space = JCS_EXT_BGRA;
-			break;
-		case BITMAP_LAYOUT_A8R8G8B8:
-			cinfo.out_color_space = JCS_EXT_ARGB;
-			break;
-		case BITMAP_LAYOUT_A8B8G8R8:
-			cinfo.out_color_space = JCS_EXT_ABGR;
-			break;
-		default:
+		cinfo.బహిర్గతం_color_space = JCS_CMYK;
+	} లేకపోతే {
+#నిర్వచితమైతే JCS_ALPHA_EXTENSIONS
+		ఎంపిక (bitmap_fmt.layout) {
+		స్థితి BITMAP_LAYOUT_R8G8B8A8:
+			cinfo.బహిర్గతం_color_space = JCS_EXT_RGBA;
+			ఆపు;
+		స్థితి BITMAP_LAYOUT_B8G8R8A8:
+			cinfo.బహిర్గతం_color_space = JCS_EXT_BGRA;
+			ఆపు;
+		స్థితి BITMAP_LAYOUT_A8R8G8B8:
+			cinfo.బహిర్గతం_color_space = JCS_EXT_ARGB;
+			ఆపు;
+		స్థితి BITMAP_LAYOUT_A8B8G8R8:
+			cinfo.బహిర్గతం_color_space = JCS_EXT_ABGR;
+			ఆపు;
+		అప్రమేయ:
 			NSLOG(netsurf, ERROR, "Unexpected bitmap format: %u",
 					bitmap_fmt.layout);
 			jpeg_destroy_decompress(&cinfo);
-			return NULL;
+			తిరిగి ఖాళీ;
 		}
-#else
-		cinfo.out_color_space = JCS_RGB;
-#endif
+#లేకపోతే
+		cinfo.బహిర్గతం_color_space = JCS_RGB;
+#అయితే_ముగింపు
 	}
-	cinfo.dct_method = JDCT_ISLOW;
+	cinfo.dct_పద్ధతి = JDCT_ISLOW;
 
 	/* commence the decompression, output parameters now valid */
-	jpeg_start_decompress(&cinfo);
+	jpeg_ప్రారంభం_decompress(&cinfo);
 
 	/* create opaque bitmap (jpegs cannot be transparent) */
 	bitmap = guit->bitmap->create(
-			cinfo.output_width,
-			cinfo.output_height, BITMAP_OPAQUE);
-	if (bitmap == NULL) {
+			cinfo.output_వెడల్పు,
+			cinfo.output_ఎత్తు, BITMAP_OPAQUE);
+	ఒకవేళ (bitmap == ఖాళీ) {
 		/* empty bitmap could not be created */
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	pixels = guit->bitmap->get_బఫరు(bitmap);
+	ఒకవేళ (pixels == ఖాళీ) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		jpeg_destroy_decompress(&cinfo);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	/* Convert scanlines from jpeg into bitmap */
 	rowstride = guit->bitmap->get_rowstride(bitmap);
 
-	switch (cinfo.out_color_space) {
-	case JCS_CMYK:
+	ఎంపిక (cinfo.బహిర్గతం_color_space) {
+	స్థితి JCS_CMYK:
 		nsjpeg__decode_cmyk(&cinfo, pixels, rowstride);
-		break;
+		ఆపు;
 
-	case JCS_RGB:
+	స్థితి JCS_RGB:
 		nsjpeg__decode_rgb(&cinfo, pixels, rowstride);
-		break;
+		ఆపు;
 
-	default:
+	అప్రమేయ:
 		nsjpeg__decode_client_fmt(&cinfo, pixels, rowstride);
-		break;
+		ఆపు;
 	}
 
 	guit->bitmap->modified(bitmap);
 
-	jpeg_finish_decompress(&cinfo);
+	jpeg_ముగింపు_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
 
-	return bitmap;
+	తిరిగి bitmap;
 }
 
 /**
  * Convert a CONTENT_JPEG for display.
  */
-static bool nsjpeg_convert(struct content *c)
+స్థిర bool nsjpeg_convert(నిర్మాణం content *c)
 {
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
-	jmp_buf setjmp_buffer;
-	struct jpeg_source_mgr source_mgr = { 0, 0,
-		nsjpeg_init_source, nsjpeg_fill_input_buffer,
-		nsjpeg_skip_input_data, jpeg_resync_to_restart,
-		nsjpeg_term_source };
-	union content_msg_data msg_data;
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	నిర్మాణం jpeg_decompress_struct cinfo;
+	నిర్మాణం jpeg_error_mgr jerr;
+	jmp_buf setjmp_బఫరు;
+	నిర్మాణం jpeg_ఆధారం_mgr ఆధారం_mgr = { 0, 0,
+		nsjpeg_init_ఆధారం, nsjpeg_fill_ఆదానం_బఫరు,
+		nsjpeg_skip_ఆదానం_దత్తాంశం, jpeg_resync_గమ్యం_restart,
+		nsjpeg_పదం_ఆధారం };
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	స్థిరరాశి uint8_t *దత్తాంశం;
+	size_t కొలత;
+	అక్షరం *title;
 
 	/* check image header is valid and get width/height */
-	data = content__get_source_data(c, &size);
+	దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &కొలత);
 
 	cinfo.err = jpeg_std_error(&jerr);
 	jerr.error_exit = nsjpeg_error_exit;
-	jerr.output_message = nsjpeg_error_log;
+	jerr.output_సందేశం = nsjpeg_error_log;
 
-	if (setjmp(setjmp_buffer)) {
+	ఒకవేళ (setjmp(setjmp_బఫరు)) {
 		jpeg_destroy_decompress(&cinfo);
 
-		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-		msg_data.errordata.errormsg = nsjpeg_error_buffer;
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		సందేశం_దత్తాంశం.errordata.errorcode = NSERROR_UNKNOWN;
+		సందేశం_దత్తాంశం.errordata.errormsg = nsjpeg_error_బఫరు;
+		content_ప్రసారం(c, CONTENT_సందేశం_ERROR, &సందేశం_దత్తాంశం);
+		తిరిగి false;
 	}
 
-	cinfo.client_data = &setjmp_buffer;
+	cinfo.client_దత్తాంశం = &setjmp_బఫరు;
 	jpeg_create_decompress(&cinfo);
-	source_mgr.next_input_byte = (unsigned char *) data;
-	source_mgr.bytes_in_buffer = size;
-	cinfo.src = &source_mgr;
-	jpeg_read_header(&cinfo, TRUE);
-	cinfo.out_color_space = JCS_RGB;
-	cinfo.dct_method = JDCT_ISLOW;
+	ఆధారం_mgr.తదుపరి_ఆదానం_byte = (గుర్తులేని అక్షరం *) దత్తాంశం;
+	ఆధారం_mgr.బైట్లు_లోపల_బఫరు = కొలత;
+	cinfo.src = &ఆధారం_mgr;
+	jpeg_read_శీర్షిక(&cinfo, TRUE);
+	cinfo.బహిర్గతం_color_space = JCS_RGB;
+	cinfo.dct_పద్ధతి = JDCT_ISLOW;
 
 	jpeg_calc_output_dimensions(&cinfo);
 
-	c->width = cinfo.output_width;
-	c->height = cinfo.output_height;
-	c->size = c->width * c->height * 4;
+	c->వెడల్పు = cinfo.output_వెడల్పు;
+	c->ఎత్తు = cinfo.output_ఎత్తు;
+	c->కొలత = c->వెడల్పు * c->ఎత్తు * 4;
 
 	jpeg_destroy_decompress(&cinfo);
 
-	image_cache_add(c, NULL, jpeg_cache_convert);
+	image_cache_కూడు(c, ఖాళీ, jpeg_cache_convert);
 
 	/* set title text */
 	title = messages_get_buff("JPEGTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ఆకు(llcache_handle_get_url(c->llcache)),
+			c->వెడల్పు, c->ఎత్తు);
+	ఒకవేళ (title != ఖాళీ) {
+		content_సమితి_title(c, title);
+		విడుదల(title);
 	}
 
-	content_set_ready(c);
-	content_set_done(c);	
-	content_set_status(c, ""); /* Done: update status bar */
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);	
+	content_సమితి_స్థితి(c, ""); /* Done: update status bar */
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -453,51 +453,51 @@ static bool nsjpeg_convert(struct content *c)
 /**
  * Clone content.
  */
-static nserror nsjpeg_clone(const struct content *old, struct content **newc)
+స్థిర nserror nsjpeg_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
-	struct content *jpeg_c;
+	నిర్మాణం content *jpeg_c;
 	nserror error;
 
-	jpeg_c = calloc(1, sizeof(struct content));
-	if (jpeg_c == NULL)
-		return NSERROR_NOMEM;
+	jpeg_c = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content));
+	ఒకవేళ (jpeg_c == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
 	error = content__clone(old, jpeg_c);
-	if (error != NSERROR_OK) {
+	ఒకవేళ (error != NSERROR_OK) {
 		content_destroy(jpeg_c);
-		return error;
+		తిరిగి error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
-	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpeg_convert(jpeg_c) == false) {
+	ఒకవేళ ((old->స్థితి_2 == CONTENT_స్థితి_READY) ||
+	    (old->స్థితి_2 == CONTENT_స్థితి_పూర్తి)) {
+		ఒకవేళ (nsjpeg_convert(jpeg_c) == false) {
 			content_destroy(jpeg_c);
-			return NSERROR_CLONE_FAILED;
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpeg_c;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static const content_handler nsjpeg_content_handler = {
+స్థిర స్థిరరాశి content_handler nsjpeg_content_handler = {
 	.create = nsjpeg_create,
-	.data_complete = nsjpeg_convert,
+	.దత్తాంశం_complete = nsjpeg_convert,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
 	.clone = nsjpeg_clone,
-	.get_internal = image_cache_get_internal,
+	.get_అంతర్గత = image_cache_get_అంతర్గత,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsjpeg_types[] = {
+స్థిర స్థిరరాశి అక్షరం *nsjpeg_types[] = {
 	"image/jpeg",
 	"image/jpg",
 	"image/pjpeg"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsjpeg, nsjpeg_types, nsjpeg_content_handler);
+CONTENT_FACTORY_రిజిస్టరు_TYPES(nsjpeg, nsjpeg_types, nsjpeg_content_handler);

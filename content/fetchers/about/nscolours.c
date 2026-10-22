@@ -21,20 +21,20 @@
  * content generator for the about scheme query privacy page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "netsurf/plot_style.h"
+#అన్తర్భావ "netsurf/plot_style.h"
 
-#include "utils/errors.h"
-#include "utils/nscolour.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/nscolour.h"
 
-#include "private.h"
-#include "nscolours.h"
+#అన్తర్భావ "private.h"
+#అన్తర్భావ "nscolours.h"
 
 /**
  * Handler to generate the nscolours stylesheet
@@ -42,22 +42,22 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_nscolours_handler(struct fetch_about_context *ctx)
+bool fetch_about_nscolours_handler(నిర్మాణం fetch_about_context *ctx)
 {
 	nserror res;
-	const char *stylesheet;
+	స్థిరరాశి అక్షరం *stylesheet;
 
 	/* content is going to return ok */
-	fetch_about_set_http_code(ctx, 200);
+	fetch_about_సమితి_http_సంకేతం(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/css; charset=utf-8")) {
-		goto aborted;
+	ఒకవేళ (fetch_about_send_శీర్షిక(ctx, "Content-Type: text/css; charset=utf-8")) {
+		వెళ్ళు aborted;
 	}
 
 	res = nscolour_get_stylesheet(&stylesheet);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	ఒకవేళ (res != NSERROR_OK) {
+		వెళ్ళు aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -65,17 +65,17 @@ bool fetch_about_nscolours_handler(struct fetch_about_context *ctx)
 			"\tbackground-color: #%06x;\n"
 			"}\n"
 			"%s",
-			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
+			రంగు_rb_మార్పిడి(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	ఒకవేళ (res != NSERROR_OK) {
+		వెళ్ళు aborted;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ముగిసిన(ctx);
 
-	return true;
+	తిరిగి true;
 
 aborted:
 
-	return false;
+	తిరిగి false;
 }

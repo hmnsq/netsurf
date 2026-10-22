@@ -21,28 +21,28 @@
  * implementation for image/ico content handler
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libnsbmp.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <libnsbmp.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "netsurf/bitmap.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "content/llcache.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "desktop/gui_internal.h"
+#అన్తర్భావ "desktop/bitmap.h"
 
-#include "image/image.h"
-#include "image/ico.h"
+#అన్తర్భావ "image/image.h"
+#అన్తర్భావ "image/ico.h"
 
-typedef struct nsico_content {
-	struct content base;
+రకనిర్వచనం నిర్మాణం nsico_content {
+	నిర్మాణం content పునాది;
 
-	struct ico_collection *ico; /** ICO collection data */
+	నిర్మాణం ico_collection *ico; /** ICO collection data */
 } nsico_content;
 
 /**
@@ -53,272 +53,272 @@ typedef struct nsico_content {
  * \param  bmp_state A flag word indicating the initial state
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsico_bitmap_create(int width, int height, unsigned int bmp_state)
+స్థిర శూన్య *nsico_bitmap_create(పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు, గుర్తులేని పూర్ణాంకం bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	గుర్తులేని పూర్ణాంకం bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
-	bitmap_state |= (bmp_state & BMP_CLEAR_MEMORY) ?
+	bitmap_state |= (bmp_state & BMP_CLEAR_జ్ఞాపకం) ?
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	తిరిగి guit->bitmap->create(వెడల్పు, ఎత్తు, bitmap_state);
 }
 
-static nserror nsico_create_ico_data(nsico_content *c)
+స్థిర nserror nsico_create_ico_దత్తాంశం(nsico_content *c)
 {
 	bmp_bitmap_callback_vt bmp_bitmap_callbacks = {
 		.bitmap_create = nsico_bitmap_create,
 		.bitmap_destroy = guit->bitmap->destroy,
-		.bitmap_get_buffer = guit->bitmap->get_buffer,
+		.bitmap_get_బఫరు = guit->bitmap->get_బఫరు,
 	};
 
-	c->ico = calloc(1, sizeof(ico_collection));
-	if (c->ico == NULL) {
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	c->ico = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(ico_collection));
+	ఒకవేళ (c->ico == ఖాళీ) {
+		content_ప్రసారం_error(&c->పునాది, NSERROR_NOMEM, ఖాళీ);
+		తిరిగి NSERROR_NOMEM;
 	}
 	ico_collection_create(c->ico, &bmp_bitmap_callbacks);
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
-static nserror nsico_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+స్థిర nserror nsico_create(స్థిరరాశి content_handler *handler,
+		lwc_string *imime_type, స్థిరరాశి నిర్మాణం http_parameter *params,
+		llcache_handle *llcache, స్థిరరాశి అక్షరం *fallback_charset,
+		bool quirks, నిర్మాణం content **c)
 {
-	nsico_content *result;
+	nsico_content *ఫలితం;
 	nserror error;
 
-	result = calloc(1, sizeof(nsico_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	ఫలితం = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(nsico_content));
+	ఒకవేళ (ఫలితం == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__init(&result->base, handler, imime_type, params,
+	error = content__init(&ఫలితం->పునాది, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(ఫలితం);
+		తిరిగి error;
 	}
 
-	error = nsico_create_ico_data(result);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	error = nsico_create_ico_దత్తాంశం(ఫలితం);
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(ఫలితం);
+		తిరిగి error;
 	}
 
-	*c = (struct content *) result;
+	*c = (నిర్మాణం content *) ఫలితం;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 
-static bool nsico_convert(struct content *c)
+స్థిర bool nsico_convert(నిర్మాణం content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
-	struct bmp_image *bmp;
-	bmp_result res;
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	నిర్మాణం bmp_image *bmp;
+	bmp_ఫలితం res;
+	స్థిరరాశి uint8_t *దత్తాంశం;
+	size_t కొలత;
+	అక్షరం *title;
 
 	/* set the ico data */
-	data = content__get_source_data(c, &size);
+	దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &కొలత);
 
 	/* analyse the ico */
-	res = ico_analyse(ico->ico, size, (unsigned char *) data);
+	res = ico_analyse(ico->ico, కొలత, (గుర్తులేని అక్షరం *) దత్తాంశం);
 
-	switch (res) {
-	case BMP_OK:
-		break;
-	case BMP_INSUFFICIENT_MEMORY:
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
-	case BMP_INSUFFICIENT_DATA:
-	case BMP_DATA_ERROR:
-		content_broadcast_error(c, NSERROR_ICO_ERROR, NULL);
-		return false;
+	ఎంపిక (res) {
+	స్థితి BMP_OK:
+		ఆపు;
+	స్థితి BMP_INSUFFICIENT_జ్ఞాపకం:
+		content_ప్రసారం_error(c, NSERROR_NOMEM, ఖాళీ);
+		తిరిగి false;
+	స్థితి BMP_INSUFFICIENT_దత్తాంశం:
+	స్థితి BMP_దత్తాంశం_ERROR:
+		content_ప్రసారం_error(c, NSERROR_ICO_ERROR, ఖాళీ);
+		తిరిగి false;
 	}
 
 	/* Store our content width, height and calculate size */
-	c->width = ico->ico->width;
-	c->height = ico->ico->height;
-	c->size += (ico->ico->width * ico->ico->height * 4) + 16 + 44;
+	c->వెడల్పు = ico->ico->వెడల్పు;
+	c->ఎత్తు = ico->ico->ఎత్తు;
+	c->కొలత += (ico->ico->వెడల్పు * ico->ico->ఎత్తు * 4) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("ICOTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ఆకు(llcache_handle_get_url(c->llcache)),
+			c->వెడల్పు, c->ఎత్తు);
+	ఒకవేళ (title != ఖాళీ) {
+		content_సమితి_title(c, title);
+		విడుదల(title);
 	}
 
 	/* select largest icon to ensure one can be selected */
-	bmp = ico_find(ico->ico, 255, 255);
-	if (bmp == NULL) {
+	bmp = ico_కనుగొను(ico->ico, 255, 255);
+	ఒకవేళ (bmp == ఖాళీ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		తిరిగి false;
 	}
 
-	content_set_ready(c);
-	content_set_done(c);
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);
 
 	/* Done: update status bar */
-	content_set_status(c, "");
-	return true;
+	content_సమితి_స్థితి(c, "");
+	తిరిగి true;
 }
 
-static bool nsico__decode(struct bmp_image *ico)
+స్థిర bool nsico__decode(నిర్మాణం bmp_image *ico)
 {
-	if (ico->decoded == false) {
+	ఒకవేళ (ico->decoded == false) {
 		NSLOG(netsurf, DEBUG, "Decoding ICO %p", ico);
-		if (bmp_decode(ico) != BMP_OK) {
-			return false;
+		ఒకవేళ (bmp_decode(ico) != BMP_OK) {
+			తిరిగి false;
 		}
 
-		bitmap_format_to_client(ico->bitmap, &(bitmap_fmt_t) {
+		bitmap_format_గమ్యం_client(ico->bitmap, &(bitmap_fmt_t) {
 			.layout = BITMAP_LAYOUT_R8G8B8A8,
 		});
 		guit->bitmap->modified(ico->bitmap);
 
 	}
 
-	return true;
+	తిరిగి true;
 }
 
-static bool nsico_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+స్థిర bool nsico_redraw(నిర్మాణం content *c, నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+		స్థిరరాశి నిర్మాణం rect *clip, స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
 	nsico_content *ico = (nsico_content *)c;
-	struct bmp_image *bmp;
+	నిర్మాణం bmp_image *bmp;
 
 	/* select most appropriate sized icon for size */
-	bmp = ico_find(ico->ico, data->width, data->height);
-	if (bmp == NULL) {
+	bmp = ico_కనుగొను(ico->ico, దత్తాంశం->వెడల్పు, దత్తాంశం->ఎత్తు);
+	ఒకవేళ (bmp == ఖాళీ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		తిరిగి false;
 	}
 
 	/* ensure its decided */
-	if (!nsico__decode(bmp)) {
-		return false;
+	ఒకవేళ (!nsico__decode(bmp)) {
+		తిరిగి false;
 	}
 
-	return image_bitmap_plot(bmp->bitmap, data, clip, ctx);
+	తిరిగి image_bitmap_plot(bmp->bitmap, దత్తాంశం, clip, ctx);
 }
 
 
-static void nsico_destroy(struct content *c)
+స్థిర శూన్య nsico_destroy(నిర్మాణం content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
 
 	ico_finalise(ico->ico);
-	free(ico->ico);
+	విడుదల(ico->ico);
 }
 
-static nserror nsico_clone(const struct content *old, struct content **newc)
+స్థిర nserror nsico_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
 	nsico_content *ico;
 	nserror error;
 
-	ico = calloc(1, sizeof(nsico_content));
-	if (ico == NULL)
-		return NSERROR_NOMEM;
+	ico = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(nsico_content));
+	ఒకవేళ (ico == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__clone(old, &ico->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&ico->base);
-		return error;
+	error = content__clone(old, &ico->పునాది);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&ico->పునాది);
+		తిరిగి error;
 	}
 
 	/* Simply replay creation and conversion */
-	error = nsico_create_ico_data(ico);
-	if (error != NSERROR_OK) {
-		content_destroy(&ico->base);
-		return error;
+	error = nsico_create_ico_దత్తాంశం(ico);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&ico->పునాది);
+		తిరిగి error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (nsico_convert(&ico->base) == false) {
-			content_destroy(&ico->base);
-			return NSERROR_CLONE_FAILED;
+	ఒకవేళ (old->స్థితి_2 == CONTENT_స్థితి_READY ||
+			old->స్థితి_2 == CONTENT_స్థితి_పూర్తి) {
+		ఒకవేళ (nsico_convert(&ico->పునాది) == false) {
+			content_destroy(&ico->పునాది);
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) ico;
+	*newc = (నిర్మాణం content *) ico;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static void *nsico_get_internal(const struct content *c, void *context)
+స్థిర శూన్య *nsico_get_అంతర్గత(స్థిరరాశి నిర్మాణం content *c, శూన్య *context)
 {
 	nsico_content *ico = (nsico_content *) c;
 	/* TODO: Pick best size for purpose.
 	 *       Currently assumes it's for a URL bar. */
-	struct bmp_image *bmp;
+	నిర్మాణం bmp_image *bmp;
 
-	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	bmp = ico_కనుగొను(ico->ico, 16, 16);
+	ఒకవేళ (bmp == ఖాళీ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return NULL;
+	ఒకవేళ (!nsico__decode(bmp)) {
+		తిరిగి ఖాళీ;
 	}
 
-	return bmp->bitmap;
+	తిరిగి bmp->bitmap;
 }
 
-static content_type nsico_content_type(void)
+స్థిర content_type nsico_content_type(శూన్య)
 {
-	return CONTENT_IMAGE;
+	తిరిగి CONTENT_IMAGE;
 }
 
-static bool nsico_is_opaque(struct content *c)
+స్థిర bool nsico_is_opaque(నిర్మాణం content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
-	struct bmp_image *bmp;
+	నిర్మాణం bmp_image *bmp;
 
 	/**
 	 * \todo Pick best size for purpose. Currently assumes
 	 *         it's for a URL bar.
 	 */
-	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	bmp = ico_కనుగొను(ico->ico, 16, 16);
+	ఒకవేళ (bmp == ఖాళీ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		తిరిగి false;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return false;
+	ఒకవేళ (!nsico__decode(bmp)) {
+		తిరిగి false;
 	}
 
-	return guit->bitmap->get_opaque(bmp->bitmap);
+	తిరిగి guit->bitmap->get_opaque(bmp->bitmap);
 }
 
-static const content_handler nsico_content_handler = {
+స్థిర స్థిరరాశి content_handler nsico_content_handler = {
 	.create = nsico_create,
-	.data_complete = nsico_convert,
+	.దత్తాంశం_complete = nsico_convert,
 	.destroy = nsico_destroy,
 	.redraw = nsico_redraw,
 	.clone = nsico_clone,
-	.get_internal = nsico_get_internal,
+	.get_అంతర్గత = nsico_get_అంతర్గత,
 	.type = nsico_content_type,
 	.is_opaque = nsico_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsico_types[] = {
+స్థిర స్థిరరాశి అక్షరం *nsico_types[] = {
 	"application/ico",
 	"application/x-ico",
 	"image/ico",
@@ -326,4 +326,4 @@ static const char *nsico_types[] = {
 	"image/x-icon"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsico, nsico_types, nsico_content_handler);
+CONTENT_FACTORY_రిజిస్టరు_TYPES(nsico, nsico_types, nsico_content_handler);

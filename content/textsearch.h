@@ -21,15 +21,15 @@
  * Interface to HTML searching.
  */
 
-#ifndef NETSURF_CONTENT_SEARCH_H
-#define NETSURF_CONTENT_SEARCH_H
+#నిర్వచితం_కాకపోతే NETSURF_CONTENT_శోధన_H
+#నిర్వచించు NETSURF_CONTENT_శోధన_H
 
-#include "desktop/search.h"
+#అన్తర్భావ "desktop/search.h"
 
-struct textsearch_context;
-struct content;
-struct hlcache_handle;
-struct box;
+నిర్మాణం textsearch_context;
+నిర్మాణం content;
+నిర్మాణం hlcache_handle;
+నిర్మాణం box;
 
 /**
  * Free text search a content
@@ -40,20 +40,20 @@ struct box;
  * \param[in] The string being searched for.
  * \retun NSERROR_OK on success else error code on faliure
  */
-nserror content_textsearch(struct hlcache_handle *h, void *context, search_flags_t flags, const char *string);
+nserror content_textsearch(నిర్మాణం hlcache_handle *h, శూన్య *context, శోధన_flags_t flags, స్థిరరాశి అక్షరం *string);
 
 /**
  * Clear a search
  *
  * \param[in] h Handle to content to clear search from.
  */
-nserror content_textsearch_clear(struct hlcache_handle *h);
+nserror content_textsearch_clear(నిర్మాణం hlcache_handle *h);
 
 /**
  * Ends the search process, invalidating all state freeing the list of
  * found boxes.
  */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch);
+nserror content_textsearch_destroy(నిర్మాణం textsearch_context *textsearch);
 
 /**
  * Determines whether any portion of the given text box should be
@@ -67,11 +67,11 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch);
  * \param end_idx      byte offset of highlight end
  * \return true iff part of the box should be highlighted
  */
-bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
-				      unsigned start_offset,
-				      unsigned end_offset,
-				      unsigned *start_idx,
-				      unsigned *end_idx);
+bool content_textsearch_ishighlighted(నిర్మాణం textsearch_context *textsearch,
+				      గుర్తులేని ప్రారంభం_స్థానభ్రంశం,
+				      గుర్తులేని చివర_స్థానభ్రంశం,
+				      గుర్తులేని *ప్రారంభం_idx,
+				      గుర్తులేని *చివర_idx);
 
 /**
  * Find the first occurrence of 'match' in 'string' and return its index
@@ -84,7 +84,7 @@ bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
  * \param  m_len      accepts length of match in bytes
  * \return pointer to first match, NULL if none
  */
-const char *content_textsearch_find_pattern(const char *string, int s_len, const char *pattern, int p_len, bool case_sens, unsigned int *m_len);
+స్థిరరాశి అక్షరం *content_textsearch_కనుగొను_నమూనా(స్థిరరాశి అక్షరం *string, పూర్ణాంకం s_len, స్థిరరాశి అక్షరం *నమూనా, పూర్ణాంకం p_len, bool case_sens, గుర్తులేని పూర్ణాంకం *m_len);
 
 /**
  * Add a new entry to the list of matches
@@ -96,6 +96,6 @@ const char *content_textsearch_find_pattern(const char *string, int s_len, const
  * \param end A pointer for the end
  * \return NSERROR_OK on sucess else error code on faliure
  */
-nserror content_textsearch_add_match(struct textsearch_context *context, unsigned start_idx, unsigned end_idx, struct box *start_ptr, struct box *end_ptr);
+nserror content_textsearch_కూడు_సరిపోలిక(నిర్మాణం textsearch_context *context, గుర్తులేని ప్రారంభం_idx, గుర్తులేని చివర_idx, నిర్మాణం box *ప్రారంభం_ptr, నిర్మాణం box *end_ptr);
 
-#endif
+#అయితే_ముగింపు

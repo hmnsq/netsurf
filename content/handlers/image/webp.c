@@ -24,46 +24,46 @@
  * Image cache handling is performed by the generic NetSurf handler.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <setjmp.h>
 
-#include <webp/decode.h>
+#అన్తర్భావ <webp/decode.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "netsurf/bitmap.h"
+#అన్తర్భావ "content/llcache.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "desktop/gui_internal.h"
+#అన్తర్భావ "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#అన్తర్భావ "image/image_cache.h"
 
-#include "webp.h"
+#అన్తర్భావ "webp.h"
 
 /**
  * Content create entry point.
  *
  * create a content object for the webp
  */
-static nserror
-webp_create(const content_handler *handler,
+స్థిర nserror
+webp_create(స్థిరరాశి content_handler *handler,
 	      lwc_string *imime_type,
-	      const struct http_parameter *params,
+	      స్థిరరాశి నిర్మాణం http_parameter *params,
 	      llcache_handle *llcache,
-	      const char *fallback_charset,
+	      స్థిరరాశి అక్షరం *fallback_charset,
 	      bool quirks,
-	      struct content **c)
+	      నిర్మాణం content **c)
 {
-	struct content *webp_c; /* webp content object */
+	నిర్మాణం content *webp_c; /* webp content object */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content));
+	ఒకవేళ (webp_c == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	res = content__init(webp_c,
@@ -73,101 +73,101 @@ webp_create(const content_handler *handler,
 			    llcache,
 			    fallback_charset,
 			    quirks);
-	if (res != NSERROR_OK) {
-		free(webp_c);
-		return res;
+	ఒకవేళ (res != NSERROR_OK) {
+		విడుదల(webp_c);
+		తిరిగి res;
 	}
 
 	*c = webp_c;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
  * create a bitmap from webp content.
  */
-static struct bitmap *
-webp_cache_convert(struct content *c)
+స్థిర నిర్మాణం bitmap *
+webp_cache_convert(నిర్మాణం content *c)
 {
-	const uint8_t *source_data; /* webp source data */
-	size_t source_size; /* length of webp source data */
-	VP8StatusCode webpres;
+	స్థిరరాశి uint8_t *ఆధారం_దత్తాంశం; /* webp source data */
+	size_t ఆధారం_కొలత; /* length of webp source data */
+	VP8_స్థితి_సంకేతం webpres;
 	WebPBitstreamFeatures webpfeatures;
-	unsigned int bmap_flags;
-	uint8_t *pixels = NULL;
+	గుర్తులేని పూర్ణాంకం bmap_flags;
+	uint8_t *pixels = ఖాళీ;
 	uint8_t *decoded;
 	size_t rowstride;
-	struct bitmap *bitmap = NULL;
+	నిర్మాణం bitmap *bitmap = ఖాళీ;
 	bitmap_fmt_t webp_fmt = {
 		.layout = bitmap_fmt.layout,
 	};
 
-	source_data = content__get_source_data(c, &source_size);
+	ఆధారం_దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &ఆధారం_కొలత);
 
-	webpres = WebPGetFeatures(source_data, source_size, &webpfeatures);
+	webpres = WebPGetFeatures(ఆధారం_దత్తాంశం, ఆధారం_కొలత, &webpfeatures);
 
-	if (webpres != VP8_STATUS_OK) {
-		return NULL;
+	ఒకవేళ (webpres != VP8_స్థితి_OK) {
+		తిరిగి ఖాళీ;
 	}
 
-	if (webpfeatures.has_alpha == 0) {
+	ఒకవేళ (webpfeatures.has_alpha == 0) {
 		bmap_flags = BITMAP_OPAQUE;
 		/* Image has no alpha. Premultiplied alpha makes no difference.
 		 * Optimisation: Avoid unnecessary conversion by copying format.
 		 */
 		webp_fmt.pma = bitmap_fmt.pma;
-	} else {
+	} లేకపోతే {
 		bmap_flags = BITMAP_NONE;
 	}
 
 	/* create bitmap */
-	bitmap = guit->bitmap->create(webpfeatures.width,
-				      webpfeatures.height,
+	bitmap = guit->bitmap->create(webpfeatures.వెడల్పు,
+				      webpfeatures.ఎత్తు,
 				      bmap_flags);
-	if (bitmap == NULL) {
+	ఒకవేళ (bitmap == ఖాళీ) {
 		/* empty bitmap could not be created */
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	pixels = guit->bitmap->get_బఫరు(bitmap);
+	ఒకవేళ (pixels == ఖాళీ) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	rowstride = guit->bitmap->get_rowstride(bitmap);
 
-	switch (webp_fmt.layout) {
-	default:
+	ఎంపిక (webp_fmt.layout) {
+	అప్రమేయ:
 		/* WebP has no ABGR function, fall back to default. */
 		webp_fmt.layout = BITMAP_LAYOUT_R8G8B8A8;
 		fallthrough;
-	case BITMAP_LAYOUT_R8G8B8A8:
-		decoded = WebPDecodeRGBAInto(source_data, source_size, pixels,
-				rowstride * webpfeatures.height, rowstride);
-		break;
+	స్థితి BITMAP_LAYOUT_R8G8B8A8:
+		decoded = WebPDecodeRGBAInto(ఆధారం_దత్తాంశం, ఆధారం_కొలత, pixels,
+				rowstride * webpfeatures.ఎత్తు, rowstride);
+		ఆపు;
 
-	case BITMAP_LAYOUT_B8G8R8A8:
-		decoded = WebPDecodeBGRAInto(source_data, source_size, pixels,
-				rowstride * webpfeatures.height, rowstride);
-		break;
+	స్థితి BITMAP_LAYOUT_B8G8R8A8:
+		decoded = WebPDecodeBGRAInto(ఆధారం_దత్తాంశం, ఆధారం_కొలత, pixels,
+				rowstride * webpfeatures.ఎత్తు, rowstride);
+		ఆపు;
 
-	case BITMAP_LAYOUT_A8R8G8B8:
-		decoded = WebPDecodeARGBInto(source_data, source_size, pixels,
-				rowstride * webpfeatures.height, rowstride);
-		break;
+	స్థితి BITMAP_LAYOUT_A8R8G8B8:
+		decoded = WebPDecodeARGBInto(ఆధారం_దత్తాంశం, ఆధారం_కొలత, pixels,
+				rowstride * webpfeatures.ఎత్తు, rowstride);
+		ఆపు;
 	}
-	if (decoded == NULL) {
+	ఒకవేళ (decoded == ఖాళీ) {
 		/* decode failed */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	bitmap_format_to_client(bitmap, &webp_fmt);
+	bitmap_format_గమ్యం_client(bitmap, &webp_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	తిరిగి bitmap;
 }
 
 /**
@@ -180,81 +180,81 @@ webp_cache_convert(struct content *c)
  * \param c The webp content object
  * \return true on successful processing of teh webp content else false
  */
-static bool webp_convert(struct content *c)
+స్థిర bool webp_convert(నిర్మాణం content *c)
 {
-	int res;
-	const uint8_t* data;
-	size_t data_size;
-	int width;
-	int height;
+	పూర్ణాంకం res;
+	స్థిరరాశి uint8_t* దత్తాంశం;
+	size_t దత్తాంశం_కొలత;
+	పూర్ణాంకం వెడల్పు;
+	పూర్ణాంకం ఎత్తు;
 
-	data = content__get_source_data(c, &data_size);
+	దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &దత్తాంశం_కొలత);
 
-	res = WebPGetInfo(data, data_size, &width, &height);
-	if (res == 0) {
+	res = WebPGetInfo(దత్తాంశం, దత్తాంశం_కొలత, &వెడల్పు, &ఎత్తు);
+	ఒకవేళ (res == 0) {
 		NSLOG(netsurf, INFO, "WebPGetInfo failed:%p", c);
-		return false;
+		తిరిగి false;
 	}
 
-	c->width = width;
-	c->height = height;
-	c->size = c->width * c->height * 4;
+	c->వెడల్పు = వెడల్పు;
+	c->ఎత్తు = ఎత్తు;
+	c->కొలత = c->వెడల్పు * c->ఎత్తు * 4;
 
-	image_cache_add(c, NULL, webp_cache_convert);
+	image_cache_కూడు(c, ఖాళీ, webp_cache_convert);
 
-	content_set_ready(c);
-	content_set_done(c);
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);
 
-	return true;
+	తిరిగి true;
 }
 
 /**
  * Clone content.
  */
-static nserror webp_clone(const struct content *old, struct content **new_c)
+స్థిర nserror webp_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **new_c)
 {
-	struct content *webp_c; /* cloned webp content */
+	నిర్మాణం content *webp_c; /* cloned webp content */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content));
+	ఒకవేళ (webp_c == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	res = content__clone(old, webp_c);
-	if (res != NSERROR_OK) {
+	ఒకవేళ (res != NSERROR_OK) {
 		content_destroy(webp_c);
-		return res;
+		తిరిగి res;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
-	    (old->status == CONTENT_STATUS_DONE)) {
-		if (webp_convert(webp_c) == false) {
+	ఒకవేళ ((old->స్థితి_2 == CONTENT_స్థితి_READY) ||
+	    (old->స్థితి_2 == CONTENT_స్థితి_పూర్తి)) {
+		ఒకవేళ (webp_convert(webp_c) == false) {
 			content_destroy(webp_c);
-			return NSERROR_CLONE_FAILED;
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*new_c = webp_c;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static const content_handler webp_content_handler = {
+స్థిర స్థిరరాశి content_handler webp_content_handler = {
 	.create = webp_create,
-	.data_complete = webp_convert,
+	.దత్తాంశం_complete = webp_convert,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
 	.clone = webp_clone,
-	.get_internal = image_cache_get_internal,
+	.get_అంతర్గత = image_cache_get_అంతర్గత,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *webp_types[] = {
+స్థిర స్థిరరాశి అక్షరం *webp_types[] = {
 	"image/webp"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nswebp, webp_types, webp_content_handler);
+CONTENT_FACTORY_రిజిస్టరు_TYPES(nswebp, webp_types, webp_content_handler);

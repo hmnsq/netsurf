@@ -21,12 +21,12 @@
  * Box tree treeview box replacement (interface).
  */
 
-#ifndef NETSURF_HTML_BOX_TEXTAREA_H
-#define NETSURF_HTML_BOX_TEXTAREA_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_BOX_TEXTAREA_H
+#నిర్వచించు NETSURF_HTML_BOX_TEXTAREA_H
 
-struct dom_node;
-struct html_content;
-struct box;
+నిర్మాణం dom_కణుపు;
+నిర్మాణం html_content;
+నిర్మాణం box;
 
 /**
  * Create textarea widget for a form element
@@ -35,8 +35,8 @@ struct box;
  * \param box     box with gadget to be given textarea widget
  * \param node    DOM node for form element
  */
-bool box_textarea_create_textarea(struct html_content *html,
-		struct box *box, struct dom_node *node);
+bool box_textarea_create_textarea(నిర్మాణం html_content *html,
+		నిర్మాణం box *box, నిర్మాణం dom_కణుపు *కణుపు);
 
 
 /**
@@ -47,6 +47,6 @@ bool box_textarea_create_textarea(struct html_content *html,
  * \param key     keypress
  * \return NSERROR_OK iff keypress handled
  */
-nserror box_textarea_keypress(struct html_content *html, struct box *box, uint32_t key);
+nserror box_textarea_keypress(నిర్మాణం html_content *html, నిర్మాణం box *box, uint32_t కీలకం);
 
-#endif
+#అయితే_ముగింపు

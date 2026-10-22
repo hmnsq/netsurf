@@ -24,158 +24,158 @@
  * output dates and directory ordering are affected by the current locale
  */
 
-#include "utils/config.h"
+#అన్తర్భావ "utils/config.h"
 
-#include <stdlib.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdarg.h>
-#ifdef HAVE_MMAP
-#include <sys/mman.h>
-#endif
-#include <libwapcaplet/libwapcaplet.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <strings.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdarg.h>
+#నిర్వచితమైతే HAVE_MMAP
+#అన్తర్భావ <sys/mman.h>
+#అయితే_ముగింపు
+#అన్తర్భావ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/nsurl.h"
-#include "utils/dirent.h"
-#include "utils/corestrings.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/time.h"
-#include "utils/ring.h"
-#include "utils/file.h"
-#include "netsurf/fetch.h"
-#include "desktop/gui_internal.h"
+#అన్తర్భావ "netsurf/inttypes.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/dirent.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/time.h"
+#అన్తర్భావ "utils/ring.h"
+#అన్తర్భావ "utils/file.h"
+#అన్తర్భావ "netsurf/fetch.h"
+#అన్తర్భావ "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "dirlist.h"
-#include "file.h"
+#అన్తర్భావ "content/fetch.h"
+#అన్తర్భావ "content/fetchers.h"
+#అన్తర్భావ "dirlist.h"
+#అన్తర్భావ "file.h"
 
 /* Maximum size of read buffer */
-#define FETCH_FILE_MAX_BUF_SIZE (1024 * 1024)
+#నిర్వచించు FETCH_FILE_MAX_BUF_కొలత (1024 * 1024)
 
 /** Context for a fetch */
-struct fetch_file_context {
-	struct fetch_file_context *r_next, *r_prev;
+నిర్మాణం fetch_file_context {
+	నిర్మాణం fetch_file_context *r_తదుపరి, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	నిర్మాణం fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
-	char *path; /**< The actual path to be used with open() */
+	అక్షరం *మార్గం; /**< The actual path to be used with open() */
 
 	time_t file_etag; /**< Request etag for file (previous st.m_time) */
 };
 
-static struct fetch_file_context *ring = NULL;
+స్థిర నిర్మాణం fetch_file_context *ring = ఖాళీ;
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_file_send_callback(const fetch_msg *msg,
-		struct fetch_file_context *ctx)
+స్థిర అంతఃవరుస bool fetch_file_send_callback(స్థిరరాశి fetch_సందేశం *సందేశం,
+		నిర్మాణం fetch_file_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(సందేశం, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	తిరిగి ctx->aborted;
 }
 
-static bool fetch_file_send_header(struct fetch_file_context *ctx,
-		const char *fmt, ...)
+స్థిర bool fetch_file_send_శీర్షిక(నిర్మాణం fetch_file_context *ctx,
+		స్థిరరాశి అక్షరం *fmt, ...)
 {
-	fetch_msg msg;
-	char header[64];
+	fetch_సందేశం సందేశం;
+	అక్షరం శీర్షిక[64];
 	va_list ap;
-	int len;
+	పూర్ణాంకం len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof header, fmt, ap);
+	len = vsnprintf(శీర్షిక, పరిమాణం శీర్షిక, fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return false;
+	ఒకవేళ (len >= (పూర్ణాంకం)పరిమాణం(శీర్షిక) || len < 0) {
+		తిరిగి false;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = len;
+	సందేశం.type = FETCH_శీర్షిక;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) శీర్షిక;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = len;
 
-	return fetch_file_send_callback(&msg, ctx);
+	తిరిగి fetch_file_send_callback(&సందేశం, ctx);
 }
 
 /** callback to initialise the file fetcher. */
-static bool fetch_file_initialise(lwc_string *scheme)
+స్థిర bool fetch_file_initialise(lwc_string *scheme)
 {
-	return true;
+	తిరిగి true;
 }
 
 /** callback to initialise the file fetcher. */
-static void fetch_file_finalise(lwc_string *scheme)
+స్థిర శూన్య fetch_file_finalise(lwc_string *scheme)
 {
 }
 
-static bool fetch_file_can_fetch(const nsurl *url)
+స్థిర bool fetch_file_can_fetch(స్థిరరాశి nsurl *url)
 {
-	return true;
+	తిరిగి true;
 }
 
 /** callback to set up a file fetch context. */
-static void *
-fetch_file_setup(struct fetch *fetchh,
+స్థిర శూన్య *
+fetch_file_అమరిక(నిర్మాణం fetch *fetchh,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 స్థిరరాశి అక్షరం *post_urlenc,
+		 స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *post_multipart,
+		 స్థిరరాశి అక్షరం **శీర్షికలు)
 {
-	struct fetch_file_context *ctx;
-	int i;
+	నిర్మాణం fetch_file_context *ctx;
+	పూర్ణాంకం i;
 	nserror ret;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*ctx));
+	ఒకవేళ (ctx == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	ret = guit->file->nsurl_to_path(url, &ctx->path);
-	if (ret != NSERROR_OK) {
-		free(ctx);
-		return NULL;
+	ret = guit->file->nsurl_గమ్యం_మార్గం(url, &ctx->మార్గం);
+	ఒకవేళ (ret != NSERROR_OK) {
+		విడుదల(ctx);
+		తిరిగి ఖాళీ;
 	}
 
 	ctx->url = nsurl_ref(url);
 
 	/* Scan request headers looking for If-None-Match */
-	for (i = 0; headers[i] != NULL; i++) {
-		if (strncasecmp(headers[i], "If-None-Match:",
+	కొరకు (i = 0; శీర్షికలు[i] != ఖాళీ; i++) {
+		ఒకవేళ (strncasecmp(శీర్షికలు[i], "If-None-Match:",
 				SLEN("If-None-Match:")) != 0) {
-			continue;
+			కొనసాగు;
 		}
 
 		/* If-None-Match: "12345678" */
-		const char *d = headers[i] + SLEN("If-None-Match:");
+		స్థిరరాశి అక్షరం *d = శీర్షికలు[i] + SLEN("If-None-Match:");
 
 		/* Scan to first digit, if any */
-		while (*d != '\0' && (*d < '0' || '9' < *d))
+		అయితే (*d != '\0' && (*d < '0' || '9' < *d))
 			d++;
 
 		/* Convert to time_t */
-		if (*d != '\0') {
-			ret = nsc_snptimet(d, strlen(d), &ctx->file_etag);
-			if (ret != NSERROR_OK) {
+		ఒకవేళ (*d != '\0') {
+			ret = nsc_snptimet(d, అక్షరశ్రేణి_పొడవు(d), &ctx->file_etag);
+			ఒకవేళ (ret != NSERROR_OK) {
 				NSLOG(fetch, WARNING,
 						"Bad If-None-Match value");
 			}
@@ -184,30 +184,30 @@ fetch_file_setup(struct fetch *fetchh,
 
 	ctx->fetchh = fetchh;
 
-	RING_INSERT(ring, ctx);
+	RING_చొప్పించు(ring, ctx);
 
-	return ctx;
+	తిరిగి ctx;
 }
 
 /** callback to free a file fetch */
-static void fetch_file_free(void *ctx)
+స్థిర శూన్య fetch_file_free(శూన్య *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	నిర్మాణం fetch_file_context *c = ctx;
 	nsurl_unref(c->url);
-	free(c->path);
-	free(ctx);
+	విడుదల(c->మార్గం);
+	విడుదల(ctx);
 }
 
 /** callback to start a file fetch */
-static bool fetch_file_start(void *ctx)
+స్థిర bool fetch_file_ప్రారంభం(శూన్య *ctx)
 {
-	return true;
+	తిరిగి true;
 }
 
 /** callback to abort a file fetch */
-static void fetch_file_abort(void *ctx)
+స్థిర శూన్య fetch_file_abort(శూన్య *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	నిర్మాణం fetch_file_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -216,40 +216,40 @@ static void fetch_file_abort(void *ctx)
 	c->aborted = true;
 }
 
-static int fetch_file_errno_to_http_code(int error_no)
+స్థిర పూర్ణాంకం fetch_file_errno_గమ్యం_http_సంకేతం(పూర్ణాంకం error_no)
 {
-	switch (error_no) {
-	case ENAMETOOLONG:
-		return 400;
-	case EACCES:
-		return 403;
-	case ENOENT:
-		return 404;
-	default:
-		break;
+	ఎంపిక (error_no) {
+	స్థితి ENAMETOOLONG:
+		తిరిగి 400;
+	స్థితి EACCES:
+		తిరిగి 403;
+	స్థితి ENOENT:
+		తిరిగి 404;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	return 500;
+	తిరిగి 500;
 }
 
-static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
+స్థిర శూన్య fetch_file_process_error(నిర్మాణం fetch_file_context *ctx, పూర్ణాంకం సంకేతం_2)
 {
-	fetch_msg msg;
-	char buffer[1024];
-	const char *title;
-	char key[8];
+	fetch_సందేశం సందేశం;
+	అక్షరం బఫరు[1024];
+	స్థిరరాశి అక్షరం *title;
+	అక్షరం కీలకం[8];
 
 	/* content is going to return error code */
-	fetch_set_http_code(ctx->fetchh, code);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, సంకేతం_2);
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_file_process_error_aborted;
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "Content-Type: text/html; charset=utf-8"))
+		వెళ్ళు fetch_file_process_error_aborted;
 
-	snprintf(key, sizeof key, "HTTP%03d", code);
-	title = messages_get(key);
+	snprintf(కీలకం, పరిమాణం కీలకం, "HTTP%03d", సంకేతం_2);
+	title = messages_get(కీలకం);
 
-	snprintf(buffer, sizeof buffer,
+	snprintf(బఫరు, పరిమాణం బఫరు,
 		 "<html><head>"
 		 "<title>%s</title>"
 		 "<link rel=\"stylesheet\" type=\"text/css\" "
@@ -261,67 +261,67 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 		 "<p>%s %d %s %s</p>\n"
 		 "</body>\n</html>\n",
 		 title, title,
-		 messages_get("FetchErrorCode"), code,
+		 messages_get("FetchErrorCode"), సంకేతం_2,
 		 messages_get("FetchFile"), nsurl_access(ctx->url));
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_error_aborted;
+	సందేశం.type = FETCH_దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) బఫరు;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(బఫరు);
+	ఒకవేళ (fetch_file_send_callback(&సందేశం, ctx))
+		వెళ్ళు fetch_file_process_error_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	సందేశం.type = FETCH_ముగిసిన;
+	fetch_file_send_callback(&సందేశం, ctx);
 
 fetch_file_process_error_aborted:
-	return;
+	తిరిగి;
 }
 
 
 /** Process object as a regular file */
-static void fetch_file_process_plain(struct fetch_file_context *ctx,
-				     struct stat *fdstat)
+స్థిర శూన్య fetch_file_process_plain(నిర్మాణం fetch_file_context *ctx,
+				     నిర్మాణం stat *fdstat)
 {
-#ifdef HAVE_MMAP
-	fetch_msg msg;
-	char *buf = NULL;
-	size_t buf_size;
+#నిర్వచితమైతే HAVE_MMAP
+	fetch_సందేశం సందేశం;
+	అక్షరం *buf = ఖాళీ;
+	size_t buf_కొలత;
 
-	int fd; /**< The file descriptor of the object */
+	పూర్ణాంకం fd; /**< The file descriptor of the object */
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
-		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
-		return;
+	ఒకవేళ (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+		fetch_సమితి_http_సంకేతం(ctx->fetchh, 304);
+		సందేశం.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&సందేశం, ctx);
+		తిరిగి;
 	}
 
-	fd = open(ctx->path, O_RDONLY);
-	if (fd < 0) {
+	fd = open(ctx->మార్గం, O_RDONLY);
+	ఒకవేళ (fd < 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_గమ్యం_http_సంకేతం(errno));
+		తిరిగి;
 	}
 
 	/* set buffer size */
-	buf_size = fdstat->st_size;
+	buf_కొలత = fdstat->st_size;
 
 	/* allocate the buffer storage */
-	if (buf_size > 0) {
-		buf = mmap(NULL, buf_size, PROT_READ, MAP_SHARED, fd, 0);
-		if (buf == MAP_FAILED) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to map memory for file data buffer";
-			fetch_file_send_callback(&msg, ctx);
+	ఒకవేళ (buf_కొలత > 0) {
+		buf = mmap(ఖాళీ, buf_కొలత, PROT_READ, MAP_SHARED, fd, 0);
+		ఒకవేళ (buf == MAP_FAILED) {
+			సందేశం.type = FETCH_ERROR;
+			సందేశం.దత్తాంశం.error = "Unable to map memory for file data buffer";
+			fetch_file_send_callback(&సందేశం, ctx);
 			close(fd);
-			return;
+			తిరిగి;
 		}
 	}
 
 	/* fetch is going to be successful */
-	fetch_set_http_code(ctx->fetchh, 200);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, 200);
 
 	/* Any callback can result in the fetch being aborted.
 	 * Therefore, we _must_ check for this after _every_ call to
@@ -329,42 +329,42 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
-				   guit->fetch->filetype(ctx->path))) {
-		goto fetch_file_process_aborted;
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "Content-Type: %s", 
+				   guit->fetch->filetype(ctx->మార్గం))) {
+		వెళ్ళు fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
-		goto fetch_file_process_aborted;
+		వెళ్ళు fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "ETag: \"%10" PRId64 "\"",
 				   (int64_t) fdstat->st_mtime)) {
-		goto fetch_file_process_aborted;
+		వెళ్ళు fetch_file_process_aborted;
 	}
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buf;
-	msg.data.header_or_data.len = buf_size;
-	fetch_file_send_callback(&msg, ctx);
+	సందేశం.type = FETCH_దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) buf;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = buf_కొలత;
+	fetch_file_send_callback(&సందేశం, ctx);
 
-	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+	ఒకవేళ (ctx->aborted == false) {
+		సందేశం.type = FETCH_ముగిసిన;
+		fetch_file_send_callback(&సందేశం, ctx);
 	}
 
 fetch_file_process_aborted:
 
-	if (buf != NULL)
-		munmap(buf, buf_size);
+	ఒకవేళ (buf != ఖాళీ)
+		munmap(buf, buf_కొలత);
 	close(fd);
-#else
-	fetch_msg msg;
-	char *buf;
-	size_t buf_size;
+#లేకపోతే
+	fetch_సందేశం సందేశం;
+	అక్షరం *buf;
+	size_t buf_కొలత;
 
 	ssize_t tot_read = 0;
 	ssize_t res;
@@ -372,39 +372,39 @@ fetch_file_process_aborted:
 	FILE *infile;
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
-		fetch_set_http_code(ctx->fetchh, 304);
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_file_send_callback(&msg, ctx);
-		return;
+	ఒకవేళ (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+		fetch_సమితి_http_సంకేతం(ctx->fetchh, 304);
+		సందేశం.type = FETCH_NOTMODIFIED;
+		fetch_file_send_callback(&సందేశం, ctx);
+		తిరిగి;
 	}
 
-	infile = fopen(ctx->path, "rb");
-	if (infile == NULL) {
+	infile = fopen(ctx->మార్గం, "rb");
+	ఒకవేళ (infile == ఖాళీ) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_గమ్యం_http_సంకేతం(errno));
+		తిరిగి;
 	}
 
 	/* set buffer size */
-	buf_size = fdstat->st_size;
-	if (buf_size > FETCH_FILE_MAX_BUF_SIZE)
-		buf_size = FETCH_FILE_MAX_BUF_SIZE;
+	buf_కొలత = fdstat->st_size;
+	ఒకవేళ (buf_కొలత > FETCH_FILE_MAX_BUF_కొలత)
+		buf_కొలత = FETCH_FILE_MAX_BUF_కొలత;
 
 	/* allocate the buffer storage */
-	buf = malloc(buf_size);
-	if (buf == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error =
+	buf = జ్ఞాపకం_ఇవ్వు(buf_కొలత);
+	ఒకవేళ (buf == ఖాళీ) {
+		సందేశం.type = FETCH_ERROR;
+		సందేశం.దత్తాంశం.error =
 			"Unable to allocate memory for file data buffer";
-		fetch_file_send_callback(&msg, ctx);
+		fetch_file_send_callback(&సందేశం, ctx);
 		fclose(infile);
-		return;
+		తిరిగి;
 	}
 
 	/* fetch is going to be successful */
-	fetch_set_http_code(ctx->fetchh, 200);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, 200);
 
 	/* Any callback can result in the fetch being aborted.
 	 * Therefore, we _must_ check for this after _every_ call to
@@ -412,112 +412,112 @@ fetch_file_process_aborted:
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
-				   guit->fetch->filetype(ctx->path))) {
-		goto fetch_file_process_aborted;
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "Content-Type: %s", 
+				   guit->fetch->filetype(ctx->మార్గం))) {
+		వెళ్ళు fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
-		goto fetch_file_process_aborted;
+		వెళ్ళు fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "ETag: \"%10" PRId64 "\"", 
 				   (int64_t) fdstat->st_mtime)) {
-		goto fetch_file_process_aborted;
+		వెళ్ళు fetch_file_process_aborted;
 	}
 
 	/* main data loop */
-	while (tot_read < fdstat->st_size) {
-		res = fread(buf, 1, buf_size, infile);
-		if (res == 0) {
-			if (feof(infile)) {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Unexpected EOF reading file";
-				fetch_file_send_callback(&msg, ctx);
-				goto fetch_file_process_aborted;
-			} else {
-				msg.type = FETCH_ERROR;
-				msg.data.error = "Error reading file";
-				fetch_file_send_callback(&msg, ctx);
-				goto fetch_file_process_aborted;
+	అయితే (tot_read < fdstat->st_size) {
+		res = fread(buf, 1, buf_కొలత, infile);
+		ఒకవేళ (res == 0) {
+			ఒకవేళ (feof(infile)) {
+				సందేశం.type = FETCH_ERROR;
+				సందేశం.దత్తాంశం.error = "Unexpected EOF reading file";
+				fetch_file_send_callback(&సందేశం, ctx);
+				వెళ్ళు fetch_file_process_aborted;
+			} లేకపోతే {
+				సందేశం.type = FETCH_ERROR;
+				సందేశం.దత్తాంశం.error = "Error reading file";
+				fetch_file_send_callback(&సందేశం, ctx);
+				వెళ్ళు fetch_file_process_aborted;
 			}
 		}
 		tot_read += res;
 
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buf;
-		msg.data.header_or_data.len = res;
-		if (fetch_file_send_callback(&msg, ctx))
-			break;
+		సందేశం.type = FETCH_దత్తాంశం;
+		సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) buf;
+		సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = res;
+		ఒకవేళ (fetch_file_send_callback(&సందేశం, ctx))
+			ఆపు;
 	}
 
-	if (ctx->aborted == false) {
-		msg.type = FETCH_FINISHED;
-		fetch_file_send_callback(&msg, ctx);
+	ఒకవేళ (ctx->aborted == false) {
+		సందేశం.type = FETCH_ముగిసిన;
+		fetch_file_send_callback(&సందేశం, ctx);
 	}
 
 fetch_file_process_aborted:
 
 	fclose(infile);
-	free(buf);
-#endif
-	return;
+	విడుదల(buf);
+#అయితే_ముగింపు
+	తిరిగి;
 }
 
-static char *gen_nice_title(char *path)
+స్థిర అక్షరం *gen_nice_title(అక్షరం *మార్గం)
 {
-	char *nice_path, *cnv, *tmp;
-	char *title;
-	int title_length;
+	అక్షరం *nice_మార్గం, *cnv, *tmp;
+	అక్షరం *title;
+	పూర్ణాంకం title_నిడివి;
 
 	/* Convert path for display */
-	nice_path = malloc(strlen(path) * SLEN("&amp;") + 1);
-	if (nice_path == NULL) {
-		return NULL;
+	nice_మార్గం = జ్ఞాపకం_ఇవ్వు(అక్షరశ్రేణి_పొడవు(మార్గం) * SLEN("&amp;") + 1);
+	ఒకవేళ (nice_మార్గం == ఖాళీ) {
+		తిరిగి ఖాళీ;
 	}
 
 	/* Escape special HTML characters */
-	for (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
-		if (*tmp == '<') {
+	కొరకు (cnv = nice_మార్గం, tmp = మార్గం; *tmp != '\0'; tmp++) {
+		ఒకవేళ (*tmp == '<') {
 			*cnv++ = '&';
 			*cnv++ = 'l';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '>') {
+		} లేకపోతే ఒకవేళ (*tmp == '>') {
 			*cnv++ = '&';
 			*cnv++ = 'g';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '&') {
+		} లేకపోతే ఒకవేళ (*tmp == '&') {
 			*cnv++ = '&';
 			*cnv++ = 'a';
 			*cnv++ = 'm';
 			*cnv++ = 'p';
 			*cnv++ = ';';
-		} else {
+		} లేకపోతే {
 			*cnv++ = *tmp;
 		}
 	}
 	*cnv = '\0';
 
 	/* Construct a localised title string */
-	title_length = (cnv - nice_path) + strlen(messages_get("FileIndex"));
-	title = malloc(title_length + 1);
+	title_నిడివి = (cnv - nice_మార్గం) + అక్షరశ్రేణి_పొడవు(messages_get("FileIndex"));
+	title = జ్ఞాపకం_ఇవ్వు(title_నిడివి + 1);
 
-	if (title == NULL) {
-		free(nice_path);
-		return NULL;
+	ఒకవేళ (title == ఖాళీ) {
+		విడుదల(nice_మార్గం);
+		తిరిగి ఖాళీ;
 	}
 
 	/* Set title to localised "Index of <nice_path>" */
-	snprintf(title, title_length, messages_get("FileIndex"), nice_path);
+	snprintf(title, title_నిడివి, messages_get("FileIndex"), nice_మార్గం);
 
-	free(nice_path);
+	విడుదల(nice_మార్గం);
 
-	return title;
+	తిరిగి title;
 }
 
 /**
@@ -530,94 +530,94 @@ static char *gen_nice_title(char *path)
  * \param buffer_len The space available in the output buffer.
  * \return NSERROR_OK or error code on faliure.
  */
-static nserror
-process_dir_ent(struct fetch_file_context *ctx,
-		 struct dirent *ent,
+స్థిర nserror
+process_dir_ent(నిర్మాణం fetch_file_context *ctx,
+		 నిర్మాణం dirent *ent,
 		 bool even,
-		 char *buffer,
-		 size_t buffer_len)
+		 అక్షరం *బఫరు,
+		 size_t బఫరు_len)
 {
 	nserror ret;
-	char *urlpath = NULL; /* buffer for leaf entry path */
-	struct stat ent_stat; /* stat result of leaf entry */
-	char datebuf[64]; /* buffer for date text */
-	char timebuf[64]; /* buffer for time text */
+	అక్షరం *urlpath = ఖాళీ; /* buffer for leaf entry path */
+	నిర్మాణం stat ent_stat; /* stat result of leaf entry */
+	అక్షరం datebuf[64]; /* buffer for date text */
+	అక్షరం timebuf[64]; /* buffer for time text */
 	nsurl *url;
 
 	/* skip hidden files */
-	if (ent->d_name[0] == '.') {
-		return NSERROR_BAD_PARAMETER;
+	ఒకవేళ (ent->d_name[0] == '.') {
+		తిరిగి NSERROR_BAD_PARAMETER;
 	}
 
-	ret = netsurf_mkpath(&urlpath, NULL, 2, ctx->path, ent->d_name);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&urlpath, ఖాళీ, 2, ctx->మార్గం, ent->d_name);
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
-	if (stat(urlpath, &ent_stat) != 0) {
+	ఒకవేళ (stat(urlpath, &ent_stat) != 0) {
 		ent_stat.st_mode = 0;
 		datebuf[0] = 0;
 		timebuf[0] = 0;
-	} else {
+	} లేకపోతే {
 		/* Get date in output format. a (day of week) and b
 		 * (month) are both affected by the locale
 		 */
-		if (strftime((char *)&datebuf, sizeof datebuf, "%a %d %b %Y",
+		ఒకవేళ (strftime((అక్షరం *)&datebuf, పరిమాణం datebuf, "%a %d %b %Y",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			datebuf[0] = '-';
 			datebuf[1] = 0;
 		}
 
 		/* Get time in output format */
-		if (strftime((char *)&timebuf, sizeof timebuf, "%H:%M",
+		ఒకవేళ (strftime((అక్షరం *)&timebuf, పరిమాణం timebuf, "%H:%M",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			timebuf[0] = '-';
 			timebuf[1] = 0;
 		}
 	}
 
-	ret = guit->file->path_to_nsurl(urlpath, &url);
-	if (ret != NSERROR_OK) {
-		free(urlpath);
-		return ret;
+	ret = guit->file->మార్గం_గమ్యం_nsurl(urlpath, &url);
+	ఒకవేళ (ret != NSERROR_OK) {
+		విడుదల(urlpath);
+		తిరిగి ret;
 	}
 
-	if (S_ISREG(ent_stat.st_mode)) {
+	ఒకవేళ (S_ISREG(ent_stat.st_mode)) {
 		/* regular file */
-		dirlist_generate_row(even,
+		dirlist_generate_అడ్డువరుస(even,
 				     false,
 				     url,
 				     ent->d_name,
 				     guit->fetch->filetype(urlpath),
 				     ent_stat.st_size,
 				     datebuf, timebuf,
-				     buffer, buffer_len);
-	} else if (S_ISDIR(ent_stat.st_mode)) {
+				     బఫరు, బఫరు_len);
+	} లేకపోతే ఒకవేళ (S_ISDIR(ent_stat.st_mode)) {
 		/* directory */
-		dirlist_generate_row(even,
+		dirlist_generate_అడ్డువరుస(even,
 				     true,
 				     url,
 				     ent->d_name,
 				     messages_get("FileDirectory"),
 				     -1,
 				     datebuf, timebuf,
-				     buffer, buffer_len);
-	} else {
+				     బఫరు, బఫరు_len);
+	} లేకపోతే {
 		/* something else */
-		dirlist_generate_row(even,
+		dirlist_generate_అడ్డువరుస(even,
 				     false,
 				     url,
 				     ent->d_name,
 				     "",
 				     -1,
 				     datebuf, timebuf,
-				     buffer, buffer_len);
+				     బఫరు, బఫరు_len);
 	}
 
 	nsurl_unref(url);
-	free(urlpath);
+	విడుదల(urlpath);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -629,180 +629,180 @@ process_dir_ent(struct fetch_file_context *ctx,
  * \param d1 first directory entry
  * \param d2 second directory entry
  */
-static int dir_sort_alpha(const struct dirent **d1, const struct dirent **d2)
+స్థిర పూర్ణాంకం dir_క్రమీకరించు_alpha(స్థిరరాశి నిర్మాణం dirent **d1, స్థిరరాశి నిర్మాణం dirent **d2)
 {
-	const char *s1 = (*d1)->d_name;
-	const char *s2 = (*d2)->d_name;
+	స్థిరరాశి అక్షరం *s1 = (*d1)->d_name;
+	స్థిరరాశి అక్షరం *s2 = (*d2)->d_name;
 
-	while (*s1 != '\0' && *s2 != '\0') {
-		if ((*s1 >= '0' && *s1 <= '9') &&
+	అయితే (*s1 != '\0' && *s2 != '\0') {
+		ఒకవేళ ((*s1 >= '0' && *s1 <= '9') &&
 				(*s2 >= '0' && *s2 <= '9')) {
-			int n1 = 0,  n2 = 0;
-			while (*s1 >= '0' && *s1 <= '9') {
+			పూర్ణాంకం n1 = 0,  n2 = 0;
+			అయితే (*s1 >= '0' && *s1 <= '9') {
 				n1 = n1 * 10 + (*s1) - '0';
 				s1++;
 			}
-			while (*s2 >= '0' && *s2 <= '9') {
+			అయితే (*s2 >= '0' && *s2 <= '9') {
 				n2 = n2 * 10 + (*s2) - '0';
 				s2++;
 			}
-			if (n1 != n2) {
-				return n1 - n2;
+			ఒకవేళ (n1 != n2) {
+				తిరిగి n1 - n2;
 			}
-			if (*s1 == '\0' || *s2 == '\0')
-				break;
+			ఒకవేళ (*s1 == '\0' || *s2 == '\0')
+				ఆపు;
 		}
-		if (tolower(*s1) != tolower(*s2))
-			break;
+		ఒకవేళ (tolower(*s1) != tolower(*s2))
+			ఆపు;
 
 		s1++;
 		s2++;
 	}
 
-	return tolower(*s1) - tolower(*s2);
+	తిరిగి tolower(*s1) - tolower(*s2);
 }
 
-static void fetch_file_process_dir(struct fetch_file_context *ctx,
-				   struct stat *fdstat)
+స్థిర శూన్య fetch_file_process_dir(నిర్మాణం fetch_file_context *ctx,
+				   నిర్మాణం stat *fdstat)
 {
-	fetch_msg msg;
-	char buffer[1024]; /* Output buffer */
+	fetch_సందేశం సందేశం;
+	అక్షరం బఫరు[1024]; /* Output buffer */
 	bool even = false; /* formatting flag */
-	char *title; /* pretty printed title */
+	అక్షరం *title; /* pretty printed title */
 	nserror err; /* result from url routines */
-	nsurl *up; /* url of parent */
+	nsurl *పైకి; /* url of parent */
 
-	struct dirent **listing = NULL; /* directory entry listing */
-	int i; /* directory entry index */
-	int n; /* number of directory entries */
+	నిర్మాణం dirent **listing = ఖాళీ; /* directory entry listing */
+	పూర్ణాంకం i; /* directory entry index */
+	పూర్ణాంకం n; /* number of directory entries */
 
-	n = scandir(ctx->path, &listing, 0, dir_sort_alpha);
-	if (n < 0) {
+	n = scandir(ctx->మార్గం, &listing, 0, dir_క్రమీకరించు_alpha);
+	ఒకవేళ (n < 0) {
 		fetch_file_process_error(ctx,
-			fetch_file_errno_to_http_code(errno));
-		return;
+			fetch_file_errno_గమ్యం_http_సంకేతం(errno));
+		తిరిగి;
 	}
 
 	/* fetch is going to be successful */
-	fetch_set_http_code(ctx->fetchh, 200);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, 200);
 
 	/* force no-cache */
-	if (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
-		goto fetch_file_process_dir_aborted;
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "Cache-Control: no-cache"))
+		వెళ్ళు fetch_file_process_dir_aborted;
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_file_process_dir_aborted;
+	ఒకవేళ (fetch_file_send_శీర్షిక(ctx, "Content-Type: text/html; charset=utf-8"))
+		వెళ్ళు fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) buffer;
+	సందేశం.type = FETCH_దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) బఫరు;
 
 	/* directory listing top */
-	dirlist_generate_top(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_శిఖరం(బఫరు, పరిమాణం బఫరు);
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(బఫరు);
+	ఒకవేళ (fetch_file_send_callback(&సందేశం, ctx))
+		వెళ్ళు fetch_file_process_dir_aborted;
 
 	/* directory listing title */
-	title = gen_nice_title(ctx->path);
-	dirlist_generate_title(title, buffer, sizeof buffer);
-	free(title);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	title = gen_nice_title(ctx->మార్గం);
+	dirlist_generate_title(title, బఫరు, పరిమాణం బఫరు);
+	విడుదల(title);
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(బఫరు);
+	ఒకవేళ (fetch_file_send_callback(&సందేశం, ctx))
+		వెళ్ళు fetch_file_process_dir_aborted;
 
 	/* Print parent directory link */
-	err = nsurl_parent(ctx->url, &up);
-	if (err == NSERROR_OK) {
-		if (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
+	err = nsurl_మాతృ(ctx->url, &పైకి);
+	ఒకవేళ (err == NSERROR_OK) {
+		ఒకవేళ (nsurl_compare(ctx->url, పైకి, NSURL_COMPLETE) == false) {
 			/* different URL; have parent */
-			dirlist_generate_parent_link(nsurl_access(up),
-					buffer, sizeof buffer);
+			dirlist_generate_మాతృ_link(nsurl_access(పైకి),
+					బఫరు, పరిమాణం బఫరు);
 
-			msg.data.header_or_data.len = strlen(buffer);
-			fetch_file_send_callback(&msg, ctx);
+			సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(బఫరు);
+			fetch_file_send_callback(&సందేశం, ctx);
 		}
-		nsurl_unref(up);
+		nsurl_unref(పైకి);
 
-		if (ctx->aborted)
-			goto fetch_file_process_dir_aborted;
+		ఒకవేళ (ctx->aborted)
+			వెళ్ళు fetch_file_process_dir_aborted;
 
 	}
 
 	/* directory list headings */
-	dirlist_generate_headings(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_headings(బఫరు, పరిమాణం బఫరు);
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(బఫరు);
+	ఒకవేళ (fetch_file_send_callback(&సందేశం, ctx))
+		వెళ్ళు fetch_file_process_dir_aborted;
 
-	for (i = 0; i < n; i++) {
+	కొరకు (i = 0; i < n; i++) {
 
-		err = process_dir_ent(ctx, listing[i], even, buffer,
-				       sizeof(buffer));
+		err = process_dir_ent(ctx, listing[i], even, బఫరు,
+				       పరిమాణం(బఫరు));
 
-		if (err == NSERROR_OK) {
-			msg.data.header_or_data.len = strlen(buffer);
-			if (fetch_file_send_callback(&msg, ctx))
-				goto fetch_file_process_dir_aborted;
+		ఒకవేళ (err == NSERROR_OK) {
+			సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(బఫరు);
+			ఒకవేళ (fetch_file_send_callback(&సందేశం, ctx))
+				వెళ్ళు fetch_file_process_dir_aborted;
 
 			even = !even;
 		}
 	}
 
 	/* directory listing bottom */
-	dirlist_generate_bottom(buffer, sizeof buffer);
-	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
-		goto fetch_file_process_dir_aborted;
+	dirlist_generate_bottom(బఫరు, పరిమాణం బఫరు);
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(బఫరు);
+	ఒకవేళ (fetch_file_send_callback(&సందేశం, ctx))
+		వెళ్ళు fetch_file_process_dir_aborted;
 
-	msg.type = FETCH_FINISHED;
-	fetch_file_send_callback(&msg, ctx);
+	సందేశం.type = FETCH_ముగిసిన;
+	fetch_file_send_callback(&సందేశం, ctx);
 
 fetch_file_process_dir_aborted:
 
-	if (listing != NULL) {
-		for (i = 0; i < n; i++) {
-			free(listing[i]);
+	ఒకవేళ (listing != ఖాళీ) {
+		కొరకు (i = 0; i < n; i++) {
+			విడుదల(listing[i]);
 		}
-		free(listing);
+		విడుదల(listing);
 	}
 }
 
 
 /* process a file fetch */
-static void fetch_file_process(struct fetch_file_context *ctx)
+స్థిర శూన్య fetch_file_process(నిర్మాణం fetch_file_context *ctx)
 {
-	struct stat fdstat; /**< The objects stat */
+	నిర్మాణం stat fdstat; /**< The objects stat */
 
-	if (stat(ctx->path, &fdstat) != 0) {
+	ఒకవేళ (stat(ctx->మార్గం, &fdstat) != 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
-				fetch_file_errno_to_http_code(errno));
-		return;
+				fetch_file_errno_గమ్యం_http_సంకేతం(errno));
+		తిరిగి;
 	}
 
-	if (S_ISDIR(fdstat.st_mode)) {
+	ఒకవేళ (S_ISDIR(fdstat.st_mode)) {
 		/* directory listing */
 		fetch_file_process_dir(ctx, &fdstat);
-		return;
-	} else if (S_ISREG(fdstat.st_mode)) {
+		తిరిగి;
+	} లేకపోతే ఒకవేళ (S_ISREG(fdstat.st_mode)) {
 		/* regular file */
 		fetch_file_process_plain(ctx, &fdstat);
-		return;
-	} else {
+		తిరిగి;
+	} లేకపోతే {
 		/* unhandled type of file */
 		fetch_file_process_error(ctx, 501);
 	}
 
-	return;
+	తిరిగి;
 }
 
 /** callback to poll for additional file fetch contents */
-static void fetch_file_poll(lwc_string *scheme)
+స్థిర శూన్య fetch_file_poll(lwc_string *scheme)
 {
-	struct fetch_file_context *c, *save_ring = NULL;
+	నిర్మాణం fetch_file_context *c, *save_ring = ఖాళీ;
 
-	while (ring != NULL) {
+	అయితే (ring != ఖాళీ) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -813,13 +813,13 @@ static void fetch_file_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		ఒకవేళ (c->locked == true) {
+			RING_చొప్పించు(save_ring, c);
+			కొనసాగు;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		ఒకవేళ (c->aborted == false) {
 			/* file fetches can be processed in one go */
 			fetch_file_process(c);
 		}
@@ -836,19 +836,19 @@ static void fetch_file_poll(lwc_string *scheme)
 	ring = save_ring;
 }
 
-nserror fetch_file_register(void)
+nserror fetch_file_రిజిస్టరు(శూన్య)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_file);
-	const struct fetcher_operation_table fetcher_ops = {
+	స్థిరరాశి నిర్మాణం fetcher_operation_పట్టిక fetcher_ops = {
 		.initialise = fetch_file_initialise,
 		.acceptable = fetch_file_can_fetch,
-		.setup = fetch_file_setup,
-		.start = fetch_file_start,
+		.అమరిక = fetch_file_అమరిక,
+		.ప్రారంభం = fetch_file_ప్రారంభం,
 		.abort = fetch_file_abort,
-		.free = fetch_file_free,
+		.విడుదల = fetch_file_free,
 		.poll = fetch_file_poll,
 		.finalise = fetch_file_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	తిరిగి fetcher_కూడు(scheme, &fetcher_ops);
 }

@@ -34,24 +34,24 @@
  * content handler complete control.
  */
 
-#ifndef NETSURF_IMAGE_IMAGE_CACHE_H_
-#define NETSURF_IMAGE_IMAGE_CACHE_H_
+#నిర్వచితం_కాకపోతే NETSURF_IMAGE_IMAGE_CACHE_H_
+#నిర్వచించు NETSURF_IMAGE_IMAGE_CACHE_H_
 
-#include "utils/errors.h"
-#include "netsurf/content_type.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "netsurf/content_type.h"
 
-struct content;
-struct content_redraw_data;
-struct redraw_context;
+నిర్మాణం content;
+నిర్మాణం content_redraw_దత్తాంశం;
+నిర్మాణం redraw_context;
 
-typedef struct bitmap * (image_cache_convert_fn) (struct content *content);
+రకనిర్వచనం నిర్మాణం bitmap * (image_cache_convert_fn) (నిర్మాణం content *content);
 
-struct image_cache_parameters {
+నిర్మాణం image_cache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	గుర్తులేని పూర్ణాంకం bg_clean_సమయం;
 
 	/** The target upper bound for the image cache size */
-	size_t limit;
+	size_t హద్దు;
 
 	/** The hysteresis allowed round the target size */
 	size_t hysteresis;
@@ -64,8 +64,8 @@ struct image_cache_parameters {
  *
  * @param image_cache_parameters The control parameters for the image cache
  */
-nserror image_cache_init(const struct image_cache_parameters *image_cache_parameters);
-nserror image_cache_fini(void);
+nserror image_cache_init(స్థిరరాశి నిర్మాణం image_cache_parameters *image_cache_parameters);
+nserror image_cache_fini(శూన్య);
 
 /** adds an image content to be cached. 
  * 
@@ -74,18 +74,18 @@ nserror image_cache_fini(void);
  * @param convert A function pointer to convert the content into a bitmap or NULL.
  * @return A netsurf error code.
  */
-nserror image_cache_add(struct content *content, 
-			struct bitmap *bitmap, 
+nserror image_cache_కూడు(నిర్మాణం content *content, 
+			నిర్మాణం bitmap *bitmap, 
 			image_cache_convert_fn *convert);
 
-nserror image_cache_remove(struct content *content);
+nserror image_cache_remove(నిర్మాణం content *content);
 
 
 /** Obtain a bitmap from a content converting from source if neccessary. */
-struct bitmap *image_cache_get_bitmap(const struct content *c);
+నిర్మాణం bitmap *image_cache_get_bitmap(స్థిరరాశి నిర్మాణం content *c);
 
 /** Obtain a bitmap from a content with no conversion */
-struct bitmap *image_cache_find_bitmap(struct content *c);
+నిర్మాణం bitmap *image_cache_కనుగొను_bitmap(నిర్మాణం content *c);
 
 /** Decide if a content should be speculatively converted.
  *
@@ -97,7 +97,7 @@ struct bitmap *image_cache_find_bitmap(struct content *c);
  * @param c The content to be considered.
  * @return true if a speculative conversion is desired false otherwise.
  */
-bool image_cache_speculate(struct content *c);
+bool image_cache_speculate(నిర్మాణం content *c);
 
 /**
  * Fill a buffer with information about a cache entry using a format.
@@ -116,8 +116,8 @@ bool image_cache_speculate(struct content *c);
  * \param fmt     The format string.
  * \return The number of bytes written to \a string or -1 on error
  */
-int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
-			 const char *fmt);
+పూర్ణాంకం image_cache_snentryf(అక్షరం *string, size_t కొలత, గుర్తులేని పూర్ణాంకం entryn,
+			 స్థిరరాశి అక్షరం *fmt);
 
 /**
  * Fill a buffer with information about the image cache using a format.
@@ -167,7 +167,7 @@ int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
  * \return The number of bytes written to \a string or -1 on error
  */
 
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
+పూర్ణాంకం image_cache_snsummaryf(అక్షరం *string, size_t కొలత, స్థిరరాశి అక్షరం *fmt);
 
 /********* Image content handler generic cache callbacks ************/
 
@@ -178,17 +178,17 @@ int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
  * callback. Performs all neccissary cache lookups and conversions and
  * calls the bitmap plot function in the redraw context.
  */
-bool image_cache_redraw(struct content *c, 
-			struct content_redraw_data *data,
-			const struct rect *clip, 
-			const struct redraw_context *ctx);
+bool image_cache_redraw(నిర్మాణం content *c, 
+			నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+			స్థిరరాశి నిర్మాణం rect *clip, 
+			స్థిరరాశి నిర్మాణం redraw_context *ctx);
 
-void image_cache_destroy(struct content *c);
+శూన్య image_cache_destroy(నిర్మాణం content *c);
 
-void *image_cache_get_internal(const struct content *c, void *context);
+శూన్య *image_cache_get_అంతర్గత(స్థిరరాశి నిర్మాణం content *c, శూన్య *context);
 
-bool image_cache_is_opaque(struct content *c);
+bool image_cache_is_opaque(నిర్మాణం content *c);
 
-content_type image_cache_content_type(void);
+content_type image_cache_content_type(శూన్య);
 
-#endif
+#అయితే_ముగింపు

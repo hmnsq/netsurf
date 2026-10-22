@@ -28,48 +28,48 @@
  */
 
 /* must come first to ensure winsock2.h vs windows.h ordering issues */
-#include "utils/inet.h"
+#అన్తర్భావ "utils/inet.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <sys/stat.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <inttypes.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <strings.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <sys/stat.h>
 
-#include <libwapcaplet/libwapcaplet.h>
-#include <nsutils/time.h>
+#అన్తర్భావ <libwapcaplet/libwapcaplet.h>
+#అన్తర్భావ <nsutils/time.h>
 
-#include "utils/corestrings.h"
-#include "utils/hashmap.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
-#include "utils/useragent.h"
-#include "utils/file.h"
-#include "utils/string.h"
-#include "netsurf/fetch.h"
-#include "netsurf/misc.h"
-#include "desktop/gui_internal.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/hashmap.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/ring.h"
+#అన్తర్భావ "utils/useragent.h"
+#అన్తర్భావ "utils/file.h"
+#అన్తర్భావ "utils/string.h"
+#అన్తర్భావ "netsurf/fetch.h"
+#అన్తర్భావ "netsurf/misc.h"
+#అన్తర్భావ "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/curl.h"
-#include "content/urldb.h"
+#అన్తర్భావ "content/fetch.h"
+#అన్తర్భావ "content/fetchers.h"
+#అన్తర్భావ "content/fetchers/curl.h"
+#అన్తర్భావ "content/urldb.h"
 
 /**
  * maximum number of progress notifications per second
  */
-#define UPDATES_PER_SECOND 2
+#నిర్వచించు UPDATES_చొప్పున_రెండవ 2
 
 /**
  * The ciphersuites the browser is prepared to use for TLS1.3
  */
-#define CIPHER_SUITES						\
+#నిర్వచించు CIPHER_SUITES						\
 	"TLS_AES_256_GCM_SHA384:"				\
 	"TLS_CHACHA20_POLY1305_SHA256:"				\
 	"TLS_AES_128_GCM_SHA256"
@@ -77,7 +77,7 @@
 /**
  * The ciphersuites the browser is prepared to use for TLS<1.3
  */
-#define CIPHER_LIST						\
+#నిర్వచించు CIPHER_LIST						\
 	/* disable everything */				\
 	"-ALL:"							\
 	/* enable TLSv1.2 ECDHE AES GCM suites */		\
@@ -92,7 +92,7 @@
 /**
  * The legacy cipher suites the browser is prepared to use for TLS<1.3
  */
-#define CIPHER_LIST_LEGACY					\
+#నిర్వచించు CIPHER_LIST_LEGACY					\
 	/* as above */						\
 	CIPHER_LIST":"						\
 	/* enable (non-PFS) RSA AES GCM suites */		\
@@ -101,206 +101,206 @@
 	"RSA+AES+SHA1"
 
 /* Open SSL compatability for certificate handling */
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 
-#include <openssl/ssl.h>
-#include <openssl/x509v3.h>
+#అన్తర్భావ <openssl/ssl.h>
+#అన్తర్భావ <openssl/x509v3.h>
 
-#else /* WITH_OPENSSL */
+#లేకపోతే /* WITH_OPENSSL */
 
-typedef char X509;
+రకనిర్వచనం అక్షరం X509;
 
-static void X509_free(X509 *cert)
+స్థిర శూన్య X509_free(X509 *cert)
 {
-	free(cert);
+	విడుదల(cert);
 }
 
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
 /* SSL certificate chain cache */
 
 /* We're only interested in the hostname and port */
-static uint32_t
-curl_fetch_ssl_key_hash(void *key)
+స్థిర uint32_t
+curl_fetch_ssl_కీలకం_hash(శూన్య *కీలకం)
 {
-	nsurl *url = key;
+	nsurl *url = కీలకం;
 	lwc_string *hostname = nsurl_get_component(url, NSURL_HOST);
-	lwc_string *port = nsurl_get_component(url, NSURL_PORT);
+	lwc_string *పోర్టు = nsurl_get_component(url, NSURL_పోర్టు);
 	uint32_t hash;
 
-	if (port == NULL)
-		port = lwc_string_ref(corestring_lwc_443);
+	ఒకవేళ (పోర్టు == ఖాళీ)
+		పోర్టు = lwc_string_ref(corestring_lwc_443);
 
-	hash = lwc_string_hash_value(hostname) ^ lwc_string_hash_value(port);
+	hash = lwc_string_hash_విలువ(hostname) ^ lwc_string_hash_విలువ(పోర్టు);
 
 	lwc_string_unref(hostname);
-	lwc_string_unref(port);
+	lwc_string_unref(పోర్టు);
 
-	return hash;
+	తిరిగి hash;
 }
 
 /* We only compare the hostname and port */
-static bool
-curl_fetch_ssl_key_eq(void *key1, void *key2)
+స్థిర bool
+curl_fetch_ssl_కీలకం_eq(శూన్య *key1, శూన్య *key2)
 {
 	nsurl *url1 = key1;
 	nsurl *url2 = key2;
 	lwc_string *hostname1 = nsurl_get_component(url1, NSURL_HOST);
 	lwc_string *hostname2 = nsurl_get_component(url2, NSURL_HOST);
-	lwc_string *port1 = nsurl_get_component(url1, NSURL_PORT);
-	lwc_string *port2 = nsurl_get_component(url2, NSURL_PORT);
+	lwc_string *port1 = nsurl_get_component(url1, NSURL_పోర్టు);
+	lwc_string *port2 = nsurl_get_component(url2, NSURL_పోర్టు);
 	bool iseq = false;
 
-	if (port1 == NULL)
+	ఒకవేళ (port1 == ఖాళీ)
 		port1 = lwc_string_ref(corestring_lwc_443);
-	if (port2 == NULL)
+	ఒకవేళ (port2 == ఖాళీ)
 		port2 = lwc_string_ref(corestring_lwc_443);
 
-	if (lwc_string_isequal(hostname1, hostname2, &iseq) != lwc_error_ok ||
+	ఒకవేళ (lwc_string_isequal(hostname1, hostname2, &iseq) != lwc_error_ok ||
 			iseq == false)
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
 	iseq = false;
-	if (lwc_string_isequal(port1, port2, &iseq) != lwc_error_ok)
-		goto out;
+	ఒకవేళ (lwc_string_isequal(port1, port2, &iseq) != lwc_error_ok)
+		వెళ్ళు బహిర్గతం;
 
-out:
+బహిర్గతం:
 	lwc_string_unref(hostname1);
 	lwc_string_unref(hostname2);
 	lwc_string_unref(port1);
 	lwc_string_unref(port2);
 
-	return iseq;
+	తిరిగి iseq;
 }
 
-static void *
-curl_fetch_ssl_value_alloc(void *key)
+స్థిర శూన్య *
+curl_fetch_ssl_విలువ_alloc(శూన్య *కీలకం)
 {
-	struct cert_chain *out;
+	నిర్మాణం cert_chain *బహిర్గతం;
 
-	if (cert_chain_alloc(0, &out) != NSERROR_OK) {
-		return NULL;
+	ఒకవేళ (cert_chain_alloc(0, &బహిర్గతం) != NSERROR_OK) {
+		తిరిగి ఖాళీ;
 	}
 
-	return out;
+	తిరిగి బహిర్గతం;
 }
 
-static void
-curl_fetch_ssl_value_destroy(void *value)
+స్థిర శూన్య
+curl_fetch_ssl_విలువ_destroy(శూన్య *విలువ)
 {
-	struct cert_chain *chain = value;
-	if (cert_chain_free(chain) != NSERROR_OK) {
+	నిర్మాణం cert_chain *chain = విలువ;
+	ఒకవేళ (cert_chain_free(chain) != NSERROR_OK) {
 		NSLOG(netsurf, WARNING, "Problem freeing SSL certificate chain");
 	}
 }
 
-static hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_eq = curl_fetch_ssl_key_eq,
-	.key_hash = curl_fetch_ssl_key_hash,
-	.value_alloc = curl_fetch_ssl_value_alloc,
-	.value_destroy = curl_fetch_ssl_value_destroy,
+స్థిర hashmap_parameters_t curl_fetch_ssl_hashmap_parameters = {
+	.కీలకం_clone = (hashmap_కీలకం_clone_t)nsurl_ref,
+	.కీలకం_destroy = (hashmap_కీలకం_destroy_t)nsurl_unref,
+	.కీలకం_eq = curl_fetch_ssl_కీలకం_eq,
+	.కీలకం_hash = curl_fetch_ssl_కీలకం_hash,
+	.విలువ_alloc = curl_fetch_ssl_విలువ_alloc,
+	.విలువ_destroy = curl_fetch_ssl_విలువ_destroy,
 };
 
-static hashmap_t *curl_fetch_ssl_hashmap = NULL;
+స్థిర hashmap_t *curl_fetch_ssl_hashmap = ఖాళీ;
 
 /** SSL certificate info */
-struct cert_info {
+నిర్మాణం cert_info {
 	X509 *cert;		/**< Pointer to certificate */
-	long err;		/**< OpenSSL error code */
+	దీర్ఘ err;		/**< OpenSSL error code */
 };
 
-#if LIBCURL_VERSION_NUM >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
-#define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_XFERINFOFUNCTION
-#define NSCURLOPT_PROGRESS_DATA CURLOPT_XFERINFODATA
-#define NSCURL_PROGRESS_T curl_off_t
-#else
-#define NSCURLOPT_PROGRESS_FUNCTION CURLOPT_PROGRESSFUNCTION
-#define NSCURLOPT_PROGRESS_DATA CURLOPT_PROGRESSDATA
-#define NSCURL_PROGRESS_T double
-#endif
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x072000 /* 7.32.0 depricated CURLOPT_PROGRESSFUNCTION*/
+#నిర్వచించు NSCURLOPT_పురోగతి_FUNCTION CURLOPT_XFERINFOFUNCTION
+#నిర్వచించు NSCURLOPT_పురోగతి_దత్తాంశం CURLOPT_XFERINFODATA
+#నిర్వచించు NSCURL_పురోగతి_T curl_off_t
+#లేకపోతే
+#నిర్వచించు NSCURLOPT_పురోగతి_FUNCTION CURLOPT_PROGRESSFUNCTION
+#నిర్వచించు NSCURLOPT_పురోగతి_దత్తాంశం CURLOPT_PROGRESSDATA
+#నిర్వచించు NSCURL_పురోగతి_T ద్విగుణ
+#అయితే_ముగింపు
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
-#define NSCURL_POSTDATA_T curl_mime
-#define NSCURL_POSTDATA_CURLOPT CURLOPT_MIMEPOST
-#define NSCURL_POSTDATA_FREE(x) curl_mime_free(x)
-#else
-#define NSCURL_POSTDATA_T struct curl_httppost
-#define NSCURL_POSTDATA_CURLOPT CURLOPT_HTTPPOST
-#define NSCURL_POSTDATA_FREE(x) curl_formfree(x)
-#endif
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#నిర్వచించు NSCURL_POSTDATA_T curl_mime
+#నిర్వచించు NSCURL_POSTDATA_CURLOPT CURLOPT_MIMEPOST
+#నిర్వచించు NSCURL_POSTDATA_FREE(x) curl_mime_free(x)
+#లేకపోతే
+#నిర్వచించు NSCURL_POSTDATA_T నిర్మాణం curl_httppost
+#నిర్వచించు NSCURL_POSTDATA_CURLOPT CURLOPT_HTTPPOST
+#నిర్వచించు NSCURL_POSTDATA_FREE(x) curl_formfree(x)
+#అయితే_ముగింపు
 
 /** Information for a single fetch. */
-struct curl_fetch_info {
-	struct fetch *fetch_handle; /**< The fetch handle we're parented by. */
+నిర్మాణం curl_fetch_info {
+	నిర్మాణం fetch *fetch_handle; /**< The fetch handle we're parented by. */
 	CURL * curl_handle;	/**< cURL handle if being fetched, or 0. */
-	bool sent_ssl_chain;	/**< Have we tried to send the SSL chain */
-	bool had_headers;	/**< Headers have been processed. */
+	bool పంపిన_ssl_chain;	/**< Have we tried to send the SSL chain */
+	bool had_శీర్షికలు;	/**< Headers have been processed. */
 	bool abort;		/**< Abort requested. */
 	bool stopped;		/**< Download stopped on purpose. */
 	bool only_2xx;		/**< Only HTTP 2xx responses acceptable. */
 	bool downgrade_tls;	/**< Downgrade to TLS 1.2 */
 	nsurl *url;		/**< URL of this fetch. */
 	lwc_string *host;	/**< The hostname of this fetch. */
-	struct curl_slist *headers;	/**< List of request headers. */
-	char *location;		/**< Response Location header, or 0. */
-	unsigned long content_length;	/**< Response Content-Length, or 0. */
-	char *cookie_string;	/**< Cookie string for this fetch */
-	char *realm;		/**< HTTP Auth Realm */
-	struct fetch_postdata *postdata; /**< POST data */
+	నిర్మాణం curl_slist *శీర్షికలు;	/**< List of request headers. */
+	అక్షరం *location;		/**< Response Location header, or 0. */
+	గుర్తులేని దీర్ఘ content_నిడివి;	/**< Response Content-Length, or 0. */
+	అక్షరం *cookie_string;	/**< Cookie string for this fetch */
+	అక్షరం *realm;		/**< HTTP Auth Realm */
+	నిర్మాణం fetch_postdata *postdata; /**< POST data */
 	NSCURL_POSTDATA_T *curl_postdata; /**< POST data in curl representation */
 
-	long http_code; /**< HTTP result code from cURL. */
+	దీర్ఘ http_సంకేతం; /**< HTTP result code from cURL. */
 
-	uint64_t last_progress_update;	/**< Time of last progress update */
-	int cert_depth; /**< deepest certificate in use */
-	struct cert_info cert_data[MAX_CERT_DEPTH]; /**< HTTPS certificate data */
+	uint64_t చివరి_పురోగతి_update;	/**< Time of last progress update */
+	పూర్ణాంకం cert_లోతు; /**< deepest certificate in use */
+	నిర్మాణం cert_info cert_దత్తాంశం[MAX_CERT_లోతు]; /**< HTTPS certificate data */
 };
 
 /** curl handle cache entry */
-struct cache_handle {
+నిర్మాణం cache_handle {
 	CURL *handle; /**< The cached cURL handle */
 	lwc_string *host; /**< The host for which this handle is cached */
 
-	struct cache_handle *r_prev; /**< Previous cached handle in ring. */
-	struct cache_handle *r_next; /**< Next cached handle in ring. */
+	నిర్మాణం cache_handle *r_prev; /**< Previous cached handle in ring. */
+	నిర్మాణం cache_handle *r_తదుపరి; /**< Next cached handle in ring. */
 };
 
 /** Global cURL multi handle. */
 CURLM *fetch_curl_multi;
 
 /** Curl handle with default options set; not used for transfers. */
-static CURL *fetch_blank_curl;
+స్థిర CURL *fetch_blank_curl;
 
 /** Ring of cached handles */
-static struct cache_handle *curl_handle_ring = 0;
+స్థిర నిర్మాణం cache_handle *curl_handle_ring = 0;
 
 /** Count of how many schemes the curl fetcher is handling */
-static int curl_fetchers_registered = 0;
+స్థిర పూర్ణాంకం curl_fetchers_registered = 0;
 
 /** Flag for runtime detection of openssl usage */
-static bool curl_with_openssl;
+స్థిర bool curl_with_openssl;
 
 /** Error buffer for cURL. */
-static char fetch_error_buffer[CURL_ERROR_SIZE];
+స్థిర అక్షరం fetch_error_బఫరు[CURL_ERROR_కొలత];
 
 /** Proxy authentication details. */
-static char fetch_proxy_userpwd[100];
+స్థిర అక్షరం fetch_proxy_userpwd[100];
 
 /** Interlock to prevent initiation during callbacks */
-static bool inside_curl = false;
+స్థిర bool inside_curl = false;
 
 
 /**
  * Initialise a cURL fetcher.
  */
-static bool fetch_curl_initialise(lwc_string *scheme)
+స్థిర bool fetch_curl_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "Initialise cURL fetcher for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_దత్తాంశం(scheme));
 	curl_fetchers_registered++;
-	return true; /* Always succeeds */
+	తిరిగి true; /* Always succeeds */
 }
 
 
@@ -309,14 +309,14 @@ static bool fetch_curl_initialise(lwc_string *scheme)
  *
  * \param scheme The scheme to finalise.
  */
-static void fetch_curl_finalise(lwc_string *scheme)
+స్థిర శూన్య fetch_curl_finalise(lwc_string *scheme)
 {
-	struct cache_handle *h;
+	నిర్మాణం cache_handle *h;
 
 	curl_fetchers_registered--;
 	NSLOG(netsurf, INFO, "Finalise cURL fetcher %s",
-	      lwc_string_data(scheme));
-	if (curl_fetchers_registered == 0) {
+	      lwc_string_దత్తాంశం(scheme));
+	ఒకవేళ (curl_fetchers_registered == 0) {
 		CURLMcode codem;
 		/* All the fetchers have been finalised. */
 		NSLOG(netsurf, INFO,
@@ -325,7 +325,7 @@ static void fetch_curl_finalise(lwc_string *scheme)
 		curl_easy_cleanup(fetch_blank_curl);
 
 		codem = curl_multi_cleanup(fetch_curl_multi);
-		if (codem != CURLM_OK)
+		ఒకవేళ (codem != CURLM_OK)
 			NSLOG(netsurf, INFO,
 			      "curl_multi_cleanup failed: ignoring");
 
@@ -333,16 +333,16 @@ static void fetch_curl_finalise(lwc_string *scheme)
 
 		NSLOG(netsurf, DEBUG, "Cleaning up SSL cert chain hashmap");
 		hashmap_destroy(curl_fetch_ssl_hashmap);
-		curl_fetch_ssl_hashmap = NULL;
+		curl_fetch_ssl_hashmap = ఖాళీ;
 	}
 
 	/* Free anything remaining in the cached curl handle ring */
-	while (curl_handle_ring != NULL) {
+	అయితే (curl_handle_ring != ఖాళీ) {
 		h = curl_handle_ring;
 		RING_REMOVE(curl_handle_ring, h);
 		lwc_string_unref(h->host);
 		curl_easy_cleanup(h->handle);
-		free(h);
+		విడుదల(h);
 	}
 }
 
@@ -353,9 +353,9 @@ static void fetch_curl_finalise(lwc_string *scheme)
  * \param url The url to check.
  * \return true if the fetcher supports the url else false.
  */
-static bool fetch_curl_can_fetch(const nsurl *url)
+స్థిర bool fetch_curl_can_fetch(స్థిరరాశి nsurl *url)
 {
-	return nsurl_has_component(url, NSURL_HOST);
+	తిరిగి nsurl_has_component(url, NSURL_HOST);
 }
 
 
@@ -363,90 +363,90 @@ static bool fetch_curl_can_fetch(const nsurl *url)
 /**
  * allocate postdata
  */
-static struct fetch_postdata *
-fetch_curl_alloc_postdata(const char *post_urlenc,
-			  const struct fetch_multipart_data *post_multipart)
+స్థిర నిర్మాణం fetch_postdata *
+fetch_curl_alloc_postdata(స్థిరరాశి అక్షరం *post_urlenc,
+			  స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *post_multipart)
 {
-	struct fetch_postdata *postdata;
-	postdata = calloc(1, sizeof(struct fetch_postdata));
-	if (postdata != NULL) {
+	నిర్మాణం fetch_postdata *postdata;
+	postdata = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం fetch_postdata));
+	ఒకవేళ (postdata != ఖాళీ) {
 
-		if (post_urlenc) {
+		ఒకవేళ (post_urlenc) {
 			postdata->type = FETCH_POSTDATA_URLENC;
-			postdata->data.urlenc = strdup(post_urlenc);
-			if (postdata->data.urlenc == NULL) {
-				free(postdata);
-				postdata = NULL;
+			postdata->దత్తాంశం.urlenc = strdup(post_urlenc);
+			ఒకవేళ (postdata->దత్తాంశం.urlenc == ఖాళీ) {
+				విడుదల(postdata);
+				postdata = ఖాళీ;
 			}
-		} else if (post_multipart) {
+		} లేకపోతే ఒకవేళ (post_multipart) {
 			postdata->type = FETCH_POSTDATA_MULTIPART;
-			postdata->data.multipart = fetch_multipart_data_clone(post_multipart);
-			if (postdata->data.multipart == NULL) {
-				free(postdata);
-				postdata = NULL;
+			postdata->దత్తాంశం.multipart = fetch_multipart_దత్తాంశం_clone(post_multipart);
+			ఒకవేళ (postdata->దత్తాంశం.multipart == ఖాళీ) {
+				విడుదల(postdata);
+				postdata = ఖాళీ;
 			}
-		} else {
+		} లేకపోతే {
 			postdata->type = FETCH_POSTDATA_NONE;
 		}
 	}
-	return postdata;
+	తిరిగి postdata;
 }
 
 /**
  * free postdata
  */
-static void fetch_curl_free_postdata(struct fetch_postdata *postdata)
+స్థిర శూన్య fetch_curl_free_postdata(నిర్మాణం fetch_postdata *postdata)
 {
-	if (postdata != NULL) {
-		switch (postdata->type) {
-		case FETCH_POSTDATA_NONE:
-			break;
-		case FETCH_POSTDATA_URLENC:
-			free(postdata->data.urlenc);
-			break;
-		case FETCH_POSTDATA_MULTIPART:
-			fetch_multipart_data_destroy(postdata->data.multipart);
-			break;
+	ఒకవేళ (postdata != ఖాళీ) {
+		ఎంపిక (postdata->type) {
+		స్థితి FETCH_POSTDATA_NONE:
+			ఆపు;
+		స్థితి FETCH_POSTDATA_URLENC:
+			విడుదల(postdata->దత్తాంశం.urlenc);
+			ఆపు;
+		స్థితి FETCH_POSTDATA_MULTIPART:
+			fetch_multipart_దత్తాంశం_destroy(postdata->దత్తాంశం.multipart);
+			ఆపు;
 		}
 
-		free(postdata);
+		విడుదల(postdata);
 	}
 }
 
 /**
  *construct a new fetch structure
  */
-static struct curl_fetch_info *fetch_alloc(void)
+స్థిర నిర్మాణం curl_fetch_info *fetch_alloc(శూన్య)
 {
-	struct curl_fetch_info *fetch;
-	fetch = malloc(sizeof (*fetch));
-	if (fetch == NULL)
-		return NULL;
+	నిర్మాణం curl_fetch_info *fetch;
+	fetch = జ్ఞాపకం_ఇవ్వు(పరిమాణం (*fetch));
+	ఒకవేళ (fetch == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	fetch->curl_handle = NULL;
-	fetch->sent_ssl_chain = false;
-	fetch->had_headers = false;
+	fetch->curl_handle = ఖాళీ;
+	fetch->పంపిన_ssl_chain = false;
+	fetch->had_శీర్షికలు = false;
 	fetch->abort = false;
 	fetch->stopped = false;
 	fetch->only_2xx = false;
 	fetch->downgrade_tls = false;
-	fetch->headers = NULL;
-	fetch->url = NULL;
-	fetch->host = NULL;
-	fetch->location = NULL;
-	fetch->content_length = 0;
-	fetch->http_code = 0;
-	fetch->cookie_string = NULL;
-	fetch->realm = NULL;
-	fetch->last_progress_update = 0;
-	fetch->postdata = NULL;
-	fetch->curl_postdata = NULL;
+	fetch->శీర్షికలు = ఖాళీ;
+	fetch->url = ఖాళీ;
+	fetch->host = ఖాళీ;
+	fetch->location = ఖాళీ;
+	fetch->content_నిడివి = 0;
+	fetch->http_సంకేతం = 0;
+	fetch->cookie_string = ఖాళీ;
+	fetch->realm = ఖాళీ;
+	fetch->చివరి_పురోగతి_update = 0;
+	fetch->postdata = ఖాళీ;
+	fetch->curl_postdata = ఖాళీ;
 
 	/* Clear certificate chain data */
-	memset(fetch->cert_data, 0, sizeof(fetch->cert_data));
-	fetch->cert_depth = -1;
+	memset(fetch->cert_దత్తాంశం, 0, పరిమాణం(fetch->cert_దత్తాంశం));
+	fetch->cert_లోతు = -1;
 
-	return fetch;
+	తిరిగి fetch;
 }
 
 /**
@@ -470,216 +470,216 @@ static struct curl_fetch_info *fetch_alloc(void)
  * Some private data can be passed as the last parameter to fetch_start, and
  * callbacks will contain this.
  */
-static void *
-fetch_curl_setup(struct fetch *parent_fetch,
+స్థిర శూన్య *
+fetch_curl_అమరిక(నిర్మాణం fetch *మాతృ_fetch,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 స్థిరరాశి అక్షరం *post_urlenc,
+		 స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *post_multipart,
+		 స్థిరరాశి అక్షరం **శీర్షికలు)
 {
-	struct curl_fetch_info *fetch;
-	struct curl_slist *slist;
-	int i;
+	నిర్మాణం curl_fetch_info *fetch;
+	నిర్మాణం curl_slist *slist;
+	పూర్ణాంకం i;
 
 	fetch = fetch_alloc();
-	if (fetch == NULL)
-		return NULL;
+	ఒకవేళ (fetch == ఖాళీ)
+		తిరిగి ఖాళీ;
 
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", fetch, nsurl_access(url));
 
 	fetch->only_2xx = only_2xx;
 	fetch->downgrade_tls = downgrade_tls;
-	fetch->fetch_handle = parent_fetch;
+	fetch->fetch_handle = మాతృ_fetch;
 	fetch->url = nsurl_ref(url);
 	fetch->host = nsurl_get_component(url, NSURL_HOST);
-	if (fetch->host == NULL) {
-		goto failed;
+	ఒకవేళ (fetch->host == ఖాళీ) {
+		వెళ్ళు failed;
 	}
 	fetch->postdata = fetch_curl_alloc_postdata(post_urlenc, post_multipart);
-	if (fetch->postdata == NULL) {
-		goto failed;
+	ఒకవేళ (fetch->postdata == ఖాళీ) {
+		వెళ్ళు failed;
 	}
 
-#define APPEND(list, value) \
-	slist = curl_slist_append(list, value);		\
-	if (slist == NULL)				\
-		goto failed;				\
+#నిర్వచించు APPEND(list, విలువ) \
+	slist = curl_slist_append(list, విలువ);		\
+	ఒకవేళ (slist == ఖాళీ)				\
+		వెళ్ళు failed;				\
 	list = slist;
 
 	/* remove curl default headers */
-	APPEND(fetch->headers, "Pragma:");
+	APPEND(fetch->శీర్షికలు, "Pragma:");
 
 	/* when doing a POST libcurl sends Expect: 100-continue" by default
 	 * which fails with lighttpd, so disable it (see bug 1429054) */
-	APPEND(fetch->headers, "Expect:");
+	APPEND(fetch->శీర్షికలు, "Expect:");
 
-	if ((nsoption_charp(accept_language) != NULL) &&
+	ఒకవేళ ((nsoption_charp(accept_language) != ఖాళీ) &&
 	    (nsoption_charp(accept_language)[0] != '\0')) {
-		char s[80];
-		snprintf(s, sizeof s, "Accept-Language: %s, *;q=0.1",
+		అక్షరం s[80];
+		snprintf(s, పరిమాణం s, "Accept-Language: %s, *;q=0.1",
 			 nsoption_charp(accept_language));
-		s[sizeof s - 1] = 0;
-		APPEND(fetch->headers, s);
+		s[పరిమాణం s - 1] = 0;
+		APPEND(fetch->శీర్షికలు, s);
 	}
 
-	if (nsoption_charp(accept_charset) != NULL &&
+	ఒకవేళ (nsoption_charp(accept_charset) != ఖాళీ &&
 	    nsoption_charp(accept_charset)[0] != '\0') {
-		char s[80];
-		snprintf(s, sizeof s, "Accept-Charset: %s, *;q=0.1",
+		అక్షరం s[80];
+		snprintf(s, పరిమాణం s, "Accept-Charset: %s, *;q=0.1",
 			 nsoption_charp(accept_charset));
-		s[sizeof s - 1] = 0;
-		APPEND(fetch->headers, s);
+		s[పరిమాణం s - 1] = 0;
+		APPEND(fetch->శీర్షికలు, s);
 	}
 
-	if (nsoption_bool(do_not_track) == true) {
-		APPEND(fetch->headers, "DNT: 1");
+	ఒకవేళ (nsoption_bool(do_not_track) == true) {
+		APPEND(fetch->శీర్షికలు, "DNT: 1");
 	}
 
 	/* And add any headers specified by the caller */
-	for (i = 0; headers[i] != NULL; i++) {
-		APPEND(fetch->headers, headers[i]);
+	కొరకు (i = 0; శీర్షికలు[i] != ఖాళీ; i++) {
+		APPEND(fetch->శీర్షికలు, శీర్షికలు[i]);
 	}
 
-	return fetch;
+	తిరిగి fetch;
 
-#undef APPEND
+#నిర్వచనం_రద్దు APPEND
 
 failed:
 	lwc_string_unref(fetch->host);
 	nsurl_unref(fetch->url);
 	fetch_curl_free_postdata(fetch->postdata);
-	curl_slist_free_all(fetch->headers);
-	free(fetch);
-	return NULL;
+	curl_slist_free_all(fetch->శీర్షికలు);
+	విడుదల(fetch);
+	తిరిగి ఖాళీ;
 }
 
 
-#ifdef WITH_OPENSSL
+#నిర్వచితమైతే WITH_OPENSSL
 
 /**
  * Retrieve the ssl cert chain for the fetch, creating a blank one if needed
  */
-static struct cert_chain *
-fetch_curl_get_cached_chain(struct curl_fetch_info *f)
+స్థిర నిర్మాణం cert_chain *
+fetch_curl_get_cached_chain(నిర్మాణం curl_fetch_info *f)
 {
-	struct cert_chain *chain;
+	నిర్మాణం cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
-	if (chain == NULL) {
-		chain = hashmap_insert(curl_fetch_ssl_hashmap, f->url);
+	ఒకవేళ (chain == ఖాళీ) {
+		chain = hashmap_చొప్పించు(curl_fetch_ssl_hashmap, f->url);
 	}
 
-	return chain;
+	తిరిగి chain;
 }
 
 /**
  * Report the certificate information in the fetch to the users
  */
-static void
-fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
+స్థిర శూన్య
+fetch_curl_store_certs_లోపల_cache(నిర్మాణం curl_fetch_info *f)
 {
-	size_t depth;
+	size_t లోతు;
 	BIO *mem;
-	BUF_MEM *buf[MAX_CERT_DEPTH];
-	struct cert_chain chain, *cached_chain;
-	struct cert_info *certs;
+	BUF_MEM *buf[MAX_CERT_లోతు];
+	నిర్మాణం cert_chain chain, *cached_chain;
+	నిర్మాణం cert_info *certs;
 
-	memset(&chain, 0, sizeof(chain));
+	memset(&chain, 0, పరిమాణం(chain));
 
-	certs = f->cert_data;
-	chain.depth = f->cert_depth + 1; /* 0 indexed certificate depth */
+	certs = f->cert_దత్తాంశం;
+	chain.లోతు = f->cert_లోతు + 1; /* 0 indexed certificate depth */
 
-	for (depth = 0; depth < chain.depth; depth++) {
-		if (certs[depth].cert == NULL) {
+	కొరకు (లోతు = 0; లోతు < chain.లోతు; లోతు++) {
+		ఒకవేళ (certs[లోతు].cert == ఖాళీ) {
 			/* This certificate is missing, skip it */
-			chain.certs[depth].err = SSL_CERT_ERR_CERT_MISSING;
-			continue;
+			chain.certs[లోతు].err = SSL_CERT_ERR_CERT_MISSING;
+			కొనసాగు;
 		}
 
 		/* error code (if any) */
-		switch (certs[depth].err) {
-		case X509_V_OK:
-			chain.certs[depth].err = SSL_CERT_ERR_OK;
-			break;
+		ఎంపిక (certs[లోతు].err) {
+		స్థితి X509_V_OK:
+			chain.certs[లోతు].err = SSL_CERT_ERR_OK;
+			ఆపు;
 
-		case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+		స్థితి X509_V_ERR_UNABLE_గమ్యం_GET_ISSUER_CERT:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
-			chain.certs[depth].err = SSL_CERT_ERR_BAD_ISSUER;
-			break;
+		స్థితి X509_V_ERR_UNABLE_గమ్యం_DECODE_ISSUER_ప్రజా_కీలకం:
+			chain.certs[లోతు].err = SSL_CERT_ERR_BAD_ISSUER;
+			ఆపు;
 
-		case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
+		స్థితి X509_V_ERR_UNABLE_గమ్యం_DECRYPT_CERT_SIGNATURE:
 			/* fallthrough */
-		case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
+		స్థితి X509_V_ERR_UNABLE_గమ్యం_DECRYPT_CRL_SIGNATURE:
 			/* fallthrough */
-		case X509_V_ERR_CERT_SIGNATURE_FAILURE:
+		స్థితి X509_V_ERR_CERT_SIGNATURE_FAILURE:
 			/* fallthrough */
-		case X509_V_ERR_CRL_SIGNATURE_FAILURE:
-			chain.certs[depth].err = SSL_CERT_ERR_BAD_SIG;
-			break;
+		స్థితి X509_V_ERR_CRL_SIGNATURE_FAILURE:
+			chain.certs[లోతు].err = SSL_CERT_ERR_BAD_SIG;
+			ఆపు;
 
-		case X509_V_ERR_CERT_NOT_YET_VALID:
+		స్థితి X509_V_ERR_CERT_NOT_YET_VALID:
 			/* fallthrough */
-		case X509_V_ERR_CRL_NOT_YET_VALID:
-			chain.certs[depth].err = SSL_CERT_ERR_TOO_YOUNG;
-			break;
+		స్థితి X509_V_ERR_CRL_NOT_YET_VALID:
+			chain.certs[లోతు].err = SSL_CERT_ERR_TOO_YOUNG;
+			ఆపు;
 
-		case X509_V_ERR_CERT_HAS_EXPIRED:
+		స్థితి X509_V_ERR_CERT_HAS_EXPIRED:
 			/* fallthrough */
-		case X509_V_ERR_CRL_HAS_EXPIRED:
-			chain.certs[depth].err = SSL_CERT_ERR_TOO_OLD;
-			break;
+		స్థితి X509_V_ERR_CRL_HAS_EXPIRED:
+			chain.certs[లోతు].err = SSL_CERT_ERR_TOO_OLD;
+			ఆపు;
 
-		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-			chain.certs[depth].err = SSL_CERT_ERR_SELF_SIGNED;
-			break;
+		స్థితి X509_V_ERR_లోతు_ZERO_SELF_SIGNED_CERT:
+			chain.certs[లోతు].err = SSL_CERT_ERR_SELF_SIGNED;
+			ఆపు;
 
-		case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
-			chain.certs[depth].err = SSL_CERT_ERR_CHAIN_SELF_SIGNED;
-			break;
+		స్థితి X509_V_ERR_SELF_SIGNED_CERT_లోపల_CHAIN:
+			chain.certs[లోతు].err = SSL_CERT_ERR_CHAIN_SELF_SIGNED;
+			ఆపు;
 
-		case X509_V_ERR_CERT_REVOKED:
-			chain.certs[depth].err = SSL_CERT_ERR_REVOKED;
-			break;
+		స్థితి X509_V_ERR_CERT_REVOKED:
+			chain.certs[లోతు].err = SSL_CERT_ERR_REVOKED;
+			ఆపు;
 
-		case X509_V_ERR_HOSTNAME_MISMATCH:
-			chain.certs[depth].err = SSL_CERT_ERR_HOSTNAME_MISMATCH;
-			break;
+		స్థితి X509_V_ERR_HOSTNAME_MISMATCH:
+			chain.certs[లోతు].err = SSL_CERT_ERR_HOSTNAME_MISMATCH;
+			ఆపు;
 
-		default:
-			chain.certs[depth].err = SSL_CERT_ERR_UNKNOWN;
-			break;
+		అప్రమేయ:
+			chain.certs[లోతు].err = SSL_CERT_ERR_UNKNOWN;
+			ఆపు;
 		}
 
 		/*
 		 * get certificate in Distinguished Encoding Rules (DER) format.
 		 */
 		mem = BIO_new(BIO_s_mem());
-		i2d_X509_bio(mem, certs[depth].cert);
-		BIO_get_mem_ptr(mem, &buf[depth]);
-		(void) BIO_set_close(mem, BIO_NOCLOSE);
+		i2d_X509_bio(mem, certs[లోతు].cert);
+		BIO_get_mem_ptr(mem, &buf[లోతు]);
+		(శూన్య) BIO_సమితి_close(mem, BIO_NOCLOSE);
 		BIO_free(mem);
 
-		chain.certs[depth].der = (uint8_t *)buf[depth]->data;
-		chain.certs[depth].der_length = buf[depth]->length;
+		chain.certs[లోతు].der = (uint8_t *)buf[లోతు]->దత్తాంశం;
+		chain.certs[లోతు].der_నిడివి = buf[లోతు]->నిడివి;
 	}
 
 	/* Now dup that chain into the cache */
 	cached_chain = fetch_curl_get_cached_chain(f);
-	if (cert_chain_dup_into(&chain, cached_chain) != NSERROR_OK) {
+	ఒకవేళ (cert_chain_dup_into(&chain, cached_chain) != NSERROR_OK) {
 		/* Something went wrong storing the chain, give up */
 		hashmap_remove(curl_fetch_ssl_hashmap, f->url);
 	}
 
 	/* release the openssl memory buffer */
-	for (depth = 0; depth < chain.depth; depth++) {
-		if (chain.certs[depth].err == SSL_CERT_ERR_CERT_MISSING) {
-			continue;
+	కొరకు (లోతు = 0; లోతు < chain.లోతు; లోతు++) {
+		ఒకవేళ (chain.certs[లోతు].err == SSL_CERT_ERR_CERT_MISSING) {
+			కొనసాగు;
 		}
-		if (buf[depth] != NULL) {
-			BUF_MEM_free(buf[depth]);
+		ఒకవేళ (buf[లోతు] != ఖాళీ) {
+			BUF_MEM_free(buf[లోతు]);
 		}
 	}
 }
@@ -703,51 +703,51 @@ fetch_curl_store_certs_in_cache(struct curl_fetch_info *f)
  * \return 1 to indicate verification should continue and 0 to indicate
  *          verification should stop.
  */
-static int
-fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
+స్థిర పూర్ణాంకం
+fetch_curl_verify_callback(పూర్ణాంకం verify_ok, X509_STORE_CTX *x509_ctx)
 {
-	int depth;
-	struct curl_fetch_info *fetch;
+	పూర్ణాంకం లోతు;
+	నిర్మాణం curl_fetch_info *fetch;
 
-	depth = X509_STORE_CTX_get_error_depth(x509_ctx);
-	fetch = X509_STORE_CTX_get_app_data(x509_ctx);
+	లోతు = X509_STORE_CTX_get_error_లోతు(x509_ctx);
+	fetch = X509_STORE_CTX_get_app_దత్తాంశం(x509_ctx);
 
 	/* certificate chain is excessively deep so fail verification */
-	if (depth >= MAX_CERT_DEPTH) {
-		X509_STORE_CTX_set_error(x509_ctx,
+	ఒకవేళ (లోతు >= MAX_CERT_లోతు) {
+		X509_STORE_CTX_సమితి_error(x509_ctx,
 					 X509_V_ERR_CERT_CHAIN_TOO_LONG);
-		return 0;
+		తిరిగి 0;
 	}
 
 	/* record the max depth */
-	if (depth > fetch->cert_depth) {
-		fetch->cert_depth = depth;
+	ఒకవేళ (లోతు > fetch->cert_లోతు) {
+		fetch->cert_లోతు = లోతు;
 	}
 
 	/* save the certificate by incrementing the reference count and
 	 * keeping a pointer.
 	 */
-	if (!fetch->cert_data[depth].cert) {
-		fetch->cert_data[depth].cert = X509_STORE_CTX_get_current_cert(x509_ctx);
-		X509_up_ref(fetch->cert_data[depth].cert);
-		fetch->cert_data[depth].err = X509_STORE_CTX_get_error(x509_ctx);
+	ఒకవేళ (!fetch->cert_దత్తాంశం[లోతు].cert) {
+		fetch->cert_దత్తాంశం[లోతు].cert = X509_STORE_CTX_get_current_cert(x509_ctx);
+		X509_పైకి_ref(fetch->cert_దత్తాంశం[లోతు].cert);
+		fetch->cert_దత్తాంశం[లోతు].err = X509_STORE_CTX_get_error(x509_ctx);
 	}
 
 	/* allow certificate chain to be completed */
-	if (depth > 0) {
+	ఒకవేళ (లోతు > 0) {
 		verify_ok = 1;
-	} else {
+	} లేకపోతే {
 		/* search for deeper certificates in the chain with errors */
-		for (depth = fetch->cert_depth; depth > 0; depth--) {
-			if (fetch->cert_data[depth].err != 0) {
+		కొరకు (లోతు = fetch->cert_లోతు; లోతు > 0; లోతు--) {
+			ఒకవేళ (fetch->cert_దత్తాంశం[లోతు].err != 0) {
 				/* error in previous certificate so fail verification */
 				verify_ok = 0;
-				X509_STORE_CTX_set_error(x509_ctx, fetch->cert_data[depth].err);
+				X509_STORE_CTX_సమితి_error(x509_ctx, fetch->cert_దత్తాంశం[లోతు].err);
 			}
 		}
 	}
 
-	return verify_ok;
+	తిరిగి verify_ok;
 }
 
 
@@ -761,33 +761,33 @@ fetch_curl_verify_callback(int verify_ok, X509_STORE_CTX *x509_ctx)
  * \param parm The fetch context.
  * \return 1 to indicate verification success and 0 to indicate verification failure.
  */
-static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
+స్థిర పూర్ణాంకం fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, శూన్య *parm)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *) parm;
-	int ok;
+	నిర్మాణం curl_fetch_info *f = (నిర్మాణం curl_fetch_info *) parm;
+	పూర్ణాంకం ok;
 	X509_VERIFY_PARAM *vparam;
 
 	/* Configure the verification parameters to include hostname */
 	vparam = X509_STORE_CTX_get0_param(x509_ctx);
-	X509_VERIFY_PARAM_set_hostflags(vparam, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
+	X509_VERIFY_PARAM_సమితి_hostflags(vparam, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
 
 	ok = X509_VERIFY_PARAM_set1_host(vparam,
-					 lwc_string_data(f->host),
-					 lwc_string_length(f->host));
+					 lwc_string_దత్తాంశం(f->host),
+					 lwc_string_నిడివి(f->host));
 
 	/* Store fetch struct in context for verify callback */
-	if (ok) {
-		ok = X509_STORE_CTX_set_app_data(x509_ctx, parm);
+	ఒకవేళ (ok) {
+		ok = X509_STORE_CTX_సమితి_app_దత్తాంశం(x509_ctx, parm);
 	}
 
 	/* verify the certificate chain using standard call */
-	if (ok) {
+	ఒకవేళ (ok) {
 		ok = X509_verify_cert(x509_ctx);
 	}
 
-	fetch_curl_store_certs_in_cache(f);
+	fetch_curl_store_certs_లోపల_cache(f);
 
-	return ok;
+	తిరిగి ok;
 }
 
 
@@ -799,118 +799,118 @@ static int fetch_curl_cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
  * \param parm The callback context.
  * \return A curl result code.
  */
-static CURLcode
-fetch_curl_sslctxfun(CURL *curl_handle, void *_sslctx, void *parm)
+స్థిర CURLcode
+fetch_curl_sslctxfun(CURL *curl_handle, శూన్య *_sslctx, శూన్య *parm)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *) parm;
+	నిర్మాణం curl_fetch_info *f = (నిర్మాణం curl_fetch_info *) parm;
 	SSL_CTX *sslctx = _sslctx;
-	long options = SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 |
+	దీర్ఘ options = SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 |
 			SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1;
 
 	/* set verify callback for each certificate in chain */
-	SSL_CTX_set_verify(sslctx, SSL_VERIFY_PEER, fetch_curl_verify_callback);
+	SSL_CTX_సమితి_verify(sslctx, SSL_VERIFY_PEER, fetch_curl_verify_callback);
 
 	/* set callback used to verify certificate chain */
-	SSL_CTX_set_cert_verify_callback(sslctx,
+	SSL_CTX_సమితి_cert_verify_callback(sslctx,
 					 fetch_curl_cert_verify_callback,
 					 parm);
 
-	if (f->downgrade_tls) {
+	ఒకవేళ (f->downgrade_tls) {
 		/* Disable TLS 1.3 if the server can't cope with it */
-#ifdef SSL_OP_NO_TLSv1_3
+#నిర్వచితమైతే SSL_OP_NO_TLSv1_3
 		options |= SSL_OP_NO_TLSv1_3;
-#endif
-#ifdef SSL_MODE_SEND_FALLBACK_SCSV
+#అయితే_ముగింపు
+#నిర్వచితమైతే SSL_బహుళకం_SEND_FALLBACK_SCSV
 		/* Ensure server rejects the connection if downgraded too far */
-		SSL_CTX_set_mode(sslctx, SSL_MODE_SEND_FALLBACK_SCSV);
-#endif
+		SSL_CTX_సమితి_బహుళకం(sslctx, SSL_బహుళకం_SEND_FALLBACK_SCSV);
+#అయితే_ముగింపు
 	}
 
-	SSL_CTX_set_options(sslctx, options);
+	SSL_CTX_సమితి_options(sslctx, options);
 
-#ifdef SSL_OP_NO_TICKET
+#నిర్వచితమైతే SSL_OP_NO_TICKET
 	SSL_CTX_clear_options(sslctx, SSL_OP_NO_TICKET);
-#endif
+#అయితే_ముగింపు
 
-	return CURLE_OK;
+	తిరిగి CURLE_OK;
 }
 
 
-#endif /* WITH_OPENSSL */
+#అయితే_ముగింపు /* WITH_OPENSSL */
 
 
 /**
  * Report the certificate information in the fetch to the users
  */
-static void
-fetch_curl_report_certs_upstream(struct curl_fetch_info *f)
+స్థిర శూన్య
+fetch_curl_report_certs_upstream(నిర్మాణం curl_fetch_info *f)
 {
-	fetch_msg msg;
-	struct cert_chain *chain;
+	fetch_సందేశం సందేశం;
+	నిర్మాణం cert_chain *chain;
 
 	chain = hashmap_lookup(curl_fetch_ssl_hashmap, f->url);
 
-	if (chain != NULL) {
-		msg.type = FETCH_CERTS;
-		msg.data.chain = chain;
+	ఒకవేళ (chain != ఖాళీ) {
+		సందేశం.type = FETCH_CERTS;
+		సందేశం.దత్తాంశం.chain = chain;
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&సందేశం, f->fetch_handle);
 	}
 
-	f->sent_ssl_chain = true;
+	f->పంపిన_ssl_chain = true;
 }
 
-#if LIBCURL_VERSION_NUM >= 0x073800 /* 7.56.0 depricated curl_formadd */
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x073800 /* 7.56.0 depricated curl_formadd */
 
 /**
  * curl mime data context
  */
-struct curl_mime_ctx {
-	char *buffer;
-	curl_off_t size;
+నిర్మాణం curl_mime_ctx {
+	అక్షరం *బఫరు;
+	curl_off_t కొలత;
 	curl_off_t position;
 };
 
-static size_t mime_data_read_callback(char *buffer, size_t size, size_t nitems, void *arg)
+స్థిర size_t mime_దత్తాంశం_read_callback(అక్షరం *బఫరు, size_t కొలత, size_t nitems, శూన్య *arg)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
-	curl_off_t sz = mctx->size - mctx->position;
+	నిర్మాణం curl_mime_ctx *mctx = (నిర్మాణం curl_mime_ctx *) arg;
+	curl_off_t sz = mctx->కొలత - mctx->position;
 
-	nitems *= size;
-	if(sz > (curl_off_t)nitems) {
+	nitems *= కొలత;
+	ఒకవేళ(sz > (curl_off_t)nitems) {
 		sz = nitems;
 	}
-	if(sz) {
-		memcpy(buffer, mctx->buffer + mctx->position, sz);
+	ఒకవేళ(sz) {
+		జ్ఞాపకం_నకలు(బఫరు, mctx->బఫరు + mctx->position, sz);
 	}
 	mctx->position += sz;
-	return sz;
+	తిరిగి sz;
 }
 
-static int mime_data_seek_callback(void *arg, curl_off_t offset, int origin)
+స్థిర పూర్ణాంకం mime_దత్తాంశం_seek_callback(శూన్య *arg, curl_off_t స్థానభ్రంశం, పూర్ణాంకం origin)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
+	నిర్మాణం curl_mime_ctx *mctx = (నిర్మాణం curl_mime_ctx *) arg;
 
-	switch(origin) {
-	case SEEK_END:
-		offset += mctx->size;
-		break;
-	case SEEK_CUR:
-		offset += mctx->position;
-		break;
+	ఎంపిక(origin) {
+	స్థితి SEEK_END:
+		స్థానభ్రంశం += mctx->కొలత;
+		ఆపు;
+	స్థితి SEEK_CUR:
+		స్థానభ్రంశం += mctx->position;
+		ఆపు;
 	}
 
-	if(offset < 0) {
-		return CURL_SEEKFUNC_FAIL;
+	ఒకవేళ(స్థానభ్రంశం < 0) {
+		తిరిగి CURL_SEEKFUNC_FAIL;
 	}
-	mctx->position = offset;
-	return CURL_SEEKFUNC_OK;
+	mctx->position = స్థానభ్రంశం;
+	తిరిగి CURL_SEEKFUNC_OK;
 }
 
-static void mime_data_free_callback(void *arg)
+స్థిర శూన్య mime_దత్తాంశం_free_callback(శూన్య *arg)
 {
-	struct curl_mime_ctx *mctx = (struct curl_mime_ctx *) arg;
-	free(mctx);
+	నిర్మాణం curl_mime_ctx *mctx = (నిర్మాణం curl_mime_ctx *) arg;
+	విడుదల(mctx);
 }
 
 /**
@@ -919,241 +919,241 @@ static void mime_data_free_callback(void *arg)
  * \param chandle curl fetch handle.
  * \param multipart limked list of struct ::fetch_multipart forming post data.
  */
-static curl_mime *
+స్థిర curl_mime *
 fetch_curl_postdata_convert(CURL *chandle,
-			    const struct fetch_multipart_data *multipart)
+			    స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *multipart)
 {
 	curl_mime *cmime;
 	curl_mimepart *part;
-	CURLcode code = CURLE_OK;
-	size_t value_len;
+	CURLcode సంకేతం_2 = CURLE_OK;
+	size_t విలువ_len;
 
 	cmime = curl_mime_init(chandle);
-	if (cmime == NULL) {
+	ఒకవేళ (cmime == ఖాళీ) {
 		NSLOG(netsurf, WARNING, "postdata conversion failed to curl mime context");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	/* iterate post data */
-	for (; multipart != NULL; multipart = multipart->next) {
+	కొరకు (; multipart != ఖాళీ; multipart = multipart->తదుపరి) {
 		part = curl_mime_addpart(cmime);
-		if (part == NULL) {
-			goto convert_failed;
+		ఒకవేళ (part == ఖాళీ) {
+			వెళ్ళు convert_failed;
 		}
 
-		code = curl_mime_name(part, multipart->name);
-		if (code != CURLE_OK) {
-			goto convert_failed;
+		సంకేతం_2 = curl_mime_name(part, multipart->name);
+		ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+			వెళ్ళు convert_failed;
 		}
 
-		value_len = strlen(multipart->value);
+		విలువ_len = అక్షరశ్రేణి_పొడవు(multipart->విలువ);
 
-		if (multipart->file && value_len==0) {
+		ఒకవేళ (multipart->file && విలువ_len==0) {
 			/* file entries with no filename require special handling */
-			code=curl_mime_data(part, multipart->value, value_len);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			సంకేతం_2=curl_mime_దత్తాంశం(part, multipart->విలువ, విలువ_len);
+			ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+				వెళ్ళు convert_failed;
 			}
 
-			code = curl_mime_filename(part, "");
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			సంకేతం_2 = curl_mime_filename(part, "");
+			ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+				వెళ్ళు convert_failed;
 			}
 
-			code = curl_mime_type(part, "application/octet-stream");
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			సంకేతం_2 = curl_mime_type(part, "application/octet-stream");
+			ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+				వెళ్ళు convert_failed;
 			}
 
-		} else if(multipart->file) {
+		} లేకపోతే ఒకవేళ(multipart->file) {
 			/* file entry */
 			nserror ret;
-			char *leafname = NULL;
-			char *mimetype = NULL;
+			అక్షరం *leafname = ఖాళీ;
+			అక్షరం *mimetype = ఖాళీ;
 
-			code = curl_mime_filedata(part, multipart->rawfile);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			సంకేతం_2 = curl_mime_filedata(part, multipart->rawfile);
+			ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+				వెళ్ళు convert_failed;
 			}
 
-			ret = guit->file->basename(multipart->value, &leafname, NULL);
-			if (ret != NSERROR_OK) {
-				goto convert_failed;
+			ret = guit->file->basename(multipart->విలువ, &leafname, ఖాళీ);
+			ఒకవేళ (ret != NSERROR_OK) {
+				వెళ్ళు convert_failed;
 			}
-			code = curl_mime_filename(part, leafname);
-			free(leafname);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			సంకేతం_2 = curl_mime_filename(part, leafname);
+			విడుదల(leafname);
+			ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+				వెళ్ళు convert_failed;
 			}
 
-			mimetype = guit->fetch->mimetype(multipart->value);
-			if (mimetype == NULL) {
+			mimetype = guit->fetch->mimetype(multipart->విలువ);
+			ఒకవేళ (mimetype == ఖాళీ) {
 				mimetype=strdup("text/plain");
 			}
-			if (mimetype == NULL) {
-				goto convert_failed;
+			ఒకవేళ (mimetype == ఖాళీ) {
+				వెళ్ళు convert_failed;
 			}
-			code = curl_mime_type(part, mimetype);
-			free(mimetype);
-			if (code != CURLE_OK) {
-				goto convert_failed;
+			సంకేతం_2 = curl_mime_type(part, mimetype);
+			విడుదల(mimetype);
+			ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+				వెళ్ళు convert_failed;
 			}
 
-		} else {
+		} లేకపోతే {
 			/* make the curl mime reference the existing multipart
 			 * data which requires use of a callback and context.
 			 */
-			struct curl_mime_ctx *cb_ctx;
-			cb_ctx = malloc(sizeof(struct curl_mime_ctx));
-			if (cb_ctx == NULL) {
-				goto convert_failed;
+			నిర్మాణం curl_mime_ctx *cb_ctx;
+			cb_ctx = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం curl_mime_ctx));
+			ఒకవేళ (cb_ctx == ఖాళీ) {
+				వెళ్ళు convert_failed;
 			}
-			cb_ctx->buffer = multipart->value;
-			cb_ctx->size = value_len;
+			cb_ctx->బఫరు = multipart->విలువ;
+			cb_ctx->కొలత = విలువ_len;
 			cb_ctx->position = 0;
-			code = curl_mime_data_cb(part,
-						 value_len,
-						 mime_data_read_callback,
-						 mime_data_seek_callback,
-						 mime_data_free_callback,
+			సంకేతం_2 = curl_mime_దత్తాంశం_cb(part,
+						 విలువ_len,
+						 mime_దత్తాంశం_read_callback,
+						 mime_దత్తాంశం_seek_callback,
+						 mime_దత్తాంశం_free_callback,
 						 cb_ctx);
-			if (code != CURLE_OK) {
-				free(cb_ctx);
-				goto convert_failed;
+			ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+				విడుదల(cb_ctx);
+				వెళ్ళు convert_failed;
 			}
 		}
 	}
 
-	return cmime;
+	తిరిగి cmime;
 
 convert_failed:
-	NSLOG(netsurf, WARNING, "postdata conversion failed with curl code: %d", code);
+	NSLOG(netsurf, WARNING, "postdata conversion failed with curl code: %d", సంకేతం_2);
 	curl_mime_free(cmime);
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-#else /* LIBCURL_VERSION_NUM >= 0x073800 */
+#లేకపోతే /* LIBCURL_VERSION_NUM >= 0x073800 */
 
 /**
  * Convert a list of struct ::fetch_multipart_data to a list of
  * struct curl_httppost for libcurl.
  */
-static struct curl_httppost *
+స్థిర నిర్మాణం curl_httppost *
 fetch_curl_postdata_convert(CURL *chandle,
-			    const struct fetch_multipart_data *control)
+			    స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *control)
 {
-	struct curl_httppost *post = NULL, *last = NULL;
-	CURLFORMcode code;
+	నిర్మాణం curl_httppost *post = ఖాళీ, *చివరి = ఖాళీ;
+	CURLFORMcode సంకేతం_2;
 	nserror ret;
 
-	for (; control; control = control->next) {
-		if (control->file) {
-			char *leafname = NULL;
-			ret = guit->file->basename(control->value, &leafname, NULL);
-			if (ret != NSERROR_OK) {
-				continue;
+	కొరకు (; control; control = control->తదుపరి) {
+		ఒకవేళ (control->file) {
+			అక్షరం *leafname = ఖాళీ;
+			ret = guit->file->basename(control->విలువ, &leafname, ఖాళీ);
+			ఒకవేళ (ret != NSERROR_OK) {
+				కొనసాగు;
 			}
 
 			/* We have to special case filenames of "", so curl
 			 * a) actually attempts the fetch and
 			 * b) doesn't attempt to open the file ""
 			 */
-			if (control->value[0] == '\0') {
+			ఒకవేళ (control->విలువ[0] == '\0') {
 				/* dummy buffer - needs to be static so
 				 * pointer's still valid when we go out
 				 * of scope (not that libcurl should be
 				 * attempting to access it, of course).
 				 */
-				static char buf;
+				స్థిర అక్షరం buf;
 
-				code = curl_formadd(&post, &last,
+				సంకేతం_2 = curl_formadd(&post, &చివరి,
 						    CURLFORM_COPYNAME, control->name,
-						    CURLFORM_BUFFER, control->value,
+						    CURLFORM_బఫరు, control->విలువ,
 						    /* needed, as basename("") == "." */
 						    CURLFORM_FILENAME, "",
 						    CURLFORM_BUFFERPTR, &buf,
 						    CURLFORM_BUFFERLENGTH, 0,
 						    CURLFORM_CONTENTTYPE,
 						    "application/octet-stream",
-						    CURLFORM_END);
-				if (code != CURL_FORMADD_OK)
+						    CURLFORM_చివర);
+				ఒకవేళ (సంకేతం_2 != CURL_FORMADD_OK)
 					NSLOG(netsurf, INFO,
-					      "curl_formadd: %d (%s)", code,
+					      "curl_formadd: %d (%s)", సంకేతం_2,
 					      control->name);
-			} else {
-				char *mimetype = guit->fetch->mimetype(control->value);
-				code = curl_formadd(&post, &last,
+			} లేకపోతే {
+				అక్షరం *mimetype = guit->fetch->mimetype(control->విలువ);
+				సంకేతం_2 = curl_formadd(&post, &చివరి,
 						    CURLFORM_COPYNAME, control->name,
 						    CURLFORM_FILE, control->rawfile,
 						    CURLFORM_FILENAME, leafname,
 						    CURLFORM_CONTENTTYPE,
 						    (mimetype != 0 ? mimetype : "text/plain"),
-						    CURLFORM_END);
-				if (code != CURL_FORMADD_OK)
+						    CURLFORM_చివర);
+				ఒకవేళ (సంకేతం_2 != CURL_FORMADD_OK)
 					NSLOG(netsurf, INFO,
 					      "curl_formadd: %d (%s=%s)",
-					      code,
+					      సంకేతం_2,
 					      control->name,
-					      control->value);
-				free(mimetype);
+					      control->విలువ);
+				విడుదల(mimetype);
 			}
-			free(leafname);
-		} else {
-			code = curl_formadd(&post, &last,
+			విడుదల(leafname);
+		} లేకపోతే {
+			సంకేతం_2 = curl_formadd(&post, &చివరి,
 					    CURLFORM_COPYNAME, control->name,
-					    CURLFORM_COPYCONTENTS, control->value,
-					    CURLFORM_END);
-			if (code != CURL_FORMADD_OK)
+					    CURLFORM_COPYCONTENTS, control->విలువ,
+					    CURLFORM_చివర);
+			ఒకవేళ (సంకేతం_2 != CURL_FORMADD_OK)
 				NSLOG(netsurf, INFO,
-				      "curl_formadd: %d (%s=%s)", code,
-				      control->name, control->value);
+				      "curl_formadd: %d (%s=%s)", సంకేతం_2,
+				      control->name, control->విలువ);
 		}
 	}
 
-	return post;
+	తిరిగి post;
 }
 
-#endif  /* LIBCURL_VERSION_NUM >= 0x073800 */
+#అయితే_ముగింపు  /* LIBCURL_VERSION_NUM >= 0x073800 */
 
 /**
  * Setup multipart post data
  */
-static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
+స్థిర CURLcode fetch_curl_సమితి_postdata(నిర్మాణం curl_fetch_info *f)
 {
-	CURLcode code = CURLE_OK;
+	CURLcode సంకేతం_2 = CURLE_OK;
 
-#undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
-	if (code != CURLE_OK)					\
-		return code;					\
+#నిర్వచనం_రద్దు SETOPT
+#నిర్వచించు SETOPT(option, విలువ) { \
+	సంకేతం_2 = curl_easy_setopt(f->curl_handle, option, విలువ);	\
+	ఒకవేళ (సంకేతం_2 != CURLE_OK)					\
+		తిరిగి సంకేతం_2;					\
 	}
 
-	switch (f->postdata->type) {
-	case FETCH_POSTDATA_NONE:
-		SETOPT(CURLOPT_POSTFIELDS, NULL);
-		SETOPT(NSCURL_POSTDATA_CURLOPT, NULL);
+	ఎంపిక (f->postdata->type) {
+	స్థితి FETCH_POSTDATA_NONE:
+		SETOPT(CURLOPT_POSTFIELDS, ఖాళీ);
+		SETOPT(NSCURL_POSTDATA_CURLOPT, ఖాళీ);
 		SETOPT(CURLOPT_HTTPGET, 1L);
-		break;
+		ఆపు;
 
-	case FETCH_POSTDATA_URLENC:
-		SETOPT(NSCURL_POSTDATA_CURLOPT, NULL);
+	స్థితి FETCH_POSTDATA_URLENC:
+		SETOPT(NSCURL_POSTDATA_CURLOPT, ఖాళీ);
 		SETOPT(CURLOPT_HTTPGET, 0L);
-		SETOPT(CURLOPT_POSTFIELDS, f->postdata->data.urlenc);
-		break;
+		SETOPT(CURLOPT_POSTFIELDS, f->postdata->దత్తాంశం.urlenc);
+		ఆపు;
 
-	case FETCH_POSTDATA_MULTIPART:
-		SETOPT(CURLOPT_POSTFIELDS, NULL);
+	స్థితి FETCH_POSTDATA_MULTIPART:
+		SETOPT(CURLOPT_POSTFIELDS, ఖాళీ);
 		SETOPT(CURLOPT_HTTPGET, 0L);
-		if (f->curl_postdata == NULL) {
+		ఒకవేళ (f->curl_postdata == ఖాళీ) {
 			f->curl_postdata =
 				fetch_curl_postdata_convert(f->curl_handle,
-							    f->postdata->data.multipart);
+							    f->postdata->దత్తాంశం.multipart);
 		}
 		SETOPT(NSCURL_POSTDATA_CURLOPT, f->curl_postdata);
-		break;
+		ఆపు;
 	}
-	return code;
+	తిరిగి సంకేతం_2;
 }
 
 /**
@@ -1162,75 +1162,75 @@ static CURLcode fetch_curl_set_postdata(struct curl_fetch_info *f)
  * \param f The fetch to set options on.
  * \return A curl result code.
  */
-static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
+స్థిర CURLcode fetch_curl_సమితి_options(నిర్మాణం curl_fetch_info *f)
 {
-	CURLcode code;
-	const char *auth;
+	CURLcode సంకేతం_2;
+	స్థిరరాశి అక్షరం *auth;
 
-#undef SETOPT
-#define SETOPT(option, value) { \
-	code = curl_easy_setopt(f->curl_handle, option, value);	\
-	if (code != CURLE_OK)					\
-		return code;					\
+#నిర్వచనం_రద్దు SETOPT
+#నిర్వచించు SETOPT(option, విలువ) { \
+	సంకేతం_2 = curl_easy_setopt(f->curl_handle, option, విలువ);	\
+	ఒకవేళ (సంకేతం_2 != CURLE_OK)					\
+		తిరిగి సంకేతం_2;					\
 	}
 
 	SETOPT(CURLOPT_URL, nsurl_access(f->url));
-	SETOPT(CURLOPT_PRIVATE, f);
+	SETOPT(CURLOPT_వ్యక్తిగత, f);
 	SETOPT(CURLOPT_WRITEDATA, f);
 	SETOPT(CURLOPT_WRITEHEADER, f);
-	SETOPT(NSCURLOPT_PROGRESS_DATA, f);
-	SETOPT(CURLOPT_HTTPHEADER, f->headers);
-	code = fetch_curl_set_postdata(f);
-	if (code != CURLE_OK) {
-		return code;
+	SETOPT(NSCURLOPT_పురోగతి_దత్తాంశం, f);
+	SETOPT(CURLOPT_HTTPHEADER, f->శీర్షికలు);
+	సంకేతం_2 = fetch_curl_సమితి_postdata(f);
+	ఒకవేళ (సంకేతం_2 != CURLE_OK) {
+		తిరిగి సంకేతం_2;
 	}
 
 	f->cookie_string = urldb_get_cookie(f->url, true);
-	if (f->cookie_string) {
+	ఒకవేళ (f->cookie_string) {
 		SETOPT(CURLOPT_COOKIE, f->cookie_string);
-	} else {
-		SETOPT(CURLOPT_COOKIE, NULL);
+	} లేకపోతే {
+		SETOPT(CURLOPT_COOKIE, ఖాళీ);
 	}
 
-	if ((auth = urldb_get_auth_details(f->url, NULL)) != NULL) {
+	ఒకవేళ ((auth = urldb_get_auth_details(f->url, ఖాళీ)) != ఖాళీ) {
 		SETOPT(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		SETOPT(CURLOPT_USERPWD, auth);
-	} else {
-		SETOPT(CURLOPT_USERPWD, NULL);
+	} లేకపోతే {
+		SETOPT(CURLOPT_USERPWD, ఖాళీ);
 	}
 
 	/* set up proxy options */
-	if (nsoption_bool(http_proxy) &&
-	    (nsoption_charp(http_proxy_host) != NULL) &&
-	    (strncmp(nsurl_access(f->url), "file:", 5) != 0)) {
+	ఒకవేళ (nsoption_bool(http_proxy) &&
+	    (nsoption_charp(http_proxy_host) != ఖాళీ) &&
+	    (అక్షరశ్రేణి_పోలిక(nsurl_access(f->url), "file:", 5) != 0)) {
 		SETOPT(CURLOPT_PROXY, nsoption_charp(http_proxy_host));
-		SETOPT(CURLOPT_PROXYPORT, (long) nsoption_int(http_proxy_port));
+		SETOPT(CURLOPT_PROXYPORT, (దీర్ఘ) nsoption_int(http_proxy_పోర్టు));
 
-#if LIBCURL_VERSION_NUM >= 0x071304
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x071304
 		/* Added in 7.19.4 */
 		/* setup the omission list */
 		SETOPT(CURLOPT_NOPROXY, nsoption_charp(http_proxy_noproxy));
-#endif
+#అయితే_ముగింపు
 
-		if (nsoption_int(http_proxy_auth) != OPTION_HTTP_PROXY_AUTH_NONE) {
+		ఒకవేళ (nsoption_int(http_proxy_auth) != OPTION_HTTP_PROXY_AUTH_NONE) {
 			SETOPT(CURLOPT_PROXYAUTH,
 			       nsoption_int(http_proxy_auth) ==
 					OPTION_HTTP_PROXY_AUTH_BASIC ?
-					(long) CURLAUTH_BASIC :
-					(long) CURLAUTH_NTLM);
+					(దీర్ఘ) CURLAUTH_BASIC :
+					(దీర్ఘ) CURLAUTH_NTLM);
 			snprintf(fetch_proxy_userpwd,
-					sizeof fetch_proxy_userpwd,
+					పరిమాణం fetch_proxy_userpwd,
 					"%s:%s",
 				 nsoption_charp(http_proxy_auth_user),
 				 nsoption_charp(http_proxy_auth_pass));
 			SETOPT(CURLOPT_PROXYUSERPWD, fetch_proxy_userpwd);
 		}
-	} else {
-		SETOPT(CURLOPT_PROXY, NULL);
+	} లేకపోతే {
+		SETOPT(CURLOPT_PROXY, ఖాళీ);
 	}
 
 
-	if (curl_with_openssl) {
+	ఒకవేళ (curl_with_openssl) {
 		SETOPT(CURLOPT_SSL_CIPHER_LIST,
 			f->downgrade_tls ? CIPHER_LIST_LEGACY : CIPHER_LIST);
 	}
@@ -1238,27 +1238,27 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
 	/* Force-enable SSL session ID caching, as some distros are odd. */
 	SETOPT(CURLOPT_SSL_SESSIONID_CACHE, 1L);
 
-	if (urldb_get_cert_permissions(f->url)) {
+	ఒకవేళ (urldb_get_cert_permissions(f->url)) {
 		/* Disable certificate verification */
 		SETOPT(CURLOPT_SSL_VERIFYPEER, 0L);
 		SETOPT(CURLOPT_SSL_VERIFYHOST, 0L);
-		if (curl_with_openssl) {
-			SETOPT(CURLOPT_SSL_CTX_FUNCTION, NULL);
-			SETOPT(CURLOPT_SSL_CTX_DATA, NULL);
+		ఒకవేళ (curl_with_openssl) {
+			SETOPT(CURLOPT_SSL_CTX_FUNCTION, ఖాళీ);
+			SETOPT(CURLOPT_SSL_CTX_దత్తాంశం, ఖాళీ);
 		}
-	} else {
+	} లేకపోతే {
 		/* do verification */
 		SETOPT(CURLOPT_SSL_VERIFYPEER, 1L);
 		SETOPT(CURLOPT_SSL_VERIFYHOST, 2L);
-#ifdef WITH_OPENSSL
-		if (curl_with_openssl) {
+#నిర్వచితమైతే WITH_OPENSSL
+		ఒకవేళ (curl_with_openssl) {
 			SETOPT(CURLOPT_SSL_CTX_FUNCTION, fetch_curl_sslctxfun);
-			SETOPT(CURLOPT_SSL_CTX_DATA, f);
+			SETOPT(CURLOPT_SSL_CTX_దత్తాంశం, f);
 		}
-#endif
+#అయితే_ముగింపు
 	}
 
-	return CURLE_OK;
+	తిరిగి CURLE_OK;
 }
 
 /**
@@ -1268,87 +1268,87 @@ static CURLcode fetch_curl_set_options(struct curl_fetch_info *f)
  * \param handle CURL handle to be used to fetch the content.
  * \return true if the fetch was successfully initiated else false.
  */
-static bool
-fetch_curl_initiate_fetch(struct curl_fetch_info *fetch, CURL *handle)
+స్థిర bool
+fetch_curl_initiate_fetch(నిర్మాణం curl_fetch_info *fetch, CURL *handle)
 {
-	CURLcode code;
+	CURLcode సంకేతం_2;
 	CURLMcode codem;
 
 	fetch->curl_handle = handle;
 
 	/* Initialise the handle */
-	code = fetch_curl_set_options(fetch);
-	if (code != CURLE_OK) {
+	సంకేతం_2 = fetch_curl_సమితి_options(fetch);
+	ఒకవేళ (సంకేతం_2 != CURLE_OK) {
 		fetch->curl_handle = 0;
 		/* The handle maybe went bad, eat it */
 		NSLOG(netsurf, WARNING, "cURL handle maybe went bad, retry later");
 		curl_easy_cleanup(handle);
-		return false;
+		తిరిగి false;
 	}
 
 	/* add to the global curl multi handle */
-	codem = curl_multi_add_handle(fetch_curl_multi, fetch->curl_handle);
-	assert(codem == CURLM_OK || codem == CURLM_CALL_MULTI_PERFORM);
+	codem = curl_multi_కూడు_handle(fetch_curl_multi, fetch->curl_handle);
+	ప్రతిజ్ఞా(codem == CURLM_OK || codem == CURLM_CALL_MULTI_PERFORM);
 
-	return true;
+	తిరిగి true;
 }
 
 
 /**
  * Find a CURL handle to use to dispatch a job
  */
-static CURL *fetch_curl_get_handle(lwc_string *host)
+స్థిర CURL *fetch_curl_get_handle(lwc_string *host)
 {
-	struct cache_handle *h;
+	నిర్మాణం cache_handle *h;
 	CURL *ret;
 	RING_FINDBYLWCHOST(curl_handle_ring, h, host);
-	if (h) {
+	ఒకవేళ (h) {
 		ret = h->handle;
 		lwc_string_unref(h->host);
 		RING_REMOVE(curl_handle_ring, h);
-		free(h);
-	} else {
+		విడుదల(h);
+	} లేకపోతే {
 		ret = curl_easy_duphandle(fetch_blank_curl);
 	}
-	return ret;
+	తిరిగి ret;
 }
 
 
 /**
  * Dispatch a single job
  */
-static bool fetch_curl_start(void *vfetch)
+స్థిర bool fetch_curl_ప్రారంభం(శూన్య *vfetch)
 {
-	struct curl_fetch_info *fetch = (struct curl_fetch_info*)vfetch;
-	if (inside_curl) {
+	నిర్మాణం curl_fetch_info *fetch = (నిర్మాణం curl_fetch_info*)vfetch;
+	ఒకవేళ (inside_curl) {
 		NSLOG(netsurf, DEBUG, "Deferring fetch because we're inside cURL");
-		return false;
+		తిరిగి false;
 	}
-	return fetch_curl_initiate_fetch(fetch,
+	తిరిగి fetch_curl_initiate_fetch(fetch,
 			fetch_curl_get_handle(fetch->host));
 }
 
 /**
  * Cache a CURL handle for the provided host (if wanted)
  */
-static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
+స్థిర శూన్య fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 {
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x071e00
 	/* 7.30.0 or later has its own connection caching; suppress ours */
 	curl_easy_cleanup(handle);
-	return;
-#else
-	struct cache_handle *h = 0;
-	int c;
+	తిరిగి;
+#లేకపోతే
+	నిర్మాణం cache_handle *h = 0;
+	పూర్ణాంకం c;
 	RING_FINDBYLWCHOST(curl_handle_ring, h, host);
-	if (h) {
+	ఒకవేళ (h) {
 		/* Already have a handle cached for this hostname */
 		curl_easy_cleanup(handle);
-		return;
+		తిరిగి;
 	}
 	/* We do not have a handle cached, first up determine if the cache is full */
-	RING_GETSIZE(struct cache_handle, curl_handle_ring, c);
-	if (c >= nsoption_int(max_cached_fetch_handles)) {
+	RING_GETSIZE(నిర్మాణం cache_handle, curl_handle_ring, c);
+	ఒకవేళ (c >= nsoption_int(max_cached_fetch_handles)) {
 		/* Cache is full, so, we rotate the ring by one and
 		 * replace the oldest handle with this one. We do this
 		 * without freeing/allocating memory (except the
@@ -1356,26 +1356,26 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
 		 * ring and then re-inserting it, in order to be as
 		 * efficient as we can.
 		 */
-		if (curl_handle_ring != NULL) {
+		ఒకవేళ (curl_handle_ring != ఖాళీ) {
 			h = curl_handle_ring;
-			curl_handle_ring = h->r_next;
+			curl_handle_ring = h->r_తదుపరి;
 			curl_easy_cleanup(h->handle);
 			h->handle = handle;
 			lwc_string_unref(h->host);
 			h->host = lwc_string_ref(host);
-		} else {
+		} లేకపోతే {
 			/* Actually, we don't want to cache any handles */
 			curl_easy_cleanup(handle);
 		}
 
-		return;
+		తిరిగి;
 	}
 	/* The table isn't full yet, so make a shiny new handle to add to the ring */
-	h = (struct cache_handle*)malloc(sizeof(struct cache_handle));
+	h = (నిర్మాణం cache_handle*)జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం cache_handle));
 	h->handle = handle;
 	h->host = lwc_string_ref(host);
-	RING_INSERT(curl_handle_ring, h);
-#endif
+	RING_చొప్పించు(curl_handle_ring, h);
+#అయితే_ముగింపు
 }
 
 
@@ -1384,18 +1384,18 @@ static void fetch_curl_cache_handle(CURL *handle, lwc_string *host)
  *
  * Will prod the queue afterwards to allow pending requests to be initiated.
  */
-static void fetch_curl_stop(struct curl_fetch_info *f)
+స్థిర శూన్య fetch_curl_stop(నిర్మాణం curl_fetch_info *f)
 {
 	CURLMcode codem;
 
-	assert(f);
+	ప్రతిజ్ఞా(f);
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", f, nsurl_access(f->url));
 
-	if (f->curl_handle) {
+	ఒకవేళ (f->curl_handle) {
 		/* remove from curl multi handle */
 		codem = curl_multi_remove_handle(fetch_curl_multi,
 				f->curl_handle);
-		assert(codem == CURLM_OK);
+		ప్రతిజ్ఞా(codem == CURLM_OK);
 		/* Put this curl handle into the cache if wanted. */
 		fetch_curl_cache_handle(f->curl_handle, f->host);
 		f->curl_handle = 0;
@@ -1408,21 +1408,21 @@ static void fetch_curl_stop(struct curl_fetch_info *f)
 /**
  * Abort a fetch.
  */
-static void fetch_curl_abort(void *vf)
+స్థిర శూన్య fetch_curl_abort(శూన్య *vf)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *)vf;
-	assert(f);
+	నిర్మాణం curl_fetch_info *f = (నిర్మాణం curl_fetch_info *)vf;
+	ప్రతిజ్ఞా(f);
 	NSLOG(netsurf, INFO, "fetch %p, url '%s'", f, nsurl_access(f->url));
-	if (f->curl_handle) {
-		if (inside_curl) {
+	ఒకవేళ (f->curl_handle) {
+		ఒకవేళ (inside_curl) {
 			NSLOG(netsurf, DEBUG, "Deferring cleanup");
 			f->abort = true;
-		} else {
+		} లేకపోతే {
 			NSLOG(netsurf, DEBUG, "Immediate abort");
 			fetch_curl_stop(f);
 			fetch_free(f->fetch_handle);
 		}
-	} else {
+	} లేకపోతే {
 		fetch_remove_from_queues(f->fetch_handle);
 		fetch_free(f->fetch_handle);
 	}
@@ -1432,33 +1432,33 @@ static void fetch_curl_abort(void *vf)
 /**
  * Free a fetch structure and associated resources.
  */
-static void fetch_curl_free(void *vf)
+స్థిర శూన్య fetch_curl_free(శూన్య *vf)
 {
-	struct curl_fetch_info *f = (struct curl_fetch_info *)vf;
-	int i;
+	నిర్మాణం curl_fetch_info *f = (నిర్మాణం curl_fetch_info *)vf;
+	పూర్ణాంకం i;
 
-	if (f->curl_handle) {
+	ఒకవేళ (f->curl_handle) {
 		curl_easy_cleanup(f->curl_handle);
 	}
 	nsurl_unref(f->url);
 	lwc_string_unref(f->host);
-	free(f->location);
-	free(f->cookie_string);
-	free(f->realm);
-	if (f->headers) {
-		curl_slist_free_all(f->headers);
+	విడుదల(f->location);
+	విడుదల(f->cookie_string);
+	విడుదల(f->realm);
+	ఒకవేళ (f->శీర్షికలు) {
+		curl_slist_free_all(f->శీర్షికలు);
 	}
 	fetch_curl_free_postdata(f->postdata);
 	NSCURL_POSTDATA_FREE(f->curl_postdata);
 
 	/* free certificate data */
-	for (i = 0; i < MAX_CERT_DEPTH; i++) {
-		if (f->cert_data[i].cert != NULL) {
-			X509_free(f->cert_data[i].cert);
+	కొరకు (i = 0; i < MAX_CERT_లోతు; i++) {
+		ఒకవేళ (f->cert_దత్తాంశం[i].cert != ఖాళీ) {
+			X509_free(f->cert_దత్తాంశం[i].cert);
 		}
 	}
 
-	free(f);
+	విడుదల(f);
 }
 
 
@@ -1467,62 +1467,62 @@ static void fetch_curl_free(void *vf)
  *
  * Return true if the fetch is being aborted.
  */
-static bool fetch_curl_process_headers(struct curl_fetch_info *f)
+స్థిర bool fetch_curl_process_శీర్షికలు(నిర్మాణం curl_fetch_info *f)
 {
-	long http_code;
-	CURLcode code;
-	fetch_msg msg;
+	దీర్ఘ http_సంకేతం;
+	CURLcode సంకేతం_2;
+	fetch_సందేశం సందేశం;
 
-	f->had_headers = true;
+	f->had_శీర్షికలు = true;
 
-	if (!f->http_code) {
-		code = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_CODE,
-					 &f->http_code);
-		assert(code == CURLE_OK);
-		fetch_set_http_code(f->fetch_handle, f->http_code);
+	ఒకవేళ (!f->http_సంకేతం) {
+		సంకేతం_2 = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_సంకేతం,
+					 &f->http_సంకేతం);
+		ప్రతిజ్ఞా(సంకేతం_2 == CURLE_OK);
+		fetch_సమితి_http_సంకేతం(f->fetch_handle, f->http_సంకేతం);
 	}
-	http_code = f->http_code;
-	NSLOG(netsurf, INFO, "HTTP status code %li", http_code);
+	http_సంకేతం = f->http_సంకేతం;
+	NSLOG(netsurf, INFO, "HTTP status code %li", http_సంకేతం);
 
-	if ((http_code == HTTP_RESPONSE_NOT_MODIFIED) &&
+	ఒకవేళ ((http_సంకేతం == HTTP_RESPONSE_NOT_MODIFIED) &&
 	    (f->postdata->type==FETCH_POSTDATA_NONE)) {
 		/* Not Modified && GET request */
-		msg.type = FETCH_NOTMODIFIED;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		సందేశం.type = FETCH_NOTMODIFIED;
+		fetch_send_callback(&సందేశం, f->fetch_handle);
+		తిరిగి true;
 	}
 
 	/* handle HTTP redirects (3xx response codes) */
-	if (HTTP_RESPONSE_IS_3XX(http_code) && (f->location != 0)) {
+	ఒకవేళ (HTTP_RESPONSE_IS_3XX(http_సంకేతం) && (f->location != 0)) {
 		NSLOG(netsurf, INFO, "FETCH_REDIRECT, '%s'", f->location);
-		msg.type = FETCH_REDIRECT;
-		msg.data.redirect = f->location;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+		సందేశం.type = FETCH_REDIRECT;
+		సందేశం.దత్తాంశం.redirect = f->location;
+		fetch_send_callback(&సందేశం, f->fetch_handle);
+		తిరిగి true;
 	}
 
 	/* handle HTTP 401 (Authentication errors) */
-	if (http_code == HTTP_RESPONSE_UNAUTHORIZED) {
-		msg.type = FETCH_AUTH;
-		msg.data.auth.realm = f->realm;
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+	ఒకవేళ (http_సంకేతం == HTTP_RESPONSE_UNAUTHORIZED) {
+		సందేశం.type = FETCH_AUTH;
+		సందేశం.దత్తాంశం.auth.realm = f->realm;
+		fetch_send_callback(&సందేశం, f->fetch_handle);
+		తిరిగి true;
 	}
 
 	/* handle HTTP errors (non 2xx response codes) */
-	if (f->only_2xx &&
-	    strncmp(nsurl_access(f->url), "http", 4) == 0 &&
-	    (HTTP_RESPONSE_IS_2XX(http_code) == false)) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = messages_get("Not2xx");
-		fetch_send_callback(&msg, f->fetch_handle);
-		return true;
+	ఒకవేళ (f->only_2xx &&
+	    అక్షరశ్రేణి_పోలిక(nsurl_access(f->url), "http", 4) == 0 &&
+	    (HTTP_RESPONSE_IS_2XX(http_సంకేతం) == false)) {
+		సందేశం.type = FETCH_ERROR;
+		సందేశం.దత్తాంశం.error = messages_get("Not2xx");
+		fetch_send_callback(&సందేశం, f->fetch_handle);
+		తిరిగి true;
 	}
 
-	if (f->abort)
-		return true;
+	ఒకవేళ (f->abort)
+		తిరిగి true;
 
-	return false;
+	తిరిగి false;
 }
 
 
@@ -1532,27 +1532,27 @@ static bool fetch_curl_process_headers(struct curl_fetch_info *f)
  * \param curl_handle curl easy handle of fetch
  * \param result The result code of the completed fetch.
  */
-static void fetch_curl_done(CURL *curl_handle, CURLcode result)
+స్థిర శూన్య fetch_curl_పూర్తి(CURL *curl_handle, CURLcode ఫలితం)
 {
-	bool finished = false;
+	bool ముగిసిన = false;
 	bool error = false;
 	bool cert = false;
 	bool abort_fetch;
-	struct curl_fetch_info *f;
-	char **_hideous_hack = (char **) (void *) &f;
-	CURLcode code;
+	నిర్మాణం curl_fetch_info *f;
+	అక్షరం **_hideous_hack = (అక్షరం **) (శూన్య *) &f;
+	CURLcode సంకేతం_2;
 
 	/* find the structure associated with this fetch */
 	/* For some reason, cURL thinks CURLINFO_PRIVATE should be a string?! */
-	code = curl_easy_getinfo(curl_handle, CURLINFO_PRIVATE, _hideous_hack);
-	assert(code == CURLE_OK);
+	సంకేతం_2 = curl_easy_getinfo(curl_handle, CURLINFO_వ్యక్తిగత, _hideous_hack);
+	ప్రతిజ్ఞా(సంకేతం_2 == CURLE_OK);
 
 	abort_fetch = f->abort;
 	NSLOG(netsurf, INFO, "done %s", nsurl_access(f->url));
 
-	if ((abort_fetch == false) &&
-	    (result == CURLE_OK ||
-	     ((result == CURLE_WRITE_ERROR) && (f->stopped == false)))) {
+	ఒకవేళ ((abort_fetch == false) &&
+	    (ఫలితం == CURLE_OK ||
+	     ((ఫలితం == CURLE_WRITE_ERROR) && (f->stopped == false)))) {
 		/* fetch completed normally or the server fed us a junk gzip
 		 * stream (usually in the form of garbage at the end of the
 		 * stream). Curl will have fed us all but the last chunk of
@@ -1562,74 +1562,74 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
 		 * object will be truncated in this case and leave it to
 		 * the content handlers to cope.
 		 */
-		if (f->stopped ||
-		    (!f->had_headers &&	fetch_curl_process_headers(f))) {
+		ఒకవేళ (f->stopped ||
+		    (!f->had_శీర్షికలు &&	fetch_curl_process_శీర్షికలు(f))) {
 			; /* redirect with no body or similar */
-		} else {
-			finished = true;
+		} లేకపోతే {
+			ముగిసిన = true;
 		}
-	} else if (result == CURLE_PARTIAL_FILE) {
+	} లేకపోతే ఒకవేళ (ఫలితం == CURLE_PARTIAL_FILE) {
 		/* CURLE_PARTIAL_FILE occurs if the received body of a
 		 * response is smaller than that specified in the
 		 * Content-Length header.
 		 */
-		if (!f->had_headers && fetch_curl_process_headers(f))
+		ఒకవేళ (!f->had_శీర్షికలు && fetch_curl_process_శీర్షికలు(f))
 			; /* redirect with partial body, or similar */
-		else {
-			finished = true;
+		లేకపోతే {
+			ముగిసిన = true;
 		}
-	} else if (result == CURLE_WRITE_ERROR && f->stopped) {
+	} లేకపోతే ఒకవేళ (ఫలితం == CURLE_WRITE_ERROR && f->stopped) {
 		/* CURLE_WRITE_ERROR occurs when fetch_curl_data
 		 * returns 0, which we use to abort intentionally
 		 */
 		;
-	} else if (result == CURLE_SSL_PEER_CERTIFICATE ||
-		   result == CURLE_SSL_CACERT) {
+	} లేకపోతే ఒకవేళ (ఫలితం == CURLE_SSL_PEER_CERTIFICATE ||
+		   ఫలితం == CURLE_SSL_CACERT) {
 		/* Some kind of failure has occurred.  If we don't know
 		 * what happened, we'll have reported unknown errors up
 		 * to the user already via the certificate chain error fields.
 		 */
 		cert = true;
-	} else {
-		NSLOG(netsurf, INFO, "Unknown cURL response code %d", result);
+	} లేకపోతే {
+		NSLOG(netsurf, INFO, "Unknown cURL response code %d", ఫలితం);
 		error = true;
 	}
 
 	fetch_curl_stop(f);
 
-	if (f->sent_ssl_chain == false) {
+	ఒకవేళ (f->పంపిన_ssl_chain == false) {
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	if (abort_fetch) {
+	ఒకవేళ (abort_fetch) {
 		; /* fetch was aborted: no callback */
-	} else if (finished) {
-		fetch_msg msg;
-		msg.type = FETCH_FINISHED;
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else if (cert) {
+	} లేకపోతే ఒకవేళ (ముగిసిన) {
+		fetch_సందేశం సందేశం;
+		సందేశం.type = FETCH_ముగిసిన;
+		fetch_send_callback(&సందేశం, f->fetch_handle);
+	} లేకపోతే ఒకవేళ (cert) {
 		/* user needs to validate certificate with issue */
-		fetch_msg msg;
-		msg.type = FETCH_CERT_ERR;
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else if (error) {
-		fetch_msg msg;
-		switch (result) {
-		case CURLE_SSL_CONNECT_ERROR:
-			msg.type = FETCH_SSL_ERR;
-			break;
+		fetch_సందేశం సందేశం;
+		సందేశం.type = FETCH_CERT_ERR;
+		fetch_send_callback(&సందేశం, f->fetch_handle);
+	} లేకపోతే ఒకవేళ (error) {
+		fetch_సందేశం సందేశం;
+		ఎంపిక (ఫలితం) {
+		స్థితి CURLE_SSL_CONNECT_ERROR:
+			సందేశం.type = FETCH_SSL_ERR;
+			ఆపు;
 
-		case CURLE_OPERATION_TIMEDOUT:
-			msg.type = FETCH_TIMEDOUT;
-			msg.data.error = curl_easy_strerror(result);
-			break;
+		స్థితి CURLE_OPERATION_TIMEDOUT:
+			సందేశం.type = FETCH_TIMEDOUT;
+			సందేశం.దత్తాంశం.error = curl_easy_strerror(ఫలితం);
+			ఆపు;
 
-		default:
-			msg.type = FETCH_ERROR;
-			msg.data.error = curl_easy_strerror(result);
+		అప్రమేయ:
+			సందేశం.type = FETCH_ERROR;
+			సందేశం.దత్తాంశం.error = curl_easy_strerror(ఫలితం);
 		}
 
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&సందేశం, f->fetch_handle);
 	}
 
 	fetch_free(f->fetch_handle);
@@ -1641,46 +1641,46 @@ static void fetch_curl_done(CURL *curl_handle, CURLcode result)
  *
  * Must be called regularly to make progress on fetches.
  */
-static void fetch_curl_poll(lwc_string *scheme_ignored)
+స్థిర శూన్య fetch_curl_poll(lwc_string *scheme_ignored)
 {
-	int running, queue;
+	పూర్ణాంకం running, వరుస;
 	CURLMcode codem;
-	CURLMsg *curl_msg;
+	CURLMsg *curl_సందేశం;
 
-	if (nsoption_bool(suppress_curl_debug) == false) {
-		fd_set read_fd_set, write_fd_set, exc_fd_set;
-		int max_fd = -1;
-		int i;
+	ఒకవేళ (nsoption_bool(suppress_curl_debug) == false) {
+		fd_set read_fd_సమితి, write_fd_సమితి, exc_fd_సమితి;
+		పూర్ణాంకం max_fd = -1;
+		పూర్ణాంకం i;
 
-		FD_ZERO(&read_fd_set);
-		FD_ZERO(&write_fd_set);
-		FD_ZERO(&exc_fd_set);
+		FD_ZERO(&read_fd_సమితి);
+		FD_ZERO(&write_fd_సమితి);
+		FD_ZERO(&exc_fd_సమితి);
 
 		codem = curl_multi_fdset(fetch_curl_multi,
-				&read_fd_set, &write_fd_set,
-				&exc_fd_set, &max_fd);
-		assert(codem == CURLM_OK);
+				&read_fd_సమితి, &write_fd_సమితి,
+				&exc_fd_సమితి, &max_fd);
+		ప్రతిజ్ఞా(codem == CURLM_OK);
 
 		NSLOG(netsurf, DEEPDEBUG,
 		      "Curl file descriptor states (maxfd=%i):", max_fd);
-		for (i = 0; i <= max_fd; i++) {
-			bool read = false;
-			bool write = false;
+		కొరకు (i = 0; i <= max_fd; i++) {
+			bool పఠ = false;
+			bool లిఖ = false;
 			bool error = false;
 
-			if (FD_ISSET(i, &read_fd_set)) {
-				read = true;
+			ఒకవేళ (FD_ISSET(i, &read_fd_సమితి)) {
+				పఠ = true;
 			}
-			if (FD_ISSET(i, &write_fd_set)) {
-				write = true;
+			ఒకవేళ (FD_ISSET(i, &write_fd_సమితి)) {
+				లిఖ = true;
 			}
-			if (FD_ISSET(i, &exc_fd_set)) {
+			ఒకవేళ (FD_ISSET(i, &exc_fd_సమితి)) {
 				error = true;
 			}
-			if (read || write || error) {
+			ఒకవేళ (పఠ || లిఖ || error) {
 				NSLOG(netsurf, DEEPDEBUG, "  fd %i: %s %s %s", i,
-				      read ? "read" : "    ",
-				      write ? "write" : "     ",
+				      పఠ ? "read" : "    ",
+				      లిఖ ? "write" : "     ",
 				      error ? "error" : "     ");
 			}
 		}
@@ -1688,28 +1688,28 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 
 	/* do any possible work on the current fetches */
 	inside_curl = true;
-	do {
+	చేయి {
 		codem = curl_multi_perform(fetch_curl_multi, &running);
-		if (codem != CURLM_OK && codem != CURLM_CALL_MULTI_PERFORM) {
+		ఒకవేళ (codem != CURLM_OK && codem != CURLM_CALL_MULTI_PERFORM) {
 			NSLOG(netsurf, WARNING,
 			      "curl_multi_perform: %i %s",
 			      codem, curl_multi_strerror(codem));
-			return;
+			తిరిగి;
 		}
-	} while (codem == CURLM_CALL_MULTI_PERFORM);
+	} అయితే (codem == CURLM_CALL_MULTI_PERFORM);
 
 	/* process curl results */
-	curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
-	while (curl_msg) {
-		switch (curl_msg->msg) {
-			case CURLMSG_DONE:
-				fetch_curl_done(curl_msg->easy_handle,
-						curl_msg->data.result);
-				break;
-			default:
-				break;
+	curl_సందేశం = curl_multi_info_read(fetch_curl_multi, &వరుస);
+	అయితే (curl_సందేశం) {
+		ఎంపిక (curl_సందేశం->సందేశం) {
+			స్థితి CURLMSG_పూర్తి:
+				fetch_curl_పూర్తి(curl_సందేశం->easy_handle,
+						curl_సందేశం->దత్తాంశం.ఫలితం);
+				ఆపు;
+			అప్రమేయ:
+				ఆపు;
 		}
-		curl_msg = curl_multi_info_read(fetch_curl_multi, &queue);
+		curl_సందేశం = curl_multi_info_read(fetch_curl_multi, &వరుస);
 	}
 	inside_curl = false;
 }
@@ -1720,138 +1720,138 @@ static void fetch_curl_poll(lwc_string *scheme_ignored)
 /**
  * Callback function for fetch progress.
  */
-static int
-fetch_curl_progress(void *clientp,
-		    NSCURL_PROGRESS_T dltotal,
-		    NSCURL_PROGRESS_T dlnow,
-		    NSCURL_PROGRESS_T ultotal,
-		    NSCURL_PROGRESS_T ulnow)
+స్థిర పూర్ణాంకం
+fetch_curl_పురోగతి(శూన్య *clientp,
+		    NSCURL_పురోగతి_T dltotal,
+		    NSCURL_పురోగతి_T dlnow,
+		    NSCURL_పురోగతి_T ultotal,
+		    NSCURL_పురోగతి_T ulnow)
 {
-	static char fetch_progress_buffer[256]; /**< Progress buffer for cURL */
-	struct curl_fetch_info *f = (struct curl_fetch_info *) clientp;
-	uint64_t time_now_ms;
-	fetch_msg msg;
+	స్థిర అక్షరం fetch_పురోగతి_బఫరు[256]; /**< Progress buffer for cURL */
+	నిర్మాణం curl_fetch_info *f = (నిర్మాణం curl_fetch_info *) clientp;
+	uint64_t సమయం_now_ms;
+	fetch_సందేశం సందేశం;
 
-	if (f->abort) {
-		return 0;
+	ఒకవేళ (f->abort) {
+		తిరిగి 0;
         }
 
-	msg.type = FETCH_PROGRESS;
-	msg.data.progress = fetch_progress_buffer;
+	సందేశం.type = FETCH_పురోగతి;
+	సందేశం.దత్తాంశం.పురోగతి = fetch_పురోగతి_బఫరు;
 
 	/* Rate limit each fetch's progress notifications */
-        nsu_getmonotonic_ms(&time_now_ms);
-#define UPDATE_DELAY_MS (1000 / UPDATES_PER_SECOND)
-	if (time_now_ms - f->last_progress_update < UPDATE_DELAY_MS) {
-		return 0;
+        nsu_getmonotonic_ms(&సమయం_now_ms);
+#నిర్వచించు UPDATE_DELAY_MS (1000 / UPDATES_చొప్పున_రెండవ)
+	ఒకవేళ (సమయం_now_ms - f->చివరి_పురోగతి_update < UPDATE_DELAY_MS) {
+		తిరిగి 0;
         }
-#undef UPDATE_DELAY_MS
-	f->last_progress_update = time_now_ms;
+#నిర్వచనం_రద్దు UPDATE_DELAY_MS
+	f->చివరి_పురోగతి_update = సమయం_now_ms;
 
-	if (dltotal > 0) {
-		snprintf(fetch_progress_buffer, 255,
+	ఒకవేళ (dltotal > 0) {
+		snprintf(fetch_పురోగతి_బఫరు, 255,
 				messages_get("Progress"),
 				human_friendly_bytesize(dlnow),
 				human_friendly_bytesize(dltotal));
-		fetch_send_callback(&msg, f->fetch_handle);
-	} else {
-		snprintf(fetch_progress_buffer, 255,
+		fetch_send_callback(&సందేశం, f->fetch_handle);
+	} లేకపోతే {
+		snprintf(fetch_పురోగతి_బఫరు, 255,
 				messages_get("ProgressU"),
 				human_friendly_bytesize(dlnow));
-		fetch_send_callback(&msg, f->fetch_handle);
+		fetch_send_callback(&సందేశం, f->fetch_handle);
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 
 /**
  * Format curl debug for nslog
  */
-static int
+స్థిర పూర్ణాంకం
 fetch_curl_debug(CURL *handle,
 		 curl_infotype type,
-		 char *data,
-		 size_t size,
-		 void *userptr)
+		 అక్షరం *దత్తాంశం,
+		 size_t కొలత,
+		 శూన్య *userptr)
 {
-	static const char s_infotype[CURLINFO_END][3] = {
+	స్థిర స్థిరరాశి అక్షరం s_infotype[CURLINFO_చివర][3] = {
 		"* ", "< ", "> ", "{ ", "} ", "{ ", "} "
 	};
-	switch(type) {
-	case CURLINFO_TEXT:
-	case CURLINFO_HEADER_OUT:
-	case CURLINFO_HEADER_IN:
-		NSLOG(fetch, DEBUG, "%s%.*s", s_infotype[type], (int)size - 1, data);
-		break;
+	ఎంపిక(type) {
+	స్థితి CURLINFO_పాఠ్యం:
+	స్థితి CURLINFO_శీర్షిక_బహిర్గతం:
+	స్థితి CURLINFO_శీర్షిక_లోపల:
+		NSLOG(fetch, DEBUG, "%s%.*s", s_infotype[type], (పూర్ణాంకం)కొలత - 1, దత్తాంశం);
+		ఆపు;
 
-	default:
-		break;
+	అప్రమేయ:
+		ఆపు;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 
-static curl_socket_t fetch_curl_socket_open(void *clientp,
-		curlsocktype purpose, struct curl_sockaddr *address)
+స్థిర curl_socket_t fetch_curl_socket_open(శూన్య *clientp,
+		curlsocktype purpose, నిర్మాణం curl_sockaddr *చిరునామా)
 {
-	(void) clientp;
-	(void) purpose;
+	(శూన్య) clientp;
+	(శూన్య) purpose;
 
-	return (curl_socket_t) guit->fetch->socket_open(
-			address->family, address->socktype,
-			address->protocol);
+	తిరిగి (curl_socket_t) guit->fetch->socket_open(
+			చిరునామా->family, చిరునామా->socktype,
+			చిరునామా->protocol);
 }
 
-static int fetch_curl_socket_close(void *clientp, curl_socket_t item)
+స్థిర పూర్ణాంకం fetch_curl_socket_close(శూన్య *clientp, curl_socket_t అంశం)
 {
-	(void) clientp;
+	(శూన్య) clientp;
 
-	return guit->fetch->socket_close((int) item);
+	తిరిగి guit->fetch->socket_close((పూర్ణాంకం) అంశం);
 }
 
 /**
  * Callback function for cURL.
  */
-static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
+స్థిర size_t fetch_curl_దత్తాంశం(అక్షరం *దత్తాంశం, size_t కొలత, size_t nmemb, శూన్య *_f)
 {
-	struct curl_fetch_info *f = _f;
-	CURLcode code;
-	fetch_msg msg;
+	నిర్మాణం curl_fetch_info *f = _f;
+	CURLcode సంకేతం_2;
+	fetch_సందేశం సందేశం;
 
 	/* ensure we only have to get this information once */
-	if (!f->http_code) {
-		code = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_CODE,
-					 &f->http_code);
-		assert(code == CURLE_OK);
-		fetch_set_http_code(f->fetch_handle, f->http_code);
+	ఒకవేళ (!f->http_సంకేతం) {
+		సంకేతం_2 = curl_easy_getinfo(f->curl_handle, CURLINFO_HTTP_సంకేతం,
+					 &f->http_సంకేతం);
+		ప్రతిజ్ఞా(సంకేతం_2 == CURLE_OK);
+		fetch_సమితి_http_సంకేతం(f->fetch_handle, f->http_సంకేతం);
 	}
 
 	/* ignore body if this is a 401 reply by skipping it and reset
 	 * the HTTP response code to enable follow up fetches.
 	 */
-	if (f->http_code == HTTP_RESPONSE_UNAUTHORIZED) {
-		f->http_code = 0;
-		return size * nmemb;
+	ఒకవేళ (f->http_సంకేతం == HTTP_RESPONSE_UNAUTHORIZED) {
+		f->http_సంకేతం = 0;
+		తిరిగి కొలత * nmemb;
 	}
 
-	if (f->abort || (!f->had_headers && fetch_curl_process_headers(f))) {
+	ఒకవేళ (f->abort || (!f->had_శీర్షికలు && fetch_curl_process_శీర్షికలు(f))) {
 		f->stopped = true;
-		return 0;
+		తిరిగి 0;
 	}
 
 	/* send data to the caller */
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size * nmemb;
-	fetch_send_callback(&msg, f->fetch_handle);
+	సందేశం.type = FETCH_దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = కొలత * nmemb;
+	fetch_send_callback(&సందేశం, f->fetch_handle);
 
-	if (f->abort) {
+	ఒకవేళ (f->abort) {
 		f->stopped = true;
-		return 0;
+		తిరిగి 0;
 	}
 
-	return size * nmemb;
+	తిరిగి కొలత * nmemb;
 }
 
 
@@ -1860,250 +1860,250 @@ static size_t fetch_curl_data(char *data, size_t size, size_t nmemb, void *_f)
  *
  * See RFC 2616 4.2.
  */
-static size_t
-fetch_curl_header(char *data, size_t size, size_t nmemb, void *_f)
+స్థిర size_t
+fetch_curl_శీర్షిక(అక్షరం *దత్తాంశం, size_t కొలత, size_t nmemb, శూన్య *_f)
 {
-	struct curl_fetch_info *f = _f;
-	int i;
-	fetch_msg msg;
-	size *= nmemb;
+	నిర్మాణం curl_fetch_info *f = _f;
+	పూర్ణాంకం i;
+	fetch_సందేశం సందేశం;
+	కొలత *= nmemb;
 
-	if (f->abort) {
+	ఒకవేళ (f->abort) {
 		f->stopped = true;
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (f->sent_ssl_chain == false) {
+	ఒకవేళ (f->పంపిన_ssl_chain == false) {
 		fetch_curl_report_certs_upstream(f);
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) data;
-	msg.data.header_or_data.len = size;
-	fetch_send_callback(&msg, f->fetch_handle);
+	సందేశం.type = FETCH_శీర్షిక;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = కొలత;
+	fetch_send_callback(&సందేశం, f->fetch_handle);
 
-#define SKIP_ST(o) for (i = (o); i < (int) size && (data[i] == ' ' || data[i] == '\t'); i++)
+#నిర్వచించు SKIP_ST(o) కొరకు (i = (o); i < (పూర్ణాంకం) కొలత && (దత్తాంశం[i] == ' ' || దత్తాంశం[i] == '\t'); i++)
 
-	if (12 < size && strncasecmp(data, "Location:", 9) == 0) {
+	ఒకవేళ (12 < కొలత && strncasecmp(దత్తాంశం, "Location:", 9) == 0) {
 		/* extract Location header */
-		free(f->location);
-		f->location = malloc(size);
-		if (!f->location) {
+		విడుదల(f->location);
+		f->location = జ్ఞాపకం_ఇవ్వు(కొలత);
+		ఒకవేళ (!f->location) {
 			NSLOG(netsurf, INFO, "malloc failed");
-			return size;
+			తిరిగి కొలత;
 		}
 		SKIP_ST(9);
-		strncpy(f->location, data + i, size - i);
-		f->location[size - i] = '\0';
-		for (i = size - i - 1; i >= 0 &&
+		strncpy(f->location, దత్తాంశం + i, కొలత - i);
+		f->location[కొలత - i] = '\0';
+		కొరకు (i = కొలత - i - 1; i >= 0 &&
 				(f->location[i] == ' ' ||
 				f->location[i] == '\t' ||
 				f->location[i] == '\r' ||
 				f->location[i] == '\n'); i--)
 			f->location[i] = '\0';
-	} else if (15 < size && strncasecmp(data, "Content-Length:", 15) == 0) {
+	} లేకపోతే ఒకవేళ (15 < కొలత && strncasecmp(దత్తాంశం, "Content-Length:", 15) == 0) {
 		/* extract Content-Length header */
 		SKIP_ST(15);
-		if (i < (int)size && '0' <= data[i] && data[i] <= '9')
-			f->content_length = atol(data + i);
-	} else if (17 < size && strncasecmp(data, "WWW-Authenticate:", 17) == 0) {
+		ఒకవేళ (i < (పూర్ణాంకం)కొలత && '0' <= దత్తాంశం[i] && దత్తాంశం[i] <= '9')
+			f->content_నిడివి = atol(దత్తాంశం + i);
+	} లేకపోతే ఒకవేళ (17 < కొలత && strncasecmp(దత్తాంశం, "WWW-Authenticate:", 17) == 0) {
 		/* extract the first Realm from WWW-Authenticate header */
 		SKIP_ST(17);
 
-		while (i < (int) size - 5 &&
-				strncasecmp(data + i, "realm", 5))
+		అయితే (i < (పూర్ణాంకం) కొలత - 5 &&
+				strncasecmp(దత్తాంశం + i, "realm", 5))
 			i++;
-		while (i < (int) size - 1 && data[++i] != '"')
+		అయితే (i < (పూర్ణాంకం) కొలత - 1 && దత్తాంశం[++i] != '"')
 			/* */;
 		i++;
 
-		if (i < (int) size) {
-			size_t end = i;
+		ఒకవేళ (i < (పూర్ణాంకం) కొలత) {
+			size_t చివర = i;
 
-			while (end < size && data[end] != '"')
-				++end;
+			అయితే (చివర < కొలత && దత్తాంశం[చివర] != '"')
+				++చివర;
 
-			if (end < size) {
-				free(f->realm);
-				f->realm = malloc(end - i + 1);
-				if (f->realm != NULL) {
-					strncpy(f->realm, data + i, end - i);
-					f->realm[end - i] = '\0';
+			ఒకవేళ (చివర < కొలత) {
+				విడుదల(f->realm);
+				f->realm = జ్ఞాపకం_ఇవ్వు(చివర - i + 1);
+				ఒకవేళ (f->realm != ఖాళీ) {
+					strncpy(f->realm, దత్తాంశం + i, చివర - i);
+					f->realm[చివర - i] = '\0';
 				}
 			}
 		}
-	} else if (11 < size && strncasecmp(data, "Set-Cookie:", 11) == 0) {
+	} లేకపోతే ఒకవేళ (11 < కొలత && strncasecmp(దత్తాంశం, "Set-Cookie:", 11) == 0) {
 		/* extract Set-Cookie header */
 		SKIP_ST(11);
 
-		fetch_set_cookie(f->fetch_handle, &data[i]);
+		fetch_సమితి_cookie(f->fetch_handle, &దత్తాంశం[i]);
 	}
 
-	return size;
-#undef SKIP_ST
+	తిరిగి కొలత;
+#నిర్వచనం_రద్దు SKIP_ST
 }
 
-static int fetch_curl_fdset(lwc_string *scheme, fd_set *read_set,
-			    fd_set *write_set, fd_set *error_set)
+స్థిర పూర్ణాంకం fetch_curl_fdset(lwc_string *scheme, fd_set *read_సమితి,
+			    fd_set *write_సమితి, fd_set *error_సమితి)
 {
-	CURLMcode code;
-	int maxfd = -1;
+	CURLMcode సంకేతం_2;
+	పూర్ణాంకం maxfd = -1;
 
-	code = curl_multi_fdset(fetch_curl_multi,
-				read_set,
-				write_set,
-				error_set,
+	సంకేతం_2 = curl_multi_fdset(fetch_curl_multi,
+				read_సమితి,
+				write_సమితి,
+				error_సమితి,
 				&maxfd);
-	assert(code == CURLM_OK);
+	ప్రతిజ్ఞా(సంకేతం_2 == CURLM_OK);
 
-	return maxfd;
+	తిరిగి maxfd;
 }
 
 
 
 /* exported function documented in content/fetchers/curl.h */
-nserror fetch_curl_register(void)
+nserror fetch_curl_రిజిస్టరు(శూన్య)
 {
-	CURLcode code;
-	curl_version_info_data *data;
-	int i;
+	CURLcode సంకేతం_2;
+	curl_సంస్కరణ_info_దత్తాంశం *దత్తాంశం;
+	పూర్ణాంకం i;
 	lwc_string *scheme;
-	const struct fetcher_operation_table fetcher_ops = {
+	స్థిరరాశి నిర్మాణం fetcher_operation_పట్టిక fetcher_ops = {
 		.initialise = fetch_curl_initialise,
 		.acceptable = fetch_curl_can_fetch,
-		.setup = fetch_curl_setup,
-		.start = fetch_curl_start,
+		.అమరిక = fetch_curl_అమరిక,
+		.ప్రారంభం = fetch_curl_ప్రారంభం,
 		.abort = fetch_curl_abort,
-		.free = fetch_curl_free,
+		.విడుదల = fetch_curl_free,
 		.poll = fetch_curl_poll,
 		.fdset = fetch_curl_fdset,
 		.finalise = fetch_curl_finalise
 	};
 
-#if LIBCURL_VERSION_NUM >= 0x073800
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x073800
 	/* version 7.56.0 can select which SSL backend to use */
 	CURLsslset setres;
 
-	setres = curl_global_sslset(CURLSSLBACKEND_OPENSSL, NULL, NULL);
-	if (setres == CURLSSLSET_OK) {
+	setres = curl_global_sslset(CURLSSLBACKEND_OPENSSL, ఖాళీ, ఖాళీ);
+	ఒకవేళ (setres == CURLSSLSET_OK) {
 		curl_with_openssl = true;
-	} else {
+	} లేకపోతే {
 		curl_with_openssl = false;
 	}
-#endif
+#అయితే_ముగింపు
 
-	NSLOG(netsurf, INFO, "curl_version %s", curl_version());
+	NSLOG(netsurf, INFO, "curl_version %s", curl_సంస్కరణ());
 
-	code = curl_global_init(CURL_GLOBAL_ALL);
-	if (code != CURLE_OK) {
+	సంకేతం_2 = curl_global_init(CURL_GLOBAL_ALL);
+	ఒకవేళ (సంకేతం_2 != CURLE_OK) {
 		NSLOG(netsurf, INFO, "curl_global_init failed.");
-		return NSERROR_INIT_FAILED;
+		తిరిగి NSERROR_INIT_FAILED;
 	}
 
 	fetch_curl_multi = curl_multi_init();
-	if (!fetch_curl_multi) {
+	ఒకవేళ (!fetch_curl_multi) {
 		NSLOG(netsurf, INFO, "curl_multi_init failed.");
-		return NSERROR_INIT_FAILED;
+		తిరిగి NSERROR_INIT_FAILED;
 	}
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x071e00
 	/* built against 7.30.0 or later: configure caching */
 	{
 		CURLMcode mcode;
-		int maxconnects = nsoption_int(max_fetchers) +
+		పూర్ణాంకం maxconnects = nsoption_int(max_fetchers) +
 				nsoption_int(max_cached_fetch_handles);
 
-#undef SETOPT
-#define SETOPT(option, value) \
-	mcode = curl_multi_setopt(fetch_curl_multi, option, value);	\
-	if (mcode != CURLM_OK) {					\
+#నిర్వచనం_రద్దు SETOPT
+#నిర్వచించు SETOPT(option, విలువ) \
+	mcode = curl_multi_setopt(fetch_curl_multi, option, విలువ);	\
+	ఒకవేళ (mcode != CURLM_OK) {					\
 		NSLOG(netsurf, ERROR, "attempting curl_multi_setopt(%s, ...)", #option); \
-		goto curl_multi_setopt_failed;				\
+		వెళ్ళు curl_multi_setopt_failed;				\
 	}
 
-		SETOPT(CURLMOPT_MAXCONNECTS, (long)maxconnects);
-		SETOPT(CURLMOPT_MAX_TOTAL_CONNECTIONS, (long)maxconnects);
-		SETOPT(CURLMOPT_MAX_HOST_CONNECTIONS, (long)nsoption_int(max_fetchers_per_host));
+		SETOPT(CURLMOPT_MAXCONNECTS, (దీర్ఘ)maxconnects);
+		SETOPT(CURLMOPT_MAX_మొత్తం_CONNECTIONS, (దీర్ఘ)maxconnects);
+		SETOPT(CURLMOPT_MAX_HOST_CONNECTIONS, (దీర్ఘ)nsoption_int(max_fetchers_చొప్పున_host));
 	}
-#endif
+#అయితే_ముగింపు
 
 	/* Create a curl easy handle with the options that are common to all
 	 *  fetches.
 	 */
 	fetch_blank_curl = curl_easy_init();
-	if (!fetch_blank_curl) {
+	ఒకవేళ (!fetch_blank_curl) {
 		NSLOG(netsurf, INFO, "curl_easy_init failed");
-		return NSERROR_INIT_FAILED;
+		తిరిగి NSERROR_INIT_FAILED;
 	}
 
-#undef SETOPT
-#define SETOPT(option, value) \
-	code = curl_easy_setopt(fetch_blank_curl, option, value);	\
-	if (code != CURLE_OK) {						\
+#నిర్వచనం_రద్దు SETOPT
+#నిర్వచించు SETOPT(option, విలువ) \
+	సంకేతం_2 = curl_easy_setopt(fetch_blank_curl, option, విలువ);	\
+	ఒకవేళ (సంకేతం_2 != CURLE_OK) {						\
 		NSLOG(netsurf, ERROR, "attempting curl_easy_setopt(%s, ...)", #option); \
-		goto curl_easy_setopt_failed;				\
+		వెళ్ళు curl_easy_setopt_failed;				\
 	}
 
-	SETOPT(CURLOPT_ERRORBUFFER, fetch_error_buffer);
+	SETOPT(CURLOPT_ERRORBUFFER, fetch_error_బఫరు);
 	SETOPT(CURLOPT_DEBUGFUNCTION, fetch_curl_debug);
-	if (nsoption_bool(suppress_curl_debug)) {
+	ఒకవేళ (nsoption_bool(suppress_curl_debug)) {
 		SETOPT(CURLOPT_VERBOSE, 0);
-	} else {
+	} లేకపోతే {
 		SETOPT(CURLOPT_VERBOSE, 1);
 	}
 
 	/* Currently we explode if curl uses HTTP2, so force 1.1. */
-	SETOPT(CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+	SETOPT(CURLOPT_HTTP_సంస్కరణ, CURL_HTTP_సంస్కరణ_1_1);
 
-	SETOPT(CURLOPT_WRITEFUNCTION, fetch_curl_data);
-	SETOPT(CURLOPT_HEADERFUNCTION, fetch_curl_header);
-	SETOPT(NSCURLOPT_PROGRESS_FUNCTION, fetch_curl_progress);
+	SETOPT(CURLOPT_WRITEFUNCTION, fetch_curl_దత్తాంశం);
+	SETOPT(CURLOPT_HEADERFUNCTION, fetch_curl_శీర్షిక);
+	SETOPT(NSCURLOPT_పురోగతి_FUNCTION, fetch_curl_పురోగతి);
 	SETOPT(CURLOPT_NOPROGRESS, 0L);
 	SETOPT(CURLOPT_USERAGENT, user_agent_string());
 	SETOPT(CURLOPT_ENCODING, "gzip");
-	SETOPT(CURLOPT_LOW_SPEED_LIMIT, 1L);
-	SETOPT(CURLOPT_LOW_SPEED_TIME, 180L);
+	SETOPT(CURLOPT_దిగువ_వేగం_హద్దు, 1L);
+	SETOPT(CURLOPT_దిగువ_వేగం_సమయం, 180L);
 	SETOPT(CURLOPT_NOSIGNAL, 1L);
-	SETOPT(CURLOPT_CONNECTTIMEOUT, (long)nsoption_uint(curl_fetch_timeout));
+	SETOPT(CURLOPT_CONNECTTIMEOUT, (దీర్ఘ)nsoption_uint(curl_fetch_timeout));
 	SETOPT(CURLOPT_OPENSOCKETFUNCTION, fetch_curl_socket_open);
 	SETOPT(CURLOPT_CLOSESOCKETFUNCTION, fetch_curl_socket_close);
 
-	if (nsoption_charp(ca_bundle) &&
+	ఒకవేళ (nsoption_charp(ca_bundle) &&
 	    strcmp(nsoption_charp(ca_bundle), "")) {
 		NSLOG(netsurf, INFO, "ca_bundle: '%s'",
 		      nsoption_charp(ca_bundle));
 		SETOPT(CURLOPT_CAINFO, nsoption_charp(ca_bundle));
 	}
-	if (nsoption_charp(ca_path) && strcmp(nsoption_charp(ca_path), "")) {
-		NSLOG(netsurf, INFO, "ca_path: '%s'", nsoption_charp(ca_path));
-		SETOPT(CURLOPT_CAPATH, nsoption_charp(ca_path));
+	ఒకవేళ (nsoption_charp(ca_మార్గం) && strcmp(nsoption_charp(ca_మార్గం), "")) {
+		NSLOG(netsurf, INFO, "ca_path: '%s'", nsoption_charp(ca_మార్గం));
+		SETOPT(CURLOPT_CAPATH, nsoption_charp(ca_మార్గం));
 	}
 
-#if LIBCURL_VERSION_NUM < 0x073800
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె < 0x073800
 	/*
 	 * before 7.56.0 Detect openssl from whether the SSL CTX
 	 *  function API works
 	 */
-	code = curl_easy_setopt(fetch_blank_curl, CURLOPT_SSL_CTX_FUNCTION, NULL);
-	if (code != CURLE_OK) {
+	సంకేతం_2 = curl_easy_setopt(fetch_blank_curl, CURLOPT_SSL_CTX_FUNCTION, ఖాళీ);
+	ఒకవేళ (సంకేతం_2 != CURLE_OK) {
 		curl_with_openssl = false;
-	} else {
+	} లేకపోతే {
 		curl_with_openssl = true;
 	}
-#endif
+#అయితే_ముగింపు
 
-	if (curl_with_openssl) {
+	ఒకవేళ (curl_with_openssl) {
 		/* only set the cipher list with openssl otherwise the
 		 *  fetch fails with "Unknown cipher in list"
 		 */
-#if LIBCURL_VERSION_NUM >= 0x073d00
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x073d00
 		/* Need libcurl 7.61.0 or later built against OpenSSL with
 		 * TLS1.3 support */
-		code = curl_easy_setopt(fetch_blank_curl,
+		సంకేతం_2 = curl_easy_setopt(fetch_blank_curl,
 				CURLOPT_TLS13_CIPHERS, CIPHER_SUITES);
-		if (code != CURLE_OK && code != CURLE_NOT_BUILT_IN)
-			goto curl_easy_setopt_failed;
-#endif
+		ఒకవేళ (సంకేతం_2 != CURLE_OK && సంకేతం_2 != CURLE_NOT_BUILT_లోపల)
+			వెళ్ళు curl_easy_setopt_failed;
+#అయితే_ముగింపు
 		SETOPT(CURLOPT_SSL_CIPHER_LIST, CIPHER_LIST);
 	}
 
@@ -2112,42 +2112,42 @@ nserror fetch_curl_register(void)
 
 	/* cURL initialised okay, register the fetchers */
 
-	data = curl_version_info(CURLVERSION_NOW);
+	దత్తాంశం = curl_సంస్కరణ_info(CURLVERSION_NOW);
 
 	curl_fetch_ssl_hashmap = hashmap_create(&curl_fetch_ssl_hashmap_parameters);
-	if (curl_fetch_ssl_hashmap == NULL) {
+	ఒకవేళ (curl_fetch_ssl_hashmap == ఖాళీ) {
 		NSLOG(netsurf, CRITICAL, "Unable to initialise SSL certificate hashmap");
-		return NSERROR_NOMEM;
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	for (i = 0; data->protocols[i]; i++) {
-		if (strcmp(data->protocols[i], "http") == 0) {
+	కొరకు (i = 0; దత్తాంశం->protocols[i]; i++) {
+		ఒకవేళ (strcmp(దత్తాంశం->protocols[i], "http") == 0) {
 			scheme = lwc_string_ref(corestring_lwc_http);
 
-		} else if (strcmp(data->protocols[i], "https") == 0) {
+		} లేకపోతే ఒకవేళ (strcmp(దత్తాంశం->protocols[i], "https") == 0) {
 			scheme = lwc_string_ref(corestring_lwc_https);
 
-		} else {
+		} లేకపోతే {
 			/* Ignore non-http(s) protocols */
-			continue;
+			కొనసాగు;
 		}
 
-		if (fetcher_add(scheme, &fetcher_ops) != NSERROR_OK) {
+		ఒకవేళ (fetcher_కూడు(scheme, &fetcher_ops) != NSERROR_OK) {
 			NSLOG(netsurf, INFO,
 			      "Unable to register cURL fetcher for %s",
-			      data->protocols[i]);
+			      దత్తాంశం->protocols[i]);
 		}
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
 curl_easy_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_easy_setopt failed.");
-	return NSERROR_INIT_FAILED;
+	తిరిగి NSERROR_INIT_FAILED;
 
-#if LIBCURL_VERSION_NUM >= 0x071e00
+#ఒకవేళ LIBCURL_సంస్కరణ_అంకె >= 0x071e00
 curl_multi_setopt_failed:
 	NSLOG(netsurf, INFO, "curl_multi_setopt failed.");
-	return NSERROR_INIT_FAILED;
-#endif
+	తిరిగి NSERROR_INIT_FAILED;
+#అయితే_ముగింపు
 }

@@ -23,45 +23,45 @@
  * Spec version: 2011-11-27
  */
 
-#include <string.h>
-#include <strings.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <strings.h>
 
-#include "utils/http.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
+#అన్తర్భావ "utils/http.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/corestrings.h"
 
-#include "content/content_factory.h"
-#include "content/mimesniff.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "content/mimesniff.h"
 
-struct map_s {
-	const uint8_t *sig;
+నిర్మాణం map_s {
+	స్థిరరాశి uint8_t *sig;
 	size_t len;
-	bool safe;
+	bool సురక్షిత;
 	lwc_string **type;
 };
 
-static bool mimesniff__has_binary_octets(const uint8_t *data, size_t len)
+స్థిర bool mimesniff_has_ద్విమాన_octets(స్థిరరాశి uint8_t *దత్తాంశం, size_t len)
 {
-	const uint8_t *end = data + len;
+	స్థిరరాశి uint8_t *చివర = దత్తాంశం + len;
 
-	while (data != end) {
-		const uint8_t c = *data;
+	అయితే (దత్తాంశం != చివర) {
+		స్థిరరాశి uint8_t c = *దత్తాంశం;
 
 		/* Binary iff in C0 and not ESC, CR, FF, LF, HT */
-		if (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
+		ఒకవేళ (c <= 0x1f && c != 0x1b && c != '\r' && c != '\f' &&
 				c != '\n' && c != '\t')
-			break;
+			ఆపు;
 
-		data++;
+		దత్తాంశం++;
 	}
 
-	return data != end;
+	తిరిగి దత్తాంశం != చివర;
 }
 
-static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
+స్థిర nserror mimesniff_సరిపోలిక_mp4(స్థిరరాశి uint8_t *దత్తాంశం, size_t len,
 		lwc_string **effective_type)
 {
-	uint32_t box_size, i;
+	uint32_t box_కొలత, i;
 
 	/* ISO/IEC 14496-12:2008 $4.3 says (effectively):
 	 *
@@ -87,166 +87,166 @@ static nserror mimesniff__match_mp4(const uint8_t *data, size_t len,
 	/* 12 reflects the minimum number of octets needed to sniff useful
 	 * information out of an 'ftyp' box (i.e. the size, type,
 	 * and major_brand words). */
-	if (len < 12)
-		return NSERROR_NOT_FOUND;
+	ఒకవేళ (len < 12)
+		తిరిగి NSERROR_NOT_దొరికింది;
 
 	/* Box size is big-endian */
-	box_size = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+	box_కొలత = (దత్తాంశం[0] << 24) | (దత్తాంశం[1] << 16) | (దత్తాంశం[2] << 8) | దత్తాంశం[3];
 
 	/* Require that we can read the entire box, and reject bad box sizes */
-	if (len < box_size || box_size % 4 != 0)
-		return NSERROR_NOT_FOUND;
+	ఒకవేళ (len < box_కొలత || box_కొలత % 4 != 0)
+		తిరిగి NSERROR_NOT_దొరికింది;
 
 	/* Ensure this is an 'ftyp' box */
-	if (data[4] != 'f' || data[5] != 't' ||
-			data[6] != 'y' || data[7] != 'p')
-		return NSERROR_NOT_FOUND;
+	ఒకవేళ (దత్తాంశం[4] != 'f' || దత్తాంశం[5] != 't' ||
+			దత్తాంశం[6] != 'y' || దత్తాంశం[7] != 'p')
+		తిరిగి NSERROR_NOT_దొరికింది;
 
 	/* Check if major brand begins with 'mp4' */
-	if (data[8] == 'm' && data[9] == 'p' && data[10] == '4') {
+	ఒకవేళ (దత్తాంశం[8] == 'm' && దత్తాంశం[9] == 'p' && దత్తాంశం[10] == '4') {
 		*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* Search each compatible brand in the box for "mp4" */
-	for (i = 16; i <= box_size - 4; i += 4) {
-		if (data[i] == 'm' &&
-		    data[i+1] == 'p' &&
-		    data[i+2] == '4') {
+	కొరకు (i = 16; i <= box_కొలత - 4; i += 4) {
+		ఒకవేళ (దత్తాంశం[i] == 'm' &&
+		    దత్తాంశం[i+1] == 'p' &&
+		    దత్తాంశం[i+2] == '4') {
 			*effective_type = lwc_string_ref(corestring_lwc_video_mp4);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
-static nserror mimesniff__match_unknown_ws(const uint8_t *data, size_t len,
+స్థిర nserror mimesniff_సరిపోలిక_unknown_ws(స్థిరరాశి uint8_t *దత్తాంశం, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s ws_exact_match_types[] = {
-		SIG(&corestring_lwc_text_xml, "<?xml", false),
-		{ NULL, 0, false, NULL }
+#నిర్వచించు SIG(t, s, x) { (స్థిరరాశి uint8_t *) s, SLEN(s), x, t }
+	స్థిర స్థిరరాశి నిర్మాణం map_s ws_exact_సరిపోలిక_types[] = {
+		SIG(&corestring_lwc_పాఠ్యం_xml, "<?xml", false),
+		{ ఖాళీ, 0, false, ఖాళీ }
 	};
 
-	static const struct map_s ws_inexact_match_types[] = {
-		SIG(&corestring_lwc_text_html, "<!DOCTYPE HTML", false),
-		SIG(&corestring_lwc_text_html, "<HTML",          false),
-		SIG(&corestring_lwc_text_html, "<HEAD",          false),
-		SIG(&corestring_lwc_text_html, "<SCRIPT",        false),
-		SIG(&corestring_lwc_text_html, "<IFRAME",        false),
-		SIG(&corestring_lwc_text_html, "<H1",            false),
-		SIG(&corestring_lwc_text_html, "<DIV",           false),
-		SIG(&corestring_lwc_text_html, "<FONT",          false),
-		SIG(&corestring_lwc_text_html, "<TABLE",         false),
-		SIG(&corestring_lwc_text_html, "<A",             false),
-		SIG(&corestring_lwc_text_html, "<STYLE",         false),
-		SIG(&corestring_lwc_text_html, "<TITLE",         false),
-		SIG(&corestring_lwc_text_html, "<B",             false),
-		SIG(&corestring_lwc_text_html, "<BODY",          false),
-		SIG(&corestring_lwc_text_html, "<BR",            false),
-		SIG(&corestring_lwc_text_html, "<P",             false),
-		SIG(&corestring_lwc_text_html, "<!--",           false),
-		{ NULL, 0, false, NULL }
+	స్థిర స్థిరరాశి నిర్మాణం map_s ws_inexact_సరిపోలిక_types[] = {
+		SIG(&corestring_lwc_పాఠ్యం_html, "<!DOCTYPE HTML", false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<HTML",          false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<HEAD",          false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<SCRIPT",        false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<IFRAME",        false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<H1",            false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<DIV",           false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<FONT",          false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<TABLE",         false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<A",             false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<STYLE",         false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<TITLE",         false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<B",             false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<BODY",          false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<BR",            false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<P",             false),
+		SIG(&corestring_lwc_పాఠ్యం_html, "<!--",           false),
+		{ ఖాళీ, 0, false, ఖాళీ }
 	};
-#undef SIG
-	const uint8_t *end = data + len;
-	const struct map_s *it;
+#నిర్వచనం_రద్దు SIG
+	స్థిరరాశి uint8_t *చివర = దత్తాంశం + len;
+	స్థిరరాశి నిర్మాణం map_s *it;
 
 	/* Skip leading whitespace */
-	while (data != end) {
-		const uint8_t c = *data;
+	అయితే (దత్తాంశం != చివర) {
+		స్థిరరాశి uint8_t c = *దత్తాంశం;
 
-		if (c != '\t' && c != '\n' && c != '\f' &&
+		ఒకవేళ (c != '\t' && c != '\n' && c != '\f' &&
 				c != '\r' && c != ' ')
-			break;
+			ఆపు;
 
-		data++;
+		దత్తాంశం++;
 	}
 
-	if (data == end)
-		return NSERROR_NOT_FOUND;
+	ఒకవేళ (దత్తాంశం == చివర)
+		తిరిగి NSERROR_NOT_దొరికింది;
 
-	len = end - data;
+	len = చివర - దత్తాంశం;
 
-	for (it = ws_exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	కొరకు (it = ws_exact_సరిపోలిక_types; it->sig != ఖాళీ; it++) {
+		ఒకవేళ (it->len <= len && memcmp(దత్తాంశం, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
 	}
 
-	for (it = ws_inexact_match_types; it->sig != NULL; it++) {
+	కొరకు (it = ws_inexact_సరిపోలిక_types; it->sig != ఖాళీ; it++) {
 		/* +1 for trailing space or > */
-		if (len < it->len + 1)
-			continue;
+		ఒకవేళ (len < it->len + 1)
+			కొనసాగు;
 
-		if (strncasecmp((const char *) data,
-				(const char *) it->sig, it->len) == 0 &&
-				(data[it->len] == ' ' ||
-				data[it->len] == '>')) {
+		ఒకవేళ (strncasecmp((స్థిరరాశి అక్షరం *) దత్తాంశం,
+				(స్థిరరాశి అక్షరం *) it->sig, it->len) == 0 &&
+				(దత్తాంశం[it->len] == ' ' ||
+				దత్తాంశం[it->len] == '>')) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
-static nserror mimesniff__match_unknown_bom(const uint8_t *data, size_t len,
+స్థిర nserror mimesniff_సరిపోలిక_unknown_bom(స్థిరరాశి uint8_t *దత్తాంశం, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s bom_match_types[] = {
-		SIG(&corestring_lwc_text_plain, "\xfe\xff",     false),
-		SIG(&corestring_lwc_text_plain, "\xff\xfe",     false),
-		SIG(&corestring_lwc_text_plain, "\xef\xbb\xbf", false),
-		{ NULL, 0, false, NULL }
+#నిర్వచించు SIG(t, s, x) { (స్థిరరాశి uint8_t *) s, SLEN(s), x, t }
+	స్థిర స్థిరరాశి నిర్మాణం map_s bom_సరిపోలిక_types[] = {
+		SIG(&corestring_lwc_పాఠ్యం_plain, "\xfe\xff",     false),
+		SIG(&corestring_lwc_పాఠ్యం_plain, "\xff\xfe",     false),
+		SIG(&corestring_lwc_పాఠ్యం_plain, "\xef\xbb\xbf", false),
+		{ ఖాళీ, 0, false, ఖాళీ }
 	};
-#undef SIG
-	const struct map_s *it;
+#నిర్వచనం_రద్దు SIG
+	స్థిరరాశి నిర్మాణం map_s *it;
 
-	for (it = bom_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	కొరకు (it = bom_సరిపోలిక_types; it->sig != ఖాళీ; it++) {
+		ఒకవేళ (it->len <= len && memcmp(దత్తాంశం, it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
-static nserror mimesniff__match_unknown_riff(const uint8_t *data, size_t len,
+స్థిర nserror mimesniff_సరిపోలిక_unknown_riff(స్థిరరాశి uint8_t *దత్తాంశం, size_t len,
 		lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s riff_match_types[] = {
+#నిర్వచించు SIG(t, s, x) { (స్థిరరాశి uint8_t *) s, SLEN(s), x, t }
+	స్థిర స్థిరరాశి నిర్మాణం map_s riff_సరిపోలిక_types[] = {
 		SIG(&corestring_lwc_image_webp, "WEBPVP", true),
 		SIG(&corestring_lwc_audio_wave, "WAVE",   true),
-		{ NULL, 0, false, NULL }
+		{ ఖాళీ, 0, false, ఖాళీ }
 	};
-#undef SIG
-	const struct map_s *it;
+#నిర్వచనం_రద్దు SIG
+	స్థిరరాశి నిర్మాణం map_s *it;
 
-	for (it = riff_match_types; it->sig != NULL; it++) {
-		if (it->len + SLEN("RIFF????") <= len &&
-				memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
-				memcmp(data + SLEN("RIFF????"),
+	కొరకు (it = riff_సరిపోలిక_types; it->sig != ఖాళీ; it++) {
+		ఒకవేళ (it->len + SLEN("RIFF????") <= len &&
+				memcmp(దత్తాంశం, "RIFF", SLEN("RIFF")) == 0 &&
+				memcmp(దత్తాంశం + SLEN("RIFF????"),
 						it->sig, it->len) == 0) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
-static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
+స్థిర nserror mimesniff_సరిపోలిక_unknown_exact(స్థిరరాశి uint8_t *దత్తాంశం, size_t len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-#define SIG(t, s, x) { (const uint8_t *) s, SLEN(s), x, t }
-	static const struct map_s exact_match_types[] = {
+#నిర్వచించు SIG(t, s, x) { (స్థిరరాశి uint8_t *) s, SLEN(s), x, t }
+	స్థిర స్థిరరాశి నిర్మాణం map_s exact_సరిపోలిక_types[] = {
 		SIG(&corestring_lwc_image_gif, "GIF87a", true),
 		SIG(&corestring_lwc_image_gif, "GIF89a", true),
 		SIG(&corestring_lwc_image_png, "\x89PNG\r\n\x1a\n", true),
@@ -262,118 +262,118 @@ static nserror mimesniff__match_unknown_exact(const uint8_t *data, size_t len,
 		SIG(&corestring_lwc_application_pdf, "%PDF-", false),
 		SIG(&corestring_lwc_image_jxl, "\xFF\x0A", true), /* containerless jpeg xl*/
 		{
-			(const uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
+			(స్థిరరాశి uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
 			12,
 			true,
 			&corestring_lwc_image_jxl
 		}, /* containered jpeg xl*/
-		{ NULL, 0, false, NULL }
+		{ ఖాళీ, 0, false, ఖాళీ }
 	};
-#undef SIG
-	const struct map_s *it;
+#నిర్వచనం_రద్దు SIG
+	స్థిరరాశి నిర్మాణం map_s *it;
 
-	for (it = exact_match_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0 &&
-				(allow_unsafe || it->safe)) {
+	కొరకు (it = exact_సరిపోలిక_types; it->sig != ఖాళీ; it++) {
+		ఒకవేళ (it->len <= len && memcmp(దత్తాంశం, it->sig, it->len) == 0 &&
+				(allow_unsafe || it->సురక్షిత)) {
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
 	}
 
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
-static nserror mimesniff__match_unknown(const uint8_t *data, size_t len,
+స్థిర nserror mimesniff_సరిపోలిక_unknown(స్థిరరాశి uint8_t *దత్తాంశం, size_t len,
 		bool allow_unsafe, lwc_string **effective_type)
 {
-	if (mimesniff__match_unknown_exact(data, len, allow_unsafe,
+	ఒకవేళ (mimesniff_సరిపోలిక_unknown_exact(దత్తాంశం, len, allow_unsafe,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 
-	if (mimesniff__match_unknown_riff(data, len,
+	ఒకవేళ (mimesniff_సరిపోలిక_unknown_riff(దత్తాంశం, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 
-	if (allow_unsafe == false)
-		return NSERROR_NOT_FOUND;
+	ఒకవేళ (allow_unsafe == false)
+		తిరిగి NSERROR_NOT_దొరికింది;
 
-	if (mimesniff__match_unknown_bom(data, len,
+	ఒకవేళ (mimesniff_సరిపోలిక_unknown_bom(దత్తాంశం, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 
-	if (mimesniff__match_unknown_ws(data, len,
+	ఒకవేళ (mimesniff_సరిపోలిక_unknown_ws(దత్తాంశం, len,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 
-	if (mimesniff__match_mp4(data, len, effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+	ఒకవేళ (mimesniff_సరిపోలిక_mp4(దత్తాంశం, len, effective_type) == NSERROR_OK)
+		తిరిగి NSERROR_OK;
 
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
-static nserror mimesniff__compute_unknown(const uint8_t *data, size_t len,
+స్థిర nserror mimesniff__compute_unknown(స్థిరరాశి uint8_t *దత్తాంశం, size_t len,
 		lwc_string **effective_type)
 {
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	ఒకవేళ (దత్తాంశం == ఖాళీ)
+		తిరిగి NSERROR_NEED_దత్తాంశం;
 
 	len = min(len, 512);
 
-	if (mimesniff__match_unknown(data, len, true,
+	ఒకవేళ (mimesniff_సరిపోలిక_unknown(దత్తాంశం, len, true,
 				     effective_type) == NSERROR_OK) {
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	ఒకవేళ (mimesniff_has_ద్విమాన_octets(దత్తాంశం, len) == false) {
 		/* No binary octets => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_పాఠ్యం_plain);
+		తిరిగి NSERROR_OK;
 	}
 
-	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
+	*effective_type = lwc_string_ref(corestring_lwc_application_octet_ప్రవాహం);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static nserror mimesniff__compute_text_or_binary(const uint8_t *data,
+స్థిర nserror mimesniff_compute_పాఠ్యం_or_ద్విమాన(స్థిరరాశి uint8_t *దత్తాంశం,
 		size_t len, lwc_string **effective_type)
 {
-	if (data == NULL) {
-		return NSERROR_NEED_DATA;
+	ఒకవేళ (దత్తాంశం == ఖాళీ) {
+		తిరిగి NSERROR_NEED_దత్తాంశం;
 	}
 
 	len = min(len, 512);
 
-	if (len >= 3 && ((data[0] == 0xfe && data[1] == 0xff) ||
-			(data[0] == 0xff && data[1] == 0xfe) ||
-			(data[0] == 0xef && data[1] == 0xbb &&
-				data[2] == 0xbf))) {
+	ఒకవేళ (len >= 3 && ((దత్తాంశం[0] == 0xfe && దత్తాంశం[1] == 0xff) ||
+			(దత్తాంశం[0] == 0xff && దత్తాంశం[1] == 0xfe) ||
+			(దత్తాంశం[0] == 0xef && దత్తాంశం[1] == 0xbb &&
+				దత్తాంశం[2] == 0xbf))) {
 		/* Found a BOM => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_పాఠ్యం_plain);
+		తిరిగి NSERROR_OK;
 	}
 
-	if (mimesniff__has_binary_octets(data, len) == false) {
+	ఒకవేళ (mimesniff_has_ద్విమాన_octets(దత్తాంశం, len) == false) {
 		/* No binary octets => text/plain */
-		*effective_type = lwc_string_ref(corestring_lwc_text_plain);
-		return NSERROR_OK;
+		*effective_type = lwc_string_ref(corestring_lwc_పాఠ్యం_plain);
+		తిరిగి NSERROR_OK;
 	}
 
-	if (mimesniff__match_unknown(data, len, false,
+	ఒకవేళ (mimesniff_సరిపోలిక_unknown(దత్తాంశం, len, false,
 			effective_type) == NSERROR_OK)
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 
-	*effective_type = lwc_string_ref(corestring_lwc_application_octet_stream);
+	*effective_type = lwc_string_ref(corestring_lwc_application_octet_ప్రవాహం);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static nserror mimesniff__compute_image(lwc_string *official_type,
-		const uint8_t *data, size_t len, lwc_string **effective_type)
+స్థిర nserror mimesniff__compute_image(lwc_string *official_type,
+		స్థిరరాశి uint8_t *దత్తాంశం, size_t len, lwc_string **effective_type)
 {
-#define SIG(t, s) { (const uint8_t *) s, SLEN(s), t }
-	static const struct it_s {
-		const uint8_t *sig;
+#నిర్వచించు SIG(t, s) { (స్థిరరాశి uint8_t *) s, SLEN(s), t }
+	స్థిర స్థిరరాశి నిర్మాణం it_s {
+		స్థిరరాశి uint8_t *sig;
 		size_t len;
 		lwc_string **type;
 	} image_types[] = {
@@ -385,316 +385,316 @@ static nserror mimesniff__compute_image(lwc_string *official_type,
 		SIG(&corestring_lwc_image_vnd_microsoft_icon, "\x00\x00\x01\x00"),
 		SIG(&corestring_lwc_image_jxl, "\xFF\x0A"), /* containerless jpeg xl*/
 		{
-			(const uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
+			(స్థిరరాశి uint8_t *)"\x00\x00\x00\x0CJXL \x0D\x0A\x87\x0A",
 			12,
 			&corestring_lwc_image_jxl
 		}, /* containered jpeg xl*/
-		{ NULL, 0, NULL }
+		{ ఖాళీ, 0, ఖాళీ }
 	};
-#undef SIG
+#నిర్వచనం_రద్దు SIG
 
-	const struct it_s *it;
+	స్థిరరాశి నిర్మాణం it_s *it;
 
-	if (data == NULL) {
+	ఒకవేళ (దత్తాంశం == ఖాళీ) {
 		lwc_string_unref(official_type);
-		return NSERROR_NEED_DATA;
+		తిరిగి NSERROR_NEED_దత్తాంశం;
 	}
 
-	for (it = image_types; it->sig != NULL; it++) {
-		if (it->len <= len && memcmp(data, it->sig, it->len) == 0) {
+	కొరకు (it = image_types; it->sig != ఖాళీ; it++) {
+		ఒకవేళ (it->len <= len && memcmp(దత్తాంశం, it->sig, it->len) == 0) {
 			lwc_string_unref(official_type);
 			*effective_type = lwc_string_ref(*it->type);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
 	}
 
 	/* WebP has a signature that doesn't fit into the above table */
-	if (SLEN("RIFF????WEBPVP") <= len &&
-			memcmp(data, "RIFF", SLEN("RIFF")) == 0 &&
-			memcmp(data + SLEN("RIFF????"),
+	ఒకవేళ (SLEN("RIFF????WEBPVP") <= len &&
+			memcmp(దత్తాంశం, "RIFF", SLEN("RIFF")) == 0 &&
+			memcmp(దత్తాంశం + SLEN("RIFF????"),
 					"WEBPVP", SLEN("WEBPVP")) == 0 ) {
 		lwc_string_unref(official_type);
 		*effective_type = lwc_string_ref(corestring_lwc_image_webp);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	*effective_type = official_type;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static nserror mimesniff__compute_feed_or_html(const uint8_t *data,
+స్థిర nserror mimesniff__compute_feed_or_html(స్థిరరాశి uint8_t *దత్తాంశం,
 		size_t len, lwc_string **effective_type)
 {
-#define RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-#define RSS_NS "http://purl.org/rss/1.0"
+#నిర్వచించు RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#నిర్వచించు RSS_NS "http://purl.org/rss/1.0"
 
-	enum state_e {
+	గణన state_e {
 		BEFORE_BOM,
 		BEFORE_MARKUP,
-		MARKUP_START,
+		MARKUP_ప్రారంభం,
 		COMMENT_OR_DOCTYPE,
-		IN_COMMENT,
-		IN_DOCTYPE,
-		IN_PI,
-		IN_TAG,
-		IN_RDF
+		లోపల_COMMENT,
+		లోపల_DOCTYPE,
+		లోపల_PI,
+		లోపల_ట్యాగ్,
+		లోపల_RDF
 	} state = BEFORE_BOM;
 
 	bool rdf = false, rss = false;
-	const uint8_t *end;
+	స్థిరరాశి uint8_t *చివర;
 
-	if (data == NULL)
-		return NSERROR_NEED_DATA;
+	ఒకవేళ (దత్తాంశం == ఖాళీ)
+		తిరిగి NSERROR_NEED_దత్తాంశం;
 
-	end = data + min(len, 512);
+	చివర = దత్తాంశం + min(len, 512);
 
-	while (data < end) {
-		const uint8_t c = *data;
+	అయితే (దత్తాంశం < చివర) {
+		స్థిరరాశి uint8_t c = *దత్తాంశం;
 
-#define MATCH(s) SLEN(s) <= (size_t) (end - data) && \
-			memcmp(data, s, SLEN(s)) == 0
+#నిర్వచించు సరిపోలిక_2(s) SLEN(s) <= (size_t) (చివర - దత్తాంశం) && \
+			memcmp(దత్తాంశం, s, SLEN(s)) == 0
 
-		switch (state) {
-		case BEFORE_BOM:
-			if (3 <= end - data && c == 0xef && data[1] == 0xbb &&
-					data[2] == 0xbf) {
-				data += 3;
+		ఎంపిక (state) {
+		స్థితి BEFORE_BOM:
+			ఒకవేళ (3 <= చివర - దత్తాంశం && c == 0xef && దత్తాంశం[1] == 0xbb &&
+					దత్తాంశం[2] == 0xbf) {
+				దత్తాంశం += 3;
 			}
 
 			state = BEFORE_MARKUP;
-			break;
-		case BEFORE_MARKUP:
-			if (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
-				data++;
-			else if (c != '<')
-				data = end;
-			else {
-				state = MARKUP_START;
-				data++;
+			ఆపు;
+		స్థితి BEFORE_MARKUP:
+			ఒకవేళ (c == '\t' || c == '\n' || c	== '\r' || c == ' ')
+				దత్తాంశం++;
+			లేకపోతే ఒకవేళ (c != '<')
+				దత్తాంశం = చివర;
+			లేకపోతే {
+				state = MARKUP_ప్రారంభం;
+				దత్తాంశం++;
 			}
-			break;
-		case MARKUP_START:
-			if (c == '!') {
+			ఆపు;
+		స్థితి MARKUP_ప్రారంభం:
+			ఒకవేళ (c == '!') {
 				state = COMMENT_OR_DOCTYPE;
-				data++;
-			} else if (c == '?') {
-				state = IN_PI;
-				data++;
-			} else {
+				దత్తాంశం++;
+			} లేకపోతే ఒకవేళ (c == '?') {
+				state = లోపల_PI;
+				దత్తాంశం++;
+			} లేకపోతే {
 				/* Reconsume input */
-				state = IN_TAG;
+				state = లోపల_ట్యాగ్;
 			}
-			break;
-		case COMMENT_OR_DOCTYPE:
-			if (2 <= end - data && c == '-' && data[1] == '-') {
-				state = IN_COMMENT;
-				data += 2;
-			} else {
+			ఆపు;
+		స్థితి COMMENT_OR_DOCTYPE:
+			ఒకవేళ (2 <= చివర - దత్తాంశం && c == '-' && దత్తాంశం[1] == '-') {
+				state = లోపల_COMMENT;
+				దత్తాంశం += 2;
+			} లేకపోతే {
 				/* Reconsume input */
-				state = IN_DOCTYPE;
+				state = లోపల_DOCTYPE;
 			}
-			break;
-		case IN_COMMENT:
-			if (3 <= end - data && c == '-' && data[1] == '-' &&
-					data[2] == '>') {
+			ఆపు;
+		స్థితి లోపల_COMMENT:
+			ఒకవేళ (3 <= చివర - దత్తాంశం && c == '-' && దత్తాంశం[1] == '-' &&
+					దత్తాంశం[2] == '>') {
 				state = BEFORE_MARKUP;
-				data += 3;
-			} else
-				data++;
-			break;
-		case IN_DOCTYPE:
-			if (c == '>')
+				దత్తాంశం += 3;
+			} లేకపోతే
+				దత్తాంశం++;
+			ఆపు;
+		స్థితి లోపల_DOCTYPE:
+			ఒకవేళ (c == '>')
 				state = BEFORE_MARKUP;
-			data++;
-			break;
-		case IN_PI:
-			if (2 <= end - data && c == '?' && data[1] == '>') {
+			దత్తాంశం++;
+			ఆపు;
+		స్థితి లోపల_PI:
+			ఒకవేళ (2 <= చివర - దత్తాంశం && c == '?' && దత్తాంశం[1] == '>') {
 				state = BEFORE_MARKUP;
-				data += 2;
-			} else
-				data++;
-			break;
-		case IN_TAG:
-			if (MATCH("rss")) {
+				దత్తాంశం += 2;
+			} లేకపోతే
+				దత్తాంశం++;
+			ఆపు;
+		స్థితి లోపల_ట్యాగ్:
+			ఒకవేళ (సరిపోలిక_2("rss")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
-			} else if (MATCH("feed")) {
+				తిరిగి NSERROR_OK;
+			} లేకపోతే ఒకవేళ (సరిపోలిక_2("feed")) {
 				*effective_type =
 					lwc_string_ref(corestring_lwc_application_atom_xml);
-				return NSERROR_OK;
-			} else if (MATCH("rdf:RDF")) {
-				state = IN_RDF;
-				data += SLEN("rdf:RDF");
-			} else
-				data = end;
-			break;
-		case IN_RDF:
-			if (MATCH(RSS_NS)) {
+				తిరిగి NSERROR_OK;
+			} లేకపోతే ఒకవేళ (సరిపోలిక_2("rdf:RDF")) {
+				state = లోపల_RDF;
+				దత్తాంశం += SLEN("rdf:RDF");
+			} లేకపోతే
+				దత్తాంశం = చివర;
+			ఆపు;
+		స్థితి లోపల_RDF:
+			ఒకవేళ (సరిపోలిక_2(RSS_NS)) {
 				rss = true;
-				data += SLEN(RSS_NS);
-			} else if (MATCH(RDF_NS)) {
+				దత్తాంశం += SLEN(RSS_NS);
+			} లేకపోతే ఒకవేళ (సరిపోలిక_2(RDF_NS)) {
 				rdf = true;
-				data += SLEN(RDF_NS);
-			} else
-				data++;
+				దత్తాంశం += SLEN(RDF_NS);
+			} లేకపోతే
+				దత్తాంశం++;
 
-			if (rdf && rss) {
+			ఒకవేళ (rdf && rss) {
 				*effective_type = lwc_string_ref(corestring_lwc_application_rss_xml);
-				return NSERROR_OK;
+				తిరిగి NSERROR_OK;
 			}
 
-			break;
+			ఆపు;
 		}
-#undef MATCH
+#నిర్వచనం_రద్దు సరిపోలిక_2
 	}
 
-	*effective_type = lwc_string_ref(corestring_lwc_text_html);
+	*effective_type = lwc_string_ref(corestring_lwc_పాఠ్యం_html);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
-#undef RSS_NS
-#undef RDF_NS
+#నిర్వచనం_రద్దు RSS_NS
+#నిర్వచనం_రద్దు RDF_NS
 }
 
 /* See mimesniff.h for documentation */
 nserror
-mimesniff_compute_effective_type(const char *content_type_header,
-				 const uint8_t *data,
+mimesniff_compute_effective_type(స్థిరరాశి అక్షరం *content_type_శీర్షిక,
+				 స్థిరరాశి uint8_t *దత్తాంశం,
 				 size_t len,
 				 bool sniff_allowed,
 				 bool image_only,
 				 lwc_string **effective_type)
 {
-#define S(s) { s, SLEN(s) }
-	static const struct tt_s {
-		const char *data;
+#నిర్వచించు S(s) { s, SLEN(s) }
+	స్థిర స్థిరరాశి నిర్మాణం tt_s {
+		స్థిరరాశి అక్షరం *దత్తాంశం;
 		size_t len;
-	} text_types[] = {
+	} పాఠ్యం_types[] = {
 		S("text/plain"),
 		S("text/plain; charset=ISO-8859-1"),
 		S("text/plain; charset=iso-8859-1"),
 		S("text/plain; charset=UTF-8"),
-		{ NULL, 0 }
+		{ ఖాళీ, 0 }
 	};
-#undef S
+#నిర్వచనం_రద్దు S
 
-	size_t content_type_header_len;
+	size_t content_type_శీర్షిక_len;
 	http_content_type *ct;
-	const struct tt_s *tt;
-	bool match;
+	స్థిరరాశి నిర్మాణం tt_s *tt;
+	bool సరిపోలిక;
 	nserror error;
 
-	if (content_type_header == NULL) {
-		if (sniff_allowed == false) {
-			return NSERROR_NOT_FOUND;
+	ఒకవేళ (content_type_శీర్షిక == ఖాళీ) {
+		ఒకవేళ (sniff_allowed == false) {
+			తిరిగి NSERROR_NOT_దొరికింది;
 		}
 
 		/* No official type => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		తిరిగి mimesniff__compute_unknown(దత్తాంశం, len, effective_type);
 	}
 
-	error = http_parse_content_type(content_type_header, &ct);
-	if (error != NSERROR_OK) {
-		if (sniff_allowed == false)
-			return NSERROR_NOT_FOUND;
+	error = http_parse_content_type(content_type_శీర్షిక, &ct);
+	ఒకవేళ (error != NSERROR_OK) {
+		ఒకవేళ (sniff_allowed == false)
+			తిరిగి NSERROR_NOT_దొరికింది;
 
 		/* Unparseable => unknown */
-		return mimesniff__compute_unknown(data, len, effective_type);
+		తిరిగి mimesniff__compute_unknown(దత్తాంశం, len, effective_type);
 	}
 
-	if (sniff_allowed == false) {
+	ఒకవేళ (sniff_allowed == false) {
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	if (image_only) {
+	ఒకవేళ (image_only) {
 		lwc_string *official_type;
 
-		if (lwc_string_caseless_isequal(ct->media_type,
+		ఒకవేళ (lwc_string_caseless_isequal(ct->media_type,
 						corestring_lwc_image_svg,
-						&match) == lwc_error_ok && match) {
+						&సరిపోలిక) == lwc_error_ok && సరిపోలిక) {
 			*effective_type = lwc_string_ref(corestring_lwc_image_svg);
 			http_content_type_destroy(ct);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
 
 		official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
-				data, len, effective_type);
+		తిరిగి mimesniff__compute_image(official_type,
+				దత్తాంశం, len, effective_type);
 	}
 
-	content_type_header_len = strlen(content_type_header);
+	content_type_శీర్షిక_len = అక్షరశ్రేణి_పొడవు(content_type_శీర్షిక);
 
 	/* Look for text types */
-	for (tt = text_types; tt->data != NULL; tt++) {
-		if (tt->len == content_type_header_len &&
-		    memcmp(tt->data,
-			   content_type_header,
-			   content_type_header_len) == 0) {
+	కొరకు (tt = పాఠ్యం_types; tt->దత్తాంశం != ఖాళీ; tt++) {
+		ఒకవేళ (tt->len == content_type_శీర్షిక_len &&
+		    memcmp(tt->దత్తాంశం,
+			   content_type_శీర్షిక,
+			   content_type_శీర్షిక_len) == 0) {
 			http_content_type_destroy(ct);
-			return mimesniff__compute_text_or_binary(data, len,
+			తిరిగి mimesniff_compute_పాఠ్యం_or_ద్విమాన(దత్తాంశం, len,
 					effective_type);
 		}
 	}
 
 	/* unknown/unknown, application/unknown, * / * */
-	if ((lwc_string_caseless_isequal(ct->media_type,
+	ఒకవేళ ((lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_unknown_unknown,
-					 &match) == lwc_error_ok && match) ||
+					 &సరిపోలిక) == lwc_error_ok && సరిపోలిక) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_application_unknown,
-					 &match) == lwc_error_ok && match) ||
+					 &సరిపోలిక) == lwc_error_ok && సరిపోలిక) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_any,
-					 &match) == lwc_error_ok && match)) {
+					 &సరిపోలిక) == lwc_error_ok && సరిపోలిక)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_unknown(data, len, effective_type);
+		తిరిగి mimesniff__compute_unknown(దత్తాంశం, len, effective_type);
 	}
 
 	/* +xml */
-	if (lwc_string_length(ct->media_type) > SLEN("+xml") &&
-			strncasecmp(lwc_string_data(ct->media_type) +
-				lwc_string_length(ct->media_type) -
+	ఒకవేళ (lwc_string_నిడివి(ct->media_type) > SLEN("+xml") &&
+			strncasecmp(lwc_string_దత్తాంశం(ct->media_type) +
+				lwc_string_నిడివి(ct->media_type) -
 				SLEN("+xml"),
 				"+xml", SLEN("+xml")) == 0) {
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* text/xml, application/xml */
-	if ((lwc_string_caseless_isequal(ct->media_type,
-					 corestring_lwc_text_xml,
-					 &match) == lwc_error_ok && match) ||
+	ఒకవేళ ((lwc_string_caseless_isequal(ct->media_type,
+					 corestring_lwc_పాఠ్యం_xml,
+					 &సరిపోలిక) == lwc_error_ok && సరిపోలిక) ||
 	    (lwc_string_caseless_isequal(ct->media_type,
 					 corestring_lwc_application_xml,
-					 &match) == lwc_error_ok && match)) {
+					 &సరిపోలిక) == lwc_error_ok && సరిపోలిక)) {
 		/* Use official type */
 		*effective_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* Image types */
-	if (content_factory_type_from_mime_type(ct->media_type) ==
+	ఒకవేళ (content_factory_type_from_mime_type(ct->media_type) ==
 			CONTENT_IMAGE) {
 		lwc_string *official_type = lwc_string_ref(ct->media_type);
 		http_content_type_destroy(ct);
-		return mimesniff__compute_image(official_type,
-				data, len, effective_type);
+		తిరిగి mimesniff__compute_image(official_type,
+				దత్తాంశం, len, effective_type);
 	}
 
 	/* text/html */
-	if ((lwc_string_caseless_isequal(ct->media_type,
-					 corestring_lwc_text_html,
-					 &match) == lwc_error_ok && match)) {
+	ఒకవేళ ((lwc_string_caseless_isequal(ct->media_type,
+					 corestring_lwc_పాఠ్యం_html,
+					 &సరిపోలిక) == lwc_error_ok && సరిపోలిక)) {
 		http_content_type_destroy(ct);
-		return mimesniff__compute_feed_or_html(data, len,
+		తిరిగి mimesniff__compute_feed_or_html(దత్తాంశం, len,
 						       effective_type);
 	}
 
@@ -703,5 +703,5 @@ mimesniff_compute_effective_type(const char *content_type_header,
 
 	http_content_type_destroy(ct);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }

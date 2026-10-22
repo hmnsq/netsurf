@@ -21,14 +21,14 @@
  * data scheme fetch handler interface.
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_FETCH_DATA_H
-#define NETSURF_CONTENT_FETCHERS_FETCH_DATA_H
+#నిర్వచితం_కాకపోతే NETSURF_CONTENT_FETCHERS_FETCH_దత్తాంశం_H
+#నిర్వచించు NETSURF_CONTENT_FETCHERS_FETCH_దత్తాంశం_H
 
 /**
  * Register data scheme handler.
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_data_register(void);
+nserror fetch_దత్తాంశం_రిజిస్టరు(శూన్య);
 
-#endif
+#అయితే_ముగింపు

@@ -20,25 +20,25 @@
  * Generate HTML content for displaying directory listings (implementation).
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "utils/nsurl.h"
-#include "utils/messages.h"
-#include "utils/nscolour.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/nscolour.h"
 
-#include "netsurf/inttypes.h"
-#include "netsurf/types.h"
-#include "netsurf/plot_style.h"
+#అన్తర్భావ "netsurf/inttypes.h"
+#అన్తర్భావ "netsurf/types.h"
+#అన్తర్భావ "netsurf/plot_style.h"
 
-#include "dirlist.h"
-#include "desktop/system_colour.h"
+#అన్తర్భావ "dirlist.h"
+#అన్తర్భావ "desktop/system_colour.h"
 
-static int dirlist_filesize_calculate(unsigned long *bytesize);
-static int dirlist_filesize_value(unsigned long bytesize);
-static char* dirlist_filesize_unit(unsigned long bytesize);
+స్థిర పూర్ణాంకం dirlist_filesize_calculate(గుర్తులేని దీర్ఘ *bytesize);
+స్థిర పూర్ణాంకం dirlist_filesize_విలువ(గుర్తులేని దీర్ఘ bytesize);
+స్థిర అక్షరం* dirlist_filesize_unit(గుర్తులేని దీర్ఘ bytesize);
 
 
 /**
@@ -58,20 +58,20 @@ static char* dirlist_filesize_unit(unsigned long bytesize);
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_top(char *buffer, int buffer_length)
+bool dirlist_generate_శిఖరం(అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి)
 {
-	int error = snprintf(buffer, buffer_length,
+	పూర్ణాంకం error = snprintf(బఫరు, బఫరు_నిడివి,
 		"<html>\n"
 		"<head>\n"
 		"<link rel=\"stylesheet\" title=\"Standard\" "
 			"type=\"text/css\" href=\"resource:internal.css\">\n"
 		"<style>\n");
-	if (error < 0 || error >= buffer_length)
+	ఒకవేళ (error < 0 || error >= బఫరు_నిడివి)
 		/* Error or buffer too small */
-		return false;
-	else
+		తిరిగి false;
+	లేకపోతే
 		/* OK */
-		return true;
+		తిరిగి true;
 
 }
 
@@ -97,26 +97,26 @@ bool dirlist_generate_top(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
+bool dirlist_generate_hide_columns(పూర్ణాంకం flags, అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి)
 {
-	int error = snprintf(buffer, buffer_length,
+	పూర్ణాంకం error = snprintf(బఫరు, బఫరు_నిడివి,
 			"%s\n%s\n%s\n%s\n%s\n",
-			(flags & DIRLIST_NO_NAME_COLUMN) ?
+			(flags & DIRLIST_NO_NAME_స్తంభం) ?
 					"span.name { display: none; }\n" : "",
-			(flags & DIRLIST_NO_TYPE_COLUMN) ?
+			(flags & DIRLIST_NO_TYPE_స్తంభం) ?
 					"span.type { display: none; }\n" : "",
-			(flags & DIRLIST_NO_SIZE_COLUMN) ?
+			(flags & DIRLIST_NO_కొలత_స్తంభం) ?
 					"span.size { display: none; }\n" : "",
-			(flags & DIRLIST_NO_DATE_COLUMN) ?
+			(flags & DIRLIST_NO_DATE_స్తంభం) ?
 					"span.date { display: none; }\n" : "",
-			(flags & DIRLIST_NO_TIME_COLUMN) ?
+			(flags & DIRLIST_NO_సమయం_స్తంభం) ?
 					"span.time { display: none; }\n" : "");
-	if (error < 0 || error >= buffer_length)
+	ఒకవేళ (error < 0 || error >= బఫరు_నిడివి)
 		/* Error or buffer too small */
-		return false;
-	else
+		తిరిగి false;
+	లేకపోతే
 		/* OK */
-		return true;
+		తిరిగి true;
 }
 
 
@@ -140,21 +140,21 @@ bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
+bool dirlist_generate_title(స్థిరరాశి అక్షరం *title, అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి)
 {
-	const char *stylesheet;
+	స్థిరరాశి అక్షరం *stylesheet;
 	nserror err;
-	int error;
+	పూర్ణాంకం error;
 
-	if (title == NULL)
+	ఒకవేళ (title == ఖాళీ)
 		title = "";
 
 	err = nscolour_get_stylesheet(&stylesheet);
-	if (err != NSERROR_OK) {
-		return false;
+	ఒకవేళ (err != NSERROR_OK) {
+		తిరిగి false;
 	}
 
-	error = snprintf(buffer, buffer_length,
+	error = snprintf(బఫరు, బఫరు_నిడివి,
 			"</style>\n"
 			"<title>%s</title>\n"
 			"<style>\n"
@@ -167,14 +167,14 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
 			"<body id=\"dirlist\" class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class=\"ns-border\">%s</h1>\n",
 			title,
-			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
+			రంగు_rb_మార్పిడి(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet, title);
-	if (error < 0 || error >= buffer_length)
+	ఒకవేళ (error < 0 || error >= బఫరు_నిడివి)
 		/* Error or buffer too small */
-		return false;
-	else
+		తిరిగి false;
+	లేకపోతే
 		/* OK */
-		return true;
+		తిరిగి true;
 }
 
 
@@ -199,18 +199,18 @@ bool dirlist_generate_title(const char *title, char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length)
+bool dirlist_generate_మాతృ_link(స్థిరరాశి అక్షరం *మాతృ, అక్షరం *బఫరు,
+		పూర్ణాంకం బఫరు_నిడివి)
 {
-	int error = snprintf(buffer, buffer_length,
+	పూర్ణాంకం error = snprintf(బఫరు, బఫరు_నిడివి,
 			"<p><a href=\"%s\">%s</a></p>",
-			parent, messages_get("FileParent"));
-	if (error < 0 || error >= buffer_length)
+			మాతృ, messages_get("FileParent"));
+	ఒకవేళ (error < 0 || error >= బఫరు_నిడివి)
 		/* Error or buffer too small */
-		return false;
-	else
+		తిరిగి false;
+	లేకపోతే
 		/* OK */
-		return true;
+		తిరిగి true;
 }
 
 
@@ -234,9 +234,9 @@ bool dirlist_generate_parent_link(const char *parent, char *buffer,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_headings(char *buffer, int buffer_length)
+bool dirlist_generate_headings(అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి)
 {
-	int error = snprintf(buffer, buffer_length,
+	పూర్ణాంకం error = snprintf(బఫరు, బఫరు_నిడివి,
 			"<div>\n"
 			"<strong>\n"
 			"\t<span class=\"name\">%s</span>\n"
@@ -249,12 +249,12 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
 			messages_get("FileName"), messages_get("FileType"),
 			messages_get("FileSize"), messages_get("FileDate"),
 			messages_get("FileTime"));
-	if (error < 0 || error >= buffer_length)
+	ఒకవేళ (error < 0 || error >= బఫరు_నిడివి)
 		/* Error or buffer too small */
-		return false;
-	else
+		తిరిగి false;
+	లేకపోతే
 		/* OK */
-		return true;
+		తిరిగి true;
 }
 
 
@@ -286,24 +286,24 @@ bool dirlist_generate_headings(char *buffer, int buffer_length)
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
-		const char *mimetype, long long size, char *date, char *time,
-		char *buffer, int buffer_length)
+bool dirlist_generate_అడ్డువరుస(bool even, bool directory, nsurl *url, అక్షరం *name,
+		స్థిరరాశి అక్షరం *mimetype, దీర్ఘ దీర్ఘ కొలత, అక్షరం *date, అక్షరం *time,
+		అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి)
 {
-	const char *unit;
-	char size_string[100];
-	int error;
+	స్థిరరాశి అక్షరం *unit;
+	అక్షరం కొలత_string[100];
+	పూర్ణాంకం error;
 
-	if (size < 0) {
+	ఒకవేళ (కొలత < 0) {
 		unit = "";
-		strncpy(size_string, "", sizeof size_string);
-	} else {
-		unit = messages_get(dirlist_filesize_unit((unsigned long)size));
-		snprintf(size_string, sizeof size_string, "%d",
-				dirlist_filesize_value((unsigned long)size));
+		strncpy(కొలత_string, "", పరిమాణం కొలత_string);
+	} లేకపోతే {
+		unit = messages_get(dirlist_filesize_unit((గుర్తులేని దీర్ఘ)కొలత));
+		snprintf(కొలత_string, పరిమాణం కొలత_string, "%d",
+				dirlist_filesize_విలువ((గుర్తులేని దీర్ఘ)కొలత));
 	}
 
-	error = snprintf(buffer, buffer_length,
+	error = snprintf(బఫరు, బఫరు_నిడివి,
 			"<a href=\"%s\" class=\"%s %s\">\n"
 			"\t<span class=\"name ns-border\">%s</span>\n"
 			"\t<span class=\"type ns-border\">%s</span>\n"
@@ -314,13 +314,13 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
 			"</a>\n", nsurl_access(url),
 			even ? "even ns-even-bg" : "odd  ns-odd-bg",
 			directory ? "dir" : "file",
-			name, mimetype, size_string, unit, date, time);
-	if (error < 0 || error >= buffer_length)
+			name, mimetype, కొలత_string, unit, date, time);
+	ఒకవేళ (error < 0 || error >= బఫరు_నిడివి)
 		/* Error or buffer too small */
-		return false;
-	else
+		తిరిగి false;
+	లేకపోతే
 		/* OK */
-		return true;
+		తిరిగి true;
 }
 
 
@@ -341,18 +341,18 @@ bool dirlist_generate_row(bool even, bool directory, nsurl *url, char *name,
  *     dirlist_generate_bottom()
  */
 
-bool dirlist_generate_bottom(char *buffer, int buffer_length)
+bool dirlist_generate_bottom(అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి)
 {
-	int error = snprintf(buffer, buffer_length,
+	పూర్ణాంకం error = snprintf(బఫరు, బఫరు_నిడివి,
 			"</div>\n"
 			"</body>\n"
 			"</html>\n");
-	if (error < 0 || error >= buffer_length)
+	ఒకవేళ (error < 0 || error >= బఫరు_నిడివి)
 		/* Error or buffer too small */
-		return false;
-	else
+		తిరిగి false;
+	లేకపోతే
 		/* OK */
-		return true;
+		తిరిగి true;
 }
 
 
@@ -364,16 +364,16 @@ bool dirlist_generate_bottom(char *buffer, int buffer_length)
  * \return  number of times bytesize has been divided by 1024
  */
 
-int dirlist_filesize_calculate(unsigned long *bytesize)
+పూర్ణాంకం dirlist_filesize_calculate(గుర్తులేని దీర్ఘ *bytesize)
 {
-	int i = 0;
-	while (*bytesize > 1024 * 4) {
+	పూర్ణాంకం i = 0;
+	అయితే (*bytesize > 1024 * 4) {
 		*bytesize /= 1024;
 		i++;
-		if (i == 3)
-			break;
+		ఒకవేళ (i == 3)
+			ఆపు;
 	}
-	return i;
+	తిరిగి i;
 }
 
 
@@ -385,10 +385,10 @@ int dirlist_filesize_calculate(unsigned long *bytesize)
  * \return  Value to display for file size, in units given by filesize_unit()
  */
 
-int dirlist_filesize_value(unsigned long bytesize)
+పూర్ణాంకం dirlist_filesize_విలువ(గుర్తులేని దీర్ఘ bytesize)
 {
 	dirlist_filesize_calculate(&bytesize);
-	return (int)bytesize;
+	తిరిగి (పూర్ణాంకం)bytesize;
 }
 
 
@@ -400,8 +400,8 @@ int dirlist_filesize_value(unsigned long bytesize)
  * \return  Units to display for file size, for value given by filesize_value()
  */
 
-char* dirlist_filesize_unit(unsigned long bytesize)
+అక్షరం* dirlist_filesize_unit(గుర్తులేని దీర్ఘ bytesize)
 {
-	const char* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
-	return (char*)units[dirlist_filesize_calculate(&bytesize)];
+	స్థిరరాశి అక్షరం* units[] = { "Bytes", "kBytes", "MBytes", "GBytes" };
+	తిరిగి (అక్షరం*)units[dirlist_filesize_calculate(&bytesize)];
 }

@@ -21,73 +21,73 @@
  * librosprite implementation for content image/x-riscos-sprite
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include <librosprite.h>
+#అన్తర్భావ <librosprite.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "netsurf/plotters.h"
+#అన్తర్భావ "netsurf/bitmap.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "content/llcache.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "desktop/gui_internal.h"
+#అన్తర్భావ "desktop/bitmap.h"
 
-#include "image/nssprite.h"
+#అన్తర్భావ "image/nssprite.h"
 
-typedef struct nssprite_content {
-	struct content base;
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+రకనిర్వచనం నిర్మాణం nssprite_content {
+	నిర్మాణం content పునాది;
+	నిర్మాణం bitmap *bitmap;	/**< Created NetSurf bitmap */
 
-	struct rosprite_area* sprite_area;
+	నిర్మాణం rosprite_area* sprite_area;
 } nssprite_content;
 
 
-#define ERRCHK(x) do { \
+#నిర్వచించు ERRCHK(x) చేయి { \
 	rosprite_error err = x; \
-	if (err == ROSPRITE_EOF) { \
+	ఒకవేళ (err == ROSPRITE_EOF) { \
 		NSLOG(netsurf, INFO, "Got ROSPRITE_EOF when loading sprite file"); \
-		goto ro_sprite_error; \
-	} else if (err == ROSPRITE_BADMODE) { \
+		వెళ్ళు ro_sprite_error; \
+	} లేకపోతే ఒకవేళ (err == ROSPRITE_BADMODE) { \
 		NSLOG(netsurf, INFO, "Got ROSPRITE_BADMODE when loading sprite file"); \
-		goto ro_sprite_error; \
-	} else if (err == ROSPRITE_OK) { \
-	} else { \
-		goto ro_sprite_error; \
+		వెళ్ళు ro_sprite_error; \
+	} లేకపోతే ఒకవేళ (err == ROSPRITE_OK) { \
+	} లేకపోతే { \
+		వెళ్ళు ro_sprite_error; \
 	} \
-} while(0)
+} అయితే(0)
 
 
 
 
-static nserror nssprite_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		struct llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+స్థిర nserror nssprite_create(స్థిరరాశి content_handler *handler,
+		lwc_string *imime_type, స్థిరరాశి నిర్మాణం http_parameter *params,
+		నిర్మాణం llcache_handle *llcache, స్థిరరాశి అక్షరం *fallback_charset,
+		bool quirks, నిర్మాణం content **c)
 {
 	nssprite_content *sprite;
 	nserror error;
 
-	sprite = calloc(1, sizeof(nssprite_content));
-	if (sprite == NULL)
-		return NSERROR_NOMEM;
+	sprite = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(nssprite_content));
+	ఒకవేళ (sprite == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__init(&sprite->base, handler, imime_type, params,
+	error = content__init(&sprite->పునాది, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(sprite);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(sprite);
+		తిరిగి error;
 	}
 
-	*c = (struct content *) sprite;
+	*c = (నిర్మాణం content *) sprite;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -96,73 +96,73 @@ static nserror nssprite_create(const content_handler *handler,
  * No conversion is necessary. We merely read the sprite dimensions.
  */
 
-static bool nssprite_convert(struct content *c)
+స్థిర bool nssprite_convert(నిర్మాణం content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	struct rosprite_mem_context* ctx = NULL;
+	నిర్మాణం rosprite_mem_context* ctx = ఖాళీ;
 
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	స్థిరరాశి uint8_t *దత్తాంశం;
+	size_t కొలత;
+	అక్షరం *title;
 
-	data = content__get_source_data(c, &size);
+	దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &కొలత);
 
-	ERRCHK(rosprite_create_mem_context((uint8_t *) data, size, &ctx));
+	ERRCHK(rosprite_create_mem_context((uint8_t *) దత్తాంశం, కొలత, &ctx));
 
-	struct rosprite_area* sprite_area;
-	ERRCHK(rosprite_load(rosprite_mem_reader, ctx, &sprite_area));
+	నిర్మాణం rosprite_area* sprite_area;
+	ERRCHK(rosprite_ఎక్కించు(rosprite_mem_reader, ctx, &sprite_area));
 	rosprite_destroy_mem_context(ctx);
 	nssprite->sprite_area = sprite_area;
 
-	assert(sprite_area->sprite_count > 0);
+	ప్రతిజ్ఞా(sprite_area->sprite_లెక్క > 0);
 
-	struct rosprite* sprite = sprite_area->sprites[0];
+	నిర్మాణం rosprite* sprite = sprite_area->sprites[0];
 
-	nssprite->bitmap = guit->bitmap->create(sprite->width, sprite->height, BITMAP_NONE);
-	if (!nssprite->bitmap) {
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+	nssprite->bitmap = guit->bitmap->create(sprite->వెడల్పు, sprite->ఎత్తు, BITMAP_NONE);
+	ఒకవేళ (!nssprite->bitmap) {
+		content_ప్రసారం_error(c, NSERROR_NOMEM, ఖాళీ);
+		తిరిగి false;
 	}
-	uint32_t* imagebuf = (uint32_t *)(void *)guit->bitmap->get_buffer(nssprite->bitmap);
-	if (!imagebuf) {
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+	uint32_t* imagebuf = (uint32_t *)(శూన్య *)guit->bitmap->get_బఫరు(nssprite->bitmap);
+	ఒకవేళ (!imagebuf) {
+		content_ప్రసారం_error(c, NSERROR_NOMEM, ఖాళీ);
+		తిరిగి false;
 	}
-	unsigned char *spritebuf = (unsigned char *)sprite->image;
+	గుర్తులేని అక్షరం *spritebuf = (గుర్తులేని అక్షరం *)sprite->image;
 
-	memcpy(imagebuf, spritebuf, sprite->width * sprite->height * 4);
+	జ్ఞాపకం_నకలు(imagebuf, spritebuf, sprite->వెడల్పు * sprite->ఎత్తు * 4);
 
-	c->width = sprite->width;
-	c->height = sprite->height;
+	c->వెడల్పు = sprite->వెడల్పు;
+	c->ఎత్తు = sprite->ఎత్తు;
 
 	/* set title text */
 	title = messages_get_buff("SpriteTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ఆకు(llcache_handle_get_url(c->llcache)),
+			c->వెడల్పు, c->ఎత్తు);
+	ఒకవేళ (title != ఖాళీ) {
+		content_సమితి_title(c, title);
+		విడుదల(title);
 	}
 
-	bitmap_format_to_client(nssprite->bitmap, &(bitmap_fmt_t) {
+	bitmap_format_గమ్యం_client(nssprite->bitmap, &(bitmap_fmt_t) {
 		.layout = BITMAP_LAYOUT_A8B8G8R8,
 	});
 	guit->bitmap->modified(nssprite->bitmap);
 
-	content_set_ready(c);
-	content_set_done(c);
-	content_set_status(c, ""); /* Done: update status bar */
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);
+	content_సమితి_స్థితి(c, ""); /* Done: update status bar */
 
-	return true;
+	తిరిగి true;
 
 ro_sprite_error:
-	if (ctx != NULL) {
+	ఒకవేళ (ctx != ఖాళీ) {
 		rosprite_destroy_mem_context(ctx);
 	}
-	content_broadcast_error(c, NSERROR_SPRITE_ERROR, NULL);
+	content_ప్రసారం_error(c, NSERROR_SPRITE_ERROR, ఖాళీ);
 
-	return false;
+	తిరిగి false;
 }
 
 
@@ -170,13 +170,13 @@ ro_sprite_error:
  * Destroy a CONTENT_SPRITE and free all resources it owns.
  */
 
-static void nssprite_destroy(struct content *c)
+స్థిర శూన్య nssprite_destroy(నిర్మాణం content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	if (nssprite->sprite_area != NULL)
+	ఒకవేళ (nssprite->sprite_area != ఖాళీ)
 		rosprite_destroy_sprite_area(nssprite->sprite_area);
-	if (nssprite->bitmap != NULL)
+	ఒకవేళ (nssprite->bitmap != ఖాళీ)
 		guit->bitmap->destroy(nssprite->bitmap);
 }
 
@@ -185,98 +185,98 @@ static void nssprite_destroy(struct content *c)
  * Redraw a CONTENT_SPRITE.
  */
 
-static bool
-nssprite_redraw(struct content *c,
-		struct content_redraw_data *data,
-		const struct rect *clip,
-		const struct redraw_context *ctx)
+స్థిర bool
+nssprite_redraw(నిర్మాణం content *c,
+		నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+		స్థిరరాశి నిర్మాణం rect *clip,
+		స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (data->repeat_x) {
+	ఒకవేళ (దత్తాంశం->repeat_x) {
 		flags |= BITMAPF_REPEAT_X;
 	}
-	if (data->repeat_y) {
+	ఒకవేళ (దత్తాంశం->repeat_y) {
 		flags |= BITMAPF_REPEAT_Y;
 	}
 
-	return (ctx->plot->bitmap(ctx,
+	తిరిగి (ctx->plot->bitmap(ctx,
 				  nssprite->bitmap,
-				  data->x, data->y,
-				  data->width, data->height,
-				  data->background_colour,
+				  దత్తాంశం->x, దత్తాంశం->y,
+				  దత్తాంశం->వెడల్పు, దత్తాంశం->ఎత్తు,
+				  దత్తాంశం->background_రంగు,
 				  flags) == NSERROR_OK);
 }
 
 
-static nserror nssprite_clone(const struct content *old, struct content **newc)
+స్థిర nserror nssprite_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
 	nssprite_content *sprite;
 	nserror error;
 
-	sprite = calloc(1, sizeof(nssprite_content));
-	if (sprite == NULL)
-		return NSERROR_NOMEM;
+	sprite = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(nssprite_content));
+	ఒకవేళ (sprite == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__clone(old, &sprite->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&sprite->base);
-		return error;
+	error = content__clone(old, &sprite->పునాది);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&sprite->పునాది);
+		తిరిగి error;
 	}
 
 	/* Simply replay convert */
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (nssprite_convert(&sprite->base) == false) {
-			content_destroy(&sprite->base);
-			return NSERROR_CLONE_FAILED;
+	ఒకవేళ (old->స్థితి_2 == CONTENT_స్థితి_READY ||
+			old->స్థితి_2 == CONTENT_స్థితి_పూర్తి) {
+		ఒకవేళ (nssprite_convert(&sprite->పునాది) == false) {
+			content_destroy(&sprite->పునాది);
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) sprite;
+	*newc = (నిర్మాణం content *) sprite;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static void *nssprite_get_internal(const struct content *c, void *context)
+స్థిర శూన్య *nssprite_get_అంతర్గత(స్థిరరాశి నిర్మాణం content *c, శూన్య *context)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	return nssprite->bitmap;
+	తిరిగి nssprite->bitmap;
 }
 
-static content_type nssprite_content_type(void)
+స్థిర content_type nssprite_content_type(శూన్య)
 {
-	return CONTENT_IMAGE;
+	తిరిగి CONTENT_IMAGE;
 }
 
 
-static bool nssprite_content_is_opaque(struct content *c)
+స్థిర bool nssprite_content_is_opaque(నిర్మాణం content *c)
 {
 	nssprite_content *nssprite = (nssprite_content *) c;
 
-	if (nssprite->bitmap != NULL) {
-		return guit->bitmap->get_opaque(nssprite->bitmap);
+	ఒకవేళ (nssprite->bitmap != ఖాళీ) {
+		తిరిగి guit->bitmap->get_opaque(nssprite->bitmap);
 	}
 
-	return false;
+	తిరిగి false;
 }
 
-static const content_handler nssprite_content_handler = {
+స్థిర స్థిరరాశి content_handler nssprite_content_handler = {
 	.create = nssprite_create,
-	.data_complete = nssprite_convert,
+	.దత్తాంశం_complete = nssprite_convert,
 	.destroy = nssprite_destroy,
 	.redraw = nssprite_redraw,
 	.clone = nssprite_clone,
-	.get_internal = nssprite_get_internal,
+	.get_అంతర్గత = nssprite_get_అంతర్గత,
 	.type = nssprite_content_type,
 	.is_opaque = nssprite_content_is_opaque,
 	.no_share = false,
 };
 
-static const char *nssprite_types[] = {
+స్థిర స్థిరరాశి అక్షరం *nssprite_types[] = {
 	"image/x-riscos-sprite"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nssprite, nssprite_types, nssprite_content_handler);
+CONTENT_FACTORY_రిజిస్టరు_TYPES(nssprite, nssprite_types, nssprite_content_handler);

@@ -24,10 +24,10 @@
  * UTF-8 strings with lengths given.
  */
 
-#ifndef NETSURF_HTML_FONT_H
-#define NETSURF_HTML_FONT_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_FONT_H
+#నిర్వచించు NETSURF_HTML_FONT_H
 
-struct plot_font_style;
+నిర్మాణం plot_font_style;
 
 /**
  * Populate a font style using data from a computed CSS style
@@ -36,8 +36,8 @@ struct plot_font_style;
  * \param css      Computed style to consider
  * \param fstyle   Font style to populate
  */
-void font_plot_style_from_css(const css_unit_ctx *unit_len_ctx,
-			      const css_computed_style *css,
-			      struct plot_font_style *fstyle);
+శూన్య font_plot_style_from_css(స్థిరరాశి css_unit_ctx *unit_len_ctx,
+			      స్థిరరాశి css_computed_style *css,
+			      నిర్మాణం plot_font_style *fstyle);
 
-#endif
+#అయితే_ముగింపు

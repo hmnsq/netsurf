@@ -21,8 +21,8 @@
  * HTML Box tree inspection interface.
  */
 
-#ifndef NETSURF_HTML_BOX_INSPECT_H
-#define NETSURF_HTML_BOX_INSPECT_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_BOX_INSPECT_H
+#నిర్వచించు NETSURF_HTML_BOX_INSPECT_H
 
 /**
  * Find the absolute coordinates of a box.
@@ -31,7 +31,7 @@
  * \param  x    updated to x coordinate
  * \param  y    updated to y coordinate
  */
-void box_coords(struct box *box, int *x, int *y);
+శూన్య box_coords(నిర్మాణం box *box, పూర్ణాంకం *x, పూర్ణాంకం *y);
 
 
 /**
@@ -40,7 +40,7 @@ void box_coords(struct box *box, int *x, int *y);
  * \param  box  the box to calculate bounds of
  * \param  r    receives bounds
  */
-void box_bounds(struct box *box, struct rect *r);
+శూన్య box_bounds(నిర్మాణం box *box, నిర్మాణం rect *r);
 
 
 /**
@@ -67,7 +67,7 @@ void box_bounds(struct box *box, struct rect *r);
  *	}
  * \endcode
  */
-struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, const int x, const int y, int *box_x, int *box_y);
+నిర్మాణం box *box_at_బిందువు(స్థిరరాశి css_unit_ctx *unit_len_ctx, నిర్మాణం box *box, స్థిరరాశి పూర్ణాంకం x, స్థిరరాశి పూర్ణాంకం y, పూర్ణాంకం *box_x, పూర్ణాంకం *box_y);
 
 
 /**
@@ -77,7 +77,7 @@ struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, cons
  * \param  id   id to look for
  * \return  the box or 0 if not found
  */
-struct box *box_find_by_id(struct box *box, lwc_string *id);
+నిర్మాణం box *box_కనుగొను_by_id(నిర్మాణం box *box, lwc_string *id);
 
 
 /**
@@ -86,13 +86,13 @@ struct box *box_find_by_id(struct box *box, lwc_string *id);
  * \param  box  box to check
  * \return  true iff the box is rendered
  */
-bool box_visible(struct box *box);
+bool box_visible(నిర్మాణం box *box);
 
 
 /**
  * Print a box tree to a file.
  */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
+శూన్య box_dump(FILE *ప్రవాహం, నిర్మాణం box *box, గుర్తులేని పూర్ణాంకం లోతు, bool style);
 
 
 /**
@@ -101,7 +101,7 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
  * \param  box  scrolling box
  * \return the box has a vertical scrollbar
  */
-bool box_vscrollbar_present(const struct box *box);
+bool box_vscrollbar_present(స్థిరరాశి నిర్మాణం box *box);
 
 
 /**
@@ -110,7 +110,7 @@ bool box_vscrollbar_present(const struct box *box);
  * \param  box  scrolling box
  * \return the box has a horizontal scrollbar
  */
-bool box_hscrollbar_present(const struct box *box);
+bool box_hscrollbar_present(స్థిరరాశి నిర్మాణం box *box);
 
 
 /**
@@ -125,7 +125,7 @@ bool box_hscrollbar_present(const struct box *box);
  * \param dx	receives x ordinate of mouse relative to text box
  * \param dy	receives y ordinate of mouse relative to text box
  */
-struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, int *dx, int *dy);
+నిర్మాణం box *box_pick_పాఠ్యం_box(నిర్మాణం html_content *html, పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం dir, పూర్ణాంకం *dx, పూర్ణాంకం *dy);
 
 
 /**
@@ -134,22 +134,22 @@ struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, 
  * \param[in] b  Box to check.
  * \return true iff box is first child.
  */
-static inline bool box_is_first_child(struct box *b)
+స్థిర అంతఃవరుస bool box_is_మొదటి_బిడ్డ(నిర్మాణం box *b)
 {
-	return (b->parent == NULL || b == b->parent->children);
+	తిరిగి (b->మాతృ == ఖాళీ || b == b->మాతృ->children);
 }
 
-static inline unsigned box_count_children(const struct box *b)
+స్థిర అంతఃవరుస గుర్తులేని box_లెక్క_children(స్థిరరాశి నిర్మాణం box *b)
 {
-	const struct box *c = b->children;
-	unsigned count = 0;
+	స్థిరరాశి నిర్మాణం box *c = b->children;
+	గుర్తులేని లెక్క = 0;
 
-	while (c != NULL) {
-		count++;
-		c = c->next;
+	అయితే (c != ఖాళీ) {
+		లెక్క++;
+		c = c->తదుపరి;
 	}
 
-	return count;
+	తిరిగి లెక్క;
 }
 
-#endif
+#అయితే_ముగింపు

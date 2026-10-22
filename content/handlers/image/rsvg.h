@@ -20,9 +20,9 @@
  * Content handler for image/svg using librsvg (interface).
  */
 
-#ifndef _NETSURF_IMAGE_RSVG_H_
-#define _NETSURF_IMAGE_RSVG_H_
+#నిర్వచితం_కాకపోతే _NETSURF_IMAGE_RSVG_H_
+#నిర్వచించు _NETSURF_IMAGE_RSVG_H_
 
-nserror nsrsvg_init(void);
+nserror nsrsvg_init(శూన్య);
 
-#endif
+#అయితే_ముగింపు

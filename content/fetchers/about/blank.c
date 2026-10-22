@@ -21,15 +21,15 @@
  * content generator for the about scheme blank page
  */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
 
-#include "netsurf/types.h"
-#include "utils/errors.h"
+#అన్తర్భావ "netsurf/types.h"
+#అన్తర్భావ "utils/errors.h"
 
-#include "private.h"
-#include "blank.h"
+#అన్తర్భావ "private.h"
+#అన్తర్భావ "blank.h"
 
 /**
  * Handler to generate about scheme cache page.
@@ -37,24 +37,24 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_blank_handler(struct fetch_about_context *ctx)
+bool fetch_about_blank_handler(నిర్మాణం fetch_about_context *ctx)
 {
-	const char buffer[2] = { ' ', '\0' };
+	స్థిరరాశి అక్షరం బఫరు[2] = { ' ', '\0' };
 
 	/* content is going to return ok */
-	fetch_about_set_http_code(ctx, 200);
+	fetch_about_సమితి_http_సంకేతం(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html"))
-		goto fetch_about_blank_handler_aborted;
+	ఒకవేళ (fetch_about_send_శీర్షిక(ctx, "Content-Type: text/html"))
+		వెళ్ళు fetch_about_blank_handler_aborted;
 
-	if (fetch_about_senddata(ctx, (const uint8_t *) buffer, strlen(buffer)) != NSERROR_OK)
-		goto fetch_about_blank_handler_aborted;
+	ఒకవేళ (fetch_about_senddata(ctx, (స్థిరరాశి uint8_t *) బఫరు, అక్షరశ్రేణి_పొడవు(బఫరు)) != NSERROR_OK)
+		వెళ్ళు fetch_about_blank_handler_aborted;
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ముగిసిన(ctx);
 
-	return true;
+	తిరిగి true;
 
 fetch_about_blank_handler_aborted:
-	return false;
+	తిరిగి false;
 }

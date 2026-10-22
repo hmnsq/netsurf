@@ -21,34 +21,34 @@
  * Processing for html content object operations.
  */
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <string.h>
-#include <strings.h>
-#include <stdlib.h>
-#include <nsutils/time.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <ctype.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <strings.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <nsutils/time.h>
 
-#include "utils/corestrings.h"
-#include "utils/config.h"
-#include "utils/log.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/misc.h"
-#include "content/hlcache.h"
-#include "css/utils.h"
-#include "desktop/scrollbar.h"
-#include "desktop/gui_internal.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "netsurf/misc.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "css/utils.h"
+#అన్తర్భావ "desktop/scrollbar.h"
+#అన్తర్భావ "desktop/gui_internal.h"
 
-#include "html/html.h"
-#include "html/private.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/object.h"
+#అన్తర్భావ "html/html.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/interaction.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_inspect.h"
+#అన్తర్భావ "html/object.h"
 
 /* break reference loop */
-static void html_object_refresh(void *p);
+స్థిర శూన్య html_object_refresh(శూన్య *p);
 
 /**
  * Retrieve objects used by HTML document
@@ -57,16 +57,16 @@ static void html_object_refresh(void *p);
  * \param n  Pointer to location to receive number of objects
  * \return Pointer to list of objects
  */
-struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
+నిర్మాణం content_html_object *html_get_objects(hlcache_handle *h, గుర్తులేని పూర్ణాంకం *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
+	ప్రతిజ్ఞా(n != ఖాళీ);
 
-	*n = c->num_objects;
+	*n = c->అంకె_objects;
 
-	return c->object_list;
+	తిరిగి c->object_list;
 }
 
 /**
@@ -77,50 +77,50 @@ struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
  * \param  background  the object was the background image for the box
  */
 
-static void
-html_object_failed(struct box *box, html_content *content, bool background)
+స్థిర శూన్య
+html_object_failed(నిర్మాణం box *box, html_content *content, bool background)
 {
 	/* Nothing to do */
-	return;
+	తిరిగి;
 }
 
 /**
  * Update a box whose content has completed rendering.
  */
 
-static void
-html_object_done(struct box *box,
+స్థిర శూన్య
+html_object_పూర్తి(నిర్మాణం box *box,
 		 hlcache_handle *object,
 		 bool background)
 {
-	struct box *b;
+	నిర్మాణం box *b;
 
-	if (background) {
+	ఒకవేళ (background) {
 		box->background = object;
-		return;
+		తిరిగి;
 	}
 
 	box->object = object;
 
 	/* Normalise the box type, now it has been replaced. */
-	switch (box->type) {
-	case BOX_TABLE:
-		box->type = BOX_BLOCK;
-		break;
-	default:
+	ఎంపిక (box->type) {
+	స్థితి BOX_పట్టిక:
+		box->type = BOX_ఖండం;
+		ఆపు;
+	అప్రమేయ:
 		/* TODO: Any other box types need mapping? */
-		break;
+		ఆపు;
 	}
 
-	if (!(box->flags & REPLACE_DIM)) {
+	ఒకవేళ (!(box->flags & REPLACE_DIM)) {
 		/* invalidate parent min, max widths */
-		for (b = box; b; b = b->parent)
-			b->max_width = UNKNOWN_MAX_WIDTH;
+		కొరకు (b = box; b; b = b->మాతృ)
+			b->max_వెడల్పు = UNKNOWN_MAX_వెడల్పు;
 
 		/* delete any clones of this box */
-		while (box->next && (box->next->flags & CLONE)) {
+		అయితే (box->తదుపరి && (box->తదుపరి->flags & CLONE)) {
 			/* box_free_box(box->next); */
-			box->next = box->next->next;
+			box->తదుపరి = box->తదుపరి->తదుపరి;
 		}
 	}
 }
@@ -129,152 +129,152 @@ html_object_done(struct box *box,
 /**
  * Callback for hlcache_handle_retrieve() for objects with no box.
  */
-static nserror
+స్థిర nserror
 html_object_nobox_callback(hlcache_handle *object,
-			   const hlcache_event *event,
-			   void *pw)
+			   స్థిరరాశి hlcache_event *event,
+			   శూన్య *pw)
 {
-	struct content_html_object *chobject = pw;
+	నిర్మాణం content_html_object *chobject = pw;
 
-	switch (event->type) {
-	case CONTENT_MSG_ERROR:
+	ఎంపిక (event->type) {
+	స్థితి CONTENT_సందేశం_ERROR:
 		hlcache_handle_release(object);
 
-		chobject->content = NULL;
-		break;
+		chobject->content = ఖాళీ;
+		ఆపు;
 
-	default:
-		break;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * Callback for hlcache_handle_retrieve() for objects with a box.
  */
-static nserror
+స్థిర nserror
 html_object_callback(hlcache_handle *object,
-		     const hlcache_event *event,
-		     void *pw)
+		     స్థిరరాశి hlcache_event *event,
+		     శూన్య *pw)
 {
-	struct content_html_object *o = pw;
-	html_content *c = (html_content *) o->parent;
-	int x, y;
-	struct box *box;
+	నిర్మాణం content_html_object *o = pw;
+	html_content *c = (html_content *) o->మాతృ;
+	పూర్ణాంకం x, y;
+	నిర్మాణం box *box;
 
 	box = o->box;
 
-	switch (event->type) {
-	case CONTENT_MSG_LOADING:
-		if (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
+	ఎంపిక (event->type) {
+	స్థితి CONTENT_సందేశం_LOADING:
+		ఒకవేళ (c->పునాది.స్థితి_2 != CONTENT_స్థితి_LOADING && c->bw != ఖాళీ)
 			content_open(object,
-					c->bw, &c->base,
+					c->bw, &c->పునాది,
 					box->object_params);
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_READY:
-		if (content_can_reformat(object)) {
+	స్థితి CONTENT_సందేశం_READY:
+		ఒకవేళ (content_can_reformat(object)) {
 			/* TODO: avoid knowledge of box internals here */
 			content_reformat(object, false,
-					box->max_width != UNKNOWN_MAX_WIDTH ?
-							box->width : 0,
-					box->max_width != UNKNOWN_MAX_WIDTH ?
-							box->height : 0);
+					box->max_వెడల్పు != UNKNOWN_MAX_వెడల్పు ?
+							box->వెడల్పు : 0,
+					box->max_వెడల్పు != UNKNOWN_MAX_వెడల్పు ?
+							box->ఎత్తు : 0);
 
 			/* Adjust parent content for new object size */
-			html_object_done(box, object, o->background);
-			if (c->base.status == CONTENT_STATUS_READY ||
-					c->base.status == CONTENT_STATUS_DONE)
-				content__reformat(&c->base, false,
-						c->base.available_width,
-						c->base.available_height);
+			html_object_పూర్తి(box, object, o->background);
+			ఒకవేళ (c->పునాది.స్థితి_2 == CONTENT_స్థితి_READY ||
+					c->పునాది.స్థితి_2 == CONTENT_స్థితి_పూర్తి)
+				content__reformat(&c->పునాది, false,
+						c->పునాది.అందుబాటు_వెడల్పు,
+						c->పునాది.అందుబాటు_ఎత్తు);
 		}
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_DONE:
-		c->base.active--;
-		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
+	స్థితి CONTENT_సందేశం_పూర్తి:
+		c->పునాది.చురుకైన--;
+		NSLOG(netsurf, INFO, "%d fetches active", c->పునాది.చురుకైన);
 
-		html_object_done(box, object, o->background);
+		html_object_పూర్తి(box, object, o->background);
 
-		if (c->base.status != CONTENT_STATUS_LOADING &&
+		ఒకవేళ (c->పునాది.స్థితి_2 != CONTENT_స్థితి_LOADING &&
 				box->flags & REPLACE_DIM) {
-			union content_msg_data data;
+			సంఘం content_సందేశం_దత్తాంశం దత్తాంశం;
 
-			if (c->had_initial_layout == false) {
-				break;
+			ఒకవేళ (c->had_initial_layout == false) {
+				ఆపు;
 			}
 
-			if (!box_visible(box))
-				break;
+			ఒకవేళ (!box_visible(box))
+				ఆపు;
 
 			box_coords(box, &x, &y);
 
-			data.redraw.x = x + box->padding[LEFT];
-			data.redraw.y = y + box->padding[TOP];
-			data.redraw.width = box->width;
-			data.redraw.height = box->height;
+			దత్తాంశం.redraw.x = x + box->padding[ఎడమ_2];
+			దత్తాంశం.redraw.y = y + box->padding[శిఖరం_2];
+			దత్తాంశం.redraw.వెడల్పు = box->వెడల్పు;
+			దత్తాంశం.redraw.ఎత్తు = box->ఎత్తు;
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_ప్రసారం(&c->పునాది, CONTENT_సందేశం_REDRAW, &దత్తాంశం);
 		}
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_ERROR:
+	స్థితి CONTENT_సందేశం_ERROR:
 		hlcache_handle_release(object);
 
-		o->content = NULL;
+		o->content = ఖాళీ;
 
-		c->base.active--;
-		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
+		c->పునాది.చురుకైన--;
+		NSLOG(netsurf, INFO, "%d fetches active", c->పునాది.చురుకైన);
 
 		html_object_failed(box, c, o->background);
 
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_REDRAW:
-		if (c->base.status != CONTENT_STATUS_LOADING) {
-			union content_msg_data data = event->data;
+	స్థితి CONTENT_సందేశం_REDRAW:
+		ఒకవేళ (c->పునాది.స్థితి_2 != CONTENT_స్థితి_LOADING) {
+			సంఘం content_సందేశం_దత్తాంశం దత్తాంశం = event->దత్తాంశం;
 
-			if (c->had_initial_layout == false) {
-				break;
+			ఒకవేళ (c->had_initial_layout == false) {
+				ఆపు;
 			}
 
-			if (!box_visible(box))
-				break;
+			ఒకవేళ (!box_visible(box))
+				ఆపు;
 
 			box_coords(box, &x, &y);
 
-			if (object == box->background) {
+			ఒకవేళ (object == box->background) {
 				/* Redraw request is for background */
 				css_fixed hpos = 0, vpos = 0;
 				css_unit hunit = CSS_UNIT_PX;
 				css_unit vunit = CSS_UNIT_PX;
-				int width = box->padding[LEFT] + box->width +
-						box->padding[RIGHT];
-				int height = box->padding[TOP] + box->height +
+				పూర్ణాంకం వెడల్పు = box->padding[ఎడమ_2] + box->వెడల్పు +
+						box->padding[కుడి_2];
+				పూర్ణాంకం ఎత్తు = box->padding[శిఖరం_2] + box->ఎత్తు +
 						box->padding[BOTTOM];
-				int t, h, l, w;
+				పూర్ణాంకం t, h, l, w;
 
 				/* Need to know background-position */
 				css_computed_background_position(box->style,
 						&hpos, &hunit, &vpos, &vunit);
 
-				w = content_get_width(box->background);
-				if (hunit == CSS_UNIT_PCT) {
-					l = (width - w) * hpos / INTTOFIX(100);
-				} else {
+				w = content_get_వెడల్పు(box->background);
+				ఒకవేళ (hunit == CSS_UNIT_PCT) {
+					l = (వెడల్పు - w) * hpos / INTTOFIX(100);
+				} లేకపోతే {
 					l = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
 							hpos, hunit));
 				}
 
-				h = content_get_height(box->background);
-				if (vunit == CSS_UNIT_PCT) {
-					t = (height - h) * vpos / INTTOFIX(100);
-				} else {
+				h = content_get_ఎత్తు(box->background);
+				ఒకవేళ (vunit == CSS_UNIT_PCT) {
+					t = (ఎత్తు - h) * vpos / INTTOFIX(100);
+				} లేకపోతే {
 					t = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -282,212 +282,212 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				/* Redraw area depends on background-repeat */
-				switch (css_computed_background_repeat(
+				ఎంపిక (css_computed_background_repeat(
 						box->style)) {
-				case CSS_BACKGROUND_REPEAT_REPEAT:
-					data.redraw.x = 0;
-					data.redraw.y = 0;
-					data.redraw.width = box->width;
-					data.redraw.height = box->height;
-					break;
+				స్థితి CSS_BACKGROUND_REPEAT_REPEAT:
+					దత్తాంశం.redraw.x = 0;
+					దత్తాంశం.redraw.y = 0;
+					దత్తాంశం.redraw.వెడల్పు = box->వెడల్పు;
+					దత్తాంశం.redraw.ఎత్తు = box->ఎత్తు;
+					ఆపు;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_X:
-					data.redraw.x = 0;
-					data.redraw.y += t;
-					data.redraw.width = box->width;
-					break;
+				స్థితి CSS_BACKGROUND_REPEAT_REPEAT_X:
+					దత్తాంశం.redraw.x = 0;
+					దత్తాంశం.redraw.y += t;
+					దత్తాంశం.redraw.వెడల్పు = box->వెడల్పు;
+					ఆపు;
 
-				case CSS_BACKGROUND_REPEAT_REPEAT_Y:
-					data.redraw.x += l;
-					data.redraw.y = 0;
-					data.redraw.height = box->height;
-					break;
+				స్థితి CSS_BACKGROUND_REPEAT_REPEAT_Y:
+					దత్తాంశం.redraw.x += l;
+					దత్తాంశం.redraw.y = 0;
+					దత్తాంశం.redraw.ఎత్తు = box->ఎత్తు;
+					ఆపు;
 
-				case CSS_BACKGROUND_REPEAT_NO_REPEAT:
-					data.redraw.x += l;
-					data.redraw.y += t;
-					break;
+				స్థితి CSS_BACKGROUND_REPEAT_NO_REPEAT:
+					దత్తాంశం.redraw.x += l;
+					దత్తాంశం.redraw.y += t;
+					ఆపు;
 
-				default:
-					break;
+				అప్రమేయ:
+					ఆపు;
 				}
 
 				/* Add offset to box */
-				data.redraw.x += x;
-				data.redraw.y += y;
+				దత్తాంశం.redraw.x += x;
+				దత్తాంశం.redraw.y += y;
 
-			} else {
+			} లేకపోతే {
 				/* Non-background case */
-				int w = content_get_width(object);
-				int h = content_get_height(object);
+				పూర్ణాంకం w = content_get_వెడల్పు(object);
+				పూర్ణాంకం h = content_get_ఎత్తు(object);
 
-				if (w != 0 && box->width != w) {
+				ఒకవేళ (w != 0 && box->వెడల్పు != w) {
 					/* Not showing image at intrinsic
 					 * width; need to scale the redraw
 					 * request area. */
-					data.redraw.x = data.redraw.x *
-							box->width / w;
-					data.redraw.width =
-							data.redraw.width *
-							box->width / w;
+					దత్తాంశం.redraw.x = దత్తాంశం.redraw.x *
+							box->వెడల్పు / w;
+					దత్తాంశం.redraw.వెడల్పు =
+							దత్తాంశం.redraw.వెడల్పు *
+							box->వెడల్పు / w;
 				}
 
-				if (h != 0 && box->height != w) {
+				ఒకవేళ (h != 0 && box->ఎత్తు != w) {
 					/* Not showing image at intrinsic
 					 * height; need to scale the redraw
 					 * request area. */
-					data.redraw.y = data.redraw.y *
-							box->height / h;
-					data.redraw.height =
-							data.redraw.height *
-							box->height / h;
+					దత్తాంశం.redraw.y = దత్తాంశం.redraw.y *
+							box->ఎత్తు / h;
+					దత్తాంశం.redraw.ఎత్తు =
+							దత్తాంశం.redraw.ఎత్తు *
+							box->ఎత్తు / h;
 				}
 
-				data.redraw.x += x + box->padding[LEFT];
-				data.redraw.y += y + box->padding[TOP];
+				దత్తాంశం.redraw.x += x + box->padding[ఎడమ_2];
+				దత్తాంశం.redraw.y += y + box->padding[శిఖరం_2];
 			}
 
-			content_broadcast(&c->base, CONTENT_MSG_REDRAW, &data);
+			content_ప్రసారం(&c->పునాది, CONTENT_సందేశం_REDRAW, &దత్తాంశం);
 		}
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_REFRESH:
-		if (content_get_type(object) == CONTENT_HTML) {
+	స్థితి CONTENT_సందేశం_REFRESH:
+		ఒకవేళ (content_get_type(object) == CONTENT_HTML) {
 			/* only for HTML objects */
-			guit->misc->schedule(event->data.delay * 1000,
+			guit->misc->కాలపట్టిక(event->దత్తాంశం.delay * 1000,
 					html_object_refresh, o);
 		}
 
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_LINK:
+	స్థితి CONTENT_సందేశం_LINK:
 		/* Don't care about favicons that aren't on top level content */
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_GETTHREAD:
+	స్థితి CONTENT_సందేశం_GETTHREAD:
 		/* Objects don't have JS threads */
-		*(event->data.jsthread) = NULL;
-		break;
+		*(event->దత్తాంశం.jsthread) = ఖాళీ;
+		ఆపు;
 
-	case CONTENT_MSG_GETDIMS:
-		*(event->data.getdims.viewport_width) =
-				content__get_width(&c->base);
-		*(event->data.getdims.viewport_height) =
-				content__get_height(&c->base);
-		break;
+	స్థితి CONTENT_సందేశం_GETDIMS:
+		*(event->దత్తాంశం.getdims.viewport_వెడల్పు) =
+				content_get_వెడల్పు_2(&c->పునాది);
+		*(event->దత్తాంశం.getdims.viewport_ఎత్తు) =
+				content_get_ఎత్తు_2(&c->పునాది);
+		ఆపు;
 
-	case CONTENT_MSG_SCROLL:
-		if (box->scroll_x != NULL)
-			scrollbar_set(box->scroll_x, event->data.scroll.x0,
+	స్థితి CONTENT_సందేశం_SCROLL:
+		ఒకవేళ (box->scroll_x != ఖాళీ)
+			scrollbar_సమితి(box->scroll_x, event->దత్తాంశం.scroll.x0,
 					false);
-		if (box->scroll_y != NULL)
-			scrollbar_set(box->scroll_y, event->data.scroll.y0,
+		ఒకవేళ (box->scroll_y != ఖాళీ)
+			scrollbar_సమితి(box->scroll_y, event->దత్తాంశం.scroll.y0,
 					false);
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_DRAGSAVE:
+	స్థితి CONTENT_సందేశం_DRAGSAVE:
 	{
-		union content_msg_data msg_data;
-		if (event->data.dragsave.content == NULL)
-			msg_data.dragsave.content = object;
-		else
-			msg_data.dragsave.content =
-					event->data.dragsave.content;
+		సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+		ఒకవేళ (event->దత్తాంశం.dragsave.content == ఖాళీ)
+			సందేశం_దత్తాంశం.dragsave.content = object;
+		లేకపోతే
+			సందేశం_దత్తాంశం.dragsave.content =
+					event->దత్తాంశం.dragsave.content;
 
-		content_broadcast(&c->base, CONTENT_MSG_DRAGSAVE, &msg_data);
+		content_ప్రసారం(&c->పునాది, CONTENT_సందేశం_DRAGSAVE, &సందేశం_దత్తాంశం);
 	}
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_SAVELINK:
-	case CONTENT_MSG_POINTER:
-	case CONTENT_MSG_SELECTMENU:
-	case CONTENT_MSG_GADGETCLICK:
+	స్థితి CONTENT_సందేశం_SAVELINK:
+	స్థితి CONTENT_సందేశం_సూచిక:
+	స్థితి CONTENT_సందేశం_SELECTMENU:
+	స్థితి CONTENT_సందేశం_GADGETCLICK:
 		/* These messages are for browser window layer.
 		 * we're not interested, so pass them on. */
-		content_broadcast(&c->base, event->type, &event->data);
-		break;
+		content_ప్రసారం(&c->పునాది, event->type, &event->దత్తాంశం);
+		ఆపు;
 
-	case CONTENT_MSG_CARET:
+	స్థితి CONTENT_సందేశం_CARET:
 	{
-		union html_focus_owner focus_owner;
+		సంఘం html_focus_owner focus_owner;
 		focus_owner.content = box;
 
-		switch (event->data.caret.type) {
-		case CONTENT_CARET_REMOVE:
-		case CONTENT_CARET_HIDE:
-			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
-					true, 0, 0, 0, NULL);
-			break;
-		case CONTENT_CARET_SET_POS:
-			html_set_focus(c, HTML_FOCUS_CONTENT, focus_owner,
-					false, event->data.caret.pos.x,
-					event->data.caret.pos.y,
-					event->data.caret.pos.height,
-					event->data.caret.pos.clip);
-			break;
+		ఎంపిక (event->దత్తాంశం.caret.type) {
+		స్థితి CONTENT_CARET_REMOVE:
+		స్థితి CONTENT_CARET_HIDE:
+			html_సమితి_focus(c, HTML_FOCUS_CONTENT, focus_owner,
+					true, 0, 0, 0, ఖాళీ);
+			ఆపు;
+		స్థితి CONTENT_CARET_సమితి_POS:
+			html_సమితి_focus(c, HTML_FOCUS_CONTENT, focus_owner,
+					false, event->దత్తాంశం.caret.pos.x,
+					event->దత్తాంశం.caret.pos.y,
+					event->దత్తాంశం.caret.pos.ఎత్తు,
+					event->దత్తాంశం.caret.pos.clip);
+			ఆపు;
 		}
 	}
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_DRAG:
+	స్థితి CONTENT_సందేశం_DRAG:
 	{
 		html_drag_type drag_type = HTML_DRAG_NONE;
-		union html_drag_owner drag_owner;
+		సంఘం html_drag_owner drag_owner;
 		drag_owner.content = box;
 
-		switch (event->data.drag.type) {
-		case CONTENT_DRAG_NONE:
+		ఎంపిక (event->దత్తాంశం.drag.type) {
+		స్థితి CONTENT_DRAG_NONE:
 			drag_type = HTML_DRAG_NONE;
 			drag_owner.no_owner = true;
-			break;
-		case CONTENT_DRAG_SCROLL:
+			ఆపు;
+		స్థితి CONTENT_DRAG_SCROLL:
 			drag_type = HTML_DRAG_CONTENT_SCROLL;
-			break;
-		case CONTENT_DRAG_SELECTION:
+			ఆపు;
+		స్థితి CONTENT_DRAG_SELECTION:
 			drag_type = HTML_DRAG_CONTENT_SELECTION;
-			break;
+			ఆపు;
 		}
-		html_set_drag_type(c, drag_type, drag_owner,
-				event->data.drag.rect);
+		html_సమితి_drag_type(c, drag_type, drag_owner,
+				event->దత్తాంశం.drag.rect);
 	}
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_SELECTION:
+	స్థితి CONTENT_సందేశం_SELECTION:
 	{
 		html_selection_type sel_type;
-		union html_selection_owner sel_owner;
+		సంఘం html_selection_owner sel_owner;
 
-		if (event->data.selection.selection) {
+		ఒకవేళ (event->దత్తాంశం.selection.selection) {
 			sel_type = HTML_SELECTION_CONTENT;
 			sel_owner.content = box;
-		} else {
+		} లేకపోతే {
 			sel_type = HTML_SELECTION_NONE;
 			sel_owner.none = true;
 		}
-		html_set_selection(c, sel_type, sel_owner,
-				event->data.selection.read_only);
+		html_సమితి_selection(c, sel_type, sel_owner,
+				event->దత్తాంశం.selection.read_only);
 	}
-		break;
+		ఆపు;
 
-	default:
-		break;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	if (c->base.status == CONTENT_STATUS_READY &&
-	    c->base.active == 0 &&
-	    (event->type == CONTENT_MSG_LOADING ||
-	     event->type == CONTENT_MSG_DONE ||
-	     event->type == CONTENT_MSG_ERROR)) {
+	ఒకవేళ (c->పునాది.స్థితి_2 == CONTENT_స్థితి_READY &&
+	    c->పునాది.చురుకైన == 0 &&
+	    (event->type == CONTENT_సందేశం_LOADING ||
+	     event->type == CONTENT_సందేశం_పూర్తి ||
+	     event->type == CONTENT_సందేశం_ERROR)) {
 		/* all objects have arrived */
-		content__reformat(&c->base, false, c->base.available_width,
-				c->base.available_height);
-		content_set_done(&c->base);
-	} else if (nsoption_bool(incremental_reflow) &&
-		   event->type == CONTENT_MSG_DONE &&
-		   box != NULL &&
+		content__reformat(&c->పునాది, false, c->పునాది.అందుబాటు_వెడల్పు,
+				c->పునాది.అందుబాటు_ఎత్తు);
+		content_సమితి_పూర్తి(&c->పునాది);
+	} లేకపోతే ఒకవేళ (nsoption_bool(incremental_reflow) &&
+		   event->type == CONTENT_సందేశం_పూర్తి &&
+		   box != ఖాళీ &&
 		   !(box->flags & REPLACE_DIM) &&
-		   (c->base.status == CONTENT_STATUS_READY ||
-		    c->base.status == CONTENT_STATUS_DONE)) {
+		   (c->పునాది.స్థితి_2 == CONTENT_స్థితి_READY ||
+		    c->పునాది.స్థితి_2 == CONTENT_స్థితి_పూర్తి)) {
 		/* 1) the configuration option to reflow pages while
 		 *      objects are fetched is set
 		 * 2) an object is newly fetched & converted,
@@ -496,20 +496,20 @@ html_object_callback(hlcache_handle *object,
 		 */
 		uint64_t ms_now;
 		nsu_getmonotonic_ms(&ms_now);
-		if (ms_now > c->base.reformat_time) {
+		ఒకవేళ (ms_now > c->పునాది.reformat_సమయం) {
 			/* The time since the previous reformat is
 			 *  more than the configured minimum time
 			 *  between reformats so reformat the page to
 			 *  display newly fetched objects
 			 */
-			content__reformat(&c->base,
+			content__reformat(&c->పునాది,
 					  false,
-					  c->base.available_width,
-					  c->base.available_height);
+					  c->పునాది.అందుబాటు_వెడల్పు,
+					  c->పునాది.అందుబాటు_ఎత్తు);
 		}
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -520,188 +520,188 @@ html_object_callback(hlcache_handle *object,
  * \param  url             URL of object to fetch (copied)
  * \return  true on success, false on memory exhaustion
  */
-static bool html_replace_object(struct content_html_object *object, nsurl *url)
+స్థిర bool html_replace_object(నిర్మాణం content_html_object *object, nsurl *url)
 {
 	html_content *c;
-	hlcache_child_context child;
-	html_content *page;
+	hlcache_బిడ్డ_context బిడ్డ;
+	html_content *పుట;
 	nserror error;
 
-	assert(object != NULL);
-	assert(object->box != NULL);
+	ప్రతిజ్ఞా(object != ఖాళీ);
+	ప్రతిజ్ఞా(object->box != ఖాళీ);
 
-	c = (html_content *) object->parent;
+	c = (html_content *) object->మాతృ;
 
-	child.charset = c->encoding;
-	child.quirks = c->base.quirks;
+	బిడ్డ.charset = c->encoding;
+	బిడ్డ.quirks = c->పునాది.quirks;
 
-	if (object->content != NULL) {
+	ఒకవేళ (object->content != ఖాళీ) {
 		/* remove existing object */
-		if (content_get_status(object->content) != CONTENT_STATUS_DONE) {
-			c->base.active--;
+		ఒకవేళ (content_get_స్థితి(object->content) != CONTENT_స్థితి_పూర్తి) {
+			c->పునాది.చురుకైన--;
 			NSLOG(netsurf, INFO, "%d fetches active",
-			      c->base.active);
+			      c->పునాది.చురుకైన);
 		}
 
 		hlcache_handle_release(object->content);
-		object->content = NULL;
+		object->content = ఖాళీ;
 
-		object->box->object = NULL;
+		object->box->object = ఖాళీ;
 	}
 
 	/* initialise fetch */
 	error = hlcache_handle_retrieve(url, HLCACHE_RETRIEVE_SNIFF_TYPE,
-			content_get_url(&c->base), NULL,
-			html_object_callback, object, &child,
+			content_get_url(&c->పునాది), ఖాళీ,
+			html_object_callback, object, &బిడ్డ,
 			object->permitted_types,
 			&object->content);
 
-	if (error != NSERROR_OK)
-		return false;
+	ఒకవేళ (error != NSERROR_OK)
+		తిరిగి false;
 
-	for (page = c; page != NULL; page = page->page) {
-		page->base.active++;
-		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
+	కొరకు (పుట = c; పుట != ఖాళీ; పుట = పుట->పుట) {
+		పుట->పునాది.చురుకైన++;
+		NSLOG(netsurf, INFO, "%d fetches active", c->పునాది.చురుకైన);
 
-		page->base.status = CONTENT_STATUS_READY;
+		పుట->పునాది.స్థితి_2 = CONTENT_స్థితి_READY;
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 /**
  * schedule callback for object refresh
  */
-static void html_object_refresh(void *p)
+స్థిర శూన్య html_object_refresh(శూన్య *p)
 {
-	struct content_html_object *object = p;
+	నిర్మాణం content_html_object *object = p;
 	nsurl *refresh_url;
 
-	assert(content_get_type(object->content) == CONTENT_HTML);
+	ప్రతిజ్ఞా(content_get_type(object->content) == CONTENT_HTML);
 
 	refresh_url = content_get_refresh_url(object->content);
 
 	/* Ignore if refresh URL has gone
 	 * (may happen if fetch errored) */
-	if (refresh_url == NULL)
-		return;
+	ఒకవేళ (refresh_url == ఖాళీ)
+		తిరిగి;
 
-	content_invalidate_reuse_data(object->content);
+	content_invalidate_reuse_దత్తాంశం(object->content);
 
-	if (!html_replace_object(object, refresh_url)) {
+	ఒకవేళ (!html_replace_object(object, refresh_url)) {
 		/** \todo handle memory exhaustion */
 	}
 }
 
 
 /* exported interface documented in html/object.h */
-nserror html_object_open_objects(html_content *html, struct browser_window *bw)
+nserror html_object_open_objects(html_content *html, నిర్మాణం browser_కిటికీ *bw)
 {
-	struct content_html_object *object, *next;
+	నిర్మాణం content_html_object *object, *తదుపరి;
 
-	for (object = html->object_list; object != NULL; object = next) {
-		next = object->next;
+	కొరకు (object = html->object_list; object != ఖాళీ; object = తదుపరి) {
+		తదుపరి = object->తదుపరి;
 
-		if (object->content == NULL || object->box == NULL)
-			continue;
+		ఒకవేళ (object->content == ఖాళీ || object->box == ఖాళీ)
+			కొనసాగు;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
-			continue;
+		ఒకవేళ (content_get_type(object->content) == CONTENT_NONE)
+			కొనసాగు;
 
 		content_open(object->content,
 			     bw,
-			     &html->base,
+			     &html->పునాది,
 			     object->box->object_params);
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_abort_objects(html_content *htmlc)
 {
-	struct content_html_object *object;
+	నిర్మాణం content_html_object *object;
 
-	for (object = htmlc->object_list;
-	     object != NULL;
-	     object = object->next) {
-		if (object->content == NULL)
-			continue;
+	కొరకు (object = htmlc->object_list;
+	     object != ఖాళీ;
+	     object = object->తదుపరి) {
+		ఒకవేళ (object->content == ఖాళీ)
+			కొనసాగు;
 
-		switch (content_get_status(object->content)) {
-		case CONTENT_STATUS_DONE:
+		ఎంపిక (content_get_స్థితి(object->content)) {
+		స్థితి CONTENT_స్థితి_పూర్తి:
 			/* already loaded: do nothing */
-			break;
+			ఆపు;
 
-		case CONTENT_STATUS_READY:
+		స్థితి CONTENT_స్థితి_READY:
 			hlcache_handle_abort(object->content);
 			/* Active count will be updated when
 			 * html_object_callback receives
 			 * CONTENT_MSG_DONE from this object
 			 */
-			break;
+			ఆపు;
 
-		default:
+		అప్రమేయ:
 			hlcache_handle_abort(object->content);
 			hlcache_handle_release(object->content);
-			object->content = NULL;
-			if (object->box != NULL) {
-				htmlc->base.active--;
+			object->content = ఖాళీ;
+			ఒకవేళ (object->box != ఖాళీ) {
+				htmlc->పునాది.చురుకైన--;
 				NSLOG(netsurf, INFO, "%d fetches active",
-				      htmlc->base.active);
+				      htmlc->పునాది.చురుకైన);
 			}
-			break;
+			ఆపు;
 
 		}
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_close_objects(html_content *html)
 {
-	struct content_html_object *object, *next;
+	నిర్మాణం content_html_object *object, *తదుపరి;
 
-	for (object = html->object_list; object != NULL; object = next) {
-		next = object->next;
+	కొరకు (object = html->object_list; object != ఖాళీ; object = తదుపరి) {
+		తదుపరి = object->తదుపరి;
 
-		if (object->content == NULL || object->box == NULL)
-			continue;
+		ఒకవేళ (object->content == ఖాళీ || object->box == ఖాళీ)
+			కొనసాగు;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
-			continue;
+		ఒకవేళ (content_get_type(object->content) == CONTENT_NONE)
+			కొనసాగు;
 
-		if (content_get_type(object->content) == CONTENT_HTML) {
-			guit->misc->schedule(-1, html_object_refresh, object);
+		ఒకవేళ (content_get_type(object->content) == CONTENT_HTML) {
+			guit->misc->కాలపట్టిక(-1, html_object_refresh, object);
 		}
 
 		content_close(object->content);
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_free_objects(html_content *html)
 {
-	while (html->object_list != NULL) {
-		struct content_html_object *victim = html->object_list;
+	అయితే (html->object_list != ఖాళీ) {
+		నిర్మాణం content_html_object *victim = html->object_list;
 
-		if (victim->content != NULL) {
+		ఒకవేళ (victim->content != ఖాళీ) {
 			NSLOG(netsurf, INFO, "object %p", victim->content);
 
-			if (content_get_type(victim->content) == CONTENT_HTML) {
-				guit->misc->schedule(-1, html_object_refresh, victim);
+			ఒకవేళ (content_get_type(victim->content) == CONTENT_HTML) {
+				guit->misc->కాలపట్టిక(-1, html_object_refresh, victim);
 			}
 			hlcache_handle_release(victim->content);
 		}
 
-		html->object_list = victim->next;
-		free(victim);
+		html->object_list = victim->తదుపరి;
+		విడుదల(victim);
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -709,63 +709,63 @@ nserror html_object_free_objects(html_content *html)
 bool
 html_fetch_object(html_content *c,
 		  nsurl *url,
-		  struct box *box,
+		  నిర్మాణం box *box,
 		  content_type permitted_types,
 		  bool background)
 {
-	struct content_html_object *object;
+	నిర్మాణం content_html_object *object;
 	hlcache_handle_callback object_callback;
-	hlcache_child_context child;
+	hlcache_బిడ్డ_context బిడ్డ;
 	nserror error;
 
 	/* If we've already been aborted, don't bother attempting the fetch */
-	if (c->aborted)
-		return true;
+	ఒకవేళ (c->aborted)
+		తిరిగి true;
 
-	child.charset = c->encoding;
-	child.quirks = c->base.quirks;
+	బిడ్డ.charset = c->encoding;
+	బిడ్డ.quirks = c->పునాది.quirks;
 
-	object = calloc(1, sizeof(struct content_html_object));
-	if (object == NULL) {
-		return false;
+	object = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content_html_object));
+	ఒకవేళ (object == ఖాళీ) {
+		తిరిగి false;
 	}
 
-	if (box == NULL) {
+	ఒకవేళ (box == ఖాళీ) {
 		object_callback = html_object_nobox_callback;
-	} else {
+	} లేకపోతే {
 		object_callback = html_object_callback;
 	}
 
-	object->parent = (struct content *) c;
-	object->next = NULL;
-	object->content = NULL;
+	object->మాతృ = (నిర్మాణం content *) c;
+	object->తదుపరి = ఖాళీ;
+	object->content = ఖాళీ;
 	object->box = box;
 	object->permitted_types = permitted_types;
 	object->background = background;
 
 	error = hlcache_handle_retrieve(url,
 					HLCACHE_RETRIEVE_SNIFF_TYPE,
-					content_get_url(&c->base),
-					NULL,
+					content_get_url(&c->పునాది),
+					ఖాళీ,
 					object_callback,
 					object,
-					&child,
+					&బిడ్డ,
 					object->permitted_types,
 					&object->content);
-	if (error != NSERROR_OK) {
-		free(object);
-		return error != NSERROR_NOMEM;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(object);
+		తిరిగి error != NSERROR_NOMEM;
 	}
 
 	/* add to content object list */
-	object->next = c->object_list;
+	object->తదుపరి = c->object_list;
 	c->object_list = object;
 
-	c->num_objects++;
-	if (box != NULL) {
-		c->base.active++;
-		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
+	c->అంకె_objects++;
+	ఒకవేళ (box != ఖాళీ) {
+		c->పునాది.చురుకైన++;
+		NSLOG(netsurf, INFO, "%d fetches active", c->పునాది.చురుకైన);
 	}
 
-	return true;
+	తిరిగి true;
 }

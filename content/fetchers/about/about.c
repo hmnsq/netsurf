@@ -26,70 +26,70 @@
  * information from the browser from a known, fixed URL.
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdarg.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "netsurf/inttypes.h"
+#అన్తర్భావ "netsurf/inttypes.h"
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
-#include "utils/messages.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/ring.h"
+#అన్తర్భావ "utils/messages.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#అన్తర్భావ "content/fetch.h"
+#అన్తర్భావ "content/fetchers.h"
 
-#include "private.h"
-#include "about.h"
-#include "blank.h"
-#include "certificate.h"
-#include "config.h"
-#include "chart.h"
-#include "choices.h"
-#include "imagecache.h"
-#include "nscolours.h"
-#include "query.h"
-#include "query_auth.h"
-#include "query_fetcherror.h"
-#include "query_privacy.h"
-#include "query_timeout.h"
-#include "atestament.h"
-#include "websearch.h"
+#అన్తర్భావ "private.h"
+#అన్తర్భావ "about.h"
+#అన్తర్భావ "blank.h"
+#అన్తర్భావ "certificate.h"
+#అన్తర్భావ "config.h"
+#అన్తర్భావ "chart.h"
+#అన్తర్భావ "choices.h"
+#అన్తర్భావ "imagecache.h"
+#అన్తర్భావ "nscolours.h"
+#అన్తర్భావ "query.h"
+#అన్తర్భావ "query_auth.h"
+#అన్తర్భావ "query_fetcherror.h"
+#అన్తర్భావ "query_privacy.h"
+#అన్తర్భావ "query_timeout.h"
+#అన్తర్భావ "atestament.h"
+#అన్తర్భావ "websearch.h"
 
-typedef bool (*fetch_about_handler)(struct fetch_about_context *);
+రకనిర్వచనం bool (*fetch_about_handler)(నిర్మాణం fetch_about_context *);
 
 /**
  * Context for an about fetch
  */
-struct fetch_about_context {
-	struct fetch_about_context *r_next, *r_prev;
+నిర్మాణం fetch_about_context {
+	నిర్మాణం fetch_about_context *r_తదుపరి, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	నిర్మాణం fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
 
-	const struct fetch_multipart_data *multipart; /**< post data */
+	స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *multipart; /**< post data */
 
 	fetch_about_handler handler;
 };
 
-static struct fetch_about_context *ring = NULL;
+స్థిర నిర్మాణం fetch_about_context *ring = ఖాళీ;
 
 /**
  * handler info for about scheme
  */
-struct about_handlers {
-	const char *name; /**< name to match in url */
-	int name_len;
+నిర్మాణం about_handlers {
+	స్థిరరాశి అక్షరం *name; /**< name to match in url */
+	పూర్ణాంకం name_len;
 	lwc_string *lname; /**< Interned name */
 	fetch_about_handler handler; /**< handler for the url */
 	bool hidden; /**< If entry should be hidden in listing */
@@ -100,102 +100,102 @@ struct about_handlers {
 /**
  * issue fetch callbacks with locking
  */
-static bool
-fetch_about_send_callback(const fetch_msg *msg, struct fetch_about_context *ctx)
+స్థిర bool
+fetch_about_send_callback(స్థిరరాశి fetch_సందేశం *సందేశం, నిర్మాణం fetch_about_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(సందేశం, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	తిరిగి ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_finished(struct fetch_about_context *ctx)
+fetch_about_send_ముగిసిన(నిర్మాణం fetch_about_context *ctx)
 {
-	fetch_msg msg;
-	msg.type = FETCH_FINISHED;
-	return fetch_about_send_callback(&msg, ctx);
+	fetch_సందేశం సందేశం;
+	సందేశం.type = FETCH_ముగిసిన;
+	తిరిగి fetch_about_send_callback(&సందేశం, ctx);
 }
 
 /* exported interface documented in about/private.h */
-bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code)
+bool fetch_about_సమితి_http_సంకేతం(నిర్మాణం fetch_about_context *ctx, దీర్ఘ సంకేతం_2)
 {
-	fetch_set_http_code(ctx->fetchh, code);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, సంకేతం_2);
 
-	return ctx->aborted;
+	తిరిగి ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_send_శీర్షిక(నిర్మాణం fetch_about_context *ctx, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	char header[64];
-	fetch_msg msg;
+	అక్షరం శీర్షిక[64];
+	fetch_సందేశం సందేశం;
 	va_list ap;
 
 	va_start(ap, fmt);
 
-	vsnprintf(header, sizeof header, fmt, ap);
+	vsnprintf(శీర్షిక, పరిమాణం శీర్షిక, fmt, ap);
 
 	va_end(ap);
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = strlen(header);
+	సందేశం.type = FETCH_శీర్షిక;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) శీర్షిక;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(శీర్షిక);
 
-	return fetch_about_send_callback(&msg, ctx);
+	తిరిగి fetch_about_send_callback(&సందేశం, ctx);
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len)
+fetch_about_senddata(నిర్మాణం fetch_about_context *ctx, స్థిరరాశి uint8_t *దత్తాంశం, size_t దత్తాంశం_len)
 {
-	fetch_msg msg;
+	fetch_సందేశం సందేశం;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = data;
-	msg.data.header_or_data.len = data_len;
+	సందేశం.type = FETCH_దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = దత్తాంశం_len;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		return NSERROR_INVALID;
+	ఒకవేళ (fetch_about_send_callback(&సందేశం, ctx)) {
+		తిరిగి NSERROR_INVALID;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_ssenddataf(నిర్మాణం fetch_about_context *ctx, స్థిరరాశి అక్షరం *fmt, ...)
 {
-	char buffer[1024];
-	char *dbuff;
-	fetch_msg msg;
+	అక్షరం బఫరు[1024];
+	అక్షరం *dbuff;
+	fetch_సందేశం సందేశం;
 	va_list ap;
-	int slen;
+	పూర్ణాంకం slen;
 
 	va_start(ap, fmt);
 
-	slen = vsnprintf(buffer, sizeof(buffer), fmt, ap);
+	slen = vsnprintf(బఫరు, పరిమాణం(బఫరు), fmt, ap);
 
 	va_end(ap);
 
-	if (slen < (int)sizeof(buffer)) {
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buffer;
-		msg.data.header_or_data.len = slen;
+	ఒకవేళ (slen < (పూర్ణాంకం)పరిమాణం(బఫరు)) {
+		సందేశం.type = FETCH_దత్తాంశం;
+		సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) బఫరు;
+		సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = slen;
 
-		if (fetch_about_send_callback(&msg, ctx)) {
-			return NSERROR_INVALID;
+		ఒకవేళ (fetch_about_send_callback(&సందేశం, ctx)) {
+			తిరిగి NSERROR_INVALID;
 		}
 
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	dbuff = malloc(slen + 1);
-	if (dbuff == NULL) {
-		return NSERROR_NOSPACE;
+	dbuff = జ్ఞాపకం_ఇవ్వు(slen + 1);
+	ఒకవేళ (dbuff == ఖాళీ) {
+		తిరిగి NSERROR_NOSPACE;
 	}
 
 	va_start(ap, fmt);
@@ -204,71 +204,71 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 
 	va_end(ap);
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *)dbuff;
-	msg.data.header_or_data.len = slen;
+	సందేశం.type = FETCH_దత్తాంశం;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *)dbuff;
+	సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = slen;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		free(dbuff);
-		return NSERROR_INVALID;
+	ఒకవేళ (fetch_about_send_callback(&సందేశం, ctx)) {
+		విడుదల(dbuff);
+		తిరిగి NSERROR_INVALID;
 	}
 
-	free(dbuff);
-	return NSERROR_OK;
+	విడుదల(dbuff);
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface documented in about/private.h */
-nsurl *fetch_about_get_url(struct fetch_about_context *ctx)
+nsurl *fetch_about_get_url(నిర్మాణం fetch_about_context *ctx)
 {
-	return ctx->url;
+	తిరిగి ctx->url;
 }
 
 
 /* exported interface documented in about/private.h */
-const struct fetch_multipart_data *
-fetch_about_get_multipart(struct fetch_about_context *ctx)
+స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *
+fetch_about_get_multipart(నిర్మాణం fetch_about_context *ctx)
 {
-	return ctx->multipart;
+	తిరిగి ctx->multipart;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_srverror(struct fetch_about_context *ctx)
+bool fetch_about_srverror(నిర్మాణం fetch_about_context *ctx)
 {
 	nserror res;
 
-	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_INTERNAL_SERVER_ERROR);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, HTTP_RESPONSE_అంతర్గత_SERVER_ERROR);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		return false;
+	ఒకవేళ (fetch_about_send_శీర్షిక(ctx, "Content-Type: text/plain"))
+		తిరిగి false;
 
 	res = fetch_about_ssenddataf(ctx, "%s 500 %s",
 				     messages_get("FetchErrorCode"),
 				     messages_get("HTTP500"));
-	if (res != NSERROR_OK) {
-		return false;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ముగిసిన(ctx);
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
+bool fetch_about_redirect(నిర్మాణం fetch_about_context *ctx, స్థిరరాశి అక్షరం *లక్ష్యం)
 {
-	fetch_msg msg;
+	fetch_సందేశం సందేశం;
 
 	/* content is going to return redirect */
-	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_FOUND);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, HTTP_RESPONSE_దొరికింది);
 
-	msg.type = FETCH_REDIRECT;
-	msg.data.redirect = target;
+	సందేశం.type = FETCH_REDIRECT;
+	సందేశం.దత్తాంశం.redirect = లక్ష్యం;
 
-	return fetch_about_send_callback(&msg, ctx);
+	తిరిగి fetch_about_send_callback(&సందేశం, ctx);
 }
 
 /**
@@ -277,9 +277,9 @@ bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
+స్థిర bool fetch_about_credits_handler(నిర్మాణం fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:credits.html");
+	తిరిగి fetch_about_redirect(ctx, "resource:credits.html");
 }
 
 
@@ -289,9 +289,9 @@ static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
+స్థిర bool fetch_about_licence_handler(నిర్మాణం fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:licence.html");
+	తిరిగి fetch_about_redirect(ctx, "resource:licence.html");
 }
 
 
@@ -301,9 +301,9 @@ static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
+స్థిర bool fetch_about_logo_handler(నిర్మాణం fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:netsurf.png");
+	తిరిగి fetch_about_redirect(ctx, "resource:netsurf.png");
 }
 
 
@@ -313,86 +313,86 @@ static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_welcome_handler(struct fetch_about_context *ctx)
+స్థిర bool fetch_about_welcome_handler(నిర్మాణం fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:welcome.html");
+	తిరిగి fetch_about_redirect(ctx, "resource:welcome.html");
 }
 
 
 /* Forward declaration because this handler requires the handler table. */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx);
+స్థిర bool fetch_about_about_handler(నిర్మాణం fetch_about_context *ctx);
 
 /**
  * List of about paths and their handlers
  */
-struct about_handlers about_handler_list[] = {
+నిర్మాణం about_handlers about_handler_list[] = {
 	{
 		"credits",
 		SLEN("credits"),
-		NULL,
+		ఖాళీ,
 		fetch_about_credits_handler,
 		false
 	},
 	{
 		"licence",
 		SLEN("licence"),
-		NULL,
+		ఖాళీ,
 		fetch_about_licence_handler,
 		false
 	},
 	{
 		"license",
 		SLEN("license"),
-		NULL,
+		ఖాళీ,
 		fetch_about_licence_handler,
 		true
 	},
 	{
 		"welcome",
 		SLEN("welcome"),
-		NULL,
+		ఖాళీ,
 		fetch_about_welcome_handler,
 		false
 	},
 	{
 		"config",
 		SLEN("config"),
-		NULL,
+		ఖాళీ,
 		fetch_about_config_handler,
 		false
 	},
 	{
 		"Choices",
 		SLEN("Choices"),
-		NULL,
+		ఖాళీ,
 		fetch_about_choices_handler,
 		false
 	},
 	{
 		"testament",
 		SLEN("testament"),
-		NULL,
+		ఖాళీ,
 		fetch_about_testament_handler,
 		false
 	},
 	{
 		"about",
 		SLEN("about"),
-		NULL,
+		ఖాళీ,
 		fetch_about_about_handler,
 		true
 	},
 	{
 		"nscolours.css",
 		SLEN("nscolours.css"),
-		NULL,
+		ఖాళీ,
 		fetch_about_nscolours_handler,
 		true
 	},
 	{
 		"logo",
 		SLEN("logo"),
-		NULL,
+		ఖాళీ,
 		fetch_about_logo_handler,
 		true
 	},
@@ -400,7 +400,7 @@ struct about_handlers about_handler_list[] = {
 		/* details about the image cache */
 		"imagecache",
 		SLEN("imagecache"),
-		NULL,
+		ఖాళీ,
 		fetch_about_imagecache_handler,
 		true
 	},
@@ -408,7 +408,7 @@ struct about_handlers about_handler_list[] = {
 		/* The default blank page */
 		"blank",
 		SLEN("blank"),
-		NULL,
+		ఖాళీ,
 		fetch_about_blank_handler,
 		true
 	},
@@ -416,7 +416,7 @@ struct about_handlers about_handler_list[] = {
 		/* details about a certificate */
 		"certificate",
 		SLEN("certificate"),
-		NULL,
+		ఖాళీ,
 		fetch_about_certificate_handler,
 		true
 	},
@@ -424,35 +424,35 @@ struct about_handlers about_handler_list[] = {
 		/* chart generator */
 		"chart",
 		SLEN("chart"),
-		NULL,
+		ఖాళీ,
 		fetch_about_chart_handler,
 		true
 	},
 	{
 		"query/auth",
 		SLEN("query/auth"),
-		NULL,
+		ఖాళీ,
 		fetch_about_query_auth_handler,
 		true
 	},
 	{
 		"query/ssl",
 		SLEN("query/ssl"),
-		NULL,
+		ఖాళీ,
 		fetch_about_query_privacy_handler,
 		true
 	},
 	{
 		"query/timeout",
 		SLEN("query/timeout"),
-		NULL,
+		ఖాళీ,
 		fetch_about_query_timeout_handler,
 		true
 	},
 	{
 		"query/fetcherror",
 		SLEN("query/fetcherror"),
-		NULL,
+		ఖాళీ,
 		fetch_about_query_fetcherror_handler,
 		true
 	},
@@ -460,14 +460,14 @@ struct about_handlers about_handler_list[] = {
 		/* web search using the configured provider */
 		"websearch",
 		SLEN("websearch"),
-		NULL,
+		ఖాళీ,
 		fetch_about_websearch_handler,
 		true
 	}
 };
 
-#define about_handler_list_len \
-	(sizeof(about_handler_list) / sizeof(struct about_handlers))
+#నిర్వచించు about_handler_list_len \
+	(పరిమాణం(about_handler_list) / పరిమాణం(నిర్మాణం about_handlers))
 
 /**
  * List all the valid about: paths available
@@ -475,17 +475,17 @@ struct about_handlers about_handler_list[] = {
  * \param ctx The fetch context.
  * \return true for sucess or false to generate an error.
  */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx)
+స్థిర bool fetch_about_about_handler(నిర్మాణం fetch_about_context *ctx)
 {
 	nserror res;
-	unsigned int abt_loop = 0;
+	గుర్తులేని పూర్ణాంకం abt_loop = 0;
 
 	/* content is going to return ok */
-	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_OK);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, HTTP_RESPONSE_OK);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_about_config_handler_aborted;
+	ఒకవేళ (fetch_about_send_శీర్షిక(ctx, "Content-Type: text/html; charset=utf-8"))
+		వెళ్ళు fetch_about_config_handler_aborted;
 
 	res = fetch_about_ssenddataf(ctx,
 			"<html>\n<head>\n"
@@ -496,51 +496,51 @@ static bool fetch_about_about_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class =\"ns-border\">List of NetSurf pages</h1>\n"
 			"<ul>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	ఒకవేళ (res != NSERROR_OK) {
+		వెళ్ళు fetch_about_config_handler_aborted;
 	}
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	కొరకు (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 
 		/* Skip over hidden entries */
-		if (about_handler_list[abt_loop].hidden)
-			continue;
+		ఒకవేళ (about_handler_list[abt_loop].hidden)
+			కొనసాగు;
 
 		res = fetch_about_ssenddataf(ctx,
 			       "<li><a href=\"about:%s\">about:%s</a></li>\n",
 			       about_handler_list[abt_loop].name,
 			       about_handler_list[abt_loop].name);
-		if (res != NSERROR_OK) {
-			goto fetch_about_config_handler_aborted;
+		ఒకవేళ (res != NSERROR_OK) {
+			వెళ్ళు fetch_about_config_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</ul>\n</body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	ఒకవేళ (res != NSERROR_OK) {
+		వెళ్ళు fetch_about_config_handler_aborted;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ముగిసిన(ctx);
 
-	return true;
+	తిరిగి true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	తిరిగి false;
 }
 
-static bool
-fetch_about_404_handler(struct fetch_about_context *ctx)
+స్థిర bool
+fetch_about_404_handler(నిర్మాణం fetch_about_context *ctx)
 {
 	nserror res;
-	const char *title;
+	స్థిరరాశి అక్షరం *title;
 
 	/* content is going to return 404 */
-	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_NOT_FOUND);
+	fetch_సమితి_http_సంకేతం(ctx->fetchh, HTTP_RESPONSE_NOT_దొరికింది);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	ఒకవేళ (fetch_about_send_శీర్షిక(ctx,
 			"Content-Type: text/html; charset=utf-8")) {
-		return false;
+		తిరిగి false;
 	}
 
 	title = messages_get("HTTP404");
@@ -556,54 +556,54 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
 		"</body>\n</html>\n",
 		title, title, messages_get("FetchErrorCode"), 404,
 		messages_get("FetchFile"),nsurl_access(ctx->url));
-	if (res != NSERROR_OK) {
-		return false;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ముగిసిన(ctx);
 
-	return true;
+	తిరిగి true;
 }
 
 /**
  * callback to initialise the about scheme fetcher.
  */
-static bool fetch_about_initialise(lwc_string *scheme)
+స్థిర bool fetch_about_initialise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
+	గుర్తులేని పూర్ణాంకం abt_loop = 0;
 	lwc_error error;
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	కొరకు (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		error = lwc_intern_string(about_handler_list[abt_loop].name,
 					about_handler_list[abt_loop].name_len,
 					&about_handler_list[abt_loop].lname);
-		if (error != lwc_error_ok) {
-			while (abt_loop-- != 0) {
+		ఒకవేళ (error != lwc_error_ok) {
+			అయితే (abt_loop-- != 0) {
 				lwc_string_unref(about_handler_list[abt_loop].lname);
 			}
-			return false;
+			తిరిగి false;
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
 /**
  * callback to finalise the about scheme fetcher.
  */
-static void fetch_about_finalise(lwc_string *scheme)
+స్థిర శూన్య fetch_about_finalise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	గుర్తులేని పూర్ణాంకం abt_loop = 0;
+	కొరకు (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		lwc_string_unref(about_handler_list[abt_loop].lname);
 	}
 }
 
 
-static bool fetch_about_can_fetch(const nsurl *url)
+స్థిర bool fetch_about_can_fetch(స్థిరరాశి nsurl *url)
 {
-	return true;
+	తిరిగి true;
 }
 
 
@@ -615,75 +615,75 @@ static bool fetch_about_can_fetch(const nsurl *url)
  * \param post_multipart post data in multipart format, owned by the llcache
  *                        object hence valid the entire lifetime of the fetch.
  */
-static void *
-fetch_about_setup(struct fetch *fetchh,
+స్థిర శూన్య *
+fetch_about_అమరిక(నిర్మాణం fetch *fetchh,
 		  nsurl *url,
 		  bool only_2xx,
 		  bool downgrade_tls,
-		  const char *post_urlenc,
-		  const struct fetch_multipart_data *post_multipart,
-		  const char **headers)
+		  స్థిరరాశి అక్షరం *post_urlenc,
+		  స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *post_multipart,
+		  స్థిరరాశి అక్షరం **శీర్షికలు)
 {
-	struct fetch_about_context *ctx;
-	unsigned int handler_loop;
-	lwc_string *path;
-	bool match;
+	నిర్మాణం fetch_about_context *ctx;
+	గుర్తులేని పూర్ణాంకం handler_loop;
+	lwc_string *మార్గం;
+	bool సరిపోలిక;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*ctx));
+	ఒకవేళ (ctx == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	path = nsurl_get_component(url, NSURL_PATH);
+	మార్గం = nsurl_get_component(url, NSURL_మార్గం);
 
-	for (handler_loop = 0;
+	కొరకు (handler_loop = 0;
 	     handler_loop < about_handler_list_len;
 	     handler_loop++) {
-		if (lwc_string_isequal(path,
+		ఒకవేళ (lwc_string_isequal(మార్గం,
 				       about_handler_list[handler_loop].lname,
-				       &match) == lwc_error_ok && match) {
+				       &సరిపోలిక) == lwc_error_ok && సరిపోలిక) {
 			ctx->handler = about_handler_list[handler_loop].handler;
-			break;
+			ఆపు;
 		}
 	}
 
-	lwc_string_unref(path);
+	lwc_string_unref(మార్గం);
 
 	ctx->fetchh = fetchh;
 	ctx->url = nsurl_ref(url);
 	ctx->multipart = post_multipart;
 
-	RING_INSERT(ring, ctx);
+	RING_చొప్పించు(ring, ctx);
 
-	return ctx;
+	తిరిగి ctx;
 }
 
 
 /**
  * callback to free a about scheme fetch
  */
-static void fetch_about_free(void *ctx)
+స్థిర శూన్య fetch_about_free(శూన్య *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	నిర్మాణం fetch_about_context *c = ctx;
 	nsurl_unref(c->url);
-	free(ctx);
+	విడుదల(ctx);
 }
 
 
 /**
  * callback to start an about scheme fetch
  */
-static bool fetch_about_start(void *ctx)
+స్థిర bool fetch_about_ప్రారంభం(శూన్య *ctx)
 {
-	return true;
+	తిరిగి true;
 }
 
 
 /**
  * callback to abort a about fetch
  */
-static void fetch_about_abort(void *ctx)
+స్థిర శూన్య fetch_about_abort(శూన్య *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	నిర్మాణం fetch_about_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -696,12 +696,12 @@ static void fetch_about_abort(void *ctx)
 /**
  * callback to poll for additional about fetch contents
  */
-static void fetch_about_poll(lwc_string *scheme)
+స్థిర శూన్య fetch_about_poll(lwc_string *scheme)
 {
-	struct fetch_about_context *c, *save_ring = NULL;
+	నిర్మాణం fetch_about_context *c, *save_ring = ఖాళీ;
 
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	అయితే (ring != ఖాళీ) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -712,17 +712,17 @@ static void fetch_about_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		ఒకవేళ (c->locked == true) {
+			RING_చొప్పించు(save_ring, c);
+			కొనసాగు;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		ఒకవేళ (c->aborted == false) {
 			/* about fetches can be processed in one go */
-			if (c->handler == NULL) {
+			ఒకవేళ (c->handler == ఖాళీ) {
 				fetch_about_404_handler(c);
-			} else {
+			} లేకపోతే {
 				c->handler(c);
 			}
 		}
@@ -739,19 +739,19 @@ static void fetch_about_poll(lwc_string *scheme)
 }
 
 
-nserror fetch_about_register(void)
+nserror fetch_about_రిజిస్టరు(శూన్య)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_about);
-	const struct fetcher_operation_table fetcher_ops = {
+	స్థిరరాశి నిర్మాణం fetcher_operation_పట్టిక fetcher_ops = {
 		.initialise = fetch_about_initialise,
 		.acceptable = fetch_about_can_fetch,
-		.setup = fetch_about_setup,
-		.start = fetch_about_start,
+		.అమరిక = fetch_about_అమరిక,
+		.ప్రారంభం = fetch_about_ప్రారంభం,
 		.abort = fetch_about_abort,
-		.free = fetch_about_free,
+		.విడుదల = fetch_about_free,
 		.poll = fetch_about_poll,
 		.finalise = fetch_about_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	తిరిగి fetcher_కూడు(scheme, &fetcher_ops);
 }

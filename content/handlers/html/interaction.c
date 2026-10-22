@@ -24,41 +24,41 @@
  * implementation of user interaction with a CONTENT_HTML.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <string.h>
 
-#include <dom/dom.h>
+#అన్తర్భావ <dom/dom.h>
 
-#include "utils/corestrings.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/mouse.h"
-#include "netsurf/misc.h"
-#include "netsurf/layout.h"
-#include "netsurf/keypress.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
-#include "desktop/browser_history.h"
-#include "desktop/frames.h"
-#include "desktop/scrollbar.h"
-#include "desktop/selection.h"
-#include "desktop/textarea.h"
-#include "javascript/js.h"
-#include "desktop/gui_internal.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "netsurf/browser_window.h"
+#అన్తర్భావ "netsurf/mouse.h"
+#అన్తర్భావ "netsurf/misc.h"
+#అన్తర్భావ "netsurf/layout.h"
+#అన్తర్భావ "netsurf/keypress.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "content/textsearch.h"
+#అన్తర్భావ "desktop/browser_history.h"
+#అన్తర్భావ "desktop/frames.h"
+#అన్తర్భావ "desktop/scrollbar.h"
+#అన్తర్భావ "desktop/selection.h"
+#అన్తర్భావ "desktop/textarea.h"
+#అన్తర్భావ "javascript/js.h"
+#అన్తర్భావ "desktop/gui_internal.h"
 
-#include "html/box.h"
-#include "html/box_textarea.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/form_internal.h"
-#include "html/private.h"
-#include "html/imagemap.h"
-#include "html/interaction.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_textarea.h"
+#అన్తర్భావ "html/box_inspect.h"
+#అన్తర్భావ "html/font.h"
+#అన్తర్భావ "html/form_internal.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/imagemap.h"
+#అన్తర్భావ "html/interaction.h"
 
 /**
  * Get pointer shape for given box
@@ -67,93 +67,93 @@
  * \param imagemap  whether an imagemap applies to the box
  */
 
-static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
+స్థిర browser_సూచిక_shape get_సూచిక_shape(నిర్మాణం box *box, bool imagemap)
 {
-	browser_pointer_shape pointer;
+	browser_సూచిక_shape సూచిక;
 	css_computed_style *style;
-	enum css_cursor_e cursor;
+	గణన css_cursor_e cursor;
 	lwc_string **cursor_uris;
 
-	if (box->type == BOX_FLOAT_LEFT || box->type == BOX_FLOAT_RIGHT)
+	ఒకవేళ (box->type == BOX_FLOAT_ఎడమ || box->type == BOX_FLOAT_కుడి)
 		style = box->children->style;
-	else
+	లేకపోతే
 		style = box->style;
 
-	if (style == NULL)
-		return BROWSER_POINTER_DEFAULT;
+	ఒకవేళ (style == ఖాళీ)
+		తిరిగి BROWSER_సూచిక_DEFAULT;
 
 	cursor = css_computed_cursor(style, &cursor_uris);
 
-	switch (cursor) {
-	case CSS_CURSOR_AUTO:
-		if (box->href || (box->gadget &&
+	ఎంపిక (cursor) {
+	స్థితి CSS_CURSOR_AUTO:
+		ఒకవేళ (box->href || (box->gadget &&
 				(box->gadget->type == GADGET_IMAGE ||
 				box->gadget->type == GADGET_SUBMIT)) ||
 				imagemap) {
 			/* link */
-			pointer = BROWSER_POINTER_POINT;
-		} else if (box->gadget &&
+			సూచిక = BROWSER_సూచిక_బిందువు;
+		} లేకపోతే ఒకవేళ (box->gadget &&
 				(box->gadget->type == GADGET_TEXTBOX ||
 				box->gadget->type == GADGET_PASSWORD ||
 				box->gadget->type == GADGET_TEXTAREA)) {
 			/* text input */
-			pointer = BROWSER_POINTER_CARET;
-		} else {
+			సూచిక = BROWSER_సూచిక_CARET;
+		} లేకపోతే {
 			/* html content doesn't mind */
-			pointer = BROWSER_POINTER_AUTO;
+			సూచిక = BROWSER_సూచిక_AUTO;
 		}
-		break;
-	case CSS_CURSOR_CROSSHAIR:
-		pointer = BROWSER_POINTER_CROSS;
-		break;
-	case CSS_CURSOR_POINTER:
-		pointer = BROWSER_POINTER_POINT;
-		break;
-	case CSS_CURSOR_MOVE:
-		pointer = BROWSER_POINTER_MOVE;
-		break;
-	case CSS_CURSOR_E_RESIZE:
-		pointer = BROWSER_POINTER_RIGHT;
-		break;
-	case CSS_CURSOR_W_RESIZE:
-		pointer = BROWSER_POINTER_LEFT;
-		break;
-	case CSS_CURSOR_N_RESIZE:
-		pointer = BROWSER_POINTER_UP;
-		break;
-	case CSS_CURSOR_S_RESIZE:
-		pointer = BROWSER_POINTER_DOWN;
-		break;
-	case CSS_CURSOR_NE_RESIZE:
-		pointer = BROWSER_POINTER_RU;
-		break;
-	case CSS_CURSOR_SW_RESIZE:
-		pointer = BROWSER_POINTER_LD;
-		break;
-	case CSS_CURSOR_SE_RESIZE:
-		pointer = BROWSER_POINTER_RD;
-		break;
-	case CSS_CURSOR_NW_RESIZE:
-		pointer = BROWSER_POINTER_LU;
-		break;
-	case CSS_CURSOR_TEXT:
-		pointer = BROWSER_POINTER_CARET;
-		break;
-	case CSS_CURSOR_WAIT:
-		pointer = BROWSER_POINTER_WAIT;
-		break;
-	case CSS_CURSOR_PROGRESS:
-		pointer = BROWSER_POINTER_PROGRESS;
-		break;
-	case CSS_CURSOR_HELP:
-		pointer = BROWSER_POINTER_HELP;
-		break;
-	default:
-		pointer = BROWSER_POINTER_DEFAULT;
-		break;
+		ఆపు;
+	స్థితి CSS_CURSOR_CROSSHAIR:
+		సూచిక = BROWSER_సూచిక_CROSS;
+		ఆపు;
+	స్థితి CSS_CURSOR_సూచిక:
+		సూచిక = BROWSER_సూచిక_బిందువు;
+		ఆపు;
+	స్థితి CSS_CURSOR_MOVE:
+		సూచిక = BROWSER_సూచిక_MOVE;
+		ఆపు;
+	స్థితి CSS_CURSOR_E_RESIZE:
+		సూచిక = BROWSER_సూచిక_కుడి;
+		ఆపు;
+	స్థితి CSS_CURSOR_W_RESIZE:
+		సూచిక = BROWSER_సూచిక_ఎడమ;
+		ఆపు;
+	స్థితి CSS_CURSOR_N_RESIZE:
+		సూచిక = BROWSER_సూచిక_పైకి;
+		ఆపు;
+	స్థితి CSS_CURSOR_S_RESIZE:
+		సూచిక = BROWSER_సూచిక_కిందికి;
+		ఆపు;
+	స్థితి CSS_CURSOR_NE_RESIZE:
+		సూచిక = BROWSER_సూచిక_RU;
+		ఆపు;
+	స్థితి CSS_CURSOR_SW_RESIZE:
+		సూచిక = BROWSER_సూచిక_LD;
+		ఆపు;
+	స్థితి CSS_CURSOR_SE_RESIZE:
+		సూచిక = BROWSER_సూచిక_RD;
+		ఆపు;
+	స్థితి CSS_CURSOR_NW_RESIZE:
+		సూచిక = BROWSER_సూచిక_LU;
+		ఆపు;
+	స్థితి CSS_CURSOR_పాఠ్యం:
+		సూచిక = BROWSER_సూచిక_CARET;
+		ఆపు;
+	స్థితి CSS_CURSOR_WAIT:
+		సూచిక = BROWSER_సూచిక_WAIT;
+		ఆపు;
+	స్థితి CSS_CURSOR_పురోగతి:
+		సూచిక = BROWSER_సూచిక_పురోగతి;
+		ఆపు;
+	స్థితి CSS_CURSOR_HELP:
+		సూచిక = BROWSER_సూచిక_HELP;
+		ఆపు;
+	అప్రమేయ:
+		సూచిక = BROWSER_సూచిక_DEFAULT;
+		ఆపు;
 	}
 
-	return pointer;
+	తిరిగి సూచిక;
 }
 
 
@@ -165,27 +165,27 @@ static browser_pointer_shape get_pointer_shape(struct box *box, bool imagemap)
  * \param y	y ordinate
  */
 
-static void html_box_drag_start(struct box *box, int x, int y)
+స్థిర శూన్య html_box_drag_ప్రారంభం(నిర్మాణం box *box, పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	int box_x, box_y;
-	int scroll_mouse_x, scroll_mouse_y;
+	పూర్ణాంకం box_x, box_y;
+	పూర్ణాంకం scroll_mouse_x, scroll_mouse_y;
 
 	box_coords(box, &box_x, &box_y);
 
-	if (box->scroll_x != NULL) {
+	ఒకవేళ (box->scroll_x != ఖాళీ) {
 		scroll_mouse_x = x - box_x ;
-		scroll_mouse_y = y - (box_y + box->padding[TOP] +
-				box->height + box->padding[BOTTOM] -
-				SCROLLBAR_WIDTH);
-		scrollbar_start_content_drag(box->scroll_x,
+		scroll_mouse_y = y - (box_y + box->padding[శిఖరం_2] +
+				box->ఎత్తు + box->padding[BOTTOM] -
+				SCROLLBAR_వెడల్పు);
+		scrollbar_ప్రారంభం_content_drag(box->scroll_x,
 				scroll_mouse_x, scroll_mouse_y);
-	} else if (box->scroll_y != NULL) {
-		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
-				box->width + box->padding[RIGHT] -
-				SCROLLBAR_WIDTH);
+	} లేకపోతే ఒకవేళ (box->scroll_y != ఖాళీ) {
+		scroll_mouse_x = x - (box_x + box->padding[ఎడమ_2] +
+				box->వెడల్పు + box->padding[కుడి_2] -
+				SCROLLBAR_వెడల్పు);
 		scroll_mouse_y = y - box_y;
 
-		scrollbar_start_content_drag(box->scroll_y,
+		scrollbar_ప్రారంభం_content_drag(box->scroll_y,
 				scroll_mouse_x, scroll_mouse_y);
 	}
 }
@@ -200,27 +200,27 @@ static void html_box_drag_start(struct box *box, int x, int y)
  * \param y	 coordinate of mouse
  * \param dir    Direction of drag
  */
-static size_t html_selection_drag_end(struct html_content *html,
-		browser_mouse_state mouse, int x, int y, int dir)
+స్థిర size_t html_selection_drag_చివర(నిర్మాణం html_content *html,
+		browser_mouse_state mouse, పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం dir)
 {
-	int pixel_offset;
-	struct box *box;
-	int dx, dy;
+	పూర్ణాంకం pixel_స్థానభ్రంశం;
+	నిర్మాణం box *box;
+	పూర్ణాంకం dx, dy;
 	size_t idx = 0;
 
-	box = box_pick_text_box(html, x, y, dir, &dx, &dy);
-	if (box) {
+	box = box_pick_పాఠ్యం_box(html, x, y, dir, &dx, &dy);
+	ఒకవేళ (box) {
 		plot_font_style_t fstyle;
 
 		font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
 
-		guit->layout->position(&fstyle, box->text, box->length,
-				       dx, &idx, &pixel_offset);
+		guit->layout->position(&fstyle, box->పాఠ్యం, box->నిడివి,
+				       dx, &idx, &pixel_స్థానభ్రంశం);
 
-		idx += box->byte_offset;
+		idx += box->byte_స్థానభ్రంశం;
 	}
 
-	return idx;
+	తిరిగి idx;
 }
 
 
@@ -238,47 +238,47 @@ static size_t html_selection_drag_end(struct html_content *html,
  * \param src The source DOM node.
  * \param dst The destination DOM node.
  */
-static void
-html__image_coords_dom_user_data_handler(dom_node_operation operation,
-					 dom_string *key,
-					 void *_data,
-					 struct dom_node *src,
-					 struct dom_node *dst)
+స్థిర శూన్య
+html_image_coords_dom_user_దత్తాంశం_handler(dom_కణుపు_operation operation,
+					 dom_string *కీలకం,
+					 శూన్య *దత్తాంశం_2,
+					 నిర్మాణం dom_కణుపు *src,
+					 నిర్మాణం dom_కణుపు *dst)
 {
-	struct image_input_coords *oldcoords, *coords = _data, *newcoords;
+	నిర్మాణం image_ఆదానం_coords *oldcoords, *coords = దత్తాంశం_2, *newcoords;
 
-	if (!dom_string_isequal(corestring_dom___ns_key_image_coords_node_data,
-				key) || coords == NULL) {
-		return;
+	ఒకవేళ (!dom_string_isequal(corestring_dom_ns_కీలకం_image_coords_కణుపు_దత్తాంశం,
+				కీలకం) || coords == ఖాళీ) {
+		తిరిగి;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		newcoords = calloc(1, sizeof(*newcoords));
-		if (newcoords != NULL) {
+	ఎంపిక (operation) {
+	స్థితి DOM_కణుపు_CLONED:
+		newcoords = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*newcoords));
+		ఒకవేళ (newcoords != ఖాళీ) {
 			*newcoords = *coords;
-			if (dom_node_set_user_data(dst,
-				 corestring_dom___ns_key_image_coords_node_data,
+			ఒకవేళ (dom_కణుపు_సమితి_user_దత్తాంశం(dst,
+				 corestring_dom_ns_కీలకం_image_coords_కణుపు_దత్తాంశం,
 				 newcoords,
-				 html__image_coords_dom_user_data_handler,
+				 html_image_coords_dom_user_దత్తాంశం_handler,
 				 &oldcoords) == DOM_NO_ERR) {
-				free(oldcoords);
+				విడుదల(oldcoords);
 			}
 		}
-		break;
+		ఆపు;
 
-	case DOM_NODE_DELETED:
-		free(coords);
-		break;
+	స్థితి DOM_కణుపు_DELETED:
+		విడుదల(coords);
+		ఆపు;
 
-	case DOM_NODE_RENAMED:
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-		break;
+	స్థితి DOM_కణుపు_RENAMED:
+	స్థితి DOM_కణుపు_IMPORTED:
+	స్థితి DOM_కణుపు_ADOPTED:
+		ఆపు;
 
-	default:
+	అప్రమేయ:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ప్రతిజ్ఞా(0);
 	}
 }
 
@@ -291,31 +291,31 @@ html__image_coords_dom_user_data_handler(dom_node_operation operation,
  * \param  x	   coordinate of mouse
  * \param  y	   coordinate of mouse
  */
-static void
-html_overflow_scroll_drag_end(struct scrollbar *scrollbar,
+స్థిర శూన్య
+html_అధికప్రవాహం_scroll_drag_చివర(నిర్మాణం scrollbar *scrollbar,
 			      browser_mouse_state mouse,
-			      int x, int y)
+			      పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	int scroll_mouse_x, scroll_mouse_y, box_x, box_y;
-	struct html_scrollbar_data *data = scrollbar_get_data(scrollbar);
-	struct box *box;
+	పూర్ణాంకం scroll_mouse_x, scroll_mouse_y, box_x, box_y;
+	నిర్మాణం html_scrollbar_దత్తాంశం *దత్తాంశం = scrollbar_get_దత్తాంశం(scrollbar);
+	నిర్మాణం box *box;
 
-	box = data->box;
+	box = దత్తాంశం->box;
 	box_coords(box, &box_x, &box_y);
 
-	if (scrollbar_is_horizontal(scrollbar)) {
+	ఒకవేళ (scrollbar_is_horizontal(scrollbar)) {
 		scroll_mouse_x = x - box_x;
-		scroll_mouse_y = y - (box_y + box->padding[TOP] +
-				box->height + box->padding[BOTTOM] -
-				SCROLLBAR_WIDTH);
-		scrollbar_mouse_drag_end(scrollbar, mouse,
+		scroll_mouse_y = y - (box_y + box->padding[శిఖరం_2] +
+				box->ఎత్తు + box->padding[BOTTOM] -
+				SCROLLBAR_వెడల్పు);
+		scrollbar_mouse_drag_చివర(scrollbar, mouse,
 				scroll_mouse_x, scroll_mouse_y);
-	} else {
-		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
-				box->width + box->padding[RIGHT] -
-				SCROLLBAR_WIDTH);
+	} లేకపోతే {
+		scroll_mouse_x = x - (box_x + box->padding[ఎడమ_2] +
+				box->వెడల్పు + box->padding[కుడి_2] -
+				SCROLLBAR_వెడల్పు);
 		scroll_mouse_y = y - box_y;
-		scrollbar_mouse_drag_end(scrollbar, mouse,
+		scrollbar_mouse_drag_చివర(scrollbar, mouse,
 				scroll_mouse_x, scroll_mouse_y);
 	}
 }
@@ -325,61 +325,61 @@ html_overflow_scroll_drag_end(struct scrollbar *scrollbar,
  * handle html mouse action when select menu is open
  *
  */
-static nserror
+స్థిర nserror
 mouse_action_select_menu(html_content *html,
-			 struct browser_window *bw,
+			 నిర్మాణం browser_కిటికీ *bw,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
-	const char *status;
-	int width, height;
-	struct hlcache_handle *bw_content;
+	నిర్మాణం box *box;
+	పూర్ణాంకం box_x = 0;
+	పూర్ణాంకం box_y = 0;
+	స్థిరరాశి అక్షరం *స్థితి_2;
+	పూర్ణాంకం వెడల్పు, ఎత్తు;
+	నిర్మాణం hlcache_handle *bw_content;
 	browser_drag_type bw_drag_type;
 
-	assert(html->visible_select_menu != NULL);
+	ప్రతిజ్ఞా(html->visible_select_menu != ఖాళీ);
 
-	bw_drag_type = browser_window_get_drag_type(bw);
-	if (bw_drag_type != DRAGGING_NONE && !mouse) {
+	bw_drag_type = browser_కిటికీ_get_drag_type(bw);
+	ఒకవేళ (bw_drag_type != DRAGGING_NONE && !mouse) {
 		/* drag end: select menu */
-		form_select_mouse_drag_end(html->visible_select_menu, mouse, x, y);
+		form_select_mouse_drag_చివర(html->visible_select_menu, mouse, x, y);
 	}
 
 	box = html->visible_select_menu->box;
 	box_coords(box, &box_x, &box_y);
 
-	box_x -= box->border[LEFT].width;
-	box_y += box->height + box->border[BOTTOM].width +
-		box->padding[BOTTOM] + box->padding[TOP];
+	box_x -= box->border[ఎడమ_2].వెడల్పు;
+	box_y += box->ఎత్తు + box->border[BOTTOM].వెడల్పు +
+		box->padding[BOTTOM] + box->padding[శిఖరం_2];
 
-	status = form_select_mouse_action(html->visible_select_menu,
+	స్థితి_2 = form_select_mouse_action(html->visible_select_menu,
 					  mouse,
 					  x - box_x,
 					  y - box_y);
-	if (status != NULL) {
+	ఒకవేళ (స్థితి_2 != ఖాళీ) {
 		/* set status if menu still open */
-		union content_msg_data msg_data;
-		msg_data.explicit_status_text = status;
-		content_broadcast((struct content *)html,
-				  CONTENT_MSG_STATUS,
-				  &msg_data);
-		return NSERROR_OK;
+		సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+		సందేశం_దత్తాంశం.explicit_స్థితి_పాఠ్యం = స్థితి_2;
+		content_ప్రసారం((నిర్మాణం content *)html,
+				  CONTENT_సందేశం_స్థితి,
+				  &సందేశం_దత్తాంశం);
+		తిరిగి NSERROR_OK;
 	}
 
 	/* close menu and redraw where it was */
-	form_select_get_dimensions(html->visible_select_menu, &width, &height);
+	form_select_get_dimensions(html->visible_select_menu, &వెడల్పు, &ఎత్తు);
 
-	html->visible_select_menu = NULL;
+	html->visible_select_menu = ఖాళీ;
 
-	bw_content = browser_window_get_content(bw);
+	bw_content = browser_కిటికీ_get_content(bw);
 	content_request_redraw(bw_content,
 			       box_x,
 			       box_y,
-			       width,
-			       height);
-	return NSERROR_OK;
+			       వెడల్పు,
+			       ఎత్తు);
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -387,56 +387,56 @@ mouse_action_select_menu(html_content *html,
  * handle html mouse action when a selection drag is being performed
  *
  */
-static nserror
+స్థిర nserror
 mouse_action_drag_selection(html_content *html,
-			    struct browser_window *bw,
+			    నిర్మాణం browser_కిటికీ *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct box *box;
-	int dir = -1;
-	int dx, dy;
+	నిర్మాణం box *box;
+	పూర్ణాంకం dir = -1;
+	పూర్ణాంకం dx, dy;
 	size_t idx;
-	union html_drag_owner drag_owner;
-	int pixel_offset;
+	సంఘం html_drag_owner drag_owner;
+	పూర్ణాంకం pixel_స్థానభ్రంశం;
 	plot_font_style_t fstyle;
 
-	if (!mouse) {
+	ఒకవేళ (!mouse) {
 		/* End of selection drag */
-		if (selection_dragging_start(html->sel)) {
+		ఒకవేళ (selection_dragging_ప్రారంభం(html->sel)) {
 			dir = 1;
 		}
 
-		idx = html_selection_drag_end(html, mouse, x, y, dir);
+		idx = html_selection_drag_చివర(html, mouse, x, y, dir);
 
-		if (idx != 0) {
+		ఒకవేళ (idx != 0) {
 			selection_track(html->sel, mouse, idx);
 		}
 
 		drag_owner.no_owner = true;
-		html_set_drag_type(html, HTML_DRAG_NONE, drag_owner, NULL);
+		html_సమితి_drag_type(html, HTML_DRAG_NONE, drag_owner, ఖాళీ);
 
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	if (selection_dragging_start(html->sel)) {
+	ఒకవేళ (selection_dragging_ప్రారంభం(html->sel)) {
 		dir = 1;
 	}
 
-	box = box_pick_text_box(html, x, y, dir, &dx, &dy);
-	if (box != NULL) {
+	box = box_pick_పాఠ్యం_box(html, x, y, dir, &dx, &dy);
+	ఒకవేళ (box != ఖాళీ) {
 		font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
 
 		guit->layout->position(&fstyle,
-				       box->text,
-				       box->length,
+				       box->పాఠ్యం,
+				       box->నిడివి,
 				       dx,
 				       &idx,
-				       &pixel_offset);
+				       &pixel_స్థానభ్రంశం);
 
-		selection_track(html->sel, mouse, box->byte_offset + idx);
+		selection_track(html->sel, mouse, box->byte_స్థానభ్రంశం + idx);
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -444,194 +444,194 @@ mouse_action_drag_selection(html_content *html,
  * handle html mouse action when a scrollbar drag is being performed
  *
  */
-static nserror
+స్థిర nserror
 mouse_action_drag_scrollbar(html_content *html,
-			    struct browser_window *bw,
+			    నిర్మాణం browser_కిటికీ *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct scrollbar *scr;
-	struct html_scrollbar_data *data;
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
-	const char *status;
-	int scroll_mouse_x = 0, scroll_mouse_y = 0;
-	scrollbar_mouse_status scrollbar_status;
+	నిర్మాణం scrollbar *scr;
+	నిర్మాణం html_scrollbar_దత్తాంశం *దత్తాంశం;
+	నిర్మాణం box *box;
+	పూర్ణాంకం box_x = 0;
+	పూర్ణాంకం box_y = 0;
+	స్థిరరాశి అక్షరం *స్థితి_2;
+	పూర్ణాంకం scroll_mouse_x = 0, scroll_mouse_y = 0;
+	scrollbar_mouse_స్థితి scrollbar_స్థితి;
 
 	scr = html->drag_owner.scrollbar;
 
-	if (!mouse) {
+	ఒకవేళ (!mouse) {
 		/* drag end: scrollbar */
-		html_overflow_scroll_drag_end(scr, mouse, x, y);
+		html_అధికప్రవాహం_scroll_drag_చివర(scr, mouse, x, y);
 	}
 
-	data = scrollbar_get_data(scr);
+	దత్తాంశం = scrollbar_get_దత్తాంశం(scr);
 
-	box = data->box;
+	box = దత్తాంశం->box;
 
 	box_coords(box, &box_x, &box_y);
 
-	if (scrollbar_is_horizontal(scr)) {
+	ఒకవేళ (scrollbar_is_horizontal(scr)) {
 		scroll_mouse_x = x - box_x ;
-		scroll_mouse_y = y - (box_y + box->padding[TOP] +
-				      box->height + box->padding[BOTTOM] -
-				      SCROLLBAR_WIDTH);
-		scrollbar_status = scrollbar_mouse_action(scr,
+		scroll_mouse_y = y - (box_y + box->padding[శిఖరం_2] +
+				      box->ఎత్తు + box->padding[BOTTOM] -
+				      SCROLLBAR_వెడల్పు);
+		scrollbar_స్థితి = scrollbar_mouse_action(scr,
 							  mouse,
 							  scroll_mouse_x,
 							  scroll_mouse_y);
-	} else {
-		scroll_mouse_x = x - (box_x + box->padding[LEFT] +
-				      box->width + box->padding[RIGHT] -
-				      SCROLLBAR_WIDTH);
+	} లేకపోతే {
+		scroll_mouse_x = x - (box_x + box->padding[ఎడమ_2] +
+				      box->వెడల్పు + box->padding[కుడి_2] -
+				      SCROLLBAR_వెడల్పు);
 		scroll_mouse_y = y - box_y;
 
-		scrollbar_status = scrollbar_mouse_action(scr,
+		scrollbar_స్థితి = scrollbar_mouse_action(scr,
 							  mouse,
 							  scroll_mouse_x,
 							  scroll_mouse_y);
 	}
-	status = scrollbar_mouse_status_to_message(scrollbar_status);
+	స్థితి_2 = scrollbar_mouse_స్థితి_గమ్యం_సందేశం(scrollbar_స్థితి);
 
-	if (status != NULL) {
-		union content_msg_data msg_data;
+	ఒకవేళ (స్థితి_2 != ఖాళీ) {
+		సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 
-		msg_data.explicit_status_text = status;
-		content_broadcast((struct content *)html,
-				  CONTENT_MSG_STATUS,
-				  &msg_data);
+		సందేశం_దత్తాంశం.explicit_స్థితి_పాఠ్యం = స్థితి_2;
+		content_ప్రసారం((నిర్మాణం content *)html,
+				  CONTENT_సందేశం_స్థితి,
+				  &సందేశం_దత్తాంశం);
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * handle mouse actions while dragging in a text area
  */
-static nserror
+స్థిర nserror
 mouse_action_drag_textarea(html_content *html,
-			    struct browser_window *bw,
+			    నిర్మాణం browser_కిటికీ *bw,
 			    browser_mouse_state mouse,
-			    int x, int y)
+			    పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	నిర్మాణం box *box;
+	పూర్ణాంకం box_x = 0;
+	పూర్ణాంకం box_y = 0;
 
 	box = html->drag_owner.textarea;
 
-	assert(box->gadget != NULL);
-	assert(box->gadget->type == GADGET_TEXTAREA ||
+	ప్రతిజ్ఞా(box->gadget != ఖాళీ);
+	ప్రతిజ్ఞా(box->gadget->type == GADGET_TEXTAREA ||
 	       box->gadget->type == GADGET_PASSWORD ||
 	       box->gadget->type == GADGET_TEXTBOX);
 
 	box_coords(box, &box_x, &box_y);
-	textarea_mouse_action(box->gadget->data.text.ta,
+	textarea_mouse_action(box->gadget->దత్తాంశం.పాఠ్యం.ta,
 			      mouse,
 			      x - box_x,
 			      y - box_y);
 
 	/* TODO: Set appropriate statusbar message */
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * handle mouse actions while dragging in a content
  */
-static nserror
+స్థిర nserror
 mouse_action_drag_content(html_content *html,
-			  struct browser_window *bw,
+			  నిర్మాణం browser_కిటికీ *bw,
 			  browser_mouse_state mouse,
-			  int x, int y)
+			  పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	నిర్మాణం box *box;
+	పూర్ణాంకం box_x = 0;
+	పూర్ణాంకం box_y = 0;
 
 	box = html->drag_owner.content;
-	assert(box->object != NULL);
+	ప్రతిజ్ఞా(box->object != ఖాళీ);
 
 	box_coords(box, &box_x, &box_y);
 	content_mouse_track(box->object,
 			    bw, mouse,
 			    x - box_x,
 			    y - box_y);
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * local structure containing all the mouse action state information
  */
-struct mouse_action_state {
-	struct {
-		const char *status; /**< status text */
-		browser_pointer_shape pointer; /**< pointer shape */
-		enum {
+నిర్మాణం mouse_action_state {
+	నిర్మాణం {
+		స్థిరరాశి అక్షరం *స్థితి_2; /**< status text */
+		browser_సూచిక_shape సూచిక; /**< pointer shape */
+		గణన {
 		      ACTION_NONE, /**< default of no action */
 		      ACTION_NOSEND, /**< do not send status and pointer message */
 		      ACTION_SUBMIT, /**< submit form */
 		      ACTION_NAVIGATE, /**< navigate to link url */
 		      ACTION_JS, /**< execute link as script */
-		      ACTION_BACK, /**< navigate back in history */
+		      ACTION_వెనుక, /**< navigate back in history */
 		      ACTION_FORWARD, /**< navigate forward in history */
 		} action;
-	} result;
+	} ఫలితం;
 
 	/** dom node */
-	struct dom_node *node;
+	నిర్మాణం dom_కణుపు *కణుపు;
 
 	/** html object */
-	struct {
-		struct box *box;
-		int pos_x;
-		int pos_y;
+	నిర్మాణం {
+		నిర్మాణం box *box;
+		పూర్ణాంకం pos_x;
+		పూర్ణాంకం pos_y;
 	} html_object;
 
 	/** non html object */
 	hlcache_handle *object;
 
 	/** iframe */
-	struct browser_window *iframe;
+	నిర్మాణం browser_కిటికీ *iframe;
 
 	/** link either from href or imagemap */
-	struct {
-		struct box *box;
+	నిర్మాణం {
+		నిర్మాణం box *box;
 		nsurl *url;
-		const char *target;
+		స్థిరరాశి అక్షరం *లక్ష్యం;
 		bool is_imagemap;
 	} link;
 
 	/** gadget */
-	struct {
-		struct form_control *control;
-		struct box *box;
-		int box_x;
-		int box_y;
-		const char *target;
+	నిర్మాణం {
+		నిర్మాణం form_control *control;
+		నిర్మాణం box *box;
+		పూర్ణాంకం box_x;
+		పూర్ణాంకం box_y;
+		స్థిరరాశి అక్షరం *లక్ష్యం;
 	} gadget;
 
 	/** title */
-	const char *title;
+	స్థిరరాశి అక్షరం *title;
 
 	/** candidate box for drag operation */
-	struct box *drag_candidate;
+	నిర్మాణం box *drag_candidate;
 
 	/** scrollbar */
-	struct {
-		struct scrollbar *bar;
-		int mouse_x;
-		int mouse_y;
+	నిర్మాణం {
+		నిర్మాణం scrollbar *bar;
+		పూర్ణాంకం mouse_x;
+		పూర్ణాంకం mouse_y;
 	} scroll;
 
 	/** text in box */
-	struct {
-		struct box *box;
-		int box_x;
-	} text;
+	నిర్మాణం {
+		నిర్మాణం box *box;
+		పూర్ణాంకం box_x;
+	} పాఠ్యం;
 };
 
 
@@ -670,19 +670,19 @@ struct mouse_action_state {
  * text_box - text box
  * text_box_x - text_box
  */
-static nserror
-get_mouse_action_node(html_content *html,
-		      int x, int y,
-		      struct mouse_action_state *man)
+స్థిర nserror
+get_mouse_action_కణుపు(html_content *html,
+		      పూర్ణాంకం x, పూర్ణాంకం y,
+		      నిర్మాణం mouse_action_state *man)
 {
-	struct box *box;
-	int box_x = 0;
-	int box_y = 0;
+	నిర్మాణం box *box;
+	పూర్ణాంకం box_x = 0;
+	పూర్ణాంకం box_y = 0;
 
 	/* initialise the mouse action state data */
-	memset(man, 0, sizeof(struct mouse_action_state));
-	man->node = html->layout->node; /* Default dom node to the <HTML> */
-	man->result.pointer = BROWSER_POINTER_DEFAULT;
+	memset(man, 0, పరిమాణం(నిర్మాణం mouse_action_state));
+	man->కణుపు = html->layout->కణుపు; /* Default dom node to the <HTML> */
+	man->ఫలితం.సూచిక = BROWSER_సూచిక_DEFAULT;
 
 	/* search the box tree for a link, imagemap, form control, or
 	 * box with scrollbars
@@ -690,366 +690,366 @@ get_mouse_action_node(html_content *html,
 	box = html->layout;
 
 	/* Consider the margins of the html page now */
-	box_x = box->margin[LEFT];
-	box_y = box->margin[TOP];
+	box_x = box->margin[ఎడమ_2];
+	box_y = box->margin[శిఖరం_2];
 
-	do {
+	చేయి {
 		/* skip hidden boxes */
-		if ((box->style != NULL) &&
+		ఒకవేళ ((box->style != ఖాళీ) &&
 		    (css_computed_visibility(box->style) ==
 		     CSS_VISIBILITY_HIDDEN)) {
-			goto next_box;
+			వెళ్ళు తదుపరి_box;
 		}
 
-		if (box->node != NULL) {
-			man->node = box->node;
+		ఒకవేళ (box->కణుపు != ఖాళీ) {
+			man->కణుపు = box->కణుపు;
 		}
 
-		if (box->object) {
-			if (content_get_type(box->object) == CONTENT_HTML) {
+		ఒకవేళ (box->object) {
+			ఒకవేళ (content_get_type(box->object) == CONTENT_HTML) {
 				man->html_object.box = box;
 				man->html_object.pos_x = box_x;
 				man->html_object.pos_y = box_y;
-			} else {
+			} లేకపోతే {
 				man->object = box->object;
 			}
 		}
 
-		if (box->iframe) {
+		ఒకవేళ (box->iframe) {
 			man->iframe = box->iframe;
 		}
 
-		if (box->href) {
+		ఒకవేళ (box->href) {
 			man->link.url = box->href;
-			man->link.target = box->target;
+			man->link.లక్ష్యం = box->లక్ష్యం;
 			man->link.box = box;
 			man->link.is_imagemap = false;
 		}
 
-		if (box->usemap) {
+		ఒకవేళ (box->usemap) {
 			man->link.url = imagemap_get(html,
 						     box->usemap,
 						     box_x,
 						     box_y,
 						     x, y,
-						     &man->link.target);
+						     &man->link.లక్ష్యం);
 			man->link.box = box;
 			man->link.is_imagemap = true;
 		}
 
-		if (box->gadget) {
+		ఒకవేళ (box->gadget) {
 			man->gadget.control = box->gadget;
 			man->gadget.box = box;
 			man->gadget.box_x = box_x;
 			man->gadget.box_y = box_y;
-			if (box->gadget->form) {
-				man->gadget.target = box->gadget->form->target;
+			ఒకవేళ (box->gadget->form) {
+				man->gadget.లక్ష్యం = box->gadget->form->లక్ష్యం;
 			}
 		}
 
-		if (box->title) {
+		ఒకవేళ (box->title) {
 			man->title = box->title;
 		}
 
-		man->result.pointer = get_pointer_shape(box, false);
+		man->ఫలితం.సూచిక = get_సూచిక_shape(box, false);
 
-		if ((box->scroll_x != NULL) ||
-		    (box->scroll_y != NULL)) {
-			int padding_left;
-			int padding_right;
-			int padding_top;
-			int padding_bottom;
+		ఒకవేళ ((box->scroll_x != ఖాళీ) ||
+		    (box->scroll_y != ఖాళీ)) {
+			పూర్ణాంకం padding_ఎడమ;
+			పూర్ణాంకం padding_కుడి;
+			పూర్ణాంకం padding_శిఖరం;
+			పూర్ణాంకం padding_bottom;
 
-			if (man->drag_candidate == NULL) {
+			ఒకవేళ (man->drag_candidate == ఖాళీ) {
 				man->drag_candidate = box;
 			}
 
-			padding_left = box_x +
-					scrollbar_get_offset(box->scroll_x);
-			padding_right = padding_left + box->padding[LEFT] +
-					box->width + box->padding[RIGHT];
-			padding_top = box_y +
-					scrollbar_get_offset(box->scroll_y);
-			padding_bottom = padding_top + box->padding[TOP] +
-					box->height + box->padding[BOTTOM];
+			padding_ఎడమ = box_x +
+					scrollbar_get_స్థానభ్రంశం(box->scroll_x);
+			padding_కుడి = padding_ఎడమ + box->padding[ఎడమ_2] +
+					box->వెడల్పు + box->padding[కుడి_2];
+			padding_శిఖరం = box_y +
+					scrollbar_get_స్థానభ్రంశం(box->scroll_y);
+			padding_bottom = padding_శిఖరం + box->padding[శిఖరం_2] +
+					box->ఎత్తు + box->padding[BOTTOM];
 
-			if ((x > padding_left) &&
-			    (x < padding_right) &&
-			    (y > padding_top) &&
+			ఒకవేళ ((x > padding_ఎడమ) &&
+			    (x < padding_కుడి) &&
+			    (y > padding_శిఖరం) &&
 			    (y < padding_bottom)) {
 				/* mouse inside padding box */
 
-				if ((box->scroll_y != NULL) &&
-				    (x > (padding_right - SCROLLBAR_WIDTH))) {
+				ఒకవేళ ((box->scroll_y != ఖాళీ) &&
+				    (x > (padding_కుడి - SCROLLBAR_వెడల్పు))) {
 					/* mouse above vertical box scroll */
 
 					man->scroll.bar = box->scroll_y;
-					man->scroll.mouse_x = x - (padding_right - SCROLLBAR_WIDTH);
-					man->scroll.mouse_y = y - padding_top;
-					break;
+					man->scroll.mouse_x = x - (padding_కుడి - SCROLLBAR_వెడల్పు);
+					man->scroll.mouse_y = y - padding_శిఖరం;
+					ఆపు;
 
-				} else if ((box->scroll_x != NULL) &&
+				} లేకపోతే ఒకవేళ ((box->scroll_x != ఖాళీ) &&
 					   (y > (padding_bottom -
-							SCROLLBAR_WIDTH))) {
+							SCROLLBAR_వెడల్పు))) {
 					/* mouse above horizontal box scroll */
 
 					man->scroll.bar = box->scroll_x;
-					man->scroll.mouse_x = x - padding_left;
-					man->scroll.mouse_y = y - (padding_bottom - SCROLLBAR_WIDTH);
-					break;
+					man->scroll.mouse_x = x - padding_ఎడమ;
+					man->scroll.mouse_y = y - (padding_bottom - SCROLLBAR_వెడల్పు);
+					ఆపు;
 				}
 			}
 		}
 
-		if (box->text && !box->object) {
-			man->text.box = box;
-			man->text.box_x = box_x;
+		ఒకవేళ (box->పాఠ్యం && !box->object) {
+			man->పాఠ్యం.box = box;
+			man->పాఠ్యం.box_x = box_x;
 		}
 
-	next_box:
+	తదుపరి_box:
 		/* iterate to next box */
-		box = box_at_point(&html->unit_len_ctx, box, x, y, &box_x, &box_y);
-	} while (box != NULL);
+		box = box_at_బిందువు(&html->unit_len_ctx, box, x, y, &box_x, &box_y);
+	} అయితే (box != ఖాళీ);
 
 	/* use of box_x, box_y, or content below this point is probably a
 	 * mistake; they will refer to the last box returned by box_at_point */
 
-	assert(man->node != NULL);
+	ప్రతిజ్ఞా(man->కణుపు != ఖాళీ);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on a form gadget
  */
-static nserror
+స్థిర nserror
 gadget_mouse_action(html_content *html,
 		    browser_mouse_state mouse,
-		    int x, int y,
-		    struct mouse_action_state *mas)
+		    పూర్ణాంకం x, పూర్ణాంకం y,
+		    నిర్మాణం mouse_action_state *mas)
 {
-	struct content *c = (struct content *)html;
-	textarea_mouse_status ta_status;
-	union content_msg_data msg_data;
+	నిర్మాణం content *c = (నిర్మాణం content *)html;
+	textarea_mouse_స్థితి ta_స్థితి;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 	nserror res;
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	switch (mas->gadget.control->type) {
-	case GADGET_SELECT:
-		mas->result.status = messages_get("FormSelect");
-		mas->result.pointer = BROWSER_POINTER_MENU;
-		if (mouse & BROWSER_MOUSE_CLICK_1 &&
+	ఎంపిక (mas->gadget.control->type) {
+	స్థితి GADGET_SELECT:
+		mas->ఫలితం.స్థితి_2 = messages_get("FormSelect");
+		mas->ఫలితం.సూచిక = BROWSER_సూచిక_MENU;
+		ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1 &&
 		    nsoption_bool(core_select_menu)) {
 			html->visible_select_menu = mas->gadget.control;
 			res = form_open_select_menu(c,
 						    mas->gadget.control,
 						    form_select_menu_callback,
 						    c);
-			if (res != NSERROR_OK) {
+			ఒకవేళ (res != NSERROR_OK) {
 				NSLOG(netsurf, ERROR, "%s",
 				      messages_get_errorcode(res));
-				html->visible_select_menu = NULL;
+				html->visible_select_menu = ఖాళీ;
 			}
-			mas->result.pointer = BROWSER_POINTER_DEFAULT;
-		} else if (mouse & BROWSER_MOUSE_CLICK_1) {
-			msg_data.select_menu.gadget = mas->gadget.control;
-			content_broadcast(c,
-					  CONTENT_MSG_SELECTMENU,
-					  &msg_data);
+			mas->ఫలితం.సూచిక = BROWSER_సూచిక_DEFAULT;
+		} లేకపోతే ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1) {
+			సందేశం_దత్తాంశం.select_menu.gadget = mas->gadget.control;
+			content_ప్రసారం(c,
+					  CONTENT_సందేశం_SELECTMENU,
+					  &సందేశం_దత్తాంశం);
 		}
-		break;
+		ఆపు;
 
-	case GADGET_CHECKBOX:
-		mas->result.status = messages_get("FormCheckbox");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
+	స్థితి GADGET_CHECKBOX:
+		mas->ఫలితం.స్థితి_2 = messages_get("FormCheckbox");
+		ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1) {
 			mas->gadget.control->selected = !mas->gadget.control->selected;
-			dom_html_input_element_set_checked(
-				(dom_html_input_element *)(mas->gadget.control->node),
+			dom_html_ఆదానం_element_సమితి_checked(
+				(dom_html_ఆదానం_element *)(mas->gadget.control->కణుపు),
 				mas->gadget.control->selected);
 			html__redraw_a_box(html, mas->gadget.box);
 		}
-		break;
+		ఆపు;
 
-	case GADGET_RADIO:
-		mas->result.status = messages_get("FormRadio");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
-			form_radio_set(mas->gadget.control);
+	స్థితి GADGET_RADIO:
+		mas->ఫలితం.స్థితి_2 = messages_get("FormRadio");
+		ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1) {
+			form_radio_సమితి(mas->gadget.control);
 		}
-		break;
+		ఆపు;
 
-	case GADGET_IMAGE:
+	స్థితి GADGET_IMAGE:
 		/* This falls through to SUBMIT */
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
-			struct image_input_coords *coords, *oldcoords;
+		ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1) {
+			నిర్మాణం image_ఆదానం_coords *coords, *oldcoords;
 			/** \todo Find a way to not ignore errors */
-			coords = calloc(1, sizeof(*coords));
-			if (coords == NULL) {
-				return NSERROR_OK;
+			coords = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*coords));
+			ఒకవేళ (coords == ఖాళీ) {
+				తిరిగి NSERROR_OK;
 			}
 			coords->x = x - mas->gadget.box_x;
 			coords->y = y - mas->gadget.box_y;
-			if (dom_node_set_user_data(
-				mas->gadget.control->node,
-				corestring_dom___ns_key_image_coords_node_data,
+			ఒకవేళ (dom_కణుపు_సమితి_user_దత్తాంశం(
+				mas->gadget.control->కణుపు,
+				corestring_dom_ns_కీలకం_image_coords_కణుపు_దత్తాంశం,
 				coords,
-				html__image_coords_dom_user_data_handler,
+				html_image_coords_dom_user_దత్తాంశం_handler,
 				&oldcoords) != DOM_NO_ERR) {
-				return NSERROR_OK;
+				తిరిగి NSERROR_OK;
 			}
-			free(oldcoords);
+			విడుదల(oldcoords);
 		}
 		fallthrough;
 
-	case GADGET_SUBMIT:
-		if (mas->gadget.control->form) {
-			static char status_buffer[200];
+	స్థితి GADGET_SUBMIT:
+		ఒకవేళ (mas->gadget.control->form) {
+			స్థిర అక్షరం స్థితి_బఫరు[200];
 
-			snprintf(status_buffer,
-				 sizeof status_buffer,
+			snprintf(స్థితి_బఫరు,
+				 పరిమాణం స్థితి_బఫరు,
 				 messages_get("FormSubmit"),
 				 mas->gadget.control->form->action);
-			mas->result.status = status_buffer;
-			mas->result.pointer = get_pointer_shape(mas->gadget.box,
+			mas->ఫలితం.స్థితి_2 = స్థితి_బఫరు;
+			mas->ఫలితం.సూచిక = get_సూచిక_shape(mas->gadget.box,
 								false);
-			if (mouse & (BROWSER_MOUSE_CLICK_1 |
+			ఒకవేళ (mouse & (BROWSER_MOUSE_CLICK_1 |
 				     BROWSER_MOUSE_CLICK_2)) {
-				mas->result.action = ACTION_SUBMIT;
+				mas->ఫలితం.action = ACTION_SUBMIT;
 			}
-		} else {
-			mas->result.status = messages_get("FormBadSubmit");
+		} లేకపోతే {
+			mas->ఫలితం.స్థితి_2 = messages_get("FormBadSubmit");
 		}
-		break;
+		ఆపు;
 
-	case GADGET_TEXTBOX:
-	case GADGET_PASSWORD:
-	case GADGET_TEXTAREA:
-		if (mas->gadget.control->type == GADGET_TEXTAREA) {
-			mas->result.status = messages_get("FormTextarea");
-		} else {
-			mas->result.status = messages_get("FormTextbox");
+	స్థితి GADGET_TEXTBOX:
+	స్థితి GADGET_PASSWORD:
+	స్థితి GADGET_TEXTAREA:
+		ఒకవేళ (mas->gadget.control->type == GADGET_TEXTAREA) {
+			mas->ఫలితం.స్థితి_2 = messages_get("FormTextarea");
+		} లేకపోతే {
+			mas->ఫలితం.స్థితి_2 = messages_get("FormTextbox");
 		}
 
-		if (click &&
+		ఒకవేళ (click &&
 		    (html->selection_type != HTML_SELECTION_TEXTAREA ||
 		     html->selection_owner.textarea != mas->gadget.box)) {
-			union html_selection_owner sel_owner;
+			సంఘం html_selection_owner sel_owner;
 			sel_owner.none = true;
-			html_set_selection(html,
+			html_సమితి_selection(html,
 					   HTML_SELECTION_NONE,
 					   sel_owner,
 					   true);
 		}
 
-		ta_status = textarea_mouse_action(mas->gadget.control->data.text.ta,
+		ta_స్థితి = textarea_mouse_action(mas->gadget.control->దత్తాంశం.పాఠ్యం.ta,
 						  mouse,
 						  x - mas->gadget.box_x,
 						  y - mas->gadget.box_y);
 
-		if (ta_status & TEXTAREA_MOUSE_EDITOR) {
-			mas->result.pointer = get_pointer_shape(mas->gadget.box, false);
-		} else {
-			mas->result.pointer = BROWSER_POINTER_DEFAULT;
-			mas->result.status = scrollbar_mouse_status_to_message(ta_status >> 3);
+		ఒకవేళ (ta_స్థితి & TEXTAREA_MOUSE_EDITOR) {
+			mas->ఫలితం.సూచిక = get_సూచిక_shape(mas->gadget.box, false);
+		} లేకపోతే {
+			mas->ఫలితం.సూచిక = BROWSER_సూచిక_DEFAULT;
+			mas->ఫలితం.స్థితి_2 = scrollbar_mouse_స్థితి_గమ్యం_సందేశం(ta_స్థితి >> 3);
 		}
-		break;
+		ఆపు;
 
-	case GADGET_HIDDEN:
+	స్థితి GADGET_HIDDEN:
 		/* not possible: no box generated */
-		break;
+		ఆపు;
 
-	case GADGET_RESET:
-		mas->result.status = messages_get("FormReset");
-		break;
+	స్థితి GADGET_RESET:
+		mas->ఫలితం.స్థితి_2 = messages_get("FormReset");
+		ఆపు;
 
-	case GADGET_FILE:
-		mas->result.status = messages_get("FormFile");
-		if (mouse & BROWSER_MOUSE_CLICK_1) {
-			msg_data.gadget_click.gadget = mas->gadget.control;
-			content_broadcast(c,
-					  CONTENT_MSG_GADGETCLICK,
-					  &msg_data);
+	స్థితి GADGET_FILE:
+		mas->ఫలితం.స్థితి_2 = messages_get("FormFile");
+		ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1) {
+			సందేశం_దత్తాంశం.gadget_click.gadget = mas->gadget.control;
+			content_ప్రసారం(c,
+					  CONTENT_సందేశం_GADGETCLICK,
+					  &సందేశం_దత్తాంశం);
 		}
-		break;
+		ఆపు;
 
-	case GADGET_BUTTON:
+	స్థితి GADGET_BUTTON:
 		/* This gadget cannot be activated */
-		mas->result.status = messages_get("FormButton");
-		break;
+		mas->ఫలితం.స్థితి_2 = messages_get("FormButton");
+		ఆపు;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on an iframe
  */
-static nserror
-iframe_mouse_action(struct browser_window *bw,
+స్థిర nserror
+iframe_mouse_action(నిర్మాణం browser_కిటికీ *bw,
 		    browser_mouse_state mouse,
-		    int x, int y,
-		    struct mouse_action_state *mas)
+		    పూర్ణాంకం x, పూర్ణాంకం y,
+		    నిర్మాణం mouse_action_state *mas)
 {
-	int pos_x, pos_y;
-	float scale;
+	పూర్ణాంకం pos_x, pos_y;
+	దశాంశం scale;
 
-	scale = browser_window_get_scale(bw);
+	scale = browser_కిటికీ_get_scale(bw);
 
-	browser_window_get_position(mas->iframe, false, &pos_x, &pos_y);
+	browser_కిటికీ_get_position(mas->iframe, false, &pos_x, &pos_y);
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 ||
+	ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1 ||
 	    mouse & BROWSER_MOUSE_CLICK_2) {
-		browser_window_mouse_click(mas->iframe,
+		browser_కిటికీ_mouse_click(mas->iframe,
 					   mouse,
 					   (x * scale) - pos_x,
 					   (y * scale) - pos_y);
-	} else {
-		browser_window_mouse_track(mas->iframe,
+	} లేకపోతే {
+		browser_కిటికీ_mouse_track(mas->iframe,
 					   mouse,
 					   (x * scale) - pos_x,
 					   (y * scale) - pos_y);
 	}
-	mas->result.action = ACTION_NOSEND;
+	mas->ఫలితం.action = ACTION_NOSEND;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * process mouse activity on an html object
  */
-static nserror
+స్థిర nserror
 html_object_mouse_action(html_content *html,
-			 struct browser_window *bw,
+			 నిర్మాణం browser_కిటికీ *bw,
 			 browser_mouse_state mouse,
-			 int x, int y,
-			 struct mouse_action_state *mas)
+			 పూర్ణాంకం x, పూర్ణాంకం y,
+			 నిర్మాణం mouse_action_state *mas)
 {
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	if (click &&
+	ఒకవేళ (click &&
 	    (html->selection_type != HTML_SELECTION_CONTENT ||
 	     html->selection_owner.content != mas->html_object.box)) {
-		union html_selection_owner sel_owner;
+		సంఘం html_selection_owner sel_owner;
 		sel_owner.none = true;
-		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
+		html_సమితి_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 ||
+	ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1 ||
 	    mouse & BROWSER_MOUSE_CLICK_2) {
 		content_mouse_action(mas->html_object.box->object,
 				     bw,
 				     mouse,
 				     x - mas->html_object.pos_x,
 				     y - mas->html_object.pos_y);
-	} else {
+	} లేకపోతే {
 		content_mouse_track(mas->html_object.box->object,
 				    bw,
 				    mouse,
@@ -1057,8 +1057,8 @@ html_object_mouse_action(html_content *html,
 				    y - mas->html_object.pos_y);
 	}
 
-	mas->result.action = ACTION_NOSEND;
-	return NSERROR_OK;
+	mas->ఫలితం.action = ACTION_NOSEND;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1068,455 +1068,455 @@ html_object_mouse_action(html_content *html,
  * \param urm The url to check.
  * \return true if the url is a javascript scheme else false
  */
-static bool is_javascript_navigate_url(nsurl *url)
+స్థిర bool is_javascript_navigate_url(nsurl *url)
 {
 	bool is_js = false;
 	lwc_string *scheme;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme != NULL) {
-		if (scheme == corestring_lwc_javascript) {
+	ఒకవేళ (scheme != ఖాళీ) {
+		ఒకవేళ (scheme == corestring_lwc_javascript) {
 			is_js = true;
 		}
 		lwc_string_unref(scheme);
 	}
-	return is_js;
+	తిరిగి is_js;
 }
 
 
 /**
  * process mouse activity on a link
  */
-static nserror
+స్థిర nserror
 link_mouse_action(html_content *html,
-		  struct browser_window *bw,
+		  నిర్మాణం browser_కిటికీ *bw,
 		  browser_mouse_state mouse,
-		  int x, int y,
-		  struct mouse_action_state *mas)
+		  పూర్ణాంకం x, పూర్ణాంకం y,
+		  నిర్మాణం mouse_action_state *mas)
 {
 	nserror res;
-	char *url_s = NULL;
+	అక్షరం *url_s = ఖాళీ;
 	size_t url_l = 0;
-	static char status_buffer[200];
-	union content_msg_data msg_data;
+	స్థిర అక్షరం స్థితి_బఫరు[200];
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 
-	if (nsoption_bool(display_decoded_idn) == true) {
+	ఒకవేళ (nsoption_bool(display_decoded_idn) == true) {
 		res = nsurl_get_utf8(mas->link.url, &url_s, &url_l);
-		if (res != NSERROR_OK) {
+		ఒకవేళ (res != NSERROR_OK) {
 			/* Unable to obtain a decoded IDN. This is not
 			 *  a fatal error.  Ensure the string pointer
 			 *  is NULL so we use the encoded version.
 			 */
-			url_s = NULL;
+			url_s = ఖాళీ;
 		}
 	}
 
-	if (mas->title) {
-		snprintf(status_buffer,
-			 sizeof status_buffer,
+	ఒకవేళ (mas->title) {
+		snprintf(స్థితి_బఫరు,
+			 పరిమాణం స్థితి_బఫరు,
 			 "%s: %s",
 			 url_s ? url_s : nsurl_access(mas->link.url),
 			 mas->title);
-	} else {
-		snprintf(status_buffer,
-			 sizeof status_buffer,
+	} లేకపోతే {
+		snprintf(స్థితి_బఫరు,
+			 పరిమాణం స్థితి_బఫరు,
 			 "%s",
 			 url_s ? url_s : nsurl_access(mas->link.url));
 	}
 
-	if (url_s != NULL) {
-		free(url_s);
+	ఒకవేళ (url_s != ఖాళీ) {
+		విడుదల(url_s);
 	}
 
-	mas->result.status = status_buffer;
+	mas->ఫలితం.స్థితి_2 = స్థితి_బఫరు;
 
-	mas->result.pointer = get_pointer_shape(mas->link.box,
+	mas->ఫలితం.సూచిక = get_సూచిక_shape(mas->link.box,
 						mas->link.is_imagemap);
 
-	if (mouse & BROWSER_MOUSE_CLICK_1 &&
+	ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1 &&
 	    mouse & BROWSER_MOUSE_MOD_1) {
 		/* force download of link */
-		browser_window_navigate(bw,
+		browser_కిటికీ_navigate(bw,
 					mas->link.url,
-					content_get_url((struct content *)html),
+					content_get_url((నిర్మాణం content *)html),
 					BW_NAVIGATE_DOWNLOAD,
-					NULL,
-					NULL,
-					NULL);
+					ఖాళీ,
+					ఖాళీ,
+					ఖాళీ);
 
-	} else if (mouse & BROWSER_MOUSE_CLICK_2 &&
+	} లేకపోతే ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_2 &&
 		   mouse & BROWSER_MOUSE_MOD_1) {
-		msg_data.savelink.url = mas->link.url;
-		msg_data.savelink.title = mas->title;
-		content_broadcast((struct content *)html,
-				  CONTENT_MSG_SAVELINK,
-				  &msg_data);
+		సందేశం_దత్తాంశం.savelink.url = mas->link.url;
+		సందేశం_దత్తాంశం.savelink.title = mas->title;
+		content_ప్రసారం((నిర్మాణం content *)html,
+				  CONTENT_సందేశం_SAVELINK,
+				  &సందేశం_దత్తాంశం);
 
-	} else if (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)) {
-		if (is_javascript_navigate_url(mas->link.url)) {
-			mas->result.action = ACTION_JS;
-		} else {
-			mas->result.action = ACTION_NAVIGATE;
+	} లేకపోతే ఒకవేళ (mouse & (BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2)) {
+		ఒకవేళ (is_javascript_navigate_url(mas->link.url)) {
+			mas->ఫలితం.action = ACTION_JS;
+		} లేకపోతే {
+			mas->ఫలితం.action = ACTION_NAVIGATE;
 		}
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
-static nserror
+స్థిర nserror
 default_mouse_action_focus(html_content *html, browser_mouse_state mouse)
 {
-	if (mouse && mouse < BROWSER_MOUSE_MOD_1) {
+	ఒకవేళ (mouse && mouse < BROWSER_MOUSE_MOD_1) {
 		/* ensure key presses still act on the browser window */
-		union html_focus_owner fo;
+		సంఘం html_focus_owner fo;
 		fo.self = true;
-		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, NULL);
+		html_సమితి_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, ఖాళీ);
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * process mouse activity if it is not anything else
  */
-static nserror
+స్థిర nserror
 default_mouse_action(html_content *html,
-		  struct browser_window *bw,
+		  నిర్మాణం browser_కిటికీ *bw,
 		  browser_mouse_state mouse,
-		  int x, int y,
-		  struct mouse_action_state *mas)
+		  పూర్ణాంకం x, పూర్ణాంకం y,
+		  నిర్మాణం mouse_action_state *mas)
 {
-	struct content *c = (struct content *)html;
+	నిర్మాణం content *c = (నిర్మాణం content *)html;
 
 	/* frame resizing */
-	if (browser_window_frame_resize_start(bw, mouse, x, y, &mas->result.pointer)) {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
-			mas->result.status = messages_get("FrameDrag");
+	ఒకవేళ (browser_కిటికీ_చట్రం_resize_ప్రారంభం(bw, mouse, x, y, &mas->ఫలితం.సూచిక)) {
+		ఒకవేళ (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+			mas->ఫలితం.స్థితి_2 = messages_get("FrameDrag");
 		}
-		return default_mouse_action_focus(html, mouse);
+		తిరిగి default_mouse_action_focus(html, mouse);
 	}
 
 	/* clicking in the main page removes the selection from any text areas.
 	 */
-	union html_selection_owner sel_owner;
+	సంఘం html_selection_owner sel_owner;
 	bool click;
 	click = mouse & (BROWSER_MOUSE_PRESS_1 | BROWSER_MOUSE_PRESS_2 |
 			 BROWSER_MOUSE_CLICK_1 | BROWSER_MOUSE_CLICK_2 |
 			 BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2);
 
-	if (click && html->focus_type != HTML_FOCUS_SELF) {
-		union html_focus_owner fo;
+	ఒకవేళ (click && html->focus_type != HTML_FOCUS_SELF) {
+		సంఘం html_focus_owner fo;
 		fo.self = true;
-		html_set_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, NULL);
+		html_సమితి_focus(html, HTML_FOCUS_SELF, fo, true, 0, 0, 0, ఖాళీ);
 	}
-	if (click && html->selection_type != HTML_SELECTION_SELF) {
+	ఒకవేళ (click && html->selection_type != HTML_SELECTION_SELF) {
 		sel_owner.none = true;
-		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
+		html_సమితి_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mas->text.box) {
-		int pixel_offset;
+	ఒకవేళ (mas->పాఠ్యం.box) {
+		పూర్ణాంకం pixel_స్థానభ్రంశం;
 		size_t idx;
 		plot_font_style_t fstyle;
 
 		font_plot_style_from_css(&html->unit_len_ctx,
-					 mas->text.box->style,
+					 mas->పాఠ్యం.box->style,
 					 &fstyle);
 
 		guit->layout->position(&fstyle,
-				       mas->text.box->text,
-				       mas->text.box->length,
-				       x - mas->text.box_x,
+				       mas->పాఠ్యం.box->పాఠ్యం,
+				       mas->పాఠ్యం.box->నిడివి,
+				       x - mas->పాఠ్యం.box_x,
 				       &idx,
-				       &pixel_offset);
+				       &pixel_స్థానభ్రంశం);
 
-		if (selection_click(html->sel,
+		ఒకవేళ (selection_click(html->sel,
 				    html->bw,
 				    mouse,
-				    mas->text.box->byte_offset + idx)) {
+				    mas->పాఠ్యం.box->byte_స్థానభ్రంశం + idx)) {
 			/* key presses must be directed at the
 			 * main browser window, paste text
 			 * operations ignored */
 			html_drag_type drag_type;
-			union html_drag_owner drag_owner;
+			సంఘం html_drag_owner drag_owner;
 
-			if (selection_dragging(html->sel)) {
+			ఒకవేళ (selection_dragging(html->sel)) {
 				drag_type = HTML_DRAG_SELECTION;
 				drag_owner.no_owner = true;
-				html_set_drag_type(html,
+				html_సమితి_drag_type(html,
 						   drag_type,
 						   drag_owner,
-						   NULL);
-				mas->result.status = messages_get("Selecting");
+						   ఖాళీ);
+				mas->ఫలితం.స్థితి_2 = messages_get("Selecting");
 			}
 
-			if (selection_active(html->sel)) {
+			ఒకవేళ (selection_చురుకైన(html->sel)) {
 				sel_owner.none = false;
-				html_set_selection(html, HTML_SELECTION_SELF,
+				html_సమితి_selection(html, HTML_SELECTION_SELF,
 						   sel_owner, true);
-			} else if (click && html->selection_type != HTML_SELECTION_NONE) {
+			} లేకపోతే ఒకవేళ (click && html->selection_type != HTML_SELECTION_NONE) {
 				sel_owner.none = true;
-				html_set_selection(html, HTML_SELECTION_NONE,
+				html_సమితి_selection(html, HTML_SELECTION_NONE,
 						   sel_owner, true);
 			}
 
-			return default_mouse_action_focus(html, mouse);
+			తిరిగి default_mouse_action_focus(html, mouse);
 		}
 
-	} else if (mouse & BROWSER_MOUSE_PRESS_1) {
+	} లేకపోతే ఒకవేళ (mouse & BROWSER_MOUSE_PRESS_1) {
 		sel_owner.none = true;
 		selection_clear(html->sel, true);
 	}
 
-	if (selection_active(html->sel)) {
+	ఒకవేళ (selection_చురుకైన(html->sel)) {
 		sel_owner.none = false;
-		html_set_selection(html, HTML_SELECTION_SELF, sel_owner, true);
-	} else if (click && html->selection_type != HTML_SELECTION_NONE) {
+		html_సమితి_selection(html, HTML_SELECTION_SELF, sel_owner, true);
+	} లేకపోతే ఒకవేళ (click && html->selection_type != HTML_SELECTION_NONE) {
 		sel_owner.none = true;
-		html_set_selection(html, HTML_SELECTION_NONE, sel_owner, true);
+		html_సమితి_selection(html, HTML_SELECTION_NONE, sel_owner, true);
 	}
 
-	if (mas->title) {
-		mas->result.status = mas->title;
+	ఒకవేళ (mas->title) {
+		mas->ఫలితం.స్థితి_2 = mas->title;
 	}
 
-	if (mouse & BROWSER_MOUSE_DRAG_1) {
-		if (mouse & BROWSER_MOUSE_MOD_2) {
-			union content_msg_data msg_data;
-			msg_data.dragsave.type = CONTENT_SAVE_COMPLETE;
-			msg_data.dragsave.content = NULL;
-			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
-		} else {
-			if (mas->drag_candidate == NULL) {
-				browser_window_page_drag_start(bw, x, y);
-			} else {
-				html_box_drag_start(mas->drag_candidate, x, y);
+	ఒకవేళ (mouse & BROWSER_MOUSE_DRAG_1) {
+		ఒకవేళ (mouse & BROWSER_MOUSE_MOD_2) {
+			సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+			సందేశం_దత్తాంశం.dragsave.type = CONTENT_SAVE_COMPLETE;
+			సందేశం_దత్తాంశం.dragsave.content = ఖాళీ;
+			content_ప్రసారం(c, CONTENT_సందేశం_DRAGSAVE, &సందేశం_దత్తాంశం);
+		} లేకపోతే {
+			ఒకవేళ (mas->drag_candidate == ఖాళీ) {
+				browser_కిటికీ_పుట_drag_ప్రారంభం(bw, x, y);
+			} లేకపోతే {
+				html_box_drag_ప్రారంభం(mas->drag_candidate, x, y);
 			}
-			mas->result.pointer = BROWSER_POINTER_MOVE;
+			mas->ఫలితం.సూచిక = BROWSER_సూచిక_MOVE;
 		}
-	} else if (mouse & BROWSER_MOUSE_DRAG_2) {
-		if (mouse & BROWSER_MOUSE_MOD_2) {
-			union content_msg_data msg_data;
-			msg_data.dragsave.type = CONTENT_SAVE_SOURCE;
-			msg_data.dragsave.content = NULL;
-			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
-		} else {
-			if (mas->drag_candidate == NULL) {
-				browser_window_page_drag_start(bw, x, y);
-			} else {
-				html_box_drag_start(mas->drag_candidate, x, y);
+	} లేకపోతే ఒకవేళ (mouse & BROWSER_MOUSE_DRAG_2) {
+		ఒకవేళ (mouse & BROWSER_MOUSE_MOD_2) {
+			సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+			సందేశం_దత్తాంశం.dragsave.type = CONTENT_SAVE_ఆధారం;
+			సందేశం_దత్తాంశం.dragsave.content = ఖాళీ;
+			content_ప్రసారం(c, CONTENT_సందేశం_DRAGSAVE, &సందేశం_దత్తాంశం);
+		} లేకపోతే {
+			ఒకవేళ (mas->drag_candidate == ఖాళీ) {
+				browser_కిటికీ_పుట_drag_ప్రారంభం(bw, x, y);
+			} లేకపోతే {
+				html_box_drag_ప్రారంభం(mas->drag_candidate, x, y);
 			}
-			mas->result.pointer = BROWSER_POINTER_MOVE;
+			mas->ఫలితం.సూచిక = BROWSER_సూచిక_MOVE;
 		}
 	}
 
 
-	return default_mouse_action_focus(html, mouse);
+	తిరిగి default_mouse_action_focus(html, mouse);
 }
 
 
 /**
  * handle non dragging mouse actions
  */
-static nserror
+స్థిర nserror
 mouse_action_drag_none(html_content *html,
-		       struct browser_window *bw,
+		       నిర్మాణం browser_కిటికీ *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       పూర్ణాంకం x, పూర్ణాంకం y)
 {
 	nserror res;
-	struct content *c = (struct content *)html;
-	union content_msg_data msg_data;
-	lwc_string *path;
+	నిర్మాణం content *c = (నిర్మాణం content *)html;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	lwc_string *మార్గం;
 
 	/**
 	 * computed state
 	 *
 	 * not on heap to avoid allocation or stack because it is large
 	 */
-	static struct mouse_action_state mas;
+	స్థిర నిర్మాణం mouse_action_state mas;
 
-	res = get_mouse_action_node(html, x, y, &mas);
-	if (res != NSERROR_OK) {
-		return res;
+	res = get_mouse_action_కణుపు(html, x, y, &mas);
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి res;
 	}
 
-	if (mouse & BROWSER_MOUSE_CLICK_4) {
-		mas.result.action = ACTION_BACK;
-	} else if (mouse & BROWSER_MOUSE_CLICK_5) {
-		mas.result.action = ACTION_FORWARD;
-	} else if (mas.scroll.bar) {
-		mas.result.status = scrollbar_mouse_status_to_message(
+	ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_4) {
+		mas.ఫలితం.action = ACTION_వెనుక;
+	} లేకపోతే ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_5) {
+		mas.ఫలితం.action = ACTION_FORWARD;
+	} లేకపోతే ఒకవేళ (mas.scroll.bar) {
+		mas.ఫలితం.స్థితి_2 = scrollbar_mouse_స్థితి_గమ్యం_సందేశం(
 				scrollbar_mouse_action(mas.scroll.bar,
 						       mouse,
 						       mas.scroll.mouse_x,
 						       mas.scroll.mouse_y));
-		mas.result.pointer = BROWSER_POINTER_DEFAULT;
+		mas.ఫలితం.సూచిక = BROWSER_సూచిక_DEFAULT;
 
-	} else if (mas.gadget.control) {
+	} లేకపోతే ఒకవేళ (mas.gadget.control) {
 		res = gadget_mouse_action(html, mouse, x, y, &mas);
 
-	} else if ((mas.object != NULL) && (mouse & BROWSER_MOUSE_MOD_2)) {
+	} లేకపోతే ఒకవేళ ((mas.object != ఖాళీ) && (mouse & BROWSER_MOUSE_MOD_2)) {
 
-		if (mouse & BROWSER_MOUSE_DRAG_2) {
-			msg_data.dragsave.type = CONTENT_SAVE_NATIVE;
-			msg_data.dragsave.content = mas.object;
-			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
+		ఒకవేళ (mouse & BROWSER_MOUSE_DRAG_2) {
+			సందేశం_దత్తాంశం.dragsave.type = CONTENT_SAVE_NATIVE;
+			సందేశం_దత్తాంశం.dragsave.content = mas.object;
+			content_ప్రసారం(c, CONTENT_సందేశం_DRAGSAVE, &సందేశం_దత్తాంశం);
 
-		} else if (mouse & BROWSER_MOUSE_DRAG_1) {
-			msg_data.dragsave.type = CONTENT_SAVE_ORIG;
-			msg_data.dragsave.content = mas.object;
-			content_broadcast(c, CONTENT_MSG_DRAGSAVE, &msg_data);
+		} లేకపోతే ఒకవేళ (mouse & BROWSER_MOUSE_DRAG_1) {
+			సందేశం_దత్తాంశం.dragsave.type = CONTENT_SAVE_ORIG;
+			సందేశం_దత్తాంశం.dragsave.content = mas.object;
+			content_ప్రసారం(c, CONTENT_సందేశం_DRAGSAVE, &సందేశం_దత్తాంశం);
 		}
 
 		/* \todo should have a drag-saving object msg */
 
-	} else if (mas.iframe != NULL) {
+	} లేకపోతే ఒకవేళ (mas.iframe != ఖాళీ) {
 		res = iframe_mouse_action(bw, mouse, x, y, &mas);
 
-	} else if (mas.html_object.box != NULL) {
+	} లేకపోతే ఒకవేళ (mas.html_object.box != ఖాళీ) {
 		res = html_object_mouse_action(html, bw, mouse, x, y, &mas);
 
-	} else if (mas.link.url != NULL) {
+	} లేకపోతే ఒకవేళ (mas.link.url != ఖాళీ) {
 		res = link_mouse_action(html, bw, mouse, x, y, &mas);
 
-	} else {
+	} లేకపోతే {
 		res = default_mouse_action(html, bw, mouse, x, y, &mas);
 
 	}
-	if (res != NSERROR_OK) {
-		return res;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి res;
 	}
 
 	/* send status and pointer message */
-	if (mas.result.action != ACTION_NOSEND) {
-		msg_data.explicit_status_text = mas.result.status;
-		content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+	ఒకవేళ (mas.ఫలితం.action != ACTION_NOSEND) {
+		సందేశం_దత్తాంశం.explicit_స్థితి_పాఠ్యం = mas.ఫలితం.స్థితి_2;
+		content_ప్రసారం(c, CONTENT_సందేశం_స్థితి, &సందేశం_దత్తాంశం);
 
-		msg_data.pointer = mas.result.pointer;
-		content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+		సందేశం_దత్తాంశం.సూచిక = mas.ఫలితం.సూచిక;
+		content_ప్రసారం(c, CONTENT_సందేశం_సూచిక, &సందేశం_దత్తాంశం);
 	}
 
 	/* fire dom click event */
-	if (mouse & BROWSER_MOUSE_CLICK_1) {
-		fire_generic_dom_event(corestring_dom_click, mas.node, true, true);
+	ఒకవేళ (mouse & BROWSER_MOUSE_CLICK_1) {
+		fire_generic_dom_event(corestring_dom_click, mas.కణుపు, true, true);
 	}
 
 	/* deferred actions that can cause this browser_window to be destroyed
 	 * and must therefore be done after set_status/pointer
 	 */
-	switch (mas.result.action) {
-	case ACTION_SUBMIT:
+	ఎంపిక (mas.ఫలితం.action) {
+	స్థితి ACTION_SUBMIT:
 		res = form_submit(content_get_url(c),
-				  browser_window_find_target(bw,
-							     mas.gadget.target,
+				  browser_కిటికీ_కనుగొను_లక్ష్యం(bw,
+							     mas.gadget.లక్ష్యం,
 							     mouse),
 				  mas.gadget.control->form,
 				  mas.gadget.control);
-		break;
+		ఆపు;
 
-	case ACTION_NAVIGATE:
-		res = browser_window_navigate(
-				browser_window_find_target(bw,
-							   mas.link.target,
+	స్థితి ACTION_NAVIGATE:
+		res = browser_కిటికీ_navigate(
+				browser_కిటికీ_కనుగొను_లక్ష్యం(bw,
+							   mas.link.లక్ష్యం,
 							   mouse),
 				mas.link.url,
 				content_get_url(c),
 				BW_NAVIGATE_HISTORY,
-				NULL,
-				NULL,
-				NULL);
-		break;
+				ఖాళీ,
+				ఖాళీ,
+				ఖాళీ);
+		ఆపు;
 
-	case ACTION_JS:
-		path = nsurl_get_component(mas.link.url, NSURL_PATH);
-		if (path != NULL) {
+	స్థితి ACTION_JS:
+		మార్గం = nsurl_get_component(mas.link.url, NSURL_మార్గం);
+		ఒకవేళ (మార్గం != ఖాళీ) {
 			html_exec(c,
-				  lwc_string_data(path),
-				  lwc_string_length(path));
-			lwc_string_unref(path);
+				  lwc_string_దత్తాంశం(మార్గం),
+				  lwc_string_నిడివి(మార్గం));
+			lwc_string_unref(మార్గం);
 		}
-		break;
+		ఆపు;
 
-	case ACTION_BACK:
-		res = browser_window_history_back(bw, false);
-		break;
+	స్థితి ACTION_వెనుక:
+		res = browser_కిటికీ_history_వెనుక(bw, false);
+		ఆపు;
 
-	case ACTION_FORWARD:
-		res = browser_window_history_forward(bw, false);
-		break;
+	స్థితి ACTION_FORWARD:
+		res = browser_కిటికీ_history_forward(bw, false);
+		ఆపు;
 
-	case ACTION_NOSEND:
-	case ACTION_NONE:
+	స్థితి ACTION_NOSEND:
+	స్థితి ACTION_NONE:
 		res = NSERROR_OK;
-		break;
+		ఆపు;
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
 /* exported interface documented in html/interaction.h */
-nserror html_mouse_track(struct content *c,
-			 struct browser_window *bw,
+nserror html_mouse_track(నిర్మాణం content *c,
+			 నిర్మాణం browser_కిటికీ *bw,
 			 browser_mouse_state mouse,
-			 int x, int y)
+			 పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	return html_mouse_action(c, bw, mouse, x, y);
+	తిరిగి html_mouse_action(c, bw, mouse, x, y);
 }
 
 
 /* exported interface documented in html/interaction.h */
 nserror
-html_mouse_action(struct content *c,
-		  struct browser_window *bw,
+html_mouse_action(నిర్మాణం content *c,
+		  నిర్మాణం browser_కిటికీ *bw,
 		  browser_mouse_state mouse,
-		  int x, int y)
+		  పూర్ణాంకం x, పూర్ణాంకం y)
 {
 	html_content *html = (html_content *)c;
 	nserror res = NSERROR_OK;
 
 	/* handle open select menu */
-	if (html->visible_select_menu != NULL) {
-		return mouse_action_select_menu(html, bw, mouse, x, y);
+	ఒకవేళ (html->visible_select_menu != ఖాళీ) {
+		తిరిగి mouse_action_select_menu(html, bw, mouse, x, y);
 	}
 
 	/* handle content drag */
-	switch (html->drag_type) {
-	case HTML_DRAG_SELECTION:
+	ఎంపిక (html->drag_type) {
+	స్థితి HTML_DRAG_SELECTION:
 		res = mouse_action_drag_selection(html, bw, mouse, x, y);
-		break;
+		ఆపు;
 
-	case HTML_DRAG_SCROLLBAR:
+	స్థితి HTML_DRAG_SCROLLBAR:
 		res = mouse_action_drag_scrollbar(html, bw, mouse, x, y);
-		break;
+		ఆపు;
 
-	case HTML_DRAG_TEXTAREA_SELECTION:
-	case HTML_DRAG_TEXTAREA_SCROLLBAR:
+	స్థితి HTML_DRAG_TEXTAREA_SELECTION:
+	స్థితి HTML_DRAG_TEXTAREA_SCROLLBAR:
 		res = mouse_action_drag_textarea(html, bw, mouse, x, y);
-		break;
+		ఆపు;
 
-	case HTML_DRAG_CONTENT_SELECTION:
-	case HTML_DRAG_CONTENT_SCROLL:
+	స్థితి HTML_DRAG_CONTENT_SELECTION:
+	స్థితి HTML_DRAG_CONTENT_SCROLL:
 		res = mouse_action_drag_content(html, bw, mouse, x, y);
-		break;
+		ఆపు;
 
-	case HTML_DRAG_NONE:
+	స్థితి HTML_DRAG_NONE:
 		res = mouse_action_drag_none(html, bw, mouse, x, y);
-		break;
+		ఆపు;
 
-	default:
+	అప్రమేయ:
 		/* Unknown content related drag type */
-		assert(0 && "Unknown content related drag type");
+		ప్రతిజ్ఞా(0 && "Unknown content related drag type");
 	}
 
-	if (res != NSERROR_OK) {
+	ఒకవేళ (res != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "%s", messages_get_errorcode(res));
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -1527,10 +1527,10 @@ html_mouse_action(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-bool html_keypress(struct content *c, uint32_t key)
+bool html_keypress(నిర్మాణం content *c, uint32_t కీలకం)
 {
 	html_content *html = (html_content *) c;
-	struct selection *sel = html->sel;
+	నిర్మాణం selection *sel = html->sel;
 
 	/** \todo
 	 * At the moment, the front end interface for keypress only gives
@@ -1563,175 +1563,175 @@ bool html_keypress(struct content *c, uint32_t key)
 	 * `event.preventDefault()` then we won't handle the event when
 	 * we're not supposed to.
 	 */
-	if (html->layout != NULL && html->layout->node != NULL) {
+	ఒకవేళ (html->layout != ఖాళీ && html->layout->కణుపు != ఖాళీ) {
 		fire_dom_keyboard_event(corestring_dom_keydown,
-				html->layout->node, true, true, key);
+				html->layout->కణుపు, true, true, కీలకం);
 	}
 
-	switch (html->focus_type) {
-	case HTML_FOCUS_CONTENT:
-		return content_keypress(html->focus_owner.content->object, key);
+	ఎంపిక (html->focus_type) {
+	స్థితి HTML_FOCUS_CONTENT:
+		తిరిగి content_keypress(html->focus_owner.content->object, కీలకం);
 
-	case HTML_FOCUS_TEXTAREA:
-		if (box_textarea_keypress(html, html->focus_owner.textarea, key) == NSERROR_OK) {
-			return true;
-		} else {
-			return false;
+	స్థితి HTML_FOCUS_TEXTAREA:
+		ఒకవేళ (box_textarea_keypress(html, html->focus_owner.textarea, కీలకం) == NSERROR_OK) {
+			తిరిగి true;
+		} లేకపోతే {
+			తిరిగి false;
 		}
 
-	default:
+	అప్రమేయ:
 		/* Deal with it below */
-		break;
+		ఆపు;
 	}
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
-		selection_copy_to_clipboard(sel);
-		return true;
+	ఎంపిక (కీలకం) {
+	స్థితి NS_కీలకం_COPY_SELECTION:
+		selection_copy_గమ్యం_clipboard(sel);
+		తిరిగి true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	స్థితి NS_కీలకం_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		తిరిగి true;
 
-	case NS_KEY_SELECT_ALL:
+	స్థితి NS_కీలకం_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		తిరిగి true;
 
-	case NS_KEY_ESCAPE:
+	స్థితి NS_కీలకం_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		తిరిగి selection_clear(sel, true);
 	}
 
-	return false;
+	తిరిగి false;
 }
 
 
 /**
  * Callback for in-page scrollbars.
  */
-void html_overflow_scroll_callback(void *client_data,
-		struct scrollbar_msg_data *scrollbar_data)
+శూన్య html_అధికప్రవాహం_scroll_callback(శూన్య *client_దత్తాంశం,
+		నిర్మాణం scrollbar_సందేశం_దత్తాంశం *scrollbar_దత్తాంశం)
 {
-	struct html_scrollbar_data *data = client_data;
-	html_content *html = (html_content *)data->c;
-	struct box *box = data->box;
-	union content_msg_data msg_data;
+	నిర్మాణం html_scrollbar_దత్తాంశం *దత్తాంశం = client_దత్తాంశం;
+	html_content *html = (html_content *)దత్తాంశం->c;
+	నిర్మాణం box *box = దత్తాంశం->box;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 	html_drag_type drag_type;
-	union html_drag_owner drag_owner;
+	సంఘం html_drag_owner drag_owner;
 
-	switch(scrollbar_data->msg) {
-	case SCROLLBAR_MSG_MOVED:
+	ఎంపిక(scrollbar_దత్తాంశం->సందేశం) {
+	స్థితి SCROLLBAR_సందేశం_MOVED:
 
-		if (html->reflowing == true) {
+		ఒకవేళ (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
-			break;
+			ఆపు;
 		}
 
 		html__redraw_a_box(html, box);
-		break;
-	case SCROLLBAR_MSG_SCROLL_START:
+		ఆపు;
+	స్థితి SCROLLBAR_సందేశం_SCROLL_ప్రారంభం:
 	{
-		struct rect rect = {
-			.x0 = scrollbar_data->x0,
-			.y0 = scrollbar_data->y0,
-			.x1 = scrollbar_data->x1,
-			.y1 = scrollbar_data->y1
+		నిర్మాణం rect rect = {
+			.x0 = scrollbar_దత్తాంశం->x0,
+			.y0 = scrollbar_దత్తాంశం->y0,
+			.x1 = scrollbar_దత్తాంశం->x1,
+			.y1 = scrollbar_దత్తాంశం->y1
 		};
 		drag_type = HTML_DRAG_SCROLLBAR;
-		drag_owner.scrollbar = scrollbar_data->scrollbar;
-		html_set_drag_type(html, drag_type, drag_owner, &rect);
+		drag_owner.scrollbar = scrollbar_దత్తాంశం->scrollbar;
+		html_సమితి_drag_type(html, drag_type, drag_owner, &rect);
 	}
-		break;
-	case SCROLLBAR_MSG_SCROLL_FINISHED:
+		ఆపు;
+	స్థితి SCROLLBAR_సందేశం_SCROLL_ముగిసిన:
 		drag_type = HTML_DRAG_NONE;
 		drag_owner.no_owner = true;
-		html_set_drag_type(html, drag_type, drag_owner, NULL);
+		html_సమితి_drag_type(html, drag_type, drag_owner, ఖాళీ);
 
-		msg_data.pointer = BROWSER_POINTER_AUTO;
-		content_broadcast(data->c, CONTENT_MSG_POINTER, &msg_data);
-		break;
+		సందేశం_దత్తాంశం.సూచిక = BROWSER_సూచిక_AUTO;
+		content_ప్రసారం(దత్తాంశం->c, CONTENT_సందేశం_సూచిక, &సందేశం_దత్తాంశం);
+		ఆపు;
 	}
 }
 
 
 /* Documented in html_internal.h */
-void html_set_drag_type(html_content *html, html_drag_type drag_type,
-		union html_drag_owner drag_owner, const struct rect *rect)
+శూన్య html_సమితి_drag_type(html_content *html, html_drag_type drag_type,
+		సంఘం html_drag_owner drag_owner, స్థిరరాశి నిర్మాణం rect *rect)
 {
-	union content_msg_data msg_data;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 
-	assert(html != NULL);
+	ప్రతిజ్ఞా(html != ఖాళీ);
 
 	html->drag_type = drag_type;
 	html->drag_owner = drag_owner;
 
-	switch (drag_type) {
-	case HTML_DRAG_NONE:
-		assert(drag_owner.no_owner == true);
-		msg_data.drag.type = CONTENT_DRAG_NONE;
-		break;
+	ఎంపిక (drag_type) {
+	స్థితి HTML_DRAG_NONE:
+		ప్రతిజ్ఞా(drag_owner.no_owner == true);
+		సందేశం_దత్తాంశం.drag.type = CONTENT_DRAG_NONE;
+		ఆపు;
 
-	case HTML_DRAG_SCROLLBAR:
-	case HTML_DRAG_TEXTAREA_SCROLLBAR:
-	case HTML_DRAG_CONTENT_SCROLL:
-		msg_data.drag.type = CONTENT_DRAG_SCROLL;
-		break;
+	స్థితి HTML_DRAG_SCROLLBAR:
+	స్థితి HTML_DRAG_TEXTAREA_SCROLLBAR:
+	స్థితి HTML_DRAG_CONTENT_SCROLL:
+		సందేశం_దత్తాంశం.drag.type = CONTENT_DRAG_SCROLL;
+		ఆపు;
 
-	case HTML_DRAG_SELECTION:
-		assert(drag_owner.no_owner == true);
+	స్థితి HTML_DRAG_SELECTION:
+		ప్రతిజ్ఞా(drag_owner.no_owner == true);
 		fallthrough;
-	case HTML_DRAG_TEXTAREA_SELECTION:
-	case HTML_DRAG_CONTENT_SELECTION:
-		msg_data.drag.type = CONTENT_DRAG_SELECTION;
-		break;
+	స్థితి HTML_DRAG_TEXTAREA_SELECTION:
+	స్థితి HTML_DRAG_CONTENT_SELECTION:
+		సందేశం_దత్తాంశం.drag.type = CONTENT_DRAG_SELECTION;
+		ఆపు;
 	}
-	msg_data.drag.rect = rect;
+	సందేశం_దత్తాంశం.drag.rect = rect;
 
 	/* Inform of the content's drag status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_DRAG, &msg_data);
+	content_ప్రసారం((నిర్మాణం content *)html, CONTENT_సందేశం_DRAG, &సందేశం_దత్తాంశం);
 }
 
 /* Documented in html_internal.h */
-void html_set_focus(html_content *html, html_focus_type focus_type,
-		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip)
+శూన్య html_సమితి_focus(html_content *html, html_focus_type focus_type,
+		సంఘం html_focus_owner focus_owner, bool hide_caret,
+		పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం ఎత్తు, స్థిరరాశి నిర్మాణం rect *clip)
 {
-	union content_msg_data msg_data;
-	int x_off = 0;
-	int y_off = 0;
-	struct rect cr;
-	bool textarea_lost_focus = html->focus_type == HTML_FOCUS_TEXTAREA &&
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	పూర్ణాంకం x_off = 0;
+	పూర్ణాంకం y_off = 0;
+	నిర్మాణం rect cr;
+	bool textarea_కోల్పోయిన_focus = html->focus_type == HTML_FOCUS_TEXTAREA &&
 			focus_type != HTML_FOCUS_TEXTAREA;
 
-	assert(html != NULL);
+	ప్రతిజ్ఞా(html != ఖాళీ);
 
-	switch (focus_type) {
-	case HTML_FOCUS_SELF:
-		assert(focus_owner.self == true);
-		if (html->focus_type == HTML_FOCUS_SELF)
+	ఎంపిక (focus_type) {
+	స్థితి HTML_FOCUS_SELF:
+		ప్రతిజ్ఞా(focus_owner.self == true);
+		ఒకవేళ (html->focus_type == HTML_FOCUS_SELF)
 			/* Don't need to tell anyone anything */
-			return;
-		break;
+			తిరిగి;
+		ఆపు;
 
-	case HTML_FOCUS_CONTENT:
+	స్థితి HTML_FOCUS_CONTENT:
 		box_coords(focus_owner.content, &x_off, &y_off);
-		break;
+		ఆపు;
 
-	case HTML_FOCUS_TEXTAREA:
+	స్థితి HTML_FOCUS_TEXTAREA:
 		box_coords(focus_owner.textarea, &x_off, &y_off);
-		break;
+		ఆపు;
 	}
 
 	html->focus_type = focus_type;
 	html->focus_owner = focus_owner;
 
-	if (textarea_lost_focus) {
-		msg_data.caret.type = CONTENT_CARET_REMOVE;
-	} else if (focus_type != HTML_FOCUS_SELF && hide_caret) {
-		msg_data.caret.type = CONTENT_CARET_HIDE;
-	} else {
-		if (clip != NULL) {
+	ఒకవేళ (textarea_కోల్పోయిన_focus) {
+		సందేశం_దత్తాంశం.caret.type = CONTENT_CARET_REMOVE;
+	} లేకపోతే ఒకవేళ (focus_type != HTML_FOCUS_SELF && hide_caret) {
+		సందేశం_దత్తాంశం.caret.type = CONTENT_CARET_HIDE;
+	} లేకపోతే {
+		ఒకవేళ (clip != ఖాళీ) {
 			cr = *clip;
 			cr.x0 += x_off;
 			cr.y0 += y_off;
@@ -1739,89 +1739,89 @@ void html_set_focus(html_content *html, html_focus_type focus_type,
 			cr.y1 += y_off;
 		}
 
-		msg_data.caret.type = CONTENT_CARET_SET_POS;
-		msg_data.caret.pos.x = x + x_off;
-		msg_data.caret.pos.y = y + y_off;
-		msg_data.caret.pos.height = height;
-		msg_data.caret.pos.clip = (clip == NULL) ? NULL : &cr;
+		సందేశం_దత్తాంశం.caret.type = CONTENT_CARET_సమితి_POS;
+		సందేశం_దత్తాంశం.caret.pos.x = x + x_off;
+		సందేశం_దత్తాంశం.caret.pos.y = y + y_off;
+		సందేశం_దత్తాంశం.caret.pos.ఎత్తు = ఎత్తు;
+		సందేశం_దత్తాంశం.caret.pos.clip = (clip == ఖాళీ) ? ఖాళీ : &cr;
 	}
 
 	/* Inform of the content's drag status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_CARET, &msg_data);
+	content_ప్రసారం((నిర్మాణం content *)html, CONTENT_సందేశం_CARET, &సందేశం_దత్తాంశం);
 }
 
 /* Documented in html_internal.h */
-void html_set_selection(html_content *html, html_selection_type selection_type,
-		union html_selection_owner selection_owner, bool read_only)
+శూన్య html_సమితి_selection(html_content *html, html_selection_type selection_type,
+		సంఘం html_selection_owner selection_owner, bool read_only)
 {
-	union content_msg_data msg_data;
-	struct box *box;
-	bool changed = false;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	నిర్మాణం box *box;
+	bool మారింది = false;
 	bool same_type = html->selection_type == selection_type;
 
-	assert(html != NULL);
+	ప్రతిజ్ఞా(html != ఖాళీ);
 
-	if ((selection_type == HTML_SELECTION_NONE &&
+	ఒకవేళ ((selection_type == HTML_SELECTION_NONE &&
 			html->selection_type != HTML_SELECTION_NONE) ||
 			(selection_type != HTML_SELECTION_NONE &&
 			html->selection_type == HTML_SELECTION_NONE))
 		/* Existance of selection has changed, and we'll need to
 		 * inform our owner */
-		changed = true;
+		మారింది = true;
 
 	/* Clear any existing selection */
-	if (html->selection_type != HTML_SELECTION_NONE) {
-		switch (html->selection_type) {
-		case HTML_SELECTION_SELF:
-			if (same_type)
-				break;
+	ఒకవేళ (html->selection_type != HTML_SELECTION_NONE) {
+		ఎంపిక (html->selection_type) {
+		స్థితి HTML_SELECTION_SELF:
+			ఒకవేళ (same_type)
+				ఆపు;
 			selection_clear(html->sel, true);
-			break;
-		case HTML_SELECTION_TEXTAREA:
-			if (same_type && html->selection_owner.textarea ==
+			ఆపు;
+		స్థితి HTML_SELECTION_TEXTAREA:
+			ఒకవేళ (same_type && html->selection_owner.textarea ==
 					selection_owner.textarea)
-				break;
+				ఆపు;
 			box = html->selection_owner.textarea;
-			textarea_clear_selection(box->gadget->data.text.ta);
-			break;
-		case HTML_SELECTION_CONTENT:
-			if (same_type && html->selection_owner.content ==
+			textarea_clear_selection(box->gadget->దత్తాంశం.పాఠ్యం.ta);
+			ఆపు;
+		స్థితి HTML_SELECTION_CONTENT:
+			ఒకవేళ (same_type && html->selection_owner.content ==
 					selection_owner.content)
-				break;
+				ఆపు;
 			box = html->selection_owner.content;
 			content_clear_selection(box->object);
-			break;
-		default:
-			break;
+			ఆపు;
+		అప్రమేయ:
+			ఆపు;
 		}
 	}
 
 	html->selection_type = selection_type;
 	html->selection_owner = selection_owner;
 
-	if (!changed)
+	ఒకవేళ (!మారింది)
 		/* Don't need to report lack of change to owner */
-		return;
+		తిరిగి;
 
 	/* Prepare msg */
-	switch (selection_type) {
-	case HTML_SELECTION_NONE:
-		assert(selection_owner.none == true);
-		msg_data.selection.selection = false;
-		break;
-	case HTML_SELECTION_SELF:
-		assert(selection_owner.none == false);
+	ఎంపిక (selection_type) {
+	స్థితి HTML_SELECTION_NONE:
+		ప్రతిజ్ఞా(selection_owner.none == true);
+		సందేశం_దత్తాంశం.selection.selection = false;
+		ఆపు;
+	స్థితి HTML_SELECTION_SELF:
+		ప్రతిజ్ఞా(selection_owner.none == false);
 		fallthrough;
-	case HTML_SELECTION_TEXTAREA:
-	case HTML_SELECTION_CONTENT:
-		msg_data.selection.selection = true;
-		break;
-	default:
-		break;
+	స్థితి HTML_SELECTION_TEXTAREA:
+	స్థితి HTML_SELECTION_CONTENT:
+		సందేశం_దత్తాంశం.selection.selection = true;
+		ఆపు;
+	అప్రమేయ:
+		ఆపు;
 	}
-	msg_data.selection.read_only = read_only;
+	సందేశం_దత్తాంశం.selection.read_only = read_only;
 
 	/* Inform of the content's selection status change */
-	content_broadcast((struct content *)html, CONTENT_MSG_SELECTION,
-			&msg_data);
+	content_ప్రసారం((నిర్మాణం content *)html, CONTENT_సందేశం_SELECTION,
+			&సందేశం_దత్తాంశం);
 }

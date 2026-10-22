@@ -20,32 +20,32 @@
  * Fetching of data from a URL (interface).
  */
 
-#ifndef _NETSURF_DESKTOP_FETCH_H_
-#define _NETSURF_DESKTOP_FETCH_H_
+#నిర్వచితం_కాకపోతే _NETSURF_DESKTOP_FETCH_H_
+#నిర్వచించు _NETSURF_DESKTOP_FETCH_H_
 
-#include <stdbool.h>
+#అన్తర్భావ <stdbool.h>
 
-#include "utils/config.h"
-#include "utils/nsurl.h"
-#include "utils/inet.h"
-#include "utils/http/response-codes.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/inet.h"
+#అన్తర్భావ "utils/http/response-codes.h"
 
-#include "netsurf/ssl_certs.h"
+#అన్తర్భావ "netsurf/ssl_certs.h"
 
-struct content;
-struct fetch;
-struct ssl_cert_info;
+నిర్మాణం content;
+నిర్మాణం fetch;
+నిర్మాణం ssl_cert_info;
 
 /**
  * Fetcher message types
  */
-typedef enum {
-	FETCH_PROGRESS,
+రకనిర్వచనం గణన {
+	FETCH_పురోగతి,
 	FETCH_CERTS,
-	FETCH_HEADER,
-	FETCH_DATA,
+	FETCH_శీర్షిక,
+	FETCH_దత్తాంశం,
 	/* Anything after here is a completed fetch of some kind. */
-	FETCH_FINISHED,
+	FETCH_ముగిసిన,
 	FETCH_TIMEDOUT,
 	FETCH_ERROR,
 	FETCH_REDIRECT,
@@ -53,52 +53,52 @@ typedef enum {
 	FETCH_AUTH,
 	FETCH_CERT_ERR,
 	FETCH_SSL_ERR
-} fetch_msg_type;
+} fetch_సందేశం_type;
 
 /** Minimum finished message type.
  *
  * If a fetch does not progress this far, it's an error and the fetch machinery
  * will send FETCH_ERROR to the llcache on fetch_free()
  */
-#define FETCH_MIN_FINISHED_MSG FETCH_FINISHED
+#నిర్వచించు FETCH_MIN_ముగిసిన_సందేశం FETCH_ముగిసిన
 
 /**
  * This message is actually an internal message used to indicate
  * that a fetch was aborted.  Do not send this, nor expect it.
  */
-#define FETCH__INTERNAL_ABORTED FETCH_ERROR
+#నిర్వచించు FETCH_అంతర్గత_ABORTED FETCH_ERROR
 
 /**
  * Fetcher message data
  */
-typedef struct fetch_msg {
-	fetch_msg_type type;
+రకనిర్వచనం నిర్మాణం fetch_సందేశం {
+	fetch_సందేశం_type type;
 
-	union {
-		const char *progress;
+	సంఘం {
+		స్థిరరాశి అక్షరం *పురోగతి;
 
-		struct {
-			const uint8_t *buf;
+		నిర్మాణం {
+			స్థిరరాశి uint8_t *buf;
 			size_t len;
-		} header_or_data;
+		} శీర్షిక_or_దత్తాంశం;
 
-		const char *error;
+		స్థిరరాశి అక్షరం *error;
 
 		/** \todo Use nsurl */
-		const char *redirect;
+		స్థిరరాశి అక్షరం *redirect;
 
-		struct {
-			const char *realm;
+		నిర్మాణం {
+			స్థిరరాశి అక్షరం *realm;
 		} auth;
 
-		const struct cert_chain *chain;
-	} data;
-} fetch_msg;
+		స్థిరరాశి నిర్మాణం cert_chain *chain;
+	} దత్తాంశం;
+} fetch_సందేశం;
 
 /**
  * Fetcher post data types
  */
-typedef enum {
+రకనిర్వచనం గణన {
 	FETCH_POSTDATA_NONE,
 	FETCH_POSTDATA_URLENC,
 	FETCH_POSTDATA_MULTIPART,
@@ -108,31 +108,31 @@ typedef enum {
 /**
  * Fetch POST multipart data
  */
-struct fetch_multipart_data {
-	struct fetch_multipart_data *next; /**< Next in linked list */
+నిర్మాణం fetch_multipart_దత్తాంశం {
+	నిర్మాణం fetch_multipart_దత్తాంశం *తదుపరి; /**< Next in linked list */
 
-	char *name; /**< Name of item */
-	char *value; /**< Item value */
+	అక్షరం *name; /**< Name of item */
+	అక్షరం *విలువ; /**< Item value */
 
-	char *rawfile; /**< Raw filename if file is true */
+	అక్షరం *rawfile; /**< Raw filename if file is true */
 	bool file; /**< Item is a file */
 };
 
 /**
  * fetch POST data
  */
-struct fetch_postdata {
+నిర్మాణం fetch_postdata {
 	fetch_postdata_type type;
-	union {
+	సంఘం {
 		/** Url encoded POST string if type is FETCH_POSTDATA_URLENC */
-		char *urlenc;
+		అక్షరం *urlenc;
 		/** Multipart post data if type is FETCH_POSTDATA_MULTIPART */
-		struct fetch_multipart_data *multipart;
-	} data;
+		నిర్మాణం fetch_multipart_దత్తాంశం *multipart;
+	} దత్తాంశం;
 };
 
 
-typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
+రకనిర్వచనం శూన్య (*fetch_callback)(స్థిరరాశి fetch_సందేశం *సందేశం, శూన్య *p);
 
 /**
  * Start fetching data for the given URL.
@@ -165,16 +165,16 @@ typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
  * \param fetch_out ponter to recive new fetch object.
  * \return NSERROR_OK and fetch_out updated else appropriate error code
  */
-nserror fetch_start(nsurl *url, nsurl *referer, fetch_callback callback,
-		    void *p, bool only_2xx, const char *post_urlenc,
-		    const struct fetch_multipart_data *post_multipart,
+nserror fetch_ప్రారంభం(nsurl *url, nsurl *referer, fetch_callback callback,
+		    శూన్య *p, bool only_2xx, స్థిరరాశి అక్షరం *post_urlenc,
+		    స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *post_multipart,
 		    bool verifiable, bool downgrade_tls,
-		    const char *headers[], struct fetch **fetch_out);
+		    స్థిరరాశి అక్షరం *శీర్షికలు[], నిర్మాణం fetch **fetch_బహిర్గతం);
 
 /**
  * Abort a fetch.
  */
-void fetch_abort(struct fetch *f);
+శూన్య fetch_abort(నిర్మాణం fetch *f);
 
 
 /**
@@ -183,17 +183,17 @@ void fetch_abort(struct fetch *f);
  * \param  url  URL to check
  * \return  true if the scheme is supported
  */
-bool fetch_can_fetch(const nsurl *url);
+bool fetch_can_fetch(స్థిరరాశి nsurl *url);
 
 /**
  * Change the callback function for a fetch.
  */
-void fetch_change_callback(struct fetch *fetch, fetch_callback callback, void *p);
+శూన్య fetch_change_callback(నిర్మాణం fetch *fetch, fetch_callback callback, శూన్య *p);
 
 /**
  * Get the HTTP response code.
  */
-http_response_code fetch_http_code(struct fetch *fetch);
+http_response_సంకేతం fetch_http_సంకేతం(నిర్మాణం fetch *fetch);
 
 
 /**
@@ -201,7 +201,7 @@ http_response_code fetch_http_code(struct fetch *fetch);
  *
  * \param list Pointer to head of list to free
  */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
+శూన్య fetch_multipart_దత్తాంశం_destroy(నిర్మాణం fetch_multipart_దత్తాంశం *list);
 
 /**
  * Clone a linked list of fetch_multipart_data.
@@ -209,7 +209,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
  * \param list  List to clone
  * \return Pointer to head of cloned list, or NULL on failure
  */
-struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multipart_data *list);
+నిర్మాణం fetch_multipart_దత్తాంశం *fetch_multipart_దత్తాంశం_clone(స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *list);
 
 /**
  * Find an entry in a fetch_multipart_data
@@ -218,8 +218,8 @@ struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multi
  * \param name The name to look for in the list
  * \return The value found, or NULL if not present
  */
-const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
-				      const char *name);
+స్థిరరాశి అక్షరం *fetch_multipart_దత్తాంశం_కనుగొను(స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *list,
+				      స్థిరరాశి అక్షరం *name);
 
 /**
  * Create an entry for a fetch_multipart_data
@@ -231,34 +231,34 @@ const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
  * \param value The value of the entry to create
  * \return The result of the attempt
  */
-nserror fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-				    const char *name,
-				    const char *value);
+nserror fetch_multipart_దత్తాంశం_new_kv(నిర్మాణం fetch_multipart_దత్తాంశం **list,
+				    స్థిరరాశి అక్షరం *name,
+				    స్థిరరాశి అక్షరం *విలువ);
 
 /**
  * send message to fetch
  */
-void fetch_send_callback(const fetch_msg *msg, struct fetch *fetch);
+శూన్య fetch_send_callback(స్థిరరాశి fetch_సందేశం *సందేశం, నిర్మాణం fetch *fetch);
 
 /**
  * remove a queued fetch
  */
-void fetch_remove_from_queues(struct fetch *fetch);
+శూన్య fetch_remove_from_queues(నిర్మాణం fetch *fetch);
 
 /**
  * Free a fetch structure and associated resources.
  */
-void fetch_free(struct fetch *f);
+శూన్య fetch_free(నిర్మాణం fetch *f);
 
 /**
  * set the http code of a fetch
  */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code);
+nserror fetch_సమితి_http_సంకేతం(నిర్మాణం fetch *fetch, http_response_సంకేతం http_సంకేతం);
 
 /**
  * set cookie data on a fetch
  */
-void fetch_set_cookie(struct fetch *fetch, const char *data);
+శూన్య fetch_సమితి_cookie(నిర్మాణం fetch *fetch, స్థిరరాశి అక్షరం *దత్తాంశం);
 
 /**
  * Get the set of file descriptors the fetchers are currently using.
@@ -284,6 +284,6 @@ void fetch_set_cookie(struct fetch *fetch, const char *data);
  * \param[out] maxfd The highest fd number in the set or -1 if no fd available.
  * \return NSERROR_OK on success or appropriate error code.
  */
-nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, int *maxfd);
+nserror fetch_fdset(fd_set *read_fd_సమితి, fd_set *write_fd_సమితి, fd_set *except_fd_సమితి, పూర్ణాంకం *maxfd);
 
-#endif
+#అయితే_ముగింపు

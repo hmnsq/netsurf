@@ -21,86 +21,86 @@
  * content generator for the about scheme web search
  */
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/url.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/url.h"
 
-#include "content/fetch.h"
-#include "desktop/searchweb.h"
+#అన్తర్భావ "content/fetch.h"
+#అన్తర్భావ "desktop/searchweb.h"
 
-#include "private.h"
-#include "websearch.h"
+#అన్తర్భావ "private.h"
+#అన్తర్భావ "websearch.h"
 
-static nserror
-process_query_section(const char *str, size_t len, char **term)
+స్థిర nserror
+process_query_section(స్థిరరాశి అక్షరం *str, size_t len, అక్షరం **పదం)
 {
-	if (len < 3) {
-		return NSERROR_BAD_PARAMETER;
+	ఒకవేళ (len < 3) {
+		తిరిగి NSERROR_BAD_PARAMETER;
 	}
-	if (str[0] != 'q' || str[1] != '=') {
-		return NSERROR_BAD_PARAMETER;
+	ఒకవేళ (str[0] != 'q' || str[1] != '=') {
+		తిరిగి NSERROR_BAD_PARAMETER;
 	}
-	return url_unescape(str + 2, len - 2, NULL, term);
+	తిరిగి url_unescape(str + 2, len - 2, ఖాళీ, పదం);
 }
 
-static nserror
-searchterm_from_query(struct nsurl *url, char **term)
+స్థిర nserror
+searchterm_from_query(నిర్మాణం nsurl *url, అక్షరం **పదం)
 {
 	nserror res;
-	char *querystr;
+	అక్షరం *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	కొరకు (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		అయితే (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
-		res = process_query_section(querystr + kvstart, kvlen, term);
-		if (res == NSERROR_OK) {
-			break;
+		res = process_query_section(querystr + kvstart, kvlen, పదం);
+		ఒకవేళ (res == NSERROR_OK) {
+			ఆపు;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	విడుదల(querystr);
 
-	return res;
+	తిరిగి res;
 }
 
-bool fetch_about_websearch_handler(struct fetch_about_context *ctx)
+bool fetch_about_websearch_handler(నిర్మాణం fetch_about_context *ctx)
 {
 	nserror res;
 	nsurl *url;
-	char *term;
+	అక్షరం *పదం;
 
-	res = searchterm_from_query(fetch_about_get_url(ctx), &term);
-	if (res != NSERROR_OK) {
-		return false;
+	res = searchterm_from_query(fetch_about_get_url(ctx), &పదం);
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
-	res = search_web_omni(term, SEARCH_WEB_OMNI_SEARCHONLY, &url);
-	free(term);
-	if (res != NSERROR_OK) {
-		return false;
+	res = శోధన_web_omni(పదం, శోధన_WEB_OMNI_SEARCHONLY, &url);
+	విడుదల(పదం);
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
 	fetch_about_redirect(ctx, nsurl_access(url));
 	nsurl_unref(url);
 
-	return true;
+	తిరిగి true;
 }

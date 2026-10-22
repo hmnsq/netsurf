@@ -20,9 +20,9 @@
  * Content for image/svg (interface).
  */
 
-#ifndef _NETSURF_IMAGE_SVG_H_
-#define _NETSURF_IMAGE_SVG_H_
+#నిర్వచితం_కాకపోతే _NETSURF_IMAGE_SVG_H_
+#నిర్వచించు _NETSURF_IMAGE_SVG_H_
 
-nserror svg_init(void);
+nserror svg_init(శూన్య);
 
-#endif
+#అయితే_ముగింపు

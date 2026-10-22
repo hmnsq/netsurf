@@ -21,48 +21,48 @@
  * implementation of content for image/svg using libsvgtiny.
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
 
-#include <svgtiny.h>
+#అన్తర్భావ <svgtiny.h>
 
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/nsurl.h"
-#include "netsurf/plotters.h"
-#include "netsurf/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "netsurf/plotters.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
 
-#include "image/svg.h"
+#అన్తర్భావ "image/svg.h"
 
-typedef struct svg_content {
-	struct content base;
+రకనిర్వచనం నిర్మాణం svg_content {
+	నిర్మాణం content పునాది;
 
-	struct svgtiny_diagram *diagram;
+	నిర్మాణం svgtiny_diagram *diagram;
 
-	int current_width;
-	int current_height;
+	పూర్ణాంకం current_వెడల్పు;
+	పూర్ణాంకం current_ఎత్తు;
 } svg_content;
 
 
 
-static nserror svg_create_svg_data(svg_content *c)
+స్థిర nserror svg_create_svg_దత్తాంశం(svg_content *c)
 {
 	c->diagram = svgtiny_create();
-	if (c->diagram == NULL)
-		goto no_memory;
+	ఒకవేళ (c->diagram == ఖాళీ)
+		వెళ్ళు no_జ్ఞాపకం;
 
-	c->current_width = INT_MAX;
-	c->current_height = INT_MAX;
+	c->current_వెడల్పు = గరిష్ఠ_పూర్ణాంకం;
+	c->current_ఎత్తు = గరిష్ఠ_పూర్ణాంకం;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
-no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-	return NSERROR_NOMEM;
+no_జ్ఞాపకం:
+	content_ప్రసారం_error(&c->పునాది, NSERROR_NOMEM, ఖాళీ);
+	తిరిగి NSERROR_NOMEM;
 }
 
 
@@ -70,34 +70,34 @@ no_memory:
  * Create a CONTENT_SVG.
  */
 
-static nserror svg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		struct llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+స్థిర nserror svg_create(స్థిరరాశి content_handler *handler,
+		lwc_string *imime_type, స్థిరరాశి నిర్మాణం http_parameter *params,
+		నిర్మాణం llcache_handle *llcache, స్థిరరాశి అక్షరం *fallback_charset,
+		bool quirks, నిర్మాణం content **c)
 {
 	svg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(svg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(svg_content));
+	ఒకవేళ (svg == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__init(&svg->base, handler, imime_type, params,
+	error = content__init(&svg->పునాది, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(svg);
+		తిరిగి error;
 	}
 
-	error = svg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	error = svg_create_svg_దత్తాంశం(svg);
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(svg);
+		తిరిగి error;
 	}
 
-	*c = (struct content *) svg;
+	*c = (నిర్మాణం content *) svg;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -106,50 +106,50 @@ static nserror svg_create(const content_handler *handler,
  * Convert a CONTENT_SVG for display.
  */
 
-static bool svg_convert(struct content *c)
+స్థిర bool svg_convert(నిర్మాణం content *c)
 {
 	/*c->title = malloc(100);
 	if (c->title)
 		snprintf(c->title, 100, messages_get("svgTitle"),
 				width, height, c->source_size);*/
 	//c->size += ?;
-	content_set_ready(c);
-	content_set_done(c);
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);
 	/* Done: update status bar */
-	content_set_status(c, "");
+	content_సమితి_స్థితి(c, "");
 
-	return true;
+	తిరిగి true;
 }
 
 /**
  * Reformat a CONTENT_SVG.
  */
 
-static void svg_reformat(struct content *c, int width, int height)
+స్థిర శూన్య svg_reformat(నిర్మాణం content *c, పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు)
 {
 	svg_content *svg = (svg_content *) c;
-	const uint8_t *source_data;
-	size_t source_size;
+	స్థిరరాశి uint8_t *ఆధారం_దత్తాంశం;
+	size_t ఆధారం_కొలత;
 
-	assert(svg->diagram);
+	ప్రతిజ్ఞా(svg->diagram);
 
 	/* Avoid reformats to same width/height as we already reformatted to */
-	if (width != svg->current_width || height != svg->current_height) {
-		source_data = content__get_source_data(c, &source_size);
+	ఒకవేళ (వెడల్పు != svg->current_వెడల్పు || ఎత్తు != svg->current_ఎత్తు) {
+		ఆధారం_దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &ఆధారం_కొలత);
 
 		svgtiny_parse(svg->diagram,
-			      (const char *)source_data,
-			      source_size,
+			      (స్థిరరాశి అక్షరం *)ఆధారం_దత్తాంశం,
+			      ఆధారం_కొలత,
 			      nsurl_access(content_get_url(c)),
-			      width,
-			      height);
+			      వెడల్పు,
+			      ఎత్తు);
 
-		svg->current_width = width;
-		svg->current_height = height;
+		svg->current_వెడల్పు = వెడల్పు;
+		svg->current_ఎత్తు = ఎత్తు;
 	}
 
-	c->width = svg->diagram->width;
-	c->height = svg->diagram->height;
+	c->వెడల్పు = svg->diagram->వెడల్పు;
+	c->ఎత్తు = svg->diagram->ఎత్తు;
 }
 
 
@@ -157,168 +157,168 @@ static void svg_reformat(struct content *c, int width, int height)
  * Redraw a CONTENT_SVG.
  */
 
-static bool
-svg_redraw_internal(svg_content *svg,
-		    int x,
-		    int y,
-		    int width,
-		    int height,
-		    const struct rect *clip,
-		    const struct redraw_context *ctx,
-		    float scale,
-		    colour background_colour)
+స్థిర bool
+svg_redraw_అంతర్గత(svg_content *svg,
+		    పూర్ణాంకం x,
+		    పూర్ణాంకం y,
+		    పూర్ణాంకం వెడల్పు,
+		    పూర్ణాంకం ఎత్తు,
+		    స్థిరరాశి నిర్మాణం rect *clip,
+		    స్థిరరాశి నిర్మాణం redraw_context *ctx,
+		    దశాంశం scale,
+		    రంగు background_రంగు)
 {
-	float transform[6];
-	struct svgtiny_diagram *diagram = svg->diagram;
-	int px, py;
-	unsigned int i;
+	దశాంశం transform[6];
+	నిర్మాణం svgtiny_diagram *diagram = svg->diagram;
+	పూర్ణాంకం px, py;
+	గుర్తులేని పూర్ణాంకం i;
 	plot_font_style_t fstyle = *plot_style_font;
 	plot_style_t pstyle;
 	nserror res;
 
-	assert(diagram);
+	ప్రతిజ్ఞా(diagram);
 
-	transform[0] = (float) width / (float) svg->base.width;
+	transform[0] = (దశాంశం) వెడల్పు / (దశాంశం) svg->పునాది.వెడల్పు;
 	transform[1] = 0;
 	transform[2] = 0;
-	transform[3] = (float) height / (float) svg->base.height;
+	transform[3] = (దశాంశం) ఎత్తు / (దశాంశం) svg->పునాది.ఎత్తు;
 	transform[4] = x;
 	transform[5] = y;
 
-#define BGR(c) (((svgtiny_RED((c))) |					\
+#నిర్వచించు BGR(c) (((svgtiny_RED((c))) |					\
 		 (svgtiny_GREEN((c)) << 8) |				\
 		 (svgtiny_BLUE((c)) << 16)))
 
-	for (i = 0; i != diagram->shape_count; i++) {
-		if (diagram->shape[i].path) {
+	కొరకు (i = 0; i != diagram->shape_లెక్క; i++) {
+		ఒకవేళ (diagram->shape[i].మార్గం) {
 			/* stroke style */
-			if (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {
+			ఒకవేళ (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {
 				pstyle.stroke_type = PLOT_OP_TYPE_NONE;
-				pstyle.stroke_colour = NS_TRANSPARENT;
-			} else {
+				pstyle.stroke_రంగు = NS_TRANSPARENT;
+			} లేకపోతే {
 				pstyle.stroke_type = PLOT_OP_TYPE_SOLID;
-				pstyle.stroke_colour = BGR(diagram->shape[i].stroke);
+				pstyle.stroke_రంగు = BGR(diagram->shape[i].stroke);
 			}
-			pstyle.stroke_width = plot_style_int_to_fixed(
-					diagram->shape[i].stroke_width);
+			pstyle.stroke_వెడల్పు = plot_style_int_గమ్యం_fixed(
+					diagram->shape[i].stroke_వెడల్పు);
 
 			/* fill style */
-			if (diagram->shape[i].fill == svgtiny_TRANSPARENT) {
+			ఒకవేళ (diagram->shape[i].fill == svgtiny_TRANSPARENT) {
 				pstyle.fill_type = PLOT_OP_TYPE_NONE;
-				pstyle.fill_colour = NS_TRANSPARENT;
-			} else {
+				pstyle.fill_రంగు = NS_TRANSPARENT;
+			} లేకపోతే {
 				pstyle.fill_type = PLOT_OP_TYPE_SOLID;
-				pstyle.fill_colour = BGR(diagram->shape[i].fill);
+				pstyle.fill_రంగు = BGR(diagram->shape[i].fill);
 			}
 
 			/* draw the path */
-			res = ctx->plot->path(ctx,
+			res = ctx->plot->మార్గం(ctx,
 					&pstyle,
-					diagram->shape[i].path,
-					diagram->shape[i].path_length,
+					diagram->shape[i].మార్గం,
+					diagram->shape[i].మార్గం_నిడివి,
 					transform);
-			if (res != NSERROR_OK) {
-				return false;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి false;
 			}
 
-		} else if (diagram->shape[i].text) {
-			px = transform[0] * diagram->shape[i].text_x +
-				transform[2] * diagram->shape[i].text_y +
+		} లేకపోతే ఒకవేళ (diagram->shape[i].పాఠ్యం) {
+			px = transform[0] * diagram->shape[i].పాఠ్యం_x +
+				transform[2] * diagram->shape[i].పాఠ్యం_y +
 				transform[4];
-			py = transform[1] * diagram->shape[i].text_x +
-				transform[3] * diagram->shape[i].text_y +
+			py = transform[1] * diagram->shape[i].పాఠ్యం_x +
+				transform[3] * diagram->shape[i].పాఠ్యం_y +
 				transform[5];
 
 			fstyle.background = 0xffffff;
 			fstyle.foreground = 0x000000;
-			fstyle.size = (8 * PLOT_STYLE_SCALE) * scale;
+			fstyle.కొలత = (8 * PLOT_STYLE_SCALE) * scale;
 
-			res = ctx->plot->text(ctx,
+			res = ctx->plot->పాఠ్యం(ctx,
 					      &fstyle,
 					      px, py,
-					      diagram->shape[i].text,
-					      strlen(diagram->shape[i].text));
-			if (res != NSERROR_OK) {
-				return false;
+					      diagram->shape[i].పాఠ్యం,
+					      అక్షరశ్రేణి_పొడవు(diagram->shape[i].పాఠ్యం));
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి false;
 			}
 		}
 	}
 
-#undef BGR
+#నిర్వచనం_రద్దు BGR
 
-	return true;
+	తిరిగి true;
 }
 
 
-static bool
-svg_redraw_tiled_internal(svg_content *svg,
-			  struct content_redraw_data *data,
-			  const struct rect *clip,
-			  const struct redraw_context *ctx)
+స్థిర bool
+svg_redraw_tiled_అంతర్గత(svg_content *svg,
+			  నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+			  స్థిరరాశి నిర్మాణం rect *clip,
+			  స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
 	/* Tiled redraw required.  SVG repeats to extents of clip
 	 * rectangle, in x, y or both directions */
-	int x, y, x0, y0, x1, y1;
+	పూర్ణాంకం x, y, x0, y0, x1, y1;
 
-	x = x0 = data->x;
-	y = y0 = data->y;
+	x = x0 = దత్తాంశం->x;
+	y = y0 = దత్తాంశం->y;
 
 	/* Find the redraw boundaries to loop within */
-	if (data->repeat_x) {
-		for (; x0 > clip->x0; x0 -= data->width);
+	ఒకవేళ (దత్తాంశం->repeat_x) {
+		కొరకు (; x0 > clip->x0; x0 -= దత్తాంశం->వెడల్పు);
 		x1 = clip->x1;
-	} else {
+	} లేకపోతే {
 		x1 = x + 1;
 	}
-	if (data->repeat_y) {
-		for (; y0 > clip->y0; y0 -= data->height);
+	ఒకవేళ (దత్తాంశం->repeat_y) {
+		కొరకు (; y0 > clip->y0; y0 -= దత్తాంశం->ఎత్తు);
 		y1 = clip->y1;
-	} else {
+	} లేకపోతే {
 		y1 = y + 1;
 	}
 
 	/* Repeatedly plot the SVG across the area */
-	for (y = y0; y < y1; y += data->height) {
-		for (x = x0; x < x1; x += data->width) {
-			if (!svg_redraw_internal(svg, x, y,
-						 data->width, data->height,
-						 clip, ctx, data->scale,
-						 data->background_colour)) {
-				return false;
+	కొరకు (y = y0; y < y1; y += దత్తాంశం->ఎత్తు) {
+		కొరకు (x = x0; x < x1; x += దత్తాంశం->వెడల్పు) {
+			ఒకవేళ (!svg_redraw_అంతర్గత(svg, x, y,
+						 దత్తాంశం->వెడల్పు, దత్తాంశం->ఎత్తు,
+						 clip, ctx, దత్తాంశం->scale,
+						 దత్తాంశం->background_రంగు)) {
+				తిరిగి false;
 			}
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
 /**
  * Redraw a CONTENT_SVG.
  */
-static bool
-svg_redraw(struct content *c,
-	   struct content_redraw_data *data,
-	   const struct rect *clip,
-	   const struct redraw_context *ctx)
+స్థిర bool
+svg_redraw(నిర్మాణం content *c,
+	   నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+	   స్థిరరాశి నిర్మాణం rect *clip,
+	   స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
 	svg_content *svg = (svg_content *)c;
 
-	if ((data->width <= 0) && (data->height <= 0)) {
+	ఒకవేళ ((దత్తాంశం->వెడల్పు <= 0) && (దత్తాంశం->ఎత్తు <= 0)) {
 		/* No point trying to plot SVG if it does not occupy a valid
 		 * area */
-		return true;
+		తిరిగి true;
 	}
 
-	if ((data->repeat_x == false) && (data->repeat_y == false)) {
+	ఒకవేళ ((దత్తాంశం->repeat_x == false) && (దత్తాంశం->repeat_y == false)) {
 		/* Simple case: SVG is not tiled */
-		return svg_redraw_internal(svg, data->x, data->y,
-				data->width, data->height,
-				clip, ctx, data->scale,
-				data->background_colour);
+		తిరిగి svg_redraw_అంతర్గత(svg, దత్తాంశం->x, దత్తాంశం->y,
+				దత్తాంశం->వెడల్పు, దత్తాంశం->ఎత్తు,
+				clip, ctx, దత్తాంశం->scale,
+				దత్తాంశం->background_రంగు);
 	}
 
-	return svg_redraw_tiled_internal(svg, data, clip, ctx);
+	తిరిగి svg_redraw_tiled_అంతర్గత(svg, దత్తాంశం, clip, ctx);
 }
 
 
@@ -326,58 +326,58 @@ svg_redraw(struct content *c,
  * Destroy a CONTENT_SVG and free all resources it owns.
  */
 
-static void svg_destroy(struct content *c)
+స్థిర శూన్య svg_destroy(నిర్మాణం content *c)
 {
 	svg_content *svg = (svg_content *) c;
 
-	if (svg->diagram != NULL)
+	ఒకవేళ (svg->diagram != ఖాళీ)
 		svgtiny_free(svg->diagram);
 }
 
 
-static nserror svg_clone(const struct content *old, struct content **newc)
+స్థిర nserror svg_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
 	svg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(svg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(svg_content));
+	ఒకవేళ (svg == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&svg->base);
-		return error;
+	error = content__clone(old, &svg->పునాది);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&svg->పునాది);
+		తిరిగి error;
 	}
 
 	/* Simply replay create/convert */
-	error = svg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		content_destroy(&svg->base);
-		return error;
+	error = svg_create_svg_దత్తాంశం(svg);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&svg->పునాది);
+		తిరిగి error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (svg_convert(&svg->base) == false) {
-			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+	ఒకవేళ (old->స్థితి_2 == CONTENT_స్థితి_READY ||
+			old->స్థితి_2 == CONTENT_స్థితి_పూర్తి) {
+		ఒకవేళ (svg_convert(&svg->పునాది) == false) {
+			content_destroy(&svg->పునాది);
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) svg;
+	*newc = (నిర్మాణం content *) svg;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static content_type svg_content_type(void)
+స్థిర content_type svg_content_type(శూన్య)
 {
-	return CONTENT_IMAGE;
+	తిరిగి CONTENT_IMAGE;
 }
 
-static const content_handler svg_content_handler = {
+స్థిర స్థిరరాశి content_handler svg_content_handler = {
 	.create = svg_create,
-	.data_complete = svg_convert,
+	.దత్తాంశం_complete = svg_convert,
 	.reformat = svg_reformat,
 	.destroy = svg_destroy,
 	.redraw = svg_redraw,
@@ -386,10 +386,10 @@ static const content_handler svg_content_handler = {
 	.no_share = true
 };
 
-static const char *svg_types[] = {
+స్థిర స్థిరరాశి అక్షరం *svg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };
 
 
-CONTENT_FACTORY_REGISTER_TYPES(svg, svg_types, svg_content_handler);
+CONTENT_FACTORY_రిజిస్టరు_TYPES(svg, svg_types, svg_content_handler);

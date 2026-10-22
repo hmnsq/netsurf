@@ -20,16 +20,16 @@
  * Interface to javascript engine functions.
  */
 
-#ifndef NETSURF_JAVASCRIPT_JS_H_
-#define NETSURF_JAVASCRIPT_JS_H_
+#నిర్వచితం_కాకపోతే NETSURF_JAVASCRIPT_JS_H_
+#నిర్వచించు NETSURF_JAVASCRIPT_JS_H_
 
-#include "utils/errors.h"
+#అన్తర్భావ "utils/errors.h"
 
-struct dom_event;
-struct dom_document;
-struct dom_node;
-struct dom_element;
-struct dom_string;
+నిర్మాణం dom_event;
+నిర్మాణం dom_document;
+నిర్మాణం dom_కణుపు;
+నిర్మాణం dom_element;
+నిర్మాణం dom_string;
 
 /**
  * JavaScript interpreter heap
@@ -38,7 +38,7 @@ struct dom_string;
  * per browser window.  This heap is shared by all browsing contexts
  * we end up creating in that window.
  */
-typedef struct jsheap jsheap;
+రకనిర్వచనం నిర్మాణం jsheap jsheap;
 
 /**
  * JavaScript interpreter thread
@@ -50,17 +50,17 @@ typedef struct jsheap jsheap;
  * the heap is destroyed.  They can be shut down manually though
  * and should be for object lifetime safety reasons.
  */
-typedef struct jsthread jsthread;
+రకనిర్వచనం నిర్మాణం jsthread jsthread;
 
 /**
  * Initialise javascript interpreter
  */
-void js_initialise(void);
+శూన్య js_initialise(శూన్య);
 
 /**
  * finalise javascript interpreter
  */
-void js_finalise(void);
+శూన్య js_finalise(శూన్య);
 
 /**
  * Create a new javascript heap.
@@ -71,14 +71,14 @@ void js_finalise(void);
  * \param heap Updated to the created JS heap
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror js_newheap(int timeout, jsheap **heap);
+nserror js_newheap(పూర్ణాంకం timeout, jsheap **కుప్ప);
 
 /**
  * Destroy a previously created heap.
  *
  * \param heap The heap to destroy
  */
-void js_destroyheap(jsheap *heap);
+శూన్య js_destroyheap(jsheap *కుప్ప);
 
 /**
  * Create a new javascript thread
@@ -94,7 +94,7 @@ void js_destroyheap(jsheap *heap);
  * \param thread Updated to the created thread
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread);
+nserror js_newthread(jsheap *కుప్ప, శూన్య *win_priv, శూన్య *doc_priv, jsthread **thread);
 
 /**
  * Close a javascript thread
@@ -121,24 +121,24 @@ nserror js_closethread(jsthread *thread);
  *
  * \param thread The thread to be destroyed
  */
-void js_destroythread(jsthread *thread);
+శూన్య js_destroythread(jsthread *thread);
 
 /**
  * execute some javascript in a context
  */
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name);
+bool js_exec(jsthread *thread, స్థిరరాశి uint8_t *txt, size_t txtlen, స్థిరరాశి అక్షరం *name);
 
 /**
  * fire an event at a dom node
  */
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target);
+bool js_fire_event(jsthread *thread, స్థిరరాశి అక్షరం *type, నిర్మాణం dom_document *doc, నిర్మాణం dom_కణుపు *లక్ష్యం);
 
 bool
-js_dom_event_add_listener(jsthread *thread,
-			  struct dom_document *document,
-			  struct dom_node *node,
-			  struct dom_string *event_type_dom,
-			  void *js_funcval);
+js_dom_event_కూడు_listener(jsthread *thread,
+			  నిర్మాణం dom_document *document,
+			  నిర్మాణం dom_కణుపు *కణుపు,
+			  నిర్మాణం dom_string *event_type_dom,
+			  శూన్య *js_funcval);
 
 /*** New Events ***/
 
@@ -149,7 +149,7 @@ js_dom_event_add_listener(jsthread *thread,
  * by the context provided.  The JS implementation must then scan the element
  * for on* attributes and register appropriate listeners for those handlers.
  */
-void js_handle_new_element(jsthread *thread, struct dom_element *node);
+శూన్య js_handle_new_element(jsthread *thread, నిర్మాణం dom_element *కణుపు);
 
 /**
  * Handle an event propagation finished callback.
@@ -159,6 +159,6 @@ void js_handle_new_element(jsthread *thread, struct dom_element *node);
  * it may need to perform before the DOM finishes and the event may end up
  * freed.
  */
-void js_event_cleanup(jsthread *thread, struct dom_event *evt);
+శూన్య js_event_cleanup(jsthread *thread, నిర్మాణం dom_event *evt);
 
-#endif /* NETSURF_JAVASCRIPT_JS_H_ */
+#అయితే_ముగింపు /* NETSURF_JAVASCRIPT_JS_H_ */

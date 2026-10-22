@@ -21,14 +21,14 @@
  * file scheme fetcher handler interface.
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_FETCH_FILE_H
-#define NETSURF_CONTENT_FETCHERS_FETCH_FILE_H
+#నిర్వచితం_కాకపోతే NETSURF_CONTENT_FETCHERS_FETCH_FILE_H
+#నిర్వచించు NETSURF_CONTENT_FETCHERS_FETCH_FILE_H
 
 /**
  * Register file scheme handler.
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_file_register(void);
+nserror fetch_file_రిజిస్టరు(శూన్య);
 
-#endif
+#అయితే_ముగింపు

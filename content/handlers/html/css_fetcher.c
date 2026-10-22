@@ -22,146 +22,146 @@
  * HTML fetcher for CSS objects
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dom/dom.h>
-#include <libwapcaplet/libwapcaplet.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <dom/dom.h>
+#అన్తర్భావ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/ring.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#అన్తర్భావ "netsurf/inttypes.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/ring.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "content/fetch.h"
+#అన్తర్భావ "content/fetchers.h"
 
-#include "html/private.h"
+#అన్తర్భావ "html/private.h"
 
-typedef struct html_css_fetcher_item {
-	uint32_t key;
-	dom_string *data;
-	nsurl *base_url;
+రకనిర్వచనం నిర్మాణం html_css_fetcher_అంశం {
+	uint32_t కీలకం;
+	dom_string *దత్తాంశం;
+	nsurl *పునాది_url;
 
-	struct html_css_fetcher_item *r_next, *r_prev;
-} html_css_fetcher_item;
+	నిర్మాణం html_css_fetcher_అంశం *r_తదుపరి, *r_prev;
+} html_css_fetcher_అంశం;
 
-typedef struct html_css_fetcher_context {
-	struct fetch *parent_fetch;
+రకనిర్వచనం నిర్మాణం html_css_fetcher_context {
+	నిర్మాణం fetch *మాతృ_fetch;
 
 	nsurl *url;
-	html_css_fetcher_item *item;
+	html_css_fetcher_అంశం *అంశం;
 
 	bool aborted;
 	bool locked;
 
-	struct html_css_fetcher_context *r_next, *r_prev;
+	నిర్మాణం html_css_fetcher_context *r_తదుపరి, *r_prev;
 } html_css_fetcher_context;
 
-static uint32_t current_key = 0;
-static html_css_fetcher_item *items = NULL;
-static html_css_fetcher_context *ring = NULL;
+స్థిర uint32_t current_కీలకం = 0;
+స్థిర html_css_fetcher_అంశం *వస్తువులు = ఖాళీ;
+స్థిర html_css_fetcher_context *ring = ఖాళీ;
 
-static bool html_css_fetcher_initialise(lwc_string *scheme)
+స్థిర bool html_css_fetcher_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_initialise called for %s",
-	      lwc_string_data(scheme));
-	return true;
+	      lwc_string_దత్తాంశం(scheme));
+	తిరిగి true;
 }
 
-static void html_css_fetcher_finalise(lwc_string *scheme)
+స్థిర శూన్య html_css_fetcher_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_finalise called for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_దత్తాంశం(scheme));
 }
 
-static bool html_css_fetcher_can_fetch(const nsurl *url)
+స్థిర bool html_css_fetcher_can_fetch(స్థిరరాశి nsurl *url)
 {
-	return true;
+	తిరిగి true;
 }
 
-static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+స్థిర శూన్య *html_css_fetcher_అమరిక(నిర్మాణం fetch *మాతృ_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, స్థిరరాశి అక్షరం *post_urlenc,
+		 స్థిరరాశి నిర్మాణం fetch_multipart_దత్తాంశం *post_multipart,
+		 స్థిరరాశి అక్షరం **శీర్షికలు)
 {
 	html_css_fetcher_context *ctx;
-	lwc_string *path;
-	uint32_t key;
-	html_css_fetcher_item *item, *found = NULL;
+	lwc_string *మార్గం;
+	uint32_t కీలకం;
+	html_css_fetcher_అంశం *అంశం, *దొరికింది = ఖాళీ;
 
 	/* format of a x-ns-css URL is:
 	 *   x-ns-url:<key>
 	 * Where key is an unsigned 32bit integer
 	 */
 
-	path = nsurl_get_component(url, NSURL_PATH);
+	మార్గం = nsurl_get_component(url, NSURL_మార్గం);
 	/* The path must exist */
-	if (path == NULL) {
-		return NULL;
+	ఒకవేళ (మార్గం == ఖాళీ) {
+		తిరిగి ఖాళీ;
 	}
 
-	key = strtoul(lwc_string_data(path), NULL, 10);
+	కీలకం = strtoul(lwc_string_దత్తాంశం(మార్గం), ఖాళీ, 10);
 
-	lwc_string_unref(path);
+	lwc_string_unref(మార్గం);
 
 	/* There must be at least one item */
-	if (items == NULL) {
-		return NULL;
+	ఒకవేళ (వస్తువులు == ఖాళీ) {
+		తిరిగి ఖాళీ;
 	}
 
-	item = items;
-	do {
-		if (item->key == key) {
-			found = item;
-			break;
+	అంశం = వస్తువులు;
+	చేయి {
+		ఒకవేళ (అంశం->కీలకం == కీలకం) {
+			దొరికింది = అంశం;
+			ఆపు;
 		}
 
-		item = item->r_next;
-	} while (item != items);
+		అంశం = అంశం->r_తదుపరి;
+	} అయితే (అంశం != వస్తువులు);
 
 	/* We must have found the item */
-	if (found == NULL) {
-		return NULL;
+	ఒకవేళ (దొరికింది == ఖాళీ) {
+		తిరిగి ఖాళీ;
 	}
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*ctx));
+	ఒకవేళ (ctx == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	ctx->parent_fetch = parent_fetch;
+	ctx->మాతృ_fetch = మాతృ_fetch;
 	ctx->url = nsurl_ref(url);
-	ctx->item = found;
+	ctx->అంశం = దొరికింది;
 
-	RING_INSERT(ring, ctx);
+	RING_చొప్పించు(ring, ctx);
 
-	return ctx;
+	తిరిగి ctx;
 }
 
-static bool html_css_fetcher_start(void *ctx)
+స్థిర bool html_css_fetcher_ప్రారంభం(శూన్య *ctx)
 {
-	return true;
+	తిరిగి true;
 }
 
-static void html_css_fetcher_free(void *ctx)
+స్థిర శూన్య html_css_fetcher_free(శూన్య *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
 	nsurl_unref(c->url);
-	if (c->item != NULL) {
-		nsurl_unref(c->item->base_url);
-		dom_string_unref(c->item->data);
-		RING_REMOVE(items, c->item);
-		free(c->item);
+	ఒకవేళ (c->అంశం != ఖాళీ) {
+		nsurl_unref(c->అంశం->పునాది_url);
+		dom_string_unref(c->అంశం->దత్తాంశం);
+		RING_REMOVE(వస్తువులు, c->అంశం);
+		విడుదల(c->అంశం);
 	}
 	RING_REMOVE(ring, c);
-	free(ctx);
+	విడుదల(ctx);
 }
 
-static void html_css_fetcher_abort(void *ctx)
+స్థిర శూన్య html_css_fetcher_abort(శూన్య *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
@@ -172,149 +172,149 @@ static void html_css_fetcher_abort(void *ctx)
 	c->aborted = true;
 }
 
-static void html_css_fetcher_send_callback(const fetch_msg *msg,
+స్థిర శూన్య html_css_fetcher_send_callback(స్థిరరాశి fetch_సందేశం *సందేశం,
 		html_css_fetcher_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(సందేశం, c->మాతృ_fetch);
 	c->locked = false;
 }
 
-static void html_css_fetcher_poll(lwc_string *scheme)
+స్థిర శూన్య html_css_fetcher_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	html_css_fetcher_context *c, *next;
+	fetch_సందేశం సందేశం;
+	html_css_fetcher_context *c, *తదుపరి;
 
-	if (ring == NULL) return;
+	ఒకవేళ (ring == ఖాళీ) తిరిగి;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
-	do {
+	చేయి {
 		/* Ignore fetches that have been flagged as locked.
 		 * This allows safe re-entrant calls to this function.
 		 * Re-entrancy can occur if, as a result of a callback,
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			next = c->r_next;
-			continue;
+		ఒకవేళ (c->locked == true) {
+			తదుపరి = c->r_తదుపరి;
+			కొనసాగు;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted) {
+		ఒకవేళ (c->aborted) {
 			/* Nothing to do */
-			assert(c->locked == false);
-		} else if (c->item != NULL) {
-			char header[4096];
+			ప్రతిజ్ఞా(c->locked == false);
+		} లేకపోతే ఒకవేళ (c->అంశం != ఖాళీ) {
+			అక్షరం శీర్షిక[4096];
 
-			fetch_set_http_code(c->parent_fetch, 200);
+			fetch_సమితి_http_సంకేతం(c->మాతృ_fetch, 200);
 
 			/* Any callback can result in the fetch being aborted.
 			 * Therefore, we _must_ check for this after _every_
 			 * call to html_css_fetcher_send_callback().
 			 */
-			snprintf(header, sizeof header,
+			snprintf(శీర్షిక, పరిమాణం శీర్షిక,
 				"Content-Type: text/css; charset=utf-8");
-			msg.type = FETCH_HEADER;
-			msg.data.header_or_data.buf = (const uint8_t *) header;
-			msg.data.header_or_data.len = strlen(header);
-			html_css_fetcher_send_callback(&msg, c);
+			సందేశం.type = FETCH_శీర్షిక;
+			సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf = (స్థిరరాశి uint8_t *) శీర్షిక;
+			సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(శీర్షిక);
+			html_css_fetcher_send_callback(&సందేశం, c);
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			ఒకవేళ (c->aborted == false) {
+				snprintf(శీర్షిక, పరిమాణం శీర్షిక,
 					"Content-Length: %"PRIsizet,
-					dom_string_byte_length(c->item->data));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					dom_string_byte_నిడివి(c->అంశం->దత్తాంశం));
+				సందేశం.type = FETCH_శీర్షిక;
+				సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf =
+						(స్థిరరాశి uint8_t *) శీర్షిక;
+				సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(శీర్షిక);
+				html_css_fetcher_send_callback(&సందేశం, c);
 			}
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			ఒకవేళ (c->aborted == false) {
+				snprintf(శీర్షిక, పరిమాణం శీర్షిక,
 					"X-NS-Base: %.*s",
-					(int) nsurl_length(c->item->base_url),
-					nsurl_access(c->item->base_url));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					(పూర్ణాంకం) nsurl_నిడివి(c->అంశం->పునాది_url),
+					nsurl_access(c->అంశం->పునాది_url));
+				సందేశం.type = FETCH_శీర్షిక;
+				సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf =
+						(స్థిరరాశి uint8_t *) శీర్షిక;
+				సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len = అక్షరశ్రేణి_పొడవు(శీర్షిక);
+				html_css_fetcher_send_callback(&సందేశం, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf =
-						(const uint8_t *)
-						dom_string_data(c->item->data);
-				msg.data.header_or_data.len =
-					dom_string_byte_length(c->item->data);
-				html_css_fetcher_send_callback(&msg, c);
+			ఒకవేళ (c->aborted == false) {
+				సందేశం.type = FETCH_దత్తాంశం;
+				సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.buf =
+						(స్థిరరాశి uint8_t *)
+						dom_string_దత్తాంశం(c->అంశం->దత్తాంశం);
+				సందేశం.దత్తాంశం.శీర్షిక_or_దత్తాంశం.len =
+					dom_string_byte_నిడివి(c->అంశం->దత్తాంశం);
+				html_css_fetcher_send_callback(&సందేశం, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				html_css_fetcher_send_callback(&msg, c);
+			ఒకవేళ (c->aborted == false) {
+				సందేశం.type = FETCH_ముగిసిన;
+				html_css_fetcher_send_callback(&సందేశం, c);
 			}
-		} else {
+		} లేకపోతే {
 			NSLOG(netsurf, INFO, "Processing of %s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't,
 			 * then html_css_fetcher_process() is broken.
 			 */
-			assert(c->locked == false);
+			ప్రతిజ్ఞా(c->locked == false);
 		}
 
 		/* Compute next fetch item at the last possible moment as
 		 * processing this item may have added to the ring.
 		 */
-		next = c->r_next;
+		తదుపరి = c->r_తదుపరి;
 
-		fetch_remove_from_queues(c->parent_fetch);
-		fetch_free(c->parent_fetch);
+		fetch_remove_from_queues(c->మాతృ_fetch);
+		fetch_free(c->మాతృ_fetch);
 
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} అయితే ( (c = తదుపరి) != ring && ring != ఖాళీ);
 }
 
 /* exported interface documented in html_internal.h */
-nserror html_css_fetcher_register(void)
+nserror html_css_fetcher_రిజిస్టరు(శూన్య)
 {
-	const struct fetcher_operation_table html_css_fetcher_ops = {
+	స్థిరరాశి నిర్మాణం fetcher_operation_పట్టిక html_css_fetcher_ops = {
 		.initialise = html_css_fetcher_initialise,
 		.acceptable = html_css_fetcher_can_fetch,
-		.setup = html_css_fetcher_setup,
-		.start = html_css_fetcher_start,
+		.అమరిక = html_css_fetcher_అమరిక,
+		.ప్రారంభం = html_css_fetcher_ప్రారంభం,
 		.abort = html_css_fetcher_abort,
-		.free = html_css_fetcher_free,
+		.విడుదల = html_css_fetcher_free,
 		.poll = html_css_fetcher_poll,
 		.finalise = html_css_fetcher_finalise
 	};
 
-	return fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
+	తిరిగి fetcher_కూడు(lwc_string_ref(corestring_lwc_x_ns_css),
 			&html_css_fetcher_ops);
 }
 
 /* exported interface documented in html_internal.h */
 nserror
-html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
+html_css_fetcher_కూడు_అంశం(dom_string *దత్తాంశం, nsurl *పునాది_url, uint32_t *కీలకం)
 {
-	html_css_fetcher_item *item = malloc(sizeof(*item));
+	html_css_fetcher_అంశం *అంశం = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*అంశం));
 
-	if (item == NULL) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (అంశం == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	*key = item->key = current_key++;
-	item->data = dom_string_ref(data);
-	item->base_url = nsurl_ref(base_url);
+	*కీలకం = అంశం->కీలకం = current_కీలకం++;
+	అంశం->దత్తాంశం = dom_string_ref(దత్తాంశం);
+	అంశం->పునాది_url = nsurl_ref(పునాది_url);
 
-	RING_INSERT(items, item);
+	RING_చొప్పించు(వస్తువులు, అంశం);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }

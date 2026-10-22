@@ -16,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_HINTS_H_
-#define NETSURF_CSS_HINTS_H_
+#నిర్వచితం_కాకపోతే NETSURF_CSS_HINTS_H_
+#నిర్వచించు NETSURF_CSS_HINTS_H_
 
-#include <stdint.h>
+#అన్తర్భావ <stdint.h>
 
-#include <libcss/libcss.h>
+#అన్తర్భావ <libcss/libcss.h>
 
-nserror css_hint_init(void);
-void css_hint_fini(void);
+nserror css_hint_init(శూన్య);
+శూన్య css_hint_fini(శూన్య);
 
 /**
  * Callback to retrieve presentational hints for a node
@@ -37,9 +37,9 @@ void css_hint_fini(void);
  *         CSS_PROPERTY_NOT_SET if there is no hint for the requested property,
  *         CSS_NOMEM            on memory exhaustion.
  */
-css_error node_presentational_hint(
-		void *pw,
-		void *node,
+css_error కణుపు_presentational_hint(
+		శూన్య *pw,
+		శూన్య *కణుపు,
 		uint32_t *nhints,
 		css_hint **hints);
 
@@ -50,6 +50,6 @@ css_error node_presentational_hint(
  * \param result  Pointer to location to receive resulting css_color
  * \return true on success, false on invalid input
  */
-bool nscss_parse_colour(const char *data, css_color *result);
+bool nscss_parse_రంగు(స్థిరరాశి అక్షరం *దత్తాంశం, css_color *ఫలితం);
 
-#endif
+#అయితే_ముగింపు

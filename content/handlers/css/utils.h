@@ -16,91 +16,91 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CSS_UTILS_H_
-#define NETSURF_CSS_UTILS_H_
+#నిర్వచితం_కాకపోతే NETSURF_CSS_UTILS_H_
+#నిర్వచించు NETSURF_CSS_UTILS_H_
 
-#include <libcss/libcss.h>
+#అన్తర్భావ <libcss/libcss.h>
 
-#include "netsurf/css.h"
+#అన్తర్భావ "netsurf/css.h"
 
 /** DPI of the screen, in fixed point units */
-extern css_fixed nscss_screen_dpi;
+బాహ్య css_fixed nscss_screen_dpi;
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display(
-		const css_computed_style *style, bool root)
+స్థిర అంతఃవరుస uint8_t ns_computed_display(
+		స్థిరరాశి css_computed_style *style, bool మూలం)
 {
-	uint8_t value = css_computed_display(style, root);
+	uint8_t విలువ = css_computed_display(style, మూలం);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	ఎంపిక (విలువ) {
+	స్థితి CSS_DISPLAY_GRID:
+		తిరిగి CSS_DISPLAY_ఖండం;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	స్థితి CSS_DISPLAY_INLINE_GRID:
+		తిరిగి CSS_DISPLAY_INLINE_ఖండం;
 
-	default:
-		break;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	return value;
+	తిరిగి విలువ;
 }
 
 /**
  * Temporary helper wrappers for for libcss computed style getter, while
  * we don't support all values of display.
  */
-static inline uint8_t ns_computed_display_static(
-		const css_computed_style *style)
+స్థిర అంతఃవరుస uint8_t ns_computed_display_static(
+		స్థిరరాశి css_computed_style *style)
 {
-	uint8_t value = css_computed_display_static(style);
+	uint8_t విలువ = css_computed_display_static(style);
 
-	switch (value) {
-	case CSS_DISPLAY_GRID:
-		return CSS_DISPLAY_BLOCK;
+	ఎంపిక (విలువ) {
+	స్థితి CSS_DISPLAY_GRID:
+		తిరిగి CSS_DISPLAY_ఖండం;
 
-	case CSS_DISPLAY_INLINE_GRID:
-		return CSS_DISPLAY_INLINE_BLOCK;
+	స్థితి CSS_DISPLAY_INLINE_GRID:
+		తిరిగి CSS_DISPLAY_INLINE_ఖండం;
 
-	default:
-		break;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	return value;
+	తిరిగి విలువ;
 }
 
-static inline uint8_t ns_computed_min_height(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+స్థిర అంతఃవరుస uint8_t ns_computed_min_ఎత్తు(
+		స్థిరరాశి css_computed_style *style,
+		css_fixed *నిడివి, css_unit *unit)
 {
-	uint8_t value = css_computed_min_height(style, length, unit);
+	uint8_t విలువ = css_computed_min_ఎత్తు(style, నిడివి, unit);
 
-	if (value == CSS_MIN_HEIGHT_AUTO) {
-		value = CSS_MIN_HEIGHT_SET;
-		*length = 0;
+	ఒకవేళ (విలువ == CSS_MIN_ఎత్తు_AUTO) {
+		విలువ = CSS_MIN_ఎత్తు_సమితి;
+		*నిడివి = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	తిరిగి విలువ;
 }
 
 
-static inline uint8_t ns_computed_min_width(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit)
+స్థిర అంతఃవరుస uint8_t ns_computed_min_వెడల్పు(
+		స్థిరరాశి css_computed_style *style,
+		css_fixed *నిడివి, css_unit *unit)
 {
-	uint8_t value = css_computed_min_width(style, length, unit);
+	uint8_t విలువ = css_computed_min_వెడల్పు(style, నిడివి, unit);
 
-	if (value == CSS_MIN_WIDTH_AUTO) {
-		value = CSS_MIN_WIDTH_SET;
-		*length = 0;
+	ఒకవేళ (విలువ == CSS_MIN_వెడల్పు_AUTO) {
+		విలువ = CSS_MIN_వెడల్పు_సమితి;
+		*నిడివి = 0;
 		*unit = CSS_UNIT_PX;
 	}
 
-	return value;
+	తిరిగి విలువ;
 }
 
-#endif
+#అయితే_ముగింపు

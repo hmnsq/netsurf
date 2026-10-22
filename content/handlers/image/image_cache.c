@@ -21,23 +21,23 @@
  * Cache implementation for bitmap images decoded into frontend format.
  */
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "netsurf/misc.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "desktop/gui_internal.h"
+#అన్తర్భావ "netsurf/inttypes.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "netsurf/misc.h"
+#అన్తర్భావ "netsurf/bitmap.h"
+#అన్తర్భావ "content/llcache.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "desktop/gui_internal.h"
 
-#include "image/image_cache.h"
-#include "image/image.h"
+#అన్తర్భావ "image/image_cache.h"
+#అన్తర్భావ "image/image.h"
 
 /**
  * Age of an entry within the cache
@@ -45,30 +45,30 @@
  * type deffed away so it can be readily changed later perhaps to a
  * wallclock time structure.
  */
-typedef unsigned int cache_age;
+రకనిర్వచనం గుర్తులేని పూర్ణాంకం cache_age;
 
 /**
  * Image cache entry
  */
-struct image_cache_entry_s {
-	struct image_cache_entry_s *next; /**< next cache entry in list */
-	struct image_cache_entry_s *prev; /**< previous cache entry in list */
+నిర్మాణం image_cache_నమోదు_s {
+	నిర్మాణం image_cache_నమోదు_s *తదుపరి; /**< next cache entry in list */
+	నిర్మాణం image_cache_నమోదు_s *prev; /**< previous cache entry in list */
 
 	/** content is used as a key */
-	struct content *content;
+	నిర్మాణం content *content;
 	/** associated bitmap entry */
-	struct bitmap *bitmap;
+	నిర్మాణం bitmap *bitmap;
 	/** routine to convert content into bitmap */
 	image_cache_convert_fn *convert;
 
 	/* Statistics for replacement algorithm */
 
-	unsigned int redraw_count; /**< number of times object has been drawn */
+	గుర్తులేని పూర్ణాంకం redraw_లెక్క; /**< number of times object has been drawn */
 	cache_age redraw_age; /**< Age of last redraw */
-	size_t bitmap_size; /**< size if storage occupied by bitmap */
+	size_t bitmap_కొలత; /**< size if storage occupied by bitmap */
 	cache_age bitmap_age; /**< Age of last conversion to a bitmap by cache*/
 
-	int conversion_count; /**< Number of times image has been converted */
+	పూర్ణాంకం conversion_లెక్క; /**< Number of times image has been converted */
 };
 
 /**
@@ -79,65 +79,65 @@ struct image_cache_entry_s {
  * using wall clock time while allowing the LRU algorithm to work
  * sensibly.
  */
-struct image_cache_s {
+నిర్మాణం image_cache_s {
 	/** Cache parameters */
-	struct image_cache_parameters params;
+	నిర్మాణం image_cache_parameters params;
 
 	/** The "age" of the current operation */
 	cache_age current_age;
 
 	/* The objects the cache holds */
-	struct image_cache_entry_s *entries;
+	నిర్మాణం image_cache_నమోదు_s *entries;
 
 
 	/* Statistics for management algorithm */
 
 	/** total size of bitmaps currently allocated */
-	size_t total_bitmap_size;
+	size_t మొత్తం_bitmap_కొలత;
 
 	/** Total count of bitmaps currently allocated */
-	int bitmap_count;
+	పూర్ణాంకం bitmap_లెక్క;
 
 	/** Maximum size of bitmaps allocated at any one time */
-	size_t max_bitmap_size;
+	size_t max_bitmap_కొలత;
 	/** The number of objects when maximum bitmap usage occurred */
-	int max_bitmap_size_count;
+	పూర్ణాంకం max_bitmap_కొలత_లెక్క;
 
 	/** Maximum count of bitmaps allocated at any one time */
-	int max_bitmap_count;
+	పూర్ణాంకం max_bitmap_లెక్క;
 	/** The size of the bitmaps when the max count occurred */
-	size_t max_bitmap_count_size;
+	size_t max_bitmap_లెక్క_కొలత;
 
 	/** Bitmap was not available at plot time required conversion */
-	int miss_count;
-	uint64_t miss_size;
+	పూర్ణాంకం తప్పిపోవు_లెక్క;
+	uint64_t తప్పిపోవు_కొలత;
 	/** Bitmap was available at plot time required no conversion */
-	int hit_count;
-	uint64_t hit_size;
+	పూర్ణాంకం తగిలింది_లెక్క;
+	uint64_t తగిలింది_కొలత;
 	/** Bitmap was not available at plot time and required
 	 * conversion which failed.
 	 */
-	int fail_count;
-	uint64_t fail_size;
+	పూర్ణాంకం fail_లెక్క;
+	uint64_t fail_కొలత;
 
 	/* Cache entry freed without ever being redrawn */
-	int total_unrendered;
+	పూర్ణాంకం మొత్తం_unrendered;
 	/** Bitmap was available but never required - wasted conversions */
-	int specultive_miss_count;
+	పూర్ణాంకం specultive_తప్పిపోవు_లెక్క;
 
 	/** Total number of additional (after the first) conversions */
-	int total_extra_conversions;
+	పూర్ణాంకం మొత్తం_extra_conversions;
 	/** counts total number of images with more than one conversion */
-	int total_extra_conversions_count;
+	పూర్ణాంకం మొత్తం_extra_conversions_లెక్క;
 
 	/** Bitmap with most conversions was converted this many times */
-	int peak_conversions;
+	పూర్ణాంకం peak_conversions;
 	/** Size of bitmap with most conversions */
-	unsigned int peak_conversions_size;
+	గుర్తులేని పూర్ణాంకం peak_conversions_కొలత;
 };
 
 /** image cache state */
-static struct image_cache_s *image_cache = NULL;
+స్థిర నిర్మాణం image_cache_s *image_cache = ఖాళీ;
 
 
 /**
@@ -146,16 +146,16 @@ static struct image_cache_s *image_cache = NULL;
  * \param entryn index of cache entry
  * \return cache entry at index or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__findn(int entryn)
+స్థిర నిర్మాణం image_cache_నమోదు_s *image_cache__findn(పూర్ణాంకం entryn)
 {
-	struct image_cache_entry_s *found;
+	నిర్మాణం image_cache_నమోదు_s *దొరికింది;
 
-	found = image_cache->entries;
-	while ((found != NULL) && (entryn > 0)) {
+	దొరికింది = image_cache->entries;
+	అయితే ((దొరికింది != ఖాళీ) && (entryn > 0)) {
 		entryn--;
-		found = found->next;
+		దొరికింది = దొరికింది->తదుపరి;
 	}
-	return found;
+	తిరిగి దొరికింది;
 }
 
 
@@ -165,15 +165,15 @@ static struct image_cache_entry_s *image_cache__findn(int entryn)
  * \param c The content to get an entry for
  * \return The image cache entry or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__find(const struct content *c)
+స్థిర నిర్మాణం image_cache_నమోదు_s *image_cache_కనుగొను(స్థిరరాశి నిర్మాణం content *c)
 {
-	struct image_cache_entry_s *found;
+	నిర్మాణం image_cache_నమోదు_s *దొరికింది;
 
-	found = image_cache->entries;
-	while ((found != NULL) && (found->content != c)) {
-		found = found->next;
+	దొరికింది = image_cache->entries;
+	అయితే ((దొరికింది != ఖాళీ) && (దొరికింది->content != c)) {
+		దొరికింది = దొరికింది->తదుపరి;
 	}
-	return found;
+	తిరిగి దొరికింది;
 }
 
 /**
@@ -181,68 +181,68 @@ static struct image_cache_entry_s *image_cache__find(const struct content *c)
  *
  * \param centry The image cache entry to update the stats with.
  */
-static void image_cache_stats_bitmap_add(struct image_cache_entry_s *centry)
+స్థిర శూన్య image_cache_stats_bitmap_కూడు(నిర్మాణం image_cache_నమోదు_s *centry)
 {
 	centry->bitmap_age = image_cache->current_age;
-	centry->conversion_count++;
+	centry->conversion_లెక్క++;
 
-	image_cache->total_bitmap_size += centry->bitmap_size;
-	image_cache->bitmap_count++;
+	image_cache->మొత్తం_bitmap_కొలత += centry->bitmap_కొలత;
+	image_cache->bitmap_లెక్క++;
 
-	if (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
-		image_cache->max_bitmap_size = image_cache->total_bitmap_size;
-		image_cache->max_bitmap_size_count = image_cache->bitmap_count;
+	ఒకవేళ (image_cache->మొత్తం_bitmap_కొలత > image_cache->max_bitmap_కొలత) {
+		image_cache->max_bitmap_కొలత = image_cache->మొత్తం_bitmap_కొలత;
+		image_cache->max_bitmap_కొలత_లెక్క = image_cache->bitmap_లెక్క;
 
 	}
 
-	if (image_cache->bitmap_count > image_cache->max_bitmap_count) {
-		image_cache->max_bitmap_count = image_cache->bitmap_count;
-		image_cache->max_bitmap_count_size = image_cache->total_bitmap_size;
+	ఒకవేళ (image_cache->bitmap_లెక్క > image_cache->max_bitmap_లెక్క) {
+		image_cache->max_bitmap_లెక్క = image_cache->bitmap_లెక్క;
+		image_cache->max_bitmap_లెక్క_కొలత = image_cache->మొత్తం_bitmap_కొలత;
 	}
 
-	if (centry->conversion_count == 2) {
-		image_cache->total_extra_conversions_count++;
+	ఒకవేళ (centry->conversion_లెక్క == 2) {
+		image_cache->మొత్తం_extra_conversions_లెక్క++;
 	}
 
-	if (centry->conversion_count > 1) {
-		image_cache->total_extra_conversions++;
+	ఒకవేళ (centry->conversion_లెక్క > 1) {
+		image_cache->మొత్తం_extra_conversions++;
 	}
 
-	if ((centry->conversion_count > image_cache->peak_conversions) ||
-	    (centry->conversion_count == image_cache->peak_conversions &&
-	     centry->bitmap_size > image_cache->peak_conversions_size)) {
-		image_cache->peak_conversions = centry->conversion_count;
-		image_cache->peak_conversions_size = centry->bitmap_size;
+	ఒకవేళ ((centry->conversion_లెక్క > image_cache->peak_conversions) ||
+	    (centry->conversion_లెక్క == image_cache->peak_conversions &&
+	     centry->bitmap_కొలత > image_cache->peak_conversions_కొలత)) {
+		image_cache->peak_conversions = centry->conversion_లెక్క;
+		image_cache->peak_conversions_కొలత = centry->bitmap_కొలత;
 	}
 }
 
-static void image_cache__link(struct image_cache_entry_s *centry)
+స్థిర శూన్య image_cache__link(నిర్మాణం image_cache_నమోదు_s *centry)
 {
-	centry->next = image_cache->entries;
-	centry->prev = NULL;
-	if (centry->next != NULL) {
-		centry->next->prev = centry;
+	centry->తదుపరి = image_cache->entries;
+	centry->prev = ఖాళీ;
+	ఒకవేళ (centry->తదుపరి != ఖాళీ) {
+		centry->తదుపరి->prev = centry;
 	}
 	image_cache->entries = centry;
 }
 
-static void image_cache__unlink(struct image_cache_entry_s *centry)
+స్థిర శూన్య image_cache__unlink(నిర్మాణం image_cache_నమోదు_s *centry)
 {
 	/* unlink entry */
-	if (centry->prev == NULL) {
+	ఒకవేళ (centry->prev == ఖాళీ) {
 		/* first in list */
-		if (centry->next != NULL) {
-			centry->next->prev = centry->prev;
-			image_cache->entries = centry->next;
-		} else {
+		ఒకవేళ (centry->తదుపరి != ఖాళీ) {
+			centry->తదుపరి->prev = centry->prev;
+			image_cache->entries = centry->తదుపరి;
+		} లేకపోతే {
 			/* empty list */
-			image_cache->entries = NULL;
+			image_cache->entries = ఖాళీ;
 		}
-	} else {
-		centry->prev->next = centry->next;
+	} లేకపోతే {
+		centry->prev->తదుపరి = centry->తదుపరి;
 
-		if (centry->next != NULL) {
-			centry->next->prev = centry->prev;
+		ఒకవేళ (centry->తదుపరి != ఖాళీ) {
+			centry->తదుపరి->prev = centry->prev;
 		}
 	}
 }
@@ -252,23 +252,23 @@ static void image_cache__unlink(struct image_cache_entry_s *centry)
  *
  * \param centry The image cache entry to free bitmap from.
  */
-static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
+స్థిర శూన్య image_cache__free_bitmap(నిర్మాణం image_cache_నమోదు_s *centry)
 {
-	if (centry->bitmap != NULL) {
-#ifdef IMAGE_CACHE_VERBOSE
+	ఒకవేళ (centry->bitmap != ఖాళీ) {
+#నిర్వచితమైతే IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
 		      "Freeing bitmap %p size %d age %d redraw count %d",
 		      centry->bitmap,
-		      centry->bitmap_size,
+		      centry->bitmap_కొలత,
 		      image_cache->current_age - centry->bitmap_age,
-		      centry->redraw_count);
-#endif
+		      centry->redraw_లెక్క);
+#అయితే_ముగింపు
 		guit->bitmap->destroy(centry->bitmap);
-		centry->bitmap = NULL;
-		image_cache->total_bitmap_size -= centry->bitmap_size;
-		image_cache->bitmap_count--;
-		if (centry->redraw_count == 0) {
-			image_cache->specultive_miss_count++;
+		centry->bitmap = ఖాళీ;
+		image_cache->మొత్తం_bitmap_కొలత -= centry->bitmap_కొలత;
+		image_cache->bitmap_లెక్క--;
+		ఒకవేళ (centry->redraw_లెక్క == 0) {
+			image_cache->specultive_తప్పిపోవు_లెక్క++;
 		}
 	}
 
@@ -279,21 +279,21 @@ static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
  *
  * \param centry The image cache entry to free.
  */
-static void image_cache__free_entry(struct image_cache_entry_s *centry)
+స్థిర శూన్య image_cache_free_నమోదు(నిర్మాణం image_cache_నమోదు_s *centry)
 {
-#ifdef IMAGE_CACHE_VERBOSE
+#నిర్వచితమైతే IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "freeing %p ", centry);
-#endif
+#అయితే_ముగింపు
 
-	if (centry->redraw_count == 0) {
-		image_cache->total_unrendered++;
+	ఒకవేళ (centry->redraw_లెక్క == 0) {
+		image_cache->మొత్తం_unrendered++;
 	}
 
 	image_cache__free_bitmap(centry);
 
 	image_cache__unlink(centry);
 
-	free(centry);
+	విడుదల(centry);
 }
 
 /**
@@ -301,21 +301,21 @@ static void image_cache__free_entry(struct image_cache_entry_s *centry)
  *
  * \param icache The image cache context.
  */
-static void image_cache__clean(struct image_cache_s *icache)
+స్థిర శూన్య image_cache__clean(నిర్మాణం image_cache_s *icache)
 {
-	struct image_cache_entry_s *centry = icache->entries;
+	నిర్మాణం image_cache_నమోదు_s *centry = icache->entries;
 
-	while (centry != NULL) {
-		if ((icache->current_age - centry->redraw_age) >
-		    icache->params.bg_clean_time) {
+	అయితే (centry != ఖాళీ) {
+		ఒకవేళ ((icache->current_age - centry->redraw_age) >
+		    icache->params.bg_clean_సమయం) {
 			/* only consider older entries, avoids active entries */
-			if ((icache->total_bitmap_size >
-			     (icache->params.limit - icache->params.hysteresis)) &&
+			ఒకవేళ ((icache->మొత్తం_bitmap_కొలత >
+			     (icache->params.హద్దు - icache->params.hysteresis)) &&
 			    (rand() > (RAND_MAX / 2))) {
 				image_cache__free_bitmap(centry);
 			}
 		}
-		centry=centry->next;
+		centry=centry->తదుపరి;
 	}
 }
 
@@ -324,211 +324,211 @@ static void image_cache__clean(struct image_cache_s *icache)
  *
  * \param p The image cache context.
  */
-static void image_cache__background_update(void *p)
+స్థిర శూన్య image_cache__background_update(శూన్య *p)
 {
-	struct image_cache_s *icache = p;
+	నిర్మాణం image_cache_s *icache = p;
 
 	/* increment current cache age */
-	icache->current_age += icache->params.bg_clean_time;
+	icache->current_age += icache->params.bg_clean_సమయం;
 
-#ifdef IMAGE_CACHE_VERBOSE
+#నిర్వచితమైతే IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "Cache age %ds", icache->current_age / 1000);
-#endif
+#అయితే_ముగింపు
 
 	image_cache__clean(icache);
 
-	guit->misc->schedule(icache->params.bg_clean_time,
+	guit->misc->కాలపట్టిక(icache->params.bg_clean_సమయం,
 				image_cache__background_update,
 				icache);
 }
 
 /* exported interface documented in image_cache.h */
-struct bitmap *image_cache_get_bitmap(const struct content *c)
+నిర్మాణం bitmap *image_cache_get_bitmap(స్థిరరాశి నిర్మాణం content *c)
 {
-	struct image_cache_entry_s *centry;
+	నిర్మాణం image_cache_నమోదు_s *centry;
 
-	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	centry = image_cache_కనుగొను(c);
+	ఒకవేళ (centry == ఖాళీ) {
+		తిరిగి ఖాళీ;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	ఒకవేళ (centry->bitmap == ఖాళీ) {
+		ఒకవేళ (centry->convert != ఖాళీ) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
-			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
-			image_cache->miss_size += centry->bitmap_size;
-		} else {
-			image_cache->fail_count++;
-			image_cache->fail_size += centry->bitmap_size;
+		ఒకవేళ (centry->bitmap != ఖాళీ) {
+			image_cache_stats_bitmap_కూడు(centry);
+			image_cache->తప్పిపోవు_లెక్క++;
+			image_cache->తప్పిపోవు_కొలత += centry->bitmap_కొలత;
+		} లేకపోతే {
+			image_cache->fail_లెక్క++;
+			image_cache->fail_కొలత += centry->bitmap_కొలత;
 		}
-	} else {
-		image_cache->hit_count++;
-		image_cache->hit_size += centry->bitmap_size;
+	} లేకపోతే {
+		image_cache->తగిలింది_లెక్క++;
+		image_cache->తగిలింది_కొలత += centry->bitmap_కొలత;
 	}
 
-	return centry->bitmap;
+	తిరిగి centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
-bool image_cache_speculate(struct content *c)
+bool image_cache_speculate(నిర్మాణం content *c)
 {
 	bool decision = false;
 
 	/* If the cache is below its target usage and the bitmap is
 	 * small enough speculate.
 	 */
-	if ((image_cache->total_bitmap_size < image_cache->params.limit) &&
-	    (c->size <= image_cache->params.speculative_small)) {
-#ifdef IMAGE_CACHE_VERBOSE
+	ఒకవేళ ((image_cache->మొత్తం_bitmap_కొలత < image_cache->params.హద్దు) &&
+	    (c->కొలత <= image_cache->params.speculative_small)) {
+#నిర్వచితమైతే IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
 		      "content size (%d) is smaller than minimum (%d)",
-		      c->size,
+		      c->కొలత,
 		      SPECULATE_SMALL);
-#endif
+#అయితే_ముగింపు
 		decision = true;
 	}
 
-#ifdef IMAGE_CACHE_VERBOSE
+#నిర్వచితమైతే IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "returning %d", decision);
-#endif
-	return decision;
+#అయితే_ముగింపు
+	తిరిగి decision;
 }
 
 /* exported interface documented in image_cache.h */
-struct bitmap *image_cache_find_bitmap(struct content *c)
+నిర్మాణం bitmap *image_cache_కనుగొను_bitmap(నిర్మాణం content *c)
 {
-	struct image_cache_entry_s *centry;
+	నిర్మాణం image_cache_నమోదు_s *centry;
 
-	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	centry = image_cache_కనుగొను(c);
+	ఒకవేళ (centry == ఖాళీ) {
+		తిరిగి ఖాళీ;
 	}
 
-	return centry->bitmap;
+	తిరిగి centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
 nserror
-image_cache_init(const struct image_cache_parameters *image_cache_parameters)
+image_cache_init(స్థిరరాశి నిర్మాణం image_cache_parameters *image_cache_parameters)
 {
-	image_cache = calloc(1, sizeof(struct image_cache_s));
-	if (image_cache == NULL) {
-		return NSERROR_NOMEM;
+	image_cache = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం image_cache_s));
+	ఒకవేళ (image_cache == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	image_cache->params = *image_cache_parameters;
 
-	guit->misc->schedule(image_cache->params.bg_clean_time,
+	guit->misc->కాలపట్టిక(image_cache->params.bg_clean_సమయం,
 				image_cache__background_update,
 				image_cache);
 
 	NSLOG(netsurf, INFO,
 	      "Image cache initialised with a limit of %"PRIsizet" hysteresis of %"PRIsizet,
-	      image_cache->params.limit,
+	      image_cache->params.హద్దు,
 	      image_cache->params.hysteresis);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_fini(void)
+nserror image_cache_fini(శూన్య)
 {
-	unsigned int op_count;
-	uint64_t op_size;
+	గుర్తులేని పూర్ణాంకం op_లెక్క;
+	uint64_t op_కొలత;
 
-	guit->misc->schedule(-1, image_cache__background_update, image_cache);
+	guit->misc->కాలపట్టిక(-1, image_cache__background_update, image_cache);
 
 	NSLOG(netsurf, INFO, "Size at finish %"PRIsizet" (in %d)",
-	      image_cache->total_bitmap_size, image_cache->bitmap_count);
+	      image_cache->మొత్తం_bitmap_కొలత, image_cache->bitmap_లెక్క);
 
-	while (image_cache->entries != NULL) {
-		image_cache__free_entry(image_cache->entries);
+	అయితే (image_cache->entries != ఖాళీ) {
+		image_cache_free_నమోదు(image_cache->entries);
 	}
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_లెక్క = image_cache->తగిలింది_లెక్క +
+		image_cache->తప్పిపోవు_లెక్క +
+		image_cache->fail_లెక్క;
 
-	op_size = image_cache->hit_size +
-		image_cache->miss_size +
-		image_cache->fail_size;
+	op_కొలత = image_cache->తగిలింది_కొలత +
+		image_cache->తప్పిపోవు_కొలత +
+		image_cache->fail_కొలత;
 
 	NSLOG(netsurf, INFO, "Age %ds", image_cache->current_age / 1000);
 	NSLOG(netsurf, INFO, "Peak size %"PRIsizet" (in %d)",
-	      image_cache->max_bitmap_size,
-	      image_cache->max_bitmap_size_count);
+	      image_cache->max_bitmap_కొలత,
+	      image_cache->max_bitmap_కొలత_లెక్క);
 	NSLOG(netsurf, INFO, "Peak image count %d (size %"PRIsizet")",
-	      image_cache->max_bitmap_count,
-	      image_cache->max_bitmap_count_size);
+	      image_cache->max_bitmap_లెక్క,
+	      image_cache->max_bitmap_లెక్క_కొలత);
 
-	if ((op_count > 0) && (op_size >0)) {
+	ఒకవేళ ((op_లెక్క > 0) && (op_కొలత >0)) {
 
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (counts) %d/%d/%d/%d (100%%/%d%%/%d%%/%d%%)",
-		      op_count,
-		      image_cache->hit_count,
-		      image_cache->miss_count,
-		      image_cache->fail_count,
-		      (image_cache->hit_count * 100) / op_count,
-		      (image_cache->miss_count * 100) / op_count,
-		      (image_cache->fail_count * 100) / op_count);
+		      op_లెక్క,
+		      image_cache->తగిలింది_లెక్క,
+		      image_cache->తప్పిపోవు_లెక్క,
+		      image_cache->fail_లెక్క,
+		      (image_cache->తగిలింది_లెక్క * 100) / op_లెక్క,
+		      (image_cache->తప్పిపోవు_లెక్క * 100) / op_లెక్క,
+		      (image_cache->fail_లెక్క * 100) / op_లెక్క);
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (size) %"PRIu64"/%"PRIu64"/%"PRIu64"/%"PRIu64" (100%%/%"PRId64"%%/%"PRId64"%%/%"PRId64"%%)",
-		      op_size,
-		      image_cache->hit_size,
-		      image_cache->miss_size,
-		      image_cache->fail_size,
-		      (image_cache->hit_size * 100) / op_size,
-		      (image_cache->miss_size * 100) / op_size,
-		      (image_cache->fail_size * 100) / op_size);
+		      op_కొలత,
+		      image_cache->తగిలింది_కొలత,
+		      image_cache->తప్పిపోవు_కొలత,
+		      image_cache->fail_కొలత,
+		      (image_cache->తగిలింది_కొలత * 100) / op_కొలత,
+		      (image_cache->తప్పిపోవు_కొలత * 100) / op_కొలత,
+		      (image_cache->fail_కొలత * 100) / op_కొలత);
 	}
 
 	NSLOG(netsurf, INFO,
 	      "Total images never rendered: %d (includes %d that were converted)",
-	      image_cache->total_unrendered,
-	      image_cache->specultive_miss_count);
+	      image_cache->మొత్తం_unrendered,
+	      image_cache->specultive_తప్పిపోవు_లెక్క);
 
 	NSLOG(netsurf, INFO,
 	      "Total number of excessive conversions: %d (from %d images converted more than once)",
-	      image_cache->total_extra_conversions,
-	      image_cache->total_extra_conversions_count);
+	      image_cache->మొత్తం_extra_conversions,
+	      image_cache->మొత్తం_extra_conversions_లెక్క);
 
 	NSLOG(netsurf, INFO, "Bitmap of size %d had most (%d) conversions",
-	      image_cache->peak_conversions_size,
+	      image_cache->peak_conversions_కొలత,
 	      image_cache->peak_conversions);
 
-	free(image_cache);
+	విడుదల(image_cache);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_add(struct content *content,
-			struct bitmap *bitmap,
+nserror image_cache_కూడు(నిర్మాణం content *content,
+			నిర్మాణం bitmap *bitmap,
 			image_cache_convert_fn *convert)
 {
-	struct image_cache_entry_s *centry;
+	నిర్మాణం image_cache_నమోదు_s *centry;
 
 	/* bump the cache age by a ms to ensure multiple items are not
 	 * added at exactly the same time
 	 */
 	image_cache->current_age++;
 
-	centry = image_cache__find(content);
-	if (centry == NULL) {
+	centry = image_cache_కనుగొను(content);
+	ఒకవేళ (centry == ఖాళీ) {
 		/* new cache entry, content not previously added */
-		centry = calloc(1, sizeof(struct image_cache_entry_s));
-		if (centry == NULL) {
-			return NSERROR_NOMEM;
+		centry = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం image_cache_నమోదు_s));
+		ఒకవేళ (centry == ఖాళీ) {
+			తిరిగి NSERROR_NOMEM;
 		}
 		image_cache__link(centry);
 		centry->content = content;
 
-		centry->bitmap_size = content->width * content->height * 4llu;
+		centry->bitmap_కొలత = content->వెడల్పు * content->ఎత్తు * 4llu;
 	}
 
 	NSLOG(netsurf, INFO, "centry %p, content %p, bitmap %p", centry,
@@ -537,144 +537,144 @@ nserror image_cache_add(struct content *content,
 	centry->convert = convert;
 
 	/* set bitmap entry if one is passed, free extant one if present */
-	if (bitmap != NULL) {
-		if (centry->bitmap != NULL) {
+	ఒకవేళ (bitmap != ఖాళీ) {
+		ఒకవేళ (centry->bitmap != ఖాళీ) {
 			guit->bitmap->destroy(centry->bitmap);
-		} else {
-			image_cache_stats_bitmap_add(centry);
+		} లేకపోతే {
+			image_cache_stats_bitmap_కూడు(centry);
 		}
 		centry->bitmap = bitmap;
-	} else {
+	} లేకపోతే {
 		/* no bitmap, check to see if we should speculatively convert */
-		if ((centry->convert != NULL) &&
+		ఒకవేళ ((centry->convert != ఖాళీ) &&
 		    (image_cache_speculate(content) == true)) {
 			centry->bitmap = centry->convert(centry->content);
 
-			if (centry->bitmap != NULL) {
-				image_cache_stats_bitmap_add(centry);
-			} else {
-				image_cache->fail_count++;
+			ఒకవేళ (centry->bitmap != ఖాళీ) {
+				image_cache_stats_bitmap_కూడు(centry);
+			} లేకపోతే {
+				image_cache->fail_లెక్క++;
 			}
 		}
 	}
 
 
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_remove(struct content *content)
+nserror image_cache_remove(నిర్మాణం content *content)
 {
-	struct image_cache_entry_s *centry;
+	నిర్మాణం image_cache_నమోదు_s *centry;
 
 	/* get the cache entry */
-	centry = image_cache__find(content);
-	if (centry == NULL) {
+	centry = image_cache_కనుగొను(content);
+	ఒకవేళ (centry == ఖాళీ) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-		return NSERROR_NOT_FOUND;
+		తిరిగి NSERROR_NOT_దొరికింది;
 	}
 
-	image_cache__free_entry(centry);
+	image_cache_free_నమోదు(centry);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt)
+పూర్ణాంకం image_cache_snsummaryf(అక్షరం *string, size_t కొలత, స్థిరరాశి అక్షరం *fmt)
 {
 	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	పూర్ణాంకం fmtc = 0; /* current index into format string */
 	bool pct;
-	unsigned int op_count;
-	uint64_t op_size;
+	గుర్తులేని పూర్ణాంకం op_లెక్క;
+	uint64_t op_కొలత;
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_లెక్క = image_cache->తగిలింది_లెక్క +
+		image_cache->తప్పిపోవు_లెక్క +
+		image_cache->fail_లెక్క;
 
-	op_size = image_cache->hit_size +
-		image_cache->miss_size +
-		image_cache->fail_size;
+	op_కొలత = image_cache->తగిలింది_కొలత +
+		image_cache->తప్పిపోవు_కొలత +
+		image_cache->fail_కొలత;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	అయితే((slen < కొలత) && (fmt[fmtc] != 0)) {
+		ఒకవేళ (fmt[fmtc] == '%') {
 			fmtc++;
 
 			/* check for percentage modifier */
-			if (fmt[fmtc] == 'p') {
+			ఒకవేళ (fmt[fmtc] == 'p') {
 				fmtc++;
 				pct = true;
-			} else {
+			} లేకపోతే {
 				pct = false;
 			}
 
-#define FMTCHR(chr,fmt,var) case chr : \
-slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); break
+#నిర్వచించు FMTCHR(chr,fmt,var) స్థితి chr : \
+slen += snprintf(string + slen, కొలత - slen, "%"fmt, image_cache->var); ఆపు
 
-#define FMTPCHR(chr,fmt,var,div) \
-case chr :					\
-	if (pct) {							\
-		if (div > 0) {						\
-			slen += snprintf(string + slen, size - slen, "%"PRId64, (uint64_t)((image_cache->var * 100) / div)); \
-		} else {						\
-			slen += snprintf(string + slen, size - slen, "100"); \
+#నిర్వచించు FMTPCHR(chr,fmt,var,div) \
+స్థితి chr :					\
+	ఒకవేళ (pct) {							\
+		ఒకవేళ (div > 0) {						\
+			slen += snprintf(string + slen, కొలత - slen, "%"PRId64, (uint64_t)((image_cache->var * 100) / div)); \
+		} లేకపోతే {						\
+			slen += snprintf(string + slen, కొలత - slen, "100"); \
 		}							\
-	} else {							\
-		slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); \
-	} break
+	} లేకపోతే {							\
+		slen += snprintf(string + slen, కొలత - slen, "%"fmt, image_cache->var); \
+	} ఆపు
 
 
-			switch (fmt[fmtc]) {
-			case '%':
+			ఎంపిక (fmt[fmtc]) {
+			స్థితి '%':
 				string[slen] = '%';
 				slen++;
-				break;
+				ఆపు;
 
-			FMTCHR('a', PRIsizet, params.limit);
+			FMTCHR('a', PRIsizet, params.హద్దు);
 			FMTCHR('b', PRIsizet, params.hysteresis);
-			FMTCHR('c', PRIsizet, total_bitmap_size);
-			FMTCHR('d', "d", bitmap_count);
+			FMTCHR('c', PRIsizet, మొత్తం_bitmap_కొలత);
+			FMTCHR('d', "d", bitmap_లెక్క);
 			FMTCHR('e', "u", current_age / 1000);
-			FMTCHR('f', PRIsizet, max_bitmap_size);
-			FMTCHR('g', "d", max_bitmap_size_count);
-			FMTCHR('h', "d", max_bitmap_count);
-			FMTCHR('i', PRIsizet, max_bitmap_count_size);
+			FMTCHR('f', PRIsizet, max_bitmap_కొలత);
+			FMTCHR('g', "d", max_bitmap_కొలత_లెక్క);
+			FMTCHR('h', "d", max_bitmap_లెక్క);
+			FMTCHR('i', PRIsizet, max_bitmap_లెక్క_కొలత);
 
 
-			case 'j':
-				slen += snprintf(string + slen, size - slen,
-						 "%u", pct?100:op_count);
-				break;
+			స్థితి 'j':
+				slen += snprintf(string + slen, కొలత - slen,
+						 "%u", pct?100:op_లెక్క);
+				ఆపు;
 
-			FMTPCHR('k', "d", hit_count, op_count);
-			FMTPCHR('l', "d", miss_count, op_count);
-			FMTPCHR('m', "d", fail_count, op_count);
+			FMTPCHR('k', "d", తగిలింది_లెక్క, op_లెక్క);
+			FMTPCHR('l', "d", తప్పిపోవు_లెక్క, op_లెక్క);
+			FMTPCHR('m', "d", fail_లెక్క, op_లెక్క);
 
-			case 'n':
-				slen += snprintf(string + slen, size - slen,
-						 "%"PRId64, pct?100:op_size);
-				break;
+			స్థితి 'n':
+				slen += snprintf(string + slen, కొలత - slen,
+						 "%"PRId64, pct?100:op_కొలత);
+				ఆపు;
 
-			FMTPCHR('o', PRId64, hit_size, op_size);
-			FMTPCHR('q', PRId64, miss_size, op_size);
-			FMTPCHR('r', PRId64, fail_size, op_size);
+			FMTPCHR('o', PRId64, తగిలింది_కొలత, op_కొలత);
+			FMTPCHR('q', PRId64, తప్పిపోవు_కొలత, op_కొలత);
+			FMTPCHR('r', PRId64, fail_కొలత, op_కొలత);
 
-			FMTCHR('s', "d", total_unrendered);
-			FMTCHR('t', "d", specultive_miss_count);
-			FMTCHR('u', "d", total_extra_conversions);
-			FMTCHR('v', "d", total_extra_conversions_count);
-			FMTCHR('w', "u", peak_conversions_size);
+			FMTCHR('s', "d", మొత్తం_unrendered);
+			FMTCHR('t', "d", specultive_తప్పిపోవు_లెక్క);
+			FMTCHR('u', "d", మొత్తం_extra_conversions);
+			FMTCHR('v', "d", మొత్తం_extra_conversions_లెక్క);
+			FMTCHR('w', "u", peak_conversions_కొలత);
 			FMTCHR('x', "d", peak_conversions);
 
 
 			}
-#undef FMTCHR
-#undef FMTPCHR
+#నిర్వచనం_రద్దు FMTCHR
+#నిర్వచనం_రద్దు FMTPCHR
 
 			fmtc++;
-		} else {
+		} లేకపోతే {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -682,69 +682,69 @@ case chr :					\
 	}
 
 	/* Ensure that we NUL-terminate the output */
-	string[min(slen, size - 1)] = '\0';
+	string[min(slen, కొలత - 1)] = '\0';
 
-	return slen;
+	తిరిగి slen;
 }
 
 /* exported interface documented in image_cache.h */
-int
-image_cache_snentryf(char *string,
-		     size_t size,
-		     unsigned int entryn,
-		     const char *fmt)
+పూర్ణాంకం
+image_cache_snentryf(అక్షరం *string,
+		     size_t కొలత,
+		     గుర్తులేని పూర్ణాంకం entryn,
+		     స్థిరరాశి అక్షరం *fmt)
 {
-	struct image_cache_entry_s *centry;
+	నిర్మాణం image_cache_నమోదు_s *centry;
 	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	పూర్ణాంకం fmtc = 0; /* current index into format string */
 	lwc_string *origin; /* current entry's origin */
 
 	centry = image_cache__findn(entryn);
-	if (centry == NULL)
-		return -1;
+	ఒకవేళ (centry == ఖాళీ)
+		తిరిగి -1;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	అయితే((slen < కొలత) && (fmt[fmtc] != 0)) {
+		ఒకవేళ (fmt[fmtc] == '%') {
 			fmtc++;
-			switch (fmt[fmtc]) {
-			case 'e':
-				slen += snprintf(string + slen, size - slen,
+			ఎంపిక (fmt[fmtc]) {
+			స్థితి 'e':
+				slen += snprintf(string + slen, కొలత - slen,
 						"%u", entryn);
-				break;
+				ఆపు;
 
-			case 'r':
-				slen += snprintf(string + slen, size - slen,
-						"%u", centry->redraw_count);
-				break;
+			స్థితి 'r':
+				slen += snprintf(string + slen, కొలత - slen,
+						"%u", centry->redraw_లెక్క);
+				ఆపు;
 
-			case 'a':
-				slen += snprintf(string + slen, size - slen,
-						 "%.2f", (float)((image_cache->current_age -  centry->redraw_age)) / 1000);
-				break;
+			స్థితి 'a':
+				slen += snprintf(string + slen, కొలత - slen,
+						 "%.2f", (దశాంశం)((image_cache->current_age -  centry->redraw_age)) / 1000);
+				ఆపు;
 
 
-			case 'c':
-				slen += snprintf(string + slen, size - slen,
-						"%d", centry->conversion_count);
-				break;
+			స్థితి 'c':
+				slen += snprintf(string + slen, కొలత - slen,
+						"%d", centry->conversion_లెక్క);
+				ఆపు;
 
-			case 'g':
-				slen += snprintf(string + slen, size - slen,
-						"%.2f", (float)((image_cache->current_age -  centry->bitmap_age)) / 1000);
-				break;
+			స్థితి 'g':
+				slen += snprintf(string + slen, కొలత - slen,
+						"%.2f", (దశాంశం)((image_cache->current_age -  centry->bitmap_age)) / 1000);
+				ఆపు;
 
-			case 'k':
-				slen += snprintf(string + slen, size - slen,
+			స్థితి 'k':
+				slen += snprintf(string + slen, కొలత - slen,
 						"%p", centry->content);
-				break;
+				ఆపు;
 
-			case 'U':
-				slen += snprintf(string + slen, size - slen,
+			స్థితి 'U':
+				slen += snprintf(string + slen, కొలత - slen,
 						"%s", nsurl_access(llcache_handle_get_url(centry->content->llcache)));
-				break;
+				ఆపు;
 
-			case 'o':
-				if (nsurl_has_component(llcache_handle_get_url(
+			స్థితి 'o':
+				ఒకవేళ (nsurl_has_component(llcache_handle_get_url(
 						centry->content->llcache),
 						NSURL_HOST)) {
 					origin = nsurl_get_component(
@@ -754,33 +754,33 @@ image_cache_snentryf(char *string,
 							NSURL_HOST);
 
 					slen += snprintf(string + slen,
-							size - slen, "%s",
-							lwc_string_data(
+							కొలత - slen, "%s",
+							lwc_string_దత్తాంశం(
 								origin));
 
 					lwc_string_unref(origin);
-				} else {
+				} లేకపోతే {
 					slen += snprintf(string + slen,
-							size - slen, "%s",
+							కొలత - slen, "%s",
 							"localhost");
 				}
-				break;
+				ఆపు;
 
-			case 's':
-				if (centry->bitmap != NULL) {
+			స్థితి 's':
+				ఒకవేళ (centry->bitmap != ఖాళీ) {
 					slen += snprintf(string + slen,
-							 size - slen,
+							 కొలత - slen,
 							 "%" PRIsizet,
-							 centry->bitmap_size);
-				} else {
+							 centry->bitmap_కొలత);
+				} లేకపోతే {
 					slen += snprintf(string + slen,
-							 size - slen,
+							 కొలత - slen,
 							 "0");
 				}
-				break;
+				ఆపు;
 			}
 			fmtc++;
-		} else {
+		} లేకపోతే {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -788,89 +788,89 @@ image_cache_snentryf(char *string,
 	}
 
 	/* Ensure that we NUL-terminate the output */
-	string[min(slen, size - 1)] = '\0';
+	string[min(slen, కొలత - 1)] = '\0';
 
-	return slen;
+	తిరిగి slen;
 }
 
 
 /* exported interface documented in image_cache.h */
-bool image_cache_redraw(struct content *c,
-			struct content_redraw_data *data,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+bool image_cache_redraw(నిర్మాణం content *c,
+			నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+			స్థిరరాశి నిర్మాణం rect *clip,
+			స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
-	struct image_cache_entry_s *centry;
+	నిర్మాణం image_cache_నమోదు_s *centry;
 
 	/* get the cache entry */
-	centry = image_cache__find(c);
-	if (centry == NULL) {
+	centry = image_cache_కనుగొను(c);
+	ఒకవేళ (centry == ఖాళీ) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", c);
-		return false;
+		తిరిగి false;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	ఒకవేళ (centry->bitmap == ఖాళీ) {
+		ఒకవేళ (centry->convert != ఖాళీ) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
-			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
-			image_cache->miss_size += centry->bitmap_size;
-		} else {
-			image_cache->fail_count++;
-			image_cache->fail_size += centry->bitmap_size;
-			return false;
+		ఒకవేళ (centry->bitmap != ఖాళీ) {
+			image_cache_stats_bitmap_కూడు(centry);
+			image_cache->తప్పిపోవు_లెక్క++;
+			image_cache->తప్పిపోవు_కొలత += centry->bitmap_కొలత;
+		} లేకపోతే {
+			image_cache->fail_లెక్క++;
+			image_cache->fail_కొలత += centry->bitmap_కొలత;
+			తిరిగి false;
 		}
-	} else {
-		image_cache->hit_count++;
-		image_cache->hit_size += centry->bitmap_size;
+	} లేకపోతే {
+		image_cache->తగిలింది_లెక్క++;
+		image_cache->తగిలింది_కొలత += centry->bitmap_కొలత;
 	}
 
 
 	/* update statistics */
-	centry->redraw_count++;
+	centry->redraw_లెక్క++;
 	centry->redraw_age = image_cache->current_age;
 
-	return image_bitmap_plot(centry->bitmap, data, clip, ctx);
+	తిరిగి image_bitmap_plot(centry->bitmap, దత్తాంశం, clip, ctx);
 }
 
 /* exported interface documented in image_cache.h */
-void image_cache_destroy(struct content *content)
+శూన్య image_cache_destroy(నిర్మాణం content *content)
 {
-	struct image_cache_entry_s *centry;
+	నిర్మాణం image_cache_నమోదు_s *centry;
 
 	/* get the cache entry */
-	centry = image_cache__find(content);
-	if (centry == NULL) {
+	centry = image_cache_కనుగొను(content);
+	ఒకవేళ (centry == ఖాళీ) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-	} else {
-		image_cache__free_entry(centry);
+	} లేకపోతే {
+		image_cache_free_నమోదు(centry);
 	}
 }
 
 /* exported interface documented in image_cache.h */
-void *image_cache_get_internal(const struct content *c, void *context)
+శూన్య *image_cache_get_అంతర్గత(స్థిరరాశి నిర్మాణం content *c, శూన్య *context)
 {
-	return image_cache_get_bitmap(c);
+	తిరిగి image_cache_get_bitmap(c);
 }
 
 /* exported interface documented in image_cache.h */
-bool image_cache_is_opaque(struct content *c)
+bool image_cache_is_opaque(నిర్మాణం content *c)
 {
-	struct bitmap *bmp;
+	నిర్మాణం bitmap *bmp;
 	bmp = image_cache_get_bitmap(c);
-	if (bmp != NULL) {
-		return guit->bitmap->get_opaque(bmp);
+	ఒకవేళ (bmp != ఖాళీ) {
+		తిరిగి guit->bitmap->get_opaque(bmp);
 	}
-	return false;
+	తిరిగి false;
 }
 
 /* exported interface documented in image_cache.h */
-content_type image_cache_content_type(void)
+content_type image_cache_content_type(శూన్య)
 {
-	return CONTENT_IMAGE;
+	తిరిగి CONTENT_IMAGE;
 }

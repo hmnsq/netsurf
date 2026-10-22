@@ -22,91 +22,91 @@
  * Free text search
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "utils/ascii.h"
-#include "netsurf/types.h"
-#include "desktop/selection.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/ascii.h"
+#అన్తర్భావ "netsurf/types.h"
+#అన్తర్భావ "desktop/selection.h"
 
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
+#అన్తర్భావ "content/content.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "content/textsearch.h"
 
 /**
  * search match
  */
-struct list_entry {
+నిర్మాణం list_నమోదు {
 	/**
 	 * previous match
 	 */
-	struct list_entry *prev;
+	నిర్మాణం list_నమోదు *prev;
 
 	/**
 	 * next match
 	 */
-	struct list_entry *next;
+	నిర్మాణం list_నమోదు *తదుపరి;
 
 	/**
 	 * start position of match
 	 */
-	unsigned start_idx;
+	గుర్తులేని ప్రారంభం_idx;
 
 	/**
 	 * end of match
 	 */
-	unsigned end_idx;
+	గుర్తులేని చివర_idx;
 
 	/**
 	 * content opaque start pointer
 	 */
-	struct box *start_box;
+	నిర్మాణం box *ప్రారంభం_box;
 
 	/**
 	 * content opaque end pointer
 	 */
-	struct box *end_box;
+	నిర్మాణం box *చివర_box;
 
 	/**
 	 * content specific selection object
 	 */
-	struct selection *sel;
+	నిర్మాణం selection *sel;
 };
 
 /**
  * The context for a free text search
  */
-struct textsearch_context {
+నిర్మాణం textsearch_context {
 
 	/**
 	 * content search was performed upon
 	 */
-	struct content *c;
+	నిర్మాణం content *c;
 
 	/**
 	 * opaque pointer passed to constructor.
 	 */
-	void *gui_p;
+	శూన్య *gui_p;
 
 	/**
 	 * List of matches
 	 */
-	struct list_entry *found;
+	నిర్మాణం list_నమోదు *దొరికింది;
 
 	/**
 	 * current selected match
 	 */
-	struct list_entry *current; /* first for select all */
+	నిర్మాణం list_నమోదు *current; /* first for select all */
 
 	/**
 	 * query string search results are for
 	 */
-	char *string;
+	అక్షరం *string;
 	bool prev_case_sens;
 	bool newsearch;
 };
@@ -115,18 +115,18 @@ struct textsearch_context {
 /**
  * broadcast textsearch message
  */
-static inline void
-textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+స్థిర అంతఃవరుస శూన్య
+textsearch_ప్రసారం(నిర్మాణం textsearch_context *textsearch,
+		     పూర్ణాంకం type,
 		     bool state,
-		     const char *string)
+		     స్థిరరాశి అక్షరం *string)
 {
-	union content_msg_data msg_data;
-	msg_data.textsearch.type = type;
-	msg_data.textsearch.ctx = textsearch->gui_p;
-	msg_data.textsearch.state = state;
-	msg_data.textsearch.string = string;
-	content_broadcast(textsearch->c, CONTENT_MSG_TEXTSEARCH, &msg_data);
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	సందేశం_దత్తాంశం.textsearch.type = type;
+	సందేశం_దత్తాంశం.textsearch.ctx = textsearch->gui_p;
+	సందేశం_దత్తాంశం.textsearch.state = state;
+	సందేశం_దత్తాంశం.textsearch.string = string;
+	content_ప్రసారం(textsearch->c, CONTENT_సందేశం_TEXTSEARCH, &సందేశం_దత్తాంశం);
 }
 
 
@@ -134,12 +134,12 @@ textsearch_broadcast(struct textsearch_context *textsearch,
  * Release the memory used by the list of matches,
  * deleting selection objects too
  */
-static void free_matches(struct textsearch_context *textsearch)
+స్థిర శూన్య free_matches(నిర్మాణం textsearch_context *textsearch)
 {
-	struct list_entry *cur;
-	struct list_entry *nxt;
+	నిర్మాణం list_నమోదు *cur;
+	నిర్మాణం list_నమోదు *nxt;
 
-	cur = textsearch->found->next;
+	cur = textsearch->దొరికింది->తదుపరి;
 
 	/*
 	 * empty the list before clearing and deleting the selections
@@ -147,15 +147,15 @@ static void free_matches(struct textsearch_context *textsearch)
 	 * causing nested accesses to the list
 	 */
 
-	textsearch->found->prev = NULL;
-	textsearch->found->next = NULL;
+	textsearch->దొరికింది->prev = ఖాళీ;
+	textsearch->దొరికింది->తదుపరి = ఖాళీ;
 
-	for (; cur; cur = nxt) {
-		nxt = cur->next;
-		if (cur->sel) {
+	కొరకు (; cur; cur = nxt) {
+		nxt = cur->తదుపరి;
+		ఒకవేళ (cur->sel) {
 			selection_destroy(cur->sel);
 		}
-		free(cur);
+		విడుదల(cur);
 	}
 }
 
@@ -164,28 +164,28 @@ static void free_matches(struct textsearch_context *textsearch)
  * Specifies whether all matches or just the current match should
  * be highlighted in the search text.
  */
-static void search_show_all(bool all, struct textsearch_context *context)
+స్థిర శూన్య శోధన_show_all(bool all, నిర్మాణం textsearch_context *context)
 {
-	struct list_entry *a;
+	నిర్మాణం list_నమోదు *a;
 
-	for (a = context->found->next; a; a = a->next) {
-		bool add = true;
-		if (!all && a != context->current) {
-			add = false;
-			if (a->sel) {
+	కొరకు (a = context->దొరికింది->తదుపరి; a; a = a->తదుపరి) {
+		bool కూడు = true;
+		ఒకవేళ (!all && a != context->current) {
+			కూడు = false;
+			ఒకవేళ (a->sel) {
 				selection_destroy(a->sel);
-				a->sel = NULL;
+				a->sel = ఖాళీ;
 			}
 		}
 
-		if (add && !a->sel) {
+		ఒకవేళ (కూడు && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			ఒకవేళ (a->sel != ఖాళీ) {
 				selection_init(a->sel);
-				selection_set_position(a->sel,
-						       a->start_idx,
-						       a->end_idx);
+				selection_సమితి_position(a->sel,
+						       a->ప్రారంభం_idx,
+						       a->చివర_idx);
 			}
 		}
 	}
@@ -200,124 +200,124 @@ static void search_show_all(bool all, struct textsearch_context *context)
  * \param string_len length of search string
  * \param flags flags to control the search.
  */
-static nserror
-search_text(struct textsearch_context *context,
-	    const char *string,
-	    int string_len,
-	    search_flags_t flags)
+స్థిర nserror
+శోధన_పాఠ్యం(నిర్మాణం textsearch_context *context,
+	    స్థిరరాశి అక్షరం *string,
+	    పూర్ణాంకం string_len,
+	    శోధన_flags_t flags)
 {
-	struct rect bounds;
-	union content_msg_data msg_data;
+	నిర్మాణం rect bounds;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 	bool case_sensitive, forwards, showall;
 	nserror res = NSERROR_OK;
 
-	case_sensitive = ((flags & SEARCH_FLAG_CASE_SENSITIVE) != 0) ?
+	case_sensitive = ((flags & శోధన_FLAG_CASE_SENSITIVE) != 0) ?
 			true : false;
-	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
-	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
+	forwards = ((flags & శోధన_FLAG_FORWARDS) != 0) ? true : false;
+	showall = ((flags & శోధన_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	ఒకవేళ (context->c == ఖాళీ) {
+		తిరిగి res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	ఒకవేళ ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
-			free(context->string);
+		ఒకవేళ (context->string != ఖాళీ) {
+			విడుదల(context->string);
 		}
 
-		context->current = NULL;
+		context->current = ఖాళీ;
 		free_matches(context);
 
-		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
-			memcpy(context->string, string, string_len);
+		context->string = జ్ఞాపకం_ఇవ్వు(string_len + 1);
+		ఒకవేళ (context->string != ఖాళీ) {
+			జ్ఞాపకం_నకలు(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
 
 		/* indicate find operation starting */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, NULL);
+		textsearch_ప్రసారం(context, CONTENT_TEXTSEARCH_కనుగొను, true, ఖాళీ);
 
 
 		/* call content find handler */
-		res = context->c->handler->textsearch_find(context->c,
+		res = context->c->handler->textsearch_కనుగొను(context->c,
 							   context,
 							   string,
 							   string_len,
 							   case_sensitive);
 
 		/* indicate find operation finished */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
+		textsearch_ప్రసారం(context, CONTENT_TEXTSEARCH_కనుగొను, false, ఖాళీ);
 
-		if (res != NSERROR_OK) {
+		ఒకవేళ (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			తిరిగి res;
 		}
 
 		context->prev_case_sens = case_sensitive;
 
 		/* new search, beginning at the top of the page */
-		context->current = context->found->next;
+		context->current = context->దొరికింది->తదుపరి;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} లేకపోతే ఒకవేళ (context->current != ఖాళీ) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
-				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		ఒకవేళ (forwards) {
+			ఒకవేళ (context->current->తదుపరి)
+				context->current = context->current->తదుపరి;
+		} లేకపోతే {
+			ఒకవేళ (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
 
 	/* update match state */
-	textsearch_broadcast(context,
-			     CONTENT_TEXTSEARCH_MATCH,
-			     (context->current != NULL),
-			     NULL);
+	textsearch_ప్రసారం(context,
+			     CONTENT_TEXTSEARCH_సరిపోలిక,
+			     (context->current != ఖాళీ),
+			     ఖాళీ);
 
-	search_show_all(showall, context);
+	శోధన_show_all(showall, context);
 
 	/* update back state */
-	textsearch_broadcast(context,
-			     CONTENT_TEXTSEARCH_BACK,
-			     ((context->current != NULL) &&
-			      (context->current->prev != NULL)),
-			     NULL);
+	textsearch_ప్రసారం(context,
+			     CONTENT_TEXTSEARCH_వెనుక,
+			     ((context->current != ఖాళీ) &&
+			      (context->current->prev != ఖాళీ)),
+			     ఖాళీ);
 
 	/* update forward state */
-	textsearch_broadcast(context,
+	textsearch_ప్రసారం(context,
 			     CONTENT_TEXTSEARCH_FORWARD,
-			     ((context->current != NULL) &&
-			      (context->current->next != NULL)),
-			     NULL);
+			     ((context->current != ఖాళీ) &&
+			      (context->current->తదుపరి != ఖాళీ)),
+			     ఖాళీ);
 
 
-	if (context->current == NULL) {
+	ఒకవేళ (context->current == ఖాళీ) {
 		/* no current match */
-		return res;
+		తిరిగి res;
 	}
 
 	/* call content match bounds handler */
 	res = context->c->handler->textsearch_bounds(context->c,
-					context->current->start_idx,
-					context->current->end_idx,
-					context->current->start_box,
-					context->current->end_box,
+					context->current->ప్రారంభం_idx,
+					context->current->చివర_idx,
+					context->current->ప్రారంభం_box,
+					context->current->చివర_box,
 					&bounds);
-	if (res == NSERROR_OK) {
-		msg_data.scroll.area = true;
-		msg_data.scroll.x0 = bounds.x0;
-		msg_data.scroll.y0 = bounds.y0;
-		msg_data.scroll.x1 = bounds.x1;
-		msg_data.scroll.y1 = bounds.y1;
-		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
+	ఒకవేళ (res == NSERROR_OK) {
+		సందేశం_దత్తాంశం.scroll.area = true;
+		సందేశం_దత్తాంశం.scroll.x0 = bounds.x0;
+		సందేశం_దత్తాంశం.scroll.y0 = bounds.y0;
+		సందేశం_దత్తాంశం.scroll.x1 = bounds.x1;
+		సందేశం_దత్తాంశం.scroll.y1 = bounds.y1;
+		content_ప్రసారం(context->c, CONTENT_సందేశం_SCROLL, &సందేశం_దత్తాంశం);
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -330,64 +330,64 @@ search_text(struct textsearch_context *context,
  * \param flags   The flags forward/back etc
  * \param string  The string to match
  */
-static nserror
-content_textsearch_step(struct textsearch_context *textsearch,
-			search_flags_t flags,
-			const char *string)
+స్థిర nserror
+content_textsearch_అడుగు(నిర్మాణం textsearch_context *textsearch,
+			శోధన_flags_t flags,
+			స్థిరరాశి అక్షరం *string)
 {
-	int string_len;
-	int i = 0;
+	పూర్ణాంకం string_len;
+	పూర్ణాంకం i = 0;
 	nserror res = NSERROR_OK;
 
-	assert(textsearch != NULL);
+	ప్రతిజ్ఞా(textsearch != ఖాళీ);
 
 	/* broadcast recent query string */
-	textsearch_broadcast(textsearch,
+	textsearch_ప్రసారం(textsearch,
 			     CONTENT_TEXTSEARCH_RECENT,
 			     false,
 			     string);
 
-	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
-			break;
+	string_len = అక్షరశ్రేణి_పొడవు(string);
+	కొరకు (i = 0; i < string_len; i++) {
+		ఒకవేళ (string[i] != '#' && string[i] != '*')
+			ఆపు;
 	}
 
-	if (i < string_len) {
-		res = search_text(textsearch, string, string_len, flags);
-	} else {
-		union content_msg_data msg_data;
+	ఒకవేళ (i < string_len) {
+		res = శోధన_పాఠ్యం(textsearch, string, string_len, flags);
+	} లేకపోతే {
+		సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 
 		free_matches(textsearch);
 
 		/* update match state */
-		textsearch_broadcast(textsearch,
-				     CONTENT_TEXTSEARCH_MATCH,
+		textsearch_ప్రసారం(textsearch,
+				     CONTENT_TEXTSEARCH_సరిపోలిక,
 				     true,
-				     NULL);
+				     ఖాళీ);
 
 		/* update back state */
-		textsearch_broadcast(textsearch,
-				     CONTENT_TEXTSEARCH_BACK,
+		textsearch_ప్రసారం(textsearch,
+				     CONTENT_TEXTSEARCH_వెనుక,
 				     false,
-				     NULL);
+				     ఖాళీ);
 
 		/* update forward state */
-		textsearch_broadcast(textsearch,
+		textsearch_ప్రసారం(textsearch,
 				     CONTENT_TEXTSEARCH_FORWARD,
 				     false,
-				     NULL);
+				     ఖాళీ);
 
 		/* clear scroll */
-		msg_data.scroll.area = false;
-		msg_data.scroll.x0 = 0;
-		msg_data.scroll.y0 = 0;
-		content_broadcast(textsearch->c,
-				  CONTENT_MSG_SCROLL,
-				  &msg_data);
+		సందేశం_దత్తాంశం.scroll.area = false;
+		సందేశం_దత్తాంశం.scroll.x0 = 0;
+		సందేశం_దత్తాంశం.scroll.y0 = 0;
+		content_ప్రసారం(textsearch->c,
+				  CONTENT_సందేశం_SCROLL,
+				  &సందేశం_దత్తాంశం);
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -396,16 +396,16 @@ content_textsearch_step(struct textsearch_context *textsearch,
  *
  * \param c content to clear
  */
-static nserror content_textsearch__clear(struct content *c)
+స్థిర nserror content_textsearch__clear(నిర్మాణం content *c)
 {
-	free(c->textsearch.string);
-	c->textsearch.string = NULL;
+	విడుదల(c->textsearch.string);
+	c->textsearch.string = ఖాళీ;
 
-	if (c->textsearch.context != NULL) {
+	ఒకవేళ (c->textsearch.context != ఖాళీ) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = ఖాళీ;
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -417,324 +417,324 @@ static nserror content_textsearch__clear(struct content *c)
  * \param search_out A pointer to recive the new text search context
  * \return NSERROR_OK on success and \a search_out updated else error code
  */
-static nserror
-content_textsearch_create(struct content *c,
-			  void *gui_data,
-			  struct textsearch_context **textsearch_out)
+స్థిర nserror
+content_textsearch_create(నిర్మాణం content *c,
+			  శూన్య *gui_దత్తాంశం,
+			  నిర్మాణం textsearch_context **textsearch_బహిర్గతం)
 {
-	struct textsearch_context *context;
-	struct list_entry *search_head;
+	నిర్మాణం textsearch_context *context;
+	నిర్మాణం list_నమోదు *శోధన_తల;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
-	    (c->handler->textsearch_bounds == NULL)) {
+	ఒకవేళ ((c->handler->textsearch_కనుగొను == ఖాళీ) ||
+	    (c->handler->textsearch_bounds == ఖాళీ)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		తిరిగి NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
-	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	context = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం textsearch_context));
+	ఒకవేళ (context == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
-		free(context);
-		return NSERROR_NOMEM;
+	శోధన_తల = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం list_నమోదు));
+	ఒకవేళ (శోధన_తల == ఖాళీ) {
+		విడుదల(context);
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	search_head->start_idx = 0;
-	search_head->end_idx = 0;
-	search_head->start_box = NULL;
-	search_head->end_box = NULL;
-	search_head->sel = NULL;
-	search_head->prev = NULL;
-	search_head->next = NULL;
+	శోధన_తల->ప్రారంభం_idx = 0;
+	శోధన_తల->చివర_idx = 0;
+	శోధన_తల->ప్రారంభం_box = ఖాళీ;
+	శోధన_తల->చివర_box = ఖాళీ;
+	శోధన_తల->sel = ఖాళీ;
+	శోధన_తల->prev = ఖాళీ;
+	శోధన_తల->తదుపరి = ఖాళీ;
 
-	context->found = search_head;
-	context->current = NULL;
-	context->string = NULL;
+	context->దొరికింది = శోధన_తల;
+	context->current = ఖాళీ;
+	context->string = ఖాళీ;
 	context->prev_case_sens = false;
 	context->newsearch = true;
 	context->c = c;
-	context->gui_p = gui_data;
+	context->gui_p = gui_దత్తాంశం;
 
-	*textsearch_out = context;
+	*textsearch_బహిర్గతం = context;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-const char *
-content_textsearch_find_pattern(const char *string,
-				int s_len,
-				const char *pattern,
-				int p_len,
+స్థిరరాశి అక్షరం *
+content_textsearch_కనుగొను_నమూనా(స్థిరరాశి అక్షరం *string,
+				పూర్ణాంకం s_len,
+				స్థిరరాశి అక్షరం *నమూనా,
+				పూర్ణాంకం p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				గుర్తులేని పూర్ణాంకం *m_len)
 {
-	struct { const char *ss, *s, *p; bool first; } context[16];
-	const char *ep = pattern + p_len;
-	const char *es = string  + s_len;
-	const char *p = pattern - 1;  /* a virtual '*' before the pattern */
-	const char *ss = string;
-	const char *s = string;
-	bool first = true;
-	int top = 0;
+	నిర్మాణం { స్థిరరాశి అక్షరం *ss, *s, *p; bool మొదటి; } context[16];
+	స్థిరరాశి అక్షరం *ep = నమూనా + p_len;
+	స్థిరరాశి అక్షరం *es = string  + s_len;
+	స్థిరరాశి అక్షరం *p = నమూనా - 1;  /* a virtual '*' before the pattern */
+	స్థిరరాశి అక్షరం *ss = string;
+	స్థిరరాశి అక్షరం *s = string;
+	bool మొదటి = true;
+	పూర్ణాంకం శిఖరం = 0;
 
-	while (p < ep) {
+	అయితే (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
-			char ch;
+		ఒకవేళ (p < నమూనా || *p == '*') {
+			అక్షరం ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			చేయి p++; అయితే (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			ఒకవేళ (p >= ep) ఆపు;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			ఒకవేళ (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
-						break;
+				ఒకవేళ (!case_sens) ch = ascii_గమ్యం_పై(ch);
+				అయితే (s < es) {
+					ఒకవేళ (case_sens) {
+						ఒకవేళ (*s == ch) ఆపు;
+					} లేకపోతే ఒకవేళ (ascii_గమ్యం_పై(*s) == ch)
+						ఆపు;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			ఒకవేళ (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
-					context[top].ss = ss;
-					context[top].s  = s + 1;
-					context[top].p  = p - 1;
+				ఒకవేళ (శిఖరం < (పూర్ణాంకం)NOF_ELEMENTS(context)) {
+					context[శిఖరం].ss = ss;
+					context[శిఖరం].s  = s + 1;
+					context[శిఖరం].p  = p - 1;
 					/* ptr to last asterisk */
-					context[top].first = first;
-					top++;
+					context[శిఖరం].మొదటి = మొదటి;
+					శిఖరం++;
 				}
 
-				if (first) {
+				ఒకవేళ (మొదటి) {
 					ss = s;
 					/* remember first non-'*' char */
-					first = false;
+					మొదటి = false;
 				}
 
 				matches = true;
-			} else {
+			} లేకపోతే {
 				matches = false;
 			}
 
-		} else if (s < es) {
-			char ch = *p;
-			if (ch == '#')
+		} లేకపోతే ఒకవేళ (s < es) {
+			అక్షరం ch = *p;
+			ఒకవేళ (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			లేకపోతే {
+				ఒకవేళ (case_sens)
 					matches = (*s == ch);
-				else
-					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
+				లేకపోతే
+					matches = (ascii_గమ్యం_పై(*s) == ascii_గమ్యం_పై(ch));
 			}
-			if (matches && first) {
+			ఒకవేళ (matches && మొదటి) {
 				ss = s;  /* remember first non-'*' char */
-				first = false;
+				మొదటి = false;
 			}
-		} else {
+		} లేకపోతే {
 			matches = false;
 		}
 
-		if (matches) {
+		ఒకవేళ (matches) {
 			p++; s++;
-		} else {
+		} లేకపోతే {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			ఒకవేళ (--శిఖరం < 0)
+				తిరిగి ఖాళీ;  /* no match, give up */
 
-			ss = context[top].ss;
-			s  = context[top].s;
-			p  = context[top].p;
-			first = context[top].first;
+			ss = context[శిఖరం].ss;
+			s  = context[శిఖరం].s;
+			p  = context[శిఖరం].p;
+			మొదటి = context[శిఖరం].మొదటి;
 		}
 	}
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	తిరిగి ss;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 nserror
-content_textsearch_add_match(struct textsearch_context *context,
-			     unsigned start_idx,
-			     unsigned end_idx,
-			     struct box *start_box,
-			     struct box *end_box)
+content_textsearch_కూడు_సరిపోలిక(నిర్మాణం textsearch_context *context,
+			     గుర్తులేని ప్రారంభం_idx,
+			     గుర్తులేని చివర_idx,
+			     నిర్మాణం box *ప్రారంభం_box,
+			     నిర్మాణం box *చివర_box)
 {
-	struct list_entry *entry;
+	నిర్మాణం list_నమోదు *నమోదు_2;
 
 	/* found string in box => add to list */
-	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	నమోదు_2 = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*నమోదు_2));
+	ఒకవేళ (నమోదు_2 == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	entry->start_idx = start_idx;
-	entry->end_idx = end_idx;
-	entry->start_box = start_box;
-	entry->end_box = end_box;
-	entry->sel = NULL;
+	నమోదు_2->ప్రారంభం_idx = ప్రారంభం_idx;
+	నమోదు_2->చివర_idx = చివర_idx;
+	నమోదు_2->ప్రారంభం_box = ప్రారంభం_box;
+	నమోదు_2->చివర_box = చివర_box;
+	నమోదు_2->sel = ఖాళీ;
 
-	entry->next = NULL;
-	entry->prev = context->found->prev;
+	నమోదు_2->తదుపరి = ఖాళీ;
+	నమోదు_2->prev = context->దొరికింది->prev;
 
-	if (context->found->prev == NULL) {
-		context->found->next = entry;
-	} else {
-		context->found->prev->next = entry;
+	ఒకవేళ (context->దొరికింది->prev == ఖాళీ) {
+		context->దొరికింది->తదుపరి = నమోదు_2;
+	} లేకపోతే {
+		context->దొరికింది->prev->తదుపరి = నమోదు_2;
 	}
 
-	context->found->prev = entry;
+	context->దొరికింది->prev = నమోదు_2;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 bool
-content_textsearch_ishighlighted(struct textsearch_context *textsearch,
-				 unsigned start_offset,
-				 unsigned end_offset,
-				 unsigned *start_idx,
-				 unsigned *end_idx)
+content_textsearch_ishighlighted(నిర్మాణం textsearch_context *textsearch,
+				 గుర్తులేని ప్రారంభం_స్థానభ్రంశం,
+				 గుర్తులేని చివర_స్థానభ్రంశం,
+				 గుర్తులేని *ప్రారంభం_idx,
+				 గుర్తులేని *చివర_idx)
 {
-	struct list_entry *cur;
+	నిర్మాణం list_నమోదు *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	కొరకు (cur = textsearch->దొరికింది->తదుపరి; cur != ఖాళీ; cur = cur->తదుపరి) {
+		ఒకవేళ (cur->sel &&
 		    selection_highlighted(cur->sel,
-					  start_offset,
-					  end_offset,
-					  start_idx,
-					  end_idx)) {
-			return true;
+					  ప్రారంభం_స్థానభ్రంశం,
+					  చివర_స్థానభ్రంశం,
+					  ప్రారంభం_idx,
+					  చివర_idx)) {
+			తిరిగి true;
 		}
 	}
 
-	return false;
+	తిరిగి false;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch)
+nserror content_textsearch_destroy(నిర్మాణం textsearch_context *textsearch)
 {
-	assert(textsearch != NULL);
+	ప్రతిజ్ఞా(textsearch != ఖాళీ);
 
-	if (textsearch->string != NULL) {
+	ఒకవేళ (textsearch->string != ఖాళీ) {
 		/* broadcast recent query string */
-		textsearch_broadcast(textsearch,
+		textsearch_ప్రసారం(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
 				     false,
 				     textsearch->string);
 
-		free(textsearch->string);
+		విడుదల(textsearch->string);
 	}
 
 	/* update back state */
-	textsearch_broadcast(textsearch,
-			     CONTENT_TEXTSEARCH_BACK,
+	textsearch_ప్రసారం(textsearch,
+			     CONTENT_TEXTSEARCH_వెనుక,
 			     true,
-			     NULL);
+			     ఖాళీ);
 
 	/* update forward state */
-	textsearch_broadcast(textsearch,
+	textsearch_ప్రసారం(textsearch,
 			     CONTENT_TEXTSEARCH_FORWARD,
 			     true,
-			     NULL);
+			     ఖాళీ);
 
 	free_matches(textsearch);
-	free(textsearch);
+	విడుదల(textsearch);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror
-content_textsearch(struct hlcache_handle *h,
-		   void *context,
-		   search_flags_t flags,
-		   const char *string)
+content_textsearch(నిర్మాణం hlcache_handle *h,
+		   శూన్య *context,
+		   శోధన_flags_t flags,
+		   స్థిరరాశి అక్షరం *string)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
 	nserror res;
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	if (string != NULL &&
-	    c->textsearch.string != NULL &&
-	    c->textsearch.context != NULL &&
+	ఒకవేళ (string != ఖాళీ &&
+	    c->textsearch.string != ఖాళీ &&
+	    c->textsearch.context != ఖాళీ &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
-		content_textsearch_step(c->textsearch.context, flags, string);
+		content_textsearch_అడుగు(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} లేకపోతే ఒకవేళ (string != ఖాళీ) {
 		/* New search */
-		free(c->textsearch.string);
+		విడుదల(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		ఒకవేళ (c->textsearch.string == ఖాళీ) {
+			తిరిగి NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		ఒకవేళ (c->textsearch.context != ఖాళీ) {
 			content_textsearch_destroy(c->textsearch.context);
-			c->textsearch.context = NULL;
+			c->textsearch.context = ఖాళీ;
 		}
 
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి res;
 		}
 
-		content_textsearch_step(c->textsearch.context, flags, string);
+		content_textsearch_అడుగు(c->textsearch.context, flags, string);
 
-	} else {
+	} లేకపోతే {
 		/* Clear search */
 		content_textsearch__clear(c);
 
-		free(c->textsearch.string);
-		c->textsearch.string = NULL;
+		విడుదల(c->textsearch.string);
+		c->textsearch.string = ఖాళీ;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
-nserror content_textsearch_clear(struct hlcache_handle *h)
+nserror content_textsearch_clear(నిర్మాణం hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != 0);
 
-	return(content_textsearch__clear(c));
+	తిరిగి(content_textsearch__clear(c));
 }

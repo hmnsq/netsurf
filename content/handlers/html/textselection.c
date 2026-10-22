@@ -21,26 +21,26 @@
  * implementation of text selection for a HTML content.
  */
 
-#include <stdlib.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "netsurf/types.h"
-#include "netsurf/plot_style.h"
-#include "desktop/selection.h"
-#include "desktop/save_text.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "netsurf/types.h"
+#అన్తర్భావ "netsurf/plot_style.h"
+#అన్తర్భావ "desktop/selection.h"
+#అన్తర్భావ "desktop/save_text.h"
 
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/font.h"
-#include "html/textselection.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_inspect.h"
+#అన్తర్భావ "html/font.h"
+#అన్తర్భావ "html/textselection.h"
 
-#define SPACE_LEN(b) ((b->space == 0) ? 0 : 1)
+#నిర్వచించు SPACE_LEN(b) ((b->space == 0) ? 0 : 1)
 
-struct rdw_info {
+నిర్మాణం rdw_info {
 	bool inited;
-	struct rect r;
+	నిర్మాణం rect r;
 };
 
 
@@ -56,46 +56,46 @@ struct rdw_info {
  * \param end_offset receives the end offset of the selected part
  * \return true iff the range encloses at least part of the box
  */
-static bool
-selected_part(struct box *box,
-	      unsigned start_idx,
-	      unsigned end_idx,
-	      unsigned *start_offset,
-	      unsigned *end_offset)
+స్థిర bool
+selected_part(నిర్మాణం box *box,
+	      గుర్తులేని ప్రారంభం_idx,
+	      గుర్తులేని చివర_idx,
+	      గుర్తులేని *ప్రారంభం_స్థానభ్రంశం,
+	      గుర్తులేని *చివర_స్థానభ్రంశం)
 {
-	size_t box_length = box->length + SPACE_LEN(box);
+	size_t box_నిడివి = box->నిడివి + SPACE_LEN(box);
 
-	if (box_length > 0) {
-		if ((box->byte_offset >= start_idx) &&
-		    (box->byte_offset + box_length <= end_idx)) {
+	ఒకవేళ (box_నిడివి > 0) {
+		ఒకవేళ ((box->byte_స్థానభ్రంశం >= ప్రారంభం_idx) &&
+		    (box->byte_స్థానభ్రంశం + box_నిడివి <= చివర_idx)) {
 
 			/* fully enclosed */
-			*start_offset = 0;
-			*end_offset = box_length;
-			return true;
-		} else if ((box->byte_offset + box_length > start_idx) &&
-			   (box->byte_offset < end_idx)) {
+			*ప్రారంభం_స్థానభ్రంశం = 0;
+			*చివర_స్థానభ్రంశం = box_నిడివి;
+			తిరిగి true;
+		} లేకపోతే ఒకవేళ ((box->byte_స్థానభ్రంశం + box_నిడివి > ప్రారంభం_idx) &&
+			   (box->byte_స్థానభ్రంశం < చివర_idx)) {
 			/* partly enclosed */
-			int offset = 0;
-			int len;
+			పూర్ణాంకం స్థానభ్రంశం = 0;
+			పూర్ణాంకం len;
 
-			if (box->byte_offset < start_idx) {
-				offset = start_idx - box->byte_offset;
+			ఒకవేళ (box->byte_స్థానభ్రంశం < ప్రారంభం_idx) {
+				స్థానభ్రంశం = ప్రారంభం_idx - box->byte_స్థానభ్రంశం;
 			}
 
-			len = box_length - offset;
+			len = box_నిడివి - స్థానభ్రంశం;
 
-			if (box->byte_offset + box_length > end_idx) {
-				len = end_idx - (box->byte_offset + offset);
+			ఒకవేళ (box->byte_స్థానభ్రంశం + box_నిడివి > చివర_idx) {
+				len = చివర_idx - (box->byte_స్థానభ్రంశం + స్థానభ్రంశం);
 			}
 
-			*start_offset = offset;
-			*end_offset = offset + len;
+			*ప్రారంభం_స్థానభ్రంశం = స్థానభ్రంశం;
+			*చివర_స్థానభ్రంశం = స్థానభ్రంశం + len;
 
-			return true;
+			తిరిగి true;
 		}
 	}
-	return false;
+	తిరిగి false;
 }
 
 
@@ -110,58 +110,58 @@ selected_part(struct box *box,
  * \param do_marker whether deal enter any marker box
  * \return NSERROR_OK on success else error code
  */
-static nserror
-coords_from_range(struct box *box,
-		  unsigned start_idx,
-		  unsigned end_idx,
-		  struct rdw_info *rdwi,
+స్థిర nserror
+coords_from_range(నిర్మాణం box *box,
+		  గుర్తులేని ప్రారంభం_idx,
+		  గుర్తులేని చివర_idx,
+		  నిర్మాణం rdw_info *rdwi,
 		  bool do_marker)
 {
-	struct box *child;
+	నిర్మాణం box *బిడ్డ;
 	nserror res;
 
-	assert(box);
+	ప్రతిజ్ఞా(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
-	    box->parent->list_marker == box &&
+	ఒకవేళ (box->మాతృ &&
+	    box->మాతృ->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
-		box = box->parent;
+		box = box->మాతృ;
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	ఒకవేళ (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = coords_from_range(box->list_marker,
-					start_idx,
-					end_idx,
+					ప్రారంభం_idx,
+					చివర_idx,
 					rdwi,
 					true);
-		if (res != NSERROR_OK) {
-			return res;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	ఒకవేళ (box->byte_స్థానభ్రంశం >= చివర_idx) {
+		తిరిగి NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
-	child = box->children;
+	బిడ్డ = box->children;
 
-	if ((box->type != BOX_BR) &&
-	    !((box->type == BOX_FLOAT_LEFT ||
-	       box->type == BOX_FLOAT_RIGHT) &&
-	      !box->text)) {
-		unsigned start_off;
-		unsigned end_off;
+	ఒకవేళ ((box->type != BOX_BR) &&
+	    !((box->type == BOX_FLOAT_ఎడమ ||
+	       box->type == BOX_FLOAT_కుడి) &&
+	      !box->పాఠ్యం)) {
+		గుర్తులేని ప్రారంభం_off;
+		గుర్తులేని చివర_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
-			int width, height;
-			int x, y;
+		ఒకవేళ (selected_part(box, ప్రారంభం_idx, చివర_idx, &ప్రారంభం_off, &చివర_off)) {
+			పూర్ణాంకం వెడల్పు, ఎత్తు;
+			పూర్ణాంకం x, y;
 
 			/**
 			 * \todo it should be possible to reduce the redrawn
@@ -169,33 +169,33 @@ coords_from_range(struct box *box,
 			 */
 			box_coords(box, &x, &y);
 
-			width = box->padding[LEFT] + box->width + box->padding[RIGHT];
-			height = box->padding[TOP] + box->height + box->padding[BOTTOM];
+			వెడల్పు = box->padding[ఎడమ_2] + box->వెడల్పు + box->padding[కుడి_2];
+			ఎత్తు = box->padding[శిఖరం_2] + box->ఎత్తు + box->padding[BOTTOM];
 
-			if ((box->type == BOX_TEXT) &&
+			ఒకవేళ ((box->type == BOX_పాఠ్యం) &&
 			    (box->space != 0)) {
-				width += box->space;
+				వెడల్పు += box->space;
 			}
 
-			if (rdwi->inited) {
-				if (x < rdwi->r.x0) {
+			ఒకవేళ (rdwi->inited) {
+				ఒకవేళ (x < rdwi->r.x0) {
 					rdwi->r.x0 = x;
 				}
-				if (y < rdwi->r.y0) {
+				ఒకవేళ (y < rdwi->r.y0) {
 					rdwi->r.y0 = y;
 				}
-				if (x + width > rdwi->r.x1) {
-					rdwi->r.x1 = x + width;
+				ఒకవేళ (x + వెడల్పు > rdwi->r.x1) {
+					rdwi->r.x1 = x + వెడల్పు;
 				}
-				if (y + height > rdwi->r.y1) {
-					rdwi->r.y1 = y + height;
+				ఒకవేళ (y + ఎత్తు > rdwi->r.y1) {
+					rdwi->r.y1 = y + ఎత్తు;
 				}
-			} else {
+			} లేకపోతే {
 				rdwi->inited = true;
 				rdwi->r.x0 = x;
 				rdwi->r.y0 = y;
-				rdwi->r.x1 = x + width;
-				rdwi->r.y1 = y + height;
+				rdwi->r.x1 = x + వెడల్పు;
+				rdwi->r.y1 = y + ఎత్తు;
 			}
 		}
 	}
@@ -204,33 +204,33 @@ coords_from_range(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
-		struct box *next = child->next;
+	ఒకవేళ (బిడ్డ) {
+		నిర్మాణం box *తదుపరి = బిడ్డ->తదుపరి;
 
-		while (next && next->byte_offset < start_idx) {
-			child = next;
-			next = child->next;
+		అయితే (తదుపరి && తదుపరి->byte_స్థానభ్రంశం < ప్రారంభం_idx) {
+			బిడ్డ = తదుపరి;
+			తదుపరి = బిడ్డ->తదుపరి;
 		}
 
-		while (child) {
+		అయితే (బిడ్డ) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
-			struct box *next = child->next;
+			నిర్మాణం box *తదుపరి = బిడ్డ->తదుపరి;
 
-			res = coords_from_range(child,
-						start_idx,
-						end_idx,
+			res = coords_from_range(బిడ్డ,
+						ప్రారంభం_idx,
+						చివర_idx,
 						rdwi,
 						false);
-			if (res != NSERROR_OK) {
-				return res;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
 
-			child = next;
+			బిడ్డ = తదుపరి;
 		}
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -247,51 +247,51 @@ coords_from_range(struct box *box,
  * \param whitespace_length  length of whitespace_text
  * \return NSERROR_OK iff successful and traversal should continue else error code
  */
-static nserror
-selection_copy_box(const char *text,
-		   size_t length,
-		   struct box *box,
-		   const css_unit_ctx *unit_len_ctx,
-		   struct selection_string *handle,
-		   const char *whitespace_text,
-		   size_t whitespace_length)
+స్థిర nserror
+selection_copy_box(స్థిరరాశి అక్షరం *పాఠ్యం,
+		   size_t నిడివి,
+		   నిర్మాణం box *box,
+		   స్థిరరాశి css_unit_ctx *unit_len_ctx,
+		   నిర్మాణం selection_string *handle,
+		   స్థిరరాశి అక్షరం *whitespace_పాఠ్యం,
+		   size_t whitespace_నిడివి)
 {
-	bool add_space = false;
+	bool కూడు_space = false;
 	plot_font_style_t style;
-	plot_font_style_t *pstyle = NULL;
+	plot_font_style_t *pstyle = ఖాళీ;
 
 	/* add any whitespace which precedes the text from this box */
-	if (whitespace_text != NULL &&
-	    whitespace_length > 0) {
-		if (!selection_string_append(whitespace_text,
-					     whitespace_length,
+	ఒకవేళ (whitespace_పాఠ్యం != ఖాళీ &&
+	    whitespace_నిడివి > 0) {
+		ఒకవేళ (!selection_string_append(whitespace_పాఠ్యం,
+					     whitespace_నిడివి,
 					     false,
 					     pstyle,
 					     handle)) {
-			return NSERROR_NOMEM;
+			తిరిగి NSERROR_NOMEM;
 		}
 	}
 
-	if (box != NULL) {
+	ఒకవేళ (box != ఖాళీ) {
 		/* HTML */
-		add_space = (box->space != 0);
+		కూడు_space = (box->space != 0);
 
-		if (box->style != NULL) {
+		ఒకవేళ (box->style != ఖాళీ) {
 			/* Override default font style */
 			font_plot_style_from_css(unit_len_ctx, box->style, &style);
 			pstyle = &style;
-		} else {
+		} లేకపోతే {
 			/* If there's no style, there must be no text */
-			assert(box->text == NULL);
+			ప్రతిజ్ఞా(box->పాఠ్యం == ఖాళీ);
 		}
 	}
 
 	/* add the text from this box */
-	if (!selection_string_append(text, length, add_space, pstyle, handle)) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (!selection_string_append(పాఠ్యం, నిడివి, కూడు_space, pstyle, handle)) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -310,88 +310,88 @@ selection_copy_box(const char *text,
  * \param do_marker  whether deal enter any marker box
  * \return NSERROR_OK on sucess else error code
  */
-static nserror
-selection_copy(struct box *box,
-	       const css_unit_ctx *unit_len_ctx,
-	       unsigned start_idx,
-	       unsigned end_idx,
-	       struct selection_string *selstr,
-	       save_text_whitespace *before,
-	       bool *first,
+స్థిర nserror
+selection_copy(నిర్మాణం box *box,
+	       స్థిరరాశి css_unit_ctx *unit_len_ctx,
+	       గుర్తులేని ప్రారంభం_idx,
+	       గుర్తులేని చివర_idx,
+	       నిర్మాణం selection_string *selstr,
+	       save_పాఠ్యం_whitespace *before,
+	       bool *మొదటి,
 	       bool do_marker)
 {
 	nserror res;
-	struct box *child;
-	const char *whitespace_text = "";
-	size_t whitespace_length = 0;
+	నిర్మాణం box *బిడ్డ;
+	స్థిరరాశి అక్షరం *whitespace_పాఠ్యం = "";
+	size_t whitespace_నిడివి = 0;
 
-	assert(box);
+	ప్రతిజ్ఞా(box);
 
 	/* If selection starts inside marker */
-	if (box->parent &&
-	    box->parent->list_marker == box &&
+	ఒకవేళ (box->మాతృ &&
+	    box->మాతృ->list_marker == box &&
 	    !do_marker) {
 		/* set box to main list element */
-		box = box->parent;
+		box = box->మాతృ;
 	}
 
 	/* If box has a list marker */
-	if (box->list_marker) {
+	ఒకవేళ (box->list_marker) {
 		/* do the marker box before continuing with the rest of the
 		 * list element */
 		res = selection_copy(box->list_marker,
 				     unit_len_ctx,
-				     start_idx,
-				     end_idx,
+				     ప్రారంభం_idx,
+				     చివర_idx,
 				     selstr,
 				     before,
-				     first,
+				     మొదటి,
 				     true);
-		if (res != NSERROR_OK) {
-			return res;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి res;
 		}
 	}
 
 	/* we can prune this subtree, it's after the selection */
-	if (box->byte_offset >= end_idx) {
-		return NSERROR_OK;
+	ఒకవేళ (box->byte_స్థానభ్రంశం >= చివర_idx) {
+		తిరిగి NSERROR_OK;
 	}
 
 	/* read before calling the handler in case it modifies the tree */
-	child = box->children;
+	బిడ్డ = box->children;
 
 	/* If nicely formatted output of the selected text is required, work
 	 * out what whitespace should be placed before the next bit of text */
-	if (before) {
-		save_text_solve_whitespace(box,
-					   first,
+	ఒకవేళ (before) {
+		save_పాఠ్యం_solve_whitespace(box,
+					   మొదటి,
 					   before,
-					   &whitespace_text,
-					   &whitespace_length);
-	} else {
-		whitespace_text = NULL;
+					   &whitespace_పాఠ్యం,
+					   &whitespace_నిడివి);
+	} లేకపోతే {
+		whitespace_పాఠ్యం = ఖాళీ;
 	}
 
-	if ((box->type != BOX_BR) &&
-	    !((box->type == BOX_FLOAT_LEFT ||
-	       box->type == BOX_FLOAT_RIGHT) &&
-	      !box->text)) {
-		unsigned start_off;
-		unsigned end_off;
+	ఒకవేళ ((box->type != BOX_BR) &&
+	    !((box->type == BOX_FLOAT_ఎడమ ||
+	       box->type == BOX_FLOAT_కుడి) &&
+	      !box->పాఠ్యం)) {
+		గుర్తులేని ప్రారంభం_off;
+		గుర్తులేని చివర_off;
 
-		if (selected_part(box, start_idx, end_idx, &start_off, &end_off)) {
-			res = selection_copy_box(box->text + start_off,
-						 min(box->length, end_off) - start_off,
+		ఒకవేళ (selected_part(box, ప్రారంభం_idx, చివర_idx, &ప్రారంభం_off, &చివర_off)) {
+			res = selection_copy_box(box->పాఠ్యం + ప్రారంభం_off,
+						 min(box->నిడివి, చివర_off) - ప్రారంభం_off,
 						 box,
 						 unit_len_ctx,
 						 selstr,
-						 whitespace_text,
-						 whitespace_length);
-			if (res != NSERROR_OK) {
-				return res;
+						 whitespace_పాఠ్యం,
+						 whitespace_నిడివి);
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
-			if (before) {
-				*first = false;
+			ఒకవేళ (before) {
+				*మొదటి = false;
 				*before = WHITESPACE_NONE;
 			}
 		}
@@ -401,36 +401,36 @@ selection_copy(struct box *box,
 	 * this is important at the top-levels of the tree for pruning subtrees
 	 * that lie entirely before the selection */
 
-	if (child) {
-		struct box *next = child->next;
+	ఒకవేళ (బిడ్డ) {
+		నిర్మాణం box *తదుపరి = బిడ్డ->తదుపరి;
 
-		while (next && next->byte_offset < start_idx) {
-			child = next;
-			next = child->next;
+		అయితే (తదుపరి && తదుపరి->byte_స్థానభ్రంశం < ప్రారంభం_idx) {
+			బిడ్డ = తదుపరి;
+			తదుపరి = బిడ్డ->తదుపరి;
 		}
 
-		while (child) {
+		అయితే (బిడ్డ) {
 			/* read before calling the handler in case it modifies
 			 * the tree */
-			struct box *next = child->next;
+			నిర్మాణం box *తదుపరి = బిడ్డ->తదుపరి;
 
-			res = selection_copy(child,
+			res = selection_copy(బిడ్డ,
 					     unit_len_ctx,
-					     start_idx,
-					     end_idx,
+					     ప్రారంభం_idx,
+					     చివర_idx,
 					     selstr,
 					     before,
-					     first,
+					     మొదటి,
 					     false);
-			if (res != NSERROR_OK) {
-				return res;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
 
-			child = next;
+			బిడ్డ = తదుపరి;
 		}
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -442,55 +442,55 @@ selection_copy(struct box *box,
  * \param idx current position within textual representation
  * \return updated position
  */
-static unsigned selection_label_subtree(struct box *box, unsigned idx)
+స్థిర గుర్తులేని selection_label_subtree(నిర్మాణం box *box, గుర్తులేని idx)
 {
-	struct box *child;
+	నిర్మాణం box *బిడ్డ;
 
-	assert(box != NULL);
+	ప్రతిజ్ఞా(box != ఖాళీ);
 
-	child = box->children;
+	బిడ్డ = box->children;
 
-	box->byte_offset = idx;
+	box->byte_స్థానభ్రంశం = idx;
 
-	if (box->text) {
-		idx += box->length + SPACE_LEN(box);
+	ఒకవేళ (box->పాఠ్యం) {
+		idx += box->నిడివి + SPACE_LEN(box);
 	}
 
-	while (child) {
-		if (child->list_marker) {
-			idx = selection_label_subtree(child->list_marker, idx);
+	అయితే (బిడ్డ) {
+		ఒకవేళ (బిడ్డ->list_marker) {
+			idx = selection_label_subtree(బిడ్డ->list_marker, idx);
 		}
 
-		idx = selection_label_subtree(child, idx);
-		child = child->next;
+		idx = selection_label_subtree(బిడ్డ, idx);
+		బిడ్డ = బిడ్డ->తదుపరి;
 	}
 
-	return idx;
+	తిరిగి idx;
 }
 
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_redraw(struct content *c,
-			  unsigned start_idx,
-			  unsigned end_idx)
+html_textselection_redraw(నిర్మాణం content *c,
+			  గుర్తులేని ప్రారంభం_idx,
+			  గుర్తులేని చివర_idx)
 {
 	nserror res;
 	html_content *html = (html_content *)c;
-	struct rdw_info rdw;
+	నిర్మాణం rdw_info rdw;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	ఒకవేళ (html->layout == ఖాళీ) {
+		తిరిగి NSERROR_INVALID;
 	}
 
 	rdw.inited = false;
 
-	res = coords_from_range(html->layout, start_idx, end_idx, &rdw, false);
-	if (res != NSERROR_OK) {
-		return res;
+	res = coords_from_range(html->layout, ప్రారంభం_idx, చివర_idx, &rdw, false);
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి res;
 	}
 
-	if (rdw.inited) {
+	ఒకవేళ (rdw.inited) {
 		content__request_redraw(c,
 					rdw.r.x0,
 					rdw.r.y0,
@@ -498,50 +498,50 @@ html_textselection_redraw(struct content *c,
 					rdw.r.y1 - rdw.r.y0);
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_copy(struct content *c,
-			unsigned start_idx,
-			unsigned end_idx,
-			struct selection_string *selstr)
+html_textselection_copy(నిర్మాణం content *c,
+			గుర్తులేని ప్రారంభం_idx,
+			గుర్తులేని చివర_idx,
+			నిర్మాణం selection_string *selstr)
 {
 	html_content *html = (html_content *)c;
-	save_text_whitespace before = WHITESPACE_NONE;
-	bool first = true;
+	save_పాఠ్యం_whitespace before = WHITESPACE_NONE;
+	bool మొదటి = true;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	ఒకవేళ (html->layout == ఖాళీ) {
+		తిరిగి NSERROR_INVALID;
 	}
 
-	return selection_copy(html->layout,
+	తిరిగి selection_copy(html->layout,
 			      &html->unit_len_ctx,
-			      start_idx,
-			      end_idx,
+			      ప్రారంభం_idx,
+			      చివర_idx,
 			      selstr,
 			      &before,
-			      &first,
+			      &మొదటి,
 			      false);
 }
 
 
 /* exported interface documented in html/textselection.h */
 nserror
-html_textselection_get_end(struct content *c, unsigned *end_idx)
+html_textselection_get_చివర(నిర్మాణం content *c, గుర్తులేని *చివర_idx)
 {
 	html_content *html = (html_content *)c;
-	unsigned root_idx;
+	గుర్తులేని మూలం_idx;
 
-	if (html->layout == NULL) {
-		return NSERROR_INVALID;
+	ఒకవేళ (html->layout == ఖాళీ) {
+		తిరిగి NSERROR_INVALID;
 	}
 
-	root_idx = 0;
+	మూలం_idx = 0;
 
-	*end_idx = selection_label_subtree(html->layout, root_idx);
+	*చివర_idx = selection_label_subtree(html->layout, మూలం_idx);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }

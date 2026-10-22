@@ -16,16 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <libcss/libcss.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <libcss/libcss.h>
 
-#include "utils/nsurl.h"
+#అన్తర్భావ "utils/nsurl.h"
 
-#include "css/internal.h"
+#అన్తర్భావ "css/internal.h"
 
 /* exported interface documented in content/handlers/css/internal.h */
-css_error nscss_resolve_url(void *pw, const char *base,
-		lwc_string *rel, lwc_string **abs)
+css_error nscss_resolve_url(శూన్య *pw, స్థిరరాశి అక్షరం *పునాది,
+		lwc_string *rel, lwc_string **నిరపేక్ష)
 {
 	lwc_error lerror;
 	nserror error;
@@ -34,30 +34,30 @@ css_error nscss_resolve_url(void *pw, const char *base,
 
 	/* Create nsurl from base */
 	/* TODO: avoid this */
-	error = nsurl_create(base, &nsbase);
-	if (error != NSERROR_OK) {
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+	error = nsurl_create(పునాది, &nsbase);
+	ఒకవేళ (error != NSERROR_OK) {
+		తిరిగి error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	/* Resolve URI */
-	error = nsurl_join(nsbase, lwc_string_data(rel), &nsabs);
-	if (error != NSERROR_OK) {
+	error = nsurl_join(nsbase, lwc_string_దత్తాంశం(rel), &nsabs);
+	ఒకవేళ (error != NSERROR_OK) {
 		nsurl_unref(nsbase);
-		return error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
+		తిరిగి error == NSERROR_NOMEM ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsbase);
 
 	/* Intern it */
 	lerror = lwc_intern_string(nsurl_access(nsabs),
-			nsurl_length(nsabs), abs);
-	if (lerror != lwc_error_ok) {
-		*abs = NULL;
+			nsurl_నిడివి(nsabs), నిరపేక్ష);
+	ఒకవేళ (lerror != lwc_error_ok) {
+		*నిరపేక్ష = ఖాళీ;
 		nsurl_unref(nsabs);
-		return lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
+		తిరిగి lerror == lwc_error_oom ? CSS_NOMEM : CSS_INVALID;
 	}
 
 	nsurl_unref(nsabs);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }

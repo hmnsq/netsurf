@@ -21,10 +21,10 @@
  * Interface to content handling debug.
  */
 
-#ifndef _NETSURF_CONTENT_CONTENT_DEBUG_H_
-#define _NETSURF_CONTENT_CONTENT_DEBUG_H_
+#నిర్వచితం_కాకపోతే _NETSURF_CONTENT_CONTENT_DEBUG_H_
+#నిర్వచించు _NETSURF_CONTENT_CONTENT_DEBUG_H_
 
-#include <stdio.h>
+#అన్తర్భావ <stdio.h>
 
 /**
  * Dump debug information to file.
@@ -33,6 +33,6 @@
  * \param f File to write output to.
  * \param op Debug operation type.
  */
-nserror content_debug_dump(struct hlcache_handle *h, FILE *f, enum content_debug op);
+nserror content_debug_dump(నిర్మాణం hlcache_handle *h, FILE *f, గణన content_debug op);
 
-#endif
+#అయితే_ముగింపు

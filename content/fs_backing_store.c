@@ -33,106 +33,106 @@
  *
  */
 
-#include <unistd.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <time.h>
-#include <stdlib.h>
-#include <nsutils/unistd.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ <sys/types.h>
+#అన్తర్భావ <fcntl.h>
+#అన్తర్భావ <errno.h>
+#అన్తర్భావ <time.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <nsutils/unistd.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/filepath.h"
-#include "utils/file.h"
-#include "utils/nsurl.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/hashmap.h"
-#include "desktop/gui_internal.h"
-#include "netsurf/misc.h"
+#అన్తర్భావ "netsurf/inttypes.h"
+#అన్తర్భావ "utils/filepath.h"
+#అన్తర్భావ "utils/file.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/hashmap.h"
+#అన్తర్భావ "desktop/gui_internal.h"
+#అన్తర్భావ "netsurf/misc.h"
 
-#include "content/backing_store.h"
+#అన్తర్భావ "content/backing_store.h"
 
 /** Backing store file format version */
-#define CONTROL_VERSION 202
+#నిర్వచించు CONTROL_సంస్కరణ 202
 
 /**
  * Number of milliseconds after a update before control data
  * maintenance is performed
  */
-#define CONTROL_MAINT_TIME 10000
+#నిర్వచించు CONTROL_MAINT_సమయం 10000
 
 /** Filename of serialised entries */
-#define ENTRIES_FNAME "entries"
+#నిర్వచించు ENTRIES_FNAME "entries"
 
 /** Filename of block file index */
-#define BLOCKS_FNAME "blocks"
+#నిర్వచించు ఖండాలు_FNAME "blocks"
 
 /** log2 block data address length (64k) */
-#define BLOCK_ADDR_LEN 16
+#నిర్వచించు ఖండం_ADDR_LEN 16
 
 /** log2 number of entries per block file(1024) */
-#define BLOCK_ENTRY_COUNT 10
+#నిర్వచించు ఖండం_నమోదు_లెక్క 10
 
 /** log2 number of data block files */
-#define BLOCK_FILE_COUNT (BLOCK_ADDR_LEN - BLOCK_ENTRY_COUNT)
+#నిర్వచించు ఖండం_FILE_లెక్క (ఖండం_ADDR_LEN - ఖండం_నమోదు_లెక్క)
 
 /** log2 size of data blocks (8k) */
-#define BLOCK_DATA_SIZE 13
+#నిర్వచించు ఖండం_దత్తాంశం_కొలత 13
 
 /** log2 size of metadata blocks (8k) */
-#define BLOCK_META_SIZE 13
+#నిర్వచించు ఖండం_META_కొలత 13
 
 /** length in bytes of a block files use map */
-#define BLOCK_USE_MAP_SIZE (1 << (BLOCK_ENTRY_COUNT - 3))
+#నిర్వచించు ఖండం_USE_MAP_కొలత (1 << (ఖండం_నమోదు_లెక్క - 3))
 
 /**
  * The type used as a binary identifier for each entry derived from
  * the URL. A larger identifier will have fewer collisions but
  * requires proportionately more storage.
  */
-typedef uint32_t entry_ident_t;
+రకనిర్వచనం uint32_t నమోదు_ident_t;
 
 /**
  * The type used to store block file index values. If this is changed
  * it will affect the entry storage/alignment and BLOCK_ADDR_LEN must
  * also be updated.
  */
-typedef uint16_t block_index_t;
+రకనిర్వచనం uint16_t ఖండం_సూచీ_t;
 
 
 /**
  * Entry element index values.
  */
-enum store_entry_elem_idx {
-	ENTRY_ELEM_DATA = 0, /**< entry element is data */
-	ENTRY_ELEM_META = 1,  /**< entry element is metadata */
-	ENTRY_ELEM_COUNT = 2, /**< count of elements on an entry */
+గణన store_నమోదు_elem_idx {
+	నమోదు_ELEM_దత్తాంశం = 0, /**< entry element is data */
+	నమోదు_ELEM_META = 1,  /**< entry element is metadata */
+	నమోదు_ELEM_లెక్క = 2, /**< count of elements on an entry */
 };
 
 /**
  * flags that indicate what additional information is contained within
  * an entry element.
  */
-enum store_entry_elem_flags {
+గణన store_నమోదు_elem_flags {
 	/** store not managing any allocation on entry */
-	ENTRY_ELEM_FLAG_NONE = 0,
+	నమోదు_ELEM_FLAG_NONE = 0,
 	/** entry data allocation is on heap */
-	ENTRY_ELEM_FLAG_HEAP = 0x1,
+	నమోదు_ELEM_FLAG_కుప్ప = 0x1,
 	/** entry data allocation is mmaped */
-	ENTRY_ELEM_FLAG_MMAP = 0x2,
+	నమోదు_ELEM_FLAG_MMAP = 0x2,
 	/** entry data allocation is in small object pool */
-	ENTRY_ELEM_FLAG_SMALL = 0x4,
+	నమోదు_ELEM_FLAG_SMALL = 0x4,
 };
 
 
-enum store_entry_flags {
+గణన store_నమోదు_flags {
 	/** entry is normal */
-	ENTRY_FLAGS_NONE = 0,
+	నమోదు_FLAGS_NONE = 0,
 	/** entry has been invalidated but something still holding a reference */
-	ENTRY_FLAGS_INVALID = 1,
+	నమోదు_FLAGS_INVALID = 1,
 };
 
 /**
@@ -146,10 +146,10 @@ enum store_entry_flags {
  *
  * @note Order is important to avoid excessive structure packing overhead.
  */
-struct store_entry_element {
-	uint8_t* data; /**< data allocated */
-	uint32_t size; /**< size of entry element on disc */
-	block_index_t block; /**< small object data block */
+నిర్మాణం store_నమోదు_element {
+	uint8_t* దత్తాంశం; /**< data allocated */
+	uint32_t కొలత; /**< size of entry element on disc */
+	ఖండం_సూచీ_t ఖండం; /**< small object data block */
 	uint8_t ref; /**< element data reference count */
 	uint8_t flags; /**< entry flags */
 };
@@ -164,40 +164,40 @@ struct store_entry_element {
  *
  * @note Order is important to avoid excessive structure packing overhead.
  */
-struct store_entry {
+నిర్మాణం store_నమోదు {
 	nsurl *url; /**< The URL for this entry */
-	int64_t last_used; /**< UNIX time the entry was last used */
-	uint16_t use_count; /**< number of times this entry has been accessed */
+	int64_t చివరి_వాడిన; /**< UNIX time the entry was last used */
+	uint16_t use_లెక్క; /**< number of times this entry has been accessed */
 	uint8_t flags; /**< entry flags */
 	/** Entry element (data or meta) specific information */
-	struct store_entry_element elem[ENTRY_ELEM_COUNT];
+	నిర్మాణం store_నమోదు_element elem[నమోదు_ELEM_లెక్క];
 };
 
 /**
  * Small block file.
  */
-struct block_file {
+నిర్మాణం ఖండం_file {
 	/** file descriptor of the block file */
-	int fd;
+	పూర్ణాంకం fd;
 	/** map of used and unused entries within the block file */
-	uint8_t use_map[BLOCK_USE_MAP_SIZE];
+	uint8_t use_map[ఖండం_USE_MAP_కొలత];
 };
 
 /**
  * log2 of block size.
  */
-static const unsigned int log2_block_size[ENTRY_ELEM_COUNT] = {
-	BLOCK_DATA_SIZE, /**< Data block size */
-	BLOCK_META_SIZE  /**< Metadata block size */
+స్థిర స్థిరరాశి గుర్తులేని పూర్ణాంకం log2_ఖండం_కొలత[నమోదు_ELEM_లెక్క] = {
+	ఖండం_దత్తాంశం_కొలత, /**< Data block size */
+	ఖండం_META_కొలత  /**< Metadata block size */
 };
 
 /**
  * Parameters controlling the backing store.
  */
-struct store_state {
+నిర్మాణం store_state {
 	/* store config */
-	char *path; /**< The path to the backing store */
-	size_t limit; /**< The backing store upper bound target size */
+	అక్షరం *మార్గం; /**< The path to the backing store */
+	size_t హద్దు; /**< The backing store upper bound target size */
 	size_t hysteresis; /**< The hysteresis around the target size */
 
 	/**
@@ -211,25 +211,25 @@ struct store_state {
 	bool entries_dirty;
 
 	/** small block indexes */
-	struct block_file blocks[ENTRY_ELEM_COUNT][BLOCK_FILE_COUNT];
+	నిర్మాణం ఖండం_file ఖండాలు[నమోదు_ELEM_లెక్క][ఖండం_FILE_లెక్క];
 
 	/** flag indicating if the block file use maps have been made
 	 * persistent since they were last changed.
 	 */
-	bool blocks_dirty;
+	bool ఖండాలు_dirty;
 
 	/** flag indicating if a block file has been opened for update
 	 * since maintenance was previously done.
 	 */
-	bool blocks_opened;
+	bool ఖండాలు_opened;
 
 
 	/* stats */
-	uint64_t total_alloc; /**< total size of all allocated storage. */
+	uint64_t మొత్తం_alloc; /**< total size of all allocated storage. */
 
-	size_t hit_count; /**< number of cache hits */
-	uint64_t hit_size; /**< size of storage served */
-	size_t miss_count; /**< number of cache misses */
+	size_t తగిలింది_లెక్క; /**< number of cache hits */
+	uint64_t తగిలింది_కొలత; /**< size of storage served */
+	size_t తప్పిపోవు_లెక్క; /**< number of cache misses */
 
 };
 
@@ -239,45 +239,45 @@ struct store_state {
  * @todo Investigate if there is a way to have a context rather than
  * use a global.
  */
-struct store_state *storestate;
+నిర్మాణం store_state *storestate;
 
 /* Entries hashmap parameters
  *
  * Our hashmap has nsurl keys and store_entry values
  */
 
-static bool
-entries_hashmap_key_eq(void *key1, void *key2)
+స్థిర bool
+entries_hashmap_కీలకం_eq(శూన్య *key1, శూన్య *key2)
 {
-	return nsurl_compare((nsurl *)key1, (nsurl *)key2, NSURL_COMPLETE);
+	తిరిగి nsurl_compare((nsurl *)key1, (nsurl *)key2, NSURL_COMPLETE);
 }
 
-static void *
-entries_hashmap_value_alloc(void *key)
+స్థిర శూన్య *
+entries_hashmap_విలువ_alloc(శూన్య *కీలకం)
 {
-	struct store_entry *ent = calloc(1, sizeof(struct store_entry));
-	if (ent != NULL) {
-		ent->url = nsurl_ref(key);
+	నిర్మాణం store_నమోదు *ent = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం store_నమోదు));
+	ఒకవేళ (ent != ఖాళీ) {
+		ent->url = nsurl_ref(కీలకం);
 	}
-	return ent;
+	తిరిగి ent;
 }
 
-static void
-entries_hashmap_value_destroy(void *value)
+స్థిర శూన్య
+entries_hashmap_విలువ_destroy(శూన్య *విలువ)
 {
-	struct store_entry *ent = value;
+	నిర్మాణం store_నమోదు *ent = విలువ;
 	/** \todo Do we need to do any disk cleanup here?  if so, meep! */
 	nsurl_unref(ent->url);
-	free(ent);
+	విడుదల(ent);
 }
 
-static hashmap_parameters_t entries_hashmap_parameters = {
-	.key_clone = (hashmap_key_clone_t)nsurl_ref,
-	.key_destroy = (hashmap_key_destroy_t)nsurl_unref,
-	.key_hash = (hashmap_key_hash_t)nsurl_hash,
-	.key_eq = entries_hashmap_key_eq,
-	.value_alloc = entries_hashmap_value_alloc,
-	.value_destroy = entries_hashmap_value_destroy,
+స్థిర hashmap_parameters_t entries_hashmap_parameters = {
+	.కీలకం_clone = (hashmap_కీలకం_clone_t)nsurl_ref,
+	.కీలకం_destroy = (hashmap_కీలకం_destroy_t)nsurl_unref,
+	.కీలకం_hash = (hashmap_కీలకం_hash_t)nsurl_hash,
+	.కీలకం_eq = entries_hashmap_కీలకం_eq,
+	.విలువ_alloc = entries_hashmap_విలువ_alloc,
+	.విలువ_destroy = entries_hashmap_విలువ_destroy,
 };
 
 /**
@@ -316,22 +316,22 @@ static hashmap_parameters_t entries_hashmap_parameters = {
  * @param elem_idx The element index.
  * @return The filename string or NULL on allocation error.
  */
-static char *
-store_fname(struct store_state *state,
-	    entry_ident_t ident,
-	    int elem_idx)
+స్థిర అక్షరం *
+store_fname(నిర్మాణం store_state *state,
+	    నమోదు_ident_t ident,
+	    పూర్ణాంకం elem_idx)
 {
-	char *fname = NULL;
+	అక్షరం *fname = ఖాళీ;
 	uint8_t b32u_i[8]; /* base32 encoded ident */
-	const uint8_t *b32u_d[6]; /* base32 ident as separate components */
+	స్థిరరాశి uint8_t *b32u_d[6]; /* base32 ident as separate components */
 
 	/* directories used to separate elements */
-	const char *base_dir_table[] = {
+	స్థిరరాశి అక్షరం *పునాది_dir_పట్టిక[] = {
 		"d", "m", "dblk", "mblk"
 	};
 
 	/* RFC4648 base32 encoding table (six bits) */
-	const uint8_t encoding_table[64][3] = {
+	స్థిరరాశి uint8_t encoding_పట్టిక[64][3] = {
 		{ 'A',   0, 0 }, { 'B',   0, 0 }, /*  0 */
 		{ 'C',   0, 0 }, { 'D',   0, 0 }, /*  2 */
 		{ 'E',   0, 0 }, { 'F',   0, 0 }, /*  4 */
@@ -367,43 +367,43 @@ store_fname(struct store_state *state,
 	};
 
 	/* base32 encode ident */
-	b32u_i[0] = encoding_table[(ident      ) & 0x1f][0];
-	b32u_i[1] = encoding_table[(ident >>  5) & 0x1f][0];
-	b32u_i[2] = encoding_table[(ident >> 10) & 0x1f][0];
-	b32u_i[3] = encoding_table[(ident >> 15) & 0x1f][0];
-	b32u_i[4] = encoding_table[(ident >> 20) & 0x1f][0];
-	b32u_i[5] = encoding_table[(ident >> 25) & 0x1f][0];
-	b32u_i[6] = encoding_table[(ident >> 30) & 0x1f][0];
+	b32u_i[0] = encoding_పట్టిక[(ident      ) & 0x1f][0];
+	b32u_i[1] = encoding_పట్టిక[(ident >>  5) & 0x1f][0];
+	b32u_i[2] = encoding_పట్టిక[(ident >> 10) & 0x1f][0];
+	b32u_i[3] = encoding_పట్టిక[(ident >> 15) & 0x1f][0];
+	b32u_i[4] = encoding_పట్టిక[(ident >> 20) & 0x1f][0];
+	b32u_i[5] = encoding_పట్టిక[(ident >> 25) & 0x1f][0];
+	b32u_i[6] = encoding_పట్టిక[(ident >> 30) & 0x1f][0];
 	b32u_i[7] = 0; /* null terminate ident string */
 
 	/* base32 encode directory separators */
-	b32u_d[0] = (uint8_t*)base_dir_table[elem_idx];
-	b32u_d[1] = &encoding_table[(ident      ) & 0x3f][0];
-	b32u_d[2] = &encoding_table[(ident >>  6) & 0x3f][0];
-	b32u_d[3] = &encoding_table[(ident >> 12) & 0x3f][0];
-	b32u_d[4] = &encoding_table[(ident >> 18) & 0x3f][0];
-	b32u_d[5] = &encoding_table[(ident >> 24) & 0x3f][0];
+	b32u_d[0] = (uint8_t*)పునాది_dir_పట్టిక[elem_idx];
+	b32u_d[1] = &encoding_పట్టిక[(ident      ) & 0x3f][0];
+	b32u_d[2] = &encoding_పట్టిక[(ident >>  6) & 0x3f][0];
+	b32u_d[3] = &encoding_పట్టిక[(ident >> 12) & 0x3f][0];
+	b32u_d[4] = &encoding_పట్టిక[(ident >> 18) & 0x3f][0];
+	b32u_d[5] = &encoding_పట్టిక[(ident >> 24) & 0x3f][0];
 
-	switch (elem_idx) {
-	case ENTRY_ELEM_DATA:
-	case ENTRY_ELEM_META:
-		netsurf_mkpath(&fname, NULL, 8,
-			       state->path, b32u_d[0], b32u_d[1], b32u_d[2],
+	ఎంపిక (elem_idx) {
+	స్థితి నమోదు_ELEM_దత్తాంశం:
+	స్థితి నమోదు_ELEM_META:
+		netsurf_mkpath(&fname, ఖాళీ, 8,
+			       state->మార్గం, b32u_d[0], b32u_d[1], b32u_d[2],
 			       b32u_d[3], b32u_d[4], b32u_d[5], b32u_i);
-		break;
+		ఆపు;
 
-	case (ENTRY_ELEM_COUNT + ENTRY_ELEM_META):
-	case (ENTRY_ELEM_COUNT + ENTRY_ELEM_DATA):
-		netsurf_mkpath(&fname, NULL, 3,
-			       state->path, b32u_d[0], b32u_d[1]);
-		break;
+	స్థితి (నమోదు_ELEM_లెక్క + నమోదు_ELEM_META):
+	స్థితి (నమోదు_ELEM_లెక్క + నమోదు_ELEM_దత్తాంశం):
+		netsurf_mkpath(&fname, ఖాళీ, 3,
+			       state->మార్గం, b32u_d[0], b32u_d[1]);
+		ఆపు;
 
-	default:
-		assert("bad element index" == NULL);
-		break;
+	అప్రమేయ:
+		ప్రతిజ్ఞా("bad element index" == ఖాళీ);
+		ఆపు;
 	}
 
-	return fname;
+	తిరిగి fname;
 }
 
 /**
@@ -414,39 +414,39 @@ store_fname(struct store_state *state,
  * @param elem_idx The element index to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-invalidate_element(struct store_state *state,
-		   struct store_entry *bse,
-		   int elem_idx)
+స్థిర nserror
+invalidate_element(నిర్మాణం store_state *state,
+		   నిర్మాణం store_నమోదు *bse,
+		   పూర్ణాంకం elem_idx)
 {
-	if (bse->elem[elem_idx].block != 0) {
-		block_index_t bf;
-		block_index_t bi;
+	ఒకవేళ (bse->elem[elem_idx].ఖండం != 0) {
+		ఖండం_సూచీ_t bf;
+		ఖండం_సూచీ_t bi;
 
 		/* block file block resides in */
-		bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-			((1 << BLOCK_FILE_COUNT) - 1);
+		bf = (bse->elem[elem_idx].ఖండం >> ఖండం_నమోదు_లెక్క) &
+			((1 << ఖండం_FILE_లెక్క) - 1);
 
 		/* block index in file */
-		bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_COUNT) -1);
+		bi = bse->elem[elem_idx].ఖండం & ((1U << ఖండం_నమోదు_లెక్క) -1);
 
 		/* clear bit in use map */
-		state->blocks[elem_idx][bf].use_map[bi >> 3] &= ~(1U << (bi & 7));
-	} else {
-		char *fname;
+		state->ఖండాలు[elem_idx][bf].use_map[bi >> 3] &= ~(1U << (bi & 7));
+	} లేకపోతే {
+		అక్షరం *fname;
 
 		/* unlink the file from disc */
 		fname = store_fname(state, nsurl_hash(bse->url), elem_idx);
-		if (fname == NULL) {
-			return NSERROR_NOMEM;
+		ఒకవేళ (fname == ఖాళీ) {
+			తిరిగి NSERROR_NOMEM;
 		}
 		unlink(fname);
-		free(fname);
+		విడుదల(fname);
 	}
 
-	state->total_alloc -= bse->elem[elem_idx].size;
+	state->మొత్తం_alloc -= bse->elem[elem_idx].కొలత;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -456,37 +456,37 @@ invalidate_element(struct store_state *state,
  * @param bse The entry to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-invalidate_entry(struct store_state *state, struct store_entry *bse)
+స్థిర nserror
+invalidate_నమోదు(నిర్మాణం store_state *state, నిర్మాణం store_నమోదు *bse)
 {
 	nserror ret;
 
 	/* mark entry as invalid */
-	bse->flags |= ENTRY_FLAGS_INVALID;
+	bse->flags |= నమోదు_FLAGS_INVALID;
 
 	/* check if the entry has storage already allocated */
-	if (((bse->elem[ENTRY_ELEM_DATA].flags &
-	     (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0) ||
-	    ((bse->elem[ENTRY_ELEM_META].flags &
-	      (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0)) {
+	ఒకవేళ (((bse->elem[నమోదు_ELEM_దత్తాంశం].flags &
+	     (నమోదు_ELEM_FLAG_కుప్ప | నమోదు_ELEM_FLAG_MMAP)) != 0) ||
+	    ((bse->elem[నమోదు_ELEM_META].flags &
+	      (నమోదు_ELEM_FLAG_కుప్ప | నమోదు_ELEM_FLAG_MMAP)) != 0)) {
 		/*
 		 * This entry cannot be immediately removed as it has
 		 * associated allocation so wait for allocation release.
 		 */
 		NSLOG(netsurf, DEBUG,
 		      "invalidating entry with referenced allocation");
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	NSLOG(netsurf, VERBOSE, "Removing entry for %s", nsurl_access(bse->url));
 
-	ret = invalidate_element(state, bse, ENTRY_ELEM_META);
-	if (ret != NSERROR_OK) {
+	ret = invalidate_element(state, bse, నమోదు_ELEM_META);
+	ఒకవేళ (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "Error invalidating metadata element");
 	}
 
-	ret = invalidate_element(state, bse, ENTRY_ELEM_DATA);
-	if (ret != NSERROR_OK) {
+	ret = invalidate_element(state, bse, నమోదు_ELEM_దత్తాంశం);
+	ఒకవేళ (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "Error invalidating data element");
 	}
 
@@ -494,70 +494,70 @@ invalidate_entry(struct store_state *state, struct store_entry *bse)
 	hashmap_remove(state->entries, bse->url);
 	/* From now, bse is invalid memory */
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * Quick sort comparison.
  */
-static int compar(const void *va, const void *vb)
+స్థిర పూర్ణాంకం compar(స్థిరరాశి శూన్య *va, స్థిరరాశి శూన్య *vb)
 {
-	const struct store_entry *a = *(const struct store_entry **)va;
-	const struct store_entry *b = *(const struct store_entry **)vb;
+	స్థిరరాశి నిర్మాణం store_నమోదు *a = *(స్థిరరాశి నిర్మాణం store_నమోదు **)va;
+	స్థిరరాశి నిర్మాణం store_నమోదు *b = *(స్థిరరాశి నిర్మాణం store_నమోదు **)vb;
 
 	/* consider the allocation flags - if an entry has an
 	 * allocation it is considered more valuable as it cannot be
 	 * freed.
 	 */
-	if ((a->elem[ENTRY_ELEM_DATA].flags == ENTRY_ELEM_FLAG_NONE) &&
-	    (b->elem[ENTRY_ELEM_DATA].flags != ENTRY_ELEM_FLAG_NONE)) {
-		return -1;
-	} else if ((a->elem[ENTRY_ELEM_DATA].flags != ENTRY_ELEM_FLAG_NONE) &&
-		   (b->elem[ENTRY_ELEM_DATA].flags == ENTRY_ELEM_FLAG_NONE)) {
-		return 1;
+	ఒకవేళ ((a->elem[నమోదు_ELEM_దత్తాంశం].flags == నమోదు_ELEM_FLAG_NONE) &&
+	    (b->elem[నమోదు_ELEM_దత్తాంశం].flags != నమోదు_ELEM_FLAG_NONE)) {
+		తిరిగి -1;
+	} లేకపోతే ఒకవేళ ((a->elem[నమోదు_ELEM_దత్తాంశం].flags != నమోదు_ELEM_FLAG_NONE) &&
+		   (b->elem[నమోదు_ELEM_దత్తాంశం].flags == నమోదు_ELEM_FLAG_NONE)) {
+		తిరిగి 1;
 	}
 
-	if ((a->elem[ENTRY_ELEM_META].flags == ENTRY_ELEM_FLAG_NONE) &&
-	    (b->elem[ENTRY_ELEM_META].flags != ENTRY_ELEM_FLAG_NONE)) {
-		return -1;
-	} else if ((a->elem[ENTRY_ELEM_META].flags != ENTRY_ELEM_FLAG_NONE) &&
-		   (b->elem[ENTRY_ELEM_META].flags == ENTRY_ELEM_FLAG_NONE)) {
-		return 1;
+	ఒకవేళ ((a->elem[నమోదు_ELEM_META].flags == నమోదు_ELEM_FLAG_NONE) &&
+	    (b->elem[నమోదు_ELEM_META].flags != నమోదు_ELEM_FLAG_NONE)) {
+		తిరిగి -1;
+	} లేకపోతే ఒకవేళ ((a->elem[నమోదు_ELEM_META].flags != నమోదు_ELEM_FLAG_NONE) &&
+		   (b->elem[నమోదు_ELEM_META].flags == నమోదు_ELEM_FLAG_NONE)) {
+		తిరిగి 1;
 	}
 
-	if (a->use_count < b->use_count) {
-		return -1;
-	} else if (a->use_count > b->use_count) {
-		return 1;
+	ఒకవేళ (a->use_లెక్క < b->use_లెక్క) {
+		తిరిగి -1;
+	} లేకపోతే ఒకవేళ (a->use_లెక్క > b->use_లెక్క) {
+		తిరిగి 1;
 	}
 	/* use count is the same - now consider last use time */
 
-	if (a->last_used < b->last_used) {
-		return -1;
-	} else if (a->last_used > b->last_used) {
-		return 1;
+	ఒకవేళ (a->చివరి_వాడిన < b->చివరి_వాడిన) {
+		తిరిగి -1;
+	} లేకపోతే ఒకవేళ (a->చివరి_వాడిన > b->చివరి_వాడిన) {
+		తిరిగి 1;
 	}
 
 	/* they are the same */
-	return 0;
+	తిరిగి 0;
 }
 
-typedef struct {
-	struct store_entry **elist;
-	size_t ent_count;
+రకనిర్వచనం నిర్మాణం {
+	నిర్మాణం store_నమోదు **elist;
+	size_t ent_లెక్క;
 } eviction_state_t;
 
 /**
  * Iterator for gathering entries to compute eviction order
  */
-static bool
-entry_eviction_iterator_cb(void *key, void *value, void *ctx)
+స్థిర bool
+నమోదు_eviction_iterator_cb(శూన్య *కీలకం, శూన్య *విలువ, శూన్య *ctx)
 {
 	eviction_state_t *estate = ctx;
-	struct store_entry *ent = value;
-	estate->elist[estate->ent_count++] = ent;
-	return false;
+	నిర్మాణం store_నమోదు *ent = విలువ;
+	estate->elist[estate->ent_లెక్క++] = ent;
+	తిరిగి false;
 }
 
 /**
@@ -574,72 +574,72 @@ entry_eviction_iterator_cb(void *key, void *value, void *ctx)
  * @param state The store state to use.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror store_evict(struct store_state *state)
+స్థిర nserror store_evict(నిర్మాణం store_state *state)
 {
 	size_t ent = 0;
 	size_t removed = 0; /* size of removed entries */
 	nserror ret = NSERROR_OK;
-	size_t old_count;
+	size_t old_లెక్క;
 	eviction_state_t estate;
 
 	/* check if the cache has exceeded configured limit */
-	if (state->total_alloc < state->limit) {
+	ఒకవేళ (state->మొత్తం_alloc < state->హద్దు) {
 		/* cache within limits */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	NSLOG(netsurf, INFO,
 	      "Evicting entries to reduce %"PRIu64" by %"PRIsizet,
-	      state->total_alloc,
+	      state->మొత్తం_alloc,
 	      state->hysteresis);
 
 	/* allocate storage for the list */
-	old_count = hashmap_count(state->entries);
-	estate.ent_count = 0;
-	estate.elist = malloc(sizeof(struct state_entry*) * old_count);
-	if (estate.elist == NULL) {
-		return NSERROR_NOMEM;
+	old_లెక్క = hashmap_లెక్క(state->entries);
+	estate.ent_లెక్క = 0;
+	estate.elist = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం state_నమోదు*) * old_లెక్క);
+	ఒకవేళ (estate.elist == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	if (hashmap_iterate(state->entries, entry_eviction_iterator_cb, &estate)) {
+	ఒకవేళ (hashmap_iterate(state->entries, నమోదు_eviction_iterator_cb, &estate)) {
 		NSLOG(netsurf, WARNING, "Unexpected termination of eviction iterator");
-		free(estate.elist);
-		return NSERROR_UNKNOWN;
+		విడుదల(estate.elist);
+		తిరిగి NSERROR_UNKNOWN;
 	}
 
-	if (old_count != estate.ent_count) {
+	ఒకవేళ (old_లెక్క != estate.ent_లెక్క) {
 		NSLOG(netsurf, WARNING, "Incorrect entry count after eviction iterator");
-		free(estate.elist);
-		return NSERROR_UNKNOWN;
+		విడుదల(estate.elist);
+		తిరిగి NSERROR_UNKNOWN;
 	}
 
-	qsort(estate.elist, estate.ent_count, sizeof(struct state_entry*), compar);
+	qsort(estate.elist, estate.ent_లెక్క, పరిమాణం(నిర్మాణం state_నమోదు*), compar);
 
 	/* evict entries in listed order */
 	removed = 0;
-	for (ent = 0; ent < estate.ent_count; ent++) {
-		struct store_entry *bse = estate.elist[ent];
+	కొరకు (ent = 0; ent < estate.ent_లెక్క; ent++) {
+		నిర్మాణం store_నమోదు *bse = estate.elist[ent];
 
-		removed += bse->elem[ENTRY_ELEM_DATA].size;
-		removed += bse->elem[ENTRY_ELEM_META].size;
+		removed += bse->elem[నమోదు_ELEM_దత్తాంశం].కొలత;
+		removed += bse->elem[నమోదు_ELEM_META].కొలత;
 
-		ret = invalidate_entry(state, bse);
-		if (ret != NSERROR_OK) {
-			break;
+		ret = invalidate_నమోదు(state, bse);
+		ఒకవేళ (ret != NSERROR_OK) {
+			ఆపు;
 		}
 
-		if (removed > state->hysteresis) {
-			break;
+		ఒకవేళ (removed > state->hysteresis) {
+			ఆపు;
 		}
 	}
 
-	free(estate.elist);
+	విడుదల(estate.elist);
 
 	NSLOG(netsurf, INFO,
 	      "removed %"PRIsizet" in %"PRIsizet" entries, %"PRIu64" remaining in %"PRIsizet" entries",
-	      removed, ent, state->total_alloc, old_count - ent);
+	      removed, ent, state->మొత్తం_alloc, old_లెక్క - ent);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /**
@@ -650,37 +650,37 @@ static nserror store_evict(struct store_state *state)
  * Then we write out the full store entry struct as-is, which includes
  * a useless nsurl pointer.
  */
-static nserror
-write_entry(struct store_entry *ent, int fd)
+స్థిర nserror
+write_నమోదు(నిర్మాణం store_నమోదు *ent, పూర్ణాంకం fd)
 {
-	uint32_t len = strlen(nsurl_access(ent->url));
-	if (write(fd, &len, sizeof(len)) != sizeof(len))
-		return NSERROR_SAVE_FAILED;
-	if (write(fd, nsurl_access(ent->url), len) != (ssize_t)len)
-		return NSERROR_SAVE_FAILED;
-	if (write(fd, ent, sizeof(*ent)) != sizeof(*ent))
-		return NSERROR_SAVE_FAILED;
+	uint32_t len = అక్షరశ్రేణి_పొడవు(nsurl_access(ent->url));
+	ఒకవేళ (లిఖ(fd, &len, పరిమాణం(len)) != పరిమాణం(len))
+		తిరిగి NSERROR_SAVE_FAILED;
+	ఒకవేళ (లిఖ(fd, nsurl_access(ent->url), len) != (ssize_t)len)
+		తిరిగి NSERROR_SAVE_FAILED;
+	ఒకవేళ (లిఖ(fd, ent, పరిమాణం(*ent)) != పరిమాణం(*ent))
+		తిరిగి NSERROR_SAVE_FAILED;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-typedef struct {
-	int fd;
+రకనిర్వచనం నిర్మాణం {
+	పూర్ణాంకం fd;
 	size_t written;
-} write_entry_iteration_state;
+} write_నమోదు_iteration_state;
 
 /**
  * Callback for iterating the entries hashmap
  */
-static bool
-write_entry_iterator(void *key, void *value, void *ctx)
+స్థిర bool
+write_నమోదు_iterator(శూన్య *కీలకం, శూన్య *విలువ, శూన్య *ctx)
 {
 	/* We ignore the key */
-	struct store_entry *ent = value;
-	write_entry_iteration_state *state = ctx;
+	నిర్మాణం store_నమోదు *ent = విలువ;
+	write_నమోదు_iteration_state *state = ctx;
 	state->written++;
 	/* We stop early if we fail to write this entry */
-	return write_entry(ent, state->fd) != NSERROR_OK;
+	తిరిగి write_నమోదు(ent, state->fd) != NSERROR_OK;
 }
 
 /**
@@ -691,60 +691,60 @@ write_entry_iterator(void *key, void *value, void *ctx)
  * @param state The backing store state to serialise.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror write_entries(struct store_state *state)
+స్థిర nserror write_entries(నిర్మాణం store_state *state)
 {
-	char *tname = NULL; /* temporary file name for atomic replace */
-	char *fname = NULL; /* target filename */
-	write_entry_iteration_state weistate;
+	అక్షరం *tname = ఖాళీ; /* temporary file name for atomic replace */
+	అక్షరం *fname = ఖాళీ; /* target filename */
+	write_నమోదు_iteration_state weistate;
 	nserror ret;
 
-	memset(&weistate, 0, sizeof(weistate));
+	memset(&weistate, 0, పరిమాణం(weistate));
 
-	if (state->entries_dirty == false) {
+	ఒకవేళ (state->entries_dirty == false) {
 		/* entries have not been updated since last write */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	ret = netsurf_mkpath(&tname, NULL, 2, state->path, "t"ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&tname, ఖాళీ, 2, state->మార్గం, "t"ENTRIES_FNAME);
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	weistate.fd = open(tname, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-	if (weistate.fd == -1) {
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+	ఒకవేళ (weistate.fd == -1) {
+		విడుదల(tname);
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
-	if (hashmap_iterate(state->entries, write_entry_iterator, &weistate)) {
+	ఒకవేళ (hashmap_iterate(state->entries, write_నమోదు_iterator, &weistate)) {
 		/* The iteration ended early, so we failed */
 		close(weistate.fd);
 		unlink(tname);
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+		విడుదల(tname);
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
 	close(weistate.fd);
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
+	ret = netsurf_mkpath(&fname, ఖాళీ, 2, state->మార్గం, ENTRIES_FNAME);
+	ఒకవేళ (ret != NSERROR_OK) {
 		unlink(tname);
-		free(tname);
-		return ret;
+		విడుదల(tname);
+		తిరిగి ret;
 	}
 
 	/* remove() call is to handle non-POSIX rename() implementations */
-	(void)remove(fname);
-	if (rename(tname, fname) != 0) {
+	(శూన్య)remove(fname);
+	ఒకవేళ (rename(tname, fname) != 0) {
 		unlink(tname);
-		free(tname);
-		free(fname);
-		return NSERROR_SAVE_FAILED;
+		విడుదల(tname);
+		విడుదల(fname);
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, INFO, "Wrote out %"PRIsizet" entries", weistate.written);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -755,47 +755,47 @@ static nserror write_entries(struct store_state *state)
  * \param state The backing store state to serialise.
  * \return NSERROR_OK on success or error code on failure.
  */
-static nserror write_blocks(struct store_state *state)
+స్థిర nserror write_ఖండాలు(నిర్మాణం store_state *state)
 {
-	int fd;
-	char *tname = NULL; /* temporary file name for atomic replace */
-	char *fname = NULL; /* target filename */
-	size_t blocks_size;
+	పూర్ణాంకం fd;
+	అక్షరం *tname = ఖాళీ; /* temporary file name for atomic replace */
+	అక్షరం *fname = ఖాళీ; /* target filename */
+	size_t ఖండాలు_కొలత;
 	size_t written = 0;
 	size_t wr;
 	nserror ret;
-	int bfidx; /* block file index */
-	int elem_idx;
+	పూర్ణాంకం bfidx; /* block file index */
+	పూర్ణాంకం elem_idx;
 
-	if (state->blocks_dirty == false) {
+	ఒకవేళ (state->ఖండాలు_dirty == false) {
 		/* blocks use maps have not been updated since last write */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	ret = netsurf_mkpath(&tname, NULL, 2, state->path, "t"BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&tname, ఖాళీ, 2, state->మార్గం, "t"ఖండాలు_FNAME);
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	fd = open(tname, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-	if (fd == -1) {
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+	ఒకవేళ (fd == -1) {
+		విడుదల(tname);
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
-	blocks_size = (BLOCK_FILE_COUNT * ENTRY_ELEM_COUNT) * BLOCK_USE_MAP_SIZE;
+	ఖండాలు_కొలత = (ఖండం_FILE_లెక్క * నమోదు_ELEM_లెక్క) * ఖండం_USE_MAP_కొలత;
 
-	for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-		for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-			wr = write(fd,
-				   &state->blocks[elem_idx][bfidx].use_map[0],
-				   BLOCK_USE_MAP_SIZE);
-			if (wr != BLOCK_USE_MAP_SIZE) {
+	కొరకు (elem_idx = 0; elem_idx < నమోదు_ELEM_లెక్క; elem_idx++) {
+		కొరకు (bfidx = 0; bfidx < ఖండం_FILE_లెక్క; bfidx++) {
+			wr = లిఖ(fd,
+				   &state->ఖండాలు[elem_idx][bfidx].use_map[0],
+				   ఖండం_USE_MAP_కొలత);
+			ఒకవేళ (wr != ఖండం_USE_MAP_కొలత) {
 				NSLOG(netsurf, DEBUG,
 				      "writing block file %d use index on file number %d failed",
 				      elem_idx,
 				      bfidx);
-				goto wr_err;
+				వెళ్ళు wr_err;
 			}
 			written += wr;
 		}
@@ -804,29 +804,29 @@ wr_err:
 	close(fd);
 
 	/* check all data was written */
-	if (written != blocks_size) {
+	ఒకవేళ (written != ఖండాలు_కొలత) {
 		unlink(tname);
-		free(tname);
-		return NSERROR_SAVE_FAILED;
+		విడుదల(tname);
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
+	ret = netsurf_mkpath(&fname, ఖాళీ, 2, state->మార్గం, ఖండాలు_FNAME);
+	ఒకవేళ (ret != NSERROR_OK) {
 		unlink(tname);
-		free(tname);
-		return ret;
+		విడుదల(tname);
+		తిరిగి ret;
 	}
 
 	/* remove() call is to handle non-POSIX rename() implementations */
-	(void)remove(fname);
-	if (rename(tname, fname) != 0) {
+	(శూన్య)remove(fname);
+	ఒకవేళ (rename(tname, fname) != 0) {
 		unlink(tname);
-		free(tname);
-		free(fname);
-		return NSERROR_SAVE_FAILED;
+		విడుదల(tname);
+		విడుదల(fname);
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -839,24 +839,24 @@ wr_err:
  * \param state The backing store state to set block extent for.
  * \return NSERROR_OK on success or error code on failure.
  */
-static nserror set_block_extents(struct store_state *state)
+స్థిర nserror సమితి_ఖండం_extents(నిర్మాణం store_state *state)
 {
-	int bfidx; /* block file index */
-	int elem_idx;
-	int ftr;
+	పూర్ణాంకం bfidx; /* block file index */
+	పూర్ణాంకం elem_idx;
+	పూర్ణాంకం ftr;
 
-	if (state->blocks_opened == false) {
+	ఒకవేళ (state->ఖండాలు_opened == false) {
 		/* no blocks have been opened since last write */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	NSLOG(netsurf, DEBUG, "Starting");
-	for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-		for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-			if (state->blocks[elem_idx][bfidx].fd != -1) {
+	కొరకు (elem_idx = 0; elem_idx < నమోదు_ELEM_లెక్క; elem_idx++) {
+		కొరకు (bfidx = 0; bfidx < ఖండం_FILE_లెక్క; bfidx++) {
+			ఒకవేళ (state->ఖండాలు[elem_idx][bfidx].fd != -1) {
 				/* ensure block file is correct extent */
-				ftr = ftruncate(state->blocks[elem_idx][bfidx].fd, 1U << (log2_block_size[elem_idx] + BLOCK_ENTRY_COUNT));
-				if (ftr == -1) {
+				ftr = ftruncate(state->ఖండాలు[elem_idx][bfidx].fd, 1U << (log2_ఖండం_కొలత[elem_idx] + ఖండం_నమోదు_లెక్క));
+				ఒకవేళ (ftr == -1) {
 					NSLOG(netsurf, ERROR,
 					      "Truncate failed errno:%d",
 					      errno);
@@ -866,9 +866,9 @@ static nserror set_block_extents(struct store_state *state)
 	}
 	NSLOG(netsurf, DEBUG, "Complete");
 
-	state->blocks_opened = false;
+	state->ఖండాలు_opened = false;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -880,13 +880,13 @@ static nserror set_block_extents(struct store_state *state)
  *
  * \param s store state to maintain.
  */
-static void control_maintenance(void *s)
+స్థిర శూన్య control_maintenance(శూన్య *s)
 {
-	struct store_state *state = s;
+	నిర్మాణం store_state *state = s;
 
 	write_entries(state);
-	write_blocks(state);
-	set_block_extents(state);
+	write_ఖండాలు(state);
+	సమితి_ఖండం_extents(state);
 }
 
 
@@ -903,58 +903,58 @@ static void control_maintenance(void *s)
  * @return NSERROR_OK and bse updated on success or NSERROR_NOT_FOUND
  *         if no entry corresponds to the url.
  */
-static nserror
-get_store_entry(struct store_state *state, nsurl *url, struct store_entry **bse)
+స్థిర nserror
+get_store_నమోదు(నిర్మాణం store_state *state, nsurl *url, నిర్మాణం store_నమోదు **bse)
 {
-	struct store_entry *ent;
+	నిర్మాణం store_నమోదు *ent;
 
 	ent = hashmap_lookup(state->entries, url);
 
-	if (ent == NULL) {
-		return NSERROR_NOT_FOUND;
+	ఒకవేళ (ent == ఖాళీ) {
+		తిరిగి NSERROR_NOT_దొరికింది;
 	}
 
 	*bse = ent;
 
-	ent->last_used = time(NULL);
-	ent->use_count++;
+	ent->చివరి_వాడిన = time(ఖాళీ);
+	ent->use_లెక్క++;
 
 	state->entries_dirty = true;
 
-	guit->misc->schedule(CONTROL_MAINT_TIME, control_maintenance, state);
+	guit->misc->కాలపట్టిక(CONTROL_MAINT_సమయం, control_maintenance, state);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
  * Find next available small block.
  */
-static block_index_t alloc_block(struct store_state *state, int elem_idx)
+స్థిర ఖండం_సూచీ_t alloc_ఖండం(నిర్మాణం store_state *state, పూర్ణాంకం elem_idx)
 {
-	int bf;
-	int idx;
-	int bit;
+	పూర్ణాంకం bf;
+	పూర్ణాంకం idx;
+	పూర్ణాంకం బిట్టు;
 	uint8_t *map;
 
-	for (bf = 0; bf < BLOCK_FILE_COUNT; bf++) {
-		map = &state->blocks[elem_idx][bf].use_map[0];
+	కొరకు (bf = 0; bf < ఖండం_FILE_లెక్క; bf++) {
+		map = &state->ఖండాలు[elem_idx][bf].use_map[0];
 
-		for (idx = 0; idx < BLOCK_USE_MAP_SIZE; idx++) {
-			if (*(map + idx) != 0xff) {
+		కొరకు (idx = 0; idx < ఖండం_USE_MAP_కొలత; idx++) {
+			ఒకవేళ (*(map + idx) != 0xff) {
 				/* located an unused block */
-				for (bit = 0; bit < 8;bit++) {
-					if (((*(map + idx)) & (1U << bit)) == 0) {
+				కొరకు (బిట్టు = 0; బిట్టు < 8;బిట్టు++) {
+					ఒకవేళ (((*(map + idx)) & (1U << బిట్టు)) == 0) {
 						/* mark block as used */
-						*(map + idx) |= 1U << bit;
-						state->blocks_dirty = true;
-						return (((bf * BLOCK_USE_MAP_SIZE) + idx) * 8) + bit;
+						*(map + idx) |= 1U << బిట్టు;
+						state->ఖండాలు_dirty = true;
+						తిరిగి (((bf * ఖండం_USE_MAP_కొలత) + idx) * 8) + బిట్టు;
 					}
 				}
 			}
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /**
@@ -971,17 +971,17 @@ static block_index_t alloc_block(struct store_state *state, int elem_idx)
  * @return NSERROR_OK and \a bse updated on success or NSERROR_NOT_FOUND
  *         if no entry corresponds to the url.
  */
-static nserror
-set_store_entry(struct store_state *state,
+స్థిర nserror
+సమితి_store_నమోదు(నిర్మాణం store_state *state,
 		nsurl *url,
-		int elem_idx,
-		uint8_t *data,
-		const size_t datalen,
-		struct store_entry **bse)
+		పూర్ణాంకం elem_idx,
+		uint8_t *దత్తాంశం,
+		స్థిరరాశి size_t datalen,
+		నిర్మాణం store_నమోదు **bse)
 {
-	struct store_entry *se;
+	నిర్మాణం store_నమోదు *se;
 	nserror ret;
-	struct store_entry_element *elem;
+	నిర్మాణం store_నమోదు_element *elem;
 
 	NSLOG(netsurf, DEBUG, "url:%s", nsurl_access(url));
 
@@ -989,57 +989,57 @@ set_store_entry(struct store_state *state,
 	 * new entry available.
 	 */
 	ret = store_evict(state);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	se = hashmap_lookup(state->entries, url);
-	if (se == NULL) {
-		se = hashmap_insert(state->entries, url);
+	ఒకవేళ (se == ఖాళీ) {
+		se = hashmap_చొప్పించు(state->entries, url);
 	}
-	if (se == NULL) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (se == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	/* the entry element */
 	elem = &se->elem[elem_idx];
 
 	/* check if the element has storage already allocated */
-	if ((elem->flags & (ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP)) != 0) {
+	ఒకవేళ ((elem->flags & (నమోదు_ELEM_FLAG_కుప్ప | నమోదు_ELEM_FLAG_MMAP)) != 0) {
 		/* this entry cannot be removed as it has associated
 		 * allocation.
 		 */
 		NSLOG(netsurf, ERROR,
 		      "attempt to overwrite entry with in use data");
-		return NSERROR_PERMISSION;
+		తిరిగి NSERROR_PERMISSION;
 	}
 
 	/* set the common entry data */
-	se->use_count = 1;
-	se->last_used = time(NULL);
+	se->use_లెక్క = 1;
+	se->చివరి_వాడిన = time(ఖాళీ);
 
 	/* store the data in the element */
-	elem->flags |= ENTRY_ELEM_FLAG_HEAP;
-	elem->data = data;
+	elem->flags |= నమోదు_ELEM_FLAG_కుప్ప;
+	elem->దత్తాంశం = దత్తాంశం;
 	elem->ref = 1;
 
 	/* account for size of entry element */
-	state->total_alloc -= elem->size;
-	elem->size = datalen;
-	state->total_alloc += elem->size;
+	state->మొత్తం_alloc -= elem->కొలత;
+	elem->కొలత = datalen;
+	state->మొత్తం_alloc += elem->కొలత;
 
 	/* if the element will fit in a small block attempt to allocate one */
-	if (elem->size <= (1U << log2_block_size[elem_idx])) {
-		elem->block = alloc_block(state, elem_idx);
+	ఒకవేళ (elem->కొలత <= (1U << log2_ఖండం_కొలత[elem_idx])) {
+		elem->ఖండం = alloc_ఖండం(state, elem_idx);
 	}
 
 	/* ensure control maintenance scheduled. */
 	state->entries_dirty = true;
-	guit->misc->schedule(CONTROL_MAINT_TIME, control_maintenance, state);
+	guit->misc->కాలపట్టిక(CONTROL_MAINT_సమయం, control_maintenance, state);
 
 	*bse = se;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1056,39 +1056,39 @@ set_store_entry(struct store_state *state,
  * @param openflags The flags used with the open call.
  * @return An fd from the open call or -1 on error.
  */
-static int
-store_open(struct store_state *state,
-	   entry_ident_t ident,
-	   int elem_idx,
-	   int openflags)
+స్థిర పూర్ణాంకం
+store_open(నిర్మాణం store_state *state,
+	   నమోదు_ident_t ident,
+	   పూర్ణాంకం elem_idx,
+	   పూర్ణాంకం openflags)
 {
-	char *fname;
+	అక్షరం *fname;
 	nserror ret;
-	int fd;
+	పూర్ణాంకం fd;
 
 	fname = store_fname(state, ident, elem_idx);
-	if (fname == NULL) {
+	ఒకవేళ (fname == ఖాళీ) {
 		NSLOG(netsurf, ERROR, "filename error");
-		return -1;
+		తిరిగి -1;
 	}
 
 	/* ensure all path elements to file exist if creating file */
-	if (openflags & O_CREAT) {
+	ఒకవేళ (openflags & O_CREAT) {
 		ret = netsurf_mkdir_all(fname);
-		if (ret != NSERROR_OK) {
+		ఒకవేళ (ret != NSERROR_OK) {
 			NSLOG(netsurf, WARNING,
 			      "file path \"%s\" could not be created", fname);
-			free(fname);
-			return -1;
+			విడుదల(fname);
+			తిరిగి -1;
 		}
 	}
 
 	NSLOG(netsurf, DEBUG, "opening %s", fname);
 	fd = open(fname, openflags, S_IRUSR | S_IWUSR);
 
-	free(fname);
+	విడుదల(fname);
 
-	return fd;
+	తిరిగి fd;
 }
 
 
@@ -1098,21 +1098,21 @@ store_open(struct store_state *state,
  * @param state The backing store state.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-unlink_entries(struct store_state *state)
+స్థిర nserror
+unlink_entries(నిర్మాణం store_state *state)
 {
-	char *fname = NULL;
+	అక్షరం *fname = ఖాళీ;
 	nserror ret;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ఖాళీ, 2, state->మార్గం, ENTRIES_FNAME);
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	unlink(fname);
 
-	free(fname);
-	return NSERROR_OK;
+	విడుదల(fname);
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -1121,79 +1121,79 @@ unlink_entries(struct store_state *state)
  * @param state The backing store state to put the loaded entries in.
  * @return NSERROR_OK on success or error code on faliure.
  */
-static nserror
-read_entries(struct store_state *state)
+స్థిర nserror
+read_entries(నిర్మాణం store_state *state)
 {
-	char *fname = NULL;
-	char *url;
+	అక్షరం *fname = ఖాళీ;
+	అక్షరం *url;
 	nsurl *nsurl;
 	nserror ret;
 	size_t read_entries = 0;
-	struct store_entry *ent;
-	int fd;
+	నిర్మాణం store_నమోదు *ent;
+	పూర్ణాంకం fd;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, ENTRIES_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ఖాళీ, 2, state->మార్గం, ENTRIES_FNAME);
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	state->entries = hashmap_create(&entries_hashmap_parameters);
-	if (state->entries == NULL) {
-		free(fname);
-		return NSERROR_NOMEM;
+	ఒకవేళ (state->entries == ఖాళీ) {
+		విడుదల(fname);
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	fd = open(fname, O_RDWR);
-	if (fd != -1) {
+	ఒకవేళ (fd != -1) {
 		uint32_t urllen;
-		while (read(fd, &urllen, sizeof(urllen)) == sizeof(urllen)) {
-			url = calloc(1, urllen+1);
-			if (url == NULL) {
+		అయితే (పఠ(fd, &urllen, పరిమాణం(urllen)) == పరిమాణం(urllen)) {
+			url = సున్నా_జ్ఞాపకం_ఇవ్వు(1, urllen+1);
+			ఒకవేళ (url == ఖాళీ) {
 				close(fd);
-				free(fname);
-				return NSERROR_NOMEM;
+				విడుదల(fname);
+				తిరిగి NSERROR_NOMEM;
 			}
-			if (read(fd, url, urllen) != (ssize_t)urllen) {
-				free(url);
+			ఒకవేళ (పఠ(fd, url, urllen) != (ssize_t)urllen) {
+				విడుదల(url);
 				close(fd);
-				free(fname);
-				return NSERROR_INIT_FAILED;
+				విడుదల(fname);
+				తిరిగి NSERROR_INIT_FAILED;
 			}
 			ret = nsurl_create(url, &nsurl);
-			if (ret != NSERROR_OK) {
-				free(url);
+			ఒకవేళ (ret != NSERROR_OK) {
+				విడుదల(url);
 				close(fd);
-				free(fname);
-				return ret;
+				విడుదల(fname);
+				తిరిగి ret;
 			}
-			free(url);
+			విడుదల(url);
 			/* We have to be careful here about nsurl refs */
-			ent = hashmap_insert(state->entries, nsurl);
-			if (ent == NULL) {
+			ent = hashmap_చొప్పించు(state->entries, nsurl);
+			ఒకవేళ (ent == ఖాళీ) {
 				nsurl_unref(nsurl);
 				close(fd);
-				free(fname);
-				return NSERROR_NOMEM;
+				విడుదల(fname);
+				తిరిగి NSERROR_NOMEM;
 			}
 			/* At this point, ent actually owns a ref of nsurl */
-			if (read(fd, ent, sizeof(*ent)) != sizeof(*ent)) {
+			ఒకవేళ (పఠ(fd, ent, పరిమాణం(*ent)) != పరిమాణం(*ent)) {
 				/* The read failed, so reset the ptr */
 				ent->url = nsurl; /* It already had a ref */
 				nsurl_unref(nsurl);
 				close(fd);
-				free(fname);
-				return NSERROR_INIT_FAILED;
+				విడుదల(fname);
+				తిరిగి NSERROR_INIT_FAILED;
 			}
 			ent->url = nsurl; /* It already owns a ref */
 			nsurl_unref(nsurl);
 			NSLOG(netsurf, DEBUG, "Successfully read entry for %s", nsurl_access(ent->url));
 			read_entries++;
 			/* Note the size allocation */
-			state->total_alloc += ent->elem[ENTRY_ELEM_DATA].size;
-			state->total_alloc += ent->elem[ENTRY_ELEM_META].size;
+			state->మొత్తం_alloc += ent->elem[నమోదు_ELEM_దత్తాంశం].కొలత;
+			state->మొత్తం_alloc += ent->elem[నమోదు_ELEM_META].కొలత;
 			/* And ensure we don't pretend to have this in memory yet */
-			ent->elem[ENTRY_ELEM_DATA].flags &= ~(ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP);
-			ent->elem[ENTRY_ELEM_META].flags &= ~(ENTRY_ELEM_FLAG_HEAP | ENTRY_ELEM_FLAG_MMAP);
+			ent->elem[నమోదు_ELEM_దత్తాంశం].flags &= ~(నమోదు_ELEM_FLAG_కుప్ప | నమోదు_ELEM_FLAG_MMAP);
+			ent->elem[నమోదు_ELEM_META].flags &= ~(నమోదు_ELEM_FLAG_కుప్ప | నమోదు_ELEM_FLAG_MMAP);
 
 		}
 		close(fd);
@@ -1201,8 +1201,8 @@ read_entries(struct store_state *state)
 
 	NSLOG(netsurf, INFO, "Read %"PRIsizet" entries from cache", read_entries);
 
-	free(fname);
-	return NSERROR_OK;
+	విడుదల(fname);
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1212,58 +1212,58 @@ read_entries(struct store_state *state)
  * @param state The backing store state to put the loaded entries in.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-read_blocks(struct store_state *state)
+స్థిర nserror
+read_ఖండాలు(నిర్మాణం store_state *state)
 {
-	int bfidx; /* block file index */
-	int elem_idx;
-	int fd;
+	పూర్ణాంకం bfidx; /* block file index */
+	పూర్ణాంకం elem_idx;
+	పూర్ణాంకం fd;
 	ssize_t rd;
-	char *fname = NULL;
+	అక్షరం *fname = ఖాళీ;
 	nserror ret;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, BLOCKS_FNAME);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ఖాళీ, 2, state->మార్గం, ఖండాలు_FNAME);
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	NSLOG(netsurf, INFO, "Initialising block use map from %s", fname);
 
 	fd = open(fname, O_RDWR);
-	free(fname);
-	if (fd != -1) {
+	విడుదల(fname);
+	ఒకవేళ (fd != -1) {
 		/* initialise block file use array */
-		for (elem_idx = 0; elem_idx < ENTRY_ELEM_COUNT; elem_idx++) {
-			for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-				rd = read(fd,
-					  &state->blocks[elem_idx][bfidx].use_map[0],
-					  BLOCK_USE_MAP_SIZE);
-				if (rd <= 0) {
+		కొరకు (elem_idx = 0; elem_idx < నమోదు_ELEM_లెక్క; elem_idx++) {
+			కొరకు (bfidx = 0; bfidx < ఖండం_FILE_లెక్క; bfidx++) {
+				rd = పఠ(fd,
+					  &state->ఖండాలు[elem_idx][bfidx].use_map[0],
+					  ఖండం_USE_MAP_కొలత);
+				ఒకవేళ (rd <= 0) {
 					NSLOG(netsurf, ERROR,
 					      "reading block file %d use index on file number %d failed",
 					      elem_idx,
 					      bfidx);
-					goto rd_err;
+					వెళ్ళు rd_err;
 				}
 			}
 		}
 	rd_err:
 		close(fd);
 
-	} else {
+	} లేకపోతే {
 		NSLOG(netsurf, INFO, "Initialising block use map to defaults");
 		/* ensure block 0 (invalid sentinel) is skipped */
-		state->blocks[ENTRY_ELEM_DATA][0].use_map[0] = 1;
-		state->blocks[ENTRY_ELEM_META][0].use_map[0] = 1;
+		state->ఖండాలు[నమోదు_ELEM_దత్తాంశం][0].use_map[0] = 1;
+		state->ఖండాలు[నమోదు_ELEM_META][0].use_map[0] = 1;
 	}
 
 	/* initialise block file file descriptors */
-	for (bfidx = 0; bfidx < BLOCK_FILE_COUNT; bfidx++) {
-		state->blocks[ENTRY_ELEM_DATA][bfidx].fd = -1;
-		state->blocks[ENTRY_ELEM_META][bfidx].fd = -1;
+	కొరకు (bfidx = 0; bfidx < ఖండం_FILE_లెక్క; bfidx++) {
+		state->ఖండాలు[నమోదు_ELEM_దత్తాంశం][bfidx].fd = -1;
+		state->ఖండాలు[నమోదు_ELEM_META][bfidx].fd = -1;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -1272,24 +1272,24 @@ read_blocks(struct store_state *state)
  * @param state The cache state.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-write_cache_tag(struct store_state *state)
+స్థిర nserror
+write_cache_ట్యాగ్(నిర్మాణం store_state *state)
 {
 	FILE *fcachetag;
 	nserror ret;
-	char *fname = NULL;
+	అక్షరం *fname = ఖాళీ;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "CACHEDIR.TAG");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ఖాళీ, 2, state->మార్గం, "CACHEDIR.TAG");
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	fcachetag = fopen(fname, "wb");
 
-	free(fname);
+	విడుదల(fname);
 
-	if (fcachetag == NULL) {
-		return NSERROR_NOT_FOUND;
+	ఒకవేళ (fcachetag == ఖాళీ) {
+		తిరిగి NSERROR_NOT_దొరికింది;
 	}
 
 	fprintf(fcachetag,
@@ -1300,7 +1300,7 @@ write_cache_tag(struct store_state *state)
 
 	fclose(fcachetag);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -1309,39 +1309,39 @@ write_cache_tag(struct store_state *state)
  * @param state The state to write to the control file.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-write_control(struct store_state *state)
+స్థిర nserror
+write_control(నిర్మాణం store_state *state)
 {
 	FILE *fcontrol;
 	nserror ret;
-	char *fname = NULL;
+	అక్షరం *fname = ఖాళీ;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "control");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ఖాళీ, 2, state->మార్గం, "control");
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	NSLOG(netsurf, INFO, "writing control file \"%s\"", fname);
 
 	ret = netsurf_mkdir_all(fname);
-	if (ret != NSERROR_OK) {
-		free(fname);
-		return ret;
+	ఒకవేళ (ret != NSERROR_OK) {
+		విడుదల(fname);
+		తిరిగి ret;
 	}
 
 	fcontrol = fopen(fname, "wb");
 
-	free(fname);
+	విడుదల(fname);
 
-	if (fcontrol == NULL) {
-		return NSERROR_NOT_FOUND;
+	ఒకవేళ (fcontrol == ఖాళీ) {
+		తిరిగి NSERROR_NOT_దొరికింది;
 	}
 
-	fprintf(fcontrol, "%u%c", CONTROL_VERSION, 0);
+	fprintf(fcontrol, "%u%c", CONTROL_సంస్కరణ, 0);
 
 	fclose(fcontrol);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1351,58 +1351,58 @@ write_control(struct store_state *state)
  * @param state The state to read from the control file.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-read_control(struct store_state *state)
+స్థిర nserror
+read_control(నిర్మాణం store_state *state)
 {
 	nserror ret;
 	FILE *fcontrol;
-	unsigned int ctrlversion;
-	char *fname = NULL;
+	గుర్తులేని పూర్ణాంకం ctrlversion;
+	అక్షరం *fname = ఖాళీ;
 
-	ret = netsurf_mkpath(&fname, NULL, 2, state->path, "control");
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = netsurf_mkpath(&fname, ఖాళీ, 2, state->మార్గం, "control");
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
 	NSLOG(netsurf, INFO, "opening control file \"%s\"", fname);
 
 	fcontrol = fopen(fname, "rb");
 
-	free(fname);
+	విడుదల(fname);
 
-	if (fcontrol == NULL) {
+	ఒకవేళ (fcontrol == ఖాళీ) {
 		/* unable to open control file */
-		if (errno == ENOENT) {
-			return NSERROR_NOT_FOUND;
-		} else {
-			return NSERROR_INIT_FAILED;
+		ఒకవేళ (errno == ENOENT) {
+			తిరిగి NSERROR_NOT_దొరికింది;
+		} లేకపోతే {
+			తిరిగి NSERROR_INIT_FAILED;
 		}
 	}
 
 	/* read control and setup new state */
 
 	/* first line is version */
-	if (fscanf(fcontrol, "%u", &ctrlversion) != 1) {
-		goto control_error;
+	ఒకవేళ (fscanf(fcontrol, "%u", &ctrlversion) != 1) {
+		వెళ్ళు control_error;
 	}
 
-	if (ctrlversion != CONTROL_VERSION) {
-		goto control_error;
+	ఒకవేళ (ctrlversion != CONTROL_సంస్కరణ) {
+		వెళ్ళు control_error;
 	}
 
-	if (fgetc(fcontrol) != 0) {
-		goto control_error;
+	ఒకవేళ (fgetc(fcontrol) != 0) {
+		వెళ్ళు control_error;
 	}
 
 	fclose(fcontrol);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
 control_error: /* problem with the control file */
 
 	fclose(fcontrol);
 
-	return NSERROR_INIT_FAILED;
+	తిరిగి NSERROR_INIT_FAILED;
 }
 
 
@@ -1416,86 +1416,86 @@ control_error: /* problem with the control file */
  * @param parameters to configure backing store.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
-initialise(const struct llcache_store_parameters *parameters)
+స్థిర nserror
+initialise(స్థిరరాశి నిర్మాణం llcache_store_parameters *parameters)
 {
-	struct store_state *newstate;
+	నిర్మాణం store_state *newstate;
 	nserror ret;
 
 	/* check backing store is not already initialised */
-	if (storestate != NULL) {
-		return NSERROR_INIT_FAILED;
+	ఒకవేళ (storestate != ఖాళీ) {
+		తిరిగి NSERROR_INIT_FAILED;
 	}
 
 	/* if we are not allowed any space simply give up on init */
-	if (parameters->limit == 0) {
-		return NSERROR_OK;
+	ఒకవేళ (parameters->హద్దు == 0) {
+		తిరిగి NSERROR_OK;
 	}
 
 	/* if the path to the cache directory is not set do not init */
-	if (parameters->path == NULL) {
-		return NSERROR_OK;
+	ఒకవేళ (parameters->మార్గం == ఖాళీ) {
+		తిరిగి NSERROR_OK;
 	}
 
 	/* allocate new store state and set defaults */
-	newstate = calloc(1, sizeof(struct store_state));
-	if (newstate == NULL) {
-		return NSERROR_NOMEM;
+	newstate = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం store_state));
+	ఒకవేళ (newstate == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	newstate->path = strdup(parameters->path);
-	newstate->limit = parameters->limit;
+	newstate->మార్గం = strdup(parameters->మార్గం);
+	newstate->హద్దు = parameters->హద్దు;
 	newstate->hysteresis = parameters->hysteresis;
 
 	/* read store control and create new if required */
 	ret = read_control(newstate);
-	if (ret != NSERROR_OK) {
-		if (ret == NSERROR_NOT_FOUND) {
+	ఒకవేళ (ret != NSERROR_OK) {
+		ఒకవేళ (ret == NSERROR_NOT_దొరికింది) {
 			NSLOG(netsurf, INFO, "cache control file not found, making fresh");
-		} else {
+		} లేకపోతే {
 			NSLOG(netsurf, ERROR, "read control failed %s",
 			      messages_get_errorcode(ret));
-			ret = netsurf_recursive_rm(newstate->path);
-			if (ret != NSERROR_OK) {
+			ret = netsurf_recursive_rm(newstate->మార్గం);
+			ఒకవేళ (ret != NSERROR_OK) {
 				NSLOG(netsurf, WARNING, "Error `%s` while removing `%s`",
-				      messages_get_errorcode(ret), newstate->path);
+				      messages_get_errorcode(ret), newstate->మార్గం);
 				NSLOG(netsurf, WARNING, "Unable to clean up partial cache state.");
 				NSLOG(netsurf, WARNING, "Funky behaviour may ensue.");
-			} else {
+			} లేకపోతే {
 				NSLOG(netsurf, INFO, "Successfully removed old cache from `%s`",
-				      newstate->path);
+				      newstate->మార్గం);
 			}
 		}
 		ret = write_control(newstate);
-		if (ret == NSERROR_OK) {
+		ఒకవేళ (ret == NSERROR_OK) {
 			unlink_entries(newstate);
-			write_cache_tag(newstate);
+			write_cache_ట్యాగ్(newstate);
 		}
 	}
-	if (ret != NSERROR_OK) {
+	ఒకవేళ (ret != NSERROR_OK) {
 		/* that went well obviously */
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		విడుదల(newstate->మార్గం);
+		విడుదల(newstate);
+		తిరిగి ret;
 	}
 
 	/* read filesystem entries */
 	ret = read_entries(newstate);
-	if (ret != NSERROR_OK) {
+	ఒకవేళ (ret != NSERROR_OK) {
 		/* that went well obviously */
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		విడుదల(newstate->మార్గం);
+		విడుదల(newstate);
+		తిరిగి ret;
 	}
 
 	/* read blocks */
-	ret = read_blocks(newstate);
-	if (ret != NSERROR_OK) {
+	ret = read_ఖండాలు(newstate);
+	ఒకవేళ (ret != NSERROR_OK) {
 		/* oh dear */
 		hashmap_destroy(newstate->entries);
-		free(newstate->path);
-		free(newstate);
-		return ret;
+		విడుదల(newstate->మార్గం);
+		విడుదల(newstate);
+		తిరిగి ret;
 	}
 
 	storestate = newstate;
@@ -1504,13 +1504,13 @@ initialise(const struct llcache_store_parameters *parameters)
 
 	NSLOG(netsurf, INFO,
 	      "path:%s limit:%"PRIsizet" hyst:%"PRIsizet,
-	      newstate->path,
-	      newstate->limit,
+	      newstate->మార్గం,
+	      newstate->హద్దు,
 	      newstate->hysteresis);
 	NSLOG(netsurf, INFO, "Using %"PRIu64"/%"PRIsizet,
-	      newstate->total_alloc, newstate->limit);
+	      newstate->మొత్తం_alloc, newstate->హద్దు);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1522,48 +1522,48 @@ initialise(const struct llcache_store_parameters *parameters)
  *
  * @return NSERROR_OK on success.
  */
-static nserror
-finalise(void)
+స్థిర nserror
+finalise(శూన్య)
 {
-	int bf; /* block file index */
-	unsigned int op_count;
+	పూర్ణాంకం bf; /* block file index */
+	గుర్తులేని పూర్ణాంకం op_లెక్క;
 
-	if (storestate != NULL) {
-		guit->misc->schedule(-1, control_maintenance, storestate);
+	ఒకవేళ (storestate != ఖాళీ) {
+		guit->misc->కాలపట్టిక(-1, control_maintenance, storestate);
 		write_entries(storestate);
-		write_blocks(storestate);
+		write_ఖండాలు(storestate);
 
 		/* ensure all block files are closed */
-		for (bf = 0; bf < BLOCK_FILE_COUNT; bf++) {
-			if (storestate->blocks[ENTRY_ELEM_DATA][bf].fd != -1) {
-				close(storestate->blocks[ENTRY_ELEM_DATA][bf].fd);
+		కొరకు (bf = 0; bf < ఖండం_FILE_లెక్క; bf++) {
+			ఒకవేళ (storestate->ఖండాలు[నమోదు_ELEM_దత్తాంశం][bf].fd != -1) {
+				close(storestate->ఖండాలు[నమోదు_ELEM_దత్తాంశం][bf].fd);
 			}
-			if (storestate->blocks[ENTRY_ELEM_META][bf].fd != -1) {
-				close(storestate->blocks[ENTRY_ELEM_META][bf].fd);
+			ఒకవేళ (storestate->ఖండాలు[నమోదు_ELEM_META][bf].fd != -1) {
+				close(storestate->ఖండాలు[నమోదు_ELEM_META][bf].fd);
 			}
 		}
 
-		op_count = storestate->hit_count + storestate->miss_count;
+		op_లెక్క = storestate->తగిలింది_లెక్క + storestate->తప్పిపోవు_లెక్క;
 
 		/* avoid division by zero */
-		if (op_count > 0) {
+		ఒకవేళ (op_లెక్క > 0) {
 			NSLOG(netsurf, INFO,
 			      "Cache total/hit/miss/fail (counts) %d/%"PRIsizet"/%"PRIsizet"/%d (100%%/%"PRIsizet"%%/%"PRIsizet"%%/%d%%)",
-			      op_count,
-			      storestate->hit_count,
-			      storestate->miss_count,
+			      op_లెక్క,
+			      storestate->తగిలింది_లెక్క,
+			      storestate->తప్పిపోవు_లెక్క,
 			      0,
-			      (storestate->hit_count * 100) / op_count,
-			      (storestate->miss_count * 100) / op_count,
+			      (storestate->తగిలింది_లెక్క * 100) / op_లెక్క,
+			      (storestate->తప్పిపోవు_లెక్క * 100) / op_లెక్క,
 			      0);
 		}
 
 		hashmap_destroy(storestate->entries);
-		free(storestate->path);
-		free(storestate);
-		storestate = NULL;
+		విడుదల(storestate->మార్గం);
+		విడుదల(storestate);
+		storestate = ఖాళీ;
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1575,53 +1575,53 @@ finalise(void)
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_write_block(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+స్థిర nserror store_write_ఖండం(నిర్మాణం store_state *state,
+			 నిర్మాణం store_నమోదు *bse,
+			 పూర్ణాంకం elem_idx)
 {
-	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-		((1 << BLOCK_FILE_COUNT) - 1); /* block file block resides in */
-	block_index_t bi = bse->elem[elem_idx].block & ((1U << BLOCK_ENTRY_COUNT) -1); /* block index in file */
+	ఖండం_సూచీ_t bf = (bse->elem[elem_idx].ఖండం >> ఖండం_నమోదు_లెక్క) &
+		((1 << ఖండం_FILE_లెక్క) - 1); /* block file block resides in */
+	ఖండం_సూచీ_t bi = bse->elem[elem_idx].ఖండం & ((1U << ఖండం_నమోదు_లెక్క) -1); /* block index in file */
 	ssize_t wr;
 	off_t offst;
 
 	/* ensure the block file fd is good */
-	if (state->blocks[elem_idx][bf].fd == -1) {
-		state->blocks[elem_idx][bf].fd = store_open(state, bf,
-				elem_idx + ENTRY_ELEM_COUNT, O_CREAT | O_RDWR);
-		if (state->blocks[elem_idx][bf].fd == -1) {
+	ఒకవేళ (state->ఖండాలు[elem_idx][bf].fd == -1) {
+		state->ఖండాలు[elem_idx][bf].fd = store_open(state, bf,
+				elem_idx + నమోదు_ELEM_లెక్క, O_CREAT | O_RDWR);
+		ఒకవేళ (state->ఖండాలు[elem_idx][bf].fd == -1) {
 			NSLOG(netsurf, ERROR, "Open failed errno %d", errno);
-			return NSERROR_SAVE_FAILED;
+			తిరిగి NSERROR_SAVE_FAILED;
 		}
 
 		/* flag that a block file has been opened */
-		state->blocks_opened = true;
+		state->ఖండాలు_opened = true;
 	}
 
-	offst = (unsigned int)bi << log2_block_size[elem_idx];
+	offst = (గుర్తులేని పూర్ణాంకం)bi << log2_ఖండం_కొలత[elem_idx];
 
-	wr = nsu_pwrite(state->blocks[elem_idx][bf].fd,
-			bse->elem[elem_idx].data,
-			bse->elem[elem_idx].size,
+	wr = nsu_pwrite(state->ఖండాలు[elem_idx][bf].fd,
+			bse->elem[elem_idx].దత్తాంశం,
+			bse->elem[elem_idx].కొలత,
 			offst);
-	if (wr != (ssize_t)bse->elem[elem_idx].size) {
+	ఒకవేళ (wr != (ssize_t)bse->elem[elem_idx].కొలత) {
 		NSLOG(netsurf, ERROR,
 		      "Write failed %"PRIssizet" of %"PRId32" bytes from %p at %"PRIsizet" block %"PRIu16" errno %d",
 		      wr,
-		      bse->elem[elem_idx].size,
-		      bse->elem[elem_idx].data,
+		      bse->elem[elem_idx].కొలత,
+		      bse->elem[elem_idx].దత్తాంశం,
 		      (size_t)offst,
-		      bse->elem[elem_idx].block,
+		      bse->elem[elem_idx].ఖండం,
 		      errno);
-		return NSERROR_SAVE_FAILED;
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, INFO,
 	      "Wrote %"PRIssizet" bytes from %p at %"PRIsizet" block %d", wr,
-	      bse->elem[elem_idx].data, (size_t)offst,
-	      bse->elem[elem_idx].block);
+	      bse->elem[elem_idx].దత్తాంశం, (size_t)offst,
+	      bse->elem[elem_idx].ఖండం);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -1632,41 +1632,41 @@ static nserror store_write_block(struct store_state *state,
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_write_file(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+స్థిర nserror store_write_file(నిర్మాణం store_state *state,
+			 నిర్మాణం store_నమోదు *bse,
+			 పూర్ణాంకం elem_idx)
 {
 	ssize_t wr;
-	int fd;
-	int err;
+	పూర్ణాంకం fd;
+	పూర్ణాంకం err;
 
 	fd = store_open(state, nsurl_hash(bse->url), elem_idx, O_CREAT | O_WRONLY);
-	if (fd < 0) {
+	ఒకవేళ (fd < 0) {
 		perror("");
 		NSLOG(netsurf, ERROR, "Open failed %d errno %d", fd, errno);
-		return NSERROR_SAVE_FAILED;
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
-	wr = write(fd, bse->elem[elem_idx].data, bse->elem[elem_idx].size);
+	wr = లిఖ(fd, bse->elem[elem_idx].దత్తాంశం, bse->elem[elem_idx].కొలత);
 	err = errno; /* close can change errno */
 
 	close(fd);
-	if (wr != (ssize_t)bse->elem[elem_idx].size) {
+	ఒకవేళ (wr != (ssize_t)bse->elem[elem_idx].కొలత) {
 		NSLOG(netsurf, ERROR,
 		      "Write failed %"PRIssizet" of %"PRId32" bytes from %p errno %d",
 		      wr,
-		      bse->elem[elem_idx].size,
-		      bse->elem[elem_idx].data,
+		      bse->elem[elem_idx].కొలత,
+		      bse->elem[elem_idx].దత్తాంశం,
 		      err);
 
 		/** @todo Delete the file? */
-		return NSERROR_SAVE_FAILED;
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, VERBOSE, "Wrote %"PRIssizet" bytes from %p", wr,
-	      bse->elem[elem_idx].data);
+	      bse->elem[elem_idx].దత్తాంశం);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -1680,60 +1680,60 @@ static nserror store_write_file(struct store_state *state,
  * @param datalen The length of the \a data.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+స్థిర nserror
 store(nsurl *url,
-      enum backing_store_flags bsflags,
-      uint8_t *data,
-      const size_t datalen)
+      గణన backing_store_flags bsflags,
+      uint8_t *దత్తాంశం,
+      స్థిరరాశి size_t datalen)
 {
 	nserror ret;
-	struct store_entry *bse;
-	int elem_idx;
+	నిర్మాణం store_నమోదు *bse;
+	పూర్ణాంకం elem_idx;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	ఒకవేళ (storestate == ఖాళీ) {
+		తిరిగి NSERROR_INIT_FAILED;
 	}
 
 	/* calculate the entry element index */
-	if ((bsflags & BACKING_STORE_META) != 0) {
-		elem_idx = ENTRY_ELEM_META;
-	} else {
-		elem_idx = ENTRY_ELEM_DATA;
+	ఒకవేళ ((bsflags & BACKING_STORE_META) != 0) {
+		elem_idx = నమోదు_ELEM_META;
+	} లేకపోతే {
+		elem_idx = నమోదు_ELEM_దత్తాంశం;
 	}
 
 	/* set the store entry up */
-	ret = set_store_entry(storestate, url, elem_idx, data, datalen, &bse);
-	if (ret != NSERROR_OK) {
+	ret = సమితి_store_నమోదు(storestate, url, elem_idx, దత్తాంశం, datalen, &bse);
+	ఒకవేళ (ret != NSERROR_OK) {
 		NSLOG(netsurf, ERROR, "store entry setting failed");
-		return ret;
+		తిరిగి ret;
 	}
 
-	if (bse->elem[elem_idx].block != 0) {
+	ఒకవేళ (bse->elem[elem_idx].ఖండం != 0) {
 		/* small block storage */
-		ret = store_write_block(storestate, bse, elem_idx);
-	} else {
+		ret = store_write_ఖండం(storestate, bse, elem_idx);
+	} లేకపోతే {
 		/* separate file in backing store */
 		ret = store_write_file(storestate, bse, elem_idx);
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
 /**
  * release any allocation for an entry
  */
-static nserror entry_release_alloc(struct store_entry_element *elem)
+స్థిర nserror నమోదు_release_alloc(నిర్మాణం store_నమోదు_element *elem)
 {
-	if ((elem->flags & ENTRY_ELEM_FLAG_HEAP) != 0) {
+	ఒకవేళ ((elem->flags & నమోదు_ELEM_FLAG_కుప్ప) != 0) {
 		elem->ref--;
-		if (elem->ref == 0) {
-			NSLOG(netsurf, DEEPDEBUG, "freeing %p", elem->data);
-			free(elem->data);
-			elem->flags &= ~ENTRY_ELEM_FLAG_HEAP;
+		ఒకవేళ (elem->ref == 0) {
+			NSLOG(netsurf, DEEPDEBUG, "freeing %p", elem->దత్తాంశం);
+			విడుదల(elem->దత్తాంశం);
+			elem->flags &= ~నమోదు_ELEM_FLAG_కుప్ప;
 		}
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1745,53 +1745,53 @@ static nserror entry_release_alloc(struct store_entry_element *elem)
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_read_block(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+స్థిర nserror store_read_ఖండం(నిర్మాణం store_state *state,
+			 నిర్మాణం store_నమోదు *bse,
+			 పూర్ణాంకం elem_idx)
 {
-	block_index_t bf = (bse->elem[elem_idx].block >> BLOCK_ENTRY_COUNT) &
-		((1 << BLOCK_FILE_COUNT) - 1); /* block file block resides in */
-	block_index_t bi = bse->elem[elem_idx].block & ((1 << BLOCK_ENTRY_COUNT) -1); /* block index in file */
+	ఖండం_సూచీ_t bf = (bse->elem[elem_idx].ఖండం >> ఖండం_నమోదు_లెక్క) &
+		((1 << ఖండం_FILE_లెక్క) - 1); /* block file block resides in */
+	ఖండం_సూచీ_t bi = bse->elem[elem_idx].ఖండం & ((1 << ఖండం_నమోదు_లెక్క) -1); /* block index in file */
 	ssize_t rd;
 	off_t offst;
 
 	/* ensure the block file fd is good */
-	if (state->blocks[elem_idx][bf].fd == -1) {
-		state->blocks[elem_idx][bf].fd = store_open(state, bf,
-				elem_idx + ENTRY_ELEM_COUNT, O_CREAT | O_RDWR);
-		if (state->blocks[elem_idx][bf].fd == -1) {
+	ఒకవేళ (state->ఖండాలు[elem_idx][bf].fd == -1) {
+		state->ఖండాలు[elem_idx][bf].fd = store_open(state, bf,
+				elem_idx + నమోదు_ELEM_లెక్క, O_CREAT | O_RDWR);
+		ఒకవేళ (state->ఖండాలు[elem_idx][bf].fd == -1) {
 			NSLOG(netsurf, ERROR, "Open failed errno %d", errno);
-			return NSERROR_SAVE_FAILED;
+			తిరిగి NSERROR_SAVE_FAILED;
 		}
 
 		/* flag that a block file has been opened */
-		state->blocks_opened = true;
+		state->ఖండాలు_opened = true;
 	}
 
-	offst = (unsigned int)bi << log2_block_size[elem_idx];
+	offst = (గుర్తులేని పూర్ణాంకం)bi << log2_ఖండం_కొలత[elem_idx];
 
-	rd = nsu_pread(state->blocks[elem_idx][bf].fd,
-		       bse->elem[elem_idx].data,
-		       bse->elem[elem_idx].size,
+	rd = nsu_pread(state->ఖండాలు[elem_idx][bf].fd,
+		       bse->elem[elem_idx].దత్తాంశం,
+		       bse->elem[elem_idx].కొలత,
 		       offst);
-	if (rd != (ssize_t)bse->elem[elem_idx].size) {
+	ఒకవేళ (rd != (ssize_t)bse->elem[elem_idx].కొలత) {
 		NSLOG(netsurf, ERROR,
 		      "Failed reading %"PRIssizet" of %"PRId32" bytes into %p from %"PRIsizet" block %"PRIu16" errno %d",
 		      rd,
-		      bse->elem[elem_idx].size,
-		      bse->elem[elem_idx].data,
+		      bse->elem[elem_idx].కొలత,
+		      bse->elem[elem_idx].దత్తాంశం,
 		      (size_t)offst,
-		      bse->elem[elem_idx].block,
+		      bse->elem[elem_idx].ఖండం,
 		      errno);
-		return NSERROR_SAVE_FAILED;
+		తిరిగి NSERROR_SAVE_FAILED;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG,
 	      "Read %"PRIssizet" bytes into %p from %"PRIsizet" block %d", rd,
-	      bse->elem[elem_idx].data, (size_t)offst,
-	      bse->elem[elem_idx].block);
+	      bse->elem[elem_idx].దత్తాంశం, (size_t)offst,
+	      bse->elem[elem_idx].ఖండం);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -1802,34 +1802,34 @@ static nserror store_read_block(struct store_state *state,
  * \param elem_idx The element index within the entry.
  * \return NSERROR_OK on success or error code.
  */
-static nserror store_read_file(struct store_state *state,
-			 struct store_entry *bse,
-			 int elem_idx)
+స్థిర nserror store_read_file(నిర్మాణం store_state *state,
+			 నిర్మాణం store_నమోదు *bse,
+			 పూర్ణాంకం elem_idx)
 {
-	int fd;
+	పూర్ణాంకం fd;
 	ssize_t rd; /* return from read */
-	int ret = NSERROR_OK;
+	పూర్ణాంకం ret = NSERROR_OK;
 	size_t tot = 0; /* total size */
 
 	/* separate file in backing store */
 	fd = store_open(storestate, nsurl_hash(bse->url), elem_idx, O_RDONLY);
-	if (fd < 0) {
+	ఒకవేళ (fd < 0) {
 		NSLOG(netsurf, ERROR, "Open failed %d errno %d", fd, errno);
 		/** @todo should this invalidate the entry? */
-		return NSERROR_NOT_FOUND;
+		తిరిగి NSERROR_NOT_దొరికింది;
 	}
 
-	while (tot < bse->elem[elem_idx].size) {
-		rd = read(fd,
-			  bse->elem[elem_idx].data + tot,
-			  bse->elem[elem_idx].size - tot);
-		if (rd <= 0) {
+	అయితే (tot < bse->elem[elem_idx].కొలత) {
+		rd = పఠ(fd,
+			  bse->elem[elem_idx].దత్తాంశం + tot,
+			  bse->elem[elem_idx].కొలత - tot);
+		ఒకవేళ (rd <= 0) {
 			NSLOG(netsurf, ERROR,
 			      "read error returned %"PRIssizet" errno %d",
 			      rd,
 			      errno);
-			ret = NSERROR_NOT_FOUND;
-			break;
+			ret = NSERROR_NOT_దొరికింది;
+			ఆపు;
 		}
 		tot += rd;
 	}
@@ -1837,9 +1837,9 @@ static nserror store_read_file(struct store_state *state,
 	close(fd);
 
 	NSLOG(netsurf, DEEPDEBUG, "Read %"PRIsizet" bytes into %p", tot,
-	      bse->elem[elem_idx].data);
+	      bse->elem[elem_idx].దత్తాంశం);
 
-	return ret;
+	తిరిగి ret;
 }
 
 /**
@@ -1851,86 +1851,86 @@ static nserror store_read_file(struct store_state *state,
  * @param[out] datalen_out The length of the \a data retrieved.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+స్థిర nserror
 fetch(nsurl *url,
-      enum backing_store_flags bsflags,
-      uint8_t **data_out,
-      size_t *datalen_out)
+      గణన backing_store_flags bsflags,
+      uint8_t **దత్తాంశం_బహిర్గతం,
+      size_t *datalen_బహిర్గతం)
 {
 	nserror ret;
-	struct store_entry *bse;
-	struct store_entry_element *elem;
-	int elem_idx;
+	నిర్మాణం store_నమోదు *bse;
+	నిర్మాణం store_నమోదు_element *elem;
+	పూర్ణాంకం elem_idx;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	ఒకవేళ (storestate == ఖాళీ) {
+		తిరిగి NSERROR_INIT_FAILED;
 	}
 
 	/* fetch store entry */
-	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
+	ret = get_store_నమోదు(storestate, url, &bse);
+	ఒకవేళ (ret != NSERROR_OK) {
 		NSLOG(netsurf, DEBUG, "Entry for %s not found", nsurl_access(url));
-		storestate->miss_count++;
-		return ret;
+		storestate->తప్పిపోవు_లెక్క++;
+		తిరిగి ret;
 	}
-	storestate->hit_count++;
+	storestate->తగిలింది_లెక్క++;
 
 	NSLOG(netsurf, DEBUG, "retrieving cache data for url:%s",
 	      nsurl_access(url));
 
 	/* calculate the entry element index */
-	if ((bsflags & BACKING_STORE_META) != 0) {
-		elem_idx = ENTRY_ELEM_META;
-	} else {
-		elem_idx = ENTRY_ELEM_DATA;
+	ఒకవేళ ((bsflags & BACKING_STORE_META) != 0) {
+		elem_idx = నమోదు_ELEM_META;
+	} లేకపోతే {
+		elem_idx = నమోదు_ELEM_దత్తాంశం;
 	}
 	elem = &bse->elem[elem_idx];
 
 	/* if an allocation already exists return it */
-	if ((elem->flags & ENTRY_ELEM_FLAG_HEAP) != 0) {
+	ఒకవేళ ((elem->flags & నమోదు_ELEM_FLAG_కుప్ప) != 0) {
 		/* use the existing allocation and bump the ref count. */
 		elem->ref++;
 
 		NSLOG(netsurf, DEEPDEBUG,
 		      "Using existing entry (%p) allocation %p refs:%d", bse,
-		      elem->data, elem->ref);
+		      elem->దత్తాంశం, elem->ref);
 
-	} else {
+	} లేకపోతే {
 		/* allocate from the heap */
-		elem->data = malloc(elem->size);
-		if (elem->data == NULL) {
+		elem->దత్తాంశం = జ్ఞాపకం_ఇవ్వు(elem->కొలత);
+		ఒకవేళ (elem->దత్తాంశం == ఖాళీ) {
 			NSLOG(netsurf, ERROR,
 			      "Failed to create new heap allocation");
-			return NSERROR_NOMEM;
+			తిరిగి NSERROR_NOMEM;
 		}
 		NSLOG(netsurf, DEEPDEBUG, "Created new heap allocation %p",
-		      elem->data);
+		      elem->దత్తాంశం);
 
 		/* mark the entry as having a valid heap allocation */
-		elem->flags |= ENTRY_ELEM_FLAG_HEAP;
+		elem->flags |= నమోదు_ELEM_FLAG_కుప్ప;
 		elem->ref = 1;
 
 		/* fill the new block */
-		if (elem->block != 0) {
-			ret = store_read_block(storestate, bse, elem_idx);
-		} else {
+		ఒకవేళ (elem->ఖండం != 0) {
+			ret = store_read_ఖండం(storestate, bse, elem_idx);
+		} లేకపోతే {
 			ret = store_read_file(storestate, bse, elem_idx);
 		}
 	}
 
 	/* free the allocation if there is a read error */
-	if (ret != NSERROR_OK) {
-		entry_release_alloc(elem);
-	} else {
+	ఒకవేళ (ret != NSERROR_OK) {
+		నమోదు_release_alloc(elem);
+	} లేకపోతే {
 		/* update stats and setup return pointers */
-		storestate->hit_size += elem->size;
+		storestate->తగిలింది_కొలత += elem->కొలత;
 
-		*data_out = elem->data;
-		*datalen_out = elem->size;
+		*దత్తాంశం_బహిర్గతం = elem->దత్తాంశం;
+		*datalen_బహిర్గతం = elem->కొలత;
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
 
@@ -1941,42 +1941,42 @@ fetch(nsurl *url,
  * @param[in] bsflags The flags to control how the object data is released.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror release(nsurl *url, enum backing_store_flags bsflags)
+స్థిర nserror release(nsurl *url, గణన backing_store_flags bsflags)
 {
 	nserror ret;
-	struct store_entry *bse;
-	struct store_entry_element *elem;
+	నిర్మాణం store_నమోదు *bse;
+	నిర్మాణం store_నమోదు_element *elem;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	ఒకవేళ (storestate == ఖాళీ) {
+		తిరిగి NSERROR_INIT_FAILED;
 	}
 
-	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
+	ret = get_store_నమోదు(storestate, url, &bse);
+	ఒకవేళ (ret != NSERROR_OK) {
 		NSLOG(netsurf, WARNING, "entry not found");
-		return ret;
+		తిరిగి ret;
 	}
 
 	/* the entry element */
-	if ((bsflags & BACKING_STORE_META) != 0) {
-		elem = &bse->elem[ENTRY_ELEM_META];
-	} else {
-		elem = &bse->elem[ENTRY_ELEM_DATA];
+	ఒకవేళ ((bsflags & BACKING_STORE_META) != 0) {
+		elem = &bse->elem[నమోదు_ELEM_META];
+	} లేకపోతే {
+		elem = &bse->elem[నమోదు_ELEM_దత్తాంశం];
 	}
 
-	ret = entry_release_alloc(elem);
+	ret = నమోదు_release_alloc(elem);
 
 	/* if the entry has previously been invalidated but had
 	 * allocation it must be invalidated fully now the allocation
 	 * has been released.
 	 */
-	if ((ret == NSERROR_OK) &&
-	    ((bse->flags & ENTRY_FLAGS_INVALID) != 0)) {
-		ret = invalidate_entry(storestate, bse);
+	ఒకవేళ ((ret == NSERROR_OK) &&
+	    ((bse->flags & నమోదు_FLAGS_INVALID) != 0)) {
+		ret = invalidate_నమోదు(storestate, bse);
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
 
@@ -1989,27 +1989,27 @@ static nserror release(nsurl *url, enum backing_store_flags bsflags)
  * @param url The url is used as the unique primary key to invalidate.
  * @return NSERROR_OK on success or error code on failure.
  */
-static nserror
+స్థిర nserror
 invalidate(nsurl *url)
 {
 	nserror ret;
-	struct store_entry *bse;
+	నిర్మాణం store_నమోదు *bse;
 
 	/* check backing store is initialised */
-	if (storestate == NULL) {
-		return NSERROR_INIT_FAILED;
+	ఒకవేళ (storestate == ఖాళీ) {
+		తిరిగి NSERROR_INIT_FAILED;
 	}
 
-	ret = get_store_entry(storestate, url, &bse);
-	if (ret != NSERROR_OK) {
-		return ret;
+	ret = get_store_నమోదు(storestate, url, &bse);
+	ఒకవేళ (ret != NSERROR_OK) {
+		తిరిగి ret;
 	}
 
-	return invalidate_entry(storestate, bse);
+	తిరిగి invalidate_నమోదు(storestate, bse);
 }
 
 
-static struct gui_llcache_table llcache_table = {
+స్థిర నిర్మాణం gui_llcache_పట్టిక llcache_పట్టిక = {
 	.initialise = initialise,
 	.finalise = finalise,
 	.store = store,
@@ -2018,4 +2018,4 @@ static struct gui_llcache_table llcache_table = {
 	.release = release,
 };
 
-struct gui_llcache_table *filesystem_llcache_table = &llcache_table;
+నిర్మాణం gui_llcache_పట్టిక *filesystem_llcache_పట్టిక = &llcache_పట్టిక;

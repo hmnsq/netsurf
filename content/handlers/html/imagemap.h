@@ -21,22 +21,22 @@
  * Interface to HTML imagemap
  */
 
-#ifndef NETSURF_HTML_IMAGEMAP_H
-#define NETSURF_HTML_IMAGEMAP_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_IMAGEMAP_H
+#నిర్వచించు NETSURF_HTML_IMAGEMAP_H
 
-#include <dom/dom.h>
+#అన్తర్భావ <dom/dom.h>
 
-struct html_content;
-struct hlcache_handle;
-struct nsurl;
+నిర్మాణం html_content;
+నిర్మాణం hlcache_handle;
+నిర్మాణం nsurl;
 
-void imagemap_destroy(struct html_content *c);
-void imagemap_dump(struct html_content *c);
-nserror imagemap_extract(struct html_content *c);
+శూన్య imagemap_destroy(నిర్మాణం html_content *c);
+శూన్య imagemap_dump(నిర్మాణం html_content *c);
+nserror imagemap_వెలికితీయి(నిర్మాణం html_content *c);
 
-struct nsurl *imagemap_get(struct html_content *c, const char *key,
-		unsigned long x, unsigned long y,
-		unsigned long click_x, unsigned long click_y,
-		const char **target);
+నిర్మాణం nsurl *imagemap_get(నిర్మాణం html_content *c, స్థిరరాశి అక్షరం *కీలకం,
+		గుర్తులేని దీర్ఘ x, గుర్తులేని దీర్ఘ y,
+		గుర్తులేని దీర్ఘ click_x, గుర్తులేని దీర్ఘ click_y,
+		స్థిరరాశి అక్షరం **లక్ష్యం);
 
-#endif
+#అయితే_ముగింపు

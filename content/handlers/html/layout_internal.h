@@ -21,10 +21,10 @@
  * HTML layout private interface.
  */
 
-#ifndef NETSURF_HTML_LAYOUT_INTERNAL_H
-#define NETSURF_HTML_LAYOUT_INTERNAL_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_LAYOUT_అంతర్గత_H
+#నిర్వచించు NETSURF_HTML_LAYOUT_అంతర్గత_H
 
-#define AUTO INT_MIN
+#నిర్వచించు AUTO INT_MIN
 
 /**
  * Layout a block formatting context.
@@ -37,9 +37,9 @@
  * This function carries out layout of a block and its children, as described
  * in CSS 2.1 9.4.1.
  */
-bool layout_block_context(
-		struct box *block,
-		int viewport_height,
+bool layout_ఖండం_context(
+		నిర్మాణం box *ఖండం,
+		పూర్ణాంకం viewport_ఎత్తు,
 		html_content *content);
 
 /**
@@ -50,9 +50,9 @@ bool layout_block_context(
  * \param  content          memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-bool layout_table(
-		struct box *table,
-		int available_width,
+bool layout_పట్టిక(
+		నిర్మాణం box *పట్టిక,
+		పూర్ణాంకం అందుబాటు_వెడల్పు,
 		html_content *content);
 
 /**
@@ -64,238 +64,238 @@ bool layout_table(
  * \return  true on success, false on memory exhaustion
  */
 bool layout_flex(
-		struct box *flex,
-		int available_width,
+		నిర్మాణం box *flex,
+		పూర్ణాంకం అందుబాటు_వెడల్పు,
 		html_content *content);
 
-typedef uint8_t (*css_len_func)(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit);
-typedef uint8_t (*css_border_style_func)(
-		const css_computed_style *style);
-typedef uint8_t (*css_border_color_func)(
-		const css_computed_style *style,
+రకనిర్వచనం uint8_t (*css_len_func)(
+		స్థిరరాశి css_computed_style *style,
+		css_fixed *నిడివి, css_unit *unit);
+రకనిర్వచనం uint8_t (*css_border_style_func)(
+		స్థిరరాశి css_computed_style *style);
+రకనిర్వచనం uint8_t (*css_border_color_func)(
+		స్థిరరాశి css_computed_style *style,
 		css_color *color);
 
 /** Array of per-side access functions for computed style margins. */
-extern const css_len_func margin_funcs[4];
+బాహ్య స్థిరరాశి css_len_func margin_funcs[4];
 
 /** Array of per-side access functions for computed style paddings. */
-extern const css_len_func padding_funcs[4];
+బాహ్య స్థిరరాశి css_len_func padding_funcs[4];
 
 /** Array of per-side access functions for computed style border_widths. */
-extern const css_len_func border_width_funcs[4];
+బాహ్య స్థిరరాశి css_len_func border_వెడల్పు_funcs[4];
 
 /** Array of per-side access functions for computed style border styles. */
-extern const css_border_style_func border_style_funcs[4];
+బాహ్య స్థిరరాశి css_border_style_func border_style_funcs[4];
 
 /** Array of per-side access functions for computed style border colors. */
-extern const css_border_color_func border_color_funcs[4];
+బాహ్య స్థిరరాశి css_border_color_func border_color_funcs[4];
 
 /** Layout helper: Check whether box is a float. */
-static inline bool lh__box_is_float_box(const struct box *b)
+స్థిర అంతఃవరుస bool lh__box_is_float_box(స్థిరరాశి నిర్మాణం box *b)
 {
-	return b->type == BOX_FLOAT_LEFT ||
-	       b->type == BOX_FLOAT_RIGHT;
+	తిరిగి b->type == BOX_FLOAT_ఎడమ ||
+	       b->type == BOX_FLOAT_కుడి;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_inline_flow(const struct box *b)
+స్థిర అంతఃవరుస bool lh__box_is_inline_flow(స్థిరరాశి నిర్మాణం box *b)
 {
-	return b->type == BOX_INLINE ||
+	తిరిగి b->type == BOX_INLINE ||
 	       b->type == BOX_INLINE_FLEX ||
-	       b->type == BOX_INLINE_BLOCK ||
-	       b->type == BOX_TEXT ||
-	       b->type == BOX_INLINE_END;
+	       b->type == BOX_INLINE_ఖండం ||
+	       b->type == BOX_పాఠ్యం ||
+	       b->type == BOX_INLINE_చివర;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_flex_container(const struct box *b)
+స్థిర అంతఃవరుస bool lh__box_is_flex_container(స్థిరరాశి నిర్మాణం box *b)
 {
-	return b->type == BOX_FLEX ||
+	తిరిగి b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_flex_item(const struct box *b)
+స్థిర అంతఃవరుస bool lh_box_is_flex_అంశం(స్థిరరాశి నిర్మాణం box *b)
 {
-	return (b->parent != NULL) && lh__box_is_flex_container(b->parent);
+	తిరిగి (b->మాతృ != ఖాళీ) && lh__box_is_flex_container(b->మాతృ);
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR.) */
-static inline bool lh__box_is_inline_level(const struct box *b)
+స్థిర అంతఃవరుస bool lh__box_is_inline_level(స్థిరరాశి నిర్మాణం box *b)
 {
-	return lh__box_is_inline_flow(b) ||
+	తిరిగి lh__box_is_inline_flow(b) ||
 	       b->type == BOX_BR;
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR, floats.) */
-static inline bool lh__box_is_inline_content(const struct box *b)
+స్థిర అంతఃవరుస bool lh__box_is_inline_content(స్థిరరాశి నిర్మాణం box *b)
 {
-	return lh__box_is_float_box(b) ||
+	తిరిగి lh__box_is_float_box(b) ||
 	       lh__box_is_inline_level(b);
 }
 
 /** Layout helper: Check whether box is an object. */
-static inline bool lh__box_is_object(const struct box *b)
+స్థిర అంతఃవరుస bool lh__box_is_object(స్థిరరాశి నిర్మాణం box *b)
 {
-	return b->object ||
+	తిరిగి b->object ||
 	       (b->flags & (IFRAME | REPLACE_DIM));
 }
 
 /** Layout helper: Check whether box is replaced. */
-static inline bool lh__box_is_replace(const struct box *b)
+స్థిర అంతఃవరుస bool lh__box_is_replace(స్థిరరాశి నిర్మాణం box *b)
 {
-	return b->gadget ||
+	తిరిగి b->gadget ||
 	       lh__box_is_object(b);
 }
 
 /** Layout helper: Check for CSS border on given side. */
-static inline bool lh__have_border(
-		enum box_side side,
-		const css_computed_style *style)
+స్థిర అంతఃవరుస bool lh__have_border(
+		గణన box_side side,
+		స్థిరరాశి css_computed_style *style)
 {
-	return border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
+	తిరిగి border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
 }
 
-static inline bool lh__box_is_absolute(const struct box *b)
+స్థిర అంతఃవరుస bool lh__box_is_absolute(స్థిరరాశి నిర్మాణం box *b)
 {
-	return css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
+	తిరిగి css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
 	       css_computed_position(b->style) == CSS_POSITION_FIXED;
 }
 
-static inline bool lh__flex_main_is_horizontal(const struct box *flex)
+స్థిర అంతఃవరుస bool lh__flex_main_is_horizontal(స్థిరరాశి నిర్మాణం box *flex)
 {
-	const css_computed_style *style = flex->style;
+	స్థిరరాశి css_computed_style *style = flex->style;
 
-	assert(style != NULL);
+	ప్రతిజ్ఞా(style != ఖాళీ);
 
-	switch (css_computed_flex_direction(style)) {
-	default:                        /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW:    /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW_REVERSE:
-		return true;
-	case CSS_FLEX_DIRECTION_COLUMN: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return false;
+	ఎంపిక (css_computed_flex_direction(style)) {
+	అప్రమేయ:                        /* Fallthrough. */
+	స్థితి CSS_FLEX_DIRECTION_అడ్డువరుస:    /* Fallthrough. */
+	స్థితి CSS_FLEX_DIRECTION_అడ్డువరుస_తిరగేయి:
+		తిరిగి true;
+	స్థితి CSS_FLEX_DIRECTION_స్తంభం: /* Fallthrough. */
+	స్థితి CSS_FLEX_DIRECTION_స్తంభం_తిరగేయి:
+		తిరిగి false;
 	}
 }
 
-static inline bool lh__flex_direction_reversed(const struct box *flex)
+స్థిర అంతఃవరుస bool lh__flex_direction_reversed(స్థిరరాశి నిర్మాణం box *flex)
 {
-	switch (css_computed_flex_direction(flex->style)) {
-	default:                             /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW_REVERSE: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return true;
-	case CSS_FLEX_DIRECTION_ROW: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN:
-		return false;
+	ఎంపిక (css_computed_flex_direction(flex->style)) {
+	అప్రమేయ:                             /* Fallthrough. */
+	స్థితి CSS_FLEX_DIRECTION_అడ్డువరుస_తిరగేయి: /* Fallthrough. */
+	స్థితి CSS_FLEX_DIRECTION_స్తంభం_తిరగేయి:
+		తిరిగి true;
+	స్థితి CSS_FLEX_DIRECTION_అడ్డువరుస: /* Fallthrough. */
+	స్థితి CSS_FLEX_DIRECTION_స్తంభం:
+		తిరిగి false;
 	}
 }
 
-static inline int lh__non_auto_margin(const struct box *b, enum box_side side)
+స్థిర అంతఃవరుస పూర్ణాంకం lh__non_auto_margin(స్థిరరాశి నిర్మాణం box *b, గణన box_side side)
 {
-	return (b->margin[side] == AUTO) ? 0 : b->margin[side];
+	తిరిగి (b->margin[side] == AUTO) ? 0 : b->margin[side];
 }
 
-static inline int lh__delta_outer_height(const struct box *b)
+స్థిర అంతఃవరుస పూర్ణాంకం lh_delta_outer_ఎత్తు(స్థిరరాశి నిర్మాణం box *b)
 {
-	return b->padding[TOP] +
+	తిరిగి b->padding[శిఖరం_2] +
 	       b->padding[BOTTOM] +
-	       b->border[TOP].width +
-	       b->border[BOTTOM].width +
-	       lh__non_auto_margin(b, TOP) +
+	       b->border[శిఖరం_2].వెడల్పు +
+	       b->border[BOTTOM].వెడల్పు +
+	       lh__non_auto_margin(b, శిఖరం_2) +
 	       lh__non_auto_margin(b, BOTTOM);
 }
 
-static inline int lh__delta_outer_width(const struct box *b)
+స్థిర అంతఃవరుస పూర్ణాంకం lh_delta_outer_వెడల్పు(స్థిరరాశి నిర్మాణం box *b)
 {
-	return b->padding[LEFT] +
-	       b->padding[RIGHT] +
-	       b->border[LEFT].width +
-	       b->border[RIGHT].width +
-	       lh__non_auto_margin(b, LEFT) +
-	       lh__non_auto_margin(b, RIGHT);
+	తిరిగి b->padding[ఎడమ_2] +
+	       b->padding[కుడి_2] +
+	       b->border[ఎడమ_2].వెడల్పు +
+	       b->border[కుడి_2].వెడల్పు +
+	       lh__non_auto_margin(b, ఎడమ_2) +
+	       lh__non_auto_margin(b, కుడి_2);
 }
 
-static inline int lh__delta_outer_main(
-		const struct box *flex,
-		const struct box *b)
+స్థిర అంతఃవరుస పూర్ణాంకం lh__delta_outer_main(
+		స్థిరరాశి నిర్మాణం box *flex,
+		స్థిరరాశి నిర్మాణం box *b)
 {
-	if (lh__flex_main_is_horizontal(flex)) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	ఒకవేళ (lh__flex_main_is_horizontal(flex)) {
+		తిరిగి lh_delta_outer_వెడల్పు(b);
+	} లేకపోతే {
+		తిరిగి lh_delta_outer_ఎత్తు(b);
 	}
 }
 
-static inline int lh__delta_outer_cross(
-		const struct box *flex,
-		const struct box *b)
+స్థిర అంతఃవరుస పూర్ణాంకం lh__delta_outer_cross(
+		స్థిరరాశి నిర్మాణం box *flex,
+		స్థిరరాశి నిర్మాణం box *b)
 {
-	if (lh__flex_main_is_horizontal(flex) == false) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	ఒకవేళ (lh__flex_main_is_horizontal(flex) == false) {
+		తిరిగి lh_delta_outer_వెడల్పు(b);
+	} లేకపోతే {
+		తిరిగి lh_delta_outer_ఎత్తు(b);
 	}
 }
 
-static inline int *lh__box_size_main_ptr(
+స్థిర అంతఃవరుస పూర్ణాంకం *lh_box_కొలత_main_ptr(
 		bool horizontal,
-		struct box *b)
+		నిర్మాణం box *b)
 {
-	return horizontal ? &b->width : &b->height;
+	తిరిగి horizontal ? &b->వెడల్పు : &b->ఎత్తు;
 }
 
-static inline int *lh__box_size_cross_ptr(
+స్థిర అంతఃవరుస పూర్ణాంకం *lh_box_కొలత_cross_ptr(
 		bool horizontal,
-		struct box *b)
+		నిర్మాణం box *b)
 {
-	return horizontal ? &b->height : &b->width;
+	తిరిగి horizontal ? &b->ఎత్తు : &b->వెడల్పు;
 }
 
-static inline int lh__box_size_main(
+స్థిర అంతఃవరుస పూర్ణాంకం lh_box_కొలత_main(
 		bool horizontal,
-		const struct box *b)
+		స్థిరరాశి నిర్మాణం box *b)
 {
-	return horizontal ? b->width : b->height;
+	తిరిగి horizontal ? b->వెడల్పు : b->ఎత్తు;
 }
 
-static inline int lh__box_size_cross(
+స్థిర అంతఃవరుస పూర్ణాంకం lh_box_కొలత_cross(
 		bool horizontal,
-		const struct box *b)
+		స్థిరరాశి నిర్మాణం box *b)
 {
-	return horizontal ? b->height : b->width;
+	తిరిగి horizontal ? b->ఎత్తు : b->వెడల్పు;
 }
 
-static inline bool lh__box_size_cross_is_auto(
+స్థిర అంతఃవరుస bool lh_box_కొలత_cross_is_auto(
 		bool horizontal,
-		struct box *b)
+		నిర్మాణం box *b)
 {
-	css_fixed length;
+	css_fixed నిడివి;
 	css_unit unit;
 
-	if (horizontal) {
-		return css_computed_height(b->style,
-				&length, &unit) == CSS_HEIGHT_AUTO;
-	} else {
-		return css_computed_width(b->style,
-				&length, &unit) == CSS_WIDTH_AUTO;
+	ఒకవేళ (horizontal) {
+		తిరిగి css_computed_ఎత్తు(b->style,
+				&నిడివి, &unit) == CSS_ఎత్తు_AUTO;
+	} లేకపోతే {
+		తిరిగి css_computed_వెడల్పు(b->style,
+				&నిడివి, &unit) == CSS_వెడల్పు_AUTO;
 	}
 }
 
-static inline enum css_align_self_e lh__box_align_self(
-		const struct box *flex,
-		const struct box *item)
+స్థిర అంతఃవరుస గణన css_align_self_e lh__box_align_self(
+		స్థిరరాశి నిర్మాణం box *flex,
+		స్థిరరాశి నిర్మాణం box *అంశం)
 {
-	enum css_align_self_e align_self = css_computed_align_self(item->style);
+	గణన css_align_self_e align_self = css_computed_align_self(అంశం->style);
 
-	if (align_self == CSS_ALIGN_SELF_AUTO) {
-		align_self = css_computed_align_items(flex->style);
+	ఒకవేళ (align_self == CSS_ALIGN_SELF_AUTO) {
+		align_self = css_computed_align_వస్తువులు(flex->style);
 	}
 
-	return align_self;
+	తిరిగి align_self;
 }
 
 /**
@@ -310,57 +310,57 @@ static inline enum css_align_self_e lh__box_align_self(
  * \param fixed    increased by sum of fixed margin, border, and padding
  * \param frac     increased by sum of fractional margin and padding
  */
-static inline void calculate_mbp_width(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style,
-		unsigned int side,
+స్థిర అంతఃవరుస శూన్య calculate_mbp_వెడల్పు(
+		స్థిరరాశి css_unit_ctx *unit_len_ctx,
+		స్థిరరాశి css_computed_style *style,
+		గుర్తులేని పూర్ణాంకం side,
 		bool margin,
 		bool border,
 		bool padding,
-		int *fixed,
-		float *frac)
+		పూర్ణాంకం *fixed,
+		దశాంశం *frac)
 {
-	css_fixed value = 0;
+	css_fixed విలువ = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(style);
+	ప్రతిజ్ఞా(style);
 
 	/* margin */
-	if (margin) {
-		enum css_margin_e type;
+	ఒకవేళ (margin) {
+		గణన css_margin_e type;
 
-		type = margin_funcs[side](style, &value, &unit);
-		if (type == CSS_MARGIN_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*frac += FIXTOFLT(FDIV(value, F_100));
-			} else {
+		type = margin_funcs[side](style, &విలువ, &unit);
+		ఒకవేళ (type == CSS_MARGIN_సమితి) {
+			ఒకవేళ (unit == CSS_UNIT_PCT) {
+				*frac += FIXTOFLT(FDIV(విలువ, F_100));
+			} లేకపోతే {
 				*fixed += FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						విలువ, unit));
 			}
 		}
 	}
 
 	/* border */
-	if (border) {
-		if (lh__have_border(side, style)) {
-			border_width_funcs[side](style, &value, &unit);
+	ఒకవేళ (border) {
+		ఒకవేళ (lh__have_border(side, style)) {
+			border_వెడల్పు_funcs[side](style, &విలువ, &unit);
 
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					విలువ, unit));
 		}
 	}
 
 	/* padding */
-	if (padding) {
-		padding_funcs[side](style, &value, &unit);
-		if (unit == CSS_UNIT_PCT) {
-			*frac += FIXTOFLT(FDIV(value, F_100));
-		} else {
+	ఒకవేళ (padding) {
+		padding_funcs[side](style, &విలువ, &unit);
+		ఒకవేళ (unit == CSS_UNIT_PCT) {
+			*frac += FIXTOFLT(FDIV(విలువ, F_100));
+		} లేకపోతే {
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					విలువ, unit));
 		}
 	}
 }
@@ -379,31 +379,31 @@ static inline void calculate_mbp_width(
  *				updated to new value after consideration of
  *				gadget properties.
  */
-static inline void layout_handle_box_sizing(
-		const css_unit_ctx *unit_len_ctx,
-		const struct box *box,
-		int available_width,
+స్థిర అంతఃవరుస శూన్య layout_handle_box_sizing(
+		స్థిరరాశి css_unit_ctx *unit_len_ctx,
+		స్థిరరాశి నిర్మాణం box *box,
+		పూర్ణాంకం అందుబాటు_వెడల్పు,
 		bool setwidth,
-		int *dimension)
+		పూర్ణాంకం *dimension)
 {
-	enum css_box_sizing_e bs;
+	గణన css_box_sizing_e bs;
 
-	assert(box && box->style);
+	ప్రతిజ్ఞా(box && box->style);
 
 	bs = css_computed_box_sizing(box->style);
 
-	if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-		int orig = *dimension;
-		int fixed = 0;
-		float frac = 0;
+	ఒకవేళ (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		పూర్ణాంకం orig = *dimension;
+		పూర్ణాంకం fixed = 0;
+		దశాంశం frac = 0;
 
-		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? LEFT : TOP,
+		calculate_mbp_వెడల్పు(unit_len_ctx, box->style,
+				setwidth ? ఎడమ_2 : శిఖరం_2,
 				false, true, true, &fixed, &frac);
-		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? RIGHT : BOTTOM,
+		calculate_mbp_వెడల్పు(unit_len_ctx, box->style,
+				setwidth ? కుడి_2 : BOTTOM,
 				false, true, true, &fixed, &frac);
-		orig -= frac * available_width + fixed;
+		orig -= frac * అందుబాటు_వెడల్పు + fixed;
 		*dimension = orig > 0 ? orig : 0;
 	}
 }
@@ -427,293 +427,293 @@ static inline void layout_handle_box_sizing(
  * \param  padding          filled with paddings, may be NULL
  * \param  border           filled with border widths, may be NULL
  */
-static inline void layout_find_dimensions(
-		const css_unit_ctx *unit_len_ctx,
-		int available_width,
-		int viewport_height,
-		const struct box *box,
-		const css_computed_style *style,
-		int *width,
-		int *height,
-		int *max_width,
-		int *min_width,
-		int *max_height,
-		int *min_height,
-		int margin[4],
-		int padding[4],
-		struct box_border border[4])
+స్థిర అంతఃవరుస శూన్య layout_కనుగొను_dimensions(
+		స్థిరరాశి css_unit_ctx *unit_len_ctx,
+		పూర్ణాంకం అందుబాటు_వెడల్పు,
+		పూర్ణాంకం viewport_ఎత్తు,
+		స్థిరరాశి నిర్మాణం box *box,
+		స్థిరరాశి css_computed_style *style,
+		పూర్ణాంకం *వెడల్పు,
+		పూర్ణాంకం *ఎత్తు,
+		పూర్ణాంకం *max_వెడల్పు,
+		పూర్ణాంకం *min_వెడల్పు,
+		పూర్ణాంకం *max_ఎత్తు,
+		పూర్ణాంకం *min_ఎత్తు,
+		పూర్ణాంకం margin[4],
+		పూర్ణాంకం padding[4],
+		నిర్మాణం box_border border[4])
 {
-	struct box *containing_block = NULL;
-	unsigned int i;
+	నిర్మాణం box *containing_ఖండం = ఖాళీ;
+	గుర్తులేని పూర్ణాంకం i;
 
-	if (width) {
-		if (css_computed_width_px(style, unit_len_ctx,
-				available_width, width) == CSS_WIDTH_SET) {
+	ఒకవేళ (వెడల్పు) {
+		ఒకవేళ (css_computed_వెడల్పు_px(style, unit_len_ctx,
+				అందుబాటు_వెడల్పు, వెడల్పు) == CSS_వెడల్పు_సమితి) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, width);
-		} else {
-			*width = AUTO;
+					అందుబాటు_వెడల్పు, true, వెడల్పు);
+		} లేకపోతే {
+			*వెడల్పు = AUTO;
 		}
 	}
 
-	if (height) {
-		enum css_height_e htype;
-		css_fixed value = 0;
+	ఒకవేళ (ఎత్తు) {
+		గణన css_ఎత్తు_e htype;
+		css_fixed విలువ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		htype = css_computed_height(style, &value, &unit);
+		htype = css_computed_ఎత్తు(style, &విలువ, &unit);
 
-		if (htype == CSS_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				enum css_height_e cbhtype;
+		ఒకవేళ (htype == CSS_ఎత్తు_సమితి) {
+			ఒకవేళ (unit == CSS_UNIT_PCT) {
+				గణన css_ఎత్తు_e cbhtype;
 
-				if (css_computed_position(box->style) ==
+				ఒకవేళ (css_computed_position(box->style) ==
 						CSS_POSITION_ABSOLUTE &&
-						box->parent) {
+						box->మాతృ) {
 					/* Box is absolutely positioned */
-					assert(box->float_container);
-					containing_block = box->float_container;
-				} else if (box->float_container &&
+					ప్రతిజ్ఞా(box->float_container);
+					containing_ఖండం = box->float_container;
+				} లేకపోతే ఒకవేళ (box->float_container &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 					(css_computed_float(box->style) ==
-						CSS_FLOAT_LEFT ||
+						CSS_FLOAT_ఎడమ ||
 					 css_computed_float(box->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_కుడి)) {
 					/* Box is a float */
-					assert(box->parent &&
-						box->parent->parent &&
-						box->parent->parent->parent);
+					ప్రతిజ్ఞా(box->మాతృ &&
+						box->మాతృ->మాతృ &&
+						box->మాతృ->మాతృ->మాతృ);
 
-					containing_block =
-						box->parent->parent->parent;
-				} else if (box->parent && box->parent->type !=
+					containing_ఖండం =
+						box->మాతృ->మాతృ->మాతృ;
+				} లేకపోతే ఒకవేళ (box->మాతృ && box->మాతృ->type !=
 						BOX_INLINE_CONTAINER) {
 					/* Box is a block level element */
-					containing_block = box->parent;
-				} else if (box->parent && box->parent->type ==
+					containing_ఖండం = box->మాతృ;
+				} లేకపోతే ఒకవేళ (box->మాతృ && box->మాతృ->type ==
 						BOX_INLINE_CONTAINER) {
 					/* Box is an inline block */
-					assert(box->parent->parent);
-					containing_block = box->parent->parent;
+					ప్రతిజ్ఞా(box->మాతృ->మాతృ);
+					containing_ఖండం = box->మాతృ->మాతృ;
 				}
 
-				if (containing_block) {
+				ఒకవేళ (containing_ఖండం) {
 					css_fixed f = 0;
 					css_unit u = CSS_UNIT_PX;
 
-					cbhtype = css_computed_height(
-							containing_block->style,
+					cbhtype = css_computed_ఎత్తు(
+							containing_ఖండం->style,
 							&f, &u);
 				}
 
-				if (containing_block &&
-					containing_block->height != AUTO &&
+				ఒకవేళ (containing_ఖండం &&
+					containing_ఖండం->ఎత్తు != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
-						cbhtype == CSS_HEIGHT_SET)) {
+						cbhtype == CSS_ఎత్తు_సమితి)) {
 					/* Box is absolutely positioned or its
 					 * containing block has a valid
 					 * specified height.
 					 * (CSS 2.1 Section 10.5) */
-					*height = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
-				} else if ((!box->parent ||
-						!box->parent->parent) &&
-						viewport_height >= 0) {
+					*ఎత్తు = FPCT_యొక్క_INT_TOINT(విలువ,
+						containing_ఖండం->ఎత్తు);
+				} లేకపోతే ఒకవేళ ((!box->మాతృ ||
+						!box->మాతృ->మాతృ) &&
+						viewport_ఎత్తు >= 0) {
 					/* If root element or it's child
 					 * (HTML or BODY) */
-					*height = FPCT_OF_INT_TOINT(value,
-							viewport_height);
-				} else {
+					*ఎత్తు = FPCT_యొక్క_INT_TOINT(విలువ,
+							viewport_ఎత్తు);
+				} లేకపోతే {
 					/* precentage height not permissible
 					 * treat height as auto */
-					*height = AUTO;
+					*ఎత్తు = AUTO;
 				}
-			} else {
-				*height = FIXTOINT(css_unit_len2device_px(
+			} లేకపోతే {
+				*ఎత్తు = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						విలువ, unit));
 			}
-		} else {
-			*height = AUTO;
+		} లేకపోతే {
+			*ఎత్తు = AUTO;
 		}
 
-		if (*height != AUTO) {
+		ఒకవేళ (*ఎత్తు != AUTO) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, false, height);
+					అందుబాటు_వెడల్పు, false, ఎత్తు);
 		}
 	}
 
-	if (max_width) {
-		enum css_max_width_e type;
-		css_fixed value = 0;
+	ఒకవేళ (max_వెడల్పు) {
+		గణన css_max_వెడల్పు_e type;
+		css_fixed విలువ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_width(style, &value, &unit);
+		type = css_computed_max_వెడల్పు(style, &విలువ, &unit);
 
-		if (type == CSS_MAX_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*max_width = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
-				*max_width = FIXTOINT(css_unit_len2device_px(
+		ఒకవేళ (type == CSS_MAX_వెడల్పు_సమితి) {
+			ఒకవేళ (unit == CSS_UNIT_PCT) {
+				*max_వెడల్పు = FPCT_యొక్క_INT_TOINT(విలువ,
+						అందుబాటు_వెడల్పు);
+			} లేకపోతే {
+				*max_వెడల్పు = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						విలువ, unit));
 			}
-		} else {
+		} లేకపోతే {
 			/* Inadmissible */
-			*max_width = -1;
+			*max_వెడల్పు = -1;
 		}
 
-		if (*max_width != -1) {
+		ఒకవేళ (*max_వెడల్పు != -1) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, max_width);
+					అందుబాటు_వెడల్పు, true, max_వెడల్పు);
 		}
 	}
 
-	if (min_width) {
-		enum css_min_width_e type;
-		css_fixed value = 0;
+	ఒకవేళ (min_వెడల్పు) {
+		గణన css_min_వెడల్పు_e type;
+		css_fixed విలువ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_width(style, &value, &unit);
+		type = ns_computed_min_వెడల్పు(style, &విలువ, &unit);
 
-		if (type == CSS_MIN_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*min_width = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
-				*min_width = FIXTOINT(css_unit_len2device_px(
+		ఒకవేళ (type == CSS_MIN_వెడల్పు_సమితి) {
+			ఒకవేళ (unit == CSS_UNIT_PCT) {
+				*min_వెడల్పు = FPCT_యొక్క_INT_TOINT(విలువ,
+						అందుబాటు_వెడల్పు);
+			} లేకపోతే {
+				*min_వెడల్పు = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						విలువ, unit));
 			}
-		} else {
+		} లేకపోతే {
 			/* Inadmissible */
-			*min_width = 0;
+			*min_వెడల్పు = 0;
 		}
 
-		if (*min_width != 0) {
+		ఒకవేళ (*min_వెడల్పు != 0) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, min_width);
+					అందుబాటు_వెడల్పు, true, min_వెడల్పు);
 		}
 	}
 
-	if (max_height) {
-		enum css_max_height_e type;
-		css_fixed value = 0;
+	ఒకవేళ (max_ఎత్తు) {
+		గణన css_max_ఎత్తు_e type;
+		css_fixed విలువ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_height(style, &value, &unit);
+		type = css_computed_max_ఎత్తు(style, &విలువ, &unit);
 
-		if (type == CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		ఒకవేళ (type == CSS_MAX_ఎత్తు_సమితి) {
+			ఒకవేళ (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
-				*max_height = -1;
-			} else {
-				*max_height = FIXTOINT(css_unit_len2device_px(
+				*max_ఎత్తు = -1;
+			} లేకపోతే {
+				*max_ఎత్తు = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						విలువ, unit));
 			}
-		} else {
+		} లేకపోతే {
 			/* Inadmissible */
-			*max_height = -1;
+			*max_ఎత్తు = -1;
 		}
 	}
 
-	if (min_height) {
-		enum css_min_height_e type;
-		css_fixed value = 0;
+	ఒకవేళ (min_ఎత్తు) {
+		గణన css_min_ఎత్తు_e type;
+		css_fixed విలువ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_height(style, &value, &unit);
+		type = ns_computed_min_ఎత్తు(style, &విలువ, &unit);
 
-		if (type == CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		ఒకవేళ (type == CSS_MIN_ఎత్తు_సమితి) {
+			ఒకవేళ (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
-				*min_height = 0;
-			} else {
-				*min_height = FIXTOINT(css_unit_len2device_px(
+				*min_ఎత్తు = 0;
+			} లేకపోతే {
+				*min_ఎత్తు = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						విలువ, unit));
 			}
-		} else {
+		} లేకపోతే {
 			/* Inadmissible */
-			*min_height = 0;
+			*min_ఎత్తు = 0;
 		}
 	}
 
-	for (i = 0; i != 4; i++) {
-		if (margin) {
-			enum css_margin_e type = CSS_MARGIN_AUTO;
-			css_fixed value = 0;
+	కొరకు (i = 0; i != 4; i++) {
+		ఒకవేళ (margin) {
+			గణన css_margin_e type = CSS_MARGIN_AUTO;
+			css_fixed విలువ = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			type = margin_funcs[i](style, &value, &unit);
+			type = margin_funcs[i](style, &విలువ, &unit);
 
-			if (type == CSS_MARGIN_SET) {
-				if (unit == CSS_UNIT_PCT) {
-					margin[i] = FPCT_OF_INT_TOINT(value,
-							available_width);
-				} else {
+			ఒకవేళ (type == CSS_MARGIN_సమితి) {
+				ఒకవేళ (unit == CSS_UNIT_PCT) {
+					margin[i] = FPCT_యొక్క_INT_TOINT(విలువ,
+							అందుబాటు_వెడల్పు);
+				} లేకపోతే {
 					margin[i] = FIXTOINT(css_unit_len2device_px(
 							style, unit_len_ctx,
-							value, unit));
+							విలువ, unit));
 				}
-			} else {
+			} లేకపోతే {
 				margin[i] = AUTO;
 			}
 		}
 
-		if (padding) {
-			css_fixed value = 0;
+		ఒకవేళ (padding) {
+			css_fixed విలువ = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			padding_funcs[i](style, &value, &unit);
+			padding_funcs[i](style, &విలువ, &unit);
 
-			if (unit == CSS_UNIT_PCT) {
-				padding[i] = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
+			ఒకవేళ (unit == CSS_UNIT_PCT) {
+				padding[i] = FPCT_యొక్క_INT_TOINT(విలువ,
+						అందుబాటు_వెడల్పు);
+			} లేకపోతే {
 				padding[i] = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						విలువ, unit));
 			}
 		}
 
 		/* Table cell borders are populated in table.c */
-		if (border && box->type != BOX_TABLE_CELL) {
-			enum css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
+		ఒకవేళ (border && box->type != BOX_పట్టిక_CELL) {
+			గణన css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
 			css_color color = 0;
-			css_fixed value = 0;
+			css_fixed విలువ = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			border_width_funcs[i](style, &value, &unit);
+			border_వెడల్పు_funcs[i](style, &విలువ, &unit);
 			bstyle = border_style_funcs[i](style);
 			border_color_funcs[i](style, &color);
 
 			border[i].style = bstyle;
 			border[i].c = color;
 
-			if (bstyle == CSS_BORDER_STYLE_HIDDEN ||
+			ఒకవేళ (bstyle == CSS_BORDER_STYLE_HIDDEN ||
 					bstyle == CSS_BORDER_STYLE_NONE)
 				/* spec unclear: following Mozilla */
-				border[i].width = 0;
-			else
-				border[i].width = FIXTOINT(css_unit_len2device_px(
+				border[i].వెడల్పు = 0;
+			లేకపోతే
+				border[i].వెడల్పు = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						విలువ, unit));
 
 			/* Special case for border-collapse: make all borders
 			 * on table/table-row-group/table-row zero width. */
-			if (css_computed_border_collapse(style) ==
+			ఒకవేళ (css_computed_border_collapse(style) ==
 					CSS_BORDER_COLLAPSE_COLLAPSE &&
-					(box->type == BOX_TABLE ||
-					 box->type == BOX_TABLE_ROW_GROUP ||
-					 box->type == BOX_TABLE_ROW))
-				border[i].width = 0;
+					(box->type == BOX_పట్టిక ||
+					 box->type == BOX_పట్టిక_అడ్డువరుస_సమూహం ||
+					 box->type == BOX_పట్టిక_అడ్డువరుస))
+				border[i].వెడల్పు = 0;
 		}
 	}
 }
 
-#endif
+#అయితే_ముగింపు

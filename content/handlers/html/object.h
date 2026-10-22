@@ -21,13 +21,13 @@
  * HTML content object interface
  */
 
-#ifndef NETSURF_HTML_OBJECT_H
-#define NETSURF_HTML_OBJECT_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_OBJECT_H
+#నిర్వచించు NETSURF_HTML_OBJECT_H
 
-struct html_content;
-struct browser_window;
-struct box;
-struct nsurl;
+నిర్మాణం html_content;
+నిర్మాణం browser_కిటికీ;
+నిర్మాణం box;
+నిర్మాణం nsurl;
 
 /**
  * Start a fetch for an object required by a page.
@@ -43,7 +43,7 @@ struct nsurl;
  * \param background this is a background image
  * \return true on success, false on memory exhaustion
  */
-bool html_fetch_object(struct html_content *c, struct nsurl *url, struct box *box, content_type permitted_types, bool background);
+bool html_fetch_object(నిర్మాణం html_content *c, నిర్మాణం nsurl *url, నిర్మాణం box *box, content_type permitted_types, bool background);
 
 /**
  * release memory of content objects associated with a HTML content
@@ -54,7 +54,7 @@ bool html_fetch_object(struct html_content *c, struct nsurl *url, struct box *bo
  * \param html The html content to release the objects from.
  * \return NSERROR_OK on success else appropriate error code.
  */
-nserror html_object_free_objects(struct html_content *html);
+nserror html_object_free_objects(నిర్మాణం html_content *html);
 
 /**
  * close content of content objects associated with a HTML content
@@ -62,7 +62,7 @@ nserror html_object_free_objects(struct html_content *html);
  * \param html The html content to close the objects from.
  * \return NSERROR_OK on success else appropriate error code.
  */
-nserror html_object_close_objects(struct html_content *html);
+nserror html_object_close_objects(నిర్మాణం html_content *html);
 
 
 /**
@@ -72,7 +72,7 @@ nserror html_object_close_objects(struct html_content *html);
  * \param bw Browser window handle to open contents with.
  * \return NSERROR_OK on success else appropriate error code.
  */
-nserror html_object_open_objects(struct html_content *html, struct browser_window *bw);
+nserror html_object_open_objects(నిర్మాణం html_content *html, నిర్మాణం browser_కిటికీ *bw);
 
 
 /**
@@ -81,6 +81,6 @@ nserror html_object_open_objects(struct html_content *html, struct browser_windo
  * \param html The html content to abort the objects from.
  * \return NSERROR_OK on success else appropriate error code.
  */
-nserror html_object_abort_objects(struct html_content *html);
+nserror html_object_abort_objects(నిర్మాణం html_content *html);
 
-#endif
+#అయితే_ముగింపు

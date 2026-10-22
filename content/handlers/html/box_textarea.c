@@ -21,351 +21,351 @@
  * Box tree treeview box replacement (implementation).
  */
 
-#include <string.h>
-#include <dom/dom.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <dom/dom.h>
 
-#include "utils/config.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/keypress.h"
-#include "netsurf/misc.h"
-#include "desktop/textarea.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "netsurf/keypress.h"
+#అన్తర్భావ "netsurf/misc.h"
+#అన్తర్భావ "desktop/textarea.h"
 
-#include "html/private.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/box_textarea.h"
-#include "html/font.h"
-#include "html/form_internal.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/interaction.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_inspect.h"
+#అన్తర్భావ "html/box_textarea.h"
+#అన్తర్భావ "html/font.h"
+#అన్తర్భావ "html/form_internal.h"
 
 
-nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
+nserror box_textarea_keypress(html_content *html, నిర్మాణం box *box, uint32_t కీలకం)
 {
-	struct form_control *gadget = box->gadget;
-	struct textarea *ta = gadget->data.text.ta;
-	struct form* form = box->gadget->form;
-	struct content *c = (struct content *)html;
+	నిర్మాణం form_control *gadget = box->gadget;
+	నిర్మాణం textarea *ta = gadget->దత్తాంశం.పాఠ్యం.ta;
+	నిర్మాణం form* form = box->gadget->form;
+	నిర్మాణం content *c = (నిర్మాణం content *)html;
 	nserror res = NSERROR_OK;
 
-	assert(ta != NULL);
+	ప్రతిజ్ఞా(ta != ఖాళీ);
 
-	if (gadget->type == GADGET_TEXTAREA) {
-		if (textarea_keypress(ta, key)) {
-			return NSERROR_OK;
-		} else {
-			return NSERROR_INVALID;
+	ఒకవేళ (gadget->type == GADGET_TEXTAREA) {
+		ఒకవేళ (textarea_keypress(ta, కీలకం)) {
+			తిరిగి NSERROR_OK;
+		} లేకపోతే {
+			తిరిగి NSERROR_INVALID;
 		}
 	}
 
 	/* non textarea input */
-	switch (key) {
-	case NS_KEY_NL:
-	case NS_KEY_CR:
-		if (form) {
+	ఎంపిక (కీలకం) {
+	స్థితి NS_కీలకం_NL:
+	స్థితి NS_కీలకం_CR:
+		ఒకవేళ (form) {
 			res = form_submit(content_get_url(c),
 					  html->bw,
 					  form,
-					  NULL);
+					  ఖాళీ);
 		}
-		break;
+		ఆపు;
 
-	case NS_KEY_TAB:
+	స్థితి NS_కీలకం_TAB:
 		{
-			struct form_control *next_input;
+			నిర్మాణం form_control *తదుపరి_ఆదానం;
 			/* Find next text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (next_input = gadget->next;
-			     next_input &&
-				     ((next_input->type != GADGET_TEXTBOX &&
-				       next_input->type != GADGET_TEXTAREA &&
-				       next_input->type != GADGET_PASSWORD) ||
-				      !next_input->box);
-			     next_input = next_input->next)
+			కొరకు (తదుపరి_ఆదానం = gadget->తదుపరి;
+			     తదుపరి_ఆదానం &&
+				     ((తదుపరి_ఆదానం->type != GADGET_TEXTBOX &&
+				       తదుపరి_ఆదానం->type != GADGET_TEXTAREA &&
+				       తదుపరి_ఆదానం->type != GADGET_PASSWORD) ||
+				      !తదుపరి_ఆదానం->box);
+			     తదుపరి_ఆదానం = తదుపరి_ఆదానం->తదుపరి)
 				;
 
-			if (next_input != NULL) {
-				textarea_set_caret(ta, -1);
-				textarea_set_caret(next_input->data.text.ta, 0);
+			ఒకవేళ (తదుపరి_ఆదానం != ఖాళీ) {
+				textarea_సమితి_caret(ta, -1);
+				textarea_సమితి_caret(తదుపరి_ఆదానం->దత్తాంశం.పాఠ్యం.ta, 0);
 			}
 		}
-		break;
+		ఆపు;
 
-	case NS_KEY_SHIFT_TAB:
+	స్థితి NS_కీలకం_జరుపు_TAB:
 		{
-			struct form_control *prev_input;
+			నిర్మాణం form_control *prev_ఆదానం;
 			/* Find previous text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (prev_input = gadget->prev;
-			     prev_input &&
-				     ((prev_input->type != GADGET_TEXTBOX &&
-				       prev_input->type != GADGET_TEXTAREA &&
-				       prev_input->type != GADGET_PASSWORD) ||
-				      !prev_input->box);
-			     prev_input = prev_input->prev)
+			కొరకు (prev_ఆదానం = gadget->prev;
+			     prev_ఆదానం &&
+				     ((prev_ఆదానం->type != GADGET_TEXTBOX &&
+				       prev_ఆదానం->type != GADGET_TEXTAREA &&
+				       prev_ఆదానం->type != GADGET_PASSWORD) ||
+				      !prev_ఆదానం->box);
+			     prev_ఆదానం = prev_ఆదానం->prev)
 				;
 
-			if (prev_input != NULL) {
-				textarea_set_caret(ta, -1);
-				textarea_set_caret(prev_input->data.text.ta, 0);
+			ఒకవేళ (prev_ఆదానం != ఖాళీ) {
+				textarea_సమితి_caret(ta, -1);
+				textarea_సమితి_caret(prev_ఆదానం->దత్తాంశం.పాఠ్యం.ta, 0);
 			}
 		}
-		break;
+		ఆపు;
 
-	default:
+	అప్రమేయ:
 		/* Pass to textarea widget */
-		if (!textarea_keypress(ta, key)) {
+		ఒకవేళ (!textarea_keypress(ta, కీలకం)) {
 			res = NSERROR_INVALID;
 		}
-		break;
+		ఆపు;
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
 /**
  * Callback for html form textareas.
  */
-static void box_textarea_callback(void *data, struct textarea_msg *msg)
+స్థిర శూన్య box_textarea_callback(శూన్య *దత్తాంశం, నిర్మాణం textarea_సందేశం *సందేశం)
 {
-	struct form_textarea_data *d = data;
-	struct form_control *gadget = d->gadget;
-	struct html_content *html = d->gadget->html;
-	struct box *box = gadget->box;
+	నిర్మాణం form_textarea_దత్తాంశం *d = దత్తాంశం;
+	నిర్మాణం form_control *gadget = d->gadget;
+	నిర్మాణం html_content *html = d->gadget->html;
+	నిర్మాణం box *box = gadget->box;
 
-	switch (msg->type) {
-	case TEXTAREA_MSG_DRAG_REPORT:
-		if (msg->data.drag == TEXTAREA_DRAG_NONE) {
+	ఎంపిక (సందేశం->type) {
+	స్థితి TEXTAREA_సందేశం_DRAG_REPORT:
+		ఒకవేళ (సందేశం->దత్తాంశం.drag == TEXTAREA_DRAG_NONE) {
 			/* Textarea drag finished */
 			html_drag_type drag_type = HTML_DRAG_NONE;
-			union html_drag_owner drag_owner;
+			సంఘం html_drag_owner drag_owner;
 			drag_owner.no_owner = true;
 
-			html_set_drag_type(html, drag_type, drag_owner,
-					NULL);
-		} else {
+			html_సమితి_drag_type(html, drag_type, drag_owner,
+					ఖాళీ);
+		} లేకపోతే {
 			/* Textarea drag started */
-			struct rect rect = {
+			నిర్మాణం rect rect = {
 				.x0 = INT_MIN,
 				.y0 = INT_MIN,
-				.x1 = INT_MAX,
-				.y1 = INT_MAX
+				.x1 = గరిష్ఠ_పూర్ణాంకం,
+				.y1 = గరిష్ఠ_పూర్ణాంకం
 			};
-			union html_drag_owner drag_owner;
+			సంఘం html_drag_owner drag_owner;
 			drag_owner.textarea = box;
 
-			switch (msg->data.drag) {
-			case TEXTAREA_DRAG_SCROLLBAR:
-				html_set_drag_type(html,
+			ఎంపిక (సందేశం->దత్తాంశం.drag) {
+			స్థితి TEXTAREA_DRAG_SCROLLBAR:
+				html_సమితి_drag_type(html,
 						   HTML_DRAG_TEXTAREA_SCROLLBAR,
 						   drag_owner,
 						   &rect);
-				break;
+				ఆపు;
 
-			case TEXTAREA_DRAG_SELECTION:
-				html_set_drag_type(html,
+			స్థితి TEXTAREA_DRAG_SELECTION:
+				html_సమితి_drag_type(html,
 						   HTML_DRAG_TEXTAREA_SELECTION,
 						   drag_owner,
 						   &rect);
-				break;
+				ఆపు;
 
-			default:
+			అప్రమేయ:
 				NSLOG(netsurf, INFO,
 				      "Drag type %d not handled.",
-				      msg->data.drag);
+				      సందేశం->దత్తాంశం.drag);
 				/* This is a logic faliure in the
 				 * front end code so abort.
 				 */
-				assert(0);
-				break;
+				ప్రతిజ్ఞా(0);
+				ఆపు;
 			}
 		}
-		break;
+		ఆపు;
 
-	case TEXTAREA_MSG_REDRAW_REQUEST:
+	స్థితి TEXTAREA_సందేశం_REDRAW_REQUEST:
 	{
 		/* Request redraw of the required textarea rectangle */
-		int x, y;
+		పూర్ణాంకం x, y;
 
-		if (html->reflowing == true) {
+		ఒకవేళ (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
-			break;
+			ఆపు;
 		}
 
 		box_coords(box, &x, &y);
 
-		content__request_redraw((struct content *)html,
-				x + msg->data.redraw.x0,
-				y + msg->data.redraw.y0,
-				msg->data.redraw.x1 - msg->data.redraw.x0,
-				msg->data.redraw.y1 - msg->data.redraw.y0);
+		content__request_redraw((నిర్మాణం content *)html,
+				x + సందేశం->దత్తాంశం.redraw.x0,
+				y + సందేశం->దత్తాంశం.redraw.y0,
+				సందేశం->దత్తాంశం.redraw.x1 - సందేశం->దత్తాంశం.redraw.x0,
+				సందేశం->దత్తాంశం.redraw.y1 - సందేశం->దత్తాంశం.redraw.y0);
 	}
-		break;
+		ఆపు;
 
-	case TEXTAREA_MSG_SELECTION_REPORT:
-		if (msg->data.selection.have_selection) {
+	స్థితి TEXTAREA_సందేశం_SELECTION_REPORT:
+		ఒకవేళ (సందేశం->దత్తాంశం.selection.have_selection) {
 			/* Textarea now has a selection */
-			union html_selection_owner sel_owner;
+			సంఘం html_selection_owner sel_owner;
 			sel_owner.textarea = box;
 
-			html_set_selection(html, HTML_SELECTION_TEXTAREA,
+			html_సమితి_selection(html, HTML_SELECTION_TEXTAREA,
 					sel_owner,
-					msg->data.selection.read_only);
-		} else {
+					సందేశం->దత్తాంశం.selection.read_only);
+		} లేకపోతే {
 			/* The textarea now has no selection */
-			union html_selection_owner sel_owner;
+			సంఘం html_selection_owner sel_owner;
 			sel_owner.none = true;
 
-			html_set_selection(html, HTML_SELECTION_NONE,
+			html_సమితి_selection(html, HTML_SELECTION_NONE,
 					sel_owner, true);
 		}
-		break;
+		ఆపు;
 
-	case TEXTAREA_MSG_CARET_UPDATE:
-		if (html->bw == NULL)
-			break;
+	స్థితి TEXTAREA_సందేశం_CARET_UPDATE:
+		ఒకవేళ (html->bw == ఖాళీ)
+			ఆపు;
 
-		if (msg->data.caret.type == TEXTAREA_CARET_HIDE) {
-			union html_focus_owner focus_owner;
+		ఒకవేళ (సందేశం->దత్తాంశం.caret.type == TEXTAREA_CARET_HIDE) {
+			సంఘం html_focus_owner focus_owner;
 			focus_owner.textarea = box;
-			html_set_focus(html, HTML_FOCUS_TEXTAREA,
-					focus_owner, true, 0, 0, 0, NULL);
-		} else {
-			union html_focus_owner focus_owner;
+			html_సమితి_focus(html, HTML_FOCUS_TEXTAREA,
+					focus_owner, true, 0, 0, 0, ఖాళీ);
+		} లేకపోతే {
+			సంఘం html_focus_owner focus_owner;
 			focus_owner.textarea = box;
-			html_set_focus(html, HTML_FOCUS_TEXTAREA,
+			html_సమితి_focus(html, HTML_FOCUS_TEXTAREA,
 					focus_owner, false,
-					msg->data.caret.pos.x,
-					msg->data.caret.pos.y,
-					msg->data.caret.pos.height,
-					msg->data.caret.pos.clip);
+					సందేశం->దత్తాంశం.caret.pos.x,
+					సందేశం->దత్తాంశం.caret.pos.y,
+					సందేశం->దత్తాంశం.caret.pos.ఎత్తు,
+					సందేశం->దత్తాంశం.caret.pos.clip);
 		}
-		break;
+		ఆపు;
 
-	case TEXTAREA_MSG_TEXT_MODIFIED:
-		form_gadget_update_value(gadget,
-					 strndup(msg->data.modified.text,
-						 msg->data.modified.len));
-		break;
+	స్థితి TEXTAREA_సందేశం_పాఠ్యం_MODIFIED:
+		form_gadget_update_విలువ(gadget,
+					 strndup(సందేశం->దత్తాంశం.modified.పాఠ్యం,
+						 సందేశం->దత్తాంశం.modified.len));
+		ఆపు;
 	}
 }
 
 
 /* Exported interface, documented in box_textarea.h */
 bool box_textarea_create_textarea(html_content *html,
-		struct box *box, struct dom_node *node)
+		నిర్మాణం box *box, నిర్మాణం dom_కణుపు *కణుపు)
 {
-	dom_string *dom_text = NULL;
+	dom_string *dom_పాఠ్యం = ఖాళీ;
 	dom_exception err;
-	textarea_setup ta_setup;
+	textarea_అమరిక ta_అమరిక;
 	textarea_flags ta_flags;
 	plot_font_style_t fstyle = {
 		.family = PLOT_FONT_FAMILY_SANS_SERIF,
-		.size = 10 * PLOT_STYLE_SCALE,
-		.weight = 400,
+		.కొలత = 10 * PLOT_STYLE_SCALE,
+		.బరువు = 400,
 		.flags = FONTF_NONE,
 		.background = 0,
 		.foreground = 0,
 	};
 	bool read_only = false;
 	bool disabled = false;
-	struct form_control *gadget = box->gadget;
-	const char *text;
+	నిర్మాణం form_control *gadget = box->gadget;
+	స్థిరరాశి అక్షరం *పాఠ్యం;
 
-	assert(gadget != NULL);
-	assert(gadget->type == GADGET_TEXTAREA ||
+	ప్రతిజ్ఞా(gadget != ఖాళీ);
+	ప్రతిజ్ఞా(gadget->type == GADGET_TEXTAREA ||
 			gadget->type == GADGET_TEXTBOX ||
 			gadget->type == GADGET_PASSWORD);
 
-	if (gadget->type == GADGET_TEXTAREA) {
-		dom_html_text_area_element *textarea =
-				(dom_html_text_area_element *) node;
+	ఒకవేళ (gadget->type == GADGET_TEXTAREA) {
+		dom_html_పాఠ్యం_area_element *textarea =
+				(dom_html_పాఠ్యం_area_element *) కణుపు;
 		ta_flags = TEXTAREA_MULTILINE;
 
-		err = dom_html_text_area_element_get_read_only(
+		err = dom_html_పాఠ్యం_area_element_get_read_only(
 				textarea, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		ఒకవేళ (err != DOM_NO_ERR)
+			తిరిగి false;
 
-		err = dom_html_text_area_element_get_disabled(
+		err = dom_html_పాఠ్యం_area_element_get_disabled(
 				textarea, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		ఒకవేళ (err != DOM_NO_ERR)
+			తిరిగి false;
 
 		/* Get the textarea's initial content */
-		err = dom_html_text_area_element_get_value(textarea, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_పాఠ్యం_area_element_get_విలువ(textarea, &dom_పాఠ్యం);
+		ఒకవేళ (err != DOM_NO_ERR)
+			తిరిగి false;
 
-	} else {
-		dom_html_input_element *input = (dom_html_input_element *) node;
+	} లేకపోతే {
+		dom_html_ఆదానం_element *ఆదానం = (dom_html_ఆదానం_element *) కణుపు;
 
-		err = dom_html_input_element_get_read_only(
-				input, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_ఆదానం_element_get_read_only(
+				ఆదానం, &read_only);
+		ఒకవేళ (err != DOM_NO_ERR)
+			తిరిగి false;
 
-		err = dom_html_input_element_get_disabled(
-				input, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_ఆదానం_element_get_disabled(
+				ఆదానం, &disabled);
+		ఒకవేళ (err != DOM_NO_ERR)
+			తిరిగి false;
 
-		if (gadget->type == GADGET_PASSWORD)
+		ఒకవేళ (gadget->type == GADGET_PASSWORD)
 			ta_flags = TEXTAREA_PASSWORD;
-		else
+		లేకపోతే
 			ta_flags = TEXTAREA_DEFAULT;
 
 		/* Get initial text */
-		err = dom_html_input_element_get_value(input, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_ఆదానం_element_get_విలువ(ఆదానం, &dom_పాఠ్యం);
+		ఒకవేళ (err != DOM_NO_ERR)
+			తిరిగి false;
 	}
 
-	if (dom_text != NULL) {
-		text = dom_string_data(dom_text);
-	} else {
+	ఒకవేళ (dom_పాఠ్యం != ఖాళీ) {
+		పాఠ్యం = dom_string_దత్తాంశం(dom_పాఠ్యం);
+	} లేకపోతే {
 		/* No initial text, or failed reading it;
 		 * use a blank string */
-		text = "";
+		పాఠ్యం = "";
 	}
 
-	if (read_only || disabled)
+	ఒకవేళ (read_only || disabled)
 		ta_flags |= TEXTAREA_READONLY;
 
-	gadget->data.text.data.gadget = gadget;
+	gadget->దత్తాంశం.పాఠ్యం.దత్తాంశం.gadget = gadget;
 
 	/* Reset to correct values by layout */
-	ta_setup.width = 200;
-	ta_setup.height = 20;
-	ta_setup.pad_top = 4;
-	ta_setup.pad_right = 4;
-	ta_setup.pad_bottom = 4;
-	ta_setup.pad_left = 4;
+	ta_అమరిక.వెడల్పు = 200;
+	ta_అమరిక.ఎత్తు = 20;
+	ta_అమరిక.pad_శిఖరం = 4;
+	ta_అమరిక.pad_కుడి = 4;
+	ta_అమరిక.pad_bottom = 4;
+	ta_అమరిక.pad_ఎడమ = 4;
 
 	/* Set remaining data */
-	ta_setup.border_width = 0;
-	ta_setup.border_col = 0x000000;
-	ta_setup.text = fstyle;
-	ta_setup.text.background = NS_TRANSPARENT;
+	ta_అమరిక.border_వెడల్పు = 0;
+	ta_అమరిక.border_నిలువు = 0x000000;
+	ta_అమరిక.పాఠ్యం = fstyle;
+	ta_అమరిక.పాఠ్యం.background = NS_TRANSPARENT;
 	/* Make selected text either black or white, as gives greatest contrast
 	 * with background colour. */
-	ta_setup.selected_bg = fstyle.foreground;
-	ta_setup.selected_text = colour_to_bw_furthest(ta_setup.selected_bg);
+	ta_అమరిక.selected_bg = fstyle.foreground;
+	ta_అమరిక.selected_పాఠ్యం = రంగు_గమ్యం_bw_furthest(ta_అమరిక.selected_bg);
 
 	/* Hand reference to dom text over to gadget */
-	gadget->data.text.initial = dom_text;
+	gadget->దత్తాంశం.పాఠ్యం.initial = dom_పాఠ్యం;
 
-	gadget->data.text.ta = textarea_create(ta_flags, &ta_setup,
-			box_textarea_callback, &gadget->data.text.data);
+	gadget->దత్తాంశం.పాఠ్యం.ta = textarea_create(ta_flags, &ta_అమరిక,
+			box_textarea_callback, &gadget->దత్తాంశం.పాఠ్యం.దత్తాంశం);
 
-	if (gadget->data.text.ta == NULL) {
-		return false;
+	ఒకవేళ (gadget->దత్తాంశం.పాఠ్యం.ta == ఖాళీ) {
+		తిరిగి false;
 	}
 
-	if (!textarea_set_text(gadget->data.text.ta, text))
-		return false;
+	ఒకవేళ (!textarea_సమితి_పాఠ్యం(gadget->దత్తాంశం.పాఠ్యం.ta, పాఠ్యం))
+		తిరిగి false;
 
-	return true;
+	తిరిగి true;
 }

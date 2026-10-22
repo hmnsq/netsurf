@@ -21,17 +21,17 @@
  * HTML content user interaction handling
  */
 
-#ifndef NETSURF_HTML_INTERACTION_H
-#define NETSURF_HTML_INTERACTION_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_INTERACTION_H
+#నిర్వచించు NETSURF_HTML_INTERACTION_H
 
-#include "desktop/search.h" /* search flags enum */
+#అన్తర్భావ "desktop/search.h" /* search flags enum */
 
 /**
  * Context for scrollbar
  */
-struct html_scrollbar_data {
-	struct content *c;
-	struct box *box;
+నిర్మాణం html_scrollbar_దత్తాంశం {
+	నిర్మాణం content *c;
+	నిర్మాణం box *box;
 };
 
 /**
@@ -43,8 +43,8 @@ struct html_scrollbar_data {
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-nserror html_mouse_track(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+nserror html_mouse_track(నిర్మాణం content *c, నిర్మాణం browser_కిటికీ *bw,
+			browser_mouse_state mouse, పూర్ణాంకం x, పూర్ణాంకం y);
 
 
 /**
@@ -63,22 +63,22 @@ nserror html_mouse_track(struct content *c, struct browser_window *bw,
  * \param y y coordinate of mouse
  * \return NSERROR_OK or appropriate error code.
  */
-nserror html_mouse_action(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+nserror html_mouse_action(నిర్మాణం content *c, నిర్మాణం browser_కిటికీ *bw,
+			browser_mouse_state mouse, పూర్ణాంకం x, పూర్ణాంకం y);
 
 
-bool html_keypress(struct content *c, uint32_t key);
+bool html_keypress(నిర్మాణం content *c, uint32_t కీలకం);
 
 
-void html_overflow_scroll_callback(void *client_data,
-		struct scrollbar_msg_data *scrollbar_data);
+శూన్య html_అధికప్రవాహం_scroll_callback(శూన్య *client_దత్తాంశం,
+		నిర్మాణం scrollbar_సందేశం_దత్తాంశం *scrollbar_దత్తాంశం);
 
 
-void html_search(struct content *c, void *context,
-		search_flags_t flags, const char *string);
+శూన్య html_శోధన(నిర్మాణం content *c, శూన్య *context,
+		శోధన_flags_t flags, స్థిరరాశి అక్షరం *string);
 
 
-void html_search_clear(struct content *c);
+శూన్య html_శోధన_clear(నిర్మాణం content *c);
 
 
 /**
@@ -89,8 +89,8 @@ void html_search_clear(struct content *c);
  * \param drag_owner	What owns the drag
  * \param rect		Pointer movement bounds
  */
-void html_set_drag_type(html_content *html, html_drag_type drag_type,
-		union html_drag_owner drag_owner, const struct rect *rect);
+శూన్య html_సమితి_drag_type(html_content *html, html_drag_type drag_type,
+		సంఘం html_drag_owner drag_owner, స్థిరరాశి నిర్మాణం rect *rect);
 
 
 /**
@@ -101,8 +101,8 @@ void html_set_drag_type(html_content *html, html_drag_type drag_type,
  * \param selection_owner	What owns the selection
  * \param read_only		True iff selection is read only
  */
-void html_set_selection(html_content *html, html_selection_type selection_type,
-		union html_selection_owner selection_owner, bool read_only);
+శూన్య html_సమితి_selection(html_content *html, html_selection_type selection_type,
+		సంఘం html_selection_owner selection_owner, bool read_only);
 
 
 /**
@@ -117,9 +117,9 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
  * \param height		Carret height
  * \param clip			Carret clip rect
  */
-void html_set_focus(html_content *html, html_focus_type focus_type,
-		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip);
+శూన్య html_సమితి_focus(html_content *html, html_focus_type focus_type,
+		సంఘం html_focus_owner focus_owner, bool hide_caret,
+		పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం ఎత్తు, స్థిరరాశి నిర్మాణం rect *clip);
 
 
-#endif
+#అయితే_ముగింపు

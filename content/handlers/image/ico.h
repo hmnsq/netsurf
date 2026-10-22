@@ -20,9 +20,9 @@
  * Content for image/ico (interface).
  */
 
-#ifndef _NETSURF_IMAGE_ICO_H_
-#define _NETSURF_IMAGE_ICO_H_
+#నిర్వచితం_కాకపోతే _NETSURF_IMAGE_ICO_H_
+#నిర్వచించు _NETSURF_IMAGE_ICO_H_
 
-nserror nsico_init(void);
+nserror nsico_init(శూన్య);
 
-#endif
+#అయితే_ముగింపు

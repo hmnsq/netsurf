@@ -20,41 +20,41 @@
  * Low-level resource cache null persistant storage implementation.
  */
 
-#include "utils/nsurl.h"
+#అన్తర్భావ "utils/nsurl.h"
 
-#include "content/backing_store.h"
+#అన్తర్భావ "content/backing_store.h"
 
 
 /* default to disabled backing store */
-static nserror initialise(const struct llcache_store_parameters *parameters)
+స్థిర nserror initialise(స్థిరరాశి నిర్మాణం llcache_store_parameters *parameters)
 {
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static nserror finalise(void)
+స్థిర nserror finalise(శూన్య)
 {
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static nserror store(nsurl *url,
-		     enum backing_store_flags flags,
-		     uint8_t *data,
-		     const size_t datalen)
+స్థిర nserror store(nsurl *url,
+		     గణన backing_store_flags flags,
+		     uint8_t *దత్తాంశం,
+		     స్థిరరాశి size_t datalen)
 {
-	return NSERROR_SAVE_FAILED;
+	తిరిగి NSERROR_SAVE_FAILED;
 }
 
-static nserror fetch(nsurl *url,
-		     enum backing_store_flags flags,
-		     uint8_t **data_out,
-		     size_t *datalen_out)
+స్థిర nserror fetch(nsurl *url,
+		     గణన backing_store_flags flags,
+		     uint8_t **దత్తాంశం_బహిర్గతం,
+		     size_t *datalen_బహిర్గతం)
 {
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
-static nserror invalidate(nsurl *url)
+స్థిర nserror invalidate(nsurl *url)
 {
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
 /**
@@ -69,12 +69,12 @@ static nserror invalidate(nsurl *url)
  * @param[in] flags The flags to control how the object data is released.
  * @return NSERROR_OK on success or error code on faliure.
  */
-static nserror release(nsurl *url, enum backing_store_flags flags)
+స్థిర nserror release(nsurl *url, గణన backing_store_flags flags)
 {
-	return NSERROR_NOT_FOUND;
+	తిరిగి NSERROR_NOT_దొరికింది;
 }
 
-static struct gui_llcache_table llcache_table = {
+స్థిర నిర్మాణం gui_llcache_పట్టిక llcache_పట్టిక = {
 	.initialise = initialise,
 	.finalise = finalise,
 	.store = store,
@@ -83,4 +83,4 @@ static struct gui_llcache_table llcache_table = {
 	.release = release,
 };
 
-struct gui_llcache_table *null_llcache_table = &llcache_table;
+నిర్మాణం gui_llcache_పట్టిక *null_llcache_పట్టిక = &llcache_పట్టిక;

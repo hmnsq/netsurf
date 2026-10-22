@@ -21,22 +21,22 @@
  * Private data for text/html content.
  */
 
-#ifndef NETSURF_HTML_PRIVATE_H
-#define NETSURF_HTML_PRIVATE_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_వ్యక్తిగత_H
+#నిర్వచించు NETSURF_HTML_వ్యక్తిగత_H
 
-#include <dom/bindings/hubbub/parser.h>
+#అన్తర్భావ <dom/bindings/hubbub/parser.h>
 
-#include "netsurf/types.h"
-#include "content/content_protected.h"
-#include "content/handlers/css/utils.h"
+#అన్తర్భావ "netsurf/types.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/handlers/css/utils.h"
 
 
-struct gui_layout_table;
-struct scrollbar_msg_data;
-struct content_redraw_data;
-struct selection;
+నిర్మాణం gui_layout_పట్టిక;
+నిర్మాణం scrollbar_సందేశం_దత్తాంశం;
+నిర్మాణం content_redraw_దత్తాంశం;
+నిర్మాణం selection;
 
-typedef enum {
+రకనిర్వచనం గణన {
 	HTML_DRAG_NONE,			/** No drag */
 	HTML_DRAG_SELECTION,		/** Own; Text selection */
 	HTML_DRAG_SCROLLBAR,		/** Not own; drag in scrollbar widget */
@@ -49,14 +49,14 @@ typedef enum {
 /**
  * For drags we don't own
  */
-union html_drag_owner {
+సంఘం html_drag_owner {
 	bool no_owner;
-	struct box *content;
-	struct scrollbar *scrollbar;
-	struct box *textarea;
+	నిర్మాణం box *content;
+	నిర్మాణం scrollbar *scrollbar;
+	నిర్మాణం box *textarea;
 };
 
-typedef enum {
+రకనిర్వచనం గణన {
 	HTML_SELECTION_NONE,		/** No selection */
 	HTML_SELECTION_TEXTAREA,	/** Selection in one of our textareas */
 	HTML_SELECTION_SELF,		/** Selection in this html content */
@@ -66,13 +66,13 @@ typedef enum {
 /**
  * For getting at selections in this content or things in this content
  */
-union html_selection_owner {
+సంఘం html_selection_owner {
 	bool none;
-	struct box *textarea;
-	struct box *content;
+	నిర్మాణం box *textarea;
+	నిర్మాణం box *content;
 };
 
-typedef enum {
+రకనిర్వచనం గణన {
 	HTML_FOCUS_SELF,		/**< Focus is our own */
 	HTML_FOCUS_CONTENT,		/**< Focus belongs to child content */
 	HTML_FOCUS_TEXTAREA		/**< Focus belongs to textarea */
@@ -81,17 +81,17 @@ typedef enum {
 /**
  * For directing input
  */
-union html_focus_owner {
+సంఘం html_focus_owner {
 	bool self;
-	struct box *textarea;
-	struct box *content;
+	నిర్మాణం box *textarea;
+	నిర్మాణం box *content;
 };
 
 /**
  * Data specific to CONTENT_HTML.
  */
-typedef struct html_content {
-	struct content base;
+రకనిర్వచనం నిర్మాణం html_content {
+	నిర్మాణం content పునాది;
 
 	dom_hubbub_parser *parser; /**< Parser object handle */
 	bool parse_completed; /**< Whether the parse has been completed */
@@ -100,17 +100,17 @@ typedef struct html_content {
 	/** Document tree */
 	dom_document *document;
 	/** Quirkyness of document */
-	dom_document_quirks_mode quirks;
+	dom_document_quirks_బహుళకం quirks;
 
 	/** Encoding of source, NULL if unknown. */
-	char *encoding;
+	అక్షరం *encoding;
 	/** Source of encoding information. */
-	dom_hubbub_encoding_source encoding_source;
+	dom_hubbub_encoding_ఆధారం encoding_ఆధారం;
 
 	/** Base URL (may be a copy of content->url). */
-	struct nsurl *base_url;
+	నిర్మాణం nsurl *పునాది_url;
 	/** Base target */
-	char *base_target;
+	అక్షరం *పునాది_లక్ష్యం;
 
 	/** Content has been aborted in the LOADING state */
 	bool aborted;
@@ -128,33 +128,33 @@ typedef struct html_content {
 	bool enable_scripting;
 
 	/* Title element node */
-	dom_node *title;
+	dom_కణుపు *title;
 
 	/** A talloc context purely for the render box tree */
-	int *bctx;
+	పూర్ణాంకం *bctx;
 	/** A context pointer for the box conversion, NULL if no conversion
 	 * is in progress.
 	 */
-	void *box_conversion_context;
+	శూన్య *box_conversion_context;
 	/** Box tree, or NULL. */
-	struct box *layout;
+	నిర్మాణం box *layout;
 	/** Document background colour. */
-	colour background_colour;
+	రంగు background_రంగు;
 
 	/** Font callback table */
-	const struct gui_layout_table *font_func;
+	స్థిరరాశి నిర్మాణం gui_layout_పట్టిక *font_func;
 
 	/** Number of entries in scripts */
-	unsigned int scripts_count;
+	గుర్తులేని పూర్ణాంకం scripts_లెక్క;
 	/** Scripts */
-	struct html_script *scripts;
+	నిర్మాణం html_script *scripts;
 	/** javascript thread in use */
-	struct jsthread *jsthread;
+	నిర్మాణం jsthread *jsthread;
 
 	/** Number of entries in stylesheet_content. */
-	unsigned int stylesheet_count;
+	గుర్తులేని పూర్ణాంకం stylesheet_లెక్క;
 	/** Stylesheets. Each may be NULL. */
-	struct html_stylesheet *stylesheets;
+	నిర్మాణం html_stylesheet *stylesheets;
 	/**< Style selection context */
 	css_select_ctx *select_ctx;
 	/**< Style selection media specification */
@@ -165,57 +165,57 @@ typedef struct html_content {
 	lwc_string *universal;
 
 	/** Number of entries in object_list. */
-	unsigned int num_objects;
+	గుర్తులేని పూర్ణాంకం అంకె_objects;
 	/** List of objects. */
-	struct content_html_object *object_list;
+	నిర్మాణం content_html_object *object_list;
 	/** Forms, in reverse order to document. */
-	struct form *forms;
+	నిర్మాణం form *forms;
 	/** Hash table of imagemaps. */
-	struct imagemap **imagemaps;
+	నిర్మాణం imagemap **imagemaps;
 
 	/** Browser window containing this document, or NULL if not open. */
-	struct browser_window *bw;
+	నిర్మాణం browser_కిటికీ *bw;
 
 	/** Frameset information */
-	struct content_html_frames *frameset;
+	నిర్మాణం content_html_చట్రాలు *frameset;
 
 	/** Inline frame information */
-	struct content_html_iframe *iframe;
+	నిర్మాణం content_html_iframe *iframe;
 
 	/** Content of type CONTENT_HTML containing this, or NULL if not an
 	 * object within a page. */
-	struct html_content *page;
+	నిర్మాణం html_content *పుట;
 
 	/** Current drag type */
 	html_drag_type drag_type;
 	/** Widget capturing all mouse events */
-	union html_drag_owner drag_owner;
+	సంఘం html_drag_owner drag_owner;
 
 	/** Current selection state */
 	html_selection_type selection_type;
 	/** Current selection owner */
-	union html_selection_owner selection_owner;
+	సంఘం html_selection_owner selection_owner;
 
 	/** Current input focus target type */
 	html_focus_type focus_type;
 	/** Current input focus target */
-	union html_focus_owner focus_owner;
+	సంఘం html_focus_owner focus_owner;
 
 	/** HTML content's own text selection object */
-	struct selection *sel;
+	నిర్మాణం selection *sel;
 
 	/**
 	 * Open core-handled form SELECT menu, or NULL if none
 	 *  currently open.
 	 */
-	struct form_control *visible_select_menu;
+	నిర్మాణం form_control *visible_select_menu;
 
 } html_content;
 
 /**
  * Render padding and margin box outlines in html_redraw().
  */
-extern bool html_redraw_debug;
+బాహ్య bool html_redraw_debug;
 
 
 /* in html/html.c */
@@ -226,7 +226,7 @@ extern bool html_redraw_debug;
  * \param htmlc HTML content
  * \param box The box to redraw.
  */
-void html__redraw_a_box(html_content *htmlc, struct box *box);
+శూన్య html__redraw_a_box(html_content *htmlc, నిర్మాణం box *box);
 
 
 /**
@@ -234,7 +234,7 @@ void html__redraw_a_box(html_content *htmlc, struct box *box);
  *
  * \param htmlc Content to convert
  */
-void html_finish_conversion(html_content *htmlc);
+శూన్య html_ముగింపు_conversion(html_content *htmlc);
 
 
 /**
@@ -257,7 +257,7 @@ bool html_begin_conversion(html_content *htmlc);
 /**
  * execute some text as a script element
  */
-bool html_exec(struct content *c, const char *src, size_t srclen);
+bool html_exec(నిర్మాణం content *c, స్థిరరాశి అక్షరం *src, size_t srclen);
 
 
 /**
@@ -291,33 +291,33 @@ bool html_saw_insecure_scripts(html_content *htmlc);
 /**
  * Complete the HTML content state machine *iff* all scripts are finished
  */
-nserror html_proceed_to_done(html_content *html);
+nserror html_proceed_గమ్యం_పూర్తి(html_content *html);
 
 
 /* in html/redraw.c */
-bool html_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx);
+bool html_redraw(నిర్మాణం content *c, నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+		స్థిరరాశి నిర్మాణం rect *clip, స్థిరరాశి నిర్మాణం redraw_context *ctx);
 
 
 /* in html/redraw_border.c */
-bool html_redraw_borders(struct box *box, int x_parent, int y_parent,
-		int p_width, int p_height, const struct rect *clip, float scale,
-		const struct redraw_context *ctx);
+bool html_redraw_borders(నిర్మాణం box *box, పూర్ణాంకం x_మాతృ, పూర్ణాంకం y_మాతృ,
+		పూర్ణాంకం p_వెడల్పు, పూర్ణాంకం p_ఎత్తు, స్థిరరాశి నిర్మాణం rect *clip, దశాంశం scale,
+		స్థిరరాశి నిర్మాణం redraw_context *ctx);
 
 
-bool html_redraw_inline_borders(struct box *box, struct rect b,
-		const struct rect *clip, float scale, bool first, bool last,
-		const struct redraw_context *ctx);
+bool html_redraw_inline_borders(నిర్మాణం box *box, నిర్మాణం rect b,
+		స్థిరరాశి నిర్మాణం rect *clip, దశాంశం scale, bool మొదటి, bool చివరి,
+		స్థిరరాశి నిర్మాణం redraw_context *ctx);
 
 
 /* in html/script.c */
-dom_hubbub_error html_process_script(void *ctx, dom_node *node);
+dom_hubbub_error html_process_script(శూన్య *ctx, dom_కణుపు *కణుపు);
 
 
 /* in html/forms.c */
-struct form *html_forms_get_forms(const char *docenc, dom_html_document *doc);
-struct form_control *html_forms_get_control_for_node(struct form *forms,
-		dom_node *node);
+నిర్మాణం form *html_forms_get_forms(స్థిరరాశి అక్షరం *docenc, dom_html_document *doc);
+నిర్మాణం form_control *html_forms_get_control_for_కణుపు(నిర్మాణం form *forms,
+		dom_కణుపు *కణుపు);
 
 
 /* in html/css_fetcher.c */
@@ -326,9 +326,9 @@ struct form_control *html_forms_get_control_for_node(struct form *forms,
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror html_css_fetcher_register(void);
-nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
-		uint32_t *key);
+nserror html_css_fetcher_రిజిస్టరు(శూన్య);
+nserror html_css_fetcher_కూడు_అంశం(dom_string *దత్తాంశం, నిర్మాణం nsurl *పునాది_url,
+		uint32_t *కీలకం);
 
 
 /* Events */
@@ -336,36 +336,36 @@ nserror html_css_fetcher_add_item(dom_string *data, struct nsurl *base_url,
  * Construct an event and fire it at the DOM
  *
  */
-bool fire_generic_dom_event(dom_string *type, dom_node *target,
+bool fire_generic_dom_event(dom_string *type, dom_కణుపు *లక్ష్యం,
 		    bool bubbles, bool cancelable);
 
 /**
  * Construct a keyboard event and fire it at the DOM
  */
-bool fire_dom_keyboard_event(dom_string *type, dom_node *target,
-		bool bubbles, bool cancelable, uint32_t key);
+bool fire_dom_keyboard_event(dom_string *type, dom_కణుపు *లక్ష్యం,
+		bool bubbles, bool cancelable, uint32_t కీలకం);
 
 /* Useful dom_string pointers */
-struct dom_string;
+నిర్మాణం dom_string;
 
-extern struct dom_string *html_dom_string_map;
-extern struct dom_string *html_dom_string_id;
-extern struct dom_string *html_dom_string_name;
-extern struct dom_string *html_dom_string_area;
-extern struct dom_string *html_dom_string_a;
-extern struct dom_string *html_dom_string_nohref;
-extern struct dom_string *html_dom_string_href;
-extern struct dom_string *html_dom_string_target;
-extern struct dom_string *html_dom_string_shape;
-extern struct dom_string *html_dom_string_default;
-extern struct dom_string *html_dom_string_rect;
-extern struct dom_string *html_dom_string_rectangle;
-extern struct dom_string *html_dom_string_coords;
-extern struct dom_string *html_dom_string_circle;
-extern struct dom_string *html_dom_string_poly;
-extern struct dom_string *html_dom_string_polygon;
-extern struct dom_string *html_dom_string_text_javascript;
-extern struct dom_string *html_dom_string_type;
-extern struct dom_string *html_dom_string_src;
+బాహ్య నిర్మాణం dom_string *html_dom_string_map;
+బాహ్య నిర్మాణం dom_string *html_dom_string_id;
+బాహ్య నిర్మాణం dom_string *html_dom_string_name;
+బాహ్య నిర్మాణం dom_string *html_dom_string_area;
+బాహ్య నిర్మాణం dom_string *html_dom_string_a;
+బాహ్య నిర్మాణం dom_string *html_dom_string_nohref;
+బాహ్య నిర్మాణం dom_string *html_dom_string_href;
+బాహ్య నిర్మాణం dom_string *html_dom_string_లక్ష్యం;
+బాహ్య నిర్మాణం dom_string *html_dom_string_shape;
+బాహ్య నిర్మాణం dom_string *html_dom_string_default;
+బాహ్య నిర్మాణం dom_string *html_dom_string_rect;
+బాహ్య నిర్మాణం dom_string *html_dom_string_rectangle;
+బాహ్య నిర్మాణం dom_string *html_dom_string_coords;
+బాహ్య నిర్మాణం dom_string *html_dom_string_circle;
+బాహ్య నిర్మాణం dom_string *html_dom_string_poly;
+బాహ్య నిర్మాణం dom_string *html_dom_string_polygon;
+బాహ్య నిర్మాణం dom_string *html_dom_string_పాఠ్యం_javascript;
+బాహ్య నిర్మాణం dom_string *html_dom_string_type;
+బాహ్య నిర్మాణం dom_string *html_dom_string_src;
 
-#endif
+#అయితే_ముగింపు

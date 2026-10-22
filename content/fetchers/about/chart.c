@@ -26,86 +26,86 @@
  *
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <stdio.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stddef.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <math.h>
+#అన్తర్భావ <stdio.h>
 
-#include "utils/config.h"
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/errors.h"
-#include "utils/nsurl.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "netsurf/inttypes.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/nsurl.h"
 
-#include "private.h"
-#include "chart.h"
+#అన్తర్భావ "private.h"
+#అన్తర్భావ "chart.h"
 
 /** minimum figure dimension */
-#define FIGURE_MIN_WIDTH 150
-#define FIGURE_MIN_HEIGHT 100
+#నిర్వచించు FIGURE_MIN_వెడల్పు 150
+#నిర్వచించు FIGURE_MIN_ఎత్తు 100
 
-enum chart_type {
+గణన chart_type {
 		 CHART_TYPE_UNKNOWN,
 		 CHART_TYPE_PIE,
 };
 
 /* type of chart key */
-enum key_type {
-	       CHART_KEY_UNSET,
-	       CHART_KEY_NONE,
-	       CHART_KEY_LEFT,
-	       CHART_KEY_RIGHT,
-	       CHART_KEY_TOP,
-	       CHART_KEY_BOT,
-	       CHART_KEY_END
+గణన కీలకం_type {
+	       CHART_కీలకం_UNSET,
+	       CHART_కీలకం_NONE,
+	       CHART_కీలకం_ఎడమ,
+	       CHART_కీలకం_కుడి,
+	       CHART_కీలకం_శిఖరం,
+	       CHART_కీలకం_BOT,
+	       CHART_కీలకం_చివర
 };
 
 
-struct chart_label {
-	char *title; /* label title */
-	unsigned int colour; /* colour */
+నిర్మాణం chart_label {
+	అక్షరం *title; /* label title */
+	గుర్తులేని పూర్ణాంకం రంగు; /*రంగు*/
 };
 
-struct chart_series {
-	unsigned int len; /* number of values in the series */
-	float *value; /* array of values */
+నిర్మాణం chart_series {
+	గుర్తులేని పూర్ణాంకం len; /* number of values in the series */
+	దశాంశం *విలువ; /* array of values */
 };
 
-#define MAX_SERIES 4
+#నిర్వచించు MAX_SERIES 4
 
-struct chart_data {
-	unsigned int series_len;
-	struct chart_series series[MAX_SERIES];
+నిర్మాణం chart_దత్తాంశం {
+	గుర్తులేని పూర్ణాంకం series_len;
+	నిర్మాణం chart_series series[MAX_SERIES];
 
-	unsigned int label_len; /* number of labels */
-	struct chart_label *label;
+	గుర్తులేని పూర్ణాంకం label_len; /* number of labels */
+	నిర్మాణం chart_label *label;
 
 };
 
 /**
  * parameters for a chart figure
  */
-struct chart_param {
-	enum chart_type type;
-	enum key_type key; /* what type of key to use */
-	unsigned int width; /* width of figure */
-	unsigned int height; /* height of figure */
-	char *title; /* title */
-	struct {
-		unsigned int x;
-		unsigned int y;
-		unsigned int width;
-		unsigned int height;
+నిర్మాణం chart_param {
+	గణన chart_type type;
+	గణన కీలకం_type కీలకం; /* what type of key to use */
+	గుర్తులేని పూర్ణాంకం వెడల్పు; /* width of figure */
+	గుర్తులేని పూర్ణాంకం ఎత్తు; /* height of figure */
+	అక్షరం *title; /* title */
+	నిర్మాణం {
+		గుర్తులేని పూర్ణాంకం x;
+		గుర్తులేని పూర్ణాంకం y;
+		గుర్తులేని పూర్ణాంకం వెడల్పు;
+		గుర్తులేని పూర్ణాంకం ఎత్తు;
 	} area; /* chart area within figure */
-	struct chart_data data;
+	నిర్మాణం chart_దత్తాంశం దత్తాంశం;
 };
 
-#define DEF_COLOUR_NUM 8
+#నిర్వచించు DEF_రంగు_అంకె 8
 /** default colour series */
-static unsigned int colour_series[DEF_COLOUR_NUM] =
+స్థిర గుర్తులేని పూర్ణాంకం రంగు_series[DEF_రంగు_అంకె] =
 	{
 	 0x00ff00, /* green */
 	 0x0000ff, /* blue */
@@ -119,376 +119,376 @@ static unsigned int colour_series[DEF_COLOUR_NUM] =
 
 
 /* ensures there are labels present for every value */
-static nserror ensure_label_count(struct chart_param *chart, unsigned int count)
+స్థిర nserror ensure_label_లెక్క(నిర్మాణం chart_param *chart, గుర్తులేని పూర్ణాంకం లెక్క)
 {
-	unsigned int lidx;
-	int deltac;
-	struct chart_label *nlabels;
+	గుర్తులేని పూర్ణాంకం lidx;
+	పూర్ణాంకం deltac;
+	నిర్మాణం chart_label *nlabels;
 
-	deltac = count - chart->data.label_len;
-	if (deltac <= 0) {
+	deltac = లెక్క - chart->దత్తాంశం.label_len;
+	ఒకవేళ (deltac <= 0) {
 		/* there are enough labels */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	nlabels = realloc(chart->data.label,
-			  count * sizeof(struct chart_label));
-	if (nlabels == NULL) {
-		return NSERROR_NOMEM;
+	nlabels = realloc(chart->దత్తాంశం.label,
+			  లెక్క * పరిమాణం(నిర్మాణం chart_label));
+	ఒకవేళ (nlabels == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
-	chart->data.label = nlabels;
+	chart->దత్తాంశం.label = nlabels;
 
-	for (lidx = chart->data.label_len; lidx < count; lidx++) {
-		chart->data.label[lidx].title = calloc(1, 20);
-		snprintf(chart->data.label[lidx].title, 19, "item %d", lidx + 1);
-		chart->data.label[lidx].colour = colour_series[lidx % DEF_COLOUR_NUM];
+	కొరకు (lidx = chart->దత్తాంశం.label_len; lidx < లెక్క; lidx++) {
+		chart->దత్తాంశం.label[lidx].title = సున్నా_జ్ఞాపకం_ఇవ్వు(1, 20);
+		snprintf(chart->దత్తాంశం.label[lidx].title, 19, "item %d", lidx + 1);
+		chart->దత్తాంశం.label[lidx].రంగు = రంగు_series[lidx % DEF_రంగు_అంకె];
 	}
 
-	chart->data.label_len = count;
+	chart->దత్తాంశం.label_len = లెక్క;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
  * extract values for a series
  */
-static nserror
-extract_series_values(struct chart_param *chart,
-		      unsigned int series_num,
-		      const char *valstr,
+స్థిర nserror
+వెలికితీయి_series_విలువలు(నిర్మాణం chart_param *chart,
+		      గుర్తులేని పూర్ణాంకం series_అంకె,
+		      స్థిరరాశి అక్షరం *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcur;
+	గుర్తులేని పూర్ణాంకం valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
-	struct chart_series *series;
+	నిర్మాణం chart_series *series;
 
-	series = chart->data.series + series_num;
+	series = chart->దత్తాంశం.series + series_అంకె;
 
 	/* ensure we do not leak any data in this series */
-	if (series->value != NULL) {
-		free(series->value);
+	ఒకవేళ (series->విలువ != ఖాళీ) {
+		విడుదల(series->విలువ);
 	}
 
 	/* count how many values present */
-	for (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	కొరకు (series->len = 1, valstart=0; valstart < valstrlen; valstart++) {
+		ఒకవేళ (valstr[valstart] == ',') {
 			series->len++;
 		}
 	}
 
 	/* allocate storage for values */
-	series->value = calloc(series->len, sizeof(float));
-	if (series->value == NULL) {
-		return NSERROR_NOMEM;
+	series->విలువ = సున్నా_జ్ఞాపకం_ఇవ్వు(series->len, పరిమాణం(దశాంశం));
+	ఒకవేళ (series->విలువ == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
 	/* extract values from query string */
-	for (valcur = 0, vallen = 0, valstart = 0;
+	కొరకు (valcur = 0, vallen = 0, valstart = 0;
 	     (valstart < valstrlen) && (valcur < series->len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		అయితే (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		series->value[valcur] = strtof(valstr + valstart, NULL);
+		series->విలువ[valcur] = strtof(valstr + valstart, ఖాళీ);
 		vallen++; /* account for , separator */
 	}
 
-	res = ensure_label_count(chart, series->len);
+	res = ensure_label_లెక్క(chart, series->len);
 
-	return res;
+	తిరిగి res;
 }
 
 
 /**
  * extract values for next series
  */
-static nserror
-extract_next_series_values(struct chart_param *chart,
-		      const char *valstr,
+స్థిర nserror
+వెలికితీయి_తదుపరి_series_విలువలు(నిర్మాణం chart_param *chart,
+		      స్థిరరాశి అక్షరం *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
 
-	if (chart->data.series_len >= MAX_SERIES) {
-		return NSERROR_NOSPACE;
+	ఒకవేళ (chart->దత్తాంశం.series_len >= MAX_SERIES) {
+		తిరిగి NSERROR_NOSPACE;
 	}
 
-	res = extract_series_values(chart,
-				    chart->data.series_len,
+	res = వెలికితీయి_series_విలువలు(chart,
+				    chart->దత్తాంశం.series_len,
 				    valstr,
 				    valstrlen);
-	if (res == NSERROR_OK) {
-		chart->data.series_len++;
+	ఒకవేళ (res == NSERROR_OK) {
+		chart->దత్తాంశం.series_len++;
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
 /**
  * extract label title
  */
-static nserror
-extract_series_labels(struct chart_param *chart,
-		      const char *valstr,
+స్థిర nserror
+వెలికితీయి_series_labels(నిర్మాణం chart_param *chart,
+		      స్థిరరాశి అక్షరం *valstr,
 		      size_t valstrlen)
 {
 	nserror res;
-	unsigned int valcount; /* count of values in valstr */
-	unsigned int valcur;
+	గుర్తులేని పూర్ణాంకం valcount; /* count of values in valstr */
+	గుర్తులేని పూర్ణాంకం valcur;
 	size_t valstart;/* value start in valstr */
 	size_t vallen; /* value end in valstr */
 
-	for (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
-		if (valstr[valstart] == ',') {
+	కొరకు (valcount = 1, valstart=0; valstart < valstrlen; valstart++) {
+		ఒకవేళ (valstr[valstart] == ',') {
 			valcount++;
 		}
 	}
 
-	res = ensure_label_count(chart, valcount);
-	if (res != NSERROR_OK) {
-		return res;
+	res = ensure_label_లెక్క(chart, valcount);
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి res;
 	}
 
 
-	for (valcur = 0, vallen = 0, valstart = 0;
-	     (valstart < valstrlen) && (valcur < chart->data.label_len);
+	కొరకు (valcur = 0, vallen = 0, valstart = 0;
+	     (valstart < valstrlen) && (valcur < chart->దత్తాంశం.label_len);
 	     valstart += vallen, valcur++) {
 		/* get query section length */
 		vallen = 0;
-		while (((valstart + vallen) < valstrlen) &&
+		అయితే (((valstart + vallen) < valstrlen) &&
 		       (valstr[valstart + vallen] != ',')) {
 			vallen++;
 		}
 
-		chart->data.label[valcur].title = strndup(valstr + valstart, vallen);
+		chart->దత్తాంశం.label[valcur].title = strndup(valstr + valstart, vallen);
 		vallen++; /* account for , separator */
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * extract labels colour
  */
-static nserror
-extract_series_colours(struct chart_param *chart,
-		      const char *valstr,
+స్థిర nserror
+వెలికితీయి_series_colours(నిర్మాణం chart_param *chart,
+		      స్థిరరాశి అక్షరం *valstr,
 		      size_t valstrlen)
 {
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
  * process a part of a query
  */
-static nserror
-process_query_section(const char *str, size_t len, struct chart_param *chart)
+స్థిర nserror
+process_query_section(స్థిరరాశి అక్షరం *str, size_t len, నిర్మాణం chart_param *chart)
 {
 	nserror res = NSERROR_OK;
 
-	if ((len > 6) &&
-	    (strncmp(str, "width=", 6) == 0)) {
+	ఒకవేళ ((len > 6) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "width=", 6) == 0)) {
 		/* figure width */
-		chart->width = strtoul(str + 6, NULL, 10);
-	} else if ((len > 7) &&
-	    (strncmp(str, "height=", 7) == 0)) {
+		chart->వెడల్పు = strtoul(str + 6, ఖాళీ, 10);
+	} లేకపోతే ఒకవేళ ((len > 7) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "height=", 7) == 0)) {
 		/* figure height */
-		chart->height = strtoul(str + 7, NULL, 10);
-	} else if ((len > 8) &&
-	    (strncmp(str, "cawidth=", 8) == 0)) {
+		chart->ఎత్తు = strtoul(str + 7, ఖాళీ, 10);
+	} లేకపోతే ఒకవేళ ((len > 8) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "cawidth=", 8) == 0)) {
 		/* chart area width */
-		chart->area.width = strtoul(str + 8, NULL, 10);
-	} else if ((len > 9) &&
-	    (strncmp(str, "caheight=", 9) == 0)) {
+		chart->area.వెడల్పు = strtoul(str + 8, ఖాళీ, 10);
+	} లేకపోతే ఒకవేళ ((len > 9) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "caheight=", 9) == 0)) {
 		/* chart area height */
-		chart->area.height = strtoul(str + 9, NULL, 10);
-	} else if ((len > 4) &&
-	    (strncmp(str, "key=", 4) == 0)) {
+		chart->area.ఎత్తు = strtoul(str + 9, ఖాళీ, 10);
+	} లేకపోతే ఒకవేళ ((len > 4) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "key=", 4) == 0)) {
 		/* figure has key */
-		chart->key = strtoul(str + 4, NULL, 10);
-	} else if ((len > 6) &&
-	    (strncmp(str, "title=", 6) == 0)) {
+		chart->కీలకం = strtoul(str + 4, ఖాళీ, 10);
+	} లేకపోతే ఒకవేళ ((len > 6) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "title=", 6) == 0)) {
 		chart->title = strndup(str + 6, len - 6);
-	} else if ((len > 5) &&
-	    (strncmp(str, "type=", 5) == 0)) {
-		if (strncmp(str + 5, "pie", len - 5) == 0) {
+	} లేకపోతే ఒకవేళ ((len > 5) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "type=", 5) == 0)) {
+		ఒకవేళ (అక్షరశ్రేణి_పోలిక(str + 5, "pie", len - 5) == 0) {
 			chart->type = CHART_TYPE_PIE;
-		} else {
+		} లేకపోతే {
 			chart->type = CHART_TYPE_UNKNOWN;
 		}
-	} else if ((len > 7) &&
-	    (strncmp(str, "values=", 7) == 0)) {
-		res = extract_next_series_values(chart, str + 7, len - 7);
-	} else if ((len > 7) &&
-	    (strncmp(str, "labels=", 7) == 0)) {
-		res = extract_series_labels(chart, str + 7, len - 7);
-	} else if ((len > 8) &&
-	    (strncmp(str, "colours=", 8) == 0)) {
-		res = extract_series_colours(chart, str + 8, len - 8);
+	} లేకపోతే ఒకవేళ ((len > 7) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "values=", 7) == 0)) {
+		res = వెలికితీయి_తదుపరి_series_విలువలు(chart, str + 7, len - 7);
+	} లేకపోతే ఒకవేళ ((len > 7) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "labels=", 7) == 0)) {
+		res = వెలికితీయి_series_labels(chart, str + 7, len - 7);
+	} లేకపోతే ఒకవేళ ((len > 8) &&
+	    (అక్షరశ్రేణి_పోలిక(str, "colours=", 8) == 0)) {
+		res = వెలికితీయి_series_colours(chart, str + 8, len - 8);
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
 
-static nserror
-chart_from_query(struct nsurl *url, struct chart_param *chart)
+స్థిర nserror
+chart_from_query(నిర్మాణం nsurl *url, నిర్మాణం chart_param *chart)
 {
 	nserror res;
-	char *querystr;
+	అక్షరం *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	కొరకు (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		అయితే (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, chart);
-		if (res != NSERROR_OK) {
-			break;
+		ఒకవేళ (res != NSERROR_OK) {
+			ఆపు;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	విడుదల(querystr);
 
 	/* sanity check dimensions */
-	if (chart->width < FIGURE_MIN_WIDTH) {
+	ఒకవేళ (chart->వెడల్పు < FIGURE_MIN_వెడల్పు) {
 		/* bad width - check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		ఒకవేళ (chart->ఎత్తు < FIGURE_MIN_ఎత్తు) {
 			/* both bad set to defaults */
-			chart->width = FIGURE_MIN_WIDTH;
-			chart->height = FIGURE_MIN_HEIGHT;
-		} else {
+			chart->వెడల్పు = FIGURE_MIN_వెడల్పు;
+			chart->ఎత్తు = FIGURE_MIN_ఎత్తు;
+		} లేకపోతే {
 			/* base width on valid height */
-			chart->width = (chart->height * 3) / 2;
+			chart->వెడల్పు = (chart->ఎత్తు * 3) / 2;
 		}
-	} else {
+	} లేకపోతే {
 		/* good width check height */
-		if (chart->height < FIGURE_MIN_HEIGHT) {
+		ఒకవేళ (chart->ఎత్తు < FIGURE_MIN_ఎత్తు) {
 			/* base height on valid width */
-			chart->height = (chart->width * 2) / 3;
+			chart->ఎత్తు = (chart->వెడల్పు * 2) / 3;
 		}
 	}
 
 	/* ensure legend type correct */
-	if ((chart->key == CHART_KEY_UNSET) ||
-	    (chart->key >= CHART_KEY_END )) {
+	ఒకవేళ ((chart->కీలకం == CHART_కీలకం_UNSET) ||
+	    (chart->కీలకం >= CHART_కీలకం_చివర )) {
 		/* default to putting key on right */
-		chart->key = CHART_KEY_RIGHT;
+		chart->కీలకం = CHART_కీలకం_కుడి;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
-static nserror
-output_pie_legend(struct fetch_about_context *ctx, struct chart_param *chart)
+స్థిర nserror
+output_pie_legend(నిర్మాణం fetch_about_context *ctx, నిర్మాణం chart_param *chart)
 {
 	nserror res;
-	unsigned int lblidx;
-	unsigned int legend_width;
-	unsigned int legend_height;
-	unsigned int vertical_spacing;
+	గుర్తులేని పూర్ణాంకం lblidx;
+	గుర్తులేని పూర్ణాంకం legend_వెడల్పు;
+	గుర్తులేని పూర్ణాంకం legend_ఎత్తు;
+	గుర్తులేని పూర్ణాంకం vertical_spacing;
 
-	switch (chart->key) {
+	ఎంపిక (chart->కీలకం) {
 
-	case CHART_KEY_NONE:
-		break;
-	case CHART_KEY_RIGHT:
-		legend_width = chart->width - chart->area.width - chart->area.x;
-		legend_width -= 10; /* margin */
-		legend_height = chart->height;
-		vertical_spacing = legend_height / (chart->data.label_len + 1);
+	స్థితి CHART_కీలకం_NONE:
+		ఆపు;
+	స్థితి CHART_కీలకం_కుడి:
+		legend_వెడల్పు = chart->వెడల్పు - chart->area.వెడల్పు - chart->area.x;
+		legend_వెడల్పు -= 10; /* margin */
+		legend_ఎత్తు = chart->ఎత్తు;
+		vertical_spacing = legend_ఎత్తు / (chart->దత్తాంశం.label_len + 1);
 
-		for(lblidx = 0; lblidx < chart->data.label_len ; lblidx++) {
+		కొరకు(lblidx = 0; lblidx < chart->దత్తాంశం.label_len ; lblidx++) {
 			res = fetch_about_ssenddataf(ctx,
 				"<rect  x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#%06x\" />",
-				chart->width - legend_width,
+				chart->వెడల్పు - legend_వెడల్పు,
 				(vertical_spacing * lblidx) + (vertical_spacing/2),
 				vertical_spacing * 2 / 3,
 				vertical_spacing * 2 / 3,
-				chart->data.label[lblidx].colour);
-			if (res != NSERROR_OK) {
-				return res;
+				chart->దత్తాంశం.label[lblidx].రంగు);
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
 			res = fetch_about_ssenddataf(ctx,
 				"<text x=\"%d\" y=\"%d\" fill=\"#%06x\" >%s</text>",
-				chart->width - legend_width + vertical_spacing,
+				chart->వెడల్పు - legend_వెడల్పు + vertical_spacing,
 				vertical_spacing * (lblidx+1),
-			     chart->data.label[lblidx].colour,
-				chart->data.label[lblidx].title);
-			if (res != NSERROR_OK) {
-				return res;
+			     chart->దత్తాంశం.label[lblidx].రంగు,
+				chart->దత్తాంశం.label[lblidx].title);
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
 		}
-		break;
-	default:
-		break;
+		ఆపు;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static float
-compute_series_total(struct chart_param *chart, unsigned int series)
+స్థిర దశాంశం
+compute_series_మొత్తం(నిర్మాణం chart_param *chart, గుర్తులేని పూర్ణాంకం series)
 {
-	float total;
-	unsigned int curdata;
+	దశాంశం మొత్తం;
+	గుర్తులేని పూర్ణాంకం curdata;
 
-	for (total = 0, curdata = 0;
-	     curdata < chart->data.series[series].len;
+	కొరకు (మొత్తం = 0, curdata = 0;
+	     curdata < chart->దత్తాంశం.series[series].len;
 	     curdata++) {
-		total += chart->data.series[series].value[curdata];
+		మొత్తం += chart->దత్తాంశం.series[series].విలువ[curdata];
 	}
-	return total;
+	తిరిగి మొత్తం;
 }
 
 /**
  * render the data as a pie chart svg
  */
-static bool
-pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
+స్థిర bool
+pie_chart(నిర్మాణం fetch_about_context *ctx, నిర్మాణం chart_param *chart)
 {
 	nserror res;
-	float ra; /* pie a radius */
-	float rb; /* pie b radius */
-	float series_total;
-	unsigned int curdata; /* current data point index */
-	float last_x, last_y;
-	float end_x, end_y;
-	float start;
-	float extent;
+	దశాంశం ra; /* pie a radius */
+	దశాంశం rb; /* pie b radius */
+	దశాంశం series_మొత్తం;
+	గుర్తులేని పూర్ణాంకం curdata; /* current data point index */
+	దశాంశం చివరి_x, చివరి_y;
+	దశాంశం చివర_x, చివర_y;
+	దశాంశం ప్రారంభం;
+	దశాంశం extent;
 	bool large;
-	float circle_centre_x, circle_centre_y;
+	దశాంశం circle_centre_x, circle_centre_y;
 
 	/* ensure there is data to render */
-	if ((chart->data.series_len < 1) || (chart->data.series[0].len < 2)) {
-		return NSERROR_BAD_PARAMETER;
+	ఒకవేళ ((chart->దత్తాంశం.series_len < 1) || (chart->దత్తాంశం.series[0].len < 2)) {
+		తిరిగి NSERROR_BAD_PARAMETER;
 	}
 
 	/* get the first series total value */
-	series_total = compute_series_total(chart, 0);
-	if (series_total == 0) {
+	series_మొత్తం = compute_series_మొత్తం(chart, 0);
+	ఒకవేళ (series_మొత్తం == 0) {
 		/* dividing by zero is embarasing */
-		return NSERROR_BAD_PARAMETER;
+		తిరిగి NSERROR_BAD_PARAMETER;
 	}
 
 	/*
@@ -497,30 +497,30 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	 * this is left to each chart type as different charts
 	 *  have differnt requirements
 	 */
-	if ((chart->area.width == 0) || (chart->area.height == 0)) {
+	ఒకవేళ ((chart->area.వెడల్పు == 0) || (chart->area.ఎత్తు == 0)) {
 		/*
 		 * pie chart defaults to square of smaller of figure
 		 *  width and height
 		 */
-		if (chart->width > chart->height) {
-			chart->area.width = chart->area.height = (chart->height - chart->area.x);
-		} else {
-			chart->area.width = chart->area.height = (chart->width - chart->area.y);
+		ఒకవేళ (chart->వెడల్పు > chart->ఎత్తు) {
+			chart->area.వెడల్పు = chart->area.ఎత్తు = (chart->ఎత్తు - chart->area.x);
+		} లేకపోతే {
+			chart->area.వెడల్పు = chart->area.ఎత్తు = (chart->వెడల్పు - chart->area.y);
 		}
 	}
 
 	/* content is going to return ok */
-	fetch_about_set_http_code(ctx, 200);
+	fetch_about_సమితి_http_సంకేతం(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	ఒకవేళ (fetch_about_send_శీర్షిక(ctx,
 			"Content-Type: image/svg; charset=utf-8")) {
-		goto aborted;
+		వెళ్ళు aborted;
 	}
 
 	/* get the pie charts elipse radii */
-	ra = chart->area.width / 2;
-	rb = chart->area.height / 2;
+	ra = chart->area.వెడల్పు / 2;
+	rb = chart->area.ఎత్తు / 2;
 
 	/* get the offset to the circle centre */
 	circle_centre_x = chart->area.x + ra;
@@ -531,31 +531,31 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 	res = fetch_about_ssenddataf(ctx,
 			"<svg width=\"%u\" height=\"%u\" "
 			"xmlns=\"http://www.w3.org/2000/svg\">\n",
-			chart->width, chart->height);
-	if (res != NSERROR_OK) {
-		goto aborted;
+			chart->వెడల్పు, chart->ఎత్తు);
+	ఒకవేళ (res != NSERROR_OK) {
+		వెళ్ళు aborted;
 	}
 
 	/* generate the legend */
 	res = output_pie_legend(ctx, chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	ఒకవేళ (res != NSERROR_OK) {
+		వెళ్ళు aborted;
 	}
 
 	/* plot the arcs */
-	start = -M_PI_2;
-	last_x = (ra * cos(start));
-	last_y = (rb * sin(start));
+	ప్రారంభం = -M_PI_2;
+	చివరి_x = (ra * కోజ్యా(ప్రారంభం));
+	చివరి_y = (rb * జ్యా(ప్రారంభం));
 
 	/* iterate over each data point creating a slice o pie */
-	for (curdata=0; curdata < chart->data.series[0].len; curdata++) {
-		extent = ((chart->data.series[0].value[curdata] / series_total) * 2 * M_PI);
-		end_x = (ra * cos(start + extent));
-		end_y = (rb * sin(start + extent));
+	కొరకు (curdata=0; curdata < chart->దత్తాంశం.series[0].len; curdata++) {
+		extent = ((chart->దత్తాంశం.series[0].విలువ[curdata] / series_మొత్తం) * 2 * M_PI);
+		చివర_x = (ra * కోజ్యా(ప్రారంభం + extent));
+		చివర_y = (rb * జ్యా(ప్రారంభం + extent));
 
-		if (extent > M_PI) {
+		ఒకవేళ (extent > M_PI) {
 			large = true;
-		} else {
+		} లేకపోతే {
 			large = false;
 		}
 
@@ -564,34 +564,34 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
 			"<path d=\"M %g %g\n"
 			"A %g %g 0 %d 1 %g %g\n"
 			"L %g %g Z\" fill=\"#%06x\" />\n",
-			circle_centre_x + last_x,
-			circle_centre_y + last_y,
+			circle_centre_x + చివరి_x,
+			circle_centre_y + చివరి_y,
 			ra, rb, large?1:0,
-			circle_centre_x + end_x,
-			circle_centre_y + end_y,
+			circle_centre_x + చివర_x,
+			circle_centre_y + చివర_y,
 			circle_centre_x,
 			circle_centre_y,
-			chart->data.label[curdata].colour);
-		if (res != NSERROR_OK) {
-			goto aborted;
+			chart->దత్తాంశం.label[curdata].రంగు);
+		ఒకవేళ (res != NSERROR_OK) {
+			వెళ్ళు aborted;
 		}
-		last_x = end_x;
-		last_y = end_y;
-		start +=extent;
+		చివరి_x = చివర_x;
+		చివరి_y = చివర_y;
+		ప్రారంభం +=extent;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</svg>\n");
-	if (res != NSERROR_OK) {
-		goto aborted;
+	ఒకవేళ (res != NSERROR_OK) {
+		వెళ్ళు aborted;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ముగిసిన(ctx);
 
-	return true;
+	తిరిగి true;
 
  aborted:
 
-	return false;
+	తిరిగి false;
 
 }
 
@@ -603,28 +603,28 @@ pie_chart(struct fetch_about_context *ctx, struct chart_param *chart)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_chart_handler(struct fetch_about_context *ctx)
+bool fetch_about_chart_handler(నిర్మాణం fetch_about_context *ctx)
 {
 	nserror res;
-	struct chart_param chart;
-	memset(&chart, 0, sizeof(struct chart_param));
+	నిర్మాణం chart_param chart;
+	memset(&chart, 0, పరిమాణం(నిర్మాణం chart_param));
 
 	res = chart_from_query(fetch_about_get_url(ctx), &chart);
-	if (res != NSERROR_OK) {
-		goto aborted;
+	ఒకవేళ (res != NSERROR_OK) {
+		వెళ్ళు aborted;
 	}
 
-	switch (chart.type) {
-	case CHART_TYPE_PIE:
-		return pie_chart(ctx, &chart);
+	ఎంపిక (chart.type) {
+	స్థితి CHART_TYPE_PIE:
+		తిరిగి pie_chart(ctx, &chart);
 
 
-	default:
-		break;
+	అప్రమేయ:
+		ఆపు;
 	}
 
 aborted:
 
-	return false;
+	తిరిగి false;
 
 }

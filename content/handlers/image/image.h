@@ -20,16 +20,16 @@
  * Initialisation/finalisation of image handlers.
  */
 
-#ifndef NETSURF_IMAGE_IMAGE_H_
-#define NETSURF_IMAGE_IMAGE_H_
+#నిర్వచితం_కాకపోతే NETSURF_IMAGE_IMAGE_H_
+#నిర్వచించు NETSURF_IMAGE_IMAGE_H_
 
-#include "utils/errors.h"
+#అన్తర్భావ "utils/errors.h"
 
-struct content_redraw_data;
+నిర్మాణం content_redraw_దత్తాంశం;
 
 /** Initialise the content handlers for image types.
  */
-nserror image_init(void);
+nserror image_init(శూన్య);
 
 /** Common image content handler bitmap plot call.
  *
@@ -37,9 +37,9 @@ nserror image_init(void);
  * and specific content redraw data. It is a helper specifically
  * provided for image content handlers redraw callback.
  */
-bool image_bitmap_plot(struct bitmap *bitmap,
-		       struct content_redraw_data *data, 
-		       const struct rect *clip,
-		       const struct redraw_context *ctx);
+bool image_bitmap_plot(నిర్మాణం bitmap *bitmap,
+		       నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం, 
+		       స్థిరరాశి నిర్మాణం rect *clip,
+		       స్థిరరాశి నిర్మాణం redraw_context *ctx);
 
-#endif
+#అయితే_ముగింపు

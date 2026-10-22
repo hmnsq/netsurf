@@ -23,85 +23,85 @@
  * plain text content handling implementation.
  */
 
-#include <string.h>
-#include <parserutils/input/inputstream.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <parserutils/input/inputstream.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/utf8.h"
-#include "utils/nsoption.h"
-#include "netsurf/content.h"
-#include "netsurf/keypress.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/plotters.h"
-#include "netsurf/layout.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
-#include "content/handlers/css/utils.h"
-#include "desktop/selection.h"
-#include "desktop/gui_internal.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/http.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/utf8.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "netsurf/keypress.h"
+#అన్తర్భావ "netsurf/browser_window.h"
+#అన్తర్భావ "netsurf/plotters.h"
+#అన్తర్భావ "netsurf/layout.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "content/textsearch.h"
+#అన్తర్భావ "content/handlers/css/utils.h"
+#అన్తర్భావ "desktop/selection.h"
+#అన్తర్భావ "desktop/gui_internal.h"
 
-#include "text/textplain.h"
+#అన్తర్భావ "text/textplain.h"
 
-struct textplain_line {
-	size_t	start;
-	size_t	length;
+నిర్మాణం textplain_పంక్తి {
+	size_t	ప్రారంభం;
+	size_t	నిడివి;
 };
 
 /**
  * plain text content
  */
-typedef struct textplain_content {
-	struct content base;
+రకనిర్వచనం నిర్మాణం textplain_content {
+	నిర్మాణం content పునాది;
 
 	lwc_string *encoding;
-	void *inputstream;
-	char *utf8_data;
-	size_t utf8_data_size;
-	size_t utf8_data_allocated;
-	unsigned long physical_line_count;
-	struct textplain_line *physical_line;
-	int formatted_width;
-	struct browser_window *bw;
+	శూన్య *inputstream;
+	అక్షరం *utf8_దత్తాంశం;
+	size_t utf8_దత్తాంశం_కొలత;
+	size_t utf8_దత్తాంశం_allocated;
+	గుర్తులేని దీర్ఘ physical_పంక్తి_లెక్క;
+	నిర్మాణం textplain_పంక్తి *physical_పంక్తి;
+	పూర్ణాంకం formatted_వెడల్పు;
+	నిర్మాణం browser_కిటికీ *bw;
 
-	struct selection *sel; /** Selection state */
+	నిర్మాణం selection *sel; /** Selection state */
 
 } textplain_content;
 
 
-#define CHUNK 32768 /* Must be a power of 2 */
-#define MARGIN 4
+#నిర్వచించు CHUNK 32768 /* Must be a power of 2 */
+#నిర్వచించు MARGIN 4
 
-#define TAB_WIDTH 8  /* must be power of 2 currently */
-#define TEXT_SIZE 10 * PLOT_STYLE_SCALE  /* Unscaled text size in pt */
+#నిర్వచించు TAB_వెడల్పు 8  /* must be power of 2 currently */
+#నిర్వచించు పాఠ్యం_కొలత 10 * PLOT_STYLE_SCALE  /* Unscaled text size in pt */
 
-static plot_font_style_t textplain_style = {
+స్థిర plot_font_style_t textplain_style = {
 	.family = PLOT_FONT_FAMILY_MONOSPACE,
-	.size = TEXT_SIZE,
-	.weight = 400,
+	.కొలత = పాఠ్యం_కొలత,
+	.బరువు = 400,
 	.flags = FONTF_NONE,
 	.background = 0xffffff,
 	.foreground = 0x000000,
 };
 
-static int textplain_tab_width = 256;  /* try for a sensible default */
+స్థిర పూర్ణాంకం textplain_tab_వెడల్పు = 256;  /* try for a sensible default */
 
-static lwc_string *textplain_default_charset;
+స్థిర lwc_string *textplain_default_charset;
 
 
 /**
  * Clean up after the text content handler
  */
-static void textplain_fini(void)
+స్థిర శూన్య textplain_fini(శూన్య)
 {
 	lwc_string_unref(textplain_default_charset);
-	textplain_default_charset = NULL;
+	textplain_default_charset = ఖాళీ;
 }
 
 
@@ -116,13 +116,13 @@ static void textplain_fini(void)
  * thus preserving whatever charset information we decided on in
  * textplain_create.
  */
-static parserutils_error
-textplain_charset_hack(const uint8_t *data,
+స్థిర parserutils_error
+textplain_charset_hack(స్థిరరాశి uint8_t *దత్తాంశం,
 		       size_t len,
 		       uint16_t *mibenum,
-		       uint32_t *source)
+		       uint32_t *ఆధారం)
 {
-	return PARSERUTILS_OK;
+	తిరిగి PARSERUTILS_OK;
 }
 
 
@@ -133,250 +133,250 @@ textplain_charset_hack(const uint8_t *data,
  * \param[in] encoding the encoding of the content.
  * \return NSERROR_OK else appropriate error code.
  */
-static nserror
-textplain_create_internal(textplain_content *c, lwc_string *encoding)
+స్థిర nserror
+textplain_create_అంతర్గత(textplain_content *c, lwc_string *encoding)
 {
-	char *utf8_data;
-	parserutils_inputstream *stream;
+	అక్షరం *utf8_దత్తాంశం;
+	parserutils_inputstream *ప్రవాహం;
 	parserutils_error error;
 
-	textplain_style.size = (nsoption_int(font_size) * PLOT_STYLE_SCALE) / 10;
+	textplain_style.కొలత = (nsoption_int(font_కొలత) * PLOT_STYLE_SCALE) / 10;
 
-	utf8_data = malloc(CHUNK);
-	if (utf8_data == NULL)
-		goto no_memory;
+	utf8_దత్తాంశం = జ్ఞాపకం_ఇవ్వు(CHUNK);
+	ఒకవేళ (utf8_దత్తాంశం == ఖాళీ)
+		వెళ్ళు no_జ్ఞాపకం;
 
-	error = parserutils_inputstream_create(lwc_string_data(encoding), 0,
-					       textplain_charset_hack, &stream);
-	if (error == PARSERUTILS_BADENCODING) {
+	error = parserutils_inputstream_create(lwc_string_దత్తాంశం(encoding), 0,
+					       textplain_charset_hack, &ప్రవాహం);
+	ఒకవేళ (error == PARSERUTILS_BADENCODING) {
 		/* Fall back to Windows-1252 */
 		error = parserutils_inputstream_create("Windows-1252", 0,
-					textplain_charset_hack, &stream);
+					textplain_charset_hack, &ప్రవాహం);
 	}
-	if (error != PARSERUTILS_OK) {
-		free(utf8_data);
-		goto no_memory;
+	ఒకవేళ (error != PARSERUTILS_OK) {
+		విడుదల(utf8_దత్తాంశం);
+		వెళ్ళు no_జ్ఞాపకం;
 	}
 
 	c->encoding = lwc_string_ref(encoding);
-	c->inputstream = stream;
-	c->utf8_data = utf8_data;
-	c->utf8_data_size = 0;
-	c->utf8_data_allocated = CHUNK;
-	c->physical_line = 0;
-	c->physical_line_count = 0;
-	c->formatted_width = 0;
-	c->bw = NULL;
-	c->sel = selection_create((struct content *)c);
+	c->inputstream = ప్రవాహం;
+	c->utf8_దత్తాంశం = utf8_దత్తాంశం;
+	c->utf8_దత్తాంశం_కొలత = 0;
+	c->utf8_దత్తాంశం_allocated = CHUNK;
+	c->physical_పంక్తి = 0;
+	c->physical_పంక్తి_లెక్క = 0;
+	c->formatted_వెడల్పు = 0;
+	c->bw = ఖాళీ;
+	c->sel = selection_create((నిర్మాణం content *)c);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
-no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
+no_జ్ఞాపకం:
+	content_ప్రసారం_error(&c->పునాది, NSERROR_NOMEM, ఖాళీ);
 
-	return NSERROR_NOMEM;
+	తిరిగి NSERROR_NOMEM;
 }
 
 
 /**
  * Create a CONTENT_TEXTPLAIN.
  */
-static nserror
-textplain_create(const content_handler *handler,
+స్థిర nserror
+textplain_create(స్థిరరాశి content_handler *handler,
 		 lwc_string *imime_type,
-		 const struct http_parameter *params,
+		 స్థిరరాశి నిర్మాణం http_parameter *params,
 		 llcache_handle *llcache,
-		 const char *fallback_charset,
+		 స్థిరరాశి అక్షరం *fallback_charset,
 		 bool quirks,
-		 struct content **c)
+		 నిర్మాణం content **c)
 {
-	textplain_content *text;
+	textplain_content *పాఠ్యం;
 	nserror error;
 	lwc_string *encoding;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL) {
-		return NSERROR_NOMEM;
+	పాఠ్యం = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(textplain_content));
+	ఒకవేళ (పాఠ్యం == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	error = content__init(&text->base, handler, imime_type, params,
+	error = content__init(&పాఠ్యం->పునాది, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(text);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(పాఠ్యం);
+		తిరిగి error;
 	}
 
-	error = http_parameter_list_find_item(params, corestring_lwc_charset,
+	error = http_parameter_list_కనుగొను_అంశం(params, corestring_lwc_charset,
 					      &encoding);
-	if (error != NSERROR_OK) {
+	ఒకవేళ (error != NSERROR_OK) {
 		encoding = lwc_string_ref(textplain_default_charset);
 	}
 
-	error = textplain_create_internal(text, encoding);
-	if (error != NSERROR_OK) {
+	error = textplain_create_అంతర్గత(పాఠ్యం, encoding);
+	ఒకవేళ (error != NSERROR_OK) {
 		lwc_string_unref(encoding);
-		free(text);
-		return error;
+		విడుదల(పాఠ్యం);
+		తిరిగి error;
 	}
 
 	lwc_string_unref(encoding);
 
-	*c = (struct content *) text;
+	*c = (నిర్మాణం content *) పాఠ్యం;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * copy utf8 encoded data
  */
-static bool
-textplain_copy_utf8_data(textplain_content *c, const uint8_t *buf, size_t len)
+స్థిర bool
+textplain_copy_utf8_దత్తాంశం(textplain_content *c, స్థిరరాశి uint8_t *buf, size_t len)
 {
-	if (c->utf8_data_size + len >= c->utf8_data_allocated) {
+	ఒకవేళ (c->utf8_దత్తాంశం_కొలత + len >= c->utf8_దత్తాంశం_allocated) {
 		/* Compute next multiple of chunk above the required space */
 		size_t allocated;
-		char *utf8_data;
+		అక్షరం *utf8_దత్తాంశం;
 
-		allocated = (c->utf8_data_size + len + CHUNK - 1) & ~(CHUNK - 1);
-		utf8_data = realloc(c->utf8_data, allocated);
-		if (utf8_data == NULL)
-			return false;
+		allocated = (c->utf8_దత్తాంశం_కొలత + len + CHUNK - 1) & ~(CHUNK - 1);
+		utf8_దత్తాంశం = realloc(c->utf8_దత్తాంశం, allocated);
+		ఒకవేళ (utf8_దత్తాంశం == ఖాళీ)
+			తిరిగి false;
 
-		c->utf8_data = utf8_data;
-		c->utf8_data_allocated = allocated;
+		c->utf8_దత్తాంశం = utf8_దత్తాంశం;
+		c->utf8_దత్తాంశం_allocated = allocated;
 	}
 
-	memcpy(c->utf8_data + c->utf8_data_size, buf, len);
-	c->utf8_data_size += len;
+	జ్ఞాపకం_నకలు(c->utf8_దత్తాంశం + c->utf8_దత్తాంశం_కొలత, buf, len);
+	c->utf8_దత్తాంశం_కొలత += len;
 
-	return true;
+	తిరిగి true;
 }
 
 
 /**
  * drain input
  */
-static bool
-textplain_drain_input(textplain_content *c,
-		      parserutils_inputstream *stream,
+స్థిర bool
+textplain_drain_ఆదానం(textplain_content *c,
+		      parserutils_inputstream *ప్రవాహం,
 		      parserutils_error terminator)
 {
-	static const uint8_t *u_fffd = (const uint8_t *) "\xef\xbf\xbd";
-	const uint8_t *ch;
-	size_t chlen, offset = 0;
+	స్థిర స్థిరరాశి uint8_t *u_fffd = (స్థిరరాశి uint8_t *) "\xef\xbf\xbd";
+	స్థిరరాశి uint8_t *ch;
+	size_t chlen, స్థానభ్రంశం = 0;
 
-	while (parserutils_inputstream_peek(stream, offset, &ch, &chlen) !=
+	అయితే (parserutils_inputstream_peek(ప్రవాహం, స్థానభ్రంశం, &ch, &chlen) !=
 	       terminator) {
 		/* Replace all instances of NUL with U+FFFD */
-		if (chlen == 1 && *ch == 0) {
-			if (offset > 0) {
+		ఒకవేళ (chlen == 1 && *ch == 0) {
+			ఒకవేళ (స్థానభ్రంశం > 0) {
 				/* Obtain pointer to start of input data */
-				parserutils_inputstream_peek(stream, 0,
+				parserutils_inputstream_peek(ప్రవాహం, 0,
 							     &ch, &chlen);
 				/* Copy from it up to the start of the NUL */
-				if (textplain_copy_utf8_data(c, ch,
-							     offset) == false)
-					return false;
+				ఒకవేళ (textplain_copy_utf8_దత్తాంశం(c, ch,
+							     స్థానభ్రంశం) == false)
+					తిరిగి false;
 			}
 
 			/* Emit U+FFFD */
-			if (textplain_copy_utf8_data(c, u_fffd, 3) == false)
-				return false;
+			ఒకవేళ (textplain_copy_utf8_దత్తాంశం(c, u_fffd, 3) == false)
+				తిరిగి false;
 
 			/* Advance inputstream past the NUL we just read */
-			parserutils_inputstream_advance(stream, offset + 1);
+			parserutils_inputstream_advance(ప్రవాహం, స్థానభ్రంశం + 1);
 			/* Reset the read offset */
-			offset = 0;
-		} else {
+			స్థానభ్రంశం = 0;
+		} లేకపోతే {
 			/* Accumulate input */
-			offset += chlen;
+			స్థానభ్రంశం += chlen;
 
-			if (offset > CHUNK) {
+			ఒకవేళ (స్థానభ్రంశం > CHUNK) {
 				/* Obtain pointer to start of input data */
-				parserutils_inputstream_peek(stream, 0,
+				parserutils_inputstream_peek(ప్రవాహం, 0,
 							     &ch, &chlen);
 
 				/* Emit the data we've read */
-				if (textplain_copy_utf8_data(c, ch,
-							     offset) == false)
-					return false;
+				ఒకవేళ (textplain_copy_utf8_దత్తాంశం(c, ch,
+							     స్థానభ్రంశం) == false)
+					తిరిగి false;
 
 				/* Advance the inputstream */
-				parserutils_inputstream_advance(stream, offset);
+				parserutils_inputstream_advance(ప్రవాహం, స్థానభ్రంశం);
 				/* Reset the read offset */
-				offset = 0;
+				స్థానభ్రంశం = 0;
 			}
 		}
 	}
 
-	if (offset > 0) {
+	ఒకవేళ (స్థానభ్రంశం > 0) {
 		/* Obtain pointer to start of input data */
-		parserutils_inputstream_peek(stream, 0, &ch, &chlen);
+		parserutils_inputstream_peek(ప్రవాహం, 0, &ch, &chlen);
 		/* Emit any data remaining */
-		if (textplain_copy_utf8_data(c, ch, offset) == false)
-			return false;
+		ఒకవేళ (textplain_copy_utf8_దత్తాంశం(c, ch, స్థానభ్రంశం) == false)
+			తిరిగి false;
 
 		/* Advance the inputstream past the data we've read */
-		parserutils_inputstream_advance(stream, offset);
+		parserutils_inputstream_advance(ప్రవాహం, స్థానభ్రంశం);
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
 /**
  * Process data for CONTENT_TEXTPLAIN.
  */
-static bool
-textplain_process_data(struct content *c, const char *data, unsigned int size)
+స్థిర bool
+textplain_process_దత్తాంశం(నిర్మాణం content *c, స్థిరరాశి అక్షరం *దత్తాంశం, గుర్తులేని పూర్ణాంకం కొలత)
 {
-	textplain_content *text = (textplain_content *) c;
-	parserutils_inputstream *stream = text->inputstream;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	parserutils_inputstream *ప్రవాహం = పాఠ్యం->inputstream;
 	parserutils_error error;
 
-	error = parserutils_inputstream_append(stream,
-					       (const uint8_t *) data, size);
-	if (error != PARSERUTILS_OK) {
-		goto no_memory;
+	error = parserutils_inputstream_append(ప్రవాహం,
+					       (స్థిరరాశి uint8_t *) దత్తాంశం, కొలత);
+	ఒకవేళ (error != PARSERUTILS_OK) {
+		వెళ్ళు no_జ్ఞాపకం;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_NEEDDATA) == false)
-		goto no_memory;
+	ఒకవేళ (textplain_drain_ఆదానం(పాఠ్యం, ప్రవాహం, PARSERUTILS_NEEDDATA) == false)
+		వెళ్ళు no_జ్ఞాపకం;
 
-	return true;
+	తిరిగి true;
 
-no_memory:
-	content_broadcast_error(c, NSERROR_NOMEM, NULL);
-	return false;
+no_జ్ఞాపకం:
+	content_ప్రసారం_error(c, NSERROR_NOMEM, ఖాళీ);
+	తిరిగి false;
 }
 
 
 /**
  * Convert a CONTENT_TEXTPLAIN for display.
  */
-static bool textplain_convert(struct content *c)
+స్థిర bool textplain_convert(నిర్మాణం content *c)
 {
-	textplain_content *text = (textplain_content *) c;
-	parserutils_inputstream *stream = text->inputstream;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	parserutils_inputstream *ప్రవాహం = పాఠ్యం->inputstream;
 	parserutils_error error;
 
-	error = parserutils_inputstream_append(stream, NULL, 0);
-	if (error != PARSERUTILS_OK) {
-		return false;
+	error = parserutils_inputstream_append(ప్రవాహం, ఖాళీ, 0);
+	ఒకవేళ (error != PARSERUTILS_OK) {
+		తిరిగి false;
 	}
 
-	if (textplain_drain_input(text, stream, PARSERUTILS_EOF) == false)
-		return false;
+	ఒకవేళ (textplain_drain_ఆదానం(పాఠ్యం, ప్రవాహం, PARSERUTILS_EOF) == false)
+		తిరిగి false;
 
-	parserutils_inputstream_destroy(stream);
-	text->inputstream = NULL;
+	parserutils_inputstream_destroy(ప్రవాహం);
+	పాఠ్యం->inputstream = ఖాళీ;
 
-	content_set_ready(c);
-	content_set_done(c);
-	content_set_status(c, messages_get("Done"));
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);
+	content_సమితి_స్థితి(c, messages_get("Done"));
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -385,133 +385,133 @@ static bool textplain_convert(struct content *c)
  *
  * \return Line height, in pixels
  */
-static float textplain_line_height(void)
+స్థిర దశాంశం textplain_పంక్తి_ఎత్తు(శూన్య)
 {
 	/* Size is in points, so convert to pixels.
 	 * Then use a constant line height of 1.2 x font size.
 	 */
-	return FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.size / PLOT_STYLE_SCALE))))), F_72));
+	తిరిగి FIXTOFLT(FDIV((FMUL(FLTTOFIX(1.2), FMUL(nscss_screen_dpi, INTTOFIX((textplain_style.కొలత / PLOT_STYLE_SCALE))))), F_72));
 }
 
 
 /**
  * Reformat a CONTENT_TEXTPLAIN to a new width.
  */
-static void textplain_reformat(struct content *c, int width, int height)
+స్థిర శూన్య textplain_reformat(నిర్మాణం content *c, పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు)
 {
-	textplain_content *text = (textplain_content *) c;
-	char *utf8_data = text->utf8_data;
-	size_t utf8_data_size = text->utf8_data_size;
-	unsigned long line_count = 0;
-	struct textplain_line *line = text->physical_line;
-	struct textplain_line *line1;
-	size_t i, space, col;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	అక్షరం *utf8_దత్తాంశం = పాఠ్యం->utf8_దత్తాంశం;
+	size_t utf8_దత్తాంశం_కొలత = పాఠ్యం->utf8_దత్తాంశం_కొలత;
+	గుర్తులేని దీర్ఘ పంక్తి_లెక్క = 0;
+	నిర్మాణం textplain_పంక్తి *పంక్తి = పాఠ్యం->physical_పంక్తి;
+	నిర్మాణం textplain_పంక్తి *line1;
+	size_t i, space, నిలువు;
 	size_t columns = 80;
-	int character_width;
-	size_t line_start;
+	పూర్ణాంకం character_వెడల్పు;
+	size_t పంక్తి_ప్రారంభం;
 	nserror res;
 
-	NSLOG(netsurf, INFO, "content %p w:%d h:%d", c, width, height);
+	NSLOG(netsurf, INFO, "content %p w:%d h:%d", c, వెడల్పు, ఎత్తు);
 
 	/* compute available columns (assuming monospaced font) - use 8
 	 * characters for better accuracy
 	 */
-	res = guit->layout->width(&textplain_style,
+	res = guit->layout->వెడల్పు(&textplain_style,
 				  "ABCDEFGH", 8,
-				  &character_width);
-	if (res != NSERROR_OK) {
-		return;
+				  &character_వెడల్పు);
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి;
 	}
 
-	columns = (width - MARGIN - MARGIN) * 8 / character_width;
-	textplain_tab_width = (TAB_WIDTH * character_width) / 8;
+	columns = (వెడల్పు - MARGIN - MARGIN) * 8 / character_వెడల్పు;
+	textplain_tab_వెడల్పు = (TAB_వెడల్పు * character_వెడల్పు) / 8;
 
-	text->formatted_width = width;
+	పాఠ్యం->formatted_వెడల్పు = వెడల్పు;
 
-	text->physical_line_count = 0;
+	పాఠ్యం->physical_పంక్తి_లెక్క = 0;
 
-	if (!line) {
-		text->physical_line = line =
-			malloc(sizeof(struct textplain_line) * (1024 + 3));
-		if (!line)
-			goto no_memory;
+	ఒకవేళ (!పంక్తి) {
+		పాఠ్యం->physical_పంక్తి = పంక్తి =
+			జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం textplain_పంక్తి) * (1024 + 3));
+		ఒకవేళ (!పంక్తి)
+			వెళ్ళు no_జ్ఞాపకం;
 	}
 
-	line[line_count++].start = line_start = 0;
+	పంక్తి[పంక్తి_లెక్క++].ప్రారంభం = పంక్తి_ప్రారంభం = 0;
 	space = 0;
 	i = 0;
-	col = 0;
-	while (i < utf8_data_size) {
+	నిలువు = 0;
+	అయితే (i < utf8_దత్తాంశం_కొలత) {
 		size_t csize; /* number of bytes in character */
 		uint32_t chr;
-		bool term;
-		size_t next_col;
+		bool పదం;
+		size_t తదుపరి_నిలువు;
 		parserutils_error perror;
 
-		perror = parserutils_charset_utf8_to_ucs4((const uint8_t *)utf8_data + i, utf8_data_size - i, &chr, &csize);
-		if (perror != PARSERUTILS_OK) {
+		perror = parserutils_charset_utf8_గమ్యం_ucs4((స్థిరరాశి uint8_t *)utf8_దత్తాంశం + i, utf8_దత్తాంశం_కొలత - i, &chr, &csize);
+		ఒకవేళ (perror != PARSERUTILS_OK) {
 			chr = 0xfffd;
 		}
 
-		term = (chr == '\n' || chr == '\r');
+		పదం = (chr == '\n' || chr == '\r');
 
-		next_col = col + 1;
+		తదుపరి_నిలువు = నిలువు + 1;
 
-		if (chr == '\t') {
-			next_col = (next_col + TAB_WIDTH - 1) & ~(TAB_WIDTH - 1);
+		ఒకవేళ (chr == '\t') {
+			తదుపరి_నిలువు = (తదుపరి_నిలువు + TAB_వెడల్పు - 1) & ~(TAB_వెడల్పు - 1);
 		}
 
-		if (term || next_col >= columns) {
-			if (line_count % 1024 == 0) {
-				line1 = realloc(line,
-						sizeof(struct textplain_line) *
-						(line_count + 1024 + 3));
-				if (!line1)
-					goto no_memory;
-				text->physical_line = line = line1;
+		ఒకవేళ (పదం || తదుపరి_నిలువు >= columns) {
+			ఒకవేళ (పంక్తి_లెక్క % 1024 == 0) {
+				line1 = realloc(పంక్తి,
+						పరిమాణం(నిర్మాణం textplain_పంక్తి) *
+						(పంక్తి_లెక్క + 1024 + 3));
+				ఒకవేళ (!line1)
+					వెళ్ళు no_జ్ఞాపకం;
+				పాఠ్యం->physical_పంక్తి = పంక్తి = line1;
 			}
 
-			if (term) {
-				line[line_count-1].length = i - line_start;
+			ఒకవేళ (పదం) {
+				పంక్తి[పంక్తి_లెక్క-1].నిడివి = i - పంక్తి_ప్రారంభం;
 
 				/* skip second char of CR/LF or LF/CR pair */
-				if (i + 1 < utf8_data_size &&
-				    utf8_data[i+1] != utf8_data[i] &&
-				    (utf8_data[i+1] == '\n' ||
-				     utf8_data[i+1] == '\r')) {
+				ఒకవేళ (i + 1 < utf8_దత్తాంశం_కొలత &&
+				    utf8_దత్తాంశం[i+1] != utf8_దత్తాంశం[i] &&
+				    (utf8_దత్తాంశం[i+1] == '\n' ||
+				     utf8_దత్తాంశం[i+1] == '\r')) {
 					i++;
 				}
-			} else {
-				if (space) {
+			} లేకపోతే {
+				ఒకవేళ (space) {
 					/* break at last space in line */
 					i = space;
-					line[line_count-1].length = (i + 1) - line_start;
-				} else
-					line[line_count-1].length = i - line_start;
+					పంక్తి[పంక్తి_లెక్క-1].నిడివి = (i + 1) - పంక్తి_ప్రారంభం;
+				} లేకపోతే
+					పంక్తి[పంక్తి_లెక్క-1].నిడివి = i - పంక్తి_ప్రారంభం;
 			}
 
-			line[line_count++].start = line_start = i + 1;
-			col = 0;
+			పంక్తి[పంక్తి_లెక్క++].ప్రారంభం = పంక్తి_ప్రారంభం = i + 1;
+			నిలువు = 0;
 			space = 0;
-		} else {
-			col++;
-			if (chr == ' ')
+		} లేకపోతే {
+			నిలువు++;
+			ఒకవేళ (chr == ' ')
 				space = i;
 		}
 		i += csize;
 	}
-	line[line_count-1].length = i - line[line_count-1].start;
-	line[line_count].start = utf8_data_size;
+	పంక్తి[పంక్తి_లెక్క-1].నిడివి = i - పంక్తి[పంక్తి_లెక్క-1].ప్రారంభం;
+	పంక్తి[పంక్తి_లెక్క].ప్రారంభం = utf8_దత్తాంశం_కొలత;
 
-	text->physical_line_count = line_count;
-	c->width = width;
-	c->height = line_count * textplain_line_height() + MARGIN + MARGIN;
+	పాఠ్యం->physical_పంక్తి_లెక్క = పంక్తి_లెక్క;
+	c->వెడల్పు = వెడల్పు;
+	c->ఎత్తు = పంక్తి_లెక్క * textplain_పంక్తి_ఎత్తు() + MARGIN + MARGIN;
 
-	return;
+	తిరిగి;
 
-no_memory:
-	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", line_count);
-	return;
+no_జ్ఞాపకం:
+	NSLOG(netsurf, INFO, "out of memory (line_count %lu)", పంక్తి_లెక్క);
+	తిరిగి;
 }
 
 
@@ -519,80 +519,80 @@ no_memory:
  * Destroy a CONTENT_TEXTPLAIN and free all resources it owns.
  */
 
-static void textplain_destroy(struct content *c)
+స్థిర శూన్య textplain_destroy(నిర్మాణం content *c)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
 
-	lwc_string_unref(text->encoding);
+	lwc_string_unref(పాఠ్యం->encoding);
 
-	if (text->inputstream != NULL) {
-		parserutils_inputstream_destroy(text->inputstream);
+	ఒకవేళ (పాఠ్యం->inputstream != ఖాళీ) {
+		parserutils_inputstream_destroy(పాఠ్యం->inputstream);
 	}
 
-	if (text->physical_line != NULL) {
-		free(text->physical_line);
+	ఒకవేళ (పాఠ్యం->physical_పంక్తి != ఖాళీ) {
+		విడుదల(పాఠ్యం->physical_పంక్తి);
 	}
 
-	if (text->utf8_data != NULL) {
-		free(text->utf8_data);
+	ఒకవేళ (పాఠ్యం->utf8_దత్తాంశం != ఖాళీ) {
+		విడుదల(పాఠ్యం->utf8_దత్తాంశం);
 	}
 
-	if (text->sel != NULL) {
-		selection_destroy(text->sel);
+	ఒకవేళ (పాఠ్యం->sel != ఖాళీ) {
+		selection_destroy(పాఠ్యం->sel);
 	}
 }
 
 
-static nserror textplain_clone(const struct content *old, struct content **newc)
+స్థిర nserror textplain_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
-	const textplain_content *old_text = (textplain_content *) old;
-	textplain_content *text;
+	స్థిరరాశి textplain_content *old_పాఠ్యం = (textplain_content *) old;
+	textplain_content *పాఠ్యం;
 	nserror error;
-	const uint8_t *data;
-	size_t size;
+	స్థిరరాశి uint8_t *దత్తాంశం;
+	size_t కొలత;
 
-	text = calloc(1, sizeof(textplain_content));
-	if (text == NULL)
-		return NSERROR_NOMEM;
+	పాఠ్యం = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(textplain_content));
+	ఒకవేళ (పాఠ్యం == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__clone(old, &text->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&text->base);
-		return error;
+	error = content__clone(old, &పాఠ్యం->పునాది);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&పాఠ్యం->పునాది);
+		తిరిగి error;
 	}
 
 	/* Simply replay create/process/convert */
-	error = textplain_create_internal(text, old_text->encoding);
-	if (error != NSERROR_OK) {
-		content_destroy(&text->base);
-		return error;
+	error = textplain_create_అంతర్గత(పాఠ్యం, old_పాఠ్యం->encoding);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&పాఠ్యం->పునాది);
+		తిరిగి error;
 	}
 
-	data = content__get_source_data(&text->base, &size);
-	if (size > 0) {
-		if (textplain_process_data(&text->base,
-					   (const char *)data,
-					   size) == false) {
-			content_destroy(&text->base);
-			return NSERROR_NOMEM;
+	దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(&పాఠ్యం->పునాది, &కొలత);
+	ఒకవేళ (కొలత > 0) {
+		ఒకవేళ (textplain_process_దత్తాంశం(&పాఠ్యం->పునాది,
+					   (స్థిరరాశి అక్షరం *)దత్తాంశం,
+					   కొలత) == false) {
+			content_destroy(&పాఠ్యం->పునాది);
+			తిరిగి NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-	    old->status == CONTENT_STATUS_DONE) {
-		if (textplain_convert(&text->base) == false) {
-			content_destroy(&text->base);
-			return NSERROR_CLONE_FAILED;
+	ఒకవేళ (old->స్థితి_2 == CONTENT_స్థితి_READY ||
+	    old->స్థితి_2 == CONTENT_స్థితి_పూర్తి) {
+		ఒకవేళ (textplain_convert(&పాఠ్యం->పునాది) == false) {
+			content_destroy(&పాఠ్యం->పునాది);
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
-static content_type textplain_content_type(void)
+స్థిర content_type textplain_content_type(శూన్య)
 {
-	return CONTENT_TEXTPLAIN;
+	తిరిగి CONTENT_TEXTPLAIN;
 }
 
 
@@ -609,78 +609,78 @@ static content_type textplain_content_type(void)
  * \param[in] dir direction of search if not within line
  * \return byte offset of character containing (or nearest to) point
  */
-static size_t
-textplain_offset_from_coords(struct content *c, int x, int y, int dir)
+స్థిర size_t
+textplain_స్థానభ్రంశం_from_coords(నిర్మాణం content *c, పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం dir)
 {
 	textplain_content *textc = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	struct textplain_line *line;
-	const char *text;
-	unsigned nlines;
-	size_t length;
-	int idx;
+	దశాంశం పంక్తి_ఎత్తు = textplain_పంక్తి_ఎత్తు();
+	నిర్మాణం textplain_పంక్తి *పంక్తి;
+	స్థిరరాశి అక్షరం *పాఠ్యం;
+	గుర్తులేని nlines;
+	size_t నిడివి;
+	పూర్ణాంకం idx;
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	y = (int)((float)(y - MARGIN) / line_height);
+	y = (పూర్ణాంకం)((దశాంశం)(y - MARGIN) / పంక్తి_ఎత్తు);
 	x -= MARGIN;
 
-	nlines = textc->physical_line_count;
-	if (!nlines)
-		return 0;
+	nlines = textc->physical_పంక్తి_లెక్క;
+	ఒకవేళ (!nlines)
+		తిరిగి 0;
 
-	if (y <= 0) y = 0;
-	else if ((unsigned)y >= nlines)
+	ఒకవేళ (y <= 0) y = 0;
+	లేకపోతే ఒకవేళ ((గుర్తులేని)y >= nlines)
 		y = nlines - 1;
 
-	line = &textc->physical_line[y];
-	text = textc->utf8_data + line->start;
-	length = line->length;
+	పంక్తి = &textc->physical_పంక్తి[y];
+	పాఠ్యం = textc->utf8_దత్తాంశం + పంక్తి->ప్రారంభం;
+	నిడివి = పంక్తి->నిడివి;
 	idx = 0;
 
-	while (x > 0) {
-		size_t next_offset = 0;
-		int width = INT_MAX;
+	అయితే (x > 0) {
+		size_t తదుపరి_స్థానభ్రంశం = 0;
+		పూర్ణాంకం వెడల్పు = గరిష్ఠ_పూర్ణాంకం;
 
-		while (next_offset < length && text[next_offset] != '\t') {
-			next_offset = utf8_next(text, length, next_offset);
+		అయితే (తదుపరి_స్థానభ్రంశం < నిడివి && పాఠ్యం[తదుపరి_స్థానభ్రంశం] != '\t') {
+			తదుపరి_స్థానభ్రంశం = utf8_తదుపరి(పాఠ్యం, నిడివి, తదుపరి_స్థానభ్రంశం);
 		}
 
-		if (next_offset < length) {
-			guit->layout->width(&textplain_style,
-					    text,
-					    next_offset,
-					    &width);
+		ఒకవేళ (తదుపరి_స్థానభ్రంశం < నిడివి) {
+			guit->layout->వెడల్పు(&textplain_style,
+					    పాఠ్యం,
+					    తదుపరి_స్థానభ్రంశం,
+					    &వెడల్పు);
 		}
 
-		if (x <= width) {
-			int pixel_offset;
-			size_t char_offset;
+		ఒకవేళ (x <= వెడల్పు) {
+			పూర్ణాంకం pixel_స్థానభ్రంశం;
+			size_t char_స్థానభ్రంశం;
 
 			guit->layout->position(&textplain_style,
-					       text, next_offset, x,
-					       &char_offset, &pixel_offset);
+					       పాఠ్యం, తదుపరి_స్థానభ్రంశం, x,
+					       &char_స్థానభ్రంశం, &pixel_స్థానభ్రంశం);
 
-			idx += char_offset;
-			break;
+			idx += char_స్థానభ్రంశం;
+			ఆపు;
 		}
 
-		x -= width;
-		length -= next_offset;
-		text += next_offset;
-		idx += next_offset;
+		x -= వెడల్పు;
+		నిడివి -= తదుపరి_స్థానభ్రంశం;
+		పాఠ్యం += తదుపరి_స్థానభ్రంశం;
+		idx += తదుపరి_స్థానభ్రంశం;
 
 		/* check if it's within the tab */
-		width = textplain_tab_width - (width % textplain_tab_width);
-		if (x <= width) break;
+		వెడల్పు = textplain_tab_వెడల్పు - (వెడల్పు % textplain_tab_వెడల్పు);
+		ఒకవేళ (x <= వెడల్పు) ఆపు;
 
-		x -= width;
-		length--;
-		text++;
+		x -= వెడల్పు;
+		నిడివి--;
+		పాఠ్యం++;
 		idx++;
 	}
 
-	return line->start + idx;
+	తిరిగి పంక్తి->ప్రారంభం + idx;
 }
 
 
@@ -693,44 +693,44 @@ textplain_offset_from_coords(struct content *c, int x, int y, int dir)
  * \param x	  coordinate of mouse
  * \param y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_action(struct content *c,
-		       struct browser_window *bw,
+స్థిర nserror
+textplain_mouse_action(నిర్మాణం content *c,
+		       నిర్మాణం browser_కిటికీ *bw,
 		       browser_mouse_state mouse,
-		       int x, int y)
+		       పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	textplain_content *text = (textplain_content *) c;
-	browser_pointer_shape pointer = BROWSER_POINTER_DEFAULT;
-	union content_msg_data msg_data;
-	const char *status = 0;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	browser_సూచిక_shape సూచిక = BROWSER_సూచిక_DEFAULT;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	స్థిరరాశి అక్షరం *స్థితి_2 = 0;
 	size_t idx;
-	int dir = 0;
+	పూర్ణాంకం dir = 0;
 
-	browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+	browser_కిటికీ_సమితి_drag_type(bw, DRAGGING_NONE, ఖాళీ);
 
-	idx = textplain_offset_from_coords(c, x, y, dir);
-	if (selection_click(text->sel, text->bw, mouse, idx)) {
+	idx = textplain_స్థానభ్రంశం_from_coords(c, x, y, dir);
+	ఒకవేళ (selection_click(పాఠ్యం->sel, పాఠ్యం->bw, mouse, idx)) {
 
-		if (selection_dragging(text->sel)) {
-			browser_window_set_drag_type(bw,
-						     DRAGGING_SELECTION, NULL);
-			status = messages_get("Selecting");
+		ఒకవేళ (selection_dragging(పాఠ్యం->sel)) {
+			browser_కిటికీ_సమితి_drag_type(bw,
+						     DRAGGING_SELECTION, ఖాళీ);
+			స్థితి_2 = messages_get("Selecting");
 		}
 
-	} else {
-		if (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
-			browser_window_page_drag_start(bw, x, y);
-			pointer = BROWSER_POINTER_MOVE;
+	} లేకపోతే {
+		ఒకవేళ (mouse & (BROWSER_MOUSE_DRAG_1 | BROWSER_MOUSE_DRAG_2)) {
+			browser_కిటికీ_పుట_drag_ప్రారంభం(bw, x, y);
+			సూచిక = BROWSER_సూచిక_MOVE;
 		}
 	}
 
-	msg_data.explicit_status_text = status;
-	content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+	సందేశం_దత్తాంశం.explicit_స్థితి_పాఠ్యం = స్థితి_2;
+	content_ప్రసారం(c, CONTENT_సందేశం_స్థితి, &సందేశం_దత్తాంశం);
 
-	msg_data.pointer = pointer;
-	content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	సందేశం_దత్తాంశం.సూచిక = సూచిక;
+	content_ప్రసారం(c, CONTENT_సందేశం_సూచిక, &సందేశం_దత్తాంశం);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -743,46 +743,46 @@ textplain_mouse_action(struct content *c,
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-static nserror
-textplain_mouse_track(struct content *c,
-		      struct browser_window *bw,
+స్థిర nserror
+textplain_mouse_track(నిర్మాణం content *c,
+		      నిర్మాణం browser_కిటికీ *bw,
 		      browser_mouse_state mouse,
-		      int x, int y)
+		      పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
 
-	if (browser_window_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
-		int dir = -1;
+	ఒకవేళ (browser_కిటికీ_get_drag_type(bw) == DRAGGING_SELECTION && !mouse) {
+		పూర్ణాంకం dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel))
+		ఒకవేళ (selection_dragging_ప్రారంభం(పాఠ్యం->sel))
 			dir = 1;
 
-		idx = textplain_offset_from_coords(c, x, y, dir);
-		selection_track(text->sel, mouse, idx);
+		idx = textplain_స్థానభ్రంశం_from_coords(c, x, y, dir);
+		selection_track(పాఠ్యం->sel, mouse, idx);
 
-		browser_window_set_drag_type(bw, DRAGGING_NONE, NULL);
+		browser_కిటికీ_సమితి_drag_type(bw, DRAGGING_NONE, ఖాళీ);
 	}
 
-	switch (browser_window_get_drag_type(bw)) {
+	ఎంపిక (browser_కిటికీ_get_drag_type(bw)) {
 
-	case DRAGGING_SELECTION: {
-		int dir = -1;
+	స్థితి DRAGGING_SELECTION: {
+		పూర్ణాంకం dir = -1;
 		size_t idx;
 
-		if (selection_dragging_start(text->sel)) dir = 1;
+		ఒకవేళ (selection_dragging_ప్రారంభం(పాఠ్యం->sel)) dir = 1;
 
-		idx = textplain_offset_from_coords(c, x, y, dir);
-		selection_track(text->sel, mouse, idx);
+		idx = textplain_స్థానభ్రంశం_from_coords(c, x, y, dir);
+		selection_track(పాఠ్యం->sel, mouse, idx);
 	}
-		break;
+		ఆపు;
 
-	default:
+	అప్రమేయ:
 		textplain_mouse_action(c, bw, mouse, x, y);
-		break;
+		ఆపు;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -793,30 +793,30 @@ textplain_mouse_track(struct content *c,
  * \param  key	The UCS4 character codepoint
  * \return true if key handled, false otherwise
  */
-static bool textplain_keypress(struct content *c, uint32_t key)
+స్థిర bool textplain_keypress(నిర్మాణం content *c, uint32_t కీలకం)
 {
-	textplain_content *text = (textplain_content *) c;
-	struct selection *sel = text->sel;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	నిర్మాణం selection *sel = పాఠ్యం->sel;
 
-	switch (key) {
-	case NS_KEY_COPY_SELECTION:
-		selection_copy_to_clipboard(sel);
-		return true;
+	ఎంపిక (కీలకం) {
+	స్థితి NS_కీలకం_COPY_SELECTION:
+		selection_copy_గమ్యం_clipboard(sel);
+		తిరిగి true;
 
-	case NS_KEY_CLEAR_SELECTION:
+	స్థితి NS_కీలకం_CLEAR_SELECTION:
 		selection_clear(sel, true);
-		return true;
+		తిరిగి true;
 
-	case NS_KEY_SELECT_ALL:
+	స్థితి NS_కీలకం_SELECT_ALL:
 		selection_select_all(sel);
-		return true;
+		తిరిగి true;
 
-	case NS_KEY_ESCAPE:
+	స్థితి NS_కీలకం_ESCAPE:
 		/* if there's no selection, leave Escape for the caller */
-		return selection_clear(sel, true);
+		తిరిగి selection_clear(sel, true);
 	}
 
-	return false;
+	తిరిగి false;
 }
 
 
@@ -838,18 +838,18 @@ static bool textplain_keypress(struct content *c, uint32_t key)
  * \param ctx	    current redraw context
  * \return true iff successful and redraw should proceed
  */
-static bool
-text_draw(const char *utf8_text,
+స్థిర bool
+పాఠ్యం_draw(స్థిరరాశి అక్షరం *utf8_పాఠ్యం,
 	    size_t utf8_len,
-	    size_t offset,
-	    int x,
-	    int y,
-	    const struct rect *clip,
-	    int height,
-	    float scale,
-	    textplain_content *text,
-	    const struct selection *sel,
-	    const struct redraw_context *ctx)
+	    size_t స్థానభ్రంశం,
+	    పూర్ణాంకం x,
+	    పూర్ణాంకం y,
+	    స్థిరరాశి నిర్మాణం rect *clip,
+	    పూర్ణాంకం ఎత్తు,
+	    దశాంశం scale,
+	    textplain_content *పాఠ్యం,
+	    స్థిరరాశి నిర్మాణం selection *sel,
+	    స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
 	bool highlighted = false;
 	plot_font_style_t plot_fstyle;
@@ -857,180 +857,180 @@ text_draw(const char *utf8_text,
 
 	/* Need scaled text size to pass to plotters */
 	plot_fstyle = textplain_style;
-	plot_fstyle.size *= scale;
+	plot_fstyle.కొలత *= scale;
 
 	/* is this box part of a selection? */
-	if (ctx->interactive == true) {
-		unsigned len = utf8_len;
-		unsigned start_idx;
-		unsigned end_idx;
+	ఒకవేళ (ctx->interactive == true) {
+		గుర్తులేని len = utf8_len;
+		గుర్తులేని ప్రారంభం_idx;
+		గుర్తులేని చివర_idx;
 
 		/* first try the browser window's current selection */
-		if (selection_highlighted(sel,
-					  offset,
-					  offset + len,
-					  &start_idx,
-					  &end_idx)) {
+		ఒకవేళ (selection_highlighted(sel,
+					  స్థానభ్రంశం,
+					  స్థానభ్రంశం + len,
+					  &ప్రారంభం_idx,
+					  &చివర_idx)) {
 			highlighted = true;
 		}
 
 		/* what about the current search operation, if any? */
-		if (!highlighted &&
-		    (text->base.textsearch.context != NULL) &&
-		    content_textsearch_ishighlighted(text->base.textsearch.context,
-						     offset,
-						     offset + len,
-						     &start_idx,
-						     &end_idx)) {
+		ఒకవేళ (!highlighted &&
+		    (పాఠ్యం->పునాది.textsearch.context != ఖాళీ) &&
+		    content_textsearch_ishighlighted(పాఠ్యం->పునాది.textsearch.context,
+						     స్థానభ్రంశం,
+						     స్థానభ్రంశం + len,
+						     &ప్రారంభం_idx,
+						     &చివర_idx)) {
 			highlighted = true;
 		}
 
 		/* \todo make search terms visible within selected text */
-		if (highlighted) {
-			struct rect r;
-			unsigned endtxt_idx = end_idx;
-			bool clip_changed = false;
-			bool text_visible = true;
-			int startx, endx;
+		ఒకవేళ (highlighted) {
+			నిర్మాణం rect r;
+			గుర్తులేని endtxt_idx = చివర_idx;
+			bool clip_మారింది = false;
+			bool పాఠ్యం_visible = true;
+			పూర్ణాంకం startx, endx;
 			plot_style_t pstyle_fill_hback = *plot_style_fill_white;
 			plot_font_style_t fstyle_hback = plot_fstyle;
 
-			if (end_idx > utf8_len) {
+			ఒకవేళ (చివర_idx > utf8_len) {
 				/* adjust for trailing space, not present in
 				 * utf8_text
 				 */
-				assert(end_idx == utf8_len + 1);
+				ప్రతిజ్ఞా(చివర_idx == utf8_len + 1);
 				endtxt_idx = utf8_len;
 			}
 
-			res = guit->layout->width(&textplain_style,
-						  utf8_text,
-						  start_idx,
+			res = guit->layout->వెడల్పు(&textplain_style,
+						  utf8_పాఠ్యం,
+						  ప్రారంభం_idx,
 						  &startx);
-			if (res != NSERROR_OK) {
+			ఒకవేళ (res != NSERROR_OK) {
 				startx = 0;
 			}
 
-			res = guit->layout->width(&textplain_style,
-						  utf8_text,
+			res = guit->layout->వెడల్పు(&textplain_style,
+						  utf8_పాఠ్యం,
 						  endtxt_idx,
 						  &endx);
-			if (res != NSERROR_OK) {
+			ఒకవేళ (res != NSERROR_OK) {
 				endx = 0;
 			}
 
-			if (scale != 1.0) {
+			ఒకవేళ (scale != 1.0) {
 				startx *= scale;
 				endx *= scale;
 			}
 
 			/* draw any text preceding highlighted portion */
-			if (start_idx > 0) {
-				res = ctx->plot->text(ctx,
+			ఒకవేళ (ప్రారంభం_idx > 0) {
+				res = ctx->plot->పాఠ్యం(ctx,
 					      &plot_fstyle,
 					      x,
-					      y + (int)(height * 0.75 * scale),
-					      utf8_text,
-					      start_idx);
-				if (res != NSERROR_OK) {
-					return false;
+					      y + (పూర్ణాంకం)(ఎత్తు * 0.75 * scale),
+					      utf8_పాఠ్యం,
+					      ప్రారంభం_idx);
+				ఒకవేళ (res != NSERROR_OK) {
+					తిరిగి false;
 				}
 			}
 
-			pstyle_fill_hback.fill_colour = textplain_style.foreground;
+			pstyle_fill_hback.fill_రంగు = textplain_style.foreground;
 
 			/* highlighted portion */
 			r.x0 = x + startx;
 			r.y0 = y;
 			r.x1 = x + endx;
-			r.y1 = y + height * scale;
+			r.y1 = y + ఎత్తు * scale;
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_hback, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి false;
 			}
 
-			if (start_idx > 0) {
-				int px0 = max(x + startx, clip->x0);
-				int px1 = min(x + endx, clip->x1);
+			ఒకవేళ (ప్రారంభం_idx > 0) {
+				పూర్ణాంకం px0 = max(x + startx, clip->x0);
+				పూర్ణాంకం px1 = min(x + endx, clip->x1);
 
-				if (px0 < px1) {
+				ఒకవేళ (px0 < px1) {
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = px1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					ఒకవేళ (res != NSERROR_OK) {
+						తిరిగి false;
 					}
 
-					clip_changed = true;
-				} else {
-					text_visible = false;
+					clip_మారింది = true;
+				} లేకపోతే {
+					పాఠ్యం_visible = false;
 				}
 			}
 
 			fstyle_hback.background =
-				pstyle_fill_hback.fill_colour;
-			fstyle_hback.foreground = colour_to_bw_furthest(
-				pstyle_fill_hback.fill_colour);
+				pstyle_fill_hback.fill_రంగు;
+			fstyle_hback.foreground = రంగు_గమ్యం_bw_furthest(
+				pstyle_fill_hback.fill_రంగు);
 
-			if (text_visible &&
-			    (ctx->plot->text(ctx,
+			ఒకవేళ (పాఠ్యం_visible &&
+			    (ctx->plot->పాఠ్యం(ctx,
 					     &fstyle_hback,
 					     x,
-					     y + (int)(height * 0.75 * scale),
-					     utf8_text,
+					     y + (పూర్ణాంకం)(ఎత్తు * 0.75 * scale),
+					     utf8_పాఠ్యం,
 					     endtxt_idx) != NSERROR_OK)) {
-				return false;
+				తిరిగి false;
 			}
 
 			/* draw any text succeeding highlighted portion */
-			if (endtxt_idx < utf8_len) {
-				int px0 = max(x + endx, clip->x0);
-				if (px0 < clip->x1) {
+			ఒకవేళ (endtxt_idx < utf8_len) {
+				పూర్ణాంకం px0 = max(x + endx, clip->x0);
+				ఒకవేళ (px0 < clip->x1) {
 
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = clip->x1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					ఒకవేళ (res != NSERROR_OK) {
+						తిరిగి false;
 					}
 
-					clip_changed = true;
+					clip_మారింది = true;
 
-					res = ctx->plot->text(ctx,
+					res = ctx->plot->పాఠ్యం(ctx,
 							      &plot_fstyle,
 							      x,
-							      y + (int)(height * 0.75 * scale),
-							      utf8_text,
+							      y + (పూర్ణాంకం)(ఎత్తు * 0.75 * scale),
+							      utf8_పాఠ్యం,
 							      utf8_len);
-					if (res != NSERROR_OK) {
-						return false;
+					ఒకవేళ (res != NSERROR_OK) {
+						తిరిగి false;
 					}
 				}
 			}
 
-			if (clip_changed &&
+			ఒకవేళ (clip_మారింది &&
 			    (ctx->plot->clip(ctx, clip) != NSERROR_OK)) {
-				return false;
+				తిరిగి false;
 			}
 		}
 	}
 
-	if (!highlighted) {
-		res = ctx->plot->text(ctx,
+	ఒకవేళ (!highlighted) {
+		res = ctx->plot->పాఠ్యం(ctx,
 				      &plot_fstyle,
 				      x,
-				      y + (int) (height * 0.75 * scale),
-				      utf8_text,
+				      y + (పూర్ణాంకం) (ఎత్తు * 0.75 * scale),
+				      utf8_పాఠ్యం,
 				      utf8_len);
-		if (res != NSERROR_OK) {
-			return false;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి false;
 		}
 	}
-	return true;
+	తిరిగి true;
 }
 
 
@@ -1045,110 +1045,110 @@ text_draw(const char *utf8_text,
  * \param  ctx	 current redraw context
  * \return true if successful, false otherwise
  */
-static bool
-textplain_redraw(struct content *c,
-		 struct content_redraw_data *data,
-		 const struct rect *clip,
-		 const struct redraw_context *ctx)
+స్థిర bool
+textplain_redraw(నిర్మాణం content *c,
+		 నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+		 స్థిరరాశి నిర్మాణం rect *clip,
+		 స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
-	textplain_content *text = (textplain_content *) c;
-	struct browser_window *bw = text->bw;
-	char *utf8_data = text->utf8_data;
-	long lineno;
-	int x = data->x;
-	int y = data->y;
-	unsigned long line_count = text->physical_line_count;
-	float line_height = textplain_line_height();
-	float scaled_line_height = line_height * data->scale;
-	long line0 = (clip->y0 - y * data->scale) / scaled_line_height - 1;
-	long line1 = (clip->y1 - y * data->scale) / scaled_line_height + 1;
-	struct textplain_line *line = text->physical_line;
-	size_t length;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	నిర్మాణం browser_కిటికీ *bw = పాఠ్యం->bw;
+	అక్షరం *utf8_దత్తాంశం = పాఠ్యం->utf8_దత్తాంశం;
+	దీర్ఘ lineno;
+	పూర్ణాంకం x = దత్తాంశం->x;
+	పూర్ణాంకం y = దత్తాంశం->y;
+	గుర్తులేని దీర్ఘ పంక్తి_లెక్క = పాఠ్యం->physical_పంక్తి_లెక్క;
+	దశాంశం పంక్తి_ఎత్తు = textplain_పంక్తి_ఎత్తు();
+	దశాంశం scaled_పంక్తి_ఎత్తు = పంక్తి_ఎత్తు * దత్తాంశం->scale;
+	దీర్ఘ line0 = (clip->y0 - y * దత్తాంశం->scale) / scaled_పంక్తి_ఎత్తు - 1;
+	దీర్ఘ line1 = (clip->y1 - y * దత్తాంశం->scale) / scaled_పంక్తి_ఎత్తు + 1;
+	నిర్మాణం textplain_పంక్తి *పంక్తి = పాఠ్యం->physical_పంక్తి;
+	size_t నిడివి;
 	plot_style_t *plot_style_highlight;
 	nserror res;
 
-	if (line0 < 0)
+	ఒకవేళ (line0 < 0)
 		line0 = 0;
-	if (line1 < 0)
+	ఒకవేళ (line1 < 0)
 		line1 = 0;
-	if (line_count < (unsigned long) line0)
-		line0 = line_count;
-	if (line_count < (unsigned long) line1)
-		line1 = line_count;
-	if (line1 < line0)
+	ఒకవేళ (పంక్తి_లెక్క < (గుర్తులేని దీర్ఘ) line0)
+		line0 = పంక్తి_లెక్క;
+	ఒకవేళ (పంక్తి_లెక్క < (గుర్తులేని దీర్ఘ) line1)
+		line1 = పంక్తి_లెక్క;
+	ఒకవేళ (line1 < line0)
 		line1 = line0;
 
 	res = ctx->plot->rectangle(ctx, plot_style_fill_white, clip);
-	if (res != NSERROR_OK) {
-		return false;
+	ఒకవేళ (res != NSERROR_OK) {
+		తిరిగి false;
 	}
 
-	if (!line)
-		return true;
+	ఒకవేళ (!పంక్తి)
+		తిరిగి true;
 
 	/* choose a suitable background colour for any highlighted text */
-	if ((data->background_colour & 0x808080) == 0x808080)
+	ఒకవేళ ((దత్తాంశం->background_రంగు & 0x808080) == 0x808080)
 		plot_style_highlight = plot_style_fill_black;
-	else
+	లేకపోతే
 		plot_style_highlight = plot_style_fill_white;
 
 	/* Set up font plot style */
-	textplain_style.background = data->background_colour;
+	textplain_style.background = దత్తాంశం->background_రంగు;
 
-	x = (x + MARGIN) * data->scale;
-	y = (y + MARGIN) * data->scale;
-	for (lineno = line0; lineno != line1; lineno++) {
-		const char *text_d = utf8_data + line[lineno].start;
-		int tab_width = textplain_tab_width * data->scale;
-		size_t offset = 0;
-		int tx = x;
+	x = (x + MARGIN) * దత్తాంశం->scale;
+	y = (y + MARGIN) * దత్తాంశం->scale;
+	కొరకు (lineno = line0; lineno != line1; lineno++) {
+		స్థిరరాశి అక్షరం *పాఠ్యం_d = utf8_దత్తాంశం + పంక్తి[lineno].ప్రారంభం;
+		పూర్ణాంకం tab_వెడల్పు = textplain_tab_వెడల్పు * దత్తాంశం->scale;
+		size_t స్థానభ్రంశం = 0;
+		పూర్ణాంకం tx = x;
 
-		if (!tab_width) tab_width = 1;
+		ఒకవేళ (!tab_వెడల్పు) tab_వెడల్పు = 1;
 
-		length = line[lineno].length;
-		if (!length)
-			continue;
+		నిడివి = పంక్తి[lineno].నిడివి;
+		ఒకవేళ (!నిడివి)
+			కొనసాగు;
 
-		while (offset < length) {
-			size_t next_offset = offset;
-			int width;
-			int ntx;
+		అయితే (స్థానభ్రంశం < నిడివి) {
+			size_t తదుపరి_స్థానభ్రంశం = స్థానభ్రంశం;
+			పూర్ణాంకం వెడల్పు;
+			పూర్ణాంకం ntx;
 			nserror res;
 
-			while ((next_offset < length) &&
-			       (text_d[next_offset] != '\t')) {
-				next_offset = utf8_next(text_d,
-							length,
-							next_offset);
+			అయితే ((తదుపరి_స్థానభ్రంశం < నిడివి) &&
+			       (పాఠ్యం_d[తదుపరి_స్థానభ్రంశం] != '\t')) {
+				తదుపరి_స్థానభ్రంశం = utf8_తదుపరి(పాఠ్యం_d,
+							నిడివి,
+							తదుపరి_స్థానభ్రంశం);
 			}
 
-			if (!text_draw(text_d + offset,
-				       next_offset - offset,
-				       line[lineno].start + offset,
+			ఒకవేళ (!పాఠ్యం_draw(పాఠ్యం_d + స్థానభ్రంశం,
+				       తదుపరి_స్థానభ్రంశం - స్థానభ్రంశం,
+				       పంక్తి[lineno].ప్రారంభం + స్థానభ్రంశం,
 				       tx,
-				       y + (lineno * scaled_line_height),
+				       y + (lineno * scaled_పంక్తి_ఎత్తు),
 				       clip,
-				       line_height,
-				       data->scale,
-				       text,
-				       text->sel,
+				       పంక్తి_ఎత్తు,
+				       దత్తాంశం->scale,
+				       పాఠ్యం,
+				       పాఠ్యం->sel,
 				       ctx)) {
-				return false;
+				తిరిగి false;
 			}
 
-			if (next_offset >= length)
-				break;
+			ఒకవేళ (తదుపరి_స్థానభ్రంశం >= నిడివి)
+				ఆపు;
 
-			res = guit->layout->width(&textplain_style,
-						  &text_d[offset],
-						  next_offset - offset,
-						  &width);
+			res = guit->layout->వెడల్పు(&textplain_style,
+						  &పాఠ్యం_d[స్థానభ్రంశం],
+						  తదుపరి_స్థానభ్రంశం - స్థానభ్రంశం,
+						  &వెడల్పు);
 			/* locate end of string and align to next tab position */
-			if (res == NSERROR_OK) {
-				tx += (int)(width * data->scale);
+			ఒకవేళ (res == NSERROR_OK) {
+				tx += (పూర్ణాంకం)(వెడల్పు * దత్తాంశం->scale);
 			}
 
-			ntx = x + ((1 + (tx - x) / tab_width) * tab_width);
+			ntx = x + ((1 + (tx - x) / tab_వెడల్పు) * tab_వెడల్పు);
 
 			/* if the tab character lies within the
 			 *  selection, if any, then we must draw it as
@@ -1156,99 +1156,99 @@ textplain_redraw(struct content *c,
 			 *  with background of the selected text
 			 */
 
-			if (bw) {
-				unsigned tab_ofst = line[lineno].start + next_offset;
-				struct selection *sel = text->sel;
+			ఒకవేళ (bw) {
+				గుర్తులేని tab_ofst = పంక్తి[lineno].ప్రారంభం + తదుపరి_స్థానభ్రంశం;
+				నిర్మాణం selection *sel = పాఠ్యం->sel;
 				bool highlighted = false;
 
-				unsigned start_idx, end_idx;
-				if (selection_highlighted(sel,
+				గుర్తులేని ప్రారంభం_idx, చివర_idx;
+				ఒకవేళ (selection_highlighted(sel,
 							  tab_ofst,
 							  tab_ofst + 1,
-							  &start_idx,
-							  &end_idx)) {
+							  &ప్రారంభం_idx,
+							  &చివర_idx)) {
 					highlighted = true;
 				}
 
 
-				if (!highlighted &&
-				    (c->textsearch.context != NULL)) {
-					unsigned start_idx, end_idx;
-					if (content_textsearch_ishighlighted(
+				ఒకవేళ (!highlighted &&
+				    (c->textsearch.context != ఖాళీ)) {
+					గుర్తులేని ప్రారంభం_idx, చివర_idx;
+					ఒకవేళ (content_textsearch_ishighlighted(
 						    c->textsearch.context,
 						    tab_ofst,
 						    tab_ofst + 1,
-						    &start_idx,
-						    &end_idx)) {
+						    &ప్రారంభం_idx,
+						    &చివర_idx)) {
 						highlighted = true;
 					}
 				}
 
-				if (highlighted) {
-					struct rect rect;
+				ఒకవేళ (highlighted) {
+					నిర్మాణం rect rect;
 					rect.x0 = tx;
-					rect.y0 = y + (lineno * scaled_line_height);
+					rect.y0 = y + (lineno * scaled_పంక్తి_ఎత్తు);
 					rect.x1 = ntx;
-					rect.y1 = rect.y0 + scaled_line_height;
+					rect.y1 = rect.y0 + scaled_పంక్తి_ఎత్తు;
 					res = ctx->plot->rectangle(ctx,
 								   plot_style_highlight,
 								   &rect);
-					if (res != NSERROR_OK) {
-						return false;
+					ఒకవేళ (res != NSERROR_OK) {
+						తిరిగి false;
 					}
 				}
 			}
 
-			offset = next_offset + 1;
+			స్థానభ్రంశం = తదుపరి_స్థానభ్రంశం + 1;
 			tx = ntx;
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being opened.
  */
-static nserror
-textplain_open(struct content *c,
-	       struct browser_window *bw,
-	       struct content *page,
-	       struct object_params *params)
+స్థిర nserror
+textplain_open(నిర్మాణం content *c,
+	       నిర్మాణం browser_కిటికీ *bw,
+	       నిర్మాణం content *పుట,
+	       నిర్మాణం object_params *params)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
 
-	text->bw = bw;
+	పాఠ్యం->bw = bw;
 
 	/* text selection */
-	selection_init(text->sel);
+	selection_init(పాఠ్యం->sel);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * Handle a window containing a CONTENT_TEXTPLAIN being closed.
  */
-static nserror textplain_close(struct content *c)
+స్థిర nserror textplain_close(నిర్మాణం content *c)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
 
-	text->bw = NULL;
+	పాఠ్యం->bw = ఖాళీ;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * Return an textplain content's selection context
  */
-static char *textplain_get_selection(struct content *c)
+స్థిర అక్షరం *textplain_get_selection(నిర్మాణం content *c)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
 
-	return selection_get_copy(text->sel);
+	తిరిగి selection_get_copy(పాఠ్యం->sel);
 }
 
 
@@ -1264,35 +1264,35 @@ static char *textplain_get_selection(struct content *c)
  * \param  length  line length
  * \return x ordinate
  */
-static int
-textplain_coord_from_offset(const char *text, size_t offset, size_t length)
+స్థిర పూర్ణాంకం
+textplain_coord_from_స్థానభ్రంశం(స్థిరరాశి అక్షరం *పాఠ్యం, size_t స్థానభ్రంశం, size_t నిడివి)
 {
-	int x = 0;
+	పూర్ణాంకం x = 0;
 
-	while (offset > 0) {
-		size_t next_offset = 0;
-		int tx;
+	అయితే (స్థానభ్రంశం > 0) {
+		size_t తదుపరి_స్థానభ్రంశం = 0;
+		పూర్ణాంకం tx;
 
-		while (next_offset < offset && text[next_offset] != '\t') {
-			next_offset = utf8_next(text, length, next_offset);
+		అయితే (తదుపరి_స్థానభ్రంశం < స్థానభ్రంశం && పాఠ్యం[తదుపరి_స్థానభ్రంశం] != '\t') {
+			తదుపరి_స్థానభ్రంశం = utf8_తదుపరి(పాఠ్యం, నిడివి, తదుపరి_స్థానభ్రంశం);
 		}
 
-		guit->layout->width(&textplain_style, text, next_offset, &tx);
+		guit->layout->వెడల్పు(&textplain_style, పాఠ్యం, తదుపరి_స్థానభ్రంశం, &tx);
 
 		x += tx;
 
-		if (next_offset >= offset)
-			break;
+		ఒకవేళ (తదుపరి_స్థానభ్రంశం >= స్థానభ్రంశం)
+			ఆపు;
 
 		/* align to next tab boundary */
-		next_offset++;
-		x = (1 + (x / textplain_tab_width)) * textplain_tab_width;
-		offset -= next_offset;
-		text += next_offset;
-		length -= next_offset;
+		తదుపరి_స్థానభ్రంశం++;
+		x = (1 + (x / textplain_tab_వెడల్పు)) * textplain_tab_వెడల్పు;
+		స్థానభ్రంశం -= తదుపరి_స్థానభ్రంశం;
+		పాఠ్యం += తదుపరి_స్థానభ్రంశం;
+		నిడివి -= తదుపరి_స్థానభ్రంశం;
 	}
 
-	return x;
+	తిరిగి x;
 }
 
 
@@ -1302,13 +1302,13 @@ textplain_coord_from_offset(const char *text, size_t offset, size_t length)
  * \param[in] c Content to retrieve line count from
  * \return Number of lines
  */
-static unsigned long textplain_line_count(struct content *c)
+స్థిర గుర్తులేని దీర్ఘ textplain_పంక్తి_లెక్క(నిర్మాణం content *c)
 {
-	textplain_content *text = (textplain_content *) c;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	return text->physical_line_count;
+	తిరిగి పాఠ్యం->physical_పంక్తి_లెక్క;
 }
 
 
@@ -1321,24 +1321,24 @@ static unsigned long textplain_line_count(struct content *c)
  * \param[out] plen    receives length of returned line
  * \return pointer to text, or NULL if invalid line number
  */
-static char *
-textplain_get_line(struct content *c,
-		   unsigned lineno,
+స్థిర అక్షరం *
+textplain_get_పంక్తి(నిర్మాణం content *c,
+		   గుర్తులేని lineno,
 		   size_t *poffset,
 		   size_t *plen)
 {
-	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	నిర్మాణం textplain_పంక్తి *పంక్తి;
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	if (lineno >= text->physical_line_count)
-		return NULL;
-	line = &text->physical_line[lineno];
+	ఒకవేళ (lineno >= పాఠ్యం->physical_పంక్తి_లెక్క)
+		తిరిగి ఖాళీ;
+	పంక్తి = &పాఠ్యం->physical_పంక్తి[lineno];
 
-	*poffset = line->start;
-	*plen = line->length;
-	return text->utf8_data + line->start;
+	*poffset = పంక్తి->ప్రారంభం;
+	*plen = పంక్తి->నిడివి;
+	తిరిగి పాఠ్యం->utf8_దత్తాంశం + పంక్తి->ప్రారంభం;
 }
 
 
@@ -1352,31 +1352,31 @@ textplain_get_line(struct content *c,
  * \param[in] offset  byte offset within textual representation
  * \return line number, or -1 if offset invalid (larger than size)
  */
-static int textplain_find_line(struct content *c, unsigned offset)
+స్థిర పూర్ణాంకం textplain_కనుగొను_పంక్తి(నిర్మాణం content *c, గుర్తులేని స్థానభ్రంశం)
 {
-	textplain_content *text = (textplain_content *) c;
-	struct textplain_line *line;
-	int nlines;
-	int lineno = 0;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	నిర్మాణం textplain_పంక్తి *పంక్తి;
+	పూర్ణాంకం nlines;
+	పూర్ణాంకం lineno = 0;
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	line = text->physical_line;
-	nlines = text->physical_line_count;
+	పంక్తి = పాఠ్యం->physical_పంక్తి;
+	nlines = పాఠ్యం->physical_పంక్తి_లెక్క;
 
-	if (offset > text->utf8_data_size) {
-		return -1;
+	ఒకవేళ (స్థానభ్రంశం > పాఠ్యం->utf8_దత్తాంశం_కొలత) {
+		తిరిగి -1;
 	}
 
 /* \todo - implement binary search here */
-	while (lineno < nlines && line[lineno].start < offset) {
+	అయితే (lineno < nlines && పంక్తి[lineno].ప్రారంభం < స్థానభ్రంశం) {
 		lineno++;
 	}
-	if (line[lineno].start > offset) {
+	ఒకవేళ (పంక్తి[lineno].ప్రారంభం > స్థానభ్రంశం) {
 		lineno--;
 	}
 
-	return lineno;
+	తిరిగి lineno;
 }
 
 
@@ -1390,59 +1390,59 @@ static int textplain_find_line(struct content *c, unsigned offset)
  * \param case_sens whether to perform a case sensitive search
  * \return NSERROR_OK on success else error code on faliure
  */
-static nserror
-textplain_textsearch_find(struct content *c,
-			  struct textsearch_context *context,
-			  const char *pattern,
-			  int p_len,
+స్థిర nserror
+textplain_textsearch_కనుగొను(నిర్మాణం content *c,
+			  నిర్మాణం textsearch_context *context,
+			  స్థిరరాశి అక్షరం *నమూనా,
+			  పూర్ణాంకం p_len,
 			  bool case_sens)
 {
-	int nlines = textplain_line_count(c);
-	int line;
+	పూర్ణాంకం nlines = textplain_పంక్తి_లెక్క(c);
+	పూర్ణాంకం పంక్తి;
 	nserror res = NSERROR_OK;
 
-	for(line = 0; line < nlines; line++) {
-		size_t offset, length;
-		const char *text;
+	కొరకు(పంక్తి = 0; పంక్తి < nlines; పంక్తి++) {
+		size_t స్థానభ్రంశం, నిడివి;
+		స్థిరరాశి అక్షరం *పాఠ్యం;
 
-		text = textplain_get_line(c, line, &offset, &length);
-		if (text) {
-			while (length > 0) {
-				unsigned match_length;
-				size_t start_idx;
-				const char *new_text;
-				const char *pos;
+		పాఠ్యం = textplain_get_పంక్తి(c, పంక్తి, &స్థానభ్రంశం, &నిడివి);
+		ఒకవేళ (పాఠ్యం) {
+			అయితే (నిడివి > 0) {
+				గుర్తులేని సరిపోలిక_నిడివి;
+				size_t ప్రారంభం_idx;
+				స్థిరరాశి అక్షరం *new_పాఠ్యం;
+				స్థిరరాశి అక్షరం *pos;
 
-				pos = content_textsearch_find_pattern(
-						text,
-						length,
-						pattern,
+				pos = content_textsearch_కనుగొను_నమూనా(
+						పాఠ్యం,
+						నిడివి,
+						నమూనా,
 						p_len,
 						case_sens,
-						&match_length);
-				if (!pos)
-					break;
+						&సరిపోలిక_నిడివి);
+				ఒకవేళ (!pos)
+					ఆపు;
 
 				/* found string in line => add to list */
-				start_idx = offset + (pos - text);
-				res = content_textsearch_add_match(context,
-						start_idx,
-						start_idx + match_length,
-						NULL,
-						NULL);
-				if (res != NSERROR_OK) {
-					return res;
+				ప్రారంభం_idx = స్థానభ్రంశం + (pos - పాఠ్యం);
+				res = content_textsearch_కూడు_సరిపోలిక(context,
+						ప్రారంభం_idx,
+						ప్రారంభం_idx + సరిపోలిక_నిడివి,
+						ఖాళీ,
+						ఖాళీ);
+				ఒకవేళ (res != NSERROR_OK) {
+					తిరిగి res;
 				}
 
-				new_text = pos + match_length;
-				offset += (new_text - text);
-				length -= (new_text - text);
-				text = new_text;
+				new_పాఠ్యం = pos + సరిపోలిక_నిడివి;
+				స్థానభ్రంశం += (new_పాఠ్యం - పాఠ్యం);
+				నిడివి -= (new_పాఠ్యం - పాఠ్యం);
+				పాఠ్యం = new_పాఠ్యం;
 			}
 		}
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -1455,56 +1455,56 @@ textplain_textsearch_find(struct content *c,
  * \param[in] end   byte offset of end
  * \param[out] r    rectangle to be completed
  */
-static void
-textplain_coords_from_range(struct content *c,
-			    unsigned start,
-			    unsigned end,
-			    struct rect *r)
+స్థిర శూన్య
+textplain_coords_from_range(నిర్మాణం content *c,
+			    గుర్తులేని ప్రారంభం,
+			    గుర్తులేని చివర,
+			    నిర్మాణం rect *r)
 {
-	textplain_content *text = (textplain_content *) c;
-	float line_height = textplain_line_height();
-	char *utf8_data;
-	struct textplain_line *line;
-	unsigned lineno = 0;
-	unsigned nlines;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	దశాంశం పంక్తి_ఎత్తు = textplain_పంక్తి_ఎత్తు();
+	అక్షరం *utf8_దత్తాంశం;
+	నిర్మాణం textplain_పంక్తి *పంక్తి;
+	గుర్తులేని lineno = 0;
+	గుర్తులేని nlines;
 
-	assert(c != NULL);
-	assert(start <= end);
-	assert(end <= text->utf8_data_size);
+	ప్రతిజ్ఞా(c != ఖాళీ);
+	ప్రతిజ్ఞా(ప్రారంభం <= చివర);
+	ప్రతిజ్ఞా(చివర <= పాఠ్యం->utf8_దత్తాంశం_కొలత);
 
-	utf8_data = text->utf8_data;
-	nlines = text->physical_line_count;
-	line = text->physical_line;
+	utf8_దత్తాంశం = పాఠ్యం->utf8_దత్తాంశం;
+	nlines = పాఠ్యం->physical_పంక్తి_లెక్క;
+	పంక్తి = పాఠ్యం->physical_పంక్తి;
 
 	/* find start */
-	lineno = textplain_find_line(c, start);
+	lineno = textplain_కనుగొను_పంక్తి(c, ప్రారంభం);
 
-	r->y0 = (int)(MARGIN + lineno * line_height);
+	r->y0 = (పూర్ణాంకం)(MARGIN + lineno * పంక్తి_ఎత్తు);
 
-	if (lineno + 1 <= nlines || line[lineno + 1].start >= end) {
+	ఒకవేళ (lineno + 1 <= nlines || పంక్తి[lineno + 1].ప్రారంభం >= చివర) {
 		/* \todo - it may actually be more efficient just to
 		 *   run forwards most of the time
 		 */
 
 		/* find end */
-		lineno = textplain_find_line(c, end);
+		lineno = textplain_కనుగొను_పంక్తి(c, చివర);
 
 		r->x0 = 0;
-		r->x1 = text->formatted_width;
-	} else {
+		r->x1 = పాఠ్యం->formatted_వెడల్పు;
+	} లేకపోతే {
 		/* single line */
-		const char *text = utf8_data + line[lineno].start;
+		స్థిరరాశి అక్షరం *పాఠ్యం = utf8_దత్తాంశం + పంక్తి[lineno].ప్రారంభం;
 
-		r->x0 = textplain_coord_from_offset(text,
-						    start - line[lineno].start,
-						    line[lineno].length);
+		r->x0 = textplain_coord_from_స్థానభ్రంశం(పాఠ్యం,
+						    ప్రారంభం - పంక్తి[lineno].ప్రారంభం,
+						    పంక్తి[lineno].నిడివి);
 
-		r->x1 = textplain_coord_from_offset(text,
-						    end - line[lineno].start,
-						    line[lineno].length);
+		r->x1 = textplain_coord_from_స్థానభ్రంశం(పాఠ్యం,
+						    చివర - పంక్తి[lineno].ప్రారంభం,
+						    పంక్తి[lineno].నిడివి);
 	}
 
-	r->y1 = (int)(MARGIN + (lineno + 1) * line_height);
+	r->y1 = (పూర్ణాంకం)(MARGIN + (lineno + 1) * పంక్తి_ఎత్తు);
 }
 
 
@@ -1519,88 +1519,88 @@ textplain_coords_from_range(struct content *c,
  * \param[out] plen receives validated length
  * \return pointer to text, or NULL if no text
  */
-static char *
-textplain_get_raw_data(struct content *c,
-		       unsigned start,
-		       unsigned end,
+స్థిర అక్షరం *
+textplain_get_raw_దత్తాంశం(నిర్మాణం content *c,
+		       గుర్తులేని ప్రారంభం,
+		       గుర్తులేని చివర,
 		       size_t *plen)
 {
-	textplain_content *text = (textplain_content *) c;
-	size_t utf8_size;
+	textplain_content *పాఠ్యం = (textplain_content *) c;
+	size_t utf8_కొలత;
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	utf8_size = text->utf8_data_size;
+	utf8_కొలత = పాఠ్యం->utf8_దత్తాంశం_కొలత;
 
 	/* any text at all? */
-	if (!utf8_size) return NULL;
+	ఒకవేళ (!utf8_కొలత) తిరిగి ఖాళీ;
 
 	/* clamp to valid offset range */
-	if (start >= utf8_size) start = utf8_size;
-	if (end >= utf8_size) end = utf8_size;
+	ఒకవేళ (ప్రారంభం >= utf8_కొలత) ప్రారంభం = utf8_కొలత;
+	ఒకవేళ (చివర >= utf8_కొలత) చివర = utf8_కొలత;
 
-	*plen = end - start;
+	*plen = చివర - ప్రారంభం;
 
-	return text->utf8_data + start;
+	తిరిగి పాఠ్యం->utf8_దత్తాంశం + ప్రారంభం;
 }
 
 
 /**
  * get bounds of a free text search match
  */
-static nserror
-textplain_textsearch_bounds(struct content *c,
-			    unsigned start_idx,
-			    unsigned end_idx,
-			    struct box *start_box,
-			    struct box *end_box,
-			    struct rect *bounds)
+స్థిర nserror
+textplain_textsearch_bounds(నిర్మాణం content *c,
+			    గుర్తులేని ప్రారంభం_idx,
+			    గుర్తులేని చివర_idx,
+			    నిర్మాణం box *ప్రారంభం_box,
+			    నిర్మాణం box *చివర_box,
+			    నిర్మాణం rect *bounds)
 {
-	textplain_coords_from_range(c, start_idx, end_idx, bounds);
+	textplain_coords_from_range(c, ప్రారంభం_idx, చివర_idx, bounds);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * invalidate a region based on offsets into the text cauing a redraw
  */
-static nserror
-textplain_textselection_redraw(struct content *c,
-			       unsigned start_idx,
-			       unsigned end_idx)
+స్థిర nserror
+textplain_textselection_redraw(నిర్మాణం content *c,
+			       గుర్తులేని ప్రారంభం_idx,
+			       గుర్తులేని చివర_idx)
 {
-	struct rect r;
+	నిర్మాణం rect r;
 
-	if (end_idx <= start_idx) {
-		return NSERROR_BAD_PARAMETER;
+	ఒకవేళ (చివర_idx <= ప్రారంభం_idx) {
+		తిరిగి NSERROR_BAD_PARAMETER;
 	}
 
-	textplain_coords_from_range(c, start_idx, end_idx, &r);
+	textplain_coords_from_range(c, ప్రారంభం_idx, చివర_idx, &r);
 
 	content__request_redraw(c, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0);
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static nserror
-textplain_textselection_copy(struct content *c,
-			     unsigned start_idx,
-			     unsigned end_idx,
-			     struct selection_string *selstr)
+స్థిర nserror
+textplain_textselection_copy(నిర్మాణం content *c,
+			     గుర్తులేని ప్రారంభం_idx,
+			     గుర్తులేని చివర_idx,
+			     నిర్మాణం selection_string *selstr)
 {
-	const char *text;
-	size_t length;
+	స్థిరరాశి అక్షరం *పాఠ్యం;
+	size_t నిడివి;
 	bool res = false;
 
-	text = textplain_get_raw_data(c, start_idx, end_idx, &length);
-	if (text != NULL) {
-		res = selection_string_append(text, length, false, NULL, selstr);
+	పాఠ్యం = textplain_get_raw_దత్తాంశం(c, ప్రారంభం_idx, చివర_idx, &నిడివి);
+	ఒకవేళ (పాఠ్యం != ఖాళీ) {
+		res = selection_string_append(పాఠ్యం, నిడివి, false, ఖాళీ, selstr);
 	}
-	if (res == false) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (res == false) {
+		తిరిగి NSERROR_NOMEM;
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
@@ -1610,24 +1610,24 @@ textplain_textselection_copy(struct content *c,
  * \param[in] c Content to retrieve size of
  * \return Size, in bytes, of data
  */
-static nserror
-textplain_textselection_get_end(struct content *c, unsigned *end_idx)
+స్థిర nserror
+textplain_textselection_get_చివర(నిర్మాణం content *c, గుర్తులేని *చివర_idx)
 {
-	textplain_content *text = (textplain_content *)c;
+	textplain_content *పాఠ్యం = (textplain_content *)c;
 
-	*end_idx = text->utf8_data_size;
-	return NSERROR_OK;
+	*చివర_idx = పాఠ్యం->utf8_దత్తాంశం_కొలత;
+	తిరిగి NSERROR_OK;
 }
 
 
 /**
  * plain text content handler table
  */
-static const content_handler textplain_content_handler = {
+స్థిర స్థిరరాశి content_handler textplain_content_handler = {
 	.fini = textplain_fini,
 	.create = textplain_create,
-	.process_data = textplain_process_data,
-	.data_complete = textplain_convert,
+	.process_దత్తాంశం = textplain_process_దత్తాంశం,
+	.దత్తాంశం_complete = textplain_convert,
 	.reformat = textplain_reformat,
 	.destroy = textplain_destroy,
 	.mouse_track = textplain_mouse_track,
@@ -1639,17 +1639,17 @@ static const content_handler textplain_content_handler = {
 	.get_selection = textplain_get_selection,
 	.clone = textplain_clone,
 	.type = textplain_content_type,
-	.textsearch_find = textplain_textsearch_find,
+	.textsearch_కనుగొను = textplain_textsearch_కనుగొను,
 	.textsearch_bounds = textplain_textsearch_bounds,
 	.textselection_redraw = textplain_textselection_redraw,
 	.textselection_copy = textplain_textselection_copy,
-	.textselection_get_end = textplain_textselection_get_end,
+	.textselection_get_చివర = textplain_textselection_get_చివర,
 	.no_share = true,
 };
 
 
 /* exported interface documented in html/textplain.h */
-nserror textplain_init(void)
+nserror textplain_init(శూన్య)
 {
 	lwc_error lerror;
 	nserror error;
@@ -1657,23 +1657,23 @@ nserror textplain_init(void)
 	lerror = lwc_intern_string("Windows-1252",
 				   SLEN("Windows-1252"),
 				   &textplain_default_charset);
-	if (lerror != lwc_error_ok) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (lerror != lwc_error_ok) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	error = content_factory_register_handler("text/plain",
+	error = content_factory_రిజిస్టరు_handler("text/plain",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	ఒకవేళ (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
-	error = content_factory_register_handler("application/json",
+	error = content_factory_రిజిస్టరు_handler("application/json",
 						 &textplain_content_handler);
-	if (error != NSERROR_OK) {
+	ఒకవేళ (error != NSERROR_OK) {
 		lwc_string_unref(textplain_default_charset);
 	}
 
-	return error;
+	తిరిగి error;
 }
 
 

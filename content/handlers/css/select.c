@@ -16,123 +16,123 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <string.h>
-#include <strings.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "netsurf/url_db.h"
-#include "desktop/system_colour.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "netsurf/plot_style.h"
+#అన్తర్భావ "netsurf/url_db.h"
+#అన్తర్భావ "desktop/system_colour.h"
 
-#include "css/internal.h"
-#include "css/hints.h"
-#include "css/select.h"
+#అన్తర్భావ "css/internal.h"
+#అన్తర్భావ "css/hints.h"
+#అన్తర్భావ "css/select.h"
 
-static css_error node_name(void *pw, void *node, css_qname *qname);
-static css_error node_classes(void *pw, void *node,
+స్థిర css_error కణుపు_name(శూన్య *pw, శూన్య *కణుపు, css_qname *qname);
+స్థిర css_error కణుపు_classes(శూన్య *pw, శూన్య *కణుపు,
 		lwc_string ***classes, uint32_t *n_classes);
-static css_error node_id(void *pw, void *node, lwc_string **id);
-static css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent);
-static css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error parent_node(void *pw, void *node, void **parent);
-static css_error sibling_node(void *pw, void *node, void **sibling);
-static css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_class(void *pw, void *node,
-		lwc_string *name, bool *match);
-static css_error node_has_id(void *pw, void *node,
-		lwc_string *name, bool *match);
-static css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_is_root(void *pw, void *node, bool *match);
-static css_error node_count_siblings(void *pw, void *node,
-		bool same_name, bool after, int32_t *count);
-static css_error node_is_empty(void *pw, void *node, bool *match);
-static css_error node_is_link(void *pw, void *node, bool *match);
-static css_error node_is_hover(void *pw, void *node, bool *match);
-static css_error node_is_active(void *pw, void *node, bool *match);
-static css_error node_is_focus(void *pw, void *node, bool *match);
-static css_error node_is_enabled(void *pw, void *node, bool *match);
-static css_error node_is_disabled(void *pw, void *node, bool *match);
-static css_error node_is_checked(void *pw, void *node, bool *match);
-static css_error node_is_target(void *pw, void *node, bool *match);
-static css_error node_is_lang(void *pw, void *node,
-		lwc_string *lang, bool *match);
-static css_error ua_default_for_property(void *pw, uint32_t property,
+స్థిర css_error కణుపు_id(శూన్య *pw, శూన్య *కణుపు, lwc_string **id);
+స్థిర css_error named_మాతృ_కణుపు(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, శూన్య **మాతృ);
+స్థిర css_error named_sibling_కణుపు(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, శూన్య **sibling);
+స్థిర css_error named_generic_sibling_కణుపు(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, శూన్య **sibling);
+స్థిర css_error మాతృ_కణుపు(శూన్య *pw, శూన్య *కణుపు, శూన్య **మాతృ);
+స్థిర css_error sibling_కణుపు(శూన్య *pw, శూన్య *కణుపు, శూన్య **sibling);
+స్థిర css_error కణుపు_has_name(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_class(శూన్య *pw, శూన్య *కణుపు,
+		lwc_string *name, bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_id(శూన్య *pw, శూన్య *కణుపు,
+		lwc_string *name, bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_attribute(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_attribute_equal(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_attribute_dashmatch(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_attribute_includes(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_attribute_ఉపసర్గ(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_attribute_suffix(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక);
+స్థిర css_error కణుపు_has_attribute_substring(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_మూలం(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_లెక్క_siblings(శూన్య *pw, శూన్య *కణుపు,
+		bool same_name, bool after, int32_t *లెక్క);
+స్థిర css_error కణుపు_is_ఖాళీలు(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_link(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_hover(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_చురుకైన(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_focus(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_enabled(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_disabled(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_checked(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_లక్ష్యం(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక);
+స్థిర css_error కణుపు_is_lang(శూన్య *pw, శూన్య *కణుపు,
+		lwc_string *lang, bool *సరిపోలిక);
+స్థిర css_error ua_default_for_property(శూన్య *pw, uint32_t property,
 		css_hint *hint);
-static css_error set_libcss_node_data(void *pw, void *node,
-		void *libcss_node_data);
-static css_error get_libcss_node_data(void *pw, void *node,
-		void **libcss_node_data);
+స్థిర css_error సమితి_libcss_కణుపు_దత్తాంశం(శూన్య *pw, శూన్య *కణుపు,
+		శూన్య *libcss_కణుపు_దత్తాంశం);
+స్థిర css_error get_libcss_కణుపు_దత్తాంశం(శూన్య *pw, శూన్య *కణుపు,
+		శూన్య **libcss_కణుపు_దత్తాంశం);
 
 /**
  * Selection callback table for libcss
  */
-static css_select_handler selection_handler = {
-	CSS_SELECT_HANDLER_VERSION_1,
+స్థిర css_select_handler selection_handler = {
+	CSS_SELECT_HANDLER_సంస్కరణ_1,
 
-	node_name,
-	node_classes,
-	node_id,
-	named_ancestor_node,
-	named_parent_node,
-	named_sibling_node,
-	named_generic_sibling_node,
-	parent_node,
-	sibling_node,
-	node_has_name,
-	node_has_class,
-	node_has_id,
-	node_has_attribute,
-	node_has_attribute_equal,
-	node_has_attribute_dashmatch,
-	node_has_attribute_includes,
-	node_has_attribute_prefix,
-	node_has_attribute_suffix,
-	node_has_attribute_substring,
-	node_is_root,
-	node_count_siblings,
-	node_is_empty,
-	node_is_link,
-	node_is_visited,
-	node_is_hover,
-	node_is_active,
-	node_is_focus,
-	node_is_enabled,
-	node_is_disabled,
-	node_is_checked,
-	node_is_target,
-	node_is_lang,
-	node_presentational_hint,
+	కణుపు_name,
+	కణుపు_classes,
+	కణుపు_id,
+	named_ancestor_కణుపు,
+	named_మాతృ_కణుపు,
+	named_sibling_కణుపు,
+	named_generic_sibling_కణుపు,
+	మాతృ_కణుపు,
+	sibling_కణుపు,
+	కణుపు_has_name,
+	కణుపు_has_class,
+	కణుపు_has_id,
+	కణుపు_has_attribute,
+	కణుపు_has_attribute_equal,
+	కణుపు_has_attribute_dashmatch,
+	కణుపు_has_attribute_includes,
+	కణుపు_has_attribute_ఉపసర్గ,
+	కణుపు_has_attribute_suffix,
+	కణుపు_has_attribute_substring,
+	కణుపు_is_మూలం,
+	కణుపు_లెక్క_siblings,
+	కణుపు_is_ఖాళీలు,
+	కణుపు_is_link,
+	కణుపు_is_సందర్శించిన,
+	కణుపు_is_hover,
+	కణుపు_is_చురుకైన,
+	కణుపు_is_focus,
+	కణుపు_is_enabled,
+	కణుపు_is_disabled,
+	కణుపు_is_checked,
+	కణుపు_is_లక్ష్యం,
+	కణుపు_is_lang,
+	కణుపు_presentational_hint,
 	ua_default_for_property,
-	set_libcss_node_data,
-	get_libcss_node_data,
+	సమితి_libcss_కణుపు_దత్తాంశం,
+	get_libcss_కణుపు_దత్తాంశం,
 };
 
 /**
@@ -145,97 +145,97 @@ static css_select_handler selection_handler = {
  * \param allow_quirks  True to permit CSS parsing quirks
  * \return Pointer to stylesheet, or NULL on failure.
  */
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks)
+css_stylesheet *nscss_create_inline_style(స్థిరరాశి uint8_t *దత్తాంశం, size_t len,
+		స్థిరరాశి అక్షరం *charset, స్థిరరాశి అక్షరం *url, bool allow_quirks)
 {
 	css_stylesheet_params params;
 	css_stylesheet *sheet;
 	css_error error;
 
-	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+	params.params_సంస్కరణ = CSS_STYLESHEET_PARAMS_సంస్కరణ_1;
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = ఖాళీ;
 	params.allow_quirks = allow_quirks;
 	params.inline_style = true;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
-	params.import = NULL;
-	params.import_pw = NULL;
-	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.resolve_pw = ఖాళీ;
+	params.import = ఖాళీ;
+	params.import_pw = ఖాళీ;
+	params.color = ns_system_రంగు;
+	params.color_pw = ఖాళీ;
+	params.font = ఖాళీ;
+	params.font_pw = ఖాళీ;
 
 	error = css_stylesheet_create(&params, &sheet);
-	if (error != CSS_OK) {
+	ఒకవేళ (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "Failed creating sheet: %d", error);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	error = css_stylesheet_append_data(sheet, data, len);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	error = css_stylesheet_append_దత్తాంశం(sheet, దత్తాంశం, len);
+	ఒకవేళ (error != CSS_OK && error != CSS_NEEDDATA) {
 		NSLOG(netsurf, INFO, "failed appending data: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	error = css_stylesheet_data_done(sheet);
-	if (error != CSS_OK) {
+	error = css_stylesheet_దత్తాంశం_పూర్తి(sheet);
+	ఒకవేళ (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "failed completing parse: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	return sheet;
+	తిరిగి sheet;
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
-static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+స్థిర శూన్య nscss_dom_user_దత్తాంశం_handler(dom_కణుపు_operation operation,
+		dom_string *కీలకం, శూన్య *దత్తాంశం, నిర్మాణం dom_కణుపు *src,
+		నిర్మాణం dom_కణుపు *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
-			key) == false || data == NULL) {
-		return;
+	ఒకవేళ (dom_string_isequal(corestring_dom_ns_కీలకం_libcss_కణుపు_దత్తాంశం,
+			కీలకం) == false || దత్తాంశం == ఖాళీ) {
+		తిరిగి;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_CLONED,
-				NULL, src, dst, data);
-		if (error != CSS_OK)
+	ఎంపిక (operation) {
+	స్థితి DOM_కణుపు_CLONED:
+		error = css_libcss_కణుపు_దత్తాంశం_handler(&selection_handler,
+				CSS_కణుపు_CLONED,
+				ఖాళీ, src, dst, దత్తాంశం);
+		ఒకవేళ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
-		break;
+		ఆపు;
 
-	case DOM_NODE_RENAMED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_MODIFIED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	స్థితి DOM_కణుపు_RENAMED:
+		error = css_libcss_కణుపు_దత్తాంశం_handler(&selection_handler,
+				CSS_కణుపు_MODIFIED,
+				ఖాళీ, src, ఖాళీ, దత్తాంశం);
+		ఒకవేళ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
-		break;
+		ఆపు;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_DELETED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	స్థితి DOM_కణుపు_IMPORTED:
+	స్థితి DOM_కణుపు_ADOPTED:
+	స్థితి DOM_కణుపు_DELETED:
+		error = css_libcss_కణుపు_దత్తాంశం_handler(&selection_handler,
+				CSS_కణుపు_DELETED,
+				ఖాళీ, src, ఖాళీ, దత్తాంశం);
+		ఒకవేళ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to delete libcss_node_data.");
-		break;
+		ఆపు;
 
-	default:
+	అప్రమేయ:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ప్రతిజ్ఞా(0);
 	}
 }
 
@@ -250,36 +250,36 @@ static void nscss_dom_user_data_handler(dom_node_operation operation,
  * \return Pointer to selection results (containing computed styles),
  *         or NULL on failure
  */
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style)
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_కణుపు *n,
+		స్థిరరాశి css_media *media,
+		స్థిరరాశి css_unit_ctx *unit_len_ctx,
+		స్థిరరాశి css_stylesheet *inline_style)
 {
 	css_computed_style *composed;
 	css_select_results *styles;
-	int pseudo_element;
+	పూర్ణాంకం pseudo_element;
 	css_error error;
 
 	/* Select style for node */
 	error = css_select_style(ctx->ctx, n, unit_len_ctx, media, inline_style,
 			&selection_handler, ctx, &styles);
 
-	if (error != CSS_OK || styles == NULL) {
+	ఒకవేళ (error != CSS_OK || styles == ఖాళీ) {
 		/* Failed selecting partial style -- bail out */
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	/* If there's a parent style, compose with partial to obtain
 	 * complete computed style for element */
-	if (ctx->parent_style != NULL) {
+	ఒకవేళ (ctx->మాతృ_style != ఖాళీ) {
 		/* Complete the computed style, by composing with the parent
 		 * element's style */
-		error = css_computed_style_compose(ctx->parent_style,
+		error = css_computed_style_compose(ctx->మాతృ_style,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		ఒకవేళ (error != CSS_OK) {
 			css_select_results_destroy(styles);
-			return NULL;
+			తిరిగి ఖాళీ;
 		}
 
 		/* Replace select_results style with composed style */
@@ -288,19 +288,19 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[CSS_PSEUDO_ELEMENT_NONE] = composed;
 	}
 
-	for (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
-			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
+	కొరకు (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
+			pseudo_element < CSS_PSEUDO_ELEMENT_లెక్క;
 			pseudo_element++) {
 
-		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
-				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
+		ఒకవేళ (pseudo_element == CSS_PSEUDO_ELEMENT_మొదటి_LETTER ||
+				pseudo_element == CSS_PSEUDO_ELEMENT_మొదటి_పంక్తి)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
-			continue;
+			కొనసాగు;
 
-		if (styles->styles[pseudo_element] == NULL)
+		ఒకవేళ (styles->styles[pseudo_element] == ఖాళీ)
 			/* There were no rules concerning this pseudo element */
-			continue;
+			కొనసాగు;
 
 		/* Complete the pseudo element's computed style, by composing
 		 * with the base element's style */
@@ -308,11 +308,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				styles->styles[pseudo_element],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		ఒకవేళ (error != CSS_OK) {
 			/* TODO: perhaps this shouldn't be quite so
 			 * catastrophic? */
 			css_select_results_destroy(styles);
-			return NULL;
+			తిరిగి ఖాళీ;
 		}
 
 		/* Replace select_results style with composed style */
@@ -320,7 +320,7 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[pseudo_element] = composed;
 	}
 
-	return styles;
+	తిరిగి styles;
 }
 
 /**
@@ -332,29 +332,29 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
  * \return Pointer to blank style, or NULL on failure
  */
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent)
+		స్థిరరాశి css_unit_ctx *unit_len_ctx,
+		స్థిరరాశి css_computed_style *మాతృ)
 {
 	css_computed_style *partial, *composed;
 	css_error error;
 
 	error = css_select_default_style(ctx->ctx,
 			&selection_handler, ctx, &partial);
-	if (error != CSS_OK) {
-		return NULL;
+	ఒకవేళ (error != CSS_OK) {
+		తిరిగి ఖాళీ;
 	}
 
 	/* TODO: Do we really need to compose?  Initial style shouldn't
 	 * have any inherited properties. */
-	error = css_computed_style_compose(parent, partial,
+	error = css_computed_style_compose(మాతృ, partial,
 			unit_len_ctx, &composed);
 	css_computed_style_destroy(partial);
-	if (error != CSS_OK) {
+	ఒకవేళ (error != CSS_OK) {
 		css_computed_style_destroy(composed);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	return composed;
+	తిరిగి composed;
 }
 
 /******************************************************************************
@@ -370,27 +370,27 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_name(void *pw, void *node, css_qname *qname)
+css_error కణుపు_name(శూన్య *pw, శూన్య *కణుపు, css_qname *qname)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *name;
 	dom_exception err;
 
-	err = dom_node_get_node_name(n, &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	err = dom_కణుపు_get_కణుపు_name(n, &name);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
-	qname->ns = NULL;
+	qname->ns = ఖాళీ;
 
 	err = dom_string_intern(name, &qname->name);
-	if (err != DOM_NO_ERR) {
+	ఒకవేళ (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_NOMEM;
+		తిరిగి CSS_NOMEM;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -407,20 +407,20 @@ css_error node_name(void *pw, void *node, css_qname *qname)
  *       be allocated using the same allocator as used by libcss during style
  *       selection.
  */
-css_error node_classes(void *pw, void *node,
+css_error కణుపు_classes(శూన్య *pw, శూన్య *కణుపు,
 		lwc_string ***classes, uint32_t *n_classes)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_exception err;
 
-	*classes = NULL;
+	*classes = ఖాళీ;
 	*n_classes = 0;
 
 	err = dom_element_get_classes(n, classes, n_classes);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -432,29 +432,29 @@ css_error node_classes(void *pw, void *node,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_id(void *pw, void *node, lwc_string **id)
+css_error కణుపు_id(శూన్య *pw, శూన్య *కణుపు, lwc_string **id)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *attr;
 	dom_exception err;
 
-	*id = NULL;
+	*id = ఖాళీ;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
-	if (attr != NULL) {
+	ఒకవేళ (attr != ఖాళీ) {
 		err = dom_string_intern(attr, id);
-		if (err != DOM_NO_ERR) {
+		ఒకవేళ (err != DOM_NO_ERR) {
 			dom_string_unref(attr);
-			return CSS_NOMEM;
+			తిరిగి CSS_NOMEM;
 		}
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -468,14 +468,14 @@ css_error node_id(void *pw, void *node, lwc_string **id)
  *
  * \post \a ancestor will contain the result, or NULL if there is no match
  */
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor)
+css_error named_ancestor_కణుపు(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, శూన్య **ancestor)
 {
-	dom_element_named_ancestor_node(node, qname->name,
-			(struct dom_element **)ancestor);
-	dom_node_unref(*ancestor);
+	dom_element_named_ancestor_కణుపు(కణుపు, qname->name,
+			(నిర్మాణం dom_element **)ancestor);
+	dom_కణుపు_unref(*ancestor);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -489,14 +489,14 @@ css_error named_ancestor_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent)
+css_error named_మాతృ_కణుపు(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, శూన్య **మాతృ)
 {
-	dom_element_named_parent_node(node, qname->name,
-			(struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_named_మాతృ_కణుపు(కణుపు, qname->name,
+			(నిర్మాణం dom_element **)మాతృ);
+	dom_కణుపు_unref(*మాతృ);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -510,61 +510,61 @@ css_error named_parent_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_sibling_కణుపు(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, శూన్య **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_కణుపు *n = కణుపు;
+	dom_కణుపు *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ఖాళీ;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_కణుపు_get_మునుపటి_sibling(n, &n);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	అయితే (n != ఖాళీ) {
+		dom_కణుపు_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_కణుపు_get_కణుపు_type(n, &type);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		ఒకవేళ (type == DOM_ELEMENT_కణుపు)
+			ఆపు;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_కణుపు_get_మునుపటి_sibling(n, &prev);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_కణుపు_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	ఒకవేళ (n != ఖాళీ) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_కణుపు_get_కణుపు_name(n, &name);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_కణుపు_unref(n);
 
-		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
+		ఒకవేళ (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
 		}
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -578,57 +578,57 @@ css_error named_sibling_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_generic_sibling_కణుపు(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, శూన్య **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_కణుపు *n = కణుపు;
+	dom_కణుపు *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ఖాళీ;
 
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_కణుపు_get_మునుపటి_sibling(n, &n);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	అయితే (n != ఖాళీ) {
+		dom_కణుపు_type type;
 		dom_string *name;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_కణుపు_get_కణుపు_type(n, &type);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
-			err = dom_node_get_node_name(n, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(n);
-				return CSS_OK;
+		ఒకవేళ (type == DOM_ELEMENT_కణుపు) {
+			err = dom_కణుపు_get_కణుపు_name(n, &name);
+			ఒకవేళ (err != DOM_NO_ERR) {
+				dom_కణుపు_unref(n);
+				తిరిగి CSS_OK;
 			}
 
-			if (dom_string_caseless_lwc_isequal(name,
+			ఒకవేళ (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
-				dom_node_unref(n);
+				dom_కణుపు_unref(n);
 				*sibling = n;
-				break;
+				ఆపు;
 			}
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_కణుపు_get_మునుపటి_sibling(n, &prev);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_కణుపు_unref(n);
 		n = prev;
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -641,12 +641,12 @@ css_error named_generic_sibling_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error parent_node(void *pw, void *node, void **parent)
+css_error మాతృ_కణుపు(శూన్య *pw, శూన్య *కణుపు, శూన్య **మాతృ)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_మాతృ_కణుపు(కణుపు, (నిర్మాణం dom_element **)మాతృ);
+	dom_కణుపు_unref(*మాతృ);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -659,49 +659,49 @@ css_error parent_node(void *pw, void *node, void **parent)
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error sibling_node(void *pw, void *node, void **sibling)
+css_error sibling_కణుపు(శూన్య *pw, శూన్య *కణుపు, శూన్య **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_కణుపు *n = కణుపు;
+	dom_కణుపు *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ఖాళీ;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_కణుపు_get_మునుపటి_sibling(n, &n);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	అయితే (n != ఖాళీ) {
+		dom_కణుపు_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_కణుపు_get_కణుపు_type(n, &type);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		ఒకవేళ (type == DOM_ELEMENT_కణుపు)
+			ఆపు;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_కణుపు_get_మునుపటి_sibling(n, &prev);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_కణుపు_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	ఒకవేళ (n != ఖాళీ) {
 		/** \todo Sort out reference counting */
-		dom_node_unref(n);
+		dom_కణుపు_unref(n);
 
 		*sibling = n;
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -715,28 +715,28 @@ css_error sibling_node(void *pw, void *node, void **sibling)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error కణుపు_has_name(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, bool *సరిపోలిక)
 {
 	nscss_select_ctx *ctx = pw;
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 
-	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
-			lwc_error_ok && *match == false) {
+	ఒకవేళ (lwc_string_isequal(qname->name, ctx->universal, సరిపోలిక) ==
+			lwc_error_ok && *సరిపోలిక == false) {
 		dom_string *name;
 		dom_exception err;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR)
-			return CSS_OK;
+		err = dom_కణుపు_get_కణుపు_name(n, &name);
+		ఒకవేళ (err != DOM_NO_ERR)
+			తిరిగి CSS_OK;
 
 		/* Element names are case insensitive in HTML */
-		*match = dom_string_caseless_lwc_isequal(name, qname->name);
+		*సరిపోలిక = dom_string_caseless_lwc_isequal(name, qname->name);
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -750,19 +750,19 @@ css_error node_has_name(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_class(void *pw, void *node,
-		lwc_string *name, bool *match)
+css_error కణుపు_has_class(శూన్య *pw, శూన్య *కణుపు,
+		lwc_string *name, bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_exception err;
 
 	/** \todo: Ensure that libdom performs case-insensitive
 	 * matching in quirks mode */
-	err = dom_element_has_class(n, name, match);
+	err = dom_element_has_class(n, name, సరిపోలిక);
 
-	assert(err == DOM_NO_ERR);
+	ప్రతిజ్ఞా(err == DOM_NO_ERR);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -776,27 +776,27 @@ css_error node_has_class(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_id(void *pw, void *node,
-		lwc_string *name, bool *match)
+css_error కణుపు_has_id(శూన్య *pw, శూన్య *కణుపు,
+		lwc_string *name, bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *attr;
 	dom_exception err;
 
-	*match = false;
+	*సరిపోలిక = false;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_OK;
 
-	if (attr != NULL) {
-		*match = dom_string_lwc_isequal(attr, name);
+	ఒకవేళ (attr != ఖాళీ) {
+		*సరిపోలిక = dom_string_lwc_isequal(attr, name);
 
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -811,28 +811,28 @@ css_error node_has_id(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error కణుపు_has_attribute(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *name;
 	dom_exception err;
 
 	err = dom_string_create_interned(
-			(const uint8_t *) lwc_string_data(qname->name),
-			lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+			(స్థిరరాశి uint8_t *) lwc_string_దత్తాంశం(qname->name),
+			lwc_string_నిడివి(qname->name), &name);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
-	err = dom_element_has_attribute(n, name, match);
-	if (err != DOM_NO_ERR) {
+	err = dom_element_has_attribute(n, name, సరిపోలిక);
+	ఒకవేళ (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_OK;
+		తిరిగి CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -848,42 +848,42 @@ css_error node_has_attribute(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error కణుపు_has_attribute_equal(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_నిడివి(విలువ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ఒకవేళ (vlen == 0) {
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(స్థిరరాశి uint8_t *) lwc_string_దత్తాంశం(qname->name),
+		lwc_string_నిడివి(qname->name), &name);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ఒకవేళ ((err != DOM_NO_ERR) || (atr_val == ఖాళీ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*సరిపోలిక = dom_string_caseless_lwc_isequal(atr_val, విలువ);
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -900,55 +900,55 @@ css_error node_has_attribute_equal(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error కణుపు_has_attribute_dashmatch(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_నిడివి(విలువ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ఒకవేళ (vlen == 0) {
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(స్థిరరాశి uint8_t *) lwc_string_దత్తాంశం(qname->name),
+		lwc_string_నిడివి(qname->name), &name);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ఒకవేళ ((err != DOM_NO_ERR) || (atr_val == ఖాళీ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*సరిపోలిక = dom_string_caseless_lwc_isequal(atr_val, విలువ);
 
 	/* check for dashmatch */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	ఒకవేళ (*సరిపోలిక == false) {
+		స్థిరరాశి అక్షరం *vdata = lwc_string_దత్తాంశం(విలువ);
+		స్థిరరాశి అక్షరం *దత్తాంశం = (స్థిరరాశి అక్షరం *) dom_string_దత్తాంశం(atr_val);
+		size_t len = dom_string_byte_నిడివి(atr_val);
 
-		if (len > vlen && data[vlen] == '-' &&
-		    strncasecmp(data, vdata, vlen) == 0) {
-				*match = true;
+		ఒకవేళ (len > vlen && దత్తాంశం[vlen] == '-' &&
+		    strncasecmp(దత్తాంశం, vdata, vlen) == 0) {
+				*సరిపోలిక = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -965,61 +965,61 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error కణుపు_has_attribute_includes(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
-	size_t vlen = lwc_string_length(value);
-	const char *p;
-	const char *start;
-	const char *end;
+	size_t vlen = lwc_string_నిడివి(విలువ);
+	స్థిరరాశి అక్షరం *p;
+	స్థిరరాశి అక్షరం *ప్రారంభం;
+	స్థిరరాశి అక్షరం *చివర;
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	if (vlen == 0) {
-		return CSS_OK;
+	ఒకవేళ (vlen == 0) {
+		తిరిగి CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(స్థిరరాశి uint8_t *) lwc_string_దత్తాంశం(qname->name),
+		lwc_string_నిడివి(qname->name), &name);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ఒకవేళ ((err != DOM_NO_ERR) || (atr_val == ఖాళీ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for match */
-	start = (const char *) dom_string_data(atr_val);
-	end = start + dom_string_byte_length(atr_val);
+	ప్రారంభం = (స్థిరరాశి అక్షరం *) dom_string_దత్తాంశం(atr_val);
+	చివర = ప్రారంభం + dom_string_byte_నిడివి(atr_val);
 
-	for (p = start; p <= end; p++) {
-		if (*p == ' ' || *p == '\0') {
-			if ((size_t) (p - start) == vlen &&
-			    strncasecmp(start,
-					lwc_string_data(value),
+	కొరకు (p = ప్రారంభం; p <= చివర; p++) {
+		ఒకవేళ (*p == ' ' || *p == '\0') {
+			ఒకవేళ ((size_t) (p - ప్రారంభం) == vlen &&
+			    strncasecmp(ప్రారంభం,
+					lwc_string_దత్తాంశం(విలువ),
 					vlen) == 0) {
-				*match = true;
-				break;
+				*సరిపోలిక = true;
+				ఆపు;
 			}
 
-			start = p + 1;
+			ప్రారంభం = p + 1;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1036,54 +1036,54 @@ css_error node_has_attribute_includes(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error కణుపు_has_attribute_ఉపసర్గ(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_నిడివి(విలువ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ఒకవేళ (vlen == 0) {
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(స్థిరరాశి uint8_t *) lwc_string_దత్తాంశం(qname->name),
+		lwc_string_నిడివి(qname->name), &name);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ఒకవేళ ((err != DOM_NO_ERR) || (atr_val == ఖాళీ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*సరిపోలిక = dom_string_caseless_lwc_isequal(atr_val, విలువ);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	ఒకవేళ (*సరిపోలిక == false) {
+		స్థిరరాశి అక్షరం *దత్తాంశం = (స్థిరరాశి అక్షరం *) dom_string_దత్తాంశం(atr_val);
+		size_t len = dom_string_byte_నిడివి(atr_val);
 
-		if ((len >= vlen) &&
-		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
-			*match = true;
+		ఒకవేళ ((len >= vlen) &&
+		    (strncasecmp(దత్తాంశం, lwc_string_దత్తాంశం(విలువ), vlen) == 0)) {
+			*సరిపోలిక = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1100,50 +1100,50 @@ css_error node_has_attribute_prefix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error కణుపు_has_attribute_suffix(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_నిడివి(విలువ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ఒకవేళ (vlen == 0) {
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(స్థిరరాశి uint8_t *) lwc_string_దత్తాంశం(qname->name),
+		lwc_string_నిడివి(qname->name), &name);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ఒకవేళ ((err != DOM_NO_ERR) || (atr_val == ఖాళీ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*సరిపోలిక = dom_string_caseless_lwc_isequal(atr_val, విలువ);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	ఒకవేళ (*సరిపోలిక == false) {
+		స్థిరరాశి అక్షరం *దత్తాంశం = (స్థిరరాశి అక్షరం *) dom_string_దత్తాంశం(atr_val);
+		size_t len = dom_string_byte_నిడివి(atr_val);
 
-		const char *start = (char *) data + len - vlen;
+		స్థిరరాశి అక్షరం *ప్రారంభం = (అక్షరం *) దత్తాంశం + len - vlen;
 
-		if ((len >= vlen) &&
-		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
-			*match = true;
+		ఒకవేళ ((len >= vlen) &&
+		    (strncasecmp(ప్రారంభం, lwc_string_దత్తాంశం(విలువ), vlen) == 0)) {
+			*సరిపోలిక = true;
 		}
 
 
@@ -1151,7 +1151,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1168,63 +1168,63 @@ css_error node_has_attribute_suffix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error కణుపు_has_attribute_substring(శూన్య *pw, శూన్య *కణుపు,
+		స్థిరరాశి css_qname *qname, lwc_string *విలువ,
+		bool *సరిపోలిక)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_నిడివి(విలువ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ఒకవేళ (vlen == 0) {
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(స్థిరరాశి uint8_t *) lwc_string_దత్తాంశం(qname->name),
+		lwc_string_నిడివి(qname->name), &name);
+	ఒకవేళ (err != DOM_NO_ERR)
+		తిరిగి CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ఒకవేళ ((err != DOM_NO_ERR) || (atr_val == ఖాళీ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*సరిపోలిక = false;
+		తిరిగి CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*సరిపోలిక = dom_string_caseless_lwc_isequal(atr_val, విలువ);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *start = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
-		const char *last_start = start + len - vlen;
+	ఒకవేళ (*సరిపోలిక == false) {
+		స్థిరరాశి అక్షరం *vdata = lwc_string_దత్తాంశం(విలువ);
+		స్థిరరాశి అక్షరం *ప్రారంభం = (స్థిరరాశి అక్షరం *) dom_string_దత్తాంశం(atr_val);
+		size_t len = dom_string_byte_నిడివి(atr_val);
+		స్థిరరాశి అక్షరం *చివరి_ప్రారంభం = ప్రారంభం + len - vlen;
 
-		if (len >= vlen) {
-			while (start <= last_start) {
-				if (strncasecmp(start, vdata,
+		ఒకవేళ (len >= vlen) {
+			అయితే (ప్రారంభం <= చివరి_ప్రారంభం) {
+				ఒకవేళ (strncasecmp(ప్రారంభం, vdata,
 						vlen) == 0) {
-					*match = true;
-					break;
+					*సరిపోలిక = true;
+					ఆపు;
 				}
 
-				start++;
+				ప్రారంభం++;
 			}
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1237,71 +1237,71 @@ css_error node_has_attribute_substring(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_root(void *pw, void *node, bool *match)
+css_error కణుపు_is_మూలం(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
-	dom_node *n = node;
-	dom_node *parent;
-	dom_node_type type;
+	dom_కణుపు *n = కణుపు;
+	dom_కణుపు *మాతృ;
+	dom_కణుపు_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_కణుపు_get_మాతృ_కణుపు(n, &మాతృ);
+	ఒకవేళ (err != DOM_NO_ERR) {
+		తిరిగి CSS_NOMEM;
 	}
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	ఒకవేళ (మాతృ != ఖాళీ) {
+		err = dom_కణుపు_get_కణుపు_type(మాతృ, &type);
 
-		dom_node_unref(parent);
+		dom_కణుపు_unref(మాతృ);
 
-		if (err != DOM_NO_ERR)
-			return CSS_NOMEM;
+		ఒకవేళ (err != DOM_NO_ERR)
+			తిరిగి CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
-			*match = false;
-			return CSS_OK;
+		ఒకవేళ (type != DOM_DOCUMENT_కణుపు) {
+			*సరిపోలిక = false;
+			తిరిగి CSS_OK;
 		}
 	}
 
-	*match = true;
+	*సరిపోలిక = true;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
-static int
-node_count_siblings_check(dom_node *node,
+స్థిర పూర్ణాంకం
+కణుపు_లెక్క_siblings_check(dom_కణుపు *కణుపు,
 			  bool check_name,
 			  dom_string *name)
 {
-	dom_node_type type;
-	int ret = 0;
+	dom_కణుపు_type type;
+	పూర్ణాంకం ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
-		return 0;
+	ఒకవేళ (కణుపు == ఖాళీ)
+		తిరిగి 0;
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
-		return 0;
+	exc = dom_కణుపు_get_కణుపు_type(కణుపు, &type);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_కణుపు)) {
+		తిరిగి 0;
 	}
 
-	if (check_name) {
-		dom_string *node_name = NULL;
-		exc = dom_node_get_node_name(node, &node_name);
+	ఒకవేళ (check_name) {
+		dom_string *కణుపు_name = ఖాళీ;
+		exc = dom_కణుపు_get_కణుపు_name(కణుపు, &కణుపు_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		ఒకవేళ ((exc == DOM_NO_ERR) && (కణుపు_name != ఖాళీ)) {
 
-			if (dom_string_caseless_isequal(name,
-							node_name)) {
+			ఒకవేళ (dom_string_caseless_isequal(name,
+							కణుపు_name)) {
 				ret = 1;
 			}
-			dom_string_unref(node_name);
+			dom_string_unref(కణుపు_name);
 		}
-	} else {
+	} లేకపోతే {
 		ret = 1;
 	}
 
-	return ret;
+	తిరిగి ret;
 }
 
 /**
@@ -1316,58 +1316,58 @@ node_count_siblings_check(dom_node *node,
  *
  * \post \a count will contain the number of siblings
  */
-css_error node_count_siblings(void *pw, void *n, bool same_name,
-		bool after, int32_t *count)
+css_error కణుపు_లెక్క_siblings(శూన్య *pw, శూన్య *n, bool same_name,
+		bool after, int32_t *లెక్క)
 {
 	int32_t cnt = 0;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *కణుపు_name = ఖాళీ;
 
-	if (same_name) {
-		dom_node *node = n;
-		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-			return CSS_NOMEM;
+	ఒకవేళ (same_name) {
+		dom_కణుపు *కణుపు = n;
+		exc = dom_కణుపు_get_కణుపు_name(కణుపు, &కణుపు_name);
+		ఒకవేళ ((exc != DOM_NO_ERR) || (కణుపు_name == ఖాళీ)) {
+			తిరిగి CSS_NOMEM;
 		}
 	}
 
-	if (after) {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+	ఒకవేళ (after) {
+		dom_కణుపు *కణుపు = dom_కణుపు_ref(n);
+		dom_కణుపు *తదుపరి;
 
-		do {
-			exc = dom_node_get_next_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		చేయి {
+			exc = dom_కణుపు_get_తదుపరి_sibling(కణుపు, &తదుపరి);
+			ఒకవేళ ((exc != DOM_NO_ERR))
+				ఆపు;
 
-			dom_node_unref(node);
-			node = next;
+			dom_కణుపు_unref(కణుపు);
+			కణుపు = తదుపరి;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
-	} else {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+			cnt += కణుపు_లెక్క_siblings_check(కణుపు, same_name, కణుపు_name);
+		} అయితే (కణుపు != ఖాళీ);
+	} లేకపోతే {
+		dom_కణుపు *కణుపు = dom_కణుపు_ref(n);
+		dom_కణుపు *తదుపరి;
 
-		do {
-			exc = dom_node_get_previous_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		చేయి {
+			exc = dom_కణుపు_get_మునుపటి_sibling(కణుపు, &తదుపరి);
+			ఒకవేళ ((exc != DOM_NO_ERR))
+				ఆపు;
 
-			dom_node_unref(node);
-			node = next;
+			dom_కణుపు_unref(కణుపు);
+			కణుపు = తదుపరి;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
+			cnt += కణుపు_లెక్క_siblings_check(కణుపు, same_name, కణుపు_name);
 
-		} while (node != NULL);
+		} అయితే (కణుపు != ఖాళీ);
 	}
 
-	if (node_name != NULL) {
-		dom_string_unref(node_name);
+	ఒకవేళ (కణుపు_name != ఖాళీ) {
+		dom_string_unref(కణుపు_name);
 	}
 
-	*count = cnt;
-	return CSS_OK;
+	*లెక్క = cnt;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1380,43 +1380,43 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
  *
  * \post \a match will contain true if the node is empty and false otherwise.
  */
-css_error node_is_empty(void *pw, void *node, bool *match)
+css_error కణుపు_is_ఖాళీలు(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
-	dom_node *n = node, *next;
+	dom_కణుపు *n = కణుపు, *తదుపరి;
 	dom_exception err;
 
-	*match = true;
+	*సరిపోలిక = true;
 
-	err = dom_node_get_first_child(n, &n);
-	if (err != DOM_NO_ERR) {
-		return CSS_BADPARM;
+	err = dom_కణుపు_get_మొదటి_బిడ్డ(n, &n);
+	ఒకవేళ (err != DOM_NO_ERR) {
+		తిరిగి CSS_BADPARM;
 	}
 
-	while (n != NULL) {
-		dom_node_type ntype;
-		err = dom_node_get_node_type(n, &ntype);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+	అయితే (n != ఖాళీ) {
+		dom_కణుపు_type ntype;
+		err = dom_కణుపు_get_కణుపు_type(n, &ntype);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
-		    ntype == DOM_TEXT_NODE) {
-			*match = false;
-			dom_node_unref(n);
-			break;
+		ఒకవేళ (ntype == DOM_ELEMENT_కణుపు ||
+		    ntype == DOM_పాఠ్యం_కణుపు) {
+			*సరిపోలిక = false;
+			dom_కణుపు_unref(n);
+			ఆపు;
 		}
 
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+		err = dom_కణుపు_get_తదుపరి_sibling(n, &తదుపరి);
+		ఒకవేళ (err != DOM_NO_ERR) {
+			dom_కణుపు_unref(n);
+			తిరిగి CSS_BADPARM;
 		}
-		dom_node_unref(n);
-		n = next;
+		dom_కణుపు_unref(n);
+		n = తదుపరి;
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1429,32 +1429,32 @@ css_error node_is_empty(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_link(void *pw, void *n, bool *match)
+css_error కణుపు_is_link(శూన్య *pw, శూన్య *n, bool *సరిపోలిక)
 {
-	dom_node *node = n;
+	dom_కణుపు *కణుపు = n;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *కణుపు_name = ఖాళీ;
 
-	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_కణుపు_get_కణుపు_name(కణుపు, &కణుపు_name);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (కణుపు_name == ఖాళీ)) {
+		తిరిగి CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	ఒకవేళ (dom_string_caseless_lwc_isequal(కణుపు_name, corestring_lwc_a)) {
 		bool has_href;
-		exc = dom_element_has_attribute(node, corestring_dom_href,
+		exc = dom_element_has_attribute(కణుపు, corestring_dom_href,
 				&has_href);
-		if ((exc == DOM_NO_ERR) && (has_href)) {
-			*match = true;
-		} else {
-			*match = false;
+		ఒకవేళ ((exc == DOM_NO_ERR) && (has_href)) {
+			*సరిపోలిక = true;
+		} లేకపోతే {
+			*సరిపోలిక = false;
 		}
-	} else {
-		*match = false;
+	} లేకపోతే {
+		*సరిపోలిక = false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(కణుపు_name);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1468,63 +1468,63 @@ css_error node_is_link(void *pw, void *n, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_visited(void *pw, void *node, bool *match)
+css_error కణుపు_is_సందర్శించిన(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
 	nserror error;
-	const struct url_data *data;
+	స్థిరరాశి నిర్మాణం url_దత్తాంశం *దత్తాంశం;
 
 	dom_exception exc;
-	dom_node *n = node;
-	dom_string *s = NULL;
+	dom_కణుపు *n = కణుపు;
+	dom_string *s = ఖాళీ;
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	exc = dom_node_get_node_name(n, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_కణుపు_get_కణుపు_name(n, &s);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (s == ఖాళీ)) {
+		తిరిగి CSS_NOMEM;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
+	ఒకవేళ (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
 		/* Can't be visited; not ancher element */
 		dom_string_unref(s);
-		return CSS_OK;
+		తిరిగి CSS_OK;
 	}
 
 	/* Finished with node name string */
 	dom_string_unref(s);
-	s = NULL;
+	s = ఖాళీ;
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
+	ఒకవేళ ((exc != DOM_NO_ERR) || (s == ఖాళీ)) {
 		/* Can't be visited; not got a URL */
-		return CSS_OK;
+		తిరిగి CSS_OK;
 	}
 
 	/* Make href absolute */
 	/* TODO: this duplicates what we do for box->href
 	 *       should we put the absolute URL on the dom node? */
-	error = nsurl_join(ctx->base_url, dom_string_data(s), &url);
+	error = nsurl_join(ctx->పునాది_url, dom_string_దత్తాంశం(s), &url);
 
 	/* Finished with href string */
 	dom_string_unref(s);
 
-	if (error != NSERROR_OK) {
+	ఒకవేళ (error != NSERROR_OK) {
 		/* Couldn't make nsurl object */
-		return CSS_NOMEM;
+		తిరిగి CSS_NOMEM;
 	}
 
-	data = urldb_get_url_data(url);
+	దత్తాంశం = urldb_get_url_దత్తాంశం(url);
 
 	/* Visited if in the db and has
 	 * non-zero visit count */
-	if (data != NULL && data->visits > 0)
-		*match = true;
+	ఒకవేళ (దత్తాంశం != ఖాళీ && దత్తాంశం->visits > 0)
+		*సరిపోలిక = true;
 
 	nsurl_unref(url);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1537,13 +1537,13 @@ css_error node_is_visited(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_hover(void *pw, void *node, bool *match)
+css_error కణుపు_is_hover(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
 	/** \todo Support hovering */
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1556,13 +1556,13 @@ css_error node_is_hover(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_active(void *pw, void *node, bool *match)
+css_error కణుపు_is_చురుకైన(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
 	/** \todo Support active nodes */
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1575,13 +1575,13 @@ css_error node_is_active(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_focus(void *pw, void *node, bool *match)
+css_error కణుపు_is_focus(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
 	/** \todo Support focussed nodes */
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1594,13 +1594,13 @@ css_error node_is_focus(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is enabled and false otherwise.
  */
-css_error node_is_enabled(void *pw, void *node, bool *match)
+css_error కణుపు_is_enabled(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
 	/** \todo Support enabled nodes */
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1613,13 +1613,13 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is disabled and false otherwise.
  */
-css_error node_is_disabled(void *pw, void *node, bool *match)
+css_error కణుపు_is_disabled(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
 	/** \todo Support disabled nodes */
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1632,13 +1632,13 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is checked and false otherwise.
  */
-css_error node_is_checked(void *pw, void *node, bool *match)
+css_error కణుపు_is_checked(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
 	/** \todo Support checked nodes */
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1651,13 +1651,13 @@ css_error node_is_checked(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node matches and false otherwise.
  */
-css_error node_is_target(void *pw, void *node, bool *match)
+css_error కణుపు_is_లక్ష్యం(శూన్య *pw, శూన్య *కణుపు, bool *సరిపోలిక)
 {
 	/** \todo Support target */
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1671,14 +1671,14 @@ css_error node_is_target(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_lang(void *pw, void *node,
-		lwc_string *lang, bool *match)
+css_error కణుపు_is_lang(శూన్య *pw, శూన్య *కణుపు,
+		lwc_string *lang, bool *సరిపోలిక)
 {
 	/** \todo Support languages */
 
-	*match = false;
+	*సరిపోలిక = false;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -1690,77 +1690,77 @@ css_error node_is_lang(void *pw, void *node,
  * \return CSS_OK       on success,
  *         CSS_INVALID  if the property should not have a user-agent default.
  */
-css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
+css_error ua_default_for_property(శూన్య *pw, uint32_t property, css_hint *hint)
 {
-	if (property == CSS_PROP_COLOR) {
-		hint->data.color = 0xff000000;
-		hint->status = CSS_COLOR_COLOR;
-	} else if (property == CSS_PROP_FONT_FAMILY) {
-		hint->data.strings = NULL;
-		switch (nsoption_int(font_default)) {
-		case PLOT_FONT_FAMILY_SANS_SERIF:
-			hint->status = CSS_FONT_FAMILY_SANS_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_SERIF:
-			hint->status = CSS_FONT_FAMILY_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_MONOSPACE:
-			hint->status = CSS_FONT_FAMILY_MONOSPACE;
-			break;
-		case PLOT_FONT_FAMILY_CURSIVE:
-			hint->status = CSS_FONT_FAMILY_CURSIVE;
-			break;
-		case PLOT_FONT_FAMILY_FANTASY:
-			hint->status = CSS_FONT_FAMILY_FANTASY;
-			break;
+	ఒకవేళ (property == CSS_PROP_COLOR) {
+		hint->దత్తాంశం.color = 0xff000000;
+		hint->స్థితి_2 = CSS_COLOR_COLOR;
+	} లేకపోతే ఒకవేళ (property == CSS_PROP_FONT_FAMILY) {
+		hint->దత్తాంశం.అక్షరశ్రేణులు = ఖాళీ;
+		ఎంపిక (nsoption_int(font_default)) {
+		స్థితి PLOT_FONT_FAMILY_SANS_SERIF:
+			hint->స్థితి_2 = CSS_FONT_FAMILY_SANS_SERIF;
+			ఆపు;
+		స్థితి PLOT_FONT_FAMILY_SERIF:
+			hint->స్థితి_2 = CSS_FONT_FAMILY_SERIF;
+			ఆపు;
+		స్థితి PLOT_FONT_FAMILY_MONOSPACE:
+			hint->స్థితి_2 = CSS_FONT_FAMILY_MONOSPACE;
+			ఆపు;
+		స్థితి PLOT_FONT_FAMILY_CURSIVE:
+			hint->స్థితి_2 = CSS_FONT_FAMILY_CURSIVE;
+			ఆపు;
+		స్థితి PLOT_FONT_FAMILY_FANTASY:
+			hint->స్థితి_2 = CSS_FONT_FAMILY_FANTASY;
+			ఆపు;
 		}
-	} else if (property == CSS_PROP_QUOTES) {
+	} లేకపోతే ఒకవేళ (property == CSS_PROP_QUOTES) {
 		/** \todo Not exactly useful :) */
-		hint->data.strings = NULL;
-		hint->status = CSS_QUOTES_NONE;
-	} else if (property == CSS_PROP_VOICE_FAMILY) {
+		hint->దత్తాంశం.అక్షరశ్రేణులు = ఖాళీ;
+		hint->స్థితి_2 = CSS_QUOTES_NONE;
+	} లేకపోతే ఒకవేళ (property == CSS_PROP_VOICE_FAMILY) {
 		/** \todo Fix this when we have voice-family done */
-		hint->data.strings = NULL;
-		hint->status = 0;
-	} else {
-		return CSS_INVALID;
+		hint->దత్తాంశం.అక్షరశ్రేణులు = ఖాళీ;
+		hint->స్థితి_2 = 0;
+	} లేకపోతే {
+		తిరిగి CSS_INVALID;
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
-css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
+css_error సమితి_libcss_కణుపు_దత్తాంశం(శూన్య *pw, శూన్య *కణుపు, శూన్య *libcss_కణుపు_దత్తాంశం)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_exception err;
-	void *old_node_data;
+	శూన్య *old_కణుపు_దత్తాంశం;
 
 	/* Set this node's node data */
-	err = dom_node_set_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data, nscss_dom_user_data_handler,
-			(void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_కణుపు_సమితి_user_దత్తాంశం(n,
+			corestring_dom_ns_కీలకం_libcss_కణుపు_దత్తాంశం,
+			libcss_కణుపు_దత్తాంశం, nscss_dom_user_దత్తాంశం_handler,
+			(శూన్య *) &old_కణుపు_దత్తాంశం);
+	ఒకవేళ (err != DOM_NO_ERR) {
+		తిరిగి CSS_NOMEM;
 	}
 
-	assert(old_node_data == NULL);
+	ప్రతిజ్ఞా(old_కణుపు_దత్తాంశం == ఖాళీ);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
-css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
+css_error get_libcss_కణుపు_దత్తాంశం(శూన్య *pw, శూన్య *కణుపు, శూన్య **libcss_కణుపు_దత్తాంశం)
 {
-	dom_node *n = node;
+	dom_కణుపు *n = కణుపు;
 	dom_exception err;
 
 	/* Get this node's node data */
-	err = dom_node_get_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_కణుపు_get_user_దత్తాంశం(n,
+			corestring_dom_ns_కీలకం_libcss_కణుపు_దత్తాంశం,
+			libcss_కణుపు_దత్తాంశం);
+	ఒకవేళ (err != DOM_NO_ERR) {
+		తిరిగి CSS_NOMEM;
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }

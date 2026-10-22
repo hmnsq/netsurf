@@ -26,18 +26,18 @@
  */
 
 
-#include "utils/errors.h"
-#include "utils/talloc.h"
-#include "utils/nsurl.h"
-#include "netsurf/types.h"
-#include "netsurf/mouse.h"
-#include "desktop/scrollbar.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/talloc.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "netsurf/types.h"
+#అన్తర్భావ "netsurf/mouse.h"
+#అన్తర్భావ "desktop/scrollbar.h"
 
-#include "html/private.h"
-#include "html/form_internal.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/form_internal.h"
+#అన్తర్భావ "html/interaction.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_manipulate.h"
 
 
 /**
@@ -46,65 +46,65 @@
  * \param b The box being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_talloc_destructor(struct box *b)
+స్థిర పూర్ణాంకం box_talloc_destructor(నిర్మాణం box *b)
 {
-	struct html_scrollbar_data *data;
+	నిర్మాణం html_scrollbar_దత్తాంశం *దత్తాంశం;
 
-	if ((b->flags & STYLE_OWNED) && b->style != NULL) {
+	ఒకవేళ ((b->flags & STYLE_OWNED) && b->style != ఖాళీ) {
 		css_computed_style_destroy(b->style);
-		b->style = NULL;
+		b->style = ఖాళీ;
 	}
 
-	if (b->styles != NULL) {
+	ఒకవేళ (b->styles != ఖాళీ) {
 		css_select_results_destroy(b->styles);
-		b->styles = NULL;
+		b->styles = ఖాళీ;
 	}
 
-	if (b->href != NULL)
+	ఒకవేళ (b->href != ఖాళీ)
 		nsurl_unref(b->href);
 
 	lwc_string_unref(b->id);
 
-	if (b->node != NULL) {
-		dom_node_unref(b->node);
+	ఒకవేళ (b->కణుపు != ఖాళీ) {
+		dom_కణుపు_unref(b->కణుపు);
 	}
 
-	if (b->scroll_x != NULL) {
-		data = scrollbar_get_data(b->scroll_x);
+	ఒకవేళ (b->scroll_x != ఖాళీ) {
+		దత్తాంశం = scrollbar_get_దత్తాంశం(b->scroll_x);
 		scrollbar_destroy(b->scroll_x);
-		free(data);
+		విడుదల(దత్తాంశం);
 	}
 
-	if (b->scroll_y != NULL) {
-		data = scrollbar_get_data(b->scroll_y);
+	ఒకవేళ (b->scroll_y != ఖాళీ) {
+		దత్తాంశం = scrollbar_get_దత్తాంశం(b->scroll_y);
 		scrollbar_destroy(b->scroll_y);
-		free(data);
+		విడుదల(దత్తాంశం);
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
+నిర్మాణం box *
 box_create(css_select_results *styles,
 	   css_computed_style *style,
 	   bool style_owned,
 	   nsurl *href,
-	   const char *target,
-	   const char *title,
+	   స్థిరరాశి అక్షరం *లక్ష్యం,
+	   స్థిరరాశి అక్షరం *title,
 	   lwc_string *id,
-	   void *context)
+	   శూన్య *context)
 {
-	unsigned int i;
-	struct box *box;
+	గుర్తులేని పూర్ణాంకం i;
+	నిర్మాణం box *box;
 
-	box = talloc(context, struct box);
-	if (!box) {
-		return 0;
+	box = talloc(context, నిర్మాణం box);
+	ఒకవేళ (!box) {
+		తిరిగి 0;
 	}
 
-	talloc_set_destructor(box, box_talloc_destructor);
+	talloc_సమితి_destructor(box, box_talloc_destructor);
 
 	box->type = BOX_INLINE;
 	box->flags = 0;
@@ -112,116 +112,116 @@ box_create(css_select_results *styles,
 	box->styles = styles;
 	box->style = style;
 	box->x = box->y = 0;
-	box->width = UNKNOWN_WIDTH;
-	box->height = 0;
+	box->వెడల్పు = UNKNOWN_వెడల్పు;
+	box->ఎత్తు = 0;
 	box->descendant_x0 = box->descendant_y0 = 0;
 	box->descendant_x1 = box->descendant_y1 = 0;
-	for (i = 0; i != 4; i++)
-		box->margin[i] = box->padding[i] = box->border[i].width = 0;
-	box->scroll_x = box->scroll_y = NULL;
-	box->min_width = 0;
-	box->max_width = UNKNOWN_MAX_WIDTH;
-	box->byte_offset = 0;
-	box->text = NULL;
-	box->length = 0;
+	కొరకు (i = 0; i != 4; i++)
+		box->margin[i] = box->padding[i] = box->border[i].వెడల్పు = 0;
+	box->scroll_x = box->scroll_y = ఖాళీ;
+	box->min_వెడల్పు = 0;
+	box->max_వెడల్పు = UNKNOWN_MAX_వెడల్పు;
+	box->byte_స్థానభ్రంశం = 0;
+	box->పాఠ్యం = ఖాళీ;
+	box->నిడివి = 0;
 	box->space = 0;
-	box->href = (href == NULL) ? NULL : nsurl_ref(href);
-	box->target = target;
+	box->href = (href == ఖాళీ) ? ఖాళీ : nsurl_ref(href);
+	box->లక్ష్యం = లక్ష్యం;
 	box->title = title;
 	box->columns = 1;
-	box->rows = 1;
-	box->start_column = 0;
-	box->next = NULL;
-	box->prev = NULL;
-	box->children = NULL;
-	box->last = NULL;
-	box->parent = NULL;
-	box->inline_end = NULL;
-	box->float_children = NULL;
-	box->float_container = NULL;
-	box->next_float = NULL;
-	box->cached_place_below_level = 0;
-	box->list_value = 1;
-	box->list_marker = NULL;
-	box->col = NULL;
-	box->gadget = NULL;
-	box->usemap = NULL;
+	box->అడ్డువరుసలు = 1;
+	box->ప్రారంభం_స్తంభం = 0;
+	box->తదుపరి = ఖాళీ;
+	box->prev = ఖాళీ;
+	box->children = ఖాళీ;
+	box->చివరి = ఖాళీ;
+	box->మాతృ = ఖాళీ;
+	box->inline_చివర = ఖాళీ;
+	box->float_children = ఖాళీ;
+	box->float_container = ఖాళీ;
+	box->తదుపరి_float = ఖాళీ;
+	box->cached_ఉంచు_క్రింద_level = 0;
+	box->list_విలువ = 1;
+	box->list_marker = ఖాళీ;
+	box->నిలువు = ఖాళీ;
+	box->gadget = ఖాళీ;
+	box->usemap = ఖాళీ;
 	box->id = id;
-	box->background = NULL;
-	box->object = NULL;
-	box->object_params = NULL;
-	box->iframe = NULL;
-	box->node = NULL;
+	box->background = ఖాళీ;
+	box->object = ఖాళీ;
+	box->object_params = ఖాళీ;
+	box->iframe = ఖాళీ;
+	box->కణుపు = ఖాళీ;
 
-	return box;
+	తిరిగి box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_add_child(struct box *parent, struct box *child)
+శూన్య box_కూడు_బిడ్డ(నిర్మాణం box *మాతృ, నిర్మాణం box *బిడ్డ)
 {
-	assert(parent);
-	assert(child);
+	ప్రతిజ్ఞా(మాతృ);
+	ప్రతిజ్ఞా(బిడ్డ);
 
-	if (parent->children != 0) {	/* has children already */
-		parent->last->next = child;
-		child->prev = parent->last;
-	} else {			/* this is the first child */
-		parent->children = child;
-		child->prev = 0;
+	ఒకవేళ (మాతృ->children != 0) {	/* has children already */
+		మాతృ->చివరి->తదుపరి = బిడ్డ;
+		బిడ్డ->prev = మాతృ->చివరి;
+	} లేకపోతే {			/* this is the first child */
+		మాతృ->children = బిడ్డ;
+		బిడ్డ->prev = 0;
 	}
 
-	parent->last = child;
-	child->parent = parent;
+	మాతృ->చివరి = బిడ్డ;
+	బిడ్డ->మాతృ = మాతృ;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_insert_sibling(struct box *box, struct box *new_box)
+శూన్య box_చొప్పించు_sibling(నిర్మాణం box *box, నిర్మాణం box *new_box)
 {
-	new_box->parent = box->parent;
+	new_box->మాతృ = box->మాతృ;
 	new_box->prev = box;
-	new_box->next = box->next;
-	box->next = new_box;
-	if (new_box->next)
-		new_box->next->prev = new_box;
-	else if (new_box->parent)
-		new_box->parent->last = new_box;
+	new_box->తదుపరి = box->తదుపరి;
+	box->తదుపరి = new_box;
+	ఒకవేళ (new_box->తదుపరి)
+		new_box->తదుపరి->prev = new_box;
+	లేకపోతే ఒకవేళ (new_box->మాతృ)
+		new_box->మాతృ->చివరి = new_box;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_unlink_and_free(struct box *box)
+శూన్య box_unlink_and_free(నిర్మాణం box *box)
 {
-	struct box *parent = box->parent;
-	struct box *next = box->next;
-	struct box *prev = box->prev;
+	నిర్మాణం box *మాతృ = box->మాతృ;
+	నిర్మాణం box *తదుపరి = box->తదుపరి;
+	నిర్మాణం box *prev = box->prev;
 
-	if (parent) {
-		if (parent->children == box)
-			parent->children = next;
-		if (parent->last == box)
-			parent->last = next ? next : prev;
+	ఒకవేళ (మాతృ) {
+		ఒకవేళ (మాతృ->children == box)
+			మాతృ->children = తదుపరి;
+		ఒకవేళ (మాతృ->చివరి == box)
+			మాతృ->చివరి = తదుపరి ? తదుపరి : prev;
 	}
 
-	if (prev)
-		prev->next = next;
-	if (next)
-		next->prev = prev;
+	ఒకవేళ (prev)
+		prev->తదుపరి = తదుపరి;
+	ఒకవేళ (తదుపరి)
+		తదుపరి->prev = prev;
 
 	box_free(box);
 }
 
 
 /* Exported function documented in html/box.h */
-void box_free(struct box *box)
+శూన్య box_free(నిర్మాణం box *box)
 {
-	struct box *child, *next;
+	నిర్మాణం box *బిడ్డ, *తదుపరి;
 
 	/* free children first */
-	for (child = box->children; child; child = next) {
-		next = child->next;
-		box_free(child);
+	కొరకు (బిడ్డ = box->children; బిడ్డ; బిడ్డ = తదుపరి) {
+		తదుపరి = బిడ్డ->తదుపరి;
+		box_free(బిడ్డ);
 	}
 
 	/* last this box */
@@ -230,16 +230,16 @@ void box_free(struct box *box)
 
 
 /* Exported function documented in html/box.h */
-void box_free_box(struct box *box)
+శూన్య box_free_box(నిర్మాణం box *box)
 {
-	if (!(box->flags & CLONE)) {
-		if (box->gadget)
+	ఒకవేళ (!(box->flags & CLONE)) {
+		ఒకవేళ (box->gadget)
 			form_free_control(box->gadget);
-		if (box->scroll_x != NULL)
+		ఒకవేళ (box->scroll_x != ఖాళీ)
 			scrollbar_destroy(box->scroll_x);
-		if (box->scroll_y != NULL)
+		ఒకవేళ (box->scroll_y != ఖాళీ)
 			scrollbar_destroy(box->scroll_y);
-		if (box->styles != NULL)
+		ఒకవేళ (box->styles != ఖాళీ)
 			css_select_results_destroy(box->styles);
 	}
 
@@ -249,102 +249,102 @@ void box_free_box(struct box *box)
 
 /* exported interface documented in html/box.h */
 nserror
-box_handle_scrollbars(struct content *c,
-		      struct box *box,
+box_handle_scrollbars(నిర్మాణం content *c,
+		      నిర్మాణం box *box,
 		      bool bottom,
-		      bool right)
+		      bool కుడి)
 {
-	struct html_scrollbar_data *data;
-	int visible_width, visible_height;
-	int full_width, full_height;
+	నిర్మాణం html_scrollbar_దత్తాంశం *దత్తాంశం;
+	పూర్ణాంకం visible_వెడల్పు, visible_ఎత్తు;
+	పూర్ణాంకం నిండిన_వెడల్పు, నిండిన_ఎత్తు;
 	nserror res;
 
-	if (!bottom && box->scroll_x != NULL) {
-		data = scrollbar_get_data(box->scroll_x);
+	ఒకవేళ (!bottom && box->scroll_x != ఖాళీ) {
+		దత్తాంశం = scrollbar_get_దత్తాంశం(box->scroll_x);
 		scrollbar_destroy(box->scroll_x);
-		free(data);
-		box->scroll_x = NULL;
+		విడుదల(దత్తాంశం);
+		box->scroll_x = ఖాళీ;
 	}
 
-	if (!right && box->scroll_y != NULL) {
-		data = scrollbar_get_data(box->scroll_y);
+	ఒకవేళ (!కుడి && box->scroll_y != ఖాళీ) {
+		దత్తాంశం = scrollbar_get_దత్తాంశం(box->scroll_y);
 		scrollbar_destroy(box->scroll_y);
-		free(data);
-		box->scroll_y = NULL;
+		విడుదల(దత్తాంశం);
+		box->scroll_y = ఖాళీ;
 	}
 
-	if (!bottom && !right) {
-		return NSERROR_OK;
+	ఒకవేళ (!bottom && !కుడి) {
+		తిరిగి NSERROR_OK;
 	}
 
-	visible_width = box->width + box->padding[RIGHT] + box->padding[LEFT];
-	visible_height = box->height + box->padding[TOP] + box->padding[BOTTOM];
+	visible_వెడల్పు = box->వెడల్పు + box->padding[కుడి_2] + box->padding[ఎడమ_2];
+	visible_ఎత్తు = box->ఎత్తు + box->padding[శిఖరం_2] + box->padding[BOTTOM];
 
-	full_width = ((box->descendant_x1 - box->border[RIGHT].width) >
-			visible_width) ?
-			box->descendant_x1 + box->padding[RIGHT] :
-			visible_width;
-	full_height = ((box->descendant_y1 - box->border[BOTTOM].width) >
-			visible_height) ?
+	నిండిన_వెడల్పు = ((box->descendant_x1 - box->border[కుడి_2].వెడల్పు) >
+			visible_వెడల్పు) ?
+			box->descendant_x1 + box->padding[కుడి_2] :
+			visible_వెడల్పు;
+	నిండిన_ఎత్తు = ((box->descendant_y1 - box->border[BOTTOM].వెడల్పు) >
+			visible_ఎత్తు) ?
 			box->descendant_y1 + box->padding[BOTTOM] :
-			visible_height;
+			visible_ఎత్తు;
 
-	if (right) {
-		if (box->scroll_y == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_NOMEM;
+	ఒకవేళ (కుడి) {
+		ఒకవేళ (box->scroll_y == ఖాళీ) {
+			దత్తాంశం = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం html_scrollbar_దత్తాంశం));
+			ఒకవేళ (దత్తాంశం == ఖాళీ) {
+				తిరిగి NSERROR_NOMEM;
 			}
-			data->c = c;
-			data->box = box;
+			దత్తాంశం->c = c;
+			దత్తాంశం->box = box;
 			res = scrollbar_create(false,
-					       visible_height,
-					       full_height,
-					       visible_height,
-					       data,
-					       html_overflow_scroll_callback,
+					       visible_ఎత్తు,
+					       నిండిన_ఎత్తు,
+					       visible_ఎత్తు,
+					       దత్తాంశం,
+					       html_అధికప్రవాహం_scroll_callback,
 					       &(box->scroll_y));
-			if (res != NSERROR_OK) {
-				return res;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
-		} else  {
-			scrollbar_set_extents(box->scroll_y,
-					      visible_height,
-					      visible_height,
-					      full_height);
+		} లేకపోతే  {
+			scrollbar_సమితి_extents(box->scroll_y,
+					      visible_ఎత్తు,
+					      visible_ఎత్తు,
+					      నిండిన_ఎత్తు);
 		}
 	}
-	if (bottom) {
-		if (box->scroll_x == NULL) {
-			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_OK;
+	ఒకవేళ (bottom) {
+		ఒకవేళ (box->scroll_x == ఖాళీ) {
+			దత్తాంశం = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం html_scrollbar_దత్తాంశం));
+			ఒకవేళ (దత్తాంశం == ఖాళీ) {
+				తిరిగి NSERROR_OK;
 			}
-			data->c = c;
-			data->box = box;
+			దత్తాంశం->c = c;
+			దత్తాంశం->box = box;
 			res = scrollbar_create(true,
-					       visible_width - (right ? SCROLLBAR_WIDTH : 0),
-					       full_width,
-					       visible_width,
-					       data,
-					       html_overflow_scroll_callback,
+					       visible_వెడల్పు - (కుడి ? SCROLLBAR_వెడల్పు : 0),
+					       నిండిన_వెడల్పు,
+					       visible_వెడల్పు,
+					       దత్తాంశం,
+					       html_అధికప్రవాహం_scroll_callback,
 					       &box->scroll_x);
-			if (res != NSERROR_OK) {
-				return res;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
-		} else {
-			scrollbar_set_extents(box->scroll_x,
-					visible_width -
-					(right ? SCROLLBAR_WIDTH : 0),
-					visible_width, full_width);
+		} లేకపోతే {
+			scrollbar_సమితి_extents(box->scroll_x,
+					visible_వెడల్పు -
+					(కుడి ? SCROLLBAR_వెడల్పు : 0),
+					visible_వెడల్పు, నిండిన_వెడల్పు);
 		}
 	}
 
-	if (right && bottom) {
+	ఒకవేళ (కుడి && bottom) {
 		scrollbar_make_pair(box->scroll_x, box->scroll_y);
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 

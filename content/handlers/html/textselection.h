@@ -21,15 +21,15 @@
  * HTML text selection handling
  */
 
-#ifndef NETSURF_HTML_TEXTSELECTION_H
-#define NETSURF_HTML_TEXTSELECTION_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_TEXTSELECTION_H
+#నిర్వచించు NETSURF_HTML_TEXTSELECTION_H
 
-struct content;
-struct selection;
+నిర్మాణం content;
+నిర్మాణం selection;
 
-nserror html_textselection_redraw(struct content *c, unsigned start_idx, unsigned end_idx);
+nserror html_textselection_redraw(నిర్మాణం content *c, గుర్తులేని ప్రారంభం_idx, గుర్తులేని చివర_idx);
 
-nserror html_textselection_copy(struct content *c, unsigned start_idx, unsigned end_idx, struct selection_string *selstr);
+nserror html_textselection_copy(నిర్మాణం content *c, గుర్తులేని ప్రారంభం_idx, గుర్తులేని చివర_idx, నిర్మాణం selection_string *selstr);
 
 /**
  * get maximum index of text section.
@@ -38,6 +38,6 @@ nserror html_textselection_copy(struct content *c, unsigned start_idx, unsigned 
  * \param[out] end_idx pointer to value to recive result
  * \return NSERROR_OK and \a end_idx updated else error code
  */
-nserror html_textselection_get_end(struct content *c, unsigned *end_idx);
+nserror html_textselection_get_చివర(నిర్మాణం content *c, గుర్తులేని *చివర_idx);
 
-#endif
+#అయితే_ముగింపు

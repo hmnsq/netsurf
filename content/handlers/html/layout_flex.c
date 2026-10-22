@@ -31,38 +31,38 @@
  * layout_minmax_X() and layout_X().
  */
 
-#include <string.h>
+#అన్తర్భావ <string.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/utils.h"
 
-#include "html/box.h"
-#include "html/html.h"
-#include "html/private.h"
-#include "html/box_inspect.h"
-#include "html/layout_internal.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/html.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/box_inspect.h"
+#అన్తర్భావ "html/layout_internal.h"
 
 /**
  * Flex item data
  */
-struct flex_item_data {
-	enum css_flex_basis_e basis;
-	css_fixed basis_length;
+నిర్మాణం flex_అంశం_దత్తాంశం {
+	గణన css_flex_basis_e basis;
+	css_fixed basis_నిడివి;
 	css_unit basis_unit;
-	struct box *box;
+	నిర్మాణం box *box;
 
 	css_fixed shrink;
 	css_fixed grow;
 
-	int min_main;
-	int max_main;
-	int min_cross;
-	int max_cross;
+	పూర్ణాంకం min_main;
+	పూర్ణాంకం max_main;
+	పూర్ణాంకం min_cross;
+	పూర్ణాంకం max_cross;
 
-	int target_main_size;
-	int base_size;
-	int main_size;
-	size_t line;
+	పూర్ణాంకం లక్ష్యం_main_కొలత;
+	పూర్ణాంకం పునాది_కొలత;
+	పూర్ణాంకం main_కొలత;
+	size_t పంక్తి;
 
 	bool freeze;
 	bool min_violation;
@@ -72,48 +72,48 @@ struct flex_item_data {
 /**
  * Flex line data
  */
-struct flex_line_data {
-	int main_size;
-	int cross_size;
+నిర్మాణం flex_పంక్తి_దత్తాంశం {
+	పూర్ణాంకం main_కొలత;
+	పూర్ణాంకం cross_కొలత;
 
-	int used_main_size;
-	int main_auto_margin_count;
+	పూర్ణాంకం వాడిన_main_కొలత;
+	పూర్ణాంకం main_auto_margin_లెక్క;
 
-	int pos;
+	పూర్ణాంకం pos;
 
-	size_t first;
-	size_t count;
+	size_t మొదటి;
+	size_t లెక్క;
 	size_t frozen;
 };
 
 /**
  * Flex layout context
  */
-struct flex_ctx {
+నిర్మాణం flex_ctx {
 	html_content *content;
-	const struct box *flex;
-	const css_unit_ctx *unit_len_ctx;
+	స్థిరరాశి నిర్మాణం box *flex;
+	స్థిరరాశి css_unit_ctx *unit_len_ctx;
 
-	int main_size;
-	int cross_size;
+	పూర్ణాంకం main_కొలత;
+	పూర్ణాంకం cross_కొలత;
 
-	int available_main;
-	int available_cross;
+	పూర్ణాంకం అందుబాటు_main;
+	పూర్ణాంకం అందుబాటు_cross;
 
 	bool horizontal;
 	bool main_reversed;
-	enum css_flex_wrap_e wrap;
+	గణన css_flex_wrap_e wrap;
 
-	struct flex_items {
-		size_t count;
-		struct flex_item_data *data;
-	} item;
+	నిర్మాణం flex_వస్తువులు {
+		size_t లెక్క;
+		నిర్మాణం flex_అంశం_దత్తాంశం *దత్తాంశం;
+	} అంశం;
 
-	struct flex_lines {
-		size_t count;
+	నిర్మాణం flex_పంక్తులు {
+		size_t లెక్క;
 		size_t alloc;
-		struct flex_line_data *data;
-	} line;
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *దత్తాంశం;
+	} పంక్తి;
 };
 
 /**
@@ -121,12 +121,12 @@ struct flex_ctx {
  *
  * \param[in] ctx  Flex layout context
  */
-static void layout_flex_ctx__destroy(struct flex_ctx *ctx)
+స్థిర శూన్య layout_flex_ctx__destroy(నిర్మాణం flex_ctx *ctx)
 {
-	if (ctx != NULL) {
-		free(ctx->item.data);
-		free(ctx->line.data);
-		free(ctx);
+	ఒకవేళ (ctx != ఖాళీ) {
+		విడుదల(ctx->అంశం.దత్తాంశం);
+		విడుదల(ctx->పంక్తి.దత్తాంశం);
+		విడుదల(ctx);
 	}
 }
 
@@ -137,30 +137,30 @@ static void layout_flex_ctx__destroy(struct flex_ctx *ctx)
  * \param[in] flex     Box to create layout context for
  * \return flex layout context or NULL on error
  */
-static struct flex_ctx *layout_flex_ctx__create(
+స్థిర నిర్మాణం flex_ctx *layout_flex_ctx__create(
 		html_content *content,
-		const struct box *flex)
+		స్థిరరాశి నిర్మాణం box *flex)
 {
-	struct flex_ctx *ctx;
+	నిర్మాణం flex_ctx *ctx;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL) {
-		return NULL;
+	ctx = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(*ctx));
+	ఒకవేళ (ctx == ఖాళీ) {
+		తిరిగి ఖాళీ;
 	}
-	ctx->line.alloc = 1;
+	ctx->పంక్తి.alloc = 1;
 
-	ctx->item.count = box_count_children(flex);
-	ctx->item.data = calloc(ctx->item.count, sizeof(*ctx->item.data));
-	if (ctx->item.data == NULL) {
+	ctx->అంశం.లెక్క = box_లెక్క_children(flex);
+	ctx->అంశం.దత్తాంశం = సున్నా_జ్ఞాపకం_ఇవ్వు(ctx->అంశం.లెక్క, పరిమాణం(*ctx->అంశం.దత్తాంశం));
+	ఒకవేళ (ctx->అంశం.దత్తాంశం == ఖాళీ) {
 		layout_flex_ctx__destroy(ctx);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	ctx->line.alloc = 1;
-	ctx->line.data = calloc(ctx->line.alloc, sizeof(*ctx->line.data));
-	if (ctx->line.data == NULL) {
+	ctx->పంక్తి.alloc = 1;
+	ctx->పంక్తి.దత్తాంశం = సున్నా_జ్ఞాపకం_ఇవ్వు(ctx->పంక్తి.alloc, పరిమాణం(*ctx->పంక్తి.దత్తాంశం));
+	ఒకవేళ (ctx->పంక్తి.దత్తాంశం == ఖాళీ) {
 		layout_flex_ctx__destroy(ctx);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	ctx->flex = flex;
@@ -171,7 +171,7 @@ static struct flex_ctx *layout_flex_ctx__create(
 	ctx->horizontal = lh__flex_main_is_horizontal(flex);
 	ctx->main_reversed = lh__flex_direction_reversed(flex);
 
-	return ctx;
+	తిరిగి ctx;
 }
 
 /**
@@ -180,13 +180,13 @@ static struct flex_ctx *layout_flex_ctx__create(
  * \param[in] ctx   Flex layout context.
  * \return the start side.
  */
-static enum box_side layout_flex__main_start_side(
-		const struct flex_ctx *ctx)
+స్థిర గణన box_side layout_flex_main_ప్రారంభం_side(
+		స్థిరరాశి నిర్మాణం flex_ctx *ctx)
 {
-	if (ctx->horizontal) {
-		return (ctx->main_reversed) ? RIGHT : LEFT;
-	} else {
-		return (ctx->main_reversed) ? BOTTOM : TOP;
+	ఒకవేళ (ctx->horizontal) {
+		తిరిగి (ctx->main_reversed) ? కుడి_2 : ఎడమ_2;
+	} లేకపోతే {
+		తిరిగి (ctx->main_reversed) ? BOTTOM : శిఖరం_2;
 	}
 }
 
@@ -196,13 +196,13 @@ static enum box_side layout_flex__main_start_side(
  * \param[in] ctx   Flex layout context.
  * \return the end side.
  */
-static enum box_side layout_flex__main_end_side(
-		const struct flex_ctx *ctx)
+స్థిర గణన box_side layout_flex_main_చివర_side(
+		స్థిరరాశి నిర్మాణం flex_ctx *ctx)
 {
-	if (ctx->horizontal) {
-		return (ctx->main_reversed) ? LEFT : RIGHT;
-	} else {
-		return (ctx->main_reversed) ? TOP : BOTTOM;
+	ఒకవేళ (ctx->horizontal) {
+		తిరిగి (ctx->main_reversed) ? ఎడమ_2 : కుడి_2;
+	} లేకపోతే {
+		తిరిగి (ctx->main_reversed) ? శిఖరం_2 : BOTTOM;
 	}
 }
 
@@ -214,39 +214,39 @@ static enum box_side layout_flex__main_end_side(
  * \param[in] available_width  Available width for item in pixels
  * \return true on success false on failure
  */
-static bool layout_flex_item(
-		const struct flex_ctx *ctx,
-		const struct flex_item_data *item,
-		int available_width)
+స్థిర bool layout_flex_అంశం(
+		స్థిరరాశి నిర్మాణం flex_ctx *ctx,
+		స్థిరరాశి నిర్మాణం flex_అంశం_దత్తాంశం *అంశం,
+		పూర్ణాంకం అందుబాటు_వెడల్పు)
 {
 	bool success;
-	struct box *b = item->box;
+	నిర్మాణం box *b = అంశం->box;
 
-	switch (b->type) {
-	case BOX_BLOCK:
-		success = layout_block_context(b, -1, ctx->content);
-		break;
-	case BOX_TABLE:
-		b->float_container = b->parent;
-		success = layout_table(b, available_width, ctx->content);
-		b->float_container = NULL;
-		break;
-	case BOX_FLEX:
-		b->float_container = b->parent;
-		success = layout_flex(b, available_width, ctx->content);
-		b->float_container = NULL;
-		break;
-	default:
-		assert(0 && "Bad flex item back type");
+	ఎంపిక (b->type) {
+	స్థితి BOX_ఖండం:
+		success = layout_ఖండం_context(b, -1, ctx->content);
+		ఆపు;
+	స్థితి BOX_పట్టిక:
+		b->float_container = b->మాతృ;
+		success = layout_పట్టిక(b, అందుబాటు_వెడల్పు, ctx->content);
+		b->float_container = ఖాళీ;
+		ఆపు;
+	స్థితి BOX_FLEX:
+		b->float_container = b->మాతృ;
+		success = layout_flex(b, అందుబాటు_వెడల్పు, ctx->content);
+		b->float_container = ఖాళీ;
+		ఆపు;
+	అప్రమేయ:
+		ప్రతిజ్ఞా(0 && "Bad flex item back type");
 		success = false;
-		break;
+		ఆపు;
 	}
 
-	if (!success) {
+	ఒకవేళ (!success) {
 		NSLOG(flex, ERROR, "box %p: layout failed", b);
 	}
 
-	return success;
+	తిరిగి success;
 }
 
 /**
@@ -257,80 +257,80 @@ static bool layout_flex_item(
  * \param[in] available_width  Available width in pixels
  * \return true on success false on failure
  */
-static inline bool layout_flex__base_and_main_sizes(
-		const struct flex_ctx *ctx,
-		struct flex_item_data *item,
-		int available_width)
+స్థిర అంతఃవరుస bool layout_flex_పునాది_and_main_sizes(
+		స్థిరరాశి నిర్మాణం flex_ctx *ctx,
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం,
+		పూర్ణాంకం అందుబాటు_వెడల్పు)
 {
-	struct box *b = item->box;
-	int content_min_width = b->min_width;
-	int content_max_width = b->max_width;
-	int delta_outer_main = lh__delta_outer_main(ctx->flex, b);
+	నిర్మాణం box *b = అంశం->box;
+	పూర్ణాంకం content_min_వెడల్పు = b->min_వెడల్పు;
+	పూర్ణాంకం content_max_వెడల్పు = b->max_వెడల్పు;
+	పూర్ణాంకం delta_outer_main = lh__delta_outer_main(ctx->flex, b);
 
 	NSLOG(flex, DEEPDEBUG, "box %p: delta_outer_main: %i",
 			b, delta_outer_main);
 
-	if (item->basis == CSS_FLEX_BASIS_SET) {
-		if (item->basis_unit == CSS_UNIT_PCT) {
-			item->base_size = FPCT_OF_INT_TOINT(
-					item->basis_length,
-					available_width);
-		} else {
-			item->base_size = FIXTOINT(css_unit_len2device_px(
+	ఒకవేళ (అంశం->basis == CSS_FLEX_BASIS_సమితి) {
+		ఒకవేళ (అంశం->basis_unit == CSS_UNIT_PCT) {
+			అంశం->పునాది_కొలత = FPCT_యొక్క_INT_TOINT(
+					అంశం->basis_నిడివి,
+					అందుబాటు_వెడల్పు);
+		} లేకపోతే {
+			అంశం->పునాది_కొలత = FIXTOINT(css_unit_len2device_px(
 					b->style, ctx->unit_len_ctx,
-					item->basis_length,
-					item->basis_unit));
+					అంశం->basis_నిడివి,
+					అంశం->basis_unit));
 		}
 
-	} else if (item->basis == CSS_FLEX_BASIS_AUTO) {
-		item->base_size = ctx->horizontal ? b->width : b->height;
-	} else {
-		item->base_size = AUTO;
+	} లేకపోతే ఒకవేళ (అంశం->basis == CSS_FLEX_BASIS_AUTO) {
+		అంశం->పునాది_కొలత = ctx->horizontal ? b->వెడల్పు : b->ఎత్తు;
+	} లేకపోతే {
+		అంశం->పునాది_కొలత = AUTO;
 	}
 
-	if (ctx->horizontal == false) {
-		if (b->width == AUTO) {
-			b->width = min(max(content_min_width, available_width),
-					content_max_width);
-			b->width -= lh__delta_outer_width(b);
+	ఒకవేళ (ctx->horizontal == false) {
+		ఒకవేళ (b->వెడల్పు == AUTO) {
+			b->వెడల్పు = min(max(content_min_వెడల్పు, అందుబాటు_వెడల్పు),
+					content_max_వెడల్పు);
+			b->వెడల్పు -= lh_delta_outer_వెడల్పు(b);
 		}
 
-		if (!layout_flex_item(ctx, item, b->width)) {
-			return false;
-		}
-	}
-
-	if (item->base_size == AUTO) {
-		if (ctx->horizontal == false) {
-			item->base_size = b->height;
-		} else {
-			item->base_size = content_max_width - delta_outer_main;
+		ఒకవేళ (!layout_flex_అంశం(ctx, అంశం, b->వెడల్పు)) {
+			తిరిగి false;
 		}
 	}
 
-	item->base_size += delta_outer_main;
-
-	if (ctx->horizontal) {
-		item->base_size = min(item->base_size, available_width);
-		item->base_size = max(item->base_size, content_min_width);
+	ఒకవేళ (అంశం->పునాది_కొలత == AUTO) {
+		ఒకవేళ (ctx->horizontal == false) {
+			అంశం->పునాది_కొలత = b->ఎత్తు;
+		} లేకపోతే {
+			అంశం->పునాది_కొలత = content_max_వెడల్పు - delta_outer_main;
+		}
 	}
 
-	item->target_main_size = item->base_size;
-	item->main_size = item->base_size;
+	అంశం->పునాది_కొలత += delta_outer_main;
 
-	if (item->max_main > 0 &&
-	    item->main_size > item->max_main + delta_outer_main) {
-		item->main_size = item->max_main + delta_outer_main;
+	ఒకవేళ (ctx->horizontal) {
+		అంశం->పునాది_కొలత = min(అంశం->పునాది_కొలత, అందుబాటు_వెడల్పు);
+		అంశం->పునాది_కొలత = max(అంశం->పునాది_కొలత, content_min_వెడల్పు);
 	}
 
-	if (item->main_size < item->min_main + delta_outer_main) {
-		item->main_size = item->min_main + delta_outer_main;
+	అంశం->లక్ష్యం_main_కొలత = అంశం->పునాది_కొలత;
+	అంశం->main_కొలత = అంశం->పునాది_కొలత;
+
+	ఒకవేళ (అంశం->max_main > 0 &&
+	    అంశం->main_కొలత > అంశం->max_main + delta_outer_main) {
+		అంశం->main_కొలత = అంశం->max_main + delta_outer_main;
+	}
+
+	ఒకవేళ (అంశం->main_కొలత < అంశం->min_main + delta_outer_main) {
+		అంశం->main_కొలత = అంశం->min_main + delta_outer_main;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "flex-item box: %p: base_size: %i, main_size %i",
-			b, item->base_size, item->main_size);
+			b, అంశం->పునాది_కొలత, అంశం->main_కొలత);
 
-	return true;
+	తిరిగి true;
 }
 
 /**
@@ -340,38 +340,38 @@ static inline bool layout_flex__base_and_main_sizes(
  * \param[in] flex             Flex box
  * \param[in] available_width  Available width in pixels
  */
-static void layout_flex_ctx__populate_item_data(
-		const struct flex_ctx *ctx,
-		const struct box *flex,
-		int available_width)
+స్థిర శూన్య layout_flex_ctx_populate_అంశం_దత్తాంశం(
+		స్థిరరాశి నిర్మాణం flex_ctx *ctx,
+		స్థిరరాశి నిర్మాణం box *flex,
+		పూర్ణాంకం అందుబాటు_వెడల్పు)
 {
 	size_t i = 0;
 	bool horizontal = ctx->horizontal;
 
-	for (struct box *b = flex->children; b != NULL; b = b->next) {
-		struct flex_item_data *item = &ctx->item.data[i++];
+	కొరకు (నిర్మాణం box *b = flex->children; b != ఖాళీ; b = b->తదుపరి) {
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i++];
 
-		b->float_container = b->parent;
-		layout_find_dimensions(ctx->unit_len_ctx, available_width, -1,
-				b, b->style, &b->width, &b->height,
-				horizontal ? &item->max_main : &item->max_cross,
-				horizontal ? &item->min_main : &item->min_cross,
-				horizontal ? &item->max_cross : &item->max_main,
-				horizontal ? &item->min_cross : &item->min_main,
+		b->float_container = b->మాతృ;
+		layout_కనుగొను_dimensions(ctx->unit_len_ctx, అందుబాటు_వెడల్పు, -1,
+				b, b->style, &b->వెడల్పు, &b->ఎత్తు,
+				horizontal ? &అంశం->max_main : &అంశం->max_cross,
+				horizontal ? &అంశం->min_main : &అంశం->min_cross,
+				horizontal ? &అంశం->max_cross : &అంశం->max_main,
+				horizontal ? &అంశం->min_cross : &అంశం->min_main,
 				b->margin, b->padding, b->border);
-		b->float_container = NULL;
+		b->float_container = ఖాళీ;
 
 		NSLOG(flex, DEEPDEBUG, "flex-item box: %p: width: %i",
-				b, b->width);
+				b, b->వెడల్పు);
 
-		item->box = b;
-		item->basis = css_computed_flex_basis(b->style,
-				&item->basis_length, &item->basis_unit);
+		అంశం->box = b;
+		అంశం->basis = css_computed_flex_basis(b->style,
+				&అంశం->basis_నిడివి, &అంశం->basis_unit);
 
-		css_computed_flex_shrink(b->style, &item->shrink);
-		css_computed_flex_grow(b->style, &item->grow);
+		css_computed_flex_shrink(b->style, &అంశం->shrink);
+		css_computed_flex_grow(b->style, &అంశం->grow);
 
-		layout_flex__base_and_main_sizes(ctx, item, available_width);
+		layout_flex_పునాది_and_main_sizes(ctx, అంశం, అందుబాటు_వెడల్పు);
 	}
 }
 
@@ -381,26 +381,26 @@ static void layout_flex_ctx__populate_item_data(
  * \param[in] ctx  Flex layout context
  * \return true on success false on out of memory
  */
-static bool layout_flex_ctx__ensure_line(struct flex_ctx *ctx)
+స్థిర bool layout_flex_ctx_ensure_పంక్తి(నిర్మాణం flex_ctx *ctx)
 {
-	struct flex_line_data *temp;
-	size_t line_alloc = ctx->line.alloc * 2;
+	నిర్మాణం flex_పంక్తి_దత్తాంశం *తాత్కాలిక;
+	size_t పంక్తి_alloc = ctx->పంక్తి.alloc * 2;
 
-	if (ctx->line.alloc > ctx->line.count) {
-		return true;
+	ఒకవేళ (ctx->పంక్తి.alloc > ctx->పంక్తి.లెక్క) {
+		తిరిగి true;
 	}
 
-	temp = realloc(ctx->line.data, sizeof(*ctx->line.data) * line_alloc);
-	if (temp == NULL) {
-		return false;
+	తాత్కాలిక = realloc(ctx->పంక్తి.దత్తాంశం, పరిమాణం(*ctx->పంక్తి.దత్తాంశం) * పంక్తి_alloc);
+	ఒకవేళ (తాత్కాలిక == ఖాళీ) {
+		తిరిగి false;
 	}
-	ctx->line.data = temp;
+	ctx->పంక్తి.దత్తాంశం = తాత్కాలిక;
 
-	memset(ctx->line.data + ctx->line.alloc, 0,
-	       sizeof(*ctx->line.data) * (line_alloc - ctx->line.alloc));
-	ctx->line.alloc = line_alloc;
+	memset(ctx->పంక్తి.దత్తాంశం + ctx->పంక్తి.alloc, 0,
+	       పరిమాణం(*ctx->పంక్తి.దత్తాంశం) * (పంక్తి_alloc - ctx->పంక్తి.alloc));
+	ctx->పంక్తి.alloc = పంక్తి_alloc;
 
-	return true;
+	తిరిగి true;
 }
 
 /**
@@ -410,65 +410,65 @@ static bool layout_flex_ctx__ensure_line(struct flex_ctx *ctx)
  * \param[in] item_index  Index to first item to assign to this line
  * \return Pointer to the new line, or NULL on error.
  */
-static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
-		size_t item_index)
+స్థిర నిర్మాణం flex_పంక్తి_దత్తాంశం *layout_flex_build_పంక్తి(నిర్మాణం flex_ctx *ctx,
+		size_t అంశం_సూచీ)
 {
-	enum box_side start_side = layout_flex__main_start_side(ctx);
-	enum box_side end_side = layout_flex__main_end_side(ctx);
-	struct flex_line_data *line;
-	int used_main = 0;
+	గణన box_side ప్రారంభం_side = layout_flex_main_ప్రారంభం_side(ctx);
+	గణన box_side చివర_side = layout_flex_main_చివర_side(ctx);
+	నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి;
+	పూర్ణాంకం వాడిన_main = 0;
 
-	if (!layout_flex_ctx__ensure_line(ctx)) {
-		return NULL;
+	ఒకవేళ (!layout_flex_ctx_ensure_పంక్తి(ctx)) {
+		తిరిగి ఖాళీ;
 	}
 
-	line = &ctx->line.data[ctx->line.count];
-	line->first = item_index;
+	పంక్తి = &ctx->పంక్తి.దత్తాంశం[ctx->పంక్తి.లెక్క];
+	పంక్తి->మొదటి = అంశం_సూచీ;
 
 	NSLOG(flex, DEEPDEBUG, "flex container %p: available main: %i",
-			ctx->flex, ctx->available_main);
+			ctx->flex, ctx->అందుబాటు_main);
 
-	while (item_index < ctx->item.count) {
-		struct flex_item_data *item = &ctx->item.data[item_index];
-		struct box *b = item->box;
-		int pos_main;
+	అయితే (అంశం_సూచీ < ctx->అంశం.లెక్క) {
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[అంశం_సూచీ];
+		నిర్మాణం box *b = అంశం->box;
+		పూర్ణాంకం pos_main;
 
 		pos_main = ctx->horizontal ?
-				item->main_size :
-				b->height + lh__delta_outer_main(ctx->flex, b);
+				అంశం->main_కొలత :
+				b->ఎత్తు + lh__delta_outer_main(ctx->flex, b);
 
-		if (ctx->wrap == CSS_FLEX_WRAP_NOWRAP ||
-		    pos_main + used_main <= ctx->available_main ||
-		    lh__box_is_absolute(item->box) ||
-		    ctx->available_main == AUTO ||
-		    line->count == 0 ||
+		ఒకవేళ (ctx->wrap == CSS_FLEX_WRAP_NOWRAP ||
+		    pos_main + వాడిన_main <= ctx->అందుబాటు_main ||
+		    lh__box_is_absolute(అంశం->box) ||
+		    ctx->అందుబాటు_main == AUTO ||
+		    పంక్తి->లెక్క == 0 ||
 		    pos_main == 0) {
-			if (lh__box_is_absolute(item->box) == false) {
-				line->main_size += item->main_size;
-				used_main += pos_main;
+			ఒకవేళ (lh__box_is_absolute(అంశం->box) == false) {
+				పంక్తి->main_కొలత += అంశం->main_కొలత;
+				వాడిన_main += pos_main;
 
-				if (b->margin[start_side] == AUTO) {
-					line->main_auto_margin_count++;
+				ఒకవేళ (b->margin[ప్రారంభం_side] == AUTO) {
+					పంక్తి->main_auto_margin_లెక్క++;
 				}
-				if (b->margin[end_side] == AUTO) {
-					line->main_auto_margin_count++;
+				ఒకవేళ (b->margin[చివర_side] == AUTO) {
+					పంక్తి->main_auto_margin_లెక్క++;
 				}
 			}
-			item->line = ctx->line.count;
-			line->count++;
-			item_index++;
-		} else {
-			break;
+			అంశం->పంక్తి = ctx->పంక్తి.లెక్క;
+			పంక్తి->లెక్క++;
+			అంశం_సూచీ++;
+		} లేకపోతే {
+			ఆపు;
 		}
 	}
 
-	if (line->count > 0) {
-		ctx->line.count++;
-	} else {
+	ఒకవేళ (పంక్తి->లెక్క > 0) {
+		ctx->పంక్తి.లెక్క++;
+	} లేకపోతే {
 		NSLOG(layout, ERROR, "Failed to fit any flex items");
 	}
 
-	return line;
+	తిరిగి పంక్తి;
 }
 
 /**
@@ -477,20 +477,20 @@ static struct flex_line_data *layout_flex__build_line(struct flex_ctx *ctx,
  * \param[in] line  Line to containing item
  * \param[in] item  Item to freeze
  */
-static inline void layout_flex__item_freeze(
-		struct flex_line_data *line,
-		struct flex_item_data *item)
+స్థిర అంతఃవరుస శూన్య layout_flex_అంశం_freeze(
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి,
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం)
 {
-	item->freeze = true;
-	line->frozen++;
+	అంశం->freeze = true;
+	పంక్తి->frozen++;
 
-	if (!lh__box_is_absolute(item->box)){
-		line->used_main_size += item->target_main_size;
+	ఒకవేళ (!lh__box_is_absolute(అంశం->box)){
+		పంక్తి->వాడిన_main_కొలత += అంశం->లక్ష్యం_main_కొలత;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "flex-item box: %p: "
 			"Frozen at target_main_size: %i",
-			item->box, item->target_main_size);
+			అంశం->box, అంశం->లక్ష్యం_main_కొలత);
 }
 
 /**
@@ -504,45 +504,45 @@ static inline void layout_flex__item_freeze(
  * \param[in]  grow                 Whether to grow or shrink
  * return remaining free space on line
  */
-static inline int layout_flex__remaining_free_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line,
-		css_fixed *unfrozen_factor_sum,
-		int initial_free_main,
-		int available_main,
+స్థిర అంతఃవరుస పూర్ణాంకం layout_flex_మిగిలిన_free_main(
+		నిర్మాణం flex_ctx *ctx,
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి,
+		css_fixed *unfrozen_గుణకం_కూడిక,
+		పూర్ణాంకం initial_free_main,
+		పూర్ణాంకం అందుబాటు_main,
 		bool grow)
 {
-	int remaining_free_main = available_main;
-	size_t item_count = line->first + line->count;
+	పూర్ణాంకం మిగిలిన_free_main = అందుబాటు_main;
+	size_t అంశం_లెక్క = పంక్తి->మొదటి + పంక్తి->లెక్క;
 
-	*unfrozen_factor_sum = 0;
+	*unfrozen_గుణకం_కూడిక = 0;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
+	కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
 
-		if (item->freeze) {
-			remaining_free_main -= item->target_main_size;
-		} else {
-			remaining_free_main -= item->base_size;
+		ఒకవేళ (అంశం->freeze) {
+			మిగిలిన_free_main -= అంశం->లక్ష్యం_main_కొలత;
+		} లేకపోతే {
+			మిగిలిన_free_main -= అంశం->పునాది_కొలత;
 
-			*unfrozen_factor_sum += grow ?
-					item->grow : item->shrink;
+			*unfrozen_గుణకం_కూడిక += grow ?
+					అంశం->grow : అంశం->shrink;
 		}
 	}
 
-	if (*unfrozen_factor_sum < F_1) {
-		int free_space = FIXTOINT(FMUL(INTTOFIX(initial_free_main),
-				*unfrozen_factor_sum));
+	ఒకవేళ (*unfrozen_గుణకం_కూడిక < F_1) {
+		పూర్ణాంకం free_space = FIXTOINT(FMUL(INTTOFIX(initial_free_main),
+				*unfrozen_గుణకం_కూడిక));
 
-		if (free_space < remaining_free_main) {
-			remaining_free_main = free_space;
+		ఒకవేళ (free_space < మిగిలిన_free_main) {
+			మిగిలిన_free_main = free_space;
 		}
 	}
 
 	NSLOG(flex, DEEPDEBUG, "Remaining free space: %i",
-			remaining_free_main);
+			మిగిలిన_free_main);
 
-	return remaining_free_main;
+	తిరిగి మిగిలిన_free_main;
 }
 
 /**
@@ -552,60 +552,60 @@ static inline int layout_flex__remaining_free_main(
  * \param[in] line  Line to align items on
  * return total violation in pixels
  */
-static inline int layout_flex__get_min_max_violations(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+స్థిర అంతఃవరుస పూర్ణాంకం layout_flex__get_min_max_violations(
+		నిర్మాణం flex_ctx *ctx,
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి)
 {
 
-	int total_violation = 0;
-	size_t item_count = line->first + line->count;
+	పూర్ణాంకం మొత్తం_violation = 0;
+	size_t అంశం_లెక్క = పంక్తి->మొదటి + పంక్తి->లెక్క;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
-		int target_main_size = item->target_main_size;
+	కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
+		పూర్ణాంకం లక్ష్యం_main_కొలత = అంశం->లక్ష్యం_main_కొలత;
 
 		NSLOG(flex, DEEPDEBUG, "item %p: target_main_size: %i",
-					item->box, target_main_size);
+					అంశం->box, లక్ష్యం_main_కొలత);
 
-		if (item->freeze) {
-			continue;
+		ఒకవేళ (అంశం->freeze) {
+			కొనసాగు;
 		}
 
-		if (item->max_main > 0 &&
-		    target_main_size > item->max_main) {
-			target_main_size = item->max_main;
-			item->max_violation = true;
+		ఒకవేళ (అంశం->max_main > 0 &&
+		    లక్ష్యం_main_కొలత > అంశం->max_main) {
+			లక్ష్యం_main_కొలత = అంశం->max_main;
+			అంశం->max_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: max_main: %i",
-					item->max_main);
+					అంశం->max_main);
 		}
 
-		if (target_main_size < item->min_main) {
-			target_main_size = item->min_main;
-			item->min_violation = true;
+		ఒకవేళ (లక్ష్యం_main_కొలత < అంశం->min_main) {
+			లక్ష్యం_main_కొలత = అంశం->min_main;
+			అంశం->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: min_main: %i",
-					item->min_main);
+					అంశం->min_main);
 		}
 
-		if (target_main_size < item->box->min_width) {
-			target_main_size = item->box->min_width;
-			item->min_violation = true;
+		ఒకవేళ (లక్ష్యం_main_కొలత < అంశం->box->min_వెడల్పు) {
+			లక్ష్యం_main_కొలత = అంశం->box->min_వెడల్పు;
+			అంశం->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: box min_width: %i",
-					item->box->min_width);
+					అంశం->box->min_వెడల్పు);
 		}
 
-		if (target_main_size < 0) {
-			target_main_size = 0;
-			item->min_violation = true;
+		ఒకవేళ (లక్ష్యం_main_కొలత < 0) {
+			లక్ష్యం_main_కొలత = 0;
+			అంశం->min_violation = true;
 			NSLOG(flex, DEEPDEBUG, "Violation: less than 0");
 		}
 
-		total_violation += target_main_size - item->target_main_size;
-		item->target_main_size = target_main_size;
+		మొత్తం_violation += లక్ష్యం_main_కొలత - అంశం->లక్ష్యం_main_కొలత;
+		అంశం->లక్ష్యం_main_కొలత = లక్ష్యం_main_కొలత;
 	}
 
-	NSLOG(flex, DEEPDEBUG, "Total violation: %i", total_violation);
+	NSLOG(flex, DEEPDEBUG, "Total violation: %i", మొత్తం_violation);
 
-	return total_violation;
+	తిరిగి మొత్తం_violation;
 }
 
 /**
@@ -619,77 +619,77 @@ static inline int layout_flex__get_min_max_violations(
  * \param[in] remaining_free_main  Remaining free space in main direction
  * \param[in] grow                 Whether to grow or shrink
  */
-static inline void layout_flex__distribute_free_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line,
-		css_fixed unfrozen_factor_sum,
-		int remaining_free_main,
+స్థిర అంతఃవరుస శూన్య layout_flex__distribute_free_main(
+		నిర్మాణం flex_ctx *ctx,
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి,
+		css_fixed unfrozen_గుణకం_కూడిక,
+		పూర్ణాంకం మిగిలిన_free_main,
 		bool grow)
 {
-	size_t item_count = line->first + line->count;
+	size_t అంశం_లెక్క = పంక్తి->మొదటి + పంక్తి->లెక్క;
 
-	if (grow) {
+	ఒకవేళ (grow) {
 		css_fixed remainder = 0;
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
-			css_fixed result;
-			css_fixed ratio;
+		కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+			నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
+			css_fixed ఫలితం;
+			css_fixed నిష్పత్తి;
 
-			if (item->freeze) {
-				continue;
+			ఒకవేళ (అంశం->freeze) {
+				కొనసాగు;
 			}
 
-			ratio = FDIV(item->grow, unfrozen_factor_sum);
-			result = FMUL(INTTOFIX(remaining_free_main), ratio) +
+			నిష్పత్తి = FDIV(అంశం->grow, unfrozen_గుణకం_కూడిక);
+			ఫలితం = FMUL(INTTOFIX(మిగిలిన_free_main), నిష్పత్తి) +
 					remainder;
 
-			item->target_main_size = item->base_size +
-					FIXTOINT(result);
-			remainder = FIXFRAC(result);
+			అంశం->లక్ష్యం_main_కొలత = అంశం->పునాది_కొలత +
+					FIXTOINT(ఫలితం);
+			remainder = FIXFRAC(ఫలితం);
 		}
-	} else {
-		css_fixed scaled_shrink_factor_sum = 0;
+	} లేకపోతే {
+		css_fixed scaled_shrink_గుణకం_కూడిక = 0;
 		css_fixed remainder = 0;
 
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
-			css_fixed scaled_shrink_factor;
+		కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+			నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
+			css_fixed scaled_shrink_గుణకం;
 
-			if (item->freeze) {
-				continue;
+			ఒకవేళ (అంశం->freeze) {
+				కొనసాగు;
 			}
 
-			scaled_shrink_factor = FMUL(
-					item->shrink,
-					INTTOFIX(item->base_size));
-			scaled_shrink_factor_sum += scaled_shrink_factor;
+			scaled_shrink_గుణకం = FMUL(
+					అంశం->shrink,
+					INTTOFIX(అంశం->పునాది_కొలత));
+			scaled_shrink_గుణకం_కూడిక += scaled_shrink_గుణకం;
 		}
 
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
-			css_fixed scaled_shrink_factor;
-			css_fixed result;
-			css_fixed ratio;
+		కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+			నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
+			css_fixed scaled_shrink_గుణకం;
+			css_fixed ఫలితం;
+			css_fixed నిష్పత్తి;
 
-			if (item->freeze) {
-				continue;
-			} else if (scaled_shrink_factor_sum == 0) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
-				continue;
+			ఒకవేళ (అంశం->freeze) {
+				కొనసాగు;
+			} లేకపోతే ఒకవేళ (scaled_shrink_గుణకం_కూడిక == 0) {
+				అంశం->లక్ష్యం_main_కొలత = అంశం->main_కొలత;
+				layout_flex_అంశం_freeze(పంక్తి, అంశం);
+				కొనసాగు;
 			}
 
-			scaled_shrink_factor = FMUL(
-					item->shrink,
-					INTTOFIX(item->base_size));
-			ratio = FDIV(scaled_shrink_factor,
-			             scaled_shrink_factor_sum);
-			result = FMUL(INTTOFIX(abs(remaining_free_main)),
-			              ratio) + remainder;
+			scaled_shrink_గుణకం = FMUL(
+					అంశం->shrink,
+					INTTOFIX(అంశం->పునాది_కొలత));
+			నిష్పత్తి = FDIV(scaled_shrink_గుణకం,
+			             scaled_shrink_గుణకం_కూడిక);
+			ఫలితం = FMUL(INTTOFIX(నిరపేక్ష(మిగిలిన_free_main)),
+			              నిష్పత్తి) + remainder;
 
-			item->target_main_size = item->base_size -
-					FIXTOINT(result);
-			remainder = FIXFRAC(result);
+			అంశం->లక్ష్యం_main_కొలత = అంశం->పునాది_కొలత -
+					FIXTOINT(ఫలితం);
+			remainder = FIXFRAC(ఫలితం);
 		}
 	}
 }
@@ -703,96 +703,96 @@ static inline void layout_flex__distribute_free_main(
  * \param[in] line  Line to resolve
  * \return true on success, false on failure.
  */
-static bool layout_flex__resolve_line(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+స్థిర bool layout_flex_resolve_పంక్తి(
+		నిర్మాణం flex_ctx *ctx,
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి)
 {
-	size_t item_count = line->first + line->count;
-	int available_main = ctx->available_main;
-	int initial_free_main;
+	size_t అంశం_లెక్క = పంక్తి->మొదటి + పంక్తి->లెక్క;
+	పూర్ణాంకం అందుబాటు_main = ctx->అందుబాటు_main;
+	పూర్ణాంకం initial_free_main;
 	bool grow;
 
-	if (available_main == AUTO) {
-		available_main = INT_MAX;
+	ఒకవేళ (అందుబాటు_main == AUTO) {
+		అందుబాటు_main = గరిష్ఠ_పూర్ణాంకం;
 	}
 
-	grow = (line->main_size < available_main);
-	initial_free_main = available_main;
+	grow = (పంక్తి->main_కొలత < అందుబాటు_main);
+	initial_free_main = అందుబాటు_main;
 
 	NSLOG(flex, DEEPDEBUG, "box %p: line %zu: first: %zu, count: %zu",
-			ctx->flex, line - ctx->line.data,
-			line->first, line->count);
+			ctx->flex, పంక్తి - ctx->పంక్తి.దత్తాంశం,
+			పంక్తి->మొదటి, పంక్తి->లెక్క);
 	NSLOG(flex, DEEPDEBUG, "Line main_size: %i, available_main: %i",
-			line->main_size, available_main);
+			పంక్తి->main_కొలత, అందుబాటు_main);
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
+	కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
 
 		/* 3. Size inflexible items */
-		if (grow) {
-			if (item->grow == 0 ||
-			    item->base_size > item->main_size) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+		ఒకవేళ (grow) {
+			ఒకవేళ (అంశం->grow == 0 ||
+			    అంశం->పునాది_కొలత > అంశం->main_కొలత) {
+				అంశం->లక్ష్యం_main_కొలత = అంశం->main_కొలత;
+				layout_flex_అంశం_freeze(పంక్తి, అంశం);
 			}
-		} else {
-			if (item->shrink == 0 ||
-			    item->base_size < item->main_size) {
-				item->target_main_size = item->main_size;
-				layout_flex__item_freeze(line, item);
+		} లేకపోతే {
+			ఒకవేళ (అంశం->shrink == 0 ||
+			    అంశం->పునాది_కొలత < అంశం->main_కొలత) {
+				అంశం->లక్ష్యం_main_కొలత = అంశం->main_కొలత;
+				layout_flex_అంశం_freeze(పంక్తి, అంశం);
 			}
 		}
 
 		/* 4. Calculate initial free space */
-		if (item->freeze) {
-			initial_free_main -= item->target_main_size;
-		} else {
-			initial_free_main -= item->base_size;
+		ఒకవేళ (అంశం->freeze) {
+			initial_free_main -= అంశం->లక్ష్యం_main_కొలత;
+		} లేకపోతే {
+			initial_free_main -= అంశం->పునాది_కొలత;
 		}
 	}
 
 	/* 5. Loop */
-	while (line->frozen < line->count) {
-		css_fixed unfrozen_factor_sum;
-		int remaining_free_main;
-		int total_violation;
+	అయితే (పంక్తి->frozen < పంక్తి->లెక్క) {
+		css_fixed unfrozen_గుణకం_కూడిక;
+		పూర్ణాంకం మిగిలిన_free_main;
+		పూర్ణాంకం మొత్తం_violation;
 
 		NSLOG(flex, DEEPDEBUG, "flex-container: %p: Resolver pass",
 				ctx->flex);
 
 		/* b */
-		remaining_free_main = layout_flex__remaining_free_main(ctx,
-				line, &unfrozen_factor_sum, initial_free_main,
-				available_main, grow);
+		మిగిలిన_free_main = layout_flex_మిగిలిన_free_main(ctx,
+				పంక్తి, &unfrozen_గుణకం_కూడిక, initial_free_main,
+				అందుబాటు_main, grow);
 
 		/* c */
-		if (remaining_free_main != 0) {
+		ఒకవేళ (మిగిలిన_free_main != 0) {
 			layout_flex__distribute_free_main(ctx,
-					line, unfrozen_factor_sum,
-					remaining_free_main, grow);
+					పంక్తి, unfrozen_గుణకం_కూడిక,
+					మిగిలిన_free_main, grow);
 		}
 
 		/* d */
-		total_violation = layout_flex__get_min_max_violations(
-				ctx, line);
+		మొత్తం_violation = layout_flex__get_min_max_violations(
+				ctx, పంక్తి);
 
 		/* e */
-		for (size_t i = line->first; i < item_count; i++) {
-			struct flex_item_data *item = &ctx->item.data[i];
+		కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+			నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
 
-			if (item->freeze) {
-				continue;
+			ఒకవేళ (అంశం->freeze) {
+				కొనసాగు;
 			}
 
-			if (total_violation == 0 ||
-			    (total_violation > 0 && item->min_violation) ||
-			    (total_violation < 0 && item->max_violation)) {
-				layout_flex__item_freeze(line, item);
+			ఒకవేళ (మొత్తం_violation == 0 ||
+			    (మొత్తం_violation > 0 && అంశం->min_violation) ||
+			    (మొత్తం_violation < 0 && అంశం->max_violation)) {
+				layout_flex_అంశం_freeze(పంక్తి, అంశం);
 			}
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 /**
@@ -802,91 +802,91 @@ static bool layout_flex__resolve_line(
  * \param[in] line  Line to resolve
  * \return true on success, false on failure.
  */
-static bool layout_flex__place_line_items_main(
-		struct flex_ctx *ctx,
-		struct flex_line_data *line)
+స్థిర bool layout_flex_ఉంచు_పంక్తి_వస్తువులు_main(
+		నిర్మాణం flex_ctx *ctx,
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి)
 {
-	int main_pos = ctx->flex->padding[layout_flex__main_start_side(ctx)];
-	int post_multiplier = ctx->main_reversed ? 0 : 1;
-	int pre_multiplier = ctx->main_reversed ? -1 : 0;
-	size_t item_count = line->first + line->count;
-	int extra_remainder = 0;
-	int extra = 0;
+	పూర్ణాంకం main_pos = ctx->flex->padding[layout_flex_main_ప్రారంభం_side(ctx)];
+	పూర్ణాంకం post_multiplier = ctx->main_reversed ? 0 : 1;
+	పూర్ణాంకం pre_multiplier = ctx->main_reversed ? -1 : 0;
+	size_t అంశం_లెక్క = పంక్తి->మొదటి + పంక్తి->లెక్క;
+	పూర్ణాంకం extra_remainder = 0;
+	పూర్ణాంకం extra = 0;
 
-	if (ctx->main_reversed) {
-		main_pos = lh__box_size_main(ctx->horizontal, ctx->flex) -
+	ఒకవేళ (ctx->main_reversed) {
+		main_pos = lh_box_కొలత_main(ctx->horizontal, ctx->flex) -
 				main_pos;
 	}
 
-	if (ctx->available_main != AUTO &&
-	    ctx->available_main != UNKNOWN_WIDTH &&
-	    ctx->available_main > line->used_main_size) {
-		if (line->main_auto_margin_count > 0) {
-			extra = ctx->available_main - line->used_main_size;
+	ఒకవేళ (ctx->అందుబాటు_main != AUTO &&
+	    ctx->అందుబాటు_main != UNKNOWN_వెడల్పు &&
+	    ctx->అందుబాటు_main > పంక్తి->వాడిన_main_కొలత) {
+		ఒకవేళ (పంక్తి->main_auto_margin_లెక్క > 0) {
+			extra = ctx->అందుబాటు_main - పంక్తి->వాడిన_main_కొలత;
 
-			extra_remainder = extra % line->main_auto_margin_count;
-			extra /= line->main_auto_margin_count;
+			extra_remainder = extra % పంక్తి->main_auto_margin_లెక్క;
+			extra /= పంక్తి->main_auto_margin_లెక్క;
 		}
 	}
 
-	for (size_t i = line->first; i < item_count; i++) {
-		enum box_side main_end = ctx->horizontal ? RIGHT : BOTTOM;
-		enum box_side main_start = ctx->horizontal ? LEFT : TOP;
-		struct flex_item_data *item = &ctx->item.data[i];
-		struct box *b = item->box;
-		int extra_total = 0;
-		int extra_post = 0;
-		int extra_pre = 0;
-		int box_size_main;
-		int *box_pos_main;
+	కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+		గణన box_side main_చివర = ctx->horizontal ? కుడి_2 : BOTTOM;
+		గణన box_side main_ప్రారంభం = ctx->horizontal ? ఎడమ_2 : శిఖరం_2;
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
+		నిర్మాణం box *b = అంశం->box;
+		పూర్ణాంకం extra_మొత్తం = 0;
+		పూర్ణాంకం extra_post = 0;
+		పూర్ణాంకం extra_pre = 0;
+		పూర్ణాంకం box_కొలత_main;
+		పూర్ణాంకం *box_pos_main;
 
-		if (ctx->horizontal) {
-			b->width = item->target_main_size -
-					lh__delta_outer_width(b);
+		ఒకవేళ (ctx->horizontal) {
+			b->వెడల్పు = అంశం->లక్ష్యం_main_కొలత -
+					lh_delta_outer_వెడల్పు(b);
 
-			if (!layout_flex_item(ctx, item, b->width)) {
-				return false;
+			ఒకవేళ (!layout_flex_అంశం(ctx, అంశం, b->వెడల్పు)) {
+				తిరిగి false;
 			}
 		}
 
-		box_size_main = lh__box_size_main(ctx->horizontal, b);
+		box_కొలత_main = lh_box_కొలత_main(ctx->horizontal, b);
 		box_pos_main = ctx->horizontal ? &b->x : &b->y;
 
-		if (!lh__box_is_absolute(b)) {
-			if (b->margin[main_start] == AUTO) {
+		ఒకవేళ (!lh__box_is_absolute(b)) {
+			ఒకవేళ (b->margin[main_ప్రారంభం] == AUTO) {
 				extra_pre = extra + extra_remainder;
 			}
-			if (b->margin[main_end] == AUTO) {
+			ఒకవేళ (b->margin[main_చివర] == AUTO) {
 				extra_post = extra + extra_remainder;
 			}
-			extra_total = extra_pre + extra_post;
+			extra_మొత్తం = extra_pre + extra_post;
 
 			main_pos += pre_multiplier *
-					(extra_total + box_size_main +
+					(extra_మొత్తం + box_కొలత_main +
 					 lh__delta_outer_main(ctx->flex, b));
 		}
 
-		*box_pos_main = main_pos + lh__non_auto_margin(b, main_start) +
-				extra_pre + b->border[main_start].width;
+		*box_pos_main = main_pos + lh__non_auto_margin(b, main_ప్రారంభం) +
+				extra_pre + b->border[main_ప్రారంభం].వెడల్పు;
 
-		if (!lh__box_is_absolute(b)) {
-			int cross_size;
-			int box_size_cross = lh__box_size_cross(
+		ఒకవేళ (!lh__box_is_absolute(b)) {
+			పూర్ణాంకం cross_కొలత;
+			పూర్ణాంకం box_కొలత_cross = lh_box_కొలత_cross(
 					ctx->horizontal, b);
 
 			main_pos += post_multiplier *
-					(extra_total + box_size_main +
+					(extra_మొత్తం + box_కొలత_main +
 					 lh__delta_outer_main(ctx->flex, b));
 
-			cross_size = box_size_cross + lh__delta_outer_cross(
+			cross_కొలత = box_కొలత_cross + lh__delta_outer_cross(
 					ctx->flex, b);
-			if (line->cross_size < cross_size) {
-				line->cross_size = cross_size;
+			ఒకవేళ (పంక్తి->cross_కొలత < cross_కొలత) {
+				పంక్తి->cross_కొలత = cross_కొలత;
 			}
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 /**
@@ -895,41 +895,41 @@ static bool layout_flex__place_line_items_main(
  * \param[in] ctx   Flex layout context
  * \return true on success, false on failure.
  */
-static bool layout_flex__collect_items_into_lines(
-		struct flex_ctx *ctx)
+స్థిర bool layout_flex_collect_వస్తువులు_into_పంక్తులు(
+		నిర్మాణం flex_ctx *ctx)
 {
 	size_t pos = 0;
 
-	while (pos < ctx->item.count) {
-		struct flex_line_data *line;
+	అయితే (pos < ctx->అంశం.లెక్క) {
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి;
 
-		line = layout_flex__build_line(ctx, pos);
-		if (line == NULL) {
-			return false;
+		పంక్తి = layout_flex_build_పంక్తి(ctx, pos);
+		ఒకవేళ (పంక్తి == ఖాళీ) {
+			తిరిగి false;
 		}
 
-		pos += line->count;
+		pos += పంక్తి->లెక్క;
 
 		NSLOG(flex, DEEPDEBUG, "flex-container: %p: "
 				"fitted: %zu (total: %zu/%zu)",
-				ctx->flex, line->count,
-				pos, ctx->item.count);
+				ctx->flex, పంక్తి->లెక్క,
+				pos, ctx->అంశం.లెక్క);
 
-		if (!layout_flex__resolve_line(ctx, line)) {
-			return false;
+		ఒకవేళ (!layout_flex_resolve_పంక్తి(ctx, పంక్తి)) {
+			తిరిగి false;
 		}
 
-		if (!layout_flex__place_line_items_main(ctx, line)) {
-			return false;
+		ఒకవేళ (!layout_flex_ఉంచు_పంక్తి_వస్తువులు_main(ctx, పంక్తి)) {
+			తిరిగి false;
 		}
 
-		ctx->cross_size += line->cross_size;
-		if (ctx->main_size < line->main_size) {
-			ctx->main_size = line->main_size;
+		ctx->cross_కొలత += పంక్తి->cross_కొలత;
+		ఒకవేళ (ctx->main_కొలత < పంక్తి->main_కొలత) {
+			ctx->main_కొలత = పంక్తి->main_కొలత;
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 /**
@@ -939,58 +939,58 @@ static bool layout_flex__collect_items_into_lines(
  * \param[in] line   Line to align items on
  * \param[in] extra  Extra line width in pixels
  */
-static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
-		struct flex_line_data *line, int extra)
+స్థిర శూన్య layout_flex_ఉంచు_పంక్తి_వస్తువులు_cross(నిర్మాణం flex_ctx *ctx,
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి, పూర్ణాంకం extra)
 {
-	enum box_side cross_start = ctx->horizontal ? TOP : LEFT;
-	size_t item_count = line->first + line->count;
+	గణన box_side cross_ప్రారంభం = ctx->horizontal ? శిఖరం_2 : ఎడమ_2;
+	size_t అంశం_లెక్క = పంక్తి->మొదటి + పంక్తి->లెక్క;
 
-	for (size_t i = line->first; i < item_count; i++) {
-		struct flex_item_data *item = &ctx->item.data[i];
-		struct box *b = item->box;
-		int cross_free_space;
-		int *box_size_cross;
-		int *box_pos_cross;
+	కొరకు (size_t i = పంక్తి->మొదటి; i < అంశం_లెక్క; i++) {
+		నిర్మాణం flex_అంశం_దత్తాంశం *అంశం = &ctx->అంశం.దత్తాంశం[i];
+		నిర్మాణం box *b = అంశం->box;
+		పూర్ణాంకం cross_free_space;
+		పూర్ణాంకం *box_కొలత_cross;
+		పూర్ణాంకం *box_pos_cross;
 
 		box_pos_cross = ctx->horizontal ? &b->y : &b->x;
-		box_size_cross = lh__box_size_cross_ptr(ctx->horizontal, b);
+		box_కొలత_cross = lh_box_కొలత_cross_ptr(ctx->horizontal, b);
 
-		cross_free_space = line->cross_size + extra - *box_size_cross -
+		cross_free_space = పంక్తి->cross_కొలత + extra - *box_కొలత_cross -
 				lh__delta_outer_cross(ctx->flex, b);
 
-		switch (lh__box_align_self(ctx->flex, b)) {
-		default:
-		case CSS_ALIGN_SELF_STRETCH:
-			if (lh__box_size_cross_is_auto(ctx->horizontal, b)) {
-				*box_size_cross += cross_free_space;
+		ఎంపిక (lh__box_align_self(ctx->flex, b)) {
+		అప్రమేయ:
+		స్థితి CSS_ALIGN_SELF_STRETCH:
+			ఒకవేళ (lh_box_కొలత_cross_is_auto(ctx->horizontal, b)) {
+				*box_కొలత_cross += cross_free_space;
 
 				/* Relayout children for stretch. */
-				if (!layout_flex_item(ctx, item, b->width)) {
-					return;
+				ఒకవేళ (!layout_flex_అంశం(ctx, అంశం, b->వెడల్పు)) {
+					తిరిగి;
 				}
 			}
 			fallthrough;
-		case CSS_ALIGN_SELF_FLEX_START:
-			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos +
-					lh__non_auto_margin(b, cross_start) +
-					b->border[cross_start].width;
-			break;
+		స్థితి CSS_ALIGN_SELF_FLEX_ప్రారంభం:
+			*box_pos_cross = ctx->flex->padding[cross_ప్రారంభం] +
+					పంక్తి->pos +
+					lh__non_auto_margin(b, cross_ప్రారంభం) +
+					b->border[cross_ప్రారంభం].వెడల్పు;
+			ఆపు;
 
-		case CSS_ALIGN_SELF_FLEX_END:
-			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos + cross_free_space +
-					lh__non_auto_margin(b, cross_start) +
-					b->border[cross_start].width;
-			break;
+		స్థితి CSS_ALIGN_SELF_FLEX_చివర:
+			*box_pos_cross = ctx->flex->padding[cross_ప్రారంభం] +
+					పంక్తి->pos + cross_free_space +
+					lh__non_auto_margin(b, cross_ప్రారంభం) +
+					b->border[cross_ప్రారంభం].వెడల్పు;
+			ఆపు;
 
-		case CSS_ALIGN_SELF_BASELINE:
-		case CSS_ALIGN_SELF_CENTER:
-			*box_pos_cross = ctx->flex->padding[cross_start] +
-					line->pos + cross_free_space / 2 +
-					lh__non_auto_margin(b, cross_start) +
-					b->border[cross_start].width;
-			break;
+		స్థితి CSS_ALIGN_SELF_BASELINE:
+		స్థితి CSS_ALIGN_SELF_CENTER:
+			*box_pos_cross = ctx->flex->padding[cross_ప్రారంభం] +
+					పంక్తి->pos + cross_free_space / 2 +
+					lh__non_auto_margin(b, cross_ప్రారంభం) +
+					b->border[cross_ప్రారంభం].వెడల్పు;
+			ఆపు;
 		}
 	}
 }
@@ -1000,36 +1000,36 @@ static void layout_flex__place_line_items_cross(struct flex_ctx *ctx,
  *
  * \param[in] ctx  Flex layout context
  */
-static void layout_flex__place_lines(struct flex_ctx *ctx)
+స్థిర శూన్య layout_flex_ఉంచు_పంక్తులు(నిర్మాణం flex_ctx *ctx)
 {
-	bool reversed = ctx->wrap == CSS_FLEX_WRAP_WRAP_REVERSE;
-	int line_pos = reversed ? ctx->cross_size : 0;
-	int post_multiplier = reversed ? 0 : 1;
-	int pre_multiplier = reversed ? -1 : 0;
-	int extra_remainder = 0;
-	int extra = 0;
+	bool reversed = ctx->wrap == CSS_FLEX_WRAP_WRAP_తిరగేయి;
+	పూర్ణాంకం పంక్తి_pos = reversed ? ctx->cross_కొలత : 0;
+	పూర్ణాంకం post_multiplier = reversed ? 0 : 1;
+	పూర్ణాంకం pre_multiplier = reversed ? -1 : 0;
+	పూర్ణాంకం extra_remainder = 0;
+	పూర్ణాంకం extra = 0;
 
-	if (ctx->available_cross != AUTO &&
-	    ctx->available_cross > ctx->cross_size &&
-	    ctx->line.count > 0) {
-		extra = ctx->available_cross - ctx->cross_size;
+	ఒకవేళ (ctx->అందుబాటు_cross != AUTO &&
+	    ctx->అందుబాటు_cross > ctx->cross_కొలత &&
+	    ctx->పంక్తి.లెక్క > 0) {
+		extra = ctx->అందుబాటు_cross - ctx->cross_కొలత;
 
-		extra_remainder = extra % ctx->line.count;
-		extra /= ctx->line.count;
+		extra_remainder = extra % ctx->పంక్తి.లెక్క;
+		extra /= ctx->పంక్తి.లెక్క;
 	}
 
-	for (size_t i = 0; i < ctx->line.count; i++) {
-		struct flex_line_data *line = &ctx->line.data[i];
+	కొరకు (size_t i = 0; i < ctx->పంక్తి.లెక్క; i++) {
+		నిర్మాణం flex_పంక్తి_దత్తాంశం *పంక్తి = &ctx->పంక్తి.దత్తాంశం[i];
 
-		line_pos += pre_multiplier * line->cross_size;
-		line->pos = line_pos;
-		line_pos += post_multiplier * line->cross_size +
+		పంక్తి_pos += pre_multiplier * పంక్తి->cross_కొలత;
+		పంక్తి->pos = పంక్తి_pos;
+		పంక్తి_pos += post_multiplier * పంక్తి->cross_కొలత +
 				extra + extra_remainder;
 
-		layout_flex__place_line_items_cross(ctx, line,
+		layout_flex_ఉంచు_పంక్తి_వస్తువులు_cross(ctx, పంక్తి,
 				extra + extra_remainder);
 
-		if (extra_remainder > 0) {
+		ఒకవేళ (extra_remainder > 0) {
 			extra_remainder--;
 		}
 	}
@@ -1043,65 +1043,65 @@ static void layout_flex__place_lines(struct flex_ctx *ctx)
  * \param[in] content          memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-bool layout_flex(struct box *flex, int available_width,
+bool layout_flex(నిర్మాణం box *flex, పూర్ణాంకం అందుబాటు_వెడల్పు,
 		html_content *content)
 {
-	int max_height, min_height;
-	struct flex_ctx *ctx;
+	పూర్ణాంకం max_ఎత్తు, min_ఎత్తు;
+	నిర్మాణం flex_ctx *ctx;
 	bool success = false;
 
 	ctx = layout_flex_ctx__create(content, flex);
-	if (ctx == NULL) {
-		return false;
+	ఒకవేళ (ctx == ఖాళీ) {
+		తిరిగి false;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "box %p: %s, available_width %i, width: %i",
 			flex, ctx->horizontal ? "horizontal" : "vertical",
-			available_width, flex->width);
+			అందుబాటు_వెడల్పు, flex->వెడల్పు);
 
-	layout_find_dimensions(
-			ctx->unit_len_ctx, available_width, -1,
-			flex, flex->style, NULL, &flex->height,
-			NULL, NULL, &max_height, &min_height,
+	layout_కనుగొను_dimensions(
+			ctx->unit_len_ctx, అందుబాటు_వెడల్పు, -1,
+			flex, flex->style, ఖాళీ, &flex->ఎత్తు,
+			ఖాళీ, ఖాళీ, &max_ఎత్తు, &min_ఎత్తు,
 			flex->margin, flex->padding, flex->border);
 
-	available_width = min(available_width, flex->width);
+	అందుబాటు_వెడల్పు = min(అందుబాటు_వెడల్పు, flex->వెడల్పు);
 
-	if (ctx->horizontal) {
-		ctx->available_main = available_width;
-		ctx->available_cross = ctx->flex->height;
-	} else {
-		ctx->available_main = ctx->flex->height;
-		ctx->available_cross = available_width;
+	ఒకవేళ (ctx->horizontal) {
+		ctx->అందుబాటు_main = అందుబాటు_వెడల్పు;
+		ctx->అందుబాటు_cross = ctx->flex->ఎత్తు;
+	} లేకపోతే {
+		ctx->అందుబాటు_main = ctx->flex->ఎత్తు;
+		ctx->అందుబాటు_cross = అందుబాటు_వెడల్పు;
 	}
 
 	NSLOG(flex, DEEPDEBUG, "box %p: available_main: %i",
-			flex, ctx->available_main);
+			flex, ctx->అందుబాటు_main);
 	NSLOG(flex, DEEPDEBUG, "box %p: available_cross: %i",
-			flex, ctx->available_cross);
+			flex, ctx->అందుబాటు_cross);
 
-	layout_flex_ctx__populate_item_data(ctx, flex, available_width);
+	layout_flex_ctx_populate_అంశం_దత్తాంశం(ctx, flex, అందుబాటు_వెడల్పు);
 
 	/* Place items onto lines. */
-	success = layout_flex__collect_items_into_lines(ctx);
-	if (!success) {
-		goto cleanup;
+	success = layout_flex_collect_వస్తువులు_into_పంక్తులు(ctx);
+	ఒకవేళ (!success) {
+		వెళ్ళు cleanup;
 	}
 
-	layout_flex__place_lines(ctx);
+	layout_flex_ఉంచు_పంక్తులు(ctx);
 
-	if (flex->height == AUTO) {
-		flex->height = ctx->horizontal ?
-				ctx->cross_size :
-				ctx->main_size;
+	ఒకవేళ (flex->ఎత్తు == AUTO) {
+		flex->ఎత్తు = ctx->horizontal ?
+				ctx->cross_కొలత :
+				ctx->main_కొలత;
 	}
 
-	if (flex->height != AUTO) {
-		if (max_height >= 0 && flex->height > max_height) {
-			flex->height = max_height;
+	ఒకవేళ (flex->ఎత్తు != AUTO) {
+		ఒకవేళ (max_ఎత్తు >= 0 && flex->ఎత్తు > max_ఎత్తు) {
+			flex->ఎత్తు = max_ఎత్తు;
 		}
-		if (min_height >  0 && flex->height < min_height) {
-			flex->height = min_height;
+		ఒకవేళ (min_ఎత్తు >  0 && flex->ఎత్తు < min_ఎత్తు) {
+			flex->ఎత్తు = min_ఎత్తు;
 		}
 	}
 
@@ -1112,6 +1112,6 @@ cleanup:
 
 	NSLOG(flex, DEEPDEBUG, "box %p: %s: w: %i, h: %i", flex,
 			success ? "success" : "failure",
-			flex->width, flex->height);
-	return success;
+			flex->వెడల్పు, flex->ఎత్తు);
+	తిరిగి success;
 }

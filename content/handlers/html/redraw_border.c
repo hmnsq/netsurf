@@ -22,43 +22,43 @@
  * Redrawing CONTENT_HTML borders implementation.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "netsurf/plotters.h"
-#include "netsurf/css.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "netsurf/plotters.h"
+#అన్తర్భావ "netsurf/css.h"
 
-#include "html/box.h"
-#include "html/private.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/private.h"
 
 
-static plot_style_t plot_style_bdr = {
+స్థిర plot_style_t plot_style_bdr = {
 	.stroke_type = PLOT_OP_TYPE_DASH,
 };
-static plot_style_t plot_style_fillbdr = {
+స్థిర plot_style_t plot_style_fillbdr = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_dark = {
+స్థిర plot_style_t plot_style_fillbdr_dark = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_light = {
+స్థిర plot_style_t plot_style_fillbdr_light = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_ddark = {
+స్థిర plot_style_t plot_style_fillbdr_ddark = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
-static plot_style_t plot_style_fillbdr_dlight = {
+స్థిర plot_style_t plot_style_fillbdr_dlight = {
 	.fill_type = PLOT_OP_TYPE_SOLID,
 };
 
 
-static inline nserror
-plot_clipped_rectangle(const struct redraw_context *ctx,
-		       const plot_style_t *style,
-		       const struct rect *clip,
-		       struct rect *rect)
+స్థిర అంతఃవరుస nserror
+plot_clipped_rectangle(స్థిరరాశి నిర్మాణం redraw_context *ctx,
+		       స్థిరరాశి plot_style_t *style,
+		       స్థిరరాశి నిర్మాణం rect *clip,
+		       నిర్మాణం rect *rect)
 {
 	nserror res;
 
@@ -66,13 +66,13 @@ plot_clipped_rectangle(const struct redraw_context *ctx,
 	rect->y0 = (clip->y0 > rect->y0) ? clip->y0 : rect->y0;
 	rect->x1 = (clip->x1 < rect->x1) ? clip->x1 : rect->x1;
 	rect->y1 = (clip->y1 < rect->y1) ? clip->y1 : rect->y1;
-	if ((rect->x0 < rect->x1) && (rect->y0 < rect->y1)) {
+	ఒకవేళ ((rect->x0 < rect->x1) && (rect->y0 < rect->y1)) {
 		/* valid clip rectangles only */
 		res = ctx->plot->rectangle(ctx, style, rect);
-	} else {
+	} లేకపోతే {
 		res = NSERROR_OK;
 	}
-	return res;
+	తిరిగి res;
 }
 
 
@@ -89,71 +89,71 @@ plot_clipped_rectangle(const struct redraw_context *ctx,
  * \param ctx current redraw context
  * \return NSERROR_OK if successful otherwise appropriate error code
  */
-static nserror
-html_redraw_border_plot(const int side,
-			const int *p,
-			colour c,
-			enum css_border_style_e style,
-			int thickness,
+స్థిర nserror
+html_redraw_border_plot(స్థిరరాశి పూర్ణాంకం side,
+			స్థిరరాశి పూర్ణాంకం *p,
+			రంగు c,
+			గణన css_border_style_e style,
+			పూర్ణాంకం thickness,
 			bool rectangular,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+			స్థిరరాశి నిర్మాణం rect *clip,
+			స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
-	int z[8]; /* Vertices of border part */
-	unsigned int light = side;
-	plot_style_t *plot_style_bdr_in;
-	plot_style_t *plot_style_bdr_out;
+	పూర్ణాంకం z[8]; /* Vertices of border part */
+	గుర్తులేని పూర్ణాంకం light = side;
+	plot_style_t *plot_style_bdr_లోపల;
+	plot_style_t *plot_style_bdr_బహిర్గతం;
 	nserror res = NSERROR_OK;
-	struct rect rect;
+	నిర్మాణం rect rect;
 
-	if (c == NS_TRANSPARENT) {
-		return res;
+	ఒకవేళ (c == NS_TRANSPARENT) {
+		తిరిగి res;
 	}
 
 	plot_style_bdr.stroke_type = PLOT_OP_TYPE_DASH;
-	plot_style_bdr.stroke_colour = c;
-	plot_style_bdr.stroke_width = (thickness << PLOT_STYLE_RADIX);
-	plot_style_fillbdr.fill_colour = c;
-	plot_style_fillbdr_dark.fill_colour = darken_colour(c);
-	plot_style_fillbdr_light.fill_colour = lighten_colour(c);
-	plot_style_fillbdr_ddark.fill_colour = double_darken_colour(c);
-	plot_style_fillbdr_dlight.fill_colour = double_lighten_colour(c);
+	plot_style_bdr.stroke_రంగు = c;
+	plot_style_bdr.stroke_వెడల్పు = (thickness << PLOT_STYLE_RADIX);
+	plot_style_fillbdr.fill_రంగు = c;
+	plot_style_fillbdr_dark.fill_రంగు = darken_రంగు(c);
+	plot_style_fillbdr_light.fill_రంగు = lighten_రంగు(c);
+	plot_style_fillbdr_ddark.fill_రంగు = double_darken_రంగు(c);
+	plot_style_fillbdr_dlight.fill_రంగు = double_lighten_రంగు(c);
 
-	switch (style) {
-	case CSS_BORDER_STYLE_DOTTED:
+	ఎంపిక (style) {
+	స్థితి CSS_BORDER_STYLE_DOTTED:
 		plot_style_bdr.stroke_type = PLOT_OP_TYPE_DOT;
 		fallthrough;
-	case CSS_BORDER_STYLE_DASHED:
+	స్థితి CSS_BORDER_STYLE_DASHED:
 		rect.x0 = (p[0] + p[2]) / 2;
 		rect.y0 = (p[1] + p[3]) / 2;
 		rect.x1 = (p[4] + p[6]) / 2;
 		rect.y1 = (p[5] + p[7]) / 2;
-		res = ctx->plot->line(ctx, &plot_style_bdr, &rect);
-		break;
+		res = ctx->plot->పంక్తి(ctx, &plot_style_bdr, &rect);
+		ఆపు;
 
-	case CSS_BORDER_STYLE_SOLID:
+	స్థితి CSS_BORDER_STYLE_SOLID:
 		/* solid is the default */
-	default:
-		if (rectangular || thickness == 1) {
+	అప్రమేయ:
+		ఒకవేళ (rectangular || thickness == 1) {
 
-			if (side == TOP || side == RIGHT) {
+			ఒకవేళ (side == శిఖరం_2 || side == కుడి_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
-				if ((side == TOP) &&
+				ఒకవేళ ((side == శిఖరం_2) &&
 				    (p[4] - p[6] != 0)) {
 					rect.x1 = p[4];
-				} else {
+				} లేకపోతే {
 					rect.x1 = p[6];
 				}
 				rect.y1 = p[7];
-			} else {
+			} లేకపోతే {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
-				if ((side == LEFT) &&
+				ఒకవేళ ((side == ఎడమ_2) &&
 				    (p[1] - p[3] != 0)) {
 					rect.y1 = p[1];
-				} else {
+				} లేకపోతే {
 					rect.y1 = p[3];
 				}
 			}
@@ -161,12 +161,12 @@ html_redraw_border_plot(const int side,
 						     &plot_style_fillbdr,
 						     clip,
 						     &rect);
-		} else {
+		} లేకపోతే {
 			res = ctx->plot->polygon(ctx, &plot_style_fillbdr, p, 4);
 		}
-		break;
+		ఆపు;
 
-	case CSS_BORDER_STYLE_DOUBLE:
+	స్థితి CSS_BORDER_STYLE_DOUBLE:
 		z[0] = p[0];
 		z[1] = p[1];
 		z[2] = (p[0] * 2 + p[2]) / 3;
@@ -176,7 +176,7 @@ html_redraw_border_plot(const int side,
 		z[6] = p[6];
 		z[7] = p[7];
 		res = ctx->plot->polygon(ctx, &plot_style_fillbdr, z, 4);
-		if (res == NSERROR_OK) {
+		ఒకవేళ (res == NSERROR_OK) {
 			z[0] = p[2];
 			z[1] = p[3];
 			z[2] = (p[2] * 2 + p[0]) / 3;
@@ -187,93 +187,93 @@ html_redraw_border_plot(const int side,
 			z[7] = p[5];
 			res = ctx->plot->polygon(ctx, &plot_style_fillbdr, z, 4);
 		}
-		break;
+		ఆపు;
 
-	case CSS_BORDER_STYLE_GROOVE:
+	స్థితి CSS_BORDER_STYLE_GROOVE:
 		light = 3 - light;
 		fallthrough;
-	case CSS_BORDER_STYLE_RIDGE:
+	స్థితి CSS_BORDER_STYLE_RIDGE:
 		/* choose correct colours for each part of the border line */
-		if (light <= 1) {
-			plot_style_bdr_in = &plot_style_fillbdr_dark;
-			plot_style_bdr_out = &plot_style_fillbdr_light;
-		} else {
-			plot_style_bdr_in = &plot_style_fillbdr_light;
-			plot_style_bdr_out = &plot_style_fillbdr_dark;
+		ఒకవేళ (light <= 1) {
+			plot_style_bdr_లోపల = &plot_style_fillbdr_dark;
+			plot_style_bdr_బహిర్గతం = &plot_style_fillbdr_light;
+		} లేకపోతే {
+			plot_style_bdr_లోపల = &plot_style_fillbdr_light;
+			plot_style_bdr_బహిర్గతం = &plot_style_fillbdr_dark;
 		}
 
 		/* Render border */
-		if ((rectangular || thickness == 2) && thickness != 1) {
+		ఒకవేళ ((rectangular || thickness == 2) && thickness != 1) {
 			/* Border made up from two parts and can be
 			 * plotted with rectangles
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			ఒకవేళ (side == శిఖరం_2 || side == కుడి_2) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-			} else {
+			} లేకపోతే {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = (p[0] + p[2]) / 2;
 				rect.y1 = (p[1] + p[3]) / 2;
 			}
 			res = plot_clipped_rectangle(ctx,
-						     plot_style_bdr_in,
+						     plot_style_bdr_లోపల,
 						     clip,
 						     &rect);
-			if (res != NSERROR_OK) {
-				return res;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			ఒకవేళ (side == శిఖరం_2 || side == కుడి_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
 				rect.y1 = (p[7] + p[5]) / 2;
-			} else {
+			} లేకపోతే {
 				rect.x0 = (p[6] + p[4]) / 2;
 				rect.y0 = (p[7] + p[5]) / 2;
 				rect.x1 = p[2];
 				rect.y1 = p[3];
 			}
 			res = plot_clipped_rectangle(ctx,
-						     plot_style_bdr_out,
+						     plot_style_bdr_బహిర్గతం,
 						     clip,
 						     &rect);
-		} else if (thickness == 1) {
+		} లేకపోతే ఒకవేళ (thickness == 1) {
 			/* Border made up from one part which can be
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			ఒకవేళ (side == శిఖరం_2 || side == కుడి_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-				rect.x1 = ((side == TOP) && (p[4] - p[6] != 0)) ?
+				rect.x1 = ((side == శిఖరం_2) && (p[4] - p[6] != 0)) ?
 					rect.x1 + p[4] - p[6] : rect.x1;
 
 				res = plot_clipped_rectangle(ctx,
-							     plot_style_bdr_in,
+							     plot_style_bdr_లోపల,
 							     clip,
 							     &rect);
-			} else {
+			} లేకపోతే {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
 				rect.y1 = p[3];
-				rect.y1 = ((side == LEFT) && (p[1] - p[3] != 0)) ?
+				rect.y1 = ((side == ఎడమ_2) && (p[1] - p[3] != 0)) ?
 					rect.y1 + p[1] - p[3] : rect.y1;
 				res = plot_clipped_rectangle(ctx,
-							     plot_style_bdr_out,
+							     plot_style_bdr_బహిర్గతం,
 							     clip,
 							     &rect);
 			}
-		} else {
+		} లేకపోతే {
 			/* Border made up from two parts and can't be
 			 * plotted with rectangles
 			 */
@@ -285,119 +285,119 @@ html_redraw_border_plot(const int side,
 			z[5] = (p[7] + p[5]) / 2;
 			z[6] = p[6];
 			z[7] = p[7];
-			res = ctx->plot->polygon(ctx, plot_style_bdr_in, z, 4);
-			if (res == NSERROR_OK) {
+			res = ctx->plot->polygon(ctx, plot_style_bdr_లోపల, z, 4);
+			ఒకవేళ (res == NSERROR_OK) {
 				z[0] = p[2];
 				z[1] = p[3];
 				z[6] = p[4];
 				z[7] = p[5];
 				res = ctx->plot->polygon(ctx,
-							 plot_style_bdr_out,
+							 plot_style_bdr_బహిర్గతం,
 							 z,
 							 4);
 			}
 		}
-		break;
+		ఆపు;
 
-	case CSS_BORDER_STYLE_INSET:
+	స్థితి CSS_BORDER_STYLE_INSET:
 		light = (light + 2) % 4;
 		fallthrough;
-	case CSS_BORDER_STYLE_OUTSET:
+	స్థితి CSS_BORDER_STYLE_OUTSET:
 		/* choose correct colours for each part of the border line */
-		switch (light) {
-		case 0:
-			plot_style_bdr_in = &plot_style_fillbdr_light;
-			plot_style_bdr_out = &plot_style_fillbdr_dlight;
-			break;
-		case 1:
-			plot_style_bdr_in = &plot_style_fillbdr_ddark;
-			plot_style_bdr_out = &plot_style_fillbdr_dark;
-			break;
-		case 2:
-			plot_style_bdr_in = &plot_style_fillbdr_dark;
-			plot_style_bdr_out = &plot_style_fillbdr_ddark;
-			break;
-		case 3:
-			plot_style_bdr_in = &plot_style_fillbdr_dlight;
-			plot_style_bdr_out = &plot_style_fillbdr_light;
-			break;
-		default:
-			plot_style_bdr_in = &plot_style_fillbdr;
-			plot_style_bdr_out = &plot_style_fillbdr;
-			break;
+		ఎంపిక (light) {
+		స్థితి 0:
+			plot_style_bdr_లోపల = &plot_style_fillbdr_light;
+			plot_style_bdr_బహిర్గతం = &plot_style_fillbdr_dlight;
+			ఆపు;
+		స్థితి 1:
+			plot_style_bdr_లోపల = &plot_style_fillbdr_ddark;
+			plot_style_bdr_బహిర్గతం = &plot_style_fillbdr_dark;
+			ఆపు;
+		స్థితి 2:
+			plot_style_bdr_లోపల = &plot_style_fillbdr_dark;
+			plot_style_bdr_బహిర్గతం = &plot_style_fillbdr_ddark;
+			ఆపు;
+		స్థితి 3:
+			plot_style_bdr_లోపల = &plot_style_fillbdr_dlight;
+			plot_style_bdr_బహిర్గతం = &plot_style_fillbdr_light;
+			ఆపు;
+		అప్రమేయ:
+			plot_style_bdr_లోపల = &plot_style_fillbdr;
+			plot_style_bdr_బహిర్గతం = &plot_style_fillbdr;
+			ఆపు;
 		}
 
 		/* Render border */
-		if ((rectangular || thickness == 2) && thickness != 1) {
+		ఒకవేళ ((rectangular || thickness == 2) && thickness != 1) {
 			/* Border made up from two parts and can be
 			 * plotted with rectangles
 			 */
 
 			/* First part */
-			if (side == TOP || side == RIGHT) {
+			ఒకవేళ (side == శిఖరం_2 || side == కుడి_2) {
 				rect.x0 = (p[0] + p[2]) / 2;
 				rect.y0 = (p[1] + p[3]) / 2;
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-			} else {
+			} లేకపోతే {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = (p[0] + p[2]) / 2;
 				rect.y1 = (p[1] + p[3]) / 2;
 			}
 			res = plot_clipped_rectangle(ctx,
-						     plot_style_bdr_in,
+						     plot_style_bdr_లోపల,
 						     clip,
 						     &rect);
-			if (res != NSERROR_OK) {
-				return res;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
 
 			/* Second part */
-			if (side == TOP || side == RIGHT) {
+			ఒకవేళ (side == శిఖరం_2 || side == కుడి_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = (p[6] + p[4]) / 2;
 				rect.y1 = (p[7] + p[5]) / 2;
-			} else {
+			} లేకపోతే {
 				rect.x0 = (p[6] + p[4]) / 2;
 				rect.y0 = (p[7] + p[5]) / 2;
 				rect.x1 = p[2];
 				rect.y1 = p[3];
 			}
 			res = plot_clipped_rectangle(ctx,
-						     plot_style_bdr_out,
+						     plot_style_bdr_బహిర్గతం,
 						     clip,
 						     &rect);
-		} else if (thickness == 1) {
+		} లేకపోతే ఒకవేళ (thickness == 1) {
 			/* Border made up from one part which can be
 			 * plotted as a rectangle
 			 */
 
-			if (side == TOP || side == RIGHT) {
+			ఒకవేళ (side == శిఖరం_2 || side == కుడి_2) {
 				rect.x0 = p[2];
 				rect.y0 = p[3];
 				rect.x1 = p[6];
 				rect.y1 = p[7];
-				rect.x1 = ((side == TOP) && (p[4] - p[6] != 0)) ?
+				rect.x1 = ((side == శిఖరం_2) && (p[4] - p[6] != 0)) ?
 					rect.x1 + p[4] - p[6] : rect.x1;
 				res = plot_clipped_rectangle(ctx,
-							     plot_style_bdr_in,
+							     plot_style_bdr_లోపల,
 							     clip,
 							     &rect);
-			} else {
+			} లేకపోతే {
 				rect.x0 = p[6];
 				rect.y0 = p[7];
 				rect.x1 = p[2];
 				rect.y1 = p[3];
-				rect.y1 = ((side == LEFT) && (p[1] - p[3] != 0)) ?
+				rect.y1 = ((side == ఎడమ_2) && (p[1] - p[3] != 0)) ?
 					rect.y1 + p[1] - p[3] : rect.y1;
 				res = plot_clipped_rectangle(ctx,
-							     plot_style_bdr_out,
+							     plot_style_bdr_బహిర్గతం,
 							     clip,
 							     &rect);
 			}
-		} else {
+		} లేకపోతే {
 			/* Border made up from two parts and can't be
 			 * plotted with rectangles
 			 */
@@ -410,20 +410,20 @@ html_redraw_border_plot(const int side,
 			z[5] = (p[7] + p[5]) / 2;
 			z[6] = p[6];
 			z[7] = p[7];
-			res = ctx->plot->polygon(ctx, plot_style_bdr_in, z, 4);
-			if (res != NSERROR_OK) {
-				return res;
+			res = ctx->plot->polygon(ctx, plot_style_bdr_లోపల, z, 4);
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి res;
 			}
 			z[0] = p[2];
 			z[1] = p[3];
 			z[6] = p[4];
 			z[7] = p[5];
-			res = ctx->plot->polygon(ctx, plot_style_bdr_out, z, 4);
+			res = ctx->plot->polygon(ctx, plot_style_bdr_బహిర్గతం, z, 4);
 		}
-		break;
+		ఆపు;
 	}
 
-	return res;
+	తిరిగి res;
 }
 
 
@@ -441,41 +441,41 @@ html_redraw_border_plot(const int side,
  * \return true if successful, false otherwise
  */
 bool
-html_redraw_borders(struct box *box,
-		    int x_parent,
-		    int y_parent,
-		    int p_width,
-		    int p_height,
-		    const struct rect *clip,
-		    float scale,
-		    const struct redraw_context *ctx)
+html_redraw_borders(నిర్మాణం box *box,
+		    పూర్ణాంకం x_మాతృ,
+		    పూర్ణాంకం y_మాతృ,
+		    పూర్ణాంకం p_వెడల్పు,
+		    పూర్ణాంకం p_ఎత్తు,
+		    స్థిరరాశి నిర్మాణం rect *clip,
+		    దశాంశం scale,
+		    స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
-	unsigned int sides[] = { LEFT, RIGHT, TOP, BOTTOM };
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
-	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
-	int x, y;
-	unsigned int i, side;
-	int p[8]; /* Box border vertices */
-	int z[8]; /* Border vertices */
-	bool square_end_1 = false;
-	bool square_end_2 = false;
+	గుర్తులేని పూర్ణాంకం sides[] = { ఎడమ_2, కుడి_2, శిఖరం_2, BOTTOM };
+	పూర్ణాంకం శిఖరం = box->border[శిఖరం_2].వెడల్పు;
+	పూర్ణాంకం కుడి = box->border[కుడి_2].వెడల్పు;
+	పూర్ణాంకం bottom = box->border[BOTTOM].వెడల్పు;
+	పూర్ణాంకం ఎడమ = box->border[ఎడమ_2].వెడల్పు;
+	పూర్ణాంకం x, y;
+	గుర్తులేని పూర్ణాంకం i, side;
+	పూర్ణాంకం p[8]; /* Box border vertices */
+	పూర్ణాంకం z[8]; /* Border vertices */
+	bool వర్గం_చివర_1 = false;
+	bool వర్గం_చివర_2 = false;
 	nserror res;
 
-	x = x_parent + box->x;
-	y = y_parent + box->y;
+	x = x_మాతృ + box->x;
+	y = y_మాతృ + box->y;
 
-	if (scale != 1.0) {
-		top *= scale;
-		right *= scale;
+	ఒకవేళ (scale != 1.0) {
+		శిఖరం *= scale;
+		కుడి *= scale;
 		bottom *= scale;
-		left *= scale;
+		ఎడమ *= scale;
 		x *= scale;
 		y *= scale;
 	}
 
-	assert(box->style);
+	ప్రతిజ్ఞా(box->style);
 
 	/* Calculate border vertices
 	 *
@@ -487,207 +487,207 @@ html_redraw_borders(struct box *box,
 	 *    | /                  \ |
 	 *    +----------------------D
 	 */
-	p[0] = x - left;		p[1] = y - top;			/* A */
+	p[0] = x - ఎడమ;		p[1] = y - శిఖరం;			/* A */
 	p[2] = x;			p[3] = y;			/* B */
-	p[4] = x + p_width;		p[5] = y + p_height;		/* C */
-	p[6] = x + p_width + right;	p[7] = y + p_height + bottom;	/* D */
+	p[4] = x + p_వెడల్పు;		p[5] = y + p_ఎత్తు;		/* C */
+	p[6] = x + p_వెడల్పు + కుడి;	p[7] = y + p_ఎత్తు + bottom;	/* D */
 
-	for (i = 0; i != 4; i++) {
-		colour col = 0;
+	కొరకు (i = 0; i != 4; i++) {
+		రంగు నిలువు = 0;
 		side = sides[i]; /* plot order */
 
-		if (box->border[side].width == 0 ||
+		ఒకవేళ (box->border[side].వెడల్పు == 0 ||
 		    nscss_color_is_transparent(box->border[side].c)) {
-			continue;
+			కొనసాగు;
 		}
 
-		switch (side) {
-		case LEFT:
-			square_end_1 = (top == 0);
-			square_end_2 = (bottom == 0);
+		ఎంపిక (side) {
+		స్థితి ఎడమ_2:
+			వర్గం_చివర_1 = (శిఖరం == 0);
+			వర్గం_చివర_2 = (bottom == 0);
 
 			z[0] = p[0];	z[1] = p[7];
 			z[2] = p[2];	z[3] = p[5];
 			z[4] = p[2];	z[5] = p[3];
 			z[6] = p[0];	z[7] = p[1];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+			ఒకవేళ (nscss_color_is_transparent(box->border[శిఖరం_2].c) == false &&
+			    box->border[శిఖరం_2].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
 				 */
-				z[5] -= top;
-				square_end_1 = true;
+				z[5] -= శిఖరం;
+				వర్గం_చివర_1 = true;
 			}
-			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+			ఒకవేళ (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 			    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang bottom corner fully,
 				 * if bottom border is opaque
 				 */
 				z[3] += bottom;
-				square_end_2 = true;
+				వర్గం_చివర_2 = true;
 			}
 
-			col = nscss_color_to_ns(box->border[side].c);
+			నిలువు = nscss_color_గమ్యం_ns(box->border[side].c);
 
 			res = html_redraw_border_plot(side,
 						      z,
-						      col,
+						      నిలువు,
 						      box->border[side].style,
-						      box->border[side].width * scale,
-						      square_end_1 && square_end_2,
+						      box->border[side].వెడల్పు * scale,
+						      వర్గం_చివర_1 && వర్గం_చివర_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి false;
 			}
-			break;
+			ఆపు;
 
-		case RIGHT:
-			square_end_1 = (top == 0);
-			square_end_2 = (bottom == 0);
+		స్థితి కుడి_2:
+			వర్గం_చివర_1 = (శిఖరం == 0);
+			వర్గం_చివర_2 = (bottom == 0);
 
 			z[0] = p[6];	z[1] = p[1];
 			z[2] = p[4];	z[3] = p[3];
 			z[4] = p[4];	z[5] = p[5];
 			z[6] = p[6];	z[7] = p[7];
 
-			if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-			    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+			ఒకవేళ (nscss_color_is_transparent(box->border[శిఖరం_2].c) == false &&
+			    box->border[శిఖరం_2].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang top corner fully,
 				 * if top border is opaque
 				 */
-				z[3] -= top;
-				square_end_1 = true;
+				z[3] -= శిఖరం;
+				వర్గం_చివర_1 = true;
 			}
-			if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+			ఒకవేళ (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 			    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 				/* make border overhang bottom corner fully,
 				 * if bottom border is opaque
 				 */
 				z[5] += bottom;
-				square_end_2 = true;
+				వర్గం_చివర_2 = true;
 			}
 
-			col = nscss_color_to_ns(box->border[side].c);
+			నిలువు = nscss_color_గమ్యం_ns(box->border[side].c);
 
 			res = html_redraw_border_plot(side,
 						      z,
-						      col,
+						      నిలువు,
 						      box->border[side].style,
-						      box->border[side].width * scale,
-						      square_end_1 && square_end_2,
+						      box->border[side].వెడల్పు * scale,
+						      వర్గం_చివర_1 && వర్గం_చివర_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి false;
 			}
-			break;
+			ఆపు;
 
-		case TOP:
-			if (clip->y0 > p[3]) {
+		స్థితి శిఖరం_2:
+			ఒకవేళ (clip->y0 > p[3]) {
 				/* clip rectangle is below border; nothing to
 				 * plot
 				 */
-				continue;
+				కొనసాగు;
 			}
 
-			square_end_1 = (left == 0);
-			square_end_2 = (right == 0);
+			వర్గం_చివర_1 = (ఎడమ == 0);
+			వర్గం_చివర_2 = (కుడి == 0);
 
 			z[0] = p[2];	z[1] = p[3];
 			z[2] = p[0];	z[3] = p[1];
 			z[4] = p[6];	z[5] = p[1];
 			z[6] = p[4];	z[7] = p[3];
 
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[TOP].c == box->border[LEFT].c) {
+			ఒకవేళ (box->border[శిఖరం_2].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[శిఖరం_2].c == box->border[ఎడమ_2].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
 				 */
-				z[2] += left;
-				square_end_1 = true;
+				z[2] += ఎడమ;
+				వర్గం_చివర_1 = true;
 			}
-			if (box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[TOP].c == box->border[RIGHT].c) {
+			ఒకవేళ (box->border[శిఖరం_2].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[శిఖరం_2].c == box->border[కుడి_2].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
 				 */
-				z[4] -= right;
-				square_end_2 = true;
+				z[4] -= కుడి;
+				వర్గం_చివర_2 = true;
 			}
 
-			col = nscss_color_to_ns(box->border[side].c);
+			నిలువు = nscss_color_గమ్యం_ns(box->border[side].c);
 
 			res = html_redraw_border_plot(side,
 						      z,
-						      col,
+						      నిలువు,
 						      box->border[side].style,
-						      box->border[side].width * scale,
-						      square_end_1 && square_end_2,
+						      box->border[side].వెడల్పు * scale,
+						      వర్గం_చివర_1 && వర్గం_చివర_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి false;
 			}
-			break;
+			ఆపు;
 
-		case BOTTOM:
-			if (clip->y1 < p[5]) {
+		స్థితి BOTTOM:
+			ఒకవేళ (clip->y1 < p[5]) {
 				/* clip rectangle is above border; nothing to
 				 * plot
 				 */
-				continue;
+				కొనసాగు;
 			}
 
-			square_end_1 = (left == 0);
-			square_end_2 = (right == 0);
+			వర్గం_చివర_1 = (ఎడమ == 0);
+			వర్గం_చివర_2 = (కుడి == 0);
 
 			z[0] = p[4];	z[1] = p[5];
 			z[2] = p[6];	z[3] = p[7];
 			z[4] = p[0];	z[5] = p[7];
 			z[6] = p[2];	z[7] = p[5];
 
-			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[BOTTOM].c == box->border[LEFT].c) {
+			ఒకవేళ (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[BOTTOM].c == box->border[ఎడమ_2].c) {
 				/* don't bother overlapping left corner if
 				 * it's the same colour anyway
 				 */
-				z[4] += left;
-				square_end_1 = true;
+				z[4] += ఎడమ;
+				వర్గం_చివర_1 = true;
 			}
-			if (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-			    box->border[BOTTOM].c == box->border[RIGHT].c) {
+			ఒకవేళ (box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
+			    box->border[BOTTOM].c == box->border[కుడి_2].c) {
 				/* don't bother overlapping right corner if
 				 * it's the same colour anyway
 				 */
-				z[2] -= right;
-				square_end_2 = true;
+				z[2] -= కుడి;
+				వర్గం_చివర_2 = true;
 			}
 
-			col = nscss_color_to_ns(box->border[side].c);
+			నిలువు = nscss_color_గమ్యం_ns(box->border[side].c);
 
 			res = html_redraw_border_plot(side,
 						      z,
-						      col,
+						      నిలువు,
 						      box->border[side].style,
-						      box->border[side].width * scale,
-						      square_end_1 && square_end_2,
+						      box->border[side].వెడల్పు * scale,
+						      వర్గం_చివర_1 && వర్గం_చివర_2,
 						      clip,
 						      ctx);
-			if (res != NSERROR_OK) {
-				return false;
+			ఒకవేళ (res != NSERROR_OK) {
+				తిరిగి false;
 			}
-			break;
+			ఆపు;
 
-		default:
-			assert(side == TOP || side == BOTTOM ||
-			       side == LEFT || side == RIGHT);
-			break;
+		అప్రమేయ:
+			ప్రతిజ్ఞా(side == శిఖరం_2 || side == BOTTOM ||
+			       side == ఎడమ_2 || side == కుడి_2);
+			ఆపు;
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -704,30 +704,30 @@ html_redraw_borders(struct box *box,
  * \return true if successful, false otherwise
  */
 bool
-html_redraw_inline_borders(struct box *box,
-			   struct rect b,
-			   const struct rect *clip,
-			   float scale,
-			   bool first,
-			   bool last,
-			   const struct redraw_context *ctx)
+html_redraw_inline_borders(నిర్మాణం box *box,
+			   నిర్మాణం rect b,
+			   స్థిరరాశి నిర్మాణం rect *clip,
+			   దశాంశం scale,
+			   bool మొదటి,
+			   bool చివరి,
+			   స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
-	int top = box->border[TOP].width;
-	int right = box->border[RIGHT].width;
-	int bottom = box->border[BOTTOM].width;
-	int left = box->border[LEFT].width;
-	colour col;
-	int p[8]; /* Box border vertices */
-	int z[8]; /* Border vertices */
-	bool square_end_1;
-	bool square_end_2;
+	పూర్ణాంకం శిఖరం = box->border[శిఖరం_2].వెడల్పు;
+	పూర్ణాంకం కుడి = box->border[కుడి_2].వెడల్పు;
+	పూర్ణాంకం bottom = box->border[BOTTOM].వెడల్పు;
+	పూర్ణాంకం ఎడమ = box->border[ఎడమ_2].వెడల్పు;
+	రంగు నిలువు;
+	పూర్ణాంకం p[8]; /* Box border vertices */
+	పూర్ణాంకం z[8]; /* Border vertices */
+	bool వర్గం_చివర_1;
+	bool వర్గం_చివర_2;
 	nserror res;
 
-	if (scale != 1.0) {
-		top *= scale;
-		right *= scale;
+	ఒకవేళ (scale != 1.0) {
+		శిఖరం *= scale;
+		కుడి *= scale;
 		bottom *= scale;
-		left *= scale;
+		ఎడమ *= scale;
 	}
 
 	/* Calculate border vertices
@@ -741,189 +741,189 @@ html_redraw_inline_borders(struct box *box,
 	 *    +----------------------D
 	 */
 	p[0] = b.x0;				p[1] = b.y0;		/* A */
-	p[2] = first ? b.x0 + left : b.x0;	p[3] = b.y0 + top;	/* B */
-	p[4] = last ? b.x1 - right : b.x1;	p[5] = b.y1 - bottom;	/* C */
+	p[2] = మొదటి ? b.x0 + ఎడమ : b.x0;	p[3] = b.y0 + శిఖరం;	/* B */
+	p[4] = చివరి ? b.x1 - కుడి : b.x1;	p[5] = b.y1 - bottom;	/* C */
 	p[6] = b.x1;				p[7] = b.y1;		/* D */
 
-	assert(box->style);
+	ప్రతిజ్ఞా(box->style);
 
 	/* Left */
-	square_end_1 = (top == 0);
-	square_end_2 = (bottom == 0);
-	if (left != 0 &&
-	    first &&
-	    nscss_color_is_transparent(box->border[LEFT].c) == false) {
-		col = nscss_color_to_ns(box->border[LEFT].c);
+	వర్గం_చివర_1 = (శిఖరం == 0);
+	వర్గం_చివర_2 = (bottom == 0);
+	ఒకవేళ (ఎడమ != 0 &&
+	    మొదటి &&
+	    nscss_color_is_transparent(box->border[ఎడమ_2].c) == false) {
+		నిలువు = nscss_color_గమ్యం_ns(box->border[ఎడమ_2].c);
 
 		z[0] = p[0];	z[1] = p[7];
 		z[2] = p[2];	z[3] = p[5];
 		z[4] = p[2];	z[5] = p[3];
 		z[6] = p[0];	z[7] = p[1];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+		ఒకవేళ (nscss_color_is_transparent(box->border[శిఖరం_2].c) == false &&
+		    box->border[శిఖరం_2].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
 			 */
-			z[5] -= top;
-			square_end_1 = true;
+			z[5] -= శిఖరం;
+			వర్గం_చివర_1 = true;
 		}
 
-		if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+		ఒకవేళ (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 		    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang bottom corner fully,
 			 * if bottom border is opaque
 			 */
 			z[3] += bottom;
-			square_end_2 = true;
+			వర్గం_చివర_2 = true;
 		}
 
-		res = html_redraw_border_plot(LEFT,
+		res = html_redraw_border_plot(ఎడమ_2,
 					      z,
-					      col,
-					      box->border[LEFT].style,
-					      left,
-					      square_end_1 && square_end_2,
+					      నిలువు,
+					      box->border[ఎడమ_2].style,
+					      ఎడమ,
+					      వర్గం_చివర_1 && వర్గం_చివర_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి false;
 		}
 	}
 
 	/* Right */
-	square_end_1 = (top == 0);
-	square_end_2 = (bottom == 0);
-	if (right != 0 &&
-	    last &&
-	    nscss_color_is_transparent(box->border[RIGHT].c) == false) {
-		col = nscss_color_to_ns(box->border[RIGHT].c);
+	వర్గం_చివర_1 = (శిఖరం == 0);
+	వర్గం_చివర_2 = (bottom == 0);
+	ఒకవేళ (కుడి != 0 &&
+	    చివరి &&
+	    nscss_color_is_transparent(box->border[కుడి_2].c) == false) {
+		నిలువు = nscss_color_గమ్యం_ns(box->border[కుడి_2].c);
 
 		z[0] = p[6];	z[1] = p[1];
 		z[2] = p[4];	z[3] = p[3];
 		z[4] = p[4];	z[5] = p[5];
 		z[6] = p[6];	z[7] = p[7];
 
-		if (nscss_color_is_transparent(box->border[TOP].c) == false &&
-		    box->border[TOP].style != CSS_BORDER_STYLE_DOUBLE) {
+		ఒకవేళ (nscss_color_is_transparent(box->border[శిఖరం_2].c) == false &&
+		    box->border[శిఖరం_2].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang top corner fully,
 			 * if top border is opaque
 			 */
-			z[3] -= top;
-			square_end_1 = true;
+			z[3] -= శిఖరం;
+			వర్గం_చివర_1 = true;
 		}
 
-		if (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
+		ఒకవేళ (nscss_color_is_transparent(box->border[BOTTOM].c) == false &&
 		    box->border[BOTTOM].style != CSS_BORDER_STYLE_DOUBLE) {
 			/* make border overhang bottom corner fully,
 			 * if bottom border is opaque
 			 */
 			z[5] += bottom;
-			square_end_2 = true;
+			వర్గం_చివర_2 = true;
 		}
 
-		res = html_redraw_border_plot(RIGHT,
+		res = html_redraw_border_plot(కుడి_2,
 					      z,
-					      col,
-					      box->border[RIGHT].style,
-					      right,
-					      square_end_1 && square_end_2,
+					      నిలువు,
+					      box->border[కుడి_2].style,
+					      కుడి,
+					      వర్గం_చివర_1 && వర్గం_చివర_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి false;
 		}
 	}
 
 	/* Top */
-	square_end_1 = (left == 0);
-	square_end_2 = (right == 0);
-	if (top != 0 &&
-	    nscss_color_is_transparent(box->border[TOP].c) == false) {
-		col = nscss_color_to_ns(box->border[TOP].c);
+	వర్గం_చివర_1 = (ఎడమ == 0);
+	వర్గం_చివర_2 = (కుడి == 0);
+	ఒకవేళ (శిఖరం != 0 &&
+	    nscss_color_is_transparent(box->border[శిఖరం_2].c) == false) {
+		నిలువు = nscss_color_గమ్యం_ns(box->border[శిఖరం_2].c);
 
 		z[0] = p[2];	z[1] = p[3];
 		z[2] = p[0];	z[3] = p[1];
 		z[4] = p[6];	z[5] = p[1];
 		z[6] = p[4];	z[7] = p[3];
 
-		if (first &&
-		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[TOP].c == box->border[LEFT].c) {
+		ఒకవేళ (మొదటి &&
+		    box->border[శిఖరం_2].style == CSS_BORDER_STYLE_SOLID &&
+		    box->border[శిఖరం_2].c == box->border[ఎడమ_2].c) {
 			/* don't bother overlapping left corner if
 			 * it's the same colour anyway
 			 */
-			z[2] += left;
-			square_end_1 = true;
+			z[2] += ఎడమ;
+			వర్గం_చివర_1 = true;
 		}
 
-		if (last &&
-		    box->border[TOP].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[TOP].c == box->border[RIGHT].c) {
+		ఒకవేళ (చివరి &&
+		    box->border[శిఖరం_2].style == CSS_BORDER_STYLE_SOLID &&
+		    box->border[శిఖరం_2].c == box->border[కుడి_2].c) {
 			/* don't bother overlapping right corner if
 			 * it's the same colour anyway
 			 */
-			z[4] -= right;
-			square_end_2 = true;
+			z[4] -= కుడి;
+			వర్గం_చివర_2 = true;
 		}
 
-		res = html_redraw_border_plot(TOP,
+		res = html_redraw_border_plot(శిఖరం_2,
 					      z,
-					      col,
-					      box->border[TOP].style,
-					      top,
-					      square_end_1 && square_end_2,
+					      నిలువు,
+					      box->border[శిఖరం_2].style,
+					      శిఖరం,
+					      వర్గం_చివర_1 && వర్గం_చివర_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి false;
 		}
 	}
 
 	/* Bottom */
-	square_end_1 = (left == 0);
-	square_end_2 = (right == 0);
-	if (bottom != 0 &&
+	వర్గం_చివర_1 = (ఎడమ == 0);
+	వర్గం_చివర_2 = (కుడి == 0);
+	ఒకవేళ (bottom != 0 &&
 	    nscss_color_is_transparent(box->border[BOTTOM].c) == false) {
-		col = nscss_color_to_ns(box->border[BOTTOM].c);
+		నిలువు = nscss_color_గమ్యం_ns(box->border[BOTTOM].c);
 
 		z[0] = p[4];	z[1] = p[5];
 		z[2] = p[6];	z[3] = p[7];
 		z[4] = p[0];	z[5] = p[7];
 		z[6] = p[2];	z[7] = p[5];
 
-		if (first &&
+		ఒకవేళ (మొదటి &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[BOTTOM].c == box->border[LEFT].c) {
+		    box->border[BOTTOM].c == box->border[ఎడమ_2].c) {
 			/* don't bother overlapping left corner if
 			 * it's the same colour anyway
 			 */
-			z[4] += left;
-			square_end_1 = true;
+			z[4] += ఎడమ;
+			వర్గం_చివర_1 = true;
 		}
 
-		if (last &&
+		ఒకవేళ (చివరి &&
 		    box->border[BOTTOM].style == CSS_BORDER_STYLE_SOLID &&
-		    box->border[BOTTOM].c == box->border[RIGHT].c) {
+		    box->border[BOTTOM].c == box->border[కుడి_2].c) {
 			/* don't bother overlapping right corner if
 			 * it's the same colour anyway
 			 */
-			z[2] -= right;
-			square_end_2 = true;
+			z[2] -= కుడి;
+			వర్గం_చివర_2 = true;
 		}
 
 		res = html_redraw_border_plot(BOTTOM,
 					      z,
-					      col,
+					      నిలువు,
 					      box->border[BOTTOM].style,
 					      bottom,
-					      square_end_1 && square_end_2,
+					      వర్గం_చివర_1 && వర్గం_చివర_2,
 					      clip,
 					      ctx);
-		if (res != NSERROR_OK) {
-			return false;
+		ఒకవేళ (res != NSERROR_OK) {
+			తిరిగి false;
 		}
 	}
 
-	return true;
+	తిరిగి true;
 }

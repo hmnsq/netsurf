@@ -21,8 +21,8 @@
  * about scheme query handlers support interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_H
+#నిర్వచితం_కాకపోతే NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_H
+#నిర్వచించు NETSURF_CONTENT_FETCHERS_ABOUT_QUERY_H
 
 /**
  * generate a generic query description
@@ -31,6 +31,6 @@
  * \param key message key
  * \param out_str pointer to buffer with output
  */
-nserror get_query_description(struct nsurl *url, const char *key, char **out_str);
+nserror get_query_description(నిర్మాణం nsurl *url, స్థిరరాశి అక్షరం *కీలకం, అక్షరం **బహిర్గతం_str);
 
-#endif
+#అయితే_ముగింపు

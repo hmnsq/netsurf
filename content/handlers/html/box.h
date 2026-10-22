@@ -24,48 +24,48 @@
  *
  */
 
-#ifndef NETSURF_HTML_BOX_H
-#define NETSURF_HTML_BOX_H
+#నిర్వచితం_కాకపోతే NETSURF_HTML_BOX_H
+#నిర్వచించు NETSURF_HTML_BOX_H
 
-#include <limits.h>
-#include <stdbool.h>
-#include <libcss/libcss.h>
+#అన్తర్భావ <limits.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <libcss/libcss.h>
 
-#include "content/handlers/css/utils.h"
+#అన్తర్భావ "content/handlers/css/utils.h"
 
-struct content;
-struct box;
-struct browser_window;
-struct html_content;
-struct nsurl;
-struct dom_node;
-struct dom_string;
-struct rect;
+నిర్మాణం content;
+నిర్మాణం box;
+నిర్మాణం browser_కిటికీ;
+నిర్మాణం html_content;
+నిర్మాణం nsurl;
+నిర్మాణం dom_కణుపు;
+నిర్మాణం dom_string;
+నిర్మాణం rect;
 
-#define UNKNOWN_WIDTH INT_MAX
-#define UNKNOWN_MAX_WIDTH INT_MAX
+#నిర్వచించు UNKNOWN_వెడల్పు గరిష్ఠ_పూర్ణాంకం
+#నిర్వచించు UNKNOWN_MAX_వెడల్పు గరిష్ఠ_పూర్ణాంకం
 
 
-typedef void (*box_construct_complete_cb)(struct html_content *c, bool success);
+రకనిర్వచనం శూన్య (*box_construct_complete_cb)(నిర్మాణం html_content *c, bool success);
 
 
 /**
  * Type of a struct box.
  */
-typedef enum {
-	BOX_BLOCK,
+రకనిర్వచనం గణన {
+	BOX_ఖండం,
 	BOX_INLINE_CONTAINER,
 	BOX_INLINE,
-	BOX_TABLE,
-	BOX_TABLE_ROW,
-	BOX_TABLE_CELL,
-	BOX_TABLE_ROW_GROUP,
-	BOX_FLOAT_LEFT,
-	BOX_FLOAT_RIGHT,
-	BOX_INLINE_BLOCK,
+	BOX_పట్టిక,
+	BOX_పట్టిక_అడ్డువరుస,
+	BOX_పట్టిక_CELL,
+	BOX_పట్టిక_అడ్డువరుస_సమూహం,
+	BOX_FLOAT_ఎడమ,
+	BOX_FLOAT_కుడి,
+	BOX_INLINE_ఖండం,
 	BOX_BR,
-	BOX_TEXT,
-	BOX_INLINE_END,
+	BOX_పాఠ్యం,
+	BOX_INLINE_చివర,
 	BOX_NONE,
 	BOX_FLEX,
 	BOX_INLINE_FLEX,
@@ -75,15 +75,15 @@ typedef enum {
 /**
  * Flags for a struct box.
  */
-typedef enum {
-	NEW_LINE    = 1 << 0,	/* first inline on a new line */
+రకనిర్వచనం గణన {
+	NEW_పంక్తి    = 1 << 0,	/* first inline on a new line */
 	STYLE_OWNED = 1 << 1,	/* style is owned by this box */
 	PRINTED     = 1 << 2,	/* box has already been printed */
 	PRE_STRIP   = 1 << 3,	/* PRE tag needing leading newline stripped */
 	CLONE       = 1 << 4,	/* continuation of previous box from wrapping */
 	MEASURED    = 1 << 5,	/* text box width has been measured */
-	HAS_HEIGHT  = 1 << 6,	/* box has height (perhaps due to children) */
-	MAKE_HEIGHT = 1 << 7,	/* box causes its own height */
+	HAS_ఎత్తు  = 1 << 6,	/* box has height (perhaps due to children) */
+	MAKE_ఎత్తు = 1 << 7,	/* box causes its own height */
 	NEED_MIN    = 1 << 8,	/* minimum width is required for layout */
 	REPLACE_DIM = 1 << 9,	/* replaced element has given dimensions */
 	IFRAME      = 1 << 10,	/* box contains an iframe */
@@ -95,49 +95,49 @@ typedef enum {
 /**
  * Sides of a box
  */
-enum box_side { TOP, RIGHT, BOTTOM, LEFT };
+గణన box_side { శిఖరం_2, కుడి_2, BOTTOM, ఎడమ_2 };
 
 
 /**
  * Container for box border details
  */
-struct box_border {
-	enum css_border_style_e style;	/**< border-style */
+నిర్మాణం box_border {
+	గణన css_border_style_e style;	/**< border-style */
 	css_color c;			/**< border-color value */
-	int width;			/**< border-width (pixels) */
+	పూర్ణాంకం వెడల్పు;			/**< border-width (pixels) */
 };
 
 
 /**
  * Table column data.
  */
-struct column {
+నిర్మాణం స్తంభం {
 	/**
 	 * Type of column.
 	 */
-	enum {
-	      COLUMN_WIDTH_UNKNOWN,
-	      COLUMN_WIDTH_FIXED,
-	      COLUMN_WIDTH_AUTO,
-	      COLUMN_WIDTH_PERCENT,
-	      COLUMN_WIDTH_RELATIVE
+	గణన {
+	      స్తంభం_వెడల్పు_UNKNOWN,
+	      స్తంభం_వెడల్పు_FIXED,
+	      స్తంభం_వెడల్పు_AUTO,
+	      స్తంభం_వెడల్పు_PERCENT,
+	      స్తంభం_వెడల్పు_RELATIVE
 	} type;
 
 	/**
 	 * Preferred width of column. Pixels for FIXED, percentage for
 	 *  PERCENT, relative units for RELATIVE, unused for AUTO.
 	 */
-	int width;
+	పూర్ణాంకం వెడల్పు;
 
 	/**
 	 * Minimum width of content.
 	 */
-	int min;
+	పూర్ణాంకం min;
 
 	/**
 	 * Maximum width of content.
 	 */
-	int max;
+	పూర్ణాంకం max;
 
 	/**
 	 * Whether all of column's cells are css positioned.
@@ -149,32 +149,32 @@ struct column {
 /**
  * Linked list of object element parameters.
  */
-struct object_param {
-	char *name;
-	char *value;
-	char *type;
-	char *valuetype;
-	struct object_param *next;
+నిర్మాణం object_param {
+	అక్షరం *name;
+	అక్షరం *విలువ;
+	అక్షరం *type;
+	అక్షరం *valuetype;
+	నిర్మాణం object_param *తదుపరి;
 };
 
 
 /**
  * Parameters for object element and similar elements.
  */
-struct object_params {
-	struct nsurl *data;
-	char *type;
-	char *codetype;
-	struct nsurl *codebase;
-	struct nsurl *classid;
-	struct object_param *params;
+నిర్మాణం object_params {
+	నిర్మాణం nsurl *దత్తాంశం;
+	అక్షరం *type;
+	అక్షరం *codetype;
+	నిర్మాణం nsurl *codebase;
+	నిర్మాణం nsurl *classid;
+	నిర్మాణం object_param *params;
 };
 
 
 /**
  * Node in box tree. All dimensions are in pixels.
  */
-struct box {
+నిర్మాణం box {
 	/**
 	 * Type of box.
 	 */
@@ -188,7 +188,7 @@ struct box {
 	/**
 	 * DOM node that generated this box or NULL
 	 */
-	struct dom_node *node;
+	నిర్మాణం dom_కణుపు *కణుపు;
 
 	/**
 	 * Computed styles for elements and their pseudo elements.
@@ -213,33 +213,33 @@ struct box {
 	/**
 	 * Next sibling box, or NULL.
 	 */
-	struct box *next;
+	నిర్మాణం box *తదుపరి;
 
 	/**
 	 * Previous sibling box, or NULL.
 	 */
-	struct box *prev;
+	నిర్మాణం box *prev;
 
 	/**
 	 * First child box, or NULL.
 	 */
-	struct box *children;
+	నిర్మాణం box *children;
 
 	/**
 	 * Last child box, or NULL.
 	 */
-	struct box *last;
+	నిర్మాణం box *చివరి;
 
 	/**
 	 * Parent box, or NULL.
 	 */
-	struct box *parent;
+	నిర్మాణం box *మాతృ;
 
 	/**
 	 * INLINE_END box corresponding to this INLINE box, or INLINE
 	 * box corresponding to this INLINE_END box.
 	 */
-	struct box *inline_end;
+	నిర్మాణం box *inline_చివర;
 
 
 	/**
@@ -248,28 +248,28 @@ struct box {
 	 * area for floats, and also in the standard tree given by
 	 * children, next, prev, etc.
 	 */
-	struct box *float_children;
+	నిర్మాణం box *float_children;
 
 	/**
 	 * Next sibling float box.
 	 */
-	struct box *next_float;
+	నిర్మాణం box *తదుపరి_float;
 
 	/**
 	 * If box is a float, points to box's containing block
 	 */
-	struct box *float_container;
+	నిర్మాణం box *float_container;
 
 	/**
 	 * Level below which subsequent floats must be cleared.  This
 	 * is used only for boxes with float_children
 	 */
-	int clear_level;
+	పూర్ణాంకం clear_level;
 
 	/**
 	 * Level below which floats have been placed.
 	 */
-	int cached_place_below_level;
+	పూర్ణాంకం cached_ఉంచు_క్రింద_level;
 
 
 	/**
@@ -277,20 +277,20 @@ struct box {
 	 * relative to ancestor that contains this box in
 	 * float_children for FLOAT_.
 	 */
-	int x;
+	పూర్ణాంకం x;
 	/**
 	 * Coordinate of top padding edge, relative as for x.
 	 */
-	int y;
+	పూర్ణాంకం y;
 
 	/**
 	 * Width of content box (excluding padding etc.).
 	 */
-	int width;
+	పూర్ణాంకం వెడల్పు;
 	/**
 	 * Height of content box (excluding padding etc.).
 	 */
-	int height;
+	పూర్ణాంకం ఎత్తు;
 
 	/* These four variables determine the maximum extent of a box's
 	 * descendants. They are relative to the x,y coordinates of the box.
@@ -306,152 +306,152 @@ struct box {
 	 *		scrollable area.
 	 * auto		As "scroll".
 	 */
-	int descendant_x0;  /**< left edge of descendants */
-	int descendant_y0;  /**< top edge of descendants */
-	int descendant_x1;  /**< right edge of descendants */
-	int descendant_y1;  /**< bottom edge of descendants */
+	పూర్ణాంకం descendant_x0;  /**< left edge of descendants */
+	పూర్ణాంకం descendant_y0;  /**< top edge of descendants */
+	పూర్ణాంకం descendant_x1;  /**< right edge of descendants */
+	పూర్ణాంకం descendant_y1;  /**< bottom edge of descendants */
 
 	/**
 	 * Margin: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	int margin[4];
+	పూర్ణాంకం margin[4];
 
 	/**
 	 * Padding: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	int padding[4];
+	పూర్ణాంకం padding[4];
 
 	/**
 	 * Border: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	struct box_border border[4];
+	నిర్మాణం box_border border[4];
 
 	/**
 	 * Horizontal scroll.
 	 */
-	struct scrollbar *scroll_x;
+	నిర్మాణం scrollbar *scroll_x;
 
 	/**
 	 * Vertical scroll.
 	 */
-	struct scrollbar *scroll_y;
+	నిర్మాణం scrollbar *scroll_y;
 
 	/**
 	 * Width of box taking all line breaks (including margins
 	 * etc). Must be non-negative.
 	 */
-	int min_width;
+	పూర్ణాంకం min_వెడల్పు;
 
 	/**
 	 * Width that would be taken with no line breaks. Must be
 	 * non-negative.
 	 */
-	int max_width;
+	పూర్ణాంకం max_వెడల్పు;
 
 
 	/**
 	 * Text, or NULL if none. Unterminated.
 	 */
-	char *text;
+	అక్షరం *పాఠ్యం;
 
 	/**
 	 * Length of text.
 	 */
-	size_t length;
+	size_t నిడివి;
 
 	/**
 	 * Width of space after current text (depends on font and size).
 	 */
-	int space;
+	పూర్ణాంకం space;
 
 	/**
 	 * Byte offset within a textual representation of this content.
 	 */
-	size_t byte_offset;
+	size_t byte_స్థానభ్రంశం;
 
 
 	/**
 	 * Link, or NULL.
 	 */
-	struct nsurl *href;
+	నిర్మాణం nsurl *href;
 
 	/**
 	 * Link target, or NULL.
 	 */
-	const char *target;
+	స్థిరరాశి అక్షరం *లక్ష్యం;
 
 	/**
 	 * Title, or NULL.
 	 */
-	const char *title;
+	స్థిరరాశి అక్షరం *title;
 
 
 	/**
 	 * Number of columns for TABLE / TABLE_CELL.
 	 */
-	unsigned int columns;
+	గుర్తులేని పూర్ణాంకం columns;
 
 	/**
 	 * Number of rows for TABLE only.
 	 */
-	unsigned int rows;
+	గుర్తులేని పూర్ణాంకం అడ్డువరుసలు;
 
 	/**
 	 * Start column for TABLE_CELL only.
 	 */
-	unsigned int start_column;
+	గుర్తులేని పూర్ణాంకం ప్రారంభం_స్తంభం;
 
 	/**
 	 * Array of table column data for TABLE only.
 	 */
-	struct column *col;
+	నిర్మాణం స్తంభం *నిలువు;
 
 	/**
 	 * List item value.
 	 */
-	int list_value;
+	పూర్ణాంకం list_విలువ;
 
 	/**
 	 * List marker box if this is a list-item, or NULL.
 	 */
-	struct box *list_marker;
+	నిర్మాణం box *list_marker;
 
 
 	/**
 	 * Form control data, or NULL if not a form control.
 	 */
-	struct form_control* gadget;
+	నిర్మాణం form_control* gadget;
 
 
 	/**
 	 * (Image)map to use with this object, or NULL if none
 	 */
-	char *usemap;
+	అక్షరం *usemap;
 
 
 	/**
 	 * Background image for this box, or NULL if none
 	 */
-	struct hlcache_handle *background;
+	నిర్మాణం hlcache_handle *background;
 
 
 	/**
 	 * Object in this box (usually an image), or NULL if none.
 	 */
-	struct hlcache_handle* object;
+	నిర్మాణం hlcache_handle* object;
 
 	/**
 	 * Parameters for the object, or NULL.
 	 */
-	struct object_params *object_params;
+	నిర్మాణం object_params *object_params;
 
 
 	/**
 	 * Iframe's browser_window, or NULL if none
 	 */
-	struct browser_window *iframe;
+	నిర్మాణం browser_కిటికీ *iframe;
 
 };
 
 
-#endif
+#అయితే_ముగింపు

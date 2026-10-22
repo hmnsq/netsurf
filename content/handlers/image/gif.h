@@ -21,9 +21,9 @@
  * Content for image/gif (interface).
  */
 
-#ifndef _NETSURF_IMAGE_GIF_H_
-#define _NETSURF_IMAGE_GIF_H_
+#నిర్వచితం_కాకపోతే _NETSURF_IMAGE_GIF_H_
+#నిర్వచించు _NETSURF_IMAGE_GIF_H_
 
-nserror nsgif_init(void);
+nserror nsgif_init(శూన్య);
 
-#endif
+#అయితే_ముగింపు

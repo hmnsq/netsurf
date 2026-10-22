@@ -23,35 +23,35 @@
  * This implementation uses the JXL library.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
-#include <string.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <setjmp.h>
+#అన్తర్భావ <string.h>
 
-#include <jxl/decode.h>
+#అన్తర్భావ <jxl/decode.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "netsurf/bitmap.h"
+#అన్తర్భావ "content/llcache.h"
+#అన్తర్భావ "content/content.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "desktop/gui_internal.h"
+#అన్తర్భావ "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#అన్తర్భావ "image/image_cache.h"
 
-#include "image/jpegxl.h"
+#అన్తర్భావ "image/jpegxl.h"
 
 
 /**
  * output image format
  */
-static const JxlPixelFormat jxl_output_format = {
-	.num_channels = 4,
-	.data_type    = JXL_TYPE_UINT8,
+స్థిర స్థిరరాశి JxlPixelFormat jxl_output_format = {
+	.అంకె_channels = 4,
+	.దత్తాంశం_type    = JXL_TYPE_UINT8,
 	.endianness   = JXL_LITTLE_ENDIAN,
 	.align        = 0,
 };
@@ -59,43 +59,43 @@ static const JxlPixelFormat jxl_output_format = {
 /**
  * Content create entry point.
  */
-static nserror
-nsjpegxl_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+స్థిర nserror
+nsjpegxl_create(స్థిరరాశి content_handler *handler,
+		lwc_string *imime_type, స్థిరరాశి నిర్మాణం http_parameter *params,
+		llcache_handle *llcache, స్థిరరాశి అక్షరం *fallback_charset,
+		bool quirks, నిర్మాణం content **c)
 {
-	struct content *jpeg;
+	నిర్మాణం content *jpeg;
 	nserror error;
 
-	jpeg = calloc(1, sizeof(struct content));
-	if (jpeg == NULL)
-		return NSERROR_NOMEM;
+	jpeg = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content));
+	ఒకవేళ (jpeg == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
 	error = content__init(jpeg, handler, imime_type, params,
 			      llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(jpeg);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(jpeg);
+		తిరిగి error;
 	}
 
 	*c = jpeg;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
  * create a bitmap from jpeg xl content.
  */
-static struct bitmap *
-jpegxl_cache_convert(struct content *c)
+స్థిర నిర్మాణం bitmap *
+jpegxl_cache_convert(నిర్మాణం content *c)
 {
-	struct bitmap * bitmap = NULL;
+	నిర్మాణం bitmap * bitmap = ఖాళీ;
 	JxlDecoder *jxldec;
-	JxlDecoderStatus decstatus;
+	Jxl_Decoder_స్థితి decstatus;
 	JxlBasicInfo binfo;
-	const uint8_t *src_data;
-	size_t src_size;
+	స్థిరరాశి uint8_t *src_దత్తాంశం;
+	size_t src_కొలత;
 	uint8_t * output;
 	bitmap_fmt_t jxl_fmt = {
 		/** TODO: At the moment we have to set the layout to the only
@@ -109,232 +109,232 @@ jpegxl_cache_convert(struct content *c)
 		.pma    = bitmap_fmt.pma,
 	};
 
-	jxldec = JxlDecoderCreate(NULL);
-	if (jxldec == NULL) {
+	jxldec = JxlDecoderCreate(ఖాళీ);
+	ఒకవేళ (jxldec == ఖాళీ) {
 		NSLOG(netsurf, ERROR, "Unable to allocate decoder");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	decstatus = JxlDecoderSetUnpremultiplyAlpha(jxldec, !bitmap_fmt.pma);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus = Jxl_Decoder_సమితి_Unpremultiply_Alpha(jxldec, !bitmap_fmt.pma);
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set premultiplied alpha status: %d",
 				decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_FULL_IMAGE);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_నిండిన_IMAGE);
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "Unable to subscribe");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	src_data = content__get_source_data(c, &src_size);
+	src_దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &src_కొలత);
 
-	decstatus = JxlDecoderSetInput(jxldec, src_data, src_size);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus = Jxl_Decoder_సమితి_ఆదానం(jxldec, src_దత్తాంశం, src_కొలత);
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set input");
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
+	decstatus = Jxl_Decoder_Process_ఆదానం(jxldec);
+	ఒకవేళ (decstatus != JXL_DEC_NEED_IMAGE_బహిర్గతం_బఫరు) {
 		NSLOG(netsurf, ERROR,
 		      "expected status JXL_DEC_NEED_IMAGE_OUT_BUFFER(%d) got %d",
-		      JXL_DEC_NEED_IMAGE_OUT_BUFFER,
+		      JXL_DEC_NEED_IMAGE_బహిర్గతం_బఫరు,
 		      decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	decstatus = JxlDecoderGetBasicInfo(jxldec, &binfo);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to get basic info status:%d",decstatus);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	/* create bitmap with appropriate opacity */
-	if (binfo.alpha_bits > 0) {
-		bitmap = guit->bitmap->create(c->width, c->height, BITMAP_OPAQUE);
-	} else {
-		bitmap = guit->bitmap->create(c->width, c->height, BITMAP_NONE);
+	ఒకవేళ (binfo.alpha_బిట్లు > 0) {
+		bitmap = guit->bitmap->create(c->వెడల్పు, c->ఎత్తు, BITMAP_OPAQUE);
+	} లేకపోతే {
+		bitmap = guit->bitmap->create(c->వెడల్పు, c->ఎత్తు, BITMAP_NONE);
 	}
-	if (bitmap == NULL) {
+	ఒకవేళ (bitmap == ఖాళీ) {
 		/* empty bitmap could not be created */
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
 	/* ensure buffer was allocated */
-	output = guit->bitmap->get_buffer(bitmap);
-	if (output == NULL) {
+	output = guit->bitmap->get_బఫరు(bitmap);
+	ఒకవేళ (output == ఖాళీ) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
-	decstatus = JxlDecoderSetImageOutBuffer(jxldec, &jxl_output_format, output, c->size);
-	if (decstatus != JXL_DEC_SUCCESS) {
+	decstatus = Jxl_Decoder_సమితి_Image_బహిర్గతం_బఫరు(jxldec, &jxl_output_format, output, c->కొలత);
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
 		NSLOG(netsurf, ERROR, "unable to set output buffer callback status:%d",decstatus);
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_FULL_IMAGE) {
+	decstatus = Jxl_Decoder_Process_ఆదానం(jxldec);
+	ఒకవేళ (decstatus != JXL_DEC_నిండిన_IMAGE) {
 		NSLOG(netsurf, ERROR, "did not get decode event");
 		guit->bitmap->destroy(bitmap);
 		JxlDecoderDestroy(jxldec);
-		return NULL;
+		తిరిగి ఖాళీ;
 	}
 	
 	JxlDecoderDestroy(jxldec);
 
-	bitmap_format_to_client(bitmap, &jxl_fmt);
+	bitmap_format_గమ్యం_client(bitmap, &jxl_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	తిరిగి bitmap;
 }
 
 /**
  * report failiure
  */
-static bool jxl_report_fail(struct content *c, JxlDecoderStatus decstatus, const char *msg)
+స్థిర bool jxl_report_fail(నిర్మాణం content *c, Jxl_Decoder_స్థితి decstatus, స్థిరరాశి అక్షరం *సందేశం)
 {
-	union content_msg_data msg_data;
-	NSLOG(netsurf, ERROR, "%s decoder status:%d", msg, decstatus);
-	msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-	msg_data.errordata.errormsg = msg;
-	content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-	return false;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	NSLOG(netsurf, ERROR, "%s decoder status:%d", సందేశం, decstatus);
+	సందేశం_దత్తాంశం.errordata.errorcode = NSERROR_UNKNOWN;
+	సందేశం_దత్తాంశం.errordata.errormsg = సందేశం;
+	content_ప్రసారం(c, CONTENT_సందేశం_ERROR, &సందేశం_దత్తాంశం);
+	తిరిగి false;
 }
 
 /**
  * Convert a CONTENT_JPEGXL for display.
  */
-static bool nsjpegxl_convert(struct content *c)
+స్థిర bool nsjpegxl_convert(నిర్మాణం content *c)
 {
 	JxlDecoder *jxldec;
 	JxlSignature decsig;
-	JxlDecoderStatus decstatus = JXL_DEC_ERROR;
+	Jxl_Decoder_స్థితి decstatus = JXL_DEC_ERROR;
 	JxlBasicInfo binfo;
-	union content_msg_data msg_data;
-	const uint8_t *data;
-	size_t size;
-	char *title;
-	size_t image_size;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	స్థిరరాశి uint8_t *దత్తాంశం;
+	size_t కొలత;
+	అక్షరం *title;
+	size_t image_కొలత;
 
 	/* check image header is valid and get width/height */
-	data = content__get_source_data(c, &size);
+	దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(c, &కొలత);
 
-	decsig = JxlSignatureCheck(data,size);
-	if ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
+	decsig = JxlSignatureCheck(దత్తాంశం,కొలత);
+	ఒకవేళ ((decsig != JXL_SIG_CODESTREAM) && (decsig != JXL_SIG_CONTAINER)) {
 		NSLOG(netsurf, ERROR, "signature failed");
-		msg_data.errordata.errorcode = NSERROR_UNKNOWN;
-		msg_data.errordata.errormsg = "Signature failed";
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		return false;
+		సందేశం_దత్తాంశం.errordata.errorcode = NSERROR_UNKNOWN;
+		సందేశం_దత్తాంశం.errordata.errormsg = "Signature failed";
+		content_ప్రసారం(c, CONTENT_సందేశం_ERROR, &సందేశం_దత్తాంశం);
+		తిరిగి false;
 	}
 
-	jxldec = JxlDecoderCreate(NULL);
-	if (jxldec == NULL) {
-		return jxl_report_fail(c, decstatus, "Unable to allocate decoder");
+	jxldec = JxlDecoderCreate(ఖాళీ);
+	ఒకవేళ (jxldec == ఖాళీ) {
+		తిరిగి jxl_report_fail(c, decstatus, "Unable to allocate decoder");
 	}
 	decstatus= JxlDecoderSubscribeEvents(jxldec, JXL_DEC_BASIC_INFO);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "Unable to subscribe");
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
+		తిరిగి jxl_report_fail(c, decstatus, "Unable to subscribe");
 	}
-	decstatus = JxlDecoderSetInput(jxldec, data,size);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable to set input");
+	decstatus = Jxl_Decoder_సమితి_ఆదానం(jxldec, దత్తాంశం,కొలత);
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
+		తిరిగి jxl_report_fail(c, decstatus, "unable to set input");
 	}
-	decstatus = JxlDecoderProcessInput(jxldec);
-	if (decstatus != JXL_DEC_BASIC_INFO) {
-		return jxl_report_fail(c, decstatus, "did not get basic info event");
+	decstatus = Jxl_Decoder_Process_ఆదానం(jxldec);
+	ఒకవేళ (decstatus != JXL_DEC_BASIC_INFO) {
+		తిరిగి jxl_report_fail(c, decstatus, "did not get basic info event");
 	}
 	decstatus = JxlDecoderGetBasicInfo(jxldec, &binfo);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable to get basic info");
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
+		తిరిగి jxl_report_fail(c, decstatus, "unable to get basic info");
 	}
-	decstatus = JxlDecoderImageOutBufferSize(jxldec, &jxl_output_format, &image_size);
-	if (decstatus != JXL_DEC_SUCCESS) {
-		return jxl_report_fail(c, decstatus, "unable get image size");
+	decstatus = Jxl_Decoder_Image_బహిర్గతం_బఫరు_కొలత(jxldec, &jxl_output_format, &image_కొలత);
+	ఒకవేళ (decstatus != JXL_DEC_SUCCESS) {
+		తిరిగి jxl_report_fail(c, decstatus, "unable get image size");
 	}
 	
 	JxlDecoderDestroy(jxldec);
 
-	NSLOG(netsurf, INFO, "got basic info size:%ld x:%d y:%d", image_size, binfo.xsize, binfo.ysize);
+	NSLOG(netsurf, INFO, "got basic info size:%ld x:%d y:%d", image_కొలత, binfo.xsize, binfo.ysize);
 
-	c->width = binfo.xsize;
-	c->height = binfo.ysize;
-	c->size = image_size;
+	c->వెడల్పు = binfo.xsize;
+	c->ఎత్తు = binfo.ysize;
+	c->కొలత = image_కొలత;
 
-	image_cache_add(c, NULL, jpegxl_cache_convert);
+	image_cache_కూడు(c, ఖాళీ, jpegxl_cache_convert);
 
 	/* set title text */
 	title = messages_get_buff("JPEGXLTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ఆకు(llcache_handle_get_url(c->llcache)),
+			c->వెడల్పు, c->ఎత్తు);
+	ఒకవేళ (title != ఖాళీ) {
+		content_సమితి_title(c, title);
+		విడుదల(title);
 	}
 
-	content_set_ready(c);
-	content_set_done(c);	
-	content_set_status(c, ""); /* Done: update status bar */
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);	
+	content_సమితి_స్థితి(c, ""); /* Done: update status bar */
 
-	return true;
+	తిరిగి true;
 }
 
 
 /**
  * Clone content.
  */
-static nserror nsjpegxl_clone(const struct content *old, struct content **newc)
+స్థిర nserror nsjpegxl_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
-	struct content *jpegxl_c;
+	నిర్మాణం content *jpegxl_c;
 	nserror error;
 
-	jpegxl_c = calloc(1, sizeof(struct content));
-	if (jpegxl_c == NULL)
-		return NSERROR_NOMEM;
+	jpegxl_c = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content));
+	ఒకవేళ (jpegxl_c == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
 	error = content__clone(old, jpegxl_c);
-	if (error != NSERROR_OK) {
+	ఒకవేళ (error != NSERROR_OK) {
 		content_destroy(jpegxl_c);
-		return error;
+		తిరిగి error;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
-	    (old->status == CONTENT_STATUS_DONE)) {
-		if (nsjpegxl_convert(jpegxl_c) == false) {
+	ఒకవేళ ((old->స్థితి_2 == CONTENT_స్థితి_READY) ||
+	    (old->స్థితి_2 == CONTENT_స్థితి_పూర్తి)) {
+		ఒకవేళ (nsjpegxl_convert(jpegxl_c) == false) {
 			content_destroy(jpegxl_c);
-			return NSERROR_CLONE_FAILED;
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = jpegxl_c;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static const content_handler nsjpegxl_content_handler = {
+స్థిర స్థిరరాశి content_handler nsjpegxl_content_handler = {
 	.create = nsjpegxl_create,
-	.data_complete = nsjpegxl_convert,
+	.దత్తాంశం_complete = nsjpegxl_convert,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
 	.clone = nsjpegxl_clone,
-	.get_internal = image_cache_get_internal,
+	.get_అంతర్గత = image_cache_get_అంతర్గత,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsjpegxl_types[] = {
+స్థిర స్థిరరాశి అక్షరం *nsjpegxl_types[] = {
 	"image/jxl",
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsjpegxl, nsjpegxl_types, nsjpegxl_content_handler);
+CONTENT_FACTORY_రిజిస్టరు_TYPES(nsjpegxl, nsjpegxl_types, nsjpegxl_content_handler);

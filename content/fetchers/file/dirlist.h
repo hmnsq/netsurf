@@ -23,28 +23,28 @@
  * These functions should in general be called via the content interface.
  */
 
-#ifndef NETSURF_CONTENT_DIRLIST_H_
-#define NETSURF_CONTENT_DIRLIST_H_
+#నిర్వచితం_కాకపోతే NETSURF_CONTENT_DIRLIST_H_
+#నిర్వచించు NETSURF_CONTENT_DIRLIST_H_
 
-#include <stdbool.h>
+#అన్తర్భావ <stdbool.h>
 
-#define DIRLIST_NO_NAME_COLUMN 1
-#define DIRLIST_NO_TYPE_COLUMN 1 << 1
-#define DIRLIST_NO_SIZE_COLUMN 1 << 2
-#define DIRLIST_NO_DATE_COLUMN 1 << 3
-#define DIRLIST_NO_TIME_COLUMN 1 << 4
+#నిర్వచించు DIRLIST_NO_NAME_స్తంభం 1
+#నిర్వచించు DIRLIST_NO_TYPE_స్తంభం 1 << 1
+#నిర్వచించు DIRLIST_NO_కొలత_స్తంభం 1 << 2
+#నిర్వచించు DIRLIST_NO_DATE_స్తంభం 1 << 3
+#నిర్వచించు DIRLIST_NO_సమయం_స్తంభం 1 << 4
 
-struct nsurl;
+నిర్మాణం nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length);
-bool dirlist_generate_headings(char *buffer, int buffer_length);
-bool dirlist_generate_row(bool even, bool directory, struct nsurl *url,
-		char *name, const char *mimetype, long long size, char *date,
-		char *time, char *buffer, int buffer_length);
-bool dirlist_generate_bottom(char *buffer, int buffer_length);
+bool dirlist_generate_శిఖరం(అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి);
+bool dirlist_generate_hide_columns(పూర్ణాంకం flags, అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి);
+bool dirlist_generate_title(స్థిరరాశి అక్షరం *title, అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి);
+bool dirlist_generate_మాతృ_link(స్థిరరాశి అక్షరం *మాతృ, అక్షరం *బఫరు,
+		పూర్ణాంకం బఫరు_నిడివి);
+bool dirlist_generate_headings(అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి);
+bool dirlist_generate_అడ్డువరుస(bool even, bool directory, నిర్మాణం nsurl *url,
+		అక్షరం *name, స్థిరరాశి అక్షరం *mimetype, దీర్ఘ దీర్ఘ కొలత, అక్షరం *date,
+		అక్షరం *time, అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి);
+bool dirlist_generate_bottom(అక్షరం *బఫరు, పూర్ణాంకం బఫరు_నిడివి);
 
-#endif
+#అయితే_ముగింపు

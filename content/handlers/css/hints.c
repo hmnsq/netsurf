@@ -16,20 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <strings.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/utils.h"
 
-#include "css/hints.h"
-#include "css/select.h"
+#అన్తర్భావ "css/hints.h"
+#అన్తర్భావ "css/select.h"
 
-#define LOG_STATS
-#undef LOG_STATS
+#నిర్వచించు LOG_STATS
+#నిర్వచనం_రద్దు LOG_STATS
 
 /******************************************************************************
  * Utility functions                                                          *
@@ -41,9 +41,9 @@
  * \param c  Character to consider
  * \return true if character is whitespace, false otherwise
  */
-static bool isWhitespace(char c)
+స్థిర bool isWhitespace(అక్షరం c)
 {
-	return c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
+	తిరిగి c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
 }
 
 /**
@@ -52,9 +52,9 @@ static bool isWhitespace(char c)
  * \param c  Character to consider
  * \return true if character is a valid hex digit, false otherwise
  */
-static bool isHex(char c)
+స్థిర bool isHex(అక్షరం c)
 {
-	return ('0' <= c && c <= '9') ||
+	తిరిగి ('0' <= c && c <= '9') ||
 			('A' <= (c & ~0x20) && (c & ~0x20) <= 'F');
 }
 
@@ -66,20 +66,20 @@ static bool isHex(char c)
  *
  * \note This function assumes an ASCII-compatible character set
  */
-static uint8_t charToHex(char c)
+స్థిర uint8_t char_గమ్యం_Hex(అక్షరం c)
 {
 	/* 0-9 */
 	c -= '0';
 
 	/* A-F */
-	if (c > 9)
+	ఒకవేళ (c > 9)
 		c -= 'A' - '9' - 1;
 
 	/* a-f */
-	if (c > 15)
+	ఒకవేళ (c > 15)
 		c -= 'a' - 'A';
 
-	return c;
+	తిరిగి c;
 }
 
 
@@ -98,58 +98,58 @@ static uint8_t charToHex(char c)
  *                        bytes consumed
  * \return true on success, false on invalid input
  */
-static bool parse_number(const char *data, bool maybe_negative, bool real,
-		css_fixed *value, size_t *consumed)
+స్థిర bool parse_సంఖ్య(స్థిరరాశి అక్షరం *దత్తాంశం, bool maybe_negative, bool real,
+		css_fixed *విలువ, size_t *consumed)
 {
 	size_t len;
-	const uint8_t *ptr;
+	స్థిరరాశి uint8_t *ptr;
 	int32_t intpart = 0;
 	int32_t fracpart = 0;
 	int32_t pwr = 1;
-	int sign = 1;
+	పూర్ణాంకం sign = 1;
 
 	*consumed = 0;
 
-	len = strlen(data);
-	ptr = (const uint8_t *) data;
+	len = అక్షరశ్రేణి_పొడవు(దత్తాంశం);
+	ptr = (స్థిరరాశి uint8_t *) దత్తాంశం;
 
-	if (len == 0)
-		return false;
+	ఒకవేళ (len == 0)
+		తిరిగి false;
 
 	/* Skip leading whitespace */
-	while (len > 0 && isWhitespace(ptr[0])) {
+	అయితే (len > 0 && isWhitespace(ptr[0])) {
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	ఒకవేళ (len == 0)
+		తిరిగి false;
 
 	/* Extract sign, if any */
-	if (ptr[0] == '+') {
+	ఒకవేళ (ptr[0] == '+') {
 		len--;
 		ptr++;
-	} else if (ptr[0] == '-' && maybe_negative) {
+	} లేకపోతే ఒకవేళ (ptr[0] == '-' && maybe_negative) {
 		sign = -1;
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	ఒకవేళ (len == 0)
+		తిరిగి false;
 
 	/* Must have a digit [0,9] */
-	if ('0' > ptr[0] || ptr[0] > '9')
-		return false;
+	ఒకవేళ ('0' > ptr[0] || ptr[0] > '9')
+		తిరిగి false;
 
 	/* Now extract intpart, assuming base 10 */
-	while (len > 0) {
+	అయితే (len > 0) {
 		/* Stop on first non-digit */
-		if (ptr[0] < '0' || '9' < ptr[0])
-			break;
+		ఒకవేళ (ptr[0] < '0' || '9' < ptr[0])
+			ఆపు;
 
 		/* Prevent overflow of 'intpart'; proper clamping below */
-		if (intpart < (1 << 22)) {
+		ఒకవేళ (intpart < (1 << 22)) {
 			intpart *= 10;
 			intpart += ptr[0] - '0';
 		}
@@ -158,16 +158,16 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 	}
 
 	/* And fracpart, again, assuming base 10 */
-	if (real && len > 1 && ptr[0] == '.' &&
+	ఒకవేళ (real && len > 1 && ptr[0] == '.' &&
 			('0' <= ptr[1] && ptr[1] <= '9')) {
 		ptr++;
 		len--;
 
-		while (len > 0) {
-			if (ptr[0] < '0' || '9' < ptr[0])
-				break;
+		అయితే (len > 0) {
+			ఒకవేళ (ptr[0] < '0' || '9' < ptr[0])
+				ఆపు;
 
-			if (pwr < 1000000) {
+			ఒకవేళ (pwr < 1000000) {
 				pwr *= 10;
 				fracpart *= 10;
 				fracpart += ptr[0] - '0';
@@ -177,39 +177,39 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 		}
 
 		fracpart = ((1 << 10) * fracpart + pwr/2) / pwr;
-		if (fracpart >= (1 << 10)) {
+		ఒకవేళ (fracpart >= (1 << 10)) {
 			intpart++;
 			fracpart &= (1 << 10) - 1;
 		}
 	}
 
-	if (sign > 0) {
+	ఒకవేళ (sign > 0) {
 		/* If the result is larger than we can represent,
 		 * then clamp to the maximum value we can store. */
-		if (intpart >= (1 << 21)) {
+		ఒకవేళ (intpart >= (1 << 21)) {
 			intpart = (1 << 21) - 1;
 			fracpart = (1 << 10) - 1;
 		}
-	} else {
+	} లేకపోతే {
 		/* If the negated result is smaller than we can represent
 		 * then clamp to the minimum value we can store. */
-		if (intpart >= (1 << 21)) {
+		ఒకవేళ (intpart >= (1 << 21)) {
 			intpart = -(1 << 21);
 			fracpart = 0;
-		} else {
+		} లేకపోతే {
 			intpart = -intpart;
-			if (fracpart) {
+			ఒకవేళ (fracpart) {
 				fracpart = (1 << 10) - fracpart;
 				intpart--;
 			}
 		}
 	}
 
-	*value = (intpart << 10) | fracpart;
+	*విలువ = (intpart << 10) | fracpart;
 
-	*consumed = ptr - (const uint8_t *) data;
+	*consumed = ptr - (స్థిరరాశి uint8_t *) దత్తాంశం;
 
-	return true;
+	తిరిగి true;
 }
 
 /**
@@ -221,36 +221,36 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
  * \param unit    Pointer to location to receive dimension's unit
  * \return true on success, false on invalid input
  */
-static bool parse_dimension(const char *data, bool strict, css_fixed *length,
+స్థిర bool parse_dimension(స్థిరరాశి అక్షరం *దత్తాంశం, bool strict, css_fixed *నిడివి,
 		css_unit *unit)
 {
 	size_t len;
-	size_t read;
-	css_fixed value;
+	size_t పఠ;
+	css_fixed విలువ;
 
-	len = strlen(data);
+	len = అక్షరశ్రేణి_పొడవు(దత్తాంశం);
 
-	if (parse_number(data, false, true, &value, &read) == false)
-		return false;
+	ఒకవేళ (parse_సంఖ్య(దత్తాంశం, false, true, &విలువ, &పఠ) == false)
+		తిరిగి false;
 
-	if (strict && value < INTTOFIX(1))
-		return false;
+	ఒకవేళ (strict && విలువ < INTTOFIX(1))
+		తిరిగి false;
 
-	*length = value;
+	*నిడివి = విలువ;
 
-	if (len > read && data[read] == '%')
+	ఒకవేళ (len > పఠ && దత్తాంశం[పఠ] == '%')
 		*unit = CSS_UNIT_PCT;
-	else
+	లేకపోతే
 		*unit = CSS_UNIT_PX;
 
-	return true;
+	తిరిగి true;
 }
 
 /**
  * Mapping of colour name to CSS color
  */
-struct colour_map {
-	const char *name;
+నిర్మాణం రంగు_map {
+	స్థిరరాశి అక్షరం *name;
 	css_color color;
 };
 
@@ -263,12 +263,12 @@ struct colour_map {
  *         < 0 if a < b,
  *         > 0 if b > a.
  */
-static int cmp_colour_name(const void *a, const void *b)
+స్థిర పూర్ణాంకం cmp_రంగు_name(స్థిరరాశి శూన్య *a, స్థిరరాశి శూన్య *b)
 {
-	const char *aa = a;
-	const struct colour_map *bb = b;
+	స్థిరరాశి అక్షరం *aa = a;
+	స్థిరరాశి నిర్మాణం రంగు_map *bb = b;
 
-	return strcasecmp(aa, bb->name);
+	తిరిగి strcasecmp(aa, bb->name);
 }
 
 /**
@@ -278,9 +278,9 @@ static int cmp_colour_name(const void *a, const void *b)
  * \param result  Pointer to location to receive css_color
  * \return true on success, false on invalid input
  */
-static bool parse_named_colour(const char *name, css_color *result)
+స్థిర bool parse_named_రంగు(స్థిరరాశి అక్షరం *name, css_color *ఫలితం)
 {
-	static const struct colour_map named_colours[] = {
+	స్థిర స్థిరరాశి నిర్మాణం రంగు_map named_colours[] = {
 		{ "aliceblue",		0xfff0f8ff },
 		{ "antiquewhite",	0xfffaebd7 },
 		{ "aqua",		0xff00ffff },
@@ -432,69 +432,69 @@ static bool parse_named_colour(const char *name, css_color *result)
 		{ "yellow",		0xffffff00 },
 		{ "yellowgreen",	0xff9acd32 }
 	};
-	const struct colour_map *entry;
+	స్థిరరాశి నిర్మాణం రంగు_map *నమోదు_2;
 
-	entry = bsearch(name, named_colours,
-			sizeof(named_colours) / sizeof(named_colours[0]),
-			sizeof(named_colours[0]),
-			cmp_colour_name);
+	నమోదు_2 = bsearch(name, named_colours,
+			పరిమాణం(named_colours) / పరిమాణం(named_colours[0]),
+			పరిమాణం(named_colours[0]),
+			cmp_రంగు_name);
 
-	if (entry != NULL)
-		*result = entry->color;
+	ఒకవేళ (నమోదు_2 != ఖాళీ)
+		*ఫలితం = నమోదు_2->color;
 
-	return entry != NULL;
+	తిరిగి నమోదు_2 != ఖాళీ;
 }
 
 /* exported interface documented in content/handlers/css/hints.h */
-bool nscss_parse_colour(const char *data, css_color *result)
+bool nscss_parse_రంగు(స్థిరరాశి అక్షరం *దత్తాంశం, css_color *ఫలితం)
 {
-	size_t len = strlen(data);
+	size_t len = అక్షరశ్రేణి_పొడవు(దత్తాంశం);
 	uint8_t r, g, b;
 
 	/* 2 */
-	if (len == 0)
-		return false;
+	ఒకవేళ (len == 0)
+		తిరిగి false;
 
 	/* 3 */
-	if (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
-		return false;
+	ఒకవేళ (len == SLEN("transparent") && strcasecmp(దత్తాంశం, "transparent") == 0)
+		తిరిగి false;
 
 	/* 4 */
-	if (parse_named_colour(data, result))
-		return true;
+	ఒకవేళ (parse_named_రంగు(దత్తాంశం, ఫలితం))
+		తిరిగి true;
 
 	/** \todo Implement HTML5's utterly insane legacy colour parsing */
 
-	if (data[0] == '#') {
-		data++;
+	ఒకవేళ (దత్తాంశం[0] == '#') {
+		దత్తాంశం++;
 		len--;
 	}
 
-	if (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
-		r = charToHex(data[0]);
-		g = charToHex(data[1]);
-		b = charToHex(data[2]);
+	ఒకవేళ (len == 3 && isHex(దత్తాంశం[0]) && isHex(దత్తాంశం[1]) && isHex(దత్తాంశం[2])) {
+		r = char_గమ్యం_Hex(దత్తాంశం[0]);
+		g = char_గమ్యం_Hex(దత్తాంశం[1]);
+		b = char_గమ్యం_Hex(దత్తాంశం[2]);
 
 		r |= (r << 4);
 		g |= (g << 4);
 		b |= (b << 4);
 
-		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
+		*ఫలితం = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
-	} else if (len == 6 && isHex(data[0]) && isHex(data[1]) &&
-			isHex(data[2]) && isHex(data[3]) && isHex(data[4]) &&
-			isHex(data[5])) {
-		r = (charToHex(data[0]) << 4) | charToHex(data[1]);
-		g = (charToHex(data[2]) << 4) | charToHex(data[3]);
-		b = (charToHex(data[4]) << 4) | charToHex(data[5]);
+		తిరిగి true;
+	} లేకపోతే ఒకవేళ (len == 6 && isHex(దత్తాంశం[0]) && isHex(దత్తాంశం[1]) &&
+			isHex(దత్తాంశం[2]) && isHex(దత్తాంశం[3]) && isHex(దత్తాంశం[4]) &&
+			isHex(దత్తాంశం[5])) {
+		r = (char_గమ్యం_Hex(దత్తాంశం[0]) << 4) | char_గమ్యం_Hex(దత్తాంశం[1]);
+		g = (char_గమ్యం_Hex(దత్తాంశం[2]) << 4) | char_గమ్యం_Hex(దత్తాంశం[3]);
+		b = (char_గమ్యం_Hex(దత్తాంశం[4]) << 4) | char_గమ్యం_Hex(దత్తాంశం[5]);
 
-		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
+		*ఫలితం = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
+		తిరిగి true;
 	}
 
-	return false;
+	తిరిగి false;
 }
 
 /**
@@ -506,69 +506,69 @@ bool nscss_parse_colour(const char *data, css_color *result)
  * \param unit  Pointer to location to receive unit
  * \return True on success, false on failure
  */
-static bool parse_font_size(const char *size, uint8_t *val,
+స్థిర bool parse_font_కొలత(స్థిరరాశి అక్షరం *కొలత, uint8_t *val,
 		css_fixed *len, css_unit *unit)
 {
-	static const uint8_t size_map[] = {
-		CSS_FONT_SIZE_XX_SMALL,
-		CSS_FONT_SIZE_SMALL,
-		CSS_FONT_SIZE_MEDIUM,
-		CSS_FONT_SIZE_LARGE,
-		CSS_FONT_SIZE_X_LARGE,
-		CSS_FONT_SIZE_XX_LARGE,
-		CSS_FONT_SIZE_DIMENSION	/* xxx-large (see below) */
+	స్థిర స్థిరరాశి uint8_t కొలత_map[] = {
+		CSS_FONT_కొలత_XX_SMALL,
+		CSS_FONT_కొలత_SMALL,
+		CSS_FONT_కొలత_MEDIUM,
+		CSS_FONT_కొలత_LARGE,
+		CSS_FONT_కొలత_X_LARGE,
+		CSS_FONT_కొలత_XX_LARGE,
+		CSS_FONT_కొలత_DIMENSION	/* xxx-large (see below) */
 	};
 
-	const char *p = size;
-	char mode;
-	int value = 0;
+	స్థిరరాశి అక్షరం *p = కొలత;
+	అక్షరం బహుళకం;
+	పూర్ణాంకం విలువ = 0;
 
 	/* Skip whitespace */
-	while (*p != '\0' && isWhitespace(*p))
+	అయితే (*p != '\0' && isWhitespace(*p))
 		p++;
 
-	mode = *p;
+	బహుళకం = *p;
 
 	/* Skip +/- */
-	if (mode == '+' || mode == '-')
+	ఒకవేళ (బహుళకం == '+' || బహుళకం == '-')
 		p++;
 
 	/* Need at least one digit */
-	if (*p < '0' || *p > '9') {
-		return false;
+	ఒకవేళ (*p < '0' || *p > '9') {
+		తిరిగి false;
 	}
 
 	/* Consume digits, computing value */
-	while ('0' <= *p && *p <= '9') {
-		value = value * 10 + (*p - '0');
+	అయితే ('0' <= *p && *p <= '9') {
+		విలువ = విలువ * 10 + (*p - '0');
 		p++;
 	}
 
 	/* Resolve relative sizes */
-	if (mode == '+')
-		value += 3;
-	else if (mode == '-')
-		value = 3 - value;
+	ఒకవేళ (బహుళకం == '+')
+		విలువ += 3;
+	లేకపోతే ఒకవేళ (బహుళకం == '-')
+		విలువ = 3 - విలువ;
 
 	/* Clamp to range [1,7] */
-	if (value < 1)
-		value = 1;
-	else if (value > 7)
-		value = 7;
+	ఒకవేళ (విలువ < 1)
+		విలువ = 1;
+	లేకపోతే ఒకవేళ (విలువ > 7)
+		విలువ = 7;
 
-	if (value == 7) {
+	ఒకవేళ (విలువ == 7) {
 		/* Manufacture xxx-large */
-	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_size))),
+	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_కొలత))),
 				F_10);
-	} else {
+	} లేకపోతే {
 		/* Len is irrelevant */
 		*len = 0;
 	}
 
 	*unit = CSS_UNIT_PT;
-	*val = size_map[value - 1];
+	*val = కొలత_map[విలువ - 1];
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -576,46 +576,46 @@ static bool parse_font_size(const char *size, uint8_t *val,
  * Hint context management                                                    *
  ******************************************************************************/
 
-#define MAX_HINTS_PER_ELEMENT 32
+#నిర్వచించు MAX_HINTS_చొప్పున_ELEMENT 32
 
-struct css_hint_ctx {
-	struct css_hint *hints;
+నిర్మాణం css_hint_ctx {
+	నిర్మాణం css_hint *hints;
 	uint32_t len;
 };
 
-struct css_hint_ctx hint_ctx;
+నిర్మాణం css_hint_ctx hint_ctx;
 
-nserror css_hint_init(void)
+nserror css_hint_init(శూన్య)
 {
-	hint_ctx.hints = malloc(sizeof(struct css_hint) *
-			MAX_HINTS_PER_ELEMENT);
-	if (hint_ctx.hints == NULL) {
-		return NSERROR_NOMEM;
+	hint_ctx.hints = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం css_hint) *
+			MAX_HINTS_చొప్పున_ELEMENT);
+	ఒకవేళ (hint_ctx.hints == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-void css_hint_fini(void)
+శూన్య css_hint_fini(శూన్య)
 {
 	hint_ctx.len = 0;
-	free(hint_ctx.hints);
+	విడుదల(hint_ctx.hints);
 }
 
-static void css_hint_clean(void)
+స్థిర శూన్య css_hint_clean(శూన్య)
 {
 	hint_ctx.len = 0;
 }
 
-static inline void css_hint_advance(struct css_hint **hint)
+స్థిర అంతఃవరుస శూన్య css_hint_advance(నిర్మాణం css_hint **hint)
 {
 	hint_ctx.len++;
-	assert(hint_ctx.len < MAX_HINTS_PER_ELEMENT);
+	ప్రతిజ్ఞా(hint_ctx.len < MAX_HINTS_చొప్పున_ELEMENT);
 
 	(*hint)++;
 }
 
-static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
+స్థిర శూన్య css_hint_get_hints(నిర్మాణం css_hint **hints, uint32_t *nhints)
 {
 	*hints = hint_ctx.hints;
 	*nhints = hint_ctx.len;
@@ -626,28 +626,28 @@ static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
  * Presentational hint handlers                                               *
  ******************************************************************************/
 
-static void css_hint_table_cell_border_padding(
+స్థిర శూన్య css_hint_పట్టిక_cell_border_padding(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_qname qs;
-	dom_string *attr = NULL;
-	dom_node *tablenode = NULL;
+	dom_string *attr = ఖాళీ;
+	dom_కణుపు *tablenode = ఖాళీ;
 	dom_exception exc;
 
-	qs.ns = NULL;
-	qs.name = lwc_string_ref(corestring_lwc_table);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&tablenode) != CSS_OK) {
+	qs.ns = ఖాళీ;
+	qs.name = lwc_string_ref(corestring_lwc_పట్టిక);
+	ఒకవేళ (named_ancestor_కణుపు(ctx, కణుపు, &qs,
+			(శూన్య *)&tablenode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return;
+		తిరిగి;
 	}
 	lwc_string_unref(qs.name);
 
-	if (tablenode == NULL) {
-		return;
+	ఒకవేళ (tablenode == ఖాళీ) {
+		తిరిగి;
 	}
 	/* No need to unref tablenode, named_ancestor_node does not
 	 * return a reffed node to the CSS
@@ -656,31 +656,31 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_నిడివి hint_నిడివి;
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit) &&
-				INTTOFIX(0) != hint_length.value) {
+		ఒకవేళ (parse_dimension(
+				dom_string_దత్తాంశం(attr), false,
+						&hint_నిడివి.విలువ,
+						&hint_నిడివి.unit) &&
+				INTTOFIX(0) != hint_నిడివి.విలువ) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
+			కొరకు (hint_prop = CSS_PROP_BORDER_శిఖరం_STYLE;
+			     hint_prop <= CSS_PROP_BORDER_ఎడమ_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->status = CSS_BORDER_STYLE_INSET;
+				hint->స్థితి_2 = CSS_BORDER_STYLE_INSET;
 				css_hint_advance(&hint);
 			}
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
+			కొరకు (hint_prop = CSS_PROP_BORDER_శిఖరం_వెడల్పు;
+			     hint_prop <= CSS_PROP_BORDER_ఎడమ_వెడల్పు;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = INTTOFIX(1);
-				hint->data.length.unit = CSS_UNIT_PX;
-				hint->status = CSS_BORDER_WIDTH_WIDTH;
+				hint->దత్తాంశం.నిడివి.విలువ = INTTOFIX(1);
+				hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_PX;
+				hint->స్థితి_2 = CSS_BORDER_వెడల్పు_వెడల్పు;
 				css_hint_advance(&hint);
 			}
 		}
@@ -690,20 +690,20 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		ఒకవేళ (nscss_parse_రంగు(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
+			కొరకు (hint_prop = CSS_PROP_BORDER_శిఖరం_COLOR;
+			     hint_prop <= CSS_PROP_BORDER_ఎడమ_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.color = hint_color;
-				hint->status = CSS_BORDER_COLOR_COLOR;
+				hint->దత్తాంశం.color = hint_color;
+				hint->స్థితి_2 = CSS_BORDER_COLOR_COLOR;
 				css_hint_advance(&hint);
 			}
 		}
@@ -713,22 +713,22 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_cellpadding, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_నిడివి hint_నిడివి;
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit)) {
+		ఒకవేళ (parse_dimension(
+				dom_string_దత్తాంశం(attr), false,
+						&hint_నిడివి.విలువ,
+						&hint_నిడివి.unit)) {
 
-			for (hint_prop = CSS_PROP_PADDING_TOP;
-			     hint_prop <= CSS_PROP_PADDING_LEFT;
+			కొరకు (hint_prop = CSS_PROP_PADDING_శిఖరం;
+			     hint_prop <= CSS_PROP_PADDING_ఎడమ;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = hint_length.value;
-				hint->data.length.unit = hint_length.unit;
-				hint->status = CSS_PADDING_SET;
+				hint->దత్తాంశం.నిడివి.విలువ = hint_నిడివి.విలువ;
+				hint->దత్తాంశం.నిడివి.unit = hint_నిడివి.unit;
+				hint->స్థితి_2 = CSS_PADDING_సమితి;
 				css_hint_advance(&hint);
 			}
 		}
@@ -736,606 +736,606 @@ static void css_hint_table_cell_border_padding(
 	}
 }
 
-static void css_hint_vertical_align_table_cells(
+స్థిర శూన్య css_hint_vertical_align_పట్టిక_cells(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ఖాళీ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(కణుపు,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		hint->data.length.value = 0;
-		hint->data.length.unit = CSS_UNIT_PX;
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_top)) {
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		hint->దత్తాంశం.నిడివి.విలువ = 0;
+		hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_PX;
+		ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_శిఖరం)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TOP;
+			hint->స్థితి_2 = CSS_VERTICAL_ALIGN_శిఖరం;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
-					corestring_lwc_middle)) {
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
+					corestring_lwc_మధ్య)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
+			hint->స్థితి_2 = CSS_VERTICAL_ALIGN_మధ్య;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BOTTOM;
+			hint->స్థితి_2 = CSS_VERTICAL_ALIGN_BOTTOM;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
+			hint->స్థితి_2 = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_vertical_align_replaced(
+స్థిర శూన్య css_hint_vertical_align_replaced(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ఖాళీ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(కణుపు,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_top)) {
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_శిఖరం)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TOP;
+			hint->స్థితి_2 = CSS_VERTICAL_ALIGN_శిఖరం;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
+			hint->స్థితి_2 = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_texttop)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TEXT_TOP;
+			hint->స్థితి_2 = CSS_VERTICAL_ALIGN_పాఠ్యం_శిఖరం;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_absmiddle) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_abscenter)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
+			hint->స్థితి_2 = CSS_VERTICAL_ALIGN_మధ్య;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_text_align_normal(
+స్థిర శూన్య css_hint_పాఠ్యం_align_సాధారణ(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = ఖాళీ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(కణుపు,
 			corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_left)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LEFT;
+	ఒకవేళ (err == DOM_NO_ERR && align != ఖాళీ) {
+		ఒకవేళ (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_ఎడమ)) {
+			hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+			hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_ఎడమ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_center)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_CENTER;
+			hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+			hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_right)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_RIGHT;
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_కుడి)) {
+			hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+			hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_కుడి;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
+			hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+			hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_JUSTIFY;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_text_align_center(
+స్థిర శూన్య css_hint_పాఠ్యం_align_center(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
-	hint->prop = CSS_PROP_TEXT_ALIGN;
-	hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
+	hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+	hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_LIBCSS_CENTER;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_left_right_align_center(
+స్థిర శూన్య css_hint_margin_ఎడమ_కుడి_align_center(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
+		memset(hint, 0, పరిమాణం(*hint) * 2);
+		ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_center) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_abscenter) ||
 				dom_string_caseless_lwc_isequal(attr,
-						corestring_lwc_middle) ||
+						corestring_lwc_మధ్య) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_absmiddle)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_ఎడమ;
+			hint->స్థితి_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_కుడి;
+			hint->స్థితి_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_text_align_special(
+స్థిర శూన్య css_hint_పాఠ్యం_align_special(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = ఖాళీ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(కణుపు,
 			corestring_dom_align, &align);
 
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	ఒకవేళ (err == DOM_NO_ERR && align != ఖాళీ) {
+		ఒకవేళ (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_center)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
+			hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+			hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_LIBCSS_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_left)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_LEFT;
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_ఎడమ)) {
+			hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+			hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_LIBCSS_ఎడమ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_right)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_RIGHT;
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_కుడి)) {
+			hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+			hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_LIBCSS_కుడి;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
+			hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+			hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_JUSTIFY;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_text_align_table_special(
+స్థిర శూన్య css_hint_పాఠ్యం_align_పట్టిక_special(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
-	hint->prop = CSS_PROP_TEXT_ALIGN;
-	hint->status = CSS_TEXT_ALIGN_INHERIT_IF_NON_MAGIC;
+	hint->prop = CSS_PROP_పాఠ్యం_ALIGN;
+	hint->స్థితి_2 = CSS_పాఠ్యం_ALIGN_INHERIT_IF_NON_MAGIC;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_hspace_vspace(
+స్థిర శూన్య css_hint_margin_hspace_vspace(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ఖాళీ;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_vspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		css_hint_length hint_length;
-		if (parse_dimension(
-				dom_string_data(attr), false,
-				&hint_length.value,
-				&hint_length.unit)) {
-			hint->prop = CSS_PROP_MARGIN_TOP;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
+		css_hint_నిడివి hint_నిడివి;
+		ఒకవేళ (parse_dimension(
+				dom_string_దత్తాంశం(attr), false,
+				&hint_నిడివి.విలువ,
+				&hint_నిడివి.unit)) {
+			hint->prop = CSS_PROP_MARGIN_శిఖరం;
+			hint->దత్తాంశం.నిడివి.విలువ = hint_నిడివి.విలువ;
+			hint->దత్తాంశం.నిడివి.unit = hint_నిడివి.unit;
+			hint->స్థితి_2 = CSS_MARGIN_సమితి;
 			css_hint_advance(&hint);
 
 			hint->prop = CSS_PROP_MARGIN_BOTTOM;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+			hint->దత్తాంశం.నిడివి.విలువ = hint_నిడివి.విలువ;
+			hint->దత్తాంశం.నిడివి.unit = hint_నిడివి.unit;
+			hint->స్థితి_2 = CSS_MARGIN_సమితి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_hspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		css_hint_length hint_length;
-		if (parse_dimension(
-				dom_string_data(attr), false,
-				&hint_length.value,
-				&hint_length.unit)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
+		css_hint_నిడివి hint_నిడివి;
+		ఒకవేళ (parse_dimension(
+				dom_string_దత్తాంశం(attr), false,
+				&hint_నిడివి.విలువ,
+				&hint_నిడివి.unit)) {
+			hint->prop = CSS_PROP_MARGIN_ఎడమ;
+			hint->దత్తాంశం.నిడివి.విలువ = hint_నిడివి.విలువ;
+			hint->దత్తాంశం.నిడివి.unit = hint_నిడివి.unit;
+			hint->స్థితి_2 = CSS_MARGIN_సమితి;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+			hint->prop = CSS_PROP_MARGIN_కుడి;
+			hint->దత్తాంశం.నిడివి.విలువ = hint_నిడివి.విలువ;
+			hint->దత్తాంశం.నిడివి.unit = hint_నిడివి.unit;
+			hint->స్థితి_2 = CSS_MARGIN_సమితి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_margin_left_right_hr(
+స్థిర శూన్య css_hint_margin_ఎడమ_కుడి_hr(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 				corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_left)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->data.length.value = 0;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_MARGIN_SET;
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
+		memset(hint, 0, పరిమాణం(*hint) * 2);
+		ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_ఎడమ)) {
+			hint->prop = CSS_PROP_MARGIN_ఎడమ;
+			hint->దత్తాంశం.నిడివి.విలువ = 0;
+			hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_PX;
+			hint->స్థితి_2 = CSS_MARGIN_సమితి;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_కుడి;
+			hint->స్థితి_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_center)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_ఎడమ;
+			hint->స్థితి_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_కుడి;
+			hint->స్థితి_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_right)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_కుడి)) {
+			hint->prop = CSS_PROP_MARGIN_ఎడమ;
+			hint->స్థితి_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->data.length.value = 0;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_MARGIN_SET;
+			hint->prop = CSS_PROP_MARGIN_కుడి;
+			hint->దత్తాంశం.నిడివి.విలువ = 0;
+			hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_PX;
+			hint->స్థితి_2 = CSS_MARGIN_సమితి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_table_spacing_border(
+స్థిర శూన్య css_hint_పట్టిక_spacing_border(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception exc;
-	dom_string *attr = NULL;
+	dom_string *attr = ఖాళీ;
 
-	exc = dom_element_get_attribute(node, corestring_dom_border, &attr);
+	exc = dom_element_get_attribute(కణుపు, corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_నిడివి hint_నిడివి;
 
-		for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
+		కొరకు (hint_prop = CSS_PROP_BORDER_శిఖరం_STYLE;
+			     hint_prop <= CSS_PROP_BORDER_ఎడమ_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->status = CSS_BORDER_STYLE_OUTSET;
+				hint->స్థితి_2 = CSS_BORDER_STYLE_OUTSET;
 				css_hint_advance(&hint);
 		}
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit)) {
+		ఒకవేళ (parse_dimension(
+				dom_string_దత్తాంశం(attr), false,
+						&hint_నిడివి.విలువ,
+						&hint_నిడివి.unit)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
+			కొరకు (hint_prop = CSS_PROP_BORDER_శిఖరం_వెడల్పు;
+			     hint_prop <= CSS_PROP_BORDER_ఎడమ_వెడల్పు;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = hint_length.value;
-				hint->data.length.unit = hint_length.unit;
-				hint->status = CSS_BORDER_WIDTH_WIDTH;
+				hint->దత్తాంశం.నిడివి.విలువ = hint_నిడివి.విలువ;
+				hint->దత్తాంశం.నిడివి.unit = hint_నిడివి.unit;
+				hint->స్థితి_2 = CSS_BORDER_వెడల్పు_వెడల్పు;
 				css_hint_advance(&hint);
 			}
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		ఒకవేళ (nscss_parse_రంగు(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
+			కొరకు (hint_prop = CSS_PROP_BORDER_శిఖరం_COLOR;
+			     hint_prop <= CSS_PROP_BORDER_ఎడమ_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.color = hint_color;
-				hint->status = CSS_BORDER_COLOR_COLOR;
+				hint->దత్తాంశం.color = hint_color;
+				hint->స్థితి_2 = CSS_BORDER_COLOR_COLOR;
 				css_hint_advance(&hint);
 			}
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_cellspacing, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-						&hint->data.position.h.value,
-						&hint->data.position.h.unit)) {
+	ఒకవేళ (exc == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (parse_dimension(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), false,
+						&hint->దత్తాంశం.position.h.విలువ,
+						&hint->దత్తాంశం.position.h.unit)) {
 			hint->prop = CSS_PROP_BORDER_SPACING;
-			hint->data.position.v = hint->data.position.h;
-			hint->status = CSS_BORDER_SPACING_SET;
+			hint->దత్తాంశం.position.v = hint->దత్తాంశం.position.h;
+			hint->స్థితి_2 = CSS_BORDER_SPACING_సమితి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height(
+స్థిర శూన్య css_hint_ఎత్తు(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ఖాళీ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_height, &attr);
+	err = dom_element_get_attribute(కణుపు,
+			corestring_dom_ఎత్తు, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->status = CSS_HEIGHT_SET;
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (parse_dimension(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), false,
+				&hint->దత్తాంశం.నిడివి.విలువ,
+				&hint->దత్తాంశం.నిడివి.unit)) {
+			hint->prop = CSS_PROP_ఎత్తు;
+			hint->స్థితి_2 = CSS_ఎత్తు_సమితి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_width(
+స్థిర శూన్య css_hint_వెడల్పు(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ఖాళీ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_width, &attr);
+	err = dom_element_get_attribute(కణుపు,
+			corestring_dom_వెడల్పు, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->status = CSS_WIDTH_SET;
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (parse_dimension(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), false,
+				&hint->దత్తాంశం.నిడివి.విలువ,
+				&hint->దత్తాంశం.నిడివి.unit)) {
+			hint->prop = CSS_PROP_వెడల్పు;
+			hint->స్థితి_2 = CSS_వెడల్పు_సమితి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height_width_textarea(
+స్థిర శూన్య css_hint_ఎత్తు_వెడల్పు_textarea(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ఖాళీ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_rows, &attr);
+	err = dom_element_get_attribute(కణుపు,
+			corestring_dom_అడ్డువరుసలు, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->data.length.unit = CSS_UNIT_EM;
-			hint->status = CSS_HEIGHT_SET;
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (parse_dimension(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), false,
+				&hint->దత్తాంశం.నిడివి.విలువ,
+				&hint->దత్తాంశం.నిడివి.unit)) {
+			hint->prop = CSS_PROP_ఎత్తు;
+			hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_EM;
+			hint->స్థితి_2 = CSS_ఎత్తు_సమితి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_cols, &attr);
+	err = dom_element_get_attribute(కణుపు,
+			corestring_dom_నిలువుల_సంఖ్య, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->data.length.unit = CSS_UNIT_EX;
-			hint->status = CSS_WIDTH_SET;
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (parse_dimension(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), false,
+				&hint->దత్తాంశం.నిడివి.విలువ,
+				&hint->దత్తాంశం.నిడివి.unit)) {
+			hint->prop = CSS_PROP_వెడల్పు;
+			hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_EX;
+			hint->స్థితి_2 = CSS_వెడల్పు_సమితి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height_width_canvas(
+స్థిర శూన్య css_hint_ఎత్తు_వెడల్పు_canvas(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = ఖాళీ;
 	dom_exception err;
-	bool set_dim = false;
+	bool సమితి_dim = false;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_height, &attr);
+	err = dom_element_get_attribute(కణుపు,
+			corestring_dom_ఎత్తు, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_HEIGHT_SET;
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (parse_dimension(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), true,
+				&hint->దత్తాంశం.నిడివి.విలువ,
+				&hint->దత్తాంశం.నిడివి.unit)) {
+			hint->prop = CSS_PROP_ఎత్తు;
+			hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_PX;
+			hint->స్థితి_2 = CSS_ఎత్తు_సమితి;
 			css_hint_advance(&hint);
-			set_dim = true;
+			సమితి_dim = true;
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	ఒకవేళ (సమితి_dim == false) {
 		/* canvas defaults to 150px tall */
-		hint->prop = CSS_PROP_HEIGHT;
-		hint->data.length.unit = CSS_UNIT_PX;
-		hint->data.length.value = INTTOFIX(150);
-		hint->status = CSS_HEIGHT_SET;
+		hint->prop = CSS_PROP_ఎత్తు;
+		hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_PX;
+		hint->దత్తాంశం.నిడివి.విలువ = INTTOFIX(150);
+		hint->స్థితి_2 = CSS_ఎత్తు_సమితి;
 		css_hint_advance(&hint);
-	} else {
-		set_dim = false;
+	} లేకపోతే {
+		సమితి_dim = false;
 	}
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_width, &attr);
+	err = dom_element_get_attribute(కణుపు,
+			corestring_dom_వెడల్పు, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_WIDTH_SET;
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (parse_dimension(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), true,
+				&hint->దత్తాంశం.నిడివి.విలువ,
+				&hint->దత్తాంశం.నిడివి.unit)) {
+			hint->prop = CSS_PROP_వెడల్పు;
+			hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_PX;
+			hint->స్థితి_2 = CSS_వెడల్పు_సమితి;
 			css_hint_advance(&hint);
-			set_dim = true;
+			సమితి_dim = true;
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	ఒకవేళ (సమితి_dim == false) {
 		/* canvas defaults to 300px wide */
-		hint->prop = CSS_PROP_WIDTH;
-		hint->data.length.unit = CSS_UNIT_PX;
-		hint->data.length.value = INTTOFIX(300);
-		hint->status = CSS_WIDTH_SET;
+		hint->prop = CSS_PROP_వెడల్పు;
+		hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_PX;
+		hint->దత్తాంశం.నిడివి.విలువ = INTTOFIX(300);
+		hint->స్థితి_2 = CSS_వెడల్పు_సమితి;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_width_input(
+స్థిర శూన్య css_hint_వెడల్పు_ఆదానం(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
-	dom_string *attr = NULL;
+	నిర్మాణం css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	dom_string *attr = ఖాళీ;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_size, &attr);
+	err = dom_element_get_attribute(కణుపు,
+			corestring_dom_కొలత, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			dom_string *attr2 = NULL;
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		ఒకవేళ (parse_dimension(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), false,
+				&hint->దత్తాంశం.నిడివి.విలువ,
+				&hint->దత్తాంశం.నిడివి.unit)) {
+			dom_string *attr2 = ఖాళీ;
 
-			err = dom_element_get_attribute(node,
+			err = dom_element_get_attribute(కణుపు,
 					corestring_dom_type, &attr2);
-			if (err == DOM_NO_ERR) {
+			ఒకవేళ (err == DOM_NO_ERR) {
 
-				hint->prop = CSS_PROP_WIDTH;
-				hint->status = CSS_WIDTH_SET;
+				hint->prop = CSS_PROP_వెడల్పు;
+				hint->స్థితి_2 = CSS_వెడల్పు_సమితి;
 
-				if (attr2 == NULL ||
+				ఒకవేళ (attr2 == ఖాళీ ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
-						corestring_lwc_text) ||
+						corestring_lwc_పాఠ్యం) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
-						corestring_lwc_search) ||
+						corestring_lwc_శోధన) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_password) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_file)) {
-					hint->data.length.unit = CSS_UNIT_EX;
+					hint->దత్తాంశం.నిడివి.unit = CSS_UNIT_EX;
 				}
-				if (attr2 != NULL) {
+				ఒకవేళ (attr2 != ఖాళీ) {
 					dom_string_unref(attr2);
 				}
 				css_hint_advance(&hint);
@@ -1345,277 +1345,277 @@ static void css_hint_width_input(
 	}
 }
 
-static void css_hint_anchor_color(
+స్థిర శూన్య css_hint_anchor_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_error error;
 	dom_exception err;
 	dom_string *color;
-	dom_node *bodynode = NULL;
+	dom_కణుపు *bodynode = ఖాళీ;
 
 	/* find body node */
 	css_qname qs;
-	bool is_visited;
+	bool is_సందర్శించిన;
 
-	qs.ns = NULL;
+	qs.ns = ఖాళీ;
 	qs.name = lwc_string_ref(corestring_lwc_body);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&bodynode) != CSS_OK) {
+	ఒకవేళ (named_ancestor_కణుపు(ctx, కణుపు, &qs,
+			(శూన్య *)&bodynode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return ;
+		తిరిగి ;
 	}
 	lwc_string_unref(qs.name);
 
-	if (bodynode == NULL) {
-		return;
+	ఒకవేళ (bodynode == ఖాళీ) {
+		తిరిగి;
 	}
 
-	error = node_is_visited(ctx, node, &is_visited);
-	if (error != CSS_OK)
-		return;
+	error = కణుపు_is_సందర్శించిన(ctx, కణుపు, &is_సందర్శించిన);
+	ఒకవేళ (error != CSS_OK)
+		తిరిగి;
 
-	if (is_visited) {
+	ఒకవేళ (is_సందర్శించిన) {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_vlink, &color);
-	} else {
+	} లేకపోతే {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_link, &color);
 	}
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	ఒకవేళ (err == DOM_NO_ERR && color != ఖాళీ) {
+		ఒకవేళ (nscss_parse_రంగు(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(color),
+						&hint->దత్తాంశం.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->స్థితి_2 = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_body_color(
+స్థిర శూన్య css_hint_body_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
-	err = dom_element_get_attribute(node, corestring_dom_text, &color);
+	err = dom_element_get_attribute(కణుపు, corestring_dom_పాఠ్యం, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	ఒకవేళ (err == DOM_NO_ERR && color != ఖాళీ) {
+		ఒకవేళ (nscss_parse_రంగు(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(color),
+						&hint->దత్తాంశం.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->స్థితి_2 = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_color(
+స్థిర శూన్య css_hint_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
-	err = dom_element_get_attribute(node, corestring_dom_color, &color);
+	err = dom_element_get_attribute(కణుపు, corestring_dom_color, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	ఒకవేళ (err == DOM_NO_ERR && color != ఖాళీ) {
+		ఒకవేళ (nscss_parse_రంగు(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(color),
+						&hint->దత్తాంశం.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->స్థితి_2 = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_font_size(
+స్థిర శూన్య css_hint_font_కొలత(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
-	dom_string *size;
+	dom_string *కొలత;
 
-	err = dom_element_get_attribute(node, corestring_dom_size, &size);
-	if (err == DOM_NO_ERR && size != NULL) {
-		if (parse_font_size(
-				(const char *)dom_string_data(size),
-						&hint->status,
-						&hint->data.length.value,
-						&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_FONT_SIZE;
+	err = dom_element_get_attribute(కణుపు, corestring_dom_కొలత, &కొలత);
+	ఒకవేళ (err == DOM_NO_ERR && కొలత != ఖాళీ) {
+		ఒకవేళ (parse_font_కొలత(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(కొలత),
+						&hint->స్థితి_2,
+						&hint->దత్తాంశం.నిడివి.విలువ,
+						&hint->దత్తాంశం.నిడివి.unit)) {
+			hint->prop = CSS_PROP_FONT_కొలత;
 			css_hint_advance(&hint);
 		}
-		dom_string_unref(size);
+		dom_string_unref(కొలత);
 	}
 }
 
-static void css_hint_float(
+స్థిర శూన్య css_hint_float(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *align;
 
-	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_left)) {
+	err = dom_element_get_attribute(కణుపు, corestring_dom_align, &align);
+	ఒకవేళ (err == DOM_NO_ERR && align != ఖాళీ) {
+		ఒకవేళ (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_ఎడమ)) {
 			hint->prop = CSS_PROP_FLOAT;
-			hint->status = CSS_FLOAT_LEFT;
+			hint->స్థితి_2 = CSS_FLOAT_ఎడమ;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_right)) {
+		} లేకపోతే ఒకవేళ (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_కుడి)) {
 			hint->prop = CSS_PROP_FLOAT;
-			hint->status = CSS_FLOAT_RIGHT;
+			hint->స్థితి_2 = CSS_FLOAT_కుడి;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_caption_side(
+స్థిర శూన్య css_hint_caption_side(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
-	dom_string *align = NULL;
+	dom_string *align = ఖాళీ;
 
-	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	err = dom_element_get_attribute(కణుపు, corestring_dom_align, &align);
+	ఒకవేళ (err == DOM_NO_ERR && align != ఖాళీ) {
+		ఒకవేళ (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_CAPTION_SIDE;
-			hint->status = CSS_CAPTION_SIDE_BOTTOM;
+			hint->స్థితి_2 = CSS_CAPTION_SIDE_BOTTOM;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_bg_color(
+స్థిర శూన్య css_hint_bg_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	నిర్మాణం css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *bgcolor;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(కణుపు,
 			corestring_dom_bgcolor, &bgcolor);
-	if (err == DOM_NO_ERR && bgcolor != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(bgcolor),
-				&hint->data.color)) {
+	ఒకవేళ (err == DOM_NO_ERR && bgcolor != ఖాళీ) {
+		ఒకవేళ (nscss_parse_రంగు(
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(bgcolor),
+				&hint->దత్తాంశం.color)) {
 			hint->prop = CSS_PROP_BACKGROUND_COLOR;
-			hint->status = CSS_BACKGROUND_COLOR_COLOR;
+			hint->స్థితి_2 = CSS_BACKGROUND_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(bgcolor);
 	}
 }
 
-static void css_hint_bg_image(
+స్థిర శూన్య css_hint_bg_image(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	నిర్మాణం css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(కణుపు,
 			corestring_dom_background, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
 		nsurl *url;
-		nserror error = nsurl_join(ctx->base_url,
-				(const char *)dom_string_data(attr), &url);
+		nserror error = nsurl_join(ctx->పునాది_url,
+				(స్థిరరాశి అక్షరం *)dom_string_దత్తాంశం(attr), &url);
 		dom_string_unref(attr);
 
-		if (error == NSERROR_OK) {
+		ఒకవేళ (error == NSERROR_OK) {
 			lwc_string *iurl;
 			lwc_error lerror = lwc_intern_string(nsurl_access(url),
-					nsurl_length(url), &iurl);
+					nsurl_నిడివి(url), &iurl);
 			nsurl_unref(url);
 
-			if (lerror == lwc_error_ok) {
+			ఒకవేళ (lerror == lwc_error_ok) {
 				hint->prop = CSS_PROP_BACKGROUND_IMAGE;
-				hint->data.string = iurl;
-				hint->status = CSS_BACKGROUND_IMAGE_IMAGE;
+				hint->దత్తాంశం.string = iurl;
+				hint->స్థితి_2 = CSS_BACKGROUND_IMAGE_IMAGE;
 				css_hint_advance(&hint);
 			}
 		}
 	}
 }
 
-static void css_hint_white_space_nowrap(
+స్థిర శూన్య css_hint_white_space_nowrap(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	నిర్మాణం css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	bool nowrap;
 
-	err = dom_element_has_attribute(node, corestring_dom_nowrap, &nowrap);
-	if (err == DOM_NO_ERR && nowrap == true) {
+	err = dom_element_has_attribute(కణుపు, corestring_dom_nowrap, &nowrap);
+	ఒకవేళ (err == DOM_NO_ERR && nowrap == true) {
 		hint->prop = CSS_PROP_WHITE_SPACE;
-		hint->status = CSS_WHITE_SPACE_NOWRAP;
+		hint->స్థితి_2 = CSS_WHITE_SPACE_NOWRAP;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_list(
+స్థిర శూన్య css_hint_list(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_కణుపు *కణుపు)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	నిర్మాణం css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
-	err = dom_element_get_attribute(node, corestring_dom_type, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
-		const char *attr_str = dom_string_data(attr);
-		size_t attr_len = dom_string_byte_length(attr);
-		enum css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
+	err = dom_element_get_attribute(కణుపు, corestring_dom_type, &attr);
+	ఒకవేళ (err == DOM_NO_ERR && attr != ఖాళీ) {
+		స్థిరరాశి అక్షరం *attr_str = dom_string_దత్తాంశం(attr);
+		size_t attr_len = dom_string_byte_నిడివి(attr);
+		గణన css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
 
-		if (attr_len == 1) {
-			switch (attr_str[0]) {
-			case 'a':
-				type = CSS_LIST_STYLE_TYPE_LOWER_ALPHA;
-				break;
-			case 'A':
-				type = CSS_LIST_STYLE_TYPE_UPPER_ALPHA;
-				break;
-			case 'i':
-				type = CSS_LIST_STYLE_TYPE_LOWER_ROMAN;
-				break;
-			case 'I':
-				type = CSS_LIST_STYLE_TYPE_UPPER_ROMAN;
-				break;
-			case '1':
+		ఒకవేళ (attr_len == 1) {
+			ఎంపిక (attr_str[0]) {
+			స్థితి 'a':
+				type = CSS_LIST_STYLE_TYPE_క్రింది_ALPHA;
+				ఆపు;
+			స్థితి 'A':
+				type = CSS_LIST_STYLE_TYPE_పై_ALPHA;
+				ఆపు;
+			స్థితి 'i':
+				type = CSS_LIST_STYLE_TYPE_క్రింది_ROMAN;
+				ఆపు;
+			స్థితి 'I':
+				type = CSS_LIST_STYLE_TYPE_పై_ROMAN;
+				ఆపు;
+			స్థితి '1':
 				type = CSS_LIST_STYLE_TYPE_DECIMAL;
-				break;
+				ఆపు;
 			}
 		}
 
-		if (type != CSS_LIST_STYLE_TYPE_INHERIT) {
+		ఒకవేళ (type != CSS_LIST_STYLE_TYPE_INHERIT) {
 			hint->prop = CSS_PROP_LIST_STYLE_TYPE;
-			hint->status = type;
+			hint->స్థితి_2 = type;
 			css_hint_advance(&hint);
 		}
 
@@ -1625,120 +1625,120 @@ static void css_hint_list(
 
 
 /* Exported function, documented in css/hints.h */
-css_error node_presentational_hint(void *pw, void *node,
+css_error కణుపు_presentational_hint(శూన్య *pw, శూన్య *కణుపు,
 		uint32_t *nhints, css_hint **hints)
 {
 	dom_exception exc;
-	dom_html_element_type tag_type;
+	dom_html_element_type ట్యాగ్_type;
 
-	if (nsoption_bool(author_level_css) == false) {
+	ఒకవేళ (nsoption_bool(author_level_css) == false) {
 		*nhints = 0;
-		*hints = NULL;
-		return CSS_OK;
+		*hints = ఖాళీ;
+		తిరిగి CSS_OK;
 	}
 
 	css_hint_clean();
 
-	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
-		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+	exc = dom_html_element_get_ట్యాగ్_type(కణుపు, &ట్యాగ్_type);
+	ఒకవేళ (exc != DOM_NO_ERR) {
+		ట్యాగ్_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	switch (tag_type) {
-	case DOM_HTML_ELEMENT_TYPE_TH:
-	case DOM_HTML_ELEMENT_TYPE_TD:
-		css_hint_width(pw, node);
-		css_hint_table_cell_border_padding(pw, node);
-		css_hint_white_space_nowrap(pw, node);
+	ఎంపిక (ట్యాగ్_type) {
+	స్థితి DOM_HTML_ELEMENT_TYPE_TH:
+	స్థితి DOM_HTML_ELEMENT_TYPE_TD:
+		css_hint_వెడల్పు(pw, కణుపు);
+		css_hint_పట్టిక_cell_border_padding(pw, కణుపు);
+		css_hint_white_space_nowrap(pw, కణుపు);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_TR:
-		css_hint_height(pw, node);
+	స్థితి DOM_HTML_ELEMENT_TYPE_TR:
+		css_hint_ఎత్తు(pw, కణుపు);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_THEAD:
-	case DOM_HTML_ELEMENT_TYPE_TBODY:
-	case DOM_HTML_ELEMENT_TYPE_TFOOT:
-		css_hint_text_align_special(pw, node);
+	స్థితి DOM_HTML_ELEMENT_TYPE_THEAD:
+	స్థితి DOM_HTML_ELEMENT_TYPE_TBODY:
+	స్థితి DOM_HTML_ELEMENT_TYPE_TFOOT:
+		css_hint_పాఠ్యం_align_special(pw, కణుపు);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_COL:
-		css_hint_vertical_align_table_cells(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_APPLET:
-	case DOM_HTML_ELEMENT_TYPE_IMG:
-		css_hint_margin_hspace_vspace(pw, node);
+	స్థితి DOM_HTML_ELEMENT_TYPE_నిలువు:
+		css_hint_vertical_align_పట్టిక_cells(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_APPLET:
+	స్థితి DOM_HTML_ELEMENT_TYPE_IMG:
+		css_hint_margin_hspace_vspace(pw, కణుపు);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_EMBED:
-	case DOM_HTML_ELEMENT_TYPE_IFRAME:
-	case DOM_HTML_ELEMENT_TYPE_OBJECT:
-		css_hint_height(pw, node);
-		css_hint_width(pw, node);
-		css_hint_vertical_align_replaced(pw, node);
-		css_hint_float(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_P:
-	case DOM_HTML_ELEMENT_TYPE_H1:
-	case DOM_HTML_ELEMENT_TYPE_H2:
-	case DOM_HTML_ELEMENT_TYPE_H3:
-	case DOM_HTML_ELEMENT_TYPE_H4:
-	case DOM_HTML_ELEMENT_TYPE_H5:
-	case DOM_HTML_ELEMENT_TYPE_H6:
-		css_hint_text_align_normal(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CENTER:
-		css_hint_text_align_center(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CAPTION:
-		css_hint_caption_side(pw, node);
+	స్థితి DOM_HTML_ELEMENT_TYPE_EMBED:
+	స్థితి DOM_HTML_ELEMENT_TYPE_IFRAME:
+	స్థితి DOM_HTML_ELEMENT_TYPE_OBJECT:
+		css_hint_ఎత్తు(pw, కణుపు);
+		css_hint_వెడల్పు(pw, కణుపు);
+		css_hint_vertical_align_replaced(pw, కణుపు);
+		css_hint_float(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_P:
+	స్థితి DOM_HTML_ELEMENT_TYPE_H1:
+	స్థితి DOM_HTML_ELEMENT_TYPE_H2:
+	స్థితి DOM_HTML_ELEMENT_TYPE_H3:
+	స్థితి DOM_HTML_ELEMENT_TYPE_H4:
+	స్థితి DOM_HTML_ELEMENT_TYPE_H5:
+	స్థితి DOM_HTML_ELEMENT_TYPE_H6:
+		css_hint_పాఠ్యం_align_సాధారణ(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_CENTER:
+		css_hint_పాఠ్యం_align_center(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_CAPTION:
+		css_hint_caption_side(pw, కణుపు);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_DIV:
-		css_hint_text_align_special(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TABLE:
-		css_hint_text_align_table_special(pw, node);
-		css_hint_table_spacing_border(pw, node);
-		css_hint_float(pw, node);
-		css_hint_margin_left_right_align_center(pw, node);
-		css_hint_width(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_HR:
-		css_hint_width(pw, node);
-		css_hint_margin_left_right_hr(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-		css_hint_height_width_textarea(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
-		css_hint_width_input(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_A:
-		css_hint_anchor_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FONT:
-		css_hint_font_size(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BODY:
-		css_hint_body_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CANVAS:
-		css_hint_height_width_canvas(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OL:
-		css_hint_list(pw, node);
-		break;
-	default:
-		break;
+	స్థితి DOM_HTML_ELEMENT_TYPE_DIV:
+		css_hint_పాఠ్యం_align_special(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_పట్టిక:
+		css_hint_పాఠ్యం_align_పట్టిక_special(pw, కణుపు);
+		css_hint_పట్టిక_spacing_border(pw, కణుపు);
+		css_hint_float(pw, కణుపు);
+		css_hint_margin_ఎడమ_కుడి_align_center(pw, కణుపు);
+		css_hint_వెడల్పు(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_HR:
+		css_hint_వెడల్పు(pw, కణుపు);
+		css_hint_margin_ఎడమ_కుడి_hr(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+		css_hint_ఎత్తు_వెడల్పు_textarea(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_ఆదానం:
+		css_hint_వెడల్పు_ఆదానం(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_A:
+		css_hint_anchor_color(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_FONT:
+		css_hint_font_కొలత(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_BODY:
+		css_hint_body_color(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_CANVAS:
+		css_hint_ఎత్తు_వెడల్పు_canvas(pw, కణుపు);
+		ఆపు;
+	స్థితి DOM_HTML_ELEMENT_TYPE_OL:
+		css_hint_list(pw, కణుపు);
+		ఆపు;
+	అప్రమేయ:
+		ఆపు;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
-		css_hint_color(pw, node);
-		css_hint_bg_color(pw, node);
-		css_hint_bg_image(pw, node);
+	ఒకవేళ (ట్యాగ్_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
+		css_hint_color(pw, కణుపు);
+		css_hint_bg_color(pw, కణుపు);
+		css_hint_bg_image(pw, కణుపు);
 	}
 
-#ifdef LOG_STATS
+#నిర్వచితమైతే LOG_STATS
 	NSLOG(netsurf, INFO, "Properties with hints: %i", hint_ctx.len);
-#endif
+#అయితే_ముగింపు
 
 	css_hint_get_hints(hints, nhints);
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }

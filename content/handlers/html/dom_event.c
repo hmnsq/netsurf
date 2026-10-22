@@ -22,28 +22,28 @@
  * Implementation of HTML content DOM event handling.
  */
 
-#include <string.h>
+#అన్తర్భావ <string.h>
 
-#include "utils/config.h"
-#include "utils/utils.h"
-#include "utils/corestrings.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/ascii.h"
-#include "utils/string.h"
-#include "utils/nsurl.h"
-#include "content/content.h"
-#include "javascript/js.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/ascii.h"
+#అన్తర్భావ "utils/string.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "content/content.h"
+#అన్తర్భావ "javascript/js.h"
 
-#include "netsurf/bitmap.h"
+#అన్తర్భావ "netsurf/bitmap.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/css.h"
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/form_internal.h"
-#include "html/dom_event.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/object.h"
+#అన్తర్భావ "html/css.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_construct.h"
+#అన్తర్భావ "html/form_internal.h"
+#అన్తర్భావ "html/dom_event.h"
 
 
 /**
@@ -53,58 +53,58 @@
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
+స్థిర bool html_process_inserted_పునాది(html_content *htmlc, dom_కణుపు *కణుపు)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 
 	/* get href attribute if present */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	exc = dom_element_get_attribute(కణుపు, corestring_dom_href, &atr_string);
+	ఒకవేళ ((exc == DOM_NO_ERR) && (atr_string != ఖాళీ)) {
 		nsurl *url;
 		nserror error;
 
 		/* get url from string */
-		error = nsurl_create(dom_string_data(atr_string), &url);
+		error = nsurl_create(dom_string_దత్తాంశం(atr_string), &url);
 		dom_string_unref(atr_string);
-		if (error == NSERROR_OK) {
-			if (htmlc->base_url != NULL) {
-				nsurl_unref(htmlc->base_url);
+		ఒకవేళ (error == NSERROR_OK) {
+			ఒకవేళ (htmlc->పునాది_url != ఖాళీ) {
+				nsurl_unref(htmlc->పునాది_url);
 			}
-			htmlc->base_url = url;
+			htmlc->పునాది_url = url;
 		}
 	}
 
 
 	/* get target attribute if present and not already set */
-	if (htmlc->base_target != NULL) {
-		return true;
+	ఒకవేళ (htmlc->పునాది_లక్ష్యం != ఖాళీ) {
+		తిరిగి true;
 	}
 
-	exc = dom_element_get_attribute(node,
-					corestring_dom_target,
+	exc = dom_element_get_attribute(కణుపు,
+					corestring_dom_లక్ష్యం,
 					&atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ఒకవేళ ((exc == DOM_NO_ERR) && (atr_string != ఖాళీ)) {
 		/* Validation rules from the HTML5 spec for the base element:
 		 *  The target must be one of _blank, _self, _parent, or
 		 *  _top or any identifier which does not begin with an
 		 *  underscore
 		 */
-		if (*dom_string_data(atr_string) != '_' ||
+		ఒకవేళ (*dom_string_దత్తాంశం(atr_string) != '_' ||
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__blank) ||
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__self) ||
 				dom_string_caseless_lwc_isequal(atr_string,
-						corestring_lwc__parent) ||
+						corestring_lwc_మాతృ) ||
 				dom_string_caseless_lwc_isequal(atr_string,
-						corestring_lwc__top)) {
-			htmlc->base_target = strdup(dom_string_data(atr_string));
+						corestring_lwc_శిఖరం_2)) {
+			htmlc->పునాది_లక్ష్యం = strdup(dom_string_దత్తాంశం(atr_string));
 		}
 		dom_string_unref(atr_string);
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
@@ -116,7 +116,7 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
+స్థిర bool html_process_inserted_img(html_content *htmlc, dom_కణుపు *కణుపు)
 {
 	dom_string *src;
 	nsurl *url;
@@ -125,27 +125,27 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	bool success;
 
 	/* Do nothing if foreground images are disabled */
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	ఒకవేళ (nsoption_bool(foreground_images) == false) {
+		తిరిగి true;
 	}
 
-	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		return true;
+	exc = dom_element_get_attribute(కణుపు, corestring_dom_src, &src);
+	ఒకవేళ (exc != DOM_NO_ERR || src == ఖాళీ) {
+		తిరిగి true;
 	}
 
-	err = nsurl_join(htmlc->base_url, dom_string_data(src), &url);
-	if (err != NSERROR_OK) {
+	err = nsurl_join(htmlc->పునాది_url, dom_string_దత్తాంశం(src), &url);
+	ఒకవేళ (err != NSERROR_OK) {
 		dom_string_unref(src);
-		return false;
+		తిరిగి false;
 	}
 	dom_string_unref(src);
 
 	/* Speculatively fetch the image */
-	success = html_fetch_object(htmlc, url, NULL, CONTENT_IMAGE, false);
+	success = html_fetch_object(htmlc, url, ఖాళీ, CONTENT_IMAGE, false);
 	nsurl_unref(url);
 
-	return success;
+	తిరిగి success;
 }
 
 
@@ -158,84 +158,84 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static bool html_process_inserted_link(html_content *c, dom_node *node)
+స్థిర bool html_process_inserted_link(html_content *c, dom_కణుపు *కణుపు)
 {
-	struct content_rfc5988_link link; /* the link added to the content */
+	నిర్మాణం content_rfc5988_link link; /* the link added to the content */
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *atr_string;
 	nserror error;
 
 	/* Handle stylesheet loading */
-	html_css_process_link(c, (dom_node *)node);
+	html_css_process_link(c, (dom_కణుపు *)కణుపు);
 
 	/* try Generic link handling */
 
-	memset(&link, 0, sizeof(struct content_rfc5988_link));
+	memset(&link, 0, పరిమాణం(నిర్మాణం content_rfc5988_link));
 
 	/* check that the relation exists - w3c spec says must be present */
-	exc = dom_element_get_attribute(node, corestring_dom_rel, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
-		return false;
+	exc = dom_element_get_attribute(కణుపు, corestring_dom_rel, &atr_string);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (atr_string == ఖాళీ)) {
+		తిరిగి false;
 	}
 	/* get a lwc string containing the link relation */
 	exc = dom_string_intern(atr_string, &link.rel);
 	dom_string_unref(atr_string);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	ఒకవేళ (exc != DOM_NO_ERR) {
+		తిరిగి false;
 	}
 
 	/* check that the href exists - w3c spec says must be present */
-	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+	exc = dom_element_get_attribute(కణుపు, corestring_dom_href, &atr_string);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (atr_string == ఖాళీ)) {
 		lwc_string_unref(link.rel);
-		return false;
+		తిరిగి false;
 	}
 
 	/* get nsurl */
-	error = nsurl_join(c->base_url, dom_string_data(atr_string),
+	error = nsurl_join(c->పునాది_url, dom_string_దత్తాంశం(atr_string),
 			&link.href);
 	dom_string_unref(atr_string);
-	if (error != NSERROR_OK) {
+	ఒకవేళ (error != NSERROR_OK) {
 		lwc_string_unref(link.rel);
-		return false;
+		తిరిగి false;
 	}
 
 	/* look for optional properties -- we don't care if internment fails */
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_hreflang, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ఒకవేళ ((exc == DOM_NO_ERR) && (atr_string != ఖాళీ)) {
 		/* get a lwc string containing the href lang */
-		(void)dom_string_intern(atr_string, &link.hreflang);
+		(శూన్య)dom_string_intern(atr_string, &link.hreflang);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_type, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ఒకవేళ ((exc == DOM_NO_ERR) && (atr_string != ఖాళీ)) {
 		/* get a lwc string containing the type */
-		(void)dom_string_intern(atr_string, &link.type);
+		(శూన్య)dom_string_intern(atr_string, &link.type);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_media, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ఒకవేళ ((exc == DOM_NO_ERR) && (atr_string != ఖాళీ)) {
 		/* get a lwc string containing the media */
-		(void)dom_string_intern(atr_string, &link.media);
+		(శూన్య)dom_string_intern(atr_string, &link.media);
 		dom_string_unref(atr_string);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(కణుపు,
 			corestring_dom_sizes, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	ఒకవేళ ((exc == DOM_NO_ERR) && (atr_string != ఖాళీ)) {
 		/* get a lwc string containing the sizes */
-		(void)dom_string_intern(atr_string, &link.sizes);
+		(శూన్య)dom_string_intern(atr_string, &link.sizes);
 		dom_string_unref(atr_string);
 	}
 
 	/* add to content */
-	content__add_rfc5988_link(&c->base, &link);
+	content_కూడు_rfc5988_link(&c->పునాది, &link);
 
 	lwc_string_unref(link.sizes);
 	lwc_string_unref(link.media);
@@ -245,55 +245,55 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 	nsurl_unref(link.href);
 	lwc_string_unref(link.rel);
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* handler for a SCRIPT which has been added to a tree */
-static void
-dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
+స్థిర శూన్య
+dom_SCRIPT_showed_పైకి(html_content *htmlc, dom_html_script_element *script)
 {
 	dom_exception exc;
 	dom_html_script_element_flags flags;
 	dom_hubbub_error res;
 	bool within;
 
-	if (!htmlc->enable_scripting) {
+	ఒకవేళ (!htmlc->enable_scripting) {
 		NSLOG(netsurf, INFO, "Encountered a script, but scripting is off, ignoring");
-		return;
+		తిరిగి;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG, "Encountered a script, node %p showed up", script);
 
 	exc = dom_html_script_element_get_flags(script, &flags);
-	if (exc != DOM_NO_ERR) {
+	ఒకవేళ (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve flags, giving up");
-		return;
+		తిరిగి;
 	}
 
-	if (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
+	ఒకవేళ (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
 		NSLOG(netsurf, DEBUG, "Script was parser inserted, skipping");
-		return;
+		తిరిగి;
 	}
 
-	exc = dom_node_contains(htmlc->document, script, &within);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_కణుపు_కలిగియుంది(htmlc->document, script, &within);
+	ఒకవేళ (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEBUG, "Unable to determine if script was within document, ignoring");
-		return;
+		తిరిగి;
 	}
 
-	if (!within) {
+	ఒకవేళ (!within) {
 		NSLOG(netsurf, DEBUG, "Script was not within the document, ignoring for now");
-		return;
+		తిరిగి;
 	}
 
-	res = html_process_script(htmlc, (dom_node *) script);
-	if (res == DOM_HUBBUB_OK) {
+	res = html_process_script(htmlc, (dom_కణుపు *) script);
+	ఒకవేళ (res == DOM_HUBBUB_OK) {
 		NSLOG(netsurf, DEEPDEBUG, "Inserted script has finished running");
-	} else {
-		if (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
+	} లేకపోతే {
+		ఒకవేళ (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
 			NSLOG(netsurf, DEEPDEBUG, "Inserted script has launced asynchronously");
-		} else {
+		} లేకపోతే {
 			NSLOG(netsurf, DEEPDEBUG, "Failure starting script");
 		}
 	}
@@ -309,48 +309,48 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
  * \param n The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_meta(html_content *c, dom_node *n)
+స్థిర nserror html_process_inserted_meta(html_content *c, dom_కణుపు *n)
 {
-	union content_msg_data msg_data;
-	const char *url, *end, *refresh = NULL;
-	char *new_url;
-	char quote = '\0';
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+	స్థిరరాశి అక్షరం *url, *చివర, *refresh = ఖాళీ;
+	అక్షరం *new_url;
+	అక్షరం quote = '\0';
 	dom_string *equiv, *content;
 	dom_exception exc;
 	nsurl *nsurl;
 	nserror error = NSERROR_OK;
 
-	if (c->refresh) {
+	ఒకవేళ (c->refresh) {
 		/* refresh already delt with */
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_http_equiv, &equiv);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	ఒకవేళ (exc != DOM_NO_ERR) {
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (equiv == NULL) {
-		return NSERROR_OK;
+	ఒకవేళ (equiv == ఖాళీ) {
+		తిరిగి NSERROR_OK;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
+	ఒకవేళ (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
 		dom_string_unref(equiv);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	dom_string_unref(equiv);
 
 	exc = dom_element_get_attribute(n, corestring_dom_content, &content);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	ఒకవేళ (exc != DOM_NO_ERR) {
+		తిరిగి NSERROR_DOM;
 	}
 
-	if (content == NULL) {
-		return NSERROR_OK;
+	ఒకవేళ (content == ఖాళీ) {
+		తిరిగి NSERROR_OK;
 	}
 
-	end = dom_string_data(content) + dom_string_byte_length(content);
+	చివర = dom_string_దత్తాంశం(content) + dom_string_byte_నిడివి(content);
 
 	/* content  := *LWS intpart fracpart? *LWS [';' *LWS *1url *LWS]
 	 * intpart  := 1*DIGIT
@@ -363,103 +363,103 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	 * nonascii := [#x80-#xD7FF#xE000-#xFFFD#x10000-#x10FFFF]
 	 */
 
-	url = dom_string_data(content);
+	url = dom_string_దత్తాంశం(content);
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	అయితే (url < చివర && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* intpart */
-	if (url == end || (*url < '0' || '9' < *url)) {
+	ఒకవేళ (url == చివర || (*url < '0' || '9' < *url)) {
 		/* Empty content, or invalid timeval */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
-	msg_data.delay = (int) strtol(url, &new_url, 10);
+	సందేశం_దత్తాంశం.delay = (పూర్ణాంకం) strtol(url, &new_url, 10);
 	/* a very small delay and self-referencing URL can cause a loop
 	 * that grinds machines to a halt. To prevent this we set a
 	 * minimum refresh delay of 1s. */
-	if (msg_data.delay < 1) {
-		msg_data.delay = 1;
+	ఒకవేళ (సందేశం_దత్తాంశం.delay < 1) {
+		సందేశం_దత్తాంశం.delay = 1;
 	}
 
 	url = new_url;
 
 	/* fracpart? (ignored, as delay is integer only) */
-	while (url < end && (('0' <= *url && *url <= '9') ||
+	అయితే (url < చివర && (('0' <= *url && *url <= '9') ||
 			*url == '.')) {
 		url++;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	అయితే (url < చివర && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* ';' */
-	if (url < end && *url == ';')
+	ఒకవేళ (url < చివర && *url == ';')
 		url++;
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	అయితే (url < చివర && ascii_is_space(*url)) {
 		url++;
 	}
 
-	if (url == end) {
+	ఒకవేళ (url == చివర) {
 		/* Just delay specified, so refresh current page */
 		dom_string_unref(content);
 
-		c->base.refresh = nsurl_ref(content_get_url(&c->base));
+		c->పునాది.refresh = nsurl_ref(content_get_url(&c->పునాది));
 
-		content_broadcast(&c->base, CONTENT_MSG_REFRESH, &msg_data);
+		content_ప్రసారం(&c->పునాది, CONTENT_సందేశం_REFRESH, &సందేశం_దత్తాంశం);
 
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* "url" */
-	if (url <= end - 3) {
-		if (strncasecmp(url, "url", 3) == 0) {
+	ఒకవేళ (url <= చివర - 3) {
+		ఒకవేళ (strncasecmp(url, "url", 3) == 0) {
 			url += 3;
-		} else {
+		} లేకపోతే {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
-	} else {
+	} లేకపోతే {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	అయితే (url < చివర && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '=' */
-	if (url < end) {
-		if (*url == '=') {
+	ఒకవేళ (url < చివర) {
+		ఒకవేళ (*url == '=') {
 			url++;
-		} else {
+		} లేకపోతే {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			తిరిగి NSERROR_OK;
 		}
-	} else {
+	} లేకపోతే {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		తిరిగి NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	అయితే (url < చివర && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '"' or "'" */
-	if (url < end && (*url == '"' || *url == '\'')) {
+	ఒకవేళ (url < చివర && (*url == '"' || *url == '\'')) {
 		quote = *url;
 		url++;
 	}
@@ -467,44 +467,44 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	/* Start of URL */
 	refresh = url;
 
-	if (quote != 0) {
+	ఒకవేళ (quote != 0) {
 		/* url-sq | url-dq */
-		while (url < end && *url != quote)
+		అయితే (url < చివర && *url != quote)
 			url++;
-	} else {
+	} లేకపోతే {
 		/* url-nq */
-		while (url < end && !ascii_is_space(*url))
+		అయితే (url < చివర && !ascii_is_space(*url))
 			url++;
 	}
 
 	/* '"' or "'" or *LWS (we don't care) */
-	if (url > refresh) {
+	ఒకవేళ (url > refresh) {
 		/* There's a URL */
 		new_url = strndup(refresh, url - refresh);
-		if (new_url == NULL) {
+		ఒకవేళ (new_url == ఖాళీ) {
 			dom_string_unref(content);
-			return NSERROR_NOMEM;
+			తిరిగి NSERROR_NOMEM;
 		}
 
-		error = nsurl_join(c->base_url, new_url, &nsurl);
-		if (error == NSERROR_OK) {
+		error = nsurl_join(c->పునాది_url, new_url, &nsurl);
+		ఒకవేళ (error == NSERROR_OK) {
 			/* broadcast valid refresh url */
 
-			c->base.refresh = nsurl;
+			c->పునాది.refresh = nsurl;
 
-			content_broadcast(&c->base,
-					  CONTENT_MSG_REFRESH,
-					  &msg_data);
+			content_ప్రసారం(&c->పునాది,
+					  CONTENT_సందేశం_REFRESH,
+					  &సందేశం_దత్తాంశం);
 			c->refresh = true;
 		}
 
-		free(new_url);
+		విడుదల(new_url);
 
 	}
 
 	dom_string_unref(content);
 
-	return error;
+	తిరిగి error;
 }
 
 
@@ -517,41 +517,41 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
  * \param node The DOM node being inserted
  * \return NSERROR_OK on success else appropriate error code
  */
-static nserror html_process_inserted_title(html_content *htmlc, dom_node *node)
+స్థిర nserror html_process_inserted_title(html_content *htmlc, dom_కణుపు *కణుపు)
 {
-	if (htmlc->title == NULL) {
+	ఒకవేళ (htmlc->title == ఖాళీ) {
 		/* only the first title is considered */
-		htmlc->title = dom_node_ref(node);
+		htmlc->title = dom_కణుపు_ref(కణుపు);
 	}
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /** process title node */
-static bool html_process_title(html_content *c, dom_node *node)
+స్థిర bool html_process_title(html_content *c, dom_కణుపు *కణుపు)
 {
 	dom_exception exc; /* returned by libdom functions */
 	dom_string *title;
-	char *title_str;
+	అక్షరం *title_str;
 	bool success;
 
-	exc = dom_node_get_text_content(node, &title);
-	if ((exc != DOM_NO_ERR) || (title == NULL)) {
-		return false;
+	exc = dom_కణుపు_get_పాఠ్యం_content(కణుపు, &title);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (title == ఖాళీ)) {
+		తిరిగి false;
 	}
 
-	title_str = squash_whitespace(dom_string_data(title));
+	title_str = squash_whitespace(dom_string_దత్తాంశం(title));
 	dom_string_unref(title);
 
-	if (title_str == NULL) {
-		return false;
+	ఒకవేళ (title_str == ఖాళీ) {
+		తిరిగి false;
 	}
 
-	success = content__set_title(&c->base, title_str);
+	success = content_సమితి_title(&c->పునాది, title_str);
 
-	free(title_str);
+	విడుదల(title_str);
 
-	return success;
+	తిరిగి success;
 }
 
 
@@ -559,14 +559,14 @@ static bool html_process_title(html_content *c, dom_node *node)
  * Deal with input elements being modified by resyncing their gadget
  * if they have one.
  */
-static void html_texty_element_update(html_content *htmlc, dom_node *node)
+స్థిర శూన్య html_texty_element_update(html_content *htmlc, dom_కణుపు *కణుపు)
 {
-	struct box *box = box_for_node(node);
-	if (box == NULL) {
-		return; /* No Box (yet?) so no gadget to update */
+	నిర్మాణం box *box = box_for_కణుపు(కణుపు);
+	ఒకవేళ (box == ఖాళీ) {
+		తిరిగి; /* No Box (yet?) so no gadget to update */
 	}
-	if (box->gadget == NULL) {
-		return; /* No gadget yet (under construction perhaps?) */
+	ఒకవేళ (box->gadget == ఖాళీ) {
+		తిరిగి; /* No gadget yet (under construction perhaps?) */
 	}
 	form_gadget_sync_with_dom(box->gadget);
 	/* And schedule a redraw for the box */
@@ -577,123 +577,123 @@ static void html_texty_element_update(html_content *htmlc, dom_node *node)
 /**
  * callback for DOMNodeInserted end type
  */
-static void
-dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
+స్థిర శూన్య
+dom_default_action_DOMNodeInserted_cb(నిర్మాణం dom_event *evt, శూన్య *pw)
 {
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_లక్ష్యం *కణుపు;
+	dom_కణుపు_type type;
 	dom_exception exc;
 	html_content *htmlc = pw;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc != DOM_NO_ERR) || (node == NULL)) {
+	exc = dom_event_get_లక్ష్యం(evt, &కణుపు);
+	ఒకవేళ ((exc != DOM_NO_ERR) || (కణుపు == ఖాళీ)) {
 		/* failed to obtain the event target node */
-		return;
+		తిరిగి;
 	}
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	exc = dom_కణుపు_get_కణుపు_type(కణుపు, &type);
+	ఒకవేళ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_కణుపు)) {
 		/* an element node has been inserted */
-		dom_html_element_type tag_type;
+		dom_html_element_type ట్యాగ్_type;
 
-		exc = dom_html_element_get_tag_type(node, &tag_type);
-		if (exc != DOM_NO_ERR) {
-			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+		exc = dom_html_element_get_ట్యాగ్_type(కణుపు, &ట్యాగ్_type);
+		ఒకవేళ (exc != DOM_NO_ERR) {
+			ట్యాగ్_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
 
-		switch (tag_type) {
-		case DOM_HTML_ELEMENT_TYPE_BASE:
-			html_process_inserted_base(htmlc, (dom_node *)node);
-			break;
+		ఎంపిక (ట్యాగ్_type) {
+		స్థితి DOM_HTML_ELEMENT_TYPE_పునాది:
+			html_process_inserted_పునాది(htmlc, (dom_కణుపు *)కణుపు);
+			ఆపు;
 
-		case DOM_HTML_ELEMENT_TYPE_IMG:
-			html_process_inserted_img(htmlc, (dom_node *)node);
-			break;
+		స్థితి DOM_HTML_ELEMENT_TYPE_IMG:
+			html_process_inserted_img(htmlc, (dom_కణుపు *)కణుపు);
+			ఆపు;
 
-		case DOM_HTML_ELEMENT_TYPE_LINK:
-			html_process_inserted_link(htmlc, (dom_node *)node);
-			break;
+		స్థితి DOM_HTML_ELEMENT_TYPE_LINK:
+			html_process_inserted_link(htmlc, (dom_కణుపు *)కణుపు);
+			ఆపు;
 
-		case DOM_HTML_ELEMENT_TYPE_META:
-			html_process_inserted_meta(htmlc, (dom_node *)node);
-			break;
+		స్థితి DOM_HTML_ELEMENT_TYPE_META:
+			html_process_inserted_meta(htmlc, (dom_కణుపు *)కణుపు);
+			ఆపు;
 
-		case DOM_HTML_ELEMENT_TYPE_STYLE:
-			if (nsoption_bool(author_level_css)) {
-				html_css_process_style(htmlc, (dom_node *)node);
+		స్థితి DOM_HTML_ELEMENT_TYPE_STYLE:
+			ఒకవేళ (nsoption_bool(author_level_css)) {
+				html_css_process_style(htmlc, (dom_కణుపు *)కణుపు);
 			}
-			break;
+			ఆపు;
 
-		case DOM_HTML_ELEMENT_TYPE_SCRIPT:
-			dom_SCRIPT_showed_up(htmlc,
-					     (dom_html_script_element *)node);
-			break;
+		స్థితి DOM_HTML_ELEMENT_TYPE_SCRIPT:
+			dom_SCRIPT_showed_పైకి(htmlc,
+					     (dom_html_script_element *)కణుపు);
+			ఆపు;
 
-		case DOM_HTML_ELEMENT_TYPE_TITLE:
-			html_process_inserted_title(htmlc, (dom_node *)node);
-			break;
+		స్థితి DOM_HTML_ELEMENT_TYPE_TITLE:
+			html_process_inserted_title(htmlc, (dom_కణుపు *)కణుపు);
+			ఆపు;
 
-		default:
-			break;
+		అప్రమేయ:
+			ఆపు;
 		}
 
-		if (htmlc->enable_scripting) {
+		ఒకవేళ (htmlc->enable_scripting) {
 			/* ensure javascript context is available */
-			if (htmlc->jsthread == NULL) {
-				union content_msg_data msg_data;
+			ఒకవేళ (htmlc->jsthread == ఖాళీ) {
+				సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 
-				msg_data.jsthread = &htmlc->jsthread;
-				content_broadcast(&htmlc->base,
-						  CONTENT_MSG_GETTHREAD,
-						  &msg_data);
+				సందేశం_దత్తాంశం.jsthread = &htmlc->jsthread;
+				content_ప్రసారం(&htmlc->పునాది,
+						  CONTENT_సందేశం_GETTHREAD,
+						  &సందేశం_దత్తాంశం);
 				NSLOG(netsurf, INFO,
 				      "javascript context: %p (htmlc: %p)",
 				      htmlc->jsthread,
 				      htmlc);
 			}
-			if (htmlc->jsthread != NULL) {
+			ఒకవేళ (htmlc->jsthread != ఖాళీ) {
 				js_handle_new_element(htmlc->jsthread,
-						      (dom_element *) node);
+						      (dom_element *) కణుపు);
 			}
 		}
 	}
-	dom_node_unref(node);
+	dom_కణుపు_unref(కణుపు);
 }
 
 
 /**
  * callback for DOMNodeInsertedIntoDocument end type
  */
-static void
-dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
-						  void *pw)
+స్థిర శూన్య
+dom_default_action_DOMNodeInsertedIntoDocument_cb(నిర్మాణం dom_event *evt,
+						  శూన్య *pw)
 {
 	html_content *htmlc = pw;
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_లక్ష్యం *కణుపు;
+	dom_కణుపు_type type;
 	dom_exception exc;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	exc = dom_event_get_లక్ష్యం(evt, &కణుపు);
+	ఒకవేళ ((exc == DOM_NO_ERR) && (కణుపు != ఖాళీ)) {
+		exc = dom_కణుపు_get_కణుపు_type(కణుపు, &type);
+		ఒకవేళ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_కణుపు)) {
 			/* an element node has been modified */
-			dom_html_element_type tag_type;
+			dom_html_element_type ట్యాగ్_type;
 
-			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
-				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+			exc = dom_html_element_get_ట్యాగ్_type(కణుపు, &ట్యాగ్_type);
+			ఒకవేళ (exc != DOM_NO_ERR) {
+				ట్యాగ్_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_SCRIPT:
-				dom_SCRIPT_showed_up(htmlc, (dom_html_script_element *) node);
+			ఎంపిక (ట్యాగ్_type) {
+			స్థితి DOM_HTML_ELEMENT_TYPE_SCRIPT:
+				dom_SCRIPT_showed_పైకి(htmlc, (dom_html_script_element *) కణుపు);
 				fallthrough;
-			default:
-				break;
+			అప్రమేయ:
+				ఆపు;
 			}
 		}
-		dom_node_unref(node);
+		dom_కణుపు_unref(కణుపు);
 	}
 }
 
@@ -701,49 +701,49 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
 /**
  * callback for DOMSubtreeModified end type
  */
-static void
-dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
+స్థిర శూన్య
+dom_default_action_DOMSubtreeModified_cb(నిర్మాణం dom_event *evt, శూన్య *pw)
 {
-	dom_event_target *node;
-	dom_node_type type;
+	dom_event_లక్ష్యం *కణుపు;
+	dom_కణుపు_type type;
 	dom_exception exc;
 	html_content *htmlc = pw;
 
-	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		if (htmlc->title == (dom_node *)node) {
+	exc = dom_event_get_లక్ష్యం(evt, &కణుపు);
+	ఒకవేళ ((exc == DOM_NO_ERR) && (కణుపు != ఖాళీ)) {
+		ఒకవేళ (htmlc->title == (dom_కణుపు *)కణుపు) {
 			/* Node is our title node */
-			html_process_title(htmlc, (dom_node *)node);
-			dom_node_unref(node);
-			return;
+			html_process_title(htmlc, (dom_కణుపు *)కణుపు);
+			dom_కణుపు_unref(కణుపు);
+			తిరిగి;
 		}
 
-		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		exc = dom_కణుపు_get_కణుపు_type(కణుపు, &type);
+		ఒకవేళ ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_కణుపు)) {
 			/* an element node has been modified */
-			dom_html_element_type tag_type;
+			dom_html_element_type ట్యాగ్_type;
 
-			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
-				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+			exc = dom_html_element_get_ట్యాగ్_type(కణుపు, &ట్యాగ్_type);
+			ఒకవేళ (exc != DOM_NO_ERR) {
+				ట్యాగ్_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
-			switch (tag_type) {
-			case DOM_HTML_ELEMENT_TYPE_STYLE:
-				if (nsoption_bool(author_level_css)) {
+			ఎంపిక (ట్యాగ్_type) {
+			స్థితి DOM_HTML_ELEMENT_TYPE_STYLE:
+				ఒకవేళ (nsoption_bool(author_level_css)) {
 					html_css_update_style(htmlc,
-							(dom_node *)node);
+							(dom_కణుపు *)కణుపు);
 				}
-				break;
-			case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-			case DOM_HTML_ELEMENT_TYPE_INPUT:
-				html_texty_element_update(htmlc, (dom_node *)node);
+				ఆపు;
+			స్థితి DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+			స్థితి DOM_HTML_ELEMENT_TYPE_ఆదానం:
+				html_texty_element_update(htmlc, (dom_కణుపు *)కణుపు);
 				fallthrough;
-			default:
-				break;
+			అప్రమేయ:
+				ఆపు;
 			}
 		}
-		dom_node_unref(node);
+		dom_కణుపు_unref(కణుపు);
 	}
 }
 
@@ -751,12 +751,12 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
 /**
  * callback for default action finished
  */
-static void
-dom_default_action_finished_cb(struct dom_event *evt, void *pw)
+స్థిర శూన్య
+dom_default_action_ముగిసిన_cb(నిర్మాణం dom_event *evt, శూన్య *pw)
 {
 	html_content *htmlc = pw;
 
-	if (htmlc->jsthread != NULL)
+	ఒకవేళ (htmlc->jsthread != ఖాళీ)
 		js_event_cleanup(htmlc->jsthread, evt);
 }
 
@@ -765,21 +765,21 @@ dom_default_action_finished_cb(struct dom_event *evt, void *pw)
 dom_default_action_callback
 html_dom_event_fetcher(dom_string *type,
 		  dom_default_action_phase phase,
-		  void **pw)
+		  శూన్య **pw)
 {
 	NSLOG(netsurf, DEEPDEBUG,
-	      "phase:%d type:%s", phase, dom_string_data(type));
+	      "phase:%d type:%s", phase, dom_string_దత్తాంశం(type));
 
-	if (phase == DOM_DEFAULT_ACTION_END) {
-		if (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
-			return dom_default_action_DOMNodeInserted_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
-			return dom_default_action_DOMNodeInsertedIntoDocument_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
-			return dom_default_action_DOMSubtreeModified_cb;
+	ఒకవేళ (phase == DOM_DEFAULT_ACTION_చివర) {
+		ఒకవేళ (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
+			తిరిగి dom_default_action_DOMNodeInserted_cb;
+		} లేకపోతే ఒకవేళ (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
+			తిరిగి dom_default_action_DOMNodeInsertedIntoDocument_cb;
+		} లేకపోతే ఒకవేళ (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
+			తిరిగి dom_default_action_DOMSubtreeModified_cb;
 		}
-	} else if (phase == DOM_DEFAULT_ACTION_FINISHED) {
-		return dom_default_action_finished_cb;
+	} లేకపోతే ఒకవేళ (phase == DOM_DEFAULT_ACTION_ముగిసిన) {
+		తిరిగి dom_default_action_ముగిసిన_cb;
 	}
-	return NULL;
+	తిరిగి ఖాళీ;
 }

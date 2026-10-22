@@ -16,34 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <assert.h>
-#include <libwapcaplet/libwapcaplet.h>
-#include <dom/dom.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <libwapcaplet/libwapcaplet.h>
+#అన్తర్భావ <dom/dom.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/utils.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
-#include "desktop/system_colour.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/http.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "content/fetch.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "desktop/system_colour.h"
 
-#include "css/css.h"
-#include "css/hints.h"
-#include "css/internal.h"
+#అన్తర్భావ "css/css.h"
+#అన్తర్భావ "css/hints.h"
+#అన్తర్భావ "css/internal.h"
 
 /* Define to trace import fetches */
-#undef NSCSS_IMPORT_TRACE
+#నిర్వచనం_రద్దు NSCSS_IMPORT_TRACE
 
 /** Screen DPI in fixed point units: defaults to 90, which RISC OS uses */
 css_fixed nscss_screen_dpi = F_90;
 
-struct content_css_data;
+నిర్మాణం content_css_దత్తాంశం;
 
 /**
  * Type of callback called when a CSS object has finished
@@ -51,68 +51,68 @@ struct content_css_data;
  * \param css  CSS object that has completed
  * \param pw   Client-specific data
  */
-typedef void (*nscss_done_callback)(struct content_css_data *css, void *pw);
+రకనిర్వచనం శూన్య (*nscss_పూర్తి_callback)(నిర్మాణం content_css_దత్తాంశం *css, శూన్య *pw);
 
 /**
  * CSS content data
  */
-struct content_css_data
+నిర్మాణం content_css_దత్తాంశం
 {
 	css_stylesheet *sheet;		/**< Stylesheet object */
-	char *charset;			/**< Character set of stylesheet */
-	struct nscss_import *imports;	/**< Array of imported sheets */
-	uint32_t import_count;		/**< Number of sheets imported */
-	uint32_t next_to_register;	/**< Index of next import to register */
-	nscss_done_callback done;	/**< Completion callback */
-	void *pw;			/**< Client data */
+	అక్షరం *charset;			/**< Character set of stylesheet */
+	నిర్మాణం nscss_import *imports;	/**< Array of imported sheets */
+	uint32_t import_లెక్క;		/**< Number of sheets imported */
+	uint32_t తదుపరి_గమ్యం_రిజిస్టరు;	/**< Index of next import to register */
+	nscss_పూర్తి_callback పూర్తి;	/**< Completion callback */
+	శూన్య *pw;			/**< Client data */
 };
 
 /**
  * CSS content data
  */
-typedef struct nscss_content
+రకనిర్వచనం నిర్మాణం nscss_content
 {
-	struct content base;		/**< Underlying content object */
+	నిర్మాణం content పునాది;		/**< Underlying content object */
 
-	struct content_css_data data;	/**< CSS data */
+	నిర్మాణం content_css_దత్తాంశం దత్తాంశం;	/**< CSS data */
 } nscss_content;
 
 /**
  * Context for import fetches
  */
-typedef struct {
-	struct content_css_data *css;		/**< Object containing import */
+రకనిర్వచనం నిర్మాణం {
+	నిర్మాణం content_css_దత్తాంశం *css;		/**< Object containing import */
 	uint32_t index;				/**< Index into parent sheet's
 						 *   imports array */
 } nscss_import_ctx;
 
-static bool nscss_convert(struct content *c);
-static void nscss_destroy(struct content *c);
-static nserror nscss_clone(const struct content *old, struct content **newc);
-static bool nscss_matches_quirks(const struct content *c, bool quirks);
-static content_type nscss_content_type(void);
+స్థిర bool nscss_convert(నిర్మాణం content *c);
+స్థిర శూన్య nscss_destroy(నిర్మాణం content *c);
+స్థిర nserror nscss_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc);
+స్థిర bool nscss_matches_quirks(స్థిరరాశి నిర్మాణం content *c, bool quirks);
+స్థిర content_type nscss_content_type(శూన్య);
 
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
-		nscss_done_callback done, void *pw);
-static css_error nscss_process_css_data(struct content_css_data *c, const char *data,
-		unsigned int size);
-static css_error nscss_convert_css_data(struct content_css_data *c);
-static void nscss_destroy_css_data(struct content_css_data *c);
+స్థిర nserror nscss_create_css_దత్తాంశం(నిర్మాణం content_css_దత్తాంశం *c,
+		స్థిరరాశి అక్షరం *url, స్థిరరాశి అక్షరం *charset, bool quirks,
+		nscss_పూర్తి_callback పూర్తి, శూన్య *pw);
+స్థిర css_error nscss_process_css_దత్తాంశం(నిర్మాణం content_css_దత్తాంశం *c, స్థిరరాశి అక్షరం *దత్తాంశం,
+		గుర్తులేని పూర్ణాంకం కొలత);
+స్థిర css_error nscss_convert_css_దత్తాంశం(నిర్మాణం content_css_దత్తాంశం *c);
+స్థిర శూన్య nscss_destroy_css_దత్తాంశం(నిర్మాణం content_css_దత్తాంశం *c);
 
-static void nscss_content_done(struct content_css_data *css, void *pw);
-static css_error nscss_handle_import(void *pw, css_stylesheet *parent,
+స్థిర శూన్య nscss_content_పూర్తి(నిర్మాణం content_css_దత్తాంశం *css, శూన్య *pw);
+స్థిర css_error nscss_handle_import(శూన్య *pw, css_stylesheet *మాతృ,
 		lwc_string *url);
-static nserror nscss_import(hlcache_handle *handle,
-		const hlcache_event *event, void *pw);
-static css_error nscss_import_complete(nscss_import_ctx *ctx);
+స్థిర nserror nscss_import(hlcache_handle *handle,
+		స్థిరరాశి hlcache_event *event, శూన్య *pw);
+స్థిర css_error nscss_import_complete(nscss_import_ctx *ctx);
 
-static css_error nscss_register_imports(struct content_css_data *c);
-static css_error nscss_register_import(struct content_css_data *c,
-		const hlcache_handle *import);
+స్థిర css_error nscss_రిజిస్టరు_imports(నిర్మాణం content_css_దత్తాంశం *c);
+స్థిర css_error nscss_రిజిస్టరు_import(నిర్మాణం content_css_దత్తాంశం *c,
+		స్థిరరాశి hlcache_handle *import);
 
 
-static css_stylesheet *blank_import;
+స్థిర css_stylesheet *blank_import;
 
 
 /**
@@ -127,64 +127,64 @@ static css_stylesheet *blank_import;
  * \param c Content to initialise
  * \return NSERROR_OK or error cod eon faliure
  */
-static nserror
-nscss_create(const content_handler *handler,
+స్థిర nserror
+nscss_create(స్థిరరాశి content_handler *handler,
 	     lwc_string *imime_type,
-	     const http_parameter *params,
+	     స్థిరరాశి http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     స్థిరరాశి అక్షరం *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     నిర్మాణం content **c)
 {
-	nscss_content *result;
-	const char *charset = NULL;
-	const char *xnsbase = NULL;
-	lwc_string *charset_value = NULL;
+	nscss_content *ఫలితం;
+	స్థిరరాశి అక్షరం *charset = ఖాళీ;
+	స్థిరరాశి అక్షరం *xnsbase = ఖాళీ;
+	lwc_string *charset_విలువ = ఖాళీ;
 	nserror error;
 
-	result = calloc(1, sizeof(nscss_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	ఫలితం = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(nscss_content));
+	ఒకవేళ (ఫలితం == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__init(&result->base, handler, imime_type,
+	error = content__init(&ఫలితం->పునాది, handler, imime_type,
 			params, llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(ఫలితం);
+		తిరిగి error;
 	}
 
 	/* Find charset specified on HTTP layer, if any */
-	error = http_parameter_list_find_item(params, corestring_lwc_charset,
-			&charset_value);
-	if (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
+	error = http_parameter_list_కనుగొను_అంశం(params, corestring_lwc_charset,
+			&charset_విలువ);
+	ఒకవేళ (error != NSERROR_OK || lwc_string_నిడివి(charset_విలువ) == 0) {
 		/* No charset specified, use fallback, if any */
 		/** \todo libcss will take this as gospel, which is wrong */
 		charset = fallback_charset;
-	} else {
-		charset = lwc_string_data(charset_value);
+	} లేకపోతే {
+		charset = lwc_string_దత్తాంశం(charset_విలువ);
 	}
 
 	/* Compute base URL for stylesheet */
-	xnsbase = llcache_handle_get_header(llcache, "X-NS-Base");
-	if (xnsbase == NULL) {
-		xnsbase = nsurl_access(content_get_url(&result->base));
+	xnsbase = llcache_handle_get_శీర్షిక(llcache, "X-NS-Base");
+	ఒకవేళ (xnsbase == ఖాళీ) {
+		xnsbase = nsurl_access(content_get_url(&ఫలితం->పునాది));
 	}
 
-	error = nscss_create_css_data(&result->data,
-			xnsbase, charset, result->base.quirks,
-			nscss_content_done, result);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&result->base, NSERROR_NOMEM, NULL);
-		lwc_string_unref(charset_value);
-		free(result);
-		return error;
+	error = nscss_create_css_దత్తాంశం(&ఫలితం->దత్తాంశం,
+			xnsbase, charset, ఫలితం->పునాది.quirks,
+			nscss_content_పూర్తి, ఫలితం);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_ప్రసారం_error(&ఫలితం->పునాది, NSERROR_NOMEM, ఖాళీ);
+		lwc_string_unref(charset_విలువ);
+		విడుదల(ఫలితం);
+		తిరిగి error;
 	}
 
-	lwc_string_unref(charset_value);
+	lwc_string_unref(charset_విలువ);
 
-	*c = (struct content *) result;
+	*c = (నిర్మాణం content *) ఫలితం;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -198,45 +198,45 @@ nscss_create(const content_handler *handler,
  * \param pw       Client data for \a done
  * \return NSERROR_OK on success, NSERROR_NOMEM on memory exhaustion
  */
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
-		nscss_done_callback done, void *pw)
+స్థిర nserror nscss_create_css_దత్తాంశం(నిర్మాణం content_css_దత్తాంశం *c,
+		స్థిరరాశి అక్షరం *url, స్థిరరాశి అక్షరం *charset, bool quirks,
+		nscss_పూర్తి_callback పూర్తి, శూన్య *pw)
 {
 	css_error error;
 	css_stylesheet_params params;
 
 	c->pw = pw;
-	c->done = done;
-	c->next_to_register = (uint32_t) -1;
-	c->import_count = 0;
-	c->imports = NULL;
-	if (charset != NULL)
+	c->పూర్తి = పూర్తి;
+	c->తదుపరి_గమ్యం_రిజిస్టరు = (uint32_t) -1;
+	c->import_లెక్క = 0;
+	c->imports = ఖాళీ;
+	ఒకవేళ (charset != ఖాళీ)
 		c->charset = strdup(charset);
-	else
-		c->charset = NULL;
+	లేకపోతే
+		c->charset = ఖాళీ;
 
-	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+	params.params_సంస్కరణ = CSS_STYLESHEET_PARAMS_సంస్కరణ_1;
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = ఖాళీ;
 	params.allow_quirks = quirks;
 	params.inline_style = false;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
+	params.resolve_pw = ఖాళీ;
 	params.import = nscss_handle_import;
 	params.import_pw = c;
-	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.color = ns_system_రంగు;
+	params.color_pw = ఖాళీ;
+	params.font = ఖాళీ;
+	params.font_pw = ఖాళీ;
 
 	error = css_stylesheet_create(&params, &c->sheet);
-	if (error != CSS_OK) {
-		return NSERROR_NOMEM;
+	ఒకవేళ (error != CSS_OK) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 /**
@@ -247,18 +247,18 @@ static nserror nscss_create_css_data(struct content_css_data *c,
  * \param size  Number of bytes to process
  * \return true on success, false on failure
  */
-static bool
-nscss_process_data(struct content *c, const char *data, unsigned int size)
+స్థిర bool
+nscss_process_దత్తాంశం(నిర్మాణం content *c, స్థిరరాశి అక్షరం *దత్తాంశం, గుర్తులేని పూర్ణాంకం కొలత)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
-	error = nscss_process_css_data(&css->data, data, size);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
+	error = nscss_process_css_దత్తాంశం(&css->దత్తాంశం, దత్తాంశం, కొలత);
+	ఒకవేళ (error != CSS_OK && error != CSS_NEEDDATA) {
+		content_ప్రసారం_error(c, NSERROR_CSS, ఖాళీ);
 	}
 
-	return (error == CSS_OK || error == CSS_NEEDDATA);
+	తిరిగి (error == CSS_OK || error == CSS_NEEDDATA);
 }
 
 /**
@@ -269,11 +269,11 @@ nscss_process_data(struct content *c, const char *data, unsigned int size)
  * \param size  Number of bytes to process
  * \return CSS_OK on success, appropriate error otherwise
  */
-static css_error nscss_process_css_data(struct content_css_data *c,
-		const char *data, unsigned int size)
+స్థిర css_error nscss_process_css_దత్తాంశం(నిర్మాణం content_css_దత్తాంశం *c,
+		స్థిరరాశి అక్షరం *దత్తాంశం, గుర్తులేని పూర్ణాంకం కొలత)
 {
-	return css_stylesheet_append_data(c->sheet,
-			(const uint8_t *) data, size);
+	తిరిగి css_stylesheet_append_దత్తాంశం(c->sheet,
+			(స్థిరరాశి uint8_t *) దత్తాంశం, కొలత);
 }
 
 /**
@@ -282,18 +282,18 @@ static css_error nscss_process_css_data(struct content_css_data *c,
  * \param c  Content to convert
  * \return true on success, false on failure
  */
-bool nscss_convert(struct content *c)
+bool nscss_convert(నిర్మాణం content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
-	error = nscss_convert_css_data(&css->data);
-	if (error != CSS_OK) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
-		return false;
+	error = nscss_convert_css_దత్తాంశం(&css->దత్తాంశం);
+	ఒకవేళ (error != CSS_OK) {
+		content_ప్రసారం_error(c, NSERROR_CSS, ఖాళీ);
+		తిరిగి false;
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 /**
@@ -302,37 +302,37 @@ bool nscss_convert(struct content *c)
  * \param c  CSS data to convert
  * \return CSS error
  */
-static css_error nscss_convert_css_data(struct content_css_data *c)
+స్థిర css_error nscss_convert_css_దత్తాంశం(నిర్మాణం content_css_దత్తాంశం *c)
 {
 	css_error error;
 
-	error = css_stylesheet_data_done(c->sheet);
+	error = css_stylesheet_దత్తాంశం_పూర్తి(c->sheet);
 
 	/* Process pending imports */
-	if (error == CSS_IMPORTS_PENDING) {
+	ఒకవేళ (error == CSS_IMPORTS_PENDING) {
 		/* We must not have registered any imports yet */
-		assert(c->next_to_register == (uint32_t) -1);
+		ప్రతిజ్ఞా(c->తదుపరి_గమ్యం_రిజిస్టరు == (uint32_t) -1);
 
 		/* Start registering, until we find one that
 		 * hasn't finished fetching */
-		c->next_to_register = 0;
-		error = nscss_register_imports(c);
-	} else if (error == CSS_OK) {
+		c->తదుపరి_గమ్యం_రిజిస్టరు = 0;
+		error = nscss_రిజిస్టరు_imports(c);
+	} లేకపోతే ఒకవేళ (error == CSS_OK) {
 		/* No imports, and no errors, so complete conversion */
-		c->done(c, c->pw);
-	} else {
-		const char *url;
+		c->పూర్తి(c, c->pw);
+	} లేకపోతే {
+		స్థిరరాశి అక్షరం *url;
 
-		if (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
+		ఒకవేళ (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
 			NSLOG(netsurf, INFO, "Failed converting %p %s (%d)",
 			      c, url, error);
-		} else {
+		} లేకపోతే {
 			NSLOG(netsurf, INFO, "Failed converting %p (%d)", c,
 			      error);
 		}
 	}
 
-	return error;
+	తిరిగి error;
 }
 
 /**
@@ -340,11 +340,11 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
  *
  * \param c  Content to clean up
  */
-void nscss_destroy(struct content *c)
+శూన్య nscss_destroy(నిర్మాణం content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 
-	nscss_destroy_css_data(&css->data);
+	nscss_destroy_css_దత్తాంశం(&css->దత్తాంశం);
 }
 
 /**
@@ -352,106 +352,106 @@ void nscss_destroy(struct content *c)
  *
  * \param c  CSS data to clean up
  */
-static void nscss_destroy_css_data(struct content_css_data *c)
+స్థిర శూన్య nscss_destroy_css_దత్తాంశం(నిర్మాణం content_css_దత్తాంశం *c)
 {
 	uint32_t i;
 
-	for (i = 0; i < c->import_count; i++) {
-		if (c->imports[i].c != NULL) {
+	కొరకు (i = 0; i < c->import_లెక్క; i++) {
+		ఒకవేళ (c->imports[i].c != ఖాళీ) {
 			hlcache_handle_release(c->imports[i].c);
 		}
-		c->imports[i].c = NULL;
+		c->imports[i].c = ఖాళీ;
 	}
 
-	free(c->imports);
+	విడుదల(c->imports);
 
-	if (c->sheet != NULL) {
+	ఒకవేళ (c->sheet != ఖాళీ) {
 		css_stylesheet_destroy(c->sheet);
-		c->sheet = NULL;
+		c->sheet = ఖాళీ;
 	}
 
-	free(c->charset);
+	విడుదల(c->charset);
 }
 
-nserror nscss_clone(const struct content *old, struct content **newc)
+nserror nscss_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
-	const nscss_content *old_css = (const nscss_content *) old;
+	స్థిరరాశి nscss_content *old_css = (స్థిరరాశి nscss_content *) old;
 	nscss_content *new_css;
-	const uint8_t *data;
-	size_t size;
+	స్థిరరాశి uint8_t *దత్తాంశం;
+	size_t కొలత;
 	nserror error;
 
-	new_css = calloc(1, sizeof(nscss_content));
-	if (new_css == NULL)
-		return NSERROR_NOMEM;
+	new_css = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(nscss_content));
+	ఒకవేళ (new_css == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
 	/* Clone content */
-	error = content__clone(old, &new_css->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_css->base);
-		return error;
+	error = content__clone(old, &new_css->పునాది);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&new_css->పునాది);
+		తిరిగి error;
 	}
 
 	/* Simply replay create/process/convert */
-	error = nscss_create_css_data(&new_css->data,
-			nsurl_access(content_get_url(&new_css->base)),
-			old_css->data.charset,
-			new_css->base.quirks,
-			nscss_content_done, new_css);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_css->base);
-		return error;
+	error = nscss_create_css_దత్తాంశం(&new_css->దత్తాంశం,
+			nsurl_access(content_get_url(&new_css->పునాది)),
+			old_css->దత్తాంశం.charset,
+			new_css->పునాది.quirks,
+			nscss_content_పూర్తి, new_css);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&new_css->పునాది);
+		తిరిగి error;
 	}
 
-	data = content__get_source_data(&new_css->base, &size);
-	if (size > 0) {
-		if (nscss_process_data(&new_css->base,
-				       (char *)data,
-				       (unsigned int)size) == false) {
-			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+	దత్తాంశం = content_get_ఆధారం_దత్తాంశం_2(&new_css->పునాది, &కొలత);
+	ఒకవేళ (కొలత > 0) {
+		ఒకవేళ (nscss_process_దత్తాంశం(&new_css->పునాది,
+				       (అక్షరం *)దత్తాంశం,
+				       (గుర్తులేని పూర్ణాంకం)కొలత) == false) {
+			content_destroy(&new_css->పునాది);
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (nscss_convert(&new_css->base) == false) {
-			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+	ఒకవేళ (old->స్థితి_2 == CONTENT_స్థితి_READY ||
+			old->స్థితి_2 == CONTENT_స్థితి_పూర్తి) {
+		ఒకవేళ (nscss_convert(&new_css->పునాది) == false) {
+			content_destroy(&new_css->పునాది);
+			తిరిగి NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_css;
+	*newc = (నిర్మాణం content *) new_css;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-bool nscss_matches_quirks(const struct content *c, bool quirks)
+bool nscss_matches_quirks(స్థిరరాశి నిర్మాణం content *c, bool quirks)
 {
-	return c->quirks == quirks;
-}
-
-/* exported interface documented in netsurf/css.h */
-css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h)
-{
-	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
-
-	assert(c != NULL);
-
-	return c->data.sheet;
+	తిరిగి c->quirks == quirks;
 }
 
 /* exported interface documented in netsurf/css.h */
-struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+css_stylesheet *nscss_get_stylesheet(నిర్మాణం hlcache_handle *h)
 {
 	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	*n = c->data.import_count;
+	తిరిగి c->దత్తాంశం.sheet;
+}
 
-	return c->data.imports;
+/* exported interface documented in netsurf/css.h */
+నిర్మాణం nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+{
+	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
+
+	ప్రతిజ్ఞా(c != ఖాళీ);
+	ప్రతిజ్ఞా(n != ఖాళీ);
+
+	*n = c->దత్తాంశం.import_లెక్క;
+
+	తిరిగి c->దత్తాంశం.imports;
 }
 
 /**
@@ -459,9 +459,9 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
  *
  * \return CONTENT_CSS
  */
-content_type nscss_content_type(void)
+content_type nscss_content_type(శూన్య)
 {
-	return CONTENT_CSS;
+	తిరిగి CONTENT_CSS;
 }
 
 /*****************************************************************************
@@ -474,37 +474,37 @@ content_type nscss_content_type(void)
  * \param css  CSS object
  * \param pw   Private data
  */
-void nscss_content_done(struct content_css_data *css, void *pw)
+శూన్య nscss_content_పూర్తి(నిర్మాణం content_css_దత్తాంశం *css, శూన్య *pw)
 {
-	struct content *c = pw;
+	నిర్మాణం content *c = pw;
 	uint32_t i;
-	size_t size;
+	size_t కొలత;
 	css_error error;
 
 	/* Retrieve the size of this sheet */
-	error = css_stylesheet_size(css->sheet, &size);
-	if (error != CSS_OK) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
-		content_set_error(c);
-		return;
+	error = css_stylesheet_కొలత(css->sheet, &కొలత);
+	ఒకవేళ (error != CSS_OK) {
+		content_ప్రసారం_error(c, NSERROR_CSS, ఖాళీ);
+		content_సమితి_error(c);
+		తిరిగి;
 	}
-	c->size += size;
+	c->కొలత += కొలత;
 
 	/* Add on the size of the imported sheets */
-	for (i = 0; i < css->import_count; i++) {
-		if (css->imports[i].c != NULL) {
-			struct content *import = hlcache_handle_get_content(
+	కొరకు (i = 0; i < css->import_లెక్క; i++) {
+		ఒకవేళ (css->imports[i].c != ఖాళీ) {
+			నిర్మాణం content *import = hlcache_handle_get_content(
 					css->imports[i].c);
 
-			if (import != NULL) {
-				c->size += import->size;
+			ఒకవేళ (import != ఖాళీ) {
+				c->కొలత += import->కొలత;
 			}
 		}
 	}
 
 	/* Finally, catch the content's users up with reality */
-	content_set_ready(c);
-	content_set_done(c);
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);
 }
 
 /*****************************************************************************
@@ -519,98 +519,98 @@ void nscss_content_done(struct content_css_data *css, void *pw)
  * \param url     URL of the imported sheet
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_handle_import(void *pw, css_stylesheet *parent,
+css_error nscss_handle_import(శూన్య *pw, css_stylesheet *మాతృ,
 		lwc_string *url)
 {
 	content_type accept = CONTENT_CSS;
-	struct content_css_data *c = pw;
+	నిర్మాణం content_css_దత్తాంశం *c = pw;
 	nscss_import_ctx *ctx;
-	hlcache_child_context child;
-	struct nscss_import *imports;
-	const char *referer;
+	hlcache_బిడ్డ_context బిడ్డ;
+	నిర్మాణం nscss_import *imports;
+	స్థిరరాశి అక్షరం *referer;
 	css_error error;
 	nserror nerror;
 
 	nsurl *ns_url;
 	nsurl *ns_ref;
 
-	assert(parent == c->sheet);
+	ప్రతిజ్ఞా(మాతృ == c->sheet);
 
 	error = css_stylesheet_get_url(c->sheet, &referer);
-	if (error != CSS_OK) {
-		return error;
+	ఒకవేళ (error != CSS_OK) {
+		తిరిగి error;
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL)
-		return CSS_NOMEM;
+	ctx = జ్ఞాపకం_ఇవ్వు(పరిమాణం(*ctx));
+	ఒకవేళ (ctx == ఖాళీ)
+		తిరిగి CSS_NOMEM;
 
 	ctx->css = c;
-	ctx->index = c->import_count;
+	ctx->index = c->import_లెక్క;
 
 	/* Increase space in table */
-	imports = realloc(c->imports, (c->import_count + 1) *
-			sizeof(struct nscss_import));
-	if (imports == NULL) {
-		free(ctx);
-		return CSS_NOMEM;
+	imports = realloc(c->imports, (c->import_లెక్క + 1) *
+			పరిమాణం(నిర్మాణం nscss_import));
+	ఒకవేళ (imports == ఖాళీ) {
+		విడుదల(ctx);
+		తిరిగి CSS_NOMEM;
 	}
 	c->imports = imports;
 
 	/** \todo fallback charset */
-	child.charset = NULL;
-	error = css_stylesheet_quirks_allowed(c->sheet, &child.quirks);
-	if (error != CSS_OK) {
-		free(ctx);
-		return error;
+	బిడ్డ.charset = ఖాళీ;
+	error = css_stylesheet_quirks_allowed(c->sheet, &బిడ్డ.quirks);
+	ఒకవేళ (error != CSS_OK) {
+		విడుదల(ctx);
+		తిరిగి error;
 	}
 
 	/* Create content */
 
 	/** \todo Why aren't we getting a relative url part, to join? */
-	nerror = nsurl_create(lwc_string_data(url), &ns_url);
-	if (nerror != NSERROR_OK) {
-		free(ctx);
-		return CSS_NOMEM;
+	nerror = nsurl_create(lwc_string_దత్తాంశం(url), &ns_url);
+	ఒకవేళ (nerror != NSERROR_OK) {
+		విడుదల(ctx);
+		తిరిగి CSS_NOMEM;
 	}
 
 	/** \todo Constructing nsurl for referer here is silly, avoid */
 	nerror = nsurl_create(referer, &ns_ref);
-	if (nerror != NSERROR_OK) {
+	ఒకవేళ (nerror != NSERROR_OK) {
 		nsurl_unref(ns_url);
-		free(ctx);
-		return CSS_NOMEM;
+		విడుదల(ctx);
+		తిరిగి CSS_NOMEM;
 	}
 
 	/* Avoid importing ourself */
-	if (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
-		c->imports[c->import_count].c = NULL;
+	ఒకవేళ (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
+		c->imports[c->import_లెక్క].c = ఖాళీ;
 		/* No longer require context as we're not fetching anything */
-		free(ctx);
-		ctx = NULL;
-	} else {
+		విడుదల(ctx);
+		ctx = ఖాళీ;
+	} లేకపోతే {
 		nerror = hlcache_handle_retrieve(ns_url,
-				0, ns_ref, NULL, nscss_import, ctx,
-				&child, accept,
-				&c->imports[c->import_count].c);
-		if (nerror != NSERROR_OK) {
-			free(ctx);
-			return CSS_NOMEM;
+				0, ns_ref, ఖాళీ, nscss_import, ctx,
+				&బిడ్డ, accept,
+				&c->imports[c->import_లెక్క].c);
+		ఒకవేళ (nerror != NSERROR_OK) {
+			విడుదల(ctx);
+			తిరిగి CSS_NOMEM;
 		}
 	}
 
 	nsurl_unref(ns_url);
 	nsurl_unref(ns_ref);
 
-#ifdef NSCSS_IMPORT_TRACE
+#నిర్వచితమైతే NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Import %d '%s' -> (handle: %p ctx: %p)",
-	      c->import_count, lwc_string_data(url),
-	      c->imports[c->import_count].c, ctx);
-#endif
+	      c->import_లెక్క, lwc_string_దత్తాంశం(url),
+	      c->imports[c->import_లెక్క].c, ctx);
+#అయితే_ముగింపు
 
-	c->import_count++;
+	c->import_లెక్క++;
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 /**
@@ -622,35 +622,35 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 nserror nscss_import(hlcache_handle *handle,
-		const hlcache_event *event, void *pw)
+		స్థిరరాశి hlcache_event *event, శూన్య *pw)
 {
 	nscss_import_ctx *ctx = pw;
 	css_error error = CSS_OK;
 
-#ifdef NSCSS_IMPORT_TRACE
+#నిర్వచితమైతే NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Event %d for %p (%p)", event->type, handle, ctx);
-#endif
+#అయితే_ముగింపు
 
-	assert(ctx->css->imports[ctx->index].c == handle);
+	ప్రతిజ్ఞా(ctx->css->imports[ctx->index].c == handle);
 
-	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	ఎంపిక (event->type) {
+	స్థితి CONTENT_సందేశం_పూర్తి:
 		error = nscss_import_complete(ctx);
-		break;
+		ఆపు;
 
-	case CONTENT_MSG_ERROR:
+	స్థితి CONTENT_సందేశం_ERROR:
 		hlcache_handle_release(handle);
-		ctx->css->imports[ctx->index].c = NULL;
+		ctx->css->imports[ctx->index].c = ఖాళీ;
 
 		error = nscss_import_complete(ctx);
 		/* Already released handle */
-		break;
-	default:
-		break;
+		ఆపు;
+	అప్రమేయ:
+		ఆపు;
 	}
 
 	/* Preserve out-of-memory. Anything else is OK */
-	return error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
+	తిరిగి error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
 }
 
 /**
@@ -664,18 +664,18 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	css_error error = CSS_OK;
 
 	/* If this import is the next to be registered, do so */
-	if (ctx->css->next_to_register == ctx->index)
-		error = nscss_register_imports(ctx->css);
+	ఒకవేళ (ctx->css->తదుపరి_గమ్యం_రిజిస్టరు == ctx->index)
+		error = nscss_రిజిస్టరు_imports(ctx->css);
 
-#ifdef NSCSS_IMPORT_TRACE
+#నిర్వచితమైతే NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Destroying import context %p for %d", ctx,
 	      ctx->index);
-#endif
+#అయితే_ముగింపు
 
 	/* No longer need import context */
-	free(ctx);
+	విడుదల(ctx);
 
-	return error;
+	తిరిగి error;
 }
 
 /*****************************************************************************
@@ -688,40 +688,40 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
  * \param c  CSS object containing the imports
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_imports(struct content_css_data *c)
+css_error nscss_రిజిస్టరు_imports(నిర్మాణం content_css_దత్తాంశం *c)
 {
 	uint32_t index;
 	css_error error;
 
-	assert(c->next_to_register != (uint32_t) -1);
-	assert(c->next_to_register < c->import_count);
+	ప్రతిజ్ఞా(c->తదుపరి_గమ్యం_రిజిస్టరు != (uint32_t) -1);
+	ప్రతిజ్ఞా(c->తదుపరి_గమ్యం_రిజిస్టరు < c->import_లెక్క);
 
 	/* Register imported sheets */
-	for (index = c->next_to_register; index < c->import_count; index++) {
+	కొరకు (index = c->తదుపరి_గమ్యం_రిజిస్టరు; index < c->import_లెక్క; index++) {
 		/* Stop registering if we encounter one whose fetch hasn't
 		 * completed yet. We'll resume at this point when it has
 		 * completed.
 		 */
-		if (c->imports[index].c != NULL &&
-			content_get_status(c->imports[index].c) !=
-				CONTENT_STATUS_DONE) {
-			break;
+		ఒకవేళ (c->imports[index].c != ఖాళీ &&
+			content_get_స్థితి(c->imports[index].c) !=
+				CONTENT_స్థితి_పూర్తి) {
+			ఆపు;
 		}
 
-		error = nscss_register_import(c, c->imports[index].c);
-		if (error != CSS_OK)
-			return error;
+		error = nscss_రిజిస్టరు_import(c, c->imports[index].c);
+		ఒకవేళ (error != CSS_OK)
+			తిరిగి error;
 	}
 
 	/* Record identity of the next import to register */
-	c->next_to_register = (uint32_t) index;
+	c->తదుపరి_గమ్యం_రిజిస్టరు = (uint32_t) index;
 
-	if (c->next_to_register == c->import_count) {
+	ఒకవేళ (c->తదుపరి_గమ్యం_రిజిస్టరు == c->import_లెక్క) {
 		/* No more imports: notify parent that we're DONE */
-		c->done(c, c->pw);
+		c->పూర్తి(c, c->pw);
 	}
 
-	return CSS_OK;
+	తిరిగి CSS_OK;
 }
 
 
@@ -732,77 +732,77 @@ css_error nscss_register_imports(struct content_css_data *c)
  * \param import  Cache handle of import, or NULL for blank
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_import(struct content_css_data *c,
-		const hlcache_handle *import)
+css_error nscss_రిజిస్టరు_import(నిర్మాణం content_css_దత్తాంశం *c,
+		స్థిరరాశి hlcache_handle *import)
 {
 	css_stylesheet *sheet;
 	css_error error;
 
-	if (import != NULL) {
+	ఒకవేళ (import != ఖాళీ) {
 		nscss_content *s =
 			(nscss_content *) hlcache_handle_get_content(import);
-		sheet = s->data.sheet;
-	} else {
+		sheet = s->దత్తాంశం.sheet;
+	} లేకపోతే {
 		/* Create a blank sheet if needed. */
-		if (blank_import == NULL) {
+		ఒకవేళ (blank_import == ఖాళీ) {
 			css_stylesheet_params params;
 
-			params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+			params.params_సంస్కరణ = CSS_STYLESHEET_PARAMS_సంస్కరణ_1;
 			params.level = CSS_LEVEL_DEFAULT;
-			params.charset = NULL;
+			params.charset = ఖాళీ;
 			params.url = "";
-			params.title = NULL;
+			params.title = ఖాళీ;
 			params.allow_quirks = false;
 			params.inline_style = false;
 			params.resolve = nscss_resolve_url;
-			params.resolve_pw = NULL;
-			params.import = NULL;
-			params.import_pw = NULL;
-			params.color = ns_system_colour;
-			params.color_pw = NULL;
-			params.font = NULL;
-			params.font_pw = NULL;
+			params.resolve_pw = ఖాళీ;
+			params.import = ఖాళీ;
+			params.import_pw = ఖాళీ;
+			params.color = ns_system_రంగు;
+			params.color_pw = ఖాళీ;
+			params.font = ఖాళీ;
+			params.font_pw = ఖాళీ;
 
 			error = css_stylesheet_create(&params, &blank_import);
-			if (error != CSS_OK) {
-				return error;
+			ఒకవేళ (error != CSS_OK) {
+				తిరిగి error;
 			}
 
-			error = css_stylesheet_data_done(blank_import);
-			if (error != CSS_OK) {
+			error = css_stylesheet_దత్తాంశం_పూర్తి(blank_import);
+			ఒకవేళ (error != CSS_OK) {
 				css_stylesheet_destroy(blank_import);
-				return error;
+				తిరిగి error;
 			}
 		}
 
 		sheet = blank_import;
 	}
 
-	error = css_stylesheet_register_import(c->sheet, sheet);
-	if (error != CSS_OK) {
-		return error;
+	error = css_stylesheet_రిజిస్టరు_import(c->sheet, sheet);
+	ఒకవేళ (error != CSS_OK) {
+		తిరిగి error;
 	}
 
-	return error;
+	తిరిగి error;
 }
 
 /**
  * Clean up after the CSS content handler
  */
-static void nscss_fini(void)
+స్థిర శూన్య nscss_fini(శూన్య)
 {
-	if (blank_import != NULL) {
+	ఒకవేళ (blank_import != ఖాళీ) {
 		css_stylesheet_destroy(blank_import);
-		blank_import = NULL;
+		blank_import = ఖాళీ;
 	}
 	css_hint_fini();
 }
 
-static const content_handler css_content_handler = {
+స్థిర స్థిరరాశి content_handler css_content_handler = {
 	.fini = nscss_fini,
 	.create = nscss_create,
-	.process_data = nscss_process_data,
-	.data_complete = nscss_convert,
+	.process_దత్తాంశం = nscss_process_దత్తాంశం,
+	.దత్తాంశం_complete = nscss_convert,
 	.destroy = nscss_destroy,
 	.clone = nscss_clone,
 	.matches_quirks = nscss_matches_quirks,
@@ -811,23 +811,23 @@ static const content_handler css_content_handler = {
 };
 
 /* exported interface documented in netsurf/css.h */
-nserror nscss_init(void)
+nserror nscss_init(శూన్య)
 {
 	nserror error;
 
-	error = content_factory_register_handler("text/css",
+	error = content_factory_రిజిస్టరు_handler("text/css",
 			&css_content_handler);
-	if (error != NSERROR_OK)
-		goto error;
+	ఒకవేళ (error != NSERROR_OK)
+		వెళ్ళు error;
 
 	error = css_hint_init();
-	if (error != NSERROR_OK)
-		goto error;
+	ఒకవేళ (error != NSERROR_OK)
+		వెళ్ళు error;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 
 error:
 	nscss_fini();
 
-	return error;
+	తిరిగి error;
 }

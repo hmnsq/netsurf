@@ -22,11 +22,11 @@
  * HTML internal font handling implementation.
  */
 
-#include "utils/nsoption.h"
-#include "netsurf/plot_style.h"
-#include "css/utils.h"
+#అన్తర్భావ "utils/nsoption.h"
+#అన్తర్భావ "netsurf/plot_style.h"
+#అన్తర్భావ "css/utils.h"
 
-#include "html/font.h"
+#అన్తర్భావ "html/font.h"
 
 /**
  * Map a generic CSS font family to a generic plot font family
@@ -34,31 +34,31 @@
  * \param css Generic CSS font family
  * \return Plot font family
  */
-static plot_font_generic_family_t
-plot_font_generic_family(enum css_font_family_e css)
+స్థిర plot_font_generic_family_t
+plot_font_generic_family(గణన css_font_family_e css)
 {
 	plot_font_generic_family_t plot;
 
-	switch (css) {
-	case CSS_FONT_FAMILY_SERIF:
+	ఎంపిక (css) {
+	స్థితి CSS_FONT_FAMILY_SERIF:
 		plot = PLOT_FONT_FAMILY_SERIF;
-		break;
-	case CSS_FONT_FAMILY_MONOSPACE:
+		ఆపు;
+	స్థితి CSS_FONT_FAMILY_MONOSPACE:
 		plot = PLOT_FONT_FAMILY_MONOSPACE;
-		break;
-	case CSS_FONT_FAMILY_CURSIVE:
+		ఆపు;
+	స్థితి CSS_FONT_FAMILY_CURSIVE:
 		plot = PLOT_FONT_FAMILY_CURSIVE;
-		break;
-	case CSS_FONT_FAMILY_FANTASY:
+		ఆపు;
+	స్థితి CSS_FONT_FAMILY_FANTASY:
 		plot = PLOT_FONT_FAMILY_FANTASY;
-		break;
-	case CSS_FONT_FAMILY_SANS_SERIF:
-	default:
+		ఆపు;
+	స్థితి CSS_FONT_FAMILY_SANS_SERIF:
+	అప్రమేయ:
 		plot = PLOT_FONT_FAMILY_SANS_SERIF;
-		break;
+		ఆపు;
 	}
 
-	return plot;
+	తిరిగి plot;
 }
 
 /**
@@ -67,44 +67,44 @@ plot_font_generic_family(enum css_font_family_e css)
  * \param css  CSS font weight
  * \return Plot weight
  */
-static int plot_font_weight(enum css_font_weight_e css)
+స్థిర పూర్ణాంకం plot_font_బరువు(గణన css_font_బరువు_e css)
 {
-	int weight;
+	పూర్ణాంకం బరువు;
 
-	switch (css) {
-	case CSS_FONT_WEIGHT_100:
-		weight = 100;
-		break;
-	case CSS_FONT_WEIGHT_200:
-		weight = 200;
-		break;
-	case CSS_FONT_WEIGHT_300:
-		weight = 300;
-		break;
-	case CSS_FONT_WEIGHT_400:
-	case CSS_FONT_WEIGHT_NORMAL:
-	default:
-		weight = 400;
-		break;
-	case CSS_FONT_WEIGHT_500:
-		weight = 500;
-		break;
-	case CSS_FONT_WEIGHT_600:
-		weight = 600;
-		break;
-	case CSS_FONT_WEIGHT_700:
-	case CSS_FONT_WEIGHT_BOLD:
-		weight = 700;
-		break;
-	case CSS_FONT_WEIGHT_800:
-		weight = 800;
-		break;
-	case CSS_FONT_WEIGHT_900:
-		weight = 900;
-		break;
+	ఎంపిక (css) {
+	స్థితి CSS_FONT_బరువు_100:
+		బరువు = 100;
+		ఆపు;
+	స్థితి CSS_FONT_బరువు_200:
+		బరువు = 200;
+		ఆపు;
+	స్థితి CSS_FONT_బరువు_300:
+		బరువు = 300;
+		ఆపు;
+	స్థితి CSS_FONT_బరువు_400:
+	స్థితి CSS_FONT_బరువు_సాధారణ:
+	అప్రమేయ:
+		బరువు = 400;
+		ఆపు;
+	స్థితి CSS_FONT_బరువు_500:
+		బరువు = 500;
+		ఆపు;
+	స్థితి CSS_FONT_బరువు_600:
+		బరువు = 600;
+		ఆపు;
+	స్థితి CSS_FONT_బరువు_700:
+	స్థితి CSS_FONT_బరువు_BOLD:
+		బరువు = 700;
+		ఆపు;
+	స్థితి CSS_FONT_బరువు_800:
+		బరువు = 800;
+		ఆపు;
+	స్థితి CSS_FONT_బరువు_900:
+		బరువు = 900;
+		ఆపు;
 	}
 
-	return weight;
+	తిరిగి బరువు;
 }
 
 /**
@@ -114,52 +114,52 @@ static int plot_font_weight(enum css_font_weight_e css)
  * \param variant  CSS font variant
  * \return Computed plot flags
  */
-static plot_font_flags_t plot_font_flags(enum css_font_style_e style,
-		enum css_font_variant_e variant)
+స్థిర plot_font_flags_t plot_font_flags(గణన css_font_style_e style,
+		గణన css_font_variant_e variant)
 {
 	plot_font_flags_t flags = FONTF_NONE;
 
-	if (style == CSS_FONT_STYLE_ITALIC)
+	ఒకవేళ (style == CSS_FONT_STYLE_ITALIC)
 		flags |= FONTF_ITALIC;
-	else if (style == CSS_FONT_STYLE_OBLIQUE)
+	లేకపోతే ఒకవేళ (style == CSS_FONT_STYLE_OBLIQUE)
 		flags |= FONTF_OBLIQUE;
 
-	if (variant == CSS_FONT_VARIANT_SMALL_CAPS)
+	ఒకవేళ (variant == CSS_FONT_VARIANT_SMALL_CAPS)
 		flags |= FONTF_SMALLCAPS;
 
-	return flags;
+	తిరిగి flags;
 }
 
 
 /* exported function documented in html/font.h */
-void font_plot_style_from_css(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *css,
+శూన్య font_plot_style_from_css(
+		స్థిరరాశి css_unit_ctx *unit_len_ctx,
+		స్థిరరాశి css_computed_style *css,
 		plot_font_style_t *fstyle)
 {
 	lwc_string **families;
-	css_fixed length = 0;
+	css_fixed నిడివి = 0;
 	css_unit unit = CSS_UNIT_PX;
-	css_color col;
+	css_color నిలువు;
 
 	fstyle->family = plot_font_generic_family(
 			css_computed_font_family(css, &families));
 	fstyle->families = families;
 
-	css_computed_font_size(css, &length, &unit);
-	fstyle->size = FIXTOINT(FMUL(css_unit_font_size_len2pt(css,
-				      unit_len_ctx, length, unit),
+	css_computed_font_కొలత(css, &నిడివి, &unit);
+	fstyle->కొలత = FIXTOINT(FMUL(css_unit_font_కొలత_len2pt(css,
+				      unit_len_ctx, నిడివి, unit),
 				      INTTOFIX(PLOT_STYLE_SCALE)));
 
 	/* Clamp font size to configured minimum */
-	if (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
-		fstyle->size = (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10;
+	ఒకవేళ (fstyle->కొలత < (nsoption_int(font_min_కొలత) * PLOT_STYLE_SCALE) / 10)
+		fstyle->కొలత = (nsoption_int(font_min_కొలత) * PLOT_STYLE_SCALE) / 10;
 
-	fstyle->weight = plot_font_weight(css_computed_font_weight(css));
+	fstyle->బరువు = plot_font_బరువు(css_computed_font_బరువు(css));
 	fstyle->flags = plot_font_flags(css_computed_font_style(css),
 			css_computed_font_variant(css));
 
-	css_computed_color(css, &col);
-	fstyle->foreground = nscss_color_to_ns(col);
+	css_computed_color(css, &నిలువు);
+	fstyle->foreground = nscss_color_గమ్యం_ns(నిలువు);
 	fstyle->background = 0;
 }

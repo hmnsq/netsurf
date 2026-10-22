@@ -21,98 +21,98 @@
  * javascript content implementation
  */
 
-#include <assert.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/config.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/hlcache.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "javascript/content.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "utils/config.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/content_factory.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+రకనిర్వచనం నిర్మాణం javascript_content {
+	నిర్మాణం content పునాది;
 } javascript_content;
 
-static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+స్థిర nserror javascript_create(స్థిరరాశి content_handler *handler,
+		lwc_string *imime_type, స్థిరరాశి నిర్మాణం http_parameter *params,
+		llcache_handle *llcache, స్థిరరాశి అక్షరం *fallback_charset,
+		bool quirks, నిర్మాణం content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(javascript_content));
+	ఒకవేళ (script == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__init(&script->base, handler, imime_type, params,
+	error = content__init(&script->పునాది, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(script);
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		విడుదల(script);
+		తిరిగి error;
 	}
 
-	*c = (struct content *) script;
+	*c = (నిర్మాణం content *) script;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+స్థిర bool javascript_convert(నిర్మాణం content *c)
 {
-	content_set_ready(c);
-	content_set_done(c);
+	content_సమితి_ready(c);
+	content_సమితి_పూర్తి(c);
 
-	return true;
+	తిరిగి true;
 }
 
-static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+స్థిర nserror 
+javascript_clone(స్థిరరాశి నిర్మాణం content *old, నిర్మాణం content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(javascript_content));
+	ఒకవేళ (script == ఖాళీ)
+		తిరిగి NSERROR_NOMEM;
 
-	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&script->base);
-		return error;
+	error = content__clone(old, &script->పునాది);
+	ఒకవేళ (error != NSERROR_OK) {
+		content_destroy(&script->పునాది);
+		తిరిగి error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (నిర్మాణం content *) script;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+స్థిర శూన్య javascript_destroy(నిర్మాణం content *c)
 {
 }
 
-static content_type javascript_content_type(void)
+స్థిర content_type javascript_content_type(శూన్య)
 {
-	return CONTENT_JS;
+	తిరిగి CONTENT_JS;
 }
 
 
-static const content_handler javascript_content_handler = {
+స్థిర స్థిరరాశి content_handler javascript_content_handler = {
 	.create = javascript_create,
-	.data_complete = javascript_convert,
+	.దత్తాంశం_complete = javascript_convert,
 	.destroy = javascript_destroy,
 	.clone = javascript_clone,
 	.type = javascript_content_type,
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+స్థిర స్థిరరాశి అక్షరం *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */
@@ -120,4 +120,4 @@ static const char *javascript_types[] = {
 	"text/ecmascript", /* common usage */
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(javascript, javascript_types, javascript_content_handler);
+CONTENT_FACTORY_రిజిస్టరు_TYPES(javascript, javascript_types, javascript_content_handler);

@@ -20,9 +20,9 @@
  * Content for image/jpegxl (interface).
  */
 
-#ifndef _NETSURF_IMAGE_JPEGXL_H_
-#define _NETSURF_IMAGE_JPEGXL_H_
+#నిర్వచితం_కాకపోతే _NETSURF_IMAGE_JPEGXL_H_
+#నిర్వచించు _NETSURF_IMAGE_JPEGXL_H_
 
-nserror nsjpegxl_init(void);
+nserror nsjpegxl_init(శూన్య);
 
-#endif
+#అయితే_ముగింపు

@@ -21,29 +21,29 @@
  * Content handling implementation.
  */
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <nsutils/time.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <nsutils/time.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/corestrings.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "desktop/knockout.h"
+#అన్తర్భావ "netsurf/inttypes.h"
+#అన్తర్భావ "utils/log.h"
+#అన్తర్భావ "utils/messages.h"
+#అన్తర్భావ "utils/corestrings.h"
+#అన్తర్భావ "netsurf/browser_window.h"
+#అన్తర్భావ "netsurf/bitmap.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "desktop/knockout.h"
 
-#include "content/content_protected.h"
-#include "content/textsearch.h"
-#include "content/content_debug.h"
-#include "content/hlcache.h"
-#include "content/urldb.h"
+#అన్తర్భావ "content/content_protected.h"
+#అన్తర్భావ "content/textsearch.h"
+#అన్తర్భావ "content/content_debug.h"
+#అన్తర్భావ "content/hlcache.h"
+#అన్తర్భావ "content/urldb.h"
 
-#define URL_FMT_SPC "%.140s"
+#నిర్వచించు URL_FMT_SPC "%.140s"
 
-const char * const content_status_name[] = {
+స్థిరరాశి అక్షరం * స్థిరరాశి content_స్థితి_name[] = {
 	"LOADING",
 	"READY",
 	"DONE",
@@ -64,30 +64,30 @@ const char * const content_status_name[] = {
  * - If the conversion fails, CONTENT_MSG_ERROR is sent. The content will soon
  *   be destroyed and must no longer be used.
  */
-static void content_convert(struct content *c)
+స్థిర శూన్య content_convert(నిర్మాణం content *c)
 {
-	assert(c);
-	assert(c->status == CONTENT_STATUS_LOADING ||
-	       c->status == CONTENT_STATUS_ERROR);
+	ప్రతిజ్ఞా(c);
+	ప్రతిజ్ఞా(c->స్థితి_2 == CONTENT_స్థితి_LOADING ||
+	       c->స్థితి_2 == CONTENT_స్థితి_ERROR);
 
-	if (c->status != CONTENT_STATUS_LOADING)
-		return;
+	ఒకవేళ (c->స్థితి_2 != CONTENT_స్థితి_LOADING)
+		తిరిగి;
 
-	if (c->locked == true)
-		return;
+	ఒకవేళ (c->locked == true)
+		తిరిగి;
 
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p)",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)), c);
 
-	if (c->handler->data_complete != NULL) {
+	ఒకవేళ (c->handler->దత్తాంశం_complete != ఖాళీ) {
 		c->locked = true;
-		if (c->handler->data_complete(c) == false) {
-			content_set_error(c);
+		ఒకవేళ (c->handler->దత్తాంశం_complete(c) == false) {
+			content_సమితి_error(c);
 		}
 		/* Conversion to the READY state will unlock the content */
-	} else {
-		content_set_ready(c);
-		content_set_done(c);
+	} లేకపోతే {
+		content_సమితి_ready(c);
+		content_సమితి_పూర్తి(c);
 	}
 }
 
@@ -100,66 +100,66 @@ static void content_convert(struct content *c)
  * \param pw	   Pointer to our context
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+స్థిర nserror
 content_llcache_callback(llcache_handle *llcache,
-			 const llcache_event *event, void *pw)
+			 స్థిరరాశి llcache_event *event, శూన్య *pw)
 {
-	struct content *c = pw;
-	union content_msg_data msg_data;
+	నిర్మాణం content *c = pw;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 	nserror error = NSERROR_OK;
 
-	switch (event->type) {
-	case LLCACHE_EVENT_GOT_CERTS:
+	ఎంపిక (event->type) {
+	స్థితి LLCACHE_EVENT_GOT_CERTS:
 		/* Will never happen: handled in hlcache */
-		break;
-	case LLCACHE_EVENT_HAD_HEADERS:
+		ఆపు;
+	స్థితి LLCACHE_EVENT_HAD_శీర్షికలు:
 		/* Will never happen: handled in hlcache */
-		break;
-	case LLCACHE_EVENT_HAD_DATA:
-		if (c->handler->process_data != NULL) {
-			if (c->handler->process_data(c,
-						     (const char *) event->data.data.buf,
-						     event->data.data.len) == false) {
+		ఆపు;
+	స్థితి LLCACHE_EVENT_HAD_దత్తాంశం:
+		ఒకవేళ (c->handler->process_దత్తాంశం != ఖాళీ) {
+			ఒకవేళ (c->handler->process_దత్తాంశం(c,
+						     (స్థిరరాశి అక్షరం *) event->దత్తాంశం.దత్తాంశం.buf,
+						     event->దత్తాంశం.దత్తాంశం.len) == false) {
 				llcache_handle_abort(c->llcache);
-				c->status = CONTENT_STATUS_ERROR;
+				c->స్థితి_2 = CONTENT_స్థితి_ERROR;
 				/** \todo It's not clear what error this is */
 				error = NSERROR_NOMEM;
 			}
 		}
-		break;
-	case LLCACHE_EVENT_DONE:
+		ఆపు;
+	స్థితి LLCACHE_EVENT_పూర్తి:
 		{
-			size_t source_size;
+			size_t ఆధారం_కొలత;
 
-			(void) llcache_handle_get_source_data(llcache, &source_size);
+			(శూన్య) llcache_handle_get_ఆధారం_దత్తాంశం(llcache, &ఆధారం_కొలత);
 
-			content_set_status(c, messages_get("Processing"));
-			msg_data.explicit_status_text = NULL;
-			content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
+			content_సమితి_స్థితి(c, messages_get("Processing"));
+			సందేశం_దత్తాంశం.explicit_స్థితి_పాఠ్యం = ఖాళీ;
+			content_ప్రసారం(c, CONTENT_సందేశం_స్థితి, &సందేశం_దత్తాంశం);
 
 			content_convert(c);
 		}
-		break;
-	case LLCACHE_EVENT_ERROR:
+		ఆపు;
+	స్థితి LLCACHE_EVENT_ERROR:
 		/** \todo Error page? */
-		c->status = CONTENT_STATUS_ERROR;
-		msg_data.errordata.errorcode = event->data.error.code;
-		msg_data.errordata.errormsg = event->data.error.msg;
-		content_broadcast(c, CONTENT_MSG_ERROR, &msg_data);
-		break;
-	case LLCACHE_EVENT_PROGRESS:
-		content_set_status(c, event->data.progress_msg);
-		msg_data.explicit_status_text = NULL;
-		content_broadcast(c, CONTENT_MSG_STATUS, &msg_data);
-		break;
-	case LLCACHE_EVENT_REDIRECT:
-		msg_data.redirect.from = event->data.redirect.from;
-		msg_data.redirect.to = event->data.redirect.to;
-		content_broadcast(c, CONTENT_MSG_REDIRECT, &msg_data);
-		break;
+		c->స్థితి_2 = CONTENT_స్థితి_ERROR;
+		సందేశం_దత్తాంశం.errordata.errorcode = event->దత్తాంశం.error.సంకేతం_2;
+		సందేశం_దత్తాంశం.errordata.errormsg = event->దత్తాంశం.error.సందేశం;
+		content_ప్రసారం(c, CONTENT_సందేశం_ERROR, &సందేశం_దత్తాంశం);
+		ఆపు;
+	స్థితి LLCACHE_EVENT_పురోగతి:
+		content_సమితి_స్థితి(c, event->దత్తాంశం.పురోగతి_సందేశం);
+		సందేశం_దత్తాంశం.explicit_స్థితి_పాఠ్యం = ఖాళీ;
+		content_ప్రసారం(c, CONTENT_సందేశం_స్థితి, &సందేశం_దత్తాంశం);
+		ఆపు;
+	స్థితి LLCACHE_EVENT_REDIRECT:
+		సందేశం_దత్తాంశం.redirect.from = event->దత్తాంశం.redirect.from;
+		సందేశం_దత్తాంశం.redirect.గమ్యం = event->దత్తాంశం.redirect.గమ్యం;
+		content_ప్రసారం(c, CONTENT_సందేశం_REDIRECT, &సందేశం_దత్తాంశం);
+		ఆపు;
 	}
 
-	return error;
+	తిరిగి error;
 }
 
 
@@ -168,451 +168,451 @@ content_llcache_callback(llcache_handle *llcache,
  *
  * \param c the content to update.
  */
-static void content_update_status(struct content *c)
+స్థిర శూన్య content_update_స్థితి(నిర్మాణం content *c)
 {
-	if (c->status == CONTENT_STATUS_LOADING ||
-	    c->status == CONTENT_STATUS_READY) {
+	ఒకవేళ (c->స్థితి_2 == CONTENT_స్థితి_LOADING ||
+	    c->స్థితి_2 == CONTENT_స్థితి_READY) {
 		/* Not done yet */
-		snprintf(c->status_message, sizeof (c->status_message),
+		snprintf(c->స్థితి_సందేశం, పరిమాణం (c->స్థితి_సందేశం),
 			 "%s%s%s", messages_get("Fetching"),
-			 c->sub_status[0] != '\0' ? ", " : " ",
-			 c->sub_status);
-	} else {
-		snprintf(c->status_message, sizeof (c->status_message),
+			 c->sub_స్థితి[0] != '\0' ? ", " : " ",
+			 c->sub_స్థితి);
+	} లేకపోతే {
+		snprintf(c->స్థితి_సందేశం, పరిమాణం (c->స్థితి_సందేశం),
 			 "%s (%.1fs)", messages_get("Done"),
-			 (float) c->time / 1000);
+			 (దశాంశం) c->time / 1000);
 	}
 }
 
 
 /* exported interface documented in content/protected.h */
 nserror
-content__init(struct content *c,
-	      const content_handler *handler,
+content__init(నిర్మాణం content *c,
+	      స్థిరరాశి content_handler *handler,
 	      lwc_string *imime_type,
-	      const struct http_parameter *params,
+	      స్థిరరాశి నిర్మాణం http_parameter *params,
 	      llcache_handle *llcache,
-	      const char *fallback_charset,
+	      స్థిరరాశి అక్షరం *fallback_charset,
 	      bool quirks)
 {
-	struct content_user *user_sentinel;
+	నిర్మాణం content_user *user_sentinel;
 	nserror error;
 
 	NSLOG(netsurf, INFO, "url "URL_FMT_SPC" -> %p",
 	      nsurl_access_log(llcache_handle_get_url(llcache)), c);
 
-	user_sentinel = calloc(1, sizeof(struct content_user));
-	if (user_sentinel == NULL) {
-		return NSERROR_NOMEM;
+	user_sentinel = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content_user));
+	ఒకవేళ (user_sentinel == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	if (fallback_charset != NULL) {
+	ఒకవేళ (fallback_charset != ఖాళీ) {
 		c->fallback_charset = strdup(fallback_charset);
-		if (c->fallback_charset == NULL) {
-			free(user_sentinel);
-			return NSERROR_NOMEM;
+		ఒకవేళ (c->fallback_charset == ఖాళీ) {
+			విడుదల(user_sentinel);
+			తిరిగి NSERROR_NOMEM;
 		}
 	}
 
 	c->llcache = llcache;
 	c->mime_type = lwc_string_ref(imime_type);
 	c->handler = handler;
-	c->status = CONTENT_STATUS_LOADING;
-	c->width = 0;
-	c->height = 0;
-	c->available_width = 0;
-	c->available_height = 0;
+	c->స్థితి_2 = CONTENT_స్థితి_LOADING;
+	c->వెడల్పు = 0;
+	c->ఎత్తు = 0;
+	c->అందుబాటు_వెడల్పు = 0;
+	c->అందుబాటు_ఎత్తు = 0;
 	c->quirks = quirks;
 	c->refresh = 0;
 	nsu_getmonotonic_ms(&c->time);
-	c->size = 0;
-	c->title = NULL;
-	c->active = 0;
-	user_sentinel->callback = NULL;
-	user_sentinel->pw = NULL;
-	user_sentinel->next = NULL;
+	c->కొలత = 0;
+	c->title = ఖాళీ;
+	c->చురుకైన = 0;
+	user_sentinel->callback = ఖాళీ;
+	user_sentinel->pw = ఖాళీ;
+	user_sentinel->తదుపరి = ఖాళీ;
 	c->user_list = user_sentinel;
-	c->sub_status[0] = 0;
+	c->sub_స్థితి[0] = 0;
 	c->locked = false;
-	c->total_size = 0;
-	c->http_code = 0;
+	c->మొత్తం_కొలత = 0;
+	c->http_సంకేతం = 0;
 
-	c->textsearch.string = NULL;
-	c->textsearch.context = NULL;
+	c->textsearch.string = ఖాళీ;
+	c->textsearch.context = ఖాళీ;
 
-	content_set_status(c, messages_get("Loading"));
+	content_సమితి_స్థితి(c, messages_get("Loading"));
 
 	/* Finally, claim low-level cache events */
 	error = llcache_handle_change_callback(llcache,
 					       content_llcache_callback, c);
-	if (error != NSERROR_OK) {
+	ఒకవేళ (error != NSERROR_OK) {
 		lwc_string_unref(c->mime_type);
-		return error;
+		తిరిగి error;
 	}
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_can_reformat(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return false;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి false;
 
-	return (c->handler->reformat != NULL);
+	తిరిగి (c->handler->reformat != ఖాళీ);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_status(struct content *c, const char *status_message)
+శూన్య content_సమితి_స్థితి(నిర్మాణం content *c, స్థిరరాశి అక్షరం *స్థితి_సందేశం)
 {
-	size_t len = strlen(status_message);
+	size_t len = అక్షరశ్రేణి_పొడవు(స్థితి_సందేశం);
 
-	if (len >= sizeof(c->sub_status)) {
-		len = sizeof(c->sub_status) - 1;
+	ఒకవేళ (len >= పరిమాణం(c->sub_స్థితి)) {
+		len = పరిమాణం(c->sub_స్థితి) - 1;
 	}
-	memcpy(c->sub_status, status_message, len);
-	c->sub_status[len] = '\0';
+	జ్ఞాపకం_నకలు(c->sub_స్థితి, స్థితి_సందేశం, len);
+	c->sub_స్థితి[len] = '\0';
 
-	content_update_status(c);
+	content_update_స్థితి(c);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_ready(struct content *c)
+శూన్య content_సమితి_ready(నిర్మాణం content *c)
 {
 	/* The content must be locked at this point, as it can only
 	 * become READY after conversion. */
-	assert(c->locked);
+	ప్రతిజ్ఞా(c->locked);
 	c->locked = false;
 
-	c->status = CONTENT_STATUS_READY;
-	content_update_status(c);
-	content_broadcast(c, CONTENT_MSG_READY, NULL);
+	c->స్థితి_2 = CONTENT_స్థితి_READY;
+	content_update_స్థితి(c);
+	content_ప్రసారం(c, CONTENT_సందేశం_READY, ఖాళీ);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_done(struct content *c)
+శూన్య content_సమితి_పూర్తి(నిర్మాణం content *c)
 {
 	uint64_t now_ms;
 
 	nsu_getmonotonic_ms(&now_ms);
 
-	c->status = CONTENT_STATUS_DONE;
+	c->స్థితి_2 = CONTENT_స్థితి_పూర్తి;
 	c->time = now_ms - c->time;
-	content_update_status(c);
-	content_broadcast(c, CONTENT_MSG_DONE, NULL);
+	content_update_స్థితి(c);
+	content_ప్రసారం(c, CONTENT_సందేశం_పూర్తి, ఖాళీ);
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_set_error(struct content *c)
+శూన్య content_సమితి_error(నిర్మాణం content *c)
 {
 	c->locked = false;
-	c->status = CONTENT_STATUS_ERROR;
+	c->స్థితి_2 = CONTENT_స్థితి_ERROR;
 }
 
 
 /* exported interface documented in content/content.h */
-void content_reformat(hlcache_handle *h, bool background,
-		      int width, int height)
+శూన్య content_reformat(hlcache_handle *h, bool background,
+		      పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు)
 {
 	content__reformat(hlcache_handle_get_content(h), background,
-			  width, height);
+			  వెడల్పు, ఎత్తు);
 }
 
 
 /* exported interface documented in content/protected.h */
-void
-content__reformat(struct content *c, bool background, int width, int height)
+శూన్య
+content__reformat(నిర్మాణం content *c, bool background, పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు)
 {
-	union content_msg_data data;
-	assert(c != 0);
-	assert(c->status == CONTENT_STATUS_READY ||
-	       c->status == CONTENT_STATUS_DONE);
-	assert(c->locked == false);
+	సంఘం content_సందేశం_దత్తాంశం దత్తాంశం;
+	ప్రతిజ్ఞా(c != 0);
+	ప్రతిజ్ఞా(c->స్థితి_2 == CONTENT_స్థితి_READY ||
+	       c->స్థితి_2 == CONTENT_స్థితి_పూర్తి);
+	ప్రతిజ్ఞా(c->locked == false);
 
-	c->available_width = width;
-	c->available_height = height;
-	if (c->handler->reformat != NULL) {
+	c->అందుబాటు_వెడల్పు = వెడల్పు;
+	c->అందుబాటు_ఎత్తు = ఎత్తు;
+	ఒకవేళ (c->handler->reformat != ఖాళీ) {
 
 		c->locked = true;
-		c->handler->reformat(c, width, height);
+		c->handler->reformat(c, వెడల్పు, ఎత్తు);
 		c->locked = false;
 
-		data.background = background;
-		content_broadcast(c, CONTENT_MSG_REFORMAT, &data);
+		దత్తాంశం.background = background;
+		content_ప్రసారం(c, CONTENT_సందేశం_REFORMAT, &దత్తాంశం);
 	}
 }
 
 
 /* exported interface documented in content/content.h */
-void content_destroy(struct content *c)
+శూన్య content_destroy(నిర్మాణం content *c)
 {
-	struct content_rfc5988_link *link;
+	నిర్మాణం content_rfc5988_link *link;
 
-	assert(c);
+	ప్రతిజ్ఞా(c);
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
-	assert(c->locked == false);
+	ప్రతిజ్ఞా(c->locked == false);
 
-	if (c->handler->destroy != NULL)
+	ఒకవేళ (c->handler->destroy != ఖాళీ)
 		c->handler->destroy(c);
 
 	llcache_handle_release(c->llcache);
-	c->llcache = NULL;
+	c->llcache = ఖాళీ;
 
 	lwc_string_unref(c->mime_type);
 
 	/* release metadata links */
 	link = c->links;
-	while (link != NULL) {
+	అయితే (link != ఖాళీ) {
 		link = content__free_rfc5988_link(link);
 	}
 
 	/* free the user list */
-	if (c->user_list != NULL) {
-		free(c->user_list);
+	ఒకవేళ (c->user_list != ఖాళీ) {
+		విడుదల(c->user_list);
 	}
 
 	/* free the title */
-	if (c->title != NULL) {
-		free(c->title);
+	ఒకవేళ (c->title != ఖాళీ) {
+		విడుదల(c->title);
 	}
 
 	/* free the fallback characterset */
-	if (c->fallback_charset != NULL) {
-		free(c->fallback_charset);
+	ఒకవేళ (c->fallback_charset != ఖాళీ) {
+		విడుదల(c->fallback_charset);
 	}
 
-	free(c);
+	విడుదల(c);
 }
 
 
 /* exported interface documented in content/content.h */
-void
+శూన్య
 content_mouse_track(hlcache_handle *h,
-		    struct browser_window *bw,
+		    నిర్మాణం browser_కిటికీ *bw,
 		    browser_mouse_state mouse,
-		    int x, int y)
+		    పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	if (c->handler->mouse_track != NULL) {
+	ఒకవేళ (c->handler->mouse_track != ఖాళీ) {
 		c->handler->mouse_track(c, bw, mouse, x, y);
-	} else {
-		union content_msg_data msg_data;
-		msg_data.pointer = BROWSER_POINTER_AUTO;
-		content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
+	} లేకపోతే {
+		సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
+		సందేశం_దత్తాంశం.సూచిక = BROWSER_సూచిక_AUTO;
+		content_ప్రసారం(c, CONTENT_సందేశం_సూచిక, &సందేశం_దత్తాంశం);
 	}
 
 
-	return;
+	తిరిగి;
 }
 
 
 /* exported interface documented in content/content.h */
-void
+శూన్య
 content_mouse_action(hlcache_handle *h,
-		     struct browser_window *bw,
+		     నిర్మాణం browser_కిటికీ *bw,
 		     browser_mouse_state mouse,
-		     int x, int y)
+		     పూర్ణాంకం x, పూర్ణాంకం y)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	if (c->handler->mouse_action != NULL)
+	ఒకవేళ (c->handler->mouse_action != ఖాళీ)
 		c->handler->mouse_action(c, bw, mouse, x, y);
 
-	return;
+	తిరిగి;
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_keypress(struct hlcache_handle *h, uint32_t key)
+bool content_keypress(నిర్మాణం hlcache_handle *h, uint32_t కీలకం)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != NULL);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	if (c->handler->keypress != NULL)
-		return c->handler->keypress(c, key);
+	ఒకవేళ (c->handler->keypress != ఖాళీ)
+		తిరిగి c->handler->keypress(c, కీలకం);
 
-	return false;
+	తిరిగి false;
 }
 
 
 /* exported interface documented in content/content.h */
-void content_request_redraw(struct hlcache_handle *h,
-			    int x, int y, int width, int height)
+శూన్య content_request_redraw(నిర్మాణం hlcache_handle *h,
+			    పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు)
 {
 	content__request_redraw(hlcache_handle_get_content(h),
-				x, y, width, height);
+				x, y, వెడల్పు, ఎత్తు);
 }
 
 
 /* exported interface, documented in content/protected.h */
-void content__request_redraw(struct content *c,
-			     int x, int y, int width, int height)
+శూన్య content__request_redraw(నిర్మాణం content *c,
+			     పూర్ణాంకం x, పూర్ణాంకం y, పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు)
 {
-	union content_msg_data data;
+	సంఘం content_సందేశం_దత్తాంశం దత్తాంశం;
 
-	if (c == NULL)
-		return;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి;
 
-	data.redraw.x = x;
-	data.redraw.y = y;
-	data.redraw.width = width;
-	data.redraw.height = height;
+	దత్తాంశం.redraw.x = x;
+	దత్తాంశం.redraw.y = y;
+	దత్తాంశం.redraw.వెడల్పు = వెడల్పు;
+	దత్తాంశం.redraw.ఎత్తు = ఎత్తు;
 
-	content_broadcast(c, CONTENT_MSG_REDRAW, &data);
+	content_ప్రసారం(c, CONTENT_సందేశం_REDRAW, &దత్తాంశం);
 }
 
 
 /* exported interface, documented in content/content.h */
-bool content_exec(struct hlcache_handle *h, const char *src, size_t srclen)
+bool content_exec(నిర్మాణం hlcache_handle *h, స్థిరరాశి అక్షరం *src, size_t srclen)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	if (c->locked) {
+	ఒకవేళ (c->locked) {
 		/* Not safe to do stuff */
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, content locked");
-		return false;
+		తిరిగి false;
 	}
 
-	if (c->handler->exec == NULL) {
+	ఒకవేళ (c->handler->exec == ఖాళీ) {
 		/* Can't exec something on this content */
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no exec function");
-		return false;
+		తిరిగి false;
 	}
 
-	return c->handler->exec(c, src, srclen);
+	తిరిగి c->handler->exec(c, src, srclen);
 }
 
 
 /* exported interface, documented in content/content.h */
-bool content_saw_insecure_objects(struct hlcache_handle *h)
+bool content_saw_insecure_objects(నిర్మాణం hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct nsurl *url = hlcache_handle_get_url(h);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	నిర్మాణం nsurl *url = hlcache_handle_get_url(h);
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
-	bool match;
+	bool సరిపోలిక;
 
 	/* Is this an internal scheme? If so, we trust here and stop */
-	if ((lwc_string_isequal(scheme, corestring_lwc_about,
-				&match) == lwc_error_ok &&
-	     (match == true)) ||
-	    (lwc_string_isequal(scheme, corestring_lwc_data,
-				&match) == lwc_error_ok &&
-	     (match == true)) ||
+	ఒకవేళ ((lwc_string_isequal(scheme, corestring_lwc_about,
+				&సరిపోలిక) == lwc_error_ok &&
+	     (సరిపోలిక == true)) ||
+	    (lwc_string_isequal(scheme, corestring_lwc_దత్తాంశం,
+				&సరిపోలిక) == lwc_error_ok &&
+	     (సరిపోలిక == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_resource,
-				&match) == lwc_error_ok &&
-	     (match == true)) ||
+				&సరిపోలిక) == lwc_error_ok &&
+	     (సరిపోలిక == true)) ||
 	    /* Our internal x-ns-css scheme is secure */
 	    (lwc_string_isequal(scheme, corestring_lwc_x_ns_css,
-				&match) == lwc_error_ok &&
-	     (match == true)) ||
+				&సరిపోలిక) == lwc_error_ok &&
+	     (సరిపోలిక == true)) ||
 	    /* We also treat file: as "not insecure" here */
 	    (lwc_string_isequal(scheme, corestring_lwc_file,
-				&match) == lwc_error_ok &&
-	     (match == true))) {
+				&సరిపోలిక) == lwc_error_ok &&
+	     (సరిపోలిక == true))) {
 		/* No insecurity to find */
 		lwc_string_unref(scheme);
-		return false;
+		తిరిగి false;
 	}
 
 	/* Okay, not internal, am *I* secure? */
-	if ((lwc_string_isequal(scheme, corestring_lwc_https,
-				&match) == lwc_error_ok)
-	    && (match == false)) {
+	ఒకవేళ ((lwc_string_isequal(scheme, corestring_lwc_https,
+				&సరిపోలిక) == lwc_error_ok)
+	    && (సరిపోలిక == false)) {
 		/* I did see something insecure -- ME! */
 		lwc_string_unref(scheme);
-		return true;
+		తిరిగి true;
 	}
 
 	lwc_string_unref(scheme);
 	/* I am supposed to be secure, but was I overridden */
-	if (urldb_get_cert_permissions(url)) {
+	ఒకవేళ (urldb_get_cert_permissions(url)) {
 		/* I was https:// but I was overridden, that's no good */
-		return true;
+		తిరిగి true;
 	}
 
 	/* Otherwise try and chain through the handler */
-	if (c != NULL && c->handler->saw_insecure_objects != NULL) {
-		return c->handler->saw_insecure_objects(c);
+	ఒకవేళ (c != ఖాళీ && c->handler->saw_insecure_objects != ఖాళీ) {
+		తిరిగి c->handler->saw_insecure_objects(c);
 	}
 
 	/* If we can't see insecure objects, we can't see them */
-	return false;
+	తిరిగి false;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
 content_redraw(hlcache_handle *h,
-	       struct content_redraw_data *data,
-	       const struct rect *clip,
-	       const struct redraw_context *ctx)
+	       నిర్మాణం content_redraw_దత్తాంశం *దత్తాంశం,
+	       స్థిరరాశి నిర్మాణం rect *clip,
+	       స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	if (c->locked) {
+	ఒకవేళ (c->locked) {
 		/* not safe to attempt redraw */
-		return true;
+		తిరిగి true;
 	}
 
 	/* ensure we have a redrawable content */
-	if (c->handler->redraw == NULL) {
-		return true;
+	ఒకవేళ (c->handler->redraw == ఖాళీ) {
+		తిరిగి true;
 	}
 
-	return c->handler->redraw(c, data, clip, ctx);
+	తిరిగి c->handler->redraw(c, దత్తాంశం, clip, ctx);
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_scaled_redraw(struct hlcache_handle *h,
-		      int width, int height,
-		      const struct redraw_context *ctx)
+content_scaled_redraw(నిర్మాణం hlcache_handle *h,
+		      పూర్ణాంకం వెడల్పు, పూర్ణాంకం ఎత్తు,
+		      స్థిరరాశి నిర్మాణం redraw_context *ctx)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct redraw_context new_ctx = *ctx;
-	struct rect clip;
-	struct content_redraw_data data;
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	నిర్మాణం redraw_context new_ctx = *ctx;
+	నిర్మాణం rect clip;
+	నిర్మాణం content_redraw_దత్తాంశం దత్తాంశం;
 	bool plot_ok = true;
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
 	/* ensure it is safe to attempt redraw */
-	if (c->locked) {
-		return true;
+	ఒకవేళ (c->locked) {
+		తిరిగి true;
 	}
 
 	/* ensure we have a redrawable content */
-	if (c->handler->redraw == NULL) {
-		return true;
+	ఒకవేళ (c->handler->redraw == ఖాళీ) {
+		తిరిగి true;
 	}
 
-	NSLOG(netsurf, INFO, "Content %p %dx%d ctx:%p", c, width, height, ctx);
+	NSLOG(netsurf, INFO, "Content %p %dx%d ctx:%p", c, వెడల్పు, ఎత్తు, ctx);
 
-	if (ctx->plot->option_knockout) {
-		knockout_plot_start(ctx, &new_ctx);
+	ఒకవేళ (ctx->plot->option_knockout) {
+		knockout_plot_ప్రారంభం(ctx, &new_ctx);
 	}
 
 	/* Set clip rectangle to required thumbnail size */
 	clip.x0 = 0;
 	clip.y0 = 0;
-	clip.x1 = width;
-	clip.y1 = height;
+	clip.x1 = వెడల్పు;
+	clip.y1 = ఎత్తు;
 
 	new_ctx.plot->clip(&new_ctx, &clip);
 
@@ -622,165 +622,165 @@ content_scaled_redraw(struct hlcache_handle *h,
 					    &clip) == NSERROR_OK);
 
 	/* Set up content redraw data */
-	data.x = 0;
-	data.y = 0;
-	data.width = width;
-	data.height = height;
+	దత్తాంశం.x = 0;
+	దత్తాంశం.y = 0;
+	దత్తాంశం.వెడల్పు = వెడల్పు;
+	దత్తాంశం.ఎత్తు = ఎత్తు;
 
-	data.background_colour = 0xFFFFFF;
-	data.repeat_x = false;
-	data.repeat_y = false;
+	దత్తాంశం.background_రంగు = 0xFFFFFF;
+	దత్తాంశం.repeat_x = false;
+	దత్తాంశం.repeat_y = false;
 
 	/* Find the scale factor to use if the content has a width */
-	if (c->width) {
-		data.scale = (float)width / (float)c->width;
-	} else {
-		data.scale = 1.0;
+	ఒకవేళ (c->వెడల్పు) {
+		దత్తాంశం.scale = (దశాంశం)వెడల్పు / (దశాంశం)c->వెడల్పు;
+	} లేకపోతే {
+		దత్తాంశం.scale = 1.0;
 	}
 
 	/* Render the content */
-	plot_ok &= c->handler->redraw(c, &data, &clip, &new_ctx);
+	plot_ok &= c->handler->redraw(c, &దత్తాంశం, &clip, &new_ctx);
 
-	if (ctx->plot->option_knockout) {
-		knockout_plot_end(ctx);
+	ఒకవేళ (ctx->plot->option_knockout) {
+		knockout_plot_చివర(ctx);
 	}
 
-	return plot_ok;
+	తిరిగి plot_ok;
 }
 
 
 /* exported interface documented in content/content.h */
 bool
-content_add_user(struct content *c,
-		 void (*callback)(
-				  struct content *c,
-				  content_msg msg,
-				  const union content_msg_data *data,
-				  void *pw),
-		 void *pw)
+content_కూడు_user(నిర్మాణం content *c,
+		 శూన్య (*callback)(
+				  నిర్మాణం content *c,
+				  content_సందేశం సందేశం,
+				  స్థిరరాశి సంఘం content_సందేశం_దత్తాంశం *దత్తాంశం,
+				  శూన్య *pw),
+		 శూన్య *pw)
 {
-	struct content_user *user;
+	నిర్మాణం content_user *user;
 
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p), user %p %p",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)),
 	      c, callback, pw);
-	user = malloc(sizeof(struct content_user));
-	if (!user)
-		return false;
+	user = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం content_user));
+	ఒకవేళ (!user)
+		తిరిగి false;
 	user->callback = callback;
 	user->pw = pw;
-	user->next = c->user_list->next;
-	c->user_list->next = user;
+	user->తదుపరి = c->user_list->తదుపరి;
+	c->user_list->తదుపరి = user;
 
-	if (c->handler->add_user != NULL)
-		c->handler->add_user(c);
+	ఒకవేళ (c->handler->కూడు_user != ఖాళీ)
+		c->handler->కూడు_user(c);
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* exported interface documented in content/content.h */
-void
-content_remove_user(struct content *c,
-		    void (*callback)(
-				     struct content *c,
-				     content_msg msg,
-				     const union content_msg_data *data,
-				     void *pw),
-		    void *pw)
+శూన్య
+content_remove_user(నిర్మాణం content *c,
+		    శూన్య (*callback)(
+				     నిర్మాణం content *c,
+				     content_సందేశం సందేశం,
+				     స్థిరరాశి సంఘం content_సందేశం_దత్తాంశం *దత్తాంశం,
+				     శూన్య *pw),
+		    శూన్య *pw)
 {
-	struct content_user *user, *next;
+	నిర్మాణం content_user *user, *తదుపరి;
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p), user %p %p",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)),
 	      c, callback, pw);
 
 	/* user_list starts with a sentinel */
-	for (user = c->user_list; user->next != 0 &&
-		     !(user->next->callback == callback &&
-		       user->next->pw == pw); user = user->next)
+	కొరకు (user = c->user_list; user->తదుపరి != 0 &&
+		     !(user->తదుపరి->callback == callback &&
+		       user->తదుపరి->pw == pw); user = user->తదుపరి)
 		;
-	if (user->next == 0) {
+	ఒకవేళ (user->తదుపరి == 0) {
 		NSLOG(netsurf, INFO, "user not found in list");
-		assert(0);
-		return;
+		ప్రతిజ్ఞా(0);
+		తిరిగి;
 	}
 
-	if (c->handler->remove_user != NULL)
+	ఒకవేళ (c->handler->remove_user != ఖాళీ)
 		c->handler->remove_user(c);
 
-	next = user->next;
-	user->next = next->next;
-	free(next);
+	తదుపరి = user->తదుపరి;
+	user->తదుపరి = తదుపరి->తదుపరి;
+	విడుదల(తదుపరి);
 }
 
 
 /* exported interface documented in content/content.h */
-uint32_t content_count_users(struct content *c)
+uint32_t content_లెక్క_users(నిర్మాణం content *c)
 {
-	struct content_user *user;
+	నిర్మాణం content_user *user;
 	uint32_t counter = 0;
 
-	assert(c != NULL);
+	ప్రతిజ్ఞా(c != ఖాళీ);
 
-	for (user = c->user_list; user != NULL; user = user->next)
+	కొరకు (user = c->user_list; user != ఖాళీ; user = user->తదుపరి)
 		counter += 1;
 
-	assert(counter > 0);
+	ప్రతిజ్ఞా(counter > 0);
 
-	return counter - 1; /* Subtract 1 for the sentinel */
+	తిరిగి counter - 1; /* Subtract 1 for the sentinel */
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_matches_quirks(struct content *c, bool quirks)
+bool content_matches_quirks(నిర్మాణం content *c, bool quirks)
 {
-	if (c->handler->matches_quirks == NULL)
-		return true;
+	ఒకవేళ (c->handler->matches_quirks == ఖాళీ)
+		తిరిగి true;
 
-	return c->handler->matches_quirks(c, quirks);
+	తిరిగి c->handler->matches_quirks(c, quirks);
 }
 
 
 /* exported interface documented in content/content.h */
-bool content_is_shareable(struct content *c)
+bool content_is_shareable(నిర్మాణం content *c)
 {
-	return c->handler->no_share == false;
+	తిరిగి c->handler->no_share == false;
 }
 
 
 /* exported interface documented in content/protected.h */
-void content_broadcast(struct content *c, content_msg msg,
-		       const union content_msg_data *data)
+శూన్య content_ప్రసారం(నిర్మాణం content *c, content_సందేశం సందేశం,
+		       స్థిరరాశి సంఘం content_సందేశం_దత్తాంశం *దత్తాంశం)
 {
-	struct content_user *user, *next;
-	assert(c);
+	నిర్మాణం content_user *user, *తదుపరి;
+	ప్రతిజ్ఞా(c);
 
-	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, msg);
-	for (user = c->user_list->next; user != 0; user = next) {
-		next = user->next;  /* user may be destroyed during callback */
-		if (user->callback != 0)
-			user->callback(c, msg, data, user->pw);
+	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, సందేశం);
+	కొరకు (user = c->user_list->తదుపరి; user != 0; user = తదుపరి) {
+		తదుపరి = user->తదుపరి;  /* user may be destroyed during callback */
+		ఒకవేళ (user->callback != 0)
+			user->callback(c, సందేశం, దత్తాంశం, user->pw);
 	}
 }
 
 
 /* exported interface documented in content_protected.h */
-void
-content_broadcast_error(struct content *c, nserror errorcode, const char *msg)
+శూన్య
+content_ప్రసారం_error(నిర్మాణం content *c, nserror errorcode, స్థిరరాశి అక్షరం *సందేశం)
 {
-	struct content_user *user, *next;
-	union content_msg_data data;
+	నిర్మాణం content_user *user, *తదుపరి;
+	సంఘం content_సందేశం_దత్తాంశం దత్తాంశం;
 
-	assert(c);
+	ప్రతిజ్ఞా(c);
 
-	data.errordata.errorcode = errorcode;
-	data.errordata.errormsg = msg;
+	దత్తాంశం.errordata.errorcode = errorcode;
+	దత్తాంశం.errordata.errormsg = సందేశం;
 
-	for (user = c->user_list->next; user != 0; user = next) {
-		next = user->next;  /* user may be destroyed during callback */
-		if (user->callback != 0) {
-			user->callback(c, CONTENT_MSG_ERROR,
-				       &data, user->pw);
+	కొరకు (user = c->user_list->తదుపరి; user != 0; user = తదుపరి) {
+		తదుపరి = user->తదుపరి;  /* user may be destroyed during callback */
+		ఒకవేళ (user->callback != 0) {
+			user->callback(c, CONTENT_సందేశం_ERROR,
+				       &దత్తాంశం, user->pw);
 		}
 	}
 }
@@ -789,192 +789,192 @@ content_broadcast_error(struct content *c, nserror errorcode, const char *msg)
 /* exported interface, documented in content/content.h */
 nserror
 content_open(hlcache_handle *h,
-	     struct browser_window *bw,
-	     struct content *page,
-	     struct object_params *params)
+	     నిర్మాణం browser_కిటికీ *bw,
+	     నిర్మాణం content *పుట,
+	     నిర్మాణం object_params *params)
 {
-	struct content *c;
+	నిర్మాణం content *c;
 	nserror res;
 
 	c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ప్రతిజ్ఞా(c != 0);
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
-	if (c->handler->open != NULL) {
-		res = c->handler->open(c, bw, page, params);
-	} else {
+	ఒకవేళ (c->handler->open != ఖాళీ) {
+		res = c->handler->open(c, bw, పుట, params);
+	} లేకపోతే {
 		res = NSERROR_OK;
 	}
-	return res;
+	తిరిగి res;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror content_close(hlcache_handle *h)
 {
-	struct content *c;
+	నిర్మాణం content *c;
 	nserror res;
 
 	c = hlcache_handle_get_content(h);
-	if (c == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	ఒకవేళ (c == ఖాళీ) {
+		తిరిగి NSERROR_BAD_PARAMETER;
 	}
 
-	if ((c->status != CONTENT_STATUS_READY) &&
-	    (c->status != CONTENT_STATUS_DONE)) {
+	ఒకవేళ ((c->స్థితి_2 != CONTENT_స్థితి_READY) &&
+	    (c->స్థితి_2 != CONTENT_స్థితి_పూర్తి)) {
 		/* status is not read or done so nothing to do */
-		return NSERROR_INVALID;
+		తిరిగి NSERROR_INVALID;
 	}
 
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
 
-	if (c->textsearch.context != NULL) {
+	ఒకవేళ (c->textsearch.context != ఖాళీ) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = ఖాళీ;
 	}
 
-	if (c->handler->close != NULL) {
+	ఒకవేళ (c->handler->close != ఖాళీ) {
 		res = c->handler->close(c);
-	} else {
+	} లేకపోతే {
 		res = NSERROR_OK;
 	}
-	return res;
+	తిరిగి res;
 }
 
 
 /* exported interface, documented in content/content.h */
-void content_clear_selection(hlcache_handle *h)
+శూన్య content_clear_selection(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != 0);
 
-	if (c->handler->get_selection != NULL)
+	ఒకవేళ (c->handler->get_selection != ఖాళీ)
 		c->handler->clear_selection(c);
 }
 
 
 /* exported interface, documented in content/content.h */
-char * content_get_selection(hlcache_handle *h)
+అక్షరం * content_get_selection(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != 0);
 
-	if (c->handler->get_selection != NULL)
-		return c->handler->get_selection(c);
-	else
-		return NULL;
+	ఒకవేళ (c->handler->get_selection != ఖాళీ)
+		తిరిగి c->handler->get_selection(c);
+	లేకపోతే
+		తిరిగి ఖాళీ;
 }
 
 
 /* exported interface documented in content/content.h */
 nserror
-content_get_contextual_content(struct hlcache_handle *h,
-			       int x, int y,
-			       struct browser_window_features *data)
+content_get_contextual_content(నిర్మాణం hlcache_handle *h,
+			       పూర్ణాంకం x, పూర్ణాంకం y,
+			       నిర్మాణం browser_కిటికీ_features *దత్తాంశం)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != 0);
 
-	if (c->handler->get_contextual_content != NULL) {
-		return c->handler->get_contextual_content(c, x, y, data);
+	ఒకవేళ (c->handler->get_contextual_content != ఖాళీ) {
+		తిరిగి c->handler->get_contextual_content(c, x, y, దత్తాంశం);
 	}
 
-	data->object = h;
-	return NSERROR_OK;
+	దత్తాంశం->object = h;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_scroll_at_point(struct hlcache_handle *h,
-			int x, int y,
-			int scrx, int scry)
+content_scroll_at_బిందువు(నిర్మాణం hlcache_handle *h,
+			పూర్ణాంకం x, పూర్ణాంకం y,
+			పూర్ణాంకం scrx, పూర్ణాంకం scry)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != 0);
 
-	if (c->handler->scroll_at_point != NULL)
-		return c->handler->scroll_at_point(c, x, y, scrx, scry);
+	ఒకవేళ (c->handler->scroll_at_బిందువు != ఖాళీ)
+		తిరిగి c->handler->scroll_at_బిందువు(c, x, y, scrx, scry);
 
-	return false;
+	తిరిగి false;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
-content_drop_file_at_point(struct hlcache_handle *h,
-			   int x, int y,
-			   char *file)
+content_drop_file_at_బిందువు(నిర్మాణం hlcache_handle *h,
+			   పూర్ణాంకం x, పూర్ణాంకం y,
+			   అక్షరం *file)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != 0);
 
-	if (c->handler->drop_file_at_point != NULL)
-		return c->handler->drop_file_at_point(c, x, y, file);
+	ఒకవేళ (c->handler->drop_file_at_బిందువు != ఖాళీ)
+		తిరిగి c->handler->drop_file_at_బిందువు(c, x, y, file);
 
-	return false;
+	తిరిగి false;
 }
 
 
 /* exported interface documented in content/content.h */
 nserror
-content_debug_dump(struct hlcache_handle *h, FILE *f, enum content_debug op)
+content_debug_dump(నిర్మాణం hlcache_handle *h, FILE *f, గణన content_debug op)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	ప్రతిజ్ఞా(c != 0);
 
-	if (c->handler->debug_dump == NULL) {
-		return NSERROR_NOT_IMPLEMENTED;
+	ఒకవేళ (c->handler->debug_dump == ఖాళీ) {
+		తిరిగి NSERROR_NOT_IMPLEMENTED;
 	}
 
-	return c->handler->debug_dump(c, f, op);
+	తిరిగి c->handler->debug_dump(c, f, op);
 }
 
 
 /* exported interface documented in content/content.h */
-nserror content_debug(struct hlcache_handle *h, enum content_debug op)
+nserror content_debug(నిర్మాణం hlcache_handle *h, గణన content_debug op)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	ఒకవేళ (c == ఖాళీ) {
+		తిరిగి NSERROR_BAD_PARAMETER;
 	}
 
-	if (c->handler->debug == NULL) {
-		return NSERROR_NOT_IMPLEMENTED;
+	ఒకవేళ (c->handler->debug == ఖాళీ) {
+		తిరిగి NSERROR_NOT_IMPLEMENTED;
 	}
 
-	return c->handler->debug(c, op);
+	తిరిగి c->handler->debug(c, op);
 }
 
 
 /* exported interface documented in content/content.h */
-struct content_rfc5988_link *
-content_find_rfc5988_link(hlcache_handle *h, lwc_string *rel)
+నిర్మాణం content_rfc5988_link *
+content_కనుగొను_rfc5988_link(hlcache_handle *h, lwc_string *rel)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	struct content_rfc5988_link *link = c->links;
-	bool rel_match = false;
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
+	నిర్మాణం content_rfc5988_link *link = c->links;
+	bool rel_సరిపోలిక = false;
 
-	while (link != NULL) {
-		if (lwc_string_caseless_isequal(link->rel, rel,
-						&rel_match) == lwc_error_ok && rel_match) {
-			break;
+	అయితే (link != ఖాళీ) {
+		ఒకవేళ (lwc_string_caseless_isequal(link->rel, rel,
+						&rel_సరిపోలిక) == lwc_error_ok && rel_సరిపోలిక) {
+			ఆపు;
 		}
-		link = link->next;
+		link = link->తదుపరి;
 	}
-	return link;
+	తిరిగి link;
 }
 
 
 /* exported interface documented in content/protected.h */
-struct content_rfc5988_link *
-content__free_rfc5988_link(struct content_rfc5988_link *link)
+నిర్మాణం content_rfc5988_link *
+content__free_rfc5988_link(నిర్మాణం content_rfc5988_link *link)
 {
-	struct content_rfc5988_link *next;
+	నిర్మాణం content_rfc5988_link *తదుపరి;
 
-	next = link->next;
+	తదుపరి = link->తదుపరి;
 
 	nsurl_unref(link->href);
 	lwc_string_unref(link->rel);
@@ -982,402 +982,402 @@ content__free_rfc5988_link(struct content_rfc5988_link *link)
 	lwc_string_unref(link->type);
 	lwc_string_unref(link->media);
 	lwc_string_unref(link->sizes);
-	free(link);
+	విడుదల(link);
 
-	return next;
+	తిరిగి తదుపరి;
 }
 
 
 /* exported interface documented in content/protected.h */
 bool
-content__add_rfc5988_link(struct content *c,
-			  const struct content_rfc5988_link *link)
+content_కూడు_rfc5988_link(నిర్మాణం content *c,
+			  స్థిరరాశి నిర్మాణం content_rfc5988_link *link)
 {
-	struct content_rfc5988_link *newlink;
-	union content_msg_data msg_data;
+	నిర్మాణం content_rfc5988_link *newlink;
+	సంఘం content_సందేశం_దత్తాంశం సందేశం_దత్తాంశం;
 
 	/* a link relation must be present for it to be a link */
-	if (link->rel == NULL) {
-		return false;
+	ఒకవేళ (link->rel == ఖాళీ) {
+		తిరిగి false;
 	}
 
 	/* a link href must be present for it to be a link */
-	if (link->href == NULL) {
-		return false;
+	ఒకవేళ (link->href == ఖాళీ) {
+		తిరిగి false;
 	}
 
-	newlink = calloc(1, sizeof(struct content_rfc5988_link));
-	if (newlink == NULL) {
-		return false;
+	newlink = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content_rfc5988_link));
+	ఒకవేళ (newlink == ఖాళీ) {
+		తిరిగి false;
 	}
 
 	/* copy values */
 	newlink->rel = lwc_string_ref(link->rel);
 	newlink->href = nsurl_ref(link->href);
-	if (link->hreflang != NULL) {
+	ఒకవేళ (link->hreflang != ఖాళీ) {
 		newlink->hreflang = lwc_string_ref(link->hreflang);
 	}
-	if (link->type != NULL) {
+	ఒకవేళ (link->type != ఖాళీ) {
 		newlink->type = lwc_string_ref(link->type);
 	}
-	if (link->media != NULL) {
+	ఒకవేళ (link->media != ఖాళీ) {
 		newlink->media = lwc_string_ref(link->media);
 	}
-	if (link->sizes != NULL) {
+	ఒకవేళ (link->sizes != ఖాళీ) {
 		newlink->sizes = lwc_string_ref(link->sizes);
 	}
 
 	/* add to metadata link to list */
-	newlink->next = c->links;
+	newlink->తదుపరి = c->links;
 	c->links = newlink;
 
 	/* broadcast the data */
-	msg_data.rfc5988_link = newlink;
-	content_broadcast(c, CONTENT_MSG_LINK, &msg_data);
+	సందేశం_దత్తాంశం.rfc5988_link = newlink;
+	content_ప్రసారం(c, CONTENT_సందేశం_LINK, &సందేశం_దత్తాంశం);
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* exported interface documented in content/content.h */
-nsurl *content_get_url(struct content *c)
+nsurl *content_get_url(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	return llcache_handle_get_url(c->llcache);
+	తిరిగి llcache_handle_get_url(c->llcache);
 }
 
 
 /* exported interface documented in content/content.h */
 content_type content_get_type(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return CONTENT_NONE;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి CONTENT_NONE;
 
-	return c->handler->type();
+	తిరిగి c->handler->type();
 }
 
 
 /* exported interface documented in content/content.h */
 lwc_string *content_get_mime_type(hlcache_handle *h)
 {
-	return content__get_mime_type(hlcache_handle_get_content(h));
+	తిరిగి content__get_mime_type(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-lwc_string *content__get_mime_type(struct content *c)
+lwc_string *content__get_mime_type(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	return lwc_string_ref(c->mime_type);
+	తిరిగి lwc_string_ref(c->mime_type);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__set_title(struct content *c, const char *title)
+bool content_సమితి_title(నిర్మాణం content *c, స్థిరరాశి అక్షరం *title)
 {
-	char *new_title = strdup(title);
-	if (new_title == NULL)
-		return false;
+	అక్షరం *new_title = strdup(title);
+	ఒకవేళ (new_title == ఖాళీ)
+		తిరిగి false;
 
-	if (c->title != NULL)
-		free(c->title);
+	ఒకవేళ (c->title != ఖాళీ)
+		విడుదల(c->title);
 
 	c->title = new_title;
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *content_get_title(hlcache_handle *h)
+స్థిరరాశి అక్షరం *content_get_title(hlcache_handle *h)
 {
-	return content__get_title(hlcache_handle_get_content(h));
+	తిరిగి content__get_title(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *content__get_title(struct content *c)
+స్థిరరాశి అక్షరం *content__get_title(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	return c->title != NULL ? c->title :
+	తిరిగి c->title != ఖాళీ ? c->title :
 		nsurl_access(llcache_handle_get_url(c->llcache));
 }
 
 
 /* exported interface documented in content/content.h */
-content_status content_get_status(hlcache_handle *h)
+content_స్థితి content_get_స్థితి(hlcache_handle *h)
 {
-	return content__get_status(hlcache_handle_get_content(h));
+	తిరిగి content_get_స్థితి_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-content_status content__get_status(struct content *c)
+content_స్థితి content_get_స్థితి_2(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return CONTENT_STATUS_ERROR;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి CONTENT_స్థితి_ERROR;
 
-	return c->status;
+	తిరిగి c->స్థితి_2;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *content_get_status_message(hlcache_handle *h)
+స్థిరరాశి అక్షరం *content_get_స్థితి_సందేశం(hlcache_handle *h)
 {
-	return content__get_status_message(hlcache_handle_get_content(h));
+	తిరిగి content_get_స్థితి_సందేశం_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *content__get_status_message(struct content *c)
+స్థిరరాశి అక్షరం *content_get_స్థితి_సందేశం_2(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	return c->status_message;
+	తిరిగి c->స్థితి_సందేశం;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_width(hlcache_handle *h)
+పూర్ణాంకం content_get_వెడల్పు(hlcache_handle *h)
 {
-	return content__get_width(hlcache_handle_get_content(h));
+	తిరిగి content_get_వెడల్పు_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_width(struct content *c)
+పూర్ణాంకం content_get_వెడల్పు_2(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return 0;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి 0;
 
-	return c->width;
+	తిరిగి c->వెడల్పు;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_height(hlcache_handle *h)
+పూర్ణాంకం content_get_ఎత్తు(hlcache_handle *h)
 {
-	return content__get_height(hlcache_handle_get_content(h));
+	తిరిగి content_get_ఎత్తు_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_height(struct content *c)
+పూర్ణాంకం content_get_ఎత్తు_2(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return 0;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి 0;
 
-	return c->height;
+	తిరిగి c->ఎత్తు;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_available_width(hlcache_handle *h)
+పూర్ణాంకం content_get_అందుబాటు_వెడల్పు(hlcache_handle *h)
 {
-	return content__get_available_width(hlcache_handle_get_content(h));
+	తిరిగి content_get_అందుబాటు_వెడల్పు_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_available_width(struct content *c)
+పూర్ణాంకం content_get_అందుబాటు_వెడల్పు_2(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return 0;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి 0;
 
-	return c->available_width;
+	తిరిగి c->అందుబాటు_వెడల్పు;
 }
 
 
 /* exported interface documented in content/content.h */
-const uint8_t *content_get_source_data(hlcache_handle *h, size_t *size)
+స్థిరరాశి uint8_t *content_get_ఆధారం_దత్తాంశం(hlcache_handle *h, size_t *కొలత)
 {
-	return content__get_source_data(hlcache_handle_get_content(h), size);
+	తిరిగి content_get_ఆధారం_దత్తాంశం_2(hlcache_handle_get_content(h), కొలత);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const uint8_t *content__get_source_data(struct content *c, size_t *size)
+స్థిరరాశి uint8_t *content_get_ఆధారం_దత్తాంశం_2(నిర్మాణం content *c, size_t *కొలత)
 {
-	assert(size != NULL);
+	ప్రతిజ్ఞా(కొలత != ఖాళీ);
 
 	/** \todo check if the content check should be an assert */
-	if (c == NULL)
-		return NULL;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	return llcache_handle_get_source_data(c->llcache, size);
+	తిరిగి llcache_handle_get_ఆధారం_దత్తాంశం(c->llcache, కొలత);
 }
 
 
 /* exported interface documented in content/content.h */
-void content_invalidate_reuse_data(hlcache_handle *h)
+శూన్య content_invalidate_reuse_దత్తాంశం(hlcache_handle *h)
 {
-	content__invalidate_reuse_data(hlcache_handle_get_content(h));
+	content_invalidate_reuse_దత్తాంశం_2(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-void content__invalidate_reuse_data(struct content *c)
+శూన్య content_invalidate_reuse_దత్తాంశం_2(నిర్మాణం content *c)
 {
-	if (c == NULL || c->llcache == NULL)
-		return;
+	ఒకవేళ (c == ఖాళీ || c->llcache == ఖాళీ)
+		తిరిగి;
 
 	/* Invalidate low-level cache data */
-	llcache_handle_invalidate_cache_data(c->llcache);
+	llcache_handle_invalidate_cache_దత్తాంశం(c->llcache);
 }
 
 
 /* exported interface documented in content/content.h */
 nsurl *content_get_refresh_url(hlcache_handle *h)
 {
-	return content__get_refresh_url(hlcache_handle_get_content(h));
+	తిరిగి content__get_refresh_url(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-nsurl *content__get_refresh_url(struct content *c)
+nsurl *content__get_refresh_url(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	return c->refresh;
+	తిరిగి c->refresh;
 }
 
 
 /* exported interface documented in content/content.h */
-struct bitmap *content_get_bitmap(hlcache_handle *h)
+నిర్మాణం bitmap *content_get_bitmap(hlcache_handle *h)
 {
-	return content__get_bitmap(hlcache_handle_get_content(h));
+	తిరిగి content__get_bitmap(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-struct bitmap *content__get_bitmap(struct content *c)
+నిర్మాణం bitmap *content__get_bitmap(నిర్మాణం content *c)
 {
-	struct bitmap *bitmap = NULL;
+	నిర్మాణం bitmap *bitmap = ఖాళీ;
 
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->type != NULL) &&
+	ఒకవేళ ((c != ఖాళీ) &&
+	    (c->handler != ఖాళీ) &&
+	    (c->handler->type != ఖాళీ) &&
 	    (c->handler->type() == CONTENT_IMAGE) &&
-	    (c->handler->get_internal != NULL) ) {
-		bitmap = c->handler->get_internal(c, NULL);
+	    (c->handler->get_అంతర్గత != ఖాళీ) ) {
+		bitmap = c->handler->get_అంతర్గత(c, ఖాళీ);
 	}
 
-	return bitmap;
+	తిరిగి bitmap;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_get_opaque(hlcache_handle *h)
 {
-	return content__get_opaque(hlcache_handle_get_content(h));
+	తిరిగి content__get_opaque(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__get_opaque(struct content *c)
+bool content__get_opaque(నిర్మాణం content *c)
 {
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->is_opaque != NULL)) {
-		return c->handler->is_opaque(c);
+	ఒకవేళ ((c != ఖాళీ) &&
+	    (c->handler != ఖాళీ) &&
+	    (c->handler->is_opaque != ఖాళీ)) {
+		తిరిగి c->handler->is_opaque(c);
 	}
 
-	return false;
+	తిరిగి false;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_get_quirks(hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	నిర్మాణం content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return false;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి false;
 
-	return c->quirks;
+	తిరిగి c->quirks;
 }
 
 
 /* exported interface documented in content/content.h */
-const char *
-content_get_encoding(hlcache_handle *h, enum content_encoding_type op)
+స్థిరరాశి అక్షరం *
+content_get_encoding(hlcache_handle *h, గణన content_encoding_type op)
 {
-	return content__get_encoding(hlcache_handle_get_content(h), op);
+	తిరిగి content__get_encoding(hlcache_handle_get_content(h), op);
 }
 
 
 /* exported interface documented in content/content_protected.h */
-const char *
-content__get_encoding(struct content *c, enum content_encoding_type op)
+స్థిరరాశి అక్షరం *
+content__get_encoding(నిర్మాణం content *c, గణన content_encoding_type op)
 {
-	const char *encoding = NULL;
+	స్థిరరాశి అక్షరం *encoding = ఖాళీ;
 
-	if ((c != NULL) &&
-	    (c->handler != NULL) &&
-	    (c->handler->get_encoding != NULL) ) {
+	ఒకవేళ ((c != ఖాళీ) &&
+	    (c->handler != ఖాళీ) &&
+	    (c->handler->get_encoding != ఖాళీ) ) {
 		encoding = c->handler->get_encoding(c, op);
 	}
 
-	return encoding;
+	తిరిగి encoding;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_is_locked(hlcache_handle *h)
 {
-	return content__is_locked(hlcache_handle_get_content(h));
+	తిరిగి content__is_locked(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-bool content__is_locked(struct content *c)
+bool content__is_locked(నిర్మాణం content *c)
 {
-	return c->locked;
+	తిరిగి c->locked;
 }
 
 
 /* exported interface documented in content/content.h */
-const llcache_handle *content_get_llcache_handle(struct content *c)
+స్థిరరాశి llcache_handle *content_get_llcache_handle(నిర్మాణం content *c)
 {
-	if (c == NULL)
-		return NULL;
+	ఒకవేళ (c == ఖాళీ)
+		తిరిగి ఖాళీ;
 
-	return c->llcache;
+	తిరిగి c->llcache;
 }
 
 
 /* exported interface documented in content/protected.h */
-struct content *content_clone(struct content *c)
+నిర్మాణం content *content_clone(నిర్మాణం content *c)
 {
-	struct content *nc;
+	నిర్మాణం content *nc;
 	nserror error;
 
 	error = c->handler->clone(c, &nc);
-	if (error != NSERROR_OK)
-		return NULL;
+	ఒకవేళ (error != NSERROR_OK)
+		తిరిగి ఖాళీ;
 
-	return nc;
+	తిరిగి nc;
 };
 
 
 /* exported interface documented in content/protected.h */
-nserror content__clone(const struct content *c, struct content *nc)
+nserror content__clone(స్థిరరాశి నిర్మాణం content *c, నిర్మాణం content *nc)
 {
 	nserror error;
 
 	error = llcache_handle_clone(c->llcache, &(nc->llcache));
-	if (error != NSERROR_OK) {
-		return error;
+	ఒకవేళ (error != NSERROR_OK) {
+		తిరిగి error;
 	}
 
 	llcache_handle_change_callback(nc->llcache,
@@ -1386,64 +1386,64 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nc->mime_type = lwc_string_ref(c->mime_type);
 	nc->handler = c->handler;
 
-	nc->status = c->status;
+	nc->స్థితి_2 = c->స్థితి_2;
 
-	nc->width = c->width;
-	nc->height = c->height;
-	nc->available_width = c->available_width;
+	nc->వెడల్పు = c->వెడల్పు;
+	nc->ఎత్తు = c->ఎత్తు;
+	nc->అందుబాటు_వెడల్పు = c->అందుబాటు_వెడల్పు;
 	nc->quirks = c->quirks;
 
-	if (c->fallback_charset != NULL) {
+	ఒకవేళ (c->fallback_charset != ఖాళీ) {
 		nc->fallback_charset = strdup(c->fallback_charset);
-		if (nc->fallback_charset == NULL) {
-			return NSERROR_NOMEM;
+		ఒకవేళ (nc->fallback_charset == ఖాళీ) {
+			తిరిగి NSERROR_NOMEM;
 		}
 	}
 
-	if (c->refresh != NULL) {
+	ఒకవేళ (c->refresh != ఖాళీ) {
 		nc->refresh = nsurl_ref(c->refresh);
-		if (nc->refresh == NULL) {
-			return NSERROR_NOMEM;
+		ఒకవేళ (nc->refresh == ఖాళీ) {
+			తిరిగి NSERROR_NOMEM;
 		}
 	}
 
 	nc->time = c->time;
-	nc->reformat_time = c->reformat_time;
-	nc->size = c->size;
+	nc->reformat_సమయం = c->reformat_సమయం;
+	nc->కొలత = c->కొలత;
 
-	if (c->title != NULL) {
+	ఒకవేళ (c->title != ఖాళీ) {
 		nc->title = strdup(c->title);
-		if (nc->title == NULL) {
-			return NSERROR_NOMEM;
+		ఒకవేళ (nc->title == ఖాళీ) {
+			తిరిగి NSERROR_NOMEM;
 		}
 	}
 
-	nc->active = c->active;
+	nc->చురుకైన = c->చురుకైన;
 
-	nc->user_list = calloc(1, sizeof(struct content_user));
-	if (nc->user_list == NULL) {
-		return NSERROR_NOMEM;
+	nc->user_list = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం content_user));
+	ఒకవేళ (nc->user_list == ఖాళీ) {
+		తిరిగి NSERROR_NOMEM;
 	}
 
-	memcpy(&(nc->status_message), &(c->status_message), 120);
-	memcpy(&(nc->sub_status), &(c->sub_status), 80);
+	జ్ఞాపకం_నకలు(&(nc->స్థితి_సందేశం), &(c->స్థితి_సందేశం), 120);
+	జ్ఞాపకం_నకలు(&(nc->sub_స్థితి), &(c->sub_స్థితి), 80);
 
 	nc->locked = c->locked;
-	nc->total_size = c->total_size;
-	nc->http_code = c->http_code;
+	nc->మొత్తం_కొలత = c->మొత్తం_కొలత;
+	nc->http_సంకేతం = c->http_సంకేతం;
 
-	return NSERROR_OK;
+	తిరిగి NSERROR_OK;
 }
 
 
 /* exported interface documented in content/content.h */
-nserror content_abort(struct content *c)
+nserror content_abort(నిర్మాణం content *c)
 {
 	NSLOG(netsurf, INFO, "Aborting %p", c);
 
-	if (c->handler->stop != NULL)
+	ఒకవేళ (c->handler->stop != ఖాళీ)
 		c->handler->stop(c);
 
 	/* And for now, abort our llcache object */
-	return llcache_handle_abort(c->llcache);
+	తిరిగి llcache_handle_abort(c->llcache);
 }

@@ -20,9 +20,9 @@
  * javascript scheme handler
  */
 
-#ifndef NETSURF_JAVASCRIPT_FETCHER_H
-#define NETSURF_JAVASCRIPT_FETCHER_H
+#నిర్వచితం_కాకపోతే NETSURF_JAVASCRIPT_FETCHER_H
+#నిర్వచించు NETSURF_JAVASCRIPT_FETCHER_H
 
-nserror fetch_javascript_register(void);
+nserror fetch_javascript_రిజిస్టరు(శూన్య);
 
-#endif
+#అయితే_ముగింపు

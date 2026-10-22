@@ -22,37 +22,37 @@
  * implementation of box tree inspection.
  */
 
-#include <stdio.h>
-#include <dom/dom.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <dom/dom.h>
 
-#include "utils/utils.h"
-#include "utils/nsurl.h"
-#include "utils/errors.h"
-#include "netsurf/types.h"
-#include "netsurf/content.h"
-#include "netsurf/mouse.h"
-#include "css/utils.h"
-#include "css/dump.h"
-#include "desktop/scrollbar.h"
+#అన్తర్భావ "utils/utils.h"
+#అన్తర్భావ "utils/nsurl.h"
+#అన్తర్భావ "utils/errors.h"
+#అన్తర్భావ "netsurf/types.h"
+#అన్తర్భావ "netsurf/content.h"
+#అన్తర్భావ "netsurf/mouse.h"
+#అన్తర్భావ "css/utils.h"
+#అన్తర్భావ "css/dump.h"
+#అన్తర్భావ "desktop/scrollbar.h"
 
-#include "html/private.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
+#అన్తర్భావ "html/private.h"
+#అన్తర్భావ "html/box.h"
+#అన్తర్భావ "html/box_inspect.h"
 
 /**
  * Direction to move in a box-tree walk
  */
-enum box_walk_dir {
+గణన box_walk_dir {
 		   BOX_WALK_CHILDREN,
-		   BOX_WALK_PARENT,
-		   BOX_WALK_NEXT_SIBLING,
+		   BOX_WALK_మాతృ,
+		   BOX_WALK_తదుపరి_SIBLING,
 		   BOX_WALK_FLOAT_CHILDREN,
-		   BOX_WALK_NEXT_FLOAT_SIBLING,
+		   BOX_WALK_తదుపరి_FLOAT_SIBLING,
 		   BOX_WALK_FLOAT_CONTAINER
 };
 
-#define box_is_float(box) (box->type == BOX_FLOAT_LEFT ||	\
-			   box->type == BOX_FLOAT_RIGHT)
+#నిర్వచించు box_is_float(box) (box->type == BOX_FLOAT_ఎడమ ||	\
+			   box->type == BOX_FLOAT_కుడి)
 
 /**
  * Determine if a point lies within a box.
@@ -71,60 +71,60 @@ enum box_walk_dir {
  *
  * This is a helper function for box_at_point().
  */
-static bool
-box_contains_point(const css_unit_ctx *unit_len_ctx,
-		   const struct box *box,
-		   int x,
-		   int y,
+స్థిర bool
+box_కలిగియుంది_బిందువు(స్థిరరాశి css_unit_ctx *unit_len_ctx,
+		   స్థిరరాశి నిర్మాణం box *box,
+		   పూర్ణాంకం x,
+		   పూర్ణాంకం y,
 		   bool *physically)
 {
 	css_computed_clip_rect css_rect;
 
-	if (box->style != NULL &&
+	ఒకవేళ (box->style != ఖాళీ &&
 	    css_computed_position(box->style) == CSS_POSITION_ABSOLUTE &&
 	    css_computed_clip(box->style, &css_rect) == CSS_CLIP_RECT) {
 		/* We have an absolutly positioned box with a clip rect */
-		struct rect r = {
-				 .x0 = box->border[LEFT].width,
-				 .y0 = box->border[TOP].width,
-				 .x1 = box->padding[LEFT] + box->width +
-				 box->border[RIGHT].width +
-				 box->padding[RIGHT],
-				 .y1 = box->padding[TOP] + box->height +
-				 box->border[BOTTOM].width +
+		నిర్మాణం rect r = {
+				 .x0 = box->border[ఎడమ_2].వెడల్పు,
+				 .y0 = box->border[శిఖరం_2].వెడల్పు,
+				 .x1 = box->padding[ఎడమ_2] + box->వెడల్పు +
+				 box->border[కుడి_2].వెడల్పు +
+				 box->padding[కుడి_2],
+				 .y1 = box->padding[శిఖరం_2] + box->ఎత్తు +
+				 box->border[BOTTOM].వెడల్పు +
 				 box->padding[BOTTOM]
 		};
-		if (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
+		ఒకవేళ (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
 			*physically = true;
-		} else {
+		} లేకపోతే {
 			*physically = false;
 		}
 
 		/* Adjust rect to css clip region */
-		if (css_rect.left_auto == false) {
+		ఒకవేళ (css_rect.ఎడమ_auto == false) {
 			r.x0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.left,
+						css_rect.ఎడమ,
 						css_rect.lunit));
 		}
-		if (css_rect.top_auto == false) {
+		ఒకవేళ (css_rect.శిఖరం_auto == false) {
 			r.y0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.top,
+						css_rect.శిఖరం,
 						css_rect.tunit));
 		}
-		if (css_rect.right_auto == false) {
-			r.x1 = box->border[LEFT].width +
+		ఒకవేళ (css_rect.కుడి_auto == false) {
+			r.x1 = box->border[ఎడమ_2].వెడల్పు +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
-						css_rect.right,
+						css_rect.కుడి,
 						css_rect.runit));
 		}
-		if (css_rect.bottom_auto == false) {
-			r.y1 = box->border[TOP].width +
+		ఒకవేళ (css_rect.bottom_auto == false) {
+			r.y1 = box->border[శిఖరం_2].వెడల్పు +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
@@ -133,57 +133,57 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 		}
 
 		/* Test if point is in clipped box */
-		if (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
+		ఒకవేళ (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
 			/* inside clip area */
-			return true;
+			తిరిగి true;
 		}
 
 		/* Not inside clip area */
-		return false;
+		తిరిగి false;
 	}
-	if (x >= -box->border[LEFT].width &&
-	    x < box->padding[LEFT] + box->width +
-	    box->padding[RIGHT] + box->border[RIGHT].width &&
-	    y >= -box->border[TOP].width &&
-	    y < box->padding[TOP] + box->height +
-	    box->padding[BOTTOM] + box->border[BOTTOM].width) {
+	ఒకవేళ (x >= -box->border[ఎడమ_2].వెడల్పు &&
+	    x < box->padding[ఎడమ_2] + box->వెడల్పు +
+	    box->padding[కుడి_2] + box->border[కుడి_2].వెడల్పు &&
+	    y >= -box->border[శిఖరం_2].వెడల్పు &&
+	    y < box->padding[శిఖరం_2] + box->ఎత్తు +
+	    box->padding[BOTTOM] + box->border[BOTTOM].వెడల్పు) {
 		*physically = true;
-		return true;
+		తిరిగి true;
 	}
-	if (box->list_marker && box->list_marker->x - box->x <= x +
-	    box->list_marker->border[LEFT].width &&
+	ఒకవేళ (box->list_marker && box->list_marker->x - box->x <= x +
+	    box->list_marker->border[ఎడమ_2].వెడల్పు &&
 	    x < box->list_marker->x - box->x +
-	    box->list_marker->padding[LEFT] +
-	    box->list_marker->width +
-	    box->list_marker->border[RIGHT].width +
-	    box->list_marker->padding[RIGHT] &&
+	    box->list_marker->padding[ఎడమ_2] +
+	    box->list_marker->వెడల్పు +
+	    box->list_marker->border[కుడి_2].వెడల్పు +
+	    box->list_marker->padding[కుడి_2] &&
 	    box->list_marker->y - box->y <= y +
-	    box->list_marker->border[TOP].width &&
+	    box->list_marker->border[శిఖరం_2].వెడల్పు &&
 	    y < box->list_marker->y - box->y +
-	    box->list_marker->padding[TOP] +
-	    box->list_marker->height +
-	    box->list_marker->border[BOTTOM].width +
+	    box->list_marker->padding[శిఖరం_2] +
+	    box->list_marker->ఎత్తు +
+	    box->list_marker->border[BOTTOM].వెడల్పు +
 	    box->list_marker->padding[BOTTOM]) {
 		*physically = true;
-		return true;
+		తిరిగి true;
 	}
-	if ((box->style && css_computed_overflow_x(box->style) ==
-	     CSS_OVERFLOW_VISIBLE) || !box->style) {
-		if (box->descendant_x0 <= x &&
+	ఒకవేళ ((box->style && css_computed_అధికప్రవాహం_x(box->style) ==
+	     CSS_అధికప్రవాహం_VISIBLE) || !box->style) {
+		ఒకవేళ (box->descendant_x0 <= x &&
 		    x < box->descendant_x1) {
 			*physically = false;
-			return true;
+			తిరిగి true;
 		}
 	}
-	if ((box->style && css_computed_overflow_y(box->style) ==
-	     CSS_OVERFLOW_VISIBLE) || !box->style) {
-		if (box->descendant_y0 <= y &&
+	ఒకవేళ ((box->style && css_computed_అధికప్రవాహం_y(box->style) ==
+	     CSS_అధికప్రవాహం_VISIBLE) || !box->style) {
+		ఒకవేళ (box->descendant_y0 <= y &&
 		    y < box->descendant_y1) {
 			*physically = false;
-			return true;
+			తిరిగి true;
 		}
 	}
-	return false;
+	తిరిగి false;
 }
 
 
@@ -197,74 +197,74 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
  *
  * If no box can be found in given direction, NULL is returned.
  */
-static inline struct box *
-box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
+స్థిర అంతఃవరుస నిర్మాణం box *
+box_move_xy(నిర్మాణం box *b, గణన box_walk_dir dir, పూర్ణాంకం *x, పూర్ణాంకం *y)
 {
-	struct box *rb = NULL;
+	నిర్మాణం box *rb = ఖాళీ;
 
-	switch (dir) {
-	case BOX_WALK_CHILDREN:
+	ఎంపిక (dir) {
+	స్థితి BOX_WALK_CHILDREN:
 		b = b->children;
-		if (b == NULL)
-			break;
+		ఒకవేళ (b == ఖాళీ)
+			ఆపు;
 		*x += b->x;
 		*y += b->y;
-		if (!box_is_float(b)) {
+		ఒకవేళ (!box_is_float(b)) {
 			rb = b;
-			break;
+			ఆపు;
 		}
 		fallthrough;
 
-	case BOX_WALK_NEXT_SIBLING:
-		do {
+	స్థితి BOX_WALK_తదుపరి_SIBLING:
+		చేయి {
 			*x -= b->x;
 			*y -= b->y;
-			b = b->next;
-			if (b == NULL)
-				break;
+			b = b->తదుపరి;
+			ఒకవేళ (b == ఖాళీ)
+				ఆపు;
 			*x += b->x;
 			*y += b->y;
-		} while (box_is_float(b));
+		} అయితే (box_is_float(b));
 		rb = b;
-		break;
+		ఆపు;
 
-	case BOX_WALK_PARENT:
+	స్థితి BOX_WALK_మాతృ:
 		*x -= b->x;
 		*y -= b->y;
-		rb = b->parent;
-		break;
+		rb = b->మాతృ;
+		ఆపు;
 
-	case BOX_WALK_FLOAT_CHILDREN:
+	స్థితి BOX_WALK_FLOAT_CHILDREN:
 		b = b->float_children;
-		if (b == NULL)
-			break;
+		ఒకవేళ (b == ఖాళీ)
+			ఆపు;
 		*x += b->x;
 		*y += b->y;
 		rb = b;
-		break;
+		ఆపు;
 
-	case BOX_WALK_NEXT_FLOAT_SIBLING:
+	స్థితి BOX_WALK_తదుపరి_FLOAT_SIBLING:
 		*x -= b->x;
 		*y -= b->y;
-		b = b->next_float;
-		if (b == NULL)
-			break;
+		b = b->తదుపరి_float;
+		ఒకవేళ (b == ఖాళీ)
+			ఆపు;
 		*x += b->x;
 		*y += b->y;
 		rb = b;
-		break;
+		ఆపు;
 
-	case BOX_WALK_FLOAT_CONTAINER:
+	స్థితి BOX_WALK_FLOAT_CONTAINER:
 		*x -= b->x;
 		*y -= b->y;
 		rb = b->float_container;
-		break;
+		ఆపు;
 
-	default:
-		assert(0 && "Bad box walk type.");
+	అప్రమేయ:
+		ప్రతిజ్ఞా(0 && "Bad box walk type.");
 	}
 
-	return rb;
+	తిరిగి rb;
 }
 
 
@@ -279,94 +279,94 @@ box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
  * This walks to a boxes float children before its children.  When walking
  * children, floating boxes are skipped.
  */
-static inline struct box *
-box_next_xy(struct box *b, int *x, int *y, bool skip_children)
+స్థిర అంతఃవరుస నిర్మాణం box *
+box_తదుపరి_xy(నిర్మాణం box *b, పూర్ణాంకం *x, పూర్ణాంకం *y, bool skip_children)
 {
-	struct box *n;
-	int tx, ty;
+	నిర్మాణం box *n;
+	పూర్ణాంకం tx, ty;
 
-	assert(b != NULL);
+	ప్రతిజ్ఞా(b != ఖాళీ);
 
-	if (skip_children) {
+	ఒకవేళ (skip_children) {
 		/* Caller is not interested in any kind of children */
-		goto skip_children;
+		వెళ్ళు skip_children;
 	}
 
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_FLOAT_CHILDREN, &tx, &ty);
-	if (n) {
+	ఒకవేళ (n) {
 		/* Next node is float child */
 		*x = tx;
 		*y = ty;
-		return n;
+		తిరిగి n;
 	}
- done_float_children:
+ పూర్తి_float_children:
 
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_CHILDREN, &tx, &ty);
-	if (n) {
+	ఒకవేళ (n) {
 		/* Next node is child */
 		*x = tx;
 		*y = ty;
-		return n;
+		తిరిగి n;
 	}
 
  skip_children:
 	tx = *x; ty = *y;
-	n = box_move_xy(b, BOX_WALK_NEXT_FLOAT_SIBLING, &tx, &ty);
-	if (n) {
+	n = box_move_xy(b, BOX_WALK_తదుపరి_FLOAT_SIBLING, &tx, &ty);
+	ఒకవేళ (n) {
 		/* Go to next float sibling */
 		*x = tx;
 		*y = ty;
-		return n;
+		తిరిగి n;
 	}
 
-	if (box_is_float(b)) {
+	ఒకవేళ (box_is_float(b)) {
 		/* Done floats, but the float container may have children,
 		 * or siblings, or ansestors with siblings.  Change to
 		 * float container and move past handling its float children.
 		 */
 		b = box_move_xy(b, BOX_WALK_FLOAT_CONTAINER, x, y);
-		goto done_float_children;
+		వెళ్ళు పూర్తి_float_children;
 	}
 
 	/* Go to next sibling, or nearest ancestor with next sibling. */
-	while (b) {
-		while (!b->next && b->parent) {
-			b = box_move_xy(b, BOX_WALK_PARENT, x, y);
-			if (box_is_float(b)) {
+	అయితే (b) {
+		అయితే (!b->తదుపరి && b->మాతృ) {
+			b = box_move_xy(b, BOX_WALK_మాతృ, x, y);
+			ఒకవేళ (box_is_float(b)) {
 				/* Go on to next float, if there is one */
-				goto skip_children;
+				వెళ్ళు skip_children;
 			}
 		}
-		if (!b->next) {
+		ఒకవేళ (!b->తదుపరి) {
 			/* No more boxes */
-			return NULL;
+			తిరిగి ఖాళీ;
 		}
 
 		tx = *x; ty = *y;
-		n = box_move_xy(b, BOX_WALK_NEXT_SIBLING, &tx, &ty);
-		if (n) {
+		n = box_move_xy(b, BOX_WALK_తదుపరి_SIBLING, &tx, &ty);
+		ఒకవేళ (n) {
 			/* Go to non-float (ancestor) sibling */
 			*x = tx;
 			*y = ty;
-			return n;
+			తిరిగి n;
 
-		} else if (b->parent) {
-			b = box_move_xy(b, BOX_WALK_PARENT, x, y);
-			if (box_is_float(b)) {
+		} లేకపోతే ఒకవేళ (b->మాతృ) {
+			b = box_move_xy(b, BOX_WALK_మాతృ, x, y);
+			ఒకవేళ (box_is_float(b)) {
 				/* Go on to next float, if there is one */
-				goto skip_children;
+				వెళ్ళు skip_children;
 			}
 
-		} else {
+		} లేకపోతే {
 			/* No more boxes */
-			return NULL;
+			తిరిగి ఖాళీ;
 		}
 	}
 
-	assert(b != NULL);
-	return NULL;
+	ప్రతిజ్ఞా(b != ఖాళీ);
+	తిరిగి ఖాళీ;
 }
 
 
@@ -392,54 +392,54 @@ box_next_xy(struct box *b, int *x, int *y, bool skip_children)
  *		    updated if box is nearer than existing nearest
  * \return true if mouse point is inside box
  */
-static bool
-box_nearer_text_box(struct box *box,
-		    int bx, int by,
-		    int x, int y,
-		    int dir,
-		    struct box **nearest,
-		    int *tx, int *ty,
-		    int *nr_xd, int *nr_yd)
+స్థిర bool
+box_nearer_పాఠ్యం_box(నిర్మాణం box *box,
+		    పూర్ణాంకం bx, పూర్ణాంకం by,
+		    పూర్ణాంకం x, పూర్ణాంకం y,
+		    పూర్ణాంకం dir,
+		    నిర్మాణం box **సమీప,
+		    పూర్ణాంకం *tx, పూర్ణాంకం *ty,
+		    పూర్ణాంకం *nr_xd, పూర్ణాంకం *nr_yd)
 {
-	int w = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	int h = box->padding[TOP] + box->height + box->padding[BOTTOM];
-	int y1 = by + h;
-	int x1 = bx + w;
-	int yd = INT_MAX;
-	int xd = INT_MAX;
+	పూర్ణాంకం w = box->padding[ఎడమ_2] + box->వెడల్పు + box->padding[కుడి_2];
+	పూర్ణాంకం h = box->padding[శిఖరం_2] + box->ఎత్తు + box->padding[BOTTOM];
+	పూర్ణాంకం y1 = by + h;
+	పూర్ణాంకం x1 = bx + w;
+	పూర్ణాంకం yd = గరిష్ఠ_పూర్ణాంకం;
+	పూర్ణాంకం xd = గరిష్ఠ_పూర్ణాంకం;
 
-	if (x >= bx && x1 > x && y >= by && y1 > y) {
-		*nearest = box;
+	ఒకవేళ (x >= bx && x1 > x && y >= by && y1 > y) {
+		*సమీప = box;
 		*tx = bx;
 		*ty = by;
-		return true;
+		తిరిగి true;
 	}
 
-	if (box->parent->list_marker != box) {
-		if (dir < 0) {
+	ఒకవేళ (box->మాతృ->list_marker != box) {
+		ఒకవేళ (dir < 0) {
 			/* consider only those children (partly) above-left */
-			if (by <= y && bx < x) {
+			ఒకవేళ (by <= y && bx < x) {
 				yd = y <= y1 ? 0 : y - y1;
 				xd = x <= x1 ? 0 : x - x1;
 			}
-		} else {
+		} లేకపోతే {
 			/* consider only those children (partly) below-right */
-			if (y1 > y && x1 > x) {
+			ఒకవేళ (y1 > y && x1 > x) {
 				yd = y > by ? 0 : by - y;
 				xd = x > bx ? 0 : bx - x;
 			}
 		}
 
 		/* give y displacement precedence over x */
-		if (yd < *nr_yd || (yd == *nr_yd && xd <= *nr_xd)) {
+		ఒకవేళ (yd < *nr_yd || (yd == *nr_yd && xd <= *nr_xd)) {
 			*nr_yd = yd;
 			*nr_xd = xd;
-			*nearest = box;
+			*సమీప = box;
 			*tx = bx;
 			*ty = by;
 		}
 	}
-	return false;
+	తిరిగి false;
 }
 
 
@@ -468,425 +468,425 @@ box_nearer_text_box(struct box *box,
  *		    updated if a descendant of box is nearer than old nearest
  * \return true if mouse point is inside text_box
  */
-static bool
-box_nearest_text_box(struct box *box,
-		     int bx, int by,
-		     int fx, int fy,
-		     int x, int y,
-		     int dir,
-		     struct box **nearest,
-		     int *tx, int *ty,
-		     int *nr_xd, int *nr_yd)
+స్థిర bool
+box_సమీప_పాఠ్యం_box(నిర్మాణం box *box,
+		     పూర్ణాంకం bx, పూర్ణాంకం by,
+		     పూర్ణాంకం fx, పూర్ణాంకం fy,
+		     పూర్ణాంకం x, పూర్ణాంకం y,
+		     పూర్ణాంకం dir,
+		     నిర్మాణం box **సమీప,
+		     పూర్ణాంకం *tx, పూర్ణాంకం *ty,
+		     పూర్ణాంకం *nr_xd, పూర్ణాంకం *nr_yd)
 {
-	struct box *child = box->children;
-	int c_bx, c_by;
-	int c_fx, c_fy;
-	bool in_box = false;
+	నిర్మాణం box *బిడ్డ = box->children;
+	పూర్ణాంకం c_bx, c_by;
+	పూర్ణాంకం c_fx, c_fy;
+	bool లోపల_box = false;
 
-	if (*nearest == NULL) {
-		*nr_xd = INT_MAX / 2; /* displacement of 'nearest so far' */
-		*nr_yd = INT_MAX / 2;
+	ఒకవేళ (*సమీప == ఖాళీ) {
+		*nr_xd = గరిష్ఠ_పూర్ణాంకం / 2; /* displacement of 'nearest so far' */
+		*nr_yd = గరిష్ఠ_పూర్ణాంకం / 2;
 	}
-	if (box->type == BOX_INLINE_CONTAINER) {
-		int bw = box->padding[LEFT] + box->width + box->padding[RIGHT];
-		int bh = box->padding[TOP] + box->height + box->padding[BOTTOM];
-		int b_y1 = by + bh;
-		int b_x1 = bx + bw;
-		if (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
-			in_box = true;
+	ఒకవేళ (box->type == BOX_INLINE_CONTAINER) {
+		పూర్ణాంకం bw = box->padding[ఎడమ_2] + box->వెడల్పు + box->padding[కుడి_2];
+		పూర్ణాంకం bh = box->padding[శిఖరం_2] + box->ఎత్తు + box->padding[BOTTOM];
+		పూర్ణాంకం b_y1 = by + bh;
+		పూర్ణాంకం b_x1 = bx + bw;
+		ఒకవేళ (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
+			లోపల_box = true;
 		}
 	}
 
-	while (child) {
-		if (child->type == BOX_FLOAT_LEFT ||
-		    child->type == BOX_FLOAT_RIGHT) {
-			c_bx = fx + child->x -
-				scrollbar_get_offset(child->scroll_x);
-			c_by = fy + child->y -
-				scrollbar_get_offset(child->scroll_y);
-		} else {
-			c_bx = bx + child->x -
-				scrollbar_get_offset(child->scroll_x);
-			c_by = by + child->y -
-				scrollbar_get_offset(child->scroll_y);
+	అయితే (బిడ్డ) {
+		ఒకవేళ (బిడ్డ->type == BOX_FLOAT_ఎడమ ||
+		    బిడ్డ->type == BOX_FLOAT_కుడి) {
+			c_bx = fx + బిడ్డ->x -
+				scrollbar_get_స్థానభ్రంశం(బిడ్డ->scroll_x);
+			c_by = fy + బిడ్డ->y -
+				scrollbar_get_స్థానభ్రంశం(బిడ్డ->scroll_y);
+		} లేకపోతే {
+			c_bx = bx + బిడ్డ->x -
+				scrollbar_get_స్థానభ్రంశం(బిడ్డ->scroll_x);
+			c_by = by + బిడ్డ->y -
+				scrollbar_get_స్థానభ్రంశం(బిడ్డ->scroll_y);
 		}
-		if (child->float_children) {
+		ఒకవేళ (బిడ్డ->float_children) {
 			c_fx = c_bx;
 			c_fy = c_by;
-		} else {
+		} లేకపోతే {
 			c_fx = fx;
 			c_fy = fy;
 		}
-		if (in_box && child->text && !child->object) {
-			if (box_nearer_text_box(child,
-						c_bx, c_by, x, y, dir, nearest,
+		ఒకవేళ (లోపల_box && బిడ్డ->పాఠ్యం && !బిడ్డ->object) {
+			ఒకవేళ (box_nearer_పాఠ్యం_box(బిడ్డ,
+						c_bx, c_by, x, y, dir, సమీప,
 						tx, ty, nr_xd, nr_yd))
-				return true;
-		} else {
-			if (child->list_marker) {
-				if (box_nearer_text_box(
-						child->list_marker,
-						c_bx + child->list_marker->x,
-						c_by + child->list_marker->y,
-						x, y, dir, nearest,
+				తిరిగి true;
+		} లేకపోతే {
+			ఒకవేళ (బిడ్డ->list_marker) {
+				ఒకవేళ (box_nearer_పాఠ్యం_box(
+						బిడ్డ->list_marker,
+						c_bx + బిడ్డ->list_marker->x,
+						c_by + బిడ్డ->list_marker->y,
+						x, y, dir, సమీప,
 						tx, ty, nr_xd, nr_yd))
-					return true;
+					తిరిగి true;
 			}
-			if (box_nearest_text_box(child, c_bx, c_by,
+			ఒకవేళ (box_సమీప_పాఠ్యం_box(బిడ్డ, c_bx, c_by,
 						 c_fx, c_fy,
-						 x, y, dir, nearest, tx, ty,
+						 x, y, dir, సమీప, tx, ty,
 						 nr_xd, nr_yd))
-				return true;
+				తిరిగి true;
 		}
-		child = child->next;
+		బిడ్డ = బిడ్డ->తదుపరి;
 	}
 
-	return false;
+	తిరిగి false;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_coords(struct box *box, int *x, int *y)
+శూన్య box_coords(నిర్మాణం box *box, పూర్ణాంకం *x, పూర్ణాంకం *y)
 {
 	*x = box->x;
 	*y = box->y;
-	while (box->parent) {
-		if (box_is_float(box)) {
-			assert(box->float_container);
+	అయితే (box->మాతృ) {
+		ఒకవేళ (box_is_float(box)) {
+			ప్రతిజ్ఞా(box->float_container);
 			box = box->float_container;
-		} else {
-			box = box->parent;
+		} లేకపోతే {
+			box = box->మాతృ;
 		}
-		*x += box->x - scrollbar_get_offset(box->scroll_x);
-		*y += box->y - scrollbar_get_offset(box->scroll_y);
+		*x += box->x - scrollbar_get_స్థానభ్రంశం(box->scroll_x);
+		*y += box->y - scrollbar_get_స్థానభ్రంశం(box->scroll_y);
 	}
 }
 
 
 /* Exported function documented in html/box.h */
-void box_bounds(struct box *box, struct rect *r)
+శూన్య box_bounds(నిర్మాణం box *box, నిర్మాణం rect *r)
 {
-	int width, height;
+	పూర్ణాంకం వెడల్పు, ఎత్తు;
 
 	box_coords(box, &r->x0, &r->y0);
 
-	width = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	height = box->padding[TOP] + box->height + box->padding[BOTTOM];
+	వెడల్పు = box->padding[ఎడమ_2] + box->వెడల్పు + box->padding[కుడి_2];
+	ఎత్తు = box->padding[శిఖరం_2] + box->ఎత్తు + box->padding[BOTTOM];
 
-	r->x1 = r->x0 + width;
-	r->y1 = r->y0 + height;
+	r->x1 = r->x0 + వెడల్పు;
+	r->y1 = r->y0 + ఎత్తు;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
-box_at_point(const css_unit_ctx *unit_len_ctx,
-	     struct box *box,
-	     const int x, const int y,
-	     int *box_x, int *box_y)
+నిర్మాణం box *
+box_at_బిందువు(స్థిరరాశి css_unit_ctx *unit_len_ctx,
+	     నిర్మాణం box *box,
+	     స్థిరరాశి పూర్ణాంకం x, స్థిరరాశి పూర్ణాంకం y,
+	     పూర్ణాంకం *box_x, పూర్ణాంకం *box_y)
 {
 	bool skip_children;
 	bool physically;
 
-	assert(box);
+	ప్రతిజ్ఞా(box);
 
 	skip_children = false;
-	while ((box = box_next_xy(box, box_x, box_y, skip_children))) {
-		if (box_contains_point(unit_len_ctx, box, x - *box_x, y - *box_y,
+	అయితే ((box = box_తదుపరి_xy(box, box_x, box_y, skip_children))) {
+		ఒకవేళ (box_కలిగియుంది_బిందువు(unit_len_ctx, box, x - *box_x, y - *box_y,
 				       &physically)) {
-			*box_x -= scrollbar_get_offset(box->scroll_x);
-			*box_y -= scrollbar_get_offset(box->scroll_y);
+			*box_x -= scrollbar_get_స్థానభ్రంశం(box->scroll_x);
+			*box_y -= scrollbar_get_స్థానభ్రంశం(box->scroll_y);
 
-			if (physically)
-				return box;
+			ఒకవేళ (physically)
+				తిరిగి box;
 
 			skip_children = false;
-		} else {
+		} లేకపోతే {
 			skip_children = true;
 		}
 	}
 
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *box_find_by_id(struct box *box, lwc_string *id)
+నిర్మాణం box *box_కనుగొను_by_id(నిర్మాణం box *box, lwc_string *id)
 {
-	struct box *a, *b;
+	నిర్మాణం box *a, *b;
 	bool m;
 
-	if (box->id != NULL &&
+	ఒకవేళ (box->id != ఖాళీ &&
 	    lwc_string_isequal(id, box->id, &m) == lwc_error_ok &&
 	    m == true) {
-		return box;
+		తిరిగి box;
 	}
 
-	for (a = box->children; a; a = a->next) {
-		if ((b = box_find_by_id(a, id)) != NULL) {
-			return b;
+	కొరకు (a = box->children; a; a = a->తదుపరి) {
+		ఒకవేళ ((b = box_కనుగొను_by_id(a, id)) != ఖాళీ) {
+			తిరిగి b;
 		}
 	}
 
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
 
 /* Exported function documented in html/box.h */
-bool box_visible(struct box *box)
+bool box_visible(నిర్మాణం box *box)
 {
 	/* visibility: hidden */
-	if (box->style &&
+	ఒకవేళ (box->style &&
 	    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
-		return false;
+		తిరిగి false;
 	}
 
-	return true;
+	తిరిగి true;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
+శూన్య box_dump(FILE *ప్రవాహం, నిర్మాణం box *box, గుర్తులేని పూర్ణాంకం లోతు, bool style)
 {
-	unsigned int i;
-	struct box *c, *prev;
+	గుర్తులేని పూర్ణాంకం i;
+	నిర్మాణం box *c, *prev;
 
-	for (i = 0; i != depth; i++) {
-		fprintf(stream, "  ");
+	కొరకు (i = 0; i != లోతు; i++) {
+		fprintf(ప్రవాహం, "  ");
 	}
 
-	fprintf(stream, "%p ", box);
-	fprintf(stream, "x%i y%i w%i h%i ",
-		box->x, box->y, box->width, box->height);
-	if (box->max_width != UNKNOWN_MAX_WIDTH) {
-		fprintf(stream, "min%i max%i ", box->min_width, box->max_width);
+	fprintf(ప్రవాహం, "%p ", box);
+	fprintf(ప్రవాహం, "x%i y%i w%i h%i ",
+		box->x, box->y, box->వెడల్పు, box->ఎత్తు);
+	ఒకవేళ (box->max_వెడల్పు != UNKNOWN_MAX_వెడల్పు) {
+		fprintf(ప్రవాహం, "min%i max%i ", box->min_వెడల్పు, box->max_వెడల్పు);
 	}
-	fprintf(stream, "desc(%i %i %i %i) ",
+	fprintf(ప్రవాహం, "desc(%i %i %i %i) ",
 		box->descendant_x0, box->descendant_y0,
 		box->descendant_x1, box->descendant_y1);
 
-	fprintf(stream, "m(%i %i %i %i) ",
-		box->margin[TOP], box->margin[LEFT],
-		box->margin[BOTTOM], box->margin[RIGHT]);
+	fprintf(ప్రవాహం, "m(%i %i %i %i) ",
+		box->margin[శిఖరం_2], box->margin[ఎడమ_2],
+		box->margin[BOTTOM], box->margin[కుడి_2]);
 
-	switch (box->type) {
-	case BOX_BLOCK:
-		fprintf(stream, "BLOCK ");
-		break;
+	ఎంపిక (box->type) {
+	స్థితి BOX_ఖండం:
+		fprintf(ప్రవాహం, "BLOCK ");
+		ఆపు;
 
-	case BOX_INLINE_CONTAINER:
-		fprintf(stream, "INLINE_CONTAINER ");
-		break;
+	స్థితి BOX_INLINE_CONTAINER:
+		fprintf(ప్రవాహం, "INLINE_CONTAINER ");
+		ఆపు;
 
-	case BOX_INLINE:
-		fprintf(stream, "INLINE ");
-		break;
+	స్థితి BOX_INLINE:
+		fprintf(ప్రవాహం, "INLINE ");
+		ఆపు;
 
-	case BOX_INLINE_END:
-		fprintf(stream, "INLINE_END ");
-		break;
+	స్థితి BOX_INLINE_చివర:
+		fprintf(ప్రవాహం, "INLINE_END ");
+		ఆపు;
 
-	case BOX_INLINE_BLOCK:
-		fprintf(stream, "INLINE_BLOCK ");
-		break;
+	స్థితి BOX_INLINE_ఖండం:
+		fprintf(ప్రవాహం, "INLINE_BLOCK ");
+		ఆపు;
 
-	case BOX_TABLE:
-		fprintf(stream, "TABLE [columns %i] ", box->columns);
-		break;
+	స్థితి BOX_పట్టిక:
+		fprintf(ప్రవాహం, "TABLE [columns %i] ", box->columns);
+		ఆపు;
 
-	case BOX_TABLE_ROW:
-		fprintf(stream, "TABLE_ROW ");
-		break;
+	స్థితి BOX_పట్టిక_అడ్డువరుస:
+		fprintf(ప్రవాహం, "TABLE_ROW ");
+		ఆపు;
 
-	case BOX_TABLE_CELL:
-		fprintf(stream, "TABLE_CELL [columns %i, start %i, rows %i] ",
+	స్థితి BOX_పట్టిక_CELL:
+		fprintf(ప్రవాహం, "TABLE_CELL [columns %i, start %i, rows %i] ",
 			box->columns,
-			box->start_column,
-			box->rows);
-		break;
+			box->ప్రారంభం_స్తంభం,
+			box->అడ్డువరుసలు);
+		ఆపు;
 
-	case BOX_TABLE_ROW_GROUP:
-		fprintf(stream, "TABLE_ROW_GROUP ");
-		break;
+	స్థితి BOX_పట్టిక_అడ్డువరుస_సమూహం:
+		fprintf(ప్రవాహం, "TABLE_ROW_GROUP ");
+		ఆపు;
 
-	case BOX_FLOAT_LEFT:
-		fprintf(stream, "FLOAT_LEFT ");
-		break;
+	స్థితి BOX_FLOAT_ఎడమ:
+		fprintf(ప్రవాహం, "FLOAT_LEFT ");
+		ఆపు;
 
-	case BOX_FLOAT_RIGHT:
-		fprintf(stream, "FLOAT_RIGHT ");
-		break;
+	స్థితి BOX_FLOAT_కుడి:
+		fprintf(ప్రవాహం, "FLOAT_RIGHT ");
+		ఆపు;
 
-	case BOX_BR:
-		fprintf(stream, "BR ");
-		break;
+	స్థితి BOX_BR:
+		fprintf(ప్రవాహం, "BR ");
+		ఆపు;
 
-	case BOX_TEXT:
-		fprintf(stream, "TEXT ");
-		break;
+	స్థితి BOX_పాఠ్యం:
+		fprintf(ప్రవాహం, "TEXT ");
+		ఆపు;
 
-	case BOX_FLEX:
-		fprintf(stream, "FLEX ");
-		break;
+	స్థితి BOX_FLEX:
+		fprintf(ప్రవాహం, "FLEX ");
+		ఆపు;
 
-	case BOX_INLINE_FLEX:
-		fprintf(stream, "INLINE_FLEX ");
-		break;
+	స్థితి BOX_INLINE_FLEX:
+		fprintf(ప్రవాహం, "INLINE_FLEX ");
+		ఆపు;
 
-	default:
-		fprintf(stream, "Unknown box type ");
+	అప్రమేయ:
+		fprintf(ప్రవాహం, "Unknown box type ");
 	}
 
-	if (box->text)
-		fprintf(stream, "%li '%.*s' ", (unsigned long) box->byte_offset,
-			(int) box->length, box->text);
-	if (box->space)
-		fprintf(stream, "space ");
-	if (box->object) {
-		fprintf(stream, "(object '%s') ",
+	ఒకవేళ (box->పాఠ్యం)
+		fprintf(ప్రవాహం, "%li '%.*s' ", (గుర్తులేని దీర్ఘ) box->byte_స్థానభ్రంశం,
+			(పూర్ణాంకం) box->నిడివి, box->పాఠ్యం);
+	ఒకవేళ (box->space)
+		fprintf(ప్రవాహం, "space ");
+	ఒకవేళ (box->object) {
+		fprintf(ప్రవాహం, "(object '%s') ",
 			nsurl_access(hlcache_handle_get_url(box->object)));
 	}
-	if (box->iframe) {
-		fprintf(stream, "(iframe) ");
+	ఒకవేళ (box->iframe) {
+		fprintf(ప్రవాహం, "(iframe) ");
 	}
-	if (box->gadget)
-		fprintf(stream, "(gadget) ");
-	if (style && box->style)
-		nscss_dump_computed_style(stream, box->style);
-	if (box->href)
-		fprintf(stream, " -> '%s'", nsurl_access(box->href));
-	if (box->target)
-		fprintf(stream, " |%s|", box->target);
-	if (box->title)
-		fprintf(stream, " [%s]", box->title);
-	if (box->id)
-		fprintf(stream, " ID:%s", lwc_string_data(box->id));
-	if (box->type == BOX_INLINE || box->type == BOX_INLINE_END)
-		fprintf(stream, " inline_end %p", box->inline_end);
-	if (box->float_children)
-		fprintf(stream, " float_children %p", box->float_children);
-	if (box->next_float)
-		fprintf(stream, " next_float %p", box->next_float);
-	if (box->float_container)
-		fprintf(stream, " float_container %p", box->float_container);
-	if (box->col) {
-		fprintf(stream, " (columns");
-		for (i = 0; i != box->columns; i++) {
-			fprintf(stream, " (%s %s %i %i %i)",
-				((const char *[]) {
+	ఒకవేళ (box->gadget)
+		fprintf(ప్రవాహం, "(gadget) ");
+	ఒకవేళ (style && box->style)
+		nscss_dump_computed_style(ప్రవాహం, box->style);
+	ఒకవేళ (box->href)
+		fprintf(ప్రవాహం, " -> '%s'", nsurl_access(box->href));
+	ఒకవేళ (box->లక్ష్యం)
+		fprintf(ప్రవాహం, " |%s|", box->లక్ష్యం);
+	ఒకవేళ (box->title)
+		fprintf(ప్రవాహం, " [%s]", box->title);
+	ఒకవేళ (box->id)
+		fprintf(ప్రవాహం, " ID:%s", lwc_string_దత్తాంశం(box->id));
+	ఒకవేళ (box->type == BOX_INLINE || box->type == BOX_INLINE_చివర)
+		fprintf(ప్రవాహం, " inline_end %p", box->inline_చివర);
+	ఒకవేళ (box->float_children)
+		fprintf(ప్రవాహం, " float_children %p", box->float_children);
+	ఒకవేళ (box->తదుపరి_float)
+		fprintf(ప్రవాహం, " next_float %p", box->తదుపరి_float);
+	ఒకవేళ (box->float_container)
+		fprintf(ప్రవాహం, " float_container %p", box->float_container);
+	ఒకవేళ (box->నిలువు) {
+		fprintf(ప్రవాహం, " (columns");
+		కొరకు (i = 0; i != box->columns; i++) {
+			fprintf(ప్రవాహం, " (%s %s %i %i %i)",
+				((స్థిరరాశి అక్షరం *[]) {
 					"UNKNOWN",
 					"FIXED",
 					"AUTO",
 					"PERCENT",
 					"RELATIVE"
 						})
-				[box->col[i].type],
-				((const char *[]) {
+				[box->నిలువు[i].type],
+				((స్థిరరాశి అక్షరం *[]) {
 					"normal",
 					"positioned"})
-				[box->col[i].positioned],
-				box->col[i].width,
-				box->col[i].min, box->col[i].max);
+				[box->నిలువు[i].positioned],
+				box->నిలువు[i].వెడల్పు,
+				box->నిలువు[i].min, box->నిలువు[i].max);
 		}
-		fprintf(stream, ")");
+		fprintf(ప్రవాహం, ")");
 	}
-	if (box->node != NULL) {
+	ఒకవేళ (box->కణుపు != ఖాళీ) {
 		dom_string *name;
-		if (dom_node_get_node_name(box->node, &name) == DOM_NO_ERR) {
-			fprintf(stream, " <%s>", dom_string_data(name));
+		ఒకవేళ (dom_కణుపు_get_కణుపు_name(box->కణుపు, &name) == DOM_NO_ERR) {
+			fprintf(ప్రవాహం, " <%s>", dom_string_దత్తాంశం(name));
 			dom_string_unref(name);
 		}
 	}
-	fprintf(stream, "\n");
+	fprintf(ప్రవాహం, "\n");
 
-	if (box->list_marker) {
-		for (i = 0; i != depth; i++)
-			fprintf(stream, "  ");
-		fprintf(stream, "list_marker:\n");
-		box_dump(stream, box->list_marker, depth + 1, style);
+	ఒకవేళ (box->list_marker) {
+		కొరకు (i = 0; i != లోతు; i++)
+			fprintf(ప్రవాహం, "  ");
+		fprintf(ప్రవాహం, "list_marker:\n");
+		box_dump(ప్రవాహం, box->list_marker, లోతు + 1, style);
 	}
 
-	for (c = box->children; c && c->next; c = c->next)
+	కొరకు (c = box->children; c && c->తదుపరి; c = c->తదుపరి)
 		;
-	if (box->last != c)
-		fprintf(stream, "warning: box->last %p (should be %p) "
-			"(box %p)\n", box->last, c, box);
-	for (prev = 0, c = box->children; c; prev = c, c = c->next) {
-		if (c->parent != box)
-			fprintf(stream, "warning: box->parent %p (should be "
+	ఒకవేళ (box->చివరి != c)
+		fprintf(ప్రవాహం, "warning: box->last %p (should be %p) "
+			"(box %p)\n", box->చివరి, c, box);
+	కొరకు (prev = 0, c = box->children; c; prev = c, c = c->తదుపరి) {
+		ఒకవేళ (c->మాతృ != box)
+			fprintf(ప్రవాహం, "warning: box->parent %p (should be "
 				"%p) (box on next line)\n",
-				c->parent, box);
-		if (c->prev != prev)
-			fprintf(stream, "warning: box->prev %p (should be "
+				c->మాతృ, box);
+		ఒకవేళ (c->prev != prev)
+			fprintf(ప్రవాహం, "warning: box->prev %p (should be "
 				"%p) (box on next line)\n",
 				c->prev, prev);
-		box_dump(stream, c, depth + 1, style);
+		box_dump(ప్రవాహం, c, లోతు + 1, style);
 	}
 }
 
 
 /* exported interface documented in html/box.h */
-bool box_vscrollbar_present(const struct box * const box)
+bool box_vscrollbar_present(స్థిరరాశి నిర్మాణం box * స్థిరరాశి box)
 {
-	return box->padding[TOP] +
-		box->height +
+	తిరిగి box->padding[శిఖరం_2] +
+		box->ఎత్తు +
 		box->padding[BOTTOM] +
-		box->border[BOTTOM].width < box->descendant_y1;
+		box->border[BOTTOM].వెడల్పు < box->descendant_y1;
 }
 
 
 /* exported interface documented in html/box.h */
-bool box_hscrollbar_present(const struct box * const box)
+bool box_hscrollbar_present(స్థిరరాశి నిర్మాణం box * స్థిరరాశి box)
 {
-	return box->padding[LEFT] +
-		box->width +
-		box->padding[RIGHT] +
-		box->border[RIGHT].width < box->descendant_x1;
+	తిరిగి box->padding[ఎడమ_2] +
+		box->వెడల్పు +
+		box->padding[కుడి_2] +
+		box->border[కుడి_2].వెడల్పు < box->descendant_x1;
 }
 
 
 /* Exported function documented in html/box.h */
-struct box *
-box_pick_text_box(struct html_content *html,
-		  int x, int y,
-		  int dir,
-		  int *dx, int *dy)
+నిర్మాణం box *
+box_pick_పాఠ్యం_box(నిర్మాణం html_content *html,
+		  పూర్ణాంకం x, పూర్ణాంకం y,
+		  పూర్ణాంకం dir,
+		  పూర్ణాంకం *dx, పూర్ణాంకం *dy)
 {
-	struct box *text_box = NULL;
-	struct box *box;
-	int nr_xd, nr_yd;
-	int bx, by;
-	int fx, fy;
-	int tx, ty;
+	నిర్మాణం box *పాఠ్యం_box = ఖాళీ;
+	నిర్మాణం box *box;
+	పూర్ణాంకం nr_xd, nr_yd;
+	పూర్ణాంకం bx, by;
+	పూర్ణాంకం fx, fy;
+	పూర్ణాంకం tx, ty;
 
-	if (html == NULL)
-		return NULL;
+	ఒకవేళ (html == ఖాళీ)
+		తిరిగి ఖాళీ;
 
 	box = html->layout;
-	bx = box->margin[LEFT];
-	by = box->margin[TOP];
+	bx = box->margin[ఎడమ_2];
+	by = box->margin[శిఖరం_2];
 	fx = bx;
 	fy = by;
 
-	if (!box_nearest_text_box(box, bx, by, fx, fy, x, y,
-				  dir, &text_box, &tx, &ty, &nr_xd, &nr_yd)) {
-		if (text_box && text_box->text && !text_box->object) {
-			int w = (text_box->padding[LEFT] +
-				 text_box->width +
-				 text_box->padding[RIGHT]);
-			int h = (text_box->padding[TOP] +
-				 text_box->height +
-				 text_box->padding[BOTTOM]);
-			int x1, y1;
+	ఒకవేళ (!box_సమీప_పాఠ్యం_box(box, bx, by, fx, fy, x, y,
+				  dir, &పాఠ్యం_box, &tx, &ty, &nr_xd, &nr_yd)) {
+		ఒకవేళ (పాఠ్యం_box && పాఠ్యం_box->పాఠ్యం && !పాఠ్యం_box->object) {
+			పూర్ణాంకం w = (పాఠ్యం_box->padding[ఎడమ_2] +
+				 పాఠ్యం_box->వెడల్పు +
+				 పాఠ్యం_box->padding[కుడి_2]);
+			పూర్ణాంకం h = (పాఠ్యం_box->padding[శిఖరం_2] +
+				 పాఠ్యం_box->ఎత్తు +
+				 పాఠ్యం_box->padding[BOTTOM]);
+			పూర్ణాంకం x1, y1;
 
 			y1 = ty + h;
 			x1 = tx + w;
 
 			/* ensure point lies within the text box */
-			if (x < tx) x = tx;
-			if (y < ty) y = ty;
-			if (y > y1) y = y1;
-			if (x > x1) x = x1;
+			ఒకవేళ (x < tx) x = tx;
+			ఒకవేళ (y < ty) y = ty;
+			ఒకవేళ (y > y1) y = y1;
+			ఒకవేళ (x > x1) x = x1;
 		}
 	}
 
@@ -894,5 +894,5 @@ box_pick_text_box(struct html_content *html,
 	*dx = x - tx;
 	*dy = y - ty;
 
-	return text_box;
+	తిరిగి పాఠ్యం_box;
 }

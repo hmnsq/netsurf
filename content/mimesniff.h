@@ -21,15 +21,15 @@
  * MIME type sniffer interface
  */
 
-#ifndef NETSURF_CONTENT_MIMESNIFF_H_
-#define NETSURF_CONTENT_MIMESNIFF_H_
+#నిర్వచితం_కాకపోతే NETSURF_CONTENT_MIMESNIFF_H_
+#నిర్వచించు NETSURF_CONTENT_MIMESNIFF_H_
 
-#include <stdbool.h>
+#అన్తర్భావ <stdbool.h>
 
-#include <libwapcaplet/libwapcaplet.h>
-#include "utils/errors.h"
+#అన్తర్భావ <libwapcaplet/libwapcaplet.h>
+#అన్తర్భావ "utils/errors.h"
 
-struct llcache_handle;
+నిర్మాణం llcache_handle;
 
 /**
  * Compute the effective MIME type for an object
@@ -48,8 +48,8 @@ struct llcache_handle;
  *         NSERROR_NOT_FOUND if sniffing is prohibited and no 
  *                           Content-Type header was found
  */
-nserror mimesniff_compute_effective_type(const char *content_type_header,
-		const uint8_t *data, size_t len, bool sniff_allowed,
+nserror mimesniff_compute_effective_type(స్థిరరాశి అక్షరం *content_type_శీర్షిక,
+		స్థిరరాశి uint8_t *దత్తాంశం, size_t len, bool sniff_allowed,
 		bool image_only, lwc_string **effective_type);
 
-#endif
+#అయితే_ముగింపు
