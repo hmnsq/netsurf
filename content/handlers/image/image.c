@@ -16,135 +16,135 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
+#অন্তর্ভাৱ <stdbool.h>
+#অন্তর্ভাৱ <stdlib.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#অন্তর্ভাৱ "utils/utils.h"
+#অন্তর্ভাৱ "utils/log.h"
+#অন্তর্ভাৱ "utils/messages.h"
+#অন্তর্ভাৱ "netsurf/plotters.h"
+#অন্তর্ভাৱ "netsurf/bitmap.h"
+#অন্তর্ভাৱ "netsurf/content.h"
+#অন্তর্ভাৱ "desktop/gui_internal.h"
+#অন্তর্ভাৱ "desktop/bitmap.h"
 
-#include "image/bmp.h"
-#include "image/gif.h"
-#include "image/ico.h"
-#include "image/jpeg.h"
-#include "image/jpegxl.h"
-#include "image/nssprite.h"
-#include "image/png.h"
-#include "image/rsvg.h"
-#include "image/svg.h"
-#include "image/webp.h"
-#include "image/image.h"
+#অন্তর্ভাৱ "image/bmp.h"
+#অন্তর্ভাৱ "image/gif.h"
+#অন্তর্ভাৱ "image/ico.h"
+#অন্তর্ভাৱ "image/jpeg.h"
+#অন্তর্ভাৱ "image/jpegxl.h"
+#অন্তর্ভাৱ "image/nssprite.h"
+#অন্তর্ভাৱ "image/png.h"
+#অন্তর্ভাৱ "image/rsvg.h"
+#অন্তর্ভাৱ "image/svg.h"
+#অন্তর্ভাৱ "image/webp.h"
+#অন্তর্ভাৱ "image/image.h"
 
 /**
  * Initialise image content handlers
  *
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror image_init(void)
+nserror image_init(শূন্য)
 {
 	nserror error = NSERROR_OK;
 
 #ifdef WITH_BMP
 	error = nsbmp_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
 #ifdef WITH_GIF
 	error = nsgif_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
 #ifdef WITH_BMP
 	error = nsico_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
 #ifdef WITH_JPEG
 	error = nsjpeg_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
 #ifdef WITH_JPEGXL
 	error = nsjpegxl_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
 #ifdef WITH_PNG
 	error = nspng_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
 #ifdef WITH_NSSPRITE
 	error = nssprite_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
 	/* Prefer rsvg over libsvgtiny for svgs */
 #ifdef WITH_NS_SVG
 	error = svg_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 #ifdef WITH_RSVG
 	error = nsrsvg_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
 #ifdef WITH_WEBP
 	error = nswebp_init();
-	if (error != NSERROR_OK)
-		return error;
+	যদি (error != NSERROR_OK)
+		ঘূৰাই error;
 #endif
 
-	return error;
+	ঘূৰাই error;
 }
 
 
-bool image_bitmap_plot(struct bitmap *bitmap,
-		       struct content_redraw_data *data,
-		       const struct rect *clip,
-		       const struct redraw_context *ctx)
+bool image_bitmap_plot(সংরচনা bitmap *bitmap,
+		       সংরচনা content_redraw_data *data,
+		       ধ্রুৱ সংরচনা rect *clip,
+		       ধ্রুৱ সংরচনা redraw_context *ctx)
 {
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	int width;
-	int height;
-	unsigned char *pixel;
+	পূর্ণাঙ্ক width;
+	পূর্ণাঙ্ক height;
+	unsigned ৱর্ণ *pixel;
 	plot_style_t fill_style;
-	struct rect area;
+	সংরচনা rect area;
 
 	width = guit->bitmap->get_width(bitmap);
-	if (width == 1) {
+	যদি (width == 1) {
 		height = guit->bitmap->get_height(bitmap);
-		if (height == 1) {
+		যদি (height == 1) {
 			/* optimise 1x1 bitmap plot */
 			pixel = guit->bitmap->get_buffer(bitmap);
 			fill_style.fill_colour = bitmap_pixel_to_colour(pixel);
 
-			if (guit->bitmap->get_opaque(bitmap) ||
+			যদি (guit->bitmap->get_opaque(bitmap) ||
 			    ((fill_style.fill_colour & 0xff000000) == 0xff000000)) {
 
 				area = *clip;
 
-				if (data->repeat_x != true) {
+				যদি (data->repeat_x != true) {
 					area.x0 = data->x;
 					area.x1 = data->x + data->width;
 				}
 
-				if (data->repeat_y != true) {
+				যদি (data->repeat_y != true) {
 					area.y0 = data->y;
 					area.y1 = data->y + data->height;
 				}
@@ -152,24 +152,24 @@ bool image_bitmap_plot(struct bitmap *bitmap,
 				fill_style.stroke_type = PLOT_OP_TYPE_NONE;
 				fill_style.fill_type = PLOT_OP_TYPE_SOLID;
 
-				return (ctx->plot->rectangle(ctx,
+				ঘূৰাই (ctx->plot->rectangle(ctx,
 							     &fill_style,
 							     &area) == NSERROR_OK);
 
-			} else if ((fill_style.fill_colour & 0xff000000) == 0) {
+			} অন্যথা যদি ((fill_style.fill_colour & 0xff000000) == 0) {
 				/* transparent pixel used as spacer, skip it */
-				return true;
+				ঘূৰাই true;
 			}
 		}
 	}
 
 	/* do the plot */
-	if (data->repeat_x)
+	যদি (data->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	যদি (data->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	ঘূৰাই (ctx->plot->bitmap(ctx,
 				  bitmap,
 				  data->x, data->y,
 				  data->width, data->height,

@@ -22,35 +22,35 @@
  * Free text search
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাৱ <stdbool.h>
+#অন্তর্ভাৱ <stddef.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "utils/ascii.h"
-#include "netsurf/types.h"
-#include "desktop/selection.h"
+#অন্তর্ভাৱ "utils/errors.h"
+#অন্তর্ভাৱ "utils/utils.h"
+#অন্তর্ভাৱ "utils/ascii.h"
+#অন্তর্ভাৱ "netsurf/types.h"
+#অন্তর্ভাৱ "desktop/selection.h"
 
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
+#অন্তর্ভাৱ "content/content.h"
+#অন্তর্ভাৱ "content/content_protected.h"
+#অন্তর্ভাৱ "content/hlcache.h"
+#অন্তর্ভাৱ "content/textsearch.h"
 
 /**
  * search match
  */
-struct list_entry {
+সংরচনা list_entry {
 	/**
 	 * previous match
 	 */
-	struct list_entry *prev;
+	সংরচনা list_entry *prev;
 
 	/**
 	 * next match
 	 */
-	struct list_entry *next;
+	সংরচনা list_entry *next;
 
 	/**
 	 * start position of match
@@ -65,48 +65,48 @@ struct list_entry {
 	/**
 	 * content opaque start pointer
 	 */
-	struct box *start_box;
+	সংরচনা box *start_box;
 
 	/**
 	 * content opaque end pointer
 	 */
-	struct box *end_box;
+	সংরচনা box *end_box;
 
 	/**
 	 * content specific selection object
 	 */
-	struct selection *sel;
+	সংরচনা selection *sel;
 };
 
 /**
  * The context for a free text search
  */
-struct textsearch_context {
+সংরচনা textsearch_context {
 
 	/**
 	 * content search was performed upon
 	 */
-	struct content *c;
+	সংরচনা content *c;
 
 	/**
 	 * opaque pointer passed to constructor.
 	 */
-	void *gui_p;
+	শূন্য *gui_p;
 
 	/**
 	 * List of matches
 	 */
-	struct list_entry *found;
+	সংরচনা list_entry *found;
 
 	/**
 	 * current selected match
 	 */
-	struct list_entry *current; /* first for select all */
+	সংরচনা list_entry *current; /* first for select all */
 
 	/**
 	 * query string search results are for
 	 */
-	char *string;
+	ৱর্ণ *string;
 	bool prev_case_sens;
 	bool newsearch;
 };
@@ -115,18 +115,18 @@ struct textsearch_context {
 /**
  * broadcast textsearch message
  */
-static inline void
-textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+স্থির অন্তঃস্থ শূন্য
+textsearch_broadcast(সংরচনা textsearch_context *textsearch,
+		     পূর্ণাঙ্ক type,
 		     bool state,
-		     const char *string)
+		     ধ্রুৱ ৱর্ণ *string)
 {
-	union content_msg_data msg_data;
-	msg_data.textsearch.type = type;
-	msg_data.textsearch.ctx = textsearch->gui_p;
-	msg_data.textsearch.state = state;
-	msg_data.textsearch.string = string;
-	content_broadcast(textsearch->c, CONTENT_MSG_TEXTSEARCH, &msg_data);
+	সঙ্ঘ content_বাৰ্তা_data বাৰ্তা_data;
+	বাৰ্তা_data.textsearch.type = type;
+	বাৰ্তা_data.textsearch.ctx = textsearch->gui_p;
+	বাৰ্তা_data.textsearch.state = state;
+	বাৰ্তা_data.textsearch.string = string;
+	content_broadcast(textsearch->c, CONTENT_বাৰ্তা_TEXTSEARCH, &বাৰ্তা_data);
 }
 
 
@@ -134,10 +134,10 @@ textsearch_broadcast(struct textsearch_context *textsearch,
  * Release the memory used by the list of matches,
  * deleting selection objects too
  */
-static void free_matches(struct textsearch_context *textsearch)
+স্থির শূন্য free_matches(সংরচনা textsearch_context *textsearch)
 {
-	struct list_entry *cur;
-	struct list_entry *nxt;
+	সংরচনা list_entry *cur;
+	সংরচনা list_entry *nxt;
 
 	cur = textsearch->found->next;
 
@@ -147,15 +147,15 @@ static void free_matches(struct textsearch_context *textsearch)
 	 * causing nested accesses to the list
 	 */
 
-	textsearch->found->prev = NULL;
-	textsearch->found->next = NULL;
+	textsearch->found->prev = রিক্ত;
+	textsearch->found->next = রিক্ত;
 
-	for (; cur; cur = nxt) {
+	বাবে (; cur; cur = nxt) {
 		nxt = cur->next;
-		if (cur->sel) {
+		যদি (cur->sel) {
 			selection_destroy(cur->sel);
 		}
-		free(cur);
+		মুক্ত(cur);
 	}
 }
 
@@ -164,24 +164,24 @@ static void free_matches(struct textsearch_context *textsearch)
  * Specifies whether all matches or just the current match should
  * be highlighted in the search text.
  */
-static void search_show_all(bool all, struct textsearch_context *context)
+স্থির শূন্য অনুসন্ধান_show_all(bool all, সংরচনা textsearch_context *context)
 {
-	struct list_entry *a;
+	সংরচনা list_entry *a;
 
-	for (a = context->found->next; a; a = a->next) {
+	বাবে (a = context->found->next; a; a = a->next) {
 		bool add = true;
-		if (!all && a != context->current) {
+		যদি (!all && a != context->current) {
 			add = false;
-			if (a->sel) {
+			যদি (a->sel) {
 				selection_destroy(a->sel);
-				a->sel = NULL;
+				a->sel = রিক্ত;
 			}
 		}
 
-		if (add && !a->sel) {
+		যদি (add && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			যদি (a->sel != রিক্ত) {
 				selection_init(a->sel);
 				selection_set_position(a->sel,
 						       a->start_idx,
@@ -200,45 +200,45 @@ static void search_show_all(bool all, struct textsearch_context *context)
  * \param string_len length of search string
  * \param flags flags to control the search.
  */
-static nserror
-search_text(struct textsearch_context *context,
-	    const char *string,
-	    int string_len,
-	    search_flags_t flags)
+স্থির nserror
+অনুসন্ধান_text(সংরচনা textsearch_context *context,
+	    ধ্রুৱ ৱর্ণ *string,
+	    পূর্ণাঙ্ক string_len,
+	    অনুসন্ধান_flags_t flags)
 {
-	struct rect bounds;
-	union content_msg_data msg_data;
+	সংরচনা rect bounds;
+	সঙ্ঘ content_বাৰ্তা_data বাৰ্তা_data;
 	bool case_sensitive, forwards, showall;
 	nserror res = NSERROR_OK;
 
-	case_sensitive = ((flags & SEARCH_FLAG_CASE_SENSITIVE) != 0) ?
+	case_sensitive = ((flags & অনুসন্ধান_FLAG_CASE_SENSITIVE) != 0) ?
 			true : false;
-	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
-	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
+	forwards = ((flags & অনুসন্ধান_FLAG_FORWARDS) != 0) ? true : false;
+	showall = ((flags & অনুসন্ধান_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	যদি (context->c == রিক্ত) {
+		ঘূৰাই res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	যদি ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
-			free(context->string);
+		যদি (context->string != রিক্ত) {
+			মুক্ত(context->string);
 		}
 
-		context->current = NULL;
+		context->current = রিক্ত;
 		free_matches(context);
 
 		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
+		যদি (context->string != রিক্ত) {
 			memcpy(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
 
 		/* indicate find operation starting */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, NULL);
+		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, রিক্ত);
 
 
 		/* call content find handler */
@@ -249,11 +249,11 @@ search_text(struct textsearch_context *context,
 							   case_sensitive);
 
 		/* indicate find operation finished */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
+		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, রিক্ত);
 
-		if (res != NSERROR_OK) {
+		যদি (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			ঘূৰাই res;
 		}
 
 		context->prev_case_sens = case_sensitive;
@@ -262,13 +262,13 @@ search_text(struct textsearch_context *context,
 		context->current = context->found->next;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} অন্যথা যদি (context->current != রিক্ত) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
+		যদি (forwards) {
+			যদি (context->current->next)
 				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		} অন্যথা {
+			যদি (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
@@ -276,29 +276,29 @@ search_text(struct textsearch_context *context,
 	/* update match state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_MATCH,
-			     (context->current != NULL),
-			     NULL);
+			     (context->current != রিক্ত),
+			     রিক্ত);
 
-	search_show_all(showall, context);
+	অনুসন্ধান_show_all(showall, context);
 
 	/* update back state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_BACK,
-			     ((context->current != NULL) &&
-			      (context->current->prev != NULL)),
-			     NULL);
+			     ((context->current != রিক্ত) &&
+			      (context->current->prev != রিক্ত)),
+			     রিক্ত);
 
 	/* update forward state */
 	textsearch_broadcast(context,
 			     CONTENT_TEXTSEARCH_FORWARD,
-			     ((context->current != NULL) &&
-			      (context->current->next != NULL)),
-			     NULL);
+			     ((context->current != রিক্ত) &&
+			      (context->current->next != রিক্ত)),
+			     রিক্ত);
 
 
-	if (context->current == NULL) {
+	যদি (context->current == রিক্ত) {
 		/* no current match */
-		return res;
+		ঘূৰাই res;
 	}
 
 	/* call content match bounds handler */
@@ -308,16 +308,16 @@ search_text(struct textsearch_context *context,
 					context->current->start_box,
 					context->current->end_box,
 					&bounds);
-	if (res == NSERROR_OK) {
-		msg_data.scroll.area = true;
-		msg_data.scroll.x0 = bounds.x0;
-		msg_data.scroll.y0 = bounds.y0;
-		msg_data.scroll.x1 = bounds.x1;
-		msg_data.scroll.y1 = bounds.y1;
-		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
+	যদি (res == NSERROR_OK) {
+		বাৰ্তা_data.scroll.area = true;
+		বাৰ্তা_data.scroll.x0 = bounds.x0;
+		বাৰ্তা_data.scroll.y0 = bounds.y0;
+		বাৰ্তা_data.scroll.x1 = bounds.x1;
+		বাৰ্তা_data.scroll.y1 = bounds.y1;
+		content_broadcast(context->c, CONTENT_বাৰ্তা_SCROLL, &বাৰ্তা_data);
 	}
 
-	return res;
+	ঘূৰাই res;
 }
 
 
@@ -330,16 +330,16 @@ search_text(struct textsearch_context *context,
  * \param flags   The flags forward/back etc
  * \param string  The string to match
  */
-static nserror
-content_textsearch_step(struct textsearch_context *textsearch,
-			search_flags_t flags,
-			const char *string)
+স্থির nserror
+content_textsearch_step(সংরচনা textsearch_context *textsearch,
+			অনুসন্ধান_flags_t flags,
+			ধ্রুৱ ৱর্ণ *string)
 {
-	int string_len;
-	int i = 0;
+	পূর্ণাঙ্ক string_len;
+	পূর্ণাঙ্ক i = 0;
 	nserror res = NSERROR_OK;
 
-	assert(textsearch != NULL);
+	প্রতিজ্ঞা(textsearch != রিক্ত);
 
 	/* broadcast recent query string */
 	textsearch_broadcast(textsearch,
@@ -348,15 +348,15 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			     string);
 
 	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
-			break;
+	বাবে (i = 0; i < string_len; i++) {
+		যদি (string[i] != '#' && string[i] != '*')
+			ভঙ্গ;
 	}
 
-	if (i < string_len) {
-		res = search_text(textsearch, string, string_len, flags);
-	} else {
-		union content_msg_data msg_data;
+	যদি (i < string_len) {
+		res = অনুসন্ধান_text(textsearch, string, string_len, flags);
+	} অন্যথা {
+		সঙ্ঘ content_বাৰ্তা_data বাৰ্তা_data;
 
 		free_matches(textsearch);
 
@@ -364,30 +364,30 @@ content_textsearch_step(struct textsearch_context *textsearch,
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_MATCH,
 				     true,
-				     NULL);
+				     রিক্ত);
 
 		/* update back state */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_BACK,
 				     false,
-				     NULL);
+				     রিক্ত);
 
 		/* update forward state */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_FORWARD,
 				     false,
-				     NULL);
+				     রিক্ত);
 
 		/* clear scroll */
-		msg_data.scroll.area = false;
-		msg_data.scroll.x0 = 0;
-		msg_data.scroll.y0 = 0;
+		বাৰ্তা_data.scroll.area = false;
+		বাৰ্তা_data.scroll.x0 = 0;
+		বাৰ্তা_data.scroll.y0 = 0;
 		content_broadcast(textsearch->c,
-				  CONTENT_MSG_SCROLL,
-				  &msg_data);
+				  CONTENT_বাৰ্তা_SCROLL,
+				  &বাৰ্তা_data);
 	}
 
-	return res;
+	ঘূৰাই res;
 }
 
 
@@ -396,16 +396,16 @@ content_textsearch_step(struct textsearch_context *textsearch,
  *
  * \param c content to clear
  */
-static nserror content_textsearch__clear(struct content *c)
+স্থির nserror content_textsearch__clear(সংরচনা content *c)
 {
-	free(c->textsearch.string);
-	c->textsearch.string = NULL;
+	মুক্ত(c->textsearch.string);
+	c->textsearch.string = রিক্ত;
 
-	if (c->textsearch.context != NULL) {
+	যদি (c->textsearch.context != রিক্ত) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = রিক্ত;
 	}
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
@@ -417,48 +417,48 @@ static nserror content_textsearch__clear(struct content *c)
  * \param search_out A pointer to recive the new text search context
  * \return NSERROR_OK on success and \a search_out updated else error code
  */
-static nserror
-content_textsearch_create(struct content *c,
-			  void *gui_data,
-			  struct textsearch_context **textsearch_out)
+স্থির nserror
+content_textsearch_create(সংরচনা content *c,
+			  শূন্য *gui_data,
+			  সংরচনা textsearch_context **textsearch_out)
 {
-	struct textsearch_context *context;
-	struct list_entry *search_head;
+	সংরচনা textsearch_context *context;
+	সংরচনা list_entry *অনুসন্ধান_head;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
-	    (c->handler->textsearch_bounds == NULL)) {
+	যদি ((c->handler->textsearch_find == রিক্ত) ||
+	    (c->handler->textsearch_bounds == রিক্ত)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		ঘূৰাই NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
-	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	context = malloc(পরিমাণ(সংরচনা textsearch_context));
+	যদি (context == রিক্ত) {
+		ঘূৰাই NSERROR_NOMEM;
 	}
 
-	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
-		free(context);
-		return NSERROR_NOMEM;
+	অনুসন্ধান_head = malloc(পরিমাণ(সংরচনা list_entry));
+	যদি (অনুসন্ধান_head == রিক্ত) {
+		মুক্ত(context);
+		ঘূৰাই NSERROR_NOMEM;
 	}
 
-	search_head->start_idx = 0;
-	search_head->end_idx = 0;
-	search_head->start_box = NULL;
-	search_head->end_box = NULL;
-	search_head->sel = NULL;
-	search_head->prev = NULL;
-	search_head->next = NULL;
+	অনুসন্ধান_head->start_idx = 0;
+	অনুসন্ধান_head->end_idx = 0;
+	অনুসন্ধান_head->start_box = রিক্ত;
+	অনুসন্ধান_head->end_box = রিক্ত;
+	অনুসন্ধান_head->sel = রিক্ত;
+	অনুসন্ধান_head->prev = রিক্ত;
+	অনুসন্ধান_head->next = রিক্ত;
 
-	context->found = search_head;
-	context->current = NULL;
-	context->string = NULL;
+	context->found = অনুসন্ধান_head;
+	context->current = রিক্ত;
+	context->string = রিক্ত;
 	context->prev_case_sens = false;
 	context->newsearch = true;
 	context->c = c;
@@ -466,275 +466,275 @@ content_textsearch_create(struct content *c,
 
 	*textsearch_out = context;
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-const char *
-content_textsearch_find_pattern(const char *string,
-				int s_len,
-				const char *pattern,
-				int p_len,
+ধ্রুৱ ৱর্ণ *
+content_textsearch_find_pattern(ধ্রুৱ ৱর্ণ *string,
+				পূর্ণাঙ্ক s_len,
+				ধ্রুৱ ৱর্ণ *pattern,
+				পূর্ণাঙ্ক p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				unsigned পূর্ণাঙ্ক *m_len)
 {
-	struct { const char *ss, *s, *p; bool first; } context[16];
-	const char *ep = pattern + p_len;
-	const char *es = string  + s_len;
-	const char *p = pattern - 1;  /* a virtual '*' before the pattern */
-	const char *ss = string;
-	const char *s = string;
+	সংরচনা { ধ্রুৱ ৱর্ণ *ss, *s, *p; bool first; } context[16];
+	ধ্রুৱ ৱর্ণ *ep = pattern + p_len;
+	ধ্রুৱ ৱর্ণ *es = string  + s_len;
+	ধ্রুৱ ৱর্ণ *p = pattern - 1;  /* a virtual '*' before the pattern */
+	ধ্রুৱ ৱর্ণ *ss = string;
+	ধ্রুৱ ৱর্ণ *s = string;
 	bool first = true;
-	int top = 0;
+	পূর্ণাঙ্ক শীৰ্ষ = 0;
 
-	while (p < ep) {
+	যেতিয়ালৈ (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
-			char ch;
+		যদি (p < pattern || *p == '*') {
+			ৱর্ণ ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			কৰা p++; যেতিয়ালৈ (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			যদি (p >= ep) ভঙ্গ;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			যদি (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
-						break;
+				যদি (!case_sens) ch = ascii_to_upper(ch);
+				যেতিয়ালৈ (s < es) {
+					যদি (case_sens) {
+						যদি (*s == ch) ভঙ্গ;
+					} অন্যথা যদি (ascii_to_upper(*s) == ch)
+						ভঙ্গ;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			যদি (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
-					context[top].ss = ss;
-					context[top].s  = s + 1;
-					context[top].p  = p - 1;
+				যদি (শীৰ্ষ < (পূর্ণাঙ্ক)NOF_ELEMENTS(context)) {
+					context[শীৰ্ষ].ss = ss;
+					context[শীৰ্ষ].s  = s + 1;
+					context[শীৰ্ষ].p  = p - 1;
 					/* ptr to last asterisk */
-					context[top].first = first;
-					top++;
+					context[শীৰ্ষ].first = first;
+					শীৰ্ষ++;
 				}
 
-				if (first) {
+				যদি (first) {
 					ss = s;
 					/* remember first non-'*' char */
 					first = false;
 				}
 
 				matches = true;
-			} else {
+			} অন্যথা {
 				matches = false;
 			}
 
-		} else if (s < es) {
-			char ch = *p;
-			if (ch == '#')
+		} অন্যথা যদি (s < es) {
+			ৱর্ণ ch = *p;
+			যদি (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			অন্যথা {
+				যদি (case_sens)
 					matches = (*s == ch);
-				else
+				অন্যথা
 					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
 			}
-			if (matches && first) {
+			যদি (matches && first) {
 				ss = s;  /* remember first non-'*' char */
 				first = false;
 			}
-		} else {
+		} অন্যথা {
 			matches = false;
 		}
 
-		if (matches) {
+		যদি (matches) {
 			p++; s++;
-		} else {
+		} অন্যথা {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			যদি (--শীৰ্ষ < 0)
+				ঘূৰাই রিক্ত;  /* no match, give up */
 
-			ss = context[top].ss;
-			s  = context[top].s;
-			p  = context[top].p;
-			first = context[top].first;
+			ss = context[শীৰ্ষ].ss;
+			s  = context[শীৰ্ষ].s;
+			p  = context[শীৰ্ষ].p;
+			first = context[শীৰ্ষ].first;
 		}
 	}
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	ঘূৰাই ss;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 nserror
-content_textsearch_add_match(struct textsearch_context *context,
+content_textsearch_add_match(সংরচনা textsearch_context *context,
 			     unsigned start_idx,
 			     unsigned end_idx,
-			     struct box *start_box,
-			     struct box *end_box)
+			     সংরচনা box *start_box,
+			     সংরচনা box *end_box)
 {
-	struct list_entry *entry;
+	সংরচনা list_entry *entry;
 
 	/* found string in box => add to list */
-	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	entry = calloc(1, পরিমাণ(*entry));
+	যদি (entry == রিক্ত) {
+		ঘূৰাই NSERROR_NOMEM;
 	}
 
 	entry->start_idx = start_idx;
 	entry->end_idx = end_idx;
 	entry->start_box = start_box;
 	entry->end_box = end_box;
-	entry->sel = NULL;
+	entry->sel = রিক্ত;
 
-	entry->next = NULL;
+	entry->next = রিক্ত;
 	entry->prev = context->found->prev;
 
-	if (context->found->prev == NULL) {
+	যদি (context->found->prev == রিক্ত) {
 		context->found->next = entry;
-	} else {
+	} অন্যথা {
 		context->found->prev->next = entry;
 	}
 
 	context->found->prev = entry;
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 bool
-content_textsearch_ishighlighted(struct textsearch_context *textsearch,
+content_textsearch_ishighlighted(সংরচনা textsearch_context *textsearch,
 				 unsigned start_offset,
 				 unsigned end_offset,
 				 unsigned *start_idx,
 				 unsigned *end_idx)
 {
-	struct list_entry *cur;
+	সংরচনা list_entry *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	বাবে (cur = textsearch->found->next; cur != রিক্ত; cur = cur->next) {
+		যদি (cur->sel &&
 		    selection_highlighted(cur->sel,
 					  start_offset,
 					  end_offset,
 					  start_idx,
 					  end_idx)) {
-			return true;
+			ঘূৰাই true;
 		}
 	}
 
-	return false;
+	ঘূৰাই false;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch)
+nserror content_textsearch_destroy(সংরচনা textsearch_context *textsearch)
 {
-	assert(textsearch != NULL);
+	প্রতিজ্ঞা(textsearch != রিক্ত);
 
-	if (textsearch->string != NULL) {
+	যদি (textsearch->string != রিক্ত) {
 		/* broadcast recent query string */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
 				     false,
 				     textsearch->string);
 
-		free(textsearch->string);
+		মুক্ত(textsearch->string);
 	}
 
 	/* update back state */
 	textsearch_broadcast(textsearch,
 			     CONTENT_TEXTSEARCH_BACK,
 			     true,
-			     NULL);
+			     রিক্ত);
 
 	/* update forward state */
 	textsearch_broadcast(textsearch,
 			     CONTENT_TEXTSEARCH_FORWARD,
 			     true,
-			     NULL);
+			     রিক্ত);
 
 	free_matches(textsearch);
-	free(textsearch);
+	মুক্ত(textsearch);
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror
-content_textsearch(struct hlcache_handle *h,
-		   void *context,
-		   search_flags_t flags,
-		   const char *string)
+content_textsearch(সংরচনা hlcache_handle *h,
+		   শূন্য *context,
+		   অনুসন্ধান_flags_t flags,
+		   ধ্রুৱ ৱর্ণ *string)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	সংরচনা content *c = hlcache_handle_get_content(h);
 	nserror res;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != রিক্ত);
 
-	if (string != NULL &&
-	    c->textsearch.string != NULL &&
-	    c->textsearch.context != NULL &&
+	যদি (string != রিক্ত &&
+	    c->textsearch.string != রিক্ত &&
+	    c->textsearch.context != রিক্ত &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} অন্যথা যদি (string != রিক্ত) {
 		/* New search */
-		free(c->textsearch.string);
+		মুক্ত(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		যদি (c->textsearch.string == রিক্ত) {
+			ঘূৰাই NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		যদি (c->textsearch.context != রিক্ত) {
 			content_textsearch_destroy(c->textsearch.context);
-			c->textsearch.context = NULL;
+			c->textsearch.context = রিক্ত;
 		}
 
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		যদি (res != NSERROR_OK) {
+			ঘূৰাই res;
 		}
 
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else {
+	} অন্যথা {
 		/* Clear search */
 		content_textsearch__clear(c);
 
-		free(c->textsearch.string);
-		c->textsearch.string = NULL;
+		মুক্ত(c->textsearch.string);
+		c->textsearch.string = রিক্ত;
 	}
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
-nserror content_textsearch_clear(struct hlcache_handle *h)
+nserror content_textsearch_clear(সংরচনা hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	সংরচনা content *c = hlcache_handle_get_content(h);
+	প্রতিজ্ঞা(c != 0);
 
-	return(content_textsearch__clear(c));
+	ঘূৰাই(content_textsearch__clear(c));
 }

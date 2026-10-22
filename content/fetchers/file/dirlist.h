@@ -26,7 +26,7 @@
 #ifndef NETSURF_CONTENT_DIRLIST_H_
 #define NETSURF_CONTENT_DIRLIST_H_
 
-#include <stdbool.h>
+#অন্তর্ভাৱ <stdbool.h>
 
 #define DIRLIST_NO_NAME_COLUMN 1
 #define DIRLIST_NO_TYPE_COLUMN 1 << 1
@@ -34,17 +34,17 @@
 #define DIRLIST_NO_DATE_COLUMN 1 << 3
 #define DIRLIST_NO_TIME_COLUMN 1 << 4
 
-struct nsurl;
+সংরচনা nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length);
-bool dirlist_generate_headings(char *buffer, int buffer_length);
-bool dirlist_generate_row(bool even, bool directory, struct nsurl *url,
-		char *name, const char *mimetype, long long size, char *date,
-		char *time, char *buffer, int buffer_length);
-bool dirlist_generate_bottom(char *buffer, int buffer_length);
+bool dirlist_generate_শীৰ্ষ(ৱর্ণ *buffer, পূর্ণাঙ্ক buffer_length);
+bool dirlist_generate_hide_columns(পূর্ণাঙ্ক flags, ৱর্ণ *buffer, পূর্ণাঙ্ক buffer_length);
+bool dirlist_generate_title(ধ্রুৱ ৱর্ণ *title, ৱর্ণ *buffer, পূর্ণাঙ্ক buffer_length);
+bool dirlist_generate_parent_link(ধ্রুৱ ৱর্ণ *parent, ৱর্ণ *buffer,
+		পূর্ণাঙ্ক buffer_length);
+bool dirlist_generate_headings(ৱর্ণ *buffer, পূর্ণাঙ্ক buffer_length);
+bool dirlist_generate_row(bool even, bool directory, সংরচনা nsurl *url,
+		ৱর্ণ *name, ধ্রুৱ ৱর্ণ *mimetype, long long size, ৱর্ণ *date,
+		ৱর্ণ *time, ৱর্ণ *buffer, পূর্ণাঙ্ক buffer_length);
+bool dirlist_generate_bottom(ৱর্ণ *buffer, পূর্ণাঙ্ক buffer_length);
 
 #endif

@@ -87,33 +87,33 @@
  * potential crashes.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
+#অন্তর্ভাৱ <assert.h>
+#অন্তর্ভাৱ <stdbool.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <strings.h>
+#অন্তর্ভাৱ <time.h>
 #ifdef WITH_NSPSL
-#include <nspsl.h>
+#অন্তর্ভাৱ <nspsl.h>
 #endif
 
-#include "utils/inet.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/corestrings.h"
-#include "utils/url.h"
-#include "utils/utils.h"
-#include "utils/bloom.h"
-#include "utils/time.h"
-#include "utils/nsurl.h"
-#include "utils/ascii.h"
-#include "utils/http.h"
-#include "netsurf/bitmap.h"
-#include "desktop/cookie_manager.h"
+#অন্তর্ভাৱ "utils/inet.h"
+#অন্তর্ভাৱ "utils/nsoption.h"
+#অন্তর্ভাৱ "utils/log.h"
+#অন্তর্ভাৱ "utils/corestrings.h"
+#অন্তর্ভাৱ "utils/url.h"
+#অন্তর্ভাৱ "utils/utils.h"
+#অন্তর্ভাৱ "utils/bloom.h"
+#অন্তর্ভাৱ "utils/time.h"
+#অন্তর্ভাৱ "utils/nsurl.h"
+#অন্তর্ভাৱ "utils/ascii.h"
+#অন্তর্ভাৱ "utils/http.h"
+#অন্তর্ভাৱ "netsurf/bitmap.h"
+#অন্তর্ভাৱ "desktop/cookie_manager.h"
 
-#include "content/content.h"
-#include "content/urldb.h"
+#অন্তর্ভাৱ "content/content.h"
+#অন্তর্ভাৱ "content/urldb.h"
 
 /**
  * cookie entry.
@@ -121,23 +121,23 @@
  * \warning This *must* be kept in sync with the public interface in
  *   netsurf/cookie_db.h
  */
-struct cookie_internal_data {
-	struct cookie_internal_data *prev;	/**< Previous in list */
-	struct cookie_internal_data *next;	/**< Next in list */
+সংরচনা cookie_internal_data {
+	সংরচনা cookie_internal_data *prev;	/**< Previous in list */
+	সংরচনা cookie_internal_data *next;	/**< Next in list */
 
-	char *name;		/**< Cookie name */
-	char *value;		/**< Cookie value */
-	bool value_was_quoted;	/**< Value was quoted in Set-Cookie: */
-	char *comment;		/**< Cookie comment */
+	ৱর্ণ *name;		/**< Cookie name */
+	ৱর্ণ *মান;		/**< Cookie value */
+	bool মান_was_quoted;	/**< Value was quoted in Set-Cookie: */
+	ৱর্ণ *comment;		/**< Cookie comment */
 	bool domain_from_set;	/**< Domain came from Set-Cookie: header */
-	char *domain;		/**< Domain */
+	ৱর্ণ *domain;		/**< Domain */
 	bool path_from_set;	/**< Path came from Set-Cookie: header */
-	char *path;		/**< Path */
+	ৱর্ণ *path;		/**< Path */
 	time_t expires;		/**< Expiry timestamp, or -1 for session */
 	time_t last_used;	/**< Last used time */
 	bool secure;		/**< Only send for HTTPS requests */
 	bool http_only;		/**< Only expose to HTTP(S) requests */
-	enum cookie_version version;	/**< Specification compliance */
+	গণনা cookie_version version;	/**< Specification compliance */
 	bool no_destroy;	/**< Never destroy this cookie,
 				 * unless it's expired */
 
@@ -151,7 +151,7 @@ struct cookie_internal_data {
  * structure lives as linked list element in a leaf host_part struct
  * so we need additional scheme and port to have a canonical_root_url.
  */
-struct prot_space_data {
+সংরচনা prot_space_data {
 	/**
 	 * URL scheme of canonical hostname of this protection space.
 	 */
@@ -161,17 +161,17 @@ struct prot_space_data {
 	 * space. When 0, it means the default port for given scheme,
 	 * i.e. 80 (http), 443 (https).
 	 */
-	unsigned int port;
+	unsigned পূর্ণাঙ্ক port;
 	/** Protection realm */
-	char *realm;
+	ৱর্ণ *realm;
 
 	/**
 	 * Authentication details for this protection space in form
 	 * username:password
 	 */
-	char *auth;
+	ৱর্ণ *auth;
 	/** Next sibling */
-	struct prot_space_data *next;
+	সংরচনা prot_space_data *next;
 };
 
 
@@ -180,9 +180,9 @@ struct prot_space_data {
  *
  * \warning must be kept in sync with url_data structure in netsurf/url_db.h
  */
-struct url_internal_data {
-	char *title;		/**< Resource title */
-	unsigned int visits;	/**< Visit count */
+সংরচনা url_internal_data {
+	ৱর্ণ *title;		/**< Resource title */
+	unsigned পূর্ণাঙ্ক visits;	/**< Visit count */
 	time_t last_visit;	/**< Last visit time */
 	content_type type;	/**< Type of resource */
 };
@@ -191,96 +191,96 @@ struct url_internal_data {
 /**
  * data entry for url
  */
-struct path_data {
+সংরচনা path_data {
 	nsurl *url;		/**< Full URL */
 	lwc_string *scheme;	/**< URL scheme for data */
-	unsigned int port;	/**< Port number for data. When 0, it means
+	unsigned পূর্ণাঙ্ক port;	/**< Port number for data. When 0, it means
 				 * the default port for given scheme, i.e.
 				 * 80 (http), 443 (https). */
-	char *segment;		/**< Path segment for this node */
-	unsigned int frag_cnt;	/**< Number of entries in path_data::fragment */
-	char **fragment;	/**< Array of fragments */
+	ৱর্ণ *segment;		/**< Path segment for this node */
+	unsigned পূর্ণাঙ্ক frag_cnt;	/**< Number of entries in path_data::fragment */
+	ৱর্ণ **fragment;	/**< Array of fragments */
 	bool persistent;	/**< This entry should persist */
 
-	struct url_internal_data urld;	/**< URL data for resource */
+	সংরচনা url_internal_data urld;	/**< URL data for resource */
 
 	/**
 	 * Protection space to which this resource belongs too. Can be
 	 * NULL when it does not belong to a protection space or when
 	 * it is not known. No ownership (is with struct host_part::prot_space).
 	 */
-	const struct prot_space_data *prot_space;
+	ধ্রুৱ সংরচনা prot_space_data *prot_space;
 	/** Cookies associated with resource */
-	struct cookie_internal_data *cookies;
+	সংরচনা cookie_internal_data *cookies;
 	/** Last cookie in list */
-	struct cookie_internal_data *cookies_end;
+	সংরচনা cookie_internal_data *cookies_end;
 
-	struct path_data *next;	/**< Next sibling */
-	struct path_data *prev;	/**< Previous sibling */
-	struct path_data *parent; /**< Parent path segment */
-	struct path_data *children; /**< Child path segments */
-	struct path_data *last; /**< Last child */
+	সংরচনা path_data *next;	/**< Next sibling */
+	সংরচনা path_data *prev;	/**< Previous sibling */
+	সংরচনা path_data *parent; /**< Parent path segment */
+	সংরচনা path_data *children; /**< Child path segments */
+	সংরচনা path_data *last; /**< Last child */
 };
 
-struct hsts_data {
+সংরচনা hsts_data {
 	time_t expires; /**< Expiry time */
 	bool include_sub_domains; /**< Whether to include subdomains */
 };
 
-struct host_part {
+সংরচনা host_part {
 	/**
 	 * Known paths on this host. This _must_ be first so that
 	 * struct host_part *h = (struct host_part *)mypath; works
 	 */
-	struct path_data paths;
+	সংরচনা path_data paths;
 	/**
 	 * Allow access to SSL protected resources on this host
 	 * without verifying certificate authenticity
 	 */
 	bool permit_invalid_certs;
 	/* HSTS data */
-	struct hsts_data hsts;
+	সংরচনা hsts_data hsts;
 
 	/**
 	 * Part of host string
 	 */
-	char *part;
+	ৱর্ণ *part;
 
 	/**
 	 * Linked list of all known proctection spaces known for this
 	 * host and all its schems and ports.
 	 */
-	struct prot_space_data *prot_space;
+	সংরচনা prot_space_data *prot_space;
 
-	struct host_part *next;	/**< Next sibling */
-	struct host_part *prev;	/**< Previous sibling */
-	struct host_part *parent; /**< Parent host part */
-	struct host_part *children; /**< Child host parts */
+	সংরচনা host_part *next;	/**< Next sibling */
+	সংরচনা host_part *prev;	/**< Previous sibling */
+	সংরচনা host_part *parent; /**< Parent host part */
+	সংরচনা host_part *children; /**< Child host parts */
 };
 
 
 /**
  * search index node
  */
-struct search_node {
-	const struct host_part *data;	/**< Host tree entry */
+সংরচনা অনুসন্ধান_গ্ৰন্থি {
+	ধ্রুৱ সংরচনা host_part *data;	/**< Host tree entry */
 
-	unsigned int level;		/**< Node level */
+	unsigned পূর্ণাঙ্ক level;		/**< Node level */
 
-	struct search_node *left;	/**< Left subtree */
-	struct search_node *right;	/**< Right subtree */
+	সংরচনা অনুসন্ধান_গ্ৰন্থি *বাম;	/**< Left subtree */
+	সংরচনা অনুসন্ধান_গ্ৰন্থি *ডান;	/**< Right subtree */
 };
 
 /** Root database handle */
-static struct host_part db_root;
+স্থির সংরচনা host_part db_মূল;
 
 /** Search trees - one per letter + 1 for IPs + 1 for Everything Else */
-#define NUM_SEARCH_TREES 28
+#define অঙ্ক_অনুসন্ধান_TREES 28
 #define ST_IP 0
 #define ST_EE 1
 #define ST_DN 2
-static struct search_node empty = { 0, 0, &empty, &empty };
-static struct search_node *search_trees[NUM_SEARCH_TREES] = {
+স্থির সংরচনা অনুসন্ধান_গ্ৰন্থি empty = { 0, 0, &empty, &empty };
+স্থির সংরচনা অনুসন্ধান_গ্ৰন্থি *অনুসন্ধান_trees[অঙ্ক_অনুসন্ধান_TREES] = {
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
 	&empty, &empty, &empty, &empty, &empty, &empty, &empty, &empty,
@@ -292,7 +292,7 @@ static struct search_node *search_trees[NUM_SEARCH_TREES] = {
 /** Current cookie database file version */
 #define COOKIE_FILE_VERSION 102
 /** loaded cookie file version */
-static int loaded_cookie_file_version;
+স্থির পূর্ণাঙ্ক loaded_cookie_file_version;
 
 /** Minimum URL database file version */
 #define MIN_URL_FILE_VERSION 106
@@ -310,7 +310,7 @@ static int loaded_cookie_file_version;
  * enough for all but the largest databases, while not being
  * shockingly wasteful on memory.
  */
-static struct bloom_filter *url_bloom;
+স্থির সংরচনা bloom_filter *url_bloom;
 /**
  * Size of url filter
  */
@@ -324,18 +324,18 @@ static struct bloom_filter *url_bloom;
  * \param val the unix time value to output
  * \return NSERROR_OK on success
  */
-static nserror urldb_write_timet(FILE *fp, time_t val)
+স্থির nserror urldb_write_timet(FILE *fp, time_t val)
 {
-	int use;
-	char op[32];
+	পূর্ণাঙ্ক use;
+	ৱর্ণ op[32];
 
 	use = nsc_sntimet(op, 32, &val);
-	if (use == 0) {
-		fprintf(fp, "%i\n", (int)val);
-	} else {
+	যদি (use == 0) {
+		fprintf(fp, "%i\n", (পূর্ণাঙ্ক)val);
+	} অন্যথা {
 		fprintf(fp, "%.*s\n", use, op);
 	}
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 /**
@@ -349,60 +349,60 @@ static nserror urldb_write_timet(FILE *fp, time_t val)
  * \param path_used Used size of path
  * \param expiry Expiry time of URLs
  */
-static void
-urldb_write_paths(const struct path_data *parent,
-		  const char *host,
+স্থির শূন্য
+urldb_write_paths(ধ্রুৱ সংরচনা path_data *parent,
+		  ধ্রুৱ ৱর্ণ *host,
 		  FILE *fp,
-		  char **path,
-		  int *path_alloc,
-		  int *path_used,
+		  ৱর্ণ **path,
+		  পূর্ণাঙ্ক *path_alloc,
+		  পূর্ণাঙ্ক *path_used,
 		  time_t expiry)
 {
-	const struct path_data *p = parent;
-	int i;
+	ধ্রুৱ সংরচনা path_data *p = parent;
+	পূর্ণাঙ্ক i;
 
-	do {
-		int seglen = p->segment != NULL ? strlen(p->segment) : 0;
-		int len = *path_used + seglen + 1;
+	কৰা {
+		পূর্ণাঙ্ক seglen = p->segment != রিক্ত ? strlen(p->segment) : 0;
+		পূর্ণাঙ্ক len = *path_used + seglen + 1;
 
-		if (*path_alloc < len) {
-			char *temp;
+		যদি (*path_alloc < len) {
+			ৱর্ণ *temp;
 			temp = realloc(*path,
 				       (len > 64) ? len : *path_alloc + 64);
-			if (!temp) {
-				return;
+			যদি (!temp) {
+				ঘূৰাই;
 			}
 			*path = temp;
 			*path_alloc = (len > 64) ? len : *path_alloc + 64;
 		}
 
-		if (p->segment != NULL) {
+		যদি (p->segment != রিক্ত) {
 			memcpy(*path + *path_used - 1, p->segment, seglen);
 		}
 
-		if (p->children != NULL) {
+		যদি (p->children != রিক্ত) {
 			(*path)[*path_used + seglen - 1] = '/';
 			(*path)[*path_used + seglen] = '\0';
-		} else {
+		} অন্যথা {
 			(*path)[*path_used + seglen - 1] = '\0';
 			len -= 1;
 		}
 
 		*path_used = len;
 
-		if (p->children != NULL) {
+		যদি (p->children != রিক্ত) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} অন্যথা {
 			/* leaf node */
-			if (p->persistent ||
+			যদি (p->persistent ||
 			    ((p->urld.last_visit > expiry) &&
 			     (p->urld.visits > 0))) {
 				fprintf(fp, "%s\n", lwc_string_data(p->scheme));
 
-				if (p->port) {
+				যদি (p->port) {
 					fprintf(fp,"%d\n", p->port);
-				} else {
+				} অন্যথা {
 					fprintf(fp, "\n");
 				}
 
@@ -417,38 +417,38 @@ urldb_write_paths(const struct path_data *parent,
 				urldb_write_timet(fp, p->urld.last_visit);
 
 				/* entry type */
-				fprintf(fp, "%i\n", (int)p->urld.type);
+				fprintf(fp, "%i\n", (পূর্ণাঙ্ক)p->urld.type);
 
 				fprintf(fp, "\n");
 
-				if (p->urld.title) {
+				যদি (p->urld.title) {
 					uint8_t *s = (uint8_t *) p->urld.title;
 
-					for (i = 0; s[i] != '\0'; i++)
-						if (s[i] < 32)
+					বাবে (i = 0; s[i] != '\0'; i++)
+						যদি (s[i] < 32)
 							s[i] = ' ';
-					for (--i; ((i > 0) && (s[i] == ' '));
+					বাবে (--i; ((i > 0) && (s[i] == ' '));
 					     i--)
 						s[i] = '\0';
 					fprintf(fp, "%s\n", p->urld.title);
-				} else {
+				} অন্যথা {
 					fprintf(fp, "\n");
 				}
 			}
 
 			/* Now, find next node to process. */
-			while (p != parent) {
-				int seglen = p->segment != NULL
+			যেতিয়ালৈ (p != parent) {
+				পূর্ণাঙ্ক seglen = p->segment != রিক্ত
 					? strlen(p->segment) : 0;
 
 				/* Remove our segment from the path */
 				*path_used -= seglen;
 				(*path)[*path_used - 1] = '\0';
 
-				if (p->next != NULL) {
+				যদি (p->next != রিক্ত) {
 					/* Have a sibling, process that */
 					p = p->next;
-					break;
+					ভঙ্গ;
 				}
 
 				/* Going up, so remove '/' */
@@ -459,7 +459,7 @@ urldb_write_paths(const struct path_data *parent,
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} যেতিয়ালৈ (p != parent);
 }
 
 
@@ -470,38 +470,38 @@ urldb_write_paths(const struct path_data *parent,
  * \param expiry Expiry time for URLs
  * \param count Pointer to count
  */
-static void
-urldb_count_urls(const struct path_data *root,
+স্থির শূন্য
+urldb_গুনতি_urls(ধ্রুৱ সংরচনা path_data *মূল,
 		 time_t expiry,
-		 unsigned int *count)
+		 unsigned পূর্ণাঙ্ক *গুনতি)
 {
-	const struct path_data *p = root;
+	ধ্রুৱ সংরচনা path_data *p = মূল;
 
-	do {
-		if (p->children != NULL) {
+	কৰা {
+		যদি (p->children != রিক্ত) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} অন্যথা {
 			/* No more children, increment count if required */
-			if (p->persistent ||
+			যদি (p->persistent ||
 			    ((p->urld.last_visit > expiry) &&
 			     (p->urld.visits > 0))) {
-				(*count)++;
+				(*গুনতি)++;
 			}
 
 			/* Now, find next node to process. */
-			while (p != root) {
-				if (p->next != NULL) {
+			যেতিয়ালৈ (p != মূল) {
+				যদি (p->next != রিক্ত) {
 					/* Have a sibling, process that */
 					p = p->next;
-					break;
+					ভঙ্গ;
 				}
 
 				/* Ascend tree */
 				p = p->parent;
 			}
 		}
-	} while (p != root);
+	} যেতিয়ালৈ (p != মূল);
 }
 
 
@@ -511,64 +511,64 @@ urldb_count_urls(const struct path_data *root,
  * \param parent root node of search tree to save.
  * \param fp File to write to
  */
-static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
+স্থির শূন্য urldb_save_অনুসন্ধান_বৃক্ষ(সংরচনা অনুসন্ধান_গ্ৰন্থি *parent, FILE *fp)
 {
-	char host[256];
-	const struct host_part *h;
-	unsigned int path_count = 0;
-	char *path, *p, *end;
-	int path_alloc = 64, path_used = 1;
+	ৱর্ণ host[256];
+	ধ্রুৱ সংরচনা host_part *h;
+	unsigned পূর্ণাঙ্ক path_গুনতি = 0;
+	ৱর্ণ *path, *p, *end;
+	পূর্ণাঙ্ক path_alloc = 64, path_used = 1;
 	time_t expiry, hsts_expiry = 0;
-	int hsts_include_subdomains = 0;
+	পূর্ণাঙ্ক hsts_include_subdomains = 0;
 
-	expiry = time(NULL) - ((60 * 60 * 24) * nsoption_int(expire_url));
+	expiry = time(রিক্ত) - ((60 * 60 * 24) * nsoption_int(expire_url));
 
-	if (parent == &empty)
-		return;
+	যদি (parent == &empty)
+		ঘূৰাই;
 
-	urldb_save_search_tree(parent->left, fp);
+	urldb_save_অনুসন্ধান_বৃক্ষ(parent->বাম, fp);
 
 	path = malloc(path_alloc);
-	if (!path)
-		return;
+	যদি (!path)
+		ঘূৰাই;
 
 	path[0] = '\0';
 
-	for (h = parent->data, p = host, end = host + sizeof host;
-	     h && h != &db_root && p < end; h = h->parent) {
-		int written = snprintf(p, end - p, "%s%s", h->part,
+	বাবে (h = parent->data, p = host, end = host + পরিমাণ host;
+	     h && h != &db_মূল && p < end; h = h->parent) {
+		পূর্ণাঙ্ক written = snprintf(p, end - p, "%s%s", h->part,
 				       (h->parent && h->parent->parent) ? "." : "");
-		if (written < 0) {
-			free(path);
-			return;
+		যদি (written < 0) {
+			মুক্ত(path);
+			ঘূৰাই;
 		}
 		p += written;
 	}
 
 	h = parent->data;
-	if (h && h->hsts.expires > expiry) {
+	যদি (h && h->hsts.expires > expiry) {
 		hsts_expiry = h->hsts.expires;
 		hsts_include_subdomains = h->hsts.include_sub_domains;
 	}
 
-	urldb_count_urls(&parent->data->paths, expiry, &path_count);
+	urldb_গুনতি_urls(&parent->data->paths, expiry, &path_গুনতি);
 
-	if (path_count > 0) {
+	যদি (path_গুনতি > 0) {
 		fprintf(fp, "%s %i ", host, hsts_include_subdomains);
 		urldb_write_timet(fp, hsts_expiry);
-		fprintf(fp, "%i\n", path_count);
+		fprintf(fp, "%i\n", path_গুনতি);
 
 		urldb_write_paths(&parent->data->paths, host, fp,
 				  &path, &path_alloc, &path_used, expiry);
-	} else if (hsts_expiry) {
+	} অন্যথা যদি (hsts_expiry) {
 		fprintf(fp, "%s %i ", host, hsts_include_subdomains);
 		urldb_write_timet(fp, hsts_expiry);
 		fprintf(fp, "0\n");
 	}
 
-	free(path);
+	মুক্ত(path);
 
-	urldb_save_search_tree(parent->right, fp);
+	urldb_save_অনুসন্ধান_বৃক্ষ(parent->ডান, fp);
 }
 
 
@@ -580,57 +580,57 @@ static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
  * \param cookie_callback Callback function
  * \return true to continue, false otherwise
  */
-static bool
-urldb_iterate_entries_path(const struct path_data *parent,
-		bool (*url_callback)(nsurl *url, const struct url_data *data),
-		bool (*cookie_callback)(const struct cookie_data *data))
+স্থির bool
+urldb_iterate_entries_path(ধ্রুৱ সংরচনা path_data *parent,
+		bool (*url_callback)(nsurl *url, ধ্রুৱ সংরচনা url_data *data),
+		bool (*cookie_callback)(ধ্রুৱ সংরচনা cookie_data *data))
 {
-	const struct path_data *p = parent;
-	const struct cookie_data *c;
+	ধ্রুৱ সংরচনা path_data *p = parent;
+	ধ্রুৱ সংরচনা cookie_data *c;
 
-	do {
-		if (p->children != NULL) {
+	কৰা {
+		যদি (p->children != রিক্ত) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} অন্যথা {
 			/* All leaf nodes in the path tree should have an URL or
 			 * cookies attached to them. If this is not the case, it
 			 * indicates that there's a bug in the file loader/URL
 			 * insertion code. Therefore, assert this here. */
-			assert(url_callback || cookie_callback);
+			প্রতিজ্ঞা(url_callback || cookie_callback);
 
 			/** \todo handle fragments? */
-			if (url_callback) {
-				const struct url_internal_data *u = &p->urld;
+			যদি (url_callback) {
+				ধ্রুৱ সংরচনা url_internal_data *u = &p->urld;
 
-				assert(p->url);
+				প্রতিজ্ঞা(p->url);
 
-				if (!url_callback(p->url,
-						  (const struct url_data *) u))
-					return false;
-			} else {
-				c = (const struct cookie_data *)p->cookies;
-				for (; c != NULL; c = c->next) {
-					if (!cookie_callback(c))
-						return false;
+				যদি (!url_callback(p->url,
+						  (ধ্রুৱ সংরচনা url_data *) u))
+					ঘূৰাই false;
+			} অন্যথা {
+				c = (ধ্রুৱ সংরচনা cookie_data *)p->cookies;
+				বাবে (; c != রিক্ত; c = c->next) {
+					যদি (!cookie_callback(c))
+						ঘূৰাই false;
 				}
 			}
 
 			/* Now, find next node to process. */
-			while (p != parent) {
-				if (p->next != NULL) {
+			যেতিয়ালৈ (p != parent) {
+				যদি (p->next != রিক্ত) {
 					/* Have a sibling, process that */
 					p = p->next;
-					break;
+					ভঙ্গ;
 				}
 
 				/* Ascend tree */
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} যেতিয়ালৈ (p != parent);
 
-	return true;
+	ঘূৰাই true;
 }
 
 
@@ -644,16 +644,16 @@ urldb_iterate_entries_path(const struct path_data *parent,
  * \param host a hostname terminated by '\0'
  * \return true if the hostname is an IP address, false otherwise
  */
-static bool urldb__host_is_ip_address(const char *host)
+স্থির bool urldb__host_is_ip_address(ধ্রুৱ ৱর্ণ *host)
 {
-	struct in_addr ipv4;
+	সংরচনা in_addr ipv4;
 	size_t host_len = strlen(host);
-	const char *sane_host;
-	const char *slash;
+	ধ্রুৱ ৱর্ণ *sane_host;
+	ধ্রুৱ ৱর্ণ *slash;
 #ifndef NO_IPV6
-	struct in6_addr ipv6;
-	char ipv6_addr[64];
-	unsigned int ipv6_addr_len;
+	সংরচনা in6_addr ipv6;
+	ৱর্ণ ipv6_addr[64];
+	unsigned পূর্ণাঙ্ক ipv6_addr_len;
 #endif
 	/**
 	 * @todo FIXME Some parts of urldb.c make confusions between hosts
@@ -674,10 +674,10 @@ static bool urldb__host_is_ip_address(const char *host)
 	 */
 
 	slash = strchr(host, '/');
-	if (slash == NULL) {
+	যদি (slash == রিক্ত) {
 		sane_host = host;
-	} else {
-		char *c = strdup(host);
+	} অন্যথা {
+		ৱর্ণ *c = strdup(host);
 		c[slash - host] = '\0';
 		sane_host = c;
 		host_len = slash - host;
@@ -685,54 +685,54 @@ static bool urldb__host_is_ip_address(const char *host)
 		      host);
 	}
 
-	if (strspn(sane_host, "0123456789abcdefABCDEF[].:") < host_len)
-		goto out_false;
+	যদি (strspn(sane_host, "0123456789abcdefABCDEF[].:") < host_len)
+		গচ্ছ out_false;
 
-	if (inet_aton(sane_host, &ipv4) != 0) {
+	যদি (inet_aton(sane_host, &ipv4) != 0) {
 		/* This can only be a sane IPv4 address if it contains 3 dots.
 		 * Helpfully, inet_aton is happy to treat "a", "a.b", "a.b.c",
 		 * and "a.b.c.d" as valid IPv4 address strings where we only
 		 * support the full, dotted-quad, form.
 		 */
-		int num_dots = 0;
+		পূর্ণাঙ্ক অঙ্ক_dots = 0;
 		size_t index;
 
-		for (index = 0; index < host_len; index++) {
-			if (sane_host[index] == '.')
-				num_dots++;
+		বাবে (index = 0; index < host_len; index++) {
+			যদি (sane_host[index] == '.')
+				অঙ্ক_dots++;
 		}
 
-		if (num_dots == 3)
-			goto out_true;
-		else
-			goto out_false;
+		যদি (অঙ্ক_dots == 3)
+			গচ্ছ out_true;
+		অন্যথা
+			গচ্ছ out_false;
 	}
 
 #ifndef NO_IPV6
-	if ((host_len < 6) ||
+	যদি ((host_len < 6) ||
 	    (sane_host[0] != '[') ||
 	    (sane_host[host_len - 1] != ']')) {
-		goto out_false;
+		গচ্ছ out_false;
 	}
 
 	ipv6_addr_len = host_len - 2;
-	if (ipv6_addr_len >= sizeof(ipv6_addr)) {
-		ipv6_addr_len = sizeof(ipv6_addr) - 1;
+	যদি (ipv6_addr_len >= পরিমাণ(ipv6_addr)) {
+		ipv6_addr_len = পরিমাণ(ipv6_addr) - 1;
 	}
 	strncpy(ipv6_addr, sane_host + 1, ipv6_addr_len);
 	ipv6_addr[ipv6_addr_len] = '\0';
 
-	if (inet_pton(AF_INET6, ipv6_addr, &ipv6) == 1)
-		goto out_true;
+	যদি (inet_pton(AF_INET6, ipv6_addr, &ipv6) == 1)
+		গচ্ছ out_true;
 #endif
 
 out_false:
-	if (slash != NULL) free((void *)sane_host);
-	return false;
+	যদি (slash != রিক্ত) মুক্ত((শূন্য *)sane_host);
+	ঘূৰাই false;
 
 out_true:
-	if (slash != NULL) free((void *)sane_host);
-	return true;
+	যদি (slash != রিক্ত) মুক্ত((শূন্য *)sane_host);
+	ঘূৰাই true;
 }
 
 
@@ -743,43 +743,43 @@ out_true:
  * \param b prefix
  * \return 0 if match, non-zero, otherwise
  */
-static int urldb_search_match_prefix(const struct host_part *a, const char *b)
+স্থির পূর্ণাঙ্ক urldb_অনুসন্ধান_match_prefix(ধ্রুৱ সংরচনা host_part *a, ধ্রুৱ ৱর্ণ *b)
 {
-	const char *end, *dot;
-	int plen, ret;
+	ধ্রুৱ ৱর্ণ *end, *dot;
+	পূর্ণাঙ্ক plen, ret;
 
-	assert(a && a != &db_root && b);
+	প্রতিজ্ঞা(a && a != &db_মূল && b);
 
-	if (urldb__host_is_ip_address(b)) {
+	যদি (urldb__host_is_ip_address(b)) {
 		/* IP address */
-		return strncasecmp(a->part, b, strlen(b));
+		ঘূৰাই strncasecmp(a->part, b, strlen(b));
 	}
 
 	end = b + strlen(b) + 1;
 
-	while (b < end && a && a != &db_root) {
+	যেতিয়ালৈ (b < end && a && a != &db_মূল) {
 		dot = strchr(b, '.');
-		if (!dot) {
+		যদি (!dot) {
 			/* last segment */
 			dot = end - 1;
 		}
 
 		/* Compare strings (length limited) */
-		if ((ret = strncasecmp(a->part, b, dot - b)) != 0)
+		যদি ((ret = strncasecmp(a->part, b, dot - b)) != 0)
 			/* didn't match => return difference */
-			return ret;
+			ঘূৰাই ret;
 
 		/* The strings matched */
-		if (dot < end - 1) {
+		যদি (dot < end - 1) {
 			/* Consider segment lengths only in the case
 			 * where the prefix contains segments */
 			plen = strlen(a->part);
-			if (plen > dot - b) {
+			যদি (plen > dot - b) {
 				/* len(a) > len(b) */
-				return 1;
-			} else if (plen < dot - b) {
+				ঘূৰাই 1;
+			} অন্যথা যদি (plen < dot - b) {
 				/* len(a) < len(b) */
-				return -1;
+				ঘূৰাই -1;
 			}
 		}
 
@@ -791,16 +791,16 @@ static int urldb_search_match_prefix(const struct host_part *a, const char *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && b >= end) {
+	যদি (a && a != &db_মূল && b >= end) {
 		/* len(a) > len(b) => prefix matches */
-		return 0;
-	} else if ((!a || a == &db_root) && b < end) {
+		ঘূৰাই 0;
+	} অন্যথা যদি ((!a || a == &db_মূল) && b < end) {
 		/* len(a) < len(b) => prefix does not match */
-		return -1;
+		ঘূৰাই -1;
 	}
 
 	/* Identical */
-	return 0;
+	ঘূৰাই 0;
 }
 
 
@@ -812,55 +812,55 @@ static int urldb_search_match_prefix(const struct host_part *a, const char *b)
  * \param callback Callback function
  * \return true to continue, false otherwise
  */
-static bool
-urldb_iterate_partial_host(struct search_node *root,
-		const char *prefix,
-		bool (*callback)(nsurl *url, const struct url_data *data))
+স্থির bool
+urldb_iterate_partial_host(সংরচনা অনুসন্ধান_গ্ৰন্থি *মূল,
+		ধ্রুৱ ৱর্ণ *prefix,
+		bool (*callback)(nsurl *url, ধ্রুৱ সংরচনা url_data *data))
 {
-	int c;
+	পূর্ণাঙ্ক c;
 
-	assert(root && prefix && callback);
+	প্রতিজ্ঞা(মূল && prefix && callback);
 
-	if (root == &empty)
-		return true;
+	যদি (মূল == &empty)
+		ঘূৰাই true;
 
-	c = urldb_search_match_prefix(root->data, prefix);
+	c = urldb_অনুসন্ধান_match_prefix(মূল->data, prefix);
 
-	if (c > 0) {
+	যদি (c > 0) {
 		/* No match => look in left subtree */
-		return urldb_iterate_partial_host(root->left,
+		ঘূৰাই urldb_iterate_partial_host(মূল->বাম,
 						  prefix,
 						  callback);
-	} else if (c < 0) {
+	} অন্যথা যদি (c < 0) {
 		/* No match => look in right subtree */
-		return urldb_iterate_partial_host(root->right,
+		ঘূৰাই urldb_iterate_partial_host(মূল->ডান,
 						  prefix,
 						  callback);
-	} else {
+	} অন্যথা {
 		/* Match => iterate over l/r subtrees & process this node */
-		if (!urldb_iterate_partial_host(root->left,
+		যদি (!urldb_iterate_partial_host(মূল->বাম,
 						prefix,
 						callback)) {
-			return false;
+			ঘূৰাই false;
 		}
 
-		if (root->data->paths.children) {
+		যদি (মূল->data->paths.children) {
 			/* and extract all paths attached to this host */
-			if (!urldb_iterate_entries_path(&root->data->paths,
+			যদি (!urldb_iterate_entries_path(&মূল->data->paths,
 							callback,
-							NULL)) {
-				return false;
+							রিক্ত)) {
+				ঘূৰাই false;
 			}
 		}
 
-		if (!urldb_iterate_partial_host(root->right,
+		যদি (!urldb_iterate_partial_host(মূল->ডান,
 						prefix,
 						callback)) {
-			return false;
+			ঘূৰাই false;
 		}
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 
@@ -902,52 +902,52 @@ urldb_iterate_partial_host(struct search_node *root,
  * \param callback Callback function
  * \return true to continue, false otherwise
  */
-static bool
-urldb_iterate_partial_path(const struct path_data *parent,
-		const char *prefix,
-		bool (*callback)(nsurl *url, const struct url_data *data))
+স্থির bool
+urldb_iterate_partial_path(ধ্রুৱ সংরচনা path_data *parent,
+		ধ্রুৱ ৱর্ণ *prefix,
+		bool (*callback)(nsurl *url, ধ্রুৱ সংরচনা url_data *data))
 {
-	const struct path_data *p = parent->children;
-	const char *slash, *end = prefix + strlen(prefix);
+	ধ্রুৱ সংরচনা path_data *p = parent->children;
+	ধ্রুৱ ৱর্ণ *slash, *end = prefix + strlen(prefix);
 
-	do {
+	কৰা {
 		slash = strchr(prefix, '/');
-		if (!slash) {
+		যদি (!slash) {
 			slash = end;
 		}
 
-		if (slash == prefix && *prefix == '/') {
+		যদি (slash == prefix && *prefix == '/') {
 			/* Ignore "//" */
 			prefix++;
-			continue;
+			অনুৱর্ত;
 		}
 
-		if (strncasecmp(p->segment, prefix, slash - prefix) == 0) {
+		যদি (strncasecmp(p->segment, prefix, slash - prefix) == 0) {
 			/* prefix matches so far */
-			if (slash == end) {
+			যদি (slash == end) {
 				/* we've run out of prefix, so all
 				 * paths below this one match */
-				if (!urldb_iterate_entries_path(p,
+				যদি (!urldb_iterate_entries_path(p,
 								callback,
-								NULL)) {
-					return false;
+								রিক্ত)) {
+					ঘূৰাই false;
 				}
 
 				/* Progress to next sibling */
 				p = p->next;
-			} else {
+			} অন্যথা {
 				/* Skip over this segment */
 				prefix = slash + 1;
 
 				p = p->children;
 			}
-		} else {
+		} অন্যথা {
 			/* Doesn't match this segment, try next sibling */
 			p = p->next;
 		}
-	} while (p != NULL);
+	} যেতিয়ালৈ (p != রিক্ত);
 
-	return true;
+	ঘূৰাই true;
 }
 
 
@@ -959,39 +959,39 @@ urldb_iterate_partial_path(const struct path_data *parent,
  * \param cookie_callback Callback function
  * \return true to continue, false otherwise
  */
-static bool
-urldb_iterate_entries_host(struct search_node *parent,
-		bool (*url_callback)(nsurl *url, const struct url_data *data),
-		bool (*cookie_callback)(const struct cookie_data *data))
+স্থির bool
+urldb_iterate_entries_host(সংরচনা অনুসন্ধান_গ্ৰন্থি *parent,
+		bool (*url_callback)(nsurl *url, ধ্রুৱ সংরচনা url_data *data),
+		bool (*cookie_callback)(ধ্রুৱ সংরচনা cookie_data *data))
 {
-	if (parent == &empty) {
-		return true;
+	যদি (parent == &empty) {
+		ঘূৰাই true;
 	}
 
-	if (!urldb_iterate_entries_host(parent->left,
+	যদি (!urldb_iterate_entries_host(parent->বাম,
 					url_callback,
 					cookie_callback)) {
-		return false;
+		ঘূৰাই false;
 	}
 
-	if ((parent->data->paths.children) ||
+	যদি ((parent->data->paths.children) ||
 	    ((cookie_callback) &&
 	     (parent->data->paths.cookies))) {
 		/* We have paths (or domain cookies), so iterate them */
-		if (!urldb_iterate_entries_path(&parent->data->paths,
+		যদি (!urldb_iterate_entries_path(&parent->data->paths,
 						url_callback,
 						cookie_callback)) {
-			return false;
+			ঘূৰাই false;
 		}
 	}
 
-	if (!urldb_iterate_entries_host(parent->right,
+	যদি (!urldb_iterate_entries_host(parent->ডান,
 					url_callback,
 					cookie_callback)) {
-		return false;
+		ঘূৰাই false;
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 
@@ -1002,32 +1002,32 @@ urldb_iterate_entries_host(struct search_node *parent,
  * \param parent Parent node to add to
  * \return Pointer to added node, or NULL on memory exhaustion
  */
-static struct host_part *
-urldb_add_host_node(const char *part, struct host_part *parent)
+স্থির সংরচনা host_part *
+urldb_add_host_গ্ৰন্থি(ধ্রুৱ ৱর্ণ *part, সংরচনা host_part *parent)
 {
-	struct host_part *d;
+	সংরচনা host_part *d;
 
-	assert(part && parent);
+	প্রতিজ্ঞা(part && parent);
 
-	d = calloc(1, sizeof(struct host_part));
-	if (!d) {
-		return NULL;
+	d = calloc(1, পরিমাণ(সংরচনা host_part));
+	যদি (!d) {
+		ঘূৰাই রিক্ত;
 	}
 
 	d->part = strdup(part);
-	if (!d->part) {
-		free(d);
-		return NULL;
+	যদি (!d->part) {
+		মুক্ত(d);
+		ঘূৰাই রিক্ত;
 	}
 
 	d->next = parent->children;
-	if (parent->children) {
+	যদি (parent->children) {
 		parent->children->prev = d;
 	}
 	d->parent = parent;
 	parent->children = d;
 
-	return d;
+	ঘূৰাই d;
 }
 
 
@@ -1038,9 +1038,9 @@ urldb_add_host_node(const char *part, struct host_part *parent)
  * \param b second value
  * \return 0 for equal else positive or negative value on comparison
  */
-static int urldb_add_path_fragment_cmp(const void *a, const void *b)
+স্থির পূর্ণাঙ্ক urldb_add_path_fragment_cmp(ধ্রুৱ শূন্য *a, ধ্রুৱ শূন্য *b)
 {
-	return strcasecmp(*((const char **) a), *((const char **) b));
+	ঘূৰাই strcasecmp(*((ধ্রুৱ ৱর্ণ **) a), *((ধ্রুৱ ৱর্ণ **) b));
 }
 
 
@@ -1051,30 +1051,30 @@ static int urldb_add_path_fragment_cmp(const void *a, const void *b)
  * \param fragment Fragment to add (copied), or NULL
  * \return segment or NULL on memory exhaustion
  */
-static struct path_data *
-urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
+স্থির সংরচনা path_data *
+urldb_add_path_fragment(সংরচনা path_data *segment, lwc_string *fragment)
 {
-	char **temp;
+	ৱর্ণ **temp;
 
-	assert(segment);
+	প্রতিজ্ঞা(segment);
 
 	/* If no fragment, this function is a NOP
 	 * This may seem strange, but it makes the rest
 	 * of the code cleaner */
-	if (!fragment)
-		return segment;
+	যদি (!fragment)
+		ঘূৰাই segment;
 
 	temp = realloc(segment->fragment,
-		       (segment->frag_cnt + 1) * sizeof(char *));
-	if (!temp)
-		return NULL;
+		       (segment->frag_cnt + 1) * পরিমাণ(ৱর্ণ *));
+	যদি (!temp)
+		ঘূৰাই রিক্ত;
 
 	segment->fragment = temp;
 	segment->fragment[segment->frag_cnt] =
 		strdup(lwc_string_data(fragment));
-	if (!segment->fragment[segment->frag_cnt]) {
+	যদি (!segment->fragment[segment->frag_cnt]) {
 		/* Don't free temp - it's now our buffer */
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
 	segment->frag_cnt++;
@@ -1083,10 +1083,10 @@ urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
 	 * It may prove better to insert in alphabetical order instead */
 	qsort(segment->fragment,
 	      segment->frag_cnt,
-	      sizeof (char *),
+	      পরিমাণ (ৱর্ণ *),
 	      urldb_add_path_fragment_cmp);
 
-	return segment;
+	ঘূৰাই segment;
 }
 
 
@@ -1100,66 +1100,66 @@ urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
  * \param parent Parent node to add to
  * \return Pointer to added node, or NULL on memory exhaustion
  */
-static struct path_data *
-urldb_add_path_node(lwc_string *scheme,
-		    unsigned int port,
-		    const char *segment,
+স্থির সংরচনা path_data *
+urldb_add_path_গ্ৰন্থি(lwc_string *scheme,
+		    unsigned পূর্ণাঙ্ক port,
+		    ধ্রুৱ ৱর্ণ *segment,
 		    lwc_string *fragment,
-		    struct path_data *parent)
+		    সংরচনা path_data *parent)
 {
-	struct path_data *d, *e;
+	সংরচনা path_data *d, *e;
 
-	assert(scheme && segment && parent);
+	প্রতিজ্ঞা(scheme && segment && parent);
 
-	d = calloc(1, sizeof(struct path_data));
-	if (!d)
-		return NULL;
+	d = calloc(1, পরিমাণ(সংরচনা path_data));
+	যদি (!d)
+		ঘূৰাই রিক্ত;
 
 	d->scheme = lwc_string_ref(scheme);
 
 	d->port = port;
 
 	d->segment = strdup(segment);
-	if (!d->segment) {
+	যদি (!d->segment) {
 		lwc_string_unref(d->scheme);
-		free(d);
-		return NULL;
+		মুক্ত(d);
+		ঘূৰাই রিক্ত;
 	}
 
-	if (fragment) {
-		if (!urldb_add_path_fragment(d, fragment)) {
-			free(d->segment);
+	যদি (fragment) {
+		যদি (!urldb_add_path_fragment(d, fragment)) {
+			মুক্ত(d->segment);
 			lwc_string_unref(d->scheme);
-			free(d);
-			return NULL;
+			মুক্ত(d);
+			ঘূৰাই রিক্ত;
 		}
 	}
 
-	for (e = parent->children; e; e = e->next) {
-		if (strcmp(e->segment, d->segment) > 0)
-			break;
+	বাবে (e = parent->children; e; e = e->next) {
+		যদি (strcmp(e->segment, d->segment) > 0)
+			ভঙ্গ;
 	}
 
-	if (e) {
+	যদি (e) {
 		d->prev = e->prev;
 		d->next = e;
-		if (e->prev)
+		যদি (e->prev)
 			e->prev->next = d;
-		else
+		অন্যথা
 			parent->children = d;
 		e->prev = d;
-	} else if (!parent->children) {
-		d->prev = d->next = NULL;
+	} অন্যথা যদি (!parent->children) {
+		d->prev = d->next = রিক্ত;
 		parent->children = parent->last = d;
-	} else {
-		d->next = NULL;
+	} অন্যথা {
+		d->next = রিক্ত;
 		d->prev = parent->last;
 		parent->last->next = d;
 		parent->last = d;
 	}
 	d->parent = parent;
 
-	return d;
+	ঘূৰাই d;
 }
 
 
@@ -1169,16 +1169,16 @@ urldb_add_path_node(lwc_string *scheme,
  * \param host the host to lookup
  * \return the corresponding search tree
  */
-static struct search_node **urldb_get_search_tree_direct(const char *host)
+স্থির সংরচনা অনুসন্ধান_গ্ৰন্থি **urldb_get_অনুসন্ধান_বৃক্ষ_direct(ধ্রুৱ ৱর্ণ *host)
 {
-	assert(host);
+	প্রতিজ্ঞা(host);
 
-	if (urldb__host_is_ip_address(host)) {
-		return &search_trees[ST_IP];
-	} else if (ascii_is_alpha(*host)) {
-		return &search_trees[ST_DN + ascii_to_lower(*host) - 'a'];
+	যদি (urldb__host_is_ip_address(host)) {
+		ঘূৰাই &অনুসন্ধান_trees[ST_IP];
+	} অন্যথা যদি (ascii_is_alpha(*host)) {
+		ঘূৰাই &অনুসন্ধান_trees[ST_DN + ascii_to_lower(*host) - 'a'];
 	}
-	return &search_trees[ST_EE];
+	ঘূৰাই &অনুসন্ধান_trees[ST_EE];
 }
 
 
@@ -1188,9 +1188,9 @@ static struct search_node **urldb_get_search_tree_direct(const char *host)
  * \param host the host to lookup
  * \return the corresponding search tree
  */
-static struct search_node *urldb_get_search_tree(const char *host)
+স্থির সংরচনা অনুসন্ধান_গ্ৰন্থি *urldb_get_অনুসন্ধান_বৃক্ষ(ধ্রুৱ ৱর্ণ *host)
 {
-	return *urldb_get_search_tree_direct(host);
+	ঘূৰাই *urldb_get_অনুসন্ধান_বৃক্ষ_direct(host);
 }
 
 
@@ -1201,41 +1201,41 @@ static struct search_node *urldb_get_search_tree(const char *host)
  * \param b string to compare
  * \return 0 if match, non-zero, otherwise
  */
-static int urldb_search_match_string(const struct host_part *a, const char *b)
+স্থির পূর্ণাঙ্ক urldb_অনুসন্ধান_match_string(ধ্রুৱ সংরচনা host_part *a, ধ্রুৱ ৱর্ণ *b)
 {
-	const char *end, *dot;
-	int plen, ret;
+	ধ্রুৱ ৱর্ণ *end, *dot;
+	পূর্ণাঙ্ক plen, ret;
 
-	assert(a && a != &db_root && b);
+	প্রতিজ্ঞা(a && a != &db_মূল && b);
 
-	if (urldb__host_is_ip_address(b)) {
+	যদি (urldb__host_is_ip_address(b)) {
 		/* IP address */
-		return strcasecmp(a->part, b);
+		ঘূৰাই strcasecmp(a->part, b);
 	}
 
 	end = b + strlen(b) + 1;
 
-	while (b < end && a && a != &db_root) {
+	যেতিয়ালৈ (b < end && a && a != &db_মূল) {
 		dot = strchr(b, '.');
-		if (!dot) {
+		যদি (!dot) {
 			/* last segment */
 			dot = end - 1;
 		}
 
 		/* Compare strings (length limited) */
-		if ((ret = strncasecmp(a->part, b, dot - b)) != 0)
+		যদি ((ret = strncasecmp(a->part, b, dot - b)) != 0)
 			/* didn't match => return difference */
-			return ret;
+			ঘূৰাই ret;
 
 		/* The strings matched, now check that the lengths do, too */
 		plen = strlen(a->part);
 
-		if (plen > dot - b) {
+		যদি (plen > dot - b) {
 			/* len(a) > len(b) */
-			return 1;
-		} else if (plen < dot - b) {
+			ঘূৰাই 1;
+		} অন্যথা যদি (plen < dot - b) {
 			/* len(a) < len(b) */
-			return -1;
+			ঘূৰাই -1;
 		}
 
 		b = dot + 1;
@@ -1246,16 +1246,16 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && b >= end) {
+	যদি (a && a != &db_মূল && b >= end) {
 		/* len(a) > len(b) */
-		return 1;
-	} else if ((!a || a == &db_root) && b < end) {
+		ঘূৰাই 1;
+	} অন্যথা যদি ((!a || a == &db_মূল) && b < end) {
 		/* len(a) < len(b) */
-		return -1;
+		ঘূৰাই -1;
 	}
 
 	/* Identical */
-	return 0;
+	ঘূৰাই 0;
 }
 
 
@@ -1266,26 +1266,26 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
  * \param host Host to find
  * \return Pointer to host tree node, or NULL if not found
  */
-static const struct host_part *
-urldb_search_find(struct search_node *root, const char *host)
+স্থির ধ্রুৱ সংরচনা host_part *
+urldb_অনুসন্ধান_find(সংরচনা অনুসন্ধান_গ্ৰন্থি *মূল, ধ্রুৱ ৱর্ণ *host)
 {
-	int c;
+	পূর্ণাঙ্ক c;
 
-	assert(root && host);
+	প্রতিজ্ঞা(মূল && host);
 
-	if (root == &empty) {
-		return NULL;
+	যদি (মূল == &empty) {
+		ঘূৰাই রিক্ত;
 	}
 
-	c = urldb_search_match_string(root->data, host);
+	c = urldb_অনুসন্ধান_match_string(মূল->data, host);
 
-	if (c > 0) {
-		return urldb_search_find(root->left, host);
-	} else if (c < 0) {
-		return urldb_search_find(root->right, host);
+	যদি (c > 0) {
+		ঘূৰাই urldb_অনুসন্ধান_find(মূল->বাম, host);
+	} অন্যথা যদি (c < 0) {
+		ঘূৰাই urldb_অনুসন্ধান_find(মূল->ডান, host);
 	}
 
-	return root->data;
+	ঘূৰাই মূল->data;
 }
 
 
@@ -1298,54 +1298,54 @@ urldb_search_find(struct search_node *root, const char *host)
  * \param port The port associated with the path
  * \return Pointer to path data or NULL if not found.
  */
-static struct path_data *
-urldb_match_path(const struct path_data *parent,
-		 const char *path,
+স্থির সংরচনা path_data *
+urldb_match_path(ধ্রুৱ সংরচনা path_data *parent,
+		 ধ্রুৱ ৱর্ণ *path,
 		 lwc_string *scheme,
 		 unsigned short port)
 {
-	const struct path_data *p;
-	const char *slash;
+	ধ্রুৱ সংরচনা path_data *p;
+	ধ্রুৱ ৱর্ণ *slash;
 	bool match;
 
-	assert(parent != NULL);
-	assert(parent->segment == NULL);
+	প্রতিজ্ঞা(parent != রিক্ত);
+	প্রতিজ্ঞা(parent->segment == রিক্ত);
 
-	if (path[0] != '/') {
+	যদি (path[0] != '/') {
 		NSLOG(netsurf, INFO, "path is %s", path);
 	}
 
-	assert(path[0] == '/');
+	প্রতিজ্ঞা(path[0] == '/');
 
 	/* Start with children, as parent has no segment */
 	p = parent->children;
 
-	while (p != NULL) {
+	যেতিয়ালৈ (p != রিক্ত) {
 		slash = strchr(path + 1, '/');
-		if (!slash) {
+		যদি (!slash) {
 			slash = path + strlen(path);
 		}
 
-		if (strncmp(p->segment, path + 1, slash - path - 1) == 0 &&
+		যদি (strncmp(p->segment, path + 1, slash - path - 1) == 0 &&
 		    lwc_string_isequal(p->scheme, scheme, &match) == lwc_error_ok &&
 		    match == true &&
 		    p->port == port) {
-			if (*slash == '\0') {
+			যদি (*slash == '\0') {
 				/* Complete match */
-				return (struct path_data *) p;
+				ঘূৰাই (সংরচনা path_data *) p;
 			}
 
 			/* Match so far, go down tree */
 			p = p->children;
 
 			path = slash;
-		} else {
+		} অন্যথা {
 			/* No match, try next sibling */
 			p = p->next;
 		}
 	}
 
-	return NULL;
+	ঘূৰাই রিক্ত;
 }
 
 
@@ -1355,78 +1355,78 @@ urldb_match_path(const struct path_data *parent,
  * \param url Absolute URL to find
  * \return Pointer to path data, or NULL if not found
  */
-static struct path_data *urldb_find_url(nsurl *url)
+স্থির সংরচনা path_data *urldb_find_url(nsurl *url)
 {
-	const struct host_part *h;
-	struct path_data *p;
-	struct search_node *tree;
-	char *plq;
-	const char *host_str;
+	ধ্রুৱ সংরচনা host_part *h;
+	সংরচনা path_data *p;
+	সংরচনা অনুসন্ধান_গ্ৰন্থি *বৃক্ষ;
+	ৱর্ণ *plq;
+	ধ্রুৱ ৱর্ণ *host_str;
 	lwc_string *scheme, *host, *port;
 	size_t len = 0;
-	unsigned int port_int;
+	unsigned পূর্ণাঙ্ক port_int;
 	bool match;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
-	if (url_bloom != NULL) {
-		if (bloom_search_hash(url_bloom, nsurl_hash(url)) == false) {
-			return NULL;
+	যদি (url_bloom != রিক্ত) {
+		যদি (bloom_অনুসন্ধান_hash(url_bloom, nsurl_hash(url)) == false) {
+			ঘূৰাই রিক্ত;
 		}
 	}
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL)
-		return NULL;
+	যদি (scheme == রিক্ত)
+		ঘূৰাই রিক্ত;
 
-	if (lwc_string_isequal(scheme, corestring_lwc_mailto, &match) ==
+	যদি (lwc_string_isequal(scheme, corestring_lwc_mailto, &match) ==
 	    lwc_error_ok && match == true) {
 		lwc_string_unref(scheme);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
+	যদি (host != রিক্ত) {
 		host_str = lwc_string_data(host);
 		lwc_string_unref(host);
 
-	} else if (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
+	} অন্যথা যদি (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
 		   lwc_error_ok && match == true) {
 		host_str = "localhost";
 
-	} else {
+	} অন্যথা {
 		lwc_string_unref(scheme);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
-	tree = urldb_get_search_tree(host_str);
-	h = urldb_search_find(tree, host_str);
-	if (!h) {
+	বৃক্ষ = urldb_get_অনুসন্ধান_বৃক্ষ(host_str);
+	h = urldb_অনুসন্ধান_find(বৃক্ষ, host_str);
+	যদি (!h) {
 		lwc_string_unref(scheme);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
 	/* generate plq (path, leaf, query) */
-	if (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &plq, &len) != NSERROR_OK) {
+	যদি (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &plq, &len) != NSERROR_OK) {
 		lwc_string_unref(scheme);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
 	/* Get port */
 	port = nsurl_get_component(url, NSURL_PORT);
-	if (port != NULL) {
+	যদি (port != রিক্ত) {
 		port_int = atoi(lwc_string_data(port));
 		lwc_string_unref(port);
-	} else {
+	} অন্যথা {
 		port_int = 0;
 	}
 
 	p = urldb_match_path(&h->paths, plq, scheme, port_int);
 
-	free(plq);
+	মুক্ত(plq);
 	lwc_string_unref(scheme);
 
-	return p;
+	ঘূৰাই p;
 }
 
 
@@ -1435,37 +1435,37 @@ static struct path_data *urldb_find_url(nsurl *url)
  *
  * \param parent Parent node of tree to dump
  */
-static void urldb_dump_paths(struct path_data *parent)
+স্থির শূন্য urldb_dump_paths(সংরচনা path_data *parent)
 {
-	const struct path_data *p = parent;
-	unsigned int i;
+	ধ্রুৱ সংরচনা path_data *p = parent;
+	unsigned পূর্ণাঙ্ক i;
 
-	do {
-		if (p->segment != NULL) {
+	কৰা {
+		যদি (p->segment != রিক্ত) {
 			NSLOG(netsurf, INFO, "\t%s : %u",
 			      lwc_string_data(p->scheme), p->port);
 
 			NSLOG(netsurf, INFO, "\t\t'%s'", p->segment);
 
-			for (i = 0; i != p->frag_cnt; i++) {
+			বাবে (i = 0; i != p->frag_cnt; i++) {
 				NSLOG(netsurf, INFO, "\t\t\t#%s",
 				      p->fragment[i]);
 			}
 		}
 
-		if (p->children != NULL) {
+		যদি (p->children != রিক্ত) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} অন্যথা {
+			যেতিয়ালৈ (p != parent) {
+				যদি (p->next != রিক্ত) {
 					p = p->next;
-					break;
+					ভঙ্গ;
 				}
 
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} যেতিয়ালৈ (p != parent);
 }
 
 
@@ -1474,11 +1474,11 @@ static void urldb_dump_paths(struct path_data *parent)
  *
  * \param parent Parent node of tree to dump
  */
-static void urldb_dump_hosts(struct host_part *parent)
+স্থির শূন্য urldb_dump_hosts(সংরচনা host_part *parent)
 {
-	struct host_part *h;
+	সংরচনা host_part *h;
 
-	if (parent->part) {
+	যদি (parent->part) {
 		NSLOG(netsurf, INFO, "%s", parent->part);
 
 		NSLOG(netsurf, INFO, "\t%s invalid SSL certs",
@@ -1489,7 +1489,7 @@ static void urldb_dump_hosts(struct host_part *parent)
 	urldb_dump_paths(&parent->paths);
 
 	/* and recurse */
-	for (h = parent->children; h; h = h->next) {
+	বাবে (h = parent->children; h; h = h->next) {
 		urldb_dump_hosts(h);
 	}
 }
@@ -1501,36 +1501,36 @@ static void urldb_dump_hosts(struct host_part *parent)
  * \param parent Parent node of tree to dump
  * \param depth Tree depth
  */
-static void urldb_dump_search(struct search_node *parent, int depth)
+স্থির শূন্য urldb_dump_অনুসন্ধান(সংরচনা অনুসন্ধান_গ্ৰন্থি *parent, পূর্ণাঙ্ক depth)
 {
-	const struct host_part *h;
-	int i; /* index into string */
-	char s[1024];
-	int r;
-	int sl = sizeof(s) - 2;
+	ধ্রুৱ সংরচনা host_part *h;
+	পূর্ণাঙ্ক i; /* index into string */
+	ৱর্ণ s[1024];
+	পূর্ণাঙ্ক r;
+	পূর্ণাঙ্ক sl = পরিমাণ(s) - 2;
 
-	if (parent == &empty)
-		return;
+	যদি (parent == &empty)
+		ঘূৰাই;
 
-	urldb_dump_search(parent->left, depth + 1);
+	urldb_dump_অনুসন্ধান(parent->বাম, depth + 1);
 
-	for (i = 0; i != depth; i++) {
+	বাবে (i = 0; i != depth; i++) {
 		s[i] = ' ';
 	}
 
-	for (h = parent->data; h; h = h->parent) {
-		if (h->part) {
+	বাবে (h = parent->data; h; h = h->parent) {
+		যদি (h->part) {
 			r = snprintf(&s[i], sl - i, "%s", h->part);
-			if (r < 0) {
-				break;
+			যদি (r < 0) {
+				ভঙ্গ;
 			}
-			if ((i + r) >= sl) {
-				break;
+			যদি ((i + r) >= sl) {
+				ভঙ্গ;
 			}
 			i += r;
 		}
 
-		if (h->parent && h->parent->parent) {
+		যদি (h->parent && h->parent->parent) {
 			s[i]='.';
 			i++;
 		}
@@ -1539,7 +1539,7 @@ static void urldb_dump_search(struct search_node *parent, int depth)
 
 	NSLOG(netsurf, INFO, "%s", s);
 
-	urldb_dump_search(parent->right, depth + 1);
+	urldb_dump_অনুসন্ধান(parent->ডান, depth + 1);
 }
 
 
@@ -1550,19 +1550,19 @@ static void urldb_dump_search(struct search_node *parent, int depth)
  * \param b second host part
  * \return 0 if match, non-zero, otherwise
  */
-static int
-urldb_search_match_host(const struct host_part *a, const struct host_part *b)
+স্থির পূর্ণাঙ্ক
+urldb_অনুসন্ধান_match_host(ধ্রুৱ সংরচনা host_part *a, ধ্রুৱ সংরচনা host_part *b)
 {
-	int ret;
+	পূর্ণাঙ্ক ret;
 
-	assert(a && b);
+	প্রতিজ্ঞা(a && b);
 
 	/* traverse up tree to root, comparing parts as we go. */
-	for (; a && a != &db_root && b && b != &db_root;
+	বাবে (; a && a != &db_মূল && b && b != &db_মূল;
 	     a = a->parent, b = b->parent) {
-		if ((ret = strcasecmp(a->part, b->part)) != 0) {
+		যদি ((ret = strcasecmp(a->part, b->part)) != 0) {
 			/* They differ => return the difference here */
-			return ret;
+			ঘূৰাই ret;
 		}
 	}
 
@@ -1570,16 +1570,16 @@ urldb_search_match_host(const struct host_part *a, const struct host_part *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && (!b || b == &db_root)) {
+	যদি (a && a != &db_মূল && (!b || b == &db_মূল)) {
 		/* len(a) > len(b) */
-		return 1;
-	} else if ((!a || a == &db_root) && b && b != &db_root) {
+		ঘূৰাই 1;
+	} অন্যথা যদি ((!a || a == &db_মূল) && b && b != &db_মূল) {
 		/* len(a) < len(b) */
-		return -1;
+		ঘূৰাই -1;
 	}
 
 	/* identical */
-	return 0;
+	ঘূৰাই 0;
 }
 
 
@@ -1589,20 +1589,20 @@ urldb_search_match_host(const struct host_part *a, const struct host_part *b)
  * \param root Root of subtree to rotate
  * \return new root of subtree
  */
-static struct search_node *urldb_search_skew(struct search_node *root)
+স্থির সংরচনা অনুসন্ধান_গ্ৰন্থি *urldb_অনুসন্ধান_skew(সংরচনা অনুসন্ধান_গ্ৰন্থি *মূল)
 {
-	assert(root);
+	প্রতিজ্ঞা(মূল);
 
-	if (root->left->level == root->level) {
-		struct search_node *temp;
+	যদি (মূল->বাম->level == মূল->level) {
+		সংরচনা অনুসন্ধান_গ্ৰন্থি *temp;
 
-		temp = root->left;
-		root->left = temp->right;
-		temp->right = root;
-		root = temp;
+		temp = মূল->বাম;
+		মূল->বাম = temp->ডান;
+		temp->ডান = মূল;
+		মূল = temp;
 	}
 
-	return root;
+	ঘূৰাই মূল;
 }
 
 
@@ -1612,22 +1612,22 @@ static struct search_node *urldb_search_skew(struct search_node *root)
  * \param root Root of subtree to rotate
  * \return New root of subtree
  */
-static struct search_node *urldb_search_split(struct search_node *root)
+স্থির সংরচনা অনুসন্ধান_গ্ৰন্থি *urldb_অনুসন্ধান_split(সংরচনা অনুসন্ধান_গ্ৰন্থি *মূল)
 {
-	assert(root);
+	প্রতিজ্ঞা(মূল);
 
-	if (root->right->right->level == root->level) {
-		struct search_node *temp;
+	যদি (মূল->ডান->ডান->level == মূল->level) {
+		সংরচনা অনুসন্ধান_গ্ৰন্থি *temp;
 
-		temp = root->right;
-		root->right = temp->left;
-		temp->left = root;
-		root = temp;
+		temp = মূল->ডান;
+		মূল->ডান = temp->বাম;
+		temp->বাম = মূল;
+		মূল = temp;
 
-		root->level++;
+		মূল->level++;
 	}
 
-	return root;
+	ঘূৰাই মূল;
 }
 
 
@@ -1638,33 +1638,33 @@ static struct search_node *urldb_search_split(struct search_node *root)
  * \param n Node to insert
  * \return Pointer to updated root
  */
-static struct search_node *
-urldb_search_insert_internal(struct search_node *root, struct search_node *n)
+স্থির সংরচনা অনুসন্ধান_গ্ৰন্থি *
+urldb_অনুসন্ধান_ঢোকাও_internal(সংরচনা অনুসন্ধান_গ্ৰন্থি *মূল, সংরচনা অনুসন্ধান_গ্ৰন্থি *n)
 {
-	assert(root && n);
+	প্রতিজ্ঞা(মূল && n);
 
-	if (root == &empty) {
-		root = n;
-	} else {
-		int c = urldb_search_match_host(root->data, n->data);
+	যদি (মূল == &empty) {
+		মূল = n;
+	} অন্যথা {
+		পূর্ণাঙ্ক c = urldb_অনুসন্ধান_match_host(মূল->data, n->data);
 
-		if (c > 0) {
-			root->left = urldb_search_insert_internal(
-				root->left, n);
-		} else if (c < 0) {
-			root->right = urldb_search_insert_internal(
-				root->right, n);
-		} else {
+		যদি (c > 0) {
+			মূল->বাম = urldb_অনুসন্ধান_ঢোকাও_internal(
+				মূল->বাম, n);
+		} অন্যথা যদি (c < 0) {
+			মূল->ডান = urldb_অনুসন্ধান_ঢোকাও_internal(
+				মূল->ডান, n);
+		} অন্যথা {
 			/* exact match */
-			free(n);
-			return root;
+			মুক্ত(n);
+			ঘূৰাই মূল;
 		}
 
-		root = urldb_search_skew(root);
-		root = urldb_search_split(root);
+		মূল = urldb_অনুসন্ধান_skew(মূল);
+		মূল = urldb_অনুসন্ধান_split(মূল);
 	}
 
-	return root;
+	ঘূৰাই মূল;
 }
 
 
@@ -1675,24 +1675,24 @@ urldb_search_insert_internal(struct search_node *root, struct search_node *n)
  * \param data User data to insert
  * \return Pointer to updated root, or NULL if failed
  */
-static struct search_node *
-urldb_search_insert(struct search_node *root, const struct host_part *data)
+স্থির সংরচনা অনুসন্ধান_গ্ৰন্থি *
+urldb_অনুসন্ধান_ঢোকাও(সংরচনা অনুসন্ধান_গ্ৰন্থি *মূল, ধ্রুৱ সংরচনা host_part *data)
 {
-	struct search_node *n;
+	সংরচনা অনুসন্ধান_গ্ৰন্থি *n;
 
-	assert(root && data);
+	প্রতিজ্ঞা(মূল && data);
 
-	n = malloc(sizeof(struct search_node));
-	if (!n)
-		return NULL;
+	n = malloc(পরিমাণ(সংরচনা অনুসন্ধান_গ্ৰন্থি));
+	যদি (!n)
+		ঘূৰাই রিক্ত;
 
 	n->level = 1;
 	n->data = data;
-	n->left = n->right = &empty;
+	n->বাম = n->ডান = &empty;
 
-	root = urldb_search_insert_internal(root, n);
+	মূল = urldb_অনুসন্ধান_ঢোকাও_internal(মূল, n);
 
-	return root;
+	ঘূৰাই মূল;
 }
 
 
@@ -1705,86 +1705,86 @@ urldb_search_insert(struct search_node *root, const struct host_part *data)
  * \param was_quoted Whether \a v was quoted in the input
  * \return true on success, false on memory exhaustion
  */
-static bool
-urldb_parse_avpair(struct cookie_internal_data *c,
-		   char *n,
-		   char *v,
+স্থির bool
+urldb_parse_avpair(সংরচনা cookie_internal_data *c,
+		   ৱর্ণ *n,
+		   ৱর্ণ *v,
 		   bool was_quoted)
 {
-	int vlen;
+	পূর্ণাঙ্ক vlen;
 
-	assert(c && n && v);
+	প্রতিজ্ঞা(c && n && v);
 
 	/* Strip whitespace from start of name */
-	for (; *n; n++) {
-		if (*n != ' ' && *n != '\t')
-			break;
+	বাবে (; *n; n++) {
+		যদি (*n != ' ' && *n != '\t')
+			ভঙ্গ;
 	}
 
 	/* Strip whitespace from end of name */
-	for (vlen = strlen(n); vlen; vlen--) {
-		if (n[vlen] == ' ' || n[vlen] == '\t')
+	বাবে (vlen = strlen(n); vlen; vlen--) {
+		যদি (n[vlen] == ' ' || n[vlen] == '\t')
 			n[vlen] = '\0';
-		else
-			break;
+		অন্যথা
+			ভঙ্গ;
 	}
 
 	/* Strip whitespace from start of value */
-	for (; *v; v++) {
-		if (*v != ' ' && *v != '\t')
-			break;
+	বাবে (; *v; v++) {
+		যদি (*v != ' ' && *v != '\t')
+			ভঙ্গ;
 	}
 
 	/* Strip whitespace from end of value */
-	for (vlen = strlen(v); vlen; vlen--) {
-		if (v[vlen] == ' ' || v[vlen] == '\t')
+	বাবে (vlen = strlen(v); vlen; vlen--) {
+		যদি (v[vlen] == ' ' || v[vlen] == '\t')
 			v[vlen] = '\0';
-		else
-			break;
+		অন্যথা
+			ভঙ্গ;
 	}
 
-	if (!c->comment && strcasecmp(n, "Comment") == 0) {
+	যদি (!c->comment && strcasecmp(n, "Comment") == 0) {
 		c->comment = strdup(v);
-		if (!c->comment)
-			return false;
-	} else if (!c->domain && strcasecmp(n, "Domain") == 0) {
-		if (v[0] == '.') {
+		যদি (!c->comment)
+			ঘূৰাই false;
+	} অন্যথা যদি (!c->domain && strcasecmp(n, "Domain") == 0) {
+		যদি (v[0] == '.') {
 			/* Domain must start with a dot */
 			c->domain_from_set = true;
 			c->domain = strdup(v);
-			if (!c->domain)
-				return false;
+			যদি (!c->domain)
+				ঘূৰাই false;
 		}
-	} else if (strcasecmp(n, "Max-Age") == 0) {
-		int temp = atoi(v);
-		if (temp == 0)
+	} অন্যথা যদি (strcasecmp(n, "Max-Age") == 0) {
+		পূর্ণাঙ্ক temp = atoi(v);
+		যদি (temp == 0)
 			/* Special case - 0 means delete */
 			c->expires = 0;
-		else
-			c->expires = time(NULL) + temp;
-	} else if (!c->path && strcasecmp(n, "Path") == 0) {
+		অন্যথা
+			c->expires = time(রিক্ত) + temp;
+	} অন্যথা যদি (!c->path && strcasecmp(n, "Path") == 0) {
 		c->path_from_set = true;
 		c->path = strdup(v);
-		if (!c->path)
-			return false;
-	} else if (strcasecmp(n, "Version") == 0) {
+		যদি (!c->path)
+			ঘূৰাই false;
+	} অন্যথা যদি (strcasecmp(n, "Version") == 0) {
 		c->version = atoi(v);
-	} else if (strcasecmp(n, "Expires") == 0) {
-		char *datenoday;
+	} অন্যথা যদি (strcasecmp(n, "Expires") == 0) {
+		ৱর্ণ *datenoday;
 		time_t expires;
 		nserror res;
 
 		/* Strip dayname from date (these are hugely variable
 		 * and liable to break the parser.  They also serve no
 		 * useful purpose) */
-		for (datenoday = v;
+		বাবে (datenoday = v;
 		     *datenoday && !ascii_is_digit(*datenoday);
 		     datenoday++) {
 			/* do nothing */
 		}
 
 		res = nsc_strntimet(datenoday, strlen(datenoday), &expires);
-		if (res != NSERROR_OK) {
+		যদি (res != NSERROR_OK) {
 			/* assume we have an unrepresentable date =>
 			 * force it to the maximum possible value of a
 			 * 32bit time_t (this may break in 2038. We'll
@@ -1792,20 +1792,20 @@ urldb_parse_avpair(struct cookie_internal_data *c,
 			expires = (time_t)0x7fffffff;
 		}
 		c->expires = expires;
-	} else if (strcasecmp(n, "Secure") == 0) {
+	} অন্যথা যদি (strcasecmp(n, "Secure") == 0) {
 		c->secure = true;
-	} else if (strcasecmp(n, "HttpOnly") == 0) {
+	} অন্যথা যদি (strcasecmp(n, "HttpOnly") == 0) {
 		c->http_only = true;
-	} else if (!c->name) {
+	} অন্যথা যদি (!c->name) {
 		c->name = strdup(n);
-		c->value = strdup(v);
-		c->value_was_quoted = was_quoted;
-		if (!c->name || !c->value) {
-			return false;
+		c->মান = strdup(v);
+		c->মান_was_quoted = was_quoted;
+		যদি (!c->name || !c->মান) {
+			ঘূৰাই false;
 		}
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 
@@ -1814,16 +1814,16 @@ urldb_parse_avpair(struct cookie_internal_data *c,
  *
  * \param c The cookie to free
  */
-static void urldb_free_cookie(struct cookie_internal_data *c)
+স্থির শূন্য urldb_free_cookie(সংরচনা cookie_internal_data *c)
 {
-	assert(c);
+	প্রতিজ্ঞা(c);
 
-	free(c->comment);
-	free(c->domain);
-	free(c->path);
-	free(c->name);
-	free(c->value);
-	free(c);
+	মুক্ত(c->comment);
+	মুক্ত(c->domain);
+	মুক্ত(c->path);
+	মুক্ত(c->name);
+	মুক্ত(c->মান);
+	মুক্ত(c);
 }
 
 
@@ -1834,83 +1834,83 @@ static void urldb_free_cookie(struct cookie_internal_data *c)
  * \param cookie Pointer to cookie string (updated on exit)
  * \return Pointer to cookie structure (on heap, caller frees) or NULL
  */
-static struct cookie_internal_data *
-urldb_parse_cookie(nsurl *url, const char **cookie)
+স্থির সংরচনা cookie_internal_data *
+urldb_parse_cookie(nsurl *url, ধ্রুৱ ৱর্ণ **cookie)
 {
-	struct cookie_internal_data *c;
-	const char *cur;
-	char name[1024], value[4096];
-	char *n = name, *v = value;
-	bool in_value = false;
-	bool had_value_data = false;
-	bool value_verbatim = false;
+	সংরচনা cookie_internal_data *c;
+	ধ্রুৱ ৱর্ণ *cur;
+	ৱর্ণ name[1024], মান[4096];
+	ৱর্ণ *n = name, *v = মান;
+	bool in_মান = false;
+	bool had_মান_data = false;
+	bool মান_verbatim = false;
 	bool quoted = false;
 	bool was_quoted = false;
 
-	assert(url && cookie && *cookie);
+	প্রতিজ্ঞা(url && cookie && *cookie);
 
-	c = calloc(1, sizeof(struct cookie_internal_data));
-	if (c == NULL)
-		return NULL;
+	c = calloc(1, পরিমাণ(সংরচনা cookie_internal_data));
+	যদি (c == রিক্ত)
+		ঘূৰাই রিক্ত;
 
 	c->expires = -1;
 
 	name[0] = '\0';
-	value[0] = '\0';
+	মান[0] = '\0';
 
-	for (cur = *cookie; *cur; cur++) {
-		if (*cur == '\r' && *(cur + 1) == '\n') {
+	বাবে (cur = *cookie; *cur; cur++) {
+		যদি (*cur == '\r' && *(cur + 1) == '\n') {
 			/* End of header */
-			if (quoted) {
+			যদি (quoted) {
 				/* Unmatched quote encountered */
 
 				/* Match Firefox 2.0.0.11 */
-				value[0] = '\0';
+				মান[0] = '\0';
 
 			}
 
-			break;
-		} else if (*cur == '\r') {
+			ভঙ্গ;
+		} অন্যথা যদি (*cur == '\r') {
 			/* Spurious linefeed */
-			continue;
-		} else if (*cur == '\n') {
+			অনুৱর্ত;
+		} অন্যথা যদি (*cur == '\n') {
 			/* Spurious newline */
-			continue;
+			অনুৱর্ত;
 		}
 
-		if (in_value && !had_value_data) {
-			if (*cur == ' ' || *cur == '\t') {
+		যদি (in_মান && !had_মান_data) {
+			যদি (*cur == ' ' || *cur == '\t') {
 				/* Strip leading whitespace from value */
-				continue;
-			} else {
-				had_value_data = true;
+				অনুৱর্ত;
+			} অন্যথা {
+				had_মান_data = true;
 
 				/* Value is taken verbatim if first non-space
 				 * character is not a " */
-				if (*cur != '"') {
-					value_verbatim = true;
+				যদি (*cur != '"') {
+					মান_verbatim = true;
 				}
 			}
 		}
 
-		if (in_value && !value_verbatim && (*cur == '"')) {
+		যদি (in_মান && !মান_verbatim && (*cur == '"')) {
 			/* Only non-verbatim values may be quoted */
-			if (cur == *cookie || *(cur - 1) != '\\') {
+			যদি (cur == *cookie || *(cur - 1) != '\\') {
 				/* Only unescaped quotes count */
 				was_quoted = quoted;
 				quoted = !quoted;
 
-				continue;
+				অনুৱর্ত;
 			}
 		}
 
-		if (!quoted && !in_value && *cur == '=') {
+		যদি (!quoted && !in_মান && *cur == '=') {
 			/* First equals => attr-value separator */
-			in_value = true;
-			continue;
+			in_মান = true;
+			অনুৱর্ত;
 		}
 
-		if (!quoted && (was_quoted || *cur == ';')) {
+		যদি (!quoted && (was_quoted || *cur == ';')) {
 			/* Semicolon or after quoted value
 			 * => end of current avpair */
 
@@ -1918,27 +1918,27 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 			*n = '\0';
 			*v = '\0';
 
-			if (!urldb_parse_avpair(c, name, value, was_quoted)) {
+			যদি (!urldb_parse_avpair(c, name, মান, was_quoted)) {
 				/* Memory exhausted */
 				urldb_free_cookie(c);
-				return NULL;
+				ঘূৰাই রিক্ত;
 			}
 
 			/* And reset to start */
 			n = name;
-			v = value;
-			in_value = false;
-			had_value_data = false;
-			value_verbatim = false;
+			v = মান;
+			in_মান = false;
+			had_মান_data = false;
+			মান_verbatim = false;
 			was_quoted = false;
 
 			/* Now, if the current input is anything other than a
 			 * semicolon, we must be sure to reprocess it */
-			if (*cur != ';') {
+			যদি (*cur != ';') {
 				cur--;
 			}
 
-			continue;
+			অনুৱর্ত;
 		}
 
 		/* And now handle commas. These are a pain as they may mean
@@ -1970,35 +1970,35 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 		 * of these is particularly likely and if they do occur, the
 		 * website is more broken than we can be bothered to handle.
 		 */
-		if (!quoted && *cur == ',') {
+		যদি (!quoted && *cur == ',') {
 			/* Find semi-colon, if any */
-			const char *p;
-			const char *semi = strchr(cur + 1, ';');
-			if (!semi)
+			ধ্রুৱ ৱর্ণ *p;
+			ধ্রুৱ ৱর্ণ *semi = strchr(cur + 1, ';');
+			যদি (!semi)
 				semi = cur + strlen(cur) - 2 /* CRLF */;
 
 			/* Look for equals sign between comma and semi */
-			for (p = cur + 1; p < semi; p++)
-				if (*p == '=')
-					break;
+			বাবে (p = cur + 1; p < semi; p++)
+				যদি (*p == '=')
+					ভঙ্গ;
 
-			if (p == semi) {
+			যদি (p == semi) {
 				/* none found => comma internal to value */
 				/* do nothing */
-			} else {
+			} অন্যথা {
 				/* found one => comma marks end of cookie */
 				cur++;
-				break;
+				ভঙ্গ;
 			}
 		}
 
 		/* Accumulate into buffers, always leaving space for a NUL */
 		/** \todo is silently truncating overlong names/values wise? */
-		if (!in_value) {
-			if (n < name + (sizeof(name) - 1))
+		যদি (!in_মান) {
+			যদি (n < name + (পরিমাণ(name) - 1))
 				*n++ = *cur;
-		} else {
-			if (v < value + (sizeof(value) - 1))
+		} অন্যথা {
+			যদি (v < মান + (পরিমাণ(মান) - 1))
 				*v++ = *cur;
 		}
 	}
@@ -2007,57 +2007,57 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	*n = '\0';
 	*v = '\0';
 
-	if (!urldb_parse_avpair(c, name, value, was_quoted)) {
+	যদি (!urldb_parse_avpair(c, name, মান, was_quoted)) {
 		/* Memory exhausted */
 		urldb_free_cookie(c);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
 	/* Now fix-up default values */
-	if (c->domain == NULL) {
+	যদি (c->domain == রিক্ত) {
 		lwc_string *host = nsurl_get_component(url, NSURL_HOST);
-		if (host == NULL) {
+		যদি (host == রিক্ত) {
 			urldb_free_cookie(c);
-			return NULL;
+			ঘূৰাই রিক্ত;
 		}
 		c->domain = strdup(lwc_string_data(host));
 		lwc_string_unref(host);
 	}
 
-	if (c->path == NULL) {
-		const char *path_data;
-		char *path, *slash;
+	যদি (c->path == রিক্ত) {
+		ধ্রুৱ ৱর্ণ *path_data;
+		ৱর্ণ *path, *slash;
 		lwc_string *path_lwc;
 
 		path_lwc = nsurl_get_component(url, NSURL_PATH);
-		if (path_lwc == NULL) {
+		যদি (path_lwc == রিক্ত) {
 			urldb_free_cookie(c);
-			return NULL;
+			ঘূৰাই রিক্ত;
 		}
 		path_data = lwc_string_data(path_lwc);
 
 		/* Strip leafname and trailing slash (4.3.1) */
 		slash = strrchr(path_data, '/');
-		if (slash != NULL) {
+		যদি (slash != রিক্ত) {
 			/* Special case: retain first slash in path */
-			if (slash == path_data)
+			যদি (slash == path_data)
 				slash++;
 
 			slash = strndup(path_data, slash - path_data);
-			if (slash == NULL) {
+			যদি (slash == রিক্ত) {
 				lwc_string_unref(path_lwc);
 				urldb_free_cookie(c);
-				return NULL;
+				ঘূৰাই রিক্ত;
 			}
 
 			path = slash;
 			lwc_string_unref(path_lwc);
-		} else {
+		} অন্যথা {
 			path = strdup(lwc_string_data(path_lwc));
 			lwc_string_unref(path_lwc);
-			if (path == NULL) {
+			যদি (path == রিক্ত) {
 				urldb_free_cookie(c);
-				return NULL;
+				ঘূৰাই রিক্ত;
 			}
 		}
 
@@ -2067,7 +2067,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	/* Write back current position */
 	*cookie = cur;
 
-	return c;
+	ঘূৰাই c;
 }
 
 
@@ -2082,76 +2082,76 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
  * \param url URL (fragment ignored)
  * \return Pointer to leaf node, or NULL on memory exhaustion
  */
-static struct path_data *
+স্থির সংরচনা path_data *
 urldb_add_path(lwc_string *scheme,
-	       unsigned int port,
-	       const struct host_part *host,
-	       char *path_query,
+	       unsigned পূর্ণাঙ্ক port,
+	       ধ্রুৱ সংরচনা host_part *host,
+	       ৱর্ণ *path_query,
 	       lwc_string *fragment,
 	       nsurl *url)
 {
-	struct path_data *d, *e;
-	char *buf = path_query;
-	char *segment, *slash;
+	সংরচনা path_data *d, *e;
+	ৱর্ণ *buf = path_query;
+	ৱর্ণ *segment, *slash;
 	bool match;
 
-	assert(scheme && host && url);
+	প্রতিজ্ঞা(scheme && host && url);
 
-	d = (struct path_data *) &host->paths;
+	d = (সংরচনা path_data *) &host->paths;
 
 	/* skip leading '/' */
 	segment = buf;
-	if (*segment == '/')
+	যদি (*segment == '/')
 		segment++;
 
 	/* Process path segments */
-	do {
+	কৰা {
 		slash = strchr(segment, '/');
-		if (!slash) {
+		যদি (!slash) {
 			/* last segment */
 			/* look for existing entry */
-			for (e = d->children; e; e = e->next)
-				if (strcmp(segment, e->segment) == 0 &&
+			বাবে (e = d->children; e; e = e->next)
+				যদি (strcmp(segment, e->segment) == 0 &&
 				    lwc_string_isequal(scheme,
 						       e->scheme, &match) ==
 				    lwc_error_ok &&
 				    match == true &&
 				    e->port == port)
-					break;
+					ভঙ্গ;
 
 			d = e ? urldb_add_path_fragment(e, fragment) :
-				urldb_add_path_node(scheme, port,
+				urldb_add_path_গ্ৰন্থি(scheme, port,
 						    segment, fragment, d);
-			break;
+			ভঙ্গ;
 		}
 
 		*slash = '\0';
 
 		/* look for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcmp(segment, e->segment) == 0 &&
+		বাবে (e = d->children; e; e = e->next)
+			যদি (strcmp(segment, e->segment) == 0 &&
 			    lwc_string_isequal(scheme, e->scheme,
 					       &match) == lwc_error_ok &&
 			    match == true &&
 			    e->port == port)
-				break;
+				ভঙ্গ;
 
-		d = e ? e : urldb_add_path_node(scheme, port, segment, NULL, d);
-		if (!d)
-			break;
+		d = e ? e : urldb_add_path_গ্ৰন্থি(scheme, port, segment, রিক্ত, d);
+		যদি (!d)
+			ভঙ্গ;
 
 		segment = slash + 1;
-	} while (1);
+	} যেতিয়ালৈ (1);
 
-	free(path_query);
+	মুক্ত(path_query);
 
-	if (d && !d->url) {
+	যদি (d && !d->url) {
 		/* Insert defragmented URL */
-		if (nsurl_defragment(url, &d->url) != NSERROR_OK)
-			return NULL;
+		যদি (nsurl_defragment(url, &d->url) != NSERROR_OK)
+			ঘূৰাই রিক্ত;
 	}
 
-	return d;
+	ঘূৰাই d;
 }
 
 
@@ -2161,87 +2161,87 @@ urldb_add_path(lwc_string *scheme,
  * \param host Hostname to add
  * \return Pointer to leaf node, or NULL on memory exhaustion
  */
-static struct host_part *urldb_add_host(const char *host)
+স্থির সংরচনা host_part *urldb_add_host(ধ্রুৱ ৱর্ণ *host)
 {
-	struct host_part *d = (struct host_part *) &db_root, *e;
-	struct search_node *s;
-	char buf[256]; /* 256 bytes is sufficient - domain names are
+	সংরচনা host_part *d = (সংরচনা host_part *) &db_মূল, *e;
+	সংরচনা অনুসন্ধান_গ্ৰন্থি *s;
+	ৱর্ণ buf[256]; /* 256 bytes is sufficient - domain names are
 			* limited to 255 chars. */
-	char *part;
+	ৱর্ণ *part;
 
-	assert(host);
+	প্রতিজ্ঞা(host);
 
-	if (urldb__host_is_ip_address(host)) {
+	যদি (urldb__host_is_ip_address(host)) {
 		/* Host is an IP, so simply add as TLD */
 
 		/* Check for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcasecmp(host, e->part) == 0)
+		বাবে (e = d->children; e; e = e->next)
+			যদি (strcasecmp(host, e->part) == 0)
 				/* found => return it */
-				return e;
+				ঘূৰাই e;
 
-		d = urldb_add_host_node(host, d);
+		d = urldb_add_host_গ্ৰন্থি(host, d);
 
-		s = urldb_search_insert(search_trees[ST_IP], d);
-		if (!s) {
+		s = urldb_অনুসন্ধান_ঢোকাও(অনুসন্ধান_trees[ST_IP], d);
+		যদি (!s) {
 			/* failed */
-			d = NULL;
-		} else {
-			search_trees[ST_IP] = s;
+			d = রিক্ত;
+		} অন্যথা {
+			অনুসন্ধান_trees[ST_IP] = s;
 		}
 
-		return d;
+		ঘূৰাই d;
 	}
 
 	/* Copy host string, so we can corrupt it */
-	strncpy(buf, host, sizeof buf);
-	buf[sizeof buf - 1] = '\0';
+	strncpy(buf, host, পরিমাণ buf);
+	buf[পরিমাণ buf - 1] = '\0';
 
 	/* Process FQDN segments backwards */
-	do {
+	কৰা {
 		part = strrchr(buf, '.');
-		if (!part) {
+		যদি (!part) {
 			/* last segment */
 			/* Check for existing entry */
-			for (e = d->children; e; e = e->next)
-				if (strcasecmp(buf, e->part) == 0)
-					break;
+			বাবে (e = d->children; e; e = e->next)
+				যদি (strcasecmp(buf, e->part) == 0)
+					ভঙ্গ;
 
-			if (e) {
+			যদি (e) {
 				d = e;
-			} else {
-				d = urldb_add_host_node(buf, d);
+			} অন্যথা {
+				d = urldb_add_host_গ্ৰন্থি(buf, d);
 			}
 
 			/* And insert into search tree */
-			if (d) {
-				struct search_node **r;
+			যদি (d) {
+				সংরচনা অনুসন্ধান_গ্ৰন্থি **r;
 
-				r = urldb_get_search_tree_direct(buf);
-				s = urldb_search_insert(*r, d);
-				if (!s) {
+				r = urldb_get_অনুসন্ধান_বৃক্ষ_direct(buf);
+				s = urldb_অনুসন্ধান_ঢোকাও(*r, d);
+				যদি (!s) {
 					/* failed */
-					d = NULL;
-				} else {
+					d = রিক্ত;
+				} অন্যথা {
 					*r = s;
 				}
 			}
-			break;
+			ভঙ্গ;
 		}
 
 		/* Check for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcasecmp(part + 1, e->part) == 0)
-				break;
+		বাবে (e = d->children; e; e = e->next)
+			যদি (strcasecmp(part + 1, e->part) == 0)
+				ভঙ্গ;
 
-		d = e ? e : urldb_add_host_node(part + 1, d);
-		if (!d)
-			break;
+		d = e ? e : urldb_add_host_গ্ৰন্থি(part + 1, d);
+		যদি (!d)
+			ভঙ্গ;
 
 		*part = '\0';
-	} while (1);
+	} যেতিয়ালৈ (1);
 
-	return d;
+	ঘূৰাই d;
 }
 
 
@@ -2253,112 +2253,112 @@ static struct host_part *urldb_add_host(const char *host)
  * \param url URL (sans fragment) associated with cookie
  * \return true on success, false on memory exhaustion (c will be freed)
  */
-static bool
-urldb_insert_cookie(struct cookie_internal_data *c,
+স্থির bool
+urldb_ঢোকাও_cookie(সংরচনা cookie_internal_data *c,
 		    lwc_string *scheme,
 		    nsurl *url)
 {
-	struct cookie_internal_data *d;
-	const struct host_part *h;
-	struct path_data *p;
-	time_t now = time(NULL);
+	সংরচনা cookie_internal_data *d;
+	ধ্রুৱ সংরচনা host_part *h;
+	সংরচনা path_data *p;
+	time_t now = time(রিক্ত);
 
-	assert(c);
+	প্রতিজ্ঞা(c);
 
-	if (c->domain[0] == '.') {
-		h = urldb_search_find(
-			urldb_get_search_tree(&(c->domain[1])),
+	যদি (c->domain[0] == '.') {
+		h = urldb_অনুসন্ধান_find(
+			urldb_get_অনুসন্ধান_বৃক্ষ(&(c->domain[1])),
 			c->domain + 1);
-		if (!h) {
+		যদি (!h) {
 			h = urldb_add_host(c->domain + 1);
-			if (!h) {
+			যদি (!h) {
 				urldb_free_cookie(c);
-				return false;
+				ঘূৰাই false;
 			}
 		}
 
-		p = (struct path_data *) &h->paths;
-	} else {
+		p = (সংরচনা path_data *) &h->paths;
+	} অন্যথা {
 		/* Need to have a URL and scheme, if it's not a domain cookie */
-		assert(url != NULL);
-		assert(scheme != NULL);
+		প্রতিজ্ঞা(url != রিক্ত);
+		প্রতিজ্ঞা(scheme != রিক্ত);
 
-		h = urldb_search_find(
-			urldb_get_search_tree(c->domain),
+		h = urldb_অনুসন্ধান_find(
+			urldb_get_অনুসন্ধান_বৃক্ষ(c->domain),
 			c->domain);
 
-		if (!h) {
+		যদি (!h) {
 			h = urldb_add_host(c->domain);
-			if (!h) {
+			যদি (!h) {
 				urldb_free_cookie(c);
-				return false;
+				ঘূৰাই false;
 			}
 		}
 
 		/* find path */
 		p = urldb_add_path(scheme, 0, h,
-				   strdup(c->path), NULL, url);
-		if (!p) {
+				   strdup(c->path), রিক্ত, url);
+		যদি (!p) {
 			urldb_free_cookie(c);
-			return false;
+			ঘূৰাই false;
 		}
 	}
 
 	/* add cookie */
-	for (d = p->cookies; d; d = d->next) {
-		if (!strcmp(d->domain, c->domain) &&
+	বাবে (d = p->cookies; d; d = d->next) {
+		যদি (!strcmp(d->domain, c->domain) &&
 		    !strcmp(d->path, c->path) &&
 		    !strcmp(d->name, c->name))
-			break;
+			ভঙ্গ;
 	}
 
-	if (d) {
-		if (c->expires != -1 && c->expires < now) {
+	যদি (d) {
+		যদি (c->expires != -1 && c->expires < now) {
 			/* remove cookie */
-			if (d->next)
+			যদি (d->next)
 				d->next->prev = d->prev;
-			else
+			অন্যথা
 				p->cookies_end = d->prev;
-			if (d->prev)
+			যদি (d->prev)
 				d->prev->next = d->next;
-			else
+			অন্যথা
 				p->cookies = d->next;
 
-			cookie_manager_remove((struct cookie_data *)d);
+			cookie_manager_remove((সংরচনা cookie_data *)d);
 
 			urldb_free_cookie(d);
 			urldb_free_cookie(c);
-		} else {
+		} অন্যথা {
 			/* replace d with c */
 			c->prev = d->prev;
 			c->next = d->next;
-			if (c->next)
+			যদি (c->next)
 				c->next->prev = c;
-			else
+			অন্যথা
 				p->cookies_end = c;
-			if (c->prev)
+			যদি (c->prev)
 				c->prev->next = c;
-			else
+			অন্যথা
 				p->cookies = c;
 
-			cookie_manager_remove((struct cookie_data *)d);
+			cookie_manager_remove((সংরচনা cookie_data *)d);
 			urldb_free_cookie(d);
 
-			cookie_manager_add((struct cookie_data *)c);
+			cookie_manager_add((সংরচনা cookie_data *)c);
 		}
-	} else {
+	} অন্যথা {
 		c->prev = p->cookies_end;
-		c->next = NULL;
-		if (p->cookies_end)
+		c->next = রিক্ত;
+		যদি (p->cookies_end)
 			p->cookies_end->next = c;
-		else
+		অন্যথা
 			p->cookies = c;
 		p->cookies_end = c;
 
-		cookie_manager_add((struct cookie_data *)c);
+		cookie_manager_add((সংরচনা cookie_data *)c);
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 /* Combined (A)BNF for the Cookie: request header:
@@ -2413,11 +2413,11 @@ urldb_insert_cookie(struct cookie_internal_data *c,
  * \param buf Pointer to Pointer to buffer (updated)
  * \return true on success, false on memory exhaustion
  */
-static bool
-concat_netscape_cookie(struct cookie_internal_data *c,
-		    int *used,
-		    int *alloc,
-		    char **buf)
+স্থির bool
+concat_netscape_cookie(সংরচনা cookie_internal_data *c,
+		    পূর্ণাঙ্ক *used,
+		    পূর্ণাঙ্ক *alloc,
+		    ৱর্ণ **buf)
 {
 	/*
 	 * A note on quoted-string handling:
@@ -2431,23 +2431,23 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	 *   We use semicolons for all separators, including between
 	 *   cookie-values. This simplifies things and is backwards compatible.
 	 */
-	int max_len;
-	int outl; /* output length */
+	পূর্ণাঙ্ক max_len;
+	পূর্ণাঙ্ক outl; /* output length */
 
-	assert(c && used && alloc && buf && *buf);
+	প্রতিজ্ঞা(c && used && alloc && buf && *buf);
 
 	/* "; " cookie-value
 	 * We allow for the possibility that values are quoted
 	 */
 	max_len = *used + 2 +
 		strlen(c->name) + 1 +
-		strlen(c->value) + 2 +
+		strlen(c->মান) + 2 +
 		(c->path_from_set ? 8 + strlen(c->path) + 2 : 0) +
 		(c->domain_from_set ? 10 + strlen(c->domain) + 2 : 0);
-	if (max_len >= *alloc) {
-		char *temp = realloc(*buf, max_len);
-		if (!temp) {
-			return false;
+	যদি (max_len >= *alloc) {
+		ৱর্ণ *temp = realloc(*buf, max_len);
+		যদি (!temp) {
+			ঘূৰাই false;
 		}
 		*buf = temp;
 		*alloc = max_len;
@@ -2455,9 +2455,9 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 
 	/* Original Netscape cookie */
 	outl = snprintf(*buf + *used - 1, *alloc - *used, "; %s=", c->name);
-	if (outl >= (*alloc - *used)) {
+	যদি (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		ঘূৰাই false;
 	}
 	*used += outl;
 
@@ -2466,22 +2466,22 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	 *
 	 * However, other browsers preserve quoting, so we should, too
 	 */
-	if (c->value_was_quoted) {
+	যদি (c->মান_was_quoted) {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"\"%s\"", c->value);
-		if (outl >= (*alloc - *used)) {
+				"\"%s\"", c->মান);
+		যদি (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			ঘূৰাই false;
 		}
 		*used += outl;
-	} else {
+	} অন্যথা {
 		/** \todo should we %XX-encode [;HT,SP] ? */
 		/** \todo Should we strip escaping backslashes? */
-		outl = snprintf(*buf + *used - 1,*alloc - *used, "%s", c->value);
-		if (outl >= (*alloc - *used)) {
+		outl = snprintf(*buf + *used - 1,*alloc - *used, "%s", c->মান);
+		যদি (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			ঘূৰাই false;
 		}
 		*used += outl;
 	}
@@ -2489,7 +2489,7 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	/* We don't send path/domain information -- that's what the
 	 * Netscape spec suggests we should do, anyway. */
 
-	return true;
+	ঘূৰাই true;
 }
 
 
@@ -2502,11 +2502,11 @@ concat_netscape_cookie(struct cookie_internal_data *c,
  * \param buf Pointer to Pointer to buffer (updated)
  * \return true on success, false on memory exhaustion
  */
-static bool
-concat_rfc2965_cookie(struct cookie_internal_data *c,
-		      int *used,
-		      int *alloc,
-		      char **buf)
+স্থির bool
+concat_rfc2965_cookie(সংরচনা cookie_internal_data *c,
+		      পূর্ণাঙ্ক *used,
+		      পূর্ণাঙ্ক *alloc,
+		      ৱর্ণ **buf)
 {
 	/*
 	 * A note on quoted-string handling:
@@ -2520,27 +2520,27 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 	 *   We use semicolons for all separators, including between
 	 *   cookie-values. This simplifies things and is backwards compatible.
 	 */
-	const char * const separators = "()<>@,;:\\\"/[]?={} \t";
-	int max_len;
-	int outl; /* output length */
+	ধ্রুৱ ৱর্ণ * ধ্রুৱ separators = "()<>@,;:\\\"/[]?={} \t";
+	পূর্ণাঙ্ক max_len;
+	পূর্ণাঙ্ক outl; /* output length */
 
-	assert(c && used && alloc && buf && *buf);
+	প্রতিজ্ঞা(c && used && alloc && buf && *buf);
 
 	/* "; " cookie-value
 	 * We allow for the possibility that values are quoted
 	 */
 	max_len = *used + 2 +
 		strlen(c->name) + 1 +
-		strlen(c->value) + 2 +
+		strlen(c->মান) + 2 +
 		(c->path_from_set ?
 		 8 + strlen(c->path) + 2 : 0) +
 		(c->domain_from_set ?
 		 10 + strlen(c->domain) + 2 : 0);
 
-	if (max_len >= *alloc) {
-		char *temp = realloc(*buf, max_len);
-		if (!temp) {
-			return false;
+	যদি (max_len >= *alloc) {
+		ৱর্ণ *temp = realloc(*buf, max_len);
+		যদি (!temp) {
+			ঘূৰাই false;
 		}
 		*buf = temp;
 		*alloc = max_len;
@@ -2550,100 +2550,100 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 	outl = snprintf(*buf + *used - 1,
 			*alloc - *used,
 			"; %s=", c->name);
-	if (outl >= (*alloc - *used)) {
+	যদি (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		ঘূৰাই false;
 	}
 	*used += outl;
 
 	/* Value needs quoting if it contains any separator or if
 	 * it needs preserving from the Set-Cookie header */
-	if (c->value_was_quoted ||
-	    strpbrk(c->value, separators) != NULL) {
+	যদি (c->মান_was_quoted ||
+	    strpbrk(c->মান, separators) != রিক্ত) {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"\"%s\"", c->value);
+				"\"%s\"", c->মান);
 
-	} else {
+	} অন্যথা {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
-				"%s", c->value);
+				"%s", c->মান);
 	}
-	if (outl >= (*alloc - *used)) {
+	যদি (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		ঘূৰাই false;
 	}
 	*used += outl;
 
-	if (c->path_from_set) {
+	যদি (c->path_from_set) {
 		/* Path, quoted if necessary */
 
-		if (strpbrk(c->path, separators) != NULL) {
+		যদি (strpbrk(c->path, separators) != রিক্ত) {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Path=\"%s\"", c->path);
 
-		} else {
+		} অন্যথা {
 			outl = snprintf(*buf + *used - 1,
 				       *alloc - *used,
 				       "; $Path=%s", c->path);
 		}
-		if (outl >= (*alloc - *used)) {
+		যদি (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			ঘূৰাই false;
 		}
 		*used += outl;
 	}
 
-	if (c->domain_from_set) {
+	যদি (c->domain_from_set) {
 		/* Domain, quoted if necessary */
-		if (strpbrk(c->domain, separators) != NULL) {
+		যদি (strpbrk(c->domain, separators) != রিক্ত) {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Domain=\"%s\"", c->domain);
-		} else {
+		} অন্যথা {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Domain=%s", c->domain);
 		}
-		if (outl >= (*alloc - *used)) {
+		যদি (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			ঘূৰাই false;
 		}
 		*used += outl;
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 
 /**
  * build output cookie string in netscape format
  */
-static char *
-get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
+স্থির ৱর্ণ *
+get_netscape_cookie(সংরচনা cookie_internal_data **matched_cookies, পূর্ণাঙ্ক গুনতি)
 {
-	int ret_alloc = 4096, ret_used = 1;
-	char *ret;
-	int midx; /* index into matched cookies */
+	পূর্ণাঙ্ক ret_alloc = 4096, ret_used = 1;
+	ৱর্ণ *ret;
+	পূর্ণাঙ্ক midx; /* index into matched cookies */
 
 	ret = malloc(ret_alloc);
-	if (ret == NULL) {
-		return NULL;
+	যদি (ret == রিক্ত) {
+		ঘূৰাই রিক্ত;
 	}
 	ret[0] = '\0';
 
-	for (midx = 0; midx < count; midx++) {
-		if (!concat_netscape_cookie(matched_cookies[midx],
+	বাবে (midx = 0; midx < গুনতি; midx++) {
+		যদি (!concat_netscape_cookie(matched_cookies[midx],
 					    &ret_used, &ret_alloc, &ret)) {
-			free(ret);
-			return NULL;
+			মুক্ত(ret);
+			ঘূৰাই রিক্ত;
 		}
 	}
 
-	if (ret_used <= 2) {
-		free(ret);
-		return NULL;
+	যদি (ret_used <= 2) {
+		মুক্ত(ret);
+		ঘূৰাই রিক্ত;
 	}
 
 	/* Old-style cookies => no version & skip "; " */
@@ -2651,58 +2651,58 @@ get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
 	ret_used -= 2;
 
 	/* shrink the output buffer to the required size */
-	char *temp = realloc(ret, ret_used);
-	if (temp != NULL) {
+	ৱর্ণ *temp = realloc(ret, ret_used);
+	যদি (temp != রিক্ত) {
 		ret = temp;
 	}
 
-	return ret;
+	ঘূৰাই ret;
 }
 
 
 /**
  * build output cookie string in RFC2965 format
  */
-static char *
-get_rfc2965_cookie(struct cookie_internal_data **matched_cookies,
-		   int count,
-		   int version)
+স্থির ৱর্ণ *
+get_rfc2965_cookie(সংরচনা cookie_internal_data **matched_cookies,
+		   পূর্ণাঙ্ক গুনতি,
+		   পূর্ণাঙ্ক version)
 {
-	int ret_alloc = 4096; /* return string allocation */
-	int ret_used = 1; /* return sting buffer used */
-	char *ret; /* return string buffer */
-	int midx; /* index into matched cookies */
-	int outl;
+	পূর্ণাঙ্ক ret_alloc = 4096; /* return string allocation */
+	পূর্ণাঙ্ক ret_used = 1; /* return sting buffer used */
+	ৱর্ণ *ret; /* return string buffer */
+	পূর্ণাঙ্ক midx; /* index into matched cookies */
+	পূর্ণাঙ্ক outl;
 
 	ret = malloc(ret_alloc);
-	if (ret == NULL) {
-		return NULL;
+	যদি (ret == রিক্ত) {
+		ঘূৰাই রিক্ত;
 	}
 	ret[0] = '\0';
 
 	outl = snprintf(ret,ret_alloc - ret_used, "$Version=%d", version);
-	if (outl >= ret_alloc - ret_used) {
+	যদি (outl >= ret_alloc - ret_used) {
 		/* overflow */
-		free(ret);
-		return NULL;
+		মুক্ত(ret);
+		ঘূৰাই রিক্ত;
 	}
 	ret_used += outl;
 
-	for (midx = 0; midx < count; midx++) {
-		if (!concat_rfc2965_cookie(matched_cookies[midx],
+	বাবে (midx = 0; midx < গুনতি; midx++) {
+		যদি (!concat_rfc2965_cookie(matched_cookies[midx],
 					   &ret_used, &ret_alloc, &ret)) {
-			free(ret);
-			return NULL;
+			মুক্ত(ret);
+			ঘূৰাই রিক্ত;
 		}
 	}
 
 	/* shrink the output buffer to the required size */
-	char *temp = realloc(ret, ret_used);
-	if (temp != NULL) {
+	ৱর্ণ *temp = realloc(ret, ret_used);
+	যদি (temp != রিক্ত) {
 		ret = temp;
 	}
 
-	return ret;
+	ঘূৰাই ret;
 }
 
 
@@ -2714,53 +2714,53 @@ get_rfc2965_cookie(struct cookie_internal_data **matched_cookies,
  * \param name The cookie name
  * \param parent The url data of the cookie
  */
-static void
-urldb_delete_cookie_paths(const char *domain,
-			  const char *path,
-			  const char *name,
-			  struct path_data *parent)
+স্থির শূন্য
+urldb_delete_cookie_paths(ধ্রুৱ ৱর্ণ *domain,
+			  ধ্রুৱ ৱর্ণ *path,
+			  ধ্রুৱ ৱর্ণ *name,
+			  সংরচনা path_data *parent)
 {
-	struct cookie_internal_data *c;
-	struct path_data *p = parent;
+	সংরচনা cookie_internal_data *c;
+	সংরচনা path_data *p = parent;
 
-	assert(parent);
+	প্রতিজ্ঞা(parent);
 
-	do {
-		for (c = p->cookies; c; c = c->next) {
-			if (strcmp(c->domain, domain) == 0 &&
+	কৰা {
+		বাবে (c = p->cookies; c; c = c->next) {
+			যদি (strcmp(c->domain, domain) == 0 &&
 			    strcmp(c->path, path) == 0 &&
 			    strcmp(c->name, name) == 0) {
-				if (c->prev) {
+				যদি (c->prev) {
 					c->prev->next = c->next;
-				} else {
+				} অন্যথা {
 					p->cookies = c->next;
 				}
 
-				if (c->next) {
+				যদি (c->next) {
 					c->next->prev = c->prev;
-				} else {
+				} অন্যথা {
 					p->cookies_end = c->prev;
 				}
 
 				urldb_free_cookie(c);
 
-				return;
+				ঘূৰাই;
 			}
 		}
 
-		if (p->children) {
+		যদি (p->children) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} অন্যথা {
+			যেতিয়ালৈ (p != parent) {
+				যদি (p->next != রিক্ত) {
 					p = p->next;
-					break;
+					ভঙ্গ;
 				}
 
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} যেতিয়ালৈ (p != parent);
 }
 
 
@@ -2772,18 +2772,18 @@ urldb_delete_cookie_paths(const char *domain,
  * \param name The cookie name
  * \param parent The url data of the cookie
  */
-static void
-urldb_delete_cookie_hosts(const char *domain,
-			  const char *path,
-			  const char *name,
-			  struct host_part *parent)
+স্থির শূন্য
+urldb_delete_cookie_hosts(ধ্রুৱ ৱর্ণ *domain,
+			  ধ্রুৱ ৱর্ণ *path,
+			  ধ্রুৱ ৱর্ণ *name,
+			  সংরচনা host_part *parent)
 {
-	struct host_part *h;
-	assert(parent);
+	সংরচনা host_part *h;
+	প্রতিজ্ঞা(parent);
 
 	urldb_delete_cookie_paths(domain, path, name, &parent->paths);
 
-	for (h = parent->children; h; h = h->next) {
+	বাবে (h = parent->children; h; h = h->next) {
 		urldb_delete_cookie_hosts(domain, path, name, h);
 	}
 }
@@ -2795,21 +2795,21 @@ urldb_delete_cookie_hosts(const char *domain,
  * \param fp File pointer to write to
  * \param parent Parent path
  */
-static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
+স্থির শূন্য urldb_save_cookie_paths(FILE *fp, সংরচনা path_data *parent)
 {
-	struct path_data *p = parent;
-	time_t now = time(NULL);
+	সংরচনা path_data *p = parent;
+	time_t now = time(রিক্ত);
 
-	assert(fp && parent);
+	প্রতিজ্ঞা(fp && parent);
 
-	do {
-		if (p->cookies != NULL) {
-			struct cookie_internal_data *c;
+	কৰা {
+		যদি (p->cookies != রিক্ত) {
+			সংরচনা cookie_internal_data *c;
 
-			for (c = p->cookies; c != NULL; c = c->next) {
-				if (c->expires == -1 || c->expires < now) {
+			বাবে (c = p->cookies; c != রিক্ত; c = c->next) {
+				যদি (c->expires == -1 || c->expires < now) {
 					/* Skip expired & session cookies */
-					continue;
+					অনুৱর্ত;
 				}
 
 				fprintf(fp,
@@ -2819,9 +2819,9 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 					c->domain_from_set, c->path,
 					c->path_from_set, c->secure,
 					c->http_only,
-					(int)c->expires, (int)c->last_used,
-					c->no_destroy, c->name, c->value,
-					c->value_was_quoted,
+					(পূর্ণাঙ্ক)c->expires, (পূর্ণাঙ্ক)c->last_used,
+					c->no_destroy, c->name, c->মান,
+					c->মান_was_quoted,
 					p->scheme ? lwc_string_data(p->scheme) :
 					"unused",
 					p->url ? nsurl_access(p->url) :
@@ -2830,19 +2830,19 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 			}
 		}
 
-		if (p->children != NULL) {
+		যদি (p->children != রিক্ত) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} অন্যথা {
+			যেতিয়ালৈ (p != parent) {
+				যদি (p->next != রিক্ত) {
 					p = p->next;
-					break;
+					ভঙ্গ;
 				}
 
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} যেতিয়ালৈ (p != parent);
 }
 
 
@@ -2852,14 +2852,14 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
  * \param fp File pointer to write to
  * \param parent Parent host
  */
-static void urldb_save_cookie_hosts(FILE *fp, struct host_part *parent)
+স্থির শূন্য urldb_save_cookie_hosts(FILE *fp, সংরচনা host_part *parent)
 {
-	struct host_part *h;
-	assert(fp && parent);
+	সংরচনা host_part *h;
+	প্রতিজ্ঞা(fp && parent);
 
 	urldb_save_cookie_paths(fp, &parent->paths);
 
-	for (h = parent->children; h; h = h->next)
+	বাবে (h = parent->children; h; h = h->next)
 		urldb_save_cookie_hosts(fp, h);
 }
 
@@ -2869,15 +2869,15 @@ static void urldb_save_cookie_hosts(FILE *fp, struct host_part *parent)
  *
  * \param c Cookie to destroy
  */
-static void urldb_destroy_cookie(struct cookie_internal_data *c)
+স্থির শূন্য urldb_destroy_cookie(সংরচনা cookie_internal_data *c)
 {
-	free(c->name);
-	free(c->value);
-	free(c->comment);
-	free(c->domain);
-	free(c->path);
+	মুক্ত(c->name);
+	মুক্ত(c->মান);
+	মুক্ত(c->comment);
+	মুক্ত(c->domain);
+	মুক্ত(c->path);
 
-	free(c);
+	মুক্ত(c);
 }
 
 
@@ -2886,25 +2886,25 @@ static void urldb_destroy_cookie(struct cookie_internal_data *c)
  *
  * \param node Node to destroy contents of (does not destroy node)
  */
-static void urldb_destroy_path_node_content(struct path_data *node)
+স্থির শূন্য urldb_destroy_path_গ্ৰন্থি_content(সংরচনা path_data *গ্ৰন্থি)
 {
-	struct cookie_internal_data *a, *b;
-	unsigned int i;
+	সংরচনা cookie_internal_data *a, *b;
+	unsigned পূর্ণাঙ্ক i;
 
-	if (node->url != NULL) {
-		nsurl_unref(node->url);
+	যদি (গ্ৰন্থি->url != রিক্ত) {
+		nsurl_unref(গ্ৰন্থি->url);
 	}
 
-	lwc_string_unref(node->scheme);
+	lwc_string_unref(গ্ৰন্থি->scheme);
 
-	free(node->segment);
-	for (i = 0; i < node->frag_cnt; i++)
-		free(node->fragment[i]);
-	free(node->fragment);
+	মুক্ত(গ্ৰন্থি->segment);
+	বাবে (i = 0; i < গ্ৰন্থি->frag_cnt; i++)
+		মুক্ত(গ্ৰন্থি->fragment[i]);
+	মুক্ত(গ্ৰন্থি->fragment);
 
-	free(node->urld.title);
+	মুক্ত(গ্ৰন্থি->urld.title);
 
-	for (a = node->cookies; a; a = b) {
+	বাবে (a = গ্ৰন্থি->cookies; a; a = b) {
 		b = a->next;
 		urldb_destroy_cookie(a);
 	}
@@ -2916,13 +2916,13 @@ static void urldb_destroy_path_node_content(struct path_data *node)
  *
  * \param space Protection space to destroy
  */
-static void urldb_destroy_prot_space(struct prot_space_data *space)
+স্থির শূন্য urldb_destroy_prot_space(সংরচনা prot_space_data *space)
 {
 	lwc_string_unref(space->scheme);
-	free(space->realm);
-	free(space->auth);
+	মুক্ত(space->realm);
+	মুক্ত(space->auth);
 
-	free(space);
+	মুক্ত(space);
 }
 
 
@@ -2931,34 +2931,34 @@ static void urldb_destroy_prot_space(struct prot_space_data *space)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_path_tree(struct path_data *root)
+স্থির শূন্য urldb_destroy_path_বৃক্ষ(সংরচনা path_data *মূল)
 {
-	struct path_data *p = root;
+	সংরচনা path_data *p = মূল;
 
-	do {
-		if (p->children != NULL) {
+	কৰা {
+		যদি (p->children != রিক্ত) {
 			p = p->children;
-		} else {
-			struct path_data *q = p;
+		} অন্যথা {
+			সংরচনা path_data *q = p;
 
-			while (p != root) {
-				if (p->next != NULL) {
+			যেতিয়ালৈ (p != মূল) {
+				যদি (p->next != রিক্ত) {
 					p = p->next;
-					break;
+					ভঙ্গ;
 				}
 
 				p = p->parent;
 
-				urldb_destroy_path_node_content(q);
-				free(q);
+				urldb_destroy_path_গ্ৰন্থি_content(q);
+				মুক্ত(q);
 
 				q = p;
 			}
 
-			urldb_destroy_path_node_content(q);
-			free(q);
+			urldb_destroy_path_গ্ৰন্থি_content(q);
+			মুক্ত(q);
 		}
-	} while (p != root);
+	} যেতিয়ালৈ (p != মূল);
 }
 
 
@@ -2967,36 +2967,36 @@ static void urldb_destroy_path_tree(struct path_data *root)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_host_tree(struct host_part *root)
+স্থির শূন্য urldb_destroy_host_বৃক্ষ(সংরচনা host_part *মূল)
 {
-	struct host_part *a, *b;
-	struct path_data *p, *q;
-	struct prot_space_data *s, *t;
+	সংরচনা host_part *a, *b;
+	সংরচনা path_data *p, *q;
+	সংরচনা prot_space_data *s, *t;
 
 	/* Destroy children */
-	for (a = root->children; a; a = b) {
+	বাবে (a = মূল->children; a; a = b) {
 		b = a->next;
-		urldb_destroy_host_tree(a);
+		urldb_destroy_host_বৃক্ষ(a);
 	}
 
 	/* Now clean up paths */
-	for (p = root->paths.children; p; p = q) {
+	বাবে (p = মূল->paths.children; p; p = q) {
 		q = p->next;
-		urldb_destroy_path_tree(p);
+		urldb_destroy_path_বৃক্ষ(p);
 	}
 
 	/* Root path */
-	urldb_destroy_path_node_content(&root->paths);
+	urldb_destroy_path_গ্ৰন্থি_content(&মূল->paths);
 
 	/* Proctection space data */
-	for (s = root->prot_space; s; s = t) {
+	বাবে (s = মূল->prot_space; s; s = t) {
 		t = s->next;
 		urldb_destroy_prot_space(s);
 	}
 
 	/* And ourselves */
-	free(root->part);
-	free(root);
+	মুক্ত(মূল->part);
+	মুক্ত(মূল);
 }
 
 
@@ -3005,16 +3005,16 @@ static void urldb_destroy_host_tree(struct host_part *root)
  *
  * \param root Root node of tree to destroy
  */
-static void urldb_destroy_search_tree(struct search_node *root)
+স্থির শূন্য urldb_destroy_অনুসন্ধান_বৃক্ষ(সংরচনা অনুসন্ধান_গ্ৰন্থি *মূল)
 {
 	/* Destroy children */
-	if (root->left != &empty)
-		urldb_destroy_search_tree(root->left);
-	if (root->right != &empty)
-		urldb_destroy_search_tree(root->right);
+	যদি (মূল->বাম != &empty)
+		urldb_destroy_অনুসন্ধান_বৃক্ষ(মূল->বাম);
+	যদি (মূল->ডান != &empty)
+		urldb_destroy_অনুসন্ধান_বৃক্ষ(মূল->ডান);
 
 	/* And destroy ourselves */
-	free(root);
+	মুক্ত(মূল);
 }
 
 
@@ -3022,162 +3022,162 @@ static void urldb_destroy_search_tree(struct search_node *root)
 
 
 /* exported interface documented in content/urldb.h */
-void urldb_destroy(void)
+শূন্য urldb_destroy(শূন্য)
 {
-	struct host_part *a, *b;
-	int i;
+	সংরচনা host_part *a, *b;
+	পূর্ণাঙ্ক i;
 
 	/* Clean up search trees */
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (search_trees[i] != &empty) {
-			urldb_destroy_search_tree(search_trees[i]);
-			search_trees[i] = &empty;
+	বাবে (i = 0; i < অঙ্ক_অনুসন্ধান_TREES; i++) {
+		যদি (অনুসন্ধান_trees[i] != &empty) {
+			urldb_destroy_অনুসন্ধান_বৃক্ষ(অনুসন্ধান_trees[i]);
+			অনুসন্ধান_trees[i] = &empty;
 		}
 	}
 
 	/* And database */
-	for (a = db_root.children; a; a = b) {
+	বাবে (a = db_মূল.children; a; a = b) {
 		b = a->next;
-		urldb_destroy_host_tree(a);
+		urldb_destroy_host_বৃক্ষ(a);
 	}
-	memset(&db_root, 0, sizeof(db_root));
+	memset(&db_মূল, 0, পরিমাণ(db_মূল));
 
 	/* And the bloom filter */
-	if (url_bloom != NULL) {
+	যদি (url_bloom != রিক্ত) {
 		bloom_destroy(url_bloom);
-		url_bloom = NULL;
+		url_bloom = রিক্ত;
 	}
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-nserror urldb_load(const char *filename)
+nserror urldb_load(ধ্রুৱ ৱর্ণ *filename)
 {
 #define MAXIMUM_URL_LENGTH 4096
-	char s[MAXIMUM_URL_LENGTH];
-	char host[256];
-	struct host_part *h;
-	int urls;
-	int i;
-	int version;
-	int length;
+	ৱর্ণ s[MAXIMUM_URL_LENGTH];
+	ৱর্ণ host[256];
+	সংরচনা host_part *h;
+	পূর্ণাঙ্ক urls;
+	পূর্ণাঙ্ক i;
+	পূর্ণাঙ্ক version;
+	পূর্ণাঙ্ক length;
 	FILE *fp;
 
-	assert(filename);
+	প্রতিজ্ঞা(filename);
 
 	NSLOG(netsurf, INFO, "Loading URL file %s", filename);
 
-	if (url_bloom == NULL)
+	যদি (url_bloom == রিক্ত)
 		url_bloom = bloom_create(BLOOM_SIZE);
 
 	fp = fopen(filename, "r");
-	if (!fp) {
+	যদি (!fp) {
 		NSLOG(netsurf, INFO, "Failed to open file '%s' for reading",
 		      filename);
-		return NSERROR_NOT_FOUND;
+		ঘূৰাই NSERROR_NOT_FOUND;
 	}
 
-	if (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
+	যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
 		fclose(fp);
-		return NSERROR_NEED_DATA;
+		ঘূৰাই NSERROR_NEED_DATA;
 	}
 
 	version = atoi(s);
-	if (version < MIN_URL_FILE_VERSION) {
+	যদি (version < MIN_URL_FILE_VERSION) {
 		NSLOG(netsurf, INFO, "Unsupported URL file version.");
 		fclose(fp);
-		return NSERROR_INVALID;
+		ঘূৰাই NSERROR_INVALID;
 	}
-	if (version > URL_FILE_VERSION) {
+	যদি (version > URL_FILE_VERSION) {
 		NSLOG(netsurf, INFO, "Unknown URL file version.");
 		fclose(fp);
-		return NSERROR_INVALID;
+		ঘূৰাই NSERROR_INVALID;
 	}
 
-	while (fgets(host, sizeof host, fp)) {
+	যেতিয়ালৈ (fgets(host, পরিমাণ host, fp)) {
 		time_t hsts_expiry = 0;
-		int hsts_include_sub_domains = 0;
+		পূর্ণাঙ্ক hsts_include_sub_domains = 0;
 
 		/* get the hostname */
 		length = strlen(host) - 1;
 		host[length] = '\0';
 
 		/* skip data that has ended up with a host of '' */
-		if (length == 0) {
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
+		যদি (length == 0) {
+			যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				ভঙ্গ;
 			urls = atoi(s);
 			/* Eight fields/url */
-			for (i = 0; i < (8 * urls); i++) {
-				if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-					break;
+			বাবে (i = 0; i < (8 * urls); i++) {
+				যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+					ভঙ্গ;
 			}
-			continue;
+			অনুৱর্ত;
 		}
 
-		if (version >= 107) {
-			char *p = host;
-			while (*p && *p != ' ') p++;
-			while (*p && *p == ' ') { *p = '\0'; p++; }
+		যদি (version >= 107) {
+			ৱর্ণ *p = host;
+			যেতিয়ালৈ (*p && *p != ' ') p++;
+			যেতিয়ালৈ (*p && *p == ' ') { *p = '\0'; p++; }
 			hsts_include_sub_domains = (*p == '1');
-			while (*p && *p != ' ') p++;
-			while (*p && *p == ' ') p++;
+			যেতিয়ালৈ (*p && *p != ' ') p++;
+			যেতিয়ালৈ (*p && *p == ' ') p++;
 			nsc_snptimet(p, strlen(p), &hsts_expiry);
 		}
 
 		h = urldb_add_host(host);
-		if (!h) {
+		যদি (!h) {
 			NSLOG(netsurf, INFO, "Failed adding host: '%s'", host);
 			fclose(fp);
-			return NSERROR_NOMEM;
+			ঘূৰাই NSERROR_NOMEM;
 		}
 		h->hsts.expires = hsts_expiry;
 		h->hsts.include_sub_domains = hsts_include_sub_domains;
 
 		/* read number of URLs */
-		if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-			break;
+		যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+			ভঙ্গ;
 		urls = atoi(s);
 
 		/* no URLs => try next host */
-		if (urls == 0) {
+		যদি (urls == 0) {
 			NSLOG(netsurf, INFO, "No URLs for '%s'", host);
-			continue;
+			অনুৱর্ত;
 		}
 
 		/* load the non-corrupt data */
-		for (i = 0; i < urls; i++) {
-			struct path_data *p = NULL;
-			char scheme[64], ports[10];
-			char url[64 + 3 + 256 + 6 + 4096 + 1 + 1];
-			unsigned int port;
+		বাবে (i = 0; i < urls; i++) {
+			সংরচনা path_data *p = রিক্ত;
+			ৱর্ণ scheme[64], ports[10];
+			ৱর্ণ url[64 + 3 + 256 + 6 + 4096 + 1 + 1];
+			unsigned পূর্ণাঙ্ক port;
 			bool is_file = false;
 			nsurl *nsurl;
 			lwc_string *scheme_lwc, *fragment_lwc;
-			char *path_query;
+			ৱর্ণ *path_query;
 			size_t len;
 
-			if (!fgets(scheme, sizeof scheme, fp))
-				break;
+			যদি (!fgets(scheme, পরিমাণ scheme, fp))
+				ভঙ্গ;
 			length = strlen(scheme) - 1;
 			scheme[length] = '\0';
 
-			if (!fgets(ports, sizeof ports, fp))
-				break;
+			যদি (!fgets(ports, পরিমাণ ports, fp))
+				ভঙ্গ;
 			length = strlen(ports) - 1;
 			ports[length] = '\0';
 			port = atoi(ports);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
+			যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				ভঙ্গ;
 			length = strlen(s) - 1;
 			s[length] = '\0';
 
-			if (!strcasecmp(host, "localhost") &&
+			যদি (!strcasecmp(host, "localhost") &&
 			    !strcasecmp(scheme, "file"))
 				is_file = true;
 
-			snprintf(url, sizeof url, "%s://%s%s%s%s",
+			snprintf(url, পরিমাণ url, "%s://%s%s%s%s",
 				 scheme,
 				 /* file URLs have no host */
 				 (is_file ? "" : host),
@@ -3190,25 +3190,25 @@ nserror urldb_load(const char *filename)
 			 *       swiftly.
 			 *       Need a nsurl_save too.
 			 */
-			if (nsurl_create(url, &nsurl) != NSERROR_OK) {
+			যদি (nsurl_create(url, &nsurl) != NSERROR_OK) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				ঘূৰাই NSERROR_NOMEM;
 			}
 
-			if (url_bloom != NULL) {
+			যদি (url_bloom != রিক্ত) {
 				uint32_t hash = nsurl_hash(nsurl);
-				bloom_insert_hash(url_bloom, hash);
+				bloom_ঢোকাও_hash(url_bloom, hash);
 			}
 
 			/* Copy and merge path/query strings */
-			if (nsurl_get(nsurl, NSURL_PATH | NSURL_QUERY,
+			যদি (nsurl_get(nsurl, NSURL_PATH | NSURL_QUERY,
 				      &path_query, &len) != NSERROR_OK) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				ঘূৰাই NSERROR_NOMEM;
 			}
 
 			scheme_lwc = nsurl_get_component(nsurl, NSURL_SCHEME);
@@ -3216,45 +3216,45 @@ nserror urldb_load(const char *filename)
 							   NSURL_FRAGMENT);
 			p = urldb_add_path(scheme_lwc, port, h, path_query,
 					   fragment_lwc, nsurl);
-			if (!p) {
+			যদি (!p) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				ঘূৰাই NSERROR_NOMEM;
 			}
 			nsurl_unref(nsurl);
 			lwc_string_unref(scheme_lwc);
 			lwc_string_unref(fragment_lwc);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
-			if (p)
-				p->urld.visits = (unsigned int)atoi(s);
+			যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				ভঙ্গ;
+			যদি (p)
+				p->urld.visits = (unsigned পূর্ণাঙ্ক)atoi(s);
 
 			/* entry last use time */
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
-				break;
+			যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
+				ভঙ্গ;
 			}
-			if (p) {
+			যদি (p) {
 				nsc_snptimet(s, strlen(s) - 1, &p->urld.last_visit);
 			}
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
-			if (p)
+			যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				ভঙ্গ;
+			যদি (p)
 				p->urld.type = (content_type)atoi(s);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
+			যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				ভঙ্গ;
 
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
-				break;
+			যদি (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+				ভঙ্গ;
 			length = strlen(s) - 1;
-			if (p && length > 0) {
+			যদি (p && length > 0) {
 				s[length] = '\0';
 				p->urld.title = malloc(length + 1);
-				if (p->urld.title)
+				যদি (p->urld.title)
 					memcpy(p->urld.title, s, length + 1);
 			}
 		}
@@ -3264,115 +3264,115 @@ nserror urldb_load(const char *filename)
 	NSLOG(netsurf, INFO, "Successfully loaded URL file");
 #undef MAXIMUM_URL_LENGTH
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 /* exported interface documented in netsurf/url_db.h */
-nserror urldb_save(const char *filename)
+nserror urldb_save(ধ্রুৱ ৱর্ণ *filename)
 {
 	FILE *fp;
-	int i;
+	পূর্ণাঙ্ক i;
 
-	assert(filename);
+	প্রতিজ্ঞা(filename);
 
 	fp = fopen(filename, "w");
-	if (!fp) {
+	যদি (!fp) {
 		NSLOG(netsurf, INFO, "Failed to open file '%s' for writing",
 		      filename);
-		return NSERROR_SAVE_FAILED;
+		ঘূৰাই NSERROR_SAVE_FAILED;
 	}
 
 	/* file format version number */
 	fprintf(fp, "%d\n", URL_FILE_VERSION);
 
-	for (i = 0; i != NUM_SEARCH_TREES; i++) {
-		urldb_save_search_tree(search_trees[i], fp);
+	বাবে (i = 0; i != অঙ্ক_অনুসন্ধান_TREES; i++) {
+		urldb_save_অনুসন্ধান_বৃক্ষ(অনুসন্ধান_trees[i], fp);
 	}
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
 nserror urldb_set_url_persistence(nsurl *url, bool persist)
 {
-	struct path_data *p;
+	সংরচনা path_data *p;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	যদি (!p) {
+		ঘূৰাই NSERROR_NOT_FOUND;
 	}
 
 	p->persistent = persist;
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
 bool urldb_add_url(nsurl *url)
 {
-	struct host_part *h;
-	struct path_data *p;
+	সংরচনা host_part *h;
+	সংরচনা path_data *p;
 	lwc_string *scheme;
 	lwc_string *port;
 	lwc_string *host;
 	lwc_string *fragment;
-	const char *host_str;
-	char *path_query = NULL;
+	ধ্রুৱ ৱর্ণ *host_str;
+	ৱর্ণ *path_query = রিক্ত;
 	size_t len;
 	bool match;
-	unsigned int port_int;
+	unsigned পূর্ণাঙ্ক port_int;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
-	if (url_bloom == NULL)
+	যদি (url_bloom == রিক্ত)
 		url_bloom = bloom_create(BLOOM_SIZE);
 
-	if (url_bloom != NULL) {
+	যদি (url_bloom != রিক্ত) {
 		uint32_t hash = nsurl_hash(url);
-		bloom_insert_hash(url_bloom, hash);
+		bloom_ঢোকাও_hash(url_bloom, hash);
 	}
 
 	/* Copy and merge path/query strings */
-	if (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &path_query, &len) !=
+	যদি (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &path_query, &len) !=
 	    NSERROR_OK) {
-		return false;
+		ঘূৰাই false;
 	}
-	assert(path_query != NULL);
+	প্রতিজ্ঞা(path_query != রিক্ত);
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
-		free(path_query);
-		return false;
+	যদি (scheme == রিক্ত) {
+		মুক্ত(path_query);
+		ঘূৰাই false;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
+	যদি (host != রিক্ত) {
 		host_str = lwc_string_data(host);
 		lwc_string_unref(host);
 
-	} else if (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
+	} অন্যথা যদি (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
 		   lwc_error_ok && match == true) {
 		host_str = "localhost";
 
-	} else {
+	} অন্যথা {
 		lwc_string_unref(scheme);
-		free(path_query);
-		return false;
+		মুক্ত(path_query);
+		ঘূৰাই false;
 	}
 
 	fragment = nsurl_get_component(url, NSURL_FRAGMENT);
 
 	port = nsurl_get_component(url, NSURL_PORT);
-	if (port != NULL) {
+	যদি (port != রিক্ত) {
 		port_int = atoi(lwc_string_data(port));
 		lwc_string_unref(port);
-	} else {
+	} অন্যথা {
 		port_int = 0;
 	}
 
@@ -3380,101 +3380,101 @@ bool urldb_add_url(nsurl *url)
 	h = urldb_add_host(host_str);
 
 	/* Get path entry */
-	if (h != NULL) {
+	যদি (h != রিক্ত) {
 		p = urldb_add_path(scheme,
 				   port_int,
 				   h,
 				   path_query,
 				   fragment,
 				   url);
-	} else {
-		p = NULL;
+	} অন্যথা {
+		p = রিক্ত;
 	}
 
 	lwc_string_unref(scheme);
 	lwc_string_unref(fragment);
 
-	return (p != NULL);
+	ঘূৰাই (p != রিক্ত);
 }
 
 
 /* exported interface documented in content/urldb.h */
-nserror urldb_set_url_title(nsurl *url, const char *title)
+nserror urldb_set_url_title(nsurl *url, ধ্রুৱ ৱর্ণ *title)
 {
-	struct path_data *p;
-	char *temp;
+	সংরচনা path_data *p;
+	ৱর্ণ *temp;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	p = urldb_find_url(url);
-	if (p == NULL) {
-		return NSERROR_NOT_FOUND;
+	যদি (p == রিক্ত) {
+		ঘূৰাই NSERROR_NOT_FOUND;
 	}
 
 	/* copy the parameter if necessary */
-	if (title != NULL) {
+	যদি (title != রিক্ত) {
 		temp = strdup(title);
-		if (temp == NULL) {
-			return NSERROR_NOMEM;
+		যদি (temp == রিক্ত) {
+			ঘূৰাই NSERROR_NOMEM;
 		}
-	} else {
-		temp = NULL;
+	} অন্যথা {
+		temp = রিক্ত;
 	}
 
-	free(p->urld.title);
+	মুক্ত(p->urld.title);
 	p->urld.title = temp;
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
 nserror urldb_set_url_content_type(nsurl *url, content_type type)
 {
-	struct path_data *p;
+	সংরচনা path_data *p;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	যদি (!p) {
+		ঘূৰাই NSERROR_NOT_FOUND;
 	}
 
 	p->urld.type = type;
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
 nserror urldb_update_url_visit_data(nsurl *url)
 {
-	struct path_data *p;
+	সংরচনা path_data *p;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	যদি (!p) {
+		ঘূৰাই NSERROR_NOT_FOUND;
 	}
 
-	p->urld.last_visit = time(NULL);
+	p->urld.last_visit = time(রিক্ত);
 	p->urld.visits++;
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface documented in content/urldb.h */
-void urldb_reset_url_visit_data(nsurl *url)
+শূন্য urldb_reset_url_visit_data(nsurl *url)
 {
-	struct path_data *p;
+	সংরচনা path_data *p;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return;
+	যদি (!p)
+		ঘূৰাই;
 
 	p->urld.last_visit = (time_t)0;
 	p->urld.visits = 0;
@@ -3482,87 +3482,87 @@ void urldb_reset_url_visit_data(nsurl *url)
 
 
 /* exported interface documented in netsurf/url_db.h */
-const struct url_data *urldb_get_url_data(nsurl *url)
+ধ্রুৱ সংরচনা url_data *urldb_get_url_data(nsurl *url)
 {
-	struct path_data *p;
-	struct url_internal_data *u;
+	সংরচনা path_data *p;
+	সংরচনা url_internal_data *u;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	যদি (!p)
+		ঘূৰাই রিক্ত;
 
 	u = &p->urld;
 
-	return (const struct url_data *) u;
+	ঘূৰাই (ধ্রুৱ সংরচনা url_data *) u;
 }
 
 
 /* exported interface documented in content/urldb.h */
 nsurl *urldb_get_url(nsurl *url)
 {
-	struct path_data *p;
+	সংরচনা path_data *p;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	যদি (!p)
+		ঘূৰাই রিক্ত;
 
-	return p->url;
+	ঘূৰাই p->url;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void urldb_set_auth_details(nsurl *url, const char *realm, const char *auth)
+শূন্য urldb_set_auth_details(nsurl *url, ধ্রুৱ ৱর্ণ *realm, ধ্রুৱ ৱর্ণ *auth)
 {
-	struct path_data *p, *pi;
-	struct host_part *h;
-	struct prot_space_data *space, *space_alloc;
-	char *realm_alloc, *auth_alloc;
+	সংরচনা path_data *p, *pi;
+	সংরচনা host_part *h;
+	সংরচনা prot_space_data *space, *space_alloc;
+	ৱর্ণ *realm_alloc, *auth_alloc;
 	bool match;
 
-	assert(url && realm && auth);
+	প্রতিজ্ঞা(url && realm && auth);
 
 	/* add url, in case it's missing */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
 
-	if (!p)
-		return;
+	যদি (!p)
+		ঘূৰাই;
 
 	/* Search for host_part */
-	for (pi = p; pi->parent != NULL; pi = pi->parent)
+	বাবে (pi = p; pi->parent != রিক্ত; pi = pi->parent)
 		;
-	h = (struct host_part *)pi;
+	h = (সংরচনা host_part *)pi;
 
 	/* Search if given URL belongs to a protection space we already know of. */
-	for (space = h->prot_space; space; space = space->next) {
-		if (!strcmp(space->realm, realm) &&
+	বাবে (space = h->prot_space; space; space = space->next) {
+		যদি (!strcmp(space->realm, realm) &&
 		    lwc_string_isequal(space->scheme, p->scheme,
 				       &match) == lwc_error_ok &&
 		    match == true &&
 		    space->port == p->port)
-			break;
+			ভঙ্গ;
 	}
 
-	if (space != NULL) {
+	যদি (space != রিক্ত) {
 		/* Overrule existing auth. */
-		free(space->auth);
+		মুক্ত(space->auth);
 		space->auth = strdup(auth);
-	} else {
+	} অন্যথা {
 		/* Create a new protection space. */
-		space = space_alloc = malloc(sizeof(struct prot_space_data));
+		space = space_alloc = malloc(পরিমাণ(সংরচনা prot_space_data));
 		realm_alloc = strdup(realm);
 		auth_alloc = strdup(auth);
 
-		if (!space_alloc || !realm_alloc || !auth_alloc) {
-			free(space_alloc);
-			free(realm_alloc);
-			free(auth_alloc);
-			return;
+		যদি (!space_alloc || !realm_alloc || !auth_alloc) {
+			মুক্ত(space_alloc);
+			মুক্ত(realm_alloc);
+			মুক্ত(auth_alloc);
+			ঘূৰাই;
 		}
 
 		space->scheme = lwc_string_ref(p->scheme);
@@ -3578,75 +3578,75 @@ void urldb_set_auth_details(nsurl *url, const char *realm, const char *auth)
 
 
 /* exported interface documented in netsurf/url_db.h */
-const char *urldb_get_auth_details(nsurl *url, const char *realm)
+ধ্রুৱ ৱর্ণ *urldb_get_auth_details(nsurl *url, ধ্রুৱ ৱর্ণ *realm)
 {
-	struct path_data *p, *p_cur, *p_top;
+	সংরচনা path_data *p, *p_cur, *p_শীৰ্ষ;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	/* add to the db, so our lookup will work */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	যদি (!p)
+		ঘূৰাই রিক্ত;
 
 	/* Check for any auth details attached to the path_data node or any of
 	 * its parents.
 	 */
-	for (p_cur = p; p_cur != NULL; p_top = p_cur, p_cur = p_cur->parent) {
-		if (p_cur->prot_space) {
-			return p_cur->prot_space->auth;
+	বাবে (p_cur = p; p_cur != রিক্ত; p_শীৰ্ষ = p_cur, p_cur = p_cur->parent) {
+		যদি (p_cur->prot_space) {
+			ঘূৰাই p_cur->prot_space->auth;
 		}
 	}
 
 	/* Only when we have a realm (and canonical root of given URL), we can
 	 * uniquely locate the protection space.
 	 */
-	if (realm != NULL) {
-		const struct host_part *h = (const struct host_part *)p_top;
-		const struct prot_space_data *space;
+	যদি (realm != রিক্ত) {
+		ধ্রুৱ সংরচনা host_part *h = (ধ্রুৱ সংরচনা host_part *)p_শীৰ্ষ;
+		ধ্রুৱ সংরচনা prot_space_data *space;
 		bool match;
 
 		/* Search for a possible matching protection space. */
-		for (space = h->prot_space; space != NULL;
+		বাবে (space = h->prot_space; space != রিক্ত;
 		     space = space->next) {
-			if (!strcmp(space->realm, realm) &&
+			যদি (!strcmp(space->realm, realm) &&
 			    lwc_string_isequal(space->scheme,
 					       p->scheme, &match) ==
 			    lwc_error_ok &&
 			    match == true &&
 			    space->port == p->port) {
 				p->prot_space = space;
-				return p->prot_space->auth;
+				ঘূৰাই p->prot_space->auth;
 			}
 		}
 	}
 
-	return NULL;
+	ঘূৰাই রিক্ত;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void urldb_set_cert_permissions(nsurl *url, bool permit)
+শূন্য urldb_set_cert_permissions(nsurl *url, bool permit)
 {
-	struct path_data *p;
-	struct host_part *h;
+	সংরচনা path_data *p;
+	সংরচনা host_part *h;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	/* add url, in case it's missing */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return;
+	যদি (!p)
+		ঘূৰাই;
 
-	for (; p && p->parent; p = p->parent)
+	বাবে (; p && p->parent; p = p->parent)
 		/* do nothing */;
-	assert(p);
+	প্রতিজ্ঞা(p);
 
-	h = (struct host_part *)p;
+	h = (সংরচনা host_part *)p;
 
 	h->permit_invalid_certs = permit;
 }
@@ -3655,122 +3655,122 @@ void urldb_set_cert_permissions(nsurl *url, bool permit)
 /* exported interface documented in content/urldb.h */
 bool urldb_get_cert_permissions(nsurl *url)
 {
-	struct path_data *p;
-	const struct host_part *h;
+	সংরচনা path_data *p;
+	ধ্রুৱ সংরচনা host_part *h;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	যদি (!p)
+		ঘূৰাই false;
 
-	for (; p && p->parent; p = p->parent)
+	বাবে (; p && p->parent; p = p->parent)
 		/* do nothing */;
-	assert(p);
+	প্রতিজ্ঞা(p);
 
-	h = (const struct host_part *)p;
+	h = (ধ্রুৱ সংরচনা host_part *)p;
 
-	return h->permit_invalid_certs;
+	ঘূৰাই h->permit_invalid_certs;
 }
 
 
 /* exported interface documented in content/urldb.h */
-bool urldb_set_hsts_policy(struct nsurl *url, const char *header)
+bool urldb_set_hsts_policy(সংরচনা nsurl *url, ধ্রুৱ ৱর্ণ *header)
 {
-	struct path_data *p;
-	struct host_part *h;
+	সংরচনা path_data *p;
+	সংরচনা host_part *h;
 	lwc_string *host;
-	time_t now = time(NULL);
+	time_t now = time(রিক্ত);
 	http_strict_transport_security *sts;
 	uint32_t max_age = 0;
 	nserror error;
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
-		if (urldb__host_is_ip_address(lwc_string_data(host))) {
+	যদি (host != রিক্ত) {
+		যদি (urldb__host_is_ip_address(lwc_string_data(host))) {
 			/* Host is IP: ignore */
 			lwc_string_unref(host);
-			return true;
-		} else if (lwc_string_length(host) == 0) {
+			ঘূৰাই true;
+		} অন্যথা যদি (lwc_string_length(host) == 0) {
 			/* Host is blank: ignore */
 			lwc_string_unref(host);
-			return true;
+			ঘূৰাই true;
 		}
 
 		lwc_string_unref(host);
-	} else {
+	} অন্যথা {
 		/* No host part: ignore */
-		return true;
+		ঘূৰাই true;
 	}
 
 	/* add url, in case it's missing */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	যদি (!p)
+		ঘূৰাই false;
 
-	for (; p && p->parent; p = p->parent)
+	বাবে (; p && p->parent; p = p->parent)
 		/* do nothing */;
-	assert(p);
+	প্রতিজ্ঞা(p);
 
-	h = (struct host_part *)p;
-	if (h->permit_invalid_certs) {
+	h = (সংরচনা host_part *)p;
+	যদি (h->permit_invalid_certs) {
 		/* Transport is tainted: ignore */
-		return true;
+		ঘূৰাই true;
 	}
 
 	error = http_parse_strict_transport_security(header, &sts);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		/* Parse failed: ignore */
-		return true;
+		ঘূৰাই true;
 	}
 
 	h->hsts.include_sub_domains =
 		http_strict_transport_security_include_subdomains(sts);
 
 	max_age = http_strict_transport_security_max_age(sts);
-	if (max_age == 0) {
+	যদি (max_age == 0) {
 		h->hsts.expires = 0;
 		h->hsts.include_sub_domains = false;
-	} else if ((time_t) (now + max_age) > h->hsts.expires) {
+	} অন্যথা যদি ((time_t) (now + max_age) > h->hsts.expires) {
 		h->hsts.expires = now + max_age;
 	}
 
 	http_strict_transport_security_destroy(sts);
 
-	return true;
+	ঘূৰাই true;
 }
 
 
 /* exported interface documented in content/urldb.h */
-bool urldb_get_hsts_enabled(struct nsurl *url)
+bool urldb_get_hsts_enabled(সংরচনা nsurl *url)
 {
-	struct path_data *p;
-	const struct host_part *h;
+	সংরচনা path_data *p;
+	ধ্রুৱ সংরচনা host_part *h;
 	lwc_string *host;
-	time_t now = time(NULL);
+	time_t now = time(রিক্ত);
 
-	assert(url);
+	প্রতিজ্ঞা(url);
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
-		if (urldb__host_is_ip_address(lwc_string_data(host))) {
+	যদি (host != রিক্ত) {
+		যদি (urldb__host_is_ip_address(lwc_string_data(host))) {
 			/* Host is IP: not enabled */
 			lwc_string_unref(host);
-			return false;
-		} else if (lwc_string_length(host) == 0) {
+			ঘূৰাই false;
+		} অন্যথা যদি (lwc_string_length(host) == 0) {
 			/* Host is blank: not enabled */
 			lwc_string_unref(host);
-			return false;
+			ঘূৰাই false;
 		}
 
 		lwc_string_unref(host);
-	} else {
+	} অন্যথা {
 		/* No host part: not enabled */
-		return false;
+		ঘূৰাই false;
 	}
 
 	/* The URL must exist in the db in order to find HSTS policy, since
@@ -3779,193 +3779,193 @@ bool urldb_get_hsts_enabled(struct nsurl *url)
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	যদি (!p)
+		ঘূৰাই false;
 
-	for (; p && p->parent; p = p->parent)
+	বাবে (; p && p->parent; p = p->parent)
 		/* do nothing */;
-	assert(p);
+	প্রতিজ্ঞা(p);
 
-	h = (const struct host_part *)p;
+	h = (ধ্রুৱ সংরচনা host_part *)p;
 
 	/* Consult record for this host */
-	if (h->hsts.expires > now) {
+	যদি (h->hsts.expires > now) {
 		/* Not expired */
-		return true;
+		ঘূৰাই true;
 	}
 
 	/* Consult parent domains */
-	for (h = h->parent; h && h != &db_root; h = h->parent) {
-		if (h->hsts.expires > now && h->hsts.include_sub_domains) {
+	বাবে (h = h->parent; h && h != &db_মূল; h = h->parent) {
+		যদি (h->hsts.expires > now && h->hsts.include_sub_domains) {
 			/* Not expired and subdomains included */
-			return true;
+			ঘূৰাই true;
 		}
 	}
 
-	return false;
+	ঘূৰাই false;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void
-urldb_iterate_partial(const char *prefix,
-		      bool (*callback)(nsurl *url, const struct url_data *data))
+শূন্য
+urldb_iterate_partial(ধ্রুৱ ৱর্ণ *prefix,
+		      bool (*callback)(nsurl *url, ধ্রুৱ সংরচনা url_data *data))
 {
-	char host[256];
-	char buf[260]; /* max domain + "www." */
-	const char *slash, *scheme_sep;
-	struct search_node *tree;
-	const struct host_part *h;
+	ৱর্ণ host[256];
+	ৱর্ণ buf[260]; /* max domain + "www." */
+	ধ্রুৱ ৱর্ণ *slash, *scheme_sep;
+	সংরচনা অনুসন্ধান_গ্ৰন্থি *বৃক্ষ;
+	ধ্রুৱ সংরচনা host_part *h;
 
-	assert(prefix && callback);
+	প্রতিজ্ঞা(prefix && callback);
 
 	/* strip scheme */
 	scheme_sep = strstr(prefix, "://");
-	if (scheme_sep)
+	যদি (scheme_sep)
 		prefix = scheme_sep + 3;
 
 	slash = strchr(prefix, '/');
-	tree = urldb_get_search_tree(prefix);
+	বৃক্ষ = urldb_get_অনুসন্ধান_বৃক্ষ(prefix);
 
-	if (slash) {
+	যদি (slash) {
 		/* if there's a slash in the input, then we can
 		 * assume that we're looking for a path */
-		snprintf(host, sizeof host, "%.*s",
-			 (int) (slash - prefix), prefix);
+		snprintf(host, পরিমাণ host, "%.*s",
+			 (পূর্ণাঙ্ক) (slash - prefix), prefix);
 
-		h = urldb_search_find(tree, host);
-		if (!h) {
-			int len = slash - prefix;
+		h = urldb_অনুসন্ধান_find(বৃক্ষ, host);
+		যদি (!h) {
+			পূর্ণাঙ্ক len = slash - prefix;
 
-			if (len <= 3 || strncasecmp(host, "www.", 4) != 0) {
-				snprintf(buf, sizeof buf, "www.%s", host);
-				h = urldb_search_find(
-					search_trees[ST_DN + 'w' - 'a'],
+			যদি (len <= 3 || strncasecmp(host, "www.", 4) != 0) {
+				snprintf(buf, পরিমাণ buf, "www.%s", host);
+				h = urldb_অনুসন্ধান_find(
+					অনুসন্ধান_trees[ST_DN + 'w' - 'a'],
 					buf);
-				if (!h)
-					return;
-			} else
-				return;
+				যদি (!h)
+					ঘূৰাই;
+			} অন্যথা
+				ঘূৰাই;
 		}
 
-		if (h->paths.children) {
+		যদি (h->paths.children) {
 			/* Have paths, iterate them */
 			urldb_iterate_partial_path(&h->paths, slash + 1,
 						   callback);
 		}
 
-	} else {
-		int len = strlen(prefix);
+	} অন্যথা {
+		পূর্ণাঙ্ক len = strlen(prefix);
 
 		/* looking for hosts */
-		if (!urldb_iterate_partial_host(tree, prefix, callback))
-			return;
+		যদি (!urldb_iterate_partial_host(বৃক্ষ, prefix, callback))
+			ঘূৰাই;
 
-		if (len <= 3 || strncasecmp(prefix, "www.", 4) != 0) {
+		যদি (len <= 3 || strncasecmp(prefix, "www.", 4) != 0) {
 			/* now look for www.prefix */
-			snprintf(buf, sizeof buf, "www.%s", prefix);
-			if(!urldb_iterate_partial_host(
-				   search_trees[ST_DN + 'w' - 'a'],
+			snprintf(buf, পরিমাণ buf, "www.%s", prefix);
+			যদি(!urldb_iterate_partial_host(
+				   অনুসন্ধান_trees[ST_DN + 'w' - 'a'],
 				   buf, callback))
-				return;
+				ঘূৰাই;
 		}
 	}
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void
-urldb_iterate_entries(bool (*callback)(nsurl *url, const struct url_data *data))
+শূন্য
+urldb_iterate_entries(bool (*callback)(nsurl *url, ধ্রুৱ সংরচনা url_data *data))
 {
-	int i;
+	পূর্ণাঙ্ক i;
 
-	assert(callback);
+	প্রতিজ্ঞা(callback);
 
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (!urldb_iterate_entries_host(search_trees[i],
+	বাবে (i = 0; i < অঙ্ক_অনুসন্ধান_TREES; i++) {
+		যদি (!urldb_iterate_entries_host(অনুসন্ধান_trees[i],
 						callback,
-						NULL)) {
-			break;
+						রিক্ত)) {
+			ভঙ্গ;
 		}
 	}
 }
 
 
 /* exported interface documented in content/urldb.h */
-void urldb_iterate_cookies(bool (*callback)(const struct cookie_data *data))
+শূন্য urldb_iterate_cookies(bool (*callback)(ধ্রুৱ সংরচনা cookie_data *data))
 {
-	int i;
+	পূর্ণাঙ্ক i;
 
-	assert(callback);
+	প্রতিজ্ঞা(callback);
 
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (!urldb_iterate_entries_host(search_trees[i],
-						NULL, callback))
-			break;
+	বাবে (i = 0; i < অঙ্ক_অনুসন্ধান_TREES; i++) {
+		যদি (!urldb_iterate_entries_host(অনুসন্ধান_trees[i],
+						রিক্ত, callback))
+			ভঙ্গ;
 	}
 }
 
 
 /* exported interface documented in content/urldb.h */
-bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
+bool urldb_set_cookie(ধ্রুৱ ৱর্ণ *header, nsurl *url, nsurl *referer)
 {
-	const char *cur = header, *end;
+	ধ্রুৱ ৱর্ণ *cur = header, *end;
 	lwc_string *path, *host, *scheme;
 	nsurl *urlt;
 	bool match;
 
-	assert(url && header);
+	প্রতিজ্ঞা(url && header);
 
 	/* Get defragmented URL, as 'urlt' */
-	if (nsurl_defragment(url, &urlt) != NSERROR_OK)
-		return NULL;
+	যদি (nsurl_defragment(url, &urlt) != NSERROR_OK)
+		ঘূৰাই রিক্ত;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
+	যদি (scheme == রিক্ত) {
 		nsurl_unref(urlt);
-		return false;
+		ঘূৰাই false;
 	}
 
 	path = nsurl_get_component(url, NSURL_PATH);
-	if (path == NULL) {
+	যদি (path == রিক্ত) {
 		lwc_string_unref(scheme);
 		nsurl_unref(urlt);
-		return false;
+		ঘূৰাই false;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host == NULL) {
+	যদি (host == রিক্ত) {
 		lwc_string_unref(path);
 		lwc_string_unref(scheme);
 		nsurl_unref(urlt);
-		return false;
+		ঘূৰাই false;
 	}
 
-	if (referer) {
+	যদি (referer) {
 		lwc_string *rhost;
 
 		/* Ensure that url's host name domain matches
 		 * referer's (4.3.5) */
 		rhost = nsurl_get_component(referer, NSURL_HOST);
-		if (rhost == NULL) {
-			goto error;
+		যদি (rhost == রিক্ত) {
+			গচ্ছ error;
 		}
 
 		/* Domain match host names */
-		if (lwc_string_isequal(host, rhost, &match) == lwc_error_ok &&
+		যদি (lwc_string_isequal(host, rhost, &match) == lwc_error_ok &&
 		    match == false) {
-			const char *hptr;
-			const char *rptr;
-			const char *dot;
-			const char *host_data = lwc_string_data(host);
-			const char *rhost_data = lwc_string_data(rhost);
+			ধ্রুৱ ৱর্ণ *hptr;
+			ধ্রুৱ ৱর্ণ *rptr;
+			ধ্রুৱ ৱর্ণ *dot;
+			ধ্রুৱ ৱর্ণ *host_data = lwc_string_data(host);
+			ধ্রুৱ ৱর্ণ *rhost_data = lwc_string_data(rhost);
 
 			/* Ensure neither host nor rhost are IP addresses */
-			if (urldb__host_is_ip_address(host_data) ||
+			যদি (urldb__host_is_ip_address(host_data) ||
 			    urldb__host_is_ip_address(rhost_data)) {
 				/* IP address, so no partial match */
 				lwc_string_unref(rhost);
-				goto error;
+				গচ্ছ error;
 			}
 
 			/* Not exact match, so try the following:
@@ -3993,9 +3993,9 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			rptr = rhost_data + lwc_string_length(rhost) - 1;
 
 			/* 1 */
-			while (hptr >= host_data && rptr >= rhost_data) {
-				if (*hptr != *rptr)
-					break;
+			যেতিয়ালৈ (hptr >= host_data && rptr >= rhost_data) {
+				যদি (*hptr != *rptr)
+					ভঙ্গ;
 				hptr--;
 				rptr--;
 			}
@@ -4005,15 +4005,15 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			hptr++;
 
 			/* 2 */
-			while (*hptr != '\0' && *hptr != '.')
+			যেতিয়ালৈ (*hptr != '\0' && *hptr != '.')
 				hptr++;
 
 			/* 3 */
-			if (*hptr == '\0' ||
-			    (dot = strchr(hptr + 1, '.')) == NULL ||
+			যদি (*hptr == '\0' ||
+			    (dot = strchr(hptr + 1, '.')) == রিক্ত ||
 			    *(dot + 1) == '\0') {
 				lwc_string_unref(rhost);
-				goto error;
+				গচ্ছ error;
 			}
 		}
 
@@ -4022,64 +4022,64 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 
 	end = cur + strlen(cur) - 2 /* Trailing CRLF */;
 
-	do {
-		struct cookie_internal_data *c;
-		char *dot;
+	কৰা {
+		সংরচনা cookie_internal_data *c;
+		ৱর্ণ *dot;
 		size_t len;
 #ifdef WITH_NSPSL
-		const char *suffix;
+		ধ্রুৱ ৱর্ণ *suffix;
 #endif
 
 		c = urldb_parse_cookie(url, &cur);
-		if (!c) {
+		যদি (!c) {
 			/* failed => stop parsing */
-			goto error;
+			গচ্ছ error;
 		}
 
 		/* validate cookie */
 
 		/* 4.2.2:i Cookie must have NAME and VALUE */
-		if (!c->name || !c->value) {
+		যদি (!c->name || !c->মান) {
 			urldb_free_cookie(c);
-			goto error;
+			গচ্ছ error;
 		}
 
 		/* 4.3.2:i Cookie path must be a prefix of URL path */
 		len = strlen(c->path);
-		if (len > lwc_string_length(path) ||
+		যদি (len > lwc_string_length(path) ||
 		    strncmp(c->path, lwc_string_data(path),
 			    len) != 0) {
 			urldb_free_cookie(c);
-			goto error;
+			গচ্ছ error;
 		}
 
 #ifdef WITH_NSPSL
 		/* check domain is not a public suffix */
 		dot = c->domain;
-		if (*dot == '.') {
+		যদি (*dot == '.') {
 			dot++;
 		}
 		suffix = nspsl_getpublicsuffix(dot);
-		if (suffix == NULL) {
+		যদি (suffix == রিক্ত) {
 			NSLOG(netsurf, INFO,
 			      "domain %s was a public suffix domain", dot);
 			urldb_free_cookie(c);
-			goto error;
+			গচ্ছ error;
 		}
-#else
+#অন্যথা
 		/* 4.3.2:ii Cookie domain must contain embedded dots */
 		dot = strchr(c->domain + 1, '.');
-		if (!dot || *(dot + 1) == '\0') {
+		যদি (!dot || *(dot + 1) == '\0') {
 			/* no embedded dots */
 			urldb_free_cookie(c);
-			goto error;
+			গচ্ছ error;
 		}
 #endif
 
 		/* Domain match fetch host with cookie domain */
-		if (strcasecmp(lwc_string_data(host), c->domain) != 0) {
-			int hlen, dlen;
-			char *domain = c->domain;
+		যদি (strcasecmp(lwc_string_data(host), c->domain) != 0) {
+			পূর্ণাঙ্ক hlen, dlen;
+			ৱর্ণ *domain = c->domain;
 
 			/* c->domain must be a domain cookie here because:
 			 * c->domain is either:
@@ -4093,35 +4093,35 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			 * The latter will pass the strcasecmp above, which
 			 * leaves the former (i.e. a domain cookie)
 			 */
-			assert(c->domain[0] == '.');
+			প্রতিজ্ঞা(c->domain[0] == '.');
 
 			/* 4.3.2:iii */
-			if (urldb__host_is_ip_address(lwc_string_data(host))) {
+			যদি (urldb__host_is_ip_address(lwc_string_data(host))) {
 				/* IP address, so no partial match */
 				urldb_free_cookie(c);
-				goto error;
+				গচ্ছ error;
 			}
 
 			hlen = lwc_string_length(host);
 			dlen = strlen(c->domain);
 
-			if (hlen <= dlen && hlen != dlen - 1) {
+			যদি (hlen <= dlen && hlen != dlen - 1) {
 				/* Partial match not possible */
 				urldb_free_cookie(c);
-				goto error;
+				গচ্ছ error;
 			}
 
-			if (hlen == dlen - 1) {
+			যদি (hlen == dlen - 1) {
 				/* Relax matching to allow
 				 * host a.com to match .a.com */
 				domain++;
 				dlen--;
 			}
 
-			if (strcasecmp(lwc_string_data(host) + (hlen - dlen),
+			যদি (strcasecmp(lwc_string_data(host) + (hlen - dlen),
 				       domain)) {
 				urldb_free_cookie(c);
-				goto error;
+				গচ্ছ error;
 			}
 
 			/* 4.3.2:iv Ensure H contains no dots
@@ -4148,16 +4148,16 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 		}
 
 		/* Now insert into database */
-		if (!urldb_insert_cookie(c, scheme, urlt))
-			goto error;
-	} while (cur < end);
+		যদি (!urldb_ঢোকাও_cookie(c, scheme, urlt))
+			গচ্ছ error;
+	} যেতিয়ালৈ (cur < end);
 
 	lwc_string_unref(host);
 	lwc_string_unref(path);
 	lwc_string_unref(scheme);
 	nsurl_unref(urlt);
 
-	return true;
+	ঘূৰাই true;
 
 error:
 	lwc_string_unref(host);
@@ -4165,27 +4165,27 @@ error:
 	lwc_string_unref(scheme);
 	nsurl_unref(urlt);
 
-	return false;
+	ঘূৰাই false;
 }
 
 
 /* exported interface documented in content/urldb.h */
-char *urldb_get_cookie(nsurl *url, bool include_http_only)
+ৱর্ণ *urldb_get_cookie(nsurl *url, bool include_http_only)
 {
-	const struct path_data *p, *q;
-	const struct host_part *h;
+	ধ্রুৱ সংরচনা path_data *p, *q;
+	ধ্রুৱ সংরচনা host_part *h;
 	lwc_string *path_lwc;
-	struct cookie_internal_data *c;
-	int count = 0, version = COOKIE_RFC2965;
-	struct cookie_internal_data **matched_cookies;
-	int matched_cookies_size = 20;
-	const char *path;
-	char *ret;
+	সংরচনা cookie_internal_data *c;
+	পূর্ণাঙ্ক গুনতি = 0, version = COOKIE_RFC2965;
+	সংরচনা cookie_internal_data **matched_cookies;
+	পূর্ণাঙ্ক matched_cookies_size = 20;
+	ধ্রুৱ ৱর্ণ *path;
+	ৱর্ণ *ret;
 	lwc_string *scheme;
 	time_t now;
 	bool match;
 
-	assert(url != NULL);
+	প্রতিজ্ঞা(url != রিক্ত);
 
 	/* The URL must exist in the db in order to find relevant cookies, since
 	 * we search up the tree from the URL node, and cookies from further
@@ -4193,121 +4193,121 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	যদি (!p)
+		ঘূৰাই রিক্ত;
 
 	scheme = p->scheme;
 
 	matched_cookies = malloc(matched_cookies_size *
-				 sizeof(struct cookie_internal_data *));
-	if (!matched_cookies)
-		return NULL;
+				 পরিমাণ(সংরচনা cookie_internal_data *));
+	যদি (!matched_cookies)
+		ঘূৰাই রিক্ত;
 
 #define GROW_MATCHED_COOKIES						\
-	do {								\
-		if (count == matched_cookies_size) {			\
-			struct cookie_internal_data **temp;		\
+	কৰা {								\
+		যদি (গুনতি == matched_cookies_size) {			\
+			সংরচনা cookie_internal_data **temp;		\
 			temp = realloc(matched_cookies,			\
 				       (matched_cookies_size + 20) *	\
-				       sizeof(struct cookie_internal_data *)); \
+				       পরিমাণ(সংরচনা cookie_internal_data *)); \
 									\
-			if (temp == NULL) {				\
-				free(matched_cookies);			\
-				return NULL;				\
+			যদি (temp == রিক্ত) {				\
+				মুক্ত(matched_cookies);			\
+				ঘূৰাই রিক্ত;				\
 			}						\
 									\
 			matched_cookies = temp;				\
 			matched_cookies_size += 20;			\
 		}							\
-	} while(0)
+	} যেতিয়ালৈ(0)
 
 	path_lwc = nsurl_get_component(url, NSURL_PATH);
-	if (path_lwc == NULL) {
-		free(matched_cookies);
-		return NULL;
+	যদি (path_lwc == রিক্ত) {
+		মুক্ত(matched_cookies);
+		ঘূৰাই রিক্ত;
 	}
 	path = lwc_string_data(path_lwc);
 	lwc_string_unref(path_lwc);
 
-	now = time(NULL);
+	now = time(রিক্ত);
 
-	if (*(p->segment) != '\0') {
+	যদি (*(p->segment) != '\0') {
 		/* Match exact path, unless directory, when prefix matching
 		 * will handle this case for us. */
-		for (q = p->parent->children; q; q = q->next) {
-			if (strcmp(q->segment, p->segment))
-				continue;
+		বাবে (q = p->parent->children; q; q = q->next) {
+			যদি (strcmp(q->segment, p->segment))
+				অনুৱর্ত;
 
 			/* Consider all cookies associated with
 			 * this exact path */
-			for (c = q->cookies; c; c = c->next) {
-				if (c->expires != -1 && c->expires < now)
+			বাবে (c = q->cookies; c; c = c->next) {
+				যদি (c->expires != -1 && c->expires < now)
 					/* cookie has expired => ignore */
-					continue;
+					অনুৱর্ত;
 
-				if (c->secure && lwc_string_isequal(
+				যদি (c->secure && lwc_string_isequal(
 					    q->scheme,
 					    corestring_lwc_https,
 					    &match) &&
 				    match == false)
 					/* secure cookie for insecure host.
 					 * ignore */
-					continue;
+					অনুৱর্ত;
 
-				if (c->http_only && !include_http_only)
+				যদি (c->http_only && !include_http_only)
 					/* Ignore HttpOnly */
-					continue;
+					অনুৱর্ত;
 
-				matched_cookies[count++] = c;
+				matched_cookies[গুনতি++] = c;
 
 				GROW_MATCHED_COOKIES;
 
-				if (c->version < (unsigned int)version)
+				যদি (c->version < (unsigned পূর্ণাঙ্ক)version)
 					version = c->version;
 
 				c->last_used = now;
 
-				cookie_manager_add((struct cookie_data *)c);
+				cookie_manager_add((সংরচনা cookie_data *)c);
 			}
 		}
 	}
 
 	/* Now consider cookies whose paths prefix-match ours */
-	for (p = p->parent; p; p = p->parent) {
+	বাবে (p = p->parent; p; p = p->parent) {
 		/* Find directory's path entry(ies) */
 		/* There are potentially multiple due to differing schemes */
-		for (q = p->children; q; q = q->next) {
-			if (*(q->segment) != '\0')
-				continue;
+		বাবে (q = p->children; q; q = q->next) {
+			যদি (*(q->segment) != '\0')
+				অনুৱর্ত;
 
-			for (c = q->cookies; c; c = c->next) {
-				if (c->expires != -1 && c->expires < now)
+			বাবে (c = q->cookies; c; c = c->next) {
+				যদি (c->expires != -1 && c->expires < now)
 					/* cookie has expired => ignore */
-					continue;
+					অনুৱর্ত;
 
-				if (c->secure && lwc_string_isequal(
+				যদি (c->secure && lwc_string_isequal(
 					    q->scheme,
 					    corestring_lwc_https,
 					    &match) &&
 				    match == false)
 					/* Secure cookie for insecure server
 					 * => ignore */
-					continue;
+					অনুৱর্ত;
 
-				matched_cookies[count++] = c;
+				matched_cookies[গুনতি++] = c;
 
 				GROW_MATCHED_COOKIES;
 
-				if (c->version < (unsigned int) version)
+				যদি (c->version < (unsigned পূর্ণাঙ্ক) version)
 					version = c->version;
 
 				c->last_used = now;
 
-				cookie_manager_add((struct cookie_data *)c);
+				cookie_manager_add((সংরচনা cookie_data *)c);
 			}
 		}
 
-		if (!p->parent) {
+		যদি (!p->parent) {
 			/* No parent, so bail here. This can't go in
 			 * the loop exit condition as we also want to
 			 * process the top-level node.
@@ -4316,144 +4316,144 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 			 * the domain cookies and thus we don't even
 			 * try matching against them.
 			 */
-			break;
+			ভঙ্গ;
 		}
 
 		/* Consider p itself - may be the result of Path=/foo */
-		for (c = p->cookies; c; c = c->next) {
-			if (c->expires != -1 && c->expires < now)
+		বাবে (c = p->cookies; c; c = c->next) {
+			যদি (c->expires != -1 && c->expires < now)
 				/* cookie has expired => ignore */
-				continue;
+				অনুৱর্ত;
 
 			/* Ensure cookie path is a prefix of the resource */
-			if (strncmp(c->path, path, strlen(c->path)) != 0)
+			যদি (strncmp(c->path, path, strlen(c->path)) != 0)
 				/* paths don't match => ignore */
-				continue;
+				অনুৱর্ত;
 
-			if (c->secure && lwc_string_isequal(p->scheme,
+			যদি (c->secure && lwc_string_isequal(p->scheme,
 							    corestring_lwc_https,
 							    &match) &&
 			    match == false)
 				/* Secure cookie for insecure server
 				 * => ignore */
-				continue;
+				অনুৱর্ত;
 
-			matched_cookies[count++] = c;
+			matched_cookies[গুনতি++] = c;
 
 			GROW_MATCHED_COOKIES;
 
-			if (c->version < (unsigned int) version)
+			যদি (c->version < (unsigned পূর্ণাঙ্ক) version)
 				version = c->version;
 
 			c->last_used = now;
 
-			cookie_manager_add((struct cookie_data *)c);
+			cookie_manager_add((সংরচনা cookie_data *)c);
 		}
 
 	}
 
 	/* Finally consider domain cookies for hosts which domain match ours */
-	for (h = (const struct host_part *)p; h && h != &db_root;
+	বাবে (h = (ধ্রুৱ সংরচনা host_part *)p; h && h != &db_মূল;
 	     h = h->parent) {
-		for (c = h->paths.cookies; c; c = c->next) {
-			if (c->expires != -1 && c->expires < now)
+		বাবে (c = h->paths.cookies; c; c = c->next) {
+			যদি (c->expires != -1 && c->expires < now)
 				/* cookie has expired => ignore */
-				continue;
+				অনুৱর্ত;
 
 			/* Ensure cookie path is a prefix of the resource */
-			if (strncmp(c->path, path, strlen(c->path)) != 0)
+			যদি (strncmp(c->path, path, strlen(c->path)) != 0)
 				/* paths don't match => ignore */
-				continue;
+				অনুৱর্ত;
 
-			if (c->secure && lwc_string_isequal(scheme,
+			যদি (c->secure && lwc_string_isequal(scheme,
 							    corestring_lwc_https,
 							    &match) &&
 			    match == false)
 				/* secure cookie for insecure host. ignore */
-				continue;
+				অনুৱর্ত;
 
-			matched_cookies[count++] = c;
+			matched_cookies[গুনতি++] = c;
 
 			GROW_MATCHED_COOKIES;
 
-			if (c->version < (unsigned int)version)
+			যদি (c->version < (unsigned পূর্ণাঙ্ক)version)
 				version = c->version;
 
 			c->last_used = now;
 
-			cookie_manager_add((struct cookie_data *)c);
+			cookie_manager_add((সংরচনা cookie_data *)c);
 		}
 	}
 #undef GROW_MATCHED_COOKIES
 
-	if (count == 0) {
+	যদি (গুনতি == 0) {
 		/* No cookies found */
-		free(matched_cookies);
-		return NULL;
+		মুক্ত(matched_cookies);
+		ঘূৰাই রিক্ত;
 	}
 
-	if (version == COOKIE_NETSCAPE) {
-		ret = get_netscape_cookie(matched_cookies, count);
-	} else {
-		ret = get_rfc2965_cookie(matched_cookies, count, version);
+	যদি (version == COOKIE_NETSCAPE) {
+		ret = get_netscape_cookie(matched_cookies, গুনতি);
+	} অন্যথা {
+		ret = get_rfc2965_cookie(matched_cookies, গুনতি, version);
 	}
-	free(matched_cookies);
+	মুক্ত(matched_cookies);
 
-	return ret;
+	ঘূৰাই ret;
 }
 
 
 /* exported interface documented in content/urldb.h */
-void urldb_delete_cookie(const char *domain, const char *path,
-			 const char *name)
+শূন্য urldb_delete_cookie(ধ্রুৱ ৱর্ণ *domain, ধ্রুৱ ৱর্ণ *path,
+			 ধ্রুৱ ৱর্ণ *name)
 {
-	urldb_delete_cookie_hosts(domain, path, name, &db_root);
+	urldb_delete_cookie_hosts(domain, path, name, &db_মূল);
 }
 
 
 /* exported interface documented in netsurf/cookie_db.h */
-nserror urldb_load_cookies(const char *filename)
+nserror urldb_load_cookies(ধ্রুৱ ৱর্ণ *filename)
 {
 	FILE *fp;
-	char s[16*1024];
+	ৱর্ণ s[16*1024];
 
-	assert(filename);
+	প্রতিজ্ঞা(filename);
 
 	fp = fopen(filename, "r");
-	if (!fp)
-		return NSERROR_NOT_FOUND;
+	যদি (!fp)
+		ঘূৰাই NSERROR_NOT_FOUND;
 
 #define FIND_T {				\
-		for (; *p && *p != '\t'; p++)	\
+		বাবে (; *p && *p != '\t'; p++)	\
 			; /* do nothing */	\
-		if (p >= end) {			\
+		যদি (p >= end) {			\
 			NSLOG(netsurf, INFO, "Overran input");	\
-			continue;		\
+			অনুৱর্ত;		\
 		}				\
 		*p++ = '\0';			\
 	}
 
 #define SKIP_T {				\
-		for (; *p && *p == '\t'; p++)	\
+		বাবে (; *p && *p == '\t'; p++)	\
 			; /* do nothing */	\
-		if (p >= end) {			\
+		যদি (p >= end) {			\
 			NSLOG(netsurf, INFO, "Overran input");	\
-			continue;		\
+			অনুৱর্ত;		\
 		}				\
 	}
 
-	while (fgets(s, sizeof s, fp)) {
-		char *p = s, *end = 0,
-			*domain, *path, *name, *value, *scheme, *url,
+	যেতিয়ালৈ (fgets(s, পরিমাণ s, fp)) {
+		ৱর্ণ *p = s, *end = 0,
+			*domain, *path, *name, *মান, *scheme, *url,
 			*comment;
-		int version, domain_specified, path_specified,
-			secure, http_only, no_destroy, value_quoted;
+		পূর্ণাঙ্ক version, domain_specified, path_specified,
+			secure, http_only, no_destroy, মান_quoted;
 		time_t expires, last_used;
-		struct cookie_internal_data *c;
+		সংরচনা cookie_internal_data *c;
 
-		if(s[0] == 0 || s[0] == '#')
+		যদি(s[0] == 0 || s[0] == '#')
 			/* Skip blank lines or comments */
-			continue;
+			অনুৱর্ত;
 
 		s[strlen(s) - 1] = '\0'; /* lose terminating newline */
 		end = s + strlen(s);
@@ -4461,20 +4461,20 @@ nserror urldb_load_cookies(const char *filename)
 		/* Look for file version first
 		 * (all input is ignored until this is read)
 		 */
-		if (strncasecmp(s, "Version:", 8) == 0) {
+		যদি (strncasecmp(s, "Version:", 8) == 0) {
 			FIND_T; SKIP_T; loaded_cookie_file_version = atoi(p);
 
-			if (loaded_cookie_file_version <
+			যদি (loaded_cookie_file_version <
 			    MIN_COOKIE_FILE_VERSION) {
 				NSLOG(netsurf, INFO,
 				      "Unsupported Cookie file version");
-				break;
+				ভঙ্গ;
 			}
 
-			continue;
-		} else if (loaded_cookie_file_version == 0) {
+			অনুৱর্ত;
+		} অন্যথা যদি (loaded_cookie_file_version == 0) {
 			/* Haven't yet seen version; skip this input */
-			continue;
+			অনুৱর্ত;
 		}
 
 		/* One cookie/line */
@@ -4486,42 +4486,42 @@ nserror urldb_load_cookies(const char *filename)
 		SKIP_T; path = p; FIND_T;
 		SKIP_T; path_specified = atoi(p); FIND_T;
 		SKIP_T; secure = atoi(p); FIND_T;
-		if (loaded_cookie_file_version > 101) {
+		যদি (loaded_cookie_file_version > 101) {
 			/* Introduced in version 1.02 */
 			SKIP_T; http_only = atoi(p); FIND_T;
-		} else {
+		} অন্যথা {
 			http_only = 0;
 		}
 		SKIP_T; expires = (time_t)atoi(p); FIND_T;
 		SKIP_T; last_used = (time_t)atoi(p); FIND_T;
 		SKIP_T; no_destroy = atoi(p); FIND_T;
 		SKIP_T; name = p; FIND_T;
-		SKIP_T; value = p; FIND_T;
-		if (loaded_cookie_file_version > 100) {
+		SKIP_T; মান = p; FIND_T;
+		যদি (loaded_cookie_file_version > 100) {
 			/* Introduced in version 1.01 */
-			SKIP_T;	value_quoted = atoi(p); FIND_T;
-		} else {
-			value_quoted = 0;
+			SKIP_T;	মান_quoted = atoi(p); FIND_T;
+		} অন্যথা {
+			মান_quoted = 0;
 		}
 		SKIP_T; scheme = p; FIND_T;
 		SKIP_T; url = p; FIND_T;
 
 		/* Comment may have no content, so don't
 		 * use macros as they'll break */
-		for (; *p && *p == '\t'; p++)
+		বাবে (; *p && *p == '\t'; p++)
 			; /* do nothing */
 		comment = p;
 
-		assert(p <= end);
+		প্রতিজ্ঞা(p <= end);
 
 		/* Now create cookie */
-		c = malloc(sizeof(struct cookie_internal_data));
-		if (!c)
-			break;
+		c = malloc(পরিমাণ(সংরচনা cookie_internal_data));
+		যদি (!c)
+			ভঙ্গ;
 
 		c->name = strdup(name);
-		c->value = strdup(value);
-		c->value_was_quoted = value_quoted;
+		c->মান = strdup(মান);
+		c->মান_was_quoted = মান_quoted;
 		c->comment = strdup(comment);
 		c->domain_from_set = domain_specified;
 		c->domain = strdup(domain);
@@ -4534,39 +4534,39 @@ nserror urldb_load_cookies(const char *filename)
 		c->version = version;
 		c->no_destroy = no_destroy;
 
-		if (!(c->name && c->value && c->comment &&
+		যদি (!(c->name && c->মান && c->comment &&
 		      c->domain && c->path)) {
 			urldb_free_cookie(c);
-			break;
+			ভঙ্গ;
 		}
 
-		if (c->domain[0] != '.') {
-			lwc_string *scheme_lwc = NULL;
-			nsurl *url_nsurl = NULL;
+		যদি (c->domain[0] != '.') {
+			lwc_string *scheme_lwc = রিক্ত;
+			nsurl *url_nsurl = রিক্ত;
 
-			assert(scheme[0] != 'u');
+			প্রতিজ্ঞা(scheme[0] != 'u');
 
-			if (nsurl_create(url, &url_nsurl) != NSERROR_OK) {
+			যদি (nsurl_create(url, &url_nsurl) != NSERROR_OK) {
 				urldb_free_cookie(c);
-				break;
+				ভঙ্গ;
 			}
 			scheme_lwc = nsurl_get_component(url_nsurl,
 							 NSURL_SCHEME);
 
 			/* And insert it into database */
-			if (!urldb_insert_cookie(c, scheme_lwc, url_nsurl)) {
+			যদি (!urldb_ঢোকাও_cookie(c, scheme_lwc, url_nsurl)) {
 				/* Cookie freed for us */
 				nsurl_unref(url_nsurl);
 				lwc_string_unref(scheme_lwc);
-				break;
+				ভঙ্গ;
 			}
 			nsurl_unref(url_nsurl);
 			lwc_string_unref(scheme_lwc);
 
-		} else {
-			if (!urldb_insert_cookie(c, NULL, NULL)) {
+		} অন্যথা {
+			যদি (!urldb_ঢোকাও_cookie(c, রিক্ত, রিক্ত)) {
 				/* Cookie freed for us */
-				break;
+				ভঙ্গ;
 			}
 		}
 	}
@@ -4576,22 +4576,22 @@ nserror urldb_load_cookies(const char *filename)
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface documented in netsurf/cookie_db.h */
-nserror urldb_save_cookies(const char *filename)
+nserror urldb_save_cookies(ধ্রুৱ ৱর্ণ *filename)
 {
 	FILE *fp;
-	int cookie_file_version = max(loaded_cookie_file_version,
+	পূর্ণাঙ্ক cookie_file_version = max(loaded_cookie_file_version,
 				      COOKIE_FILE_VERSION);
 
-	assert(filename);
+	প্রতিজ্ঞা(filename);
 
 	fp = fopen(filename, "w");
-	if (!fp)
-		return NSERROR_NOT_FOUND;
+	যদি (!fp)
+		ঘূৰাই NSERROR_NOT_FOUND;
 
 	fprintf(fp, "# NetSurf cookies file.\n"
 		"#\n"
@@ -4607,22 +4607,22 @@ nserror urldb_save_cookies(const char *filename)
 		cookie_file_version);
 	fprintf(fp, "Version:\t%d\n", cookie_file_version);
 
-	urldb_save_cookie_hosts(fp, &db_root);
+	urldb_save_cookie_hosts(fp, &db_মূল);
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
-void urldb_dump(void)
+শূন্য urldb_dump(শূন্য)
 {
-	int i;
+	পূর্ণাঙ্ক i;
 
-	urldb_dump_hosts(&db_root);
+	urldb_dump_hosts(&db_মূল);
 
-	for (i = 0; i != NUM_SEARCH_TREES; i++) {
-		urldb_dump_search(search_trees[i], 0);
+	বাবে (i = 0; i != অঙ্ক_অনুসন্ধান_TREES; i++) {
+		urldb_dump_অনুসন্ধান(অনুসন্ধান_trees[i], 0);
 	}
 }

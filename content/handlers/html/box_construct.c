@@ -25,71 +25,71 @@
  * Implementation of conversion from DOM tree to box tree.
  */
 
-#include <string.h>
-#include <dom/dom.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <dom/dom.h>
 
-#include "utils/errors.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/talloc.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "netsurf/misc.h"
-#include "css/select.h"
-#include "desktop/gui_internal.h"
+#অন্তর্ভাৱ "utils/errors.h"
+#অন্তর্ভাৱ "utils/nsoption.h"
+#অন্তর্ভাৱ "utils/corestrings.h"
+#অন্তর্ভাৱ "utils/talloc.h"
+#অন্তর্ভাৱ "utils/string.h"
+#অন্তর্ভাৱ "utils/ascii.h"
+#অন্তর্ভাৱ "utils/nsurl.h"
+#অন্তর্ভাৱ "utils/utils.h"
+#অন্তর্ভাৱ "netsurf/misc.h"
+#অন্তর্ভাৱ "css/select.h"
+#অন্তর্ভাৱ "desktop/gui_internal.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_construct.h"
-#include "html/box_special.h"
-#include "html/box_normalise.h"
-#include "html/form_internal.h"
+#অন্তর্ভাৱ "html/private.h"
+#অন্তর্ভাৱ "html/object.h"
+#অন্তর্ভাৱ "html/box.h"
+#অন্তর্ভাৱ "html/box_manipulate.h"
+#অন্তর্ভাৱ "html/box_construct.h"
+#অন্তর্ভাৱ "html/box_special.h"
+#অন্তর্ভাৱ "html/box_normalise.h"
+#অন্তর্ভাৱ "html/form_internal.h"
 
 /**
  * Context for box tree construction
  */
-struct box_construct_ctx {
+সংরচনা box_construct_ctx {
 	html_content *content;		/**< Content we're constructing for */
 
-	dom_node *n;			/**< Current node to process */
+	dom_গ্ৰন্থি *n;			/**< Current node to process */
 
-	struct box *root_box;		/**< Root box in the tree */
+	সংরচনা box *মূল_box;		/**< Root box in the tree */
 
 	box_construct_complete_cb cb;	/**< Callback to invoke on completion */
 
-	int *bctx;			/**< talloc context */
+	পূর্ণাঙ্ক *bctx;			/**< talloc context */
 };
 
 /**
  * Transient properties for construction of current node
  */
-struct box_construct_props {
+সংরচনা box_construct_props {
 	/** Style from which to inherit, or NULL if none */
-	const css_computed_style *parent_style;
+	ধ্রুৱ css_computed_style *parent_style;
 	/** Current link target, or NULL if none */
-	struct nsurl *href;
+	সংরচনা nsurl *href;
 	/** Current frame target, or NULL if none */
-	const char *target;
+	ধ্রুৱ ৱর্ণ *target;
 	/** Current title attribute, or NULL if none */
-	const char *title;
+	ধ্রুৱ ৱর্ণ *title;
 	/** Identity of the current block-level container */
-	struct box *containing_block;
+	সংরচনা box *containing_block;
 	/** Current container for inlines, or NULL if none
 	 * \note If non-NULL, will be the last child of containing_block */
-	struct box *inline_container;
+	সংরচনা box *inline_container;
 	/** Whether the current node is the root of the DOM tree */
-	bool node_is_root;
+	bool গ্ৰন্থি_is_মূল;
 };
 
-static const content_type image_types = CONTENT_IMAGE;
+স্থির ধ্রুৱ content_type image_types = CONTENT_IMAGE;
 
 /* mapping from CSS display to box type
  * this table must be in sync with libcss' css_display enum */
-static const box_type box_map[] = {
+স্থির ধ্রুৱ box_type box_map[] = {
 	BOX_BLOCK,           /* CSS_DISPLAY_INHERIT */
 	BOX_INLINE,          /* CSS_DISPLAY_INLINE */
 	BOX_BLOCK,           /* CSS_DISPLAY_BLOCK */
@@ -120,29 +120,29 @@ static const box_type box_map[] = {
  * \param n node to check
  * \return true if node is root else false.
  */
-static inline bool box_is_root(dom_node *n)
+স্থির অন্তঃস্থ bool box_is_মূল(dom_গ্ৰন্থি *n)
 {
-	dom_node *parent;
-	dom_node_type type;
+	dom_গ্ৰন্থি *parent;
+	dom_গ্ৰন্থি_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_গ্ৰন্থি_get_parent_গ্ৰন্থি(n, &parent);
+	যদি (err != DOM_NO_ERR)
+		ঘূৰাই false;
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	যদি (parent != রিক্ত) {
+		err = dom_গ্ৰন্থি_get_গ্ৰন্থি_type(parent, &type);
 
-		dom_node_unref(parent);
+		dom_গ্ৰন্থি_unref(parent);
 
-		if (err != DOM_NO_ERR)
-			return false;
+		যদি (err != DOM_NO_ERR)
+			ঘূৰাই false;
 
-		if (type != DOM_DOCUMENT_NODE)
-			return false;
+		যদি (type != DOM_DOCUMENT_গ্ৰন্থি)
+			ঘূৰাই false;
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 /**
@@ -151,61 +151,61 @@ static inline bool box_is_root(dom_node *n)
  * \param n      Current DOM node to convert
  * \param props  Property object to populate
  */
-static void
-box_extract_properties(dom_node *n, struct box_construct_props *props)
+স্থির শূন্য
+box_extract_properties(dom_গ্ৰন্থি *n, সংরচনা box_construct_props *props)
 {
-	memset(props, 0, sizeof(*props));
+	memset(props, 0, পরিমাণ(*props));
 
-	props->node_is_root = box_is_root(n);
+	props->গ্ৰন্থি_is_মূল = box_is_মূল(n);
 
 	/* Extract properties from containing DOM node */
-	if (props->node_is_root == false) {
-		dom_node *current_node = n;
-		dom_node *parent_node = NULL;
-		struct box *parent_box;
+	যদি (props->গ্ৰন্থি_is_মূল == false) {
+		dom_গ্ৰন্থি *current_গ্ৰন্থি = n;
+		dom_গ্ৰন্থি *parent_গ্ৰন্থি = রিক্ত;
+		সংরচনা box *parent_box;
 		dom_exception err;
 
 		/* Find ancestor node containing parent box */
-		while (true) {
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL)
-				break;
+		যেতিয়ালৈ (true) {
+			err = dom_গ্ৰন্থি_get_parent_গ্ৰন্থি(current_গ্ৰন্থি,
+					&parent_গ্ৰন্থি);
+			যদি (err != DOM_NO_ERR || parent_গ্ৰন্থি == রিক্ত)
+				ভঙ্গ;
 
-			parent_box = box_for_node(parent_node);
+			parent_box = box_for_গ্ৰন্থি(parent_গ্ৰন্থি);
 
-			if (parent_box != NULL) {
+			যদি (parent_box != রিক্ত) {
 				props->parent_style = parent_box->style;
 				props->href = parent_box->href;
 				props->target = parent_box->target;
 				props->title = parent_box->title;
 
-				dom_node_unref(parent_node);
-				break;
-			} else {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				current_node = parent_node;
-				parent_node = NULL;
+				dom_গ্ৰন্থি_unref(parent_গ্ৰন্থি);
+				ভঙ্গ;
+			} অন্যথা {
+				যদি (current_গ্ৰন্থি != n)
+					dom_গ্ৰন্থি_unref(current_গ্ৰন্থি);
+				current_গ্ৰন্থি = parent_গ্ৰন্থি;
+				parent_গ্ৰন্থি = রিক্ত;
 			}
 		}
 
 		/* Find containing block (may be parent) */
-		while (true) {
-			struct box *b;
+		যেতিয়ালৈ (true) {
+			সংরচনা box *b;
 
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL) {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				break;
+			err = dom_গ্ৰন্থি_get_parent_গ্ৰন্থি(current_গ্ৰন্থি,
+					&parent_গ্ৰন্থি);
+			যদি (err != DOM_NO_ERR || parent_গ্ৰন্থি == রিক্ত) {
+				যদি (current_গ্ৰন্থি != n)
+					dom_গ্ৰন্থি_unref(current_গ্ৰন্থি);
+				ভঙ্গ;
 			}
 
-			if (current_node != n)
-				dom_node_unref(current_node);
+			যদি (current_গ্ৰন্থি != n)
+				dom_গ্ৰন্থি_unref(current_গ্ৰন্থি);
 
-			b = box_for_node(parent_node);
+			b = box_for_গ্ৰন্থি(parent_গ্ৰন্থি);
 
 			/* Children of nodes that created an inline box
 			 * will generate boxes which are attached as
@@ -213,22 +213,22 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
 			 * parent node. Note, however, that we'll still
 			 * use the parent node's styling as the parent
 			 * style, above. */
-			if (b != NULL && b->type != BOX_INLINE &&
+			যদি (b != রিক্ত && b->type != BOX_INLINE &&
 					b->type != BOX_BR) {
 				props->containing_block = b;
 
-				dom_node_unref(parent_node);
-				break;
-			} else {
-				current_node = parent_node;
-				parent_node = NULL;
+				dom_গ্ৰন্থি_unref(parent_গ্ৰন্থি);
+				ভঙ্গ;
+			} অন্যথা {
+				current_গ্ৰন্থি = parent_গ্ৰন্থি;
+				parent_গ্ৰন্থি = রিক্ত;
 			}
 		}
 	}
 
 	/* Compute current inline container, if any */
-	if (props->containing_block != NULL &&
-			props->containing_block->last != NULL &&
+	যদি (props->containing_block != রিক্ত &&
+			props->containing_block->last != রিক্ত &&
 			props->containing_block->last->type ==
 				BOX_INLINE_CONTAINER)
 		props->inline_container = props->containing_block->last;
@@ -244,29 +244,29 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
  * \param  n               node in xml tree
  * \return  the new style, or NULL on memory exhaustion
  */
-static css_select_results *
+স্থির css_select_results *
 box_get_style(html_content *c,
-	      const css_computed_style *parent_style,
-	      const css_computed_style *root_style,
-	      dom_node *n)
+	      ধ্রুৱ css_computed_style *parent_style,
+	      ধ্রুৱ css_computed_style *মূল_style,
+	      dom_গ্ৰন্থি *n)
 {
-	dom_string *s = NULL;
-	css_stylesheet *inline_style = NULL;
+	dom_string *s = রিক্ত;
+	css_stylesheet *inline_style = রিক্ত;
 	css_select_results *styles;
 	nscss_select_ctx ctx;
 
 	/* Firstly, construct inline stylesheet, if any */
-	if (nsoption_bool(author_level_css)) {
+	যদি (nsoption_bool(author_level_css)) {
 		dom_exception err;
 		err = dom_element_get_attribute(n, corestring_dom_style, &s);
-		if (err != DOM_NO_ERR) {
-			return NULL;
+		যদি (err != DOM_NO_ERR) {
+			ঘূৰাই রিক্ত;
 		}
 	}
 
-	if (s != NULL) {
+	যদি (s != রিক্ত) {
 		inline_style = nscss_create_inline_style(
-				(const uint8_t *) dom_string_data(s),
+				(ধ্রুৱ uint8_t *) dom_string_data(s),
 				dom_string_byte_length(s),
 				c->encoding,
 				nsurl_access(c->base_url),
@@ -274,8 +274,8 @@ box_get_style(html_content *c,
 
 		dom_string_unref(s);
 
-		if (inline_style == NULL)
-			return NULL;
+		যদি (inline_style == রিক্ত)
+			ঘূৰাই রিক্ত;
 	}
 
 	/* Populate selection context */
@@ -283,7 +283,7 @@ box_get_style(html_content *c,
 	ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
 	ctx.base_url = c->base_url;
 	ctx.universal = c->universal;
-	ctx.root_style = root_style;
+	ctx.মূল_style = মূল_style;
 	ctx.parent_style = parent_style;
 
 	/* Select style for element */
@@ -291,10 +291,10 @@ box_get_style(html_content *c,
 			inline_style);
 
 	/* No longer need inline style */
-	if (inline_style != NULL)
+	যদি (inline_style != রিক্ত)
 		css_stylesheet_destroy(inline_style);
 
-	return styles;
+	ঘূৰাই styles;
 }
 
 
@@ -309,46 +309,46 @@ box_get_style(html_content *c,
  * \todo This is currently incomplete. It just does enough to support
  * the clearfix hack. (http://www.positioniseverything.net/easyclearing.html )
  */
-static void
-box_construct_generate(dom_node *n,
+স্থির শূন্য
+box_construct_generate(dom_গ্ৰন্থি *n,
 		       html_content *content,
-		       struct box *box,
-		       const css_computed_style *style)
+		       সংরচনা box *box,
+		       ধ্রুৱ css_computed_style *style)
 {
-	struct box *gen = NULL;
-	enum css_display_e computed_display;
-	const css_computed_content_item *c_item;
+	সংরচনা box *gen = রিক্ত;
+	গণনা css_display_e computed_display;
+	ধ্রুৱ css_computed_content_item *c_item;
 
 	/* Nothing to generate if the parent box is not a block */
-	if (box->type != BOX_BLOCK)
-		return;
+	যদি (box->type != BOX_BLOCK)
+		ঘূৰাই;
 
 	/* To determine if an element has a pseudo element, we select
 	 * for it and test to see if the returned style's content
 	 * property is set to normal. */
-	if (style == NULL ||
+	যদি (style == রিক্ত ||
 			css_computed_content(style, &c_item) ==
 			CSS_CONTENT_NORMAL) {
 		/* No pseudo element */
-		return;
+		ঘূৰাই;
 	}
 
 	/* create box for this element */
-	computed_display = ns_computed_display(style, box_is_root(n));
-	if (computed_display == CSS_DISPLAY_BLOCK ||
+	computed_display = ns_computed_display(style, box_is_মূল(n));
+	যদি (computed_display == CSS_DISPLAY_BLOCK ||
 			computed_display == CSS_DISPLAY_TABLE) {
 		/* currently only support block level boxes */
 
 		/** \todo Not wise to drop const from the computed style */
-		gen = box_create(NULL, (css_computed_style *) style,
-				false, NULL, NULL, NULL, NULL, content->bctx);
-		if (gen == NULL) {
-			return;
+		gen = box_create(রিক্ত, (css_computed_style *) style,
+				false, রিক্ত, রিক্ত, রিক্ত, রিক্ত, content->bctx);
+		যদি (gen == রিক্ত) {
+			ঘূৰাই;
 		}
 
 		/* set box type from computed display */
 		gen->type = box_map[ns_computed_display(
-				style, box_is_root(n))];
+				style, box_is_মূল(n))];
 
 		box_add_child(box, gen);
 	}
@@ -364,56 +364,56 @@ box_construct_generate(dom_node *n,
  * \param parent   Current block-level container
  * \return true on success, false on memory exhaustion
  */
-static bool
-box_construct_marker(struct box *box,
-		     const char *title,
-		     struct box_construct_ctx *ctx,
-		     struct box *parent)
+স্থির bool
+box_construct_marker(সংরচনা box *box,
+		     ধ্রুৱ ৱর্ণ *title,
+		     সংরচনা box_construct_ctx *ctx,
+		     সংরচনা box *parent)
 {
 	lwc_string *image_uri;
-	struct box *marker;
-	enum css_list_style_type_e list_style_type;
+	সংরচনা box *marker;
+	গণনা css_list_style_type_e list_style_type;
 
-	marker = box_create(NULL, box->style, false, NULL, NULL, title,
-			NULL, ctx->bctx);
-	if (marker == false)
-		return false;
+	marker = box_create(রিক্ত, box->style, false, রিক্ত, রিক্ত, title,
+			রিক্ত, ctx->bctx);
+	যদি (marker == false)
+		ঘূৰাই false;
 
 	marker->type = BOX_BLOCK;
 
 	list_style_type = css_computed_list_style_type(box->style);
 
 	/** \todo marker content (list-style-type) */
-	switch (list_style_type) {
-	case CSS_LIST_STYLE_TYPE_DISC:
+	ৱিকল্প (list_style_type) {
+	পক্ষ CSS_LIST_STYLE_TYPE_DISC:
 		/* 2022 BULLET */
-		marker->text = (char *) "\342\200\242";
+		marker->text = (ৱর্ণ *) "\342\200\242";
 		marker->length = 3;
-		break;
+		ভঙ্গ;
 
-	case CSS_LIST_STYLE_TYPE_CIRCLE:
+	পক্ষ CSS_LIST_STYLE_TYPE_CIRCLE:
 		/* 25CB WHITE CIRCLE */
-		marker->text = (char *) "\342\227\213";
+		marker->text = (ৱর্ণ *) "\342\227\213";
 		marker->length = 3;
-		break;
+		ভঙ্গ;
 
-	case CSS_LIST_STYLE_TYPE_SQUARE:
+	পক্ষ CSS_LIST_STYLE_TYPE_SQUARE:
 		/* 25AA BLACK SMALL SQUARE */
-		marker->text = (char *) "\342\226\252";
+		marker->text = (ৱর্ণ *) "\342\226\252";
 		marker->length = 3;
-		break;
+		ভঙ্গ;
 
-	default:
+	স্ৱভাৱ:
 		/* Numerical list counters get handled in layout. */
 		/* Fall through. */
-	case CSS_LIST_STYLE_TYPE_NONE:
-		marker->text = NULL;
+	পক্ষ CSS_LIST_STYLE_TYPE_NONE:
+		marker->text = রিক্ত;
 		marker->length = 0;
-		break;
+		ভঙ্গ;
 	}
 
-	if (css_computed_list_style_image(box->style, &image_uri) == CSS_LIST_STYLE_IMAGE_URI &&
-	    (image_uri != NULL) &&
+	যদি (css_computed_list_style_image(box->style, &image_uri) == CSS_LIST_STYLE_IMAGE_URI &&
+	    (image_uri != রিক্ত) &&
 	    (nsoption_bool(foreground_images) == true)) {
 		nsurl *url;
 		nserror error;
@@ -423,16 +423,16 @@ box_construct_marker(struct box *box,
 		 *       nsurl_joined it.  Can this be improved?
 		 *       For now, just making another nsurl. */
 		error = nsurl_create(lwc_string_data(image_uri), &url);
-		if (error != NSERROR_OK)
-			return false;
+		যদি (error != NSERROR_OK)
+			ঘূৰাই false;
 
-		if (html_fetch_object(ctx->content,
+		যদি (html_fetch_object(ctx->content,
 				      url,
 				      marker,
 				      image_types,
 				      false) ==	false) {
 			nsurl_unref(url);
-			return false;
+			ঘূৰাই false;
 		}
 		nsurl_unref(url);
 	}
@@ -440,24 +440,24 @@ box_construct_marker(struct box *box,
 	box->list_marker = marker;
 	marker->parent = box;
 
-	return true;
+	ঘূৰাই true;
 }
 
-static inline bool box__style_is_float(const struct box *box)
+স্থির অন্তঃস্থ bool box__style_is_float(ধ্রুৱ সংরচনা box *box)
 {
-	return css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-	       css_computed_float(box->style) == CSS_FLOAT_RIGHT;
+	ঘূৰাই css_computed_float(box->style) == CSS_FLOAT_বাম ||
+	       css_computed_float(box->style) == CSS_FLOAT_ডান;
 }
 
-static inline bool box__is_flex(const struct box *box)
+স্থির অন্তঃস্থ bool box__is_flex(ধ্রুৱ সংরচনা box *box)
 {
-	return box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX;
+	ঘূৰাই box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX;
 }
 
-static inline bool box__containing_block_is_flex(
-		const struct box_construct_props *props)
+স্থির অন্তঃস্থ bool box__containing_block_is_flex(
+		ধ্রুৱ সংরচনা box_construct_props *props)
 {
-	return props->containing_block != NULL &&
+	ঘূৰাই props->containing_block != রিক্ত &&
 	       box__is_flex(props->containing_block);
 }
 
@@ -468,69 +468,69 @@ static inline bool box__containing_block_is_flex(
  * \param convert_children  Whether to convert children
  * \return  true on success, false on memory exhaustion
  */
-static bool
-box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
+স্থির bool
+box_construct_element(সংরচনা box_construct_ctx *ctx, bool *convert_children)
 {
 	dom_string *title0, *s;
-	lwc_string *id = NULL;
-	enum css_display_e css_display;
-	struct box *box = NULL, *old_box;
-	css_select_results *styles = NULL;
+	lwc_string *id = রিক্ত;
+	গণনা css_display_e css_display;
+	সংরচনা box *box = রিক্ত, *old_box;
+	css_select_results *styles = রিক্ত;
 	lwc_string *bgimage_uri;
 	dom_exception err;
-	struct box_construct_props props;
-	const css_computed_style *root_style = NULL;
+	সংরচনা box_construct_props props;
+	ধ্রুৱ css_computed_style *মূল_style = রিক্ত;
 
-	assert(ctx->n != NULL);
+	প্রতিজ্ঞা(ctx->n != রিক্ত);
 
 	box_extract_properties(ctx->n, &props);
 
-	if (props.containing_block != NULL) {
+	যদি (props.containing_block != রিক্ত) {
 		/* In case the containing block is a pre block, we clear
 		 * the PRE_STRIP flag since it is not used if we follow
 		 * the pre with a tag */
 		props.containing_block->flags &= ~PRE_STRIP;
 	}
 
-	if (props.node_is_root == false) {
-		root_style = ctx->root_box->style;
+	যদি (props.গ্ৰন্থি_is_মূল == false) {
+		মূল_style = ctx->মূল_box->style;
 	}
 
-	styles = box_get_style(ctx->content, props.parent_style, root_style,
+	styles = box_get_style(ctx->content, props.parent_style, মূল_style,
 			ctx->n);
-	if (styles == NULL)
-		return false;
+	যদি (styles == রিক্ত)
+		ঘূৰাই false;
 
 	/* Extract title attribute, if present */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_title, &title0);
-	if (err != DOM_NO_ERR)
-		return false;
+	যদি (err != DOM_NO_ERR)
+		ঘূৰাই false;
 
-	if (title0 != NULL) {
-		char *t = squash_whitespace(dom_string_data(title0));
+	যদি (title0 != রিক্ত) {
+		ৱর্ণ *t = squash_whitespace(dom_string_data(title0));
 
 		dom_string_unref(title0);
 
-		if (t == NULL)
-			return false;
+		যদি (t == রিক্ত)
+			ঘূৰাই false;
 
 		props.title = talloc_strdup(ctx->bctx, t);
 
-		free(t);
+		মুক্ত(t);
 
-		if (props.title == NULL)
-			return false;
+		যদি (props.title == রিক্ত)
+			ঘূৰাই false;
 	}
 
 	/* Extract id attribute, if present */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_id, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	যদি (err != DOM_NO_ERR)
+		ঘূৰাই false;
 
-	if (s != NULL) {
+	যদি (s != রিক্ত) {
 		err = dom_string_intern(s, &id);
-		if (err != DOM_NO_ERR)
-			id = NULL;
+		যদি (err != DOM_NO_ERR)
+			id = রিক্ত;
 
 		dom_string_unref(s);
 	}
@@ -538,38 +538,38 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	box = box_create(styles, styles->styles[CSS_PSEUDO_ELEMENT_NONE], false,
 			props.href, props.target, props.title, id,
 			ctx->bctx);
-	if (box == NULL)
-		return false;
+	যদি (box == রিক্ত)
+		ঘূৰাই false;
 
 	/* If this is the root box, add it to the context */
-	if (props.node_is_root)
-		ctx->root_box = box;
+	যদি (props.গ্ৰন্থি_is_মূল)
+		ctx->মূল_box = box;
 
 	/* Deal with colspan/rowspan */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_colspan, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	যদি (err != DOM_NO_ERR)
+		ঘূৰাই false;
 
-	if (s != NULL) {
-		const char *val = dom_string_data(s);
+	যদি (s != রিক্ত) {
+		ধ্রুৱ ৱর্ণ *val = dom_string_data(s);
 
 		/* Convert to a number, clamping to [1,1000] according to 4.9.11 */
-		if ('0' <= val[0] && val[0] <= '9')
-			box->columns = clamp(strtol(val, NULL, 10), 1, 1000);
+		যদি ('0' <= val[0] && val[0] <= '9')
+			box->columns = clamp(strtol(val, রিক্ত, 10), 1, 1000);
 
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(ctx->n, corestring_dom_rowspan, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	যদি (err != DOM_NO_ERR)
+		ঘূৰাই false;
 
-	if (s != NULL) {
-		const char *val = dom_string_data(s);
+	যদি (s != রিক্ত) {
+		ধ্রুৱ ৱর্ণ *val = dom_string_data(s);
 
 		/* Convert to a number, clamping to [0,65534] according to 4.9.11 */
-		if ('0' <= val[0] && val[0] <= '9')
-			box->rows = clamp(strtol(val, NULL, 10), 0, 65534);
+		যদি ('0' <= val[0] && val[0] <= '9')
+			box->rows = clamp(strtol(val, রিক্ত, 10), 0, 65534);
 
 		dom_string_unref(s);
 	}
@@ -577,7 +577,7 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	css_display = ns_computed_display_static(box->style);
 
 	/* Set box type from computed display */
-	if ((css_computed_position(box->style) == CSS_POSITION_ABSOLUTE ||
+	যদি ((css_computed_position(box->style) == CSS_POSITION_ABSOLUTE ||
 	     css_computed_position(box->style) == CSS_POSITION_FIXED) &&
 			(css_display == CSS_DISPLAY_INLINE ||
 			 css_display == CSS_DISPLAY_INLINE_BLOCK ||
@@ -588,55 +588,55 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		 * inline container as if they were not absolutely positioned.
 		 * Layout expects and handles this. */
 		box->type = box_map[CSS_DISPLAY_INLINE_BLOCK];
-	} else if (props.node_is_root) {
+	} অন্যথা যদি (props.গ্ৰন্থি_is_মূল) {
 		/* Special case for root element: force it to BLOCK, or the
 		 * rest of the layout will break. */
 		box->type = BOX_BLOCK;
-	} else {
+	} অন্যথা {
 		/* Normal mapping */
 		box->type = box_map[ns_computed_display(box->style,
-				props.node_is_root)];
+				props.গ্ৰন্থি_is_মূল)];
 
-		if (props.containing_block->type == BOX_FLEX ||
+		যদি (props.containing_block->type == BOX_FLEX ||
 		    props.containing_block->type == BOX_INLINE_FLEX) {
 			/* Blockification */
-			switch (box->type) {
-			case BOX_INLINE_FLEX:
+			ৱিকল্প (box->type) {
+			পক্ষ BOX_INLINE_FLEX:
 				box->type = BOX_FLEX;
-				break;
-			case BOX_INLINE_BLOCK:
+				ভঙ্গ;
+			পক্ষ BOX_INLINE_BLOCK:
 				box->type = BOX_BLOCK;
-				break;
-			default:
-				break;
+				ভঙ্গ;
+			স্ৱভাৱ:
+				ভঙ্গ;
 			}
 		}
 	}
 
-	if (convert_special_elements(ctx->n,
+	যদি (convert_special_elements(ctx->n,
 				     ctx->content,
 				     box,
 				     convert_children) == false) {
-		return false;
+		ঘূৰাই false;
 	}
 
 	/* Handle the :before pseudo element */
-	if (!(box->flags & IS_REPLACED)) {
+	যদি (!(box->flags & IS_REPLACED)) {
 		box_construct_generate(ctx->n, ctx->content, box,
 				box->styles->styles[CSS_PSEUDO_ELEMENT_BEFORE]);
 	}
 
-	if (box->type == BOX_NONE || (ns_computed_display(box->style,
-			props.node_is_root) == CSS_DISPLAY_NONE &&
-			props.node_is_root == false)) {
+	যদি (box->type == BOX_NONE || (ns_computed_display(box->style,
+			props.গ্ৰন্থি_is_মূল) == CSS_DISPLAY_NONE &&
+			props.গ্ৰন্থি_is_মূল == false)) {
 		css_select_results_destroy(styles);
-		box->styles = NULL;
-		box->style = NULL;
+		box->styles = রিক্ত;
+		box->style = রিক্ত;
 
 		/* Invalidate associated gadget, if any */
-		if (box->gadget != NULL) {
-			box->gadget->box = NULL;
-			box->gadget = NULL;
+		যদি (box->gadget != রিক্ত) {
+			box->gadget->box = রিক্ত;
+			box->gadget = রিক্ত;
 		}
 
 		/* Can't do this, because the lifetimes of boxes and gadgets
@@ -646,37 +646,37 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 
 		*convert_children = false;
 
-		return true;
+		ঘূৰাই true;
 	}
 
 	/* Attach DOM node to box */
-	err = dom_node_set_user_data(ctx->n,
-			corestring_dom___ns_key_box_node_data, box, NULL,
-			(void *) &old_box);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_গ্ৰন্থি_set_user_data(ctx->n,
+			corestring_dom_ns_চাবি_box_গ্ৰন্থি_data, box, রিক্ত,
+			(শূন্য *) &old_box);
+	যদি (err != DOM_NO_ERR)
+		ঘূৰাই false;
 
 	/* Attach box to DOM node */
-	box->node = dom_node_ref(ctx->n);
+	box->গ্ৰন্থি = dom_গ্ৰন্থি_ref(ctx->n);
 
-	if (props.inline_container == NULL &&
+	যদি (props.inline_container == রিক্ত &&
 			(box->type == BOX_INLINE ||
 			 box->type == BOX_BR ||
 			 box->type == BOX_INLINE_BLOCK ||
 			 box->type == BOX_INLINE_FLEX ||
 			 (box__style_is_float(box) &&
 			  !box__containing_block_is_flex(&props))) &&
-			props.node_is_root == false) {
+			props.গ্ৰন্থি_is_মূল == false) {
 		/* Found an inline child of a block without a current container
 		 * (i.e. this box is the first child of its parent, or was
 		 * preceded by block-level siblings) */
-		assert(props.containing_block != NULL &&
+		প্রতিজ্ঞা(props.containing_block != রিক্ত &&
 				"Box must have containing block.");
 
-		props.inline_container = box_create(NULL, NULL, false, NULL,
-				NULL, NULL, NULL, ctx->bctx);
-		if (props.inline_container == NULL)
-			return false;
+		props.inline_container = box_create(রিক্ত, রিক্ত, false, রিক্ত,
+				রিক্ত, রিক্ত, রিক্ত, ctx->bctx);
+		যদি (props.inline_container == রিক্ত)
+			ঘূৰাই false;
 
 		props.inline_container->type = BOX_INLINE_CONTAINER;
 
@@ -684,8 +684,8 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	}
 
 	/* Kick off fetch for any background image */
-	if (css_computed_background_image(box->style, &bgimage_uri) ==
-			CSS_BACKGROUND_IMAGE_IMAGE && bgimage_uri != NULL &&
+	যদি (css_computed_background_image(box->style, &bgimage_uri) ==
+			CSS_BACKGROUND_IMAGE_IMAGE && bgimage_uri != রিক্ত &&
 			nsoption_bool(background_images) == true) {
 		nsurl *url;
 		nserror error;
@@ -695,70 +695,70 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		 *       nsurl_joined it.  Can this be improved?
 		 *       For now, just making another nsurl. */
 		error = nsurl_create(lwc_string_data(bgimage_uri), &url);
-		if (error == NSERROR_OK) {
+		যদি (error == NSERROR_OK) {
 			/* Fetch image if we got a valid URL */
-			if (html_fetch_object(ctx->content,
+			যদি (html_fetch_object(ctx->content,
 					      url,
 					      box,
 					      image_types,
 					      true) == false) {
 				nsurl_unref(url);
-				return false;
+				ঘূৰাই false;
 			}
 			nsurl_unref(url);
 		}
 	}
 
-	if (*convert_children)
+	যদি (*convert_children)
 		box->flags |= CONVERT_CHILDREN;
 
-	if (box->type == BOX_INLINE || box->type == BOX_BR ||
+	যদি (box->type == BOX_INLINE || box->type == BOX_BR ||
 			box->type == BOX_INLINE_FLEX ||
 			box->type == BOX_INLINE_BLOCK) {
 		/* Inline container must exist, as we'll have
 		 * created it above if it didn't */
-		assert(props.inline_container != NULL);
+		প্রতিজ্ঞা(props.inline_container != রিক্ত);
 
 		box_add_child(props.inline_container, box);
-	} else {
-		if (ns_computed_display(box->style, props.node_is_root) ==
+	} অন্যথা {
+		যদি (ns_computed_display(box->style, props.গ্ৰন্থি_is_মূল) ==
 				CSS_DISPLAY_LIST_ITEM) {
 			/* List item: compute marker */
-			if (box_construct_marker(box, props.title, ctx,
+			যদি (box_construct_marker(box, props.title, ctx,
 					props.containing_block) == false)
-				return false;
+				ঘূৰাই false;
 		}
 
-		if (props.node_is_root == false &&
+		যদি (props.গ্ৰন্থি_is_মূল == false &&
 				box__containing_block_is_flex(&props) == false &&
 				(css_computed_float(box->style) ==
-				CSS_FLOAT_LEFT ||
+				CSS_FLOAT_বাম ||
 				css_computed_float(box->style) ==
-				CSS_FLOAT_RIGHT)) {
+				CSS_FLOAT_ডান)) {
 			/* Float: insert a float between the parent and box. */
-			struct box *flt = box_create(NULL, NULL, false,
+			সংরচনা box *flt = box_create(রিক্ত, রিক্ত, false,
 					props.href, props.target, props.title,
-					NULL, ctx->bctx);
-			if (flt == NULL)
-				return false;
+					রিক্ত, ctx->bctx);
+			যদি (flt == রিক্ত)
+				ঘূৰাই false;
 
-			if (css_computed_float(box->style) == CSS_FLOAT_LEFT)
-				flt->type = BOX_FLOAT_LEFT;
-			else
-				flt->type = BOX_FLOAT_RIGHT;
+			যদি (css_computed_float(box->style) == CSS_FLOAT_বাম)
+				flt->type = BOX_FLOAT_বাম;
+			অন্যথা
+				flt->type = BOX_FLOAT_ডান;
 
 			box_add_child(props.inline_container, flt);
 			box_add_child(flt, box);
-		} else {
+		} অন্যথা {
 			/* Non-floated block-level box: add to containing block
 			 * if there is one. If we're the root box, then there
 			 * won't be. */
-			if (props.containing_block != NULL)
+			যদি (props.containing_block != রিক্ত)
 				box_add_child(props.containing_block, box);
 		}
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 
@@ -770,37 +770,37 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
  *
  * This will be called after all children of an element have been processed
  */
-static void box_construct_element_after(dom_node *n, html_content *content)
+স্থির শূন্য box_construct_element_after(dom_গ্ৰন্থি *n, html_content *content)
 {
-	struct box_construct_props props;
-	struct box *box = box_for_node(n);
+	সংরচনা box_construct_props props;
+	সংরচনা box *box = box_for_গ্ৰন্থি(n);
 
-	assert(box != NULL);
+	প্রতিজ্ঞা(box != রিক্ত);
 
 	box_extract_properties(n, &props);
 
-	if (box->type == BOX_INLINE || box->type == BOX_BR) {
+	যদি (box->type == BOX_INLINE || box->type == BOX_BR) {
 		/* Insert INLINE_END into containing block */
-		struct box *inline_end;
+		সংরচনা box *inline_end;
 		bool has_children;
 		dom_exception err;
 
-		err = dom_node_has_child_nodes(n, &has_children);
-		if (err != DOM_NO_ERR)
-			return;
+		err = dom_গ্ৰন্থি_has_child_nodes(n, &has_children);
+		যদি (err != DOM_NO_ERR)
+			ঘূৰাই;
 
-		if (has_children == false ||
+		যদি (has_children == false ||
 				(box->flags & CONVERT_CHILDREN) == 0) {
 			/* No children, or didn't want children converted */
-			return;
+			ঘূৰাই;
 		}
 
-		if (props.inline_container == NULL) {
+		যদি (props.inline_container == রিক্ত) {
 			/* Create inline container if we don't have one */
-			props.inline_container = box_create(NULL, NULL, false,
-					NULL, NULL, NULL, NULL, content->bctx);
-			if (props.inline_container == NULL)
-				return;
+			props.inline_container = box_create(রিক্ত, রিক্ত, false,
+					রিক্ত, রিক্ত, রিক্ত, রিক্ত, content->bctx);
+			যদি (props.inline_container == রিক্ত)
+				ঘূৰাই;
 
 			props.inline_container->type = BOX_INLINE_CONTAINER;
 
@@ -808,21 +808,21 @@ static void box_construct_element_after(dom_node *n, html_content *content)
 					props.inline_container);
 		}
 
-		inline_end = box_create(NULL, box->style, false,
+		inline_end = box_create(রিক্ত, box->style, false,
 				box->href, box->target, box->title,
-				box->id == NULL ? NULL :
+				box->id == রিক্ত ? রিক্ত :
 				lwc_string_ref(box->id), content->bctx);
-		if (inline_end != NULL) {
+		যদি (inline_end != রিক্ত) {
 			inline_end->type = BOX_INLINE_END;
 
-			assert(props.inline_container != NULL);
+			প্রতিজ্ঞা(props.inline_container != রিক্ত);
 
 			box_add_child(props.inline_container, inline_end);
 
 			box->inline_end = inline_end;
 			inline_end->inline_end = box;
 		}
-	} else if (!(box->flags & IS_REPLACED)) {
+	} অন্যথা যদি (!(box->flags & IS_REPLACED)) {
 		/* Handle the :after pseudo element */
 		box_construct_generate(n, content, box,
 				box->styles->styles[CSS_PSEUDO_ELEMENT_AFTER]);
@@ -841,108 +841,108 @@ static void box_construct_element_after(dom_node *n, html_content *content)
  *
  * \note \a n will be unreferenced
  */
-static dom_node *
-next_node(dom_node *n, html_content *content, bool convert_children)
+স্থির dom_গ্ৰন্থি *
+next_গ্ৰন্থি(dom_গ্ৰন্থি *n, html_content *content, bool convert_children)
 {
-	dom_node *next = NULL;
+	dom_গ্ৰন্থি *next = রিক্ত;
 	bool has_children;
 	dom_exception err;
 
-	err = dom_node_has_child_nodes(n, &has_children);
-	if (err != DOM_NO_ERR) {
-		dom_node_unref(n);
-		return NULL;
+	err = dom_গ্ৰন্থি_has_child_nodes(n, &has_children);
+	যদি (err != DOM_NO_ERR) {
+		dom_গ্ৰন্থি_unref(n);
+		ঘূৰাই রিক্ত;
 	}
 
-	if (convert_children && has_children) {
-		err = dom_node_get_first_child(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return NULL;
+	যদি (convert_children && has_children) {
+		err = dom_গ্ৰন্থি_get_first_child(n, &next);
+		যদি (err != DOM_NO_ERR) {
+			dom_গ্ৰন্থি_unref(n);
+			ঘূৰাই রিক্ত;
 		}
-		dom_node_unref(n);
-	} else {
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return NULL;
+		dom_গ্ৰন্থি_unref(n);
+	} অন্যথা {
+		err = dom_গ্ৰন্থি_get_next_sibling(n, &next);
+		যদি (err != DOM_NO_ERR) {
+			dom_গ্ৰন্থি_unref(n);
+			ঘূৰাই রিক্ত;
 		}
 
-		if (next != NULL) {
-			if (box_for_node(n) != NULL)
+		যদি (next != রিক্ত) {
+			যদি (box_for_গ্ৰন্থি(n) != রিক্ত)
 				box_construct_element_after(n, content);
-			dom_node_unref(n);
-		} else {
-			if (box_for_node(n) != NULL)
+			dom_গ্ৰন্থি_unref(n);
+		} অন্যথা {
+			যদি (box_for_গ্ৰন্থি(n) != রিক্ত)
 				box_construct_element_after(n, content);
 
-			while (box_is_root(n) == false) {
-				dom_node *parent = NULL;
-				dom_node *parent_next = NULL;
+			যেতিয়ালৈ (box_is_মূল(n) == false) {
+				dom_গ্ৰন্থি *parent = রিক্ত;
+				dom_গ্ৰন্থি *parent_next = রিক্ত;
 
-				err = dom_node_get_parent_node(n, &parent);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
-					return NULL;
+				err = dom_গ্ৰন্থি_get_parent_গ্ৰন্থি(n, &parent);
+				যদি (err != DOM_NO_ERR) {
+					dom_গ্ৰন্থি_unref(n);
+					ঘূৰাই রিক্ত;
 				}
 
-				assert(parent != NULL);
+				প্রতিজ্ঞা(parent != রিক্ত);
 
-				err = dom_node_get_next_sibling(parent,
+				err = dom_গ্ৰন্থি_get_next_sibling(parent,
 						&parent_next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
-					return NULL;
+				যদি (err != DOM_NO_ERR) {
+					dom_গ্ৰন্থি_unref(parent);
+					dom_গ্ৰন্থি_unref(n);
+					ঘূৰাই রিক্ত;
 				}
 
-				if (parent_next != NULL) {
-					dom_node_unref(parent_next);
-					dom_node_unref(parent);
-					break;
+				যদি (parent_next != রিক্ত) {
+					dom_গ্ৰন্থি_unref(parent_next);
+					dom_গ্ৰন্থি_unref(parent);
+					ভঙ্গ;
 				}
 
-				dom_node_unref(n);
+				dom_গ্ৰন্থি_unref(n);
 				n = parent;
-				parent = NULL;
+				parent = রিক্ত;
 
-				if (box_for_node(n) != NULL) {
+				যদি (box_for_গ্ৰন্থি(n) != রিক্ত) {
 					box_construct_element_after(
 							n, content);
 				}
 			}
 
-			if (box_is_root(n) == false) {
-				dom_node *parent = NULL;
+			যদি (box_is_মূল(n) == false) {
+				dom_গ্ৰন্থি *parent = রিক্ত;
 
-				err = dom_node_get_parent_node(n, &parent);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
-					return NULL;
+				err = dom_গ্ৰন্থি_get_parent_গ্ৰন্থি(n, &parent);
+				যদি (err != DOM_NO_ERR) {
+					dom_গ্ৰন্থি_unref(n);
+					ঘূৰাই রিক্ত;
 				}
 
-				assert(parent != NULL);
+				প্রতিজ্ঞা(parent != রিক্ত);
 
-				err = dom_node_get_next_sibling(parent, &next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
-					return NULL;
+				err = dom_গ্ৰন্থি_get_next_sibling(parent, &next);
+				যদি (err != DOM_NO_ERR) {
+					dom_গ্ৰন্থি_unref(parent);
+					dom_গ্ৰন্থি_unref(n);
+					ঘূৰাই রিক্ত;
 				}
 
-				if (box_for_node(parent) != NULL) {
+				যদি (box_for_গ্ৰন্থি(parent) != রিক্ত) {
 					box_construct_element_after(parent,
 							content);
 				}
 
-				dom_node_unref(parent);
+				dom_গ্ৰন্থি_unref(parent);
 			}
 
-			dom_node_unref(n);
+			dom_গ্ৰন্থি_unref(n);
 		}
 	}
 
-	return next;
+	ঘূৰাই next;
 }
 
 
@@ -953,33 +953,33 @@ next_node(dom_node *n, html_content *content, bool convert_children)
  * \param  len  length of s
  * \param  tt	transform type
  */
-static void
-box_text_transform(char *s, unsigned int len, enum css_text_transform_e tt)
+স্থির শূন্য
+box_text_transform(ৱর্ণ *s, unsigned পূর্ণাঙ্ক len, গণনা css_text_transform_e tt)
 {
-	unsigned int i;
-	if (len == 0)
-		return;
-	switch (tt) {
-		case CSS_TEXT_TRANSFORM_UPPERCASE:
-			for (i = 0; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80)
+	unsigned পূর্ণাঙ্ক i;
+	যদি (len == 0)
+		ঘূৰাই;
+	ৱিকল্প (tt) {
+		পক্ষ CSS_TEXT_TRANSFORM_UPPERCASE:
+			বাবে (i = 0; i < len; ++i)
+				যদি ((unsigned ৱর্ণ) s[i] < 0x80)
 					s[i] = ascii_to_upper(s[i]);
-			break;
-		case CSS_TEXT_TRANSFORM_LOWERCASE:
-			for (i = 0; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80)
+			ভঙ্গ;
+		পক্ষ CSS_TEXT_TRANSFORM_LOWERCASE:
+			বাবে (i = 0; i < len; ++i)
+				যদি ((unsigned ৱর্ণ) s[i] < 0x80)
 					s[i] = ascii_to_lower(s[i]);
-			break;
-		case CSS_TEXT_TRANSFORM_CAPITALIZE:
-			if ((unsigned char) s[0] < 0x80)
+			ভঙ্গ;
+		পক্ষ CSS_TEXT_TRANSFORM_CAPITALIZE:
+			যদি ((unsigned ৱর্ণ) s[0] < 0x80)
 				s[0] = ascii_to_upper(s[0]);
-			for (i = 1; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80 &&
+			বাবে (i = 1; i < len; ++i)
+				যদি ((unsigned ৱর্ণ) s[i] < 0x80 &&
 						ascii_is_space(s[i - 1]))
 					s[i] = ascii_to_upper(s[i]);
-			break;
-		default:
-			break;
+			ভঙ্গ;
+		স্ৱভাৱ:
+			ভঙ্গ;
 	}
 }
 
@@ -990,60 +990,60 @@ box_text_transform(char *s, unsigned int len, enum css_text_transform_e tt)
  * \param  ctx  Tree construction context
  * \return  true on success, false on memory exhaustion
  */
-static bool box_construct_text(struct box_construct_ctx *ctx)
+স্থির bool box_construct_text(সংরচনা box_construct_ctx *ctx)
 {
-	struct box_construct_props props;
-	struct box *box = NULL;
+	সংরচনা box_construct_props props;
+	সংরচনা box *box = রিক্ত;
 	dom_string *content;
 	dom_exception err;
 
-	assert(ctx->n != NULL);
+	প্রতিজ্ঞা(ctx->n != রিক্ত);
 
 	box_extract_properties(ctx->n, &props);
 
-	assert(props.containing_block != NULL);
+	প্রতিজ্ঞা(props.containing_block != রিক্ত);
 
 	err = dom_characterdata_get_data(ctx->n, &content);
-	if (err != DOM_NO_ERR || content == NULL)
-		return false;
+	যদি (err != DOM_NO_ERR || content == রিক্ত)
+		ঘূৰাই false;
 
-	if (css_computed_white_space(props.parent_style) ==
+	যদি (css_computed_white_space(props.parent_style) ==
 			CSS_WHITE_SPACE_NORMAL ||
 			css_computed_white_space(props.parent_style) ==
 			CSS_WHITE_SPACE_NOWRAP) {
-		char *text;
+		ৱর্ণ *text;
 
 		text = squash_whitespace(dom_string_data(content));
 
 		dom_string_unref(content);
 
-		if (text == NULL)
-			return false;
+		যদি (text == রিক্ত)
+			ঘূৰাই false;
 
 		/* if the text is just a space, combine it with the preceding
 		 * text node, if any */
-		if (text[0] == ' ' && text[1] == 0) {
-			if (props.inline_container != NULL) {
-				assert(props.inline_container->last != NULL);
+		যদি (text[0] == ' ' && text[1] == 0) {
+			যদি (props.inline_container != রিক্ত) {
+				প্রতিজ্ঞা(props.inline_container->last != রিক্ত);
 
 				props.inline_container->last->space =
 						UNKNOWN_WIDTH;
 			}
 
-			free(text);
+			মুক্ত(text);
 
-			return true;
+			ঘূৰাই true;
 		}
 
-		if (props.inline_container == NULL) {
+		যদি (props.inline_container == রিক্ত) {
 			/* Child of a block without a current container
 			 * (i.e. this box is the first child of its parent, or
 			 * was preceded by block-level siblings) */
-			props.inline_container = box_create(NULL, NULL, false,
-					NULL, NULL, NULL, NULL, ctx->bctx);
-			if (props.inline_container == NULL) {
-				free(text);
-				return false;
+			props.inline_container = box_create(রিক্ত, রিক্ত, false,
+					রিক্ত, রিক্ত, রিক্ত, রিক্ত, ctx->bctx);
+			যদি (props.inline_container == রিক্ত) {
+				মুক্ত(text);
+				ঘূৰাই false;
 			}
 
 			props.inline_container->type = BOX_INLINE_CONTAINER;
@@ -1053,31 +1053,31 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 		}
 
 		/** \todo Dropping const here is not clever */
-		box = box_create(NULL,
+		box = box_create(রিক্ত,
 				(css_computed_style *) props.parent_style,
 				false, props.href, props.target, props.title,
-				NULL, ctx->bctx);
-		if (box == NULL) {
-			free(text);
-			return false;
+				রিক্ত, ctx->bctx);
+		যদি (box == রিক্ত) {
+			মুক্ত(text);
+			ঘূৰাই false;
 		}
 
 		box->type = BOX_TEXT;
 
 		box->text = talloc_strdup(ctx->bctx, text);
-		free(text);
-		if (box->text == NULL)
-			return false;
+		মুক্ত(text);
+		যদি (box->text == রিক্ত)
+			ঘূৰাই false;
 
 		box->length = strlen(box->text);
 
 		/* strip ending space char off */
-		if (box->length > 1 && box->text[box->length - 1] == ' ') {
+		যদি (box->length > 1 && box->text[box->length - 1] == ' ') {
 			box->space = UNKNOWN_WIDTH;
 			box->length--;
 		}
 
-		if (css_computed_text_transform(props.parent_style) !=
+		যদি (css_computed_text_transform(props.parent_style) !=
 				CSS_TEXT_TRANSFORM_NONE)
 			box_text_transform(box->text, box->length,
 				css_computed_text_transform(
@@ -1085,43 +1085,43 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 
 		box_add_child(props.inline_container, box);
 
-		if (box->text[0] == ' ') {
+		যদি (box->text[0] == ' ') {
 			box->length--;
 
 			memmove(box->text, &box->text[1], box->length);
 
-			if (box->prev != NULL)
+			যদি (box->prev != রিক্ত)
 				box->prev->space = UNKNOWN_WIDTH;
 		}
-	} else {
+	} অন্যথা {
 		/* white-space: pre */
-		char *text;
+		ৱর্ণ *text;
 		size_t text_len = dom_string_byte_length(content);
 		size_t i;
-		char *current;
-		enum css_white_space_e white_space =
+		ৱর্ণ *current;
+		গণনা css_white_space_e white_space =
 				css_computed_white_space(props.parent_style);
 
 		/* note: pre-wrap/pre-line are unimplemented */
-		assert(white_space == CSS_WHITE_SPACE_PRE ||
-				white_space == CSS_WHITE_SPACE_PRE_LINE ||
+		প্রতিজ্ঞা(white_space == CSS_WHITE_SPACE_PRE ||
+				white_space == CSS_WHITE_SPACE_PRE_সাৰি ||
 				white_space == CSS_WHITE_SPACE_PRE_WRAP);
 
 		text = malloc(text_len + 1);
 		dom_string_unref(content);
 
-		if (text == NULL)
-			return false;
+		যদি (text == রিক্ত)
+			ঘূৰাই false;
 
 		memcpy(text, dom_string_data(content), text_len);
 		text[text_len] = '\0';
 
 		/* TODO: Handle tabs properly */
-		for (i = 0; i < text_len; i++)
-			if (text[i] == '\t')
+		বাবে (i = 0; i < text_len; i++)
+			যদি (text[i] == '\t')
 				text[i] = ' ';
 
-		if (css_computed_text_transform(props.parent_style) !=
+		যদি (css_computed_text_transform(props.parent_style) !=
 				CSS_TEXT_TRANSFORM_NONE)
 			box_text_transform(text, strlen(text),
 				css_computed_text_transform(
@@ -1130,38 +1130,38 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 		current = text;
 
 		/* swallow a single leading new line */
-		if (props.containing_block->flags & PRE_STRIP) {
-			switch (*current) {
-			case '\n':
+		যদি (props.containing_block->flags & PRE_STRIP) {
+			ৱিকল্প (*current) {
+			পক্ষ '\n':
 				current++;
-				break;
-			case '\r':
+				ভঙ্গ;
+			পক্ষ '\r':
 				current++;
-				if (*current == '\n')
+				যদি (*current == '\n')
 					current++;
-				break;
+				ভঙ্গ;
 			}
 			props.containing_block->flags &= ~PRE_STRIP;
 		}
 
-		do {
+		কৰা {
 			size_t len = strcspn(current, "\r\n");
 
-			char old = current[len];
+			ৱর্ণ old = current[len];
 
 			current[len] = 0;
 
-			if (props.inline_container == NULL) {
+			যদি (props.inline_container == রিক্ত) {
 				/* Child of a block without a current container
 				 * (i.e. this box is the first child of its
 				 * parent, or was preceded by block-level
 				 * siblings) */
-				props.inline_container = box_create(NULL, NULL,
-						false, NULL, NULL, NULL, NULL,
+				props.inline_container = box_create(রিক্ত, রিক্ত,
+						false, রিক্ত, রিক্ত, রিক্ত, রিক্ত,
 						ctx->bctx);
-				if (props.inline_container == NULL) {
-					free(text);
-					return false;
+				যদি (props.inline_container == রিক্ত) {
+					মুক্ত(text);
+					ঘূৰাই false;
 				}
 
 				props.inline_container->type =
@@ -1172,21 +1172,21 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 			}
 
 			/** \todo Dropping const isn't clever */
-			box = box_create(NULL,
+			box = box_create(রিক্ত,
 				(css_computed_style *) props.parent_style,
 				false, props.href, props.target, props.title,
-				NULL, ctx->bctx);
-			if (box == NULL) {
-				free(text);
-				return false;
+				রিক্ত, ctx->bctx);
+			যদি (box == রিক্ত) {
+				মুক্ত(text);
+				ঘূৰাই false;
 			}
 
 			box->type = BOX_TEXT;
 
 			box->text = talloc_strdup(ctx->bctx, current);
-			if (box->text == NULL) {
-				free(text);
-				return false;
+			যদি (box->text == রিক্ত) {
+				মুক্ত(text);
+				ঘূৰাই false;
 			}
 
 			box->length = strlen(box->text);
@@ -1197,14 +1197,14 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 
 			current += len;
 
-			if (current[0] != '\0') {
+			যদি (current[0] != '\0') {
 				/* Linebreak: create new inline container */
-				props.inline_container = box_create(NULL, NULL,
-						false, NULL, NULL, NULL, NULL,
+				props.inline_container = box_create(রিক্ত, রিক্ত,
+						false, রিক্ত, রিক্ত, রিক্ত, রিক্ত,
 						ctx->bctx);
-				if (props.inline_container == NULL) {
-					free(text);
-					return false;
+				যদি (props.inline_container == রিক্ত) {
+					মুক্ত(text);
+					ঘূৰাই false;
 				}
 
 				props.inline_container->type =
@@ -1213,17 +1213,17 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
 				box_add_child(props.containing_block,
 						props.inline_container);
 
-				if (current[0] == '\r' && current[1] == '\n')
+				যদি (current[0] == '\r' && current[1] == '\n')
 					current += 2;
-				else
+				অন্যথা
 					current++;
 			}
-		} while (*current);
+		} যেতিয়ালৈ (*current);
 
-		free(text);
+		মুক্ত(text);
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 
@@ -1231,210 +1231,210 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
  * Convert an ELEMENT node to a box tree fragment,
  * then schedule conversion of the next ELEMENT node
  */
-static void convert_xml_to_box(struct box_construct_ctx *ctx)
+স্থির শূন্য convert_xml_to_box(সংরচনা box_construct_ctx *ctx)
 {
-	dom_node *next;
+	dom_গ্ৰন্থি *next;
 	bool convert_children;
-	uint32_t num_processed = 0;
-	const uint32_t max_processed_before_yield = 10;
+	uint32_t অঙ্ক_processed = 0;
+	ধ্রুৱ uint32_t max_processed_before_yield = 10;
 
-	do {
+	কৰা {
 		convert_children = true;
 
-		assert(ctx->n != NULL);
+		প্রতিজ্ঞা(ctx->n != রিক্ত);
 
-		if (box_construct_element(ctx, &convert_children) == false) {
+		যদি (box_construct_element(ctx, &convert_children) == false) {
 			ctx->cb(ctx->content, false);
-			dom_node_unref(ctx->n);
-			free(ctx);
-			return;
+			dom_গ্ৰন্থি_unref(ctx->n);
+			মুক্ত(ctx);
+			ঘূৰাই;
 		}
 
 		/* Find next element to process, converting text nodes as we go */
-		next = next_node(ctx->n, ctx->content, convert_children);
-		while (next != NULL) {
-			dom_node_type type;
+		next = next_গ্ৰন্থি(ctx->n, ctx->content, convert_children);
+		যেতিয়ালৈ (next != রিক্ত) {
+			dom_গ্ৰন্থি_type type;
 			dom_exception err;
 
-			err = dom_node_get_node_type(next, &type);
-			if (err != DOM_NO_ERR) {
+			err = dom_গ্ৰন্থি_get_গ্ৰন্থি_type(next, &type);
+			যদি (err != DOM_NO_ERR) {
 				ctx->cb(ctx->content, false);
-				dom_node_unref(next);
-				free(ctx);
-				return;
+				dom_গ্ৰন্থি_unref(next);
+				মুক্ত(ctx);
+				ঘূৰাই;
 			}
 
-			if (type == DOM_ELEMENT_NODE)
-				break;
+			যদি (type == DOM_ELEMENT_গ্ৰন্থি)
+				ভঙ্গ;
 
-			if (type == DOM_TEXT_NODE) {
+			যদি (type == DOM_TEXT_গ্ৰন্থি) {
 				ctx->n = next;
-				if (box_construct_text(ctx) == false) {
+				যদি (box_construct_text(ctx) == false) {
 					ctx->cb(ctx->content, false);
-					dom_node_unref(ctx->n);
-					free(ctx);
-					return;
+					dom_গ্ৰন্থি_unref(ctx->n);
+					মুক্ত(ctx);
+					ঘূৰাই;
 				}
 			}
 
-			next = next_node(next, ctx->content, true);
+			next = next_গ্ৰন্থি(next, ctx->content, true);
 		}
 
 		ctx->n = next;
 
-		if (next == NULL) {
+		যদি (next == রিক্ত) {
 			/* Conversion complete */
-			struct box root;
+			সংরচনা box মূল;
 
-			memset(&root, 0, sizeof(root));
+			memset(&মূল, 0, পরিমাণ(মূল));
 
-			root.type = BOX_BLOCK;
-			root.children = root.last = ctx->root_box;
-			root.children->parent = &root;
+			মূল.type = BOX_BLOCK;
+			মূল.children = মূল.last = ctx->মূল_box;
+			মূল.children->parent = &মূল;
 
 			/** \todo Remove box_normalise_block */
-			if (box_normalise_block(&root, ctx->root_box,
+			যদি (box_normalise_block(&মূল, ctx->মূল_box,
 					ctx->content) == false) {
 				ctx->cb(ctx->content, false);
-			} else {
-				ctx->content->layout = root.children;
-				ctx->content->layout->parent = NULL;
+			} অন্যথা {
+				ctx->content->layout = মূল.children;
+				ctx->content->layout->parent = রিক্ত;
 
 				ctx->cb(ctx->content, true);
 			}
 
-			assert(ctx->n == NULL);
+			প্রতিজ্ঞা(ctx->n == রিক্ত);
 
-			free(ctx);
-			return;
+			মুক্ত(ctx);
+			ঘূৰাই;
 		}
-	} while (++num_processed < max_processed_before_yield);
+	} যেতিয়ালৈ (++অঙ্ক_processed < max_processed_before_yield);
 
 	/* More work to do: schedule a continuation */
-	guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
+	guit->misc->schedule(0, (শূন্য *)convert_xml_to_box, ctx);
 }
 
 
 /* exported function documented in html/box_construct.h */
 nserror
-dom_to_box(dom_node *n,
+dom_to_box(dom_গ্ৰন্থি *n,
 	   html_content *c,
 	   box_construct_complete_cb cb,
-	   void **box_conversion_context)
+	   শূন্য **box_conversion_context)
 {
-	struct box_construct_ctx *ctx;
+	সংরচনা box_construct_ctx *ctx;
 
-	assert(box_conversion_context != NULL);
+	প্রতিজ্ঞা(box_conversion_context != রিক্ত);
 
-	if (c->bctx == NULL) {
+	যদি (c->bctx == রিক্ত) {
 		/* create a context allocation for this box tree */
-		c->bctx = talloc_zero(0, int);
-		if (c->bctx == NULL) {
-			return NSERROR_NOMEM;
+		c->bctx = talloc_zero(0, পূর্ণাঙ্ক);
+		যদি (c->bctx == রিক্ত) {
+			ঘূৰাই NSERROR_NOMEM;
 		}
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL) {
-		return NSERROR_NOMEM;
+	ctx = malloc(পরিমাণ(*ctx));
+	যদি (ctx == রিক্ত) {
+		ঘূৰাই NSERROR_NOMEM;
 	}
 
 	ctx->content = c;
-	ctx->n = dom_node_ref(n);
-	ctx->root_box = NULL;
+	ctx->n = dom_গ্ৰন্থি_ref(n);
+	ctx->মূল_box = রিক্ত;
 	ctx->cb = cb;
 	ctx->bctx = c->bctx;
 
 	*box_conversion_context = ctx;
 
-	return guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
+	ঘূৰাই guit->misc->schedule(0, (শূন্য *)convert_xml_to_box, ctx);
 }
 
 
 /* exported function documented in html/box_construct.h */
-nserror cancel_dom_to_box(void *box_conversion_context)
+nserror cancel_dom_to_box(শূন্য *box_conversion_context)
 {
-	struct box_construct_ctx *ctx = box_conversion_context;
+	সংরচনা box_construct_ctx *ctx = box_conversion_context;
 	nserror err;
 
-	err = guit->misc->schedule(-1, (void *)convert_xml_to_box, ctx);
-	if (err != NSERROR_OK) {
-		return err;
+	err = guit->misc->schedule(-1, (শূন্য *)convert_xml_to_box, ctx);
+	যদি (err != NSERROR_OK) {
+		ঘূৰাই err;
 	}
 
-	dom_node_unref(ctx->n);
-	free(ctx);
+	dom_গ্ৰন্থি_unref(ctx->n);
+	মুক্ত(ctx);
 
-	return NSERROR_OK;
+	ঘূৰাই NSERROR_OK;
 }
 
 
 /* exported function documented in html/box_construct.h */
-struct box *box_for_node(dom_node *n)
+সংরচনা box *box_for_গ্ৰন্থি(dom_গ্ৰন্থি *n)
 {
-	struct box *box = NULL;
+	সংরচনা box *box = রিক্ত;
 	dom_exception err;
 
-	err = dom_node_get_user_data(n, corestring_dom___ns_key_box_node_data,
-			(void *) &box);
-	if (err != DOM_NO_ERR)
-		return NULL;
+	err = dom_গ্ৰন্থি_get_user_data(n, corestring_dom_ns_চাবি_box_গ্ৰন্থি_data,
+			(শূন্য *) &box);
+	যদি (err != DOM_NO_ERR)
+		ঘূৰাই রিক্ত;
 
-	return box;
+	ঘূৰাই box;
 }
 
 /* exported function documented in html/box_construct.h */
 bool
-box_extract_link(const html_content *content,
-		 const dom_string *dsrel,
+box_extract_link(ধ্রুৱ html_content *content,
+		 ধ্রুৱ dom_string *dsrel,
 		 nsurl *base,
 		 nsurl **result)
 {
-	char *s, *s1, *apos0 = 0, *apos1 = 0, *quot0 = 0, *quot1 = 0;
-	unsigned int i, j, end;
+	ৱর্ণ *s, *s1, *apos0 = 0, *apos1 = 0, *quot0 = 0, *quot1 = 0;
+	unsigned পূর্ণাঙ্ক i, j, end;
 	nserror error;
-	const char *rel;
+	ধ্রুৱ ৱর্ণ *rel;
 
 	rel = dom_string_data(dsrel);
 
 	s1 = s = malloc(3 * strlen(rel) + 1);
-	if (!s)
-		return false;
+	যদি (!s)
+		ঘূৰাই false;
 
 	/* copy to s, removing white space and control characters */
-	for (i = 0; rel[i] && ascii_is_space(rel[i]); i++)
+	বাবে (i = 0; rel[i] && ascii_is_space(rel[i]); i++)
 		;
-	for (end = strlen(rel);
+	বাবে (end = strlen(rel);
 	     (end != i) && ascii_is_space(rel[end - 1]);
 	     end--)
 		;
-	for (j = 0; i != end; i++) {
-		if ((unsigned char) rel[i] < 0x20) {
+	বাবে (j = 0; i != end; i++) {
+		যদি ((unsigned ৱর্ণ) rel[i] < 0x20) {
 			; /* skip control characters */
-		} else if (rel[i] == ' ') {
+		} অন্যথা যদি (rel[i] == ' ') {
 			s[j++] = '%';
 			s[j++] = '2';
 			s[j++] = '0';
-		} else {
+		} অন্যথা {
 			s[j++] = rel[i];
 		}
 	}
 	s[j] = 0;
 
-	if (content->enable_scripting == false) {
+	যদি (content->enable_scripting == false) {
 		/* extract first quoted string out of "javascript:" link */
-		if (strncmp(s, "javascript:", 11) == 0) {
+		যদি (strncmp(s, "javascript:", 11) == 0) {
 			apos0 = strchr(s, '\'');
-			if (apos0)
+			যদি (apos0)
 				apos1 = strchr(apos0 + 1, '\'');
 			quot0 = strchr(s, '"');
-			if (quot0)
+			যদি (quot0)
 				quot1 = strchr(quot0 + 1, '"');
-			if (apos0 && apos1 &&
+			যদি (apos0 && apos1 &&
 					(!quot0 || !quot1 || apos0 < quot0)) {
 				*apos1 = 0;
 				s1 = apos0 + 1;
-			} else if (quot0 && quot1) {
+			} অন্যথা যদি (quot0 && quot1) {
 				*quot1 = 0;
 				s1 = quot0 + 1;
 			}
@@ -1443,11 +1443,11 @@ box_extract_link(const html_content *content,
 
 	/* construct absolute URL */
 	error = nsurl_join(base, s1, result);
-	free(s);
-	if (error != NSERROR_OK) {
-		*result = NULL;
-		return false;
+	মুক্ত(s);
+	যদি (error != NSERROR_OK) {
+		*result = রিক্ত;
+		ঘূৰাই false;
 	}
 
-	return true;
+	ঘূৰাই true;
 }

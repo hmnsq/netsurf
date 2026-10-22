@@ -25,9 +25,9 @@
 #ifndef NETSURF_HTML_TABLE_H
 #define NETSURF_HTML_TABLE_H
 
-#include <stdbool.h>
+#অন্তর্ভাৱ <stdbool.h>
 
-struct box;
+সংরচনা box;
 
 
 /**
@@ -40,7 +40,7 @@ struct box;
  * The table->col array is allocated and type and width are filled in for each
  * column.
  */
-bool table_calculate_column_types(const css_unit_ctx *unit_len_ctx,	struct box *table);
+bool table_calculate_column_types(ধ্রুৱ css_unit_ctx *unit_len_ctx,	সংরচনা box *table);
 
 
 /**
@@ -51,6 +51,6 @@ bool table_calculate_column_types(const css_unit_ctx *unit_len_ctx,	struct box *
  *
  * \post \a cell's border array is populated
  */
-void table_used_border_for_cell(const css_unit_ctx *unit_len_ctx, struct box *cell);
+শূন্য table_used_border_for_cell(ধ্রুৱ css_unit_ctx *unit_len_ctx, সংরচনা box *cell);
 
 #endif

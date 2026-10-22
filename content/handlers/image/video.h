@@ -19,8 +19,8 @@
 #ifndef NETSURF_IMAGE_VIDEO_H_
 #define NETSURF_IMAGE_VIDEO_H_
 
-#include "utils/errors.h"
+#অন্তর্ভাৱ "utils/errors.h"
 
-nserror nsvideo_init(void);
+nserror nsvideo_init(শূন্য);
 
 #endif

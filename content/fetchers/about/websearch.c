@@ -21,86 +21,86 @@
  * content generator for the about scheme web search
  */
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাৱ <stdbool.h>
+#অন্তর্ভাৱ <stdint.h>
+#অন্তর্ভাৱ <sys/types.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/url.h"
+#অন্তর্ভাৱ "utils/errors.h"
+#অন্তর্ভাৱ "utils/nsurl.h"
+#অন্তর্ভাৱ "utils/url.h"
 
-#include "content/fetch.h"
-#include "desktop/searchweb.h"
+#অন্তর্ভাৱ "content/fetch.h"
+#অন্তর্ভাৱ "desktop/searchweb.h"
 
-#include "private.h"
-#include "websearch.h"
+#অন্তর্ভাৱ "private.h"
+#অন্তর্ভাৱ "websearch.h"
 
-static nserror
-process_query_section(const char *str, size_t len, char **term)
+স্থির nserror
+process_query_section(ধ্রুৱ ৱর্ণ *str, size_t len, ৱর্ণ **term)
 {
-	if (len < 3) {
-		return NSERROR_BAD_PARAMETER;
+	যদি (len < 3) {
+		ঘূৰাই NSERROR_BAD_PARAMETER;
 	}
-	if (str[0] != 'q' || str[1] != '=') {
-		return NSERROR_BAD_PARAMETER;
+	যদি (str[0] != 'q' || str[1] != '=') {
+		ঘূৰাই NSERROR_BAD_PARAMETER;
 	}
-	return url_unescape(str + 2, len - 2, NULL, term);
+	ঘূৰাই url_unescape(str + 2, len - 2, রিক্ত, term);
 }
 
-static nserror
-searchterm_from_query(struct nsurl *url, char **term)
+স্থির nserror
+searchterm_from_query(সংরচনা nsurl *url, ৱর্ণ **term)
 {
 	nserror res;
-	char *querystr;
+	ৱর্ণ *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	যদি (res != NSERROR_OK) {
+		ঘূৰাই res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	বাবে (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		যেতিয়ালৈ (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, term);
-		if (res == NSERROR_OK) {
-			break;
+		যদি (res == NSERROR_OK) {
+			ভঙ্গ;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	মুক্ত(querystr);
 
-	return res;
+	ঘূৰাই res;
 }
 
-bool fetch_about_websearch_handler(struct fetch_about_context *ctx)
+bool fetch_about_websearch_handler(সংরচনা fetch_about_context *ctx)
 {
 	nserror res;
 	nsurl *url;
-	char *term;
+	ৱর্ণ *term;
 
 	res = searchterm_from_query(fetch_about_get_url(ctx), &term);
-	if (res != NSERROR_OK) {
-		return false;
+	যদি (res != NSERROR_OK) {
+		ঘূৰাই false;
 	}
 
-	res = search_web_omni(term, SEARCH_WEB_OMNI_SEARCHONLY, &url);
-	free(term);
-	if (res != NSERROR_OK) {
-		return false;
+	res = অনুসন্ধান_web_omni(term, অনুসন্ধান_WEB_OMNI_SEARCHONLY, &url);
+	মুক্ত(term);
+	যদি (res != NSERROR_OK) {
+		ঘূৰাই false;
 	}
 
 	fetch_about_redirect(ctx, nsurl_access(url));
 	nsurl_unref(url);
 
-	return true;
+	ঘূৰাই true;
 }
