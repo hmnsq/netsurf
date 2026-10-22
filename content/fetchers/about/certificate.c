@@ -21,160 +21,160 @@
  * content generator for the about scheme certificate page
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
 
-#include "utils/errors.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/ssl_certs.h"
+#अन्तर्भाव "utils/errors.h"
+#अन्तर्भाव "utils/log.h"
+#अन्तर्भाव "utils/messages.h"
+#अन्तर्भाव "netsurf/inttypes.h"
+#अन्तर्भाव "netsurf/ssl_certs.h"
 
-#include "private.h"
-#include "certificate.h"
+#अन्तर्भाव "private.h"
+#अन्तर्भाव "certificate.h"
 
 /**
  * certificate name parameters
  */
-struct ns_cert_name {
-	char *common_name;
-	char *organisation;
-	char *organisation_unit;
-	char *locality;
-	char *province;
-	char *country;
+संरचना ns_cert_name {
+	वर्ण *common_name;
+	वर्ण *organisation;
+	वर्ण *organisation_unit;
+	वर्ण *locality;
+	वर्ण *province;
+	वर्ण *country;
 };
 
 /**
  * Certificate public key parameters
  */
-struct ns_cert_pkey {
-	char *algor;
-	int size;
-	char *modulus;
-	char *exponent;
-	char *curve;
-	char *public;
+संरचना ns_cert_pkey {
+	वर्ण *algor;
+	पूर्णाङ्क size;
+	वर्ण *modulus;
+	वर्ण *exponent;
+	वर्ण *curve;
+	वर्ण *सार्वजनिक;
 };
 
 /**
  * Certificate subject alternative name
  */
-struct ns_cert_san {
-	struct ns_cert_san *next;
-	char *name;
+संरचना ns_cert_san {
+	संरचना ns_cert_san *next;
+	वर्ण *name;
 };
 
 /**
  * certificate information for certificate chain
  */
-struct ns_cert_info {
-	struct ns_cert_name subject_name; /**< Subject details */
-	struct ns_cert_name issuer_name; /**< Issuer details */
-	struct ns_cert_pkey public_key; /**< public key details */
+संरचना ns_cert_info {
+	संरचना ns_cert_name subject_name; /**< Subject details */
+	संरचना ns_cert_name issuer_name; /**< Issuer details */
+	संरचना ns_cert_pkey public_कुञ्चिका; /**< public key details */
 	long version;		/**< Certificate version */
-	char *not_before;	/**< Valid from date */
-	char *not_after;	/**< Valid to date */
-	int sig_type;		/**< Signature type */
-	char *sig_algor;        /**< Signature Algorithm */
-	char *serialnum;	/**< Serial number */
-	char *sha1fingerprint; /**< fingerprint shar1 encoded */
-	char *sha256fingerprint; /**< fingerprint shar256 encoded */
-	struct ns_cert_san *san; /**< subject alternative names */
+	वर्ण *not_before;	/**< Valid from date */
+	वर्ण *not_after;	/**< Valid to date */
+	पूर्णाङ्क sig_type;		/**< Signature type */
+	वर्ण *sig_algor;        /**< Signature Algorithm */
+	वर्ण *serialnum;	/**< Serial number */
+	वर्ण *sha1fingerprint; /**< fingerprint shar1 encoded */
+	वर्ण *sha256fingerprint; /**< fingerprint shar256 encoded */
+	संरचना ns_cert_san *san; /**< subject alternative names */
 	ssl_cert_err err;       /**< Whatever is wrong with this certificate */
 };
 
 /**
  * free all resources associated with a certificate information structure
  */
-static nserror free_ns_cert_info(struct ns_cert_info *cinfo)
+स्थिर nserror free_ns_cert_info(संरचना ns_cert_info *cinfo)
 {
-	struct ns_cert_san *san;
+	संरचना ns_cert_san *san;
 
-	free(cinfo->subject_name.common_name);
-	free(cinfo->subject_name.organisation);
-	free(cinfo->subject_name.organisation_unit);
-	free(cinfo->subject_name.locality);
-	free(cinfo->subject_name.province);
-	free(cinfo->subject_name.country);
-	free(cinfo->issuer_name.common_name);
-	free(cinfo->issuer_name.organisation);
-	free(cinfo->issuer_name.organisation_unit);
-	free(cinfo->issuer_name.locality);
-	free(cinfo->issuer_name.province);
-	free(cinfo->issuer_name.country);
-	free(cinfo->public_key.algor);
-	free(cinfo->public_key.modulus);
-	free(cinfo->public_key.exponent);
-	free(cinfo->public_key.curve);
-	free(cinfo->public_key.public);
-	free(cinfo->not_before);
-	free(cinfo->not_after);
-	free(cinfo->sig_algor);
-	free(cinfo->serialnum);
+	मुक्त(cinfo->subject_name.common_name);
+	मुक्त(cinfo->subject_name.organisation);
+	मुक्त(cinfo->subject_name.organisation_unit);
+	मुक्त(cinfo->subject_name.locality);
+	मुक्त(cinfo->subject_name.province);
+	मुक्त(cinfo->subject_name.country);
+	मुक्त(cinfo->issuer_name.common_name);
+	मुक्त(cinfo->issuer_name.organisation);
+	मुक्त(cinfo->issuer_name.organisation_unit);
+	मुक्त(cinfo->issuer_name.locality);
+	मुक्त(cinfo->issuer_name.province);
+	मुक्त(cinfo->issuer_name.country);
+	मुक्त(cinfo->public_कुञ्चिका.algor);
+	मुक्त(cinfo->public_कुञ्चिका.modulus);
+	मुक्त(cinfo->public_कुञ्चिका.exponent);
+	मुक्त(cinfo->public_कुञ्चिका.curve);
+	मुक्त(cinfo->public_कुञ्चिका.सार्वजनिक);
+	मुक्त(cinfo->not_before);
+	मुक्त(cinfo->not_after);
+	मुक्त(cinfo->sig_algor);
+	मुक्त(cinfo->serialnum);
 
 	/* free san list avoiding use after free */
 	san = cinfo->san;
-	while (san != NULL) {
-		struct ns_cert_san *next;
+	याव (san != रिक्त) {
+		संरचना ns_cert_san *next;
 		next = san->next;
-		free(san);
+		मुक्त(san);
 		san = next;
 	}
 
-	free(cinfo);
+	मुक्त(cinfo);
 
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
 #ifdef WITH_OPENSSL
 
-#include <openssl/ssl.h>
-#include <openssl/x509v3.h>
+#अन्तर्भाव <openssl/ssl.h>
+#अन्तर्भाव <openssl/x509v3.h>
 
-#if (OPENSSL_VERSION_NUMBER < 0x30000000L)
+#सचे (OPENSSL_VERSION_सङ्ख्या < 0x30000000L)
 /* OpenSSL 1.1.1 or LibreSSL */
 
-# if defined(LIBRESSL_VERSION_NUMBER)
+# सचे defined(LIBRESSL_VERSION_सङ्ख्या)
   /* LibreSSL */
-#  if (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
+#  सचे (LIBRESSL_VERSION_सङ्ख्या < 0x3050000fL)
    /* LibreSSL <3.5.0 */
 
-#   if (LIBRESSL_VERSION_NUMBER < 0x2070000fL)
+#   सचे (LIBRESSL_VERSION_सङ्ख्या < 0x2070000fL)
     /* LibreSSL <2.7.0 */
-static int ns_X509_get_signature_nid(X509 *cert)
+स्थिर पूर्णाङ्क ns_X509_get_signature_nid(X509 *cert)
 {
-	return OBJ_obj2nid(cert->cert_info->key->algor->algorithm);
+	पटिनिवत्त OBJ_obj2nid(cert->cert_info->कुञ्चिका->algor->algorithm);
 }
 
-static const unsigned char *ns_ASN1_STRING_get0_data(ASN1_STRING *asn1str)
+स्थिर ध्रुव unsigned वर्ण *ns_ASN1_STRING_get0_data(ASN1_STRING *asn1str)
 {
-	return (const unsigned char *)ASN1_STRING_data(asn1str);
+	पटिनिवत्त (ध्रुव unsigned वर्ण *)ASN1_STRING_data(asn1str);
 }
-#   else
+#   अञ्ञथा
 #    define ns_X509_get_signature_nid X509_get_signature_nid
 #    define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
 #   endif
 
-static const BIGNUM *ns_RSA_get0_n(const RSA *d)
+स्थिर ध्रुव BIGNUM *ns_RSA_get0_n(ध्रुव RSA *d)
 {
-	return d->n;
+	पटिनिवत्त d->n;
 }
 
-static const BIGNUM *ns_RSA_get0_e(const RSA *d)
+स्थिर ध्रुव BIGNUM *ns_RSA_get0_e(ध्रुव RSA *d)
 {
-	return d->e;
+	पटिनिवत्त d->e;
 }
-#  else
+#  अञ्ञथा
    /* LibreSSL >= 3.5.0 */
 #   define ns_X509_get_signature_nid X509_get_signature_nid
 #   define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
 #   define ns_RSA_get0_n RSA_get0_n
 #   define ns_RSA_get0_e RSA_get0_e
 #  endif
-# else
+# अञ्ञथा
   /* OpenSSL 1.1.1 */
 #  define ns_X509_get_signature_nid X509_get_signature_nid
 #  define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
@@ -182,30 +182,30 @@ static const BIGNUM *ns_RSA_get0_e(const RSA *d)
 #  define ns_RSA_get0_e RSA_get0_e
 # endif
 
-static int ns_EVP_PKEY_get_bn_param(const EVP_PKEY *pkey,
-		const char *key_name, BIGNUM **bn) {
+स्थिर पूर्णाङ्क ns_EVP_PKEY_get_bn_param(ध्रुव EVP_PKEY *pkey,
+		ध्रुव वर्ण *कुञ्चिका_name, BIGNUM **bn) {
 	RSA *rsa;
-	BIGNUM *result = NULL;
+	BIGNUM *result = रिक्त;
 
 	/* Check parameters: only support allocation-form *bn */
-	if (pkey == NULL || key_name == NULL || bn == NULL || *bn != NULL)
-		return 0;
+	सचे (pkey == रिक्त || कुञ्चिका_name == रिक्त || bn == रिक्त || *bn != रिक्त)
+		पटिनिवत्त 0;
 
 	/* Only support RSA keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_RSA)
-		return 0;
+	सचे (EVP_PKEY_base_id(pkey) != EVP_PKEY_RSA)
+		पटिनिवत्त 0;
 
 	rsa = EVP_PKEY_get1_RSA((EVP_PKEY *) pkey);
-	if (rsa == NULL)
-		return 0;
+	सचे (rsa == रिक्त)
+		पटिनिवत्त 0;
 
-	if (strcmp(key_name, "n") == 0) {
-		const BIGNUM *n = ns_RSA_get0_n(rsa);
-		if (n != NULL)
+	सचे (strcmp(कुञ्चिका_name, "n") == 0) {
+		ध्रुव BIGNUM *n = ns_RSA_get0_n(rsa);
+		सचे (n != रिक्त)
 			result = BN_dup(n);
-	} else if (strcmp(key_name, "e") == 0) {
-		const BIGNUM *e = ns_RSA_get0_e(rsa);
-		if (e != NULL)
+	} अञ्ञथा सचे (strcmp(कुञ्चिका_name, "e") == 0) {
+		ध्रुव BIGNUM *e = ns_RSA_get0_e(rsa);
+		सचे (e != रिक्त)
 			result = BN_dup(e);
 	}
 
@@ -213,91 +213,91 @@ static int ns_EVP_PKEY_get_bn_param(const EVP_PKEY *pkey,
 
 	*bn = result;
 
-	return (result != NULL) ? 1 : 0;
+	पटिनिवत्त (result != रिक्त) ? 1 : 0;
 }
 
-static int ns_EVP_PKEY_get_utf8_string_param(const EVP_PKEY *pkey,
-		const char *key_name, char *str, size_t max_len,
+स्थिर पूर्णाङ्क ns_EVP_PKEY_get_utf8_string_param(ध्रुव EVP_PKEY *pkey,
+		ध्रुव वर्ण *कुञ्चिका_name, वर्ण *str, size_t max_len,
 		size_t *out_len)
 {
-	const EC_GROUP *ecgroup;
-	const char *group = "";
+	ध्रुव EC_GROUP *ecgroup;
+	ध्रुव वर्ण *group = "";
 	size_t group_len = 0;
-	EC_KEY *ec;
-	int ret = 0;
+	EC_कुञ्चिका *ec;
+	पूर्णाङ्क ret = 0;
 
-	if (pkey == NULL || key_name == NULL)
-		return 0;
+	सचे (pkey == रिक्त || कुञ्चिका_name == रिक्त)
+		पटिनिवत्त 0;
 
 	/* Only support EC keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
-		return 0;
+	सचे (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
+		पटिनिवत्त 0;
 
 	/* Only support fetching the group */
-	if (strcmp(key_name, "group") != 0)
-		return 0;
+	सचे (strcmp(कुञ्चिका_name, "group") != 0)
+		पटिनिवत्त 0;
 
-	ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY *) pkey);
+	ec = EVP_PKEY_get1_EC_कुञ्चिका((EVP_PKEY *) pkey);
 
-	ecgroup = EC_KEY_get0_group(ec);
-	if (ecgroup != NULL) {
+	ecgroup = EC_कुञ्चिका_get0_group(ec);
+	सचे (ecgroup != रिक्त) {
 		group = OBJ_nid2ln(EC_GROUP_get_curve_name(ecgroup));
 		group_len = strlen(group);
 	}
 
-	if (str != NULL && max_len > group_len) {
+	सचे (str != रिक्त && max_len > group_len) {
 		memcpy(str, group, group_len);
 		str[group_len] = '\0';
 		ret = 1;
 	}
 
-	if (out_len != NULL) {
+	सचे (out_len != रिक्त) {
 		*out_len = group_len;
 	}
 
-	EC_KEY_free(ec);
+	EC_कुञ्चिका_free(ec);
 
-	return ret;
+	पटिनिवत्त ret;
 }
 
-static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
-		const char *key_name, unsigned char *buf, size_t max_len,
+स्थिर पूर्णाङ्क ns_EVP_PKEY_get_octet_string_param(ध्रुव EVP_PKEY *pkey,
+		ध्रुव वर्ण *कुञ्चिका_name, unsigned वर्ण *buf, size_t max_len,
 		size_t *out_len)
 {
-	const EC_GROUP *ecgroup;
-	const EC_POINT *ecpoint;
+	ध्रुव EC_GROUP *ecgroup;
+	ध्रुव EC_POINT *ecpoint;
 	size_t len;
 	BN_CTX *bnctx;
-	EC_KEY *ec;
-	int ret = 0;
+	EC_कुञ्चिका *ec;
+	पूर्णाङ्क ret = 0;
 
-	if (pkey == NULL || key_name == NULL)
-		return 0;
+	सचे (pkey == रिक्त || कुञ्चिका_name == रिक्त)
+		पटिनिवत्त 0;
 
 	/* Only support EC keys */
-	if (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
-		return 0;
+	सचे (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC)
+		पटिनिवत्त 0;
 
-	if (strcmp(key_name, "encoded-pub-key") != 0)
-		return 0;
+	सचे (strcmp(कुञ्चिका_name, "encoded-pub-key") != 0)
+		पटिनिवत्त 0;
 
-	ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY *) pkey);
-	if (ec == NULL)
-		return 0;
+	ec = EVP_PKEY_get1_EC_कुञ्चिका((EVP_PKEY *) pkey);
+	सचे (ec == रिक्त)
+		पटिनिवत्त 0;
 
-	ecgroup = EC_KEY_get0_group(ec);
-	if (ecgroup != NULL) {
-		ecpoint = EC_KEY_get0_public_key(ec);
-		if (ecpoint != NULL) {
+	ecgroup = EC_कुञ्चिका_get0_group(ec);
+	सचे (ecgroup != रिक्त) {
+		ecpoint = EC_कुञ्चिका_get0_public_कुञ्चिका(ec);
+		सचे (ecpoint != रिक्त) {
 			bnctx = BN_CTX_new();
 			len = EC_POINT_point2oct(ecgroup,
 						 ecpoint,
 						 POINT_CONVERSION_UNCOMPRESSED,
-						 NULL,
+						 रिक्त,
 						 0,
 						 bnctx);
-			if (len != 0 && len <= max_len) {
-				if (EC_POINT_point2oct(ecgroup,
+			सचे (len != 0 && len <= max_len) {
+				सचे (EC_POINT_point2oct(ecgroup,
 						       ecpoint,
 						       POINT_CONVERSION_UNCOMPRESSED,
 						       buf,
@@ -305,17 +305,17 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
 						       bnctx) == len)
 					ret = 1;
 			}
-			if (out_len != NULL)
+			सचे (out_len != रिक्त)
 				*out_len = len;
 			BN_CTX_free(bnctx);
 		}
 	}
 
-	EC_KEY_free(ec);
+	EC_कुञ्चिका_free(ec);
 
-	return ret;
+	पटिनिवत्त ret;
 }
-#else
+#अञ्ञथा
 /* OpenSSL 3.x and later */
 #define ns_X509_get_signature_nid X509_get_signature_nid
 #define ns_ASN1_STRING_get0_data ASN1_STRING_get0_data
@@ -333,54 +333,54 @@ static int ns_EVP_PKEY_get_octet_string_param(const EVP_PKEY *pkey,
  * \param iname The info structure to recive the extracted parameters.
  * \return NSERROR_OK on success else error code
  */
-static nserror
-xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
+स्थिर nserror
+xname_to_info(X509_NAME *xname, संरचना ns_cert_name *iname)
 {
-	int entryidx;
-	int entrycnt;
+	पूर्णाङ्क entryidx;
+	पूर्णाङ्क entrycnt;
 	X509_NAME_ENTRY *entry; /* current name entry */
-	ASN1_STRING *value;
-	const unsigned char *value_str;
+	ASN1_STRING *मानम्;
+	ध्रुव unsigned वर्ण *मानम्_str;
 	ASN1_OBJECT *name;
-	int name_nid;
-	char **field;
+	पूर्णाङ्क name_nid;
+	वर्ण **field;
 
-	entrycnt = X509_NAME_entry_count(xname);
+	entrycnt = X509_NAME_entry_गणनम्(xname);
 
-	for (entryidx = 0; entryidx < entrycnt; entryidx++) {
+	अत्थाय (entryidx = 0; entryidx < entrycnt; entryidx++) {
 		entry = X509_NAME_get_entry(xname, entryidx);
 		name = X509_NAME_ENTRY_get_object(entry);
 		name_nid = OBJ_obj2nid(name);
-		value = X509_NAME_ENTRY_get_data(entry);
-		value_str = ns_ASN1_STRING_get0_data(value);
-		switch (name_nid) {
-		case NID_commonName:
+		मानम् = X509_NAME_ENTRY_get_data(entry);
+		मानम्_str = ns_ASN1_STRING_get0_data(मानम्);
+		विकल्प (name_nid) {
+		पक्ष NID_commonName:
 			field = &iname->common_name;
-			break;
-		case NID_countryName:
+			भङ्ग;
+		पक्ष NID_countryName:
 			field = &iname->country;
-			break;
-		case NID_localityName:
+			भङ्ग;
+		पक्ष NID_localityName:
 			field = &iname->locality;
-			break;
-		case NID_stateOrProvinceName:
+			भङ्ग;
+		पक्ष NID_stateOrProvinceName:
 			field = &iname->province;
-			break;
-		case NID_organizationName:
+			भङ्ग;
+		पक्ष NID_organizationName:
 			field = &iname->organisation;
-			break;
-		case NID_organizationalUnitName:
+			भङ्ग;
+		पक्ष NID_organizationalUnitName:
 			field = &iname->organisation_unit;
-			break;
-		default :
-			field = NULL;
-			break;
+			भङ्ग;
+		स्वभाव :
+			field = रिक्त;
+			भङ्ग;
 		}
-		if (field != NULL) {
-			*field = strdup((const char *)value_str);
+		सचे (field != रिक्त) {
+			*field = strdup((ध्रुव वर्ण *)मानम्_str);
 			NSLOG(netsurf, DEEPDEBUG,
 			      "NID:%d value: %s", name_nid, *field);
-		} else {
+		} अञ्ञथा {
 			NSLOG(netsurf, DEEPDEBUG, "NID:%d", name_nid);
 		}
 	}
@@ -390,11 +390,11 @@ xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
 	 *  missing means the certificate is broken but this should be
 	 *  robust in the face of bad data
 	 */
-	if (iname->common_name == NULL) {
+	सचे (iname->common_name == रिक्त) {
 		iname->common_name = strdup("Unknown");
 	}
 
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
 
@@ -404,20 +404,20 @@ xname_to_info(X509_NAME *xname, struct ns_cert_name *iname)
  * \todo only uses html entity as separator because netsurfs line breaking
  *       fails otherwise.
  */
-static char *hexdup(const char *hex)
+स्थिर वर्ण *hexdup(ध्रुव वर्ण *hex)
 {
-	int hexlen;
-	char *dst;
-	char *out;
-	int cn = 0;
+	पूर्णाङ्क hexlen;
+	वर्ण *dst;
+	वर्ण *out;
+	पूर्णाङ्क cn = 0;
 
 	hexlen = strlen(hex);
 	/* allow space fox XXYY to XX&#58;YY&#58; */
 	dst = malloc(((hexlen * 7) + 6) / 2);
 
-	if (dst != NULL) {
-		for (out = dst; *hex != 0; hex++) {
-			if (cn == 2) {
+	सचे (dst != रिक्त) {
+		अत्थाय (out = dst; *hex != 0; hex++) {
+			सचे (cn == 2) {
 				cn = 0;
 				*out++ = '&';
 				*out++ = '#';
@@ -430,7 +430,7 @@ static char *hexdup(const char *hex)
 		}
 		*out = 0;
 	}
-	return dst;
+	पटिनिवत्त dst;
 }
 
 
@@ -440,20 +440,20 @@ static char *hexdup(const char *hex)
  * \todo only uses html entity as separator because netsurfs line breaking
  *       fails otherwise.
  */
-static char *bindup(unsigned char *bin, unsigned int binlen)
+स्थिर वर्ण *bindup(unsigned वर्ण *bin, unsigned पूर्णाङ्क binlen)
 {
-	char *dst;
-	char *out;
-	unsigned int idx;
-	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
+	वर्ण *dst;
+	वर्ण *out;
+	unsigned पूर्णाङ्क idx;
+	ध्रुव वर्ण hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
 			     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	/* allow space fox XY to expand to XX&#58;YY&#58; */
 	dst = malloc(binlen * 7);
 
-	if (dst != NULL) {
+	सचे (dst != रिक्त) {
 		out = dst;
-		for (idx = 0; idx < binlen; idx++) {
+		अत्थाय (idx = 0; idx < binlen; idx++) {
 			*out++ = hex[(bin[idx] & 0xf0) >> 4];
 			*out++ = hex[bin[idx] & 0xf];
 
@@ -466,7 +466,7 @@ static char *bindup(unsigned char *bin, unsigned int binlen)
 		out -= 5;
 		*out = 0;
 	}
-	return dst;
+	पटिनिवत्त dst;
 }
 
 
@@ -477,19 +477,19 @@ static char *bindup(unsigned char *bin, unsigned int binlen)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+स्थिर nserror
+rsa_to_info(EVP_PKEY *pkey, संरचना ns_cert_pkey *ikey)
 {
-	BIGNUM *n = NULL, *e = NULL;
-	char *tmp;
+	BIGNUM *n = रिक्त, *e = रिक्त;
+	वर्ण *tmp;
 
-	if (ns_EVP_PKEY_get_bn_param(pkey, "n", &n) != 1) {
-		return NSERROR_BAD_PARAMETER;
+	सचे (ns_EVP_PKEY_get_bn_param(pkey, "n", &n) != 1) {
+		पटिनिवत्त NSERROR_BAD_PARAMETER;
 	}
 
-	if (ns_EVP_PKEY_get_bn_param(pkey, "e", &e) != 1) {
+	सचे (ns_EVP_PKEY_get_bn_param(pkey, "e", &e) != 1) {
 		BN_free(n);
-		return NSERROR_BAD_PARAMETER;
+		पटिनिवत्त NSERROR_BAD_PARAMETER;
 	}
 
 	ikey->algor = strdup("RSA");
@@ -497,13 +497,13 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	ikey->size = EVP_PKEY_bits(pkey);
 
 	tmp = BN_bn2hex(n);
-	if (tmp != NULL) {
+	सचे (tmp != रिक्त) {
 		ikey->modulus = hexdup(tmp);
 		OPENSSL_free(tmp);
 	}
 
 	tmp = BN_bn2dec(e);
-	if (tmp != NULL) {
+	सचे (tmp != रिक्त) {
 		ikey->exponent = strdup(tmp);
 		OPENSSL_free(tmp);
 	}
@@ -511,7 +511,7 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	BN_free(e);
 	BN_free(n);
 
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
 
@@ -522,14 +522,14 @@ rsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-dsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+स्थिर nserror
+dsa_to_info(EVP_PKEY *pkey, संरचना ns_cert_pkey *ikey)
 {
 	ikey->algor = strdup("DSA");
 
 	ikey->size = EVP_PKEY_bits(pkey);
 
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
 
@@ -540,14 +540,14 @@ dsa_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-dh_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+स्थिर nserror
+dh_to_info(EVP_PKEY *pkey, संरचना ns_cert_pkey *ikey)
 {
 	ikey->algor = strdup("Diffie Hellman");
 
 	ikey->size = EVP_PKEY_bits(pkey);
 
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
 
@@ -558,8 +558,8 @@ dh_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+स्थिर nserror
+ec_to_info(EVP_PKEY *pkey, संरचना ns_cert_pkey *ikey)
 {
 	size_t len;
 
@@ -568,34 +568,34 @@ ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
 	ikey->size = EVP_PKEY_bits(pkey);
 
 	len = 0;
-	ns_EVP_PKEY_get_utf8_string_param(pkey, "group", NULL, 0, &len);
-	if (len != 0) {
+	ns_EVP_PKEY_get_utf8_string_param(pkey, "group", रिक्त, 0, &len);
+	सचे (len != 0) {
 		ikey->curve = malloc(len + 1);
-		if (ikey->curve != NULL) {
-			if (ns_EVP_PKEY_get_utf8_string_param(pkey, "group",
-					ikey->curve, len + 1, NULL) == 0) {
-				free(ikey->curve);
-				ikey->curve = NULL;
+		सचे (ikey->curve != रिक्त) {
+			सचे (ns_EVP_PKEY_get_utf8_string_param(pkey, "group",
+					ikey->curve, len + 1, रिक्त) == 0) {
+				मुक्त(ikey->curve);
+				ikey->curve = रिक्त;
 			}
 		}
 	}
 
 	len = 0;
 	ns_EVP_PKEY_get_octet_string_param(pkey, "encoded-pub-key",
-			NULL, 0, &len);
-	if (len != 0) {
-		unsigned char *point = malloc(len);
-		if (point != NULL) {
-			if (ns_EVP_PKEY_get_octet_string_param(pkey,
+			रिक्त, 0, &len);
+	सचे (len != 0) {
+		unsigned वर्ण *point = malloc(len);
+		सचे (point != रिक्त) {
+			सचे (ns_EVP_PKEY_get_octet_string_param(pkey,
 					"encoded-pub-key", point, len,
-					NULL) == 1) {
-				ikey->public = bindup(point, len);
+					रिक्त) == 1) {
+				ikey->सार्वजनिक = bindup(point, len);
 			}
-			free(point);
+			मुक्त(point);
 		}
 	}
 
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
 /**
@@ -605,71 +605,71 @@ ec_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
  * \param ikey The public key info structure to fill
  * \rerun NSERROR_OK on success else error code.
  */
-static nserror
-pkey_to_info(EVP_PKEY *pkey, struct ns_cert_pkey *ikey)
+स्थिर nserror
+pkey_to_info(EVP_PKEY *pkey, संरचना ns_cert_pkey *ikey)
 {
 	nserror res;
 
-	if (pkey == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	सचे (pkey == रिक्त) {
+		पटिनिवत्त NSERROR_BAD_PARAMETER;
 	}
 
-	switch (EVP_PKEY_base_id(pkey)) {
-	case EVP_PKEY_RSA:
+	विकल्प (EVP_PKEY_base_id(pkey)) {
+	पक्ष EVP_PKEY_RSA:
 		res = rsa_to_info(pkey, ikey);
-		break;
+		भङ्ग;
 
-	case EVP_PKEY_DSA:
+	पक्ष EVP_PKEY_DSA:
 		res = dsa_to_info(pkey, ikey);
-		break;
+		भङ्ग;
 
-	case EVP_PKEY_DH:
+	पक्ष EVP_PKEY_DH:
 		res = dh_to_info(pkey, ikey);
-		break;
+		भङ्ग;
 
-	case EVP_PKEY_EC:
+	पक्ष EVP_PKEY_EC:
 		res = ec_to_info(pkey, ikey);
-		break;
+		भङ्ग;
 
-	default:
+	स्वभाव:
 		res = NSERROR_NOT_IMPLEMENTED;
-		break;
+		भङ्ग;
 	}
 
 	EVP_PKEY_free(pkey);
 
-	return res;
+	पटिनिवत्त res;
 }
 
-static nserror san_to_info(X509 *cert, struct ns_cert_san **prev_next)
+स्थिर nserror san_to_info(X509 *cert, संरचना ns_cert_san **prev_next)
 {
-	int idx;
-	int san_names_nb = -1;
-	const GENERAL_NAME *current_name;
-	const unsigned char *dns_name;
-	struct ns_cert_san *isan;
+	पूर्णाङ्क idx;
+	पूर्णाङ्क san_names_nb = -1;
+	ध्रुव GENERAL_NAME *current_name;
+	ध्रुव unsigned वर्ण *dns_name;
+	संरचना ns_cert_san *isan;
 
-	STACK_OF(GENERAL_NAME) *san_names = NULL;
+	राशिः_OF(GENERAL_NAME) *san_names = रिक्त;
 
-	san_names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
-	if (san_names == NULL) {
-		return NSERROR_OK;
+	san_names = X509_get_ext_d2i(cert, NID_subject_alt_name, रिक्त, रिक्त);
+	सचे (san_names == रिक्त) {
+		पटिनिवत्त NSERROR_OK;
 	}
 
-	san_names_nb = sk_GENERAL_NAME_num(san_names);
+	san_names_nb = sk_GENERAL_NAME_अङ्कः(san_names);
 
 	/* Check each name within the extension */
-	for (idx = 0; idx < san_names_nb; idx++) {
-		current_name = sk_GENERAL_NAME_value(san_names, idx);
+	अत्थाय (idx = 0; idx < san_names_nb; idx++) {
+		current_name = sk_GENERAL_NAME_मानम्(san_names, idx);
 
-		if (current_name->type == GEN_DNS) {
+		सचे (current_name->type == GEN_DNS) {
 			/* extract DNS name into info structure */
 			dns_name = ns_ASN1_STRING_get0_data(current_name->d.dNSName);
 
-			isan = malloc(sizeof(struct ns_cert_san));
-			if (isan != NULL) {
-				isan->name = strdup((const char *)dns_name);
-				isan->next = NULL;
+			isan = malloc(परिमाण(संरचना ns_cert_san));
+			सचे (isan != रिक्त) {
+				isan->name = strdup((ध्रुव वर्ण *)dns_name);
+				isan->next = रिक्त;
 				*prev_next = isan;
 				prev_next = &isan->next;
 			}
@@ -681,33 +681,33 @@ static nserror san_to_info(X509 *cert, struct ns_cert_san **prev_next)
 	 * sk_GENERAL_NAME_pop_free(san_names, GENERAL_NAME_free);
 	 * So instead we do this open-coded loop which does the same:
 	 */
-	for (idx = 0; idx < san_names_nb; idx++) {
-		GENERAL_NAME *entry = sk_GENERAL_NAME_pop(san_names);
+	अत्थाय (idx = 0; idx < san_names_nb; idx++) {
+		GENERAL_NAME *entry = sk_GENERAL_NAME_निष्कासय(san_names);
 		GENERAL_NAME_free(entry);
 	}
 	sk_GENERAL_NAME_free(san_names);
 
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
-static nserror
-der_to_certinfo(const uint8_t *der,
+स्थिर nserror
+der_to_certinfo(ध्रुव uint8_t *der,
 		size_t der_length,
-		struct ns_cert_info *info)
+		संरचना ns_cert_info *info)
 {
 	BIO *mem;
 	BUF_MEM *buf;
-	const ASN1_INTEGER *asn1_num;
+	ध्रुव ASN1_INTEGER *asn1_अङ्कः;
 	BIGNUM *bignum;
 	X509 *cert;		/**< Pointer to certificate */
 
-	if (der == NULL) {
-		return NSERROR_OK;
+	सचे (der == रिक्त) {
+		पटिनिवत्त NSERROR_OK;
 	}
 
-	cert = d2i_X509(NULL, &der, der_length);
-	if (cert == NULL) {
-		return NSERROR_INVALID;
+	cert = d2i_X509(रिक्त, &der, der_length);
+	सचे (cert == रिक्त) {
+		पटिनिवत्त NSERROR_INVALID;
 	}
 
 	/*
@@ -722,10 +722,10 @@ der_to_certinfo(const uint8_t *der,
 	mem = BIO_new(BIO_s_mem());
 	ASN1_TIME_print(mem, X509_get_notBefore(cert));
 	BIO_get_mem_ptr(mem, &buf);
-	(void) BIO_set_close(mem, BIO_NOCLOSE);
+	(शून्य) BIO_set_close(mem, BIO_NOCLOSE);
 	BIO_free(mem);
 	info->not_before = calloc(1, buf->length + 1);
-	if (info->not_before != NULL) {
+	सचे (info->not_before != रिक्त) {
 		memcpy(info->not_before, buf->data, (unsigned)buf->length);
 	}
 	BUF_MEM_free(buf);
@@ -735,10 +735,10 @@ der_to_certinfo(const uint8_t *der,
 	ASN1_TIME_print(mem,
 			X509_get_notAfter(cert));
 	BIO_get_mem_ptr(mem, &buf);
-	(void) BIO_set_close(mem, BIO_NOCLOSE);
+	(शून्य) BIO_set_close(mem, BIO_NOCLOSE);
 	BIO_free(mem);
 	info->not_after = calloc(1, buf->length + 1);
-	if (info->not_after != NULL) {
+	सचे (info->not_after != रिक्त) {
 		memcpy(info->not_after, buf->data, (unsigned)buf->length);
 	}
 	BUF_MEM_free(buf);
@@ -747,53 +747,53 @@ der_to_certinfo(const uint8_t *der,
 	info->sig_type = X509_get_signature_type(cert);
 
 	/* signature algorithm */
-	int pkey_nid = ns_X509_get_signature_nid(cert);
-	if (pkey_nid != NID_undef) {
-		const char* sslbuf = OBJ_nid2ln(pkey_nid);
-		if (sslbuf != NULL) {
+	पूर्णाङ्क pkey_nid = ns_X509_get_signature_nid(cert);
+	सचे (pkey_nid != NID_undef) {
+		ध्रुव वर्ण* sslbuf = OBJ_nid2ln(pkey_nid);
+		सचे (sslbuf != रिक्त) {
 			info->sig_algor = strdup(sslbuf);
 		}
 	}
 
 	/* serial number */
-	asn1_num = X509_get_serialNumber(cert);
-	if (asn1_num != NULL) {
-		bignum = ASN1_INTEGER_to_BN(asn1_num, NULL);
-		if (bignum != NULL) {
-			char *tmp = BN_bn2hex(bignum);
-			if (tmp != NULL) {
+	asn1_अङ्कः = X509_get_serial_सङ्ख्या(cert);
+	सचे (asn1_अङ्कः != रिक्त) {
+		bignum = ASN1_INTEGER_to_BN(asn1_अङ्कः, रिक्त);
+		सचे (bignum != रिक्त) {
+			वर्ण *tmp = BN_bn2hex(bignum);
+			सचे (tmp != रिक्त) {
 				info->serialnum = hexdup(tmp);
 				OPENSSL_free(tmp);
 			}
 			BN_free(bignum);
-			bignum = NULL;
+			bignum = रिक्त;
 		}
 	}
 
 	/* fingerprints */
-	const EVP_MD *digest;
-	unsigned int dig_len;
-	unsigned char *buff;
-	int rc;
+	ध्रुव EVP_MD *digest;
+	unsigned पूर्णाङ्क dig_len;
+	unsigned वर्ण *buff;
+	पूर्णाङ्क rc;
 
 	digest = EVP_sha1();
 	buff = malloc(EVP_MD_size(digest));
-	if (buff != NULL) {
+	सचे (buff != रिक्त) {
 		rc = X509_digest(cert, digest, buff, &dig_len);
-		if ((rc == 1) && (dig_len == (unsigned int)EVP_MD_size(digest))) {
+		सचे ((rc == 1) && (dig_len == (unsigned पूर्णाङ्क)EVP_MD_size(digest))) {
 			info->sha1fingerprint = bindup(buff, dig_len);
 		}
-		free(buff);
+		मुक्त(buff);
 	}
 
 	digest = EVP_sha256();
 	buff = malloc(EVP_MD_size(digest));
-	if (buff != NULL) {
+	सचे (buff != रिक्त) {
 		rc = X509_digest(cert, digest, buff, &dig_len);
-		if ((rc == 1) && (dig_len == (unsigned int)EVP_MD_size(digest))) {
+		सचे ((rc == 1) && (dig_len == (unsigned पूर्णाङ्क)EVP_MD_size(digest))) {
 			info->sha256fingerprint = bindup(buff, dig_len);
 		}
-		free(buff);
+		मुक्त(buff);
 	}
 
 	/* subject alternative names */
@@ -806,138 +806,138 @@ der_to_certinfo(const uint8_t *der,
 	xname_to_info(X509_get_subject_name(cert), &info->subject_name);
 
 	/* public key */
-	pkey_to_info(X509_get_pubkey(cert), &info->public_key);
+	pkey_to_info(X509_get_pubkey(cert), &info->public_कुञ्चिका);
 
 	X509_free(cert);
 
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
 /* copy certificate data */
-static nserror
-convert_chain_to_cert_info(const struct cert_chain *chain,
-			   struct ns_cert_info **cert_info_out)
+स्थिर nserror
+convert_chain_to_cert_info(ध्रुव संरचना cert_chain *chain,
+			   संरचना ns_cert_info **cert_info_out)
 {
-	struct ns_cert_info *certs;
+	संरचना ns_cert_info *certs;
 	size_t depth;
 	nserror res;
 
-	certs = calloc(chain->depth, sizeof(struct ns_cert_info));
-	if (certs == NULL) {
-		return NSERROR_NOMEM;
+	certs = calloc(chain->depth, परिमाण(संरचना ns_cert_info));
+	सचे (certs == रिक्त) {
+		पटिनिवत्त NSERROR_NOMEM;
 	}
 
-	for (depth = 0; depth < chain->depth;depth++) {
+	अत्थाय (depth = 0; depth < chain->depth;depth++) {
 		res = der_to_certinfo(chain->certs[depth].der,
 				      chain->certs[depth].der_length,
 				      certs + depth);
-		if (res != NSERROR_OK) {
-			free(certs);
-			return res;
+		सचे (res != NSERROR_OK) {
+			मुक्त(certs);
+			पटिनिवत्त res;
 		}
 		certs[depth].err = chain->certs[depth].err;
 	}
 
 	*cert_info_out = certs;
-	return NSERROR_OK;
+	पटिनिवत्त NSERROR_OK;
 }
 
-#else
-static nserror
-convert_chain_to_cert_info(const struct cert_chain *chain,
-			   struct ns_cert_info **cert_info_out)
+#अञ्ञथा
+स्थिर nserror
+convert_chain_to_cert_info(ध्रुव संरचना cert_chain *chain,
+			   संरचना ns_cert_info **cert_info_out)
 {
-	return NSERROR_NOT_IMPLEMENTED;
+	पटिनिवत्त NSERROR_NOT_IMPLEMENTED;
 }
 #endif
 
 
-static nserror
-format_certificate_name(struct fetch_about_context *ctx,
-			struct ns_cert_name *cert_name)
+स्थिर nserror
+format_certificate_name(संरचना fetch_about_context *ctx,
+			संरचना ns_cert_name *cert_name)
 {
 	nserror res;
 	res = fetch_about_ssenddataf(ctx,
 			 "<tr><th>Common Name</th><td>%s</td></tr>\n",
 			 cert_name->common_name);
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
-	if (cert_name->organisation != NULL) {
+	सचे (cert_name->organisation != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Organisation</th><td>%s</td></tr>\n",
 				 cert_name->organisation);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (cert_name->organisation_unit != NULL) {
+	सचे (cert_name->organisation_unit != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Organisation Unit</th><td>%s</td></tr>\n",
 				 cert_name->organisation_unit);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (cert_name->locality != NULL) {
+	सचे (cert_name->locality != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Locality</th><td>%s</td></tr>\n",
 				 cert_name->locality);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (cert_name->province != NULL) {
+	सचे (cert_name->province != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Province</th><td>%s</td></tr>\n",
 				 cert_name->province);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (cert_name->country != NULL) {
+	सचे (cert_name->country != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Country</th><td>%s</td></tr>\n",
 				 cert_name->country);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	return res;
+	पटिनिवत्त res;
 }
 
 /**
  * output formatted certificate subject alternate names
  */
-static nserror
-format_certificate_san(struct fetch_about_context *ctx,
-			      struct ns_cert_san *san)
+स्थिर nserror
+format_certificate_san(संरचना fetch_about_context *ctx,
+			      संरचना ns_cert_san *san)
 {
 	nserror res;
 
-	if (san == NULL) {
-		return NSERROR_OK;
+	सचे (san == रिक्त) {
+		पटिनिवत्त NSERROR_OK;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Alternative Names</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
-	while (san != NULL) {
+	याव (san != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>DNS Name</th><td>%s</td></tr>\n",
 				 san->name);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 
 		san = san->next;
@@ -945,20 +945,20 @@ format_certificate_san(struct fetch_about_context *ctx,
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	पटिनिवत्त res;
 
 }
 
 
-static nserror
-format_certificate_public_key(struct fetch_about_context *ctx,
-			      struct ns_cert_pkey *public_key)
+स्थिर nserror
+format_certificate_public_कुञ्चिका(संरचना fetch_about_context *ctx,
+			      संरचना ns_cert_pkey *public_कुञ्चिका)
 {
 	nserror res;
 
-	if (public_key->algor == NULL) {
+	सचे (public_कुञ्चिका->algor == रिक्त) {
 		/* skip the table if no algorithm name */
-		return NSERROR_OK;
+		पटिनिवत्त NSERROR_OK;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -966,100 +966,100 @@ format_certificate_public_key(struct fetch_about_context *ctx,
 			 "<tr><th>Public Key</th><td><hr></td></tr>\n"
 			 "<tr><th>Algorithm</th><td>%s</td></tr>\n"
 			 "<tr><th>Key Size</th><td>%d</td></tr>\n",
-			 public_key->algor,
-			 public_key->size);
-	if (res != NSERROR_OK) {
-		return res;
+			 public_कुञ्चिका->algor,
+			 public_कुञ्चिका->size);
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 
-	if (public_key->exponent != NULL) {
+	सचे (public_कुञ्चिका->exponent != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Exponent</th><td>%s</td></tr>\n",
-				 public_key->exponent);
-		if (res != NSERROR_OK) {
-			return res;
+				 public_कुञ्चिका->exponent);
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (public_key->modulus != NULL) {
+	सचे (public_कुञ्चिका->modulus != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Modulus</th><td class=\"data\">%s</td></tr>\n",
-				 public_key->modulus);
-		if (res != NSERROR_OK) {
-			return res;
+				 public_कुञ्चिका->modulus);
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (public_key->curve != NULL) {
+	सचे (public_कुञ्चिका->curve != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Curve</th><td>%s</td></tr>\n",
-				 public_key->curve);
-		if (res != NSERROR_OK) {
-			return res;
+				 public_कुञ्चिका->curve);
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (public_key->public != NULL) {
+	सचे (public_कुञ्चिका->सार्वजनिक != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Public Value</th><td>%s</td></tr>\n",
-				 public_key->public);
-		if (res != NSERROR_OK) {
-			return res;
+				 public_कुञ्चिका->सार्वजनिक);
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	पटिनिवत्त res;
 }
 
-static nserror
-format_certificate_fingerprint(struct fetch_about_context *ctx,
-			      struct ns_cert_info *cert_info)
+स्थिर nserror
+format_certificate_fingerprint(संरचना fetch_about_context *ctx,
+			      संरचना ns_cert_info *cert_info)
 {
 	nserror res;
 
-	if ((cert_info->sha1fingerprint == NULL) &&
-	    (cert_info->sha256fingerprint == NULL))  {
+	सचे ((cert_info->sha1fingerprint == रिक्त) &&
+	    (cert_info->sha256fingerprint == रिक्त))  {
 		/* skip the table if no fingerprints */
-		return NSERROR_OK;
+		पटिनिवत्त NSERROR_OK;
 	}
 
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Fingerprints</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
-	if (cert_info->sha256fingerprint != NULL) {
+	सचे (cert_info->sha256fingerprint != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>SHA-256</th><td class=\"data\">%s</td></tr>\n",
 				 cert_info->sha256fingerprint);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (cert_info->sha1fingerprint != NULL) {
+	सचे (cert_info->sha1fingerprint != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>SHA-1</th><td class=\"data\">%s</td></tr>\n",
 				 cert_info->sha1fingerprint);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>\n");
 
-	return res;
+	पटिनिवत्त res;
 }
 
-static nserror
-format_certificate(struct fetch_about_context *ctx,
-		   struct ns_cert_info *cert_info,
+स्थिर nserror
+format_certificate(संरचना fetch_about_context *ctx,
+		   संरचना ns_cert_info *cert_info,
 		   size_t depth)
 {
 	nserror res;
@@ -1067,11 +1067,11 @@ format_certificate(struct fetch_about_context *ctx,
 	res = fetch_about_ssenddataf(ctx,
 			 "<h2 id=\"%"PRIsizet"\" class=\"ns-border\">%s</h2>\n",
 			 depth, cert_info->subject_name.common_name);
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
-	if (cert_info->err != SSL_CERT_ERR_OK) {
+	सचे (cert_info->err != SSL_CERT_ERR_OK) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<table class=\"info\">\n"
 				 "<tr class=\"ns-even-fg-bad\">"
@@ -1080,45 +1080,45 @@ format_certificate(struct fetch_about_context *ctx,
 				 "</tr>"
 				 "</table>\n",
 				 messages_get_sslcode(cert_info->err));
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Issued To</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = format_certificate_name(ctx, &cert_info->subject_name);
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "</table>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Issued By</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = format_certificate_name(ctx, &cert_info->issuer_name);
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "</table>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -1129,43 +1129,43 @@ format_certificate(struct fetch_about_context *ctx,
 			 "</table>\n",
 			 cert_info->not_before,
 			 cert_info->not_after);
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = format_certificate_san(ctx, cert_info->san);
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
-	res = format_certificate_public_key(ctx, &cert_info->public_key);
-	if (res != NSERROR_OK) {
-		return res;
+	res = format_certificate_public_कुञ्चिका(ctx, &cert_info->public_कुञ्चिका);
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<table class=\"info\">\n"
 			 "<tr><th>Miscellaneous</th><td><hr></td></tr>\n");
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
-	if (cert_info->serialnum != NULL) {
+	सचे (cert_info->serialnum != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Serial Number</th><td>%s</td></tr>\n",
 				 cert_info->serialnum);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
-	if (cert_info->sig_algor != NULL) {
+	सचे (cert_info->sig_algor != रिक्त) {
 		res = fetch_about_ssenddataf(ctx,
 				 "<tr><th>Signature Algorithm</th>"
 				 "<td>%s</td></tr>\n",
 				 cert_info->sig_algor);
-		if (res != NSERROR_OK) {
-			return res;
+		सचे (res != NSERROR_OK) {
+			पटिनिवत्त res;
 		}
 	}
 
@@ -1173,16 +1173,16 @@ format_certificate(struct fetch_about_context *ctx,
 			 "<tr><th>Version</th><td>%ld</td></tr>\n"
 			 "</table>\n",
 			 cert_info->version);
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
 	res = format_certificate_fingerprint(ctx, cert_info);
-	if (res != NSERROR_OK) {
-		return res;
+	सचे (res != NSERROR_OK) {
+		पटिनिवत्त res;
 	}
 
-	return res;
+	पटिनिवत्त res;
 }
 
 /**
@@ -1193,18 +1193,18 @@ format_certificate(struct fetch_about_context *ctx,
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
+bool fetch_about_certificate_handler(संरचना fetch_about_context *ctx)
 {
-	int code = 200;
+	पूर्णाङ्क code = 200;
 	nserror res;
-	struct cert_chain *chain = NULL;
+	संरचना cert_chain *chain = रिक्त;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html"))
-		goto fetch_about_certificate_handler_aborted;
+	सचे (fetch_about_send_header(ctx, "Content-Type: text/html"))
+		गच्छ fetch_about_certificate_handler_aborted;
 
 	/* page head */
 	res = fetch_about_ssenddataf(ctx,
@@ -1215,61 +1215,61 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 			"</head>\n"
 			"<body id=\"certificate\" class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class=\"ns-border\">Certificate</h1>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_certificate_handler_aborted;
+	सचे (res != NSERROR_OK) {
+		गच्छ fetch_about_certificate_handler_aborted;
 	}
 
 	res = cert_chain_from_query(fetch_about_get_url(ctx), &chain);
-	if (res != NSERROR_OK) {
+	सचे (res != NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<p>Could not process that</p>\n");
-		if (res != NSERROR_OK) {
-			goto fetch_about_certificate_handler_aborted;
+		सचे (res != NSERROR_OK) {
+			गच्छ fetch_about_certificate_handler_aborted;
 		}
-	} else {
-		struct ns_cert_info *cert_info;
+	} अञ्ञथा {
+		संरचना ns_cert_info *cert_info;
 		res = convert_chain_to_cert_info(chain, &cert_info);
-		if (res == NSERROR_OK) {
+		सचे (res == NSERROR_OK) {
 			size_t depth;
 			res = fetch_about_ssenddataf(ctx, "<ul>\n");
-			if (res != NSERROR_OK) {
+			सचे (res != NSERROR_OK) {
 				free_ns_cert_info(cert_info);
-				goto fetch_about_certificate_handler_aborted;
+				गच्छ fetch_about_certificate_handler_aborted;
 			}
 
-			for (depth = 0; depth < chain->depth; depth++) {
+			अत्थाय (depth = 0; depth < chain->depth; depth++) {
 				res = fetch_about_ssenddataf(ctx, "<li><a href=\"#%"PRIsizet"\">%s</a></li>\n",
 						depth, (cert_info + depth)
 							->subject_name
 								.common_name);
-				if (res != NSERROR_OK) {
+				सचे (res != NSERROR_OK) {
 					free_ns_cert_info(cert_info);
-					goto fetch_about_certificate_handler_aborted;
+					गच्छ fetch_about_certificate_handler_aborted;
 				}
 
 			}
 
 			res = fetch_about_ssenddataf(ctx, "</ul>\n");
-			if (res != NSERROR_OK) {
+			सचे (res != NSERROR_OK) {
 				free_ns_cert_info(cert_info);
-				goto fetch_about_certificate_handler_aborted;
+				गच्छ fetch_about_certificate_handler_aborted;
 			}
 
-			for (depth = 0; depth < chain->depth; depth++) {
+			अत्थाय (depth = 0; depth < chain->depth; depth++) {
 				res = format_certificate(ctx, cert_info + depth,
 						depth);
-				if (res != NSERROR_OK) {
+				सचे (res != NSERROR_OK) {
 					free_ns_cert_info(cert_info);
-					goto fetch_about_certificate_handler_aborted;
+					गच्छ fetch_about_certificate_handler_aborted;
 				}
 
 			}
 			free_ns_cert_info(cert_info);
 
-		} else {
+		} अञ्ञथा {
 			res = fetch_about_ssenddataf(ctx,
 					 "<p>Invalid certificate data</p>\n");
-			if (res != NSERROR_OK) {
-				goto fetch_about_certificate_handler_aborted;
+			सचे (res != NSERROR_OK) {
+				गच्छ fetch_about_certificate_handler_aborted;
 			}
 		}
 	}
@@ -1277,17 +1277,17 @@ bool fetch_about_certificate_handler(struct fetch_about_context *ctx)
 
 	/* page footer */
 	res = fetch_about_ssenddataf(ctx, "</body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_certificate_handler_aborted;
+	सचे (res != NSERROR_OK) {
+		गच्छ fetch_about_certificate_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
 	cert_chain_free(chain);
 
-	return true;
+	पटिनिवत्त true;
 
 fetch_about_certificate_handler_aborted:
 	cert_chain_free(chain);
-	return false;
+	पटिनिवत्त false;
 }

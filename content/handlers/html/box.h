@@ -27,32 +27,32 @@
 #ifndef NETSURF_HTML_BOX_H
 #define NETSURF_HTML_BOX_H
 
-#include <limits.h>
-#include <stdbool.h>
-#include <libcss/libcss.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <libcss/libcss.h>
 
-#include "content/handlers/css/utils.h"
+#अन्तर्भाव "content/handlers/css/utils.h"
 
-struct content;
-struct box;
-struct browser_window;
-struct html_content;
-struct nsurl;
-struct dom_node;
-struct dom_string;
-struct rect;
+संरचना content;
+संरचना box;
+संरचना browser_window;
+संरचना html_content;
+संरचना nsurl;
+संरचना dom_ग्रन्थिः;
+संरचना dom_string;
+संरचना rect;
 
 #define UNKNOWN_WIDTH INT_MAX
 #define UNKNOWN_MAX_WIDTH INT_MAX
 
 
-typedef void (*box_construct_complete_cb)(struct html_content *c, bool success);
+प्रकारनिर्देश शून्य (*box_construct_complete_cb)(संरचना html_content *c, bool success);
 
 
 /**
  * Type of a struct box.
  */
-typedef enum {
+प्रकारनिर्देश गणना {
 	BOX_BLOCK,
 	BOX_INLINE_CONTAINER,
 	BOX_INLINE,
@@ -60,8 +60,8 @@ typedef enum {
 	BOX_TABLE_ROW,
 	BOX_TABLE_CELL,
 	BOX_TABLE_ROW_GROUP,
-	BOX_FLOAT_LEFT,
-	BOX_FLOAT_RIGHT,
+	BOX_FLOAT_वामः,
+	BOX_FLOAT_दक्षिणः,
 	BOX_INLINE_BLOCK,
 	BOX_BR,
 	BOX_TEXT,
@@ -75,8 +75,8 @@ typedef enum {
 /**
  * Flags for a struct box.
  */
-typedef enum {
-	NEW_LINE    = 1 << 0,	/* first inline on a new line */
+प्रकारनिर्देश गणना {
+	NEW_पङ्क्तिः    = 1 << 0,	/* first inline on a new line */
 	STYLE_OWNED = 1 << 1,	/* style is owned by this box */
 	PRINTED     = 1 << 2,	/* box has already been printed */
 	PRE_STRIP   = 1 << 3,	/* PRE tag needing leading newline stripped */
@@ -95,27 +95,27 @@ typedef enum {
 /**
  * Sides of a box
  */
-enum box_side { TOP, RIGHT, BOTTOM, LEFT };
+गणना box_side { शिखरम्_2, दक्षिणः_2, BOTTOM, वामः_2 };
 
 
 /**
  * Container for box border details
  */
-struct box_border {
-	enum css_border_style_e style;	/**< border-style */
+संरचना box_border {
+	गणना css_border_style_e style;	/**< border-style */
 	css_color c;			/**< border-color value */
-	int width;			/**< border-width (pixels) */
+	पूर्णाङ्क width;			/**< border-width (pixels) */
 };
 
 
 /**
  * Table column data.
  */
-struct column {
+संरचना column {
 	/**
 	 * Type of column.
 	 */
-	enum {
+	गणना {
 	      COLUMN_WIDTH_UNKNOWN,
 	      COLUMN_WIDTH_FIXED,
 	      COLUMN_WIDTH_AUTO,
@@ -127,17 +127,17 @@ struct column {
 	 * Preferred width of column. Pixels for FIXED, percentage for
 	 *  PERCENT, relative units for RELATIVE, unused for AUTO.
 	 */
-	int width;
+	पूर्णाङ्क width;
 
 	/**
 	 * Minimum width of content.
 	 */
-	int min;
+	पूर्णाङ्क min;
 
 	/**
 	 * Maximum width of content.
 	 */
-	int max;
+	पूर्णाङ्क max;
 
 	/**
 	 * Whether all of column's cells are css positioned.
@@ -149,32 +149,32 @@ struct column {
 /**
  * Linked list of object element parameters.
  */
-struct object_param {
-	char *name;
-	char *value;
-	char *type;
-	char *valuetype;
-	struct object_param *next;
+संरचना object_param {
+	वर्ण *name;
+	वर्ण *मानम्;
+	वर्ण *type;
+	वर्ण *valuetype;
+	संरचना object_param *next;
 };
 
 
 /**
  * Parameters for object element and similar elements.
  */
-struct object_params {
-	struct nsurl *data;
-	char *type;
-	char *codetype;
-	struct nsurl *codebase;
-	struct nsurl *classid;
-	struct object_param *params;
+संरचना object_params {
+	संरचना nsurl *data;
+	वर्ण *type;
+	वर्ण *codetype;
+	संरचना nsurl *codebase;
+	संरचना nsurl *classid;
+	संरचना object_param *params;
 };
 
 
 /**
  * Node in box tree. All dimensions are in pixels.
  */
-struct box {
+संरचना box {
 	/**
 	 * Type of box.
 	 */
@@ -188,7 +188,7 @@ struct box {
 	/**
 	 * DOM node that generated this box or NULL
 	 */
-	struct dom_node *node;
+	संरचना dom_ग्रन्थिः *ग्रन्थिः;
 
 	/**
 	 * Computed styles for elements and their pseudo elements.
@@ -213,33 +213,33 @@ struct box {
 	/**
 	 * Next sibling box, or NULL.
 	 */
-	struct box *next;
+	संरचना box *next;
 
 	/**
 	 * Previous sibling box, or NULL.
 	 */
-	struct box *prev;
+	संरचना box *prev;
 
 	/**
 	 * First child box, or NULL.
 	 */
-	struct box *children;
+	संरचना box *children;
 
 	/**
 	 * Last child box, or NULL.
 	 */
-	struct box *last;
+	संरचना box *last;
 
 	/**
 	 * Parent box, or NULL.
 	 */
-	struct box *parent;
+	संरचना box *parent;
 
 	/**
 	 * INLINE_END box corresponding to this INLINE box, or INLINE
 	 * box corresponding to this INLINE_END box.
 	 */
-	struct box *inline_end;
+	संरचना box *inline_end;
 
 
 	/**
@@ -248,28 +248,28 @@ struct box {
 	 * area for floats, and also in the standard tree given by
 	 * children, next, prev, etc.
 	 */
-	struct box *float_children;
+	संरचना box *float_children;
 
 	/**
 	 * Next sibling float box.
 	 */
-	struct box *next_float;
+	संरचना box *next_float;
 
 	/**
 	 * If box is a float, points to box's containing block
 	 */
-	struct box *float_container;
+	संरचना box *float_container;
 
 	/**
 	 * Level below which subsequent floats must be cleared.  This
 	 * is used only for boxes with float_children
 	 */
-	int clear_level;
+	पूर्णाङ्क clear_level;
 
 	/**
 	 * Level below which floats have been placed.
 	 */
-	int cached_place_below_level;
+	पूर्णाङ्क cached_place_below_level;
 
 
 	/**
@@ -277,20 +277,20 @@ struct box {
 	 * relative to ancestor that contains this box in
 	 * float_children for FLOAT_.
 	 */
-	int x;
+	पूर्णाङ्क x;
 	/**
 	 * Coordinate of top padding edge, relative as for x.
 	 */
-	int y;
+	पूर्णाङ्क y;
 
 	/**
 	 * Width of content box (excluding padding etc.).
 	 */
-	int width;
+	पूर्णाङ्क width;
 	/**
 	 * Height of content box (excluding padding etc.).
 	 */
-	int height;
+	पूर्णाङ्क height;
 
 	/* These four variables determine the maximum extent of a box's
 	 * descendants. They are relative to the x,y coordinates of the box.
@@ -306,53 +306,53 @@ struct box {
 	 *		scrollable area.
 	 * auto		As "scroll".
 	 */
-	int descendant_x0;  /**< left edge of descendants */
-	int descendant_y0;  /**< top edge of descendants */
-	int descendant_x1;  /**< right edge of descendants */
-	int descendant_y1;  /**< bottom edge of descendants */
+	पूर्णाङ्क descendant_x0;  /**< left edge of descendants */
+	पूर्णाङ्क descendant_y0;  /**< top edge of descendants */
+	पूर्णाङ्क descendant_x1;  /**< right edge of descendants */
+	पूर्णाङ्क descendant_y1;  /**< bottom edge of descendants */
 
 	/**
 	 * Margin: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	int margin[4];
+	पूर्णाङ्क margin[4];
 
 	/**
 	 * Padding: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	int padding[4];
+	पूर्णाङ्क padding[4];
 
 	/**
 	 * Border: TOP, RIGHT, BOTTOM, LEFT.
 	 */
-	struct box_border border[4];
+	संरचना box_border border[4];
 
 	/**
 	 * Horizontal scroll.
 	 */
-	struct scrollbar *scroll_x;
+	संरचना scrollbar *scroll_x;
 
 	/**
 	 * Vertical scroll.
 	 */
-	struct scrollbar *scroll_y;
+	संरचना scrollbar *scroll_y;
 
 	/**
 	 * Width of box taking all line breaks (including margins
 	 * etc). Must be non-negative.
 	 */
-	int min_width;
+	पूर्णाङ्क min_width;
 
 	/**
 	 * Width that would be taken with no line breaks. Must be
 	 * non-negative.
 	 */
-	int max_width;
+	पूर्णाङ्क max_width;
 
 
 	/**
 	 * Text, or NULL if none. Unterminated.
 	 */
-	char *text;
+	वर्ण *text;
 
 	/**
 	 * Length of text.
@@ -362,7 +362,7 @@ struct box {
 	/**
 	 * Width of space after current text (depends on font and size).
 	 */
-	int space;
+	पूर्णाङ्क space;
 
 	/**
 	 * Byte offset within a textual representation of this content.
@@ -373,83 +373,83 @@ struct box {
 	/**
 	 * Link, or NULL.
 	 */
-	struct nsurl *href;
+	संरचना nsurl *href;
 
 	/**
 	 * Link target, or NULL.
 	 */
-	const char *target;
+	ध्रुव वर्ण *target;
 
 	/**
 	 * Title, or NULL.
 	 */
-	const char *title;
+	ध्रुव वर्ण *title;
 
 
 	/**
 	 * Number of columns for TABLE / TABLE_CELL.
 	 */
-	unsigned int columns;
+	unsigned पूर्णाङ्क columns;
 
 	/**
 	 * Number of rows for TABLE only.
 	 */
-	unsigned int rows;
+	unsigned पूर्णाङ्क rows;
 
 	/**
 	 * Start column for TABLE_CELL only.
 	 */
-	unsigned int start_column;
+	unsigned पूर्णाङ्क start_column;
 
 	/**
 	 * Array of table column data for TABLE only.
 	 */
-	struct column *col;
+	संरचना column *col;
 
 	/**
 	 * List item value.
 	 */
-	int list_value;
+	पूर्णाङ्क list_मानम्;
 
 	/**
 	 * List marker box if this is a list-item, or NULL.
 	 */
-	struct box *list_marker;
+	संरचना box *list_marker;
 
 
 	/**
 	 * Form control data, or NULL if not a form control.
 	 */
-	struct form_control* gadget;
+	संरचना form_control* gadget;
 
 
 	/**
 	 * (Image)map to use with this object, or NULL if none
 	 */
-	char *usemap;
+	वर्ण *usemap;
 
 
 	/**
 	 * Background image for this box, or NULL if none
 	 */
-	struct hlcache_handle *background;
+	संरचना hlcache_handle *background;
 
 
 	/**
 	 * Object in this box (usually an image), or NULL if none.
 	 */
-	struct hlcache_handle* object;
+	संरचना hlcache_handle* object;
 
 	/**
 	 * Parameters for the object, or NULL.
 	 */
-	struct object_params *object_params;
+	संरचना object_params *object_params;
 
 
 	/**
 	 * Iframe's browser_window, or NULL if none
 	 */
-	struct browser_window *iframe;
+	संरचना browser_window *iframe;
 
 };
 
