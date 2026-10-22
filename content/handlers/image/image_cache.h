@@ -40,15 +40,15 @@
 #include "utils/errors.h"
 #include "netsurf/content_type.h"
 
-struct content;
-struct content_redraw_data;
-struct redraw_context;
+sa_nracanaa content;
+sa_nracanaa content_redraw_data;
+sa_nracanaa redraw_context;
 
-typedef struct bitmap * (image_cache_convert_fn) (struct content *content);
+typedef sa_nracanaa bitmap * (image_cache_convert_fn) (sa_nracanaa content *content);
 
-struct image_cache_parameters {
+sa_nracanaa image_cache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	unsigned ကိန်းပြည့် bg_clean_time;
 
 	/** The target upper bound for the image cache size */
 	size_t limit;
@@ -64,7 +64,7 @@ struct image_cache_parameters {
  *
  * @param image_cache_parameters The control parameters for the image cache
  */
-nserror image_cache_init(const struct image_cache_parameters *image_cache_parameters);
+nserror image_cache_init(const sa_nracanaa image_cache_parameters *image_cache_parameters);
 nserror image_cache_fini(void);
 
 /** adds an image content to be cached. 
@@ -74,18 +74,18 @@ nserror image_cache_fini(void);
  * @param convert A function pointer to convert the content into a bitmap or NULL.
  * @return A netsurf error code.
  */
-nserror image_cache_add(struct content *content, 
-			struct bitmap *bitmap, 
+nserror image_cache_add(sa_nracanaa content *content, 
+			sa_nracanaa bitmap *bitmap, 
 			image_cache_convert_fn *convert);
 
-nserror image_cache_remove(struct content *content);
+nserror image_cache_remove(sa_nracanaa content *content);
 
 
 /** Obtain a bitmap from a content converting from source if neccessary. */
-struct bitmap *image_cache_get_bitmap(const struct content *c);
+sa_nracanaa bitmap *image_cache_get_bitmap(const sa_nracanaa content *c);
 
 /** Obtain a bitmap from a content with no conversion */
-struct bitmap *image_cache_find_bitmap(struct content *c);
+sa_nracanaa bitmap *image_cache_find_bitmap(sa_nracanaa content *c);
 
 /** Decide if a content should be speculatively converted.
  *
@@ -97,7 +97,7 @@ struct bitmap *image_cache_find_bitmap(struct content *c);
  * @param c The content to be considered.
  * @return true if a speculative conversion is desired false otherwise.
  */
-bool image_cache_speculate(struct content *c);
+bool image_cache_speculate(sa_nracanaa content *c);
 
 /**
  * Fill a buffer with information about a cache entry using a format.
@@ -116,8 +116,8 @@ bool image_cache_speculate(struct content *c);
  * \param fmt     The format string.
  * \return The number of bytes written to \a string or -1 on error
  */
-int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
-			 const char *fmt);
+ကိန်းပြည့် image_cache_snentryf(var_na *string, size_t size, unsigned ကိန်းပြည့် entryn,
+			 const var_na *fmt);
 
 /**
  * Fill a buffer with information about the image cache using a format.
@@ -167,7 +167,7 @@ int image_cache_snentryf(char *string, size_t size, unsigned int entryn,
  * \return The number of bytes written to \a string or -1 on error
  */
 
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
+ကိန်းပြည့် image_cache_snsummaryf(var_na *string, size_t size, const var_na *fmt);
 
 /********* Image content handler generic cache callbacks ************/
 
@@ -178,16 +178,16 @@ int image_cache_snsummaryf(char *string, size_t size, const char *fmt);
  * callback. Performs all neccissary cache lookups and conversions and
  * calls the bitmap plot function in the redraw context.
  */
-bool image_cache_redraw(struct content *c, 
-			struct content_redraw_data *data,
-			const struct rect *clip, 
-			const struct redraw_context *ctx);
+bool image_cache_redraw(sa_nracanaa content *c, 
+			sa_nracanaa content_redraw_data *data,
+			const sa_nracanaa rect *clip, 
+			const sa_nracanaa redraw_context *ctx);
 
-void image_cache_destroy(struct content *c);
+void image_cache_destroy(sa_nracanaa content *c);
 
-void *image_cache_get_internal(const struct content *c, void *context);
+void *image_cache_get_internal(const sa_nracanaa content *c, void *context);
 
-bool image_cache_is_opaque(struct content *c);
+bool image_cache_is_opaque(sa_nracanaa content *c);
 
 content_type image_cache_content_type(void);
 

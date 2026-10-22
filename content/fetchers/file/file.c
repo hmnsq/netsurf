@@ -66,60 +66,60 @@
 #define FETCH_FILE_MAX_BUF_SIZE (1024 * 1024)
 
 /** Context for a fetch */
-struct fetch_file_context {
-	struct fetch_file_context *r_next, *r_prev;
+sa_nracanaa fetch_file_context {
+	sa_nracanaa fetch_file_context *r_next, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	sa_nracanaa fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
-	char *path; /**< The actual path to be used with open() */
+	var_na *path; /**< The actual path to be used with open() */
 
 	time_t file_etag; /**< Request etag for file (previous st.m_time) */
 };
 
-static struct fetch_file_context *ring = NULL;
+static sa_nracanaa fetch_file_context *ring = NULL;
 
 /** issue fetch callbacks with locking */
-static inline bool fetch_file_send_callback(const fetch_msg *msg,
-		struct fetch_file_context *ctx)
+static anta_hstha bool fetch_file_send_callback(const fetch_msg *msg,
+		sa_nracanaa fetch_file_context *ctx)
 {
 	ctx->locked = true;
 	fetch_send_callback(msg, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	ပြန်ပေး ctx->aborted;
 }
 
-static bool fetch_file_send_header(struct fetch_file_context *ctx,
-		const char *fmt, ...)
+static bool fetch_file_send_header(sa_nracanaa fetch_file_context *ctx,
+		const var_na *fmt, ...)
 {
 	fetch_msg msg;
-	char header[64];
+	var_na header[64];
 	va_list ap;
-	int len;
+	ကိန်းပြည့် len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof header, fmt, ap);
+	len = vsnprintf(header, parimaa_na header, fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return false;
+	အကယ်၍ (len >= (ကိန်းပြည့်)parimaa_na(header) || len < 0) {
+		ပြန်ပေး false;
 	}
 
 	msg.type = FETCH_HEADER;
 	msg.data.header_or_data.buf = (const uint8_t *) header;
 	msg.data.header_or_data.len = len;
 
-	return fetch_file_send_callback(&msg, ctx);
+	ပြန်ပေး fetch_file_send_callback(&msg, ctx);
 }
 
 /** callback to initialise the file fetcher. */
 static bool fetch_file_initialise(lwc_string *scheme)
 {
-	return true;
+	ပြန်ပေး true;
 }
 
 /** callback to initialise the file fetcher. */
@@ -129,53 +129,53 @@ static void fetch_file_finalise(lwc_string *scheme)
 
 static bool fetch_file_can_fetch(const nsurl *url)
 {
-	return true;
+	ပြန်ပေး true;
 }
 
 /** callback to set up a file fetch context. */
 static void *
-fetch_file_setup(struct fetch *fetchh,
+fetch_file_setup(sa_nracanaa fetch *fetchh,
 		 nsurl *url,
 		 bool only_2xx,
 		 bool downgrade_tls,
-		 const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+		 const var_na *post_urlenc,
+		 const sa_nracanaa fetch_multipart_data *post_multipart,
+		 const var_na **headers)
 {
-	struct fetch_file_context *ctx;
-	int i;
+	sa_nracanaa fetch_file_context *ctx;
+	ကိန်းပြည့် i;
 	nserror ret;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = calloc(1, parimaa_na(*ctx));
+	အကယ်၍ (ctx == NULL)
+		ပြန်ပေး NULL;
 
 	ret = guit->file->nsurl_to_path(url, &ctx->path);
-	if (ret != NSERROR_OK) {
+	အကယ်၍ (ret != NSERROR_OK) {
 		free(ctx);
-		return NULL;
+		ပြန်ပေး NULL;
 	}
 
 	ctx->url = nsurl_ref(url);
 
 	/* Scan request headers looking for If-None-Match */
-	for (i = 0; headers[i] != NULL; i++) {
-		if (strncasecmp(headers[i], "If-None-Match:",
+	အတွက် (i = 0; headers[i] != NULL; i++) {
+		အကယ်၍ (strncasecmp(headers[i], "If-None-Match:",
 				SLEN("If-None-Match:")) != 0) {
 			continue;
 		}
 
 		/* If-None-Match: "12345678" */
-		const char *d = headers[i] + SLEN("If-None-Match:");
+		const var_na *d = headers[i] + SLEN("If-None-Match:");
 
 		/* Scan to first digit, if any */
-		while (*d != '\0' && (*d < '0' || '9' < *d))
+		နေစဉ် (*d != '\0' && (*d < '0' || '9' < *d))
 			d++;
 
 		/* Convert to time_t */
-		if (*d != '\0') {
+		အကယ်၍ (*d != '\0') {
 			ret = nsc_snptimet(d, strlen(d), &ctx->file_etag);
-			if (ret != NSERROR_OK) {
+			အကယ်၍ (ret != NSERROR_OK) {
 				NSLOG(fetch, WARNING,
 						"Bad If-None-Match value");
 			}
@@ -186,13 +186,13 @@ fetch_file_setup(struct fetch *fetchh,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	ပြန်ပေး ctx;
 }
 
 /** callback to free a file fetch */
 static void fetch_file_free(void *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	sa_nracanaa fetch_file_context *c = ctx;
 	nsurl_unref(c->url);
 	free(c->path);
 	free(ctx);
@@ -201,13 +201,13 @@ static void fetch_file_free(void *ctx)
 /** callback to start a file fetch */
 static bool fetch_file_start(void *ctx)
 {
-	return true;
+	ပြန်ပေး true;
 }
 
 /** callback to abort a file fetch */
 static void fetch_file_abort(void *ctx)
 {
-	struct fetch_file_context *c = ctx;
+	sa_nracanaa fetch_file_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -216,40 +216,40 @@ static void fetch_file_abort(void *ctx)
 	c->aborted = true;
 }
 
-static int fetch_file_errno_to_http_code(int error_no)
+static ကိန်းပြည့် fetch_file_errno_to_http_code(ကိန်းပြည့် error_no)
 {
 	switch (error_no) {
-	case ENAMETOOLONG:
-		return 400;
-	case EACCES:
-		return 403;
-	case ENOENT:
-		return 404;
+	pak_sa ENAMETOOLONG:
+		ပြန်ပေး 400;
+	pak_sa EACCES:
+		ပြန်ပေး 403;
+	pak_sa ENOENT:
+		ပြန်ပေး 404;
 	default:
-		break;
+		bha_nga;
 	}
 
-	return 500;
+	ပြန်ပေး 500;
 }
 
-static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
+static void fetch_file_process_error(sa_nracanaa fetch_file_context *ctx, ကိန်းပြည့် code)
 {
 	fetch_msg msg;
-	char buffer[1024];
-	const char *title;
-	char key[8];
+	var_na buffer[1024];
+	const var_na *title;
+	var_na key[8];
 
 	/* content is going to return error code */
 	fetch_set_http_code(ctx->fetchh, code);
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+	အကယ်၍ (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_file_process_error_aborted;
 
-	snprintf(key, sizeof key, "HTTP%03d", code);
+	snprintf(key, parimaa_na key, "HTTP%03d", code);
 	title = messages_get(key);
 
-	snprintf(buffer, sizeof buffer,
+	snprintf(buffer, parimaa_na buffer,
 		 "<html><head>"
 		 "<title>%s</title>"
 		 "<link rel=\"stylesheet\" type=\"text/css\" "
@@ -267,56 +267,56 @@ static void fetch_file_process_error(struct fetch_file_context *ctx, int code)
 	msg.type = FETCH_DATA;
 	msg.data.header_or_data.buf = (const uint8_t *) buffer;
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	အကယ်၍ (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_error_aborted;
 
 	msg.type = FETCH_FINISHED;
 	fetch_file_send_callback(&msg, ctx);
 
 fetch_file_process_error_aborted:
-	return;
+	ပြန်ပေး;
 }
 
 
 /** Process object as a regular file */
-static void fetch_file_process_plain(struct fetch_file_context *ctx,
-				     struct stat *fdstat)
+static void fetch_file_process_plain(sa_nracanaa fetch_file_context *ctx,
+				     sa_nracanaa stat *fdstat)
 {
 #ifdef HAVE_MMAP
 	fetch_msg msg;
-	char *buf = NULL;
+	var_na *buf = NULL;
 	size_t buf_size;
 
-	int fd; /**< The file descriptor of the object */
+	ကိန်းပြည့် fd; /**< The file descriptor of the object */
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+	အကယ်၍ (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
 		msg.type = FETCH_NOTMODIFIED;
 		fetch_file_send_callback(&msg, ctx);
-		return;
+		ပြန်ပေး;
 	}
 
 	fd = open(ctx->path, O_RDONLY);
-	if (fd < 0) {
+	အကယ်၍ (fd < 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		ပြန်ပေး;
 	}
 
 	/* set buffer size */
 	buf_size = fdstat->st_size;
 
 	/* allocate the buffer storage */
-	if (buf_size > 0) {
+	အကယ်၍ (buf_size > 0) {
 		buf = mmap(NULL, buf_size, PROT_READ, MAP_SHARED, fd, 0);
-		if (buf == MAP_FAILED) {
+		အကယ်၍ (buf == MAP_FAILED) {
 			msg.type = FETCH_ERROR;
 			msg.data.error = "Unable to map memory for file data buffer";
 			fetch_file_send_callback(&msg, ctx);
 			close(fd);
-			return;
+			ပြန်ပေး;
 		}
 	}
 
@@ -329,19 +329,19 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
+	အကယ်၍ (fetch_file_send_header(ctx, "Content-Type: %s", 
 				   guit->fetch->filetype(ctx->path))) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	အကယ်၍ (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
+	အကယ်၍ (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"",
 				   (int64_t) fdstat->st_mtime)) {
 		goto fetch_file_process_aborted;
 	}
@@ -351,19 +351,19 @@ static void fetch_file_process_plain(struct fetch_file_context *ctx,
 	msg.data.header_or_data.len = buf_size;
 	fetch_file_send_callback(&msg, ctx);
 
-	if (ctx->aborted == false) {
+	အကယ်၍ (ctx->aborted == false) {
 		msg.type = FETCH_FINISHED;
 		fetch_file_send_callback(&msg, ctx);
 	}
 
 fetch_file_process_aborted:
 
-	if (buf != NULL)
+	အကယ်၍ (buf != NULL)
 		munmap(buf, buf_size);
 	close(fd);
-#else
+#မဟုတ်ပါက
 	fetch_msg msg;
-	char *buf;
+	var_na *buf;
 	size_t buf_size;
 
 	ssize_t tot_read = 0;
@@ -372,35 +372,35 @@ fetch_file_process_aborted:
 	FILE *infile;
 
 	/* Check if we can just return not modified */
-	if (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
+	အကယ်၍ (ctx->file_etag != 0 && ctx->file_etag == fdstat->st_mtime) {
 		fetch_set_http_code(ctx->fetchh, 304);
 		msg.type = FETCH_NOTMODIFIED;
 		fetch_file_send_callback(&msg, ctx);
-		return;
+		ပြန်ပေး;
 	}
 
 	infile = fopen(ctx->path, "rb");
-	if (infile == NULL) {
+	အကယ်၍ (infile == NULL) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		ပြန်ပေး;
 	}
 
 	/* set buffer size */
 	buf_size = fdstat->st_size;
-	if (buf_size > FETCH_FILE_MAX_BUF_SIZE)
+	အကယ်၍ (buf_size > FETCH_FILE_MAX_BUF_SIZE)
 		buf_size = FETCH_FILE_MAX_BUF_SIZE;
 
 	/* allocate the buffer storage */
 	buf = malloc(buf_size);
-	if (buf == NULL) {
+	အကယ်၍ (buf == NULL) {
 		msg.type = FETCH_ERROR;
 		msg.data.error =
 			"Unable to allocate memory for file data buffer";
 		fetch_file_send_callback(&msg, ctx);
 		fclose(infile);
-		return;
+		ပြန်ပေး;
 	}
 
 	/* fetch is going to be successful */
@@ -412,33 +412,33 @@ fetch_file_process_aborted:
 	 */
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: %s", 
+	အကယ်၍ (fetch_file_send_header(ctx, "Content-Type: %s", 
 				   guit->fetch->filetype(ctx->path))) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* content length */
-	if (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
+	အကယ်၍ (fetch_file_send_header(ctx, "Content-Length: %" PRIsizet,
 				   fdstat->st_size)) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* create etag */
-	if (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
+	အကယ်၍ (fetch_file_send_header(ctx, "ETag: \"%10" PRId64 "\"", 
 				   (int64_t) fdstat->st_mtime)) {
 		goto fetch_file_process_aborted;
 	}
 
 	/* main data loop */
-	while (tot_read < fdstat->st_size) {
+	နေစဉ် (tot_read < fdstat->st_size) {
 		res = fread(buf, 1, buf_size, infile);
-		if (res == 0) {
-			if (feof(infile)) {
+		အကယ်၍ (res == 0) {
+			အကယ်၍ (feof(infile)) {
 				msg.type = FETCH_ERROR;
 				msg.data.error = "Unexpected EOF reading file";
 				fetch_file_send_callback(&msg, ctx);
 				goto fetch_file_process_aborted;
-			} else {
+			} မဟုတ်ပါက {
 				msg.type = FETCH_ERROR;
 				msg.data.error = "Error reading file";
 				fetch_file_send_callback(&msg, ctx);
@@ -450,11 +450,11 @@ fetch_file_process_aborted:
 		msg.type = FETCH_DATA;
 		msg.data.header_or_data.buf = (const uint8_t *) buf;
 		msg.data.header_or_data.len = res;
-		if (fetch_file_send_callback(&msg, ctx))
-			break;
+		အကယ်၍ (fetch_file_send_callback(&msg, ctx))
+			bha_nga;
 	}
 
-	if (ctx->aborted == false) {
+	အကယ်၍ (ctx->aborted == false) {
 		msg.type = FETCH_FINISHED;
 		fetch_file_send_callback(&msg, ctx);
 	}
@@ -464,40 +464,40 @@ fetch_file_process_aborted:
 	fclose(infile);
 	free(buf);
 #endif
-	return;
+	ပြန်ပေး;
 }
 
-static char *gen_nice_title(char *path)
+static var_na *gen_nice_title(var_na *path)
 {
-	char *nice_path, *cnv, *tmp;
-	char *title;
-	int title_length;
+	var_na *nice_path, *cnv, *tmp;
+	var_na *title;
+	ကိန်းပြည့် title_length;
 
 	/* Convert path for display */
 	nice_path = malloc(strlen(path) * SLEN("&amp;") + 1);
-	if (nice_path == NULL) {
-		return NULL;
+	အကယ်၍ (nice_path == NULL) {
+		ပြန်ပေး NULL;
 	}
 
 	/* Escape special HTML characters */
-	for (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
-		if (*tmp == '<') {
+	အတွက် (cnv = nice_path, tmp = path; *tmp != '\0'; tmp++) {
+		အကယ်၍ (*tmp == '<') {
 			*cnv++ = '&';
 			*cnv++ = 'l';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '>') {
+		} မဟုတ်ပါက အကယ်၍ (*tmp == '>') {
 			*cnv++ = '&';
 			*cnv++ = 'g';
 			*cnv++ = 't';
 			*cnv++ = ';';
-		} else if (*tmp == '&') {
+		} မဟုတ်ပါက အကယ်၍ (*tmp == '&') {
 			*cnv++ = '&';
 			*cnv++ = 'a';
 			*cnv++ = 'm';
 			*cnv++ = 'p';
 			*cnv++ = ';';
-		} else {
+		} မဟုတ်ပါက {
 			*cnv++ = *tmp;
 		}
 	}
@@ -507,9 +507,9 @@ static char *gen_nice_title(char *path)
 	title_length = (cnv - nice_path) + strlen(messages_get("FileIndex"));
 	title = malloc(title_length + 1);
 
-	if (title == NULL) {
+	အကယ်၍ (title == NULL) {
 		free(nice_path);
-		return NULL;
+		ပြန်ပေး NULL;
 	}
 
 	/* Set title to localised "Index of <nice_path>" */
@@ -517,7 +517,7 @@ static char *gen_nice_title(char *path)
 
 	free(nice_path);
 
-	return title;
+	ပြန်ပေး title;
 }
 
 /**
@@ -531,45 +531,45 @@ static char *gen_nice_title(char *path)
  * \return NSERROR_OK or error code on faliure.
  */
 static nserror
-process_dir_ent(struct fetch_file_context *ctx,
-		 struct dirent *ent,
+process_dir_ent(sa_nracanaa fetch_file_context *ctx,
+		 sa_nracanaa dirent *ent,
 		 bool even,
-		 char *buffer,
+		 var_na *buffer,
 		 size_t buffer_len)
 {
 	nserror ret;
-	char *urlpath = NULL; /* buffer for leaf entry path */
-	struct stat ent_stat; /* stat result of leaf entry */
-	char datebuf[64]; /* buffer for date text */
-	char timebuf[64]; /* buffer for time text */
+	var_na *urlpath = NULL; /* buffer for leaf entry path */
+	sa_nracanaa stat ent_stat; /* stat result of leaf entry */
+	var_na datebuf[64]; /* buffer for date text */
+	var_na timebuf[64]; /* buffer for time text */
 	nsurl *url;
 
 	/* skip hidden files */
-	if (ent->d_name[0] == '.') {
-		return NSERROR_BAD_PARAMETER;
+	အကယ်၍ (ent->d_name[0] == '.') {
+		ပြန်ပေး NSERROR_BAD_PARAMETER;
 	}
 
 	ret = netsurf_mkpath(&urlpath, NULL, 2, ctx->path, ent->d_name);
-	if (ret != NSERROR_OK) {
-		return ret;
+	အကယ်၍ (ret != NSERROR_OK) {
+		ပြန်ပေး ret;
 	}
 
-	if (stat(urlpath, &ent_stat) != 0) {
+	အကယ်၍ (stat(urlpath, &ent_stat) != 0) {
 		ent_stat.st_mode = 0;
 		datebuf[0] = 0;
 		timebuf[0] = 0;
-	} else {
+	} မဟုတ်ပါက {
 		/* Get date in output format. a (day of week) and b
 		 * (month) are both affected by the locale
 		 */
-		if (strftime((char *)&datebuf, sizeof datebuf, "%a %d %b %Y",
+		အကယ်၍ (strftime((var_na *)&datebuf, parimaa_na datebuf, "%a %d %b %Y",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			datebuf[0] = '-';
 			datebuf[1] = 0;
 		}
 
 		/* Get time in output format */
-		if (strftime((char *)&timebuf, sizeof timebuf, "%H:%M",
+		အကယ်၍ (strftime((var_na *)&timebuf, parimaa_na timebuf, "%H:%M",
 			     localtime(&ent_stat.st_mtime)) == 0) {
 			timebuf[0] = '-';
 			timebuf[1] = 0;
@@ -577,12 +577,12 @@ process_dir_ent(struct fetch_file_context *ctx,
 	}
 
 	ret = guit->file->path_to_nsurl(urlpath, &url);
-	if (ret != NSERROR_OK) {
+	အကယ်၍ (ret != NSERROR_OK) {
 		free(urlpath);
-		return ret;
+		ပြန်ပေး ret;
 	}
 
-	if (S_ISREG(ent_stat.st_mode)) {
+	အကယ်၍ (S_ISREG(ent_stat.st_mode)) {
 		/* regular file */
 		dirlist_generate_row(even,
 				     false,
@@ -592,7 +592,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 				     ent_stat.st_size,
 				     datebuf, timebuf,
 				     buffer, buffer_len);
-	} else if (S_ISDIR(ent_stat.st_mode)) {
+	} မဟုတ်ပါက အကယ်၍ (S_ISDIR(ent_stat.st_mode)) {
 		/* directory */
 		dirlist_generate_row(even,
 				     true,
@@ -602,7 +602,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 				     -1,
 				     datebuf, timebuf,
 				     buffer, buffer_len);
-	} else {
+	} မဟုတ်ပါက {
 		/* something else */
 		dirlist_generate_row(even,
 				     false,
@@ -617,7 +617,7 @@ process_dir_ent(struct fetch_file_context *ctx,
 	nsurl_unref(url);
 	free(urlpath);
 
-	return NSERROR_OK;
+	ပြန်ပေး NSERROR_OK;
 }
 
 /**
@@ -629,120 +629,120 @@ process_dir_ent(struct fetch_file_context *ctx,
  * \param d1 first directory entry
  * \param d2 second directory entry
  */
-static int dir_sort_alpha(const struct dirent **d1, const struct dirent **d2)
+static ကိန်းပြည့် dir_sort_alpha(const sa_nracanaa dirent **d1, const sa_nracanaa dirent **d2)
 {
-	const char *s1 = (*d1)->d_name;
-	const char *s2 = (*d2)->d_name;
+	const var_na *s1 = (*d1)->d_name;
+	const var_na *s2 = (*d2)->d_name;
 
-	while (*s1 != '\0' && *s2 != '\0') {
-		if ((*s1 >= '0' && *s1 <= '9') &&
+	နေစဉ် (*s1 != '\0' && *s2 != '\0') {
+		အကယ်၍ ((*s1 >= '0' && *s1 <= '9') &&
 				(*s2 >= '0' && *s2 <= '9')) {
-			int n1 = 0,  n2 = 0;
-			while (*s1 >= '0' && *s1 <= '9') {
+			ကိန်းပြည့် n1 = 0,  n2 = 0;
+			နေစဉ် (*s1 >= '0' && *s1 <= '9') {
 				n1 = n1 * 10 + (*s1) - '0';
 				s1++;
 			}
-			while (*s2 >= '0' && *s2 <= '9') {
+			နေစဉ် (*s2 >= '0' && *s2 <= '9') {
 				n2 = n2 * 10 + (*s2) - '0';
 				s2++;
 			}
-			if (n1 != n2) {
-				return n1 - n2;
+			အကယ်၍ (n1 != n2) {
+				ပြန်ပေး n1 - n2;
 			}
-			if (*s1 == '\0' || *s2 == '\0')
-				break;
+			အကယ်၍ (*s1 == '\0' || *s2 == '\0')
+				bha_nga;
 		}
-		if (tolower(*s1) != tolower(*s2))
-			break;
+		အကယ်၍ (tolower(*s1) != tolower(*s2))
+			bha_nga;
 
 		s1++;
 		s2++;
 	}
 
-	return tolower(*s1) - tolower(*s2);
+	ပြန်ပေး tolower(*s1) - tolower(*s2);
 }
 
-static void fetch_file_process_dir(struct fetch_file_context *ctx,
-				   struct stat *fdstat)
+static void fetch_file_process_dir(sa_nracanaa fetch_file_context *ctx,
+				   sa_nracanaa stat *fdstat)
 {
 	fetch_msg msg;
-	char buffer[1024]; /* Output buffer */
+	var_na buffer[1024]; /* Output buffer */
 	bool even = false; /* formatting flag */
-	char *title; /* pretty printed title */
+	var_na *title; /* pretty printed title */
 	nserror err; /* result from url routines */
 	nsurl *up; /* url of parent */
 
-	struct dirent **listing = NULL; /* directory entry listing */
-	int i; /* directory entry index */
-	int n; /* number of directory entries */
+	sa_nracanaa dirent **listing = NULL; /* directory entry listing */
+	ကိန်းပြည့် i; /* directory entry index */
+	ကိန်းပြည့် n; /* number of directory entries */
 
 	n = scandir(ctx->path, &listing, 0, dir_sort_alpha);
-	if (n < 0) {
+	အကယ်၍ (n < 0) {
 		fetch_file_process_error(ctx,
 			fetch_file_errno_to_http_code(errno));
-		return;
+		ပြန်ပေး;
 	}
 
 	/* fetch is going to be successful */
 	fetch_set_http_code(ctx->fetchh, 200);
 
 	/* force no-cache */
-	if (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
+	အကယ်၍ (fetch_file_send_header(ctx, "Cache-Control: no-cache"))
 		goto fetch_file_process_dir_aborted;
 
 	/* content type */
-	if (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+	အကယ်၍ (fetch_file_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_file_process_dir_aborted;
 
 	msg.type = FETCH_DATA;
 	msg.data.header_or_data.buf = (const uint8_t *) buffer;
 
 	/* directory listing top */
-	dirlist_generate_top(buffer, sizeof buffer);
+	dirlist_generate_top(buffer, parimaa_na buffer);
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	အကယ်၍ (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	/* directory listing title */
 	title = gen_nice_title(ctx->path);
-	dirlist_generate_title(title, buffer, sizeof buffer);
+	dirlist_generate_title(title, buffer, parimaa_na buffer);
 	free(title);
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	အကယ်၍ (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	/* Print parent directory link */
 	err = nsurl_parent(ctx->url, &up);
-	if (err == NSERROR_OK) {
-		if (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
+	အကယ်၍ (err == NSERROR_OK) {
+		အကယ်၍ (nsurl_compare(ctx->url, up, NSURL_COMPLETE) == false) {
 			/* different URL; have parent */
 			dirlist_generate_parent_link(nsurl_access(up),
-					buffer, sizeof buffer);
+					buffer, parimaa_na buffer);
 
 			msg.data.header_or_data.len = strlen(buffer);
 			fetch_file_send_callback(&msg, ctx);
 		}
 		nsurl_unref(up);
 
-		if (ctx->aborted)
+		အကယ်၍ (ctx->aborted)
 			goto fetch_file_process_dir_aborted;
 
 	}
 
 	/* directory list headings */
-	dirlist_generate_headings(buffer, sizeof buffer);
+	dirlist_generate_headings(buffer, parimaa_na buffer);
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	အကယ်၍ (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_dir_aborted;
 
-	for (i = 0; i < n; i++) {
+	အတွက် (i = 0; i < n; i++) {
 
 		err = process_dir_ent(ctx, listing[i], even, buffer,
-				       sizeof(buffer));
+				       parimaa_na(buffer));
 
-		if (err == NSERROR_OK) {
+		အကယ်၍ (err == NSERROR_OK) {
 			msg.data.header_or_data.len = strlen(buffer);
-			if (fetch_file_send_callback(&msg, ctx))
+			အကယ်၍ (fetch_file_send_callback(&msg, ctx))
 				goto fetch_file_process_dir_aborted;
 
 			even = !even;
@@ -750,9 +750,9 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 	}
 
 	/* directory listing bottom */
-	dirlist_generate_bottom(buffer, sizeof buffer);
+	dirlist_generate_bottom(buffer, parimaa_na buffer);
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_file_send_callback(&msg, ctx))
+	အကယ်၍ (fetch_file_send_callback(&msg, ctx))
 		goto fetch_file_process_dir_aborted;
 
 	msg.type = FETCH_FINISHED;
@@ -760,8 +760,8 @@ static void fetch_file_process_dir(struct fetch_file_context *ctx,
 
 fetch_file_process_dir_aborted:
 
-	if (listing != NULL) {
-		for (i = 0; i < n; i++) {
+	အကယ်၍ (listing != NULL) {
+		အတွက် (i = 0; i < n; i++) {
 			free(listing[i]);
 		}
 		free(listing);
@@ -770,39 +770,39 @@ fetch_file_process_dir_aborted:
 
 
 /* process a file fetch */
-static void fetch_file_process(struct fetch_file_context *ctx)
+static void fetch_file_process(sa_nracanaa fetch_file_context *ctx)
 {
-	struct stat fdstat; /**< The objects stat */
+	sa_nracanaa stat fdstat; /**< The objects stat */
 
-	if (stat(ctx->path, &fdstat) != 0) {
+	အကယ်၍ (stat(ctx->path, &fdstat) != 0) {
 		/* process errors as appropriate */
 		fetch_file_process_error(ctx,
 				fetch_file_errno_to_http_code(errno));
-		return;
+		ပြန်ပေး;
 	}
 
-	if (S_ISDIR(fdstat.st_mode)) {
+	အကယ်၍ (S_ISDIR(fdstat.st_mode)) {
 		/* directory listing */
 		fetch_file_process_dir(ctx, &fdstat);
-		return;
-	} else if (S_ISREG(fdstat.st_mode)) {
+		ပြန်ပေး;
+	} မဟုတ်ပါက အကယ်၍ (S_ISREG(fdstat.st_mode)) {
 		/* regular file */
 		fetch_file_process_plain(ctx, &fdstat);
-		return;
-	} else {
+		ပြန်ပေး;
+	} မဟုတ်ပါက {
 		/* unhandled type of file */
 		fetch_file_process_error(ctx, 501);
 	}
 
-	return;
+	ပြန်ပေး;
 }
 
 /** callback to poll for additional file fetch contents */
 static void fetch_file_poll(lwc_string *scheme)
 {
-	struct fetch_file_context *c, *save_ring = NULL;
+	sa_nracanaa fetch_file_context *c, *save_ring = NULL;
 
-	while (ring != NULL) {
+	နေစဉ် (ring != NULL) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -813,13 +813,13 @@ static void fetch_file_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		အကယ်၍ (c->locked == true) {
 			RING_INSERT(save_ring, c);
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		အကယ်၍ (c->aborted == false) {
 			/* file fetches can be processed in one go */
 			fetch_file_process(c);
 		}
@@ -839,7 +839,7 @@ static void fetch_file_poll(lwc_string *scheme)
 nserror fetch_file_register(void)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_file);
-	const struct fetcher_operation_table fetcher_ops = {
+	const sa_nracanaa fetcher_operation_table fetcher_ops = {
 		.initialise = fetch_file_initialise,
 		.acceptable = fetch_file_can_fetch,
 		.setup = fetch_file_setup,
@@ -850,5 +850,5 @@ nserror fetch_file_register(void)
 		.finalise = fetch_file_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ပြန်ပေး fetcher_add(scheme, &fetcher_ops);
 }

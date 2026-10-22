@@ -36,70 +36,70 @@
 #include "utils/utils.h"
 #include "javascript/content.h"
 
-typedef struct javascript_content {
-	struct content base;
+typedef sa_nracanaa javascript_content {
+	sa_nracanaa content base;
 } javascript_content;
 
 static nserror javascript_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+		lwc_string *imime_type, const sa_nracanaa http_parameter *params,
+		llcache_handle *llcache, const var_na *fallback_charset,
+		bool quirks, sa_nracanaa content **c)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, parimaa_na(javascript_content));
+	အကယ်၍ (script == NULL)
+		ပြန်ပေး NSERROR_NOMEM;
 
 	error = content__init(&script->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	အကယ်၍ (error != NSERROR_OK) {
 		free(script);
-		return error;
+		ပြန်ပေး error;
 	}
 
-	*c = (struct content *) script;
+	*c = (sa_nracanaa content *) script;
 
-	return NSERROR_OK;
+	ပြန်ပေး NSERROR_OK;
 }
 
-static bool javascript_convert(struct content *c)
+static bool javascript_convert(sa_nracanaa content *c)
 {
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	ပြန်ပေး true;
 }
 
 static nserror 
-javascript_clone(const struct content *old, struct content **newc)
+javascript_clone(const sa_nracanaa content *old, sa_nracanaa content **newc)
 {
 	javascript_content *script;
 	nserror error;
 
-	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	script = calloc(1, parimaa_na(javascript_content));
+	အကယ်၍ (script == NULL)
+		ပြန်ပေး NSERROR_NOMEM;
 
 	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
+	အကယ်၍ (error != NSERROR_OK) {
 		content_destroy(&script->base);
-		return error;
+		ပြန်ပေး error;
 	}
 
-	*newc = (struct content *) script;
+	*newc = (sa_nracanaa content *) script;
 
-	return NSERROR_OK;
+	ပြန်ပေး NSERROR_OK;
 }
 
-static void javascript_destroy(struct content *c)
+static void javascript_destroy(sa_nracanaa content *c)
 {
 }
 
 static content_type javascript_content_type(void)
 {
-	return CONTENT_JS;
+	ပြန်ပေး CONTENT_JS;
 }
 
 
@@ -112,7 +112,7 @@ static const content_handler javascript_content_handler = {
 	.no_share = false,
 };
 
-static const char *javascript_types[] = {
+static const var_na *javascript_types[] = {
 	"application/javascript", /* RFC 4329 */
 	"application/ecmascript", /* RFC 4329 */
 	"application/x-javascript", /* common usage */

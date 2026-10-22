@@ -41,42 +41,42 @@
  * generate the description of the login query
  */
 static nserror
-get_authentication_description(struct nsurl *url,
-			       const char *realm,
-			       const char *username,
-			       const char *password,
-			       char **out_str)
+get_authentication_description(sa_nracanaa nsurl *url,
+			       const var_na *realm,
+			       const var_na *username,
+			       const var_na *password,
+			       var_na **out_str)
 {
 	nserror res;
-	char *url_s;
+	var_na *url_s;
 	size_t url_l;
-	char *str = NULL;
-	const char *key;
+	var_na *str = NULL;
+	const var_na *key;
 
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	အကယ်၍ (res != NSERROR_OK) {
+		ပြန်ပေး res;
 	}
 
-	if ((*username == 0) && (*password == 0)) {
+	အကယ်၍ ((*username == 0) && (*password == 0)) {
 		key = "LoginDescription";
-	} else {
+	} မဟုတ်ပါက {
 		key = "LoginAgain";
 	}
 
 	str = messages_get_buff(key, url_s, realm);
-	if (str != NULL) {
+	အကယ်၍ (str != NULL) {
 		NSLOG(netsurf, INFO,
 		      "key:%s url:%s realm:%s str:%s",
 		      key, url_s, realm, str);
 		*out_str = str;
-	} else {
+	} မဟုတ်ပါက {
 		res = NSERROR_NOMEM;
 	}
 
 	free(url_s);
 
-	return res;
+	ပြန်ပေး res;
 }
 
 
@@ -86,46 +86,46 @@ get_authentication_description(struct nsurl *url,
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
+bool fetch_about_query_auth_handler(sa_nracanaa fetch_about_context *ctx)
 {
 	nserror res;
-	char *url_s;
+	var_na *url_s;
 	size_t url_l;
-	const char *realm = "";
-	const char *username = "";
-	const char *password = "";
-	const char *title;
-	char *description = NULL;
-	struct nsurl *siteurl = NULL;
-	const struct fetch_multipart_data *curmd; /* mutipart data iterator */
+	const var_na *realm = "";
+	const var_na *username = "";
+	const var_na *password = "";
+	const var_na *title;
+	var_na *description = NULL;
+	sa_nracanaa nsurl *siteurl = NULL;
+	const sa_nracanaa fetch_multipart_data *curmd; /* mutipart data iterator */
 
 	/* extract parameters from multipart post data */
 	curmd = fetch_about_get_multipart(ctx);
-	while (curmd != NULL) {
-		if (strcmp(curmd->name, "siteurl") == 0) {
+	နေစဉ် (curmd != NULL) {
+		အကယ်၍ (strcmp(curmd->name, "siteurl") == 0) {
 			res = nsurl_create(curmd->value, &siteurl);
-			if (res != NSERROR_OK) {
-				return fetch_about_srverror(ctx);
+			အကယ်၍ (res != NSERROR_OK) {
+				ပြန်ပေး fetch_about_srverror(ctx);
 			}
-		} else if (strcmp(curmd->name, "realm") == 0) {
+		} မဟုတ်ပါက အကယ်၍ (strcmp(curmd->name, "realm") == 0) {
 			realm = curmd->value;
-		} else if (strcmp(curmd->name, "username") == 0) {
+		} မဟုတ်ပါက အကယ်၍ (strcmp(curmd->name, "username") == 0) {
 			username = curmd->value;
-		} else if (strcmp(curmd->name, "password") == 0) {
+		} မဟုတ်ပါက အကယ်၍ (strcmp(curmd->name, "password") == 0) {
 			password = curmd->value;
 		}
 		curmd = curmd->next;
 	}
 
-	if (siteurl == NULL) {
-		return fetch_about_srverror(ctx);
+	အကယ်၍ (siteurl == NULL) {
+		ပြန်ပေး fetch_about_srverror(ctx);
 	}
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
+	အကယ်၍ (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -139,14 +139,14 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\" id =\"authentication\">\n"
 			"<h1 class=\"ns-border\">%s</h1>\n",
 			title, title);
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<form method=\"post\""
 			 " enctype=\"multipart/form-data\">");
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -155,16 +155,16 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 					     username,
 					     password,
 					     &description);
-	if (res == NSERROR_OK) {
+	အကယ်၍ (res == NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<p>%s</p>", description);
 		free(description);
-		if (res != NSERROR_OK) {
+		အကယ်၍ (res != NSERROR_OK) {
 			goto fetch_about_query_auth_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "<table>");
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -175,7 +175,7 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "name=\"username\" value=\"%s\"></td>"
 			 "</tr>",
 			 messages_get("Username"), username);
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -186,12 +186,12 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "name=\"password\" value=\"%s\"></td>"
 			 "</tr>",
 			 messages_get("Password"), password);
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>");
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -204,31 +204,31 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "</div>",
 			 messages_get("Login"),
 			 messages_get("Cancel"));
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = nsurl_get(siteurl, NSURL_COMPLETE, &url_s, &url_l);
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		url_s = strdup("");
 	}
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"siteurl\" value=\"%s\">",
 			 url_s);
 	free(url_s);
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"realm\" value=\"%s\">",
 			 realm);
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</form></body>\n</html>\n");
-	if (res != NSERROR_OK) {
+	အကယ်၍ (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -236,11 +236,11 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 
 	nsurl_unref(siteurl);
 
-	return true;
+	ပြန်ပေး true;
 
 fetch_about_query_auth_handler_aborted:
 
 	nsurl_unref(siteurl);
 
-	return false;
+	ပြန်ပေး false;
 }
