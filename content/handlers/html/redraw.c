@@ -28,41 +28,41 @@
  * Redrawing CONTENT_HTML implementation.
  */
 
-#include "utils/config.h"
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <dom/dom.h>
+#شامل "utils/config.h"
+#شامل <assert.h>
+#شامل <stdbool.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <math.h>
+#شامل <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "netsurf/content.h"
-#include "netsurf/browser_window.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/layout.h"
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/textsearch.h"
-#include "css/utils.h"
-#include "desktop/selection.h"
-#include "desktop/print.h"
-#include "desktop/scrollbar.h"
-#include "desktop/textarea.h"
-#include "desktop/gui_internal.h"
+#شامل "utils/log.h"
+#شامل "utils/messages.h"
+#شامل "utils/utils.h"
+#شامل "utils/nsoption.h"
+#شامل "utils/corestrings.h"
+#شامل "netsurf/content.h"
+#شامل "netsurf/browser_window.h"
+#شامل "netsurf/plotters.h"
+#شامل "netsurf/bitmap.h"
+#شامل "netsurf/layout.h"
+#شامل "content/content.h"
+#شامل "content/content_protected.h"
+#شامل "content/textsearch.h"
+#شامل "css/utils.h"
+#شامل "desktop/selection.h"
+#شامل "desktop/print.h"
+#شامل "desktop/scrollbar.h"
+#شامل "desktop/textarea.h"
+#شامل "desktop/gui_internal.h"
 
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/box_manipulate.h"
-#include "html/font.h"
-#include "html/form_internal.h"
-#include "html/private.h"
-#include "html/layout.h"
+#شامل "html/box.h"
+#شامل "html/box_inspect.h"
+#شامل "html/box_manipulate.h"
+#شامل "html/font.h"
+#شامل "html/form_internal.h"
+#شامل "html/private.h"
+#شامل "html/layout.h"
 
 
 bool html_redraw_debug = false;
@@ -73,21 +73,21 @@ bool html_redraw_debug = false;
  * \param box  Box to consider
  * \return True if box has a background, false otherwise.
  */
-static bool html_redraw_box_has_background(struct box *box)
+ساکن bool html_redraw_box_has_background(ساخت box *box)
 {
-	if (box->background != NULL)
-		return true;
+	اگر (box->background != تہی)
+		واپس true;
 
-	if (box->style != NULL) {
-		css_color colour;
+	اگر (box->style != تہی) {
+		css_color رنگ;
 
-		css_computed_background_color(box->style, &colour);
+		css_computed_background_color(box->style, &رنگ);
 
-		if (nscss_color_is_transparent(colour) == false)
-			return true;
+		اگر (nscss_color_is_transparent(رنگ) == false)
+			واپس true;
 	}
 
-	return false;
+	واپس false;
 }
 
 /**
@@ -96,7 +96,7 @@ static bool html_redraw_box_has_background(struct box *box)
  * \param box  Box to find background box for
  * \return Pointer to background box, or NULL if there is none
  */
-static struct box *html_redraw_find_bg_box(struct box *box)
+ساکن ساخت box *html_redraw_ڈھونڈو_bg_box(ساخت box *box)
 {
 	/* Thanks to backwards compatibility, CSS defines the following:
 	 *
@@ -108,28 +108,28 @@ static struct box *html_redraw_find_bg_box(struct box *box)
 	 *   element is processed, ignore the background.
 	 * + For any other box, just use its own styling.
 	 */
-	if (box->parent == NULL) {
+	اگر (box->والد == تہی) {
 		/* Root box */
-		if (html_redraw_box_has_background(box))
-			return box;
+		اگر (html_redraw_box_has_background(box))
+			واپس box;
 
 		/* No background on root box: consider body box, if any */
-		if (box->children != NULL) {
-			if (html_redraw_box_has_background(box->children))
-				return box->children;
+		اگر (box->children != تہی) {
+			اگر (html_redraw_box_has_background(box->children))
+				واپس box->children;
 		}
-	} else if (box->parent != NULL && box->parent->parent == NULL) {
+	} ورنہ اگر (box->والد != تہی && box->والد->والد == تہی) {
 		/* Body box: only render background if root has its own */
-		if (html_redraw_box_has_background(box) &&
-				html_redraw_box_has_background(box->parent))
-			return box;
-	} else {
+		اگر (html_redraw_box_has_background(box) &&
+				html_redraw_box_has_background(box->والد))
+			واپس box;
+	} ورنہ {
 		/* Any other box */
-		if (html_redraw_box_has_background(box))
-			return box;
+		اگر (html_redraw_box_has_background(box))
+			واپس box;
 	}
 
-	return NULL;
+	واپس تہی;
 }
 
 /**
@@ -154,201 +154,201 @@ static struct box *html_redraw_find_bg_box(struct box *box)
  * \return true iff successful and redraw should proceed
  */
 
-static bool
-text_redraw(const char *utf8_text,
+ساکن bool
+متن_redraw(ثابت حرف *utf8_متن,
 	    size_t utf8_len,
-	    size_t offset,
-	    int space,
-	    const plot_font_style_t *fstyle,
-	    int x,
-	    int y,
-	    const struct rect *clip,
-	    int height,
-	    float scale,
+	    size_t انحراف,
+	    صحیح space,
+	    ثابت plot_font_style_t *fstyle,
+	    صحیح x,
+	    صحیح y,
+	    ثابت ساخت rect *clip,
+	    صحیح اونچائی,
+	    اعشاری scale,
 	    bool excluded,
-	    struct content *c,
-	    const struct selection *sel,
-	    const struct redraw_context *ctx)
+	    ساخت content *c,
+	    ثابت ساخت selection *sel,
+	    ثابت ساخت redraw_context *ctx)
 {
 	bool highlighted = false;
 	plot_font_style_t plot_fstyle = *fstyle;
 	nserror res;
 
 	/* Need scaled text size to pass to plotters */
-	plot_fstyle.size *= scale;
+	plot_fstyle.سائز *= scale;
 
 	/* is this box part of a selection? */
-	if (!excluded && ctx->interactive == true) {
-		unsigned len = utf8_len + (space ? 1 : 0);
-		unsigned start_idx;
-		unsigned end_idx;
+	اگر (!excluded && ctx->interactive == true) {
+		غیرعلامتی len = utf8_len + (space ? 1 : 0);
+		غیرعلامتی آغاز_idx;
+		غیرعلامتی انتہا_idx;
 
 		/* first try the browser window's current selection */
-		if (selection_highlighted(sel,
-					  offset,
-					  offset + len,
-					  &start_idx,
-					  &end_idx)) {
+		اگر (selection_highlighted(sel,
+					  انحراف,
+					  انحراف + len,
+					  &آغاز_idx,
+					  &انتہا_idx)) {
 			highlighted = true;
 		}
 
 		/* what about the current search operation, if any? */
-		if (!highlighted &&
-		    (c->textsearch.context != NULL) &&
+		اگر (!highlighted &&
+		    (c->textsearch.context != تہی) &&
 		    content_textsearch_ishighlighted(c->textsearch.context,
-						     offset,
-						     offset + len,
-						     &start_idx,
-						     &end_idx)) {
+						     انحراف,
+						     انحراف + len,
+						     &آغاز_idx,
+						     &انتہا_idx)) {
 			highlighted = true;
 		}
 
 		/* \todo make search terms visible within selected text */
-		if (highlighted) {
-			struct rect r;
-			unsigned endtxt_idx = end_idx;
-			bool clip_changed = false;
-			bool text_visible = true;
-			int startx, endx;
+		اگر (highlighted) {
+			ساخت rect r;
+			غیرعلامتی endtxt_idx = انتہا_idx;
+			bool clip_بدلا = false;
+			bool متن_visible = true;
+			صحیح startx, endx;
 			plot_style_t pstyle_fill_hback = *plot_style_fill_white;
 			plot_font_style_t fstyle_hback = plot_fstyle;
 
-			if (end_idx > utf8_len) {
+			اگر (انتہا_idx > utf8_len) {
 				/* adjust for trailing space, not present in
 				 * utf8_text */
-				assert(end_idx == utf8_len + 1);
+				أكد(انتہا_idx == utf8_len + 1);
 				endtxt_idx = utf8_len;
 			}
 
-			res = guit->layout->width(fstyle,
-						  utf8_text, start_idx,
+			res = guit->layout->چوڑائی(fstyle,
+						  utf8_متن, آغاز_idx,
 						  &startx);
-			if (res != NSERROR_OK) {
+			اگر (res != NSERROR_OK) {
 				startx = 0;
 			}
 
-			res = guit->layout->width(fstyle,
-						  utf8_text, endtxt_idx,
+			res = guit->layout->چوڑائی(fstyle,
+						  utf8_متن, endtxt_idx,
 						  &endx);
-			if (res != NSERROR_OK) {
+			اگر (res != NSERROR_OK) {
 				endx = 0;
 			}
 
 			/* is there a trailing space that should be highlighted
 			 * as well? */
-			if (end_idx > utf8_len) {
+			اگر (انتہا_idx > utf8_len) {
 					endx += space;
 			}
 
-			if (scale != 1.0) {
+			اگر (scale != 1.0) {
 				startx *= scale;
 				endx *= scale;
 			}
 
 			/* draw any text preceding highlighted portion */
-			if ((start_idx > 0) &&
-			    (ctx->plot->text(ctx,
+			اگر ((آغاز_idx > 0) &&
+			    (ctx->plot->متن(ctx,
 					     &plot_fstyle,
 					     x,
-					     y + (int)(height * 0.75 * scale),
-					     utf8_text,
-					     start_idx) != NSERROR_OK))
-				return false;
+					     y + (صحیح)(اونچائی * 0.75 * scale),
+					     utf8_متن,
+					     آغاز_idx) != NSERROR_OK))
+				واپس false;
 
-			pstyle_fill_hback.fill_colour = fstyle->foreground;
+			pstyle_fill_hback.fill_رنگ = fstyle->foreground;
 
 			/* highlighted portion */
 			r.x0 = x + startx;
 			r.y0 = y;
 			r.x1 = x + endx;
-			r.y1 = y + height * scale;
+			r.y1 = y + اونچائی * scale;
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_hback, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				واپس false;
 			}
 
-			if (start_idx > 0) {
-				int px0 = max(x + startx, clip->x0);
-				int px1 = min(x + endx, clip->x1);
+			اگر (آغاز_idx > 0) {
+				صحیح px0 = max(x + startx, clip->x0);
+				صحیح px1 = min(x + endx, clip->x1);
 
-				if (px0 < px1) {
+				اگر (px0 < px1) {
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = px1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					اگر (res != NSERROR_OK) {
+						واپس false;
 					}
 
-					clip_changed = true;
-				} else {
-					text_visible = false;
+					clip_بدلا = true;
+				} ورنہ {
+					متن_visible = false;
 				}
 			}
 
 			fstyle_hback.background =
-				pstyle_fill_hback.fill_colour;
-			fstyle_hback.foreground = colour_to_bw_furthest(
-				pstyle_fill_hback.fill_colour);
+				pstyle_fill_hback.fill_رنگ;
+			fstyle_hback.foreground = رنگ_مقصد_bw_furthest(
+				pstyle_fill_hback.fill_رنگ);
 
-			if (text_visible &&
-			    (ctx->plot->text(ctx,
+			اگر (متن_visible &&
+			    (ctx->plot->متن(ctx,
 					     &fstyle_hback,
 					     x,
-					     y + (int)(height * 0.75 * scale),
-					     utf8_text,
+					     y + (صحیح)(اونچائی * 0.75 * scale),
+					     utf8_متن,
 					     endtxt_idx) != NSERROR_OK)) {
-				return false;
+				واپس false;
 			}
 
 			/* draw any text succeeding highlighted portion */
-			if (endtxt_idx < utf8_len) {
-				int px0 = max(x + endx, clip->x0);
-				if (px0 < clip->x1) {
+			اگر (endtxt_idx < utf8_len) {
+				صحیح px0 = max(x + endx, clip->x0);
+				اگر (px0 < clip->x1) {
 
 					r.x0 = px0;
 					r.y0 = clip->y0;
 					r.x1 = clip->x1;
 					r.y1 = clip->y1;
 					res = ctx->plot->clip(ctx, &r);
-					if (res != NSERROR_OK) {
-						return false;
+					اگر (res != NSERROR_OK) {
+						واپس false;
 					}
 
-					clip_changed = true;
+					clip_بدلا = true;
 
-					res = ctx->plot->text(ctx,
+					res = ctx->plot->متن(ctx,
 							      &plot_fstyle,
 							      x,
-							      y + (int)(height * 0.75 * scale),
-							      utf8_text,
+							      y + (صحیح)(اونچائی * 0.75 * scale),
+							      utf8_متن,
 							      utf8_len);
-					if (res != NSERROR_OK) {
-						return false;
+					اگر (res != NSERROR_OK) {
+						واپس false;
 					}
 				}
 			}
 
-			if (clip_changed &&
+			اگر (clip_بدلا &&
 			    (ctx->plot->clip(ctx, clip) != NSERROR_OK)) {
-				return false;
+				واپس false;
 			}
 		}
 	}
 
-	if (!highlighted) {
-		res = ctx->plot->text(ctx,
+	اگر (!highlighted) {
+		res = ctx->plot->متن(ctx,
 				      &plot_fstyle,
 				      x,
-				      y + (int) (height * 0.75 * scale),
-				      utf8_text,
+				      y + (صحیح) (اونچائی * 0.75 * scale),
+				      utf8_متن,
 				      utf8_len);
-		if (res != NSERROR_OK) {
-			return false;
+		اگر (res != NSERROR_OK) {
+			واپس false;
 		}
 	}
-	return true;
+	واپس true;
 }
 
 
@@ -364,91 +364,91 @@ text_redraw(const char *utf8_text,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_checkbox(int x, int y, int width, int height,
-		bool selected, const struct redraw_context *ctx)
+ساکن bool html_redraw_checkbox(صحیح x, صحیح y, صحیح چوڑائی, صحیح اونچائی,
+		bool selected, ثابت ساخت redraw_context *ctx)
 {
-	double z;
+	دوہرا z;
 	nserror res;
-	struct rect rect;
+	ساخت rect rect;
 
-	z = width * 0.15;
-	if (z == 0) {
+	z = چوڑائی * 0.15;
+	اگر (z == 0) {
 		z = 1;
 	}
 
 	rect.x0 = x;
 	rect.y0 = y ;
-	rect.x1 = x + width;
-	rect.y1 = y + height;
+	rect.x1 = x + چوڑائی;
+	rect.y1 = y + اونچائی;
 	res = ctx->plot->rectangle(ctx, plot_style_fill_wbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
 
 	/* dark line across top */
 	rect.y1 = y;
-	res = ctx->plot->line(ctx, plot_style_stroke_darkwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	res = ctx->plot->سطر(ctx, plot_style_stroke_darkwbasec, &rect);
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
 
 	/* dark line across left */
 	rect.x1 = x;
-	rect.y1 = y + height;
-	res = ctx->plot->line(ctx, plot_style_stroke_darkwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	rect.y1 = y + اونچائی;
+	res = ctx->plot->سطر(ctx, plot_style_stroke_darkwbasec, &rect);
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
 
 	/* light line across right */
-	rect.x0 = x + width;
-	rect.x1 = x + width;
-	res = ctx->plot->line(ctx, plot_style_stroke_lightwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	rect.x0 = x + چوڑائی;
+	rect.x1 = x + چوڑائی;
+	res = ctx->plot->سطر(ctx, plot_style_stroke_lightwbasec, &rect);
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
 
 	/* light line across bottom */
 	rect.x0 = x;
-	rect.y0 = y + height;
-	res = ctx->plot->line(ctx, plot_style_stroke_lightwbasec, &rect);
-	if (res != NSERROR_OK) {
-		return false;
+	rect.y0 = y + اونچائی;
+	res = ctx->plot->سطر(ctx, plot_style_stroke_lightwbasec, &rect);
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
 
-	if (selected) {
-		if (width < 12 || height < 12) {
+	اگر (selected) {
+		اگر (چوڑائی < 12 || اونچائی < 12) {
 			/* render a solid box instead of a tick */
 			rect.x0 = x + z + z;
 			rect.y0 = y + z + z;
-			rect.x1 = x + width - z;
-			rect.y1 = y + height - z;
+			rect.x1 = x + چوڑائی - z;
+			rect.y1 = y + اونچائی - z;
 			res = ctx->plot->rectangle(ctx, plot_style_fill_wblobc, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				واپس false;
 			}
-		} else {
+		} ورنہ {
 			/* render a tick, as it'll fit comfortably */
-			rect.x0 = x + width - z;
+			rect.x0 = x + چوڑائی - z;
 			rect.y0 = y + z;
 			rect.x1 = x + (z * 3);
-			rect.y1 = y + height - z;
-			res = ctx->plot->line(ctx, plot_style_stroke_wblobc, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			rect.y1 = y + اونچائی - z;
+			res = ctx->plot->سطر(ctx, plot_style_stroke_wblobc, &rect);
+			اگر (res != NSERROR_OK) {
+				واپس false;
 			}
 
 			rect.x0 = x + (z * 3);
-			rect.y0 = y + height - z;
+			rect.y0 = y + اونچائی - z;
 			rect.x1 = x + z + z;
-			rect.y1 = y + (height / 2);
-			res = ctx->plot->line(ctx, plot_style_stroke_wblobc, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			rect.y1 = y + (اونچائی / 2);
+			res = ctx->plot->سطر(ctx, plot_style_stroke_wblobc, &rect);
+			اگر (res != NSERROR_OK) {
+				واپس false;
 			}
 		}
 	}
-	return true;
+	واپس true;
 }
 
 
@@ -463,58 +463,58 @@ static bool html_redraw_checkbox(int x, int y, int width, int height,
  * \param  ctx	     current redraw context
  * \return true if successful, false otherwise
  */
-static bool html_redraw_radio(int x, int y, int width, int height,
-		bool selected, const struct redraw_context *ctx)
+ساکن bool html_redraw_radio(صحیح x, صحیح y, صحیح چوڑائی, صحیح اونچائی,
+		bool selected, ثابت ساخت redraw_context *ctx)
 {
 	nserror res;
 
 	/* plot background of radio button */
 	res = ctx->plot->disc(ctx,
 			      plot_style_fill_wbasec,
-			      x + width * 0.5,
-			      y + height * 0.5,
-			      width * 0.5 - 1);
-	if (res != NSERROR_OK) {
-		return false;
+			      x + چوڑائی * 0.5,
+			      y + اونچائی * 0.5,
+			      چوڑائی * 0.5 - 1);
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
 
 	/* plot dark arc */
 	res = ctx->plot->arc(ctx,
 			     plot_style_fill_darkwbasec,
-			     x + width * 0.5,
-			     y + height * 0.5,
-			     width * 0.5 - 1,
+			     x + چوڑائی * 0.5,
+			     y + اونچائی * 0.5,
+			     چوڑائی * 0.5 - 1,
 			     45,
 			     225);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
 
 	/* plot light arc */
 	res = ctx->plot->arc(ctx,
 			     plot_style_fill_lightwbasec,
-			     x + width * 0.5,
-			     y + height * 0.5,
-			     width * 0.5 - 1,
+			     x + چوڑائی * 0.5,
+			     y + اونچائی * 0.5,
+			     چوڑائی * 0.5 - 1,
 			     225,
 			     45);
-	if (res != NSERROR_OK) {
-		return false;
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
 
-	if (selected) {
+	اگر (selected) {
 		/* plot selection blob */
 		res = ctx->plot->disc(ctx,
 				      plot_style_fill_wblobc,
-				      x + width * 0.5,
-				      y + height * 0.5,
-				      width * 0.3 - 1);
-		if (res != NSERROR_OK) {
-			return false;
+				      x + چوڑائی * 0.5,
+				      y + اونچائی * 0.5,
+				      چوڑائی * 0.3 - 1);
+		اگر (res != NSERROR_OK) {
+			واپس false;
 		}
 	}
 
-	return true;
+	واپس true;
 }
 
 
@@ -533,43 +533,43 @@ static bool html_redraw_radio(int x, int y, int width, int height,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_file(int x, int y, int width, int height,
-		struct box *box, float scale, colour background_colour,
-		const css_unit_ctx *unit_len_ctx,
-		const struct redraw_context *ctx)
+ساکن bool html_redraw_file(صحیح x, صحیح y, صحیح چوڑائی, صحیح اونچائی,
+		ساخت box *box, اعشاری scale, رنگ background_رنگ,
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت ساخت redraw_context *ctx)
 {
-	int text_width;
-	const char *text;
-	size_t length;
+	صحیح متن_چوڑائی;
+	ثابت حرف *متن;
+	size_t لمبائی;
 	plot_font_style_t fstyle;
 	nserror res;
 
 	font_plot_style_from_css(unit_len_ctx, box->style, &fstyle);
-	fstyle.background = background_colour;
+	fstyle.background = background_رنگ;
 
-	if (box->gadget->value) {
-		text = box->gadget->value;
-	} else {
-		text = messages_get("Form_Drop");
+	اگر (box->gadget->قدر) {
+		متن = box->gadget->قدر;
+	} ورنہ {
+		متن = messages_get("Form_Drop");
 	}
-	length = strlen(text);
+	لمبائی = لڑی_لمبائی(متن);
 
-	res = guit->layout->width(&fstyle, text, length, &text_width);
-	if (res != NSERROR_OK) {
-		return false;
+	res = guit->layout->چوڑائی(&fstyle, متن, لمبائی, &متن_چوڑائی);
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
-	text_width *= scale;
-	if (width < text_width + 8) {
-		x = x + width - text_width - 4;
-	} else {
+	متن_چوڑائی *= scale;
+	اگر (چوڑائی < متن_چوڑائی + 8) {
+		x = x + چوڑائی - متن_چوڑائی - 4;
+	} ورنہ {
 		x = x + 4;
 	}
 
-	res = ctx->plot->text(ctx, &fstyle, x, y + height * 0.75, text, length);
-	if (res != NSERROR_OK) {
-		return false;
+	res = ctx->plot->متن(ctx, &fstyle, x, y + اونچائی * 0.75, متن, لمبائی);
+	اگر (res != NSERROR_OK) {
+		واپس false;
 	}
-	return true;
+	واپس true;
 }
 
 
@@ -592,97 +592,97 @@ static bool html_redraw_file(int x, int y, int width, int height,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_background(int x, int y, struct box *box, float scale,
-		const struct rect *clip, colour *background_colour,
-		struct box *background,
-		const css_unit_ctx *unit_len_ctx,
-		const struct redraw_context *ctx)
+ساکن bool html_redraw_background(صحیح x, صحیح y, ساخت box *box, اعشاری scale,
+		ثابت ساخت rect *clip, رنگ *background_رنگ,
+		ساخت box *background,
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت ساخت redraw_context *ctx)
 {
 	bool repeat_x = false;
 	bool repeat_y = false;
-	bool plot_colour = true;
+	bool plot_رنگ = true;
 	bool plot_content;
-	bool clip_to_children = false;
-	struct box *clip_box = box;
-	int ox = x, oy = y;
-	int width, height;
+	bool clip_مقصد_children = false;
+	ساخت box *clip_box = box;
+	صحیح ox = x, oy = y;
+	صحیح چوڑائی, اونچائی;
 	css_fixed hpos = 0, vpos = 0;
 	css_unit hunit = CSS_UNIT_PX, vunit = CSS_UNIT_PX;
-	struct box *parent;
-	struct rect r = *clip;
+	ساخت box *والد;
+	ساخت rect r = *clip;
 	css_color bgcol;
 	plot_style_t pstyle_fill_bg = {
 		.fill_type = PLOT_OP_TYPE_SOLID,
-		.fill_colour = *background_colour,
+		.fill_رنگ = *background_رنگ,
 	};
 	nserror res;
 
-	if (ctx->background_images == false)
-		return true;
+	اگر (ctx->background_images == false)
+		واپس true;
 
-	plot_content = (background->background != NULL);
+	plot_content = (background->background != تہی);
 
-	if (plot_content) {
-		if (!box->parent) {
+	اگر (plot_content) {
+		اگر (!box->والد) {
 			/* Root element, special case:
 			 * background origin calc. is based on margin box */
-			x -= box->margin[LEFT] * scale;
-			y -= box->margin[TOP] * scale;
-			width = box->margin[LEFT] + box->padding[LEFT] +
-					box->width + box->padding[RIGHT] +
-					box->margin[RIGHT];
-			height = box->margin[TOP] + box->padding[TOP] +
-					box->height + box->padding[BOTTOM] +
+			x -= box->margin[بایاں_2] * scale;
+			y -= box->margin[چوٹی_2] * scale;
+			چوڑائی = box->margin[بایاں_2] + box->padding[بایاں_2] +
+					box->چوڑائی + box->padding[دایاں_2] +
+					box->margin[دایاں_2];
+			اونچائی = box->margin[چوٹی_2] + box->padding[چوٹی_2] +
+					box->اونچائی + box->padding[BOTTOM] +
 					box->margin[BOTTOM];
-		} else {
-			width = box->padding[LEFT] + box->width +
-					box->padding[RIGHT];
-			height = box->padding[TOP] + box->height +
+		} ورنہ {
+			چوڑائی = box->padding[بایاں_2] + box->چوڑائی +
+					box->padding[دایاں_2];
+			اونچائی = box->padding[چوٹی_2] + box->اونچائی +
 					box->padding[BOTTOM];
 		}
 		/* handle background-repeat */
-		switch (css_computed_background_repeat(background->style)) {
-		case CSS_BACKGROUND_REPEAT_REPEAT:
+		انتخاب (css_computed_background_repeat(background->style)) {
+		حالت CSS_BACKGROUND_REPEAT_REPEAT:
 			repeat_x = repeat_y = true;
 			/* optimisation: only plot the colour if
 			 * bitmap is not opaque */
-			plot_colour = !content_get_opaque(background->background);
-			break;
+			plot_رنگ = !content_get_opaque(background->background);
+			توڑو;
 
-		case CSS_BACKGROUND_REPEAT_REPEAT_X:
+		حالت CSS_BACKGROUND_REPEAT_REPEAT_X:
 			repeat_x = true;
-			break;
+			توڑو;
 
-		case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+		حالت CSS_BACKGROUND_REPEAT_REPEAT_Y:
 			repeat_y = true;
-			break;
+			توڑو;
 
-		case CSS_BACKGROUND_REPEAT_NO_REPEAT:
-			break;
+		حالت CSS_BACKGROUND_REPEAT_NO_REPEAT:
+			توڑو;
 
-		default:
-			break;
+		طےشدہ:
+			توڑو;
 		}
 
 		/* handle background-position */
 		css_computed_background_position(background->style,
 				&hpos, &hunit, &vpos, &vunit);
-		if (hunit == CSS_UNIT_PCT) {
-			x += (width -
-				content_get_width(background->background)) *
+		اگر (hunit == CSS_UNIT_PCT) {
+			x += (چوڑائی -
+				content_get_چوڑائی(background->background)) *
 				scale * FIXTOFLT(hpos) / 100.;
-		} else {
-			x += (int) (FIXTOFLT(css_unit_len2device_px(
+		} ورنہ {
+			x += (صحیح) (FIXTOFLT(css_unit_len2device_px(
 					background->style, unit_len_ctx,
 					hpos, hunit)) * scale);
 		}
 
-		if (vunit == CSS_UNIT_PCT) {
-			y += (height -
-				content_get_height(background->background)) *
+		اگر (vunit == CSS_UNIT_PCT) {
+			y += (اونچائی -
+				content_get_اونچائی(background->background)) *
 				scale * FIXTOFLT(vpos) / 100.;
-		} else {
-			y += (int) (FIXTOFLT(css_unit_len2device_px(
+		} ورنہ {
+			y += (صحیح) (FIXTOFLT(css_unit_len2device_px(
 					background->style, unit_len_ctx,
 					vpos, vunit)) * scale);
 		}
@@ -690,42 +690,42 @@ static bool html_redraw_background(int x, int y, struct box *box, float scale,
 
 	/* special case for table rows as their background needs
 	 * to be clipped to all the cells */
-	if (box->type == BOX_TABLE_ROW) {
+	اگر (box->type == BOX_جدول_صف) {
 		css_fixed h = 0, v = 0;
 		css_unit hu = CSS_UNIT_PX, vu = CSS_UNIT_PX;
 
-		for (parent = box->parent;
-			((parent) && (parent->type != BOX_TABLE));
-				parent = parent->parent);
-		assert(parent && (parent->style));
+		برائے (والد = box->والد;
+			((والد) && (والد->type != BOX_جدول));
+				والد = والد->والد);
+		أكد(والد && (والد->style));
 
-		css_computed_border_spacing(parent->style, &h, &hu, &v, &vu);
+		css_computed_border_spacing(والد->style, &h, &hu, &v, &vu);
 
-		clip_to_children = (h > 0) || (v > 0);
+		clip_مقصد_children = (h > 0) || (v > 0);
 
-		if (clip_to_children)
+		اگر (clip_مقصد_children)
 			clip_box = box->children;
 	}
 
-	for (; clip_box; clip_box = clip_box->next) {
+	برائے (; clip_box; clip_box = clip_box->اگلا) {
 		/* clip to child boxes if needed */
-		if (clip_to_children) {
-			assert(clip_box->type == BOX_TABLE_CELL);
+		اگر (clip_مقصد_children) {
+			أكد(clip_box->type == BOX_جدول_CELL);
 
 			/* update clip.* to the child cell */
 			r.x0 = ox + (clip_box->x * scale);
 			r.y0 = oy + (clip_box->y * scale);
-			r.x1 = r.x0 + (clip_box->padding[LEFT] +
-					clip_box->width +
-					clip_box->padding[RIGHT]) * scale;
-			r.y1 = r.y0 + (clip_box->padding[TOP] +
-					clip_box->height +
+			r.x1 = r.x0 + (clip_box->padding[بایاں_2] +
+					clip_box->چوڑائی +
+					clip_box->padding[دایاں_2]) * scale;
+			r.y1 = r.y0 + (clip_box->padding[چوٹی_2] +
+					clip_box->اونچائی +
 					clip_box->padding[BOTTOM]) * scale;
 
-			if (r.x0 < clip->x0) r.x0 = clip->x0;
-			if (r.y0 < clip->y0) r.y0 = clip->y0;
-			if (r.x1 > clip->x1) r.x1 = clip->x1;
-			if (r.y1 > clip->y1) r.y1 = clip->y1;
+			اگر (r.x0 < clip->x0) r.x0 = clip->x0;
+			اگر (r.y0 < clip->y0) r.y0 = clip->y0;
+			اگر (r.x1 > clip->x1) r.x1 = clip->x1;
+			اگر (r.y1 > clip->y1) r.y1 = clip->y1;
 
 			css_computed_background_color(clip_box->style, &bgcol);
 
@@ -733,74 +733,74 @@ static bool html_redraw_background(int x, int y, struct box *box, float scale,
 			/* if the background content is opaque there
 			 * is no need to plot underneath it.
 			 */
-			if ((r.x0 >= r.x1) ||
+			اگر ((r.x0 >= r.x1) ||
 			    (r.y0 >= r.y1) ||
 			    (nscss_color_is_transparent(bgcol) == false) ||
-			    ((clip_box->background != NULL) &&
+			    ((clip_box->background != تہی) &&
 			     content_get_opaque(clip_box->background)))
-				continue;
+				جاری;
 		}
 
 		/* plot the background colour */
 		css_computed_background_color(background->style, &bgcol);
 
-		if (nscss_color_is_transparent(bgcol) == false) {
-			*background_colour = nscss_color_to_ns(bgcol);
-			pstyle_fill_bg.fill_colour = *background_colour;
-			if (plot_colour) {
+		اگر (nscss_color_is_transparent(bgcol) == false) {
+			*background_رنگ = nscss_color_مقصد_ns(bgcol);
+			pstyle_fill_bg.fill_رنگ = *background_رنگ;
+			اگر (plot_رنگ) {
 				res = ctx->plot->rectangle(ctx, &pstyle_fill_bg, &r);
-				if (res != NSERROR_OK) {
-					return false;
+				اگر (res != NSERROR_OK) {
+					واپس false;
 				}
 			}
 		}
 		/* and plot the image */
-		if (plot_content) {
-			width = content_get_width(background->background);
-			height = content_get_height(background->background);
+		اگر (plot_content) {
+			چوڑائی = content_get_چوڑائی(background->background);
+			اونچائی = content_get_اونچائی(background->background);
 
 			/* ensure clip area only as large as required */
-			if (!repeat_x) {
-				if (r.x0 < x)
+			اگر (!repeat_x) {
+				اگر (r.x0 < x)
 					r.x0 = x;
-				if (r.x1 > x + width * scale)
-					r.x1 = x + width * scale;
+				اگر (r.x1 > x + چوڑائی * scale)
+					r.x1 = x + چوڑائی * scale;
 			}
-			if (!repeat_y) {
-				if (r.y0 < y)
+			اگر (!repeat_y) {
+				اگر (r.y0 < y)
 					r.y0 = y;
-				if (r.y1 > y + height * scale)
-					r.y1 = y + height * scale;
+				اگر (r.y1 > y + اونچائی * scale)
+					r.y1 = y + اونچائی * scale;
 			}
 			/* valid clipping rectangles only */
-			if ((r.x0 < r.x1) && (r.y0 < r.y1)) {
-				struct content_redraw_data bg_data;
+			اگر ((r.x0 < r.x1) && (r.y0 < r.y1)) {
+				ساخت content_redraw_ڈیٹا bg_ڈیٹا;
 
 				res = ctx->plot->clip(ctx, &r);
-				if (res != NSERROR_OK) {
-					return false;
+				اگر (res != NSERROR_OK) {
+					واپس false;
 				}
 
-				bg_data.x = x;
-				bg_data.y = y;
-				bg_data.width = ceilf(width * scale);
-				bg_data.height = ceilf(height * scale);
-				bg_data.background_colour = *background_colour;
-				bg_data.scale = scale;
-				bg_data.repeat_x = repeat_x;
-				bg_data.repeat_y = repeat_y;
+				bg_ڈیٹا.x = x;
+				bg_ڈیٹا.y = y;
+				bg_ڈیٹا.چوڑائی = ceilf(چوڑائی * scale);
+				bg_ڈیٹا.اونچائی = ceilf(اونچائی * scale);
+				bg_ڈیٹا.background_رنگ = *background_رنگ;
+				bg_ڈیٹا.scale = scale;
+				bg_ڈیٹا.repeat_x = repeat_x;
+				bg_ڈیٹا.repeat_y = repeat_y;
 
 				/* We just continue if redraw fails */
 				content_redraw(background->background,
-						&bg_data, &r, ctx);
+						&bg_ڈیٹا, &r, ctx);
 			}
 		}
 
 		/* only <tr> rows being clipped to child boxes loop */
-		if (!clip_to_children)
-			return true;
+		اگر (!clip_مقصد_children)
+			واپس true;
 	}
-	return true;
+	واپس true;
 }
 
 
@@ -821,81 +821,81 @@ static bool html_redraw_background(int x, int y, struct box *box, float scale,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_inline_background(int x, int y, struct box *box,
-		float scale, const struct rect *clip, struct rect b,
-		bool first, bool last, colour *background_colour,
-		const css_unit_ctx *unit_len_ctx,
-		const struct redraw_context *ctx)
+ساکن bool html_redraw_inline_background(صحیح x, صحیح y, ساخت box *box,
+		اعشاری scale, ثابت ساخت rect *clip, ساخت rect b,
+		bool پہلا, bool آخری, رنگ *background_رنگ,
+		ثابت css_unit_ctx *unit_len_ctx,
+		ثابت ساخت redraw_context *ctx)
 {
-	struct rect r = *clip;
+	ساخت rect r = *clip;
 	bool repeat_x = false;
 	bool repeat_y = false;
-	bool plot_colour = true;
+	bool plot_رنگ = true;
 	bool plot_content;
 	css_fixed hpos = 0, vpos = 0;
 	css_unit hunit = CSS_UNIT_PX, vunit = CSS_UNIT_PX;
 	css_color bgcol;
 	plot_style_t pstyle_fill_bg = {
 		.fill_type = PLOT_OP_TYPE_SOLID,
-		.fill_colour = *background_colour,
+		.fill_رنگ = *background_رنگ,
 	};
 	nserror res;
 
-	plot_content = (box->background != NULL);
+	plot_content = (box->background != تہی);
 
-	if (html_redraw_printing && nsoption_bool(remove_backgrounds))
-		return true;
+	اگر (html_redraw_printing && nsoption_bool(remove_backgrounds))
+		واپس true;
 
-	if (plot_content) {
+	اگر (plot_content) {
 		/* handle background-repeat */
-		switch (css_computed_background_repeat(box->style)) {
-		case CSS_BACKGROUND_REPEAT_REPEAT:
+		انتخاب (css_computed_background_repeat(box->style)) {
+		حالت CSS_BACKGROUND_REPEAT_REPEAT:
 			repeat_x = repeat_y = true;
 			/* optimisation: only plot the colour if
 			 * bitmap is not opaque
 			 */
-			plot_colour = !content_get_opaque(box->background);
-			break;
+			plot_رنگ = !content_get_opaque(box->background);
+			توڑو;
 
-		case CSS_BACKGROUND_REPEAT_REPEAT_X:
+		حالت CSS_BACKGROUND_REPEAT_REPEAT_X:
 			repeat_x = true;
-			break;
+			توڑو;
 
-		case CSS_BACKGROUND_REPEAT_REPEAT_Y:
+		حالت CSS_BACKGROUND_REPEAT_REPEAT_Y:
 			repeat_y = true;
-			break;
+			توڑو;
 
-		case CSS_BACKGROUND_REPEAT_NO_REPEAT:
-			break;
+		حالت CSS_BACKGROUND_REPEAT_NO_REPEAT:
+			توڑو;
 
-		default:
-			break;
+		طےشدہ:
+			توڑو;
 		}
 
 		/* handle background-position */
 		css_computed_background_position(box->style,
 				&hpos, &hunit, &vpos, &vunit);
-		if (hunit == CSS_UNIT_PCT) {
+		اگر (hunit == CSS_UNIT_PCT) {
 			x += (b.x1 - b.x0 -
-					content_get_width(box->background) *
+					content_get_چوڑائی(box->background) *
 					scale) * FIXTOFLT(hpos) / 100.;
 
-			if (!repeat_x && ((hpos < 2 && !first) ||
-					(hpos > 98 && !last))){
+			اگر (!repeat_x && ((hpos < 2 && !پہلا) ||
+					(hpos > 98 && !آخری))){
 				plot_content = false;
 			}
-		} else {
-			x += (int) (FIXTOFLT(css_unit_len2device_px(
+		} ورنہ {
+			x += (صحیح) (FIXTOFLT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
 					hpos, hunit)) * scale);
 		}
 
-		if (vunit == CSS_UNIT_PCT) {
+		اگر (vunit == CSS_UNIT_PCT) {
 			y += (b.y1 - b.y0 -
-					content_get_height(box->background) *
+					content_get_اونچائی(box->background) *
 					scale) * FIXTOFLT(vpos) / 100.;
-		} else {
-			y += (int) (FIXTOFLT(css_unit_len2device_px(
+		} ورنہ {
+			y += (صحیح) (FIXTOFLT(css_unit_len2device_px(
 					box->style, unit_len_ctx,
 					vpos, vunit)) * scale);
 		}
@@ -904,58 +904,58 @@ static bool html_redraw_inline_background(int x, int y, struct box *box,
 	/* plot the background colour */
 	css_computed_background_color(box->style, &bgcol);
 
-	if (nscss_color_is_transparent(bgcol) == false) {
-		*background_colour = nscss_color_to_ns(bgcol);
-		pstyle_fill_bg.fill_colour = *background_colour;
+	اگر (nscss_color_is_transparent(bgcol) == false) {
+		*background_رنگ = nscss_color_مقصد_ns(bgcol);
+		pstyle_fill_bg.fill_رنگ = *background_رنگ;
 
-		if (plot_colour) {
+		اگر (plot_رنگ) {
 			res = ctx->plot->rectangle(ctx, &pstyle_fill_bg, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				واپس false;
 			}
 		}
 	}
 	/* and plot the image */
-	if (plot_content) {
-		int width = content_get_width(box->background);
-		int height = content_get_height(box->background);
+	اگر (plot_content) {
+		صحیح چوڑائی = content_get_چوڑائی(box->background);
+		صحیح اونچائی = content_get_اونچائی(box->background);
 
-		if (!repeat_x) {
-			if (r.x0 < x)
+		اگر (!repeat_x) {
+			اگر (r.x0 < x)
 				r.x0 = x;
-			if (r.x1 > x + width * scale)
-				r.x1 = x + width * scale;
+			اگر (r.x1 > x + چوڑائی * scale)
+				r.x1 = x + چوڑائی * scale;
 		}
-		if (!repeat_y) {
-			if (r.y0 < y)
+		اگر (!repeat_y) {
+			اگر (r.y0 < y)
 				r.y0 = y;
-			if (r.y1 > y + height * scale)
-				r.y1 = y + height * scale;
+			اگر (r.y1 > y + اونچائی * scale)
+				r.y1 = y + اونچائی * scale;
 		}
 		/* valid clipping rectangles only */
-		if ((r.x0 < r.x1) && (r.y0 < r.y1)) {
-			struct content_redraw_data bg_data;
+		اگر ((r.x0 < r.x1) && (r.y0 < r.y1)) {
+			ساخت content_redraw_ڈیٹا bg_ڈیٹا;
 
 			res = ctx->plot->clip(ctx, &r);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				واپس false;
 			}
 
-			bg_data.x = x;
-			bg_data.y = y;
-			bg_data.width = ceilf(width * scale);
-			bg_data.height = ceilf(height * scale);
-			bg_data.background_colour = *background_colour;
-			bg_data.scale = scale;
-			bg_data.repeat_x = repeat_x;
-			bg_data.repeat_y = repeat_y;
+			bg_ڈیٹا.x = x;
+			bg_ڈیٹا.y = y;
+			bg_ڈیٹا.چوڑائی = ceilf(چوڑائی * scale);
+			bg_ڈیٹا.اونچائی = ceilf(اونچائی * scale);
+			bg_ڈیٹا.background_رنگ = *background_رنگ;
+			bg_ڈیٹا.scale = scale;
+			bg_ڈیٹا.repeat_x = repeat_x;
+			bg_ڈیٹا.repeat_y = repeat_y;
 
 			/* We just continue if redraw fails */
-			content_redraw(box->background, &bg_data, &r, ctx);
+			content_redraw(box->background, &bg_ڈیٹا, &r, ctx);
 		}
 	}
 
-	return true;
+	واپس true;
 }
 
 
@@ -972,38 +972,38 @@ static bool html_redraw_inline_background(int x, int y, struct box *box,
  * \return true if successful, false otherwise
  */
 
-static bool
-html_redraw_text_decoration_inline(struct box *box,
-				   int x, int y,
-				   float scale,
-				   colour colour,
-				   float ratio,
-				   const struct redraw_context *ctx)
+ساکن bool
+html_redraw_متن_decoration_inline(ساخت box *box,
+				   صحیح x, صحیح y,
+				   اعشاری scale,
+				   رنگ رنگ,
+				   اعشاری تناسب,
+				   ثابت ساخت redraw_context *ctx)
 {
-	struct box *c;
+	ساخت box *c;
 	plot_style_t plot_style_box = {
 		.stroke_type = PLOT_OP_TYPE_SOLID,
-		.stroke_colour = colour,
+		.stroke_رنگ = رنگ,
 	};
 	nserror res;
-	struct rect rect;
+	ساخت rect rect;
 
-	for (c = box->next;
-	     c && c != box->inline_end;
-	     c = c->next) {
-		if (c->type != BOX_TEXT) {
-			continue;
+	برائے (c = box->اگلا;
+	     c && c != box->inline_انتہا;
+	     c = c->اگلا) {
+		اگر (c->type != BOX_متن) {
+			جاری;
 		}
 		rect.x0 = (x + c->x) * scale;
-		rect.y0 = (y + c->y + c->height * ratio) * scale;
-		rect.x1 = (x + c->x + c->width) * scale;
-		rect.y1 = (y + c->y + c->height * ratio) * scale;
-		res = ctx->plot->line(ctx, &plot_style_box, &rect);
-		if (res != NSERROR_OK) {
-			return false;
+		rect.y0 = (y + c->y + c->اونچائی * تناسب) * scale;
+		rect.x1 = (x + c->x + c->چوڑائی) * scale;
+		rect.y1 = (y + c->y + c->اونچائی * تناسب) * scale;
+		res = ctx->plot->سطر(ctx, &plot_style_box, &rect);
+		اگر (res != NSERROR_OK) {
+			واپس false;
 		}
 	}
-	return true;
+	واپس true;
 }
 
 
@@ -1020,41 +1020,41 @@ html_redraw_text_decoration_inline(struct box *box,
  * \return true if successful, false otherwise
  */
 
-static bool
-html_redraw_text_decoration_block(struct box *box,
-				  int x, int y,
-				  float scale,
-				  colour colour,
-				  float ratio,
-				  const struct redraw_context *ctx)
+ساکن bool
+html_redraw_متن_decoration_بلاک(ساخت box *box,
+				  صحیح x, صحیح y,
+				  اعشاری scale,
+				  رنگ رنگ,
+				  اعشاری تناسب,
+				  ثابت ساخت redraw_context *ctx)
 {
-	struct box *c;
+	ساخت box *c;
 	plot_style_t plot_style_box = {
 		.stroke_type = PLOT_OP_TYPE_SOLID,
-		.stroke_colour = colour,
+		.stroke_رنگ = رنگ,
 	};
 	nserror res;
-	struct rect rect;
+	ساخت rect rect;
 
 	/* draw through text descendants */
-	for (c = box->children; c; c = c->next) {
-		if (c->type == BOX_TEXT) {
+	برائے (c = box->children; c; c = c->اگلا) {
+		اگر (c->type == BOX_متن) {
 			rect.x0 = (x + c->x) * scale;
-			rect.y0 = (y + c->y + c->height * ratio) * scale;
-			rect.x1 = (x + c->x + c->width) * scale;
-			rect.y1 = (y + c->y + c->height * ratio) * scale;
-			res = ctx->plot->line(ctx, &plot_style_box, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			rect.y0 = (y + c->y + c->اونچائی * تناسب) * scale;
+			rect.x1 = (x + c->x + c->چوڑائی) * scale;
+			rect.y1 = (y + c->y + c->اونچائی * تناسب) * scale;
+			res = ctx->plot->سطر(ctx, &plot_style_box, &rect);
+			اگر (res != NSERROR_OK) {
+				واپس false;
 			}
-		} else if ((c->type == BOX_INLINE_CONTAINER) || (c->type == BOX_BLOCK)) {
-			if (!html_redraw_text_decoration_block(c,
+		} ورنہ اگر ((c->type == BOX_INLINE_CONTAINER) || (c->type == BOX_بلاک)) {
+			اگر (!html_redraw_متن_decoration_بلاک(c,
 					x + c->x, y + c->y,
-					scale, colour, ratio, ctx))
-				return false;
+					scale, رنگ, تناسب, ctx))
+				واپس false;
 		}
 	}
-	return true;
+	واپس true;
 }
 
 
@@ -1070,48 +1070,48 @@ html_redraw_text_decoration_block(struct box *box,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_text_decoration(struct box *box,
-		int x_parent, int y_parent, float scale,
-		colour background_colour, const struct redraw_context *ctx)
+ساکن bool html_redraw_متن_decoration(ساخت box *box,
+		صحیح x_والد, صحیح y_والد, اعشاری scale,
+		رنگ background_رنگ, ثابت ساخت redraw_context *ctx)
 {
-	static const enum css_text_decoration_e decoration[] = {
-		CSS_TEXT_DECORATION_UNDERLINE, CSS_TEXT_DECORATION_OVERLINE,
-		CSS_TEXT_DECORATION_LINE_THROUGH };
-	static const float line_ratio[] = { 0.9, 0.1, 0.5 };
-	colour fgcol;
-	unsigned int i;
-	css_color col;
+	ساکن ثابت شمار css_متن_decoration_e decoration[] = {
+		CSS_متن_DECORATION_UNDERLINE, CSS_متن_DECORATION_OVERLINE,
+		CSS_متن_DECORATION_سطر_THROUGH };
+	ساکن ثابت اعشاری سطر_تناسب[] = { 0.9, 0.1, 0.5 };
+	رنگ fgcol;
+	غیرعلامتی صحیح i;
+	css_color ستون;
 
-	css_computed_color(box->style, &col);
-	fgcol = nscss_color_to_ns(col);
+	css_computed_color(box->style, &ستون);
+	fgcol = nscss_color_مقصد_ns(ستون);
 
 	/* antialias colour for under/overline */
-	if (html_redraw_printing == false)
-		fgcol = blend_colour(background_colour, fgcol);
+	اگر (html_redraw_printing == false)
+		fgcol = blend_رنگ(background_رنگ, fgcol);
 
-	if (box->type == BOX_INLINE) {
-		if (!box->inline_end)
-			return true;
-		for (i = 0; i != NOF_ELEMENTS(decoration); i++)
-			if (css_computed_text_decoration(box->style) &
+	اگر (box->type == BOX_INLINE) {
+		اگر (!box->inline_انتہا)
+			واپس true;
+		برائے (i = 0; i != NOF_ELEMENTS(decoration); i++)
+			اگر (css_computed_متن_decoration(box->style) &
 					decoration[i])
-				if (!html_redraw_text_decoration_inline(box,
-						x_parent, y_parent, scale,
-						fgcol, line_ratio[i], ctx))
-					return false;
-	} else {
-		for (i = 0; i != NOF_ELEMENTS(decoration); i++)
-			if (css_computed_text_decoration(box->style) &
+				اگر (!html_redraw_متن_decoration_inline(box,
+						x_والد, y_والد, scale,
+						fgcol, سطر_تناسب[i], ctx))
+					واپس false;
+	} ورنہ {
+		برائے (i = 0; i != NOF_ELEMENTS(decoration); i++)
+			اگر (css_computed_متن_decoration(box->style) &
 					decoration[i])
-				if (!html_redraw_text_decoration_block(box,
-						x_parent + box->x,
-						y_parent + box->y,
+				اگر (!html_redraw_متن_decoration_بلاک(box,
+						x_والد + box->x,
+						y_والد + box->y,
 						scale,
-						fgcol, line_ratio[i], ctx))
-					return false;
+						fgcol, سطر_تناسب[i], ctx))
+					واپس false;
 	}
 
-	return true;
+	واپس true;
 }
 
 
@@ -1130,40 +1130,40 @@ static bool html_redraw_text_decoration(struct box *box,
  * \return true iff successful and redraw should proceed
  */
 
-static bool html_redraw_text_box(const html_content *html, struct box *box,
-		int x, int y, const struct rect *clip, float scale,
-		colour current_background_color,
-		const struct redraw_context *ctx)
+ساکن bool html_redraw_متن_box(ثابت html_content *html, ساخت box *box,
+		صحیح x, صحیح y, ثابت ساخت rect *clip, اعشاری scale,
+		رنگ current_background_color,
+		ثابت ساخت redraw_context *ctx)
 {
-	bool excluded = (box->object != NULL);
+	bool excluded = (box->object != تہی);
 	plot_font_style_t fstyle;
 
 	font_plot_style_from_css(&html->unit_len_ctx, box->style, &fstyle);
 	fstyle.background = current_background_color;
 
-	if (!text_redraw(box->text,
-			 box->length,
-			 box->byte_offset,
+	اگر (!متن_redraw(box->متن,
+			 box->لمبائی,
+			 box->byte_انحراف,
 			 box->space,
 			 &fstyle,
 			 x, y,
 			 clip,
-			 box->height,
+			 box->اونچائی,
 			 scale,
 			 excluded,
-			 (struct content *)html,
+			 (ساخت content *)html,
 			 html->sel,
 			 ctx))
-		return false;
+		واپس false;
 
-	return true;
+	واپس true;
 }
 
-bool html_redraw_box(const html_content *html, struct box *box,
-		int x_parent, int y_parent,
-		const struct rect *clip, float scale,
-		colour current_background_color,
-		const struct redraw_context *ctx);
+bool html_redraw_box(ثابت html_content *html, ساخت box *box,
+		صحیح x_والد, صحیح y_والد,
+		ثابت ساخت rect *clip, اعشاری scale,
+		رنگ current_background_color,
+		ثابت ساخت redraw_context *ctx);
 
 /**
  * Draw the various children of a box.
@@ -1179,37 +1179,37 @@ bool html_redraw_box(const html_content *html, struct box *box,
  * \return true if successful, false otherwise
  */
 
-static bool html_redraw_box_children(const html_content *html, struct box *box,
-		int x_parent, int y_parent,
-		const struct rect *clip, float scale,
-		colour current_background_color,
-		const struct redraw_context *ctx)
+ساکن bool html_redraw_box_children(ثابت html_content *html, ساخت box *box,
+		صحیح x_والد, صحیح y_والد,
+		ثابت ساخت rect *clip, اعشاری scale,
+		رنگ current_background_color,
+		ثابت ساخت redraw_context *ctx)
 {
-	struct box *c;
+	ساخت box *c;
 
-	for (c = box->children; c; c = c->next) {
+	برائے (c = box->children; c; c = c->اگلا) {
 
-		if (c->type != BOX_FLOAT_LEFT && c->type != BOX_FLOAT_RIGHT)
-			if (!html_redraw_box(html, c,
-					x_parent + box->x -
-					scrollbar_get_offset(box->scroll_x),
-					y_parent + box->y -
-					scrollbar_get_offset(box->scroll_y),
+		اگر (c->type != BOX_FLOAT_بایاں && c->type != BOX_FLOAT_دایاں)
+			اگر (!html_redraw_box(html, c,
+					x_والد + box->x -
+					scrollbar_get_انحراف(box->scroll_x),
+					y_والد + box->y -
+					scrollbar_get_انحراف(box->scroll_y),
 					clip, scale, current_background_color,
 					ctx))
-				return false;
+				واپس false;
 	}
-	for (c = box->float_children; c; c = c->next_float)
-		if (!html_redraw_box(html, c,
-				x_parent + box->x -
-				scrollbar_get_offset(box->scroll_x),
-				y_parent + box->y -
-				scrollbar_get_offset(box->scroll_y),
+	برائے (c = box->float_children; c; c = c->اگلا_float)
+		اگر (!html_redraw_box(html, c,
+				x_والد + box->x -
+				scrollbar_get_انحراف(box->scroll_x),
+				y_والد + box->y -
+				scrollbar_get_انحراف(box->scroll_y),
 				clip, scale, current_background_color,
 				ctx))
-			return false;
+			واپس false;
 
-	return true;
+	واپس true;
 }
 
 /**
@@ -1228,705 +1228,705 @@ static bool html_redraw_box_children(const html_content *html, struct box *box,
  * x, y, clip_[xy][01] are in target coordinates.
  */
 
-bool html_redraw_box(const html_content *html, struct box *box,
-		int x_parent, int y_parent,
-		const struct rect *clip, const float scale,
-		colour current_background_color,
-		const struct redraw_context *ctx)
+bool html_redraw_box(ثابت html_content *html, ساخت box *box,
+		صحیح x_والد, صحیح y_والد,
+		ثابت ساخت rect *clip, ثابت اعشاری scale,
+		رنگ current_background_color,
+		ثابت ساخت redraw_context *ctx)
 {
-	const struct plotter_table *plot = ctx->plot;
-	int x, y;
-	int width, height;
-	int padding_left, padding_top, padding_width, padding_height;
-	int border_left, border_top, border_right, border_bottom;
-	struct rect r;
-	struct rect rect;
-	int x_scrolled, y_scrolled;
-	struct box *bg_box = NULL;
+	ثابت ساخت plotter_جدول *plot = ctx->plot;
+	صحیح x, y;
+	صحیح چوڑائی, اونچائی;
+	صحیح padding_بایاں, padding_چوٹی, padding_چوڑائی, padding_اونچائی;
+	صحیح border_بایاں, border_چوٹی, border_دایاں, border_bottom;
+	ساخت rect r;
+	ساخت rect rect;
+	صحیح x_scrolled, y_scrolled;
+	ساخت box *bg_box = تہی;
 	css_computed_clip_rect css_rect;
-	enum css_overflow_e overflow_x = CSS_OVERFLOW_VISIBLE;
-	enum css_overflow_e overflow_y = CSS_OVERFLOW_VISIBLE;
+	شمار css_حد_سے_تجاوز_e حد_سے_تجاوز_x = CSS_حد_سے_تجاوز_VISIBLE;
+	شمار css_حد_سے_تجاوز_e حد_سے_تجاوز_y = CSS_حد_سے_تجاوز_VISIBLE;
 	dom_exception exc;
-	dom_html_element_type tag_type;
+	dom_html_element_type لیبل_type;
 
 
-	if (html_redraw_printing && (box->flags & PRINTED))
-		return true;
+	اگر (html_redraw_printing && (box->flags & PRINTED))
+		واپس true;
 
-	if (box->style != NULL) {
-		overflow_x = css_computed_overflow_x(box->style);
-		overflow_y = css_computed_overflow_y(box->style);
+	اگر (box->style != تہی) {
+		حد_سے_تجاوز_x = css_computed_حد_سے_تجاوز_x(box->style);
+		حد_سے_تجاوز_y = css_computed_حد_سے_تجاوز_y(box->style);
 	}
 
 	/* avoid trivial FP maths */
-	if (scale == 1.0) {
-		x = x_parent + box->x;
-		y = y_parent + box->y;
-		width = box->width;
-		height = box->height;
-		padding_left = box->padding[LEFT];
-		padding_top = box->padding[TOP];
-		padding_width = padding_left + box->width + box->padding[RIGHT];
-		padding_height = padding_top + box->height +
+	اگر (scale == 1.0) {
+		x = x_والد + box->x;
+		y = y_والد + box->y;
+		چوڑائی = box->چوڑائی;
+		اونچائی = box->اونچائی;
+		padding_بایاں = box->padding[بایاں_2];
+		padding_چوٹی = box->padding[چوٹی_2];
+		padding_چوڑائی = padding_بایاں + box->چوڑائی + box->padding[دایاں_2];
+		padding_اونچائی = padding_چوٹی + box->اونچائی +
 				box->padding[BOTTOM];
-		border_left = box->border[LEFT].width;
-		border_top = box->border[TOP].width;
-		border_right = box->border[RIGHT].width;
-		border_bottom = box->border[BOTTOM].width;
-	} else {
-		x = (x_parent + box->x) * scale;
-		y = (y_parent + box->y) * scale;
-		width = box->width * scale;
-		height = box->height * scale;
+		border_بایاں = box->border[بایاں_2].چوڑائی;
+		border_چوٹی = box->border[چوٹی_2].چوڑائی;
+		border_دایاں = box->border[دایاں_2].چوڑائی;
+		border_bottom = box->border[BOTTOM].چوڑائی;
+	} ورنہ {
+		x = (x_والد + box->x) * scale;
+		y = (y_والد + box->y) * scale;
+		چوڑائی = box->چوڑائی * scale;
+		اونچائی = box->اونچائی * scale;
 		/* left and top padding values are normally zero,
 		 * so avoid trivial FP maths */
-		padding_left = box->padding[LEFT] ? box->padding[LEFT] * scale
+		padding_بایاں = box->padding[بایاں_2] ? box->padding[بایاں_2] * scale
 				: 0;
-		padding_top = box->padding[TOP] ? box->padding[TOP] * scale
+		padding_چوٹی = box->padding[چوٹی_2] ? box->padding[چوٹی_2] * scale
 				: 0;
-		padding_width = (box->padding[LEFT] + box->width +
-				box->padding[RIGHT]) * scale;
-		padding_height = (box->padding[TOP] + box->height +
+		padding_چوڑائی = (box->padding[بایاں_2] + box->چوڑائی +
+				box->padding[دایاں_2]) * scale;
+		padding_اونچائی = (box->padding[چوٹی_2] + box->اونچائی +
 				box->padding[BOTTOM]) * scale;
-		border_left = box->border[LEFT].width * scale;
-		border_top = box->border[TOP].width * scale;
-		border_right = box->border[RIGHT].width * scale;
-		border_bottom = box->border[BOTTOM].width * scale;
+		border_بایاں = box->border[بایاں_2].چوڑائی * scale;
+		border_چوٹی = box->border[چوٹی_2].چوڑائی * scale;
+		border_دایاں = box->border[دایاں_2].چوڑائی * scale;
+		border_bottom = box->border[BOTTOM].چوڑائی * scale;
 	}
 
 	/* calculate rectangle covering this box and descendants */
-	if (box->style && overflow_x != CSS_OVERFLOW_VISIBLE &&
-			box->parent != NULL) {
+	اگر (box->style && حد_سے_تجاوز_x != CSS_حد_سے_تجاوز_VISIBLE &&
+			box->والد != تہی) {
 		/* box contents clipped to box size */
-		r.x0 = x - border_left;
-		r.x1 = x + padding_width + border_right;
-	} else {
+		r.x0 = x - border_بایاں;
+		r.x1 = x + padding_چوڑائی + border_دایاں;
+	} ورنہ {
 		/* box contents can hang out of the box; use descendant box */
-		if (scale == 1.0) {
+		اگر (scale == 1.0) {
 			r.x0 = x + box->descendant_x0;
 			r.x1 = x + box->descendant_x1 + 1;
-		} else {
+		} ورنہ {
 			r.x0 = x + box->descendant_x0 * scale;
 			r.x1 = x + box->descendant_x1 * scale + 1;
 		}
-		if (!box->parent) {
+		اگر (!box->والد) {
 			/* root element */
-			int margin_left, margin_right;
-			if (scale == 1.0) {
-				margin_left = box->margin[LEFT];
-				margin_right = box->margin[RIGHT];
-			} else {
-				margin_left = box->margin[LEFT] * scale;
-				margin_right = box->margin[RIGHT] * scale;
+			صحیح margin_بایاں, margin_دایاں;
+			اگر (scale == 1.0) {
+				margin_بایاں = box->margin[بایاں_2];
+				margin_دایاں = box->margin[دایاں_2];
+			} ورنہ {
+				margin_بایاں = box->margin[بایاں_2] * scale;
+				margin_دایاں = box->margin[دایاں_2] * scale;
 			}
-			r.x0 = x - border_left - margin_left < r.x0 ?
-					x - border_left - margin_left : r.x0;
-			r.x1 = x + padding_width + border_right +
-					margin_right > r.x1 ?
-					x + padding_width + border_right +
-					margin_right : r.x1;
+			r.x0 = x - border_بایاں - margin_بایاں < r.x0 ?
+					x - border_بایاں - margin_بایاں : r.x0;
+			r.x1 = x + padding_چوڑائی + border_دایاں +
+					margin_دایاں > r.x1 ?
+					x + padding_چوڑائی + border_دایاں +
+					margin_دایاں : r.x1;
 		}
 	}
 
 	/* calculate rectangle covering this box and descendants */
-	if (box->style && overflow_y != CSS_OVERFLOW_VISIBLE &&
-			box->parent != NULL) {
+	اگر (box->style && حد_سے_تجاوز_y != CSS_حد_سے_تجاوز_VISIBLE &&
+			box->والد != تہی) {
 		/* box contents clipped to box size */
-		r.y0 = y - border_top;
-		r.y1 = y + padding_height + border_bottom;
-	} else {
+		r.y0 = y - border_چوٹی;
+		r.y1 = y + padding_اونچائی + border_bottom;
+	} ورنہ {
 		/* box contents can hang out of the box; use descendant box */
-		if (scale == 1.0) {
+		اگر (scale == 1.0) {
 			r.y0 = y + box->descendant_y0;
 			r.y1 = y + box->descendant_y1 + 1;
-		} else {
+		} ورنہ {
 			r.y0 = y + box->descendant_y0 * scale;
 			r.y1 = y + box->descendant_y1 * scale + 1;
 		}
-		if (!box->parent) {
+		اگر (!box->والد) {
 			/* root element */
-			int margin_top, margin_bottom;
-			if (scale == 1.0) {
-				margin_top = box->margin[TOP];
+			صحیح margin_چوٹی, margin_bottom;
+			اگر (scale == 1.0) {
+				margin_چوٹی = box->margin[چوٹی_2];
 				margin_bottom = box->margin[BOTTOM];
-			} else {
-				margin_top = box->margin[TOP] * scale;
+			} ورنہ {
+				margin_چوٹی = box->margin[چوٹی_2] * scale;
 				margin_bottom = box->margin[BOTTOM] * scale;
 			}
-			r.y0 = y - border_top - margin_top < r.y0 ?
-					y - border_top - margin_top : r.y0;
-			r.y1 = y + padding_height + border_bottom +
+			r.y0 = y - border_چوٹی - margin_چوٹی < r.y0 ?
+					y - border_چوٹی - margin_چوٹی : r.y0;
+			r.y1 = y + padding_اونچائی + border_bottom +
 					margin_bottom > r.y1 ?
-					y + padding_height + border_bottom +
+					y + padding_اونچائی + border_bottom +
 					margin_bottom : r.y1;
 		}
 	}
 
 	/* return if the rectangle is completely outside the clip rectangle */
-	if (clip->y1 < r.y0 || r.y1 < clip->y0 ||
+	اگر (clip->y1 < r.y0 || r.y1 < clip->y0 ||
 			clip->x1 < r.x0 || r.x1 < clip->x0)
-		return true;
+		واپس true;
 
 	/*if the rectangle is under the page bottom but it can fit in a page,
 	don't print it now*/
-	if (html_redraw_printing) {
-		if (r.y1 > html_redraw_printing_border) {
-			if (r.y1 - r.y0 <= html_redraw_printing_border &&
-					(box->type == BOX_TEXT ||
-					box->type == BOX_TABLE_CELL
+	اگر (html_redraw_printing) {
+		اگر (r.y1 > html_redraw_printing_border) {
+			اگر (r.y1 - r.y0 <= html_redraw_printing_border &&
+					(box->type == BOX_متن ||
+					box->type == BOX_جدول_CELL
 					|| box->object || box->gadget)) {
 				/*remember the highest of all points from the
 				not printed elements*/
-				if (r.y0 < html_redraw_printing_top_cropped)
-					html_redraw_printing_top_cropped = r.y0;
-				return true;
+				اگر (r.y0 < html_redraw_printing_چوٹی_cropped)
+					html_redraw_printing_چوٹی_cropped = r.y0;
+				واپس true;
 			}
 		}
-		else box->flags |= PRINTED; /*it won't be printed anymore*/
+		ورنہ box->flags |= PRINTED; /*it won't be printed anymore*/
 	}
 
 	/* if visibility is hidden render children only */
-	if (box->style && css_computed_visibility(box->style) ==
+	اگر (box->style && css_computed_visibility(box->style) ==
 			CSS_VISIBILITY_HIDDEN) {
-		if ((ctx->plot->group_start) &&
-		    (ctx->plot->group_start(ctx, "hidden box") != NSERROR_OK))
-			return false;
-		if (!html_redraw_box_children(html, box, x_parent, y_parent,
+		اگر ((ctx->plot->گروہ_آغاز) &&
+		    (ctx->plot->گروہ_آغاز(ctx, "hidden box") != NSERROR_OK))
+			واپس false;
+		اگر (!html_redraw_box_children(html, box, x_والد, y_والد,
 				&r, scale, current_background_color, ctx))
-			return false;
-		return ((!ctx->plot->group_end) || (ctx->plot->group_end(ctx) == NSERROR_OK));
+			واپس false;
+		واپس ((!ctx->plot->گروہ_انتہا) || (ctx->plot->گروہ_انتہا(ctx) == NSERROR_OK));
 	}
 
-	if ((ctx->plot->group_start) &&
-	    (ctx->plot->group_start(ctx,"vis box") != NSERROR_OK)) {
-		return false;
+	اگر ((ctx->plot->گروہ_آغاز) &&
+	    (ctx->plot->گروہ_آغاز(ctx,"vis box") != NSERROR_OK)) {
+		واپس false;
 	}
 
-	if (box->style != NULL &&
+	اگر (box->style != تہی &&
 			css_computed_position(box->style) ==
 					CSS_POSITION_ABSOLUTE &&
 			css_computed_clip(box->style, &css_rect) ==
 					CSS_CLIP_RECT) {
 		/* We have an absolutly positioned box with a clip rect */
-		if (css_rect.left_auto == false)
-			r.x0 = x - border_left + FIXTOINT(css_unit_len2device_px(
+		اگر (css_rect.بایاں_auto == false)
+			r.x0 = x - border_بایاں + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.left, css_rect.lunit));
+					css_rect.بایاں, css_rect.lunit));
 
-		if (css_rect.top_auto == false)
-			r.y0 = y - border_top + FIXTOINT(css_unit_len2device_px(
+		اگر (css_rect.چوٹی_auto == false)
+			r.y0 = y - border_چوٹی + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.top, css_rect.tunit));
+					css_rect.چوٹی, css_rect.tunit));
 
-		if (css_rect.right_auto == false)
-			r.x1 = x - border_left + FIXTOINT(css_unit_len2device_px(
+		اگر (css_rect.دایاں_auto == false)
+			r.x1 = x - border_بایاں + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
-					css_rect.right, css_rect.runit));
+					css_rect.دایاں, css_rect.runit));
 
-		if (css_rect.bottom_auto == false)
-			r.y1 = y - border_top + FIXTOINT(css_unit_len2device_px(
+		اگر (css_rect.bottom_auto == false)
+			r.y1 = y - border_چوٹی + FIXTOINT(css_unit_len2device_px(
 					box->style, &html->unit_len_ctx,
 					css_rect.bottom, css_rect.bunit));
 
 		/* find intersection of clip rectangle and box */
-		if (r.x0 < clip->x0) r.x0 = clip->x0;
-		if (r.y0 < clip->y0) r.y0 = clip->y0;
-		if (clip->x1 < r.x1) r.x1 = clip->x1;
-		if (clip->y1 < r.y1) r.y1 = clip->y1;
+		اگر (r.x0 < clip->x0) r.x0 = clip->x0;
+		اگر (r.y0 < clip->y0) r.y0 = clip->y0;
+		اگر (clip->x1 < r.x1) r.x1 = clip->x1;
+		اگر (clip->y1 < r.y1) r.y1 = clip->y1;
 		/* Nothing to do for invalid rectangles */
-		if (r.x0 >= r.x1 || r.y0 >= r.y1)
+		اگر (r.x0 >= r.x1 || r.y0 >= r.y1)
 			/* not an error */
-			return ((!ctx->plot->group_end) ||
-				(ctx->plot->group_end(ctx) == NSERROR_OK));
+			واپس ((!ctx->plot->گروہ_انتہا) ||
+				(ctx->plot->گروہ_انتہا(ctx) == NSERROR_OK));
 		/* clip to it */
-		if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-			return false;
+		اگر (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+			واپس false;
 
-	} else if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
-			box->type == BOX_TABLE_CELL || box->object) {
+	} ورنہ اگر (box->type == BOX_بلاک || box->type == BOX_INLINE_بلاک ||
+			box->type == BOX_جدول_CELL || box->object) {
 		/* find intersection of clip rectangle and box */
-		if (r.x0 < clip->x0) r.x0 = clip->x0;
-		if (r.y0 < clip->y0) r.y0 = clip->y0;
-		if (clip->x1 < r.x1) r.x1 = clip->x1;
-		if (clip->y1 < r.y1) r.y1 = clip->y1;
+		اگر (r.x0 < clip->x0) r.x0 = clip->x0;
+		اگر (r.y0 < clip->y0) r.y0 = clip->y0;
+		اگر (clip->x1 < r.x1) r.x1 = clip->x1;
+		اگر (clip->y1 < r.y1) r.y1 = clip->y1;
 		/* no point trying to draw 0-width/height boxes */
-		if (r.x0 == r.x1 || r.y0 == r.y1)
+		اگر (r.x0 == r.x1 || r.y0 == r.y1)
 			/* not an error */
-			return ((!ctx->plot->group_end) ||
-				(ctx->plot->group_end(ctx) == NSERROR_OK));
+			واپس ((!ctx->plot->گروہ_انتہا) ||
+				(ctx->plot->گروہ_انتہا(ctx) == NSERROR_OK));
 		/* clip to it */
-		if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-			return false;
-	} else {
+		اگر (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+			واپس false;
+	} ورنہ {
 		/* clip box is fine, clip to it */
 		r = *clip;
-		if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-			return false;
+		اگر (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+			واپس false;
 	}
 
 	/* background colour and image for block level content and replaced
 	 * inlines */
 
-	bg_box = html_redraw_find_bg_box(box);
+	bg_box = html_redraw_ڈھونڈو_bg_box(box);
 
 	/* bg_box == NULL implies that this box should not have
 	* its background rendered. Otherwise filter out linebreaks,
 	* optimize away non-differing inlines, only plot background
 	* for BOX_TEXT it's in an inline */
-	if (bg_box && bg_box->type != BOX_BR &&
-			bg_box->type != BOX_TEXT &&
-			bg_box->type != BOX_INLINE_END &&
+	اگر (bg_box && bg_box->type != BOX_BR &&
+			bg_box->type != BOX_متن &&
+			bg_box->type != BOX_INLINE_انتہا &&
 			(bg_box->type != BOX_INLINE || bg_box->object ||
 			bg_box->flags & IFRAME || box->flags & REPLACE_DIM ||
-			(bg_box->gadget != NULL &&
+			(bg_box->gadget != تہی &&
 			(bg_box->gadget->type == GADGET_TEXTAREA ||
 			bg_box->gadget->type == GADGET_TEXTBOX ||
 			bg_box->gadget->type == GADGET_PASSWORD)))) {
 		/* find intersection of clip box and border edge */
-		struct rect p;
-		p.x0 = x - border_left < r.x0 ? r.x0 : x - border_left;
-		p.y0 = y - border_top < r.y0 ? r.y0 : y - border_top;
-		p.x1 = x + padding_width + border_right < r.x1 ?
-				x + padding_width + border_right : r.x1;
-		p.y1 = y + padding_height + border_bottom < r.y1 ?
-				y + padding_height + border_bottom : r.y1;
-		if (!box->parent) {
+		ساخت rect p;
+		p.x0 = x - border_بایاں < r.x0 ? r.x0 : x - border_بایاں;
+		p.y0 = y - border_چوٹی < r.y0 ? r.y0 : y - border_چوٹی;
+		p.x1 = x + padding_چوڑائی + border_دایاں < r.x1 ?
+				x + padding_چوڑائی + border_دایاں : r.x1;
+		p.y1 = y + padding_اونچائی + border_bottom < r.y1 ?
+				y + padding_اونچائی + border_bottom : r.y1;
+		اگر (!box->والد) {
 			/* Root element, special case:
 			 * background covers margins too */
-			int m_left, m_top, m_right, m_bottom;
-			if (scale == 1.0) {
-				m_left = box->margin[LEFT];
-				m_top = box->margin[TOP];
-				m_right = box->margin[RIGHT];
+			صحیح m_بایاں, m_چوٹی, m_دایاں, m_bottom;
+			اگر (scale == 1.0) {
+				m_بایاں = box->margin[بایاں_2];
+				m_چوٹی = box->margin[چوٹی_2];
+				m_دایاں = box->margin[دایاں_2];
 				m_bottom = box->margin[BOTTOM];
-			} else {
-				m_left = box->margin[LEFT] * scale;
-				m_top = box->margin[TOP] * scale;
-				m_right = box->margin[RIGHT] * scale;
+			} ورنہ {
+				m_بایاں = box->margin[بایاں_2] * scale;
+				m_چوٹی = box->margin[چوٹی_2] * scale;
+				m_دایاں = box->margin[دایاں_2] * scale;
 				m_bottom = box->margin[BOTTOM] * scale;
 			}
-			p.x0 = p.x0 - m_left < r.x0 ? r.x0 : p.x0 - m_left;
-			p.y0 = p.y0 - m_top < r.y0 ? r.y0 : p.y0 - m_top;
-			p.x1 = p.x1 + m_right < r.x1 ? p.x1 + m_right : r.x1;
+			p.x0 = p.x0 - m_بایاں < r.x0 ? r.x0 : p.x0 - m_بایاں;
+			p.y0 = p.y0 - m_چوٹی < r.y0 ? r.y0 : p.y0 - m_چوٹی;
+			p.x1 = p.x1 + m_دایاں < r.x1 ? p.x1 + m_دایاں : r.x1;
 			p.y1 = p.y1 + m_bottom < r.y1 ? p.y1 + m_bottom : r.y1;
 		}
 		/* valid clipping rectangles only */
-		if ((p.x0 < p.x1) && (p.y0 < p.y1)) {
+		اگر ((p.x0 < p.x1) && (p.y0 < p.y1)) {
 			/* plot background */
-			if (!html_redraw_background(x, y, box, scale, &p,
+			اگر (!html_redraw_background(x, y, box, scale, &p,
 					&current_background_color, bg_box,
 					&html->unit_len_ctx, ctx))
-				return false;
+				واپس false;
 			/* restore previous graphics window */
-			if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-				return false;
+			اگر (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+				واپس false;
 		}
 	}
 
 	/* borders for block level content and replaced inlines */
-	if (box->style &&
-	    box->type != BOX_TEXT &&
-	    box->type != BOX_INLINE_END &&
+	اگر (box->style &&
+	    box->type != BOX_متن &&
+	    box->type != BOX_INLINE_انتہا &&
 	    (box->type != BOX_INLINE || box->object ||
 	     box->flags & IFRAME || box->flags & REPLACE_DIM ||
-	     (box->gadget != NULL &&
+	     (box->gadget != تہی &&
 	      (box->gadget->type == GADGET_TEXTAREA ||
 	       box->gadget->type == GADGET_TEXTBOX ||
 	       box->gadget->type == GADGET_PASSWORD))) &&
-	    (border_top || border_right || border_bottom || border_left)) {
-		if (!html_redraw_borders(box, x_parent, y_parent,
-				padding_width, padding_height, &r,
+	    (border_چوٹی || border_دایاں || border_bottom || border_بایاں)) {
+		اگر (!html_redraw_borders(box, x_والد, y_والد,
+				padding_چوڑائی, padding_اونچائی, &r,
 				scale, ctx))
-			return false;
+			واپس false;
 	}
 
 	/* backgrounds and borders for non-replaced inlines */
-	if (box->style && box->type == BOX_INLINE && box->inline_end &&
+	اگر (box->style && box->type == BOX_INLINE && box->inline_انتہا &&
 			(html_redraw_box_has_background(box) ||
-			border_top || border_right ||
-			border_bottom || border_left)) {
+			border_چوٹی || border_دایاں ||
+			border_bottom || border_بایاں)) {
 		/* inline backgrounds and borders span other boxes and may
 		 * wrap onto separate lines */
-		struct box *ib;
-		struct rect b; /* border edge rectangle */
-		struct rect p; /* clipped rect */
-		bool first = true;
-		int ib_x;
-		int ib_y = y;
-		int ib_p_width;
-		int ib_b_left, ib_b_right;
+		ساخت box *ib;
+		ساخت rect b; /* border edge rectangle */
+		ساخت rect p; /* clipped rect */
+		bool پہلا = true;
+		صحیح ib_x;
+		صحیح ib_y = y;
+		صحیح ib_p_چوڑائی;
+		صحیح ib_b_بایاں, ib_b_دایاں;
 
-		b.x0 = x - border_left;
-		b.x1 = x + padding_width + border_right;
-		b.y0 = y - border_top;
-		b.y1 = y + padding_height + border_bottom;
+		b.x0 = x - border_بایاں;
+		b.x1 = x + padding_چوڑائی + border_دایاں;
+		b.y0 = y - border_چوٹی;
+		b.y1 = y + padding_اونچائی + border_bottom;
 
 		p.x0 = b.x0 < r.x0 ? r.x0 : b.x0;
 		p.x1 = b.x1 < r.x1 ? b.x1 : r.x1;
 		p.y0 = b.y0 < r.y0 ? r.y0 : b.y0;
 		p.y1 = b.y1 < r.y1 ? b.y1 : r.y1;
-		for (ib = box; ib; ib = ib->next) {
+		برائے (ib = box; ib; ib = ib->اگلا) {
 			/* to get extents of rectangle(s) associated with
 			 * inline, cycle though all boxes in inline, skipping
 			 * over floats */
-			if (ib->type == BOX_FLOAT_LEFT ||
-					ib->type == BOX_FLOAT_RIGHT)
-				continue;
-			if (scale == 1.0) {
-				ib_x = x_parent + ib->x;
-				ib_y = y_parent + ib->y;
-				ib_p_width = ib->padding[LEFT] + ib->width +
-						ib->padding[RIGHT];
-				ib_b_left = ib->border[LEFT].width;
-				ib_b_right = ib->border[RIGHT].width;
-			} else {
-				ib_x = (x_parent + ib->x) * scale;
-				ib_y = (y_parent + ib->y) * scale;
-				ib_p_width = (ib->padding[LEFT] + ib->width +
-						ib->padding[RIGHT]) * scale;
-				ib_b_left = ib->border[LEFT].width * scale;
-				ib_b_right = ib->border[RIGHT].width * scale;
+			اگر (ib->type == BOX_FLOAT_بایاں ||
+					ib->type == BOX_FLOAT_دایاں)
+				جاری;
+			اگر (scale == 1.0) {
+				ib_x = x_والد + ib->x;
+				ib_y = y_والد + ib->y;
+				ib_p_چوڑائی = ib->padding[بایاں_2] + ib->چوڑائی +
+						ib->padding[دایاں_2];
+				ib_b_بایاں = ib->border[بایاں_2].چوڑائی;
+				ib_b_دایاں = ib->border[دایاں_2].چوڑائی;
+			} ورنہ {
+				ib_x = (x_والد + ib->x) * scale;
+				ib_y = (y_والد + ib->y) * scale;
+				ib_p_چوڑائی = (ib->padding[بایاں_2] + ib->چوڑائی +
+						ib->padding[دایاں_2]) * scale;
+				ib_b_بایاں = ib->border[بایاں_2].چوڑائی * scale;
+				ib_b_دایاں = ib->border[دایاں_2].چوڑائی * scale;
 			}
 
-			if ((ib->flags & NEW_LINE) && ib != box) {
+			اگر ((ib->flags & NEW_سطر) && ib != box) {
 				/* inline element has wrapped, plot background
 				 * and borders */
-				if (!html_redraw_inline_background(
+				اگر (!html_redraw_inline_background(
 						x, y, box, scale, &p, b,
-						first, false,
+						پہلا, false,
 						&current_background_color,
 						&html->unit_len_ctx, ctx))
-					return false;
+					واپس false;
 				/* restore previous graphics window */
-				if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-					return false;
-				if (!html_redraw_inline_borders(box, b, &r,
-						scale, first, false, ctx))
-					return false;
+				اگر (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+					واپس false;
+				اگر (!html_redraw_inline_borders(box, b, &r,
+						scale, پہلا, false, ctx))
+					واپس false;
 				/* reset coords */
-				b.x0 = ib_x - ib_b_left;
-				b.y0 = ib_y - border_top - padding_top;
-				b.y1 = ib_y + padding_height - padding_top +
+				b.x0 = ib_x - ib_b_بایاں;
+				b.y0 = ib_y - border_چوٹی - padding_چوٹی;
+				b.y1 = ib_y + padding_اونچائی - padding_چوٹی +
 						border_bottom;
 
 				p.x0 = b.x0 < r.x0 ? r.x0 : b.x0;
 				p.y0 = b.y0 < r.y0 ? r.y0 : b.y0;
 				p.y1 = b.y1 < r.y1 ? b.y1 : r.y1;
 
-				first = false;
+				پہلا = false;
 			}
 
 			/* increase width for current box */
-			b.x1 = ib_x + ib_p_width + ib_b_right;
+			b.x1 = ib_x + ib_p_چوڑائی + ib_b_دایاں;
 			p.x1 = b.x1 < r.x1 ? b.x1 : r.x1;
 
-			if (ib == box->inline_end)
+			اگر (ib == box->inline_انتہا)
 				/* reached end of BOX_INLINE span */
-				break;
+				توڑو;
 		}
 		/* plot background and borders for last rectangle of
 		 * the inline */
-		if (!html_redraw_inline_background(x, ib_y, box, scale, &p, b,
-				first, true, &current_background_color,
+		اگر (!html_redraw_inline_background(x, ib_y, box, scale, &p, b,
+				پہلا, true, &current_background_color,
 				&html->unit_len_ctx, ctx))
-			return false;
+			واپس false;
 		/* restore previous graphics window */
-		if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-			return false;
-		if (!html_redraw_inline_borders(box, b, &r, scale, first, true,
+		اگر (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+			واپس false;
+		اگر (!html_redraw_inline_borders(box, b, &r, scale, پہلا, true,
 				ctx))
-			return false;
+			واپس false;
 
 	}
 
 	/* Debug outlines */
-	if (html_redraw_debug) {
-		int margin_left, margin_right;
-		int margin_top, margin_bottom;
-		if (scale == 1.0) {
+	اگر (html_redraw_debug) {
+		صحیح margin_بایاں, margin_دایاں;
+		صحیح margin_چوٹی, margin_bottom;
+		اگر (scale == 1.0) {
 			/* avoid trivial fp maths */
-			margin_left = box->margin[LEFT];
-			margin_top = box->margin[TOP];
-			margin_right = box->margin[RIGHT];
+			margin_بایاں = box->margin[بایاں_2];
+			margin_چوٹی = box->margin[چوٹی_2];
+			margin_دایاں = box->margin[دایاں_2];
 			margin_bottom = box->margin[BOTTOM];
-		} else {
-			margin_left = box->margin[LEFT] * scale;
-			margin_top = box->margin[TOP] * scale;
-			margin_right = box->margin[RIGHT] * scale;
+		} ورنہ {
+			margin_بایاں = box->margin[بایاں_2] * scale;
+			margin_چوٹی = box->margin[چوٹی_2] * scale;
+			margin_دایاں = box->margin[دایاں_2] * scale;
 			margin_bottom = box->margin[BOTTOM] * scale;
 		}
 		/* Content edge -- blue */
-		rect.x0 = x + padding_left;
-		rect.y0 = y + padding_top;
-		rect.x1 = x + padding_left + width;
-		rect.y1 = y + padding_top + height;
-		if (ctx->plot->rectangle(ctx, plot_style_content_edge, &rect) != NSERROR_OK)
-			return false;
+		rect.x0 = x + padding_بایاں;
+		rect.y0 = y + padding_چوٹی;
+		rect.x1 = x + padding_بایاں + چوڑائی;
+		rect.y1 = y + padding_چوٹی + اونچائی;
+		اگر (ctx->plot->rectangle(ctx, plot_style_content_کنارہ, &rect) != NSERROR_OK)
+			واپس false;
 
 		/* Padding edge -- red */
 		rect.x0 = x;
 		rect.y0 = y;
-		rect.x1 = x + padding_width;
-		rect.y1 = y + padding_height;
-		if (ctx->plot->rectangle(ctx, plot_style_padding_edge, &rect) != NSERROR_OK)
-			return false;
+		rect.x1 = x + padding_چوڑائی;
+		rect.y1 = y + padding_اونچائی;
+		اگر (ctx->plot->rectangle(ctx, plot_style_padding_کنارہ, &rect) != NSERROR_OK)
+			واپس false;
 
 		/* Margin edge -- yellow */
-		rect.x0 = x - border_left - margin_left;
-		rect.y0 = y - border_top - margin_top;
-		rect.x1 = x + padding_width + border_right + margin_right;
-		rect.y1 = y + padding_height + border_bottom + margin_bottom;
-		if (ctx->plot->rectangle(ctx, plot_style_margin_edge, &rect) != NSERROR_OK)
-			return false;
+		rect.x0 = x - border_بایاں - margin_بایاں;
+		rect.y0 = y - border_چوٹی - margin_چوٹی;
+		rect.x1 = x + padding_چوڑائی + border_دایاں + margin_دایاں;
+		rect.y1 = y + padding_اونچائی + border_bottom + margin_bottom;
+		اگر (ctx->plot->rectangle(ctx, plot_style_margin_کنارہ, &rect) != NSERROR_OK)
+			واپس false;
 	}
 
 	/* clip to the padding edge for objects, or boxes with overflow hidden
 	 * or scroll, unless it's the root element */
-	if (box->parent != NULL) {
+	اگر (box->والد != تہی) {
 		bool need_clip = false;
-		if (box->object || box->flags & IFRAME ||
-				(overflow_x != CSS_OVERFLOW_VISIBLE &&
-				 overflow_y != CSS_OVERFLOW_VISIBLE)) {
+		اگر (box->object || box->flags & IFRAME ||
+				(حد_سے_تجاوز_x != CSS_حد_سے_تجاوز_VISIBLE &&
+				 حد_سے_تجاوز_y != CSS_حد_سے_تجاوز_VISIBLE)) {
 			r.x0 = x;
 			r.y0 = y;
-			r.x1 = x + padding_width;
-			r.y1 = y + padding_height;
-			if (r.x0 < clip->x0) r.x0 = clip->x0;
-			if (r.y0 < clip->y0) r.y0 = clip->y0;
-			if (clip->x1 < r.x1) r.x1 = clip->x1;
-			if (clip->y1 < r.y1) r.y1 = clip->y1;
-			if (r.x1 <= r.x0 || r.y1 <= r.y0) {
-				return (!ctx->plot->group_end ||
-					(ctx->plot->group_end(ctx) == NSERROR_OK));
+			r.x1 = x + padding_چوڑائی;
+			r.y1 = y + padding_اونچائی;
+			اگر (r.x0 < clip->x0) r.x0 = clip->x0;
+			اگر (r.y0 < clip->y0) r.y0 = clip->y0;
+			اگر (clip->x1 < r.x1) r.x1 = clip->x1;
+			اگر (clip->y1 < r.y1) r.y1 = clip->y1;
+			اگر (r.x1 <= r.x0 || r.y1 <= r.y0) {
+				واپس (!ctx->plot->گروہ_انتہا ||
+					(ctx->plot->گروہ_انتہا(ctx) == NSERROR_OK));
 			}
 			need_clip = true;
 
-		} else if (overflow_x != CSS_OVERFLOW_VISIBLE) {
+		} ورنہ اگر (حد_سے_تجاوز_x != CSS_حد_سے_تجاوز_VISIBLE) {
 			r.x0 = x;
 			r.y0 = clip->y0;
-			r.x1 = x + padding_width;
+			r.x1 = x + padding_چوڑائی;
 			r.y1 = clip->y1;
-			if (r.x0 < clip->x0) r.x0 = clip->x0;
-			if (clip->x1 < r.x1) r.x1 = clip->x1;
-			if (r.x1 <= r.x0) {
-				return (!ctx->plot->group_end ||
-					(ctx->plot->group_end(ctx) == NSERROR_OK));
+			اگر (r.x0 < clip->x0) r.x0 = clip->x0;
+			اگر (clip->x1 < r.x1) r.x1 = clip->x1;
+			اگر (r.x1 <= r.x0) {
+				واپس (!ctx->plot->گروہ_انتہا ||
+					(ctx->plot->گروہ_انتہا(ctx) == NSERROR_OK));
 			}
 			need_clip = true;
 
-		} else if (overflow_y != CSS_OVERFLOW_VISIBLE) {
+		} ورنہ اگر (حد_سے_تجاوز_y != CSS_حد_سے_تجاوز_VISIBLE) {
 			r.x0 = clip->x0;
 			r.y0 = y;
 			r.x1 = clip->x1;
-			r.y1 = y + padding_height;
-			if (r.y0 < clip->y0) r.y0 = clip->y0;
-			if (clip->y1 < r.y1) r.y1 = clip->y1;
-			if (r.y1 <= r.y0) {
-				return (!ctx->plot->group_end ||
-					(ctx->plot->group_end(ctx) == NSERROR_OK));
+			r.y1 = y + padding_اونچائی;
+			اگر (r.y0 < clip->y0) r.y0 = clip->y0;
+			اگر (clip->y1 < r.y1) r.y1 = clip->y1;
+			اگر (r.y1 <= r.y0) {
+				واپس (!ctx->plot->گروہ_انتہا ||
+					(ctx->plot->گروہ_انتہا(ctx) == NSERROR_OK));
 			}
 			need_clip = true;
 		}
 
-		if (need_clip &&
-		    (box->type == BOX_BLOCK ||
-		     box->type == BOX_INLINE_BLOCK ||
-		     box->type == BOX_TABLE_CELL || box->object)) {
-			if (ctx->plot->clip(ctx, &r) != NSERROR_OK)
-				return false;
+		اگر (need_clip &&
+		    (box->type == BOX_بلاک ||
+		     box->type == BOX_INLINE_بلاک ||
+		     box->type == BOX_جدول_CELL || box->object)) {
+			اگر (ctx->plot->clip(ctx, &r) != NSERROR_OK)
+				واپس false;
 		}
 	}
 
 	/* text decoration */
-	if ((box->type != BOX_TEXT) &&
+	اگر ((box->type != BOX_متن) &&
 	    box->style &&
-	    css_computed_text_decoration(box->style) !=	CSS_TEXT_DECORATION_NONE) {
-		if (!html_redraw_text_decoration(box, x_parent, y_parent,
+	    css_computed_متن_decoration(box->style) !=	CSS_متن_DECORATION_NONE) {
+		اگر (!html_redraw_متن_decoration(box, x_والد, y_والد,
 				scale, current_background_color, ctx))
-			return false;
+			واپس false;
 	}
 
-	if (box->node != NULL) {
-		exc = dom_html_element_get_tag_type(box->node, &tag_type);
-		if (exc != DOM_NO_ERR) {
-			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+	اگر (box->گرہ != تہی) {
+		exc = dom_html_element_get_لیبل_type(box->گرہ, &لیبل_type);
+		اگر (exc != DOM_NO_ERR) {
+			لیبل_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
-	} else {
-		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+	} ورنہ {
+		لیبل_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	if (box->object && width != 0 && height != 0) {
-		struct content_redraw_data obj_data;
+	اگر (box->object && چوڑائی != 0 && اونچائی != 0) {
+		ساخت content_redraw_ڈیٹا obj_ڈیٹا;
 
-		x_scrolled = x - scrollbar_get_offset(box->scroll_x) * scale;
-		y_scrolled = y - scrollbar_get_offset(box->scroll_y) * scale;
+		x_scrolled = x - scrollbar_get_انحراف(box->scroll_x) * scale;
+		y_scrolled = y - scrollbar_get_انحراف(box->scroll_y) * scale;
 
-		obj_data.x = x_scrolled + padding_left;
-		obj_data.y = y_scrolled + padding_top;
-		obj_data.width = width;
-		obj_data.height = height;
-		obj_data.background_colour = current_background_color;
-		obj_data.scale = scale;
-		obj_data.repeat_x = false;
-		obj_data.repeat_y = false;
+		obj_ڈیٹا.x = x_scrolled + padding_بایاں;
+		obj_ڈیٹا.y = y_scrolled + padding_چوٹی;
+		obj_ڈیٹا.چوڑائی = چوڑائی;
+		obj_ڈیٹا.اونچائی = اونچائی;
+		obj_ڈیٹا.background_رنگ = current_background_color;
+		obj_ڈیٹا.scale = scale;
+		obj_ڈیٹا.repeat_x = false;
+		obj_ڈیٹا.repeat_y = false;
 
-		if (content_get_type(box->object) == CONTENT_HTML) {
-			obj_data.x /= scale;
-			obj_data.y /= scale;
+		اگر (content_get_type(box->object) == CONTENT_HTML) {
+			obj_ڈیٹا.x /= scale;
+			obj_ڈیٹا.y /= scale;
 		}
 
-		if (!content_redraw(box->object, &obj_data, &r, ctx)) {
+		اگر (!content_redraw(box->object, &obj_ڈیٹا, &r, ctx)) {
 			/* Show image fail */
 			/* Unicode (U+FFFC) 'OBJECT REPLACEMENT CHARACTER' */
-			const char *obj = "\xef\xbf\xbc";
-			int obj_width;
-			int obj_x = x + padding_left;
+			ثابت حرف *obj = "\xef\xbf\xbc";
+			صحیح obj_چوڑائی;
+			صحیح obj_x = x + padding_بایاں;
 			nserror res;
 
-			rect.x0 = x + padding_left;
-			rect.y0 = y + padding_top;
-			rect.x1 = x + padding_left + width - 1;
-			rect.y1 = y + padding_top + height - 1;
+			rect.x0 = x + padding_بایاں;
+			rect.y0 = y + padding_چوٹی;
+			rect.x1 = x + padding_بایاں + چوڑائی - 1;
+			rect.y1 = y + padding_چوٹی + اونچائی - 1;
 			res = ctx->plot->rectangle(ctx, plot_style_broken_object, &rect);
-			if (res != NSERROR_OK) {
-				return false;
+			اگر (res != NSERROR_OK) {
+				واپس false;
 			}
 
-			res = guit->layout->width(plot_fstyle_broken_object,
+			res = guit->layout->چوڑائی(plot_fstyle_broken_object,
 						  obj,
-						  sizeof(obj) - 1,
-						  &obj_width);
-			if (res != NSERROR_OK) {
+						  حجم(obj) - 1,
+						  &obj_چوڑائی);
+			اگر (res != NSERROR_OK) {
 				obj_x += 1;
-			} else {
-				obj_x += width / 2 - obj_width / 2;
+			} ورنہ {
+				obj_x += چوڑائی / 2 - obj_چوڑائی / 2;
 			}
 
-			if (ctx->plot->text(ctx,
+			اگر (ctx->plot->متن(ctx,
 					    plot_fstyle_broken_object,
-					    obj_x, y + padding_top + (int)(height * 0.75),
-					    obj, sizeof(obj) - 1) != NSERROR_OK)
-				return false;
+					    obj_x, y + padding_چوٹی + (صحیح)(اونچائی * 0.75),
+					    obj, حجم(obj) - 1) != NSERROR_OK)
+				واپس false;
 		}
-	} else if (tag_type == DOM_HTML_ELEMENT_TYPE_CANVAS &&
-		   box->node != NULL &&
+	} ورنہ اگر (لیبل_type == DOM_HTML_ELEMENT_TYPE_CANVAS &&
+		   box->گرہ != تہی &&
 		   box->flags & REPLACE_DIM) {
 		/* Canvas to draw */
-		struct bitmap *bitmap = NULL;
-		exc = dom_node_get_user_data(box->node,
-					     corestring_dom___ns_key_canvas_node_data,
+		ساخت bitmap *bitmap = تہی;
+		exc = dom_گرہ_get_user_ڈیٹا(box->گرہ,
+					     corestring_dom_ns_کلید_canvas_گرہ_ڈیٹا,
 					     &bitmap);
-		if (exc != DOM_NO_ERR) {
-			bitmap = NULL;
+		اگر (exc != DOM_NO_ERR) {
+			bitmap = تہی;
 		}
-		if (bitmap != NULL &&
-		    ctx->plot->bitmap(ctx, bitmap, x + padding_left, y + padding_top,
-				      width, height, current_background_color,
+		اگر (bitmap != تہی &&
+		    ctx->plot->bitmap(ctx, bitmap, x + padding_بایاں, y + padding_چوٹی,
+				      چوڑائی, اونچائی, current_background_color,
 				      BITMAPF_NONE) != NSERROR_OK)
-			return false;
-	} else if (box->iframe) {
+			واپس false;
+	} ورنہ اگر (box->iframe) {
 		/* Offset is passed to browser window redraw unscaled */
-		browser_window_redraw(box->iframe,
-				x + padding_left,
-				y + padding_top, &r, ctx);
+		browser_کھڑکی_redraw(box->iframe,
+				x + padding_بایاں,
+				y + padding_چوٹی, &r, ctx);
 
-	} else if (box->gadget && box->gadget->type == GADGET_CHECKBOX) {
-		if (!html_redraw_checkbox(x + padding_left, y + padding_top,
-				width, height, box->gadget->selected, ctx))
-			return false;
+	} ورنہ اگر (box->gadget && box->gadget->type == GADGET_CHECKBOX) {
+		اگر (!html_redraw_checkbox(x + padding_بایاں, y + padding_چوٹی,
+				چوڑائی, اونچائی, box->gadget->selected, ctx))
+			واپس false;
 
-	} else if (box->gadget && box->gadget->type == GADGET_RADIO) {
-		if (!html_redraw_radio(x + padding_left, y + padding_top,
-				width, height, box->gadget->selected, ctx))
-			return false;
+	} ورنہ اگر (box->gadget && box->gadget->type == GADGET_RADIO) {
+		اگر (!html_redraw_radio(x + padding_بایاں, y + padding_چوٹی,
+				چوڑائی, اونچائی, box->gadget->selected, ctx))
+			واپس false;
 
-	} else if (box->gadget && box->gadget->type == GADGET_FILE) {
-		if (!html_redraw_file(x + padding_left, y + padding_top,
-				width, height, box, scale,
+	} ورنہ اگر (box->gadget && box->gadget->type == GADGET_FILE) {
+		اگر (!html_redraw_file(x + padding_بایاں, y + padding_چوٹی,
+				چوڑائی, اونچائی, box, scale,
 				current_background_color, &html->unit_len_ctx, ctx))
-			return false;
+			واپس false;
 
-	} else if (box->gadget &&
+	} ورنہ اگر (box->gadget &&
 			(box->gadget->type == GADGET_TEXTAREA ||
 			box->gadget->type == GADGET_PASSWORD ||
 			box->gadget->type == GADGET_TEXTBOX)) {
-		textarea_redraw(box->gadget->data.text.ta, x, y,
+		textarea_redraw(box->gadget->ڈیٹا.متن.ta, x, y,
 				current_background_color, scale, &r, ctx);
 
-	} else if (box->text) {
-		if (!html_redraw_text_box(html, box, x, y, &r, scale,
+	} ورنہ اگر (box->متن) {
+		اگر (!html_redraw_متن_box(html, box, x, y, &r, scale,
 				current_background_color, ctx))
-			return false;
+			واپس false;
 
-	} else {
-		if (!html_redraw_box_children(html, box, x_parent, y_parent, &r,
+	} ورنہ {
+		اگر (!html_redraw_box_children(html, box, x_والد, y_والد, &r,
 				scale, current_background_color, ctx))
-			return false;
+			واپس false;
 	}
 
-	if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
-			box->type == BOX_TABLE_CELL || box->type == BOX_INLINE)
-		if (ctx->plot->clip(ctx, clip) != NSERROR_OK)
-			return false;
+	اگر (box->type == BOX_بلاک || box->type == BOX_INLINE_بلاک ||
+			box->type == BOX_جدول_CELL || box->type == BOX_INLINE)
+		اگر (ctx->plot->clip(ctx, clip) != NSERROR_OK)
+			واپس false;
 
 	/* list marker */
-	if (box->list_marker) {
-		if (!html_redraw_box(html, box->list_marker,
-				x_parent + box->x -
-				scrollbar_get_offset(box->scroll_x),
-				y_parent + box->y -
-				scrollbar_get_offset(box->scroll_y),
+	اگر (box->list_marker) {
+		اگر (!html_redraw_box(html, box->list_marker,
+				x_والد + box->x -
+				scrollbar_get_انحراف(box->scroll_x),
+				y_والد + box->y -
+				scrollbar_get_انحراف(box->scroll_y),
 				clip, scale, current_background_color, ctx))
-			return false;
+			واپس false;
 	}
 
 	/* scrollbars */
-	if (((box->style && box->type != BOX_BR &&
-	      box->type != BOX_TABLE && box->type != BOX_INLINE &&
-	      (box->gadget == NULL || box->gadget->type != GADGET_TEXTAREA) &&
-	      (overflow_x == CSS_OVERFLOW_SCROLL ||
-	       overflow_x == CSS_OVERFLOW_AUTO ||
-	       overflow_y == CSS_OVERFLOW_SCROLL ||
-	       overflow_y == CSS_OVERFLOW_AUTO)) ||
+	اگر (((box->style && box->type != BOX_BR &&
+	      box->type != BOX_جدول && box->type != BOX_INLINE &&
+	      (box->gadget == تہی || box->gadget->type != GADGET_TEXTAREA) &&
+	      (حد_سے_تجاوز_x == CSS_حد_سے_تجاوز_SCROLL ||
+	       حد_سے_تجاوز_x == CSS_حد_سے_تجاوز_AUTO ||
+	       حد_سے_تجاوز_y == CSS_حد_سے_تجاوز_SCROLL ||
+	       حد_سے_تجاوز_y == CSS_حد_سے_تجاوز_AUTO)) ||
 	     (box->object && content_get_type(box->object) ==
-	      CONTENT_HTML)) && box->parent != NULL) {
+	      CONTENT_HTML)) && box->والد != تہی) {
 		nserror res;
-		bool has_x_scroll = (overflow_x == CSS_OVERFLOW_SCROLL);
-		bool has_y_scroll = (overflow_y == CSS_OVERFLOW_SCROLL);
+		bool has_x_scroll = (حد_سے_تجاوز_x == CSS_حد_سے_تجاوز_SCROLL);
+		bool has_y_scroll = (حد_سے_تجاوز_y == CSS_حد_سے_تجاوز_SCROLL);
 
-		has_x_scroll |= (overflow_x == CSS_OVERFLOW_AUTO) &&
+		has_x_scroll |= (حد_سے_تجاوز_x == CSS_حد_سے_تجاوز_AUTO) &&
 				box_hscrollbar_present(box);
-		has_y_scroll |= (overflow_y == CSS_OVERFLOW_AUTO) &&
+		has_y_scroll |= (حد_سے_تجاوز_y == CSS_حد_سے_تجاوز_AUTO) &&
 				box_vscrollbar_present(box);
 
-		res = box_handle_scrollbars((struct content *)html,
+		res = box_handle_scrollbars((ساخت content *)html,
 					    box, has_x_scroll, has_y_scroll);
-		if (res != NSERROR_OK) {
+		اگر (res != NSERROR_OK) {
 			NSLOG(netsurf, INFO, "%s", messages_get_errorcode(res));
-			return false;
+			واپس false;
 		}
 
-		if (box->scroll_x != NULL)
+		اگر (box->scroll_x != تہی)
 			scrollbar_redraw(box->scroll_x,
-					x_parent + box->x,
-					y_parent + box->y + box->padding[TOP] +
-					box->height + box->padding[BOTTOM] -
-					SCROLLBAR_WIDTH, clip, scale, ctx);
-		if (box->scroll_y != NULL)
+					x_والد + box->x,
+					y_والد + box->y + box->padding[چوٹی_2] +
+					box->اونچائی + box->padding[BOTTOM] -
+					SCROLLBAR_چوڑائی, clip, scale, ctx);
+		اگر (box->scroll_y != تہی)
 			scrollbar_redraw(box->scroll_y,
-					x_parent + box->x + box->padding[LEFT] +
-					box->width + box->padding[RIGHT] -
-					SCROLLBAR_WIDTH,
-					y_parent + box->y, clip, scale, ctx);
+					x_والد + box->x + box->padding[بایاں_2] +
+					box->چوڑائی + box->padding[دایاں_2] -
+					SCROLLBAR_چوڑائی,
+					y_والد + box->y, clip, scale, ctx);
 	}
 
-	if (box->type == BOX_BLOCK || box->type == BOX_INLINE_BLOCK ||
-	    box->type == BOX_TABLE_CELL || box->type == BOX_INLINE) {
-		if (ctx->plot->clip(ctx, clip) != NSERROR_OK)
-			return false;
+	اگر (box->type == BOX_بلاک || box->type == BOX_INLINE_بلاک ||
+	    box->type == BOX_جدول_CELL || box->type == BOX_INLINE) {
+		اگر (ctx->plot->clip(ctx, clip) != NSERROR_OK)
+			واپس false;
 	}
 
-	return ((!plot->group_end) || (ctx->plot->group_end(ctx) == NSERROR_OK));
+	واپس ((!plot->گروہ_انتہا) || (ctx->plot->گروہ_انتہا(ctx) == NSERROR_OK));
 }
 
 /**
@@ -1941,61 +1941,61 @@ bool html_redraw_box(const html_content *html, struct box *box,
  * x, y, clip_[xy][01] are in target coordinates.
  */
 
-bool html_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+bool html_redraw(ساخت content *c, ساخت content_redraw_ڈیٹا *ڈیٹا,
+		ثابت ساخت rect *clip, ثابت ساخت redraw_context *ctx)
 {
 	html_content *html = (html_content *) c;
-	struct box *box;
-	bool result = true;
+	ساخت box *box;
+	bool نتیجہ = true;
 	bool select, select_only;
 	plot_style_t pstyle_fill_bg = {
 		.fill_type = PLOT_OP_TYPE_SOLID,
-		.fill_colour = data->background_colour,
+		.fill_رنگ = ڈیٹا->background_رنگ,
 	};
 
 	box = html->layout;
-	assert(box);
+	أكد(box);
 
 	/* The select menu needs special treating because, when opened, it
 	 * reaches beyond its layout box.
 	 */
 	select = false;
 	select_only = false;
-	if (ctx->interactive && html->visible_select_menu != NULL) {
-		struct form_control *control = html->visible_select_menu;
+	اگر (ctx->interactive && html->visible_select_menu != تہی) {
+		ساخت form_control *control = html->visible_select_menu;
 		select = true;
 		/* check if the redraw rectangle is completely inside of the
 		   select menu */
 		select_only = form_clip_inside_select_menu(control,
-				data->scale, clip);
+				ڈیٹا->scale, clip);
 	}
 
-	if (!select_only) {
+	اگر (!select_only) {
 		/* clear to background colour */
-		result = (ctx->plot->clip(ctx, clip) == NSERROR_OK);
+		نتیجہ = (ctx->plot->clip(ctx, clip) == NSERROR_OK);
 
-		if (html->background_colour != NS_TRANSPARENT)
-			pstyle_fill_bg.fill_colour = html->background_colour;
+		اگر (html->background_رنگ != NS_TRANSPARENT)
+			pstyle_fill_bg.fill_رنگ = html->background_رنگ;
 
-		result &= (ctx->plot->rectangle(ctx, &pstyle_fill_bg, clip) == NSERROR_OK);
+		نتیجہ &= (ctx->plot->rectangle(ctx, &pstyle_fill_bg, clip) == NSERROR_OK);
 
-		result &= html_redraw_box(html, box, data->x, data->y, clip,
-				data->scale, pstyle_fill_bg.fill_colour, ctx);
+		نتیجہ &= html_redraw_box(html, box, ڈیٹا->x, ڈیٹا->y, clip,
+				ڈیٹا->scale, pstyle_fill_bg.fill_رنگ, ctx);
 	}
 
-	if (select) {
-		int menu_x, menu_y;
+	اگر (select) {
+		صحیح menu_x, menu_y;
 		box = html->visible_select_menu->box;
 		box_coords(box, &menu_x, &menu_y);
 
-		menu_x -= box->border[LEFT].width;
-		menu_y += box->height + box->border[BOTTOM].width +
-				box->padding[BOTTOM] + box->padding[TOP];
-		result &= form_redraw_select_menu(html->visible_select_menu,
-				data->x + menu_x, data->y + menu_y,
-				data->scale, clip, ctx);
+		menu_x -= box->border[بایاں_2].چوڑائی;
+		menu_y += box->اونچائی + box->border[BOTTOM].چوڑائی +
+				box->padding[BOTTOM] + box->padding[چوٹی_2];
+		نتیجہ &= form_redraw_select_menu(html->visible_select_menu,
+				ڈیٹا->x + menu_x, ڈیٹا->y + menu_y,
+				ڈیٹا->scale, clip, ctx);
 	}
 
-	return result;
+	واپس نتیجہ;
 
 }

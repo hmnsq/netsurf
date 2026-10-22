@@ -20,32 +20,32 @@
  * Fetching of data from a URL (interface).
  */
 
-#ifndef _NETSURF_DESKTOP_FETCH_H_
-#define _NETSURF_DESKTOP_FETCH_H_
+#اگر_غیر_تعریف_شدہ _NETSURF_DESKTOP_FETCH_H_
+#تعریف_کرو _NETSURF_DESKTOP_FETCH_H_
 
-#include <stdbool.h>
+#شامل <stdbool.h>
 
-#include "utils/config.h"
-#include "utils/nsurl.h"
-#include "utils/inet.h"
-#include "utils/http/response-codes.h"
+#شامل "utils/config.h"
+#شامل "utils/nsurl.h"
+#شامل "utils/inet.h"
+#شامل "utils/http/response-codes.h"
 
-#include "netsurf/ssl_certs.h"
+#شامل "netsurf/ssl_certs.h"
 
-struct content;
-struct fetch;
-struct ssl_cert_info;
+ساخت content;
+ساخت fetch;
+ساخت ssl_cert_info;
 
 /**
  * Fetcher message types
  */
-typedef enum {
-	FETCH_PROGRESS,
+قسمتعریف شمار {
+	FETCH_پیش_رفت,
 	FETCH_CERTS,
-	FETCH_HEADER,
-	FETCH_DATA,
+	FETCH_سرخی,
+	FETCH_ڈیٹا,
 	/* Anything after here is a completed fetch of some kind. */
-	FETCH_FINISHED,
+	FETCH_ختم_شدہ,
 	FETCH_TIMEDOUT,
 	FETCH_ERROR,
 	FETCH_REDIRECT,
@@ -53,52 +53,52 @@ typedef enum {
 	FETCH_AUTH,
 	FETCH_CERT_ERR,
 	FETCH_SSL_ERR
-} fetch_msg_type;
+} fetch_پیغام_type;
 
 /** Minimum finished message type.
  *
  * If a fetch does not progress this far, it's an error and the fetch machinery
  * will send FETCH_ERROR to the llcache on fetch_free()
  */
-#define FETCH_MIN_FINISHED_MSG FETCH_FINISHED
+#تعریف_کرو FETCH_MIN_ختم_شدہ_پیغام FETCH_ختم_شدہ
 
 /**
  * This message is actually an internal message used to indicate
  * that a fetch was aborted.  Do not send this, nor expect it.
  */
-#define FETCH__INTERNAL_ABORTED FETCH_ERROR
+#تعریف_کرو FETCH_اندرونی_ABORTED FETCH_ERROR
 
 /**
  * Fetcher message data
  */
-typedef struct fetch_msg {
-	fetch_msg_type type;
+قسمتعریف ساخت fetch_پیغام {
+	fetch_پیغام_type type;
 
-	union {
-		const char *progress;
+	اتحاد {
+		ثابت حرف *پیش_رفت;
 
-		struct {
-			const uint8_t *buf;
+		ساخت {
+			ثابت uint8_t *buf;
 			size_t len;
-		} header_or_data;
+		} سرخی_or_ڈیٹا;
 
-		const char *error;
+		ثابت حرف *error;
 
 		/** \todo Use nsurl */
-		const char *redirect;
+		ثابت حرف *redirect;
 
-		struct {
-			const char *realm;
+		ساخت {
+			ثابت حرف *realm;
 		} auth;
 
-		const struct cert_chain *chain;
-	} data;
-} fetch_msg;
+		ثابت ساخت cert_chain *chain;
+	} ڈیٹا;
+} fetch_پیغام;
 
 /**
  * Fetcher post data types
  */
-typedef enum {
+قسمتعریف شمار {
 	FETCH_POSTDATA_NONE,
 	FETCH_POSTDATA_URLENC,
 	FETCH_POSTDATA_MULTIPART,
@@ -108,31 +108,31 @@ typedef enum {
 /**
  * Fetch POST multipart data
  */
-struct fetch_multipart_data {
-	struct fetch_multipart_data *next; /**< Next in linked list */
+ساخت fetch_multipart_ڈیٹا {
+	ساخت fetch_multipart_ڈیٹا *اگلا; /**< Next in linked list */
 
-	char *name; /**< Name of item */
-	char *value; /**< Item value */
+	حرف *name; /**< Name of item */
+	حرف *قدر; /**< Item value */
 
-	char *rawfile; /**< Raw filename if file is true */
+	حرف *rawfile; /**< Raw filename if file is true */
 	bool file; /**< Item is a file */
 };
 
 /**
  * fetch POST data
  */
-struct fetch_postdata {
+ساخت fetch_postdata {
 	fetch_postdata_type type;
-	union {
+	اتحاد {
 		/** Url encoded POST string if type is FETCH_POSTDATA_URLENC */
-		char *urlenc;
+		حرف *urlenc;
 		/** Multipart post data if type is FETCH_POSTDATA_MULTIPART */
-		struct fetch_multipart_data *multipart;
-	} data;
+		ساخت fetch_multipart_ڈیٹا *multipart;
+	} ڈیٹا;
 };
 
 
-typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
+قسمتعریف خالی (*fetch_callback)(ثابت fetch_پیغام *پیغام, خالی *p);
 
 /**
  * Start fetching data for the given URL.
@@ -165,16 +165,16 @@ typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
  * \param fetch_out ponter to recive new fetch object.
  * \return NSERROR_OK and fetch_out updated else appropriate error code
  */
-nserror fetch_start(nsurl *url, nsurl *referer, fetch_callback callback,
-		    void *p, bool only_2xx, const char *post_urlenc,
-		    const struct fetch_multipart_data *post_multipart,
+nserror fetch_آغاز(nsurl *url, nsurl *referer, fetch_callback callback,
+		    خالی *p, bool only_2xx, ثابت حرف *post_urlenc,
+		    ثابت ساخت fetch_multipart_ڈیٹا *post_multipart,
 		    bool verifiable, bool downgrade_tls,
-		    const char *headers[], struct fetch **fetch_out);
+		    ثابت حرف *سرخیاں[], ساخت fetch **fetch_برآمد);
 
 /**
  * Abort a fetch.
  */
-void fetch_abort(struct fetch *f);
+خالی fetch_abort(ساخت fetch *f);
 
 
 /**
@@ -183,17 +183,17 @@ void fetch_abort(struct fetch *f);
  * \param  url  URL to check
  * \return  true if the scheme is supported
  */
-bool fetch_can_fetch(const nsurl *url);
+bool fetch_can_fetch(ثابت nsurl *url);
 
 /**
  * Change the callback function for a fetch.
  */
-void fetch_change_callback(struct fetch *fetch, fetch_callback callback, void *p);
+خالی fetch_change_callback(ساخت fetch *fetch, fetch_callback callback, خالی *p);
 
 /**
  * Get the HTTP response code.
  */
-http_response_code fetch_http_code(struct fetch *fetch);
+http_response_رمز fetch_http_رمز(ساخت fetch *fetch);
 
 
 /**
@@ -201,7 +201,7 @@ http_response_code fetch_http_code(struct fetch *fetch);
  *
  * \param list Pointer to head of list to free
  */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
+خالی fetch_multipart_ڈیٹا_destroy(ساخت fetch_multipart_ڈیٹا *list);
 
 /**
  * Clone a linked list of fetch_multipart_data.
@@ -209,7 +209,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
  * \param list  List to clone
  * \return Pointer to head of cloned list, or NULL on failure
  */
-struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multipart_data *list);
+ساخت fetch_multipart_ڈیٹا *fetch_multipart_ڈیٹا_clone(ثابت ساخت fetch_multipart_ڈیٹا *list);
 
 /**
  * Find an entry in a fetch_multipart_data
@@ -218,8 +218,8 @@ struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multi
  * \param name The name to look for in the list
  * \return The value found, or NULL if not present
  */
-const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
-				      const char *name);
+ثابت حرف *fetch_multipart_ڈیٹا_ڈھونڈو(ثابت ساخت fetch_multipart_ڈیٹا *list,
+				      ثابت حرف *name);
 
 /**
  * Create an entry for a fetch_multipart_data
@@ -231,34 +231,34 @@ const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
  * \param value The value of the entry to create
  * \return The result of the attempt
  */
-nserror fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-				    const char *name,
-				    const char *value);
+nserror fetch_multipart_ڈیٹا_new_kv(ساخت fetch_multipart_ڈیٹا **list,
+				    ثابت حرف *name,
+				    ثابت حرف *قدر);
 
 /**
  * send message to fetch
  */
-void fetch_send_callback(const fetch_msg *msg, struct fetch *fetch);
+خالی fetch_send_callback(ثابت fetch_پیغام *پیغام, ساخت fetch *fetch);
 
 /**
  * remove a queued fetch
  */
-void fetch_remove_from_queues(struct fetch *fetch);
+خالی fetch_remove_from_queues(ساخت fetch *fetch);
 
 /**
  * Free a fetch structure and associated resources.
  */
-void fetch_free(struct fetch *f);
+خالی fetch_free(ساخت fetch *f);
 
 /**
  * set the http code of a fetch
  */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code);
+nserror fetch_سیٹ_http_رمز(ساخت fetch *fetch, http_response_رمز http_رمز);
 
 /**
  * set cookie data on a fetch
  */
-void fetch_set_cookie(struct fetch *fetch, const char *data);
+خالی fetch_سیٹ_cookie(ساخت fetch *fetch, ثابت حرف *ڈیٹا);
 
 /**
  * Get the set of file descriptors the fetchers are currently using.
@@ -284,6 +284,6 @@ void fetch_set_cookie(struct fetch *fetch, const char *data);
  * \param[out] maxfd The highest fd number in the set or -1 if no fd available.
  * \return NSERROR_OK on success or appropriate error code.
  */
-nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, int *maxfd);
+nserror fetch_fdset(fd_set *read_fd_سیٹ, fd_set *write_fd_سیٹ, fd_set *except_fd_سیٹ, صحیح *maxfd);
 
-#endif
+#اگر_ختم

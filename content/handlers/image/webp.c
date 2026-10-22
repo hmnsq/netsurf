@@ -24,46 +24,46 @@
  * Image cache handling is performed by the generic NetSurf handler.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
+#شامل <stdbool.h>
+#شامل <stdlib.h>
+#شامل <setjmp.h>
 
-#include <webp/decode.h>
+#شامل <webp/decode.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#شامل "utils/utils.h"
+#شامل "utils/log.h"
+#شامل "utils/messages.h"
+#شامل "netsurf/bitmap.h"
+#شامل "content/llcache.h"
+#شامل "content/content_protected.h"
+#شامل "content/content_factory.h"
+#شامل "desktop/gui_internal.h"
+#شامل "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#شامل "image/image_cache.h"
 
-#include "webp.h"
+#شامل "webp.h"
 
 /**
  * Content create entry point.
  *
  * create a content object for the webp
  */
-static nserror
-webp_create(const content_handler *handler,
+ساکن nserror
+webp_create(ثابت content_handler *handler,
 	      lwc_string *imime_type,
-	      const struct http_parameter *params,
+	      ثابت ساخت http_parameter *params,
 	      llcache_handle *llcache,
-	      const char *fallback_charset,
+	      ثابت حرف *fallback_charset,
 	      bool quirks,
-	      struct content **c)
+	      ساخت content **c)
 {
-	struct content *webp_c; /* webp content object */
+	ساخت content *webp_c; /* webp content object */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = صفر_حافظہ_دو(1, حجم(ساخت content));
+	اگر (webp_c == تہی) {
+		واپس NSERROR_NOMEM;
 	}
 
 	res = content__init(webp_c,
@@ -73,101 +73,101 @@ webp_create(const content_handler *handler,
 			    llcache,
 			    fallback_charset,
 			    quirks);
-	if (res != NSERROR_OK) {
-		free(webp_c);
-		return res;
+	اگر (res != NSERROR_OK) {
+		آزاد(webp_c);
+		واپس res;
 	}
 
 	*c = webp_c;
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 /**
  * create a bitmap from webp content.
  */
-static struct bitmap *
-webp_cache_convert(struct content *c)
+ساکن ساخت bitmap *
+webp_cache_convert(ساخت content *c)
 {
-	const uint8_t *source_data; /* webp source data */
-	size_t source_size; /* length of webp source data */
-	VP8StatusCode webpres;
+	ثابت uint8_t *ماخذ_ڈیٹا; /* webp source data */
+	size_t ماخذ_سائز; /* length of webp source data */
+	VP8_حالت_رمز webpres;
 	WebPBitstreamFeatures webpfeatures;
-	unsigned int bmap_flags;
-	uint8_t *pixels = NULL;
+	غیرعلامتی صحیح bmap_flags;
+	uint8_t *pixels = تہی;
 	uint8_t *decoded;
 	size_t rowstride;
-	struct bitmap *bitmap = NULL;
+	ساخت bitmap *bitmap = تہی;
 	bitmap_fmt_t webp_fmt = {
 		.layout = bitmap_fmt.layout,
 	};
 
-	source_data = content__get_source_data(c, &source_size);
+	ماخذ_ڈیٹا = content_get_ماخذ_ڈیٹا_2(c, &ماخذ_سائز);
 
-	webpres = WebPGetFeatures(source_data, source_size, &webpfeatures);
+	webpres = WebPGetFeatures(ماخذ_ڈیٹا, ماخذ_سائز, &webpfeatures);
 
-	if (webpres != VP8_STATUS_OK) {
-		return NULL;
+	اگر (webpres != VP8_حالت_OK) {
+		واپس تہی;
 	}
 
-	if (webpfeatures.has_alpha == 0) {
+	اگر (webpfeatures.has_alpha == 0) {
 		bmap_flags = BITMAP_OPAQUE;
 		/* Image has no alpha. Premultiplied alpha makes no difference.
 		 * Optimisation: Avoid unnecessary conversion by copying format.
 		 */
 		webp_fmt.pma = bitmap_fmt.pma;
-	} else {
+	} ورنہ {
 		bmap_flags = BITMAP_NONE;
 	}
 
 	/* create bitmap */
-	bitmap = guit->bitmap->create(webpfeatures.width,
-				      webpfeatures.height,
+	bitmap = guit->bitmap->create(webpfeatures.چوڑائی,
+				      webpfeatures.اونچائی,
 				      bmap_flags);
-	if (bitmap == NULL) {
+	اگر (bitmap == تہی) {
 		/* empty bitmap could not be created */
-		return NULL;
+		واپس تہی;
 	}
 
-	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	pixels = guit->bitmap->get_بفر(bitmap);
+	اگر (pixels == تہی) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		واپس تہی;
 	}
 
 	rowstride = guit->bitmap->get_rowstride(bitmap);
 
-	switch (webp_fmt.layout) {
-	default:
+	انتخاب (webp_fmt.layout) {
+	طےشدہ:
 		/* WebP has no ABGR function, fall back to default. */
 		webp_fmt.layout = BITMAP_LAYOUT_R8G8B8A8;
 		fallthrough;
-	case BITMAP_LAYOUT_R8G8B8A8:
-		decoded = WebPDecodeRGBAInto(source_data, source_size, pixels,
-				rowstride * webpfeatures.height, rowstride);
-		break;
+	حالت BITMAP_LAYOUT_R8G8B8A8:
+		decoded = WebPDecodeRGBAInto(ماخذ_ڈیٹا, ماخذ_سائز, pixels,
+				rowstride * webpfeatures.اونچائی, rowstride);
+		توڑو;
 
-	case BITMAP_LAYOUT_B8G8R8A8:
-		decoded = WebPDecodeBGRAInto(source_data, source_size, pixels,
-				rowstride * webpfeatures.height, rowstride);
-		break;
+	حالت BITMAP_LAYOUT_B8G8R8A8:
+		decoded = WebPDecodeBGRAInto(ماخذ_ڈیٹا, ماخذ_سائز, pixels,
+				rowstride * webpfeatures.اونچائی, rowstride);
+		توڑو;
 
-	case BITMAP_LAYOUT_A8R8G8B8:
-		decoded = WebPDecodeARGBInto(source_data, source_size, pixels,
-				rowstride * webpfeatures.height, rowstride);
-		break;
+	حالت BITMAP_LAYOUT_A8R8G8B8:
+		decoded = WebPDecodeARGBInto(ماخذ_ڈیٹا, ماخذ_سائز, pixels,
+				rowstride * webpfeatures.اونچائی, rowstride);
+		توڑو;
 	}
-	if (decoded == NULL) {
+	اگر (decoded == تہی) {
 		/* decode failed */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		واپس تہی;
 	}
 
-	bitmap_format_to_client(bitmap, &webp_fmt);
+	bitmap_format_مقصد_client(bitmap, &webp_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	واپس bitmap;
 }
 
 /**
@@ -180,81 +180,81 @@ webp_cache_convert(struct content *c)
  * \param c The webp content object
  * \return true on successful processing of teh webp content else false
  */
-static bool webp_convert(struct content *c)
+ساکن bool webp_convert(ساخت content *c)
 {
-	int res;
-	const uint8_t* data;
-	size_t data_size;
-	int width;
-	int height;
+	صحیح res;
+	ثابت uint8_t* ڈیٹا;
+	size_t ڈیٹا_سائز;
+	صحیح چوڑائی;
+	صحیح اونچائی;
 
-	data = content__get_source_data(c, &data_size);
+	ڈیٹا = content_get_ماخذ_ڈیٹا_2(c, &ڈیٹا_سائز);
 
-	res = WebPGetInfo(data, data_size, &width, &height);
-	if (res == 0) {
+	res = WebPGetInfo(ڈیٹا, ڈیٹا_سائز, &چوڑائی, &اونچائی);
+	اگر (res == 0) {
 		NSLOG(netsurf, INFO, "WebPGetInfo failed:%p", c);
-		return false;
+		واپس false;
 	}
 
-	c->width = width;
-	c->height = height;
-	c->size = c->width * c->height * 4;
+	c->چوڑائی = چوڑائی;
+	c->اونچائی = اونچائی;
+	c->سائز = c->چوڑائی * c->اونچائی * 4;
 
-	image_cache_add(c, NULL, webp_cache_convert);
+	image_cache_جوڑو(c, تہی, webp_cache_convert);
 
-	content_set_ready(c);
-	content_set_done(c);
+	content_سیٹ_ready(c);
+	content_سیٹ_مکمل(c);
 
-	return true;
+	واپس true;
 }
 
 /**
  * Clone content.
  */
-static nserror webp_clone(const struct content *old, struct content **new_c)
+ساکن nserror webp_clone(ثابت ساخت content *old, ساخت content **new_c)
 {
-	struct content *webp_c; /* cloned webp content */
+	ساخت content *webp_c; /* cloned webp content */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = صفر_حافظہ_دو(1, حجم(ساخت content));
+	اگر (webp_c == تہی) {
+		واپس NSERROR_NOMEM;
 	}
 
 	res = content__clone(old, webp_c);
-	if (res != NSERROR_OK) {
+	اگر (res != NSERROR_OK) {
 		content_destroy(webp_c);
-		return res;
+		واپس res;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
-	    (old->status == CONTENT_STATUS_DONE)) {
-		if (webp_convert(webp_c) == false) {
+	اگر ((old->حالت_2 == CONTENT_حالت_READY) ||
+	    (old->حالت_2 == CONTENT_حالت_مکمل)) {
+		اگر (webp_convert(webp_c) == false) {
 			content_destroy(webp_c);
-			return NSERROR_CLONE_FAILED;
+			واپس NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*new_c = webp_c;
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
-static const content_handler webp_content_handler = {
+ساکن ثابت content_handler webp_content_handler = {
 	.create = webp_create,
-	.data_complete = webp_convert,
+	.ڈیٹا_complete = webp_convert,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
 	.clone = webp_clone,
-	.get_internal = image_cache_get_internal,
+	.get_اندرونی = image_cache_get_اندرونی,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *webp_types[] = {
+ساکن ثابت حرف *webp_types[] = {
 	"image/webp"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nswebp, webp_types, webp_content_handler);
+CONTENT_FACTORY_رجسٹر_TYPES(nswebp, webp_types, webp_content_handler);

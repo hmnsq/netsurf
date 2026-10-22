@@ -21,17 +21,17 @@
  * HTML content user interaction handling
  */
 
-#ifndef NETSURF_HTML_INTERACTION_H
-#define NETSURF_HTML_INTERACTION_H
+#اگر_غیر_تعریف_شدہ NETSURF_HTML_INTERACTION_H
+#تعریف_کرو NETSURF_HTML_INTERACTION_H
 
-#include "desktop/search.h" /* search flags enum */
+#شامل "desktop/search.h" /* search flags enum */
 
 /**
  * Context for scrollbar
  */
-struct html_scrollbar_data {
-	struct content *c;
-	struct box *box;
+ساخت html_scrollbar_ڈیٹا {
+	ساخت content *c;
+	ساخت box *box;
 };
 
 /**
@@ -43,8 +43,8 @@ struct html_scrollbar_data {
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-nserror html_mouse_track(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+nserror html_mouse_track(ساخت content *c, ساخت browser_کھڑکی *bw,
+			browser_mouse_state mouse, صحیح x, صحیح y);
 
 
 /**
@@ -63,22 +63,22 @@ nserror html_mouse_track(struct content *c, struct browser_window *bw,
  * \param y y coordinate of mouse
  * \return NSERROR_OK or appropriate error code.
  */
-nserror html_mouse_action(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+nserror html_mouse_action(ساخت content *c, ساخت browser_کھڑکی *bw,
+			browser_mouse_state mouse, صحیح x, صحیح y);
 
 
-bool html_keypress(struct content *c, uint32_t key);
+bool html_keypress(ساخت content *c, uint32_t کلید);
 
 
-void html_overflow_scroll_callback(void *client_data,
-		struct scrollbar_msg_data *scrollbar_data);
+خالی html_حد_سے_تجاوز_scroll_callback(خالی *client_ڈیٹا,
+		ساخت scrollbar_پیغام_ڈیٹا *scrollbar_ڈیٹا);
 
 
-void html_search(struct content *c, void *context,
-		search_flags_t flags, const char *string);
+خالی html_تلاش(ساخت content *c, خالی *context,
+		تلاش_flags_t flags, ثابت حرف *string);
 
 
-void html_search_clear(struct content *c);
+خالی html_تلاش_clear(ساخت content *c);
 
 
 /**
@@ -89,8 +89,8 @@ void html_search_clear(struct content *c);
  * \param drag_owner	What owns the drag
  * \param rect		Pointer movement bounds
  */
-void html_set_drag_type(html_content *html, html_drag_type drag_type,
-		union html_drag_owner drag_owner, const struct rect *rect);
+خالی html_سیٹ_drag_type(html_content *html, html_drag_type drag_type,
+		اتحاد html_drag_owner drag_owner, ثابت ساخت rect *rect);
 
 
 /**
@@ -101,8 +101,8 @@ void html_set_drag_type(html_content *html, html_drag_type drag_type,
  * \param selection_owner	What owns the selection
  * \param read_only		True iff selection is read only
  */
-void html_set_selection(html_content *html, html_selection_type selection_type,
-		union html_selection_owner selection_owner, bool read_only);
+خالی html_سیٹ_selection(html_content *html, html_selection_type selection_type,
+		اتحاد html_selection_owner selection_owner, bool read_only);
 
 
 /**
@@ -117,9 +117,9 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
  * \param height		Carret height
  * \param clip			Carret clip rect
  */
-void html_set_focus(html_content *html, html_focus_type focus_type,
-		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip);
+خالی html_سیٹ_focus(html_content *html, html_focus_type focus_type,
+		اتحاد html_focus_owner focus_owner, bool hide_caret,
+		صحیح x, صحیح y, صحیح اونچائی, ثابت ساخت rect *clip);
 
 
-#endif
+#اگر_ختم

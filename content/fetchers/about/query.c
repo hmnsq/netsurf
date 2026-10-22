@@ -21,40 +21,40 @@
  * content generator for the about scheme query privacy page
  */
 
-#include <stdlib.h>
+#شامل <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/messages.h"
+#شامل "utils/errors.h"
+#شامل "utils/nsurl.h"
+#شامل "utils/messages.h"
 
-#include "query.h"
+#شامل "query.h"
 
 /* exported interface documented in about/query.h */
 nserror
-get_query_description(struct nsurl *url,
-		      const char *key,
-		      char **out_str)
+get_query_description(ساخت nsurl *url,
+		      ثابت حرف *کلید,
+		      حرف **برآمد_str)
 {
 	nserror res;
-	char *url_s;
+	حرف *url_s;
 	size_t url_l;
-	char *str = NULL;
+	حرف *str = تہی;
 
 	/* get the host in question */
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	اگر (res != NSERROR_OK) {
+		واپس res;
 	}
 
 	/* obtain the description with the url substituted */
-	str = messages_get_buff(key, url_s);
-	if (str == NULL) {
+	str = messages_get_buff(کلید, url_s);
+	اگر (str == تہی) {
 		res = NSERROR_NOMEM;
-	} else {
-		*out_str = str;
+	} ورنہ {
+		*برآمد_str = str;
 	}
 
-	free(url_s);
+	آزاد(url_s);
 
-	return res;
+	واپس res;
 }

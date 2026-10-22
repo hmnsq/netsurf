@@ -20,21 +20,21 @@
  * Custom configuration for duktape
  */
 
-#include "utils/config.h"
+#شامل "utils/config.h"
 
-#ifndef HAVE_STRPTIME
-#undef DUK_USE_DATE_PRS_STRPTIME
-#undef DUK_USE_DATE_PRS_GETDATE
-#undef DUK_USE_DATE_PARSE_STRING
-#endif
+#اگر_غیر_تعریف_شدہ HAVE_STRPTIME
+#تعریف_منسوخ DUK_USE_DATE_PRS_STRPTIME
+#تعریف_منسوخ DUK_USE_DATE_PRS_GETDATE
+#تعریف_منسوخ DUK_USE_DATE_PARSE_STRING
+#اگر_ختم
 
-#define DUK_USE_FASTINT
-#define DUK_USE_REGEXP_CANON_WORKAROUND
+#تعریف_کرو DUK_USE_FASTINT
+#تعریف_کرو DUK_USE_REGEXP_CANON_WORKAROUND
 
 /* Required for execution timeout checking */
-#define DUK_USE_INTERRUPT_COUNTER
+#تعریف_کرو DUK_USE_مداخلت_شمار
 
-extern duk_bool_t dukky_check_timeout(void *udata);
-#define DUK_USE_EXEC_TIMEOUT_CHECK dukky_check_timeout
+خارجی duk_bool_t dukky_check_timeout(خالی *udata);
+#تعریف_کرو DUK_USE_EXEC_TIMEOUT_CHECK dukky_check_timeout
 
-#include "netsurf/inttypes.h"
+#شامل "netsurf/inttypes.h"

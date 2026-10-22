@@ -59,8 +59,8 @@
  *
  */
 
-#if !defined(DUK_CONFIG_H_INCLUDED)
-#define DUK_CONFIG_H_INCLUDED
+#اگر !defined(DUK_CONFIG_H_INCLUDED)
+#تعریف_کرو DUK_CONFIG_H_INCLUDED
 
 /*
  *  Intermediate helper defines
@@ -68,162 +68,162 @@
 
 /* DLL build detection */
 /* not configured for DLL build */
-#undef DUK_F_DLL_BUILD
+#تعریف_منسوخ DUK_F_DLL_BUILD
 
 /* Apple OSX, iOS */
-#if defined(__APPLE__)
-#define DUK_F_APPLE
-#endif
+#اگر defined(__APPLE__)
+#تعریف_کرو DUK_F_APPLE
+#اگر_ختم
 
 /* FreeBSD */
-#if defined(__FreeBSD__) || defined(__FreeBSD)
-#define DUK_F_FREEBSD
-#endif
+#اگر defined(__FreeBSD__) || defined(__FreeBSD)
+#تعریف_کرو DUK_F_FREEBSD
+#اگر_ختم
 
 /* Orbis (PS4) variant */
-#if defined(DUK_F_FREEBSD) && defined(__ORBIS__)
-#define DUK_F_ORBIS
-#endif
+#اگر defined(DUK_F_FREEBSD) && defined(__ORBIS__)
+#تعریف_کرو DUK_F_ORBIS
+#اگر_ختم
 
 /* OpenBSD */
-#if defined(__OpenBSD__) || defined(__OpenBSD)
-#define DUK_F_OPENBSD
-#endif
+#اگر defined(__OpenBSD__) || defined(__OpenBSD)
+#تعریف_کرو DUK_F_OPENBSD
+#اگر_ختم
 
 /* NetBSD */
-#if defined(__NetBSD__) || defined(__NetBSD)
-#define DUK_F_NETBSD
-#endif
+#اگر defined(__NetBSD__) || defined(__NetBSD)
+#تعریف_کرو DUK_F_NETBSD
+#اگر_ختم
 
 /* BSD variant */
-#if defined(DUK_F_FREEBSD) || defined(DUK_F_NETBSD) || defined(DUK_F_OPENBSD) || \
+#اگر defined(DUK_F_FREEBSD) || defined(DUK_F_NETBSD) || defined(DUK_F_OPENBSD) || \
     defined(__bsdi__) || defined(__DragonFly__)
-#define DUK_F_BSD
-#endif
+#تعریف_کرو DUK_F_BSD
+#اگر_ختم
 
 /* Atari ST TOS.  __TOS__ defined by PureC.  No platform define in VBCC
  * apparently, so to use with VBCC user must define __TOS__ manually.
   */
-#if defined(__TOS__)
-#define DUK_F_TOS
-#endif
+#اگر defined(__TOS__)
+#تعریف_کرو DUK_F_TOS
+#اگر_ختم
 
 /* Motorola 68K.  Not defined by VBCC, so user must define one of these
  * manually when using VBCC.
  */
-#if defined(__m68k__) || defined(M68000) || defined(__MC68K__)
-#define DUK_F_M68K
-#endif
+#اگر defined(__m68k__) || defined(M68000) || defined(__MC68K__)
+#تعریف_کرو DUK_F_M68K
+#اگر_ختم
 
 /* AmigaOS.  Neither AMIGA nor __amigaos__ is defined on VBCC, so user must
  * define 'AMIGA' manually when using VBCC.
  */
-#if defined(AMIGA) || defined(__amigaos__)
-#define DUK_F_AMIGAOS
-#endif
+#اگر defined(AMIGA) || defined(__amigaos__)
+#تعریف_کرو DUK_F_AMIGAOS
+#اگر_ختم
 
 /* PowerPC */
-#if defined(__powerpc) || defined(__powerpc__) || defined(__PPC__)
-#define DUK_F_PPC
-#if defined(__PPC64__) || defined(__LP64__) || defined(_LP64)
-#define DUK_F_PPC64
-#else
-#define DUK_F_PPC32
-#endif
-#endif
+#اگر defined(__powerpc) || defined(__powerpc__) || defined(__PPC__)
+#تعریف_کرو DUK_F_PPC
+#اگر defined(__PPC64__) || defined(__LP64__) || defined(_LP64)
+#تعریف_کرو DUK_F_PPC64
+#ورنہ
+#تعریف_کرو DUK_F_PPC32
+#اگر_ختم
+#اگر_ختم
 
 /* Durango (Xbox One) */
-#if defined(_DURANGO) || defined(_XBOX_ONE)
-#define DUK_F_DURANGO
-#endif
+#اگر defined(_DURANGO) || defined(_XBOX_ONE)
+#تعریف_کرو DUK_F_DURANGO
+#اگر_ختم
 
 /* Windows, both 32-bit and 64-bit */
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64) || \
+#اگر defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64) || \
     defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
-#define DUK_F_WINDOWS
-#if defined(_WIN64) || defined(WIN64)
-#define DUK_F_WIN64
-#else
-#define DUK_F_WIN32
-#endif
-#endif
+#تعریف_کرو DUK_F_WINDOWS
+#اگر defined(_WIN64) || defined(WIN64)
+#تعریف_کرو DUK_F_WIN64
+#ورنہ
+#تعریف_کرو DUK_F_WIN32
+#اگر_ختم
+#اگر_ختم
 
 /* Flash player (e.g. Crossbridge) */
-#if defined(__FLASHPLAYER__)
-#define DUK_F_FLASHPLAYER
-#endif
+#اگر defined(__FLASHPLAYER__)
+#تعریف_کرو DUK_F_FLASHPLAYER
+#اگر_ختم
 
 /* QNX */
-#if defined(__QNX__)
-#define DUK_F_QNX
-#endif
+#اگر defined(__QNX__)
+#تعریف_کرو DUK_F_QNX
+#اگر_ختم
 
 /* TI-Nspire (using Ndless) */
-#if defined(_TINSPIRE)
-#define DUK_F_TINSPIRE
-#endif
+#اگر defined(_TINSPIRE)
+#تعریف_کرو DUK_F_TINSPIRE
+#اگر_ختم
 
 /* Emscripten (provided explicitly by user), improve if possible */
-#if defined(EMSCRIPTEN)
-#define DUK_F_EMSCRIPTEN
-#endif
+#اگر defined(EMSCRIPTEN)
+#تعریف_کرو DUK_F_EMSCRIPTEN
+#اگر_ختم
 
 /* BCC (Bruce's C compiler): this is a "torture target" for compilation */
-#if defined(__BCC__) || defined(__BCC_VERSION__)
-#define DUK_F_BCC
-#endif
+#اگر defined(__BCC__) || defined(__BCC_VERSION__)
+#تعریف_کرو DUK_F_BCC
+#اگر_ختم
 
-#if defined(ANDROID) || defined(__ANDROID__)
-#define DUK_F_ANDROID
-#endif
+#اگر defined(ANDROID) || defined(__ANDROID__)
+#تعریف_کرو DUK_F_ANDROID
+#اگر_ختم
 
 /* Linux */
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#define DUK_F_LINUX
-#endif
+#اگر defined(__linux) || defined(__linux__) || defined(linux)
+#تعریف_کرو DUK_F_LINUX
+#اگر_ختم
 
 /* illumos / Solaris */
-#if defined(__sun) && defined(__SVR4)
-#define DUK_F_SUN
-#if defined(__SUNPRO_C) && (__SUNPRO_C < 0x550)
-#define DUK_F_OLD_SOLARIS
+#اگر defined(__sun) && defined(__SVR4)
+#تعریف_کرو DUK_F_SUN
+#اگر defined(__SUNPRO_C) && (__SUNPRO_C < 0x550)
+#تعریف_کرو DUK_F_OLD_SOLARIS
 /* Defines _ILP32 / _LP64 required by DUK_F_X86/DUK_F_X64.  Platforms
  * are processed before architectures, so this happens before the
  * DUK_F_X86/DUK_F_X64 detection is emitted.
  */
-#include <sys/isa_defs.h>
-#endif
-#endif
+#شامل <sys/isa_defs.h>
+#اگر_ختم
+#اگر_ختم
 
 /* AIX */
-#if defined(_AIX)
+#اگر defined(_AIX)
 /* defined(__xlc__) || defined(__IBMC__): works but too wide */
-#define DUK_F_AIX
-#endif
+#تعریف_کرو DUK_F_AIX
+#اگر_ختم
 
 /* HPUX */
-#if defined(__hpux)
-#define DUK_F_HPUX
-#if defined(__ia64)
-#define DUK_F_HPUX_ITANIUM
-#endif
-#endif
+#اگر defined(__hpux)
+#تعریف_کرو DUK_F_HPUX
+#اگر defined(__ia64)
+#تعریف_کرو DUK_F_HPUX_ITANIUM
+#اگر_ختم
+#اگر_ختم
 
 /* POSIX */
-#if defined(__posix)
-#define DUK_F_POSIX
-#endif
+#اگر defined(__posix)
+#تعریف_کرو DUK_F_POSIX
+#اگر_ختم
 
 /* Cygwin */
-#if defined(__CYGWIN__)
-#define DUK_F_CYGWIN
-#endif
+#اگر defined(__CYGWIN__)
+#تعریف_کرو DUK_F_CYGWIN
+#اگر_ختم
 
 /* Generic Unix (includes Cygwin) */
-#if defined(__unix) || defined(__unix__) || defined(unix) || \
+#اگر defined(__unix) || defined(__unix__) || defined(unix) || \
     defined(DUK_F_LINUX) || defined(DUK_F_BSD)
-#define DUK_F_UNIX
-#endif
+#تعریف_کرو DUK_F_UNIX
+#اگر_ختم
 
 /* Intel x86 (32-bit), x64 (64-bit) or x32 (64-bit but 32-bit pointers),
  * define only one of DUK_F_X86, DUK_F_X64, DUK_F_X32.
@@ -232,157 +232,157 @@
  * With DUK_F_OLD_SOLARIS the <sys/isa_defs.h> header must be included
  * before this.
  */
-#if defined(__amd64__) || defined(__amd64) || \
+#اگر defined(__amd64__) || defined(__amd64) || \
     defined(__x86_64__) || defined(__x86_64) || \
     defined(_M_X64) || defined(_M_AMD64)
-#if defined(__ILP32__) || defined(_ILP32)
-#define DUK_F_X32
-#else
-#define DUK_F_X64
-#endif
-#elif defined(i386) || defined(__i386) || defined(__i386__) || \
+#اگر defined(__ILP32__) || defined(_ILP32)
+#تعریف_کرو DUK_F_X32
+#ورنہ
+#تعریف_کرو DUK_F_X64
+#اگر_ختم
+#وگرنہ_اگر defined(i386) || defined(__i386) || defined(__i386__) || \
       defined(__i486__) || defined(__i586__) || defined(__i686__) || \
       defined(__IA32__) || defined(_M_IX86) || defined(__X86__) || \
       defined(_X86_) || defined(__THW_INTEL__) || defined(__I86__)
-#if defined(__LP64__) || defined(_LP64)
+#اگر defined(__LP64__) || defined(_LP64)
 /* This should not really happen, but would indicate x64. */
-#define DUK_F_X64
-#else
-#define DUK_F_X86
-#endif
-#endif
+#تعریف_کرو DUK_F_X64
+#ورنہ
+#تعریف_کرو DUK_F_X86
+#اگر_ختم
+#اگر_ختم
 
 /* ARM */
-#if defined(__arm__) || defined(__thumb__) || defined(_ARM) || defined(_M_ARM) || defined(_M_ARM64) || defined(__aarch64__)
-#define DUK_F_ARM
-#if defined(__LP64__) || defined(_LP64) || defined(__arm64) || defined(__arm64__) || defined(_M_ARM64) || defined(__aarch64__)
-#define DUK_F_ARM64
-#else
-#define DUK_F_ARM32
-#endif
-#endif
+#اگر defined(__arm__) || defined(__thumb__) || defined(_ARM) || defined(_M_ARM) || defined(_M_ARM64) || defined(__aarch64__)
+#تعریف_کرو DUK_F_ARM
+#اگر defined(__LP64__) || defined(_LP64) || defined(__arm64) || defined(__arm64__) || defined(_M_ARM64) || defined(__aarch64__)
+#تعریف_کرو DUK_F_ARM64
+#ورنہ
+#تعریف_کرو DUK_F_ARM32
+#اگر_ختم
+#اگر_ختم
 
 /* MIPS.  Related defines: __MIPSEB__, __MIPSEL__, __mips_isa_rev, __LP64__ */
-#if defined(__mips__) || defined(mips) || defined(_MIPS_ISA) || \
+#اگر defined(__mips__) || defined(mips) || defined(_MIPS_ISA) || \
     defined(_R3000) || defined(_R4000) || defined(_R5900) || \
     defined(_MIPS_ISA_MIPS1) || defined(_MIPS_ISA_MIPS2) || \
     defined(_MIPS_ISA_MIPS3) || defined(_MIPS_ISA_MIPS4) || \
     defined(__mips) || defined(__MIPS__)
-#define DUK_F_MIPS
-#if defined(__LP64__) || defined(_LP64) || defined(__mips64) || \
+#تعریف_کرو DUK_F_MIPS
+#اگر defined(__LP64__) || defined(_LP64) || defined(__mips64) || \
     defined(__mips64__) || defined(__mips_n64)
-#define DUK_F_MIPS64
-#else
-#define DUK_F_MIPS32
-#endif
-#endif
+#تعریف_کرو DUK_F_MIPS64
+#ورنہ
+#تعریف_کرو DUK_F_MIPS32
+#اگر_ختم
+#اگر_ختم
 
 /* SPARC */
-#if defined(sparc) || defined(__sparc) || defined(__sparc__)
-#define DUK_F_SPARC
-#if defined(__LP64__) || defined(_LP64)
-#define DUK_F_SPARC64
-#else
-#define DUK_F_SPARC32
-#endif
-#endif
+#اگر defined(sparc) || defined(__sparc) || defined(__sparc__)
+#تعریف_کرو DUK_F_SPARC
+#اگر defined(__LP64__) || defined(_LP64)
+#تعریف_کرو DUK_F_SPARC64
+#ورنہ
+#تعریف_کرو DUK_F_SPARC32
+#اگر_ختم
+#اگر_ختم
 
 /* RISC-V, https://github.com/riscv/riscv-toolchain-conventions#cc-preprocessor-definitions */
-#if defined(__riscv)
-#define DUK_F_RISCV
-#if defined(__riscv_xlen)
-#if (__riscv_xlen == 32)
-#define DUK_F_RISCV32
-#elif (__riscv_xlen == 64)
-#define DUK_F_RISCV64
-#else
-#error __riscv_xlen has unsupported value (not 32 or 64)
-#endif
-#else
-#error __riscv defined without __riscv_xlen
-#endif
-#endif  /* __riscv */
+#اگر defined(__riscv)
+#تعریف_کرو DUK_F_RISCV
+#اگر defined(__riscv_xlen)
+#اگر (__riscv_xlen == 32)
+#تعریف_کرو DUK_F_RISCV32
+#وگرنہ_اگر (__riscv_xlen == 64)
+#تعریف_کرو DUK_F_RISCV64
+#ورنہ
+#غلطی __riscv_xlen has unsupported قدر (not 32 or 64)
+#اگر_ختم
+#ورنہ
+#غلطی __riscv defined without __riscv_xlen
+#اگر_ختم
+#اگر_ختم  /* __riscv */
 
 /* SuperH */
-#if defined(__sh__) || \
+#اگر defined(__sh__) || \
     defined(__sh1__) || defined(__SH1__) || \
     defined(__sh2__) || defined(__SH2__) || \
     defined(__sh3__) || defined(__SH3__) || \
     defined(__sh4__) || defined(__SH4__) || \
     defined(__sh5__) || defined(__SH5__)
-#define DUK_F_SUPERH
-#endif
+#تعریف_کرو DUK_F_SUPERH
+#اگر_ختم
 
 /* Clang */
-#if defined(__clang__)
-#define DUK_F_CLANG
-#endif
+#اگر defined(__clang__)
+#تعریف_کرو DUK_F_CLANG
+#اگر_ختم
 
 /* C++ */
-#undef DUK_F_CPP
-#if defined(__cplusplus)
-#define DUK_F_CPP
-#endif
+#تعریف_منسوخ DUK_F_CPP
+#اگر defined(__cplusplus)
+#تعریف_کرو DUK_F_CPP
+#اگر_ختم
 
 /* C99 or above */
-#undef DUK_F_C99
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
-#define DUK_F_C99
-#endif
+#تعریف_منسوخ DUK_F_C99
+#اگر defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
+#تعریف_کرو DUK_F_C99
+#اگر_ختم
 
 /* C++11 or above */
-#undef DUK_F_CPP11
-#if defined(__cplusplus) && (__cplusplus >= 201103L)
-#define DUK_F_CPP11
-#endif
+#تعریف_منسوخ DUK_F_CPP11
+#اگر defined(__cplusplus) && (__cplusplus >= 201103L)
+#تعریف_کرو DUK_F_CPP11
+#اگر_ختم
 
 /* GCC.  Clang also defines __GNUC__ so don't detect GCC if using Clang. */
-#if defined(__GNUC__) && !defined(__clang__) && !defined(DUK_F_CLANG)
-#define DUK_F_GCC
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__)
+#اگر defined(__GNUC__) && !defined(__clang__) && !defined(DUK_F_CLANG)
+#تعریف_کرو DUK_F_GCC
+#اگر defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__)
 /* Convenience, e.g. gcc 4.5.1 == 40501; http://stackoverflow.com/questions/6031819/emulating-gccs-builtin-unreachable */
-#define DUK_F_GCC_VERSION  (__GNUC__ * 10000L + __GNUC_MINOR__ * 100L + __GNUC_PATCHLEVEL__)
-#else
-#error cannot figure out gcc version
-#endif
-#endif
+#تعریف_کرو DUK_F_GCC_نسخہ  (__GNUC__ * 10000L + __GNUC_MINOR__ * 100L + __GNUC_PATCHLEVEL__)
+#ورنہ
+#غلطی cannot figure برآمد gcc نسخہ
+#اگر_ختم
+#اگر_ختم
 
 /* MinGW.  Also GCC flags (DUK_F_GCC) are enabled now. */
-#if defined(__MINGW32__) || defined(__MINGW64__)
-#define DUK_F_MINGW
-#endif
+#اگر defined(__MINGW32__) || defined(__MINGW64__)
+#تعریف_کرو DUK_F_MINGW
+#اگر_ختم
 
 /* MSVC */
-#if defined(_MSC_VER)
+#اگر defined(_MSC_VER)
 /* MSVC preprocessor defines: http://msdn.microsoft.com/en-us/library/b0084kay.aspx
  * _MSC_FULL_VER includes the build number, but it has at least two formats, see e.g.
  * BOOST_MSVC_FULL_VER in http://www.boost.org/doc/libs/1_52_0/boost/config/compiler/visualc.hpp
  */
-#define DUK_F_MSVC
-#if defined(_MSC_FULL_VER)
-#if (_MSC_FULL_VER > 100000000)
-#define DUK_F_MSVC_FULL_VER _MSC_FULL_VER
-#else
-#define DUK_F_MSCV_FULL_VER (_MSC_FULL_VER * 10)
-#endif
-#endif
-#endif  /* _MSC_VER */
+#تعریف_کرو DUK_F_MSVC
+#اگر defined(MSC_بھرا_VER)
+#اگر (MSC_بھرا_VER > 100000000)
+#تعریف_کرو DUK_F_MSVC_بھرا_VER MSC_بھرا_VER
+#ورنہ
+#تعریف_کرو DUK_F_MSCV_بھرا_VER (MSC_بھرا_VER * 10)
+#اگر_ختم
+#اگر_ختم
+#اگر_ختم  /* _MSC_VER */
 
 /* TinyC */
-#if defined(__TINYC__)
+#اگر defined(__TINYC__)
 /* http://bellard.org/tcc/tcc-doc.html#SEC9 */
-#define DUK_F_TINYC
-#endif
+#تعریف_کرو DUK_F_TINYC
+#اگر_ختم
 
 /* VBCC */
-#if defined(__VBCC__)
-#define DUK_F_VBCC
-#endif
+#اگر defined(__VBCC__)
+#تعریف_کرو DUK_F_VBCC
+#اگر_ختم
 
 /* Atari Mint */
-#if defined(__MINT__)
-#define DUK_F_MINT
-#endif
+#اگر defined(__MINT__)
+#تعریف_کرو DUK_F_MINT
+#اگر_ختم
 
 /*
  *  Platform autodetection
@@ -391,124 +391,124 @@
 /* Workaround for older C++ compilers before including <inttypes.h>,
  * see e.g.: https://sourceware.org/bugzilla/show_bug.cgi?id=15366
  */
-#if defined(__cplusplus) && !defined(__STDC_LIMIT_MACROS)
-#define __STDC_LIMIT_MACROS
-#endif
-#if defined(__cplusplus) && !defined(__STDC_CONSTANT_MACROS)
-#define __STDC_CONSTANT_MACROS
-#endif
+#اگر defined(__cplusplus) && !defined(__STDC_LIMIT_MACROS)
+#تعریف_کرو __STDC_LIMIT_MACROS
+#اگر_ختم
+#اگر defined(__cplusplus) && !defined(__STDC_CONSTANT_MACROS)
+#تعریف_کرو __STDC_CONSTANT_MACROS
+#اگر_ختم
 
-#if defined(DUK_F_APPLE)
+#اگر defined(DUK_F_APPLE)
 /* --- Mac OSX, iPhone, Darwin --- */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <TargetConditionals.h>
-#include <architecture/byte_order.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <TargetConditionals.h>
+#شامل <architecture/byte_order.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
 /* http://stackoverflow.com/questions/5919996/how-to-detect-reliably-mac-os-x-ios-linux-windows-in-c-preprocessor */
-#if TARGET_IPHONE_SIMULATOR
-#define DUK_USE_OS_STRING "iphone-sim"
-#elif TARGET_OS_IPHONE
-#define DUK_USE_OS_STRING "iphone"
-#elif TARGET_OS_MAC
-#define DUK_USE_OS_STRING "osx"
-#else
-#define DUK_USE_OS_STRING "osx-unknown"
-#endif
+#اگر ہدف_IPHONE_SIMULATOR
+#تعریف_کرو DUK_USE_OS_STRING "iphone-sim"
+#وگرنہ_اگر ہدف_OS_IPHONE
+#تعریف_کرو DUK_USE_OS_STRING "iphone"
+#وگرنہ_اگر ہدف_OS_MAC
+#تعریف_کرو DUK_USE_OS_STRING "osx"
+#ورنہ
+#تعریف_کرو DUK_USE_OS_STRING "osx-unknown"
+#اگر_ختم
 
 /* Use _setjmp() on Apple by default, see GH-55. */
-#define DUK_JMPBUF_TYPE       jmp_buf
-#define DUK_SETJMP(jb)        _setjmp((jb))
-#define DUK_LONGJMP(jb)       _longjmp((jb), 1)
-#elif defined(DUK_F_ORBIS)
+#تعریف_کرو DUK_JMPBUF_TYPE       jmp_buf
+#تعریف_کرو DUK_SETJMP(jb)        _setjmp((jb))
+#تعریف_کرو DUK_LONGJMP(jb)       _longjmp((jb), 1)
+#وگرنہ_اگر defined(DUK_F_ORBIS)
 /* --- Orbis --- */
 /* Orbis = PS4 */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_S
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_S
 /* no parsing (not an error) */
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/types.h>
-#include <machine/endian.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/types.h>
+#شامل <machine/endian.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING  "orbis"
-#elif defined(DUK_F_OPENBSD)
+#تعریف_کرو DUK_USE_OS_STRING  "orbis"
+#وگرنہ_اگر defined(DUK_F_OPENBSD)
 /* --- OpenBSD --- */
 /* http://www.monkey.org/openbsd/archive/ports/0401/msg00089.html */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/types.h>
-#include <sys/endian.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/types.h>
+#شامل <sys/endian.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING  "openbsd"
-#elif defined(DUK_F_BSD)
+#تعریف_کرو DUK_USE_OS_STRING  "openbsd"
+#وگرنہ_اگر defined(DUK_F_BSD)
 /* --- Generic BSD --- */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/types.h>
-#include <sys/endian.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/types.h>
+#شامل <sys/endian.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING  "bsd"
-#elif defined(DUK_F_TOS)
+#تعریف_کرو DUK_USE_OS_STRING  "bsd"
+#وگرنہ_اگر defined(DUK_F_TOS)
 /* --- Atari ST TOS --- */
-#define DUK_USE_DATE_NOW_TIME
-#define DUK_USE_DATE_TZO_GMTIME
+#تعریف_کرو DUK_USE_DATE_NOW_وقت
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME
 /* no parsing (not an error) */
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING  "tos"
+#تعریف_کرو DUK_USE_OS_STRING  "tos"
 
 /* TOS on M68K is always big endian. */
-#if !defined(DUK_USE_BYTEORDER) && defined(DUK_F_M68K)
-#define DUK_USE_BYTEORDER 3
-#endif
-#elif defined(DUK_F_AMIGAOS)
+#اگر !defined(DUK_USE_BYTEORDER) && defined(DUK_F_M68K)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#اگر_ختم
+#وگرنہ_اگر defined(DUK_F_AMIGAOS)
 /* --- AmigaOS --- */
-#if defined(DUK_F_M68K)
+#اگر defined(DUK_F_M68K)
 /* AmigaOS on M68k */
-#define DUK_USE_DATE_NOW_TIME
-#define DUK_USE_DATE_TZO_GMTIME
+#تعریف_کرو DUK_USE_DATE_NOW_وقت
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME
 /* no parsing (not an error) */
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <time.h>
-#elif defined(DUK_F_PPC)
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <time.h>
-#if !defined(UINTPTR_MAX)
-#define UINTPTR_MAX UINT_MAX
-#endif
-#else
-#error AmigaOS but not M68K/PPC, not supported now
-#endif
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <time.h>
+#وگرنہ_اگر defined(DUK_F_PPC)
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <time.h>
+#اگر !defined(UINTPTR_MAX)
+#تعریف_کرو UINTPTR_MAX UINT_MAX
+#اگر_ختم
+#ورنہ
+#غلطی AmigaOS but not M68K/PPC, not supported now
+#اگر_ختم
 
-#define DUK_USE_OS_STRING "amigaos"
+#تعریف_کرو DUK_USE_OS_STRING "amigaos"
 
 /* AmigaOS on M68K or PPC is always big endian. */
-#if !defined(DUK_USE_BYTEORDER) && (defined(DUK_F_M68K) || defined(DUK_F_PPC))
-#define DUK_USE_BYTEORDER 3
-#endif
-#elif defined(DUK_F_DURANGO)
+#اگر !defined(DUK_USE_BYTEORDER) && (defined(DUK_F_M68K) || defined(DUK_F_PPC))
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#اگر_ختم
+#وگرنہ_اگر defined(DUK_F_DURANGO)
 /* --- Durango (XboxOne) --- */
 /* Durango = XboxOne
  * Configuration is nearly identical to Windows, except for
@@ -519,30 +519,30 @@
  * itself (must be defined before including Windows headers).  Don't define
  * for user code including duktape.h.
  */
-#if defined(DUK_COMPILING_DUKTAPE) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+#اگر defined(DUK_COMPILING_DUKTAPE) && !defined(_CRT_SECURE_NO_WARNINGS)
+#تعریف_کرو _CRT_SECURE_NO_WARNINGS
+#اگر_ختم
 
 /* MSVC does not have sys/param.h */
-#define DUK_USE_DATE_NOW_WINDOWS
-#define DUK_USE_DATE_TZO_WINDOWS_NO_DST
+#تعریف_کرو DUK_USE_DATE_NOW_WINDOWS
+#تعریف_کرو DUK_USE_DATE_TZO_WINDOWS_NO_DST
 /* Note: PRS and FMT are intentionally left undefined for now.  This means
  * there is no platform specific date parsing/formatting but there is still
  * the ISO 8601 standard format.
  */
-#if defined(DUK_COMPILING_DUKTAPE)
+#اگر defined(DUK_COMPILING_DUKTAPE)
 /* Only include when compiling Duktape to avoid polluting application build
  * with a lot of unnecessary defines.
  */
-#include <windows.h>
-#endif
+#شامل <windows.h>
+#اگر_ختم
 
-#define DUK_USE_OS_STRING "durango"
+#تعریف_کرو DUK_USE_OS_STRING "durango"
 
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 1
-#endif
-#elif defined(DUK_F_WINDOWS)
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#اگر_ختم
+#وگرنہ_اگر defined(DUK_F_WINDOWS)
 /* --- Windows --- */
 /* Windows version can't obviously be determined at compile time,
  * but _WIN32_WINNT indicates the minimum version targeted:
@@ -553,34 +553,34 @@
  * itself (must be defined before including Windows headers).  Don't define
  * for user code including duktape.h.
  */
-#if defined(DUK_COMPILING_DUKTAPE) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+#اگر defined(DUK_COMPILING_DUKTAPE) && !defined(_CRT_SECURE_NO_WARNINGS)
+#تعریف_کرو _CRT_SECURE_NO_WARNINGS
+#اگر_ختم
 
 /* Windows 32-bit and 64-bit are currently the same. */
 /* MSVC does not have sys/param.h */
 
-#if defined(DUK_COMPILING_DUKTAPE)
+#اگر defined(DUK_COMPILING_DUKTAPE)
 /* Only include when compiling Duktape to avoid polluting application build
  * with a lot of unnecessary defines.
  */
-#include <windows.h>
-#endif
+#شامل <windows.h>
+#اگر_ختم
 
 /* GetSystemTimePreciseAsFileTime() available from Windows 8:
  * https://msdn.microsoft.com/en-us/library/windows/desktop/hh706895(v=vs.85).aspx
  */
-#if defined(DUK_USE_DATE_NOW_WINDOWS_SUBMS) || defined(DUK_USE_DATE_NOW_WINDOWS)
+#اگر defined(DUK_USE_DATE_NOW_WINDOWS_SUBMS) || defined(DUK_USE_DATE_NOW_WINDOWS)
 /* User forced provider. */
-#else
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0602)
-#define DUK_USE_DATE_NOW_WINDOWS_SUBMS
-#else
-#define DUK_USE_DATE_NOW_WINDOWS
-#endif
-#endif
+#ورنہ
+#اگر defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0602)
+#تعریف_کرو DUK_USE_DATE_NOW_WINDOWS_SUBMS
+#ورنہ
+#تعریف_کرو DUK_USE_DATE_NOW_WINDOWS
+#اگر_ختم
+#اگر_ختم
 
-#define DUK_USE_DATE_TZO_WINDOWS
+#تعریف_کرو DUK_USE_DATE_TZO_WINDOWS
 
 /* Note: PRS and FMT are intentionally left undefined for now.  This means
  * there is no platform specific date parsing/formatting but there is still
@@ -590,305 +590,305 @@
 /* QueryPerformanceCounter() may go backwards in Windows XP, so enable for
  * Vista and later: https://msdn.microsoft.com/en-us/library/windows/desktop/dn553408(v=vs.85).aspx#qpc_support_in_windows_versions
  */
-#if !defined(DUK_USE_GET_MONOTONIC_TIME_WINDOWS_QPC) && \
+#اگر !defined(DUK_USE_GET_MONOTONIC_وقت_WINDOWS_QPC) && \
     defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
-#define DUK_USE_GET_MONOTONIC_TIME_WINDOWS_QPC
-#endif
+#تعریف_کرو DUK_USE_GET_MONOTONIC_وقت_WINDOWS_QPC
+#اگر_ختم
 
-#define DUK_USE_OS_STRING "windows"
+#تعریف_کرو DUK_USE_OS_STRING "windows"
 
 /* On Windows, assume we're little endian.  Even Itanium which has a
  * configurable endianness runs little endian in Windows.
  */
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 1
-#endif
-#elif defined(DUK_F_FLASHPLAYER)
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#اگر_ختم
+#وگرنہ_اگر defined(DUK_F_FLASHPLAYER)
 /* --- Flashplayer (Crossbridge) --- */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <endian.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <endian.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING "flashplayer"
+#تعریف_کرو DUK_USE_OS_STRING "flashplayer"
 
-#if !defined(DUK_USE_BYTEORDER) && defined(DUK_F_FLASHPLAYER)
-#define DUK_USE_BYTEORDER 1
-#endif
-#elif defined(DUK_F_QNX)
+#اگر !defined(DUK_USE_BYTEORDER) && defined(DUK_F_FLASHPLAYER)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#اگر_ختم
+#وگرنہ_اگر defined(DUK_F_QNX)
 /* --- QNX --- */
-#if defined(DUK_F_QNX) && defined(DUK_COMPILING_DUKTAPE)
+#اگر defined(DUK_F_QNX) && defined(DUK_COMPILING_DUKTAPE)
 /* See: /opt/qnx650/target/qnx6/usr/include/sys/platform.h */
-#define _XOPEN_SOURCE    600
-#define _POSIX_C_SOURCE  200112L
-#endif
+#تعریف_کرو XOPEN_ماخذ    600
+#تعریف_کرو _POSIX_C_SOURCE  200112L
+#اگر_ختم
 
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/types.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/types.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING "qnx"
-#elif defined(DUK_F_TINSPIRE)
+#تعریف_کرو DUK_USE_OS_STRING "qnx"
+#وگرنہ_اگر defined(DUK_F_TINSPIRE)
 /* --- TI-Nspire --- */
-#if defined(DUK_COMPILING_DUKTAPE) && !defined(_XOPEN_SOURCE)
-#define _XOPEN_SOURCE    /* e.g. strptime */
-#endif
+#اگر defined(DUK_COMPILING_DUKTAPE) && !defined(XOPEN_ماخذ)
+#تعریف_کرو XOPEN_ماخذ    /* e.g. strptime */
+#اگر_ختم
 
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/types.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/types.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING "tinspire"
-#elif defined(DUK_F_EMSCRIPTEN)
+#تعریف_کرو DUK_USE_OS_STRING "tinspire"
+#وگرنہ_اگر defined(DUK_F_EMSCRIPTEN)
 /* --- Emscripten --- */
-#if defined(DUK_COMPILING_DUKTAPE)
-#if !defined(_POSIX_C_SOURCE)
-#define _POSIX_C_SOURCE  200809L
-#endif
-#if !defined(_GNU_SOURCE)
-#define _GNU_SOURCE      /* e.g. getdate_r */
-#endif
-#if !defined(_XOPEN_SOURCE)
-#define _XOPEN_SOURCE    /* e.g. strptime */
-#endif
-#endif  /* DUK_COMPILING_DUKTAPE */
+#اگر defined(DUK_COMPILING_DUKTAPE)
+#اگر !defined(_POSIX_C_SOURCE)
+#تعریف_کرو _POSIX_C_SOURCE  200809L
+#اگر_ختم
+#اگر !defined(GNU_ماخذ)
+#تعریف_کرو GNU_ماخذ      /* e.g. getdate_r */
+#اگر_ختم
+#اگر !defined(XOPEN_ماخذ)
+#تعریف_کرو XOPEN_ماخذ    /* e.g. strptime */
+#اگر_ختم
+#اگر_ختم  /* DUK_COMPILING_DUKTAPE */
 
-#include <sys/types.h>
-#if defined(DUK_F_BCC)
+#شامل <sys/types.h>
+#اگر defined(DUK_F_BCC)
 /* no endian.h */
-#else
-#include <endian.h>
-#endif  /* DUK_F_BCC */
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
-#include <stdint.h>
+#ورنہ
+#شامل <endian.h>
+#اگر_ختم  /* DUK_F_BCC */
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
+#شامل <stdint.h>
 
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
 
-#define DUK_USE_OS_STRING "emscripten"
-#elif defined(DUK_F_ANDROID)
+#تعریف_کرو DUK_USE_OS_STRING "emscripten"
+#وگرنہ_اگر defined(DUK_F_ANDROID)
 /* --- Android --- */
-#if defined(DUK_COMPILING_DUKTAPE)
-#if !defined(_POSIX_C_SOURCE)
-#define _POSIX_C_SOURCE  200809L
-#endif
-#if !defined(_GNU_SOURCE)
-#define _GNU_SOURCE      /* e.g. getdate_r */
-#endif
-#if !defined(_XOPEN_SOURCE)
-#define _XOPEN_SOURCE    /* e.g. strptime */
-#endif
-#endif  /* DUK_COMPILING_DUKTAPE */
+#اگر defined(DUK_COMPILING_DUKTAPE)
+#اگر !defined(_POSIX_C_SOURCE)
+#تعریف_کرو _POSIX_C_SOURCE  200809L
+#اگر_ختم
+#اگر !defined(GNU_ماخذ)
+#تعریف_کرو GNU_ماخذ      /* e.g. getdate_r */
+#اگر_ختم
+#اگر !defined(XOPEN_ماخذ)
+#تعریف_کرو XOPEN_ماخذ    /* e.g. strptime */
+#اگر_ختم
+#اگر_ختم  /* DUK_COMPILING_DUKTAPE */
 
-#include <sys/types.h>
-#if defined(DUK_F_BCC)
+#شامل <sys/types.h>
+#اگر defined(DUK_F_BCC)
 /* no endian.h or stdint.h */
-#else
-#include <endian.h>
-#include <stdint.h>
-#endif  /* DUK_F_BCC */
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#ورنہ
+#شامل <endian.h>
+#شامل <stdint.h>
+#اگر_ختم  /* DUK_F_BCC */
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
 
-#if 0  /* XXX: safe condition? */
-#define DUK_USE_GET_MONOTONIC_TIME_CLOCK_GETTIME
-#endif
+#اگر 0  /* XXX: safe condition? */
+#تعریف_کرو DUK_USE_GET_MONOTONIC_وقت_CLOCK_GETTIME
+#اگر_ختم
 
-#define DUK_USE_OS_STRING "android"
-#elif defined(DUK_F_LINUX)
+#تعریف_کرو DUK_USE_OS_STRING "android"
+#وگرنہ_اگر defined(DUK_F_LINUX)
 /* --- Linux --- */
-#if defined(DUK_COMPILING_DUKTAPE)
-#if !defined(_POSIX_C_SOURCE)
-#define _POSIX_C_SOURCE  200809L
-#endif
-#if !defined(_GNU_SOURCE)
-#define _GNU_SOURCE      /* e.g. getdate_r */
-#endif
-#if !defined(_XOPEN_SOURCE)
-#define _XOPEN_SOURCE    /* e.g. strptime */
-#endif
-#endif  /* DUK_COMPILING_DUKTAPE */
+#اگر defined(DUK_COMPILING_DUKTAPE)
+#اگر !defined(_POSIX_C_SOURCE)
+#تعریف_کرو _POSIX_C_SOURCE  200809L
+#اگر_ختم
+#اگر !defined(GNU_ماخذ)
+#تعریف_کرو GNU_ماخذ      /* e.g. getdate_r */
+#اگر_ختم
+#اگر !defined(XOPEN_ماخذ)
+#تعریف_کرو XOPEN_ماخذ    /* e.g. strptime */
+#اگر_ختم
+#اگر_ختم  /* DUK_COMPILING_DUKTAPE */
 
-#include <sys/types.h>
-#if defined(DUK_F_BCC)
+#شامل <sys/types.h>
+#اگر defined(DUK_F_BCC)
 /* no endian.h or stdint.h */
-#else
-#include <endian.h>
-#include <stdint.h>
-#endif  /* DUK_F_BCC */
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#ورنہ
+#شامل <endian.h>
+#شامل <stdint.h>
+#اگر_ختم  /* DUK_F_BCC */
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
 
-#if 0  /* XXX: safe condition? */
-#define DUK_USE_GET_MONOTONIC_TIME_CLOCK_GETTIME
-#endif
+#اگر 0  /* XXX: safe condition? */
+#تعریف_کرو DUK_USE_GET_MONOTONIC_وقت_CLOCK_GETTIME
+#اگر_ختم
 
-#define DUK_USE_OS_STRING "linux"
-#elif defined(DUK_F_SUN)
+#تعریف_کرو DUK_USE_OS_STRING "linux"
+#وگرنہ_اگر defined(DUK_F_SUN)
 /* --- Solaris --- */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
 
-#include <sys/types.h>
-#if defined(DUK_F_OLD_SOLARIS)
+#شامل <sys/types.h>
+#اگر defined(DUK_F_OLD_SOLARIS)
 /* Old Solaris with no endian.h, stdint.h */
-#define DUK_F_NO_STDINT_H
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 3
-#endif
-#else  /* DUK_F_OLD_SOLARIS */
-#include <sys/param.h>
-#endif  /* DUK_F_OLD_SOLARIS */
+#تعریف_کرو DUK_F_NO_STDINT_H
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#اگر_ختم
+#ورنہ  /* DUK_F_OLD_SOLARIS */
+#شامل <sys/param.h>
+#اگر_ختم  /* DUK_F_OLD_SOLARIS */
 
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING "solaris"
-#elif defined(DUK_F_AIX)
+#تعریف_کرو DUK_USE_OS_STRING "solaris"
+#وگرنہ_اگر defined(DUK_F_AIX)
 /* --- AIX --- */
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 3
-#endif
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#اگر_ختم
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING "aix"
-#elif defined(DUK_F_HPUX)
+#تعریف_کرو DUK_USE_OS_STRING "aix"
+#وگرنہ_اگر defined(DUK_F_HPUX)
 /* --- HPUX --- */
-#define DUK_F_NO_STDINT_H
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 3
-#endif
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_F_NO_STDINT_H
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#اگر_ختم
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING "hpux"
-#elif defined(DUK_F_POSIX)
+#تعریف_کرو DUK_USE_OS_STRING "hpux"
+#وگرنہ_اگر defined(DUK_F_POSIX)
 /* --- Generic POSIX --- */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/types.h>
-#include <endian.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/types.h>
+#شامل <endian.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING "posix"
-#elif defined(DUK_F_CYGWIN)
+#تعریف_کرو DUK_USE_OS_STRING "posix"
+#وگرنہ_اگر defined(DUK_F_CYGWIN)
 /* --- Cygwin --- */
 /* don't use strptime() for now */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <sys/types.h>
-#include <endian.h>
-#include <sys/param.h>
-#include <sys/time.h>
-#include <time.h>
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <sys/types.h>
+#شامل <endian.h>
+#شامل <sys/param.h>
+#شامل <sys/time.h>
+#شامل <time.h>
 
-#define DUK_JMPBUF_TYPE       jmp_buf
-#define DUK_SETJMP(jb)        _setjmp((jb))
-#define DUK_LONGJMP(jb)       _longjmp((jb), 1)
+#تعریف_کرو DUK_JMPBUF_TYPE       jmp_buf
+#تعریف_کرو DUK_SETJMP(jb)        _setjmp((jb))
+#تعریف_کرو DUK_LONGJMP(jb)       _longjmp((jb), 1)
 
-#define DUK_USE_OS_STRING "windows"
-#elif defined(DUK_F_UNIX)
+#تعریف_کرو DUK_USE_OS_STRING "windows"
+#وگرنہ_اگر defined(DUK_F_UNIX)
 /* --- Generic UNIX --- */
-#define DUK_USE_DATE_NOW_GETTIMEOFDAY
-#define DUK_USE_DATE_TZO_GMTIME_R
-#define DUK_USE_DATE_PRS_STRPTIME
-#define DUK_USE_DATE_FMT_STRFTIME
-#include <time.h>
-#include <sys/time.h>
-#define DUK_USE_OS_STRING "unknown"
-#else
+#تعریف_کرو DUK_USE_DATE_NOW_GETTIMEOFDAY
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME_R
+#تعریف_کرو DUK_USE_DATE_PRS_STRPTIME
+#تعریف_کرو DUK_USE_DATE_FMT_STRFTIME
+#شامل <time.h>
+#شامل <sys/time.h>
+#تعریف_کرو DUK_USE_OS_STRING "unknown"
+#ورنہ
 /* --- Generic fallback --- */
 /* The most portable current time provider is time(), but it only has a
  * one second resolution.
  */
-#define DUK_USE_DATE_NOW_TIME
+#تعریف_کرو DUK_USE_DATE_NOW_وقت
 
 /* The most portable way to figure out local time offset is gmtime(),
  * but it's not thread safe so use with caution.
  */
-#define DUK_USE_DATE_TZO_GMTIME
+#تعریف_کرو DUK_USE_DATE_TZO_GMTIME
 
 /* Avoid custom date parsing and formatting for portability. */
-#undef DUK_USE_DATE_PRS_STRPTIME
-#undef DUK_USE_DATE_FMT_STRFTIME
+#تعریف_منسوخ DUK_USE_DATE_PRS_STRPTIME
+#تعریف_منسوخ DUK_USE_DATE_FMT_STRFTIME
 
 /* Rely on C89 headers only; time.h must be here. */
-#include <time.h>
+#شامل <time.h>
 
-#define DUK_USE_OS_STRING "unknown"
-#endif  /* autodetect platform */
+#تعریف_کرو DUK_USE_OS_STRING "unknown"
+#اگر_ختم  /* autodetect platform */
 
 /* Shared includes: C89 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>  /* varargs */
-#include <setjmp.h>
-#include <stddef.h>  /* e.g. ptrdiff_t */
-#include <math.h>
-#include <limits.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <stdarg.h>  /* varargs */
+#شامل <setjmp.h>
+#شامل <stddef.h>  /* e.g. ptrdiff_t */
+#شامل <math.h>
+#شامل <limits.h>
 
 /* date.h is omitted, and included per platform */
 
 /* Shared includes: stdint.h is C99 */
-#if defined(DUK_F_NO_STDINT_H)
+#اگر defined(DUK_F_NO_STDINT_H)
 /* stdint.h not available */
-#else
+#ورنہ
 /* Technically C99 (C++11) but found in many systems.  On some systems
  * __STDC_LIMIT_MACROS and __STDC_CONSTANT_MACROS must be defined before
  * including stdint.h (see above).
  */
-#include <stdint.h>
-#endif
+#شامل <stdint.h>
+#اگر_ختم
 
 /* <exception> is only included if needed, based on DUK_USE_xxx flags. */
 
@@ -896,678 +896,678 @@
  *  Architecture autodetection
  */
 
-#if defined(DUK_F_X86)
+#اگر defined(DUK_F_X86)
 /* --- x86 --- */
-#define DUK_USE_ARCH_STRING "x86"
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 1
-#endif
+#تعریف_کرو DUK_USE_ARCH_STRING "x86"
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#اگر_ختم
 
-#define DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_USE_PACKED_TVAL
 
 /* FreeBSD, -m32, and clang prior to 5.0 has union aliasing issues which
  * break duk_tval copying.  Disable packed duk_tval automatically.
  */
-#if defined(DUK_F_FREEBSD) && defined(DUK_F_X86) && \
+#اگر defined(DUK_F_FREEBSD) && defined(DUK_F_X86) && \
     defined(__clang__) && defined(__clang_major__) && (__clang_major__ < 5)
-#undef DUK_USE_PACKED_TVAL
-#endif
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_X64)
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#اگر_ختم
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_X64)
 /* --- x64 --- */
-#define DUK_USE_ARCH_STRING "x64"
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 1
-#endif
-#undef DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_X32)
+#تعریف_کرو DUK_USE_ARCH_STRING "x64"
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#اگر_ختم
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_X32)
 /* --- x32 --- */
-#define DUK_USE_ARCH_STRING "x32"
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 1
-#endif
-#define DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_ARM32)
+#تعریف_کرو DUK_USE_ARCH_STRING "x32"
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#اگر_ختم
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_ARM32)
 /* --- ARM 32-bit --- */
-#define DUK_USE_ARCH_STRING "arm32"
+#تعریف_کرو DUK_USE_ARCH_STRING "arm32"
 /* Byte order varies, so rely on autodetect. */
-#define DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_ARM64)
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_ARM64)
 /* --- ARM 64-bit --- */
-#define DUK_USE_ARCH_STRING "arm64"
+#تعریف_کرو DUK_USE_ARCH_STRING "arm64"
 /* Byte order varies, so rely on autodetect. */
-#undef DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_MIPS32)
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_MIPS32)
 /* --- MIPS 32-bit --- */
-#define DUK_USE_ARCH_STRING "mips32"
+#تعریف_کرو DUK_USE_ARCH_STRING "mips32"
 /* MIPS byte order varies so rely on autodetection. */
-#define DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_MIPS64)
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_MIPS64)
 /* --- MIPS 64-bit --- */
-#define DUK_USE_ARCH_STRING "mips64"
+#تعریف_کرو DUK_USE_ARCH_STRING "mips64"
 /* MIPS byte order varies so rely on autodetection. */
-#undef DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_PPC32)
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_PPC32)
 /* --- PowerPC 32-bit --- */
-#define DUK_USE_ARCH_STRING "ppc32"
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 3
-#endif
-#define DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_PPC64)
+#تعریف_کرو DUK_USE_ARCH_STRING "ppc32"
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#اگر_ختم
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_PPC64)
 /* --- PowerPC 64-bit --- */
-#define DUK_USE_ARCH_STRING "ppc64"
+#تعریف_کرو DUK_USE_ARCH_STRING "ppc64"
 /* No forced byteorder (both little and big endian are possible). */
-#undef DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_SPARC32)
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_SPARC32)
 /* --- SPARC 32-bit --- */
-#define DUK_USE_ARCH_STRING "sparc32"
+#تعریف_کرو DUK_USE_ARCH_STRING "sparc32"
 /* SPARC byte order varies so rely on autodetection. */
-#define DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_SPARC64)
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_SPARC64)
 /* --- SPARC 64-bit --- */
-#define DUK_USE_ARCH_STRING "sparc64"
+#تعریف_کرو DUK_USE_ARCH_STRING "sparc64"
 /* SPARC byte order varies so rely on autodetection. */
-#undef DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_RISCV32)
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_RISCV32)
 /* --- RISC-V 32-bit --- */
-#define DUK_USE_ARCH_STRING "riscv32"
-#define DUK_USE_BYTEORDER 1
-#define DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_RISCV64)
+#تعریف_کرو DUK_USE_ARCH_STRING "riscv32"
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_RISCV64)
 /* --- RISC-V 64-bit --- */
-#define DUK_USE_ARCH_STRING "riscv64"
-#define DUK_USE_BYTEORDER 1
-#undef DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_SUPERH)
+#تعریف_کرو DUK_USE_ARCH_STRING "riscv64"
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_SUPERH)
 /* --- SuperH --- */
-#define DUK_USE_ARCH_STRING "sh"
+#تعریف_کرو DUK_USE_ARCH_STRING "sh"
 /* Byte order varies, rely on autodetection. */
-#define DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_M68K)
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_M68K)
 /* --- Motorola 68k --- */
-#define DUK_USE_ARCH_STRING "m68k"
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 3
-#endif
-#define DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#elif defined(DUK_F_EMSCRIPTEN)
+#تعریف_کرو DUK_USE_ARCH_STRING "m68k"
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#اگر_ختم
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#وگرنہ_اگر defined(DUK_F_EMSCRIPTEN)
 /* --- Emscripten --- */
-#define DUK_USE_ARCH_STRING "emscripten"
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 1
-#endif
-#undef DUK_USE_PACKED_TVAL
-#define DUK_F_PACKED_TVAL_PROVIDED
-#else
+#تعریف_کرو DUK_USE_ARCH_STRING "emscripten"
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#اگر_ختم
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#تعریف_کرو DUK_F_PACKED_TVAL_PROVIDED
+#ورنہ
 /* --- Generic --- */
 /* These are necessary wild guesses. */
-#define DUK_USE_ARCH_STRING "generic"
+#تعریف_کرو DUK_USE_ARCH_STRING "generic"
 /* Rely on autodetection for byte order, alignment, and packed tval. */
-#endif  /* autodetect architecture */
+#اگر_ختم  /* autodetect architecture */
 
 /*
  *  Compiler autodetection
  */
 
-#if defined(DUK_F_CLANG)
+#اگر defined(DUK_F_CLANG)
 /* --- Clang --- */
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
 /* C99 / C++11 and above: rely on va_copy() which is required. */
-#define DUK_VA_COPY(dest,src) va_copy(dest,src)
-#else
+#تعریف_کرو DUK_VA_COPY(dest,src) va_copy(dest,src)
+#ورنہ
 /* Clang: assume we have __va_copy() in non-C99 mode. */
-#define DUK_VA_COPY(dest,src) __va_copy(dest,src)
-#endif
+#تعریف_کرو DUK_VA_COPY(dest,src) __va_copy(dest,src)
+#اگر_ختم
 
-#define DUK_NORETURN(decl)  decl __attribute__((noreturn))
+#تعریف_کرو DUK_NORETURN(decl)  decl __attribute__((noreturn))
 
-#if defined(__clang__) && defined(__has_builtin)
-#if __has_builtin(__builtin_unreachable)
-#define DUK_UNREACHABLE()  do { __builtin_unreachable(); } while (0)
-#endif
-#endif
+#اگر defined(__clang__) && defined(__has_builtin)
+#اگر __has_builtin(__builtin_unreachable)
+#تعریف_کرو DUK_UNREACHABLE()  کرو { __builtin_unreachable(); } جب (0)
+#اگر_ختم
+#اگر_ختم
 
-#define DUK_USE_BRANCH_HINTS
-#define DUK_LIKELY(x)    __builtin_expect((x), 1)
-#define DUK_UNLIKELY(x)  __builtin_expect((x), 0)
-#if defined(__clang__) && defined(__has_builtin)
-#if __has_builtin(__builtin_unpredictable)
-#define DUK_UNPREDICTABLE(x)  __builtin_unpredictable((x))
-#endif
-#endif
+#تعریف_کرو DUK_USE_BRANCH_HINTS
+#تعریف_کرو DUK_LIKELY(x)    __builtin_expect((x), 1)
+#تعریف_کرو DUK_UNLIKELY(x)  __builtin_expect((x), 0)
+#اگر defined(__clang__) && defined(__has_builtin)
+#اگر __has_builtin(__builtin_unpredictable)
+#تعریف_کرو DUK_UNPREDICTABLE(x)  __builtin_unpredictable((x))
+#اگر_ختم
+#اگر_ختم
 
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
-#define DUK_NOINLINE        __attribute__((noinline))
-#define DUK_INLINE          inline
-#define DUK_ALWAYS_INLINE   inline __attribute__((always_inline))
-#endif
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#تعریف_کرو DUK_NOINLINE        __attribute__((noinline))
+#تعریف_کرو DUK_INLINE          اندرونی
+#تعریف_کرو DUK_ALWAYS_INLINE   اندرونی __attribute__((always_inline))
+#اگر_ختم
 
 /* DUK_HOT */
 /* DUK_COLD */
 
-#if defined(DUK_F_DLL_BUILD) && defined(DUK_F_WINDOWS)
+#اگر defined(DUK_F_DLL_BUILD) && defined(DUK_F_WINDOWS)
 /* MSVC dllexport/dllimport: appropriate __declspec depends on whether we're
  * compiling Duktape or the application.
  */
-#if defined(DUK_COMPILING_DUKTAPE)
-#define DUK_EXTERNAL_DECL  extern __declspec(dllexport)
-#define DUK_EXTERNAL       __declspec(dllexport)
-#else
-#define DUK_EXTERNAL_DECL  extern __declspec(dllimport)
-#define DUK_EXTERNAL       should_not_happen
-#endif
-#if defined(DUK_SINGLE_FILE)
-#define DUK_INTERNAL_DECL  static
-#define DUK_INTERNAL       static
-#else
-#define DUK_INTERNAL_DECL  extern
-#define DUK_INTERNAL       /*empty*/
-#endif
-#define DUK_LOCAL_DECL     static
-#define DUK_LOCAL          static
-#else
-#define DUK_EXTERNAL_DECL  __attribute__ ((visibility("default"))) extern
-#define DUK_EXTERNAL       __attribute__ ((visibility("default")))
-#if defined(DUK_SINGLE_FILE)
-#if (defined(DUK_F_GCC_VERSION) && DUK_F_GCC_VERSION >= 30101) || defined(DUK_F_CLANG)
+#اگر defined(DUK_COMPILING_DUKTAPE)
+#تعریف_کرو DUK_EXTERNAL_DECL  خارجی __declspec(dllexport)
+#تعریف_کرو DUK_EXTERNAL       __declspec(dllexport)
+#ورنہ
+#تعریف_کرو DUK_EXTERNAL_DECL  خارجی __declspec(dllimport)
+#تعریف_کرو DUK_EXTERNAL       should_not_happen
+#اگر_ختم
+#اگر defined(DUK_SINGLE_FILE)
+#تعریف_کرو DUK_اندرونی_DECL  ساکن
+#تعریف_کرو DUK_اندرونی       ساکن
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  خارجی
+#تعریف_کرو DUK_اندرونی       /*خالی_خانے*/
+#اگر_ختم
+#تعریف_کرو DUK_LOCAL_DECL     ساکن
+#تعریف_کرو DUK_LOCAL          ساکن
+#ورنہ
+#تعریف_کرو DUK_EXTERNAL_DECL  __attribute__ ((visibility("default"))) خارجی
+#تعریف_کرو DUK_EXTERNAL       __attribute__ ((visibility("default")))
+#اگر defined(DUK_SINGLE_FILE)
+#اگر (defined(DUK_F_GCC_نسخہ) && DUK_F_GCC_نسخہ >= 30101) || defined(DUK_F_CLANG)
 /* Minimize warnings for unused internal functions with GCC >= 3.1.1 and
  * Clang.  Based on documentation it should suffice to have the attribute
  * in the declaration only, but in practice some warnings are generated unless
  * the attribute is also applied to the definition.
  */
-#define DUK_INTERNAL_DECL  static __attribute__ ((unused))
-#define DUK_INTERNAL       static __attribute__ ((unused))
-#else
-#define DUK_INTERNAL_DECL  static
-#define DUK_INTERNAL       static
-#endif
-#else
-#if (defined(DUK_F_GCC_VERSION) && DUK_F_GCC_VERSION >= 30101) || defined(DUK_F_CLANG)
-#define DUK_INTERNAL_DECL  __attribute__ ((visibility("hidden"))) __attribute__ ((unused)) extern
-#define DUK_INTERNAL       __attribute__ ((visibility("hidden"))) __attribute__ ((unused))
-#else
-#define DUK_INTERNAL_DECL  __attribute__ ((visibility("hidden"))) extern
-#define DUK_INTERNAL       __attribute__ ((visibility("hidden")))
-#endif
-#endif
-#define DUK_LOCAL_DECL     static
-#define DUK_LOCAL          static
-#endif
+#تعریف_کرو DUK_اندرونی_DECL  ساکن __attribute__ ((غیر_مستعمل))
+#تعریف_کرو DUK_اندرونی       ساکن __attribute__ ((غیر_مستعمل))
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  ساکن
+#تعریف_کرو DUK_اندرونی       ساکن
+#اگر_ختم
+#ورنہ
+#اگر (defined(DUK_F_GCC_نسخہ) && DUK_F_GCC_نسخہ >= 30101) || defined(DUK_F_CLANG)
+#تعریف_کرو DUK_اندرونی_DECL  __attribute__ ((visibility("hidden"))) __attribute__ ((غیر_مستعمل)) خارجی
+#تعریف_کرو DUK_اندرونی       __attribute__ ((visibility("hidden"))) __attribute__ ((غیر_مستعمل))
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  __attribute__ ((visibility("hidden"))) خارجی
+#تعریف_کرو DUK_اندرونی       __attribute__ ((visibility("hidden")))
+#اگر_ختم
+#اگر_ختم
+#تعریف_کرو DUK_LOCAL_DECL     ساکن
+#تعریف_کرو DUK_LOCAL          ساکن
+#اگر_ختم
 
-#if defined(DUK_F_CPP)
-#define DUK_USE_COMPILER_STRING "clang"
-#else
-#define DUK_USE_COMPILER_STRING "clang"
-#endif
+#اگر defined(DUK_F_CPP)
+#تعریف_کرو DUK_USE_COMPILER_STRING "clang"
+#ورنہ
+#تعریف_کرو DUK_USE_COMPILER_STRING "clang"
+#اگر_ختم
 
-#undef DUK_USE_VARIADIC_MACROS
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
-#define DUK_USE_VARIADIC_MACROS
-#endif
+#تعریف_منسوخ DUK_USE_VARIADIC_MACROS
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#تعریف_کرو DUK_USE_VARIADIC_MACROS
+#اگر_ختم
 
-#define DUK_USE_UNION_INITIALIZERS
+#تعریف_کرو DUK_USE_UNION_INITIALIZERS
 
-#undef DUK_USE_FLEX_C99
-#undef DUK_USE_FLEX_ZEROSIZE
-#undef DUK_USE_FLEX_ONESIZE
-#if defined(DUK_F_C99)
-#define DUK_USE_FLEX_C99
-#else
-#define DUK_USE_FLEX_ZEROSIZE
-#endif
+#تعریف_منسوخ DUK_USE_FLEX_C99
+#تعریف_منسوخ DUK_USE_FLEX_ZEROSIZE
+#تعریف_منسوخ DUK_USE_FLEX_ONESIZE
+#اگر defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_FLEX_C99
+#ورنہ
+#تعریف_کرو DUK_USE_FLEX_ZEROSIZE
+#اگر_ختم
 
-#define DUK_USE_CLANG_PRAGMAS
-#define DUK_USE_PACK_CLANG_ATTR
+#تعریف_کرو DUK_USE_CLANG_PRAGMAS
+#تعریف_کرو DUK_USE_PACK_CLANG_ATTR
 
-#if defined(__clang__) && defined(__has_builtin)
-#if __has_builtin(__builtin_bswap64)
-#define DUK_BSWAP64(x) ((duk_uint64_t) __builtin_bswap64((duk_uint64_t) (x)))
-#endif
-#if __has_builtin(__builtin_bswap32)
-#define DUK_BSWAP32(x) ((duk_uint32_t) __builtin_bswap32((duk_uint32_t) (x)))
-#endif
-#if __has_builtin(__builtin_bswap16)
-#define DUK_BSWAP16(x) ((duk_uint16_t) __builtin_bswap16((duk_uint16_t) (x)))
-#endif
-#endif
-#elif defined(DUK_F_GCC)
+#اگر defined(__clang__) && defined(__has_builtin)
+#اگر __has_builtin(__builtin_bswap64)
+#تعریف_کرو DUK_BSWAP64(x) ((duk_uint64_t) __builtin_bswap64((duk_uint64_t) (x)))
+#اگر_ختم
+#اگر __has_builtin(__builtin_bswap32)
+#تعریف_کرو DUK_BSWAP32(x) ((duk_uint32_t) __builtin_bswap32((duk_uint32_t) (x)))
+#اگر_ختم
+#اگر __has_builtin(__builtin_bswap16)
+#تعریف_کرو DUK_BSWAP16(x) ((duk_uint16_t) __builtin_bswap16((duk_uint16_t) (x)))
+#اگر_ختم
+#اگر_ختم
+#وگرنہ_اگر defined(DUK_F_GCC)
 /* --- GCC --- */
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
 /* C99 / C++11 and above: rely on va_copy() which is required. */
-#define DUK_VA_COPY(dest,src) va_copy(dest,src)
-#else
+#تعریف_کرو DUK_VA_COPY(dest,src) va_copy(dest,src)
+#ورنہ
 /* GCC: assume we have __va_copy() in non-C99 mode. */
-#define DUK_VA_COPY(dest,src) __va_copy(dest,src)
-#endif
+#تعریف_کرو DUK_VA_COPY(dest,src) __va_copy(dest,src)
+#اگر_ختم
 
-#if defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION >= 20500L) && (DUK_F_GCC_VERSION < 50000L)
+#اگر defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ >= 20500L) && (DUK_F_GCC_نسخہ < 50000L)
 /* Since gcc-2.5.
  *
  * Disabled temporarily in GCC 5+ because of an unresolved noreturn-related
  * issue: https://github.com/svaarala/duktape/issues/2155.
  */
-#define DUK_NORETURN(decl)  decl __attribute__((noreturn))
-#endif
+#تعریف_کرو DUK_NORETURN(decl)  decl __attribute__((noreturn))
+#اگر_ختم
 
-#if defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION >= 40500L)
+#اگر defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ >= 40500L)
 /* Since gcc-4.5. */
-#define DUK_UNREACHABLE()  do { __builtin_unreachable(); } while (0)
-#endif
+#تعریف_کرو DUK_UNREACHABLE()  کرو { __builtin_unreachable(); } جب (0)
+#اگر_ختم
 
-#define DUK_USE_BRANCH_HINTS
-#if defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION >= 40500L)
+#تعریف_کرو DUK_USE_BRANCH_HINTS
+#اگر defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ >= 40500L)
 /* GCC: test not very accurate; enable only in relatively recent builds
  * because of bugs in gcc-4.4 (http://lists.debian.org/debian-gcc/2010/04/msg00000.html)
  */
-#define DUK_LIKELY(x)    __builtin_expect((x), 1)
-#define DUK_UNLIKELY(x)  __builtin_expect((x), 0)
-#endif
+#تعریف_کرو DUK_LIKELY(x)    __builtin_expect((x), 1)
+#تعریف_کرو DUK_UNLIKELY(x)  __builtin_expect((x), 0)
+#اگر_ختم
 /* XXX: equivalent of clang __builtin_unpredictable? */
 
-#if (defined(DUK_F_C99) || defined(DUK_F_CPP11)) && \
-    defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION >= 30101)
-#define DUK_NOINLINE        __attribute__((noinline))
-#define DUK_INLINE          inline
-#define DUK_ALWAYS_INLINE   inline __attribute__((always_inline))
-#endif
+#اگر (defined(DUK_F_C99) || defined(DUK_F_CPP11)) && \
+    defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ >= 30101)
+#تعریف_کرو DUK_NOINLINE        __attribute__((noinline))
+#تعریف_کرو DUK_INLINE          اندرونی
+#تعریف_کرو DUK_ALWAYS_INLINE   اندرونی __attribute__((always_inline))
+#اگر_ختم
 
-#if (defined(DUK_F_C99) || defined(DUK_F_CPP11)) && \
-    defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION >= 40300)
-#define DUK_HOT             __attribute__((hot))
-#define DUK_COLD            __attribute__((cold))
-#endif
+#اگر (defined(DUK_F_C99) || defined(DUK_F_CPP11)) && \
+    defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ >= 40300)
+#تعریف_کرو DUK_HOT             __attribute__((hot))
+#تعریف_کرو DUK_COLD            __attribute__((cold))
+#اگر_ختم
 
-#if defined(DUK_F_DLL_BUILD) && defined(DUK_F_WINDOWS)
+#اگر defined(DUK_F_DLL_BUILD) && defined(DUK_F_WINDOWS)
 /* MSVC dllexport/dllimport: appropriate __declspec depends on whether we're
  * compiling Duktape or the application.
  */
-#if defined(DUK_COMPILING_DUKTAPE)
-#define DUK_EXTERNAL_DECL  extern __declspec(dllexport)
-#define DUK_EXTERNAL       __declspec(dllexport)
-#else
-#define DUK_EXTERNAL_DECL  extern __declspec(dllimport)
-#define DUK_EXTERNAL       should_not_happen
-#endif
-#if defined(DUK_SINGLE_FILE)
-#define DUK_INTERNAL_DECL  static
-#define DUK_INTERNAL       static
-#else
-#define DUK_INTERNAL_DECL  extern
-#define DUK_INTERNAL       /*empty*/
-#endif
-#define DUK_LOCAL_DECL     static
-#define DUK_LOCAL          static
-#elif defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION >= 40000)
-#define DUK_EXTERNAL_DECL  __attribute__ ((visibility("default"))) extern
-#define DUK_EXTERNAL       __attribute__ ((visibility("default")))
-#if defined(DUK_SINGLE_FILE)
-#if (defined(DUK_F_GCC_VERSION) && DUK_F_GCC_VERSION >= 30101) || defined(DUK_F_CLANG)
+#اگر defined(DUK_COMPILING_DUKTAPE)
+#تعریف_کرو DUK_EXTERNAL_DECL  خارجی __declspec(dllexport)
+#تعریف_کرو DUK_EXTERNAL       __declspec(dllexport)
+#ورنہ
+#تعریف_کرو DUK_EXTERNAL_DECL  خارجی __declspec(dllimport)
+#تعریف_کرو DUK_EXTERNAL       should_not_happen
+#اگر_ختم
+#اگر defined(DUK_SINGLE_FILE)
+#تعریف_کرو DUK_اندرونی_DECL  ساکن
+#تعریف_کرو DUK_اندرونی       ساکن
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  خارجی
+#تعریف_کرو DUK_اندرونی       /*خالی_خانے*/
+#اگر_ختم
+#تعریف_کرو DUK_LOCAL_DECL     ساکن
+#تعریف_کرو DUK_LOCAL          ساکن
+#وگرنہ_اگر defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ >= 40000)
+#تعریف_کرو DUK_EXTERNAL_DECL  __attribute__ ((visibility("default"))) خارجی
+#تعریف_کرو DUK_EXTERNAL       __attribute__ ((visibility("default")))
+#اگر defined(DUK_SINGLE_FILE)
+#اگر (defined(DUK_F_GCC_نسخہ) && DUK_F_GCC_نسخہ >= 30101) || defined(DUK_F_CLANG)
 /* Minimize warnings for unused internal functions with GCC >= 3.1.1 and
  * Clang.  Based on documentation it should suffice to have the attribute
  * in the declaration only, but in practice some warnings are generated unless
  * the attribute is also applied to the definition.
  */
-#define DUK_INTERNAL_DECL  static __attribute__ ((unused))
-#define DUK_INTERNAL       static __attribute__ ((unused))
-#else
-#define DUK_INTERNAL_DECL  static
-#define DUK_INTERNAL       static
-#endif
-#else
-#if (defined(DUK_F_GCC_VERSION) && DUK_F_GCC_VERSION >= 30101) || defined(DUK_F_CLANG)
-#define DUK_INTERNAL_DECL  __attribute__ ((visibility("hidden"))) __attribute__ ((unused)) extern
-#define DUK_INTERNAL       __attribute__ ((visibility("hidden"))) __attribute__ ((unused))
-#else
-#define DUK_INTERNAL_DECL  __attribute__ ((visibility("hidden"))) extern
-#define DUK_INTERNAL       __attribute__ ((visibility("hidden")))
-#endif
-#endif
-#define DUK_LOCAL_DECL     static
-#define DUK_LOCAL          static
-#endif
+#تعریف_کرو DUK_اندرونی_DECL  ساکن __attribute__ ((غیر_مستعمل))
+#تعریف_کرو DUK_اندرونی       ساکن __attribute__ ((غیر_مستعمل))
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  ساکن
+#تعریف_کرو DUK_اندرونی       ساکن
+#اگر_ختم
+#ورنہ
+#اگر (defined(DUK_F_GCC_نسخہ) && DUK_F_GCC_نسخہ >= 30101) || defined(DUK_F_CLANG)
+#تعریف_کرو DUK_اندرونی_DECL  __attribute__ ((visibility("hidden"))) __attribute__ ((غیر_مستعمل)) خارجی
+#تعریف_کرو DUK_اندرونی       __attribute__ ((visibility("hidden"))) __attribute__ ((غیر_مستعمل))
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  __attribute__ ((visibility("hidden"))) خارجی
+#تعریف_کرو DUK_اندرونی       __attribute__ ((visibility("hidden")))
+#اگر_ختم
+#اگر_ختم
+#تعریف_کرو DUK_LOCAL_DECL     ساکن
+#تعریف_کرو DUK_LOCAL          ساکن
+#اگر_ختم
 
-#if defined(DUK_F_MINGW)
-#if defined(DUK_F_CPP)
-#define DUK_USE_COMPILER_STRING "mingw++"
-#else
-#define DUK_USE_COMPILER_STRING "mingw"
-#endif
-#else
-#if defined(DUK_F_CPP)
-#define DUK_USE_COMPILER_STRING "g++"
-#else
-#define DUK_USE_COMPILER_STRING "gcc"
-#endif
-#endif
+#اگر defined(DUK_F_MINGW)
+#اگر defined(DUK_F_CPP)
+#تعریف_کرو DUK_USE_COMPILER_STRING "mingw++"
+#ورنہ
+#تعریف_کرو DUK_USE_COMPILER_STRING "mingw"
+#اگر_ختم
+#ورنہ
+#اگر defined(DUK_F_CPP)
+#تعریف_کرو DUK_USE_COMPILER_STRING "g++"
+#ورنہ
+#تعریف_کرو DUK_USE_COMPILER_STRING "gcc"
+#اگر_ختم
+#اگر_ختم
 
-#undef DUK_USE_VARIADIC_MACROS
-#if defined(DUK_F_C99) || (defined(DUK_F_CPP11) && defined(__GNUC__))
-#define DUK_USE_VARIADIC_MACROS
-#endif
+#تعریف_منسوخ DUK_USE_VARIADIC_MACROS
+#اگر defined(DUK_F_C99) || (defined(DUK_F_CPP11) && defined(__GNUC__))
+#تعریف_کرو DUK_USE_VARIADIC_MACROS
+#اگر_ختم
 
-#define DUK_USE_UNION_INITIALIZERS
+#تعریف_کرو DUK_USE_UNION_INITIALIZERS
 
-#undef DUK_USE_FLEX_C99
-#undef DUK_USE_FLEX_ZEROSIZE
-#undef DUK_USE_FLEX_ONESIZE
-#if defined(DUK_F_C99)
-#define DUK_USE_FLEX_C99
-#else
-#define DUK_USE_FLEX_ZEROSIZE
-#endif
+#تعریف_منسوخ DUK_USE_FLEX_C99
+#تعریف_منسوخ DUK_USE_FLEX_ZEROSIZE
+#تعریف_منسوخ DUK_USE_FLEX_ONESIZE
+#اگر defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_FLEX_C99
+#ورنہ
+#تعریف_کرو DUK_USE_FLEX_ZEROSIZE
+#اگر_ختم
 
 /* Since 4.6 one can '#pragma GCC diagnostic push/pop'. */
-#if defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION >= 40600)
-#define DUK_USE_GCC_PRAGMAS
-#else
-#undef DUK_USE_GCC_PRAGMAS
-#endif
+#اگر defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ >= 40600)
+#تعریف_کرو DUK_USE_GCC_PRAGMAS
+#ورنہ
+#تعریف_منسوخ DUK_USE_GCC_PRAGMAS
+#اگر_ختم
 
-#define DUK_USE_PACK_GCC_ATTR
+#تعریف_کرو DUK_USE_PACK_GCC_ATTR
 
 /* Availability varies based on platform (between GCC 4.4 and 4.8), and there
  * are apparently some bugs in GCC 4.x.  Check for GCC 5.0 before enabling
  * these to be safe.
  */
-#if defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION >= 50000L)
-#define DUK_BSWAP64(x) ((duk_uint64_t) __builtin_bswap64((duk_uint64_t) (x)))
-#define DUK_BSWAP32(x) ((duk_uint32_t) __builtin_bswap32((duk_uint32_t) (x)))
-#define DUK_BSWAP16(x) ((duk_uint16_t) __builtin_bswap16((duk_uint16_t) (x)))
-#endif
-#elif defined(DUK_F_MSVC)
+#اگر defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ >= 50000L)
+#تعریف_کرو DUK_BSWAP64(x) ((duk_uint64_t) __builtin_bswap64((duk_uint64_t) (x)))
+#تعریف_کرو DUK_BSWAP32(x) ((duk_uint32_t) __builtin_bswap32((duk_uint32_t) (x)))
+#تعریف_کرو DUK_BSWAP16(x) ((duk_uint16_t) __builtin_bswap16((duk_uint16_t) (x)))
+#اگر_ختم
+#وگرنہ_اگر defined(DUK_F_MSVC)
 /* --- MSVC --- */
 /* http://msdn.microsoft.com/en-us/library/aa235362(VS.60).aspx */
-#define DUK_NORETURN(decl)  __declspec(noreturn) decl
+#تعریف_کرو DUK_NORETURN(decl)  __declspec(noreturn) decl
 
 /* XXX: DUK_UNREACHABLE for msvc? */
 
-#undef DUK_USE_BRANCH_HINTS
+#تعریف_منسوخ DUK_USE_BRANCH_HINTS
 
 /* XXX: DUK_LIKELY, DUK_UNLIKELY for msvc? */
 /* XXX: DUK_NOINLINE, DUK_INLINE, DUK_ALWAYS_INLINE for msvc? */
 
-#if defined(DUK_F_DLL_BUILD) && defined(DUK_F_WINDOWS)
+#اگر defined(DUK_F_DLL_BUILD) && defined(DUK_F_WINDOWS)
 /* MSVC dllexport/dllimport: appropriate __declspec depends on whether we're
  * compiling Duktape or the application.
  */
-#if defined(DUK_COMPILING_DUKTAPE)
-#define DUK_EXTERNAL_DECL  extern __declspec(dllexport)
-#define DUK_EXTERNAL       __declspec(dllexport)
-#else
-#define DUK_EXTERNAL_DECL  extern __declspec(dllimport)
-#define DUK_EXTERNAL       should_not_happen
-#endif
-#if defined(DUK_SINGLE_FILE)
-#define DUK_INTERNAL_DECL  static
-#define DUK_INTERNAL       static
-#else
-#define DUK_INTERNAL_DECL  extern
-#define DUK_INTERNAL       /*empty*/
-#endif
-#define DUK_LOCAL_DECL     static
-#define DUK_LOCAL          static
-#endif
+#اگر defined(DUK_COMPILING_DUKTAPE)
+#تعریف_کرو DUK_EXTERNAL_DECL  خارجی __declspec(dllexport)
+#تعریف_کرو DUK_EXTERNAL       __declspec(dllexport)
+#ورنہ
+#تعریف_کرو DUK_EXTERNAL_DECL  خارجی __declspec(dllimport)
+#تعریف_کرو DUK_EXTERNAL       should_not_happen
+#اگر_ختم
+#اگر defined(DUK_SINGLE_FILE)
+#تعریف_کرو DUK_اندرونی_DECL  ساکن
+#تعریف_کرو DUK_اندرونی       ساکن
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  خارجی
+#تعریف_کرو DUK_اندرونی       /*خالی_خانے*/
+#اگر_ختم
+#تعریف_کرو DUK_LOCAL_DECL     ساکن
+#تعریف_کرو DUK_LOCAL          ساکن
+#اگر_ختم
 
-#if defined(DUK_F_CPP)
-#define DUK_USE_COMPILER_STRING "msvc++"
-#else
-#define DUK_USE_COMPILER_STRING "msvc"
-#endif
+#اگر defined(DUK_F_CPP)
+#تعریف_کرو DUK_USE_COMPILER_STRING "msvc++"
+#ورنہ
+#تعریف_کرو DUK_USE_COMPILER_STRING "msvc"
+#اگر_ختم
 
-#undef DUK_USE_VARIADIC_MACROS
-#if defined(DUK_F_C99)
-#define DUK_USE_VARIADIC_MACROS
-#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
+#تعریف_منسوخ DUK_USE_VARIADIC_MACROS
+#اگر defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_VARIADIC_MACROS
+#وگرنہ_اگر defined(_MSC_VER) && (_MSC_VER >= 1400)
 /* VS2005+ should have variadic macros even when they're not C99. */
-#define DUK_USE_VARIADIC_MACROS
-#endif
+#تعریف_کرو DUK_USE_VARIADIC_MACROS
+#اگر_ختم
 
-#undef DUK_USE_UNION_INITIALIZERS
-#if defined(_MSC_VER) && (_MSC_VER >= 1800)
+#تعریف_منسوخ DUK_USE_UNION_INITIALIZERS
+#اگر defined(_MSC_VER) && (_MSC_VER >= 1800)
 /* VS2013+ supports union initializers but there's a bug involving union-inside-struct:
  * https://connect.microsoft.com/VisualStudio/feedback/details/805981
  * The bug was fixed (at least) in VS2015 so check for VS2015 for now:
  * https://blogs.msdn.microsoft.com/vcblog/2015/07/01/c-compiler-front-end-fixes-in-vs2015/
  * Manually tested using VS2013, CL reports 18.00.31101, so enable for VS2013 too.
  */
-#define DUK_USE_UNION_INITIALIZERS
-#endif
+#تعریف_کرو DUK_USE_UNION_INITIALIZERS
+#اگر_ختم
 
-#undef DUK_USE_FLEX_C99
-#undef DUK_USE_FLEX_ZEROSIZE
-#undef DUK_USE_FLEX_ONESIZE
-#if defined(DUK_F_C99)
-#define DUK_USE_FLEX_C99
-#else
-#define DUK_USE_FLEX_ZEROSIZE
-#endif
+#تعریف_منسوخ DUK_USE_FLEX_C99
+#تعریف_منسوخ DUK_USE_FLEX_ZEROSIZE
+#تعریف_منسوخ DUK_USE_FLEX_ONESIZE
+#اگر defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_FLEX_C99
+#ورنہ
+#تعریف_کرو DUK_USE_FLEX_ZEROSIZE
+#اگر_ختم
 
-#undef DUK_USE_GCC_PRAGMAS
+#تعریف_منسوخ DUK_USE_GCC_PRAGMAS
 
-#define DUK_USE_PACK_MSVC_PRAGMA
+#تعریف_کرو DUK_USE_PACK_MSVC_PRAGMA
 
 /* These have been tested from VS2008 onwards; may work in older VS versions
  * too but not enabled by default.
  */
-#if defined(_MSC_VER) && (_MSC_VER >= 1500)
-#define DUK_NOINLINE        __declspec(noinline)
-#define DUK_INLINE          __inline
-#define DUK_ALWAYS_INLINE   __forceinline
-#endif
+#اگر defined(_MSC_VER) && (_MSC_VER >= 1500)
+#تعریف_کرو DUK_NOINLINE        __declspec(noinline)
+#تعریف_کرو DUK_INLINE          __inline
+#تعریف_کرو DUK_ALWAYS_INLINE   __forceinline
+#اگر_ختم
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1900)
-#define DUK_SNPRINTF     snprintf
-#define DUK_VSNPRINTF    vsnprintf
-#else
+#اگر defined(_MSC_VER) && (_MSC_VER >= 1900)
+#تعریف_کرو DUK_SNPRINTF     snprintf
+#تعریف_کرو DUK_VSNPRINTF    vsnprintf
+#ورنہ
 /* (v)snprintf() is missing before MSVC 2015.  Note that _(v)snprintf() does
  * NOT NUL terminate on truncation, but Duktape code never assumes that.
  * http://stackoverflow.com/questions/2915672/snprintf-and-visual-studio-2010
  */
-#define DUK_SNPRINTF     _snprintf
-#define DUK_VSNPRINTF    _vsnprintf
-#endif
+#تعریف_کرو DUK_SNPRINTF     _snprintf
+#تعریف_کرو DUK_VSNPRINTF    _vsnprintf
+#اگر_ختم
 
 /* Avoid warning when doing DUK_UNREF(some_function). */
-#if defined(_MSC_VER) && (_MSC_VER < 1500)
-#pragma warning(disable: 4100 4101 4550 4551)
-#define DUK_UNREF(x)
-#else
-#define DUK_UNREF(x)  do { __pragma(warning(suppress:4100 4101 4550 4551)) (x); } while (0)
-#endif
+#اگر defined(_MSC_VER) && (_MSC_VER < 1500)
+#ہدایت warning(disable: 4100 4101 4550 4551)
+#تعریف_کرو DUK_UNREF(x)
+#ورنہ
+#تعریف_کرو DUK_UNREF(x)  کرو { __pragma(warning(suppress:4100 4101 4550 4551)) (x); } جب (0)
+#اگر_ختم
 
 /* Older versions of MSVC don't support the LL/ULL suffix. */
-#define DUK_U64_CONSTANT(x) x##ui64
-#define DUK_I64_CONSTANT(x) x##i64
-#elif defined(DUK_F_EMSCRIPTEN)
+#تعریف_کرو DUK_U64_CONSTANT(x) x##ui64
+#تعریف_کرو DUK_I64_CONSTANT(x) x##i64
+#وگرنہ_اگر defined(DUK_F_EMSCRIPTEN)
 /* --- Emscripten --- */
-#define DUK_NORETURN(decl)  decl __attribute__((noreturn))
+#تعریف_کرو DUK_NORETURN(decl)  decl __attribute__((noreturn))
 
-#if defined(__clang__) && defined(__has_builtin)
-#if __has_builtin(__builtin_unreachable)
-#define DUK_UNREACHABLE()  do { __builtin_unreachable(); } while (0)
-#endif
-#endif
+#اگر defined(__clang__) && defined(__has_builtin)
+#اگر __has_builtin(__builtin_unreachable)
+#تعریف_کرو DUK_UNREACHABLE()  کرو { __builtin_unreachable(); } جب (0)
+#اگر_ختم
+#اگر_ختم
 
-#define DUK_USE_BRANCH_HINTS
-#define DUK_LIKELY(x)    __builtin_expect((x), 1)
-#define DUK_UNLIKELY(x)  __builtin_expect((x), 0)
-#if defined(__clang__) && defined(__has_builtin)
-#if __has_builtin(__builtin_unpredictable)
-#define DUK_UNPREDICTABLE(x)  __builtin_unpredictable((x))
-#endif
-#endif
+#تعریف_کرو DUK_USE_BRANCH_HINTS
+#تعریف_کرو DUK_LIKELY(x)    __builtin_expect((x), 1)
+#تعریف_کرو DUK_UNLIKELY(x)  __builtin_expect((x), 0)
+#اگر defined(__clang__) && defined(__has_builtin)
+#اگر __has_builtin(__builtin_unpredictable)
+#تعریف_کرو DUK_UNPREDICTABLE(x)  __builtin_unpredictable((x))
+#اگر_ختم
+#اگر_ختم
 
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
-#define DUK_NOINLINE        __attribute__((noinline))
-#define DUK_INLINE          inline
-#define DUK_ALWAYS_INLINE   inline __attribute__((always_inline))
-#endif
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#تعریف_کرو DUK_NOINLINE        __attribute__((noinline))
+#تعریف_کرو DUK_INLINE          اندرونی
+#تعریف_کرو DUK_ALWAYS_INLINE   اندرونی __attribute__((always_inline))
+#اگر_ختم
 
-#define DUK_EXTERNAL_DECL  __attribute__ ((visibility("default"))) extern
-#define DUK_EXTERNAL       __attribute__ ((visibility("default")))
-#if defined(DUK_SINGLE_FILE)
-#if (defined(DUK_F_GCC_VERSION) && DUK_F_GCC_VERSION >= 30101) || defined(DUK_F_CLANG)
+#تعریف_کرو DUK_EXTERNAL_DECL  __attribute__ ((visibility("default"))) خارجی
+#تعریف_کرو DUK_EXTERNAL       __attribute__ ((visibility("default")))
+#اگر defined(DUK_SINGLE_FILE)
+#اگر (defined(DUK_F_GCC_نسخہ) && DUK_F_GCC_نسخہ >= 30101) || defined(DUK_F_CLANG)
 /* Minimize warnings for unused internal functions with GCC >= 3.1.1 and
  * Clang.  Based on documentation it should suffice to have the attribute
  * in the declaration only, but in practice some warnings are generated unless
  * the attribute is also applied to the definition.
  */
-#define DUK_INTERNAL_DECL  static __attribute__ ((unused))
-#define DUK_INTERNAL       static __attribute__ ((unused))
-#else
-#define DUK_INTERNAL_DECL  static
-#define DUK_INTERNAL       static
-#endif
-#else
-#if (defined(DUK_F_GCC_VERSION) && DUK_F_GCC_VERSION >= 30101) || defined(DUK_F_CLANG)
-#define DUK_INTERNAL_DECL  __attribute__ ((visibility("hidden"))) __attribute__ ((unused)) extern
-#define DUK_INTERNAL       __attribute__ ((visibility("hidden"))) __attribute__ ((unused))
-#else
-#define DUK_INTERNAL_DECL  __attribute__ ((visibility("hidden"))) extern
-#define DUK_INTERNAL       __attribute__ ((visibility("hidden")))
-#endif
-#endif
-#define DUK_LOCAL_DECL     static
-#define DUK_LOCAL          static
+#تعریف_کرو DUK_اندرونی_DECL  ساکن __attribute__ ((غیر_مستعمل))
+#تعریف_کرو DUK_اندرونی       ساکن __attribute__ ((غیر_مستعمل))
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  ساکن
+#تعریف_کرو DUK_اندرونی       ساکن
+#اگر_ختم
+#ورنہ
+#اگر (defined(DUK_F_GCC_نسخہ) && DUK_F_GCC_نسخہ >= 30101) || defined(DUK_F_CLANG)
+#تعریف_کرو DUK_اندرونی_DECL  __attribute__ ((visibility("hidden"))) __attribute__ ((غیر_مستعمل)) خارجی
+#تعریف_کرو DUK_اندرونی       __attribute__ ((visibility("hidden"))) __attribute__ ((غیر_مستعمل))
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  __attribute__ ((visibility("hidden"))) خارجی
+#تعریف_کرو DUK_اندرونی       __attribute__ ((visibility("hidden")))
+#اگر_ختم
+#اگر_ختم
+#تعریف_کرو DUK_LOCAL_DECL     ساکن
+#تعریف_کرو DUK_LOCAL          ساکن
 
-#define DUK_USE_COMPILER_STRING "emscripten"
+#تعریف_کرو DUK_USE_COMPILER_STRING "emscripten"
 
-#undef DUK_USE_VARIADIC_MACROS
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
-#define DUK_USE_VARIADIC_MACROS
-#endif
+#تعریف_منسوخ DUK_USE_VARIADIC_MACROS
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#تعریف_کرو DUK_USE_VARIADIC_MACROS
+#اگر_ختم
 
-#define DUK_USE_UNION_INITIALIZERS
+#تعریف_کرو DUK_USE_UNION_INITIALIZERS
 
-#undef DUK_USE_FLEX_C99
-#undef DUK_USE_FLEX_ZEROSIZE
-#undef DUK_USE_FLEX_ONESIZE
-#if defined(DUK_F_C99)
-#define DUK_USE_FLEX_C99
-#else
-#define DUK_USE_FLEX_ZEROSIZE
-#endif
+#تعریف_منسوخ DUK_USE_FLEX_C99
+#تعریف_منسوخ DUK_USE_FLEX_ZEROSIZE
+#تعریف_منسوخ DUK_USE_FLEX_ONESIZE
+#اگر defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_FLEX_C99
+#ورنہ
+#تعریف_کرو DUK_USE_FLEX_ZEROSIZE
+#اگر_ختم
 
-#undef DUK_USE_GCC_PRAGMAS
-#define DUK_USE_PACK_CLANG_ATTR
-#elif defined(DUK_F_TINYC)
+#تعریف_منسوخ DUK_USE_GCC_PRAGMAS
+#تعریف_کرو DUK_USE_PACK_CLANG_ATTR
+#وگرنہ_اگر defined(DUK_F_TINYC)
 /* --- TinyC --- */
-#undef DUK_USE_BRANCH_HINTS
+#تعریف_منسوخ DUK_USE_BRANCH_HINTS
 
-#if defined(DUK_F_CPP)
-#define DUK_USE_COMPILER_STRING "tinyc++"
-#else
-#define DUK_USE_COMPILER_STRING "tinyc"
-#endif
+#اگر defined(DUK_F_CPP)
+#تعریف_کرو DUK_USE_COMPILER_STRING "tinyc++"
+#ورنہ
+#تعریف_کرو DUK_USE_COMPILER_STRING "tinyc"
+#اگر_ختم
 
 /* http://bellard.org/tcc/tcc-doc.html#SEC7 */
-#define DUK_USE_VARIADIC_MACROS
+#تعریف_کرو DUK_USE_VARIADIC_MACROS
 
-#define DUK_USE_UNION_INITIALIZERS
+#تعریف_کرو DUK_USE_UNION_INITIALIZERS
 
 /* Most portable, wastes space */
-#define DUK_USE_FLEX_ONESIZE
+#تعریف_کرو DUK_USE_FLEX_ONESIZE
 
 /* Most portable, potentially wastes space */
-#define DUK_USE_PACK_DUMMY_MEMBER
-#elif defined(DUK_F_VBCC)
+#تعریف_کرو DUK_USE_PACK_DUMMY_MEMBER
+#وگرنہ_اگر defined(DUK_F_VBCC)
 /* --- VBCC --- */
-#undef DUK_USE_BRANCH_HINTS
+#تعریف_منسوخ DUK_USE_BRANCH_HINTS
 
-#if defined(DUK_F_CPP)
-#define DUK_USE_COMPILER_STRING "vbcc-c++"
-#else
-#define DUK_USE_COMPILER_STRING "vbcc"
-#endif
+#اگر defined(DUK_F_CPP)
+#تعریف_کرو DUK_USE_COMPILER_STRING "vbcc-c++"
+#ورنہ
+#تعریف_کرو DUK_USE_COMPILER_STRING "vbcc"
+#اگر_ختم
 
-#undef DUK_USE_VARIADIC_MACROS
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
-#define DUK_USE_VARIADIC_MACROS
-#endif
+#تعریف_منسوخ DUK_USE_VARIADIC_MACROS
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#تعریف_کرو DUK_USE_VARIADIC_MACROS
+#اگر_ختم
 
 /* VBCC supports C99 so check only for C99 for union initializer support.
  * Designated union initializers would possibly work even without a C99 check.
  */
-#undef DUK_USE_UNION_INITIALIZERS
-#if defined(DUK_F_C99)
-#define DUK_USE_UNION_INITIALIZERS
-#endif
+#تعریف_منسوخ DUK_USE_UNION_INITIALIZERS
+#اگر defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_UNION_INITIALIZERS
+#اگر_ختم
 
-#define DUK_USE_FLEX_ZEROSIZE
-#define DUK_USE_PACK_DUMMY_MEMBER
-#elif defined(DUK_F_BCC)
+#تعریف_کرو DUK_USE_FLEX_ZEROSIZE
+#تعریف_کرو DUK_USE_PACK_DUMMY_MEMBER
+#وگرنہ_اگر defined(DUK_F_BCC)
 /* --- Bruce's C compiler --- */
-#undef DUK_USE_BRANCH_HINTS
+#تعریف_منسوخ DUK_USE_BRANCH_HINTS
 
-#if defined(DUK_F_CPP)
-#define DUK_USE_COMPILER_STRING "bcc++"
-#else
-#define DUK_USE_COMPILER_STRING "bcc"
-#endif
+#اگر defined(DUK_F_CPP)
+#تعریف_کرو DUK_USE_COMPILER_STRING "bcc++"
+#ورنہ
+#تعریف_کرو DUK_USE_COMPILER_STRING "bcc"
+#اگر_ختم
 
 /* Most portable */
-#undef DUK_USE_VARIADIC_MACROS
+#تعریف_منسوخ DUK_USE_VARIADIC_MACROS
 
 /* Most portable, wastes space */
-#undef DUK_USE_UNION_INITIALIZERS
+#تعریف_منسوخ DUK_USE_UNION_INITIALIZERS
 
 /* Most portable, wastes space */
-#define DUK_USE_FLEX_ONESIZE
+#تعریف_کرو DUK_USE_FLEX_ONESIZE
 
 /* Most portable, potentially wastes space */
-#define DUK_USE_PACK_DUMMY_MEMBER
+#تعریف_کرو DUK_USE_PACK_DUMMY_MEMBER
 
 /* BCC, assume we're on x86. */
-#if !defined(DUK_USE_BYTEORDER)
-#define DUK_USE_BYTEORDER 1
-#endif
-#else
+#اگر !defined(DUK_USE_BYTEORDER)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#اگر_ختم
+#ورنہ
 /* --- Generic --- */
-#undef DUK_USE_BRANCH_HINTS
+#تعریف_منسوخ DUK_USE_BRANCH_HINTS
 
-#if defined(DUK_F_CPP)
-#define DUK_USE_COMPILER_STRING "generic-c++"
-#else
-#define DUK_USE_COMPILER_STRING "generic"
-#endif
+#اگر defined(DUK_F_CPP)
+#تعریف_کرو DUK_USE_COMPILER_STRING "generic-c++"
+#ورنہ
+#تعریف_کرو DUK_USE_COMPILER_STRING "generic"
+#اگر_ختم
 
-#undef DUK_USE_VARIADIC_MACROS
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
-#define DUK_USE_VARIADIC_MACROS
-#endif
+#تعریف_منسوخ DUK_USE_VARIADIC_MACROS
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#تعریف_کرو DUK_USE_VARIADIC_MACROS
+#اگر_ختم
 
 /* C++ doesn't have standard designated union initializers ({ .foo = 1 }). */
-#undef DUK_USE_UNION_INITIALIZERS
-#if defined(DUK_F_C99)
-#define DUK_USE_UNION_INITIALIZERS
-#endif
+#تعریف_منسوخ DUK_USE_UNION_INITIALIZERS
+#اگر defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_UNION_INITIALIZERS
+#اگر_ختم
 
 /* Most portable, wastes space */
-#define DUK_USE_FLEX_ONESIZE
+#تعریف_کرو DUK_USE_FLEX_ONESIZE
 
 /* Most portable, potentially wastes space */
-#define DUK_USE_PACK_DUMMY_MEMBER
-#endif  /* autodetect compiler */
+#تعریف_کرو DUK_USE_PACK_DUMMY_MEMBER
+#اگر_ختم  /* autodetect compiler */
 
 /* uclibc */
-#if defined(__UCLIBC__)
-#define DUK_F_UCLIBC
-#endif
+#اگر defined(__UCLIBC__)
+#تعریف_کرو DUK_F_UCLIBC
+#اگر_ختم
 
 /*
  *  Wrapper typedefs and constants for integer types, also sanity check types.
@@ -1597,155 +1597,155 @@
 
 /* XXX: add feature options to force basic types from outside? */
 
-#if !defined(INT_MAX)
-#error INT_MAX not defined
-#endif
+#اگر !defined(زیادہ_سے_زیادہ_عدد)
+#غلطی زیادہ_سے_زیادہ_عدد not defined
+#اگر_ختم
 
 /* Check that architecture is two's complement, standard C allows e.g.
  * INT_MIN to be -2**31+1 (instead of -2**31).
  */
-#if defined(INT_MAX) && defined(INT_MIN)
-#if INT_MAX != -(INT_MIN + 1)
-#error platform does not seem complement of two
-#endif
-#else
-#error cannot check complement of two
-#endif
+#اگر defined(زیادہ_سے_زیادہ_عدد) && defined(INT_MIN)
+#اگر زیادہ_سے_زیادہ_عدد != -(INT_MIN + 1)
+#غلطی platform does not seem complement کا two
+#اگر_ختم
+#ورنہ
+#غلطی cannot check complement کا two
+#اگر_ختم
 
 /* Pointer size determination based on __WORDSIZE or architecture when
  * that's not available.
  */
-#if defined(DUK_F_X86) || defined(DUK_F_X32) || \
+#اگر defined(DUK_F_X86) || defined(DUK_F_X32) || \
     defined(DUK_F_M68K) || defined(DUK_F_PPC32) || \
     defined(DUK_F_BCC) || \
     (defined(__WORDSIZE) && (__WORDSIZE == 32)) || \
     ((defined(DUK_F_OLD_SOLARIS) || defined(DUK_F_AIX) || \
       defined(DUK_F_HPUX)) && defined(_ILP32)) || \
     defined(DUK_F_ARM32)
-#define DUK_F_32BIT_PTRS
-#elif defined(DUK_F_X64) || \
+#تعریف_کرو DUK_F_32_ثنائی_ہندسہ_PTRS
+#وگرنہ_اگر defined(DUK_F_X64) || \
       (defined(__WORDSIZE) && (__WORDSIZE == 64)) || \
    ((defined(DUK_F_OLD_SOLARIS) || defined(DUK_F_AIX) || \
      defined(DUK_F_HPUX)) && defined(_LP64)) || \
     defined(DUK_F_ARM64)
-#define DUK_F_64BIT_PTRS
-#else
+#تعریف_کرو DUK_F_64_ثنائی_ہندسہ_PTRS
+#ورنہ
 /* not sure, not needed with C99 anyway */
-#endif
+#اگر_ختم
 
 /* Intermediate define for 'have inttypes.h' */
-#undef DUK_F_HAVE_INTTYPES
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) && \
+#تعریف_منسوخ DUK_F_HAVE_INTTYPES
+#اگر defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) && \
     !(defined(DUK_F_AMIGAOS) && defined(DUK_F_VBCC))
 /* vbcc + AmigaOS has C99 but no inttypes.h */
-#define DUK_F_HAVE_INTTYPES
-#elif defined(__cplusplus) && (__cplusplus >= 201103L)
+#تعریف_کرو DUK_F_HAVE_INTTYPES
+#وگرنہ_اگر defined(__cplusplus) && (__cplusplus >= 201103L)
 /* C++11 apparently ratified stdint.h */
-#define DUK_F_HAVE_INTTYPES
-#endif
+#تعریف_کرو DUK_F_HAVE_INTTYPES
+#اگر_ختم
 
 /* Basic integer typedefs and limits, preferably from inttypes.h, otherwise
  * through automatic detection.
  */
-#if defined(DUK_F_HAVE_INTTYPES)
+#اگر defined(DUK_F_HAVE_INTTYPES)
 /* C99 or compatible */
 
-#define DUK_F_HAVE_64BIT
-#include <inttypes.h>
+#تعریف_کرو DUK_F_HAVE_64_ثنائی_ہندسہ
+#شامل <inttypes.h>
 
-typedef uint8_t duk_uint8_t;
-typedef int8_t duk_int8_t;
-typedef uint16_t duk_uint16_t;
-typedef int16_t duk_int16_t;
-typedef uint32_t duk_uint32_t;
-typedef int32_t duk_int32_t;
-typedef uint64_t duk_uint64_t;
-typedef int64_t duk_int64_t;
-typedef uint_least8_t duk_uint_least8_t;
-typedef int_least8_t duk_int_least8_t;
-typedef uint_least16_t duk_uint_least16_t;
-typedef int_least16_t duk_int_least16_t;
-typedef uint_least32_t duk_uint_least32_t;
-typedef int_least32_t duk_int_least32_t;
-typedef uint_least64_t duk_uint_least64_t;
-typedef int_least64_t duk_int_least64_t;
-typedef uint_fast8_t duk_uint_fast8_t;
-typedef int_fast8_t duk_int_fast8_t;
-typedef uint_fast16_t duk_uint_fast16_t;
-typedef int_fast16_t duk_int_fast16_t;
-typedef uint_fast32_t duk_uint_fast32_t;
-typedef int_fast32_t duk_int_fast32_t;
-typedef uint_fast64_t duk_uint_fast64_t;
-typedef int_fast64_t duk_int_fast64_t;
-typedef uintptr_t duk_uintptr_t;
-typedef intptr_t duk_intptr_t;
-typedef uintmax_t duk_uintmax_t;
-typedef intmax_t duk_intmax_t;
+قسمتعریف uint8_t duk_uint8_t;
+قسمتعریف int8_t duk_int8_t;
+قسمتعریف uint16_t duk_uint16_t;
+قسمتعریف int16_t duk_int16_t;
+قسمتعریف uint32_t duk_uint32_t;
+قسمتعریف int32_t duk_int32_t;
+قسمتعریف uint64_t duk_uint64_t;
+قسمتعریف int64_t duk_int64_t;
+قسمتعریف uint_least8_t duk_uint_least8_t;
+قسمتعریف int_least8_t duk_int_least8_t;
+قسمتعریف uint_least16_t duk_uint_least16_t;
+قسمتعریف int_least16_t duk_int_least16_t;
+قسمتعریف uint_least32_t duk_uint_least32_t;
+قسمتعریف int_least32_t duk_int_least32_t;
+قسمتعریف uint_least64_t duk_uint_least64_t;
+قسمتعریف int_least64_t duk_int_least64_t;
+قسمتعریف uint_fast8_t duk_uint_fast8_t;
+قسمتعریف int_fast8_t duk_int_fast8_t;
+قسمتعریف uint_fast16_t duk_uint_fast16_t;
+قسمتعریف int_fast16_t duk_int_fast16_t;
+قسمتعریف uint_fast32_t duk_uint_fast32_t;
+قسمتعریف int_fast32_t duk_int_fast32_t;
+قسمتعریف uint_fast64_t duk_uint_fast64_t;
+قسمتعریف int_fast64_t duk_int_fast64_t;
+قسمتعریف uintptr_t duk_uintptr_t;
+قسمتعریف intptr_t duk_intptr_t;
+قسمتعریف uintmax_t duk_uintmax_t;
+قسمتعریف intmax_t duk_intmax_t;
 
-#define DUK_UINT8_MIN         0
-#define DUK_UINT8_MAX         UINT8_MAX
-#define DUK_INT8_MIN          INT8_MIN
-#define DUK_INT8_MAX          INT8_MAX
-#define DUK_UINT_LEAST8_MIN   0
-#define DUK_UINT_LEAST8_MAX   UINT_LEAST8_MAX
-#define DUK_INT_LEAST8_MIN    INT_LEAST8_MIN
-#define DUK_INT_LEAST8_MAX    INT_LEAST8_MAX
-#define DUK_UINT_FAST8_MIN    0
-#define DUK_UINT_FAST8_MAX    UINT_FAST8_MAX
-#define DUK_INT_FAST8_MIN     INT_FAST8_MIN
-#define DUK_INT_FAST8_MAX     INT_FAST8_MAX
-#define DUK_UINT16_MIN        0
-#define DUK_UINT16_MAX        UINT16_MAX
-#define DUK_INT16_MIN         INT16_MIN
-#define DUK_INT16_MAX         INT16_MAX
-#define DUK_UINT_LEAST16_MIN  0
-#define DUK_UINT_LEAST16_MAX  UINT_LEAST16_MAX
-#define DUK_INT_LEAST16_MIN   INT_LEAST16_MIN
-#define DUK_INT_LEAST16_MAX   INT_LEAST16_MAX
-#define DUK_UINT_FAST16_MIN   0
-#define DUK_UINT_FAST16_MAX   UINT_FAST16_MAX
-#define DUK_INT_FAST16_MIN    INT_FAST16_MIN
-#define DUK_INT_FAST16_MAX    INT_FAST16_MAX
-#define DUK_UINT32_MIN        0
-#define DUK_UINT32_MAX        UINT32_MAX
-#define DUK_INT32_MIN         INT32_MIN
-#define DUK_INT32_MAX         INT32_MAX
-#define DUK_UINT_LEAST32_MIN  0
-#define DUK_UINT_LEAST32_MAX  UINT_LEAST32_MAX
-#define DUK_INT_LEAST32_MIN   INT_LEAST32_MIN
-#define DUK_INT_LEAST32_MAX   INT_LEAST32_MAX
-#define DUK_UINT_FAST32_MIN   0
-#define DUK_UINT_FAST32_MAX   UINT_FAST32_MAX
-#define DUK_INT_FAST32_MIN    INT_FAST32_MIN
-#define DUK_INT_FAST32_MAX    INT_FAST32_MAX
-#define DUK_UINT64_MIN        0
-#define DUK_UINT64_MAX        UINT64_MAX
-#define DUK_INT64_MIN         INT64_MIN
-#define DUK_INT64_MAX         INT64_MAX
-#define DUK_UINT_LEAST64_MIN  0
-#define DUK_UINT_LEAST64_MAX  UINT_LEAST64_MAX
-#define DUK_INT_LEAST64_MIN   INT_LEAST64_MIN
-#define DUK_INT_LEAST64_MAX   INT_LEAST64_MAX
-#define DUK_UINT_FAST64_MIN   0
-#define DUK_UINT_FAST64_MAX   UINT_FAST64_MAX
-#define DUK_INT_FAST64_MIN    INT_FAST64_MIN
-#define DUK_INT_FAST64_MAX    INT_FAST64_MAX
+#تعریف_کرو DUK_UINT8_MIN         0
+#تعریف_کرو DUK_UINT8_MAX         UINT8_MAX
+#تعریف_کرو DUK_INT8_MIN          INT8_MIN
+#تعریف_کرو DUK_INT8_MAX          INT8_MAX
+#تعریف_کرو DUK_UINT_LEAST8_MIN   0
+#تعریف_کرو DUK_UINT_LEAST8_MAX   UINT_LEAST8_MAX
+#تعریف_کرو DUK_INT_LEAST8_MIN    INT_LEAST8_MIN
+#تعریف_کرو DUK_INT_LEAST8_MAX    INT_LEAST8_MAX
+#تعریف_کرو DUK_UINT_FAST8_MIN    0
+#تعریف_کرو DUK_UINT_FAST8_MAX    UINT_FAST8_MAX
+#تعریف_کرو DUK_INT_FAST8_MIN     INT_FAST8_MIN
+#تعریف_کرو DUK_INT_FAST8_MAX     INT_FAST8_MAX
+#تعریف_کرو DUK_UINT16_MIN        0
+#تعریف_کرو DUK_UINT16_MAX        UINT16_MAX
+#تعریف_کرو DUK_INT16_MIN         INT16_MIN
+#تعریف_کرو DUK_INT16_MAX         INT16_MAX
+#تعریف_کرو DUK_UINT_LEAST16_MIN  0
+#تعریف_کرو DUK_UINT_LEAST16_MAX  UINT_LEAST16_MAX
+#تعریف_کرو DUK_INT_LEAST16_MIN   INT_LEAST16_MIN
+#تعریف_کرو DUK_INT_LEAST16_MAX   INT_LEAST16_MAX
+#تعریف_کرو DUK_UINT_FAST16_MIN   0
+#تعریف_کرو DUK_UINT_FAST16_MAX   UINT_FAST16_MAX
+#تعریف_کرو DUK_INT_FAST16_MIN    INT_FAST16_MIN
+#تعریف_کرو DUK_INT_FAST16_MAX    INT_FAST16_MAX
+#تعریف_کرو DUK_UINT32_MIN        0
+#تعریف_کرو DUK_UINT32_MAX        UINT32_MAX
+#تعریف_کرو DUK_INT32_MIN         INT32_MIN
+#تعریف_کرو DUK_INT32_MAX         INT32_MAX
+#تعریف_کرو DUK_UINT_LEAST32_MIN  0
+#تعریف_کرو DUK_UINT_LEAST32_MAX  UINT_LEAST32_MAX
+#تعریف_کرو DUK_INT_LEAST32_MIN   INT_LEAST32_MIN
+#تعریف_کرو DUK_INT_LEAST32_MAX   INT_LEAST32_MAX
+#تعریف_کرو DUK_UINT_FAST32_MIN   0
+#تعریف_کرو DUK_UINT_FAST32_MAX   UINT_FAST32_MAX
+#تعریف_کرو DUK_INT_FAST32_MIN    INT_FAST32_MIN
+#تعریف_کرو DUK_INT_FAST32_MAX    INT_FAST32_MAX
+#تعریف_کرو DUK_UINT64_MIN        0
+#تعریف_کرو DUK_UINT64_MAX        UINT64_MAX
+#تعریف_کرو DUK_INT64_MIN         INT64_MIN
+#تعریف_کرو DUK_INT64_MAX         INT64_MAX
+#تعریف_کرو DUK_UINT_LEAST64_MIN  0
+#تعریف_کرو DUK_UINT_LEAST64_MAX  UINT_LEAST64_MAX
+#تعریف_کرو DUK_INT_LEAST64_MIN   INT_LEAST64_MIN
+#تعریف_کرو DUK_INT_LEAST64_MAX   INT_LEAST64_MAX
+#تعریف_کرو DUK_UINT_FAST64_MIN   0
+#تعریف_کرو DUK_UINT_FAST64_MAX   UINT_FAST64_MAX
+#تعریف_کرو DUK_INT_FAST64_MIN    INT_FAST64_MIN
+#تعریف_کرو DUK_INT_FAST64_MAX    INT_FAST64_MAX
 
-#define DUK_UINTPTR_MIN       0
-#define DUK_UINTPTR_MAX       UINTPTR_MAX
-#define DUK_INTPTR_MIN        INTPTR_MIN
-#define DUK_INTPTR_MAX        INTPTR_MAX
+#تعریف_کرو DUK_UINTPTR_MIN       0
+#تعریف_کرو DUK_UINTPTR_MAX       UINTPTR_MAX
+#تعریف_کرو DUK_INTPTR_MIN        INTPTR_MIN
+#تعریف_کرو DUK_INTPTR_MAX        INTPTR_MAX
 
-#define DUK_UINTMAX_MIN       0
-#define DUK_UINTMAX_MAX       UINTMAX_MAX
-#define DUK_INTMAX_MIN        INTMAX_MIN
-#define DUK_INTMAX_MAX        INTMAX_MAX
+#تعریف_کرو DUK_UINTMAX_MIN       0
+#تعریف_کرو DUK_UINTMAX_MAX       UINTMAX_MAX
+#تعریف_کرو DUK_INTMAX_MIN        INTMAX_MIN
+#تعریف_کرو DUK_INTMAX_MAX        INTMAX_MAX
 
-#define DUK_SIZE_MIN          0
-#define DUK_SIZE_MAX          SIZE_MAX
-#undef DUK_SIZE_MAX_COMPUTED
+#تعریف_کرو DUK_سائز_MIN          0
+#تعریف_کرو DUK_سائز_MAX          SIZE_MAX
+#تعریف_منسوخ DUK_سائز_MAX_COMPUTED
 
-#else  /* C99 types */
+#ورنہ  /* C99 types */
 
 /* When C99 types are not available, we use heuristic detection to get
  * the basic 8, 16, 32, and (possibly) 64 bit types.  The fast/least
@@ -1758,35 +1758,35 @@ typedef intmax_t duk_intmax_t;
  * and defines that won't work correctly on some exotic platform.
  */
 
-#if (defined(CHAR_BIT) && (CHAR_BIT == 8)) || \
+#اگر (defined(CHAR_ثنائی_ہندسہ) && (CHAR_ثنائی_ہندسہ == 8)) || \
     (defined(UCHAR_MAX) && (UCHAR_MAX == 255))
-typedef unsigned char duk_uint8_t;
-typedef signed char duk_int8_t;
-#else
-#error cannot detect 8-bit type
-#endif
+قسمتعریف غیرعلامتی حرف duk_uint8_t;
+قسمتعریف علامتی حرف duk_int8_t;
+#ورنہ
+#غلطی cannot detect 8-ثنائی_ہندسہ type
+#اگر_ختم
 
-#if defined(USHRT_MAX) && (USHRT_MAX == 65535UL)
-typedef unsigned short duk_uint16_t;
-typedef signed short duk_int16_t;
-#elif defined(UINT_MAX) && (UINT_MAX == 65535UL)
+#اگر defined(USHRT_MAX) && (USHRT_MAX == 65535UL)
+قسمتعریف غیرعلامتی مختصر duk_uint16_t;
+قسمتعریف علامتی مختصر duk_int16_t;
+#وگرنہ_اگر defined(UINT_MAX) && (UINT_MAX == 65535UL)
 /* On some platforms int is 16-bit but long is 32-bit (e.g. PureC) */
-typedef unsigned int duk_uint16_t;
-typedef signed int duk_int16_t;
-#else
-#error cannot detect 16-bit type
-#endif
+قسمتعریف غیرعلامتی صحیح duk_uint16_t;
+قسمتعریف علامتی صحیح duk_int16_t;
+#ورنہ
+#غلطی cannot detect 16-ثنائی_ہندسہ type
+#اگر_ختم
 
-#if defined(UINT_MAX) && (UINT_MAX == 4294967295UL)
-typedef unsigned int duk_uint32_t;
-typedef signed int duk_int32_t;
-#elif defined(ULONG_MAX) && (ULONG_MAX == 4294967295UL)
+#اگر defined(UINT_MAX) && (UINT_MAX == 4294967295UL)
+قسمتعریف غیرعلامتی صحیح duk_uint32_t;
+قسمتعریف علامتی صحیح duk_int32_t;
+#وگرنہ_اگر defined(ULONG_MAX) && (ULONG_MAX == 4294967295UL)
 /* On some platforms int is 16-bit but long is 32-bit (e.g. PureC) */
-typedef unsigned long duk_uint32_t;
-typedef signed long duk_int32_t;
-#else
-#error cannot detect 32-bit type
-#endif
+قسمتعریف غیرعلامتی طویل duk_uint32_t;
+قسمتعریف علامتی طویل duk_int32_t;
+#ورنہ
+#غلطی cannot detect 32-ثنائی_ہندسہ type
+#اگر_ختم
 
 /* 64-bit type detection is a bit tricky.
  *
@@ -1801,288 +1801,288 @@ typedef signed long duk_int32_t;
  * bits but can't be sure it is exactly 64 bits.  Self tests will catch such
  * cases.
  */
-#undef DUK_F_HAVE_64BIT
-#if !defined(DUK_F_HAVE_64BIT) && defined(ULONG_MAX)
-#if (ULONG_MAX > 4294967295UL)
-#define DUK_F_HAVE_64BIT
-typedef unsigned long duk_uint64_t;
-typedef signed long duk_int64_t;
-#endif
-#endif
-#if !defined(DUK_F_HAVE_64BIT) && defined(ULLONG_MAX)
-#if (ULLONG_MAX > 4294967295UL)
-#define DUK_F_HAVE_64BIT
-typedef unsigned long long duk_uint64_t;
-typedef signed long long duk_int64_t;
-#endif
-#endif
-#if !defined(DUK_F_HAVE_64BIT) && defined(__ULONG_LONG_MAX__)
-#if (__ULONG_LONG_MAX__ > 4294967295UL)
-#define DUK_F_HAVE_64BIT
-typedef unsigned long long duk_uint64_t;
-typedef signed long long duk_int64_t;
-#endif
-#endif
-#if !defined(DUK_F_HAVE_64BIT) && defined(__LONG_LONG_MAX__)
-#if (__LONG_LONG_MAX__ > 2147483647L)
-#define DUK_F_HAVE_64BIT
-typedef unsigned long long duk_uint64_t;
-typedef signed long long duk_int64_t;
-#endif
-#endif
-#if !defined(DUK_F_HAVE_64BIT) && defined(DUK_F_MINGW)
-#define DUK_F_HAVE_64BIT
-typedef unsigned long duk_uint64_t;
-typedef signed long duk_int64_t;
-#endif
-#if !defined(DUK_F_HAVE_64BIT) && defined(DUK_F_MSVC)
-#define DUK_F_HAVE_64BIT
-typedef unsigned __int64 duk_uint64_t;
-typedef signed __int64 duk_int64_t;
-#endif
-#if !defined(DUK_F_HAVE_64BIT)
+#تعریف_منسوخ DUK_F_HAVE_64_ثنائی_ہندسہ
+#اگر !defined(DUK_F_HAVE_64_ثنائی_ہندسہ) && defined(ULONG_MAX)
+#اگر (ULONG_MAX > 4294967295UL)
+#تعریف_کرو DUK_F_HAVE_64_ثنائی_ہندسہ
+قسمتعریف غیرعلامتی طویل duk_uint64_t;
+قسمتعریف علامتی طویل duk_int64_t;
+#اگر_ختم
+#اگر_ختم
+#اگر !defined(DUK_F_HAVE_64_ثنائی_ہندسہ) && defined(ULLONG_MAX)
+#اگر (ULLONG_MAX > 4294967295UL)
+#تعریف_کرو DUK_F_HAVE_64_ثنائی_ہندسہ
+قسمتعریف غیرعلامتی طویل طویل duk_uint64_t;
+قسمتعریف علامتی طویل طویل duk_int64_t;
+#اگر_ختم
+#اگر_ختم
+#اگر !defined(DUK_F_HAVE_64_ثنائی_ہندسہ) && defined(__ULONG_LONG_MAX__)
+#اگر (__ULONG_LONG_MAX__ > 4294967295UL)
+#تعریف_کرو DUK_F_HAVE_64_ثنائی_ہندسہ
+قسمتعریف غیرعلامتی طویل طویل duk_uint64_t;
+قسمتعریف علامتی طویل طویل duk_int64_t;
+#اگر_ختم
+#اگر_ختم
+#اگر !defined(DUK_F_HAVE_64_ثنائی_ہندسہ) && defined(__LONG_LONG_MAX__)
+#اگر (__LONG_LONG_MAX__ > 2147483647L)
+#تعریف_کرو DUK_F_HAVE_64_ثنائی_ہندسہ
+قسمتعریف غیرعلامتی طویل طویل duk_uint64_t;
+قسمتعریف علامتی طویل طویل duk_int64_t;
+#اگر_ختم
+#اگر_ختم
+#اگر !defined(DUK_F_HAVE_64_ثنائی_ہندسہ) && defined(DUK_F_MINGW)
+#تعریف_کرو DUK_F_HAVE_64_ثنائی_ہندسہ
+قسمتعریف غیرعلامتی طویل duk_uint64_t;
+قسمتعریف علامتی طویل duk_int64_t;
+#اگر_ختم
+#اگر !defined(DUK_F_HAVE_64_ثنائی_ہندسہ) && defined(DUK_F_MSVC)
+#تعریف_کرو DUK_F_HAVE_64_ثنائی_ہندسہ
+قسمتعریف غیرعلامتی __int64 duk_uint64_t;
+قسمتعریف علامتی __int64 duk_int64_t;
+#اگر_ختم
+#اگر !defined(DUK_F_HAVE_64_ثنائی_ہندسہ)
 /* cannot detect 64-bit type, not always needed so don't error */
-#endif
+#اگر_ختم
 
-typedef duk_uint8_t duk_uint_least8_t;
-typedef duk_int8_t duk_int_least8_t;
-typedef duk_uint16_t duk_uint_least16_t;
-typedef duk_int16_t duk_int_least16_t;
-typedef duk_uint32_t duk_uint_least32_t;
-typedef duk_int32_t duk_int_least32_t;
-typedef duk_uint8_t duk_uint_fast8_t;
-typedef duk_int8_t duk_int_fast8_t;
-typedef duk_uint16_t duk_uint_fast16_t;
-typedef duk_int16_t duk_int_fast16_t;
-typedef duk_uint32_t duk_uint_fast32_t;
-typedef duk_int32_t duk_int_fast32_t;
-#if defined(DUK_F_HAVE_64BIT)
-typedef duk_uint64_t duk_uint_least64_t;
-typedef duk_int64_t duk_int_least64_t;
-typedef duk_uint64_t duk_uint_fast64_t;
-typedef duk_int64_t duk_int_fast64_t;
-#endif
-#if defined(DUK_F_HAVE_64BIT)
-typedef duk_uint64_t duk_uintmax_t;
-typedef duk_int64_t duk_intmax_t;
-#else
-typedef duk_uint32_t duk_uintmax_t;
-typedef duk_int32_t duk_intmax_t;
-#endif
+قسمتعریف duk_uint8_t duk_uint_least8_t;
+قسمتعریف duk_int8_t duk_int_least8_t;
+قسمتعریف duk_uint16_t duk_uint_least16_t;
+قسمتعریف duk_int16_t duk_int_least16_t;
+قسمتعریف duk_uint32_t duk_uint_least32_t;
+قسمتعریف duk_int32_t duk_int_least32_t;
+قسمتعریف duk_uint8_t duk_uint_fast8_t;
+قسمتعریف duk_int8_t duk_int_fast8_t;
+قسمتعریف duk_uint16_t duk_uint_fast16_t;
+قسمتعریف duk_int16_t duk_int_fast16_t;
+قسمتعریف duk_uint32_t duk_uint_fast32_t;
+قسمتعریف duk_int32_t duk_int_fast32_t;
+#اگر defined(DUK_F_HAVE_64_ثنائی_ہندسہ)
+قسمتعریف duk_uint64_t duk_uint_least64_t;
+قسمتعریف duk_int64_t duk_int_least64_t;
+قسمتعریف duk_uint64_t duk_uint_fast64_t;
+قسمتعریف duk_int64_t duk_int_fast64_t;
+#اگر_ختم
+#اگر defined(DUK_F_HAVE_64_ثنائی_ہندسہ)
+قسمتعریف duk_uint64_t duk_uintmax_t;
+قسمتعریف duk_int64_t duk_intmax_t;
+#ورنہ
+قسمتعریف duk_uint32_t duk_uintmax_t;
+قسمتعریف duk_int32_t duk_intmax_t;
+#اگر_ختم
 
 /* Note: the funny looking computations for signed minimum 16-bit, 32-bit, and
  * 64-bit values are intentional as the obvious forms (e.g. -0x80000000L) are
  * -not- portable.  See code-issues.txt for a detailed discussion.
  */
-#define DUK_UINT8_MIN         0UL
-#define DUK_UINT8_MAX         0xffUL
-#define DUK_INT8_MIN          (-0x80L)
-#define DUK_INT8_MAX          0x7fL
-#define DUK_UINT_LEAST8_MIN   0UL
-#define DUK_UINT_LEAST8_MAX   0xffUL
-#define DUK_INT_LEAST8_MIN    (-0x80L)
-#define DUK_INT_LEAST8_MAX    0x7fL
-#define DUK_UINT_FAST8_MIN    0UL
-#define DUK_UINT_FAST8_MAX    0xffUL
-#define DUK_INT_FAST8_MIN     (-0x80L)
-#define DUK_INT_FAST8_MAX     0x7fL
-#define DUK_UINT16_MIN        0UL
-#define DUK_UINT16_MAX        0xffffUL
-#define DUK_INT16_MIN         (-0x7fffL - 1L)
-#define DUK_INT16_MAX         0x7fffL
-#define DUK_UINT_LEAST16_MIN  0UL
-#define DUK_UINT_LEAST16_MAX  0xffffUL
-#define DUK_INT_LEAST16_MIN   (-0x7fffL - 1L)
-#define DUK_INT_LEAST16_MAX   0x7fffL
-#define DUK_UINT_FAST16_MIN   0UL
-#define DUK_UINT_FAST16_MAX   0xffffUL
-#define DUK_INT_FAST16_MIN    (-0x7fffL - 1L)
-#define DUK_INT_FAST16_MAX    0x7fffL
-#define DUK_UINT32_MIN        0UL
-#define DUK_UINT32_MAX        0xffffffffUL
-#define DUK_INT32_MIN         (-0x7fffffffL - 1L)
-#define DUK_INT32_MAX         0x7fffffffL
-#define DUK_UINT_LEAST32_MIN  0UL
-#define DUK_UINT_LEAST32_MAX  0xffffffffUL
-#define DUK_INT_LEAST32_MIN   (-0x7fffffffL - 1L)
-#define DUK_INT_LEAST32_MAX   0x7fffffffL
-#define DUK_UINT_FAST32_MIN   0UL
-#define DUK_UINT_FAST32_MAX   0xffffffffUL
-#define DUK_INT_FAST32_MIN    (-0x7fffffffL - 1L)
-#define DUK_INT_FAST32_MAX    0x7fffffffL
+#تعریف_کرو DUK_UINT8_MIN         0UL
+#تعریف_کرو DUK_UINT8_MAX         0xffUL
+#تعریف_کرو DUK_INT8_MIN          (-0x80L)
+#تعریف_کرو DUK_INT8_MAX          0x7fL
+#تعریف_کرو DUK_UINT_LEAST8_MIN   0UL
+#تعریف_کرو DUK_UINT_LEAST8_MAX   0xffUL
+#تعریف_کرو DUK_INT_LEAST8_MIN    (-0x80L)
+#تعریف_کرو DUK_INT_LEAST8_MAX    0x7fL
+#تعریف_کرو DUK_UINT_FAST8_MIN    0UL
+#تعریف_کرو DUK_UINT_FAST8_MAX    0xffUL
+#تعریف_کرو DUK_INT_FAST8_MIN     (-0x80L)
+#تعریف_کرو DUK_INT_FAST8_MAX     0x7fL
+#تعریف_کرو DUK_UINT16_MIN        0UL
+#تعریف_کرو DUK_UINT16_MAX        0xffffUL
+#تعریف_کرو DUK_INT16_MIN         (-0x7fffL - 1L)
+#تعریف_کرو DUK_INT16_MAX         0x7fffL
+#تعریف_کرو DUK_UINT_LEAST16_MIN  0UL
+#تعریف_کرو DUK_UINT_LEAST16_MAX  0xffffUL
+#تعریف_کرو DUK_INT_LEAST16_MIN   (-0x7fffL - 1L)
+#تعریف_کرو DUK_INT_LEAST16_MAX   0x7fffL
+#تعریف_کرو DUK_UINT_FAST16_MIN   0UL
+#تعریف_کرو DUK_UINT_FAST16_MAX   0xffffUL
+#تعریف_کرو DUK_INT_FAST16_MIN    (-0x7fffL - 1L)
+#تعریف_کرو DUK_INT_FAST16_MAX    0x7fffL
+#تعریف_کرو DUK_UINT32_MIN        0UL
+#تعریف_کرو DUK_UINT32_MAX        0xffffffffUL
+#تعریف_کرو DUK_INT32_MIN         (-0x7fffffffL - 1L)
+#تعریف_کرو DUK_INT32_MAX         0x7fffffffL
+#تعریف_کرو DUK_UINT_LEAST32_MIN  0UL
+#تعریف_کرو DUK_UINT_LEAST32_MAX  0xffffffffUL
+#تعریف_کرو DUK_INT_LEAST32_MIN   (-0x7fffffffL - 1L)
+#تعریف_کرو DUK_INT_LEAST32_MAX   0x7fffffffL
+#تعریف_کرو DUK_UINT_FAST32_MIN   0UL
+#تعریف_کرو DUK_UINT_FAST32_MAX   0xffffffffUL
+#تعریف_کرو DUK_INT_FAST32_MIN    (-0x7fffffffL - 1L)
+#تعریف_کرو DUK_INT_FAST32_MAX    0x7fffffffL
 
 /* 64-bit constants.  Since LL / ULL constants are not always available,
  * use computed values.  These values can't be used in preprocessor
  * comparisons; flag them as such.
  */
-#if defined(DUK_F_HAVE_64BIT)
-#define DUK_UINT64_MIN        ((duk_uint64_t) 0)
-#define DUK_UINT64_MAX        ((duk_uint64_t) -1)
-#define DUK_INT64_MIN         ((duk_int64_t) (~(DUK_UINT64_MAX >> 1)))
-#define DUK_INT64_MAX         ((duk_int64_t) (DUK_UINT64_MAX >> 1))
-#define DUK_UINT_LEAST64_MIN  DUK_UINT64_MIN
-#define DUK_UINT_LEAST64_MAX  DUK_UINT64_MAX
-#define DUK_INT_LEAST64_MIN   DUK_INT64_MIN
-#define DUK_INT_LEAST64_MAX   DUK_INT64_MAX
-#define DUK_UINT_FAST64_MIN   DUK_UINT64_MIN
-#define DUK_UINT_FAST64_MAX   DUK_UINT64_MAX
-#define DUK_INT_FAST64_MIN    DUK_INT64_MIN
-#define DUK_INT_FAST64_MAX    DUK_INT64_MAX
-#define DUK_UINT64_MIN_COMPUTED
-#define DUK_UINT64_MAX_COMPUTED
-#define DUK_INT64_MIN_COMPUTED
-#define DUK_INT64_MAX_COMPUTED
-#define DUK_UINT_LEAST64_MIN_COMPUTED
-#define DUK_UINT_LEAST64_MAX_COMPUTED
-#define DUK_INT_LEAST64_MIN_COMPUTED
-#define DUK_INT_LEAST64_MAX_COMPUTED
-#define DUK_UINT_FAST64_MIN_COMPUTED
-#define DUK_UINT_FAST64_MAX_COMPUTED
-#define DUK_INT_FAST64_MIN_COMPUTED
-#define DUK_INT_FAST64_MAX_COMPUTED
-#endif
+#اگر defined(DUK_F_HAVE_64_ثنائی_ہندسہ)
+#تعریف_کرو DUK_UINT64_MIN        ((duk_uint64_t) 0)
+#تعریف_کرو DUK_UINT64_MAX        ((duk_uint64_t) -1)
+#تعریف_کرو DUK_INT64_MIN         ((duk_int64_t) (~(DUK_UINT64_MAX >> 1)))
+#تعریف_کرو DUK_INT64_MAX         ((duk_int64_t) (DUK_UINT64_MAX >> 1))
+#تعریف_کرو DUK_UINT_LEAST64_MIN  DUK_UINT64_MIN
+#تعریف_کرو DUK_UINT_LEAST64_MAX  DUK_UINT64_MAX
+#تعریف_کرو DUK_INT_LEAST64_MIN   DUK_INT64_MIN
+#تعریف_کرو DUK_INT_LEAST64_MAX   DUK_INT64_MAX
+#تعریف_کرو DUK_UINT_FAST64_MIN   DUK_UINT64_MIN
+#تعریف_کرو DUK_UINT_FAST64_MAX   DUK_UINT64_MAX
+#تعریف_کرو DUK_INT_FAST64_MIN    DUK_INT64_MIN
+#تعریف_کرو DUK_INT_FAST64_MAX    DUK_INT64_MAX
+#تعریف_کرو DUK_UINT64_MIN_COMPUTED
+#تعریف_کرو DUK_UINT64_MAX_COMPUTED
+#تعریف_کرو DUK_INT64_MIN_COMPUTED
+#تعریف_کرو DUK_INT64_MAX_COMPUTED
+#تعریف_کرو DUK_UINT_LEAST64_MIN_COMPUTED
+#تعریف_کرو DUK_UINT_LEAST64_MAX_COMPUTED
+#تعریف_کرو DUK_INT_LEAST64_MIN_COMPUTED
+#تعریف_کرو DUK_INT_LEAST64_MAX_COMPUTED
+#تعریف_کرو DUK_UINT_FAST64_MIN_COMPUTED
+#تعریف_کرو DUK_UINT_FAST64_MAX_COMPUTED
+#تعریف_کرو DUK_INT_FAST64_MIN_COMPUTED
+#تعریف_کرو DUK_INT_FAST64_MAX_COMPUTED
+#اگر_ختم
 
-#if defined(DUK_F_HAVE_64BIT)
-#define DUK_UINTMAX_MIN       DUK_UINT64_MIN
-#define DUK_UINTMAX_MAX       DUK_UINT64_MAX
-#define DUK_INTMAX_MIN        DUK_INT64_MIN
-#define DUK_INTMAX_MAX        DUK_INT64_MAX
-#define DUK_UINTMAX_MIN_COMPUTED
-#define DUK_UINTMAX_MAX_COMPUTED
-#define DUK_INTMAX_MIN_COMPUTED
-#define DUK_INTMAX_MAX_COMPUTED
-#else
-#define DUK_UINTMAX_MIN       0UL
-#define DUK_UINTMAX_MAX       0xffffffffUL
-#define DUK_INTMAX_MIN        (-0x7fffffffL - 1L)
-#define DUK_INTMAX_MAX        0x7fffffffL
-#endif
+#اگر defined(DUK_F_HAVE_64_ثنائی_ہندسہ)
+#تعریف_کرو DUK_UINTMAX_MIN       DUK_UINT64_MIN
+#تعریف_کرو DUK_UINTMAX_MAX       DUK_UINT64_MAX
+#تعریف_کرو DUK_INTMAX_MIN        DUK_INT64_MIN
+#تعریف_کرو DUK_INTMAX_MAX        DUK_INT64_MAX
+#تعریف_کرو DUK_UINTMAX_MIN_COMPUTED
+#تعریف_کرو DUK_UINTMAX_MAX_COMPUTED
+#تعریف_کرو DUK_INTMAX_MIN_COMPUTED
+#تعریف_کرو DUK_INTMAX_MAX_COMPUTED
+#ورنہ
+#تعریف_کرو DUK_UINTMAX_MIN       0UL
+#تعریف_کرو DUK_UINTMAX_MAX       0xffffffffUL
+#تعریف_کرو DUK_INTMAX_MIN        (-0x7fffffffL - 1L)
+#تعریف_کرو DUK_INTMAX_MAX        0x7fffffffL
+#اگر_ختم
 
 /* This detection is not very reliable. */
-#if defined(DUK_F_32BIT_PTRS)
-typedef duk_int32_t duk_intptr_t;
-typedef duk_uint32_t duk_uintptr_t;
-#define DUK_UINTPTR_MIN       DUK_UINT32_MIN
-#define DUK_UINTPTR_MAX       DUK_UINT32_MAX
-#define DUK_INTPTR_MIN        DUK_INT32_MIN
-#define DUK_INTPTR_MAX        DUK_INT32_MAX
-#elif defined(DUK_F_64BIT_PTRS) && defined(DUK_F_HAVE_64BIT)
-typedef duk_int64_t duk_intptr_t;
-typedef duk_uint64_t duk_uintptr_t;
-#define DUK_UINTPTR_MIN       DUK_UINT64_MIN
-#define DUK_UINTPTR_MAX       DUK_UINT64_MAX
-#define DUK_INTPTR_MIN        DUK_INT64_MIN
-#define DUK_INTPTR_MAX        DUK_INT64_MAX
-#define DUK_UINTPTR_MIN_COMPUTED
-#define DUK_UINTPTR_MAX_COMPUTED
-#define DUK_INTPTR_MIN_COMPUTED
-#define DUK_INTPTR_MAX_COMPUTED
-#else
-#error cannot determine intptr type
-#endif
+#اگر defined(DUK_F_32_ثنائی_ہندسہ_PTRS)
+قسمتعریف duk_int32_t duk_intptr_t;
+قسمتعریف duk_uint32_t duk_uintptr_t;
+#تعریف_کرو DUK_UINTPTR_MIN       DUK_UINT32_MIN
+#تعریف_کرو DUK_UINTPTR_MAX       DUK_UINT32_MAX
+#تعریف_کرو DUK_INTPTR_MIN        DUK_INT32_MIN
+#تعریف_کرو DUK_INTPTR_MAX        DUK_INT32_MAX
+#وگرنہ_اگر defined(DUK_F_64_ثنائی_ہندسہ_PTRS) && defined(DUK_F_HAVE_64_ثنائی_ہندسہ)
+قسمتعریف duk_int64_t duk_intptr_t;
+قسمتعریف duk_uint64_t duk_uintptr_t;
+#تعریف_کرو DUK_UINTPTR_MIN       DUK_UINT64_MIN
+#تعریف_کرو DUK_UINTPTR_MAX       DUK_UINT64_MAX
+#تعریف_کرو DUK_INTPTR_MIN        DUK_INT64_MIN
+#تعریف_کرو DUK_INTPTR_MAX        DUK_INT64_MAX
+#تعریف_کرو DUK_UINTPTR_MIN_COMPUTED
+#تعریف_کرو DUK_UINTPTR_MAX_COMPUTED
+#تعریف_کرو DUK_INTPTR_MIN_COMPUTED
+#تعریف_کرو DUK_INTPTR_MAX_COMPUTED
+#ورنہ
+#غلطی cannot determine intptr type
+#اگر_ختم
 
 /* SIZE_MAX may be missing so use an approximate value for it. */
-#undef DUK_SIZE_MAX_COMPUTED
-#if !defined(SIZE_MAX)
-#define DUK_SIZE_MAX_COMPUTED
-#define SIZE_MAX              ((size_t) (-1))
-#endif
-#define DUK_SIZE_MIN          0
-#define DUK_SIZE_MAX          SIZE_MAX
+#تعریف_منسوخ DUK_سائز_MAX_COMPUTED
+#اگر !defined(SIZE_MAX)
+#تعریف_کرو DUK_سائز_MAX_COMPUTED
+#تعریف_کرو SIZE_MAX              ((size_t) (-1))
+#اگر_ختم
+#تعریف_کرو DUK_سائز_MIN          0
+#تعریف_کرو DUK_سائز_MAX          SIZE_MAX
 
-#endif  /* C99 types */
+#اگر_ختم  /* C99 types */
 
 /* A few types are assumed to always exist. */
-typedef size_t duk_size_t;
-typedef ptrdiff_t duk_ptrdiff_t;
+قسمتعریف size_t duk_سائز_t;
+قسمتعریف ptrdiff_t duk_ptrdiff_t;
 
 /* The best type for an "all around int" in Duktape internals is "at least
  * 32 bit signed integer" which is most convenient.  Same for unsigned type.
  * Prefer 'int' when large enough, as it is almost always a convenient type.
  */
-#if defined(UINT_MAX) && (UINT_MAX >= 0xffffffffUL)
-typedef int duk_int_t;
-typedef unsigned int duk_uint_t;
-#define DUK_INT_MIN           INT_MIN
-#define DUK_INT_MAX           INT_MAX
-#define DUK_UINT_MIN          0
-#define DUK_UINT_MAX          UINT_MAX
-#else
-typedef duk_int_fast32_t duk_int_t;
-typedef duk_uint_fast32_t duk_uint_t;
-#define DUK_INT_MIN           DUK_INT_FAST32_MIN
-#define DUK_INT_MAX           DUK_INT_FAST32_MAX
-#define DUK_UINT_MIN          DUK_UINT_FAST32_MIN
-#define DUK_UINT_MAX          DUK_UINT_FAST32_MAX
-#endif
+#اگر defined(UINT_MAX) && (UINT_MAX >= 0xffffffffUL)
+قسمتعریف صحیح duk_int_t;
+قسمتعریف غیرعلامتی صحیح duk_uint_t;
+#تعریف_کرو DUK_INT_MIN           INT_MIN
+#تعریف_کرو DUK_INT_MAX           زیادہ_سے_زیادہ_عدد
+#تعریف_کرو DUK_UINT_MIN          0
+#تعریف_کرو DUK_UINT_MAX          UINT_MAX
+#ورنہ
+قسمتعریف duk_int_fast32_t duk_int_t;
+قسمتعریف duk_uint_fast32_t duk_uint_t;
+#تعریف_کرو DUK_INT_MIN           DUK_INT_FAST32_MIN
+#تعریف_کرو DUK_INT_MAX           DUK_INT_FAST32_MAX
+#تعریف_کرو DUK_UINT_MIN          DUK_UINT_FAST32_MIN
+#تعریف_کرو DUK_UINT_MAX          DUK_UINT_FAST32_MAX
+#اگر_ختم
 
 /* Same as 'duk_int_t' but guaranteed to be a 'fast' variant if this
  * distinction matters for the CPU.  These types are used mainly in the
  * executor where it might really matter.
  */
-typedef duk_int_fast32_t duk_int_fast_t;
-typedef duk_uint_fast32_t duk_uint_fast_t;
-#define DUK_INT_FAST_MIN      DUK_INT_FAST32_MIN
-#define DUK_INT_FAST_MAX      DUK_INT_FAST32_MAX
-#define DUK_UINT_FAST_MIN     DUK_UINT_FAST32_MIN
-#define DUK_UINT_FAST_MAX     DUK_UINT_FAST32_MAX
+قسمتعریف duk_int_fast32_t duk_int_fast_t;
+قسمتعریف duk_uint_fast32_t duk_uint_fast_t;
+#تعریف_کرو DUK_INT_FAST_MIN      DUK_INT_FAST32_MIN
+#تعریف_کرو DUK_INT_FAST_MAX      DUK_INT_FAST32_MAX
+#تعریف_کرو DUK_UINT_FAST_MIN     DUK_UINT_FAST32_MIN
+#تعریف_کرو DUK_UINT_FAST_MAX     DUK_UINT_FAST32_MAX
 
 /* Small integers (16 bits or more) can fall back to the 'int' type, but
  * have a typedef so they are marked "small" explicitly.
  */
-typedef int duk_small_int_t;
-typedef unsigned int duk_small_uint_t;
-#define DUK_SMALL_INT_MIN     INT_MIN
-#define DUK_SMALL_INT_MAX     INT_MAX
-#define DUK_SMALL_UINT_MIN    0
-#define DUK_SMALL_UINT_MAX    UINT_MAX
+قسمتعریف صحیح duk_small_int_t;
+قسمتعریف غیرعلامتی صحیح duk_small_uint_t;
+#تعریف_کرو DUK_SMALL_INT_MIN     INT_MIN
+#تعریف_کرو DUK_SMALL_INT_MAX     زیادہ_سے_زیادہ_عدد
+#تعریف_کرو DUK_SMALL_UINT_MIN    0
+#تعریف_کرو DUK_SMALL_UINT_MAX    UINT_MAX
 
 /* Fast variants of small integers, again for really fast paths like the
  * executor.
  */
-typedef duk_int_fast16_t duk_small_int_fast_t;
-typedef duk_uint_fast16_t duk_small_uint_fast_t;
-#define DUK_SMALL_INT_FAST_MIN    DUK_INT_FAST16_MIN
-#define DUK_SMALL_INT_FAST_MAX    DUK_INT_FAST16_MAX
-#define DUK_SMALL_UINT_FAST_MIN   DUK_UINT_FAST16_MIN
-#define DUK_SMALL_UINT_FAST_MAX   DUK_UINT_FAST16_MAX
+قسمتعریف duk_int_fast16_t duk_small_int_fast_t;
+قسمتعریف duk_uint_fast16_t duk_small_uint_fast_t;
+#تعریف_کرو DUK_SMALL_INT_FAST_MIN    DUK_INT_FAST16_MIN
+#تعریف_کرو DUK_SMALL_INT_FAST_MAX    DUK_INT_FAST16_MAX
+#تعریف_کرو DUK_SMALL_UINT_FAST_MIN   DUK_UINT_FAST16_MIN
+#تعریف_کرو DUK_SMALL_UINT_FAST_MAX   DUK_UINT_FAST16_MAX
 
 /* Boolean values are represented with the platform 'unsigned int'. */
-typedef duk_small_uint_t duk_bool_t;
-#define DUK_BOOL_MIN              DUK_SMALL_UINT_MIN
-#define DUK_BOOL_MAX              DUK_SMALL_UINT_MAX
+قسمتعریف duk_small_uint_t duk_bool_t;
+#تعریف_کرو DUK_BOOL_MIN              DUK_SMALL_UINT_MIN
+#تعریف_کرو DUK_BOOL_MAX              DUK_SMALL_UINT_MAX
 
 /* Index values must have at least 32-bit signed range. */
-typedef duk_int_t duk_idx_t;
-#define DUK_IDX_MIN               DUK_INT_MIN
-#define DUK_IDX_MAX               DUK_INT_MAX
+قسمتعریف duk_int_t duk_idx_t;
+#تعریف_کرو DUK_IDX_MIN               DUK_INT_MIN
+#تعریف_کرو DUK_IDX_MAX               DUK_INT_MAX
 
 /* Unsigned index variant. */
-typedef duk_uint_t duk_uidx_t;
-#define DUK_UIDX_MIN              DUK_UINT_MIN
-#define DUK_UIDX_MAX              DUK_UINT_MAX
+قسمتعریف duk_uint_t duk_uidx_t;
+#تعریف_کرو DUK_UIDX_MIN              DUK_UINT_MIN
+#تعریف_کرو DUK_UIDX_MAX              DUK_UINT_MAX
 
 /* Array index values, could be exact 32 bits.
  * Currently no need for signed duk_arridx_t.
  */
-typedef duk_uint_t duk_uarridx_t;
-#define DUK_UARRIDX_MIN           DUK_UINT_MIN
-#define DUK_UARRIDX_MAX           DUK_UINT_MAX
+قسمتعریف duk_uint_t duk_uarridx_t;
+#تعریف_کرو DUK_UARRIDX_MIN           DUK_UINT_MIN
+#تعریف_کرو DUK_UARRIDX_MAX           DUK_UINT_MAX
 
 /* Duktape/C function return value, platform int is enough for now to
  * represent 0, 1, or negative error code.  Must be compatible with
  * assigning truth values (e.g. duk_ret_t rc = (foo == bar);).
  */
-typedef duk_small_int_t duk_ret_t;
-#define DUK_RET_MIN               DUK_SMALL_INT_MIN
-#define DUK_RET_MAX               DUK_SMALL_INT_MAX
+قسمتعریف duk_small_int_t duk_ret_t;
+#تعریف_کرو DUK_RET_MIN               DUK_SMALL_INT_MIN
+#تعریف_کرو DUK_RET_MAX               DUK_SMALL_INT_MAX
 
 /* Error codes are represented with platform int.  High bits are used
  * for flags and such, so 32 bits are needed.
  */
-typedef duk_int_t duk_errcode_t;
-#define DUK_ERRCODE_MIN           DUK_INT_MIN
-#define DUK_ERRCODE_MAX           DUK_INT_MAX
+قسمتعریف duk_int_t duk_errcode_t;
+#تعریف_کرو DUK_ERRCODE_MIN           DUK_INT_MIN
+#تعریف_کرو DUK_ERRCODE_MAX           DUK_INT_MAX
 
 /* Codepoint type.  Must be 32 bits or more because it is used also for
  * internal codepoints.  The type is signed because negative codepoints
@@ -2091,39 +2091,39 @@ typedef duk_int_t duk_errcode_t;
  * ensure duk_uint32_t casts back and forth nicely.  Almost everything
  * else uses the signed one.
  */
-typedef duk_int_t duk_codepoint_t;
-typedef duk_uint_t duk_ucodepoint_t;
-#define DUK_CODEPOINT_MIN         DUK_INT_MIN
-#define DUK_CODEPOINT_MAX         DUK_INT_MAX
-#define DUK_UCODEPOINT_MIN        DUK_UINT_MIN
-#define DUK_UCODEPOINT_MAX        DUK_UINT_MAX
+قسمتعریف duk_int_t duk_codepoint_t;
+قسمتعریف duk_uint_t duk_ucodepoint_t;
+#تعریف_کرو DUK_CODEPOINT_MIN         DUK_INT_MIN
+#تعریف_کرو DUK_CODEPOINT_MAX         DUK_INT_MAX
+#تعریف_کرو DUK_UCODEPOINT_MIN        DUK_UINT_MIN
+#تعریف_کرو DUK_UCODEPOINT_MAX        DUK_UINT_MAX
 
 /* IEEE float/double typedef. */
-typedef float duk_float_t;
-typedef double duk_double_t;
+قسمتعریف اعشاری duk_float_t;
+قسمتعریف دوہرا duk_double_t;
 
 /* We're generally assuming that we're working on a platform with a 32-bit
  * address space.  If DUK_SIZE_MAX is a typecast value (which is necessary
  * if SIZE_MAX is missing), the check must be avoided because the
  * preprocessor can't do a comparison.
  */
-#if !defined(DUK_SIZE_MAX)
-#error DUK_SIZE_MAX is undefined, probably missing SIZE_MAX
-#elif !defined(DUK_SIZE_MAX_COMPUTED)
-#if DUK_SIZE_MAX < 0xffffffffUL
+#اگر !defined(DUK_سائز_MAX)
+#غلطی DUK_سائز_MAX is undefined, probably missing SIZE_MAX
+#وگرنہ_اگر !defined(DUK_سائز_MAX_COMPUTED)
+#اگر DUK_سائز_MAX < 0xffffffffUL
 /* On some systems SIZE_MAX can be smaller than max unsigned 32-bit value
  * which seems incorrect if size_t is (at least) an unsigned 32-bit type.
  * However, it doesn't seem useful to error out compilation if this is the
  * case.
  */
-#endif
-#endif
+#اگر_ختم
+#اگر_ختم
 
 /* Type used in public API declarations and user code.  Typedef maps to
  * 'struct duk_hthread' like the 'duk_hthread' typedef which is used
  * exclusively in internals.
  */
-typedef struct duk_hthread duk_context;
+قسمتعریف ساخت duk_hthread duk_context;
 
 /* Check whether we should use 64-bit integers or not.
  *
@@ -2131,50 +2131,50 @@ typedef struct duk_hthread duk_context;
  * unless they are known to be unreliable.  For instance, 64-bit types are
  * available on VBCC but seem to misbehave.
  */
-#if defined(DUK_F_HAVE_64BIT) && !defined(DUK_F_VBCC)
-#define DUK_USE_64BIT_OPS
-#else
-#undef DUK_USE_64BIT_OPS
-#endif
+#اگر defined(DUK_F_HAVE_64_ثنائی_ہندسہ) && !defined(DUK_F_VBCC)
+#تعریف_کرو DUK_USE_64_ثنائی_ہندسہ_OPS
+#ورنہ
+#تعریف_منسوخ DUK_USE_64_ثنائی_ہندسہ_OPS
+#اگر_ختم
 
 /*
  *  Fill-ins for platform, architecture, and compiler
  */
 
 /* An abort()-like primitive is needed by the default fatal error handler. */
-#if !defined(DUK_ABORT)
-#define DUK_ABORT             abort
-#endif
+#اگر !defined(DUK_ABORT)
+#تعریف_کرو DUK_ABORT             abort
+#اگر_ختم
 
-#if !defined(DUK_SETJMP)
-#define DUK_JMPBUF_TYPE       jmp_buf
-#define DUK_SETJMP(jb)        setjmp((jb))
-#define DUK_LONGJMP(jb)       longjmp((jb), 1)
-#endif
+#اگر !defined(DUK_SETJMP)
+#تعریف_کرو DUK_JMPBUF_TYPE       jmp_buf
+#تعریف_کرو DUK_SETJMP(jb)        setjmp((jb))
+#تعریف_کرو DUK_LONGJMP(jb)       longjmp((jb), 1)
+#اگر_ختم
 
-#if 0
+#اگر 0
 /* sigsetjmp() alternative */
-#define DUK_JMPBUF_TYPE       sigjmp_buf
-#define DUK_SETJMP(jb)        sigsetjmp((jb))
-#define DUK_LONGJMP(jb)       siglongjmp((jb), 1)
-#endif
+#تعریف_کرو DUK_JMPBUF_TYPE       sigjmp_buf
+#تعریف_کرو DUK_SETJMP(jb)        sigsetjmp((jb))
+#تعریف_کرو DUK_LONGJMP(jb)       siglongjmp((jb), 1)
+#اگر_ختم
 
 /* Special naming to avoid conflict with e.g. DUK_FREE() in duk_heap.h
  * (which is unfortunately named).  May sometimes need replacement, e.g.
  * some compilers don't handle zero length or NULL correctly in realloc().
  */
-#if !defined(DUK_ANSI_MALLOC)
-#define DUK_ANSI_MALLOC      malloc
-#endif
-#if !defined(DUK_ANSI_REALLOC)
-#define DUK_ANSI_REALLOC     realloc
-#endif
-#if !defined(DUK_ANSI_CALLOC)
-#define DUK_ANSI_CALLOC      calloc
-#endif
-#if !defined(DUK_ANSI_FREE)
-#define DUK_ANSI_FREE        free
-#endif
+#اگر !defined(DUK_ANSI_MALLOC)
+#تعریف_کرو DUK_ANSI_MALLOC      حافظہ_دو
+#اگر_ختم
+#اگر !defined(DUK_ANSI_REALLOC)
+#تعریف_کرو DUK_ANSI_REALLOC     realloc
+#اگر_ختم
+#اگر !defined(DUK_ANSI_CALLOC)
+#تعریف_کرو DUK_ANSI_CALLOC      صفر_حافظہ_دو
+#اگر_ختم
+#اگر !defined(DUK_ANSI_FREE)
+#تعریف_کرو DUK_ANSI_FREE        آزاد
+#اگر_ختم
 
 /* ANSI C (various versions) and some implementations require that the
  * pointer arguments to memset(), memcpy(), and memmove() be valid values
@@ -2197,264 +2197,264 @@ typedef struct duk_hthread duk_context;
  *   | 0 | 1 | 2 | .....
  *                 ^-- p=3, points after last valid byte (2)
  */
-#if !defined(DUK_MEMCPY)
-#if defined(DUK_F_UCLIBC)
+#اگر !defined(DUK_MEMCPY)
+#اگر defined(DUK_F_UCLIBC)
 /* Old uclibcs have a broken memcpy so use memmove instead (this is overly wide
  * now on purpose): http://lists.uclibc.org/pipermail/uclibc-cvs/2008-October/025511.html
  */
-#define DUK_MEMCPY       memmove
-#else
-#define DUK_MEMCPY       memcpy
-#endif
-#endif
-#if !defined(DUK_MEMMOVE)
-#define DUK_MEMMOVE      memmove
-#endif
-#if !defined(DUK_MEMCMP)
-#define DUK_MEMCMP       memcmp
-#endif
-#if !defined(DUK_MEMSET)
-#define DUK_MEMSET       memset
-#endif
-#if !defined(DUK_STRLEN)
-#define DUK_STRLEN       strlen
-#endif
-#if !defined(DUK_STRCMP)
-#define DUK_STRCMP       strcmp
-#endif
-#if !defined(DUK_STRNCMP)
-#define DUK_STRNCMP      strncmp
-#endif
-#if !defined(DUK_SPRINTF)
-#define DUK_SPRINTF      sprintf
-#endif
-#if !defined(DUK_SNPRINTF)
+#تعریف_کرو DUK_MEMCPY       memmove
+#ورنہ
+#تعریف_کرو DUK_MEMCPY       حافظہ_نقل
+#اگر_ختم
+#اگر_ختم
+#اگر !defined(DUK_MEMMOVE)
+#تعریف_کرو DUK_MEMMOVE      memmove
+#اگر_ختم
+#اگر !defined(DUK_MEMCMP)
+#تعریف_کرو DUK_MEMCMP       memcmp
+#اگر_ختم
+#اگر !defined(DUK_MEMSET)
+#تعریف_کرو DUK_MEMSET       memset
+#اگر_ختم
+#اگر !defined(DUK_STRLEN)
+#تعریف_کرو DUK_STRLEN       لڑی_لمبائی
+#اگر_ختم
+#اگر !defined(DUK_STRCMP)
+#تعریف_کرو DUK_STRCMP       strcmp
+#اگر_ختم
+#اگر !defined(DUK_STRNCMP)
+#تعریف_کرو DUK_STRNCMP      لڑی_موازنہ
+#اگر_ختم
+#اگر !defined(DUK_SPRINTF)
+#تعریف_کرو DUK_SPRINTF      sprintf
+#اگر_ختم
+#اگر !defined(DUK_SNPRINTF)
 /* snprintf() is technically not part of C89 but usually available. */
-#define DUK_SNPRINTF     snprintf
-#endif
-#if !defined(DUK_VSPRINTF)
-#define DUK_VSPRINTF     vsprintf
-#endif
-#if !defined(DUK_VSNPRINTF)
+#تعریف_کرو DUK_SNPRINTF     snprintf
+#اگر_ختم
+#اگر !defined(DUK_VSPRINTF)
+#تعریف_کرو DUK_VSPRINTF     vsprintf
+#اگر_ختم
+#اگر !defined(DUK_VSNPRINTF)
 /* vsnprintf() is technically not part of C89 but usually available. */
-#define DUK_VSNPRINTF    vsnprintf
-#endif
-#if !defined(DUK_SSCANF)
-#define DUK_SSCANF       sscanf
-#endif
-#if !defined(DUK_VSSCANF)
-#define DUK_VSSCANF      vsscanf
-#endif
-#if !defined(DUK_MEMZERO)
-#define DUK_MEMZERO(p,n) DUK_MEMSET((p), 0, (n))
-#endif
+#تعریف_کرو DUK_VSNPRINTF    vsnprintf
+#اگر_ختم
+#اگر !defined(DUK_SSCANF)
+#تعریف_کرو DUK_SSCANF       لڑی_سے_پڑھو
+#اگر_ختم
+#اگر !defined(DUK_VSSCANF)
+#تعریف_کرو DUK_VSSCANF      vsscanf
+#اگر_ختم
+#اگر !defined(DUK_MEMZERO)
+#تعریف_کرو DUK_MEMZERO(p,n) DUK_MEMSET((p), 0, (n))
+#اگر_ختم
 
-#if !defined(DUK_DOUBLE_INFINITY)
-#undef DUK_USE_COMPUTED_INFINITY
-#if defined(DUK_F_GCC_VERSION) && (DUK_F_GCC_VERSION < 40600)
+#اگر !defined(DUK_DOUBLE_INFINITY)
+#تعریف_منسوخ DUK_USE_COMPUTED_INFINITY
+#اگر defined(DUK_F_GCC_نسخہ) && (DUK_F_GCC_نسخہ < 40600)
 /* GCC older than 4.6: avoid overflow warnings related to using INFINITY */
-#define DUK_DOUBLE_INFINITY  (__builtin_inf())
-#elif defined(INFINITY)
-#define DUK_DOUBLE_INFINITY  ((double) INFINITY)
-#elif !defined(DUK_F_VBCC) && !defined(DUK_F_MSVC) && !defined(DUK_F_BCC) && \
+#تعریف_کرو DUK_DOUBLE_INFINITY  (__builtin_inf())
+#وگرنہ_اگر defined(INFINITY)
+#تعریف_کرو DUK_DOUBLE_INFINITY  ((دوہرا) INFINITY)
+#وگرنہ_اگر !defined(DUK_F_VBCC) && !defined(DUK_F_MSVC) && !defined(DUK_F_BCC) && \
       !defined(DUK_F_OLD_SOLARIS) && !defined(DUK_F_AIX)
-#define DUK_DOUBLE_INFINITY  (1.0 / 0.0)
-#else
+#تعریف_کرو DUK_DOUBLE_INFINITY  (1.0 / 0.0)
+#ورنہ
 /* In VBCC (1.0 / 0.0) results in a warning and 0.0 instead of infinity.
  * Use a computed infinity (initialized when a heap is created at the
  * latest).
  */
-#define DUK_USE_COMPUTED_INFINITY
-#define DUK_DOUBLE_INFINITY  duk_computed_infinity
-#endif
-#endif
+#تعریف_کرو DUK_USE_COMPUTED_INFINITY
+#تعریف_کرو DUK_DOUBLE_INFINITY  duk_computed_infinity
+#اگر_ختم
+#اگر_ختم
 
-#if !defined(DUK_DOUBLE_NAN)
-#undef DUK_USE_COMPUTED_NAN
-#if defined(NAN)
-#define DUK_DOUBLE_NAN       NAN
-#elif !defined(DUK_F_VBCC) && !defined(DUK_F_MSVC) && !defined(DUK_F_BCC) && \
+#اگر !defined(DUK_DOUBLE_NAN)
+#تعریف_منسوخ DUK_USE_COMPUTED_NAN
+#اگر defined(NAN)
+#تعریف_کرو DUK_DOUBLE_NAN       NAN
+#وگرنہ_اگر !defined(DUK_F_VBCC) && !defined(DUK_F_MSVC) && !defined(DUK_F_BCC) && \
       !defined(DUK_F_OLD_SOLARIS) && !defined(DUK_F_AIX)
-#define DUK_DOUBLE_NAN       (0.0 / 0.0)
-#else
+#تعریف_کرو DUK_DOUBLE_NAN       (0.0 / 0.0)
+#ورنہ
 /* In VBCC (0.0 / 0.0) results in a warning and 0.0 instead of NaN.
  * In MSVC (VS2010 Express) (0.0 / 0.0) results in a compile error.
  * Use a computed NaN (initialized when a heap is created at the
  * latest).
  */
-#define DUK_USE_COMPUTED_NAN
-#define DUK_DOUBLE_NAN       duk_computed_nan
-#endif
-#endif
+#تعریف_کرو DUK_USE_COMPUTED_NAN
+#تعریف_کرو DUK_DOUBLE_NAN       duk_computed_nan
+#اگر_ختم
+#اگر_ختم
 
 /* Many platforms are missing fpclassify() and friends, so use replacements
  * if necessary.  The replacement constants (FP_NAN etc) can be anything but
  * match Linux constants now.
  */
-#undef DUK_USE_REPL_FPCLASSIFY
-#undef DUK_USE_REPL_SIGNBIT
-#undef DUK_USE_REPL_ISFINITE
-#undef DUK_USE_REPL_ISNAN
-#undef DUK_USE_REPL_ISINF
+#تعریف_منسوخ DUK_USE_REPL_FPCLASSIFY
+#تعریف_منسوخ DUK_USE_REPL_SIGNBIT
+#تعریف_منسوخ DUK_USE_REPL_ISFINITE
+#تعریف_منسوخ DUK_USE_REPL_ISNAN
+#تعریف_منسوخ DUK_USE_REPL_ISINF
 
 /* Complex condition broken into separate parts. */
-#undef DUK_F_USE_REPL_ALL
-#if !(defined(FP_NAN) && defined(FP_INFINITE) && defined(FP_ZERO) && \
+#تعریف_منسوخ DUK_F_USE_REPL_ALL
+#اگر !(defined(FP_NAN) && defined(FP_INFINITE) && defined(FP_ZERO) && \
       defined(FP_SUBNORMAL) && defined(FP_NORMAL))
 /* Missing some obvious constants. */
-#define DUK_F_USE_REPL_ALL
-#elif defined(DUK_F_AMIGAOS) && defined(DUK_F_VBCC)
+#تعریف_کرو DUK_F_USE_REPL_ALL
+#وگرنہ_اگر defined(DUK_F_AMIGAOS) && defined(DUK_F_VBCC)
 /* VBCC is missing the built-ins even in C99 mode (perhaps a header issue). */
-#define DUK_F_USE_REPL_ALL
-#elif defined(DUK_F_AMIGAOS) && defined(DUK_F_M68K)
+#تعریف_کرو DUK_F_USE_REPL_ALL
+#وگرنہ_اگر defined(DUK_F_AMIGAOS) && defined(DUK_F_M68K)
 /* AmigaOS + M68K seems to have math issues even when using GCC cross
  * compilation.  Use replacements for all AmigaOS versions on M68K
  * regardless of compiler.
  */
-#define DUK_F_USE_REPL_ALL
-#elif defined(DUK_F_FREEBSD) && defined(DUK_F_CLANG)
+#تعریف_کرو DUK_F_USE_REPL_ALL
+#وگرنہ_اگر defined(DUK_F_FREEBSD) && defined(DUK_F_CLANG)
 /* Placeholder fix for (detection is wider than necessary):
  * http://llvm.org/bugs/show_bug.cgi?id=17788
  */
-#define DUK_F_USE_REPL_ALL
-#elif defined(DUK_F_UCLIBC)
+#تعریف_کرو DUK_F_USE_REPL_ALL
+#وگرنہ_اگر defined(DUK_F_UCLIBC)
 /* At least some uclibc versions have broken floating point math.  For
  * example, fpclassify() can incorrectly classify certain NaN formats.
  * To be safe, use replacements.
  */
-#define DUK_F_USE_REPL_ALL
-#elif defined(DUK_F_AIX)
+#تعریف_کرو DUK_F_USE_REPL_ALL
+#وگرنہ_اگر defined(DUK_F_AIX)
 /* Older versions may be missing isnan(), etc. */
-#define DUK_F_USE_REPL_ALL
-#endif
+#تعریف_کرو DUK_F_USE_REPL_ALL
+#اگر_ختم
 
-#if defined(DUK_F_USE_REPL_ALL)
-#define DUK_USE_REPL_FPCLASSIFY
-#define DUK_USE_REPL_SIGNBIT
-#define DUK_USE_REPL_ISFINITE
-#define DUK_USE_REPL_ISNAN
-#define DUK_USE_REPL_ISINF
-#define DUK_FPCLASSIFY       duk_repl_fpclassify
-#define DUK_SIGNBIT          duk_repl_signbit
-#define DUK_ISFINITE         duk_repl_isfinite
-#define DUK_ISNAN            duk_repl_isnan
-#define DUK_ISINF            duk_repl_isinf
-#define DUK_FP_NAN           0
-#define DUK_FP_INFINITE      1
-#define DUK_FP_ZERO          2
-#define DUK_FP_SUBNORMAL     3
-#define DUK_FP_NORMAL        4
-#else
-#define DUK_FPCLASSIFY       fpclassify
-#define DUK_SIGNBIT          signbit
-#define DUK_ISFINITE         isfinite
-#define DUK_ISNAN            isnan
-#define DUK_ISINF            isinf
-#define DUK_FP_NAN           FP_NAN
-#define DUK_FP_INFINITE      FP_INFINITE
-#define DUK_FP_ZERO          FP_ZERO
-#define DUK_FP_SUBNORMAL     FP_SUBNORMAL
-#define DUK_FP_NORMAL        FP_NORMAL
-#endif
+#اگر defined(DUK_F_USE_REPL_ALL)
+#تعریف_کرو DUK_USE_REPL_FPCLASSIFY
+#تعریف_کرو DUK_USE_REPL_SIGNBIT
+#تعریف_کرو DUK_USE_REPL_ISFINITE
+#تعریف_کرو DUK_USE_REPL_ISNAN
+#تعریف_کرو DUK_USE_REPL_ISINF
+#تعریف_کرو DUK_FPCLASSIFY       duk_repl_fpclassify
+#تعریف_کرو DUK_SIGNBIT          duk_repl_signbit
+#تعریف_کرو DUK_ISFINITE         duk_repl_isfinite
+#تعریف_کرو DUK_ISNAN            duk_repl_isnan
+#تعریف_کرو DUK_ISINF            duk_repl_isinf
+#تعریف_کرو DUK_FP_NAN           0
+#تعریف_کرو DUK_FP_INFINITE      1
+#تعریف_کرو DUK_FP_ZERO          2
+#تعریف_کرو DUK_FP_SUBNORMAL     3
+#تعریف_کرو DUK_FP_معمول        4
+#ورنہ
+#تعریف_کرو DUK_FPCLASSIFY       fpclassify
+#تعریف_کرو DUK_SIGNBIT          signbit
+#تعریف_کرو DUK_ISFINITE         isfinite
+#تعریف_کرو DUK_ISNAN            isnan
+#تعریف_کرو DUK_ISINF            isinf
+#تعریف_کرو DUK_FP_NAN           FP_NAN
+#تعریف_کرو DUK_FP_INFINITE      FP_INFINITE
+#تعریف_کرو DUK_FP_ZERO          FP_ZERO
+#تعریف_کرو DUK_FP_SUBNORMAL     FP_SUBNORMAL
+#تعریف_کرو DUK_FP_معمول        FP_NORMAL
+#اگر_ختم
 
-#if defined(DUK_F_USE_REPL_ALL)
-#undef DUK_F_USE_REPL_ALL
-#endif
+#اگر defined(DUK_F_USE_REPL_ALL)
+#تعریف_منسوخ DUK_F_USE_REPL_ALL
+#اگر_ختم
 
 /* These functions don't currently need replacement but are wrapped for
  * completeness.  Because these are used as function pointers, they need
  * to be defined as concrete C functions (not macros).
  */
-#if !defined(DUK_FABS)
-#define DUK_FABS             fabs
-#endif
-#if !defined(DUK_FLOOR)
-#define DUK_FLOOR            floor
-#endif
-#if !defined(DUK_CEIL)
-#define DUK_CEIL             ceil
-#endif
-#if !defined(DUK_FMOD)
-#define DUK_FMOD             fmod
-#endif
-#if !defined(DUK_POW)
-#define DUK_POW              pow
-#endif
-#if !defined(DUK_ACOS)
-#define DUK_ACOS             acos
-#endif
-#if !defined(DUK_ASIN)
-#define DUK_ASIN             asin
-#endif
-#if !defined(DUK_ATAN)
-#define DUK_ATAN             atan
-#endif
-#if !defined(DUK_ATAN2)
-#define DUK_ATAN2            atan2
-#endif
-#if !defined(DUK_SIN)
-#define DUK_SIN              sin
-#endif
-#if !defined(DUK_COS)
-#define DUK_COS              cos
-#endif
-#if !defined(DUK_TAN)
-#define DUK_TAN              tan
-#endif
-#if !defined(DUK_EXP)
-#define DUK_EXP              exp
-#endif
-#if !defined(DUK_LOG)
-#define DUK_LOG              log
-#endif
-#if !defined(DUK_SQRT)
-#define DUK_SQRT             sqrt
-#endif
+#اگر !defined(DUK_FABS)
+#تعریف_کرو DUK_FABS             fabs
+#اگر_ختم
+#اگر !defined(DUK_FLOOR)
+#تعریف_کرو DUK_FLOOR            floor
+#اگر_ختم
+#اگر !defined(DUK_CEIL)
+#تعریف_کرو DUK_CEIL             ceil
+#اگر_ختم
+#اگر !defined(DUK_FMOD)
+#تعریف_کرو DUK_FMOD             fmod
+#اگر_ختم
+#اگر !defined(DUK_POW)
+#تعریف_کرو DUK_POW              قوت
+#اگر_ختم
+#اگر !defined(DUK_ACOS)
+#تعریف_کرو DUK_ACOS             acos
+#اگر_ختم
+#اگر !defined(DUK_ASIN)
+#تعریف_کرو DUK_ASIN             asin
+#اگر_ختم
+#اگر !defined(DUK_ATAN)
+#تعریف_کرو DUK_ATAN             atan
+#اگر_ختم
+#اگر !defined(DUK_ATAN2)
+#تعریف_کرو DUK_ATAN2            atan2
+#اگر_ختم
+#اگر !defined(DUK_SIN)
+#تعریف_کرو DUK_SIN              جیب
+#اگر_ختم
+#اگر !defined(DUK_COS)
+#تعریف_کرو DUK_COS              جیب_تمام
+#اگر_ختم
+#اگر !defined(DUK_TAN)
+#تعریف_کرو DUK_TAN              tan
+#اگر_ختم
+#اگر !defined(DUK_EXP)
+#تعریف_کرو DUK_EXP              قوت_نما
+#اگر_ختم
+#اگر !defined(DUK_LOG)
+#تعریف_کرو DUK_LOG              لوگارتھم
+#اگر_ختم
+#اگر !defined(DUK_SQRT)
+#تعریف_کرو DUK_SQRT             جذر
+#اگر_ختم
 
 /* The functions below exist only in C99/C++11 or later and need a workaround
  * for platforms that don't include them.  MSVC isn't detected as C99, but
  * these functions also exist in MSVC 2013 and later so include a clause for
  * that too.  Android doesn't have log2; disable all of these for Android.
  */
-#if (defined(DUK_F_C99) || defined(DUK_F_CPP11) || (defined(_MSC_VER) && (_MSC_VER >= 1800))) && \
+#اگر (defined(DUK_F_C99) || defined(DUK_F_CPP11) || (defined(_MSC_VER) && (_MSC_VER >= 1800))) && \
     !defined(DUK_F_ANDROID) && !defined(DUK_F_MINT)
-#if !defined(DUK_CBRT)
-#define DUK_CBRT             cbrt
-#endif
-#if !defined(DUK_LOG2)
-#define DUK_LOG2             log2
-#endif
-#if !defined(DUK_LOG10)
-#define DUK_LOG10            log10
-#endif
-#if !defined(DUK_TRUNC)
-#define DUK_TRUNC            trunc
-#endif
-#endif  /* DUK_F_C99 etc */
+#اگر !defined(DUK_CBRT)
+#تعریف_کرو DUK_CBRT             cbrt
+#اگر_ختم
+#اگر !defined(DUK_LOG2)
+#تعریف_کرو DUK_LOG2             log2
+#اگر_ختم
+#اگر !defined(DUK_LOG10)
+#تعریف_کرو DUK_LOG10            log10
+#اگر_ختم
+#اگر !defined(DUK_TRUNC)
+#تعریف_کرو DUK_TRUNC            trunc
+#اگر_ختم
+#اگر_ختم  /* DUK_F_C99 etc */
 
 /* NetBSD 6.0 x86 (at least) has a few problems with pow() semantics,
  * see test-bug-netbsd-math-pow.js.  MinGW has similar (but different)
  * issues, see test-bug-mingw-math-issues.js.  Enable pow() workarounds
  * for these targets.
  */
-#undef DUK_USE_POW_WORKAROUNDS
-#if defined(DUK_F_NETBSD) || defined(DUK_F_MINGW)
-#define DUK_USE_POW_WORKAROUNDS
-#endif
+#تعریف_منسوخ DUK_USE_POW_WORKAROUNDS
+#اگر defined(DUK_F_NETBSD) || defined(DUK_F_MINGW)
+#تعریف_کرو DUK_USE_POW_WORKAROUNDS
+#اگر_ختم
 
 /* Similar workarounds for atan2() semantics issues.  MinGW issues are
  * documented in test-bug-mingw-math-issues.js.
  */
-#undef DUK_USE_ATAN2_WORKAROUNDS
-#if defined(DUK_F_MINGW)
-#define DUK_USE_ATAN2_WORKAROUNDS
-#endif
+#تعریف_منسوخ DUK_USE_ATAN2_WORKAROUNDS
+#اگر defined(DUK_F_MINGW)
+#تعریف_کرو DUK_USE_ATAN2_WORKAROUNDS
+#اگر_ختم
 
 /* Rely as little as possible on compiler behavior for NaN comparison,
  * signed zero handling, etc.  Currently never activated but may be needed
  * for broken compilers.
  */
-#undef DUK_USE_PARANOID_MATH
+#تعریف_منسوخ DUK_USE_PARANOID_MATH
 
 /* There was a curious bug where test-bi-date-canceling.js would fail e.g.
  * on 64-bit Ubuntu, gcc-4.8.1, -m32, and no -std=c99.  Some date computations
@@ -2464,10 +2464,10 @@ typedef struct duk_hthread duk_context;
  * non-C99 systems solves the known issues and has relatively little cost
  * on other platforms.
  */
-#undef DUK_USE_PARANOID_DATE_COMPUTATION
-#if !defined(DUK_F_C99)
-#define DUK_USE_PARANOID_DATE_COMPUTATION
-#endif
+#تعریف_منسوخ DUK_USE_PARANOID_DATE_COMPUTATION
+#اگر !defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_PARANOID_DATE_COMPUTATION
+#اگر_ختم
 
 /*
  *  Byte order and double memory layout detection
@@ -2496,33 +2496,33 @@ typedef struct duk_hthread duk_context;
  * seem to provide __FLOAT_WORD_ORDER__; assume not mixed endian for clang.
  * http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
  */
-#if !defined(DUK_USE_BYTEORDER) && defined(__BYTE_ORDER__)
-#if defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-#if defined(__FLOAT_WORD_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && (__FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-#define DUK_USE_BYTEORDER 1
-#elif defined(__FLOAT_WORD_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && (__FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__)
-#define DUK_USE_BYTEORDER 2
-#elif !defined(__FLOAT_WORD_ORDER__)
+#اگر !defined(DUK_USE_BYTEORDER) && defined(__BYTE_ORDER__)
+#اگر defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#اگر defined(__FLOAT_WORD_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && (__FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#وگرنہ_اگر defined(__FLOAT_WORD_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && (__FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__)
+#تعریف_کرو DUK_USE_BYTEORDER 2
+#وگرنہ_اگر !defined(__FLOAT_WORD_ORDER__)
 /* Float word order not known, assume not a hybrid. */
-#define DUK_USE_BYTEORDER 1
-#else
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#ورنہ
 /* Byte order is little endian but cannot determine IEEE double word order. */
-#endif  /* float word order */
-#elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-#if defined(__FLOAT_WORD_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && (__FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__)
-#define DUK_USE_BYTEORDER 3
-#elif !defined(__FLOAT_WORD_ORDER__)
+#اگر_ختم  /* float word order */
+#وگرنہ_اگر defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#اگر defined(__FLOAT_WORD_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && (__FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#وگرنہ_اگر !defined(__FLOAT_WORD_ORDER__)
 /* Float word order not known, assume not a hybrid. */
-#define DUK_USE_BYTEORDER 3
-#else
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#ورنہ
 /* Byte order is big endian but cannot determine IEEE double word order. */
-#endif  /* float word order */
-#else
+#اگر_ختم  /* float word order */
+#ورنہ
 /* Cannot determine byte order; __ORDER_PDP_ENDIAN__ is related to 32-bit
  * integer ordering and is not relevant.
  */
-#endif  /* integer byte order */
-#endif  /* !defined(DUK_USE_BYTEORDER) && defined(__BYTE_ORDER__) */
+#اگر_ختم  /* integer byte order */
+#اگر_ختم  /* !defined(DUK_USE_BYTEORDER) && defined(__BYTE_ORDER__) */
 
 /* More or less standard endianness predefines provided by header files.
  * The ARM hybrid case is detected by assuming that __FLOAT_WORD_ORDER
@@ -2530,38 +2530,38 @@ typedef struct duk_hthread duk_context;
  * On some platforms some defines may be present with an empty value which
  * causes comparisons to fail: https://github.com/svaarala/duktape/issues/453.
  */
-#if !defined(DUK_USE_BYTEORDER)
-#if defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN) || \
-    defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN) || \
+#اگر !defined(DUK_USE_BYTEORDER)
+#اگر defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN) || \
+    defined(BYTE_ترتیب) && defined(_LITTLE_ENDIAN) && (BYTE_ترتیب == _LITTLE_ENDIAN) || \
     defined(__LITTLE_ENDIAN__)
-#if defined(__FLOAT_WORD_ORDER) && defined(__LITTLE_ENDIAN) && (__FLOAT_WORD_ORDER == __LITTLE_ENDIAN) || \
-    defined(_FLOAT_WORD_ORDER) && defined(_LITTLE_ENDIAN) && (_FLOAT_WORD_ORDER == _LITTLE_ENDIAN)
-#define DUK_USE_BYTEORDER 1
-#elif defined(__FLOAT_WORD_ORDER) && defined(__BIG_ENDIAN) && (__FLOAT_WORD_ORDER == __BIG_ENDIAN) || \
-      defined(_FLOAT_WORD_ORDER) && defined(_BIG_ENDIAN) && (_FLOAT_WORD_ORDER == _BIG_ENDIAN)
-#define DUK_USE_BYTEORDER 2
-#elif !defined(__FLOAT_WORD_ORDER) && !defined(_FLOAT_WORD_ORDER)
+#اگر defined(__FLOAT_WORD_ORDER) && defined(__LITTLE_ENDIAN) && (__FLOAT_WORD_ORDER == __LITTLE_ENDIAN) || \
+    defined(FLOAT_لفظ_ترتیب) && defined(_LITTLE_ENDIAN) && (FLOAT_لفظ_ترتیب == _LITTLE_ENDIAN)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#وگرنہ_اگر defined(__FLOAT_WORD_ORDER) && defined(__BIG_ENDIAN) && (__FLOAT_WORD_ORDER == __BIG_ENDIAN) || \
+      defined(FLOAT_لفظ_ترتیب) && defined(_BIG_ENDIAN) && (FLOAT_لفظ_ترتیب == _BIG_ENDIAN)
+#تعریف_کرو DUK_USE_BYTEORDER 2
+#وگرنہ_اگر !defined(__FLOAT_WORD_ORDER) && !defined(FLOAT_لفظ_ترتیب)
 /* Float word order not known, assume not a hybrid. */
-#define DUK_USE_BYTEORDER 1
-#else
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#ورنہ
 /* Byte order is little endian but cannot determine IEEE double word order. */
-#endif  /* float word order */
-#elif defined(__BYTE_ORDER) && defined(__BIG_ENDIAN) && (__BYTE_ORDER == __BIG_ENDIAN) || \
-      defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN) || \
+#اگر_ختم  /* float word order */
+#وگرنہ_اگر defined(__BYTE_ORDER) && defined(__BIG_ENDIAN) && (__BYTE_ORDER == __BIG_ENDIAN) || \
+      defined(BYTE_ترتیب) && defined(_BIG_ENDIAN) && (BYTE_ترتیب == _BIG_ENDIAN) || \
       defined(__BIG_ENDIAN__)
-#if defined(__FLOAT_WORD_ORDER) && defined(__BIG_ENDIAN) && (__FLOAT_WORD_ORDER == __BIG_ENDIAN) || \
-    defined(_FLOAT_WORD_ORDER) && defined(_BIG_ENDIAN) && (_FLOAT_WORD_ORDER == _BIG_ENDIAN)
-#define DUK_USE_BYTEORDER 3
-#elif !defined(__FLOAT_WORD_ORDER) && !defined(_FLOAT_WORD_ORDER)
+#اگر defined(__FLOAT_WORD_ORDER) && defined(__BIG_ENDIAN) && (__FLOAT_WORD_ORDER == __BIG_ENDIAN) || \
+    defined(FLOAT_لفظ_ترتیب) && defined(_BIG_ENDIAN) && (FLOAT_لفظ_ترتیب == _BIG_ENDIAN)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#وگرنہ_اگر !defined(__FLOAT_WORD_ORDER) && !defined(FLOAT_لفظ_ترتیب)
 /* Float word order not known, assume not a hybrid. */
-#define DUK_USE_BYTEORDER 3
-#else
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#ورنہ
 /* Byte order is big endian but cannot determine IEEE double word order. */
-#endif  /* float word order */
-#else
+#اگر_ختم  /* float word order */
+#ورنہ
 /* Cannot determine byte order. */
-#endif  /* integer byte order */
-#endif  /* !defined(DUK_USE_BYTEORDER) */
+#اگر_ختم  /* integer byte order */
+#اگر_ختم  /* !defined(DUK_USE_BYTEORDER) */
 
 /* QNX gcc cross compiler seems to define e.g. __LITTLEENDIAN__ or __BIGENDIAN__:
  *  $ /opt/qnx650/host/linux/x86/usr/bin/i486-pc-nto-qnx6.5.0-gcc -dM -E - </dev/null | grep -ni endian
@@ -2571,13 +2571,13 @@ typedef struct duk_hthread duk_context;
  *  $ /opt/qnx650/host/linux/x86/usr/bin/arm-unknown-nto-qnx6.5.0-gcc -dM -E - </dev/null | grep -ni endian
  *  70:#define __LITTLEENDIAN__ 1
  */
-#if !defined(DUK_USE_BYTEORDER)
-#if defined(__LITTLEENDIAN__)
-#define DUK_USE_BYTEORDER 1
-#elif defined(__BIGENDIAN__)
-#define DUK_USE_BYTEORDER 3
-#endif
-#endif
+#اگر !defined(DUK_USE_BYTEORDER)
+#اگر defined(__LITTLEENDIAN__)
+#تعریف_کرو DUK_USE_BYTEORDER 1
+#وگرنہ_اگر defined(__BIGENDIAN__)
+#تعریف_کرو DUK_USE_BYTEORDER 3
+#اگر_ختم
+#اگر_ختم
 
 /*
  *  Alignment requirement and support for unaligned accesses
@@ -2591,9 +2591,9 @@ typedef struct duk_hthread duk_context;
  */
 
 /* If not forced, use safe default for alignment. */
-#if !defined(DUK_USE_ALIGN_BY)
-#define DUK_USE_ALIGN_BY 8
-#endif
+#اگر !defined(DUK_USE_ALIGN_BY)
+#تعریف_کرو DUK_USE_ALIGN_BY 8
+#اگر_ختم
 
 /* Compiler specific hackery needed to force struct size to match alignment,
  * see e.g. duk_hbuffer.h.
@@ -2601,64 +2601,64 @@ typedef struct duk_hthread duk_context;
  * http://stackoverflow.com/questions/11130109/c-struct-size-alignment
  * http://stackoverflow.com/questions/10951039/specifying-64-bit-alignment
  */
-#if !(defined(DUK_USE_PACK_MSVC_PRAGMA) || defined(DUK_USE_PACK_GCC_ATTR) || \
+#اگر !(defined(DUK_USE_PACK_MSVC_PRAGMA) || defined(DUK_USE_PACK_GCC_ATTR) || \
       defined(DUK_USE_PACK_CLANG_ATTR) || defined(DUK_USE_PACK_DUMMY_MEMBER))
-#define DUK_USE_PACK_DUMMY_MEMBER
-#endif
+#تعریف_کرو DUK_USE_PACK_DUMMY_MEMBER
+#اگر_ختم
 
-#if !defined(DUK_U64_CONSTANT)
-#define DUK_U64_CONSTANT(x) x##ULL
-#endif
-#if !defined(DUK_I64_CONSTANT)
-#define DUK_I64_CONSTANT(x) x##LL
-#endif
+#اگر !defined(DUK_U64_CONSTANT)
+#تعریف_کرو DUK_U64_CONSTANT(x) x##ULL
+#اگر_ختم
+#اگر !defined(DUK_I64_CONSTANT)
+#تعریف_کرو DUK_I64_CONSTANT(x) x##LL
+#اگر_ختم
 
-#if !defined(DUK_VA_COPY)
+#اگر !defined(DUK_VA_COPY)
 /* We need va_copy() which is defined in C99 / C++11, so an awkward
  * replacement is needed for pre-C99 / pre-C++11 environments.  This
  * will quite likely need portability hacks for some non-C99
  * environments.
  */
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
 /* C99 / C++11 and above: rely on va_copy() which is required.
  * Omit parenthesis on macro right side on purpose to minimize differences
  * to direct use.
  */
-#define DUK_VA_COPY(dest,src) va_copy(dest,src)
-#else
+#تعریف_کرو DUK_VA_COPY(dest,src) va_copy(dest,src)
+#ورنہ
 /* Pre-C99: va_list type is implementation dependent.  This replacement
  * assumes it is a plain value so that a simple assignment will work.
  * This is not the case on all platforms (it may be a single-array element,
  * for instance).
  */
-#define DUK_VA_COPY(dest,src) do { (dest) = (src); } while (0)
-#endif
-#endif
+#تعریف_کرو DUK_VA_COPY(dest,src) کرو { (dest) = (src); } جب (0)
+#اگر_ختم
+#اگر_ختم
 
-#if !defined(DUK_MACRO_STRINGIFY)
+#اگر !defined(DUK_MACRO_STRINGIFY)
 /* Macro hackery to convert e.g. __LINE__ to a string without formatting,
  * see: http://stackoverflow.com/questions/240353/convert-a-preprocessor-token-to-a-string
  */
-#define DUK_MACRO_STRINGIFY_HELPER(x)  #x
-#define DUK_MACRO_STRINGIFY(x)  DUK_MACRO_STRINGIFY_HELPER(x)
-#endif
+#تعریف_کرو DUK_MACRO_STRINGIFY_HELPER(x)  #x
+#تعریف_کرو DUK_MACRO_STRINGIFY(x)  DUK_MACRO_STRINGIFY_HELPER(x)
+#اگر_ختم
 
-#if !defined(DUK_CAUSE_SEGFAULT)
+#اگر !defined(DUK_CAUSE_SEGFAULT)
 /* This can be used for testing; valgrind will then indicate the C call stack
  * leading to the call site.
  */
-#define DUK_CAUSE_SEGFAULT()  do { *((volatile duk_uint32_t *) NULL) = (duk_uint32_t) 0xdeadbeefUL; } while (0)
-#endif
+#تعریف_کرو DUK_CAUSE_SEGFAULT()  کرو { *((متلون duk_uint32_t *) تہی) = (duk_uint32_t) 0xdeadbeefUL; } جب (0)
+#اگر_ختم
 
-#if !defined(DUK_UNREF)
+#اگر !defined(DUK_UNREF)
 /* Macro for suppressing warnings for potentially unreferenced variables.
  * The variables can be actually unreferenced or unreferenced in some
  * specific cases only; for instance, if a variable is only debug printed,
  * it is unreferenced when debug printing is disabled.  May cause warnings
  * for volatile arguments.
  */
-#define DUK_UNREF(x)  do { (void) (x); } while (0)
-#endif
+#تعریف_کرو DUK_UNREF(x)  کرو { (خالی) (x); } جب (0)
+#اگر_ختم
 
 /* Fillin for DUK_NORETURN; DUK_WO_NORETURN() is used to insert dummy
  * dummy statements after noreturn calls to silence harmless compiler
@@ -2670,105 +2670,105 @@ typedef struct duk_hthread duk_context;
  * Statements inside DUK_WO_NORETURN() must NEVER be actually reachable,
  * and they're only included to satisfy the compiler.
  */
-#if defined(DUK_NORETURN)
-#define DUK_WO_NORETURN(stmt) do { } while (0)
-#else
-#define DUK_NORETURN(decl)  decl
-#define DUK_WO_NORETURN(stmt) do { stmt } while (0)
-#endif
+#اگر defined(DUK_NORETURN)
+#تعریف_کرو DUK_WO_NORETURN(stmt) کرو { } جب (0)
+#ورنہ
+#تعریف_کرو DUK_NORETURN(decl)  decl
+#تعریف_کرو DUK_WO_NORETURN(stmt) کرو { stmt } جب (0)
+#اگر_ختم
 
-#if defined(DUK_UNREACHABLE)
-#define DUK_WO_UNREACHABLE(stmt) do { } while (0)
-#else
+#اگر defined(DUK_UNREACHABLE)
+#تعریف_کرو DUK_WO_UNREACHABLE(stmt) کرو { } جب (0)
+#ورنہ
 /* Don't know how to declare unreachable point, so don't do it; this
  * may cause some spurious compilation warnings (e.g. "variable used
  * uninitialized").
  */
-#define DUK_UNREACHABLE()  do { } while (0)
-#define DUK_WO_UNREACHABLE(stmt) do { stmt } while (0)
-#endif
+#تعریف_کرو DUK_UNREACHABLE()  کرو { } جب (0)
+#تعریف_کرو DUK_WO_UNREACHABLE(stmt) کرو { stmt } جب (0)
+#اگر_ختم
 
-#if !defined(DUK_LOSE_CONST)
+#اگر !defined(DUK_LOSE_CONST)
 /* Convert any input pointer into a "void *", losing a const qualifier.
  * This is not fully portable because casting through duk_uintptr_t may
  * not work on all architectures (e.g. those with long, segmented pointers).
  */
-#define DUK_LOSE_CONST(src) ((void *) (duk_uintptr_t) (src))
-#endif
+#تعریف_کرو DUK_LOSE_CONST(src) ((خالی *) (duk_uintptr_t) (src))
+#اگر_ختم
 
-#if !defined(DUK_LIKELY)
-#define DUK_LIKELY(x)    (x)
-#endif
-#if !defined(DUK_UNLIKELY)
-#define DUK_UNLIKELY(x)  (x)
-#endif
-#if !defined(DUK_UNPREDICTABLE)
-#define DUK_UNPREDICTABLE(x)  (x)
-#endif
+#اگر !defined(DUK_LIKELY)
+#تعریف_کرو DUK_LIKELY(x)    (x)
+#اگر_ختم
+#اگر !defined(DUK_UNLIKELY)
+#تعریف_کرو DUK_UNLIKELY(x)  (x)
+#اگر_ختم
+#اگر !defined(DUK_UNPREDICTABLE)
+#تعریف_کرو DUK_UNPREDICTABLE(x)  (x)
+#اگر_ختم
 
-#if !defined(DUK_NOINLINE)
-#define DUK_NOINLINE       /*nop*/
-#endif
-#if !defined(DUK_INLINE)
-#define DUK_INLINE         /*nop*/
-#endif
-#if !defined(DUK_ALWAYS_INLINE)
-#define DUK_ALWAYS_INLINE  /*nop*/
-#endif
+#اگر !defined(DUK_NOINLINE)
+#تعریف_کرو DUK_NOINLINE       /*nop*/
+#اگر_ختم
+#اگر !defined(DUK_INLINE)
+#تعریف_کرو DUK_INLINE         /*nop*/
+#اگر_ختم
+#اگر !defined(DUK_ALWAYS_INLINE)
+#تعریف_کرو DUK_ALWAYS_INLINE  /*nop*/
+#اگر_ختم
 
-#if !defined(DUK_HOT)
-#define DUK_HOT            /*nop*/
-#endif
-#if !defined(DUK_COLD)
-#define DUK_COLD           /*nop*/
-#endif
+#اگر !defined(DUK_HOT)
+#تعریف_کرو DUK_HOT            /*nop*/
+#اگر_ختم
+#اگر !defined(DUK_COLD)
+#تعریف_کرو DUK_COLD           /*nop*/
+#اگر_ختم
 
-#if !defined(DUK_EXTERNAL_DECL)
-#define DUK_EXTERNAL_DECL  extern
-#endif
-#if !defined(DUK_EXTERNAL)
-#define DUK_EXTERNAL       /*empty*/
-#endif
-#if !defined(DUK_INTERNAL_DECL)
-#if defined(DUK_SINGLE_FILE)
-#define DUK_INTERNAL_DECL  static
-#else
-#define DUK_INTERNAL_DECL  extern
-#endif
-#endif
-#if !defined(DUK_INTERNAL)
-#if defined(DUK_SINGLE_FILE)
-#define DUK_INTERNAL       static
-#else
-#define DUK_INTERNAL       /*empty*/
-#endif
-#endif
-#if !defined(DUK_LOCAL_DECL)
-#define DUK_LOCAL_DECL     static
-#endif
-#if !defined(DUK_LOCAL)
-#define DUK_LOCAL          static
-#endif
+#اگر !defined(DUK_EXTERNAL_DECL)
+#تعریف_کرو DUK_EXTERNAL_DECL  خارجی
+#اگر_ختم
+#اگر !defined(DUK_EXTERNAL)
+#تعریف_کرو DUK_EXTERNAL       /*خالی_خانے*/
+#اگر_ختم
+#اگر !defined(DUK_اندرونی_DECL)
+#اگر defined(DUK_SINGLE_FILE)
+#تعریف_کرو DUK_اندرونی_DECL  ساکن
+#ورنہ
+#تعریف_کرو DUK_اندرونی_DECL  خارجی
+#اگر_ختم
+#اگر_ختم
+#اگر !defined(DUK_اندرونی)
+#اگر defined(DUK_SINGLE_FILE)
+#تعریف_کرو DUK_اندرونی       ساکن
+#ورنہ
+#تعریف_کرو DUK_اندرونی       /*خالی_خانے*/
+#اگر_ختم
+#اگر_ختم
+#اگر !defined(DUK_LOCAL_DECL)
+#تعریف_کرو DUK_LOCAL_DECL     ساکن
+#اگر_ختم
+#اگر !defined(DUK_LOCAL)
+#تعریف_کرو DUK_LOCAL          ساکن
+#اگر_ختم
 
-#if !defined(DUK_FILE_MACRO)
-#define DUK_FILE_MACRO  __FILE__
-#endif
-#if !defined(DUK_LINE_MACRO)
-#define DUK_LINE_MACRO  __LINE__
-#endif
-#if !defined(DUK_FUNC_MACRO)
-#if defined(DUK_F_C99) || defined(DUK_F_CPP11)
-#define DUK_FUNC_MACRO  __func__
-#elif defined(__FUNCTION__)
-#define DUK_FUNC_MACRO  __FUNCTION__
-#else
-#define DUK_FUNC_MACRO  "unknown"
-#endif
-#endif
+#اگر !defined(DUK_FILE_MACRO)
+#تعریف_کرو DUK_FILE_MACRO  __FILE__
+#اگر_ختم
+#اگر !defined(DUK_سطر_MACRO)
+#تعریف_کرو DUK_سطر_MACRO  __LINE__
+#اگر_ختم
+#اگر !defined(DUK_FUNC_MACRO)
+#اگر defined(DUK_F_C99) || defined(DUK_F_CPP11)
+#تعریف_کرو DUK_FUNC_MACRO  __func__
+#وگرنہ_اگر defined(__FUNCTION__)
+#تعریف_کرو DUK_FUNC_MACRO  __FUNCTION__
+#ورنہ
+#تعریف_کرو DUK_FUNC_MACRO  "unknown"
+#اگر_ختم
+#اگر_ختم
 
-#if defined(DUK_F_HAVE_64BIT)
-#if !defined(DUK_BSWAP64)
-#define DUK_BSWAP64(x) \
+#اگر defined(DUK_F_HAVE_64_ثنائی_ہندسہ)
+#اگر !defined(DUK_BSWAP64)
+#تعریف_کرو DUK_BSWAP64(x) \
 	((((duk_uint64_t) (x)) >> 56U) | \
 	 ((((duk_uint64_t) (x)) >> 40U) & DUK_U64_CONSTANT(0xff00)) | \
 	 ((((duk_uint64_t) (x)) >> 24U) & DUK_U64_CONSTANT(0xff0000)) | \
@@ -2777,52 +2777,52 @@ typedef struct duk_hthread duk_context;
 	 ((((duk_uint64_t) (x)) << 24U) & DUK_U64_CONSTANT(0xff0000000000)) | \
 	 ((((duk_uint64_t) (x)) << 40U) & DUK_U64_CONSTANT(0xff000000000000)) | \
 	 (((duk_uint64_t) (x)) << 56U))
-#endif
-#endif
-#if !defined(DUK_BSWAP32)
-#define DUK_BSWAP32(x) \
+#اگر_ختم
+#اگر_ختم
+#اگر !defined(DUK_BSWAP32)
+#تعریف_کرو DUK_BSWAP32(x) \
 	((((duk_uint32_t) (x)) >> 24U) | \
 	 ((((duk_uint32_t) (x)) >> 8U) & 0xff00UL) | \
 	 ((((duk_uint32_t) (x)) << 8U) & 0xff0000UL) | \
 	 (((duk_uint32_t) (x)) << 24U))
-#endif
-#if !defined(DUK_BSWAP16)
-#define DUK_BSWAP16(x) \
+#اگر_ختم
+#اگر !defined(DUK_BSWAP16)
+#تعریف_کرو DUK_BSWAP16(x) \
 	((duk_uint16_t) (x) >> 8U) | \
 	((duk_uint16_t) (x) << 8U)
-#endif
+#اگر_ختم
 
 /* DUK_USE_VARIADIC_MACROS: required from compilers, so no fill-in. */
 /* DUK_USE_UNION_INITIALIZERS: required from compilers, so no fill-in. */
 
-#if !(defined(DUK_USE_FLEX_C99) || defined(DUK_USE_FLEX_ZEROSIZE) || defined(DUK_USE_FLEX_ONESIZE))
-#if defined(DUK_F_C99)
-#define DUK_USE_FLEX_C99
-#else
-#define DUK_USE_FLEX_ZEROSIZE  /* Not standard but common enough */
-#endif
-#endif
+#اگر !(defined(DUK_USE_FLEX_C99) || defined(DUK_USE_FLEX_ZEROSIZE) || defined(DUK_USE_FLEX_ONESIZE))
+#اگر defined(DUK_F_C99)
+#تعریف_کرو DUK_USE_FLEX_C99
+#ورنہ
+#تعریف_کرو DUK_USE_FLEX_ZEROSIZE  /* Not standard but common enough */
+#اگر_ختم
+#اگر_ختم
 
-#if !(defined(DUK_USE_PACK_GCC_ATTR) || defined(DUK_USE_PACK_CLANG_ATTR) || \
+#اگر !(defined(DUK_USE_PACK_GCC_ATTR) || defined(DUK_USE_PACK_CLANG_ATTR) || \
       defined(DUK_USE_PACK_MSVC_PRAGMA) || defined(DUK_USE_PACK_DUMMY_MEMBER))
-#define DUK_USE_PACK_DUMMY_MEMBER
-#endif
+#تعریف_کرو DUK_USE_PACK_DUMMY_MEMBER
+#اگر_ختم
 
-#if 0  /* not defined by default */
-#undef DUK_USE_GCC_PRAGMAS
-#endif
+#اگر 0  /* not defined by default */
+#تعریف_منسوخ DUK_USE_GCC_PRAGMAS
+#اگر_ختم
 
 /* Workaround for GH-323: avoid inlining control when compiling from
  * multiple sources, as it causes compiler portability trouble.
  */
-#if !defined(DUK_SINGLE_FILE)
-#undef DUK_NOINLINE
-#undef DUK_INLINE
-#undef DUK_ALWAYS_INLINE
-#define DUK_NOINLINE       /*nop*/
-#define DUK_INLINE         /*nop*/
-#define DUK_ALWAYS_INLINE  /*nop*/
-#endif
+#اگر !defined(DUK_SINGLE_FILE)
+#تعریف_منسوخ DUK_NOINLINE
+#تعریف_منسوخ DUK_INLINE
+#تعریف_منسوخ DUK_ALWAYS_INLINE
+#تعریف_کرو DUK_NOINLINE       /*nop*/
+#تعریف_کرو DUK_INLINE         /*nop*/
+#تعریف_کرو DUK_ALWAYS_INLINE  /*nop*/
+#اگر_ختم
 
 /*
  *  Check whether or not a packed duk_tval representation is possible.
@@ -2833,267 +2833,267 @@ typedef struct duk_hthread duk_context;
  */
 
 /* Explicit marker needed; may be 'defined', 'undefined, 'or 'not provided'. */
-#if !defined(DUK_F_PACKED_TVAL_PROVIDED)
-#undef DUK_F_PACKED_TVAL_POSSIBLE
+#اگر !defined(DUK_F_PACKED_TVAL_PROVIDED)
+#تعریف_منسوخ DUK_F_PACKED_TVAL_POSSIBLE
 
 /* Strict C99 case: DUK_UINTPTR_MAX (= UINTPTR_MAX) should be very reliable */
-#if !defined(DUK_F_PACKED_TVAL_POSSIBLE) && defined(DUK_UINTPTR_MAX)
-#if (DUK_UINTPTR_MAX <= 0xffffffffUL)
-#define DUK_F_PACKED_TVAL_POSSIBLE
-#endif
-#endif
+#اگر !defined(DUK_F_PACKED_TVAL_POSSIBLE) && defined(DUK_UINTPTR_MAX)
+#اگر (DUK_UINTPTR_MAX <= 0xffffffffUL)
+#تعریف_کرو DUK_F_PACKED_TVAL_POSSIBLE
+#اگر_ختم
+#اگر_ختم
 
 /* Non-C99 case, still relying on DUK_UINTPTR_MAX, as long as it is not a computed value */
-#if !defined(DUK_F_PACKED_TVAL_POSSIBLE) && defined(DUK_UINTPTR_MAX) && !defined(DUK_UINTPTR_MAX_COMPUTED)
-#if (DUK_UINTPTR_MAX <= 0xffffffffUL)
-#define DUK_F_PACKED_TVAL_POSSIBLE
-#endif
-#endif
+#اگر !defined(DUK_F_PACKED_TVAL_POSSIBLE) && defined(DUK_UINTPTR_MAX) && !defined(DUK_UINTPTR_MAX_COMPUTED)
+#اگر (DUK_UINTPTR_MAX <= 0xffffffffUL)
+#تعریف_کرو DUK_F_PACKED_TVAL_POSSIBLE
+#اگر_ختم
+#اگر_ختم
 
 /* DUK_SIZE_MAX (= SIZE_MAX) is often reliable */
-#if !defined(DUK_F_PACKED_TVAL_POSSIBLE) && defined(DUK_SIZE_MAX) && !defined(DUK_SIZE_MAX_COMPUTED)
-#if (DUK_SIZE_MAX <= 0xffffffffUL)
-#define DUK_F_PACKED_TVAL_POSSIBLE
-#endif
-#endif
+#اگر !defined(DUK_F_PACKED_TVAL_POSSIBLE) && defined(DUK_سائز_MAX) && !defined(DUK_سائز_MAX_COMPUTED)
+#اگر (DUK_سائز_MAX <= 0xffffffffUL)
+#تعریف_کرو DUK_F_PACKED_TVAL_POSSIBLE
+#اگر_ختم
+#اگر_ختم
 
-#undef DUK_USE_PACKED_TVAL
-#if defined(DUK_F_PACKED_TVAL_POSSIBLE)
-#define DUK_USE_PACKED_TVAL
-#endif
-#undef DUK_F_PACKED_TVAL_POSSIBLE
+#تعریف_منسوخ DUK_USE_PACKED_TVAL
+#اگر defined(DUK_F_PACKED_TVAL_POSSIBLE)
+#تعریف_کرو DUK_USE_PACKED_TVAL
+#اگر_ختم
+#تعریف_منسوخ DUK_F_PACKED_TVAL_POSSIBLE
 
-#endif  /* DUK_F_PACKED_TVAL_PROVIDED */
+#اگر_ختم  /* DUK_F_PACKED_TVAL_PROVIDED */
 /* Object property allocation layout has implications for memory and code
  * footprint and generated code size/speed.  The best layout also depends
  * on whether the platform has alignment requirements or benefits from
  * having mostly aligned accesses.
  */
-#undef DUK_USE_HOBJECT_LAYOUT_1
-#undef DUK_USE_HOBJECT_LAYOUT_2
-#undef DUK_USE_HOBJECT_LAYOUT_3
-#if (DUK_USE_ALIGN_BY == 1)
+#تعریف_منسوخ DUK_USE_HOBJECT_LAYOUT_1
+#تعریف_منسوخ DUK_USE_HOBJECT_LAYOUT_2
+#تعریف_منسوخ DUK_USE_HOBJECT_LAYOUT_3
+#اگر (DUK_USE_ALIGN_BY == 1)
 /* On platforms without any alignment issues, layout 1 is preferable
  * because it compiles to slightly less code and provides direct access
  * to property keys.
  */
-#define DUK_USE_HOBJECT_LAYOUT_1
-#else
+#تعریف_کرو DUK_USE_HOBJECT_LAYOUT_1
+#ورنہ
 /* On other platforms use layout 2, which requires some padding but
  * is a bit more natural than layout 3 in ordering the entries.  Layout
  * 3 is currently not used.
  */
-#define DUK_USE_HOBJECT_LAYOUT_2
-#endif
+#تعریف_کرو DUK_USE_HOBJECT_LAYOUT_2
+#اگر_ختم
 
 /* GCC/clang inaccurate math would break compliance and probably duk_tval,
  * so refuse to compile.  Relax this if -ffast-math is tested to work.
  */
-#if defined(__FAST_MATH__)
-#error __FAST_MATH__ defined, refusing to compile
-#endif
+#اگر defined(__FAST_MATH__)
+#غلطی __FAST_MATH__ defined, refusing مقصد compile
+#اگر_ختم
 
 /*
  *  Autogenerated defaults
  */
 
-#undef DUK_USE_ALLOW_UNDEFINED_BEHAVIOR
-#define DUK_USE_ARRAY_BUILTIN
-#define DUK_USE_ARRAY_FASTPATH
-#define DUK_USE_ARRAY_PROP_FASTPATH
-#undef DUK_USE_ASSERTIONS
-#define DUK_USE_AUGMENT_ERROR_CREATE
-#define DUK_USE_AUGMENT_ERROR_THROW
-#define DUK_USE_AVOID_PLATFORM_FUNCPTRS
-#define DUK_USE_BASE64_FASTPATH
-#define DUK_USE_BASE64_SUPPORT
-#define DUK_USE_BOOLEAN_BUILTIN
-#define DUK_USE_BUFFEROBJECT_SUPPORT
-#undef DUK_USE_BUFLEN16
-#define DUK_USE_BYTECODE_DUMP_SUPPORT
-#define DUK_USE_CACHE_ACTIVATION
-#define DUK_USE_CACHE_CATCHER
-#define DUK_USE_CALLSTACK_LIMIT 10000
-#define DUK_USE_CBOR_BUILTIN
-#define DUK_USE_CBOR_DEC_RECLIMIT 1000
-#define DUK_USE_CBOR_ENC_RECLIMIT 1000
-#define DUK_USE_CBOR_SUPPORT
-#define DUK_USE_COMPILER_RECLIMIT 2500
-#define DUK_USE_COROUTINE_SUPPORT
-#undef DUK_USE_CPP_EXCEPTIONS
-#undef DUK_USE_DATAPTR16
-#undef DUK_USE_DATAPTR_DEC16
-#undef DUK_USE_DATAPTR_ENC16
-#define DUK_USE_DATE_BUILTIN
-#undef DUK_USE_DATE_FORMAT_STRING
-#undef DUK_USE_DATE_GET_LOCAL_TZOFFSET
-#undef DUK_USE_DATE_GET_NOW
-#undef DUK_USE_DATE_PARSE_STRING
-#undef DUK_USE_DATE_PRS_GETDATE
-#undef DUK_USE_DEBUG
-#undef DUK_USE_DEBUGGER_DUMPHEAP
-#undef DUK_USE_DEBUGGER_INSPECT
-#undef DUK_USE_DEBUGGER_PAUSE_UNCAUGHT
-#undef DUK_USE_DEBUGGER_SUPPORT
-#define DUK_USE_DEBUGGER_THROW_NOTIFY
-#undef DUK_USE_DEBUGGER_TRANSPORT_TORTURE
-#define DUK_USE_DEBUG_BUFSIZE 65536L
-#define DUK_USE_DEBUG_LEVEL 0
-#undef DUK_USE_DEBUG_WRITE
-#define DUK_USE_DOUBLE_LINKED_HEAP
-#define DUK_USE_DUKTAPE_BUILTIN
-#define DUK_USE_ENCODING_BUILTINS
-#define DUK_USE_ERRCREATE
-#define DUK_USE_ERRTHROW
-#define DUK_USE_ES6
-#define DUK_USE_ES6_OBJECT_PROTO_PROPERTY
-#define DUK_USE_ES6_OBJECT_SETPROTOTYPEOF
-#define DUK_USE_ES6_PROXY
-#define DUK_USE_ES6_REGEXP_SYNTAX
-#define DUK_USE_ES6_UNICODE_ESCAPE
-#define DUK_USE_ES7
-#define DUK_USE_ES7_EXP_OPERATOR
-#define DUK_USE_ES8
-#define DUK_USE_ES9
-#define DUK_USE_ESBC_LIMITS
-#define DUK_USE_ESBC_MAX_BYTES 2147418112L
-#define DUK_USE_ESBC_MAX_LINENUMBER 2147418112L
-#undef DUK_USE_EXEC_FUN_LOCAL
-#undef DUK_USE_EXEC_INDIRECT_BOUND_CHECK
-#undef DUK_USE_EXEC_PREFER_SIZE
-#define DUK_USE_EXEC_REGCONST_OPTIMIZE
-#undef DUK_USE_EXEC_TIMEOUT_CHECK
-#undef DUK_USE_EXPLICIT_NULL_INIT
-#undef DUK_USE_EXTSTR_FREE
-#undef DUK_USE_EXTSTR_INTERN_CHECK
-#undef DUK_USE_FASTINT
-#define DUK_USE_FAST_REFCOUNT_DEFAULT
-#undef DUK_USE_FATAL_HANDLER
-#define DUK_USE_FATAL_MAXLEN 128
-#define DUK_USE_FINALIZER_SUPPORT
-#undef DUK_USE_FINALIZER_TORTURE
-#undef DUK_USE_FUNCPTR16
-#undef DUK_USE_FUNCPTR_DEC16
-#undef DUK_USE_FUNCPTR_ENC16
-#define DUK_USE_FUNCTION_BUILTIN
-#define DUK_USE_FUNC_FILENAME_PROPERTY
-#define DUK_USE_FUNC_NAME_PROPERTY
-#undef DUK_USE_GC_TORTURE
-#undef DUK_USE_GET_MONOTONIC_TIME
-#undef DUK_USE_GET_RANDOM_DOUBLE
-#define DUK_USE_GLOBAL_BINDING
-#define DUK_USE_GLOBAL_BUILTIN
-#undef DUK_USE_HEAPPTR16
-#undef DUK_USE_HEAPPTR_DEC16
-#undef DUK_USE_HEAPPTR_ENC16
-#define DUK_USE_HEX_FASTPATH
-#define DUK_USE_HEX_SUPPORT
-#define DUK_USE_HOBJECT_ARRAY_ABANDON_LIMIT 2
-#define DUK_USE_HOBJECT_ARRAY_ABANDON_MINSIZE 257
-#define DUK_USE_HOBJECT_ARRAY_FAST_RESIZE_LIMIT 9
-#define DUK_USE_HOBJECT_ARRAY_MINGROW_ADD 16
-#define DUK_USE_HOBJECT_ARRAY_MINGROW_DIVISOR 8
-#define DUK_USE_HOBJECT_ENTRY_MINGROW_ADD 16
-#define DUK_USE_HOBJECT_ENTRY_MINGROW_DIVISOR 8
-#define DUK_USE_HOBJECT_HASH_PART
-#define DUK_USE_HOBJECT_HASH_PROP_LIMIT 8
-#define DUK_USE_HSTRING_ARRIDX
-#define DUK_USE_HSTRING_CLEN
-#undef DUK_USE_HSTRING_EXTDATA
-#define DUK_USE_HSTRING_LAZY_CLEN
-#define DUK_USE_HTML_COMMENTS
-#define DUK_USE_IDCHAR_FASTPATH
-#undef DUK_USE_INJECT_HEAP_ALLOC_ERROR
-#undef DUK_USE_INTERRUPT_COUNTER
-#undef DUK_USE_INTERRUPT_DEBUG_FIXUP
-#define DUK_USE_JC
-#define DUK_USE_JSON_BUILTIN
-#define DUK_USE_JSON_DECNUMBER_FASTPATH
-#define DUK_USE_JSON_DECSTRING_FASTPATH
-#define DUK_USE_JSON_DEC_RECLIMIT 1000
-#define DUK_USE_JSON_EATWHITE_FASTPATH
-#define DUK_USE_JSON_ENC_RECLIMIT 1000
-#define DUK_USE_JSON_QUOTESTRING_FASTPATH
-#undef DUK_USE_JSON_STRINGIFY_FASTPATH
-#define DUK_USE_JSON_SUPPORT
-#define DUK_USE_JX
-#define DUK_USE_LEXER_SLIDING_WINDOW
-#undef DUK_USE_LIGHTFUNC_BUILTINS
-#define DUK_USE_LITCACHE_SIZE 256
-#define DUK_USE_MARK_AND_SWEEP_RECLIMIT 256
-#define DUK_USE_MATH_BUILTIN
-#define DUK_USE_NATIVE_CALL_RECLIMIT 1000
-#undef DUK_USE_NATIVE_STACK_CHECK
-#define DUK_USE_NONSTD_ARRAY_SPLICE_DELCOUNT
-#undef DUK_USE_NONSTD_FUNC_CALLER_PROPERTY
-#undef DUK_USE_NONSTD_FUNC_SOURCE_PROPERTY
-#define DUK_USE_NONSTD_FUNC_STMT
-#define DUK_USE_NONSTD_GETTER_KEY_ARGUMENT
-#define DUK_USE_NONSTD_JSON_ESC_U2028_U2029
-#define DUK_USE_NONSTD_SETTER_KEY_ARGUMENT
-#define DUK_USE_NONSTD_STRING_FROMCHARCODE_32BIT
-#define DUK_USE_NUMBER_BUILTIN
-#define DUK_USE_OBJECT_BUILTIN
-#undef DUK_USE_OBJSIZES16
-#undef DUK_USE_PARANOID_ERRORS
-#define DUK_USE_PC2LINE
-#define DUK_USE_PERFORMANCE_BUILTIN
-#undef DUK_USE_PREFER_SIZE
-#undef DUK_USE_PROMISE_BUILTIN
-#define DUK_USE_PROVIDE_DEFAULT_ALLOC_FUNCTIONS
-#undef DUK_USE_REFCOUNT16
-#define DUK_USE_REFCOUNT32
-#define DUK_USE_REFERENCE_COUNTING
-#define DUK_USE_REFLECT_BUILTIN
-#define DUK_USE_REGEXP_CANON_BITMAP
-#undef DUK_USE_REGEXP_CANON_WORKAROUND
-#define DUK_USE_REGEXP_COMPILER_RECLIMIT 10000
-#define DUK_USE_REGEXP_EXECUTOR_RECLIMIT 10000
-#define DUK_USE_REGEXP_SUPPORT
-#undef DUK_USE_ROM_GLOBAL_CLONE
-#undef DUK_USE_ROM_GLOBAL_INHERIT
-#undef DUK_USE_ROM_OBJECTS
-#define DUK_USE_ROM_PTRCOMP_FIRST 63488L
-#undef DUK_USE_ROM_STRINGS
-#define DUK_USE_SECTION_B
-#undef DUK_USE_SELF_TESTS
-#define DUK_USE_SHEBANG_COMMENTS
-#undef DUK_USE_SHUFFLE_TORTURE
-#define DUK_USE_SOURCE_NONBMP
-#undef DUK_USE_STRHASH16
-#undef DUK_USE_STRHASH_DENSE
-#define DUK_USE_STRHASH_SKIP_SHIFT 5
-#define DUK_USE_STRICT_DECL
-#undef DUK_USE_STRICT_UTF8_SOURCE
-#define DUK_USE_STRING_BUILTIN
-#undef DUK_USE_STRLEN16
-#define DUK_USE_STRTAB_GROW_LIMIT 17
-#define DUK_USE_STRTAB_MAXSIZE 268435456L
-#define DUK_USE_STRTAB_MINSIZE 1024
-#undef DUK_USE_STRTAB_PTRCOMP
-#define DUK_USE_STRTAB_RESIZE_CHECK_MASK 255
-#define DUK_USE_STRTAB_SHRINK_LIMIT 6
-#undef DUK_USE_STRTAB_TORTURE
-#define DUK_USE_SYMBOL_BUILTIN
-#define DUK_USE_TAILCALL
-#define DUK_USE_TARGET_INFO "unknown"
-#define DUK_USE_TRACEBACKS
-#define DUK_USE_TRACEBACK_DEPTH 10
-#define DUK_USE_VALSTACK_GROW_SHIFT 2
-#define DUK_USE_VALSTACK_LIMIT 1000000L
-#define DUK_USE_VALSTACK_SHRINK_CHECK_SHIFT 2
-#define DUK_USE_VALSTACK_SHRINK_SLACK_SHIFT 4
-#undef DUK_USE_VALSTACK_UNSAFE
-#define DUK_USE_VERBOSE_ERRORS
-#define DUK_USE_VERBOSE_EXECUTOR_ERRORS
-#define DUK_USE_VOLUNTARY_GC
-#define DUK_USE_ZERO_BUFFER_DATA
+#تعریف_منسوخ DUK_USE_ALLOW_UNDEFINED_BEHAVIOR
+#تعریف_کرو DUK_USE_ARRAY_BUILTIN
+#تعریف_کرو DUK_USE_ARRAY_FASTPATH
+#تعریف_کرو DUK_USE_ARRAY_PROP_FASTPATH
+#تعریف_منسوخ DUK_USE_ASSERTIONS
+#تعریف_کرو DUK_USE_AUGMENT_ERROR_CREATE
+#تعریف_کرو DUK_USE_AUGMENT_ERROR_THROW
+#تعریف_کرو DUK_USE_AVOID_PLATFORM_FUNCPTRS
+#تعریف_کرو DUK_USE_BASE64_FASTPATH
+#تعریف_کرو DUK_USE_BASE64_SUPPORT
+#تعریف_کرو DUK_USE_BOOLEAN_BUILTIN
+#تعریف_کرو DUK_USE_BUFFEROBJECT_SUPPORT
+#تعریف_منسوخ DUK_USE_BUFLEN16
+#تعریف_کرو DUK_USE_BYTECODE_DUMP_SUPPORT
+#تعریف_کرو DUK_USE_CACHE_ACTIVATION
+#تعریف_کرو DUK_USE_CACHE_CATCHER
+#تعریف_کرو DUK_USE_CALLSTACK_حد_بندی 10000
+#تعریف_کرو DUK_USE_CBOR_BUILTIN
+#تعریف_کرو DUK_USE_CBOR_DEC_RECLIMIT 1000
+#تعریف_کرو DUK_USE_CBOR_ENC_RECLIMIT 1000
+#تعریف_کرو DUK_USE_CBOR_SUPPORT
+#تعریف_کرو DUK_USE_COMPILER_RECLIMIT 2500
+#تعریف_کرو DUK_USE_COROUTINE_SUPPORT
+#تعریف_منسوخ DUK_USE_CPP_EXCEPTIONS
+#تعریف_منسوخ DUK_USE_DATAPTR16
+#تعریف_منسوخ DUK_USE_DATAPTR_DEC16
+#تعریف_منسوخ DUK_USE_DATAPTR_ENC16
+#تعریف_کرو DUK_USE_DATE_BUILTIN
+#تعریف_منسوخ DUK_USE_DATE_FORMAT_STRING
+#تعریف_منسوخ DUK_USE_DATE_GET_LOCAL_TZOFFSET
+#تعریف_منسوخ DUK_USE_DATE_GET_NOW
+#تعریف_منسوخ DUK_USE_DATE_PARSE_STRING
+#تعریف_منسوخ DUK_USE_DATE_PRS_GETDATE
+#تعریف_منسوخ DUK_USE_DEBUG
+#تعریف_منسوخ DUK_USE_DEBUGGER_DUMPHEAP
+#تعریف_منسوخ DUK_USE_DEBUGGER_INSPECT
+#تعریف_منسوخ DUK_USE_DEBUGGER_PAUSE_UNCAUGHT
+#تعریف_منسوخ DUK_USE_DEBUGGER_SUPPORT
+#تعریف_کرو DUK_USE_DEBUGGER_THROW_NOTIFY
+#تعریف_منسوخ DUK_USE_DEBUGGER_TRANSPORT_TORTURE
+#تعریف_کرو DUK_USE_DEBUG_BUFSIZE 65536L
+#تعریف_کرو DUK_USE_DEBUG_LEVEL 0
+#تعریف_منسوخ DUK_USE_DEBUG_WRITE
+#تعریف_کرو DUK_USE_DOUBLE_LINKED_ڈھیر
+#تعریف_کرو DUK_USE_DUKTAPE_BUILTIN
+#تعریف_کرو DUK_USE_ENCODING_BUILTINS
+#تعریف_کرو DUK_USE_ERRCREATE
+#تعریف_کرو DUK_USE_ERRTHROW
+#تعریف_کرو DUK_USE_ES6
+#تعریف_کرو DUK_USE_ES6_OBJECT_PROTO_PROPERTY
+#تعریف_کرو DUK_USE_ES6_OBJECT_SETPROTOTYPEOF
+#تعریف_کرو DUK_USE_ES6_PROXY
+#تعریف_کرو DUK_USE_ES6_REGEXP_SYNTAX
+#تعریف_کرو DUK_USE_ES6_UNICODE_ESCAPE
+#تعریف_کرو DUK_USE_ES7
+#تعریف_کرو DUK_USE_ES7_EXP_OPERATOR
+#تعریف_کرو DUK_USE_ES8
+#تعریف_کرو DUK_USE_ES9
+#تعریف_کرو DUK_USE_ESBC_LIMITS
+#تعریف_کرو DUK_USE_ESBC_MAX_بائٹیں 2147418112L
+#تعریف_کرو DUK_USE_ESBC_MAX_LINENUMBER 2147418112L
+#تعریف_منسوخ DUK_USE_EXEC_FUN_LOCAL
+#تعریف_منسوخ DUK_USE_EXEC_بالواسطہ_BOUND_CHECK
+#تعریف_منسوخ DUK_USE_EXEC_PREFER_سائز
+#تعریف_کرو DUK_USE_EXEC_REGCONST_OPTIMIZE
+#تعریف_منسوخ DUK_USE_EXEC_TIMEOUT_CHECK
+#تعریف_منسوخ DUK_USE_EXPLICIT_NULL_INIT
+#تعریف_منسوخ DUK_USE_EXTSTR_FREE
+#تعریف_منسوخ DUK_USE_EXTSTR_INTERN_CHECK
+#تعریف_منسوخ DUK_USE_FASTINT
+#تعریف_کرو DUK_USE_FAST_REFCOUNT_DEFAULT
+#تعریف_منسوخ DUK_USE_FATAL_HANDLER
+#تعریف_کرو DUK_USE_FATAL_MAXLEN 128
+#تعریف_کرو DUK_USE_FINALIZER_SUPPORT
+#تعریف_منسوخ DUK_USE_FINALIZER_TORTURE
+#تعریف_منسوخ DUK_USE_FUNCPTR16
+#تعریف_منسوخ DUK_USE_FUNCPTR_DEC16
+#تعریف_منسوخ DUK_USE_FUNCPTR_ENC16
+#تعریف_کرو DUK_USE_FUNCTION_BUILTIN
+#تعریف_کرو DUK_USE_FUNC_FILENAME_PROPERTY
+#تعریف_کرو DUK_USE_FUNC_NAME_PROPERTY
+#تعریف_منسوخ DUK_USE_GC_TORTURE
+#تعریف_منسوخ DUK_USE_GET_MONOTONIC_وقت
+#تعریف_منسوخ DUK_USE_GET_RANDOM_DOUBLE
+#تعریف_کرو DUK_USE_GLOBAL_BINDING
+#تعریف_کرو DUK_USE_GLOBAL_BUILTIN
+#تعریف_منسوخ DUK_USE_HEAPPTR16
+#تعریف_منسوخ DUK_USE_HEAPPTR_DEC16
+#تعریف_منسوخ DUK_USE_HEAPPTR_ENC16
+#تعریف_کرو DUK_USE_HEX_FASTPATH
+#تعریف_کرو DUK_USE_HEX_SUPPORT
+#تعریف_کرو DUK_USE_HOBJECT_ARRAY_ABANDON_حد_بندی 2
+#تعریف_کرو DUK_USE_HOBJECT_ARRAY_ABANDON_MINSIZE 257
+#تعریف_کرو DUK_USE_HOBJECT_ARRAY_FAST_RESIZE_حد_بندی 9
+#تعریف_کرو DUK_USE_HOBJECT_ARRAY_MINGROW_جوڑو 16
+#تعریف_کرو DUK_USE_HOBJECT_ARRAY_MINGROW_مقسوم_علیہ 8
+#تعریف_کرو DUK_USE_HOBJECT_اندراج_MINGROW_جوڑو 16
+#تعریف_کرو DUK_USE_HOBJECT_اندراج_MINGROW_مقسوم_علیہ 8
+#تعریف_کرو DUK_USE_HOBJECT_HASH_PART
+#تعریف_کرو DUK_USE_HOBJECT_HASH_PROP_حد_بندی 8
+#تعریف_کرو DUK_USE_HSTRING_ARRIDX
+#تعریف_کرو DUK_USE_HSTRING_CLEN
+#تعریف_منسوخ DUK_USE_HSTRING_EXTDATA
+#تعریف_کرو DUK_USE_HSTRING_LAZY_CLEN
+#تعریف_کرو DUK_USE_HTML_COMMENTS
+#تعریف_کرو DUK_USE_IDCHAR_FASTPATH
+#تعریف_منسوخ DUK_USE_INJECT_ڈھیر_ALLOC_ERROR
+#تعریف_منسوخ DUK_USE_مداخلت_شمار
+#تعریف_منسوخ DUK_USE_مداخلت_DEBUG_FIXUP
+#تعریف_کرو DUK_USE_JC
+#تعریف_کرو DUK_USE_JSON_BUILTIN
+#تعریف_کرو DUK_USE_JSON_DECNUMBER_FASTPATH
+#تعریف_کرو DUK_USE_JSON_DECSTRING_FASTPATH
+#تعریف_کرو DUK_USE_JSON_DEC_RECLIMIT 1000
+#تعریف_کرو DUK_USE_JSON_EATWHITE_FASTPATH
+#تعریف_کرو DUK_USE_JSON_ENC_RECLIMIT 1000
+#تعریف_کرو DUK_USE_JSON_QUOTESTRING_FASTPATH
+#تعریف_منسوخ DUK_USE_JSON_STRINGIFY_FASTPATH
+#تعریف_کرو DUK_USE_JSON_SUPPORT
+#تعریف_کرو DUK_USE_JX
+#تعریف_کرو DUK_USE_LEXER_SLIDING_کھڑکی
+#تعریف_منسوخ DUK_USE_LIGHTFUNC_BUILTINS
+#تعریف_کرو DUK_USE_LITCACHE_سائز 256
+#تعریف_کرو DUK_USE_MARK_AND_SWEEP_RECLIMIT 256
+#تعریف_کرو DUK_USE_MATH_BUILTIN
+#تعریف_کرو DUK_USE_NATIVE_CALL_RECLIMIT 1000
+#تعریف_منسوخ DUK_USE_NATIVE_ڈھیر_CHECK
+#تعریف_کرو DUK_USE_NONSTD_ARRAY_SPLICE_DELCOUNT
+#تعریف_منسوخ DUK_USE_NONSTD_FUNC_CALLER_PROPERTY
+#تعریف_منسوخ DUK_USE_NONSTD_FUNC_ماخذ_PROPERTY
+#تعریف_کرو DUK_USE_NONSTD_FUNC_STMT
+#تعریف_کرو DUK_USE_NONSTD_GETTER_کلید_دلیل
+#تعریف_کرو DUK_USE_NONSTD_JSON_ESC_U2028_U2029
+#تعریف_کرو DUK_USE_NONSTD_SETTER_کلید_دلیل
+#تعریف_کرو DUK_USE_NONSTD_STRING_FROMCHARCODE_32_ثنائی_ہندسہ
+#تعریف_کرو DUK_USE_نمبر_BUILTIN
+#تعریف_کرو DUK_USE_OBJECT_BUILTIN
+#تعریف_منسوخ DUK_USE_OBJSIZES16
+#تعریف_منسوخ DUK_USE_PARANOID_ERRORS
+#تعریف_کرو DUK_USE_PC2_سطر
+#تعریف_کرو DUK_USE_PERFORMANCE_BUILTIN
+#تعریف_منسوخ DUK_USE_PREFER_سائز
+#تعریف_منسوخ DUK_USE_PROMISE_BUILTIN
+#تعریف_کرو DUK_USE_PROVIDE_DEFAULT_ALLOC_FUNCTIONS
+#تعریف_منسوخ DUK_USE_REFCOUNT16
+#تعریف_کرو DUK_USE_REFCOUNT32
+#تعریف_کرو DUK_USE_REFERENCE_COUNTING
+#تعریف_کرو DUK_USE_REFLECT_BUILTIN
+#تعریف_کرو DUK_USE_REGEXP_CANON_BITMAP
+#تعریف_منسوخ DUK_USE_REGEXP_CANON_WORKAROUND
+#تعریف_کرو DUK_USE_REGEXP_COMPILER_RECLIMIT 10000
+#تعریف_کرو DUK_USE_REGEXP_EXECUTOR_RECLIMIT 10000
+#تعریف_کرو DUK_USE_REGEXP_SUPPORT
+#تعریف_منسوخ DUK_USE_ROM_GLOBAL_CLONE
+#تعریف_منسوخ DUK_USE_ROM_GLOBAL_INHERIT
+#تعریف_منسوخ DUK_USE_ROM_OBJECTS
+#تعریف_کرو DUK_USE_ROM_PTRCOMP_پہلا 63488L
+#تعریف_منسوخ DUK_USE_ROM_لڑیاں
+#تعریف_کرو DUK_USE_SECTION_B
+#تعریف_منسوخ DUK_USE_SELF_TESTS
+#تعریف_کرو DUK_USE_SHEBANG_COMMENTS
+#تعریف_منسوخ DUK_USE_SHUFFLE_TORTURE
+#تعریف_کرو DUK_USE_ماخذ_NONBMP
+#تعریف_منسوخ DUK_USE_STRHASH16
+#تعریف_منسوخ DUK_USE_STRHASH_DENSE
+#تعریف_کرو DUK_USE_STRHASH_SKIP_سرکاؤ 5
+#تعریف_کرو DUK_USE_STRICT_DECL
+#تعریف_منسوخ DUK_USE_STRICT_UTF8_ماخذ
+#تعریف_کرو DUK_USE_STRING_BUILTIN
+#تعریف_منسوخ DUK_USE_STRLEN16
+#تعریف_کرو DUK_USE_STRTAB_GROW_حد_بندی 17
+#تعریف_کرو DUK_USE_STRTAB_MAXSIZE 268435456L
+#تعریف_کرو DUK_USE_STRTAB_MINSIZE 1024
+#تعریف_منسوخ DUK_USE_STRTAB_PTRCOMP
+#تعریف_کرو DUK_USE_STRTAB_RESIZE_CHECK_نقاب 255
+#تعریف_کرو DUK_USE_STRTAB_SHRINK_حد_بندی 6
+#تعریف_منسوخ DUK_USE_STRTAB_TORTURE
+#تعریف_کرو DUK_USE_علامت_BUILTIN
+#تعریف_کرو DUK_USE_TAILCALL
+#تعریف_کرو DUK_USE_ہدف_INFO "unknown"
+#تعریف_کرو DUK_USE_TRACEBACKS
+#تعریف_کرو DUK_USE_TRACEBACK_گہرائی 10
+#تعریف_کرو DUK_USE_VALSTACK_GROW_سرکاؤ 2
+#تعریف_کرو DUK_USE_VALSTACK_حد_بندی 1000000L
+#تعریف_کرو DUK_USE_VALSTACK_SHRINK_CHECK_سرکاؤ 2
+#تعریف_کرو DUK_USE_VALSTACK_SHRINK_SLACK_سرکاؤ 4
+#تعریف_منسوخ DUK_USE_VALSTACK_UNSAFE
+#تعریف_کرو DUK_USE_VERBOSE_ERRORS
+#تعریف_کرو DUK_USE_VERBOSE_EXECUTOR_ERRORS
+#تعریف_کرو DUK_USE_VOLUNTARY_GC
+#تعریف_کرو DUK_USE_ZERO_بفر_ڈیٹا
 
 /*
  *  Fixups
  */
 
-#include "duk_custom.h"
+#شامل "duk_custom.h"
 
 /*
  *  You may add overriding #define/#undef directives below for
@@ -3107,10 +3107,10 @@ typedef struct duk_hthread duk_context;
  *  Conditional includes
  */
 
-#if defined(DUK_F_CPP) && defined(DUK_USE_CPP_EXCEPTIONS)
-#include <exception>  /* std::exception */
-#include <stdexcept>  /* std::runtime_error */
-#endif
+#اگر defined(DUK_F_CPP) && defined(DUK_USE_CPP_EXCEPTIONS)
+#شامل <exception>  /* std::exception */
+#شامل <stdexcept>  /* std::runtime_error */
+#اگر_ختم
 
 /*
  *  Date provider selection
@@ -3120,85 +3120,85 @@ typedef struct duk_hthread duk_context;
  *  behavior and use Unix/Windows built-in provider.
  */
 
-#if defined(DUK_COMPILING_DUKTAPE)
+#اگر defined(DUK_COMPILING_DUKTAPE)
 
-#if defined(DUK_USE_DATE_GET_NOW)
+#اگر defined(DUK_USE_DATE_GET_NOW)
 /* External provider already defined. */
-#elif defined(DUK_USE_DATE_NOW_GETTIMEOFDAY)
-#define DUK_USE_DATE_GET_NOW(ctx)            duk_bi_date_get_now_gettimeofday()
-#elif defined(DUK_USE_DATE_NOW_TIME)
-#define DUK_USE_DATE_GET_NOW(ctx)            duk_bi_date_get_now_time()
-#elif defined(DUK_USE_DATE_NOW_WINDOWS)
-#define DUK_USE_DATE_GET_NOW(ctx)            duk_bi_date_get_now_windows()
-#elif defined(DUK_USE_DATE_NOW_WINDOWS_SUBMS)
-#define DUK_USE_DATE_GET_NOW(ctx)            duk_bi_date_get_now_windows_subms()
-#else
-#error no provider for DUK_USE_DATE_GET_NOW()
-#endif
+#وگرنہ_اگر defined(DUK_USE_DATE_NOW_GETTIMEOFDAY)
+#تعریف_کرو DUK_USE_DATE_GET_NOW(ctx)            duk_bi_date_get_now_gettimeofday()
+#وگرنہ_اگر defined(DUK_USE_DATE_NOW_وقت)
+#تعریف_کرو DUK_USE_DATE_GET_NOW(ctx)            duk_bi_date_get_now_وقت()
+#وگرنہ_اگر defined(DUK_USE_DATE_NOW_WINDOWS)
+#تعریف_کرو DUK_USE_DATE_GET_NOW(ctx)            duk_bi_date_get_now_windows()
+#وگرنہ_اگر defined(DUK_USE_DATE_NOW_WINDOWS_SUBMS)
+#تعریف_کرو DUK_USE_DATE_GET_NOW(ctx)            duk_bi_date_get_now_windows_subms()
+#ورنہ
+#غلطی no provider برائے DUK_USE_DATE_GET_NOW()
+#اگر_ختم
 
-#if defined(DUK_USE_DATE_GET_LOCAL_TZOFFSET)
+#اگر defined(DUK_USE_DATE_GET_LOCAL_TZOFFSET)
 /* External provider already defined. */
-#elif defined(DUK_USE_DATE_TZO_GMTIME_R) || defined(DUK_USE_DATE_TZO_GMTIME_S) || defined(DUK_USE_DATE_TZO_GMTIME)
-#define DUK_USE_DATE_GET_LOCAL_TZOFFSET(d)   duk_bi_date_get_local_tzoffset_gmtime((d))
-#elif defined(DUK_USE_DATE_TZO_WINDOWS)
-#define DUK_USE_DATE_GET_LOCAL_TZOFFSET(d)   duk_bi_date_get_local_tzoffset_windows((d))
-#elif defined(DUK_USE_DATE_TZO_WINDOWS_NO_DST)
-#define DUK_USE_DATE_GET_LOCAL_TZOFFSET(d)   duk_bi_date_get_local_tzoffset_windows_no_dst((d))
-#else
-#error no provider for DUK_USE_DATE_GET_LOCAL_TZOFFSET()
-#endif
+#وگرنہ_اگر defined(DUK_USE_DATE_TZO_GMTIME_R) || defined(DUK_USE_DATE_TZO_GMTIME_S) || defined(DUK_USE_DATE_TZO_GMTIME)
+#تعریف_کرو DUK_USE_DATE_GET_LOCAL_TZOFFSET(d)   duk_bi_date_get_local_tzoffset_gmtime((d))
+#وگرنہ_اگر defined(DUK_USE_DATE_TZO_WINDOWS)
+#تعریف_کرو DUK_USE_DATE_GET_LOCAL_TZOFFSET(d)   duk_bi_date_get_local_tzoffset_windows((d))
+#وگرنہ_اگر defined(DUK_USE_DATE_TZO_WINDOWS_NO_DST)
+#تعریف_کرو DUK_USE_DATE_GET_LOCAL_TZOFFSET(d)   duk_bi_date_get_local_tzoffset_windows_no_dst((d))
+#ورنہ
+#غلطی no provider برائے DUK_USE_DATE_GET_LOCAL_TZOFFSET()
+#اگر_ختم
 
-#if defined(DUK_USE_DATE_PARSE_STRING)
+#اگر defined(DUK_USE_DATE_PARSE_STRING)
 /* External provider already defined. */
-#elif defined(DUK_USE_DATE_PRS_STRPTIME)
-#define DUK_USE_DATE_PARSE_STRING(ctx,str)   duk_bi_date_parse_string_strptime((ctx), (str))
-#elif defined(DUK_USE_DATE_PRS_GETDATE)
-#define DUK_USE_DATE_PARSE_STRING(ctx,str)   duk_bi_date_parse_string_getdate((ctx), (str))
-#else
+#وگرنہ_اگر defined(DUK_USE_DATE_PRS_STRPTIME)
+#تعریف_کرو DUK_USE_DATE_PARSE_STRING(ctx,str)   duk_bi_date_parse_string_strptime((ctx), (str))
+#وگرنہ_اگر defined(DUK_USE_DATE_PRS_GETDATE)
+#تعریف_کرو DUK_USE_DATE_PARSE_STRING(ctx,str)   duk_bi_date_parse_string_getdate((ctx), (str))
+#ورنہ
 /* No provider for DUK_USE_DATE_PARSE_STRING(), fall back to ISO 8601 only. */
-#endif
+#اگر_ختم
 
-#if defined(DUK_USE_DATE_FORMAT_STRING)
+#اگر defined(DUK_USE_DATE_FORMAT_STRING)
 /* External provider already defined. */
-#elif defined(DUK_USE_DATE_FMT_STRFTIME)
-#define DUK_USE_DATE_FORMAT_STRING(ctx,parts,tzoffset,flags) \
+#وگرنہ_اگر defined(DUK_USE_DATE_FMT_STRFTIME)
+#تعریف_کرو DUK_USE_DATE_FORMAT_STRING(ctx,parts,tzoffset,flags) \
 	duk_bi_date_format_parts_strftime((ctx), (parts), (tzoffset), (flags))
-#else
+#ورنہ
 /* No provider for DUK_USE_DATE_FORMAT_STRING(), fall back to ISO 8601 only. */
-#endif
+#اگر_ختم
 
-#if defined(DUK_USE_GET_MONOTONIC_TIME)
+#اگر defined(DUK_USE_GET_MONOTONIC_وقت)
 /* External provider already defined. */
-#elif defined(DUK_USE_GET_MONOTONIC_TIME_CLOCK_GETTIME)
-#define DUK_USE_GET_MONOTONIC_TIME(ctx)  duk_bi_date_get_monotonic_time_clock_gettime()
-#elif defined(DUK_USE_GET_MONOTONIC_TIME_WINDOWS_QPC)
-#define DUK_USE_GET_MONOTONIC_TIME(ctx)  duk_bi_date_get_monotonic_time_windows_qpc()
-#else
+#وگرنہ_اگر defined(DUK_USE_GET_MONOTONIC_وقت_CLOCK_GETTIME)
+#تعریف_کرو DUK_USE_GET_MONOTONIC_وقت(ctx)  duk_bi_date_get_monotonic_وقت_clock_gettime()
+#وگرنہ_اگر defined(DUK_USE_GET_MONOTONIC_وقت_WINDOWS_QPC)
+#تعریف_کرو DUK_USE_GET_MONOTONIC_وقت(ctx)  duk_bi_date_get_monotonic_وقت_windows_qpc()
+#ورنہ
 /* No provider for DUK_USE_GET_MONOTONIC_TIME(), fall back to DUK_USE_DATE_GET_NOW(). */
-#endif
+#اگر_ختم
 
-#endif  /* DUK_COMPILING_DUKTAPE */
+#اگر_ختم  /* DUK_COMPILING_DUKTAPE */
 
 /*
  *  Convert DUK_USE_BYTEORDER, from whatever source, into currently used
  *  internal defines.  If detection failed, #error out.
  */
 
-#if defined(DUK_USE_BYTEORDER)
-#if (DUK_USE_BYTEORDER == 1)
-#define DUK_USE_INTEGER_LE
-#define DUK_USE_DOUBLE_LE
-#elif (DUK_USE_BYTEORDER == 2)
-#define DUK_USE_INTEGER_LE  /* integer endianness is little on purpose */
-#define DUK_USE_DOUBLE_ME
-#elif (DUK_USE_BYTEORDER == 3)
-#define DUK_USE_INTEGER_BE
-#define DUK_USE_DOUBLE_BE
-#else
-#error unsupported: byte order invalid
-#endif  /* byte order */
-#else
-#error unsupported: byte order detection failed
-#endif  /* defined(DUK_USE_BYTEORDER) */
+#اگر defined(DUK_USE_BYTEORDER)
+#اگر (DUK_USE_BYTEORDER == 1)
+#تعریف_کرو DUK_USE_INTEGER_LE
+#تعریف_کرو DUK_USE_DOUBLE_LE
+#وگرنہ_اگر (DUK_USE_BYTEORDER == 2)
+#تعریف_کرو DUK_USE_INTEGER_LE  /* integer endianness is little on purpose */
+#تعریف_کرو DUK_USE_DOUBLE_ME
+#وگرنہ_اگر (DUK_USE_BYTEORDER == 3)
+#تعریف_کرو DUK_USE_INTEGER_BE
+#تعریف_کرو DUK_USE_DOUBLE_BE
+#ورنہ
+#غلطی unsupported: byte ترتیب invalid
+#اگر_ختم  /* byte order */
+#ورنہ
+#غلطی unsupported: byte ترتیب detection failed
+#اگر_ختم  /* defined(DUK_USE_BYTEORDER) */
 
-#endif  /* DUK_CONFIG_H_INCLUDED */
+#اگر_ختم  /* DUK_CONFIG_H_INCLUDED */

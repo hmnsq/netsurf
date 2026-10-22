@@ -20,9 +20,9 @@
  * Content for image/jpegxl (interface).
  */
 
-#ifndef _NETSURF_IMAGE_JPEGXL_H_
-#define _NETSURF_IMAGE_JPEGXL_H_
+#اگر_غیر_تعریف_شدہ _NETSURF_IMAGE_JPEGXL_H_
+#تعریف_کرو _NETSURF_IMAGE_JPEGXL_H_
 
-nserror nsjpegxl_init(void);
+nserror nsjpegxl_init(خالی);
 
-#endif
+#اگر_ختم

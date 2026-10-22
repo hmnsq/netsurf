@@ -21,30 +21,30 @@
  * Interface to form handling functions internal to HTML content handler.
  */
 
-#ifndef NETSURF_HTML_FORM_INTERNAL_H
-#define NETSURF_HTML_FORM_INTERNAL_H
+#اگر_غیر_تعریف_شدہ NETSURF_HTML_FORM_اندرونی_H
+#تعریف_کرو NETSURF_HTML_FORM_اندرونی_H
 
-#include <stdbool.h>
+#شامل <stdbool.h>
 
-#include "netsurf/form.h"
+#شامل "netsurf/form.h"
 
-struct box;
-struct form_control;
-struct form_option;
-struct form_select_menu;
-struct form;
-struct html_content;
-struct dom_string;
-struct content;
-struct nsurl;
-struct fetch_multipart_data;
-struct redraw_context;
-struct browser_window;
+ساخت box;
+ساخت form_control;
+ساخت form_option;
+ساخت form_select_menu;
+ساخت form;
+ساخت html_content;
+ساخت dom_string;
+ساخت content;
+ساخت nsurl;
+ساخت fetch_multipart_ڈیٹا;
+ساخت redraw_context;
+ساخت browser_کھڑکی;
 
-enum browser_mouse_state;
+شمار browser_mouse_state;
 
 /** Type of a struct form_control. */
-typedef enum {
+قسمتعریف شمار {
 	GADGET_HIDDEN,
 	GADGET_TEXTBOX,
 	GADGET_RADIO,
@@ -60,83 +60,83 @@ typedef enum {
 } form_control_type;
 
 /** Data for textarea */
-struct form_textarea_data {
-	struct form_control *gadget;
+ساخت form_textarea_ڈیٹا {
+	ساخت form_control *gadget;
 };
 
-struct image_input_coords {
-	int x;
-	int y;
+ساخت image_داخلہ_coords {
+	صحیح x;
+	صحیح y;
 };
 
 /** Form control. */
-struct form_control {
-	void *node;			/**< Corresponding DOM node */
-	struct dom_string *node_value;  /**< The last value sync'd with the DOM */
+ساخت form_control {
+	خالی *گرہ;			/**< Corresponding DOM node */
+	ساخت dom_string *گرہ_قدر;  /**< The last value sync'd with the DOM */
 	bool syncing;                   /**< Set if a DOM sync is in-progress */
-	struct html_content *html;	/**< HTML content containing control */
+	ساخت html_content *html;	/**< HTML content containing control */
 
 	form_control_type type;		/**< Type of control */
 
-	struct form *form;		/**< Containing form */
+	ساخت form *form;		/**< Containing form */
 
-	char *name;			/**< Control name */
-	char *value;			/**< Current value of control */
-	char *initial_value;		/**< Initial value of control */
-	char *last_synced_value;        /**< The last value sync'd to the DOM */
+	حرف *name;			/**< Control name */
+	حرف *قدر;			/**< Current value of control */
+	حرف *initial_قدر;		/**< Initial value of control */
+	حرف *آخری_synced_قدر;        /**< The last value sync'd to the DOM */
 	bool disabled;			/**< Whether control is disabled */
 
-	struct box *box;		/**< Box for control */
+	ساخت box *box;		/**< Box for control */
 
-	unsigned int length;		/**< Number of characters in control */
-	unsigned int maxlength;		/**< Maximum characters permitted */
+	غیرعلامتی صحیح لمبائی;		/**< Number of characters in control */
+	غیرعلامتی صحیح maxlength;		/**< Maximum characters permitted */
 
 	bool selected;			/**< Whether control is selected */
 
-	union {
-		struct {
-			int mx, my;
+	اتحاد {
+		ساخت {
+			صحیح mx, my;
 		} image;
-		struct {
-			int num_items;
-			struct form_option *items, *last_item;
-			bool multiple;
-			int num_selected;
+		ساخت {
+			صحیح عدد_اشیاء;
+			ساخت form_option *اشیاء, *آخری_شے;
+			bool مضرب;
+			صحیح عدد_selected;
 			/** Currently selected item, if num_selected == 1. */
-			struct form_option *current;
-			struct form_select_menu *menu;
+			ساخت form_option *current;
+			ساخت form_select_menu *menu;
 		} select;
-		struct {
-			struct textarea *ta;
-			struct dom_string *initial;
-			struct form_textarea_data data;
-		} text;			/**< input type=text or textarea */
-	} data;
+		ساخت {
+			ساخت textarea *ta;
+			ساخت dom_string *initial;
+			ساخت form_textarea_ڈیٹا ڈیٹا;
+		} متن;			/**< input type=text or textarea */
+	} ڈیٹا;
 
-	struct form_control *prev;      /**< Previous control in this form */
-	struct form_control *next;	/**< Next control in this form. */
+	ساخت form_control *پچھلا;      /**< Previous control in this form */
+	ساخت form_control *اگلا;	/**< Next control in this form. */
 };
 
 /** Form submit method. */
-typedef enum {
-	method_GET,		/**< GET, always url encoded. */
-	method_POST_URLENC,	/**< POST, url encoded. */
-	method_POST_MULTIPART	/**< POST, multipart/form-data. */
-} form_method;
+قسمتعریف شمار {
+	طریقہ_GET,		/**< GET, always url encoded. */
+	طریقہ_POST_URLENC,	/**< POST, url encoded. */
+	طریقہ_POST_MULTIPART	/**< POST, multipart/form-data. */
+} form_طریقہ;
 
 /** HTML form. */
-struct form {
-	void *node;			/**< Corresponding DOM node */
+ساخت form {
+	خالی *گرہ;			/**< Corresponding DOM node */
 
-	char *action;			/**< Absolute URL to submit to. */
-	char *target;			/**< Target to submit to. */
-	form_method method;		/**< Method and enctype. */
-	char *accept_charsets;		/**< Charset to submit form in */
-	char *document_charset;		/**< Charset of document containing form */
-	struct form_control *controls;	/**< Linked list of controls. */
-	struct form_control *last_control;	/**< Last control in list. */
+	حرف *action;			/**< Absolute URL to submit to. */
+	حرف *ہدف;			/**< Target to submit to. */
+	form_طریقہ طریقہ;		/**< Method and enctype. */
+	حرف *accept_charsets;		/**< Charset to submit form in */
+	حرف *document_charset;		/**< Charset of document containing form */
+	ساخت form_control *controls;	/**< Linked list of controls. */
+	ساخت form_control *آخری_control;	/**< Last control in list. */
 
-	struct form *prev;		/**< Previous form in doc. */
+	ساخت form *پچھلا;		/**< Previous form in doc. */
 };
 
 /**
@@ -149,8 +149,8 @@ struct form {
  * \param width		width of redraw rectangle
  * \param height	height of redraw rectangle
  */
-typedef void(*select_menu_redraw_callback)(void *client_data,
-		int x, int y, int width, int height);
+قسمتعریف خالی(*select_menu_redraw_callback)(خالی *client_ڈیٹا,
+		صحیح x, صحیح y, صحیح چوڑائی, صحیح اونچائی);
 
 /**
  * Create a struct form.
@@ -163,9 +163,9 @@ typedef void(*select_menu_redraw_callback)(void *client_data,
  * \param doc_charset  encoding of containing document, or NULL
  * \return A new form or NULL on memory exhaustion
  */
-struct form *form_new(void *node, const char *action, const char *target,
-		form_method method, const char *charset,
-		const char *doc_charset);
+ساخت form *form_new(خالی *گرہ, ثابت حرف *action, ثابت حرف *ہدف,
+		form_طریقہ طریقہ, ثابت حرف *charset,
+		ثابت حرف *doc_charset);
 
 /**
  * Free a form and any controls it owns.
@@ -178,7 +178,7 @@ struct form *form_new(void *node, const char *action, const char *target,
  *
  * \param form The form to free
  */
-void form_free(struct form *form);
+خالی form_free(ساخت form *form);
 
 
 /**
@@ -188,7 +188,7 @@ void form_free(struct form *form);
  * \param  type  control type
  * \return  a new structure, or NULL on memory exhaustion
  */
-struct form_control *form_new_control(void *node, form_control_type type);
+ساخت form_control *form_new_control(خالی *گرہ, form_control_type type);
 
 
 /**
@@ -197,7 +197,7 @@ struct form_control *form_new_control(void *node, form_control_type type);
  * \param form  The form to add the control to
  * \param control  The control to add
  */
-void form_add_control(struct form *form, struct form_control *control);
+خالی form_جوڑو_control(ساخت form *form, ساخت form_control *control);
 
 
 /**
@@ -205,7 +205,7 @@ void form_add_control(struct form *form, struct form_control *control);
  *
  * \param  control  structure to free
  */
-void form_free_control(struct form_control *control);
+خالی form_free_control(ساخت form_control *control);
 
 
 /**
@@ -218,8 +218,8 @@ void form_free_control(struct form_control *control);
  * \param  node      the DOM node this option is associated with
  * \return  true on success, false on memory exhaustion
  */
-bool form_add_option(struct form_control *control, char *value, char *text,
-		     bool selected, void *node);
+bool form_جوڑو_option(ساخت form_control *control, حرف *قدر, حرف *متن,
+		     bool selected, خالی *گرہ);
 
 
 /**
@@ -231,10 +231,10 @@ bool form_add_option(struct form_control *control, char *value, char *text,
  * \param c The content the select menu is opening for.
  * \return NSERROR_OK on sucess else error code.
  */
-nserror form_open_select_menu(void *client_data,
-		struct form_control *control,
+nserror form_open_select_menu(خالی *client_ڈیٹا,
+		ساخت form_control *control,
 		select_menu_redraw_callback redraw_callback,
-		struct content *c);
+		ساخت content *c);
 
 
 /**
@@ -243,7 +243,7 @@ nserror form_open_select_menu(void *client_data,
  * \param control  the select form control owning the select menu being
  *                  destroyed.
  */
-void form_free_select_menu(struct form_control *control);
+خالی form_free_select_menu(ساخت form_control *control);
 
 
 /**
@@ -257,9 +257,9 @@ void form_free_select_menu(struct form_control *control);
  * \param ctx      current redraw context
  * \return         true on success, false otherwise
  */
-bool form_redraw_select_menu(struct form_control *control, int x, int y,
-		float scale, const struct rect *clip,
-		const struct redraw_context *ctx);
+bool form_redraw_select_menu(ساخت form_control *control, صحیح x, صحیح y,
+		اعشاری scale, ثابت ساخت rect *clip,
+		ثابت ساخت redraw_context *ctx);
 
 
 /**
@@ -271,8 +271,8 @@ bool form_redraw_select_menu(struct form_control *control, int x, int y,
  * \param clip     the clipping rectangle
  * \return true if inside false otherwise
  */
-bool form_clip_inside_select_menu(struct form_control *control, float scale,
-		const struct rect *clip);
+bool form_clip_inside_select_menu(ساخت form_control *control, اعشاری scale,
+		ثابت ساخت rect *clip);
 
 
 /**
@@ -284,8 +284,8 @@ bool form_clip_inside_select_menu(struct form_control *control, float scale,
  * \param y Y coordinate of click
  * \return text for the browser status bar or NULL if the menu has to be closed
  */
-const char *form_select_mouse_action(struct form_control *control,
-		enum browser_mouse_state mouse, int x, int y);
+ثابت حرف *form_select_mouse_action(ساخت form_control *control,
+		شمار browser_mouse_state mouse, صحیح x, صحیح y);
 
 
 /**
@@ -296,8 +296,8 @@ const char *form_select_mouse_action(struct form_control *control,
  * \param x X coordinate of drag end
  * \param y Y coordinate of drag end
  */
-void form_select_mouse_drag_end(struct form_control *control,
-		enum browser_mouse_state mouse, int x, int y);
+خالی form_select_mouse_drag_انتہا(ساخت form_control *control,
+		شمار browser_mouse_state mouse, صحیح x, صحیح y);
 
 
 /**
@@ -307,15 +307,15 @@ void form_select_mouse_drag_end(struct form_control *control,
  * \param width		gets updated to menu width
  * \param height	gets updated to menu height
  */
-void form_select_get_dimensions(struct form_control *control,
-		int *width, int *height);
+خالی form_select_get_dimensions(ساخت form_control *control,
+		صحیح *چوڑائی, صحیح *اونچائی);
 
 
 /**
  * Callback for the core select menu.
  */
-void form_select_menu_callback(void *client_data,
-		int x, int y, int width, int height);
+خالی form_select_menu_callback(خالی *client_ڈیٹا,
+		صحیح x, صحیح y, صحیح چوڑائی, صحیح اونچائی);
 
 
 /**
@@ -323,7 +323,7 @@ void form_select_menu_callback(void *client_data,
  *
  * \param radio form control of type GADGET_RADIO
  */
-void form_radio_set(struct form_control *radio);
+خالی form_radio_سیٹ(ساخت form_control *radio);
 
 /**
  * navigate browser window based on form submission.
@@ -333,14 +333,14 @@ void form_radio_set(struct form_control *radio);
  * \param form The form to submit.
  * \param submit_button The control used to submit the form.
  */
-nserror form_submit(struct nsurl *page_url, struct browser_window *target,
-		struct form *form, struct form_control *submit_button);
+nserror form_submit(ساخت nsurl *صفحہ_url, ساخت browser_کھڑکی *ہدف,
+		ساخت form *form, ساخت form_control *submit_button);
 
 
 /**
  * Update gadget value.
  */
-void form_gadget_update_value(struct form_control *control, char *value);
+خالی form_gadget_update_قدر(ساخت form_control *control, حرف *قدر);
 
 
 /**
@@ -355,6 +355,6 @@ void form_gadget_update_value(struct form_control *control, char *value);
  *
  * \note Currently this will only synchronise input gadgets (text/password)
  */
-void form_gadget_sync_with_dom(struct form_control *control);
+خالی form_gadget_sync_with_dom(ساخت form_control *control);
 
-#endif
+#اگر_ختم

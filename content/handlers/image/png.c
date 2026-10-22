@@ -18,55 +18,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
-#include <png.h>
+#شامل <stdbool.h>
+#شامل <string.h>
+#شامل <stdlib.h>
+#شامل <png.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#شامل "netsurf/inttypes.h"
+#شامل "utils/utils.h"
+#شامل "utils/log.h"
+#شامل "utils/messages.h"
+#شامل "netsurf/bitmap.h"
+#شامل "content/llcache.h"
+#شامل "content/content_protected.h"
+#شامل "content/content_factory.h"
+#شامل "desktop/gui_internal.h"
+#شامل "desktop/bitmap.h"
 
-#include "image/image_cache.h"
-#include "image/png.h"
+#شامل "image/image_cache.h"
+#شامل "image/png.h"
 
 /* accommodate for old versions of libpng (beware security holes!) */
 
-#ifndef png_jmpbuf
+#اگر_غیر_تعریف_شدہ png_jmpbuf
 #warning you have an antique libpng
-#define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
-#endif
+#تعریف_کرو png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
+#اگر_ختم
 
-#if PNG_LIBPNG_VER < 10209
-#define png_set_expand_gray_1_2_4_to_8(png) png_set_gray_1_2_4_to_8(png)
-#endif
+#اگر PNG_LIBPNG_VER < 10209
+#تعریف_کرو png_سیٹ_expand_سرمئی_1_2_4_مقصد_8(png) png_سیٹ_سرمئی_1_2_4_مقصد_8(png)
+#اگر_ختم
 
-typedef struct nspng_content {
-	struct content base; /**< base content type */
+قسمتعریف ساخت nspng_content {
+	ساخت content بنیاد; /**< base content type */
 
-	bool no_process_data; /**< Do not continue to process data as it arrives */
+	bool no_process_ڈیٹا; /**< Do not continue to process data as it arrives */
 	png_structp png;
 	png_infop info;
-	int interlace;
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	صحیح interlace;
+	ساخت bitmap *bitmap;	/**< Created NetSurf bitmap */
 	size_t rowstride, bpp; /**< Bitmap rowstride and bpp */
 	size_t rowbytes; /**< Number of bytes per row */
 } nspng_content;
 
-static unsigned int interlace_start[8] = {0, 16, 0, 8, 0, 4, 0};
-static unsigned int interlace_step[8] = {28, 28, 12, 12, 4, 4, 0};
-static unsigned int interlace_row_start[8] = {0, 0, 4, 0, 2, 0, 1};
-static unsigned int interlace_row_step[8] = {8, 8, 8, 4, 4, 2, 2};
+ساکن غیرعلامتی صحیح interlace_آغاز[8] = {0, 16, 0, 8, 0, 4, 0};
+ساکن غیرعلامتی صحیح interlace_قدم[8] = {28, 28, 12, 12, 4, 4, 0};
+ساکن غیرعلامتی صحیح interlace_صف_آغاز[8] = {0, 0, 4, 0, 2, 0, 1};
+ساکن غیرعلامتی صحیح interlace_صف_قدم[8] = {8, 8, 8, 4, 4, 2, 2};
 
 /** Callbak error numbers*/
-enum nspng_cberr {
+شمار nspng_cberr {
 	CBERR_NONE = 0, /* no error */
 	CBERR_LIBPNG, /* error from png library */
 	CBERR_NOPRE, /* no pre-conversion performed */
@@ -75,80 +75,80 @@ enum nspng_cberr {
 /**
  * nspng_warning -- callback for libpng warnings
  */
-static void nspng_warning(png_structp png_ptr, png_const_charp warning_message)
+ساکن خالی nspng_warning(png_structp png_ptr, png_const_charp warning_پیغام)
 {
-	NSLOG(netsurf, INFO, "%s", warning_message);
+	NSLOG(netsurf, INFO, "%s", warning_پیغام);
 }
 
 /**
  * nspng_error -- callback for libpng errors
  */
-static void nspng_error(png_structp png_ptr, png_const_charp error_message)
+ساکن خالی nspng_error(png_structp png_ptr, png_const_charp error_پیغام)
 {
-	NSLOG(netsurf, INFO, "%s", error_message);
+	NSLOG(netsurf, INFO, "%s", error_پیغام);
 	longjmp(png_jmpbuf(png_ptr), CBERR_LIBPNG);
 }
 
-static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
+ساکن خالی nspng_تیاری_transforms(png_structp png_ptr, png_infop info_ptr)
 {
-	int bit_depth, color_type, intent;
-	double gamma;
+	صحیح ثنائی_ہندسہ_گہرائی, color_type, intent;
+	دوہرا gamma;
 
-	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	ثنائی_ہندسہ_گہرائی = png_get_ثنائی_ہندسہ_گہرائی(png_ptr, info_ptr);
 	color_type = png_get_color_type(png_ptr, info_ptr);
 
 	/* Set up our transformations */
-	if (color_type == PNG_COLOR_TYPE_PALETTE) {
-		png_set_palette_to_rgb(png_ptr);
+	اگر (color_type == PNG_COLOR_TYPE_PALETTE) {
+		png_سیٹ_palette_مقصد_rgb(png_ptr);
 	}
 
-	if ((color_type == PNG_COLOR_TYPE_GRAY) && (bit_depth < 8)) {
-		png_set_expand_gray_1_2_4_to_8(png_ptr);
+	اگر ((color_type == PNG_COLOR_TYPE_سرمئی) && (ثنائی_ہندسہ_گہرائی < 8)) {
+		png_سیٹ_expand_سرمئی_1_2_4_مقصد_8(png_ptr);
 	}
 
-	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
-		png_set_tRNS_to_alpha(png_ptr);
+	اگر (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
+		png_سیٹ_t_RNS_مقصد_alpha(png_ptr);
 	}
 
-	if (bit_depth == 16) {
-		png_set_strip_16(png_ptr);
+	اگر (ثنائی_ہندسہ_گہرائی == 16) {
+		png_سیٹ_strip_16(png_ptr);
 	}
 
-	if (color_type == PNG_COLOR_TYPE_GRAY ||
-	    color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
-		png_set_gray_to_rgb(png_ptr);
+	اگر (color_type == PNG_COLOR_TYPE_سرمئی ||
+	    color_type == PNG_COLOR_TYPE_سرمئی_ALPHA) {
+		png_سیٹ_سرمئی_مقصد_rgb(png_ptr);
 	}
 
-	switch (bitmap_fmt.layout) {
-	case BITMAP_LAYOUT_B8G8R8A8: /* Fall through. */
-	case BITMAP_LAYOUT_A8B8G8R8:
-		png_set_bgr(png_ptr);
-		break;
-	default:
+	انتخاب (bitmap_fmt.layout) {
+	حالت BITMAP_LAYOUT_B8G8R8A8: /* Fall through. */
+	حالت BITMAP_LAYOUT_A8B8G8R8:
+		png_سیٹ_bgr(png_ptr);
+		توڑو;
+	طےشدہ:
 		/* RGB is the default. */
-		break;
+		توڑو;
 	}
 
-	if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
-		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
-		case BITMAP_LAYOUT_A8B8G8R8:
-			png_set_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
-			break;
+	اگر (!(color_type & PNG_COLOR_نقاب_ALPHA)) {
+		انتخاب (bitmap_fmt.layout) {
+		حالت BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
+		حالت BITMAP_LAYOUT_A8B8G8R8:
+			png_سیٹ_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
+			توڑو;
 
-		default:
-			png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-			break;
+		طےشدہ:
+			png_سیٹ_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+			توڑو;
 		}
-	} else {
-		switch (bitmap_fmt.layout) {
-		case BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
-		case BITMAP_LAYOUT_A8B8G8R8:
-			png_set_swap_alpha(png_ptr);
-			break;
-		default:
+	} ورنہ {
+		انتخاب (bitmap_fmt.layout) {
+		حالت BITMAP_LAYOUT_A8R8G8B8: /* Fall through. */
+		حالت BITMAP_LAYOUT_A8B8G8R8:
+			png_سیٹ_تبادلہ_alpha(png_ptr);
+			توڑو;
+		طےشدہ:
 			/* Alpha as final component is the default. */
-			break;
+			توڑو;
 		}
 	}
 
@@ -156,13 +156,13 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
 	 * this appears to be correct (at least in respect to !Browse)
 	 * see http://www.w3.org/Graphics/PNG/all_seven.html for a test case
 	 */
-	if (png_get_sRGB(png_ptr, info_ptr, &intent)) {
-		png_set_gamma(png_ptr, 2.2, 0.45455);
-	} else {
-		if (png_get_gAMA(png_ptr, info_ptr, &gamma)) {
-			png_set_gamma(png_ptr, 2.2, gamma);
-		} else {
-			png_set_gamma(png_ptr, 2.2, 0.45455);
+	اگر (png_get_sRGB(png_ptr, info_ptr, &intent)) {
+		png_سیٹ_gamma(png_ptr, 2.2, 0.45455);
+	} ورنہ {
+		اگر (png_get_gAMA(png_ptr, info_ptr, &gamma)) {
+			png_سیٹ_gamma(png_ptr, 2.2, gamma);
+		} ورنہ {
+			png_سیٹ_gamma(png_ptr, 2.2, 0.45455);
 		}
 	}
 
@@ -173,198 +173,198 @@ static void nspng_setup_transforms(png_structp png_ptr, png_infop info_ptr)
  * info_callback -- PNG header has been completely received, prepare to process
  * image data
  */
-static void info_callback(png_structp png_s, png_infop info)
+ساکن خالی info_callback(png_structp png_s, png_infop info)
 {
-	int interlace;
-	png_uint_32 width, height;
+	صحیح interlace;
+	png_uint_32 چوڑائی, اونچائی;
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
 
-	width = png_get_image_width(png_s, info);
-	height = png_get_image_height(png_s, info);
+	چوڑائی = png_get_image_چوڑائی(png_s, info);
+	اونچائی = png_get_image_اونچائی(png_s, info);
 	interlace = png_get_interlace_type(png_s, info);
 
-	png_c->base.width = width;
-	png_c->base.height = height;
-	png_c->base.size += width * height * 4;
+	png_c->بنیاد.چوڑائی = چوڑائی;
+	png_c->بنیاد.اونچائی = اونچائی;
+	png_c->بنیاد.سائز += چوڑائی * اونچائی * 4;
 
 	/* see if progressive-conversion should continue */
-	if (image_cache_speculate((struct content *)png_c) == false) {
+	اگر (image_cache_speculate((ساخت content *)png_c) == false) {
 		longjmp(png_jmpbuf(png_s), CBERR_NOPRE);
 	}
 
 	/* Claim the required memory for the converted PNG */
-	png_c->bitmap = guit->bitmap->create(width, height, BITMAP_NONE);
-	if (png_c->bitmap == NULL) {
+	png_c->bitmap = guit->bitmap->create(چوڑائی, اونچائی, BITMAP_NONE);
+	اگر (png_c->bitmap == تہی) {
 		/* Failed to create bitmap skip pre-conversion */
 		longjmp(png_jmpbuf(png_s), CBERR_NOPRE);
 	}
 
 	png_c->rowstride = guit->bitmap->get_rowstride(png_c->bitmap);
-	png_c->bpp = sizeof(uint32_t);
+	png_c->bpp = حجم(uint32_t);
 
-	nspng_setup_transforms(png_s, info);
+	nspng_تیاری_transforms(png_s, info);
 
 	png_c->rowbytes = png_get_rowbytes(png_s, info);
 	png_c->interlace = (interlace == PNG_INTERLACE_ADAM7);
 
 	NSLOG(netsurf, INFO, "size %li * %li, rowbytes %"PRIsizet,
-	      (unsigned long)width, (unsigned long)height, png_c->rowbytes);
+	      (غیرعلامتی طویل)چوڑائی, (غیرعلامتی طویل)اونچائی, png_c->rowbytes);
 }
 
-static void row_callback(png_structp png_s, png_bytep new_row,
-			 png_uint_32 row_num, int pass)
+ساکن خالی صف_callback(png_structp png_s, png_bytep new_صف,
+			 png_uint_32 صف_عدد, صحیح pass)
 {
 	nspng_content *png_c = png_get_progressive_ptr(png_s);
-	unsigned long rowbytes = png_c->rowbytes;
-	unsigned char *buffer, *row;
+	غیرعلامتی طویل rowbytes = png_c->rowbytes;
+	غیرعلامتی حرف *بفر, *صف;
 
 	/* Give up if there's no bitmap */
-	if (png_c->bitmap == NULL)
-		return;
+	اگر (png_c->bitmap == تہی)
+		واپس;
 
 	/* Abort if we've not got any data */
-	if (new_row == NULL)
-		return;
+	اگر (new_صف == تہی)
+		واپس;
 
 	/* Get bitmap buffer */
-	buffer = guit->bitmap->get_buffer(png_c->bitmap);
-	if (buffer == NULL) {
+	بفر = guit->bitmap->get_بفر(png_c->bitmap);
+	اگر (بفر == تہی) {
 		/* No buffer, bail out */
 		longjmp(png_jmpbuf(png_s), 1);
 	}
 
 	/* Calculate address of row start */
-	row = buffer + (png_c->rowstride * row_num);
+	صف = بفر + (png_c->rowstride * صف_عدد);
 
 	/* Handle interlaced sprites using the Adam7 algorithm */
-	if (png_c->interlace) {
-		unsigned long dst_off;
-		unsigned long src_off = 0;
-		unsigned int start, step;
+	اگر (png_c->interlace) {
+		غیرعلامتی طویل dst_off;
+		غیرعلامتی طویل src_off = 0;
+		غیرعلامتی صحیح آغاز, قدم;
 
-		start = interlace_start[pass];
-		step = interlace_step[pass];
-		row_num = interlace_row_start[pass] +
-			interlace_row_step[pass] * row_num;
+		آغاز = interlace_آغاز[pass];
+		قدم = interlace_قدم[pass];
+		صف_عدد = interlace_صف_آغاز[pass] +
+			interlace_صف_قدم[pass] * صف_عدد;
 
 		/* Copy the data to our current row taking interlacing
 		 * into consideration */
-		row = buffer + (png_c->rowstride * row_num);
+		صف = بفر + (png_c->rowstride * صف_عدد);
 
-		for (dst_off = start; dst_off < rowbytes; dst_off += step) {
-			row[dst_off++] = new_row[src_off++];
-			row[dst_off++] = new_row[src_off++];
-			row[dst_off++] = new_row[src_off++];
-			row[dst_off++] = new_row[src_off++];
+		برائے (dst_off = آغاز; dst_off < rowbytes; dst_off += قدم) {
+			صف[dst_off++] = new_صف[src_off++];
+			صف[dst_off++] = new_صف[src_off++];
+			صف[dst_off++] = new_صف[src_off++];
+			صف[dst_off++] = new_صف[src_off++];
 		}
-	} else {
+	} ورنہ {
 		/* Do a fast memcpy of the row data */
-		memcpy(row, new_row, rowbytes);
+		حافظہ_نقل(صف, new_صف, rowbytes);
 	}
 }
 
 
-static void end_callback(png_structp png_s, png_infop info)
+ساکن خالی انتہا_callback(png_structp png_s, png_infop info)
 {
 }
 
-static nserror nspng_create_png_data(nspng_content *png_c)
+ساکن nserror nspng_create_png_ڈیٹا(nspng_content *png_c)
 {
-	png_c->bitmap = NULL;
+	png_c->bitmap = تہی;
 
 	png_c->png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-	if (png_c->png == NULL) {
-		content_broadcast_error(&png_c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	اگر (png_c->png == تہی) {
+		content_نشر_error(&png_c->بنیاد, NSERROR_NOMEM, تہی);
+		واپس NSERROR_NOMEM;
 	}
 
-	png_set_error_fn(png_c->png, NULL, nspng_error, nspng_warning);
+	png_سیٹ_error_fn(png_c->png, تہی, nspng_error, nspng_warning);
 
 	png_c->info = png_create_info_struct(png_c->png);
-	if (png_c->info == NULL) {
+	اگر (png_c->info == تہی) {
 		png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 
-		content_broadcast_error(&png_c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		content_نشر_error(&png_c->بنیاد, NSERROR_NOMEM, تہی);
+		واپس NSERROR_NOMEM;
 	}
 
-	if (setjmp(png_jmpbuf(png_c->png))) {
+	اگر (setjmp(png_jmpbuf(png_c->png))) {
 		png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 		NSLOG(netsurf, INFO, "Failed to set callbacks");
-		png_c->png = NULL;
-		png_c->info = NULL;
+		png_c->png = تہی;
+		png_c->info = تہی;
 
-		content_broadcast_error(&png_c->base, NSERROR_PNG_ERROR, NULL);
-		return NSERROR_NOMEM;
+		content_نشر_error(&png_c->بنیاد, NSERROR_PNG_ERROR, تہی);
+		واپس NSERROR_NOMEM;
 	}
 
-	png_set_progressive_read_fn(png_c->png, png_c,
-			info_callback, row_callback, end_callback);
+	png_سیٹ_progressive_read_fn(png_c->png, png_c,
+			info_callback, صف_callback, انتہا_callback);
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
-static nserror
-nspng_create(const content_handler *handler,
+ساکن nserror
+nspng_create(ثابت content_handler *handler,
 	     lwc_string *imime_type,
-	     const struct http_parameter *params,
-	     struct llcache_handle *llcache,
-	     const char *fallback_charset,
+	     ثابت ساخت http_parameter *params,
+	     ساخت llcache_handle *llcache,
+	     ثابت حرف *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     ساخت content **c)
 {
 	nspng_content *png_c;
 	nserror error;
 
-	png_c = calloc(1, sizeof(nspng_content));
-	if (png_c == NULL)
-		return NSERROR_NOMEM;
+	png_c = صفر_حافظہ_دو(1, حجم(nspng_content));
+	اگر (png_c == تہی)
+		واپس NSERROR_NOMEM;
 
-	error = content__init(&png_c->base, 
+	error = content__init(&png_c->بنیاد, 
 			      handler, 
 			      imime_type, 
 			      params,
 			      llcache, 
 			      fallback_charset, 
 			      quirks);
-	if (error != NSERROR_OK) {
-		free(png_c);
-		return error;
+	اگر (error != NSERROR_OK) {
+		آزاد(png_c);
+		واپس error;
 	}
 
-	error = nspng_create_png_data(png_c);
-	if (error != NSERROR_OK) {
-		free(png_c);
-		return error;
+	error = nspng_create_png_ڈیٹا(png_c);
+	اگر (error != NSERROR_OK) {
+		آزاد(png_c);
+		واپس error;
 	}
 
-	*c = (struct content *)png_c;
+	*c = (ساخت content *)png_c;
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 
-static bool nspng_process_data(struct content *c, const char *data,
-			       unsigned int size)
+ساکن bool nspng_process_ڈیٹا(ساخت content *c, ثابت حرف *ڈیٹا,
+			       غیرعلامتی صحیح سائز)
 {
 	nspng_content *png_c = (nspng_content *)c;
-	volatile bool ret = true;
+	متلون bool ret = true;
 
-	if (png_c->no_process_data) {
-		return ret;
+	اگر (png_c->no_process_ڈیٹا) {
+		واپس ret;
 	}
 
-	switch (setjmp(png_jmpbuf(png_c->png))) {
-	case CBERR_NONE: /* direct return */	
-		png_process_data(png_c->png, png_c->info, (uint8_t *)data, size);
-		break;
+	انتخاب (setjmp(png_jmpbuf(png_c->png))) {
+	حالت CBERR_NONE: /* direct return */	
+		png_process_ڈیٹا(png_c->png, png_c->info, (uint8_t *)ڈیٹا, سائز);
+		توڑو;
 
-	case CBERR_NOPRE: /* not going to progressive convert */
-		png_c->no_process_data = true;
-		break;
+	حالت CBERR_NOPRE: /* not going to progressive convert */
+		png_c->no_process_ڈیٹا = true;
+		توڑو;
 
-	default: /* fatal error from library processing png */
-		if (png_c->bitmap != NULL) {
+	طےشدہ: /* fatal error from library processing png */
+		اگر (png_c->bitmap != تہی) {
 			/* A bitmap managed to get created so
 			 * operation is past header and possibly some
 			 * conversion happened before faliure. 
@@ -374,8 +374,8 @@ static bool nspng_process_data(struct content *c, const char *data,
 			 * has been truncated (often jsut lost its
 			 * last byte and hence end of image marker)
 			 */
-			png_c->no_process_data = true;
-		} else {
+			png_c->no_process_ڈیٹا = true;
+		} ورنہ {
 			/* not managed to progress past header, clean
 			 * up png conversion and signal the content
 			 * error 
@@ -384,273 +384,273 @@ static bool nspng_process_data(struct content *c, const char *data,
 			      "Fatal PNG error during header, error content");
 
 			png_destroy_read_struct(&png_c->png, &png_c->info, 0);
-			png_c->png = NULL;
-			png_c->info = NULL;
+			png_c->png = تہی;
+			png_c->info = تہی;
 
-			content_broadcast_error(c, NSERROR_PNG_ERROR, NULL);
+			content_نشر_error(c, NSERROR_PNG_ERROR, تہی);
 
 			ret = false;
 
 		}
-		break;
+		توڑو;
 	}
 
-	return ret;
+	واپس ret;
 }
 
-struct png_cache_read_data_s {
-	const uint8_t *data;
-	size_t size;
+ساخت png_cache_read_ڈیٹا_s {
+	ثابت uint8_t *ڈیٹا;
+	size_t سائز;
 };
 
 /** PNG library read fucntion to read data from a memory array 
  */
-static void 
-png_cache_read_fn(png_structp png_ptr, png_bytep data, png_size_t length)
+ساکن خالی 
+png_cache_read_fn(png_structp png_ptr, png_bytep ڈیٹا, png_سائز_t لمبائی)
 {
-	struct png_cache_read_data_s *png_cache_read_data;
-	png_cache_read_data = png_get_io_ptr(png_ptr);
+	ساخت png_cache_read_ڈیٹا_s *png_cache_read_ڈیٹا;
+	png_cache_read_ڈیٹا = png_get_io_ptr(png_ptr);
 
-	if (length > png_cache_read_data->size) {
-		length = png_cache_read_data->size;
+	اگر (لمبائی > png_cache_read_ڈیٹا->سائز) {
+		لمبائی = png_cache_read_ڈیٹا->سائز;
 	}
 
-	if (length == 0) {
+	اگر (لمبائی == 0) {
 		png_error(png_ptr, "Read Error");
 	}
 
-	memcpy(data, png_cache_read_data->data, length);
+	حافظہ_نقل(ڈیٹا, png_cache_read_ڈیٹا->ڈیٹا, لمبائی);
 
-	png_cache_read_data->data += length;
-	png_cache_read_data->size -= length;
+	png_cache_read_ڈیٹا->ڈیٹا += لمبائی;
+	png_cache_read_ڈیٹا->سائز -= لمبائی;
 }
 
 /** calculate an array of row pointers into a bitmap data area
  */
-static png_bytep *calc_row_pointers(struct bitmap *bitmap)
+ساکن png_bytep *calc_صف_اشارے(ساخت bitmap *bitmap)
 {
-	int height = guit->bitmap->get_height(bitmap);
-	unsigned char *buffer= guit->bitmap->get_buffer(bitmap);
+	صحیح اونچائی = guit->bitmap->get_اونچائی(bitmap);
+	غیرعلامتی حرف *بفر= guit->bitmap->get_بفر(bitmap);
 	size_t rowstride = guit->bitmap->get_rowstride(bitmap);
-	png_bytep *row_ptrs;
-	int hloop;
+	png_bytep *صف_ptrs;
+	صحیح hloop;
 
 	/* The buffer allocation may occour when the buffer is aquired
 	 * and therefore may fail.
 	 */
-	if (buffer == NULL) {
-		return NULL;
+	اگر (بفر == تہی) {
+		واپس تہی;
 	}
 
-	row_ptrs = malloc(sizeof(png_bytep) * height);
+	صف_ptrs = حافظہ_دو(حجم(png_bytep) * اونچائی);
 
-	if (row_ptrs != NULL) {
-		for (hloop = 0; hloop < height; hloop++) {
-			row_ptrs[hloop] = buffer + (rowstride * hloop);
+	اگر (صف_ptrs != تہی) {
+		برائے (hloop = 0; hloop < اونچائی; hloop++) {
+			صف_ptrs[hloop] = بفر + (rowstride * hloop);
 		}
 	}
 
-	return row_ptrs;
+	واپس صف_ptrs;
 }
 
 /** PNG content to bitmap conversion.
  *
  * This routine generates a bitmap object from a PNG image content
  */
-static struct bitmap *
-png_cache_convert(struct content *c)
+ساکن ساخت bitmap *
+png_cache_convert(ساخت content *c)
 {
 	png_structp png_ptr;
 	png_infop info_ptr;
-	png_infop end_info_ptr;
-	volatile struct bitmap * volatile bitmap = NULL;
-	struct png_cache_read_data_s png_cache_read_data;
-	png_uint_32 width, height;
-	volatile png_bytep * volatile row_pointers = NULL;
+	png_infop انتہا_info_ptr;
+	متلون ساخت bitmap * متلون bitmap = تہی;
+	ساخت png_cache_read_ڈیٹا_s png_cache_read_ڈیٹا;
+	png_uint_32 چوڑائی, اونچائی;
+	متلون png_bytep * متلون صف_اشارے = تہی;
 
-	png_cache_read_data.data = 
-		content__get_source_data(c, &png_cache_read_data.size);
+	png_cache_read_ڈیٹا.ڈیٹا = 
+		content_get_ماخذ_ڈیٹا_2(c, &png_cache_read_ڈیٹا.سائز);
 
-	if ((png_cache_read_data.data == NULL) || 
-	    (png_cache_read_data.size <= 8)) {
-		return NULL;
+	اگر ((png_cache_read_ڈیٹا.ڈیٹا == تہی) || 
+	    (png_cache_read_ڈیٹا.سائز <= 8)) {
+		واپس تہی;
 	}
 
-	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL,
+	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, تہی,
 			nspng_error, nspng_warning);
-	if (png_ptr == NULL) {
-		return NULL;
+	اگر (png_ptr == تہی) {
+		واپس تہی;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL) {
-		png_destroy_read_struct(&png_ptr, NULL, NULL);
-		return NULL;
+	اگر (info_ptr == تہی) {
+		png_destroy_read_struct(&png_ptr, تہی, تہی);
+		واپس تہی;
 	}
 
-	end_info_ptr = png_create_info_struct(png_ptr);
-	if (end_info_ptr == NULL) {
-		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		return NULL;
+	انتہا_info_ptr = png_create_info_struct(png_ptr);
+	اگر (انتہا_info_ptr == تہی) {
+		png_destroy_read_struct(&png_ptr, &info_ptr, تہی);
+		واپس تہی;
 	}
 
 	/* setup error exit path */
-	if (setjmp(png_jmpbuf(png_ptr))) {
+	اگر (setjmp(png_jmpbuf(png_ptr))) {
 		/* cleanup and bail */
-		goto png_cache_convert_error;
+		جاؤ png_cache_convert_error;
 	}
 
 	/* read from a buffer instead of stdio */
-	png_set_read_fn(png_ptr, &png_cache_read_data, png_cache_read_fn);
+	png_سیٹ_read_fn(png_ptr, &png_cache_read_ڈیٹا, png_cache_read_fn);
 
 	/* ensure the png info structure is populated */
 	png_read_info(png_ptr, info_ptr);
 
 	/* setup output transforms */
-	nspng_setup_transforms(png_ptr, info_ptr);
+	nspng_تیاری_transforms(png_ptr, info_ptr);
 
-	width = png_get_image_width(png_ptr, info_ptr);
-	height = png_get_image_height(png_ptr, info_ptr);
+	چوڑائی = png_get_image_چوڑائی(png_ptr, info_ptr);
+	اونچائی = png_get_image_اونچائی(png_ptr, info_ptr);
 
 	/* Claim the required memory for the converted PNG */
-	bitmap = guit->bitmap->create(width, height, BITMAP_NONE);
-	if (bitmap == NULL) {
+	bitmap = guit->bitmap->create(چوڑائی, اونچائی, BITMAP_NONE);
+	اگر (bitmap == تہی) {
 		/* cleanup and bail */
-		goto png_cache_convert_error;
+		جاؤ png_cache_convert_error;
 	}
 
-	row_pointers = calc_row_pointers((struct bitmap *) bitmap);
+	صف_اشارے = calc_صف_اشارے((ساخت bitmap *) bitmap);
 
-	if (row_pointers != NULL) {
-		png_read_image(png_ptr, (png_bytep *) row_pointers);
-	} else {
-		guit->bitmap->destroy((struct bitmap *)bitmap);
-		bitmap = NULL;
+	اگر (صف_اشارے != تہی) {
+		png_read_image(png_ptr, (png_bytep *) صف_اشارے);
+	} ورنہ {
+		guit->bitmap->destroy((ساخت bitmap *)bitmap);
+		bitmap = تہی;
 	}
 
 png_cache_convert_error:
 
 	/* cleanup png read */
-	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info_ptr);
+	png_destroy_read_struct(&png_ptr, &info_ptr, &انتہا_info_ptr);
 
-	if (row_pointers != NULL) {
-		free((png_bytep *) row_pointers);
+	اگر (صف_اشارے != تہی) {
+		آزاد((png_bytep *) صف_اشارے);
 	}
 
-	if (bitmap != NULL) {
-		bool opaque = bitmap_test_opaque((void *)bitmap);
-		guit->bitmap->set_opaque((void *)bitmap, opaque);
-		bitmap_format_to_client((void *)bitmap, &(bitmap_fmt_t) {
+	اگر (bitmap != تہی) {
+		bool opaque = bitmap_test_opaque((خالی *)bitmap);
+		guit->bitmap->سیٹ_opaque((خالی *)bitmap, opaque);
+		bitmap_format_مقصد_client((خالی *)bitmap, &(bitmap_fmt_t) {
 			.layout = bitmap_fmt.layout,
 			.pma = opaque ? bitmap_fmt.pma : false,
 		});
-		guit->bitmap->modified((void *)bitmap);
+		guit->bitmap->modified((خالی *)bitmap);
 	}
 
-	return (struct bitmap *)bitmap;
+	واپس (ساخت bitmap *)bitmap;
 }
 
-static bool nspng_convert(struct content *c)
+ساکن bool nspng_convert(ساخت content *c)
 {
 	nspng_content *png_c = (nspng_content *) c;
-	char *title;
+	حرف *title;
 
-	assert(png_c->png != NULL);
-	assert(png_c->info != NULL);
+	أكد(png_c->png != تہی);
+	أكد(png_c->info != تہی);
 
 	/* clean up png structures */
 	png_destroy_read_struct(&png_c->png, &png_c->info, 0);
 
 	/* set title text */
 	title = messages_get_buff("PNGTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_برگ(llcache_handle_get_url(c->llcache)),
+			c->چوڑائی, c->اونچائی);
+	اگر (title != تہی) {
+		content_سیٹ_title(c, title);
+		آزاد(title);
 	}
 
-	if (png_c->bitmap != NULL) {
+	اگر (png_c->bitmap != تہی) {
 		bool opaque = bitmap_test_opaque(png_c->bitmap);
-		guit->bitmap->set_opaque(png_c->bitmap, opaque);
-		bitmap_format_to_client(png_c->bitmap, &(bitmap_fmt_t) {
+		guit->bitmap->سیٹ_opaque(png_c->bitmap, opaque);
+		bitmap_format_مقصد_client(png_c->bitmap, &(bitmap_fmt_t) {
 			.layout = bitmap_fmt.layout,
 			.pma = opaque ? bitmap_fmt.pma : false,
 		});
 		guit->bitmap->modified(png_c->bitmap);
 	}
 
-	image_cache_add(c, png_c->bitmap, png_cache_convert);
+	image_cache_جوڑو(c, png_c->bitmap, png_cache_convert);
 
-	content_set_ready(c);
-	content_set_done(c);
-	content_set_status(c, "");
+	content_سیٹ_ready(c);
+	content_سیٹ_مکمل(c);
+	content_سیٹ_حالت(c, "");
 
-	return true;
+	واپس true;
 }
 
 
-static nserror nspng_clone(const struct content *old_c, struct content **new_c)
+ساکن nserror nspng_clone(ثابت ساخت content *old_c, ساخت content **new_c)
 {
 	nspng_content *clone_png_c;
 	nserror error;
-	const uint8_t *data;
-	size_t size;
+	ثابت uint8_t *ڈیٹا;
+	size_t سائز;
 
-	clone_png_c = calloc(1, sizeof(nspng_content));
-	if (clone_png_c == NULL)
-		return NSERROR_NOMEM;
+	clone_png_c = صفر_حافظہ_دو(1, حجم(nspng_content));
+	اگر (clone_png_c == تہی)
+		واپس NSERROR_NOMEM;
 
-	error = content__clone(old_c, &clone_png_c->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&clone_png_c->base);
-		return error;
+	error = content__clone(old_c, &clone_png_c->بنیاد);
+	اگر (error != NSERROR_OK) {
+		content_destroy(&clone_png_c->بنیاد);
+		واپس error;
 	}
 
 	/* Simply replay create/process/convert */
-	error = nspng_create_png_data(clone_png_c);
-	if (error != NSERROR_OK) {
-		content_destroy(&clone_png_c->base);
-		return error;
+	error = nspng_create_png_ڈیٹا(clone_png_c);
+	اگر (error != NSERROR_OK) {
+		content_destroy(&clone_png_c->بنیاد);
+		واپس error;
 	}
 
-	data = content__get_source_data(&clone_png_c->base, &size);
-	if (size > 0) {
-		if (nspng_process_data(&clone_png_c->base, (const char *)data, size) == false) {
-			content_destroy(&clone_png_c->base);
-			return NSERROR_NOMEM;
+	ڈیٹا = content_get_ماخذ_ڈیٹا_2(&clone_png_c->بنیاد, &سائز);
+	اگر (سائز > 0) {
+		اگر (nspng_process_ڈیٹا(&clone_png_c->بنیاد, (ثابت حرف *)ڈیٹا, سائز) == false) {
+			content_destroy(&clone_png_c->بنیاد);
+			واپس NSERROR_NOMEM;
 		}
 	}
 
-	if ((old_c->status == CONTENT_STATUS_READY) ||
-	    (old_c->status == CONTENT_STATUS_DONE)) {
-		if (nspng_convert(&clone_png_c->base) == false) {
-			content_destroy(&clone_png_c->base);
-			return NSERROR_CLONE_FAILED;
+	اگر ((old_c->حالت_2 == CONTENT_حالت_READY) ||
+	    (old_c->حالت_2 == CONTENT_حالت_مکمل)) {
+		اگر (nspng_convert(&clone_png_c->بنیاد) == false) {
+			content_destroy(&clone_png_c->بنیاد);
+			واپس NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*new_c = (struct content *)clone_png_c;
+	*new_c = (ساخت content *)clone_png_c;
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
-static const content_handler nspng_content_handler = {
+ساکن ثابت content_handler nspng_content_handler = {
 	.create = nspng_create,
-	.process_data = nspng_process_data,
-	.data_complete = nspng_convert,
+	.process_ڈیٹا = nspng_process_ڈیٹا,
+	.ڈیٹا_complete = nspng_convert,
 	.clone = nspng_clone,
 	.destroy = image_cache_destroy,
 	.redraw = image_cache_redraw,
-	.get_internal = image_cache_get_internal,
+	.get_اندرونی = image_cache_get_اندرونی,
 	.type = image_cache_content_type,
 	.is_opaque = image_cache_is_opaque,
 	.no_share = false,
 };
 
-static const char *nspng_types[] = {
+ساکن ثابت حرف *nspng_types[] = {
 	"image/png",
 	"image/x-png"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nspng, nspng_types, nspng_content_handler);
+CONTENT_FACTORY_رجسٹر_TYPES(nspng, nspng_types, nspng_content_handler);

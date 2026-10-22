@@ -22,146 +22,146 @@
  * HTML fetcher for CSS objects
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dom/dom.h>
-#include <libwapcaplet/libwapcaplet.h>
+#شامل <assert.h>
+#شامل <stdbool.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <dom/dom.h>
+#شامل <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/ring.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#شامل "netsurf/inttypes.h"
+#شامل "utils/config.h"
+#شامل "utils/corestrings.h"
+#شامل "utils/log.h"
+#شامل "utils/ring.h"
+#شامل "utils/nsurl.h"
+#شامل "utils/utils.h"
+#شامل "content/fetch.h"
+#شامل "content/fetchers.h"
 
-#include "html/private.h"
+#شامل "html/private.h"
 
-typedef struct html_css_fetcher_item {
-	uint32_t key;
-	dom_string *data;
-	nsurl *base_url;
+قسمتعریف ساخت html_css_fetcher_شے {
+	uint32_t کلید;
+	dom_string *ڈیٹا;
+	nsurl *بنیاد_url;
 
-	struct html_css_fetcher_item *r_next, *r_prev;
-} html_css_fetcher_item;
+	ساخت html_css_fetcher_شے *r_اگلا, *r_پچھلا;
+} html_css_fetcher_شے;
 
-typedef struct html_css_fetcher_context {
-	struct fetch *parent_fetch;
+قسمتعریف ساخت html_css_fetcher_context {
+	ساخت fetch *والد_fetch;
 
 	nsurl *url;
-	html_css_fetcher_item *item;
+	html_css_fetcher_شے *شے;
 
 	bool aborted;
 	bool locked;
 
-	struct html_css_fetcher_context *r_next, *r_prev;
+	ساخت html_css_fetcher_context *r_اگلا, *r_پچھلا;
 } html_css_fetcher_context;
 
-static uint32_t current_key = 0;
-static html_css_fetcher_item *items = NULL;
-static html_css_fetcher_context *ring = NULL;
+ساکن uint32_t current_کلید = 0;
+ساکن html_css_fetcher_شے *اشیاء = تہی;
+ساکن html_css_fetcher_context *ring = تہی;
 
-static bool html_css_fetcher_initialise(lwc_string *scheme)
+ساکن bool html_css_fetcher_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_initialise called for %s",
-	      lwc_string_data(scheme));
-	return true;
+	      lwc_string_ڈیٹا(scheme));
+	واپس true;
 }
 
-static void html_css_fetcher_finalise(lwc_string *scheme)
+ساکن خالی html_css_fetcher_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_finalise called for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_ڈیٹا(scheme));
 }
 
-static bool html_css_fetcher_can_fetch(const nsurl *url)
+ساکن bool html_css_fetcher_can_fetch(ثابت nsurl *url)
 {
-	return true;
+	واپس true;
 }
 
-static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+ساکن خالی *html_css_fetcher_تیاری(ساخت fetch *والد_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, ثابت حرف *post_urlenc,
+		 ثابت ساخت fetch_multipart_ڈیٹا *post_multipart,
+		 ثابت حرف **سرخیاں)
 {
 	html_css_fetcher_context *ctx;
-	lwc_string *path;
-	uint32_t key;
-	html_css_fetcher_item *item, *found = NULL;
+	lwc_string *راستہ;
+	uint32_t کلید;
+	html_css_fetcher_شے *شے, *ملا = تہی;
 
 	/* format of a x-ns-css URL is:
 	 *   x-ns-url:<key>
 	 * Where key is an unsigned 32bit integer
 	 */
 
-	path = nsurl_get_component(url, NSURL_PATH);
+	راستہ = nsurl_get_component(url, NSURL_راستہ);
 	/* The path must exist */
-	if (path == NULL) {
-		return NULL;
+	اگر (راستہ == تہی) {
+		واپس تہی;
 	}
 
-	key = strtoul(lwc_string_data(path), NULL, 10);
+	کلید = strtoul(lwc_string_ڈیٹا(راستہ), تہی, 10);
 
-	lwc_string_unref(path);
+	lwc_string_unref(راستہ);
 
 	/* There must be at least one item */
-	if (items == NULL) {
-		return NULL;
+	اگر (اشیاء == تہی) {
+		واپس تہی;
 	}
 
-	item = items;
-	do {
-		if (item->key == key) {
-			found = item;
-			break;
+	شے = اشیاء;
+	کرو {
+		اگر (شے->کلید == کلید) {
+			ملا = شے;
+			توڑو;
 		}
 
-		item = item->r_next;
-	} while (item != items);
+		شے = شے->r_اگلا;
+	} جب (شے != اشیاء);
 
 	/* We must have found the item */
-	if (found == NULL) {
-		return NULL;
+	اگر (ملا == تہی) {
+		واپس تہی;
 	}
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = صفر_حافظہ_دو(1, حجم(*ctx));
+	اگر (ctx == تہی)
+		واپس تہی;
 
-	ctx->parent_fetch = parent_fetch;
+	ctx->والد_fetch = والد_fetch;
 	ctx->url = nsurl_ref(url);
-	ctx->item = found;
+	ctx->شے = ملا;
 
-	RING_INSERT(ring, ctx);
+	RING_داخل_کرو(ring, ctx);
 
-	return ctx;
+	واپس ctx;
 }
 
-static bool html_css_fetcher_start(void *ctx)
+ساکن bool html_css_fetcher_آغاز(خالی *ctx)
 {
-	return true;
+	واپس true;
 }
 
-static void html_css_fetcher_free(void *ctx)
+ساکن خالی html_css_fetcher_free(خالی *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
 	nsurl_unref(c->url);
-	if (c->item != NULL) {
-		nsurl_unref(c->item->base_url);
-		dom_string_unref(c->item->data);
-		RING_REMOVE(items, c->item);
-		free(c->item);
+	اگر (c->شے != تہی) {
+		nsurl_unref(c->شے->بنیاد_url);
+		dom_string_unref(c->شے->ڈیٹا);
+		RING_REMOVE(اشیاء, c->شے);
+		آزاد(c->شے);
 	}
 	RING_REMOVE(ring, c);
-	free(ctx);
+	آزاد(ctx);
 }
 
-static void html_css_fetcher_abort(void *ctx)
+ساکن خالی html_css_fetcher_abort(خالی *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
@@ -172,149 +172,149 @@ static void html_css_fetcher_abort(void *ctx)
 	c->aborted = true;
 }
 
-static void html_css_fetcher_send_callback(const fetch_msg *msg,
+ساکن خالی html_css_fetcher_send_callback(ثابت fetch_پیغام *پیغام,
 		html_css_fetcher_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(پیغام, c->والد_fetch);
 	c->locked = false;
 }
 
-static void html_css_fetcher_poll(lwc_string *scheme)
+ساکن خالی html_css_fetcher_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	html_css_fetcher_context *c, *next;
+	fetch_پیغام پیغام;
+	html_css_fetcher_context *c, *اگلا;
 
-	if (ring == NULL) return;
+	اگر (ring == تہی) واپس;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
-	do {
+	کرو {
 		/* Ignore fetches that have been flagged as locked.
 		 * This allows safe re-entrant calls to this function.
 		 * Re-entrancy can occur if, as a result of a callback,
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			next = c->r_next;
-			continue;
+		اگر (c->locked == true) {
+			اگلا = c->r_اگلا;
+			جاری;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted) {
+		اگر (c->aborted) {
 			/* Nothing to do */
-			assert(c->locked == false);
-		} else if (c->item != NULL) {
-			char header[4096];
+			أكد(c->locked == false);
+		} ورنہ اگر (c->شے != تہی) {
+			حرف سرخی[4096];
 
-			fetch_set_http_code(c->parent_fetch, 200);
+			fetch_سیٹ_http_رمز(c->والد_fetch, 200);
 
 			/* Any callback can result in the fetch being aborted.
 			 * Therefore, we _must_ check for this after _every_
 			 * call to html_css_fetcher_send_callback().
 			 */
-			snprintf(header, sizeof header,
+			snprintf(سرخی, حجم سرخی,
 				"Content-Type: text/css; charset=utf-8");
-			msg.type = FETCH_HEADER;
-			msg.data.header_or_data.buf = (const uint8_t *) header;
-			msg.data.header_or_data.len = strlen(header);
-			html_css_fetcher_send_callback(&msg, c);
+			پیغام.type = FETCH_سرخی;
+			پیغام.ڈیٹا.سرخی_or_ڈیٹا.buf = (ثابت uint8_t *) سرخی;
+			پیغام.ڈیٹا.سرخی_or_ڈیٹا.len = لڑی_لمبائی(سرخی);
+			html_css_fetcher_send_callback(&پیغام, c);
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			اگر (c->aborted == false) {
+				snprintf(سرخی, حجم سرخی,
 					"Content-Length: %"PRIsizet,
-					dom_string_byte_length(c->item->data));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					dom_string_byte_لمبائی(c->شے->ڈیٹا));
+				پیغام.type = FETCH_سرخی;
+				پیغام.ڈیٹا.سرخی_or_ڈیٹا.buf =
+						(ثابت uint8_t *) سرخی;
+				پیغام.ڈیٹا.سرخی_or_ڈیٹا.len = لڑی_لمبائی(سرخی);
+				html_css_fetcher_send_callback(&پیغام, c);
 			}
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			اگر (c->aborted == false) {
+				snprintf(سرخی, حجم سرخی,
 					"X-NS-Base: %.*s",
-					(int) nsurl_length(c->item->base_url),
-					nsurl_access(c->item->base_url));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					(صحیح) nsurl_لمبائی(c->شے->بنیاد_url),
+					nsurl_access(c->شے->بنیاد_url));
+				پیغام.type = FETCH_سرخی;
+				پیغام.ڈیٹا.سرخی_or_ڈیٹا.buf =
+						(ثابت uint8_t *) سرخی;
+				پیغام.ڈیٹا.سرخی_or_ڈیٹا.len = لڑی_لمبائی(سرخی);
+				html_css_fetcher_send_callback(&پیغام, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf =
-						(const uint8_t *)
-						dom_string_data(c->item->data);
-				msg.data.header_or_data.len =
-					dom_string_byte_length(c->item->data);
-				html_css_fetcher_send_callback(&msg, c);
+			اگر (c->aborted == false) {
+				پیغام.type = FETCH_ڈیٹا;
+				پیغام.ڈیٹا.سرخی_or_ڈیٹا.buf =
+						(ثابت uint8_t *)
+						dom_string_ڈیٹا(c->شے->ڈیٹا);
+				پیغام.ڈیٹا.سرخی_or_ڈیٹا.len =
+					dom_string_byte_لمبائی(c->شے->ڈیٹا);
+				html_css_fetcher_send_callback(&پیغام, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				html_css_fetcher_send_callback(&msg, c);
+			اگر (c->aborted == false) {
+				پیغام.type = FETCH_ختم_شدہ;
+				html_css_fetcher_send_callback(&پیغام, c);
 			}
-		} else {
+		} ورنہ {
 			NSLOG(netsurf, INFO, "Processing of %s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't,
 			 * then html_css_fetcher_process() is broken.
 			 */
-			assert(c->locked == false);
+			أكد(c->locked == false);
 		}
 
 		/* Compute next fetch item at the last possible moment as
 		 * processing this item may have added to the ring.
 		 */
-		next = c->r_next;
+		اگلا = c->r_اگلا;
 
-		fetch_remove_from_queues(c->parent_fetch);
-		fetch_free(c->parent_fetch);
+		fetch_remove_from_queues(c->والد_fetch);
+		fetch_free(c->والد_fetch);
 
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} جب ( (c = اگلا) != ring && ring != تہی);
 }
 
 /* exported interface documented in html_internal.h */
-nserror html_css_fetcher_register(void)
+nserror html_css_fetcher_رجسٹر(خالی)
 {
-	const struct fetcher_operation_table html_css_fetcher_ops = {
+	ثابت ساخت fetcher_operation_جدول html_css_fetcher_ops = {
 		.initialise = html_css_fetcher_initialise,
 		.acceptable = html_css_fetcher_can_fetch,
-		.setup = html_css_fetcher_setup,
-		.start = html_css_fetcher_start,
+		.تیاری = html_css_fetcher_تیاری,
+		.آغاز = html_css_fetcher_آغاز,
 		.abort = html_css_fetcher_abort,
-		.free = html_css_fetcher_free,
+		.آزاد = html_css_fetcher_free,
 		.poll = html_css_fetcher_poll,
 		.finalise = html_css_fetcher_finalise
 	};
 
-	return fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
+	واپس fetcher_جوڑو(lwc_string_ref(corestring_lwc_x_ns_css),
 			&html_css_fetcher_ops);
 }
 
 /* exported interface documented in html_internal.h */
 nserror
-html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
+html_css_fetcher_جوڑو_شے(dom_string *ڈیٹا, nsurl *بنیاد_url, uint32_t *کلید)
 {
-	html_css_fetcher_item *item = malloc(sizeof(*item));
+	html_css_fetcher_شے *شے = حافظہ_دو(حجم(*شے));
 
-	if (item == NULL) {
-		return NSERROR_NOMEM;
+	اگر (شے == تہی) {
+		واپس NSERROR_NOMEM;
 	}
 
-	*key = item->key = current_key++;
-	item->data = dom_string_ref(data);
-	item->base_url = nsurl_ref(base_url);
+	*کلید = شے->کلید = current_کلید++;
+	شے->ڈیٹا = dom_string_ref(ڈیٹا);
+	شے->بنیاد_url = nsurl_ref(بنیاد_url);
 
-	RING_INSERT(items, item);
+	RING_داخل_کرو(اشیاء, شے);
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }

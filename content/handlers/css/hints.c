@@ -16,20 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <strings.h>
+#شامل <string.h>
+#شامل <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
+#شامل "utils/nsoption.h"
+#شامل "utils/corestrings.h"
+#شامل "utils/log.h"
+#شامل "utils/nsurl.h"
+#شامل "utils/utils.h"
 
-#include "css/hints.h"
-#include "css/select.h"
+#شامل "css/hints.h"
+#شامل "css/select.h"
 
-#define LOG_STATS
-#undef LOG_STATS
+#تعریف_کرو LOG_STATS
+#تعریف_منسوخ LOG_STATS
 
 /******************************************************************************
  * Utility functions                                                          *
@@ -41,9 +41,9 @@
  * \param c  Character to consider
  * \return true if character is whitespace, false otherwise
  */
-static bool isWhitespace(char c)
+ساکن bool isWhitespace(حرف c)
 {
-	return c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
+	واپس c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\n';
 }
 
 /**
@@ -52,9 +52,9 @@ static bool isWhitespace(char c)
  * \param c  Character to consider
  * \return true if character is a valid hex digit, false otherwise
  */
-static bool isHex(char c)
+ساکن bool isHex(حرف c)
 {
-	return ('0' <= c && c <= '9') ||
+	واپس ('0' <= c && c <= '9') ||
 			('A' <= (c & ~0x20) && (c & ~0x20) <= 'F');
 }
 
@@ -66,20 +66,20 @@ static bool isHex(char c)
  *
  * \note This function assumes an ASCII-compatible character set
  */
-static uint8_t charToHex(char c)
+ساکن uint8_t char_مقصد_Hex(حرف c)
 {
 	/* 0-9 */
 	c -= '0';
 
 	/* A-F */
-	if (c > 9)
+	اگر (c > 9)
 		c -= 'A' - '9' - 1;
 
 	/* a-f */
-	if (c > 15)
+	اگر (c > 15)
 		c -= 'a' - 'A';
 
-	return c;
+	واپس c;
 }
 
 
@@ -98,58 +98,58 @@ static uint8_t charToHex(char c)
  *                        bytes consumed
  * \return true on success, false on invalid input
  */
-static bool parse_number(const char *data, bool maybe_negative, bool real,
-		css_fixed *value, size_t *consumed)
+ساکن bool parse_نمبر(ثابت حرف *ڈیٹا, bool maybe_negative, bool real,
+		css_fixed *قدر, size_t *consumed)
 {
 	size_t len;
-	const uint8_t *ptr;
+	ثابت uint8_t *ptr;
 	int32_t intpart = 0;
 	int32_t fracpart = 0;
 	int32_t pwr = 1;
-	int sign = 1;
+	صحیح sign = 1;
 
 	*consumed = 0;
 
-	len = strlen(data);
-	ptr = (const uint8_t *) data;
+	len = لڑی_لمبائی(ڈیٹا);
+	ptr = (ثابت uint8_t *) ڈیٹا;
 
-	if (len == 0)
-		return false;
+	اگر (len == 0)
+		واپس false;
 
 	/* Skip leading whitespace */
-	while (len > 0 && isWhitespace(ptr[0])) {
+	جب (len > 0 && isWhitespace(ptr[0])) {
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	اگر (len == 0)
+		واپس false;
 
 	/* Extract sign, if any */
-	if (ptr[0] == '+') {
+	اگر (ptr[0] == '+') {
 		len--;
 		ptr++;
-	} else if (ptr[0] == '-' && maybe_negative) {
+	} ورنہ اگر (ptr[0] == '-' && maybe_negative) {
 		sign = -1;
 		len--;
 		ptr++;
 	}
 
-	if (len == 0)
-		return false;
+	اگر (len == 0)
+		واپس false;
 
 	/* Must have a digit [0,9] */
-	if ('0' > ptr[0] || ptr[0] > '9')
-		return false;
+	اگر ('0' > ptr[0] || ptr[0] > '9')
+		واپس false;
 
 	/* Now extract intpart, assuming base 10 */
-	while (len > 0) {
+	جب (len > 0) {
 		/* Stop on first non-digit */
-		if (ptr[0] < '0' || '9' < ptr[0])
-			break;
+		اگر (ptr[0] < '0' || '9' < ptr[0])
+			توڑو;
 
 		/* Prevent overflow of 'intpart'; proper clamping below */
-		if (intpart < (1 << 22)) {
+		اگر (intpart < (1 << 22)) {
 			intpart *= 10;
 			intpart += ptr[0] - '0';
 		}
@@ -158,16 +158,16 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 	}
 
 	/* And fracpart, again, assuming base 10 */
-	if (real && len > 1 && ptr[0] == '.' &&
+	اگر (real && len > 1 && ptr[0] == '.' &&
 			('0' <= ptr[1] && ptr[1] <= '9')) {
 		ptr++;
 		len--;
 
-		while (len > 0) {
-			if (ptr[0] < '0' || '9' < ptr[0])
-				break;
+		جب (len > 0) {
+			اگر (ptr[0] < '0' || '9' < ptr[0])
+				توڑو;
 
-			if (pwr < 1000000) {
+			اگر (pwr < 1000000) {
 				pwr *= 10;
 				fracpart *= 10;
 				fracpart += ptr[0] - '0';
@@ -177,39 +177,39 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
 		}
 
 		fracpart = ((1 << 10) * fracpart + pwr/2) / pwr;
-		if (fracpart >= (1 << 10)) {
+		اگر (fracpart >= (1 << 10)) {
 			intpart++;
 			fracpart &= (1 << 10) - 1;
 		}
 	}
 
-	if (sign > 0) {
+	اگر (sign > 0) {
 		/* If the result is larger than we can represent,
 		 * then clamp to the maximum value we can store. */
-		if (intpart >= (1 << 21)) {
+		اگر (intpart >= (1 << 21)) {
 			intpart = (1 << 21) - 1;
 			fracpart = (1 << 10) - 1;
 		}
-	} else {
+	} ورنہ {
 		/* If the negated result is smaller than we can represent
 		 * then clamp to the minimum value we can store. */
-		if (intpart >= (1 << 21)) {
+		اگر (intpart >= (1 << 21)) {
 			intpart = -(1 << 21);
 			fracpart = 0;
-		} else {
+		} ورنہ {
 			intpart = -intpart;
-			if (fracpart) {
+			اگر (fracpart) {
 				fracpart = (1 << 10) - fracpart;
 				intpart--;
 			}
 		}
 	}
 
-	*value = (intpart << 10) | fracpart;
+	*قدر = (intpart << 10) | fracpart;
 
-	*consumed = ptr - (const uint8_t *) data;
+	*consumed = ptr - (ثابت uint8_t *) ڈیٹا;
 
-	return true;
+	واپس true;
 }
 
 /**
@@ -221,36 +221,36 @@ static bool parse_number(const char *data, bool maybe_negative, bool real,
  * \param unit    Pointer to location to receive dimension's unit
  * \return true on success, false on invalid input
  */
-static bool parse_dimension(const char *data, bool strict, css_fixed *length,
+ساکن bool parse_dimension(ثابت حرف *ڈیٹا, bool strict, css_fixed *لمبائی,
 		css_unit *unit)
 {
 	size_t len;
-	size_t read;
-	css_fixed value;
+	size_t اقرأ;
+	css_fixed قدر;
 
-	len = strlen(data);
+	len = لڑی_لمبائی(ڈیٹا);
 
-	if (parse_number(data, false, true, &value, &read) == false)
-		return false;
+	اگر (parse_نمبر(ڈیٹا, false, true, &قدر, &اقرأ) == false)
+		واپس false;
 
-	if (strict && value < INTTOFIX(1))
-		return false;
+	اگر (strict && قدر < INTTOFIX(1))
+		واپس false;
 
-	*length = value;
+	*لمبائی = قدر;
 
-	if (len > read && data[read] == '%')
+	اگر (len > اقرأ && ڈیٹا[اقرأ] == '%')
 		*unit = CSS_UNIT_PCT;
-	else
+	ورنہ
 		*unit = CSS_UNIT_PX;
 
-	return true;
+	واپس true;
 }
 
 /**
  * Mapping of colour name to CSS color
  */
-struct colour_map {
-	const char *name;
+ساخت رنگ_map {
+	ثابت حرف *name;
 	css_color color;
 };
 
@@ -263,12 +263,12 @@ struct colour_map {
  *         < 0 if a < b,
  *         > 0 if b > a.
  */
-static int cmp_colour_name(const void *a, const void *b)
+ساکن صحیح cmp_رنگ_name(ثابت خالی *a, ثابت خالی *b)
 {
-	const char *aa = a;
-	const struct colour_map *bb = b;
+	ثابت حرف *aa = a;
+	ثابت ساخت رنگ_map *bb = b;
 
-	return strcasecmp(aa, bb->name);
+	واپس strcasecmp(aa, bb->name);
 }
 
 /**
@@ -278,9 +278,9 @@ static int cmp_colour_name(const void *a, const void *b)
  * \param result  Pointer to location to receive css_color
  * \return true on success, false on invalid input
  */
-static bool parse_named_colour(const char *name, css_color *result)
+ساکن bool parse_named_رنگ(ثابت حرف *name, css_color *نتیجہ)
 {
-	static const struct colour_map named_colours[] = {
+	ساکن ثابت ساخت رنگ_map named_colours[] = {
 		{ "aliceblue",		0xfff0f8ff },
 		{ "antiquewhite",	0xfffaebd7 },
 		{ "aqua",		0xff00ffff },
@@ -432,69 +432,69 @@ static bool parse_named_colour(const char *name, css_color *result)
 		{ "yellow",		0xffffff00 },
 		{ "yellowgreen",	0xff9acd32 }
 	};
-	const struct colour_map *entry;
+	ثابت ساخت رنگ_map *اندراج_2;
 
-	entry = bsearch(name, named_colours,
-			sizeof(named_colours) / sizeof(named_colours[0]),
-			sizeof(named_colours[0]),
-			cmp_colour_name);
+	اندراج_2 = bsearch(name, named_colours,
+			حجم(named_colours) / حجم(named_colours[0]),
+			حجم(named_colours[0]),
+			cmp_رنگ_name);
 
-	if (entry != NULL)
-		*result = entry->color;
+	اگر (اندراج_2 != تہی)
+		*نتیجہ = اندراج_2->color;
 
-	return entry != NULL;
+	واپس اندراج_2 != تہی;
 }
 
 /* exported interface documented in content/handlers/css/hints.h */
-bool nscss_parse_colour(const char *data, css_color *result)
+bool nscss_parse_رنگ(ثابت حرف *ڈیٹا, css_color *نتیجہ)
 {
-	size_t len = strlen(data);
+	size_t len = لڑی_لمبائی(ڈیٹا);
 	uint8_t r, g, b;
 
 	/* 2 */
-	if (len == 0)
-		return false;
+	اگر (len == 0)
+		واپس false;
 
 	/* 3 */
-	if (len == SLEN("transparent") && strcasecmp(data, "transparent") == 0)
-		return false;
+	اگر (len == SLEN("transparent") && strcasecmp(ڈیٹا, "transparent") == 0)
+		واپس false;
 
 	/* 4 */
-	if (parse_named_colour(data, result))
-		return true;
+	اگر (parse_named_رنگ(ڈیٹا, نتیجہ))
+		واپس true;
 
 	/** \todo Implement HTML5's utterly insane legacy colour parsing */
 
-	if (data[0] == '#') {
-		data++;
+	اگر (ڈیٹا[0] == '#') {
+		ڈیٹا++;
 		len--;
 	}
 
-	if (len == 3 && isHex(data[0]) && isHex(data[1]) && isHex(data[2])) {
-		r = charToHex(data[0]);
-		g = charToHex(data[1]);
-		b = charToHex(data[2]);
+	اگر (len == 3 && isHex(ڈیٹا[0]) && isHex(ڈیٹا[1]) && isHex(ڈیٹا[2])) {
+		r = char_مقصد_Hex(ڈیٹا[0]);
+		g = char_مقصد_Hex(ڈیٹا[1]);
+		b = char_مقصد_Hex(ڈیٹا[2]);
 
 		r |= (r << 4);
 		g |= (g << 4);
 		b |= (b << 4);
 
-		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
+		*نتیجہ = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
-	} else if (len == 6 && isHex(data[0]) && isHex(data[1]) &&
-			isHex(data[2]) && isHex(data[3]) && isHex(data[4]) &&
-			isHex(data[5])) {
-		r = (charToHex(data[0]) << 4) | charToHex(data[1]);
-		g = (charToHex(data[2]) << 4) | charToHex(data[3]);
-		b = (charToHex(data[4]) << 4) | charToHex(data[5]);
+		واپس true;
+	} ورنہ اگر (len == 6 && isHex(ڈیٹا[0]) && isHex(ڈیٹا[1]) &&
+			isHex(ڈیٹا[2]) && isHex(ڈیٹا[3]) && isHex(ڈیٹا[4]) &&
+			isHex(ڈیٹا[5])) {
+		r = (char_مقصد_Hex(ڈیٹا[0]) << 4) | char_مقصد_Hex(ڈیٹا[1]);
+		g = (char_مقصد_Hex(ڈیٹا[2]) << 4) | char_مقصد_Hex(ڈیٹا[3]);
+		b = (char_مقصد_Hex(ڈیٹا[4]) << 4) | char_مقصد_Hex(ڈیٹا[5]);
 
-		*result = (0xff << 24) | (r << 16) | (g << 8) | b;
+		*نتیجہ = (0xff << 24) | (r << 16) | (g << 8) | b;
 
-		return true;
+		واپس true;
 	}
 
-	return false;
+	واپس false;
 }
 
 /**
@@ -506,69 +506,69 @@ bool nscss_parse_colour(const char *data, css_color *result)
  * \param unit  Pointer to location to receive unit
  * \return True on success, false on failure
  */
-static bool parse_font_size(const char *size, uint8_t *val,
+ساکن bool parse_font_سائز(ثابت حرف *سائز, uint8_t *val,
 		css_fixed *len, css_unit *unit)
 {
-	static const uint8_t size_map[] = {
-		CSS_FONT_SIZE_XX_SMALL,
-		CSS_FONT_SIZE_SMALL,
-		CSS_FONT_SIZE_MEDIUM,
-		CSS_FONT_SIZE_LARGE,
-		CSS_FONT_SIZE_X_LARGE,
-		CSS_FONT_SIZE_XX_LARGE,
-		CSS_FONT_SIZE_DIMENSION	/* xxx-large (see below) */
+	ساکن ثابت uint8_t سائز_map[] = {
+		CSS_FONT_سائز_XX_SMALL,
+		CSS_FONT_سائز_SMALL,
+		CSS_FONT_سائز_MEDIUM,
+		CSS_FONT_سائز_LARGE,
+		CSS_FONT_سائز_X_LARGE,
+		CSS_FONT_سائز_XX_LARGE,
+		CSS_FONT_سائز_DIMENSION	/* xxx-large (see below) */
 	};
 
-	const char *p = size;
-	char mode;
-	int value = 0;
+	ثابت حرف *p = سائز;
+	حرف منوال;
+	صحیح قدر = 0;
 
 	/* Skip whitespace */
-	while (*p != '\0' && isWhitespace(*p))
+	جب (*p != '\0' && isWhitespace(*p))
 		p++;
 
-	mode = *p;
+	منوال = *p;
 
 	/* Skip +/- */
-	if (mode == '+' || mode == '-')
+	اگر (منوال == '+' || منوال == '-')
 		p++;
 
 	/* Need at least one digit */
-	if (*p < '0' || *p > '9') {
-		return false;
+	اگر (*p < '0' || *p > '9') {
+		واپس false;
 	}
 
 	/* Consume digits, computing value */
-	while ('0' <= *p && *p <= '9') {
-		value = value * 10 + (*p - '0');
+	جب ('0' <= *p && *p <= '9') {
+		قدر = قدر * 10 + (*p - '0');
 		p++;
 	}
 
 	/* Resolve relative sizes */
-	if (mode == '+')
-		value += 3;
-	else if (mode == '-')
-		value = 3 - value;
+	اگر (منوال == '+')
+		قدر += 3;
+	ورنہ اگر (منوال == '-')
+		قدر = 3 - قدر;
 
 	/* Clamp to range [1,7] */
-	if (value < 1)
-		value = 1;
-	else if (value > 7)
-		value = 7;
+	اگر (قدر < 1)
+		قدر = 1;
+	ورنہ اگر (قدر > 7)
+		قدر = 7;
 
-	if (value == 7) {
+	اگر (قدر == 7) {
 		/* Manufacture xxx-large */
-	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_size))),
+	  *len = FDIV(FMUL(INTTOFIX(3), INTTOFIX(nsoption_int(font_سائز))),
 				F_10);
-	} else {
+	} ورنہ {
 		/* Len is irrelevant */
 		*len = 0;
 	}
 
 	*unit = CSS_UNIT_PT;
-	*val = size_map[value - 1];
+	*val = سائز_map[قدر - 1];
 
-	return true;
+	واپس true;
 }
 
 
@@ -576,46 +576,46 @@ static bool parse_font_size(const char *size, uint8_t *val,
  * Hint context management                                                    *
  ******************************************************************************/
 
-#define MAX_HINTS_PER_ELEMENT 32
+#تعریف_کرو MAX_HINTS_فی_ELEMENT 32
 
-struct css_hint_ctx {
-	struct css_hint *hints;
+ساخت css_hint_ctx {
+	ساخت css_hint *hints;
 	uint32_t len;
 };
 
-struct css_hint_ctx hint_ctx;
+ساخت css_hint_ctx hint_ctx;
 
-nserror css_hint_init(void)
+nserror css_hint_init(خالی)
 {
-	hint_ctx.hints = malloc(sizeof(struct css_hint) *
-			MAX_HINTS_PER_ELEMENT);
-	if (hint_ctx.hints == NULL) {
-		return NSERROR_NOMEM;
+	hint_ctx.hints = حافظہ_دو(حجم(ساخت css_hint) *
+			MAX_HINTS_فی_ELEMENT);
+	اگر (hint_ctx.hints == تہی) {
+		واپس NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
-void css_hint_fini(void)
+خالی css_hint_fini(خالی)
 {
 	hint_ctx.len = 0;
-	free(hint_ctx.hints);
+	آزاد(hint_ctx.hints);
 }
 
-static void css_hint_clean(void)
+ساکن خالی css_hint_clean(خالی)
 {
 	hint_ctx.len = 0;
 }
 
-static inline void css_hint_advance(struct css_hint **hint)
+ساکن اندرونی خالی css_hint_advance(ساخت css_hint **hint)
 {
 	hint_ctx.len++;
-	assert(hint_ctx.len < MAX_HINTS_PER_ELEMENT);
+	أكد(hint_ctx.len < MAX_HINTS_فی_ELEMENT);
 
 	(*hint)++;
 }
 
-static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
+ساکن خالی css_hint_get_hints(ساخت css_hint **hints, uint32_t *nhints)
 {
 	*hints = hint_ctx.hints;
 	*nhints = hint_ctx.len;
@@ -626,28 +626,28 @@ static void css_hint_get_hints(struct css_hint **hints, uint32_t *nhints)
  * Presentational hint handlers                                               *
  ******************************************************************************/
 
-static void css_hint_table_cell_border_padding(
+ساکن خالی css_hint_جدول_cell_border_padding(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_qname qs;
-	dom_string *attr = NULL;
-	dom_node *tablenode = NULL;
+	dom_string *attr = تہی;
+	dom_گرہ *tablenode = تہی;
 	dom_exception exc;
 
-	qs.ns = NULL;
-	qs.name = lwc_string_ref(corestring_lwc_table);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&tablenode) != CSS_OK) {
+	qs.ns = تہی;
+	qs.name = lwc_string_ref(corestring_lwc_جدول);
+	اگر (named_ancestor_گرہ(ctx, گرہ, &qs,
+			(خالی *)&tablenode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return;
+		واپس;
 	}
 	lwc_string_unref(qs.name);
 
-	if (tablenode == NULL) {
-		return;
+	اگر (tablenode == تہی) {
+		واپس;
 	}
 	/* No need to unref tablenode, named_ancestor_node does not
 	 * return a reffed node to the CSS
@@ -656,31 +656,31 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_لمبائی hint_لمبائی;
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit) &&
-				INTTOFIX(0) != hint_length.value) {
+		اگر (parse_dimension(
+				dom_string_ڈیٹا(attr), false,
+						&hint_لمبائی.قدر,
+						&hint_لمبائی.unit) &&
+				INTTOFIX(0) != hint_لمبائی.قدر) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
+			برائے (hint_prop = CSS_PROP_BORDER_چوٹی_STYLE;
+			     hint_prop <= CSS_PROP_BORDER_بایاں_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->status = CSS_BORDER_STYLE_INSET;
+				hint->حالت_2 = CSS_BORDER_STYLE_INSET;
 				css_hint_advance(&hint);
 			}
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
+			برائے (hint_prop = CSS_PROP_BORDER_چوٹی_چوڑائی;
+			     hint_prop <= CSS_PROP_BORDER_بایاں_چوڑائی;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = INTTOFIX(1);
-				hint->data.length.unit = CSS_UNIT_PX;
-				hint->status = CSS_BORDER_WIDTH_WIDTH;
+				hint->ڈیٹا.لمبائی.قدر = INTTOFIX(1);
+				hint->ڈیٹا.لمبائی.unit = CSS_UNIT_PX;
+				hint->حالت_2 = CSS_BORDER_چوڑائی_چوڑائی;
 				css_hint_advance(&hint);
 			}
 		}
@@ -690,20 +690,20 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		اگر (nscss_parse_رنگ(
+				(ثابت حرف *)dom_string_ڈیٹا(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
+			برائے (hint_prop = CSS_PROP_BORDER_چوٹی_COLOR;
+			     hint_prop <= CSS_PROP_BORDER_بایاں_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.color = hint_color;
-				hint->status = CSS_BORDER_COLOR_COLOR;
+				hint->ڈیٹا.color = hint_color;
+				hint->حالت_2 = CSS_BORDER_COLOR_COLOR;
 				css_hint_advance(&hint);
 			}
 		}
@@ -713,22 +713,22 @@ static void css_hint_table_cell_border_padding(
 	exc = dom_element_get_attribute(tablenode,
 			corestring_dom_cellpadding, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_لمبائی hint_لمبائی;
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit)) {
+		اگر (parse_dimension(
+				dom_string_ڈیٹا(attr), false,
+						&hint_لمبائی.قدر,
+						&hint_لمبائی.unit)) {
 
-			for (hint_prop = CSS_PROP_PADDING_TOP;
-			     hint_prop <= CSS_PROP_PADDING_LEFT;
+			برائے (hint_prop = CSS_PROP_PADDING_چوٹی;
+			     hint_prop <= CSS_PROP_PADDING_بایاں;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = hint_length.value;
-				hint->data.length.unit = hint_length.unit;
-				hint->status = CSS_PADDING_SET;
+				hint->ڈیٹا.لمبائی.قدر = hint_لمبائی.قدر;
+				hint->ڈیٹا.لمبائی.unit = hint_لمبائی.unit;
+				hint->حالت_2 = CSS_PADDING_سیٹ;
 				css_hint_advance(&hint);
 			}
 		}
@@ -736,606 +736,606 @@ static void css_hint_table_cell_border_padding(
 	}
 }
 
-static void css_hint_vertical_align_table_cells(
+ساکن خالی css_hint_vertical_align_جدول_cells(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = تہی;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(گرہ,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		hint->data.length.value = 0;
-		hint->data.length.unit = CSS_UNIT_PX;
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_top)) {
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		hint->ڈیٹا.لمبائی.قدر = 0;
+		hint->ڈیٹا.لمبائی.unit = CSS_UNIT_PX;
+		اگر (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_چوٹی)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TOP;
+			hint->حالت_2 = CSS_VERTICAL_ALIGN_چوٹی;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
-					corestring_lwc_middle)) {
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(attr,
+					corestring_lwc_درمیان)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
+			hint->حالت_2 = CSS_VERTICAL_ALIGN_درمیان;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BOTTOM;
+			hint->حالت_2 = CSS_VERTICAL_ALIGN_BOTTOM;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
+			hint->حالت_2 = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_vertical_align_replaced(
+ساکن خالی css_hint_vertical_align_replaced(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = تہی;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(گرہ,
 			corestring_dom_valign, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_top)) {
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		اگر (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_چوٹی)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TOP;
+			hint->حالت_2 = CSS_VERTICAL_ALIGN_چوٹی;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_bottom) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_baseline)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_BASELINE;
+			hint->حالت_2 = CSS_VERTICAL_ALIGN_BASELINE;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_texttop)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_TEXT_TOP;
+			hint->حالت_2 = CSS_VERTICAL_ALIGN_متن_چوٹی;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_absmiddle) ||
 			   dom_string_caseless_lwc_isequal(attr,
 					corestring_lwc_abscenter)) {
 			hint->prop = CSS_PROP_VERTICAL_ALIGN;
-			hint->status = CSS_VERTICAL_ALIGN_MIDDLE;
+			hint->حالت_2 = CSS_VERTICAL_ALIGN_درمیان;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_text_align_normal(
+ساکن خالی css_hint_متن_align_معمول(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = تہی;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(گرہ,
 			corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_left)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LEFT;
+	اگر (err == DOM_NO_ERR && align != تہی) {
+		اگر (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_بایاں)) {
+			hint->prop = CSS_PROP_متن_ALIGN;
+			hint->حالت_2 = CSS_متن_ALIGN_بایاں;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_center)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_CENTER;
+			hint->prop = CSS_PROP_متن_ALIGN;
+			hint->حالت_2 = CSS_متن_ALIGN_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_right)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_RIGHT;
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_دایاں)) {
+			hint->prop = CSS_PROP_متن_ALIGN;
+			hint->حالت_2 = CSS_متن_ALIGN_دایاں;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
+			hint->prop = CSS_PROP_متن_ALIGN;
+			hint->حالت_2 = CSS_متن_ALIGN_JUSTIFY;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_text_align_center(
+ساکن خالی css_hint_متن_align_center(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
-	hint->prop = CSS_PROP_TEXT_ALIGN;
-	hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
+	hint->prop = CSS_PROP_متن_ALIGN;
+	hint->حالت_2 = CSS_متن_ALIGN_LIBCSS_CENTER;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_left_right_align_center(
+ساکن خالی css_hint_margin_بایاں_دایاں_align_center(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گرہ,
 			corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
+		memset(hint, 0, حجم(*hint) * 2);
+		اگر (dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_center) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_abscenter) ||
 				dom_string_caseless_lwc_isequal(attr,
-						corestring_lwc_middle) ||
+						corestring_lwc_درمیان) ||
 				dom_string_caseless_lwc_isequal(attr,
 						corestring_lwc_absmiddle)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_بایاں;
+			hint->حالت_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_دایاں;
+			hint->حالت_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_text_align_special(
+ساکن خالی css_hint_متن_align_special(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *align = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *align = تہی;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(گرہ,
 			corestring_dom_align, &align);
 
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	اگر (err == DOM_NO_ERR && align != تہی) {
+		اگر (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_center)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_CENTER;
+			hint->prop = CSS_PROP_متن_ALIGN;
+			hint->حالت_2 = CSS_متن_ALIGN_LIBCSS_CENTER;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_left)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_LEFT;
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_بایاں)) {
+			hint->prop = CSS_PROP_متن_ALIGN;
+			hint->حالت_2 = CSS_متن_ALIGN_LIBCSS_بایاں;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-					corestring_lwc_right)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_LIBCSS_RIGHT;
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(align,
+					corestring_lwc_دایاں)) {
+			hint->prop = CSS_PROP_متن_ALIGN;
+			hint->حالت_2 = CSS_متن_ALIGN_LIBCSS_دایاں;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(align,
 					corestring_lwc_justify)) {
-			hint->prop = CSS_PROP_TEXT_ALIGN;
-			hint->status = CSS_TEXT_ALIGN_JUSTIFY;
+			hint->prop = CSS_PROP_متن_ALIGN;
+			hint->حالت_2 = CSS_متن_ALIGN_JUSTIFY;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_text_align_table_special(
+ساکن خالی css_hint_متن_align_جدول_special(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 
-	hint->prop = CSS_PROP_TEXT_ALIGN;
-	hint->status = CSS_TEXT_ALIGN_INHERIT_IF_NON_MAGIC;
+	hint->prop = CSS_PROP_متن_ALIGN;
+	hint->حالت_2 = CSS_متن_ALIGN_INHERIT_IF_NON_MAGIC;
 	css_hint_advance(&hint);
 }
 
-static void css_hint_margin_hspace_vspace(
+ساکن خالی css_hint_margin_hspace_vspace(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = تہی;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گرہ,
 			corestring_dom_vspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		css_hint_length hint_length;
-		if (parse_dimension(
-				dom_string_data(attr), false,
-				&hint_length.value,
-				&hint_length.unit)) {
-			hint->prop = CSS_PROP_MARGIN_TOP;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
+		css_hint_لمبائی hint_لمبائی;
+		اگر (parse_dimension(
+				dom_string_ڈیٹا(attr), false,
+				&hint_لمبائی.قدر,
+				&hint_لمبائی.unit)) {
+			hint->prop = CSS_PROP_MARGIN_چوٹی;
+			hint->ڈیٹا.لمبائی.قدر = hint_لمبائی.قدر;
+			hint->ڈیٹا.لمبائی.unit = hint_لمبائی.unit;
+			hint->حالت_2 = CSS_MARGIN_سیٹ;
 			css_hint_advance(&hint);
 
 			hint->prop = CSS_PROP_MARGIN_BOTTOM;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+			hint->ڈیٹا.لمبائی.قدر = hint_لمبائی.قدر;
+			hint->ڈیٹا.لمبائی.unit = hint_لمبائی.unit;
+			hint->حالت_2 = CSS_MARGIN_سیٹ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گرہ,
 			corestring_dom_hspace, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		css_hint_length hint_length;
-		if (parse_dimension(
-				dom_string_data(attr), false,
-				&hint_length.value,
-				&hint_length.unit)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
+		css_hint_لمبائی hint_لمبائی;
+		اگر (parse_dimension(
+				dom_string_ڈیٹا(attr), false,
+				&hint_لمبائی.قدر,
+				&hint_لمبائی.unit)) {
+			hint->prop = CSS_PROP_MARGIN_بایاں;
+			hint->ڈیٹا.لمبائی.قدر = hint_لمبائی.قدر;
+			hint->ڈیٹا.لمبائی.unit = hint_لمبائی.unit;
+			hint->حالت_2 = CSS_MARGIN_سیٹ;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->data.length.value = hint_length.value;
-			hint->data.length.unit = hint_length.unit;
-			hint->status = CSS_MARGIN_SET;
+			hint->prop = CSS_PROP_MARGIN_دایاں;
+			hint->ڈیٹا.لمبائی.قدر = hint_لمبائی.قدر;
+			hint->ڈیٹا.لمبائی.unit = hint_لمبائی.unit;
+			hint->حالت_2 = CSS_MARGIN_سیٹ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_margin_left_right_hr(
+ساکن خالی css_hint_margin_بایاں_دایاں_hr(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_string *attr;
 	dom_exception exc;
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گرہ,
 				corestring_dom_align, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		memset(hint, 0, sizeof(*hint) * 2);
-		if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_left)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->data.length.value = 0;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_MARGIN_SET;
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
+		memset(hint, 0, حجم(*hint) * 2);
+		اگر (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_بایاں)) {
+			hint->prop = CSS_PROP_MARGIN_بایاں;
+			hint->ڈیٹا.لمبائی.قدر = 0;
+			hint->ڈیٹا.لمبائی.unit = CSS_UNIT_PX;
+			hint->حالت_2 = CSS_MARGIN_سیٹ;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_دایاں;
+			hint->حالت_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(attr,
 				corestring_lwc_center)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_بایاں;
+			hint->حالت_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->status = CSS_MARGIN_AUTO;
+			hint->prop = CSS_PROP_MARGIN_دایاں;
+			hint->حالت_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(attr,
-				corestring_lwc_right)) {
-			hint->prop = CSS_PROP_MARGIN_LEFT;
-			hint->status = CSS_MARGIN_AUTO;
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(attr,
+				corestring_lwc_دایاں)) {
+			hint->prop = CSS_PROP_MARGIN_بایاں;
+			hint->حالت_2 = CSS_MARGIN_AUTO;
 			css_hint_advance(&hint);
 
-			hint->prop = CSS_PROP_MARGIN_RIGHT;
-			hint->data.length.value = 0;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_MARGIN_SET;
+			hint->prop = CSS_PROP_MARGIN_دایاں;
+			hint->ڈیٹا.لمبائی.قدر = 0;
+			hint->ڈیٹا.لمبائی.unit = CSS_UNIT_PX;
+			hint->حالت_2 = CSS_MARGIN_سیٹ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_table_spacing_border(
+ساکن خالی css_hint_جدول_spacing_border(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception exc;
-	dom_string *attr = NULL;
+	dom_string *attr = تہی;
 
-	exc = dom_element_get_attribute(node, corestring_dom_border, &attr);
+	exc = dom_element_get_attribute(گرہ, corestring_dom_border, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
 		uint32_t hint_prop;
-		css_hint_length hint_length;
+		css_hint_لمبائی hint_لمبائی;
 
-		for (hint_prop = CSS_PROP_BORDER_TOP_STYLE;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_STYLE;
+		برائے (hint_prop = CSS_PROP_BORDER_چوٹی_STYLE;
+			     hint_prop <= CSS_PROP_BORDER_بایاں_STYLE;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->status = CSS_BORDER_STYLE_OUTSET;
+				hint->حالت_2 = CSS_BORDER_STYLE_OUTSET;
 				css_hint_advance(&hint);
 		}
 
-		if (parse_dimension(
-				dom_string_data(attr), false,
-						&hint_length.value,
-						&hint_length.unit)) {
+		اگر (parse_dimension(
+				dom_string_ڈیٹا(attr), false,
+						&hint_لمبائی.قدر,
+						&hint_لمبائی.unit)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_WIDTH;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_WIDTH;
+			برائے (hint_prop = CSS_PROP_BORDER_چوٹی_چوڑائی;
+			     hint_prop <= CSS_PROP_BORDER_بایاں_چوڑائی;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.length.value = hint_length.value;
-				hint->data.length.unit = hint_length.unit;
-				hint->status = CSS_BORDER_WIDTH_WIDTH;
+				hint->ڈیٹا.لمبائی.قدر = hint_لمبائی.قدر;
+				hint->ڈیٹا.لمبائی.unit = hint_لمبائی.unit;
+				hint->حالت_2 = CSS_BORDER_چوڑائی_چوڑائی;
 				css_hint_advance(&hint);
 			}
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گرہ,
 			corestring_dom_bordercolor, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
 		uint32_t hint_prop;
 		css_color hint_color;
 
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(attr),
+		اگر (nscss_parse_رنگ(
+				(ثابت حرف *)dom_string_ڈیٹا(attr),
 				&hint_color)) {
 
-			for (hint_prop = CSS_PROP_BORDER_TOP_COLOR;
-			     hint_prop <= CSS_PROP_BORDER_LEFT_COLOR;
+			برائے (hint_prop = CSS_PROP_BORDER_چوٹی_COLOR;
+			     hint_prop <= CSS_PROP_BORDER_بایاں_COLOR;
 			     hint_prop++) {
 				hint->prop = hint_prop;
-				hint->data.color = hint_color;
-				hint->status = CSS_BORDER_COLOR_COLOR;
+				hint->ڈیٹا.color = hint_color;
+				hint->حالت_2 = CSS_BORDER_COLOR_COLOR;
 				css_hint_advance(&hint);
 			}
 		}
 		dom_string_unref(attr);
 	}
 
-	exc = dom_element_get_attribute(node,
+	exc = dom_element_get_attribute(گرہ,
 			corestring_dom_cellspacing, &attr);
 
-	if (exc == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-						&hint->data.position.h.value,
-						&hint->data.position.h.unit)) {
+	اگر (exc == DOM_NO_ERR && attr != تہی) {
+		اگر (parse_dimension(
+				(ثابت حرف *)dom_string_ڈیٹا(attr), false,
+						&hint->ڈیٹا.position.h.قدر,
+						&hint->ڈیٹا.position.h.unit)) {
 			hint->prop = CSS_PROP_BORDER_SPACING;
-			hint->data.position.v = hint->data.position.h;
-			hint->status = CSS_BORDER_SPACING_SET;
+			hint->ڈیٹا.position.v = hint->ڈیٹا.position.h;
+			hint->حالت_2 = CSS_BORDER_SPACING_سیٹ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height(
+ساکن خالی css_hint_اونچائی(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = تہی;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_height, &attr);
+	err = dom_element_get_attribute(گرہ,
+			corestring_dom_اونچائی, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->status = CSS_HEIGHT_SET;
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		اگر (parse_dimension(
+				(ثابت حرف *)dom_string_ڈیٹا(attr), false,
+				&hint->ڈیٹا.لمبائی.قدر,
+				&hint->ڈیٹا.لمبائی.unit)) {
+			hint->prop = CSS_PROP_اونچائی;
+			hint->حالت_2 = CSS_اونچائی_سیٹ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_width(
+ساکن خالی css_hint_چوڑائی(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = تہی;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_width, &attr);
+	err = dom_element_get_attribute(گرہ,
+			corestring_dom_چوڑائی, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->status = CSS_WIDTH_SET;
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		اگر (parse_dimension(
+				(ثابت حرف *)dom_string_ڈیٹا(attr), false,
+				&hint->ڈیٹا.لمبائی.قدر,
+				&hint->ڈیٹا.لمبائی.unit)) {
+			hint->prop = CSS_PROP_چوڑائی;
+			hint->حالت_2 = CSS_چوڑائی_سیٹ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height_width_textarea(
+ساکن خالی css_hint_اونچائی_چوڑائی_textarea(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = تہی;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_rows, &attr);
+	err = dom_element_get_attribute(گرہ,
+			corestring_dom_صفیں, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->data.length.unit = CSS_UNIT_EM;
-			hint->status = CSS_HEIGHT_SET;
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		اگر (parse_dimension(
+				(ثابت حرف *)dom_string_ڈیٹا(attr), false,
+				&hint->ڈیٹا.لمبائی.قدر,
+				&hint->ڈیٹا.لمبائی.unit)) {
+			hint->prop = CSS_PROP_اونچائی;
+			hint->ڈیٹا.لمبائی.unit = CSS_UNIT_EM;
+			hint->حالت_2 = CSS_اونچائی_سیٹ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_cols, &attr);
+	err = dom_element_get_attribute(گرہ,
+			corestring_dom_ستون_تعداد, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->data.length.unit = CSS_UNIT_EX;
-			hint->status = CSS_WIDTH_SET;
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		اگر (parse_dimension(
+				(ثابت حرف *)dom_string_ڈیٹا(attr), false,
+				&hint->ڈیٹا.لمبائی.قدر,
+				&hint->ڈیٹا.لمبائی.unit)) {
+			hint->prop = CSS_PROP_چوڑائی;
+			hint->ڈیٹا.لمبائی.unit = CSS_UNIT_EX;
+			hint->حالت_2 = CSS_چوڑائی_سیٹ;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(attr);
 	}
 }
 
-static void css_hint_height_width_canvas(
+ساکن خالی css_hint_اونچائی_چوڑائی_canvas(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
-	dom_string *attr = NULL;
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	dom_string *attr = تہی;
 	dom_exception err;
-	bool set_dim = false;
+	bool سیٹ_dim = false;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_height, &attr);
+	err = dom_element_get_attribute(گرہ,
+			corestring_dom_اونچائی, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_HEIGHT;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_HEIGHT_SET;
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		اگر (parse_dimension(
+				(ثابت حرف *)dom_string_ڈیٹا(attr), true,
+				&hint->ڈیٹا.لمبائی.قدر,
+				&hint->ڈیٹا.لمبائی.unit)) {
+			hint->prop = CSS_PROP_اونچائی;
+			hint->ڈیٹا.لمبائی.unit = CSS_UNIT_PX;
+			hint->حالت_2 = CSS_اونچائی_سیٹ;
 			css_hint_advance(&hint);
-			set_dim = true;
+			سیٹ_dim = true;
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	اگر (سیٹ_dim == false) {
 		/* canvas defaults to 150px tall */
-		hint->prop = CSS_PROP_HEIGHT;
-		hint->data.length.unit = CSS_UNIT_PX;
-		hint->data.length.value = INTTOFIX(150);
-		hint->status = CSS_HEIGHT_SET;
+		hint->prop = CSS_PROP_اونچائی;
+		hint->ڈیٹا.لمبائی.unit = CSS_UNIT_PX;
+		hint->ڈیٹا.لمبائی.قدر = INTTOFIX(150);
+		hint->حالت_2 = CSS_اونچائی_سیٹ;
 		css_hint_advance(&hint);
-	} else {
-		set_dim = false;
+	} ورنہ {
+		سیٹ_dim = false;
 	}
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_width, &attr);
+	err = dom_element_get_attribute(گرہ,
+			corestring_dom_چوڑائی, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), true,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_WIDTH;
-			hint->data.length.unit = CSS_UNIT_PX;
-			hint->status = CSS_WIDTH_SET;
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		اگر (parse_dimension(
+				(ثابت حرف *)dom_string_ڈیٹا(attr), true,
+				&hint->ڈیٹا.لمبائی.قدر,
+				&hint->ڈیٹا.لمبائی.unit)) {
+			hint->prop = CSS_PROP_چوڑائی;
+			hint->ڈیٹا.لمبائی.unit = CSS_UNIT_PX;
+			hint->حالت_2 = CSS_چوڑائی_سیٹ;
 			css_hint_advance(&hint);
-			set_dim = true;
+			سیٹ_dim = true;
 		}
 		dom_string_unref(attr);
 	}
-	if (set_dim == false) {
+	اگر (سیٹ_dim == false) {
 		/* canvas defaults to 300px wide */
-		hint->prop = CSS_PROP_WIDTH;
-		hint->data.length.unit = CSS_UNIT_PX;
-		hint->data.length.value = INTTOFIX(300);
-		hint->status = CSS_WIDTH_SET;
+		hint->prop = CSS_PROP_چوڑائی;
+		hint->ڈیٹا.لمبائی.unit = CSS_UNIT_PX;
+		hint->ڈیٹا.لمبائی.قدر = INTTOFIX(300);
+		hint->حالت_2 = CSS_چوڑائی_سیٹ;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_width_input(
+ساکن خالی css_hint_چوڑائی_داخلہ(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
-	dom_string *attr = NULL;
+	ساخت css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	dom_string *attr = تہی;
 	dom_exception err;
 
-	err = dom_element_get_attribute(node,
-			corestring_dom_size, &attr);
+	err = dom_element_get_attribute(گرہ,
+			corestring_dom_سائز, &attr);
 
-	if (err == DOM_NO_ERR && attr != NULL) {
-		if (parse_dimension(
-				(const char *)dom_string_data(attr), false,
-				&hint->data.length.value,
-				&hint->data.length.unit)) {
-			dom_string *attr2 = NULL;
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		اگر (parse_dimension(
+				(ثابت حرف *)dom_string_ڈیٹا(attr), false,
+				&hint->ڈیٹا.لمبائی.قدر,
+				&hint->ڈیٹا.لمبائی.unit)) {
+			dom_string *attr2 = تہی;
 
-			err = dom_element_get_attribute(node,
+			err = dom_element_get_attribute(گرہ,
 					corestring_dom_type, &attr2);
-			if (err == DOM_NO_ERR) {
+			اگر (err == DOM_NO_ERR) {
 
-				hint->prop = CSS_PROP_WIDTH;
-				hint->status = CSS_WIDTH_SET;
+				hint->prop = CSS_PROP_چوڑائی;
+				hint->حالت_2 = CSS_چوڑائی_سیٹ;
 
-				if (attr2 == NULL ||
+				اگر (attr2 == تہی ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
-						corestring_lwc_text) ||
+						corestring_lwc_متن) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
-						corestring_lwc_search) ||
+						corestring_lwc_تلاش) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_password) ||
 						dom_string_caseless_lwc_isequal(
 						attr2,
 						corestring_lwc_file)) {
-					hint->data.length.unit = CSS_UNIT_EX;
+					hint->ڈیٹا.لمبائی.unit = CSS_UNIT_EX;
 				}
-				if (attr2 != NULL) {
+				اگر (attr2 != تہی) {
 					dom_string_unref(attr2);
 				}
 				css_hint_advance(&hint);
@@ -1345,277 +1345,277 @@ static void css_hint_width_input(
 	}
 }
 
-static void css_hint_anchor_color(
+ساکن خالی css_hint_anchor_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	css_error error;
 	dom_exception err;
 	dom_string *color;
-	dom_node *bodynode = NULL;
+	dom_گرہ *bodynode = تہی;
 
 	/* find body node */
 	css_qname qs;
-	bool is_visited;
+	bool is_دیکھا;
 
-	qs.ns = NULL;
+	qs.ns = تہی;
 	qs.name = lwc_string_ref(corestring_lwc_body);
-	if (named_ancestor_node(ctx, node, &qs,
-			(void *)&bodynode) != CSS_OK) {
+	اگر (named_ancestor_گرہ(ctx, گرہ, &qs,
+			(خالی *)&bodynode) != CSS_OK) {
 		/* Didn't find, or had error */
 		lwc_string_unref(qs.name);
-		return ;
+		واپس ;
 	}
 	lwc_string_unref(qs.name);
 
-	if (bodynode == NULL) {
-		return;
+	اگر (bodynode == تہی) {
+		واپس;
 	}
 
-	error = node_is_visited(ctx, node, &is_visited);
-	if (error != CSS_OK)
-		return;
+	error = گرہ_is_دیکھا(ctx, گرہ, &is_دیکھا);
+	اگر (error != CSS_OK)
+		واپس;
 
-	if (is_visited) {
+	اگر (is_دیکھا) {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_vlink, &color);
-	} else {
+	} ورنہ {
 		err = dom_element_get_attribute(bodynode,
 				corestring_dom_link, &color);
 	}
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	اگر (err == DOM_NO_ERR && color != تہی) {
+		اگر (nscss_parse_رنگ(
+				(ثابت حرف *)dom_string_ڈیٹا(color),
+						&hint->ڈیٹا.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->حالت_2 = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_body_color(
+ساکن خالی css_hint_body_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
-	err = dom_element_get_attribute(node, corestring_dom_text, &color);
+	err = dom_element_get_attribute(گرہ, corestring_dom_متن, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	اگر (err == DOM_NO_ERR && color != تہی) {
+		اگر (nscss_parse_رنگ(
+				(ثابت حرف *)dom_string_ڈیٹا(color),
+						&hint->ڈیٹا.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->حالت_2 = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_color(
+ساکن خالی css_hint_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *color;
 
-	err = dom_element_get_attribute(node, corestring_dom_color, &color);
+	err = dom_element_get_attribute(گرہ, corestring_dom_color, &color);
 
-	if (err == DOM_NO_ERR && color != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(color),
-						&hint->data.color)) {
+	اگر (err == DOM_NO_ERR && color != تہی) {
+		اگر (nscss_parse_رنگ(
+				(ثابت حرف *)dom_string_ڈیٹا(color),
+						&hint->ڈیٹا.color)) {
 			hint->prop = CSS_PROP_COLOR;
-			hint->status = CSS_COLOR_COLOR;
+			hint->حالت_2 = CSS_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(color);
 	}
 }
 
-static void css_hint_font_size(
+ساکن خالی css_hint_font_سائز(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
-	dom_string *size;
+	dom_string *سائز;
 
-	err = dom_element_get_attribute(node, corestring_dom_size, &size);
-	if (err == DOM_NO_ERR && size != NULL) {
-		if (parse_font_size(
-				(const char *)dom_string_data(size),
-						&hint->status,
-						&hint->data.length.value,
-						&hint->data.length.unit)) {
-			hint->prop = CSS_PROP_FONT_SIZE;
+	err = dom_element_get_attribute(گرہ, corestring_dom_سائز, &سائز);
+	اگر (err == DOM_NO_ERR && سائز != تہی) {
+		اگر (parse_font_سائز(
+				(ثابت حرف *)dom_string_ڈیٹا(سائز),
+						&hint->حالت_2,
+						&hint->ڈیٹا.لمبائی.قدر,
+						&hint->ڈیٹا.لمبائی.unit)) {
+			hint->prop = CSS_PROP_FONT_سائز;
 			css_hint_advance(&hint);
 		}
-		dom_string_unref(size);
+		dom_string_unref(سائز);
 	}
 }
 
-static void css_hint_float(
+ساکن خالی css_hint_float(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *align;
 
-	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_left)) {
+	err = dom_element_get_attribute(گرہ, corestring_dom_align, &align);
+	اگر (err == DOM_NO_ERR && align != تہی) {
+		اگر (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_بایاں)) {
 			hint->prop = CSS_PROP_FLOAT;
-			hint->status = CSS_FLOAT_LEFT;
+			hint->حالت_2 = CSS_FLOAT_بایاں;
 			css_hint_advance(&hint);
 
-		} else if (dom_string_caseless_lwc_isequal(align,
-				corestring_lwc_right)) {
+		} ورنہ اگر (dom_string_caseless_lwc_isequal(align,
+				corestring_lwc_دایاں)) {
 			hint->prop = CSS_PROP_FLOAT;
-			hint->status = CSS_FLOAT_RIGHT;
+			hint->حالت_2 = CSS_FLOAT_دایاں;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_caption_side(
+ساکن خالی css_hint_caption_side(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
-	dom_string *align = NULL;
+	dom_string *align = تہی;
 
-	err = dom_element_get_attribute(node, corestring_dom_align, &align);
-	if (err == DOM_NO_ERR && align != NULL) {
-		if (dom_string_caseless_lwc_isequal(align,
+	err = dom_element_get_attribute(گرہ, corestring_dom_align, &align);
+	اگر (err == DOM_NO_ERR && align != تہی) {
+		اگر (dom_string_caseless_lwc_isequal(align,
 				corestring_lwc_bottom)) {
 			hint->prop = CSS_PROP_CAPTION_SIDE;
-			hint->status = CSS_CAPTION_SIDE_BOTTOM;
+			hint->حالت_2 = CSS_CAPTION_SIDE_BOTTOM;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(align);
 	}
 }
 
-static void css_hint_bg_color(
+ساکن خالی css_hint_bg_color(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &hint_ctx.hints[hint_ctx.len];
+	ساخت css_hint *hint = &hint_ctx.hints[hint_ctx.len];
 	dom_exception err;
 	dom_string *bgcolor;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(گرہ,
 			corestring_dom_bgcolor, &bgcolor);
-	if (err == DOM_NO_ERR && bgcolor != NULL) {
-		if (nscss_parse_colour(
-				(const char *)dom_string_data(bgcolor),
-				&hint->data.color)) {
+	اگر (err == DOM_NO_ERR && bgcolor != تہی) {
+		اگر (nscss_parse_رنگ(
+				(ثابت حرف *)dom_string_ڈیٹا(bgcolor),
+				&hint->ڈیٹا.color)) {
 			hint->prop = CSS_PROP_BACKGROUND_COLOR;
-			hint->status = CSS_BACKGROUND_COLOR_COLOR;
+			hint->حالت_2 = CSS_BACKGROUND_COLOR_COLOR;
 			css_hint_advance(&hint);
 		}
 		dom_string_unref(bgcolor);
 	}
 }
 
-static void css_hint_bg_image(
+ساکن خالی css_hint_bg_image(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	ساخت css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
-	err = dom_element_get_attribute(node,
+	err = dom_element_get_attribute(گرہ,
 			corestring_dom_background, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
+	اگر (err == DOM_NO_ERR && attr != تہی) {
 		nsurl *url;
-		nserror error = nsurl_join(ctx->base_url,
-				(const char *)dom_string_data(attr), &url);
+		nserror error = nsurl_join(ctx->بنیاد_url,
+				(ثابت حرف *)dom_string_ڈیٹا(attr), &url);
 		dom_string_unref(attr);
 
-		if (error == NSERROR_OK) {
+		اگر (error == NSERROR_OK) {
 			lwc_string *iurl;
 			lwc_error lerror = lwc_intern_string(nsurl_access(url),
-					nsurl_length(url), &iurl);
+					nsurl_لمبائی(url), &iurl);
 			nsurl_unref(url);
 
-			if (lerror == lwc_error_ok) {
+			اگر (lerror == lwc_error_ok) {
 				hint->prop = CSS_PROP_BACKGROUND_IMAGE;
-				hint->data.string = iurl;
-				hint->status = CSS_BACKGROUND_IMAGE_IMAGE;
+				hint->ڈیٹا.string = iurl;
+				hint->حالت_2 = CSS_BACKGROUND_IMAGE_IMAGE;
 				css_hint_advance(&hint);
 			}
 		}
 	}
 }
 
-static void css_hint_white_space_nowrap(
+ساکن خالی css_hint_white_space_nowrap(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	ساخت css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	bool nowrap;
 
-	err = dom_element_has_attribute(node, corestring_dom_nowrap, &nowrap);
-	if (err == DOM_NO_ERR && nowrap == true) {
+	err = dom_element_has_attribute(گرہ, corestring_dom_nowrap, &nowrap);
+	اگر (err == DOM_NO_ERR && nowrap == true) {
 		hint->prop = CSS_PROP_WHITE_SPACE;
-		hint->status = CSS_WHITE_SPACE_NOWRAP;
+		hint->حالت_2 = CSS_WHITE_SPACE_NOWRAP;
 		css_hint_advance(&hint);
 	}
 }
 
-static void css_hint_list(
+ساکن خالی css_hint_list(
 		nscss_select_ctx *ctx,
-		dom_node *node)
+		dom_گرہ *گرہ)
 {
-	struct css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
+	ساخت css_hint *hint = &(hint_ctx.hints[hint_ctx.len]);
 	dom_exception err;
 	dom_string *attr;
 
-	err = dom_element_get_attribute(node, corestring_dom_type, &attr);
-	if (err == DOM_NO_ERR && attr != NULL) {
-		const char *attr_str = dom_string_data(attr);
-		size_t attr_len = dom_string_byte_length(attr);
-		enum css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
+	err = dom_element_get_attribute(گرہ, corestring_dom_type, &attr);
+	اگر (err == DOM_NO_ERR && attr != تہی) {
+		ثابت حرف *attr_str = dom_string_ڈیٹا(attr);
+		size_t attr_len = dom_string_byte_لمبائی(attr);
+		شمار css_list_style_type_e type = CSS_LIST_STYLE_TYPE_INHERIT;
 
-		if (attr_len == 1) {
-			switch (attr_str[0]) {
-			case 'a':
-				type = CSS_LIST_STYLE_TYPE_LOWER_ALPHA;
-				break;
-			case 'A':
-				type = CSS_LIST_STYLE_TYPE_UPPER_ALPHA;
-				break;
-			case 'i':
-				type = CSS_LIST_STYLE_TYPE_LOWER_ROMAN;
-				break;
-			case 'I':
-				type = CSS_LIST_STYLE_TYPE_UPPER_ROMAN;
-				break;
-			case '1':
+		اگر (attr_len == 1) {
+			انتخاب (attr_str[0]) {
+			حالت 'a':
+				type = CSS_LIST_STYLE_TYPE_زیریں_ALPHA;
+				توڑو;
+			حالت 'A':
+				type = CSS_LIST_STYLE_TYPE_بالائی_ALPHA;
+				توڑو;
+			حالت 'i':
+				type = CSS_LIST_STYLE_TYPE_زیریں_ROMAN;
+				توڑو;
+			حالت 'I':
+				type = CSS_LIST_STYLE_TYPE_بالائی_ROMAN;
+				توڑو;
+			حالت '1':
 				type = CSS_LIST_STYLE_TYPE_DECIMAL;
-				break;
+				توڑو;
 			}
 		}
 
-		if (type != CSS_LIST_STYLE_TYPE_INHERIT) {
+		اگر (type != CSS_LIST_STYLE_TYPE_INHERIT) {
 			hint->prop = CSS_PROP_LIST_STYLE_TYPE;
-			hint->status = type;
+			hint->حالت_2 = type;
 			css_hint_advance(&hint);
 		}
 
@@ -1625,120 +1625,120 @@ static void css_hint_list(
 
 
 /* Exported function, documented in css/hints.h */
-css_error node_presentational_hint(void *pw, void *node,
+css_error گرہ_presentational_hint(خالی *pw, خالی *گرہ,
 		uint32_t *nhints, css_hint **hints)
 {
 	dom_exception exc;
-	dom_html_element_type tag_type;
+	dom_html_element_type لیبل_type;
 
-	if (nsoption_bool(author_level_css) == false) {
+	اگر (nsoption_bool(author_level_css) == false) {
 		*nhints = 0;
-		*hints = NULL;
-		return CSS_OK;
+		*hints = تہی;
+		واپس CSS_OK;
 	}
 
 	css_hint_clean();
 
-	exc = dom_html_element_get_tag_type(node, &tag_type);
-	if (exc != DOM_NO_ERR) {
-		tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
+	exc = dom_html_element_get_لیبل_type(گرہ, &لیبل_type);
+	اگر (exc != DOM_NO_ERR) {
+		لیبل_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 	}
 
-	switch (tag_type) {
-	case DOM_HTML_ELEMENT_TYPE_TH:
-	case DOM_HTML_ELEMENT_TYPE_TD:
-		css_hint_width(pw, node);
-		css_hint_table_cell_border_padding(pw, node);
-		css_hint_white_space_nowrap(pw, node);
+	انتخاب (لیبل_type) {
+	حالت DOM_HTML_ELEMENT_TYPE_TH:
+	حالت DOM_HTML_ELEMENT_TYPE_TD:
+		css_hint_چوڑائی(pw, گرہ);
+		css_hint_جدول_cell_border_padding(pw, گرہ);
+		css_hint_white_space_nowrap(pw, گرہ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_TR:
-		css_hint_height(pw, node);
+	حالت DOM_HTML_ELEMENT_TYPE_TR:
+		css_hint_اونچائی(pw, گرہ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_THEAD:
-	case DOM_HTML_ELEMENT_TYPE_TBODY:
-	case DOM_HTML_ELEMENT_TYPE_TFOOT:
-		css_hint_text_align_special(pw, node);
+	حالت DOM_HTML_ELEMENT_TYPE_THEAD:
+	حالت DOM_HTML_ELEMENT_TYPE_TBODY:
+	حالت DOM_HTML_ELEMENT_TYPE_TFOOT:
+		css_hint_متن_align_special(pw, گرہ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_COL:
-		css_hint_vertical_align_table_cells(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_APPLET:
-	case DOM_HTML_ELEMENT_TYPE_IMG:
-		css_hint_margin_hspace_vspace(pw, node);
+	حالت DOM_HTML_ELEMENT_TYPE_ستون:
+		css_hint_vertical_align_جدول_cells(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_APPLET:
+	حالت DOM_HTML_ELEMENT_TYPE_IMG:
+		css_hint_margin_hspace_vspace(pw, گرہ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_EMBED:
-	case DOM_HTML_ELEMENT_TYPE_IFRAME:
-	case DOM_HTML_ELEMENT_TYPE_OBJECT:
-		css_hint_height(pw, node);
-		css_hint_width(pw, node);
-		css_hint_vertical_align_replaced(pw, node);
-		css_hint_float(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_P:
-	case DOM_HTML_ELEMENT_TYPE_H1:
-	case DOM_HTML_ELEMENT_TYPE_H2:
-	case DOM_HTML_ELEMENT_TYPE_H3:
-	case DOM_HTML_ELEMENT_TYPE_H4:
-	case DOM_HTML_ELEMENT_TYPE_H5:
-	case DOM_HTML_ELEMENT_TYPE_H6:
-		css_hint_text_align_normal(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CENTER:
-		css_hint_text_align_center(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CAPTION:
-		css_hint_caption_side(pw, node);
+	حالت DOM_HTML_ELEMENT_TYPE_EMBED:
+	حالت DOM_HTML_ELEMENT_TYPE_IFRAME:
+	حالت DOM_HTML_ELEMENT_TYPE_OBJECT:
+		css_hint_اونچائی(pw, گرہ);
+		css_hint_چوڑائی(pw, گرہ);
+		css_hint_vertical_align_replaced(pw, گرہ);
+		css_hint_float(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_P:
+	حالت DOM_HTML_ELEMENT_TYPE_H1:
+	حالت DOM_HTML_ELEMENT_TYPE_H2:
+	حالت DOM_HTML_ELEMENT_TYPE_H3:
+	حالت DOM_HTML_ELEMENT_TYPE_H4:
+	حالت DOM_HTML_ELEMENT_TYPE_H5:
+	حالت DOM_HTML_ELEMENT_TYPE_H6:
+		css_hint_متن_align_معمول(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_CENTER:
+		css_hint_متن_align_center(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_CAPTION:
+		css_hint_caption_side(pw, گرہ);
 		fallthrough;
-	case DOM_HTML_ELEMENT_TYPE_DIV:
-		css_hint_text_align_special(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TABLE:
-		css_hint_text_align_table_special(pw, node);
-		css_hint_table_spacing_border(pw, node);
-		css_hint_float(pw, node);
-		css_hint_margin_left_right_align_center(pw, node);
-		css_hint_width(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_HR:
-		css_hint_width(pw, node);
-		css_hint_margin_left_right_hr(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_TEXTAREA:
-		css_hint_height_width_textarea(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_INPUT:
-		css_hint_width_input(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_A:
-		css_hint_anchor_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_FONT:
-		css_hint_font_size(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_BODY:
-		css_hint_body_color(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_CANVAS:
-		css_hint_height_width_canvas(pw, node);
-		break;
-	case DOM_HTML_ELEMENT_TYPE_OL:
-		css_hint_list(pw, node);
-		break;
-	default:
-		break;
+	حالت DOM_HTML_ELEMENT_TYPE_DIV:
+		css_hint_متن_align_special(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_جدول:
+		css_hint_متن_align_جدول_special(pw, گرہ);
+		css_hint_جدول_spacing_border(pw, گرہ);
+		css_hint_float(pw, گرہ);
+		css_hint_margin_بایاں_دایاں_align_center(pw, گرہ);
+		css_hint_چوڑائی(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_HR:
+		css_hint_چوڑائی(pw, گرہ);
+		css_hint_margin_بایاں_دایاں_hr(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_TEXTAREA:
+		css_hint_اونچائی_چوڑائی_textarea(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_داخلہ:
+		css_hint_چوڑائی_داخلہ(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_A:
+		css_hint_anchor_color(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_FONT:
+		css_hint_font_سائز(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_BODY:
+		css_hint_body_color(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_CANVAS:
+		css_hint_اونچائی_چوڑائی_canvas(pw, گرہ);
+		توڑو;
+	حالت DOM_HTML_ELEMENT_TYPE_OL:
+		css_hint_list(pw, گرہ);
+		توڑو;
+	طےشدہ:
+		توڑو;
 	}
 
-	if (tag_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
-		css_hint_color(pw, node);
-		css_hint_bg_color(pw, node);
-		css_hint_bg_image(pw, node);
+	اگر (لیبل_type != DOM_HTML_ELEMENT_TYPE__UNKNOWN) {
+		css_hint_color(pw, گرہ);
+		css_hint_bg_color(pw, گرہ);
+		css_hint_bg_image(pw, گرہ);
 	}
 
-#ifdef LOG_STATS
+#اگر_تعریف_شدہ LOG_STATS
 	NSLOG(netsurf, INFO, "Properties with hints: %i", hint_ctx.len);
-#endif
+#اگر_ختم
 
 	css_hint_get_hints(hints, nhints);
 
-	return CSS_OK;
+	واپس CSS_OK;
 }

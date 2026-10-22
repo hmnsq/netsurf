@@ -21,35 +21,35 @@
  * High-level resource cache interface
  */
 
-#ifndef NETSURF_CONTENT_HLCACHE_H_
-#define NETSURF_CONTENT_HLCACHE_H_
+#اگر_غیر_تعریف_شدہ NETSURF_CONTENT_HLCACHE_H_
+#تعریف_کرو NETSURF_CONTENT_HLCACHE_H_
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
+#شامل "utils/errors.h"
+#شامل "utils/nsurl.h"
 
-#include "content/content.h"
-#include "content/llcache.h"
+#شامل "content/content.h"
+#شامل "content/llcache.h"
 
 /** High-level cache handle */
-typedef struct hlcache_handle hlcache_handle;
+قسمتعریف ساخت hlcache_handle hlcache_handle;
 
 /** Context for retrieving a child object */
-typedef struct hlcache_child_context {
- 	const char *charset;		/**< Charset of parent */
+قسمتعریف ساخت hlcache_بچہ_context {
+ 	ثابت حرف *charset;		/**< Charset of parent */
  	bool quirks;			/**< Whether parent is quirky */
-} hlcache_child_context;
+} hlcache_بچہ_context;
 
 /** High-level cache event */
-typedef struct hlcache_event {
-	content_msg type;		/**< Event type */
-	union content_msg_data data;	/**< Event data */
+قسمتعریف ساخت hlcache_event {
+	content_پیغام type;		/**< Event type */
+	اتحاد content_پیغام_ڈیٹا ڈیٹا;	/**< Event data */
 } hlcache_event;
 
-struct hlcache_parameters {
+ساخت hlcache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	غیرعلامتی صحیح bg_clean_وقت;
 
-	struct llcache_parameters llcache;
+	ساخت llcache_parameters llcache;
 };
 
 /**
@@ -60,11 +60,11 @@ struct hlcache_parameters {
  * \param pw      Pointer to client-specific data
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-typedef nserror (*hlcache_handle_callback)(hlcache_handle *handle,
-		const hlcache_event *event, void *pw);
+قسمتعریف nserror (*hlcache_handle_callback)(hlcache_handle *handle,
+		ثابت hlcache_event *event, خالی *pw);
 
 /** Flags for high-level cache object retrieval */
-enum hlcache_retrieve_flag {
+شمار hlcache_retrieve_flag {
 	/* Note: low-level cache retrieval flags occupy the bottom 16 bits of
 	 * the flags word. High-level cache flags occupy the top 16 bits.
 	 * To avoid confusion, high-level flags are allocated from bit 31 down.
@@ -81,18 +81,18 @@ enum hlcache_retrieve_flag {
  * \param hlcache_parameters Settings to initialise cache with
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror hlcache_initialise(const struct hlcache_parameters *hlcache_parameters);
+nserror hlcache_initialise(ثابت ساخت hlcache_parameters *hlcache_parameters);
 
 /**
  * Stop the high-level cache periodic functionality so that the
  * exit sequence can run.
  */
-void hlcache_stop(void);
+خالی hlcache_stop(خالی);
 
 /**
  * Finalise the high-level cache, destroying any remaining contents
  */
-void hlcache_finalise(void);
+خالی hlcache_finalise(خالی);
 
 /**
  * Retrieve a high-level cache handle for an object
@@ -117,10 +117,10 @@ void hlcache_finalise(void);
  * \todo Is there any way to sensibly reduce the number of parameters here?
  */
 nserror hlcache_handle_retrieve(nsurl *url, uint32_t flags,
-		nsurl *referer, llcache_post_data *post,
-		hlcache_handle_callback cb, void *pw,
-		hlcache_child_context *child,
-		content_type accepted_types, hlcache_handle **result);
+		nsurl *referer, llcache_post_ڈیٹا *post,
+		hlcache_handle_callback cb, خالی *pw,
+		hlcache_بچہ_context *بچہ,
+		content_type accepted_types, hlcache_handle **نتیجہ);
 
 /**
  * Release a high-level cache handle
@@ -147,7 +147,7 @@ nserror hlcache_handle_abort(hlcache_handle *handle);
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 nserror hlcache_handle_replace_callback(hlcache_handle *handle,
-		hlcache_handle_callback cb, void *pw);
+		hlcache_handle_callback cb, خالی *pw);
 
 /**
  * Retrieve a content object from a cache handle
@@ -164,7 +164,7 @@ nserror hlcache_handle_replace_callback(hlcache_handle *handle,
  * thing being that the client need not care about this possibility and can
  * just call the functions with impugnity.
  */
-struct content *hlcache_handle_get_content(const hlcache_handle *handle);
+ساخت content *hlcache_handle_get_content(ثابت hlcache_handle *handle);
 
 /**
  * Clone a high level cache handle.
@@ -174,7 +174,7 @@ struct content *hlcache_handle_get_content(const hlcache_handle *handle);
  * \return NSERROR_OK on success, appropriate error otherwise
  *
  */
-nserror hlcache_handle_clone(hlcache_handle *handle, hlcache_handle **result);
+nserror hlcache_handle_clone(hlcache_handle *handle, hlcache_handle **نتیجہ);
 
 
-#endif
+#اگر_ختم

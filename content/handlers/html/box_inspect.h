@@ -21,8 +21,8 @@
  * HTML Box tree inspection interface.
  */
 
-#ifndef NETSURF_HTML_BOX_INSPECT_H
-#define NETSURF_HTML_BOX_INSPECT_H
+#اگر_غیر_تعریف_شدہ NETSURF_HTML_BOX_INSPECT_H
+#تعریف_کرو NETSURF_HTML_BOX_INSPECT_H
 
 /**
  * Find the absolute coordinates of a box.
@@ -31,7 +31,7 @@
  * \param  x    updated to x coordinate
  * \param  y    updated to y coordinate
  */
-void box_coords(struct box *box, int *x, int *y);
+خالی box_coords(ساخت box *box, صحیح *x, صحیح *y);
 
 
 /**
@@ -40,7 +40,7 @@ void box_coords(struct box *box, int *x, int *y);
  * \param  box  the box to calculate bounds of
  * \param  r    receives bounds
  */
-void box_bounds(struct box *box, struct rect *r);
+خالی box_bounds(ساخت box *box, ساخت rect *r);
 
 
 /**
@@ -67,7 +67,7 @@ void box_bounds(struct box *box, struct rect *r);
  *	}
  * \endcode
  */
-struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, const int x, const int y, int *box_x, int *box_y);
+ساخت box *box_at_نقطہ(ثابت css_unit_ctx *unit_len_ctx, ساخت box *box, ثابت صحیح x, ثابت صحیح y, صحیح *box_x, صحیح *box_y);
 
 
 /**
@@ -77,7 +77,7 @@ struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, cons
  * \param  id   id to look for
  * \return  the box or 0 if not found
  */
-struct box *box_find_by_id(struct box *box, lwc_string *id);
+ساخت box *box_ڈھونڈو_by_id(ساخت box *box, lwc_string *id);
 
 
 /**
@@ -86,13 +86,13 @@ struct box *box_find_by_id(struct box *box, lwc_string *id);
  * \param  box  box to check
  * \return  true iff the box is rendered
  */
-bool box_visible(struct box *box);
+bool box_visible(ساخت box *box);
 
 
 /**
  * Print a box tree to a file.
  */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
+خالی box_dump(FILE *دھارا, ساخت box *box, غیرعلامتی صحیح گہرائی, bool style);
 
 
 /**
@@ -101,7 +101,7 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
  * \param  box  scrolling box
  * \return the box has a vertical scrollbar
  */
-bool box_vscrollbar_present(const struct box *box);
+bool box_vscrollbar_present(ثابت ساخت box *box);
 
 
 /**
@@ -110,7 +110,7 @@ bool box_vscrollbar_present(const struct box *box);
  * \param  box  scrolling box
  * \return the box has a horizontal scrollbar
  */
-bool box_hscrollbar_present(const struct box *box);
+bool box_hscrollbar_present(ثابت ساخت box *box);
 
 
 /**
@@ -125,7 +125,7 @@ bool box_hscrollbar_present(const struct box *box);
  * \param dx	receives x ordinate of mouse relative to text box
  * \param dy	receives y ordinate of mouse relative to text box
  */
-struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, int *dx, int *dy);
+ساخت box *box_pick_متن_box(ساخت html_content *html, صحیح x, صحیح y, صحیح dir, صحیح *dx, صحیح *dy);
 
 
 /**
@@ -134,22 +134,22 @@ struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, 
  * \param[in] b  Box to check.
  * \return true iff box is first child.
  */
-static inline bool box_is_first_child(struct box *b)
+ساکن اندرونی bool box_is_پہلا_بچہ(ساخت box *b)
 {
-	return (b->parent == NULL || b == b->parent->children);
+	واپس (b->والد == تہی || b == b->والد->children);
 }
 
-static inline unsigned box_count_children(const struct box *b)
+ساکن اندرونی غیرعلامتی box_گنتی_children(ثابت ساخت box *b)
 {
-	const struct box *c = b->children;
-	unsigned count = 0;
+	ثابت ساخت box *c = b->children;
+	غیرعلامتی گنتی = 0;
 
-	while (c != NULL) {
-		count++;
-		c = c->next;
+	جب (c != تہی) {
+		گنتی++;
+		c = c->اگلا;
 	}
 
-	return count;
+	واپس گنتی;
 }
 
-#endif
+#اگر_ختم

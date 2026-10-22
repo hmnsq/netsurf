@@ -21,33 +21,33 @@
  * High-level resource cache implementation.
  */
 
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <assert.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/ring.h"
-#include "utils/utils.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/misc.h"
-#include "netsurf/content.h"
-#include "desktop/gui_internal.h"
+#شامل "utils/http.h"
+#شامل "utils/log.h"
+#شامل "utils/messages.h"
+#شامل "utils/ring.h"
+#شامل "utils/utils.h"
+#شامل "netsurf/inttypes.h"
+#شامل "netsurf/misc.h"
+#شامل "netsurf/content.h"
+#شامل "desktop/gui_internal.h"
 
-#include "content/mimesniff.h"
-#include "content/hlcache.h"
+#شامل "content/mimesniff.h"
+#شامل "content/hlcache.h"
 // Note, this is *ONLY* so that we can abort cleanly during shutdown of the cache
-#include "content/content_protected.h"
-#include "content/content_factory.h"
+#شامل "content/content_protected.h"
+#شامل "content/content_factory.h"
 
-typedef struct hlcache_entry hlcache_entry;
-typedef struct hlcache_retrieval_ctx hlcache_retrieval_ctx;
+قسمتعریف ساخت hlcache_اندراج hlcache_اندراج;
+قسمتعریف ساخت hlcache_retrieval_ctx hlcache_retrieval_ctx;
 
 /** High-level cache retrieval context */
-struct hlcache_retrieval_ctx {
-	struct hlcache_retrieval_ctx *r_prev; /**< Previous retrieval context in the ring */
-	struct hlcache_retrieval_ctx *r_next; /**< Next retrieval context in the ring */
+ساخت hlcache_retrieval_ctx {
+	ساخت hlcache_retrieval_ctx *r_پچھلا; /**< Previous retrieval context in the ring */
+	ساخت hlcache_retrieval_ctx *r_اگلا; /**< Next retrieval context in the ring */
 
 	llcache_handle *llcache;	/**< Low-level cache handle */
 
@@ -57,47 +57,47 @@ struct hlcache_retrieval_ctx {
 
 	content_type accepted_types;	/**< Accepted types */
 
-	hlcache_child_context child;	/**< Child context */
+	hlcache_بچہ_context بچہ;	/**< Child context */
 
-	bool migrate_target;		/**< Whether this context is the migration target */
+	bool migrate_ہدف;		/**< Whether this context is the migration target */
 };
 
 /** High-level cache handle */
-struct hlcache_handle {
-	hlcache_entry *entry;		/**< Pointer to cache entry */
+ساخت hlcache_handle {
+	hlcache_اندراج *اندراج_2;		/**< Pointer to cache entry */
 
 	hlcache_handle_callback cb;	/**< Client callback */
-	void *pw;			/**< Client data */
+	خالی *pw;			/**< Client data */
 };
 
 /** Entry in high-level cache */
-struct hlcache_entry {
-	struct content *content;	/**< Pointer to associated content */
+ساخت hlcache_اندراج {
+	ساخت content *content;	/**< Pointer to associated content */
 
-	hlcache_entry *next;		/**< Next sibling */
-	hlcache_entry *prev;		/**< Previous sibling */
+	hlcache_اندراج *اگلا;		/**< Next sibling */
+	hlcache_اندراج *پچھلا;		/**< Previous sibling */
 };
 
 /** Current state of the cache.
  *
  * Global state of the cache.
  */
-struct hlcache_s {
-	struct hlcache_parameters params;
+ساخت hlcache_s {
+	ساخت hlcache_parameters params;
 
 	/** List of cached content objects */
-	hlcache_entry *content_list;
+	hlcache_اندراج *content_list;
 
 	/** Ring of retrieval contexts */
 	hlcache_retrieval_ctx *retrieval_ctx_ring;
 
 	/* statistics */
-	unsigned int hit_count;
-	unsigned int miss_count;
+	غیرعلامتی صحیح کامیابی_گنتی;
+	غیرعلامتی صحیح ناکامی_گنتی;
 };
 
 /** high level cache state */
-static struct hlcache_s *hlcache = NULL;
+ساکن ساخت hlcache_s *hlcache = تہی;
 
 
 /******************************************************************************
@@ -108,26 +108,26 @@ static struct hlcache_s *hlcache = NULL;
 /**
  * Attempt to clean the cache
  */
-static void hlcache_clean(void *force_clean_flag)
+ساکن خالی hlcache_clean(خالی *force_clean_flag)
 {
-	hlcache_entry *entry, *next;
-	bool force_clean = (force_clean_flag != NULL);
+	hlcache_اندراج *اندراج_2, *اگلا;
+	bool force_clean = (force_clean_flag != تہی);
 
-	for (entry = hlcache->content_list; entry != NULL; entry = next) {
-		next = entry->next;
+	برائے (اندراج_2 = hlcache->content_list; اندراج_2 != تہی; اندراج_2 = اگلا) {
+		اگلا = اندراج_2->اگلا;
 
-		if (entry->content == NULL)
-			continue;
+		اگر (اندراج_2->content == تہی)
+			جاری;
 
-		if (content_count_users(entry->content) != 0)
-			continue;
+		اگر (content_گنتی_users(اندراج_2->content) != 0)
+			جاری;
 
-		if (content__get_status(entry->content) == CONTENT_STATUS_LOADING) {
-			if (force_clean == false)
-				continue;
+		اگر (content_get_حالت_2(اندراج_2->content) == CONTENT_حالت_LOADING) {
+			اگر (force_clean == false)
+				جاری;
 			NSLOG(netsurf, DEBUG, "Forcing content cleanup during shutdown");
-			content_abort(entry->content);
-			content_set_error(entry->content);
+			content_abort(اندراج_2->content);
+			content_سیٹ_error(اندراج_2->content);
 		}
 
 		/** \todo This is over-zealous: all unused contents
@@ -138,26 +138,26 @@ static void hlcache_clean(void *force_clean_flag)
 		 */
 
 		/* Remove entry from cache */
-		if (entry->prev == NULL)
-			hlcache->content_list = entry->next;
-		else
-			entry->prev->next = entry->next;
+		اگر (اندراج_2->پچھلا == تہی)
+			hlcache->content_list = اندراج_2->اگلا;
+		ورنہ
+			اندراج_2->پچھلا->اگلا = اندراج_2->اگلا;
 
-		if (entry->next != NULL)
-			entry->next->prev = entry->prev;
+		اگر (اندراج_2->اگلا != تہی)
+			اندراج_2->اگلا->پچھلا = اندراج_2->پچھلا;
 
 		/* Destroy content */
-		content_destroy(entry->content);
+		content_destroy(اندراج_2->content);
 
 		/* Destroy entry */
-		free(entry);
+		آزاد(اندراج_2);
 	}
 
 	/* Attempt to clean the llcache */
 	llcache_clean(false);
 
 	/* Re-schedule ourselves */
-	guit->misc->schedule(hlcache->params.bg_clean_time, hlcache_clean, NULL);
+	guit->misc->جدول_وقت(hlcache->params.bg_clean_وقت, hlcache_clean, تہی);
 }
 
 /**
@@ -168,7 +168,7 @@ static void hlcache_clean(void *force_clean_flag)
  * \param computed_type	  Pointer to location to receive computed type of object
  * \return True if the type is acceptable, false otherwise
  */
-static bool hlcache_type_is_acceptable(lwc_string *mime_type,
+ساکن bool hlcache_type_is_acceptable(lwc_string *mime_type,
 		content_type accepted_types, content_type *computed_type)
 {
 	content_type type;
@@ -177,7 +177,7 @@ static bool hlcache_type_is_acceptable(lwc_string *mime_type,
 
 	*computed_type = type;
 
-	return ((accepted_types & type) != 0);
+	واپس ((accepted_types & type) != 0);
 }
 
 /**
@@ -188,23 +188,23 @@ static bool hlcache_type_is_acceptable(lwc_string *mime_type,
  * \param data	Data for message
  * \param pw	Pointer to private data (hlcache_handle)
  */
-static void hlcache_content_callback(struct content *c, content_msg msg,
-		const union content_msg_data *data, void *pw)
+ساکن خالی hlcache_content_callback(ساخت content *c, content_پیغام پیغام,
+		ثابت اتحاد content_پیغام_ڈیٹا *ڈیٹا, خالی *pw)
 {
 	hlcache_handle *handle = pw;
 	nserror error = NSERROR_OK;
 	hlcache_event event = {
-		.type = msg,
+		.type = پیغام,
 	};
 
-	if (data != NULL) {
-		event.data = *data;
+	اگر (ڈیٹا != تہی) {
+		event.ڈیٹا = *ڈیٹا;
 	}
 
-	if (handle->cb != NULL)
+	اگر (handle->cb != تہی)
 		error = handle->cb(handle, &event, handle->pw);
 
-	if (error != NSERROR_OK)
+	اگر (error != NSERROR_OK)
 		NSLOG(netsurf, INFO, "Error in callback: %d", error);
 }
 
@@ -222,118 +222,118 @@ static void hlcache_content_callback(struct content *c, content_msg msg,
  * \post Low-level handle is either released, or associated with new content
  * \post High-level handle is registered with content
  */
-static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
+ساکن nserror hlcache_ڈھونڈو_content(hlcache_retrieval_ctx *ctx,
 		lwc_string *effective_type)
 {
-	hlcache_entry *entry;
+	hlcache_اندراج *اندراج_2;
 	hlcache_event event;
 	nserror error = NSERROR_OK;
 
 	/* Search list of cached contents for a suitable one */
-	for (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
-		hlcache_handle entry_handle = { entry, NULL, NULL };
-		const llcache_handle *entry_llcache;
+	برائے (اندراج_2 = hlcache->content_list; اندراج_2 != تہی; اندراج_2 = اندراج_2->اگلا) {
+		hlcache_handle اندراج_handle = { اندراج_2, تہی, تہی };
+		ثابت llcache_handle *اندراج_llcache;
 
-		if (entry->content == NULL)
-			continue;
+		اگر (اندراج_2->content == تہی)
+			جاری;
 
 		/* Ignore contents in the error state */
-		if (content_get_status(&entry_handle) == CONTENT_STATUS_ERROR)
-			continue;
+		اگر (content_get_حالت(&اندراج_handle) == CONTENT_حالت_ERROR)
+			جاری;
 
 		/* Ensure that content is shareable */
-		if (content_is_shareable(entry->content) == false)
-			continue;
+		اگر (content_is_shareable(اندراج_2->content) == false)
+			جاری;
 
 		/* Ensure that quirks mode is acceptable */
-		if (content_matches_quirks(entry->content,
-				ctx->child.quirks) == false)
-			continue;
+		اگر (content_matches_quirks(اندراج_2->content,
+				ctx->بچہ.quirks) == false)
+			جاری;
 
 		/* Ensure that content uses same low-level object as
 		 * low-level handle */
-		entry_llcache = content_get_llcache_handle(entry->content);
+		اندراج_llcache = content_get_llcache_handle(اندراج_2->content);
 
-		if (llcache_handle_references_same_object(entry_llcache,
+		اگر (llcache_handle_references_same_object(اندراج_llcache,
 				ctx->llcache))
-			break;
+			توڑو;
 	}
 
-	if (entry == NULL) {
+	اگر (اندراج_2 == تہی) {
 		/* No existing entry, so need to create one */
-		entry = malloc(sizeof(hlcache_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+		اندراج_2 = حافظہ_دو(حجم(hlcache_اندراج));
+		اگر (اندراج_2 == تہی)
+			واپس NSERROR_NOMEM;
 
 		/* Create content using llhandle */
-		entry->content = content_factory_create_content(ctx->llcache,
-				ctx->child.charset, ctx->child.quirks,
+		اندراج_2->content = content_factory_create_content(ctx->llcache,
+				ctx->بچہ.charset, ctx->بچہ.quirks,
 				effective_type);
-		if (entry->content == NULL) {
-			free(entry);
-			return NSERROR_NOMEM;
+		اگر (اندراج_2->content == تہی) {
+			آزاد(اندراج_2);
+			واپس NSERROR_NOMEM;
 		}
 
 		/* Insert into cache */
-		entry->prev = NULL;
-		entry->next = hlcache->content_list;
-		if (hlcache->content_list != NULL)
-			hlcache->content_list->prev = entry;
-		hlcache->content_list = entry;
+		اندراج_2->پچھلا = تہی;
+		اندراج_2->اگلا = hlcache->content_list;
+		اگر (hlcache->content_list != تہی)
+			hlcache->content_list->پچھلا = اندراج_2;
+		hlcache->content_list = اندراج_2;
 
 		/* Signal to caller that we created a content */
-		error = NSERROR_NEED_DATA;
+		error = NSERROR_NEED_ڈیٹا;
 
-		hlcache->miss_count++;
-	} else {
+		hlcache->ناکامی_گنتی++;
+	} ورنہ {
 		/* Found a suitable content: no longer need low-level handle */
 		llcache_handle_release(ctx->llcache);
-		hlcache->hit_count++;
+		hlcache->کامیابی_گنتی++;
 	}
 
 	/* Associate handle with content */
-	if (content_add_user(entry->content,
+	اگر (content_جوڑو_user(اندراج_2->content,
 			hlcache_content_callback, ctx->handle) == false)
-		return NSERROR_NOMEM;
+		واپس NSERROR_NOMEM;
 
 	/* Associate cache entry with handle */
-	ctx->handle->entry = entry;
+	ctx->handle->اندراج_2 = اندراج_2;
 
 	/* Catch handle up with state of content */
-	if (ctx->handle->cb != NULL) {
-		content_status status = content_get_status(ctx->handle);
+	اگر (ctx->handle->cb != تہی) {
+		content_حالت حالت_2 = content_get_حالت(ctx->handle);
 
-		if (status == CONTENT_STATUS_LOADING) {
-			event.type = CONTENT_MSG_LOADING;
+		اگر (حالت_2 == CONTENT_حالت_LOADING) {
+			event.type = CONTENT_پیغام_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
-		} else if (status == CONTENT_STATUS_READY) {
-			event.type = CONTENT_MSG_LOADING;
+		} ورنہ اگر (حالت_2 == CONTENT_حالت_READY) {
+			event.type = CONTENT_پیغام_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
-			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_READY;
+			اگر (ctx->handle->cb != تہی) {
+				event.type = CONTENT_پیغام_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
-		} else if (status == CONTENT_STATUS_DONE) {
-			event.type = CONTENT_MSG_LOADING;
+		} ورنہ اگر (حالت_2 == CONTENT_حالت_مکمل) {
+			event.type = CONTENT_پیغام_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
-			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_READY;
+			اگر (ctx->handle->cb != تہی) {
+				event.type = CONTENT_پیغام_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
 
-			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_DONE;
+			اگر (ctx->handle->cb != تہی) {
+				event.type = CONTENT_پیغام_مکمل;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
 		}
 	}
 
-	return error;
+	واپس error;
 }
 
 /**
@@ -345,26 +345,26 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
  *         NSERROR_NEED_DATA on success where data is needed,
  *         appropriate error otherwise
  */
-static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
+ساکن nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 		lwc_string *effective_type)
 {
 	content_type type = CONTENT_NONE;
 	nserror error = NSERROR_OK;
 
-	ctx->migrate_target = true;
+	ctx->migrate_ہدف = true;
 
-	if ((effective_type != NULL) &&
+	اگر ((effective_type != تہی) &&
 	    hlcache_type_is_acceptable(effective_type,
 				       ctx->accepted_types,
 				       &type)) {
-		error = hlcache_find_content(ctx, effective_type);
-		if (error != NSERROR_OK && error != NSERROR_NEED_DATA) {
-			if (ctx->handle->cb != NULL) {
+		error = hlcache_ڈھونڈو_content(ctx, effective_type);
+		اگر (error != NSERROR_OK && error != NSERROR_NEED_ڈیٹا) {
+			اگر (ctx->handle->cb != تہی) {
 				hlcache_event hlevent;
 
-				hlevent.type = CONTENT_MSG_ERROR;
-				hlevent.data.errordata.errorcode = NSERROR_UNKNOWN;
-				hlevent.data.errordata.errormsg = messages_get("MiscError");
+				hlevent.type = CONTENT_پیغام_ERROR;
+				hlevent.ڈیٹا.errordata.errorcode = NSERROR_UNKNOWN;
+				hlevent.ڈیٹا.errordata.errormsg = messages_get("MiscError");
 
 				ctx->handle->cb(ctx->handle, &hlevent,
 						ctx->handle->pw);
@@ -373,31 +373,31 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 			llcache_handle_abort(ctx->llcache);
 			llcache_handle_release(ctx->llcache);
 		}
-	} else if (type == CONTENT_NONE &&
+	} ورنہ اگر (type == CONTENT_NONE &&
 			(ctx->flags & HLCACHE_RETRIEVE_MAY_DOWNLOAD)) {
 		/* Unknown type, and we can download, so convert */
-		llcache_handle_force_stream(ctx->llcache);
+		llcache_handle_force_دھارا(ctx->llcache);
 
-		if (ctx->handle->cb != NULL) {
+		اگر (ctx->handle->cb != تہی) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_DOWNLOAD;
-			hlevent.data.download = ctx->llcache;
+			hlevent.type = CONTENT_پیغام_DOWNLOAD;
+			hlevent.ڈیٹا.download = ctx->llcache;
 
 			ctx->handle->cb(ctx->handle, &hlevent,
 					ctx->handle->pw);
 		}
 
 		/* Ensure caller knows we need data */
-		error = NSERROR_NEED_DATA;
-	} else {
+		error = NSERROR_NEED_ڈیٹا;
+	} ورنہ {
 		/* Unacceptable type: report error */
-		if (ctx->handle->cb != NULL) {
+		اگر (ctx->handle->cb != تہی) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
-			hlevent.data.errordata.errorcode = NSERROR_UNKNOWN;
-			hlevent.data.errordata.errormsg = messages_get("UnacceptableType");
+			hlevent.type = CONTENT_پیغام_ERROR;
+			hlevent.ڈیٹا.errordata.errorcode = NSERROR_UNKNOWN;
+			hlevent.ڈیٹا.errordata.errormsg = messages_get("UnacceptableType");
 
 			ctx->handle->cb(ctx->handle, &hlevent,
 					ctx->handle->pw);
@@ -407,14 +407,14 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 		llcache_handle_release(ctx->llcache);
 	}
 
-	ctx->migrate_target = false;
+	ctx->migrate_ہدف = false;
 
 	/* No longer require retrieval context */
 	RING_REMOVE(hlcache->retrieval_ctx_ring, ctx);
-	free((char *) ctx->child.charset);
-	free(ctx);
+	آزاد((حرف *) ctx->بچہ.charset);
+	آزاد(ctx);
 
-	return error;
+	واپس error;
 }
 
 /**
@@ -425,35 +425,35 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
  * \param pw	  Pointer to client-specific data
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+ساکن nserror
 hlcache_llcache_callback(llcache_handle *handle,
-			 const llcache_event *event,
-			 void *pw)
+			 ثابت llcache_event *event,
+			 خالی *pw)
 {
 	hlcache_retrieval_ctx *ctx = pw;
-	lwc_string *effective_type = NULL;
+	lwc_string *effective_type = تہی;
 	nserror error;
 
-	assert(ctx->llcache == handle);
+	أكد(ctx->llcache == handle);
 
-	switch (event->type) {
-	case LLCACHE_EVENT_GOT_CERTS:
+	انتخاب (event->type) {
+	حالت LLCACHE_EVENT_GOT_CERTS:
 		/* Pass them on upward */
-		if (ctx->handle->cb != NULL) {
+		اگر (ctx->handle->cb != تہی) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_SSL_CERTS;
-			hlevent.data.chain = event->data.chain;
+			hlevent.type = CONTENT_پیغام_SSL_CERTS;
+			hlevent.ڈیٹا.chain = event->ڈیٹا.chain;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_HAD_HEADERS:
-		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"), NULL, 0,
+		توڑو;
+	حالت LLCACHE_EVENT_HAD_سرخیاں:
+		error = mimesniff_compute_effective_type(llcache_handle_get_سرخی(handle, "Content-Type"), تہی, 0,
 				ctx->flags & HLCACHE_RETRIEVE_SNIFF_TYPE,
 				ctx->accepted_types == CONTENT_IMAGE,
 				&effective_type);
-		if (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
+		اگر (error == NSERROR_OK || error == NSERROR_NOT_ملا) {
 			/* If the sniffer was successful or failed to find
 			 * a Content-Type header when sniffing was
 			 * prohibited, we must migrate the retrieval context. */
@@ -464,78 +464,78 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 		/* No need to report that we need data:
 		 * we'll get some anyway if there is any */
-		if (error == NSERROR_NEED_DATA)
+		اگر (error == NSERROR_NEED_ڈیٹا)
 			error = NSERROR_OK;
 
-		return error;
+		واپس error;
 
-		break;
-	case LLCACHE_EVENT_HAD_DATA:
-		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"),
-				event->data.data.buf, event->data.data.len,
+		توڑو;
+	حالت LLCACHE_EVENT_HAD_ڈیٹا:
+		error = mimesniff_compute_effective_type(llcache_handle_get_سرخی(handle, "Content-Type"),
+				event->ڈیٹا.ڈیٹا.buf, event->ڈیٹا.ڈیٹا.len,
 				ctx->flags & HLCACHE_RETRIEVE_SNIFF_TYPE,
 				ctx->accepted_types == CONTENT_IMAGE,
 				&effective_type);
-		if (error != NSERROR_OK) {
-			assert(0 && "MIME sniff failed with data");
+		اگر (error != NSERROR_OK) {
+			أكد(0 && "MIME sniff failed with data");
 		}
 
 		error = hlcache_migrate_ctx(ctx, effective_type);
 
 		lwc_string_unref(effective_type);
 
-		return error;
+		واپس error;
 
-		break;
-	case LLCACHE_EVENT_DONE:
+		توڑو;
+	حالت LLCACHE_EVENT_مکمل:
 		/* DONE event before we could determine the effective MIME type.
 		 */
-		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"),
-				NULL, 0, false, false, &effective_type);
-		if (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
+		error = mimesniff_compute_effective_type(llcache_handle_get_سرخی(handle, "Content-Type"),
+				تہی, 0, false, false, &effective_type);
+		اگر (error == NSERROR_OK || error == NSERROR_NOT_ملا) {
 			error = hlcache_migrate_ctx(ctx, effective_type);
 
 			lwc_string_unref(effective_type);
-			return error;
+			واپس error;
 		}
 
-		if (ctx->handle->cb != NULL) {
+		اگر (ctx->handle->cb != تہی) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
-			hlevent.data.errordata.errorcode = error;
-			hlevent.data.errordata.errormsg = NULL;
+			hlevent.type = CONTENT_پیغام_ERROR;
+			hlevent.ڈیٹا.errordata.errorcode = error;
+			hlevent.ڈیٹا.errordata.errormsg = تہی;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_ERROR:
-		if (ctx->handle->cb != NULL) {
+		توڑو;
+	حالت LLCACHE_EVENT_ERROR:
+		اگر (ctx->handle->cb != تہی) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
-			hlevent.data.errordata.errorcode = event->data.error.code;
-			hlevent.data.errordata.errormsg = event->data.error.msg;
+			hlevent.type = CONTENT_پیغام_ERROR;
+			hlevent.ڈیٹا.errordata.errorcode = event->ڈیٹا.error.رمز;
+			hlevent.ڈیٹا.errordata.errormsg = event->ڈیٹا.error.پیغام;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_PROGRESS:
-		break;
-	case LLCACHE_EVENT_REDIRECT:
-		if (ctx->handle->cb != NULL) {
+		توڑو;
+	حالت LLCACHE_EVENT_پیش_رفت:
+		توڑو;
+	حالت LLCACHE_EVENT_REDIRECT:
+		اگر (ctx->handle->cb != تہی) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_REDIRECT;
-			hlevent.data.redirect.from = event->data.redirect.from;
-			hlevent.data.redirect.to = event->data.redirect.to;
+			hlevent.type = CONTENT_پیغام_REDIRECT;
+			hlevent.ڈیٹا.redirect.from = event->ڈیٹا.redirect.from;
+			hlevent.ڈیٹا.redirect.مقصد = event->ڈیٹا.redirect.مقصد;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
+		توڑو;
 	}
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 
@@ -545,126 +545,126 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 
 nserror
-hlcache_initialise(const struct hlcache_parameters *hlcache_parameters)
+hlcache_initialise(ثابت ساخت hlcache_parameters *hlcache_parameters)
 {
 	nserror ret;
 
-	hlcache = calloc(1, sizeof(struct hlcache_s));
-	if (hlcache == NULL) {
-		return NSERROR_NOMEM;
+	hlcache = صفر_حافظہ_دو(1, حجم(ساخت hlcache_s));
+	اگر (hlcache == تہی) {
+		واپس NSERROR_NOMEM;
 	}
 
 	ret = llcache_initialise(&hlcache_parameters->llcache);
-	if (ret != NSERROR_OK) {
-		free(hlcache);
-		hlcache = NULL;
-		return ret;
+	اگر (ret != NSERROR_OK) {
+		آزاد(hlcache);
+		hlcache = تہی;
+		واپس ret;
 	}
 
 	hlcache->params = *hlcache_parameters;
 
 	/* Schedule the cache cleanup */
-	guit->misc->schedule(hlcache->params.bg_clean_time, hlcache_clean, NULL);
+	guit->misc->جدول_وقت(hlcache->params.bg_clean_وقت, hlcache_clean, تہی);
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 /* See hlcache.h for documentation */
-void hlcache_stop(void)
+خالی hlcache_stop(خالی)
 {
 	/* Remove the hlcache_clean schedule */
-	guit->misc->schedule(-1, hlcache_clean, NULL);
+	guit->misc->جدول_وقت(-1, hlcache_clean, تہی);
 }
 
 /* See hlcache.h for documentation */
-void hlcache_finalise(void)
+خالی hlcache_finalise(خالی)
 {
-	uint32_t num_contents, prev_contents;
-	hlcache_entry *entry;
-	hlcache_retrieval_ctx *ctx, *next;
+	uint32_t عدد_contents, پچھلا_contents;
+	hlcache_اندراج *اندراج_2;
+	hlcache_retrieval_ctx *ctx, *اگلا;
 
 	/* Obtain initial count of contents remaining */
-	for (num_contents = 0, entry = hlcache->content_list;
-			entry != NULL; entry = entry->next) {
-		num_contents++;
+	برائے (عدد_contents = 0, اندراج_2 = hlcache->content_list;
+			اندراج_2 != تہی; اندراج_2 = اندراج_2->اگلا) {
+		عدد_contents++;
 	}
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remain before cache drain",
-	      num_contents);
+	      عدد_contents);
 
 	/* Drain cache */
-	do {
-		prev_contents = num_contents;
+	کرو {
+		پچھلا_contents = عدد_contents;
 
-		hlcache_clean(NULL);
+		hlcache_clean(تہی);
 
-		for (num_contents = 0, entry = hlcache->content_list;
-				entry != NULL; entry = entry->next) {
-			num_contents++;
+		برائے (عدد_contents = 0, اندراج_2 = hlcache->content_list;
+				اندراج_2 != تہی; اندراج_2 = اندراج_2->اگلا) {
+			عدد_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} جب (عدد_contents > 0 && عدد_contents != پچھلا_contents);
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining after being polite",
-			num_contents);
+			عدد_contents);
 
 	/* Drain cache again, forcing the matter */
-	do {
-		prev_contents = num_contents;
+	کرو {
+		پچھلا_contents = عدد_contents;
 
-		hlcache_clean(&entry); // Any non-NULL pointer will do
+		hlcache_clean(&اندراج_2); // Any non-NULL pointer will do
 
-		for (num_contents = 0, entry = hlcache->content_list;
-				entry != NULL; entry = entry->next) {
-			num_contents++;
+		برائے (عدد_contents = 0, اندراج_2 = hlcache->content_list;
+				اندراج_2 != تہی; اندراج_2 = اندراج_2->اگلا) {
+			عدد_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} جب (عدد_contents > 0 && عدد_contents != پچھلا_contents);
 
-	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining:", num_contents);
-	for (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
-		hlcache_handle entry_handle = { entry, NULL, NULL };
+	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining:", عدد_contents);
+	برائے (اندراج_2 = hlcache->content_list; اندراج_2 != تہی; اندراج_2 = اندراج_2->اگلا) {
+		hlcache_handle اندراج_handle = { اندراج_2, تہی, تہی };
 
-		if (entry->content != NULL) {
+		اگر (اندراج_2->content != تہی) {
 			NSLOG(netsurf, INFO, "	%p : %s (%"PRIu32" users)",
-			      entry,
-			      nsurl_access(hlcache_handle_get_url(&entry_handle)),
-			      content_count_users(entry->content));
-		} else {
-			NSLOG(netsurf, INFO, "	%p", entry);
+			      اندراج_2,
+			      nsurl_access(hlcache_handle_get_url(&اندراج_handle)),
+			      content_گنتی_users(اندراج_2->content));
+		} ورنہ {
+			NSLOG(netsurf, INFO, "	%p", اندراج_2);
 		}
 	}
 
 	/* Clean up retrieval contexts */
-	if (hlcache->retrieval_ctx_ring != NULL) {
+	اگر (hlcache->retrieval_ctx_ring != تہی) {
 		ctx = hlcache->retrieval_ctx_ring;
 
-		do {
-			next = ctx->r_next;
+		کرو {
+			اگلا = ctx->r_اگلا;
 
-			if (ctx->llcache != NULL)
+			اگر (ctx->llcache != تہی)
 				llcache_handle_release(ctx->llcache);
 
-			if (ctx->handle != NULL)
-				free(ctx->handle);
+			اگر (ctx->handle != تہی)
+				آزاد(ctx->handle);
 
-			if (ctx->child.charset != NULL)
-				free((char *) ctx->child.charset);
+			اگر (ctx->بچہ.charset != تہی)
+				آزاد((حرف *) ctx->بچہ.charset);
 
-			free(ctx);
+			آزاد(ctx);
 
-			ctx = next;
-		} while (ctx != hlcache->retrieval_ctx_ring);
+			ctx = اگلا;
+		} جب (ctx != hlcache->retrieval_ctx_ring);
 
-		hlcache->retrieval_ctx_ring = NULL;
+		hlcache->retrieval_ctx_ring = تہی;
 	}
 
-	NSLOG(netsurf, INFO, "hit/miss %d/%d", hlcache->hit_count,
-	      hlcache->miss_count);
+	NSLOG(netsurf, INFO, "hit/miss %d/%d", hlcache->کامیابی_گنتی,
+	      hlcache->ناکامی_گنتی);
 
 	/* De-schedule ourselves */
-	guit->misc->schedule(-1, hlcache_clean, NULL);
+	guit->misc->جدول_وقت(-1, hlcache_clean, تہی);
 
-	free(hlcache);
-	hlcache = NULL;
+	آزاد(hlcache);
+	hlcache = تہی;
 
 	NSLOG(netsurf, INFO, "Finalising low-level cache");
 	llcache_finalise();
@@ -675,38 +675,38 @@ nserror
 hlcache_handle_retrieve(nsurl *url,
 			uint32_t flags,
 			nsurl *referer,
-			llcache_post_data *post,
-			hlcache_handle_callback cb, void *pw,
-			hlcache_child_context *child,
+			llcache_post_ڈیٹا *post,
+			hlcache_handle_callback cb, خالی *pw,
+			hlcache_بچہ_context *بچہ,
 			content_type accepted_types,
-			hlcache_handle **result)
+			hlcache_handle **نتیجہ)
 {
 	hlcache_retrieval_ctx *ctx;
 	nserror error;
 
-	assert(cb != NULL);
+	أكد(cb != تہی);
 
-	ctx = calloc(1, sizeof(hlcache_retrieval_ctx));
-	if (ctx == NULL) {
-		return NSERROR_NOMEM;
+	ctx = صفر_حافظہ_دو(1, حجم(hlcache_retrieval_ctx));
+	اگر (ctx == تہی) {
+		واپس NSERROR_NOMEM;
 	}
 
-	ctx->handle = calloc(1, sizeof(hlcache_handle));
-	if (ctx->handle == NULL) {
-		free(ctx);
-		return NSERROR_NOMEM;
+	ctx->handle = صفر_حافظہ_دو(1, حجم(hlcache_handle));
+	اگر (ctx->handle == تہی) {
+		آزاد(ctx);
+		واپس NSERROR_NOMEM;
 	}
 
-	if (child != NULL) {
-		if (child->charset != NULL) {
-			ctx->child.charset = strdup(child->charset);
-			if (ctx->child.charset == NULL) {
-				free(ctx->handle);
-				free(ctx);
-				return NSERROR_NOMEM;
+	اگر (بچہ != تہی) {
+		اگر (بچہ->charset != تہی) {
+			ctx->بچہ.charset = strdup(بچہ->charset);
+			اگر (ctx->بچہ.charset == تہی) {
+				آزاد(ctx->handle);
+				آزاد(ctx);
+				واپس NSERROR_NOMEM;
 			}
 		}
-		ctx->child.quirks = child->quirks;
+		ctx->بچہ.quirks = بچہ->quirks;
 	}
 
 	ctx->flags = flags;
@@ -718,32 +718,32 @@ hlcache_handle_retrieve(nsurl *url,
 	error = llcache_handle_retrieve(url, flags, referer, post,
 			hlcache_llcache_callback, ctx,
 			&ctx->llcache);
-	if (error != NSERROR_OK) {
+	اگر (error != NSERROR_OK) {
 		/* error retrieving handle so free context and return error */
-		free((char *) ctx->child.charset);
-		free(ctx->handle);
-		free(ctx);
-	} else {
+		آزاد((حرف *) ctx->بچہ.charset);
+		آزاد(ctx->handle);
+		آزاد(ctx);
+	} ورنہ {
 		/* successfully started fetch so add new context to list */
-		RING_INSERT(hlcache->retrieval_ctx_ring, ctx);
+		RING_داخل_کرو(hlcache->retrieval_ctx_ring, ctx);
 
-		*result = ctx->handle;
+		*نتیجہ = ctx->handle;
 	}
-	return error;
+	واپس error;
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_release(hlcache_handle *handle)
 {
-	if (handle->entry != NULL) {
-		content_remove_user(handle->entry->content,
+	اگر (handle->اندراج_2 != تہی) {
+		content_remove_user(handle->اندراج_2->content,
 				hlcache_content_callback, handle);
-	} else {
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+	} ورنہ {
+		RING_ITERATE_آغاز(ساخت hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle &&
-					ictx->migrate_target == false) {
+			اگر (ictx->handle == handle &&
+					ictx->migrate_ہدف == false) {
 				/* This is the nascent context for us,
 				 * so abort the fetch */
 				llcache_handle_abort(ictx->llcache);
@@ -751,50 +751,50 @@ nserror hlcache_handle_release(hlcache_handle *handle)
 				/* Remove us from the ring */
 				RING_REMOVE(hlcache->retrieval_ctx_ring, ictx);
 				/* Throw us away */
-				free((char *) ictx->child.charset);
-				free(ictx);
+				آزاد((حرف *) ictx->بچہ.charset);
+				آزاد(ictx);
 				/* And stop */
 				RING_ITERATE_STOP(hlcache->retrieval_ctx_ring,
 						ictx);
 			}
-		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
+		} RING_ITERATE_انتہا(hlcache->retrieval_ctx_ring, ictx);
 	}
 
-	handle->cb = NULL;
-	handle->pw = NULL;
+	handle->cb = تہی;
+	handle->pw = تہی;
 
-	free(handle);
+	آزاد(handle);
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 /* See hlcache.h for documentation */
-struct content *hlcache_handle_get_content(const hlcache_handle *handle)
+ساخت content *hlcache_handle_get_content(ثابت hlcache_handle *handle)
 {
-	if ((handle != NULL) && (handle->entry != NULL)) {
-		return handle->entry->content;
+	اگر ((handle != تہی) && (handle->اندراج_2 != تہی)) {
+		واپس handle->اندراج_2->content;
 	}
 
-	return NULL;
+	واپس تہی;
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_abort(hlcache_handle *handle)
 {
-	struct hlcache_entry *entry = handle->entry;
-	struct content *c;
+	ساخت hlcache_اندراج *اندراج_2 = handle->اندراج_2;
+	ساخت content *c;
 
-	if (entry == NULL) {
+	اگر (اندراج_2 == تہی) {
 		/* This handle is not yet associated with a cache entry.
 		 * The implication is that the fetch for the handle has
 		 * not progressed to the point where the entry can be
 		 * created. */
 
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+		RING_ITERATE_آغاز(ساخت hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle &&
-					ictx->migrate_target == false) {
+			اگر (ictx->handle == handle &&
+					ictx->migrate_ہدف == false) {
 				/* This is the nascent context for us,
 				 * so abort the fetch */
 				llcache_handle_abort(ictx->llcache);
@@ -802,95 +802,95 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 				/* Remove us from the ring */
 				RING_REMOVE(hlcache->retrieval_ctx_ring, ictx);
 				/* Throw us away */
-				free((char *) ictx->child.charset);
-				free(ictx);
+				آزاد((حرف *) ictx->بچہ.charset);
+				آزاد(ictx);
 				/* And stop */
 				RING_ITERATE_STOP(hlcache->retrieval_ctx_ring,
 						ictx);
 			}
-		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
+		} RING_ITERATE_انتہا(hlcache->retrieval_ctx_ring, ictx);
 
-		return NSERROR_OK;
+		واپس NSERROR_OK;
 	}
 
-	c = entry->content;
+	c = اندراج_2->content;
 
-	if (content_count_users(c) > 1) {
+	اگر (content_گنتی_users(c) > 1) {
 		/* We are not the only user of 'c' so clone it. */
-		struct content *clone = content_clone(c);
+		ساخت content *clone = content_clone(c);
 
-		if (clone == NULL)
-			return NSERROR_NOMEM;
+		اگر (clone == تہی)
+			واپس NSERROR_NOMEM;
 
-		entry = calloc(1, sizeof(struct hlcache_entry));
+		اندراج_2 = صفر_حافظہ_دو(1, حجم(ساخت hlcache_اندراج));
 
-		if (entry == NULL) {
+		اگر (اندراج_2 == تہی) {
 			content_destroy(clone);
-			return NSERROR_NOMEM;
+			واپس NSERROR_NOMEM;
 		}
 
-		if (content_add_user(clone,
+		اگر (content_جوڑو_user(clone,
 				hlcache_content_callback, handle) == false) {
 			content_destroy(clone);
-			free(entry);
-			return NSERROR_NOMEM;
+			آزاد(اندراج_2);
+			واپس NSERROR_NOMEM;
 		}
 
 		content_remove_user(c, hlcache_content_callback, handle);
 
-		entry->content = clone;
-		handle->entry = entry;
-		entry->prev = NULL;
-		entry->next = hlcache->content_list;
-		if (hlcache->content_list != NULL)
-			hlcache->content_list->prev = entry;
-		hlcache->content_list = entry;
+		اندراج_2->content = clone;
+		handle->اندراج_2 = اندراج_2;
+		اندراج_2->پچھلا = تہی;
+		اندراج_2->اگلا = hlcache->content_list;
+		اگر (hlcache->content_list != تہی)
+			hlcache->content_list->پچھلا = اندراج_2;
+		hlcache->content_list = اندراج_2;
 
 		c = clone;
 	}
 
-	return content_abort(c);
+	واپس content_abort(c);
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_replace_callback(hlcache_handle *handle,
-		hlcache_handle_callback cb, void *pw)
+		hlcache_handle_callback cb, خالی *pw)
 {
 	handle->cb = cb;
 	handle->pw = pw;
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
-nserror hlcache_handle_clone(hlcache_handle *handle, hlcache_handle **result)
+nserror hlcache_handle_clone(hlcache_handle *handle, hlcache_handle **نتیجہ)
 {
-	*result = NULL;
-	return NSERROR_CLONE_FAILED;
+	*نتیجہ = تہی;
+	واپس NSERROR_CLONE_FAILED;
 }
 
 /* See hlcache.h for documentation */
-nsurl *hlcache_handle_get_url(const hlcache_handle *handle)
+nsurl *hlcache_handle_get_url(ثابت hlcache_handle *handle)
 {
-	nsurl *result = NULL;
+	nsurl *نتیجہ = تہی;
 
-	assert(handle != NULL);
+	أكد(handle != تہی);
 
-	if (handle->entry != NULL) {
-		result = content_get_url(handle->entry->content);
-	} else {
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+	اگر (handle->اندراج_2 != تہی) {
+		نتیجہ = content_get_url(handle->اندراج_2->content);
+	} ورنہ {
+		RING_ITERATE_آغاز(ساخت hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle) {
+			اگر (ictx->handle == handle) {
 				/* This is the nascent context for us */
-				result = llcache_handle_get_url(ictx->llcache);
+				نتیجہ = llcache_handle_get_url(ictx->llcache);
 
 				/* And stop */
 				RING_ITERATE_STOP(hlcache->retrieval_ctx_ring,
 						ictx);
 			}
-		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
+		} RING_ITERATE_انتہا(hlcache->retrieval_ctx_ring, ictx);
 	}
 
-	return result;
+	واپس نتیجہ;
 }

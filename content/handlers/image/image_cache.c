@@ -21,23 +21,23 @@
  * Cache implementation for bitmap images decoded into frontend format.
  */
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
+#شامل <assert.h>
+#شامل <stdint.h>
+#شامل <stdbool.h>
+#شامل <string.h>
+#شامل <stdlib.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "netsurf/misc.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "desktop/gui_internal.h"
+#شامل "netsurf/inttypes.h"
+#شامل "utils/utils.h"
+#شامل "utils/log.h"
+#شامل "netsurf/misc.h"
+#شامل "netsurf/bitmap.h"
+#شامل "content/llcache.h"
+#شامل "content/content_protected.h"
+#شامل "desktop/gui_internal.h"
 
-#include "image/image_cache.h"
-#include "image/image.h"
+#شامل "image/image_cache.h"
+#شامل "image/image.h"
 
 /**
  * Age of an entry within the cache
@@ -45,30 +45,30 @@
  * type deffed away so it can be readily changed later perhaps to a
  * wallclock time structure.
  */
-typedef unsigned int cache_age;
+قسمتعریف غیرعلامتی صحیح cache_age;
 
 /**
  * Image cache entry
  */
-struct image_cache_entry_s {
-	struct image_cache_entry_s *next; /**< next cache entry in list */
-	struct image_cache_entry_s *prev; /**< previous cache entry in list */
+ساخت image_cache_اندراج_s {
+	ساخت image_cache_اندراج_s *اگلا; /**< next cache entry in list */
+	ساخت image_cache_اندراج_s *پچھلا; /**< previous cache entry in list */
 
 	/** content is used as a key */
-	struct content *content;
+	ساخت content *content;
 	/** associated bitmap entry */
-	struct bitmap *bitmap;
+	ساخت bitmap *bitmap;
 	/** routine to convert content into bitmap */
 	image_cache_convert_fn *convert;
 
 	/* Statistics for replacement algorithm */
 
-	unsigned int redraw_count; /**< number of times object has been drawn */
+	غیرعلامتی صحیح redraw_گنتی; /**< number of times object has been drawn */
 	cache_age redraw_age; /**< Age of last redraw */
-	size_t bitmap_size; /**< size if storage occupied by bitmap */
+	size_t bitmap_سائز; /**< size if storage occupied by bitmap */
 	cache_age bitmap_age; /**< Age of last conversion to a bitmap by cache*/
 
-	int conversion_count; /**< Number of times image has been converted */
+	صحیح conversion_گنتی; /**< Number of times image has been converted */
 };
 
 /**
@@ -79,65 +79,65 @@ struct image_cache_entry_s {
  * using wall clock time while allowing the LRU algorithm to work
  * sensibly.
  */
-struct image_cache_s {
+ساخت image_cache_s {
 	/** Cache parameters */
-	struct image_cache_parameters params;
+	ساخت image_cache_parameters params;
 
 	/** The "age" of the current operation */
 	cache_age current_age;
 
 	/* The objects the cache holds */
-	struct image_cache_entry_s *entries;
+	ساخت image_cache_اندراج_s *entries;
 
 
 	/* Statistics for management algorithm */
 
 	/** total size of bitmaps currently allocated */
-	size_t total_bitmap_size;
+	size_t کل_bitmap_سائز;
 
 	/** Total count of bitmaps currently allocated */
-	int bitmap_count;
+	صحیح bitmap_گنتی;
 
 	/** Maximum size of bitmaps allocated at any one time */
-	size_t max_bitmap_size;
+	size_t max_bitmap_سائز;
 	/** The number of objects when maximum bitmap usage occurred */
-	int max_bitmap_size_count;
+	صحیح max_bitmap_سائز_گنتی;
 
 	/** Maximum count of bitmaps allocated at any one time */
-	int max_bitmap_count;
+	صحیح max_bitmap_گنتی;
 	/** The size of the bitmaps when the max count occurred */
-	size_t max_bitmap_count_size;
+	size_t max_bitmap_گنتی_سائز;
 
 	/** Bitmap was not available at plot time required conversion */
-	int miss_count;
-	uint64_t miss_size;
+	صحیح ناکامی_گنتی;
+	uint64_t ناکامی_سائز;
 	/** Bitmap was available at plot time required no conversion */
-	int hit_count;
-	uint64_t hit_size;
+	صحیح کامیابی_گنتی;
+	uint64_t کامیابی_سائز;
 	/** Bitmap was not available at plot time and required
 	 * conversion which failed.
 	 */
-	int fail_count;
-	uint64_t fail_size;
+	صحیح fail_گنتی;
+	uint64_t fail_سائز;
 
 	/* Cache entry freed without ever being redrawn */
-	int total_unrendered;
+	صحیح کل_unrendered;
 	/** Bitmap was available but never required - wasted conversions */
-	int specultive_miss_count;
+	صحیح specultive_ناکامی_گنتی;
 
 	/** Total number of additional (after the first) conversions */
-	int total_extra_conversions;
+	صحیح کل_extra_conversions;
 	/** counts total number of images with more than one conversion */
-	int total_extra_conversions_count;
+	صحیح کل_extra_conversions_گنتی;
 
 	/** Bitmap with most conversions was converted this many times */
-	int peak_conversions;
+	صحیح peak_conversions;
 	/** Size of bitmap with most conversions */
-	unsigned int peak_conversions_size;
+	غیرعلامتی صحیح peak_conversions_سائز;
 };
 
 /** image cache state */
-static struct image_cache_s *image_cache = NULL;
+ساکن ساخت image_cache_s *image_cache = تہی;
 
 
 /**
@@ -146,16 +146,16 @@ static struct image_cache_s *image_cache = NULL;
  * \param entryn index of cache entry
  * \return cache entry at index or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__findn(int entryn)
+ساکن ساخت image_cache_اندراج_s *image_cache__findn(صحیح entryn)
 {
-	struct image_cache_entry_s *found;
+	ساخت image_cache_اندراج_s *ملا;
 
-	found = image_cache->entries;
-	while ((found != NULL) && (entryn > 0)) {
+	ملا = image_cache->entries;
+	جب ((ملا != تہی) && (entryn > 0)) {
 		entryn--;
-		found = found->next;
+		ملا = ملا->اگلا;
 	}
-	return found;
+	واپس ملا;
 }
 
 
@@ -165,15 +165,15 @@ static struct image_cache_entry_s *image_cache__findn(int entryn)
  * \param c The content to get an entry for
  * \return The image cache entry or NULL if not found.
  */
-static struct image_cache_entry_s *image_cache__find(const struct content *c)
+ساکن ساخت image_cache_اندراج_s *image_cache_ڈھونڈو(ثابت ساخت content *c)
 {
-	struct image_cache_entry_s *found;
+	ساخت image_cache_اندراج_s *ملا;
 
-	found = image_cache->entries;
-	while ((found != NULL) && (found->content != c)) {
-		found = found->next;
+	ملا = image_cache->entries;
+	جب ((ملا != تہی) && (ملا->content != c)) {
+		ملا = ملا->اگلا;
 	}
-	return found;
+	واپس ملا;
 }
 
 /**
@@ -181,68 +181,68 @@ static struct image_cache_entry_s *image_cache__find(const struct content *c)
  *
  * \param centry The image cache entry to update the stats with.
  */
-static void image_cache_stats_bitmap_add(struct image_cache_entry_s *centry)
+ساکن خالی image_cache_stats_bitmap_جوڑو(ساخت image_cache_اندراج_s *centry)
 {
 	centry->bitmap_age = image_cache->current_age;
-	centry->conversion_count++;
+	centry->conversion_گنتی++;
 
-	image_cache->total_bitmap_size += centry->bitmap_size;
-	image_cache->bitmap_count++;
+	image_cache->کل_bitmap_سائز += centry->bitmap_سائز;
+	image_cache->bitmap_گنتی++;
 
-	if (image_cache->total_bitmap_size > image_cache->max_bitmap_size) {
-		image_cache->max_bitmap_size = image_cache->total_bitmap_size;
-		image_cache->max_bitmap_size_count = image_cache->bitmap_count;
+	اگر (image_cache->کل_bitmap_سائز > image_cache->max_bitmap_سائز) {
+		image_cache->max_bitmap_سائز = image_cache->کل_bitmap_سائز;
+		image_cache->max_bitmap_سائز_گنتی = image_cache->bitmap_گنتی;
 
 	}
 
-	if (image_cache->bitmap_count > image_cache->max_bitmap_count) {
-		image_cache->max_bitmap_count = image_cache->bitmap_count;
-		image_cache->max_bitmap_count_size = image_cache->total_bitmap_size;
+	اگر (image_cache->bitmap_گنتی > image_cache->max_bitmap_گنتی) {
+		image_cache->max_bitmap_گنتی = image_cache->bitmap_گنتی;
+		image_cache->max_bitmap_گنتی_سائز = image_cache->کل_bitmap_سائز;
 	}
 
-	if (centry->conversion_count == 2) {
-		image_cache->total_extra_conversions_count++;
+	اگر (centry->conversion_گنتی == 2) {
+		image_cache->کل_extra_conversions_گنتی++;
 	}
 
-	if (centry->conversion_count > 1) {
-		image_cache->total_extra_conversions++;
+	اگر (centry->conversion_گنتی > 1) {
+		image_cache->کل_extra_conversions++;
 	}
 
-	if ((centry->conversion_count > image_cache->peak_conversions) ||
-	    (centry->conversion_count == image_cache->peak_conversions &&
-	     centry->bitmap_size > image_cache->peak_conversions_size)) {
-		image_cache->peak_conversions = centry->conversion_count;
-		image_cache->peak_conversions_size = centry->bitmap_size;
+	اگر ((centry->conversion_گنتی > image_cache->peak_conversions) ||
+	    (centry->conversion_گنتی == image_cache->peak_conversions &&
+	     centry->bitmap_سائز > image_cache->peak_conversions_سائز)) {
+		image_cache->peak_conversions = centry->conversion_گنتی;
+		image_cache->peak_conversions_سائز = centry->bitmap_سائز;
 	}
 }
 
-static void image_cache__link(struct image_cache_entry_s *centry)
+ساکن خالی image_cache__link(ساخت image_cache_اندراج_s *centry)
 {
-	centry->next = image_cache->entries;
-	centry->prev = NULL;
-	if (centry->next != NULL) {
-		centry->next->prev = centry;
+	centry->اگلا = image_cache->entries;
+	centry->پچھلا = تہی;
+	اگر (centry->اگلا != تہی) {
+		centry->اگلا->پچھلا = centry;
 	}
 	image_cache->entries = centry;
 }
 
-static void image_cache__unlink(struct image_cache_entry_s *centry)
+ساکن خالی image_cache__unlink(ساخت image_cache_اندراج_s *centry)
 {
 	/* unlink entry */
-	if (centry->prev == NULL) {
+	اگر (centry->پچھلا == تہی) {
 		/* first in list */
-		if (centry->next != NULL) {
-			centry->next->prev = centry->prev;
-			image_cache->entries = centry->next;
-		} else {
+		اگر (centry->اگلا != تہی) {
+			centry->اگلا->پچھلا = centry->پچھلا;
+			image_cache->entries = centry->اگلا;
+		} ورنہ {
 			/* empty list */
-			image_cache->entries = NULL;
+			image_cache->entries = تہی;
 		}
-	} else {
-		centry->prev->next = centry->next;
+	} ورنہ {
+		centry->پچھلا->اگلا = centry->اگلا;
 
-		if (centry->next != NULL) {
-			centry->next->prev = centry->prev;
+		اگر (centry->اگلا != تہی) {
+			centry->اگلا->پچھلا = centry->پچھلا;
 		}
 	}
 }
@@ -252,23 +252,23 @@ static void image_cache__unlink(struct image_cache_entry_s *centry)
  *
  * \param centry The image cache entry to free bitmap from.
  */
-static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
+ساکن خالی image_cache__free_bitmap(ساخت image_cache_اندراج_s *centry)
 {
-	if (centry->bitmap != NULL) {
-#ifdef IMAGE_CACHE_VERBOSE
+	اگر (centry->bitmap != تہی) {
+#اگر_تعریف_شدہ IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
 		      "Freeing bitmap %p size %d age %d redraw count %d",
 		      centry->bitmap,
-		      centry->bitmap_size,
+		      centry->bitmap_سائز,
 		      image_cache->current_age - centry->bitmap_age,
-		      centry->redraw_count);
-#endif
+		      centry->redraw_گنتی);
+#اگر_ختم
 		guit->bitmap->destroy(centry->bitmap);
-		centry->bitmap = NULL;
-		image_cache->total_bitmap_size -= centry->bitmap_size;
-		image_cache->bitmap_count--;
-		if (centry->redraw_count == 0) {
-			image_cache->specultive_miss_count++;
+		centry->bitmap = تہی;
+		image_cache->کل_bitmap_سائز -= centry->bitmap_سائز;
+		image_cache->bitmap_گنتی--;
+		اگر (centry->redraw_گنتی == 0) {
+			image_cache->specultive_ناکامی_گنتی++;
 		}
 	}
 
@@ -279,21 +279,21 @@ static void image_cache__free_bitmap(struct image_cache_entry_s *centry)
  *
  * \param centry The image cache entry to free.
  */
-static void image_cache__free_entry(struct image_cache_entry_s *centry)
+ساکن خالی image_cache_free_اندراج(ساخت image_cache_اندراج_s *centry)
 {
-#ifdef IMAGE_CACHE_VERBOSE
+#اگر_تعریف_شدہ IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "freeing %p ", centry);
-#endif
+#اگر_ختم
 
-	if (centry->redraw_count == 0) {
-		image_cache->total_unrendered++;
+	اگر (centry->redraw_گنتی == 0) {
+		image_cache->کل_unrendered++;
 	}
 
 	image_cache__free_bitmap(centry);
 
 	image_cache__unlink(centry);
 
-	free(centry);
+	آزاد(centry);
 }
 
 /**
@@ -301,21 +301,21 @@ static void image_cache__free_entry(struct image_cache_entry_s *centry)
  *
  * \param icache The image cache context.
  */
-static void image_cache__clean(struct image_cache_s *icache)
+ساکن خالی image_cache__clean(ساخت image_cache_s *icache)
 {
-	struct image_cache_entry_s *centry = icache->entries;
+	ساخت image_cache_اندراج_s *centry = icache->entries;
 
-	while (centry != NULL) {
-		if ((icache->current_age - centry->redraw_age) >
-		    icache->params.bg_clean_time) {
+	جب (centry != تہی) {
+		اگر ((icache->current_age - centry->redraw_age) >
+		    icache->params.bg_clean_وقت) {
 			/* only consider older entries, avoids active entries */
-			if ((icache->total_bitmap_size >
-			     (icache->params.limit - icache->params.hysteresis)) &&
+			اگر ((icache->کل_bitmap_سائز >
+			     (icache->params.حد_بندی - icache->params.hysteresis)) &&
 			    (rand() > (RAND_MAX / 2))) {
 				image_cache__free_bitmap(centry);
 			}
 		}
-		centry=centry->next;
+		centry=centry->اگلا;
 	}
 }
 
@@ -324,211 +324,211 @@ static void image_cache__clean(struct image_cache_s *icache)
  *
  * \param p The image cache context.
  */
-static void image_cache__background_update(void *p)
+ساکن خالی image_cache__background_update(خالی *p)
 {
-	struct image_cache_s *icache = p;
+	ساخت image_cache_s *icache = p;
 
 	/* increment current cache age */
-	icache->current_age += icache->params.bg_clean_time;
+	icache->current_age += icache->params.bg_clean_وقت;
 
-#ifdef IMAGE_CACHE_VERBOSE
+#اگر_تعریف_شدہ IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "Cache age %ds", icache->current_age / 1000);
-#endif
+#اگر_ختم
 
 	image_cache__clean(icache);
 
-	guit->misc->schedule(icache->params.bg_clean_time,
+	guit->misc->جدول_وقت(icache->params.bg_clean_وقت,
 				image_cache__background_update,
 				icache);
 }
 
 /* exported interface documented in image_cache.h */
-struct bitmap *image_cache_get_bitmap(const struct content *c)
+ساخت bitmap *image_cache_get_bitmap(ثابت ساخت content *c)
 {
-	struct image_cache_entry_s *centry;
+	ساخت image_cache_اندراج_s *centry;
 
-	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	centry = image_cache_ڈھونڈو(c);
+	اگر (centry == تہی) {
+		واپس تہی;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	اگر (centry->bitmap == تہی) {
+		اگر (centry->convert != تہی) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
-			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
-			image_cache->miss_size += centry->bitmap_size;
-		} else {
-			image_cache->fail_count++;
-			image_cache->fail_size += centry->bitmap_size;
+		اگر (centry->bitmap != تہی) {
+			image_cache_stats_bitmap_جوڑو(centry);
+			image_cache->ناکامی_گنتی++;
+			image_cache->ناکامی_سائز += centry->bitmap_سائز;
+		} ورنہ {
+			image_cache->fail_گنتی++;
+			image_cache->fail_سائز += centry->bitmap_سائز;
 		}
-	} else {
-		image_cache->hit_count++;
-		image_cache->hit_size += centry->bitmap_size;
+	} ورنہ {
+		image_cache->کامیابی_گنتی++;
+		image_cache->کامیابی_سائز += centry->bitmap_سائز;
 	}
 
-	return centry->bitmap;
+	واپس centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
-bool image_cache_speculate(struct content *c)
+bool image_cache_speculate(ساخت content *c)
 {
 	bool decision = false;
 
 	/* If the cache is below its target usage and the bitmap is
 	 * small enough speculate.
 	 */
-	if ((image_cache->total_bitmap_size < image_cache->params.limit) &&
-	    (c->size <= image_cache->params.speculative_small)) {
-#ifdef IMAGE_CACHE_VERBOSE
+	اگر ((image_cache->کل_bitmap_سائز < image_cache->params.حد_بندی) &&
+	    (c->سائز <= image_cache->params.speculative_small)) {
+#اگر_تعریف_شدہ IMAGE_CACHE_VERBOSE
 		NSLOG(netsurf, INFO,
 		      "content size (%d) is smaller than minimum (%d)",
-		      c->size,
+		      c->سائز,
 		      SPECULATE_SMALL);
-#endif
+#اگر_ختم
 		decision = true;
 	}
 
-#ifdef IMAGE_CACHE_VERBOSE
+#اگر_تعریف_شدہ IMAGE_CACHE_VERBOSE
 	NSLOG(netsurf, INFO, "returning %d", decision);
-#endif
-	return decision;
+#اگر_ختم
+	واپس decision;
 }
 
 /* exported interface documented in image_cache.h */
-struct bitmap *image_cache_find_bitmap(struct content *c)
+ساخت bitmap *image_cache_ڈھونڈو_bitmap(ساخت content *c)
 {
-	struct image_cache_entry_s *centry;
+	ساخت image_cache_اندراج_s *centry;
 
-	centry = image_cache__find(c);
-	if (centry == NULL) {
-		return NULL;
+	centry = image_cache_ڈھونڈو(c);
+	اگر (centry == تہی) {
+		واپس تہی;
 	}
 
-	return centry->bitmap;
+	واپس centry->bitmap;
 }
 
 /* exported interface documented in image_cache.h */
 nserror
-image_cache_init(const struct image_cache_parameters *image_cache_parameters)
+image_cache_init(ثابت ساخت image_cache_parameters *image_cache_parameters)
 {
-	image_cache = calloc(1, sizeof(struct image_cache_s));
-	if (image_cache == NULL) {
-		return NSERROR_NOMEM;
+	image_cache = صفر_حافظہ_دو(1, حجم(ساخت image_cache_s));
+	اگر (image_cache == تہی) {
+		واپس NSERROR_NOMEM;
 	}
 
 	image_cache->params = *image_cache_parameters;
 
-	guit->misc->schedule(image_cache->params.bg_clean_time,
+	guit->misc->جدول_وقت(image_cache->params.bg_clean_وقت,
 				image_cache__background_update,
 				image_cache);
 
 	NSLOG(netsurf, INFO,
 	      "Image cache initialised with a limit of %"PRIsizet" hysteresis of %"PRIsizet,
-	      image_cache->params.limit,
+	      image_cache->params.حد_بندی,
 	      image_cache->params.hysteresis);
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_fini(void)
+nserror image_cache_fini(خالی)
 {
-	unsigned int op_count;
-	uint64_t op_size;
+	غیرعلامتی صحیح op_گنتی;
+	uint64_t op_سائز;
 
-	guit->misc->schedule(-1, image_cache__background_update, image_cache);
+	guit->misc->جدول_وقت(-1, image_cache__background_update, image_cache);
 
 	NSLOG(netsurf, INFO, "Size at finish %"PRIsizet" (in %d)",
-	      image_cache->total_bitmap_size, image_cache->bitmap_count);
+	      image_cache->کل_bitmap_سائز, image_cache->bitmap_گنتی);
 
-	while (image_cache->entries != NULL) {
-		image_cache__free_entry(image_cache->entries);
+	جب (image_cache->entries != تہی) {
+		image_cache_free_اندراج(image_cache->entries);
 	}
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_گنتی = image_cache->کامیابی_گنتی +
+		image_cache->ناکامی_گنتی +
+		image_cache->fail_گنتی;
 
-	op_size = image_cache->hit_size +
-		image_cache->miss_size +
-		image_cache->fail_size;
+	op_سائز = image_cache->کامیابی_سائز +
+		image_cache->ناکامی_سائز +
+		image_cache->fail_سائز;
 
 	NSLOG(netsurf, INFO, "Age %ds", image_cache->current_age / 1000);
 	NSLOG(netsurf, INFO, "Peak size %"PRIsizet" (in %d)",
-	      image_cache->max_bitmap_size,
-	      image_cache->max_bitmap_size_count);
+	      image_cache->max_bitmap_سائز,
+	      image_cache->max_bitmap_سائز_گنتی);
 	NSLOG(netsurf, INFO, "Peak image count %d (size %"PRIsizet")",
-	      image_cache->max_bitmap_count,
-	      image_cache->max_bitmap_count_size);
+	      image_cache->max_bitmap_گنتی,
+	      image_cache->max_bitmap_گنتی_سائز);
 
-	if ((op_count > 0) && (op_size >0)) {
+	اگر ((op_گنتی > 0) && (op_سائز >0)) {
 
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (counts) %d/%d/%d/%d (100%%/%d%%/%d%%/%d%%)",
-		      op_count,
-		      image_cache->hit_count,
-		      image_cache->miss_count,
-		      image_cache->fail_count,
-		      (image_cache->hit_count * 100) / op_count,
-		      (image_cache->miss_count * 100) / op_count,
-		      (image_cache->fail_count * 100) / op_count);
+		      op_گنتی,
+		      image_cache->کامیابی_گنتی,
+		      image_cache->ناکامی_گنتی,
+		      image_cache->fail_گنتی,
+		      (image_cache->کامیابی_گنتی * 100) / op_گنتی,
+		      (image_cache->ناکامی_گنتی * 100) / op_گنتی,
+		      (image_cache->fail_گنتی * 100) / op_گنتی);
 		NSLOG(netsurf, INFO,
 		      "Cache total/hit/miss/fail (size) %"PRIu64"/%"PRIu64"/%"PRIu64"/%"PRIu64" (100%%/%"PRId64"%%/%"PRId64"%%/%"PRId64"%%)",
-		      op_size,
-		      image_cache->hit_size,
-		      image_cache->miss_size,
-		      image_cache->fail_size,
-		      (image_cache->hit_size * 100) / op_size,
-		      (image_cache->miss_size * 100) / op_size,
-		      (image_cache->fail_size * 100) / op_size);
+		      op_سائز,
+		      image_cache->کامیابی_سائز,
+		      image_cache->ناکامی_سائز,
+		      image_cache->fail_سائز,
+		      (image_cache->کامیابی_سائز * 100) / op_سائز,
+		      (image_cache->ناکامی_سائز * 100) / op_سائز,
+		      (image_cache->fail_سائز * 100) / op_سائز);
 	}
 
 	NSLOG(netsurf, INFO,
 	      "Total images never rendered: %d (includes %d that were converted)",
-	      image_cache->total_unrendered,
-	      image_cache->specultive_miss_count);
+	      image_cache->کل_unrendered,
+	      image_cache->specultive_ناکامی_گنتی);
 
 	NSLOG(netsurf, INFO,
 	      "Total number of excessive conversions: %d (from %d images converted more than once)",
-	      image_cache->total_extra_conversions,
-	      image_cache->total_extra_conversions_count);
+	      image_cache->کل_extra_conversions,
+	      image_cache->کل_extra_conversions_گنتی);
 
 	NSLOG(netsurf, INFO, "Bitmap of size %d had most (%d) conversions",
-	      image_cache->peak_conversions_size,
+	      image_cache->peak_conversions_سائز,
 	      image_cache->peak_conversions);
 
-	free(image_cache);
+	آزاد(image_cache);
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_add(struct content *content,
-			struct bitmap *bitmap,
+nserror image_cache_جوڑو(ساخت content *content,
+			ساخت bitmap *bitmap,
 			image_cache_convert_fn *convert)
 {
-	struct image_cache_entry_s *centry;
+	ساخت image_cache_اندراج_s *centry;
 
 	/* bump the cache age by a ms to ensure multiple items are not
 	 * added at exactly the same time
 	 */
 	image_cache->current_age++;
 
-	centry = image_cache__find(content);
-	if (centry == NULL) {
+	centry = image_cache_ڈھونڈو(content);
+	اگر (centry == تہی) {
 		/* new cache entry, content not previously added */
-		centry = calloc(1, sizeof(struct image_cache_entry_s));
-		if (centry == NULL) {
-			return NSERROR_NOMEM;
+		centry = صفر_حافظہ_دو(1, حجم(ساخت image_cache_اندراج_s));
+		اگر (centry == تہی) {
+			واپس NSERROR_NOMEM;
 		}
 		image_cache__link(centry);
 		centry->content = content;
 
-		centry->bitmap_size = content->width * content->height * 4llu;
+		centry->bitmap_سائز = content->چوڑائی * content->اونچائی * 4llu;
 	}
 
 	NSLOG(netsurf, INFO, "centry %p, content %p, bitmap %p", centry,
@@ -537,144 +537,144 @@ nserror image_cache_add(struct content *content,
 	centry->convert = convert;
 
 	/* set bitmap entry if one is passed, free extant one if present */
-	if (bitmap != NULL) {
-		if (centry->bitmap != NULL) {
+	اگر (bitmap != تہی) {
+		اگر (centry->bitmap != تہی) {
 			guit->bitmap->destroy(centry->bitmap);
-		} else {
-			image_cache_stats_bitmap_add(centry);
+		} ورنہ {
+			image_cache_stats_bitmap_جوڑو(centry);
 		}
 		centry->bitmap = bitmap;
-	} else {
+	} ورنہ {
 		/* no bitmap, check to see if we should speculatively convert */
-		if ((centry->convert != NULL) &&
+		اگر ((centry->convert != تہی) &&
 		    (image_cache_speculate(content) == true)) {
 			centry->bitmap = centry->convert(centry->content);
 
-			if (centry->bitmap != NULL) {
-				image_cache_stats_bitmap_add(centry);
-			} else {
-				image_cache->fail_count++;
+			اگر (centry->bitmap != تہی) {
+				image_cache_stats_bitmap_جوڑو(centry);
+			} ورنہ {
+				image_cache->fail_گنتی++;
 			}
 		}
 	}
 
 
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-nserror image_cache_remove(struct content *content)
+nserror image_cache_remove(ساخت content *content)
 {
-	struct image_cache_entry_s *centry;
+	ساخت image_cache_اندراج_s *centry;
 
 	/* get the cache entry */
-	centry = image_cache__find(content);
-	if (centry == NULL) {
+	centry = image_cache_ڈھونڈو(content);
+	اگر (centry == تہی) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-		return NSERROR_NOT_FOUND;
+		واپس NSERROR_NOT_ملا;
 	}
 
-	image_cache__free_entry(centry);
+	image_cache_free_اندراج(centry);
 
-	return NSERROR_OK;
+	واپس NSERROR_OK;
 }
 
 /* exported interface documented in image_cache.h */
-int image_cache_snsummaryf(char *string, size_t size, const char *fmt)
+صحیح image_cache_snsummaryf(حرف *string, size_t سائز, ثابت حرف *fmt)
 {
 	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	صحیح fmtc = 0; /* current index into format string */
 	bool pct;
-	unsigned int op_count;
-	uint64_t op_size;
+	غیرعلامتی صحیح op_گنتی;
+	uint64_t op_سائز;
 
-	op_count = image_cache->hit_count +
-		image_cache->miss_count +
-		image_cache->fail_count;
+	op_گنتی = image_cache->کامیابی_گنتی +
+		image_cache->ناکامی_گنتی +
+		image_cache->fail_گنتی;
 
-	op_size = image_cache->hit_size +
-		image_cache->miss_size +
-		image_cache->fail_size;
+	op_سائز = image_cache->کامیابی_سائز +
+		image_cache->ناکامی_سائز +
+		image_cache->fail_سائز;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	جب((slen < سائز) && (fmt[fmtc] != 0)) {
+		اگر (fmt[fmtc] == '%') {
 			fmtc++;
 
 			/* check for percentage modifier */
-			if (fmt[fmtc] == 'p') {
+			اگر (fmt[fmtc] == 'p') {
 				fmtc++;
 				pct = true;
-			} else {
+			} ورنہ {
 				pct = false;
 			}
 
-#define FMTCHR(chr,fmt,var) case chr : \
-slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); break
+#تعریف_کرو FMTCHR(chr,fmt,var) حالت chr : \
+slen += snprintf(string + slen, سائز - slen, "%"fmt, image_cache->var); توڑو
 
-#define FMTPCHR(chr,fmt,var,div) \
-case chr :					\
-	if (pct) {							\
-		if (div > 0) {						\
-			slen += snprintf(string + slen, size - slen, "%"PRId64, (uint64_t)((image_cache->var * 100) / div)); \
-		} else {						\
-			slen += snprintf(string + slen, size - slen, "100"); \
+#تعریف_کرو FMTPCHR(chr,fmt,var,div) \
+حالت chr :					\
+	اگر (pct) {							\
+		اگر (div > 0) {						\
+			slen += snprintf(string + slen, سائز - slen, "%"PRId64, (uint64_t)((image_cache->var * 100) / div)); \
+		} ورنہ {						\
+			slen += snprintf(string + slen, سائز - slen, "100"); \
 		}							\
-	} else {							\
-		slen += snprintf(string + slen, size - slen, "%"fmt, image_cache->var); \
-	} break
+	} ورنہ {							\
+		slen += snprintf(string + slen, سائز - slen, "%"fmt, image_cache->var); \
+	} توڑو
 
 
-			switch (fmt[fmtc]) {
-			case '%':
+			انتخاب (fmt[fmtc]) {
+			حالت '%':
 				string[slen] = '%';
 				slen++;
-				break;
+				توڑو;
 
-			FMTCHR('a', PRIsizet, params.limit);
+			FMTCHR('a', PRIsizet, params.حد_بندی);
 			FMTCHR('b', PRIsizet, params.hysteresis);
-			FMTCHR('c', PRIsizet, total_bitmap_size);
-			FMTCHR('d', "d", bitmap_count);
+			FMTCHR('c', PRIsizet, کل_bitmap_سائز);
+			FMTCHR('d', "d", bitmap_گنتی);
 			FMTCHR('e', "u", current_age / 1000);
-			FMTCHR('f', PRIsizet, max_bitmap_size);
-			FMTCHR('g', "d", max_bitmap_size_count);
-			FMTCHR('h', "d", max_bitmap_count);
-			FMTCHR('i', PRIsizet, max_bitmap_count_size);
+			FMTCHR('f', PRIsizet, max_bitmap_سائز);
+			FMTCHR('g', "d", max_bitmap_سائز_گنتی);
+			FMTCHR('h', "d", max_bitmap_گنتی);
+			FMTCHR('i', PRIsizet, max_bitmap_گنتی_سائز);
 
 
-			case 'j':
-				slen += snprintf(string + slen, size - slen,
-						 "%u", pct?100:op_count);
-				break;
+			حالت 'j':
+				slen += snprintf(string + slen, سائز - slen,
+						 "%u", pct?100:op_گنتی);
+				توڑو;
 
-			FMTPCHR('k', "d", hit_count, op_count);
-			FMTPCHR('l', "d", miss_count, op_count);
-			FMTPCHR('m', "d", fail_count, op_count);
+			FMTPCHR('k', "d", کامیابی_گنتی, op_گنتی);
+			FMTPCHR('l', "d", ناکامی_گنتی, op_گنتی);
+			FMTPCHR('m', "d", fail_گنتی, op_گنتی);
 
-			case 'n':
-				slen += snprintf(string + slen, size - slen,
-						 "%"PRId64, pct?100:op_size);
-				break;
+			حالت 'n':
+				slen += snprintf(string + slen, سائز - slen,
+						 "%"PRId64, pct?100:op_سائز);
+				توڑو;
 
-			FMTPCHR('o', PRId64, hit_size, op_size);
-			FMTPCHR('q', PRId64, miss_size, op_size);
-			FMTPCHR('r', PRId64, fail_size, op_size);
+			FMTPCHR('o', PRId64, کامیابی_سائز, op_سائز);
+			FMTPCHR('q', PRId64, ناکامی_سائز, op_سائز);
+			FMTPCHR('r', PRId64, fail_سائز, op_سائز);
 
-			FMTCHR('s', "d", total_unrendered);
-			FMTCHR('t', "d", specultive_miss_count);
-			FMTCHR('u', "d", total_extra_conversions);
-			FMTCHR('v', "d", total_extra_conversions_count);
-			FMTCHR('w', "u", peak_conversions_size);
+			FMTCHR('s', "d", کل_unrendered);
+			FMTCHR('t', "d", specultive_ناکامی_گنتی);
+			FMTCHR('u', "d", کل_extra_conversions);
+			FMTCHR('v', "d", کل_extra_conversions_گنتی);
+			FMTCHR('w', "u", peak_conversions_سائز);
 			FMTCHR('x', "d", peak_conversions);
 
 
 			}
-#undef FMTCHR
-#undef FMTPCHR
+#تعریف_منسوخ FMTCHR
+#تعریف_منسوخ FMTPCHR
 
 			fmtc++;
-		} else {
+		} ورنہ {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -682,69 +682,69 @@ case chr :					\
 	}
 
 	/* Ensure that we NUL-terminate the output */
-	string[min(slen, size - 1)] = '\0';
+	string[min(slen, سائز - 1)] = '\0';
 
-	return slen;
+	واپس slen;
 }
 
 /* exported interface documented in image_cache.h */
-int
-image_cache_snentryf(char *string,
-		     size_t size,
-		     unsigned int entryn,
-		     const char *fmt)
+صحیح
+image_cache_snentryf(حرف *string,
+		     size_t سائز,
+		     غیرعلامتی صحیح entryn,
+		     ثابت حرف *fmt)
 {
-	struct image_cache_entry_s *centry;
+	ساخت image_cache_اندراج_s *centry;
 	size_t slen = 0; /* current output string length */
-	int fmtc = 0; /* current index into format string */
+	صحیح fmtc = 0; /* current index into format string */
 	lwc_string *origin; /* current entry's origin */
 
 	centry = image_cache__findn(entryn);
-	if (centry == NULL)
-		return -1;
+	اگر (centry == تہی)
+		واپس -1;
 
-	while((slen < size) && (fmt[fmtc] != 0)) {
-		if (fmt[fmtc] == '%') {
+	جب((slen < سائز) && (fmt[fmtc] != 0)) {
+		اگر (fmt[fmtc] == '%') {
 			fmtc++;
-			switch (fmt[fmtc]) {
-			case 'e':
-				slen += snprintf(string + slen, size - slen,
+			انتخاب (fmt[fmtc]) {
+			حالت 'e':
+				slen += snprintf(string + slen, سائز - slen,
 						"%u", entryn);
-				break;
+				توڑو;
 
-			case 'r':
-				slen += snprintf(string + slen, size - slen,
-						"%u", centry->redraw_count);
-				break;
+			حالت 'r':
+				slen += snprintf(string + slen, سائز - slen,
+						"%u", centry->redraw_گنتی);
+				توڑو;
 
-			case 'a':
-				slen += snprintf(string + slen, size - slen,
-						 "%.2f", (float)((image_cache->current_age -  centry->redraw_age)) / 1000);
-				break;
+			حالت 'a':
+				slen += snprintf(string + slen, سائز - slen,
+						 "%.2f", (اعشاری)((image_cache->current_age -  centry->redraw_age)) / 1000);
+				توڑو;
 
 
-			case 'c':
-				slen += snprintf(string + slen, size - slen,
-						"%d", centry->conversion_count);
-				break;
+			حالت 'c':
+				slen += snprintf(string + slen, سائز - slen,
+						"%d", centry->conversion_گنتی);
+				توڑو;
 
-			case 'g':
-				slen += snprintf(string + slen, size - slen,
-						"%.2f", (float)((image_cache->current_age -  centry->bitmap_age)) / 1000);
-				break;
+			حالت 'g':
+				slen += snprintf(string + slen, سائز - slen,
+						"%.2f", (اعشاری)((image_cache->current_age -  centry->bitmap_age)) / 1000);
+				توڑو;
 
-			case 'k':
-				slen += snprintf(string + slen, size - slen,
+			حالت 'k':
+				slen += snprintf(string + slen, سائز - slen,
 						"%p", centry->content);
-				break;
+				توڑو;
 
-			case 'U':
-				slen += snprintf(string + slen, size - slen,
+			حالت 'U':
+				slen += snprintf(string + slen, سائز - slen,
 						"%s", nsurl_access(llcache_handle_get_url(centry->content->llcache)));
-				break;
+				توڑو;
 
-			case 'o':
-				if (nsurl_has_component(llcache_handle_get_url(
+			حالت 'o':
+				اگر (nsurl_has_component(llcache_handle_get_url(
 						centry->content->llcache),
 						NSURL_HOST)) {
 					origin = nsurl_get_component(
@@ -754,33 +754,33 @@ image_cache_snentryf(char *string,
 							NSURL_HOST);
 
 					slen += snprintf(string + slen,
-							size - slen, "%s",
-							lwc_string_data(
+							سائز - slen, "%s",
+							lwc_string_ڈیٹا(
 								origin));
 
 					lwc_string_unref(origin);
-				} else {
+				} ورنہ {
 					slen += snprintf(string + slen,
-							size - slen, "%s",
+							سائز - slen, "%s",
 							"localhost");
 				}
-				break;
+				توڑو;
 
-			case 's':
-				if (centry->bitmap != NULL) {
+			حالت 's':
+				اگر (centry->bitmap != تہی) {
 					slen += snprintf(string + slen,
-							 size - slen,
+							 سائز - slen,
 							 "%" PRIsizet,
-							 centry->bitmap_size);
-				} else {
+							 centry->bitmap_سائز);
+				} ورنہ {
 					slen += snprintf(string + slen,
-							 size - slen,
+							 سائز - slen,
 							 "0");
 				}
-				break;
+				توڑو;
 			}
 			fmtc++;
-		} else {
+		} ورنہ {
 			string[slen] = fmt[fmtc];
 			slen++;
 			fmtc++;
@@ -788,89 +788,89 @@ image_cache_snentryf(char *string,
 	}
 
 	/* Ensure that we NUL-terminate the output */
-	string[min(slen, size - 1)] = '\0';
+	string[min(slen, سائز - 1)] = '\0';
 
-	return slen;
+	واپس slen;
 }
 
 
 /* exported interface documented in image_cache.h */
-bool image_cache_redraw(struct content *c,
-			struct content_redraw_data *data,
-			const struct rect *clip,
-			const struct redraw_context *ctx)
+bool image_cache_redraw(ساخت content *c,
+			ساخت content_redraw_ڈیٹا *ڈیٹا,
+			ثابت ساخت rect *clip,
+			ثابت ساخت redraw_context *ctx)
 {
-	struct image_cache_entry_s *centry;
+	ساخت image_cache_اندراج_s *centry;
 
 	/* get the cache entry */
-	centry = image_cache__find(c);
-	if (centry == NULL) {
+	centry = image_cache_ڈھونڈو(c);
+	اگر (centry == تہی) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", c);
-		return false;
+		واپس false;
 	}
 
-	if (centry->bitmap == NULL) {
-		if (centry->convert != NULL) {
+	اگر (centry->bitmap == تہی) {
+		اگر (centry->convert != تہی) {
 			centry->bitmap = centry->convert(centry->content);
 		}
 
-		if (centry->bitmap != NULL) {
-			image_cache_stats_bitmap_add(centry);
-			image_cache->miss_count++;
-			image_cache->miss_size += centry->bitmap_size;
-		} else {
-			image_cache->fail_count++;
-			image_cache->fail_size += centry->bitmap_size;
-			return false;
+		اگر (centry->bitmap != تہی) {
+			image_cache_stats_bitmap_جوڑو(centry);
+			image_cache->ناکامی_گنتی++;
+			image_cache->ناکامی_سائز += centry->bitmap_سائز;
+		} ورنہ {
+			image_cache->fail_گنتی++;
+			image_cache->fail_سائز += centry->bitmap_سائز;
+			واپس false;
 		}
-	} else {
-		image_cache->hit_count++;
-		image_cache->hit_size += centry->bitmap_size;
+	} ورنہ {
+		image_cache->کامیابی_گنتی++;
+		image_cache->کامیابی_سائز += centry->bitmap_سائز;
 	}
 
 
 	/* update statistics */
-	centry->redraw_count++;
+	centry->redraw_گنتی++;
 	centry->redraw_age = image_cache->current_age;
 
-	return image_bitmap_plot(centry->bitmap, data, clip, ctx);
+	واپس image_bitmap_plot(centry->bitmap, ڈیٹا, clip, ctx);
 }
 
 /* exported interface documented in image_cache.h */
-void image_cache_destroy(struct content *content)
+خالی image_cache_destroy(ساخت content *content)
 {
-	struct image_cache_entry_s *centry;
+	ساخت image_cache_اندراج_s *centry;
 
 	/* get the cache entry */
-	centry = image_cache__find(content);
-	if (centry == NULL) {
+	centry = image_cache_ڈھونڈو(content);
+	اگر (centry == تہی) {
 		NSLOG(netsurf, INFO,
 		      "Could not find cache entry for content (%p)", content);
-	} else {
-		image_cache__free_entry(centry);
+	} ورنہ {
+		image_cache_free_اندراج(centry);
 	}
 }
 
 /* exported interface documented in image_cache.h */
-void *image_cache_get_internal(const struct content *c, void *context)
+خالی *image_cache_get_اندرونی(ثابت ساخت content *c, خالی *context)
 {
-	return image_cache_get_bitmap(c);
+	واپس image_cache_get_bitmap(c);
 }
 
 /* exported interface documented in image_cache.h */
-bool image_cache_is_opaque(struct content *c)
+bool image_cache_is_opaque(ساخت content *c)
 {
-	struct bitmap *bmp;
+	ساخت bitmap *bmp;
 	bmp = image_cache_get_bitmap(c);
-	if (bmp != NULL) {
-		return guit->bitmap->get_opaque(bmp);
+	اگر (bmp != تہی) {
+		واپس guit->bitmap->get_opaque(bmp);
 	}
-	return false;
+	واپس false;
 }
 
 /* exported interface documented in image_cache.h */
-content_type image_cache_content_type(void)
+content_type image_cache_content_type(خالی)
 {
-	return CONTENT_IMAGE;
+	واپس CONTENT_IMAGE;
 }
